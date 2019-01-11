@@ -4,51 +4,52 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-10.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 348C3C43612
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:46:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 86747C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:46:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EF799206B6
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:46:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 57E27206B6
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:46:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547217966;
-	bh=8Hjs2BNd7XV9satEaGpNrDIhN2iN5zPfaY5P0HXZuLQ=;
+	s=default; t=1547217975;
+	bh=NLwRLLyoaPze/svjYnmNLfWyeYs8+PKc3wbY0gXStR0=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=hsOfB3lmeqnhRX+MHpfcrlVSmpAEt1bWnW3TEPw7tn6TpvmPuukvTccHnTmQFzgoO
-	 en+7D1dqNAIPZYN2WG4w5pMLpo48pJrHoK6ek/PP09lOQ7Vn8wp3JCA61qjw84RE8I
-	 QIiyeAqvyiAjs8blwkC0ZvbyFCzHtAyLeNykOteU=
+	b=mjdGw6UVQ5HnFMMRybG+jFY74+jLR3WCdsqUWZ1+vQhlla2GyRjyPG/uqGSC3nnYm
+	 si1Ca8ycmXTNfjVgPiFOwdyqUbbjWzannjPolyqlyS9LebM1Y2rkczRR4kTd/8fjlb
+	 P5TWVCqG7bM6UDG0GxGj5GWAuLFm8uxax4b4P/gQ=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404410AbfAKOng (ORCPT
+        id S2404373AbfAKOn3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 11 Jan 2019 09:43:36 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36434 "EHLO mail.kernel.org"
+        Fri, 11 Jan 2019 09:43:29 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36302 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404026AbfAKOnd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Jan 2019 09:43:33 -0500
+        id S2404362AbfAKOn0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 Jan 2019 09:43:26 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 63069206B6;
-        Fri, 11 Jan 2019 14:43:32 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D8DAE206B6;
+        Fri, 11 Jan 2019 14:43:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547217812;
-        bh=8Hjs2BNd7XV9satEaGpNrDIhN2iN5zPfaY5P0HXZuLQ=;
+        s=default; t=1547217805;
+        bh=NLwRLLyoaPze/svjYnmNLfWyeYs8+PKc3wbY0gXStR0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=WaAnBetfV/HAol0yvXR2VtdeM2pPGHtSgAtQTA8HOG45MdaszOst/CwsU0xVahlCp
-         NZepks9hFagr4lwkG2qZolJSU3kcd/F33odj0nMCIQc6SlS8Tu1icLveBzy9iGFOwq
-         bcRuOUTQhcDTxLgFfaQxnVFEQYDTH88DuKJwGokE=
+        b=iIOmsrs9LR1EQKmXEgSeOgfJFYcdLIvodC3ncPWsuBPwtE2MdUGo97r75SwtlNPgP
+         ZBmNi8Mzjy5dTG88j3OZ7wWmpwy3EBjNL7MiHEbUof2sTww+YwG6Nzdzsjo2Q/SzG5
+         6JM7w4b41WThby6a2Q2+P3df2kI0ePuObo/EcUtQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Pan Bian <bianpan2016@163.com>,
-        Christoph Hellwig <hch@lst.de>,
-        Andreas Gruenbacher <agruenba@redhat.com>,
-        Bob Peterson <rpeterso@redhat.com>
-Subject: [PATCH 4.20 33/65] gfs2: Get rid of potential double-freeing in gfs2_create_inode
-Date:   Fri, 11 Jan 2019 15:15:19 +0100
-Message-Id: <20190111131100.894748678@linuxfoundation.org>
+        stable@vger.kernel.org, Sergey Gorenko <sergeygo@mellanox.com>,
+        Max Gurtovoy <maxg@mellanox.com>,
+        Laurence Oberman <loberman@redhat.com>,
+        Bart Van Assche <bvanassche@acm.org>,
+        Doug Ledford <dledford@redhat.com>
+Subject: [PATCH 4.20 48/65] RDMA/srpt: Fix a use-after-free in the channel release code
+Date:   Fri, 11 Jan 2019 15:15:34 +0100
+Message-Id: <20190111131102.868093083@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190111131055.331350141@linuxfoundation.org>
 References: <20190111131055.331350141@linuxfoundation.org>
@@ -67,70 +68,123 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Andreas Gruenbacher <agruenba@redhat.com>
+From: Bart Van Assche <bvanassche@acm.org>
 
-commit 6ff9b09e00a441599f3aacdf577254455a048bc9 upstream.
+commit ed041919f0d23c109d52cde8da6ddc211c52d67e upstream.
 
-In gfs2_create_inode, after setting and releasing the acl / default_acl, the
-acl / default_acl pointers are not set to NULL as they should be.  In that
-state, when the function reaches label fail_free_acls, gfs2_create_inode will
-try to release the same acls again.
+This patch avoids that KASAN sporadically reports the following:
 
-Fix that by setting the pointers to NULL after releasing the acls.  Slightly
-simplify the logic.  Also, posix_acl_release checks for NULL already, so
-there is no need to duplicate those checks here.
+BUG: KASAN: use-after-free in rxe_run_task+0x1e/0x60 [rdma_rxe]
+Read of size 1 at addr ffff88801c50d8f4 by task check/24830
 
-Fixes: e01580bf9e4d ("gfs2: use generic posix ACL infrastructure")
-Reported-by: Pan Bian <bianpan2016@163.com>
-Cc: Christoph Hellwig <hch@lst.de>
-Cc: stable@vger.kernel.org # v4.9+
-Signed-off-by: Andreas Gruenbacher <agruenba@redhat.com>
-Signed-off-by: Bob Peterson <rpeterso@redhat.com>
+CPU: 4 PID: 24830 Comm: check Not tainted 4.20.0-rc6-dbg+ #3
+Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.10.2-1 04/01/2014
+Call Trace:
+ dump_stack+0x86/0xca
+ print_address_description+0x71/0x239
+ kasan_report.cold.5+0x242/0x301
+ __asan_load1+0x47/0x50
+ rxe_run_task+0x1e/0x60 [rdma_rxe]
+ rxe_post_send+0x4bd/0x8d0 [rdma_rxe]
+ srpt_zerolength_write+0xe1/0x160 [ib_srpt]
+ srpt_close_ch+0x8b/0xe0 [ib_srpt]
+ srpt_set_enabled+0xe7/0x150 [ib_srpt]
+ srpt_tpg_enable_store+0xc0/0x100 [ib_srpt]
+ configfs_write_file+0x157/0x1d0
+ __vfs_write+0xd7/0x3d0
+ vfs_write+0x102/0x290
+ ksys_write+0xab/0x130
+ __x64_sys_write+0x43/0x50
+ do_syscall_64+0x71/0x210
+ entry_SYSCALL_64_after_hwframe+0x49/0xbe
+
+Allocated by task 13856:
+ save_stack+0x43/0xd0
+ kasan_kmalloc+0xc7/0xe0
+ kasan_slab_alloc+0x11/0x20
+ kmem_cache_alloc+0x105/0x320
+ rxe_alloc+0xff/0x1f0 [rdma_rxe]
+ rxe_create_qp+0x9f/0x160 [rdma_rxe]
+ ib_create_qp+0xf5/0x690 [ib_core]
+ rdma_create_qp+0x6a/0x140 [rdma_cm]
+ srpt_cm_req_recv.cold.59+0x1588/0x237b [ib_srpt]
+ srpt_rdma_cm_req_recv.isra.35+0x1d5/0x220 [ib_srpt]
+ srpt_rdma_cm_handler+0x6f/0x100 [ib_srpt]
+ cma_listen_handler+0x59/0x60 [rdma_cm]
+ cma_ib_req_handler+0xd5b/0x2570 [rdma_cm]
+ cm_process_work+0x2e/0x110 [ib_cm]
+ cm_work_handler+0x2aae/0x502b [ib_cm]
+ process_one_work+0x481/0x9e0
+ worker_thread+0x67/0x5b0
+ kthread+0x1cf/0x1f0
+ ret_from_fork+0x24/0x30
+
+Freed by task 3440:
+ save_stack+0x43/0xd0
+ __kasan_slab_free+0x139/0x190
+ kasan_slab_free+0xe/0x10
+ kmem_cache_free+0xbc/0x330
+ rxe_elem_release+0x66/0xe0 [rdma_rxe]
+ rxe_destroy_qp+0x3f/0x50 [rdma_rxe]
+ ib_destroy_qp+0x140/0x360 [ib_core]
+ srpt_release_channel_work+0xdc/0x310 [ib_srpt]
+ process_one_work+0x481/0x9e0
+ worker_thread+0x67/0x5b0
+ kthread+0x1cf/0x1f0
+ ret_from_fork+0x24/0x30
+
+Cc: Sergey Gorenko <sergeygo@mellanox.com>
+Cc: Max Gurtovoy <maxg@mellanox.com>
+Cc: Laurence Oberman <loberman@redhat.com>
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Bart Van Assche <bvanassche@acm.org>
+Signed-off-by: Doug Ledford <dledford@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/gfs2/inode.c |   18 +++++++++---------
- 1 file changed, 9 insertions(+), 9 deletions(-)
+ drivers/infiniband/ulp/srpt/ib_srpt.c |   18 +++++++++++++-----
+ 1 file changed, 13 insertions(+), 5 deletions(-)
 
---- a/fs/gfs2/inode.c
-+++ b/fs/gfs2/inode.c
-@@ -744,17 +744,19 @@ static int gfs2_create_inode(struct inod
- 			       the gfs2 structures. */
- 	if (default_acl) {
- 		error = __gfs2_set_acl(inode, default_acl, ACL_TYPE_DEFAULT);
-+		if (error)
-+			goto fail_gunlock3;
- 		posix_acl_release(default_acl);
-+		default_acl = NULL;
- 	}
- 	if (acl) {
--		if (!error)
--			error = __gfs2_set_acl(inode, acl, ACL_TYPE_ACCESS);
-+		error = __gfs2_set_acl(inode, acl, ACL_TYPE_ACCESS);
-+		if (error)
-+			goto fail_gunlock3;
- 		posix_acl_release(acl);
-+		acl = NULL;
- 	}
+--- a/drivers/infiniband/ulp/srpt/ib_srpt.c
++++ b/drivers/infiniband/ulp/srpt/ib_srpt.c
+@@ -2010,6 +2010,14 @@ static void srpt_free_ch(struct kref *kr
+ 	kfree_rcu(ch, rcu);
+ }
  
--	if (error)
--		goto fail_gunlock3;
++/*
++ * Shut down the SCSI target session, tell the connection manager to
++ * disconnect the associated RDMA channel, transition the QP to the error
++ * state and remove the channel from the channel list. This function is
++ * typically called from inside srpt_zerolength_write_done(). Concurrent
++ * srpt_zerolength_write() calls from inside srpt_close_ch() are possible
++ * as long as the channel is on sport->nexus_list.
++ */
+ static void srpt_release_channel_work(struct work_struct *w)
+ {
+ 	struct srpt_rdma_ch *ch;
+@@ -2037,6 +2045,11 @@ static void srpt_release_channel_work(st
+ 	else
+ 		ib_destroy_cm_id(ch->ib_cm.cm_id);
+ 
++	sport = ch->sport;
++	mutex_lock(&sport->mutex);
++	list_del_rcu(&ch->list);
++	mutex_unlock(&sport->mutex);
++
+ 	srpt_destroy_ch_ib(ch);
+ 
+ 	srpt_free_ioctx_ring((struct srpt_ioctx **)ch->ioctx_ring,
+@@ -2047,11 +2060,6 @@ static void srpt_release_channel_work(st
+ 			     sdev, ch->rq_size,
+ 			     srp_max_req_size, DMA_FROM_DEVICE);
+ 
+-	sport = ch->sport;
+-	mutex_lock(&sport->mutex);
+-	list_del_rcu(&ch->list);
+-	mutex_unlock(&sport->mutex);
 -
- 	error = security_inode_init_security(&ip->i_inode, &dip->i_inode, name,
- 					     &gfs2_initxattrs, NULL);
- 	if (error)
-@@ -789,10 +791,8 @@ fail_free_inode:
- 	}
- 	gfs2_rsqa_delete(ip, NULL);
- fail_free_acls:
--	if (default_acl)
--		posix_acl_release(default_acl);
--	if (acl)
--		posix_acl_release(acl);
-+	posix_acl_release(default_acl);
-+	posix_acl_release(acl);
- fail_gunlock:
- 	gfs2_dir_no_add(&da);
- 	gfs2_glock_dq_uninit(ghs);
+ 	wake_up(&sport->ch_releaseQ);
+ 
+ 	kref_put(&ch->kref, srpt_free_ch);
 
 
