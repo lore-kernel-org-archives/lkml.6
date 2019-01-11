@@ -2,156 +2,224 @@ Return-Path: <SRS0=uvhX=PT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8BC11C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 11:06:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E0ABC43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 11:06:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5A6892184B
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 11:06:17 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="Sh4bRYuz"
+	by mail.kernel.org (Postfix) with ESMTP id 1E56A21783
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 11:06:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732144AbfAKLGQ (ORCPT
+        id S1732171AbfAKLGX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 11 Jan 2019 06:06:16 -0500
-Received: from lelv0142.ext.ti.com ([198.47.23.249]:34568 "EHLO
-        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732130AbfAKLGP (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Jan 2019 06:06:15 -0500
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id x0BB69Pe113754;
-        Fri, 11 Jan 2019 05:06:09 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1547204769;
-        bh=wteOl5uvyjVk6GljbaTc8Q2ud1451fQf4mi1LazvlsQ=;
-        h=From:To:CC:Subject:Date:In-Reply-To:References;
-        b=Sh4bRYuz11FsU3Pp5rUZ0Z/N0FGCI7O8e0VIUU9QhUaogIh9BNLJCT6ZSdjXKdEbJ
-         1GIeGFL1s0AhG57TaTzT1wEh5wps71AM9VwXGQzOLugPmaCS51qzzibWqU0+TI7yW0
-         9c0jTNoJUUXSEFzJiONl9avej6d78SsvcUgsWUhs=
-Received: from DFLE105.ent.ti.com (dfle105.ent.ti.com [10.64.6.26])
-        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x0BB698T119264
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Fri, 11 Jan 2019 05:06:09 -0600
-Received: from DFLE107.ent.ti.com (10.64.6.28) by DFLE105.ent.ti.com
- (10.64.6.26) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Fri, 11
- Jan 2019 05:06:09 -0600
-Received: from dlep32.itg.ti.com (157.170.170.100) by DFLE107.ent.ti.com
- (10.64.6.28) with Microsoft SMTP Server (version=TLS1_0,
- cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1591.10 via Frontend Transport;
- Fri, 11 Jan 2019 05:06:09 -0600
-Received: from a0230074-OptiPlex-7010.india.ti.com (ileax41-snat.itg.ti.com [10.172.224.153])
-        by dlep32.itg.ti.com (8.14.3/8.13.8) with ESMTP id x0BB5xEs024503;
-        Fri, 11 Jan 2019 05:06:06 -0600
-From:   Faiz Abbas <faiz_abbas@ti.com>
-To:     <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-mmc@vger.kernel.org>
-CC:     <zhang.chunyan@linaro.org>, <kishon@ti.com>,
-        <adrian.hunter@intel.com>, <mark.rutland@arm.com>,
-        <robh+dt@kernel.org>, <ulf.hansson@linaro.org>, <faiz_abbas@ti.com>
-Subject: [PATCH 2/7] mmc: sdhci-omap: Add using external dma
-Date:   Fri, 11 Jan 2019 16:38:46 +0530
-Message-ID: <20190111110851.6805-3-faiz_abbas@ti.com>
-X-Mailer: git-send-email 2.19.2
-In-Reply-To: <20190111110851.6805-1-faiz_abbas@ti.com>
-References: <20190111110851.6805-1-faiz_abbas@ti.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+        Fri, 11 Jan 2019 06:06:23 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:60372 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1731306AbfAKLGV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 Jan 2019 06:06:21 -0500
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 73E758E68E;
+        Fri, 11 Jan 2019 11:06:20 +0000 (UTC)
+Received: from localhost (ovpn-8-28.pek2.redhat.com [10.72.8.28])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id F13055D9C8;
+        Fri, 11 Jan 2019 11:06:10 +0000 (UTC)
+From:   Ming Lei <ming.lei@redhat.com>
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, Theodore Ts'o <tytso@mit.edu>,
+        Omar Sandoval <osandov@fb.com>,
+        Sagi Grimberg <sagi@grimberg.me>,
+        Dave Chinner <dchinner@redhat.com>,
+        Kent Overstreet <kent.overstreet@gmail.com>,
+        Mike Snitzer <snitzer@redhat.com>, dm-devel@redhat.com,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel@vger.kernel.org, linux-raid@vger.kernel.org,
+        David Sterba <dsterba@suse.com>, linux-btrfs@vger.kernel.org,
+        "Darrick J . Wong" <darrick.wong@oracle.com>,
+        linux-xfs@vger.kernel.org, Gao Xiang <gaoxiang25@huawei.com>,
+        Christoph Hellwig <hch@lst.de>, linux-ext4@vger.kernel.org,
+        Coly Li <colyli@suse.de>, linux-bcache@vger.kernel.org,
+        Boaz Harrosh <ooo@electrozaur.com>,
+        Bob Peterson <rpeterso@redhat.com>, cluster-devel@redhat.com,
+        Ming Lei <ming.lei@redhat.com>
+Subject: [PATCH V13 18/19] block: kill QUEUE_FLAG_NO_SG_MERGE
+Date:   Fri, 11 Jan 2019 19:01:26 +0800
+Message-Id: <20190111110127.21664-19-ming.lei@redhat.com>
+In-Reply-To: <20190111110127.21664-1-ming.lei@redhat.com>
+References: <20190111110127.21664-1-ming.lei@redhat.com>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.25]); Fri, 11 Jan 2019 11:06:20 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Chunyan Zhang <zhang.chunyan@linaro.org>
+Since bdced438acd83ad83a6c ("block: setup bi_phys_segments after splitting"),
+physical segment number is mainly figured out in blk_queue_split() for
+fast path, and the flag of BIO_SEG_VALID is set there too.
 
-sdhci-omap can support both external dma controller via dmaengine framework
-as well as ADMA which standard SD host controller provides.
+Now only blk_recount_segments() and blk_recalc_rq_segments() use this
+flag.
 
-Fixes by Faiz Abbas <fazi_abbas@ti.com>:
-1. Switch to DMA slave mode when using external DMA
-2. Add offset to mapbase
+Basically blk_recount_segments() is bypassed in fast path given BIO_SEG_VALID
+is set in blk_queue_split().
 
-Signed-off-by: Chunyan Zhang <zhang.chunyan@linaro.org>
-Signed-off-by: Faiz Abbas <faiz_abbas@ti.com>
+For another user of blk_recalc_rq_segments():
+
+- run in partial completion branch of blk_update_request, which is an unusual case
+
+- run in blk_cloned_rq_check_limits(), still not a big problem if the flag is killed
+since dm-rq is the only user.
+
+Multi-page bvec is enabled now, not doing S/G merging is rather pointless with the
+current setup of the I/O path, as it isn't going to save you a significant amount
+of cycles.
+
+Reviewed-by: Christoph Hellwig <hch@lst.de>
+Reviewed-by: Omar Sandoval <osandov@fb.com>
+Signed-off-by: Ming Lei <ming.lei@redhat.com>
 ---
- drivers/mmc/host/Kconfig      |  1 +
- drivers/mmc/host/sdhci-omap.c | 16 +++++++++++++++-
- 2 files changed, 16 insertions(+), 1 deletion(-)
+ block/blk-merge.c      | 31 ++++++-------------------------
+ block/blk-mq-debugfs.c |  1 -
+ block/blk-mq.c         |  3 ---
+ drivers/md/dm-table.c  | 13 -------------
+ include/linux/blkdev.h |  1 -
+ 5 files changed, 6 insertions(+), 43 deletions(-)
 
-diff --git a/drivers/mmc/host/Kconfig b/drivers/mmc/host/Kconfig
-index 333292e8ecdd..70e90b00cb37 100644
---- a/drivers/mmc/host/Kconfig
-+++ b/drivers/mmc/host/Kconfig
-@@ -979,6 +979,7 @@ config MMC_SDHCI_OMAP
- 	depends on MMC_SDHCI_PLTFM && OF
- 	select THERMAL
- 	select TI_SOC_THERMAL
-+	select MMC_SDHCI_EXTERNAL_DMA if DMA_ENGINE
- 	help
- 	  This selects the Secure Digital Host Controller Interface (SDHCI)
- 	  support present in TI's DRA7 SOCs. The controller supports
-diff --git a/drivers/mmc/host/sdhci-omap.c b/drivers/mmc/host/sdhci-omap.c
-index c11c18a9aacb..8a05e94fe612 100644
---- a/drivers/mmc/host/sdhci-omap.c
-+++ b/drivers/mmc/host/sdhci-omap.c
-@@ -696,7 +696,11 @@ static int sdhci_omap_enable_dma(struct sdhci_host *host)
- 	struct sdhci_omap_host *omap_host = sdhci_pltfm_priv(pltfm_host);
+diff --git a/block/blk-merge.c b/block/blk-merge.c
+index bf736d2b3710..dc4877eaf9f9 100644
+--- a/block/blk-merge.c
++++ b/block/blk-merge.c
+@@ -354,8 +354,7 @@ void blk_queue_split(struct request_queue *q, struct bio **bio)
+ EXPORT_SYMBOL(blk_queue_split);
  
- 	reg = sdhci_omap_readl(omap_host, SDHCI_OMAP_CON);
--	reg |= CON_DMA_MASTER;
-+	reg &= ~CON_DMA_MASTER;
-+	/* Switch to DMA slave mode when using external DMA */
-+	if (!host->use_external_dma)
-+		reg |= CON_DMA_MASTER;
-+
- 	sdhci_omap_writel(omap_host, SDHCI_OMAP_CON, reg);
+ static unsigned int __blk_recalc_rq_segments(struct request_queue *q,
+-					     struct bio *bio,
+-					     bool no_sg_merge)
++					     struct bio *bio)
+ {
+ 	struct bio_vec bv, bvprv = { NULL };
+ 	int prev = 0;
+@@ -381,13 +380,6 @@ static unsigned int __blk_recalc_rq_segments(struct request_queue *q,
+ 	nr_phys_segs = 0;
+ 	for_each_bio(bio) {
+ 		bio_for_each_bvec(bv, bio, iter) {
+-			/*
+-			 * If SG merging is disabled, each bio vector is
+-			 * a segment
+-			 */
+-			if (no_sg_merge)
+-				goto new_segment;
+-
+ 			if (prev) {
+ 				if (seg_size + bv.bv_len
+ 				    > queue_max_segment_size(q))
+@@ -417,27 +409,16 @@ static unsigned int __blk_recalc_rq_segments(struct request_queue *q,
  
- 	return 0;
-@@ -1010,6 +1014,7 @@ static int sdhci_omap_probe(struct platform_device *pdev)
- 	const struct of_device_id *match;
- 	struct sdhci_omap_data *data;
- 	const struct soc_device_attribute *soc;
-+	struct resource *regs;
+ void blk_recalc_rq_segments(struct request *rq)
+ {
+-	bool no_sg_merge = !!test_bit(QUEUE_FLAG_NO_SG_MERGE,
+-			&rq->q->queue_flags);
+-
+-	rq->nr_phys_segments = __blk_recalc_rq_segments(rq->q, rq->bio,
+-			no_sg_merge);
++	rq->nr_phys_segments = __blk_recalc_rq_segments(rq->q, rq->bio);
+ }
  
- 	match = of_match_device(omap_sdhci_match, dev);
- 	if (!match)
-@@ -1022,6 +1027,10 @@ static int sdhci_omap_probe(struct platform_device *pdev)
- 	}
- 	offset = data->offset;
+ void blk_recount_segments(struct request_queue *q, struct bio *bio)
+ {
+-	unsigned short seg_cnt = bio_segments(bio);
+-
+-	if (test_bit(QUEUE_FLAG_NO_SG_MERGE, &q->queue_flags) &&
+-			(seg_cnt < queue_max_segments(q)))
+-		bio->bi_phys_segments = seg_cnt;
+-	else {
+-		struct bio *nxt = bio->bi_next;
++	struct bio *nxt = bio->bi_next;
  
-+	regs = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-+	if (!regs)
-+		return -ENXIO;
-+
- 	host = sdhci_pltfm_init(pdev, &sdhci_omap_pdata,
- 				sizeof(*omap_host));
- 	if (IS_ERR(host)) {
-@@ -1038,6 +1047,7 @@ static int sdhci_omap_probe(struct platform_device *pdev)
- 	omap_host->timing = MMC_TIMING_LEGACY;
- 	omap_host->flags = data->flags;
- 	host->ioaddr += offset;
-+	host->mapbase = regs->start + offset;
+-		bio->bi_next = NULL;
+-		bio->bi_phys_segments = __blk_recalc_rq_segments(q, bio, false);
+-		bio->bi_next = nxt;
+-	}
++	bio->bi_next = NULL;
++	bio->bi_phys_segments = __blk_recalc_rq_segments(q, bio);
++	bio->bi_next = nxt;
  
- 	mmc = host->mmc;
- 	sdhci_get_of_property(pdev);
-@@ -1105,6 +1115,10 @@ static int sdhci_omap_probe(struct platform_device *pdev)
- 	host->mmc_host_ops.execute_tuning = sdhci_omap_execute_tuning;
- 	host->mmc_host_ops.enable_sdio_irq = sdhci_omap_enable_sdio_irq;
+ 	bio_set_flag(bio, BIO_SEG_VALID);
+ }
+diff --git a/block/blk-mq-debugfs.c b/block/blk-mq-debugfs.c
+index 90d68760af08..2f9a11ef5bad 100644
+--- a/block/blk-mq-debugfs.c
++++ b/block/blk-mq-debugfs.c
+@@ -128,7 +128,6 @@ static const char *const blk_queue_flag_name[] = {
+ 	QUEUE_FLAG_NAME(SAME_FORCE),
+ 	QUEUE_FLAG_NAME(DEAD),
+ 	QUEUE_FLAG_NAME(INIT_DONE),
+-	QUEUE_FLAG_NAME(NO_SG_MERGE),
+ 	QUEUE_FLAG_NAME(POLL),
+ 	QUEUE_FLAG_NAME(WC),
+ 	QUEUE_FLAG_NAME(FUA),
+diff --git a/block/blk-mq.c b/block/blk-mq.c
+index 3ba37b9e15e9..fa45817a7e62 100644
+--- a/block/blk-mq.c
++++ b/block/blk-mq.c
+@@ -2829,9 +2829,6 @@ struct request_queue *blk_mq_init_allocated_queue(struct blk_mq_tag_set *set,
+ 	    set->map[HCTX_TYPE_POLL].nr_queues)
+ 		blk_queue_flag_set(QUEUE_FLAG_POLL, q);
  
-+	/* Switch to external DMA only if there is the "dmas" property */
-+	if (of_find_property(dev->of_node, "dmas", NULL))
-+		sdhci_switch_external_dma(host, true);
-+
- 	ret = sdhci_setup_host(host);
- 	if (ret)
- 		goto err_put_sync;
+-	if (!(set->flags & BLK_MQ_F_SG_MERGE))
+-		blk_queue_flag_set(QUEUE_FLAG_NO_SG_MERGE, q);
+-
+ 	q->sg_reserved_size = INT_MAX;
+ 
+ 	INIT_DELAYED_WORK(&q->requeue_work, blk_mq_requeue_work);
+diff --git a/drivers/md/dm-table.c b/drivers/md/dm-table.c
+index 4b1be754cc41..ba9481f1bf3c 100644
+--- a/drivers/md/dm-table.c
++++ b/drivers/md/dm-table.c
+@@ -1698,14 +1698,6 @@ static int device_is_not_random(struct dm_target *ti, struct dm_dev *dev,
+ 	return q && !blk_queue_add_random(q);
+ }
+ 
+-static int queue_supports_sg_merge(struct dm_target *ti, struct dm_dev *dev,
+-				   sector_t start, sector_t len, void *data)
+-{
+-	struct request_queue *q = bdev_get_queue(dev->bdev);
+-
+-	return q && !test_bit(QUEUE_FLAG_NO_SG_MERGE, &q->queue_flags);
+-}
+-
+ static bool dm_table_all_devices_attribute(struct dm_table *t,
+ 					   iterate_devices_callout_fn func)
+ {
+@@ -1902,11 +1894,6 @@ void dm_table_set_restrictions(struct dm_table *t, struct request_queue *q,
+ 	if (!dm_table_supports_write_zeroes(t))
+ 		q->limits.max_write_zeroes_sectors = 0;
+ 
+-	if (dm_table_all_devices_attribute(t, queue_supports_sg_merge))
+-		blk_queue_flag_clear(QUEUE_FLAG_NO_SG_MERGE, q);
+-	else
+-		blk_queue_flag_set(QUEUE_FLAG_NO_SG_MERGE, q);
+-
+ 	dm_table_verify_integrity(t);
+ 
+ 	/*
+diff --git a/include/linux/blkdev.h b/include/linux/blkdev.h
+index 7f4ca073e2f3..61bb72f55fc3 100644
+--- a/include/linux/blkdev.h
++++ b/include/linux/blkdev.h
+@@ -588,7 +588,6 @@ struct request_queue {
+ #define QUEUE_FLAG_SAME_FORCE  15	/* force complete on same CPU */
+ #define QUEUE_FLAG_DEAD        16	/* queue tear-down finished */
+ #define QUEUE_FLAG_INIT_DONE   17	/* queue is initialized */
+-#define QUEUE_FLAG_NO_SG_MERGE 18	/* don't attempt to merge SG segments*/
+ #define QUEUE_FLAG_POLL	       19	/* IO polling enabled if set */
+ #define QUEUE_FLAG_WC	       20	/* Write back caching */
+ #define QUEUE_FLAG_FUA	       21	/* device supports FUA writes */
 -- 
-2.19.2
+2.9.5
 
