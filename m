@@ -4,51 +4,52 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-10.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 478E3C43612
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:14:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B3C81C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:14:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 175E6214D8
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:14:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 800AE21783
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:14:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547216067;
-	bh=xGnyinLWW+OdGt73MlTIdf7F/75CGr7JPpc1CxVsFOg=;
+	s=default; t=1547216071;
+	bh=lcq1Z4cqy0Wl1pJ8Rma7/uBWZj11aNM/dct79nFJbes=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=TpgEPtXxo8Q8lp0UMquCb+avpQcdwgyI8a+Lox/X+RognysFQtXDNpwXG+2yoLt80
-	 f3JCL8Kwk0KyCHp1ATTIvMjfpeFwS/rufbyKIxH0BoEVtoOeL7cvMWB6uiDIwfMLQR
-	 xPpZWD8MnsibFmeg4j+/Fsh8pYbQwk5GenJIhYCc=
+	b=bB1z3IRQD33oScm/6Rf/8LkFonMmNakrATu+CD3UaL+cjzrvh2zC7booBKuKQPOUL
+	 WW/N2oyntmmMJahN9Ux6iSRy0kOZvtqd+gfgpnBlaLIF8+J3uwSRB5+Bee0U9ZldfW
+	 Qx1jiGuD4G0xqLeVmtLm0QUbsI7T6E+wdrP5I7MM=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732951AbfAKOO0 (ORCPT
+        id S1733070AbfAKOOa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 11 Jan 2019 09:14:26 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58086 "EHLO mail.kernel.org"
+        Fri, 11 Jan 2019 09:14:30 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58150 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725267AbfAKOO0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Jan 2019 09:14:26 -0500
+        id S1725267AbfAKOO2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 Jan 2019 09:14:28 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DA32C20874;
-        Fri, 11 Jan 2019 14:14:24 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7731D214D8;
+        Fri, 11 Jan 2019 14:14:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547216065;
-        bh=xGnyinLWW+OdGt73MlTIdf7F/75CGr7JPpc1CxVsFOg=;
+        s=default; t=1547216068;
+        bh=lcq1Z4cqy0Wl1pJ8Rma7/uBWZj11aNM/dct79nFJbes=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=2C7L5cvdvRfwOMHab73FW97MawIAGJOp2HXUcLrdnBQo4wi8aaLXh0q/Dl7AC0dBP
-         lGjfkMSUpaLgTdAt9kY/vOKi+EAkD2vJmwOcF9xvYZ+EmJ6X5Zx+UsDPGfvPJCOFUN
-         dILU3U/WEBzzrhWreyDhjh/68Jmivae4cBI6e5N8=
+        b=Vl6XtZbQjNrP6VoBzKkRwybhKrTG7yXZiXqmeYDCZS7oGJxhUj5tIHeUrXxy604tW
+         VAT8lZzkm574TNKhgdguVMRSKbPXFTY2gJ3tb33c//CWGD+R426i8EMZ8FjuivP7Ah
+         4hrJwcqmnA3VeS3CqTU3u0j2t7Rj5Q7J6gAynef8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Hui Peng <benquike@gmail.com>,
-        Mathias Payer <mathias.payer@nebelwelt.net>,
-        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        stable@vger.kernel.org,
+        syzbot+c56449ed3652e6720f30@syzkaller.appspotmail.com,
+        Jon Maloy <jon.maloy@ericsson.com>,
+        Cong Wang <xiyou.wangcong@gmail.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 3.18 01/47] USB: hso: Fix OOB memory access in hso_probe/hso_get_config_data
-Date:   Fri, 11 Jan 2019 15:07:46 +0100
-Message-Id: <20190111130956.410865338@linuxfoundation.org>
+Subject: [PATCH 3.18 10/47] ipv6: explicitly initialize udp6_addr in udp_sock_create6()
+Date:   Fri, 11 Jan 2019 15:07:55 +0100
+Message-Id: <20190111130957.420881422@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190111130956.170952125@linuxfoundation.org>
 References: <20190111130956.170952125@linuxfoundation.org>
@@ -67,67 +68,48 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Hui Peng <benquike@gmail.com>
+From: Cong Wang <xiyou.wangcong@gmail.com>
 
-commit 5146f95df782b0ac61abde36567e718692725c89 upstream.
+[ Upstream commit fb24274546310872eeeaf3d1d53799d8414aa0f2 ]
 
-The function hso_probe reads if_num from the USB device (as an u8) and uses
-it without a length check to index an array, resulting in an OOB memory read
-in hso_probe or hso_get_config_data.
+syzbot reported the use of uninitialized udp6_addr::sin6_scope_id.
+We can just set ::sin6_scope_id to zero, as tunnels are unlikely
+to use an IPv6 address that needs a scope id and there is no
+interface to bind in this context.
 
-Add a length check for both locations and updated hso_probe to bail on
-error.
+For net-next, it looks different as we have cfg->bind_ifindex there
+so we can probably call ipv6_iface_scope_id().
 
-This issue has been assigned CVE-2018-19985.
+Same for ::sin6_flowinfo, tunnels don't use it.
 
-Reported-by: Hui Peng <benquike@gmail.com>
-Reported-by: Mathias Payer <mathias.payer@nebelwelt.net>
-Signed-off-by: Hui Peng <benquike@gmail.com>
-Signed-off-by: Mathias Payer <mathias.payer@nebelwelt.net>
-Reviewed-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Fixes: 8024e02879dd ("udp: Add udp_sock_create for UDP tunnels to open listener socket")
+Reported-by: syzbot+c56449ed3652e6720f30@syzkaller.appspotmail.com
+Cc: Jon Maloy <jon.maloy@ericsson.com>
+Signed-off-by: Cong Wang <xiyou.wangcong@gmail.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- drivers/net/usb/hso.c |   18 ++++++++++++++++--
- 1 file changed, 16 insertions(+), 2 deletions(-)
+ net/ipv6/ip6_udp_tunnel.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/drivers/net/usb/hso.c
-+++ b/drivers/net/usb/hso.c
-@@ -2814,6 +2814,12 @@ static int hso_get_config_data(struct us
- 		return -EIO;
- 	}
+--- a/net/ipv6/ip6_udp_tunnel.c
++++ b/net/ipv6/ip6_udp_tunnel.c
+@@ -15,7 +15,7 @@
+ int udp_sock_create6(struct net *net, struct udp_port_cfg *cfg,
+ 		     struct socket **sockp)
+ {
+-	struct sockaddr_in6 udp6_addr;
++	struct sockaddr_in6 udp6_addr = {};
+ 	int err;
+ 	struct socket *sock = NULL;
  
-+	/* check if we have a valid interface */
-+	if (if_num > 16) {
-+		kfree(config_data);
-+		return -EINVAL;
-+	}
-+
- 	switch (config_data[if_num]) {
- 	case 0x0:
- 		result = 0;
-@@ -2884,10 +2890,18 @@ static int hso_probe(struct usb_interfac
+@@ -35,6 +35,7 @@ int udp_sock_create6(struct net *net, st
+ 		goto error;
  
- 	/* Get the interface/port specification from either driver_info or from
- 	 * the device itself */
--	if (id->driver_info)
-+	if (id->driver_info) {
-+		/* if_num is controlled by the device, driver_info is a 0 terminated
-+		 * array. Make sure, the access is in bounds! */
-+		for (i = 0; i <= if_num; ++i)
-+			if (((u32 *)(id->driver_info))[i] == 0)
-+				goto exit;
- 		port_spec = ((u32 *)(id->driver_info))[if_num];
--	else
-+	} else {
- 		port_spec = hso_get_config_data(interface);
-+		if (port_spec < 0)
-+			goto exit;
-+	}
- 
- 	/* Check if we need to switch to alt interfaces prior to port
- 	 * configuration */
+ 	if (cfg->peer_udp_port) {
++		memset(&udp6_addr, 0, sizeof(udp6_addr));
+ 		udp6_addr.sin6_family = AF_INET6;
+ 		memcpy(&udp6_addr.sin6_addr, &cfg->peer_ip6,
+ 		       sizeof(udp6_addr.sin6_addr));
 
 
