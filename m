@@ -2,102 +2,96 @@ Return-Path: <SRS0=uvhX=PT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CF6C5C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 12:29:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 32E9BC43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 12:33:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9FA5F2177B
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 12:29:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DB8052133F
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 12:33:11 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="KAdTT9cZ"
+	dkim=pass (1024-bit key) header.d=alien8.de header.i=@alien8.de header.b="l596ly5w"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732358AbfAKM3f (ORCPT
+        id S1732368AbfAKMdL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 11 Jan 2019 07:29:35 -0500
-Received: from mail-lf1-f67.google.com ([209.85.167.67]:40281 "EHLO
-        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731078AbfAKM3e (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Jan 2019 07:29:34 -0500
-Received: by mail-lf1-f67.google.com with SMTP id v5so10679816lfe.7
-        for <linux-kernel@vger.kernel.org>; Fri, 11 Jan 2019 04:29:33 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=m0NbfYFrTR37/6yq4EL2AS7FhfEsBLR9KFY2wOv1wW0=;
-        b=KAdTT9cZSpG5nliHUcCSdFd/fcU591+9klqp/eepDCmDs2I2D4AfrSLMmnMMliSixd
-         22CrmvQz0ACD1++eGBdf8kJsrg3tVQ4jhte9V4xpDPXnRcpbNHLn5Z6qZngZugRxGOuB
-         TrgRLAhYNzNrbwOh7zXFVaIkyJZFwsP+QR09c=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=m0NbfYFrTR37/6yq4EL2AS7FhfEsBLR9KFY2wOv1wW0=;
-        b=ZclcLYeQvUqx8SxFPFQDyYhBZ0xN9r23xi01KPYofS54p9n33e6BgWNVm8yx+XNc4w
-         ttP9RbXAVLTkZgHraUkK/Lr0PxyjETVRuyNw1Vt1cHYhtbG2+8m+jkockFq4D1qTv6Ab
-         FZ+Tkpt+NoCEgnLtBYHJ5BPWfXsXPjQdR2ZKg+KgMYurgTvEmVJyEXbKe9l/Z9CCWU3V
-         H0hI/pheRts/TKTrQ0ZJItbKcfztdHmqe1M2Pk7cNuNw1jN5R+BSr3fUzBBazVqQ5QRZ
-         dDm7u+rLYEFnCWjznBo7xCwT+bzhHC4HTylgij2yeQw9zvQUAzMpGH4MDAFO+HjSaeXD
-         d74Q==
-X-Gm-Message-State: AJcUukc+vSvBR9NJAkPsdlTsla1f4rViS8ValNOhFsBQywW7XrGjaEkC
-        GL9kp5Lq6uCeMjvXcP9Ld4Ebqu49fhWR9GaVhX0Ryw==
-X-Google-Smtp-Source: ALg8bN5hrj3g3OHnE6yMhHOY+gBohaFZHFAVU2tb8Y/w5J199hw8S1UEhZGztsfmZ5XJfQ6AyPR1HgZsGH9JmR9p+4Y=
-X-Received: by 2002:a19:8d01:: with SMTP id p1mr7607523lfd.149.1547209772422;
- Fri, 11 Jan 2019 04:29:32 -0800 (PST)
+        Fri, 11 Jan 2019 07:33:11 -0500
+Received: from mail.skyhub.de ([5.9.137.197]:58780 "EHLO mail.skyhub.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725298AbfAKMdK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 Jan 2019 07:33:10 -0500
+Received: from zn.tnic (p200300EC2BCAC50001F60DFCC2EB2B0F.dip0.t-ipconnect.de [IPv6:2003:ec:2bca:c500:1f6:dfc:c2eb:2b0f])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id AF7111EC027A;
+        Fri, 11 Jan 2019 13:33:08 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
+        t=1547209988;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
+        bh=JYN6qDQvtPPPCKoedb2bCKmSonRtOssz3bneax6/GbE=;
+        b=l596ly5wdtUuAZVnea1bTmE9hO3stcTrx+0pV2i9FtpC/m9S4OA8I7/hT9xAShAPfJG5ME
+        eLNPQEXSZdHmXPP+2AhfXS/MlCFQpPQLoCI4BScH+AYfFMYKnp30tQsl6Ee82c96D6oD2V
+        19BL1DOjV8p/V48V9RKcswEcHz8lG/M=
+Date:   Fri, 11 Jan 2019 13:33:00 +0100
+From:   Borislav Petkov <bp@alien8.de>
+To:     Lianbo Jiang <lijiang@redhat.com>
+Cc:     linux-kernel@vger.kernel.org, kexec@lists.infradead.org,
+        tglx@linutronix.de, mingo@redhat.com, x86@kernel.org,
+        akpm@linux-foundation.org, bhe@redhat.com, dyoung@redhat.com,
+        k-hagio@ab.jp.nec.com, anderson@redhat.com,
+        linux-doc@vger.kernel.org
+Subject: Re: [PATCH 1/2 v6] kdump: add the vmcoreinfo documentation
+Message-ID: <20190111123300.GE4729@zn.tnic>
+References: <20190110121944.6050-1-lijiang@redhat.com>
+ <20190110121944.6050-2-lijiang@redhat.com>
 MIME-Version: 1.0
-References: <20181229114755.8711-1-masneyb@onstation.org> <20181229114755.8711-2-masneyb@onstation.org>
- <154664792383.15366.9346249356552958882@swboyd.mtv.corp.google.com> <20190105014503.GA32383@basecamp>
-In-Reply-To: <20190105014503.GA32383@basecamp>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Fri, 11 Jan 2019 13:29:21 +0100
-Message-ID: <CACRpkda4j6WAS-s1Eo6q64dKwvSDYKsEstbWSG4PBeU9jNiZvQ@mail.gmail.com>
-Subject: Re: [PATCH 1/3] spmi: pmic-arb: convert to v2 irq interfaces to
- support hierarchical IRQ chips
-To:     Brian Masney <masneyb@onstation.org>
-Cc:     Stephen Boyd <sboyd@kernel.org>,
-        Andy Gross <andy.gross@linaro.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Doug Anderson <dianders@chromium.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Nicolas Dechesne <nicolas.dechesne@linaro.org>,
-        Niklas Cassel <niklas.cassel@linaro.org>,
-        David Brown <david.brown@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        "thierry.reding@gmail.com" <thierry.reding@gmail.com>,
-        linux-arm-msm@vger.kernel.org,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20190110121944.6050-2-lijiang@redhat.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Jan 5, 2019 at 2:45 AM Brian Masney <masneyb@onstation.org> wrote:
-> [Stephen]
-> > Otherwise patch looks good to me. Thanks for working on this. Are you
-> > going to convert the ssbi master and gpio chip too?
->
-> Yes, I will do that work as well once this patch series is accepted.
-> I currently don't have the hardware to test it, but I'm willing to pick
-> up a cheap device on ebay. Any suggestions for something that boots a
-> mainline kernel with the ssbi? It looks like the Sony Xperia Z phone is
-> one of the supported devices.
+On Thu, Jan 10, 2019 at 08:19:43PM +0800, Lianbo Jiang wrote:
+> +init_uts_ns.name.release
+> +------------------------
+> +
+> +The version of the Linux kernel. Used to find the corresponding source
+> +code from which the kernel has been built.
+> +
 
-I think my APQ8060 DragonBoard uses SSBI:
-https://dflund.se/~triad/krad/dragonboard/
-arch/arm/boot/dts/qcom-apq8060-dragonboard.dts
+...
 
-So I can test it. Or even  write the patch once the SSPI is merged and
-known working.
+> +
+> +init_uts_ns
+> +-----------
+> +
+> +This is the UTS namespace, which is used to isolate two specific
+> +elements of the system that relate to the uname(2) system call. The UTS
+> +namespace is named after the data structure used to store information
+> +returned by the uname(2) system call.
+> +
+> +User-space tools can get the kernel name, host name, kernel release
+> +number, kernel version, architecture name and OS type from it.
 
-Yours,
-Linus Walleij
+Already asked this but no reply so lemme paste my question again:
+
+"And this document already fulfills its purpose - those two vmcoreinfo
+exports are redundant and the first one can be removed.
+
+And now that we agreed that VMCOREINFO is not an ABI and is very tightly
+coupled to the kernel version, init_uts_ns.name.release can be removed,
+yes?
+
+Or is there anything speaking against that?"
+
+-- 
+Regards/Gruss,
+    Boris.
+
+Good mailing practices for 400: avoid top-posting and trim the reply.
