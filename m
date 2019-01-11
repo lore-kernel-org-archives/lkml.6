@@ -7,49 +7,48 @@ X-Spam-Status: No, score=-10.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A0D90C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:46:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B90D9C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:46:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6EEAF206B6
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:46:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7FEE9206B6
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:46:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547217985;
-	bh=Mv2WzS3YNTlW3gUgXxfi/kM0qf7S4dkvDLPp+HgsatY=;
+	s=default; t=1547217989;
+	bh=ovmtQlXGn31Rhr/kBzg0WxGis0FDsQeCTnXf2timqLA=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=fdfZYVeV9u4RGt60IOkHz9ch4s2kF5Aq61Bx/IM0KxbeEYl6E7Clcx43y1EBbs2/U
-	 zTDZqI7rE+8sdF/zfK2vT64ggZU1hYuBv7jgf/B+KIN+z0b8TGVOBn+lt7zZs3CXrY
-	 RTFru3hfpIVSRhQfsFnOExCz7UvIFQ6KMrLT0v9Y=
+	b=b2DdN7uPOE3XFUfICD/bkQmfiE1hWRho6QPitMnC+k6pW3jnoxGycg698YdDwRNTQ
+	 y82D0XaTOFwc47vUvZh3cUPVGT7n7Vodc34B7V32Ll+MOAGRnPfhvHh5LlaU+a/Cyx
+	 dx4pR7tWBOBvBPEvEUYXNvkjtBqNUSk07OkB8Keg=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404347AbfAKOnP (ORCPT
+        id S2391464AbfAKOq2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 11 Jan 2019 09:43:15 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35984 "EHLO mail.kernel.org"
+        Fri, 11 Jan 2019 09:46:28 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36130 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404313AbfAKOnH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Jan 2019 09:43:07 -0500
+        id S2404340AbfAKOnP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 Jan 2019 09:43:15 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D816F20872;
-        Fri, 11 Jan 2019 14:43:05 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A61F821848;
+        Fri, 11 Jan 2019 14:43:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547217786;
-        bh=Mv2WzS3YNTlW3gUgXxfi/kM0qf7S4dkvDLPp+HgsatY=;
+        s=default; t=1547217794;
+        bh=ovmtQlXGn31Rhr/kBzg0WxGis0FDsQeCTnXf2timqLA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Foc66/Orzv72DgGf9ph2wpeQ0omE7m/xrOSVxqmYO/44BmcMcCUlswnAFvJxB7XcG
-         r1xcuIt4HP0915F/v9PpQJhkBjQid+RbFcQbPmgKaLl9A0VFIV3MDNrEMIljyTnP5H
-         ujJKu0r6dtJc8w6Onbk0a1qXEWMKbBVE+Zuae5xE=
+        b=wvYju3mQVU2PlPriN5QFluCeevHQkTZMReJoj4u1f/pj2aoCNB356nH+O901dO/U0
+         TioUjijSlFP8rSyDsXYK2AxWBgEn3uQ4w/t/RMlOLS9Y2PaLojrOJARebxCnxeDxSL
+         Mg/A0DtgC3m9e4g3m/x3rMRWN63ObNCc7FdQY/o4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Guenter Roeck <linux@roeck-us.net>,
-        Breno Leitao <leitao@debian.org>,
-        =?UTF-8?q?Michal=20Such=C3=A1nek?= <msuchanek@suse.de>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Christoph Biedl <linux-kernel.bfrz@manchmal.in-ulm.de>
-Subject: [PATCH 4.20 41/65] Revert "powerpc/tm: Unset MSR[TS] if not recheckpointing"
-Date:   Fri, 11 Jan 2019 15:15:27 +0100
-Message-Id: <20190111131102.136630542@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Mircea Caprioru <mircea.caprioru@analog.com>,
+        Stable@vger.kernel.org,
+        Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Subject: [PATCH 4.20 44/65] iio: dac: ad5686: fix bit shift read register
+Date:   Fri, 11 Jan 2019 15:15:30 +0100
+Message-Id: <20190111131102.416207544@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190111131055.331350141@linuxfoundation.org>
 References: <20190111131055.331350141@linuxfoundation.org>
@@ -68,93 +67,37 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+From: Mircea Caprioru <mircea.caprioru@analog.com>
 
-This reverts commit d412deb85a4aada382352a8202beb7af8921cd53 which is
-commit 6f5b9f018f4c7686fd944d920209d1382d320e4e upstream.
+commit 0e76df5c978338f3051e5126fc0c4245c57a307a upstream.
 
-It breaks the powerpc build, so drop it from the tree until a fix goes
-upstream.
+This patch solves the register readback issue with the bit shift. When the
+dac resolution was lower than the register size (ex. 12 bits out of 16
+bits) the readback value was not shifted with the difference in bits and
+the value was higher. Also a mask is applied on the read value in order to
+get the value relative to the actual bit size.
 
-Reported-by: Guenter Roeck <linux@roeck-us.net>
-Cc: Breno Leitao <leitao@debian.org>
-Cc: Michal Suchánek <msuchanek@suse.de>
-Cc: Michael Ellerman <mpe@ellerman.id.au>
-Cc: Christoph Biedl <linux-kernel.bfrz@manchmal.in-ulm.de>
+Fixes: 0357e488b8 ("iio:dac:ad5686: Refactor the driver")
+Signed-off-by: Mircea Caprioru <mircea.caprioru@analog.com>
+Cc: <Stable@vger.kernel.org>
+Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- arch/powerpc/kernel/signal_32.c |   18 +++++-------------
- arch/powerpc/kernel/signal_64.c |   20 ++++----------------
- 2 files changed, 9 insertions(+), 29 deletions(-)
 
---- a/arch/powerpc/kernel/signal_32.c
-+++ b/arch/powerpc/kernel/signal_32.c
-@@ -1140,11 +1140,11 @@ SYSCALL_DEFINE0(rt_sigreturn)
- {
- 	struct rt_sigframe __user *rt_sf;
- 	struct pt_regs *regs = current_pt_regs();
--	int tm_restore = 0;
- #ifdef CONFIG_PPC_TRANSACTIONAL_MEM
- 	struct ucontext __user *uc_transact;
- 	unsigned long msr_hi;
- 	unsigned long tmp;
-+	int tm_restore = 0;
- #endif
- 	/* Always make any pending restarted system calls return -EINTR */
- 	current->restart_block.fn = do_no_restart_syscall;
-@@ -1192,19 +1192,11 @@ SYSCALL_DEFINE0(rt_sigreturn)
- 				goto bad;
- 		}
- 	}
--	if (!tm_restore) {
--		/*
--		 * Unset regs->msr because ucontext MSR TS is not
--		 * set, and recheckpoint was not called. This avoid
--		 * hitting a TM Bad thing at RFID
--		 */
--		regs->msr &= ~MSR_TS_MASK;
--	}
--	/* Fall through, for non-TM restore */
--#endif
- 	if (!tm_restore)
--		if (do_setcontext(&rt_sf->uc, regs, 1))
--			goto bad;
-+		/* Fall through, for non-TM restore */
-+#endif
-+	if (do_setcontext(&rt_sf->uc, regs, 1))
-+		goto bad;
- 
- 	/*
- 	 * It's not clear whether or why it is desirable to save the
---- a/arch/powerpc/kernel/signal_64.c
-+++ b/arch/powerpc/kernel/signal_64.c
-@@ -740,23 +740,11 @@ SYSCALL_DEFINE0(rt_sigreturn)
- 					   &uc_transact->uc_mcontext))
- 			goto badframe;
- 	}
--#endif
-+	else
- 	/* Fall through, for non-TM restore */
--	if (!MSR_TM_ACTIVE(msr)) {
--		/*
--		 * Unset MSR[TS] on the thread regs since MSR from user
--		 * context does not have MSR active, and recheckpoint was
--		 * not called since restore_tm_sigcontexts() was not called
--		 * also.
--		 *
--		 * If not unsetting it, the code can RFID to userspace with
--		 * MSR[TS] set, but without CPU in the proper state,
--		 * causing a TM bad thing.
--		 */
--		current->thread.regs->msr &= ~MSR_TS_MASK;
--		if (restore_sigcontext(current, NULL, 1, &uc->uc_mcontext))
--			goto badframe;
--	}
-+#endif
-+	if (restore_sigcontext(current, NULL, 1, &uc->uc_mcontext))
-+		goto badframe;
- 
- 	if (restore_altstack(&uc->uc_stack))
- 		goto badframe;
+---
+ drivers/iio/dac/ad5686.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+--- a/drivers/iio/dac/ad5686.c
++++ b/drivers/iio/dac/ad5686.c
+@@ -124,7 +124,8 @@ static int ad5686_read_raw(struct iio_de
+ 		mutex_unlock(&indio_dev->mlock);
+ 		if (ret < 0)
+ 			return ret;
+-		*val = ret;
++		*val = (ret >> chan->scan_type.shift) &
++			GENMASK(chan->scan_type.realbits - 1, 0);
+ 		return IIO_VAL_INT;
+ 	case IIO_CHAN_INFO_SCALE:
+ 		*val = st->vref_mv;
 
 
