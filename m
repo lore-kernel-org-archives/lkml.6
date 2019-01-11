@@ -2,73 +2,139 @@ Return-Path: <SRS0=uvhX=PT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+X-Spam-Status: No, score=-10.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 676A1C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:25:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7EFC7C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:25:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 30F9E2177B
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:25:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4D25320874
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:25:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1547216757;
+	bh=TWTEF80yo6wcsDeIu35Qd9OH5h89bqZw6UetiEeCiKI=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=Mc9LRdS+e8sW0E+doiQZGp3oKW8LEEtHDYSBB6cqhBbHTHNkNMeg6wWixixJ5N7lS
+	 k0FVF06HcabqeNDqHK8wAKDXhpFJjGwFr0iBJv3RwDEqTUYipcxVdPrjbzL3b8MZBV
+	 jcVAYinlKpjrW5VubNMSWCgUOq2HymFOZGm0V9ok=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387948AbfAKOZq (ORCPT
+        id S1731860AbfAKOZz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 11 Jan 2019 09:25:46 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:44434 "EHLO mx1.redhat.com"
+        Fri, 11 Jan 2019 09:25:55 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34772 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730179AbfAKOZo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Jan 2019 09:25:44 -0500
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        id S1731827AbfAKOSQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 Jan 2019 09:18:16 -0500
+Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id A219280F88;
-        Fri, 11 Jan 2019 14:25:44 +0000 (UTC)
-Received: from localhost (unknown [10.18.25.149])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 276A1601A9;
-        Fri, 11 Jan 2019 14:25:40 +0000 (UTC)
-Date:   Fri, 11 Jan 2019 09:25:39 -0500
-From:   Mike Snitzer <snitzer@redhat.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-        Ming Lin <ming.l@ssi.samsung.com>,
-        Christoph Hellwig <hch@lst.de>, Xiao Ni <xni@redhat.com>,
-        Mariusz Dabrowski <mariusz.dabrowski@intel.com>,
-        Ming Lei <ming.lei@redhat.com>, Jens Axboe <axboe@kernel.dk>,
-        Sudip Mukherjee <sudipm.mukherjee@gmail.com>
-Subject: Re: [PATCH 4.4 72/88] block: dont deal with discard limit in
- blkdev_issue_discard()
-Message-ID: <20190111142539.GA10601@redhat.com>
+        by mail.kernel.org (Postfix) with ESMTPSA id 5DDB2214D8;
+        Fri, 11 Jan 2019 14:18:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1547216295;
+        bh=TWTEF80yo6wcsDeIu35Qd9OH5h89bqZw6UetiEeCiKI=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=wDstRDecx5yDuYHT5OOiALkvBYjXdwJcYKor32AaEWk5Wl+/aTebJ+cj/xNoC3E6C
+         ytzP4mnoLZcp02qtBHv9nLEGIrtaM7XOypk9bnTX8tjm4/Y7E8wXDbGL7S36/GqxLU
+         H4c/GeFklQ1qsopJQxns3BOFVUiTsdS73hCKtpJE=
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        Daniel Vetter <daniel.vetter@ffwll.ch>
+Subject: [PATCH 4.4 13/88] drm/ioctl: Fix Spectre v1 vulnerabilities
+Date:   Fri, 11 Jan 2019 15:07:42 +0100
+Message-Id: <20190111131048.178025379@linuxfoundation.org>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20190111131045.137499039@linuxfoundation.org>
 References: <20190111131045.137499039@linuxfoundation.org>
- <20190111131058.120784730@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
+X-Patchwork-Hint: ignore
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190111131058.120784730@linuxfoundation.org>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.27]); Fri, 11 Jan 2019 14:25:44 +0000 (UTC)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jan 11 2019 at  9:08am -0500,
-Greg Kroah-Hartman <gregkh@linuxfoundation.org> wrote:
+4.4-stable review patch.  If anyone has any objections, please let me know.
 
-> 4.4-stable review patch.  If anyone has any objections, please let me know.
-> 
-> ------------------
-> 
-> From: Ming Lei <ming.lei@redhat.com>
-> 
-> commit 744889b7cbb56a64f957e65ade7cb65fe3f35714 upstream.
+------------------
 
-Hi Greg,
+From: Gustavo A. R. Silva <gustavo@embeddedor.com>
 
-Please also pick up this commit:
-89f5fa47476eda56402e29fff3c5097f5c2a1e19 ("dm: call blk_queue_split() to
-impose device limits on bios")
+commit 505b5240329b922f21f91d5b5d1e535c805eca6d upstream.
 
-Thanks,
-Mike
+nr is indirectly controlled by user-space, hence leading to a
+potential exploitation of the Spectre variant 1 vulnerability.
+
+This issue was detected with the help of Smatch:
+
+drivers/gpu/drm/drm_ioctl.c:805 drm_ioctl() warn: potential spectre issue 'dev->driver->ioctls' [r]
+drivers/gpu/drm/drm_ioctl.c:810 drm_ioctl() warn: potential spectre issue 'drm_ioctls' [r] (local cap)
+drivers/gpu/drm/drm_ioctl.c:892 drm_ioctl_flags() warn: potential spectre issue 'drm_ioctls' [r] (local cap)
+
+Fix this by sanitizing nr before using it to index dev->driver->ioctls
+and drm_ioctls.
+
+Notice that given that speculation windows are large, the policy is
+to kill the speculation on the first load and not worry if it can be
+completed with a dependent load/store [1].
+
+[1] https://marc.info/?l=linux-kernel&m=152449131114778&w=2
+
+Cc: stable@vger.kernel.org
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+Signed-off-by: Daniel Vetter <daniel.vetter@ffwll.ch>
+Link: https://patchwork.freedesktop.org/patch/msgid/20181220000015.GA18973@embeddedor
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
+---
+ drivers/gpu/drm/drm_ioctl.c |   10 ++++++++--
+ 1 file changed, 8 insertions(+), 2 deletions(-)
+
+--- a/drivers/gpu/drm/drm_ioctl.c
++++ b/drivers/gpu/drm/drm_ioctl.c
+@@ -36,6 +36,7 @@
+ 
+ #include <linux/pci.h>
+ #include <linux/export.h>
++#include <linux/nospec.h>
+ 
+ static int drm_version(struct drm_device *dev, void *data,
+ 		       struct drm_file *file_priv);
+@@ -702,13 +703,17 @@ long drm_ioctl(struct file *filp,
+ 
+ 	if (is_driver_ioctl) {
+ 		/* driver ioctl */
+-		if (nr - DRM_COMMAND_BASE >= dev->driver->num_ioctls)
++		unsigned int index = nr - DRM_COMMAND_BASE;
++
++		if (index >= dev->driver->num_ioctls)
+ 			goto err_i1;
+-		ioctl = &dev->driver->ioctls[nr - DRM_COMMAND_BASE];
++		index = array_index_nospec(index, dev->driver->num_ioctls);
++		ioctl = &dev->driver->ioctls[index];
+ 	} else {
+ 		/* core ioctl */
+ 		if (nr >= DRM_CORE_IOCTL_COUNT)
+ 			goto err_i1;
++		nr = array_index_nospec(nr, DRM_CORE_IOCTL_COUNT);
+ 		ioctl = &drm_ioctls[nr];
+ 	}
+ 
+@@ -810,6 +815,7 @@ bool drm_ioctl_flags(unsigned int nr, un
+ 
+ 	if (nr >= DRM_CORE_IOCTL_COUNT)
+ 		return false;
++	nr = array_index_nospec(nr, DRM_CORE_IOCTL_COUNT);
+ 
+ 	*flags = drm_ioctls[nr].flags;
+ 	return true;
+
+
