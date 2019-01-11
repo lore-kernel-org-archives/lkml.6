@@ -3,246 +3,168 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 656ACC43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 16:04:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5843DC43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 16:07:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 371E920675
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 16:04:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 24D9320872
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 16:07:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387509AbfAKQEg (ORCPT
+        id S1731267AbfAKQHo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 11 Jan 2019 11:04:36 -0500
-Received: from foss.arm.com ([217.140.101.70]:58912 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1733300AbfAKQEf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Jan 2019 11:04:35 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 18AD1EBD;
-        Fri, 11 Jan 2019 08:04:35 -0800 (PST)
-Received: from [10.1.196.128] (ostrya.cambridge.arm.com [10.1.196.128])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 6621B3F5AF;
-        Fri, 11 Jan 2019 08:04:32 -0800 (PST)
-Subject: Re: [RFC v3 09/21] iommu/smmuv3: Get prepared for nested stage
- support
-To:     Eric Auger <eric.auger@redhat.com>, eric.auger.pro@gmail.com,
-        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
-        kvm@vger.kernel.org, kvmarm@lists.cs.columbia.edu, joro@8bytes.org,
-        alex.williamson@redhat.com, jacob.jun.pan@linux.intel.com,
-        yi.l.liu@linux.intel.com, will.deacon@arm.com, robin.murphy@arm.com
-Cc:     marc.zyngier@arm.com, peter.maydell@linaro.org,
-        kevin.tian@intel.com, ashok.raj@intel.com, christoffer.dall@arm.com
-References: <20190108102633.17482-1-eric.auger@redhat.com>
- <20190108102633.17482-10-eric.auger@redhat.com>
-From:   Jean-Philippe Brucker <jean-philippe.brucker@arm.com>
-Message-ID: <0d766261-119b-0802-4c09-e601b5abe727@arm.com>
-Date:   Fri, 11 Jan 2019 16:04:17 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.0
+        Fri, 11 Jan 2019 11:07:44 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:34218 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728498AbfAKQHn (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 Jan 2019 11:07:43 -0500
+Received: from pps.filterd (m0098409.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id x0BG5mwT041711
+        for <linux-kernel@vger.kernel.org>; Fri, 11 Jan 2019 11:07:42 -0500
+Received: from e06smtp02.uk.ibm.com (e06smtp02.uk.ibm.com [195.75.94.98])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2pxx9w8fcx-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Fri, 11 Jan 2019 11:07:38 -0500
+Received: from localhost
+        by e06smtp02.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <schwidefsky@de.ibm.com>;
+        Fri, 11 Jan 2019 16:07:16 -0000
+Received: from b06cxnps4075.portsmouth.uk.ibm.com (9.149.109.197)
+        by e06smtp02.uk.ibm.com (192.168.101.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Fri, 11 Jan 2019 16:07:13 -0000
+Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
+        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x0BG7C0x63242364
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Fri, 11 Jan 2019 16:07:13 GMT
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id D453EA4059;
+        Fri, 11 Jan 2019 16:07:12 +0000 (GMT)
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 9AC09A404D;
+        Fri, 11 Jan 2019 16:07:12 +0000 (GMT)
+Received: from mschwideX1 (unknown [9.152.97.20])
+        by d06av23.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Fri, 11 Jan 2019 16:07:12 +0000 (GMT)
+Date:   Fri, 11 Jan 2019 17:07:11 +0100
+From:   Martin Schwidefsky <schwidefsky@de.ibm.com>
+To:     David Hildenbrand <david@redhat.com>
+Cc:     linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Cornelia Huck <cohuck@redhat.com>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        Vasily Gorbik <gor@linux.ibm.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>
+Subject: Re: [PATCH v1] s390/smp: Fix calling smp_call_ipl_cpu() from ipl
+ CPU
+In-Reply-To: <20190111141822.17262-1-david@redhat.com>
+References: <20190111141822.17262-1-david@redhat.com>
+X-Mailer: Claws Mail 3.13.2 (GTK+ 2.24.30; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-In-Reply-To: <20190108102633.17482-10-eric.auger@redhat.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+x-cbid: 19011116-0008-0000-0000-000002AF93D6
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19011116-0009-0000-0000-0000221B9E94
+Message-Id: <20190111170711.21059fe7@mschwideX1>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-01-11_09:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1901110132
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Eric,
+On Fri, 11 Jan 2019 15:18:22 +0100
+David Hildenbrand <david@redhat.com> wrote:
 
-On 08/01/2019 10:26, Eric Auger wrote:
-> To allow nested stage support, we need to store both
-> stage 1 and stage 2 configurations (and remove the former
-> union).
+> When calling smp_call_ipl_cpu() from the IPL CPU, we will try to read
+> from pcpu_devices->lowcore. However, due to prefixing, that will result
+> in reading from absolute address 0 on that CPU. We have to go via the
+> actual lowcore instead.
 > 
-> arm_smmu_write_strtab_ent() is modified to write both stage
-> fields in the STE.
+> This means that right now, we will read lc->nodat_stack == 0 and
+> therfore work on a very wrong stack.
 > 
-> We add a nested_bypass field to the S1 configuration as the first
-> stage can be bypassed. Also the guest may force the STE to abort:
-> this information gets stored into the nested_abort field.
+> This BUG essentially broke rebooting under QEMU TCG (which will report
+> a low address protection exception). And checking under KVM, it is
+> also broken under KVM. With 1 VCPU it can be easily triggered.
 > 
-> Only S2 stage is "finalized" as the host does not configure
-> S1 CD, guest does.
+> :/# echo 1 > /proc/sys/kernel/sysrq
+> :/# echo b > /proc/sysrq-trigger
+> [   28.476745] sysrq: SysRq : Resetting
+> [   28.476793] Kernel stack overflow.
+> [   28.476817] CPU: 0 PID: 424 Comm: sh Not tainted 5.0.0-rc1+ #13
+> [   28.476820] Hardware name: IBM 2964 NE1 716 (KVM/Linux)
+> [   28.476826] Krnl PSW : 0400c00180000000 0000000000115c0c (pcpu_delegate+0x12c/0x140)
+> [   28.476861]            R:0 T:1 IO:0 EX:0 Key:0 M:0 W:0 P:0 AS:3 CC:0 PM:0 RI:0 EA:3
+> [   28.476863] Krnl GPRS: ffffffffffffffff 0000000000000000 000000000010dff8 0000000000000000
+> [   28.476864]            0000000000000000 0000000000000000 0000000000ab7090 000003e0006efbf0
+> [   28.476864]            000000000010dff8 0000000000000000 0000000000000000 0000000000000000
+> [   28.476865]            000000007fffc000 0000000000730408 000003e0006efc58 0000000000000000
+> [   28.476887] Krnl Code: 0000000000115bfe: 4170f000            la      %r7,0(%r15)
+> [   28.476887]            0000000000115c02: 41f0a000            la      %r15,0(%r10)
+> [   28.476887]           #0000000000115c06: e370f0980024        stg     %r7,152(%r15)
+> [   28.476887]           >0000000000115c0c: c0e5fffff86e        brasl   %r14,114ce8
+> [   28.476887]            0000000000115c12: 41f07000            la      %r15,0(%r7)
+> [   28.476887]            0000000000115c16: a7f4ffa8            brc     15,115b66
+> [   28.476887]            0000000000115c1a: 0707                bcr     0,%r7
+> [   28.476887]            0000000000115c1c: 0707                bcr     0,%r7
+> [   28.476901] Call Trace:
+> [   28.476902] Last Breaking-Event-Address:
+> [   28.476920]  [<0000000000a01c4a>] arch_call_rest_init+0x22/0x80
+> [   28.476927] Kernel panic - not syncing: Corrupt kernel stack, can't continue.
+> [   28.476930] CPU: 0 PID: 424 Comm: sh Not tainted 5.0.0-rc1+ #13
+> [   28.476932] Hardware name: IBM 2964 NE1 716 (KVM/Linux)
+> [   28.476932] Call Trace:
 > 
-> Signed-off-by: Eric Auger <eric.auger@redhat.com>
-> 
+> Reported-by: Cornelia Huck <cohuck@redhat.com>
+> Signed-off-by: David Hildenbrand <david@redhat.com>
 > ---
+>  arch/s390/kernel/smp.c | 7 ++++++-
+>  1 file changed, 6 insertions(+), 1 deletion(-)
 > 
-> v1 -> v2:
-> - invalidate the STE before moving from a live STE config to another
-> - add the nested_abort and nested_bypass fields
-> ---
->  drivers/iommu/arm-smmu-v3.c | 43 ++++++++++++++++++++++++++++---------
->  1 file changed, 33 insertions(+), 10 deletions(-)
-> 
-> diff --git a/drivers/iommu/arm-smmu-v3.c b/drivers/iommu/arm-smmu-v3.c
-> index 9af68266bbb1..9716a301d9ae 100644
-> --- a/drivers/iommu/arm-smmu-v3.c
-> +++ b/drivers/iommu/arm-smmu-v3.c
-> @@ -212,6 +212,7 @@
->  #define STRTAB_STE_0_CFG_BYPASS		4
->  #define STRTAB_STE_0_CFG_S1_TRANS	5
->  #define STRTAB_STE_0_CFG_S2_TRANS	6
-> +#define STRTAB_STE_0_CFG_NESTED		7
->  
->  #define STRTAB_STE_0_S1FMT		GENMASK_ULL(5, 4)
->  #define STRTAB_STE_0_S1FMT_LINEAR	0
-> @@ -491,6 +492,10 @@ struct arm_smmu_strtab_l1_desc {
->  struct arm_smmu_s1_cfg {
->  	__le64				*cdptr;
->  	dma_addr_t			cdptr_dma;
-> +	/* in nested mode, tells s1 must be bypassed */
-> +	bool				nested_bypass;
-> +	/* in nested mode, abort is forced by guest */
-> +	bool				nested_abort;
->  
->  	struct arm_smmu_ctx_desc {
->  		u16	asid;
-> @@ -515,6 +520,7 @@ struct arm_smmu_strtab_ent {
->  	 * configured according to the domain type.
->  	 */
->  	bool				assigned;
-> +	bool				nested;
->  	struct arm_smmu_s1_cfg		*s1_cfg;
->  	struct arm_smmu_s2_cfg		*s2_cfg;
->  };
-> @@ -629,10 +635,8 @@ struct arm_smmu_domain {
->  	bool				non_strict;
->  
->  	enum arm_smmu_domain_stage	stage;
-> -	union {
-> -		struct arm_smmu_s1_cfg	s1_cfg;
-> -		struct arm_smmu_s2_cfg	s2_cfg;
-> -	};
-> +	struct arm_smmu_s1_cfg	s1_cfg;
-> +	struct arm_smmu_s2_cfg	s2_cfg;
->  
->  	struct iommu_domain		domain;
->  
-> @@ -1139,10 +1143,11 @@ static void arm_smmu_write_strtab_ent(struct arm_smmu_device *smmu, u32 sid,
-
-Could you also update the "This is hideously complicated..." comment
-with the nested case? This function was complicated before, but it
-becomes hell when adding nested and SVA support, so we really need the
-comments :)
-
->  			break;
->  		case STRTAB_STE_0_CFG_S1_TRANS:
->  		case STRTAB_STE_0_CFG_S2_TRANS:
-> +		case STRTAB_STE_0_CFG_NESTED:
->  			ste_live = true;
->  			break;
->  		case STRTAB_STE_0_CFG_ABORT:
-> -			if (disable_bypass)
-> +			if (disable_bypass || ste->nested)
->  				break;
->  		default:
->  			BUG(); /* STE corruption */
-> @@ -1154,7 +1159,8 @@ static void arm_smmu_write_strtab_ent(struct arm_smmu_device *smmu, u32 sid,
->  
->  	/* Bypass/fault */
->  	if (!ste->assigned || !(ste->s1_cfg || ste->s2_cfg)) {
-> -		if (!ste->assigned && disable_bypass)
-> +		if ((!ste->assigned && disable_bypass) ||
-> +				(ste->s1_cfg && ste->s1_cfg->nested_abort))
-
-I don't think we're ever reaching this, given that ste->assigned is true
-and ste->s2_cfg is set.
-
-Something I find noteworthy is that with STRTAB_STE_0_CFG_ABORT, no
-event is recorded in case of DMA fault. For vSMMU you'd want to emulate
-the SMMU behavior closely, so you don't want to inject faults if the
-guest sets CFG_ABORT, but this way you also can't report errors to the
-VMM. If we did want to notify the VMM of faults, we'd need to implement
-nested_abort differently, for example by installing an empty context
-descriptor with Config=s1translate-s2translate.
-
->  			val |= FIELD_PREP(STRTAB_STE_0_CFG, STRTAB_STE_0_CFG_ABORT);
->  		else
->  			val |= FIELD_PREP(STRTAB_STE_0_CFG, STRTAB_STE_0_CFG_BYPASS);
-> @@ -1172,8 +1178,17 @@ static void arm_smmu_write_strtab_ent(struct arm_smmu_device *smmu, u32 sid,
->  		return;
->  	}
->  
-> +	if (ste->nested && ste_live) {
-> +		/*
-> +		 * When enabling nested, the STE may be transitionning from
-
-transitioning (my bad)
-
-> +		 * s2 to nested and back. Invalidate the STE before changing it.
-> +		 */
-> +		dst[0] = cpu_to_le64(0);
-> +		arm_smmu_sync_ste_for_sid(smmu, sid);
-> +		val = STRTAB_STE_0_V;
-
-val is already STRTAB_STE_0_V
-
-> +	}
+> diff --git a/arch/s390/kernel/smp.c b/arch/s390/kernel/smp.c
+> index f82b3d3c36e2..be32dd0b4191 100644
+> --- a/arch/s390/kernel/smp.c
+> +++ b/arch/s390/kernel/smp.c
+> @@ -381,8 +381,13 @@ void smp_call_online_cpu(void (*func)(void *), void *data)
+>   */
+>  void smp_call_ipl_cpu(void (*func)(void *), void *data)
+>  {
+> +	struct lowcore *lc = pcpu_devices->lowcore;
 > +
->  	if (ste->s1_cfg) {
-> -		BUG_ON(ste_live);
->  		dst[1] = cpu_to_le64(
->  			 FIELD_PREP(STRTAB_STE_1_S1CIR, STRTAB_STE_1_S1C_CACHE_WBRA) |
->  			 FIELD_PREP(STRTAB_STE_1_S1COR, STRTAB_STE_1_S1C_CACHE_WBRA) |
-> @@ -1187,12 +1202,12 @@ static void arm_smmu_write_strtab_ent(struct arm_smmu_device *smmu, u32 sid,
->  		   !(smmu->features & ARM_SMMU_FEAT_STALL_FORCE))
->  			dst[1] |= cpu_to_le64(STRTAB_STE_1_S1STALLD);
->  
-> -		val |= (ste->s1_cfg->cdptr_dma & STRTAB_STE_0_S1CTXPTR_MASK) |
-> -			FIELD_PREP(STRTAB_STE_0_CFG, STRTAB_STE_0_CFG_S1_TRANS);
-> +		if (!ste->s1_cfg->nested_bypass)
-> +			val |= (ste->s1_cfg->cdptr_dma & STRTAB_STE_0_S1CTXPTR_MASK) |
-> +				FIELD_PREP(STRTAB_STE_0_CFG, STRTAB_STE_0_CFG_S1_TRANS);
-
-In patch 10/21, you're handling cfg->bypass == 1 by clearing ste->s1_cfg
-(which I think is the best way - resetting the STE like it was when
-initializing the nested domain). So can we get rid of
-s1_cfg->nested_bypass and this change?
-
->  	}
->  
->  	if (ste->s2_cfg) {
-> -		BUG_ON(ste_live);
->  		dst[2] = cpu_to_le64(
->  			 FIELD_PREP(STRTAB_STE_2_S2VMID, ste->s2_cfg->vmid) |
->  			 FIELD_PREP(STRTAB_STE_2_VTCR, ste->s2_cfg->vtcr) |
-> @@ -1454,6 +1469,10 @@ static void arm_smmu_tlb_inv_context(void *cookie)
->  		cmd.opcode	= CMDQ_OP_TLBI_NH_ASID;
->  		cmd.tlbi.asid	= smmu_domain->s1_cfg.cd.asid;
->  		cmd.tlbi.vmid	= 0;
-> +	} else if (smmu_domain->stage == ARM_SMMU_DOMAIN_NESTED) {
-> +		cmd.opcode      = CMDQ_OP_TLBI_NH_ASID;
-> +		cmd.tlbi.asid   = smmu_domain->s1_cfg.cd.asid;
-
-Using s1_cfg.cd.asid as interface between cache_invalidate() and
-tlb_inv_context() seems racy. In nested mode, s1_cfg.cd really shouldn't
-be used. I'd rather cache_invalidate() crafted the commands itself
-instead of going through these callbacks. Or you could add a leaf
-function that takes asid as argument and is called by both
-arm_smmu_tlb_inv_context() and cache_invalidate().
-
-Thanks,
-Jean
-
-> +		cmd.tlbi.vmid   = smmu_domain->s2_cfg.vmid;
->  	} else {
->  		cmd.opcode	= CMDQ_OP_TLBI_S12_VMALL;
->  		cmd.tlbi.vmid	= smmu_domain->s2_cfg.vmid;
-> @@ -1484,6 +1503,10 @@ static void arm_smmu_tlb_inv_range_nosync(unsigned long iova, size_t size,
->  	if (smmu_domain->stage == ARM_SMMU_DOMAIN_S1) {
->  		cmd.opcode	= CMDQ_OP_TLBI_NH_VA;
->  		cmd.tlbi.asid	= smmu_domain->s1_cfg.cd.asid;
-> +	} else if (smmu_domain->stage == ARM_SMMU_DOMAIN_NESTED) {
-> +		cmd.opcode      = CMDQ_OP_TLBI_NH_VA;
-> +		cmd.tlbi.asid   = smmu_domain->s1_cfg.cd.asid;
-> +		cmd.tlbi.vmid   = smmu_domain->s2_cfg.vmid;
->  	} else {
->  		cmd.opcode	= CMDQ_OP_TLBI_S2_IPA;
->  		cmd.tlbi.vmid	= smmu_domain->s2_cfg.vmid;
+> +	if (pcpu_devices[0].address == stap())
+> +		lc = &S390_lowcore;
+> +
+>  	pcpu_delegate(&pcpu_devices[0], func, data,
+> -		      pcpu_devices->lowcore->nodat_stack);
+> +		      lc->nodat_stack);
+>  }
 > 
+>  int smp_find_processor_id(u16 address)
+
+Uhh, subtle. With EDAT-1 this sort of works because the lowcore of CPU #0
+is allocated in an area of the kernel address space that is backed with 1M
+pages. It is nevertheless broken.
+
+I have added
+Fixes: 2f859d0dad81 ("s390/smp: reduce size of struct pcpu")                    
+Cc: stable@vger.kernel.org # 4.0+                                               
+
+and will queue the patch for the next pull. Thanks!
+
+-- 
+blue skies,
+   Martin.
+
+"Reality continues to ruin my life." - Calvin.
 
