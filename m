@@ -7,46 +7,47 @@ X-Spam-Status: No, score=-10.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A2AADC43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:29:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 05427C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:29:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 741522177B
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:29:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C412021841
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:29:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547216982;
-	bh=ven6ux7xPgrmAY0YOkjtsLZUnhxAM9scYAPdc8o/AOE=;
+	s=default; t=1547216986;
+	bh=l7ypWOvK7s5QNKrOWtI+lVy3TL6c/Dc5FIAhxBvRQSM=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=THh5gXR0J+nwOfhPEz/STa/z2QECRvho31wQbmThDz8wg0drQBI6KpTrWEWbGJizn
-	 YVLAAzq7HSixTPAKbDVrPA4Rt+vnXlSCQaBtbrKycjx8oy6adtlJwSJpFhH8ziTjSS
-	 Nyh1rSmQ7y6+qW2Levlyq+rAUqciwnMGgSVpcCRQ=
+	b=maOvosTtFalNaNXjWiJp5vnHQf8aCRGoea1aDG2OdK+7FJJv90V87ukq9VljUYf8K
+	 wc5CI5L1T5N0WdlRQpZk9Z6T3kiCIUUDqVD3k2PlSf8298nreICcjzV4mEU8QiKm11
+	 vDsNc7Bb402VPEXbbjHcSu1XMcU+aqBM0BGdRcu4=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388794AbfAKO3l (ORCPT
+        id S2388805AbfAKO3q (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 11 Jan 2019 09:29:41 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48756 "EHLO mail.kernel.org"
+        Fri, 11 Jan 2019 09:29:46 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48840 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388780AbfAKO3k (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Jan 2019 09:29:40 -0500
+        id S2388282AbfAKO3n (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 Jan 2019 09:29:43 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CEE7721841;
-        Fri, 11 Jan 2019 14:29:39 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 507CE2133F;
+        Fri, 11 Jan 2019 14:29:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547216980;
-        bh=ven6ux7xPgrmAY0YOkjtsLZUnhxAM9scYAPdc8o/AOE=;
+        s=default; t=1547216982;
+        bh=l7ypWOvK7s5QNKrOWtI+lVy3TL6c/Dc5FIAhxBvRQSM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=zT+yz7RR4jVPxoRrarfSybcGegh+MI78JiaGyUZDpj08NyRrPfo/m2RwMAYjAbgH9
-         ma6/G8icYmTxvAn8gpk4rchAefQsUG7qk2Bdy4fqTUxYtktqKumeCb5thRDspVFr+g
-         J/hp3aqr5B8Thg4eZSDfBfhcoAxA2/L3XRVzEEoI=
+        b=h1oMnEYf6bz+c94UYmoO9sxYaRyZdLldwSpxYGoSMm2gBRuUFVujIwiyo4ak75A89
+         n1izRNQ+EWbdZqOn24vacWyx4+2tyVCOkcOAsjpu/p9tQr+YDMNQKCLs500PlgI9GP
+         nr5VZjY+3hbsk9ihsx4fmP0VWGwJ+wz4we4qrH5Y=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, "Yan, Zheng" <zyan@redhat.com>,
-        Ilya Dryomov <idryomov@gmail.com>
-Subject: [PATCH 4.9 59/63] ceph: dont update importing caps mseq when handing cap export
-Date:   Fri, 11 Jan 2019 15:15:02 +0100
-Message-Id: <20190111131055.234170081@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Christian Borntraeger <borntraeger@de.ibm.com>,
+        Frank Haverkamp <haver@linux.vnet.ibm.com>
+Subject: [PATCH 4.9 60/63] genwqe: Fix size check
+Date:   Fri, 11 Jan 2019 15:15:03 +0100
+Message-Id: <20190111131055.596781801@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190111131046.387528003@linuxfoundation.org>
 References: <20190111131046.387528003@linuxfoundation.org>
@@ -65,35 +66,65 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Yan, Zheng <zyan@redhat.com>
+From: Christian Borntraeger <borntraeger@de.ibm.com>
 
-commit 3c1392d4c49962a31874af14ae9ff289cb2b3851 upstream.
+commit fdd669684655c07dacbdb0d753fd13833de69a33 upstream.
 
-Updating mseq makes client think importer mds has accepted all prior
-cap messages and importer mds knows what caps client wants. Actually
-some cap messages may have been dropped because of mseq mismatch.
+Calling the test program genwqe_cksum with the default buffer size of
+2MB triggers the following kernel warning on s390:
 
-If mseq is left untouched, importing cap's mds_wanted later will get
-reset by cap import message.
+WARNING: CPU: 30 PID: 9311 at mm/page_alloc.c:3189 __alloc_pages_nodemask+0x45c/0xbe0
+CPU: 30 PID: 9311 Comm: genwqe_cksum Kdump: loaded Not tainted 3.10.0-957.el7.s390x #1
+task: 00000005e5d13980 ti: 00000005e7c6c000 task.ti: 00000005e7c6c000
+Krnl PSW : 0704c00180000000 00000000002780ac (__alloc_pages_nodemask+0x45c/0xbe0)
+           R:0 T:1 IO:1 EX:1 Key:0 M:1 W:0 P:0 AS:3 CC:0 PM:0 EA:3
+Krnl GPRS: 00000000002932b8 0000000000b73d7c 0000000000000010 0000000000000009
+           0000000000000041 00000005e7c6f9b8 0000000000000001 00000000000080d0
+           0000000000000000 0000000000b70500 0000000000000001 0000000000000000
+           0000000000b70528 00000000007682c0 0000000000277df2 00000005e7c6f9a0
+Krnl Code: 000000000027809e: de7195001000	ed	1280(114,%r9),0(%r1)
+	   00000000002780a4: a774fead		brc	7,277dfe
+	  #00000000002780a8: a7f40001		brc	15,2780aa
+	  >00000000002780ac: 92011000		mvi	0(%r1),1
+	   00000000002780b0: a7f4fea7		brc	15,277dfe
+	   00000000002780b4: 9101c6b6		tm	1718(%r12),1
+	   00000000002780b8: a784ff3a		brc	8,277f2c
+	   00000000002780bc: a7f4fe2e		brc	15,277d18
+Call Trace:
+([<0000000000277df2>] __alloc_pages_nodemask+0x1a2/0xbe0)
+ [<000000000013afae>] s390_dma_alloc+0xfe/0x310
+ [<000003ff8065f362>] __genwqe_alloc_consistent+0xfa/0x148 [genwqe_card]
+ [<000003ff80658f7a>] genwqe_mmap+0xca/0x248 [genwqe_card]
+ [<00000000002b2712>] mmap_region+0x4e2/0x778
+ [<00000000002b2c54>] do_mmap+0x2ac/0x3e0
+ [<0000000000292d7e>] vm_mmap_pgoff+0xd6/0x118
+ [<00000000002b081c>] SyS_mmap_pgoff+0xdc/0x268
+ [<00000000002b0a34>] SyS_old_mmap+0x8c/0xb0
+ [<000000000074e518>] sysc_tracego+0x14/0x1e
+ [<000003ffacf87dc6>] 0x3ffacf87dc6
+
+turns out the check in __genwqe_alloc_consistent uses "> MAX_ORDER"
+while the mm code uses ">= MAX_ORDER". Fix genwqe.
 
 Cc: stable@vger.kernel.org
-Signed-off-by: "Yan, Zheng" <zyan@redhat.com>
-Signed-off-by: Ilya Dryomov <idryomov@gmail.com>
+Signed-off-by: Christian Borntraeger <borntraeger@de.ibm.com>
+Signed-off-by: Frank Haverkamp <haver@linux.vnet.ibm.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/ceph/caps.c |    1 -
- 1 file changed, 1 deletion(-)
+ drivers/misc/genwqe/card_utils.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/fs/ceph/caps.c
-+++ b/fs/ceph/caps.c
-@@ -3343,7 +3343,6 @@ retry:
- 			tcap->cap_id = t_cap_id;
- 			tcap->seq = t_seq - 1;
- 			tcap->issue_seq = t_seq - 1;
--			tcap->mseq = t_mseq;
- 			tcap->issued |= issued;
- 			tcap->implemented |= issued;
- 			if (cap == ci->i_auth_cap)
+--- a/drivers/misc/genwqe/card_utils.c
++++ b/drivers/misc/genwqe/card_utils.c
+@@ -217,7 +217,7 @@ u32 genwqe_crc32(u8 *buff, size_t len, u
+ void *__genwqe_alloc_consistent(struct genwqe_dev *cd, size_t size,
+ 			       dma_addr_t *dma_handle)
+ {
+-	if (get_order(size) > MAX_ORDER)
++	if (get_order(size) >= MAX_ORDER)
+ 		return NULL;
+ 
+ 	return dma_zalloc_coherent(&cd->pci_dev->dev, size, dma_handle,
 
 
