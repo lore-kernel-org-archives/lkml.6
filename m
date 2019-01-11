@@ -2,95 +2,110 @@ Return-Path: <SRS0=uvhX=PT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+X-Spam-Status: No, score=-10.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A650C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 15:06:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 78F6AC43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 15:06:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6652B2084C
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 15:06:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3DC6D2084C
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 15:06:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1547219185;
+	bh=nmwhOyLv2F8PnzsqA8Ss5zM1GTsMlPSieoKWSW/uaXg=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=ncM4Z4e2OubtzuEObZ+GQNExnrj4z7FA0yvHP13qzj4BSKZqi6wtekLPxMZ3Ubfer
+	 s+hcI+uKdA3Bouy3DSPksV9cOHZ6ZxdSCzsbEojVVZmtRkj9JG3wxq4hNeUinP39Tx
+	 WHW7mnZF0rMl1wN+PBS7nCHXG0NE8pjwZML9zDIY=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391897AbfAKPGM (ORCPT
+        id S2391898AbfAKPGY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 11 Jan 2019 10:06:12 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:55178 "EHLO mx1.redhat.com"
+        Fri, 11 Jan 2019 10:06:24 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47828 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389267AbfAKPGH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Jan 2019 10:06:07 -0500
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        id S2388614AbfAKO27 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 Jan 2019 09:28:59 -0500
+Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id DCD337AE8B;
-        Fri, 11 Jan 2019 15:06:06 +0000 (UTC)
-Received: from localhost (unknown [10.18.25.149])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 3CC8860920;
-        Fri, 11 Jan 2019 15:06:06 +0000 (UTC)
-Date:   Fri, 11 Jan 2019 10:06:05 -0500
-From:   Mike Snitzer <snitzer@redhat.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-        Ming Lin <ming.l@ssi.samsung.com>,
-        Christoph Hellwig <hch@lst.de>, Xiao Ni <xni@redhat.com>,
-        Mariusz Dabrowski <mariusz.dabrowski@intel.com>,
-        Ming Lei <ming.lei@redhat.com>, Jens Axboe <axboe@kernel.dk>,
-        Sudip Mukherjee <sudipm.mukherjee@gmail.com>
-Subject: Re: [PATCH 4.4 72/88] block: dont deal with discard limit in
- blkdev_issue_discard()
-Message-ID: <20190111150605.GA10771@redhat.com>
-References: <20190111131045.137499039@linuxfoundation.org>
- <20190111131058.120784730@linuxfoundation.org>
- <20190111142539.GA10601@redhat.com>
- <20190111143514.GA8530@kroah.com>
+        by mail.kernel.org (Postfix) with ESMTPSA id 060892063F;
+        Fri, 11 Jan 2019 14:28:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1547216938;
+        bh=nmwhOyLv2F8PnzsqA8Ss5zM1GTsMlPSieoKWSW/uaXg=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=F7GeaHcE2p1AtsYl5NR4KctdKu6N/cGPNZXyC25nsqUNPOBXxSJulkLdqIl2dQ1IM
+         M7FMB6HOqQ9addMF1dIpAj8WREi8iiQr4hLq5G5rZ9z0F7SXITrAl1jGZzDZxawMut
+         p6315ClTXo8OMDo/Xcd4eE7GfL73LPkvQRu2AtwU=
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Takashi Iwai <tiwai@suse.de>
+Subject: [PATCH 4.9 46/63] ALSA: usb-audio: Avoid access before bLength check in build_audio_procunit()
+Date:   Fri, 11 Jan 2019 15:14:49 +0100
+Message-Id: <20190111131053.194181785@linuxfoundation.org>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20190111131046.387528003@linuxfoundation.org>
+References: <20190111131046.387528003@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
+X-Patchwork-Hint: ignore
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190111143514.GA8530@kroah.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.25]); Fri, 11 Jan 2019 15:06:07 +0000 (UTC)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jan 11 2019 at  9:35am -0500,
-Greg Kroah-Hartman <gregkh@linuxfoundation.org> wrote:
+4.9-stable review patch.  If anyone has any objections, please let me know.
 
-> On Fri, Jan 11, 2019 at 09:25:39AM -0500, Mike Snitzer wrote:
-> > On Fri, Jan 11 2019 at  9:08am -0500,
-> > Greg Kroah-Hartman <gregkh@linuxfoundation.org> wrote:
-> > 
-> > > 4.4-stable review patch.  If anyone has any objections, please let me know.
-> > > 
-> > > ------------------
-> > > 
-> > > From: Ming Lei <ming.lei@redhat.com>
-> > > 
-> > > commit 744889b7cbb56a64f957e65ade7cb65fe3f35714 upstream.
-> > 
-> > Hi Greg,
-> > 
-> > Please also pick up this commit:
-> > 89f5fa47476eda56402e29fff3c5097f5c2a1e19 ("dm: call blk_queue_split() to
-> > impose device limits on bios")
-> 
-> That's going to be hard as the dependancy for that patch is not here in
-> 4.4.y, and this patch itself isn't even in anything older than 4.19.y.
+------------------
 
-Right, I quickly replied to this thread with followup of the 3 prereq
-patches needed to get 89f5fa47476 to apply.
+From: Takashi Iwai <tiwai@suse.de>
 
-> So why add it here to 4.4.y only?
+commit f4351a199cc120ff9d59e06d02e8657d08e6cc46 upstream.
 
-Because you're looking to pull in a commit into 4.4 that causes problems
-elsewhere.
+The parser for the processing unit reads bNrInPins field before the
+bLength sanity check, which may lead to an out-of-bound access when a
+malformed descriptor is given.  Fix it by assignment after the bLength
+check.
+
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
+---
+ sound/usb/mixer.c |   10 ++++++++--
+ 1 file changed, 8 insertions(+), 2 deletions(-)
+
+--- a/sound/usb/mixer.c
++++ b/sound/usb/mixer.c
+@@ -1882,7 +1882,7 @@ static int build_audio_procunit(struct m
+ 				char *name)
+ {
+ 	struct uac_processing_unit_descriptor *desc = raw_desc;
+-	int num_ins = desc->bNrInPins;
++	int num_ins;
+ 	struct usb_mixer_elem_info *cval;
+ 	struct snd_kcontrol *kctl;
+ 	int i, err, nameid, type, len;
+@@ -1897,7 +1897,13 @@ static int build_audio_procunit(struct m
+ 		0, NULL, default_value_info
+ 	};
  
-> Can you send the needed patch series to the stable@ mailing list for the
-> different stable trees if this needs to get into them?
+-	if (desc->bLength < 13 || desc->bLength < 13 + num_ins ||
++	if (desc->bLength < 13) {
++		usb_audio_err(state->chip, "invalid %s descriptor (id %d)\n", name, unitid);
++		return -EINVAL;
++	}
++
++	num_ins = desc->bNrInPins;
++	if (desc->bLength < 13 + num_ins ||
+ 	    desc->bLength < num_ins + uac_processing_unit_bControlSize(desc, state->mixer->protocol)) {
+ 		usb_audio_err(state->chip, "invalid %s descriptor (id %d)\n", name, unitid);
+ 		return -EINVAL;
 
-I'll try to get to that, but it is low priority for me.  And in the
-meantime.. DM will be broken in 4.4 if you take 744889b7cb.. wheeeee.
 
-Mike
