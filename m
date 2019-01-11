@@ -7,49 +7,49 @@ X-Spam-Status: No, score=-10.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 86747C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:46:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A0D90C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:46:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 57E27206B6
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:46:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6EEAF206B6
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:46:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547217975;
-	bh=NLwRLLyoaPze/svjYnmNLfWyeYs8+PKc3wbY0gXStR0=;
+	s=default; t=1547217985;
+	bh=Mv2WzS3YNTlW3gUgXxfi/kM0qf7S4dkvDLPp+HgsatY=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=mjdGw6UVQ5HnFMMRybG+jFY74+jLR3WCdsqUWZ1+vQhlla2GyRjyPG/uqGSC3nnYm
-	 si1Ca8ycmXTNfjVgPiFOwdyqUbbjWzannjPolyqlyS9LebM1Y2rkczRR4kTd/8fjlb
-	 P5TWVCqG7bM6UDG0GxGj5GWAuLFm8uxax4b4P/gQ=
+	b=fdfZYVeV9u4RGt60IOkHz9ch4s2kF5Aq61Bx/IM0KxbeEYl6E7Clcx43y1EBbs2/U
+	 zTDZqI7rE+8sdF/zfK2vT64ggZU1hYuBv7jgf/B+KIN+z0b8TGVOBn+lt7zZs3CXrY
+	 RTFru3hfpIVSRhQfsFnOExCz7UvIFQ6KMrLT0v9Y=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404373AbfAKOn3 (ORCPT
+        id S2404347AbfAKOnP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 11 Jan 2019 09:43:29 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36302 "EHLO mail.kernel.org"
+        Fri, 11 Jan 2019 09:43:15 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35984 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404362AbfAKOn0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Jan 2019 09:43:26 -0500
+        id S2404313AbfAKOnH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 Jan 2019 09:43:07 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D8DAE206B6;
-        Fri, 11 Jan 2019 14:43:24 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D816F20872;
+        Fri, 11 Jan 2019 14:43:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547217805;
-        bh=NLwRLLyoaPze/svjYnmNLfWyeYs8+PKc3wbY0gXStR0=;
+        s=default; t=1547217786;
+        bh=Mv2WzS3YNTlW3gUgXxfi/kM0qf7S4dkvDLPp+HgsatY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=iIOmsrs9LR1EQKmXEgSeOgfJFYcdLIvodC3ncPWsuBPwtE2MdUGo97r75SwtlNPgP
-         ZBmNi8Mzjy5dTG88j3OZ7wWmpwy3EBjNL7MiHEbUof2sTww+YwG6Nzdzsjo2Q/SzG5
-         6JM7w4b41WThby6a2Q2+P3df2kI0ePuObo/EcUtQ=
+        b=Foc66/Orzv72DgGf9ph2wpeQ0omE7m/xrOSVxqmYO/44BmcMcCUlswnAFvJxB7XcG
+         r1xcuIt4HP0915F/v9PpQJhkBjQid+RbFcQbPmgKaLl9A0VFIV3MDNrEMIljyTnP5H
+         ujJKu0r6dtJc8w6Onbk0a1qXEWMKbBVE+Zuae5xE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Sergey Gorenko <sergeygo@mellanox.com>,
-        Max Gurtovoy <maxg@mellanox.com>,
-        Laurence Oberman <loberman@redhat.com>,
-        Bart Van Assche <bvanassche@acm.org>,
-        Doug Ledford <dledford@redhat.com>
-Subject: [PATCH 4.20 48/65] RDMA/srpt: Fix a use-after-free in the channel release code
-Date:   Fri, 11 Jan 2019 15:15:34 +0100
-Message-Id: <20190111131102.868093083@linuxfoundation.org>
+        stable@vger.kernel.org, Guenter Roeck <linux@roeck-us.net>,
+        Breno Leitao <leitao@debian.org>,
+        =?UTF-8?q?Michal=20Such=C3=A1nek?= <msuchanek@suse.de>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Christoph Biedl <linux-kernel.bfrz@manchmal.in-ulm.de>
+Subject: [PATCH 4.20 41/65] Revert "powerpc/tm: Unset MSR[TS] if not recheckpointing"
+Date:   Fri, 11 Jan 2019 15:15:27 +0100
+Message-Id: <20190111131102.136630542@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190111131055.331350141@linuxfoundation.org>
 References: <20190111131055.331350141@linuxfoundation.org>
@@ -68,123 +68,93 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Bart Van Assche <bvanassche@acm.org>
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-commit ed041919f0d23c109d52cde8da6ddc211c52d67e upstream.
+This reverts commit d412deb85a4aada382352a8202beb7af8921cd53 which is
+commit 6f5b9f018f4c7686fd944d920209d1382d320e4e upstream.
 
-This patch avoids that KASAN sporadically reports the following:
+It breaks the powerpc build, so drop it from the tree until a fix goes
+upstream.
 
-BUG: KASAN: use-after-free in rxe_run_task+0x1e/0x60 [rdma_rxe]
-Read of size 1 at addr ffff88801c50d8f4 by task check/24830
-
-CPU: 4 PID: 24830 Comm: check Not tainted 4.20.0-rc6-dbg+ #3
-Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.10.2-1 04/01/2014
-Call Trace:
- dump_stack+0x86/0xca
- print_address_description+0x71/0x239
- kasan_report.cold.5+0x242/0x301
- __asan_load1+0x47/0x50
- rxe_run_task+0x1e/0x60 [rdma_rxe]
- rxe_post_send+0x4bd/0x8d0 [rdma_rxe]
- srpt_zerolength_write+0xe1/0x160 [ib_srpt]
- srpt_close_ch+0x8b/0xe0 [ib_srpt]
- srpt_set_enabled+0xe7/0x150 [ib_srpt]
- srpt_tpg_enable_store+0xc0/0x100 [ib_srpt]
- configfs_write_file+0x157/0x1d0
- __vfs_write+0xd7/0x3d0
- vfs_write+0x102/0x290
- ksys_write+0xab/0x130
- __x64_sys_write+0x43/0x50
- do_syscall_64+0x71/0x210
- entry_SYSCALL_64_after_hwframe+0x49/0xbe
-
-Allocated by task 13856:
- save_stack+0x43/0xd0
- kasan_kmalloc+0xc7/0xe0
- kasan_slab_alloc+0x11/0x20
- kmem_cache_alloc+0x105/0x320
- rxe_alloc+0xff/0x1f0 [rdma_rxe]
- rxe_create_qp+0x9f/0x160 [rdma_rxe]
- ib_create_qp+0xf5/0x690 [ib_core]
- rdma_create_qp+0x6a/0x140 [rdma_cm]
- srpt_cm_req_recv.cold.59+0x1588/0x237b [ib_srpt]
- srpt_rdma_cm_req_recv.isra.35+0x1d5/0x220 [ib_srpt]
- srpt_rdma_cm_handler+0x6f/0x100 [ib_srpt]
- cma_listen_handler+0x59/0x60 [rdma_cm]
- cma_ib_req_handler+0xd5b/0x2570 [rdma_cm]
- cm_process_work+0x2e/0x110 [ib_cm]
- cm_work_handler+0x2aae/0x502b [ib_cm]
- process_one_work+0x481/0x9e0
- worker_thread+0x67/0x5b0
- kthread+0x1cf/0x1f0
- ret_from_fork+0x24/0x30
-
-Freed by task 3440:
- save_stack+0x43/0xd0
- __kasan_slab_free+0x139/0x190
- kasan_slab_free+0xe/0x10
- kmem_cache_free+0xbc/0x330
- rxe_elem_release+0x66/0xe0 [rdma_rxe]
- rxe_destroy_qp+0x3f/0x50 [rdma_rxe]
- ib_destroy_qp+0x140/0x360 [ib_core]
- srpt_release_channel_work+0xdc/0x310 [ib_srpt]
- process_one_work+0x481/0x9e0
- worker_thread+0x67/0x5b0
- kthread+0x1cf/0x1f0
- ret_from_fork+0x24/0x30
-
-Cc: Sergey Gorenko <sergeygo@mellanox.com>
-Cc: Max Gurtovoy <maxg@mellanox.com>
-Cc: Laurence Oberman <loberman@redhat.com>
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Bart Van Assche <bvanassche@acm.org>
-Signed-off-by: Doug Ledford <dledford@redhat.com>
+Reported-by: Guenter Roeck <linux@roeck-us.net>
+Cc: Breno Leitao <leitao@debian.org>
+Cc: Michal Suchánek <msuchanek@suse.de>
+Cc: Michael Ellerman <mpe@ellerman.id.au>
+Cc: Christoph Biedl <linux-kernel.bfrz@manchmal.in-ulm.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- drivers/infiniband/ulp/srpt/ib_srpt.c |   18 +++++++++++++-----
- 1 file changed, 13 insertions(+), 5 deletions(-)
+ arch/powerpc/kernel/signal_32.c |   18 +++++-------------
+ arch/powerpc/kernel/signal_64.c |   20 ++++----------------
+ 2 files changed, 9 insertions(+), 29 deletions(-)
 
---- a/drivers/infiniband/ulp/srpt/ib_srpt.c
-+++ b/drivers/infiniband/ulp/srpt/ib_srpt.c
-@@ -2010,6 +2010,14 @@ static void srpt_free_ch(struct kref *kr
- 	kfree_rcu(ch, rcu);
- }
- 
-+/*
-+ * Shut down the SCSI target session, tell the connection manager to
-+ * disconnect the associated RDMA channel, transition the QP to the error
-+ * state and remove the channel from the channel list. This function is
-+ * typically called from inside srpt_zerolength_write_done(). Concurrent
-+ * srpt_zerolength_write() calls from inside srpt_close_ch() are possible
-+ * as long as the channel is on sport->nexus_list.
-+ */
- static void srpt_release_channel_work(struct work_struct *w)
+--- a/arch/powerpc/kernel/signal_32.c
++++ b/arch/powerpc/kernel/signal_32.c
+@@ -1140,11 +1140,11 @@ SYSCALL_DEFINE0(rt_sigreturn)
  {
- 	struct srpt_rdma_ch *ch;
-@@ -2037,6 +2045,11 @@ static void srpt_release_channel_work(st
- 	else
- 		ib_destroy_cm_id(ch->ib_cm.cm_id);
+ 	struct rt_sigframe __user *rt_sf;
+ 	struct pt_regs *regs = current_pt_regs();
+-	int tm_restore = 0;
+ #ifdef CONFIG_PPC_TRANSACTIONAL_MEM
+ 	struct ucontext __user *uc_transact;
+ 	unsigned long msr_hi;
+ 	unsigned long tmp;
++	int tm_restore = 0;
+ #endif
+ 	/* Always make any pending restarted system calls return -EINTR */
+ 	current->restart_block.fn = do_no_restart_syscall;
+@@ -1192,19 +1192,11 @@ SYSCALL_DEFINE0(rt_sigreturn)
+ 				goto bad;
+ 		}
+ 	}
+-	if (!tm_restore) {
+-		/*
+-		 * Unset regs->msr because ucontext MSR TS is not
+-		 * set, and recheckpoint was not called. This avoid
+-		 * hitting a TM Bad thing at RFID
+-		 */
+-		regs->msr &= ~MSR_TS_MASK;
+-	}
+-	/* Fall through, for non-TM restore */
+-#endif
+ 	if (!tm_restore)
+-		if (do_setcontext(&rt_sf->uc, regs, 1))
+-			goto bad;
++		/* Fall through, for non-TM restore */
++#endif
++	if (do_setcontext(&rt_sf->uc, regs, 1))
++		goto bad;
  
-+	sport = ch->sport;
-+	mutex_lock(&sport->mutex);
-+	list_del_rcu(&ch->list);
-+	mutex_unlock(&sport->mutex);
-+
- 	srpt_destroy_ch_ib(ch);
+ 	/*
+ 	 * It's not clear whether or why it is desirable to save the
+--- a/arch/powerpc/kernel/signal_64.c
++++ b/arch/powerpc/kernel/signal_64.c
+@@ -740,23 +740,11 @@ SYSCALL_DEFINE0(rt_sigreturn)
+ 					   &uc_transact->uc_mcontext))
+ 			goto badframe;
+ 	}
+-#endif
++	else
+ 	/* Fall through, for non-TM restore */
+-	if (!MSR_TM_ACTIVE(msr)) {
+-		/*
+-		 * Unset MSR[TS] on the thread regs since MSR from user
+-		 * context does not have MSR active, and recheckpoint was
+-		 * not called since restore_tm_sigcontexts() was not called
+-		 * also.
+-		 *
+-		 * If not unsetting it, the code can RFID to userspace with
+-		 * MSR[TS] set, but without CPU in the proper state,
+-		 * causing a TM bad thing.
+-		 */
+-		current->thread.regs->msr &= ~MSR_TS_MASK;
+-		if (restore_sigcontext(current, NULL, 1, &uc->uc_mcontext))
+-			goto badframe;
+-	}
++#endif
++	if (restore_sigcontext(current, NULL, 1, &uc->uc_mcontext))
++		goto badframe;
  
- 	srpt_free_ioctx_ring((struct srpt_ioctx **)ch->ioctx_ring,
-@@ -2047,11 +2060,6 @@ static void srpt_release_channel_work(st
- 			     sdev, ch->rq_size,
- 			     srp_max_req_size, DMA_FROM_DEVICE);
- 
--	sport = ch->sport;
--	mutex_lock(&sport->mutex);
--	list_del_rcu(&ch->list);
--	mutex_unlock(&sport->mutex);
--
- 	wake_up(&sport->ch_releaseQ);
- 
- 	kref_put(&ch->kref, srpt_free_ch);
+ 	if (restore_altstack(&uc->uc_stack))
+ 		goto badframe;
 
 
