@@ -7,52 +7,46 @@ X-Spam-Status: No, score=-10.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A76CC43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:41:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 12FBAC43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:42:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 07DE12184A
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:41:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D955621848
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:42:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547217719;
-	bh=MrA2S3ujII9btpjRf+rnrNZLxR4nGTTdI6ko6EbKOmI=;
+	s=default; t=1547217722;
+	bh=uqi27+toaOnvsEtnS6W99/4xTxjYELkTAh8UP530LBY=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=n2YIHrHEevrgnnyUpvFD+YF4N5YTnqNkYI6HiJeuWRXjYp/if2113CyUL2f5BsN0F
-	 dJ4mZ4qsdn/ry5p8d79buOl0nou+TXwOC1BmKFI/QW+KORMLgsMzCMuuHN4VzHyF2M
-	 H5MJBB3gnZjxWla4WFdt2y3drXSLWmTCmT1AeZio=
+	b=JOv1AViIfkC4LfGYUxAuC8leD1P18A/Ao+a0KkPgwLRDLt8ThTBwS+asFUiXderIG
+	 5Fi4q2JrExCROo8YXs+aoxp10bOcNE+8/KSCqMX4WkwzNrw4RyAdl+GBIEItfkxcRX
+	 x2F1dxUtRC6x6nGlbbYw3A6yXb1SUv65CnfHebvU=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404081AbfAKOl6 (ORCPT
+        id S2404100AbfAKOmC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 11 Jan 2019 09:41:58 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34648 "EHLO mail.kernel.org"
+        Fri, 11 Jan 2019 09:42:02 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34802 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404035AbfAKOlw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Jan 2019 09:41:52 -0500
+        id S2404087AbfAKOmA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 Jan 2019 09:42:00 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0F0F3206B6;
-        Fri, 11 Jan 2019 14:41:50 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E55362063F;
+        Fri, 11 Jan 2019 14:41:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547217711;
-        bh=MrA2S3ujII9btpjRf+rnrNZLxR4nGTTdI6ko6EbKOmI=;
+        s=default; t=1547217719;
+        bh=uqi27+toaOnvsEtnS6W99/4xTxjYELkTAh8UP530LBY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=qzTA54S/MeX4ofjLdZhQv8EZyA7S78CdXcZ+AWvGaa3yl8bbxsajzRDvBIGdSVjzu
-         gwMbW5Bww/obz1DoAPVnm6GmqgxGGkj57pCG0uufpuerB4YvFmvM2CtdblPATJGLKQ
-         1lPF3xxdEUvlRbu95sw6FnTst29SAQHn6LJNg658=
+        b=yif5pbWqceBgv8AZkCdcOlcn04uRz+AGUEgUkLlJlR0OOpBLW+KsbaVw8aip5Lh07
+         Hzu99g+mIwatUMu4QWodei4fW/1pzhFJqeJcmdcRUXLOfEC3PquFnSyJbuUUBK8wox
+         /ETLk1gQ1352USeu+XAxsyLrpOUyn+sbuFY+IRSs=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dan Williams <dan.j.williams@intel.com>,
-        Christoph Hellwig <hch@lst.de>,
-        =?UTF-8?q?J=C3=A9r=C3=B4me=20Glisse?= <jglisse@redhat.com>,
-        Balbir Singh <bsingharora@gmail.com>,
-        Logan Gunthorpe <logang@deltatee.com>,
-        Michal Hocko <mhocko@suse.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH 4.20 14/65] mm, hmm: replace hmm_devmem_pages_create() with devm_memremap_pages()
-Date:   Fri, 11 Jan 2019 15:15:00 +0100
-Message-Id: <20190111131058.344603590@linuxfoundation.org>
+        stable@vger.kernel.org, Brad Love <brad@nextdimension.cc>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Subject: [PATCH 4.20 17/65] media: cx23885: only reset DMA on problematic CPUs
+Date:   Fri, 11 Jan 2019 15:15:03 +0100
+Message-Id: <20190111131058.815430757@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190111131055.331350141@linuxfoundation.org>
 References: <20190111131055.331350141@linuxfoundation.org>
@@ -71,291 +65,131 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Dan Williams <dan.j.williams@intel.com>
+From: Brad Love <brad@nextdimension.cc>
 
-commit bbecd94e6c514a1559fc1a7749a62715958137b1 upstream.
+commit 4bd46aa0353e022c2401a258e93b107880a66533 upstream.
 
-Commit e8d513483300 ("memremap: change devm_memremap_pages interface to
-use struct dev_pagemap") refactored devm_memremap_pages() to allow a
-dev_pagemap instance to be supplied.  Passing in a dev_pagemap interface
-simplifies the design of pgmap type drivers in that they can rely on
-container_of() to lookup any private data associated with the given
-dev_pagemap instance.
+It is reported that commit 95f408bbc4e4 ("media: cx23885: Ryzen DMA
+related RiSC engine stall fixes") caused regresssions with other CPUs.
 
-In addition to the cleanups this also gives hmm users multi-order-radix
-improvements that arrived with commit ab1b597ee0e4 "mm,
-devm_memremap_pages: use multi-order radix for ZONE_DEVICE lookups"
+Ensure that the quirk will be applied only for the CPUs that
+are known to cause problems.
 
-As part of the conversion to the devm_memremap_pages() method of
-handling the percpu_ref relative to when pages are put, the percpu_ref
-completion needs to move to hmm_devmem_ref_exit().  See 71389703839e
-("mm, zone_device: Replace {get, put}_zone_device_page...") for details.
+A module option is added for explicit control of the behaviour.
 
-Link: http://lkml.kernel.org/r/154275560053.76910.10870962637383152392.stgit@dwillia2-desk3.amr.corp.intel.com
-Signed-off-by: Dan Williams <dan.j.williams@intel.com>
-Reviewed-by: Christoph Hellwig <hch@lst.de>
-Reviewed-by: Jérôme Glisse <jglisse@redhat.com>
-Acked-by: Balbir Singh <bsingharora@gmail.com>
-Cc: Logan Gunthorpe <logang@deltatee.com>
-Cc: Michal Hocko <mhocko@suse.com>
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Fixes: 95f408bbc4e4 ("media: cx23885: Ryzen DMA related RiSC engine stall fixes")
+
+Signed-off-by: Brad Love <brad@nextdimension.cc>
+Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- mm/hmm.c |  196 ++++++++-------------------------------------------------------
- 1 file changed, 26 insertions(+), 170 deletions(-)
+ drivers/media/pci/cx23885/cx23885-core.c |   55 +++++++++++++++++++++++++++++--
+ drivers/media/pci/cx23885/cx23885.h      |    2 +
+ 2 files changed, 55 insertions(+), 2 deletions(-)
 
---- a/mm/hmm.c
-+++ b/mm/hmm.c
-@@ -986,17 +986,16 @@ static void hmm_devmem_ref_exit(void *da
- 	struct hmm_devmem *devmem;
+--- a/drivers/media/pci/cx23885/cx23885-core.c
++++ b/drivers/media/pci/cx23885/cx23885-core.c
+@@ -23,6 +23,7 @@
+ #include <linux/moduleparam.h>
+ #include <linux/kmod.h>
+ #include <linux/kernel.h>
++#include <linux/pci.h>
+ #include <linux/slab.h>
+ #include <linux/interrupt.h>
+ #include <linux/delay.h>
+@@ -41,6 +42,18 @@ MODULE_AUTHOR("Steven Toth <stoth@linuxt
+ MODULE_LICENSE("GPL");
+ MODULE_VERSION(CX23885_VERSION);
  
- 	devmem = container_of(ref, struct hmm_devmem, ref);
-+	wait_for_completion(&devmem->completion);
- 	percpu_ref_exit(ref);
- }
++/*
++ * Some platforms have been found to require periodic resetting of the DMA
++ * engine. Ryzen and XEON platforms are known to be affected. The symptom
++ * encountered is "mpeg risc op code error". Only Ryzen platforms employ
++ * this workaround if the option equals 1. The workaround can be explicitly
++ * disabled for all platforms by setting to 0, the workaround can be forced
++ * on for any platform by setting to 2.
++ */
++static unsigned int dma_reset_workaround = 1;
++module_param(dma_reset_workaround, int, 0644);
++MODULE_PARM_DESC(dma_reset_workaround, "periodic RiSC dma engine reset; 0-force disable, 1-driver detect (default), 2-force enable");
++
+ static unsigned int debug;
+ module_param(debug, int, 0644);
+ MODULE_PARM_DESC(debug, "enable debug messages");
+@@ -603,8 +616,13 @@ static void cx23885_risc_disasm(struct c
  
--static void hmm_devmem_ref_kill(void *data)
-+static void hmm_devmem_ref_kill(struct percpu_ref *ref)
+ static void cx23885_clear_bridge_error(struct cx23885_dev *dev)
  {
--	struct percpu_ref *ref = data;
- 	struct hmm_devmem *devmem;
+-	uint32_t reg1_val = cx_read(TC_REQ); /* read-only */
+-	uint32_t reg2_val = cx_read(TC_REQ_SET);
++	uint32_t reg1_val, reg2_val;
++
++	if (!dev->need_dma_reset)
++		return;
++
++	reg1_val = cx_read(TC_REQ); /* read-only */
++	reg2_val = cx_read(TC_REQ_SET);
  
- 	devmem = container_of(ref, struct hmm_devmem, ref);
- 	percpu_ref_kill(ref);
--	wait_for_completion(&devmem->completion);
+ 	if (reg1_val && reg2_val) {
+ 		cx_write(TC_REQ, reg1_val);
+@@ -2058,6 +2076,37 @@ void cx23885_gpio_enable(struct cx23885_
+ 	/* TODO: 23-19 */
  }
  
- static int hmm_devmem_fault(struct vm_area_struct *vma,
-@@ -1019,154 +1018,6 @@ static void hmm_devmem_free(struct page
- 	devmem->ops->free(devmem, page);
- }
- 
--static DEFINE_MUTEX(hmm_devmem_lock);
--static RADIX_TREE(hmm_devmem_radix, GFP_KERNEL);
--
--static void hmm_devmem_radix_release(struct resource *resource)
--{
--	resource_size_t key;
--
--	mutex_lock(&hmm_devmem_lock);
--	for (key = resource->start;
--	     key <= resource->end;
--	     key += PA_SECTION_SIZE)
--		radix_tree_delete(&hmm_devmem_radix, key >> PA_SECTION_SHIFT);
--	mutex_unlock(&hmm_devmem_lock);
--}
--
--static void hmm_devmem_release(void *data)
--{
--	struct hmm_devmem *devmem = data;
--	struct resource *resource = devmem->resource;
--	unsigned long start_pfn, npages;
--	struct zone *zone;
--	struct page *page;
--
--	/* pages are dead and unused, undo the arch mapping */
--	start_pfn = (resource->start & ~(PA_SECTION_SIZE - 1)) >> PAGE_SHIFT;
--	npages = ALIGN(resource_size(resource), PA_SECTION_SIZE) >> PAGE_SHIFT;
--
--	page = pfn_to_page(start_pfn);
--	zone = page_zone(page);
--
--	mem_hotplug_begin();
--	if (resource->desc == IORES_DESC_DEVICE_PRIVATE_MEMORY)
--		__remove_pages(zone, start_pfn, npages, NULL);
--	else
--		arch_remove_memory(start_pfn << PAGE_SHIFT,
--				   npages << PAGE_SHIFT, NULL);
--	mem_hotplug_done();
--
--	hmm_devmem_radix_release(resource);
--}
--
--static int hmm_devmem_pages_create(struct hmm_devmem *devmem)
--{
--	resource_size_t key, align_start, align_size, align_end;
--	struct device *device = devmem->device;
--	int ret, nid, is_ram;
--
--	align_start = devmem->resource->start & ~(PA_SECTION_SIZE - 1);
--	align_size = ALIGN(devmem->resource->start +
--			   resource_size(devmem->resource),
--			   PA_SECTION_SIZE) - align_start;
--
--	is_ram = region_intersects(align_start, align_size,
--				   IORESOURCE_SYSTEM_RAM,
--				   IORES_DESC_NONE);
--	if (is_ram == REGION_MIXED) {
--		WARN_ONCE(1, "%s attempted on mixed region %pr\n",
--				__func__, devmem->resource);
--		return -ENXIO;
--	}
--	if (is_ram == REGION_INTERSECTS)
--		return -ENXIO;
--
--	if (devmem->resource->desc == IORES_DESC_DEVICE_PUBLIC_MEMORY)
--		devmem->pagemap.type = MEMORY_DEVICE_PUBLIC;
--	else
--		devmem->pagemap.type = MEMORY_DEVICE_PRIVATE;
--
--	devmem->pagemap.res = *devmem->resource;
--	devmem->pagemap.page_fault = hmm_devmem_fault;
--	devmem->pagemap.page_free = hmm_devmem_free;
--	devmem->pagemap.dev = devmem->device;
--	devmem->pagemap.ref = &devmem->ref;
--	devmem->pagemap.data = devmem;
--
--	mutex_lock(&hmm_devmem_lock);
--	align_end = align_start + align_size - 1;
--	for (key = align_start; key <= align_end; key += PA_SECTION_SIZE) {
--		struct hmm_devmem *dup;
--
--		dup = radix_tree_lookup(&hmm_devmem_radix,
--					key >> PA_SECTION_SHIFT);
--		if (dup) {
--			dev_err(device, "%s: collides with mapping for %s\n",
--				__func__, dev_name(dup->device));
--			mutex_unlock(&hmm_devmem_lock);
--			ret = -EBUSY;
--			goto error;
--		}
--		ret = radix_tree_insert(&hmm_devmem_radix,
--					key >> PA_SECTION_SHIFT,
--					devmem);
--		if (ret) {
--			dev_err(device, "%s: failed: %d\n", __func__, ret);
--			mutex_unlock(&hmm_devmem_lock);
--			goto error_radix;
--		}
--	}
--	mutex_unlock(&hmm_devmem_lock);
--
--	nid = dev_to_node(device);
--	if (nid < 0)
--		nid = numa_mem_id();
--
--	mem_hotplug_begin();
--	/*
--	 * For device private memory we call add_pages() as we only need to
--	 * allocate and initialize struct page for the device memory. More-
--	 * over the device memory is un-accessible thus we do not want to
--	 * create a linear mapping for the memory like arch_add_memory()
--	 * would do.
--	 *
--	 * For device public memory, which is accesible by the CPU, we do
--	 * want the linear mapping and thus use arch_add_memory().
--	 */
--	if (devmem->pagemap.type == MEMORY_DEVICE_PUBLIC)
--		ret = arch_add_memory(nid, align_start, align_size, NULL,
--				false);
--	else
--		ret = add_pages(nid, align_start >> PAGE_SHIFT,
--				align_size >> PAGE_SHIFT, NULL, false);
--	if (ret) {
--		mem_hotplug_done();
--		goto error_add_memory;
--	}
--	move_pfn_range_to_zone(&NODE_DATA(nid)->node_zones[ZONE_DEVICE],
--				align_start >> PAGE_SHIFT,
--				align_size >> PAGE_SHIFT, NULL);
--	mem_hotplug_done();
--
--	/*
--	 * Initialization of the pages has been deferred until now in order
--	 * to allow us to do the work while not holding the hotplug lock.
--	 */
--	memmap_init_zone_device(&NODE_DATA(nid)->node_zones[ZONE_DEVICE],
--				align_start >> PAGE_SHIFT,
--				align_size >> PAGE_SHIFT, &devmem->pagemap);
--
--	return 0;
--
--error_add_memory:
--	untrack_pfn(NULL, PHYS_PFN(align_start), align_size);
--error_radix:
--	hmm_devmem_radix_release(devmem->resource);
--error:
--	return ret;
--}
--
- /*
-  * hmm_devmem_add() - hotplug ZONE_DEVICE memory for device memory
-  *
-@@ -1190,6 +1041,7 @@ struct hmm_devmem *hmm_devmem_add(const
++static struct {
++	int vendor, dev;
++} const broken_dev_id[] = {
++	/* According with
++	 * https://openbenchmarking.org/system/1703021-RI-AMDZEN08075/Ryzen%207%201800X/lspci,
++	 * 0x1451 is PCI ID for the IOMMU found on Ryzen
++	 */
++	{ PCI_VENDOR_ID_AMD, 0x1451 },
++};
++
++static bool cx23885_does_need_dma_reset(void)
++{
++	int i;
++	struct pci_dev *pdev = NULL;
++
++	if (dma_reset_workaround == 0)
++		return false;
++	else if (dma_reset_workaround == 2)
++		return true;
++
++	for (i = 0; i < ARRAY_SIZE(broken_dev_id); i++) {
++		pdev = pci_get_device(broken_dev_id[i].vendor,
++				      broken_dev_id[i].dev, NULL);
++		if (pdev) {
++			pci_dev_put(pdev);
++			return true;
++		}
++	}
++	return false;
++}
++
+ static int cx23885_initdev(struct pci_dev *pci_dev,
+ 			   const struct pci_device_id *pci_id)
  {
- 	struct hmm_devmem *devmem;
- 	resource_size_t addr;
-+	void *result;
- 	int ret;
+@@ -2069,6 +2118,8 @@ static int cx23885_initdev(struct pci_de
+ 	if (NULL == dev)
+ 		return -ENOMEM;
  
- 	dev_pagemap_get_ops();
-@@ -1244,14 +1096,18 @@ struct hmm_devmem *hmm_devmem_add(const
- 	devmem->pfn_last = devmem->pfn_first +
- 			   (resource_size(devmem->resource) >> PAGE_SHIFT);
++	dev->need_dma_reset = cx23885_does_need_dma_reset();
++
+ 	err = v4l2_device_register(&pci_dev->dev, &dev->v4l2_dev);
+ 	if (err < 0)
+ 		goto fail_free;
+--- a/drivers/media/pci/cx23885/cx23885.h
++++ b/drivers/media/pci/cx23885/cx23885.h
+@@ -451,6 +451,8 @@ struct cx23885_dev {
+ 	/* Analog raw audio */
+ 	struct cx23885_audio_dev   *audio_dev;
  
--	ret = hmm_devmem_pages_create(devmem);
--	if (ret)
--		return ERR_PTR(ret);
--
--	ret = devm_add_action_or_reset(device, hmm_devmem_release, devmem);
--	if (ret)
--		return ERR_PTR(ret);
-+	devmem->pagemap.type = MEMORY_DEVICE_PRIVATE;
-+	devmem->pagemap.res = *devmem->resource;
-+	devmem->pagemap.page_fault = hmm_devmem_fault;
-+	devmem->pagemap.page_free = hmm_devmem_free;
-+	devmem->pagemap.altmap_valid = false;
-+	devmem->pagemap.ref = &devmem->ref;
-+	devmem->pagemap.data = devmem;
-+	devmem->pagemap.kill = hmm_devmem_ref_kill;
++	/* Does the system require periodic DMA resets? */
++	unsigned int		need_dma_reset:1;
+ };
  
-+	result = devm_memremap_pages(devmem->device, &devmem->pagemap);
-+	if (IS_ERR(result))
-+		return result;
- 	return devmem;
- }
- EXPORT_SYMBOL(hmm_devmem_add);
-@@ -1261,6 +1117,7 @@ struct hmm_devmem *hmm_devmem_add_resour
- 					   struct resource *res)
- {
- 	struct hmm_devmem *devmem;
-+	void *result;
- 	int ret;
- 
- 	if (res->desc != IORES_DESC_DEVICE_PUBLIC_MEMORY)
-@@ -1293,19 +1150,18 @@ struct hmm_devmem *hmm_devmem_add_resour
- 	devmem->pfn_last = devmem->pfn_first +
- 			   (resource_size(devmem->resource) >> PAGE_SHIFT);
- 
--	ret = hmm_devmem_pages_create(devmem);
--	if (ret)
--		return ERR_PTR(ret);
--
--	ret = devm_add_action_or_reset(device, hmm_devmem_release, devmem);
--	if (ret)
--		return ERR_PTR(ret);
--
--	ret = devm_add_action_or_reset(device, hmm_devmem_ref_kill,
--			&devmem->ref);
--	if (ret)
--		return ERR_PTR(ret);
-+	devmem->pagemap.type = MEMORY_DEVICE_PUBLIC;
-+	devmem->pagemap.res = *devmem->resource;
-+	devmem->pagemap.page_fault = hmm_devmem_fault;
-+	devmem->pagemap.page_free = hmm_devmem_free;
-+	devmem->pagemap.altmap_valid = false;
-+	devmem->pagemap.ref = &devmem->ref;
-+	devmem->pagemap.data = devmem;
-+	devmem->pagemap.kill = hmm_devmem_ref_kill;
- 
-+	result = devm_memremap_pages(devmem->device, &devmem->pagemap);
-+	if (IS_ERR(result))
-+		return result;
- 	return devmem;
- }
- EXPORT_SYMBOL(hmm_devmem_add_resource);
+ static inline struct cx23885_dev *to_cx23885(struct v4l2_device *v4l2_dev)
 
 
