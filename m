@@ -2,181 +2,84 @@ Return-Path: <SRS0=uvhX=PT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F1BFC43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 03:39:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6EBDEC43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 03:40:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6A5232084C
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 03:39:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3D2B02133F
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 03:40:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730472AbfAKDjM (ORCPT
+        id S1730498AbfAKDkj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 10 Jan 2019 22:39:12 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:40116 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726531AbfAKDjM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Jan 2019 22:39:12 -0500
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 2D6B519CBDB;
-        Fri, 11 Jan 2019 03:39:11 +0000 (UTC)
-Received: from madcap2.tricolour.ca (ovpn-112-10.phx2.redhat.com [10.3.112.10])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 18F6D6A690;
-        Fri, 11 Jan 2019 03:38:58 +0000 (UTC)
-Date:   Thu, 10 Jan 2019 22:38:56 -0500
-From:   Richard Guy Briggs <rgb@redhat.com>
-To:     Paul Moore <paul@paul-moore.com>
-Cc:     simo@redhat.com, carlos@redhat.com,
-        containers@lists.linux-foundation.org,
-        linux-kernel@vger.kernel.org, dhowells@redhat.com,
-        linux-audit@redhat.com, ebiederm@xmission.com, luto@kernel.org,
-        Eric Paris <eparis@parisplace.org>,
-        Serge Hallyn <serge@hallyn.com>, viro@zeniv.linux.org.uk
-Subject: Re: [PATCH ghak90 (was ghak32) V4 06/10] audit: add containerid
- support for tty_audit
-Message-ID: <20190111033856.6lhtlls7bvttoxhd@madcap2.tricolour.ca>
-References: <cover.1533065887.git.rgb@redhat.com>
- <e41cb6760a8183c0955c378fce7b500819f9838f.1533065887.git.rgb@redhat.com>
- <CAHC9VhRPMAUsgs2zXkPEFZPQS6dmAO1-kBX1Y-7tRkD-kwGEjw@mail.gmail.com>
- <20181031211739.6jag6b5qve77qmmu@madcap2.tricolour.ca>
- <CAHC9VhTnj3Sg9R-XM0U9gqOsNXT+Tn+VVRXJtBTt0A0DPQ0GQg@mail.gmail.com>
- <20190110225847.vumlt2jor57djrdc@madcap2.tricolour.ca>
- <CAHC9VhSqPBKv5hmSNSsrMYcmQ86phaUWG54JtAH84sSkPrz_Nw@mail.gmail.com>
+        Thu, 10 Jan 2019 22:40:39 -0500
+Received: from mail.cn.fujitsu.com ([183.91.158.132]:6470 "EHLO
+        heian.cn.fujitsu.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726531AbfAKDki (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 10 Jan 2019 22:40:38 -0500
+X-IronPort-AV: E=Sophos;i="5.56,463,1539619200"; 
+   d="scan'208";a="51761711"
+Received: from unknown (HELO cn.fujitsu.com) ([10.167.33.5])
+  by heian.cn.fujitsu.com with ESMTP; 11 Jan 2019 11:40:37 +0800
+Received: from G08CNEXCHPEKD02.g08.fujitsu.local (unknown [10.167.33.83])
+        by cn.fujitsu.com (Postfix) with ESMTP id F15044BAD909;
+        Fri, 11 Jan 2019 11:40:36 +0800 (CST)
+Received: from [10.167.226.60] (10.167.226.60) by
+ G08CNEXCHPEKD02.g08.fujitsu.local (10.167.33.89) with Microsoft SMTP Server
+ (TLS) id 14.3.408.0; Fri, 11 Jan 2019 11:40:35 +0800
+Subject: Re: [PATCH] x86/boot: drop memset from copy.S
+From:   Cao jin <caoj.fnst@cn.fujitsu.com>
+To:     <x86@kernel.org>, <linux-kernel@vger.kernel.org>
+CC:     <tglx@linutronix.de>, <mingo@redhat.com>, <bp@alien8.de>,
+        <hpa@zytor.com>
+References: <20190107074056.12532-1-caoj.fnst@cn.fujitsu.com>
+ <4bb8f61a-f93c-4b30-9990-ecf5a8ddc998@cn.fujitsu.com>
+Message-ID: <1b9db13b-ebe9-70f7-bc79-b608d8906a4b@cn.fujitsu.com>
+Date:   Fri, 11 Jan 2019 11:40:53 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAHC9VhSqPBKv5hmSNSsrMYcmQ86phaUWG54JtAH84sSkPrz_Nw@mail.gmail.com>
-User-Agent: NeoMutt/20180716
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.29]); Fri, 11 Jan 2019 03:39:11 +0000 (UTC)
+In-Reply-To: <4bb8f61a-f93c-4b30-9990-ecf5a8ddc998@cn.fujitsu.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.167.226.60]
+X-yoursite-MailScanner-ID: F15044BAD909.A7C5A
+X-yoursite-MailScanner: Found to be clean
+X-yoursite-MailScanner-From: caoj.fnst@cn.fujitsu.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2019-01-10 20:12, Paul Moore wrote:
-> On Thu, Jan 10, 2019 at 5:59 PM Richard Guy Briggs <rgb@redhat.com> wrote:
-> > On 2019-01-03 15:11, Paul Moore wrote:
-> > > On Wed, Oct 31, 2018 at 5:17 PM Richard Guy Briggs <rgb@redhat.com> wrote:
-> > > > On 2018-10-19 19:17, Paul Moore wrote:
-> > > > > On Sun, Aug 5, 2018 at 4:33 AM Richard Guy Briggs
-> > > <rgb@redhat.com> wrote:
-> > > > > > Add audit container identifier auxiliary record to tty logging rule
-> > > > > > event standalone records.
-> > > > > >
-> > > > > > Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
-> > > > > > Acked-by: Serge Hallyn <serge@hallyn.com>
-> > > > > > ---
-> > > > > >  drivers/tty/tty_audit.c | 5 ++++-
-> > > > > >  1 file changed, 4 insertions(+), 1 deletion(-)
-> > > > > >
-> > > > > > diff --git a/drivers/tty/tty_audit.c b/drivers/tty/tty_audit.c
-> > > > > > index 50f567b..3e21477 100644
-> > > > > > --- a/drivers/tty/tty_audit.c
-> > > > > > +++ b/drivers/tty/tty_audit.c
-> > > > > > @@ -66,8 +66,9 @@ static void tty_audit_log(const char *description, dev_t dev,
-> > > > > >         uid_t uid = from_kuid(&amp;init_user_ns, task_uid(tsk));
-> > > > > >         uid_t loginuid = from_kuid(&amp;init_user_ns, audit_get_loginuid(tsk));
-> > > > > >         unsigned int sessionid = audit_get_sessionid(tsk);
-> > > > > > +       struct audit_context *context = audit_alloc_local(GFP_KERNEL);
-> > > > > >
-> > > > > > -       ab = audit_log_start(NULL, GFP_KERNEL, AUDIT_TTY);
-> > > > > > +       ab = audit_log_start(context, GFP_KERNEL, AUDIT_TTY);
-> > > > > >         if (ab) {
-> > > > > >                 char name[sizeof(tsk->comm)];
-> > > > > >
-> > > > > > @@ -80,6 +81,8 @@ static void tty_audit_log(const char *description, dev_t dev,
-> > > > > >                 audit_log_n_hex(ab, data, size);
-> > > > > >                 audit_log_end(ab);
-> > > > > >         }
-> > > > > > +       audit_log_contid(context, "tty", audit_get_contid(tsk));
-> > > > > > +       audit_free_context(context);
-> > > > > >  }
-> > > > >
-> > > > > Since I never polished up my task_struct/current fix patch enough to
-> > > > > get it past RFC status during this development window (new job, stolen
-> > > > > laptop, etc.) *and* it looks like you are going to need at least one
-> > > > > more respin of this patchset, go ahead and fix this patch to use
-> > > > > current instead of generating a local context.  I'll deal with the
-> > > > > merge fallout if/when it happens.
-> > > >
-> > > > Sure, I will switch it to current in the call to audit_get_contid().
-> > > >
-> > > > The local context is a distinct issue.  Like USER records, I prefer
-> > > > local due to potential record volume, it is already trackable as far as
-> > > > Steve is concerned, and if it is to be connected with the syscall
-> > > > record, it should be linked to syscall records in a seperate new github
-> > > > issue with its own patch.  It accumulates events until the buffer is
-> > > > flushed to a record, so the timestamp only represents the flush (usually
-> > > > user "CR/enter").
-> > >
-> > > Generally, yes, associating records is a separate issue, but in this
-> > > particular case you are changing this record by making it a "local"
-> > > record, which as we've discussed before, I view as a necessary evil
-> > > and something that must be minimized.  A quick look at the
-> > > tty_audit_log() callers shows tty_audit_tiocsti() which is an ioctl
-> > > handler (and thus current should be valid and correct), and
-> > > tty_audit_buf_push() whose callers all seem have valid and correct
-> > > current values; if you find that not to be the case please let me
-> > > know.
-> >
-> > Unless I'm misunderstanding what "local" means, it already had a local
-> > context by virtue of having a NULL context since it was never previously
-> > connected to syscall events, so changing it to a local context doesn't
-> > change that other than making it possible to associate an auxiliary
-> > audit container identifier record.
-> >
-> > The reasoning I'm also applying here is that the contents of this record
-> > don't all come from this one syscall, but most likely came in from an
-> > entire line of individual keystrokes, so the syscall information is only
-> > from the last one of those syscalls, though that syscall information
-> > other than the timestamp should be the same.
+On 1/8/19 4:46 PM, Cao jin wrote:
+> One more question: in compressed/, for mem*(), it seems we both use the
+> macros of boot/string.h, and the functions of compressed/string.c. Is
+> that what we want?
 > 
-> Looking at the callers to tty_audit_log(), I think we can all agree
-> that in the tty_audit_tiocsti() case it is correct to associate the
-> tty record with current, as it is the current task which sent the
-> ioctl with the data.  Do you not agree?
+> compressed/ is compiled with -O2, so it cannot be told by objdump -d,
+> but still can be confirmed by nm <*.o>, for example:
+> 
+> $nm arch/x86/boot/compressed/eboot.o
+>                  U memcpy
+>                  U memset
+> 
+> $nm arch/x86/boot/compressed/pgtable_64.o
+>                  # No entry of mem*()
+> 
+> both of eboot.c and pgtable_64.c #include "../string.h", and use some of
+>  mem*(), it is counter-intuitive to me. Very appreciate it someone can
+> leave a hint.
+> 
 
-I'm fine with that, yes.
+Well, I think HPA's previous answer is also suitable for this question,
+with -O2, sometimes __builtin_mem*() is optimized as inline code, while
+sometimes just emit a call to corresponding self-defined mem*() functions.
 
-> With tty_audit_buf_push() we need to do a bit more work to track down
-> all the callers.  Looking quickly it appears that all of the
-> tty_audit_add_data() callers are copying data to/from userspace, so
-> associating these tty records with their syscall would seem
-> appropriate.  With tty_audit_push() it either appears to be
-> tty_audit_tiocsti() (again) or more userspace copy routines.  I didn't
-> bother looking at tty_audit_exit() because that seemed pretty clear to
-> be something worth associating with a syscall.  You may find that if
-> you dig deeper into the call stacks things fall apart and there are
-> cases where the records shouldn't be associated with the current
-> syscall, but based on what I'm seeing right now that doesn't appear to
-> be the case.
+-- 
+Sincerely,
+Cao jin
 
-Ok.  Except that it might be multiple subsequent calls that assemble
-that data, only flushed to an audit record on exceeding N_TTY_BUF_SIZE
-(4k) or that task switching device and flushing the previous device or
-that task switching icanon mode.
 
-> > Reading your reply above it isn't clear to me that I had made these two
-> > points clear previously.  If you still think this record should be
-> > associated to a syscall despite my reasoning above, I'm willing to
-> > connect it, but will do so in a seperate issue/patch.
-
-So can I conclude that you are fine with the buffering of the data from
-multiple syscalls being associated with the output of that buffer to one
-audit record with the last of those syscalls?
-
-> paul moore
-
-- RGB
-
---
-Richard Guy Briggs <rgb@redhat.com>
-Sr. S/W Engineer, Kernel Security, Base Operating Systems
-Remote, Ottawa, Red Hat Canada
-IRC: rgb, SunRaycer
-Voice: +1.647.777.2635, Internal: (81) 32635
