@@ -2,200 +2,232 @@ Return-Path: <SRS0=uvhX=PT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9BB36C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 10:24:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 133E9C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 10:25:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5A09F2177E
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 10:24:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C41472063F
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 10:25:10 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="YOsJ6JCb"
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="SMQWWReP"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730472AbfAKKYh (ORCPT
+        id S1731149AbfAKKZJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 11 Jan 2019 05:24:37 -0500
-Received: from mail-vs1-f68.google.com ([209.85.217.68]:40404 "EHLO
-        mail-vs1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730273AbfAKKYh (ORCPT
+        Fri, 11 Jan 2019 05:25:09 -0500
+Received: from mail-ed1-f68.google.com ([209.85.208.68]:40750 "EHLO
+        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725807AbfAKKZJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Jan 2019 05:24:37 -0500
-Received: by mail-vs1-f68.google.com with SMTP id z3so8886167vsf.7
-        for <linux-kernel@vger.kernel.org>; Fri, 11 Jan 2019 02:24:36 -0800 (PST)
+        Fri, 11 Jan 2019 05:25:09 -0500
+Received: by mail-ed1-f68.google.com with SMTP id g22so12639978edr.7
+        for <linux-kernel@vger.kernel.org>; Fri, 11 Jan 2019 02:25:07 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=YBQrJVCwQ0JVDhwx4xMgo3jE6/kf13B9wxHBBaJ7Qx4=;
-        b=YOsJ6JCbZtnDm9mNFmWziR8/Y3/Y9J2Da6tneHn0GQMoYK56XP9wu9xWR2u2kDRHVs
-         cGlw1dekdqmsUDXJLnsXGaZcEd/3ueBPf5Clmyg8N6I200+P/eLaHqqJpPgKRup4nJ90
-         0YqeT74AKhgFrSaAYtCvjT90wfQoLdCMljo5Q=
+        d=ffwll.ch; s=google;
+        h=sender:date:from:to:cc:subject:message-id:mail-followup-to
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=UznZJ4nq2scyICjLjA+3i2m90tln4XAhhH78Sp44HWM=;
+        b=SMQWWReP1XL5PbZ4HE0hPS//H2+j7MPOz9xlFcWKUgsDUxU3tfbdslRjySA/u4HNED
+         6p0/4XVD7JleBlt0REl9eW4/fauZXslahrcQ21tEf0Wm7LT/GcPCVJdZWdSC+AgKY+Nx
+         lb1WSS84X22cvnOtTXdu3mWrAolZYbRulIw8Y=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=YBQrJVCwQ0JVDhwx4xMgo3jE6/kf13B9wxHBBaJ7Qx4=;
-        b=lz7DcxIdLfO4xnFOStLGRHAcJRcEW06RvNSei5D9Mr62w5d7pm/KYoweYz+oRXVMXk
-         0kl53aXaREq30mtkZ67VmYQh7OjwtvYDKEF/Ae3Ea+zn5vuc7scs72hK9SRWH2IixXX+
-         I9r7hYLBFqqNgKc9iqLNSqcYbvjXbxk0NIWVS1/n/nB087vlRW7SBAfLJ/Rj/GFQPi7r
-         Z4QLpynx7REoRN6Vjf+/eKoyfWTtlgWkbyGd4YbPblVKRN+mohxUQQt/1CP19k52kN/5
-         pr07sgFjCtz6YxTY+N/JGHV7K3S5clhMVavcPpHO2USnNSGBLhaMlEmnlurvqVVHQQGs
-         M8jg==
-X-Gm-Message-State: AJcUukeyKY1YuahdDnHBbVUvxz7AJBTJ1QFg/X+TMB+nDITj3XVtyCdn
-        U474r3UcAaCUQ0Wf1m3LGQqnX9ciNaebnoDDqKKqOg==
-X-Google-Smtp-Source: ALg8bN4Fd4aCLPUgWUKtf+5ePEYo4pNi36UsBHfOlVqWCE9CWD+Mb0uf/ZCf/LfWGsNZbpwXdvXNhs0LSVfiwL7eiuw=
-X-Received: by 2002:a67:7ed8:: with SMTP id z207mr5331792vsc.159.1547202275581;
- Fri, 11 Jan 2019 02:24:35 -0800 (PST)
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :mail-followup-to:references:mime-version:content-disposition
+         :in-reply-to:user-agent;
+        bh=UznZJ4nq2scyICjLjA+3i2m90tln4XAhhH78Sp44HWM=;
+        b=Ix4QozPlQonqxD+6lTXH7lfz2VsBtSBEC0smruprzuCqhtCEjAciAc2VAzOMdhdH+j
+         2ehLi5csGcDgwEE8yAPzn5IPBDqCrv+6s5Q1epjhMNW6twjFZAaByZYefr/6+5Txzr1g
+         gZAklcGEpXNLRQP74ZcEyrZtpjhD6j/Eq1GEqhX6JxsoOvCzv8oo4F2mwDG+qwuO5yqV
+         VYQCP/hTMof2TZYctZ9ja+MExPKznF9wj1yJDv8ZiT7zMGxWvRIkvEv8snv1vuHj1ZLO
+         0OLFALrrH4O8MyyVmq5khEsKYoGwY2/kQxomT2S0T/pzFYcffWLMIId+hOyKfBAMffxO
+         rj9Q==
+X-Gm-Message-State: AJcUukdXUv8j9l7gkIK97J5s0sXgKD0ERyLt3zd9McYNBq/wDxr4hjT+
+        b2zveqKOwNv82oj/RGiz6KxBzw==
+X-Google-Smtp-Source: ALg8bN7sFzq/ghTGglKLlsQmNHbWG+TXIph3SJHjp3nvSkX4BFe37kteXXsDEd4APUHP+w7DIvYXRQ==
+X-Received: by 2002:a50:9315:: with SMTP id m21mr12456159eda.58.1547202306456;
+        Fri, 11 Jan 2019 02:25:06 -0800 (PST)
+Received: from phenom.ffwll.local ([2a02:168:569e:0:3106:d637:d723:e855])
+        by smtp.gmail.com with ESMTPSA id q10-v6sm1826885eju.47.2019.01.11.02.25.04
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 11 Jan 2019 02:25:05 -0800 (PST)
+Date:   Fri, 11 Jan 2019 11:25:03 +0100
+From:   Daniel Vetter <daniel@ffwll.ch>
+To:     CK Hu <ck.hu@mediatek.com>
+Cc:     Daniel Vetter <daniel@ffwll.ch>,
+        Noralf =?iso-8859-1?Q?Tr=F8nnes?= <noralf@tronnes.org>,
+        Frank Wunderlich <frank-w@public-files.de>,
+        David Airlie <airlied@linux.ie>,
+        Alexander Ryabchenko <d3adme4t@gmail.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        "moderated list:ARM/Mediatek SoC support" 
+        <linux-mediatek@lists.infradead.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>
+Subject: Re: Re: [PATCH] drm/mediatek: Add MTK Framebuffer-Device (mt7623)
+Message-ID: <20190111102503.GU21184@phenom.ffwll.local>
+Mail-Followup-To: CK Hu <ck.hu@mediatek.com>,
+        Noralf =?iso-8859-1?Q?Tr=F8nnes?= <noralf@tronnes.org>,
+        Frank Wunderlich <frank-w@public-files.de>,
+        David Airlie <airlied@linux.ie>,
+        Alexander Ryabchenko <d3adme4t@gmail.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        "moderated list:ARM/Mediatek SoC support" <linux-mediatek@lists.infradead.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>
+References: <20190102084917.4049-1-frank-w@public-files.de>
+ <20190107103640.GH21184@phenom.ffwll.local>
+ <CAKMK7uEqxz4TAt_iwEC+dMWboVxCeCduyABsSwD0Ns7k=Z_UWA@mail.gmail.com>
+ <trinity-0da588a3-1277-4421-ad6b-1f6aeb129dd6-1547146897687@3c-app-gmx-bs35>
+ <20190110200225.GN21184@phenom.ffwll.local>
+ <1547176809.12054.11.camel@mtksdaap41>
+ <20190111092042.GP21184@phenom.ffwll.local>
+ <1547200155.4209.4.camel@mtksdaap41>
 MIME-Version: 1.0
-References: <cover.1547078153.git.amit.kucheria@linaro.org>
- <041258d65883df964890249a24d2a4788c419304.1547078153.git.amit.kucheria@linaro.org>
- <20190110011533.GV261387@google.com>
-In-Reply-To: <20190110011533.GV261387@google.com>
-From:   Amit Kucheria <amit.kucheria@linaro.org>
-Date:   Fri, 11 Jan 2019 15:54:23 +0530
-Message-ID: <CAHLCerPN3dxd=XBEkU2cMacFDkZjNhXEw7BDYNTEyfSUszSUzg@mail.gmail.com>
-Subject: Re: [PATCH v1 6/7] arm64: dts: sdm845: Increase alert trip point to
- 95 degrees
-To:     Matthias Kaehlcke <mka@chromium.org>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Eduardo Valentin <edubezval@gmail.com>,
-        Andy Gross <andy.gross@linaro.org>,
-        Taniya Das <tdas@codeaurora.org>,
-        Stephen Boyd <swboyd@chromium.org>,
-        Douglas Anderson <dianders@chromium.org>,
-        David Brown <david.brown@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1547200155.4209.4.camel@mtksdaap41>
+X-Operating-System: Linux phenom 4.18.0-2-amd64 
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jan 10, 2019 at 6:45 AM Matthias Kaehlcke <mka@chromium.org> wrote:
->
-> Hi Amit,
->
-> On Thu, Jan 10, 2019 at 05:30:55AM +0530, Amit Kucheria wrote:
-> > 75 degrees is too aggressive for throttling the CPU. After speaking to
-> > Qualcomm engineers, increase it to 95 degrees.
-> >
-> > Signed-off-by: Amit Kucheria <amit.kucheria@linaro.org>
-> > ---
-> >  arch/arm64/boot/dts/qcom/sdm845.dtsi | 16 ++++++++--------
-> >  1 file changed, 8 insertions(+), 8 deletions(-)
-> >
-> > diff --git a/arch/arm64/boot/dts/qcom/sdm845.dtsi b/arch/arm64/boot/dts/qcom/sdm845.dtsi
-> > index c27cbd3bcb0a..29e823b0caf4 100644
-> > --- a/arch/arm64/boot/dts/qcom/sdm845.dtsi
-> > +++ b/arch/arm64/boot/dts/qcom/sdm845.dtsi
-> > @@ -1692,7 +1692,7 @@
-> >
-> >                       trips {
-> >                               cpu_alert0: trip0 {
-> > -                                     temperature = <75000>;
-> > +                                     temperature = <95000>;
-> >                                       hysteresis = <2000>;
-> >                                       type = "passive";
-> >                               };
-> > @@ -1713,7 +1713,7 @@
-> >
-> >                       trips {
-> >                               cpu_alert1: trip0 {
-> > -                                     temperature = <75000>;
-> > +                                     temperature = <95000>;
-> >                                       hysteresis = <2000>;
-> >                                       type = "passive";
-> >                               };
-> > @@ -1734,7 +1734,7 @@
-> >
-> >                       trips {
-> >                               cpu_alert2: trip0 {
-> > -                                     temperature = <75000>;
-> > +                                     temperature = <95000>;
-> >                                       hysteresis = <2000>;
-> >                                       type = "passive";
-> >                               };
-> > @@ -1755,7 +1755,7 @@
-> >
-> >                       trips {
-> >                               cpu_alert3: trip0 {
-> > -                                     temperature = <75000>;
-> > +                                     temperature = <95000>;
-> >                                       hysteresis = <2000>;
-> >                                       type = "passive";
-> >                               };
-> > @@ -1776,7 +1776,7 @@
-> >
-> >                       trips {
-> >                               cpu_alert4: trip0 {
-> > -                                     temperature = <75000>;
-> > +                                     temperature = <95000>;
-> >                                       hysteresis = <2000>;
-> >                                       type = "passive";
-> >                               };
-> > @@ -1797,7 +1797,7 @@
-> >
-> >                       trips {
-> >                               cpu_alert5: trip0 {
-> > -                                     temperature = <75000>;
-> > +                                     temperature = <95000>;
-> >                                       hysteresis = <2000>;
-> >                                       type = "passive";
-> >                               };
-> > @@ -1818,7 +1818,7 @@
-> >
-> >                       trips {
-> >                               cpu_alert6: trip0 {
-> > -                                     temperature = <75000>;
-> > +                                     temperature = <95000>;
-> >                                       hysteresis = <2000>;
-> >                                       type = "passive";
-> >                               };
-> > @@ -1839,7 +1839,7 @@
-> >
-> >                       trips {
-> >                               cpu_alert7: trip0 {
-> > -                                     temperature = <75000>;
-> > +                                     temperature = <95000>;
-> >                                       hysteresis = <2000>;
-> >                                       type = "passive";
-> >                               };
->
-> The change itself looks good to me, however I wonder if it would be
-> worth to eliminate redundancy and merge the current 8 thermal zones
-> into 2, one for the Silver and one for the Gold cluster (as done by
-> http://crrev.com/c/1381752). There is a single cooling device for
-> each cluster, so it's not clear to me if there is any gain from having
-> a separate thermal zone for each CPU. If it is important to monitor
-> the temperatures of the individual cores this can still be done by
-> configuring the thermal zone of the cluster with multiple thermal
-> sensors.
+On Fri, Jan 11, 2019 at 05:49:15PM +0800, CK Hu wrote:
+> Hi, Daniel:
+> 
+> On Fri, 2019-01-11 at 10:20 +0100, Daniel Vetter wrote:
+> > On Fri, Jan 11, 2019 at 11:20:09AM +0800, CK Hu wrote:
+> > > Hi, Daniel:
+> > > 
+> > > On Thu, 2019-01-10 at 21:02 +0100, Daniel Vetter wrote:
+> > > > On Thu, Jan 10, 2019 at 08:01:37PM +0100, Frank Wunderlich wrote:
+> > > > > Hi Daniel,
+> > > > > 
+> > > > > > > Would be good to use the new generic fbdev emulation code here, for even
+> > > > > > > less code. Or at least know why this isn't possible to use for mtk (and
+> > > > > > > maybe address that in the core code). Hand-rolling fbdev code shouldn't be
+> > > > > > > needed anymore.
+> > > > > > 
+> > > > > > Back on the mailing list, no private replies please:
+> > > > > 
+> > > > > i don't wanted to spam all people with dumb questions ;)
+> > > > 
+> > > > There's no dumb questions, only insufficient documentation :-)
+> > > > 
+> > > > > > For examples please grep for drm_fbdev_generic_setup(). There's also a
+> > > > > > still in-flight series from Gerd Hoffmann to convert over bochs. That,
+> > > > > > plus all the kerneldoc linked from there should get you started.
+> > > > > > -Daniel
+> > > > > 
+> > > > > this is one of google best founds if i search for drm_fbdev_generic_setup:
+> > > > > 
+> > > > > https://lkml.org/lkml/2018/12/19/305
+> > > > > 
+> > > > > not very helpful...
+> > > > > 
+> > > > > so i tried kernel-doc
+> > > > > 
+> > > > > https://www.kernel.org/doc/html/latest/gpu/drm-kms-helpers.html?highlight=drm_fbdev_generic_setup#c.drm_fbdev_generic_setup
+> > > > > 
+> > > > > which is nice function-reference but i've found no generic workflow
+> > > > > 
+> > > > > as the posted driver is "only" a driver ported from kernel 4.4 by Alexander, i don't know if this new framework can be used and which parts need to be changed. I only try to bring his code Mainline....
+> > > > > Maybe CK Hu can help here because driver is originally from him and he knows internals. Or maybe you can help here?
+> > > > > 
+> > > > > i personally make my first steps as spare-time kernel-developer :)
+> > > > 
+> > > > There's a ton of in-kernel users of that function already, I meant you can
+> > > > use those to serve as examples ... If those + the kerneldoc aren't
+> > > > good enough, then we need to improve them.
+> > > > -Daniel
+> > > 
+> > > I've tried with drm_fbdev_generic_setup() and it works fine with simple
+> > > modification. The patch is
+> > > 
+> > > --- a/drivers/gpu/drm/mediatek/mtk_drm_drv.c
+> > > +++ b/drivers/gpu/drm/mediatek/mtk_drm_drv.c
+> > > @@ -16,6 +16,7 @@
+> > >  #include <drm/drm_atomic.h>
+> > >  #include <drm/drm_atomic_helper.h>
+> > >  #include <drm/drm_crtc_helper.h>
+> > > +#include <drm/drm_fb_helper.h>
+> > >  #include <drm/drm_gem.h>
+> > >  #include <drm/drm_gem_cma_helper.h>
+> > >  #include <drm/drm_of.h>
+> > > @@ -379,6 +380,7 @@ static void mtk_drm_kms_deinit(struct drm_device
+> > > *drm)
+> > >         .gem_prime_get_sg_table = mtk_gem_prime_get_sg_table,
+> > >         .gem_prime_import_sg_table = mtk_gem_prime_import_sg_table,
+> > >         .gem_prime_mmap = mtk_drm_gem_mmap_buf,
+> > > +       .gem_prime_vmap = mtk_drm_gem_prime_vmap,
+> > >         .ioctls = mtk_ioctls,
+> > >         .num_ioctls = ARRAY_SIZE(mtk_ioctls),
+> > >         .fops = &mtk_drm_fops,
+> > > @@ -416,6 +418,8 @@ static int mtk_drm_bind(struct device *dev)
+> > >         if (ret < 0)
+> > >                 goto err_deinit;
+> > > 
+> > > +       drm_fbdev_generic_setup(drm, 32);
+> > > +
+> > >         return 0;
+> > > 
+> > > 
+> > > But I implement .gem_prime_vmap with a workaround,
+> > > 
+> > > 
+> > > --- a/drivers/gpu/drm/mediatek/mtk_drm_gem.c
+> > > +++ b/drivers/gpu/drm/mediatek/mtk_drm_gem.c
+> > > @@ -280,3 +280,8 @@ int mtk_gem_create_ioctl(struct drm_device *dev,
+> > > void *data,
+> > >         mtk_drm_gem_free_object(&mtk_gem->base);
+> > >         return ret;
+> > >  }
+> > > +
+> > > +void *mtk_drm_gem_prime_vmap(struct drm_gem_object *obj)
+> > > +{
+> > > +       return (void *)1;
+> > > +}
+> > > 
+> > > Current drm_fb_helper depends on drm_client to create fbdev. When
+> > > drm_client create drm_client_buffer, it need to vmap to get kernel
+> > > vaddr. But I think for fbdev, the vaddr is useless. Do you agree that I
+> > > temporarily implement .gem_prime_vmap in such way?
+> > 
+> > The vmap is used by fbcon, without that fbdev won't really work I think.
+> > So I'm rather confused on what you tested ...
+> > 
+> > Adding Noralf, he's the expert here.
+> > -Daniel
+> 
+> I test with fb_test [1], it is a user space program just open /dev/fb0
+> and mmap it to user space. I does not turn on fbcon so everything looks
+> well. If support fbcon is essential, I would implement vmap correctly.
+> If it's not essential, I think I could return 0 when
+> CONFIG_FRAMBUFFER_CONSOLE is defined.
 
-Reducing the number of thermal zones to 2 (by grouping 4 sensors per
-zone) is not possible due a limitation of the thermal framework[1]. It
-is something that we want to address. Previous attempts to fix this
-were rejected for various reasons. Eduardo was going to share a way to
-have more flexible mapping between sensors and zones after discussions
-at LPC.
+I think fbdev emulation without working fbcon is fairly useless. And it
+shouldn't be that much work to make it work, we have quite a few more
+helers for gem bo nowadays.
+-Daniel
 
-<nag> Eduardo, do you have anything we can review? </nag> :-)
+> 
+> Regards,
+> CK
+> 
+> [1]
+> https://android.googlesource.com/platform/system/extras/+/master/tests/framebuffer/fb_test.c
+> 
+> 
 
-Having said that, we'll need some aggregation functions when we add
-multiple sensors to a zone (e.g. max, mean) to reflect the zone. This
-will lose information about hotspots and prevent things like idle
-injection on a particular CPU that is causing most of the heat in the
-aggregated zone. So IMHO, it might be useful to have information about
-the hotspots (i.e TZ per sensor) and aggregated values (ambient
-temperature) that can be fed to the thermal policy.
-
-
-[1] https://elixir.bootlin.com/linux/v5.0-rc1/source/drivers/thermal/of-thermal.c#L502
+-- 
+Daniel Vetter
+Software Engineer, Intel Corporation
+http://blog.ffwll.ch
