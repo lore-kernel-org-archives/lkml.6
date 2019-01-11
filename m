@@ -7,47 +7,46 @@ X-Spam-Status: No, score=-10.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A645C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 15:13:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C77E8C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 15:13:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D0EB52177B
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 15:13:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9909921848
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 15:13:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547219624;
-	bh=pdS8msKkP7S5fvCe6Kx6fer6qbBpdqhXPLSeXCx+FsA=;
+	s=default; t=1547219639;
+	bh=0bo/QvKv0hAL6e1gqYT124c3dEZ+uWPSbX95hocvWdI=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=uq+IAYpLCoFz2G0qV4bGH4fhI88LvF59Xiqmd+9Q78oRp10WdVNOxJorncp8pIVmo
-	 Cq7Bb49M+GAg0/7TRFgR9zqupuv2newlH6/skwFzeGdBqBRIQs61pJyRSoNGo0TZ5k
-	 S2a8UswtU12+4A/ro+773ikhSCsfgJvU+2id9/S0=
+	b=Fn07CUB/nbkBM+Jzk+T2ceHi1z7/XSWCJ7NVf0+5oSay4R2Shsn0DqPVnHV81AqA4
+	 3zOgfjL+tRjGu5ijVq5D2naWHF4wawRshsxdNHLvRqswwT3NUqAz4a4sOrGo7IZEaG
+	 443j1zfqcLceIQjZKMpxJtek6PG+1wwGpz8nvMOM=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387432AbfAKPNn (ORCPT
+        id S2388182AbfAKPN7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 11 Jan 2019 10:13:43 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58638 "EHLO mail.kernel.org"
+        Fri, 11 Jan 2019 10:13:59 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58328 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1733137AbfAKOOr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Jan 2019 09:14:47 -0500
+        id S1733069AbfAKOOh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 Jan 2019 09:14:37 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 130072177B;
-        Fri, 11 Jan 2019 14:14:45 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6D47120874;
+        Fri, 11 Jan 2019 14:14:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547216086;
-        bh=pdS8msKkP7S5fvCe6Kx6fer6qbBpdqhXPLSeXCx+FsA=;
+        s=default; t=1547216075;
+        bh=0bo/QvKv0hAL6e1gqYT124c3dEZ+uWPSbX95hocvWdI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ct3HemASYc2I95hAe2emfNsxDeaGCJKXrcHXeSL5PtdWRH0U2W8Zhs15KaIryCIv8
-         H7OriiQ2MWJHGTxdXjNpV63ZArHnFzAbF33GEYMBLZa4wgrQ28dqCnuzGiB0lo+Lnw
-         DwEQvMKkKRgxNNeRBiPbMiDDGhSCtd7vk9J4H17g=
+        b=qHjpicHxd/ug32AtPQ16nZESEyhWudUAA9BaaTxvsJJdnrUX0wey3B6pBeXznZ4Ly
+         wQj87w1MtoUQojt0TNh56sGTeETmLstZNKv6PQBni27mAw9GwSYlwMC/t2jKzvgBZr
+         xSg2yzgRxBb/rjJR3ZbOOjp6fZkiqs3qYdjrZSiw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Cong Wang <xiyou.wangcong@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        syzbot+ae6bb869cbed29b29040@syzkaller.appspotmail.com
-Subject: [PATCH 3.18 08/47] ax25: fix a use-after-free in ax25_fillin_cb()
-Date:   Fri, 11 Jan 2019 15:07:53 +0100
-Message-Id: <20190111130957.183353754@linuxfoundation.org>
+        stable@vger.kernel.org, Russell King <rmk+kernel@armlinux.org.uk>,
+        Ulf Hansson <ulf.hansson@linaro.org>
+Subject: [PATCH 3.18 04/47] mmc: omap_hsmmc: fix DMA API warning
+Date:   Fri, 11 Jan 2019 15:07:49 +0100
+Message-Id: <20190111130956.733599374@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190111130956.170952125@linuxfoundation.org>
 References: <20190111130956.170952125@linuxfoundation.org>
@@ -66,73 +65,66 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Cong Wang <xiyou.wangcong@gmail.com>
+From: Russell King <rmk+kernel@armlinux.org.uk>
 
-[ Upstream commit c433570458e49bccea5c551df628d058b3526289 ]
+commit 0b479790684192ab7024ce6a621f93f6d0a64d92 upstream.
 
-There are multiple issues here:
+While booting with rootfs on MMC, the following warning is encountered
+on OMAP4430:
 
-1. After freeing dev->ax25_ptr, we need to set it to NULL otherwise
-   we may use a dangling pointer.
+omap-dma-engine 4a056000.dma-controller: DMA-API: mapping sg segment longer than device claims to support [len=69632] [max=65536]
 
-2. There is a race between ax25_setsockopt() and device notifier as
-   reported by syzbot. Close it by holding RTNL lock.
+This is because the DMA engine has a default maximum segment size of 64K
+but HSMMC sets:
 
-3. We need to test if dev->ax25_ptr is NULL before using it.
+        mmc->max_blk_size = 512;       /* Block Length at max can be 1024 */
+        mmc->max_blk_count = 0xFFFF;    /* No. of Blocks is 16 bits */
+        mmc->max_req_size = mmc->max_blk_size * mmc->max_blk_count;
+        mmc->max_seg_size = mmc->max_req_size;
 
-Reported-and-tested-by: syzbot+ae6bb869cbed29b29040@syzkaller.appspotmail.com
-Signed-off-by: Cong Wang <xiyou.wangcong@gmail.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+which ends up telling the block layer that we support a maximum segment
+size of 65535*512, which exceeds the advertised DMA engine capabilities.
+
+Fix this by clamping the maximum segment size to the lower of the
+maximum request size and of the DMA engine device used for either DMA
+channel.
+
+Signed-off-by: Russell King <rmk+kernel@armlinux.org.uk>
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- net/ax25/af_ax25.c  |   11 +++++++++--
- net/ax25/ax25_dev.c |    2 ++
- 2 files changed, 11 insertions(+), 2 deletions(-)
 
---- a/net/ax25/af_ax25.c
-+++ b/net/ax25/af_ax25.c
-@@ -655,15 +655,22 @@ static int ax25_setsockopt(struct socket
- 			break;
- 		}
+---
+ drivers/mmc/host/omap_hsmmc.c |   12 +++++++++++-
+ 1 file changed, 11 insertions(+), 1 deletion(-)
+
+--- a/drivers/mmc/host/omap_hsmmc.c
++++ b/drivers/mmc/host/omap_hsmmc.c
+@@ -2141,7 +2141,6 @@ static int omap_hsmmc_probe(struct platf
+ 	mmc->max_blk_size = 512;       /* Block Length at max can be 1024 */
+ 	mmc->max_blk_count = 0xFFFF;    /* No. of Blocks is 16 bits */
+ 	mmc->max_req_size = mmc->max_blk_size * mmc->max_blk_count;
+-	mmc->max_seg_size = mmc->max_req_size;
  
--		dev = dev_get_by_name(&init_net, devname);
-+		rtnl_lock();
-+		dev = __dev_get_by_name(&init_net, devname);
- 		if (!dev) {
-+			rtnl_unlock();
- 			res = -ENODEV;
- 			break;
- 		}
+ 	mmc->caps |= MMC_CAP_MMC_HIGHSPEED | MMC_CAP_SD_HIGHSPEED |
+ 		     MMC_CAP_WAIT_WHILE_BUSY | MMC_CAP_ERASE;
+@@ -2198,6 +2197,17 @@ static int omap_hsmmc_probe(struct platf
+ 		goto err_irq;
+ 	}
  
- 		ax25->ax25_dev = ax25_dev_ax25dev(dev);
-+		if (!ax25->ax25_dev) {
-+			rtnl_unlock();
-+			res = -ENODEV;
-+			break;
-+		}
- 		ax25_fillin_cb(ax25, ax25->ax25_dev);
--		dev_put(dev);
-+		rtnl_unlock();
- 		break;
- 
- 	default:
---- a/net/ax25/ax25_dev.c
-+++ b/net/ax25/ax25_dev.c
-@@ -116,6 +116,7 @@ void ax25_dev_device_down(struct net_dev
- 	if ((s = ax25_dev_list) == ax25_dev) {
- 		ax25_dev_list = s->next;
- 		spin_unlock_bh(&ax25_dev_lock);
-+		dev->ax25_ptr = NULL;
- 		dev_put(dev);
- 		kfree(ax25_dev);
- 		return;
-@@ -125,6 +126,7 @@ void ax25_dev_device_down(struct net_dev
- 		if (s->next == ax25_dev) {
- 			s->next = ax25_dev->next;
- 			spin_unlock_bh(&ax25_dev_lock);
-+			dev->ax25_ptr = NULL;
- 			dev_put(dev);
- 			kfree(ax25_dev);
- 			return;
++	/*
++	 * Limit the maximum segment size to the lower of the request size
++	 * and the DMA engine device segment size limits.  In reality, with
++	 * 32-bit transfers, the DMA engine can do longer segments than this
++	 * but there is no way to represent that in the DMA model - if we
++	 * increase this figure here, we get warnings from the DMA API debug.
++	 */
++	mmc->max_seg_size = min3(mmc->max_req_size,
++			dma_get_max_seg_size(host->rx_chan->device->dev),
++			dma_get_max_seg_size(host->tx_chan->device->dev));
++
+ 	/* Request IRQ for MMC operations */
+ 	ret = devm_request_irq(&pdev->dev, host->irq, omap_hsmmc_irq, 0,
+ 			mmc_hostname(mmc), host);
 
 
