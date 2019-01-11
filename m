@@ -4,52 +4,57 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-10.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F742C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:48:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 74A13C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:48:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0F01E206B6
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:48:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 45F112063F
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:48:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547218115;
-	bh=6pc/jo2MU2d0y2OJLB/bqfNxPXN4Qc2jhEN7YMvfp2g=;
+	s=default; t=1547218137;
+	bh=yND8rJKpujL93ijAcR/vL6CscxA9IzU0PiVv2Cy+gY4=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=YPMgcZ3zgqjxwYWrat5x7oQqPJu7wX0bwNqjUR/kf4NzSVgasXioxgSQR8KnuVG/R
-	 4mcw5YcTwIUMN0RN0eYBjJ7S43Dr/OfJhMhr1XVBu9c+t/BR8vMhbHA2PEVzilujrh
-	 WVKi5lVTfUq1EdLv3F8G2WdykW7hxKrVRsGo+zs0=
+	b=VD7u0QgtsEKSeoLeD0GcHQdJ/V82eCw3dtJX9D3ncPD60c/fmFDFp+wcAw64IL43q
+	 PV5KcBDNBqFXvs0Pchj4is9HfI/FfqpsdBNBTW8hJ5ekzSKuh/3ZLwQIbP4qUAHFYs
+	 pAelWaUWXoJwd/SfH2NL9EBJkEHLEjW7AFOwM0/c=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391535AbfAKOse (ORCPT
+        id S2391544AbfAKOs4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 11 Jan 2019 09:48:34 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34386 "EHLO mail.kernel.org"
+        Fri, 11 Jan 2019 09:48:56 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39568 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2391307AbfAKOlj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Jan 2019 09:41:39 -0500
+        id S1731956AbfAKOsx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 Jan 2019 09:48:53 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 38E5821848;
-        Fri, 11 Jan 2019 14:41:38 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3D0702063F;
+        Fri, 11 Jan 2019 14:48:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547217698;
-        bh=6pc/jo2MU2d0y2OJLB/bqfNxPXN4Qc2jhEN7YMvfp2g=;
+        s=default; t=1547218132;
+        bh=yND8rJKpujL93ijAcR/vL6CscxA9IzU0PiVv2Cy+gY4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=MODz2oEZiSdgTyqKki9mPtA67ELToQGtNGO7pdMSyHNpu73By6uoVY9N1oO/AyW24
-         OpRzsc6YFpH/Va51xJXfpQfX87HF6xLRoB5rC+kktNu4TLpwMpPLQmJXdn5nxeaHC8
-         ycTmtl98oJPbLZcTYUHo8FzdWGDSnj9jF7I7+7/g=
+        b=t6fkZKLx9Kki0osepJWkUsXtBadarUXRcWFAi140UXAkKZ2wThpHHBlXwsf36kYlu
+         ye8+J7fQ/cLeV4rBo18W5yabHDcrxn6nQfENd1QdTJju1b2UhMyrLDxS1EjUEKyEhr
+         Gx9X33eV7/V3ycLM6wCZA0shtPRkVWi/ZXtY5U6s=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Steffen Maier <maier@linux.ibm.com>,
-        Jens Remus <jremus@linux.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>
-Subject: [PATCH 4.20 01/65] scsi: zfcp: fix posting too many status read buffers leading to adapter shutdown
-Date:   Fri, 11 Jan 2019 15:14:47 +0100
-Message-Id: <20190111131055.947138751@linuxfoundation.org>
+        stable@vger.kernel.org, Ashok Raj <ashok.raj@intel.com>,
+        Jacob Pan <jacob.jun.pan@linux.intel.com>,
+        Lu Baolu <baolu.lu@linux.intel.com>,
+        "Ramos Falcon, Ernesto R" <ernesto.r.ramos.falcon@intel.com>,
+        Ricardo Neri <ricardo.neri-calderon@linux.intel.com>,
+        Sohil Mehta <sohil.mehta@intel.com>,
+        Joerg Roedel <jroedel@suse.de>
+Subject: [PATCH 4.9 58/63] iommu/vt-d: Handle domain agaw being less than iommu agaw
+Date:   Fri, 11 Jan 2019 15:15:01 +0100
+Message-Id: <20190111131055.041545554@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190111131055.331350141@linuxfoundation.org>
-References: <20190111131055.331350141@linuxfoundation.org>
+In-Reply-To: <20190111131046.387528003@linuxfoundation.org>
+References: <20190111131046.387528003@linuxfoundation.org>
 User-Agent: quilt/0.65
 X-stable: review
 X-Patchwork-Hint: ignore
@@ -61,96 +66,63 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.20-stable review patch.  If anyone has any objections, please let me know.
+4.9-stable review patch.  If anyone has any objections, please let me know.
 
 ------------------
 
-From: Steffen Maier <maier@linux.ibm.com>
+From: Sohil Mehta <sohil.mehta@intel.com>
 
-commit 60a161b7e5b2a252ff0d4c622266a7d8da1120ce upstream.
+commit 3569dd07aaad71920c5ea4da2d5cc9a167c1ffd4 upstream.
 
-Suppose adapter (open) recovery is between opened QDIO queues and before
-(the end of) initial posting of status read buffers (SRBs). This time
-window can be seconds long due to FSF_PROT_HOST_CONNECTION_INITIALIZING
-causing by design looping with exponential increase sleeps in the function
-performing exchange config data during recovery
-[zfcp_erp_adapter_strat_fsf_xconf()]. Recovery triggered by local link up.
+The Intel IOMMU driver opportunistically skips a few top level page
+tables from the domain paging directory while programming the IOMMU
+context entry. However there is an implicit assumption in the code that
+domain's adjusted guest address width (agaw) would always be greater
+than IOMMU's agaw.
 
-Suppose an event occurs for which the FCP channel would send an unsolicited
-notification to zfcp by means of a previously posted SRB.  We saw it with
-local cable pull (link down) in multi-initiator zoning with multiple
-NPIV-enabled subchannels of the same shared FCP channel.
+The IOMMU capabilities in an upcoming platform cause the domain's agaw
+to be lower than IOMMU's agaw. The issue is seen when the IOMMU supports
+both 4-level and 5-level paging. The domain builds a 4-level page table
+based on agaw of 2. However the IOMMU's agaw is set as 3 (5-level). In
+this case the code incorrectly tries to skip page page table levels.
+This causes the IOMMU driver to avoid programming the context entry. The
+fix handles this case and programs the context entry accordingly.
 
-As soon as zfcp_erp_adapter_strategy_open_fsf() starts posting the initial
-status read buffers from within the adapter's ERP thread, the channel does
-send an unsolicited notification.
-
-Since v2.6.27 commit d26ab06ede83 ("[SCSI] zfcp: receiving an unsolicted
-status can lead to I/O stall"), zfcp_fsf_status_read_handler() schedules
-adapter->stat_work to re-fill the just consumed SRB from a work item.
-
-Now the ERP thread and the work item post SRBs in parallel.  Both contexts
-call the helper function zfcp_status_read_refill().  The tracking of
-missing (to be posted / re-filled) SRBs is not thread-safe due to separate
-atomic_read() and atomic_dec(), in order to depend on posting
-success. Hence, both contexts can see
-atomic_read(&adapter->stat_miss) == 1. One of the two contexts posts
-one too many SRB. Zfcp gets QDIO_ERROR_SLSB_STATE on the output queue
-(trace tag "qdireq1") leading to zfcp_erp_adapter_shutdown() in
-zfcp_qdio_handler_error().
-
-An obvious and seemingly clean fix would be to schedule stat_work from the
-ERP thread and wait for it to finish. This would serialize all SRB
-re-fills. However, we already have another work item wait on the ERP
-thread: adapter->scan_work runs zfcp_fc_scan_ports() which calls
-zfcp_fc_eval_gpn_ft(). The latter calls zfcp_erp_wait() to wait for all the
-open port recoveries during zfcp auto port scan, but in fact it waits for
-any pending recovery including an adapter recovery. This approach leads to
-a deadlock.  [see also v3.19 commit 18f87a67e6d6 ("zfcp: auto port scan
-resiliency"); v2.6.37 commit d3e1088d6873
-("[SCSI] zfcp: No ERP escalation on gpn_ft eval");
-v2.6.28 commit fca55b6fb587
-("[SCSI] zfcp: fix deadlock between wq triggered port scan and ERP")
-fixing v2.6.27 commit c57a39a45a76
-("[SCSI] zfcp: wait until adapter is finished with ERP during auto-port");
-v2.6.27 commit cc8c282963bd
-("[SCSI] zfcp: Automatically attach remote ports")]
-
-Instead make the accounting of missing SRBs atomic for parallel execution
-in both the ERP thread and adapter->stat_work.
-
-Signed-off-by: Steffen Maier <maier@linux.ibm.com>
-Fixes: d26ab06ede83 ("[SCSI] zfcp: receiving an unsolicted status can lead to I/O stall")
-Cc: <stable@vger.kernel.org> #2.6.27+
-Reviewed-by: Jens Remus <jremus@linux.ibm.com>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+Fixes: de24e55395698 ("iommu/vt-d: Simplify domain_context_mapping_one")
+Cc: <stable@vger.kernel.org>
+Cc: Ashok Raj <ashok.raj@intel.com>
+Cc: Jacob Pan <jacob.jun.pan@linux.intel.com>
+Cc: Lu Baolu <baolu.lu@linux.intel.com>
+Reviewed-by: Lu Baolu <baolu.lu@linux.intel.com>
+Reported-by: Ramos Falcon, Ernesto R <ernesto.r.ramos.falcon@intel.com>
+Tested-by: Ricardo Neri <ricardo.neri-calderon@linux.intel.com>
+Signed-off-by: Sohil Mehta <sohil.mehta@intel.com>
+Signed-off-by: Joerg Roedel <jroedel@suse.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/s390/scsi/zfcp_aux.c |    6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/iommu/intel-iommu.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/drivers/s390/scsi/zfcp_aux.c
-+++ b/drivers/s390/scsi/zfcp_aux.c
-@@ -275,16 +275,16 @@ static void zfcp_free_low_mem_buffers(st
-  */
- int zfcp_status_read_refill(struct zfcp_adapter *adapter)
- {
--	while (atomic_read(&adapter->stat_miss) > 0)
-+	while (atomic_add_unless(&adapter->stat_miss, -1, 0))
- 		if (zfcp_fsf_status_read(adapter->qdio)) {
-+			atomic_inc(&adapter->stat_miss); /* undo add -1 */
- 			if (atomic_read(&adapter->stat_miss) >=
- 			    adapter->stat_read_buf_num) {
- 				zfcp_erp_adapter_reopen(adapter, 0, "axsref1");
- 				return 1;
- 			}
- 			break;
--		} else
--			atomic_dec(&adapter->stat_miss);
-+		}
- 	return 0;
- }
+--- a/drivers/iommu/intel-iommu.c
++++ b/drivers/iommu/intel-iommu.c
+@@ -2084,7 +2084,7 @@ static int domain_context_mapping_one(st
+ 	 * than default.  Unnecessary for PT mode.
+ 	 */
+ 	if (translation != CONTEXT_TT_PASS_THROUGH) {
+-		for (agaw = domain->agaw; agaw != iommu->agaw; agaw--) {
++		for (agaw = domain->agaw; agaw > iommu->agaw; agaw--) {
+ 			ret = -ENOMEM;
+ 			pgd = phys_to_virt(dma_pte_addr(pgd));
+ 			if (!dma_pte_present(pgd))
+@@ -2098,7 +2098,7 @@ static int domain_context_mapping_one(st
+ 			translation = CONTEXT_TT_MULTI_LEVEL;
  
+ 		context_set_address_root(context, virt_to_phys(pgd));
+-		context_set_address_width(context, iommu->agaw);
++		context_set_address_width(context, agaw);
+ 	} else {
+ 		/*
+ 		 * In pass through mode, AW must be programmed to
 
 
