@@ -2,347 +2,189 @@ Return-Path: <SRS0=uvhX=PT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EE70DC43444
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 07:22:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BAAA3C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 07:25:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BDCDD20874
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 07:22:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6F84A20872
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 07:25:32 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="k3/fMZEo"
+	dkim=pass (1024-bit key) header.d=microchiptechnology.onmicrosoft.com header.i=@microchiptechnology.onmicrosoft.com header.b="S1b3lOK1"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729964AbfAKHWc (ORCPT
+        id S1731088AbfAKHZb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 11 Jan 2019 02:22:32 -0500
-Received: from mail-vs1-f66.google.com ([209.85.217.66]:34355 "EHLO
-        mail-vs1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727723AbfAKHWc (ORCPT
+        Fri, 11 Jan 2019 02:25:31 -0500
+Received: from esa3.microchip.iphmx.com ([68.232.153.233]:30296 "EHLO
+        esa3.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730667AbfAKHZb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Jan 2019 02:22:32 -0500
-Received: by mail-vs1-f66.google.com with SMTP id y27so8673482vsi.1
-        for <linux-kernel@vger.kernel.org>; Thu, 10 Jan 2019 23:22:31 -0800 (PST)
+        Fri, 11 Jan 2019 02:25:31 -0500
+X-IronPort-AV: E=Sophos;i="5.56,464,1539673200"; 
+   d="scan'208";a="25358629"
+Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
+  by esa3.microchip.iphmx.com with ESMTP/TLS/DHE-RSA-AES256-SHA; 11 Jan 2019 00:25:29 -0700
+Received: from NAM03-BY2-obe.outbound.protection.outlook.com (10.10.215.89) by
+ email.microchip.com (10.10.76.106) with Microsoft SMTP Server (TLS) id
+ 14.3.352.0; Fri, 11 Jan 2019 00:25:29 -0700
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=xh141qVbrslnUf/QkqeYFZOBC/pwFQvqgQp0+qxdpKs=;
-        b=k3/fMZEo+aPbQ6Z+XvHRsdZ0TfdxNz82/3QkMGe6qEXwBtUvDTYttQe6OVyEuw0E9d
-         jocrbLGPXrsbVbckMlduk5MLGJU/qJpHDQ0shEDa2nG/4S4ApxBsr0zmpxmKX6ivEQGi
-         OBKtPK8izEDb/X0mYRrAqXxIVJIg0UqMWrjrE=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=xh141qVbrslnUf/QkqeYFZOBC/pwFQvqgQp0+qxdpKs=;
-        b=KQa60qxKgkypjsVVQi/LChCKKEpRJl0DY/wJnq8luqISPflrSn8f4QA6oL272Z44o9
-         LXdhULBDijRdg1GDEUeFYr5CGVvo3JrNNa398L3iRLApUtiJOT9ppa1+OEKiaeha+eiA
-         0nNQzEOwLlwBPUgdDOpyCmbpFvJYw9UUkhN2Nr0ZGlSgtiiTXj86bthKFhO4X5HfLk6+
-         DAa03oX3Psqj0Un2TKcJiWkgMLjzEjfLUSBw7Ifc6D5Gjde/Q0EzSzZWMZ4TOq/16N/A
-         z1ku/7JgvZp+luJ2fr+ukUonML0pPK86lnPHbpDdy4EdiicyV20yGuSIaFIM3IQsQQED
-         17ig==
-X-Gm-Message-State: AJcUukfJFwNyXce1zMF+SL7CvestiWGfWHNF0hXhw2+6e2RPcQXiYZQs
-        irZVzNIkGcPCSJFemjVdq9PCid2UpB6LEbxY5P4iwQ==
-X-Google-Smtp-Source: ALg8bN4mMby8HrQ+LOFAXXeWzqQKI6UnF8h/PBy4jQckUzXN+ZQPC3hS3cVgFKoNkCzAw/iuMQ67nNn7c2a3d79B5KQ=
-X-Received: by 2002:a67:ea90:: with SMTP id f16mr5392159vso.89.1547191351196;
- Thu, 10 Jan 2019 23:22:31 -0800 (PST)
+ d=microchiptechnology.onmicrosoft.com;
+ s=selector1-microchiptechnology-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=akCWEhmZfDkKOuM8S8pymathlQxEVoK5fLlHbAQwr90=;
+ b=S1b3lOK1a5vkykIF1oDVtoWkKVftLUxmbAzmJoBAJqMIIoC6M7NIHttA79XM0ePSnerUVgZPt+FnFz6Mrn2X6n59o4p3QANXuJgjmJ4Hefe1fNvkh7ciIAHvBobSkng+vqM4j0IkK7vhkbTHfh4imkXQV+qLgjFVhar3SaQWXGg=
+Received: from MWHPR11MB1248.namprd11.prod.outlook.com (10.169.236.145) by
+ MWHPR11MB1309.namprd11.prod.outlook.com (10.169.237.140) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1516.14; Fri, 11 Jan 2019 07:25:25 +0000
+Received: from MWHPR11MB1248.namprd11.prod.outlook.com
+ ([fe80::c14e:91dd:ffb7:5c1d]) by MWHPR11MB1248.namprd11.prod.outlook.com
+ ([fe80::c14e:91dd:ffb7:5c1d%9]) with mapi id 15.20.1516.015; Fri, 11 Jan 2019
+ 07:25:25 +0000
+From:   <Eugen.Hristev@microchip.com>
+To:     <luis.oliveira@synopsys.com>, <linux-media@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+CC:     <joao.pinto@synopsys.com>, <festevam@gmail.com>,
+        <mchehab@kernel.org>, <gregkh@linuxfoundation.org>,
+        <davem@davemloft.net>, <akpm@linux-foundation.org>,
+        <arnd@arndb.de>, <hans.verkuil@cisco.com>,
+        <laurent.pinchart@ideasonboard.com>, <geert@linux-m68k.org>,
+        <narmstrong@baylibre.com>, <p.zabel@pengutronix.de>,
+        <treding@nvidia.com>, <maxime.ripard@bootlin.com>,
+        <todor.tomov@linaro.org>
+Subject: Re: [V3, 4/4] media: platform: dwc: Add MIPI CSI-2 controller driver
+Thread-Topic: [V3, 4/4] media: platform: dwc: Add MIPI CSI-2 controller driver
+Thread-Index: AQHUqBuhCcv9szjWl0qFFgx76hUWpKWosBEAgAD8KwA=
+Date:   Fri, 11 Jan 2019 07:25:25 +0000
+Message-ID: <24f6a1fe-4790-91ba-ce21-72397c0a02df@microchip.com>
+References: <1539953556-35762-1-git-send-email-lolivei@synopsys.com>
+ <1539953556-35762-5-git-send-email-lolivei@synopsys.com>
+ <4db76eb2-460f-c644-6dbd-370b07b2def8@microchip.com>
+ <2407a3ca-1a83-5685-c26c-a922251b2943@synopsys.com>
+In-Reply-To: <2407a3ca-1a83-5685-c26c-a922251b2943@synopsys.com>
+Accept-Language: ro-RO, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-clientproxiedby: VI1PR08CA0245.eurprd08.prod.outlook.com
+ (2603:10a6:803:dc::18) To MWHPR11MB1248.namprd11.prod.outlook.com
+ (2603:10b6:300:29::17)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=Eugen.Hristev@microchip.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-originating-ip: [94.177.32.154]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;MWHPR11MB1309;6:1FTixN49vZtoWxFnP/JiVLSCnWKhMfw7/RROcZQfZqth8QpsJ449/KvzUqx24ansDDH1QCjLQ+fCgpo0gf0ORitr09TUNrTqkN88H6Xvxi6CxynFHKsAR3WVIPe/+YlqOUfOH7tnqC0LQi869CW+s1yHFV49GyA2WySUuZse6n0b7iQCRO3+LbrUdyFjZeZhGhHT3CzZ/yPKsIieFq9loR/I4t1qqIY0HNtWqeFUnwfzh0fjArIDyhnUGD285YlxXqSGduODEoNvWBbW+Dm0O75To/7i87NFpwlbXjYs5rVrA5El0ixxtjDvLnUJiUuHdg8lupxKLfh2OTAywze5Il+XJjrCey5v4wOAVtaJPARowLgjudrHmWlgKZiFjz1uiT0evAeVhKqEl8a2gI6QYBLaQndrmtdzytZhgLPecWlXkYAcW0jJpKG35D8BozLZOCjkprwPaY9Bsh3ElizfYw==;5:Mbvhg6AHvPLNTh04WC2USdKyJsYJFfD4GS/uFH1Wr+rSqh//R//JRAa+lvCqeedtDEd/cHkKuUNtGqyL6gx4pnMMXyq9Oti/PMmA/wo+ZzY+a+0lVgFkzPXtY0+/eAbwwHyRrRN+sRF7EFho7Yh/eA0jYa6+jvCVdka8ycPYKCkxYp6OxkH5TDl5yn5zw2hwZgaxR1ezCmTqk0WbzRNkpQ==;7:PON2ConJFh7z0OP295p3BwnuIHl9EFhPmRsSCXDPYO7x2E8FIyKESe1tSkLo/eQJmg0kDWNPo09fq7uX93RCjLonKerUxF2ixcs2L2I4HjJQJ9B3kG6kiOh07PmWeEhpuYmw32uzNJU6YyFhYgcugQ==
+x-ms-office365-filtering-correlation-id: 06fa77f9-2f9a-443e-d8b9-08d67795f436
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600109)(711020)(2017052603328)(7153060)(7193020);SRVR:MWHPR11MB1309;
+x-ms-traffictypediagnostic: MWHPR11MB1309:
+x-microsoft-antispam-prvs: <MWHPR11MB13092A76CA866C1634ECFFC7E8850@MWHPR11MB1309.namprd11.prod.outlook.com>
+x-forefront-prvs: 09144DB0F7
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(376002)(346002)(396003)(136003)(366004)(39860400002)(54534003)(199004)(189003)(40764003)(39060400002)(93886005)(4326008)(99286004)(26005)(6506007)(386003)(53546011)(7736002)(305945005)(8936002)(6246003)(36756003)(106356001)(53936002)(2201001)(2616005)(25786009)(97736004)(11346002)(476003)(86362001)(446003)(6512007)(6116002)(3846002)(186003)(8676002)(81166006)(102836004)(81156014)(52116002)(2501003)(76176011)(5660300001)(7416002)(14454004)(72206003)(256004)(486006)(316002)(6436002)(31696002)(66066001)(54906003)(110136005)(14444005)(6486002)(105586002)(68736007)(71190400001)(71200400001)(31686004)(478600001)(2906002)(229853002);DIR:OUT;SFP:1101;SCL:1;SRVR:MWHPR11MB1309;H:MWHPR11MB1248.namprd11.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: microchip.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: Irxzr0jZncm5Ss/AbnmAQN+xSpe9jUbvrYa4FGdpXEK/AZF0yXCNhP+hllF1zuRtcMpypkG9MHTL0SmoHC0IbHPZfT+HUz8LLP1rrNOJg7tvI7mTPZRt+y/RdBqAKFG/GnXhrqOM1t/rS8OwNHaz1Pv9J5JrN+aWO5//wH854QpPxdWFKQCmDcyv6uAJTVXSdVRg7WtYCfl/ZnOD5fMVWXncZ6WKwv/Trzb2e/Mjdly4QUJV5ZrWCrcYFU8BzoexHSR/LoCqRVVoAghrZolzgjqjNOTFfYjZ7e7+57tj6WJ/KMPljeBmuzfsXGhB4jZgSaezfFcpfUGejFz3WqKkoi63VutNNz/QLtmMBu5Ywm56nhclTj62d+baqhSiO55UDaxVDL4iDAxg3w+IpWhu8WefdJw8gHWUqvBjb+Y1T7w=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <9FB4AD518DC7024B8E6445F77228AEFA@namprd11.prod.outlook.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-References: <1547123097-16431-1-git-send-email-sumit.garg@linaro.org>
- <1547123097-16431-3-git-send-email-sumit.garg@linaro.org> <20190110141856.p3evqyf34py74gkg@holly.lan>
-In-Reply-To: <20190110141856.p3evqyf34py74gkg@holly.lan>
-From:   Sumit Garg <sumit.garg@linaro.org>
-Date:   Fri, 11 Jan 2019 12:52:19 +0530
-Message-ID: <CAFA6WYPHmtY4N9ruGLZ70FNeiDCbQE-fs+EP2px-S+GEj2nPTw@mail.gmail.com>
-Subject: Re: [PATCH v2 2/4] tee: optee: add TEE bus device enumeration support
-To:     Daniel Thompson <daniel.thompson@linaro.org>
-Cc:     linux-arm-kernel@lists.infradead.org,
-        "open list:HARDWARE RANDOM NUMBER GENERATOR CORE" 
-        <linux-crypto@vger.kernel.org>, linux-kernel@vger.kernel.org,
-        Jens Wiklander <jens.wiklander@linaro.org>, mpm@selenic.com,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Bhupesh Sharma <bhsharma@redhat.com>, tee-dev@lists.linaro.org
-Content-Type: text/plain; charset="UTF-8"
+X-MS-Exchange-CrossTenant-Network-Message-Id: 06fa77f9-2f9a-443e-d8b9-08d67795f436
+X-MS-Exchange-CrossTenant-originalarrivaltime: 11 Jan 2019 07:25:25.5414
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 3f4057f3-b418-4d4e-ba84-d55b4e897d88
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR11MB1309
+X-OriginatorOrg: microchip.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 10 Jan 2019 at 19:49, Daniel Thompson
-<daniel.thompson@linaro.org> wrote:
->
-> On Thu, Jan 10, 2019 at 05:54:55PM +0530, Sumit Garg wrote:
-> > OP-TEE provides a pseudo TA to enumerate TAs which can act as devices/
-> > services for TEE bus. So implement device enumeration using invoke
-> > function: PTA_CMD_GET_DEVICES provided by pseudo TA to fetch array of
-> > device UUIDs. Also register these enumerated devices with TEE bus as
-> > "optee-clntX" device.
-> >
-> > Signed-off-by: Sumit Garg <sumit.garg@linaro.org>
-> > ---
-> >  drivers/tee/optee/Makefile        |   1 +
-> >  drivers/tee/optee/core.c          |   4 +
-> >  drivers/tee/optee/device.c        | 150 ++++++++++++++++++++++++++++++++++++++
-> >  drivers/tee/optee/optee_private.h |   3 +
-> >  4 files changed, 158 insertions(+)
-> >  create mode 100644 drivers/tee/optee/device.c
-> >
-> > diff --git a/drivers/tee/optee/Makefile b/drivers/tee/optee/Makefile
-> > index 48d262a..56263ae 100644
-> > --- a/drivers/tee/optee/Makefile
-> > +++ b/drivers/tee/optee/Makefile
-> > @@ -5,3 +5,4 @@ optee-objs += call.o
-> >  optee-objs += rpc.o
-> >  optee-objs += supp.o
-> >  optee-objs += shm_pool.o
-> > +optee-objs += device.o
-> > diff --git a/drivers/tee/optee/core.c b/drivers/tee/optee/core.c
-> > index e5efce3..ac59c77 100644
-> > --- a/drivers/tee/optee/core.c
-> > +++ b/drivers/tee/optee/core.c
-> > @@ -634,6 +634,10 @@ static struct optee *optee_probe(struct device_node *np)
-> >       if (optee->sec_caps & OPTEE_SMC_SEC_CAP_DYNAMIC_SHM)
-> >               pr_info("dynamic shared memory is enabled\n");
-> >
-> > +     rc = optee_enumerate_devices();
-> > +     if (rc)
-> > +             goto err;
-> > +
-> >       pr_info("initialized driver\n");
-> >       return optee;
-> >  err:
-> > diff --git a/drivers/tee/optee/device.c b/drivers/tee/optee/device.c
-> > new file mode 100644
-> > index 0000000..b38d24b
-> > --- /dev/null
-> > +++ b/drivers/tee/optee/device.c
-> > @@ -0,0 +1,150 @@
-> > +// SPDX-License-Identifier: GPL-2.0
-> > +/*
-> > + * Copyright (C) 2019 Linaro Ltd.
-> > + */
-> > +
-> > +#include <linux/kernel.h>
-> > +#include <linux/slab.h>
-> > +#include <linux/tee_drv.h>
-> > +#include <linux/uuid.h>
-> > +#include "optee_private.h"
-> > +
-> > +/*
-> > + * Get device UUIDs
-> > + *
-> > + * [out]     memref[0]        Array of device UUIDs
-> > + *
-> > + * Return codes:
-> > + * TEE_SUCCESS - Invoke command success
-> > + * TEE_ERROR_BAD_PARAMETERS - Incorrect input param
-> > + * TEE_ERROR_SHORT_BUFFER - Output buffer size less than required
-> > + */
-> > +#define PTA_CMD_GET_DEVICES          0x0
-> > +
-> > +static int optee_ctx_match(struct tee_ioctl_version_data *ver, const void *data)
-> > +{
-> > +     if (ver->impl_id == TEE_IMPL_ID_OPTEE)
-> > +             return 1;
-> > +     else
-> > +             return 0;
-> > +}
-> > +
-> > +static int get_devices(struct tee_context *ctx, u32 session,
-> > +                    struct tee_shm *device_uuid, u32 *shm_size)
->
-> Missing const on device_uuid?
->
-
-I don't think we should have a const for device_uuid here as this is
-shared memory struct pointer which is dynamically allocated and used
-to fetch device UUIDs.
-
->
-> > +{
-> > +     u32 ret = 0;
-> > +     struct tee_ioctl_invoke_arg inv_arg = {0};
-> > +     struct tee_param param[4] = {0};
-> > +
-> > +     /* Invoke PTA_CMD_GET_DEVICES function */
-> > +     inv_arg.func = PTA_CMD_GET_DEVICES;
-> > +     inv_arg.session = session;
-> > +     inv_arg.num_params = 4;
-> > +
-> > +     /* Fill invoke cmd params */
-> > +     param[0].attr = TEE_IOCTL_PARAM_ATTR_TYPE_MEMREF_OUTPUT;
-> > +     param[0].u.memref.shm = device_uuid;
-> > +     param[0].u.memref.size = *shm_size;
-> > +     param[0].u.memref.shm_offs = 0;
-> > +
-> > +     ret = tee_client_invoke_func(ctx, &inv_arg, param);
-> > +     if ((ret < 0) || ((inv_arg.ret != TEEC_SUCCESS) &&
-> > +                       (inv_arg.ret != TEEC_ERROR_SHORT_BUFFER))) {
-> > +             pr_err("PTA_CMD_GET_DEVICES invoke function err: %x\n",
-> > +                    inv_arg.ret);
-> > +             return -EINVAL;
-> > +     }
-> > +
-> > +     *shm_size = param[0].u.memref.size;
-> > +
-> > +     return 0;
-> > +}
-> > +
-> > +static int optee_register_device(uuid_t *device_uuid, u32 device_id)
->
-> const?
->
-
-Will add const here.
-
->
-> > +{
-> > +     struct tee_client_device *optee_device = NULL;
-> > +     int rc;
-> > +
-> > +     optee_device = kzalloc(sizeof(*optee_device), GFP_KERNEL);
-> > +     if (!optee_device)
-> > +             return -ENOMEM;
-> > +
-> > +     optee_device->dev.bus = &tee_bus_type;
-> > +     dev_set_name(&optee_device->dev, "optee-clnt%u", device_id);
-> > +     uuid_copy(&optee_device->id.uuid, device_uuid);
-> > +
-> > +     rc = device_register(&optee_device->dev);
-> > +     if (rc)
-> > +             pr_err("device registration failed, err: %d\n", rc);
->
-> Leak optee_device?
->
-
-Will fix.
-
->
-> > +
-> > +     return rc;
-> > +}
-> > +
-> > +int optee_enumerate_devices(void)
-> > +{
-> > +     uuid_t pta_uuid =
-> > +             UUID_INIT(0x7011a688, 0xddde, 0x4053,
-> > +                       0xa5, 0xa9, 0x7b, 0x3c, 0x4d, 0xdf, 0x13, 0xb8);
->
-> I think this could/should be const too.
->
-
-Agree, will add const here too.
-
->
-> > +     struct tee_ioctl_open_session_arg sess_arg = {0};
-> > +     struct tee_shm *device_shm = NULL;
-> > +     uuid_t *device_uuid = NULL;
-> > +     struct tee_context *ctx = NULL;
-> > +     u32 shm_size = 0, idx = 0;
-> > +     int rc;
-> > +
-> > +     /* Open context with OP-TEE driver */
-> > +     ctx = tee_client_open_context(NULL, optee_ctx_match, NULL, NULL);
-> > +     if (IS_ERR(ctx))
-> > +             return -ENODEV;
-> > +
-> > +     /* Open session with device enumeration pseudo TA */
-> > +     memcpy(sess_arg.uuid, pta_uuid.b, TEE_IOCTL_UUID_LEN);
-> > +     sess_arg.clnt_login = TEE_IOCTL_LOGIN_PUBLIC;
-> > +     sess_arg.num_params = 0;
-> > +
-> > +     rc = tee_client_open_session(ctx, &sess_arg, NULL);
-> > +     if ((rc < 0) || (sess_arg.ret != TEEC_SUCCESS)) {
-> > +             /* Device enumeration pseudo TA not found */
-> > +             rc = 0;
-> > +             goto out_ctx;
-> > +     }
-> > +
-> > +     rc = get_devices(ctx, sess_arg.session, device_shm, &shm_size);
->
-> Use NULL and 0 directly here instead of relying on initialized values.
-> This makes it clear we are fetching the size of a buffer and are doing
-> something different to the next call to get_devices().
->
-
-Ok, will directly pass NULL here.
-
->
-> > +     if (rc < 0)
-> > +             goto out_sess;
-> > +
-> > +     device_shm = tee_shm_alloc(ctx, shm_size,
-> > +                                TEE_SHM_MAPPED | TEE_SHM_DMA_BUF);
-> > +     if (IS_ERR(device_shm)) {
-> > +             pr_err("tee_shm_alloc failed\n");
-> > +             rc = PTR_ERR(device_shm);
-> > +             goto out_sess;
-> > +     }
-> > +
-> > +     rc = get_devices(ctx, sess_arg.session, device_shm, &shm_size);
-> > +     if (rc < 0)
-> > +             goto out_shm;
-> > +
-> > +     device_uuid = tee_shm_get_va(device_shm, 0);
-> > +     if (IS_ERR(device_uuid)) {
-> > +             pr_err("tee_shm_get_va failed\n");
-> > +             rc = PTR_ERR(device_uuid);
-> > +             goto out_shm;
-> > +     }
-> > +
-> > +     while (idx < shm_size / sizeof(uuid_t)) {
->
-> This is a very uncommon way to write a for loop ;-).
->
-
-Ok, will add "num_devices" variable.
-
--Sumit
-
->
-> > +             rc = optee_register_device(&device_uuid[idx], idx);
-> > +             if (rc)
-> > +                     goto out_shm;
-> > +             idx++;
-> > +     }
-> > +
-> > +out_shm:
-> > +     tee_shm_free(device_shm);
-> > +out_sess:
-> > +     tee_client_close_session(ctx, sess_arg.session);
-> > +out_ctx:
-> > +     tee_client_close_context(ctx);
-> > +
-> > +     return rc;
-> > +}
-> > diff --git a/drivers/tee/optee/optee_private.h b/drivers/tee/optee/optee_private.h
-> > index 35e7938..a5e84af 100644
-> > --- a/drivers/tee/optee/optee_private.h
-> > +++ b/drivers/tee/optee/optee_private.h
-> > @@ -28,6 +28,7 @@
-> >  #define TEEC_ERROR_BAD_PARAMETERS    0xFFFF0006
-> >  #define TEEC_ERROR_COMMUNICATION     0xFFFF000E
-> >  #define TEEC_ERROR_OUT_OF_MEMORY     0xFFFF000C
-> > +#define TEEC_ERROR_SHORT_BUFFER              0xFFFF0010
-> >
-> >  #define TEEC_ORIGIN_COMMS            0x00000002
-> >
-> > @@ -181,6 +182,8 @@ void optee_free_pages_list(void *array, size_t num_entries);
-> >  void optee_fill_pages_list(u64 *dst, struct page **pages, int num_pages,
-> >                          size_t page_offset);
-> >
-> > +int optee_enumerate_devices(void);
-> > +
-> >  /*
-> >   * Small helpers
-> >   */
-> > --
-> > 2.7.4
-> >
+DQoNCk9uIDEwLjAxLjIwMTkgMTg6MTgsIEx1aXMgZGUgT2xpdmVpcmEgd3JvdGU6DQo+IA0KPiAN
+Cj4gT24gMDktSmFuLTE5IDEzOjA3LCBFdWdlbi5IcmlzdGV2QG1pY3JvY2hpcC5jb20gd3JvdGU6
+DQo+Pg0KPj4NCj4+IE9uIDE5LjEwLjIwMTggMTU6NTIsIEx1aXMgT2xpdmVpcmEgd3JvdGU6DQo+
+Pj4gQWRkIHRoZSBTeW5vcHN5cyBNSVBJIENTSS0yIGNvbnRyb2xsZXIgZHJpdmVyLiBUaGlzDQo+
+Pj4gY29udHJvbGxlciBkcml2ZXIgaXMgZGl2aWRlZCBpbiBwbGF0Zm9ybSBkZXBlbmRlbnQgZnVu
+Y3Rpb25zDQo+Pj4gYW5kIGNvcmUgZnVuY3Rpb25zLiBJdCBhbHNvIGluY2x1ZGVzIGEgcGxhdGZv
+cm0gZm9yIGZ1dHVyZQ0KPj4+IERlc2lnbldhcmUgZHJpdmVycy4NCj4+Pg0KPj4+IFNpZ25lZC1v
+ZmYtYnk6IEx1aXMgT2xpdmVpcmEgPGxvbGl2ZWlAc3lub3BzeXMuY29tPg0KPj4+IC0tLQ0KPj4+
+IENoYW5nZWxvZw0KPj4+IHYyLVYzDQo+Pj4gLSBleHBvc2VkIElQSSBzZXR0aW5ncyB0byB1c2Vy
+c3BhY2UNCj4+PiAtIGZpeGVkIGhlYWRlcnMNCj4+Pg0KPj4+ICAgIE1BSU5UQUlORVJTICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgfCAgMTEgKw0KPj4+ICAgIGRyaXZlcnMvbWVkaWEvcGxh
+dGZvcm0vZHdjL0tjb25maWcgICAgICAgfCAgMzAgKy0NCj4+PiAgICBkcml2ZXJzL21lZGlhL3Bs
+YXRmb3JtL2R3Yy9NYWtlZmlsZSAgICAgIHwgICAyICsNCj4+PiAgICBkcml2ZXJzL21lZGlhL3Bs
+YXRmb3JtL2R3Yy9kdy1jc2ktcGxhdC5jIHwgNjk5ICsrKysrKysrKysrKysrKysrKysrKysrKysr
+KysrKysNCj4+PiAgICBkcml2ZXJzL21lZGlhL3BsYXRmb3JtL2R3Yy9kdy1jc2ktcGxhdC5oIHwg
+IDc3ICsrKysNCj4+PiAgICBkcml2ZXJzL21lZGlhL3BsYXRmb3JtL2R3Yy9kdy1taXBpLWNzaS5j
+IHwgNDk0ICsrKysrKysrKysrKysrKysrKysrKysNCj4+PiAgICBkcml2ZXJzL21lZGlhL3BsYXRm
+b3JtL2R3Yy9kdy1taXBpLWNzaS5oIHwgMjAyICsrKysrKysrKw0KPj4+ICAgIGluY2x1ZGUvbWVk
+aWEvZHdjL2R3LW1pcGktY3NpLXBsdGZybS5oICAgfCAxMDIgKysrKysNCj4+PiAgICA4IGZpbGVz
+IGNoYW5nZWQsIDE2MTYgaW5zZXJ0aW9ucygrKSwgMSBkZWxldGlvbigtKQ0KPj4+ICAgIGNyZWF0
+ZSBtb2RlIDEwMDY0NCBkcml2ZXJzL21lZGlhL3BsYXRmb3JtL2R3Yy9kdy1jc2ktcGxhdC5jDQo+
+Pj4gICAgY3JlYXRlIG1vZGUgMTAwNjQ0IGRyaXZlcnMvbWVkaWEvcGxhdGZvcm0vZHdjL2R3LWNz
+aS1wbGF0LmgNCj4+PiAgICBjcmVhdGUgbW9kZSAxMDA2NDQgZHJpdmVycy9tZWRpYS9wbGF0Zm9y
+bS9kd2MvZHctbWlwaS1jc2kuYw0KPj4+ICAgIGNyZWF0ZSBtb2RlIDEwMDY0NCBkcml2ZXJzL21l
+ZGlhL3BsYXRmb3JtL2R3Yy9kdy1taXBpLWNzaS5oDQo+Pj4gICAgY3JlYXRlIG1vZGUgMTAwNjQ0
+IGluY2x1ZGUvbWVkaWEvZHdjL2R3LW1pcGktY3NpLXBsdGZybS5oDQo+Pj4NCj4+DQo+PiBbc25p
+cF0NCj4+DQo+Pj4gKy8qIFZpZGVvIGZvcm1hdHMgc3VwcG9ydGVkIGJ5IHRoZSBNSVBJIENTSS0y
+ICovDQo+Pj4gK2NvbnN0IHN0cnVjdCBtaXBpX2ZtdCBkd19taXBpX2NzaV9mb3JtYXRzW10gPSB7
+DQo+Pj4gKwl7DQo+Pj4gKwkJLyogUkFXIDggKi8NCj4+PiArCQkuY29kZSA9IE1FRElBX0JVU19G
+TVRfU0JHR1I4XzFYOCwNCj4+PiArCQkuZGVwdGggPSA4LA0KPj4+ICsJfSwNCj4+PiArCXsNCj4+
+PiArCQkvKiBSQVcgMTAgKi8NCj4+PiArCQkuY29kZSA9IE1FRElBX0JVU19GTVRfU0JHR1IxMF8y
+WDhfUEFESElfQkUsDQo+Pj4gKwkJLmRlcHRoID0gMTAsDQo+Pj4gKwl9LA0KPj4NCj4+IEhpIEx1
+aXMsDQo+Pg0KPj4gQW55IHJlYXNvbiB3aHkgUkFXMTIgZm9ybWF0IGlzIG5vdCBoYW5kbGVkIGhl
+cmUgPw0KPj4NCj4+IEhlcmUsIG5hbWVseSBNRURJQV9CVVNfRk1UX1NCR0dSMTJfMVgxMiBldGMu
+DQo+Pg0KPiBIaSBFdWdlbiwNCj4gDQo+IE15IEh3IHRlc3Rpbmcgc2V0dXAgY3VycmVudGx5IGRv
+ZXMgbm90IHN1cHBvcnQgaXQsIHNvIEkgZGlkbid0IGFkZCBpdC4NCj4gDQo+Pj4gKwl7DQo+Pj4g
+KwkJLyogUkdCIDU2NSAqLw0KPj4+ICsJCS5jb2RlID0gTUVESUFfQlVTX0ZNVF9SR0I1NjVfMlg4
+X0JFLA0KPj4+ICsJCS5kZXB0aCA9IDE2LA0KPj4+ICsJfSwNCj4+PiArCXsNCj4+PiArCQkvKiBC
+R1IgNTY1ICovDQo+Pj4gKwkJLmNvZGUgPSBNRURJQV9CVVNfRk1UX1JHQjU2NV8yWDhfTEUsDQo+
+Pj4gKwkJLmRlcHRoID0gMTYsDQo+Pj4gKwl9LA0KPj4+ICsJew0KPj4+ICsJCS8qIFJHQiA4ODgg
+Ki8NCj4+PiArCQkuY29kZSA9IE1FRElBX0JVU19GTVRfUkdCODg4XzJYMTJfTEUsDQo+Pj4gKwkJ
+LmRlcHRoID0gMjQsDQo+Pj4gKwl9LA0KPj4+ICsJew0KPj4+ICsJCS8qIEJHUiA4ODggKi8NCj4+
+PiArCQkuY29kZSA9IE1FRElBX0JVU19GTVRfUkdCODg4XzJYMTJfQkUsDQo+Pj4gKwkJLmRlcHRo
+ID0gMjQsDQo+Pj4gKwl9LA0KPj4+ICt9Ow0KPj4NCj4+IFtzbmlwXQ0KPj4NCj4+PiArDQo+Pj4g
+K3ZvaWQgZHdfbWlwaV9jc2lfc2V0X2lwaV9mbXQoc3RydWN0IG1pcGlfY3NpX2RldiAqY3NpX2Rl
+dikNCj4+PiArew0KPj4+ICsJc3RydWN0IGRldmljZSAqZGV2ID0gY3NpX2Rldi0+ZGV2Ow0KPj4+
+ICsNCj4+PiArCWlmIChjc2lfZGV2LT5pcGlfZHQpDQo+Pj4gKwkJZHdfbWlwaV9jc2lfd3JpdGUo
+Y3NpX2RldiwgcmVnLklQSV9EQVRBX1RZUEUsIGNzaV9kZXYtPmlwaV9kdCk7DQo+Pj4gKwllbHNl
+IHsNCj4+PiArCQlzd2l0Y2ggKGNzaV9kZXYtPmZtdC0+Y29kZSkgew0KPj4+ICsJCWNhc2UgTUVE
+SUFfQlVTX0ZNVF9SR0I1NjVfMlg4X0JFOg0KPj4+ICsJCWNhc2UgTUVESUFfQlVTX0ZNVF9SR0I1
+NjVfMlg4X0xFOg0KPj4+ICsJCQlkd19taXBpX2NzaV93cml0ZShjc2lfZGV2LA0KPj4+ICsJCQkJ
+CXJlZy5JUElfREFUQV9UWVBFLCBDU0lfMl9SR0I1NjUpOw0KPj4+ICsJCQlkZXZfZGJnKGRldiwg
+IkRUOiBSR0IgNTY1Iik7DQo+Pj4gKwkJCWJyZWFrOw0KPj4+ICsNCj4+PiArCQljYXNlIE1FRElB
+X0JVU19GTVRfUkdCODg4XzJYMTJfTEU6DQo+Pj4gKwkJY2FzZSBNRURJQV9CVVNfRk1UX1JHQjg4
+OF8yWDEyX0JFOg0KPj4+ICsJCQlkd19taXBpX2NzaV93cml0ZShjc2lfZGV2LA0KPj4+ICsJCQkJ
+CXJlZy5JUElfREFUQV9UWVBFLCBDU0lfMl9SR0I4ODgpOw0KPj4+ICsJCQlkZXZfZGJnKGRldiwg
+IkRUOiBSR0IgODg4Iik7DQo+Pj4gKwkJCWJyZWFrOw0KPj4+ICsJCWNhc2UgTUVESUFfQlVTX0ZN
+VF9TQkdHUjEwXzJYOF9QQURISV9CRToNCj4+PiArCQkJZHdfbWlwaV9jc2lfd3JpdGUoY3NpX2Rl
+diwNCj4+PiArCQkJCQlyZWcuSVBJX0RBVEFfVFlQRSwgQ1NJXzJfUkFXMTApOw0KPj4+ICsJCQlk
+ZXZfZGJnKGRldiwgIkRUOiBSQVcgMTAiKTsNCj4+PiArCQkJYnJlYWs7DQo+Pj4gKwkJY2FzZSBN
+RURJQV9CVVNfRk1UX1NCR0dSOF8xWDg6DQo+Pj4gKwkJCWR3X21pcGlfY3NpX3dyaXRlKGNzaV9k
+ZXYsDQo+Pj4gKwkJCQkJcmVnLklQSV9EQVRBX1RZUEUsIENTSV8yX1JBVzgpOw0KPj4+ICsJCQlk
+ZXZfZGJnKGRldiwgIkRUOiBSQVcgOCIpOw0KPj4+ICsJCQlicmVhazsNCj4+DQo+PiBTYW1lIGhl
+cmUsIGluIENTSV8yX1JBVzEyIGNhc2UgaXQgd2lsbCBkZWZhdWx0IHRvIGEgUkdCNTY1IGNhc2Uu
+DQo+Pg0KPj4gVGhhbmtzLA0KPj4NCj4+IEV1Z2VuDQo+Pg0KPj4NCj4gSSB3aWxsIHRyeSB0byBh
+ZGQgdGhlIHN1cHBvcnQgZm9yIHRoaXMgZGF0YSB0eXBlIGluIG15IG5leHQgcGF0Y2hzZXQgaWYg
+bm90IEkNCj4gd2lsbCBmbGFnIGl0IGFzIHVuc3VwcG9ydGVkIGZvciBub3cgaW4gdGhlIGNvbW1p
+dCBtZXNzYWdlIGFuZCBjb2RlLg0KDQpIaSBMdWlzLA0KDQpJIGFtIGN1cnJlbnRseSB0cnlpbmcg
+dG8gc2VlIGlmIHlvdXIgZHJpdmVyIHdvcmtzICwgYW5kIEkgbmVlZCB0aGUgUkFXMTIgDQp0eXBl
+LCB0aGF0J3Mgd2h5IEkgYW0gYXNraW5nIGFib3V0IGl0Lg0KDQpPbmUgcXVlc3Rpb24gcmVsYXRl
+ZCB0byB0aGUgc3ViZGV2aWNlIHlvdSBjcmVhdGUgaGVyZSwgaG93IGRvIHlvdSANCnJlZ2lzdGVy
+IHRoaXMgc3ViZGV2IGludG8gdGhlIG1lZGlhIHN1YnN5c3RlbSA/IHN5bmMgb3IgYXN5bmMsIG9y
+IG5vdCBhdCANCmFsbCA/DQpBZnRlciB0aGUgZHJpdmVyIHByb2JlcywgdGhlcmUgaXMgbm8gY2Fs
+bCB0byB0aGUgc2V0IGZvcm1hdCBmdW5jdGlvbnMsIEkgDQphZGRlZCBhIG5vZGUgaW5zaWRlIHRo
+ZSBEZXZpY2UgdHJlZSwgSSBzZWUgeW91IGFyZSByZWdpc3RlcmluZyBtZWRpYSANCnBhZHMsIGJ1
+dCB0aGUgb3RoZXIgZW5kcG9pbnQgbmVlZHMgdG8gYmUgYW4gYXN5bmMgd2FpdGluZyBmb3IgY29t
+cGxldGlvbiANCm5vZGUgb3IgeW91ciBzdWJkZXYgcmVnaXN0ZXJzIGluIHNvbWUgb3RoZXIgd2F5
+ID8gKG1heWJlIHNvbWUgbGluayANCnZhbGlkYXRpb24gcmVxdWlyZWQgPykNCg0KVGhhbmtzIGZv
+ciB5b3VyIGhlbHAsDQoNCkV1Z2VuDQoNCj4gDQo+IFRoYW5rcyBmb3IgeW91ciByZXZpZXcsDQo+
+IEx1aXMNCj4gDQo+Pg0KPj4+ICsJCWRlZmF1bHQ6DQo+Pj4gKwkJCWR3X21pcGlfY3NpX3dyaXRl
+KGNzaV9kZXYsDQo+Pj4gKwkJCQkJcmVnLklQSV9EQVRBX1RZUEUsIENTSV8yX1JHQjU2NSk7DQo+
+Pj4gKwkJCWRldl9kYmcoZGV2LCAiRXJyb3IiKTsNCj4+PiArCQkJYnJlYWs7DQo+Pj4gKwkJfQ0K
+Pj4+ICsJfQ0KPj4+ICt9DQo+Pj4gKw0KPj4NCj4+IFtzbmlwXQ0KPj4NCj4gDQo=
