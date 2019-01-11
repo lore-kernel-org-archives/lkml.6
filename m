@@ -2,101 +2,105 @@ Return-Path: <SRS0=uvhX=PT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5FF38C43612
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 03:29:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 19C82C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 03:32:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 291512084C
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 03:29:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CF6C72084C
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 03:32:21 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="FN7qan2z"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730390AbfAKD3o (ORCPT
+        id S1730439AbfAKDcV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 10 Jan 2019 22:29:44 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:39818 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727957AbfAKD3o (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Jan 2019 22:29:44 -0500
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 726E573A62;
-        Fri, 11 Jan 2019 03:29:43 +0000 (UTC)
-Received: from [10.72.12.143] (ovpn-12-143.pek2.redhat.com [10.72.12.143])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 992D65C219;
-        Fri, 11 Jan 2019 03:29:34 +0000 (UTC)
-Subject: Re: [PATCH 0/3] Fix virtio-blk issue with SWIOTLB
-To:     Joerg Roedel <joro@8bytes.org>,
-        "Michael S . Tsirkin" <mst@redhat.com>,
-        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
-Cc:     Jens Axboe <axboe@kernel.dk>,
-        virtualization@lists.linux-foundation.org,
-        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-        iommu@lists.linux-foundation.org, jfehlig@suse.com,
-        jon.grimm@amd.com, brijesh.singh@amd.com, hch@lst.de
-References: <20190110134433.15672-1-joro@8bytes.org>
-From:   Jason Wang <jasowang@redhat.com>
-Message-ID: <5ae1341e-62ec-0478-552b-259eabf9fb17@redhat.com>
-Date:   Fri, 11 Jan 2019 11:29:31 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Thu, 10 Jan 2019 22:32:21 -0500
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:38893 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730120AbfAKDcU (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 10 Jan 2019 22:32:20 -0500
+Received: by mail-pf1-f195.google.com with SMTP id q1so6286443pfi.5
+        for <linux-kernel@vger.kernel.org>; Thu, 10 Jan 2019 19:32:20 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=DOEoOTFnCJtH0Vw91l1W7H3fMhcZNKrRGlpTflF9xMo=;
+        b=FN7qan2z1uCWFu1klGhxb5ItOCIy9qs7wXE97ddNl8haasScXvBfxqd4T25tTOtuR6
+         4OjJmDahxiM0RkQyBygRba9pveUN2RgJ+vJ+q2/tDfdepO8z/tMF1AAHITcmfOmI4lr0
+         A6ZhGogIt0yh4np5bd8KK5ifAXBpgutoAqyoo=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=DOEoOTFnCJtH0Vw91l1W7H3fMhcZNKrRGlpTflF9xMo=;
+        b=Mi6cNxOXAJJNu1n5tnKtGMZQhuz0CJxkQBuq9RIjZ1KQr1HYApsyxVulAqU6Vx3/a6
+         IikN/PYsiuubz5xbePtFqyEu12NdkOmdm7qIot5oYx3Xyv06nJpUfCT9jF9Cd93QoUUu
+         YLc/ef+/mDUTMxfphcurotJoh7GTj7B6Le2doVPpaGLzFGhKAEdhAX0PKhs6synvromz
+         efQlBJHW1bpi2mR5IkNO9c86Qj+BeQ8yRegYT73YSOrab49SzecCiSfPcy7C7PWnoBIC
+         DT0P2JSXLt3Y5AsLELZuBFzC5xyLj6emnElQWUL6mRUSHcKTGfk95UtH6gXi34Jp0598
+         OtCA==
+X-Gm-Message-State: AJcUukdzNk/Eooi29ZbZvZ/o+46fLhBM12FvIP3dQzbZrTYcsI7rEUUR
+        eiHnZWWIz25fR0f4uKfYy6XgMA==
+X-Google-Smtp-Source: ALg8bN4BK35qiCCMFn/RTPIQXqB74gv+dnrjLRI3+9ZjKHLsLdXzz4xD3gU6PKekNWxYm9XM4X/aIA==
+X-Received: by 2002:a62:220d:: with SMTP id i13mr12775103pfi.162.1547177539994;
+        Thu, 10 Jan 2019 19:32:19 -0800 (PST)
+Received: from localhost ([122.172.34.203])
+        by smtp.gmail.com with ESMTPSA id b2sm130779484pgg.87.2019.01.10.19.32.18
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 10 Jan 2019 19:32:18 -0800 (PST)
+Date:   Fri, 11 Jan 2019 09:02:16 +0530
+From:   Viresh Kumar <viresh.kumar@linaro.org>
+To:     Matthias Kaehlcke <mka@chromium.org>
+Cc:     Amit Kucheria <amit.kucheria@linaro.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Eduardo Valentin <edubezval@gmail.com>,
+        Andy Gross <andy.gross@linaro.org>,
+        Taniya Das <tdas@codeaurora.org>,
+        Stephen Boyd <swboyd@chromium.org>,
+        Douglas Anderson <dianders@chromium.org>,
+        David Brown <david.brown@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>
+Subject: Re: [PATCH v1 6/7] arm64: dts: sdm845: Increase alert trip point to
+ 95 degrees
+Message-ID: <20190111033216.u3ic5it3lygot4sb@vireshk-i7>
+References: <cover.1547078153.git.amit.kucheria@linaro.org>
+ <041258d65883df964890249a24d2a4788c419304.1547078153.git.amit.kucheria@linaro.org>
+ <20190110011533.GV261387@google.com>
+ <20190110021522.GW261387@google.com>
+ <CAHLCerM+p+GkVsR_WuC0xF1oFvj=8cZ+OmU=pMssfZGGs-eS7w@mail.gmail.com>
+ <20190110200034.GZ261387@google.com>
 MIME-Version: 1.0
-In-Reply-To: <20190110134433.15672-1-joro@8bytes.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.26]); Fri, 11 Jan 2019 03:29:43 +0000 (UTC)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190110200034.GZ261387@google.com>
+User-Agent: NeoMutt/20180323-120-3dd1ac
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 10-01-19, 12:00, Matthias Kaehlcke wrote:
+> Viresh helped me understand that we currently need to add cooling
+> device entries for all CPUs to the DT, even though at most one will be
+> active per freq domain at any time (I wonder if this could be changed
+> though).
 
-On 2019/1/10 下午9:44, Joerg Roedel wrote:
-> Hi,
->
-> there is a problem with virtio-blk driven devices when
-> virtio-ring uses SWIOTLB through the DMA-API. This happens
-> for example in AMD-SEV enabled guests, where the guest RAM
-> is mostly encrypted and all emulated DMA has to happen
-> to/from the SWIOTLB aperture.
->
-> The problem is a limitation of the SWIOTLB implementation,
-> which does not support allocations larger than 256kb. When
-> the virtio-blk driver tries to read/write a block larger
-> than that, the allocation of the dma-handle fails and an IO
-> error is reported.
->
-> This patch-set adds a check to the virtio-code whether it
-> might be using SWIOTLB bounce buffering and limits the
-> maximum segment size in the virtio-blk driver in this case,
-> so that it doesn't try to do larger reads/writes.
+Actually we were only adding cooling-cells in CPU0 until now and I
+fixed that, so that is going to stay :)
 
+The idea is that the hardware should be described properly and not
+partially. Even if all the CPUs are part of the same freq-domain, they
+are all capable of being a cooling device here and the DT should
+describe that. Kernel will ofcourse create a single cooling device.
 
-Just wonder if my understanding is correct IOMMU_PLATFORM must be set 
-for all virtio devices under AMD-SEV guests?
-
-Thanks
-
-
->
-> Please review.
->
-> Thanks,
->
-> 	Joerg
->
-> Joerg Roedel (3):
->    swiotlb: Export maximum allocation size
->    virtio: Introduce virtio_max_dma_size()
->    virtio-blk: Consider virtio_max_dma_size() for maximum segment size
->
->   drivers/block/virtio_blk.c   | 10 ++++++----
->   drivers/virtio/virtio_ring.c | 11 +++++++++++
->   include/linux/swiotlb.h      | 12 ++++++++++++
->   include/linux/virtio.h       |  2 ++
->   4 files changed, 31 insertions(+), 4 deletions(-)
->
+-- 
+viresh
