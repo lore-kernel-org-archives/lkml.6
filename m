@@ -2,74 +2,98 @@ Return-Path: <SRS0=uvhX=PT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 55423C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 15:08:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0CB1CC43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 15:08:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 23E3421841
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 15:08:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D07ED21841
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 15:08:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1547219300;
+	bh=UKuCz9QnVomT7Bxot5vk9YX1Bz1amZuaWlFINBQ9lJ8=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=QKOHBju6MvPJOe0ohYTV/p2NcFW/EADUJd+E7OEOV5ih5lork/4xIqRR/eOQA96X/
+	 LWmfk8h2iRM5biXuMNjCKvHSMunGciPr5ujWKgaIukbcfL5bhSyXb3G2LhAdmXMSf1
+	 VxrYVpWT4Kr1ANFhHU/h7ZYacxnKVgccCxHVQyYE=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391979AbfAKPIO (ORCPT
+        id S2388439AbfAKO2C (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 11 Jan 2019 10:08:14 -0500
-Received: from cdptpa-outbound-snat.email.rr.com ([107.14.166.227]:43278 "EHLO
-        cdptpa-cmomta01.email.rr.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S2388440AbfAKO2D (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Jan 2019 09:28:03 -0500
-X-Greylist: delayed 487 seconds by postgrey-1.27 at vger.kernel.org; Fri, 11 Jan 2019 09:28:02 EST
-Received: from [192.168.86.39] ([98.26.25.200])
-        by cmsmtp with ESMTPA
-        id hxf3gm14oSv2qhxf5gVXZm; Fri, 11 Jan 2019 14:19:52 +0000
+        Fri, 11 Jan 2019 09:28:02 -0500
+Received: from mail.kernel.org ([198.145.29.99]:46428 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1732488AbfAKO15 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 Jan 2019 09:27:57 -0500
+Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id A390D2133F;
+        Fri, 11 Jan 2019 14:27:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1547216877;
+        bh=UKuCz9QnVomT7Bxot5vk9YX1Bz1amZuaWlFINBQ9lJ8=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=Ek1UU91woa4MOEmZ00MSxi/QHtCnk3Ba2RACR81co/MULipMkkgVyjddAwA/WXALO
+         s0cehfdQAuI+tIrJCS7qNs5K8yR4icXOuiqYjg52oIQOWjiSdtSLBMmRoRdE7jvIO2
+         sONB6j+EegZRyFblFiNYcs8EuRfSSP91p0uvmYdA=
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
-From:   bnv@nc.rr.com
-Subject: DTLS and UDP servers
-Message-ID: <b2c00870-c2bf-bd62-0476-4140c3a5a4e6@nc.rr.com>
-Date:   Fri, 11 Jan 2019 09:19:44 -0500
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Benjamin Poirier <bpoirier@suse.com>,
+        Steffen Klassert <steffen.klassert@secunet.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.9 07/63] xfrm: Fix bucket count reported to userspace
+Date:   Fri, 11 Jan 2019 15:14:10 +0100
+Message-Id: <20190111131047.359472473@linuxfoundation.org>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20190111131046.387528003@linuxfoundation.org>
+References: <20190111131046.387528003@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
+X-Patchwork-Hint: ignore
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-Content-Language: en-US
-X-CMAE-Envelope: MS4wfFDlV5M0as7J3+SAEzCbQ+NRtOTDvxNNdY4NJkedeQgHnISpVUe+WBSYzArlUU6O6rnjv1Wph6QXl1KOSWmgFq78kmIYGCaCScXUpnT1xu8onHKTq0Cw
- e5+El654pRIfZ6XqTd7GAGIcowOUy4iR+IC1LA/dMEmFyW6ZNXGtxf3E
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[Due to list volume, this address is not subscribed.  Please CC with any 
-replies]
+4.9-stable review patch.  If anyone has any objections, please let me know.
 
-Standard practice when using DTLS on a UDP server is to bind and connect 
-a new socket upon receipt of a valid ClientHello on the listener 
-socket.  SO_REUSEPORT is required to ensure new sockets can bind to the 
-same port as the listener socket.
+------------------
 
-This works because the listener socket will see nothing but ClientHello 
-messages, and clients will block on a ServerHello message which is sent 
-after the new connected socket is created.
+[ Upstream commit ca92e173ab34a4f7fc4128bd372bd96f1af6f507 ]
 
-However, there is a window of opportunity between the bind and connect 
-calls, where the new socket temporarily takes over the port from the 
-listener socket.  Ingress ClientHello messages will get delivered to the 
-queue of the new socket within this window. The result is that 
-authentication fails for the new client, and isn't begun for the other 
-clients whose ClientHello messages were diverted.
+sadhcnt is reported by `ip -s xfrm state count` as "buckets count", not the
+hash mask.
 
-Arguably, this is UDP so clients should not expect reliability and 
-simply try again.However, this issue is addressable if a mechanism 
-existed to bind and connect simultaneously.  Is it feasible?
+Fixes: 28d8909bc790 ("[XFRM]: Export SAD info.")
+Signed-off-by: Benjamin Poirier <bpoirier@suse.com>
+Signed-off-by: Steffen Klassert <steffen.klassert@secunet.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ net/xfrm/xfrm_state.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Note: This would benefit the unsecured UDP server case as well, where it 
-is desired to move a new "session" off the listener descriptor to its 
-own for better scaling.  SO_REUSEPORT addresses this to a degree, but is 
-modeled on multiple server processes rather than multiple threads within 
-a single server process.
+diff --git a/net/xfrm/xfrm_state.c b/net/xfrm/xfrm_state.c
+index 71a94e549301..884f2136b34b 100644
+--- a/net/xfrm/xfrm_state.c
++++ b/net/xfrm/xfrm_state.c
+@@ -641,7 +641,7 @@ void xfrm_sad_getinfo(struct net *net, struct xfrmk_sadinfo *si)
+ {
+ 	spin_lock_bh(&net->xfrm.xfrm_state_lock);
+ 	si->sadcnt = net->xfrm.state_num;
+-	si->sadhcnt = net->xfrm.state_hmask;
++	si->sadhcnt = net->xfrm.state_hmask + 1;
+ 	si->sadhmcnt = xfrm_state_hashmax;
+ 	spin_unlock_bh(&net->xfrm.xfrm_state_lock);
+ }
+-- 
+2.19.1
 
-Regards, BH
 
 
