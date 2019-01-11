@@ -2,85 +2,99 @@ Return-Path: <SRS0=uvhX=PT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-13.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6BF5DC43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 19:43:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0665BC43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 19:45:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4EEEF206B7
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 19:43:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D2ED320700
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 19:45:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1547235916;
+	bh=CXY+98g+PJvADRe/ANXTIKWXZGmq9QhWL59zUq73F94=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=Txl2Dy82CmbllbSBLBaR6dZDWdCfVTJVgwqUZfqBAIkCoqNaZ5OdDfW+OPz3dqyf4
+	 vzyi4jmbNj+zqdaRYMMqmPMvsH5bZCZyy21ptYuYDJT7IW2wDN+RpkuQT6E/5lBjhl
+	 uIpJvMUobBPWr6shQJYNqgolA/bbiEr6NYYvwoCg=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390107AbfAKTnl convert rfc822-to-8bit (ORCPT
+        id S2388855AbfAKTpQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 11 Jan 2019 14:43:41 -0500
-Received: from lhrrgout.huawei.com ([185.176.76.210]:32823 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1732097AbfAKTnk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Jan 2019 14:43:40 -0500
-Received: from lhreml702-cah.china.huawei.com (unknown [172.18.7.107])
-        by Forcepoint Email with ESMTP id D52B3CA9BD4F993EF10A;
-        Fri, 11 Jan 2019 19:43:38 +0000 (GMT)
-Received: from FRAEMA703-CHM.china.huawei.com (10.206.14.52) by
- lhreml702-cah.china.huawei.com (10.201.108.43) with Microsoft SMTP Server
- (TLS) id 14.3.408.0; Fri, 11 Jan 2019 19:43:38 +0000
-Received: from FRAEML521-MBS.china.huawei.com ([169.254.2.121]) by
- FRAEMA703-CHM.china.huawei.com ([169.254.3.216]) with mapi id 14.03.0415.000;
- Fri, 11 Jan 2019 20:43:30 +0100
-From:   Salil Mehta <salil.mehta@huawei.com>
-To:     Alexey Khoroshilov <khoroshilov@ispras.ru>,
-        "Zhuangyuzeng (Yisen)" <yisen.zhuang@huawei.com>,
-        "lipeng (Y)" <lipeng321@huawei.com>
-CC:     "David S. Miller" <davem@davemloft.net>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "ldv-project@linuxtesting.org" <ldv-project@linuxtesting.org>
-Subject: RE: hns: question regarding ae_node device node refcounting
-Thread-Topic: hns: question regarding ae_node device node refcounting
-Thread-Index: AQHUmkEQfoEKVWjY3kaJv102UJfyGaWqlq9g
-Date:   Fri, 11 Jan 2019 19:43:30 +0000
-Message-ID: <F4CC6FACFEB3C54C9141D49AD221F7F93C0F34A1@FRAEML521-MBS.china.huawei.com>
-References: <1545515681-29561-1-git-send-email-khoroshilov@ispras.ru>
-In-Reply-To: <1545515681-29561-1-git-send-email-khoroshilov@ispras.ru>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.202.226.60]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+        Fri, 11 Jan 2019 14:45:16 -0500
+Received: from mail-ot1-f68.google.com ([209.85.210.68]:36972 "EHLO
+        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732889AbfAKTpP (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 Jan 2019 14:45:15 -0500
+Received: by mail-ot1-f68.google.com with SMTP id s13so5654113otq.4;
+        Fri, 11 Jan 2019 11:45:15 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=5Kf1FM98exgQJHOBMRMPPRO6dBSs4QLvl+lqi/ByeFE=;
+        b=NWvcDvcdAkfzgoBV5lpqFK5m/aeUu8J4RewtvCdWWCIwgyAp+scIYEuRxTLe7uBStv
+         Qv4aRfgkc386rYlmX9u8U2ulu7+edM5F+1WjRHQcrKtJWwaPUXdDOIxOzK7LDq4ilyEi
+         qcKY5uHNEQV8CjCuyFtuCFT5P7ySZYWSHG7usswhyYc3z65jcmvRNIsoS3B/Gnu1boVA
+         cpQdM+obCLWpbatbNJ5q8UtT8BXoqUUEjtGSMwrsKzWb1Ko1hiZO4F6GZfmA6LFF2ukT
+         uwCIe/34NlIzWngeZMd3ogpWCVUQrWFpwKaM9+b8hZc5+iQn64pjGcG/egRkgM39fwnu
+         Lj0Q==
+X-Gm-Message-State: AJcUukfvg/0KkWL9m1Ocrh9jyACIuZIdLVQeHtRfFskNjGjwYB6Enito
+        uVgDTnOSHK1ZZupJKAXjyA==
+X-Google-Smtp-Source: ALg8bN5z4PF+ib69dqhTo+4RjYdNhuwGK7M1rLsSIxs0h3zfnwyVZLRt1SdExq/V1V+QlXLzissnGA==
+X-Received: by 2002:a9d:1405:: with SMTP id h5mr9788194oth.331.1547235914801;
+        Fri, 11 Jan 2019 11:45:14 -0800 (PST)
+Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id v3sm71325341oib.57.2019.01.11.11.45.13
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 11 Jan 2019 11:45:14 -0800 (PST)
+Date:   Fri, 11 Jan 2019 13:45:13 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Jeffrey Hugo <jhugo@codeaurora.org>
+Cc:     kishon@ti.com, bjorn.andersson@linaro.org, andy.gross@linaro.org,
+        david.brown@linaro.org, mturquette@baylibre.com, sboyd@kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, mark.rutland@arm.com,
+        devicetree@vger.kernel.org, gregkh@linuxfoundation.org,
+        balbi@kernel.org, linux-usb@vger.kernel.org
+Subject: Re: [PATCH v1 4/6] phy: qcom-qmp: Add QMP V3 USB3 PHY support for
+ msm8998
+Message-ID: <20190111194513.GA13699@bogus>
+References: <1546620647-2467-1-git-send-email-jhugo@codeaurora.org>
 MIME-Version: 1.0
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1546620647-2467-1-git-send-email-jhugo@codeaurora.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Alexey,
+On Fri, Jan 04, 2019 at 09:50:47AM -0700, Jeffrey Hugo wrote:
+> MSM8998 contains a single QMP v3 USB3 phy similar to the existing sdm845
+> support, however MSM8998 does not have display port (DP) support.
+> 
+> Signed-off-by: Jeffrey Hugo <jhugo@codeaurora.org>
+> ---
+>  .../devicetree/bindings/phy/qcom-qmp-phy.txt       |   5 +
+>  drivers/phy/qualcomm/phy-qcom-qmp.c                | 142 +++++++++++++++++++++
+>  drivers/phy/qualcomm/phy-qcom-qmp.h                |   4 +
+>  3 files changed, 151 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/phy/qcom-qmp-phy.txt b/Documentation/devicetree/bindings/phy/qcom-qmp-phy.txt
+> index 41a1074..6061b6f 100644
+> --- a/Documentation/devicetree/bindings/phy/qcom-qmp-phy.txt
+> +++ b/Documentation/devicetree/bindings/phy/qcom-qmp-phy.txt
+> @@ -9,6 +9,7 @@ Required properties:
+>  	       "qcom,ipq8074-qmp-pcie-phy" for PCIe phy on IPQ8074
+>  	       "qcom,msm8996-qmp-pcie-phy" for 14nm PCIe phy on msm8996,
+>  	       "qcom,msm8996-qmp-usb3-phy" for 14nm USB3 phy on msm8996,
+> +	       "qcom,msm8998-qmp-usb3-phy" for USB3 QMP V3 phy on msm8998,
 
-> From: Alexey Khoroshilov [mailto:khoroshilov@ispras.ru]
-> Sent: Saturday, December 22, 2018 9:55 PM
-> To: Zhuangyuzeng (Yisen) <yisen.zhuang@huawei.com>; Salil Mehta
-> <salil.mehta@huawei.com>; lipeng (Y) <lipeng321@huawei.com>
-> Cc: Alexey Khoroshilov <khoroshilov@ispras.ru>; David S. Miller
-> <davem@davemloft.net>; netdev@vger.kernel.org; linux-
-> kernel@vger.kernel.org; ldv-project@linuxtesting.org
-> Subject: net: hns: question regarding ae_node device node refcounting
-> 
-> Hello,
-> 
-> hns_nic_dev_probe() increments refcount of ae_node device node:
-> 	ae_node = of_parse_phandle(dev->of_node, "ae-handle", 0);
-> 
-> But there is no of_node_put() for ae_node.
-> What is the right place to decrement the ae_node refount?
-> 
-> Should it be placed in hns_nic_dev_probe() or in hns_nic_dev_remove()?
-> Or may be it is managed by fwnode somehow?
+Please make bindings a separate patch. Combining patch 1 and 2 
+binding changes is fine.
 
-Thanks for bringing this to notice. Yes, you are right of_node_put()
-is missing. We will float a fix for this soon.
-
-Cheers
-Salil
+Rob
