@@ -2,123 +2,102 @@ Return-Path: <SRS0=uvhX=PT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DF8B0C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 22:08:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E616C43444
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 22:09:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A79D821783
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 22:08:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547244514;
-	bh=VSF2IiNDEjZXbDAFNccaf5sT5CpLNlBmN+NeWKwih4c=;
-	h=Subject:In-Reply-To:References:Cc:To:From:Date:List-ID:From;
-	b=DX/8/LCrr3L7Z8hamFY/qvV9GG4/eiGoRfP6sGMOAI5LqvICsSOfA4M/JzXD1GZZD
-	 Z6vfQ30WoJm/2ErOloGKul3DtHkgJqi+o6812ZA1qcRzdR+K2BfGgVYIl3szBxgVWR
-	 uhjeW6Mp2A8SGgH5xEx2qlVkerVVdV6sZxSJ7Vmk=
+	by mail.kernel.org (Postfix) with ESMTP id 1992620878
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 22:09:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726497AbfAKWIe (ORCPT
+        id S1726472AbfAKWJy convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 11 Jan 2019 17:08:34 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60836 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725810AbfAKWId (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Jan 2019 17:08:33 -0500
-Received: from localhost (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CC99C20878;
-        Fri, 11 Jan 2019 22:08:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547244512;
-        bh=VSF2IiNDEjZXbDAFNccaf5sT5CpLNlBmN+NeWKwih4c=;
-        h=Subject:In-Reply-To:References:Cc:To:From:Date:From;
-        b=Y0FLVD90vlL+P5wHmxLvDcX69mhs5L6OsMq5p/S4DtAZbyB6Nuu2jBVTKmhF8B6ww
-         WfMegfmWrr5U+hlmC55SpBAvz1ATYQf90wGoHCArstQO5xTufePVW/VIQX3rzt6T9V
-         UK1vqZo/GbbY7onrt2NhD6BtJzrA+Nr5OpaxwGZU=
-Content-Type: text/plain; charset="utf-8"
+        Fri, 11 Jan 2019 17:09:54 -0500
+Received: from mx0b-00176a03.pphosted.com ([67.231.157.48]:58760 "EHLO
+        mx0a-00176a03.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1725810AbfAKWJx (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 Jan 2019 17:09:53 -0500
+X-Greylist: delayed 6108 seconds by postgrey-1.27 at vger.kernel.org; Fri, 11 Jan 2019 17:09:53 EST
+Received: from pps.filterd (m0048205.ppops.net [127.0.0.1])
+        by m0048205.ppops.net-00176a03. (8.16.0.22/8.16.0.22) with SMTP id x0BKOZYq039770;
+        Fri, 11 Jan 2019 15:28:03 -0500
+From:   "Safford, David (GE Global Research)" <david.safford@ge.com>
+To:     Stefan Berger <stefanb@linux.vnet.ibm.com>,
+        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
+        "jarkko.sakkinen@linux.intel.com" <jarkko.sakkinen@linux.intel.com>
+CC:     "linux-security-module@vger.kernel.org" 
+        <linux-security-module@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH 0/5] Extend TPM PPI interface to support revision 1.3
+Thread-Topic: [PATCH 0/5] Extend TPM PPI interface to support revision 1.3
+Thread-Index: AQHUqGg8qCxFiw8eqEqkK4aYmPL2cqWqhNVg
+Date:   Fri, 11 Jan 2019 20:28:00 +0000
+Message-ID: <BCA04D5D9A3B764C9B7405BBA4D4A3C0151A3125@ALPMBAPA12.e2k.ad.ge.com>
+References: <20190109221103.1897677-1-stefanb@linux.vnet.ibm.com>
+In-Reply-To: <20190109221103.1897677-1-stefanb@linux.vnet.ibm.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-dg-ref: PG1ldGE+PGF0IG5tPSJib2R5LnR4dCIgcD0iYzpcdXNlcnNcMjEyNDczOTUwXGFwcGRhdGFccm9hbWluZ1wwOWQ4NDliNi0zMmQzLTRhNDAtODVlZS02Yjg0YmEyOWUzNWJcbXNnc1xtc2ctNWM3ODk2OGUtMTVkZi0xMWU5LTgxZWMtNWNlMGM1OGE4NGIzXGFtZS10ZXN0XDVjNzg5NjhmLTE1ZGYtMTFlOS04MWVjLTVjZTBjNThhODRiM2JvZHkudHh0IiBzej0iMTgyOCIgdD0iMTMxOTE3MTIwNzg3MDAzOTc5IiBoPSJoaG0raXhHUUtlVDkzYnV0eFo2aU1INjBCb009IiBpZD0iIiBibD0iMCIgYm89IjEiLz48L21ldGE+
+x-originating-ip: [3.159.16.100]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v3 4/6] qcom: spmi-gpio: add support for hierarchical IRQ chip
-User-Agent: alot/0.8
-In-Reply-To: <20190110011258.17227-5-masneyb@onstation.org>
-References: <20190110011258.17227-1-masneyb@onstation.org> <20190110011258.17227-5-masneyb@onstation.org>
-Cc:     marc.zyngier@arm.com, shawnguo@kernel.org, dianders@chromium.org,
-        linux-gpio@vger.kernel.org, nicolas.dechesne@linaro.org,
-        niklas.cassel@linaro.org, david.brown@linaro.org,
-        robh+dt@kernel.org, mark.rutland@arm.com, thierry.reding@gmail.com,
-        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org
-To:     Brian Masney <masneyb@onstation.org>, andy.gross@linaro.org,
-        bjorn.andersson@linaro.org, linus.walleij@linaro.org
-Message-ID: <154724451211.169631.16582455779809137159@swboyd.mtv.corp.google.com>
-From:   Stephen Boyd <sboyd@kernel.org>
-Date:   Fri, 11 Jan 2019 14:08:32 -0800
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-01-11_11:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
+ definitions=main-1901110162
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Brian Masney (2019-01-09 17:12:56)
-> spmi-gpio did not have any irqchip support so consumers of this in
-> device tree would need to call gpio[d]_to_irq() in order to get the
-> proper IRQ on the underlying PMIC. IRQ chips in device tree should
-> be usable from the start without the consumer having to make an
-> additional call to get the proper IRQ on the parent. This patch adds
-> hierarchical IRQ chip support to the spmi-gpio code to correct this
-> issue.
->=20
-> Driver was tested using the volume buttons (via gpio-keys) on the LG
-> Nexus 5 (hammerhead) phone with the following two configurations.
->=20
-> volume-up {
->         interrupts-extended =3D <&pm8941_gpios 2 IRQ_TYPE_EDGE_BOTH>;
->         ...
-> };
->=20
-> volume-up {
->         gpios =3D <&pm8941_gpios 2 GPIO_ACTIVE_LOW>;
->         ...
-> };
->=20
-> Both configurations now show that spmi-gpio is the IRQ domain and that
-> the IRQ is setup in a hierarchy.
->=20
-> $ grep volume_up /proc/interrupts
->  72:          6          0  spmi-gpio   1 Edge      volume_up
->=20
-> $ cat /sys/kernel/debug/irq/irqs/72
-> handler:  handle_edge_irq
-> device:   (null)
-> status:   0x00000403
->             _IRQ_NOPROBE
-> istate:   0x00000000
-> ddepth:   0
-> wdepth:   0
-> dstate:   0x02400203
->             IRQ_TYPE_EDGE_RISING
->             IRQ_TYPE_EDGE_FALLING
->             IRQD_ACTIVATED
->             IRQD_IRQ_STARTED
-> node:     0
-> affinity: 0-3
-> effectiv:=20
-> domain:  :soc:spmi@fc4cf000:pm8941@0:gpios@c000
->  hwirq:   0x1
->  chip:    spmi-gpio
->   flags:   0x4
->              IRQCHIP_MASK_ON_SUSPEND
->  parent:
->     domain:  :soc:spmi@fc4cf000
->      hwirq:   0xc100057
->      chip:    pmic_arb
->       flags:   0x4
->                  IRQCHIP_MASK_ON_SUSPEND
->=20
-> Signed-off-by: Brian Masney <masneyb@onstation.org>
-> ---
+> -----Original Message-----
+> From: linux-integrity-owner@vger.kernel.org <linux-integrity-
+> owner@vger.kernel.org> On Behalf Of Stefan Berger
+> Sent: Wednesday, January 09, 2019 5:11 PM
+> To: linux-integrity@vger.kernel.org; jarkko.sakkinen@linux.intel.com
+> Cc: linux-security-module@vger.kernel.org; linux-kernel@vger.kernel.org;
+> Stefan Berger <stefanb@linux.vnet.ibm.com>
+> Subject: EXT: [PATCH 0/5] Extend TPM PPI interface to support revision 1.3
+> 
+> This series of patches extends the TPM subsystem's PPI support to support
+> TPM PPI revision 1.3 where more commands are supported (up to 101) and
+> the TPM 2 command code '23' takes an additional parameter.
+> 
+> For the command code '23' see this document here on document page 39:
+> https://trustedcomputinggroup.org/wp-content/uploads/Physical-
+> Presence-Interface_1-30_0-52.pdf
+> 
+>    Stefan
 
-Reviewed-by: Stephen Boyd <sboyd@kernel.org>
+You might mention that this is an important feature, as on at least some
+systems, ppi function 23 is the only way to enable/disable PCR banks.
+
+I have tested this patch set on my HP Spectre laptop, and I am finally
+able to turn the sha-1 bank on and off. Much appreciated!
+
+Tested-by: David Safford <david.safford@ge.com>
+
+> 
+> Stefan Berger (5):
+>   tpm: ppi: pass function revision ID to tpm_eval_dsm()
+>   tpm: ppi: rename TPM_PPI_REVISION_ID to TPM_PPI_REVISION_1
+>   tpm: ppi: Display up to 101 operations as define for version 1.3
+>   tpm: ppi: Possibly show command parameter if TPM PPI 1.3 is used
+>   tpm: ppi: Enable submission of optional command parameter for PPI 1.3
+> 
+>  drivers/char/tpm/tpm_ppi.c | 78 ++++++++++++++++++++++++++++--------
+> --
+>  1 file changed, 58 insertions(+), 20 deletions(-)
+> 
+> --
+> 2.17.1
 
