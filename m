@@ -2,104 +2,88 @@ Return-Path: <SRS0=uvhX=PT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.7 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F9B3C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 09:33:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 03C91C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 09:35:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 538412146F
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 09:33:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B50882146F
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 09:35:02 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="aHIGgFGN"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729224AbfAKJdT (ORCPT
+        id S1729858AbfAKJfC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 11 Jan 2019 04:33:19 -0500
-Received: from mx07-00178001.pphosted.com ([62.209.51.94]:4193 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727008AbfAKJdT (ORCPT
+        Fri, 11 Jan 2019 04:35:02 -0500
+Received: from mail-yb1-f182.google.com ([209.85.219.182]:34517 "EHLO
+        mail-yb1-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727008AbfAKJfB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Jan 2019 04:33:19 -0500
-Received: from pps.filterd (m0046037.ppops.net [127.0.0.1])
-        by mx07-00178001.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x0B9VZjf016823;
-        Fri, 11 Jan 2019 10:33:13 +0100
-Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx07-00178001.pphosted.com with ESMTP id 2ptybne56d-1
-        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
-        Fri, 11 Jan 2019 10:33:13 +0100
-Received: from zeta.dmz-eu.st.com (zeta.dmz-eu.st.com [164.129.230.9])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 617CC3A;
-        Fri, 11 Jan 2019 09:33:12 +0000 (GMT)
-Received: from Webmail-eu.st.com (Safex1hubcas24.st.com [10.75.90.94])
-        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 09F612696;
-        Fri, 11 Jan 2019 09:33:12 +0000 (GMT)
-Received: from SAFEX1HUBCAS21.st.com (10.75.90.45) by Safex1hubcas24.st.com
- (10.75.90.94) with Microsoft SMTP Server (TLS) id 14.3.361.1; Fri, 11 Jan
- 2019 10:33:11 +0100
-Received: from localhost (10.201.20.178) by Webmail-ga.st.com (10.75.90.48)
- with Microsoft SMTP Server (TLS) id 14.3.361.1; Fri, 11 Jan 2019 10:33:11
- +0100
-From:   Loic Pallardy <loic.pallardy@st.com>
-To:     <bjorn.andersson@linaro.org>, <ohad@wizery.com>
-CC:     <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <arnaud.pouliquen@st.com>, <benjamin.gaignard@linaro.org>,
-        <s-anna@ti.com>, Loic Pallardy <loic.pallardy@st.com>
-Subject: [PATCH 1/1] rpmsg: virtio: change header file sort style
-Date:   Fri, 11 Jan 2019 10:33:01 +0100
-Message-ID: <1547199181-83058-1-git-send-email-loic.pallardy@st.com>
-X-Mailer: git-send-email 2.7.4
+        Fri, 11 Jan 2019 04:35:01 -0500
+Received: by mail-yb1-f182.google.com with SMTP id w186so4700374ybg.1
+        for <linux-kernel@vger.kernel.org>; Fri, 11 Jan 2019 01:35:01 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=MX/2rZ9Ui1xuyU6im60xpO0Kqrmer0lOdAC4uufDsDs=;
+        b=aHIGgFGNs4DnhRrImTc5oEoRBdzp1iNCKHYyulmaTQLMJsdaR0lA/Q9ATLwpgYDZsm
+         9MK7RYnoAYnGuSGotDeZ5r0hkk8OjcKeVcQ91kzZxGdYcUNNMNgsC/RklsXD/uxpOo4q
+         Kw7cVUYR+ly+SYsW+wpv0tv6r/VW2cTAnep56divkpmC1pRc95oieNZIMyl0EjrQwBNN
+         015CNb3eyxjvg3ukjE4XnjPPXDT4KIV+GK6aznAlMFefJgk6B/eF+HRnGojbD0Ne7JUX
+         rFmISRCCFUf8AlDcBU4tKV3oP3Z1L+XRbCu80H605MEclby03dVsKeI+Lt2laRrqlrLp
+         VE/g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=MX/2rZ9Ui1xuyU6im60xpO0Kqrmer0lOdAC4uufDsDs=;
+        b=sExe3BqM3PPk4msTuu811Tc4clud6gBuoj2VImWlYnht5bYO1UjuBKrMkADYfahVUw
+         hh/2Ho5pLI/R/MMQmVLSnDyNU66NpHgDIawZZucJuwaNFSiMb0rdJPKdA5UVnOCSwIJ0
+         4nPCnSzPUIdam/t2ZfGiwfyQyrgVFdOvNOr4shSN0VhPceyEFc+NRelLTNYhGV5VQng8
+         Rrau/juUGO1hQ10BedKAleZ1Ltfq9HdiMbIh+NX7FrRyIcJy9CKOpZAg/W3eBi1wFI33
+         R1cQ9JEwilsEk9fUxzcAcNTtCMHvXCdut0jgw/85qW4YnMtjuOWCCF7RBKkPDr/B4YOe
+         Olww==
+X-Gm-Message-State: AJcUukcjFTsipxMEM6f3OzX3e5jByYwCodxLtEgA5w+09nES6FUtyRpT
+        wL0Pbr0NKwusM2by2BlCKtOihLA5+r7Ohq98q4GenA==
+X-Google-Smtp-Source: ALg8bN6sW7b3gVF0Y0rj+bW48bqPvU/g68lZ+obdov5KWZwiJ4TCTf98PaLxhDWNL/GrUefTJs7Sq09sO6q2x5zLvBQ=
+X-Received: by 2002:a25:b08b:: with SMTP id f11mr13308071ybj.236.1547199300403;
+ Fri, 11 Jan 2019 01:35:00 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.201.20.178]
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-01-11_06:,,
- signatures=0
+References: <CAA85sZt=Q4b_tn_vDx3g1ap7GNrXsHQk7Jki1T+zPbqVot90jg@mail.gmail.com>
+ <CANn89iLkciYGn7GyKc2QitSjjTms58_GKFqjOJ=6G8wEFi=SJA@mail.gmail.com>
+ <CAA85sZvciuNTc1NM1XbbBCqV-hWwjMZM+0i3vigtzmJ8CpPjHg@mail.gmail.com> <351f5da149072c8c1165f8f205ac5c852a92dff8.camel@redhat.com>
+In-Reply-To: <351f5da149072c8c1165f8f205ac5c852a92dff8.camel@redhat.com>
+From:   Eric Dumazet <edumazet@google.com>
+Date:   Fri, 11 Jan 2019 01:34:49 -0800
+Message-ID: <CANn89i+h4Og42OKaqJ8dsrupHkt2Lg1vPo-j92Bos98yPJzoNw@mail.gmail.com>
+Subject: Re: [BUG] moving fq back to clock monotonic breaks my setup
+To:     Paolo Abeni <pabeni@redhat.com>
+Cc:     ian.kumlien@gmail.com, netdev <netdev@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Make header files alphabetical order.
+On Thu, Jan 10, 2019 at 12:55 AM Paolo Abeni <pabeni@redhat.com> wrote:
+>
+> On Thu, 2019-01-10 at 09:25 +0100, Ian Kumlien wrote:
 
-Signed-off-by: Loic Pallardy <loic.pallardy@st.com>
----
- drivers/rpmsg/virtio_rpmsg_bus.c | 18 +++++++++---------
- 1 file changed, 9 insertions(+), 9 deletions(-)
 
-diff --git a/drivers/rpmsg/virtio_rpmsg_bus.c b/drivers/rpmsg/virtio_rpmsg_bus.c
-index 664f957012cd..e1d563fbfe65 100644
---- a/drivers/rpmsg/virtio_rpmsg_bus.c
-+++ b/drivers/rpmsg/virtio_rpmsg_bus.c
-@@ -11,21 +11,21 @@
- 
- #define pr_fmt(fmt) "%s: " fmt, __func__
- 
-+#include <linux/dma-mapping.h>
-+#include <linux/idr.h>
-+#include <linux/jiffies.h>
- #include <linux/kernel.h>
- #include <linux/module.h>
--#include <linux/virtio.h>
--#include <linux/virtio_ids.h>
--#include <linux/virtio_config.h>
-+#include <linux/mutex.h>
-+#include <linux/of_device.h>
-+#include <linux/rpmsg.h>
- #include <linux/scatterlist.h>
--#include <linux/dma-mapping.h>
- #include <linux/slab.h>
--#include <linux/idr.h>
--#include <linux/jiffies.h>
- #include <linux/sched.h>
-+#include <linux/virtio.h>
-+#include <linux/virtio_ids.h>
-+#include <linux/virtio_config.h>
- #include <linux/wait.h>
--#include <linux/rpmsg.h>
--#include <linux/mutex.h>
--#include <linux/of_device.h>
- 
- #include "rpmsg_internal.h"
- 
--- 
-2.7.4
+> > This works, and so does: https://marc.info/?l=linux-netdev&m=154696956604748&w=2
+> >
+> > Pointed out by Paolo (tested both separately)
+>
+> Note: I cleared the tstamp in br_forward_finish() instead of
+> br_dev_queue_push_xmit() because I think the latter could be called
+> also in the local xmit path, via br_nf_post_routing.
+>
+> We must preserve the tstamp in output path, right?
+>
 
+ I was not aware of your patch, SGTM, thanks.
