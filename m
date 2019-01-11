@@ -7,48 +7,47 @@ X-Spam-Status: No, score=-10.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 99BBAC43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:17:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BF6B7C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:17:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 65ED82183F
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:17:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 91CCC2184A
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:17:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547216255;
-	bh=4SQ0JE3dBnTklZSgKUpBToJMtGfPvnUh4IF//zqv3+g=;
+	s=default; t=1547216257;
+	bh=MgTA/ZMwPfMdGyRr7NNitxYGAq2t32DnGsw5MblMOMs=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=xgOqPyost8HPKOCXSiVxrtvHvFEuWpiyy311Rz7xxb0TO1jUkdQIrz+J4aUhyleX9
-	 FIgdces3P6mZj/bQ8fl45mHyHVELFB9/Z7D9kYBdhLu4mEsz/CaTwked/fRxCX/KHZ
-	 SeJ6BDVegGcJ/lhU+uK9YG7OoJ8YMlofB2tWihac=
+	b=b96VE68GuBlAgyHXGkSScn95QlXhbfaOTFa7ilDrBP5LKISAQ8MKAd8+Y8KtFHPX7
+	 RJ/MIPU3Rujmskh6yW14oKLT3bEl994GGshC3hUfApCGDrJDcM6bI+bkEsfDRYeAkR
+	 /syr6fznrjPePhp8x+dEaf7jx+q+qdUIdDV5OBbw=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733124AbfAKORe (ORCPT
+        id S1731255AbfAKORg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 11 Jan 2019 09:17:34 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33840 "EHLO mail.kernel.org"
+        Fri, 11 Jan 2019 09:17:36 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33968 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730904AbfAKOR0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Jan 2019 09:17:26 -0500
+        id S2387872AbfAKORe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 Jan 2019 09:17:34 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 92C5721783;
-        Fri, 11 Jan 2019 14:17:25 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7321521783;
+        Fri, 11 Jan 2019 14:17:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547216245;
-        bh=4SQ0JE3dBnTklZSgKUpBToJMtGfPvnUh4IF//zqv3+g=;
+        s=default; t=1547216254;
+        bh=MgTA/ZMwPfMdGyRr7NNitxYGAq2t32DnGsw5MblMOMs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=2GeOdql1PUAqvCaQRlEJqNy7MEVd6RvHrfG2LQZftny+IZfjwDtYMHOFFoRgMqGEH
-         7LvorO0dCp0WFaOxt8JDJGwvPpx55fxoryfw3oGA8LgaqupY/AHq9WdNIW77mPDOZ5
-         FoIerMjNcdvYk3JUbmLkwPm97rfXkchO5NHiu27g=
+        b=tvFBoRz4tsoRfKcuoy8gj8yGD9rN5a18I/Rvut2+/aEC/fCue6zm20NEvTBtVYVEr
+         bi3CpAiqFpaZ6nO4cZDjJ91MBYEqAPbIQm3BLuUgTpUpAkwScCxsi/yRyDH6Uvjww9
+         9A8e0NtZCmTHaEAJaIQKUVBUHqTiHaiTXxenCa/0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Lorenzo Bianconi <lorenzo.bianconi@redhat.com>,
-        Eric Dumazet <edumazet@google.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.4 28/88] gro_cell: add napi_disable in gro_cells_destroy
-Date:   Fri, 11 Jan 2019 15:07:57 +0100
-Message-Id: <20190111131050.276768921@linuxfoundation.org>
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        Takashi Iwai <tiwai@suse.de>
+Subject: [PATCH 4.4 31/88] ALSA: emu10k1: Fix potential Spectre v1 vulnerabilities
+Date:   Fri, 11 Jan 2019 15:08:00 +0100
+Message-Id: <20190111131050.653863390@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190111131045.137499039@linuxfoundation.org>
 References: <20190111131045.137499039@linuxfoundation.org>
@@ -67,77 +66,62 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Lorenzo Bianconi <lorenzo.bianconi@redhat.com>
+From: Gustavo A. R. Silva <gustavo@embeddedor.com>
 
-[ Upstream commit 8e1da73acded4751a93d4166458a7e640f37d26c ]
+commit 5ae4f61f012a097df93de2285070ec8e34716d29 upstream.
 
-Add napi_disable routine in gro_cells_destroy since starting from
-commit c42858eaf492 ("gro_cells: remove spinlock protecting receive
-queues") gro_cell_poll and gro_cells_destroy can run concurrently on
-napi_skbs list producing a kernel Oops if the tunnel interface is
-removed while gro_cell_poll is running. The following Oops has been
-triggered removing a vxlan device while the interface is receiving
-traffic
+ipcm->substream is indirectly controlled by user-space, hence leading to
+a potential exploitation of the Spectre variant 1 vulnerability.
 
-[ 5628.948853] BUG: unable to handle kernel NULL pointer dereference at 0000000000000008
-[ 5628.949981] PGD 0 P4D 0
-[ 5628.950308] Oops: 0002 [#1] SMP PTI
-[ 5628.950748] CPU: 0 PID: 9 Comm: ksoftirqd/0 Not tainted 4.20.0-rc6+ #41
-[ 5628.952940] RIP: 0010:gro_cell_poll+0x49/0x80
-[ 5628.955615] RSP: 0018:ffffc9000004fdd8 EFLAGS: 00010202
-[ 5628.956250] RAX: 0000000000000000 RBX: ffffe8ffffc08150 RCX: 0000000000000000
-[ 5628.957102] RDX: 0000000000000000 RSI: ffff88802356bf00 RDI: ffffe8ffffc08150
-[ 5628.957940] RBP: 0000000000000026 R08: 0000000000000000 R09: 0000000000000000
-[ 5628.958803] R10: 0000000000000001 R11: 0000000000000000 R12: 0000000000000040
-[ 5628.959661] R13: ffffe8ffffc08100 R14: 0000000000000000 R15: 0000000000000040
-[ 5628.960682] FS:  0000000000000000(0000) GS:ffff88803ea00000(0000) knlGS:0000000000000000
-[ 5628.961616] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[ 5628.962359] CR2: 0000000000000008 CR3: 000000000221c000 CR4: 00000000000006b0
-[ 5628.963188] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-[ 5628.964034] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-[ 5628.964871] Call Trace:
-[ 5628.965179]  net_rx_action+0xf0/0x380
-[ 5628.965637]  __do_softirq+0xc7/0x431
-[ 5628.966510]  run_ksoftirqd+0x24/0x30
-[ 5628.966957]  smpboot_thread_fn+0xc5/0x160
-[ 5628.967436]  kthread+0x113/0x130
-[ 5628.968283]  ret_from_fork+0x3a/0x50
-[ 5628.968721] Modules linked in:
-[ 5628.969099] CR2: 0000000000000008
-[ 5628.969510] ---[ end trace 9d9dedc7181661fe ]---
-[ 5628.970073] RIP: 0010:gro_cell_poll+0x49/0x80
-[ 5628.972965] RSP: 0018:ffffc9000004fdd8 EFLAGS: 00010202
-[ 5628.973611] RAX: 0000000000000000 RBX: ffffe8ffffc08150 RCX: 0000000000000000
-[ 5628.974504] RDX: 0000000000000000 RSI: ffff88802356bf00 RDI: ffffe8ffffc08150
-[ 5628.975462] RBP: 0000000000000026 R08: 0000000000000000 R09: 0000000000000000
-[ 5628.976413] R10: 0000000000000001 R11: 0000000000000000 R12: 0000000000000040
-[ 5628.977375] R13: ffffe8ffffc08100 R14: 0000000000000000 R15: 0000000000000040
-[ 5628.978296] FS:  0000000000000000(0000) GS:ffff88803ea00000(0000) knlGS:0000000000000000
-[ 5628.979327] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[ 5628.980044] CR2: 0000000000000008 CR3: 000000000221c000 CR4: 00000000000006b0
-[ 5628.980929] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-[ 5628.981736] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-[ 5628.982409] Kernel panic - not syncing: Fatal exception in interrupt
-[ 5628.983307] Kernel Offset: disabled
+This issue was detected with the help of Smatch:
 
-Fixes: c42858eaf492 ("gro_cells: remove spinlock protecting receive queues")
-Signed-off-by: Lorenzo Bianconi <lorenzo.bianconi@redhat.com>
-Acked-by: Eric Dumazet <edumazet@google.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+sound/pci/emu10k1/emufx.c:1031 snd_emu10k1_ipcm_poke() warn: potential spectre issue 'emu->fx8010.pcm' [r] (local cap)
+sound/pci/emu10k1/emufx.c:1075 snd_emu10k1_ipcm_peek() warn: potential spectre issue 'emu->fx8010.pcm' [r] (local cap)
+
+Fix this by sanitizing ipcm->substream before using it to index emu->fx8010.pcm
+
+Notice that given that speculation windows are large, the policy is
+to kill the speculation on the first load and not worry if it can be
+completed with a dependent load/store [1].
+
+[1] https://marc.info/?l=linux-kernel&m=152449131114778&w=2
+
+Cc: stable@vger.kernel.org
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- include/net/gro_cells.h |    1 +
- 1 file changed, 1 insertion(+)
 
---- a/include/net/gro_cells.h
-+++ b/include/net/gro_cells.h
-@@ -84,6 +84,7 @@ static inline void gro_cells_destroy(str
- 	for_each_possible_cpu(i) {
- 		struct gro_cell *cell = per_cpu_ptr(gcells->cells, i);
+---
+ sound/pci/emu10k1/emufx.c |    5 +++++
+ 1 file changed, 5 insertions(+)
+
+--- a/sound/pci/emu10k1/emufx.c
++++ b/sound/pci/emu10k1/emufx.c
+@@ -36,6 +36,7 @@
+ #include <linux/init.h>
+ #include <linux/mutex.h>
+ #include <linux/moduleparam.h>
++#include <linux/nospec.h>
  
-+		napi_disable(&cell->napi);
- 		netif_napi_del(&cell->napi);
- 		__skb_queue_purge(&cell->napi_skbs);
- 	}
+ #include <sound/core.h>
+ #include <sound/tlv.h>
+@@ -1000,6 +1001,8 @@ static int snd_emu10k1_ipcm_poke(struct
+ 
+ 	if (ipcm->substream >= EMU10K1_FX8010_PCM_COUNT)
+ 		return -EINVAL;
++	ipcm->substream = array_index_nospec(ipcm->substream,
++					     EMU10K1_FX8010_PCM_COUNT);
+ 	if (ipcm->channels > 32)
+ 		return -EINVAL;
+ 	pcm = &emu->fx8010.pcm[ipcm->substream];
+@@ -1046,6 +1049,8 @@ static int snd_emu10k1_ipcm_peek(struct
+ 
+ 	if (ipcm->substream >= EMU10K1_FX8010_PCM_COUNT)
+ 		return -EINVAL;
++	ipcm->substream = array_index_nospec(ipcm->substream,
++					     EMU10K1_FX8010_PCM_COUNT);
+ 	pcm = &emu->fx8010.pcm[ipcm->substream];
+ 	mutex_lock(&emu->fx8010.lock);
+ 	spin_lock_irq(&emu->reg_lock);
 
 
