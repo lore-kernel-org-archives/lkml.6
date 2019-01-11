@@ -2,101 +2,219 @@ Return-Path: <SRS0=uvhX=PT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D70BC43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 19:39:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 803F1C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 19:43:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 33055218D9
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 19:39:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4C1B1218D3
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 19:43:03 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=pobox.com header.i=@pobox.com header.b="IOZYmgbh";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=fluxnic.net header.i=@fluxnic.net header.b="UXVfj+eh"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JoF+RxuW"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388845AbfAKTji (ORCPT
+        id S2388859AbfAKTnC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 11 Jan 2019 14:39:38 -0500
-Received: from pb-smtp20.pobox.com ([173.228.157.52]:59951 "EHLO
-        pb-smtp20.pobox.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730371AbfAKTjh (ORCPT
+        Fri, 11 Jan 2019 14:43:02 -0500
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:36800 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732097AbfAKTnC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Jan 2019 14:39:37 -0500
-X-Greylist: delayed 412 seconds by postgrey-1.27 at vger.kernel.org; Fri, 11 Jan 2019 14:39:35 EST
-Received: from pb-smtp20.pobox.com (unknown [127.0.0.1])
-        by pb-smtp20.pobox.com (Postfix) with ESMTP id 240E04C3C4;
-        Fri, 11 Jan 2019 14:32:43 -0500 (EST)
-        (envelope-from nico@fluxnic.net)
-DKIM-Signature: v=1; a=rsa-sha1; c=relaxed; d=pobox.com; h=date:from:to
-        :cc:subject:in-reply-to:message-id:references:mime-version
-        :content-type; s=sasl; bh=vG2aKQy+cfKY6IB9UEFcw9yTUOw=; b=IOZYmg
-        bhQOJaL/fklFhU7aqfp7jy+c/sYZipnLfDFFyXrZzbbFX2wxqD8pXXx4s9gOhln0
-        bkEkhga58qbtj/gNbQCo57lDUsG555HTc2gpijsgvSxn+hr7Df3qwZiIkMbi6pGh
-        91EyAYxNUmkqhzkCui0Hly56dXCixTktFY3a8=
-Received: from pb-smtp20.sea.icgroup.com (unknown [127.0.0.1])
-        by pb-smtp20.pobox.com (Postfix) with ESMTP id 1D2A54C3C3;
-        Fri, 11 Jan 2019 14:32:43 -0500 (EST)
-        (envelope-from nico@fluxnic.net)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed; d=fluxnic.net;
- h=date:from:to:cc:subject:in-reply-to:message-id:references:mime-version:content-type; s=2016-12.pbsmtp; bh=8BsB+MVUqappM/wIgAyQg05SJx8e4t1Fl1VGMiMX5gE=; b=UXVfj+eh1mHGobPhUqXFm7OcfDW7SGwNY86TJIdRVI9GsI+NwPRcKsm7sCT4UcI2cPmHz1gFizC1s3xt6FBvhHBzFS9NuhPV9UwUbLqX9xPBBBSlDY5pn3rxH1fGAhZotm334ku+z+cmVU9pi9X7sNbNJwuTcagZ3Ly314SO2HI=
-Received: from yoda.home (unknown [70.82.104.228])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by pb-smtp20.pobox.com (Postfix) with ESMTPSA id 16B804C3C2;
-        Fri, 11 Jan 2019 14:32:40 -0500 (EST)
-        (envelope-from nico@fluxnic.net)
-Received: from xanadu.home (xanadu.home [192.168.2.2])
-        by yoda.home (Postfix) with ESMTPSA id 3205C2DA0173;
-        Fri, 11 Jan 2019 14:32:38 -0500 (EST)
-Date:   Fri, 11 Jan 2019 14:32:35 -0500 (EST)
-From:   Nicolas Pitre <nico@fluxnic.net>
-To:     Vito Caputo <vcaputo@pengaru.com>
-cc:     Dmitry Safonov <dima@arista.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jslaby@suse.cz>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        Tycho Andersen <tycho@tycho.ws>, Dave Mielke <dave@mielke.cc>,
-        linux-kernel@vger.kernel.org
-Subject: Re: commit 83d817f410 broke my ability to use Linux with a braille
- display
-In-Reply-To: <20190111191155.s4e5sn5fqk33fqr4@shells.gnugeneration.com>
-Message-ID: <nycvar.YSQ.7.76.1901111426250.1647@knanqh.ubzr>
-References: <nycvar.YSQ.7.76.1901111239510.1512@knanqh.ubzr> <20190111191155.s4e5sn5fqk33fqr4@shells.gnugeneration.com>
-User-Agent: Alpine 2.21 (LFD 202 2017-01-01)
+        Fri, 11 Jan 2019 14:43:02 -0500
+Received: by mail-lj1-f195.google.com with SMTP id g11-v6so13965279ljk.3;
+        Fri, 11 Jan 2019 11:42:59 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=WZRVS57tv9I9ffMetpNGaYITV4nVk628qDxZw36pJwY=;
+        b=JoF+RxuWc2U9ZqruqdjMEi3EjCHt0bgwXRIwuZppsWf8QH8qSge61SMBsSilfSj6Tg
+         pw4ZUIBNDO0tUwDtPKfgMFMBK3XFn5y6Qhgg03Iv0VNDuh+hLNhYUWZNGbf93yeK+5UM
+         ZrxVROqyBcFhWrMElADODgOAENuuFx7t/ep+ZIddLBvvZHeBERqmkejK0mmu5JPXntBN
+         Fcssi9buJrfJm0RUg/J5vDecw9WzoxkI7N/uh73NzFpO2vuo5F++6j2aH60pdxGSesrf
+         Wv1wq15hteaG+z4NtC/OGLH9byfsjaNSasr3UprXgwDP5DxlpSAOpW86ViMmBBk9e+uq
+         KZ6g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=WZRVS57tv9I9ffMetpNGaYITV4nVk628qDxZw36pJwY=;
+        b=eMza6BbSYqvmm9gDH++Ts5ymhQBdz44uCRDq5e0ul6Tlp040LTJUPnZsOCYJ1L7CWe
+         Paqi4sOIh/36/l+Twv04vyq0L5vGpQ9KpTvuEB3MA2EqIHKzERyiyLNsdyPITdY8DMC3
+         hSc38F+ociy3yVJrZKSNaDDZr66J2HZJpnUBZRf5Mo0tvBcWLHcXI37Ni88gGVkNamsl
+         5raONeTkT2g5NN+Oc34603DBnWzFoKX7qfwjJ4cU+pFlFeti83TxInNfXvuhz4Guqa6U
+         C4YrhgjQJdG+8gxHTmQXL8Zh028ygKuJMi5i5dx1Vci5SumQaNxSuIN4Q1bJ/KI48ZRF
+         gKIQ==
+X-Gm-Message-State: AJcUukeiXMwHApz8Er5R7woI5zp2UKiGbgWElmqr7xV/tqK9jEpAlL55
+        BoKfge9QZmTiP03Rd0EGiaA=
+X-Google-Smtp-Source: ALg8bN5G1D/gYawrOZ1LXdLsVI9Ryj4UGQP1xBGAR8D5E9SYUt9eLCKuZEmQortAT8+vnWDeCbTIgw==
+X-Received: by 2002:a2e:e02:: with SMTP id 2-v6mr6808353ljo.10.1547235778733;
+        Fri, 11 Jan 2019 11:42:58 -0800 (PST)
+Received: from localhost.localdomain ([2a02:a315:5445:5300:1c33:9053:5344:9f1f])
+        by smtp.googlemail.com with ESMTPSA id h3sm14602964lfj.25.2019.01.11.11.42.56
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 11 Jan 2019 11:42:57 -0800 (PST)
+From:   =?UTF-8?q?Pawe=C5=82=20Chmiel?= <pawel.mikolaj.chmiel@gmail.com>
+To:     kgene@kernel.org
+Cc:     krzk@kernel.org, viresh.kumar@linaro.org, rjw@rjwysocki.net,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-pm@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        =?UTF-8?q?Pawe=C5=82=20Chmiel?= <pawel.mikolaj.chmiel@gmail.com>
+Subject: [PATCH v3] cpufreq: s5pv210: Defer probe if getting regulators fail
+Date:   Fri, 11 Jan 2019 20:42:44 +0100
+Message-Id: <20190111194244.2439-1-pawel.mikolaj.chmiel@gmail.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-Pobox-Relay-ID: A886A468-15D7-11E9-A153-D889C09F693B-78420484!pb-smtp20.pobox.com
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 11 Jan 2019, Vito Caputo wrote:
+There is possibility, that when probing driver, regulators are not yet
+initialized. In this case we should return EPROBE_DEFER and wait till
+they're initialized, since they're required currently for cpufreq driver
+to work. Also move regulator initialization code at beginning of probe,
+so we can defer as fast as posibble.
 
-> On Fri, Jan 11, 2019 at 01:33:09PM -0500, Nicolas Pitre wrote:
-> > I use Linux with the help of a braille display and the brltty daemon. It 
-> > turns out that the latest mainline kernel I can work with comes from 
-> > commit 231f8fd0cc. Anything past that and I lose the ability to read the 
-> > console barely a few seconds after the system has booted as brltty is 
-> > thrown a wrench and the braille display becomes completely inoperable.
-> > 
-> > Things get somewhat better with commit c96cf923a9 as brltty is not 
-> > longer incapacitated, but some programs would randomly crash. Even the 
-> > very first login attempt won't work as I soon as I hit enter after my 
-> > user name the password prompt is skipped over, just like if the enter 
-> > key had been hit twice. Then lynx (the text web browser) would crash as 
-> > soon as I switch the virtual console with LeftAlt+FN. Mind you, this 
-> > isn't easy to perform bisection in those conditions.
-> > 
-> > And the worst commit i.e. 83d817f410 is marked for stable!  :-(
-> 
-> This all sounds familiar, and I suspect this is the fix:
-> 
-> https://lkml.org/lkml/2019/1/8/1379
+Signed-off-by: Paweł Chmiel <pawel.mikolaj.chmiel@gmail.com>
+---
+Changes from v2:
+  - Handle all error paths in probe
 
-Yep, I confirm this patch did solve all my issues.
+Changes from v1:
+  - Fix compilation error
+  - Reorganize code so it's smaller
+---
+ drivers/cpufreq/s5pv210-cpufreq.c | 68 ++++++++++++++++++++++---------
+ 1 file changed, 49 insertions(+), 19 deletions(-)
 
+diff --git a/drivers/cpufreq/s5pv210-cpufreq.c b/drivers/cpufreq/s5pv210-cpufreq.c
+index f51697f1e0b3..627b132e3e61 100644
+--- a/drivers/cpufreq/s5pv210-cpufreq.c
++++ b/drivers/cpufreq/s5pv210-cpufreq.c
+@@ -584,7 +584,7 @@ static struct notifier_block s5pv210_cpufreq_reboot_notifier = {
+ static int s5pv210_cpufreq_probe(struct platform_device *pdev)
+ {
+ 	struct device_node *np;
+-	int id;
++	int id, result = 0;
+ 
+ 	/*
+ 	 * HACK: This is a temporary workaround to get access to clock
+@@ -594,18 +594,40 @@ static int s5pv210_cpufreq_probe(struct platform_device *pdev)
+ 	 * this whole driver as soon as S5PV210 gets migrated to use
+ 	 * cpufreq-dt driver.
+ 	 */
++	arm_regulator = regulator_get(NULL, "vddarm");
++	if (IS_ERR(arm_regulator)) {
++		if (PTR_ERR(arm_regulator) == -EPROBE_DEFER)
++			pr_debug("vddarm regulator not ready, defer\n");
++		else
++			pr_err("failed to get regulator vddarm\n");
++		result = PTR_ERR(arm_regulator);
++		goto err_arm_regulator;
++	}
++
++	int_regulator = regulator_get(NULL, "vddint");
++	if (IS_ERR(int_regulator)) {
++		if (PTR_ERR(int_regulator) == -EPROBE_DEFER)
++			pr_debug("vddint regulator not ready, defer\n");
++		else
++			pr_err("failed to get regulator vddint\n");
++		result = PTR_ERR(int_regulator);
++		goto err_int_regulator;
++	}
++
+ 	np = of_find_compatible_node(NULL, NULL, "samsung,s5pv210-clock");
+ 	if (!np) {
+ 		pr_err("%s: failed to find clock controller DT node\n",
+ 			__func__);
+-		return -ENODEV;
++		result = -ENODEV;
++		goto err_clock;
+ 	}
+ 
+ 	clk_base = of_iomap(np, 0);
+ 	of_node_put(np);
+ 	if (!clk_base) {
+ 		pr_err("%s: failed to map clock registers\n", __func__);
+-		return -EFAULT;
++		result = -EFAULT;
++		goto err_clock;
+ 	}
+ 
+ 	for_each_compatible_node(np, NULL, "samsung,s5pv210-dmc") {
+@@ -614,7 +636,8 @@ static int s5pv210_cpufreq_probe(struct platform_device *pdev)
+ 			pr_err("%s: failed to get alias of dmc node '%pOFn'\n",
+ 				__func__, np);
+ 			of_node_put(np);
+-			return id;
++			result = id;
++			goto err_clk_base;
+ 		}
+ 
+ 		dmc_base[id] = of_iomap(np, 0);
+@@ -622,33 +645,40 @@ static int s5pv210_cpufreq_probe(struct platform_device *pdev)
+ 			pr_err("%s: failed to map dmc%d registers\n",
+ 				__func__, id);
+ 			of_node_put(np);
+-			return -EFAULT;
++			result = -EFAULT;
++			goto err_dmc;
+ 		}
+ 	}
+ 
+ 	for (id = 0; id < ARRAY_SIZE(dmc_base); ++id) {
+ 		if (!dmc_base[id]) {
+ 			pr_err("%s: failed to find dmc%d node\n", __func__, id);
+-			return -ENODEV;
++			result = -ENODEV;
++			goto err_dmc;
+ 		}
+ 	}
+ 
+-	arm_regulator = regulator_get(NULL, "vddarm");
+-	if (IS_ERR(arm_regulator)) {
+-		pr_err("failed to get regulator vddarm\n");
+-		return PTR_ERR(arm_regulator);
+-	}
+-
+-	int_regulator = regulator_get(NULL, "vddint");
+-	if (IS_ERR(int_regulator)) {
+-		pr_err("failed to get regulator vddint\n");
+-		regulator_put(arm_regulator);
+-		return PTR_ERR(int_regulator);
+-	}
+-
+ 	register_reboot_notifier(&s5pv210_cpufreq_reboot_notifier);
+ 
+ 	return cpufreq_register_driver(&s5pv210_driver);
++
++err_dmc:
++	for (id = 0; id < ARRAY_SIZE(dmc_base); ++id)
++		if (dmc_base[id])
++			iounmap(dmc_base[id]);
++
++err_clk_base:
++	iounmap(clk_base);
++
++err_clock:
++	regulator_put(int_regulator);
++
++err_int_regulator:
++	regulator_put(arm_regulator);
++
++err_arm_regulator:
++
++	return result;
+ }
+ 
+ static struct platform_driver s5pv210_cpufreq_platdrv = {
+-- 
+2.17.1
 
-Nicolas
