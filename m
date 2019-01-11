@@ -2,139 +2,170 @@ Return-Path: <SRS0=uvhX=PT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.7 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 07B3DC43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 02:08:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F5C5C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 02:10:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C39DD20872
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 02:08:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1CE6B20872
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 02:10:24 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="be7UFB1L"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=xenosoft.de header.i=@xenosoft.de header.b="Y9bn1tu9"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729557AbfAKCIy (ORCPT
+        id S1729570AbfAKCKV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 10 Jan 2019 21:08:54 -0500
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:33866 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728083AbfAKCIy (ORCPT
+        Thu, 10 Jan 2019 21:10:21 -0500
+Received: from mo4-p02-ob.smtp.rzone.de ([85.215.255.82]:25686 "EHLO
+        mo4-p02-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728083AbfAKCKU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Jan 2019 21:08:54 -0500
-Received: by mail-pl1-f195.google.com with SMTP id w4so6034636plz.1
-        for <linux-kernel@vger.kernel.org>; Thu, 10 Jan 2019 18:08:53 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:from:to:cc:subject:in-reply-to:message-id:references
-         :user-agent:mime-version;
-        bh=Pbs3viVnbLmrJDgZToOWnI2RCPBUPFNlcmEf/PajdJI=;
-        b=be7UFB1LIsM1GXBUnRqgUd1Bg5S47LHTc2yx/D8RMpNdLkrEnNcED8NWgmKomJqmIp
-         WYgPN5abdriOnT3SevisE/0NwDFNJm98i7Be+Yrrs7w3sFyh7/lrZVItpBY6kofBUDOu
-         pJb1Lh35mDCcDASTBoeUkDycl4LRVlQLpMsmSkvJxeZk/Txd1lR5ry5mibtvseHAiu2p
-         RfOEXz8MP2uBBNzf/BVP27ymYip56gz6xvNjqpT11W93MQvBoF0Y3YoSVbzL3KzR5T9t
-         4exhZdcdIU4hoVbQE+e9wmpsTGnBFzRbm/SmI7DtE5/CFUvu2vCXhHJEJiD/zifhK4td
-         x9Hg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:in-reply-to:message-id
-         :references:user-agent:mime-version;
-        bh=Pbs3viVnbLmrJDgZToOWnI2RCPBUPFNlcmEf/PajdJI=;
-        b=HDepZ6rbit++FOjmy3wrO/mv7slW2hkkTZVHgpiabe3h9q3dYVHE5SW9D9WnLGtytp
-         WcHNvP/235PEKgvuqNIJA746JyMVs/T5kl9vpvwBAIBtBRp13OxWNReREvy4K8g5DNBu
-         u0fsdgNNJbcDWUtqvpNtYkt0JwcatlVuqmMFrE2iqAwVwSm9Diq3sb8ewumC1gro6sHa
-         b5eymmm27LfrtxFSTpPjDrzGtL022i1wOA3vL30+L1YszdO1VAoFiyoz7jBGriJtMsBj
-         UFhEjOkUcbtUnWrX00ZtwwqEcpZOqaW2f1bplg94JlNk9QM6qTyi6n69Ie9vpDfXyNrn
-         kJ5w==
-X-Gm-Message-State: AJcUukd97oxO141q/Jb3hXqYn/8cz5fIE7HW2mKhzqJKIJDPqyA6W7hM
-        WhMwfoRS8BM4EpE0xJo20rvyXw==
-X-Google-Smtp-Source: ALg8bN4UQkYPpqJKpxWxRaK4cmgmxKZNkNyamVkTWcAR4FwLrPYPdnPfoPvOk/aDS3iWtakkjV8faA==
-X-Received: by 2002:a17:902:5588:: with SMTP id g8mr12780632pli.22.1547172532918;
-        Thu, 10 Jan 2019 18:08:52 -0800 (PST)
-Received: from [100.112.89.103] ([104.133.8.103])
-        by smtp.gmail.com with ESMTPSA id v9sm111315757pfg.144.2019.01.10.18.08.49
-        (version=TLS1 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Thu, 10 Jan 2019 18:08:50 -0800 (PST)
-Date:   Thu, 10 Jan 2019 18:08:37 -0800 (PST)
-From:   Hugh Dickins <hughd@google.com>
-X-X-Sender: hugh@eggly.anvils
-To:     Vlastimil Babka <vbabka@suse.cz>
-cc:     Hugh Dickins <hughd@google.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Baoquan He <bhe@redhat.com>, Michal Hocko <mhocko@suse.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        David Hildenbrand <david@redhat.com>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        David Herrmann <dh.herrmann@gmail.com>,
-        Tim Chen <tim.c.chen@linux.intel.com>,
-        Kan Liang <kan.liang@intel.com>,
-        Andi Kleen <ak@linux.intel.com>,
-        Davidlohr Bueso <dave@stgolabs.net>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Christoph Lameter <cl@linux.com>,
-        Nick Piggin <npiggin@gmail.com>, pifang@redhat.com,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
-Subject: Re: [PATCHi v2] mm: put_and_wait_on_page_locked() while page is
- migrated
-In-Reply-To: <fccdbef6-00cf-38ad-3aa0-9466c9b83176@suse.cz>
-Message-ID: <alpine.LSU.2.11.1901101748550.3146@eggly.anvils>
-References: <alpine.LSU.2.11.1811241858540.4415@eggly.anvils> <CAHk-=wjeqKYevxGnfCM4UkxX8k8xfArzM6gKkG3BZg1jBYThVQ@mail.gmail.com> <alpine.LSU.2.11.1811251900300.1278@eggly.anvils> <alpine.LSU.2.11.1811261121330.1116@eggly.anvils>
- <fccdbef6-00cf-38ad-3aa0-9466c9b83176@suse.cz>
-User-Agent: Alpine 2.11 (LSU 23 2013-08-11)
+        Thu, 10 Jan 2019 21:10:20 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1547172616;
+        s=strato-dkim-0002; d=xenosoft.de;
+        h=In-Reply-To:Date:Message-ID:References:Cc:To:From:Subject:
+        X-RZG-CLASS-ID:X-RZG-AUTH:From:Subject:Sender;
+        bh=qGVmgqtlQDziwwLkWKa25bRl+9+rwwdzzixuHKRHbhs=;
+        b=Y9bn1tu9cMfoFyCIhjS4E+05COjdMiHnJEoDHZf8nOB2S56aGt5CklRJA8eaa6fosr
+        +2xsvP2RI8G/PboiPD0LL9rFV0NP+aEx+9C85rwh8HfsaF05MXaC6v3h5rwdiYmOgIv6
+        citFwEfv8MpP9XJX2NXri1m0cdD7EXfxKxlRS3l8ZkqZbI0YiAZHAO7yMPjF5zR9LryW
+        QxdI83dmzDmygwknNFB5lMMmBl5Tf/q5/V8MUErA+mc2K5kRa1uvVF6PzQWZpD6zfv3V
+        eOZ+yXqJtLXZQsMYjCqoSkgbozglwgr5i99opsX1JneLFS00a7tVxUjTqm9QaKIiNFIF
+        Ze7A==
+X-RZG-AUTH: ":L2QefEenb+UdBJSdRCXu93KJ1bmSGnhMdmOod1DhGM4l4Hio94KKxRySfLxnHfJ+Dkjp5G5MdirQj0WG7CkMjtMHfb0qEIS/g2biZPgkZjq/DQ=="
+X-RZG-CLASS-ID: mo00
+Received: from [IPv6:2a02:8109:a400:162c:302c:e1f6:9992:a190]
+        by smtp.strato.de (RZmta 44.9 AUTH)
+        with ESMTPSA id t0203dv0B2AEXIO
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (curve secp521r1 with 521 ECDH bits, eq. 15360 bits RSA))
+        (Client did not present a certificate);
+        Fri, 11 Jan 2019 03:10:14 +0100 (CET)
+Subject: Re: use generic DMA mapping code in powerpc V4
+From:   Christian Zigotzky <chzigotzky@xenosoft.de>
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     linux-arch@vger.kernel.org,
+        Darren Stevens <darren@stevens-zone.net>,
+        linux-kernel@vger.kernel.org, Julian Margetson <runaway@candw.ms>,
+        linux-mm@kvack.org, iommu@lists.linux-foundation.org,
+        Paul Mackerras <paulus@samba.org>,
+        Olof Johansson <olof@lixom.net>, linuxppc-dev@lists.ozlabs.org
+References: <2242B4B2-6311-492E-BFF9-6740E36EC6D4@xenosoft.de>
+ <84558d7f-5a7f-5219-0c3a-045e6b4c494f@xenosoft.de>
+ <20181213091021.GA2106@lst.de>
+ <835bd119-081e-a5ea-1899-189d439c83d6@xenosoft.de>
+ <76bc684a-b4d2-1d26-f18d-f5c9ba65978c@xenosoft.de>
+ <20181213112511.GA4574@lst.de>
+ <e109de27-f4af-147d-dc0e-067c8bafb29b@xenosoft.de>
+ <ad5a5a8a-d232-d523-a6f7-e9377fc3857b@xenosoft.de>
+ <e60d6ca3-860c-f01d-8860-c5e022ec7179@xenosoft.de>
+ <008c981e-bdd2-21a7-f5f7-c57e4850ae9a@xenosoft.de>
+ <20190103073622.GA24323@lst.de>
+ <71A251A5-FA06-4019-B324-7AED32F7B714@xenosoft.de>
+ <1b0c5c21-2761-d3a3-651b-3687bb6ae694@xenosoft.de>
+ <3504ee70-02de-049e-6402-2d530bf55a84@xenosoft.de>
+Message-ID: <23284859-bf0a-9cd5-a480-2a7fd7802056@xenosoft.de>
+Date:   Fri, 11 Jan 2019 03:10:13 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+In-Reply-To: <3504ee70-02de-049e-6402-2d530bf55a84@xenosoft.de>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: de-DE
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 10 Jan 2019, Vlastimil Babka wrote:
-> 
-> For the record, anyone backporting this to older kernels should make
-> sure to also include 605ca5ede764 ("mm/huge_memory.c: reorder operations
-> in __split_huge_page_tail()") or they are in for a lot of fun, like me.
+Next step: 891dcc1072f1fa27a83da920d88daff6ca08fc02 (powerpc/dma: remove 
+dma_nommu_dma_supported)
 
-Thanks a lot for alerting us all to this, Vlastimil.  Yes, I consider
-Konstantin's 605ca5ede764 a must-have, and so had it already in all
-the trees on which I was testing put_and_wait_on_page_locked(),
-without being aware of the critical role it was playing.
+git clone git://git.infradead.org/users/hch/misc.git -b powerpc-dma.6 a
 
-But you do enjoy fun, don't you? So I shouldn't apologize :)
+git checkout 891dcc1072f1fa27a83da920d88daff6ca08fc02
 
-> 
-> Long story [1] short, Konstantin was correct in 605ca5ede764 changelog,
-> although it wasn't the main known issue he was fixing:
-> 
->   clear_compound_head() also must be called before unfreezing page
->   reference because after successful get_page_unless_zero() might follow
->   put_page() which needs correct compound_head().
-> 
-> Which is exactly what happens in __migration_entry_wait():
-> 
->         if (!get_page_unless_zero(page))
->                 goto out;
->         pte_unmap_unlock(ptep, ptl);
->         put_and_wait_on_page_locked(page); -> does put_page(page)
-> 
-> while waiting on the THP split (which inserts those migration entries)
-> to finish. Before put_and_wait_on_page_locked() it would wait first, and
-> only then do put_page() on a page that's no longer tail page, so it
-> would work out despite the dangerous get_page_unless_zero() on a tail
-> page. Now it doesn't :)
+Output:
 
-It took me a while to follow there, but yes, agreed.
+Note: checking out '891dcc1072f1fa27a83da920d88daff6ca08fc02'.
 
-> 
-> Now if only 605ca5ede764 had a CC:stable and a Fixes: tag... Machine
-> Learning won this round though, because 605ca5ede764 was added to 4.14
-> stable by Sasha...
+You are in 'detached HEAD' state. You can look around, make experimental
+changes and commit them, and you can discard any commits you make in this
+state without impacting any branches by performing another checkout.
 
-I'm proud to have passed the Turing test in reverse, but actually
-that was me, not ML.  My 173d9d9fd3dd ("mm/huge_memory: splitting set
-mapping+index before unfreeze") in 4.20 built upon Konstantin's, so I
-included his as a precursor when sending the stable guys pre-XArray
-backports.  So Konstantin's is even in 4.9 stable now.
+If you want to create a new branch to retain commits you create, you may
+do so (now or later) by using -b with the checkout command again. Example:
 
-Hugh
+git checkout -b <new-branch-name>
+
+HEAD is now at 891dcc1... powerpc/dma: remove dma_nommu_dma_supported
+
+---
+
+Link to the Git: 
+http://git.infradead.org/users/hch/misc.git/shortlog/refs/heads/powerpc-dma.6
+
+Results: PASEMI onboard ethernet works and the X5000 (P5020 board) 
+boots. I also successfully tested sound, hardware 3D acceleration, 
+Bluetooth, network, booting with a label etc. The uImages work also in a 
+virtual e5500 quad-core QEMU machine.
+
+-- Christian
+
+
+On 09 January 2019 at 10:31AM, Christian Zigotzky wrote:
+> Next step: a64e18ba191ba9102fb174f27d707485ffd9389c (powerpc/dma: 
+> remove dma_nommu_get_required_mask)
+>
+> git clone git://git.infradead.org/users/hch/misc.git -b powerpc-dma.6 a
+>
+> git checkout a64e18ba191ba9102fb174f27d707485ffd9389c
+>
+> Link to the Git: 
+> http://git.infradead.org/users/hch/misc.git/shortlog/refs/heads/powerpc-dma.6
+>
+> Results: PASEMI onboard ethernet works and the X5000 (P5020 board) 
+> boots. I also successfully tested sound, hardware 3D acceleration, 
+> Bluetooth, network, booting with a label etc. The uImages work also in 
+> a virtual e5500 quad-core QEMU machine.
+>
+> -- Christian
+>
+>
+> On 05 January 2019 at 5:03PM, Christian Zigotzky wrote:
+>> Next step: c446404b041130fbd9d1772d184f24715cf2362f (powerpc/dma: 
+>> remove dma_nommu_mmap_coherent)
+>>
+>> git clone git://git.infradead.org/users/hch/misc.git -b powerpc-dma.6 a
+>>
+>> git checkout c446404b041130fbd9d1772d184f24715cf2362f
+>>
+>> Output:
+>>
+>> Note: checking out 'c446404b041130fbd9d1772d184f24715cf2362f'.
+>>
+>> You are in 'detached HEAD' state. You can look around, make experimental
+>> changes and commit them, and you can discard any commits you make in 
+>> this
+>> state without impacting any branches by performing another checkout.
+>>
+>> If you want to create a new branch to retain commits you create, you may
+>> do so (now or later) by using -b with the checkout command again. 
+>> Example:
+>>
+>>   git checkout -b <new-branch-name>
+>>
+>> HEAD is now at c446404... powerpc/dma: remove dma_nommu_mmap_coherent
+>>
+>> -----
+>>
+>> Link to the Git: 
+>> http://git.infradead.org/users/hch/misc.git/shortlog/refs/heads/powerpc-dma.6
+>>
+>> Result: PASEMI onboard ethernet works and the X5000 (P5020 board) boots.
+>>
+>> -- Christian
+>>
+>
+>
+
