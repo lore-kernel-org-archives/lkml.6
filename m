@@ -2,56 +2,55 @@ Return-Path: <SRS0=uvhX=PT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-13.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D738AC43612
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:56:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BC1FCC43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:56:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9EBB8206B6
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:56:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8D12B20872
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:56:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547218611;
-	bh=TJEPmVOH+ntqnQI/+bfhEn8QJhFPrLThUtKoM+GGlbs=;
+	s=default; t=1547218615;
+	bh=4vto7/wFLlHdJb/YG35whr2HpWyC20yL3Lxs/Rgm2a4=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=quvNexLE5pxTmftRlwwNeVlOo70QLqNczLzfJCdjQvQyPglwfrhjnps3Q8O/DdkbS
-	 p02DCLZkot7vCYOkZYOdPiNqI5yhgl8K37nX+ZmfEzYjDt4q+vu38HMHmZBIcmt1Pf
-	 4M3zWHgXTtSO8GJMl7rLbcpebKVVkeJcxkcEnUyY=
+	b=JFMVnOXLzallkBZXKmbtDHPbmar3hMLwMW6YwJKF8oROvTmYT30eeh6B2rs+hWLOY
+	 /LMVcO1s0R6dQlOi6UPjaD9UsEyh+NtzmsDFb/4jginCmr2DKsCSKE3RAQ59gf4Le5
+	 Nkz7ucQWkp/sh2GWUcUFf3wvBzXGKL+efcqjDmso=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389941AbfAKOfd (ORCPT
+        id S2390170AbfAKOfb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 11 Jan 2019 09:35:33 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54778 "EHLO mail.kernel.org"
+        Fri, 11 Jan 2019 09:35:31 -0500
+Received: from mail.kernel.org ([198.145.29.99]:55748 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389931AbfAKOeb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Jan 2019 09:34:31 -0500
+        id S2390148AbfAKOf2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 Jan 2019 09:35:28 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5DF712133F;
-        Fri, 11 Jan 2019 14:34:30 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 53299218AE;
+        Fri, 11 Jan 2019 14:35:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547217270;
-        bh=TJEPmVOH+ntqnQI/+bfhEn8QJhFPrLThUtKoM+GGlbs=;
+        s=default; t=1547217327;
+        bh=4vto7/wFLlHdJb/YG35whr2HpWyC20yL3Lxs/Rgm2a4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=o6aapS0jQnDkJIzFv/N0sUfQss1ZuiOdFWF/PElp7Q1iRhKd0jlaSJibIiaEkDSgM
-         2ZXEFoaUQcgfcBPobT93qm6DoHKTYDFROhEUwDfdArw2Ha2M4SIabcCbjcz1OWWVBS
-         duZpHZqyO3FMYblf03/AYbsFXB/seAZDIEOoQ5/k=
+        b=RF68suGLju3ktyV6nDP3VHtrnqPQ2MpcQ85ZzH23eQLLSXik8IzwTt18/AMLIO4kz
+         Fa5LX1w1Je7MTa9i5CKXolqTrZA8MvLSFfBshQoZZ6YpNtXjpt6dwUt/THutUVqw6h
+         Lt6sU3wl01An0wTExaFWo8S53gZy1GI/dOCJndU4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Nicholas Piggin <npiggin@gmail.com>,
-        Joel Stanley <joel@jms.id.au>,
+        stable@vger.kernel.org, Paul Mackerras <paulus@ozlabs.org>,
         Michael Ellerman <mpe@ellerman.id.au>,
-        Nathan Chancellor <natechancellor@gmail.com>
-Subject: [PATCH 4.14 069/105] powerpc: avoid -mno-sched-epilog on GCC 4.9 and newer
-Date:   Fri, 11 Jan 2019 15:14:40 +0100
-Message-Id: <20190111131108.798178199@linuxfoundation.org>
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 004/148] powerpc: Fix COFF zImage booting on old powermacs
+Date:   Fri, 11 Jan 2019 15:13:02 +0100
+Message-Id: <20190111131114.508408747@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190111131102.899065735@linuxfoundation.org>
-References: <20190111131102.899065735@linuxfoundation.org>
+In-Reply-To: <20190111131114.337122649@linuxfoundation.org>
+References: <20190111131114.337122649@linuxfoundation.org>
 User-Agent: quilt/0.65
 X-stable: review
 X-Patchwork-Hint: ignore
@@ -63,39 +62,60 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.14-stable review patch.  If anyone has any objections, please let me know.
+4.19-stable review patch.  If anyone has any objections, please let me know.
 
 ------------------
 
-From: Nicholas Piggin <npiggin@gmail.com>
+[ Upstream commit 5564597d51c8ff5b88d95c76255e18b13b760879 ]
 
-commit 6977f95e63b9b3fb4a5973481a800dd9f48a1338 upstream.
+Commit 6975a783d7b4 ("powerpc/boot: Allow building the zImage wrapper
+as a relocatable ET_DYN", 2011-04-12) changed the procedure descriptor
+at the start of crt0.S to have a hard-coded start address of 0x500000
+rather than a reference to _zimage_start, presumably because having
+a reference to a symbol introduced a relocation which is awkward to
+handle in a position-independent executable.  Unfortunately, what is
+at 0x500000 in the COFF image is not the first instruction, but the
+procedure descriptor itself, that is, a word containing 0x500000,
+which is not a valid instruction.  Hence, booting a COFF zImage
+results in a "DEFAULT CATCH!, code=FFF00700" message from Open
+Firmware.
 
-Signed-off-by: Nicholas Piggin <npiggin@gmail.com>
-Reviewed-by: Joel Stanley <joel@jms.id.au>
+This fixes the problem by (a) putting the procedure descriptor in the
+data section and (b) adding a branch to _zimage_start as the first
+instruction in the program.
+
+Fixes: 6975a783d7b4 ("powerpc/boot: Allow building the zImage wrapper as a relocatable ET_DYN")
+Signed-off-by: Paul Mackerras <paulus@ozlabs.org>
 Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
-[nc: Adjust context due to lack of f2910f0e6835 and 2a056f58fd33]
-Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/powerpc/Makefile |    7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
+ arch/powerpc/boot/crt0.S | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
---- a/arch/powerpc/Makefile
-+++ b/arch/powerpc/Makefile
-@@ -236,7 +236,12 @@ endif
+diff --git a/arch/powerpc/boot/crt0.S b/arch/powerpc/boot/crt0.S
+index 32dfe6d083f3..9b9d17437373 100644
+--- a/arch/powerpc/boot/crt0.S
++++ b/arch/powerpc/boot/crt0.S
+@@ -15,7 +15,7 @@
+ RELA = 7
+ RELACOUNT = 0x6ffffff9
  
- # Work around a gcc code-gen bug with -fno-omit-frame-pointer.
- ifeq ($(CONFIG_FUNCTION_TRACER),y)
--KBUILD_CFLAGS		+= -mno-sched-epilog
-+# Work around gcc code-gen bugs with -pg / -fno-omit-frame-pointer in gcc <= 4.8
-+# https://gcc.gnu.org/bugzilla/show_bug.cgi?id=44199
-+# https://gcc.gnu.org/bugzilla/show_bug.cgi?id=52828
-+ifneq ($(cc-name),clang)
-+KBUILD_CFLAGS		+= $(call cc-ifversion, -lt, 0409, -mno-sched-epilog)
-+endif
- endif
+-	.text
++	.data
+ 	/* A procedure descriptor used when booting this as a COFF file.
+ 	 * When making COFF, this comes first in the link and we're
+ 	 * linked at 0x500000.
+@@ -23,6 +23,8 @@ RELACOUNT = 0x6ffffff9
+ 	.globl	_zimage_start_opd
+ _zimage_start_opd:
+ 	.long	0x500000, 0, 0, 0
++	.text
++	b	_zimage_start
  
- cpu-as-$(CONFIG_4xx)		+= -Wa,-m405
+ #ifdef __powerpc64__
+ .balign 8
+-- 
+2.19.1
+
 
 
