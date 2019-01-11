@@ -4,50 +4,52 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-10.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B8C8AC43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:34:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 502F5C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:34:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8884A2063F
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:34:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1F60621848
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:34:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547217247;
-	bh=QKE4OjUqkkq8T0JPgnpL4XidRVMaQ3wMcS3r4Wp8gd4=;
+	s=default; t=1547217254;
+	bh=yxTbaW2/H86KPOIvxEVR6A9rE2FxtdppKrYFzjWH9w4=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=DEO5aTOjGkWd1zTuJ51nritM2RJsjvdN0wktZs1TQGi+7km0g71WZKU/Aq1PcCl1F
-	 7LTvAB3C8uXSH/dR04xHBpGP3f6XdOjpdeH8elbLQPz7S1TE64X+f6oNgQvHR58w6F
-	 KsYt4XfhJ28f2bRaaiCoH/lU49Zg6yAFbUGw746I=
+	b=vZTmt5yfl/i+0mr4+pz12reTYZrUZAHS1Q/jOr3bZTsfWd3t0czofRJKLbbD6Gbk3
+	 q3gf+KxKOt4xWBMRk/YXYF+NvDKVZDo10Wn/VDCvkFOaOVeNRLrl1Z75kb2DNICJv7
+	 NZq05yKYhRr1gKRSj0H4f3LLpK7saNlW2RbAJclc=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389390AbfAKOeG (ORCPT
+        id S2389860AbfAKOeN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 11 Jan 2019 09:34:06 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54302 "EHLO mail.kernel.org"
+        Fri, 11 Jan 2019 09:34:13 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54430 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389818AbfAKOeD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Jan 2019 09:34:03 -0500
+        id S2389834AbfAKOeJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 Jan 2019 09:34:09 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E220D21848;
-        Fri, 11 Jan 2019 14:34:01 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 551672133F;
+        Fri, 11 Jan 2019 14:34:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547217242;
-        bh=QKE4OjUqkkq8T0JPgnpL4XidRVMaQ3wMcS3r4Wp8gd4=;
+        s=default; t=1547217248;
+        bh=yxTbaW2/H86KPOIvxEVR6A9rE2FxtdppKrYFzjWH9w4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=aOMorr9MepnPbT9A0K9IFfKbMxXlIEjWXTQKoG9AZAKnp84/YTZLzL9ELfMWrV2RA
-         Oz/TsGpS7Wo6qwD4HNIZrta6J1dXpIrDEbexZkZQ955f7YMp6bevd9RcBlJmApFMmz
-         oB4bolnek1bCHcFPAvl9OTvBmuyiSZcChTq53TkI=
+        b=L0JuzQnmvRTk6KOWZonqjL5beMU2E1xAwNNtMaTEJ1UUfVgxpcOG7Bb57FWBMgRjE
+         sjpHrvWvt/DgAjrgE01CC5W6G6wVerl8sbh0irKrkXwziHtaKE+5pxRp4XKwPBQVbo
+         NIO0f9OxzX9MNabi9H1bRkorN2B7i8BVPE+633QY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Nick Desaulniers <ndesaulniers@google.com>,
-        Peter Smith <peter.smith@linaro.org>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Will Deacon <will.deacon@arm.com>
-Subject: [PATCH 4.14 094/105] arm64: relocatable: fix inconsistencies in linker script and options
-Date:   Fri, 11 Jan 2019 15:15:05 +0100
-Message-Id: <20190111131110.785837868@linuxfoundation.org>
+        stable@vger.kernel.org,
+        syzbot+0c1d61e4db7db94102ca@syzkaller.appspotmail.com,
+        Dominique Martinet <dominique.martinet@cea.fr>,
+        Eric Van Hensbergen <ericvh@gmail.com>,
+        Latchesar Ionkov <lucho@ionkov.net>
+Subject: [PATCH 4.14 096/105] 9p/net: put a lower bound on msize
+Date:   Fri, 11 Jan 2019 15:15:07 +0100
+Message-Id: <20190111131110.949799461@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190111131102.899065735@linuxfoundation.org>
 References: <20190111131102.899065735@linuxfoundation.org>
@@ -66,96 +68,81 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+From: Dominique Martinet <dominique.martinet@cea.fr>
 
-commit 3bbd3db86470c701091fb1d67f1fab6621debf50 upstream.
+commit 574d356b7a02c7e1b01a1d9cba8a26b3c2888f45 upstream.
 
-readelf complains about the section layout of vmlinux when building
-with CONFIG_RELOCATABLE=y (for KASLR):
+If the requested msize is too small (either from command line argument
+or from the server version reply), we won't get any work done.
+If it's *really* too small, nothing will work, and this got caught by
+syzbot recently (on a new kmem_cache_create_usercopy() call)
 
-  readelf: Warning: [21]: Link field (0) should index a symtab section.
-  readelf: Warning: [21]: Info field (0) should index a relocatable section.
+Just set a minimum msize to 4k in both code paths, until someone
+complains they have a use-case for a smaller msize.
 
-Also, it seems that our use of '-pie -shared' is contradictory, and
-thus ambiguous. In general, the way KASLR is wired up at the moment
-is highly tailored to how ld.bfd happens to implement (and conflate)
-PIE executables and shared libraries, so given the current effort to
-support other toolchains, let's fix some of these issues as well.
+We need to check in both mount option and server reply individually
+because the msize for the first version request would be unchecked
+with just a global check on clnt->msize.
 
-- Drop the -pie linker argument and just leave -shared. In ld.bfd,
-  the differences between them are unclear (except for the ELF type
-  of the produced image [0]) but lld chokes on seeing both at the
-  same time.
-
-- Rename the .rela output section to .rela.dyn, as is customary for
-  shared libraries and PIE executables, so that it is not misidentified
-  by readelf as a static relocation section (producing the warnings
-  above).
-
-- Pass the -z notext and -z norelro options to explicitly instruct the
-  linker to permit text relocations, and to omit the RELRO program
-  header (which requires a certain section layout that we don't adhere
-  to in the kernel). These are the defaults for current versions of
-  ld.bfd.
-
-- Discard .eh_frame and .gnu.hash sections to avoid them from being
-  emitted between .head.text and .text, screwing up the section layout.
-
-These changes only affect the ELF image, and produce the same binary
-image.
-
-[0] b9dce7f1ba01 ("arm64: kernel: force ET_DYN ELF type for ...")
-
-Cc: Nick Desaulniers <ndesaulniers@google.com>
-Cc: Peter Smith <peter.smith@linaro.org>
-Tested-by: Nick Desaulniers <ndesaulniers@google.com>
-Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Signed-off-by: Will Deacon <will.deacon@arm.com>
+Link: http://lkml.kernel.org/r/1541407968-31350-1-git-send-email-asmadeus@codewreck.org
+Reported-by: syzbot+0c1d61e4db7db94102ca@syzkaller.appspotmail.com
+Signed-off-by: Dominique Martinet <dominique.martinet@cea.fr>
+Cc: Eric Van Hensbergen <ericvh@gmail.com>
+Cc: Latchesar Ionkov <lucho@ionkov.net>
+Cc: stable@vger.kernel.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/arm64/Makefile             |    2 +-
- arch/arm64/kernel/vmlinux.lds.S |    9 +++++----
- 2 files changed, 6 insertions(+), 5 deletions(-)
+ net/9p/client.c |   21 +++++++++++++++++++++
+ 1 file changed, 21 insertions(+)
 
---- a/arch/arm64/Makefile
-+++ b/arch/arm64/Makefile
-@@ -18,7 +18,7 @@ ifeq ($(CONFIG_RELOCATABLE), y)
- # Pass --no-apply-dynamic-relocs to restore pre-binutils-2.27 behaviour
- # for relative relocs, since this leads to better Image compression
- # with the relocation offsets always being zero.
--LDFLAGS_vmlinux		+= -pie -shared -Bsymbolic \
-+LDFLAGS_vmlinux		+= -shared -Bsymbolic -z notext -z norelro \
- 			$(call ld-option, --no-apply-dynamic-relocs)
- endif
- 
---- a/arch/arm64/kernel/vmlinux.lds.S
-+++ b/arch/arm64/kernel/vmlinux.lds.S
-@@ -99,7 +99,8 @@ SECTIONS
- 		*(.discard)
- 		*(.discard.*)
- 		*(.interp .dynamic)
--		*(.dynsym .dynstr .hash)
-+		*(.dynsym .dynstr .hash .gnu.hash)
-+		*(.eh_frame)
+--- a/net/9p/client.c
++++ b/net/9p/client.c
+@@ -181,6 +181,12 @@ static int parse_opts(char *opts, struct
+ 				ret = r;
+ 				continue;
+ 			}
++			if (option < 4096) {
++				p9_debug(P9_DEBUG_ERROR,
++					 "msize should be at least 4k\n");
++				ret = -EINVAL;
++				continue;
++			}
+ 			clnt->msize = option;
+ 			break;
+ 		case Opt_trans:
+@@ -996,10 +1002,18 @@ static int p9_client_version(struct p9_c
+ 	else if (!strncmp(version, "9P2000", 6))
+ 		c->proto_version = p9_proto_legacy;
+ 	else {
++		p9_debug(P9_DEBUG_ERROR,
++			 "server returned an unknown version: %s\n", version);
+ 		err = -EREMOTEIO;
+ 		goto error;
  	}
  
- 	. = KIMAGE_VADDR + TEXT_OFFSET;
-@@ -176,12 +177,12 @@ SECTIONS
++	if (msize < 4096) {
++		p9_debug(P9_DEBUG_ERROR,
++			 "server returned a msize < 4096: %d\n", msize);
++		err = -EREMOTEIO;
++		goto error;
++	}
+ 	if (msize < c->msize)
+ 		c->msize = msize;
  
- 	PERCPU_SECTION(L1_CACHE_BYTES)
+@@ -1064,6 +1078,13 @@ struct p9_client *p9_client_create(const
+ 	if (clnt->msize > clnt->trans_mod->maxsize)
+ 		clnt->msize = clnt->trans_mod->maxsize;
  
--	.rela : ALIGN(8) {
-+	.rela.dyn : ALIGN(8) {
- 		*(.rela .rela*)
- 	}
- 
--	__rela_offset	= ABSOLUTE(ADDR(.rela) - KIMAGE_VADDR);
--	__rela_size	= SIZEOF(.rela);
-+	__rela_offset	= ABSOLUTE(ADDR(.rela.dyn) - KIMAGE_VADDR);
-+	__rela_size	= SIZEOF(.rela.dyn);
- 
- 	. = ALIGN(SEGMENT_ALIGN);
- 	__initdata_end = .;
++	if (clnt->msize < 4096) {
++		p9_debug(P9_DEBUG_ERROR,
++			 "Please specify a msize of at least 4k\n");
++		err = -EINVAL;
++		goto free_client;
++	}
++
+ 	err = p9_client_version(clnt);
+ 	if (err)
+ 		goto close_trans;
 
 
