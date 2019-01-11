@@ -2,139 +2,84 @@ Return-Path: <SRS0=uvhX=PT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7EFC7C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:25:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D585C43444
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:26:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4D25320874
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:25:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547216757;
-	bh=TWTEF80yo6wcsDeIu35Qd9OH5h89bqZw6UetiEeCiKI=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=Mc9LRdS+e8sW0E+doiQZGp3oKW8LEEtHDYSBB6cqhBbHTHNkNMeg6wWixixJ5N7lS
-	 k0FVF06HcabqeNDqHK8wAKDXhpFJjGwFr0iBJv3RwDEqTUYipcxVdPrjbzL3b8MZBV
-	 jcVAYinlKpjrW5VubNMSWCgUOq2HymFOZGm0V9ok=
+	by mail.kernel.org (Postfix) with ESMTP id 44D9C20874
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:26:03 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="CsvY9CXu"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731860AbfAKOZz (ORCPT
+        id S1731130AbfAKO0C (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 11 Jan 2019 09:25:55 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34772 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731827AbfAKOSQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Jan 2019 09:18:16 -0500
-Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5DDB2214D8;
-        Fri, 11 Jan 2019 14:18:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547216295;
-        bh=TWTEF80yo6wcsDeIu35Qd9OH5h89bqZw6UetiEeCiKI=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=wDstRDecx5yDuYHT5OOiALkvBYjXdwJcYKor32AaEWk5Wl+/aTebJ+cj/xNoC3E6C
-         ytzP4mnoLZcp02qtBHv9nLEGIrtaM7XOypk9bnTX8tjm4/Y7E8wXDbGL7S36/GqxLU
-         H4c/GeFklQ1qsopJQxns3BOFVUiTsdS73hCKtpJE=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        Daniel Vetter <daniel.vetter@ffwll.ch>
-Subject: [PATCH 4.4 13/88] drm/ioctl: Fix Spectre v1 vulnerabilities
-Date:   Fri, 11 Jan 2019 15:07:42 +0100
-Message-Id: <20190111131048.178025379@linuxfoundation.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190111131045.137499039@linuxfoundation.org>
-References: <20190111131045.137499039@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
-X-Patchwork-Hint: ignore
+        Fri, 11 Jan 2019 09:26:02 -0500
+Received: from mail-lf1-f67.google.com ([209.85.167.67]:36665 "EHLO
+        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732487AbfAKOZw (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 Jan 2019 09:25:52 -0500
+Received: by mail-lf1-f67.google.com with SMTP id a16so10937760lfg.3
+        for <linux-kernel@vger.kernel.org>; Fri, 11 Jan 2019 06:25:50 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=eMezhPlibajiGAUTYo08rPGVJy9LI+52kVipFELMAgQ=;
+        b=CsvY9CXuHvuP2vTpRQyKuR/UFoKr2gc+Zd1n5HWeW3jeQeJrAzB8eBNZmGtnEZ6RdB
+         vp8jZlgGDUgSR1AjbcHxNt00u5/mn/ScwOaE3oM2AZPDZJnNDU0+VSxfpEH1JEA9Rfk+
+         LDNQzmeGNrE1fq1QcUooxTZdilxSiv5vEXc98=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=eMezhPlibajiGAUTYo08rPGVJy9LI+52kVipFELMAgQ=;
+        b=TiuKL3DppWHGUNtVs7zeLatfuz02vD1RgB4nbQMLC1gOzYl2BwCMoQJ8aco3jrkMKf
+         fn/Bhx0nfpPuQ6CtHaLnD20dQoGFoQ6cKGGs3G/enn5ycVRHf1h/1ENM/aRzrdmqJtlD
+         x4Ug30c8RcN8u8SLtNlV1nJakSrPp3PSuT4tVTLpAvjgBCbLF3QgdI2906hp68wbnLhY
+         y6gOxLb9d/+rt8F7n/4RTM0Pk9enOCnmJnhN1OId1z8B9myvA3t28HwmibP0FTIibOaA
+         3EDeysiSFDiRZ2hGnR5ZIRXVMS2uj/ztxmHFujQ2xf/MohKD9Wu/Gp6rRxewOwP4UrEN
+         0jdw==
+X-Gm-Message-State: AJcUukcUejPOhS5Utpw1eM+UG3VGeyZTF+iRZ7UtC0Nz+sbBBEOqq0S5
+        hH8nDK+SqPwTKKQpHXtk5ZXNBzzrAArdLtQ4kpxNtKfZ
+X-Google-Smtp-Source: ALg8bN6aiLFd5CFB+xSIBHKWd6SdJTQ+kll9fKsdXbyRMUwy4ow0dOqzUTcdToXSWNu3qzVWZgxi9O6aBOv+ycsVxok=
+X-Received: by 2002:a19:f813:: with SMTP id a19mr7889089lff.67.1547216749948;
+ Fri, 11 Jan 2019 06:25:49 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <64a23e6f8751ee6f1387a611a9d5dba43694b0d0.1546999151.git.ryder.lee@mediatek.com>
+In-Reply-To: <64a23e6f8751ee6f1387a611a9d5dba43694b0d0.1546999151.git.ryder.lee@mediatek.com>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Fri, 11 Jan 2019 15:25:38 +0100
+Message-ID: <CACRpkdaJ29di4GxcHNa+pUtV62aF+8SRKTzYMAJHd-8j0oiX=Q@mail.gmail.com>
+Subject: Re: [PATCH] pinctrl: mediatek: fix build errors for moore core when
+ CONFIG_OF is not enabled
+To:     Ryder Lee <ryder.lee@mediatek.com>
+Cc:     Sean Wang <sean.wang@kernel.org>,
+        Weijie Gao <weijie.gao@mediatek.com>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        "moderated list:ARM/Mediatek SoC support" 
+        <linux-mediatek@lists.infradead.org>,
+        stable <stable@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.4-stable review patch.  If anyone has any objections, please let me know.
+On Wed, Jan 9, 2019 at 3:14 AM Ryder Lee <ryder.lee@mediatek.com> wrote:
 
-------------------
+> on i386 or x86_64:
+>
+> Lots of build errors for drivers/pinctrl/mediatek/pinctrl-moore.c when
+> CONFIG_OF is not enabled (but COMPILE_TEST is).
 
-From: Gustavo A. R. Silva <gustavo@embeddedor.com>
+Patch applied with Seans ACK and trimming down the subject
+and commit message a bit :)
 
-commit 505b5240329b922f21f91d5b5d1e535c805eca6d upstream.
-
-nr is indirectly controlled by user-space, hence leading to a
-potential exploitation of the Spectre variant 1 vulnerability.
-
-This issue was detected with the help of Smatch:
-
-drivers/gpu/drm/drm_ioctl.c:805 drm_ioctl() warn: potential spectre issue 'dev->driver->ioctls' [r]
-drivers/gpu/drm/drm_ioctl.c:810 drm_ioctl() warn: potential spectre issue 'drm_ioctls' [r] (local cap)
-drivers/gpu/drm/drm_ioctl.c:892 drm_ioctl_flags() warn: potential spectre issue 'drm_ioctls' [r] (local cap)
-
-Fix this by sanitizing nr before using it to index dev->driver->ioctls
-and drm_ioctls.
-
-Notice that given that speculation windows are large, the policy is
-to kill the speculation on the first load and not worry if it can be
-completed with a dependent load/store [1].
-
-[1] https://marc.info/?l=linux-kernel&m=152449131114778&w=2
-
-Cc: stable@vger.kernel.org
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
-Signed-off-by: Daniel Vetter <daniel.vetter@ffwll.ch>
-Link: https://patchwork.freedesktop.org/patch/msgid/20181220000015.GA18973@embeddedor
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
----
- drivers/gpu/drm/drm_ioctl.c |   10 ++++++++--
- 1 file changed, 8 insertions(+), 2 deletions(-)
-
---- a/drivers/gpu/drm/drm_ioctl.c
-+++ b/drivers/gpu/drm/drm_ioctl.c
-@@ -36,6 +36,7 @@
- 
- #include <linux/pci.h>
- #include <linux/export.h>
-+#include <linux/nospec.h>
- 
- static int drm_version(struct drm_device *dev, void *data,
- 		       struct drm_file *file_priv);
-@@ -702,13 +703,17 @@ long drm_ioctl(struct file *filp,
- 
- 	if (is_driver_ioctl) {
- 		/* driver ioctl */
--		if (nr - DRM_COMMAND_BASE >= dev->driver->num_ioctls)
-+		unsigned int index = nr - DRM_COMMAND_BASE;
-+
-+		if (index >= dev->driver->num_ioctls)
- 			goto err_i1;
--		ioctl = &dev->driver->ioctls[nr - DRM_COMMAND_BASE];
-+		index = array_index_nospec(index, dev->driver->num_ioctls);
-+		ioctl = &dev->driver->ioctls[index];
- 	} else {
- 		/* core ioctl */
- 		if (nr >= DRM_CORE_IOCTL_COUNT)
- 			goto err_i1;
-+		nr = array_index_nospec(nr, DRM_CORE_IOCTL_COUNT);
- 		ioctl = &drm_ioctls[nr];
- 	}
- 
-@@ -810,6 +815,7 @@ bool drm_ioctl_flags(unsigned int nr, un
- 
- 	if (nr >= DRM_CORE_IOCTL_COUNT)
- 		return false;
-+	nr = array_index_nospec(nr, DRM_CORE_IOCTL_COUNT);
- 
- 	*flags = drm_ioctls[nr].flags;
- 	return true;
-
-
+Yours,
+Linus Walleij
