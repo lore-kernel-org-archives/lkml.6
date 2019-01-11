@@ -2,105 +2,128 @@ Return-Path: <SRS0=uvhX=PT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 64550C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 22:05:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EF494C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 22:06:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 28A3A2183F
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 22:05:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547244352;
-	bh=ud1Yie9k2C3EIYIWAmP3UjxK8Tm7sc4U7aRKQxqj91o=;
-	h=Subject:In-Reply-To:References:Cc:To:From:Date:List-ID:From;
-	b=PbEKTCy4MBUyUcP6bYsmuXFG5BMoMMoVg61rWeJ+HtPmSsLFmHUuBWZx3/EtfEtkF
-	 upfVL+hHwMyVVxDA6o7uTcUb3Bjj9VALNNbmOGy5tvZZF4dL2We3v4MH4aePxODh6E
-	 lC3t9UNhUFQghN8yNn9zDeu4bj05TQ6gGwlBzENI=
+	by mail.kernel.org (Postfix) with ESMTP id BEBDE2133F
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 22:06:26 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="PeOI1ssU"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726428AbfAKWFv (ORCPT
+        id S1726451AbfAKWGZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 11 Jan 2019 17:05:51 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59640 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725777AbfAKWFv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Jan 2019 17:05:51 -0500
-Received: from localhost (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3BC8C20878;
-        Fri, 11 Jan 2019 22:05:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547244350;
-        bh=ud1Yie9k2C3EIYIWAmP3UjxK8Tm7sc4U7aRKQxqj91o=;
-        h=Subject:In-Reply-To:References:Cc:To:From:Date:From;
-        b=ilG10Ty6DY58y1IBrOcrvwiFVK45oRpQHmKTMAG7QKhZqAY/jJGGsYI2yMbfb9MZf
-         uSKHHosITQosxI/25JWebRfPPsgsDVvxMK6NFKxLTR7uvWMuoM1pc+4IRVshNUBTLE
-         s37UQoFFRB4Elm13CB6rEQ6yN8Dp4P8j7rbb/B+w=
-Content-Type: text/plain; charset="utf-8"
+        Fri, 11 Jan 2019 17:06:25 -0500
+Received: from mail-ed1-f67.google.com ([209.85.208.67]:35460 "EHLO
+        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725767AbfAKWGZ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 Jan 2019 17:06:25 -0500
+Received: by mail-ed1-f67.google.com with SMTP id x30so14290938edx.2
+        for <linux-kernel@vger.kernel.org>; Fri, 11 Jan 2019 14:06:24 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ffwll.ch; s=google;
+        h=sender:date:from:to:cc:subject:message-id:mail-followup-to
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=5t8aNtf7qt4in6pKjl0LVAnHXwRhW20pyP639gOd7X8=;
+        b=PeOI1ssUllyIbVN8Nccyv9SDxUbdG33UBWWeCCTBdDNPzRUf84t+GS7GcYnjj0alV2
+         +/iTSe5FtEzg/vaMmZGGrHJmp7hTLRBlav0EtCPLKM433BoasTGFvnRp1RfErz4+9bPA
+         mHksJsfoG1xdqQZIZ5R4P7XfXE1gfMP9+TZXU=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :mail-followup-to:references:mime-version:content-disposition
+         :in-reply-to:user-agent;
+        bh=5t8aNtf7qt4in6pKjl0LVAnHXwRhW20pyP639gOd7X8=;
+        b=byQoHVeydCiOBEJBjbKrJi0C0yQrfmskPcXrxwvnVRYgAxXEC606vgo4UMKO1jEnJk
+         wvPFiiU/8qGXXDMDhB/bo2KZjT+DsEdYqnGVb0j1lNop9RP9KipliEZBaPXxkzHFIFh1
+         vCwMd1dbbdl9pTiC+Alo58o3kzkzO4EiN2/gkcCCNJKhLv1EzRZYt/O0Hazu2m8jLY2A
+         dvVg3BJkqh5YtHCdA3GmF//ljB8lzZqoIXUlJ2oUrrTnYMvKSdkzm2Gt2Wy4qSjXf6QM
+         1xSwjbYyRxIno2iCR3Z/U5Qfw2Gyr7P+3LH9vuiwfnwwv+VK6VOIVyh5IFjsbxSrCTR0
+         srGA==
+X-Gm-Message-State: AJcUukdgCV37/3X6O3jydim+kzB/MdMME3u7gfUgMClN6MSGpL7L8A9t
+        h2WmgBElfc/4YZDS4k19zoFJig==
+X-Google-Smtp-Source: ALg8bN6XxNcrVkjEb6b7QASaB2X7JRBUZ+czQW69saPymcseE33nJ60pNdZ7HLzHyUZLxyS9IRH8PQ==
+X-Received: by 2002:a50:a5e2:: with SMTP id b31mr14256892edc.5.1547244383241;
+        Fri, 11 Jan 2019 14:06:23 -0800 (PST)
+Received: from phenom.ffwll.local ([2a02:168:569e:0:3106:d637:d723:e855])
+        by smtp.gmail.com with ESMTPSA id gz20-v6sm1689296ejb.56.2019.01.11.14.06.21
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 11 Jan 2019 14:06:22 -0800 (PST)
+Date:   Fri, 11 Jan 2019 23:06:20 +0100
+From:   Daniel Vetter <daniel@ffwll.ch>
+To:     Rob Clark <robdclark@gmail.com>
+Cc:     dri-devel@lists.freedesktop.org, Rob Clark <rclark@redhat.com>,
+        Daniel Stone <daniels@collabora.com>,
+        David Airlie <airlied@linux.ie>,
+        YueHaibing <yuehaibing@huawei.com>, linux-kernel@vger.kernel.org,
+        virtualization@lists.linux-foundation.org,
+        Gerd Hoffmann <kraxel@redhat.com>,
+        Thomas Zimmermann <tzimmermann@suse.de>,
+        Dave Airlie <airlied@redhat.com>,
+        Thierry Reding <treding@nvidia.com>
+Subject: Re: [PATCH] drm/cirrus: fix connector leak at unload
+Message-ID: <20190111220620.GF21184@phenom.ffwll.local>
+Mail-Followup-To: Rob Clark <robdclark@gmail.com>,
+        dri-devel@lists.freedesktop.org, Rob Clark <rclark@redhat.com>,
+        Daniel Stone <daniels@collabora.com>,
+        David Airlie <airlied@linux.ie>, YueHaibing <yuehaibing@huawei.com>,
+        linux-kernel@vger.kernel.org,
+        virtualization@lists.linux-foundation.org,
+        Gerd Hoffmann <kraxel@redhat.com>,
+        Thomas Zimmermann <tzimmermann@suse.de>,
+        Dave Airlie <airlied@redhat.com>,
+        Thierry Reding <treding@nvidia.com>
+References: <20190111140242.29002-1-robdclark@gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v3 3/6] gpio: add irq domain activate/deactivate functions
-User-Agent: alot/0.8
-In-Reply-To: <20190110011258.17227-4-masneyb@onstation.org>
-References: <20190110011258.17227-1-masneyb@onstation.org> <20190110011258.17227-4-masneyb@onstation.org>
-Cc:     marc.zyngier@arm.com, shawnguo@kernel.org, dianders@chromium.org,
-        linux-gpio@vger.kernel.org, nicolas.dechesne@linaro.org,
-        niklas.cassel@linaro.org, david.brown@linaro.org,
-        robh+dt@kernel.org, mark.rutland@arm.com, thierry.reding@gmail.com,
-        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org
-To:     Brian Masney <masneyb@onstation.org>, andy.gross@linaro.org,
-        bjorn.andersson@linaro.org, linus.walleij@linaro.org
-Message-ID: <154724434941.169631.6671178005596601495@swboyd.mtv.corp.google.com>
-From:   Stephen Boyd <sboyd@kernel.org>
-Date:   Fri, 11 Jan 2019 14:05:49 -0800
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190111140242.29002-1-robdclark@gmail.com>
+X-Operating-System: Linux phenom 4.18.0-2-amd64 
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Brian Masney (2019-01-09 17:12:55)
-> This adds the two new functions gpiochip_irq_domain_activate and
-> gpiochip_irq_domain_deactivate that can be used as the activate and
-> deactivate functions in the struct irq_domain_ops. This is for
-> situations where only gpiochip_{lock,unlock}_as_irq needs to be called.
-> SPMI and SSBI GPIO are two users that will initially use these
-> functions.
->=20
-> Signed-off-by: Brian Masney <masneyb@onstation.org>
+On Fri, Jan 11, 2019 at 09:02:34AM -0500, Rob Clark wrote:
+> This fixes an '*ERROR* connector VGA-2 leaked!' splat at driver unload.
+> 
+> Signed-off-by: Rob Clark <robdclark@gmail.com>
 > ---
-> Stephen: Reply if you want a Suggested-by tag for this.
+> Similar case to the issue that was fixed recently in drm/ast
 
-Sure. Add it please.
+Reviewed-by: Daniel Vetter <daniel.vetter@ffwll.ch>
 
-Suggested-by: Stephen Boyd <sboyd@kernel.org>
-
-Minor question but otherwise
-
-Reviewed-by: Stephen Boyd <sboyd@kernel.org>
-
-> +/**
-> + * gpiochip_irq_domain_deactivate() - Unlock a GPIO used as an IRQ
-> + * @domain: The IRQ domain used by this IRQ chip
-> + * @data: Outermost irq_data associated with the IRQ
-> + *
-> + * This function is a wrapper that will call &gpiochip_unlock_as_irq and=
- is to
-
-Is this kernel-doc notation to refer to functions and structures with
-ampersand only? According to the docs[1] we should put () after
-functions and '&struct' before structures.
-
-> + * be used as the deactivate function for the struct &irq_domain_ops. The
-> + * host_data for the IRQ domain must be the struct &gpiochip.
-> + */
-> +void gpiochip_irq_domain_deactivate(struct irq_domain *domain,
-> +                                   struct irq_data *data)
-> +{
-> +       struct gpio_chip *chip =3D domain->host_data;
+> 
+>  drivers/gpu/drm/cirrus/cirrus_fbdev.c | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
+> diff --git a/drivers/gpu/drm/cirrus/cirrus_fbdev.c b/drivers/gpu/drm/cirrus/cirrus_fbdev.c
+> index 4dd499c7d1ba..bb379ec4c182 100644
+> --- a/drivers/gpu/drm/cirrus/cirrus_fbdev.c
+> +++ b/drivers/gpu/drm/cirrus/cirrus_fbdev.c
+> @@ -256,6 +256,8 @@ static int cirrus_fbdev_destroy(struct drm_device *dev,
+>  {
+>  	struct drm_framebuffer *gfb = gfbdev->gfb;
+>  
+> +	drm_crtc_force_disable_all(dev);
 > +
+>  	drm_fb_helper_unregister_fbi(&gfbdev->helper);
+>  
+>  	vfree(gfbdev->sysram);
+> -- 
+> 2.20.1
+> 
+> _______________________________________________
+> dri-devel mailing list
+> dri-devel@lists.freedesktop.org
+> https://lists.freedesktop.org/mailman/listinfo/dri-devel
 
-[1] https://www.kernel.org/doc/html/latest/doc-guide/kernel-doc.html?highli=
-ght=3Dcross%20references#highlights-and-cross-references
+-- 
+Daniel Vetter
+Software Engineer, Intel Corporation
+http://blog.ffwll.ch
