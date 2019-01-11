@@ -2,129 +2,86 @@ Return-Path: <SRS0=uvhX=PT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C6C6C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 21:30:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8EA82C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 21:31:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E1A712084C
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 21:30:53 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="UAZi7u1A"
+	by mail.kernel.org (Postfix) with ESMTP id 61E2B2084C
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 21:31:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1547242289;
+	bh=wTwNNBLK9XKCazXMD/eW1bS2NsXJImOUTCWAhVot3tk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=rjQTrtUmLO96TCqitxIhhUQnTGELiIHbLTGznxSkpi/chyGqvobTtkMyBYw5a6aAb
+	 dBZN/69P7uQOjGf0TFrOeQHWG7dUJ3dC4sysyClXAt3dggBTK5tbXTODmu/jpC6UxF
+	 kkojH1e9uCHxJ3Yv6+IgLUs8JQ3DG/9CbP+2RCtA=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726224AbfAKVax (ORCPT
+        id S1726255AbfAKVb2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 11 Jan 2019 16:30:53 -0500
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:42478 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726016AbfAKVau (ORCPT
+        Fri, 11 Jan 2019 16:31:28 -0500
+Received: from mail-ot1-f67.google.com ([209.85.210.67]:38541 "EHLO
+        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725554AbfAKVb2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Jan 2019 16:30:50 -0500
-Received: by mail-wr1-f68.google.com with SMTP id q18so16652025wrx.9
-        for <linux-kernel@vger.kernel.org>; Fri, 11 Jan 2019 13:30:49 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=5QAqoEHzh6Ejh4bBTGXFMICGj2I4GufJbUObrFyLkr0=;
-        b=UAZi7u1AadQ3wN3l2N/7z0nUXhf1d5mbG0P04mPwxbjcPRwEkyTBB7gWP7tJTz5zHg
-         ODikHfepWTOfCDtH3cdUcdOH7n/vlQ6zfV62JfKPJVg0B/TOGwtxo65StcAp+uIX3tYq
-         F60zXVopIVlwC+/tWtHQ9PInzPxQ4xA5hATYE=
+        Fri, 11 Jan 2019 16:31:28 -0500
+Received: by mail-ot1-f67.google.com with SMTP id e12so14421248otl.5;
+        Fri, 11 Jan 2019 13:31:27 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=5QAqoEHzh6Ejh4bBTGXFMICGj2I4GufJbUObrFyLkr0=;
-        b=OF7ndX3y9A456DUTuFV6LHqNey0CruBqH/K+jNhJmP1ErE3oc8ybjJdR9YhUkSWa5A
-         jAJ2uAyqUncC2F2H04JaC/CQlr8eAaBSWOGFKv+KkijzeU7JomyM8H2I253Vjj9G9h3j
-         9Y+uYezRanBJLrdQcwcYlt5S/WrsO8aC9iKaYz3anHpoWjiWiEOG0puRqOXovwBLBaFx
-         +Y0ND6mh/MfWQfaET5xpX2SPBiPWbdngNykoYVlBjuZf11a0x1Uwgufq2SxpDjvdnsBf
-         psjRkmTGRunll9VWDh73HhoXzR2m7IeHSQxKY4qELMDghhuXZ51IIR/W03DrrpYvyM8k
-         EFsQ==
-X-Gm-Message-State: AJcUukfZuifHqc+IlADhiVvYgx9P+T19SC4s7809ndHJNe5cAIoceTh2
-        gCbg/v95rOGBGlFMYOSRygxyq5DU3qc5GzqSE1W9rg==
-X-Google-Smtp-Source: ALg8bN4vT/0zLCqUBV3zENiN8ByUnk7PT+L3Dgnupy89EoKyHJ9iOfFf1AlNmh22YxscUpvX1Rwf/dD2DPf3Pzt5RzA=
-X-Received: by 2002:adf:c108:: with SMTP id r8mr15663568wre.233.1547242248094;
- Fri, 11 Jan 2019 13:30:48 -0800 (PST)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=gjKUWXoyBGsDaa8XCbDtSc0bf22b9KFq3QUlcdNswu8=;
+        b=MODSclUDgiUqgeoszXJNXvXOLXcdEVfRQsmttn09oVFzelhT59ErewuLj+QxbhXEI6
+         /CJTNiiObUdMhjgNm0kklPbMDtmLsphLetXtXR5Hul+LRIAkwL2tUJ3fLIf3wJ58nZkE
+         uypkNQZv3G52J+Geo72fDBTXa22bndnTs1VKLQ1TF485CdtZm7gHPSKcvWqdMCp9TMsf
+         wviY3J9ZA7tyRJSFBC4S1CaLgQi37L8y8qZL5R0tZJPo7b6golvJ79MeUSmMdGczj2fP
+         1qFL+1fWDADNyZgYv+yqLB0PT2N2djKSpBoG0as8E16uWPNR5XcIEqJZEx0MijxMhrXi
+         JLig==
+X-Gm-Message-State: AJcUukd4eh/in3zS5MaY/nJKLguuaF8TxqvQ1WJ3vDeFuVn0PjW9JDR5
+        OH4tr4gRYJLCEmjEHEsdMxw1xwzs6Q==
+X-Google-Smtp-Source: ALg8bN6d4Z8GKELVgQhwT9GQ8zNFKKcGCQ9iEoA7pZXP9S6unRhX+0lis370YTiwc/1j8/RfkY2pKg==
+X-Received: by 2002:a9d:3b21:: with SMTP id z30mr11596657otb.132.1547242287215;
+        Fri, 11 Jan 2019 13:31:27 -0800 (PST)
+Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id g138sm77317127oib.26.2019.01.11.13.31.26
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 11 Jan 2019 13:31:26 -0800 (PST)
+Date:   Fri, 11 Jan 2019 15:31:25 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Nicolin Chen <nicoleotsuka@gmail.com>
+Cc:     jdelvare@suse.com, linux@roeck-us.net, robh+dt@kernel.org,
+        mark.rutland@arm.com, linux-hwmon@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] dt-bindings: hwmon: ina3221: Add ti,single-shot
+ property
+Message-ID: <20190111213125.GA17790@bogus>
+References: <20190105004904.17947-1-nicoleotsuka@gmail.com>
+ <20190105004904.17947-2-nicoleotsuka@gmail.com>
 MIME-Version: 1.0
-References: <1547141652-8660-1-git-send-email-john.stultz@linaro.org>
- <1547141652-8660-3-git-send-email-john.stultz@linaro.org> <CAL_Jsq+2dYaCzLSr8n4W=ftSjgmKJaUqwQ4S7qv7ZAaR2A-5XQ@mail.gmail.com>
- <CAL_JsqJLm_tDakS10gch8K_3F+mHrzR3isw8Tm=D-R118D1sYQ@mail.gmail.com>
-In-Reply-To: <CAL_JsqJLm_tDakS10gch8K_3F+mHrzR3isw8Tm=D-R118D1sYQ@mail.gmail.com>
-From:   John Stultz <john.stultz@linaro.org>
-Date:   Fri, 11 Jan 2019 13:30:35 -0800
-Message-ID: <CALAqxLVzh8ZrXQPSEsvrTXocqmF2z4hMFHH48a29VybYM=QyFg@mail.gmail.com>
-Subject: Re: [PATCH 2/8 v3] Documentation: bindings: k3dma: Add binding for hisi-dma-avail-chan
-To:     Rob Herring <robh+dt@kernel.org>
-Cc:     lkml <linux-kernel@vger.kernel.org>, Vinod Koul <vkoul@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Tanglei Han <hantanglei@huawei.com>,
-        Zhuangluan Su <suzhuangluan@hisilicon.com>,
-        Ryan Grachek <ryan@edited.us>,
-        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-        "open list:DMA GENERIC OFFLOAD ENGINE SUBSYSTEM" 
-        <dmaengine@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190105004904.17947-2-nicoleotsuka@gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jan 11, 2019 at 12:04 PM Rob Herring <robh+dt@kernel.org> wrote:
->
-> On Fri, Jan 11, 2019 at 1:58 PM Rob Herring <robh+dt@kernel.org> wrote:
-> >
-> > On Thu, Jan 10, 2019 at 11:34 AM John Stultz <john.stultz@linaro.org> wrote:
-> > >
-> > > Some dma channels can be reserved for secure mode or other
-> > > hardware on the SoC, so provide a binding for a bitmask
-> > > listing the available channels for the kernel to use.
-> > >
-> > > Cc: Vinod Koul <vkoul@kernel.org>
-> > > Cc: Rob Herring <robh+dt@kernel.org>
-> > > Cc: Mark Rutland <mark.rutland@arm.com>
-> > > Cc: Tanglei Han <hantanglei@huawei.com>
-> > > Cc: Zhuangluan Su <suzhuangluan@hisilicon.com>
-> > > Cc: Ryan Grachek <ryan@edited.us>
-> > > Cc: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-> > > Cc: dmaengine@vger.kernel.org
-> > > Cc: devicetree@vger.kernel.org
-> > > Signed-off-by: John Stultz <john.stultz@linaro.org>
-> > > ---
-> > > v3: Renamed to hisi-dma-avail-chan
-> > > ---
-> > >  Documentation/devicetree/bindings/dma/k3dma.txt | 3 +++
-> > >  1 file changed, 3 insertions(+)
-> > >
-> > > diff --git a/Documentation/devicetree/bindings/dma/k3dma.txt b/Documentation/devicetree/bindings/dma/k3dma.txt
-> > > index 10a2f15..38825d4 100644
-> > > --- a/Documentation/devicetree/bindings/dma/k3dma.txt
-> > > +++ b/Documentation/devicetree/bindings/dma/k3dma.txt
-> > > @@ -14,6 +14,9 @@ Required properties:
-> > >                 have specific request line
-> > >  - clocks: clock required
-> > >
-> > > +Optional properties:
-> > > +- hisi-dma-avail-chan: Bitmask of available physical channels
-> >
-> > Not quite right. Should be: hisilicon,dma-avail-chan
->
-> Actually, we already have the same case elsewhere with
-> 'brcm,dma-channel-mask'. Maybe there are others. So make the property
-> common (i.e. documented in dma.txt) and called 'dma-channel-mask'.
+On Fri,  4 Jan 2019 16:49:03 -0800, Nicolin Chen wrote:
+> By default, ina3221, as a hardware monitor, continuously measures
+> the inputs and generates corresponding data. However, for battery
+> powered devices, this mode might be power consuming.
+> 
+> This patch adds a "ti,single-shot" property to allow changing the
+> default continuous mode to single-shot operating mode.
+> 
+> Signed-off-by: Nicolin Chen <nicoleotsuka@gmail.com>
+> ---
+>  Documentation/devicetree/bindings/hwmon/ina3221.txt | 10 ++++++++++
+>  1 file changed, 10 insertions(+)
+> 
 
-Ok. I'll rework it for that then.
-
-> Whether or not the dmaengine handles this or not is irrelevant to
-> whether the binding is common or not. I have no say over OS design
-> decisions.
-
-Ok. I'll keep it in the driver for now unless otherwise directed.
-
-Thanks so much for the review!
--john
+Reviewed-by: Rob Herring <robh@kernel.org>
