@@ -2,230 +2,146 @@ Return-Path: <SRS0=uvhX=PT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.7 required=3.0 tests=FROM_LOCAL_HEX,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E9C04C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 15:56:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AD1B9C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 15:57:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A5E9D20700
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 15:56:36 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="jsMo0Myq"
+	by mail.kernel.org (Postfix) with ESMTP id 7E99A20675
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 15:57:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733205AbfAKP4f (ORCPT
+        id S1733275AbfAKP5E (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 11 Jan 2019 10:56:35 -0500
-Received: from mail-ed1-f65.google.com ([209.85.208.65]:37538 "EHLO
-        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730850AbfAKP4f (ORCPT
+        Fri, 11 Jan 2019 10:57:04 -0500
+Received: from mail-it1-f198.google.com ([209.85.166.198]:40901 "EHLO
+        mail-it1-f198.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730850AbfAKP5E (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Jan 2019 10:56:35 -0500
-Received: by mail-ed1-f65.google.com with SMTP id h15so13483681edb.4
-        for <linux-kernel@vger.kernel.org>; Fri, 11 Jan 2019 07:56:33 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ffwll.ch; s=google;
-        h=sender:date:from:to:subject:message-id:mail-followup-to:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=HOv0t38exu7RfCLrDZrMLZNOG9JxRiRz9wyZnSDe6H8=;
-        b=jsMo0MyqMBxhK6cTnOCp3pSGFT7hcivhxNh2pCsL4eL/xE/XKWAbVMmzyli57lu4Hk
-         O3jLS/3COc0Pdx/2FvC4xTKuHZ4JnoKCfpoosWQQ2O7M+G+I7hWJMTdwcPRx3XykYhu8
-         nR9Ag8mrRbhSijv/uTQCsab2gQgPxGd8ycuAA=
+        Fri, 11 Jan 2019 10:57:04 -0500
+Received: by mail-it1-f198.google.com with SMTP id 135so1868590itk.5
+        for <linux-kernel@vger.kernel.org>; Fri, 11 Jan 2019 07:57:03 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:subject:message-id
-         :mail-followup-to:references:mime-version:content-disposition
-         :in-reply-to:user-agent;
-        bh=HOv0t38exu7RfCLrDZrMLZNOG9JxRiRz9wyZnSDe6H8=;
-        b=chf6vREIwgKfwi9ynZaxLgwQwXv0Y3dj8LwNMDUHlm13OxvJl+GdNG0F7chefF1Ywv
-         YxJrkGEMK1cXNieVLHVU16b89LujAxfqa6lz4//lK0Bh3FVArfcDR0u/hoYU6/CINmjg
-         rpXpT2gMrrxjqDnnGogtvWFHJdbNzl3iD+PivhEeflEDSlgAfxUdQBN8AtGomGX5s3On
-         SJt/S5tCz7XI8Ac1Vhe7QDos/AzX/D1VLFS+3E9NHu90zbNjZ4YMCF6f2tulKGI6kZjS
-         rQGVROye4AL78nyL/aYyItDlg7UxOjIGbtO8DkzVjycU9VSpjPtUTYHMG2CHlJmm3IMh
-         Gdzw==
-X-Gm-Message-State: AJcUukezKQZAz6V3G5Q4K4KnnSDazOlmiyhDEaJpz8qQMnz+NwUXMxzg
-        QjpD+M+9qpDy+NxtbNPntbNFQw==
-X-Google-Smtp-Source: ALg8bN4deVtI+K0+HtbIEq8bW8ufsTrdgpZG7mhyhipF4ZrvwQp1Uwv+dcNCSxu5F135WkUhVWrIhA==
-X-Received: by 2002:a50:8262:: with SMTP id 89mr13090301edf.125.1547222192991;
-        Fri, 11 Jan 2019 07:56:32 -0800 (PST)
-Received: from phenom.ffwll.local ([2a02:168:569e:0:3106:d637:d723:e855])
-        by smtp.gmail.com with ESMTPSA id j4sm2464348edh.69.2019.01.11.07.56.31
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 11 Jan 2019 07:56:32 -0800 (PST)
-Date:   Fri, 11 Jan 2019 16:56:29 +0100
-From:   Daniel Vetter <daniel@ffwll.ch>
-To:     Sam Ravnborg <sam@ravnborg.org>, David Airlie <airlied@linux.ie>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Sean Paul <sean@poorly.run>,
-        David Lechner <david@lechnology.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Noralf =?iso-8859-1?Q?Tr=F8nnes?= <noralf@tronnes.org>,
-        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        Alexey Brodkin <abrodkin@synopsys.com>,
-        Archit Taneja <architt@codeaurora.org>,
-        Andrzej Hajda <a.hajda@samsung.com>,
-        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Subject: Re: [PATCH v3 08/12] drm: remove include of drmP.h from
- drm_modeset_helper.h
-Message-ID: <20190111155629.GD21184@phenom.ffwll.local>
-Mail-Followup-To: Sam Ravnborg <sam@ravnborg.org>,
-        David Airlie <airlied@linux.ie>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Sean Paul <sean@poorly.run>, David Lechner <david@lechnology.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Noralf =?iso-8859-1?Q?Tr=F8nnes?= <noralf@tronnes.org>,
-        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        Alexey Brodkin <abrodkin@synopsys.com>,
-        Archit Taneja <architt@codeaurora.org>,
-        Andrzej Hajda <a.hajda@samsung.com>,
-        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-References: <20190108192939.15255-1-sam@ravnborg.org>
- <20190108192939.15255-9-sam@ravnborg.org>
- <20190109215354.GZ21184@phenom.ffwll.local>
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=IKdybMznxGej5G3wTR0XRGA6U9dFeu1vOFc5tE0yRg4=;
+        b=rUQT0Dy7q7a+A64ymy9/FoChfInw6i6zUpWK0jQ/kgemjFhOOtAwGpjDzHMhKgDG4p
+         tXFiRCkvh9Wt1CCp/CGvkHzoh3IzxsYKmkYy7mSyxO+qgTRWyZuV+jDPh+QZhtJwhSP5
+         BQ6nKm0e4yPXASxEMmtn0gsg95sK1gz51v+pf8EuacJ/kAXjHIVdTvL5P2SoLzMBZPs+
+         DJElHaukhz3HMUdorB0BKqb/It7Vt0BbKoMxTcT6R4W4UVvpiUaJvGljSONfFb9AIef4
+         i/lD0zZ15BKO4D2mACbHzKVNibye9RlTpPWdl16hywuHyPNqu+VGOFmIR2DnrElx2qbY
+         Y3hA==
+X-Gm-Message-State: AJcUukdPhFJ9NV1FfWTScM5dX71isGjambdxo0azTlAgXKGZztZcyQqS
+        X0z7EbhJ0TVLtc2JdQOpPYjNQKgUivZh6g40KGtpFqHAYrQf
+X-Google-Smtp-Source: ALg8bN4Oo+dG2ghYavH9w9X36Yk2ibT/323CM6dGmNcZGmOflI6dt1a1sQGY+UKW3Msu5IGawJ+BxgLqC0Lgz2M701ei2Y9SU7ie
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190109215354.GZ21184@phenom.ffwll.local>
-X-Operating-System: Linux phenom 4.18.0-2-amd64 
-User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Received: by 2002:a24:5948:: with SMTP id p69mr455509itb.21.1547222223234;
+ Fri, 11 Jan 2019 07:57:03 -0800 (PST)
+Date:   Fri, 11 Jan 2019 07:57:03 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000000131d4057f30bf14@google.com>
+Subject: WARNING: refcount bug in xfrm_policy_bysel_ctx
+From:   syzbot <syzbot+8a6a21b4254f25f2ee66@syzkaller.appspotmail.com>
+To:     davem@davemloft.net, herbert@gondor.apana.org.au,
+        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+        steffen.klassert@secunet.com, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 09, 2019 at 10:53:54PM +0100, Daniel Vetter wrote:
-> On Tue, Jan 08, 2019 at 08:29:35PM +0100, Sam Ravnborg wrote:
-> > drmP.h is an relic from the days when there was a single header file.
-> > To enable the removal of drmP.h from all users drop include
-> > of drmP.h from drm_modeset_helper.h.
-> > 
-> > A few files relied on the file included in drmP.h - add explicit
-> > include statements to these files.
-> > Build tested with arm and x86.
-> > 
-> > v2:
-> > - Add forward declarations to drm_modeset_helper.h (Laurent Pinchart)
-> > 
-> > Signed-off-by: Sam Ravnborg <sam@ravnborg.org>
-> > Reviewed-by: Laurent Pinchart <Laurent.pinchart@ideasonboard.com>
-> > Cc: Alexey Brodkin <abrodkin@synopsys.com>
-> > Cc: David Airlie <airlied@linux.ie>
-> > Cc: Daniel Vetter <daniel@ffwll.ch>
-> > Cc: Archit Taneja <architt@codeaurora.org>
-> > Cc: Andrzej Hajda <a.hajda@samsung.com>
-> > Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
-> > Cc: Maxime Ripard <maxime.ripard@bootlin.com>
-> > Cc: Sean Paul <sean@poorly.run>
-> > Cc: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-> 
-> This one here breaks tinydrm without the tinydrm patch first. I reorderd
-> while applying. It also breaks kirin (and maybe more, I didn't check), so
-> I've left this one out for now.
+Hello,
 
-Note that I've just fixed up a large pile of these in i915 because I've
-been rebasing a patch that removes lots of drm_modeset_helper.h includes.
+syzbot found the following crash on:
 
-Getting this all merged will be fun :-/
--Daniel
+HEAD commit:    b19bce0335e2 net: ethernet: mediatek: fix warning in phy_s..
+git tree:       net
+console output: https://syzkaller.appspot.com/x/log.txt?x=168e0b9f400000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=7308e68273924137
+dashboard link: https://syzkaller.appspot.com/bug?extid=8a6a21b4254f25f2ee66
+compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
 
-> -Daniel
-> 
-> > ---
-> >  drivers/gpu/drm/arc/arcpgu_sim.c     | 1 +
-> >  drivers/gpu/drm/bridge/cdns-dsi.c    | 2 ++
-> >  drivers/gpu/drm/drm_modeset_helper.c | 2 ++
-> >  drivers/gpu/drm/rcar-du/rcar_lvds.c  | 1 +
-> >  include/drm/drm_modeset_helper.h     | 6 +++++-
-> >  5 files changed, 11 insertions(+), 1 deletion(-)
-> > 
-> > diff --git a/drivers/gpu/drm/arc/arcpgu_sim.c b/drivers/gpu/drm/arc/arcpgu_sim.c
-> > index 68629e614990..3b7556f62230 100644
-> > --- a/drivers/gpu/drm/arc/arcpgu_sim.c
-> > +++ b/drivers/gpu/drm/arc/arcpgu_sim.c
-> > @@ -14,6 +14,7 @@
-> >   *
-> >   */
-> >  
-> > +#include <drm/drm_device.h>
-> >  #include <drm/drm_crtc_helper.h>
-> >  #include <drm/drm_atomic_helper.h>
-> >  
-> > diff --git a/drivers/gpu/drm/bridge/cdns-dsi.c b/drivers/gpu/drm/bridge/cdns-dsi.c
-> > index ce9496d13986..4b73d0969468 100644
-> > --- a/drivers/gpu/drm/bridge/cdns-dsi.c
-> > +++ b/drivers/gpu/drm/bridge/cdns-dsi.c
-> > @@ -8,11 +8,13 @@
-> >  #include <drm/drm_atomic_helper.h>
-> >  #include <drm/drm_bridge.h>
-> >  #include <drm/drm_crtc_helper.h>
-> > +#include <drm/drm_drv.h>
-> >  #include <drm/drm_mipi_dsi.h>
-> >  #include <drm/drm_panel.h>
-> >  #include <video/mipi_display.h>
-> >  
-> >  #include <linux/clk.h>
-> > +#include <linux/interrupt.h>
-> >  #include <linux/iopoll.h>
-> >  #include <linux/module.h>
-> >  #include <linux/of_address.h>
-> > diff --git a/drivers/gpu/drm/drm_modeset_helper.c b/drivers/gpu/drm/drm_modeset_helper.c
-> > index 9150fa385bba..9bc1ef788c77 100644
-> > --- a/drivers/gpu/drm/drm_modeset_helper.c
-> > +++ b/drivers/gpu/drm/drm_modeset_helper.c
-> > @@ -23,8 +23,10 @@
-> >  #include <drm/drm_atomic_helper.h>
-> >  #include <drm/drm_crtc_helper.h>
-> >  #include <drm/drm_fb_helper.h>
-> > +#include <drm/drm_fourcc.h>
-> >  #include <drm/drm_modeset_helper.h>
-> >  #include <drm/drm_plane_helper.h>
-> > +#include <drm/drm_print.h>
-> >  
-> >  /**
-> >   * DOC: aux kms helpers
-> > diff --git a/drivers/gpu/drm/rcar-du/rcar_lvds.c b/drivers/gpu/drm/rcar-du/rcar_lvds.c
-> > index 534a128a869d..8010ed702509 100644
-> > --- a/drivers/gpu/drm/rcar-du/rcar_lvds.c
-> > +++ b/drivers/gpu/drm/rcar-du/rcar_lvds.c
-> > @@ -10,6 +10,7 @@
-> >  #include <linux/clk.h>
-> >  #include <linux/delay.h>
-> >  #include <linux/io.h>
-> > +#include <linux/module.h>
-> >  #include <linux/of.h>
-> >  #include <linux/of_device.h>
-> >  #include <linux/of_graph.h>
-> > diff --git a/include/drm/drm_modeset_helper.h b/include/drm/drm_modeset_helper.h
-> > index efa337f03129..995fd981cab0 100644
-> > --- a/include/drm/drm_modeset_helper.h
-> > +++ b/include/drm/drm_modeset_helper.h
-> > @@ -23,7 +23,11 @@
-> >  #ifndef __DRM_KMS_HELPER_H__
-> >  #define __DRM_KMS_HELPER_H__
-> >  
-> > -#include <drm/drmP.h>
-> > +struct drm_crtc;
-> > +struct drm_crtc_funcs;
-> > +struct drm_device;
-> > +struct drm_framebuffer;
-> > +struct drm_mode_fb_cmd2;
-> >  
-> >  void drm_helper_move_panel_connectors_to_head(struct drm_device *);
-> >  
-> > -- 
-> > 2.12.0
-> > 
-> 
-> -- 
-> Daniel Vetter
-> Software Engineer, Intel Corporation
-> http://blog.ffwll.ch
+Unfortunately, I don't have any reproducer for this crash yet.
 
--- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+8a6a21b4254f25f2ee66@syzkaller.appspotmail.com
+
+netlink: 104 bytes leftover after parsing attributes in process  
+`syz-executor4'.
+netlink: 104 bytes leftover after parsing attributes in process  
+`syz-executor4'.
+------------[ cut here ]------------
+refcount_t: increment on 0; use-after-free.
+WARNING: CPU: 0 PID: 25457 at lib/refcount.c:153 refcount_inc_checked  
+lib/refcount.c:153 [inline]
+WARNING: CPU: 0 PID: 25457 at lib/refcount.c:153  
+refcount_inc_checked+0x61/0x70 lib/refcount.c:151
+Kernel panic - not syncing: panic_on_warn set ...
+CPU: 0 PID: 25457 Comm: syz-executor4 Not tainted 4.20.0+ #16
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+Call Trace:
+  __dump_stack lib/dump_stack.c:77 [inline]
+  dump_stack+0x1db/0x2d0 lib/dump_stack.c:113
+  panic+0x2cb/0x589 kernel/panic.c:189
+  __warn.cold+0x20/0x4b kernel/panic.c:544
+  report_bug+0x263/0x2b0 lib/bug.c:186
+  fixup_bug arch/x86/kernel/traps.c:178 [inline]
+  fixup_bug arch/x86/kernel/traps.c:173 [inline]
+  do_error_trap+0x11b/0x200 arch/x86/kernel/traps.c:271
+  do_invalid_op+0x37/0x50 arch/x86/kernel/traps.c:290
+  invalid_op+0x14/0x20 arch/x86/entry/entry_64.S:973
+RIP: 0010:refcount_inc_checked lib/refcount.c:153 [inline]
+RIP: 0010:refcount_inc_checked+0x61/0x70 lib/refcount.c:151
+Code: 1d 8a 37 c8 06 31 ff 89 de e8 1b 27 f2 fd 84 db 75 dd e8 d2 25 f2 fd  
+48 c7 c7 e0 97 81 88 c6 05 6a 37 c8 06 01 e8 0f 7d bb fd <0f> 0b eb c1 90  
+66 2e 0f 1f 84 00 00 00 00 00 55 48 89 e5 41 54 49
+RSP: 0018:ffff88806d877138 EFLAGS: 00010286
+RAX: 0000000000000000 RBX: 0000000000000000 RCX: ffffc9000bf9d000
+RDX: 000000000001d827 RSI: ffffffff816849b6 RDI: 0000000000000005
+RBP: ffff88806d877148 R08: ffff8880608260c0 R09: ffff888060826988
+R10: ffff8880608260c0 R11: 0000000000000000 R12: ffff88806a024520
+R13: ffff888087287c00 R14: ffff88806d8772d0 R15: 0000000000000004
+  xfrm_pol_hold include/net/xfrm.h:838 [inline]
+  xfrm_policy_bysel_ctx+0x1c9/0x1020 net/xfrm/xfrm_policy.c:1679
+  xfrm_get_policy+0x67b/0x1160 net/xfrm/xfrm_user.c:1887
+  xfrm_user_rcv_msg+0x458/0x8d0 net/xfrm/xfrm_user.c:2663
+  netlink_rcv_skb+0x17d/0x410 net/netlink/af_netlink.c:2477
+  xfrm_netlink_rcv+0x70/0x90 net/xfrm/xfrm_user.c:2671
+  netlink_unicast_kernel net/netlink/af_netlink.c:1310 [inline]
+  netlink_unicast+0x574/0x770 net/netlink/af_netlink.c:1336
+  netlink_sendmsg+0xa05/0xf90 net/netlink/af_netlink.c:1917
+  sock_sendmsg_nosec net/socket.c:621 [inline]
+  sock_sendmsg+0xdd/0x130 net/socket.c:631
+  ___sys_sendmsg+0x7ec/0x910 net/socket.c:2116
+  __sys_sendmsg+0x112/0x270 net/socket.c:2154
+  __do_sys_sendmsg net/socket.c:2163 [inline]
+  __se_sys_sendmsg net/socket.c:2161 [inline]
+  __x64_sys_sendmsg+0x78/0xb0 net/socket.c:2161
+  do_syscall_64+0x1a3/0x800 arch/x86/entry/common.c:290
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x457ec9
+Code: 6d b7 fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 48 89 f8 48 89 f7  
+48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff  
+ff 0f 83 3b b7 fb ff c3 66 2e 0f 1f 84 00 00 00 00
+RSP: 002b:00007f6d47b19c78 EFLAGS: 00000246 ORIG_RAX: 000000000000002e
+RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 0000000000457ec9
+RDX: 0000000000000000 RSI: 000000002014f000 RDI: 0000000000000006
+RBP: 000000000073bfa0 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 00007f6d47b1a6d4
+R13: 00000000004c5394 R14: 00000000004d8e30 R15: 00000000ffffffff
+Kernel Offset: disabled
+Rebooting in 86400 seconds..
+
+
+---
+This bug is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this bug report. See:
+https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with  
+syzbot.
