@@ -2,101 +2,190 @@ Return-Path: <SRS0=uvhX=PT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 00E18C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 01:05:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 56E8CC43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 01:08:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BAD6F2133F
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 01:05:43 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WwqLF1XS"
+	by mail.kernel.org (Postfix) with ESMTP id 29C40206B7
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 01:08:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728834AbfAKBFm (ORCPT
+        id S1728880AbfAKBIM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 10 Jan 2019 20:05:42 -0500
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:46244 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726369AbfAKBFm (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Jan 2019 20:05:42 -0500
-Received: by mail-pl1-f195.google.com with SMTP id t13so5951364ply.13;
-        Thu, 10 Jan 2019 17:05:42 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=fB2hJP/xSQK32eL1DvTMTTE0TsTmVKmT+UznK7gNy2U=;
-        b=WwqLF1XSi+VUGOMM07aBjhWGESjZHyXztV4H/7uMIwImXdK+AYHOajE+HNkVxUftT+
-         8DfEv3Ba3mPZ+YXk3aBnB18eNTwsPpY3Mg/KgpQFCqKey90k9BMi1G/GBKkQGusCtT16
-         EDB3eLUUX9PnqZiMP1Hmtp5VR9UqNKsuNinOUToFCl7zxjOE1BdDZy4CbcljE6X3UE43
-         r4YdWcqGNsffnXY8T1GUPRfsPR1I/0wwm75MJSiCOUaaCgso+1SjSO94wxxStaRhG32/
-         RaLzmTklnAANnfWOB1Fhv2GdgxyuCTrkKK0lAhDRr+SqThyk1AbonRMVTSmXzjffChWC
-         6j+w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=fB2hJP/xSQK32eL1DvTMTTE0TsTmVKmT+UznK7gNy2U=;
-        b=LzYlu/SWLGAfK6cldO+Su4aAWFtWH5E/FaBdJcOYFYKzt6JF+7gl9YVfTx1zgJi0Ub
-         7emBsoRqnykd1Nft3+3v4jHW7KdtuqNEsVn8rO+fO72bimH8zqZ+f7xXOY7JflHn/G48
-         w9Ds4ZJlQMeSBi1YcAIUBq6G/VX1CJKSt3yp2ZK4sz83/7zjmA5rqAp8bjQbcmpdQyRH
-         mTX7uNfnGHlLxH39JdHArYiyH0kh7/GWdmhpNdAXvZsbF/qb2xPRFsKOT38tBTtHv8hu
-         TECLq0S8evN/jHzPogY05B64KjIoIDTOu0O6gwky+bao3HfVU2XPqIyvCSXt8KphlMUL
-         McPw==
-X-Gm-Message-State: AJcUukcCjiV0cpOfi3Ew6TX7aHZYo7PI2YpFM8bH0llX/gR1bD01y3/J
-        ofvVFbKX32kVJmBoz/g9+Bw=
-X-Google-Smtp-Source: ALg8bN54mOtEC33zSTXmgul2NT3Zm+4+GoUoWBENXtJZiQTyEsGyiJ3Bq5MXQOuzHXrd14B04Esoqg==
-X-Received: by 2002:a17:902:ab92:: with SMTP id f18mr12104999plr.221.1547168741765;
-        Thu, 10 Jan 2019 17:05:41 -0800 (PST)
-Received: from ?IPv6:2601:282:800:fd80:f849:e85a:90:6d6a? ([2601:282:800:fd80:f849:e85a:90:6d6a])
-        by smtp.googlemail.com with ESMTPSA id a90sm138701421pfj.109.2019.01.10.17.05.39
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 10 Jan 2019 17:05:40 -0800 (PST)
-Subject: Re: [PATCH v6 perf, bpf-next 1/7] perf, bpf: Introduce
- PERF_RECORD_KSYMBOL
-To:     Song Liu <songliubraving@fb.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc:     lkml <linux-kernel@vger.kernel.org>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "peterz@infradead.org" <peterz@infradead.org>,
-        "ast@kernel.org" <ast@kernel.org>,
-        "daniel@iogearbox.net" <daniel@iogearbox.net>,
-        Kernel Team <Kernel-team@fb.com>
-References: <20190109192111.130995-1-songliubraving@fb.com>
- <20190109192111.130995-2-songliubraving@fb.com>
- <20190110182403.GN22483@kernel.org>
- <064FBBA4-A0D0-4335-BCE7-902724CE2988@fb.com>
- <20190110185524.GO22483@kernel.org>
- <CCB26BF8-9FF5-4BBF-84BE-878CF0D3882A@fb.com>
- <E220DFC6-A2E2-4B3A-B52B-3B194315D2A0@fb.com>
-From:   David Ahern <dsahern@gmail.com>
-Message-ID: <af9bfba0-6115-922e-f988-fe4aa6bf1ca3@gmail.com>
-Date:   Thu, 10 Jan 2019 18:05:38 -0700
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.14; rv:60.0)
- Gecko/20100101 Thunderbird/60.4.0
+        Thu, 10 Jan 2019 20:08:12 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:49482 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727682AbfAKBIL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 10 Jan 2019 20:08:11 -0500
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 6DE5C9F75D;
+        Fri, 11 Jan 2019 01:08:11 +0000 (UTC)
+Received: from redhat.com (dhcp-17-208.bos.redhat.com [10.18.17.208])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 6C4C760A35;
+        Fri, 11 Jan 2019 01:08:10 +0000 (UTC)
+Date:   Thu, 10 Jan 2019 20:08:08 -0500
+From:   Joe Lawrence <joe.lawrence@redhat.com>
+To:     Nicolai Stange <nstange@suse.de>
+Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        live-patching@vger.kernel.org, Torsten Duwe <duwe@lst.de>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Jiri Kosina <jkosina@suse.cz>,
+        Balbir Singh <bsingharora@gmail.com>
+Subject: Re: ppc64le reliable stack unwinder and scheduled tasks
+Message-ID: <20190111010808.GA17858@redhat.com>
+References: <7f468285-b149-37e2-e782-c9e538b997a9@redhat.com>
+ <87bm4ocbbt.fsf@suse.de>
 MIME-Version: 1.0
-In-Reply-To: <E220DFC6-A2E2-4B3A-B52B-3B194315D2A0@fb.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <87bm4ocbbt.fsf@suse.de>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.39]); Fri, 11 Jan 2019 01:08:11 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 1/10/19 12:45 PM, Song Liu wrote:
-> Could you please share your feedback on PERF_RECORD_BPF_EVENT for auditing
-> use cases?
+On Fri, Jan 11, 2019 at 01:00:38AM +0100, Nicolai Stange wrote:
+> Hi Joe,
+> 
+> Joe Lawrence <joe.lawrence@redhat.com> writes:
+> 
+> > tl;dr: On ppc64le, what is top-most stack frame for scheduled tasks
+> >        about?
+> 
+> If I'm reading the code in _switch() correctly, the first frame is
+> completely uninitialized except for the pointer back to the caller's
+> stack frame.
+> 
+> For completeness: _switch() saves the return address, i.e. the link
+> register into its parent's stack frame, as is mandated by the ABI and
+> consistent with your findings below: it's always the second stack frame
+> where the return address into __switch_to() is kept.
+>
 
-Google shows Daniel was the one looking at audit use cases:
-https://www.mail-archive.com/netdev@vger.kernel.org/msg250728.html
+Hi Nicolai,
 
+Good, that makes a lot of sense.  I couldn't find any reference
+explaining the contents of frame 0, only unwinding code here and there
+(as in crash-utility) that stepped over it.
+ 
+> <snip>
+> 
+> >
+> >
+> > Example 1 (RHEL-7)
+> > ==================
+> >
+> > crash> struct task_struct.thread c00000022fd015c0 | grep ksp
+> >     ksp = 0xc0000000288af9c0
+> >
+> > crash> rd 0xc0000000288af9c0 -e 0xc0000000288b0000
+> >
+> >  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+> >
+> > sp[0]:
+> >
+> > c0000000288af9c0:  c0000000288afb90 0000000000dd0000   ...(............
+> > c0000000288af9d0:  c000000000002a94 c000000001c60a00   .*..............
+> >
+> >         crash> sym c000000000002a94
+> >         c000000000002a94 (T) hardware_interrupt_common+0x114
+> 
+> So that c000000000002a94 certainly wasn't stored by _switch(). I think
+> what might have happened is that the switching frame aliased with some
+> prior interrupt frame as setup by hardware_interrupt_common().
+> 
+> The interrupt and switching frames seem to share a common layout as far
+> as the lower STACK_FRAME_OVERHEAD + sizeof(struct pt_regs) bytes are
+> concerned.
+> 
+> That address into hardware_interrupt_common() could have been written by
+> the do_IRQ() called from there.
+> 
 
-My comment was that using a PERF_RECORD_BPF_EVENT limits the usability
-with combinations of other tracepoints (e.g, scheduling) when tracing
-processes.
+That was my initial theory, but then when I saw an ordinary scheduled
+task with a similarly strange frame 0, I thought that _switch() might
+have been doing something clever (or not).  But according your earlier
+explanation, it would line up that these values may be inherited from
+do_IRQ() or the like.
+
+> 
+> > c0000000288af9e0:  c000000001c60a80 0000000000000000   ................
+> > c0000000288af9f0:  c0000000288afbc0 0000000000dd0000   ...(............
+> > c0000000288afa00:  c0000000014322e0 c000000001c60a00   ."C.............
+> > c0000000288afa10:  c0000002303ae380 c0000002303ae380   ..:0......:0....
+> > c0000000288afa20:  7265677368657265 0000000000002200   erehsger."......
+> >
+> >         Uh-oh...
+> >
+> >         /* Mark stacktraces with exception frames as unreliable. */
+> >         stack[STACK_FRAME_MARKER] == STACK_FRAME_REGS_MARKER
+> 
+> 
+> Aliasing of the switching stack frame with some prior interrupt stack
+> frame would explain why that STACK_FRAME_REGS_MARKER is still found on
+> the stack, i.e. it's a leftover.
+> 
+> For testing, could you try whether clearing the word at STACK_FRAME_MARKER
+> from _switch() helps?
+> 
+> I.e. something like (completely untested):
+
+I'll kick off some builds tonight and try to get tests lined up
+tomorrow.  Unfortunately these take a bit of time to run setup, schedule
+and complete, so perhaps by next week.
+
+> 
+> diff --git a/arch/powerpc/kernel/entry_64.S b/arch/powerpc/kernel/entry_64.S
+> index 435927f549c4..b747d0647ec4 100644
+> --- a/arch/powerpc/kernel/entry_64.S
+> +++ b/arch/powerpc/kernel/entry_64.S
+> @@ -596,6 +596,10 @@ _GLOBAL(_switch)
+>  	SAVE_8GPRS(14, r1)
+>  	SAVE_10GPRS(22, r1)
+>  	std	r0,_NIP(r1)	/* Return to switch caller */
+> +
+> +	li	r23,0
+> +	std	r23,96(r1)	/* 96 == STACK_FRAME_MARKER * sizeof(long) */
+> +
+>  	mfcr	r23
+>  	std	r23,_CCR(r1)
+>  	std	r1,KSP(r3)	/* Set old stack pointer */
+> 
+> 
+
+This may be sufficient to avoid the condition, but if the contents of
+frame 0 are truely uninitialized (not to be trusted), should the
+unwinder be even looking at that frame (for STACK_FRAMES_REGS_MARKER),
+aside from the LR and other stack size geometry sanity checks?
+
+> <snap>
+> 
+> >
+> > save_stack_trace_tsk_reliable
+> > =============================
+> >
+> > arch/powerpc/kernel/stacktrace.c :: save_stack_trace_tsk_reliable() does
+> > take into account the first stackframe, but only to verify that the link
+> > register is indeed pointing at kernel code address.
+> 
+> It's actually the other way around:
+> 
+> 	if (!firstframe && !__kernel_text_address(ip))
+> 		return 1;
+> 
+> 
+> So the address gets sanitized only if it's _not_ coming from the first
+> frame.
+
+Yup, that's right, I had it backwards.
+
+Thanks!
+
+-- Joe
