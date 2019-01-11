@@ -2,250 +2,181 @@ Return-Path: <SRS0=uvhX=PT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E6BC5C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 03:36:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F1BFC43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 03:39:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AB74E2084C
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 03:36:52 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="gD8AdhxK"
+	by mail.kernel.org (Postfix) with ESMTP id 6A5232084C
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 03:39:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730464AbfAKDgv (ORCPT
+        id S1730472AbfAKDjM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 10 Jan 2019 22:36:51 -0500
-Received: from hqemgate14.nvidia.com ([216.228.121.143]:3796 "EHLO
-        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728944AbfAKDgv (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Jan 2019 22:36:51 -0500
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate14.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5c380f430001>; Thu, 10 Jan 2019 19:36:35 -0800
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Thu, 10 Jan 2019 19:36:49 -0800
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Thu, 10 Jan 2019 19:36:49 -0800
-Received: from HQMAIL112.nvidia.com (172.18.146.18) by HQMAIL103.nvidia.com
- (172.20.187.11) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Fri, 11 Jan
- 2019 03:36:48 +0000
-Received: from HQMAIL105.nvidia.com (172.20.187.12) by HQMAIL112.nvidia.com
- (172.18.146.18) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Fri, 11 Jan
- 2019 03:36:48 +0000
-Received: from hqnvemgw02.nvidia.com (172.16.227.111) by HQMAIL105.nvidia.com
- (172.20.187.12) with Microsoft SMTP Server (TLS) id 15.0.1395.4 via Frontend
- Transport; Fri, 11 Jan 2019 03:36:48 +0000
-Received: from skomatineni-linux.nvidia.com (Not Verified[10.110.103.52]) by hqnvemgw02.nvidia.com with Trustwave SEG (v7,5,8,10121)
-        id <B5c380f500000>; Thu, 10 Jan 2019 19:36:48 -0800
-From:   Sowjanya Komatineni <skomatineni@nvidia.com>
-To:     <thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
-        <mkarthik@nvidia.com>, <smohammed@nvidia.com>, <talho@nvidia.com>
-CC:     <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-i2c@vger.kernel.org>,
-        Sowjanya Komatineni <skomatineni@nvidia.com>
-Subject: [PATCH V2] i2c: tegra: Add Bus Clear Master Support
-Date:   Thu, 10 Jan 2019 19:36:46 -0800
-Message-ID: <1547177806-23769-1-git-send-email-skomatineni@nvidia.com>
-X-Mailer: git-send-email 2.7.4
-X-NVConfidentiality: public
+        Thu, 10 Jan 2019 22:39:12 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:40116 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726531AbfAKDjM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 10 Jan 2019 22:39:12 -0500
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 2D6B519CBDB;
+        Fri, 11 Jan 2019 03:39:11 +0000 (UTC)
+Received: from madcap2.tricolour.ca (ovpn-112-10.phx2.redhat.com [10.3.112.10])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 18F6D6A690;
+        Fri, 11 Jan 2019 03:38:58 +0000 (UTC)
+Date:   Thu, 10 Jan 2019 22:38:56 -0500
+From:   Richard Guy Briggs <rgb@redhat.com>
+To:     Paul Moore <paul@paul-moore.com>
+Cc:     simo@redhat.com, carlos@redhat.com,
+        containers@lists.linux-foundation.org,
+        linux-kernel@vger.kernel.org, dhowells@redhat.com,
+        linux-audit@redhat.com, ebiederm@xmission.com, luto@kernel.org,
+        Eric Paris <eparis@parisplace.org>,
+        Serge Hallyn <serge@hallyn.com>, viro@zeniv.linux.org.uk
+Subject: Re: [PATCH ghak90 (was ghak32) V4 06/10] audit: add containerid
+ support for tty_audit
+Message-ID: <20190111033856.6lhtlls7bvttoxhd@madcap2.tricolour.ca>
+References: <cover.1533065887.git.rgb@redhat.com>
+ <e41cb6760a8183c0955c378fce7b500819f9838f.1533065887.git.rgb@redhat.com>
+ <CAHC9VhRPMAUsgs2zXkPEFZPQS6dmAO1-kBX1Y-7tRkD-kwGEjw@mail.gmail.com>
+ <20181031211739.6jag6b5qve77qmmu@madcap2.tricolour.ca>
+ <CAHC9VhTnj3Sg9R-XM0U9gqOsNXT+Tn+VVRXJtBTt0A0DPQ0GQg@mail.gmail.com>
+ <20190110225847.vumlt2jor57djrdc@madcap2.tricolour.ca>
+ <CAHC9VhSqPBKv5hmSNSsrMYcmQ86phaUWG54JtAH84sSkPrz_Nw@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1547177795; bh=9VTTQSKGI4wMayuCfiqm3eQOr8mPuMGzGdx7wS4Yreo=;
-        h=X-PGP-Universal:From:To:CC:Subject:Date:Message-ID:X-Mailer:
-         X-NVConfidentiality:MIME-Version:Content-Type;
-        b=gD8AdhxKi4pIyZo5T4cwE/vqawGzzaie2WQz8B3lPoCTfJ5Wh+DzNX+KCZqKZ3+/p
-         05WF109cW0K6zhz3UowriWd2tSvGzrlGzRAlIC7XfenJHZ72w2ZNwtMA9NfVP6v9xF
-         yKxOb+ZZ71ZdkOOPjB8jc35iNmjB7z+DDq0MhdUfD46YE7aWyLMCL25hUCEnuCbrVx
-         25vP/p47hmbAhNtJ5NSRkjj7u21Y9Ix4okQYhzpGqu+tJKtybfGYTacuSlJKdhwanv
-         Bc5sOkO8qT9X366htKoOcEUXSFHdpvJNrypELfj4+vHdx66hzUdTf1juRz1E0+ngr7
-         /OMfsXjchWtpQ==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAHC9VhSqPBKv5hmSNSsrMYcmQ86phaUWG54JtAH84sSkPrz_Nw@mail.gmail.com>
+User-Agent: NeoMutt/20180716
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.29]); Fri, 11 Jan 2019 03:39:11 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Bus Clear feature of tegra i2c controller helps to recover from
-bus hang when i2c master loses the bus arbitration due to the
-slave device holding SDA LOW continuously for some unknown reasons.
+On 2019-01-10 20:12, Paul Moore wrote:
+> On Thu, Jan 10, 2019 at 5:59 PM Richard Guy Briggs <rgb@redhat.com> wrote:
+> > On 2019-01-03 15:11, Paul Moore wrote:
+> > > On Wed, Oct 31, 2018 at 5:17 PM Richard Guy Briggs <rgb@redhat.com> wrote:
+> > > > On 2018-10-19 19:17, Paul Moore wrote:
+> > > > > On Sun, Aug 5, 2018 at 4:33 AM Richard Guy Briggs
+> > > <rgb@redhat.com> wrote:
+> > > > > > Add audit container identifier auxiliary record to tty logging rule
+> > > > > > event standalone records.
+> > > > > >
+> > > > > > Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
+> > > > > > Acked-by: Serge Hallyn <serge@hallyn.com>
+> > > > > > ---
+> > > > > >  drivers/tty/tty_audit.c | 5 ++++-
+> > > > > >  1 file changed, 4 insertions(+), 1 deletion(-)
+> > > > > >
+> > > > > > diff --git a/drivers/tty/tty_audit.c b/drivers/tty/tty_audit.c
+> > > > > > index 50f567b..3e21477 100644
+> > > > > > --- a/drivers/tty/tty_audit.c
+> > > > > > +++ b/drivers/tty/tty_audit.c
+> > > > > > @@ -66,8 +66,9 @@ static void tty_audit_log(const char *description, dev_t dev,
+> > > > > >         uid_t uid = from_kuid(&amp;init_user_ns, task_uid(tsk));
+> > > > > >         uid_t loginuid = from_kuid(&amp;init_user_ns, audit_get_loginuid(tsk));
+> > > > > >         unsigned int sessionid = audit_get_sessionid(tsk);
+> > > > > > +       struct audit_context *context = audit_alloc_local(GFP_KERNEL);
+> > > > > >
+> > > > > > -       ab = audit_log_start(NULL, GFP_KERNEL, AUDIT_TTY);
+> > > > > > +       ab = audit_log_start(context, GFP_KERNEL, AUDIT_TTY);
+> > > > > >         if (ab) {
+> > > > > >                 char name[sizeof(tsk->comm)];
+> > > > > >
+> > > > > > @@ -80,6 +81,8 @@ static void tty_audit_log(const char *description, dev_t dev,
+> > > > > >                 audit_log_n_hex(ab, data, size);
+> > > > > >                 audit_log_end(ab);
+> > > > > >         }
+> > > > > > +       audit_log_contid(context, "tty", audit_get_contid(tsk));
+> > > > > > +       audit_free_context(context);
+> > > > > >  }
+> > > > >
+> > > > > Since I never polished up my task_struct/current fix patch enough to
+> > > > > get it past RFC status during this development window (new job, stolen
+> > > > > laptop, etc.) *and* it looks like you are going to need at least one
+> > > > > more respin of this patchset, go ahead and fix this patch to use
+> > > > > current instead of generating a local context.  I'll deal with the
+> > > > > merge fallout if/when it happens.
+> > > >
+> > > > Sure, I will switch it to current in the call to audit_get_contid().
+> > > >
+> > > > The local context is a distinct issue.  Like USER records, I prefer
+> > > > local due to potential record volume, it is already trackable as far as
+> > > > Steve is concerned, and if it is to be connected with the syscall
+> > > > record, it should be linked to syscall records in a seperate new github
+> > > > issue with its own patch.  It accumulates events until the buffer is
+> > > > flushed to a record, so the timestamp only represents the flush (usually
+> > > > user "CR/enter").
+> > >
+> > > Generally, yes, associating records is a separate issue, but in this
+> > > particular case you are changing this record by making it a "local"
+> > > record, which as we've discussed before, I view as a necessary evil
+> > > and something that must be minimized.  A quick look at the
+> > > tty_audit_log() callers shows tty_audit_tiocsti() which is an ioctl
+> > > handler (and thus current should be valid and correct), and
+> > > tty_audit_buf_push() whose callers all seem have valid and correct
+> > > current values; if you find that not to be the case please let me
+> > > know.
+> >
+> > Unless I'm misunderstanding what "local" means, it already had a local
+> > context by virtue of having a NULL context since it was never previously
+> > connected to syscall events, so changing it to a local context doesn't
+> > change that other than making it possible to associate an auxiliary
+> > audit container identifier record.
+> >
+> > The reasoning I'm also applying here is that the contents of this record
+> > don't all come from this one syscall, but most likely came in from an
+> > entire line of individual keystrokes, so the syscall information is only
+> > from the last one of those syscalls, though that syscall information
+> > other than the timestamp should be the same.
+> 
+> Looking at the callers to tty_audit_log(), I think we can all agree
+> that in the tty_audit_tiocsti() case it is correct to associate the
+> tty record with current, as it is the current task which sent the
+> ioctl with the data.  Do you not agree?
 
-Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
----
- drivers/i2c/busses/i2c-tegra.c | 66 ++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 66 insertions(+)
+I'm fine with that, yes.
 
-diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-tegra.c
-index e417ebf7628c..11bc43ed08e9 100644
---- a/drivers/i2c/busses/i2c-tegra.c
-+++ b/drivers/i2c/busses/i2c-tegra.c
-@@ -54,6 +54,7 @@
- #define I2C_FIFO_STATUS_RX_SHIFT		0
- #define I2C_INT_MASK				0x064
- #define I2C_INT_STATUS				0x068
-+#define I2C_INT_BUS_CLR_DONE			BIT(11)
- #define I2C_INT_PACKET_XFER_COMPLETE		BIT(7)
- #define I2C_INT_ALL_PACKETS_XFER_COMPLETE	BIT(6)
- #define I2C_INT_TX_FIFO_OVERFLOW		BIT(5)
-@@ -96,6 +97,15 @@
- #define I2C_HEADER_MASTER_ADDR_SHIFT		12
- #define I2C_HEADER_SLAVE_ADDR_SHIFT		1
- 
-+#define I2C_BUS_CLEAR_CNFG			0x084
-+#define I2C_BC_SCLK_THRESHOLD			9
-+#define I2C_BC_SCLK_THRESHOLD_SHIFT		16
-+#define I2C_BC_STOP_COND			BIT(2)
-+#define I2C_BC_TERMINATE			BIT(1)
-+#define I2C_BC_ENABLE				BIT(0)
-+#define I2C_BUS_CLEAR_STATUS			0x088
-+#define I2C_BC_STATUS				BIT(0)
-+
- #define I2C_CONFIG_LOAD				0x08C
- #define I2C_MSTR_CONFIG_LOAD			BIT(0)
- #define I2C_SLV_CONFIG_LOAD			BIT(1)
-@@ -155,6 +165,8 @@ enum msg_end_type {
-  * @has_mst_fifo: The I2C controller contains the new MST FIFO interface that
-  *		provides additional features and allows for longer messages to
-  *		be transferred in one go.
-+ * @supports_bus_clear: Bus Clear support to recover from bus hang during
-+ *		SDA stuck low from device for some unknown reasons.
-  */
- struct tegra_i2c_hw_feature {
- 	bool has_continue_xfer_support;
-@@ -167,6 +179,7 @@ struct tegra_i2c_hw_feature {
- 	bool has_multi_master_mode;
- 	bool has_slcg_override_reg;
- 	bool has_mst_fifo;
-+	bool supports_bus_clear;
- };
- 
- /**
-@@ -640,6 +653,9 @@ static irqreturn_t tegra_i2c_isr(int irq, void *dev_id)
- 		goto err;
- 	}
- 
-+	if (i2c_dev->hw->supports_bus_clear && (status & I2C_INT_BUS_CLR_DONE))
-+		goto err;
-+
- 	if (i2c_dev->msg_read && (status & I2C_INT_RX_FIFO_DATA_REQ)) {
- 		if (i2c_dev->msg_buf_remaining)
- 			tegra_i2c_empty_rx_fifo(i2c_dev);
-@@ -668,6 +684,8 @@ static irqreturn_t tegra_i2c_isr(int irq, void *dev_id)
- 	tegra_i2c_mask_irq(i2c_dev, I2C_INT_NO_ACK | I2C_INT_ARBITRATION_LOST |
- 		I2C_INT_PACKET_XFER_COMPLETE | I2C_INT_TX_FIFO_DATA_REQ |
- 		I2C_INT_RX_FIFO_DATA_REQ);
-+	if (i2c_dev->hw->supports_bus_clear)
-+		tegra_i2c_mask_irq(i2c_dev, I2C_INT_BUS_CLR_DONE);
- 	i2c_writel(i2c_dev, status, I2C_INT_STATUS);
- 	if (i2c_dev->is_dvc)
- 		dvc_writel(i2c_dev, DVC_STATUS_I2C_DONE_INTR, DVC_STATUS);
-@@ -678,6 +696,42 @@ static irqreturn_t tegra_i2c_isr(int irq, void *dev_id)
- 	return IRQ_HANDLED;
- }
- 
-+static int tegra_i2c_issue_bus_clear(struct tegra_i2c_dev *i2c_dev)
-+{
-+	int err;
-+	unsigned long time_left;
-+	u32 reg;
-+
-+	if (i2c_dev->hw->supports_bus_clear) {
-+		reinit_completion(&i2c_dev->msg_complete);
-+		reg = (I2C_BC_SCLK_THRESHOLD << I2C_BC_SCLK_THRESHOLD_SHIFT) |
-+		      I2C_BC_STOP_COND | I2C_BC_TERMINATE;
-+		i2c_writel(i2c_dev, reg, I2C_BUS_CLEAR_CNFG);
-+		if (i2c_dev->hw->has_config_load_reg) {
-+			err = tegra_i2c_wait_for_config_load(i2c_dev);
-+			if (err)
-+				return err;
-+		}
-+		reg |= I2C_BC_ENABLE;
-+		i2c_writel(i2c_dev, reg, I2C_BUS_CLEAR_CNFG);
-+		tegra_i2c_unmask_irq(i2c_dev, I2C_INT_BUS_CLR_DONE);
-+
-+		time_left = wait_for_completion_timeout(&i2c_dev->msg_complete,
-+							TEGRA_I2C_TIMEOUT);
-+		if (time_left == 0) {
-+			dev_err(i2c_dev->dev, "timed out for bus clear\n");
-+			return -ETIMEDOUT;
-+		}
-+		reg = i2c_readl(i2c_dev, I2C_BUS_CLEAR_STATUS);
-+		if (!(reg & I2C_BC_STATUS)) {
-+			dev_err(i2c_dev->dev, "Un-recovered Arb lost\n");
-+			return -EIO;
-+		}
-+	}
-+
-+	return -EAGAIN;
-+}
-+
- static int tegra_i2c_xfer_msg(struct tegra_i2c_dev *i2c_dev,
- 	struct i2c_msg *msg, enum msg_end_type end_state)
- {
-@@ -759,6 +813,12 @@ static int tegra_i2c_xfer_msg(struct tegra_i2c_dev *i2c_dev,
- 		return 0;
- 
- 	tegra_i2c_init(i2c_dev);
-+	/* Start recovery upon Arbitration loss in Single-Master Mode */
-+	if (i2c_dev->msg_err == I2C_ERR_ARBITRATION_LOST) {
-+		if (!i2c_dev->is_multimaster_mode)
-+			return tegra_i2c_issue_bus_clear(i2c_dev);
-+		return -EAGAIN;
-+	}
- 	if (i2c_dev->msg_err == I2C_ERR_NO_ACK) {
- 		if (msg->flags & I2C_M_IGNORE_NAK)
- 			return 0;
-@@ -848,6 +908,7 @@ static const struct tegra_i2c_hw_feature tegra20_i2c_hw = {
- 	.has_multi_master_mode = false,
- 	.has_slcg_override_reg = false,
- 	.has_mst_fifo = false,
-+	.supports_bus_clear = false,
- };
- 
- static const struct tegra_i2c_hw_feature tegra30_i2c_hw = {
-@@ -861,6 +922,7 @@ static const struct tegra_i2c_hw_feature tegra30_i2c_hw = {
- 	.has_multi_master_mode = false,
- 	.has_slcg_override_reg = false,
- 	.has_mst_fifo = false,
-+	.supports_bus_clear = false,
- };
- 
- static const struct tegra_i2c_hw_feature tegra114_i2c_hw = {
-@@ -874,6 +936,7 @@ static const struct tegra_i2c_hw_feature tegra114_i2c_hw = {
- 	.has_multi_master_mode = false,
- 	.has_slcg_override_reg = false,
- 	.has_mst_fifo = false,
-+	.supports_bus_clear = true,
- };
- 
- static const struct tegra_i2c_hw_feature tegra124_i2c_hw = {
-@@ -887,6 +950,7 @@ static const struct tegra_i2c_hw_feature tegra124_i2c_hw = {
- 	.has_multi_master_mode = false,
- 	.has_slcg_override_reg = true,
- 	.has_mst_fifo = false,
-+	.supports_bus_clear = true,
- };
- 
- static const struct tegra_i2c_hw_feature tegra210_i2c_hw = {
-@@ -900,6 +964,7 @@ static const struct tegra_i2c_hw_feature tegra210_i2c_hw = {
- 	.has_multi_master_mode = true,
- 	.has_slcg_override_reg = true,
- 	.has_mst_fifo = false,
-+	.supports_bus_clear = true,
- };
- 
- static const struct tegra_i2c_hw_feature tegra194_i2c_hw = {
-@@ -913,6 +978,7 @@ static const struct tegra_i2c_hw_feature tegra194_i2c_hw = {
- 	.has_multi_master_mode = true,
- 	.has_slcg_override_reg = true,
- 	.has_mst_fifo = true,
-+	.supports_bus_clear = true,
- };
- 
- /* Match table for of_platform binding */
--- 
-2.7.4
+> With tty_audit_buf_push() we need to do a bit more work to track down
+> all the callers.  Looking quickly it appears that all of the
+> tty_audit_add_data() callers are copying data to/from userspace, so
+> associating these tty records with their syscall would seem
+> appropriate.  With tty_audit_push() it either appears to be
+> tty_audit_tiocsti() (again) or more userspace copy routines.  I didn't
+> bother looking at tty_audit_exit() because that seemed pretty clear to
+> be something worth associating with a syscall.  You may find that if
+> you dig deeper into the call stacks things fall apart and there are
+> cases where the records shouldn't be associated with the current
+> syscall, but based on what I'm seeing right now that doesn't appear to
+> be the case.
 
+Ok.  Except that it might be multiple subsequent calls that assemble
+that data, only flushed to an audit record on exceeding N_TTY_BUF_SIZE
+(4k) or that task switching device and flushing the previous device or
+that task switching icanon mode.
+
+> > Reading your reply above it isn't clear to me that I had made these two
+> > points clear previously.  If you still think this record should be
+> > associated to a syscall despite my reasoning above, I'm willing to
+> > connect it, but will do so in a seperate issue/patch.
+
+So can I conclude that you are fine with the buffering of the data from
+multiple syscalls being associated with the output of that buffer to one
+audit record with the last of those syscalls?
+
+> paul moore
+
+- RGB
+
+--
+Richard Guy Briggs <rgb@redhat.com>
+Sr. S/W Engineer, Kernel Security, Base Operating Systems
+Remote, Ottawa, Red Hat Canada
+IRC: rgb, SunRaycer
+Voice: +1.647.777.2635, Internal: (81) 32635
