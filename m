@@ -2,91 +2,105 @@ Return-Path: <SRS0=uvhX=PT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 614D8C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 09:52:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D174C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 09:52:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3183320874
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 09:52:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DB5DB20874
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 09:52:28 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="tWXRdCZ2"
+	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="M658JAGb"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731534AbfAKJwO (ORCPT
+        id S1731542AbfAKJw2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 11 Jan 2019 04:52:14 -0500
-Received: from mail-lf1-f66.google.com ([209.85.167.66]:39641 "EHLO
-        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730155AbfAKJwL (ORCPT
+        Fri, 11 Jan 2019 04:52:28 -0500
+Received: from conuserg-10.nifty.com ([210.131.2.77]:40670 "EHLO
+        conuserg-10.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728175AbfAKJw1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Jan 2019 04:52:11 -0500
-Received: by mail-lf1-f66.google.com with SMTP id n18so10376815lfh.6;
-        Fri, 11 Jan 2019 01:52:10 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=XIQwehbPrlY7BUP6CB2B8k1PMAjTFQv50MV82hxeWcg=;
-        b=tWXRdCZ2D6dwuoxQCh+RSNF1sdTWe5eu6rGt1gdnelgAg+UpYdmuyd3uGqpm/xKggV
-         FwkYDfUC3iYLJORA37eEHgCPFduhyuXXTQgVWPGJ2RyG3pXAH8b9xci8KhOf2ycb7085
-         lYuzmfoke1FcGvVNSA1rJGdieywkiZ0Wix8XOBIy5kPlUilOpOYrEeLDU5bVE8eM2+dq
-         J8RWKsmM43a0R1dwLBx+ds+qwbfYWyyCNLs37LcrgFEXSg82lJqu8N2bJLTILEIfZww8
-         mLccx6gmDpiy3wSlc6DGHhDcgwK1ePCMqksJWB8fm4zvVUh6XQngVmjgmCTMAtxb0k2l
-         ldng==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=XIQwehbPrlY7BUP6CB2B8k1PMAjTFQv50MV82hxeWcg=;
-        b=DNgfrPxcYYHJXv6NaKbTAF/dWU16V5gUbTz0o0+vFsfbCzii9fiS1G+JXwLeGAJL8T
-         SMTj/coCl0Ls/9gQGE/Q6FV5hhNEaV6EEMgogfQjtXueymqMVzem0daKRzHoP3SUN+ft
-         tMaV7CmyDJJPpREyoyPfjtbIq92vcxSz+HVHOFNCA8/AAj7fllXPZ86sPZ7iU6aMfyfM
-         58L46ZNO4MDDuTZ0LPQD0vPIpj7lHXtv+L+esuhvyp6dLgMiDVOukdvarPFGufO4+Ns6
-         Vyoghn5EIDxOkHjUOX38NpBVMvnqcCDR7OhsNSGee+nBMeUZ+33ti9XAxXtdUejU/gx7
-         de9A==
-X-Gm-Message-State: AJcUukcInNv+hixeun9ZUS1zDHnvQGKDSKQ6hPBl3XQlYd9YyrO8PibL
-        kp5k9QICw5u6ihoZQ7YobKkqnLHZn93rph9twQk=
-X-Google-Smtp-Source: ALg8bN6zxUtJLmjmXaPX9LtyOP/4mys2mrMhfZc1+Cnkq876ds7Ktqb1cVBb8nfdZ4ageNNFRJlSkawQaiB4XK5g/xM=
-X-Received: by 2002:a19:6514:: with SMTP id z20mr5734838lfb.31.1547200328069;
- Fri, 11 Jan 2019 01:52:08 -0800 (PST)
-MIME-Version: 1.0
-References: <CAA85sZt=Q4b_tn_vDx3g1ap7GNrXsHQk7Jki1T+zPbqVot90jg@mail.gmail.com>
- <CANn89iLkciYGn7GyKc2QitSjjTms58_GKFqjOJ=6G8wEFi=SJA@mail.gmail.com>
- <CAA85sZvciuNTc1NM1XbbBCqV-hWwjMZM+0i3vigtzmJ8CpPjHg@mail.gmail.com>
- <351f5da149072c8c1165f8f205ac5c852a92dff8.camel@redhat.com> <CANn89i+h4Og42OKaqJ8dsrupHkt2Lg1vPo-j92Bos98yPJzoNw@mail.gmail.com>
-In-Reply-To: <CANn89i+h4Og42OKaqJ8dsrupHkt2Lg1vPo-j92Bos98yPJzoNw@mail.gmail.com>
-From:   Ian Kumlien <ian.kumlien@gmail.com>
-Date:   Fri, 11 Jan 2019 10:51:56 +0100
-Message-ID: <CAA85sZt3NBKgebX_Bdwbz7QH--W6zb3w3-qoxRHpcHMuSYzPZw@mail.gmail.com>
-Subject: Re: [BUG] moving fq back to clock monotonic breaks my setup
-To:     Eric Dumazet <edumazet@google.com>
-Cc:     Paolo Abeni <pabeni@redhat.com>, netdev <netdev@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Fri, 11 Jan 2019 04:52:27 -0500
+Received: from pug.e01.socionext.com (p14092-ipngnfx01kyoto.kyoto.ocn.ne.jp [153.142.97.92]) (authenticated)
+        by conuserg-10.nifty.com with ESMTP id x0B9q8sf019557;
+        Fri, 11 Jan 2019 18:52:08 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-10.nifty.com x0B9q8sf019557
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1547200328;
+        bh=hmjRxVLse3KfB65gtEHQhiYrire4aNjXDv2r+uSNxeM=;
+        h=From:To:Cc:Subject:Date:From;
+        b=M658JAGb6bGNWqWs0/9dCqILZx0D6Ym/RPDBzEjnuJoA5Q2EWSLwN9Yq1Am7EZjtj
+         RYPQRc3wqk8I0GdFRvbs7GFrn01WdqDiv42FM2yYE26yxacBWRkkQORJ1HkGQrbgQw
+         V74DXKYHIGVnhV07wGGUFetpfLb1lABcO021HPqLUm/l7di7L8VDNlaguh7Uakc2ck
+         JzjxpSeg1pJaN81jjiriNKHbphLsQUVnjoNteMTxhYDOIdAW8FhOcHR4A81v0CYGab
+         DzN0RMVVuDe9u6nYU8oZkTOPU7Klys7HYUpPVMhRsbaVAAzHo84C4aZ6PeypbZpPlo
+         AfM35uxYZya/g==
+X-Nifty-SrcIP: [153.142.97.92]
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+To:     Luis Chamberlain <mcgrof@kernel.org>
+Cc:     Masahiro Yamada <yamada.masahiro@socionext.com>,
+        linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Michal Marek <michal.lkml@markovi.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>
+Subject: [PATCH] firmware_loader: move firmware/ to drivers/base/firmware_loader/builtin/
+Date:   Fri, 11 Jan 2019 18:52:00 +0900
+Message-Id: <1547200321-17120-1-git-send-email-yamada.masahiro@socionext.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jan 11, 2019 at 10:35 AM Eric Dumazet <edumazet@google.com> wrote:
-> On Thu, Jan 10, 2019 at 12:55 AM Paolo Abeni <pabeni@redhat.com> wrote:
-> > On Thu, 2019-01-10 at 09:25 +0100, Ian Kumlien wrote:
->
->
-> > > This works, and so does: https://marc.info/?l=linux-netdev&m=154696956604748&w=2
-> > >
-> > > Pointed out by Paolo (tested both separately)
-> >
-> > Note: I cleared the tstamp in br_forward_finish() instead of
-> > br_dev_queue_push_xmit() because I think the latter could be called
-> > also in the local xmit path, via br_nf_post_routing.
-> >
-> > We must preserve the tstamp in output path, right?
-> >
->
->  I was not aware of your patch, SGTM, thanks.
+Currently, the 'firmware' directory only contains a single Makefile
+to embed extra firmware into the kernel.
 
-And you can add Tested-by: ian.kumlien@gmail.com
+Move it to the more relevant place.
+
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+---
+
+ Makefile                                                      | 2 +-
+ drivers/base/firmware_loader/Makefile                         | 2 ++
+ {firmware => drivers/base/firmware_loader/builtin}/.gitignore | 0
+ {firmware => drivers/base/firmware_loader/builtin}/Makefile   | 0
+ 4 files changed, 3 insertions(+), 1 deletion(-)
+ rename {firmware => drivers/base/firmware_loader/builtin}/.gitignore (100%)
+ rename {firmware => drivers/base/firmware_loader/builtin}/Makefile (100%)
+
+diff --git a/Makefile b/Makefile
+index 8c55b64..1625c99 100644
+--- a/Makefile
++++ b/Makefile
+@@ -583,7 +583,7 @@ export KBUILD_MODULES KBUILD_BUILTIN
+ ifeq ($(KBUILD_EXTMOD),)
+ # Objects we will link into vmlinux / subdirs we need to visit
+ init-y		:= init/
+-drivers-y	:= drivers/ sound/ firmware/
++drivers-y	:= drivers/ sound/
+ net-y		:= net/
+ libs-y		:= lib/
+ core-y		:= usr/
+diff --git a/drivers/base/firmware_loader/Makefile b/drivers/base/firmware_loader/Makefile
+index 5c7f422..0b2dfa6 100644
+--- a/drivers/base/firmware_loader/Makefile
++++ b/drivers/base/firmware_loader/Makefile
+@@ -5,3 +5,5 @@ obj-$(CONFIG_FW_LOADER_USER_HELPER) += fallback_table.o
+ obj-$(CONFIG_FW_LOADER)	+= firmware_class.o
+ firmware_class-objs := main.o
+ firmware_class-$(CONFIG_FW_LOADER_USER_HELPER) += fallback.o
++
++obj-y += builtin/
+diff --git a/firmware/.gitignore b/drivers/base/firmware_loader/builtin/.gitignore
+similarity index 100%
+rename from firmware/.gitignore
+rename to drivers/base/firmware_loader/builtin/.gitignore
+diff --git a/firmware/Makefile b/drivers/base/firmware_loader/builtin/Makefile
+similarity index 100%
+rename from firmware/Makefile
+rename to drivers/base/firmware_loader/builtin/Makefile
+-- 
+2.7.4
+
