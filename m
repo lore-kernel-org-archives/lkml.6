@@ -3,96 +3,106 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 965E7C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 08:14:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B4E9C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 08:15:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7191B2177E
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 08:14:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 052252084C
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 08:15:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730105AbfAKIOV convert rfc822-to-8bit (ORCPT
+        id S1730226AbfAKIPb convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 11 Jan 2019 03:14:21 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:54813 "EHLO
-        mail.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728637AbfAKIOU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Jan 2019 03:14:20 -0500
-Received: from [IPv6:2607:fb90:3626:b003:4cfb:2561:b6b1:b594] ([172.58.37.146])
-        (authenticated bits=0)
-        by mail.zytor.com (8.15.2/8.15.2) with ESMTPSA id x0B8D8ht569393
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NO);
-        Fri, 11 Jan 2019 00:13:09 -0800
-Date:   Fri, 11 Jan 2019 00:13:00 -0800
-User-Agent: K-9 Mail for Android
-In-Reply-To: <20190111013421.GD2365@linux.intel.com>
-References: <cover.1547073843.git.jpoimboe@redhat.com> <279b8003f7f0a6831d090ab822d37bc958f974de.1547073843.git.jpoimboe@redhat.com> <8138A1EE-359D-4CD2-8E96-5BF00313AB3B@vmware.com> <20190110172004.wuh45xoafynfm2df@treble> <20190110123243.3b9e0856@gandalf.local.home> <20190110174257.GE16556@linux.intel.com> <1955E727-BF68-4C00-A8C2-54FA9487A5A6@zytor.com> <20190111013421.GD2365@linux.intel.com>
-MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
+        Fri, 11 Jan 2019 03:15:31 -0500
+Received: from tyo162.gate.nec.co.jp ([114.179.232.162]:39746 "EHLO
+        tyo162.gate.nec.co.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725601AbfAKIPb (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 Jan 2019 03:15:31 -0500
+Received: from mailgate02.nec.co.jp ([114.179.233.122])
+        by tyo162.gate.nec.co.jp (8.15.1/8.15.1) with ESMTPS id x0B8FKgw004575
+        (version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+        Fri, 11 Jan 2019 17:15:20 +0900
+Received: from mailsv02.nec.co.jp (mailgate-v.nec.co.jp [10.204.236.94])
+        by mailgate02.nec.co.jp (8.15.1/8.15.1) with ESMTP id x0B8FKTk022401;
+        Fri, 11 Jan 2019 17:15:20 +0900
+Received: from mail01b.kamome.nec.co.jp (mail01b.kamome.nec.co.jp [10.25.43.2])
+        by mailsv02.nec.co.jp (8.15.1/8.15.1) with ESMTP id x0B8FKfp013282;
+        Fri, 11 Jan 2019 17:15:20 +0900
+Received: from bpxc99gp.gisp.nec.co.jp ([10.38.151.151] [10.38.151.151]) by mail01b.kamome.nec.co.jp with ESMTP id BT-MMP-1394824; Fri, 11 Jan 2019 17:14:04 +0900
+Received: from BPXM23GP.gisp.nec.co.jp ([10.38.151.215]) by
+ BPXC23GP.gisp.nec.co.jp ([10.38.151.151]) with mapi id 14.03.0319.002; Fri,
+ 11 Jan 2019 17:14:03 +0900
+From:   Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
+To:     Dan Williams <dan.j.williams@intel.com>
+CC:     Jane Chu <jane.chu@oracle.com>,
+        linux-nvdimm <linux-nvdimm@lists.01.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: PMEM error-handling forces SIGKILL causes kernel panic
+Thread-Topic: PMEM error-handling forces SIGKILL causes kernel panic
+Thread-Index: AQHUqHYAxvTPvTfmqUexHC1SPEdRnKWpI2uA
+Date:   Fri, 11 Jan 2019 08:14:02 +0000
+Message-ID: <20190111081401.GA5080@hori1.linux.bs1.fc.nec.co.jp>
+References: <e3c4c0e0-1434-4353-b893-2973c04e7ff7@oracle.com>
+ <CAPcyv4j67n6H7hD6haXJqysbaauci4usuuj5c+JQ7VQBGngO1Q@mail.gmail.com>
+In-Reply-To: <CAPcyv4j67n6H7hD6haXJqysbaauci4usuuj5c+JQ7VQBGngO1Q@mail.gmail.com>
+Accept-Language: en-US, ja-JP
+Content-Language: ja-JP
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.51.8.80]
+Content-Type: text/plain; charset="iso-2022-jp"
+Content-ID: <20D6C8CB51441D4F91DA79AE81215CE1@gisp.nec.co.jp>
 Content-Transfer-Encoding: 8BIT
-Subject: Re: [PATCH v3 5/6] x86/alternative: Use a single access in text_poke() where possible
-To:     Sean Christopherson <sean.j.christopherson@intel.com>
-CC:     Steven Rostedt <rostedt@goodmis.org>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Nadav Amit <namit@vmware.com>, X86 ML <x86@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Jason Baron <jbaron@akamai.com>, Jiri Kosina <jkosina@suse.cz>,
-        David Laight <David.Laight@ACULAB.COM>,
-        Borislav Petkov <bp@alien8.de>,
-        Julia Cartwright <julia@ni.com>, Jessica Yu <jeyu@kernel.org>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        Edward Cree <ecree@solarflare.com>,
-        Daniel Bristot de Oliveira <bristot@redhat.com>
-From:   hpa@zytor.com
-Message-ID: <5DD129EB-3EEF-479E-98BB-DFCAD999DC2D@zytor.com>
+MIME-Version: 1.0
+X-TM-AS-MML: disable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On January 10, 2019 5:34:21 PM PST, Sean Christopherson <sean.j.christopherson@intel.com> wrote:
->On Thu, Jan 10, 2019 at 04:59:55PM -0800, hpa@zytor.com wrote:
->> On January 10, 2019 9:42:57 AM PST, Sean Christopherson
-><sean.j.christopherson@intel.com> wrote:
->> >On Thu, Jan 10, 2019 at 12:32:43PM -0500, Steven Rostedt wrote:
->> >> On Thu, 10 Jan 2019 11:20:04 -0600
->> >> Josh Poimboeuf <jpoimboe@redhat.com> wrote:
->> >> 
->> >> 
->> >> > > While I can't find a reason for hypervisors to emulate this
->> >instruction,
->> >> > > smarter people might find ways to turn it into a security
->> >exploit.  
->> >> > 
->> >> > Interesting point... but I wonder if it's a realistic concern. 
->> >BTW,
->> >> > text_poke_bp() also relies on undocumented behavior.
->> >> 
->> >> But we did get an official OK from Intel that it will work. Took a
->> >bit
->> >> of arm twisting to get them to do so, but they did. And it really
->is
->> >> pretty robust.
->> >
->> >Did we (they?) list any caveats for this behavior?  E.g. I'm fairly
->> >certain atomicity guarantees go out the window if WC memtype is
->used.
->> 
->> If you run code from non-WB memory, all bets are off and you better
->> not be doing cross-modifying code.
->
->I wasn't thinking of running code from non-WB, but rather running code
->in WB while doing a CMC write via WC.
+Hi Dan, Jane,
 
-Same thing. Don't do that.
--- 
-Sent from my Android device with K-9 Mail. Please excuse my brevity.
+Thanks for the report.
+
+On Wed, Jan 09, 2019 at 03:49:32PM -0800, Dan Williams wrote:
+> [ switch to text mail, add lkml and Naoya ]
+> 
+> On Wed, Jan 9, 2019 at 12:19 PM Jane Chu <jane.chu@oracle.com> wrote:
+...
+> > 3. The hardware consists the latest revision CPU and Intel NVDIMM, we suspected
+> >    the CPU faulty because it generated MCE over PMEM UE in a unlikely high
+> >    rate for any reasonable NVDIMM (like a few per 24hours).
+> >
+> > After swapping the CPU, the problem stopped reproducing.
+> >
+> > But one could argue that perhaps the faulty CPU exposed a small race window
+> > from collect_procs() to unmap_mapping_range() and to kill_procs(), hence
+> > caught the kernel  PMEM error handler off guard.
+> 
+> There's definitely a race, and the implementation is buggy as can be
+> seen in __exit_signal:
+> 
+>         sighand = rcu_dereference_check(tsk->sighand,
+>                                         lockdep_tasklist_lock_is_held());
+>         spin_lock(&sighand->siglock);
+> 
+> ...the memory-failure path needs to hold the proper locks before it
+> can assume that de-referencing tsk->sighand is valid.
+> 
+> > Also note, the same workload on the same faulty CPU were run on Linux prior to
+> > the 4.19 PMEM error handling and did not encounter kernel crash, probably because
+> > the prior HWPOISON handler did not force SIGKILL?
+> 
+> Before 4.19 this test should result in a machine-check reboot, not
+> much better than a kernel crash.
+> 
+> > Should we not to force the SIGKILL, or find a way to close the race window?
+> 
+> The race should be closed by holding the proper tasklist and rcu read lock(s).
+
+This reasoning and proposal sound right to me. I'm trying to reproduce
+this race (for non-pmem case,) but no luck for now. I'll investigate more.
+
+Thanks,
+Naoya Horiguchi
