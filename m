@@ -2,240 +2,205 @@ Return-Path: <SRS0=uvhX=PT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 036E8C43612
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 09:19:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 90226C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 09:20:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C76A22184A
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 09:19:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4DED02146F
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 09:20:49 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="F2zEtjEy"
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="J3+uACOs"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731534AbfAKJTu (ORCPT
+        id S1731194AbfAKJUs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 11 Jan 2019 04:19:50 -0500
-Received: from conuserg-10.nifty.com ([210.131.2.77]:36618 "EHLO
-        conuserg-10.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731169AbfAKJTt (ORCPT
+        Fri, 11 Jan 2019 04:20:48 -0500
+Received: from mail-ed1-f67.google.com ([209.85.208.67]:37153 "EHLO
+        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727653AbfAKJUs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Jan 2019 04:19:49 -0500
-Received: from pug.e01.socionext.com (p14092-ipngnfx01kyoto.kyoto.ocn.ne.jp [153.142.97.92]) (authenticated)
-        by conuserg-10.nifty.com with ESMTP id x0B9J6oJ028675;
-        Fri, 11 Jan 2019 18:19:07 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-10.nifty.com x0B9J6oJ028675
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1547198348;
-        bh=Qs7YIVojkKyJtreTzu//aKchbHUzPKQWCV5FkDF/H08=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=F2zEtjEy33dV7FSAuYpFMXHnEfIMwlK6ROeLeStDnas7WIsRFakjc/zFhszVBM/Db
-         KdcvP6/1aMTyVxXH2Sm+781HgStb6ngh8bNke8ETMPhOigqW/7+94ddFR7EDkWFIE4
-         BCGZ5R+RQtsJKLJjE+eObZZov7KCGO5igzdFPhPIM4XJdNkeBO3V4a8yRgL2YlwlQU
-         nkKfGSD7LKnFvFxweCXK2jPIP7wdvfrItZi0HoVfl0eShOfYD0C/G+WOWo48HZ5N+j
-         PLBn6y4dm6DZMV9HQXs3zyUENof3j+3RDQAG+sPKi9WTQ3L2CUC0LUovO7w+qg71gz
-         Dem4yj1vjcgZQ==
-X-Nifty-SrcIP: [153.142.97.92]
-From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-To:     linux-kbuild@vger.kernel.org
-Cc:     Kees Cook <keescook@chromium.org>,
-        kernel-hardening@lists.openwall.com,
-        Emese Revfy <re.emese@gmail.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        linux-kernel@vger.kernel.org,
-        Michal Marek <michal.lkml@markovi.net>
-Subject: [PATCH 2/2] kbuild: simplify GCC plugin build rules
-Date:   Fri, 11 Jan 2019 18:18:47 +0900
-Message-Id: <1547198328-26359-2-git-send-email-yamada.masahiro@socionext.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1547198328-26359-1-git-send-email-yamada.masahiro@socionext.com>
-References: <1547198328-26359-1-git-send-email-yamada.masahiro@socionext.com>
+        Fri, 11 Jan 2019 04:20:48 -0500
+Received: by mail-ed1-f67.google.com with SMTP id h15so12525521edb.4
+        for <linux-kernel@vger.kernel.org>; Fri, 11 Jan 2019 01:20:46 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ffwll.ch; s=google;
+        h=sender:date:from:to:cc:subject:message-id:mail-followup-to
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=GaqnS2LOgt+LFJt9xFrmU2vVR4iRU1kwlidEkb98jHQ=;
+        b=J3+uACOsGvjKIwwNZU9v/5e9exunHsPJpRPYDg4OlMHHf/XELl6dYwNsYlGox5YTa8
+         yMbxIMStMsUQrN+OyrAaM3vIDZ3TDlpKGlarvZ6Rb6jV8SGsXkCrKe5+9f6rxGOE0zrC
+         M4wSFRXHs04vdaIB4+CC7tXD97hu9kx632QVE=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :mail-followup-to:references:mime-version:content-disposition
+         :in-reply-to:user-agent;
+        bh=GaqnS2LOgt+LFJt9xFrmU2vVR4iRU1kwlidEkb98jHQ=;
+        b=j2fR7RfBOoId3ljNIInRUt/AoC5gZ75pZbAQeyNzNnxlu70vXjXcdL6YM1FD03nYlY
+         tgDECSYxmzQcRoVehODAdgnKkoy/QIS4bOcWw9tbDF1Ic5IZxCNOWImvvhb88eGxxsqJ
+         nt2dwoneusLvj9RQFwChG56vAmNtJmS7uwh6d0NF4pOhtyijms2zr6kI9Lhpt/4PSFWD
+         MNUeY/Kayvw8FdDBc3VDy5EkUO3u9JeZVwsLHc8EQLlbXK8UBUPx8ymFOjIZ4qvvsd/e
+         jfVs4fCOUEjmaLxc7J4tQKGqJKqc1xZZaX5kkh/+mhZlXPXrguLEHCnvCG5EZFSYxLTE
+         S1/A==
+X-Gm-Message-State: AJcUukclp08JM6EaNDpTRPxzz7hu6rWKZlyNj17C5oTP0Sju2GFYU14C
+        iZvjxNl7EUyjGBH6lmWQcxNi2Q==
+X-Google-Smtp-Source: ALg8bN4kBtaXnQRgos4KUgmDEnpC7otk8vZ64bn1MqFMnTMg4iIyt3mMD7L0TM3+lcOPEX94Yx+UEg==
+X-Received: by 2002:a17:906:d507:: with SMTP id ge7-v6mr11266479ejb.78.1547198445731;
+        Fri, 11 Jan 2019 01:20:45 -0800 (PST)
+Received: from phenom.ffwll.local ([2a02:168:569e:0:3106:d637:d723:e855])
+        by smtp.gmail.com with ESMTPSA id m14sm3064811edc.27.2019.01.11.01.20.44
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 11 Jan 2019 01:20:44 -0800 (PST)
+Date:   Fri, 11 Jan 2019 10:20:42 +0100
+From:   Daniel Vetter <daniel@ffwll.ch>
+To:     CK Hu <ck.hu@mediatek.com>,
+        Noralf =?iso-8859-1?Q?Tr=F8nnes?= <noralf@tronnes.org>
+Cc:     Daniel Vetter <daniel@ffwll.ch>,
+        Frank Wunderlich <frank-w@public-files.de>,
+        David Airlie <airlied@linux.ie>,
+        Alexander Ryabchenko <d3adme4t@gmail.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        "moderated list:ARM/Mediatek SoC support" 
+        <linux-mediatek@lists.infradead.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>
+Subject: Re: Re: [PATCH] drm/mediatek: Add MTK Framebuffer-Device (mt7623)
+Message-ID: <20190111092042.GP21184@phenom.ffwll.local>
+Mail-Followup-To: CK Hu <ck.hu@mediatek.com>,
+        Noralf =?iso-8859-1?Q?Tr=F8nnes?= <noralf@tronnes.org>,
+        Frank Wunderlich <frank-w@public-files.de>,
+        David Airlie <airlied@linux.ie>,
+        Alexander Ryabchenko <d3adme4t@gmail.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        "moderated list:ARM/Mediatek SoC support" <linux-mediatek@lists.infradead.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>
+References: <20190102084917.4049-1-frank-w@public-files.de>
+ <20190107103640.GH21184@phenom.ffwll.local>
+ <CAKMK7uEqxz4TAt_iwEC+dMWboVxCeCduyABsSwD0Ns7k=Z_UWA@mail.gmail.com>
+ <trinity-0da588a3-1277-4421-ad6b-1f6aeb129dd6-1547146897687@3c-app-gmx-bs35>
+ <20190110200225.GN21184@phenom.ffwll.local>
+ <1547176809.12054.11.camel@mtksdaap41>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1547176809.12054.11.camel@mtksdaap41>
+X-Operating-System: Linux phenom 4.18.0-2-amd64
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-GCC-plugin is the only user of the shared library build rules in
-scripts/Makefile.host. Hence, those rules do not need to be treewide
-available.
+On Fri, Jan 11, 2019 at 11:20:09AM +0800, CK Hu wrote:
+> Hi, Daniel:
+> 
+> On Thu, 2019-01-10 at 21:02 +0100, Daniel Vetter wrote:
+> > On Thu, Jan 10, 2019 at 08:01:37PM +0100, Frank Wunderlich wrote:
+> > > Hi Daniel,
+> > > 
+> > > > > Would be good to use the new generic fbdev emulation code here, for even
+> > > > > less code. Or at least know why this isn't possible to use for mtk (and
+> > > > > maybe address that in the core code). Hand-rolling fbdev code shouldn't be
+> > > > > needed anymore.
+> > > > 
+> > > > Back on the mailing list, no private replies please:
+> > > 
+> > > i don't wanted to spam all people with dumb questions ;)
+> > 
+> > There's no dumb questions, only insufficient documentation :-)
+> > 
+> > > > For examples please grep for drm_fbdev_generic_setup(). There's also a
+> > > > still in-flight series from Gerd Hoffmann to convert over bochs. That,
+> > > > plus all the kerneldoc linked from there should get you started.
+> > > > -Daniel
+> > > 
+> > > this is one of google best founds if i search for drm_fbdev_generic_setup:
+> > > 
+> > > https://lkml.org/lkml/2018/12/19/305
+> > > 
+> > > not very helpful...
+> > > 
+> > > so i tried kernel-doc
+> > > 
+> > > https://www.kernel.org/doc/html/latest/gpu/drm-kms-helpers.html?highlight=drm_fbdev_generic_setup#c.drm_fbdev_generic_setup
+> > > 
+> > > which is nice function-reference but i've found no generic workflow
+> > > 
+> > > as the posted driver is "only" a driver ported from kernel 4.4 by Alexander, i don't know if this new framework can be used and which parts need to be changed. I only try to bring his code Mainline....
+> > > Maybe CK Hu can help here because driver is originally from him and he knows internals. Or maybe you can help here?
+> > > 
+> > > i personally make my first steps as spare-time kernel-developer :)
+> > 
+> > There's a ton of in-kernel users of that function already, I meant you can
+> > use those to serve as examples ... If those + the kerneldoc aren't
+> > good enough, then we need to improve them.
+> > -Daniel
+> 
+> I've tried with drm_fbdev_generic_setup() and it works fine with simple
+> modification. The patch is
+> 
+> --- a/drivers/gpu/drm/mediatek/mtk_drm_drv.c
+> +++ b/drivers/gpu/drm/mediatek/mtk_drm_drv.c
+> @@ -16,6 +16,7 @@
+>  #include <drm/drm_atomic.h>
+>  #include <drm/drm_atomic_helper.h>
+>  #include <drm/drm_crtc_helper.h>
+> +#include <drm/drm_fb_helper.h>
+>  #include <drm/drm_gem.h>
+>  #include <drm/drm_gem_cma_helper.h>
+>  #include <drm/drm_of.h>
+> @@ -379,6 +380,7 @@ static void mtk_drm_kms_deinit(struct drm_device
+> *drm)
+>         .gem_prime_get_sg_table = mtk_gem_prime_get_sg_table,
+>         .gem_prime_import_sg_table = mtk_gem_prime_import_sg_table,
+>         .gem_prime_mmap = mtk_drm_gem_mmap_buf,
+> +       .gem_prime_vmap = mtk_drm_gem_prime_vmap,
+>         .ioctls = mtk_ioctls,
+>         .num_ioctls = ARRAY_SIZE(mtk_ioctls),
+>         .fops = &mtk_drm_fops,
+> @@ -416,6 +418,8 @@ static int mtk_drm_bind(struct device *dev)
+>         if (ret < 0)
+>                 goto err_deinit;
+> 
+> +       drm_fbdev_generic_setup(drm, 32);
+> +
+>         return 0;
+> 
+> 
+> But I implement .gem_prime_vmap with a workaround,
+> 
+> 
+> --- a/drivers/gpu/drm/mediatek/mtk_drm_gem.c
+> +++ b/drivers/gpu/drm/mediatek/mtk_drm_gem.c
+> @@ -280,3 +280,8 @@ int mtk_gem_create_ioctl(struct drm_device *dev,
+> void *data,
+>         mtk_drm_gem_free_object(&mtk_gem->base);
+>         return ret;
+>  }
+> +
+> +void *mtk_drm_gem_prime_vmap(struct drm_gem_object *obj)
+> +{
+> +       return (void *)1;
+> +}
+> 
+> Current drm_fb_helper depends on drm_client to create fbdev. When
+> drm_client create drm_client_buffer, it need to vmap to get kernel
+> vaddr. But I think for fbdev, the vaddr is useless. Do you agree that I
+> temporarily implement .gem_prime_vmap in such way?
 
-The build rules in scripts/Makefile.host are written in a too generic
-way. I guess the main reason is because commit 24403874316a ("Shared
-library support") revived the code ripped off by commit 62e2210798ed
-("kbuild: drop shared library support from Makefile.host").
+The vmap is used by fbcon, without that fbdev won't really work I think.
+So I'm rather confused on what you tested ...
 
-Currently, every plugin is built from a single C file. So, all we need
-is a pattern rule to create %.so from %.c.
-
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
----
-
-I want Acked-by from GCC plugin folks,
-so this series can go into kbuild tree.
-
-
- scripts/Makefile.build       |  2 +-
- scripts/Makefile.clean       |  4 +---
- scripts/Makefile.host        | 49 +-------------------------------------------
- scripts/gcc-plugins/Makefile | 28 ++++++++++++++-----------
- 4 files changed, 19 insertions(+), 64 deletions(-)
-
-diff --git a/scripts/Makefile.build b/scripts/Makefile.build
-index fd03d60..d71a4ed 100644
---- a/scripts/Makefile.build
-+++ b/scripts/Makefile.build
-@@ -44,7 +44,7 @@ include $(kbuild-file)
- include scripts/Makefile.lib
- 
- # Do not include host rules unless needed
--ifneq ($(hostprogs-y)$(hostprogs-m)$(hostlibs-y)$(hostlibs-m)$(hostcxxlibs-y)$(hostcxxlibs-m),)
-+ifneq ($(hostprogs-y)$(hostprogs-m),)
- include scripts/Makefile.host
- endif
- 
-diff --git a/scripts/Makefile.clean b/scripts/Makefile.clean
-index 0b80e320..032160a 100644
---- a/scripts/Makefile.clean
-+++ b/scripts/Makefile.clean
-@@ -38,9 +38,7 @@ subdir-ymn	:= $(addprefix $(obj)/,$(subdir-ymn))
- 
- __clean-files	:= $(extra-y) $(extra-m) $(extra-)       \
- 		   $(always) $(targets) $(clean-files)   \
--		   $(hostprogs-y) $(hostprogs-m) $(hostprogs-) \
--		   $(hostlibs-y) $(hostlibs-m) $(hostlibs-) \
--		   $(hostcxxlibs-y) $(hostcxxlibs-m)
-+		   $(hostprogs-y) $(hostprogs-m) $(hostprogs-)
- 
- __clean-files   := $(filter-out $(no-clean-files), $(__clean-files))
- 
-diff --git a/scripts/Makefile.host b/scripts/Makefile.host
-index f2e15de..0486180 100644
---- a/scripts/Makefile.host
-+++ b/scripts/Makefile.host
-@@ -22,8 +22,6 @@
- # They are linked as C++ code to the executable qconf
- 
- __hostprogs := $(sort $(hostprogs-y) $(hostprogs-m))
--host-cshlib := $(sort $(hostlibs-y) $(hostlibs-m))
--host-cxxshlib := $(sort $(hostcxxlibs-y) $(hostcxxlibs-m))
- 
- # C code
- # Executables compiled from a single .c file
-@@ -45,19 +43,11 @@ host-cxxmulti	:= $(foreach m,$(__hostprogs),$(if $($(m)-cxxobjs),$(m)))
- # C++ Object (.o) files compiled from .cc files
- host-cxxobjs	:= $(sort $(foreach m,$(host-cxxmulti),$($(m)-cxxobjs)))
- 
--# Object (.o) files used by the shared libaries
--host-cshobjs	:= $(sort $(foreach m,$(host-cshlib),$($(m:.so=-objs))))
--host-cxxshobjs	:= $(sort $(foreach m,$(host-cxxshlib),$($(m:.so=-objs))))
--
- host-csingle	:= $(addprefix $(obj)/,$(host-csingle))
- host-cmulti	:= $(addprefix $(obj)/,$(host-cmulti))
- host-cobjs	:= $(addprefix $(obj)/,$(host-cobjs))
- host-cxxmulti	:= $(addprefix $(obj)/,$(host-cxxmulti))
- host-cxxobjs	:= $(addprefix $(obj)/,$(host-cxxobjs))
--host-cshlib	:= $(addprefix $(obj)/,$(host-cshlib))
--host-cxxshlib	:= $(addprefix $(obj)/,$(host-cxxshlib))
--host-cshobjs	:= $(addprefix $(obj)/,$(host-cshobjs))
--host-cxxshobjs	:= $(addprefix $(obj)/,$(host-cxxshobjs))
- 
- #####
- # Handle options to gcc. Support building with separate output directory
-@@ -126,42 +116,5 @@ quiet_cmd_host-cxxobjs	= HOSTCXX $@
- $(host-cxxobjs): $(obj)/%.o: $(src)/%.cc FORCE
- 	$(call if_changed_dep,host-cxxobjs)
- 
--# Compile .c file, create position independent .o file
--# host-cshobjs -> .o
--quiet_cmd_host-cshobjs	= HOSTCC  -fPIC $@
--      cmd_host-cshobjs	= $(HOSTCC) $(hostc_flags) -fPIC -c -o $@ $<
--$(host-cshobjs): $(obj)/%.o: $(src)/%.c FORCE
--	$(call if_changed_dep,host-cshobjs)
--
--# Compile .c file, create position independent .o file
--# Note that plugin capable gcc versions can be either C or C++ based
--# therefore plugin source files have to be compilable in both C and C++ mode.
--# This is why a C++ compiler is invoked on a .c file.
--# host-cxxshobjs -> .o
--quiet_cmd_host-cxxshobjs	= HOSTCXX -fPIC $@
--      cmd_host-cxxshobjs	= $(HOSTCXX) $(hostcxx_flags) -fPIC -c -o $@ $<
--$(host-cxxshobjs): $(obj)/%.o: $(src)/%.c FORCE
--	$(call if_changed_dep,host-cxxshobjs)
--
--# Link a shared library, based on position independent .o files
--# *.o -> .so shared library (host-cshlib)
--quiet_cmd_host-cshlib	= HOSTLLD -shared $@
--      cmd_host-cshlib	= $(HOSTCC) $(hostld_flags) -shared -o $@ \
--			  $(addprefix $(obj)/,$($(@F:.so=-objs))) \
--			  $(hostld_libs)
--$(host-cshlib): FORCE
--	$(call if_changed,host-cshlib)
--$(call multi_depend, $(host-cshlib), .so, -objs)
--
--# Link a shared library, based on position independent .o files
--# *.o -> .so shared library (host-cxxshlib)
--quiet_cmd_host-cxxshlib	= HOSTLLD -shared $@
--      cmd_host-cxxshlib	= $(HOSTCXX) $(hostld_flags) -shared -o $@ \
--			  $(addprefix $(obj)/,$($(@F:.so=-objs))) \
--			  $(hostld_libs)
--$(host-cxxshlib): FORCE
--	$(call if_changed,host-cxxshlib)
--$(call multi_depend, $(host-cxxshlib), .so, -objs)
--
- targets += $(host-csingle)  $(host-cmulti) $(host-cobjs)\
--	   $(host-cxxmulti) $(host-cxxobjs) $(host-cshlib) $(host-cshobjs) $(host-cxxshlib) $(host-cxxshobjs)
-+	   $(host-cxxmulti) $(host-cxxobjs)
-diff --git a/scripts/gcc-plugins/Makefile b/scripts/gcc-plugins/Makefile
-index aa0d0ec..a09404d 100644
---- a/scripts/gcc-plugins/Makefile
-+++ b/scripts/gcc-plugins/Makefile
-@@ -3,18 +3,17 @@ PLUGINCC := $(CONFIG_PLUGIN_HOSTCC:"%"=%)
- GCC_PLUGINS_DIR := $(shell $(CC) -print-file-name=plugin)
- 
- ifeq ($(PLUGINCC),$(HOSTCC))
--  HOSTLIBS := hostlibs
--  HOST_EXTRACFLAGS += -I$(GCC_PLUGINS_DIR)/include -I$(src) -std=gnu99 -ggdb
--  export HOST_EXTRACFLAGS
-+  quiet_cmd_plugin = HOSTCC  $@
-+  pluginc_flags = $(hostc_flags) -std=gnu99
- else
--  HOSTLIBS := hostcxxlibs
--  HOST_EXTRACXXFLAGS += -I$(GCC_PLUGINS_DIR)/include -I$(src) -std=gnu++98 -fno-rtti
--  HOST_EXTRACXXFLAGS += -fno-exceptions -fasynchronous-unwind-tables -ggdb
--  HOST_EXTRACXXFLAGS += -Wno-narrowing -Wno-unused-variable
--  export HOST_EXTRACXXFLAGS
-+  quiet_cmd_plugin = HOSTCXX $@
-+  pluginc_flags = $(hostcxx_flags) -std=gnu++98 -fno-rtti -fno-exceptions \
-+	-fasynchronous-unwind-tables -Wno-narrowing -Wno-unused-variable
- endif
- 
--$(obj)/randomize_layout_plugin.o: $(objtree)/$(obj)/randomize_layout_seed.h
-+pluginc_flags += -I$(GCC_PLUGINS_DIR)/include -I$(src) -ggdb -fPIC
-+
-+$(obj)/randomize_layout_plugin.so: $(objtree)/$(obj)/randomize_layout_seed.h
- quiet_cmd_create_randomize_layout_seed = GENSEED $@
- cmd_create_randomize_layout_seed = \
-   $(CONFIG_SHELL) $(srctree)/$(src)/gen-random-seed.sh $@ $(objtree)/include/generated/randomize_layout_hash.h
-@@ -22,9 +21,14 @@ $(objtree)/$(obj)/randomize_layout_seed.h: FORCE
- 	$(call if_changed,create_randomize_layout_seed)
- targets = randomize_layout_seed.h randomize_layout_hash.h
- 
--$(HOSTLIBS)-y := $(foreach p,$(GCC_PLUGIN),$(if $(findstring /,$(p)),,$(p)))
--always := $($(HOSTLIBS)-y)
-+extra-y := $(GCC_PLUGIN)
-+
-+cmd_plugin = $(PLUGINCC) $(pluginc_flags) -shared $(hostld_flags) \
-+	     -o $@ $< $(hostld_libs)
-+
-+$(obj)/%.so: $(src)/%.c FORCE
-+	$(call if_changed_dep,plugin)
- 
--$(foreach p,$($(HOSTLIBS)-y:%.so=%),$(eval $(p)-objs := $(p).o))
-+hostprogs-y += dummy_to_include_scripts/Makefile.host
- 
- clean-files += *.so
+Adding Noralf, he's the expert here.
+-Daniel
 -- 
-2.7.4
-
+Daniel Vetter
+Software Engineer, Intel Corporation
+http://blog.ffwll.ch
