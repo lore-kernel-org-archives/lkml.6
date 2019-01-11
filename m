@@ -2,54 +2,55 @@ Return-Path: <SRS0=uvhX=PT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-15.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C2A6C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:39:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 23969C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:39:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4DA822133F
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:39:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DF7772184A
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:39:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547217546;
-	bh=DrM6L9gDZDCkK0XHNseQwPAgCB2foVyZNptlm9fYmdE=;
+	s=default; t=1547217550;
+	bh=YqK5JzPf0iFKZuksaAnusxTTKTVgAto0IVXgK9bNy5M=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=ArmuwH6Dc0p6gz+u8mKNTzbw4y9oKbSfvy1E37UkYNL89XFiGdL4hOPPIwMqBVEgK
-	 yu1hkKSADbbXvLsFvYDZgLn3rKcjtoljMIS4Bu8XvnMUVifvApZaflnIqG7Wp7ZEU0
-	 osJIXEl4JZDkZcT3TkZSph3941ypC8hBLT1wdL5Y=
+	b=oEiJnfjVkxysy4FfuBgIerrzOupHYs9BROmglb+1Md2TWTIjrjOeyvZKdwkt9sazl
+	 A0TnrZaXTO0NfQoigxkOAV5PPYWZhCCKSp5LqZd34+weNx5O9agUX8F10Zip2MsDpZ
+	 tD+bRusOAI8s+qOGAq1YKLT4tLoLTrQsZlvwWftA=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2403778AbfAKOjE (ORCPT
+        id S2390969AbfAKOjJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 11 Jan 2019 09:39:04 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59752 "EHLO mail.kernel.org"
+        Fri, 11 Jan 2019 09:39:09 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59860 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2403759AbfAKOi7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Jan 2019 09:38:59 -0500
+        id S2403776AbfAKOjF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 Jan 2019 09:39:05 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 964D1206B6;
-        Fri, 11 Jan 2019 14:38:58 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1A3042063F;
+        Fri, 11 Jan 2019 14:39:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547217539;
-        bh=DrM6L9gDZDCkK0XHNseQwPAgCB2foVyZNptlm9fYmdE=;
+        s=default; t=1547217544;
+        bh=YqK5JzPf0iFKZuksaAnusxTTKTVgAto0IVXgK9bNy5M=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ZSQbdxbuDyOEkZG6GrHT6DhNq4aK3Jw+1h6p6ZwSbZg7wd+k80iuEV+fZ6xnz9XlK
-         YoqWsc5li4KbcjP3f6luEjJ+IIeSCQJhj/0eqCZhwT7DyM9lPpBN40k2HkaGZJBbIO
-         +NWgYA6P9EWcCWyYhtMjZElKiqNohAsT7hyxRt24=
+        b=nXvB06V7RD+I9UYybkh6lhneayCKsAFwlMCOmE2WBNRYrE0BJCq2/4c5TFAc7Tpvw
+         V9YLsYTaRiOjhlUCxAN4L3vy2Ac72KOuVBale6Y64ZgFFhBTB/nUmr9XtCOA4Zr+82
+         yZ/2ciR9I2nt/+MKR2tSKejUtD71Rh+UNdDPRmgc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        stable@vger.kernel.org, Joel Stanley <joel@jms.id.au>,
+        Michael Ellerman <mpe@ellerman.id.au>,
         Nick Desaulniers <ndesaulniers@google.com>,
-        Greg Hackmann <ghackmann@google.com>,
-        Nathan Chancellor <natechancellor@gmail.com>
-Subject: [PATCH 4.19 097/148] kbuild: consolidate Clang compiler flags
-Date:   Fri, 11 Jan 2019 15:14:35 +0100
-Message-Id: <20190111131118.105496254@linuxfoundation.org>
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Nathan Chancellor <natechancellor@gmail.com>,
+        Daniel Axtens <dja@axtens.net>
+Subject: [PATCH 4.19 099/148] powerpc/boot: Set target when cross-compiling for clang
+Date:   Fri, 11 Jan 2019 15:14:37 +0100
+Message-Id: <20190111131118.181576049@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190111131114.337122649@linuxfoundation.org>
 References: <20190111131114.337122649@linuxfoundation.org>
@@ -68,50 +69,38 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
+From: Joel Stanley <joel@jms.id.au>
 
-commit 238bcbc4e07fad2fff99c5b157d0c37ccd4d093c upstream.
+commit 813af51f5d30a2da6a2523c08465f9726e51772e upstream.
 
-Collect basic Clang options such as --target, --prefix, --gcc-toolchain,
--no-integrated-as into a single variable CLANG_FLAGS so that it can be
-easily reused in other parts of Makefile.
+Clang needs to be told which target it is building for when cross
+compiling.
 
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+Link: https://github.com/ClangBuiltLinux/linux/issues/259
+Signed-off-by: Joel Stanley <joel@jms.id.au>
+Tested-by: Daniel Axtens <dja@axtens.net> # powerpc 64-bit BE
+Acked-by: Michael Ellerman <mpe@ellerman.id.au>
 Reviewed-by: Nick Desaulniers <ndesaulniers@google.com>
-Tested-by: Nick Desaulniers <ndesaulniers@google.com>
-Acked-by: Greg Hackmann <ghackmann@google.com>
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
 Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- Makefile |   13 ++++++-------
- 1 file changed, 6 insertions(+), 7 deletions(-)
+ arch/powerpc/boot/Makefile |    5 +++++
+ 1 file changed, 5 insertions(+)
 
---- a/Makefile
-+++ b/Makefile
-@@ -482,18 +482,17 @@ endif
+--- a/arch/powerpc/boot/Makefile
++++ b/arch/powerpc/boot/Makefile
+@@ -55,6 +55,11 @@ BOOTAFLAGS	:= -D__ASSEMBLY__ $(BOOTCFLAG
  
- ifeq ($(cc-name),clang)
- ifneq ($(CROSS_COMPILE),)
--CLANG_TARGET	:= --target=$(notdir $(CROSS_COMPILE:%-=%))
-+CLANG_FLAGS	:= --target=$(notdir $(CROSS_COMPILE:%-=%))
- GCC_TOOLCHAIN_DIR := $(dir $(shell which $(LD)))
--CLANG_PREFIX	:= --prefix=$(GCC_TOOLCHAIN_DIR)
-+CLANG_FLAGS	+= --prefix=$(GCC_TOOLCHAIN_DIR)
- GCC_TOOLCHAIN	:= $(realpath $(GCC_TOOLCHAIN_DIR)/..)
- endif
- ifneq ($(GCC_TOOLCHAIN),)
--CLANG_GCC_TC	:= --gcc-toolchain=$(GCC_TOOLCHAIN)
-+CLANG_FLAGS	+= --gcc-toolchain=$(GCC_TOOLCHAIN)
- endif
--KBUILD_CFLAGS += $(CLANG_TARGET) $(CLANG_GCC_TC) $(CLANG_PREFIX)
--KBUILD_AFLAGS += $(CLANG_TARGET) $(CLANG_GCC_TC) $(CLANG_PREFIX)
--KBUILD_CFLAGS += -no-integrated-as
--KBUILD_AFLAGS += -no-integrated-as
-+CLANG_FLAGS	+= -no-integrated-as
-+KBUILD_CFLAGS	+= $(CLANG_FLAGS)
-+KBUILD_AFLAGS	+= $(CLANG_FLAGS)
- endif
+ BOOTARFLAGS	:= -cr$(KBUILD_ARFLAGS)
  
- RETPOLINE_CFLAGS_GCC := -mindirect-branch=thunk-extern -mindirect-branch-register
++ifdef CONFIG_CC_IS_CLANG
++BOOTCFLAGS += $(CLANG_FLAGS)
++BOOTAFLAGS += $(CLANG_FLAGS)
++endif
++
+ ifdef CONFIG_DEBUG_INFO
+ BOOTCFLAGS	+= -g
+ endif
 
 
