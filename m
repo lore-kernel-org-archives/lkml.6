@@ -2,85 +2,252 @@ Return-Path: <SRS0=uvhX=PT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D68AC43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 18:16:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 09E3DC43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 18:16:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F20DD2133F
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 18:16:09 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="lTCr9aGG"
+	by mail.kernel.org (Postfix) with ESMTP id D99E820870
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 18:16:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387962AbfAKSQJ (ORCPT
+        id S2388069AbfAKSQY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 11 Jan 2019 13:16:09 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:46526 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725789AbfAKSQI (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Jan 2019 13:16:08 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Transfer-Encoding
-        :Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
-        Sender:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=Nmx4asMzroV5sBI0wqplHX3gob/sn7xzkvUWEPDo4YU=; b=lTCr9aGG28zQaVC/ak9w+BxbBq
-        Yl6l4kuGG4gV8wGelcfDSp/tx+qs1FzJJdpZ753xYJXbGv1FINzBAx3qH0McDCjGEC4dbeiTAULud
-        3Ofv2ZNrZFXaVaVAwuLQcdZCvSMX+Edz/X7N2Gi2d5pi8CfYgvYvOR89CBOgUd/aPSqJqCx/H9495
-        +PCa105LqDzWedVTQCcoXt+KmENBUcHRFeQhK8DShVKMVoy320P1jUvG+hGjabTYThv2LCyG+3l2G
-        +e4mNscbG0l/26QPj+THE81fHfhwrVWhhDoJp9YaO6TGZk5l4cIZLO0ikROozRkAYrH1qu58NRYkp
-        Qksf27cA==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gi1Lc-0000qm-Ns; Fri, 11 Jan 2019 18:16:00 +0000
-Date:   Fri, 11 Jan 2019 10:16:00 -0800
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Qian Cai <cai@lca.pw>
-Cc:     akpm@linux-foundation.org, esploit@protonmail.ch,
-        jejb@linux.ibm.com, dgilbert@interlog.com,
-        martin.petersen@oracle.com, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, walken@google.com,
-        David.Woodhouse@intel.com
-Subject: Re: [PATCH] rbtree: fix the red root
-Message-ID: <20190111181600.GJ6310@bombadil.infradead.org>
-References: <YrcPMrGmYbPe_xgNEV6Q0jqc5XuPYmL2AFSyeNmg1gW531bgZnBGfEUK5_ktqDBaNW37b-NP2VXvlliM7_PsBRhSfB649MaW1Ne7zT9lHc=@protonmail.ch>
- <20190111165145.23628-1-cai@lca.pw>
- <20190111173132.GH6310@bombadil.infradead.org>
- <1547230356.6911.23.camel@lca.pw>
+        Fri, 11 Jan 2019 13:16:24 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:32992 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725446AbfAKSQY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 Jan 2019 13:16:24 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id CA80180D;
+        Fri, 11 Jan 2019 10:16:23 -0800 (PST)
+Received: from [10.1.196.128] (ostrya.cambridge.arm.com [10.1.196.128])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 2522B3F6CF;
+        Fri, 11 Jan 2019 10:16:21 -0800 (PST)
+Subject: Re: [RFC v3 01/21] iommu: Introduce set_pasid_table API
+To:     Eric Auger <eric.auger@redhat.com>, eric.auger.pro@gmail.com,
+        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
+        kvm@vger.kernel.org, kvmarm@lists.cs.columbia.edu, joro@8bytes.org,
+        alex.williamson@redhat.com, jacob.jun.pan@linux.intel.com,
+        yi.l.liu@linux.intel.com, will.deacon@arm.com, robin.murphy@arm.com
+Cc:     marc.zyngier@arm.com, peter.maydell@linaro.org,
+        kevin.tian@intel.com, ashok.raj@intel.com, christoffer.dall@arm.com
+References: <20190108102633.17482-1-eric.auger@redhat.com>
+ <20190108102633.17482-2-eric.auger@redhat.com>
+From:   Jean-Philippe Brucker <jean-philippe.brucker@arm.com>
+Message-ID: <0203e4ce-eace-be6e-7e95-5a02c069c8e8@arm.com>
+Date:   Fri, 11 Jan 2019 18:16:06 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <1547230356.6911.23.camel@lca.pw>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <20190108102633.17482-2-eric.auger@redhat.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jan 11, 2019 at 01:12:36PM -0500, Qian Cai wrote:
-> On Fri, 2019-01-11 at 09:31 -0800, Matthew Wilcox wrote:
-> > On Fri, Jan 11, 2019 at 11:51:45AM -0500, Qian Cai wrote:
-> > > Reported-by: Esme <esploit@protonmail.ch>
-> > > Signed-off-by: Qian Cai <cai@lca.pw>
-> > 
-> > What change introduced this bug?  We need a Fixes: line so the stable
-> > people know how far to backport this fix.
+On 08/01/2019 10:26, Eric Auger wrote:
+> From: Jacob Pan <jacob.jun.pan@linux.intel.com>
 > 
-> It looks like,
+> In virtualization use case, when a guest is assigned
+> a PCI host device, protected by a virtual IOMMU on a guest,
+> the physical IOMMU must be programmed to be consistent with
+> the guest mappings. If the physical IOMMU supports two
+> translation stages it makes sense to program guest mappings
+> onto the first stage/level (ARM/VTD terminology) while to host
+> owns the stage/level 2.
 > 
-> Fixes: 6d58452dc06 (rbtree: adjust root color in rb_insert_color() only when
-> necessary)
+> In that case, it is mandated to trap on guest configuration
+> settings and pass those to the physical iommu driver.
 > 
-> where it no longer always paint the root as black.
+> This patch adds a new API to the iommu subsystem that allows
+> to set the pasid table information.
 > 
-> Also, copying this fix for the original author and reviewer.
-> 
-> https://lore.kernel.org/lkml/20190111165145.23628-1-cai@lca.pw/
+> A generic iommu_pasid_table_config struct is introduced in
+> a new iommu.h uapi header. This is going to be used by the VFIO
+> user API. We foresee at least two specializations of this struct,
+> for PASID table passing and ARM SMMUv3.
 
-Great, thanks!  We have a test-suite (lib/rbtree_test.c); could you add
-a test to it that will reproduce this bug without your patch applied?
+Last sentence is a bit confusing. With SMMUv3 it is also used for the
+PASID table, even when it only has one entry and PASID is disabled.
+
+> Signed-off-by: Jean-Philippe Brucker <jean-philippe.brucker@arm.com>
+> Signed-off-by: Liu, Yi L <yi.l.liu@linux.intel.com>
+> Signed-off-by: Ashok Raj <ashok.raj@intel.com>
+> Signed-off-by: Jacob Pan <jacob.jun.pan@linux.intel.com>
+> Signed-off-by: Eric Auger <eric.auger@redhat.com>
+> 
+> ---
+> 
+> This patch generalizes the API introduced by Jacob & co-authors in
+> https://lwn.net/Articles/754331/
+> 
+> v2 -> v3:
+> - replace unbind/bind by set_pasid_table
+> - move table pointer and pasid bits in the generic part of the struct
+> 
+> v1 -> v2:
+> - restore the original pasid table name
+> - remove the struct device * parameter in the API
+> - reworked iommu_pasid_smmuv3
+> ---
+>  drivers/iommu/iommu.c      | 10 ++++++++
+>  include/linux/iommu.h      | 14 +++++++++++
+>  include/uapi/linux/iommu.h | 50 ++++++++++++++++++++++++++++++++++++++
+>  3 files changed, 74 insertions(+)
+>  create mode 100644 include/uapi/linux/iommu.h
+> 
+> diff --git a/drivers/iommu/iommu.c b/drivers/iommu/iommu.c
+> index 3ed4db334341..0f2b7f1fc7c8 100644
+> --- a/drivers/iommu/iommu.c
+> +++ b/drivers/iommu/iommu.c
+> @@ -1393,6 +1393,16 @@ int iommu_attach_device(struct iommu_domain *domain, struct device *dev)
+>  }
+>  EXPORT_SYMBOL_GPL(iommu_attach_device);
+>  
+> +int iommu_set_pasid_table(struct iommu_domain *domain,
+> +			  struct iommu_pasid_table_config *cfg)
+> +{
+> +	if (unlikely(!domain->ops->set_pasid_table))
+> +		return -ENODEV;
+> +
+> +	return domain->ops->set_pasid_table(domain, cfg);
+> +}
+> +EXPORT_SYMBOL_GPL(iommu_set_pasid_table);
+> +
+>  static void __iommu_detach_device(struct iommu_domain *domain,
+>  				  struct device *dev)
+>  {
+> diff --git a/include/linux/iommu.h b/include/linux/iommu.h
+> index e90da6b6f3d1..1da2a2357ea4 100644
+> --- a/include/linux/iommu.h
+> +++ b/include/linux/iommu.h
+> @@ -25,6 +25,7 @@
+>  #include <linux/errno.h>
+>  #include <linux/err.h>
+>  #include <linux/of.h>
+> +#include <uapi/linux/iommu.h>
+>  
+>  #define IOMMU_READ	(1 << 0)
+>  #define IOMMU_WRITE	(1 << 1)
+> @@ -184,6 +185,7 @@ struct iommu_resv_region {
+>   * @domain_window_disable: Disable a particular window for a domain
+>   * @of_xlate: add OF master IDs to iommu grouping
+>   * @pgsize_bitmap: bitmap of all possible supported page sizes
+> + * @set_pasid_table: set pasid table
+>   */
+>  struct iommu_ops {
+>  	bool (*capable)(enum iommu_cap);
+> @@ -226,6 +228,9 @@ struct iommu_ops {
+>  	int (*of_xlate)(struct device *dev, struct of_phandle_args *args);
+>  	bool (*is_attach_deferred)(struct iommu_domain *domain, struct device *dev);
+>  
+> +	int (*set_pasid_table)(struct iommu_domain *domain,
+> +			       struct iommu_pasid_table_config *cfg);
+> +
+>  	unsigned long pgsize_bitmap;
+>  };
+>  
+> @@ -287,6 +292,8 @@ extern int iommu_attach_device(struct iommu_domain *domain,
+>  			       struct device *dev);
+>  extern void iommu_detach_device(struct iommu_domain *domain,
+>  				struct device *dev);
+> +extern int iommu_set_pasid_table(struct iommu_domain *domain,
+> +				 struct iommu_pasid_table_config *cfg);
+>  extern struct iommu_domain *iommu_get_domain_for_dev(struct device *dev);
+>  extern struct iommu_domain *iommu_get_dma_domain(struct device *dev);
+>  extern int iommu_map(struct iommu_domain *domain, unsigned long iova,
+> @@ -696,6 +703,13 @@ const struct iommu_ops *iommu_ops_from_fwnode(struct fwnode_handle *fwnode)
+>  	return NULL;
+>  }
+>  
+> +static inline
+> +int iommu_set_pasid_table(struct iommu_domain *domain,
+> +			  struct iommu_pasid_table_config *cfg)
+> +{
+> +	return -ENODEV;
+> +}
+> +
+>  #endif /* CONFIG_IOMMU_API */
+>  
+>  #ifdef CONFIG_IOMMU_DEBUGFS
+> diff --git a/include/uapi/linux/iommu.h b/include/uapi/linux/iommu.h
+> new file mode 100644
+> index 000000000000..7a7cf7a3de7c
+> --- /dev/null
+> +++ b/include/uapi/linux/iommu.h
+> @@ -0,0 +1,50 @@
+> +/* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
+> +/*
+> + * IOMMU user API definitions
+> + *
+> + *
+> + * This program is free software; you can redistribute it and/or modify
+> + * it under the terms of the GNU General Public License version 2 as
+> + * published by the Free Software Foundation.
+
+I don't think we need both the boilerplate and the SPDX header
+
+> + */
+> +
+> +#ifndef _UAPI_IOMMU_H
+> +#define _UAPI_IOMMU_H
+> +
+> +#include <linux/types.h>
+> +
+> +/**
+> + * SMMUv3 Stream Table Entry stage 1 related information
+> + * @abort: shall the STE lead to abort
+> + * @s1fmt: STE s1fmt field as set by the guest
+> + * @s1dss: STE s1dss as set by the guest
+> + * All field names match the smmu 3.0/3.1 spec (ARM IHI 0070A)
+
+Not really the case for @abort. Could you clarify whether @abort is
+valid in combination with @bypass?
+
+> + */
+> +struct iommu_pasid_smmuv3 {
+> +	__u8 abort;
+> +	__u8 s1fmt;
+> +	__u8 s1dss;
+> +};
+> +
+> +/**
+> + * PASID table data used to bind guest PASID table to the host IOMMU
+> + * Note PASID table corresponds to the Context Table on ARM SMMUv3.
+> + *
+> + * @version: API version to prepare for future extensions
+> + * @format: format of the PASID table
+> + *
+> + */
+> +struct iommu_pasid_table_config {
+> +#define PASID_TABLE_CFG_VERSION_1 1
+> +	__u32	version;
+> +#define IOMMU_PASID_FORMAT_SMMUV3	(1 << 0)
+> +	__u32	format;
+> +	__u64	base_ptr;
+> +	__u8	pasid_bits;
+> +	__u8	bypass;
+
+We need some padding, in case someone adds a new struct to the union
+that requires 64-byte alignment
+
+And 'bypass' might not be the right name if we're making it common,
+maybe 'reset' would be clearer? Or we just need to explain that bypass
+is the initial state of a nesting domain
+
+Thanks,
+Jean
+
+> +	union {
+> +		struct iommu_pasid_smmuv3 smmuv3;
+> +	};
+> +};
+> +
+> +#endif /* _UAPI_IOMMU_H */
+> 
 
