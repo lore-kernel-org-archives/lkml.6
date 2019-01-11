@@ -2,165 +2,97 @@ Return-Path: <SRS0=uvhX=PT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A165C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 00:51:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B522C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 00:52:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 031752133F
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 00:51:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547167874;
-	bh=Lvca0j7SQ8acgEjqgQpHsC1KXYC4RVNaaIuBFKjpcKs=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:List-ID:From;
-	b=JftawxGkoep9LGMEKRPhIU1oX9lo2jx95L+wy4wD6raMTGzuqAL7Do9FfWS23E0Na
-	 sJ8mdiL8zvbNGxpn5Inqzg8St2NwBIQUnrc78nv5WlPTyyCG0qx8/m0DO49DSVGInZ
-	 ZDYm9HDAgmqYnTIl4H/iYdJxmy7Q27Fa0A4V3xwQ=
+	by mail.kernel.org (Postfix) with ESMTP id 32BF820879
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 00:52:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728963AbfAKAvN (ORCPT
+        id S1729167AbfAKAwQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 10 Jan 2019 19:51:13 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37346 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726924AbfAKAvM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Jan 2019 19:51:12 -0500
-Received: from devnote (unknown [180.0.253.189])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E17DD20879;
-        Fri, 11 Jan 2019 00:51:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547167871;
-        bh=Lvca0j7SQ8acgEjqgQpHsC1KXYC4RVNaaIuBFKjpcKs=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=PE8WTNUIaD0KrN/YxlDh1v2YqX+6Heshp4C4bXjzhfa3/yrQW3QFetH2BG2QXuBNX
-         tNfuHwjsV92azWYRByt8Vd0UIBnsL+y5Ux/lV/vzQIHFtFADf1Y7CoMRQVmXm91w79
-         9JIIe7KCWeUJysreIQPfornNYplQXAxDd++6MF7c=
-Date:   Fri, 11 Jan 2019 09:51:08 +0900
-From:   Masami Hiramatsu <mhiramat@kernel.org>
-To:     Andrea Righi <righi.andrea@gmail.com>
-Cc:     Steven Rostedt <rostedt@goodmis.org>,
-        Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] tracing/kprobes: fix NULL pointer dereference in
- trace_kprobe_create()
-Message-Id: <20190111095108.b79a2ee026185cbd62365977@kernel.org>
-In-Reply-To: <20190110173947.GA19243@xps-13>
-References: <20190110173947.GA19243@xps-13>
-X-Mailer: Sylpheed 3.5.0 (GTK+ 2.24.30; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
+        Thu, 10 Jan 2019 19:52:16 -0500
+Received: from relmlor2.renesas.com ([210.160.252.172]:13673 "EHLO
+        relmlie6.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726745AbfAKAwP (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 10 Jan 2019 19:52:15 -0500
+Date:   11 Jan 2019 09:52:12 +0900
+X-IronPort-AV: E=Sophos;i="5.56,463,1539615600"; 
+   d="scan'208";a="4698073"
+Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
+  by relmlie6.idc.renesas.com with ESMTP; 11 Jan 2019 09:52:12 +0900
+Received: from morimoto-PC.renesas.com (unknown [10.166.18.140])
+        by relmlir6.idc.renesas.com (Postfix) with ESMTP id A357C415FA50;
+        Fri, 11 Jan 2019 09:52:12 +0900 (JST)
+Message-ID: <871s5kqb43.wl-kuninori.morimoto.gx@renesas.com>
+From:   Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+To:     Jon Hunter <jonathanh@nvidia.com>
+Cc:     Mark Brown <broonie@kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        <linux-tegra@vger.kernel.org>, Matthias Reichl <hias@horus.com>,
+        <alsa-devel@alsa-project.org>,
+        Marcel Ziswiler <marcel.ziswiler@toradex.com>,
+        Takashi Iwai <tiwai@suse.com>, <linux-kernel@vger.kernel.org>,
+        Marcel Ziswiler <marcel@ziswiler.com>
+Subject: Re: [alsa-devel] [PATCH v1 3/3] ASoC: soc-core: fix platform name vs. of_node assignement
+In-Reply-To: <a2068291-e554-cc4f-9af9-0022f3c4de34@nvidia.com>
+References: <20181218174040.k7u26vnnoplllnwb@camel2.lan>
+        <952471da-b355-6471-6c19-5120d6704f81@nvidia.com>
+        <87lg3vuc7p.wl-kuninori.morimoto.gx@renesas.com>
+        <b5164c93-8be8-1c3d-9415-c895da6ad622@nvidia.com>
+        <d1e41ed2-da7c-b46c-bc6d-64cf3e536771@nvidia.com>
+        <865d2a3e-bf6b-1f30-1179-7e922c0d0641@nvidia.com>
+        <87k1je38w7.wl-kuninori.morimoto.gx@renesas.com>
+        <0660a471-3698-2059-4494-ad146518a4ed@nvidia.com>
+        <20190109125340.GD10405@sirena.org.uk>
+        <52f5f2cf-9260-f9c5-f73d-3c3d5debc86b@nvidia.com>
+        <20190109141439.GE10405@sirena.org.uk>
+        <875zuxb9uy.wl-kuninori.morimoto.gx@renesas.com>
+        <a2068291-e554-cc4f-9af9-0022f3c4de34@nvidia.com>
+User-Agent: Wanderlust/2.15.9 Emacs/24.5 Mule/6.0
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
 Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Andrea,
 
-On Thu, 10 Jan 2019 18:39:47 +0100
-Andrea Righi <righi.andrea@gmail.com> wrote:
+Hi Jon
 
-> It is possible to trigger a NULL pointer dereference by writing an
-> incorrectly formatted string to krpobe_events (omitting the symbol).
-> 
-> Example:
-> 
->  echo "r:event_1 " >> /sys/kernel/debug/tracing/kprobe_events
-> 
-> That triggers this:
-> 
->  BUG: unable to handle kernel NULL pointer dereference at 0000000000000000
->  #PF error: [normal kernel read fault]
->  PGD 0 P4D 0
->  Oops: 0000 [#1] SMP PTI
->  CPU: 6 PID: 1757 Comm: bash Not tainted 5.0.0-rc1+ #125
->  Hardware name: Dell Inc. XPS 13 9370/0F6P3V, BIOS 1.5.1 08/09/2018
->  RIP: 0010:kstrtoull+0x2/0x20
->  Code: 28 00 00 00 75 17 48 83 c4 18 5b 41 5c 5d c3 b8 ea ff ff ff eb e1 b8 de ff ff ff eb da e8 d6 36 bb ff 66 0f 1f 44 00 00 31 c0 <80> 3f 2b 55 48 89 e5 0f 94 c0 48 01 c7 e8 5c ff ff ff 5d c3 66 2e
->  RSP: 0018:ffffb5d482e57cb8 EFLAGS: 00010246
->  RAX: 0000000000000000 RBX: 0000000000000001 RCX: ffffffff82b12720
->  RDX: ffffb5d482e57cf8 RSI: 0000000000000000 RDI: 0000000000000000
->  RBP: ffffb5d482e57d70 R08: ffffa0c05e5a7080 R09: ffffa0c05e003980
->  R10: 0000000000000000 R11: 0000000040000000 R12: ffffa0c04fe87b08
->  R13: 0000000000000001 R14: 000000000000000b R15: ffffa0c058d749e1
->  FS:  00007f137c7f7740(0000) GS:ffffa0c05e580000(0000) knlGS:0000000000000000
->  CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
->  CR2: 0000000000000000 CR3: 0000000497d46004 CR4: 00000000003606e0
->  Call Trace:
->   ? trace_kprobe_create+0xb6/0x840
->   ? _cond_resched+0x19/0x40
->   ? _cond_resched+0x19/0x40
->   ? __kmalloc+0x62/0x210
->   ? argv_split+0x8f/0x140
->   ? trace_kprobe_create+0x840/0x840
->   ? trace_kprobe_create+0x840/0x840
->   create_or_delete_trace_kprobe+0x11/0x30
->   trace_run_command+0x50/0x90
->   trace_parse_run_command+0xc1/0x160
->   probes_write+0x10/0x20
->   __vfs_write+0x3a/0x1b0
->   ? apparmor_file_permission+0x1a/0x20
->   ? security_file_permission+0x31/0xf0
->   ? _cond_resched+0x19/0x40
->   vfs_write+0xb1/0x1a0
->   ksys_write+0x55/0xc0
->   __x64_sys_write+0x1a/0x20
->   do_syscall_64+0x5a/0x120
->   entry_SYSCALL_64_after_hwframe+0x44/0xa9
-> 
-> Fix by doing the proper argument check when a NULL symbol is passed in
-> trace_kprobe_create().
-> 
+> Actually no. Looking at snd_soc_init_multicodec() it always allocates
+> memory if any of the 'legacy' codec members
+> (codec_name/codec_of_node/codec_dai_name) are populated. However, this
+> looks quite fragile to me and is susceptible to leaking memory if the
+> user/machine driver already incorrectly allocated the memory as well as
+> populating these legacy codec members.
 
-Oops! It is my fault on commit 6212dd29683e ("tracing/kprobes: Use dyn_event
-framework for kprobe events")
+Yeah, sorry I was 100% misunderstood.
+I thought there is a case that defered card connected to
+unbind_card_list, and try snd_soc_init_platform/codec again
+without freeing memory...
+very mess
 
-Previously, we have following check, but it is removed 
+> My concern about all of this is it is not fool proof and hard to detect
+> if a machine driver is doing something bad that it should not.
 
--       if (argc < 2) {
--               pr_info("Probe point is not specified.\n");
--               return -EINVAL;
--       }
+Yeah, agree.
+Best solution is removing legacy style, I think.
 
-and check it only for kprobe event but not kretprobe event.
+> It is still fragile. Again the machine driver could have incorrectly set
+> these 'allocated_platform/codecs' members as they are exposed to the
+> machine driver. You have no way to determine if the machine driver is
+> doing the correct thing or not. The problem becomes more complex with
+> probe deferral.
 
-        /* argc must be >= 1 */
-        if (argv[0][0] == 'r') {
-                is_return = true;
-                flags |= TPARG_FL_RETURN;
-        } else if (argv[0][0] != 'p' || argc < 2)
-                return -ECANCELED;
+Indeed there is such case so far, but my understanding is that current
+driver should select "legacy style" or "modern style".
+If driver setup it as "legacy", but access to "modern" member,
+it is driver side bug, right ?
 
-I would like to recover above if block instead of adding new check.
-
-Could you do it with Fixed: and Cc: stable@vger.kernel.org tags?
-
-Thank you,
-
-> Signed-off-by: Andrea Righi <righi.andrea@gmail.com>
-> ---
->  kernel/trace/trace_kprobe.c | 2 ++
->  1 file changed, 2 insertions(+)
-> 
-> diff --git a/kernel/trace/trace_kprobe.c b/kernel/trace/trace_kprobe.c
-> index 5c19b8c41c7e..76410ceeff50 100644
-> --- a/kernel/trace/trace_kprobe.c
-> +++ b/kernel/trace/trace_kprobe.c
-> @@ -644,6 +644,8 @@ static int trace_kprobe_create(int argc, const char *argv[])
->  
->  	/* try to parse an address. if that fails, try to read the
->  	 * input as a symbol. */
-> +	if (!argv[1])
-> +		return -EINVAL;
->  	if (kstrtoul(argv[1], 0, (unsigned long *)&addr)) {
->  		/* Check whether uprobe event specified */
->  		if (strchr(argv[1], '/') && strchr(argv[1], ':'))
-> -- 
-> 2.17.1
-> 
-
-
--- 
-Masami Hiramatsu <mhiramat@kernel.org>
+Best regards
+---
+Kuninori Morimoto
