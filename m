@@ -7,46 +7,47 @@ X-Spam-Status: No, score=-10.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B44CC43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:40:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BB266C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:40:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4FA8C2063F
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:40:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8DCAE21848
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:40:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547217611;
-	bh=FGFxA5Me/4Oj9pcsXGhfUHvRbTJy4KGcQVt76UIu/n4=;
+	s=default; t=1547217614;
+	bh=3g1YrHdmxRqgIqe0so8HDrP8m/88VBxhENFa8T5tnvk=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=u2cjRQxFB7gUArmp82G+DUGpG1jASXWI1wSvWj6L1LAxwNHAQKFVnRj1sLYZden42
-	 Ts2E4hg4OmpGEb8xLkuKnDQu+ANErQexArDvaCxc8Am7qgOFtdCyAB4+Hx1xBJ3cx8
-	 Lge2TDGf6bfR3I6Yapis/eBZfpEyTzQtwZTK2D4g=
+	b=ZUTOwnSbxSkpELbwQm4dys8SCLBC++HMB28fc4qqy9yBxV0P0VigdLLSlfiezK3Ng
+	 le2gAkLt4VUtBgr05zI6n/2679aLmcZNGXdFo0UTF3H/XgxhuuzCmbxNaWCPPtCzmI
+	 JJM4dPP9LaRhESa3TdZ/BZAwPtkstVAuTixiiL4c=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2403865AbfAKOkK (ORCPT
+        id S2391186AbfAKOkN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 11 Jan 2019 09:40:10 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60976 "EHLO mail.kernel.org"
+        Fri, 11 Jan 2019 09:40:13 -0500
+Received: from mail.kernel.org ([198.145.29.99]:32784 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2403847AbfAKOkI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Jan 2019 09:40:08 -0500
+        id S2403847AbfAKOkL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 Jan 2019 09:40:11 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 42A5C2063F;
-        Fri, 11 Jan 2019 14:40:07 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 51803206B6;
+        Fri, 11 Jan 2019 14:40:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547217607;
-        bh=FGFxA5Me/4Oj9pcsXGhfUHvRbTJy4KGcQVt76UIu/n4=;
+        s=default; t=1547217610;
+        bh=3g1YrHdmxRqgIqe0so8HDrP8m/88VBxhENFa8T5tnvk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=JC70NUvo1PP0UvkV7lrpG2CxcBk3D82jGwS0um6+oikcaCrsBsh6Zu4zUGKASouMc
-         rbUa23I7bOrfx9YRoB6EDMwG/rBqHpnfrKQztjVZqzBHbRQOVlLorzZM34FM7Pm1d1
-         mF+Xt4Tbe+uaZ4Y/uqXHL7lMuDBCo3npoIy0+6Vs=
+        b=bhLonGdq6aoSLIXS06ESnNLTwE1rjSOfdC+J5jK9r4UyqqWaMtoGjd5RXFKuzvUup
+         AlvzVwirDZbKaeTiojxMo1b6j78/cBY1gQU/RDhc7+mZez5qHiMk0CkC3lGr0Rfpdz
+         N/cRwP9AT0616g9KgA6u+5zk6gkzPmq4vP++eNtg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Chuck Lever <chuck.lever@oracle.com>,
-        "J. Bruce Fields" <bfields@redhat.com>
-Subject: [PATCH 4.19 124/148] nfsd4: zero-length WRITE should succeed
-Date:   Fri, 11 Jan 2019 15:15:02 +0100
-Message-Id: <20190111131119.212173111@linuxfoundation.org>
+        stable@vger.kernel.org, Nick Desaulniers <ndesaulniers@google.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Will Deacon <will.deacon@arm.com>
+Subject: [PATCH 4.19 125/148] arm64: drop linker script hack to hide __efistub_ symbols
+Date:   Fri, 11 Jan 2019 15:15:03 +0100
+Message-Id: <20190111131119.249039125@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190111131114.337122649@linuxfoundation.org>
 References: <20190111131114.337122649@linuxfoundation.org>
@@ -65,37 +66,89 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: J. Bruce Fields <bfields@redhat.com>
+From: Ard Biesheuvel <ard.biesheuvel@linaro.org>
 
-commit fdec6114ee1f0f43b1ad081ad8d46b23ba126d70 upstream.
+commit dd6846d774693bfa27d7db4dae5ea67dfe373fa1 upstream.
 
-Zero-length writes are legal; from 5661 section 18.32.3: "If the count
-is zero, the WRITE will succeed and return a count of zero subject to
-permissions checking".
+Commit 1212f7a16af4 ("scripts/kallsyms: filter arm64's __efistub_
+symbols") updated the kallsyms code to filter out symbols with
+the __efistub_ prefix explicitly, so we no longer require the
+hack in our linker script to emit them as absolute symbols.
 
-This check is unnecessary and is causing zero-length reads to return
-EINVAL.
-
-Cc: stable@vger.kernel.org
-Fixes: 3fd9557aec91 "NFSD: Refactor the generic write vector fill helper"
-Cc: Chuck Lever <chuck.lever@oracle.com>
-Signed-off-by: J. Bruce Fields <bfields@redhat.com>
+Cc: Nick Desaulniers <ndesaulniers@google.com>
+Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Signed-off-by: Will Deacon <will.deacon@arm.com>
+Signed-off-by: Nick Desaulniers <ndesaulniers@google.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- fs/nfsd/nfs4proc.c |    2 --
- 1 file changed, 2 deletions(-)
+ arch/arm64/kernel/image.h |   46 ++++++++++++++++++----------------------------
+ 1 file changed, 18 insertions(+), 28 deletions(-)
 
---- a/fs/nfsd/nfs4proc.c
-+++ b/fs/nfsd/nfs4proc.c
-@@ -1015,8 +1015,6 @@ nfsd4_write(struct svc_rqst *rqstp, stru
+--- a/arch/arm64/kernel/image.h
++++ b/arch/arm64/kernel/image.h
+@@ -76,16 +76,6 @@
+ __efistub_stext_offset = stext - _text;
  
- 	nvecs = svc_fill_write_vector(rqstp, write->wr_pagelist,
- 				      &write->wr_head, write->wr_buflen);
--	if (!nvecs)
--		return nfserr_io;
- 	WARN_ON_ONCE(nvecs > ARRAY_SIZE(rqstp->rq_vec));
+ /*
+- * Prevent the symbol aliases below from being emitted into the kallsyms
+- * table, by forcing them to be absolute symbols (which are conveniently
+- * ignored by scripts/kallsyms) rather than section relative symbols.
+- * The distinction is only relevant for partial linking, and only for symbols
+- * that are defined within a section declaration (which is not the case for
+- * the definitions below) so the resulting values will be identical.
+- */
+-#define KALLSYMS_HIDE(sym)	ABSOLUTE(sym)
+-
+-/*
+  * The EFI stub has its own symbol namespace prefixed by __efistub_, to
+  * isolate it from the kernel proper. The following symbols are legally
+  * accessed by the stub, so provide some aliases to make them accessible.
+@@ -94,28 +84,28 @@ __efistub_stext_offset = stext - _text;
+  * linked at. The routines below are all implemented in assembler in a
+  * position independent manner
+  */
+-__efistub_memcmp		= KALLSYMS_HIDE(__pi_memcmp);
+-__efistub_memchr		= KALLSYMS_HIDE(__pi_memchr);
+-__efistub_memcpy		= KALLSYMS_HIDE(__pi_memcpy);
+-__efistub_memmove		= KALLSYMS_HIDE(__pi_memmove);
+-__efistub_memset		= KALLSYMS_HIDE(__pi_memset);
+-__efistub_strlen		= KALLSYMS_HIDE(__pi_strlen);
+-__efistub_strnlen		= KALLSYMS_HIDE(__pi_strnlen);
+-__efistub_strcmp		= KALLSYMS_HIDE(__pi_strcmp);
+-__efistub_strncmp		= KALLSYMS_HIDE(__pi_strncmp);
+-__efistub_strrchr		= KALLSYMS_HIDE(__pi_strrchr);
+-__efistub___flush_dcache_area	= KALLSYMS_HIDE(__pi___flush_dcache_area);
++__efistub_memcmp		= __pi_memcmp;
++__efistub_memchr		= __pi_memchr;
++__efistub_memcpy		= __pi_memcpy;
++__efistub_memmove		= __pi_memmove;
++__efistub_memset		= __pi_memset;
++__efistub_strlen		= __pi_strlen;
++__efistub_strnlen		= __pi_strnlen;
++__efistub_strcmp		= __pi_strcmp;
++__efistub_strncmp		= __pi_strncmp;
++__efistub_strrchr		= __pi_strrchr;
++__efistub___flush_dcache_area	= __pi___flush_dcache_area;
  
- 	status = nfsd_vfs_write(rqstp, &cstate->current_fh, filp,
+ #ifdef CONFIG_KASAN
+-__efistub___memcpy		= KALLSYMS_HIDE(__pi_memcpy);
+-__efistub___memmove		= KALLSYMS_HIDE(__pi_memmove);
+-__efistub___memset		= KALLSYMS_HIDE(__pi_memset);
++__efistub___memcpy		= __pi_memcpy;
++__efistub___memmove		= __pi_memmove;
++__efistub___memset		= __pi_memset;
+ #endif
+ 
+-__efistub__text			= KALLSYMS_HIDE(_text);
+-__efistub__end			= KALLSYMS_HIDE(_end);
+-__efistub__edata		= KALLSYMS_HIDE(_edata);
+-__efistub_screen_info		= KALLSYMS_HIDE(screen_info);
++__efistub__text			= _text;
++__efistub__end			= _end;
++__efistub__edata		= _edata;
++__efistub_screen_info		= screen_info;
+ 
+ #endif
+ 
 
 
