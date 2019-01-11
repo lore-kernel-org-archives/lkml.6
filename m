@@ -2,84 +2,82 @@ Return-Path: <SRS0=uvhX=PT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CC9F7C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 20:14:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1BB49C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 20:17:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A29572183F
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 20:14:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547237645;
-	bh=Tns2HzlCPwGUIO5h0kc6dWRc81keKGWJOGbTkIDsrtY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=s06iSm1kTo231EP8ai2d7NeUb/j3DzI9cFRuhi2EDfc6HqsVq5ilzHQzfeXyUmTqV
-	 feIMnOSr7/RGN3XTWM4Cim+pStHvJqf0cEpZQ9abmdqWcpSgW/UyzvNA8DDXR7mx4Q
-	 qy800RPlZBbehn9Nww2zi6ENRYq65I9K51nQU2OU=
+	by mail.kernel.org (Postfix) with ESMTP id E5F202084C
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 20:17:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390721AbfAKUOE (ORCPT
+        id S2390727AbfAKURU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 11 Jan 2019 15:14:04 -0500
-Received: from mail-ot1-f67.google.com ([209.85.210.67]:46985 "EHLO
-        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387951AbfAKUOD (ORCPT
+        Fri, 11 Jan 2019 15:17:20 -0500
+Received: from Galois.linutronix.de ([146.0.238.70]:34625 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387847AbfAKURT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Jan 2019 15:14:03 -0500
-Received: by mail-ot1-f67.google.com with SMTP id w25so14197034otm.13;
-        Fri, 11 Jan 2019 12:14:03 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=C7AT1paUpexE0fxOgLbS01YsTZMkfGBrjy2UmVen7/Q=;
-        b=Bey2+6DrbaZb5q2x0TRW6grHUuNxrqyf8+BnbPlXlzq7TFwVniij6/bYTBUx41SPtJ
-         OsW7ce96Moen91C6RIe9CR7LsHRZQJz/VnbPc3bnndsqcBjEZcIQN1Gp7yWKdENcgaDI
-         spqfLwHSAqAIpYUtFAMgdrp9hZAqyes+O2gzYxVK/EWkUKz3CKmLODLlDdgK2wgZLZhV
-         avTJ3sHo2qqiYh3vYNxkNnCV1ach2+RapJDDa2DorHSkRFaYbDC9ZtmMPB9bKxwTZAHJ
-         ygpdkVtKYdThu0cEUjp9AqDl1kJjT9WZs35AyLaseLPc5ZQhAedU6NDbSsaPG3encSgF
-         FV+Q==
-X-Gm-Message-State: AJcUukfH3LX44diVHkIdKYOtBNCWNtYrf1E4aKmzWzhF7DwhOg0h+reA
-        93s9wQFG574rT+gYEYT4Nd8yjr3e/Q==
-X-Google-Smtp-Source: ALg8bN7fkDB+k1ARB/nhz26/XhyhW4sFirvLzsMRQovG8JvU+0oEZIfyseFcDYZNeDBWFQEXl+TrHg==
-X-Received: by 2002:a9d:a83:: with SMTP id 3mr10962331otq.88.1547237642888;
-        Fri, 11 Jan 2019 12:14:02 -0800 (PST)
-Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id o2sm40211341otj.2.2019.01.11.12.14.02
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 11 Jan 2019 12:14:02 -0800 (PST)
-Date:   Fri, 11 Jan 2019 14:14:01 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Lubomir Rintel <lkundrak@v3.sk>
-Cc:     Jiri Kosina <trivial@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] dt-bindings: marvell,mmp2: fix typos in bindings doc
-Message-ID: <20190111201401.GA1349@bogus>
-References: <20190104215656.23002-1-lkundrak@v3.sk>
+        Fri, 11 Jan 2019 15:17:19 -0500
+Received: from p4fea4364.dip0.t-ipconnect.de ([79.234.67.100] helo=nanos)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1gi3Eu-0003av-Eh; Fri, 11 Jan 2019 21:17:12 +0100
+Date:   Fri, 11 Jan 2019 21:17:12 +0100 (CET)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     Daniel Drake <drake@endlessm.com>
+cc:     suresh.b.siddha@intel.com,
+        Linux Upstreaming Team <linux@endlessm.com>,
+        Linux Kernel <linux-kernel@vger.kernel.org>
+Subject: Re: APIC timer checked before it is set up, boot fails on Connex
+ L1430
+In-Reply-To: <CAD8Lp468JYCGn6Qbc5720wy3JfO2SwQTD-SQWi4RK_9_dBwtbA@mail.gmail.com>
+Message-ID: <alpine.DEB.2.21.1901112054220.1661@nanos.tec.linutronix.de>
+References: <CAD8Lp46R2oQxKv5gmC09Zb=WL=nV6o0CGZ3K=JZ80QYm0DJ9QQ@mail.gmail.com> <CAD8Lp468JYCGn6Qbc5720wy3JfO2SwQTD-SQWi4RK_9_dBwtbA@mail.gmail.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190104215656.23002-1-lkundrak@v3.sk>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=US-ASCII
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jan 04, 2019 at 10:56:56PM +0100, Lubomir Rintel wrote:
-> A pair of rather trivial ones.
+On Mon, 7 Jan 2019, Daniel Drake wrote:
+> I asked the motherboard vendor if they have any idea why the 8254 is
+> not ticking and they sent me a new BIOS where it is now working. So we
+> can probably consider this a non issue, although there are a few other
+> curious points to mention:
 > 
-> Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
-> 
-> ---
-> Changes since v1:
-> - s/identifier/identifiers/ as suggested by Rob Herring
-> 
->  Documentation/devicetree/bindings/clock/marvell,mmp2.txt | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+> 1. Other platforms with the same Intel N3350 SoC use the HPET timer
+> instead of PIC during early boot; on this platform there is no HPET
+> ACPI table though, so it uses PIT instead.
 
-Applied, thanks.
+Right. PIT is the ultimate fallback.
 
-Rob
+> 2. It does seem a little redundant that the Linux APIC code goes to
+> these lengths to check that the legacy 8254 timer interrupt is working
+> before it then gets disabled a bit later during boot (when
+> setup_APIC_timer happens, the clocksource layer disables the previous
+> timer source, in this case the PIT or HPET). Although I can see this
+> is not a trivial patch to write.
+
+Well, it'd be trivial if we could rely on the APIC timer being functional
+on all CPUs and if we could figure out the APIC timer frequency without
+calibrating it against the PIT/HPET on older CPUs. Plus a gazillion of
+other issues (e.g. APIC stops in C states ....)
+
+> 3. Windows 10 boots fine with no HPET & no 8254 timer ticks, so if we
+> find more platforms that appear in this state, we may want to look for
+> how to work around this strange situation on the Linux side.
+
+Under certain conditions we actually might avoid touching PIT/HPET and
+solely rely on the CPUID/MSR calibration values. Needs quite some thought
+though.
+
+Thanks,
+
+	tglx
