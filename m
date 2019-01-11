@@ -4,50 +4,50 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-10.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E6256C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:17:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A8A11C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:17:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ACBF82177B
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:17:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6DDF821783
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:17:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547216262;
-	bh=v+pOeFvlxefTws2fuXaoZCJWKV+h7toMPB2F1dwEGrA=;
+	s=default; t=1547216267;
+	bh=OIsowgbriFpDzFUx/E/wBCj243I9ujx5HvZrXopR8Kg=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=Tzav56buJ60VwqmC2e/hidbi7ScLNAf9wt1NHIw7P7Tkftl54BubKYIrAn64A3n+r
-	 6M4POPBnq+PseG8M1ds3LS+29ifPXdG35I3qzst+ZOIb5Yupi2c/bdJqTmFad8PkK/
-	 x59+qf45NHyYz1Lp1FjTeRc0lBo0m/qfO8pg6ON0=
+	b=P8v2X9t9KFvAs6d1AHWHg3Yq/OlTaL2UnLyWgCQjiiOrmwFUVbDJTPcuF5mcfdjiE
+	 wEMoOvDF0XUjm0tjFu+ddkJ1h0/a3oILpO/JqOYy/MUv5JOqBD31xUu+WpZ3IXrquA
+	 ZUYFpMzQcOuD6Yd7VOMAUPFx4wd3H/EGQb6xX4Wc=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387891AbfAKORk (ORCPT
+        id S2387912AbfAKORq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 11 Jan 2019 09:17:40 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34018 "EHLO mail.kernel.org"
+        Fri, 11 Jan 2019 09:17:46 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34122 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387882AbfAKORh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Jan 2019 09:17:37 -0500
+        id S1731271AbfAKORm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 Jan 2019 09:17:42 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1D02D2183F;
-        Fri, 11 Jan 2019 14:17:35 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2A5282184A;
+        Fri, 11 Jan 2019 14:17:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547216256;
-        bh=v+pOeFvlxefTws2fuXaoZCJWKV+h7toMPB2F1dwEGrA=;
+        s=default; t=1547216261;
+        bh=OIsowgbriFpDzFUx/E/wBCj243I9ujx5HvZrXopR8Kg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=gz9Q3TRqna0b7Db6912BK27Z9wFVXexSd4CHCYJp22n87XUxI+Nav4YUqK1gNCWRT
-         iwQjBNk24wBP1m8JkZG5torTQSApHbrTCuprkT8RMNal8BsYAvVbKVJq0Grt0QXOvV
-         fmsXmMn1r9a0uScexRtJU9P8cpUXzBvJzbqwwSnA=
+        b=gZU8fgZxMsDcsP698gHGjXqw5hz+7Md1vcYKiqP5QJV8zuW7Z29yTs8Biu0JgskRT
+         Ujv43wTtpXTGM1atK0aUIgeGzDwH8Yw+m7+GKixc9TC9THdClZ40csDkPnvyuOBfUd
+         aGSQmdql7npfd7f9bZFn2AUgVPFGqZIfTz7osixU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        =?UTF-8?q?Mantas=20Mikul=C4=97nas?= <grawity@gmail.com>,
         Takashi Iwai <tiwai@suse.de>
-Subject: [PATCH 4.4 32/88] ALSA: pcm: Fix potential Spectre v1 vulnerability
-Date:   Fri, 11 Jan 2019 15:08:01 +0100
-Message-Id: <20190111131050.728922534@linuxfoundation.org>
+Subject: [PATCH 4.4 34/88] ALSA: hda: add mute LED support for HP EliteBook 840 G4
+Date:   Fri, 11 Jan 2019 15:08:03 +0100
+Message-Id: <20190111131050.973773748@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190111131045.137499039@linuxfoundation.org>
 References: <20190111131045.137499039@linuxfoundation.org>
@@ -66,51 +66,33 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Gustavo A. R. Silva <gustavo@embeddedor.com>
+From: Mantas Mikulėnas <grawity@gmail.com>
 
-commit 94ffb030b6d31ec840bb811be455dd2e26a4f43e upstream.
+commit 40906ebe3af6a48457151b3c6726b480f6a6cb13 upstream.
 
-stream is indirectly controlled by user-space, hence leading to
-a potential exploitation of the Spectre variant 1 vulnerability.
+Tested with 4.19.9.
 
-This issue was detected with the help of Smatch:
+v2: Changed from CXT_FIXUP_MUTE_LED_GPIO to CXT_FIXUP_HP_DOCK because
+    that's what the existing fixups for EliteBooks use.
 
-sound/core/pcm.c:140 snd_pcm_control_ioctl() warn: potential spectre issue 'pcm->streams' [r] (local cap)
-
-Fix this by sanitizing stream before using it to index pcm->streams
-
-Notice that given that speculation windows are large, the policy is
-to kill the speculation on the first load and not worry if it can be
-completed with a dependent load/store [1].
-
-[1] https://marc.info/?l=linux-kernel&m=152449131114778&w=2
-
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
-Cc: stable@vger.kernel.org
+Signed-off-by: Mantas Mikulėnas <grawity@gmail.com>
+Cc: <stable@vger.kernel.org>
 Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- sound/core/pcm.c |    2 ++
- 1 file changed, 2 insertions(+)
+ sound/pci/hda/patch_conexant.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/sound/core/pcm.c
-+++ b/sound/core/pcm.c
-@@ -25,6 +25,7 @@
- #include <linux/time.h>
- #include <linux/mutex.h>
- #include <linux/device.h>
-+#include <linux/nospec.h>
- #include <sound/core.h>
- #include <sound/minors.h>
- #include <sound/pcm.h>
-@@ -125,6 +126,7 @@ static int snd_pcm_control_ioctl(struct
- 				return -EFAULT;
- 			if (stream < 0 || stream > 1)
- 				return -EINVAL;
-+			stream = array_index_nospec(stream, 2);
- 			if (get_user(subdevice, &info->subdevice))
- 				return -EFAULT;
- 			mutex_lock(&register_mutex);
+--- a/sound/pci/hda/patch_conexant.c
++++ b/sound/pci/hda/patch_conexant.c
+@@ -853,6 +853,7 @@ static const struct snd_pci_quirk cxt506
+ 	SND_PCI_QUIRK(0x103c, 0x8079, "HP EliteBook 840 G3", CXT_FIXUP_HP_DOCK),
+ 	SND_PCI_QUIRK(0x103c, 0x807C, "HP EliteBook 820 G3", CXT_FIXUP_HP_DOCK),
+ 	SND_PCI_QUIRK(0x103c, 0x80FD, "HP ProBook 640 G2", CXT_FIXUP_HP_DOCK),
++	SND_PCI_QUIRK(0x103c, 0x828c, "HP EliteBook 840 G4", CXT_FIXUP_HP_DOCK),
+ 	SND_PCI_QUIRK(0x103c, 0x83b3, "HP EliteBook 830 G5", CXT_FIXUP_HP_DOCK),
+ 	SND_PCI_QUIRK(0x103c, 0x83d3, "HP ProBook 640 G4", CXT_FIXUP_HP_DOCK),
+ 	SND_PCI_QUIRK(0x103c, 0x8174, "HP Spectre x360", CXT_FIXUP_HP_SPECTRE),
 
 
