@@ -2,52 +2,52 @@ Return-Path: <SRS0=uvhX=PT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 688F0C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:38:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DC3DFC43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:38:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 32AED2133F
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:38:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AED172133F
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:38:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547217481;
-	bh=ICBzdRkPqv3Xc5j0T/VZsnyJQJo99Bb2NRTtueSzaIc=;
+	s=default; t=1547217484;
+	bh=VVPPdrh5cwzPbGTLOrtTSFe6wB1J9FnCG9fsDF9MQig=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=ws9QfPa7T/lnmyCbeLr1fEjvOWYufIuCrSMPM5T89BR0ZVgSKjSAEzHrZv4FCOhp7
-	 ZegLEquxxM0UTLeQH38NwekKti5rH5yHUs+wuq2TDEGs9c2Hj9t/lGFyQ36CK1x/d4
-	 Q90Y0JQuYbfU7RLwZcFfbFSV27LII5rDFIcWdWf0=
+	b=UExry0bkDGX7+KpVUQHISZw8pIwFtbyO/AcDEavXWGEXf2NKGQ5qNtr6sMDI/GU1g
+	 nXig0HXFVSyj1N/Uco4cN3DuMaILbXnPKXyWZQ4MYro0QlFbkZBijVBYTH2bt1ylOF
+	 TT2f/Ys5WcsCK653c6lX5wv1+TP+zIhBTDEtSgSw=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390744AbfAKOiA (ORCPT
+        id S2390756AbfAKOiE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 11 Jan 2019 09:38:00 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58514 "EHLO mail.kernel.org"
+        Fri, 11 Jan 2019 09:38:04 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58580 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390236AbfAKOh4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Jan 2019 09:37:56 -0500
+        id S2390236AbfAKOiB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 Jan 2019 09:38:01 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 77616204EC;
-        Fri, 11 Jan 2019 14:37:55 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8EC69206B6;
+        Fri, 11 Jan 2019 14:38:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547217476;
-        bh=ICBzdRkPqv3Xc5j0T/VZsnyJQJo99Bb2NRTtueSzaIc=;
+        s=default; t=1547217481;
+        bh=VVPPdrh5cwzPbGTLOrtTSFe6wB1J9FnCG9fsDF9MQig=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=KKKj3FItPkGguCwDnePzPUF+/CAdP26u/x4eeUuaMLGvQO3HMzYOtB2flsWAHjw/s
-         /vBDUaZN4bHKoKaejFnp4k4XYKd3OjJs37rjjghoCQBfeN/txG3q14hbq+X9p4IDTM
-         9iPf82IyPdONW/dJiN1/nk8bFdfwUibTQX4JfaDc=
+        b=HZ/zzV05yAz34mu/d9UWVd2pt6V4CkdgM/z7sTGDgQ04QG+VvWTRg3g0UmvezywaF
+         YPZJvaLjCnDau6h4Fm34bM7hq1QzMIJe92McwZ5JWvhRFZ2BjHdslOQJcVfQVfJc8h
+         A5Q2AuM+XgdT+4emihmNHmppxI5vvuGkOLOJ4dpU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Yangtao Li <tiny.windzz@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 075/148] serial/sunsu: fix refcount leak
-Date:   Fri, 11 Jan 2019 15:14:13 +0100
-Message-Id: <20190111131117.231104013@linuxfoundation.org>
+        stable@vger.kernel.org, Steffen Maier <maier@linux.ibm.com>,
+        Jens Remus <jremus@linux.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>
+Subject: [PATCH 4.19 077/148] scsi: zfcp: fix posting too many status read buffers leading to adapter shutdown
+Date:   Fri, 11 Jan 2019 15:14:15 +0100
+Message-Id: <20190111131117.300592805@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190111131114.337122649@linuxfoundation.org>
 References: <20190111131114.337122649@linuxfoundation.org>
@@ -66,80 +66,92 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit d430aff8cd0c57502d873909c184e3b5753f8b88 ]
+From: Steffen Maier <maier@linux.ibm.com>
 
-The function of_find_node_by_path() acquires a reference to the node
-returned by it and that reference needs to be dropped by its caller.
+commit 60a161b7e5b2a252ff0d4c622266a7d8da1120ce upstream.
 
-su_get_type() doesn't do that. The match node are used as an identifier
-to compare against the current node, so we can directly drop the refcount
-after getting the node from the path as it is not used as pointer.
+Suppose adapter (open) recovery is between opened QDIO queues and before
+(the end of) initial posting of status read buffers (SRBs). This time
+window can be seconds long due to FSF_PROT_HOST_CONNECTION_INITIALIZING
+causing by design looping with exponential increase sleeps in the function
+performing exchange config data during recovery
+[zfcp_erp_adapter_strat_fsf_xconf()]. Recovery triggered by local link up.
 
-Fix this by use a single variable and drop the refcount right after
-of_find_node_by_path().
+Suppose an event occurs for which the FCP channel would send an unsolicited
+notification to zfcp by means of a previously posted SRB.  We saw it with
+local cable pull (link down) in multi-initiator zoning with multiple
+NPIV-enabled subchannels of the same shared FCP channel.
 
-Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+As soon as zfcp_erp_adapter_strategy_open_fsf() starts posting the initial
+status read buffers from within the adapter's ERP thread, the channel does
+send an unsolicited notification.
+
+Since v2.6.27 commit d26ab06ede83 ("[SCSI] zfcp: receiving an unsolicted
+status can lead to I/O stall"), zfcp_fsf_status_read_handler() schedules
+adapter->stat_work to re-fill the just consumed SRB from a work item.
+
+Now the ERP thread and the work item post SRBs in parallel.  Both contexts
+call the helper function zfcp_status_read_refill().  The tracking of
+missing (to be posted / re-filled) SRBs is not thread-safe due to separate
+atomic_read() and atomic_dec(), in order to depend on posting
+success. Hence, both contexts can see
+atomic_read(&adapter->stat_miss) == 1. One of the two contexts posts
+one too many SRB. Zfcp gets QDIO_ERROR_SLSB_STATE on the output queue
+(trace tag "qdireq1") leading to zfcp_erp_adapter_shutdown() in
+zfcp_qdio_handler_error().
+
+An obvious and seemingly clean fix would be to schedule stat_work from the
+ERP thread and wait for it to finish. This would serialize all SRB
+re-fills. However, we already have another work item wait on the ERP
+thread: adapter->scan_work runs zfcp_fc_scan_ports() which calls
+zfcp_fc_eval_gpn_ft(). The latter calls zfcp_erp_wait() to wait for all the
+open port recoveries during zfcp auto port scan, but in fact it waits for
+any pending recovery including an adapter recovery. This approach leads to
+a deadlock.  [see also v3.19 commit 18f87a67e6d6 ("zfcp: auto port scan
+resiliency"); v2.6.37 commit d3e1088d6873
+("[SCSI] zfcp: No ERP escalation on gpn_ft eval");
+v2.6.28 commit fca55b6fb587
+("[SCSI] zfcp: fix deadlock between wq triggered port scan and ERP")
+fixing v2.6.27 commit c57a39a45a76
+("[SCSI] zfcp: wait until adapter is finished with ERP during auto-port");
+v2.6.27 commit cc8c282963bd
+("[SCSI] zfcp: Automatically attach remote ports")]
+
+Instead make the accounting of missing SRBs atomic for parallel execution
+in both the ERP thread and adapter->stat_work.
+
+Signed-off-by: Steffen Maier <maier@linux.ibm.com>
+Fixes: d26ab06ede83 ("[SCSI] zfcp: receiving an unsolicted status can lead to I/O stall")
+Cc: <stable@vger.kernel.org> #2.6.27+
+Reviewed-by: Jens Remus <jremus@linux.ibm.com>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- drivers/tty/serial/sunsu.c | 31 ++++++++++++++++++++++++++-----
- 1 file changed, 26 insertions(+), 5 deletions(-)
+ drivers/s390/scsi/zfcp_aux.c |    6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/tty/serial/sunsu.c b/drivers/tty/serial/sunsu.c
-index 6cf3e9b0728f..3e77475668c0 100644
---- a/drivers/tty/serial/sunsu.c
-+++ b/drivers/tty/serial/sunsu.c
-@@ -1394,22 +1394,43 @@ static inline struct console *SUNSU_CONSOLE(void)
- static enum su_type su_get_type(struct device_node *dp)
+--- a/drivers/s390/scsi/zfcp_aux.c
++++ b/drivers/s390/scsi/zfcp_aux.c
+@@ -275,16 +275,16 @@ static void zfcp_free_low_mem_buffers(st
+  */
+ int zfcp_status_read_refill(struct zfcp_adapter *adapter)
  {
- 	struct device_node *ap = of_find_node_by_path("/aliases");
-+	enum su_type rc = SU_PORT_PORT;
- 
- 	if (ap) {
- 		const char *keyb = of_get_property(ap, "keyboard", NULL);
- 		const char *ms = of_get_property(ap, "mouse", NULL);
-+		struct device_node *match;
- 
- 		if (keyb) {
--			if (dp == of_find_node_by_path(keyb))
--				return SU_PORT_KBD;
-+			match = of_find_node_by_path(keyb);
-+
-+			/*
-+			 * The pointer is used as an identifier not
-+			 * as a pointer, we can drop the refcount on
-+			 * the of__node immediately after getting it.
-+			 */
-+			of_node_put(match);
-+
-+			if (dp == match) {
-+				rc = SU_PORT_KBD;
-+				goto out;
-+			}
- 		}
- 		if (ms) {
--			if (dp == of_find_node_by_path(ms))
--				return SU_PORT_MS;
-+			match = of_find_node_by_path(ms);
-+
-+			of_node_put(match);
-+
-+			if (dp == match) {
-+				rc = SU_PORT_MS;
-+				goto out;
-+			}
- 		}
- 	}
- 
--	return SU_PORT_PORT;
-+out:
-+	of_node_put(ap);
-+	return rc;
+-	while (atomic_read(&adapter->stat_miss) > 0)
++	while (atomic_add_unless(&adapter->stat_miss, -1, 0))
+ 		if (zfcp_fsf_status_read(adapter->qdio)) {
++			atomic_inc(&adapter->stat_miss); /* undo add -1 */
+ 			if (atomic_read(&adapter->stat_miss) >=
+ 			    adapter->stat_read_buf_num) {
+ 				zfcp_erp_adapter_reopen(adapter, 0, "axsref1");
+ 				return 1;
+ 			}
+ 			break;
+-		} else
+-			atomic_dec(&adapter->stat_miss);
++		}
+ 	return 0;
  }
  
- static int su_probe(struct platform_device *op)
--- 
-2.19.1
-
 
 
