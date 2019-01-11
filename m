@@ -4,50 +4,51 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-10.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EA9C4C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:16:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 24A68C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:16:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B3911214D8
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:16:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E0BA12177B
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:16:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547216160;
-	bh=P353MK5ri8NK5kyP3r85waIop7iJ1a/91a7VBbXP5us=;
+	s=default; t=1547216164;
+	bh=zZvLHw4jBNPaqYJlfkn6142XFss+SrZsJjT82EMuyVM=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=Y2sRfM2//dws14BbaWSS3eziN+vMAf06Ex3C6bi6qWWiDycDSldNq6KQKH9DTepCS
-	 fhgUl/sPcrnRAefqkgXtjKggzwZFKcfWcBtG69PqaL/wxWjDF+jos3dYKt/0wf+ahq
-	 uYvFTA/ApXpX7oD+NdOb8ECu229vqGTHyo377r2w=
+	b=jbybFtuUY9zihTfjaJxwEySXF7Gkw/PzcnBUFTqJd08qrvfU06/sj4+W9XQ+aBeL3
+	 50e+QKEs2fHaMtsibjtfXr+7IGtb/FR72hCinJUa72GVbWSlP+vpJPKL16EDdhhuG8
+	 aGUB5RAoOhyIuqoiiYUhfgGXZHXpMuvwlK6lmojg=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387527AbfAKOP7 (ORCPT
+        id S2387542AbfAKOQD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 11 Jan 2019 09:15:59 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60162 "EHLO mail.kernel.org"
+        Fri, 11 Jan 2019 09:16:03 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60300 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387495AbfAKOPx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Jan 2019 09:15:53 -0500
+        id S2387520AbfAKOQB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 Jan 2019 09:16:01 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 49DD420874;
-        Fri, 11 Jan 2019 14:15:52 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 12F9C20874;
+        Fri, 11 Jan 2019 14:15:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547216152;
-        bh=P353MK5ri8NK5kyP3r85waIop7iJ1a/91a7VBbXP5us=;
+        s=default; t=1547216160;
+        bh=zZvLHw4jBNPaqYJlfkn6142XFss+SrZsJjT82EMuyVM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=EV1zAnMsQZRnEhhuF2lD7FdzV4lsKRQwV94hQaPboEXLWaKYwPp9kT7C2K0x9Dthr
-         0GG0ElERFh8yHhQWdlm3ZZfn9dmzfVN9jIiQWLYJgPQAXJKXNUMa4aclN0zt4hMHUz
-         3uP9lutlorVLfHP/EmS8a5GKvJy2WtA7qKhduv08=
+        b=THd6AhmwT2r0rVMLIkgyApUEfdyLViIEJ0yf8GUC4mxqVRFeNaFd2xhX7dTxk70VD
+         BizDgM+EsVGhNT69q3OR8VkQ9O5jxckVcDkBQm7ZaLr3CMDPopArdJM4qbCx0/J3r6
+         LG7g0rj9DMXKwu5Z0r4jHD5ulp9ZJpOIFPdcFHjw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Ido Schimmel <idosch@idosch.org>,
-        Willem de Bruijn <willemb@google.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 3.18 14/47] packet: validate address length if non-zero
-Date:   Fri, 11 Jan 2019 15:07:59 +0100
-Message-Id: <20190111130957.834271092@linuxfoundation.org>
+        stable@vger.kernel.org, Priit Laes <plaes@plaes.org>,
+        =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>,
+        Larry Finger <Larry.Finger@lwfinger.net>,
+        Kalle Valo <kvalo@codeaurora.org>
+Subject: [PATCH 3.18 43/47] b43: Fix error in cordic routine
+Date:   Fri, 11 Jan 2019 15:08:28 +0100
+Message-Id: <20190111131001.720792092@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190111130956.170952125@linuxfoundation.org>
 References: <20190111130956.170952125@linuxfoundation.org>
@@ -66,41 +67,40 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Willem de Bruijn <willemb@google.com>
+From: Larry Finger <Larry.Finger@lwfinger.net>
 
-[ Upstream commit 6b8d95f1795c42161dc0984b6863e95d6acf24ed ]
+commit 8ea3819c0bbef57a51d8abe579e211033e861677 upstream.
 
-Validate packet socket address length if a length is given. Zero
-length is equivalent to not setting an address.
+The cordic routine for calculating sines and cosines that was added in
+commit 6f98e62a9f1b ("b43: update cordic code to match current specs")
+contains an error whereby a quantity declared u32 can in fact go negative.
 
-Fixes: 99137b7888f4 ("packet: validate address length")
-Reported-by: Ido Schimmel <idosch@idosch.org>
-Signed-off-by: Willem de Bruijn <willemb@google.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+This problem was detected by Priit Laes who is switching b43 to use the
+routine in the library functions of the kernel.
+
+Fixes: 986504540306 ("b43: make cordic common (LP-PHY and N-PHY need it)")
+Reported-by: Priit Laes <plaes@plaes.org>
+Cc: Rafał Miłecki <zajec5@gmail.com>
+Cc: Stable <stable@vger.kernel.org> # 2.6.34
+Signed-off-by: Larry Finger <Larry.Finger@lwfinger.net>
+Signed-off-by: Priit Laes <plaes@plaes.org>
+Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- net/packet/af_packet.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/net/packet/af_packet.c
-+++ b/net/packet/af_packet.c
-@@ -2273,7 +2273,7 @@ static int tpacket_snd(struct packet_soc
- 						sll_addr)))
- 			goto out;
- 		proto	= saddr->sll_protocol;
--		addr	= saddr->sll_addr;
-+		addr	= saddr->sll_halen ? saddr->sll_addr : NULL;
- 		dev = dev_get_by_index(sock_net(&po->sk), saddr->sll_ifindex);
- 		if (addr && dev && saddr->sll_halen < dev->addr_len)
- 			goto out;
-@@ -2436,7 +2436,7 @@ static int packet_snd(struct socket *soc
- 		if (msg->msg_namelen < (saddr->sll_halen + offsetof(struct sockaddr_ll, sll_addr)))
- 			goto out;
- 		proto	= saddr->sll_protocol;
--		addr	= saddr->sll_addr;
-+		addr	= saddr->sll_halen ? saddr->sll_addr : NULL;
- 		dev = dev_get_by_index(sock_net(sk), saddr->sll_ifindex);
- 		if (addr && dev && saddr->sll_halen < dev->addr_len)
- 			goto out;
+---
+ drivers/net/wireless/b43/phy_common.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+--- a/drivers/net/wireless/b43/phy_common.c
++++ b/drivers/net/wireless/b43/phy_common.c
+@@ -609,7 +609,7 @@ struct b43_c32 b43_cordic(int theta)
+ 	u8 i;
+ 	s32 tmp;
+ 	s8 signx = 1;
+-	u32 angle = 0;
++	s32 angle = 0;
+ 	struct b43_c32 ret = { .i = 39797, .q = 0, };
+ 
+ 	while (theta > (180 << 16))
 
 
