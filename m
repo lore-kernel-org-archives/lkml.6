@@ -2,130 +2,114 @@ Return-Path: <SRS0=uvhX=PT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 50D57C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 15:10:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C41E5C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 15:10:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1FA2C21841
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 15:10:10 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fyUdRY77"
+	by mail.kernel.org (Postfix) with ESMTP id 8F76320874
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 15:10:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1547219417;
+	bh=axN72L6zMeFRk09n2oyHRoFceQm+E0o1ApcYzNvQn9Y=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=Ggqc/cBa84iLn7qeOMajb3wkm4fYjzP6il7qaoRHiPz8p9LpHvNicRoojCOgYsKbh
+	 ACC857y2aPhYcnPweEBWFrxYalm9BaUH3cbhw04/h6Ve6wVDPn2rVPuC3WzBE8ibum
+	 TZ0kcS3zewjXhgfPaeMwE/sIVQTw7qUiWUyOy1LY=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391899AbfAKPKI (ORCPT
+        id S2391989AbfAKPKQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 11 Jan 2019 10:10:08 -0500
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:41780 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731910AbfAKPKG (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Jan 2019 10:10:06 -0500
-Received: by mail-lj1-f196.google.com with SMTP id k15-v6so13197800ljc.8
-        for <linux-kernel@vger.kernel.org>; Fri, 11 Jan 2019 07:10:04 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-transfer-encoding:content-language;
-        bh=ayka7Sh3aQlBgO/wDrEiHMv9aQQ0JWeEDtgdlGLEXKQ=;
-        b=fyUdRY77N1/CFuA54mNf9PsA8YNDmorB9kqtctzsXuCQXNYltn2bl5oULAhUFMkt4R
-         3uDlw9VIrP/rL9CKNIGhV7stgWqJhzxnCa0Q8B46WL2rAeaCb356GkSVdWbJWUq0zJyz
-         S3j7IxOG+n1CJHQWXCOFT2aunZJ87gkDWJREu9l4tuEBJREGRPxk06tN5TGIU2Eaqsh6
-         QiWqD6RZG505P087/cS17lPOyCneNu8aOxFsWTtftfRw6zNXD4xX/rmR0juXA/NT6PS5
-         FQjGb8yVq9YTlNqxFqE8VIdARK+zHwPWx0FR2Rr/q9D3VGxUjONDlhXMqRuA9b+1sTCY
-         +1oA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-transfer-encoding
-         :content-language;
-        bh=ayka7Sh3aQlBgO/wDrEiHMv9aQQ0JWeEDtgdlGLEXKQ=;
-        b=Ah1+w+bZJtIe7GxP98xoLazkAxiEVuOTRds+y8zUPeoMu+xXgzfjAXGV7WdMdNGDKE
-         bI13koNAQU2V9RHESu26uK+6Vn1fWYXogphRCfV7+cmehOR8ajfRoM7hiBydW3GcvQhP
-         iD4jxbgxGvZur8qygPuGACYFLEd7Q9Oha/FiF3EaGLe6a1frMY7aL487WLH/T4yCxBqI
-         K9egATMZWU8BQx/bWROieKO/Os74QXkCfG2Pq7ei5vjyAr2KEB/687vAA4xQOj2KeEAG
-         DbreyfIn+h7G4e0ZMukwJCBrXuDXqXOfZFtREqUWD6AdGr0HSbIUf0oXslgk98ehoi2H
-         b+3Q==
-X-Gm-Message-State: AJcUukdC1lCVZZX7sLNtLwIm+MXlQ3xzoKiNh4FRHL5C/iU1eRNlqH+p
-        7SqFAqVkgX+eI6Ku9Z/KXRxL0ojK
-X-Google-Smtp-Source: ALg8bN6iwtzlJsM4v7xbMiZG3OECiJeAkNcKvI4OcW5ddQcDJYe6fzblqJtGoZMS2lxGE3AeLMY1Dg==
-X-Received: by 2002:a2e:8045:: with SMTP id p5-v6mr8525037ljg.87.1547219403389;
-        Fri, 11 Jan 2019 07:10:03 -0800 (PST)
-Received: from [10.17.182.20] (ll-22.209.223.85.sovam.net.ua. [85.223.209.22])
-        by smtp.gmail.com with ESMTPSA id s3-v6sm16010590lje.73.2019.01.11.07.10.01
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 11 Jan 2019 07:10:02 -0800 (PST)
-Subject: Re: [PATCH 5/9] drm/xen/xen_drm_front_gem.c: Convert to use
- vm_insert_range
-To:     Souptick Joarder <jrdr.linux@gmail.com>, akpm@linux-foundation.org,
-        willy@infradead.org, mhocko@suse.com, airlied@linux.ie,
-        linux@armlinux.org.uk, robin.murphy@arm.com
-Cc:     linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        dri-devel@lists.freedesktop.org, xen-devel@lists.xen.org,
-        "Oleksandr_Andrushchenko@epam.com" <Oleksandr_Andrushchenko@epam.com>
-References: <20190111151037.GA2781@jordon-HP-15-Notebook-PC>
-From:   Oleksandr Andrushchenko <andr2000@gmail.com>
-Message-ID: <1ce5287f-22d1-3704-1e81-a44b2c63cbd8@gmail.com>
-Date:   Fri, 11 Jan 2019 17:10:01 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Fri, 11 Jan 2019 10:10:16 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33334 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725801AbfAKOQ7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 Jan 2019 09:16:59 -0500
+Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0F24D21841;
+        Fri, 11 Jan 2019 14:16:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1547216218;
+        bh=axN72L6zMeFRk09n2oyHRoFceQm+E0o1ApcYzNvQn9Y=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=fujV2njqJKNqSi5P4HfgDnuN0BBltVqcgmoH9kXWRNcUkTPVILFe16WgLiEmy1fwp
+         +fnvfJR7kLWxWRrVaipiaM0/phZM3rNaqbVLVIkOxHYB8eMv701rFDi3H/NsDItMBd
+         nes2sBL4VuYhwtCLru5ANPTfZCXl5cm1uXn4c9Dc=
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org,
+        syzbot+c56449ed3652e6720f30@syzkaller.appspotmail.com,
+        Jon Maloy <jon.maloy@ericsson.com>,
+        Cong Wang <xiyou.wangcong@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.4 19/88] ipv6: explicitly initialize udp6_addr in udp_sock_create6()
+Date:   Fri, 11 Jan 2019 15:07:48 +0100
+Message-Id: <20190111131048.950378734@linuxfoundation.org>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20190111131045.137499039@linuxfoundation.org>
+References: <20190111131045.137499039@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
+X-Patchwork-Hint: ignore
 MIME-Version: 1.0
-In-Reply-To: <20190111151037.GA2781@jordon-HP-15-Notebook-PC>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 1/11/19 5:10 PM, Souptick Joarder wrote:
-> Convert to use vm_insert_range() to map range of kernel
-> memory to user vma.
->
-> Signed-off-by: Souptick Joarder <jrdr.linux@gmail.com>
-Reviewed-by: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
-> ---
->   drivers/gpu/drm/xen/xen_drm_front_gem.c | 18 +++++-------------
->   1 file changed, 5 insertions(+), 13 deletions(-)
->
-> diff --git a/drivers/gpu/drm/xen/xen_drm_front_gem.c b/drivers/gpu/drm/xen/xen_drm_front_gem.c
-> index 47ff019..9990c2f 100644
-> --- a/drivers/gpu/drm/xen/xen_drm_front_gem.c
-> +++ b/drivers/gpu/drm/xen/xen_drm_front_gem.c
-> @@ -225,8 +225,7 @@ struct drm_gem_object *
->   static int gem_mmap_obj(struct xen_gem_object *xen_obj,
->   			struct vm_area_struct *vma)
->   {
-> -	unsigned long addr = vma->vm_start;
-> -	int i;
-> +	int ret;
->   
->   	/*
->   	 * clear the VM_PFNMAP flag that was set by drm_gem_mmap(), and set the
-> @@ -247,18 +246,11 @@ static int gem_mmap_obj(struct xen_gem_object *xen_obj,
->   	 * FIXME: as we insert all the pages now then no .fault handler must
->   	 * be called, so don't provide one
->   	 */
-> -	for (i = 0; i < xen_obj->num_pages; i++) {
-> -		int ret;
-> -
-> -		ret = vm_insert_page(vma, addr, xen_obj->pages[i]);
-> -		if (ret < 0) {
-> -			DRM_ERROR("Failed to insert pages into vma: %d\n", ret);
-> -			return ret;
-> -		}
-> +	ret = vm_insert_range(vma, xen_obj->pages, xen_obj->num_pages);
-> +	if (ret < 0)
-> +		DRM_ERROR("Failed to insert pages into vma: %d\n", ret);
->   
-> -		addr += PAGE_SIZE;
-> -	}
-> -	return 0;
-> +	return ret;
->   }
->   
->   int xen_drm_front_gem_mmap(struct file *filp, struct vm_area_struct *vma)
+4.4-stable review patch.  If anyone has any objections, please let me know.
+
+------------------
+
+From: Cong Wang <xiyou.wangcong@gmail.com>
+
+[ Upstream commit fb24274546310872eeeaf3d1d53799d8414aa0f2 ]
+
+syzbot reported the use of uninitialized udp6_addr::sin6_scope_id.
+We can just set ::sin6_scope_id to zero, as tunnels are unlikely
+to use an IPv6 address that needs a scope id and there is no
+interface to bind in this context.
+
+For net-next, it looks different as we have cfg->bind_ifindex there
+so we can probably call ipv6_iface_scope_id().
+
+Same for ::sin6_flowinfo, tunnels don't use it.
+
+Fixes: 8024e02879dd ("udp: Add udp_sock_create for UDP tunnels to open listener socket")
+Reported-by: syzbot+c56449ed3652e6720f30@syzkaller.appspotmail.com
+Cc: Jon Maloy <jon.maloy@ericsson.com>
+Signed-off-by: Cong Wang <xiyou.wangcong@gmail.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+---
+ net/ipv6/ip6_udp_tunnel.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+--- a/net/ipv6/ip6_udp_tunnel.c
++++ b/net/ipv6/ip6_udp_tunnel.c
+@@ -15,7 +15,7 @@
+ int udp_sock_create6(struct net *net, struct udp_port_cfg *cfg,
+ 		     struct socket **sockp)
+ {
+-	struct sockaddr_in6 udp6_addr;
++	struct sockaddr_in6 udp6_addr = {};
+ 	int err;
+ 	struct socket *sock = NULL;
+ 
+@@ -42,6 +42,7 @@ int udp_sock_create6(struct net *net, st
+ 		goto error;
+ 
+ 	if (cfg->peer_udp_port) {
++		memset(&udp6_addr, 0, sizeof(udp6_addr));
+ 		udp6_addr.sin6_family = AF_INET6;
+ 		memcpy(&udp6_addr.sin6_addr, &cfg->peer_ip6,
+ 		       sizeof(udp6_addr.sin6_addr));
+
 
