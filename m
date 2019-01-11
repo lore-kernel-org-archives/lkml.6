@@ -2,200 +2,122 @@ Return-Path: <SRS0=uvhX=PT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B601C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 23:17:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 747E2C43444
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 23:19:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 00A09206B6
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 23:17:09 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore-com.20150623.gappssmtp.com header.i=@paul-moore-com.20150623.gappssmtp.com header.b="N0mahbOb"
+	by mail.kernel.org (Postfix) with ESMTP id 4AB63206B6
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 23:19:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726414AbfAKXRJ (ORCPT
+        id S1726418AbfAKXT6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 11 Jan 2019 18:17:09 -0500
-Received: from mail-lf1-f68.google.com ([209.85.167.68]:35548 "EHLO
-        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725794AbfAKXRI (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Jan 2019 18:17:08 -0500
-Received: by mail-lf1-f68.google.com with SMTP id e26so11975731lfc.2
-        for <linux-kernel@vger.kernel.org>; Fri, 11 Jan 2019 15:17:05 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=WMS4AhmZ1RhHfF22Nc+XLRPa8N0NnW+ncOe3a7YCZPg=;
-        b=N0mahbOba9HL50kqBlHVjOKb8gKpb5eHFRMGQu0r01HaUc8GjpOtSd6Viub1YDx1pZ
-         y9tqOOZKtBtmJAu4buLkwgBw3guVAK0z3rRIK7/VIKVQ0v0kw1/BuLKXGsLxYblmpQiv
-         Li/Asy64QZgwZrNjBq7+XJa60WhTEKKSvFlikH+0KDwzDimoxzu1D2mtKUZuT2AH7liD
-         NbNLyx+aKS17WArGNLHCYeIYAXEqHwUmjMKcVXV6xxfQItamt8mLv3Zb7wyENe9e1JMe
-         WXCziQMogowBrkXnZRM/xBZ83udRDMKso6KoBCx10HyaOePdmEmSMYXKsvLOivFjvgL8
-         YbKA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=WMS4AhmZ1RhHfF22Nc+XLRPa8N0NnW+ncOe3a7YCZPg=;
-        b=cdoA1LHnt+yKQ3TZmXEqjJq+iKNmdB8LRhsvVv5NckiciGQnohVhDUZ0Y95ZI3elKN
-         by88fHw0GUmMagkMuVudSxkBiVOoc9lJ8ecIzxZGE03xNoKZmiROXTh0aNS4VE5EA8nS
-         /6orXVPDhHvncUFhdob4eeYYHudl0pR1TZZvXehs0YEh3Kq1qzB+V5CPEwA3T+0qg0P0
-         a6Yx29C99AV2/exXOFLAreb3Qhyb9u/El8bjr/i/2Pn1EzgrtQQeecinzeYrHk5L+c4H
-         cJKr8ZSo9+RJspdZ7fqdFiUHyEFD0v3dg9OvXLoXfsWllDvHKo2c96tubcGjqiVTVX5G
-         AoGA==
-X-Gm-Message-State: AJcUukckbSbWrzKEvSXdejhKwtvvmEB45JYu74Macods5hmAepCV+V4g
-        jOeHNR7J7XQKHGT9Ey8wRMXAXJFKa5C4JksbWxhr
-X-Google-Smtp-Source: ALg8bN6O56MYFH6YtMg/Bps5K+sVqVQpXkMg9GTmpZmPqpsWr8+H3TgNqeld8QoZTf1c5Ihbt85KE+6fYPf0yvLgGAM=
-X-Received: by 2002:a19:40cc:: with SMTP id n195mr9042757lfa.40.1547248624766;
- Fri, 11 Jan 2019 15:17:04 -0800 (PST)
+        Fri, 11 Jan 2019 18:19:58 -0500
+Received: from mga17.intel.com ([192.55.52.151]:32059 "EHLO mga17.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725794AbfAKXT6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 Jan 2019 18:19:58 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Jan 2019 15:19:57 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,467,1539673200"; 
+   d="scan'208";a="117460767"
+Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.154])
+  by orsmga003.jf.intel.com with ESMTP; 11 Jan 2019 15:19:56 -0800
+Date:   Fri, 11 Jan 2019 15:19:56 -0800
+From:   Sean Christopherson <sean.j.christopherson@intel.com>
+To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Cc:     Andy Lutomirski <luto@kernel.org>,
+        "Huang, Kai" <kai.huang@intel.com>,
+        Jethro Beekman <jethro@fortanix.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "x86@kernel.org" <x86@kernel.org>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
+        Josh Triplett <josh@joshtriplett.org>,
+        Haitao Huang <haitao.huang@linux.intel.com>,
+        "Dr . Greg Wettstein" <greg@enjellic.com>
+Subject: Re: x86/sgx: uapi change proposal
+Message-ID: <20190111231956.GB29769@linux.intel.com>
+References: <20181219091148.GA5121@linux.intel.com>
+ <613c6814-4e71-38e5-444a-545f0e286df8@fortanix.com>
+ <20181219144515.GA30909@linux.intel.com>
+ <CALCETrW_8LnitFamYUU7POHFOJFxLO7ESFUdS=aeG_SOvHVPkw@mail.gmail.com>
+ <20181221162825.GB26865@linux.intel.com>
+ <105F7BF4D0229846AF094488D65A0989355A45B6@PGSMSX112.gar.corp.intel.com>
+ <20190108220946.GA30462@linux.intel.com>
+ <CALCETrU7Zb8L8eTYZg3bAB1Gfw1orUfeQmXjVy1_R-kfBeweVA@mail.gmail.com>
+ <20190109163135.GA1821@linux.intel.com>
+ <20190111125826.GA5400@linux.intel.com>
 MIME-Version: 1.0
-References: <cover.1533065887.git.rgb@redhat.com> <e41cb6760a8183c0955c378fce7b500819f9838f.1533065887.git.rgb@redhat.com>
- <CAHC9VhRPMAUsgs2zXkPEFZPQS6dmAO1-kBX1Y-7tRkD-kwGEjw@mail.gmail.com>
- <20181031211739.6jag6b5qve77qmmu@madcap2.tricolour.ca> <CAHC9VhTnj3Sg9R-XM0U9gqOsNXT+Tn+VVRXJtBTt0A0DPQ0GQg@mail.gmail.com>
- <20190110225847.vumlt2jor57djrdc@madcap2.tricolour.ca> <CAHC9VhSqPBKv5hmSNSsrMYcmQ86phaUWG54JtAH84sSkPrz_Nw@mail.gmail.com>
- <20190111033856.6lhtlls7bvttoxhd@madcap2.tricolour.ca>
-In-Reply-To: <20190111033856.6lhtlls7bvttoxhd@madcap2.tricolour.ca>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Fri, 11 Jan 2019 18:16:53 -0500
-Message-ID: <CAHC9VhRMmGxovEkHhbe=qcu-CnORk=Ddss8gRe+sEvko0fbq+Q@mail.gmail.com>
-Subject: Re: [PATCH ghak90 (was ghak32) V4 06/10] audit: add containerid
- support for tty_audit
-To:     Richard Guy Briggs <rgb@redhat.com>
-Cc:     simo@redhat.com, carlos@redhat.com,
-        containers@lists.linux-foundation.org,
-        linux-kernel@vger.kernel.org, dhowells@redhat.com,
-        linux-audit@redhat.com, ebiederm@xmission.com, luto@kernel.org,
-        Eric Paris <eparis@parisplace.org>,
-        Serge Hallyn <serge@hallyn.com>, viro@zeniv.linux.org.uk
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190111125826.GA5400@linux.intel.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jan 10, 2019 at 10:39 PM Richard Guy Briggs <rgb@redhat.com> wrote:
-> On 2019-01-10 20:12, Paul Moore wrote:
-> > On Thu, Jan 10, 2019 at 5:59 PM Richard Guy Briggs <rgb@redhat.com> wrote:
-> > > On 2019-01-03 15:11, Paul Moore wrote:
-> > > > On Wed, Oct 31, 2018 at 5:17 PM Richard Guy Briggs <rgb@redhat.com> wrote:
-> > > > > On 2018-10-19 19:17, Paul Moore wrote:
-> > > > > > On Sun, Aug 5, 2018 at 4:33 AM Richard Guy Briggs
-> > > > <rgb@redhat.com> wrote:
-> > > > > > > Add audit container identifier auxiliary record to tty logging rule
-> > > > > > > event standalone records.
-> > > > > > >
-> > > > > > > Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
-> > > > > > > Acked-by: Serge Hallyn <serge@hallyn.com>
-> > > > > > > ---
-> > > > > > >  drivers/tty/tty_audit.c | 5 ++++-
-> > > > > > >  1 file changed, 4 insertions(+), 1 deletion(-)
-> > > > > > >
-> > > > > > > diff --git a/drivers/tty/tty_audit.c b/drivers/tty/tty_audit.c
-> > > > > > > index 50f567b..3e21477 100644
-> > > > > > > --- a/drivers/tty/tty_audit.c
-> > > > > > > +++ b/drivers/tty/tty_audit.c
-> > > > > > > @@ -66,8 +66,9 @@ static void tty_audit_log(const char *description, dev_t dev,
-> > > > > > >         uid_t uid = from_kuid(&amp;init_user_ns, task_uid(tsk));
-> > > > > > >         uid_t loginuid = from_kuid(&amp;init_user_ns, audit_get_loginuid(tsk));
-> > > > > > >         unsigned int sessionid = audit_get_sessionid(tsk);
-> > > > > > > +       struct audit_context *context = audit_alloc_local(GFP_KERNEL);
-> > > > > > >
-> > > > > > > -       ab = audit_log_start(NULL, GFP_KERNEL, AUDIT_TTY);
-> > > > > > > +       ab = audit_log_start(context, GFP_KERNEL, AUDIT_TTY);
-> > > > > > >         if (ab) {
-> > > > > > >                 char name[sizeof(tsk->comm)];
-> > > > > > >
-> > > > > > > @@ -80,6 +81,8 @@ static void tty_audit_log(const char *description, dev_t dev,
-> > > > > > >                 audit_log_n_hex(ab, data, size);
-> > > > > > >                 audit_log_end(ab);
-> > > > > > >         }
-> > > > > > > +       audit_log_contid(context, "tty", audit_get_contid(tsk));
-> > > > > > > +       audit_free_context(context);
-> > > > > > >  }
-> > > > > >
-> > > > > > Since I never polished up my task_struct/current fix patch enough to
-> > > > > > get it past RFC status during this development window (new job, stolen
-> > > > > > laptop, etc.) *and* it looks like you are going to need at least one
-> > > > > > more respin of this patchset, go ahead and fix this patch to use
-> > > > > > current instead of generating a local context.  I'll deal with the
-> > > > > > merge fallout if/when it happens.
-> > > > >
-> > > > > Sure, I will switch it to current in the call to audit_get_contid().
-> > > > >
-> > > > > The local context is a distinct issue.  Like USER records, I prefer
-> > > > > local due to potential record volume, it is already trackable as far as
-> > > > > Steve is concerned, and if it is to be connected with the syscall
-> > > > > record, it should be linked to syscall records in a seperate new github
-> > > > > issue with its own patch.  It accumulates events until the buffer is
-> > > > > flushed to a record, so the timestamp only represents the flush (usually
-> > > > > user "CR/enter").
+On Fri, Jan 11, 2019 at 02:58:26PM +0200, Jarkko Sakkinen wrote:
+> On Wed, Jan 09, 2019 at 08:31:37AM -0800, Sean Christopherson wrote:
+> > On Tue, Jan 08, 2019 at 02:54:11PM -0800, Andy Lutomirski wrote:
+> > > On Tue, Jan 8, 2019 at 2:09 PM Sean Christopherson
+> > > <sean.j.christopherson@intel.com> wrote:
 > > > >
-> > > > Generally, yes, associating records is a separate issue, but in this
-> > > > particular case you are changing this record by making it a "local"
-> > > > record, which as we've discussed before, I view as a necessary evil
-> > > > and something that must be minimized.  A quick look at the
-> > > > tty_audit_log() callers shows tty_audit_tiocsti() which is an ioctl
-> > > > handler (and thus current should be valid and correct), and
-> > > > tty_audit_buf_push() whose callers all seem have valid and correct
-> > > > current values; if you find that not to be the case please let me
-> > > > know.
-> > >
-> > > Unless I'm misunderstanding what "local" means, it already had a local
-> > > context by virtue of having a NULL context since it was never previously
-> > > connected to syscall events, so changing it to a local context doesn't
-> > > change that other than making it possible to associate an auxiliary
-> > > audit container identifier record.
-> > >
-> > > The reasoning I'm also applying here is that the contents of this record
-> > > don't all come from this one syscall, but most likely came in from an
-> > > entire line of individual keystrokes, so the syscall information is only
-> > > from the last one of those syscalls, though that syscall information
-> > > other than the timestamp should be the same.
-> >
-> > Looking at the callers to tty_audit_log(), I think we can all agree
-> > that in the tty_audit_tiocsti() case it is correct to associate the
-> > tty record with current, as it is the current task which sent the
-> > ioctl with the data.  Do you not agree?
->
-> I'm fine with that, yes.
->
-> > With tty_audit_buf_push() we need to do a bit more work to track down
-> > all the callers.  Looking quickly it appears that all of the
-> > tty_audit_add_data() callers are copying data to/from userspace, so
-> > associating these tty records with their syscall would seem
-> > appropriate.  With tty_audit_push() it either appears to be
-> > tty_audit_tiocsti() (again) or more userspace copy routines.  I didn't
-> > bother looking at tty_audit_exit() because that seemed pretty clear to
-> > be something worth associating with a syscall.  You may find that if
-> > you dig deeper into the call stacks things fall apart and there are
-> > cases where the records shouldn't be associated with the current
-> > syscall, but based on what I'm seeing right now that doesn't appear to
-> > be the case.
->
-> Ok.  Except that it might be multiple subsequent calls that assemble
-> that data, only flushed to an audit record on exceeding N_TTY_BUF_SIZE
-> (4k) or that task switching device and flushing the previous device or
-> that task switching icanon mode.
+> > > > Cleaner in the sense that it's faster to get basic support up and running
+> > > > since there are fewer touchpoints, but there are long term ramifications
+> > > > to cramming EPC management in KVM.
+> > > >
+> > > > And at this point I'm not stating any absolutes, e.g. how EPC will be
+> > > > handled by KVM.  What I'm pushing for is to not eliminate the possibility
+> > > > of having the SGX subsystem own all EPC management, e.g. don't tie
+> > > > /dev/sgx to a single enclave.
+> > > 
+> > > I haven't gone and re-read all the relevant SDM bits, so I'll just
+> > > ask: what, if anything, are the actual semantics of mapping "raw EPC"
+> > > like this?  You can't actually do anything with the mapping from user
+> > > mode unless you actually get an enclave created and initialized in it
+> > > and have it mapped at the correct linear address, right?  I still
+> > > think you have the right idea, but it is a bit unusual.
+> > 
+> > Correct, the EPC is inaccessible until a range is "mapped" with ECREATE.
+> > But I'd argue that it's not unusual, just different.  And really it's not
+> > all that different than userspace mmap'ing /dev/sgx/enclave prior to
+> > ioctl(ENCLAVE_CREATE).  In that case, userspace can still (attempt to)
+> > access the "raw" EPC, i.e. generate a #PF, the kernel/driver just happens
+> > to consider any faulting EPC address without an associated enclave as
+> > illegal, e.g. signals SIGBUS.
+> > 
+> > The /dev/sgx/epc case simply has different semantics for moving pages in
+> > and out of the EPC, i.e. different fault and eviction semantics.  Yes,
+> > this allows the guest kernel to directly access the "raw" EPC, but that's
+> > conceptually in line with hardware where priveleged software can directly
+> > "access" the EPC (or rather, the abort page for all intents and purposes).
+> > I.e. it's an argument for requiring certain privileges to open /dev/sgx/epc,
+> > but IMO it's not unusual.
+> > 
+> > Maybe /dev/sgx/epc is a poor name and is causing confusion, e.g.
+> > /dev/sgx/virtualmachine might be more appropriate.
+> 
+> What do you mean by saying "requiring certain privileges"? Are you
+> saying that "raw EPC" (lets say /dev/vmsgx, which probably the name I
+> will use for the device *if* it is required) device would require
+> differet privileged than /dev/sgx?
 
-It seems just as reasonable to associate it with that final triggering
-syscall just as much as it seems reasonable to log the buffered tty
-data via the audit subsystem.  If for some reason we need to
-dissociate the tty data from the syscall data I don't see why we can't
-make that change in the future.
+I don't think it would be mandatory, especially if PROVISION and EINITTOKEN
+attributes are routed through securityfs, but it might be nice to have
+since the functionality provided by /dev/vmsgx would be different than
+/dev/sgx.
 
-> > > Reading your reply above it isn't clear to me that I had made these two
-> > > points clear previously.  If you still think this record should be
-> > > associated to a syscall despite my reasoning above, I'm willing to
-> > > connect it, but will do so in a seperate issue/patch.
->
-> So can I conclude that you are fine with the buffering of the data from
-> multiple syscalls being associated with the output of that buffer to one
-> audit record with the last of those syscalls?
-
--- 
-paul moore
-www.paul-moore.com
+Side topic, what's the reasoning for doing /dev/sgx and /dev/vmsgx instead
+of /dev/sgx/{enclave,vm,etc...}?
