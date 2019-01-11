@@ -7,46 +7,46 @@ X-Spam-Status: No, score=-10.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 60EE7C43444
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:58:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EA919C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:58:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2961320874
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:58:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AF74F20874
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:58:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547218723;
-	bh=99XzeAf0lrGZH9/9So7PmaRKfwPAp+q2DgV3noaUq0A=;
+	s=default; t=1547218731;
+	bh=cNXo8HBfQ9mItkIfL/+LuZHg/GQjJbayUmhanOPBls0=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=IXGPSqiHrPKTizg6HaVnVlwHQ2qC+mSc6B8DXJ2hfbIx0wdcSm6QOoQ/0SZqnU9Z9
-	 6FSuQGFiKquPZicC7j7LZlPQHI1L0rDMEu8Qr5eLy8GNWvvMeCjrTly6razIMHdSwm
-	 WBJlFDlxVaKE5fLitnffS/oMqeeUZ0DbY2vV/Cd8=
+	b=qXkhZwhSgeRAoOl3hK7uJdM4Ioo3a/c3Oi6hdn6kU+9bNkcbhDdgXeBQabqRxxT8D
+	 0LVQ7bsMf2bsvZoagU6o7hPreYdTjUxc9/YqD5NbQuBKpBBXBt536KB+/BjIXd0Yqv
+	 K59+vFyig9TNjF1Nfar75+WNnO+xSb5Nzx1iYzLA=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391732AbfAKO6m (ORCPT
+        id S2391751AbfAKO6v (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 11 Jan 2019 09:58:42 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54656 "EHLO mail.kernel.org"
+        Fri, 11 Jan 2019 09:58:51 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54582 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389888AbfAKOeX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Jan 2019 09:34:23 -0500
+        id S2389849AbfAKOeS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 Jan 2019 09:34:18 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9BD732133F;
-        Fri, 11 Jan 2019 14:34:22 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 921D32133F;
+        Fri, 11 Jan 2019 14:34:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547217263;
-        bh=99XzeAf0lrGZH9/9So7PmaRKfwPAp+q2DgV3noaUq0A=;
+        s=default; t=1547217258;
+        bh=cNXo8HBfQ9mItkIfL/+LuZHg/GQjJbayUmhanOPBls0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=pXDX2FYKFw5gLtwKHAXuQ8nGhN/Lcvti73D1MaRtZxETo8Pd0adjQPTkEtfPCsgZ6
-         tbdYzgUuaeOnCU8lWFseRj1tyrWzVRgQ+rJ1xfMBsMyWaQS8FrX/d/nWpyqqPD2PDa
-         JklCALnxs6BJEdto43+T6JdIgIhARYmwyFZL+Rlo=
+        b=X0bVPrDmMzbOw7SymnyWx1sz6AvfsIA4i6lIUgM2AdTMtjEXzxefIwWghhvdNcrzE
+         GI2DoSqduOT5N1QSTSHqwIX+sOUeBpPRy6AaEnBLQ5EHd/R2Pk3xD0nDG4tTpwWMks
+         5pjg4lwacPPT1xU1bf7ohS7U/R1wUL97f2j7l9ko=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Subject: [PATCH 4.14 102/105] intel_th: msu: Fix an off-by-one in attribute store
-Date:   Fri, 11 Jan 2019 15:15:13 +0100
-Message-Id: <20190111131111.266853477@linuxfoundation.org>
+        stable@vger.kernel.org, "Yan, Zheng" <zyan@redhat.com>,
+        Ilya Dryomov <idryomov@gmail.com>
+Subject: [PATCH 4.14 100/105] ceph: dont update importing caps mseq when handing cap export
+Date:   Fri, 11 Jan 2019 15:15:11 +0100
+Message-Id: <20190111131111.159827011@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190111131102.899065735@linuxfoundation.org>
 References: <20190111131102.899065735@linuxfoundation.org>
@@ -65,52 +65,35 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+From: Yan, Zheng <zyan@redhat.com>
 
-commit ec5b5ad6e272d8d6b92d1007f79574919862a2d2 upstream.
+commit 3c1392d4c49962a31874af14ae9ff289cb2b3851 upstream.
 
-The 'nr_pages' attribute of the 'msc' subdevices parses a comma-separated
-list of window sizes, passed from userspace. However, there is a bug in
-the string parsing logic wherein it doesn't exclude the comma character
-from the range of characters as it consumes them. This leads to an
-out-of-bounds access given a sufficiently long list. For example:
+Updating mseq makes client think importer mds has accepted all prior
+cap messages and importer mds knows what caps client wants. Actually
+some cap messages may have been dropped because of mseq mismatch.
 
-> # echo 8,8,8,8 > /sys/bus/intel_th/devices/0-msc0/nr_pages
-> ==================================================================
-> BUG: KASAN: slab-out-of-bounds in memchr+0x1e/0x40
-> Read of size 1 at addr ffff8803ffcebcd1 by task sh/825
->
-> CPU: 3 PID: 825 Comm: npktest.sh Tainted: G        W         4.20.0-rc1+
-> Call Trace:
->  dump_stack+0x7c/0xc0
->  print_address_description+0x6c/0x23c
->  ? memchr+0x1e/0x40
->  kasan_report.cold.5+0x241/0x308
->  memchr+0x1e/0x40
->  nr_pages_store+0x203/0xd00 [intel_th_msu]
+If mseq is left untouched, importing cap's mds_wanted later will get
+reset by cap import message.
 
-Fix this by accounting for the comma character.
-
-Signed-off-by: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Fixes: ba82664c134ef ("intel_th: Add Memory Storage Unit driver")
-Cc: stable@vger.kernel.org # v4.4+
+Cc: stable@vger.kernel.org
+Signed-off-by: "Yan, Zheng" <zyan@redhat.com>
+Signed-off-by: Ilya Dryomov <idryomov@gmail.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/hwtracing/intel_th/msu.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ fs/ceph/caps.c |    1 -
+ 1 file changed, 1 deletion(-)
 
---- a/drivers/hwtracing/intel_th/msu.c
-+++ b/drivers/hwtracing/intel_th/msu.c
-@@ -1431,7 +1431,8 @@ nr_pages_store(struct device *dev, struc
- 		if (!end)
- 			break;
- 
--		len -= end - p;
-+		/* consume the number and the following comma, hence +1 */
-+		len -= end - p + 1;
- 		p = end + 1;
- 	} while (len);
- 
+--- a/fs/ceph/caps.c
++++ b/fs/ceph/caps.c
+@@ -3438,7 +3438,6 @@ retry:
+ 			tcap->cap_id = t_cap_id;
+ 			tcap->seq = t_seq - 1;
+ 			tcap->issue_seq = t_seq - 1;
+-			tcap->mseq = t_mseq;
+ 			tcap->issued |= issued;
+ 			tcap->implemented |= issued;
+ 			if (cap == ci->i_auth_cap)
 
 
