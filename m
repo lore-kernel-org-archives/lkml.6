@@ -7,47 +7,48 @@ X-Spam-Status: No, score=-10.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AA564C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:17:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 99BBAC43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:17:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7A6DD21841
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:17:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 65ED82183F
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:17:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547216249;
-	bh=6H3ujWPjbVHbrG2+00y2M2QkEO+p86mu9x1SfKhpCqo=;
+	s=default; t=1547216255;
+	bh=4SQ0JE3dBnTklZSgKUpBToJMtGfPvnUh4IF//zqv3+g=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=Q/9+TkWtH7MXl40pQezq9c6o7K9EDnWrBkZICyaZkvOv6NP4i75wChCx4uIaaUavq
-	 zNRbS8ds7hhY4Kxvwa0dx3uvjEBx55O7NjypAM5eP2TqYyZ2rfD1KKxJFAxste2aZS
-	 0R8uzmfs0e+dFekx6g6TxZqanlpf5TyehYQkdMLk=
+	b=xgOqPyost8HPKOCXSiVxrtvHvFEuWpiyy311Rz7xxb0TO1jUkdQIrz+J4aUhyleX9
+	 FIgdces3P6mZj/bQ8fl45mHyHVELFB9/Z7D9kYBdhLu4mEsz/CaTwked/fRxCX/KHZ
+	 SeJ6BDVegGcJ/lhU+uK9YG7OoJ8YMlofB2tWihac=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731921AbfAKOR2 (ORCPT
+        id S1733124AbfAKORe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 11 Jan 2019 09:17:28 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33806 "EHLO mail.kernel.org"
+        Fri, 11 Jan 2019 09:17:34 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33840 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729564AbfAKORY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Jan 2019 09:17:24 -0500
+        id S1730904AbfAKOR0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 Jan 2019 09:17:26 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id F075D2177B;
-        Fri, 11 Jan 2019 14:17:22 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 92C5721783;
+        Fri, 11 Jan 2019 14:17:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547216243;
-        bh=6H3ujWPjbVHbrG2+00y2M2QkEO+p86mu9x1SfKhpCqo=;
+        s=default; t=1547216245;
+        bh=4SQ0JE3dBnTklZSgKUpBToJMtGfPvnUh4IF//zqv3+g=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Vcx7ZY6Sn9tIP8ZZROnuCzYyKGKkqdYeXdLRmKX1iZmsaYavD0jKEIzDLGxk71NIc
-         Mw6+l/pinLKEGxhfSSAAq1GgSbRBvxXOFKhoqPlJgvjUIWx7OGgr3yBG6NaWA5/kU6
-         CBfhagskgscxbjpg+Q7uaRZ/viPTX8IeSlRg2W7Y=
+        b=2GeOdql1PUAqvCaQRlEJqNy7MEVd6RvHrfG2LQZftny+IZfjwDtYMHOFFoRgMqGEH
+         7LvorO0dCp0WFaOxt8JDJGwvPpx55fxoryfw3oGA8LgaqupY/AHq9WdNIW77mPDOZ5
+         FoIerMjNcdvYk3JUbmLkwPm97rfXkchO5NHiu27g=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dietmar Hahn <dietmar.hahn@ts.fujitsu.com>,
-        Juergen Gross <jgross@suse.com>,
+        stable@vger.kernel.org,
+        Lorenzo Bianconi <lorenzo.bianconi@redhat.com>,
+        Eric Dumazet <edumazet@google.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.4 27/88] xen/netfront: tolerate frags with no data
-Date:   Fri, 11 Jan 2019 15:07:56 +0100
-Message-Id: <20190111131050.132215217@linuxfoundation.org>
+Subject: [PATCH 4.4 28/88] gro_cell: add napi_disable in gro_cells_destroy
+Date:   Fri, 11 Jan 2019 15:07:57 +0100
+Message-Id: <20190111131050.276768921@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190111131045.137499039@linuxfoundation.org>
 References: <20190111131045.137499039@linuxfoundation.org>
@@ -66,35 +67,77 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Juergen Gross <jgross@suse.com>
+From: Lorenzo Bianconi <lorenzo.bianconi@redhat.com>
 
-[ Upstream commit d81c5054a5d1d4999c7cdead7636b6cd4af83d36 ]
+[ Upstream commit 8e1da73acded4751a93d4166458a7e640f37d26c ]
 
-At least old Xen net backends seem to send frags with no real data
-sometimes. In case such a fragment happens to occur with the frag limit
-already reached the frontend will BUG currently even if this situation
-is easily recoverable.
+Add napi_disable routine in gro_cells_destroy since starting from
+commit c42858eaf492 ("gro_cells: remove spinlock protecting receive
+queues") gro_cell_poll and gro_cells_destroy can run concurrently on
+napi_skbs list producing a kernel Oops if the tunnel interface is
+removed while gro_cell_poll is running. The following Oops has been
+triggered removing a vxlan device while the interface is receiving
+traffic
 
-Modify the BUG_ON() condition accordingly.
+[ 5628.948853] BUG: unable to handle kernel NULL pointer dereference at 0000000000000008
+[ 5628.949981] PGD 0 P4D 0
+[ 5628.950308] Oops: 0002 [#1] SMP PTI
+[ 5628.950748] CPU: 0 PID: 9 Comm: ksoftirqd/0 Not tainted 4.20.0-rc6+ #41
+[ 5628.952940] RIP: 0010:gro_cell_poll+0x49/0x80
+[ 5628.955615] RSP: 0018:ffffc9000004fdd8 EFLAGS: 00010202
+[ 5628.956250] RAX: 0000000000000000 RBX: ffffe8ffffc08150 RCX: 0000000000000000
+[ 5628.957102] RDX: 0000000000000000 RSI: ffff88802356bf00 RDI: ffffe8ffffc08150
+[ 5628.957940] RBP: 0000000000000026 R08: 0000000000000000 R09: 0000000000000000
+[ 5628.958803] R10: 0000000000000001 R11: 0000000000000000 R12: 0000000000000040
+[ 5628.959661] R13: ffffe8ffffc08100 R14: 0000000000000000 R15: 0000000000000040
+[ 5628.960682] FS:  0000000000000000(0000) GS:ffff88803ea00000(0000) knlGS:0000000000000000
+[ 5628.961616] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[ 5628.962359] CR2: 0000000000000008 CR3: 000000000221c000 CR4: 00000000000006b0
+[ 5628.963188] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+[ 5628.964034] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+[ 5628.964871] Call Trace:
+[ 5628.965179]  net_rx_action+0xf0/0x380
+[ 5628.965637]  __do_softirq+0xc7/0x431
+[ 5628.966510]  run_ksoftirqd+0x24/0x30
+[ 5628.966957]  smpboot_thread_fn+0xc5/0x160
+[ 5628.967436]  kthread+0x113/0x130
+[ 5628.968283]  ret_from_fork+0x3a/0x50
+[ 5628.968721] Modules linked in:
+[ 5628.969099] CR2: 0000000000000008
+[ 5628.969510] ---[ end trace 9d9dedc7181661fe ]---
+[ 5628.970073] RIP: 0010:gro_cell_poll+0x49/0x80
+[ 5628.972965] RSP: 0018:ffffc9000004fdd8 EFLAGS: 00010202
+[ 5628.973611] RAX: 0000000000000000 RBX: ffffe8ffffc08150 RCX: 0000000000000000
+[ 5628.974504] RDX: 0000000000000000 RSI: ffff88802356bf00 RDI: ffffe8ffffc08150
+[ 5628.975462] RBP: 0000000000000026 R08: 0000000000000000 R09: 0000000000000000
+[ 5628.976413] R10: 0000000000000001 R11: 0000000000000000 R12: 0000000000000040
+[ 5628.977375] R13: ffffe8ffffc08100 R14: 0000000000000000 R15: 0000000000000040
+[ 5628.978296] FS:  0000000000000000(0000) GS:ffff88803ea00000(0000) knlGS:0000000000000000
+[ 5628.979327] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[ 5628.980044] CR2: 0000000000000008 CR3: 000000000221c000 CR4: 00000000000006b0
+[ 5628.980929] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+[ 5628.981736] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+[ 5628.982409] Kernel panic - not syncing: Fatal exception in interrupt
+[ 5628.983307] Kernel Offset: disabled
 
-Tested-by: Dietmar Hahn <dietmar.hahn@ts.fujitsu.com>
-Signed-off-by: Juergen Gross <jgross@suse.com>
+Fixes: c42858eaf492 ("gro_cells: remove spinlock protecting receive queues")
+Signed-off-by: Lorenzo Bianconi <lorenzo.bianconi@redhat.com>
+Acked-by: Eric Dumazet <edumazet@google.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/xen-netfront.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ include/net/gro_cells.h |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/drivers/net/xen-netfront.c
-+++ b/drivers/net/xen-netfront.c
-@@ -889,7 +889,7 @@ static RING_IDX xennet_fill_frags(struct
- 		if (skb_shinfo(skb)->nr_frags == MAX_SKB_FRAGS) {
- 			unsigned int pull_to = NETFRONT_SKB_CB(skb)->pull_to;
+--- a/include/net/gro_cells.h
++++ b/include/net/gro_cells.h
+@@ -84,6 +84,7 @@ static inline void gro_cells_destroy(str
+ 	for_each_possible_cpu(i) {
+ 		struct gro_cell *cell = per_cpu_ptr(gcells->cells, i);
  
--			BUG_ON(pull_to <= skb_headlen(skb));
-+			BUG_ON(pull_to < skb_headlen(skb));
- 			__pskb_pull_tail(skb, pull_to - skb_headlen(skb));
- 		}
- 		if (unlikely(skb_shinfo(skb)->nr_frags >= MAX_SKB_FRAGS)) {
++		napi_disable(&cell->napi);
+ 		netif_napi_del(&cell->napi);
+ 		__skb_queue_purge(&cell->napi_skbs);
+ 	}
 
 
