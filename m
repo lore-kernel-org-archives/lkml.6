@@ -4,49 +4,51 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-10.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F3EF9C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:44:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A3364C43444
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:45:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C2EC6206B6
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:44:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 68675206B6
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:45:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547217896;
-	bh=grEBYRVM6RwhhVZLqXFHbll7TMPH7t7XJL+avMDBCPU=;
+	s=default; t=1547217906;
+	bh=uNoZ03c9MBSJ4r+9LOqND5E71pDBH8Uh77c89KOOixc=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=ITecg7QhXRpAWOUrXclIWIW3B+vapgZqj6XjRpM09g/VcMnUQTx4O2QBB0WYzFvos
-	 N8jctCrtsYwdiRg3FrkyRdBOD0tcJ9IF8ikBIRjq4/LT6hFBEuArX1qMBclmhIanY/
-	 ckqHoiupA/v5NAwf9JLZo2JETI11WO4r8toQaGCQ=
+	b=SdknSkJT1xPdXmMJ7BgnGj9HqA1DynvPTYKccICEOIwZHOe3kMz7hakQypb5hLh3J
+	 Daz6LgSxSUcKqBLVoOBLgt7WKdQpTW4WBscJKp6SDYqzwhaRQ35u3iB5HZEGTGH3Xb
+	 q5sIpyGSoAfLgc6AtsGSjYZRXoEEUkUpzWfsCWKk=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404652AbfAKOod (ORCPT
+        id S2391412AbfAKOpF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 11 Jan 2019 09:44:33 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37432 "EHLO mail.kernel.org"
+        Fri, 11 Jan 2019 09:45:05 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37284 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390045AbfAKOo3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Jan 2019 09:44:29 -0500
+        id S2404589AbfAKOoU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 Jan 2019 09:44:20 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D0F7B206B6;
-        Fri, 11 Jan 2019 14:44:27 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0C610206B6;
+        Fri, 11 Jan 2019 14:44:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547217868;
-        bh=grEBYRVM6RwhhVZLqXFHbll7TMPH7t7XJL+avMDBCPU=;
+        s=default; t=1547217859;
+        bh=uNoZ03c9MBSJ4r+9LOqND5E71pDBH8Uh77c89KOOixc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Nf0oZRKZetYNAZjc/5FfQCy60QpZJfwcXh4X7q29q2ds2eo2rIsY6WwL0h5dUK/Y4
-         z/9KZJCdjSRrP0ChDWxczbmpxa2J3QyEgP25p6VL1LUHlHymeI0iK6hf0RIlOcddcR
-         ymY94eScrkBN42eOaN28/c+4bVlbfeoQ6TgXcEZI=
+        b=NgY0o7Q+0dSFfHCSvm7TVi1MAj3vl45ieS3nDDAQkI9qllBLXQiyR4WbO7Y9W2vt5
+         NANqW6IOcLeq779a30yjJ3L+lWGBIInDqQZh9Z5NZunQhBRU00gC41x5rAsfJBdRhu
+         yn9IM70G0Atqtn5n3bHKledGZFoPiQsDqgYRkSjU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Benjamin Coddington <bcodding@redhat.com>,
-        "J. Bruce Fields" <bfields@redhat.com>
-Subject: [PATCH 4.20 38/65] lockd: Show pid of lockd for remote locks
-Date:   Fri, 11 Jan 2019 15:15:24 +0100
-Message-Id: <20190111131101.839152665@linuxfoundation.org>
+        stable@vger.kernel.org, Priit Laes <plaes@plaes.org>,
+        =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>,
+        Larry Finger <Larry.Finger@lwfinger.net>,
+        Kalle Valo <kvalo@codeaurora.org>
+Subject: [PATCH 4.20 35/65] b43: Fix error in cordic routine
+Date:   Fri, 11 Jan 2019 15:15:21 +0100
+Message-Id: <20190111131101.191291619@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190111131055.331350141@linuxfoundation.org>
 References: <20190111131055.331350141@linuxfoundation.org>
@@ -65,83 +67,40 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Benjamin Coddington <bcodding@redhat.com>
+From: Larry Finger <Larry.Finger@lwfinger.net>
 
-commit b8eee0e90f9797b747113638bc75e739b192ad38 upstream.
+commit 8ea3819c0bbef57a51d8abe579e211033e861677 upstream.
 
-Commit 9d5b86ac13c5 ("fs/locks: Remove fl_nspid and use fs-specific l_pid
-for remote locks") specified that the l_pid returned for F_GETLK on a local
-file that has a remote lock should be the pid of the lock manager process.
-That commit, while updating other filesystems, failed to update lockd, such
-that locks created by lockd had their fl_pid set to that of the remote
-process holding the lock.  Fix that here to be the pid of lockd.
+The cordic routine for calculating sines and cosines that was added in
+commit 6f98e62a9f1b ("b43: update cordic code to match current specs")
+contains an error whereby a quantity declared u32 can in fact go negative.
 
-Also, fix the client case so that the returned lock pid is negative, which
-indicates a remote lock on a remote file.
+This problem was detected by Priit Laes who is switching b43 to use the
+routine in the library functions of the kernel.
 
-Fixes: 9d5b86ac13c5 ("fs/locks: Remove fl_nspid and use fs-specific...")
-Cc: stable@vger.kernel.org
-
-Signed-off-by: Benjamin Coddington <bcodding@redhat.com>
-Signed-off-by: J. Bruce Fields <bfields@redhat.com>
+Fixes: 986504540306 ("b43: make cordic common (LP-PHY and N-PHY need it)")
+Reported-by: Priit Laes <plaes@plaes.org>
+Cc: Rafał Miłecki <zajec5@gmail.com>
+Cc: Stable <stable@vger.kernel.org> # 2.6.34
+Signed-off-by: Larry Finger <Larry.Finger@lwfinger.net>
+Signed-off-by: Priit Laes <plaes@plaes.org>
+Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/lockd/clntproc.c |    2 +-
- fs/lockd/xdr.c      |    4 ++--
- fs/lockd/xdr4.c     |    4 ++--
- 3 files changed, 5 insertions(+), 5 deletions(-)
+ drivers/net/wireless/broadcom/b43/phy_common.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/fs/lockd/clntproc.c
-+++ b/fs/lockd/clntproc.c
-@@ -442,7 +442,7 @@ nlmclnt_test(struct nlm_rqst *req, struc
- 			fl->fl_start = req->a_res.lock.fl.fl_start;
- 			fl->fl_end = req->a_res.lock.fl.fl_end;
- 			fl->fl_type = req->a_res.lock.fl.fl_type;
--			fl->fl_pid = 0;
-+			fl->fl_pid = -req->a_res.lock.fl.fl_pid;
- 			break;
- 		default:
- 			status = nlm_stat_to_errno(req->a_res.status);
---- a/fs/lockd/xdr.c
-+++ b/fs/lockd/xdr.c
-@@ -127,7 +127,7 @@ nlm_decode_lock(__be32 *p, struct nlm_lo
+--- a/drivers/net/wireless/broadcom/b43/phy_common.c
++++ b/drivers/net/wireless/broadcom/b43/phy_common.c
+@@ -616,7 +616,7 @@ struct b43_c32 b43_cordic(int theta)
+ 	u8 i;
+ 	s32 tmp;
+ 	s8 signx = 1;
+-	u32 angle = 0;
++	s32 angle = 0;
+ 	struct b43_c32 ret = { .i = 39797, .q = 0, };
  
- 	locks_init_lock(fl);
- 	fl->fl_owner = current->files;
--	fl->fl_pid   = (pid_t)lock->svid;
-+	fl->fl_pid   = current->tgid;
- 	fl->fl_flags = FL_POSIX;
- 	fl->fl_type  = F_RDLCK;		/* as good as anything else */
- 	start = ntohl(*p++);
-@@ -269,7 +269,7 @@ nlmsvc_decode_shareargs(struct svc_rqst
- 	memset(lock, 0, sizeof(*lock));
- 	locks_init_lock(&lock->fl);
- 	lock->svid = ~(u32) 0;
--	lock->fl.fl_pid = (pid_t)lock->svid;
-+	lock->fl.fl_pid = current->tgid;
- 
- 	if (!(p = nlm_decode_cookie(p, &argp->cookie))
- 	 || !(p = xdr_decode_string_inplace(p, &lock->caller,
---- a/fs/lockd/xdr4.c
-+++ b/fs/lockd/xdr4.c
-@@ -119,7 +119,7 @@ nlm4_decode_lock(__be32 *p, struct nlm_l
- 
- 	locks_init_lock(fl);
- 	fl->fl_owner = current->files;
--	fl->fl_pid   = (pid_t)lock->svid;
-+	fl->fl_pid   = current->tgid;
- 	fl->fl_flags = FL_POSIX;
- 	fl->fl_type  = F_RDLCK;		/* as good as anything else */
- 	p = xdr_decode_hyper(p, &start);
-@@ -266,7 +266,7 @@ nlm4svc_decode_shareargs(struct svc_rqst
- 	memset(lock, 0, sizeof(*lock));
- 	locks_init_lock(&lock->fl);
- 	lock->svid = ~(u32) 0;
--	lock->fl.fl_pid = (pid_t)lock->svid;
-+	lock->fl.fl_pid = current->tgid;
- 
- 	if (!(p = nlm4_decode_cookie(p, &argp->cookie))
- 	 || !(p = xdr_decode_string_inplace(p, &lock->caller,
+ 	while (theta > (180 << 16))
 
 
