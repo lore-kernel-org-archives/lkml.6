@@ -4,51 +4,49 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-13.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BB5C4C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:31:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C52F2C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:32:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8E5C221848
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:31:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 96A662177B
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:32:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547217119;
-	bh=nRa/al4YCjMracuNGFvHzOBna8i00A1GmevtbK8uQy8=;
+	s=default; t=1547217122;
+	bh=L+SW/f0JZXY1tHFAZDfK94LRACI8d7mlTJz4+vauc20=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=A5+/VLje/AhpvgWa7M8jEHf3c59gvK9IM+IkJV/fF7skdyZZmVjmcNFhrRFTUG4gB
-	 N4Dcp5BpadEwbHrU7zQvmMvYW8QGyiuEIpvu7d9WZV4iQOPjjywnrmNo/CLnhwlUYF
-	 3z1fSuuFlRlfvfmHL7c67m1zuxaenYFqLb16TkiE=
+	b=yLafBXM1mdsUXVKjEgzwLY+nAMVeWF93KZp9+wiyr4W0vN1xHh7pFth5yJLEuMiEI
+	 CUiF8xMMgZ5znoNfPAkT+8hyzpedsGa633X64vKB6gACxQ+CzxbF05J0c9wfj0LTRD
+	 Hw5/yOzwk4tUQK4OvAPS6VVDs+ErNaQmWKhzhjGo=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389300AbfAKOb6 (ORCPT
+        id S2388832AbfAKOcB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 11 Jan 2019 09:31:58 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51768 "EHLO mail.kernel.org"
+        Fri, 11 Jan 2019 09:32:01 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51870 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389286AbfAKObz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Jan 2019 09:31:55 -0500
+        id S2388788AbfAKOcA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 Jan 2019 09:32:00 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1122A2063F;
-        Fri, 11 Jan 2019 14:31:53 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1FE002133F;
+        Fri, 11 Jan 2019 14:31:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547217114;
-        bh=nRa/al4YCjMracuNGFvHzOBna8i00A1GmevtbK8uQy8=;
+        s=default; t=1547217119;
+        bh=L+SW/f0JZXY1tHFAZDfK94LRACI8d7mlTJz4+vauc20=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=bOoOmRSbEHIJIevRr2ao92aAuPk3uzJwPxAUKDmZQR1ZuPYggAwLHBCxsM8/bjFBh
-         0FJoZMcedKxKuzkZK2PKorow+hb07SkbtKLur+vfhpssefC9JcUmOyHPBMUSQ+O6Dt
-         94oEQQqQIQ0jRvwVfSK5icyozwI7nFZakymmgSbY=
+        b=HsSXWaAqeqGmacE1bU8nuIDIDBsoVcQXhPT3uonPDSXW7YvfD3sX5yrrYY5XSLqXB
+         k2XUfliNfzzJgpS8PKR2yzBnNiZvpqja5V+I8G+kYWVUb5k64CEEw/mKKRDfSWVg4k
+         TDF3M1Qo+mLkO3zoMshsOmmLsI/D5HV2RcWfaNNg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Sara Sharon <sara.sharon@intel.com>,
-        Luca Coelho <luciano.coelho@intel.com>,
-        Johannes Berg <johannes.berg@intel.com>,
+        stable@vger.kernel.org, "Michael S. Tsirkin" <mst@redhat.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 047/105] mac80211: free skb fraglist before freeing the skb
-Date:   Fri, 11 Jan 2019 15:14:18 +0100
-Message-Id: <20190111131107.060817785@linuxfoundation.org>
+Subject: [PATCH 4.14 049/105] virtio: fix test build after uio.h change
+Date:   Fri, 11 Jan 2019 15:14:20 +0100
+Message-Id: <20190111131107.209630620@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190111131102.899065735@linuxfoundation.org>
 References: <20190111131102.899065735@linuxfoundation.org>
@@ -67,42 +65,30 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 34b1e0e9efe101822e83cc62d22443ed3867ae7a ]
+[ Upstream commit c5c08bed843c2b2c048c16d1296d7631d7c1620e ]
 
-mac80211 uses the frag list to build AMSDU. When freeing
-the skb, it may not be really freed, since someone is still
-holding a reference to it.
-In that case, when TCP skb is being retransmitted, the
-pointer to the frag list is being reused, while the data
-in there is no longer valid.
-Since we will never get frag list from the network stack,
-as mac80211 doesn't advertise the capability, we can safely
-free and nullify it before releasing the SKB.
-
-Signed-off-by: Sara Sharon <sara.sharon@intel.com>
-Signed-off-by: Luca Coelho <luciano.coelho@intel.com>
-Signed-off-by: Johannes Berg <johannes.berg@intel.com>
+Fixes: d38499530e5 ("fs: decouple READ and WRITE from the block layer ops")
+Signed-off-by: Michael S. Tsirkin <mst@redhat.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/mac80211/status.c | 5 +++++
- 1 file changed, 5 insertions(+)
+ tools/virtio/linux/kernel.h | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/net/mac80211/status.c b/net/mac80211/status.c
-index 35912270087c..b18466cf466c 100644
---- a/net/mac80211/status.c
-+++ b/net/mac80211/status.c
-@@ -545,6 +545,11 @@ static void ieee80211_report_used_skb(struct ieee80211_local *local,
- 	}
+diff --git a/tools/virtio/linux/kernel.h b/tools/virtio/linux/kernel.h
+index 395521a7a8d8..268ce239de65 100644
+--- a/tools/virtio/linux/kernel.h
++++ b/tools/virtio/linux/kernel.h
+@@ -23,6 +23,10 @@
+ #define PAGE_MASK (~(PAGE_SIZE-1))
+ #define PAGE_ALIGN(x) ((x + PAGE_SIZE - 1) & PAGE_MASK)
  
- 	ieee80211_led_tx(local);
++/* generic data direction definitions */
++#define READ                    0
++#define WRITE                   1
 +
-+	if (skb_has_frag_list(skb)) {
-+		kfree_skb_list(skb_shinfo(skb)->frag_list);
-+		skb_shinfo(skb)->frag_list = NULL;
-+	}
- }
- 
- /*
+ typedef unsigned long long phys_addr_t;
+ typedef unsigned long long dma_addr_t;
+ typedef size_t __kernel_size_t;
 -- 
 2.19.1
 
