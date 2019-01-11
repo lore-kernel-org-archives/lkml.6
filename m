@@ -7,38 +7,38 @@ X-Spam-Status: No, score=-13.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A70D2C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:29:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 051D5C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:29:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 749552177B
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:29:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BF1892177B
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:29:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547216991;
-	bh=OfoB1p4qiCIyPuc2Ty456x1e7sE0vdDjz+9ewDCj9SU=;
+	s=default; t=1547216994;
+	bh=KmpPXNnlpaqreyCfJoQJ/BXN6/yMSEELXrnGRXtYHmU=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=oAXStkdKrrzzLpHAKJuJGpDluUR1zKjUd0cTXTFvnqu382IZ8h4lwj1ud89Q/Wjnn
-	 RrTQgN302CjtYKftu49l5CREBOgM+tLmqroBXZ6R7MGZihHNFgfkQOgTKjueixiv0A
-	 H50ery3ODM6NE5++QhzqvNaxKHRX7b54NQWk6pMc=
+	b=WJ6dZK8DUu9IWC0JChrG6BHly0pEsHNE8TwvUBt4E78/z9/COgp0lEjNUjttvqzTK
+	 7+NU8gswcvfnoa86LMAMlR5aNtiAxnPnDV4r4gy+/w15on1AYA/92yLkC3F0K+Xz0I
+	 KWh1X63ePsJgjzRz6k54yB+HIIxptMI2ip3qWeEA=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388293AbfAKO3u (ORCPT
+        id S2388828AbfAKO3x (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 11 Jan 2019 09:29:50 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48892 "EHLO mail.kernel.org"
+        Fri, 11 Jan 2019 09:29:53 -0500
+Received: from mail.kernel.org ([198.145.29.99]:49006 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388800AbfAKO3p (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Jan 2019 09:29:45 -0500
+        id S2388800AbfAKO3v (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 Jan 2019 09:29:51 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E75FD2063F;
-        Fri, 11 Jan 2019 14:29:44 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id EE8A42063F;
+        Fri, 11 Jan 2019 14:29:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547216985;
-        bh=OfoB1p4qiCIyPuc2Ty456x1e7sE0vdDjz+9ewDCj9SU=;
+        s=default; t=1547216990;
+        bh=KmpPXNnlpaqreyCfJoQJ/BXN6/yMSEELXrnGRXtYHmU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=gwzSdhQa5vaB164RVAoBzCnO50svPmu60ljGrWK7dB+3eb/aDUYANvq9+CHMvydkz
-         rN2xdrGDIVcVO6YgIFbC+gVH1fwICFEYZ88HIxG8p6z/7cGb9dYN3LqPElBEj1iSbn
-         jg0gkgfMHoGz+wxh8V9joSD/hZXs3UTozWBEbHEQ=
+        b=cfNsQR/En6PSgklZYtXL3PrVrnFF2JxlhUmgKM/sCYTtyPEdJY+0SBfzLi/M/wiTv
+         YvX/zJzqmJqzKmbNPl1s0XVwJNWaFyw5BeOhRObcI4O+0DLl+1c7bcen61ZNSEo9so
+         52NDKVW/KpX6Gd1qGlGzMwY+IZzgOaxhI3tI2o/E=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -46,9 +46,9 @@ Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Peng Li <lipeng321@huawei.com>,
         "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 24/63] net: hns: Free irq when exit from abnormal branch
-Date:   Fri, 11 Jan 2019 15:14:27 +0100
-Message-Id: <20190111131049.561214939@linuxfoundation.org>
+Subject: [PATCH 4.9 26/63] net: hns: Fix ntuple-filters status error.
+Date:   Fri, 11 Jan 2019 15:14:29 +0100
+Message-Id: <20190111131049.851346606@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190111131046.387528003@linuxfoundation.org>
 References: <20190111131046.387528003@linuxfoundation.org>
@@ -67,79 +67,33 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit c82bd077e1ba3dd586569c733dc6d3dd4b0e43cd ]
+[ Upstream commit 7e74a19ca522aec7c2be201a7ae1d1d57ded409b ]
 
-1.In "hns_nic_init_irq", if request irq fail at index i,
-  the function return directly without releasing irq resources
-  that already requested.
-
-2.In "hns_nic_net_up" after "hns_nic_init_irq",
-  if exceptional branch occurs, irqs that already requested
-  are not release.
+The ntuple-filters features is forced on by chip.
+But it shows "ntuple-filters: off [fixed]" when use ethtool.
+This patch make it correct with "ntuple-filters: on [fixed]".
 
 Signed-off-by: Yonglong Liu <liuyonglong@huawei.com>
 Signed-off-by: Peng Li <lipeng321@huawei.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/hisilicon/hns/hns_enet.c | 23 ++++++++++++++++++-
- 1 file changed, 22 insertions(+), 1 deletion(-)
+ drivers/net/ethernet/hisilicon/hns/hns_enet.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/drivers/net/ethernet/hisilicon/hns/hns_enet.c b/drivers/net/ethernet/hisilicon/hns/hns_enet.c
-index d96a64bc1db8..63a14edd6a19 100644
+index 7ffbd70824d9..a2f7d0834071 100644
 --- a/drivers/net/ethernet/hisilicon/hns/hns_enet.c
 +++ b/drivers/net/ethernet/hisilicon/hns/hns_enet.c
-@@ -1195,6 +1195,22 @@ static void hns_set_irq_affinity(struct hns_nic_priv *priv)
- 	}
- }
+@@ -2036,7 +2036,7 @@ static int hns_nic_dev_probe(struct platform_device *pdev)
  
-+static void hns_nic_free_irq(int q_num, struct hns_nic_priv *priv)
-+{
-+	int i;
-+
-+	for (i = 0; i < q_num * 2; i++) {
-+		if (priv->ring_data[i].ring->irq_init_flag == RCB_IRQ_INITED) {
-+			irq_set_affinity_hint(priv->ring_data[i].ring->irq,
-+					      NULL);
-+			free_irq(priv->ring_data[i].ring->irq,
-+				 &priv->ring_data[i]);
-+			priv->ring_data[i].ring->irq_init_flag =
-+				RCB_IRQ_NOT_INITED;
-+		}
-+	}
-+}
-+
- static int hns_nic_init_irq(struct hns_nic_priv *priv)
- {
- 	struct hnae_handle *h = priv->ae_handle;
-@@ -1219,7 +1235,7 @@ static int hns_nic_init_irq(struct hns_nic_priv *priv)
- 		if (ret) {
- 			netdev_err(priv->netdev, "request irq(%d) fail\n",
- 				   rd->ring->irq);
--			return ret;
-+			goto out_free_irq;
- 		}
- 		disable_irq(rd->ring->irq);
- 		rd->ring->irq_init_flag = RCB_IRQ_INITED;
-@@ -1229,6 +1245,10 @@ static int hns_nic_init_irq(struct hns_nic_priv *priv)
- 	hns_set_irq_affinity(priv);
- 
- 	return 0;
-+
-+out_free_irq:
-+	hns_nic_free_irq(h->q_num, priv);
-+	return ret;
- }
- 
- static int hns_nic_net_up(struct net_device *ndev)
-@@ -1276,6 +1296,7 @@ static int hns_nic_net_up(struct net_device *ndev)
- 	for (j = i - 1; j >= 0; j--)
- 		hns_nic_ring_close(ndev, j);
- 
-+	hns_nic_free_irq(h->q_num, priv);
- 	set_bit(NIC_STATE_DOWN, &priv->state);
- 
- 	return ret;
+ 	switch (priv->enet_ver) {
+ 	case AE_VERSION_2:
+-		ndev->features |= NETIF_F_TSO | NETIF_F_TSO6;
++		ndev->features |= NETIF_F_TSO | NETIF_F_TSO6 | NETIF_F_NTUPLE;
+ 		ndev->hw_features |= NETIF_F_IP_CSUM | NETIF_F_IPV6_CSUM |
+ 			NETIF_F_RXCSUM | NETIF_F_SG | NETIF_F_GSO |
+ 			NETIF_F_GRO | NETIF_F_TSO | NETIF_F_TSO6;
 -- 
 2.19.1
 
