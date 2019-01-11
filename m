@@ -2,109 +2,157 @@ Return-Path: <SRS0=uvhX=PT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A1DD1C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 09:41:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 47878C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 09:42:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 748142146F
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 09:41:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547199705;
-	bh=7TGE3evPZLQePyLo3TSVKssHkb9tgorZJiv28AxUe1k=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=sUNQZBhZISjxO1wSZ3UheZ1Kh/eKcVByz7wk9M3xnrEIKn/SsOTQMksuUPepQk3pv
-	 MS70OPeM1ki9mNckcLBhFSmKmkG1r8EJf7iiMh0ly8dHR8t2sTKA0IH9TkBQg2QrhY
-	 mNWe3g1ivQUByxP4N9+qXdkJVvgJI48J3OU0jeuM=
+	by mail.kernel.org (Postfix) with ESMTP id 22E8A20874
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 09:42:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730347AbfAKJlo (ORCPT
+        id S1730502AbfAKJme (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 11 Jan 2019 04:41:44 -0500
-Received: from mail-oi1-f196.google.com ([209.85.167.196]:46970 "EHLO
-        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729792AbfAKJln (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Jan 2019 04:41:43 -0500
-Received: by mail-oi1-f196.google.com with SMTP id x202so11688631oif.13
-        for <linux-kernel@vger.kernel.org>; Fri, 11 Jan 2019 01:41:42 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=lq5kxItlnpnFbfKz4N5S5DXe16Fa09lPVZ+gHUIVQH4=;
-        b=qLN0HEc/SR38h7wnPvU7nzRK4hD3dXA8+4fX9Hr6An1C0G/Z0FrMAY0020gRbpzbST
-         yUwOV3Kj5dJQXpCW0xxic387fxfRDVWoMVFa062VzLTFxAlW6T/ThBR0+dUeliugRaDN
-         w1n0gpGNv2cxxzxW4qQ9rCUA3z0FRk5RzZJXNLj0SEo7WJl1zHm/AZ9G8GKKrS5Oamit
-         JkzGbH2G+hRWswcWheEHRnHuYWO7vYDAcpmI7gXHkVlDuK0cj2UVd907VKOipZxopLSh
-         jr/ntrHb9eaPxVkpZHs9uv9VDGGpI77qpwQlk1TtGLwe0nsE8W6fwsBSUN0XNXGBZ/lI
-         vQgQ==
-X-Gm-Message-State: AJcUukfbapboeWszevYElZUjcbENQHr0CZEAaMKX7+1nrarMdQL5ncN4
-        mwO4RvLmoWC9sBANpEY3IbB6pgwj9s4b8cCm+oPasw==
-X-Google-Smtp-Source: ALg8bN7WN6InQu+GEgdjDknIBEwAQMOcMxBtRyBgo8GHQNnxyS0fIoCurmwPZLHW2hLaR++Vt2UPA44PmCBsqW2Jf5Q=
-X-Received: by 2002:aca:6c8b:: with SMTP id h133mr8866617oic.33.1547199702255;
- Fri, 11 Jan 2019 01:41:42 -0800 (PST)
+        Fri, 11 Jan 2019 04:42:34 -0500
+Received: from foss.arm.com ([217.140.101.70]:51704 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729413AbfAKJmd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 Jan 2019 04:42:33 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id DB7BEEBD;
+        Fri, 11 Jan 2019 01:42:32 -0800 (PST)
+Received: from [10.1.196.93] (en101.cambridge.arm.com [10.1.196.93])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 372233F694;
+        Fri, 11 Jan 2019 01:42:31 -0800 (PST)
+Subject: Re: [PATCH v3] irqchip: gicv3-its: Use NUMA aware memory allocation
+ for ITS tables
+To:     shameerali.kolothum.thodi@huawei.com, marc.zyngier@arm.com,
+        linux-kernel@vger.kernel.org
+Cc:     shankerd@codeaurora.org, ganapatrao.kulkarni@cavium.com,
+        Robert.Richter@cavium.com, guohanjun@huawei.com,
+        john.garry@huawei.com, linux-arm-kernel@lists.infradead.org,
+        linuxarm@huawei.com
+References: <20181213105924.30384-1-shameerali.kolothum.thodi@huawei.com>
+From:   Suzuki K Poulose <suzuki.poulose@arm.com>
+Message-ID: <9046beb6-36e7-8890-5d09-fc03b6d2728c@arm.com>
+Date:   Fri, 11 Jan 2019 09:42:29 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-References: <20181221162341.9847-1-jbrunet@baylibre.com>
-In-Reply-To: <20181221162341.9847-1-jbrunet@baylibre.com>
-From:   "Rafael J. Wysocki" <rafael@kernel.org>
-Date:   Fri, 11 Jan 2019 10:41:30 +0100
-Message-ID: <CAJZ5v0jaGwxcLf81R0eeLmoaJbUpPr9g6OzN38hWPfyX4C_6Dw@mail.gmail.com>
-Subject: Re: [PATCH] driver core: silence device link messages unless debugging
-To:     Jerome Brunet <jbrunet@baylibre.com>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Rafael J . Wysocki" <rafael@kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-amlogic@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20181213105924.30384-1-shameerali.kolothum.thodi@huawei.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Dec 21, 2018 at 5:23 PM Jerome Brunet <jbrunet@baylibre.com> wrote:
->
-> On platforms making a fair use of regulators, the dev_info() messages
-> coming from the device link function are a bit too verbose. The amount
-> of message will increase further with the clock framework joining the
-> device link party.
->
-> These messages looks valuable for people debugging device link related
-> issues, so dev_dbg() looks more appropriate than dev_info().
->
-> Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+Hi Shameer,
 
-Reviewed-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-
+On 13/12/2018 10:59, Shameer Kolothum wrote:
+> From: Shanker Donthineni <shankerd@codeaurora.org>
+> 
+> The NUMA node information is visible to ITS driver but not being used
+> other than handling hardware errata. ITS/GICR hardware accesses to the
+> local NUMA node is usually quicker than the remote NUMA node. How slow
+> the remote NUMA accesses are depends on the implementation details.
+> 
+> This patch allocates memory for ITS management tables and command
+> queue from the corresponding NUMA node using the appropriate NUMA
+> aware functions. This change improves the performance of the ITS
+> tables read latency on systems where it has more than one ITS block,
+> and with the slower inter node accesses.
+> 
+> Apache Web server benchmarking using ab tool on a HiSilicon D06
+> board with multiple numa mem nodes shows Time per request and
+> Transfer rate improvements of ~3.6% with this patch.
+> 
+> Signed-off-by: Shanker Donthineni <shankerd@codeaurora.org>
+> Signed-off-by: Hanjun Guo <guohanjun@huawei.com>
+> Signed-off-by: Shameer Kolothum <shameerali.kolothum.thodi@huawei.com>
 > ---
->  drivers/base/core.c | 6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
->
-> diff --git a/drivers/base/core.c b/drivers/base/core.c
-> index 04bbcd779e11..8d330f921ad7 100644
-> --- a/drivers/base/core.c
-> +++ b/drivers/base/core.c
-> @@ -301,7 +301,7 @@ struct device_link *device_link_add(struct device *consumer,
->         list_add_tail_rcu(&link->s_node, &supplier->links.consumers);
->         list_add_tail_rcu(&link->c_node, &consumer->links.suppliers);
->
-> -       dev_info(consumer, "Linked as a consumer to %s\n", dev_name(supplier));
-> +       dev_dbg(consumer, "Linked as a consumer to %s\n", dev_name(supplier));
->
->   out:
->         device_pm_unlock();
-> @@ -327,8 +327,8 @@ static void __device_link_del(struct kref *kref)
->  {
->         struct device_link *link = container_of(kref, struct device_link, kref);
->
-> -       dev_info(link->consumer, "Dropping the link to %s\n",
-> -                dev_name(link->supplier));
-> +       dev_dbg(link->consumer, "Dropping the link to %s\n",
-> +               dev_name(link->supplier));
->
->         if (link->flags & DL_FLAG_PM_RUNTIME)
->                 pm_runtime_drop_link(link->consumer);
-> --
-> 2.19.2
->
+> 
+> This is to revive the patch originally sent by Shanker[1] and
+> to back it up with a benchmark test. Any further testing of
+> this is most welcome.
+> 
+> v2-->v3
+>   -Addressed comments to use page_address().
+>   -Added Benchmark results to commit log.
+>   -Removed T-by from Ganapatrao for now.
+> 
+> v1-->v2
+>   -Edited commit text.
+>   -Added Ganapatrao's tested-by.
+> 
+> Benchmark test details:
+> --------------------------------
+> Test Setup:
+> -D06 with dimm on node 0(Sock#0) and 3 (Sock#1).
+> -ITS belongs to numa node 0.
+> -Filesystem mounted on a PCIe NVMe based disk.
+> -Apache server installed on D06.
+> -Running ab benchmark test in concurrency mode from a remote m/c
+>   connected to D06 via  hns3(PCIe) n/w port.
+>   "ab -k -c 750 -n 2000000 http://10.202.225.188/"
+> 
+> Test results are avg. of 15 runs.
+> 
+> For 4.20-rc1  Kernel,
+> ----------------------------
+> Time per request(mean, concurrent)  = 0.02753[ms]
+> Transfer Rate = 416501[Kbytes/sec]
+> 
+> For 4.20-rc1 +  this patch,
+> ----------------------------------
+> Time per request(mean, concurrent)  = 0.02653[ms]
+> Transfer Rate = 431954[Kbytes/sec]
+> 
+> % improvement ~3.6%
+> 
+> vmstat shows around 170K-200K interrupts per second.
+> 
+> ~# vmstat 1 -w
+> procs -----------------------memory-- -  -system--
+>   r  b         swpd         free            in
+>   5  0            0     30166724          102794
+>   9  0            0     30141828          171148
+>   5  0            0     30150160          207185
+> 13  0            0     30145924          175691
+> 15  0            0     30140792          145250
+> 13  0            0     30135556          201879
+> 13  0            0     30134864          192391
+> 10  0            0     30133632          168880
+> ....
+> 
+> [1] https://patchwork.kernel.org/patch/9833339/
+> 
+>   drivers/irqchip/irq-gic-v3-its.c | 20 ++++++++++++--------
+>   1 file changed, 12 insertions(+), 8 deletions(-)
+> 
+> diff --git a/drivers/irqchip/irq-gic-v3-its.c b/drivers/irqchip/irq-gic-v3-its.c
+> index db20e99..ab01061 100644
+> --- a/drivers/irqchip/irq-gic-v3-its.c
+> +++ b/drivers/irqchip/irq-gic-v3-its.c
+> @@ -1749,7 +1749,8 @@ static int its_setup_baser(struct its_node *its, struct its_baser *baser,
+>   		order = get_order(GITS_BASER_PAGES_MAX * psz);
+>   	}
+>   
+> -	base = (void *)__get_free_pages(GFP_KERNEL | __GFP_ZERO, order);
+> +	base = (void *)page_address(alloc_pages_node(its->numa_node,
+> +				    GFP_KERNEL | __GFP_ZERO, order));
+
+If alloc_pages_node() fails, the page_address() could crash the system.
+
+> -	its->cmd_base = (void *)__get_free_pages(GFP_KERNEL | __GFP_ZERO,
+> -						get_order(ITS_CMD_QUEUE_SZ));
+> +	its->cmd_base = (void *)page_address(alloc_pages_node(its->numa_node,
+> +					     GFP_KERNEL | __GFP_ZERO,
+> +					     get_order(ITS_CMD_QUEUE_SZ)));
+
+Similarly here. We may want to handle it properly.
+
+Cheers
+Suzuki
