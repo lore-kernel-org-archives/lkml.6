@@ -4,48 +4,50 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-10.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 57C4CC43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:43:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 08E52C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:44:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 29D7821841
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:43:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CEC1121848
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:44:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547217837;
-	bh=I5T0Zb/ZNJzGUgTjEGRCOozK+54Jmx3qq2UcA454X+0=;
+	s=default; t=1547217840;
+	bh=WLmvW3qN7xdyUvKG5WICrpKzdk6yTactIH1S9rStr2o=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=x4rVpTLljKEo6fVH9Bjd4f3JnwKmU+AXcGtyauifJBo3VceJt5TaUF3/fFCN0SJV+
-	 sSMG940rFg9xSVzLN2Kb5slRnzqLlHoQzr2/425zob/jiYbv1n7FqZ3qdD/NgJKj+Z
-	 hJGaHymS5lRi0rIwu47jTf6oh2oE6UgZ+53Aa2tE=
+	b=O4szSuv7X7FWsHBI/3CxBosm3eHxtvcSkU8ukqTmfCzTFe3T2gDvOzmQ5cu72cpM5
+	 oY1dkAGiF8y1ORYlFdAu2QP0vqsUX4arT+9Tm8SyuNHMGsm81gUhRNDQy25EPZ148E
+	 rrwUKr26FkCnPZj1ulnJdIC7hZPokyFw1rEjroiE=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404510AbfAKOn4 (ORCPT
+        id S2404521AbfAKOn7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 11 Jan 2019 09:43:56 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36868 "EHLO mail.kernel.org"
+        Fri, 11 Jan 2019 09:43:59 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36900 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404489AbfAKOnz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Jan 2019 09:43:55 -0500
+        id S2404511AbfAKOn5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 Jan 2019 09:43:57 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EACD020872;
-        Fri, 11 Jan 2019 14:43:53 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6E5B02063F;
+        Fri, 11 Jan 2019 14:43:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547217834;
-        bh=I5T0Zb/ZNJzGUgTjEGRCOozK+54Jmx3qq2UcA454X+0=;
+        s=default; t=1547217836;
+        bh=WLmvW3qN7xdyUvKG5WICrpKzdk6yTactIH1S9rStr2o=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=1dcoW7Rw77AeuXWWS4l9B/o0oSSQQ3IURbkjc/RQjoF0u/3Ftuxgay/lHPzxKj2Yf
-         UOybuAaPbx7XJd77+ex72d/rD5ktNYqEKyj1h8YKN5Mah6OSXXc/8Mi86wP3P0MSF8
-         ZqSUKbmoYUhJhi1Mnu8t9smtYuL55ZmMPrZaD/rs=
+        b=0tqdbLcYudS/Nbe3/wdVojseuDLSK+rxUVDxPgesp2S8C5mbVTtGf1tYn26Ew7Qdl
+         0EkNXfChdkLsvQjNS3sfeu4VrkKLqWnU2rj9/FGX+drcAlNJT3OG/D2gGtFnjohqdR
+         2QGrlpVGFW+7mSqrLudNTjT+909T8RYBk37erd4s=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Subject: [PATCH 4.20 58/65] intel_th: msu: Fix an off-by-one in attribute store
-Date:   Fri, 11 Jan 2019 15:15:44 +0100
-Message-Id: <20190111131103.899942834@linuxfoundation.org>
+        stable@vger.kernel.org, Lubomir Rintel <lkundrak@v3.sk>,
+        Pavel Machek <pavel@ucw.cz>,
+        Sebastian Reichel <sebastian.reichel@collabora.com>
+Subject: [PATCH 4.20 59/65] power: supply: olpc_battery: correct the temperature units
+Date:   Fri, 11 Jan 2019 15:15:45 +0100
+Message-Id: <20190111131104.003405397@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190111131055.331350141@linuxfoundation.org>
 References: <20190111131055.331350141@linuxfoundation.org>
@@ -64,52 +66,51 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+From: Lubomir Rintel <lkundrak@v3.sk>
 
-commit ec5b5ad6e272d8d6b92d1007f79574919862a2d2 upstream.
+commit ed54ffbe554f0902689fd6d1712bbacbacd11376 upstream.
 
-The 'nr_pages' attribute of the 'msc' subdevices parses a comma-separated
-list of window sizes, passed from userspace. However, there is a bug in
-the string parsing logic wherein it doesn't exclude the comma character
-from the range of characters as it consumes them. This leads to an
-out-of-bounds access given a sufficiently long list. For example:
+According to [1] and [2], the temperature values are in tenths of degree
+Celsius. Exposing the Celsius value makes the battery appear on fire:
 
-> # echo 8,8,8,8 > /sys/bus/intel_th/devices/0-msc0/nr_pages
-> ==================================================================
-> BUG: KASAN: slab-out-of-bounds in memchr+0x1e/0x40
-> Read of size 1 at addr ffff8803ffcebcd1 by task sh/825
->
-> CPU: 3 PID: 825 Comm: npktest.sh Tainted: G        W         4.20.0-rc1+
-> Call Trace:
->  dump_stack+0x7c/0xc0
->  print_address_description+0x6c/0x23c
->  ? memchr+0x1e/0x40
->  kasan_report.cold.5+0x241/0x308
->  memchr+0x1e/0x40
->  nr_pages_store+0x203/0xd00 [intel_th_msu]
+  $ upower -i /org/freedesktop/UPower/devices/battery_olpc_battery
+  ...
+      temperature:         236.9 degrees C
 
-Fix this by accounting for the comma character.
+Tested on OLPC XO-1 and OLPC XO-1.75 laptops.
 
-Signed-off-by: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Fixes: ba82664c134ef ("intel_th: Add Memory Storage Unit driver")
-Cc: stable@vger.kernel.org # v4.4+
+[1] include/linux/power_supply.h
+[2] Documentation/power/power_supply_class.txt
+
+Fixes: fb972873a767 ("[BATTERY] One Laptop Per Child power/battery driver")
+Cc: stable@vger.kernel.org
+Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
+Acked-by: Pavel Machek <pavel@ucw.cz>
+Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/hwtracing/intel_th/msu.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/power/supply/olpc_battery.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/drivers/hwtracing/intel_th/msu.c
-+++ b/drivers/hwtracing/intel_th/msu.c
-@@ -1423,7 +1423,8 @@ nr_pages_store(struct device *dev, struc
- 		if (!end)
- 			break;
+--- a/drivers/power/supply/olpc_battery.c
++++ b/drivers/power/supply/olpc_battery.c
+@@ -428,14 +428,14 @@ static int olpc_bat_get_property(struct
+ 		if (ret)
+ 			return ret;
  
--		len -= end - p;
-+		/* consume the number and the following comma, hence +1 */
-+		len -= end - p + 1;
- 		p = end + 1;
- 	} while (len);
+-		val->intval = (s16)be16_to_cpu(ec_word) * 100 / 256;
++		val->intval = (s16)be16_to_cpu(ec_word) * 10 / 256;
+ 		break;
+ 	case POWER_SUPPLY_PROP_TEMP_AMBIENT:
+ 		ret = olpc_ec_cmd(EC_AMB_TEMP, NULL, 0, (void *)&ec_word, 2);
+ 		if (ret)
+ 			return ret;
  
+-		val->intval = (int)be16_to_cpu(ec_word) * 100 / 256;
++		val->intval = (int)be16_to_cpu(ec_word) * 10 / 256;
+ 		break;
+ 	case POWER_SUPPLY_PROP_CHARGE_COUNTER:
+ 		ret = olpc_ec_cmd(EC_BAT_ACR, NULL, 0, (void *)&ec_word, 2);
 
 
