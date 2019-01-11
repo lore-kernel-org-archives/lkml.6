@@ -7,49 +7,47 @@ X-Spam-Status: No, score=-13.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 33C03C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:32:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 040AFC43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:32:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F2E2C21841
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:32:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C79192133F
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:32:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547217133;
-	bh=fe9ToFOJnoHtGMoNsQnwoZ3s1ogkR3H2at4gKfr34X4=;
+	s=default; t=1547217136;
+	bh=Vi3ttY5v0apsHZ+6g+znH90msY3GZnPlnenDWzmWqbE=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=bs4C/GZmPaR1apq0HR3G3skX3ZUkN/1PBGgdjRX6TFWRIWnf9bDmpmOocqO4XrYsC
-	 5P88IWyf71R85FJNLF4h/rdw9/r5GK2oQdMU8jPmgZvq+aZ4cpmDmoOsu7UZwRMjOa
-	 5YDpxAUfj+TU5LxoRtB+cckq/BhKvwnr1Bryihp0=
+	b=irytApY566RIXfn35uUcCarY2feEQmsAS+3+Hi82cLxvg5PggHOBBQj7tMUWMl/a4
+	 0SndZSIW/EHVEAYu6aD7Q/RqjAgVxnWbambXiixKGmaDBY/PC0s50wJjtTofazRdOm
+	 VKSW3OMdo7KQr5/dlqX1WERbV5Yj5tLRmj+G8/tM=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389368AbfAKOcL (ORCPT
+        id S2388667AbfAKOcP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 11 Jan 2019 09:32:11 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52056 "EHLO mail.kernel.org"
+        Fri, 11 Jan 2019 09:32:15 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52104 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387951AbfAKOcI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Jan 2019 09:32:08 -0500
+        id S2389325AbfAKOcL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 Jan 2019 09:32:11 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E1EF62063F;
-        Fri, 11 Jan 2019 14:32:06 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C77822063F;
+        Fri, 11 Jan 2019 14:32:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547217127;
-        bh=fe9ToFOJnoHtGMoNsQnwoZ3s1ogkR3H2at4gKfr34X4=;
+        s=default; t=1547217130;
+        bh=Vi3ttY5v0apsHZ+6g+znH90msY3GZnPlnenDWzmWqbE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=HOxLlwrIPqg50vMok9mQck3aHdd9jwuwjX3ptDhXY1+eDrZHxtpFCeFffFjIaoe1g
-         NnU+GFoicFoJgkTu5W25TV71zXUJfRzZRBup7monXRx1TtZarDv2PqsxB8vLb5HPLF
-         F72681U4AOV+oq+QUVmOTuX1Zd/e5aW94H/TF2N0=
+        b=vMUCEU0tTfdG9RgGVAm7dmLGH3ga+w7PBdkV55JVsiLtR6hybt4O0+yOaPx6A2Bnj
+         SZwgVNzTFDEAbPHr3zYZxH1jR70mnfpagFV2xAqglIMxKalhiMtR1LwcFC0sFkNS3a
+         oa6VUnrwV5LNOSQ8P7M5KQtlZLoc2AMWLQWiJ1Yw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Sudarsana Reddy Kalluru <Sudarsana.Kalluru@cavium.com>,
-        Ariel Elior <ariel.elior@cavium.com>,
+        stable@vger.kernel.org, Kangjie Lu <kjlu@umn.edu>,
         "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 025/105] bnx2x: Send update-svid ramrod with retry/poll flags enabled
-Date:   Fri, 11 Jan 2019 15:13:56 +0100
-Message-Id: <20190111131105.504194974@linuxfoundation.org>
+Subject: [PATCH 4.14 052/105] net: netxen: fix a missing check and an uninitialized use
+Date:   Fri, 11 Jan 2019 15:14:23 +0100
+Message-Id: <20190111131107.423652118@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190111131102.899065735@linuxfoundation.org>
 References: <20190111131102.899065735@linuxfoundation.org>
@@ -68,70 +66,34 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 9061193c4ee065d3240fde06767c2e06ec61decc ]
+[ Upstream commit d134e486e831defd26130770181f01dfc6195f7d ]
 
-Driver sends update-SVID ramrod in the MFW notification path.
-If there is a pending ramrod, driver doesn't retry the command
-and storm firmware will never be updated with the SVID value.
-The patch adds changes to send update-svid ramrod in process context with
-retry/poll flags set.
+When netxen_rom_fast_read() fails, "bios" is left uninitialized and may
+contain random value, thus should not be used.
 
-Signed-off-by: Sudarsana Reddy Kalluru <Sudarsana.Kalluru@cavium.com>
-Signed-off-by: Ariel Elior <ariel.elior@cavium.com>
+The fix ensures that if netxen_rom_fast_read() fails, we return "-EIO".
+
+Signed-off-by: Kangjie Lu <kjlu@umn.edu>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/broadcom/bnx2x/bnx2x.h      |  1 +
- drivers/net/ethernet/broadcom/bnx2x/bnx2x_main.c | 10 +++++++++-
- 2 files changed, 10 insertions(+), 1 deletion(-)
+ drivers/net/ethernet/qlogic/netxen/netxen_nic_init.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/net/ethernet/broadcom/bnx2x/bnx2x.h b/drivers/net/ethernet/broadcom/bnx2x/bnx2x.h
-index 1b7f4342dab9..d17a5c911524 100644
---- a/drivers/net/ethernet/broadcom/bnx2x/bnx2x.h
-+++ b/drivers/net/ethernet/broadcom/bnx2x/bnx2x.h
-@@ -1278,6 +1278,7 @@ enum sp_rtnl_flag {
- 	BNX2X_SP_RTNL_TX_STOP,
- 	BNX2X_SP_RTNL_GET_DRV_VERSION,
- 	BNX2X_SP_RTNL_CHANGE_UDP_PORT,
-+	BNX2X_SP_RTNL_UPDATE_SVID,
- };
- 
- enum bnx2x_iov_flag {
-diff --git a/drivers/net/ethernet/broadcom/bnx2x/bnx2x_main.c b/drivers/net/ethernet/broadcom/bnx2x/bnx2x_main.c
-index 433a7a37575d..85a320e5c0a8 100644
---- a/drivers/net/ethernet/broadcom/bnx2x/bnx2x_main.c
-+++ b/drivers/net/ethernet/broadcom/bnx2x/bnx2x_main.c
-@@ -2925,6 +2925,10 @@ static void bnx2x_handle_update_svid_cmd(struct bnx2x *bp)
- 	func_params.f_obj = &bp->func_obj;
- 	func_params.cmd = BNX2X_F_CMD_SWITCH_UPDATE;
- 
-+	/* Prepare parameters for function state transitions */
-+	__set_bit(RAMROD_COMP_WAIT, &func_params.ramrod_flags);
-+	__set_bit(RAMROD_RETRY, &func_params.ramrod_flags);
-+
- 	if (IS_MF_UFP(bp) || IS_MF_BD(bp)) {
- 		int func = BP_ABS_FUNC(bp);
- 		u32 val;
-@@ -4301,7 +4305,8 @@ static void bnx2x_attn_int_deasserted3(struct bnx2x *bp, u32 attn)
- 				bnx2x_handle_eee_event(bp);
- 
- 			if (val & DRV_STATUS_OEM_UPDATE_SVID)
--				bnx2x_handle_update_svid_cmd(bp);
-+				bnx2x_schedule_sp_rtnl(bp,
-+					BNX2X_SP_RTNL_UPDATE_SVID, 0);
- 
- 			if (bp->link_vars.periodic_flags &
- 			    PERIODIC_FLAGS_LINK_EVENT) {
-@@ -10369,6 +10374,9 @@ static void bnx2x_sp_rtnl_task(struct work_struct *work)
- 			       &bp->sp_rtnl_state))
- 		bnx2x_update_mng_version(bp);
- 
-+	if (test_and_clear_bit(BNX2X_SP_RTNL_UPDATE_SVID, &bp->sp_rtnl_state))
-+		bnx2x_handle_update_svid_cmd(bp);
-+
- 	if (test_and_clear_bit(BNX2X_SP_RTNL_CHANGE_UDP_PORT,
- 			       &bp->sp_rtnl_state)) {
- 		if (bnx2x_udp_port_update(bp)) {
+diff --git a/drivers/net/ethernet/qlogic/netxen/netxen_nic_init.c b/drivers/net/ethernet/qlogic/netxen/netxen_nic_init.c
+index 3dd973475125..4b444351ab7d 100644
+--- a/drivers/net/ethernet/qlogic/netxen/netxen_nic_init.c
++++ b/drivers/net/ethernet/qlogic/netxen/netxen_nic_init.c
+@@ -1125,7 +1125,8 @@ netxen_validate_firmware(struct netxen_adapter *adapter)
+ 		return -EINVAL;
+ 	}
+ 	val = nx_get_bios_version(adapter);
+-	netxen_rom_fast_read(adapter, NX_BIOS_VERSION_OFFSET, (int *)&bios);
++	if (netxen_rom_fast_read(adapter, NX_BIOS_VERSION_OFFSET, (int *)&bios))
++		return -EIO;
+ 	if ((__force u32)val != bios) {
+ 		dev_err(&pdev->dev, "%s: firmware bios is incompatible\n",
+ 				fw_name[fw_type]);
 -- 
 2.19.1
 
