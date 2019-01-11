@@ -2,106 +2,67 @@ Return-Path: <SRS0=uvhX=PT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6474BC43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 05:39:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C5B2C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 05:40:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3F3E520675
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 05:39:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 33010217F9
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 05:40:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730872AbfAKFjH (ORCPT
+        id S1728908AbfAKFkE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 11 Jan 2019 00:39:07 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:50878 "EHLO mx1.redhat.com"
+        Fri, 11 Jan 2019 00:40:04 -0500
+Received: from mga14.intel.com ([192.55.52.115]:1062 "EHLO mga14.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729462AbfAKFh5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Jan 2019 00:37:57 -0500
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 6D87F80F9F;
-        Fri, 11 Jan 2019 05:37:57 +0000 (UTC)
-Received: from sirius.home.kraxel.org (ovpn-116-203.ams2.redhat.com [10.36.116.203])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 8BA067F1B6;
-        Fri, 11 Jan 2019 05:37:53 +0000 (UTC)
-Received: by sirius.home.kraxel.org (Postfix, from userid 1000)
-        id D32FE5EE4; Fri, 11 Jan 2019 06:37:52 +0100 (CET)
-From:   Gerd Hoffmann <kraxel@redhat.com>
-To:     dri-devel@lists.freedesktop.org, David Airlie <airlied@redhat.com>
-Cc:     andr2000@gmail.com, noralf@tronnes.org,
-        Gerd Hoffmann <kraxel@redhat.com>,
-        David Airlie <airlied@linux.ie>,
-        virtualization@lists.linux-foundation.org (open list:DRM DRIVER FOR
-        BOCHS VIRTUAL GPU), linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH v4 01/16] drm/bochs: encoder cleanup
-Date:   Fri, 11 Jan 2019 06:37:37 +0100
-Message-Id: <20190111053752.4004-2-kraxel@redhat.com>
-In-Reply-To: <20190111053752.4004-1-kraxel@redhat.com>
-References: <20190111053752.4004-1-kraxel@redhat.com>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.27]); Fri, 11 Jan 2019 05:37:57 +0000 (UTC)
+        id S1725793AbfAKFkE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 Jan 2019 00:40:04 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Jan 2019 21:40:03 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,464,1539673200"; 
+   d="scan'208";a="126797129"
+Received: from lahna.fi.intel.com (HELO lahna) ([10.237.72.157])
+  by orsmga001.jf.intel.com with SMTP; 10 Jan 2019 21:39:59 -0800
+Received: by lahna (sSMTP sendmail emulation); Fri, 11 Jan 2019 07:39:58 +0200
+Date:   Fri, 11 Jan 2019 07:39:58 +0200
+From:   Mika Westerberg <mika.westerberg@linux.intel.com>
+To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc:     Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        linux-gpio@vger.kernel.org,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        linux-acpi@vger.kernel.org,
+        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
+        Liam Girdwood <liam.r.girdwood@linux.intel.com>,
+        Jie Yang <yang.jie@linux.intel.com>,
+        Mark Brown <broonie@kernel.org>, alsa-devel@alsa-project.org,
+        Hans de Goede <hdegoede@redhat.com>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [RFT][PATCH v2] gpiolib: acpi: Introduce
+ ACPI_GPIO_QUIRK_ONLY_GPIOIO
+Message-ID: <20190111053958.GR14577@lahna.fi.intel.com>
+References: <20190109105245.25954-1-andriy.shevchenko@linux.intel.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190109105245.25954-1-andriy.shevchenko@linux.intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Most unused callbacks can be NULL pointers these days.
-Drop a bunch of empty encoder callbacks.
+On Wed, Jan 09, 2019 at 12:52:45PM +0200, Andy Shevchenko wrote:
+> New quirk enforces search for GPIO based on its type,
+> i.e. iterate over GpioIo resources only.
+> 
+> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
-Signed-off-by: Gerd Hoffmann <kraxel@redhat.com>
-Reviewed-by: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
-Acked-by: Daniel Vetter <daniel.vetter@ffwll.ch>
----
- drivers/gpu/drm/bochs/bochs_kms.c | 26 --------------------------
- 1 file changed, 26 deletions(-)
-
-diff --git a/drivers/gpu/drm/bochs/bochs_kms.c b/drivers/gpu/drm/bochs/bochs_kms.c
-index f87c284dd9..c8ce54498d 100644
---- a/drivers/gpu/drm/bochs/bochs_kms.c
-+++ b/drivers/gpu/drm/bochs/bochs_kms.c
-@@ -170,31 +170,6 @@ static void bochs_crtc_init(struct drm_device *dev)
- 	drm_crtc_helper_add(crtc, &bochs_helper_funcs);
- }
- 
--static void bochs_encoder_mode_set(struct drm_encoder *encoder,
--				   struct drm_display_mode *mode,
--				   struct drm_display_mode *adjusted_mode)
--{
--}
--
--static void bochs_encoder_dpms(struct drm_encoder *encoder, int state)
--{
--}
--
--static void bochs_encoder_prepare(struct drm_encoder *encoder)
--{
--}
--
--static void bochs_encoder_commit(struct drm_encoder *encoder)
--{
--}
--
--static const struct drm_encoder_helper_funcs bochs_encoder_helper_funcs = {
--	.dpms = bochs_encoder_dpms,
--	.mode_set = bochs_encoder_mode_set,
--	.prepare = bochs_encoder_prepare,
--	.commit = bochs_encoder_commit,
--};
--
- static const struct drm_encoder_funcs bochs_encoder_encoder_funcs = {
- 	.destroy = drm_encoder_cleanup,
- };
-@@ -207,7 +182,6 @@ static void bochs_encoder_init(struct drm_device *dev)
- 	encoder->possible_crtcs = 0x1;
- 	drm_encoder_init(dev, encoder, &bochs_encoder_encoder_funcs,
- 			 DRM_MODE_ENCODER_DAC, NULL);
--	drm_encoder_helper_add(encoder, &bochs_encoder_helper_funcs);
- }
- 
- 
--- 
-2.9.3
-
+Acked-by: Mika Westerberg <mika.westerberg@linux.intel.com>
