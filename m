@@ -2,97 +2,122 @@ Return-Path: <SRS0=uvhX=PT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+X-Spam-Status: No, score=-12.0 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C923C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 15:15:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 59F4EC43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 15:16:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5613A2177B
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 15:15:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 327F52177B
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 15:16:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387445AbfAKPPc (ORCPT
+        id S2387561AbfAKPQ1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 11 Jan 2019 10:15:32 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:54650 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731231AbfAKPPc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Jan 2019 10:15:32 -0500
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 09FAFC0B2007;
-        Fri, 11 Jan 2019 15:15:31 +0000 (UTC)
-Received: from treble (ovpn-122-231.rdu2.redhat.com [10.10.122.231])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id DACFE101962B;
-        Fri, 11 Jan 2019 15:15:27 +0000 (UTC)
-Date:   Fri, 11 Jan 2019 09:15:25 -0600
-From:   Josh Poimboeuf <jpoimboe@redhat.com>
-To:     Nadav Amit <namit@vmware.com>
-Cc:     Andy Lutomirski <luto@kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        the arch/x86 maintainers <x86@kernel.org>,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Jason Baron <jbaron@akamai.com>, Jiri Kosina <jkosina@suse.cz>,
-        David Laight <David.Laight@aculab.com>,
-        Borislav Petkov <bp@alien8.de>,
-        Julia Cartwright <julia@ni.com>, Jessica Yu <jeyu@kernel.org>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        Edward Cree <ecree@solarflare.com>,
-        Daniel Bristot de Oliveira <bristot@redhat.com>
-Subject: Re: [PATCH v3 0/6] Static calls
-Message-ID: <20190111151525.tf7lhuycyyvjjxez@treble>
-References: <cover.1547073843.git.jpoimboe@redhat.com>
- <20190110203023.GL2861@worktop.programming.kicks-ass.net>
- <20190110205226.iburt6mrddsxnjpk@treble>
- <CAHk-=whR7LzKcuB9Z2km1T25DUkJcbE9rNhCzApAPADbDqMhmQ@mail.gmail.com>
- <CALCETrWBwTVHWXahVXMMBL4QA1f+YdKgv1XANXPsk86FjFFH2Q@mail.gmail.com>
- <B374297A-8298-4CED-8EC0-6A39BDBA5F05@vmware.com>
+        Fri, 11 Jan 2019 10:16:27 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:53515 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731231AbfAKPQ0 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 Jan 2019 10:16:26 -0500
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x0BFFxcC704922
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+        Fri, 11 Jan 2019 07:15:59 -0800
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x0BFFxlx704919;
+        Fri, 11 Jan 2019 07:15:59 -0800
+Date:   Fri, 11 Jan 2019 07:15:59 -0800
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Lianbo Jiang <tipbot@zytor.com>
+Message-ID: <tip-65f750e5457aef9a8085a99d613fea0430303e93@git.kernel.org>
+Cc:     dyoung@redhat.com, linux-kernel@vger.kernel.org, mingo@kernel.org,
+        hpa@zytor.com, tglx@linutronix.de, thomas.lendacky@amd.com,
+        bhe@redhat.com, mingo@redhat.com, bp@suse.de, x86@kernel.org,
+        akpm@linux-foundation.org, lijiang@redhat.com
+Reply-To: linux-kernel@vger.kernel.org, mingo@kernel.org,
+          dyoung@redhat.com, thomas.lendacky@amd.com, bhe@redhat.com,
+          hpa@zytor.com, tglx@linutronix.de, mingo@redhat.com,
+          akpm@linux-foundation.org, lijiang@redhat.com, bp@suse.de,
+          x86@kernel.org
+In-Reply-To: <20190110121944.6050-3-lijiang@redhat.com>
+References: <20190110121944.6050-3-lijiang@redhat.com>
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:x86/kdump] x86/kdump: Export the SME mask to vmcoreinfo
+Git-Commit-ID: 65f750e5457aef9a8085a99d613fea0430303e93
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <B374297A-8298-4CED-8EC0-6A39BDBA5F05@vmware.com>
-User-Agent: NeoMutt/20180716
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.31]); Fri, 11 Jan 2019 15:15:31 +0000 (UTC)
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jan 11, 2019 at 01:47:01AM +0000, Nadav Amit wrote:
-> Here is an alternative idea (although similar to Steven’s and my code).
-> 
-> Assume that we always clobber R10, R11 on static-calls explicitly, as anyhow
-> should be done by the calling convention (and gcc plugin should allow us to
-> enforce). Also assume that we hold a table with all source RIP and the
-> matching target.
-> 
-> Now, in the int3 handler can you take the faulting RIP and search for it in
-> the “static-calls” table, writing the RIP+5 (offset) into R10 (return
-> address) and the target into R11. You make the int3 handler to divert the
-> code execution by changing pt_regs->rip to point to a new function that does:
-> 
-> 	push R10
-> 	jmp __x86_indirect_thunk_r11
-> 
-> And then you are done. No?
+Commit-ID:  65f750e5457aef9a8085a99d613fea0430303e93
+Gitweb:     https://git.kernel.org/tip/65f750e5457aef9a8085a99d613fea0430303e93
+Author:     Lianbo Jiang <lijiang@redhat.com>
+AuthorDate: Thu, 10 Jan 2019 20:19:44 +0800
+Committer:  Borislav Petkov <bp@suse.de>
+CommitDate: Fri, 11 Jan 2019 16:09:25 +0100
 
-IIUC, that sounds pretty much like what Steven proposed:
+x86/kdump: Export the SME mask to vmcoreinfo
 
-  https://lkml.kernel.org/r/20181129122000.7fb4fb04@gandalf.local.home
+On AMD SME machines, makedumpfile tools need to know whether the crashed
+kernel was encrypted.
 
-I liked the idea, BUT, how would it work for callee-saved PV ops?  In
-that case there's only one clobbered register to work with (rax).
+If SME is enabled in the first kernel, the crashed kernel's page table
+entries (pgd/pud/pmd/pte) contain the memory encryption mask which
+makedumpfile needs to remove in order to obtain the true physical
+address.
 
--- 
-Josh
+Export that mask in a vmcoreinfo variable.
+
+ [ bp: Massage commit message and move define at the end of the
+   function. ]
+
+Signed-off-by: Lianbo Jiang <lijiang@redhat.com>
+Signed-off-by: Borislav Petkov <bp@suse.de>
+Cc: "H. Peter Anvin" <hpa@zytor.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Baoquan He <bhe@redhat.com>
+Cc: Dave Young <dyoung@redhat.com>
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Tom Lendacky <thomas.lendacky@amd.com>
+Cc: anderson@redhat.com
+Cc: k-hagio@ab.jp.nec.com
+Cc: kexec@lists.infradead.org
+Cc: linux-doc@vger.kernel.org
+Cc: x86-ml <x86@kernel.org>
+Link: https://lkml.kernel.org/r/20190110121944.6050-3-lijiang@redhat.com
+---
+ arch/x86/kernel/machine_kexec_64.c | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/arch/x86/kernel/machine_kexec_64.c b/arch/x86/kernel/machine_kexec_64.c
+index 4c8acdfdc5a7..ceba408ea982 100644
+--- a/arch/x86/kernel/machine_kexec_64.c
++++ b/arch/x86/kernel/machine_kexec_64.c
+@@ -352,6 +352,8 @@ void machine_kexec(struct kimage *image)
+ 
+ void arch_crash_save_vmcoreinfo(void)
+ {
++	u64 sme_mask = sme_me_mask;
++
+ 	VMCOREINFO_NUMBER(phys_base);
+ 	VMCOREINFO_SYMBOL(init_top_pgt);
+ 	vmcoreinfo_append_str("NUMBER(pgtable_l5_enabled)=%d\n",
+@@ -364,6 +366,7 @@ void arch_crash_save_vmcoreinfo(void)
+ 	vmcoreinfo_append_str("KERNELOFFSET=%lx\n",
+ 			      kaslr_offset());
+ 	VMCOREINFO_NUMBER(KERNEL_IMAGE_SIZE);
++	VMCOREINFO_NUMBER(sme_mask);
+ }
+ 
+ /* arch-dependent functionality related to kexec file-based syscall */
