@@ -4,53 +4,53 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-13.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 732FFC43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 18:05:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3404AC43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 18:05:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4E60D20652
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 18:05:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 05C5220652
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 18:05:47 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="kNRJgLwb"
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="quIOiofc"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387561AbfAKSFl (ORCPT
+        id S2389649AbfAKSFq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 11 Jan 2019 13:05:41 -0500
-Received: from fllv0016.ext.ti.com ([198.47.19.142]:41920 "EHLO
-        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1733134AbfAKSFh (ORCPT
+        Fri, 11 Jan 2019 13:05:46 -0500
+Received: from fllv0015.ext.ti.com ([198.47.19.141]:44206 "EHLO
+        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1733253AbfAKSFk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Jan 2019 13:05:37 -0500
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id x0BI5VVT058867;
-        Fri, 11 Jan 2019 12:05:31 -0600
+        Fri, 11 Jan 2019 13:05:40 -0500
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id x0BI5Xxb067747;
+        Fri, 11 Jan 2019 12:05:33 -0600
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1547229931;
-        bh=1D2MlCtLYhIPabsQzdGn3gtPwyGFeW2PytvSRMYIQ9w=;
+        s=ti-com-17Q1; t=1547229933;
+        bh=j+pOCWud2cX3YCzm6ALAF5aeJ85HnYKhGDqRt481drw=;
         h=From:To:CC:Subject:Date:In-Reply-To:References;
-        b=kNRJgLwbjRni2CZ3gCou7R0Yk5geJYage2bBNyigAIx+EveLekbI3lSi/mr22qv3s
-         6kyPlzAvUNEQekidVlEqHreWJttQe1CzX+Ggu87BzvxwYzMUYTF9OS76Ch1CVfurs/
-         HvIenrrwwGD3XgZJ5DQAlWsqi7BhpAvTnwRUvdxA=
+        b=quIOiofcFw+3fO6DFD8buWeiTsgElkaA8LDqRBWDCPSCPqfqF+mymmkjsqT1evwnU
+         s9K8GRrX2deqPPbbQHXzq5e/Zk/BAh40+o1BnkoCO2iolxn+A0/026VOLeCVHDD9lO
+         nnNUaz0LculNS01e6i2K+bd49dArAbY5EfJ/Z3A8=
 Received: from DFLE115.ent.ti.com (dfle115.ent.ti.com [10.64.6.36])
-        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x0BI5V2x009026
+        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x0BI5XVd059297
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Fri, 11 Jan 2019 12:05:31 -0600
-Received: from DFLE107.ent.ti.com (10.64.6.28) by DFLE115.ent.ti.com
+        Fri, 11 Jan 2019 12:05:33 -0600
+Received: from DFLE101.ent.ti.com (10.64.6.22) by DFLE115.ent.ti.com
  (10.64.6.36) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Fri, 11
- Jan 2019 12:05:30 -0600
-Received: from dflp32.itg.ti.com (10.64.6.15) by DFLE107.ent.ti.com
- (10.64.6.28) with Microsoft SMTP Server (version=TLS1_0,
+ Jan 2019 12:05:33 -0600
+Received: from dflp33.itg.ti.com (10.64.6.16) by DFLE101.ent.ti.com
+ (10.64.6.22) with Microsoft SMTP Server (version=TLS1_0,
  cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1591.10 via Frontend Transport;
- Fri, 11 Jan 2019 12:05:30 -0600
+ Fri, 11 Jan 2019 12:05:33 -0600
 Received: from legion.dal.desgin.ti.com (legion.dal.design.ti.com [128.247.22.53])
-        by dflp32.itg.ti.com (8.14.3/8.13.8) with ESMTP id x0BI5Ufp025779;
-        Fri, 11 Jan 2019 12:05:30 -0600
+        by dflp33.itg.ti.com (8.14.3/8.13.8) with ESMTP id x0BI5XuX017185;
+        Fri, 11 Jan 2019 12:05:33 -0600
 Received: from localhost (uda0226330.dhcp.ti.com [172.22.109.196])
-        by legion.dal.desgin.ti.com (8.11.7p1+Sun/8.11.7) with ESMTP id x0BI5UU07734;
-        Fri, 11 Jan 2019 12:05:30 -0600 (CST)
+        by legion.dal.desgin.ti.com (8.11.7p1+Sun/8.11.7) with ESMTP id x0BI5WU07752;
+        Fri, 11 Jan 2019 12:05:32 -0600 (CST)
 From:   "Andrew F. Davis" <afd@ti.com>
 To:     Laura Abbott <labbott@redhat.com>,
         Sumit Semwal <sumit.semwal@linaro.org>,
@@ -58,9 +58,9 @@ To:     Laura Abbott <labbott@redhat.com>,
         =?UTF-8?q?Arve=20Hj=C3=B8nnev=C3=A5g?= <arve@android.com>
 CC:     <devel@driverdev.osuosl.org>, <dri-devel@lists.freedesktop.org>,
         <linux-kernel@vger.kernel.org>, "Andrew F . Davis" <afd@ti.com>
-Subject: [PATCH 07/14] staging: android: ion: Sync comment docs with struct ion_buffer
-Date:   Fri, 11 Jan 2019 12:05:16 -0600
-Message-ID: <20190111180523.27862-8-afd@ti.com>
+Subject: [PATCH 10/14] staging: android: ion: Remove unused headers
+Date:   Fri, 11 Jan 2019 12:05:19 -0600
+Message-ID: <20190111180523.27862-11-afd@ti.com>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190111180523.27862-1-afd@ti.com>
 References: <20190111180523.27862-1-afd@ti.com>
@@ -73,54 +73,78 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This struct is no longer documented correctly, fix this.
+Various cleanups have removed the use of some headers in ION, remove
+these here.
 
 Signed-off-by: Andrew F. Davis <afd@ti.com>
 ---
- drivers/staging/android/ion/ion.h | 9 +++++++--
- 1 file changed, 7 insertions(+), 2 deletions(-)
+ drivers/staging/android/ion/ion.c               | 3 ---
+ drivers/staging/android/ion/ion_carveout_heap.c | 4 ++--
+ drivers/staging/android/ion/ion_chunk_heap.c    | 3 +--
+ 3 files changed, 3 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/staging/android/ion/ion.h b/drivers/staging/android/ion/ion.h
-index 2ef78c951a6b..e291299fd35f 100644
---- a/drivers/staging/android/ion/ion.h
-+++ b/drivers/staging/android/ion/ion.h
-@@ -23,8 +23,8 @@
- 
- /**
-  * struct ion_buffer - metadata for a particular buffer
-- * @ref:		reference count
-  * @node:		node in the ion_device buffers tree
-+ * @list:		element in list of deferred freeable buffers
-  * @dev:		back pointer to the ion_device
-  * @heap:		back pointer to the heap the buffer came from
-  * @flags:		buffer specific flags
-@@ -35,7 +35,8 @@
-  * @lock:		protects the buffers cnt fields
-  * @kmap_cnt:		number of times the buffer is mapped to the kernel
-  * @vaddr:		the kernel mapping if kmap_cnt is not zero
-- * @sg_table:		the sg table for the buffer if dmap_cnt is not zero
-+ * @sg_table:		the sg table for the buffer
-+ * @attachments:	list of devices attached to this buffer
+diff --git a/drivers/staging/android/ion/ion.c b/drivers/staging/android/ion/ion.c
+index 2d6d8c0994b2..bba5f682bc25 100644
+--- a/drivers/staging/android/ion/ion.c
++++ b/drivers/staging/android/ion/ion.c
+@@ -5,7 +5,6 @@
+  * Copyright (C) 2011 Google, Inc.
   */
- struct ion_buffer {
- 	union {
-@@ -151,12 +152,16 @@ struct ion_heap {
- 	unsigned long flags;
- 	unsigned int id;
- 	const char *name;
+ 
+-#include <linux/anon_inodes.h>
+ #include <linux/debugfs.h>
+ #include <linux/device.h>
+ #include <linux/dma-buf.h>
+@@ -14,10 +13,8 @@
+ #include <linux/file.h>
+ #include <linux/freezer.h>
+ #include <linux/fs.h>
+-#include <linux/idr.h>
+ #include <linux/kthread.h>
+ #include <linux/list.h>
+-#include <linux/memblock.h>
+ #include <linux/miscdevice.h>
+ #include <linux/mm.h>
+ #include <linux/mm_types.h>
+diff --git a/drivers/staging/android/ion/ion_carveout_heap.c b/drivers/staging/android/ion/ion_carveout_heap.c
+index ab9b72adca9c..bb9d614767a2 100644
+--- a/drivers/staging/android/ion/ion_carveout_heap.c
++++ b/drivers/staging/android/ion/ion_carveout_heap.c
+@@ -4,7 +4,7 @@
+  *
+  * Copyright (C) 2011 Google, Inc.
+  */
+-#include <linux/spinlock.h>
 +
-+	/* deferred free support */
- 	struct shrinker shrinker;
- 	struct list_head free_list;
- 	size_t free_list_size;
- 	spinlock_t free_lock;
- 	wait_queue_head_t waitqueue;
- 	struct task_struct *task;
+ #include <linux/dma-mapping.h>
+ #include <linux/err.h>
+ #include <linux/genalloc.h>
+@@ -12,7 +12,7 @@
+ #include <linux/mm.h>
+ #include <linux/scatterlist.h>
+ #include <linux/slab.h>
+-#include <linux/vmalloc.h>
 +
-+	/* heap statistics */
- 	u64 num_of_buffers;
- 	u64 num_of_alloc_bytes;
- 	u64 alloc_bytes_wm;
+ #include "ion.h"
+ 
+ #define ION_CARVEOUT_ALLOCATE_FAIL	-1
+diff --git a/drivers/staging/android/ion/ion_chunk_heap.c b/drivers/staging/android/ion/ion_chunk_heap.c
+index 899380beeee1..3cdde9c1a717 100644
+--- a/drivers/staging/android/ion/ion_chunk_heap.c
++++ b/drivers/staging/android/ion/ion_chunk_heap.c
+@@ -8,11 +8,10 @@
+ #include <linux/dma-mapping.h>
+ #include <linux/err.h>
+ #include <linux/genalloc.h>
+-#include <linux/io.h>
+ #include <linux/mm.h>
+ #include <linux/scatterlist.h>
+ #include <linux/slab.h>
+-#include <linux/vmalloc.h>
++
+ #include "ion.h"
+ 
+ struct ion_chunk_heap {
 -- 
 2.19.1
 
