@@ -2,121 +2,165 @@ Return-Path: <SRS0=uvhX=PT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B1C2EC43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 00:44:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A165C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 00:51:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8312420879
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 00:44:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 031752133F
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 00:51:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547167494;
-	bh=WG/P66XN4qR7HG2MSq1KjFJ2CkSzkKRidv2c1nBua0c=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=m8I7sDxyjXQWx1EX7t1TKH48hESqY5vdx7DY96qq673YTc1/Hh3TEzchZ40+GdJcS
-	 xqqqe5pZhe/oLtQhuVeWkDufMg0R1xZf5nnlM5/c+LGAxP4TcMqHyZCBYrYTM8PUgw
-	 PieF8Py+p1W6gcN0Uub5QnibF+3Z5r2Qeo69GDH4=
+	s=default; t=1547167874;
+	bh=Lvca0j7SQ8acgEjqgQpHsC1KXYC4RVNaaIuBFKjpcKs=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:List-ID:From;
+	b=JftawxGkoep9LGMEKRPhIU1oX9lo2jx95L+wy4wD6raMTGzuqAL7Do9FfWS23E0Na
+	 sJ8mdiL8zvbNGxpn5Inqzg8St2NwBIQUnrc78nv5WlPTyyCG0qx8/m0DO49DSVGInZ
+	 ZDYm9HDAgmqYnTIl4H/iYdJxmy7Q27Fa0A4V3xwQ=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729149AbfAKAox (ORCPT
+        id S1728963AbfAKAvN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 10 Jan 2019 19:44:53 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35442 "EHLO mail.kernel.org"
+        Thu, 10 Jan 2019 19:51:13 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37346 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727098AbfAKAox (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Jan 2019 19:44:53 -0500
-Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        id S1726924AbfAKAvM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 10 Jan 2019 19:51:12 -0500
+Received: from devnote (unknown [180.0.253.189])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EBCC6218AF
-        for <linux-kernel@vger.kernel.org>; Fri, 11 Jan 2019 00:44:51 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E17DD20879;
+        Fri, 11 Jan 2019 00:51:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547167492;
-        bh=WG/P66XN4qR7HG2MSq1KjFJ2CkSzkKRidv2c1nBua0c=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=0wOYoZuyhSTuDfZfYOyUUB5GM/qZ9DSk4fNQHanVxK9hh7E3mLxhPcUrcR2SZRW5d
-         b4nTmZ8zHmhPcBKNilb5lTl8kgLtNby3D7Z2g4CMUfmtAEdq9iQ09l2y1lGM8zpxvr
-         u+8m/v/cCMoB1KoBZpIdHeGMzLrLmVjZfj6FClYE=
-Received: by mail-wr1-f43.google.com with SMTP id u4so13427928wrp.3
-        for <linux-kernel@vger.kernel.org>; Thu, 10 Jan 2019 16:44:51 -0800 (PST)
-X-Gm-Message-State: AJcUukeMnVPiKJTl2uUodOWhIz0ViLwWsPxcEwOcR8nQNe4Idefd8nfG
-        NWTps816LHRNSzxkKcosxF0dYKGk/KMRbfHW7/nymw==
-X-Google-Smtp-Source: ALg8bN60rjZn/1Q52Wpgpv3aehK6m/VINba8FysQCwVaafrup3TKLXCoz60PhAHZrTKREhmOAYAfPLnIcp9KWcYR5Gc=
-X-Received: by 2002:adf:f0c5:: with SMTP id x5mr10938341wro.77.1547167488414;
- Thu, 10 Jan 2019 16:44:48 -0800 (PST)
-MIME-Version: 1.0
-References: <cover.1547153058.git.khalid.aziz@oracle.com> <CAGXu5jKS8XSw7nByaeXqgPbmRRw01E_zUYxLCk7zFepAVSw_aQ@mail.gmail.com>
-In-Reply-To: <CAGXu5jKS8XSw7nByaeXqgPbmRRw01E_zUYxLCk7zFepAVSw_aQ@mail.gmail.com>
-From:   Andy Lutomirski <luto@kernel.org>
-Date:   Thu, 10 Jan 2019 16:44:36 -0800
-X-Gmail-Original-Message-ID: <CALCETrVWjdo6C53eFz8Gc99q4HFsGpwf4kDXR5OG8E96t-gSLw@mail.gmail.com>
-Message-ID: <CALCETrVWjdo6C53eFz8Gc99q4HFsGpwf4kDXR5OG8E96t-gSLw@mail.gmail.com>
-Subject: Re: [RFC PATCH v7 00/16] Add support for eXclusive Page Frame Ownership
-To:     Kees Cook <keescook@chromium.org>
-Cc:     Khalid Aziz <khalid.aziz@oracle.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Ingo Molnar <mingo@kernel.org>,
-        Juerg Haefliger <juergh@gmail.com>,
-        Tycho Andersen <tycho@tycho.ws>, jsteckli@amazon.de,
-        Andi Kleen <ak@linux.intel.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        liran.alon@oracle.com,
-        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
-        deepa.srinivasan@oracle.com, chris hyser <chris.hyser@oracle.com>,
-        Tyler Hicks <tyhicks@canonical.com>,
-        "Woodhouse, David" <dwmw@amazon.co.uk>,
-        Andrew Cooper <andrew.cooper3@citrix.com>,
-        Jon Masters <jcm@redhat.com>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        kanth.ghatraju@oracle.com,
-        Joao Martins <joao.m.martins@oracle.com>,
-        Jim Mattson <jmattson@google.com>, pradeep.vincent@oracle.com,
-        John Haxby <john.haxby@oracle.com>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Christoph Hellwig <hch@lst.de>, steven.sistare@oracle.com,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        Linux-MM <linux-mm@kvack.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>
-Content-Type: text/plain; charset="UTF-8"
+        s=default; t=1547167871;
+        bh=Lvca0j7SQ8acgEjqgQpHsC1KXYC4RVNaaIuBFKjpcKs=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=PE8WTNUIaD0KrN/YxlDh1v2YqX+6Heshp4C4bXjzhfa3/yrQW3QFetH2BG2QXuBNX
+         tNfuHwjsV92azWYRByt8Vd0UIBnsL+y5Ux/lV/vzQIHFtFADf1Y7CoMRQVmXm91w79
+         9JIIe7KCWeUJysreIQPfornNYplQXAxDd++6MF7c=
+Date:   Fri, 11 Jan 2019 09:51:08 +0900
+From:   Masami Hiramatsu <mhiramat@kernel.org>
+To:     Andrea Righi <righi.andrea@gmail.com>
+Cc:     Steven Rostedt <rostedt@goodmis.org>,
+        Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] tracing/kprobes: fix NULL pointer dereference in
+ trace_kprobe_create()
+Message-Id: <20190111095108.b79a2ee026185cbd62365977@kernel.org>
+In-Reply-To: <20190110173947.GA19243@xps-13>
+References: <20190110173947.GA19243@xps-13>
+X-Mailer: Sylpheed 3.5.0 (GTK+ 2.24.30; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jan 10, 2019 at 3:07 PM Kees Cook <keescook@chromium.org> wrote:
->
-> On Thu, Jan 10, 2019 at 1:10 PM Khalid Aziz <khalid.aziz@oracle.com> wrote:
-> > I implemented a solution to reduce performance penalty and
-> > that has had large impact. When XPFO code flushes stale TLB entries,
-> > it does so for all CPUs on the system which may include CPUs that
-> > may not have any matching TLB entries or may never be scheduled to
-> > run the userspace task causing TLB flush. Problem is made worse by
-> > the fact that if number of entries being flushed exceeds
-> > tlb_single_page_flush_ceiling, it results in a full TLB flush on
-> > every CPU. A rogue process can launch a ret2dir attack only from a
-> > CPU that has dual mapping for its pages in physmap in its TLB. We
-> > can hence defer TLB flush on a CPU until a process that would have
-> > caused a TLB flush is scheduled on that CPU. I have added a cpumask
-> > to task_struct which is then used to post pending TLB flush on CPUs
-> > other than the one a process is running on. This cpumask is checked
-> > when a process migrates to a new CPU and TLB is flushed at that
-> > time. I measured system time for parallel make with unmodified 4.20
-> > kernel, 4.20 with XPFO patches before this optimization and then
-> > again after applying this optimization. Here are the results:
+Hi Andrea,
 
-I wasn't cc'd on the patch, so I don't know the exact details.
+On Thu, 10 Jan 2019 18:39:47 +0100
+Andrea Righi <righi.andrea@gmail.com> wrote:
 
-I'm assuming that "ret2dir" means that you corrupt the kernel into
-using a direct-map page as its stack.  If so, then I don't see why the
-task in whose context the attack is launched needs to be the same
-process as the one that has the page mapped for user access.
+> It is possible to trigger a NULL pointer dereference by writing an
+> incorrectly formatted string to krpobe_events (omitting the symbol).
+> 
+> Example:
+> 
+>  echo "r:event_1 " >> /sys/kernel/debug/tracing/kprobe_events
+> 
+> That triggers this:
+> 
+>  BUG: unable to handle kernel NULL pointer dereference at 0000000000000000
+>  #PF error: [normal kernel read fault]
+>  PGD 0 P4D 0
+>  Oops: 0000 [#1] SMP PTI
+>  CPU: 6 PID: 1757 Comm: bash Not tainted 5.0.0-rc1+ #125
+>  Hardware name: Dell Inc. XPS 13 9370/0F6P3V, BIOS 1.5.1 08/09/2018
+>  RIP: 0010:kstrtoull+0x2/0x20
+>  Code: 28 00 00 00 75 17 48 83 c4 18 5b 41 5c 5d c3 b8 ea ff ff ff eb e1 b8 de ff ff ff eb da e8 d6 36 bb ff 66 0f 1f 44 00 00 31 c0 <80> 3f 2b 55 48 89 e5 0f 94 c0 48 01 c7 e8 5c ff ff ff 5d c3 66 2e
+>  RSP: 0018:ffffb5d482e57cb8 EFLAGS: 00010246
+>  RAX: 0000000000000000 RBX: 0000000000000001 RCX: ffffffff82b12720
+>  RDX: ffffb5d482e57cf8 RSI: 0000000000000000 RDI: 0000000000000000
+>  RBP: ffffb5d482e57d70 R08: ffffa0c05e5a7080 R09: ffffa0c05e003980
+>  R10: 0000000000000000 R11: 0000000040000000 R12: ffffa0c04fe87b08
+>  R13: 0000000000000001 R14: 000000000000000b R15: ffffa0c058d749e1
+>  FS:  00007f137c7f7740(0000) GS:ffffa0c05e580000(0000) knlGS:0000000000000000
+>  CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+>  CR2: 0000000000000000 CR3: 0000000497d46004 CR4: 00000000003606e0
+>  Call Trace:
+>   ? trace_kprobe_create+0xb6/0x840
+>   ? _cond_resched+0x19/0x40
+>   ? _cond_resched+0x19/0x40
+>   ? __kmalloc+0x62/0x210
+>   ? argv_split+0x8f/0x140
+>   ? trace_kprobe_create+0x840/0x840
+>   ? trace_kprobe_create+0x840/0x840
+>   create_or_delete_trace_kprobe+0x11/0x30
+>   trace_run_command+0x50/0x90
+>   trace_parse_run_command+0xc1/0x160
+>   probes_write+0x10/0x20
+>   __vfs_write+0x3a/0x1b0
+>   ? apparmor_file_permission+0x1a/0x20
+>   ? security_file_permission+0x31/0xf0
+>   ? _cond_resched+0x19/0x40
+>   vfs_write+0xb1/0x1a0
+>   ksys_write+0x55/0xc0
+>   __x64_sys_write+0x1a/0x20
+>   do_syscall_64+0x5a/0x120
+>   entry_SYSCALL_64_after_hwframe+0x44/0xa9
+> 
+> Fix by doing the proper argument check when a NULL symbol is passed in
+> trace_kprobe_create().
+> 
 
-My advice would be to attempt an entirely different optimization: try
-to avoid putting pages *back* into the direct map when they're freed
-until there is an actual need to use them for kernel purposes.
+Oops! It is my fault on commit 6212dd29683e ("tracing/kprobes: Use dyn_event
+framework for kprobe events")
 
-How are you handing page cache?  Presumably MAP_SHARED PROT_WRITE
-pages are still in the direct map so that IO works.
+Previously, we have following check, but it is removed 
+
+-       if (argc < 2) {
+-               pr_info("Probe point is not specified.\n");
+-               return -EINVAL;
+-       }
+
+and check it only for kprobe event but not kretprobe event.
+
+        /* argc must be >= 1 */
+        if (argv[0][0] == 'r') {
+                is_return = true;
+                flags |= TPARG_FL_RETURN;
+        } else if (argv[0][0] != 'p' || argc < 2)
+                return -ECANCELED;
+
+I would like to recover above if block instead of adding new check.
+
+Could you do it with Fixed: and Cc: stable@vger.kernel.org tags?
+
+Thank you,
+
+> Signed-off-by: Andrea Righi <righi.andrea@gmail.com>
+> ---
+>  kernel/trace/trace_kprobe.c | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
+> diff --git a/kernel/trace/trace_kprobe.c b/kernel/trace/trace_kprobe.c
+> index 5c19b8c41c7e..76410ceeff50 100644
+> --- a/kernel/trace/trace_kprobe.c
+> +++ b/kernel/trace/trace_kprobe.c
+> @@ -644,6 +644,8 @@ static int trace_kprobe_create(int argc, const char *argv[])
+>  
+>  	/* try to parse an address. if that fails, try to read the
+>  	 * input as a symbol. */
+> +	if (!argv[1])
+> +		return -EINVAL;
+>  	if (kstrtoul(argv[1], 0, (unsigned long *)&addr)) {
+>  		/* Check whether uprobe event specified */
+>  		if (strchr(argv[1], '/') && strchr(argv[1], ':'))
+> -- 
+> 2.17.1
+> 
+
+
+-- 
+Masami Hiramatsu <mhiramat@kernel.org>
