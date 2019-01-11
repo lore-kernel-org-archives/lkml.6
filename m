@@ -7,51 +7,48 @@ X-Spam-Status: No, score=-13.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 700A1C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:35:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 10355C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:36:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 401772184A
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:35:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CCB362133F
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:36:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547217356;
-	bh=ME83h21x7S5tpbBBgHVFaHTnEKaUl6hxPSnLBQK79R8=;
+	s=default; t=1547217366;
+	bh=ceNKCBEx/bTuRfTe5vR6gQwrWfrHc1rL0mvbIbeGsx4=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=m0bmXKFRP1NjVxMSk5UIL3PkZthpoeEF9VObFoIKMVpm7SMs8O+0l+BY6j3HPH2ly
-	 orSdCgrU0v9pKnl1FrY04Sf8kvY91ymQYRdDB6aGe+uLy+aco/P3rDzSB+LBc2Ah77
-	 BjnU93Z8FcBuKUqcWH8vfDtdncfzplx/HQFV2PVU=
+	b=PhdRzIJoYvTrjXVGtf2ycSuCBbvLLFkB/UpM2P7QkMWiV5xIMcYniPQReIHF3MEoj
+	 7IzlyXOZkusRHgJRaIzG1mlSErvsSaFQkMl2ai3PG/mtSP4nJNeFU7nGPxYIeUDHJQ
+	 Vuvw4Q5pyoVZJeyleSgY0w+U3ZYvFTltGtD29bNU=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390256AbfAKOfz (ORCPT
+        id S2390293AbfAKOgF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 11 Jan 2019 09:35:55 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56130 "EHLO mail.kernel.org"
+        Fri, 11 Jan 2019 09:36:05 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56354 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390239AbfAKOfv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Jan 2019 09:35:51 -0500
+        id S2390276AbfAKOgD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 Jan 2019 09:36:03 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 17C182133F;
-        Fri, 11 Jan 2019 14:35:50 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id AEA462063F;
+        Fri, 11 Jan 2019 14:36:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547217350;
-        bh=ME83h21x7S5tpbBBgHVFaHTnEKaUl6hxPSnLBQK79R8=;
+        s=default; t=1547217362;
+        bh=ceNKCBEx/bTuRfTe5vR6gQwrWfrHc1rL0mvbIbeGsx4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=y8BfX7bZI30oB4rmxTlxYwl0JQxN4eOc79u5F6BQyJ4MKG2YG9XLw+qjqZi/P8L2I
-         xsu4hsYfzx6Cw4SAhpWzJDBbcgpb3w29aWIEicPdEd0C2++q1FOtoF/UmftLjpA05q
-         GGJtmRIyBjGybei9BvvncBgd6ZfEWPb84Gp5lXDg=
+        b=JFzH728khb6NSL8kVS4YD7rAVqZE3tgRR6OcapHaJBT1UYHbtH0V8KGdjZkYTWtL6
+         RQLztpBMEg7bW7UjGefZmCHvnTzyOTTjg3a/4O8W+2in/QO0ap7M0deiBjdaerFQG4
+         6YnAO44cHKfWxo5obMQzPIFYtghoFcHAhgtj7dfM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>, bp@alien8.de,
-        hpa@zytor.com, dave.hansen@linux.intel.com, luto@kernel.org,
-        peterz@infradead.org, boris.ostrovsky@oracle.com, jgross@suse.com,
-        bhe@redhat.com, hans.van.kranenburg@mendix.com, linux-mm@kvack.org,
-        xen-devel@lists.xenproject.org, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 030/148] x86/dump_pagetables: Fix LDT remap address marker
-Date:   Fri, 11 Jan 2019 15:13:28 +0100
-Message-Id: <20190111131115.509913664@linuxfoundation.org>
+        stable@vger.kernel.org, Martin Zaharinov <micron10@gmail.com>,
+        Florian Westphal <fw@strlen.de>,
+        Pablo Neira Ayuso <pablo@netfilter.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 034/148] netfilter: nat: cant use dst_hold on noref dst
+Date:   Fri, 11 Jan 2019 15:13:32 +0100
+Message-Id: <20190111131115.660596561@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190111131114.337122649@linuxfoundation.org>
 References: <20190111131114.337122649@linuxfoundation.org>
@@ -70,60 +67,47 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 254eb5505ca0ca749d3a491fc6668b6c16647a99 ]
+[ Upstream commit 542fbda0f08f1cbbc250f9e59f7537649651d0c8 ]
 
-The LDT remap placement has been changed. It's now placed before the direct
-mapping in the kernel virtual address space for both paging modes.
+The dst entry might already have a zero refcount, waiting on rcu list
+to be free'd.  Using dst_hold() transitions its reference count to 1, and
+next dst release will try to free it again -- resulting in a double free:
 
-Change address markers order accordingly.
+  WARNING: CPU: 1 PID: 0 at include/net/dst.h:239 nf_xfrm_me_harder+0xe7/0x130 [nf_nat]
+  RIP: 0010:nf_xfrm_me_harder+0xe7/0x130 [nf_nat]
+  Code: 48 8b 5c 24 60 65 48 33 1c 25 28 00 00 00 75 53 48 83 c4 68 5b 5d 41 5c c3 85 c0 74 0d 8d 48 01 f0 0f b1 0a 74 86 85 c0 75 f3 <0f> 0b e9 7b ff ff ff 29 c6 31 d2 b9 20 00 48 00 4c 89 e7 e8 31 27
+  Call Trace:
+  nf_nat_ipv4_out+0x78/0x90 [nf_nat_ipv4]
+  nf_hook_slow+0x36/0xd0
+  ip_output+0x9f/0xd0
+  ip_forward+0x328/0x440
+  ip_rcv+0x8a/0xb0
 
-Fixes: d52888aa2753 ("x86/mm: Move LDT remap out of KASLR region on 5-level paging")
-Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: bp@alien8.de
-Cc: hpa@zytor.com
-Cc: dave.hansen@linux.intel.com
-Cc: luto@kernel.org
-Cc: peterz@infradead.org
-Cc: boris.ostrovsky@oracle.com
-Cc: jgross@suse.com
-Cc: bhe@redhat.com
-Cc: hans.van.kranenburg@mendix.com
-Cc: linux-mm@kvack.org
-Cc: xen-devel@lists.xenproject.org
-Link: https://lkml.kernel.org/r/20181130202328.65359-3-kirill.shutemov@linux.intel.com
+Use dst_hold_safe instead and bail out if we cannot take a reference.
+
+Fixes: a4c2fd7f7891 ("net: remove DST_NOCACHE flag")
+Reported-by: Martin Zaharinov <micron10@gmail.com>
+Signed-off-by: Florian Westphal <fw@strlen.de>
+Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/x86/mm/dump_pagetables.c | 7 ++-----
- 1 file changed, 2 insertions(+), 5 deletions(-)
+ net/netfilter/nf_nat_core.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/arch/x86/mm/dump_pagetables.c b/arch/x86/mm/dump_pagetables.c
-index 073755c89126..c05a818224bb 100644
---- a/arch/x86/mm/dump_pagetables.c
-+++ b/arch/x86/mm/dump_pagetables.c
-@@ -53,10 +53,10 @@ struct addr_marker {
- enum address_markers_idx {
- 	USER_SPACE_NR = 0,
- 	KERNEL_SPACE_NR,
--	LOW_KERNEL_NR,
--#if defined(CONFIG_MODIFY_LDT_SYSCALL) && defined(CONFIG_X86_5LEVEL)
-+#ifdef CONFIG_MODIFY_LDT_SYSCALL
- 	LDT_NR,
- #endif
-+	LOW_KERNEL_NR,
- 	VMALLOC_START_NR,
- 	VMEMMAP_START_NR,
- #ifdef CONFIG_KASAN
-@@ -64,9 +64,6 @@ enum address_markers_idx {
- 	KASAN_SHADOW_END_NR,
- #endif
- 	CPU_ENTRY_AREA_NR,
--#if defined(CONFIG_MODIFY_LDT_SYSCALL) && !defined(CONFIG_X86_5LEVEL)
--	LDT_NR,
--#endif
- #ifdef CONFIG_X86_ESPFIX64
- 	ESPFIX_START_NR,
- #endif
+diff --git a/net/netfilter/nf_nat_core.c b/net/netfilter/nf_nat_core.c
+index e2b196054dfc..2268b10a9dcf 100644
+--- a/net/netfilter/nf_nat_core.c
++++ b/net/netfilter/nf_nat_core.c
+@@ -117,7 +117,8 @@ int nf_xfrm_me_harder(struct net *net, struct sk_buff *skb, unsigned int family)
+ 	dst = skb_dst(skb);
+ 	if (dst->xfrm)
+ 		dst = ((struct xfrm_dst *)dst)->route;
+-	dst_hold(dst);
++	if (!dst_hold_safe(dst))
++		return -EHOSTUNREACH;
+ 
+ 	if (sk && !net_eq(net, sock_net(sk)))
+ 		sk = NULL;
 -- 
 2.19.1
 
