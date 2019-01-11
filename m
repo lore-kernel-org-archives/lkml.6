@@ -4,48 +4,48 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-10.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 28158C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:15:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E39D5C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:15:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ED23E20874
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:15:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B4AAF2177B
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:15:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547216139;
-	bh=NhdPfI/2oqphfDIKq5dPj4OtiCIDRmTueAfx252t5LE=;
+	s=default; t=1547216142;
+	bh=ZRx8CRevtFQ3dSTks1OOTQWTkFVElFtgLKXZAfhSCJ4=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=Xjxai0uaeshX9XBA2mNdEg1Uc1OGOJZdbElOOu5j0EB+XofoxWeTrLbSXxd+dKVQp
-	 HWlArOFbUGSQZFDs4SOqvMgYtnwP+S5HWj//MFjzpSMnIZbiRKxRvZc71w9VsXCMSz
-	 gU52CPpix/5/kcJg/7YR5WpZjg9UipD31pIsz+wE=
+	b=izRd7zwsIxCaPDbgqWyBj/nLdDJv7VPtdy1JV63c2Lmozw/G2pVdMqfEUsuCM86CH
+	 6w8kCX1WKHz2qJFG6frGOzdy03JYSeDij3s0m6nWGJLyzecfUg+l2IuhV1P7Ytnx4V
+	 SLUp19yGxESdre9T/yH16W2rqUKxvk6j3EDoMsvw=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387442AbfAKOPi (ORCPT
+        id S2387452AbfAKOPl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 11 Jan 2019 09:15:38 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59772 "EHLO mail.kernel.org"
+        Fri, 11 Jan 2019 09:15:41 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59860 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387412AbfAKOPe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Jan 2019 09:15:34 -0500
+        id S2387412AbfAKOPj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 Jan 2019 09:15:39 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8EC13214D8;
-        Fri, 11 Jan 2019 14:15:33 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 84FA2214D8;
+        Fri, 11 Jan 2019 14:15:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547216134;
-        bh=NhdPfI/2oqphfDIKq5dPj4OtiCIDRmTueAfx252t5LE=;
+        s=default; t=1547216139;
+        bh=ZRx8CRevtFQ3dSTks1OOTQWTkFVElFtgLKXZAfhSCJ4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=IMq6ha9d3cZbs1VFjcQvQlpYh49x69LKO2Q7bU2sMjgfYOsFP7x6kbRs9vY6KKeQD
-         J6l372tFu53VbnpsIK2PcS0VU9jTBIGskioeyGicYfUjwILnxgOCiP6lnMeuPChVHN
-         I7yv76ixLe8wVYQcfdelUmhEd1NVovlMdyuQM74E=
+        b=1ycnjQLsVM02+Osa9Ezaa2SV0LbhzoNdD95pEccLCGSKTmUQWcdFa8mTBSaR4IXnA
+         QGpsbqMDpcPbRZpVX0DfXQ4hgih3EDUvMYQvKth8084YWLmK2NUfbesgr0UhIJ+Qrk
+         UGqGviw+xGeRSzWcamT3txGuw4rtYXFM4xNKmyuQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Vasily Averin <vvs@virtuozzo.com>,
-        "J. Bruce Fields" <bfields@redhat.com>
-Subject: [PATCH 3.18 34/47] sunrpc: use SVC_NET() in svcauth_gss_* functions
-Date:   Fri, 11 Jan 2019 15:08:19 +0100
-Message-Id: <20190111131000.489001194@linuxfoundation.org>
+        stable@vger.kernel.org, Takashi Iwai <tiwai@suse.de>
+Subject: [PATCH 3.18 36/47] ALSA: usb-audio: Avoid access before bLength check in build_audio_procunit()
+Date:   Fri, 11 Jan 2019 15:08:21 +0100
+Message-Id: <20190111131000.780833242@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190111130956.170952125@linuxfoundation.org>
 References: <20190111130956.170952125@linuxfoundation.org>
@@ -64,56 +64,48 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Vasily Averin <vvs@virtuozzo.com>
+From: Takashi Iwai <tiwai@suse.de>
 
-commit b8be5674fa9a6f3677865ea93f7803c4212f3e10 upstream.
+commit f4351a199cc120ff9d59e06d02e8657d08e6cc46 upstream.
 
-Signed-off-by: Vasily Averin <vvs@virtuozzo.com>
-Cc: stable@vger.kernel.org
-Signed-off-by: J. Bruce Fields <bfields@redhat.com>
+The parser for the processing unit reads bNrInPins field before the
+bLength sanity check, which may lead to an out-of-bound access when a
+malformed descriptor is given.  Fix it by assignment after the bLength
+check.
+
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- net/sunrpc/auth_gss/svcauth_gss.c |    8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ sound/usb/mixer.c |   10 ++++++++--
+ 1 file changed, 8 insertions(+), 2 deletions(-)
 
---- a/net/sunrpc/auth_gss/svcauth_gss.c
-+++ b/net/sunrpc/auth_gss/svcauth_gss.c
-@@ -1102,7 +1102,7 @@ static int svcauth_gss_legacy_init(struc
- 	struct kvec *resv = &rqstp->rq_res.head[0];
- 	struct rsi *rsip, rsikey;
- 	int ret;
--	struct sunrpc_net *sn = net_generic(rqstp->rq_xprt->xpt_net, sunrpc_net_id);
-+	struct sunrpc_net *sn = net_generic(SVC_NET(rqstp), sunrpc_net_id);
+--- a/sound/usb/mixer.c
++++ b/sound/usb/mixer.c
+@@ -1799,7 +1799,7 @@ static int build_audio_procunit(struct m
+ 				char *name)
+ {
+ 	struct uac_processing_unit_descriptor *desc = raw_desc;
+-	int num_ins = desc->bNrInPins;
++	int num_ins;
+ 	struct usb_mixer_elem_info *cval;
+ 	struct snd_kcontrol *kctl;
+ 	int i, err, nameid, type, len;
+@@ -1814,7 +1814,13 @@ static int build_audio_procunit(struct m
+ 		0, NULL, default_value_info
+ 	};
  
- 	memset(&rsikey, 0, sizeof(rsikey));
- 	ret = gss_read_verf(gc, argv, authp,
-@@ -1213,7 +1213,7 @@ static int svcauth_gss_proxy_init(struct
- 	uint64_t handle;
- 	int status;
- 	int ret;
--	struct net *net = rqstp->rq_xprt->xpt_net;
-+	struct net *net = SVC_NET(rqstp);
- 	struct sunrpc_net *sn = net_generic(net, sunrpc_net_id);
- 
- 	memset(&ud, 0, sizeof(ud));
-@@ -1403,7 +1403,7 @@ svcauth_gss_accept(struct svc_rqst *rqst
- 	__be32		*rpcstart;
- 	__be32		*reject_stat = resv->iov_base + resv->iov_len;
- 	int		ret;
--	struct sunrpc_net *sn = net_generic(rqstp->rq_xprt->xpt_net, sunrpc_net_id);
-+	struct sunrpc_net *sn = net_generic(SVC_NET(rqstp), sunrpc_net_id);
- 
- 	dprintk("RPC:       svcauth_gss: argv->iov_len = %zd\n",
- 			argv->iov_len);
-@@ -1691,7 +1691,7 @@ svcauth_gss_release(struct svc_rqst *rqs
- 	struct rpc_gss_wire_cred *gc = &gsd->clcred;
- 	struct xdr_buf *resbuf = &rqstp->rq_res;
- 	int stat = -EINVAL;
--	struct sunrpc_net *sn = net_generic(rqstp->rq_xprt->xpt_net, sunrpc_net_id);
-+	struct sunrpc_net *sn = net_generic(SVC_NET(rqstp), sunrpc_net_id);
- 
- 	if (gc->gc_proc != RPC_GSS_PROC_DATA)
- 		goto out;
+-	if (desc->bLength < 13 || desc->bLength < 13 + num_ins ||
++	if (desc->bLength < 13) {
++		usb_audio_err(state->chip, "invalid %s descriptor (id %d)\n", name, unitid);
++		return -EINVAL;
++	}
++
++	num_ins = desc->bNrInPins;
++	if (desc->bLength < 13 + num_ins ||
+ 	    desc->bLength < num_ins + uac_processing_unit_bControlSize(desc, state->mixer->protocol)) {
+ 		usb_audio_err(state->chip, "invalid %s descriptor (id %d)\n", name, unitid);
+ 		return -EINVAL;
 
 
