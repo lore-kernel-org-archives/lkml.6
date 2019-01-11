@@ -7,47 +7,52 @@ X-Spam-Status: No, score=-10.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D85CEC43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:20:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F81AC43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:20:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A8AA721872
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:20:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 45E87218A4
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:20:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547216409;
-	bh=rIVjOYakZB7JPdrngqddDLVGKx/VZci+QuM6OGMkUUI=;
+	s=default; t=1547216413;
+	bh=9iIz9UCsY5sDBdWwKM2VQAYPqVq0eat760P5R2dyhR8=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=ageu+Guhr4gVjD4oEcRXIhJljUJ2XpOTqqDibYlCXRcTfhNd3szreCr/p+jGcdnUk
-	 CxG0qfLiUy+JpTpqzX/BYNMGwO65UM5u2hB4f2MF0IZgFHVLHgJIWLEM2dYuzyW42F
-	 PjPraCEE0Tpiy1ROphVowt1hTuO9SWuPIiBG2f3o=
+	b=eqAwoBJ+oSnwgq9IVkEIm4/ixRqMXxdV5hoQ5abubhaggbHxZC5UPiAnfKpke/Ik7
+	 6ZSMjEOzvVA6ql76J9MWEW4nRHdqPc1N77kbrO8b1UyMVDHX0G9SOX/blOZNkY4Bav
+	 NFQMFZiSnP559eIBmO+8HbcK4Td7UFfkrPNPDaxI=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388056AbfAKOUH (ORCPT
+        id S2388066AbfAKOUM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 11 Jan 2019 09:20:07 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37572 "EHLO mail.kernel.org"
+        Fri, 11 Jan 2019 09:20:12 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37650 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731690AbfAKOUE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Jan 2019 09:20:04 -0500
+        id S2388054AbfAKOUH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 Jan 2019 09:20:07 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C6BE92183F;
-        Fri, 11 Jan 2019 14:20:03 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 36C042184C;
+        Fri, 11 Jan 2019 14:20:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547216404;
-        bh=rIVjOYakZB7JPdrngqddDLVGKx/VZci+QuM6OGMkUUI=;
+        s=default; t=1547216406;
+        bh=9iIz9UCsY5sDBdWwKM2VQAYPqVq0eat760P5R2dyhR8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=tEGJVFNTZA1mxhaq9+A81HT8ZbkthuGi6ru7/7Ks/IgVCyMT15WbWIP0Zpt5dwxLT
-         aFER9/nN0xjrxHzab8TUAjQZYUDFspUSFsC6otlOgEi1MREMH66epMh88BqLiN4d+o
-         LSBPzvjPhrn95UUzZSVjweKUFgpf+NTEBvleSyMw=
+        b=TI9rQtZv/AmUdaUSXEhj+M83iuIwMzhabta9XRB1EhoyJbS1i+iGuWCL7IwZtaUDn
+         oxR2cK76g+7TvkC/Beh9YdwdCrntWkKMOoypSBr19wAdtIexwfJ/mQcEFfR+0on4Af
+         axStaArGB8VXbHm3njryztuB3bjRrswkfnctrUXU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-        syzbot+0cc8e3cc63ca373722c6@syzkaller.appspotmail.com,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-Subject: [PATCH 4.4 50/88] media: vivid: free bitmap_cap when updating std/timings/etc.
-Date:   Fri, 11 Jan 2019 15:08:19 +0100
-Message-Id: <20190111131053.497914379@linuxfoundation.org>
+        stable@vger.kernel.org, James Hogan <jhogan@kernel.org>,
+        Huacai Chen <chenhc@lemote.com>,
+        Paul Burton <paul.burton@mips.com>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        James Hogan <james.hogan@mips.com>,
+        "Steven J . Hill" <Steven.Hill@cavium.com>,
+        linux-mips@linux-mips.org, Fuxin Zhang <zhangfx@lemote.com>,
+        Zhangjin Wu <wuzhangjin@gmail.com>
+Subject: [PATCH 4.4 51/88] MIPS: Ensure pmd_present() returns false after pmd_mknotpresent()
+Date:   Fri, 11 Jan 2019 15:08:20 +0100
+Message-Id: <20190111131053.606551681@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190111131045.137499039@linuxfoundation.org>
 References: <20190111131045.137499039@linuxfoundation.org>
@@ -66,33 +71,44 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Hans Verkuil <hverkuil-cisco@xs4all.nl>
+From: Huacai Chen <chenhc@lemote.com>
 
-commit 560ccb75c2caa6b1039dec1a53cd2ef526f5bf03 upstream.
+commit 92aa0718c9fa5160ad2f0e7b5bffb52f1ea1e51a upstream.
 
-When vivid_update_format_cap() is called it should free any overlay
-bitmap since the compose size will change.
+This patch is borrowed from ARM64 to ensure pmd_present() returns false
+after pmd_mknotpresent(). This is needed for THP.
 
-Signed-off-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
-Reported-by: syzbot+0cc8e3cc63ca373722c6@syzkaller.appspotmail.com
-Cc: <stable@vger.kernel.org>      # for v3.18 and up
-Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+References: 5bb1cc0ff9a6 ("arm64: Ensure pmd_present() returns false after pmd_mknotpresent()")
+Reviewed-by: James Hogan <jhogan@kernel.org>
+Signed-off-by: Huacai Chen <chenhc@lemote.com>
+Signed-off-by: Paul Burton <paul.burton@mips.com>
+Patchwork: https://patchwork.linux-mips.org/patch/21135/
+Cc: Ralf Baechle <ralf@linux-mips.org>
+Cc: James Hogan <james.hogan@mips.com>
+Cc: Steven J . Hill <Steven.Hill@cavium.com>
+Cc: linux-mips@linux-mips.org
+Cc: Fuxin Zhang <zhangfx@lemote.com>
+Cc: Zhangjin Wu <wuzhangjin@gmail.com>
+Cc: <stable@vger.kernel.org> # 3.8+
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/media/platform/vivid/vivid-vid-cap.c |    2 ++
- 1 file changed, 2 insertions(+)
+ arch/mips/include/asm/pgtable-64.h |    5 +++++
+ 1 file changed, 5 insertions(+)
 
---- a/drivers/media/platform/vivid/vivid-vid-cap.c
-+++ b/drivers/media/platform/vivid/vivid-vid-cap.c
-@@ -461,6 +461,8 @@ void vivid_update_format_cap(struct vivi
- 		tpg_s_rgb_range(&dev->tpg, v4l2_ctrl_g_ctrl(dev->rgb_range_cap));
- 		break;
- 	}
-+	vfree(dev->bitmap_cap);
-+	dev->bitmap_cap = NULL;
- 	vivid_update_quality(dev);
- 	tpg_reset_source(&dev->tpg, dev->src_rect.width, dev->src_rect.height, dev->field_cap);
- 	dev->crop_cap = dev->src_rect;
+--- a/arch/mips/include/asm/pgtable-64.h
++++ b/arch/mips/include/asm/pgtable-64.h
+@@ -189,6 +189,11 @@ static inline int pmd_bad(pmd_t pmd)
+ 
+ static inline int pmd_present(pmd_t pmd)
+ {
++#ifdef CONFIG_MIPS_HUGE_TLB_SUPPORT
++	if (unlikely(pmd_val(pmd) & _PAGE_HUGE))
++		return pmd_val(pmd) & _PAGE_PRESENT;
++#endif
++
+ 	return pmd_val(pmd) != (unsigned long) invalid_pte_table;
+ }
+ 
 
 
