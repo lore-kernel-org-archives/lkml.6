@@ -2,403 +2,105 @@ Return-Path: <SRS0=uvhX=PT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F21EAC43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 16:21:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E61CC43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 16:24:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AEE3E20872
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 16:21:23 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=android.com header.i=@android.com header.b="LNzq1YE+"
+	by mail.kernel.org (Postfix) with ESMTP id 1780320872
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 16:24:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388028AbfAKQVW (ORCPT
+        id S1731743AbfAKQYN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 11 Jan 2019 11:21:22 -0500
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:37673 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731300AbfAKQVW (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Jan 2019 11:21:22 -0500
-Received: by mail-pf1-f194.google.com with SMTP id y126so7178965pfb.4
-        for <linux-kernel@vger.kernel.org>; Fri, 11 Jan 2019 08:21:21 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=android.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=pg2TQH2wNE/h74YkvyJYRJ4k8KCaLGH75izqJOKcM0g=;
-        b=LNzq1YE+bXTdM9IJFW09UxeG7tZDp6pZ/jcWYLY/ilLlVVxPECkhufTJCogRRg9LVc
-         D54bplL3SjRzXV1R4Pn9eweZzYlJerQy4eQ0iCG7Fe7CYxQq9i871vrbyuXqwFKYTExp
-         Fl55kuJOYmEsRwQxO5eCNMvEksrleo3MxMgAbwQ3thvZtUHJAPwHyBAxZv+pp5YIUSJP
-         FwucW/NqvYsLWp1f4XSWH58buJxUCEvC0ROZL1gLsk57tYbXmMsycrRLX6192xUw5TNP
-         7Q9AHq2CbveEkOEAg04CJe5Fgeh8ZVY/35XRxtc3neegTC6Io4WmbCj9Ihw6X4egsiqh
-         JlvA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=pg2TQH2wNE/h74YkvyJYRJ4k8KCaLGH75izqJOKcM0g=;
-        b=SJRP90jnt+3Z+kMBVqPJAzQq/F1Sni4k14NTN99NrGCH085UA1qN4N7Z3fPOLM94Ln
-         yF2zuxIqn9FuZh9EwJ2ZA7nAmFjBZfQgXiTnaZdQApglKQiwuIJtVKOdnBK+6RFCdo1B
-         G2qjQW7JFKGRITeVF8DfACYgrgBBOivSXgj4o12sdK+av0GEWNI5gYAne5GOd3yMH4pp
-         M3NahzchtaRNHE/eY4P5N9Ta8qQL0mAQpjUq84bsDDDEPwAw6TlnUUjHhNUxufZn70Ry
-         rO6VDYrDZAFNOS8HgXUT6ZEo+wuZlX31scWQEj/RGsrxtK58ln/XKLoUX19/343e4BN9
-         uogw==
-X-Gm-Message-State: AJcUukdii+SZRyUwfrzFUmG/IiKOz5Gw3nmCHKe7jfSHMvgGsO4vlBKl
-        8G/v/ZHtcc2+uuGAiRC9eUIeaw==
-X-Google-Smtp-Source: ALg8bN5LpP8Y0IqJeabcIOaiYPEcvQfXt6KM7yxgkoTx1Hr20WDtBtQUv7qp1CzA1QfiOLTGOX/b1w==
-X-Received: by 2002:a62:29c3:: with SMTP id p186mr15432844pfp.117.1547223680664;
-        Fri, 11 Jan 2019 08:21:20 -0800 (PST)
-Received: from ava-linux2.mtv.corp.google.com ([2620:0:1000:1601:6cc0:d41d:b970:fd7])
-        by smtp.googlemail.com with ESMTPSA id b26sm179619526pfe.91.2019.01.11.08.21.19
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 11 Jan 2019 08:21:19 -0800 (PST)
-From:   Todd Kjos <tkjos@android.com>
-X-Google-Original-From: Todd Kjos <tkjos@google.com>
-To:     tkjos@google.com, gregkh@linuxfoundation.org, arve@android.com,
-        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
-        maco@google.com
-Cc:     joel@joelfernandes.org, kernel-team@android.com
-Subject: [PATCH v2] binder: create node flag to request sender's security context
-Date:   Fri, 11 Jan 2019 08:21:09 -0800
-Message-Id: <20190111162109.59237-1-tkjos@google.com>
-X-Mailer: git-send-email 2.20.1.97.g81188d93c3-goog
+        Fri, 11 Jan 2019 11:24:13 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33208 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727906AbfAKQYM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 Jan 2019 11:24:12 -0500
+Received: from gandalf.local.home (cpe-66-24-56-78.stny.res.rr.com [66.24.56.78])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 83A2B20872;
+        Fri, 11 Jan 2019 16:24:11 +0000 (UTC)
+Date:   Fri, 11 Jan 2019 11:24:09 -0500
+From:   Steven Rostedt <rostedt@goodmis.org>
+To:     Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
+Cc:     Petr Mladek <pmladek@suse.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jslaby@suse.com>,
+        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] sysrq: Restore original console_loglevel when sysrq
+ disabled
+Message-ID: <20190111112409.6babfa2a@gandalf.local.home>
+In-Reply-To: <20190111130729.GA31790@tigerII.localdomain>
+References: <20190111124515.11017-1-pmladek@suse.com>
+        <20190111130729.GA31790@tigerII.localdomain>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-To allow servers to verify client identity, allow a node
-flag to be set that causes the sender's security context
-to be delivered with the transaction. The BR_TRANSACTION
-command is extended in BR_TRANSACTION_SEC_CTX to
-contain a pointer to the security context string.
+On Fri, 11 Jan 2019 22:07:29 +0900
+Sergey Senozhatsky <sergey.senozhatsky@gmail.com> wrote:
 
-Signed-off-by: Todd Kjos <tkjos@google.com>
----
-v2: fix 32-bit build warning
+> On (01/11/19 13:45), Petr Mladek wrote:
+> > The sysrq header line is printed with an increased loglevel
+> > to provide users some positive feedback.
+> > 
+> > The original loglevel is not restored when the sysrq operation
+> > is disabled. This bug was introduced in 2.6.12 (pre-git-history)
+> > by the commit ("Allow admin to enable only some of the Magic-Sysrq
+> > functions").  
+> 
+> 
+> Good find, and the patch looks OK to me. A small comment below.
+> FWIW,
+> Reviewed-by: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
+> 
+> 
+> ---
+> 
+> A side note (nitpick, etc.); it's Friday night in here, I'm enjoying
+> my beer; so maybe I'm wrong about the whole thing.
+> 
+> 
+> > @@ -553,6 +553,7 @@ void __handle_sysrq(int key, bool check_mask)
+> >  			op_p->handler(key);
+> >  		} else {
+> >  			pr_cont("This sysrq operation is disabled.\n");
+> > +			console_loglevel = orig_log_level;
+> >  		}  
+> 
+> This looks a bit racy.
+> 
+> When we do
+> 
+> 	printk("FOO\n");
+> 	console_loglevel = XYZ;
+> 
+> We don't have any real guarantees that printk("FOO\n") will print
+> anything straight ahead. It is possible that console_sem is already
+> locked and the owner is preempted, so by the time the console_sem
+> owner picks up that FOO\n messages, console_loglevel is back to
+> orig_log_level and suppress_message_printing() will just tell us
+> to skip the message.
+> 
+> Do we need pr_cont() there? Maybe we can just have a normal pr_err()
+> which would always tell that "key" sysrq is disabled? (we also
+> would need to change the error message a bit).
+> 
 
- drivers/android/binder.c            | 106 ++++++++++++++++++++++------
- include/uapi/linux/android/binder.h |  19 +++++
- 2 files changed, 102 insertions(+), 23 deletions(-)
+All this is for another patch and another discussion. This current
+patch keeps with what is there and fixes a missing reset of
+console_loglevel.
 
-diff --git a/drivers/android/binder.c b/drivers/android/binder.c
-index cdfc87629efb8..c12ade0fb75c6 100644
---- a/drivers/android/binder.c
-+++ b/drivers/android/binder.c
-@@ -329,6 +329,8 @@ struct binder_error {
-  *                        (invariant after initialized)
-  * @min_priority:         minimum scheduling priority
-  *                        (invariant after initialized)
-+ * @txn_security_ctx:     require sender's security context
-+ *                        (invariant after initialized)
-  * @async_todo:           list of async work items
-  *                        (protected by @proc->inner_lock)
-  *
-@@ -365,6 +367,7 @@ struct binder_node {
- 		 * invariant after initialization
- 		 */
- 		u8 accept_fds:1;
-+		u8 txn_security_ctx:1;
- 		u8 min_priority;
- 	};
- 	bool has_async_transaction;
-@@ -615,6 +618,7 @@ struct binder_transaction {
- 	long	saved_priority;
- 	kuid_t	sender_euid;
- 	struct list_head fd_fixups;
-+	binder_uintptr_t security_ctx;
- 	/**
- 	 * @lock:  protects @from, @to_proc, and @to_thread
- 	 *
-@@ -1152,6 +1156,7 @@ static struct binder_node *binder_init_node_ilocked(
- 	node->work.type = BINDER_WORK_NODE;
- 	node->min_priority = flags & FLAT_BINDER_FLAG_PRIORITY_MASK;
- 	node->accept_fds = !!(flags & FLAT_BINDER_FLAG_ACCEPTS_FDS);
-+	node->txn_security_ctx = !!(flags & FLAT_BINDER_FLAG_TXN_SECURITY_CTX);
- 	spin_lock_init(&node->lock);
- 	INIT_LIST_HEAD(&node->work.entry);
- 	INIT_LIST_HEAD(&node->async_todo);
-@@ -2778,6 +2783,8 @@ static void binder_transaction(struct binder_proc *proc,
- 	binder_size_t last_fixup_min_off = 0;
- 	struct binder_context *context = proc->context;
- 	int t_debug_id = atomic_inc_return(&binder_last_id);
-+	char *secctx = NULL;
-+	u32 secctx_sz = 0;
- 
- 	e = binder_transaction_log_add(&binder_transaction_log);
- 	e->debug_id = t_debug_id;
-@@ -3020,6 +3027,20 @@ static void binder_transaction(struct binder_proc *proc,
- 	t->flags = tr->flags;
- 	t->priority = task_nice(current);
- 
-+	if (target_node && target_node->txn_security_ctx) {
-+		u32 secid;
-+
-+		security_task_getsecid(proc->tsk, &secid);
-+		ret = security_secid_to_secctx(secid, &secctx, &secctx_sz);
-+		if (ret) {
-+			return_error = BR_FAILED_REPLY;
-+			return_error_param = ret;
-+			return_error_line = __LINE__;
-+			goto err_get_secctx_failed;
-+		}
-+		extra_buffers_size += ALIGN(secctx_sz, sizeof(u64));
-+	}
-+
- 	trace_binder_transaction(reply, t, target_node);
- 
- 	t->buffer = binder_alloc_new_buf(&target_proc->alloc, tr->data_size,
-@@ -3036,6 +3057,19 @@ static void binder_transaction(struct binder_proc *proc,
- 		t->buffer = NULL;
- 		goto err_binder_alloc_buf_failed;
- 	}
-+	if (secctx) {
-+		size_t buf_offset = ALIGN(tr->data_size, sizeof(void *)) +
-+				    ALIGN(tr->offsets_size, sizeof(void *)) +
-+				    ALIGN(extra_buffers_size, sizeof(void *)) -
-+				    ALIGN(secctx_sz, sizeof(u64));
-+		char *kptr = t->buffer->data + buf_offset;
-+
-+		t->security_ctx = (uintptr_t)kptr +
-+		    binder_alloc_get_user_buffer_offset(&target_proc->alloc);
-+		memcpy(kptr, secctx, secctx_sz);
-+		security_release_secctx(secctx, secctx_sz);
-+		secctx = NULL;
-+	}
- 	t->buffer->debug_id = t->debug_id;
- 	t->buffer->transaction = t;
- 	t->buffer->target_node = target_node;
-@@ -3305,6 +3339,9 @@ static void binder_transaction(struct binder_proc *proc,
- 	t->buffer->transaction = NULL;
- 	binder_alloc_free_buf(&target_proc->alloc, t->buffer);
- err_binder_alloc_buf_failed:
-+	if (secctx)
-+		security_release_secctx(secctx, secctx_sz);
-+err_get_secctx_failed:
- 	kfree(tcomplete);
- 	binder_stats_deleted(BINDER_STAT_TRANSACTION_COMPLETE);
- err_alloc_tcomplete_failed:
-@@ -4036,11 +4073,13 @@ static int binder_thread_read(struct binder_proc *proc,
- 
- 	while (1) {
- 		uint32_t cmd;
--		struct binder_transaction_data tr;
-+		struct binder_transaction_data_secctx tr;
-+		struct binder_transaction_data *trd = &tr.transaction_data;
- 		struct binder_work *w = NULL;
- 		struct list_head *list = NULL;
- 		struct binder_transaction *t = NULL;
- 		struct binder_thread *t_from;
-+		size_t trsize = sizeof(*trd);
- 
- 		binder_inner_proc_lock(proc);
- 		if (!binder_worklist_empty_ilocked(&thread->todo))
-@@ -4240,8 +4279,8 @@ static int binder_thread_read(struct binder_proc *proc,
- 		if (t->buffer->target_node) {
- 			struct binder_node *target_node = t->buffer->target_node;
- 
--			tr.target.ptr = target_node->ptr;
--			tr.cookie =  target_node->cookie;
-+			trd->target.ptr = target_node->ptr;
-+			trd->cookie =  target_node->cookie;
- 			t->saved_priority = task_nice(current);
- 			if (t->priority < target_node->min_priority &&
- 			    !(t->flags & TF_ONE_WAY))
-@@ -4251,22 +4290,23 @@ static int binder_thread_read(struct binder_proc *proc,
- 				binder_set_nice(target_node->min_priority);
- 			cmd = BR_TRANSACTION;
- 		} else {
--			tr.target.ptr = 0;
--			tr.cookie = 0;
-+			trd->target.ptr = 0;
-+			trd->cookie = 0;
- 			cmd = BR_REPLY;
- 		}
--		tr.code = t->code;
--		tr.flags = t->flags;
--		tr.sender_euid = from_kuid(current_user_ns(), t->sender_euid);
-+		trd->code = t->code;
-+		trd->flags = t->flags;
-+		trd->sender_euid = from_kuid(current_user_ns(), t->sender_euid);
- 
- 		t_from = binder_get_txn_from(t);
- 		if (t_from) {
- 			struct task_struct *sender = t_from->proc->tsk;
- 
--			tr.sender_pid = task_tgid_nr_ns(sender,
--							task_active_pid_ns(current));
-+			trd->sender_pid =
-+				task_tgid_nr_ns(sender,
-+						task_active_pid_ns(current));
- 		} else {
--			tr.sender_pid = 0;
-+			trd->sender_pid = 0;
- 		}
- 
- 		ret = binder_apply_fd_fixups(t);
-@@ -4297,15 +4337,20 @@ static int binder_thread_read(struct binder_proc *proc,
- 			}
- 			continue;
- 		}
--		tr.data_size = t->buffer->data_size;
--		tr.offsets_size = t->buffer->offsets_size;
--		tr.data.ptr.buffer = (binder_uintptr_t)
-+		trd->data_size = t->buffer->data_size;
-+		trd->offsets_size = t->buffer->offsets_size;
-+		trd->data.ptr.buffer = (binder_uintptr_t)
- 			((uintptr_t)t->buffer->data +
- 			binder_alloc_get_user_buffer_offset(&proc->alloc));
--		tr.data.ptr.offsets = tr.data.ptr.buffer +
-+		trd->data.ptr.offsets = trd->data.ptr.buffer +
- 					ALIGN(t->buffer->data_size,
- 					    sizeof(void *));
- 
-+		if (t->security_ctx) {
-+			cmd = BR_TRANSACTION_SEC_CTX;
-+			tr.secctx = t->security_ctx;
-+			trsize = sizeof(tr);
-+		}
- 		if (put_user(cmd, (uint32_t __user *)ptr)) {
- 			if (t_from)
- 				binder_thread_dec_tmpref(t_from);
-@@ -4316,7 +4361,7 @@ static int binder_thread_read(struct binder_proc *proc,
- 			return -EFAULT;
- 		}
- 		ptr += sizeof(uint32_t);
--		if (copy_to_user(ptr, &tr, sizeof(tr))) {
-+		if (copy_to_user(ptr, &tr, trsize)) {
- 			if (t_from)
- 				binder_thread_dec_tmpref(t_from);
- 
-@@ -4325,7 +4370,7 @@ static int binder_thread_read(struct binder_proc *proc,
- 
- 			return -EFAULT;
- 		}
--		ptr += sizeof(tr);
-+		ptr += trsize;
- 
- 		trace_binder_transaction_received(t);
- 		binder_stat_br(proc, thread, cmd);
-@@ -4333,16 +4378,18 @@ static int binder_thread_read(struct binder_proc *proc,
- 			     "%d:%d %s %d %d:%d, cmd %d size %zd-%zd ptr %016llx-%016llx\n",
- 			     proc->pid, thread->pid,
- 			     (cmd == BR_TRANSACTION) ? "BR_TRANSACTION" :
--			     "BR_REPLY",
-+				(cmd == BR_TRANSACTION_SEC_CTX) ?
-+				     "BR_TRANSACTION_SEC_CTX" : "BR_REPLY",
- 			     t->debug_id, t_from ? t_from->proc->pid : 0,
- 			     t_from ? t_from->pid : 0, cmd,
- 			     t->buffer->data_size, t->buffer->offsets_size,
--			     (u64)tr.data.ptr.buffer, (u64)tr.data.ptr.offsets);
-+			     (u64)trd->data.ptr.buffer,
-+			     (u64)trd->data.ptr.offsets);
- 
- 		if (t_from)
- 			binder_thread_dec_tmpref(t_from);
- 		t->buffer->allow_user_free = 1;
--		if (cmd == BR_TRANSACTION && !(t->flags & TF_ONE_WAY)) {
-+		if (cmd != BR_REPLY && !(t->flags & TF_ONE_WAY)) {
- 			binder_inner_proc_lock(thread->proc);
- 			t->to_parent = thread->transaction_stack;
- 			t->to_thread = thread;
-@@ -4690,7 +4737,8 @@ static int binder_ioctl_write_read(struct file *filp,
- 	return ret;
- }
- 
--static int binder_ioctl_set_ctx_mgr(struct file *filp)
-+static int binder_ioctl_set_ctx_mgr(struct file *filp,
-+				    struct flat_binder_object *fbo)
- {
- 	int ret = 0;
- 	struct binder_proc *proc = filp->private_data;
-@@ -4719,7 +4767,7 @@ static int binder_ioctl_set_ctx_mgr(struct file *filp)
- 	} else {
- 		context->binder_context_mgr_uid = curr_euid;
- 	}
--	new_node = binder_new_node(proc, NULL);
-+	new_node = binder_new_node(proc, fbo);
- 	if (!new_node) {
- 		ret = -ENOMEM;
- 		goto out;
-@@ -4842,8 +4890,20 @@ static long binder_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
- 		binder_inner_proc_unlock(proc);
- 		break;
- 	}
-+	case BINDER_SET_CONTEXT_MGR_EXT: {
-+		struct flat_binder_object fbo;
-+
-+		if (copy_from_user(&fbo, ubuf, sizeof(fbo))) {
-+			ret = -EINVAL;
-+			goto err;
-+		}
-+		ret = binder_ioctl_set_ctx_mgr(filp, &fbo);
-+		if (ret)
-+			goto err;
-+		break;
-+	}
- 	case BINDER_SET_CONTEXT_MGR:
--		ret = binder_ioctl_set_ctx_mgr(filp);
-+		ret = binder_ioctl_set_ctx_mgr(filp, NULL);
- 		if (ret)
- 			goto err;
- 		break;
-diff --git a/include/uapi/linux/android/binder.h b/include/uapi/linux/android/binder.h
-index b9ba520f7e4bb..2832134e53971 100644
---- a/include/uapi/linux/android/binder.h
-+++ b/include/uapi/linux/android/binder.h
-@@ -41,6 +41,14 @@ enum {
- enum {
- 	FLAT_BINDER_FLAG_PRIORITY_MASK = 0xff,
- 	FLAT_BINDER_FLAG_ACCEPTS_FDS = 0x100,
-+
-+	/**
-+	 * @FLAT_BINDER_FLAG_TXN_SECURITY_CTX: request security contexts
-+	 *
-+	 * Only when set, causes senders to include their security
-+	 * context
-+	 */
-+	FLAT_BINDER_FLAG_TXN_SECURITY_CTX = 0x1000,
- };
- 
- #ifdef BINDER_IPC_32BIT
-@@ -218,6 +226,7 @@ struct binder_node_info_for_ref {
- #define BINDER_VERSION			_IOWR('b', 9, struct binder_version)
- #define BINDER_GET_NODE_DEBUG_INFO	_IOWR('b', 11, struct binder_node_debug_info)
- #define BINDER_GET_NODE_INFO_FOR_REF	_IOWR('b', 12, struct binder_node_info_for_ref)
-+#define BINDER_SET_CONTEXT_MGR_EXT	_IOW('b', 13, struct flat_binder_object)
- 
- /*
-  * NOTE: Two special error codes you should check for when calling
-@@ -276,6 +285,11 @@ struct binder_transaction_data {
- 	} data;
- };
- 
-+struct binder_transaction_data_secctx {
-+	struct binder_transaction_data transaction_data;
-+	binder_uintptr_t secctx;
-+};
-+
- struct binder_transaction_data_sg {
- 	struct binder_transaction_data transaction_data;
- 	binder_size_t buffers_size;
-@@ -311,6 +325,11 @@ enum binder_driver_return_protocol {
- 	BR_OK = _IO('r', 1),
- 	/* No parameters! */
- 
-+	BR_TRANSACTION_SEC_CTX = _IOR('r', 2,
-+				      struct binder_transaction_data_secctx),
-+	/*
-+	 * binder_transaction_data_secctx: the received command.
-+	 */
- 	BR_TRANSACTION = _IOR('r', 2, struct binder_transaction_data),
- 	BR_REPLY = _IOR('r', 3, struct binder_transaction_data),
- 	/*
--- 
-2.20.1.97.g81188d93c3-goog
+Reviewed-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
 
+-- Steve
