@@ -2,86 +2,123 @@ Return-Path: <SRS0=uvhX=PT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-11.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FSL_HELO_FAKE,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E1D35C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 01:01:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 40FF6C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 01:01:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AF62C2133F
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 01:01:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0FD73214C6
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 01:01:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1547168483;
+	bh=l7osxpZsN682QcM4TNEXqTFkMgOfdi+veNmBfHbARWE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=qCNu+Fc7tuUi7lcrb4kNhdzgsRus6i6oBqtJxPMPAEeDD54eiRhE/i22fF8HxhSuy
+	 rrO9B0yrww6exiawrpMRr7TnJmzsgrT2FMA+kE/audbD9RfJTH5fQmi+y82MsrDI+A
+	 zLuPMASGP8KLf38f7fOC6oM4XexGvbWXHddcc/ew=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728685AbfAKBBT convert rfc822-to-8bit (ORCPT
+        id S1728806AbfAKBBV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 10 Jan 2019 20:01:21 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42248 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726369AbfAKBBT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 10 Jan 2019 20:01:19 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:48099 "EHLO
-        mail.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726149AbfAKBBT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Jan 2019 20:01:19 -0500
-Received: from wld62.hos.anvin.org (c-24-5-245-234.hsd1.ca.comcast.net [24.5.245.234] (may be forged))
-        (authenticated bits=0)
-        by mail.zytor.com (8.15.2/8.15.2) with ESMTPSA id x0B103LP431560
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NO);
-        Thu, 10 Jan 2019 17:00:03 -0800
-Date:   Thu, 10 Jan 2019 16:59:55 -0800
-User-Agent: K-9 Mail for Android
-In-Reply-To: <20190110174257.GE16556@linux.intel.com>
-References: <cover.1547073843.git.jpoimboe@redhat.com> <279b8003f7f0a6831d090ab822d37bc958f974de.1547073843.git.jpoimboe@redhat.com> <8138A1EE-359D-4CD2-8E96-5BF00313AB3B@vmware.com> <20190110172004.wuh45xoafynfm2df@treble> <20190110123243.3b9e0856@gandalf.local.home> <20190110174257.GE16556@linux.intel.com>
+Received: from gmail.com (unknown [104.132.1.77])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id B6933206B7;
+        Fri, 11 Jan 2019 01:01:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1547168478;
+        bh=l7osxpZsN682QcM4TNEXqTFkMgOfdi+veNmBfHbARWE=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=lfHqjuAFi7k+98Dt3caZBRCkoXLbVCikPgiDlsjXW6ZdQbVQaez0d7Esos47ZDIUe
+         4pkNsgdK3ygskwkZDi41wbCjMbBCm2gsoP63dedvu9JCCfJq6VoJ8qIuoB3OJAvMHS
+         VjfaPG+7VL+sIMEDjQPfKNxlOkWEvnGTpavhFmvc=
+Date:   Thu, 10 Jan 2019 17:01:17 -0800
+From:   Eric Biggers <ebiggers@kernel.org>
+To:     Guenter Roeck <linux@roeck-us.net>, Theodore Ts'o <tytso@mit.edu>
+Cc:     Chandan Rajendra <chandan@linux.vnet.ibm.com>,
+        linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
+        linux-kernel@vger.kernel.org
+Subject: Re: [f2fs-dev] [PATCH] fscrypt: remove filesystem specific build
+ config option
+Message-ID: <20190111010116.GG149637@gmail.com>
+References: <20190110233230.GA23953@roeck-us.net>
 MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: 8BIT
-Subject: Re: [PATCH v3 5/6] x86/alternative: Use a single access in text_poke() where possible
-To:     Sean Christopherson <sean.j.christopherson@intel.com>,
-        Steven Rostedt <rostedt@goodmis.org>
-CC:     Josh Poimboeuf <jpoimboe@redhat.com>,
-        Nadav Amit <namit@vmware.com>, X86 ML <x86@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Jason Baron <jbaron@akamai.com>, Jiri Kosina <jkosina@suse.cz>,
-        David Laight <David.Laight@ACULAB.COM>,
-        Borislav Petkov <bp@alien8.de>,
-        Julia Cartwright <julia@ni.com>, Jessica Yu <jeyu@kernel.org>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        Edward Cree <ecree@solarflare.com>,
-        Daniel Bristot de Oliveira <bristot@redhat.com>
-From:   hpa@zytor.com
-Message-ID: <1955E727-BF68-4C00-A8C2-54FA9487A5A6@zytor.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190110233230.GA23953@roeck-us.net>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On January 10, 2019 9:42:57 AM PST, Sean Christopherson <sean.j.christopherson@intel.com> wrote:
->On Thu, Jan 10, 2019 at 12:32:43PM -0500, Steven Rostedt wrote:
->> On Thu, 10 Jan 2019 11:20:04 -0600
->> Josh Poimboeuf <jpoimboe@redhat.com> wrote:
->> 
->> 
->> > > While I can't find a reason for hypervisors to emulate this
->instruction,
->> > > smarter people might find ways to turn it into a security
->exploit.  
->> > 
->> > Interesting point... but I wonder if it's a realistic concern. 
->BTW,
->> > text_poke_bp() also relies on undocumented behavior.
->> 
->> But we did get an official OK from Intel that it will work. Took a
->bit
->> of arm twisting to get them to do so, but they did. And it really is
->> pretty robust.
->
->Did we (they?) list any caveats for this behavior?  E.g. I'm fairly
->certain atomicity guarantees go out the window if WC memtype is used.
+On Thu, Jan 10, 2019 at 03:32:30PM -0800, Guenter Roeck wrote:
+> On Sat, Dec 08, 2018 at 12:21:38PM +0530, Chandan Rajendra wrote:
+> > In order to have a common code base for fscrypt "post read" processing
+> > for all filesystems which support encryption, this commit removes
+> > filesystem specific build config option (e.g. CONFIG_EXT4_FS_ENCRYPTION)
+> > and replaces it with a build option (i.e. CONFIG_FS_ENCRYPTION) whose
+> > value affects all the filesystems making use of fscrypt.
+> > 
+> > Signed-off-by: Chandan Rajendra <chandan@linux.vnet.ibm.com>
+> > Signed-off-by: Theodore Ts'o <tytso@mit.edu>
+> 
+> This results in:
+> 
+> Building ia64:allnoconfig ... failed
+> --------------
+> Error log:
+> make[1]: Entering directory '/tmp/buildbot-builddir.7Wft3'
+>   GEN     Makefile
+> scripts/kconfig/conf  --allnoconfig Kconfig
+> arch/ia64/Kconfig:128:error: recursive dependency detected!
+> arch/ia64/Kconfig:128:	choice <choice> contains symbol IA64_HP_SIM
+> arch/ia64/Kconfig:202:	symbol IA64_HP_SIM is part of choice PM
+> kernel/power/Kconfig:144:	symbol PM is selected by PM_SLEEP
+> kernel/power/Kconfig:104:	symbol PM_SLEEP depends on HIBERNATE_CALLBACKS
+> kernel/power/Kconfig:31:	symbol HIBERNATE_CALLBACKS is selected by HIBERNATION
+> kernel/power/Kconfig:34:	symbol HIBERNATION depends on SWAP
+> init/Kconfig:250:	symbol SWAP depends on BLOCK
+> block/Kconfig:5:	symbol BLOCK is selected by UBIFS_FS
+> fs/ubifs/Kconfig:1:	symbol UBIFS_FS depends on MISC_FILESYSTEMS
+> fs/Kconfig:227:	symbol MISC_FILESYSTEMS is selected by ACPI_APEI
+> drivers/acpi/apei/Kconfig:8:	symbol ACPI_APEI depends on ACPI
+> drivers/acpi/Kconfig:9:	symbol ACPI depends on ARCH_SUPPORTS_ACPI
+> drivers/acpi/Kconfig:6:	symbol ARCH_SUPPORTS_ACPI is selected by IA64_HP_SIM
+> arch/ia64/Kconfig:202:	symbol IA64_HP_SIM is part of choice <choice>
+> For a resolution refer to Documentation/kbuild/kconfig-language.txt
+> subsection "Kconfig recursive dependency limitations"
+> 
+> Didn't we have exactly the same problem before ?
+> 
+> Guenter
 
-If you run code from non-WB memory, all bets are off and you better not be doing cross-modifying code.
--- 
-Sent from my Android device with K-9 Mail. Please excuse my brevity.
+Indeed, Chandan Rajendra sent out a new version of the patch which fixes the
+problem (by removing the 'select BLOCK' from fs/ubifs/Kconfig), but it never
+made it into the fscrypt tree and hence never made it into linux-next.
+
+Ted, what you are planning to do with the fscrypt tree following the fsverity
+discussion?  IMO, we should keep the fsverity stuff in its own branch, separate
+from any fscrypt changes.  As a suggestion, in the branch "fscrypt" of my
+linux.git repo [1], I applied just these four patches on top of v5.0-rc1 and
+resolved the conflicts with them no longer being on top of fsverity:
+
+	fscrypt: remove CRYPTO_CTR dependency
+	ext4: use IS_ENCRYPTED() to check encryption status
+	f2fs: use IS_ENCRYPTED() to check encryption status
+	fscrypt: remove filesystem specific build config option
+
+(The last patch is the fixed version.)
+
+Please consider doing the same with the official fscrypt tree.  Thanks!
+
+[1] https://git.kernel.org/pub/scm/linux/kernel/git/ebiggers/linux.git/log/?h=fscrypt
+
+- Eric
