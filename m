@@ -7,51 +7,51 @@ X-Spam-Status: No, score=-13.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D2D44C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 23:02:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B743C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 23:02:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 98FFA21783
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 23:02:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4886B21783
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 23:02:25 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="IGuE8jgU"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="P5PsoN9H"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726524AbfAKXCU (ORCPT
+        id S1726542AbfAKXCY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 11 Jan 2019 18:02:20 -0500
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:44927 "EHLO
+        Fri, 11 Jan 2019 18:02:24 -0500
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:39166 "EHLO
         mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726428AbfAKXCT (ORCPT
+        with ESMTP id S1726428AbfAKXCW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Jan 2019 18:02:19 -0500
-Received: by mail-pf1-f196.google.com with SMTP id u6so7597305pfh.11
-        for <linux-kernel@vger.kernel.org>; Fri, 11 Jan 2019 15:02:18 -0800 (PST)
+        Fri, 11 Jan 2019 18:02:22 -0500
+Received: by mail-pf1-f196.google.com with SMTP id r136so7608717pfc.6
+        for <linux-kernel@vger.kernel.org>; Fri, 11 Jan 2019 15:02:22 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=VUHnc+wg8uvlPoMEfQzRuLKMBmh3tzh5bMrl0Ofbpb4=;
-        b=IGuE8jgUxjWgZwY+lY6ExMAl2fkykA0Rs47aK5PMXNDbMhZkKeRb6PJ/v2cCQpcwGR
-         HFnIa2dk7zgxCFgcTTIfkGOAxJmtl0eGDFpAypCxiJClqfKXU+NP9r0BvCgv4iZoBeJJ
-         pa5VE3Wn9ZIlbGpFY6HT6/JmgJUxKRJpp7Jjc=
+        bh=Nc8zOqvU/BYO5yX/GyinA9uO6UDOhslefwMFhbwZSoI=;
+        b=P5PsoN9HWf6UOB5fqArSwWe5wQSGMEm60qsES6NfGSoyPg8BhLa1H6O4Tr5gvThSB8
+         1sJUxnqmiggQQGF6lwq2Sl3Qt/en0wtFi5o+gr0oYfdbLi27CG/+JJK8jSP9BXoEe0i+
+         LwDlM9ezew0z1Lpy4tUdNAWDJI84S9XISu3Oc=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=VUHnc+wg8uvlPoMEfQzRuLKMBmh3tzh5bMrl0Ofbpb4=;
-        b=C/55LdKDGFVcX2vBMlqlTOQIFKO+h5KG1ouNj7NVbYK8zftT+jvDe9TOWmxdzTEZgO
-         qrpwYrwNZQlIqWbyI9A64YOvBAiTTUr9tsGCPo0EXn2ychFBuppsEYOGHrXTPBG79GqI
-         GCwcYp1sM4MTmvuilLQpCg2GUd6/wCTCuWAjIShgYuAu0XZk7o4f52kRKwHgYA0XMxz0
-         mitvMaO6DNznVh3krSO2j7EX73MYSCWebg6VAs0/GaAczXYGhYqt0cUZXXhuMt7/Qo32
-         w6yX+3hAvbCebhXKzbETvQEv2gc6MLIx/hUuiozYswNz4E5PylMYwN2nUvLcaY8ukac9
-         DT/w==
-X-Gm-Message-State: AJcUukdRovag9BVaR7hIemvjWRl4tMoU44bBUxQJuYnSJw8N/8Xm65c7
-        wZLyHrbTOvS1ashYi/FaS4GlUQ==
-X-Google-Smtp-Source: ALg8bN6BFQX0yiCO8vp78vFgpVAtWy/cN2Jv3iBo6WZhESodOIW0k+iVPBODwt36Rifg5dQv44S57A==
-X-Received: by 2002:a63:fb4c:: with SMTP id w12mr5001013pgj.321.1547247738332;
-        Fri, 11 Jan 2019 15:02:18 -0800 (PST)
+        bh=Nc8zOqvU/BYO5yX/GyinA9uO6UDOhslefwMFhbwZSoI=;
+        b=eHsRx665h6X5BQezGFjiLok8Pf6uXyMsmutHFIGVKubgZfVa/jODfFztIghs+Q4NgY
+         locKO5M/Vf9YqikmELnKVGyroj7nvlmxlWZYo75sGj6x8wufgO1skuTXq8o4o74+XrOA
+         d28MgFhmzQhGr4R0hbOBxgC5dlgladbCBxaT5DqaPYRXLKByHxDCeS4OT+7i0OXlJhA3
+         w1jo09be8vZMj5LKdKDTL00Lr77t6Pd8ZhQxz0ZLuXVRYfSNstimEeVdey78hBE5Od+A
+         YT4/7jfbwFSRKFZjMRByGEODELhj8alwQqo38DzD/VKA9SF/JOdGdQaTpdyyayU4b6V4
+         QkXw==
+X-Gm-Message-State: AJcUukfzdwC4+SUtWW8W2oqIvyE8wy+c6b+Wwbh+GOTBDsKWVZxVqyjj
+        sner3yB4zGlW6jaBGIMzjnucmw==
+X-Google-Smtp-Source: ALg8bN684BXwqhN1BtTlZt1EyatKdKlCqs0Mf+jfOQmY1MkMt8jQV+4NLa3Rq8VRM1MgGQqTeDqG+A==
+X-Received: by 2002:a63:fe0a:: with SMTP id p10mr12777106pgh.265.1547247741982;
+        Fri, 11 Jan 2019 15:02:21 -0800 (PST)
 Received: from evgreen2.mtv.corp.google.com ([2620:15c:202:201:ffda:7716:9afc:1301])
-        by smtp.gmail.com with ESMTPSA id 15sm116045186pfr.55.2019.01.11.15.02.17
+        by smtp.gmail.com with ESMTPSA id 15sm116045186pfr.55.2019.01.11.15.02.20
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Fri, 11 Jan 2019 15:02:17 -0800 (PST)
+        Fri, 11 Jan 2019 15:02:21 -0800 (PST)
 From:   Evan Green <evgreen@chromium.org>
 To:     Andy Gross <andy.gross@linaro.org>,
         Rob Herring <robh+dt@kernel.org>,
@@ -62,10 +62,14 @@ Cc:     Can Guo <cang@codeaurora.org>,
         Stephen Boyd <swboyd@chromium.org>,
         Vivek Gautam <vivek.gautam@codeaurora.org>,
         Evan Green <evgreen@chromium.org>,
-        linux-kernel@vger.kernel.org, Manu Gautam <mgautam@codeaurora.org>
-Subject: [PATCH v1 7/8] phy: qcom-qmp: Move UFS phy to phy_poweron/off
-Date:   Fri, 11 Jan 2019 15:01:28 -0800
-Message-Id: <20190111230129.127037-8-evgreen@chromium.org>
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Grygorii Strashko <grygorii.strashko@ti.com>,
+        linux-kernel@vger.kernel.org,
+        "Martin K. Petersen" <martin.petersen@oracle.com>
+Subject: [PATCH v1 8/8] phy: qcom-ufs: Refactor all init steps into phy_poweron
+Date:   Fri, 11 Jan 2019 15:01:29 -0800
+Message-Id: <20190111230129.127037-9-evgreen@chromium.org>
 X-Mailer: git-send-email 2.18.1
 In-Reply-To: <20190111230129.127037-1-evgreen@chromium.org>
 References: <20190111230129.127037-1-evgreen@chromium.org>
@@ -74,183 +78,271 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-For UFS, move the actual firing up of the PHY to phy_poweron and
-phy_poweroff callbacks, rather than init/exit. UFS calls
-phy_poweroff during suspend, so now all clocks and regulators for
-the phy can be powered down during suspend.
+The phy code was using implicit sequencing between the PHY driver
+and the UFS driver to implement certain hardware requirements.
+Specifically, the PHY reset register in the UFS controller needs
+to be deasserted before serdes start occurs in the PHY.
+
+Before this change, the code was doing this by utilizing the two
+phy callbacks, phy_init and phy_poweron, as "init step 1" and
+"init step 2", where the UFS driver would deassert reset between
+these two steps.
+
+This makes it challenging to power off the regulators in suspend,
+as regulators are initialized in init, not in poweron, but only
+poweroff is called during suspend, not exit.
+
+Consolidate the initialization code into phy_poweron, and utilize
+the reset controller exported from the UFS driver to explicitly
+perform all the steps needed to initialize the PHY.
 
 Signed-off-by: Evan Green <evgreen@chromium.org>
-
 ---
 
- drivers/phy/qualcomm/phy-qcom-qmp.c | 82 ++++++++---------------------
- 1 file changed, 23 insertions(+), 59 deletions(-)
+ drivers/phy/qualcomm/phy-qcom-ufs-i.h        |  5 +-
+ drivers/phy/qualcomm/phy-qcom-ufs-qmp-14nm.c | 25 +--------
+ drivers/phy/qualcomm/phy-qcom-ufs-qmp-20nm.c | 25 +--------
+ drivers/phy/qualcomm/phy-qcom-ufs.c          | 57 +++++++++++++++-----
+ 4 files changed, 49 insertions(+), 63 deletions(-)
 
-diff --git a/drivers/phy/qualcomm/phy-qcom-qmp.c b/drivers/phy/qualcomm/phy-qcom-qmp.c
-index eb1cac8f0fd4e..7766c6384d0a8 100644
---- a/drivers/phy/qualcomm/phy-qcom-qmp.c
-+++ b/drivers/phy/qualcomm/phy-qcom-qmp.c
-@@ -1209,8 +1209,7 @@ static int qcom_qmp_phy_com_exit(struct qcom_qmp *qmp)
- 	return 0;
+diff --git a/drivers/phy/qualcomm/phy-qcom-ufs-i.h b/drivers/phy/qualcomm/phy-qcom-ufs-i.h
+index 681644e43248c..404b365c114df 100644
+--- a/drivers/phy/qualcomm/phy-qcom-ufs-i.h
++++ b/drivers/phy/qualcomm/phy-qcom-ufs-i.h
+@@ -19,6 +19,7 @@
+ #include <linux/clk.h>
+ #include <linux/phy/phy.h>
+ #include <linux/regulator/consumer.h>
++#include <linux/reset.h>
+ #include <linux/slab.h>
+ #include <linux/platform_device.h>
+ #include <linux/io.h>
+@@ -113,11 +114,10 @@ struct ufs_qcom_phy {
+ 	char name[UFS_QCOM_PHY_NAME_LEN];
+ 	struct ufs_qcom_phy_calibration *cached_regs;
+ 	int cached_regs_table_size;
+-	bool is_powered_on;
+-	bool is_started;
+ 	struct ufs_qcom_phy_specific_ops *phy_spec_ops;
+ 
+ 	enum phy_mode mode;
++	struct reset_control *ufs_reset;
+ };
+ 
+ /**
+@@ -132,6 +132,7 @@ struct ufs_qcom_phy {
+  * and writes to QSERDES_RX_SIGDET_CNTRL attribute
+  */
+ struct ufs_qcom_phy_specific_ops {
++	int (*calibrate)(struct ufs_qcom_phy *ufs_qcom_phy, bool is_rate_B);
+ 	void (*start_serdes)(struct ufs_qcom_phy *phy);
+ 	int (*is_physical_coding_sublayer_ready)(struct ufs_qcom_phy *phy);
+ 	void (*set_tx_lane_enable)(struct ufs_qcom_phy *phy, u32 val);
+diff --git a/drivers/phy/qualcomm/phy-qcom-ufs-qmp-14nm.c b/drivers/phy/qualcomm/phy-qcom-ufs-qmp-14nm.c
+index 1e0d4f2046a45..4815546f228cd 100644
+--- a/drivers/phy/qualcomm/phy-qcom-ufs-qmp-14nm.c
++++ b/drivers/phy/qualcomm/phy-qcom-ufs-qmp-14nm.c
+@@ -42,28 +42,6 @@ void ufs_qcom_phy_qmp_14nm_advertise_quirks(struct ufs_qcom_phy *phy_common)
+ 		UFS_QCOM_PHY_QUIRK_HIBERN8_EXIT_AFTER_PHY_PWR_COLLAPSE;
  }
  
--/* PHY Initialization */
--static int qcom_qmp_phy_init(struct phy *phy)
-+static int qcom_qmp_phy_enable(struct phy *phy)
- {
- 	struct qmp_phy *qphy = phy_get_drvdata(phy);
- 	struct qcom_qmp *qmp = qphy->qmp;
-@@ -1224,7 +1223,6 @@ static int qcom_qmp_phy_init(struct phy *phy)
- 	int ret;
- 
- 	dev_vdbg(qmp->dev, "Initializing QMP phy\n");
--
- 	if (cfg->has_ufsphy_reset) {
- 		/*
- 		 * Get UFS reset, which is delayed until now to avoid a
-@@ -1292,14 +1290,6 @@ static int qcom_qmp_phy_init(struct phy *phy)
- 		}
- 	}
- 
--	/*
--	 * UFS PHY requires the deassert of software reset before serdes start.
--	 * For UFS PHYs that do not have software reset control bits, defer
--	 * starting serdes until the power on callback.
--	 */
--	if ((cfg->type == PHY_TYPE_UFS) && cfg->no_pcs_sw_reset)
--		goto out;
--
- 	/*
- 	 * Pull out PHY from POWER DOWN state.
- 	 * This is active low enable signal to power-down PHY.
-@@ -1311,7 +1301,9 @@ static int qcom_qmp_phy_init(struct phy *phy)
- 		usleep_range(cfg->pwrdn_delay_min, cfg->pwrdn_delay_max);
- 
- 	/* Pull PHY out of reset state */
--	qphy_clrbits(pcs, cfg->regs[QPHY_SW_RESET], SW_RESET);
-+	if (!cfg->no_pcs_sw_reset)
-+		qphy_clrbits(pcs, cfg->regs[QPHY_SW_RESET], SW_RESET);
-+
- 	if (cfg->has_phy_dp_com_ctrl)
- 		qphy_clrbits(dp_com, QPHY_V3_DP_COM_SW_RESET, SW_RESET);
- 
-@@ -1328,11 +1320,12 @@ static int qcom_qmp_phy_init(struct phy *phy)
- 		goto err_pcs_ready;
- 	}
- 	qmp->phy_initialized = true;
--
--out:
--	return ret;
-+	return 0;
- 
- err_pcs_ready:
-+	if (qmp->ufs_reset)
-+		reset_control_assert(qmp->ufs_reset);
-+
- 	clk_disable_unprepare(qphy->pipe_clk);
- err_clk_enable:
- 	if (cfg->has_lane_rst)
-@@ -1343,7 +1336,7 @@ static int qcom_qmp_phy_init(struct phy *phy)
- 	return ret;
- }
- 
--static int qcom_qmp_phy_exit(struct phy *phy)
-+static int qcom_qmp_phy_disable(struct phy *phy)
- {
- 	struct qmp_phy *qphy = phy_get_drvdata(phy);
- 	struct qcom_qmp *qmp = qphy->qmp;
-@@ -1360,7 +1353,6 @@ static int qcom_qmp_phy_exit(struct phy *phy)
- 
- 	/* Put PHY into POWER DOWN state: active low */
- 	qphy_clrbits(qphy->pcs, QPHY_POWER_DOWN_CONTROL, cfg->pwrdn_ctrl);
--
- 	if (cfg->has_lane_rst)
- 		reset_control_assert(qphy->lane_rst);
- 
-@@ -1371,44 +1363,6 @@ static int qcom_qmp_phy_exit(struct phy *phy)
- 	return 0;
- }
- 
--static int qcom_qmp_phy_poweron(struct phy *phy)
+-static int ufs_qcom_phy_qmp_14nm_init(struct phy *generic_phy)
 -{
--	struct qmp_phy *qphy = phy_get_drvdata(phy);
--	struct qcom_qmp *qmp = qphy->qmp;
--	const struct qmp_phy_cfg *cfg = qmp->cfg;
--	void __iomem *pcs = qphy->pcs;
--	void __iomem *status;
--	unsigned int mask, val;
--	int ret = 0;
+-	struct ufs_qcom_phy *phy_common = get_ufs_qcom_phy(generic_phy);
+-	bool is_rate_B = false;
+-	int ret;
 -
--	if (cfg->type != PHY_TYPE_UFS)
--		return 0;
+-	if (phy_common->mode == PHY_MODE_UFS_HS_B)
+-		is_rate_B = true;
 -
--	/*
--	 * For UFS PHY that has not software reset control, serdes start
--	 * should only happen when UFS driver explicitly calls phy_power_on
--	 * after it deasserts software reset.
--	 */
--	if (cfg->no_pcs_sw_reset && !qmp->phy_initialized &&
--	    (qmp->init_count != 0)) {
--		/* start SerDes and Phy-Coding-Sublayer */
--		qphy_setbits(pcs, cfg->regs[QPHY_START_CTRL], cfg->start_ctrl);
--
--		status = pcs + cfg->regs[QPHY_PCS_READY_STATUS];
--		mask = cfg->mask_pcs_ready;
--
--		ret = readl_poll_timeout(status, val, !(val & mask), 1,
--					 PHY_INIT_COMPLETE_TIMEOUT);
--		if (ret) {
--			dev_err(qmp->dev, "phy initialization timed-out\n");
--			return ret;
--		}
--		qmp->phy_initialized = true;
--	}
+-	ret = ufs_qcom_phy_qmp_14nm_phy_calibrate(phy_common, is_rate_B);
+-	if (!ret)
+-		/* phy calibrated, but yet to be started */
+-		phy_common->is_started = false;
 -
 -	return ret;
 -}
 -
- static int qcom_qmp_phy_set_mode(struct phy *phy,
- 				 enum phy_mode mode, int submode)
- {
-@@ -1658,9 +1612,15 @@ static int phy_pipe_clk_register(struct qcom_qmp *qmp, struct device_node *np)
+-static int ufs_qcom_phy_qmp_14nm_exit(struct phy *generic_phy)
+-{
+-	return 0;
+-}
+-
+ static
+ int ufs_qcom_phy_qmp_14nm_set_mode(struct phy *generic_phy,
+ 				   enum phy_mode mode, int submode)
+@@ -124,8 +102,6 @@ static int ufs_qcom_phy_qmp_14nm_is_pcs_ready(struct ufs_qcom_phy *phy_common)
  }
  
- static const struct phy_ops qcom_qmp_phy_gen_ops = {
--	.init		= qcom_qmp_phy_init,
--	.exit		= qcom_qmp_phy_exit,
--	.power_on	= qcom_qmp_phy_poweron,
-+	.init		= qcom_qmp_phy_enable,
-+	.exit		= qcom_qmp_phy_disable,
-+	.set_mode	= qcom_qmp_phy_set_mode,
-+	.owner		= THIS_MODULE,
-+};
-+
-+static const struct phy_ops qcom_qmp_ufs_ops = {
-+	.power_on	= qcom_qmp_phy_enable,
-+	.power_off	= qcom_qmp_phy_disable,
- 	.set_mode	= qcom_qmp_phy_set_mode,
- 	.owner		= THIS_MODULE,
+ static const struct phy_ops ufs_qcom_phy_qmp_14nm_phy_ops = {
+-	.init		= ufs_qcom_phy_qmp_14nm_init,
+-	.exit		= ufs_qcom_phy_qmp_14nm_exit,
+ 	.power_on	= ufs_qcom_phy_power_on,
+ 	.power_off	= ufs_qcom_phy_power_off,
+ 	.set_mode	= ufs_qcom_phy_qmp_14nm_set_mode,
+@@ -133,6 +109,7 @@ static const struct phy_ops ufs_qcom_phy_qmp_14nm_phy_ops = {
  };
-@@ -1671,6 +1631,7 @@ int qcom_qmp_phy_create(struct device *dev, struct device_node *np, int id)
- 	struct qcom_qmp *qmp = dev_get_drvdata(dev);
- 	struct phy *generic_phy;
- 	struct qmp_phy *qphy;
-+	const struct phy_ops *ops = &qcom_qmp_phy_gen_ops;
- 	char prop_name[MAX_PROP_NAME];
- 	int ret;
  
-@@ -1757,7 +1718,10 @@ int qcom_qmp_phy_create(struct device *dev, struct device_node *np, int id)
+ static struct ufs_qcom_phy_specific_ops phy_14nm_ops = {
++	.calibrate		= ufs_qcom_phy_qmp_14nm_phy_calibrate,
+ 	.start_serdes		= ufs_qcom_phy_qmp_14nm_start_serdes,
+ 	.is_physical_coding_sublayer_ready = ufs_qcom_phy_qmp_14nm_is_pcs_ready,
+ 	.set_tx_lane_enable	= ufs_qcom_phy_qmp_14nm_set_tx_lane_enable,
+diff --git a/drivers/phy/qualcomm/phy-qcom-ufs-qmp-20nm.c b/drivers/phy/qualcomm/phy-qcom-ufs-qmp-20nm.c
+index aef40f7a41d49..f1cf819e12eae 100644
+--- a/drivers/phy/qualcomm/phy-qcom-ufs-qmp-20nm.c
++++ b/drivers/phy/qualcomm/phy-qcom-ufs-qmp-20nm.c
+@@ -61,28 +61,6 @@ void ufs_qcom_phy_qmp_20nm_advertise_quirks(struct ufs_qcom_phy *phy_common)
+ 		UFS_QCOM_PHY_QUIRK_HIBERN8_EXIT_AFTER_PHY_PWR_COLLAPSE;
+ }
+ 
+-static int ufs_qcom_phy_qmp_20nm_init(struct phy *generic_phy)
+-{
+-	struct ufs_qcom_phy *phy_common = get_ufs_qcom_phy(generic_phy);
+-	bool is_rate_B = false;
+-	int ret;
+-
+-	if (phy_common->mode == PHY_MODE_UFS_HS_B)
+-		is_rate_B = true;
+-
+-	ret = ufs_qcom_phy_qmp_20nm_phy_calibrate(phy_common, is_rate_B);
+-	if (!ret)
+-		/* phy calibrated, but yet to be started */
+-		phy_common->is_started = false;
+-
+-	return ret;
+-}
+-
+-static int ufs_qcom_phy_qmp_20nm_exit(struct phy *generic_phy)
+-{
+-	return 0;
+-}
+-
+ static
+ int ufs_qcom_phy_qmp_20nm_set_mode(struct phy *generic_phy,
+ 				   enum phy_mode mode, int submode)
+@@ -182,8 +160,6 @@ static int ufs_qcom_phy_qmp_20nm_is_pcs_ready(struct ufs_qcom_phy *phy_common)
+ }
+ 
+ static const struct phy_ops ufs_qcom_phy_qmp_20nm_phy_ops = {
+-	.init		= ufs_qcom_phy_qmp_20nm_init,
+-	.exit		= ufs_qcom_phy_qmp_20nm_exit,
+ 	.power_on	= ufs_qcom_phy_power_on,
+ 	.power_off	= ufs_qcom_phy_power_off,
+ 	.set_mode	= ufs_qcom_phy_qmp_20nm_set_mode,
+@@ -191,6 +167,7 @@ static const struct phy_ops ufs_qcom_phy_qmp_20nm_phy_ops = {
+ };
+ 
+ static struct ufs_qcom_phy_specific_ops phy_20nm_ops = {
++	.calibrate		= ufs_qcom_phy_qmp_20nm_phy_calibrate,
+ 	.start_serdes		= ufs_qcom_phy_qmp_20nm_start_serdes,
+ 	.is_physical_coding_sublayer_ready = ufs_qcom_phy_qmp_20nm_is_pcs_ready,
+ 	.set_tx_lane_enable	= ufs_qcom_phy_qmp_20nm_set_tx_lane_enable,
+diff --git a/drivers/phy/qualcomm/phy-qcom-ufs.c b/drivers/phy/qualcomm/phy-qcom-ufs.c
+index f2979ccad00a3..a4cff17fef925 100644
+--- a/drivers/phy/qualcomm/phy-qcom-ufs.c
++++ b/drivers/phy/qualcomm/phy-qcom-ufs.c
+@@ -147,6 +147,21 @@ struct phy *ufs_qcom_phy_generic_probe(struct platform_device *pdev,
+ }
+ EXPORT_SYMBOL_GPL(ufs_qcom_phy_generic_probe);
+ 
++static int ufs_qcom_phy_get_reset(struct ufs_qcom_phy *phy_common)
++{
++	struct reset_control *reset;
++
++	if (phy_common->ufs_reset)
++		return 0;
++
++	reset = of_reset_control_get_by_index(phy_common->dev->of_node, 0);
++	if (IS_ERR(reset))
++		return PTR_ERR(reset);
++
++	phy_common->ufs_reset = reset;
++	return 0;
++}
++
+ static int __ufs_qcom_phy_clk_get(struct device *dev,
+ 			 const char *name, struct clk **clk_out, bool err_print)
+ {
+@@ -528,23 +543,42 @@ int ufs_qcom_phy_power_on(struct phy *generic_phy)
+ {
+ 	struct ufs_qcom_phy *phy_common = get_ufs_qcom_phy(generic_phy);
+ 	struct device *dev = phy_common->dev;
++	bool is_rate_B = false;
+ 	int err;
+ 
+-	if (phy_common->is_powered_on)
+-		return 0;
++	err = ufs_qcom_phy_get_reset(phy_common);
++	if (err)
++		return err;
+ 
+-	if (!phy_common->is_started) {
+-		err = ufs_qcom_phy_start_serdes(phy_common);
++	if (phy_common->ufs_reset) {
++		err = reset_control_assert(phy_common->ufs_reset);
+ 		if (err)
+ 			return err;
++	}
+ 
+-		err = ufs_qcom_phy_is_pcs_ready(phy_common);
+-		if (err)
+-			return err;
++	if (phy_common->mode == PHY_MODE_UFS_HS_B)
++		is_rate_B = true;
+ 
+-		phy_common->is_started = true;
++	err = phy_common->phy_spec_ops->calibrate(phy_common, is_rate_B);
++	if (err)
++		return err;
++
++	if (phy_common->ufs_reset) {
++		err = reset_control_deassert(phy_common->ufs_reset);
++		if (err) {
++			dev_err(dev, "Failed to assert UFS PHY reset");
++			return err;
++		}
+ 	}
+ 
++	err = ufs_qcom_phy_start_serdes(phy_common);
++	if (err)
++		return err;
++
++	err = ufs_qcom_phy_is_pcs_ready(phy_common);
++	if (err)
++		return err;
++
+ 	err = ufs_qcom_phy_enable_vreg(dev, &phy_common->vdda_phy);
+ 	if (err) {
+ 		dev_err(dev, "%s enable vdda_phy failed, err=%d\n",
+@@ -587,7 +621,6 @@ int ufs_qcom_phy_power_on(struct phy *generic_phy)
  		}
  	}
  
--	generic_phy = devm_phy_create(dev, np, &qcom_qmp_phy_gen_ops);
-+	if (qmp->cfg->type == PHY_TYPE_UFS)
-+		ops = &qcom_qmp_ufs_ops;
-+
-+	generic_phy = devm_phy_create(dev, np, ops);
- 	if (IS_ERR(generic_phy)) {
- 		ret = PTR_ERR(generic_phy);
- 		dev_err(dev, "failed to create qphy %d\n", ret);
+-	phy_common->is_powered_on = true;
+ 	goto out;
+ 
+ out_disable_ref_clk:
+@@ -607,9 +640,6 @@ int ufs_qcom_phy_power_off(struct phy *generic_phy)
+ {
+ 	struct ufs_qcom_phy *phy_common = get_ufs_qcom_phy(generic_phy);
+ 
+-	if (!phy_common->is_powered_on)
+-		return 0;
+-
+ 	phy_common->phy_spec_ops->power_control(phy_common, false);
+ 
+ 	if (phy_common->vddp_ref_clk.reg)
+@@ -620,7 +650,8 @@ int ufs_qcom_phy_power_off(struct phy *generic_phy)
+ 
+ 	ufs_qcom_phy_disable_vreg(phy_common->dev, &phy_common->vdda_pll);
+ 	ufs_qcom_phy_disable_vreg(phy_common->dev, &phy_common->vdda_phy);
+-	phy_common->is_powered_on = false;
++	if (phy_common->ufs_reset)
++		reset_control_assert(phy_common->ufs_reset);
+ 
+ 	return 0;
+ }
 -- 
 2.18.1
 
