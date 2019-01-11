@@ -7,48 +7,48 @@ X-Spam-Status: No, score=-13.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 002AEC43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:30:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 16207C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:31:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C60D921841
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:30:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D9B3E2177B
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:31:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547217057;
-	bh=ShjdSdUhBJD8kjZd9neGZfhSF8K9FZ/lDtoGPiW/NW0=;
+	s=default; t=1547217065;
+	bh=12QsP3ahP7KbRA04E99CvNLsNI5CJeSubGvM6EjBbSg=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=bA+GjBvEDmNolvIV7Plp7ax7aipTt3fKyMOStFLz/7nQ7uDo4bAddMhn5asSmcjhJ
-	 vs22/oHAQIzXCaXRweE6TysT3Uj3YGpZjex05KdrRYPdlFh1dn6oxLqQYsoauH9dpr
-	 hTugsV5x70smV7Dn5IYDL3bHbmuyjKS/Asn15tOE=
+	b=mf+4akpbEiTmiFBAMe/kzWEUJhIVsWCl9uG8mIE9ExHGYkxC3Eug6DGndH3tOjnGG
+	 iN0Ye5ohuuh1L+VDyMvr5dSX1NVYLAqd9NjYq6C0yj1lEvEAlZO32bbcp00JfaOECz
+	 o8e30sX7NeeB7lfsNdGgO62VP40Znm30SNIKMXM4=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389060AbfAKOa5 (ORCPT
+        id S2389098AbfAKObE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 11 Jan 2019 09:30:57 -0500
-Received: from mail.kernel.org ([198.145.29.99]:50370 "EHLO mail.kernel.org"
+        Fri, 11 Jan 2019 09:31:04 -0500
+Received: from mail.kernel.org ([198.145.29.99]:50560 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389020AbfAKOax (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Jan 2019 09:30:53 -0500
+        id S2389080AbfAKObC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 Jan 2019 09:31:02 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 653312063F;
-        Fri, 11 Jan 2019 14:30:52 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2EFB92063F;
+        Fri, 11 Jan 2019 14:31:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547217052;
-        bh=ShjdSdUhBJD8kjZd9neGZfhSF8K9FZ/lDtoGPiW/NW0=;
+        s=default; t=1547217061;
+        bh=12QsP3ahP7KbRA04E99CvNLsNI5CJeSubGvM6EjBbSg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=N5TBi7hYxhB9/fr+vxRRz55hw5QBz+9royGkCDQHiv/9IahoYMAlGNOkMe22WQzH6
-         UT55GxE2kyksA0OnaZcEajz/nf/y6iuPP6iZJMDv1aD6mk3vCtAQwNVQ8THkUppVB1
-         7DR8HspR1pKGpmAvP6WtVj3ODxu7J6pISNz/yLrQ=
+        b=lLWijFX/tdfrptMtrN7WvUR7Fu7SYBvtD0ZOuFoSHV1srbMzOh2KJpytwmpCS4LHe
+         3OuMjVBtrYiRwp1WbE0//s//BKoyLaqE4hY6o9ctnzcTa3ToNDqXwYdqg60vgxLMhU
+         /yyu0Heqswumyda2rHVEuJC0+y86HCtipUBC5718=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Anson Huang <Anson.Huang@nxp.com>,
-        Fabio Estevam <festevam@gmail.com>,
-        Shawn Guo <shawnguo@kernel.org>,
+        stable@vger.kernel.org, Qian Cai <cai@lca.pw>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 005/105] ARM: imx: update the cpu power up timing setting on i.mx6sx
-Date:   Fri, 11 Jan 2019 15:13:36 +0100
-Message-Id: <20190111131103.470691783@linuxfoundation.org>
+Subject: [PATCH 4.14 008/105] checkstack.pl: fix for aarch64
+Date:   Fri, 11 Jan 2019 15:13:39 +0100
+Message-Id: <20190111131103.754645690@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190111131102.899065735@linuxfoundation.org>
 References: <20190111131102.899065735@linuxfoundation.org>
@@ -67,38 +67,44 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 1e434b703248580b7aaaf8a115d93e682f57d29f ]
+[ Upstream commit f1733a1d3cd32a9492f4cf866be37bb46e10163d ]
 
-The sw2iso count should cover ARM LDO ramp-up time,
-the MAX ARM LDO ramp-up time may be up to more than
-100us on some boards, this patch sets sw2iso to 0xf
-(~384us) which is the reset value, and it is much
-more safe to cover different boards, since we have
-observed that some customer boards failed with current
-setting of 0x2.
+There is actually a space after "sp," like this,
 
-Fixes: 05136f0897b5 ("ARM: imx: support arm power off in cpuidle for i.mx6sx")
-Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
-Reviewed-by: Fabio Estevam <festevam@gmail.com>
-Signed-off-by: Shawn Guo <shawnguo@kernel.org>
+    ffff2000080813c8:       a9bb7bfd        stp     x29, x30, [sp, #-80]!
+
+Right now, checkstack.pl isn't able to print anything on aarch64,
+because it won't be able to match the stating objdump line of a function
+due to this missing space.  Hence, it displays every stack as zero-size.
+
+After this patch, checkpatch.pl is able to match the start of a
+function's objdump, and is then able to calculate each function's stack
+correctly.
+
+Link: http://lkml.kernel.org/r/20181207195843.38528-1-cai@lca.pw
+Signed-off-by: Qian Cai <cai@lca.pw>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm/mach-imx/cpuidle-imx6sx.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ scripts/checkstack.pl | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/arch/arm/mach-imx/cpuidle-imx6sx.c b/arch/arm/mach-imx/cpuidle-imx6sx.c
-index c5a5c3a70ab1..edb888ac5ad3 100644
---- a/arch/arm/mach-imx/cpuidle-imx6sx.c
-+++ b/arch/arm/mach-imx/cpuidle-imx6sx.c
-@@ -108,7 +108,7 @@ int __init imx6sx_cpuidle_init(void)
- 	 * except for power up sw2iso which need to be
- 	 * larger than LDO ramp up time.
- 	 */
--	imx_gpc_set_arm_power_up_timing(2, 1);
-+	imx_gpc_set_arm_power_up_timing(0xf, 1);
- 	imx_gpc_set_arm_power_down_timing(1, 1);
- 
- 	return cpuidle_register(&imx6sx_cpuidle_driver, NULL);
+diff --git a/scripts/checkstack.pl b/scripts/checkstack.pl
+index cb993801e4b2..16dc157f9662 100755
+--- a/scripts/checkstack.pl
++++ b/scripts/checkstack.pl
+@@ -46,8 +46,8 @@ my (@stack, $re, $dre, $x, $xs, $funcre);
+ 	$xs	= "[0-9a-f ]";	# hex character or space
+ 	$funcre = qr/^$x* <(.*)>:$/;
+ 	if ($arch eq 'aarch64') {
+-		#ffffffc0006325cc:       a9bb7bfd        stp     x29, x30, [sp,#-80]!
+-		$re = qr/^.*stp.*sp,\#-([0-9]{1,8})\]\!/o;
++		#ffffffc0006325cc:       a9bb7bfd        stp     x29, x30, [sp, #-80]!
++		$re = qr/^.*stp.*sp, \#-([0-9]{1,8})\]\!/o;
+ 	} elsif ($arch eq 'arm') {
+ 		#c0008ffc:	e24dd064	sub	sp, sp, #100	; 0x64
+ 		$re = qr/.*sub.*sp, sp, #(([0-9]{2}|[3-9])[0-9]{2})/o;
 -- 
 2.19.1
 
