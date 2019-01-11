@@ -4,153 +4,167 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D8467C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 23:23:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B60F5C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 23:25:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9DD8820700
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 23:23:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7068520700
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 23:25:49 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="BwGMfWAQ"
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="LxfSvdHP"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726424AbfAKXX5 (ORCPT
+        id S1726239AbfAKXZs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 11 Jan 2019 18:23:57 -0500
-Received: from userp2120.oracle.com ([156.151.31.85]:57888 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725829AbfAKXX4 (ORCPT
+        Fri, 11 Jan 2019 18:25:48 -0500
+Received: from userp2130.oracle.com ([156.151.31.86]:45118 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725776AbfAKXZr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Jan 2019 18:23:56 -0500
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id x0BNETSK177704;
-        Fri, 11 Jan 2019 23:23:10 GMT
+        Fri, 11 Jan 2019 18:25:47 -0500
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id x0BNORZ8032137;
+        Fri, 11 Jan 2019 23:25:05 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
  references : from : message-id : date : mime-version : in-reply-to :
  content-type; s=corp-2018-07-02;
- bh=n/uZ4YFihSn+32Y83fDLt5ec67SO6Zk/EM+MWYD900Q=;
- b=BwGMfWAQ208BVFfL0BRoSAH+rSiccncJDD8imVDx4Yakl/Nd+Q1for1Z7tQedI44JOO4
- 4h4XKyAgssZpcmbPI0+VWyE0nfQJBITRYeTpEs6JYIJgX3iqHOz+nbGbHFRTkSM8oSdR
- RUOQ1d4zUOfKM7dBgBKU42GgcVGXjRLO4sxwSH2EItvpiSfKQfuucRBgFyGwAjWPOIld
- s717IgQCBfB8JOoTSJFjzNSflEpCWv8veckTaY+LY++sbYOATEay6sfGlqHcqRzEyK+X
- YHIKFxOGFntRc6mXeVEuxYAXY7gPMAdXE3/s6x8WysGHDHvd+UQkJqCX9JdXULBAT9Ge +Q== 
-Received: from userv0022.oracle.com (userv0022.oracle.com [156.151.31.74])
-        by userp2120.oracle.com with ESMTP id 2ptn7rfafy-1
+ bh=2r2JWB4I/bKDxlRDueTV8CFTPH294ds1sC3zbKw2qMg=;
+ b=LxfSvdHPrUhCQQmmlk6tLIHzfr2x456oAxagAJUD2851m4PqQmNmmsaExFN44oEE7wrS
+ uI5jWL45/spUmaqXZm/P8VYUXYklmeMQII5fhFSFqu4Skf8NfXnwyEEYD6nc1Y31p9wp
+ WaPlIsWzVLjgPY4QF/8wo/6R9Mi6xpqpmYRAK+9O0fI0vq1MBxiVMKwnUsICBo8ocuiw
+ SYdqC8Y0Q4AZaIXMF5iqMV9UK5OrExUZIUx4i/JwDhUfsIV24sm+wZle0aQEMLqwVBF3
+ qgkHWEoKWHyjORx37avf75Y5OeC+FdfRKPl0hxnw4xS2pdIKFozjEDLfGkkwNK4IPLO4 9Q== 
+Received: from aserv0021.oracle.com (aserv0021.oracle.com [141.146.126.233])
+        by userp2130.oracle.com with ESMTP id 2ptm0uqh7q-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 11 Jan 2019 23:23:09 +0000
-Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
-        by userv0022.oracle.com (8.14.4/8.14.4) with ESMTP id x0BNN3cU007071
+        Fri, 11 Jan 2019 23:25:05 +0000
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by aserv0021.oracle.com (8.14.4/8.14.4) with ESMTP id x0BNP35f024575
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 11 Jan 2019 23:23:03 GMT
-Received: from abhmp0019.oracle.com (abhmp0019.oracle.com [141.146.116.25])
-        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x0BNN1Ce003054;
-        Fri, 11 Jan 2019 23:23:01 GMT
+        Fri, 11 Jan 2019 23:25:04 GMT
+Received: from abhmp0006.oracle.com (abhmp0006.oracle.com [141.146.116.12])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x0BNP2nm009064;
+        Fri, 11 Jan 2019 23:25:02 GMT
 Received: from [192.168.1.44] (/24.9.64.241)
         by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Fri, 11 Jan 2019 15:23:01 -0800
+        with ESMTP ; Fri, 11 Jan 2019 15:25:02 -0800
 Subject: Re: [RFC PATCH v7 00/16] Add support for eXclusive Page Frame
  Ownership
-To:     Dave Hansen <dave.hansen@intel.com>, juergh@gmail.com,
-        tycho@tycho.ws, jsteckli@amazon.de, ak@linux.intel.com,
-        torvalds@linux-foundation.org, liran.alon@oracle.com,
-        keescook@google.com, konrad.wilk@oracle.com
-Cc:     deepa.srinivasan@oracle.com, chris.hyser@oracle.com,
-        tyhicks@canonical.com, dwmw@amazon.co.uk,
-        andrew.cooper3@citrix.com, jcm@redhat.com,
-        boris.ostrovsky@oracle.com, kanth.ghatraju@oracle.com,
-        joao.m.martins@oracle.com, jmattson@google.com,
-        pradeep.vincent@oracle.com, john.haxby@oracle.com,
-        tglx@linutronix.de, kirill.shutemov@linux.intel.com, hch@lst.de,
-        steven.sistare@oracle.com, kernel-hardening@lists.openwall.com,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        Andy Lutomirski <luto@kernel.org>,
+To:     Andy Lutomirski <luto@kernel.org>,
+        Dave Hansen <dave.hansen@intel.com>
+Cc:     Juerg Haefliger <juergh@gmail.com>,
+        Tycho Andersen <tycho@tycho.ws>, jsteckli@amazon.de,
+        Andi Kleen <ak@linux.intel.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        liran.alon@oracle.com, Kees Cook <keescook@google.com>,
+        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+        deepa.srinivasan@oracle.com, chris hyser <chris.hyser@oracle.com>,
+        Tyler Hicks <tyhicks@canonical.com>,
+        "Woodhouse, David" <dwmw@amazon.co.uk>,
+        Andrew Cooper <andrew.cooper3@citrix.com>,
+        Jon Masters <jcm@redhat.com>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        kanth.ghatraju@oracle.com,
+        Joao Martins <joao.m.martins@oracle.com>,
+        Jim Mattson <jmattson@google.com>, pradeep.vincent@oracle.com,
+        John Haxby <john.haxby@oracle.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Christoph Hellwig <hch@lst.de>, steven.sistare@oracle.com,
+        Kernel Hardening <kernel-hardening@lists.openwall.com>,
+        Linux-MM <linux-mm@kvack.org>,
+        LKML <linux-kernel@vger.kernel.org>,
         Peter Zijlstra <peterz@infradead.org>
 References: <cover.1547153058.git.khalid.aziz@oracle.com>
  <31fe7522-0a59-94c8-663e-049e9ad2bff6@intel.com>
  <7e3b2c4b-51ff-2027-3a53-8c798c2ca588@oracle.com>
  <8ffc77a9-6eae-7287-0ea3-56bfb61758cd@intel.com>
+ <CALCETrXqJJq1LMxfBA=LK=PYc5Q7hgeDQGap38h1AUAQuF2VHA@mail.gmail.com>
 From:   Khalid Aziz <khalid.aziz@oracle.com>
 Organization: Oracle Corp
-Message-ID: <783eefa3-9725-34c1-9729-2453274b1736@oracle.com>
-Date:   Fri, 11 Jan 2019 16:23:02 -0700
+Message-ID: <5284c6a5-01a2-41af-be14-fc0461b1797b@oracle.com>
+Date:   Fri, 11 Jan 2019 16:25:03 -0700
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.2.1
 MIME-Version: 1.0
-In-Reply-To: <8ffc77a9-6eae-7287-0ea3-56bfb61758cd@intel.com>
+In-Reply-To: <CALCETrXqJJq1LMxfBA=LK=PYc5Q7hgeDQGap38h1AUAQuF2VHA@mail.gmail.com>
 Content-Type: multipart/mixed;
- boundary="------------4D9466AD76737D0389537E8D"
+ boundary="------------3B1C04C67CAC5EBC8F9B5BC7"
 Content-Language: en-US
 X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9133 signatures=668680
 X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
  phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
  adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1810050000 definitions=main-1901110183
+ engine=8.0.1-1810050000 definitions=main-1901110184
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 This is a multi-part message in MIME format.
---------------4D9466AD76737D0389537E8D
+--------------3B1C04C67CAC5EBC8F9B5BC7
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
 
-On 1/11/19 1:42 PM, Dave Hansen wrote:
->>> The second process could easily have the page's old TLB entry.  It co=
-uld
->>> abuse that entry as long as that CPU doesn't context switch
->>> (switch_mm_irqs_off()) or otherwise flush the TLB entry.
+On 1/11/19 2:06 PM, Andy Lutomirski wrote:
+> On Fri, Jan 11, 2019 at 12:42 PM Dave Hansen <dave.hansen@intel.com> wr=
+ote:
 >>
->> That is an interesting scenario. Working through this scenario, physma=
-p
->> TLB entry for a page is flushed on the local processor when the page i=
-s
->> allocated to userspace, in xpfo_alloc_pages(). When the userspace pass=
+>>>> The second process could easily have the page's old TLB entry.  It c=
+ould
+>>>> abuse that entry as long as that CPU doesn't context switch
+>>>> (switch_mm_irqs_off()) or otherwise flush the TLB entry.
+>>>
+>>> That is an interesting scenario. Working through this scenario, physm=
+ap
+>>> TLB entry for a page is flushed on the local processor when the page =
+is
+>>> allocated to userspace, in xpfo_alloc_pages(). When the userspace pas=
+ses
+>>> page back into kernel, that page is mapped into kernel space using a =
+va
+>>> from kmap pool in xpfo_kmap() which can be different for each new
+>>> mapping of the same page. The physical page is unmapped from kernel o=
+n
+>>> the way back from kernel to userspace by xpfo_kunmap(). So two proces=
+ses
+>>> on different CPUs sharing same physical page might not be seeing the
+>>> same virtual address for that page while they are in the kernel, as l=
+ong
+>>> as it is an address from kmap pool. ret2dir attack relies upon being
+>>> able to craft a predictable virtual address in the kernel physmap for=
+ a
+>>> physical page and redirect execution to that address. Does that sound=
+ right?
+>>
+>> All processes share one set of kernel page tables.  Or, did your patch=
 es
->> page back into kernel, that page is mapped into kernel space using a v=
-a
->> from kmap pool in xpfo_kmap() which can be different for each new
->> mapping of the same page. The physical page is unmapped from kernel on=
+>> change that somehow that I missed?
+>>
+>> Since they share the page tables, they implicitly share kmap*()
+>> mappings.  kmap_atomic() is not *used* by more than one CPU, but the
+>> mapping is accessible and at least exists for all processors.
+>>
+>> I'm basically assuming that any entry mapped in a shared page table is=
 
->> the way back from kernel to userspace by xpfo_kunmap(). So two process=
-es
->> on different CPUs sharing same physical page might not be seeing the
->> same virtual address for that page while they are in the kernel, as lo=
-ng
->> as it is an address from kmap pool. ret2dir attack relies upon being
->> able to craft a predictable virtual address in the kernel physmap for =
-a
->> physical page and redirect execution to that address. Does that sound =
-right?
+>> exploitable on any CPU regardless of where we logically *want* it to b=
+e
+>> used.
+>>
+>>
 >=20
-> All processes share one set of kernel page tables.  Or, did your patche=
-s
-> change that somehow that I missed?
->=20
-> Since they share the page tables, they implicitly share kmap*()
-> mappings.  kmap_atomic() is not *used* by more than one CPU, but the
-> mapping is accessible and at least exists for all processors.
->=20
-> I'm basically assuming that any entry mapped in a shared page table is
-> exploitable on any CPU regardless of where we logically *want* it to be=
-
-> used.
->=20
+> We can, very easily, have kernel mappings that are private to a given
+> mm.  Maybe this is useful here.
 >=20
 
-Ah, I see what you are saying. Virtual address on one processor is
-visible on the other processor as well and one process could communicate
-that va to the other process in some way so it could be exploited by the
-other process. This va is exploitable only between the kmap and matching
-kunmap but the window exists. I am trying to understand your scenario,
-so I can address it right.
+That sounds like an interesting idea. kmap mappings would be a good
+candidate for that. Those are temporary mappings and should only be
+valid for one process.
 
 --
 Khalid
 
-
-
---------------4D9466AD76737D0389537E8D
+--------------3B1C04C67CAC5EBC8F9B5BC7
 Content-Type: application/pgp-keys;
  name="pEpkey.asc"
 Content-Transfer-Encoding: quoted-printable
@@ -199,4 +213,4 @@ E6wtYze9oihz8mbNHY3jtUGajTsv/F7Jl42rmnbeukwfN2H/4gTDV1sB/D8z5G1+
 =3DnPqY
 -----END PGP PUBLIC KEY BLOCK-----
 
---------------4D9466AD76737D0389537E8D--
+--------------3B1C04C67CAC5EBC8F9B5BC7--
