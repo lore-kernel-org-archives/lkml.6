@@ -7,50 +7,50 @@ X-Spam-Status: No, score=-13.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 87833C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 18:06:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CBB98C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 18:06:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 61E5F20652
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 18:06:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A3EFC20652
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 18:06:05 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="lRAtrcLf"
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="qpZvNzkp"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389621AbfAKSFn (ORCPT
+        id S2389738AbfAKSGE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 11 Jan 2019 13:05:43 -0500
-Received: from fllv0015.ext.ti.com ([198.47.19.141]:44190 "EHLO
-        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1733173AbfAKSFi (ORCPT
+        Fri, 11 Jan 2019 13:06:04 -0500
+Received: from fllv0016.ext.ti.com ([198.47.19.142]:42048 "EHLO
+        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387681AbfAKSFm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Jan 2019 13:05:38 -0500
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id x0BI5WX5067738;
-        Fri, 11 Jan 2019 12:05:32 -0600
+        Fri, 11 Jan 2019 13:05:42 -0500
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id x0BI5aTc058958;
+        Fri, 11 Jan 2019 12:05:36 -0600
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1547229932;
-        bh=gzuEnEsPaQcZK2oODLbGLwXYQUoHuT21tgLVqTniWPY=;
+        s=ti-com-17Q1; t=1547229936;
+        bh=h4p+f2tE8z6QOYqBFk+UP7b77atrn7b1IYD8CRImi3k=;
         h=From:To:CC:Subject:Date:In-Reply-To:References;
-        b=lRAtrcLfJ6Q3KExkcFglz+YVZvMzEKCy7mgl+yZvZpx3DmuCbjiupJVybg5Tz+Wk+
-         q1GLLHU47HYINk8uxaqE7N1tyKFhS1TX0Cj1Z9TrC6ubihzF9A0zSePt0ZnrsF3PqT
-         Sx/dTbP8u4jHy7KRCDwPC0DuXxjpjEcKzQv/Dzx0=
-Received: from DLEE109.ent.ti.com (dlee109.ent.ti.com [157.170.170.41])
-        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x0BI5Wna059286
+        b=qpZvNzkpo/FkIm2vouYZH5xGhfYxNSGTHjKlBYfY4TsHEsyExa6d5643CXtYB2Z4Q
+         1uMmlxWP89JupJ5scOKi6HoG7ydl8Cd5iQDQKcR5gdoao/UxDCAe4id3N87rdbAsy1
+         HSirT93Itn1cBLAkkOK5XvCfDfWCOAgMeco7iy/o=
+Received: from DFLE114.ent.ti.com (dfle114.ent.ti.com [10.64.6.35])
+        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x0BI5aMs009158
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Fri, 11 Jan 2019 12:05:32 -0600
-Received: from DLEE107.ent.ti.com (157.170.170.37) by DLEE109.ent.ti.com
- (157.170.170.41) with Microsoft SMTP Server (version=TLS1_2,
+        Fri, 11 Jan 2019 12:05:36 -0600
+Received: from DFLE108.ent.ti.com (10.64.6.29) by DFLE114.ent.ti.com
+ (10.64.6.35) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Fri, 11
- Jan 2019 12:05:32 -0600
-Received: from dlep33.itg.ti.com (157.170.170.75) by DLEE107.ent.ti.com
- (157.170.170.37) with Microsoft SMTP Server (version=TLS1_0,
+ Jan 2019 12:05:35 -0600
+Received: from dlep32.itg.ti.com (157.170.170.100) by DFLE108.ent.ti.com
+ (10.64.6.29) with Microsoft SMTP Server (version=TLS1_0,
  cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1591.10 via Frontend Transport;
- Fri, 11 Jan 2019 12:05:32 -0600
+ Fri, 11 Jan 2019 12:05:35 -0600
 Received: from legion.dal.desgin.ti.com (legion.dal.design.ti.com [128.247.22.53])
-        by dlep33.itg.ti.com (8.14.3/8.13.8) with ESMTP id x0BI5WoE022660;
-        Fri, 11 Jan 2019 12:05:32 -0600
+        by dlep32.itg.ti.com (8.14.3/8.13.8) with ESMTP id x0BI5ZiQ006491;
+        Fri, 11 Jan 2019 12:05:35 -0600
 Received: from localhost (uda0226330.dhcp.ti.com [172.22.109.196])
-        by legion.dal.desgin.ti.com (8.11.7p1+Sun/8.11.7) with ESMTP id x0BI5VU07748;
-        Fri, 11 Jan 2019 12:05:31 -0600 (CST)
+        by legion.dal.desgin.ti.com (8.11.7p1+Sun/8.11.7) with ESMTP id x0BI5ZU07768;
+        Fri, 11 Jan 2019 12:05:35 -0600 (CST)
 From:   "Andrew F. Davis" <afd@ti.com>
 To:     Laura Abbott <labbott@redhat.com>,
         Sumit Semwal <sumit.semwal@linaro.org>,
@@ -58,9 +58,9 @@ To:     Laura Abbott <labbott@redhat.com>,
         =?UTF-8?q?Arve=20Hj=C3=B8nnev=C3=A5g?= <arve@android.com>
 CC:     <devel@driverdev.osuosl.org>, <dri-devel@lists.freedesktop.org>,
         <linux-kernel@vger.kernel.org>, "Andrew F . Davis" <afd@ti.com>
-Subject: [PATCH 09/14] staging: android: ion: Remove base from ion_chunk_heap
-Date:   Fri, 11 Jan 2019 12:05:18 -0600
-Message-ID: <20190111180523.27862-10-afd@ti.com>
+Subject: [PATCH 13/14] staging: android: ion: Do not sync CPU cache on map/unmap
+Date:   Fri, 11 Jan 2019 12:05:22 -0600
+Message-ID: <20190111180523.27862-14-afd@ti.com>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190111180523.27862-1-afd@ti.com>
 References: <20190111180523.27862-1-afd@ti.com>
@@ -73,45 +73,40 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The base address is not used anywhere and tracked by the pool
-allocator. No need to store this anymore.
+Buffers may not be mapped from the CPU so skip cache maintenance here.
+Accesses from the CPU to a cached heap should be bracketed with
+{begin,end}_cpu_access calls so maintenance should not be needed anyway.
 
 Signed-off-by: Andrew F. Davis <afd@ti.com>
 ---
- drivers/staging/android/ion/ion_chunk_heap.c | 7 ++-----
- 1 file changed, 2 insertions(+), 5 deletions(-)
+ drivers/staging/android/ion/ion.c | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/staging/android/ion/ion_chunk_heap.c b/drivers/staging/android/ion/ion_chunk_heap.c
-index b82eac1c2d7a..899380beeee1 100644
---- a/drivers/staging/android/ion/ion_chunk_heap.c
-+++ b/drivers/staging/android/ion/ion_chunk_heap.c
-@@ -18,7 +18,6 @@
- struct ion_chunk_heap {
- 	struct ion_heap heap;
- 	struct gen_pool *pool;
--	phys_addr_t base;
- 	unsigned long chunk_size;
- 	unsigned long size;
- 	unsigned long allocated;
-@@ -131,16 +130,14 @@ struct ion_heap *ion_chunk_heap_create(phys_addr_t base, size_t size, size_t chu
- 		ret = -ENOMEM;
- 		goto error_gen_pool_create;
- 	}
--	chunk_heap->base = base;
- 	chunk_heap->size = size;
- 	chunk_heap->allocated = 0;
+diff --git a/drivers/staging/android/ion/ion.c b/drivers/staging/android/ion/ion.c
+index 14e48f6eb734..09cb5a8e2b09 100644
+--- a/drivers/staging/android/ion/ion.c
++++ b/drivers/staging/android/ion/ion.c
+@@ -261,8 +261,8 @@ static struct sg_table *ion_map_dma_buf(struct dma_buf_attachment *attachment,
  
--	gen_pool_add(chunk_heap->pool, chunk_heap->base, size, -1);
-+	gen_pool_add(chunk_heap->pool, base, size, -1);
- 	chunk_heap->heap.ops = &chunk_heap_ops;
- 	chunk_heap->heap.type = ION_HEAP_TYPE_CHUNK;
- 	chunk_heap->heap.flags = ION_HEAP_FLAG_DEFER_FREE;
--	pr_debug("%s: base %pa size %zu\n", __func__,
--		 &chunk_heap->base, size);
-+	pr_debug("%s: base %pa size %zu\n", __func__, &base, size);
+ 	table = a->table;
  
- 	return &chunk_heap->heap;
+-	if (!dma_map_sg(attachment->dev, table->sgl, table->nents,
+-			direction))
++	if (!dma_map_sg_attrs(attachment->dev, table->sgl, table->nents,
++			      direction, DMA_ATTR_SKIP_CPU_SYNC))
+ 		return ERR_PTR(-ENOMEM);
  
+ 	return table;
+@@ -272,7 +272,8 @@ static void ion_unmap_dma_buf(struct dma_buf_attachment *attachment,
+ 			      struct sg_table *table,
+ 			      enum dma_data_direction direction)
+ {
+-	dma_unmap_sg(attachment->dev, table->sgl, table->nents, direction);
++	dma_unmap_sg_attrs(attachment->dev, table->sgl, table->nents,
++			   direction, DMA_ATTR_SKIP_CPU_SYNC);
+ }
+ 
+ static int ion_mmap(struct dma_buf *dmabuf, struct vm_area_struct *vma)
 -- 
 2.19.1
 
