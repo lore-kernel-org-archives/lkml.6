@@ -2,108 +2,95 @@ Return-Path: <SRS0=uvhX=PT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C2B5FC43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 04:25:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A7ECBC43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 04:26:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 90A312146F
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 04:25:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 730792133F
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 04:26:19 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="3p+YzvoL"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="tglla91H"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730745AbfAKEZq (ORCPT
+        id S1730807AbfAKE0S (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 10 Jan 2019 23:25:46 -0500
-Received: from userp2130.oracle.com ([156.151.31.86]:45140 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728178AbfAKEZq (ORCPT
+        Thu, 10 Jan 2019 23:26:18 -0500
+Received: from mail-io1-f65.google.com ([209.85.166.65]:39401 "EHLO
+        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728178AbfAKE0S (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Jan 2019 23:25:46 -0500
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id x0B4JSSD132505;
-        Fri, 11 Jan 2019 04:25:14 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
- references : from : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=corp-2018-07-02;
- bh=IY8sLSOYgVx/ehspVdffeUJz5kK176BpWKLb7Gb8WK8=;
- b=3p+YzvoL0kYZ22VTCKAtzcOvPcCWa1AF8i6o/mKy3lCv9jJw8TRok8KZ3siyhfk6VO69
- rZX4InWXE4q/UvHY/+cqufalksSgkds64+vzPvNcbXHTtztupezvSNWc1vBpjUm+MFiH
- voZ/DNHbMq2dVsf4Gio22jF+Ay8e9FDvVehLWjn9eZlDaeleofJhBtgfUx9aSqgoFDyh
- BddQ+Piu2dzsswkn2uznkFzBkpZJ99thwsAyXWEHrAscUkftiQPZhs/Rs2GROUEHrYSs
- Ipni5h/slAQfai06eDDwNGEAkwrFmuAEQW512K3EdqLSSfosnJGA+iZV5nyBBtDLMoDQ fA== 
-Received: from aserv0021.oracle.com (aserv0021.oracle.com [141.146.126.233])
-        by userp2130.oracle.com with ESMTP id 2ptm0ujt7h-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 11 Jan 2019 04:25:13 +0000
-Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
-        by aserv0021.oracle.com (8.14.4/8.14.4) with ESMTP id x0B4PCE8022556
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 11 Jan 2019 04:25:13 GMT
-Received: from abhmp0003.oracle.com (abhmp0003.oracle.com [141.146.116.9])
-        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x0B4PBwc029642;
-        Fri, 11 Jan 2019 04:25:12 GMT
-Received: from [10.39.212.228] (/10.39.212.228)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Thu, 10 Jan 2019 20:25:11 -0800
-Subject: Re: [PATCH 3/3] bitops.h: set_mask_bits() to return old value
-To:     Vineet Gupta <vineet.gupta1@synopsys.com>,
-        linux-kernel@vger.kernel.org
-Cc:     linux-snps-arc@lists.infradead.org, linux-mm@kvack.org,
-        peterz@infradead.org, Miklos Szeredi <mszeredi@redhat.com>,
-        Ingo Molnar <mingo@kernel.org>,
-        Jani Nikula <jani.nikula@intel.com>,
-        Chris Wilson <chris@chris-wilson.co.uk>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Will Deacon <will.deacon@arm.com>
-References: <1547166387-19785-1-git-send-email-vgupta@synopsys.com>
- <1547166387-19785-4-git-send-email-vgupta@synopsys.com>
-From:   Anthony Yznaga <anthony.yznaga@oracle.com>
-Organization: Oracle Corporation
-Message-ID: <693b30a9-96dc-a5e6-9708-c215b90146b0@oracle.com>
-Date:   Thu, 10 Jan 2019 20:25:09 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.0
+        Thu, 10 Jan 2019 23:26:18 -0500
+Received: by mail-io1-f65.google.com with SMTP id k7so11231478iob.6;
+        Thu, 10 Jan 2019 20:26:16 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=dKKW4KX0W8co6X3GdJtBCN6KWzvQnWbDVJp2nnG34FY=;
+        b=tglla91H89i1R3gf4NQ42Mtm5RsepUvu1KFnb9iPSvJuQkPyw8m5RH8Y2uul8RxrOy
+         U/AANR6s6dd79robnnULiXxXiAlypbwV7Vz45Qe1n9Oa6oLbFcaViMtIMQJeFaJN55ex
+         GjXpEw7Eu4mSUWplWdFT6lyCKRDNOgybtYBqsniyLmzlpOvq1qNMEgR1+hcju/rTcq2Q
+         aXiKf5sn23cFfnZrk4vi8p/DHstsNbKAJB4oc9tiBiUPZXwfxoZy/Ox4JoEYEBlXuuGN
+         dpSNq9HI/mc30K4YmT+MxKi726D0hIRvuf9zCIfvzb1Tk9VpUmn11+TUfrMugzU6gbh5
+         kfIw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=dKKW4KX0W8co6X3GdJtBCN6KWzvQnWbDVJp2nnG34FY=;
+        b=PUrHpYskHH3TestB+W5GNyuftpZK0SDKh9BAJQKQVzMsaoiS1aCAeju7+Owvu77nvc
+         uE8tBn8ybbMJq0MANceNJRCEOnN8z7+QogJfrzTS0ao4rQiMHh5p5uCB7fLFTpJ+Kskb
+         VaDbC3NrzLtY+IYLl2h609cy4pl4HEYIpO/Rk+RzecHFC8/mP3ORib5X9QbAur32aKAw
+         YK7sSeJ4vOBuufDLc0k3x71Wlu6NiZ+oDlXT07ZTgHafDnPGWIj7u2PvDpkQ2Nt8Gfu4
+         zpCm7vMhA6TyHPoWCXUtcKvQGpPaaz61kqNM5gKMO7fdnF1u2hw4SD4A5EaiF016Jm6A
+         Q0aQ==
+X-Gm-Message-State: AJcUukcKlJlOlGUZnSHqvkYBBq//5vfpqKJ1oBP9nZ+i1jWSMnwn1p9N
+        wxVmDIKRBw1KgTJaugt2ACpycCYwGcgfw5krVXJlVBRD
+X-Google-Smtp-Source: ALg8bN7/h8ZGV1XbVqTyvQ30HXJWRsEL8jqvCZJebSp+XohTz6AJuEpLvZkZ6a55o1TPMxiOfQIG0zAn4Cw7ecn5ZYo=
+X-Received: by 2002:a6b:3945:: with SMTP id g66mr8524731ioa.131.1547180776406;
+ Thu, 10 Jan 2019 20:26:16 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <1547166387-19785-4-git-send-email-vgupta@synopsys.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9132 signatures=668680
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1810050000 definitions=main-1901110035
+References: <154693980088.104235.16222977463502002037.stgit@buzz> <CAM_iQpX1oiOiGFejO8yKNM_VT2BSMH9aFk-_1nPDjfO=jFmNgQ@mail.gmail.com>
+In-Reply-To: <CAM_iQpX1oiOiGFejO8yKNM_VT2BSMH9aFk-_1nPDjfO=jFmNgQ@mail.gmail.com>
+From:   Konstantin Khlebnikov <koct9i@gmail.com>
+Date:   Fri, 11 Jan 2019 07:26:09 +0300
+Message-ID: <CALYGNiOHu5gif7Kqgt_LCMBBOHq-LxffSFJGn6Joi6dccDfptQ@mail.gmail.com>
+Subject: Re: [PATCH] net/core/neighbour: tell kmemleak about hash tables
+To:     Cong Wang <xiyou.wangcong@gmail.com>
+Cc:     Konstantin Khlebnikov <khlebnikov@yandex-team.ru>,
+        Linux Kernel Network Developers <netdev@vger.kernel.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 1/10/19 4:26 PM, Vineet Gupta wrote:
-> | > Also, set_mask_bits is used in fs quite a bit and we can possibly come up
-> | > with a generic llsc based implementation (w/o the cmpxchg loop)
-> |
-> | May I also suggest changing the return value of set_mask_bits() to old.
-> |
-> | You can compute the new value given old, but you cannot compute the old
-> | value given new, therefore old is the better return value. Also, no
-> | current user seems to use the return value, so changing it is without
-> | risk.
+On Thu, Jan 10, 2019 at 11:45 PM Cong Wang <xiyou.wangcong@gmail.com> wrote:
 >
-> Link: http://lkml.kernel.org/g/20150807110955.GH16853@twins.programming.kicks-ass.net
-> Suggested-by: Peter Zijlstra <peterz@infradead.org>
-> Cc: Miklos Szeredi <mszeredi@redhat.com>
-> Cc: Ingo Molnar <mingo@kernel.org>
-> Cc: Jani Nikula <jani.nikula@intel.com>
-> Cc: Chris Wilson <chris@chris-wilson.co.uk>
-> Cc: Andrew Morton <akpm@linux-foundation.org>
-> Cc: Will Deacon <will.deacon@arm.com>
-> Signed-off-by: Vineet Gupta <vgupta@synopsys.com>
+> On Tue, Jan 8, 2019 at 1:30 AM Konstantin Khlebnikov
+> <khlebnikov@yandex-team.ru> wrote:
+> > @@ -443,12 +444,14 @@ static struct neigh_hash_table *neigh_hash_alloc(unsigned int shift)
+> >         ret = kmalloc(sizeof(*ret), GFP_ATOMIC);
+> >         if (!ret)
+> >                 return NULL;
+> > -       if (size <= PAGE_SIZE)
+> > +       if (size <= PAGE_SIZE) {
+> >                 buckets = kzalloc(size, GFP_ATOMIC);
+> > -       else
+> > +       } else {
+> >                 buckets = (struct neighbour __rcu **)
+> >                           __get_free_pages(GFP_ATOMIC | __GFP_ZERO,
+> >                                            get_order(size));
+> > +               kmemleak_alloc(buckets, size, 0, GFP_ATOMIC);
 >
+> Why min_count is 0 rather than 1 here?
 
-Reviewed-by: Anthony Yznaga <anthony.yznaga@oracle.com>
+The api isn't clear and I've misread description.
+So it should be 1 for reporting leak of hash table itself.
+But 0 doesn't add any new issues.
