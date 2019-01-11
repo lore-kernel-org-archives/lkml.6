@@ -7,38 +7,38 @@ X-Spam-Status: No, score=-13.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 051D5C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:29:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B7C5C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:29:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BF1892177B
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:29:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EACEF21848
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:29:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547216994;
-	bh=KmpPXNnlpaqreyCfJoQJ/BXN6/yMSEELXrnGRXtYHmU=;
+	s=default; t=1547216999;
+	bh=RhvXuNqessGxz9zguFxSO1TjQ2ikEKBXRQImV0IOAYw=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=WJ6dZK8DUu9IWC0JChrG6BHly0pEsHNE8TwvUBt4E78/z9/COgp0lEjNUjttvqzTK
-	 7+NU8gswcvfnoa86LMAMlR5aNtiAxnPnDV4r4gy+/w15on1AYA/92yLkC3F0K+Xz0I
-	 KWh1X63ePsJgjzRz6k54yB+HIIxptMI2ip3qWeEA=
+	b=sXf3O9dbcDKvEQYE7+fafqJSqPpF76H7Yn46uXNW7i7PIetLpJG4tAF0zUlfLrkYB
+	 u+qXnucNG2+N46dhO0NLaoWu+P/xD6wZQm8KypA+Ur58FPt0TeBcCqlZw7aPwH6QlE
+	 C5JncTHpDwLBkOhR2gTlO5tFPtHoNOTQoJD53KCw=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388828AbfAKO3x (ORCPT
+        id S2388839AbfAKO34 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 11 Jan 2019 09:29:53 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49006 "EHLO mail.kernel.org"
+        Fri, 11 Jan 2019 09:29:56 -0500
+Received: from mail.kernel.org ([198.145.29.99]:49070 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388800AbfAKO3v (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Jan 2019 09:29:51 -0500
+        id S2388824AbfAKO3y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 Jan 2019 09:29:54 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EE8A42063F;
-        Fri, 11 Jan 2019 14:29:49 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B09DD2133F;
+        Fri, 11 Jan 2019 14:29:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547216990;
-        bh=KmpPXNnlpaqreyCfJoQJ/BXN6/yMSEELXrnGRXtYHmU=;
+        s=default; t=1547216993;
+        bh=RhvXuNqessGxz9zguFxSO1TjQ2ikEKBXRQImV0IOAYw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=cfNsQR/En6PSgklZYtXL3PrVrnFF2JxlhUmgKM/sCYTtyPEdJY+0SBfzLi/M/wiTv
-         YvX/zJzqmJqzKmbNPl1s0XVwJNWaFyw5BeOhRObcI4O+0DLl+1c7bcen61ZNSEo9so
-         52NDKVW/KpX6Gd1qGlGzMwY+IZzgOaxhI3tI2o/E=
+        b=Q4VEmvaMcowBSgZivX1jsN0mmSWcHSwVw46uVDTblvv1fXkOA/CdPDxumtC3a5WNu
+         1NGDZo7zDsFW2o+H487zqXtxL1ZFcajt8xBsWY1k9TI2kdZYXHrsuF+qDwO2jyPhHZ
+         MXN6zaau/3CKPMlyN23Od/0GkbB8AJZ3qkVHJBbs=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -46,9 +46,9 @@ Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Peng Li <lipeng321@huawei.com>,
         "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 26/63] net: hns: Fix ntuple-filters status error.
-Date:   Fri, 11 Jan 2019 15:14:29 +0100
-Message-Id: <20190111131049.851346606@linuxfoundation.org>
+Subject: [PATCH 4.9 27/63] net: hns: Add mac pcs config when enable|disable mac
+Date:   Fri, 11 Jan 2019 15:14:30 +0100
+Message-Id: <20190111131049.958220187@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190111131046.387528003@linuxfoundation.org>
 References: <20190111131046.387528003@linuxfoundation.org>
@@ -67,33 +67,74 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 7e74a19ca522aec7c2be201a7ae1d1d57ded409b ]
+[ Upstream commit 726ae5c9e5f0c18eca8ea5296b526242c3e89822 ]
 
-The ntuple-filters features is forced on by chip.
-But it shows "ntuple-filters: off [fixed]" when use ethtool.
-This patch make it correct with "ntuple-filters: on [fixed]".
+In some case, when mac enable|disable and adjust link, may cause hard to
+link(or abnormal) between mac and phy. This patch adds the code for rx PCS
+to avoid this bug.
+
+Disable the rx PCS when driver disable the gmac, and enable the rx PCS
+when driver enable the mac.
 
 Signed-off-by: Yonglong Liu <liuyonglong@huawei.com>
 Signed-off-by: Peng Li <lipeng321@huawei.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/hisilicon/hns/hns_enet.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/net/ethernet/hisilicon/hns/hns_dsaf_gmac.c | 14 ++++++++++----
+ drivers/net/ethernet/hisilicon/hns/hns_dsaf_reg.h  |  1 +
+ 2 files changed, 11 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/net/ethernet/hisilicon/hns/hns_enet.c b/drivers/net/ethernet/hisilicon/hns/hns_enet.c
-index 7ffbd70824d9..a2f7d0834071 100644
---- a/drivers/net/ethernet/hisilicon/hns/hns_enet.c
-+++ b/drivers/net/ethernet/hisilicon/hns/hns_enet.c
-@@ -2036,7 +2036,7 @@ static int hns_nic_dev_probe(struct platform_device *pdev)
+diff --git a/drivers/net/ethernet/hisilicon/hns/hns_dsaf_gmac.c b/drivers/net/ethernet/hisilicon/hns/hns_dsaf_gmac.c
+index 02a03bccde7b..95967470d423 100644
+--- a/drivers/net/ethernet/hisilicon/hns/hns_dsaf_gmac.c
++++ b/drivers/net/ethernet/hisilicon/hns/hns_dsaf_gmac.c
+@@ -67,11 +67,14 @@ static void hns_gmac_enable(void *mac_drv, enum mac_commom_mode mode)
+ 	struct mac_driver *drv = (struct mac_driver *)mac_drv;
  
- 	switch (priv->enet_ver) {
- 	case AE_VERSION_2:
--		ndev->features |= NETIF_F_TSO | NETIF_F_TSO6;
-+		ndev->features |= NETIF_F_TSO | NETIF_F_TSO6 | NETIF_F_NTUPLE;
- 		ndev->hw_features |= NETIF_F_IP_CSUM | NETIF_F_IPV6_CSUM |
- 			NETIF_F_RXCSUM | NETIF_F_SG | NETIF_F_GSO |
- 			NETIF_F_GRO | NETIF_F_TSO | NETIF_F_TSO6;
+ 	/*enable GE rX/tX */
+-	if ((mode == MAC_COMM_MODE_TX) || (mode == MAC_COMM_MODE_RX_AND_TX))
++	if (mode == MAC_COMM_MODE_TX || mode == MAC_COMM_MODE_RX_AND_TX)
+ 		dsaf_set_dev_bit(drv, GMAC_PORT_EN_REG, GMAC_PORT_TX_EN_B, 1);
+ 
+-	if ((mode == MAC_COMM_MODE_RX) || (mode == MAC_COMM_MODE_RX_AND_TX))
++	if (mode == MAC_COMM_MODE_RX || mode == MAC_COMM_MODE_RX_AND_TX) {
++		/* enable rx pcs */
++		dsaf_set_dev_bit(drv, GMAC_PCS_RX_EN_REG, 0, 0);
+ 		dsaf_set_dev_bit(drv, GMAC_PORT_EN_REG, GMAC_PORT_RX_EN_B, 1);
++	}
+ }
+ 
+ static void hns_gmac_disable(void *mac_drv, enum mac_commom_mode mode)
+@@ -79,11 +82,14 @@ static void hns_gmac_disable(void *mac_drv, enum mac_commom_mode mode)
+ 	struct mac_driver *drv = (struct mac_driver *)mac_drv;
+ 
+ 	/*disable GE rX/tX */
+-	if ((mode == MAC_COMM_MODE_TX) || (mode == MAC_COMM_MODE_RX_AND_TX))
++	if (mode == MAC_COMM_MODE_TX || mode == MAC_COMM_MODE_RX_AND_TX)
+ 		dsaf_set_dev_bit(drv, GMAC_PORT_EN_REG, GMAC_PORT_TX_EN_B, 0);
+ 
+-	if ((mode == MAC_COMM_MODE_RX) || (mode == MAC_COMM_MODE_RX_AND_TX))
++	if (mode == MAC_COMM_MODE_RX || mode == MAC_COMM_MODE_RX_AND_TX) {
++		/* disable rx pcs */
++		dsaf_set_dev_bit(drv, GMAC_PCS_RX_EN_REG, 0, 1);
+ 		dsaf_set_dev_bit(drv, GMAC_PORT_EN_REG, GMAC_PORT_RX_EN_B, 0);
++	}
+ }
+ 
+ /* hns_gmac_get_en - get port enable
+diff --git a/drivers/net/ethernet/hisilicon/hns/hns_dsaf_reg.h b/drivers/net/ethernet/hisilicon/hns/hns_dsaf_reg.h
+index bf0c5a60f5f1..6f3ec2f1535d 100644
+--- a/drivers/net/ethernet/hisilicon/hns/hns_dsaf_reg.h
++++ b/drivers/net/ethernet/hisilicon/hns/hns_dsaf_reg.h
+@@ -528,6 +528,7 @@
+ #define GMAC_LD_LINK_COUNTER_REG		0x01D0UL
+ #define GMAC_LOOP_REG				0x01DCUL
+ #define GMAC_RECV_CONTROL_REG			0x01E0UL
++#define GMAC_PCS_RX_EN_REG			0x01E4UL
+ #define GMAC_VLAN_CODE_REG			0x01E8UL
+ #define GMAC_RX_OVERRUN_CNT_REG			0x01ECUL
+ #define GMAC_RX_LENGTHFIELD_ERR_CNT_REG		0x01F4UL
 -- 
 2.19.1
 
