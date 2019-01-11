@@ -7,47 +7,47 @@ X-Spam-Status: No, score=-10.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 950E0C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:16:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9741DC43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:17:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 67CB32184A
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:16:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5E5EA2184C
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:17:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547216219;
-	bh=1Wpty1Kkwu4JKarq78ifhZ8Ra9vynM2K6pYIuq1Es5o=;
+	s=default; t=1547216221;
+	bh=saKEvZEKF3KL8z9IlyNDy3vdJwlv80m06CPIezkhRVE=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=pWDYQ4To+92dQ9oB1DJKCBstzT/YdvmNpInsl499GreFlKWKSUr0WfAF+yhuHfitk
-	 1g2eYNycq5DmLnwrfg2QIKCoEhzsJUaKVwzYJDGX1lqy4DSOIdHlsDoC75VSvm8PiE
-	 oLKPnbm+cBKljU7kKizPlakTmImloF7gx5ZY6UIQ=
+	b=xkk4pSye4MzCmRvMBV4gixEZXyt5wCxp+KY1C0yqbw0//OGLjb4n8bY+df2n+9MFX
+	 VIJqcIL+22LfG1TccWzHnR8YlMKjwrF9xp4aLeCYhtQf2Jng0NA6gBAotmCSs9k8k+
+	 auz/S9ak6P2iyzF8Kd0Tzbe1TAVa3KWr9sJynnIs=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387761AbfAKOQx (ORCPT
+        id S2387781AbfAKORA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 11 Jan 2019 09:16:53 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33162 "EHLO mail.kernel.org"
+        Fri, 11 Jan 2019 09:17:00 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33260 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387724AbfAKOQu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Jan 2019 09:16:50 -0500
+        id S2387740AbfAKOQ4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 Jan 2019 09:16:56 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C961F21783;
-        Fri, 11 Jan 2019 14:16:49 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 62E1721783;
+        Fri, 11 Jan 2019 14:16:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547216210;
-        bh=1Wpty1Kkwu4JKarq78ifhZ8Ra9vynM2K6pYIuq1Es5o=;
+        s=default; t=1547216215;
+        bh=saKEvZEKF3KL8z9IlyNDy3vdJwlv80m06CPIezkhRVE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=JO5KfwfkXTjGKOJL/gZdnBRmT0c07pFS2RXQNLWI991y3WmYUyQEmu6vzeA5dufHo
-         lELrJJQ7NtFYkzl2XgTh0JhHNnER4vl5o0Q/KiTHSjmKS8skee1tVhGBSCAFc8CS7V
-         6U11W8MWbYGqnXgLFIWYnq2RUe7WwNksnaa3g2OU=
+        b=AwwH9OgBIMwEUyakMbVppLMNy025H8Dl/9bTUo9Dl5wtknyY5pJibu7AZQMyXXLfX
+         54QgYjlqNySuNPOcMMH0IZXTS2GjRgVBG8rkyjw4uakZjlVEhwQH+Qvxr2JYrIjH3d
+         54ko1jW138/sMeF7XsC4IRqYjqXQSmTVEQwtvb1g=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Cong Wang <xiyou.wangcong@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        syzbot+ae6bb869cbed29b29040@syzkaller.appspotmail.com
-Subject: [PATCH 4.4 16/88] ax25: fix a use-after-free in ax25_fillin_cb()
-Date:   Fri, 11 Jan 2019 15:07:45 +0100
-Message-Id: <20190111131048.530410589@linuxfoundation.org>
+        stable@vger.kernel.org, Willem de Bruijn <willemb@google.com>,
+        Alexander Aring <aring@mojatatu.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.4 18/88] ieee802154: lowpan_header_create check must check daddr
+Date:   Fri, 11 Jan 2019 15:07:47 +0100
+Message-Id: <20190111131048.835006301@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190111131045.137499039@linuxfoundation.org>
 References: <20190111131045.137499039@linuxfoundation.org>
@@ -66,73 +66,33 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Cong Wang <xiyou.wangcong@gmail.com>
+From: Willem de Bruijn <willemb@google.com>
 
-[ Upstream commit c433570458e49bccea5c551df628d058b3526289 ]
+[ Upstream commit 40c3ff6d5e0809505a067dd423c110c5658c478c ]
 
-There are multiple issues here:
+Packet sockets may call dev_header_parse with NULL daddr. Make
+lowpan_header_ops.create fail.
 
-1. After freeing dev->ax25_ptr, we need to set it to NULL otherwise
-   we may use a dangling pointer.
-
-2. There is a race between ax25_setsockopt() and device notifier as
-   reported by syzbot. Close it by holding RTNL lock.
-
-3. We need to test if dev->ax25_ptr is NULL before using it.
-
-Reported-and-tested-by: syzbot+ae6bb869cbed29b29040@syzkaller.appspotmail.com
-Signed-off-by: Cong Wang <xiyou.wangcong@gmail.com>
+Fixes: 87a93e4eceb4 ("ieee802154: change needed headroom/tailroom")
+Signed-off-by: Willem de Bruijn <willemb@google.com>
+Acked-by: Alexander Aring <aring@mojatatu.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/ax25/af_ax25.c  |   11 +++++++++--
- net/ax25/ax25_dev.c |    2 ++
- 2 files changed, 11 insertions(+), 2 deletions(-)
+ net/ieee802154/6lowpan/tx.c |    3 +++
+ 1 file changed, 3 insertions(+)
 
---- a/net/ax25/af_ax25.c
-+++ b/net/ax25/af_ax25.c
-@@ -654,15 +654,22 @@ static int ax25_setsockopt(struct socket
- 			break;
- 		}
+--- a/net/ieee802154/6lowpan/tx.c
++++ b/net/ieee802154/6lowpan/tx.c
+@@ -55,6 +55,9 @@ int lowpan_header_create(struct sk_buff
+ 	const u8 *daddr = _daddr;
+ 	struct lowpan_addr_info *info;
  
--		dev = dev_get_by_name(&init_net, devname);
-+		rtnl_lock();
-+		dev = __dev_get_by_name(&init_net, devname);
- 		if (!dev) {
-+			rtnl_unlock();
- 			res = -ENODEV;
- 			break;
- 		}
- 
- 		ax25->ax25_dev = ax25_dev_ax25dev(dev);
-+		if (!ax25->ax25_dev) {
-+			rtnl_unlock();
-+			res = -ENODEV;
-+			break;
-+		}
- 		ax25_fillin_cb(ax25, ax25->ax25_dev);
--		dev_put(dev);
-+		rtnl_unlock();
- 		break;
- 
- 	default:
---- a/net/ax25/ax25_dev.c
-+++ b/net/ax25/ax25_dev.c
-@@ -116,6 +116,7 @@ void ax25_dev_device_down(struct net_dev
- 	if ((s = ax25_dev_list) == ax25_dev) {
- 		ax25_dev_list = s->next;
- 		spin_unlock_bh(&ax25_dev_lock);
-+		dev->ax25_ptr = NULL;
- 		dev_put(dev);
- 		kfree(ax25_dev);
- 		return;
-@@ -125,6 +126,7 @@ void ax25_dev_device_down(struct net_dev
- 		if (s->next == ax25_dev) {
- 			s->next = ax25_dev->next;
- 			spin_unlock_bh(&ax25_dev_lock);
-+			dev->ax25_ptr = NULL;
- 			dev_put(dev);
- 			kfree(ax25_dev);
- 			return;
++	if (!daddr)
++		return -EINVAL;
++
+ 	/* TODO:
+ 	 * if this package isn't ipv6 one, where should it be routed?
+ 	 */
 
 
