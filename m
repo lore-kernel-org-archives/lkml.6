@@ -2,93 +2,150 @@ Return-Path: <SRS0=uvhX=PT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 48BA1C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 10:21:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A7D35C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 10:21:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1057F2177B
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 10:21:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6F98D2146F
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 10:21:22 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=brauner.io header.i=@brauner.io header.b="DQkvEE1q"
+	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="XHSgmnRh"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731731AbfAKKVA (ORCPT
+        id S1731750AbfAKKVV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 11 Jan 2019 05:21:00 -0500
-Received: from mail-ed1-f66.google.com ([209.85.208.66]:46384 "EHLO
-        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731121AbfAKKVA (ORCPT
+        Fri, 11 Jan 2019 05:21:21 -0500
+Received: from conssluserg-06.nifty.com ([210.131.2.91]:57819 "EHLO
+        conssluserg-06.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730920AbfAKKVU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Jan 2019 05:21:00 -0500
-Received: by mail-ed1-f66.google.com with SMTP id o10so12611889edt.13
-        for <linux-kernel@vger.kernel.org>; Fri, 11 Jan 2019 02:20:58 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=brauner.io; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=UcSsdNuw845dDAXRms6IlwCZsgcNTDldOAqAQh5XSXg=;
-        b=DQkvEE1qqswes1yyA/HkEjQeUhk0gJUybXQOK1rBcMZnX0TZZTb2APN4XPrPUcLPn0
-         YVJmV8JIdghs9EFGMROoKXy45RxmtGlTeN/pVpNd19/6aNpqeNiGA4ndL72CrePAG13u
-         vgZ16AhIVTQbL6+7MmREksLKaUeD2Ela5GZtSYCiTeMycbHB58Av8X7oNEC4Pghntw4A
-         LwHR8/kZhACVP7VW+awpsD4iXPlVGpx/uSWx6vtRnJnfchXUFbQs8Oo/z6C5Ugvi1Ttm
-         swSH5nHWU7u1SnHpNVg8yQ2/MiMhcdXHawOdwNWvthL0mcS7a43XrJMJhWJlyqCW1N52
-         0lUw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=UcSsdNuw845dDAXRms6IlwCZsgcNTDldOAqAQh5XSXg=;
-        b=LGzWR1Po2eYhw7atL/J0dUMYR8UH0W2O8MM8xqUxjYagl1gxO9DWl22la0LjI6pzut
-         7w6x1t4anaG3YW1JzTToFge9x+Pjbj/cETxG36mWGmKfMfoM2erVm/HlQ0jk9Y2oz8Hs
-         PH4jt6Whk3b4wAWP+10QBu83hnjpHCsKQ44NUPNiYFyV5fMDV3eyP94PsyQJt8ctCamB
-         c/0ss+FEo2jJX2EQhHVAOGgOoCZGc9sNZfFb+PUADHBEXJx/neqsjMmk31IHtOSAJBRe
-         zUSZFUFq0Zr7Ti9J6ODtI1FM5tSC7S/WM/T9Enw3IpJHZvOBgT8SELksbvqt6c/dvL3h
-         dlCw==
-X-Gm-Message-State: AJcUuke4Ee3+OOg6y7ge0t2B4//UjOe24OIoiDXusV3bODn4PAZJBC4l
-        MX5TqCw93NnwATRucVyWJqu8MtMnZuixgw==
-X-Google-Smtp-Source: ALg8bN4KGPrZz3pVNClWfa2Ia3oP21xVJRjPTAplzrHBlIA7qb9ZbHTA423ryF+FuVr0UvdV0AWcrA==
-X-Received: by 2002:a50:8e95:: with SMTP id w21mr12256700edw.198.1547202058043;
-        Fri, 11 Jan 2019 02:20:58 -0800 (PST)
-Received: from brauner.io ([2a02:8109:b6c0:d6c:c571:88:8aee:976c])
-        by smtp.gmail.com with ESMTPSA id s46sm2328273edd.9.2019.01.11.02.20.57
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 11 Jan 2019 02:20:57 -0800 (PST)
-Date:   Fri, 11 Jan 2019 11:20:56 +0100
-From:   Christian Brauner <christian@brauner.io>
-To:     gregkh@linuxfoundation.org, tkjos@android.com,
-        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
-Cc:     arve@android.com, maco@android.com, joel@joelfernandes.org,
-        tkjos@google.com
-Subject: Re: [RESEND PATCH] binderfs: reserve devices for initial mount
-Message-ID: <20190111102055.fryctkdngibd56dq@brauner.io>
-References: <20190111101940.24965-1-christian@brauner.io>
+        Fri, 11 Jan 2019 05:21:20 -0500
+Received: from mail-ua1-f53.google.com (mail-ua1-f53.google.com [209.85.222.53]) (authenticated)
+        by conssluserg-06.nifty.com with ESMTP id x0BAL8Ke017069;
+        Fri, 11 Jan 2019 19:21:09 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-06.nifty.com x0BAL8Ke017069
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1547202069;
+        bh=bi5gXUU2H3UH2Rk2hSMeWMnCsazFzyD/fdnj1Pu1CVU=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=XHSgmnRhZFRId+KxWTZfxACVqteZJ6z9OOkN1S0ZC9QPC9amvOpmKatlF90pIk/4x
+         IPd1+F4ie1rtGMjn+boXzCTaXoYKc5o8lLiyyIuAK8GcjWrfc+RZMwMCAP82AmpNC7
+         ncrXtCBFYFiZvNYDgku1EeadjB9y7cH8Sd5QxTHIc0E64pj+er9f2JdF+6h12kwO9E
+         YkDQZP/6BHj/hzj7xJPTkm6bj1RCfpgoP9ax7wV/PFVlPxtLsICoLzccXvEv2UMMQU
+         kBHjXCLqaYauJ6lfb29eRzn3gQuWwF114hWAgPq31ML+0ZMH749CxihIl+Tm2vuWBv
+         iedMLEzf4ipjQ==
+X-Nifty-SrcIP: [209.85.222.53]
+Received: by mail-ua1-f53.google.com with SMTP id u19so4579509uae.4;
+        Fri, 11 Jan 2019 02:21:09 -0800 (PST)
+X-Gm-Message-State: AJcUukdZl41bIHXwJuaU41nQ6cA/JbGbrhFsEDWRD2RndeIiPzdC8icY
+        teByzOmU0lKQ0lqChlKWJ/ShnnWRtKvpFWatAuQ=
+X-Google-Smtp-Source: ALg8bN4vvwmY0J+PQ1IRDmpbuvZqEKQ2NnBjr97EYqcfDymVFWgZUvH2HwkeIYOiZ/wSGGgSiHM7mHwOmx8gBZiO9SA=
+X-Received: by 2002:ab0:849:: with SMTP id b9mr5317176uaf.93.1547202068160;
+ Fri, 11 Jan 2019 02:21:08 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20190111101940.24965-1-christian@brauner.io>
-User-Agent: NeoMutt/20180716
+References: <1547200321-17120-1-git-send-email-yamada.masahiro@socionext.com> <20190111095924.GA555@kroah.com>
+In-Reply-To: <20190111095924.GA555@kroah.com>
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+Date:   Fri, 11 Jan 2019 19:20:32 +0900
+X-Gmail-Original-Message-ID: <CAK7LNAQQdmVpL5_v+6Tw+o0A3_mPWafMfGF5j9imXBuXMHTuDA@mail.gmail.com>
+Message-ID: <CAK7LNAQQdmVpL5_v+6Tw+o0A3_mPWafMfGF5j9imXBuXMHTuDA@mail.gmail.com>
+Subject: Re: [PATCH] firmware_loader: move firmware/ to drivers/base/firmware_loader/builtin/
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Luis Chamberlain <mcgrof@kernel.org>,
+        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Michal Marek <michal.lkml@markovi.net>,
+        "Rafael J. Wysocki" <rafael@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jan 11, 2019 at 11:19:40AM +0100, Christian Brauner wrote:
-> The binderfs instance in the initial ipc namespace will always have a
-> reserve of 4 binder devices unless explicitly capped by specifying a lower
-> value via the "max" mount option.
-> This ensures when binder devices are removed (on accident or on purpose)
-> they can always be recreated without risking that all minor numbers have
-> already been used up.
-> 
-> Cc: Todd Kjos <tkjos@google.com>
-> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> Signed-off-by: Christian Brauner <christian.brauner@ubuntu.com>
+On Fri, Jan 11, 2019 at 6:59 PM Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
+>
+> On Fri, Jan 11, 2019 at 06:52:00PM +0900, Masahiro Yamada wrote:
+> > Currently, the 'firmware' directory only contains a single Makefile
+> > to embed extra firmware into the kernel.
+> >
+> > Move it to the more relevant place.
+>
+> So this moves any "build in" firmware to need to be placed in
+> drivers/base/firmare_loader/builtin/ instead of firmware/builtin/ ?
 
-Cherry-picked this commit on top of char-misc-linus and it applied
-cleanly. I hope I took the right branch?
+Nope.
 
-Thanks!
-Christian
+The build system searches extra firmware in the directory specified
+by CONFIG_EXTRA_FIRMWARE_DIR.  (default is /lib/firmware)
+
+
+See drivers/base/firmware_loader/Kconfig:
+
+config EXTRA_FIRMWARE_DIR
+        string "Firmware blobs root directory"
+        depends on EXTRA_FIRMWARE != ""
+        default "/lib/firmware"
+        help
+          This option controls the directory in which the kernel build system
+          looks for the firmware files listed in the EXTRA_FIRMWARE option.
+
+
+
+>  If
+> so, why?  That seems like a lot of extra work for people now.  And
+> burrying it down in the drivers/base/ directory is not obvious at all.
+
+
+The firmware search path is a different thing.
+
+
+I am just moving the Makefile
+because all the other stuff (C files, Kconfig)
+has been moved into drivers/base/firmware_loader/.
+
+And, this is the last piece work in order to
+make drivers/base/firmware_loader self-contained.
+
+
+
+Just a reminder of previous commits you applied:
+
+
+commit 06bfd3c8ab1dbf0031022d056a90ace682f6a94c
+Author: Luis R. Rodriguez <mcgrof@kernel.org>
+Date:   Thu May 10 13:08:43 2018 -0700
+
+    firmware_loader: move kconfig FW_LOADER entries to its own file
+
+    This will make it easier to track and easier to understand
+    what components and features are part of the FW_LOADER. There
+    are some components related to firmware which have *nothing* to
+    do with the FW_LOADER, souch as PREVENT_FIRMWARE_BUILD.
+
+    Reviewed-by: Kees Cook <keescook@chromium.org>
+    Signed-off-by: Luis R. Rodriguez <mcgrof@kernel.org>
+    Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
+
+commit 5d6d1ddd27301dc85b13b794262c8bcececf88f1
+Author: Luis R. Rodriguez <mcgrof@kernel.org>
+Date:   Sat Mar 10 06:14:50 2018 -0800
+
+    firmware: move firmware loader into its own directory
+
+    This will make it much easier to manage as we manage to
+    keep trimming componnents down into their own files to more
+    easily manage and maintain this codebase.
+
+    Suggested-by: Kees Cook <keescook@chromium.org>
+    Signed-off-by: Luis R. Rodriguez <mcgrof@kernel.org>
+    Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
+
+
+-- 
+Best Regards
+Masahiro Yamada
