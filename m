@@ -7,49 +7,49 @@ X-Spam-Status: No, score=-13.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 96D76C43444
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:35:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B4671C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:35:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5EB912133F
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:35:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7C93621841
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:35:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547217300;
-	bh=H7uAdKN/S0Mg0So+OAyKBDKGFh8Gzj3pT2IyDT/lAwI=;
+	s=default; t=1547217303;
+	bh=jSYBkxQctiQ6C3FF71KB6J6fWQJW+zlHCLoO9KL9Wvg=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=B1c6L22Q/RYYMPmJ+w8Tre7iqcX/WaC0TOceLK7X9RvAcKOGGlilHlzBPn+5/B5ks
-	 qCFrP+quhc0MfuVykpS0uATYId22sGROB6WpBBnz1Z87Hmb4u4zuEgYAq96qglmlBi
-	 26vjCbYzBLtZNC82gj/Tihrlt5YjHllAlAaxldtY=
+	b=rsRR5rfjUkXV7GuD3511h3sxXJY9P6MrZJr8lhPAux27mypZlIPeX3GA/NuxFRkvo
+	 Rz1qYIWFI0Pyd4FW9jwwms/7ryxwBLlNBBnLOfcLoHAAme1bgduLll0v41cWmYZAM0
+	 vYqzdg2a4OfX52OTpdE5tjK26aR6m/wER204zaxY=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389270AbfAKOe7 (ORCPT
+        id S2390053AbfAKOfC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 11 Jan 2019 09:34:59 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55204 "EHLO mail.kernel.org"
+        Fri, 11 Jan 2019 09:35:02 -0500
+Received: from mail.kernel.org ([198.145.29.99]:55234 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730154AbfAKOe5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Jan 2019 09:34:57 -0500
+        id S2390038AbfAKOe7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 Jan 2019 09:34:59 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DC89E204EC;
-        Fri, 11 Jan 2019 14:34:55 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6C72C2063F;
+        Fri, 11 Jan 2019 14:34:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547217296;
-        bh=H7uAdKN/S0Mg0So+OAyKBDKGFh8Gzj3pT2IyDT/lAwI=;
+        s=default; t=1547217298;
+        bh=jSYBkxQctiQ6C3FF71KB6J6fWQJW+zlHCLoO9KL9Wvg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=DisqhUiRguKQzgRfRXsYHuzYdrekyMVzM9pETgc1x2mQnTiLuPSddfMr5AgTgsb75
-         5WLU07SHxaJVDg9DcD3FP3XDoyW9M69xpx0ZdwN4dnYJudhw4lB6qpwhDfwjv0zj1M
-         77Bfo0oTi51pGpYwUILGk8Ro5i+Fs31kMbsZQCzw=
+        b=hfo4sNIEYgIniEmjbLsExIgvUEM9VGXFa9nPgpvjST7Ey6kn6Jclbd+tFadF9/ENG
+         1DR1Lmohoi9/6YhhEx8v0CZUtKuXyaPHyH0GZAwV0dz6BpU5Uq8rt0RUQ+iHRjuw7A
+         ZPBqRcXbTUEX4zAnlDBkeegHhCyPH8jePa9PExGI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Yishai Hadas <yishaih@mellanox.com>,
-        Artemy Kovalyov <artemyko@mellanox.com>,
-        Leon Romanovsky <leonro@mellanox.com>,
-        Doug Ledford <dledford@redhat.com>,
+        stable@vger.kernel.org, Peter Hutterer <peter.hutterer@who-t.net>,
+        Martin Kepplinger <martin.kepplinger@ginzinger.com>,
+        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 010/148] IB/mlx5: Block DEVX umem from the non applicable cases
-Date:   Fri, 11 Jan 2019 15:13:08 +0100
-Message-Id: <20190111131114.746725571@linuxfoundation.org>
+Subject: [PATCH 4.19 011/148] Input: restore EV_ABS ABS_RESERVED
+Date:   Fri, 11 Jan 2019 15:13:09 +0100
+Message-Id: <20190111131114.786225087@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190111131114.337122649@linuxfoundation.org>
 References: <20190111131114.337122649@linuxfoundation.org>
@@ -68,47 +68,41 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 47f07f03b5ee436fe074c4fb1fb28d013c36a0d8 ]
+[ Upstream commit c201e3808e0e4be9b98d192802085a9f491bd80c ]
 
-Blocks creating a DEVX UMEM with the non applicable access flags
-as of ODP, MW_BIND, etc.
+ABS_RESERVED was added in d9ca1c990a7 and accidentally removed as part of
+ffe0e7cf290f5c9 when the high-resolution scrolling code was removed.
 
-Specifically when an ODP flag is used below WARN call trace is issued.
-
-[ 2510.404131] RIP: 0010:__mlx5_ib_populate_pas+0x207/0x220 [mlx5_ib]
-...
-[ 2510.404143] Call Trace:
-[ 2510.404150]  ? __kmalloc_node+0x1b3/0x280
-[ 2510.404156]  ? _uverbs_alloc+0x63/0x90 [ib_uverbs]
-[ 2510.404158]  ? _uverbs_alloc+0x63/0x90 [ib_uverbs]
-[ 2510.404162]  mlx5_ib_populate_pas+0x53/0x60 [mlx5_ib]
-[ 2510.404167]  mlx5_ib_handler_MLX5_IB_METHOD_DEVX_UMEM_REG+0x273/0x3f0 [mlx5_ib]
-
-Fixes: aeae94579caf ("IB/mlx5: Add DEVX support for memory registration")
-Signed-off-by: Yishai Hadas <yishaih@mellanox.com>
-Reviewed-by: Artemy Kovalyov <artemyko@mellanox.com>
-Signed-off-by: Leon Romanovsky <leonro@mellanox.com>
-Signed-off-by: Doug Ledford <dledford@redhat.com>
+Signed-off-by: Peter Hutterer <peter.hutterer@who-t.net>
+Reviewed-by: Martin Kepplinger <martin.kepplinger@ginzinger.com>
+Acked-by: Benjamin Tissoires <benjamin.tissoires@redhat.com>
+Acked-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Signed-off-by: Benjamin Tissoires <benjamin.tissoires@redhat.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/infiniband/hw/mlx5/devx.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ include/uapi/linux/input-event-codes.h | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
-diff --git a/drivers/infiniband/hw/mlx5/devx.c b/drivers/infiniband/hw/mlx5/devx.c
-index f2f11e652dcd..02f36ab72ad4 100644
---- a/drivers/infiniband/hw/mlx5/devx.c
-+++ b/drivers/infiniband/hw/mlx5/devx.c
-@@ -857,7 +857,9 @@ static int devx_umem_get(struct mlx5_ib_dev *dev, struct ib_ucontext *ucontext,
+diff --git a/include/uapi/linux/input-event-codes.h b/include/uapi/linux/input-event-codes.h
+index 53fbae27b280..61a5799b440b 100644
+--- a/include/uapi/linux/input-event-codes.h
++++ b/include/uapi/linux/input-event-codes.h
+@@ -744,6 +744,15 @@
  
- 	err = uverbs_get_flags32(&access, attrs,
- 				 MLX5_IB_ATTR_DEVX_UMEM_REG_ACCESS,
--				 IB_ACCESS_SUPPORTED);
-+				 IB_ACCESS_LOCAL_WRITE |
-+				 IB_ACCESS_REMOTE_WRITE |
-+				 IB_ACCESS_REMOTE_READ);
- 	if (err)
- 		return err;
+ #define ABS_MISC		0x28
  
++/*
++ * 0x2e is reserved and should not be used in input drivers.
++ * It was used by HID as ABS_MISC+6 and userspace needs to detect if
++ * the next ABS_* event is correct or is just ABS_MISC + n.
++ * We define here ABS_RESERVED so userspace can rely on it and detect
++ * the situation described above.
++ */
++#define ABS_RESERVED		0x2e
++
+ #define ABS_MT_SLOT		0x2f	/* MT slot being modified */
+ #define ABS_MT_TOUCH_MAJOR	0x30	/* Major axis of touching ellipse */
+ #define ABS_MT_TOUCH_MINOR	0x31	/* Minor axis (omit if circular) */
 -- 
 2.19.1
 
