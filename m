@@ -2,92 +2,124 @@ Return-Path: <SRS0=uvhX=PT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 26B8CC43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 09:18:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 118C8C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 09:18:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E880F2173B
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 09:18:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547198304;
-	bh=K6kMvZB01NKiLOCkq1fK6WbXC08g4Mm45zKtI5lvSUo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=lT5UERIBCtKiHa70BnRBNOs/d0q8aeP+SULhQDuWA7PJBBrbpED6Ev3QttJZLsDKS
-	 IVKQZZJ6SLsZb7N479Q9tvMUbHNZevLZXEmCbQQvdwkO/dumSD+MIfZDzARaFM+V3C
-	 yp96IAbUxAGTr6EQ1tpgRyBtzX3eCK6Q/B+n0jOQ=
+	by mail.kernel.org (Postfix) with ESMTP id D4DB42183F
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 09:18:46 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="Wt3/0n+E"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731441AbfAKJSW (ORCPT
+        id S1731453AbfAKJSp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 11 Jan 2019 04:18:22 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58274 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730334AbfAKJSW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Jan 2019 04:18:22 -0500
-Received: from localhost (unknown [178.228.36.116])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2F80820872;
-        Fri, 11 Jan 2019 09:18:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547198302;
-        bh=K6kMvZB01NKiLOCkq1fK6WbXC08g4Mm45zKtI5lvSUo=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=jX1K90JopcSTjebTlG/2NywgDiU4mPnmknhkI42ckWSS3hm8msF2UALTuiDCh7LNg
-         yOjEPP5gT0oOYQKa8HF4aM78NxK1igx5hyQaF+6Azv0+briALwRHI0XI13Qt1yJ2J4
-         FIyibM1Hi7ZDotAFY6vAsR34lF1obE/xi2ePKPZM=
-Date:   Fri, 11 Jan 2019 10:18:18 +0100
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Christian Brauner <christian@brauner.io>
-Cc:     tkjos@android.com, devel@driverdev.osuosl.org,
-        linux-kernel@vger.kernel.org, arve@android.com,
-        dan.carpenter@oracle.com, joel@joelfernandes.org, maco@android.com,
-        tkjos@google.com
-Subject: Re: [PATCH v2 2/2] binderfs: reserve devices for initial mount
-Message-ID: <20190111091818.GA17058@kroah.com>
-References: <20190102113219.3716-1-christian@brauner.io>
- <20190102113219.3716-2-christian@brauner.io>
+        Fri, 11 Jan 2019 04:18:45 -0500
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:46521 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730334AbfAKJSp (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 Jan 2019 04:18:45 -0500
+Received: by mail-pl1-f193.google.com with SMTP id t13so6508844ply.13
+        for <linux-kernel@vger.kernel.org>; Fri, 11 Jan 2019 01:18:45 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=CatBFT4UD3UyYIzL57sVRGcnSjILPik9Oqm2Ih2xguA=;
+        b=Wt3/0n+EhKiKAvBx6BJt93aNhktO+0l+BxYn97S5zoIiuRDAIGrYV8xFZY4dlPD/xm
+         066GdBmLTwmF92bdvKxnUWFvn3lpqVoPRaL1N/Hm3hQsV6kpLdLr9iIW2onXIBVKiUXX
+         wnKidE/7JKiOclW5/lu1sFCEVj26cAtweLzzw=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=CatBFT4UD3UyYIzL57sVRGcnSjILPik9Oqm2Ih2xguA=;
+        b=PoWGr07h0L3fuIQUChPBNbLo6S6qlW5jAFideW2wMDKnFJE51KcuUckuvrnaF3dIQB
+         TQwLgGt01nWhJhODmzZklChFLJeBMZGd37lgwKSrtlwF2LUTOSTiMDqLXHDjqcae1E4P
+         +wqtJ25NWSu/6x+cN/mN1+sBSVvaJvbFmRz3fqG2J44UgeiTC9xFoqb6KRgGfknseNEO
+         l70ylARxbTzBE3QJ1GhLN0h5MFHdZ0OFBBdrF7ulkTdiHKraIbRrQzKWb/VMe5x6PNrP
+         piJcLYDmXBuWNY2WpJgkPfoBHv6jlPxmsMQtadT5NxXbkHXsfecVONbNyHLr7YMaEgcy
+         dLgA==
+X-Gm-Message-State: AJcUukcyUdJCO5tkVFgVbkPinPpEQjjiOAIfHtMXYcfIGmLI6O5ZvWei
+        853EuTQlKi6zOdJ4gWc9g+6CwQ==
+X-Google-Smtp-Source: ALg8bN67b7yeMg2EHiVjrf0NydERBLt0fs+CayPgx8MuP42CI0NREY7F/wLqK7FrTEhE/07m2hWsLg==
+X-Received: by 2002:a17:902:14e:: with SMTP id 72mr13986222plb.287.1547198323885;
+        Fri, 11 Jan 2019 01:18:43 -0800 (PST)
+Received: from localhost ([122.172.34.203])
+        by smtp.gmail.com with ESMTPSA id h82sm137490651pfa.105.2019.01.11.01.18.42
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 11 Jan 2019 01:18:43 -0800 (PST)
+From:   Viresh Kumar <viresh.kumar@linaro.org>
+To:     Rafael Wysocki <rjw@rjwysocki.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Viresh Kumar <vireshk@kernel.org>
+Cc:     Viresh Kumar <viresh.kumar@linaro.org>, linux-pm@vger.kernel.org,
+        Vincent Guittot <vincent.guittot@linaro.org>, mka@chromium.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH 0/3] drivers: Frequency constraint infrastructure
+Date:   Fri, 11 Jan 2019 14:48:33 +0530
+Message-Id: <cover.1547197612.git.viresh.kumar@linaro.org>
+X-Mailer: git-send-email 2.20.1.321.g9e740568ce00
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190102113219.3716-2-christian@brauner.io>
-User-Agent: Mutt/1.11.2 (2019-01-07)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 02, 2019 at 12:32:19PM +0100, Christian Brauner wrote:
-> The binderfs instance in the initial ipc namespace will always have a
-> reserve of 4 binder devices unless explicitly capped by specifying a lower
-> value via the "max" mount option.
-> This ensures when binder devices are removed (on accident or on purpose)
-> they can always be recreated without risking that all minor numbers have
-> already been used up.
-> 
-> Cc: Todd Kjos <tkjos@google.com>
-> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> Signed-off-by: Christian Brauner <christian.brauner@ubuntu.com>
-> ---
-> v2:
-> - patch unchanged
-> v1:
-> - patch introduced
-> v0:
-> - patch not present
-> ---
->  drivers/android/binderfs.c | 7 ++++++-
->  1 file changed, 6 insertions(+), 1 deletion(-)
+Hi,
 
-What did you make this patch against?  It doesn't apply cleanly so I
-don't want to take it until we get everything synced up properly
-together :(
+This commit introduces the frequency constraint infrastructure, which
+provides a generic interface for parts of the kernel to constraint the
+working frequency range of a device.
 
-I'll apply patch 1/2 now, can you rebase and resend this one?
+The primary users of this are the cpufreq and devfreq frameworks. The
+cpufreq framework already implements such constraints with help of
+notifier chains (for thermal and other constraints) and some local code
+(for user-space constraints). The devfreq framework developers have also
+shown interest [1] in such a framework, which may use it at a later
+point of time.
 
-thanks,
+The idea here is to provide a generic interface and get rid of the
+notifier based mechanism.
 
-greg k-h
+Only one constraint is added for now for the cpufreq framework and the
+rest will follow after this stuff is merged.
+
+Matthias Kaehlcke was involved in the preparation of the first draft of
+this work and so I have added him as Co-author to the first patch.
+Thanks Matthias.
+
+FWIW, This doesn't have anything to do with the boot-constraints
+framework [2] I was trying to upstream earlier :)
+
+--
+viresh
+
+[1] lore.kernel.org/lkml/20181002220625.GJ22824@google.com
+[2] lore.kernel.org/lkml/cover.1519380923.git.viresh.kumar@linaro.org
+
+Viresh Kumar (3):
+  drivers: base: Add frequency constraint infrastructure
+  cpufreq: Implement freq-constraint callback
+  cpufreq: Implement USER constraint
+
+ MAINTAINERS                     |   8 +
+ drivers/base/Kconfig            |   5 +
+ drivers/base/Makefile           |   1 +
+ drivers/base/freq_constraint.c  | 633 ++++++++++++++++++++++++++++++++++++++++
+ drivers/cpufreq/Kconfig         |   1 +
+ drivers/cpufreq/cpufreq.c       |  92 ++++--
+ include/linux/cpufreq.h         |   8 +-
+ include/linux/freq_constraint.h |  45 +++
+ 8 files changed, 756 insertions(+), 37 deletions(-)
+ create mode 100644 drivers/base/freq_constraint.c
+ create mode 100644 include/linux/freq_constraint.h
+
+-- 
+2.7.4
+
