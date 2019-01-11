@@ -2,95 +2,133 @@ Return-Path: <SRS0=uvhX=PT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3AC83C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 06:10:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B853C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 06:13:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0962D21783
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 06:10:33 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="tCTJNLys"
+	by mail.kernel.org (Postfix) with ESMTP id CC0DA20870
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 06:13:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729885AbfAKGKc (ORCPT
+        id S1730036AbfAKGNY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 11 Jan 2019 01:10:32 -0500
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:37929 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728042AbfAKGKc (ORCPT
+        Fri, 11 Jan 2019 01:13:24 -0500
+Received: from mail.cn.fujitsu.com ([183.91.158.132]:19975 "EHLO
+        heian.cn.fujitsu.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1728042AbfAKGNX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Jan 2019 01:10:32 -0500
-Received: by mail-wr1-f66.google.com with SMTP id v13so13866127wrw.5;
-        Thu, 10 Jan 2019 22:10:30 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=L/iotYi1UnvAborjb6KMRqYSwxpEZRYKhqYyPDgZMGc=;
-        b=tCTJNLysNUZ306PWsot0o9msllhJRRRaccpVt/AhM6R8SbiSfiSfxf7JachRSTYc/u
-         F7W277/KnAdSMzQkSLvd1x1y5n0QzqTywQm5iIlEQUqoo1jgw+SmRNDKpEbBAyYjzv4j
-         zZNcU4+sb0Nnc6wmssYx/ROmEkJz/68M8YZKyuSdPfVXXXbNVSenH9H0aJwnVH+HtDw9
-         DEf+dUeg9sFd79s8b0mdT3z/xygx1Y/5OvbuyaX+sUuG220mvEGZK5pL6jFjxlJ4jnQS
-         re2I5hLDYEKA1PwUr6Y329oR/hobSnxFXW51Y5+40Rq55w7dmh6YGX3++NnFApS/ism7
-         afuQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=L/iotYi1UnvAborjb6KMRqYSwxpEZRYKhqYyPDgZMGc=;
-        b=Wbn3mVa9iMTSq+xH0ygilh0x3B76QRb5RSh6MyH1W6zHqSAnhb0e3PfoLDl1oGzDj1
-         Au35VC1J01XOaT5Nz/Fh7A+zF11nfixrZTV7EhhWAt6faKCNzWp4hHGARNCRj1knAoaG
-         1Gim8dH893eSy/LjfFpEQ7Ub8TnB2nBqswgjYvT86jE9W2KXyeRwIurUr7ABpfc25gnx
-         xRkmYDG5Ewcw2S9Lus8wxMb3aychOvOIuXYp4U11hDW9RCDmpHcnM/9Vz1zJvhcqMT7t
-         7NQffxMHaTw1BKMtzIhGRZKCOjQuOhjxRdLiA5eM9fQm3nP7QiOME+lXm3SWXMYC6AiZ
-         P6bQ==
-X-Gm-Message-State: AJcUukfcjXo+YdScfRnU9YuRx8a2sfPw/GeQpX9zr15eSX7eNpiQmkZI
-        z0h+y901nwUEoqoAW7yF1plE2RkS
-X-Google-Smtp-Source: ALg8bN7R9+tCo1iBpSbWDPo72p0BfdrYaGw9VsRvhhEylhzR9WsRB9aTavpt9Y0rgRK6B+AuF6ZzTQ==
-X-Received: by 2002:adf:84e4:: with SMTP id 91mr11865073wrg.237.1547187029592;
-        Thu, 10 Jan 2019 22:10:29 -0800 (PST)
-Received: from ?IPv6:2003:ea:8be2:e400:e930:1d02:8fe9:d67c? (p200300EA8BE2E400E9301D028FE9D67C.dip0.t-ipconnect.de. [2003:ea:8be2:e400:e930:1d02:8fe9:d67c])
-        by smtp.googlemail.com with ESMTPSA id c202sm20146367wmd.40.2019.01.10.22.10.28
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 10 Jan 2019 22:10:28 -0800 (PST)
-Subject: Re: linux-next: Signed-off-by missing for commit in the net tree
-To:     Stephen Rothwell <sfr@canb.auug.org.au>,
-        David Miller <davem@davemloft.net>,
-        Networking <netdev@vger.kernel.org>,
-        Frank Wunderlich <frank-w@public-files.de>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-References: <20190111144818.0fe8bde2@canb.auug.org.au>
-From:   Heiner Kallweit <hkallweit1@gmail.com>
-Message-ID: <685063fd-a1c2-954a-db1e-b1339ad90e15@gmail.com>
-Date:   Fri, 11 Jan 2019 07:10:21 +0100
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        Fri, 11 Jan 2019 01:13:23 -0500
+X-IronPort-AV: E=Sophos;i="5.56,464,1539619200"; 
+   d="scan'208";a="51771161"
+Received: from unknown (HELO cn.fujitsu.com) ([10.167.33.5])
+  by heian.cn.fujitsu.com with ESMTP; 11 Jan 2019 14:13:20 +0800
+Received: from G08CNEXCHPEKD01.g08.fujitsu.local (unknown [10.167.33.80])
+        by cn.fujitsu.com (Postfix) with ESMTP id 912FD4BAD914;
+        Fri, 11 Jan 2019 14:13:17 +0800 (CST)
+Received: from localhost.localdomain (10.167.225.56) by
+ G08CNEXCHPEKD01.g08.fujitsu.local (10.167.33.89) with Microsoft SMTP Server
+ (TLS) id 14.3.408.0; Fri, 11 Jan 2019 14:13:15 +0800
+Date:   Fri, 11 Jan 2019 14:12:21 +0800
+From:   Chao Fan <fanc.fnst@cn.fujitsu.com>
+To:     Pingfan Liu <kernelfans@gmail.com>
+CC:     <linux-kernel@vger.kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Len Brown <lenb@kernel.org>, Yinghai Lu <yinghai@kernel.org>,
+        Tejun Heo <tj@kernel.org>, Baoquan He <bhe@redhat.com>,
+        Juergen Gross <jgross@suse.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Michal Hocko <mhocko@suse.com>, <x86@kernel.org>,
+        <linux-acpi@vger.kernel.org>, <linux-mm@kvack.org>
+Subject: Re: [PATCHv2 1/7] x86/mm: concentrate the code to memblock allocator
+ enabled
+Message-ID: <20190111061221.GB13263@localhost.localdomain>
+References: <1547183577-20309-1-git-send-email-kernelfans@gmail.com>
+ <1547183577-20309-2-git-send-email-kernelfans@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20190111144818.0fe8bde2@canb.auug.org.au>
-Content-Type: text/plain; charset=windows-1252
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <1547183577-20309-2-git-send-email-kernelfans@gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Originating-IP: [10.167.225.56]
+X-yoursite-MailScanner-ID: 912FD4BAD914.ADDB6
+X-yoursite-MailScanner: Found to be clean
+X-yoursite-MailScanner-From: fanc.fnst@cn.fujitsu.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11.01.2019 04:48, Stephen Rothwell wrote:
-> Hi all,
-> 
-> Commit
-> 
->   b19bce0335e2 ("net: ethernet: mediatek: fix warning in phy_start_aneg")
-> 
-> is missing a Signed-off-by from its author.
-> 
-I suggested the changes and Frank prepared the patch with me as author.
-Therefore:
+On Fri, Jan 11, 2019 at 01:12:51PM +0800, Pingfan Liu wrote:
+>This patch identifies the point where memblock alloc start. It has no
+>functional.
+[...]
+>+#ifdef CONFIG_MEMORY_HOTPLUG
+>+	/*
+>+	 * Memory used by the kernel cannot be hot-removed because Linux
+>+	 * cannot migrate the kernel pages. When memory hotplug is
+>+	 * enabled, we should prevent memblock from allocating memory
+>+	 * for the kernel.
+>+	 *
+>+	 * ACPI SRAT records all hotpluggable memory ranges. But before
+>+	 * SRAT is parsed, we don't know about it.
+>+	 *
+>+	 * The kernel image is loaded into memory at very early time. We
+>+	 * cannot prevent this anyway. So on NUMA system, we set any
+>+	 * node the kernel resides in as un-hotpluggable.
+>+	 *
+>+	 * Since on modern servers, one node could have double-digit
+>+	 * gigabytes memory, we can assume the memory around the kernel
+>+	 * image is also un-hotpluggable. So before SRAT is parsed, just
+>+	 * allocate memory near the kernel image to try the best to keep
+>+	 * the kernel away from hotpluggable memory.
+>+	 */
+>+	if (movable_node_is_enabled())
+>+		memblock_set_bottom_up(true);
 
-Suggested-by: Heiner Kallweit <hkallweit1@gmail.com>
-Signed-off-by: Frank Wunderlich <frank-w@public-files.de>
+Hi Pingfan,
+
+In my understanding, 'movable_node' is based on the that memory near
+kernel is considered as in the same node as kernel in high possibility.
+
+If SRAT has been parsed early, do we still need the kernel parameter
+'movable_node'? Since you have got the memory information about hot-remove,
+so I wonder if it's OK to drop 'movable_node', and if memory-hotremove is
+enabled, change memblock allocation according to SRAT.
+
+If there is something wrong in my understanding, please let me know.
+
+Thanks,
+Chao Fan
+
+>+#endif
+> 	init_mem_mapping();
+>+	memblock_set_current_limit(get_max_mapped());
+> 
+> 	idt_setup_early_pf();
+> 
+>@@ -1145,8 +1145,6 @@ void __init setup_arch(char **cmdline_p)
+> 	 */
+> 	mmu_cr4_features = __read_cr4() & ~X86_CR4_PCIDE;
+> 
+>-	memblock_set_current_limit(get_max_mapped());
+>-
+> 	/*
+> 	 * NOTE: On x86-32, only from this point on, fixmaps are ready for use.
+> 	 */
+>-- 
+>2.7.4
+>
+>
+>
+
+
