@@ -7,55 +7,46 @@ X-Spam-Status: No, score=-10.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 444AFC43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:58:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 60EE7C43444
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:58:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0B8E720874
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:58:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2961320874
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:58:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547218722;
-	bh=TxznblPju3hhTyfG3JFpP6TE+E5R75Vyw1jV97aaOyo=;
+	s=default; t=1547218723;
+	bh=99XzeAf0lrGZH9/9So7PmaRKfwPAp+q2DgV3noaUq0A=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=CF6OdVUtm0uKgJqprZp+pkTuRIzX9ySEb9TAEMESy8rrGkd1qD77+RLlLNIzQaU+4
-	 8GRR13ZUihNxe2q4LxUtO1IO+OgUh67hQAIPUYoxkZ69dtpERgpmQuZzv3eznYVTHz
-	 B1drO0Wf7V4FvoVJ7L0QtE6dYb8LUgwlSv03cpX4=
+	b=IXGPSqiHrPKTizg6HaVnVlwHQ2qC+mSc6B8DXJ2hfbIx0wdcSm6QOoQ/0SZqnU9Z9
+	 6FSuQGFiKquPZicC7j7LZlPQHI1L0rDMEu8Qr5eLy8GNWvvMeCjrTly6razIMHdSwm
+	 WBJlFDlxVaKE5fLitnffS/oMqeeUZ0DbY2vV/Cd8=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389889AbfAKOeX (ORCPT
+        id S2391732AbfAKO6m (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 11 Jan 2019 09:34:23 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54544 "EHLO mail.kernel.org"
+        Fri, 11 Jan 2019 09:58:42 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54656 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387662AbfAKOeR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Jan 2019 09:34:17 -0500
+        id S2389888AbfAKOeX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 Jan 2019 09:34:23 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 129F321841;
-        Fri, 11 Jan 2019 14:34:15 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9BD732133F;
+        Fri, 11 Jan 2019 14:34:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547217255;
-        bh=TxznblPju3hhTyfG3JFpP6TE+E5R75Vyw1jV97aaOyo=;
+        s=default; t=1547217263;
+        bh=99XzeAf0lrGZH9/9So7PmaRKfwPAp+q2DgV3noaUq0A=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=NTmCDugXx8WkP8rp8zdQ8RLcz4Q2T+7lPprnvmsOPRzhBsRBMJgsfk/zVCvDIq3Io
-         PCah0vVPoTXMJDL3/KZThbKXrYJ8hE/YTaO+cWaJQAnFz/tMRnmftXyVCmWX/e6zIH
-         EX24uxa2Y8RQ5akwUj/4Tk2ipMdBdYwKLThBVSA4=
+        b=pXDX2FYKFw5gLtwKHAXuQ8nGhN/Lcvti73D1MaRtZxETo8Pd0adjQPTkEtfPCsgZ6
+         tbdYzgUuaeOnCU8lWFseRj1tyrWzVRgQ+rJ1xfMBsMyWaQS8FrX/d/nWpyqqPD2PDa
+         JklCALnxs6BJEdto43+T6JdIgIhARYmwyFZL+Rlo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Zhipeng Xie <xiezhipeng1@huawei.com>,
-        Sargun Dhillon <sargun@sargun.me>,
-        Xie XiuQi <xiexiuqi@huawei.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Bin Li <huawei.libin@huawei.com>,
-        Mike Galbraith <efault@gmx.de>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Tejun Heo <tj@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@kernel.org>
-Subject: [PATCH 4.14 099/105] sched/fair: Fix infinite loop in update_blocked_averages() by reverting a9e7f6544b9c
-Date:   Fri, 11 Jan 2019 15:15:10 +0100
-Message-Id: <20190111131111.118791086@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Subject: [PATCH 4.14 102/105] intel_th: msu: Fix an off-by-one in attribute store
+Date:   Fri, 11 Jan 2019 15:15:13 +0100
+Message-Id: <20190111131111.266853477@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190111131102.899065735@linuxfoundation.org>
 References: <20190111131102.899065735@linuxfoundation.org>
@@ -74,185 +65,52 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Linus Torvalds <torvalds@linux-foundation.org>
+From: Alexander Shishkin <alexander.shishkin@linux.intel.com>
 
-commit c40f7d74c741a907cfaeb73a7697081881c497d0 upstream.
+commit ec5b5ad6e272d8d6b92d1007f79574919862a2d2 upstream.
 
-Zhipeng Xie, Xie XiuQi and Sargun Dhillon reported lockups in the
-scheduler under high loads, starting at around the v4.18 time frame,
-and Zhipeng Xie tracked it down to bugs in the rq->leaf_cfs_rq_list
-manipulation.
+The 'nr_pages' attribute of the 'msc' subdevices parses a comma-separated
+list of window sizes, passed from userspace. However, there is a bug in
+the string parsing logic wherein it doesn't exclude the comma character
+from the range of characters as it consumes them. This leads to an
+out-of-bounds access given a sufficiently long list. For example:
 
-Do a (manual) revert of:
+> # echo 8,8,8,8 > /sys/bus/intel_th/devices/0-msc0/nr_pages
+> ==================================================================
+> BUG: KASAN: slab-out-of-bounds in memchr+0x1e/0x40
+> Read of size 1 at addr ffff8803ffcebcd1 by task sh/825
+>
+> CPU: 3 PID: 825 Comm: npktest.sh Tainted: G        W         4.20.0-rc1+
+> Call Trace:
+>  dump_stack+0x7c/0xc0
+>  print_address_description+0x6c/0x23c
+>  ? memchr+0x1e/0x40
+>  kasan_report.cold.5+0x241/0x308
+>  memchr+0x1e/0x40
+>  nr_pages_store+0x203/0xd00 [intel_th_msu]
 
-  a9e7f6544b9c ("sched/fair: Fix O(nr_cgroups) in load balance path")
+Fix this by accounting for the comma character.
 
-It turns out that the list_del_leaf_cfs_rq() introduced by this commit
-is a surprising property that was not considered in followup commits
-such as:
-
-  9c2791f936ef ("sched/fair: Fix hierarchical order in rq->leaf_cfs_rq_list")
-
-As Vincent Guittot explains:
-
- "I think that there is a bigger problem with commit a9e7f6544b9c and
-  cfs_rq throttling:
-
-  Let take the example of the following topology TG2 --> TG1 --> root:
-
-   1) The 1st time a task is enqueued, we will add TG2 cfs_rq then TG1
-      cfs_rq to leaf_cfs_rq_list and we are sure to do the whole branch in
-      one path because it has never been used and can't be throttled so
-      tmp_alone_branch will point to leaf_cfs_rq_list at the end.
-
-   2) Then TG1 is throttled
-
-   3) and we add TG3 as a new child of TG1.
-
-   4) The 1st enqueue of a task on TG3 will add TG3 cfs_rq just before TG1
-      cfs_rq and tmp_alone_branch will stay  on rq->leaf_cfs_rq_list.
-
-  With commit a9e7f6544b9c, we can del a cfs_rq from rq->leaf_cfs_rq_list.
-  So if the load of TG1 cfs_rq becomes NULL before step 2) above, TG1
-  cfs_rq is removed from the list.
-  Then at step 4), TG3 cfs_rq is added at the beginning of rq->leaf_cfs_rq_list
-  but tmp_alone_branch still points to TG3 cfs_rq because its throttled
-  parent can't be enqueued when the lock is released.
-  tmp_alone_branch doesn't point to rq->leaf_cfs_rq_list whereas it should.
-
-  So if TG3 cfs_rq is removed or destroyed before tmp_alone_branch
-  points on another TG cfs_rq, the next TG cfs_rq that will be added,
-  will be linked outside rq->leaf_cfs_rq_list - which is bad.
-
-  In addition, we can break the ordering of the cfs_rq in
-  rq->leaf_cfs_rq_list but this ordering is used to update and
-  propagate the update from leaf down to root."
-
-Instead of trying to work through all these cases and trying to reproduce
-the very high loads that produced the lockup to begin with, simplify
-the code temporarily by reverting a9e7f6544b9c - which change was clearly
-not thought through completely.
-
-This (hopefully) gives us a kernel that doesn't lock up so people
-can continue to enjoy their holidays without worrying about regressions. ;-)
-
-[ mingo: Wrote changelog, fixed weird spelling in code comment while at it. ]
-
-Analyzed-by: Xie XiuQi <xiexiuqi@huawei.com>
-Analyzed-by: Vincent Guittot <vincent.guittot@linaro.org>
-Reported-by: Zhipeng Xie <xiezhipeng1@huawei.com>
-Reported-by: Sargun Dhillon <sargun@sargun.me>
-Reported-by: Xie XiuQi <xiexiuqi@huawei.com>
-Tested-by: Zhipeng Xie <xiezhipeng1@huawei.com>
-Tested-by: Sargun Dhillon <sargun@sargun.me>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
-Acked-by: Vincent Guittot <vincent.guittot@linaro.org>
-Cc: <stable@vger.kernel.org> # v4.13+
-Cc: Bin Li <huawei.libin@huawei.com>
-Cc: Mike Galbraith <efault@gmx.de>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Tejun Heo <tj@kernel.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Fixes: a9e7f6544b9c ("sched/fair: Fix O(nr_cgroups) in load balance path")
-Link: http://lkml.kernel.org/r/1545879866-27809-1-git-send-email-xiexiuqi@huawei.com
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Signed-off-by: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Fixes: ba82664c134ef ("intel_th: Add Memory Storage Unit driver")
+Cc: stable@vger.kernel.org # v4.4+
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- kernel/sched/fair.c |   43 +++++++++----------------------------------
- 1 file changed, 9 insertions(+), 34 deletions(-)
+ drivers/hwtracing/intel_th/msu.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/kernel/sched/fair.c
-+++ b/kernel/sched/fair.c
-@@ -369,10 +369,9 @@ static inline void list_del_leaf_cfs_rq(
- 	}
- }
+--- a/drivers/hwtracing/intel_th/msu.c
++++ b/drivers/hwtracing/intel_th/msu.c
+@@ -1431,7 +1431,8 @@ nr_pages_store(struct device *dev, struc
+ 		if (!end)
+ 			break;
  
--/* Iterate thr' all leaf cfs_rq's on a runqueue */
--#define for_each_leaf_cfs_rq_safe(rq, cfs_rq, pos)			\
--	list_for_each_entry_safe(cfs_rq, pos, &rq->leaf_cfs_rq_list,	\
--				 leaf_cfs_rq_list)
-+/* Iterate through all leaf cfs_rq's on a runqueue: */
-+#define for_each_leaf_cfs_rq(rq, cfs_rq) \
-+	list_for_each_entry_rcu(cfs_rq, &rq->leaf_cfs_rq_list, leaf_cfs_rq_list)
+-		len -= end - p;
++		/* consume the number and the following comma, hence +1 */
++		len -= end - p + 1;
+ 		p = end + 1;
+ 	} while (len);
  
- /* Do the two (enqueued) entities belong to the same group ? */
- static inline struct cfs_rq *
-@@ -465,8 +464,8 @@ static inline void list_del_leaf_cfs_rq(
- {
- }
- 
--#define for_each_leaf_cfs_rq_safe(rq, cfs_rq, pos)	\
--		for (cfs_rq = &rq->cfs, pos = NULL; cfs_rq; cfs_rq = pos)
-+#define for_each_leaf_cfs_rq(rq, cfs_rq)	\
-+		for (cfs_rq = &rq->cfs; cfs_rq; cfs_rq = NULL)
- 
- static inline struct sched_entity *parent_entity(struct sched_entity *se)
- {
-@@ -6970,27 +6969,10 @@ static void attach_tasks(struct lb_env *
- 
- #ifdef CONFIG_FAIR_GROUP_SCHED
- 
--static inline bool cfs_rq_is_decayed(struct cfs_rq *cfs_rq)
--{
--	if (cfs_rq->load.weight)
--		return false;
--
--	if (cfs_rq->avg.load_sum)
--		return false;
--
--	if (cfs_rq->avg.util_sum)
--		return false;
--
--	if (cfs_rq->runnable_load_sum)
--		return false;
--
--	return true;
--}
--
- static void update_blocked_averages(int cpu)
- {
- 	struct rq *rq = cpu_rq(cpu);
--	struct cfs_rq *cfs_rq, *pos;
-+	struct cfs_rq *cfs_rq;
- 	struct rq_flags rf;
- 
- 	rq_lock_irqsave(rq, &rf);
-@@ -7000,7 +6982,7 @@ static void update_blocked_averages(int
- 	 * Iterates the task_group tree in a bottom up fashion, see
- 	 * list_add_leaf_cfs_rq() for details.
- 	 */
--	for_each_leaf_cfs_rq_safe(rq, cfs_rq, pos) {
-+	for_each_leaf_cfs_rq(rq, cfs_rq) {
- 		struct sched_entity *se;
- 
- 		/* throttled entities do not contribute to load */
-@@ -7014,13 +6996,6 @@ static void update_blocked_averages(int
- 		se = cfs_rq->tg->se[cpu];
- 		if (se && !skip_blocked_update(se))
- 			update_load_avg(se, 0);
--
--		/*
--		 * There can be a lot of idle CPU cgroups.  Don't let fully
--		 * decayed cfs_rqs linger on the list.
--		 */
--		if (cfs_rq_is_decayed(cfs_rq))
--			list_del_leaf_cfs_rq(cfs_rq);
- 	}
- 	rq_unlock_irqrestore(rq, &rf);
- }
-@@ -9580,10 +9555,10 @@ const struct sched_class fair_sched_clas
- #ifdef CONFIG_SCHED_DEBUG
- void print_cfs_stats(struct seq_file *m, int cpu)
- {
--	struct cfs_rq *cfs_rq, *pos;
-+	struct cfs_rq *cfs_rq;
- 
- 	rcu_read_lock();
--	for_each_leaf_cfs_rq_safe(cpu_rq(cpu), cfs_rq, pos)
-+	for_each_leaf_cfs_rq(cpu_rq(cpu), cfs_rq)
- 		print_cfs_rq(m, cpu, cfs_rq);
- 	rcu_read_unlock();
- }
 
 
