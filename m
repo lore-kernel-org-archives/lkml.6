@@ -2,110 +2,241 @@ Return-Path: <SRS0=uvhX=PT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F4D2C43444
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 15:00:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 848DBC43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 15:00:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CA64220874
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 15:00:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547218837;
-	bh=feaqvvU4jfIdWvpMCwAy+Iys/aRH3CLt1W4yHta7Jdw=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=LuAeTIGh5OnVSngrzVL9GgirRAgDQT6eM2HgrDgSbZp6JEkWX+rUNGou6rZKmxqKP
-	 CPXr+a91awvFmtTZhNeL9H8w4x3HUOw9xo+PADFlK/51u5jLYiAYvzpNW0m5600lqD
-	 VfCgna3UeUDfLEvTRy5NQm08ouaIPgrUTbNbmK9c=
+	by mail.kernel.org (Postfix) with ESMTP id 49E5120874
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 15:00:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389484AbfAKOco (ORCPT
+        id S2390215AbfAKPAj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 11 Jan 2019 09:32:44 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52702 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388562AbfAKOci (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Jan 2019 09:32:38 -0500
-Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8DC912177B;
-        Fri, 11 Jan 2019 14:32:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547217158;
-        bh=feaqvvU4jfIdWvpMCwAy+Iys/aRH3CLt1W4yHta7Jdw=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=rVVLhLUUq+5Nkk+iWPLbl/6BOJ4L9pO1rtiD6AR7xv9UDyYD4q/YWCHpG90vsuWNj
-         SOqtONA65Ywqvls3tFr4LcOWA4aYW0ALNf1E31e0oyDOPYlgAAVSQsLrXhgsyyFiP1
-         7jQJ5C5mNhtQoAA0GSfdV/dV8VYqT+Lo61xpoHw0=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Varun Prakash <varun@chelsio.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 026/105] scsi: target: iscsi: cxgbit: fix csk leak
-Date:   Fri, 11 Jan 2019 15:13:57 +0100
-Message-Id: <20190111131105.584102977@linuxfoundation.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190111131102.899065735@linuxfoundation.org>
-References: <20190111131102.899065735@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
-X-Patchwork-Hint: ignore
+        Fri, 11 Jan 2019 10:00:39 -0500
+Received: from smtp.nue.novell.com ([195.135.221.5]:48440 "EHLO
+        smtp.nue.novell.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731281AbfAKPAh (ORCPT
+        <rfc822;groupwise-linux-kernel@vger.kernel.org:0:0>);
+        Fri, 11 Jan 2019 10:00:37 -0500
+Received: from linux-l9pv.suse (124-11-22-254.static.tfn.net.tw [124.11.22.254])
+        by smtp.nue.novell.com with ESMTP (TLS encrypted); Fri, 11 Jan 2019 16:00:24 +0100
+Date:   Fri, 11 Jan 2019 22:59:58 +0800
+From:   joeyli <jlee@suse.com>
+To:     Andy Lutomirski <luto@kernel.org>
+Cc:     David Howells <dhowells@redhat.com>, Pavel Machek <pavel@ucw.cz>,
+        "Lee, Chun-Yi" <joeyli.kernel@gmail.com>,
+        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
+        LKML <linux-kernel@vger.kernel.org>, linux-pm@vger.kernel.org,
+        keyrings@vger.kernel.org,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        Chen Yu <yu.c.chen@intel.com>,
+        Oliver Neukum <oneukum@suse.com>,
+        Ryan Chen <yu.chen.surf@gmail.com>,
+        Giovanni Gherdovich <ggherdovich@suse.cz>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Jann Horn <jannh@google.com>
+Subject: Re: [PATCH 0/5 v2][RFC] Encryption and authentication for hibernate
+ snapshot image
+Message-ID: <20190111145958.GA3599@linux-l9pv.suse>
+References: <20190103143227.9138-1-jlee@suse.com>
+ <20190106181026.GA15256@amd>
+ <20190107173743.GC4210@linux-l9pv.suse>
+ <CALCETrWHjn_WN1WRc2pbFPB+H-ZL_1y=8dhhHoVqA53Q7Pj5vA@mail.gmail.com>
+ <20190109163958.GG9503@linux-l9pv.suse>
+ <CALCETrUprUNLci+tQ+P7PV3PvS4ruxz5jrGH3R_FDV4SFp3r9g@mail.gmail.com>
+ <20190110151256.GN3599@linux-l9pv.suse>
+ <CALCETrU5qWzMSLxa28XHXBsg-gZwkxfzrqztTbBO+qcCYQbTMA@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <CALCETrU5qWzMSLxa28XHXBsg-gZwkxfzrqztTbBO+qcCYQbTMA@mail.gmail.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.14-stable review patch.  If anyone has any objections, please let me know.
+On Thu, Jan 10, 2019 at 05:09:46PM -0800, Andy Lutomirski wrote:
+> On Thu, Jan 10, 2019 at 7:13 AM joeyli <jlee@suse.com> wrote:
+> >
+> > On Wed, Jan 09, 2019 at 10:47:42AM -0800, Andy Lutomirski wrote:
+> > > On Wed, Jan 9, 2019 at 8:40 AM joeyli <jlee@suse.com> wrote:
+> > > >
+> > > > Hi Andy,
+> > > >
+> > > > Thanks for your review!
+> > > >
+> > > > On Tue, Jan 08, 2019 at 01:41:48PM -0800, Andy Lutomirski wrote:
+> > > > > > On Jan 7, 2019, at 9:37 AM, joeyli <jlee@suse.com> wrote:
+> > > > > >
+> > > > > > Hi Pavel,
+> > > > > >
+> > > > > > Thanks for your review!
+> > > > > >
+> > > > > >> On Sun, Jan 06, 2019 at 07:10:27PM +0100, Pavel Machek wrote:
+> > > > > >> Hi!
+> > > > > >>
+> > > > > >>> This patchset is the implementation of encryption and authentication
+> > > > > >>> for hibernate snapshot image. The image will be encrypted by AES and
+> > > > > >>> authenticated by HMAC.
+> > > > > >>
+> > > > > >> Ok, so you encrypt.
+> > > > > >
+> > > > > > Yes, encryption and authentication.
+> > > > > >
+> > > > > >>> The hibernate function can be used to snapshot memory pages to an image,
+> > > > > >>> then kernel restores the image to memory space in a appropriate time.
+> > > > > >>> There have secrets in snapshot image and cracker may modifies it for
+> > > > > >>> hacking system. Encryption and authentication of snapshot image can protect
+> > > > > >>> the system.
+> > > > > >>>
+> > > > > >>> Hibernate function requests the master key through key retention service.
+> > > > > >>> The snapshot master key can be a trusted key or a user defined key. The
+> > > > > >>> name of snapshot master key is fixed to "swsusp-kmk". User should loads
+> > > > > >>> swsusp-kmk to kernel by keyctl tool before the hibernation resume.
+> > > > > >>> e.g. The swsusp-kmk must be loaded before systemd-hibernate-resume
+> > > > > >>
+> > > > > >> But if userspace has a key, encryption is useless against root.
+> > > > > >
+> > > > > > Yes, but this concern is not only for hibernation encryption. This patch
+> > > > > > set does not provide solution against this concern.
+> > > > > >
+> > > > > > The purpose of this patch set is to encrypt and authenticate hibernate
+> > > > > > snapshot image in kernel space. It also requests key through keyring
+> > > > > > mechanism. Which means that we can easy to adapt to new key type from
+> > > > > > keyring in the future.
+> > > > > >
+> > > > > > Currently TPM trusted key or user defined key types are not against
+> > > > > > root. Even using the TPM trusted key, it still can be unsealed by root
+> > > > > > before the PCRs be capped (unless we capped PCRs in kernel).
+> > > > > >
+> > > > > > My solution for keeping the secret by kernel is the EFI secure key type:
+> > > > > >    https://lkml.org/lkml/2018/8/5/31
+> > > > > >
+> > > > > > But the EFI boot variable doesn't design for keeping secret, so Windows
+> > > > > > and OEM/ODM do not use boot variable to keep secret. So this idea can
+> > > > > > not be accepted. We must think other key type against root.
+> > > > > >
+> > > > > >>> The TPM trusted key type is preferred to be the master key. But user
+> > > > > >>> defined key can also be used for testing or when the platform doesn't
+> > > > > >>> have TPM. User must be aware that the security of user key relies on
+> > > > > >>> user space. If the root account be compromised, then the user key will
+> > > > > >>> easy to be grabbed.
+> > > > > >>
+> > > > > >> In the TPM case, does userland have access to the key?
+> > > > > >
+> > > > > > In the TPM case, userland can only touch the sealed key blob. So userland
+> > > > > > doesn't know the real secret. But it has risk that root unseals the key
+> > > > > > before PCRs be capped.
+> > > > > >
+> > > > > >> Please explain your security goals.
+> > > > > >
+> > > > > > My security goals:
+> > > > > >
+> > > > > > - Encrypt and authicate hibernate snapshot image in kernel space. Userspace
+> > > > > >  can only touch an encrypted and signed snapshot image.
+> > > > >
+> > > > > Signed?
+> > > > >
+> > > > > I’m not entirely convinced that the keyring mechanism is what you
+> > > > > want. ISTM that there are two goals here:
+> > > > >
+> > > > > a) Encryption: it should be as hard as can reasonably be arranged to
+> > > > > extract secrets from a hibernation image.
+> > > > >
+> > > > > b) Authentication part 1: it should not be possible for someone in
+> > > > > possession of a turned-off machine to tamper with the hibernation
+> > > > > image such that the image, when booted, will leak its secrets. This
+> > > > > should protect against attackers who don’t know the encryption key.
+> > > > >
+> > > > > c) Authentication part 2: it should be to verify, to the extent
+> > > > > practical, that the image came from the same machine and was really
+> > > > > created using hibernation.  Or maybe by the same user.
+> > > > >
+> > > > > For (a) and (b), using an AE mode where the key is protected in some
+> > > > > reasonable way.  Joey, why are you using HMAC?  Please tell me you’re
+> > > > > at least doing encrypt-then-MAC.  But why not use a real AE mode like
+> > > > > AES-GCM?
+> > > >
+> > > > The reason for using HMAC is the history for development. My first patch
+> > > > set is only for hibernate authentication. Then I added encryption code on
+> > > > top of my authentication patches in last version.
+> > > >
+> > > > I am doing encrypt-then-MAC. My code ecrypts each page by AES then HMAC
+> > > > whole snapshot image. I feed encrypted data pages one by one to
+> > > > crypto_shash_update() API for calculating the hash for whole image.
+> > >
+> > > ...
+> > >
+> > > I think you should write down a clear description of the data format.
+> >
+> > Hibernation allocates free pages for building snapshot image. Those free
+> > pages are scattered in memory. So kernel marks those page numbers on a
+> > bitmap to locate them. Because this image buffer is discontinuous, so I
+> > use update mode hashing whole image.
+> >
+> > > A general problem with crypto is that the fact that it appears to work
+> > > doesn't mean it's secure at all, and it's very hard to follow the
+> > > code.  Especially in Linux using the crypto API -- code using the
+> > > crypto API tends to be mostly boilerplate.
+> > >
+> >
+> > hm... Do you mean that the implementation of HMAC in crypto cannot be
+> > trusted? I hope at least that I can trust the update mode for normal
+> > hash like SHA256 or SHA512?
+> 
+> No, I fully expect the crypto code to do what it says.  What I mean is
+> that you can easily create utterly broken things that involve crypto,
+> but they still work fine when you use then non-maliciously.
+>
 
-------------------
-
-[ Upstream commit 801df68d617e3cb831f531c99fa6003620e6b343 ]
-
-csk leak can happen if a new TCP connection gets established after
-cxgbit_accept_np() returns, to fix this leak free remaining csk in
-cxgbit_free_np().
-
-Signed-off-by: Varun Prakash <varun@chelsio.com>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- drivers/target/iscsi/cxgbit/cxgbit_cm.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/target/iscsi/cxgbit/cxgbit_cm.c b/drivers/target/iscsi/cxgbit/cxgbit_cm.c
-index d4fa41be80f9..0c00bb27c9c5 100644
---- a/drivers/target/iscsi/cxgbit/cxgbit_cm.c
-+++ b/drivers/target/iscsi/cxgbit/cxgbit_cm.c
-@@ -631,8 +631,11 @@ static void cxgbit_send_halfclose(struct cxgbit_sock *csk)
+OK, I see! I will review my code with crypto to make sure that I didn't
+create broken things.
  
- static void cxgbit_arp_failure_discard(void *handle, struct sk_buff *skb)
- {
-+	struct cxgbit_sock *csk = handle;
-+
- 	pr_debug("%s cxgbit_device %p\n", __func__, handle);
- 	kfree_skb(skb);
-+	cxgbit_put_csk(csk);
- }
- 
- static void cxgbit_abort_arp_failure(void *handle, struct sk_buff *skb)
-@@ -1147,7 +1150,7 @@ cxgbit_pass_accept_rpl(struct cxgbit_sock *csk, struct cpl_pass_accept_req *req)
- 	rpl5->opt0 = cpu_to_be64(opt0);
- 	rpl5->opt2 = cpu_to_be32(opt2);
- 	set_wr_txq(skb, CPL_PRIORITY_SETUP, csk->ctrlq_idx);
--	t4_set_arp_err_handler(skb, NULL, cxgbit_arp_failure_discard);
-+	t4_set_arp_err_handler(skb, csk, cxgbit_arp_failure_discard);
- 	cxgbit_l2t_send(csk->com.cdev, skb, csk->l2t);
- }
- 
--- 
-2.19.1
+> > > >
+> > > > Sorry for I didn't capture the meaning of "acceptable usage". The trusted
+> > > > key already be unsealed by TPM when the key be enrolled by keyctl tool.
+> > > > So my code just extract the unsealed key data (the random number) for
+> > > > encryption.
+> > >
+> > > If someone creates a trusted key that is used for asymmetric crypto or
+> > > perhaps a trusted key that is intended to be used for, say, an HMAC
+> > > key, you should not also use it to derive hibernation keys.  This is
+> > > what I mean by "acceptable usage".
+> > >
+> >
+> > When keyring is producing encrypted key, the trusted key be used to
+> > derive the encrypt key and authenticate key to encrypt and hmac sign
+> > a encrypted key. So trusted key can be used in symmetric crypto.
+> 
+> Can it?
+> 
+> David, you actually understand the overall kernel keyring design.  Do
+> keys in the keyring have usage constraints?
+> 
+> But I think you need to take a big step back here.  We already have
+> kernel/power/user.c.  It seems to me that you can do a better job of
+> what you're trying to do with less code by using it.  Why do you need
+> new kernel code *at all* to accomplish your goals?
 
+I still very think for you, Stephan, Pavel and all kernel experts'
+review to my code. I will follow your suggestions to rewrite my
+solution.
 
+I thought that the userland hibernation is not enough against a
+compromised root. My original target of hibernation encryption and
+authentication is for kernel lockdown mode. I hope that kernel can
+produce encrypted/signed snapshot image. So I developed EFI secure
+key and hibernation encryption.
 
+Becasue my original solution relates two areas, EFI and hibernation.
+So I separated them and sent them to kernel upsteam for review. The
+EFI seucre key is not accepted so I moved to use TPM trusted key.
+I thought that the final problem is still how to deal with TPM against
+a compromised root.
+
+Thanks a lot!
+Joey Lee
