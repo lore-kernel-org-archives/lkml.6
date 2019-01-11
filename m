@@ -7,46 +7,46 @@ X-Spam-Status: No, score=-10.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E152C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:15:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C3E7C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:15:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D3ABB214D8
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:15:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2D63F21783
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:15:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547216151;
-	bh=cA5wIsK3G0ubxI5QPQUASVky4ckSyCmx9kRBgdJkEhQ=;
+	s=default; t=1547216155;
+	bh=b2JXNkohC+ogAg4l104Pv3UEF+VVpbogIVkfcvDBr2g=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=izphp7uW2/ty0Q+5uyloIOGazeXP5OQGqyh9h+ca5+wxQct/CPov+lxMVXoOplyV7
-	 mUdDhy6D8eB/bcYZdDPwZJzA3udjy/Fav9H6OVsHqhkb/V614Gy0yDNrxIwCxewxTS
-	 +43zQzY3kgqbHX7DKD0prebMoyLOcpNQgm1c66k8=
+	b=ZGuLQ6pO0EZCytGoMWjPbmwn7n3MLvdjVZY65eVXLcHDOLZpGNsCZcHCDDeLsP7qz
+	 SQA9d56gQW8v1EgFgyKaI9u6PUDx1t1Qdezxqa7oRlkTr6i5/jI8X0lgMoOFg3kP2J
+	 kJGoftUeLO3BowZ6oZn9QaJiYPdlifVvInNrw7uM=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387490AbfAKOPv (ORCPT
+        id S2387500AbfAKOPy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 11 Jan 2019 09:15:51 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60028 "EHLO mail.kernel.org"
+        Fri, 11 Jan 2019 09:15:54 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60098 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387468AbfAKOPr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Jan 2019 09:15:47 -0500
+        id S2387481AbfAKOPu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 Jan 2019 09:15:50 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 982EC20874;
-        Fri, 11 Jan 2019 14:15:46 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2841D2177B;
+        Fri, 11 Jan 2019 14:15:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547216147;
-        bh=cA5wIsK3G0ubxI5QPQUASVky4ckSyCmx9kRBgdJkEhQ=;
+        s=default; t=1547216149;
+        bh=b2JXNkohC+ogAg4l104Pv3UEF+VVpbogIVkfcvDBr2g=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=dtW691rZ5YNySw0X5RCB4S+7LvChn+SGXW9gj948FUB2metgBJrCFltSAFHcfhlWt
-         yvmzX12PK1Bbo2T2lpUoAbcoLa4SYGF7rHOcUMeDv3uqwZRnF9qOftPVxOg4bLUQ64
-         OB9zre2CreEyURQTIvFUkdY/0G8yxr300ckbvAu8=
+        b=Xtl6vNww46HIHknhnhnt+dEICIcnq5ZLXcJuNsYbHv44fyVB/XVHzqLphb09cGKur
+         doLSD30i4glqoSRBXHa5wKh1cOPKIuoI9LwKe+CfHmF13VnXmZtekkabggbFoW4voK
+         q/MDskyuZ6eGA/NpwlDCwcQIY8x+zGzdoUBJ8NEU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Vasily Averin <vvs@virtuozzo.com>,
         David Teigland <teigland@redhat.com>, stable@kernel.org
-Subject: [PATCH 3.18 39/47] dlm: possible memory leak on error path in create_lkb()
-Date:   Fri, 11 Jan 2019 15:08:24 +0100
-Message-Id: <20190111131001.147498819@linuxfoundation.org>
+Subject: [PATCH 3.18 40/47] dlm: lost put_lkb on error path in receive_convert() and receive_unlock()
+Date:   Fri, 11 Jan 2019 15:08:25 +0100
+Message-Id: <20190111131001.290868287@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190111130956.170952125@linuxfoundation.org>
 References: <20190111130956.170952125@linuxfoundation.org>
@@ -67,27 +67,35 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Vasily Averin <vvs@virtuozzo.com>
 
-commit 23851e978f31eda8b2d01bd410d3026659ca06c7 upstream.
+commit c0174726c3976e67da8649ac62cae43220ae173a upstream.
 
-Fixes 3d6aa675fff9 ("dlm: keep lkbs in idr")
-Cc: stable@kernel.org # 3.1
+Fixes 6d40c4a708e0 ("dlm: improve error and debug messages")
+Cc: stable@kernel.org # 3.5
 
 Signed-off-by: Vasily Averin <vvs@virtuozzo.com>
 Signed-off-by: David Teigland <teigland@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/dlm/lock.c |    1 +
- 1 file changed, 1 insertion(+)
+ fs/dlm/lock.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
 --- a/fs/dlm/lock.c
 +++ b/fs/dlm/lock.c
-@@ -1210,6 +1210,7 @@ static int create_lkb(struct dlm_ls *ls,
+@@ -4178,6 +4178,7 @@ static int receive_convert(struct dlm_ls
+ 			  (unsigned long long)lkb->lkb_recover_seq,
+ 			  ms->m_header.h_nodeid, ms->m_lkid);
+ 		error = -ENOENT;
++		dlm_put_lkb(lkb);
+ 		goto fail;
+ 	}
  
- 	if (rv < 0) {
- 		log_error(ls, "create_lkb idr error %d", rv);
-+		dlm_free_lkb(lkb);
- 		return rv;
+@@ -4231,6 +4232,7 @@ static int receive_unlock(struct dlm_ls
+ 			  lkb->lkb_id, lkb->lkb_remid,
+ 			  ms->m_header.h_nodeid, ms->m_lkid);
+ 		error = -ENOENT;
++		dlm_put_lkb(lkb);
+ 		goto fail;
  	}
  
 
