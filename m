@@ -2,105 +2,113 @@ Return-Path: <SRS0=uvhX=PT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.9 required=3.0 tests=FROM_EXCESS_BASE64,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D3DF9C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 13:30:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 541EFC43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 13:32:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B04B02133F
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 13:30:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2615E20874
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 13:32:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1547213527;
+	bh=cmZKf2wkusTxzdB1yzxbqR7LWETTrx9cTnqsLgpJrU8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=NRI/+50Dfbwmq9irNj/P+tx+UzZFltq+eKpwJ89GjTPXuGVfaNSbJgpGY/B38mVTt
+	 E4rJEgTKqrlJL4Hh0VoNm44IpmoI/8PufAQWj8AqGH6S7FJeS47S3nbrLnJGLaZh9f
+	 Pd1AiR2ATZ2rzlyx6qW+QNA2qBR96Kx6uxFPL7A4=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732648AbfAKNaL (ORCPT
+        id S1732689AbfAKNcF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 11 Jan 2019 08:30:11 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:59846 "EHLO mx1.redhat.com"
+        Fri, 11 Jan 2019 08:32:05 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36882 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728853AbfAKNaL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Jan 2019 08:30:11 -0500
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        id S1728853AbfAKNcF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 Jan 2019 08:32:05 -0500
+Received: from quaco.ghostprotocols.net (unknown [190.15.121.82])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 0C98EC04F4DD;
-        Fri, 11 Jan 2019 13:30:11 +0000 (UTC)
-Received: from flask (unknown [10.40.205.161])
-        by smtp.corp.redhat.com (Postfix) with SMTP id 287F05D75D;
-        Fri, 11 Jan 2019 13:30:03 +0000 (UTC)
-Received: by flask (sSMTP sendmail emulation); Fri, 11 Jan 2019 14:30:03 +0100
-Date:   Fri, 11 Jan 2019 14:30:03 +0100
-From:   Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>
-To:     Peng Hao <peng.hao2@zte.com.cn>
-Cc:     pbonzini@redhat.com, tglx@linutronix.de, x86@kernel.org,
-        kvm@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [RESEND PATCH]  kvm/x86: propagate fetch fault into guest
-Message-ID: <20190111133002.GA14852@flask>
-References: <1545652830-65253-1-git-send-email-peng.hao2@zte.com.cn>
+        by mail.kernel.org (Postfix) with ESMTPSA id CCBBA20874;
+        Fri, 11 Jan 2019 13:32:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1547213525;
+        bh=cmZKf2wkusTxzdB1yzxbqR7LWETTrx9cTnqsLgpJrU8=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=ZgLWLz7kSc7vRnF7ddSNAHt3Mv/1atecrU9MV0cxJK+4AmVHr7Ys3l9vU4oSKqAH1
+         2fDrfpQS2CtWv2gNb1CwERfxfkiaHURZvHX9HvqkAcIW5mvbDtiqGE9aVlDvy+dzWF
+         MV1smrxungpS2HoTxUrIAo14imP84DZ9fjL9r73U=
+Received: by quaco.ghostprotocols.net (Postfix, from userid 1000)
+        id 7878641AB5; Fri, 11 Jan 2019 10:32:02 -0300 (-03)
+Date:   Fri, 11 Jan 2019 10:32:02 -0300
+From:   Arnaldo Carvalho de Melo <acme@kernel.org>
+To:     Rasmus Villemoes <linux@rasmusvillemoes.dk>
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] perf: replace automatic const char[] variables by statics
+Message-ID: <20190111133202.GS22483@kernel.org>
+References: <20181102230624.20064-1-linux@rasmusvillemoes.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1545652830-65253-1-git-send-email-peng.hao2@zte.com.cn>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.31]); Fri, 11 Jan 2019 13:30:11 +0000 (UTC)
+In-Reply-To: <20181102230624.20064-1-linux@rasmusvillemoes.dk>
+X-Url:  http://acmel.wordpress.com
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-2018-12-24 20:00+0800, Peng Hao:
-> When handling ept misconfig exit, it will call emulate instruction
-> with insn_len = 0. The decode instruction function may return a fetch
-> fault and should propagate to guest.
+Em Sat, Nov 03, 2018 at 12:06:23AM +0100, Rasmus Villemoes escreveu:
+> An automatic const char[] variable gets initialized at runtime, just
+> like any other automatic variable. For long strings, that uses a lot of
+> stack and wastes time building the string; e.g. for the "No %s
+> allocation events..." case one has
 > 
-> The problem will result to emulation fail.
-> KVM internal error. Suberror: 1
-> emulation failure
-> EAX=f81a0024 EBX=f6a07000 ECX=f6a0737c EDX=f8be0118
-> ESI=f6a0737c EDI=00000021 EBP=f6929f98 ESP=f6929f98
-> EIP=f8bdd141 EFL=00010086 [--S--P-] CPL=0 II=0 A20=1 SMM=0 HLT=0
-> ES =007b 00000000 ffffffff 00c0f300 DPL=3 DS   [-WA]
-> CS =0060 00000000 ffffffff 00c09b00 DPL=0 CS32 [-RA]
-> SS =0068 00000000 ffffffff 00c09300 DPL=0 DS   [-WA]
-> DS =007b 00000000 ffffffff 00c0f300 DPL=3 DS   [-WA]
-> FS =00d8 2c044000 ffffffff 00809300 DPL=0 DS16 [-WA]
-> GS =0033 081a44c8 01000fff 00d0f300 DPL=3 DS   [-WA]
-> LDT=0000 00000000 ffffffff 00000000
-> TR =0080 f6ea0c80 0000206b 00008b00 DPL=0 TSS32-busy
-> GDT=     f6e99000 000000ff
-> IDT=     fffbb000 000007ff
-> CR0=80050033 CR2=b757d000 CR3=35d31000 CR4=001406d0
+>   444516:       48 b8 4e 6f 20 25 73 20 61 6c   movabs $0x6c61207325206f4e,%rax # "No %s al"
+>   ...
+>   444674:       48 89 45 80                     mov    %rax,-0x80(%rbp)
+>   444678:       48 b8 6c 6f 63 61 74 69 6f 6e   movabs $0x6e6f697461636f6c,%rax # "location"
+>   444682:       48 89 45 88                     mov    %rax,-0x78(%rbp)
+>   444686:       48 b8 20 65 76 65 6e 74 73 20   movabs $0x2073746e65766520,%rax # " events "
+>   444690:       66 44 89 55 c4                  mov    %r10w,-0x3c(%rbp)
+>   444695:       48 89 45 90                     mov    %rax,-0x70(%rbp)
+>   444699:       48 b8 66 6f 75 6e 64 2e 20 20   movabs $0x20202e646e756f66,%rax
+> 
+> Make them all static so that the compiler just references objects in .rodata.
+> 
 
-Do you have a test case for this?
+Ok, using dwarves's codiff tool:
 
-> Signed-off-by: Peng Hao <peng.hao2@zte.com.cn>
-> ---
-> diff --git a/arch/x86/kvm/emulate.c b/arch/x86/kvm/emulate.c
-> @@ -5114,8 +5114,11 @@ int x86_decode_insn(struct x86_emulate_ctxt *ctxt, void *insn, int insn_len)
->  		memcpy(ctxt->fetch.data, insn, insn_len);
->  	else {
->  		rc = __do_insn_fetch_bytes(ctxt, 1);
-> -		if (rc != X86EMUL_CONTINUE)
-> +		if (rc != X86EMUL_CONTINUE) {
-> +			if (rc == X86EMUL_PROPAGATE_FAULT)
-> +				ctxt->have_exception = true;
->  			return rc;
+  $ codiff --functions /tmp/perf.before ~/bin/perf
+builtin-sched.c:
+  cmd_sched                 |  -48
+ 1 function changed, 48 bytes removed, diff: -48
 
-(Ugh, the caller expects EMULATION_FAILED instead of rc.)
+builtin-report.c:
+  cmd_report                |  -32
+ 1 function changed, 32 bytes removed, diff: -32
 
-> +		}
->  	}
->  
->  	switch (mode) {
-> diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
-> @@ -6333,8 +6333,10 @@ int x86_emulate_instruction(struct kvm_vcpu *vcpu,
->  			if (reexecute_instruction(vcpu, cr2, write_fault_to_spt,
->  						emulation_type))
->  				return EMULATE_DONE;
-> -			if (ctxt->have_exception && inject_emulated_exception(vcpu))
+builtin-kmem.c:
+  cmd_kmem                  |  -64
+  build_alloc_func_list     |  -50
+ 2 functions changed, 114 bytes removed, diff: -114
 
-I don't understand what that return value check was supposed to do, but
-yours version seems good.
+builtin-c2c.c:
+  perf_c2c__report          | -390
+ 1 function changed, 390 bytes removed, diff: -390
 
-I have queued it for rc3 to get some extra testing,
+ui/browsers/header.c:
+  tui__header_window        | -104
+ 1 function changed, 104 bytes removed, diff: -104
 
-thanks.
+/home/acme/bin/perf:
+ 9 functions changed, 688 bytes removed, diff: -688
+
+Thanks, applied.
+
+- Arnaldo
