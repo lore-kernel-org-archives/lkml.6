@@ -2,79 +2,139 @@ Return-Path: <SRS0=uvhX=PT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 18449C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 19:52:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1AD78C43612
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 19:53:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EDE1020700
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 19:52:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E94B520836
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 19:53:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1547236387;
+	bh=/RbIUTsicKRWGlJZW/bYousgfFP0ecwjHcGBKq7xITc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=z+ieM3X4bWxx3VIl8u4xcB9LjfDEwRyP44XwSHun6jlzn/wzQKXMT08nnjcGdJlRE
+	 9GiCGXUclxPSacDh8id/uTHbBicJcgKmOIIirejr8VEQo85UqIuzct9/uIyzPcqkxB
+	 FHYfVlwl21/Z6Sg2pxNsiBWPBF2cevmzcVqF30sY=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732893AbfAKTwi (ORCPT
+        id S2387841AbfAKTxG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 11 Jan 2019 14:52:38 -0500
-Received: from Galois.linutronix.de ([146.0.238.70]:34581 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729124AbfAKTwh (ORCPT
+        Fri, 11 Jan 2019 14:53:06 -0500
+Received: from mail-ot1-f65.google.com ([209.85.210.65]:33042 "EHLO
+        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729124AbfAKTxF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Jan 2019 14:52:37 -0500
-Received: from p4fea4364.dip0.t-ipconnect.de ([79.234.67.100] helo=nanos)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1gi2r2-0002u7-7G; Fri, 11 Jan 2019 20:52:32 +0100
-Date:   Fri, 11 Jan 2019 20:52:31 +0100 (CET)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     Waiman Long <longman@redhat.com>
-cc:     Ingo Molnar <mingo@kernel.org>, Borislav Petkov <bp@alien8.de>,
-        Jonathan Corbet <corbet@lwn.net>, x86@kernel.org,
-        LKML <linux-kernel@vger.kernel.org>, linux-doc@vger.kernel.org,
-        "H. Peter Anvin" <hpa@zytor.com>, Andi Kleen <ak@linux.intel.com>,
-        David Woodhouse <dwmw@amazon.co.uk>,
-        Jiri Kosina <jikos@kernel.org>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Tim Chen <tim.c.chen@linux.intel.com>,
-        KarimAllah Ahmed <karahmed@amazon.de>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
-        Kees Cook <keescook@chromium.org>
-Subject: Re: [RFC PATCH] x86/speculation: Don't inherit TIF_SSBD on
- execve()
-In-Reply-To: <1545246590-12704-1-git-send-email-longman@redhat.com>
-Message-ID: <alpine.DEB.2.21.1901112046290.1661@nanos.tec.linutronix.de>
-References: <1545246590-12704-1-git-send-email-longman@redhat.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Fri, 11 Jan 2019 14:53:05 -0500
+Received: by mail-ot1-f65.google.com with SMTP id i20so14218095otl.0;
+        Fri, 11 Jan 2019 11:53:04 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=+2TD2oZRzwkC+aydOSsmZyCcfz+f8jQPAtzrx0HUfqM=;
+        b=a4BsSpaw116QsIseM8+alOa3onzc+F4NyUu5xFcduDzX5bQ8YlbMvID48jHjJQ5g0I
+         7QCTfuZfzie8x9WibB1JkYQRcAzunS1tVWloVEha2xHhYef/zOYWBE6dRjVbvnK/L1e1
+         peMroP13s+jdKjTp5JIdQTBMh60BZamJ18wpn95uU3+KhYJuu/HV2g6/eDHrvEei7DnY
+         nFIuU5P0IalM9RS8t8mhyd6XFRPOYh56VMwC6i/8Ewot3UP13kTDufVmVNeGZl+3wSn5
+         EVU0itDL0bZJ3F+s6mDk8VkZDrYg9iIgigtuaIYqxZjums7JMCcJVNQjVo9H1Bz1t4Jv
+         RAOw==
+X-Gm-Message-State: AJcUukclI03BGECOCUxa+Zwthr3DTWIFoNHydB9N7BZDISMSrNfkbZ20
+        dtb4J5Hvt67UTUxb+wX1UA==
+X-Google-Smtp-Source: ALg8bN7EzkRi1yi2nyRqFZbexKquii1ImncHMr18M7iKOeoBY5A61qbjzYXDOgcIZKa7dSRptWs7WQ==
+X-Received: by 2002:a9d:4f0e:: with SMTP id d14mr10995137otl.259.1547236384002;
+        Fri, 11 Jan 2019 11:53:04 -0800 (PST)
+Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id l108sm35408545otc.23.2019.01.11.11.53.03
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 11 Jan 2019 11:53:03 -0800 (PST)
+Date:   Fri, 11 Jan 2019 13:53:02 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Andrey Smirnov <andrew.smirnov@gmail.com>
+Cc:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Chris Healy <cphealy@gmail.com>,
+        Lucas Stach <l.stach@pengutronix.de>,
+        Leonard Crestez <leonard.crestez@nxp.com>,
+        "A.s. Dong" <aisheng.dong@nxp.com>,
+        Richard Zhu <hongxing.zhu@nxp.com>, devicetree@vger.kernel.org,
+        linux-imx@nxp.com, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org
+Subject: Re: [PATCH v4 4/4] PCI: imx6: Add support for i.MX8MQ
+Message-ID: <20190111195302.GA18985@bogus>
+References: <20190104165335.13205-1-andrew.smirnov@gmail.com>
+ <20190104165335.13205-5-andrew.smirnov@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190104165335.13205-5-andrew.smirnov@gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 19 Dec 2018, Waiman Long wrote:
-
-> With the default SPEC_STORE_BYPASS_SECCOMP/SPEC_STORE_BYPASS_PRCTL mode,
-> the TIF_SSBD bit will be inherited when a new task is fork'ed or cloned.
+On Fri, Jan 04, 2019 at 08:53:35AM -0800, Andrey Smirnov wrote:
+> Add code needed to support i.MX8MQ variant.
 > 
-> As only certain class of applications (like Java) requires disabling
-> speculative store bypass for security purpose, it may not make sense to
-> allow the TIF_SSBD bit to be inherited across execve() boundary where the
-> new application may not need SSBD at all and is probably not aware that
-> SSBD may have been turned on. This may cause an unnecessary performance
-> loss of up to 20% in some cases.
+> Cc: Bjorn Helgaas <bhelgaas@google.com>
+> Cc: Fabio Estevam <fabio.estevam@nxp.com>
+> Cc: Chris Healy <cphealy@gmail.com>
+> Cc: Lucas Stach <l.stach@pengutronix.de>
+> Cc: Leonard Crestez <leonard.crestez@nxp.com>
+> Cc: "A.s. Dong" <aisheng.dong@nxp.com>
+> Cc: Richard Zhu <hongxing.zhu@nxp.com>
+> Cc: Rob Herring <robh@kernel.org>,
+> Cc: devicetree@vger.kernel.org,
+> Cc: linux-imx@nxp.com
+> Cc: linux-arm-kernel@lists.infradead.org
+> Cc: linux-kernel@vger.kernel.org
+> Cc: linux-pci@vger.kernel.org
+> Signed-off-by: Andrey Smirnov <andrew.smirnov@gmail.com>
+> ---
+>  .../bindings/pci/fsl,imx6q-pcie.txt           |  3 +-
+>  drivers/pci/controller/dwc/Kconfig            |  4 +-
+>  drivers/pci/controller/dwc/pci-imx6.c         | 77 ++++++++++++++++++-
+>  3 files changed, 79 insertions(+), 5 deletions(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/pci/fsl,imx6q-pcie.txt b/Documentation/devicetree/bindings/pci/fsl,imx6q-pcie.txt
+> index d514c1f2365f..920ca93870a8 100644
+> --- a/Documentation/devicetree/bindings/pci/fsl,imx6q-pcie.txt
+> +++ b/Documentation/devicetree/bindings/pci/fsl,imx6q-pcie.txt
+> @@ -9,6 +9,7 @@ Required properties:
+>  	- "fsl,imx6sx-pcie",
+>  	- "fsl,imx6qp-pcie"
+>  	- "fsl,imx7d-pcie"
+> +	- "fsl,imx8mq-pcie"
+>  - reg: base address and length of the PCIe controller
+>  - interrupts: A list of interrupt outputs of the controller. Must contain an
+>    entry for each entry in the interrupt-names property.
+> @@ -45,7 +46,7 @@ Additional required properties for imx6sx-pcie:
+>    PCIE_PHY power domains
+>  - power-domain-names: Must be "pcie", "pcie_phy"
+>  
+> -Additional required properties for imx7d-pcie:
+> +Additional required properties for imx7d-pcie and imx8mq-pcie:
+>  - power-domains: Must be set to a phandle pointing to PCIE_PHY power domain
+>  - resets: Must contain phandles to PCIe-related reset lines exposed by SRC
+>    IP block
+> diff --git a/drivers/pci/controller/dwc/Kconfig b/drivers/pci/controller/dwc/Kconfig
+> index 6aafec3fad00..83ea318ad989 100644
+> --- a/drivers/pci/controller/dwc/Kconfig
+> +++ b/drivers/pci/controller/dwc/Kconfig
+> @@ -89,8 +89,8 @@ config PCI_EXYNOS
+>  	select PCIE_DW_HOST
+>  
+>  config PCI_IMX6
+> -	bool "Freescale i.MX6/7 PCIe controller"
+> -	depends on SOC_IMX6Q || SOC_IMX7D || (ARM && COMPILE_TEST)
+> +	bool "Freescale i.MX6/7/8 PCIe controller"
+> +	depends on SOC_IMX6Q || SOC_IMX7D || (ARM64 && ARCH_MXC) || ((ARM || ARM64) && COMPILE_TEST)
 
-Lot's of MAY's here. Aside of that this fundamentally changes the
-behaviour. I'm not really a fan of doing that.
+Since you added the ifdef around the abort handler, I think you can drop 
+"(ARM || ARM64)" and enable building other arches.
 
-If there are good reasons to have a non-inherited variant, then we rather
-introduce that instead of changing the existing semantics without a way for
-existing userspace to notice.
-
-Thanks,
-
-	tglx
-
+Rob
