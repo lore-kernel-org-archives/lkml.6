@@ -2,163 +2,98 @@ Return-Path: <SRS0=uvhX=PT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+X-Spam-Status: No, score=-13.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 52AE9C43612
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:57:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D9A6C43444
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:57:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 24EBC20872
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:57:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 34E2F20872
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:57:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1547218648;
+	bh=XzWRRl7DUTei8OXy/29Pn5koSm/dXj3qY5ZvHAlUEAo=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=X7TFREGM7MGQgQhMQ7GVH6elpSlE2SdBp2uYpAj4q1EVpRo57EAv+AtWV9k9JK5Mj
+	 P6Y8i+BiCSBYYd7DmsjXDXXhsGPODjV10TFtBkMPWH0CEd7bovlICjRg+gBZh7ub8a
+	 ZufmY19zOfZl9lDnVp6YrCVE7uHcqn8V/0VumdCU=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391668AbfAKO5S convert rfc822-to-8bit (ORCPT
+        id S2390104AbfAKOfR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 11 Jan 2019 09:57:18 -0500
-Received: from mail-ot1-f67.google.com ([209.85.210.67]:41003 "EHLO
-        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389695AbfAKO5P (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Jan 2019 09:57:15 -0500
-Received: by mail-ot1-f67.google.com with SMTP id u16so13310607otk.8;
-        Fri, 11 Jan 2019 06:57:14 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=JGzfeS2moeGKrgbjYztqlSp3x8nVRM2tLKzBtYuE4IA=;
-        b=YInLNuCgDrXZy+DE7XfmrgzujpHNntol40vFAgOier14G/PrjWC4IHemEdSIBo2rj5
-         a2j3uEr2wABMPMT8EuDk0Txo+ajdGMGhrT3TRnc+R4OMsxJ+ZawCN0np4bFm8tn6tYB1
-         7R+7nMycC0U4E67j0xSVm1a3DLg7GzMC0avLTQA8DwFdYAo7/xGUUdDZ3c8gN6XNjWlU
-         s/dDiK4PgwG+TQXTnXfM62XEek051IgbcTUAx1sdF7ss6/s0LrqPuccD84BAU2iZ93rM
-         SYS2h4FXa1WeGd2Le89tr4iWaA7FPmgiV1a4txeoUyxx/eGu6LfvhG41z5OohT1AQYIf
-         H4GA==
-X-Gm-Message-State: AJcUukflCtJhds7yS6zGr6fQfGmsiS1OjUoCisFL33ZQ3HXHOKdeJvNu
-        v1cujv0KEO2DZFgtGoS0T0SP9dAZ5uv/GJM4IC0=
-X-Google-Smtp-Source: ALg8bN7u9dodIM0o2cAk2ZRM5QOUptT7ubs4+QkZDq1cZiM48WpMhSndJGY/pxu+Tyw2Ssp/lh1qsXU5pM0LqDH9yzU=
-X-Received: by 2002:a9d:75da:: with SMTP id c26mr10569533otl.39.1547218633801;
- Fri, 11 Jan 2019 06:57:13 -0800 (PST)
+        Fri, 11 Jan 2019 09:35:17 -0500
+Received: from mail.kernel.org ([198.145.29.99]:55488 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2390078AbfAKOfO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 Jan 2019 09:35:14 -0500
+Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id C73EA2133F;
+        Fri, 11 Jan 2019 14:35:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1547217314;
+        bh=XzWRRl7DUTei8OXy/29Pn5koSm/dXj3qY5ZvHAlUEAo=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=mfxUu41zVKp/cgn7jo0sJBrxE99eFjldJJ7E61TOawR/6VWEJHv8KbE52S6CazApE
+         4rR3Dqk4SOD/1XfmVziiOVND6gPxr6wQITTz9Rw9fnaoc4hHpATD9tvkzLKeZ3PxId
+         wbNElHku29pTFhg+TAAJl0Y0plyF6PEmJryE2MH8=
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Benjamin Poirier <bpoirier@suse.com>,
+        Steffen Klassert <steffen.klassert@secunet.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 017/148] xfrm: Fix bucket count reported to userspace
+Date:   Fri, 11 Jan 2019 15:13:15 +0100
+Message-Id: <20190111131115.020657766@linuxfoundation.org>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20190111131114.337122649@linuxfoundation.org>
+References: <20190111131114.337122649@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
+X-Patchwork-Hint: ignore
 MIME-Version: 1.0
-References: <1546839359-5478-1-git-send-email-dongli.zhang@oracle.com>
- <1546839359-5478-2-git-send-email-dongli.zhang@oracle.com>
- <20190107120107.euf7mrq7gk6bmibz@mac> <35c7d495-2d6c-5fec-abf8-c5aef55cf866@oracle.com>
- <56819579-def2-b045-f414-4de45188fe2e@oracle.com> <20190107152708.z4mecdm2apfxz2rk@mac>
- <d347524f-20e1-6ce4-70f5-95b699374bb2@oracle.com>
-In-Reply-To: <d347524f-20e1-6ce4-70f5-95b699374bb2@oracle.com>
-From:   =?UTF-8?Q?Roger_Pau_Monn=C3=A9?= <royger@freebsd.org>
-Date:   Fri, 11 Jan 2019 15:57:02 +0100
-Message-ID: <CAPLaKK4VAS1EXAXRmSxSShdxQK=ZdShVRMeCkswg=RPEjvRVog@mail.gmail.com>
-Subject: Re: [Xen-devel] [PATCH v4 2/2] xen/blkback: rework connect_ring() to
- avoid inconsistent xenstore 'ring-page-order' set by malicious blkfront
-To:     Dongli Zhang <dongli.zhang@oracle.com>
-Cc:     =?UTF-8?Q?Roger_Pau_Monn=C3=A9?= <roger.pau@citrix.com>,
-        axboe@kernel.dk, Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
-        linux-kernel@vger.kernel.org, linux-block@vger.kernel.org,
-        Paul Durrant <Paul.Durrant@citrix.com>,
-        xen-devel <xen-devel@lists.xenproject.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 8, 2019 at 10:53 AM Dongli Zhang <dongli.zhang@oracle.com> wrote:
->
-> Hi Roger,
->
-> On 01/07/2019 11:27 PM, Roger Pau Monné wrote:
-> > On Mon, Jan 07, 2019 at 10:07:34PM +0800, Dongli Zhang wrote:
-> >>
-> >>
-> >> On 01/07/2019 10:05 PM, Dongli Zhang wrote:
-> >>>
-> >>>
-> >>> On 01/07/2019 08:01 PM, Roger Pau Monné wrote:
-> >>>> On Mon, Jan 07, 2019 at 01:35:59PM +0800, Dongli Zhang wrote:
-> >>>>> The xenstore 'ring-page-order' is used globally for each blkback queue and
-> >>>>> therefore should be read from xenstore only once. However, it is obtained
-> >>>>> in read_per_ring_refs() which might be called multiple times during the
-> >>>>> initialization of each blkback queue.
-> >>>>>
-> >>>>> If the blkfront is malicious and the 'ring-page-order' is set in different
-> >>>>> value by blkfront every time before blkback reads it, this may end up at
-> >>>>> the "WARN_ON(i != (XEN_BLKIF_REQS_PER_PAGE * blkif->nr_ring_pages));" in
-> >>>>> xen_blkif_disconnect() when frontend is destroyed.
-> >>>>>
-> >>>>> This patch reworks connect_ring() to read xenstore 'ring-page-order' only
-> >>>>> once.
-> >>>>>
-> >>>>> Signed-off-by: Dongli Zhang <dongli.zhang@oracle.com>
-> >>>>> ---
-> >>>>> Changed since v1:
-> >>>>>   * change the order of xenstore read in read_per_ring_refs
-> >>>>>   * use xenbus_read_unsigned() in connect_ring()
-> >>>>>
-> >>>>> Changed since v2:
-> >>>>>   * simplify the condition check as "(err != 1 && nr_grefs > 1)"
-> >>>>>   * avoid setting err as -EINVAL to remove extra one line of code
-> >>>>>
-> >>>>> Changed since v3:
-> >>>>>   * exit at the beginning if !nr_grefs
-> >>>>>   * change the if statements to avoid test (err != 1) twice
-> >>>>>   * initialize a 'blkif' stack variable (refer to PATCH 1/2)
-> >>>>>
-> >>>>>  drivers/block/xen-blkback/xenbus.c | 76 +++++++++++++++++++++-----------------
-> >>>>>  1 file changed, 43 insertions(+), 33 deletions(-)
-> >>>>>
-> >>>>> diff --git a/drivers/block/xen-blkback/xenbus.c b/drivers/block/xen-blkback/xenbus.c
-> >>>>> index a4aadac..a2acbc9 100644
-> >>>>> --- a/drivers/block/xen-blkback/xenbus.c
-> >>>>> +++ b/drivers/block/xen-blkback/xenbus.c
-> >>>>> @@ -926,7 +926,7 @@ static int read_per_ring_refs(struct xen_blkif_ring *ring, const char *dir)
-> >>>>>   int err, i, j;
-> >>>>>   struct xen_blkif *blkif = ring->blkif;
-> >>>>>   struct xenbus_device *dev = blkif->be->dev;
-> >>>>> - unsigned int ring_page_order, nr_grefs, evtchn;
-> >>>>> + unsigned int nr_grefs, evtchn;
-> >>>>>
-> >>>>>   err = xenbus_scanf(XBT_NIL, dir, "event-channel", "%u",
-> >>>>>                     &evtchn);
-> >>>>> @@ -936,43 +936,38 @@ static int read_per_ring_refs(struct xen_blkif_ring *ring, const char *dir)
-> >>>>>           return err;
-> >>>>>   }
-> >>>>>
-> >>>>> - err = xenbus_scanf(XBT_NIL, dev->otherend, "ring-page-order", "%u",
-> >>>>> -                   &ring_page_order);
-> >>>>> - if (err != 1) {
-> >>>>> -         err = xenbus_scanf(XBT_NIL, dir, "ring-ref", "%u", &ring_ref[0]);
-> >>>>> + nr_grefs = blkif->nr_ring_pages;
-> >>>>> +
-> >>>>> + if (unlikely(!nr_grefs))
-> >>>>> +         return -EINVAL;
-> >>>>
-> >>>> Is this even possible? AFAICT read_per_ring_refs will always be called
-> >>>> with blkif->nr_ring_pages != 0?
-> >>>>
-> >>>> If so, I would consider turning this into a BUG_ON/WARN_ON.
-> >>>
-> >>> It used to be "WARN_ON(!nr_grefs);" in the v3 of the patch.
-> >>>
-> >>> I would turn it into WARN_ON if it is fine with both Paul and you.
-> >>
-> >> To clarify, I would use WARN_ON() before exit with -EINVAL (when
-> >> blkif->nr_ring_pages is 0).
-> >
-> > Given that this function will never be called with nr_ring_pages == 0
-> > I would be fine with just using a BUG_ON, getting here with
-> > nr_ring_pages == 0 would imply memory corruption or some other severe
-> > issue has happened, and there's no possible recovery.
-> >
-> > If you want to instead keep the return, please use plain WARN instead
-> > of WARN_ON.
-> >
-> > Thanks, Roger.
-> >
->
-> Is there any reason using WARN than WARN_ON? Because of the message printed by
-> WARN? something like below?
+4.19-stable review patch.  If anyone has any objections, please let me know.
 
-Oh, so WARN also takes a condition, I was expecting WARN to not take
-any parameters. Just use WARN_ON(true); then, there's no need to
-re-evaluate !nr_grefs.
+------------------
+
+[ Upstream commit ca92e173ab34a4f7fc4128bd372bd96f1af6f507 ]
+
+sadhcnt is reported by `ip -s xfrm state count` as "buckets count", not the
+hash mask.
+
+Fixes: 28d8909bc790 ("[XFRM]: Export SAD info.")
+Signed-off-by: Benjamin Poirier <bpoirier@suse.com>
+Signed-off-by: Steffen Klassert <steffen.klassert@secunet.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ net/xfrm/xfrm_state.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/net/xfrm/xfrm_state.c b/net/xfrm/xfrm_state.c
+index 7a34990a68b1..cc0203efb584 100644
+--- a/net/xfrm/xfrm_state.c
++++ b/net/xfrm/xfrm_state.c
+@@ -794,7 +794,7 @@ void xfrm_sad_getinfo(struct net *net, struct xfrmk_sadinfo *si)
+ {
+ 	spin_lock_bh(&net->xfrm.xfrm_state_lock);
+ 	si->sadcnt = net->xfrm.state_num;
+-	si->sadhcnt = net->xfrm.state_hmask;
++	si->sadhcnt = net->xfrm.state_hmask + 1;
+ 	si->sadhmcnt = xfrm_state_hashmax;
+ 	spin_unlock_bh(&net->xfrm.xfrm_state_lock);
+ }
+-- 
+2.19.1
+
+
+
