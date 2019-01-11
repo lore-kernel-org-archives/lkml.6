@@ -2,352 +2,123 @@ Return-Path: <SRS0=uvhX=PT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B7C5C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 15:40:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7FAB8C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 15:40:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B9EA120836
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 15:40:16 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="F4O9otQt"
+	by mail.kernel.org (Postfix) with ESMTP id 5B70D20836
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 15:40:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731518AbfAKPkP (ORCPT
+        id S1731669AbfAKPkr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 11 Jan 2019 10:40:15 -0500
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:38667 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729221AbfAKPkP (ORCPT
+        Fri, 11 Jan 2019 10:40:47 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:43686 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1729463AbfAKPkq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Jan 2019 10:40:15 -0500
-Received: by mail-pf1-f194.google.com with SMTP id q1so7121456pfi.5
-        for <linux-kernel@vger.kernel.org>; Fri, 11 Jan 2019 07:40:14 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=NiCpuXELNnptEp4vnLvWELQ2Qe/RP7CL4uygCvLL+48=;
-        b=F4O9otQtggOa/196+aYq1PQ3hlIqNYrpTLlcdFs+jclMt3VadJ2vG9u88vgLdWsfQD
-         y84etVRudm/r7MND0Y2f+2EDR+GNzmouO7FyAcTS0EiSyv9Y9eD3d8ad2yG8iEKM192Y
-         XGKT5BJX9Za324o+ZiiBHOp0EIpQTqej5g1DrdApdZ3Tu7ZpjkZLdQiYDBbcsOa1dIKE
-         KFMeWeLt35hNX4/k9t9cXoo6NYFgu7n/VMwqbvJ+1p0lQ9iBrb+I2XOWBUaa5iT2SGIt
-         Ef4U9nVabjI0eVzDr539gpVrNiZNuGYpZSdNlLSiD9yEh/ApOrKXLrMzbfN0M9PXVPYp
-         vwUA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=NiCpuXELNnptEp4vnLvWELQ2Qe/RP7CL4uygCvLL+48=;
-        b=avDesHW7JTO6bb61I+rIxvFO/dtWfu8e/+zv//bki063Axdu+RT8Aju6ChbKlimBPq
-         3szAV1kYWWJiCOmOWzFdT0IakqCwE3dvoSaZ88udtc7/uFD6j5HMQTNdZzSx5I3zRXof
-         JqU/2IYvwlL6N/9nytFnr1hPBd+N8+KPC6fl6ge1YltgZh1B1pqan8ycYJxCVsHDzCe6
-         G7jIsrjqKqm4u5oDrhGWkRZWBeU9kDFo7HA923RFcXKRAf+8zf31AAoF5VsN44JiXe9s
-         XvK5uvNRbp4FRbOKu6k/I6fcd2JVSCkullV8g+NgEMacsxUDKtQC8a+Y/DCdqJ/ZEP0X
-         1V5Q==
-X-Gm-Message-State: AJcUukceDqSc/ap3nyzE0fDnixGsNjieuHPt3wmeBCTsALtBnzu3M0n+
-        squ3TfwfswBKmHYw72e6u4I=
-X-Google-Smtp-Source: ALg8bN5pMY5Gc1JpRn5nLqpMEUcBJ6mKEr1Hc3MZ5uFHXpY4OIdEwiMAf0KgAJLi+jnYCEiHWWHboA==
-X-Received: by 2002:a63:9306:: with SMTP id b6mr13287310pge.36.1547221214061;
-        Fri, 11 Jan 2019 07:40:14 -0800 (PST)
-Received: from nishad ([106.51.25.107])
-        by smtp.gmail.com with ESMTPSA id u126sm183302727pgb.2.2019.01.11.07.40.10
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 11 Jan 2019 07:40:13 -0800 (PST)
-Date:   Fri, 11 Jan 2019 21:10:06 +0530
-From:   Nishad Kamdar <nishadkamdar@gmail.com>
-To:     Johan Hovold <johan@kernel.org>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Alex Elder <elder@kernel.org>,
-        Rui Miguel Silva <rmfrfs@gmail.com>,
-        greybus-dev@lists.linaro.org, devel@driverdev.osuosl.org,
-        linux-kernel@vger.kernel.org,
-        Nishad Kamdar <nishadkamdar@gmail.com>
-Subject: [PATCH v6 2/2] staging: greybus: arche-platform: Switch to the gpio
- descriptor interface
-Message-ID: <c911d10345114980158b17ab984af71276450079.1547219996.git.nishadkamdar@gmail.com>
-References: <cover.1547219996.git.nishadkamdar@gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <cover.1547219996.git.nishadkamdar@gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+        Fri, 11 Jan 2019 10:40:46 -0500
+Received: from pps.filterd (m0098413.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id x0BFTKM5016706
+        for <linux-kernel@vger.kernel.org>; Fri, 11 Jan 2019 10:40:45 -0500
+Received: from e06smtp02.uk.ibm.com (e06smtp02.uk.ibm.com [195.75.94.98])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2pxupd045a-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Fri, 11 Jan 2019 10:40:44 -0500
+Received: from localhost
+        by e06smtp02.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <zohar@linux.ibm.com>;
+        Fri, 11 Jan 2019 15:40:43 -0000
+Received: from b06cxnps3074.portsmouth.uk.ibm.com (9.149.109.194)
+        by e06smtp02.uk.ibm.com (192.168.101.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Fri, 11 Jan 2019 15:40:39 -0000
+Received: from d06av21.portsmouth.uk.ibm.com (d06av21.portsmouth.uk.ibm.com [9.149.105.232])
+        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x0BFedL443778098
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Fri, 11 Jan 2019 15:40:39 GMT
+Received: from d06av21.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id F28DA5204E;
+        Fri, 11 Jan 2019 15:40:38 +0000 (GMT)
+Received: from localhost.localdomain (unknown [9.80.91.13])
+        by d06av21.portsmouth.uk.ibm.com (Postfix) with ESMTP id 3F07152050;
+        Fri, 11 Jan 2019 15:40:38 +0000 (GMT)
+Subject: Re: [BUG] Nuvoton NCPT650 TPM 2.0 mode not working
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Michael =?ISO-8859-1?Q?Niew=F6hner?= <linux@mniewoehner.de>
+Cc:     jarkko.sakkinen@linux.intel.com, linux-integrity@vger.kernel.org,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Date:   Fri, 11 Jan 2019 10:40:27 -0500
+In-Reply-To: <e8eb56fdab618770917fbe5b174328dc1240f934.camel@mniewoehner.de>
+References: <776f384a81466642472beb4a34b10f26f1de88e9.camel@mniewoehner.de>
+         <1541960689.3190.4.camel@HansenPartnership.com>
+         <e8eb56fdab618770917fbe5b174328dc1240f934.camel@mniewoehner.de>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+x-cbid: 19011115-0008-0000-0000-000002AF9074
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19011115-0009-0000-0000-0000221B9B19
+Message-Id: <1547221227.19931.453.camel@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-01-11_09:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1901110128
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Use the gpiod interface instead of the deprecated old non-descriptor
-interface while continuing to ignore gpio flags from device tree in
-"svc_reset_onoff()" for now.
+Hi Michael,
 
-Reviewed-by: Johan Hovold <johan@kernel.org>
-Signed-off-by: Nishad Kamdar <nishadkamdar@gmail.com>
----
-Changes in v6:
-  - Make error messages consistent.
-Changes in v5:
-  - Change the commit message.
-  - Restore the names of the gpio device-tree properties without
-    the "-gpio" suffix.
-Changes in v4:
- - Move 'gpio_desc *svc_sysboot' below the reset flag
-   as it is more logical to have reset flag below
-   reset gpio.
- - Remove a few unnecessary line breaks.
-Changes in v3:
- - Add this patch to a patchset.
-Changes in v2:
- - Move comment to the same line as to what it applies to.
----
- drivers/staging/greybus/arche-platform.c | 124 ++++++++---------------
- 1 file changed, 41 insertions(+), 83 deletions(-)
+On Sun, 2018-11-11 at 19:50 +0100, Michael Niewöhner wrote:
 
-diff --git a/drivers/staging/greybus/arche-platform.c b/drivers/staging/greybus/arche-platform.c
-index 4c36e88766e7..6eb842040c22 100644
---- a/drivers/staging/greybus/arche-platform.c
-+++ b/drivers/staging/greybus/arche-platform.c
-@@ -8,10 +8,9 @@
- 
- #include <linux/clk.h>
- #include <linux/delay.h>
--#include <linux/gpio.h>
-+#include <linux/gpio/consumer.h>
- #include <linux/init.h>
- #include <linux/module.h>
--#include <linux/of_gpio.h>
- #include <linux/of_platform.h>
- #include <linux/pinctrl/consumer.h>
- #include <linux/platform_device.h>
-@@ -45,14 +44,14 @@ enum svc_wakedetect_state {
- 
- struct arche_platform_drvdata {
- 	/* Control GPIO signals to and from AP <=> SVC */
--	int svc_reset_gpio;
-+	struct gpio_desc *svc_reset;
- 	bool is_reset_act_hi;
--	int svc_sysboot_gpio;
--	int wake_detect_gpio; /* bi-dir,maps to WAKE_MOD & WAKE_FRAME signals */
-+	struct gpio_desc *svc_sysboot;
-+	struct gpio_desc *wake_detect; /* bi-dir,maps to WAKE_MOD & WAKE_FRAME signals */
- 
- 	enum arche_platform_state state;
- 
--	int svc_refclk_req;
-+	struct gpio_desc *svc_refclk_req;
- 	struct clk *svc_ref_clk;
- 
- 	struct pinctrl *pinctrl;
-@@ -85,9 +84,9 @@ static void arche_platform_set_wake_detect_state(
- 	arche_pdata->wake_detect_state = state;
- }
- 
--static inline void svc_reset_onoff(unsigned int gpio, bool onoff)
-+static inline void svc_reset_onoff(struct gpio_desc *gpio, bool onoff)
- {
--	gpio_set_value(gpio, onoff);
-+	gpiod_set_raw_value(gpio, onoff);
- }
- 
- static int apb_cold_boot(struct device *dev, void *data)
-@@ -116,7 +115,6 @@ static int apb_poweroff(struct device *dev, void *data)
- static void arche_platform_wd_irq_en(struct arche_platform_drvdata *arche_pdata)
- {
- 	/* Enable interrupt here, to read event back from SVC */
--	gpio_direction_input(arche_pdata->wake_detect_gpio);
- 	enable_irq(arche_pdata->wake_detect_irq);
- }
- 
-@@ -160,7 +158,7 @@ static irqreturn_t arche_platform_wd_irq(int irq, void *devid)
- 
- 	spin_lock_irqsave(&arche_pdata->wake_lock, flags);
- 
--	if (gpio_get_value(arche_pdata->wake_detect_gpio)) {
-+	if (gpiod_get_value(arche_pdata->wake_detect)) {
- 		/* wake/detect rising */
- 
- 		/*
-@@ -224,10 +222,9 @@ arche_platform_coldboot_seq(struct arche_platform_drvdata *arche_pdata)
- 
- 	dev_info(arche_pdata->dev, "Booting from cold boot state\n");
- 
--	svc_reset_onoff(arche_pdata->svc_reset_gpio,
--			arche_pdata->is_reset_act_hi);
-+	svc_reset_onoff(arche_pdata->svc_reset, arche_pdata->is_reset_act_hi);
- 
--	gpio_set_value(arche_pdata->svc_sysboot_gpio, 0);
-+	gpiod_set_value(arche_pdata->svc_sysboot, 0);
- 	usleep_range(100, 200);
- 
- 	ret = clk_prepare_enable(arche_pdata->svc_ref_clk);
-@@ -238,8 +235,7 @@ arche_platform_coldboot_seq(struct arche_platform_drvdata *arche_pdata)
- 	}
- 
- 	/* bring SVC out of reset */
--	svc_reset_onoff(arche_pdata->svc_reset_gpio,
--			!arche_pdata->is_reset_act_hi);
-+	svc_reset_onoff(arche_pdata->svc_reset, !arche_pdata->is_reset_act_hi);
- 
- 	arche_platform_set_state(arche_pdata, ARCHE_PLATFORM_STATE_ACTIVE);
- 
-@@ -259,10 +255,9 @@ arche_platform_fw_flashing_seq(struct arche_platform_drvdata *arche_pdata)
- 
- 	dev_info(arche_pdata->dev, "Switching to FW flashing state\n");
- 
--	svc_reset_onoff(arche_pdata->svc_reset_gpio,
--			arche_pdata->is_reset_act_hi);
-+	svc_reset_onoff(arche_pdata->svc_reset, arche_pdata->is_reset_act_hi);
- 
--	gpio_set_value(arche_pdata->svc_sysboot_gpio, 1);
-+	gpiod_set_value(arche_pdata->svc_sysboot, 1);
- 
- 	usleep_range(100, 200);
- 
-@@ -273,8 +268,7 @@ arche_platform_fw_flashing_seq(struct arche_platform_drvdata *arche_pdata)
- 		return ret;
- 	}
- 
--	svc_reset_onoff(arche_pdata->svc_reset_gpio,
--			!arche_pdata->is_reset_act_hi);
-+	svc_reset_onoff(arche_pdata->svc_reset,	!arche_pdata->is_reset_act_hi);
- 
- 	arche_platform_set_state(arche_pdata, ARCHE_PLATFORM_STATE_FW_FLASHING);
- 
-@@ -305,8 +299,7 @@ arche_platform_poweroff_seq(struct arche_platform_drvdata *arche_pdata)
- 	clk_disable_unprepare(arche_pdata->svc_ref_clk);
- 
- 	/* As part of exit, put APB back in reset state */
--	svc_reset_onoff(arche_pdata->svc_reset_gpio,
--			arche_pdata->is_reset_act_hi);
-+	svc_reset_onoff(arche_pdata->svc_reset,	arche_pdata->is_reset_act_hi);
- 
- 	arche_platform_set_state(arche_pdata, ARCHE_PLATFORM_STATE_OFF);
- }
-@@ -435,6 +428,7 @@ static int arche_platform_probe(struct platform_device *pdev)
- 	struct device *dev = &pdev->dev;
- 	struct device_node *np = dev->of_node;
- 	int ret;
-+	unsigned int flags;
- 
- 	arche_pdata = devm_kzalloc(&pdev->dev, sizeof(*arche_pdata),
- 				   GFP_KERNEL);
-@@ -444,61 +438,33 @@ static int arche_platform_probe(struct platform_device *pdev)
- 	/* setup svc reset gpio */
- 	arche_pdata->is_reset_act_hi = of_property_read_bool(np,
- 							     "svc,reset-active-high");
--	arche_pdata->svc_reset_gpio = of_get_named_gpio(np,
--							"svc,reset-gpio",
--							0);
--	if (!gpio_is_valid(arche_pdata->svc_reset_gpio)) {
--		dev_err(dev, "failed to get reset-gpio\n");
--		return arche_pdata->svc_reset_gpio;
--	}
--	ret = devm_gpio_request(dev, arche_pdata->svc_reset_gpio, "svc-reset");
--	if (ret) {
--		dev_err(dev, "failed to request svc-reset gpio:%d\n", ret);
--		return ret;
--	}
--	ret = gpio_direction_output(arche_pdata->svc_reset_gpio,
--				    arche_pdata->is_reset_act_hi);
--	if (ret) {
--		dev_err(dev, "failed to set svc-reset gpio dir:%d\n", ret);
-+	if (arche_pdata->is_reset_act_hi)
-+		flags = GPIOD_OUT_HIGH;
-+	else
-+		flags = GPIOD_OUT_LOW;
-+
-+	arche_pdata->svc_reset = devm_gpiod_get(dev, "svc,reset", flags);
-+	if (IS_ERR(arche_pdata->svc_reset)) {
-+		ret = PTR_ERR(arche_pdata->svc_reset);
-+		dev_err(dev, "failed to request svc-reset GPIO: %d\n", ret);
- 		return ret;
- 	}
- 	arche_platform_set_state(arche_pdata, ARCHE_PLATFORM_STATE_OFF);
- 
--	arche_pdata->svc_sysboot_gpio = of_get_named_gpio(np,
--							  "svc,sysboot-gpio",
--							  0);
--	if (!gpio_is_valid(arche_pdata->svc_sysboot_gpio)) {
--		dev_err(dev, "failed to get sysboot gpio\n");
--		return arche_pdata->svc_sysboot_gpio;
--	}
--	ret = devm_gpio_request(dev, arche_pdata->svc_sysboot_gpio, "sysboot0");
--	if (ret) {
--		dev_err(dev, "failed to request sysboot0 gpio:%d\n", ret);
--		return ret;
--	}
--	ret = gpio_direction_output(arche_pdata->svc_sysboot_gpio, 0);
--	if (ret) {
--		dev_err(dev, "failed to set svc-reset gpio dir:%d\n", ret);
-+	arche_pdata->svc_sysboot = devm_gpiod_get(dev, "svc,sysboot",
-+						  GPIOD_OUT_LOW);
-+	if (IS_ERR(arche_pdata->svc_sysboot)) {
-+		ret = PTR_ERR(arche_pdata->svc_sysboot);
-+		dev_err(dev, "failed to request sysboot0 GPIO: %d\n", ret);
- 		return ret;
- 	}
- 
- 	/* setup the clock request gpio first */
--	arche_pdata->svc_refclk_req = of_get_named_gpio(np,
--							"svc,refclk-req-gpio",
--							0);
--	if (!gpio_is_valid(arche_pdata->svc_refclk_req)) {
--		dev_err(dev, "failed to get svc clock-req gpio\n");
--		return arche_pdata->svc_refclk_req;
--	}
--	ret = devm_gpio_request(dev, arche_pdata->svc_refclk_req,
--				"svc-clk-req");
--	if (ret) {
--		dev_err(dev, "failed to request svc-clk-req gpio: %d\n", ret);
--		return ret;
--	}
--	ret = gpio_direction_input(arche_pdata->svc_refclk_req);
--	if (ret) {
--		dev_err(dev, "failed to set svc-clk-req gpio dir :%d\n", ret);
-+	arche_pdata->svc_refclk_req = devm_gpiod_get(dev, "svc,refclk-req",
-+						     GPIOD_IN);
-+	if (IS_ERR(arche_pdata->svc_refclk_req)) {
-+		ret = PTR_ERR(arche_pdata->svc_refclk_req);
-+		dev_err(dev, "failed to request svc-clk-req GPIO: %d\n", ret);
- 		return ret;
- 	}
- 
-@@ -515,19 +481,11 @@ static int arche_platform_probe(struct platform_device *pdev)
- 	arche_pdata->num_apbs = of_get_child_count(np);
- 	dev_dbg(dev, "Number of APB's available - %d\n", arche_pdata->num_apbs);
- 
--	arche_pdata->wake_detect_gpio = of_get_named_gpio(np,
--							  "svc,wake-detect-gpio",
--							  0);
--	if (arche_pdata->wake_detect_gpio < 0) {
--		dev_err(dev, "failed to get wake detect gpio\n");
--		return arche_pdata->wake_detect_gpio;
--	}
--
--	ret = devm_gpio_request(dev, arche_pdata->wake_detect_gpio,
--				"wake detect");
--	if (ret) {
--		dev_err(dev, "Failed requesting wake_detect gpio %d\n",
--			arche_pdata->wake_detect_gpio);
-+	arche_pdata->wake_detect = devm_gpiod_get(dev, "svc,wake-detect",
-+						  GPIOD_IN);
-+	if (IS_ERR(arche_pdata->wake_detect)) {
-+		ret = PTR_ERR(arche_pdata->wake_detect);
-+		dev_err(dev, "Failed requesting wake_detect GPIO: %d\n", ret);
- 		return ret;
- 	}
- 
-@@ -538,7 +496,7 @@ static int arche_platform_probe(struct platform_device *pdev)
- 	spin_lock_init(&arche_pdata->wake_lock);
- 	mutex_init(&arche_pdata->platform_state_mutex);
- 	arche_pdata->wake_detect_irq =
--		gpio_to_irq(arche_pdata->wake_detect_gpio);
-+		gpiod_to_irq(arche_pdata->wake_detect);
- 
- 	ret = devm_request_threaded_irq(dev, arche_pdata->wake_detect_irq,
- 					arche_platform_wd_irq,
--- 
-2.17.1
+> Well, there are at least two implementations I know of:
+> For my Lenovo X260 I can choose between Infineon TPM 1.2 or Intel PTT TPM 2.0
+> This here is my ThinkStation P320 which can choose between PTT 1.2, PTT 2.0,
+> Nuvoton 1.2 and 2.0. When switchting between 1.2 and 2.0 the Nuvoton gets
+> reflashed with the appropriate firmware.
+
+With IBM's LTC help, we finally found a Lenovo with the Nuvoton
+NCPT650.  It's a System x3550 M5[1], not a ThinkStation P320, running
+Fedora (vmlinuz-4.16.14-300.fc28.x86_64). I replaced the 4.16 kernel
+with the latest stable 4.19.y kernel.  Both the TPM and IMA seem to be
+working properly.  Not sure if this helps...
+
+From dmesg:
+# dmesg | grep -i tpm 
+[    0.000000] Linux version 4.19.14 (mimi@x86tpm2Server.rtp.stglabs.i
+bm.com) (gcc version 8.1.1 20180502 (Red Hat 8.1.1-1) (GCC)) #6 SMP
+Thu Jan 10 22:32:54 EST 2019
+[    0.000000] efi:  ACPI=0x7b786000  ACPI 2.0=0x7b786014 
+SMBIOS=0x793fe000  TPMEventLog=0x426fa018 
+[    0.014413] ACPI: SSDT 0x000000007B784000 0003A7 (v02 INTEL 
+Tpm2Tabl 00001000 INTL 20130328)
+[    0.014416] ACPI: TPM2 0x000000007B783000 000034 (v03 INTEL  EDK2  
+  00000002 INTL 01000013)
+[    2.667052] tpm_tis MSFT0101:00: 2.0 TPM (device-id 0xFE, rev-id 2
+
+# cat /sys/kernel/security/ima/ascii_runtime_measurements | head -2
+10 5425744ce804c8cae89a08d53b41ab20ff1b3ea6 ima-sig
+sha1:7996f7339c3ce64e63f1232ef1aa6033247af784 boot_aggregate
+
+I installed the ibmtpm2tss[2], built (eg. autoreconf -i; configure --
+enable-hwtpm) and installed it.
+
+# export LD_LIBRARY_PATH=/usr/local/lib/
+# cd /usr/local/bin
+# ./tsspcrread -ha 10 -halg sha256 -ns
+f73ff9109b06d4f7a7cbe7eac32b20d2ca662e55cb4c81e152beea261989ad4b
+
+Mimi
+
+[1] https://lenovopress.com/lp0599.pdf
+[2] https://git.code.sf.net/p/ibmtpm20tss/tss
 
