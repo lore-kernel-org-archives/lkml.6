@@ -4,52 +4,49 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-10.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D720C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 15:11:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E189DC43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 15:11:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E407320874
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 15:11:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B3B1D20874
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 15:11:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547219486;
-	bh=lWxSlZm4FLrwrCoc+WcaGlj3nv30BScGOl4ad3LCz+A=;
+	s=default; t=1547219492;
+	bh=5cJXIKY9yJ31Tb9FeWRH4wmim5dWsYfOnLdvHIc8S/A=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=t/JwqQsJL4FzyP2BN1yDHlq0OBDULaBq7VLjUTbVjg1wzMztPjUl8hJcX8otEoOYq
-	 FfIOxtghbNs8+moHrtQXFgor7JWVoQ+UwYCZKzUIJY9yn502oB4UNWgT2HeCLS9LTz
-	 YxWLuIXOwpvG2R+kQZCz4VW6f6938dXwH79zue+o=
+	b=tNytwPiQJVVEw9bhpkxJaitEw1u1r/d5Lsa+GXOCVUIxJK/fi1AOerAm7LDuMMext
+	 edlwzKsmFnuG+/Y9z1KXC8KiDV3Ev8wUPrAo3hgX7ON7knf+z1QVeEk75kKiF2Pfrb
+	 eHF2MRPaZ6EIytwQUMgRUEOgO3UY+q1C68+oyVhA=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387547AbfAKOQH (ORCPT
+        id S2387514AbfAKOP6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 11 Jan 2019 09:16:07 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60360 "EHLO mail.kernel.org"
+        Fri, 11 Jan 2019 09:15:58 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60208 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387543AbfAKOQD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Jan 2019 09:16:03 -0500
+        id S2387481AbfAKOPz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 Jan 2019 09:15:55 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 93AEC214D8;
-        Fri, 11 Jan 2019 14:16:02 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B8F29214D8;
+        Fri, 11 Jan 2019 14:15:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547216163;
-        bh=lWxSlZm4FLrwrCoc+WcaGlj3nv30BScGOl4ad3LCz+A=;
+        s=default; t=1547216155;
+        bh=5cJXIKY9yJ31Tb9FeWRH4wmim5dWsYfOnLdvHIc8S/A=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Z0Zwn/n1opincI9CNNnA+wftiLrM+rGz2X6eluImyBHc/q62HDOblAObUP9sb86MK
-         NppQpZ4Oqdet66zamOTVKnkuXCJel2xgGlcTMrCQE+qGUVsoCAJo0GzRMOnCjyOzHb
-         3Dg84QniwX3ZFWfAZ8hLvJJ/vagEKBaQk1/IA5bY=
+        b=DGeYtICQeaL37ZnTlpZYM9+2nawLYXrCdRFQHHxp7I5rpixAZQt5Lqr9Vy8PsTJMm
+         45O0Ey+0+i1WISahJe3KWZfWGF433n0YIUkloO5GuNvMQmKolq6KnCE0sHakwMm6sR
+         KH2Y4GRHzIDOzhHXhDR/5ug2YBndSbiIpBiJKMY8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        syzbot+0c1d61e4db7db94102ca@syzkaller.appspotmail.com,
-        Dominique Martinet <dominique.martinet@cea.fr>,
-        Eric Van Hensbergen <ericvh@gmail.com>,
-        Latchesar Ionkov <lucho@ionkov.net>
-Subject: [PATCH 3.18 44/47] 9p/net: put a lower bound on msize
-Date:   Fri, 11 Jan 2019 15:08:29 +0100
-Message-Id: <20190111131001.837522541@linuxfoundation.org>
+        stable@vger.kernel.org, Vasily Averin <vvs@virtuozzo.com>,
+        David Teigland <teigland@redhat.com>, stable@kernel.org
+Subject: [PATCH 3.18 41/47] dlm: memory leaks on error path in dlm_user_request()
+Date:   Fri, 11 Jan 2019 15:08:26 +0100
+Message-Id: <20190111131001.460390179@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190111130956.170952125@linuxfoundation.org>
 References: <20190111130956.170952125@linuxfoundation.org>
@@ -68,81 +65,56 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Dominique Martinet <dominique.martinet@cea.fr>
+From: Vasily Averin <vvs@virtuozzo.com>
 
-commit 574d356b7a02c7e1b01a1d9cba8a26b3c2888f45 upstream.
+commit d47b41aceeadc6b58abc9c7c6485bef7cfb75636 upstream.
 
-If the requested msize is too small (either from command line argument
-or from the server version reply), we won't get any work done.
-If it's *really* too small, nothing will work, and this got caught by
-syzbot recently (on a new kmem_cache_create_usercopy() call)
+According to comment in dlm_user_request() ua should be freed
+in dlm_free_lkb() after successful attach to lkb.
 
-Just set a minimum msize to 4k in both code paths, until someone
-complains they have a use-case for a smaller msize.
+However ua is attached to lkb not in set_lock_args() but later,
+inside request_lock().
 
-We need to check in both mount option and server reply individually
-because the msize for the first version request would be unchecked
-with just a global check on clnt->msize.
+Fixes 597d0cae0f99 ("[DLM] dlm: user locks")
+Cc: stable@kernel.org # 2.6.19
 
-Link: http://lkml.kernel.org/r/1541407968-31350-1-git-send-email-asmadeus@codewreck.org
-Reported-by: syzbot+0c1d61e4db7db94102ca@syzkaller.appspotmail.com
-Signed-off-by: Dominique Martinet <dominique.martinet@cea.fr>
-Cc: Eric Van Hensbergen <ericvh@gmail.com>
-Cc: Latchesar Ionkov <lucho@ionkov.net>
-Cc: stable@vger.kernel.org
+Signed-off-by: Vasily Averin <vvs@virtuozzo.com>
+Signed-off-by: David Teigland <teigland@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- net/9p/client.c |   21 +++++++++++++++++++++
- 1 file changed, 21 insertions(+)
+ fs/dlm/lock.c |   14 +++++++-------
+ 1 file changed, 7 insertions(+), 7 deletions(-)
 
---- a/net/9p/client.c
-+++ b/net/9p/client.c
-@@ -155,6 +155,12 @@ static int parse_opts(char *opts, struct
- 				ret = r;
- 				continue;
- 			}
-+			if (option < 4096) {
-+				p9_debug(P9_DEBUG_ERROR,
-+					 "msize should be at least 4k\n");
-+				ret = -EINVAL;
-+				continue;
-+			}
- 			clnt->msize = option;
- 			break;
- 		case Opt_trans:
-@@ -979,10 +985,18 @@ static int p9_client_version(struct p9_c
- 	else if (!strncmp(version, "9P2000", 6))
- 		c->proto_version = p9_proto_legacy;
- 	else {
-+		p9_debug(P9_DEBUG_ERROR,
-+			 "server returned an unknown version: %s\n", version);
- 		err = -EREMOTEIO;
- 		goto error;
+--- a/fs/dlm/lock.c
++++ b/fs/dlm/lock.c
+@@ -5795,20 +5795,20 @@ int dlm_user_request(struct dlm_ls *ls,
+ 			goto out;
+ 		}
+ 	}
+-
+-	/* After ua is attached to lkb it will be freed by dlm_free_lkb().
+-	   When DLM_IFL_USER is set, the dlm knows that this is a userspace
+-	   lock and that lkb_astparam is the dlm_user_args structure. */
+-
+ 	error = set_lock_args(mode, &ua->lksb, flags, namelen, timeout_cs,
+ 			      fake_astfn, ua, fake_bastfn, &args);
+-	lkb->lkb_flags |= DLM_IFL_USER;
+-
+ 	if (error) {
++		kfree(ua->lksb.sb_lvbptr);
++		ua->lksb.sb_lvbptr = NULL;
++		kfree(ua);
+ 		__put_lkb(ls, lkb);
+ 		goto out;
  	}
  
-+	if (msize < 4096) {
-+		p9_debug(P9_DEBUG_ERROR,
-+			 "server returned a msize < 4096: %d\n", msize);
-+		err = -EREMOTEIO;
-+		goto error;
-+	}
- 	if (msize < c->msize)
- 		c->msize = msize;
++	/* After ua is attached to lkb it will be freed by dlm_free_lkb().
++	   When DLM_IFL_USER is set, the dlm knows that this is a userspace
++	   lock and that lkb_astparam is the dlm_user_args structure. */
++	lkb->lkb_flags |= DLM_IFL_USER;
+ 	error = request_lock(ls, lkb, name, namelen, &args);
  
-@@ -1047,6 +1061,13 @@ struct p9_client *p9_client_create(const
- 	if (clnt->msize > clnt->trans_mod->maxsize)
- 		clnt->msize = clnt->trans_mod->maxsize;
- 
-+	if (clnt->msize < 4096) {
-+		p9_debug(P9_DEBUG_ERROR,
-+			 "Please specify a msize of at least 4k\n");
-+		err = -EINVAL;
-+		goto free_client;
-+	}
-+
- 	err = p9_client_version(clnt);
- 	if (err)
- 		goto close_trans;
+ 	switch (error) {
 
 
