@@ -2,102 +2,274 @@ Return-Path: <SRS0=uvhX=PT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.5 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E50A8C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 18:56:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9455DC43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 18:58:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B7BE421848
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 18:56:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6F7DF2183F
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 18:58:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732559AbfAKS4z (ORCPT
+        id S2388067AbfAKS6c (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 11 Jan 2019 13:56:55 -0500
-Received: from sauhun.de ([88.99.104.3]:60488 "EHLO pokefinder.org"
+        Fri, 11 Jan 2019 13:58:32 -0500
+Received: from relay.sw.ru ([185.231.240.75]:42226 "EHLO relay.sw.ru"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731352AbfAKS4y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Jan 2019 13:56:54 -0500
-Received: from localhost (p54B338E8.dip0.t-ipconnect.de [84.179.56.232])
-        by pokefinder.org (Postfix) with ESMTPSA id A524F3E4153;
-        Fri, 11 Jan 2019 19:56:52 +0100 (CET)
-Date:   Fri, 11 Jan 2019 19:56:52 +0100
-From:   Wolfram Sang <wsa@the-dreams.de>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Peter Rosin <peda@axentia.se>,
-        Bartosz Golaszewski <brgl@bgdev.pl>
-Subject: [PULL REQUEST] i2c for 5.0
-Message-ID: <20190111185648.GA9214@kunai>
+        id S1730650AbfAKS6c (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 Jan 2019 13:58:32 -0500
+Received: from [172.16.25.12] (helo=i7.sw.ru)
+        by relay.sw.ru with esmtp (Exim 4.91)
+        (envelope-from <aryabinin@virtuozzo.com>)
+        id 1gi20f-0006j6-CF; Fri, 11 Jan 2019 21:58:25 +0300
+From:   Andrey Ryabinin <aryabinin@virtuozzo.com>
+To:     akpm@linux-foundation.org
+Cc:     linux-kernel@vger.kernel.org, kasan-dev@googlegroups.com,
+        linux-mm@kvack.org, linux-arm-kernel@lists.infradead.org,
+        Andrey Ryabinin <aryabinin@virtuozzo.com>,
+        Qian Cai <cai@lca.pw>, Alexander Potapenko <glider@google.com>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>
+Subject: [PATCH] kasan: Remove use after scope bugs detection.
+Date:   Fri, 11 Jan 2019 21:58:42 +0300
+Message-Id: <20190111185842.13978-1-aryabinin@virtuozzo.com>
+X-Mailer: git-send-email 2.19.2
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="T4sUOijqQbZv57TR"
-Content-Disposition: inline
-User-Agent: Mutt/1.5.21 (2010-09-15)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Use after scope bugs detector seems to be almost entirely useless
+for the linux kernel. It exists over two years, but I've seen only
+one valid bug so far [1]. And the bug was fixed before it has been
+reported. There were some other use-after-scope reports, but they
+were false-positives due to different reasons like incompatibility
+with structleak plugin.
 
---T4sUOijqQbZv57TR
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+This feature significantly increases stack usage, especially with
+GCC < 9 version, and causes a 32K stack overflow. It probably
+adds performance penalty too.
 
-Linus,
+Given all that, let's remove use-after-scope detector entirely.
 
-I2C has one core and one driver bugfix for you.
+While preparing this patch I've noticed that we mistakenly enable
+use-after-scope detection for clang compiler regardless of
+CONFIG_KASAN_EXTRA setting. This is also fixed now.
 
-Please pull.
+[1] http://lkml.kernel.org/r/<20171129052106.rhgbjhhis53hkgfn@wfg-t540p.sh.intel.com>
 
-Thanks,
+Signed-off-by: Andrey Ryabinin <aryabinin@virtuozzo.com>
+Cc: Qian Cai <cai@lca.pw>
+Cc: Alexander Potapenko <glider@google.com>
+Cc: Dmitry Vyukov <dvyukov@google.com>
+Cc: Catalin Marinas <catalin.marinas@arm.com>
+Cc: Will Deacon <will.deacon@arm.com>
+---
+ arch/arm64/include/asm/memory.h |  4 ----
+ lib/Kconfig.debug               |  1 -
+ lib/Kconfig.kasan               | 10 ----------
+ lib/test_kasan.c                | 24 ------------------------
+ mm/kasan/generic.c              | 19 -------------------
+ mm/kasan/generic_report.c       |  3 ---
+ mm/kasan/kasan.h                |  3 ---
+ scripts/Makefile.kasan          |  5 -----
+ scripts/gcc-plugins/Kconfig     |  4 ----
+ 9 files changed, 73 deletions(-)
 
-   Wolfram
+diff --git a/arch/arm64/include/asm/memory.h b/arch/arm64/include/asm/memory.h
+index e1ec947e7c0c..0e236a99b3ef 100644
+--- a/arch/arm64/include/asm/memory.h
++++ b/arch/arm64/include/asm/memory.h
+@@ -80,11 +80,7 @@
+  */
+ #ifdef CONFIG_KASAN
+ #define KASAN_SHADOW_SIZE	(UL(1) << (VA_BITS - KASAN_SHADOW_SCALE_SHIFT))
+-#ifdef CONFIG_KASAN_EXTRA
+-#define KASAN_THREAD_SHIFT	2
+-#else
+ #define KASAN_THREAD_SHIFT	1
+-#endif /* CONFIG_KASAN_EXTRA */
+ #else
+ #define KASAN_SHADOW_SIZE	(0)
+ #define KASAN_THREAD_SHIFT	0
+diff --git a/lib/Kconfig.debug b/lib/Kconfig.debug
+index d4df5b24d75e..a219f3488ad7 100644
+--- a/lib/Kconfig.debug
++++ b/lib/Kconfig.debug
+@@ -222,7 +222,6 @@ config ENABLE_MUST_CHECK
+ config FRAME_WARN
+ 	int "Warn for stack frames larger than (needs gcc 4.4)"
+ 	range 0 8192
+-	default 3072 if KASAN_EXTRA
+ 	default 2048 if GCC_PLUGIN_LATENT_ENTROPY
+ 	default 1280 if (!64BIT && PARISC)
+ 	default 1024 if (!64BIT && !PARISC)
+diff --git a/lib/Kconfig.kasan b/lib/Kconfig.kasan
+index d8c474b6691e..67d7d1309c52 100644
+--- a/lib/Kconfig.kasan
++++ b/lib/Kconfig.kasan
+@@ -78,16 +78,6 @@ config KASAN_SW_TAGS
+ 
+ endchoice
+ 
+-config KASAN_EXTRA
+-	bool "KASAN: extra checks"
+-	depends on KASAN_GENERIC && DEBUG_KERNEL && !COMPILE_TEST
+-	help
+-	  This enables further checks in generic KASAN, for now it only
+-	  includes the address-use-after-scope check that can lead to
+-	  excessive kernel stack usage, frame size warnings and longer
+-	  compile time.
+-	  See https://gcc.gnu.org/bugzilla/show_bug.cgi?id=81715
+-
+ choice
+ 	prompt "Instrumentation type"
+ 	depends on KASAN
+diff --git a/lib/test_kasan.c b/lib/test_kasan.c
+index 51b78405bf24..7de2702621dc 100644
+--- a/lib/test_kasan.c
++++ b/lib/test_kasan.c
+@@ -480,29 +480,6 @@ static noinline void __init copy_user_test(void)
+ 	kfree(kmem);
+ }
+ 
+-static noinline void __init use_after_scope_test(void)
+-{
+-	volatile char *volatile p;
+-
+-	pr_info("use-after-scope on int\n");
+-	{
+-		int local = 0;
+-
+-		p = (char *)&local;
+-	}
+-	p[0] = 1;
+-	p[3] = 1;
+-
+-	pr_info("use-after-scope on array\n");
+-	{
+-		char local[1024] = {0};
+-
+-		p = local;
+-	}
+-	p[0] = 1;
+-	p[1023] = 1;
+-}
+-
+ static noinline void __init kasan_alloca_oob_left(void)
+ {
+ 	volatile int i = 10;
+@@ -682,7 +659,6 @@ static int __init kmalloc_tests_init(void)
+ 	kasan_alloca_oob_right();
+ 	ksize_unpoisons_memory();
+ 	copy_user_test();
+-	use_after_scope_test();
+ 	kmem_cache_double_free();
+ 	kmem_cache_invalid_free();
+ 	kasan_memchr();
+diff --git a/mm/kasan/generic.c b/mm/kasan/generic.c
+index ccb6207276e3..504c79363a34 100644
+--- a/mm/kasan/generic.c
++++ b/mm/kasan/generic.c
+@@ -275,25 +275,6 @@ EXPORT_SYMBOL(__asan_storeN_noabort);
+ void __asan_handle_no_return(void) {}
+ EXPORT_SYMBOL(__asan_handle_no_return);
+ 
+-/* Emitted by compiler to poison large objects when they go out of scope. */
+-void __asan_poison_stack_memory(const void *addr, size_t size)
+-{
+-	/*
+-	 * Addr is KASAN_SHADOW_SCALE_SIZE-aligned and the object is surrounded
+-	 * by redzones, so we simply round up size to simplify logic.
+-	 */
+-	kasan_poison_shadow(addr, round_up(size, KASAN_SHADOW_SCALE_SIZE),
+-			    KASAN_USE_AFTER_SCOPE);
+-}
+-EXPORT_SYMBOL(__asan_poison_stack_memory);
+-
+-/* Emitted by compiler to unpoison large objects when they go into scope. */
+-void __asan_unpoison_stack_memory(const void *addr, size_t size)
+-{
+-	kasan_unpoison_shadow(addr, size);
+-}
+-EXPORT_SYMBOL(__asan_unpoison_stack_memory);
+-
+ /* Emitted by compiler to poison alloca()ed objects. */
+ void __asan_alloca_poison(unsigned long addr, size_t size)
+ {
+diff --git a/mm/kasan/generic_report.c b/mm/kasan/generic_report.c
+index 5e12035888f2..36c645939bc9 100644
+--- a/mm/kasan/generic_report.c
++++ b/mm/kasan/generic_report.c
+@@ -82,9 +82,6 @@ static const char *get_shadow_bug_type(struct kasan_access_info *info)
+ 	case KASAN_KMALLOC_FREE:
+ 		bug_type = "use-after-free";
+ 		break;
+-	case KASAN_USE_AFTER_SCOPE:
+-		bug_type = "use-after-scope";
+-		break;
+ 	case KASAN_ALLOCA_LEFT:
+ 	case KASAN_ALLOCA_RIGHT:
+ 		bug_type = "alloca-out-of-bounds";
+diff --git a/mm/kasan/kasan.h b/mm/kasan/kasan.h
+index ea51b2d898ec..3e0c11f7d7a1 100644
+--- a/mm/kasan/kasan.h
++++ b/mm/kasan/kasan.h
+@@ -34,7 +34,6 @@
+ #define KASAN_STACK_MID         0xF2
+ #define KASAN_STACK_RIGHT       0xF3
+ #define KASAN_STACK_PARTIAL     0xF4
+-#define KASAN_USE_AFTER_SCOPE   0xF8
+ 
+ /*
+  * alloca redzone shadow values
+@@ -187,8 +186,6 @@ void __asan_unregister_globals(struct kasan_global *globals, size_t size);
+ void __asan_loadN(unsigned long addr, size_t size);
+ void __asan_storeN(unsigned long addr, size_t size);
+ void __asan_handle_no_return(void);
+-void __asan_poison_stack_memory(const void *addr, size_t size);
+-void __asan_unpoison_stack_memory(const void *addr, size_t size);
+ void __asan_alloca_poison(unsigned long addr, size_t size);
+ void __asan_allocas_unpoison(const void *stack_top, const void *stack_bottom);
+ 
+diff --git a/scripts/Makefile.kasan b/scripts/Makefile.kasan
+index 25c259df8ffa..f1fb8e502657 100644
+--- a/scripts/Makefile.kasan
++++ b/scripts/Makefile.kasan
+@@ -27,14 +27,9 @@ else
+ 	 $(call cc-param,asan-globals=1) \
+ 	 $(call cc-param,asan-instrumentation-with-call-threshold=$(call_threshold)) \
+ 	 $(call cc-param,asan-stack=1) \
+-	 $(call cc-param,asan-use-after-scope=1) \
+ 	 $(call cc-param,asan-instrument-allocas=1)
+ endif
+ 
+-ifdef CONFIG_KASAN_EXTRA
+-CFLAGS_KASAN += $(call cc-option, -fsanitize-address-use-after-scope)
+-endif
+-
+ endif # CONFIG_KASAN_GENERIC
+ 
+ ifdef CONFIG_KASAN_SW_TAGS
+diff --git a/scripts/gcc-plugins/Kconfig b/scripts/gcc-plugins/Kconfig
+index d45f7f36b859..d9fd9988ef27 100644
+--- a/scripts/gcc-plugins/Kconfig
++++ b/scripts/gcc-plugins/Kconfig
+@@ -68,10 +68,6 @@ config GCC_PLUGIN_LATENT_ENTROPY
+ 
+ config GCC_PLUGIN_STRUCTLEAK
+ 	bool "Force initialization of variables containing userspace addresses"
+-	# Currently STRUCTLEAK inserts initialization out of live scope of
+-	# variables from KASAN point of view. This leads to KASAN false
+-	# positive reports. Prohibit this combination for now.
+-	depends on !KASAN_EXTRA
+ 	help
+ 	  This plugin zero-initializes any structures containing a
+ 	  __user attribute. This can prevent some classes of information
+-- 
+2.19.2
 
-
-The following changes since commit bfeffd155283772bbe78c6a05dec7c0128ee500c:
-
-  Linux 5.0-rc1 (2019-01-06 17:08:20 -0800)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git i2c/for-current
-
-for you to fetch changes up to b67d4530cdade7ebfafa2c6b46f2a0dad3e41bcb:
-
-  i2c: tegra: Fix Maximum transfer size (2019-01-11 00:15:04 +0100)
-
-----------------------------------------------------------------
-Sowjanya Komatineni (1):
-      i2c: tegra: Fix Maximum transfer size
-
-Yi Zeng (1):
-      i2c: dev: prevent adapter retries and timeout being set as minus value
-
- drivers/i2c/busses/i2c-tegra.c | 15 ++++++++++++++-
- drivers/i2c/i2c-dev.c          |  6 ++++++
- 2 files changed, 20 insertions(+), 1 deletion(-)
-
---T4sUOijqQbZv57TR
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlw45uwACgkQFA3kzBSg
-Kba4DRAAjy05eXY5qK9AN9D0cF8sT8HKvs1//4FUOA3y1rBcODTNvKBxrZITmlmf
-xppJnYqsjdEgRB00I8oGhUOARRLXoveDm6fWTgwWVRQ1gNE82/YI9+/JMSjtm6/F
-4jDknVZGl5jDr02GbLgvU5eZnxQy6orrtlbC5uDyYY030JXkT0qtdyM6tww5IVdO
-xE+Nqe1H5AnPuttYOK+LEfiDCecj+nhJBSlPzgUzgeED8dfnNvn2c/GAvdB6bZ/L
-clum/giJiN8i+jFiORwncx7Yynt2fKYPwFI4T/Z2lSk4gq1riPToNOxLBrFTv9t1
-n3GC4V1gdAgtxMcZcgrXbG8+41+JmwSUcHIiUoRL36vqu7mF04bBTRlEproD4lAG
-PczM35UhI6xQ+f4Ccclu7WPatelVHy/Mof9BNQqIsE+hMuClegAUPTDVdpwCjAb4
-rKN116bTpFbGIhLbVyGlW1TZbyAPz7279DPf1aDYPqA6hUH/eG4WLjCzk2Es0+c6
-wz0YiEeFuuJQO9RKxiY9muOCVp0Ff/GXg2sYJFOAd7RSxecKGIVv0/7tJDC46UZ0
-um1Opa/P5fkb4HOPGhVNm+Z7MZ849XWHzQ7LEnRdWs5kSb0sZr6UUHAFZhj5AzPO
-dSDa+iEqSBfNnICDkoTib8ZeoELfzmcsrW6AHJjNC5Hl/m3cQN8=
-=y5FR
------END PGP SIGNATURE-----
-
---T4sUOijqQbZv57TR--
