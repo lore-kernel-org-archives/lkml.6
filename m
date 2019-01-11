@@ -2,122 +2,125 @@ Return-Path: <SRS0=uvhX=PT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 075EEC43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 15:12:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DE005C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 15:12:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D6C4D21841
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 15:12:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AFDF121841
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 15:12:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1547219548;
+	bh=BaQ4zuEKogifOveOxAPT0x+lddvRg4KpMJLKxjewYv8=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=OOqv/A+uOUBWrHdirqFIOP968x7Bfcs/9zjajUcx3AHmw9Ti5VYXix+ojzXg7NKHQ
+	 9cKxrCmP6W3DjNnh2djpKhXUcneBQg/cRPFnNnkAzowdNQ/Iw64Ekqqajw67ikQGMj
+	 8JGSK1BL8TdZgsNL5AQgrRPnfQh1/+T75JkoRarE=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391992AbfAKPMU (ORCPT
+        id S2392011AbfAKPM1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 11 Jan 2019 10:12:20 -0500
-Received: from smtp3.goneo.de ([85.220.129.37]:49212 "EHLO smtp3.goneo.de"
+        Fri, 11 Jan 2019 10:12:27 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59410 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731050AbfAKPMS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Jan 2019 10:12:18 -0500
-Received: from localhost (localhost [127.0.0.1])
-        by smtp3.goneo.de (Postfix) with ESMTP id 3AF0B240000;
-        Fri, 11 Jan 2019 16:12:15 +0100 (CET)
-X-Virus-Scanned: by goneo
-Received: from smtp3.goneo.de ([127.0.0.1])
-        by localhost (smtp3.goneo.de [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id glWbOeY2Eqlb; Fri, 11 Jan 2019 16:12:14 +0100 (CET)
-Received: from lem-wkst-02.lemonage.de. (hq.lemonage.de [87.138.178.34])
-        by smtp3.goneo.de (Postfix) with ESMTPA id 1AF9124001C;
-        Fri, 11 Jan 2019 16:12:14 +0100 (CET)
-From:   Lars Poeschel <poeschel@lemonage.de>
-To:     devicetree@vger.kernel.org, Samuel Ortiz <sameo@linux.intel.com>,
-        "GitAuthor: Lars Poeschel" <poeschel@lemonage.de>,
-        linux-wireless@vger.kernel.org (open list:NFC SUBSYSTEM),
-        linux-kernel@vger.kernel.org (open list)
-Cc:     Johan Hovold <johan@kernel.org>
-Subject: [PATCH v5 3/7] nfc: pn533: Add dev_up/dev_down hooks to phy_ops
-Date:   Fri, 11 Jan 2019 17:18:06 +0100
-Message-Id: <20190111161812.26325-3-poeschel@lemonage.de>
+        id S1733268AbfAKOPS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 Jan 2019 09:15:18 -0500
+Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id C647420874;
+        Fri, 11 Jan 2019 14:15:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1547216118;
+        bh=BaQ4zuEKogifOveOxAPT0x+lddvRg4KpMJLKxjewYv8=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=hO53KioTSCsY5m9fTlObR5T27aCY5AvBJf8xyd2ohlS25WOvnPiUNeZOrll7L9+80
+         B0b0IoBhfTG9cAUzDwPrplZgnaTuygu7pKy4bzZoTkrZmlgOcILPh79LAsWyVxx+Up
+         +tLe3d24VchHlV8alQ61ocm81SUUpMbAwbiGMVJ8=
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Huacai Chen <chenhc@lemote.com>,
+        Paul Burton <paul.burton@mips.com>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        James Hogan <james.hogan@mips.com>,
+        "Steven J . Hill" <Steven.Hill@cavium.com>,
+        linux-mips@linux-mips.org, Fuxin Zhang <zhangfx@lemote.com>,
+        Zhangjin Wu <wuzhangjin@gmail.com>
+Subject: [PATCH 3.18 29/47] MIPS: Align kernel load address to 64KB
+Date:   Fri, 11 Jan 2019 15:08:14 +0100
+Message-Id: <20190111130959.840860462@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190111161812.26325-1-poeschel@lemonage.de>
-References: <20190111161812.26325-1-poeschel@lemonage.de>
+In-Reply-To: <20190111130956.170952125@linuxfoundation.org>
+References: <20190111130956.170952125@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
+X-Patchwork-Hint: ignore
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This adds hooks for dev_up and dev_down to the phy_ops. They are
-optional.
-The idea is to inform the phy driver when the nfc chip is really going
-to be used. When it is not used, the phy driver can suspend it's
-interface to the nfc chip to save some power. The nfc chip is considered
-not in use before dev_up and after dev_down.
+3.18-stable review patch.  If anyone has any objections, please let me know.
 
-Cc: Johan Hovold <johan@kernel.org>
-Signed-off-by: Lars Poeschel <poeschel@lemonage.de>
+------------------
+
+From: Huacai Chen <chenhc@lemote.com>
+
+commit bec0de4cfad21bd284dbddee016ed1767a5d2823 upstream.
+
+KEXEC needs the new kernel's load address to be aligned on a page
+boundary (see sanity_check_segment_list()), but on MIPS the default
+vmlinuz load address is only explicitly aligned to 16 bytes.
+
+Since the largest PAGE_SIZE supported by MIPS kernels is 64KB, increase
+the alignment calculated by calc_vmlinuz_load_addr to 64KB.
+
+Signed-off-by: Huacai Chen <chenhc@lemote.com>
+Signed-off-by: Paul Burton <paul.burton@mips.com>
+Patchwork: https://patchwork.linux-mips.org/patch/21131/
+Cc: Ralf Baechle <ralf@linux-mips.org>
+Cc: James Hogan <james.hogan@mips.com>
+Cc: Steven J . Hill <Steven.Hill@cavium.com>
+Cc: linux-mips@linux-mips.org
+Cc: Fuxin Zhang <zhangfx@lemote.com>
+Cc: Zhangjin Wu <wuzhangjin@gmail.com>
+Cc: <stable@vger.kernel.org> # 2.6.36+
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
-Changes in v5:
-- (dev->phy_ops->dev_up) instead (dev->phy_ops)
+ arch/mips/boot/compressed/calc_vmlinuz_load_addr.c |    7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
 
-Changes in v4:
-- This patch is new in v4
-
- drivers/nfc/pn533/pn533.c | 12 +++++++++++-
- drivers/nfc/pn533/pn533.h |  9 +++++++++
- 2 files changed, 20 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/nfc/pn533/pn533.c b/drivers/nfc/pn533/pn533.c
-index a0cc1cc45292..1bc097d03789 100644
---- a/drivers/nfc/pn533/pn533.c
-+++ b/drivers/nfc/pn533/pn533.c
-@@ -2468,6 +2468,9 @@ static int pn533_dev_up(struct nfc_dev *nfc_dev)
+--- a/arch/mips/boot/compressed/calc_vmlinuz_load_addr.c
++++ b/arch/mips/boot/compressed/calc_vmlinuz_load_addr.c
+@@ -13,6 +13,7 @@
+ #include <stdint.h>
+ #include <stdio.h>
+ #include <stdlib.h>
++#include "../../../../include/linux/sizes.h"
+ 
+ int main(int argc, char *argv[])
  {
- 	struct pn533 *dev = nfc_get_drvdata(nfc_dev);
+@@ -45,11 +46,11 @@ int main(int argc, char *argv[])
+ 	vmlinuz_load_addr = vmlinux_load_addr + vmlinux_size;
  
-+	if (dev->phy_ops->dev_up)
-+		dev->phy_ops->dev_up(dev);
-+
- 	if (dev->device_type == PN533_DEVICE_PN532) {
- 		int rc = pn532_sam_configuration(nfc_dev);
+ 	/*
+-	 * Align with 16 bytes: "greater than that used for any standard data
+-	 * types by a MIPS compiler." -- See MIPS Run Linux (Second Edition).
++	 * Align with 64KB: KEXEC needs load sections to be aligned to PAGE_SIZE,
++	 * which may be as large as 64KB depending on the kernel configuration.
+ 	 */
  
-@@ -2480,7 +2483,14 @@ static int pn533_dev_up(struct nfc_dev *nfc_dev)
+-	vmlinuz_load_addr += (16 - vmlinux_size % 16);
++	vmlinuz_load_addr += (SZ_64K - vmlinux_size % SZ_64K);
  
- static int pn533_dev_down(struct nfc_dev *nfc_dev)
- {
--	return pn533_rf_field(nfc_dev, 0);
-+	struct pn533 *dev = nfc_get_drvdata(nfc_dev);
-+	int ret;
-+
-+	ret = pn533_rf_field(nfc_dev, 0);
-+	if (dev->phy_ops->dev_down && !ret)
-+		dev->phy_ops->dev_down(dev);
-+
-+	return ret;
- }
+ 	printf("0x%llx\n", vmlinuz_load_addr);
  
- static struct nfc_ops pn533_nfc_ops = {
-diff --git a/drivers/nfc/pn533/pn533.h b/drivers/nfc/pn533/pn533.h
-index 88d569666c51..eb5ccefc32e5 100644
---- a/drivers/nfc/pn533/pn533.h
-+++ b/drivers/nfc/pn533/pn533.h
-@@ -219,6 +219,15 @@ struct pn533_phy_ops {
- 			  struct sk_buff *out);
- 	int (*send_ack)(struct pn533 *dev, gfp_t flags);
- 	void (*abort_cmd)(struct pn533 *priv, gfp_t flags);
-+	/*
-+	 * dev_up and dev_down are optional.
-+	 * They are used to inform the phy layer that the nfc chip
-+	 * is going to be really used very soon. The phy layer can then
-+	 * bring up it's interface to the chip and have it suspended for power
-+	 * saving reasons otherwise.
-+	 */
-+	void (*dev_up)(struct pn533 *priv);
-+	void (*dev_down)(struct pn533 *priv);
- };
- 
- 
--- 
-2.20.1
+
 
