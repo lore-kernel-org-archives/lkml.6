@@ -2,106 +2,163 @@ Return-Path: <SRS0=uvhX=PT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E837CC43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:57:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 52AE9C43612
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:57:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B89D120872
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:57:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547218634;
-	bh=AgL2UzyOiDVLK5WrXeEi8UqXN+ktX+8Vun0izwEqTfM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=BYynywhUdAEnvAvmV/6/M/W6ib9axd468GqJ5/7IoioGsT0AvuBAyRa8BOiIAg+Ut
-	 73m02/P++FXi7mHYZFDyBQgQoUdoVYgIqvDH/x8fIsQvNuoc91/T8oAQfo7NRqaD9x
-	 T2nbU2DcjVLG7qZXZRdhKjdyePkuyH9KbwiTu2nc=
+	by mail.kernel.org (Postfix) with ESMTP id 24EBC20872
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:57:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390954AbfAKO5N (ORCPT
+        id S2391668AbfAKO5S convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 11 Jan 2019 09:57:13 -0500
-Received: from mail-ot1-f68.google.com ([209.85.210.68]:45724 "EHLO
-        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389695AbfAKOfU (ORCPT
+        Fri, 11 Jan 2019 09:57:18 -0500
+Received: from mail-ot1-f67.google.com ([209.85.210.67]:41003 "EHLO
+        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389695AbfAKO5P (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Jan 2019 09:35:20 -0500
-Received: by mail-ot1-f68.google.com with SMTP id 32so13218228ota.12;
-        Fri, 11 Jan 2019 06:35:20 -0800 (PST)
+        Fri, 11 Jan 2019 09:57:15 -0500
+Received: by mail-ot1-f67.google.com with SMTP id u16so13310607otk.8;
+        Fri, 11 Jan 2019 06:57:14 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=JQOVdFjdcuNNtWfuTabFCrV74xhSNL7upBycsgWKZ/g=;
-        b=HBCza5IuouhQjyBoz4reA/1ZAss/L6e4bW6zhoOXlQSM/az6XsHUhlMe8AG5WM/cfr
-         LmZHeq0uAk8PUhLUaTidavnF6IVCO03QQixJgDgMmVffdWBBRNZTBlrsF02YXzHjlmep
-         n/h5Flf7XsbPUk9jc7jmg8d5NH27uQ8lYviRq1LTNnmHAQbhnseZ1C/znLJl+oGQJU20
-         UmSY3PpJAeW3knLNGhUm7vK+p9JKItOdJpv4HjPkC4DPtHEJ0ZMmBBWllVjbp9deUSUE
-         MOnAtISb2MG1rQG6v8xfxkkncj1KDuRbPN6CXzrbuXngXipmWDQ8W5BcahtuULgxoPfI
-         oKhQ==
-X-Gm-Message-State: AJcUukemwusQnDunGc4twzGG63JE6pql/af87q30eSJHmVAGyaTg5Ztp
-        NSYV0HViCF89/LVsrzxnig==
-X-Google-Smtp-Source: ALg8bN61PjZw/+SBQz4A89/ksPqeTrywYXPBZmlXnw81CRNukXqXx9Uq6VudtZmhJNMqpf3fEQ52DQ==
-X-Received: by 2002:a9d:3a46:: with SMTP id j64mr10389262otc.103.1547217319496;
-        Fri, 11 Jan 2019 06:35:19 -0800 (PST)
-Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id v3sm70449155oib.57.2019.01.11.06.35.18
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 11 Jan 2019 06:35:18 -0800 (PST)
-Date:   Fri, 11 Jan 2019 08:35:18 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Jayant Shekhar <jshekhar@codeaurora.org>
-Cc:     dri-devel@lists.freedesktop.org, linux-arm-msm@vger.kernel.org,
-        freedreno@lists.freedesktop.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, abhinavk@codeaurora.org,
-        Jayant Shekhar <jshekhar@codeaurora.org>,
-        seanpaul@chromium.org, chandanu@codeaurora.org,
-        hoegsberg@chromium.org,
-        Sravanthi Kollukuduru <skolluku@codeaurora.org>
-Subject: Re: [v5 3/3] dt-bindings: msm/disp: Introduce interconnect bindings
- for  MDSS on SDM845
-Message-ID: <20190111143518.GA19187@bogus>
-References: <1547056325-1919-1-git-send-email-jshekhar@codeaurora.org>
- <1547056325-1919-4-git-send-email-jshekhar@codeaurora.org>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=JGzfeS2moeGKrgbjYztqlSp3x8nVRM2tLKzBtYuE4IA=;
+        b=YInLNuCgDrXZy+DE7XfmrgzujpHNntol40vFAgOier14G/PrjWC4IHemEdSIBo2rj5
+         a2j3uEr2wABMPMT8EuDk0Txo+ajdGMGhrT3TRnc+R4OMsxJ+ZawCN0np4bFm8tn6tYB1
+         7R+7nMycC0U4E67j0xSVm1a3DLg7GzMC0avLTQA8DwFdYAo7/xGUUdDZ3c8gN6XNjWlU
+         s/dDiK4PgwG+TQXTnXfM62XEek051IgbcTUAx1sdF7ss6/s0LrqPuccD84BAU2iZ93rM
+         SYS2h4FXa1WeGd2Le89tr4iWaA7FPmgiV1a4txeoUyxx/eGu6LfvhG41z5OohT1AQYIf
+         H4GA==
+X-Gm-Message-State: AJcUukflCtJhds7yS6zGr6fQfGmsiS1OjUoCisFL33ZQ3HXHOKdeJvNu
+        v1cujv0KEO2DZFgtGoS0T0SP9dAZ5uv/GJM4IC0=
+X-Google-Smtp-Source: ALg8bN7u9dodIM0o2cAk2ZRM5QOUptT7ubs4+QkZDq1cZiM48WpMhSndJGY/pxu+Tyw2Ssp/lh1qsXU5pM0LqDH9yzU=
+X-Received: by 2002:a9d:75da:: with SMTP id c26mr10569533otl.39.1547218633801;
+ Fri, 11 Jan 2019 06:57:13 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1547056325-1919-4-git-send-email-jshekhar@codeaurora.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <1546839359-5478-1-git-send-email-dongli.zhang@oracle.com>
+ <1546839359-5478-2-git-send-email-dongli.zhang@oracle.com>
+ <20190107120107.euf7mrq7gk6bmibz@mac> <35c7d495-2d6c-5fec-abf8-c5aef55cf866@oracle.com>
+ <56819579-def2-b045-f414-4de45188fe2e@oracle.com> <20190107152708.z4mecdm2apfxz2rk@mac>
+ <d347524f-20e1-6ce4-70f5-95b699374bb2@oracle.com>
+In-Reply-To: <d347524f-20e1-6ce4-70f5-95b699374bb2@oracle.com>
+From:   =?UTF-8?Q?Roger_Pau_Monn=C3=A9?= <royger@freebsd.org>
+Date:   Fri, 11 Jan 2019 15:57:02 +0100
+Message-ID: <CAPLaKK4VAS1EXAXRmSxSShdxQK=ZdShVRMeCkswg=RPEjvRVog@mail.gmail.com>
+Subject: Re: [Xen-devel] [PATCH v4 2/2] xen/blkback: rework connect_ring() to
+ avoid inconsistent xenstore 'ring-page-order' set by malicious blkfront
+To:     Dongli Zhang <dongli.zhang@oracle.com>
+Cc:     =?UTF-8?Q?Roger_Pau_Monn=C3=A9?= <roger.pau@citrix.com>,
+        axboe@kernel.dk, Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+        linux-kernel@vger.kernel.org, linux-block@vger.kernel.org,
+        Paul Durrant <Paul.Durrant@citrix.com>,
+        xen-devel <xen-devel@lists.xenproject.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed,  9 Jan 2019 23:22:05 +0530, Jayant Shekhar wrote:
-> From: Sravanthi Kollukuduru <skolluku@codeaurora.org>
-> 
-> Add interconnect properties such as interconnect provider specifier
-> , the edge source and destination ports which are required by the
-> interconnect API to configure interconnect path for MDSS.
-> 
-> Changes in v2:
-> 	- none
-> 
-> Changes in v3:
-> 	- Remove common property definitions (Rob Herring)
-> 
-> Changes in v4:
-> 	- Use port macros and change port string names (Georgi Djakov)
-> 
-> Changes in v5:
-> 	- None
-> 
-> Signed-off-by: Sravanthi Kollukuduru <skolluku@codeaurora.org>
-> Signed-off-by: Jayant Shekhar <jshekhar@codeaurora.org>
-> ---
->  Documentation/devicetree/bindings/display/msm/dpu.txt | 10 ++++++++++
->  1 file changed, 10 insertions(+)
-> 
+On Tue, Jan 8, 2019 at 10:53 AM Dongli Zhang <dongli.zhang@oracle.com> wrote:
+>
+> Hi Roger,
+>
+> On 01/07/2019 11:27 PM, Roger Pau Monné wrote:
+> > On Mon, Jan 07, 2019 at 10:07:34PM +0800, Dongli Zhang wrote:
+> >>
+> >>
+> >> On 01/07/2019 10:05 PM, Dongli Zhang wrote:
+> >>>
+> >>>
+> >>> On 01/07/2019 08:01 PM, Roger Pau Monné wrote:
+> >>>> On Mon, Jan 07, 2019 at 01:35:59PM +0800, Dongli Zhang wrote:
+> >>>>> The xenstore 'ring-page-order' is used globally for each blkback queue and
+> >>>>> therefore should be read from xenstore only once. However, it is obtained
+> >>>>> in read_per_ring_refs() which might be called multiple times during the
+> >>>>> initialization of each blkback queue.
+> >>>>>
+> >>>>> If the blkfront is malicious and the 'ring-page-order' is set in different
+> >>>>> value by blkfront every time before blkback reads it, this may end up at
+> >>>>> the "WARN_ON(i != (XEN_BLKIF_REQS_PER_PAGE * blkif->nr_ring_pages));" in
+> >>>>> xen_blkif_disconnect() when frontend is destroyed.
+> >>>>>
+> >>>>> This patch reworks connect_ring() to read xenstore 'ring-page-order' only
+> >>>>> once.
+> >>>>>
+> >>>>> Signed-off-by: Dongli Zhang <dongli.zhang@oracle.com>
+> >>>>> ---
+> >>>>> Changed since v1:
+> >>>>>   * change the order of xenstore read in read_per_ring_refs
+> >>>>>   * use xenbus_read_unsigned() in connect_ring()
+> >>>>>
+> >>>>> Changed since v2:
+> >>>>>   * simplify the condition check as "(err != 1 && nr_grefs > 1)"
+> >>>>>   * avoid setting err as -EINVAL to remove extra one line of code
+> >>>>>
+> >>>>> Changed since v3:
+> >>>>>   * exit at the beginning if !nr_grefs
+> >>>>>   * change the if statements to avoid test (err != 1) twice
+> >>>>>   * initialize a 'blkif' stack variable (refer to PATCH 1/2)
+> >>>>>
+> >>>>>  drivers/block/xen-blkback/xenbus.c | 76 +++++++++++++++++++++-----------------
+> >>>>>  1 file changed, 43 insertions(+), 33 deletions(-)
+> >>>>>
+> >>>>> diff --git a/drivers/block/xen-blkback/xenbus.c b/drivers/block/xen-blkback/xenbus.c
+> >>>>> index a4aadac..a2acbc9 100644
+> >>>>> --- a/drivers/block/xen-blkback/xenbus.c
+> >>>>> +++ b/drivers/block/xen-blkback/xenbus.c
+> >>>>> @@ -926,7 +926,7 @@ static int read_per_ring_refs(struct xen_blkif_ring *ring, const char *dir)
+> >>>>>   int err, i, j;
+> >>>>>   struct xen_blkif *blkif = ring->blkif;
+> >>>>>   struct xenbus_device *dev = blkif->be->dev;
+> >>>>> - unsigned int ring_page_order, nr_grefs, evtchn;
+> >>>>> + unsigned int nr_grefs, evtchn;
+> >>>>>
+> >>>>>   err = xenbus_scanf(XBT_NIL, dir, "event-channel", "%u",
+> >>>>>                     &evtchn);
+> >>>>> @@ -936,43 +936,38 @@ static int read_per_ring_refs(struct xen_blkif_ring *ring, const char *dir)
+> >>>>>           return err;
+> >>>>>   }
+> >>>>>
+> >>>>> - err = xenbus_scanf(XBT_NIL, dev->otherend, "ring-page-order", "%u",
+> >>>>> -                   &ring_page_order);
+> >>>>> - if (err != 1) {
+> >>>>> -         err = xenbus_scanf(XBT_NIL, dir, "ring-ref", "%u", &ring_ref[0]);
+> >>>>> + nr_grefs = blkif->nr_ring_pages;
+> >>>>> +
+> >>>>> + if (unlikely(!nr_grefs))
+> >>>>> +         return -EINVAL;
+> >>>>
+> >>>> Is this even possible? AFAICT read_per_ring_refs will always be called
+> >>>> with blkif->nr_ring_pages != 0?
+> >>>>
+> >>>> If so, I would consider turning this into a BUG_ON/WARN_ON.
+> >>>
+> >>> It used to be "WARN_ON(!nr_grefs);" in the v3 of the patch.
+> >>>
+> >>> I would turn it into WARN_ON if it is fine with both Paul and you.
+> >>
+> >> To clarify, I would use WARN_ON() before exit with -EINVAL (when
+> >> blkif->nr_ring_pages is 0).
+> >
+> > Given that this function will never be called with nr_ring_pages == 0
+> > I would be fine with just using a BUG_ON, getting here with
+> > nr_ring_pages == 0 would imply memory corruption or some other severe
+> > issue has happened, and there's no possible recovery.
+> >
+> > If you want to instead keep the return, please use plain WARN instead
+> > of WARN_ON.
+> >
+> > Thanks, Roger.
+> >
+>
+> Is there any reason using WARN than WARN_ON? Because of the message printed by
+> WARN? something like below?
 
-Please add Acked-by/Reviewed-by tags when posting new versions. However,
-there's no need to repost patches *only* to add the tags. The upstream
-maintainer will do that for acks received on the version they apply.
-
-If a tag was not added on purpose, please state why and what changed.
+Oh, so WARN also takes a condition, I was expecting WARN to not take
+any parameters. Just use WARN_ON(true); then, there's no need to
+re-evaluate !nr_grefs.
