@@ -2,248 +2,153 @@ Return-Path: <SRS0=uvhX=PT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F65FC43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 11:03:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 36FF0C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 11:03:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6ED2B2177B
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 11:03:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E69AD2183F
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 11:03:49 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fo52YPgW"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732031AbfAKLDi (ORCPT
+        id S1732041AbfAKLDs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 11 Jan 2019 06:03:38 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:59066 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725789AbfAKLDh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Jan 2019 06:03:37 -0500
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 40A661F8EC;
-        Fri, 11 Jan 2019 11:03:36 +0000 (UTC)
-Received: from localhost (ovpn-8-28.pek2.redhat.com [10.72.8.28])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 6DA3B1059580;
-        Fri, 11 Jan 2019 11:03:26 +0000 (UTC)
-From:   Ming Lei <ming.lei@redhat.com>
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, Theodore Ts'o <tytso@mit.edu>,
-        Omar Sandoval <osandov@fb.com>,
-        Sagi Grimberg <sagi@grimberg.me>,
-        Dave Chinner <dchinner@redhat.com>,
-        Kent Overstreet <kent.overstreet@gmail.com>,
-        Mike Snitzer <snitzer@redhat.com>, dm-devel@redhat.com,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel@vger.kernel.org, linux-raid@vger.kernel.org,
-        David Sterba <dsterba@suse.com>, linux-btrfs@vger.kernel.org,
-        "Darrick J . Wong" <darrick.wong@oracle.com>,
-        linux-xfs@vger.kernel.org, Gao Xiang <gaoxiang25@huawei.com>,
-        Christoph Hellwig <hch@lst.de>, linux-ext4@vger.kernel.org,
-        Coly Li <colyli@suse.de>, linux-bcache@vger.kernel.org,
-        Boaz Harrosh <ooo@electrozaur.com>,
-        Bob Peterson <rpeterso@redhat.com>, cluster-devel@redhat.com,
-        Ming Lei <ming.lei@redhat.com>
-Subject: [PATCH V13 07/19] block: use bio_for_each_bvec() to compute multi-page bvec count
-Date:   Fri, 11 Jan 2019 19:01:15 +0800
-Message-Id: <20190111110127.21664-8-ming.lei@redhat.com>
-In-Reply-To: <20190111110127.21664-1-ming.lei@redhat.com>
-References: <20190111110127.21664-1-ming.lei@redhat.com>
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.28]); Fri, 11 Jan 2019 11:03:36 +0000 (UTC)
+        Fri, 11 Jan 2019 06:03:48 -0500
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:33442 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725789AbfAKLDq (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 Jan 2019 06:03:46 -0500
+Received: by mail-lj1-f195.google.com with SMTP id v1-v6so12583505ljd.0
+        for <linux-kernel@vger.kernel.org>; Fri, 11 Jan 2019 03:03:42 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-transfer-encoding:content-language;
+        bh=/w5gvclLd1jkuIiTozfSyJ/5AuGznvuoyQdobchRqls=;
+        b=fo52YPgWngnx00UJM6usLj3gPuJ69kNJmsWE0hVaLL19f+kRWvqOYM2kuIJI/WvxH6
+         Vp7Bq96VRWPq8hPgSlzQoFf+uSpsukVLL1LON2QydcbRk5U2jHrhwPJkRuDplxAbX35N
+         ALAlYuu3ht5sxpAambPyR09ogcifS2f/mjtIIXloLy5AfWG546KThoh4FFc7gvGtpuTb
+         HCtkk5KUV9WTXPuZ/d6Ycr0Kw69Q/MBOTzhGyIVR5Xg/Tb0XB72zpzqvdL3LQTerHXno
+         3XvOrkg8M0oKO6rSLkcqjwV0YQXZ4Ur6GIovwY/l2I9IbHhj2Mhpsr2YdHJIimz2odCN
+         1/OQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-transfer-encoding
+         :content-language;
+        bh=/w5gvclLd1jkuIiTozfSyJ/5AuGznvuoyQdobchRqls=;
+        b=jMQQ6ztDeGclzsJpDyf2cUrs3xMfzWreaXeby9I+vOptnIXtmiDQ0Jv2QefJ7n8mYV
+         KfHvyT/MhwkZIJfFFCa3BYsQJ2ShobQyIMBFxh8nVKt0N6lMj0y8L/i4UtJ3XeJJe+gA
+         pxgjCCyEn5X1QaQMFauMY6i34gtgg6ZtuWNm1xC8lJpK2kl4A4oax6Sd24tMqJMO7pS/
+         6jXJ1oUzhD849nrCBydV0vOSgOD8h58EZc8klWKFgSaXwqqTXOzS5I9/HI9J/N+CZZ68
+         EdRMj1N83WMGWVc2b74AIOt5j+e1nSYz+R+md+4P019Uk1EHW8Sr0L7izr4GdsnGBu7N
+         3dvg==
+X-Gm-Message-State: AJcUukcMWvmjoV5VLyoxDfzH2D1QVgtGfYob3bUUIVXc+V8ehrSnXpi2
+        nYS6w2mlvEgcyICw0n6cOuc=
+X-Google-Smtp-Source: ALg8bN4BRAOgX6fnopgXclXi4z+337xjruc6qKWpkvze+clkmj6If7X1D0TCFjpsaCuKaz7JiopqHw==
+X-Received: by 2002:a2e:4218:: with SMTP id p24-v6mr8118016lja.58.1547204621355;
+        Fri, 11 Jan 2019 03:03:41 -0800 (PST)
+Received: from [10.17.182.20] (ll-22.209.223.85.sovam.net.ua. [85.223.209.22])
+        by smtp.gmail.com with ESMTPSA id s17sm8543204lfk.9.2019.01.11.03.03.40
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 11 Jan 2019 03:03:40 -0800 (PST)
+Subject: Re: [PATCH] drm/virtio: drop prime import/export callbacks
+To:     Gerd Hoffmann <kraxel@redhat.com>, dri-devel@lists.freedesktop.org
+Cc:     David Airlie <airlied@linux.ie>,
+        open list <linux-kernel@vger.kernel.org>,
+        "open list:VIRTIO GPU DRIVER" 
+        <virtualization@lists.linux-foundation.org>
+References: <20190110111545.26768-1-kraxel@redhat.com>
+From:   Oleksandr Andrushchenko <andr2000@gmail.com>
+Message-ID: <1465b863-8ea4-9200-3332-11777f537390@gmail.com>
+Date:   Fri, 11 Jan 2019 13:03:39 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
+MIME-Version: 1.0
+In-Reply-To: <20190110111545.26768-1-kraxel@redhat.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-First it is more efficient to use bio_for_each_bvec() in both
-blk_bio_segment_split() and __blk_recalc_rq_segments() to compute how
-many multi-page bvecs there are in the bio.
-
-Secondly once bio_for_each_bvec() is used, the bvec may need to be
-splitted because its length can be very longer than max segment size,
-so we have to split the big bvec into several segments.
-
-Thirdly when splitting multi-page bvec into segments, the max segment
-limit may be reached, so the bio split need to be considered under
-this situation too.
-
-Reviewed-by: Christoph Hellwig <hch@lst.de>
-Reviewed-by: Omar Sandoval <osandov@fb.com>
-Signed-off-by: Ming Lei <ming.lei@redhat.com>
----
- block/blk-merge.c | 99 ++++++++++++++++++++++++++++++++++++++++++++-----------
- 1 file changed, 79 insertions(+), 20 deletions(-)
-
-diff --git a/block/blk-merge.c b/block/blk-merge.c
-index f85d878f313d..abe1c89c1253 100644
---- a/block/blk-merge.c
-+++ b/block/blk-merge.c
-@@ -161,6 +161,69 @@ static inline unsigned get_max_io_size(struct request_queue *q,
- 	return sectors;
- }
- 
-+static unsigned get_max_segment_size(struct request_queue *q,
-+				     unsigned offset)
-+{
-+	unsigned long mask = queue_segment_boundary(q);
-+
-+	return min_t(unsigned long, mask - (mask & offset) + 1,
-+		     queue_max_segment_size(q));
-+}
-+
-+/*
-+ * Split the bvec @bv into segments, and update all kinds of
-+ * variables.
-+ */
-+static bool bvec_split_segs(struct request_queue *q, struct bio_vec *bv,
-+		unsigned *nsegs, unsigned *last_seg_size,
-+		unsigned *front_seg_size, unsigned *sectors)
-+{
-+	unsigned len = bv->bv_len;
-+	unsigned total_len = 0;
-+	unsigned new_nsegs = 0, seg_size = 0;
-+
-+	/*
-+	 * Multi-page bvec may be too big to hold in one segment, so the
-+	 * current bvec has to be splitted as multiple segments.
-+	 */
-+	while (len && new_nsegs + *nsegs < queue_max_segments(q)) {
-+		seg_size = get_max_segment_size(q, bv->bv_offset + total_len);
-+		seg_size = min(seg_size, len);
-+
-+		new_nsegs++;
-+		total_len += seg_size;
-+		len -= seg_size;
-+
-+		if ((bv->bv_offset + total_len) & queue_virt_boundary(q))
-+			break;
-+	}
-+
-+	if (!new_nsegs)
-+		return !!len;
-+
-+	/* update front segment size */
-+	if (!*nsegs) {
-+		unsigned first_seg_size;
-+
-+		if (new_nsegs == 1)
-+			first_seg_size = get_max_segment_size(q, bv->bv_offset);
-+		else
-+			first_seg_size = queue_max_segment_size(q);
-+
-+		if (*front_seg_size < first_seg_size)
-+			*front_seg_size = first_seg_size;
-+	}
-+
-+	/* update other varibles */
-+	*last_seg_size = seg_size;
-+	*nsegs += new_nsegs;
-+	if (sectors)
-+		*sectors += total_len >> 9;
-+
-+	/* split in the middle of the bvec if len != 0 */
-+	return !!len;
-+}
-+
- static struct bio *blk_bio_segment_split(struct request_queue *q,
- 					 struct bio *bio,
- 					 struct bio_set *bs,
-@@ -174,7 +237,7 @@ static struct bio *blk_bio_segment_split(struct request_queue *q,
- 	struct bio *new = NULL;
- 	const unsigned max_sectors = get_max_io_size(q, bio);
- 
--	bio_for_each_segment(bv, bio, iter) {
-+	bio_for_each_bvec(bv, bio, iter) {
- 		/*
- 		 * If the queue doesn't support SG gaps and adding this
- 		 * offset would create a gap, disallow it.
-@@ -189,8 +252,12 @@ static struct bio *blk_bio_segment_split(struct request_queue *q,
- 			 */
- 			if (nsegs < queue_max_segments(q) &&
- 			    sectors < max_sectors) {
--				nsegs++;
--				sectors = max_sectors;
-+				/* split in the middle of bvec */
-+				bv.bv_len = (max_sectors - sectors) << 9;
-+				bvec_split_segs(q, &bv, &nsegs,
-+						&seg_size,
-+						&front_seg_size,
-+						&sectors);
- 			}
- 			goto split;
- 		}
-@@ -212,14 +279,12 @@ static struct bio *blk_bio_segment_split(struct request_queue *q,
- 		if (nsegs == queue_max_segments(q))
- 			goto split;
- 
--		if (nsegs == 1 && seg_size > front_seg_size)
--			front_seg_size = seg_size;
--
--		nsegs++;
- 		bvprv = bv;
- 		bvprvp = &bvprv;
--		seg_size = bv.bv_len;
--		sectors += bv.bv_len >> 9;
-+
-+		if (bvec_split_segs(q, &bv, &nsegs, &seg_size,
-+				    &front_seg_size, &sectors))
-+			goto split;
- 
- 	}
- 
-@@ -233,8 +298,6 @@ static struct bio *blk_bio_segment_split(struct request_queue *q,
- 			bio = new;
- 	}
- 
--	if (nsegs == 1 && seg_size > front_seg_size)
--		front_seg_size = seg_size;
- 	bio->bi_seg_front_size = front_seg_size;
- 	if (seg_size > bio->bi_seg_back_size)
- 		bio->bi_seg_back_size = seg_size;
-@@ -297,6 +360,7 @@ static unsigned int __blk_recalc_rq_segments(struct request_queue *q,
- 	struct bio_vec bv, bvprv = { NULL };
- 	int prev = 0;
- 	unsigned int seg_size, nr_phys_segs;
-+	unsigned front_seg_size = bio->bi_seg_front_size;
- 	struct bio *fbio, *bbio;
- 	struct bvec_iter iter;
- 
-@@ -316,7 +380,7 @@ static unsigned int __blk_recalc_rq_segments(struct request_queue *q,
- 	seg_size = 0;
- 	nr_phys_segs = 0;
- 	for_each_bio(bio) {
--		bio_for_each_segment(bv, bio, iter) {
-+		bio_for_each_bvec(bv, bio, iter) {
- 			/*
- 			 * If SG merging is disabled, each bio vector is
- 			 * a segment
-@@ -336,20 +400,15 @@ static unsigned int __blk_recalc_rq_segments(struct request_queue *q,
- 				continue;
- 			}
- new_segment:
--			if (nr_phys_segs == 1 && seg_size >
--			    fbio->bi_seg_front_size)
--				fbio->bi_seg_front_size = seg_size;
--
--			nr_phys_segs++;
- 			bvprv = bv;
- 			prev = 1;
--			seg_size = bv.bv_len;
-+			bvec_split_segs(q, &bv, &nr_phys_segs, &seg_size,
-+					&front_seg_size, NULL);
- 		}
- 		bbio = bio;
- 	}
- 
--	if (nr_phys_segs == 1 && seg_size > fbio->bi_seg_front_size)
--		fbio->bi_seg_front_size = seg_size;
-+	fbio->bi_seg_front_size = front_seg_size;
- 	if (seg_size > bbio->bi_seg_back_size)
- 		bbio->bi_seg_back_size = seg_size;
- 
--- 
-2.9.5
+On 1/10/19 1:15 PM, Gerd Hoffmann wrote:
+> Also set prime_handle_to_fd and prime_fd_to_handle to NULL,
+> so drm will not advertive DRM_PRIME_CAP_{IMPORT,EXPORT} to
+> userspace.
+>
+> Signed-off-by: Gerd Hoffmann <kraxel@redhat.com>
+Reviewed-by: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
+> ---
+>   drivers/gpu/drm/virtio/virtgpu_drv.h   |  4 ----
+>   drivers/gpu/drm/virtio/virtgpu_drv.c   |  4 ----
+>   drivers/gpu/drm/virtio/virtgpu_prime.c | 14 --------------
+>   3 files changed, 22 deletions(-)
+>
+> diff --git a/drivers/gpu/drm/virtio/virtgpu_drv.h b/drivers/gpu/drm/virtio/virtgpu_drv.h
+> index cf896d8793..4f2f3c43a4 100644
+> --- a/drivers/gpu/drm/virtio/virtgpu_drv.h
+> +++ b/drivers/gpu/drm/virtio/virtgpu_drv.h
+> @@ -354,10 +354,6 @@ int virtio_gpu_object_wait(struct virtio_gpu_object *bo, bool no_wait);
+>   /* virtgpu_prime.c */
+>   int virtgpu_gem_prime_pin(struct drm_gem_object *obj);
+>   void virtgpu_gem_prime_unpin(struct drm_gem_object *obj);
+> -struct sg_table *virtgpu_gem_prime_get_sg_table(struct drm_gem_object *obj);
+> -struct drm_gem_object *virtgpu_gem_prime_import_sg_table(
+> -	struct drm_device *dev, struct dma_buf_attachment *attach,
+> -	struct sg_table *sgt);
+>   void *virtgpu_gem_prime_vmap(struct drm_gem_object *obj);
+>   void virtgpu_gem_prime_vunmap(struct drm_gem_object *obj, void *vaddr);
+>   int virtgpu_gem_prime_mmap(struct drm_gem_object *obj,
+> diff --git a/drivers/gpu/drm/virtio/virtgpu_drv.c b/drivers/gpu/drm/virtio/virtgpu_drv.c
+> index af92964b68..b996ac1d4f 100644
+> --- a/drivers/gpu/drm/virtio/virtgpu_drv.c
+> +++ b/drivers/gpu/drm/virtio/virtgpu_drv.c
+> @@ -205,14 +205,10 @@ static struct drm_driver driver = {
+>   #if defined(CONFIG_DEBUG_FS)
+>   	.debugfs_init = virtio_gpu_debugfs_init,
+>   #endif
+> -	.prime_handle_to_fd = drm_gem_prime_handle_to_fd,
+> -	.prime_fd_to_handle = drm_gem_prime_fd_to_handle,
+>   	.gem_prime_export = drm_gem_prime_export,
+>   	.gem_prime_import = drm_gem_prime_import,
+>   	.gem_prime_pin = virtgpu_gem_prime_pin,
+>   	.gem_prime_unpin = virtgpu_gem_prime_unpin,
+> -	.gem_prime_get_sg_table = virtgpu_gem_prime_get_sg_table,
+> -	.gem_prime_import_sg_table = virtgpu_gem_prime_import_sg_table,
+>   	.gem_prime_vmap = virtgpu_gem_prime_vmap,
+>   	.gem_prime_vunmap = virtgpu_gem_prime_vunmap,
+>   	.gem_prime_mmap = virtgpu_gem_prime_mmap,
+> diff --git a/drivers/gpu/drm/virtio/virtgpu_prime.c b/drivers/gpu/drm/virtio/virtgpu_prime.c
+> index 86ce0ae93f..c59ec34c80 100644
+> --- a/drivers/gpu/drm/virtio/virtgpu_prime.c
+> +++ b/drivers/gpu/drm/virtio/virtgpu_prime.c
+> @@ -39,20 +39,6 @@ void virtgpu_gem_prime_unpin(struct drm_gem_object *obj)
+>   	WARN_ONCE(1, "not implemented");
+>   }
+>   
+> -struct sg_table *virtgpu_gem_prime_get_sg_table(struct drm_gem_object *obj)
+> -{
+> -	WARN_ONCE(1, "not implemented");
+> -	return ERR_PTR(-ENODEV);
+> -}
+> -
+> -struct drm_gem_object *virtgpu_gem_prime_import_sg_table(
+> -	struct drm_device *dev, struct dma_buf_attachment *attach,
+> -	struct sg_table *table)
+> -{
+> -	WARN_ONCE(1, "not implemented");
+> -	return ERR_PTR(-ENODEV);
+> -}
+> -
+>   void *virtgpu_gem_prime_vmap(struct drm_gem_object *obj)
+>   {
+>   	struct virtio_gpu_object *bo = gem_to_virtio_gpu_obj(obj);
 
