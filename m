@@ -2,52 +2,55 @@ Return-Path: <SRS0=uvhX=PT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A8EBBC43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:38:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 44413C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:38:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 79FDB206B6
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:38:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0742721841
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:38:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547217496;
-	bh=hEptycDe6vBTW9ZhMq1B0bjq4FCQ1jbc7CaCLsOmy7w=;
+	s=default; t=1547217500;
+	bh=zHgMQeLChgWhEsEmusTjEntzdcILRAB5uMNt9HnxPLc=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=vmctYLLZD+eyXXUCKfAwsyEE5fSrlTn2k7Pngu4SBCMhasnbUQMTuLGeYvUHuOnGR
-	 A++Ynh8xgNiQh6L/dcQzoCNgOwO2YLU9hzlA2kccSUUhZVaIYvw0aQeydbWB4sPzYy
-	 Jawarr89U8dUZ3t6nuZyQYJ3jvpQbJEKsHJSFJzI=
+	b=PnCmbRVq1VgRdu48DC/EqKFkPE2E610kzEKO5qxY/JppJPeK6XnIvayumaEKx2O4B
+	 wFNhMPuO7M44zVZ5Ki+RPnIPOdcvHVZfrCeREXMIYOqbew8v4A7ruaLe0Kvl5OAV01
+	 iutJDaxhyBnxwdMJXjW91HDqANxY66MF5yauli40=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390807AbfAKOiP (ORCPT
+        id S2390821AbfAKOiS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 11 Jan 2019 09:38:15 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58780 "EHLO mail.kernel.org"
+        Fri, 11 Jan 2019 09:38:18 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58832 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390777AbfAKOiM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Jan 2019 09:38:12 -0500
+        id S2390799AbfAKOiP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 Jan 2019 09:38:15 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CDEF12063F;
-        Fri, 11 Jan 2019 14:38:10 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7D8CE2063F;
+        Fri, 11 Jan 2019 14:38:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547217491;
-        bh=hEptycDe6vBTW9ZhMq1B0bjq4FCQ1jbc7CaCLsOmy7w=;
+        s=default; t=1547217494;
+        bh=zHgMQeLChgWhEsEmusTjEntzdcILRAB5uMNt9HnxPLc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=mlrZ955HDtpqlcMbSGIXkfpoBOsueGajE7K5BrOFdKE6kCx6XvL6CMC+wEJyeK/0L
-         290y6NEVuQ2/DRBMrysdPKMk4HYMF9xsgZQnF1oRxZhHDKzA7KKpb3G4wDMlkxmmas
-         qMCFZqb3yn6fYjsptKq090BaPucqCLAtTT4Eu14g=
+        b=GGbhM+Uj4AA11WMWh6fMZTWRcZdfk+gpeGgVUDRFtCbwmJs2W2wX+ZYwqeAoVdlVo
+         0Ks6hl76Tn73BlJyBiVkoDk7JaRdcEsYrh7jkL6yeoi0zV7dfE1NrsR2RWwPHh7gnH
+         1pWAxfhC8ZI0uSJ6zCsS8nHK//U0Fso/GkwmBos4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jason Martinsen <jasonmartinsen@msn.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 063/148] lan78xx: Resolve issue with changing MAC address
-Date:   Fri, 11 Jan 2019 15:14:01 +0100
-Message-Id: <20190111131116.774392797@linuxfoundation.org>
+        stable@vger.kernel.org, Michal Hocko <mhocko@suse.com>,
+        Oscar Salvador <osalvador@suse.com>,
+        David Hildenbrand <david@redhat.com>,
+        Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: [PATCH 4.19 081/148] hwpoison, memory_hotplug: allow hwpoisoned pages to be offlined
+Date:   Fri, 11 Jan 2019 15:14:19 +0100
+Message-Id: <20190111131117.456422190@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190111131114.337122649@linuxfoundation.org>
 References: <20190111131114.337122649@linuxfoundation.org>
@@ -66,53 +69,169 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 15515aaaa69659c502003926a2067ee76176148a ]
+From: Michal Hocko <mhocko@suse.com>
 
-Current state for the lan78xx driver does not allow for changing the
-MAC address of the interface, without either removing the module (if
-you compiled it that way) or rebooting the machine.  If you attempt to
-change the MAC address, ifconfig will show the new address, however,
-the system/interface will not respond to any traffic using that
-configuration.  A few short-term options to work around this are to
-unload the module and reload it with the new MAC address, change the
-interface to "promisc", or reboot with the correct configuration to
-change the MAC.
+commit b15c87263a69272423771118c653e9a1d0672caa upstream.
 
-This patch enables the ability to change the MAC address via fairly normal means...
-ifdown <interface>
-modify entry in /etc/network/interfaces OR a similar method
-ifup <interface>
-Then test via any network communication, such as ICMP requests to gateway.
+We have received a bug report that an injected MCE about faulty memory
+prevents memory offline to succeed on 4.4 base kernel.  The underlying
+reason was that the HWPoison page has an elevated reference count and the
+migration keeps failing.  There are two problems with that.  First of all
+it is dubious to migrate the poisoned page because we know that accessing
+that memory is possible to fail.  Secondly it doesn't make any sense to
+migrate a potentially broken content and preserve the memory corruption
+over to a new location.
 
-My only test platform for this patch has been a raspberry pi model 3b+.
+Oscar has found out that 4.4 and the current upstream kernels behave
+slightly differently with his simply testcase
 
-Signed-off-by: Jason Martinsen <jasonmartinsen@msn.com>
+===
 
------
+int main(void)
+{
+        int ret;
+        int i;
+        int fd;
+        char *array = malloc(4096);
+        char *array_locked = malloc(4096);
 
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+        fd = open("/tmp/data", O_RDONLY);
+        read(fd, array, 4095);
+
+        for (i = 0; i < 4096; i++)
+                array_locked[i] = 'd';
+
+        ret = mlock((void *)PAGE_ALIGN((unsigned long)array_locked), sizeof(array_locked));
+        if (ret)
+                perror("mlock");
+
+        sleep (20);
+
+        ret = madvise((void *)PAGE_ALIGN((unsigned long)array_locked), 4096, MADV_HWPOISON);
+        if (ret)
+                perror("madvise");
+
+        for (i = 0; i < 4096; i++)
+                array_locked[i] = 'd';
+
+        return 0;
+}
+===
+
++ offline this memory.
+
+In 4.4 kernels he saw the hwpoisoned page to be returned back to the LRU
+list
+kernel:  [<ffffffff81019ac9>] dump_trace+0x59/0x340
+kernel:  [<ffffffff81019e9a>] show_stack_log_lvl+0xea/0x170
+kernel:  [<ffffffff8101ac71>] show_stack+0x21/0x40
+kernel:  [<ffffffff8132bb90>] dump_stack+0x5c/0x7c
+kernel:  [<ffffffff810815a1>] warn_slowpath_common+0x81/0xb0
+kernel:  [<ffffffff811a275c>] __pagevec_lru_add_fn+0x14c/0x160
+kernel:  [<ffffffff811a2eed>] pagevec_lru_move_fn+0xad/0x100
+kernel:  [<ffffffff811a334c>] __lru_cache_add+0x6c/0xb0
+kernel:  [<ffffffff81195236>] add_to_page_cache_lru+0x46/0x70
+kernel:  [<ffffffffa02b4373>] extent_readpages+0xc3/0x1a0 [btrfs]
+kernel:  [<ffffffff811a16d7>] __do_page_cache_readahead+0x177/0x200
+kernel:  [<ffffffff811a18c8>] ondemand_readahead+0x168/0x2a0
+kernel:  [<ffffffff8119673f>] generic_file_read_iter+0x41f/0x660
+kernel:  [<ffffffff8120e50d>] __vfs_read+0xcd/0x140
+kernel:  [<ffffffff8120e9ea>] vfs_read+0x7a/0x120
+kernel:  [<ffffffff8121404b>] kernel_read+0x3b/0x50
+kernel:  [<ffffffff81215c80>] do_execveat_common.isra.29+0x490/0x6f0
+kernel:  [<ffffffff81215f08>] do_execve+0x28/0x30
+kernel:  [<ffffffff81095ddb>] call_usermodehelper_exec_async+0xfb/0x130
+kernel:  [<ffffffff8161c045>] ret_from_fork+0x55/0x80
+
+And that latter confuses the hotremove path because an LRU page is
+attempted to be migrated and that fails due to an elevated reference
+count.  It is quite possible that the reuse of the HWPoisoned page is some
+kind of fixed race condition but I am not really sure about that.
+
+With the upstream kernel the failure is slightly different.  The page
+doesn't seem to have LRU bit set but isolate_movable_page simply fails and
+do_migrate_range simply puts all the isolated pages back to LRU and
+therefore no progress is made and scan_movable_pages finds same set of
+pages over and over again.
+
+Fix both cases by explicitly checking HWPoisoned pages before we even try
+to get reference on the page, try to unmap it if it is still mapped.  As
+explained by Naoya:
+
+: Hwpoison code never unmapped those for no big reason because
+: Ksm pages never dominate memory, so we simply didn't have strong
+: motivation to save the pages.
+
+Also put WARN_ON(PageLRU) in case there is a race and we can hit LRU
+HWPoison pages which shouldn't happen but I couldn't convince myself about
+that.  Naoya has noted the following:
+
+: Theoretically no such gurantee, because try_to_unmap() doesn't have a
+: guarantee of success and then memory_failure() returns immediately
+: when hwpoison_user_mappings fails.
+: Or the following code (comes after hwpoison_user_mappings block) also impli=
+: es
+: that the target page can still have PageLRU flag.
+:
+:         /*
+:          * Torn down by someone else?
+:          */
+:         if (PageLRU(p) && !PageSwapCache(p) && p->mapping =3D=3D NULL) {
+:                 action_result(pfn, MF_MSG_TRUNCATED_LRU, MF_IGNORED);
+:                 res =3D -EBUSY;
+:                 goto out;
+:         }
+:
+: So I think it's OK to keep "if (WARN_ON(PageLRU(page)))" block in
+: current version of your patch.
+
+Link: http://lkml.kernel.org/r/20181206120135.14079-1-mhocko@kernel.org
+Signed-off-by: Michal Hocko <mhocko@suse.com>
+Reviewed-by: Oscar Salvador <osalvador@suse.com>
+Debugged-by: Oscar Salvador <osalvador@suse.com>
+Tested-by: Oscar Salvador <osalvador@suse.com>
+Acked-by: David Hildenbrand <david@redhat.com>
+Acked-by: Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- drivers/net/usb/lan78xx.c | 4 ++++
- 1 file changed, 4 insertions(+)
+ mm/memory_hotplug.c |   16 ++++++++++++++++
+ 1 file changed, 16 insertions(+)
 
-diff --git a/drivers/net/usb/lan78xx.c b/drivers/net/usb/lan78xx.c
-index c3c9ba44e2a1..8d140495da79 100644
---- a/drivers/net/usb/lan78xx.c
-+++ b/drivers/net/usb/lan78xx.c
-@@ -2335,6 +2335,10 @@ static int lan78xx_set_mac_addr(struct net_device *netdev, void *p)
- 	ret = lan78xx_write_reg(dev, RX_ADDRL, addr_lo);
- 	ret = lan78xx_write_reg(dev, RX_ADDRH, addr_hi);
+--- a/mm/memory_hotplug.c
++++ b/mm/memory_hotplug.c
+@@ -35,6 +35,7 @@
+ #include <linux/memblock.h>
+ #include <linux/bootmem.h>
+ #include <linux/compaction.h>
++#include <linux/rmap.h>
  
-+	/* Added to support MAC address changes */
-+	ret = lan78xx_write_reg(dev, MAF_LO(0), addr_lo);
-+	ret = lan78xx_write_reg(dev, MAF_HI(0), addr_hi | MAF_HI_VALID_);
+ #include <asm/tlbflush.h>
+ 
+@@ -1393,6 +1394,21 @@ do_migrate_range(unsigned long start_pfn
+ 			pfn = page_to_pfn(compound_head(page))
+ 				+ hpage_nr_pages(page) - 1;
+ 
++		/*
++		 * HWPoison pages have elevated reference counts so the migration would
++		 * fail on them. It also doesn't make any sense to migrate them in the
++		 * first place. Still try to unmap such a page in case it is still mapped
++		 * (e.g. current hwpoison implementation doesn't unmap KSM pages but keep
++		 * the unmap as the catch all safety net).
++		 */
++		if (PageHWPoison(page)) {
++			if (WARN_ON(PageLRU(page)))
++				isolate_lru_page(page);
++			if (page_mapped(page))
++				try_to_unmap(page, TTU_IGNORE_MLOCK | TTU_IGNORE_ACCESS);
++			continue;
++		}
 +
- 	return 0;
- }
- 
--- 
-2.19.1
-
+ 		if (!get_page_unless_zero(page))
+ 			continue;
+ 		/*
 
 
