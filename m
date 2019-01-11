@@ -7,48 +7,47 @@ X-Spam-Status: No, score=-10.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 86BF2C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:34:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D3B31C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:34:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 55ECE21841
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:34:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A3F8021841
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:34:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547217279;
-	bh=dOAxQ0XWhFuLYCW+VXiYgWlXZCnDocutYTXWnWo7d7g=;
+	s=default; t=1547217283;
+	bh=ASJkPlw79uE8VDccTJklANK97EtHdUAEnWTkYYVUnIo=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=b5ubErwvbP5tl3+8T3iesJUiO7K7nwL7PzgHkH52Kh2tpJ4zdtVsslnX6mM6/wowI
-	 yYNQGkXlGqFOC8Gi5lpwQP5Kacctkls10EZDOPUuWwq18Az3YDT/TKA1YaolRDhvgy
-	 x87tlDhujTwcJv9PK+GJf4ZW43jTf2ZHDbcoyEWY=
+	b=TMIJfxyTm6/xtJ2e4Xdulpltuc6am0sicEHXbvTa0jMJouGTzVnSgGlt8vpGLk807
+	 6qTWlRo5jdkORop72zcJ1GJ4qx6FczxXgMnTJoC1pkw0pFVhxe4QN/ddPvAW/jLzni
+	 lQNwLzzE/dxskD+pCprr46bhzdk4RofPfa2Vk3XA=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389933AbfAKOei (ORCPT
+        id S2389965AbfAKOem (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 11 Jan 2019 09:34:38 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54832 "EHLO mail.kernel.org"
+        Fri, 11 Jan 2019 09:34:42 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54946 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389952AbfAKOee (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Jan 2019 09:34:34 -0500
+        id S2389928AbfAKOek (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 Jan 2019 09:34:40 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4EC06204EC;
-        Fri, 11 Jan 2019 14:34:33 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id EFFEF204EC;
+        Fri, 11 Jan 2019 14:34:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547217273;
-        bh=dOAxQ0XWhFuLYCW+VXiYgWlXZCnDocutYTXWnWo7d7g=;
+        s=default; t=1547217279;
+        bh=ASJkPlw79uE8VDccTJklANK97EtHdUAEnWTkYYVUnIo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=yKdtXzB7G8TL1SVMgNWWKWi26fqsvWSsd1MDPSM/TOqCUltrqMqXxXFo3J7nb5Glt
-         jsneTWfjTvXOxijte1ugEUlMu4ZoYzzVe7zS90HXJ4aHlvQhGoUWoWzqHDVKWz7gX6
-         hbsFPOLgXQuLRfr9nm1+IdezecICzyuW3uG991WA=
+        b=dLQDjYI7XDt57W5KbZ5jF57vlVYTuhRfu6y2KHdVNhBjFRt3RlfHnRLtq3SU3yBG7
+         XROiD9pA1TQF2JqdjzjBu8ComS4Oo2X4EwGRcekwghal1COVHkCnfgh4e8RTGUCAxZ
+         RKiEJVsQ3WKyCFdnu+6qpMFfOdTxT3WjPfqZMi6s=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Joel Stanley <joel@jms.id.au>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
+        stable@vger.kernel.org, Matthias Kaehlcke <mka@chromium.org>,
+        Guenter Roeck <groeck@chromium.org>, Shaohua Li <shli@fb.com>,
         Nathan Chancellor <natechancellor@gmail.com>
-Subject: [PATCH 4.14 070/105] powerpc: Disable -Wbuiltin-requires-header when setjmp is used
-Date:   Fri, 11 Jan 2019 15:14:41 +0100
-Message-Id: <20190111131108.890927318@linuxfoundation.org>
+Subject: [PATCH 4.14 072/105] md: raid10: remove VLAIS
+Date:   Fri, 11 Jan 2019 15:14:43 +0100
+Message-Id: <20190111131109.031726599@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190111131102.899065735@linuxfoundation.org>
 References: <20190111131102.899065735@linuxfoundation.org>
@@ -67,65 +66,70 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Joel Stanley <joel@jms.id.au>
+From: Matthias Kaehlcke <mka@chromium.org>
 
-commit aea447141c7e7824b81b49acd1bc785506fba46e upstream.
+commit 584ed9fa9532f8b9d5955628ff87ee3b2ab9f5a9 upstream.
 
-The powerpc kernel uses setjmp which causes a warning when building
-with clang:
+The raid10 driver can't be built with clang since it uses a variable
+length array in a structure (VLAIS):
 
-  In file included from arch/powerpc/xmon/xmon.c:51:
-  ./arch/powerpc/include/asm/setjmp.h:15:13: error: declaration of
-  built-in function 'setjmp' requires inclusion of the header <setjmp.h>
-        [-Werror,-Wbuiltin-requires-header]
-  extern long setjmp(long *);
-              ^
-  ./arch/powerpc/include/asm/setjmp.h:16:13: error: declaration of
-  built-in function 'longjmp' requires inclusion of the header <setjmp.h>
-        [-Werror,-Wbuiltin-requires-header]
-  extern void longjmp(long *, long);
-              ^
+drivers/md/raid10.c:4583:17: error: fields must have a constant size:
+  'variable length array in structure' extension will never be supported
 
-This *is* the header and we're not using the built-in setjump but
-rather the one in arch/powerpc/kernel/misc.S. As the compiler warning
-does not make sense, it for the files where setjmp is used.
+Allocate the r10bio struct with kmalloc instead of using the VLAIS
+construct.
 
-Signed-off-by: Joel Stanley <joel@jms.id.au>
-Reviewed-by: Nick Desaulniers <ndesaulniers@google.com>
-[mpe: Move subdir-ccflags in xmon/Makefile to not clobber -Werror]
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+Shaohua: set the MD_RECOVERY_INTR bit
+Neil Brown: use GFP_NOIO
+
+Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
+Reviewed-by: Guenter Roeck <groeck@chromium.org>
+Signed-off-by: Shaohua Li <shli@fb.com>
 Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/powerpc/kernel/Makefile |    3 +++
- arch/powerpc/xmon/Makefile   |    5 ++++-
- 2 files changed, 7 insertions(+), 1 deletion(-)
+ drivers/md/raid10.c |   15 ++++++++++-----
+ 1 file changed, 10 insertions(+), 5 deletions(-)
 
---- a/arch/powerpc/kernel/Makefile
-+++ b/arch/powerpc/kernel/Makefile
-@@ -5,6 +5,9 @@
+--- a/drivers/md/raid10.c
++++ b/drivers/md/raid10.c
+@@ -4591,15 +4591,18 @@ static int handle_reshape_read_error(str
+ 	/* Use sync reads to get the blocks from somewhere else */
+ 	int sectors = r10_bio->sectors;
+ 	struct r10conf *conf = mddev->private;
+-	struct {
+-		struct r10bio r10_bio;
+-		struct r10dev devs[conf->copies];
+-	} on_stack;
+-	struct r10bio *r10b = &on_stack.r10_bio;
++	struct r10bio *r10b;
+ 	int slot = 0;
+ 	int idx = 0;
+ 	struct page **pages;
  
- CFLAGS_ptrace.o		+= -DUTS_MACHINE='"$(UTS_MACHINE)"'
- 
-+# Disable clang warning for using setjmp without setjmp.h header
-+CFLAGS_crash.o		+= $(call cc-disable-warning, builtin-requires-header)
++	r10b = kmalloc(sizeof(*r10b) +
++	       sizeof(struct r10dev) * conf->copies, GFP_NOIO);
++	if (!r10b) {
++		set_bit(MD_RECOVERY_INTR, &mddev->recovery);
++		return -ENOMEM;
++	}
 +
- subdir-ccflags-$(CONFIG_PPC_WERROR) := -Werror
+ 	/* reshape IOs share pages from .devs[0].bio */
+ 	pages = get_resync_pages(r10_bio->devs[0].bio)->pages;
  
- ifeq ($(CONFIG_PPC64),y)
---- a/arch/powerpc/xmon/Makefile
-+++ b/arch/powerpc/xmon/Makefile
-@@ -1,7 +1,10 @@
- # SPDX-License-Identifier: GPL-2.0
- # Makefile for xmon
+@@ -4648,11 +4651,13 @@ static int handle_reshape_read_error(str
+ 			/* couldn't read this block, must give up */
+ 			set_bit(MD_RECOVERY_INTR,
+ 				&mddev->recovery);
++			kfree(r10b);
+ 			return -EIO;
+ 		}
+ 		sectors -= s;
+ 		idx++;
+ 	}
++	kfree(r10b);
+ 	return 0;
+ }
  
--subdir-ccflags-$(CONFIG_PPC_WERROR) := -Werror
-+# Disable clang warning for using setjmp without setjmp.h header
-+subdir-ccflags-y := $(call cc-disable-warning, builtin-requires-header)
-+
-+subdir-ccflags-$(CONFIG_PPC_WERROR) += -Werror
- 
- GCOV_PROFILE := n
- UBSAN_SANITIZE := n
 
 
