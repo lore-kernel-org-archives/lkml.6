@@ -2,151 +2,151 @@ Return-Path: <SRS0=uvhX=PT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B794C43444
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 16:35:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EF029C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 16:41:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1D6042133F
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 16:35:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C1FB020872
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 16:41:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388180AbfAKQfI (ORCPT
+        id S2388187AbfAKQly (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 11 Jan 2019 11:35:08 -0500
-Received: from mga14.intel.com ([192.55.52.115]:63254 "EHLO mga14.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731688AbfAKQfH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Jan 2019 11:35:07 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Jan 2019 08:35:07 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,466,1539673200"; 
-   d="scan'208";a="116045836"
-Received: from gandrejc-mobl1.ger.corp.intel.com (HELO localhost) ([10.249.254.144])
-  by fmsmga008.fm.intel.com with ESMTP; 11 Jan 2019 08:35:02 -0800
-Date:   Fri, 11 Jan 2019 18:35:00 +0200
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     Roberto Sassu <roberto.sassu@huawei.com>
-Cc:     zohar@linux.ibm.com, david.safford@ge.com, monty.wiseman@ge.com,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, silviu.vlasceanu@huawei.com
-Subject: Re: [PATCH v7 1/5] tpm: dynamically allocate the allocated_banks
- array
-Message-ID: <20190111163500.GD12093@linux.intel.com>
-References: <20181213102945.30946-1-roberto.sassu@huawei.com>
- <20181213102945.30946-2-roberto.sassu@huawei.com>
- <20181220145500.GA10652@linux.intel.com>
- <0900a894-e17b-edc8-fa30-db7d16665082@huawei.com>
- <20181222000321.GB8954@linux.intel.com>
- <7cc91a22-b09b-8bdc-c225-adff68e1f69e@huawei.com>
- <20190110173845.GG6589@linux.intel.com>
- <32ec194b-811e-fe83-3937-bb82ffad55a7@huawei.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <32ec194b-811e-fe83-3937-bb82ffad55a7@huawei.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Fri, 11 Jan 2019 11:41:54 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:40522 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1731998AbfAKQlx (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 Jan 2019 11:41:53 -0500
+Received: from pps.filterd (m0098419.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id x0BGY4Gc041266
+        for <linux-kernel@vger.kernel.org>; Fri, 11 Jan 2019 11:41:51 -0500
+Received: from e32.co.us.ibm.com (e32.co.us.ibm.com [32.97.110.150])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2pxw27xkyk-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Fri, 11 Jan 2019 11:41:51 -0500
+Received: from localhost
+        by e32.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <jejb@linux.ibm.com>;
+        Fri, 11 Jan 2019 16:41:50 -0000
+Received: from b03cxnp07029.gho.boulder.ibm.com (9.17.130.16)
+        by e32.co.us.ibm.com (192.168.1.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Fri, 11 Jan 2019 16:41:47 -0000
+Received: from b03ledav004.gho.boulder.ibm.com (b03ledav004.gho.boulder.ibm.com [9.17.130.235])
+        by b03cxnp07029.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x0BGfk4419726434
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Fri, 11 Jan 2019 16:41:46 GMT
+Received: from b03ledav004.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 403C57805C;
+        Fri, 11 Jan 2019 16:41:46 +0000 (GMT)
+Received: from b03ledav004.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id A424478063;
+        Fri, 11 Jan 2019 16:41:44 +0000 (GMT)
+Received: from [153.66.254.194] (unknown [9.85.186.19])
+        by b03ledav004.gho.boulder.ibm.com (Postfix) with ESMTP;
+        Fri, 11 Jan 2019 16:41:44 +0000 (GMT)
+Subject: Re: [PATCH] scsi: advansys: use struct_size() in kzalloc()
+From:   James Bottomley <jejb@linux.ibm.com>
+To:     Hannes Reinecke <hare@suse.de>,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Hannes Reinecke <hare@suse.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>
+Cc:     linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
+Date:   Fri, 11 Jan 2019 08:41:43 -0800
+In-Reply-To: <05420a5c-c268-b87d-9d75-f5d18a4b7f7a@suse.de>
+References: <20190104212209.GA15250@embeddedor>
+         <05420a5c-c268-b87d-9d75-f5d18a4b7f7a@suse.de>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.26.6 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+x-cbid: 19011116-0004-0000-0000-000014D15FB0
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00010385; HX=3.00000242; KW=3.00000007;
+ PH=3.00000004; SC=3.00000274; SDB=6.01144996; UDB=6.00596224; IPR=6.00925266;
+ MB=3.00025086; MTD=3.00000008; XFM=3.00000015; UTC=2019-01-11 16:41:49
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19011116-0005-0000-0000-00008A2F4732
+Message-Id: <1547224903.2793.10.camel@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-01-11_09:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1901110136
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jan 11, 2019 at 08:53:00AM +0100, Roberto Sassu wrote:
-> On 1/10/2019 6:38 PM, Jarkko Sakkinen wrote:
-> > On Mon, Jan 07, 2019 at 11:06:33AM +0100, Roberto Sassu wrote:
-> > > On 12/22/2018 1:03 AM, Jarkko Sakkinen wrote:
-> > > > On Fri, Dec 21, 2018 at 10:40:09AM +0100, Roberto Sassu wrote:
-> > > > > On 12/20/2018 3:55 PM, Jarkko Sakkinen wrote:
-> > > > > > On Thu, Dec 13, 2018 at 11:29:41AM +0100, Roberto Sassu wrote:
-> > > > > > > This patch renames active_banks (member of tpm_chip) to allocated_banks,
-> > > > > > > stores the number of allocated PCR banks in nr_allocated_banks (new member
-> > > > > > > of tpm_chip), and replaces the static array with a pointer to a dynamically
-> > > > > > > allocated array.
-> > > > > > > 
-> > > > > > > tpm2_get_pcr_allocation() determines if a PCR bank is allocated by checking
-> > > > > > > the mask in the TPML_PCR_SELECTION structure returned by the TPM for
-> > > > > > > TPM2_Get_Capability(). If a bank is not allocated, the TPM returns that
-> > > > > > > bank in TPML_PCR_SELECTION, with all bits in the mask set to zero. In this
-> > > > > > > case, the bank is not included in chip->allocated_banks, to avoid that TPM
-> > > > > > > driver users unnecessarily calculate a digest for that bank.
-> > > > > > > 
-> > > > > > > One PCR bank with algorithm set to SHA1 is always allocated for TPM 1.x.
-> > > > > > > 
-> > > > > > > As a consequence of the introduction of nr_allocated_banks,
-> > > > > > > tpm_pcr_extend() does not check anymore if the algorithm stored in tpm_chip
-> > > > > > > is equal to zero.
-> > > > > > > 
-> > > > > > > Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
-> > > > > > > Tested-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-> > > > > > > ---
-> > > > > > >     drivers/char/tpm/tpm-chip.c      |  1 +
-> > > > > > >     drivers/char/tpm/tpm-interface.c | 18 +++++++++--------
-> > > > > > >     drivers/char/tpm/tpm.h           |  3 ++-
-> > > > > > >     drivers/char/tpm/tpm1-cmd.c      | 10 ++++++++++
-> > > > > > >     drivers/char/tpm/tpm2-cmd.c      | 34 ++++++++++++++++++++++----------
-> > > > > > >     5 files changed, 47 insertions(+), 19 deletions(-)
-> > > > > > > 
-> > > > > > > diff --git a/drivers/char/tpm/tpm-chip.c b/drivers/char/tpm/tpm-chip.c
-> > > > > > > index 32db84683c40..ce851c62bb68 100644
-> > > > > > > --- a/drivers/char/tpm/tpm-chip.c
-> > > > > > > +++ b/drivers/char/tpm/tpm-chip.c
-> > > > > > > @@ -160,6 +160,7 @@ static void tpm_dev_release(struct device *dev)
-> > > > > > >     	kfree(chip->log.bios_event_log);
-> > > > > > >     	kfree(chip->work_space.context_buf);
-> > > > > > >     	kfree(chip->work_space.session_buf);
-> > > > > > > +	kfree(chip->allocated_banks);
-> > > > > > >     	kfree(chip);
-> > > > > > >     }
-> > > > > > > diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-interface.c
-> > > > > > > index d9439f9abe78..7b80919228be 100644
-> > > > > > > --- a/drivers/char/tpm/tpm-interface.c
-> > > > > > > +++ b/drivers/char/tpm/tpm-interface.c
-> > > > > > > @@ -488,8 +488,7 @@ EXPORT_SYMBOL_GPL(tpm_pcr_read);
-> > > > > > >     int tpm_pcr_extend(struct tpm_chip *chip, u32 pcr_idx, const u8 *hash)
-> > > > > > >     {
-> > > > > > >     	int rc;
-> > > > > > > -	struct tpm2_digest digest_list[ARRAY_SIZE(chip->active_banks)];
-> > > > > > > -	u32 count = 0;
-> > > > > > > +	struct tpm2_digest *digest_list;
-> > > > > > >     	int i;
-> > > > > > >     	chip = tpm_find_get_ops(chip);
-> > > > > > > @@ -497,16 +496,19 @@ int tpm_pcr_extend(struct tpm_chip *chip, u32 pcr_idx, const u8 *hash)
-> > > > > > >     		return -ENODEV;
-> > > > > > >     	if (chip->flags & TPM_CHIP_FLAG_TPM2) {
-> > > > > > > -		memset(digest_list, 0, sizeof(digest_list));
-> > > > > > > +		digest_list = kcalloc(chip->nr_allocated_banks,
-> > > > > > > +				      sizeof(*digest_list), GFP_KERNEL);
-> > > > > > > +		if (!digest_list)
-> > > > > > > +			return -ENOMEM;
-> > > > > > 
-> > > > > > You could preallocate digest list and place it to struct tpm_chip
-> > > > > > instead of doing it everytime tpm_pcr_extend() called.
-> > > > > 
-> > > > > This part will be removed with patch 5/5.
-> > > > 
-> > > > Even if it did, it does not make this patch unbroken.
-> > > 
-> > > Can two calls to tpm_pcr_extend() be executed at the same time?
-> > > 
-> > > If yes, the digest list should be protected by a mutex.
+On Fri, 2019-01-11 at 16:46 +0100, Hannes Reinecke wrote:
+> On 1/4/19 10:22 PM, Gustavo A. R. Silva wrote:
+> > One of the more common cases of allocation size calculations is
+> > finding the
+> > size of a structure that has a zero-sized array at the end, along
+> > with memory
+> > for some number of elements for that array. For example:
 > > 
-> > Good question: the answer is no. Mutex locking is done inside the
-> > transmit flow ATM.
+> > struct foo {
+> >      int stuff;
+> >      void *entry[];
+> > };
+> > 
+> > instance = kzalloc(sizeof(struct foo) + sizeof(void *) * count,
+> > GFP_KERNEL);
+> > 
+> > Instead of leaving these open-coded and prone to type mistakes, we
+> > can now
+> > use the new struct_size() helper:
+> > 
+> > instance = kzalloc(struct_size(instance, entry, count),
+> > GFP_KERNEL);
+> > 
+> > This code was detected with the help of Coccinelle.
+> > 
+> > Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+> > ---
+> >   drivers/scsi/advansys.c | 4 ++--
+> >   1 file changed, 2 insertions(+), 2 deletions(-)
+> > 
+> > diff --git a/drivers/scsi/advansys.c b/drivers/scsi/advansys.c
+> > index d37584403c33..6c274e6e1c33 100644
+> > --- a/drivers/scsi/advansys.c
+> > +++ b/drivers/scsi/advansys.c
+> > @@ -7576,8 +7576,8 @@ static int asc_build_req(struct asc_board
+> > *boardp, struct scsi_cmnd *scp,
+> >   			return ASC_ERROR;
+> >   		}
+> >   
+> > -		asc_sg_head = kzalloc(sizeof(asc_scsi_q->sg_head)
+> > +
+> > -			use_sg * sizeof(struct asc_sg_list),
+> > GFP_ATOMIC);
+> > +		asc_sg_head = kzalloc(struct_size(asc_sg_head,
+> > sg_list, use_sg),
+> > +				      GFP_ATOMIC);
+> >   		if (!asc_sg_head) {
+> >   			scsi_dma_unmap(scp);
+> >   			scp->result = HOST_BYTE(DID_SOFT_ERROR);
+> > 
 > 
-> But data are copied before the mutex is locked. Can't a second call
-> overwrite chip->preallocated_digest_list while the first call is still
-> writing it?
+> If you want ...
 
-Now I see what you mean. I have patch set on review that would make this
-more natural to do. Locking can be done now too so that it would work
-but that would counter-productive, so lets keep the approach that you
-have.
+Are we sure there's a benefit to this?  It's obvious that the current
+code is correct but no-one's likely to test the new code for quite some
+time, so changing the code introduces risk. What's the benefit of
+making the change in legacy drivers?  Just because we have a new, shiny
+macro doesn't mean we have to force its use everywhere.
 
-/Jarkko
+I would recommend we have a rational needs test: so run the coccinelle
+script over all the drivers to find out where this construct is used,
+but only update those that are actually buggy with the new macro.
+
+James
+
