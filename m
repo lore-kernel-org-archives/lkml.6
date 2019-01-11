@@ -7,46 +7,46 @@ X-Spam-Status: No, score=-10.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CB4ECC43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:29:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 33FDEC43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:29:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8E0A12063F
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:29:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EEE472063F
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:29:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547216956;
-	bh=zipRhKOJR5LLiOcymnUGGu52rzlnPDzF4hbHZw+6asU=;
+	s=default; t=1547216960;
+	bh=Hx2TIM8oGR0qhusTW3FpDQhIFEZKVlS9qulW6/k9n2g=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=PacVRW/kql/Ht9W6bf7u41Zvv9D+cnie/H+mqInFKXhlPQ3DHj3FKWJeFX7Ai71fd
-	 RHCkbX3c2Ea5g0JumXBTvwb8CEak5R9UmgwKlJl1Q6C9wRlOgxHruJUOS+0h5Dp1Kt
-	 c6pXdFa2l6UPzY1GS5ukVzbZw44R9pRPu+cJVdIg=
+	b=VYdt21pohWC62aEBTj6j4x0jU6FwAaRVEnT1ywNKNBYNaXGr3zQWvKyqNtRzg6oXw
+	 rMOZ3w6qMB1fmRv/Zr2nht65nypBIQA3LAYB/Wq7iFiP2fp7C4dliUhsYrRfI1CI65
+	 ZNOD1zzJxUFOLBX2n7me+lQlcAYgqVf+ypnjM08I=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388687AbfAKO3Q (ORCPT
+        id S2388697AbfAKO3T (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 11 Jan 2019 09:29:16 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48136 "EHLO mail.kernel.org"
+        Fri, 11 Jan 2019 09:29:19 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48194 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388246AbfAKO3N (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Jan 2019 09:29:13 -0500
+        id S2388684AbfAKO3Q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 Jan 2019 09:29:16 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 76D982063F;
-        Fri, 11 Jan 2019 14:29:12 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0E3952133F;
+        Fri, 11 Jan 2019 14:29:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547216952;
-        bh=zipRhKOJR5LLiOcymnUGGu52rzlnPDzF4hbHZw+6asU=;
+        s=default; t=1547216955;
+        bh=Hx2TIM8oGR0qhusTW3FpDQhIFEZKVlS9qulW6/k9n2g=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=fv4/fVgQcCUBBDBw8ILPw+8ROjJ4XUwOuz24PRLajpriHXwKh0JW8FF4p6gc6K5NX
-         wk3TD6mpNubsKbjWAZ61L/5eQSZDmewIGYoJvvruNjAxdcae+ACBGVu971PYNUdwzF
-         bLGu5Pw0GP0mjyGNrS7wsuLTIcB/qPRxScsKGDRU=
+        b=cGE1Zre9Nxd86WzLZ9QT/lo4/QFPqkja4R/eRsCkRkC9I2R+22NSujgMr6pO/fv35
+         d/+SpMo3CJ/Uj+XXMwCu3BQlwxDabjHgQKvKn6EDpzIYobZqyt9lvTRV1YIg0QTlfN
+         pc3c3azxpl1CBmaHSxv5mrBi5nn0wH55iCGh+T30=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Vasily Averin <vvs@virtuozzo.com>,
         David Teigland <teigland@redhat.com>, stable@kernel.org
-Subject: [PATCH 4.9 50/63] dlm: lost put_lkb on error path in receive_convert() and receive_unlock()
-Date:   Fri, 11 Jan 2019 15:14:53 +0100
-Message-Id: <20190111131053.647900160@linuxfoundation.org>
+Subject: [PATCH 4.9 51/63] dlm: memory leaks on error path in dlm_user_request()
+Date:   Fri, 11 Jan 2019 15:14:54 +0100
+Message-Id: <20190111131053.772607133@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190111131046.387528003@linuxfoundation.org>
 References: <20190111131046.387528003@linuxfoundation.org>
@@ -67,36 +67,54 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Vasily Averin <vvs@virtuozzo.com>
 
-commit c0174726c3976e67da8649ac62cae43220ae173a upstream.
+commit d47b41aceeadc6b58abc9c7c6485bef7cfb75636 upstream.
 
-Fixes 6d40c4a708e0 ("dlm: improve error and debug messages")
-Cc: stable@kernel.org # 3.5
+According to comment in dlm_user_request() ua should be freed
+in dlm_free_lkb() after successful attach to lkb.
+
+However ua is attached to lkb not in set_lock_args() but later,
+inside request_lock().
+
+Fixes 597d0cae0f99 ("[DLM] dlm: user locks")
+Cc: stable@kernel.org # 2.6.19
 
 Signed-off-by: Vasily Averin <vvs@virtuozzo.com>
 Signed-off-by: David Teigland <teigland@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/dlm/lock.c |    2 ++
- 1 file changed, 2 insertions(+)
+ fs/dlm/lock.c |   14 +++++++-------
+ 1 file changed, 7 insertions(+), 7 deletions(-)
 
 --- a/fs/dlm/lock.c
 +++ b/fs/dlm/lock.c
-@@ -4178,6 +4178,7 @@ static int receive_convert(struct dlm_ls
- 			  (unsigned long long)lkb->lkb_recover_seq,
- 			  ms->m_header.h_nodeid, ms->m_lkid);
- 		error = -ENOENT;
-+		dlm_put_lkb(lkb);
- 		goto fail;
+@@ -5795,20 +5795,20 @@ int dlm_user_request(struct dlm_ls *ls,
+ 			goto out;
+ 		}
+ 	}
+-
+-	/* After ua is attached to lkb it will be freed by dlm_free_lkb().
+-	   When DLM_IFL_USER is set, the dlm knows that this is a userspace
+-	   lock and that lkb_astparam is the dlm_user_args structure. */
+-
+ 	error = set_lock_args(mode, &ua->lksb, flags, namelen, timeout_cs,
+ 			      fake_astfn, ua, fake_bastfn, &args);
+-	lkb->lkb_flags |= DLM_IFL_USER;
+-
+ 	if (error) {
++		kfree(ua->lksb.sb_lvbptr);
++		ua->lksb.sb_lvbptr = NULL;
++		kfree(ua);
+ 		__put_lkb(ls, lkb);
+ 		goto out;
  	}
  
-@@ -4231,6 +4232,7 @@ static int receive_unlock(struct dlm_ls
- 			  lkb->lkb_id, lkb->lkb_remid,
- 			  ms->m_header.h_nodeid, ms->m_lkid);
- 		error = -ENOENT;
-+		dlm_put_lkb(lkb);
- 		goto fail;
- 	}
++	/* After ua is attached to lkb it will be freed by dlm_free_lkb().
++	   When DLM_IFL_USER is set, the dlm knows that this is a userspace
++	   lock and that lkb_astparam is the dlm_user_args structure. */
++	lkb->lkb_flags |= DLM_IFL_USER;
+ 	error = request_lock(ls, lkb, name, namelen, &args);
  
+ 	switch (error) {
 
 
