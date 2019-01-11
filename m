@@ -2,110 +2,117 @@ Return-Path: <SRS0=uvhX=PT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F305C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 15:28:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A74A7C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 15:29:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0272621848
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 15:28:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 76B3D218AF
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 15:29:05 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="rXCWuoik"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387414AbfAKP2S (ORCPT
+        id S2387592AbfAKP3E (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 11 Jan 2019 10:28:18 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:37033 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728958AbfAKP2S (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Jan 2019 10:28:18 -0500
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        Fri, 11 Jan 2019 10:29:04 -0500
+Received: from bedivere.hansenpartnership.com ([66.63.167.143]:44612 "EHLO
+        bedivere.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728941AbfAKP3E (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 Jan 2019 10:29:04 -0500
+Received: from localhost (localhost [127.0.0.1])
+        by bedivere.hansenpartnership.com (Postfix) with ESMTP id 63A888EE491;
+        Fri, 11 Jan 2019 07:29:02 -0800 (PST)
+Received: from bedivere.hansenpartnership.com ([127.0.0.1])
+        by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id knqUCgmGQTLS; Fri, 11 Jan 2019 07:29:01 -0800 (PST)
+Received: from [153.66.254.194] (unknown [50.35.68.20])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 457B94E93F;
-        Fri, 11 Jan 2019 15:28:17 +0000 (UTC)
-Received: from treble (ovpn-122-231.rdu2.redhat.com [10.10.122.231])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 5C3BA5C689;
-        Fri, 11 Jan 2019 15:28:11 +0000 (UTC)
-Date:   Fri, 11 Jan 2019 09:28:09 -0600
-From:   Josh Poimboeuf <jpoimboe@redhat.com>
-To:     Alexandre Chartre <alexandre.chartre@oracle.com>
-Cc:     Sean Christopherson <sean.j.christopherson@intel.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Nadav Amit <namit@vmware.com>, X86 ML <x86@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Jason Baron <jbaron@akamai.com>, Jiri Kosina <jkosina@suse.cz>,
-        David Laight <David.Laight@ACULAB.COM>,
-        Borislav Petkov <bp@alien8.de>,
-        Julia Cartwright <julia@ni.com>, Jessica Yu <jeyu@kernel.org>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        Edward Cree <ecree@solarflare.com>,
-        Daniel Bristot de Oliveira <bristot@redhat.com>
-Subject: Re: [PATCH v3 5/6] x86/alternative: Use a single access in
- text_poke() where possible
-Message-ID: <20190111152809.ejutcmqrx4ud3fli@treble>
-References: <cover.1547073843.git.jpoimboe@redhat.com>
- <279b8003f7f0a6831d090ab822d37bc958f974de.1547073843.git.jpoimboe@redhat.com>
- <8138A1EE-359D-4CD2-8E96-5BF00313AB3B@vmware.com>
- <20190110172004.wuh45xoafynfm2df@treble>
- <20190110123243.3b9e0856@gandalf.local.home>
- <20190110174257.GE16556@linux.intel.com>
- <20190110125757.1c8d2870@gandalf.local.home>
- <20190110180428.GG16556@linux.intel.com>
- <e5ea3781-336d-7b03-a22e-5012e915affd@oracle.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <e5ea3781-336d-7b03-a22e-5012e915affd@oracle.com>
-User-Agent: NeoMutt/20180716
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.38]); Fri, 11 Jan 2019 15:28:17 +0000 (UTC)
+        by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id 058B08EE369;
+        Fri, 11 Jan 2019 07:29:00 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=hansenpartnership.com;
+        s=20151216; t=1547220541;
+        bh=S6CiscRi8b9JhK/2xjPs5aFjuBUbVmlVCSQUIm9Gkbg=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=rXCWuoikEBL7bsHUpVoyOsxAQ/2SsONzczVDpaPOjMR9BZ6bkRhff6vD8TZwDYcEQ
+         J3HZG/M4u6bC6diqs6DtxvbiunFI4ZKErwOtM0JeXVvo9udyA4hQ8PPsR12Q/z/udU
+         VtpsRHgTu8XmuLRcFAwQow/8NiZBU7bQ5b7nn5Fc=
+Message-ID: <1547220538.2793.6.camel@HansenPartnership.com>
+Subject: Re: [PATCH 1/5 v2] PM / hibernate: Create snapshot keys handler
+From:   James Bottomley <James.Bottomley@HansenPartnership.com>
+To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Andy Lutomirski <luto@kernel.org>
+Cc:     Stephan Mueller <smueller@chronox.de>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        "Lee, Chun-Yi" <joeyli.kernel@gmail.com>,
+        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
+        Pavel Machek <pavel@ucw.cz>,
+        LKML <linux-kernel@vger.kernel.org>, linux-pm@vger.kernel.org,
+        keyrings@vger.kernel.org,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        Chen Yu <yu.c.chen@intel.com>,
+        Oliver Neukum <oneukum@suse.com>,
+        Ryan Chen <yu.chen.surf@gmail.com>,
+        David Howells <dhowells@redhat.com>,
+        Giovanni Gherdovich <ggherdovich@suse.cz>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Jann Horn <jannh@google.com>
+Date:   Fri, 11 Jan 2019 07:28:58 -0800
+In-Reply-To: <20190111140226.GA6448@linux.intel.com>
+References: <20190103143227.9138-1-jlee@suse.com>
+         <4499700.LRS4F2YjjC@tauon.chronox.de>
+         <20190108050358.llsox32hggn2jioe@gondor.apana.org.au>
+         <1565399.7ulKdI1fm5@tauon.chronox.de>
+         <D70458DE-712B-4767-8143-7DC9107689C3@amacapital.net>
+         <1546994671.6077.10.camel@HansenPartnership.com>
+         <CALCETrWTAYpWv73MgAz=NUfvJSLq965fWMYvJnDepJoRBsgt6Q@mail.gmail.com>
+         <20190111140226.GA6448@linux.intel.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.26.6 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jan 11, 2019 at 01:10:52PM +0100, Alexandre Chartre wrote:
-> To avoid any issue with live patching the call instruction, what about
-> toggling between two call instructions: one would be the currently active
-> call, while the other would currently be inactive but to be used after a
-> change is made. You can safely patch the inactive call and then toggle
-> the call flow (using a jump label) between the active and inactive calls.
+On Fri, 2019-01-11 at 16:02 +0200, Jarkko Sakkinen wrote:
+> On Tue, Jan 08, 2019 at 05:43:53PM -0800, Andy Lutomirski wrote:
+> > (Also, do we have a sensible story of how the TPM interacts with
+> > hibernation at all?  Presumably we should at least try to replay
+> > the PCR operations that have occurred so that we can massage the
+> > PCRs into the same state post-hibernation.  Also, do we have any
+> > way for the kernel to sign something with the TPM along with an
+> > attestation that the signature was requested *by the
+> > kernel*?  Something like a sub-hierarchy of keys that the kernel
+> > explicitly prevents userspace from accessing?)
 > 
-> So instead of having a single call instruction:
+> Kernel can keep it is own key hierarchy in memory as TPM2 chips allow
+> to offload data in encrypted form and load it to TPM when it needs to
+> use it.
 > 
-> 	call function
-> 
-> You would have:
-> 
-> 	STATIC_JUMP_IF_TRUE label, key
-> 	call function1
-> 	jmp done
-> label:
-> 	call function2
-> done:
-> 
-> If the key is set so that function1 is currently called then you can
-> safely update the call instruction for function2. Once this is done,
-> just flip the key to make the function2 call active. On a next update,
-> you would, of course, have to switch and update the call for function1.
+> The in-kernel resource manager that I initiated couple years ago
+> provides this type of functionality.
 
-What about the following race?
+Actually, the resource manager only keeps volatile objects separated
+when in use not when offloaded.  The problem here is that the object
+needs to be persisted across reboots, so either it gets written to the
+NV area, bypassing the resource manager and making it globally visible
+or it has to get stored in TPM form in the hibernation image, meaning
+anyone with access to the TPM who can read the image can extract and
+load it. Further: anyone with access to the TPM can create a bogus
+sealed key and encrypt a malicious hibernation image with it.  So there
+are two additional problems
 
-CPU1						CPU2
-static key is false, doesn't jump
-task gets preempted before calling function1
-						change static key to true
-						start patching "call function1"
-task resumes, sees inconsistent call instruction
+   1. Given that the attacker may have access to the binary form of the
+      key, can we make sure only the kernel can get it released?
+   2. How do we prevent an attacker with access to the TPM from creating a
+      bogus sealed key?
 
--- 
-Josh
+This is why I was thinking localities.
+
+James
+
