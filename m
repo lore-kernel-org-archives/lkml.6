@@ -2,98 +2,238 @@ Return-Path: <SRS0=uvhX=PT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 07972C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 15:55:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 43101C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 15:55:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D54C720872
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 15:55:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 092C721848
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 15:55:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1547222144;
+	bh=aZ+iU4NnSiExjNpf2JvFrRWoSzs3TMMIbdxypyKl51U=;
+	h=Date:From:To:Cc:Subject:List-ID:From;
+	b=BBTCM7837eG59W6/KPd6RNms6zMCa/vWO5gSPGxIRnuJSAQOjW3HEB21ZEEyk78iG
+	 OafYmM8+PXrUGhaEikgz+P8+Q5qDJyTgkDdzJXGV1wtWGcHomT6G2W1Mx5jiAI52Xi
+	 BfpGx1oBvfkZICfYj436HTTeItefWtXN+at0673E=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733034AbfAKPzG (ORCPT
+        id S1733148AbfAKPzm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 11 Jan 2019 10:55:06 -0500
-Received: from mail-pf1-f182.google.com ([209.85.210.182]:43165 "EHLO
-        mail-pf1-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730850AbfAKPzG (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Jan 2019 10:55:06 -0500
-Received: by mail-pf1-f182.google.com with SMTP id w73so7126130pfk.10
-        for <linux-kernel@vger.kernel.org>; Fri, 11 Jan 2019 07:55:06 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=DVNv+L3D5rzXV4sCudk10OQd3dGwGv9if4k9ZxEJnN8=;
-        b=f6LWL7fqjP1gw5+odgJo5q+7uI/EvN5zQX0J95jd2lDevBkHdIpNfvOUW0tPQh9ALA
-         dHyatd68ja7Ljbtgrn/mnXNKoT3DVGTme0MUhiuJmJQCn+pI+5RToMplW/CAVhyy2gOU
-         urzvgO6tLkgSvjbTvhB7953JT2luR2FddN7WluAqo+LjG+56V+Kz6x2SQapEfHkxHQ55
-         8O5JImiFeeEiNEPOW9jh/RSoSCCuNFgFrjkWThSWUSAAD6CM98JC1u98fc+bQHiX0zu/
-         9535qLUBDuN6C/m0emHtoYnjjfZ1vj4vNfid9foPEtgu4HmIv+sf20xmCF9+WmgeRDGr
-         RHfg==
-X-Gm-Message-State: AJcUukcQ9UJ+nwpdG50ZOTD/5lqokfzBJePE87PXXQJAhYpehyNNUdIO
-        nf1ujoLh2z4Wt9iDVrrBKXU=
-X-Google-Smtp-Source: ALg8bN4j1rvXoN6PCmQXnBJdEsN/DatRgCKOCj0nKcr0JGN8AiDnIH/5+W/Tu/hoej3HHmlqPSx9MQ==
-X-Received: by 2002:a62:c21c:: with SMTP id l28mr14935750pfg.74.1547222105603;
-        Fri, 11 Jan 2019 07:55:05 -0800 (PST)
-Received: from ?IPv6:2620:15c:2cd:203:5cdc:422c:7b28:ebb5? ([2620:15c:2cd:203:5cdc:422c:7b28:ebb5])
-        by smtp.gmail.com with ESMTPSA id z9sm211455645pfd.99.2019.01.11.07.55.04
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 11 Jan 2019 07:55:04 -0800 (PST)
-Message-ID: <1547222103.83374.72.camel@acm.org>
-Subject: Re: [PATCH v6 00/16] locking/lockdep: Add support for dynamic keys
-From:   Bart Van Assche <bvanassche@acm.org>
+        Fri, 11 Jan 2019 10:55:42 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45136 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730850AbfAKPzm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 Jan 2019 10:55:42 -0500
+Received: from quaco.ghostprotocols.net (unknown [190.15.121.82])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id E08CB20874;
+        Fri, 11 Jan 2019 15:55:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1547222141;
+        bh=aZ+iU4NnSiExjNpf2JvFrRWoSzs3TMMIbdxypyKl51U=;
+        h=Date:From:To:Cc:Subject:From;
+        b=q2MbPgF8hsPhQWEy/nKCP1+OBYV7fss4oDsektPADkgdHDh5hn3wFfWzi8CJ+xGnG
+         FShkV8Z/W7CecGWAmHsfEATmxf9H1lV/jtTLbd7fIWFf/8ahCmSCJCH/tkEV+tfkyj
+         Vbq7enrgQXoIDy0aKR9XLSliowfMhYQnrI0xdNtA=
+Received: by quaco.ghostprotocols.net (Postfix, from userid 1000)
+        id 8FFDD41AB5; Fri, 11 Jan 2019 12:55:38 -0300 (-03)
+Date:   Fri, 11 Jan 2019 12:55:38 -0300
+From:   Arnaldo Carvalho de Melo <acme@kernel.org>
 To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     mingo@redhat.com, tj@kernel.org, longman@redhat.com,
-        johannes.berg@intel.com, linux-kernel@vger.kernel.org
-Date:   Fri, 11 Jan 2019 07:55:03 -0800
-In-Reply-To: <20190111124835.GP1900@hirez.programming.kicks-ass.net>
-References: <20190109210204.192109-1-bvanassche@acm.org>
-         <20190111124835.GP1900@hirez.programming.kicks-ass.net>
-Content-Type: text/plain; charset="UTF-7"
-X-Mailer: Evolution 3.26.2-1 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Cc:     Ingo Molnar <mingo@kernel.org>,
+        Alexei Starovoitov <alexei.starovoitov@gmail.com>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Jamal Hadi Salim <jhs@mojatatu.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux Networking Development Mailing List 
+        <netdev@vger.kernel.org>
+Subject: [PATCH/RFC] Make perf_event_open() propagate errors for use in
+ bpf_perf_event_open()
+Message-ID: <20190111155538.GX22483@kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Url:  http://acmel.wordpress.com
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 2019-01-11 at 13:48 +-0100, Peter Zijlstra wrote:
-+AD4 I spotted this new v6 in my inbox and have rebased to it.
+Hi Peter,
 
-Thanks+ACE
+	bpf_perf_event_open() already returns a value, but if
+perf_event_output's output_begin (mostly perf_output_begin) fails,
+the only way to know about that is looking before/after the rb->lost,
+right?
 
-+AD4 On Wed, Jan 09, 2019 at 01:01:48PM -0800, Bart Van Assche wrote:
-+AD4 
-+AD4 +AD4 The changes compared to v5 are:
-+AD4 +AD4 - Modified zap+AF8-class() such that it doesn't try to free a list entry that
-+AD4 +AD4   is already being freed.
-+AD4 
-+AD4 I however have a question on this+ADs this seems wrong. Once a list entry
-+AD4 is enqueued it should not be reachable anymore. If we can reach an entry
-+AD4 after call+AF8-rcu() happened, we've got a problem.
+	For ring buffer users that is ok, we'll get a PERF_RECORD_LOST,
+etc, but for BPF programs it would be convenient to get that -ENOSPC and
+do some fallback, whatever makes sense, like in my augmented_syscalls
+stuff for 'perf trace', i.e. don't augment it (i.e. push stuff at the
+end of the normal payload), just don't filter the
+raw_syscalls:sys_enter, 'perf trace' will get the enter syscall enter
+event without the pointer dereference at the end, etc, warn the user but
+don't lose a syscall in the strace-like output.	
 
-Apparently I confused you - sorry that I was not more clear. What I meant is
-that I changed a single if test into a loop. The graph lock is held while that
-loop is being executed so the code below is serialized against the code called
-from inside the RCU callback:
+	What do you think? Am I missing something? Probably ;-)
 
-+AEAAQA -4574,8 +-4563,9 +AEAAQA static void zap+AF8-class(struct pending+AF8-free +ACo-pf, struct lock
-+AF8-class +ACo-class)
-                entry +AD0 list+AF8-entries +- i+ADs
-                if (entry-+AD4-class +ACEAPQ class +ACYAJg entry-+AD4-links+AF8-to +ACEAPQ class)
-                        continue+ADs
--               if (+AF8AXw-test+AF8-and+AF8-set+AF8-bit(i, pf-+AD4-list+AF8-entries+AF8-being+AF8-freed))
-+-               if (list+AF8-entry+AF8-being+AF8-freed(i))
-                        continue+ADs
-+-               set+AF8-bit(i, pf-+AD4-list+AF8-entries+AF8-being+AF8-freed)+ADs
-                nr+AF8-list+AF8-entries--+ADs
-                list+AF8-del+AF8-rcu(+ACY-entry-+AD4-entry)+ADs
-        +AH0
+	Ah, its just test built.
 
-Please let me know if you need more information.
+- Arnaldo
 
-Bart.
-
+diff --git a/include/linux/perf_event.h b/include/linux/perf_event.h
+index 1d5c551a5add..9ed2af2abd6d 100644
+--- a/include/linux/perf_event.h
++++ b/include/linux/perf_event.h
+@@ -978,9 +978,9 @@ extern void perf_event_output_forward(struct perf_event *event,
+ extern void perf_event_output_backward(struct perf_event *event,
+ 				       struct perf_sample_data *data,
+ 				       struct pt_regs *regs);
+-extern void perf_event_output(struct perf_event *event,
+-			      struct perf_sample_data *data,
+-			      struct pt_regs *regs);
++extern int perf_event_output(struct perf_event *event,
++			     struct perf_sample_data *data,
++			     struct pt_regs *regs);
+ 
+ static inline bool
+ is_default_overflow_handler(struct perf_event *event)
+diff --git a/kernel/events/core.c b/kernel/events/core.c
+index 3cd13a30f732..dcbb2b508034 100644
+--- a/kernel/events/core.c
++++ b/kernel/events/core.c
+@@ -6489,7 +6489,7 @@ void perf_prepare_sample(struct perf_event_header *header,
+ 		data->phys_addr = perf_virt_to_phys(data->addr);
+ }
+ 
+-static __always_inline void
++static __always_inline int
+ __perf_event_output(struct perf_event *event,
+ 		    struct perf_sample_data *data,
+ 		    struct pt_regs *regs,
+@@ -6499,13 +6499,15 @@ __perf_event_output(struct perf_event *event,
+ {
+ 	struct perf_output_handle handle;
+ 	struct perf_event_header header;
++	int err;
+ 
+ 	/* protect the callchain buffers */
+ 	rcu_read_lock();
+ 
+ 	perf_prepare_sample(&header, data, event, regs);
+ 
+-	if (output_begin(&handle, event, header.size))
++	err = output_begin(&handle, event, header.size);
++	if (err)
+ 		goto exit;
+ 
+ 	perf_output_sample(&handle, &header, data, event);
+@@ -6514,6 +6516,7 @@ __perf_event_output(struct perf_event *event,
+ 
+ exit:
+ 	rcu_read_unlock();
++	return err;
+ }
+ 
+ void
+@@ -6532,12 +6535,12 @@ perf_event_output_backward(struct perf_event *event,
+ 	__perf_event_output(event, data, regs, perf_output_begin_backward);
+ }
+ 
+-void
++int
+ perf_event_output(struct perf_event *event,
+ 		  struct perf_sample_data *data,
+ 		  struct pt_regs *regs)
+ {
+-	__perf_event_output(event, data, regs, perf_output_begin);
++	return __perf_event_output(event, data, regs, perf_output_begin);
+ }
+ 
+ /*
+diff --git a/kernel/trace/bpf_trace.c b/kernel/trace/bpf_trace.c
+index 8b068adb9da1..088c2032ceaf 100644
+--- a/kernel/trace/bpf_trace.c
++++ b/kernel/trace/bpf_trace.c
+@@ -431,8 +431,7 @@ __bpf_perf_event_output(struct pt_regs *regs, struct bpf_map *map,
+ 	if (unlikely(event->oncpu != cpu))
+ 		return -EOPNOTSUPP;
+ 
+-	perf_event_output(event, sd, regs);
+-	return 0;
++	return perf_event_output(event, sd, regs);
+ }
+ 
+ BPF_CALL_5(bpf_perf_event_output, struct pt_regs *, regs, struct bpf_map *, map,
+diff --git a/tools/perf/examples/bpf/augmented_raw_syscalls.c b/tools/perf/examples/bpf/augmented_raw_syscalls.c
+index 53c233370fae..9e9d4c66e53c 100644
+--- a/tools/perf/examples/bpf/augmented_raw_syscalls.c
++++ b/tools/perf/examples/bpf/augmented_raw_syscalls.c
+@@ -141,8 +141,8 @@ int sys_enter(struct syscall_enter_args *args)
+ 		len = sizeof(augmented_args.args);
+ 	}
+ 
+-	perf_event_output(args, &__augmented_syscalls__, BPF_F_CURRENT_CPU, &augmented_args, len);
+-	return 0;
++	/* If perf_event_output fails, return non-zero so that it gets recorded unaugmented */
++	return perf_event_output(args, &__augmented_syscalls__, BPF_F_CURRENT_CPU, &augmented_args, len);
+ }
+ 
+ SEC("raw_syscalls:sys_exit")
+diff --git a/tools/perf/examples/bpf/augmented_syscalls.c b/tools/perf/examples/bpf/augmented_syscalls.c
+index 2ae44813ef2d..b7dba114e36c 100644
+--- a/tools/perf/examples/bpf/augmented_syscalls.c
++++ b/tools/perf/examples/bpf/augmented_syscalls.c
+@@ -55,9 +55,9 @@ int syscall_enter(syscall)(struct syscall_enter_##syscall##_args *args)				\
+ 		len -= sizeof(augmented_args.filename.value) - augmented_args.filename.size;	\
+ 		len &= sizeof(augmented_args.filename.value) - 1;				\
+ 	}											\
+-	perf_event_output(args, &__augmented_syscalls__, BPF_F_CURRENT_CPU, 			\
+-			  &augmented_args, len);						\
+-	return 0;										\
++	/* If perf_event_output fails, return non-zero so that it gets recorded unaugmented */	\
++	return perf_event_output(args, &__augmented_syscalls__, BPF_F_CURRENT_CPU, 		\
++				 &augmented_args, len);						\
+ }												\
+ int syscall_exit(syscall)(struct syscall_exit_args *args)					\
+ {												\
+@@ -125,10 +125,10 @@ int syscall_enter(syscall)(struct syscall_enter_##syscall##_args *args)				\
+ /*		addrlen = augmented_args.args.addrlen;				     */		\
+ /*										     */		\
+ 	probe_read(&augmented_args.addr, addrlen, args->addr_ptr); 				\
+-	perf_event_output(args, &__augmented_syscalls__, BPF_F_CURRENT_CPU, 			\
+-			  &augmented_args, 							\
+-			  sizeof(augmented_args) - sizeof(augmented_args.addr) + addrlen);	\
+-	return 0;										\
++	/* If perf_event_output fails, return non-zero so that it gets recorded unaugmented */	\
++	return perf_event_output(args, &__augmented_syscalls__, BPF_F_CURRENT_CPU, 		\
++				 &augmented_args, 						\
++				sizeof(augmented_args) - sizeof(augmented_args.addr) + addrlen);\
+ }												\
+ int syscall_exit(syscall)(struct syscall_exit_args *args)					\
+ {												\
+diff --git a/tools/perf/examples/bpf/etcsnoop.c b/tools/perf/examples/bpf/etcsnoop.c
+index b59e8812ee8c..550e69c2e8d1 100644
+--- a/tools/perf/examples/bpf/etcsnoop.c
++++ b/tools/perf/examples/bpf/etcsnoop.c
+@@ -49,11 +49,11 @@ int syscall_enter(syscall)(struct syscall_enter_##syscall##_args *args)				\
+ 						      args->filename_ptr); 			\
+ 	if (__builtin_memcmp(augmented_args.filename.value, etc, 4) != 0)			\
+ 		return 0;									\
+-	perf_event_output(args, &__augmented_syscalls__, BPF_F_CURRENT_CPU, 			\
+-			  &augmented_args, 							\
+-			  (sizeof(augmented_args) - sizeof(augmented_args.filename.value) +	\
+-			   augmented_args.filename.size));					\
+-	return 0;										\
++	/* If perf_event_output fails, return non-zero so that it gets recorded unaugmented */	\
++	return perf_event_output(args, &__augmented_syscalls__, BPF_F_CURRENT_CPU, 		\
++				 &augmented_args,						\
++				 (sizeof(augmented_args) - sizeof(augmented_args.filename.value) + \
++				 augmented_args.filename.size));				\
+ }
+ 
+ struct syscall_enter_openat_args {
