@@ -2,368 +2,296 @@ Return-Path: <SRS0=uvhX=PT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 188F1C43612
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 20:36:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4BE79C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 20:36:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D53C921783
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 20:36:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0C55B21783
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 20:36:09 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="qbl2Jern"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Ncyr2DHp"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725799AbfAKUgD (ORCPT
+        id S1725895AbfAKUgJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 11 Jan 2019 15:36:03 -0500
-Received: from mail-lf1-f66.google.com ([209.85.167.66]:41585 "EHLO
-        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725308AbfAKUgD (ORCPT
+        Fri, 11 Jan 2019 15:36:09 -0500
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:42665 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725804AbfAKUgH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Jan 2019 15:36:03 -0500
-Received: by mail-lf1-f66.google.com with SMTP id c16so11716032lfj.8;
-        Fri, 11 Jan 2019 12:36:01 -0800 (PST)
+        Fri, 11 Jan 2019 15:36:07 -0500
+Received: by mail-pl1-f193.google.com with SMTP id y1so7240423plp.9
+        for <linux-kernel@vger.kernel.org>; Fri, 11 Jan 2019 12:36:07 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=fFPPu0HIu8G+9U251NeXS6S7tzGeri3Oawv2js6PMu8=;
-        b=qbl2JernIzZFzZiVfOdpSW3Xblf/pjLtTeF5cb6Yp4HavdnJfodMGNwlqBTOUW9j4U
-         WecFffGh0Qi7095qCOiheBv4codY7yQidDyuW6L9OFaX6rtXpClEZ7xxeVtSOsb5X04a
-         4aeeF4J+EL8eXVogl0D8Cu/KrQ+B5S6UcBrjMxiJHjJTccU3et9gba1ICMVCLuHHIjE4
-         wJuS/aUoQMD/xH3PD09oLSvA5hgdwQ6+eGAUUBJqGalHjpOCMGj6IWH1KSMrToZroXML
-         Pi6IXf8yfVgfsLtTcZXHhxOMHelrmpYpQuI9VcjxAzVE03cNpt6qme/9RYbBR3B1U9Gi
-         RxnQ==
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=xcWWIbOm2J3eFMuV+hJKXP1P/GfLQOPTvj4Lf/y9kvQ=;
+        b=Ncyr2DHpTIrPPZypZXVwd6msWaghhaSaIifbfoghFWmQ1P7hMgBoocESotC1CJRE/o
+         j3ijXKUMmfQEkgzTeMOARYRmY216mdeCsGQIj0vDzDGgtI11ZxvYmr7vO3LSc/UNvLqA
+         cnW1yXSqYIpns7ZE04g/uXxqlBJJ5/rarZFtQ=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=fFPPu0HIu8G+9U251NeXS6S7tzGeri3Oawv2js6PMu8=;
-        b=m7D1s/XXmt1QY3p1ayBMJ3NG9Fyc2FceR84CFZ3Uh5iVknlsWYXHKBQPpdrj+BT71B
-         afHI6IqbXq7qTvGF1f6yovoC1tN5mXH2lrf1vgdNm7CtUSoa2hbkuk7iWVyBCFq4sfZ+
-         60YY/RjBda9hsblwWz/szOfz6OreENCJ61iLcttlSG1EPcgHUz4snyutB7nyivrSrnXm
-         ZGp2UxtlKb7LLrnJM9RVk85h/QJtTuOrOX3yGpjGE23632hi7SpJH+1E8rZdmn86PEbo
-         OK8sd+A4slRl9pOtvC2+Fo9k/cnQGDnae5BEI6hPFOG3OCLTBLlMCJxtLosBd1IsaexC
-         DRNg==
-X-Gm-Message-State: AJcUukdVHfrmnYjWL2AETgpZBXbtymCDBMMzNDFjj0SkrKW7ViqwJx1C
-        nwLeM0kHwqWoksmDhOLv4L9/0rAWa9c=
-X-Google-Smtp-Source: ALg8bN6/2chzZNxKUjUM5RgLEb11QWiUDweafrWt4JVasGB3mopvH5ECvyf7UcYQtUYJbwmUiGcbog==
-X-Received: by 2002:a19:5394:: with SMTP id h20mr9235886lfl.75.1547238960150;
-        Fri, 11 Jan 2019 12:36:00 -0800 (PST)
-Received: from arch.domain.name (89-70-37-207.dynamic.chello.pl. [89.70.37.207])
-        by smtp.gmail.com with ESMTPSA id a2-v6sm16282754lji.13.2019.01.11.12.35.57
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 11 Jan 2019 12:35:58 -0800 (PST)
-From:   Tomasz Duszynski <tduszyns@gmail.com>
-To:     linux-iio@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org, Tomasz Duszynski <tduszyns@gmail.com>
-Subject: [PATCH v2] iio: chemical: sps30: allow changing self cleaning period
-Date:   Fri, 11 Jan 2019 21:35:33 +0100
-Message-Id: <20190111203533.11930-1-tduszyns@gmail.com>
-X-Mailer: git-send-email 2.20.1
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=xcWWIbOm2J3eFMuV+hJKXP1P/GfLQOPTvj4Lf/y9kvQ=;
+        b=Bvc4XZOBFCUkDVMVMVtmgGx7QPhAl+cLxYaQM+cZjjZNt/PMhJXqJWNjOcLH8qHXid
+         U1KQzVPWrZPRbWlzsocmlupLaUifBV2CULHysa+R4tXXCa9Nsc0uGPvuse6cFIMRhHGc
+         M6z+onDmsih6Mhpov2xxOt2Bzim9Aje0RIYoi1TG6Pl2ovzr6s8XZqccqb5FCdVdUkmK
+         1iwLMG65X71X0J/XvYT7a92NRkLTQv/Rpf8d8qJQKAg/gPgDEWQnWjwZ48uAGDNIoHy+
+         Xqz0dUhEcBvlEKzqGnFOLw+myTZtK9jnQWDgAnNfGzI3aV4eZak95YmtFV1vThCyzjtK
+         70CQ==
+X-Gm-Message-State: AJcUukcw8I7jOquojlc0IZaqZ59R+cQAXw7RzS1iKq2ZcSV4yhdNSgVL
+        6dQqomyObPxCrSzUJVg4IWFXgg==
+X-Google-Smtp-Source: ALg8bN4P47H6XXdTmLX995PaTOzniZQ3jzeXpjNQ/7vjfEM4TMIqepzjtioH2v2nrRtPKnX6vPGy3Q==
+X-Received: by 2002:a17:902:e20b:: with SMTP id ce11mr15583359plb.251.1547238966885;
+        Fri, 11 Jan 2019 12:36:06 -0800 (PST)
+Received: from localhost ([2620:15c:202:1:75a:3f6e:21d:9374])
+        by smtp.gmail.com with ESMTPSA id d69sm108775446pfg.168.2019.01.11.12.36.05
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 11 Jan 2019 12:36:06 -0800 (PST)
+Date:   Fri, 11 Jan 2019 12:36:05 -0800
+From:   Matthias Kaehlcke <mka@chromium.org>
+To:     Amit Kucheria <amit.kucheria@linaro.org>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Eduardo Valentin <edubezval@gmail.com>,
+        Andy Gross <andy.gross@linaro.org>,
+        Taniya Das <tdas@codeaurora.org>,
+        Stephen Boyd <swboyd@chromium.org>,
+        Douglas Anderson <dianders@chromium.org>,
+        David Brown <david.brown@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>
+Subject: Re: [PATCH v1 7/7] arm64: dts: sdm845: wireup the thermal trip
+ points to cpufreq
+Message-ID: <20190111203605.GG261387@google.com>
+References: <cover.1547078153.git.amit.kucheria@linaro.org>
+ <6c5b26e65be18222587724e066fc2e39b9f60397.1547078153.git.amit.kucheria@linaro.org>
+ <20190111003014.GB261387@google.com>
+ <CAHLCerP5ZyORkJm9E8kk-+4X6u6f2=vn_0hq7jSewr9O4=RKDw@mail.gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <CAHLCerP5ZyORkJm9E8kk-+4X6u6f2=vn_0hq7jSewr9O4=RKDw@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Sensor can periodically trigger self cleaning. Period can be changed by
-writing a new value to a dedicated attribute. Upon attribute read
-current period gets returned.
+On Fri, Jan 11, 2019 at 04:47:15PM +0530, Amit Kucheria wrote:
+> On Fri, Jan 11, 2019 at 6:00 AM Matthias Kaehlcke <mka@chromium.org> wrote:
+> >
+> > On Thu, Jan 10, 2019 at 05:30:56AM +0530, Amit Kucheria wrote:
+> > > Since the big and little cpus are in the same frequency domain, use all
+> > > of them for mitigation in the cooling-map. At the lower trip points we
+> > > restrict ourselves to throttling only a few OPPs. At higher trip
+> > > temperatures, allow ourselves to be throttled to any extent.
+> > >
+> > > Signed-off-by: Amit Kucheria <amit.kucheria@linaro.org>
+> > > ---
+> > >  arch/arm64/boot/dts/qcom/sdm845.dtsi | 145 +++++++++++++++++++++++++++
+> > >  1 file changed, 145 insertions(+)
+> > >
+> > > diff --git a/arch/arm64/boot/dts/qcom/sdm845.dtsi b/arch/arm64/boot/dts/qcom/sdm845.dtsi
+> > > index 29e823b0caf4..cd6402a9aa64 100644
+> > > --- a/arch/arm64/boot/dts/qcom/sdm845.dtsi
+> > > +++ b/arch/arm64/boot/dts/qcom/sdm845.dtsi
+> > > @@ -13,6 +13,7 @@
+> > >  #include <dt-bindings/reset/qcom,sdm845-aoss.h>
+> > >  #include <dt-bindings/soc/qcom,rpmh-rsc.h>
+> > >  #include <dt-bindings/clock/qcom,gcc-sdm845.h>
+> > > +#include <dt-bindings/thermal/thermal.h>
+> > >
+> > >  / {
+> > >       interrupt-parent = <&intc>;
+> > > @@ -99,6 +100,7 @@
+> > >                       compatible = "qcom,kryo385";
+> > >                       reg = <0x0 0x0>;
+> > >                       enable-method = "psci";
+> > > +                     #cooling-cells = <2>;
+> > >                       next-level-cache = <&L2_0>;
+> > >                       L2_0: l2-cache {
+> > >                               compatible = "cache";
+> > > @@ -114,6 +116,7 @@
+> > >                       compatible = "qcom,kryo385";
+> > >                       reg = <0x0 0x100>;
+> > >                       enable-method = "psci";
+> > > +                     #cooling-cells = <2>;
+> > >                       next-level-cache = <&L2_100>;
+> > >                       L2_100: l2-cache {
+> > >                               compatible = "cache";
+> > > @@ -126,6 +129,7 @@
+> > >                       compatible = "qcom,kryo385";
+> > >                       reg = <0x0 0x200>;
+> > >                       enable-method = "psci";
+> > > +                     #cooling-cells = <2>;
+> > >                       next-level-cache = <&L2_200>;
+> > >                       L2_200: l2-cache {
+> > >                               compatible = "cache";
+> > > @@ -138,6 +142,7 @@
+> > >                       compatible = "qcom,kryo385";
+> > >                       reg = <0x0 0x300>;
+> > >                       enable-method = "psci";
+> > > +                     #cooling-cells = <2>;
+> > >                       next-level-cache = <&L2_300>;
+> > >                       L2_300: l2-cache {
+> > >                               compatible = "cache";
+> > > @@ -150,6 +155,7 @@
+> > >                       compatible = "qcom,kryo385";
+> > >                       reg = <0x0 0x400>;
+> > >                       enable-method = "psci";
+> > > +                     #cooling-cells = <2>;
+> > >                       next-level-cache = <&L2_400>;
+> > >                       L2_400: l2-cache {
+> > >                               compatible = "cache";
+> > > @@ -162,6 +168,7 @@
+> > >                       compatible = "qcom,kryo385";
+> > >                       reg = <0x0 0x500>;
+> > >                       enable-method = "psci";
+> > > +                     #cooling-cells = <2>;
+> > >                       next-level-cache = <&L2_500>;
+> > >                       L2_500: l2-cache {
+> > >                               compatible = "cache";
+> > > @@ -174,6 +181,7 @@
+> > >                       compatible = "qcom,kryo385";
+> > >                       reg = <0x0 0x600>;
+> > >                       enable-method = "psci";
+> > > +                     #cooling-cells = <2>;
+> > >                       next-level-cache = <&L2_600>;
+> > >                       L2_600: l2-cache {
+> > >                               compatible = "cache";
+> > > @@ -186,6 +194,7 @@
+> > >                       compatible = "qcom,kryo385";
+> > >                       reg = <0x0 0x700>;
+> > >                       enable-method = "psci";
+> > > +                     #cooling-cells = <2>;
+> > >                       next-level-cache = <&L2_700>;
+> > >                       L2_700: l2-cache {
+> > >                               compatible = "cache";
+> > > @@ -1703,6 +1712,23 @@
+> > >                                       type = "critical";
+> > >                               };
+> > >                       };
+> > > +
+> > > +                     cooling-maps {
+> > > +                             map0 {
+> > > +                                     trip = <&cpu_alert0>;
+> > > +                                     cooling-device = <&CPU0 THERMAL_NO_LIMIT 4>,
+> > > +                                                      <&CPU1 THERMAL_NO_LIMIT 4>,
+> > > +                                                      <&CPU2 THERMAL_NO_LIMIT 4>,
+> > > +                                                      <&CPU3 THERMAL_NO_LIMIT 4>;
+> > > +                             };
+> > > +                             map1 {
+> > > +                                     trip = <&cpu_crit0>;
+> > > +                                     cooling-device = <&CPU0 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
+> > > +                                                      <&CPU1 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
+> > > +                                                      <&CPU2 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
+> > > +                                                      <&CPU3 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>;
+> > > +                             };
+> > > +                     };
+> >
+> > Slightly off-topic, buy maybe not so much since we are just starting
+> > to use the trip points:
+> >
+> > Currently we use the naming scheme 'cpu_<type>N' for trip points. I
+> > anticipate that we're going to add more passive trip points soon, to
+> > keep the 'power_allocator' thermal governor happy, which expects a
+> > 'switch_on' and a 'desired_temperature' trip point. With the current
+> > naming scheme this could become a bit messy. I suggest to change it to
+> > 'cpuN_<type>[X]', which would allow for something like 'cpuN_alert0'
+> > and 'cpuN_alert1'.
+> >
+> > If you think the change makes sense you can consider to do it within
+> > this series, I can also send a separate patch once it has landed.
+> 
+> Sure, I can change them to cpuN_alertX format.
 
-Signed-off-by: Tomasz Duszynski <tduszyns@gmail.com>
----
-v2:
- * return available values formated as a range
- * tweak naming a little (interval -> period)
+Great, thanks!
 
- Documentation/ABI/testing/sysfs-bus-iio-sps30 |  19 +++
- drivers/iio/chemical/sps30.c                  | 143 +++++++++++++++---
- 2 files changed, 144 insertions(+), 18 deletions(-)
+Another concern about adding trip points later could be the node
+name. We currently have:
 
-diff --git a/Documentation/ABI/testing/sysfs-bus-iio-sps30 b/Documentation/ABI/testing/sysfs-bus-iio-sps30
-index e7ce2c57635e..68fbaf2ad30d 100644
---- a/Documentation/ABI/testing/sysfs-bus-iio-sps30
-+++ b/Documentation/ABI/testing/sysfs-bus-iio-sps30
-@@ -6,3 +6,22 @@ Description:
- 		Writing 1 starts sensor self cleaning. Internal fan accelerates
- 		to its maximum speed and keeps spinning for about 10 seconds in
- 		order to blow out accumulated dust.
-+
-+What:		/sys/bus/iio/devices/iio:deviceX/cleaning_period
-+Date:		January 2019
-+KernelVersion:	5.1
-+Contact:	linux-iio@vger.kernel.org
-+Description:
-+		Sensor is capable of triggering self cleaning periodically.
-+		Period can be changed by writing a new value here. Upon reading
-+		the current one is returned.
-+
-+		Writing 0 disables periodical self cleaning entirely.
-+
-+What:		/sys/bus/iio/devices/iio:deviceX/cleaning_period_available
-+Date:		January 2019
-+KernelVersion:	5.1
-+Contact:	linux-iio@vger.kernel.org
-+Description:
-+		The range of available values represented as the minimum value,
-+		the step and the maximum value, all enclosed in square brackets.
-diff --git a/drivers/iio/chemical/sps30.c b/drivers/iio/chemical/sps30.c
-index f3b4390c8f5c..fe5f6309191b 100644
---- a/drivers/iio/chemical/sps30.c
-+++ b/drivers/iio/chemical/sps30.c
-@@ -5,9 +5,6 @@
-  * Copyright (c) Tomasz Duszynski <tduszyns@gmail.com>
-  *
-  * I2C slave address: 0x69
-- *
-- * TODO:
-- *  - support for reading/setting auto cleaning interval
-  */
 
- #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
-@@ -21,6 +18,7 @@
- #include <linux/iio/sysfs.h>
- #include <linux/iio/trigger_consumer.h>
- #include <linux/iio/triggered_buffer.h>
-+#include <linux/kernel.h>
- #include <linux/module.h>
+trips {
+  cpu0_alert0: trip0 {
+    ...
+  };
 
- #define SPS30_CRC8_POLYNOMIAL 0x31
-@@ -28,6 +26,9 @@
- #define SPS30_MAX_READ_SIZE 48
- /* sensor measures reliably up to 3000 ug / m3 */
- #define SPS30_MAX_PM 3000
-+/* minimum and maximum self cleaning periods in seconds */
-+#define SPS30_AUTO_CLEANING_PERIOD_MIN 0
-+#define SPS30_AUTO_CLEANING_PERIOD_MAX 604800
+  cpu0_crit: trip1 {
+    ...
+  };
+};
 
- /* SPS30 commands */
- #define SPS30_START_MEAS 0x0010
-@@ -37,6 +38,9 @@
- #define SPS30_READ_DATA 0x0300
- #define SPS30_READ_SERIAL 0xd033
- #define SPS30_START_FAN_CLEANING 0x5607
-+#define SPS30_AUTO_CLEANING_PERIOD 0x8004
-+/* not a sensor command per se, used only to distinguish write from read */
-+#define SPS30_READ_AUTO_CLEANING_PERIOD 0x8005
+If we keep increasing enumeration with the node name this would become:
 
- enum {
- 	PM1,
-@@ -45,6 +49,11 @@ enum {
- 	PM10,
- };
+trips {
+  cpu0_alert0: trip0 {
+    ...
+  };
 
-+enum {
-+	RESET,
-+	MEASURING,
-+};
-+
- struct sps30_state {
- 	struct i2c_client *client;
- 	/*
-@@ -52,6 +61,7 @@ struct sps30_state {
- 	 * Must be held whenever sequence of commands is to be executed.
- 	 */
- 	struct mutex lock;
-+	int state;
- };
+  cpu0_alert1: trip1 {
+    ...
+  };
 
- DECLARE_CRC8_TABLE(sps30_crc8_table);
-@@ -107,6 +117,9 @@ static int sps30_do_cmd(struct sps30_state *state, u16 cmd, u8 *data, int size)
- 	case SPS30_START_FAN_CLEANING:
- 		ret = sps30_write_then_read(state, buf, 2, NULL, 0);
- 		break;
-+	case SPS30_READ_AUTO_CLEANING_PERIOD:
-+		buf[0] = SPS30_AUTO_CLEANING_PERIOD >> 8;
-+		buf[1] = (u8)SPS30_AUTO_CLEANING_PERIOD;
- 	case SPS30_READ_DATA_READY_FLAG:
- 	case SPS30_READ_DATA:
- 	case SPS30_READ_SERIAL:
-@@ -114,6 +127,15 @@ static int sps30_do_cmd(struct sps30_state *state, u16 cmd, u8 *data, int size)
- 		size += size / 2;
- 		ret = sps30_write_then_read(state, buf, 2, buf, size);
- 		break;
-+	case SPS30_AUTO_CLEANING_PERIOD:
-+		buf[2] = data[0];
-+		buf[3] = data[1];
-+		buf[4] = crc8(sps30_crc8_table, &buf[2], 2, CRC8_INIT_VALUE);
-+		buf[5] = data[2];
-+		buf[6] = data[3];
-+		buf[7] = crc8(sps30_crc8_table, &buf[5], 2, CRC8_INIT_VALUE);
-+		ret = sps30_write_then_read(state, buf, 8, NULL, 0);
-+		break;
- 	}
+  cpu0_crit: trip2 {
+    ...
+  };
+};
 
- 	if (ret)
-@@ -170,6 +192,14 @@ static int sps30_do_meas(struct sps30_state *state, s32 *data, int size)
- 	int i, ret, tries = 5;
- 	u8 tmp[16];
+i.e. the node name of the critical trip-point changes, which might be
+a concern for dtsi's that override a value, though they should
+probably use the phandle &cpu0_crit anyway. If this is a concern we
+could change the node names to 'alert0' and 'crit'.
 
-+	if (state->state == RESET) {
-+		ret = sps30_do_cmd(state, SPS30_START_MEAS, NULL, 0);
-+		if (ret)
-+			return ret;
-+
-+		state->state = MEASURING;
-+	}
-+
- 	while (tries--) {
- 		ret = sps30_do_cmd(state, SPS30_READ_DATA_READY_FLAG, tmp, 2);
- 		if (ret)
-@@ -276,6 +306,24 @@ static int sps30_read_raw(struct iio_dev *indio_dev,
- 	return -EINVAL;
- }
+I looked around a bit and actually I kinda like the naming scheme used
+by hisilicon/hi6220.dtsi, mediatek/mt8173.dtsi and rockchip/rk3328.dtsi
+(with minor variations):
 
-+static int sps30_do_cmd_reset(struct sps30_state *state)
-+{
-+	int ret;
-+
-+	ret = sps30_do_cmd(state, SPS30_RESET, NULL, 0);
-+	msleep(300);
-+	/*
-+	 * Power-on-reset causes sensor to produce some glitch on i2c bus and
-+	 * some controllers end up in error state. Recover simply by placing
-+	 * some data on the bus, for example STOP_MEAS command, which
-+	 * is NOP in this case.
-+	 */
-+	sps30_do_cmd(state, SPS30_STOP_MEAS, NULL, 0);
-+	state->state = RESET;
-+
-+	return ret;
-+}
-+
- static ssize_t start_cleaning_store(struct device *dev,
- 				    struct device_attribute *attr,
- 				    const char *buf, size_t len)
-@@ -296,10 +344,82 @@ static ssize_t start_cleaning_store(struct device *dev,
- 	return len;
- }
+trips {
+        threshold: trip-point@0 {
+                temperature = <68000>;
+                hysteresis = <2000>;
+                type = "passive";
+        };
 
-+static ssize_t cleaning_period_show(struct device *dev,
-+				      struct device_attribute *attr,
-+				      char *buf)
-+{
-+	struct iio_dev *indio_dev = dev_to_iio_dev(dev);
-+	struct sps30_state *state = iio_priv(indio_dev);
-+	u8 tmp[4];
-+	int ret;
-+
-+	mutex_lock(&state->lock);
-+	ret = sps30_do_cmd(state, SPS30_READ_AUTO_CLEANING_PERIOD, tmp, 4);
-+	mutex_unlock(&state->lock);
-+	if (ret)
-+		return ret;
-+
-+	return sprintf(buf, "%d\n", get_unaligned_be32(tmp));
-+}
-+
-+static ssize_t cleaning_period_store(struct device *dev,
-+				       struct device_attribute *attr,
-+				       const char *buf, size_t len)
-+{
-+	struct iio_dev *indio_dev = dev_to_iio_dev(dev);
-+	struct sps30_state *state = iio_priv(indio_dev);
-+	int val, ret;
-+	u8 tmp[4];
-+
-+	if (kstrtoint(buf, 0, &val))
-+		return -EINVAL;
-+
-+	if ((val < SPS30_AUTO_CLEANING_PERIOD_MIN) &&
-+	    (val > SPS30_AUTO_CLEANING_PERIOD_MAX))
-+		return -EINVAL;
-+
-+	put_unaligned_be32(val, tmp);
-+
-+	mutex_lock(&state->lock);
-+	ret = sps30_do_cmd(state, SPS30_AUTO_CLEANING_PERIOD, tmp, 0);
-+	if (ret) {
-+		mutex_unlock(&state->lock);
-+		return ret;
-+	}
-+
-+	msleep(20);
-+
-+	/*
-+	 * sensor requires reset in order to return up to date self cleaning
-+	 * period
-+	 */
-+	ret = sps30_do_cmd_reset(state);
-+	if (ret)
-+		dev_warn(dev,
-+			 "period changed but reads will return the old value\n");
-+
-+	mutex_unlock(&state->lock);
-+
-+	return len;
-+}
-+
-+static ssize_t cleaning_period_available_show(struct device *dev,
-+					      struct device_attribute *attr,
-+					      char *buf)
-+{
-+	return snprintf(buf, PAGE_SIZE, "[%d %d %d]\n",
-+			SPS30_AUTO_CLEANING_PERIOD_MIN, 1,
-+			SPS30_AUTO_CLEANING_PERIOD_MAX);
-+}
-+
- static IIO_DEVICE_ATTR_WO(start_cleaning, 0);
-+static IIO_DEVICE_ATTR_RW(cleaning_period, 0);
-+static IIO_DEVICE_ATTR_RO(cleaning_period_available, 0);
+        target: trip-point@1 {
+                temperature = <85000>;
+                hysteresis = <2000>;
+                type = "passive";
+        };
 
- static struct attribute *sps30_attrs[] = {
- 	&iio_dev_attr_start_cleaning.dev_attr.attr,
-+	&iio_dev_attr_cleaning_period.dev_attr.attr,
-+	&iio_dev_attr_cleaning_period_available.dev_attr.attr,
- 	NULL
- };
+        cpu_crit: cpu_crit@0 {
+                temperature = <115000>;
+                hysteresis = <2000>;
+                type = "critical";
+        };
+};
 
-@@ -362,6 +482,7 @@ static int sps30_probe(struct i2c_client *client)
- 	state = iio_priv(indio_dev);
- 	i2c_set_clientdata(client, indio_dev);
- 	state->client = client;
-+	state->state = RESET;
- 	indio_dev->dev.parent = &client->dev;
- 	indio_dev->info = &sps30_info;
- 	indio_dev->name = client->name;
-@@ -373,19 +494,11 @@ static int sps30_probe(struct i2c_client *client)
- 	mutex_init(&state->lock);
- 	crc8_populate_msb(sps30_crc8_table, SPS30_CRC8_POLYNOMIAL);
+If we were to use this we'd have to adapt it slightly since we have
+multiple thermal zones. In line with the other scheme this could be
+cpuN_threshold, cpuN_target and cpuN_crit.
 
--	ret = sps30_do_cmd(state, SPS30_RESET, NULL, 0);
-+	ret = sps30_do_cmd_reset(state);
- 	if (ret) {
- 		dev_err(&client->dev, "failed to reset device\n");
- 		return ret;
- 	}
--	msleep(300);
--	/*
--	 * Power-on-reset causes sensor to produce some glitch on i2c bus and
--	 * some controllers end up in error state. Recover simply by placing
--	 * some data on the bus, for example STOP_MEAS command, which
--	 * is NOP in this case.
--	 */
--	sps30_do_cmd(state, SPS30_STOP_MEAS, NULL, 0);
+Up to you, just providing some options ;-)
 
- 	ret = sps30_do_cmd(state, SPS30_READ_SERIAL, buf, sizeof(buf));
- 	if (ret) {
-@@ -395,12 +508,6 @@ static int sps30_probe(struct i2c_client *client)
- 	/* returned serial number is already NUL terminated */
- 	dev_info(&client->dev, "serial number: %s\n", buf);
+> > You could also consider to add the additional trip point in this
+> > series if you agree that it will be needed.
+> 
+> I expect that we'll end up with at least 2 passive trip points but I
+> don't know what temperature to set the next one at. So let's just go
+> with 1 passive and 1 critical trip point in this series and you can
+> send a patch adding more once we've characterised IPA.
 
--	ret = sps30_do_cmd(state, SPS30_START_MEAS, NULL, 0);
--	if (ret) {
--		dev_err(&client->dev, "failed to start measurement\n");
--		return ret;
--	}
--
- 	ret = devm_add_action_or_reset(&client->dev, sps30_stop_meas, state);
- 	if (ret)
- 		return ret;
---
-2.20.1
+Sounds good
 
+Thanks!
+
+Matthias
