@@ -7,49 +7,46 @@ X-Spam-Status: No, score=-10.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0BEABC43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:40:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A95DDC43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:40:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D281621841
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:40:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6ED1F218B0
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:40:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547217623;
-	bh=iWqY+NJmh5DlIMqCtxYBPxBm831vY7eX95A9Au8rMV0=;
+	s=default; t=1547217628;
+	bh=Sfuiqqti5g9rkazo/6CT/4BMvuQuaqpMbbuJAGVpWrg=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=I8G4T9WYJlI9LaBNz/OaAo8VSTYqWn8wC7lGZcCiaCgdAckdi/V2zD4QFeX/Q5GP+
-	 MDtN/dysYeIUOSQGEzBrcMLDt0HfiTCQfKdu5KCTfA4hBMK12y701sNHC1z0/sL/01
-	 C80ANkG/VJzBRSYQXyiH+QZWcwRro7pNah9fQ0ds=
+	b=lIV1bR0Kx/G15v/Rv2tF1pvvI27QqqZkia8BjjHQkx66FqDF4Hr/0vBYqFurSSDjT
+	 Hbbgx6b/oQ8MENesYzXXLqOV8H7RqiFoTLc/72dY3fBJD2TPPiBLZH8VFul9kw0Nuv
+	 DsL4f/r4PhW+Ko77S5/feYxFh4RWCbHuNYv0Asrg=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391213AbfAKOkX (ORCPT
+        id S2391226AbfAKOk1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 11 Jan 2019 09:40:23 -0500
-Received: from mail.kernel.org ([198.145.29.99]:32940 "EHLO mail.kernel.org"
+        Fri, 11 Jan 2019 09:40:27 -0500
+Received: from mail.kernel.org ([198.145.29.99]:32992 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2391197AbfAKOkU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Jan 2019 09:40:20 -0500
+        id S2391207AbfAKOkX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 Jan 2019 09:40:23 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 011772063F;
-        Fri, 11 Jan 2019 14:40:18 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 03FAF206B6;
+        Fri, 11 Jan 2019 14:40:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547217619;
-        bh=iWqY+NJmh5DlIMqCtxYBPxBm831vY7eX95A9Au8rMV0=;
+        s=default; t=1547217622;
+        bh=Sfuiqqti5g9rkazo/6CT/4BMvuQuaqpMbbuJAGVpWrg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=sPFDjJW4VGG0etHkXgjWWPJfvojkPnheN0TsRnbMlv5gQnQwMRJ5y2OXFCEuCAZ3h
-         bYJOI6PutOFvl6erCrAM7obJnEahlBIOhW4xBIjv8k4aqtQMXyHmpftVvpYmomMwaQ
-         RS0lHlGUajpkU9Mxg6z8v4I4rBzn5UjFBkCoPEWE=
+        b=0tpuSHXky9Io2bcRL0jLzrH82NvS5ASdrXt4qbnN34vcYhCyV06fV0KESADMLxJSE
+         zP0qgFeS4yMSKLBO0Jwvsay7283R6BxIJfFpUIIx5U7Kq5VbSvXCWFPRrO6uL8spgr
+         FR0chnrYGgPjiDu2c4Y80Ee+3cp1uZe+bYUGjfmE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Guenter Roeck <linux@roeck-us.net>,
-        Breno Leitao <leitao@debian.org>,
-        =?UTF-8?q?Michal=20Such=C3=A1nek?= <msuchanek@suse.de>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Christoph Biedl <linux-kernel.bfrz@manchmal.in-ulm.de>
-Subject: [PATCH 4.19 128/148] Revert "powerpc/tm: Unset MSR[TS] if not recheckpointing"
-Date:   Fri, 11 Jan 2019 15:15:06 +0100
-Message-Id: <20190111131119.396416827@linuxfoundation.org>
+        stable@vger.kernel.org, Breno Leitao <leitao@debian.org>,
+        Michael Ellerman <mpe@ellerman.id.au>
+Subject: [PATCH 4.19 129/148] powerpc/tm: Set MSR[TS] just prior to recheckpoint
+Date:   Fri, 11 Jan 2019 15:15:07 +0100
+Message-Id: <20190111131119.437264481@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190111131114.337122649@linuxfoundation.org>
 References: <20190111131114.337122649@linuxfoundation.org>
@@ -68,93 +65,189 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+From: Breno Leitao <leitao@debian.org>
 
-This reverts commit a9935a12768851762089fda8e5a9daaf0231808e which is
-commit 6f5b9f018f4c7686fd944d920209d1382d320e4e upstream.
+commit e1c3743e1a20647c53b719dbf28b48f45d23f2cd upstream.
 
-It breaks the powerpc build, so drop it from the tree until a fix goes
-upstream.
+On a signal handler return, the user could set a context with MSR[TS] bits
+set, and these bits would be copied to task regs->msr.
 
-Reported-by: Guenter Roeck <linux@roeck-us.net>
-Cc: Breno Leitao <leitao@debian.org>
-Cc: Michal Suchánek <msuchanek@suse.de>
-Cc: Michael Ellerman <mpe@ellerman.id.au>
-Cc: Christoph Biedl <linux-kernel.bfrz@manchmal.in-ulm.de>
+At restore_tm_sigcontexts(), after current task regs->msr[TS] bits are set,
+several __get_user() are called and then a recheckpoint is executed.
+
+This is a problem since a page fault (in kernel space) could happen when
+calling __get_user(). If it happens, the process MSR[TS] bits were
+already set, but recheckpoint was not executed, and SPRs are still invalid.
+
+The page fault can cause the current process to be de-scheduled, with
+MSR[TS] active and without tm_recheckpoint() being called.  More
+importantly, without TEXASR[FS] bit set also.
+
+Since TEXASR might not have the FS bit set, and when the process is
+scheduled back, it will try to reclaim, which will be aborted because of
+the CPU is not in the suspended state, and, then, recheckpoint. This
+recheckpoint will restore thread->texasr into TEXASR SPR, which might be
+zero, hitting a BUG_ON().
+
+	kernel BUG at /build/linux-sf3Co9/linux-4.9.30/arch/powerpc/kernel/tm.S:434!
+	cpu 0xb: Vector: 700 (Program Check) at [c00000041f1576d0]
+	    pc: c000000000054550: restore_gprs+0xb0/0x180
+	    lr: 0000000000000000
+	    sp: c00000041f157950
+	   msr: 8000000100021033
+	  current = 0xc00000041f143000
+	  paca    = 0xc00000000fb86300	 softe: 0	 irq_happened: 0x01
+	    pid   = 1021, comm = kworker/11:1
+	kernel BUG at /build/linux-sf3Co9/linux-4.9.30/arch/powerpc/kernel/tm.S:434!
+	Linux version 4.9.0-3-powerpc64le (debian-kernel@lists.debian.org) (gcc version 6.3.0 20170516 (Debian 6.3.0-18) ) #1 SMP Debian 4.9.30-2+deb9u2 (2017-06-26)
+	enter ? for help
+	[c00000041f157b30] c00000000001bc3c tm_recheckpoint.part.11+0x6c/0xa0
+	[c00000041f157b70] c00000000001d184 __switch_to+0x1e4/0x4c0
+	[c00000041f157bd0] c00000000082eeb8 __schedule+0x2f8/0x990
+	[c00000041f157cb0] c00000000082f598 schedule+0x48/0xc0
+	[c00000041f157ce0] c0000000000f0d28 worker_thread+0x148/0x610
+	[c00000041f157d80] c0000000000f96b0 kthread+0x120/0x140
+	[c00000041f157e30] c00000000000c0e0 ret_from_kernel_thread+0x5c/0x7c
+
+This patch simply delays the MSR[TS] set, so, if there is any page fault in
+the __get_user() section, it does not have regs->msr[TS] set, since the TM
+structures are still invalid, thus avoiding doing TM operations for
+in-kernel exceptions and possible process reschedule.
+
+With this patch, the MSR[TS] will only be set just before recheckpointing
+and setting TEXASR[FS] = 1, thus avoiding an interrupt with TM registers in
+invalid state.
+
+Other than that, if CONFIG_PREEMPT is set, there might be a preemption just
+after setting MSR[TS] and before tm_recheckpoint(), thus, this block must
+be atomic from a preemption perspective, thus, calling
+preempt_disable/enable() on this code.
+
+It is not possible to move tm_recheckpoint to happen earlier, because it is
+required to get the checkpointed registers from userspace, with
+__get_user(), thus, the only way to avoid this undesired behavior is
+delaying the MSR[TS] set.
+
+The 32-bits signal handler seems to be safe this current issue, but, it
+might be exposed to the preemption issue, thus, disabling preemption in
+this chunk of code.
+
+Changes from v2:
+ * Run the critical section with preempt_disable.
+
+Fixes: 87b4e5393af7 ("powerpc/tm: Fix return of active 64bit signals")
+Cc: stable@vger.kernel.org (v3.9+)
+Signed-off-by: Breno Leitao <leitao@debian.org>
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- arch/powerpc/kernel/signal_32.c |   18 +++++-------------
- arch/powerpc/kernel/signal_64.c |   20 ++++----------------
- 2 files changed, 9 insertions(+), 29 deletions(-)
+ arch/powerpc/kernel/signal_32.c |   20 +++++++++++++++++-
+ arch/powerpc/kernel/signal_64.c |   44 +++++++++++++++++++++++++++-------------
+ 2 files changed, 49 insertions(+), 15 deletions(-)
 
 --- a/arch/powerpc/kernel/signal_32.c
 +++ b/arch/powerpc/kernel/signal_32.c
-@@ -1140,11 +1140,11 @@ SYSCALL_DEFINE0(rt_sigreturn)
- {
- 	struct rt_sigframe __user *rt_sf;
- 	struct pt_regs *regs = current_pt_regs();
--	int tm_restore = 0;
- #ifdef CONFIG_PPC_TRANSACTIONAL_MEM
- 	struct ucontext __user *uc_transact;
- 	unsigned long msr_hi;
- 	unsigned long tmp;
-+	int tm_restore = 0;
- #endif
- 	/* Always make any pending restarted system calls return -EINTR */
- 	current->restart_block.fn = do_no_restart_syscall;
-@@ -1192,19 +1192,11 @@ SYSCALL_DEFINE0(rt_sigreturn)
- 				goto bad;
- 		}
+@@ -848,7 +848,23 @@ static long restore_tm_user_regs(struct
+ 	/* If TM bits are set to the reserved value, it's an invalid context */
+ 	if (MSR_TM_RESV(msr_hi))
+ 		return 1;
+-	/* Pull in the MSR TM bits from the user context */
++
++	/*
++	 * Disabling preemption, since it is unsafe to be preempted
++	 * with MSR[TS] set without recheckpointing.
++	 */
++	preempt_disable();
++
++	/*
++	 * CAUTION:
++	 * After regs->MSR[TS] being updated, make sure that get_user(),
++	 * put_user() or similar functions are *not* called. These
++	 * functions can generate page faults which will cause the process
++	 * to be de-scheduled with MSR[TS] set but without calling
++	 * tm_recheckpoint(). This can cause a bug.
++	 *
++	 * Pull in the MSR TM bits from the user context
++	 */
+ 	regs->msr = (regs->msr & ~MSR_TS_MASK) | (msr_hi & MSR_TS_MASK);
+ 	/* Now, recheckpoint.  This loads up all of the checkpointed (older)
+ 	 * registers, including FP and V[S]Rs.  After recheckpointing, the
+@@ -873,6 +889,8 @@ static long restore_tm_user_regs(struct
  	}
--	if (!tm_restore) {
--		/*
--		 * Unset regs->msr because ucontext MSR TS is not
--		 * set, and recheckpoint was not called. This avoid
--		 * hitting a TM Bad thing at RFID
--		 */
--		regs->msr &= ~MSR_TS_MASK;
--	}
--	/* Fall through, for non-TM restore */
--#endif
- 	if (!tm_restore)
--		if (do_setcontext(&rt_sf->uc, regs, 1))
--			goto bad;
-+		/* Fall through, for non-TM restore */
-+#endif
-+	if (do_setcontext(&rt_sf->uc, regs, 1))
-+		goto bad;
+ #endif
  
- 	/*
- 	 * It's not clear whether or why it is desirable to save the
++	preempt_enable();
++
+ 	return 0;
+ }
+ #endif
 --- a/arch/powerpc/kernel/signal_64.c
 +++ b/arch/powerpc/kernel/signal_64.c
-@@ -740,23 +740,11 @@ SYSCALL_DEFINE0(rt_sigreturn)
- 					   &uc_transact->uc_mcontext))
- 			goto badframe;
- 	}
--#endif
-+	else
- 	/* Fall through, for non-TM restore */
--	if (!MSR_TM_ACTIVE(msr)) {
--		/*
--		 * Unset MSR[TS] on the thread regs since MSR from user
--		 * context does not have MSR active, and recheckpoint was
--		 * not called since restore_tm_sigcontexts() was not called
--		 * also.
--		 *
--		 * If not unsetting it, the code can RFID to userspace with
--		 * MSR[TS] set, but without CPU in the proper state,
--		 * causing a TM bad thing.
--		 */
--		current->thread.regs->msr &= ~MSR_TS_MASK;
--		if (restore_sigcontext(current, NULL, 1, &uc->uc_mcontext))
--			goto badframe;
--	}
-+#endif
-+	if (restore_sigcontext(current, NULL, 1, &uc->uc_mcontext))
-+		goto badframe;
+@@ -467,20 +467,6 @@ static long restore_tm_sigcontexts(struc
+ 	if (MSR_TM_RESV(msr))
+ 		return -EINVAL;
  
- 	if (restore_altstack(&uc->uc_stack))
- 		goto badframe;
+-	/* pull in MSR TS bits from user context */
+-	regs->msr = (regs->msr & ~MSR_TS_MASK) | (msr & MSR_TS_MASK);
+-
+-	/*
+-	 * Ensure that TM is enabled in regs->msr before we leave the signal
+-	 * handler. It could be the case that (a) user disabled the TM bit
+-	 * through the manipulation of the MSR bits in uc_mcontext or (b) the
+-	 * TM bit was disabled because a sufficient number of context switches
+-	 * happened whilst in the signal handler and load_tm overflowed,
+-	 * disabling the TM bit. In either case we can end up with an illegal
+-	 * TM state leading to a TM Bad Thing when we return to userspace.
+-	 */
+-	regs->msr |= MSR_TM;
+-
+ 	/* pull in MSR LE from user context */
+ 	regs->msr = (regs->msr & ~MSR_LE) | (msr & MSR_LE);
+ 
+@@ -572,6 +558,34 @@ static long restore_tm_sigcontexts(struc
+ 	tm_enable();
+ 	/* Make sure the transaction is marked as failed */
+ 	tsk->thread.tm_texasr |= TEXASR_FS;
++
++	/*
++	 * Disabling preemption, since it is unsafe to be preempted
++	 * with MSR[TS] set without recheckpointing.
++	 */
++	preempt_disable();
++
++	/* pull in MSR TS bits from user context */
++	regs->msr = (regs->msr & ~MSR_TS_MASK) | (msr & MSR_TS_MASK);
++
++	/*
++	 * Ensure that TM is enabled in regs->msr before we leave the signal
++	 * handler. It could be the case that (a) user disabled the TM bit
++	 * through the manipulation of the MSR bits in uc_mcontext or (b) the
++	 * TM bit was disabled because a sufficient number of context switches
++	 * happened whilst in the signal handler and load_tm overflowed,
++	 * disabling the TM bit. In either case we can end up with an illegal
++	 * TM state leading to a TM Bad Thing when we return to userspace.
++	 *
++	 * CAUTION:
++	 * After regs->MSR[TS] being updated, make sure that get_user(),
++	 * put_user() or similar functions are *not* called. These
++	 * functions can generate page faults which will cause the process
++	 * to be de-scheduled with MSR[TS] set but without calling
++	 * tm_recheckpoint(). This can cause a bug.
++	 */
++	regs->msr |= MSR_TM;
++
+ 	/* This loads the checkpointed FP/VEC state, if used */
+ 	tm_recheckpoint(&tsk->thread);
+ 
+@@ -585,6 +599,8 @@ static long restore_tm_sigcontexts(struc
+ 		regs->msr |= MSR_VEC;
+ 	}
+ 
++	preempt_enable();
++
+ 	return err;
+ }
+ #endif
 
 
