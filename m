@@ -7,38 +7,38 @@ X-Spam-Status: No, score=-10.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5693EC43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:49:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 70AEDC43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:49:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 27605218A4
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:49:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3ED722063F
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:49:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547218166;
-	bh=Qi/zkqveRfUhXddwbTRb5f3pdnt67YTSr7WSKxlzjMw=;
+	s=default; t=1547218169;
+	bh=4UHGELlQ0XqYKDYuYVqTmbIBErK4vSLq/6o5gpd4PVU=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=MVoEFEUwQ5tW4H8zPJ/Kz4QvdM3vQ9As6cetJFqSZM7PaCzqOAx7DUyS3ReKXygH7
-	 pAL4BZ8WbggmC23tU2TN8kHSDIv0sZfRfRnII8DvFkfmO9ORbu44HdpI1oTw1j01hO
-	 ijCXUqmvEgr+SLHhQEY1vyBXikd6uQDJc8Fl+aOk=
+	b=rUv9rLzgOE2xK1+N1qVTkvo6Ho6fYC26NMY6vCfpiEg7ESoU46eoNaX01Sg/0HYmn
+	 8Mx+VzbkauN2UvSTltErETKKhHYAI7T94eYQyJG/lP97Vxxyzr6CY92nRfgAR38X7z
+	 +7VnA1LwqRxJAKpG6PYGZr4pwlKbsPCoo/AaG7AY=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391593AbfAKOtY (ORCPT
+        id S2391607AbfAKOt2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 11 Jan 2019 09:49:24 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39838 "EHLO mail.kernel.org"
+        Fri, 11 Jan 2019 09:49:28 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39886 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2391578AbfAKOtV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Jan 2019 09:49:21 -0500
+        id S2391586AbfAKOtY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 Jan 2019 09:49:24 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4E86B2063F;
-        Fri, 11 Jan 2019 14:49:20 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E99982063F;
+        Fri, 11 Jan 2019 14:49:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547218160;
-        bh=Qi/zkqveRfUhXddwbTRb5f3pdnt67YTSr7WSKxlzjMw=;
+        s=default; t=1547218163;
+        bh=4UHGELlQ0XqYKDYuYVqTmbIBErK4vSLq/6o5gpd4PVU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=qRcke5WAiiiucBiKgyh6MLddP8s6B+8SgxwX+4sSSQm3GSn4fASnebAPQjN8s8PxT
-         JChOSkUdEBZ95n41wEgwWGvFwiWBkcQFlqrvS7bNTNxr8qFHY8XdNpHeekQi8mHK5o
-         ZKmZ5AUTx07IuVvFnhMzTyaSzZjKiMGXB7IP0r1g=
+        b=u/l+pL2Fkq1Xzs+/27tUExk7e/n02M9TPKR7yuo3lR/IT1CcIdJaBtBliGHSNqE/1
+         HUPm8dGBnlRc6cNzgMwl8dE9YcoVgJ/LUag/duGxrn1D7+CoWB0wUDx5jX9AWCZPQk
+         NVuhuVzin1KMdtr/es+JkCI7g+k5NlOulWeFl2xk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -49,12 +49,12 @@ Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Ricardo Neri <ricardo.neri-calderon@linux.intel.com>,
         Sohil Mehta <sohil.mehta@intel.com>,
         Joerg Roedel <jroedel@suse.de>
-Subject: [PATCH 4.14 098/105] iommu/vt-d: Handle domain agaw being less than iommu agaw
-Date:   Fri, 11 Jan 2019 15:15:09 +0100
-Message-Id: <20190111131111.065157899@linuxfoundation.org>
+Subject: [PATCH 4.19 134/148] iommu/vt-d: Handle domain agaw being less than iommu agaw
+Date:   Fri, 11 Jan 2019 15:15:12 +0100
+Message-Id: <20190111131119.621157082@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190111131102.899065735@linuxfoundation.org>
-References: <20190111131102.899065735@linuxfoundation.org>
+In-Reply-To: <20190111131114.337122649@linuxfoundation.org>
+References: <20190111131114.337122649@linuxfoundation.org>
 User-Agent: quilt/0.65
 X-stable: review
 X-Patchwork-Hint: ignore
@@ -66,7 +66,7 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.14-stable review patch.  If anyone has any objections, please let me know.
+4.19-stable review patch.  If anyone has any objections, please let me know.
 
 ------------------
 
@@ -106,7 +106,7 @@ Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 --- a/drivers/iommu/intel-iommu.c
 +++ b/drivers/iommu/intel-iommu.c
-@@ -2093,7 +2093,7 @@ static int domain_context_mapping_one(st
+@@ -2069,7 +2069,7 @@ static int domain_context_mapping_one(st
  	 * than default.  Unnecessary for PT mode.
  	 */
  	if (translation != CONTEXT_TT_PASS_THROUGH) {
@@ -115,7 +115,7 @@ Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
  			ret = -ENOMEM;
  			pgd = phys_to_virt(dma_pte_addr(pgd));
  			if (!dma_pte_present(pgd))
-@@ -2107,7 +2107,7 @@ static int domain_context_mapping_one(st
+@@ -2083,7 +2083,7 @@ static int domain_context_mapping_one(st
  			translation = CONTEXT_TT_MULTI_LEVEL;
  
  		context_set_address_root(context, virt_to_phys(pgd));
