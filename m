@@ -2,49 +2,49 @@ Return-Path: <SRS0=uvhX=PT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 09378C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 19:14:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 402FFC43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 19:14:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D1F5220872
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 19:14:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 125E121841
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 19:14:29 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=chronox.de header.i=@chronox.de header.b="n7SLib3x"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=chronox.de header.i=@chronox.de header.b="CkM3/MFz"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390423AbfAKTOI (ORCPT
+        id S2390405AbfAKTOF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 11 Jan 2019 14:14:08 -0500
-Received: from mo4-p03-ob.smtp.rzone.de ([81.169.146.174]:14454 "EHLO
-        mo4-p03-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390318AbfAKTN6 (ORCPT
+        Fri, 11 Jan 2019 14:14:05 -0500
+Received: from mo4-p02-ob.smtp.rzone.de ([85.215.255.81]:12942 "EHLO
+        mo4-p02-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2390315AbfAKTN4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Jan 2019 14:13:58 -0500
+        Fri, 11 Jan 2019 14:13:56 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1547234033;
         s=strato-dkim-0002; d=chronox.de;
         h=References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:
         X-RZG-CLASS-ID:X-RZG-AUTH:From:Subject:Sender;
-        bh=4AYi+MkUrKf+lfwSEQQdfE9a2fKEILbeYVFC8+EZ1GY=;
-        b=n7SLib3xWjsNanqT0jce6PpC5tZ72dCLOYHMxw1PKMsbdrsVMvXp1j25tF+M9wXzuT
-        kwB4XDVg5l7kvE/2sI+7pno9qsy7Bz9KgzV0h70jyNAX67Bw4NnQXIrMvGvEjbK0dj8s
-        KIXqP/4Ezx6pjxc7wM4tZtmljy+90/zLYbXazCN/NkcJMjq7xCtfbVUvxD17Ee0uJYy1
-        dDJlX4aWKo/nE9Po8YcQSkbNTd/yt5nxBf0iozEFLMDg/RYooSGMvQB2ZZmcsNI3YSd3
-        1NbO6/0F4kNZT8xgg951EWCKimy3fXQAqJbqZhWXJWfipxtX7rHGYjiLQfPB4kgiSABh
-        zd1g==
+        bh=xVDNMA4x3xNK9BgtVUxaQwWYMgOno7oBx3A0xWT0wh4=;
+        b=CkM3/MFzXqU8eWcyRMNCbhhn6zu/po3EbZkcuJ8bcmqTw5DkeVs+36WJWHFlwwesK3
+        HpaZaps0JI0htB3+WHYaGO40V7sgMc0l3DAuWPmLCOMtirUtUSBMPz/0wPpBTuI+RR3m
+        sWxjc4MEhp64MUbiXWZhqNG3Z4BjYwmiLfAQSkSZDProF0xcW2sgd4DQwz5LvB0pevun
+        jIdgFdPmgZ48/Kl6xNCZArtdihMqXiN3hCZUmHDuiFDtunHJGHswM0DeDv4WCW4MRT9S
+        T+IDu1YyRZ1E76RRgLY6ezXyizIokFugFlF4+9l7uPKBtW/MWXB9zSXf2jOtubdxuk6E
+        QgkQ==
 X-RZG-AUTH: ":P2ERcEykfu11Y98lp/T7+hdri+uKZK8TKWEqNyiHySGSa9k9xmwdNnzGHXPaLvSbdkg="
 X-RZG-CLASS-ID: mo00
 Received: from positron.chronox.de
         by smtp.strato.de (RZmta 44.9 DYNA|AUTH)
-        with ESMTPSA id 309bcfv0BJDXflE
+        with ESMTPSA id 309bcfv0BJDSfl9
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (curve secp521r1 with 521 ECDH bits, eq. 15360 bits RSA))
         (Client did not present a certificate);
-        Fri, 11 Jan 2019 20:13:33 +0100 (CET)
+        Fri, 11 Jan 2019 20:13:28 +0100 (CET)
 From:   Stephan =?ISO-8859-1?Q?M=FCller?= <smueller@chronox.de>
-To:     Eric Biggers <ebiggers@kernel.org>,
-        Herbert Xu <herbert@gondor.apana.org.au>
-Cc:     James Bottomley <James.Bottomley@hansenpartnership.com>,
+To:     Eric Biggers <ebiggers@kernel.org>
+Cc:     Herbert Xu <herbert@gondor.apana.org.au>,
+        James Bottomley <James.Bottomley@hansenpartnership.com>,
         Andy Lutomirski <luto@amacapital.net>,
         "Lee, Chun-Yi" <joeyli.kernel@gmail.com>,
         "Rafael J . Wysocki" <rjw@rjwysocki.net>,
@@ -59,11 +59,11 @@ Cc:     James Bottomley <James.Bottomley@hansenpartnership.com>,
         Randy Dunlap <rdunlap@infradead.org>,
         Jann Horn <jannh@google.com>,
         Andy Lutomirski <luto@kernel.org>, linux-crypto@vger.kernel.org
-Subject: [PATCH 0/6] General Key Derivation Function Support
-Date:   Fri, 11 Jan 2019 20:08:16 +0100
-Message-ID: <9733066.Vrs4h5eWcW@positron.chronox.de>
-In-Reply-To: <20190109082103.GA8586@sol.localdomain>
-References: <20190103143227.9138-1-jlee@suse.com> <1894062.aDvIuj92vB@tauon.chronox.de> <20190109082103.GA8586@sol.localdomain>
+Subject: [PATCH 5/6] crypto: hkdf - add known answer tests
+Date:   Fri, 11 Jan 2019 20:10:56 +0100
+Message-ID: <9857029.1Sm7LFDBlJ@positron.chronox.de>
+In-Reply-To: <9733066.Vrs4h5eWcW@positron.chronox.de>
+References: <20190103143227.9138-1-jlee@suse.com> <20190109082103.GA8586@sol.localdomain> <9733066.Vrs4h5eWcW@positron.chronox.de>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7Bit
 Content-Type: text/plain; charset="us-ascii"
@@ -72,60 +72,189 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Herbert, Eric,
+Add known answer tests to the testmgr for the HKDF (RFC5869) cipher.
 
-key derivation functions behave like a random number generator requiring
-a seed and can generate arbitrarily-sized bit sequences. As KDFs wrap
-ciphers, the first patch adds template support for the RNG part of the
-kernel crypto API. This allows the KDFs to be implemented as templates.
+The known answer tests are derived from RFC 5869 appendix A.
 
-The patches two through five add different KDFs. The immediate use in
-the kernel are:
+Note, the HKDF is considered to be a FIPS 140-2 allowed (not approved)
+cipher as of now. Yet, an allowed cipher is usable under FIPS 140-2
+rules.
 
-- SP800-108: security/keys/dh.c
+Signed-off-by: Stephan Mueller <smueller@chronox.de>
+---
+ crypto/testmgr.c |  32 +++++++++++++
+ crypto/testmgr.h | 115 +++++++++++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 147 insertions(+)
 
-- HKDF: As Eric Biggers outlined, he wants to use HKDF for Ext4 FBE
-
-Other areas of the kernel implement KDFs which should be migrated to the
-common code base offered with this patch.
-
-The last patch adds the KDF invocation to tcrypt to allow an immediate
-test invocation of the KDFs which is at least needed for FIPS 140-2
-compliance where the tcrypt module is insmod'ed during boot time to
-trigger the self tests.
-
-Eric, considering your request for supporting parallel use of HKDF, I
-instantiate the HMAC twice: once for the extract and once for the expand
-phase. The idea is that an extract operation does not collide too much
-with the expand operation (when using one instance of HMAC, the extract
-phase would invoke setkey with the salt and thus affect the expand phase).
-Though, the final extract phase setkey call with the PRK is non-atomic (at
-least in the software HMAC implementation). Thus, the caller would need
-to guarantee to invoke the extract phase while no expand phase operation
-is performed. So, maintaining two HMAC instances is not really required
-after all. What is your take on that?
-
-Stephan Mueller (6):
-  crypto: add template handling for RNGs
-  crypto: kdf - SP800-108 Key Derivation Function
-  crypto: kdf - add known answer tests
-  crypto: hkdf - RFC5869 Key Derivation Function
-  crypto: hkdf - add known answer tests
-  crypto: tcrypt - add KDF test invocation
-
- crypto/Kconfig                |  13 +
- crypto/Makefile               |   2 +
- crypto/hkdf.c                 | 290 ++++++++++++++++++++
- crypto/kdf.c                  | 492 ++++++++++++++++++++++++++++++++++
- crypto/rng.c                  |  44 +++
- crypto/tcrypt.c               |   8 +
- crypto/testmgr.c              | 258 ++++++++++++++++++
- crypto/testmgr.h              | 225 ++++++++++++++++
- include/crypto/internal/rng.h |  26 ++
- 9 files changed, 1358 insertions(+)
- create mode 100644 crypto/hkdf.c
- create mode 100644 crypto/kdf.c
-
+diff --git a/crypto/testmgr.c b/crypto/testmgr.c
+index ff9051bffa1f..aba7a3645293 100644
+--- a/crypto/testmgr.c
++++ b/crypto/testmgr.c
+@@ -3187,6 +3187,38 @@ static const struct alg_test_desc alg_test_descs[] = {
+ 		.suite = {
+ 			.hash = __VECS(ghash_tv_template)
+ 		}
++	}, {
++		.alg = "hkdf(hmac(sha1))",
++		.test = alg_test_kdf,
++		.fips_allowed = 1,
++		.suite = {
++			.kdf = {
++				.vecs = hkdf_hmac_sha1_tv_template,
++				.count = ARRAY_SIZE(hkdf_hmac_sha1_tv_template)
++			}
++		}
++	}, {
++		.alg = "hkdf(hmac(sha224))",
++		.test = alg_test_null,
++		.fips_allowed = 1,
++	}, {
++		.alg = "hkdf(hmac(sha256))",
++		.test = alg_test_kdf,
++		.fips_allowed = 1,
++		.suite = {
++			.kdf = {
++				.vecs = hkdf_hmac_sha256_tv_template,
++				.count = ARRAY_SIZE(hkdf_hmac_sha256_tv_template)
++			}
++		}
++	}, {
++		.alg = "hkdf(hmac(sha384))",
++		.test = alg_test_null,
++		.fips_allowed = 1,
++	}, {
++		.alg = "hkdf(hmac(sha512))",
++		.test = alg_test_null,
++		.fips_allowed = 1,
+ 	}, {
+ 		.alg = "hmac(md5)",
+ 		.test = alg_test_hash,
+diff --git a/crypto/testmgr.h b/crypto/testmgr.h
+index a729b66f8757..7c4aa694e0f3 100644
+--- a/crypto/testmgr.h
++++ b/crypto/testmgr.h
+@@ -28002,6 +28002,121 @@ static struct kdf_testvec kdf_dpi_hmac_sha256_tv_template[] = {
+ 	}
+ };
+ 
++/* Test vectors from RFC 5869 appendix A */
++static struct kdf_testvec hkdf_hmac_sha256_tv_template[] = {
++	{
++		.K1 = (unsigned char *)
++#ifdef __LITTLE_ENDIAN
++			"\x08\x00"			/* rta length */
++			"\x01\x00"			/* rta type */
++			"\x0d\x00\x00\x00"		/* salt length */
++#else
++			"\x00\x08"			/* rta length */
++			"\x00\x01"			/* rta type */
++			"\x00\x00\x00\x0d"		/* salt length */
++#endif
++			"\x00\x01\x02\x03\x04\x05\x06\x07"
++			"\x08\x09\x0a\x0b\x0c"		/* salt */
++			"\x0b\x0b\x0b\x0b\x0b\x0b\x0b\x0b"
++			"\x0b\x0b\x0b\x0b\x0b\x0b\x0b\x0b"
++			"\x0b\x0b\x0b\x0b\x0b\x0b",	/* IKM */
++		.K1len = 43,
++		.context = (unsigned char *)
++			"\xf0\xf1\xf2\xf3\xf4\xf5\xf6\xf7"
++			"\xf8\xf9",
++		.contextlen = 10,
++		.expected = (unsigned char *)
++			"\x3c\xb2\x5f\x25\xfa\xac\xd5\x7a"
++			"\x90\x43\x4f\x64\xd0\x36\x2f\x2a"
++			"\x2d\x2d\x0a\x90\xcf\x1a\x5a\x4c"
++			"\x5d\xb0\x2d\x56\xec\xc4\xc5\xbf"
++			"\x34\x00\x72\x08\xd5\xb8\x87\x18"
++			"\x58\x65",
++		.expectedlen = 42
++	}, {
++		.K1 = (unsigned char *)
++#ifdef __LITTLE_ENDIAN
++			"\x08\x00"			/* rta length */
++			"\x01\x00"			/* rta type */
++#else
++			"\x00\x08"			/* rta length */
++			"\x00\x01"			/* rta type */
++#endif
++			"\x00\x00\x00\x00"		/* salt length */
++			"\x0b\x0b\x0b\x0b\x0b\x0b\x0b\x0b"
++			"\x0b\x0b\x0b\x0b\x0b\x0b\x0b\x0b"
++			"\x0b\x0b\x0b\x0b\x0b\x0b",	/* IKM */
++		.K1len = 30,
++		.context = NULL,
++		.contextlen = 0,
++		.expected = (unsigned char *)
++			"\x8d\xa4\xe7\x75\xa5\x63\xc1\x8f"
++			"\x71\x5f\x80\x2a\x06\x3c\x5a\x31"
++			"\xb8\xa1\x1f\x5c\x5e\xe1\x87\x9e"
++			"\xc3\x45\x4e\x5f\x3c\x73\x8d\x2d"
++			"\x9d\x20\x13\x95\xfa\xa4\xb6\x1a"
++			"\x96\xc8",
++		.expectedlen = 42
++	}
++};
++
++/* Test vectors from RFC 5869 appendix A */
++static struct kdf_testvec hkdf_hmac_sha1_tv_template[] = {
++	{
++		.K1 = (unsigned char *)
++#ifdef __LITTLE_ENDIAN
++			"\x08\x00"			/* rta length */
++			"\x01\x00"			/* rta type */
++			"\x0d\x00\x00\x00"		/* salt length */
++#else
++			"\x00\x08"			/* rta length */
++			"\x00\x01"			/* rta type */
++			"\x00\x00\x00\x0d"		/* salt length */
++#endif
++			"\x00\x01\x02\x03\x04\x05\x06\x07"
++			"\x08\x09\x0a\x0b\x0c"		/* salt */
++			"\x0b\x0b\x0b\x0b\x0b\x0b\x0b\x0b"
++			"\x0b\x0b\x0b",			/* IKM */
++		.K1len = 32,
++		.context = (unsigned char *)
++			"\xf0\xf1\xf2\xf3\xf4\xf5\xf6\xf7"
++			"\xf8\xf9",
++		.contextlen = 10,
++		.expected = (unsigned char *)
++			"\x08\x5a\x01\xea\x1b\x10\xf3\x69"
++			"\x33\x06\x8b\x56\xef\xa5\xad\x81"
++			"\xa4\xf1\x4b\x82\x2f\x5b\x09\x15"
++			"\x68\xa9\xcd\xd4\xf1\x55\xfd\xa2"
++			"\xc2\x2e\x42\x24\x78\xd3\x05\xf3"
++			"\xf8\x96",
++		.expectedlen = 42
++	}, {
++		.K1 = (unsigned char *)
++#ifdef __LITTLE_ENDIAN
++			"\x08\x00"			/* rta length */
++			"\x01\x00"			/* rta type */
++#else
++			"\x00\x08"			/* rta length */
++			"\x00\x01"			/* rta type */
++#endif
++			"\x00\x00\x00\x00"		/* salt length */
++			"\x0b\x0b\x0b\x0b\x0b\x0b\x0b\x0b"
++			"\x0b\x0b\x0b\x0b\x0b\x0b\x0b\x0b"
++			"\x0b\x0b\x0b\x0b\x0b\x0b",	/* IKM */
++		.K1len = 30,
++		.context = NULL,
++		.contextlen = 0,
++		.expected = (unsigned char *)
++			"\x0a\xc1\xaf\x70\x02\xb3\xd7\x61"
++			"\xd1\xe5\x52\x98\xda\x9d\x05\x06"
++			"\xb9\xae\x52\x05\x72\x20\xa3\x06"
++			"\xe0\x7b\x6b\x87\xe8\xdf\x21\xd0"
++			"\xea\x00\x03\x3d\xe0\x39\x84\xd3"
++			"\x49\x18",
++		.expectedlen = 42
++	}
++};
++
+ /* Cast5 test vectors from RFC 2144 */
+ static const struct cipher_testvec cast5_tv_template[] = {
+ 	{
 -- 
 2.20.1
 
