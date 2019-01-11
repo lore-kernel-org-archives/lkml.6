@@ -7,46 +7,48 @@ X-Spam-Status: No, score=-10.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AD631C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:19:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AD8A6C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:19:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7E69D21783
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:19:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 732D02183F
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:19:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547216360;
-	bh=VeSxX8EMEuy2YtcYxp90yAOlHX2g1YLaPq7t/34q7wY=;
+	s=default; t=1547216366;
+	bh=ezxktuBPXy+XkMrISUMKTKcZKAUUO/sN2tn/dizpP50=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=PuJKV5DzFQjXKaOtsEFSEKtui5rgbLgRPymsq4ZNgNaA03M4abnclLysxGPQAMFvQ
-	 ydHC5lhPWTJh+mn8MEHcmoNLcrylg/f1WvhhkI7N31Y/7wgrG1POmUVlNHt8IIBGrn
-	 ml5p3O23BOu24v51L/Sz21exPtHzBsljeHSr7//U=
+	b=CseUPJ/Ci36EeAoLwu3MDL00vft5nqwWiUrEVbiJTzWzowmSuOSNOQhn/jTAzbZWI
+	 /oyJ6WAQe0Fx2zjoIJXP89LtYnXpOVkM2zLCey7QKQ0mBxICrxUY+zs03Ili26wte9
+	 3/vUGiwmRMllaLeavybIrMsuwVgSinkCP4af0uxA=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731694AbfAKOTT (ORCPT
+        id S1731807AbfAKOTZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 11 Jan 2019 09:19:19 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36026 "EHLO mail.kernel.org"
+        Fri, 11 Jan 2019 09:19:25 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36192 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730595AbfAKOTN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Jan 2019 09:19:13 -0500
+        id S1731683AbfAKOTT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 Jan 2019 09:19:19 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B5DD621841;
-        Fri, 11 Jan 2019 14:19:12 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 538DD2177B;
+        Fri, 11 Jan 2019 14:19:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547216353;
-        bh=VeSxX8EMEuy2YtcYxp90yAOlHX2g1YLaPq7t/34q7wY=;
+        s=default; t=1547216358;
+        bh=ezxktuBPXy+XkMrISUMKTKcZKAUUO/sN2tn/dizpP50=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=KaByYTkhn94qjZstQwQGk/Op0834XwZuHrzFd0pGI+0KT4CkvCrkakLCqit/yC386
-         JgvM0dmuJeAwXeZJSV9sNR4Bl25EyqXXCSXWqoWa8uA8lzE0c7Xn9ICDf0cVxD1fQR
-         xbtCD6XgPesG8Cog0TuFWkPhd/Nl+was5lAX0hwQ=
+        b=zMUY/eJj1SJ21Wbt/msSYNUCffURVsjIhvrpr7xGrCzzYMHT0yk0G3HGfVJgxY84L
+         YbdwTWcelZLpBw7NWxe5aymOkPj5r0JyfbPm3WtYzBZ6d2MwBeuJLNRq/7ERwrXa2C
+         ArqTsFPK+OrIR1GWBoCYLsNmYLHD3JykUHGtPXO8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Vasily Averin <vvs@virtuozzo.com>,
-        "J. Bruce Fields" <bfields@redhat.com>
-Subject: [PATCH 4.4 69/88] sunrpc: use SVC_NET() in svcauth_gss_* functions
-Date:   Fri, 11 Jan 2019 15:08:38 +0100
-Message-Id: <20190111131057.561418619@linuxfoundation.org>
+        stable@vger.kernel.org,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        Omar Sandoval <osandov@fb.com>, Jens Axboe <axboe@kernel.dk>,
+        Sudip Mukherjee <sudipm.mukherjee@gmail.com>
+Subject: [PATCH 4.4 71/88] block: break discard submissions into the user defined size
+Date:   Fri, 11 Jan 2019 15:08:40 +0100
+Message-Id: <20190111131057.981935488@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190111131045.137499039@linuxfoundation.org>
 References: <20190111131045.137499039@linuxfoundation.org>
@@ -65,56 +67,40 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Vasily Averin <vvs@virtuozzo.com>
+From: Jens Axboe <axboe@kernel.dk>
 
-commit b8be5674fa9a6f3677865ea93f7803c4212f3e10 upstream.
+commit af097f5d199e2aa3ab3ef777f0716e487b8f7b08 upstream.
 
-Signed-off-by: Vasily Averin <vvs@virtuozzo.com>
-Cc: stable@vger.kernel.org
-Signed-off-by: J. Bruce Fields <bfields@redhat.com>
+Don't build discards bigger than what the user asked for, if the
+user decided to limit the size by writing to 'discard_max_bytes'.
+
+Reviewed-by: Darrick J. Wong <darrick.wong@oracle.com>
+Reviewed-by: Omar Sandoval <osandov@fb.com>
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
+Signed-off-by: Sudip Mukherjee <sudipm.mukherjee@gmail.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- net/sunrpc/auth_gss/svcauth_gss.c |    8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ block/blk-lib.c |   10 ++++++++--
+ 1 file changed, 8 insertions(+), 2 deletions(-)
 
---- a/net/sunrpc/auth_gss/svcauth_gss.c
-+++ b/net/sunrpc/auth_gss/svcauth_gss.c
-@@ -1105,7 +1105,7 @@ static int svcauth_gss_legacy_init(struc
- 	struct kvec *resv = &rqstp->rq_res.head[0];
- 	struct rsi *rsip, rsikey;
- 	int ret;
--	struct sunrpc_net *sn = net_generic(rqstp->rq_xprt->xpt_net, sunrpc_net_id);
-+	struct sunrpc_net *sn = net_generic(SVC_NET(rqstp), sunrpc_net_id);
+--- a/block/blk-lib.c
++++ b/block/blk-lib.c
+@@ -81,8 +81,14 @@ int blkdev_issue_discard(struct block_de
+ 			break;
+ 		}
  
- 	memset(&rsikey, 0, sizeof(rsikey));
- 	ret = gss_read_verf(gc, argv, authp,
-@@ -1216,7 +1216,7 @@ static int svcauth_gss_proxy_init(struct
- 	uint64_t handle;
- 	int status;
- 	int ret;
--	struct net *net = rqstp->rq_xprt->xpt_net;
-+	struct net *net = SVC_NET(rqstp);
- 	struct sunrpc_net *sn = net_generic(net, sunrpc_net_id);
+-		/* Make sure bi_size doesn't overflow */
+-		req_sects = min_t(sector_t, nr_sects, UINT_MAX >> 9);
++		/*
++		 * Issue in chunks of the user defined max discard setting,
++		 * ensuring that bi_size doesn't overflow
++		 */
++		req_sects = min_t(sector_t, nr_sects,
++					q->limits.max_discard_sectors);
++		if (req_sects > UINT_MAX >> 9)
++			req_sects = UINT_MAX >> 9;
  
- 	memset(&ud, 0, sizeof(ud));
-@@ -1406,7 +1406,7 @@ svcauth_gss_accept(struct svc_rqst *rqst
- 	__be32		*rpcstart;
- 	__be32		*reject_stat = resv->iov_base + resv->iov_len;
- 	int		ret;
--	struct sunrpc_net *sn = net_generic(rqstp->rq_xprt->xpt_net, sunrpc_net_id);
-+	struct sunrpc_net *sn = net_generic(SVC_NET(rqstp), sunrpc_net_id);
- 
- 	dprintk("RPC:       svcauth_gss: argv->iov_len = %zd\n",
- 			argv->iov_len);
-@@ -1694,7 +1694,7 @@ svcauth_gss_release(struct svc_rqst *rqs
- 	struct rpc_gss_wire_cred *gc = &gsd->clcred;
- 	struct xdr_buf *resbuf = &rqstp->rq_res;
- 	int stat = -EINVAL;
--	struct sunrpc_net *sn = net_generic(rqstp->rq_xprt->xpt_net, sunrpc_net_id);
-+	struct sunrpc_net *sn = net_generic(SVC_NET(rqstp), sunrpc_net_id);
- 
- 	if (gc->gc_proc != RPC_GSS_PROC_DATA)
- 		goto out;
+ 		/*
+ 		 * If splitting a request, and the next starting sector would be
 
 
