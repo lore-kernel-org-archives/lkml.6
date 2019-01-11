@@ -7,49 +7,46 @@ X-Spam-Status: No, score=-10.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C41E5C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 15:10:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 03D8CC43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 15:10:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8F76320874
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 15:10:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CCFDD20874
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 15:10:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547219417;
-	bh=axN72L6zMeFRk09n2oyHRoFceQm+E0o1ApcYzNvQn9Y=;
+	s=default; t=1547219423;
+	bh=uaqGE23CK3zUIKgN59kcI1JN8xayUKHIyU+GVrEi+7Q=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=Ggqc/cBa84iLn7qeOMajb3wkm4fYjzP6il7qaoRHiPz8p9LpHvNicRoojCOgYsKbh
-	 ACC857y2aPhYcnPweEBWFrxYalm9BaUH3cbhw04/h6Ve6wVDPn2rVPuC3WzBE8ibum
-	 TZ0kcS3zewjXhgfPaeMwE/sIVQTw7qUiWUyOy1LY=
+	b=BXnz2P8SCx55gnorbCEGR98kpzxy/I2EWnxS0scYruWjueRkJOKxsUZP1II+l3axZ
+	 1p3JYXpWYsatkXsudv5/ubG6BWUZWu2gg3E+4BCU7QN/tsM2e73j6mFuDL+NuSr/SV
+	 Yk4dBjDted2zxxJsDLcDe04x6829NLqXefVHlLB4=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391989AbfAKPKQ (ORCPT
+        id S2403796AbfAKPKX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 11 Jan 2019 10:10:16 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33334 "EHLO mail.kernel.org"
+        Fri, 11 Jan 2019 10:10:23 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33224 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725801AbfAKOQ7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Jan 2019 09:16:59 -0500
+        id S2387757AbfAKOQx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 Jan 2019 09:16:53 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0F24D21841;
-        Fri, 11 Jan 2019 14:16:57 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6B5DA21783;
+        Fri, 11 Jan 2019 14:16:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547216218;
-        bh=axN72L6zMeFRk09n2oyHRoFceQm+E0o1ApcYzNvQn9Y=;
+        s=default; t=1547216212;
+        bh=uaqGE23CK3zUIKgN59kcI1JN8xayUKHIyU+GVrEi+7Q=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=fujV2njqJKNqSi5P4HfgDnuN0BBltVqcgmoH9kXWRNcUkTPVILFe16WgLiEmy1fwp
-         +fnvfJR7kLWxWRrVaipiaM0/phZM3rNaqbVLVIkOxHYB8eMv701rFDi3H/NsDItMBd
-         nes2sBL4VuYhwtCLru5ANPTfZCXl5cm1uXn4c9Dc=
+        b=bObbdAp+/mYV00OeotZ+AOga31FyBueeO5fpqGdUy+3ggvlAvB5wP87xWPGAG3bop
+         8WUggJ5nxBnqfPzOBhvNH1aE6tzw0sSbRsVTbtwf8uWSvqTIddyTyDMBacjqZVN4JF
+         4bxqUOSBqGFA5fFYfP/Y0ynmWnghyXni2ttCyCEE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        syzbot+c56449ed3652e6720f30@syzkaller.appspotmail.com,
-        Jon Maloy <jon.maloy@ericsson.com>,
-        Cong Wang <xiyou.wangcong@gmail.com>,
+        stable@vger.kernel.org, Tyrel Datwyler <tyreld@linux.vnet.ibm.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.4 19/88] ipv6: explicitly initialize udp6_addr in udp_sock_create6()
-Date:   Fri, 11 Jan 2019 15:07:48 +0100
-Message-Id: <20190111131048.950378734@linuxfoundation.org>
+Subject: [PATCH 4.4 17/88] ibmveth: fix DMA unmap error in ibmveth_xmit_start error path
+Date:   Fri, 11 Jan 2019 15:07:46 +0100
+Message-Id: <20190111131048.670525163@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190111131045.137499039@linuxfoundation.org>
 References: <20190111131045.137499039@linuxfoundation.org>
@@ -68,48 +65,60 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Cong Wang <xiyou.wangcong@gmail.com>
+From: Tyrel Datwyler <tyreld@linux.vnet.ibm.com>
 
-[ Upstream commit fb24274546310872eeeaf3d1d53799d8414aa0f2 ]
+[ Upstream commit 756af9c642329d54f048bac2a62f829b391f6944 ]
 
-syzbot reported the use of uninitialized udp6_addr::sin6_scope_id.
-We can just set ::sin6_scope_id to zero, as tunnels are unlikely
-to use an IPv6 address that needs a scope id and there is no
-interface to bind in this context.
+Commit 33a48ab105a7 ("ibmveth: Fix DMA unmap error") fixed an issue in the
+normal code path of ibmveth_xmit_start() that was originally introduced by
+Commit 6e8ab30ec677 ("ibmveth: Add scatter-gather support"). This original
+fix missed the error path where dma_unmap_page is wrongly called on the
+header portion in descs[0] which was mapped with dma_map_single. As a
+result a failure to DMA map any of the frags results in a dmesg warning
+when CONFIG_DMA_API_DEBUG is enabled.
 
-For net-next, it looks different as we have cfg->bind_ifindex there
-so we can probably call ipv6_iface_scope_id().
+------------[ cut here ]------------
+DMA-API: ibmveth 30000002: device driver frees DMA memory with wrong function
+  [device address=0x000000000a430000] [size=172 bytes] [mapped as page] [unmapped as single]
+WARNING: CPU: 1 PID: 8426 at kernel/dma/debug.c:1085 check_unmap+0x4fc/0xe10
+...
+<snip>
+...
+DMA-API: Mapped at:
+ibmveth_start_xmit+0x30c/0xb60
+dev_hard_start_xmit+0x100/0x450
+sch_direct_xmit+0x224/0x490
+__qdisc_run+0x20c/0x980
+__dev_queue_xmit+0x1bc/0xf20
 
-Same for ::sin6_flowinfo, tunnels don't use it.
+This fixes the API misuse by unampping descs[0] with dma_unmap_single.
 
-Fixes: 8024e02879dd ("udp: Add udp_sock_create for UDP tunnels to open listener socket")
-Reported-by: syzbot+c56449ed3652e6720f30@syzkaller.appspotmail.com
-Cc: Jon Maloy <jon.maloy@ericsson.com>
-Signed-off-by: Cong Wang <xiyou.wangcong@gmail.com>
+Fixes: 6e8ab30ec677 ("ibmveth: Add scatter-gather support")
+Signed-off-by: Tyrel Datwyler <tyreld@linux.vnet.ibm.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/ipv6/ip6_udp_tunnel.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/net/ethernet/ibm/ibmveth.c |    6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
---- a/net/ipv6/ip6_udp_tunnel.c
-+++ b/net/ipv6/ip6_udp_tunnel.c
-@@ -15,7 +15,7 @@
- int udp_sock_create6(struct net *net, struct udp_port_cfg *cfg,
- 		     struct socket **sockp)
- {
--	struct sockaddr_in6 udp6_addr;
-+	struct sockaddr_in6 udp6_addr = {};
- 	int err;
- 	struct socket *sock = NULL;
+--- a/drivers/net/ethernet/ibm/ibmveth.c
++++ b/drivers/net/ethernet/ibm/ibmveth.c
+@@ -1163,11 +1163,15 @@ out:
  
-@@ -42,6 +42,7 @@ int udp_sock_create6(struct net *net, st
- 		goto error;
+ map_failed_frags:
+ 	last = i+1;
+-	for (i = 0; i < last; i++)
++	for (i = 1; i < last; i++)
+ 		dma_unmap_page(&adapter->vdev->dev, descs[i].fields.address,
+ 			       descs[i].fields.flags_len & IBMVETH_BUF_LEN_MASK,
+ 			       DMA_TO_DEVICE);
  
- 	if (cfg->peer_udp_port) {
-+		memset(&udp6_addr, 0, sizeof(udp6_addr));
- 		udp6_addr.sin6_family = AF_INET6;
- 		memcpy(&udp6_addr.sin6_addr, &cfg->peer_ip6,
- 		       sizeof(udp6_addr.sin6_addr));
++	dma_unmap_single(&adapter->vdev->dev,
++			 descs[0].fields.address,
++			 descs[0].fields.flags_len & IBMVETH_BUF_LEN_MASK,
++			 DMA_TO_DEVICE);
+ map_failed:
+ 	if (!firmware_has_feature(FW_FEATURE_CMO))
+ 		netdev_err(netdev, "tx: unable to map xmit buffer\n");
 
 
