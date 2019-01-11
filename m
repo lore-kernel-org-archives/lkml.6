@@ -2,327 +2,188 @@ Return-Path: <SRS0=uvhX=PT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 99E9AC43612
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 03:15:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 97E31C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 03:16:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5E6B820660
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 03:15:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547176553;
-	bh=GP7Yxy8QOP+6agn6GqxfZavIxV+4koyeXHQsZfKg+P0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=j6S3l4x58Z4u/roaCyicl2xSS5PfaHX/YY3AZUARMocrSxcLGiYDDEev5c64YUqdx
-	 FhkISm6iGiyfd1pTVqbDDBWfMlGocECpwungf/5Os9tFrKqlhVUWuzT7PKwYlO2I6M
-	 c9u0MwCMLBz68vruaf0NUbcu6GspE5rOG+0yqZeY=
+	by mail.kernel.org (Postfix) with ESMTP id 70E9320660
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 03:16:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730027AbfAKDPw (ORCPT
+        id S1730258AbfAKDQt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 10 Jan 2019 22:15:52 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55488 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728266AbfAKDPs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Jan 2019 22:15:48 -0500
-Received: from dragon (61-216-91-114.HINET-IP.hinet.net [61.216.91.114])
-        (using TLSv1.2 with cipher DHE-RSA-AES128-SHA (128/128 bits))
+        Thu, 10 Jan 2019 22:16:49 -0500
+Received: from mail.tripleback.net ([198.50.226.104]:40472 "EHLO
+        mail.tripleback.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728098AbfAKDQt (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 10 Jan 2019 22:16:49 -0500
+X-Greylist: delayed 561 seconds by postgrey-1.27 at vger.kernel.org; Thu, 10 Jan 2019 22:16:48 EST
+Received: from localhost (mail.clusterducks.int [127.0.0.1])
+        by mail.tripleback.net (Postfix) with ESMTP id 1A999C0E65
+        for <linux-kernel@vger.kernel.org>; Thu, 10 Jan 2019 22:09:11 -0500 (EST)
+X-Virus-Scanned: amavisd-new at tripleback.net
+Received: from mail.tripleback.net ([127.0.0.1])
+        by localhost (mail.tripleback.net [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id O7vEHoVDEntv for <linux-kernel@vger.kernel.org>;
+        Thu, 10 Jan 2019 22:09:10 -0500 (EST)
+Received: from [192.168.0.22] (S010664777daa9143.du.shawcable.net [184.66.63.229])
+        (using TLSv1 with cipher ECDHE-RSA-AES128-SHA (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 363C320660;
-        Fri, 11 Jan 2019 03:15:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547176547;
-        bh=GP7Yxy8QOP+6agn6GqxfZavIxV+4koyeXHQsZfKg+P0=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=sXLMbhywwpxCi+dQyZwHPOngK0uEDlBVt0lSA6DD9oqAr8TUyhuzb/uZIvvKYD6gc
-         J9quu3GFiFVRQO/2HYiqNRnHXYGpmp+sQ5NzmbN4VcDy15zxIqGfGTx1MKd1kOZq0R
-         VGocQGboV6Xri88VGLWf2g7WiNp28NqOzLbQ7fhc=
-Date:   Fri, 11 Jan 2019 11:15:35 +0800
-From:   Shawn Guo <shawnguo@kernel.org>
-To:     Anson Huang <anson.huang@nxp.com>
-Cc:     "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
-        "kernel@pengutronix.de" <kernel@pengutronix.de>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        "linux@armlinux.org.uk" <linux@armlinux.org.uk>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        dl-linux-imx <linux-imx@nxp.com>
-Subject: Re: [PATCH] ARM: imx: add i.MX7ULP cpuidle support
-Message-ID: <20190111031533.GI25218@dragon>
-References: <1544775444-31544-1-git-send-email-Anson.Huang@nxp.com>
+        (Authenticated sender: kash@tripleback.net)
+        by mail.tripleback.net (Postfix) with ESMTPSA id 3F1B9C0CC3
+        for <linux-kernel@vger.kernel.org>; Thu, 10 Jan 2019 22:09:10 -0500 (EST)
+From:   Kash Pande <kash@tripleback.net>
+Subject: Re: x86/fpu: Don't export __kernel_fpu_{begin,end}()
+To:     linux-kernel@vger.kernel.org
+Openpgp: preference=signencrypt
+Autocrypt: addr=kash@tripleback.net; prefer-encrypt=mutual; keydata=
+ mQENBFk4mtYBCACd55EsQx9d/7r6jPgo9+Niwyv6QBYGBc5ww9pPOBrN0oSO47Hm+oSOO5Bu
+ yywIw4U5DTUtvdj7elfnsJMhunduhc2P8p7rhLxcQeFIm+yghOepkjqhxTdFLsgavmcnubxy
+ Olc29b2fByIVXnFAwHypgpHEqEWTHp2cnNVOtuO9GeIr8YxB+wO4Z5rDnNnEsOuLSJq9kG9c
+ uoI8RF+StEBmYVRCfELhafBlluURLRPO/Uoax8+wFyq4/d3iDVtKyrDdvxLG0aXkj3Wfc6rY
+ l8trOQl1zw8dCfJMw0+LPaj2EVza1HGCdhgIrg2cS1nKNjNDnIZB/8RwBU99FIY1xoGXABEB
+ AAG0O0thc2ggUGFuZGUgKEdlbmVyYXRlZCBKdW5lIDd0aCwgMjAxNykgPGthc2hAdHJpcGxl
+ YmFjay5uZXQ+iQFOBBMBCAA4FiEE5MQWwRLWQeWW1A0MLHWyk7icJXgFAlk4mtYCGwMFCwkI
+ BwIGFQgJCgsCBBYCAwECHgECF4AACgkQLHWyk7icJXiG1Af9HI1f87UPQPEpsWVHuoeMlPra
+ NPrefNZ+O1vnQEdTHEQ+Mc49ozLtpdrpi0VqKYlsdVHxhY5YbzyTC2tdHtiL2LTwbnkrqKMN
+ 6DJSiogXFLH/q+SzXoAUxqN8rrRptVEHSYrxENt+ZN5R0A071QrURdEa2vLXicjMGitvdVcV
+ pxdRLJgSqQygSlKysoQsY2vvgRujD322BEwDqgq3XWCMIo3ld/riMSCiO8ShCvmqojeWRfh2
+ ComhNSzzbn2oGUceEJRJ++mv+0i1jMzO+9L5qsrYnH7KnPA1HsORqHGi7+wJdRn4zG/+g+Ey
+ hoTk2WVCDC/Gp4t9CYeQOa/rC1kxm7kBDQRZOJrWAQgA75dQD3FhNz1JDUuAEDRpKOJA7A1A
+ t11ItkvolADQwJYtAqoMjFybAG+rN+H2+6CLFsShO2RLY8K1FJVPy31am9qeY5WWO1PhU3tg
+ PHVeGOYF/mWTxNBKSwZgfWo8cOT9OcUTjTTR8z58kEcbZJ6PtiPyCsk2MKFMT+OcJ3w7GB2K
+ KViN5L4f4sBOOgFZ5U+hNNcLOTmYk8ba2w0GnT4ePnidby8XStGIt1sVeNkbD2hdRUdXtpku
+ OKQ2iw/j/GBo7+B7lYMBOSZaxKwpyEt7DPSJuLATSu6l16oDk4uqXulXC1td1fXfXfGLudHN
+ sXUJDE/0jf2r8Mi3rPUdPn+dpwARAQABiQE2BBgBCAAgFiEE5MQWwRLWQeWW1A0MLHWyk7ic
+ JXgFAlk4mtYCGwwACgkQLHWyk7icJXiv4gf7BqzcEq7IYUIMUI/ubyQuKdASfLHxbGmEJkxk
+ Q7iPf38zLucS7jL3XnXrhkU4rzNneaQ0jn/bYhyo2ZDrmIloSOIYQPJTdCU53waLqbdgOSZH
+ zVm7aFHVs7/C/joNxZ9Qcg75zdhAJP1bTWTBdmvofJFjwV3YXxhW9U0qIt6Dqq4IQ6TB2tzw
+ bMiVH+IeWnlIwBScamT3DAXmu4CxKUpgkqmFsDL2aZve1ZUxwMwgblDZqBKdZoLJEYQ4Llf6
+ JXZmkBNIuO8GA0ZGamjEOvxwn3OYPd7I2FQESawdKNAzv734vCCYELEQFP2mh04B32bEH4ei
+ 2oovF94E7UQCVIZg7Q==
+Message-ID: <a4c5c516-bf38-cc7a-bd4c-f0f3297e855e@tripleback.net>
+Date:   Thu, 10 Jan 2019 19:07:13 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.3
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1544775444-31544-1-git-send-email-Anson.Huang@nxp.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ protocol="application/pgp-signature";
+ boundary="7wDvpqP4iyaq4TMwcpbK9lyiT9BKJF1G4"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Dec 14, 2018 at 08:23:25AM +0000, Anson Huang wrote:
-> This patch adds cpuidle support for i.MX7ULP, 3 cpuidle
-> states supported as below:
-> 
-> 1. WFI, just ARM wfi;
-> 2. WAIT mode, mapped to SoC's partial stop mode #3;
-> 3. STOP mode, mapped to SoC's partial stop mode #1.
-> 
-> In WAIT mode, system clock and bus clock will be enabled;
-> In STOP mode, system clock and bus clock will be disabled.
-> 
-> Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
-> ---
->  arch/arm/mach-imx/Makefile          |  1 +
->  arch/arm/mach-imx/common.h          | 10 +++++++
->  arch/arm/mach-imx/cpuidle-imx7ulp.c | 60 +++++++++++++++++++++++++++++++++++++
->  arch/arm/mach-imx/cpuidle.h         |  5 ++++
->  arch/arm/mach-imx/mach-imx7ulp.c    |  7 +++++
->  arch/arm/mach-imx/pm-imx7ulp.c      | 49 ++++++++++++++++++++++++++----
->  6 files changed, 127 insertions(+), 5 deletions(-)
->  create mode 100644 arch/arm/mach-imx/cpuidle-imx7ulp.c
-> 
-> diff --git a/arch/arm/mach-imx/Makefile b/arch/arm/mach-imx/Makefile
-> index 8af2f7e..12aa44a 100644
-> --- a/arch/arm/mach-imx/Makefile
-> +++ b/arch/arm/mach-imx/Makefile
-> @@ -29,6 +29,7 @@ obj-$(CONFIG_SOC_IMX6SL) += cpuidle-imx6sl.o
->  obj-$(CONFIG_SOC_IMX6SLL) += cpuidle-imx6sx.o
->  obj-$(CONFIG_SOC_IMX6SX) += cpuidle-imx6sx.o
->  obj-$(CONFIG_SOC_IMX6UL) += cpuidle-imx6sx.o
-> +obj-$(CONFIG_SOC_IMX7ULP) += cpuidle-imx7ulp.o
->  endif
->  
->  ifdef CONFIG_SND_IMX_SOC
-> diff --git a/arch/arm/mach-imx/common.h b/arch/arm/mach-imx/common.h
-> index bc915e5..a87fab1 100644
-> --- a/arch/arm/mach-imx/common.h
-> +++ b/arch/arm/mach-imx/common.h
-> @@ -72,6 +72,15 @@ enum mxc_cpu_pwr_mode {
->  	STOP_POWER_OFF,		/* STOP + SRPG */
->  };
->  
-> +enum ulp_cpu_pwr_mode {
-> +	HSRUN,    /* High speed run mode */
-> +	RUN,      /* Run mode */
-> +	WAIT,     /* Wait mode */
-> +	STOP,     /* Stop mode */
-> +	VLPS,     /* Very low power stop mode */
-> +	VLLS,     /* very low leakage stop mode */
+This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
+--7wDvpqP4iyaq4TMwcpbK9lyiT9BKJF1G4
+Content-Type: multipart/mixed; boundary="RiJlwvZCYZbDrpFhjxoBOejVTgRNoqYYQ";
+ protected-headers="v1"
+From: Kash Pande <kash@tripleback.net>
+To: linux-kernel@vger.kernel.org
+Message-ID: <a4c5c516-bf38-cc7a-bd4c-f0f3297e855e@tripleback.net>
+Subject: Re: x86/fpu: Don't export __kernel_fpu_{begin,end}()
 
-Can we prefix these enums a little bit, like UPL_PM_XXX?
+--RiJlwvZCYZbDrpFhjxoBOejVTgRNoqYYQ
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+Content-Language: en-US
 
-> +};
-> +
->  void imx_enable_cpu(int cpu, bool enable);
->  void imx_set_cpu_jump(int cpu, void *jump_addr);
->  u32 imx_get_cpu_arg(int cpu);
-> @@ -98,6 +107,7 @@ int imx6_set_lpm(enum mxc_cpu_pwr_mode mode);
->  void imx6_set_int_mem_clk_lpm(bool enable);
->  void imx6sl_set_wait_clk(bool enter);
->  int imx_mmdc_get_ddr_type(void);
-> +int imx7ulp_set_lpm(enum ulp_cpu_pwr_mode mode);
->  
->  void imx_cpu_die(unsigned int cpu);
->  int imx_cpu_kill(unsigned int cpu);
-> diff --git a/arch/arm/mach-imx/cpuidle-imx7ulp.c b/arch/arm/mach-imx/cpuidle-imx7ulp.c
-> new file mode 100644
-> index 0000000..a59df93
-> --- /dev/null
-> +++ b/arch/arm/mach-imx/cpuidle-imx7ulp.c
-> @@ -0,0 +1,60 @@
-> +// SPDX-License-Identifier: GPL-2.0+
-> +/*
-> + * Copyright (C) 2016 Freescale Semiconductor, Inc.
-> + * Copyright 2017-2018 NXP
-> + *   Anson Huang <Anson.Huang@nxp.com>
-> + */
-> +
-> +#include <linux/cpuidle.h>
-> +#include <linux/module.h>
-> +#include <asm/cpuidle.h>
-> +
-> +#include "common.h"
-> +#include "cpuidle.h"
-> +
-> +static int imx7ulp_enter_wait(struct cpuidle_device *dev,
-> +			    struct cpuidle_driver *drv, int index)
-> +{
-> +	if (index == 1)
-> +		imx7ulp_set_lpm(WAIT);
-> +	else
-> +		imx7ulp_set_lpm(STOP);
-> +
-> +	cpu_do_idle();
-> +
-> +	imx7ulp_set_lpm(RUN);
-> +
-> +	return index;
-> +}
-> +
-> +static struct cpuidle_driver imx7ulp_cpuidle_driver = {
-> +	.name = "imx7ulp_cpuidle",
-> +	.owner = THIS_MODULE,
-> +	.states = {
-> +		/* WFI */
-> +		ARM_CPUIDLE_WFI_STATE,
-> +		/* WAIT */
-> +		{
-> +			.exit_latency = 50,
-> +			.target_residency = 75,
-> +			.enter = imx7ulp_enter_wait,
-> +			.name = "WAIT",
-> +			.desc = "PSTOP2",
-> +		},
-> +		/* STOP */
-> +		{
-> +			.exit_latency = 100,
-> +			.target_residency = 150,
-> +			.enter = imx7ulp_enter_wait,
-> +			.name = "STOP",
-> +			.desc = "PSTOP1",
-> +		},
-> +	},
-> +	.state_count = 3,
-> +	.safe_state_index = 0,
-> +};
-> +
-> +int __init imx7ulp_cpuidle_init(void)
-> +{
-> +	return cpuidle_register(&imx7ulp_cpuidle_driver, NULL);
-> +}
-> diff --git a/arch/arm/mach-imx/cpuidle.h b/arch/arm/mach-imx/cpuidle.h
-> index f914012..7694c8f 100644
-> --- a/arch/arm/mach-imx/cpuidle.h
-> +++ b/arch/arm/mach-imx/cpuidle.h
-> @@ -15,6 +15,7 @@ extern int imx5_cpuidle_init(void);
->  extern int imx6q_cpuidle_init(void);
->  extern int imx6sl_cpuidle_init(void);
->  extern int imx6sx_cpuidle_init(void);
-> +extern int imx7ulp_cpuidle_init(void);
->  #else
->  static inline int imx5_cpuidle_init(void)
->  {
-> @@ -32,4 +33,8 @@ static inline int imx6sx_cpuidle_init(void)
->  {
->  	return 0;
->  }
-> +static inline int imx7ulp_cpuidle_init(void)
-> +{
-> +	return 0;
-> +}
->  #endif
-> diff --git a/arch/arm/mach-imx/mach-imx7ulp.c b/arch/arm/mach-imx/mach-imx7ulp.c
-> index 16b295b..95efb2d 100644
-> --- a/arch/arm/mach-imx/mach-imx7ulp.c
-> +++ b/arch/arm/mach-imx/mach-imx7ulp.c
-> @@ -12,6 +12,7 @@
->  #include <asm/mach/arch.h>
->  
->  #include "common.h"
-> +#include "cpuidle.h"
->  #include "hardware.h"
->  
->  #define SIM_JTAG_ID_REG		0x8c
-> @@ -64,7 +65,13 @@ static const char *const imx7ulp_dt_compat[] __initconst = {
->  	NULL,
->  };
->  
-> +static void __init imx7ulp_init_late(void)
-> +{
-> +	imx7ulp_cpuidle_init();
-> +}
-> +
->  DT_MACHINE_START(IMX7ulp, "Freescale i.MX7ULP (Device Tree)")
->  	.init_machine	= imx7ulp_init_machine,
->  	.dt_compat	= imx7ulp_dt_compat,
-> +	.init_late      = imx7ulp_init_late,
 
-Please use tab instead of space.
 
->  MACHINE_END
-> diff --git a/arch/arm/mach-imx/pm-imx7ulp.c b/arch/arm/mach-imx/pm-imx7ulp.c
-> index cf6a380..9551e1f 100644
-> --- a/arch/arm/mach-imx/pm-imx7ulp.c
-> +++ b/arch/arm/mach-imx/pm-imx7ulp.c
-> @@ -9,21 +9,60 @@
->  #include <linux/of.h>
->  #include <linux/of_address.h>
->  
-> +#include "common.h"
-> +
->  #define SMC_PMCTRL		0x10
->  #define BP_PMCTRL_PSTOPO        16
->  #define PSTOPO_PSTOP3		0x3
-> +#define PSTOPO_PSTOP2		0x2
-> +#define PSTOPO_PSTOP1		0x1
-> +#define BP_PMCTRL_RUNM          8
-> +#define RUNM_RUN                0
-> +#define BP_PMCTRL_STOPM         0
-> +#define STOPM_STOP              0
+> On Thu, Jan 10, 2019 at 07:07:52PM +0100, Sebastian Andrzej Siewior wro=
+te:
+> > On 2019-01-10 17:32:58 [+0000], Hutter, Tony wrote:
+> > > > But since when did out-of-tree modules use __kernel_fpu_begin?=C2=
+=A0
+It's an
+> > > > x86-only thing, and shouldn't really be used by anyone, right?
+> > >
+> > > ZFS on Linux uses it for checksums.=C2=A0 Its removal is currently
+breaking ZFS builds against 5.0:
+> >
+> > So btrfs uses crc32c() / kernel's crypto API for that and ZFS can't?
+> > Well the crypto API is GPL only exported so that won't work. crc32c()=
+ is
+> > EXPORT_SYMBOL() so it would work.
+> > On the other hand it does not look right to provide a EXPORT_SYMBOL
+> > wrapper around a GPL only interface=C3=A2=E2=82=AC=C2=A6
 
-Use tab instead space.
+> Yes, the "GPL condom" attempt doesn't work at all.=C2=A0 It's been shot=
+ down
+> a long time ago in the courts.
 
-Shawn
+SFLC maintains there is no kernel licensing issue[1].
 
-> +
-> +#define BM_PMCTRL_PSTOPO	(3 << BP_PMCTRL_PSTOPO)
-> +#define BM_PMCTRL_RUNM		(3 << BP_PMCTRL_RUNM)
-> +#define BM_PMCTRL_STOPM		(7 << BP_PMCTRL_STOPM)
-> +
-> +static void __iomem *smc1_base;
-> +
-> +int imx7ulp_set_lpm(enum ulp_cpu_pwr_mode mode)
-> +{
-> +	u32 val = readl_relaxed(smc1_base + SMC_PMCTRL);
-> +
-> +	/* clear all */
-> +	val &= ~(BM_PMCTRL_RUNM | BM_PMCTRL_STOPM | BM_PMCTRL_PSTOPO);
-> +
-> +	switch (mode) {
-> +	case RUN:
-> +		/* system/bus clock enabled */
-> +		val |= PSTOPO_PSTOP3 << BP_PMCTRL_PSTOPO;
-> +		break;
-> +	case WAIT:
-> +		/* system clock disabled, bus clock enabled */
-> +		val |= PSTOPO_PSTOP2 << BP_PMCTRL_PSTOPO;
-> +		break;
-> +	case STOP:
-> +		/* system/bus clock disabled */
-> +		val |= PSTOPO_PSTOP1 << BP_PMCTRL_PSTOPO;
-> +		break;
-> +	default:
-> +		return -EINVAL;
-> +	}
-> +
-> +	writel_relaxed(val, smc1_base + SMC_PMCTRL);
-> +
-> +	return 0;
-> +}
->  
->  void __init imx7ulp_pm_init(void)
->  {
->  	struct device_node *np;
-> -	void __iomem *smc1_base;
->  
->  	np = of_find_compatible_node(NULL, NULL, "fsl,imx7ulp-smc1");
->  	smc1_base = of_iomap(np, 0);
->  	WARN_ON(!smc1_base);
->  
-> -	/* Partial Stop mode 3 with system/bus clock enabled */
-> -	writel_relaxed(PSTOPO_PSTOP3 << BP_PMCTRL_PSTOPO,
-> -		       smc1_base + SMC_PMCTRL);
-> -	iounmap(smc1_base);
-> +	imx7ulp_set_lpm(RUN);
->  }
-> -- 
-> 2.7.4
-> 
-> 
-> _______________________________________________
-> linux-arm-kernel mailing list
-> linux-arm-kernel@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+As a side note, even Hellwig's suit against VMware was dismissed (he may
+appeal)[2].
+
+Debian and Canonical base their decision to ship DKMS source for ZFS on
+Linux[3].
+
+The GPL does not disqualify a user from compiling ZFS or Linux however
+they see fit.
+It is only the users' distribution rights that come into question.
+
+No one is combing ZFS into Linux or even distributing binary modules here=
+;
+we're following the terms of GPL.
+
+> My tolerance for ZFS is pretty non-existant.=C2=A0 Sun explicitly did n=
+ot
+> want their code to work on Linux, so why would we do extra work to get
+> their code to work properly?
+
+
+1. Should your personal feelings affect the quality of the Linux kernel?
+I say no.
+
+2. Did Sun or Oracle ever release any statement of any kind that backs
+your statement?
+
+3. What extra work is being done here aside from the dropping of a
+pseudo-protection,
+the "GPL ONLY" symbol export? Something tells me, even if someone else
+did "the work"
+and submitted patches, you would find a reason to tell them to get
+stuffed and leave
+it "as-is".
+
+
+With all of that... why have ANY kind of tolerance for out of tree
+kernel modules at all?
+
+
+[1] https://www.softwarefreedom.org/resources/2016/linux-kernel-cddl.html=
+
+
+[2] https://opensource.com/law/16/8/gpl-enforcement-action-hellwig-v-vmwa=
+re
+
+[3] https://lists.debian.org/debian-devel-announce/2015/04/msg00006.html
+
+
+
+
+--RiJlwvZCYZbDrpFhjxoBOejVTgRNoqYYQ--
+
+--7wDvpqP4iyaq4TMwcpbK9lyiT9BKJF1G4
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEE5MQWwRLWQeWW1A0MLHWyk7icJXgFAlw4CGIACgkQLHWyk7ic
+JXh9Mwf/bw/0NH40luX/XVbEwn9LlkwAld8X/nuMnUw08I17FqL9ZQxdlJa78Q3v
+JslpAChnVURV5TvpJ4Jb99JuqLwJVRzZWYXfhV/LjVF2Xo6SmSAzkaBHDfj1Q59g
+wXjv6f0hDCU1Dw5Fx+bNn/AtPY6/o57Y57CTnM8E+fLB/zp/v/v3Cb7XBpDv4la2
+DFkRDv4JcKfi6M7qxsb0Hwjy9Gg5lvfuXJlThTsP8OMIHIOjucRGBQcMzAZqs4d3
+kkzfVy//7nnYC9UXe2ZK4wvLLVEHGvT0t8+NprXw3dWG0ZIDZ3gYJ4PW4qIthTIq
+JznsVeEEg98I+ocRmYFYjmbZotRHqA==
+=9vPG
+-----END PGP SIGNATURE-----
+
+--7wDvpqP4iyaq4TMwcpbK9lyiT9BKJF1G4--
