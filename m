@@ -7,45 +7,45 @@ X-Spam-Status: No, score=-10.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6788FC43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:42:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F398C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:42:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 375D421848
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:42:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 205C120872
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:42:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547217730;
-	bh=nqLMuK+irL0+qVdTAtDVyB9bLNryJDDmoyv9EpEuYwg=;
+	s=default; t=1547217735;
+	bh=UWLrWHI0iaLdFr3z8cr41/2aDiJjPviFHuu0mv7AVIM=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=dLm3TkNUdsrWnz10e3shtZrA2cbadeSLcLPJEzzB3LekoHk/iSA+Kq5RG/2/XoHKA
-	 RYySoCztyERAhyyI61rkY8bDikdSkF21k+vKt2PJuv0MxweLS8iPJh40gB1EGiGAE9
-	 giPzJAMPTfeGtjEo5ttGOhgM2TJmYFTWwvPYeUEE=
+	b=VXIeX9maARkq2aHZDBVeiDk4BnEqzHIyz4zljZp5CpGYdjPdB4RIwKaTWpv3/441e
+	 7rFWmxFNPYaVvh74iAo2sMiZOard0ShtF+ZrCdZJPJ9bagr12SMClNplE08sCOFSQp
+	 u886U4nAy11kw4+uRgK6YMQ0PYIZCArrqKA7Tq8M=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391356AbfAKOmI (ORCPT
+        id S2404121AbfAKOmO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 11 Jan 2019 09:42:08 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34880 "EHLO mail.kernel.org"
+        Fri, 11 Jan 2019 09:42:14 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34976 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388066AbfAKOmG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Jan 2019 09:42:06 -0500
+        id S2391359AbfAKOmM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 Jan 2019 09:42:12 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 130012133F;
-        Fri, 11 Jan 2019 14:42:04 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A71232063F;
+        Fri, 11 Jan 2019 14:42:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547217725;
-        bh=nqLMuK+irL0+qVdTAtDVyB9bLNryJDDmoyv9EpEuYwg=;
+        s=default; t=1547217731;
+        bh=UWLrWHI0iaLdFr3z8cr41/2aDiJjPviFHuu0mv7AVIM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ziDbxwhLYpr1ILH0Le+zSR/+h/skGDsagAuyR+84Rkw4wQEB4yHkPyLou/+UELAAq
-         uzI7taqLFALJANhvajYj2/4X7dGQt/EYRJ4kvs04v22yPeMdWUYTno0FUuDkLBGjz3
-         AR/e6cIoauBpUAq+k8HGIo8NY0gVrcAUlxP9kfUo=
+        b=G+4TOyUQUDsjfuss5ZgHcKJ/s1Q+b8r4UZxcfjMoiCWXXioz7sWXNX3kNjy73DU6M
+         dUqDRs67OtLhhaiQBc1yOkWPoks1xe+Q/2pqmdW8HRnasVEn5cZXuMrzx9q5ZfciZr
+         rAvGKE9HErYd2UWe4G6fgwnCN706MBnPFDsYTIso=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Takashi Iwai <tiwai@suse.de>
-Subject: [PATCH 4.20 19/65] ALSA: usb-audio: Avoid access before bLength check in build_audio_procunit()
-Date:   Fri, 11 Jan 2019 15:15:05 +0100
-Message-Id: <20190111131059.079395634@linuxfoundation.org>
+Subject: [PATCH 4.20 20/65] ALSA: usb-audio: Check mixer unit descriptors more strictly
+Date:   Fri, 11 Jan 2019 15:15:06 +0100
+Message-Id: <20190111131059.191849004@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190111131055.331350141@linuxfoundation.org>
 References: <20190111131055.331350141@linuxfoundation.org>
@@ -66,46 +66,79 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Takashi Iwai <tiwai@suse.de>
 
-commit f4351a199cc120ff9d59e06d02e8657d08e6cc46 upstream.
+commit 0bfe5e434e6665b3590575ec3c5e4f86a1ce51c9 upstream.
 
-The parser for the processing unit reads bNrInPins field before the
-bLength sanity check, which may lead to an out-of-bound access when a
-malformed descriptor is given.  Fix it by assignment after the bLength
-check.
+We've had some sanity checks of the mixer unit descriptors but they
+are too loose and some corner cases are overlooked.  Add more strict
+checks in uac_mixer_unit_get_channels() for avoiding possible OOB
+accesses by malformed descriptors.
+
+This also changes the semantics of uac_mixer_unit_get_channels()
+slightly.  Now it returns zero for the cases where the descriptor
+lacks of bmControls instead of -EINVAL.  Then the caller side skips
+the mixer creation for such unit while it keeps parsing it.
+This corresponds to the case like Maya44.
 
 Cc: <stable@vger.kernel.org>
 Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- sound/usb/mixer.c |   10 ++++++++--
- 1 file changed, 8 insertions(+), 2 deletions(-)
+ sound/usb/mixer.c |   15 +++++++++++----
+ 1 file changed, 11 insertions(+), 4 deletions(-)
 
 --- a/sound/usb/mixer.c
 +++ b/sound/usb/mixer.c
-@@ -2314,7 +2314,7 @@ static int build_audio_procunit(struct m
- 				char *name)
+@@ -753,8 +753,9 @@ static int uac_mixer_unit_get_channels(s
+ 				       struct uac_mixer_unit_descriptor *desc)
  {
- 	struct uac_processing_unit_descriptor *desc = raw_desc;
--	int num_ins = desc->bNrInPins;
-+	int num_ins;
- 	struct usb_mixer_elem_info *cval;
- 	struct snd_kcontrol *kctl;
- 	int i, err, nameid, type, len;
-@@ -2329,7 +2329,13 @@ static int build_audio_procunit(struct m
- 		0, NULL, default_value_info
- 	};
+ 	int mu_channels;
++	void *c;
  
--	if (desc->bLength < 13 || desc->bLength < 13 + num_ins ||
-+	if (desc->bLength < 13) {
-+		usb_audio_err(state->chip, "invalid %s descriptor (id %d)\n", name, unitid);
-+		return -EINVAL;
-+	}
-+
-+	num_ins = desc->bNrInPins;
-+	if (desc->bLength < 13 + num_ins ||
- 	    desc->bLength < num_ins + uac_processing_unit_bControlSize(desc, state->mixer->protocol)) {
- 		usb_audio_err(state->chip, "invalid %s descriptor (id %d)\n", name, unitid);
+-	if (desc->bLength < 11)
++	if (desc->bLength < sizeof(*desc))
  		return -EINVAL;
+ 	if (!desc->bNrInPins)
+ 		return -EINVAL;
+@@ -763,6 +764,8 @@ static int uac_mixer_unit_get_channels(s
+ 	case UAC_VERSION_1:
+ 	case UAC_VERSION_2:
+ 	default:
++		if (desc->bLength < sizeof(*desc) + desc->bNrInPins + 1)
++			return 0; /* no bmControls -> skip */
+ 		mu_channels = uac_mixer_unit_bNrChannels(desc);
+ 		break;
+ 	case UAC_VERSION_3:
+@@ -772,7 +775,11 @@ static int uac_mixer_unit_get_channels(s
+ 	}
+ 
+ 	if (!mu_channels)
+-		return -EINVAL;
++		return 0;
++
++	c = uac_mixer_unit_bmControls(desc, state->mixer->protocol);
++	if (c - (void *)desc + (mu_channels - 1) / 8 >= desc->bLength)
++		return 0; /* no bmControls -> skip */
+ 
+ 	return mu_channels;
+ }
+@@ -944,7 +951,7 @@ static int check_input_term(struct mixer
+ 				struct uac_mixer_unit_descriptor *d = p1;
+ 
+ 				err = uac_mixer_unit_get_channels(state, d);
+-				if (err < 0)
++				if (err <= 0)
+ 					return err;
+ 
+ 				term->channels = err;
+@@ -2118,7 +2125,7 @@ static int parse_audio_mixer_unit(struct
+ 		if (err < 0)
+ 			continue;
+ 		/* no bmControls field (e.g. Maya44) -> ignore */
+-		if (desc->bLength <= 10 + input_pins)
++		if (!num_outs)
+ 			continue;
+ 		err = check_input_term(state, desc->baSourceID[pin], &iterm);
+ 		if (err < 0)
 
 
