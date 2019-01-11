@@ -2,98 +2,247 @@ Return-Path: <SRS0=uvhX=PT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A3560C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 16:04:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 656ACC43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 16:04:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7C26121872
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 16:04:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 371E920675
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 16:04:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733238AbfAKQEX (ORCPT
+        id S2387509AbfAKQEg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 11 Jan 2019 11:04:23 -0500
-Received: from mga02.intel.com ([134.134.136.20]:24559 "EHLO mga02.intel.com"
+        Fri, 11 Jan 2019 11:04:36 -0500
+Received: from foss.arm.com ([217.140.101.70]:58912 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729359AbfAKQEX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Jan 2019 11:04:23 -0500
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from fmsmga003.fm.intel.com ([10.253.24.29])
-  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Jan 2019 08:04:22 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,466,1539673200"; 
-   d="scan'208";a="125175893"
-Received: from gandrejc-mobl1.ger.corp.intel.com (HELO localhost) ([10.249.254.144])
-  by FMSMGA003.fm.intel.com with ESMTP; 11 Jan 2019 08:04:14 -0800
-Date:   Fri, 11 Jan 2019 18:04:13 +0200
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     Andy Lutomirski <luto@kernel.org>
-Cc:     James Bottomley <James.Bottomley@hansenpartnership.com>,
-        Stephan Mueller <smueller@chronox.de>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        "Lee, Chun-Yi" <joeyli.kernel@gmail.com>,
-        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
-        Pavel Machek <pavel@ucw.cz>,
-        LKML <linux-kernel@vger.kernel.org>, linux-pm@vger.kernel.org,
-        keyrings@vger.kernel.org,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-        Chen Yu <yu.c.chen@intel.com>,
-        Oliver Neukum <oneukum@suse.com>,
-        Ryan Chen <yu.chen.surf@gmail.com>,
-        David Howells <dhowells@redhat.com>,
-        Giovanni Gherdovich <ggherdovich@suse.cz>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Jann Horn <jannh@google.com>
-Subject: Re: [PATCH 1/5 v2] PM / hibernate: Create snapshot keys handler
-Message-ID: <20190111160413.GB12093@linux.intel.com>
-References: <20190103143227.9138-1-jlee@suse.com>
- <4499700.LRS4F2YjjC@tauon.chronox.de>
- <20190108050358.llsox32hggn2jioe@gondor.apana.org.au>
- <1565399.7ulKdI1fm5@tauon.chronox.de>
- <D70458DE-712B-4767-8143-7DC9107689C3@amacapital.net>
- <1546994671.6077.10.camel@HansenPartnership.com>
- <CALCETrWTAYpWv73MgAz=NUfvJSLq965fWMYvJnDepJoRBsgt6Q@mail.gmail.com>
- <1547016579.2789.17.camel@HansenPartnership.com>
- <CALCETrWoSAf4hHCXvqVZhQ5YAMBaZzaBCfnb6sC8JPrSs6FRog@mail.gmail.com>
+        id S1733300AbfAKQEf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 Jan 2019 11:04:35 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 18AD1EBD;
+        Fri, 11 Jan 2019 08:04:35 -0800 (PST)
+Received: from [10.1.196.128] (ostrya.cambridge.arm.com [10.1.196.128])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 6621B3F5AF;
+        Fri, 11 Jan 2019 08:04:32 -0800 (PST)
+Subject: Re: [RFC v3 09/21] iommu/smmuv3: Get prepared for nested stage
+ support
+To:     Eric Auger <eric.auger@redhat.com>, eric.auger.pro@gmail.com,
+        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
+        kvm@vger.kernel.org, kvmarm@lists.cs.columbia.edu, joro@8bytes.org,
+        alex.williamson@redhat.com, jacob.jun.pan@linux.intel.com,
+        yi.l.liu@linux.intel.com, will.deacon@arm.com, robin.murphy@arm.com
+Cc:     marc.zyngier@arm.com, peter.maydell@linaro.org,
+        kevin.tian@intel.com, ashok.raj@intel.com, christoffer.dall@arm.com
+References: <20190108102633.17482-1-eric.auger@redhat.com>
+ <20190108102633.17482-10-eric.auger@redhat.com>
+From:   Jean-Philippe Brucker <jean-philippe.brucker@arm.com>
+Message-ID: <0d766261-119b-0802-4c09-e601b5abe727@arm.com>
+Date:   Fri, 11 Jan 2019 16:04:17 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.0
 MIME-Version: 1.0
+In-Reply-To: <20190108102633.17482-10-eric.auger@redhat.com>
 Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CALCETrWoSAf4hHCXvqVZhQ5YAMBaZzaBCfnb6sC8JPrSs6FRog@mail.gmail.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 09, 2019 at 10:34:42AM -0800, Andy Lutomirski wrote:
-> I suppose I should go read the 2.0 spec. I’ve read the 1.2 spec, but I
-> always assumed that 2.0 was essentially a superset of 1.2
-> functionality.
+Hi Eric,
 
-They are essentially different protocols. No real compatibility.
+On 08/01/2019 10:26, Eric Auger wrote:
+> To allow nested stage support, we need to store both
+> stage 1 and stage 2 configurations (and remove the former
+> union).
+> 
+> arm_smmu_write_strtab_ent() is modified to write both stage
+> fields in the STE.
+> 
+> We add a nested_bypass field to the S1 configuration as the first
+> stage can be bypassed. Also the guest may force the STE to abort:
+> this information gets stored into the nested_abort field.
+> 
+> Only S2 stage is "finalized" as the host does not configure
+> S1 CD, guest does.
+> 
+> Signed-off-by: Eric Auger <eric.auger@redhat.com>
+> 
+> ---
+> 
+> v1 -> v2:
+> - invalidate the STE before moving from a live STE config to another
+> - add the nested_abort and nested_bypass fields
+> ---
+>  drivers/iommu/arm-smmu-v3.c | 43 ++++++++++++++++++++++++++++---------
+>  1 file changed, 33 insertions(+), 10 deletions(-)
+> 
+> diff --git a/drivers/iommu/arm-smmu-v3.c b/drivers/iommu/arm-smmu-v3.c
+> index 9af68266bbb1..9716a301d9ae 100644
+> --- a/drivers/iommu/arm-smmu-v3.c
+> +++ b/drivers/iommu/arm-smmu-v3.c
+> @@ -212,6 +212,7 @@
+>  #define STRTAB_STE_0_CFG_BYPASS		4
+>  #define STRTAB_STE_0_CFG_S1_TRANS	5
+>  #define STRTAB_STE_0_CFG_S2_TRANS	6
+> +#define STRTAB_STE_0_CFG_NESTED		7
+>  
+>  #define STRTAB_STE_0_S1FMT		GENMASK_ULL(5, 4)
+>  #define STRTAB_STE_0_S1FMT_LINEAR	0
+> @@ -491,6 +492,10 @@ struct arm_smmu_strtab_l1_desc {
+>  struct arm_smmu_s1_cfg {
+>  	__le64				*cdptr;
+>  	dma_addr_t			cdptr_dma;
+> +	/* in nested mode, tells s1 must be bypassed */
+> +	bool				nested_bypass;
+> +	/* in nested mode, abort is forced by guest */
+> +	bool				nested_abort;
+>  
+>  	struct arm_smmu_ctx_desc {
+>  		u16	asid;
+> @@ -515,6 +520,7 @@ struct arm_smmu_strtab_ent {
+>  	 * configured according to the domain type.
+>  	 */
+>  	bool				assigned;
+> +	bool				nested;
+>  	struct arm_smmu_s1_cfg		*s1_cfg;
+>  	struct arm_smmu_s2_cfg		*s2_cfg;
+>  };
+> @@ -629,10 +635,8 @@ struct arm_smmu_domain {
+>  	bool				non_strict;
+>  
+>  	enum arm_smmu_domain_stage	stage;
+> -	union {
+> -		struct arm_smmu_s1_cfg	s1_cfg;
+> -		struct arm_smmu_s2_cfg	s2_cfg;
+> -	};
+> +	struct arm_smmu_s1_cfg	s1_cfg;
+> +	struct arm_smmu_s2_cfg	s2_cfg;
+>  
+>  	struct iommu_domain		domain;
+>  
+> @@ -1139,10 +1143,11 @@ static void arm_smmu_write_strtab_ent(struct arm_smmu_device *smmu, u32 sid,
 
+Could you also update the "This is hideously complicated..." comment
+with the nested case? This function was complicated before, but it
+becomes hell when adding nested and SVA support, so we really need the
+comments :)
 
-> Can the kernel filter TPM 2.0 operations?  If so, then a signature
-> that the kernel would have prevented user code from generating is de
-> facto an attestation that the kernel generated it (or that the kernel
-> was compromised, which is sort of equivalent).
+>  			break;
+>  		case STRTAB_STE_0_CFG_S1_TRANS:
+>  		case STRTAB_STE_0_CFG_S2_TRANS:
+> +		case STRTAB_STE_0_CFG_NESTED:
+>  			ste_live = true;
+>  			break;
+>  		case STRTAB_STE_0_CFG_ABORT:
+> -			if (disable_bypass)
+> +			if (disable_bypass || ste->nested)
+>  				break;
+>  		default:
+>  			BUG(); /* STE corruption */
+> @@ -1154,7 +1159,8 @@ static void arm_smmu_write_strtab_ent(struct arm_smmu_device *smmu, u32 sid,
+>  
+>  	/* Bypass/fault */
+>  	if (!ste->assigned || !(ste->s1_cfg || ste->s2_cfg)) {
+> -		if (!ste->assigned && disable_bypass)
+> +		if ((!ste->assigned && disable_bypass) ||
+> +				(ste->s1_cfg && ste->s1_cfg->nested_abort))
 
-You shoud look into TPM resource manager that I implemented with great
-work from James on session swapping and see how far it scales what you
-have in mind. It is currently exposed only to the user space but could
-be easily made an in-kernel API.
+I don't think we're ever reaching this, given that ste->assigned is true
+and ste->s2_cfg is set.
 
-Side-topic: right now the TPM driver can be compiled as a module when
-its APIs are not used by the kernel (namely IMA and trusted keys) with
-some Kconfig magic. Since it looks like that there will be even more
-customers, I think it would make sense to make the TPM driver core as
-part of the core kernel (device drivers for different types of chips
-could still be modules). I've proposed this before maybe two times, but
-it has always been rejected.
+Something I find noteworthy is that with STRTAB_STE_0_CFG_ABORT, no
+event is recorded in case of DMA fault. For vSMMU you'd want to emulate
+the SMMU behavior closely, so you don't want to inject faults if the
+guest sets CFG_ABORT, but this way you also can't report errors to the
+VMM. If we did want to notify the VMM of faults, we'd need to implement
+nested_abort differently, for example by installing an empty context
+descriptor with Config=s1translate-s2translate.
 
-/Jarkko
+>  			val |= FIELD_PREP(STRTAB_STE_0_CFG, STRTAB_STE_0_CFG_ABORT);
+>  		else
+>  			val |= FIELD_PREP(STRTAB_STE_0_CFG, STRTAB_STE_0_CFG_BYPASS);
+> @@ -1172,8 +1178,17 @@ static void arm_smmu_write_strtab_ent(struct arm_smmu_device *smmu, u32 sid,
+>  		return;
+>  	}
+>  
+> +	if (ste->nested && ste_live) {
+> +		/*
+> +		 * When enabling nested, the STE may be transitionning from
+
+transitioning (my bad)
+
+> +		 * s2 to nested and back. Invalidate the STE before changing it.
+> +		 */
+> +		dst[0] = cpu_to_le64(0);
+> +		arm_smmu_sync_ste_for_sid(smmu, sid);
+> +		val = STRTAB_STE_0_V;
+
+val is already STRTAB_STE_0_V
+
+> +	}
+> +
+>  	if (ste->s1_cfg) {
+> -		BUG_ON(ste_live);
+>  		dst[1] = cpu_to_le64(
+>  			 FIELD_PREP(STRTAB_STE_1_S1CIR, STRTAB_STE_1_S1C_CACHE_WBRA) |
+>  			 FIELD_PREP(STRTAB_STE_1_S1COR, STRTAB_STE_1_S1C_CACHE_WBRA) |
+> @@ -1187,12 +1202,12 @@ static void arm_smmu_write_strtab_ent(struct arm_smmu_device *smmu, u32 sid,
+>  		   !(smmu->features & ARM_SMMU_FEAT_STALL_FORCE))
+>  			dst[1] |= cpu_to_le64(STRTAB_STE_1_S1STALLD);
+>  
+> -		val |= (ste->s1_cfg->cdptr_dma & STRTAB_STE_0_S1CTXPTR_MASK) |
+> -			FIELD_PREP(STRTAB_STE_0_CFG, STRTAB_STE_0_CFG_S1_TRANS);
+> +		if (!ste->s1_cfg->nested_bypass)
+> +			val |= (ste->s1_cfg->cdptr_dma & STRTAB_STE_0_S1CTXPTR_MASK) |
+> +				FIELD_PREP(STRTAB_STE_0_CFG, STRTAB_STE_0_CFG_S1_TRANS);
+
+In patch 10/21, you're handling cfg->bypass == 1 by clearing ste->s1_cfg
+(which I think is the best way - resetting the STE like it was when
+initializing the nested domain). So can we get rid of
+s1_cfg->nested_bypass and this change?
+
+>  	}
+>  
+>  	if (ste->s2_cfg) {
+> -		BUG_ON(ste_live);
+>  		dst[2] = cpu_to_le64(
+>  			 FIELD_PREP(STRTAB_STE_2_S2VMID, ste->s2_cfg->vmid) |
+>  			 FIELD_PREP(STRTAB_STE_2_VTCR, ste->s2_cfg->vtcr) |
+> @@ -1454,6 +1469,10 @@ static void arm_smmu_tlb_inv_context(void *cookie)
+>  		cmd.opcode	= CMDQ_OP_TLBI_NH_ASID;
+>  		cmd.tlbi.asid	= smmu_domain->s1_cfg.cd.asid;
+>  		cmd.tlbi.vmid	= 0;
+> +	} else if (smmu_domain->stage == ARM_SMMU_DOMAIN_NESTED) {
+> +		cmd.opcode      = CMDQ_OP_TLBI_NH_ASID;
+> +		cmd.tlbi.asid   = smmu_domain->s1_cfg.cd.asid;
+
+Using s1_cfg.cd.asid as interface between cache_invalidate() and
+tlb_inv_context() seems racy. In nested mode, s1_cfg.cd really shouldn't
+be used. I'd rather cache_invalidate() crafted the commands itself
+instead of going through these callbacks. Or you could add a leaf
+function that takes asid as argument and is called by both
+arm_smmu_tlb_inv_context() and cache_invalidate().
+
+Thanks,
+Jean
+
+> +		cmd.tlbi.vmid   = smmu_domain->s2_cfg.vmid;
+>  	} else {
+>  		cmd.opcode	= CMDQ_OP_TLBI_S12_VMALL;
+>  		cmd.tlbi.vmid	= smmu_domain->s2_cfg.vmid;
+> @@ -1484,6 +1503,10 @@ static void arm_smmu_tlb_inv_range_nosync(unsigned long iova, size_t size,
+>  	if (smmu_domain->stage == ARM_SMMU_DOMAIN_S1) {
+>  		cmd.opcode	= CMDQ_OP_TLBI_NH_VA;
+>  		cmd.tlbi.asid	= smmu_domain->s1_cfg.cd.asid;
+> +	} else if (smmu_domain->stage == ARM_SMMU_DOMAIN_NESTED) {
+> +		cmd.opcode      = CMDQ_OP_TLBI_NH_VA;
+> +		cmd.tlbi.asid   = smmu_domain->s1_cfg.cd.asid;
+> +		cmd.tlbi.vmid   = smmu_domain->s2_cfg.vmid;
+>  	} else {
+>  		cmd.opcode	= CMDQ_OP_TLBI_S2_IPA;
+>  		cmd.tlbi.vmid	= smmu_domain->s2_cfg.vmid;
+> 
+
