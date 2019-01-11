@@ -7,41 +7,42 @@ X-Spam-Status: No, score=-12.0 required=3.0
 	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9BF82C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 07:49:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 99974C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 07:50:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7561820874
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 07:49:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5E4A820874
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 07:50:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730120AbfAKHtj (ORCPT
+        id S1730210AbfAKHuV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 11 Jan 2019 02:49:39 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:45385 "EHLO
+        Fri, 11 Jan 2019 02:50:21 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:49299 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727578AbfAKHtj (ORCPT
+        with ESMTP id S1727578AbfAKHuV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Jan 2019 02:49:39 -0500
+        Fri, 11 Jan 2019 02:50:21 -0500
 Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x0B7nV0c561610
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x0B7o7pK561741
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Thu, 10 Jan 2019 23:49:31 -0800
+        Thu, 10 Jan 2019 23:50:07 -0800
 Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x0B7nV5v561607;
-        Thu, 10 Jan 2019 23:49:31 -0800
-Date:   Thu, 10 Jan 2019 23:49:31 -0800
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x0B7o6pn561729;
+        Thu, 10 Jan 2019 23:50:06 -0800
+Date:   Thu, 10 Jan 2019 23:50:06 -0800
 X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Arnaldo Carvalho de Melo <tipbot@zytor.com>
-Message-ID: <tip-4q2b5g4p2hrstrhp9t2mrlho@git.kernel.org>
-Cc:     hpa@zytor.com, linux-kernel@vger.kernel.org,
-        adrian.hunter@intel.com, tglx@linutronix.de, namhyung@kernel.org,
-        mingo@kernel.org, jolsa@kernel.org, acme@redhat.com
-Reply-To: namhyung@kernel.org, tglx@linutronix.de, jolsa@kernel.org,
-          acme@redhat.com, mingo@kernel.org, hpa@zytor.com,
-          adrian.hunter@intel.com, linux-kernel@vger.kernel.org
+From:   tip-bot for Ravi Bangoria <tipbot@zytor.com>
+Message-ID: <tip-0206131811fa6e4b3ed64b5f1c107e2815dcab42@git.kernel.org>
+Cc:     mingo@kernel.org, ravi.bangoria@linux.ibm.com, mpe@ellerman.id.au,
+        hpa@zytor.com, jolsa@redhat.com, tglx@linutronix.de,
+        acme@redhat.com, namhyung@kernel.org, linux-kernel@vger.kernel.org
+Reply-To: acme@redhat.com, tglx@linutronix.de, namhyung@kernel.org,
+          linux-kernel@vger.kernel.org, hpa@zytor.com, jolsa@redhat.com,
+          mpe@ellerman.id.au, mingo@kernel.org, ravi.bangoria@linux.ibm.com
+In-Reply-To: <20190110094936.3132-1-ravi.bangoria@linux.ibm.com>
+References: <20190110094936.3132-1-ravi.bangoria@linux.ibm.com>
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/urgent] perf symbols: Add 'arch_cpu_idle' to the list of
- kernel idle symbols
-Git-Commit-ID: 549aff770ccfec368aa8f0652dbce8b1e8e6715a
+Subject: [tip:perf/urgent] perf powerpc: Rework syscall table generation
+Git-Commit-ID: 0206131811fa6e4b3ed64b5f1c107e2815dcab42
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -55,37 +56,219 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  549aff770ccfec368aa8f0652dbce8b1e8e6715a
-Gitweb:     https://git.kernel.org/tip/549aff770ccfec368aa8f0652dbce8b1e8e6715a
-Author:     Arnaldo Carvalho de Melo <acme@redhat.com>
-AuthorDate: Wed, 9 Jan 2019 16:19:24 -0300
+Commit-ID:  0206131811fa6e4b3ed64b5f1c107e2815dcab42
+Gitweb:     https://git.kernel.org/tip/0206131811fa6e4b3ed64b5f1c107e2815dcab42
+Author:     Ravi Bangoria <ravi.bangoria@linux.ibm.com>
+AuthorDate: Thu, 10 Jan 2019 15:19:35 +0530
 Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
-CommitDate: Wed, 9 Jan 2019 16:21:15 -0300
+CommitDate: Thu, 10 Jan 2019 10:34:52 -0300
 
-perf symbols: Add 'arch_cpu_idle' to the list of kernel idle symbols
+perf powerpc: Rework syscall table generation
 
-When testing 'perf top' on a armhf system (32-bit, Orange Pi Zero), I
-noticed that 'arch_cpu_idle' dominated, add it to the list of idle
-symbols, so that we can see what is that being done when not idle.
+Commit aff850393200 ("powerpc: add system call table generation
+support") changed how systemcall table is generated for powerpc.
+Incorporate these changes into perf as well.
 
-Cc: Adrian Hunter <adrian.hunter@intel.com>
-Cc: Jiri Olsa <jolsa@kernel.org>
+Committer testing:
+
+  $ podman run --entrypoint=/bin/sh --privileged -v /home/acme/git:/git --rm -ti docker.io/acmel/linux-perf-tools-build-ubuntu:18.04-x-powerpc64
+  perfbuilder@d7a7af166a80:/git/perf$ head -2 /etc/os-release
+  NAME="Ubuntu"
+  VERSION="18.04.1 LTS (Bionic Beaver)"
+  perfbuilder@d7a7af166a80:/git/perf$
+  perfbuilder@d7a7af166a80:/git/perf$ make ARCH=powerpc CROSS_COMPILE=powerpc64-linux-gnu- EXTRA_CFLAGS= -C /git/linux/tools/perf O=/tmp/build/perf
+  make: Entering directory '/git/linux/tools/perf'
+    BUILD:   Doing 'make -j8' parallel build
+    HOSTCC   /tmp/build/perf/fixdep.o
+    HOSTLD   /tmp/build/perf/fixdep-in.o
+    LINK     /tmp/build/perf/fixdep
+  Warning: Kernel ABI header at 'tools/include/uapi/linux/mman.h' differs from latest version at 'include/uapi/linux/mman.h'
+  diff -u tools/include/uapi/linux/mman.h include/uapi/linux/mman.h
+  sh: 1: command: Illegal option -c
+
+  Auto-detecting system features:
+  ...                         dwarf: [ on  ]
+  ...            dwarf_getlocations: [ on  ]
+  ...                         glibc: [ on  ]
+  ...                          gtk2: [ OFF ]
+  ...                      libaudit: [ OFF ]
+  ...                        libbfd: [ OFF ]
+  ...                        libelf: [ on  ]
+  ...                       libnuma: [ OFF ]
+  ...        numa_num_possible_cpus: [ OFF ]
+  ...                       libperl: [ OFF ]
+  ...                     libpython: [ OFF ]
+  ...                      libslang: [ OFF ]
+  ...                     libcrypto: [ OFF ]
+  ...                     libunwind: [ OFF ]
+  ...            libdw-dwarf-unwind: [ on  ]
+  ...                          zlib: [ on  ]
+  ...                          lzma: [ OFF ]
+  ...                     get_cpuid: [ OFF ]
+  ...                           bpf: [ on  ]
+
+  Makefile.config:445: No sys/sdt.h found, no SDT events are defined, please install systemtap-sdt-devel or systemtap-sdt-dev
+  Makefile.config:491: No libunwind found. Please install libunwind-dev[el] >= 1.1 and/or set LIBUNWIND_DIR
+  Makefile.config:583: No libcrypto.h found, disables jitted code injection, please install libssl-devel or libssl-dev
+  Makefile.config:598: slang not found, disables TUI support. Please install slang-devel, libslang-dev or libslang2-dev
+  Makefile.config:612: GTK2 not found, disables GTK2 support. Please install gtk2-devel or libgtk2.0-dev
+  Makefile.config:639: Missing perl devel files. Disabling perl scripting support, please install perl-ExtUtils-Embed/libperl-dev
+  Makefile.config:666: No python interpreter was found: disables Python support - please install python-devel/python-dev
+  Makefile.config:721: No bfd.h/libbfd found, please install binutils-dev[el]/zlib-static/libiberty-dev to gain symbol demangling
+  Makefile.config:750: No liblzma found, disables xz kernel module decompression, please install xz-devel/liblzma-dev
+  Makefile.config:763: No numa.h found, disables 'perf bench numa mem' benchmark, please install numactl-devel/libnuma-devel/libnuma-dev
+  Makefile.config:814: No libbabeltrace found, disables 'perf data' CTF format support, please install libbabeltrace-dev[el]/libbabeltrace-ctf-dev
+  Makefile.config:840: No alternatives command found, you need to set JDIR= to point to the root of your Java directory
+    GEN      /tmp/build/perf/common-cmds.h
+  <SNIP>
+    CC       /tmp/build/perf/util/syscalltbl.o
+  <SNIP>
+    LD       /tmp/build/perf/libperf-in.o
+    AR       /tmp/build/perf/libperf.a
+    LINK     /tmp/build/perf/perf
+  make: Leaving directory '/git/linux/tools/perf'
+  perfbuilder@d7a7af166a80:/git/perf$ head /tmp/build/perf/arch/powerpc/include/generated/asm/syscalls_64.c
+  static const char *syscalltbl_powerpc_64[] = {
+  	[0] = "restart_syscall",
+  	[1] = "exit",
+  	[2] = "fork",
+  	[3] = "read",
+  	[4] = "write",
+  	[5] = "open",
+  	[6] = "close",
+  	[7] = "waitpid",
+  	[8] = "creat",
+  perfbuilder@d7a7af166a80:/git/perf$ tail /tmp/build/perf/arch/powerpc/include/generated/asm/syscalls_64.c
+  	[381] = "pwritev2",
+  	[382] = "kexec_file_load",
+  	[383] = "statx",
+  	[384] = "pkey_alloc",
+  	[385] = "pkey_free",
+  	[386] = "pkey_mprotect",
+  	[387] = "rseq",
+  	[388] = "io_pgetevents",
+  };
+  #define SYSCALLTBL_POWERPC_64_MAX_ID 388
+  perfbuilder@d7a7af166a80:/git/perf$ head /tmp/build/perf/arch/powerpc/include/generated/asm/syscalls_32.c
+  static const char *syscalltbl_powerpc_32[] = {
+  	[0] = "restart_syscall",
+  	[1] = "exit",
+  	[2] = "fork",
+  	[3] = "read",
+  	[4] = "write",
+  	[5] = "open",
+  	[6] = "close",
+  	[7] = "waitpid",
+  	[8] = "creat",
+  perfbuilder@d7a7af166a80:/git/perf$ tail /tmp/build/perf/arch/powerpc/include/generated/asm/syscalls_32.c
+  	[381] = "pwritev2",
+  	[382] = "kexec_file_load",
+  	[383] = "statx",
+  	[384] = "pkey_alloc",
+  	[385] = "pkey_free",
+  	[386] = "pkey_mprotect",
+  	[387] = "rseq",
+  	[388] = "io_pgetevents",
+  };
+  #define SYSCALLTBL_POWERPC_32_MAX_ID 388
+  perfbuilder@d7a7af166a80:/git/perf$
+
+Signed-off-by: Ravi Bangoria <ravi.bangoria@linux.ibm.com>
+Reported-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Tested-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Cc: Jiri Olsa <jolsa@redhat.com>
+Cc: Michael Ellerman <mpe@ellerman.id.au>
 Cc: Namhyung Kim <namhyung@kernel.org>
-Link: https://lkml.kernel.org/n/tip-4q2b5g4p2hrstrhp9t2mrlho@git.kernel.org
+Cc: linuxppc-dev@lists.ozlabs.org
+Link: http://lkml.kernel.org/r/20190110094936.3132-1-ravi.bangoria@linux.ibm.com
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/util/symbol.c | 1 +
- 1 file changed, 1 insertion(+)
+ tools/perf/arch/powerpc/Makefile                   | 15 +++++++++++----
+ .../perf/arch/powerpc/entry/syscalls/mksyscalltbl  | 22 ++++++++++++----------
+ .../perf/arch/powerpc/entry}/syscalls/syscall.tbl  |  0
+ 3 files changed, 23 insertions(+), 14 deletions(-)
 
-diff --git a/tools/perf/util/symbol.c b/tools/perf/util/symbol.c
-index 01f2c7385e38..48efad6d0f90 100644
---- a/tools/perf/util/symbol.c
-+++ b/tools/perf/util/symbol.c
-@@ -614,6 +614,7 @@ out:
- static bool symbol__is_idle(const char *name)
+diff --git a/tools/perf/arch/powerpc/Makefile b/tools/perf/arch/powerpc/Makefile
+index a111239df182..e58d00d62f02 100644
+--- a/tools/perf/arch/powerpc/Makefile
++++ b/tools/perf/arch/powerpc/Makefile
+@@ -14,18 +14,25 @@ PERF_HAVE_JITDUMP := 1
+ out    := $(OUTPUT)arch/powerpc/include/generated/asm
+ header32 := $(out)/syscalls_32.c
+ header64 := $(out)/syscalls_64.c
+-sysdef := $(srctree)/tools/arch/powerpc/include/uapi/asm/unistd.h
+-sysprf := $(srctree)/tools/perf/arch/powerpc/entry/syscalls/
++syskrn := $(srctree)/arch/powerpc/kernel/syscalls/syscall.tbl
++sysprf := $(srctree)/tools/perf/arch/powerpc/entry/syscalls
++sysdef := $(sysprf)/syscall.tbl
+ systbl := $(sysprf)/mksyscalltbl
+ 
+ # Create output directory if not already present
+ _dummy := $(shell [ -d '$(out)' ] || mkdir -p '$(out)')
+ 
+ $(header64): $(sysdef) $(systbl)
+-	$(Q)$(SHELL) '$(systbl)' '64' '$(CC)' $(sysdef) > $@
++	@(test -d ../../kernel -a -d ../../tools -a -d ../perf && ( \
++	(diff -B $(sysdef) $(syskrn) >/dev/null) \
++	|| echo "Warning: Kernel ABI header at '$(sysdef)' differs from latest version at '$(syskrn)'" >&2 )) || true
++	$(Q)$(SHELL) '$(systbl)' '64' $(sysdef) > $@
+ 
+ $(header32): $(sysdef) $(systbl)
+-	$(Q)$(SHELL) '$(systbl)' '32' '$(CC)' $(sysdef) > $@
++	@(test -d ../../kernel -a -d ../../tools -a -d ../perf && ( \
++	(diff -B $(sysdef) $(syskrn) >/dev/null) \
++	|| echo "Warning: Kernel ABI header at '$(sysdef)' differs from latest version at '$(syskrn)'" >&2 )) || true
++	$(Q)$(SHELL) '$(systbl)' '32' $(sysdef) > $@
+ 
+ clean::
+ 	$(call QUIET_CLEAN, powerpc) $(RM) $(header32) $(header64)
+diff --git a/tools/perf/arch/powerpc/entry/syscalls/mksyscalltbl b/tools/perf/arch/powerpc/entry/syscalls/mksyscalltbl
+index ef52e1dd694b..6c58060aa03b 100755
+--- a/tools/perf/arch/powerpc/entry/syscalls/mksyscalltbl
++++ b/tools/perf/arch/powerpc/entry/syscalls/mksyscalltbl
+@@ -9,10 +9,9 @@
+ # Changed by: Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com>
+ 
+ wordsize=$1
+-gcc=$2
+-input=$3
++SYSCALL_TBL=$2
+ 
+-if ! test -r $input; then
++if ! test -r $SYSCALL_TBL; then
+ 	echo "Could not read input file" >&2
+ 	exit 1
+ fi
+@@ -20,18 +19,21 @@ fi
+ create_table()
  {
- 	const char * const idle_symbols[] = {
-+		"arch_cpu_idle",
- 		"cpu_idle",
- 		"cpu_startup_entry",
- 		"intel_idle",
+ 	local wordsize=$1
+-	local max_nr
++	local max_nr nr abi sc discard
++	max_nr=-1
++	nr=0
+ 
+ 	echo "static const char *syscalltbl_powerpc_${wordsize}[] = {"
+-	while read sc nr; do
+-		printf '\t[%d] = "%s",\n' $nr $sc
+-		max_nr=$nr
++	while read nr abi sc discard; do
++		if [ "$max_nr" -lt "$nr" ]; then
++			printf '\t[%d] = "%s",\n' $nr $sc
++			max_nr=$nr
++		fi
+ 	done
+ 	echo '};'
+ 	echo "#define SYSCALLTBL_POWERPC_${wordsize}_MAX_ID $max_nr"
+ }
+ 
+-$gcc -m${wordsize} -E -dM -x c  $input	       \
+-	|sed -ne 's/^#define __NR_//p' \
+-	|sort -t' ' -k2 -nu	       \
++grep -E "^[[:digit:]]+[[:space:]]+(common|spu|nospu|${wordsize})" $SYSCALL_TBL \
++	|sort -k1 -n                                                           \
+ 	|create_table ${wordsize}
+diff --git a/arch/powerpc/kernel/syscalls/syscall.tbl b/tools/perf/arch/powerpc/entry/syscalls/syscall.tbl
+similarity index 100%
+copy from arch/powerpc/kernel/syscalls/syscall.tbl
+copy to tools/perf/arch/powerpc/entry/syscalls/syscall.tbl
