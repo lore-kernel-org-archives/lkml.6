@@ -7,46 +7,47 @@ X-Spam-Status: No, score=-10.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 17B11C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:33:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 41DD2C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:34:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DCAE92184A
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:33:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 134472133F
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:34:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547217238;
-	bh=6dJ+0F96Xie7al34d8DWcIdMI9l2QWCnTCKvyZZF6vc=;
+	s=default; t=1547217244;
+	bh=1Y6JlY0XtO4u4cTvQRRSRa8egveBqCUtwm74WK7EJlo=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=HnogvIbPMmLAP6FIuAhEfCcktkejtIiovBDuVNYWBIWec1LQn8t/p7Aex//r47oMH
-	 p12yIwg2gBp8EAp5cp3SuCw5pm+EdIKfGy/KLoraqErDv0iSsTpIUoOUgqLPb1X2Zy
-	 sJXfkiASdrMtfWDPn5/jCPPNQrqSyn8c60STzVA8=
+	b=bUx+3FAPbGGumgFqkZ0z834T0jo8Zcae3TnZ1+ek4KC+Qj3s1Eo8JRUO+dyTgAxEZ
+	 h9QG4HnepoTkjoI3hz9HlC+q0KbvUJZ5/iYGwbvsSSWsZM6DCGY0XMkJf/zS7FaFWl
+	 ZyKw8jMYK5J4+QwyeqkqHVLa20nzLDL44UWbJBbo=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389798AbfAKOd6 (ORCPT
+        id S2389823AbfAKOeD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 11 Jan 2019 09:33:58 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54130 "EHLO mail.kernel.org"
+        Fri, 11 Jan 2019 09:34:03 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54262 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389781AbfAKOdz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Jan 2019 09:33:55 -0500
+        id S2389806AbfAKOeA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 Jan 2019 09:34:00 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5A92521841;
-        Fri, 11 Jan 2019 14:33:54 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4F6CD2063F;
+        Fri, 11 Jan 2019 14:33:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547217234;
-        bh=6dJ+0F96Xie7al34d8DWcIdMI9l2QWCnTCKvyZZF6vc=;
+        s=default; t=1547217239;
+        bh=1Y6JlY0XtO4u4cTvQRRSRa8egveBqCUtwm74WK7EJlo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Tz5hFrA/TudcAzOnZ55p7Eju0dRGCsjbPTbRP2iP52KxEdZqZp3Mrq9XbHVWFynBE
-         PY6MqOpBHGZDQtKbPTnZvwh4wPGWWZ0DwWRSw5Hpkj/TsX8ICpnpey9dA+MdHvBMIG
-         xfxKRMuPRZq7Xg/eYNl5T1pCwm7Am+Q31bwdRyek=
+        b=jOJsEMyNL+SXRNc3RWsQl+SeAM5S3lSoFGreEaMPGIJJzEyUBdm4bF1Dmv9nGstCj
+         zTKfzONSl31LL6Ptv2wbObqgUPUZWFPkJ1KF//8qLcdkcqmFy2JcQE2uc46MuCAUtl
+         nCP7uj7Becz23XnjfyydSiiy0AAM7Oww7uQ55IxQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Benjamin Coddington <bcodding@redhat.com>,
-        "J. Bruce Fields" <bfields@redhat.com>
-Subject: [PATCH 4.14 092/105] lockd: Show pid of lockd for remote locks
-Date:   Fri, 11 Jan 2019 15:15:03 +0100
-Message-Id: <20190111131110.620860608@linuxfoundation.org>
+        stable@vger.kernel.org, Nick Desaulniers <ndesaulniers@google.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Will Deacon <will.deacon@arm.com>
+Subject: [PATCH 4.14 093/105] arm64: drop linker script hack to hide __efistub_ symbols
+Date:   Fri, 11 Jan 2019 15:15:04 +0100
+Message-Id: <20190111131110.701589602@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190111131102.899065735@linuxfoundation.org>
 References: <20190111131102.899065735@linuxfoundation.org>
@@ -65,83 +66,88 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Benjamin Coddington <bcodding@redhat.com>
+From: Ard Biesheuvel <ard.biesheuvel@linaro.org>
 
-commit b8eee0e90f9797b747113638bc75e739b192ad38 upstream.
+commit dd6846d774693bfa27d7db4dae5ea67dfe373fa1 upstream.
 
-Commit 9d5b86ac13c5 ("fs/locks: Remove fl_nspid and use fs-specific l_pid
-for remote locks") specified that the l_pid returned for F_GETLK on a local
-file that has a remote lock should be the pid of the lock manager process.
-That commit, while updating other filesystems, failed to update lockd, such
-that locks created by lockd had their fl_pid set to that of the remote
-process holding the lock.  Fix that here to be the pid of lockd.
+Commit 1212f7a16af4 ("scripts/kallsyms: filter arm64's __efistub_
+symbols") updated the kallsyms code to filter out symbols with
+the __efistub_ prefix explicitly, so we no longer require the
+hack in our linker script to emit them as absolute symbols.
 
-Also, fix the client case so that the returned lock pid is negative, which
-indicates a remote lock on a remote file.
-
-Fixes: 9d5b86ac13c5 ("fs/locks: Remove fl_nspid and use fs-specific...")
-Cc: stable@vger.kernel.org
-
-Signed-off-by: Benjamin Coddington <bcodding@redhat.com>
-Signed-off-by: J. Bruce Fields <bfields@redhat.com>
+Cc: Nick Desaulniers <ndesaulniers@google.com>
+Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Signed-off-by: Will Deacon <will.deacon@arm.com>
+[ND: adjusted for context]
+Signed-off-by: Nick Desaulniers <ndesaulniers@google.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- fs/lockd/clntproc.c |    2 +-
- fs/lockd/xdr.c      |    4 ++--
- fs/lockd/xdr4.c     |    4 ++--
- 3 files changed, 5 insertions(+), 5 deletions(-)
+ arch/arm64/kernel/image.h |   44 +++++++++++++++++---------------------------
+ 1 file changed, 17 insertions(+), 27 deletions(-)
 
---- a/fs/lockd/clntproc.c
-+++ b/fs/lockd/clntproc.c
-@@ -442,7 +442,7 @@ nlmclnt_test(struct nlm_rqst *req, struc
- 			fl->fl_start = req->a_res.lock.fl.fl_start;
- 			fl->fl_end = req->a_res.lock.fl.fl_end;
- 			fl->fl_type = req->a_res.lock.fl.fl_type;
--			fl->fl_pid = 0;
-+			fl->fl_pid = -req->a_res.lock.fl.fl_pid;
- 			break;
- 		default:
- 			status = nlm_stat_to_errno(req->a_res.status);
---- a/fs/lockd/xdr.c
-+++ b/fs/lockd/xdr.c
-@@ -127,7 +127,7 @@ nlm_decode_lock(__be32 *p, struct nlm_lo
+--- a/arch/arm64/kernel/image.h
++++ b/arch/arm64/kernel/image.h
+@@ -76,16 +76,6 @@
+ __efistub_stext_offset = stext - _text;
  
- 	locks_init_lock(fl);
- 	fl->fl_owner = current->files;
--	fl->fl_pid   = (pid_t)lock->svid;
-+	fl->fl_pid   = current->tgid;
- 	fl->fl_flags = FL_POSIX;
- 	fl->fl_type  = F_RDLCK;		/* as good as anything else */
- 	start = ntohl(*p++);
-@@ -269,7 +269,7 @@ nlmsvc_decode_shareargs(struct svc_rqst
- 	memset(lock, 0, sizeof(*lock));
- 	locks_init_lock(&lock->fl);
- 	lock->svid = ~(u32) 0;
--	lock->fl.fl_pid = (pid_t)lock->svid;
-+	lock->fl.fl_pid = current->tgid;
+ /*
+- * Prevent the symbol aliases below from being emitted into the kallsyms
+- * table, by forcing them to be absolute symbols (which are conveniently
+- * ignored by scripts/kallsyms) rather than section relative symbols.
+- * The distinction is only relevant for partial linking, and only for symbols
+- * that are defined within a section declaration (which is not the case for
+- * the definitions below) so the resulting values will be identical.
+- */
+-#define KALLSYMS_HIDE(sym)	ABSOLUTE(sym)
+-
+-/*
+  * The EFI stub has its own symbol namespace prefixed by __efistub_, to
+  * isolate it from the kernel proper. The following symbols are legally
+  * accessed by the stub, so provide some aliases to make them accessible.
+@@ -94,27 +84,27 @@ __efistub_stext_offset = stext - _text;
+  * linked at. The routines below are all implemented in assembler in a
+  * position independent manner
+  */
+-__efistub_memcmp		= KALLSYMS_HIDE(__pi_memcmp);
+-__efistub_memchr		= KALLSYMS_HIDE(__pi_memchr);
+-__efistub_memcpy		= KALLSYMS_HIDE(__pi_memcpy);
+-__efistub_memmove		= KALLSYMS_HIDE(__pi_memmove);
+-__efistub_memset		= KALLSYMS_HIDE(__pi_memset);
+-__efistub_strlen		= KALLSYMS_HIDE(__pi_strlen);
+-__efistub_strnlen		= KALLSYMS_HIDE(__pi_strnlen);
+-__efistub_strcmp		= KALLSYMS_HIDE(__pi_strcmp);
+-__efistub_strncmp		= KALLSYMS_HIDE(__pi_strncmp);
+-__efistub___flush_dcache_area	= KALLSYMS_HIDE(__pi___flush_dcache_area);
++__efistub_memcmp		= __pi_memcmp;
++__efistub_memchr		= __pi_memchr;
++__efistub_memcpy		= __pi_memcpy;
++__efistub_memmove		= __pi_memmove;
++__efistub_memset		= __pi_memset;
++__efistub_strlen		= __pi_strlen;
++__efistub_strnlen		= __pi_strnlen;
++__efistub_strcmp		= __pi_strcmp;
++__efistub_strncmp		= __pi_strncmp;
++__efistub___flush_dcache_area	= __pi___flush_dcache_area;
  
- 	if (!(p = nlm_decode_cookie(p, &argp->cookie))
- 	 || !(p = xdr_decode_string_inplace(p, &lock->caller,
---- a/fs/lockd/xdr4.c
-+++ b/fs/lockd/xdr4.c
-@@ -119,7 +119,7 @@ nlm4_decode_lock(__be32 *p, struct nlm_l
+ #ifdef CONFIG_KASAN
+-__efistub___memcpy		= KALLSYMS_HIDE(__pi_memcpy);
+-__efistub___memmove		= KALLSYMS_HIDE(__pi_memmove);
+-__efistub___memset		= KALLSYMS_HIDE(__pi_memset);
++__efistub___memcpy		= __pi_memcpy;
++__efistub___memmove		= __pi_memmove;
++__efistub___memset		= __pi_memset;
+ #endif
  
- 	locks_init_lock(fl);
- 	fl->fl_owner = current->files;
--	fl->fl_pid   = (pid_t)lock->svid;
-+	fl->fl_pid   = current->tgid;
- 	fl->fl_flags = FL_POSIX;
- 	fl->fl_type  = F_RDLCK;		/* as good as anything else */
- 	p = xdr_decode_hyper(p, &start);
-@@ -266,7 +266,7 @@ nlm4svc_decode_shareargs(struct svc_rqst
- 	memset(lock, 0, sizeof(*lock));
- 	locks_init_lock(&lock->fl);
- 	lock->svid = ~(u32) 0;
--	lock->fl.fl_pid = (pid_t)lock->svid;
-+	lock->fl.fl_pid = current->tgid;
+-__efistub__text			= KALLSYMS_HIDE(_text);
+-__efistub__end			= KALLSYMS_HIDE(_end);
+-__efistub__edata		= KALLSYMS_HIDE(_edata);
+-__efistub_screen_info		= KALLSYMS_HIDE(screen_info);
++__efistub__text			= _text;
++__efistub__end			= _end;
++__efistub__edata		= _edata;
++__efistub_screen_info		= screen_info;
  
- 	if (!(p = nlm4_decode_cookie(p, &argp->cookie))
- 	 || !(p = xdr_decode_string_inplace(p, &lock->caller,
+ #endif
+ 
 
 
