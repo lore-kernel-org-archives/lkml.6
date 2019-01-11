@@ -7,47 +7,50 @@ X-Spam-Status: No, score=-10.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 10DE4C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:21:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CACEBC43444
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:21:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D4F5E21841
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:21:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9A3902183F
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:21:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547216474;
-	bh=+8bnEF3Qj6Vv9Ay0hcuuYFkwcWYH/2+Xe7fvK/GTWtg=;
+	s=default; t=1547216480;
+	bh=Bt5f0lJYEwi4Z7PFsaQxjJmeAVqqKZpPP0oZ+SUZ740=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=VQRJcTXgtnU5fQVGvig5RkCbLKB7DAaHzJtk242+n+g989hoDTWhKWbNwJ62+Hq2E
-	 EsJ54+ymQsfuKyGS1A2cX/bKn5rhlHdj1W3tfeuyUfHh0it4dlVvNliA3Z1k/cd3Q6
-	 ztD5VlZ7jPcaex8FOml20fofP1rjYYJTgwqqLoeg=
+	b=Qwl9oSZO2iE9ZvaSbPEnkXbRmbK9ECmOAQIkxYefyK7KowfWzpDK/K5EF4FVf4cJb
+	 yhl8OUxf+OO8rUtozn5PVek8U7pqz4r8gpehzmgfswwhmWtsY3p1CR4rU43zgrEhMq
+	 OY5Jko3ryCXsgHWAom61Z9TaHlF6DH0okF4pY4P0=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388047AbfAKOUF (ORCPT
+        id S1732503AbfAKOVU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 11 Jan 2019 09:20:05 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37472 "EHLO mail.kernel.org"
+        Fri, 11 Jan 2019 09:21:20 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37384 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731874AbfAKOUC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Jan 2019 09:20:02 -0500
+        id S2388019AbfAKOT7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 Jan 2019 09:19:59 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9D6E62177B;
-        Fri, 11 Jan 2019 14:20:00 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 21C212184A;
+        Fri, 11 Jan 2019 14:19:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547216401;
-        bh=+8bnEF3Qj6Vv9Ay0hcuuYFkwcWYH/2+Xe7fvK/GTWtg=;
+        s=default; t=1547216398;
+        bh=Bt5f0lJYEwi4Z7PFsaQxjJmeAVqqKZpPP0oZ+SUZ740=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=X1DACgPxvKaHKBXTSGFAEphdJ1yF5rdbMNPK2m8W9g/2RUxkSCc7j7R+Pt9wRa7sE
-         urGmN2OOlmeMSGuksO68jLEJ0YeTWmZvuiM+OGPw3eP0gBSPv10zLkMoqY78NWtwOh
-         geeNDDE7kiX2FqYLY7bGtRNbpgv3KgB7nowCkIy4=
+        b=rZzC10NDKph1i9wLYZuIdZ/LgrGMF+J5Td3MwN+vmWE8FebKJTrn+vf1CQJLbrLJM
+         NKCvWmNJRcuzmOytg0aKaoqItfdhsl+lZkiZfOL+RfegKLL7JNMKsgQc88Ic+Ci/Tj
+         rfiTMCXUb251OFVqdQinZAmvVM9LomjhrcnT74ao=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Macpaul Lin <macpaul.lin@mediatek.com>,
-        Johan Hovold <johan@kernel.org>,
-        Oliver Neukum <oneukum@suse.com>
-Subject: [PATCH 4.4 49/88] cdc-acm: fix abnormal DATA RX issue for Mediatek Preloader.
-Date:   Fri, 11 Jan 2019 15:08:18 +0100
-Message-Id: <20190111131053.347555508@linuxfoundation.org>
+        stable@vger.kernel.org, Lukas Wunner <lukas@wunner.de>,
+        Mathias Duckeck <m.duckeck@kunbus.de>,
+        Frank Pavlic <f.pavlic@kunbus.de>,
+        Martin Sperl <kernel@martin.sperl.org>,
+        =?UTF-8?q?Noralf=20Tr=C3=B8nnes?= <noralf@tronnes.org>,
+        Mark Brown <broonie@kernel.org>
+Subject: [PATCH 4.4 48/88] spi: bcm2835: Avoid finishing transfer prematurely in IRQ mode
+Date:   Fri, 11 Jan 2019 15:08:17 +0100
+Message-Id: <20190111131053.213760317@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190111131045.137499039@linuxfoundation.org>
 References: <20190111131045.137499039@linuxfoundation.org>
@@ -66,80 +69,57 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Macpaul Lin <macpaul.lin@mediatek.com>
+From: Lukas Wunner <lukas@wunner.de>
 
-commit eafb27fa5283599ce6c5492ea18cf636a28222bb upstream.
+commit 56c1723426d3cfd4723bfbfce531d7b38bae6266 upstream.
 
-Mediatek Preloader is a proprietary embedded boot loader for loading
-Little Kernel and Linux into device DRAM.
+The IRQ handler bcm2835_spi_interrupt() first reads as much as possible
+from the RX FIFO, then writes as much as possible to the TX FIFO.
+Afterwards it decides whether the transfer is finished by checking if
+the TX FIFO is empty.
 
-This boot loader also handle firmware update. Mediatek Preloader will be
-enumerated as a virtual COM port when the device is connected to Windows
-or Linux OS via CDC-ACM class driver. When the USB enumeration has been
-done, Mediatek Preloader will send out handshake command "READY" to PC
-actively instead of waiting command from the download tool.
+If very few bytes were written to the TX FIFO, they may already have
+been transmitted by the time the FIFO's emptiness is checked.  As a
+result, the transfer will be declared finished and the chip will be
+reset without reading the corresponding received bytes from the RX FIFO.
 
-Since Linux 4.12, the commit "tty: reset termios state on device
-registration" (93857edd9829e144acb6c7e72d593f6e01aead66) causes Mediatek
-Preloader receiving some abnoraml command like "READYXX" as it sent.
-This will be recognized as an incorrect response. The behavior change
-also causes the download handshake fail. This change only affects
-subsequent connects if the reconnected device happens to get the same minor
-number.
+The odds of this happening increase with a high clock frequency (such
+that the TX FIFO drains quickly) and either passing "threadirqs" on the
+command line or enabling CONFIG_PREEMPT_RT_BASE (such that the IRQ
+handler may be preempted between filling the TX FIFO and checking its
+emptiness).
 
-By disabling the ECHO termios flag could avoid this problem. However, it
-cannot be done by user space configuration when download tool open
-/dev/ttyACM0. This is because the device running Mediatek Preloader will
-send handshake command "READY" immediately once the CDC-ACM driver is
-ready.
+Fix by instead checking whether rx_len has reached zero, which means
+that the transfer has been received in full.  This is also more
+efficient as it avoids one bus read access per interrupt.  Note that
+bcm2835_spi_transfer_one_poll() likewise uses rx_len to determine
+whether the transfer has finished.
 
-This patch wants to fix above problem by introducing "DISABLE_ECHO"
-property in driver_info. When Mediatek Preloader is connected, the
-CDC-ACM driver could disable ECHO flag in termios to avoid the problem.
-
-Signed-off-by: Macpaul Lin <macpaul.lin@mediatek.com>
-Cc: stable@vger.kernel.org
-Reviewed-by: Johan Hovold <johan@kernel.org>
-Acked-by: Oliver Neukum <oneukum@suse.com>
+Signed-off-by: Lukas Wunner <lukas@wunner.de>
+Fixes: e34ff011c70e ("spi: bcm2835: move to the transfer_one driver model")
+Cc: stable@vger.kernel.org # v4.1+
+Cc: Mathias Duckeck <m.duckeck@kunbus.de>
+Cc: Frank Pavlic <f.pavlic@kunbus.de>
+Cc: Martin Sperl <kernel@martin.sperl.org>
+Cc: Noralf Trønnes <noralf@tronnes.org>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/usb/class/cdc-acm.c |   10 ++++++++++
- drivers/usb/class/cdc-acm.h |    1 +
- 2 files changed, 11 insertions(+)
+ drivers/spi/spi-bcm2835.c |    3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
---- a/drivers/usb/class/cdc-acm.c
-+++ b/drivers/usb/class/cdc-acm.c
-@@ -507,6 +507,13 @@ static int acm_tty_install(struct tty_dr
- 	if (retval)
- 		goto error_init_termios;
+--- a/drivers/spi/spi-bcm2835.c
++++ b/drivers/spi/spi-bcm2835.c
+@@ -155,8 +155,7 @@ static irqreturn_t bcm2835_spi_interrupt
+ 	/* Write as many bytes as possible to FIFO */
+ 	bcm2835_wr_fifo(bs);
  
-+	/*
-+	 * Suppress initial echoing for some devices which might send data
-+	 * immediately after acm driver has been installed.
-+	 */
-+	if (acm->quirks & DISABLE_ECHO)
-+		tty->termios.c_lflag &= ~ECHO;
-+
- 	tty->driver_data = acm;
- 
- 	return 0;
-@@ -1677,6 +1684,9 @@ static const struct usb_device_id acm_id
- 	{ USB_DEVICE(0x0e8d, 0x0003), /* FIREFLY, MediaTek Inc; andrey.arapov@gmail.com */
- 	.driver_info = NO_UNION_NORMAL, /* has no union descriptor */
- 	},
-+	{ USB_DEVICE(0x0e8d, 0x2000), /* MediaTek Inc Preloader */
-+	.driver_info = DISABLE_ECHO, /* DISABLE ECHO in termios flag */
-+	},
- 	{ USB_DEVICE(0x0e8d, 0x3329), /* MediaTek Inc GPS */
- 	.driver_info = NO_UNION_NORMAL, /* has no union descriptor */
- 	},
---- a/drivers/usb/class/cdc-acm.h
-+++ b/drivers/usb/class/cdc-acm.h
-@@ -134,3 +134,4 @@ struct acm {
- #define QUIRK_CONTROL_LINE_STATE	BIT(6)
- #define CLEAR_HALT_CONDITIONS		BIT(7)
- #define SEND_ZERO_PACKET		BIT(8)
-+#define DISABLE_ECHO			BIT(9)
+-	/* based on flags decide if we can finish the transfer */
+-	if (bcm2835_rd(bs, BCM2835_SPI_CS) & BCM2835_SPI_CS_DONE) {
++	if (!bs->rx_len) {
+ 		/* Transfer complete - reset SPI HW */
+ 		bcm2835_spi_reset_hw(master);
+ 		/* wake up the framework */
 
 
