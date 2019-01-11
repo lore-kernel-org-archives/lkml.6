@@ -4,50 +4,53 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-10.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EE63CC43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:16:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B9579C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:16:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BEEB82177B
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:16:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8C648214D8
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:16:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547216171;
-	bh=5WofaX99lw7Fwgkit/rhhV9wF6RiqHqRYUJ4jkf6/Fs=;
+	s=default; t=1547216177;
+	bh=Jzp3hwua/miz3QmUBvg8GwOF4NhHDZWyuaHWIQZ65Ys=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=Kx98GuojkRVoYufJ0gI2Ue8Fhnl+tynxxPzykvJviWqbpIYYU6z5Mj4ZS375h5D4N
-	 bN6cHI5/RrQ3GXNRs2WiuST05jc3qOjWKh22AnByEA6hAcF5/xyQoAHve97TldrDoo
-	 VqeQXrgr+GHchIHj0z+bsrFacQlYSFXN7mi2RsVQ=
+	b=hSHfFkifGDz5Y7Id9SW5pUCY4VxegPTaWgMHGVKed4mkPIG5j/rjxCn4P3H5R9kAk
+	 Uw3Mg9ES51YrLU88m8SAom9ZAMx7hnPOiA8OqWztBa8x3uZDlwnWezbpTH+TTAaP+I
+	 4b8FtqCjcvsxjWIjiWjAY0jc4CvYy7Be9scf29W8=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387579AbfAKOQK (ORCPT
+        id S2387606AbfAKOQP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 11 Jan 2019 09:16:10 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60482 "EHLO mail.kernel.org"
+        Fri, 11 Jan 2019 09:16:15 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60578 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387560AbfAKOQI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Jan 2019 09:16:08 -0500
+        id S2387589AbfAKOQN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 Jan 2019 09:16:13 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9CBC02177B;
-        Fri, 11 Jan 2019 14:16:07 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id BA5362177B;
+        Fri, 11 Jan 2019 14:16:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547216168;
-        bh=5WofaX99lw7Fwgkit/rhhV9wF6RiqHqRYUJ4jkf6/Fs=;
+        s=default; t=1547216173;
+        bh=Jzp3hwua/miz3QmUBvg8GwOF4NhHDZWyuaHWIQZ65Ys=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=lAO3EzWgY1WSquVP0VMnXqDCqxSg+F4W6u2ZE4kl8mcJ8Ll7VpCt2YjuSdytv4P5W
-         cBWsAhS/u2210P5eVVO1qtaGWjRhiQ02e4GXW1L9oJTdRt5+id2b7uV/Kx7V17W/Ju
-         /zBPcfSraG1c0glm+BwmJAoIwbO8vTynqZitbFdE=
+        b=iJofvrjPajAvJ7JqzUpS1VPFUo6SlcmF9FoWwj7RzcVmn7sEegWg3ck6ag91XdCU6
+         SHE1ivg5jNguV7h2xyaDnnAE9/XulQVIEXcHZRZG7QSuLNMq4790iYNrOkD8HyQuNj
+         AnJRlwY/GgG7K41iinqAWQxMEouQM7u9SajcWs7k=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Christian Borntraeger <borntraeger@de.ibm.com>,
-        Frank Haverkamp <haver@linux.vnet.ibm.com>
-Subject: [PATCH 3.18 46/47] genwqe: Fix size check
-Date:   Fri, 11 Jan 2019 15:08:31 +0100
-Message-Id: <20190111131002.056746932@linuxfoundation.org>
+        syzbot+ad5d327e6936a2e284be@syzkaller.appspotmail.com,
+        Xin Long <lucien.xin@gmail.com>,
+        Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>,
+        Neil Horman <nhorman@tuxdriver.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 3.18 15/47] sctp: initialize sin6_flowinfo for ipv6 addrs in sctp_inet6addr_event
+Date:   Fri, 11 Jan 2019 15:08:00 +0100
+Message-Id: <20190111130957.923531077@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190111130956.170952125@linuxfoundation.org>
 References: <20190111130956.170952125@linuxfoundation.org>
@@ -66,65 +69,61 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Christian Borntraeger <borntraeger@de.ibm.com>
+From: Xin Long <lucien.xin@gmail.com>
 
-commit fdd669684655c07dacbdb0d753fd13833de69a33 upstream.
+[ Upstream commit 4a2eb0c37b4759416996fbb4c45b932500cf06d3 ]
 
-Calling the test program genwqe_cksum with the default buffer size of
-2MB triggers the following kernel warning on s390:
+syzbot reported a kernel-infoleak, which is caused by an uninitialized
+field(sin6_flowinfo) of addr->a.v6 in sctp_inet6addr_event().
+The call trace is as below:
 
-WARNING: CPU: 30 PID: 9311 at mm/page_alloc.c:3189 __alloc_pages_nodemask+0x45c/0xbe0
-CPU: 30 PID: 9311 Comm: genwqe_cksum Kdump: loaded Not tainted 3.10.0-957.el7.s390x #1
-task: 00000005e5d13980 ti: 00000005e7c6c000 task.ti: 00000005e7c6c000
-Krnl PSW : 0704c00180000000 00000000002780ac (__alloc_pages_nodemask+0x45c/0xbe0)
-           R:0 T:1 IO:1 EX:1 Key:0 M:1 W:0 P:0 AS:3 CC:0 PM:0 EA:3
-Krnl GPRS: 00000000002932b8 0000000000b73d7c 0000000000000010 0000000000000009
-           0000000000000041 00000005e7c6f9b8 0000000000000001 00000000000080d0
-           0000000000000000 0000000000b70500 0000000000000001 0000000000000000
-           0000000000b70528 00000000007682c0 0000000000277df2 00000005e7c6f9a0
-Krnl Code: 000000000027809e: de7195001000	ed	1280(114,%r9),0(%r1)
-	   00000000002780a4: a774fead		brc	7,277dfe
-	  #00000000002780a8: a7f40001		brc	15,2780aa
-	  >00000000002780ac: 92011000		mvi	0(%r1),1
-	   00000000002780b0: a7f4fea7		brc	15,277dfe
-	   00000000002780b4: 9101c6b6		tm	1718(%r12),1
-	   00000000002780b8: a784ff3a		brc	8,277f2c
-	   00000000002780bc: a7f4fe2e		brc	15,277d18
-Call Trace:
-([<0000000000277df2>] __alloc_pages_nodemask+0x1a2/0xbe0)
- [<000000000013afae>] s390_dma_alloc+0xfe/0x310
- [<000003ff8065f362>] __genwqe_alloc_consistent+0xfa/0x148 [genwqe_card]
- [<000003ff80658f7a>] genwqe_mmap+0xca/0x248 [genwqe_card]
- [<00000000002b2712>] mmap_region+0x4e2/0x778
- [<00000000002b2c54>] do_mmap+0x2ac/0x3e0
- [<0000000000292d7e>] vm_mmap_pgoff+0xd6/0x118
- [<00000000002b081c>] SyS_mmap_pgoff+0xdc/0x268
- [<00000000002b0a34>] SyS_old_mmap+0x8c/0xb0
- [<000000000074e518>] sysc_tracego+0x14/0x1e
- [<000003ffacf87dc6>] 0x3ffacf87dc6
+  BUG: KMSAN: kernel-infoleak in _copy_to_user+0x19a/0x230 lib/usercopy.c:33
+  CPU: 1 PID: 8164 Comm: syz-executor2 Not tainted 4.20.0-rc3+ #95
+  Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
+  Google 01/01/2011
+  Call Trace:
+    __dump_stack lib/dump_stack.c:77 [inline]
+    dump_stack+0x32d/0x480 lib/dump_stack.c:113
+    kmsan_report+0x12c/0x290 mm/kmsan/kmsan.c:683
+    kmsan_internal_check_memory+0x32a/0xa50 mm/kmsan/kmsan.c:743
+    kmsan_copy_to_user+0x78/0xd0 mm/kmsan/kmsan_hooks.c:634
+    _copy_to_user+0x19a/0x230 lib/usercopy.c:33
+    copy_to_user include/linux/uaccess.h:183 [inline]
+    sctp_getsockopt_local_addrs net/sctp/socket.c:5998 [inline]
+    sctp_getsockopt+0x15248/0x186f0 net/sctp/socket.c:7477
+    sock_common_getsockopt+0x13f/0x180 net/core/sock.c:2937
+    __sys_getsockopt+0x489/0x550 net/socket.c:1939
+    __do_sys_getsockopt net/socket.c:1950 [inline]
+    __se_sys_getsockopt+0xe1/0x100 net/socket.c:1947
+    __x64_sys_getsockopt+0x62/0x80 net/socket.c:1947
+    do_syscall_64+0xcf/0x110 arch/x86/entry/common.c:291
+    entry_SYSCALL_64_after_hwframe+0x63/0xe7
 
-turns out the check in __genwqe_alloc_consistent uses "> MAX_ORDER"
-while the mm code uses ">= MAX_ORDER". Fix genwqe.
+sin6_flowinfo is not really used by SCTP, so it will be fixed by simply
+setting it to 0.
 
-Cc: stable@vger.kernel.org
-Signed-off-by: Christian Borntraeger <borntraeger@de.ibm.com>
-Signed-off-by: Frank Haverkamp <haver@linux.vnet.ibm.com>
+The issue exists since very beginning.
+Thanks Alexander for the reproducer provided.
+
+Reported-by: syzbot+ad5d327e6936a2e284be@syzkaller.appspotmail.com
+Signed-off-by: Xin Long <lucien.xin@gmail.com>
+Acked-by: Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>
+Acked-by: Neil Horman <nhorman@tuxdriver.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- drivers/misc/genwqe/card_utils.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ net/sctp/ipv6.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/drivers/misc/genwqe/card_utils.c
-+++ b/drivers/misc/genwqe/card_utils.c
-@@ -217,7 +217,7 @@ u32 genwqe_crc32(u8 *buff, size_t len, u
- void *__genwqe_alloc_consistent(struct genwqe_dev *cd, size_t size,
- 			       dma_addr_t *dma_handle)
- {
--	if (get_order(size) > MAX_ORDER)
-+	if (get_order(size) >= MAX_ORDER)
- 		return NULL;
- 
- 	return pci_alloc_consistent(cd->pci_dev, size, dma_handle);
+--- a/net/sctp/ipv6.c
++++ b/net/sctp/ipv6.c
+@@ -101,6 +101,7 @@ static int sctp_inet6addr_event(struct n
+ 		if (addr) {
+ 			addr->a.v6.sin6_family = AF_INET6;
+ 			addr->a.v6.sin6_port = 0;
++			addr->a.v6.sin6_flowinfo = 0;
+ 			addr->a.v6.sin6_addr = ifa->addr;
+ 			addr->a.v6.sin6_scope_id = ifa->idev->dev->ifindex;
+ 			addr->valid = 1;
 
 
