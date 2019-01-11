@@ -2,121 +2,101 @@ Return-Path: <SRS0=uvhX=PT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+X-Spam-Status: No, score=-17.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,USER_AGENT_MUTT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BF635C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 09:15:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F2467C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 09:15:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 89AAD20870
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 09:15:48 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="DsDYTZNh"
+	by mail.kernel.org (Postfix) with ESMTP id B8BFA2173B
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 09:15:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1547198157;
+	bh=EPkfhSzD35jlc0RrFf/THPBSQE3JZqtVVQepjXg9emQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=0XWBChuQ4nKov6NIX8F3I+p0SO5wByHjExTxiEk8Y+JN26S05HuPJ4cAgku21KJcb
+	 FrzZWtMErIx12tSJ5I6P8Lm/V9ARUsrjoy6IFJH4trRovuvg8UXMOZ1ZTvPLwiDVUQ
+	 7SFvAu1l7nOLl97tAYzbevae/c8pQ8aiM3Eh9ayk=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731370AbfAKJPs (ORCPT
+        id S1731382AbfAKJP5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 11 Jan 2019 04:15:48 -0500
-Received: from hqemgate16.nvidia.com ([216.228.121.65]:12270 "EHLO
-        hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731355AbfAKJPr (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Jan 2019 04:15:47 -0500
-Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqemgate16.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5c385ea80001>; Fri, 11 Jan 2019 01:15:20 -0800
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate102.nvidia.com (PGP Universal service);
-  Fri, 11 Jan 2019 01:15:46 -0800
-X-PGP-Universal: processed;
-        by hqpgpgate102.nvidia.com on Fri, 11 Jan 2019 01:15:46 -0800
-Received: from [10.21.132.148] (10.124.1.5) by HQMAIL101.nvidia.com
- (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Fri, 11 Jan
- 2019 09:15:44 +0000
-Subject: Re: [alsa-devel] [PATCH v1 3/3] ASoC: soc-core: fix platform name vs.
- of_node assignement
-To:     Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-CC:     Mark Brown <broonie@kernel.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        <linux-tegra@vger.kernel.org>, Matthias Reichl <hias@horus.com>,
-        <alsa-devel@alsa-project.org>,
-        Marcel Ziswiler <marcel.ziswiler@toradex.com>,
-        Takashi Iwai <tiwai@suse.com>, <linux-kernel@vger.kernel.org>,
-        Marcel Ziswiler <marcel@ziswiler.com>
-References: <20181218174040.k7u26vnnoplllnwb@camel2.lan>
- <952471da-b355-6471-6c19-5120d6704f81@nvidia.com>
- <87lg3vuc7p.wl-kuninori.morimoto.gx@renesas.com>
- <b5164c93-8be8-1c3d-9415-c895da6ad622@nvidia.com>
- <d1e41ed2-da7c-b46c-bc6d-64cf3e536771@nvidia.com>
- <865d2a3e-bf6b-1f30-1179-7e922c0d0641@nvidia.com>
- <87k1je38w7.wl-kuninori.morimoto.gx@renesas.com>
- <0660a471-3698-2059-4494-ad146518a4ed@nvidia.com>
- <20190109125340.GD10405@sirena.org.uk>
- <52f5f2cf-9260-f9c5-f73d-3c3d5debc86b@nvidia.com>
- <20190109141439.GE10405@sirena.org.uk>
- <875zuxb9uy.wl-kuninori.morimoto.gx@renesas.com>
- <a2068291-e554-cc4f-9af9-0022f3c4de34@nvidia.com>
- <871s5kqb43.wl-kuninori.morimoto.gx@renesas.com>
- <dfdc497f-9e52-99d7-208c-d8eef31fe61d@nvidia.com>
- <87h8efpoxh.wl-kuninori.morimoto.gx@renesas.com>
-From:   Jon Hunter <jonathanh@nvidia.com>
-Message-ID: <ea6b6a3a-b4eb-1d29-51fd-330b2b170005@nvidia.com>
-Date:   Fri, 11 Jan 2019 09:15:42 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Fri, 11 Jan 2019 04:15:57 -0500
+Received: from mail.kernel.org ([198.145.29.99]:57396 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730734AbfAKJP4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 Jan 2019 04:15:56 -0500
+Received: from localhost (unknown [178.228.36.116])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 30F6D20870;
+        Fri, 11 Jan 2019 09:15:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1547198156;
+        bh=EPkfhSzD35jlc0RrFf/THPBSQE3JZqtVVQepjXg9emQ=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=ZO44XxHLzsphwIhSUcSPcx33VlosgnQ/lDw9BKyb5i+UZ9B9ywUQ7MQuJgdvTVUDK
+         XNWh8/kjybfqjaZseTS1s+17hTdlxdTaxcenERv3wT5tV0EOsytWpQ1LBdXOHglc1/
+         xD+8BQi0gs9wUawaEVyUoKC0BQhZeJCd0J8Q5D/E=
+Date:   Fri, 11 Jan 2019 10:15:52 +0100
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     Sasha Levin <sashal@kernel.org>
+Cc:     linux-kernel@microsoft.com, kys@microsoft.com,
+        haiyangz@microsoft.com, sthemmin@microsoft.com,
+        linux-kernel@vger.kernel.org
+Subject: Re: [GIT PULL v3] Hyper-V commits for 5.0
+Message-ID: <20190111091552.GA16264@kroah.com>
+References: <20190110152432.75529214C6@mail.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <87h8efpoxh.wl-kuninori.morimoto.gx@renesas.com>
-X-Originating-IP: [10.124.1.5]
-X-ClientProxiedBy: HQMAIL108.nvidia.com (172.18.146.13) To
- HQMAIL101.nvidia.com (172.20.187.10)
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1547198121; bh=1rrvMM4MjDeO//ECKMPyDeXrm6Ya4/OwKYxd/hh4D14=;
-        h=X-PGP-Universal:Subject:To:CC:References:From:Message-ID:Date:
-         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
-         X-ClientProxiedBy:Content-Type:Content-Language:
-         Content-Transfer-Encoding;
-        b=DsDYTZNhPgMJ3FDbLxs78qyl1Hn3WGNpHIGRlvG5LfkIFdfswnEuqwQryE1vOrODg
-         UX4oCRAQ4yLH4DC9pqt4V1iWn7e7TwZawUBSSC+/EC0bLgSBNYA3p9oz/9RLQXkQ4n
-         4t+faVsgEQkeRuGfYCeQwtwe5Ji/U+iy1MbQ6qM/304xNmzCSJcxhU0TSfpt1vnJgo
-         BKejbAhKVYdbJbG4EOL/LRvbyYCGGVQRRF7SPlyez5Yiz6ruF4cPKb9ynWwx4RPKrx
-         M2plav0bbaOXeO1wv/jkgaEhUqaQrEToQZeEMBJpvHhINGSb8iLkhj5IIr5EvDud70
-         ETRac366QakoA==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190110152432.75529214C6@mail.kernel.org>
+User-Agent: Mutt/1.11.2 (2019-01-07)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-On 11/01/2019 08:51, Kuninori Morimoto wrote:
->>> Indeed there is such case so far, but my understanding is that current
->>> driver should select "legacy style" or "modern style".
->>> If driver setup it as "legacy", but access to "modern" member,
->>> it is driver side bug, right ?
->>
->> Yes absolutely it is a driver bug, but looking at the snd_soc_dai_link
->> structure today it is not clear what the driver should be setting and
->> what is 'modern' and what is 'legacy'. You need to dig through the git
->> history and code to figure this out. So you could say it is not very
->> well documented/commented from a soc-core perspective and could be easy
->> for a driver writer to get themselves in a pickle/mess. Anyway, that is
->> easy to fix and we could add some comments to clear it up.
+On Thu, Jan 10, 2019 at 10:24:31AM -0500, Sasha Levin wrote:
+> -----BEGIN PGP SIGNED MESSAGE-----
+> Hash: SHA512
 > 
-> Thank you for your feedback.
-> Yes, indeed there is no enough information/documentation about
-> legacy/modern style, and its plan
-> (= all driver will be switched to modern, legacy will be removed, etc, etc..).
+> The following changes since commit bfeffd155283772bbe78c6a05dec7c0128ee500c:
 > 
-> So, can you agree about these ?
-> 1) Add enough information/documentation about legacy/modern style and its plan.
-> 2) Add dirty pointer fixup patch as workaround
-> 3) switch to modern style as much as possible
+>   Linux 5.0-rc1 (2019-01-06 17:08:20 -0800)
+> 
+> are available in the Git repository at:
+> 
+>   git://git.kernel.org/pub/scm/linux/kernel/git/hyperv/linux.git tags/hyperv-fixes-signed
+> 
+> for you to fetch changes up to b5679cebf780c6f1c2451a73bf1842a4409840e7:
+> 
+>   vmbus: fix subchannel removal (2019-01-09 19:20:31 -0500)
+> 
+> - ----------------------------------------------------------------
+> Three bug fixes for different parts of the hyper-v code:
+> 
+>  - Fix for a lockup when changing NIC's MTU from Dexuan.
+>  - Fix of use of uninitialized memory from Dexuan.
+>  - Fix for memory corruption caused by ballooning from Vitaly.
+> 
+> All 3 were tested internally.
+> 
+> - ----------------------------------------------------------------
 
-I think that Mark needs to decided on whether use your 'dirty pointer'
-fix or not.
+Did you really push out an updated tag?  I still get the following text
+when doing a pull of this tag:
 
-Jon
+-----------
+hyperv-fixes-signed
+-----------
 
--- 
-nvpublic
+So it looks like nothing changed from your previous request.
+
+Note, when creating the signed tag, with 'git tag -s' you have to enter
+the text you want to show up in the tag into the editor at that time.
+
+thanks,
+
+greg k-h
