@@ -4,49 +4,49 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-10.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A6175C43444
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:41:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ED6E6C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:41:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7756A206B6
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:41:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C073A21841
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:41:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547217683;
-	bh=wVvJFQ3rMnuJjMlfYzKBzyJ64LTGvZJvg+x+qGybW7I=;
+	s=default; t=1547217685;
+	bh=0VnDfnTpFM7iQYWEgaxnVOQYDN+nwQqIEvnYqZQDbnc=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=J/w0a/THqtWDnVmqcflGauLJEVa41kd7oqQ9jBGVe0BvW5da0/ZynBJkm9/Tilb/H
-	 9N/PWl8AOfIumAacod22PsuiQblU71iSrLtv6HW0CmT0JL8qd9p/6ikNpbTaacydNR
-	 PoK1AMgjmkyYouDdgmj5qes0zxmLBrOIg0uGxpl8=
+	b=ZNj6KsgC5Kg3ADobGkiNJhfBp1RdXjXg20xc4oP2cIc+upitY29krlsbCuN7b0Bvg
+	 hirXA3gYf0jZlFRPxhMAW4+x4gQ7vuVgIlQ/WZrm3dg5tdEtFlD67m5gbvGZztmc8p
+	 vdYgckpay2VKO1VXvecp6kdiwzBLNW+9jYkKUnvY=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391287AbfAKOlW (ORCPT
+        id S2404002AbfAKOlZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 11 Jan 2019 09:41:22 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34022 "EHLO mail.kernel.org"
+        Fri, 11 Jan 2019 09:41:25 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34068 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2403990AbfAKOlU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Jan 2019 09:41:20 -0500
+        id S2391284AbfAKOlW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 Jan 2019 09:41:22 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2A8A2206B6;
-        Fri, 11 Jan 2019 14:41:19 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id AC6CA2133F;
+        Fri, 11 Jan 2019 14:41:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547217679;
-        bh=wVvJFQ3rMnuJjMlfYzKBzyJ64LTGvZJvg+x+qGybW7I=;
+        s=default; t=1547217682;
+        bh=0VnDfnTpFM7iQYWEgaxnVOQYDN+nwQqIEvnYqZQDbnc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=2oVnwezVx2PlvL2ieD4UzdU9n54QOE9oUfFD3YNEkmcQIxlAEP9Jr6MyZGK7RvYP2
-         kg25jnPnQgo1gf2XAOSO9xbKIJJq84cwuQeGoEs3hVks8YuT/Z/M66518h9P2pzlhL
-         vki5pKhMZ2O9z6+Y/WajzAwOik7Hmcle2u/ep3v0=
+        b=TpjQq45fCn3EkT1V/B1gzCznP7GNVCbCzrLQZIUKwbzTbeHxMjRVXcjipuZ8Ri+iR
+         sv1x9LO3b7qEIZaDgv0atLVPKnbazr77LawHNpgskYtViRp0P4f3eQGN7OkzdnwY3M
+         BbM6sje5B4kTq47th2xNgi0HVhhP45Q/3z5YLT8M=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Paolo Valente <paolo.valente@linaro.org>,
-        Ming Lei <ming.lei@redhat.com>, Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH 4.19 112/148] block: deactivate blk_stat timer in wbt_disable_default()
-Date:   Fri, 11 Jan 2019 15:14:50 +0100
-Message-Id: <20190111131118.740644193@linuxfoundation.org>
+        stable@vger.kernel.org, Brad Love <brad@nextdimension.cc>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Subject: [PATCH 4.19 103/148] media: cx23885: only reset DMA on problematic CPUs
+Date:   Fri, 11 Jan 2019 15:14:41 +0100
+Message-Id: <20190111131118.344793326@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190111131114.337122649@linuxfoundation.org>
 References: <20190111131114.337122649@linuxfoundation.org>
@@ -65,96 +65,131 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Ming Lei <ming.lei@redhat.com>
+From: Brad Love <brad@nextdimension.cc>
 
-commit 544fbd16a461a318cd80537d1331c0df5c6cf930 upstream.
+commit 4bd46aa0353e022c2401a258e93b107880a66533 upstream.
 
-rwb_enabled() can't be changed when there is any inflight IO.
+It is reported that commit 95f408bbc4e4 ("media: cx23885: Ryzen DMA
+related RiSC engine stall fixes") caused regresssions with other CPUs.
 
-wbt_disable_default() may set rwb->wb_normal as zero, however the
-blk_stat timer may still be pending, and the timer function will update
-wrb->wb_normal again.
+Ensure that the quirk will be applied only for the CPUs that
+are known to cause problems.
 
-This patch introduces blk_stat_deactivate() and applies it in
-wbt_disable_default(), then the following IO hang triggered when running
-parted & switching io scheduler can be fixed:
+A module option is added for explicit control of the behaviour.
 
-[  369.937806] INFO: task parted:3645 blocked for more than 120 seconds.
-[  369.938941]       Not tainted 4.20.0-rc6-00284-g906c801e5248 #498
-[  369.939797] "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-[  369.940768] parted          D    0  3645   3239 0x00000000
-[  369.941500] Call Trace:
-[  369.941874]  ? __schedule+0x6d9/0x74c
-[  369.942392]  ? wbt_done+0x5e/0x5e
-[  369.942864]  ? wbt_cleanup_cb+0x16/0x16
-[  369.943404]  ? wbt_done+0x5e/0x5e
-[  369.943874]  schedule+0x67/0x78
-[  369.944298]  io_schedule+0x12/0x33
-[  369.944771]  rq_qos_wait+0xb5/0x119
-[  369.945193]  ? karma_partition+0x1c2/0x1c2
-[  369.945691]  ? wbt_cleanup_cb+0x16/0x16
-[  369.946151]  wbt_wait+0x85/0xb6
-[  369.946540]  __rq_qos_throttle+0x23/0x2f
-[  369.947014]  blk_mq_make_request+0xe6/0x40a
-[  369.947518]  generic_make_request+0x192/0x2fe
-[  369.948042]  ? submit_bio+0x103/0x11f
-[  369.948486]  ? __radix_tree_lookup+0x35/0xb5
-[  369.949011]  submit_bio+0x103/0x11f
-[  369.949436]  ? blkg_lookup_slowpath+0x25/0x44
-[  369.949962]  submit_bio_wait+0x53/0x7f
-[  369.950469]  blkdev_issue_flush+0x8a/0xae
-[  369.951032]  blkdev_fsync+0x2f/0x3a
-[  369.951502]  do_fsync+0x2e/0x47
-[  369.951887]  __x64_sys_fsync+0x10/0x13
-[  369.952374]  do_syscall_64+0x89/0x149
-[  369.952819]  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-[  369.953492] RIP: 0033:0x7f95a1e729d4
-[  369.953996] Code: Bad RIP value.
-[  369.954456] RSP: 002b:00007ffdb570dd48 EFLAGS: 00000246 ORIG_RAX: 000000000000004a
-[  369.955506] RAX: ffffffffffffffda RBX: 000055c2139c6be0 RCX: 00007f95a1e729d4
-[  369.956389] RDX: 0000000000000001 RSI: 0000000000001261 RDI: 0000000000000004
-[  369.957325] RBP: 0000000000000002 R08: 0000000000000000 R09: 000055c2139c6ce0
-[  369.958199] R10: 0000000000000000 R11: 0000000000000246 R12: 000055c2139c0380
-[  369.959143] R13: 0000000000000004 R14: 0000000000000100 R15: 0000000000000008
+Fixes: 95f408bbc4e4 ("media: cx23885: Ryzen DMA related RiSC engine stall fixes")
 
-Cc: stable@vger.kernel.org
-Cc: Paolo Valente <paolo.valente@linaro.org>
-Signed-off-by: Ming Lei <ming.lei@redhat.com>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
+Signed-off-by: Brad Love <brad@nextdimension.cc>
+Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- block/blk-stat.h |    5 +++++
- block/blk-wbt.c  |    4 +++-
- 2 files changed, 8 insertions(+), 1 deletion(-)
+ drivers/media/pci/cx23885/cx23885-core.c |   55 +++++++++++++++++++++++++++++--
+ drivers/media/pci/cx23885/cx23885.h      |    2 +
+ 2 files changed, 55 insertions(+), 2 deletions(-)
 
---- a/block/blk-stat.h
-+++ b/block/blk-stat.h
-@@ -145,6 +145,11 @@ static inline void blk_stat_activate_nse
- 	mod_timer(&cb->timer, jiffies + nsecs_to_jiffies(nsecs));
+--- a/drivers/media/pci/cx23885/cx23885-core.c
++++ b/drivers/media/pci/cx23885/cx23885-core.c
+@@ -23,6 +23,7 @@
+ #include <linux/moduleparam.h>
+ #include <linux/kmod.h>
+ #include <linux/kernel.h>
++#include <linux/pci.h>
+ #include <linux/slab.h>
+ #include <linux/interrupt.h>
+ #include <linux/delay.h>
+@@ -41,6 +42,18 @@ MODULE_AUTHOR("Steven Toth <stoth@linuxt
+ MODULE_LICENSE("GPL");
+ MODULE_VERSION(CX23885_VERSION);
+ 
++/*
++ * Some platforms have been found to require periodic resetting of the DMA
++ * engine. Ryzen and XEON platforms are known to be affected. The symptom
++ * encountered is "mpeg risc op code error". Only Ryzen platforms employ
++ * this workaround if the option equals 1. The workaround can be explicitly
++ * disabled for all platforms by setting to 0, the workaround can be forced
++ * on for any platform by setting to 2.
++ */
++static unsigned int dma_reset_workaround = 1;
++module_param(dma_reset_workaround, int, 0644);
++MODULE_PARM_DESC(dma_reset_workaround, "periodic RiSC dma engine reset; 0-force disable, 1-driver detect (default), 2-force enable");
++
+ static unsigned int debug;
+ module_param(debug, int, 0644);
+ MODULE_PARM_DESC(debug, "enable debug messages");
+@@ -603,8 +616,13 @@ static void cx23885_risc_disasm(struct c
+ 
+ static void cx23885_clear_bridge_error(struct cx23885_dev *dev)
+ {
+-	uint32_t reg1_val = cx_read(TC_REQ); /* read-only */
+-	uint32_t reg2_val = cx_read(TC_REQ_SET);
++	uint32_t reg1_val, reg2_val;
++
++	if (!dev->need_dma_reset)
++		return;
++
++	reg1_val = cx_read(TC_REQ); /* read-only */
++	reg2_val = cx_read(TC_REQ_SET);
+ 
+ 	if (reg1_val && reg2_val) {
+ 		cx_write(TC_REQ, reg1_val);
+@@ -2058,6 +2076,37 @@ void cx23885_gpio_enable(struct cx23885_
+ 	/* TODO: 23-19 */
  }
  
-+static inline void blk_stat_deactivate(struct blk_stat_callback *cb)
++static struct {
++	int vendor, dev;
++} const broken_dev_id[] = {
++	/* According with
++	 * https://openbenchmarking.org/system/1703021-RI-AMDZEN08075/Ryzen%207%201800X/lspci,
++	 * 0x1451 is PCI ID for the IOMMU found on Ryzen
++	 */
++	{ PCI_VENDOR_ID_AMD, 0x1451 },
++};
++
++static bool cx23885_does_need_dma_reset(void)
 +{
-+	del_timer_sync(&cb->timer);
++	int i;
++	struct pci_dev *pdev = NULL;
++
++	if (dma_reset_workaround == 0)
++		return false;
++	else if (dma_reset_workaround == 2)
++		return true;
++
++	for (i = 0; i < ARRAY_SIZE(broken_dev_id); i++) {
++		pdev = pci_get_device(broken_dev_id[i].vendor,
++				      broken_dev_id[i].dev, NULL);
++		if (pdev) {
++			pci_dev_put(pdev);
++			return true;
++		}
++	}
++	return false;
 +}
 +
- /**
-  * blk_stat_activate_msecs() - Gather block statistics during a time window in
-  * milliseconds.
---- a/block/blk-wbt.c
-+++ b/block/blk-wbt.c
-@@ -760,8 +760,10 @@ void wbt_disable_default(struct request_
- 	if (!rqos)
- 		return;
- 	rwb = RQWB(rqos);
--	if (rwb->enable_state == WBT_STATE_ON_DEFAULT)
-+	if (rwb->enable_state == WBT_STATE_ON_DEFAULT) {
-+		blk_stat_deactivate(rwb->cb);
- 		rwb->wb_normal = 0;
-+	}
- }
- EXPORT_SYMBOL_GPL(wbt_disable_default);
+ static int cx23885_initdev(struct pci_dev *pci_dev,
+ 			   const struct pci_device_id *pci_id)
+ {
+@@ -2069,6 +2118,8 @@ static int cx23885_initdev(struct pci_de
+ 	if (NULL == dev)
+ 		return -ENOMEM;
  
++	dev->need_dma_reset = cx23885_does_need_dma_reset();
++
+ 	err = v4l2_device_register(&pci_dev->dev, &dev->v4l2_dev);
+ 	if (err < 0)
+ 		goto fail_free;
+--- a/drivers/media/pci/cx23885/cx23885.h
++++ b/drivers/media/pci/cx23885/cx23885.h
+@@ -451,6 +451,8 @@ struct cx23885_dev {
+ 	/* Analog raw audio */
+ 	struct cx23885_audio_dev   *audio_dev;
+ 
++	/* Does the system require periodic DMA resets? */
++	unsigned int		need_dma_reset:1;
+ };
+ 
+ static inline struct cx23885_dev *to_cx23885(struct v4l2_device *v4l2_dev)
 
 
