@@ -3,77 +3,81 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 591E0C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 01:49:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B805FC43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 01:49:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2DE6C2133F
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 01:49:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8E9A921841
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 01:49:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729515AbfAKBtT (ORCPT
+        id S1729538AbfAKBtd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 10 Jan 2019 20:49:19 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33372 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727750AbfAKBtT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Jan 2019 20:49:19 -0500
-Received: from vmware.local.home (cpe-66-24-56-78.stny.res.rr.com [66.24.56.78])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7FB52206B7;
-        Fri, 11 Jan 2019 01:49:17 +0000 (UTC)
-Date:   Thu, 10 Jan 2019 20:49:15 -0500
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     Alexey Kardashevskiy <aik@ozlabs.ru>
-Cc:     Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        kvm@vger.kernel.org, Laura Abbott <labbott@redhat.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Cornelia Huck <cohuck@redhat.com>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] vfio_pci: set TRACE_INCLUDE_PATH to fix the build error
-Message-ID: <20190110204915.1cab2b78@vmware.local.home>
-In-Reply-To: <9b1c9668-98cb-2a30-2fb0-b797b47aa9b6@ozlabs.ru>
-References: <1546916883-25911-1-git-send-email-yamada.masahiro@socionext.com>
-        <20190110144701.ah3hmedqmyqf5uzt@home.goodmis.org>
-        <9b1c9668-98cb-2a30-2fb0-b797b47aa9b6@ozlabs.ru>
-X-Mailer: Claws Mail 3.15.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        Thu, 10 Jan 2019 20:49:33 -0500
+Received: from mail1.windriver.com ([147.11.146.13]:64856 "EHLO
+        mail1.windriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727750AbfAKBtd (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 10 Jan 2019 20:49:33 -0500
+Received: from ALA-HCA.corp.ad.wrs.com ([147.11.189.40])
+        by mail1.windriver.com (8.15.2/8.15.1) with ESMTPS id x0B1n8eS019112
+        (version=TLSv1 cipher=AES128-SHA bits=128 verify=FAIL);
+        Thu, 10 Jan 2019 17:49:08 -0800 (PST)
+Received: from [128.224.162.180] (128.224.162.180) by ALA-HCA.corp.ad.wrs.com
+ (147.11.189.50) with Microsoft SMTP Server (TLS) id 14.3.408.0; Thu, 10 Jan
+ 2019 17:49:07 -0800
+Subject: Re: [PATCH v2] kernel/dma: Fix panic caused by passing swiotlb to
+ command line
+To:     <konrad@darnok.org>, Christoph Hellwig <hch@lst.de>
+CC:     Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+        <m.szyprowski@samsung.com>, <robin.murphy@arm.com>,
+        <iommu@lists.linux-foundation.org>, <linux-kernel@vger.kernel.org>
+References: <1543832571-121638-1-git-send-email-zhe.he@windriver.com>
+ <b35907a9-4d30-493b-3839-731b10d71c63@windriver.com>
+ <20190107090702.GA14033@lst.de>
+ <CAPbh3rupHC_G0=5dBhhpoXvXO_=i-Y6p=9WdRtn9W19jRpVVcg@mail.gmail.com>
+ <1cef7480-0838-c044-9bca-9b7adacb0f17@windriver.com>
+From:   He Zhe <zhe.he@windriver.com>
+Message-ID: <bf0c7631-f5c1-42cc-fa1a-d7f4f5b9e6eb@windriver.com>
+Date:   Fri, 11 Jan 2019 09:49:03 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+In-Reply-To: <1cef7480-0838-c044-9bca-9b7adacb0f17@windriver.com>
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Originating-IP: [128.224.162.180]
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 11 Jan 2019 12:13:35 +1100
-Alexey Kardashevskiy <aik@ozlabs.ru> wrote:
 
-> > The words in TRACE_INCLUDE_PATH can be updated by C preprocessor defines. For
-> > example, if for some reason you had:
-> > 
-> > #define pci special_pci
-> > 
-> > The above would turn into:
-> > 
-> >  ../../drivers/vfio/special_pci
-> > 
-> > and it wont build, and you will be left scratching your head wondering why.  
-> 
-> Lovely :) imho it is +1 for
-> CFLAGS_vfio_pci_nvlink2.o += -I$(src)
-> and a comment.
 
-A more realistic example is:
+On 1/11/19 9:46 AM, He Zhe wrote:
+>
+> On 1/11/19 1:27 AM, Konrad Rzeszutek Wilk wrote:
+>> Let's skip it. There was another patch that would allocate a default 4MB size if it there was an misue of swiotlb parameters.
+> But this patch mainly fixes a crash. Could you please point me to the patch you mentioned?
 
-#define pci 1
+And the v2 is modified according to your suggestion.
 
-which I hit when I first tried to do it this way when I first
-implemented this code (not with "pci" but a similar word).
+Zhe
 
-I'll leave this up to the maintainers of the code to decide which way
-they want to do it, as they are the ones that have to deal with the
-fallout if something goes wrong ;-)
+>
+> Thanks,
+> Zhe
+>
+>>
+>>
+>> On Mon, Jan 7, 2019, 4:07 AM Christoph Hellwig <hch@lst.de <mailto:hch@lst.de> wrote:
+>>
+>>     On Mon, Jan 07, 2019 at 04:46:51PM +0800, He Zhe wrote:
+>>     > Kindly ping.
+>>
+>>     Konrad, I'll pick this up through the DMA mapping tree unless you
+>>     protest in the next few days.
+>>
+>
 
--- Steve
