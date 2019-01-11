@@ -7,46 +7,48 @@ X-Spam-Status: No, score=-10.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 08FDFC43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:16:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EE482C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:16:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CCC3D218A4
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:16:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BE1D321841
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:16:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547216191;
-	bh=yjlnFNqSLUy7eYvj3Nk33hA6U+G4LTIDrsFNzz/ojSc=;
+	s=default; t=1547216194;
+	bh=8E8vV3zTeahPtaWlixZ1+kF44BcDjUEzkqlPB0iTtt8=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=uLAsnJafRA6DqF600lN19YBMkCvgOxt6Y3TwCn8ub1ZEYwwsw+y7wwLQR+hBZ7V4N
-	 DrWsq2M5uTW8U97ftEkL9zbggDIOO+Tx1h62AB14qfWDOIUNYwvGc9sXxbZlHImhZ0
-	 dNa2+aH7r0OZjsbYy6nH0hcnEuzph8W/+hk/L2R4=
+	b=pAuET9V2cAsFcqJQ3lj8Tn05gJ2/KMxbpL0liPdtxPklTDh6YGiXgoC2Ev3ilVyDx
+	 LKfy1rLwnQCXbDD4PalkUKfNcIUOPI5gx2zmBRt9rxUU7gPPLK5jGfA2+BKbx2ofou
+	 +F1LcXZLw7MgJfQa8MeGUvyfI7B7z9f/Lqo1Jta0=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387652AbfAKOQa (ORCPT
+        id S2387662AbfAKOQd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 11 Jan 2019 09:16:30 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60888 "EHLO mail.kernel.org"
+        Fri, 11 Jan 2019 09:16:33 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60930 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730773AbfAKOQ1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Jan 2019 09:16:27 -0500
+        id S1731311AbfAKOQa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 Jan 2019 09:16:30 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8C6AE214D8;
-        Fri, 11 Jan 2019 14:16:26 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 11F09214D8;
+        Fri, 11 Jan 2019 14:16:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547216187;
-        bh=yjlnFNqSLUy7eYvj3Nk33hA6U+G4LTIDrsFNzz/ojSc=;
+        s=default; t=1547216189;
+        bh=8E8vV3zTeahPtaWlixZ1+kF44BcDjUEzkqlPB0iTtt8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ASGcG66yzzcLXZTjXYsHNCrtMISvQyTh021TqnGR/rW1hdmK0e5AKjo6srZeQ1oaS
-         ko1C5cMb6b1XEJyZPvMDqe53nfEx4kBNf7o7HNjWp9av2wr39lfgQl6qW+LwRAe1a/
-         Na6Hd7Co5x8xlxWF0Hv8y2cRGWDgymtlnbvtMJWc=
+        b=b2tWMSB9zRfXz4nRZNvn4qj8eCa0rLczbrBjaKD3ON7jwsidjAmkMVgYFIvmrCMv3
+         R5HmCs39vSrKNeCG6S/qOOl5fwXX1eMQ3PYFMsHGwUuKbJYOCtx2ZreSX0pL1908iQ
+         6ucyLMaxCjawz/JqFv2KcBd529OT3HGjoUb75VJc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Scott Chen <scott@labau.com.tw>,
-        Johan Hovold <johan@kernel.org>
-Subject: [PATCH 3.18 20/47] USB: serial: pl2303: add ids for Hewlett-Packard HP POS pole displays
-Date:   Fri, 11 Jan 2019 15:08:05 +0100
-Message-Id: <20190111130958.732148745@linuxfoundation.org>
+        stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
+        syzbot <syzkaller@googlegroups.com>,
+        Karsten Keil <isdn@linux-pingi.de>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 3.18 11/47] isdn: fix kernel-infoleak in capi_unlocked_ioctl
+Date:   Fri, 11 Jan 2019 15:07:56 +0100
+Message-Id: <20190111130957.509297580@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190111130956.170952125@linuxfoundation.org>
 References: <20190111130956.170952125@linuxfoundation.org>
@@ -65,61 +67,80 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Scott Chen <scott@labau.com.tw>
+From: Eric Dumazet <edumazet@google.com>
 
-commit 8d503f206c336677954160ac62f0c7d9c219cd89 upstream.
+[ Upstream commit d63967e475ae10f286dbd35e189cb241e0b1f284 ]
 
-Add device ids to pl2303 for the HP POS pole displays:
-LM920:   03f0:026b
-TD620:   03f0:0956
-LD960TA: 03f0:4439
-LD220TA: 03f0:4349
-LM940:   03f0:5039
+Since capi_ioctl() copies 64 bytes after calling
+capi20_get_manufacturer() we need to ensure to not leak
+information to user.
 
-Signed-off-by: Scott Chen <scott@labau.com.tw>
-Cc: stable <stable@vger.kernel.org>
-Signed-off-by: Johan Hovold <johan@kernel.org>
+BUG: KMSAN: kernel-infoleak in _copy_to_user+0x16b/0x1f0 lib/usercopy.c:32
+CPU: 0 PID: 11245 Comm: syz-executor633 Not tainted 4.20.0-rc7+ #2
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+Call Trace:
+ __dump_stack lib/dump_stack.c:77 [inline]
+ dump_stack+0x173/0x1d0 lib/dump_stack.c:113
+ kmsan_report+0x12e/0x2a0 mm/kmsan/kmsan.c:613
+ kmsan_internal_check_memory+0x9d4/0xb00 mm/kmsan/kmsan.c:704
+ kmsan_copy_to_user+0xab/0xc0 mm/kmsan/kmsan_hooks.c:601
+ _copy_to_user+0x16b/0x1f0 lib/usercopy.c:32
+ capi_ioctl include/linux/uaccess.h:177 [inline]
+ capi_unlocked_ioctl+0x1a0b/0x1bf0 drivers/isdn/capi/capi.c:939
+ do_vfs_ioctl+0xebd/0x2bf0 fs/ioctl.c:46
+ ksys_ioctl fs/ioctl.c:713 [inline]
+ __do_sys_ioctl fs/ioctl.c:720 [inline]
+ __se_sys_ioctl+0x1da/0x270 fs/ioctl.c:718
+ __x64_sys_ioctl+0x4a/0x70 fs/ioctl.c:718
+ do_syscall_64+0xbc/0xf0 arch/x86/entry/common.c:291
+ entry_SYSCALL_64_after_hwframe+0x63/0xe7
+RIP: 0033:0x440019
+Code: 18 89 d0 c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 0f 83 fb 13 fc ff c3 66 2e 0f 1f 84 00 00 00 00
+RSP: 002b:00007ffdd4659fb8 EFLAGS: 00000213 ORIG_RAX: 0000000000000010
+RAX: ffffffffffffffda RBX: 00000000004002c8 RCX: 0000000000440019
+RDX: 0000000020000080 RSI: 00000000c0044306 RDI: 0000000000000003
+RBP: 00000000006ca018 R08: 0000000000000000 R09: 00000000004002c8
+R10: 0000000000000000 R11: 0000000000000213 R12: 00000000004018a0
+R13: 0000000000401930 R14: 0000000000000000 R15: 0000000000000000
+
+Local variable description: ----data.i@capi_unlocked_ioctl
+Variable was created at:
+ capi_ioctl drivers/isdn/capi/capi.c:747 [inline]
+ capi_unlocked_ioctl+0x82/0x1bf0 drivers/isdn/capi/capi.c:939
+ do_vfs_ioctl+0xebd/0x2bf0 fs/ioctl.c:46
+
+Bytes 12-63 of 64 are uninitialized
+Memory access of size 64 starts at ffff88807ac5fce8
+Data copied to user address 0000000020000080
+
+Signed-off-by: Eric Dumazet <edumazet@google.com>
+Reported-by: syzbot <syzkaller@googlegroups.com>
+Cc: Karsten Keil <isdn@linux-pingi.de>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- drivers/usb/serial/pl2303.c |    5 +++++
- drivers/usb/serial/pl2303.h |    5 +++++
- 2 files changed, 10 insertions(+)
+ drivers/isdn/capi/kcapi.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/drivers/usb/serial/pl2303.c
-+++ b/drivers/usb/serial/pl2303.c
-@@ -84,9 +84,14 @@ static const struct usb_device_id id_tab
- 	{ USB_DEVICE(YCCABLE_VENDOR_ID, YCCABLE_PRODUCT_ID) },
- 	{ USB_DEVICE(SUPERIAL_VENDOR_ID, SUPERIAL_PRODUCT_ID) },
- 	{ USB_DEVICE(HP_VENDOR_ID, HP_LD220_PRODUCT_ID) },
-+	{ USB_DEVICE(HP_VENDOR_ID, HP_LD220TA_PRODUCT_ID) },
- 	{ USB_DEVICE(HP_VENDOR_ID, HP_LD960_PRODUCT_ID) },
-+	{ USB_DEVICE(HP_VENDOR_ID, HP_LD960TA_PRODUCT_ID) },
- 	{ USB_DEVICE(HP_VENDOR_ID, HP_LCM220_PRODUCT_ID) },
- 	{ USB_DEVICE(HP_VENDOR_ID, HP_LCM960_PRODUCT_ID) },
-+	{ USB_DEVICE(HP_VENDOR_ID, HP_LM920_PRODUCT_ID) },
-+	{ USB_DEVICE(HP_VENDOR_ID, HP_LM940_PRODUCT_ID) },
-+	{ USB_DEVICE(HP_VENDOR_ID, HP_TD620_PRODUCT_ID) },
- 	{ USB_DEVICE(CRESSI_VENDOR_ID, CRESSI_EDY_PRODUCT_ID) },
- 	{ USB_DEVICE(ZEAGLE_VENDOR_ID, ZEAGLE_N2ITION3_PRODUCT_ID) },
- 	{ USB_DEVICE(SONY_VENDOR_ID, SONY_QN3USB_PRODUCT_ID) },
---- a/drivers/usb/serial/pl2303.h
-+++ b/drivers/usb/serial/pl2303.h
-@@ -121,10 +121,15 @@
+--- a/drivers/isdn/capi/kcapi.c
++++ b/drivers/isdn/capi/kcapi.c
+@@ -851,7 +851,7 @@ u16 capi20_get_manufacturer(u32 contr, u
+ 	u16 ret;
  
- /* Hewlett-Packard POS Pole Displays */
- #define HP_VENDOR_ID		0x03f0
-+#define HP_LM920_PRODUCT_ID	0x026b
-+#define HP_TD620_PRODUCT_ID	0x0956
- #define HP_LD960_PRODUCT_ID	0x0b39
- #define HP_LCM220_PRODUCT_ID	0x3139
- #define HP_LCM960_PRODUCT_ID	0x3239
- #define HP_LD220_PRODUCT_ID	0x3524
-+#define HP_LD220TA_PRODUCT_ID	0x4349
-+#define HP_LD960TA_PRODUCT_ID	0x4439
-+#define HP_LM940_PRODUCT_ID	0x5039
+ 	if (contr == 0) {
+-		strlcpy(buf, capi_manufakturer, CAPI_MANUFACTURER_LEN);
++		strncpy(buf, capi_manufakturer, CAPI_MANUFACTURER_LEN);
+ 		return CAPI_NOERROR;
+ 	}
  
- /* Cressi Edy (diving computer) PC interface */
- #define CRESSI_VENDOR_ID	0x04b8
+@@ -859,7 +859,7 @@ u16 capi20_get_manufacturer(u32 contr, u
+ 
+ 	ctr = get_capi_ctr_by_nr(contr);
+ 	if (ctr && ctr->state == CAPI_CTR_RUNNING) {
+-		strlcpy(buf, ctr->manu, CAPI_MANUFACTURER_LEN);
++		strncpy(buf, ctr->manu, CAPI_MANUFACTURER_LEN);
+ 		ret = CAPI_NOERROR;
+ 	} else
+ 		ret = CAPI_REGNOTINSTALLED;
 
 
