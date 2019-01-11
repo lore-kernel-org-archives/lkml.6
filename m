@@ -7,46 +7,45 @@ X-Spam-Status: No, score=-10.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D0059C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:59:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 05974C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:59:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A242C21841
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:59:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C12FE20874
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:59:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547218783;
-	bh=O0kfdaJfW0YPq4mNyWI6Rcpq/9xx+RuIp9UX4Gv5KDc=;
+	s=default; t=1547218792;
+	bh=mACBTY/W+1wmzWAWnQc/gYcmmj6H2wrl12MKg1agPAw=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=BY0TK3nK5TbR3UyTkCWUhlJLL/85BCcm2mZkua2MuQu1exUdTPhI8dX5yF9swrqYf
-	 uSMXeINBUKdsobxibZr0blw78G6EJ291uTR59pf63J3ibkUaGtfSx5Hcd5zq9sg5p2
-	 fxTctQ1sTJImP/YWk3qEOsrh5hMH5fYvPZmh7zrg=
+	b=xmtuGKooEbgH1MDgIn9+ga4IeVe7qGZR2WFCSTlrm1ecOO0Gj2qKY/txiRvnWCReq
+	 qr6fmj8Cmfz2PSfz0RdV2nMDDInsm6Sy08xEIb9VC3w3QoL3rTxsIkkX7FwzMiTSCy
+	 INfjveD9aJplF3Ak0BN2ezKzHo5vDbq6NdDJEDO4=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391752AbfAKO7h (ORCPT
+        id S2391775AbfAKO7v (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 11 Jan 2019 09:59:37 -0500
-Received: from mail.kernel.org ([198.145.29.99]:53764 "EHLO mail.kernel.org"
+        Fri, 11 Jan 2019 09:59:51 -0500
+Received: from mail.kernel.org ([198.145.29.99]:53646 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389668AbfAKOdb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Jan 2019 09:33:31 -0500
+        id S2389655AbfAKOd0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 Jan 2019 09:33:26 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 670F8204EC;
-        Fri, 11 Jan 2019 14:33:30 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 57BA7204EC;
+        Fri, 11 Jan 2019 14:33:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547217210;
-        bh=O0kfdaJfW0YPq4mNyWI6Rcpq/9xx+RuIp9UX4Gv5KDc=;
+        s=default; t=1547217205;
+        bh=mACBTY/W+1wmzWAWnQc/gYcmmj6H2wrl12MKg1agPAw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=jaVbi5xYmMN5QsyeuvQdbXUK4/as9+psTwaKWa1+p+9S7SfDeYQpZtHj7wDZPrmKB
-         EZrTBmy3pmTNcbCiWAFRGSLdwHMF8rLVzyJWX2GzDXG0avJ2swccWTPe+g11HZPPPM
-         rraoiNOJKdwNduxfvc/TYxiMG7x+VsJVInSVK33I=
+        b=R35/DtdrU4p3bnCBI5aOPqpvJlEJ4ZehYQa4BB2JNFoxbjdhY/yTA+BTrtgPtuKGp
+         OOUxrq8Bpk+/wht0+Qs3DmVVW36KQFQj0/5Mk0tvjXdCDUiUB/7BAK+N4DK5qfi4Y/
+         HXmzp6Vjakqksk6bQhuE4krPWFNhQTx26++vrMAc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Hui Peng <benquike@163.com>,
-        Takashi Iwai <tiwai@suse.de>
-Subject: [PATCH 4.14 083/105] ALSA: usb-audio: Fix an out-of-bound read in create_composite_quirks
-Date:   Fri, 11 Jan 2019 15:14:54 +0100
-Message-Id: <20190111131109.954084486@linuxfoundation.org>
+        stable@vger.kernel.org, Takashi Iwai <tiwai@suse.de>
+Subject: [PATCH 4.14 082/105] ALSA: usb-audio: Avoid access before bLength check in build_audio_procunit()
+Date:   Fri, 11 Jan 2019 15:14:53 +0100
+Message-Id: <20190111131109.865091338@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190111131102.899065735@linuxfoundation.org>
 References: <20190111131102.899065735@linuxfoundation.org>
@@ -65,45 +64,48 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Hui Peng <benquike@163.com>
+From: Takashi Iwai <tiwai@suse.de>
 
-commit cbb2ebf70daf7f7d97d3811a2ff8e39655b8c184 upstream.
+commit f4351a199cc120ff9d59e06d02e8657d08e6cc46 upstream.
 
-In `create_composite_quirk`, the terminating condition of for loops is
-`quirk->ifnum < 0`. So any composite quirks should end with `struct
-snd_usb_audio_quirk` object with ifnum < 0.
+The parser for the processing unit reads bNrInPins field before the
+bLength sanity check, which may lead to an out-of-bound access when a
+malformed descriptor is given.  Fix it by assignment after the bLength
+check.
 
-    for (quirk = quirk_comp->data; quirk->ifnum >= 0; ++quirk) {
-
-    	.....
-    }
-
-the data field of Bower's & Wilkins PX headphones usb device device quirks
-do not end with {.ifnum = -1}, wihch may result in out-of-bound read.
-
-This Patch fix the bug by adding an ending quirk object.
-
-Fixes: 240a8af929c7 ("ALSA: usb-audio: Add a quirck for B&W PX headphones")
-Signed-off-by: Hui Peng <benquike@163.com>
 Cc: <stable@vger.kernel.org>
 Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- sound/usb/quirks-table.h |    3 +++
- 1 file changed, 3 insertions(+)
+ sound/usb/mixer.c |   10 ++++++++--
+ 1 file changed, 8 insertions(+), 2 deletions(-)
 
---- a/sound/usb/quirks-table.h
-+++ b/sound/usb/quirks-table.h
-@@ -3321,6 +3321,9 @@ AU0828_DEVICE(0x2040, 0x7270, "Hauppauge
- 					}
- 				}
- 			},
-+			{
-+				.ifnum = -1
-+			},
- 		}
- 	}
- },
+--- a/sound/usb/mixer.c
++++ b/sound/usb/mixer.c
+@@ -1888,7 +1888,7 @@ static int build_audio_procunit(struct m
+ 				char *name)
+ {
+ 	struct uac_processing_unit_descriptor *desc = raw_desc;
+-	int num_ins = desc->bNrInPins;
++	int num_ins;
+ 	struct usb_mixer_elem_info *cval;
+ 	struct snd_kcontrol *kctl;
+ 	int i, err, nameid, type, len;
+@@ -1903,7 +1903,13 @@ static int build_audio_procunit(struct m
+ 		0, NULL, default_value_info
+ 	};
+ 
+-	if (desc->bLength < 13 || desc->bLength < 13 + num_ins ||
++	if (desc->bLength < 13) {
++		usb_audio_err(state->chip, "invalid %s descriptor (id %d)\n", name, unitid);
++		return -EINVAL;
++	}
++
++	num_ins = desc->bNrInPins;
++	if (desc->bLength < 13 + num_ins ||
+ 	    desc->bLength < num_ins + uac_processing_unit_bControlSize(desc, state->mixer->protocol)) {
+ 		usb_audio_err(state->chip, "invalid %s descriptor (id %d)\n", name, unitid);
+ 		return -EINVAL;
 
 
