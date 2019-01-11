@@ -2,189 +2,124 @@ Return-Path: <SRS0=uvhX=PT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1AC32C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 15:06:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 25FFDC43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 15:06:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DD2302084C
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 15:06:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547219201;
-	bh=0VA1UcJ6A1fDK36+YFfbPQLFIVDwdStFVXmiTdC9GuM=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=c+ldKuOA3I1d2uOqfNqhZX8fUB8/iD6rObNRT4UzZQwZAHJdUx7UvzeFvn8rLVBap
-	 D2KMPRBGwAZRu1EA8wqtAclp7ABDAzhl+hUjNRJZriiv2uEYmfxbUXM1mHvB8+ZGd4
-	 L4Zo2Dit/HnQpXbvmfexkRL9JwI8v2chKZGLUdJU=
+	by mail.kernel.org (Postfix) with ESMTP id E53FE20874
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 15:06:43 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Jn8yGcSe"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388599AbfAKO2y (ORCPT
+        id S2391904AbfAKPGn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 11 Jan 2019 09:28:54 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47584 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388571AbfAKO2q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Jan 2019 09:28:46 -0500
-Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AE16821841;
-        Fri, 11 Jan 2019 14:28:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547216925;
-        bh=0VA1UcJ6A1fDK36+YFfbPQLFIVDwdStFVXmiTdC9GuM=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=OxgDXtoPo9DD7KKfGg5mCG0Jgvpu17NCYOfCOwYkWEqDGc0PKyXhD379HX5rVd7DG
-         bfeFJwVq79gFxIsOr99vQTmCRktlTdJXZwOlD/D5QZnvK80GgbzIoZWg0hwguVEfrF
-         fp+XbsI30SPjQHuapCi6bQB83FlDnHcjnSI/2wYM=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Andy Lutomirski <luto@kernel.org>,
-        Paul Burton <paul.burton@mips.com>, linux-mips@vger.kernel.org,
-        Rich Felker <dalias@libc.org>,
-        David Daney <david.daney@cavium.com>
-Subject: [PATCH 4.9 41/63] MIPS: math-emu: Write-protect delay slot emulation pages
-Date:   Fri, 11 Jan 2019 15:14:44 +0100
-Message-Id: <20190111131052.421721088@linuxfoundation.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190111131046.387528003@linuxfoundation.org>
-References: <20190111131046.387528003@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
-X-Patchwork-Hint: ignore
+        Fri, 11 Jan 2019 10:06:43 -0500
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:39572 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388449AbfAKPGi (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 Jan 2019 10:06:38 -0500
+Received: by mail-pg1-f193.google.com with SMTP id w6so6428548pgl.6
+        for <linux-kernel@vger.kernel.org>; Fri, 11 Jan 2019 07:06:37 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
+         :user-agent;
+        bh=jJyfr251abKPUjfrLnfnZBYdiVZ7BdP/pFKC0YWuEDs=;
+        b=Jn8yGcSec9ppfdCMuebFOrYumbJez4VJp9ziQIzdHm4MyE7zHGBNv9jGGByDvcgQpn
+         a4Mb1kNvbp+zXJnQq1QgIOOI7k4m7EBEOI8R9NBuJ+gOUIP+fz5rqpguuFagKdcElYjD
+         +1EqR/6zuGgPokgzBSRbAqHNI2HGCTOaMZ7jveItEs2ypgi/m2luTW5lGJazXMnGy64q
+         MXCUeX8B4/c4+WJv1umzbb5ZhKe3bWYqfF0fK3MwigxOq0vl1h7hkKTts1HzhjTGM/nY
+         qASR6ayanD3G4foV2vBVIcJhbX1WEF9mjWene/Rj0RM1C+DPFca6892JPfFLhNGY97Kh
+         7gXQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=jJyfr251abKPUjfrLnfnZBYdiVZ7BdP/pFKC0YWuEDs=;
+        b=kne9J5bA4x2K9ekNniL8HdfMqOwQRTYasrYokgNEl3dfJVThMHLkc/T5F0yetv9GRc
+         4Ljp9SeoL0WBbtboPob4j/lIM7URRFuKHsYZrdbYYIae8iG46cnVtc1c5JY//yndOy9n
+         VuSyRkgd9SbijXfSDYedw2lsfjYnPL3xi5Eqg/jOnxmz2bV/wVf5EtypHUGPP1Da0AH2
+         AE4lLhGrRbG9MdMHAZ6+Ed7Wfof2W1S0g3Q/KtP/Q3k1ZpkplvDCjuTPRhRteBfewEAo
+         nGg9skKfIKLXh6qUES3obMHesb9sWA5kHjaYhILnnsnyjIYRHXHoL3gM37/a/pSMfIi7
+         m6hA==
+X-Gm-Message-State: AJcUukcSolUVB1+AGSXsQb8mksOyEakWHUEFiKyj/oolOxf0VSyMDMc9
+        7TzBG9ckerWWeR1lxFPDMjM=
+X-Google-Smtp-Source: ALg8bN76xSFly+CWNyQpefhrTarhDoTZdH79A8t9NSuLjWP1kW/Wkt1ixSodqPFgFeaytLToyuoA9A==
+X-Received: by 2002:aa7:83c6:: with SMTP id j6mr14876943pfn.91.1547219197536;
+        Fri, 11 Jan 2019 07:06:37 -0800 (PST)
+Received: from jordon-HP-15-Notebook-PC ([49.207.52.190])
+        by smtp.gmail.com with ESMTPSA id 6sm165163391pfv.30.2019.01.11.07.06.35
+        (version=TLS1 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Fri, 11 Jan 2019 07:06:36 -0800 (PST)
+Date:   Fri, 11 Jan 2019 20:40:37 +0530
+From:   Souptick Joarder <jrdr.linux@gmail.com>
+To:     akpm@linux-foundation.org, willy@infradead.org, mhocko@suse.com,
+        oleksandr_andrushchenko@epam.com, airlied@linux.ie,
+        linux@armlinux.org.uk, robin.murphy@arm.com
+Cc:     linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        dri-devel@lists.freedesktop.org, xen-devel@lists.xen.org
+Subject: [PATCH 5/9] drm/xen/xen_drm_front_gem.c: Convert to use
+ vm_insert_range
+Message-ID: <20190111151037.GA2781@jordon-HP-15-Notebook-PC>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.9-stable review patch.  If anyone has any objections, please let me know.
+Convert to use vm_insert_range() to map range of kernel
+memory to user vma.
 
-------------------
-
-From: Paul Burton <paul.burton@mips.com>
-
-commit adcc81f148d733b7e8e641300c5590a2cdc13bf3 upstream.
-
-Mapping the delay slot emulation page as both writeable & executable
-presents a security risk, in that if an exploit can write to & jump into
-the page then it can be used as an easy way to execute arbitrary code.
-
-Prevent this by mapping the page read-only for userland, and using
-access_process_vm() with the FOLL_FORCE flag to write to it from
-mips_dsemul().
-
-This will likely be less efficient due to copy_to_user_page() performing
-cache maintenance on a whole page, rather than a single line as in the
-previous use of flush_cache_sigtramp(). However this delay slot
-emulation code ought not to be running in any performance critical paths
-anyway so this isn't really a problem, and we can probably do better in
-copy_to_user_page() anyway in future.
-
-A major advantage of this approach is that the fix is small & simple to
-backport to stable kernels.
-
-Reported-by: Andy Lutomirski <luto@kernel.org>
-Signed-off-by: Paul Burton <paul.burton@mips.com>
-Fixes: 432c6bacbd0c ("MIPS: Use per-mm page to execute branch delay slot instructions")
-Cc: stable@vger.kernel.org # v4.8+
-Cc: linux-mips@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
-Cc: Rich Felker <dalias@libc.org>
-Cc: David Daney <david.daney@cavium.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Signed-off-by: Souptick Joarder <jrdr.linux@gmail.com>
 ---
- arch/mips/kernel/vdso.c     |    4 ++--
- arch/mips/math-emu/dsemul.c |   38 ++++++++++++++++++++------------------
- 2 files changed, 22 insertions(+), 20 deletions(-)
+ drivers/gpu/drm/xen/xen_drm_front_gem.c | 18 +++++-------------
+ 1 file changed, 5 insertions(+), 13 deletions(-)
 
---- a/arch/mips/kernel/vdso.c
-+++ b/arch/mips/kernel/vdso.c
-@@ -111,8 +111,8 @@ int arch_setup_additional_pages(struct l
- 
- 	/* Map delay slot emulation page */
- 	base = mmap_region(NULL, STACK_TOP, PAGE_SIZE,
--			   VM_READ|VM_WRITE|VM_EXEC|
--			   VM_MAYREAD|VM_MAYWRITE|VM_MAYEXEC,
-+			   VM_READ | VM_EXEC |
-+			   VM_MAYREAD | VM_MAYWRITE | VM_MAYEXEC,
- 			   0);
- 	if (IS_ERR_VALUE(base)) {
- 		ret = base;
---- a/arch/mips/math-emu/dsemul.c
-+++ b/arch/mips/math-emu/dsemul.c
-@@ -211,8 +211,9 @@ int mips_dsemul(struct pt_regs *regs, mi
+diff --git a/drivers/gpu/drm/xen/xen_drm_front_gem.c b/drivers/gpu/drm/xen/xen_drm_front_gem.c
+index 47ff019..9990c2f 100644
+--- a/drivers/gpu/drm/xen/xen_drm_front_gem.c
++++ b/drivers/gpu/drm/xen/xen_drm_front_gem.c
+@@ -225,8 +225,7 @@ struct drm_gem_object *
+ static int gem_mmap_obj(struct xen_gem_object *xen_obj,
+ 			struct vm_area_struct *vma)
  {
- 	int isa16 = get_isa16_mode(regs->cp0_epc);
- 	mips_instruction break_math;
--	struct emuframe __user *fr;
--	int err, fr_idx;
-+	unsigned long fr_uaddr;
-+	struct emuframe fr;
-+	int fr_idx, ret;
+-	unsigned long addr = vma->vm_start;
+-	int i;
++	int ret;
  
- 	/* NOP is easy */
- 	if (ir == 0)
-@@ -247,27 +248,31 @@ int mips_dsemul(struct pt_regs *regs, mi
- 		fr_idx = alloc_emuframe();
- 	if (fr_idx == BD_EMUFRAME_NONE)
- 		return SIGBUS;
--	fr = &dsemul_page()[fr_idx];
- 
- 	/* Retrieve the appropriately encoded break instruction */
- 	break_math = BREAK_MATH(isa16);
- 
- 	/* Write the instructions to the frame */
- 	if (isa16) {
--		err = __put_user(ir >> 16,
--				 (u16 __user *)(&fr->emul));
--		err |= __put_user(ir & 0xffff,
--				  (u16 __user *)((long)(&fr->emul) + 2));
--		err |= __put_user(break_math >> 16,
--				  (u16 __user *)(&fr->badinst));
--		err |= __put_user(break_math & 0xffff,
--				  (u16 __user *)((long)(&fr->badinst) + 2));
-+		union mips_instruction _emul = {
-+			.halfword = { ir >> 16, ir }
-+		};
-+		union mips_instruction _badinst = {
-+			.halfword = { break_math >> 16, break_math }
-+		};
-+
-+		fr.emul = _emul.word;
-+		fr.badinst = _badinst.word;
- 	} else {
--		err = __put_user(ir, &fr->emul);
--		err |= __put_user(break_math, &fr->badinst);
-+		fr.emul = ir;
-+		fr.badinst = break_math;
- 	}
- 
--	if (unlikely(err)) {
-+	/* Write the frame to user memory */
-+	fr_uaddr = (unsigned long)&dsemul_page()[fr_idx];
-+	ret = access_process_vm(current, fr_uaddr, &fr, sizeof(fr),
-+				FOLL_FORCE | FOLL_WRITE);
-+	if (unlikely(ret != sizeof(fr))) {
- 		MIPS_FPU_EMU_INC_STATS(errors);
- 		free_emuframe(fr_idx, current->mm);
- 		return SIGBUS;
-@@ -279,10 +284,7 @@ int mips_dsemul(struct pt_regs *regs, mi
- 	atomic_set(&current->thread.bd_emu_frame, fr_idx);
- 
- 	/* Change user register context to execute the frame */
--	regs->cp0_epc = (unsigned long)&fr->emul | isa16;
+ 	/*
+ 	 * clear the VM_PFNMAP flag that was set by drm_gem_mmap(), and set the
+@@ -247,18 +246,11 @@ static int gem_mmap_obj(struct xen_gem_object *xen_obj,
+ 	 * FIXME: as we insert all the pages now then no .fault handler must
+ 	 * be called, so don't provide one
+ 	 */
+-	for (i = 0; i < xen_obj->num_pages; i++) {
+-		int ret;
 -
--	/* Ensure the icache observes our newly written frame */
--	flush_cache_sigtramp((unsigned long)&fr->emul);
-+	regs->cp0_epc = fr_uaddr | isa16;
+-		ret = vm_insert_page(vma, addr, xen_obj->pages[i]);
+-		if (ret < 0) {
+-			DRM_ERROR("Failed to insert pages into vma: %d\n", ret);
+-			return ret;
+-		}
++	ret = vm_insert_range(vma, xen_obj->pages, xen_obj->num_pages);
++	if (ret < 0)
++		DRM_ERROR("Failed to insert pages into vma: %d\n", ret);
  
- 	return 0;
+-		addr += PAGE_SIZE;
+-	}
+-	return 0;
++	return ret;
  }
-
+ 
+ int xen_drm_front_gem_mmap(struct file *filp, struct vm_area_struct *vma)
+-- 
+1.9.1
 
