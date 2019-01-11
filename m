@@ -7,49 +7,49 @@ X-Spam-Status: No, score=-13.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B4671C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:35:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 77928C43444
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:35:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7C93621841
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:35:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3CC8A2063F
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:35:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547217303;
-	bh=jSYBkxQctiQ6C3FF71KB6J6fWQJW+zlHCLoO9KL9Wvg=;
+	s=default; t=1547217310;
+	bh=OQ+07Dh7TAh1dFcwG7KI8NcPTiVi/D49OZ3vo1M0QQA=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=rsRR5rfjUkXV7GuD3511h3sxXJY9P6MrZJr8lhPAux27mypZlIPeX3GA/NuxFRkvo
-	 Rz1qYIWFI0Pyd4FW9jwwms/7ryxwBLlNBBnLOfcLoHAAme1bgduLll0v41cWmYZAM0
-	 vYqzdg2a4OfX52OTpdE5tjK26aR6m/wER204zaxY=
+	b=fNxWaAUk2DicpiJ8GxFMwJNgcsFvA5vdU1PI7bC1gSq34SgUev6nKFjm/R0PR81k+
+	 GPV9ckpEIbcC062qfQZpeC/y9e9gVQmr5Fycn/Wag/lLdj7v5TDMksoOVBdmXtS6aT
+	 zjZzr/IoX1x56bTtUmxX8dYfbnnzkz/pe/YObTbQ=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390053AbfAKOfC (ORCPT
+        id S2389657AbfAKOfJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 11 Jan 2019 09:35:02 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55234 "EHLO mail.kernel.org"
+        Fri, 11 Jan 2019 09:35:09 -0500
+Received: from mail.kernel.org ([198.145.29.99]:55334 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390038AbfAKOe7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Jan 2019 09:34:59 -0500
+        id S2389626AbfAKOfE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 Jan 2019 09:35:04 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6C72C2063F;
-        Fri, 11 Jan 2019 14:34:58 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 73E662063F;
+        Fri, 11 Jan 2019 14:35:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547217298;
-        bh=jSYBkxQctiQ6C3FF71KB6J6fWQJW+zlHCLoO9KL9Wvg=;
+        s=default; t=1547217303;
+        bh=OQ+07Dh7TAh1dFcwG7KI8NcPTiVi/D49OZ3vo1M0QQA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=hfo4sNIEYgIniEmjbLsExIgvUEM9VGXFa9nPgpvjST7Ey6kn6Jclbd+tFadF9/ENG
-         1DR1Lmohoi9/6YhhEx8v0CZUtKuXyaPHyH0GZAwV0dz6BpU5Uq8rt0RUQ+iHRjuw7A
-         ZPBqRcXbTUEX4zAnlDBkeegHhCyPH8jePa9PExGI=
+        b=cX3Y07ofr6yBZOj272DUS2uHCMcXBvdC9pzPTI2X37tz9OpJZzpjWdRc9gUTlJOrE
+         TDq+8mH4YN6TkjQndDChFZHW0TNJgZWw5Sm/LGZFy6BANXasWf7cw9gybNBVj4R7zO
+         /meS7ZeS1TKUSOWoSqnvLfvs3o2KnEOmm5EIEAIg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Peter Hutterer <peter.hutterer@who-t.net>,
-        Martin Kepplinger <martin.kepplinger@ginzinger.com>,
-        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        stable@vger.kernel.org,
+        Andrey Grodzovsky <andrey.grodzovsky@amd.com>,
+        =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
+        Alex Deucher <alexander.deucher@amd.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 011/148] Input: restore EV_ABS ABS_RESERVED
-Date:   Fri, 11 Jan 2019 15:13:09 +0100
-Message-Id: <20190111131114.786225087@linuxfoundation.org>
+Subject: [PATCH 4.19 013/148] drm/amdgpu: Fix DEBUG_LOCKS_WARN_ON(depth <= 0) in amdgpu_ctx.lock
+Date:   Fri, 11 Jan 2019 15:13:11 +0100
+Message-Id: <20190111131114.863293100@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190111131114.337122649@linuxfoundation.org>
 References: <20190111131114.337122649@linuxfoundation.org>
@@ -68,41 +68,41 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit c201e3808e0e4be9b98d192802085a9f491bd80c ]
+[ Upstream commit c554206077428af56cc2e0314b86b41cd030458c ]
 
-ABS_RESERVED was added in d9ca1c990a7 and accidentally removed as part of
-ffe0e7cf290f5c9 when the high-resolution scrolling code was removed.
+If CS is submitted using guilty ctx, we terminate amdgpu_cs_parser_init
+before locking ctx->lock, latter in amdgpu_cs_parser_fini we still are
+trying to release the lock just becase parser->ctx != NULL.
 
-Signed-off-by: Peter Hutterer <peter.hutterer@who-t.net>
-Reviewed-by: Martin Kepplinger <martin.kepplinger@ginzinger.com>
-Acked-by: Benjamin Tissoires <benjamin.tissoires@redhat.com>
-Acked-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Signed-off-by: Benjamin Tissoires <benjamin.tissoires@redhat.com>
+Signed-off-by: Andrey Grodzovsky <andrey.grodzovsky@amd.com>
+Reviewed-by: Christian König <christian.koenig@amd.com>
+Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- include/uapi/linux/input-event-codes.h | 9 +++++++++
- 1 file changed, 9 insertions(+)
+ drivers/gpu/drm/amd/amdgpu/amdgpu_cs.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/include/uapi/linux/input-event-codes.h b/include/uapi/linux/input-event-codes.h
-index 53fbae27b280..61a5799b440b 100644
---- a/include/uapi/linux/input-event-codes.h
-+++ b/include/uapi/linux/input-event-codes.h
-@@ -744,6 +744,15 @@
+diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_cs.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_cs.c
+index b31d121a876b..81001d879322 100644
+--- a/drivers/gpu/drm/amd/amdgpu/amdgpu_cs.c
++++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_cs.c
+@@ -122,14 +122,14 @@ static int amdgpu_cs_parser_init(struct amdgpu_cs_parser *p, union drm_amdgpu_cs
+ 		goto free_chunk;
+ 	}
  
- #define ABS_MISC		0x28
- 
-+/*
-+ * 0x2e is reserved and should not be used in input drivers.
-+ * It was used by HID as ABS_MISC+6 and userspace needs to detect if
-+ * the next ABS_* event is correct or is just ABS_MISC + n.
-+ * We define here ABS_RESERVED so userspace can rely on it and detect
-+ * the situation described above.
-+ */
-+#define ABS_RESERVED		0x2e
++	mutex_lock(&p->ctx->lock);
 +
- #define ABS_MT_SLOT		0x2f	/* MT slot being modified */
- #define ABS_MT_TOUCH_MAJOR	0x30	/* Major axis of touching ellipse */
- #define ABS_MT_TOUCH_MINOR	0x31	/* Minor axis (omit if circular) */
+ 	/* skip guilty context job */
+ 	if (atomic_read(&p->ctx->guilty) == 1) {
+ 		ret = -ECANCELED;
+ 		goto free_chunk;
+ 	}
+ 
+-	mutex_lock(&p->ctx->lock);
+-
+ 	/* get chunks */
+ 	chunk_array_user = u64_to_user_ptr(cs->in.chunks);
+ 	if (copy_from_user(chunk_array, chunk_array_user,
 -- 
 2.19.1
 
