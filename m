@@ -7,46 +7,49 @@ X-Spam-Status: No, score=-13.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C98DC43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:34:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 96D76C43444
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:35:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 140352133F
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:34:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5EB912133F
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:35:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547217296;
-	bh=uq5JL/jrvM0FwZp/oqW/vKAogok0WeVpBDAyiuj+0F8=;
+	s=default; t=1547217300;
+	bh=H7uAdKN/S0Mg0So+OAyKBDKGFh8Gzj3pT2IyDT/lAwI=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=EAfCmxoWebXBCvJG/sGy37pYVi886Xh/P5F5RtxQAKWcvQA2jXbM8opFliwVXjkLl
-	 EeMemo5oRqG7oaWtDgWrGO4qlXnHQ5MFm866/l9pqTNWAL/mZmi3aLYjdeJQu0wW7l
-	 CjqckcmJyAGgOFCztgGoSA4yEgzx87Y79HZZj6SM=
+	b=B1c6L22Q/RYYMPmJ+w8Tre7iqcX/WaC0TOceLK7X9RvAcKOGGlilHlzBPn+5/B5ks
+	 qCFrP+quhc0MfuVykpS0uATYId22sGROB6WpBBnz1Z87Hmb4u4zuEgYAq96qglmlBi
+	 26vjCbYzBLtZNC82gj/Tihrlt5YjHllAlAaxldtY=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390029AbfAKOez (ORCPT
+        id S2389270AbfAKOe7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 11 Jan 2019 09:34:55 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55156 "EHLO mail.kernel.org"
+        Fri, 11 Jan 2019 09:34:59 -0500
+Received: from mail.kernel.org ([198.145.29.99]:55204 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389554AbfAKOey (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Jan 2019 09:34:54 -0500
+        id S1730154AbfAKOe5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 Jan 2019 09:34:57 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E0743204EC;
-        Fri, 11 Jan 2019 14:34:52 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id DC89E204EC;
+        Fri, 11 Jan 2019 14:34:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547217293;
-        bh=uq5JL/jrvM0FwZp/oqW/vKAogok0WeVpBDAyiuj+0F8=;
+        s=default; t=1547217296;
+        bh=H7uAdKN/S0Mg0So+OAyKBDKGFh8Gzj3pT2IyDT/lAwI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=urZR4I/P6OpOMcAhRKdG5d732P5UK5QS2VhYRD3ssZDGUMSvuIg92/kB+Gxq6GGob
-         Etzy/s0ftGwZVOLpWgnB5CCbXFLsVbbHt8eGeGIYFCzJ1i5MubYipGRip0Fe1bAVpD
-         S0Nbz6yXb4sJuy8FTH7FOaWrU5wA7E9z/VJn4Cow=
+        b=DisqhUiRguKQzgRfRXsYHuzYdrekyMVzM9pETgc1x2mQnTiLuPSddfMr5AgTgsb75
+         5WLU07SHxaJVDg9DcD3FP3XDoyW9M69xpx0ZdwN4dnYJudhw4lB6qpwhDfwjv0zj1M
+         77Bfo0oTi51pGpYwUILGk8Ro5i+Fs31kMbsZQCzw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Corentin Labbe <clabbe@baylibre.com>,
-        Chen-Yu Tsai <wens@csie.org>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 001/148] ARM: dts: sun8i: a83t: bananapi-m3: increase vcc-pd voltage to 3.3V
-Date:   Fri, 11 Jan 2019 15:12:59 +0100
-Message-Id: <20190111131114.391001335@linuxfoundation.org>
+        stable@vger.kernel.org, Yishai Hadas <yishaih@mellanox.com>,
+        Artemy Kovalyov <artemyko@mellanox.com>,
+        Leon Romanovsky <leonro@mellanox.com>,
+        Doug Ledford <dledford@redhat.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 010/148] IB/mlx5: Block DEVX umem from the non applicable cases
+Date:   Fri, 11 Jan 2019 15:13:08 +0100
+Message-Id: <20190111131114.746725571@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190111131114.337122649@linuxfoundation.org>
 References: <20190111131114.337122649@linuxfoundation.org>
@@ -65,43 +68,46 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 5f8208f557065163f9a8089ea2ea7888f9d96922 ]
+[ Upstream commit 47f07f03b5ee436fe074c4fb1fb28d013c36a0d8 ]
 
-Since commit d7c5f6863550 ("ARM: dts: sun8i: a83t: bananapi-m3: Add
-AXP813 regulator nodes") my BPIM3 no longer works at gigabit speed.
+Blocks creating a DEVX UMEM with the non applicable access flags
+as of ODP, MW_BIND, etc.
 
-With the default setting, dldo3 is regulated at 2.9v which seems
-sufficient for the PHY but the aforementioned commit drops it to 2.5V
-which is insufficient. Note that this behaviour is random for all BPIM3.
-Some work with 2.5V, but some don't.
+Specifically when an ODP flag is used below WARN call trace is issued.
 
-Finnaly, someone from Bananapi confirmed that this regulator must be set
-to 3.3V.
+[ 2510.404131] RIP: 0010:__mlx5_ib_populate_pas+0x207/0x220 [mlx5_ib]
+...
+[ 2510.404143] Call Trace:
+[ 2510.404150]  ? __kmalloc_node+0x1b3/0x280
+[ 2510.404156]  ? _uverbs_alloc+0x63/0x90 [ib_uverbs]
+[ 2510.404158]  ? _uverbs_alloc+0x63/0x90 [ib_uverbs]
+[ 2510.404162]  mlx5_ib_populate_pas+0x53/0x60 [mlx5_ib]
+[ 2510.404167]  mlx5_ib_handler_MLX5_IB_METHOD_DEVX_UMEM_REG+0x273/0x3f0 [mlx5_ib]
 
-Fixes: d7c5f6863550 ("ARM: dts: sun8i: a83t: bananapi-m3: Add AXP813
-		      regulator nodes")
-Signed-off-by: Corentin Labbe <clabbe@baylibre.com>
-[wens@csie.org: Reworked commit message]
-Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+Fixes: aeae94579caf ("IB/mlx5: Add DEVX support for memory registration")
+Signed-off-by: Yishai Hadas <yishaih@mellanox.com>
+Reviewed-by: Artemy Kovalyov <artemyko@mellanox.com>
+Signed-off-by: Leon Romanovsky <leonro@mellanox.com>
+Signed-off-by: Doug Ledford <dledford@redhat.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm/boot/dts/sun8i-a83t-bananapi-m3.dts | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/infiniband/hw/mlx5/devx.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/arch/arm/boot/dts/sun8i-a83t-bananapi-m3.dts b/arch/arm/boot/dts/sun8i-a83t-bananapi-m3.dts
-index c7ce4158d6c8..f250b20af493 100644
---- a/arch/arm/boot/dts/sun8i-a83t-bananapi-m3.dts
-+++ b/arch/arm/boot/dts/sun8i-a83t-bananapi-m3.dts
-@@ -309,8 +309,8 @@
+diff --git a/drivers/infiniband/hw/mlx5/devx.c b/drivers/infiniband/hw/mlx5/devx.c
+index f2f11e652dcd..02f36ab72ad4 100644
+--- a/drivers/infiniband/hw/mlx5/devx.c
++++ b/drivers/infiniband/hw/mlx5/devx.c
+@@ -857,7 +857,9 @@ static int devx_umem_get(struct mlx5_ib_dev *dev, struct ib_ucontext *ucontext,
  
- &reg_dldo3 {
- 	regulator-always-on;
--	regulator-min-microvolt = <2500000>;
--	regulator-max-microvolt = <2500000>;
-+	regulator-min-microvolt = <3300000>;
-+	regulator-max-microvolt = <3300000>;
- 	regulator-name = "vcc-pd";
- };
+ 	err = uverbs_get_flags32(&access, attrs,
+ 				 MLX5_IB_ATTR_DEVX_UMEM_REG_ACCESS,
+-				 IB_ACCESS_SUPPORTED);
++				 IB_ACCESS_LOCAL_WRITE |
++				 IB_ACCESS_REMOTE_WRITE |
++				 IB_ACCESS_REMOTE_READ);
+ 	if (err)
+ 		return err;
  
 -- 
 2.19.1
