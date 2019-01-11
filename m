@@ -2,127 +2,138 @@ Return-Path: <SRS0=uvhX=PT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 29DEAC43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 15:01:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 31360C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 15:01:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EE9E720874
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 15:01:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547218904;
-	bh=taOGbMQh93TdgIuuP76DZUmHoUOHqRuPen9Zr962Kzg=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=nh8AO0dJh2OTjoVZvGTZHSYdCnrF0oH0AN6LgKBZz8M1bcq7OmL3IBGx/bOE/CzCv
-	 3oXDAzHoPvHzN+CbM/r6iAt1i57TjJOOqzzb1sNKTDdEaDDjfsSmnT54fYntN4InwR
-	 +W/THi0sOx2N1MfbkiRftUhIWOU2jdvHMzFWBaOg=
+	by mail.kernel.org (Postfix) with ESMTP id 02246218AE
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 15:01:48 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RpzAMn/t"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390165AbfAKPBn (ORCPT
+        id S2391410AbfAKPBq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 11 Jan 2019 10:01:46 -0500
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:40188 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389984AbfAKPBn (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 11 Jan 2019 10:01:43 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51822 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388799AbfAKOb5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Jan 2019 09:31:57 -0500
-Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 915272063F;
-        Fri, 11 Jan 2019 14:31:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547217117;
-        bh=taOGbMQh93TdgIuuP76DZUmHoUOHqRuPen9Zr962Kzg=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=NavOgN0TFMz14rQnYMcjERX2WnjXOuHERbSlhhvt9RTnojL6xHrt8H5HDREVLNmVO
-         UcyRvpRQRFFwpjQZrSx/qErKPMHXlMCEVd3WZ3+w6gBL7HUqsvnt6VSCUgeEr8J82p
-         NCelFneNZzXnALHqYSFdoHhCI0+cFbdJ0FUBtoyw=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Paul Gortmaker <paul.gortmaker@windriver.com>,
-        Bernd Edlinger <bernd.edlinger@hotmail.de>,
-        Qian Cai <cai@lca.pw>, Josh Poimboeuf <jpoimboe@redhat.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 048/105] kbuild: fix false positive warning/error about missing libelf
-Date:   Fri, 11 Jan 2019 15:14:19 +0100
-Message-Id: <20190111131107.141377119@linuxfoundation.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190111131102.899065735@linuxfoundation.org>
-References: <20190111131102.899065735@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
-X-Patchwork-Hint: ignore
+Received: by mail-pf1-f196.google.com with SMTP id i12so7067378pfo.7;
+        Fri, 11 Jan 2019 07:01:43 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
+         :user-agent;
+        bh=SrodQzZztcg8txHZaZFxducSgC9DqvYe1eV09xmVfQk=;
+        b=RpzAMn/tFZO9w1bOsU0R3bl0Czqgh3vozKcpize0+4T5FcTI3eGHnL7a/siSocGNeS
+         YpzDw/x5TPn/ZIK8D8rFRVnfSd+kRunfwlXMPBFnoy0agtIVT3l2o8n93yulfDdqPfpM
+         02pnJKSJtBrMnNoIKfIXvp+dl7xWo/ZINl/06zWYmqtI8R6Rd1tzw33GJStW9BWNcyJd
+         UTxrdHPrzQA7Dgo9vXmzvN7LPm0x/n5eENgEHExKf5wRU3L1BPvidyksamluwHiEMfNj
+         jLP1Epne1X0o4Fs5YlsShABd8w6xov+ORe//hxIum1KwYBI45AwbqyCzizyY7CZsappy
+         j23Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=SrodQzZztcg8txHZaZFxducSgC9DqvYe1eV09xmVfQk=;
+        b=d2+qG4mTCgeTXqDyk8Cxjf0tGyVMvmHwgMOVkgQLrdFIE3N4QuLcU+D+hjEmYYra8m
+         h6Nm8pWE5ITOmLknREiAgSesue7h/kCEX5I1b6E/M/bz21clMv+18mfFk0FXMITFZf/b
+         TvMv05TdKL1Qz/DKSFyoMsu4el/1dXqLtX5jAdKXc5OfID486OiojEDm36nbn3Bxky3G
+         gQS+GalWXbXEb2WRiCLh8ZSxnWLsnpELC4ItaFIivfidt7cL5ICwy3SJ3wu49akoE8nq
+         KhYrQtj/EgpZ8xYLfZY6LC3VcOHCqGWKaimlfgCSRYGTFdWq+LFCxlgcAU5cyGJDGsgP
+         /1yA==
+X-Gm-Message-State: AJcUukeD6H6zh7THqO3kLNuON1Qfnsg4HS8zw0l4iSTEasjXK3OCF+jT
+        s05gNROLGhZNnGBnFpReV7D6bMw9
+X-Google-Smtp-Source: ALg8bN63Mqumr33i923Eaojw1CNwJqGO3fUgNxuFX1Idnsn+2UvfCqyMDy2gA5SSe2/mxV+qUcpzvQ==
+X-Received: by 2002:a63:f30d:: with SMTP id l13mr13690215pgh.399.1547218901644;
+        Fri, 11 Jan 2019 07:01:41 -0800 (PST)
+Received: from jordon-HP-15-Notebook-PC ([49.207.52.190])
+        by smtp.gmail.com with ESMTPSA id l70sm87429186pgd.20.2019.01.11.07.01.39
+        (version=TLS1 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Fri, 11 Jan 2019 07:01:40 -0800 (PST)
+Date:   Fri, 11 Jan 2019 20:35:41 +0530
+From:   Souptick Joarder <jrdr.linux@gmail.com>
+To:     akpm@linux-foundation.org, willy@infradead.org, mhocko@suse.com,
+        kirill.shutemov@linux.intel.com, vbabka@suse.cz, riel@surriel.com,
+        sfr@canb.auug.org.au, rppt@linux.vnet.ibm.com,
+        peterz@infradead.org, linux@armlinux.org.uk, robin.murphy@arm.com,
+        iamjoonsoo.kim@lge.com, treding@nvidia.com, keescook@chromium.org,
+        m.szyprowski@samsung.com, stefanr@s5r6.in-berlin.de,
+        hjc@rock-chips.com, heiko@sntech.de, airlied@linux.ie,
+        oleksandr_andrushchenko@epam.com, joro@8bytes.org,
+        pawel@osciak.com, kyungmin.park@samsung.com, mchehab@kernel.org,
+        boris.ostrovsky@oracle.com, jgross@suse.com
+Cc:     linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux1394-devel@lists.sourceforge.net,
+        dri-devel@lists.freedesktop.org,
+        linux-rockchip@lists.infradead.org, xen-devel@lists.xen.org,
+        iommu@lists.linux-foundation.org, linux-media@vger.kernel.org
+Subject: [PATCH 0/9] Use vm_insert_range and vm_insert_range_buggy
+Message-ID: <20190111150541.GA2670@jordon-HP-15-Notebook-PC>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.14-stable review patch.  If anyone has any objections, please let me know.
+Previouly drivers have their own way of mapping range of
+kernel pages/memory into user vma and this was done by
+invoking vm_insert_page() within a loop.
 
-------------------
+As this pattern is common across different drivers, it can
+be generalized by creating new functions and use it across
+the drivers.
 
-[ Upstream commit ef7cfd00b2caf6edeb7f169682b64be2d0a798cf ]
+vm_insert_range() is the API which could be used to mapped
+kernel memory/pages in drivers which has considered vm_pgoff
 
-For the same reason as commit 25896d073d8a ("x86/build: Fix compiler
-support check for CONFIG_RETPOLINE"), you cannot put this $(error ...)
-into the parse stage of the top Makefile.
+vm_insert_range_buggy() is the API which could be used to map
+range of kernel memory/pages in drivers which has not considered
+vm_pgoff. vm_pgoff is passed default as 0 for those drivers.
 
-Perhaps I'd propose a more sophisticated solution later, but this is
-the best I can do for now.
+We _could_ then at a later "fix" these drivers which are using
+vm_insert_range_buggy() to behave according to the normal vm_pgoff
+offsetting simply by removing the _buggy suffix on the function
+name and if that causes regressions, it gives us an easy way to revert.
 
-Link: https://lkml.org/lkml/2017/12/25/211
-Reported-by: Paul Gortmaker <paul.gortmaker@windriver.com>
-Reported-by: Bernd Edlinger <bernd.edlinger@hotmail.de>
-Reported-by: Qian Cai <cai@lca.pw>
-Cc: Josh Poimboeuf <jpoimboe@redhat.com>
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
-Tested-by: Qian Cai <cai@lca.pw>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- Makefile | 13 ++++++++-----
- 1 file changed, 8 insertions(+), 5 deletions(-)
+There is an existing bug in [7/9], where user passed length is not
+verified against object_count. For any value of length > object_count
+it will end up overrun page array which could lead to a potential bug.
+This is fixed as part of these conversion.
 
-diff --git a/Makefile b/Makefile
-index be4d1f25cb29..2de4072bcc90 100644
---- a/Makefile
-+++ b/Makefile
-@@ -954,11 +954,6 @@ ifdef CONFIG_STACK_VALIDATION
-   ifeq ($(has_libelf),1)
-     objtool_target := tools/objtool FORCE
-   else
--    ifdef CONFIG_UNWINDER_ORC
--      $(error "Cannot generate ORC metadata for CONFIG_UNWINDER_ORC=y, please install libelf-dev, libelf-devel or elfutils-libelf-devel")
--    else
--      $(warning "Cannot use CONFIG_STACK_VALIDATION=y, please install libelf-dev, libelf-devel or elfutils-libelf-devel")
--    endif
-     SKIP_STACK_VALIDATION := 1
-     export SKIP_STACK_VALIDATION
-   endif
-@@ -1102,6 +1097,14 @@ uapi-asm-generic:
- 
- PHONY += prepare-objtool
- prepare-objtool: $(objtool_target)
-+ifeq ($(SKIP_STACK_VALIDATION),1)
-+ifdef CONFIG_UNWINDER_ORC
-+	@echo "error: Cannot generate ORC metadata for CONFIG_UNWINDER_ORC=y, please install libelf-dev, libelf-devel or elfutils-libelf-devel" >&2
-+	@false
-+else
-+	@echo "warning: Cannot use CONFIG_STACK_VALIDATION=y, please install libelf-dev, libelf-devel or elfutils-libelf-devel" >&2
-+endif
-+endif
- 
- # Check for CONFIG flags that require compiler support. Abort the build
- # after .config has been processed, but before the kernel build starts.
+Souptick Joarder (9):
+  mm: Introduce new vm_insert_range and vm_insert_range_buggy API
+  arch/arm/mm/dma-mapping.c: Convert to use vm_insert_range
+  drivers/firewire/core-iso.c: Convert to use vm_insert_range_buggy
+  drm/rockchip/rockchip_drm_gem.c: Convert to use vm_insert_range
+  drm/xen/xen_drm_front_gem.c: Convert to use vm_insert_range
+  iommu/dma-iommu.c: Convert to use vm_insert_range
+  videobuf2/videobuf2-dma-sg.c: Convert to use vm_insert_range_buggy
+  xen/gntdev.c: Convert to use vm_insert_range
+  xen/privcmd-buf.c: Convert to use vm_insert_range_buggy
+
+ arch/arm/mm/dma-mapping.c                         | 22 ++----
+ drivers/firewire/core-iso.c                       | 15 +----
+ drivers/gpu/drm/rockchip/rockchip_drm_gem.c       | 17 +----
+ drivers/gpu/drm/xen/xen_drm_front_gem.c           | 18 ++---
+ drivers/iommu/dma-iommu.c                         | 12 +---
+ drivers/media/common/videobuf2/videobuf2-dma-sg.c | 22 ++----
+ drivers/xen/gntdev.c                              | 16 ++---
+ drivers/xen/privcmd-buf.c                         |  8 +--
+ include/linux/mm.h                                |  4 ++
+ mm/memory.c                                       | 81 +++++++++++++++++++++++
+ mm/nommu.c                                        | 14 ++++
+ 11 files changed, 129 insertions(+), 100 deletions(-)
+
 -- 
-2.19.1
-
-
+1.9.1
 
