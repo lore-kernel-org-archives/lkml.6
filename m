@@ -2,96 +2,96 @@ Return-Path: <SRS0=uvhX=PT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F01E9C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 15:53:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 60220C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 15:53:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C924320872
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 15:53:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 397E620872
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 15:53:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732892AbfAKPxa (ORCPT
+        id S1732963AbfAKPxe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 11 Jan 2019 10:53:30 -0500
-Received: from mga02.intel.com ([134.134.136.20]:21644 "EHLO mga02.intel.com"
+        Fri, 11 Jan 2019 10:53:34 -0500
+Received: from mail.bootlin.com ([62.4.15.54]:59163 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732686AbfAKPx3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Jan 2019 10:53:29 -0500
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Jan 2019 07:53:29 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,466,1539673200"; 
-   d="scan'208";a="107525932"
-Received: from gandrejc-mobl1.ger.corp.intel.com (HELO localhost) ([10.249.254.144])
-  by orsmga006.jf.intel.com with ESMTP; 11 Jan 2019 07:53:19 -0800
-Date:   Fri, 11 Jan 2019 17:53:18 +0200
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     joeyli <jlee@suse.com>
-Cc:     James Bottomley <James.Bottomley@HansenPartnership.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Stephan Mueller <smueller@chronox.de>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        "Lee, Chun-Yi" <joeyli.kernel@gmail.com>,
-        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
-        Pavel Machek <pavel@ucw.cz>,
-        LKML <linux-kernel@vger.kernel.org>, linux-pm@vger.kernel.org,
-        keyrings@vger.kernel.org,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-        Chen Yu <yu.c.chen@intel.com>,
-        Oliver Neukum <oneukum@suse.com>,
-        Ryan Chen <yu.chen.surf@gmail.com>,
-        David Howells <dhowells@redhat.com>,
-        Giovanni Gherdovich <ggherdovich@suse.cz>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Jann Horn <jannh@google.com>
-Subject: Re: [PATCH 1/5 v2] PM / hibernate: Create snapshot keys handler
-Message-ID: <20190111154146.GA12093@linux.intel.com>
-References: <20190103143227.9138-1-jlee@suse.com>
- <4499700.LRS4F2YjjC@tauon.chronox.de>
- <20190108050358.llsox32hggn2jioe@gondor.apana.org.au>
- <1565399.7ulKdI1fm5@tauon.chronox.de>
- <D70458DE-712B-4767-8143-7DC9107689C3@amacapital.net>
- <1546994671.6077.10.camel@HansenPartnership.com>
- <CALCETrWTAYpWv73MgAz=NUfvJSLq965fWMYvJnDepJoRBsgt6Q@mail.gmail.com>
- <1547016579.2789.17.camel@HansenPartnership.com>
- <20190109181155.GI9503@linux-l9pv.suse>
+        id S1730850AbfAKPxa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 Jan 2019 10:53:30 -0500
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id CE004209BC; Fri, 11 Jan 2019 16:53:27 +0100 (CET)
+Received: from localhost (aaubervilliers-681-1-45-241.w90-88.abo.wanadoo.fr [90.88.163.241])
+        by mail.bootlin.com (Postfix) with ESMTPSA id A27172074D;
+        Fri, 11 Jan 2019 16:53:27 +0100 (CET)
+Date:   Fri, 11 Jan 2019 16:53:27 +0100
+From:   Maxime Ripard <maxime.ripard@bootlin.com>
+To:     Eric Anholt <eric@anholt.net>
+Cc:     Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
+        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+        Eben Upton <eben@raspberrypi.org>,
+        David Airlie <airlied@linux.ie>,
+        Boris Brezillon <boris.brezillon@bootlin.com>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Subject: Re: [PATCH] drm/vc4: Limit SAND tiling support to semiplanar YUV420
+ formats
+Message-ID: <20190111155327.wbj3xgcfgz3tqmwo@flea>
+References: <20181214141218.12671-1-paul.kocialkowski@bootlin.com>
+ <87d0q4f5i7.fsf@anholt.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="44bmoovxofnwahbw"
 Content-Disposition: inline
-In-Reply-To: <20190109181155.GI9503@linux-l9pv.suse>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <87d0q4f5i7.fsf@anholt.net>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jan 10, 2019 at 02:11:55AM +0800, joeyli wrote:
-> > Well, I think here, if we were actually trying to solve the problem of
-> > proving the hibernated image were the same one we would need to prove
-> > some log of the kernel operation came to a particular value *after* the
-> > hibernated image were restored ... it's not really possible to
-> > condition key release which must occur before the restore on that
-> > outcome, so it strikes me we need more than a simple release bound to
-> > PCR values.
+
+--44bmoovxofnwahbw
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Fri, Dec 14, 2018 at 08:16:32AM -0800, Eric Anholt wrote:
+> Paul Kocialkowski <paul.kocialkowski@bootlin.com> writes:
+>=20
+> > Despite what the HVS documentation indicates, the VC4 does not actually
+> > support SAND tiling modes for any RGB format and only semiplanar YUV420
+> > formats (NV12/NV21) can be used in these tiling modes.
 > >
-> 
-> hm... I am studying your information. But I have a question...
-> 
-> If PCR is not capped and the root be compromised, is it possible that a
-> sealed bundle also be compromised? 
-> 
-> Is it possible that kernel can produce a sealed key with PCR by TPM when
-> booting? Then kernel caps a PCR by a constant value before the root is
-> available for userland. Then the sealed key can be exposed to userland
-> or be attached on hibernate image. Even the root be compromised, the TPM
-> trusted key is still secure.
+> > The driver currently claims to support RGB formats for the associated
+> > modifiers, so remove them from the supported list in the
+> > format_mod_supported helper for RGB formats.
+> >
+> > Remove further checks that are no longer necessary along the way, since
+> > semi-planar YUV420 formats support every SAND tiling mode.
+> >
+> > Signed-off-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+>=20
+> Reviewed-by: Eric Anholt <eric@anholt.net>
 
-I think this even might be reasonable. Especially when we land James'
-encrypted sessions patches at some point.
+Applied,
 
-/Jarkko
+Maxime
+
+
+--=20
+Maxime Ripard, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
+
+--44bmoovxofnwahbw
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXDi79wAKCRDj7w1vZxhR
+xbxhAQDkUkt4/RU+FZkRKqLB5O8qPuy7jguQF2KxPqAwFN8p9wEAtjTk5xsI68Ns
+07Bt4u/y3npiru1Jgw/IhL0z8oFWOAE=
+=Yal1
+-----END PGP SIGNATURE-----
+
+--44bmoovxofnwahbw--
