@@ -2,111 +2,121 @@ Return-Path: <SRS0=uvhX=PT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C4AACC43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 10:22:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 967E5C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 10:22:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8DA012146F
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 10:22:44 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=brauner.io header.i=@brauner.io header.b="Ghf2qNcc"
+	by mail.kernel.org (Postfix) with ESMTP id 602932177B
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 10:22:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1547202168;
+	bh=PG/GZyqPfjIhNBMJUTI5rw6jwpPQEx5pW77TEkiNFRo=;
+	h=From:Date:Subject:To:Cc:List-ID:From;
+	b=IsOGUWlu8wKJU73jwfaqCvxM5kam0LhUh816DjFUX630jRLwJKHz0MiPyreN41IGe
+	 yMkTVpvCnr24cDHtfwDZNgmA7iIn5WYNjYaI8KS+kNVJZzY/f8ufhIHMu9VJz8tnQq
+	 qljn44IFraSukPwt0YltMDvZC4hIS6VQbSaBYXIY=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729935AbfAKKWn (ORCPT
+        id S1731781AbfAKKWr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 11 Jan 2019 05:22:43 -0500
-Received: from mail-ed1-f67.google.com ([209.85.208.67]:40457 "EHLO
-        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727745AbfAKKWm (ORCPT
+        Fri, 11 Jan 2019 05:22:47 -0500
+Received: from mail-oi1-f195.google.com ([209.85.167.195]:34988 "EHLO
+        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725807AbfAKKWq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Jan 2019 05:22:42 -0500
-Received: by mail-ed1-f67.google.com with SMTP id g22so12633947edr.7
-        for <linux-kernel@vger.kernel.org>; Fri, 11 Jan 2019 02:22:41 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=brauner.io; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=ZPrExMqjX2aSg2yR/cKM5sDuT7CAwBh7xPK8cb41bao=;
-        b=Ghf2qNccSpA7NEnN6SpJo1YEjgTFgUdEBCRA7jHQyPpNzGUzUC9988UGh8nCPz9P/3
-         1mH1O21uQI8NldhNsSYLzE8H92KfJIDWk11xLL4uI7wEfG3IcGCb6ENMTLFeVx81PZ7l
-         pDCVf1n8zkQn56zdOC8P5u0ew4pTcBT3tBmrlaL077/Fq852o5Go084lMq1YlCML/Zia
-         X7MVCOv3ozbujDpOXi5Tanm6WxDQoJi1yK5tunmTX9baSkxDHdp69DzPdRZ/r9AOAlbn
-         D47Q/E4Rl7b6psNY/FumqCQqmjLD/Cu0SUdge6Eo3pbNEZ9BBZVlvZSUVdFX0MhADMMY
-         EOTQ==
+        Fri, 11 Jan 2019 05:22:46 -0500
+Received: by mail-oi1-f195.google.com with SMTP id v6so11798292oif.2;
+        Fri, 11 Jan 2019 02:22:44 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=ZPrExMqjX2aSg2yR/cKM5sDuT7CAwBh7xPK8cb41bao=;
-        b=pmawLzwLMWzXs+FUBAny5cvP93AF9U9BDyimwTYbBSav+KvcG8bGEMN+iG4m5kN/os
-         DcxxRI/CR9+dlN+fRHp7HSXQAaBi+u1U0pY6QtyO/TXOoyYKZQqjCJNiQo02yI4vqnUf
-         gRdhFozD+ZSkQfMSVs1i5+sgGBmb2v6XHaQl//fOrNPXbZISoEy5LSZwg7Cm25O7KyjV
-         Y9Sv68vuANOtx5EooUaOAe67k1hSwM1vmTu6FckvUnFCFpdR/rtPXGUTqIfFSCTEsntw
-         zaTBcyClYlpmcRdTSQvMMWSioRWLtDG9brhVkxlmkq/XZ21WXPFxfOD/1/SoYh55FCnN
-         DcQg==
-X-Gm-Message-State: AJcUukdmfiYChMWETQugwi48FnPFpd25WH/afbD4p6sbhTD3zbpCnRrf
-        2KodM7yNCdO93YvVTnNM+uLbrF2ojMz2Lg==
-X-Google-Smtp-Source: ALg8bN67TOVnEU0oMn13ie4b+hH7Jk08ktufUBFz88c36nGxp2cJ/XIt4qgUzuOGlnh/DtJqAonuTQ==
-X-Received: by 2002:a17:906:6d59:: with SMTP id a25-v6mr11394021ejt.54.1547202160422;
-        Fri, 11 Jan 2019 02:22:40 -0800 (PST)
-Received: from brauner.io ([2a02:8109:b6c0:d6c:c571:88:8aee:976c])
-        by smtp.gmail.com with ESMTPSA id m14sm3093750edc.27.2019.01.11.02.22.39
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 11 Jan 2019 02:22:39 -0800 (PST)
-Date:   Fri, 11 Jan 2019 11:22:39 +0100
-From:   Christian Brauner <christian@brauner.io>
-To:     Jonathan Corbet <corbet@lwn.net>
-Cc:     linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] Documentation/filesystems: add binderfs
-Message-ID: <20190111102238.bpyyb6g4tmkm772h@brauner.io>
-References: <20190110231309.12653-1-christian@brauner.io>
- <20190110164703.1dd6cee1@lwn.net>
- <20190110235641.nhuodos74i67jf64@brauner.io>
- <20190110170811.5d56f9cb@lwn.net>
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
+        bh=dj0OX87eiD5eXmDpyMWeS/s/LtaeLGorc2Nd49cmBBg=;
+        b=VSg3wvPHAGtQqK3ZU1iqJTLqfpg7+uBloCBT/2bNbku5LqFRMjdv00rgRhyYTsmGvv
+         a0fCFSi/DqZ3VOQwwbom1OZ4XZYOO5S2vf55u6w5NUB8az6PO3FEZ+yE7dbJyQ1uG+AU
+         xwEoSyORe3KkvSoPmXDTJ77rzD/MHFSe68fjHDCrG6cknsdf4f8UfXJIiesEhOuAAddT
+         g75UEtVOsbW2b+mvleCe5c0teDSKNA6iVfyvouWXSNxZQNCqwbHDUfZ+OCegNs3nijo+
+         6a/WWpJUx1zE5UdZevm++O6P9nHLWT245Q0jVfjgVITh6tPyh9AHs7pl/GdRFwig2svM
+         6w9Q==
+X-Gm-Message-State: AJcUukcFVnKFIkHt00MtkDBngbb7NaOBmxRjs6kdn4pA0kuEuUTnCaM8
+        JH9M0gZmGiCrxPIVcE/CMN96cajunT5OKDd0/DUEKxv5
+X-Google-Smtp-Source: ALg8bN5UaXCzrzp0sDBPOySkzWLsi3xSm3RL1z8CyTi3z+ispuLQhun8YpiIKFMi6iZaoHUbb/d5CxQU86svdl2RMBg=
+X-Received: by 2002:aca:195:: with SMTP id 143mr8284453oib.322.1547202164506;
+ Fri, 11 Jan 2019 02:22:44 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20190110170811.5d56f9cb@lwn.net>
-User-Agent: NeoMutt/20180716
+From:   "Rafael J. Wysocki" <rafael@kernel.org>
+Date:   Fri, 11 Jan 2019 11:22:33 +0100
+Message-ID: <CAJZ5v0jRxHZJW5aW5NPLx2pcD1g5dhYzdyUw_PUTRekhOsqeyQ@mail.gmail.com>
+Subject: [GIT PULL] ACPI fixes for v5.0-rc2
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
+        Linux PCI <linux-pci@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jan 10, 2019 at 05:08:11PM -0700, Jonathan Corbet wrote:
-> On Fri, 11 Jan 2019 00:56:42 +0100
-> Christian Brauner <christian@brauner.io> wrote:
-> 
-> > >  - Please consider doing this in RST and tying it into our documentation
-> > >    tree.  It's *almost* RST now, so the effort required will be almost
-> > >    zero.  
-> > 
-> > Oh sure. I simply didn't know. I was just going by the files under
-> > Documentation/filesystems/. Is this a separate git tree? If so, where is
-> > located? Or can I just place it as
-> > Documentation/filesystems/binderfs.rst?
-> 
-> The latter - plus an entry in index.rst.  Look at, say, path-lookup.rst in
-> that directory now.
+Hi Linus,
 
-Good. Thanks!
+Please pull from the tag
 
-> 
-> > >  - Is it worth putting the example program in the samples/ directory?  Is
-> > >    it something that would ever make any sense to run in its current form?  
-> > 
-> > Hm, I mean I can write a small binary that illustrates mounting and
-> > allocating binder devices in binderfs.
-> 
-> This was just a thought - I sure don't want to try to send you off on some
-> sort of project if it won't be useful! :)
+ git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git \
+ acpi-5.0-rc2
 
-I mean it'll be useful and it's really not a lot of work to be honest.
-It's just extending the program I put into the commit message for
-binderfs itself. :)
+with top-most commit 65a4f3a1efda8e0cc2516301fc3ad64e3eca716c
+
+ Merge branches 'acpi-pci', 'acpi-power' and 'acpi-misc'
+
+on top of commit bfeffd155283772bbe78c6a05dec7c0128ee500c
+
+ Linux 5.0-rc1
+
+to receive ACPI fixes for 5.0-rc2.
+
+This fix a build failure introduced recently, fix the xpower PMIC
+ACPI driver, clean up the handling of duplicate entries in _PRx
+power resource lists and fix addresses in NUMA-related messages on
+32-bit with PAE.
+
+Specifics:
+
+ - Fix build failures with both CONFIG_NLS and CONFIG_PCI unset that
+   can occur since ACPI can be built without PCI now (Sinan Kaya).
+
+ - Clean up the handling of duplicate entries in power resource lists
+   returned by _PRx evaluation to avoid triggering WARN_ON() on
+   attempts to add duplicate symlinks in sysfs (Hans de Goede).
+
+ - Fix issues with the TS current-source switching on systems using
+   the xpower PMIC by avoiding to update unrelated bits in the TS
+   pin-ctrl register and avoiding to unconditionally enable TS
+   current-source on systems where it is not used (Hans de Goede).
+
+ - Fix addresses in NUMA-related messages on 32-bit with PAE which
+   can be truncated due to integer type conversions (Chao Fan).
 
 Thanks!
-Christian
+
+
+---------------
+
+Chao Fan (1):
+      ACPI: NUMA: Use correct type for printing addresses on i386-PAE
+
+Hans de Goede (2):
+      ACPI: power: Skip duplicate power resource references in _PRx
+      ACPI / PMIC: xpower: Fix TS-pin current-source handling
+
+Sinan Kaya (1):
+      ACPI: Fix build failure when CONFIG_NLS is set to 'n'
+
+---------------
+
+ drivers/acpi/Kconfig                  |  1 +
+ drivers/acpi/numa.c                   |  6 ++---
+ drivers/acpi/pmic/intel_pmic_xpower.c | 41 ++++++++++++++++++++++++++++-------
+ drivers/acpi/power.c                  | 22 +++++++++++++++++++
+ 4 files changed, 59 insertions(+), 11 deletions(-)
