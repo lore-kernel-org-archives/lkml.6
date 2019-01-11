@@ -2,100 +2,128 @@ Return-Path: <SRS0=uvhX=PT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E806DC43612
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 06:06:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 372BBC43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 06:07:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C09182146F
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 06:06:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 04AAA20675
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 06:07:02 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="RxeDdcnH"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729492AbfAKGGQ (ORCPT
+        id S1729594AbfAKGHC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 11 Jan 2019 01:06:16 -0500
-Received: from ozlabs.org ([203.11.71.1]:58421 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728869AbfAKGGP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Jan 2019 01:06:15 -0500
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 43bXRm3Kxfz9sCs;
-        Fri, 11 Jan 2019 17:06:12 +1100 (AEDT)
-From:   Michael Ellerman <mpe@ellerman.id.au>
-To:     Tyrel Datwyler <tyreld@linux.vnet.ibm.com>,
-        Bjorn Helgaas <helgaas@kernel.org>
-Cc:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        linux-pci@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: Kconfig label updates
-In-Reply-To: <83241c8b-8f44-162b-b42a-0f4f9bb858e7@linux.vnet.ibm.com>
-References: <20190108223024.GA147017@google.com> <87tviiroqy.fsf@concordia.ellerman.id.au> <83241c8b-8f44-162b-b42a-0f4f9bb858e7@linux.vnet.ibm.com>
-Date:   Fri, 11 Jan 2019 17:06:12 +1100
-Message-ID: <874lafg23v.fsf@concordia.ellerman.id.au>
+        Fri, 11 Jan 2019 01:07:02 -0500
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:33811 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729502AbfAKGHB (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 Jan 2019 01:07:01 -0500
+Received: by mail-pl1-f196.google.com with SMTP id w4so6295349plz.1
+        for <linux-kernel@vger.kernel.org>; Thu, 10 Jan 2019 22:07:01 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=sifive.com; s=google;
+        h=from:date:to:cc:subject:in-reply-to:message-id:references
+         :user-agent:mime-version;
+        bh=ITc9OIf9pik7euIoiRYxplAS/DUu6fViAaIU4Z7ph84=;
+        b=RxeDdcnHkS68BD5rjl6DbKx6jn5eTM45xn+iaTtbm+WkOhA2psmuNaPRT4mDSwqw6w
+         qgtQmvdiuBdoFsb+N4O2EH9JjQIxrQsdODm9vp0sHCVa96C4bNiRw/COesPFd5KBzTlb
+         WMAUdZtiBZVim1QihlcNwyh0IISoMyqbnJTiOt/dzjlaE/+mAbZQjW92CeHHivHkTjKt
+         t9NnyA8LzaLvsIBYvt5Q+BC+X63dOIWnG0uGN7kfFN+St+iQjswA41liPDvjb5EM8fl6
+         NG48HNdEGGpXnSGwTXpKEZJp7VFqv3865uFDzT40Ain0dSqK+GEcCzJnRC758aniFEdB
+         G2uQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:date:to:cc:subject:in-reply-to:message-id
+         :references:user-agent:mime-version;
+        bh=ITc9OIf9pik7euIoiRYxplAS/DUu6fViAaIU4Z7ph84=;
+        b=FE1HXNdZifp8iJNpLZNewoChHC51HkgxkaLR27guSeAkEn6n1o+K6NlHiwGj4vzrnV
+         2z+u4RskIGCjYIfpWKtLd2tpEQtSr+lHSZJ475N6jxLzmD5DFiH5IEr0VRd6bfLsisqY
+         7d9TiY3cbvL2ub2raQQclNX5auMQzWbn7ETzX4kAvvgJn0rWLOycymCV77+hYj6w4Glh
+         PwFk6XVOGoRjQBDGdwOp9t3DVE9g3OgVPYuGWj1SR/1zupS65VMcft/jdisCsD1vY55q
+         W2Z0cyyG4wEfVSvyo1I8ZowDBCfarG3pPT02grbgReqIK8goXU59JE+eZ7cJBjYmqtXN
+         fnxQ==
+X-Gm-Message-State: AJcUukdWaHo963gCd0NPruhi6KnkFktyIPQW042D32+aUlRCYnQmhhXX
+        2gDI9+arxvwA6kuNNF5qOqztuw==
+X-Google-Smtp-Source: ALg8bN7qtKVwBfycm1wLyrpfQRG7Hi2Xc8xrg4UjeHy+hh/1kojkCS3yR0R+6aUghkv1pyvHXiMKEQ==
+X-Received: by 2002:a17:902:850c:: with SMTP id bj12mr13141874plb.46.1547186820616;
+        Thu, 10 Jan 2019 22:07:00 -0800 (PST)
+Received: from localhost ([12.206.222.5])
+        by smtp.gmail.com with ESMTPSA id p7sm117530221pfa.22.2019.01.10.22.06.59
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 10 Jan 2019 22:06:59 -0800 (PST)
+From:   Paul Walmsley <paul.walmsley@sifive.com>
+X-Google-Original-From: Paul Walmsley <paulw@sifive.com>
+Date:   Thu, 10 Jan 2019 22:06:59 -0800 (PST)
+To:     Alistair Francis <Alistair.Francis@wdc.com>
+cc:     "Palmpalmer@sifive.com" <palmer@sifive.com>,
+        "linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2] RISC-V: defconfig: Enable Generic PCIE by default
+In-Reply-To: <20190110193451.29016-1-alistair.francis@wdc.com>
+Message-ID: <alpine.DEB.2.21.9999.1901102153570.22105@viisi.sifive.com>
+References: <20190110193451.29016-1-alistair.francis@wdc.com>
+User-Agent: Alpine 2.21.9999 (DEB 301 2018-08-15)
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Tyrel Datwyler <tyreld@linux.vnet.ibm.com> writes:
-> On 01/09/2019 04:37 AM, Michael Ellerman wrote:
->> Bjorn Helgaas <helgaas@kernel.org> writes:
->>> I want to update the PCI Kconfig labels so they're more consistent and
->>> useful to users, something like the patch below.  IIUC, the items
->>> below are all IBM-related; please correct me if not.
->>>
->>> I'd also like to expand (or remove) "RPA" because Google doesn't find
->>> anything about "IBM RPA", except Robotic Process Automation, which I
->>> think must be something else.
->> 
->> Yeah I think just remove it, it's not a well known term and is unlikely
->> to help anyone these days.
->> 
->> It stands for "RISC Platform Architecture", which was some kind of
->> specification for Power machines back in the day, but from what I can
->> tell it was never used in marketing or manuals much (hence so few hits
->> on Google).
+Hi Alistair,
+
+Looks like you're still sending patches to "palmpalmer" ?
+
+On Thu, 10 Jan 2019, Alistair Francis wrote:
+
+> Enable generic PCIe by default in the RISC-V defconfig, this allows us
+> to use QEMU's PCIe support out of the box.
 >
-> It is basically the predecessor to PAPR "Power Architecture Platform Reference".
-> Which the LoPAPR document is available through power.org. Not sure if there is
-> any desire to adopt PAPR in place of RPA. It is the platform reference doc that
-> outlines how we do DLPAR and PCI Hotplug.
+> Signed-off-by: Alistair Francis <alistair.francis@wdc.com>
+> ---
+>  arch/riscv/configs/defconfig | 3 +++
+>  1 file changed, 3 insertions(+)
+> 
+> diff --git a/arch/riscv/configs/defconfig b/arch/riscv/configs/defconfig
+> index f399659d3b8d..ccfd3f05223c 100644
+> --- a/arch/riscv/configs/defconfig
+> +++ b/arch/riscv/configs/defconfig
+> @@ -14,6 +14,8 @@ CONFIG_EXPERT=y
+>  CONFIG_BPF_SYSCALL=y
+>  CONFIG_SMP=y
+>  CONFIG_PCI=y
+> +CONFIG_PCIEPORTBUS=y
+> +CONFIG_PCI_HOST_GENERIC=y
+>  CONFIG_PCIE_XILINX=y
+>  CONFIG_MODULES=y
+>  CONFIG_MODULE_UNLOAD=y
+> @@ -77,5 +79,6 @@ CONFIG_NFS_V4_1=y
+>  CONFIG_NFS_V4_2=y
+>  CONFIG_ROOT_NFS=y
+>  CONFIG_CRYPTO_USER_API_HASH=y
+> +CONFIG_CRYPTO_DEV_VIRTIO=y
+>  CONFIG_PRINTK_TIME=y
+>  # CONFIG_RCU_TRACE is not set
 
-True. But a user is unlikely to know "PAPR" either, and it googles badly.
+Not sure what commit this patch is against - I picked v5.0-rc1.  Before 
+applying your patch, I generated a seedconfig with "make defconfig 
+savedefconfig; mv defconfig defconfig.1".  Then applied your patch and did 
+a "make defconfig savedefconfig" and then ran "diff -u defconfig.1 
+defconfig".
 
-LoPAPR I guess is better, you can google for it, though I'm not entirely
-sure if everything used by this code is actually in LoPAPR, because some
-bits of PAPR were ripped out of LoPAPR.
+That should have shown me just the patch above.  But it also included a 
+line removing CONFIG_RAS=y.  I am sorry to ask you to fix such a nitpicky 
+item, but it is good practice for these defconfig patches.  Otherwise the 
+defconfig deltas gradually get out of control.
 
->>> Ideally the PCI Kconfig labels would match the terms used in
->>> arch/.../Kconfig, e.g.,
->>>
->>>   config PPC_POWERNV
->>>     bool "IBM PowerNV (Non-Virtualized) platform support"
->>>
->>>   config PPC_PSERIES
->>>     bool "IBM pSeries & new (POWER5-based) iSeries"
->> 
->> TBH these are pretty unhelpful too. PowerNV is not a marketing name and
->> so doesn't appear anywhere much in official manuals or brochures and
->> it's also used on non-IBM branded machines. And pSeries & iSeries were
->> marketing names but are no longer used.
->
-> pseries is still used as a machine type for PAPR compliant qemu/kvm instances.
+When you repost it, if you verify that the ./defconfig delta from running 
+"make savedefconfig" before and after your patch applied is simply your 
+patch, then feel free to add a Reviewed-by: line from my E-mail address 
+above.
 
-Yeah so I guess it's helpful for someone configuring a kernel with that
-in mind.
 
-But if you've bought an IBM branded system the "pseries" name is not
-used anywhere AFAIK.
-
-cheers
+- Paul
