@@ -2,245 +2,433 @@ Return-Path: <SRS0=uvhX=PT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C10FC43612
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 23:56:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 001AEC43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 23:56:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 50B8C2084E
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 23:56:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547250975;
-	bh=FvrIwQ31pL3FRVTP4WBRQllOu8nZ60ny2EBaPgmiGmY=;
-	h=Subject:In-Reply-To:References:Cc:To:From:Date:List-ID:From;
-	b=1rPBVc4eYeK3CkKBzjBFpy/TuBkSm+LrAj4ci/8HsAQjtoWOdVzBvEIV+rqQfQKeN
-	 32wtjaQ+etR7My5RCzNjhNKaT2t9WlWKI49NdO2A5PuyUy3FXvckWG0NXVButhaAJD
-	 ejQ4aVCkNN7R62Pb628Nft+kaNCQ571lRScN4g+8=
+	by mail.kernel.org (Postfix) with ESMTP id B07FF2084E
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 23:56:33 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="1zbh2o8y"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726430AbfAKX4O (ORCPT
+        id S1726477AbfAKX4c (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 11 Jan 2019 18:56:14 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36826 "EHLO mail.kernel.org"
+        Fri, 11 Jan 2019 18:56:32 -0500
+Received: from vps0.lunn.ch ([185.16.172.187]:40874 "EHLO vps0.lunn.ch"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726193AbfAKX4O (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Jan 2019 18:56:14 -0500
-Received: from localhost (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 96C3920835;
-        Fri, 11 Jan 2019 23:56:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547250972;
-        bh=FvrIwQ31pL3FRVTP4WBRQllOu8nZ60ny2EBaPgmiGmY=;
-        h=Subject:In-Reply-To:References:Cc:To:From:Date:From;
-        b=wOwoXjUH1YJsBvY6+sosj9koOBqq40BORV1182r3quAPc4wLM6e02adpJcT0KA+yz
-         a1EEz4Sch96cUvyI/88K7sytiAKfnNhw0ZfENE/kuty042MS826uoxpPz4yaj1MZ1W
-         y0xX2mIZiY2x56LCtW7znye46OFcCNg3sDa2wB+M=
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH 5/6] clk: actions: Add clock driver for S500 SoC
-User-Agent: alot/0.8
-In-Reply-To: <20181231185517.18517-6-manivannan.sadhasivam@linaro.org>
-References: <20181231185517.18517-1-manivannan.sadhasivam@linaro.org> <20181231185517.18517-6-manivannan.sadhasivam@linaro.org>
-Cc:     linux-arm-kernel@lists.infradead.org,
-        linux-actions@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-        Edgar Bernardi Righi <edgar.righi@lsitec.org.br>
-To:     Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-        afaerber@suse.de, mturquette@baylibre.com, robh+dt@kernel.org
-Message-ID: <154725097174.169631.1773315055825741424@swboyd.mtv.corp.google.com>
-From:   Stephen Boyd <sboyd@kernel.org>
-Date:   Fri, 11 Jan 2019 15:56:11 -0800
+        id S1726193AbfAKX4c (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 Jan 2019 18:56:32 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch; s=20171124;
+        h=Message-Id:Date:Subject:Cc:To:From; bh=de0GN29/GFrx2AyAsjE0cKYSkJFDsOEKVBk5zucsQVM=;
+        b=1zbh2o8yC6jnZAo4ezjjhJrfgCq7AfBfIFlN0tb751h+Cpg/3AkBW7Bs5SHGnAt4Jf+20t7hR+TK2tclujWJoggZYY56R7Slr0BKojCOOhVJANQCai8c5IUmUH/sk8GOrEboJFcdxxp66rWnkq5eXbV7b5/90cEEVsB7dL+aSHA=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.84_2)
+        (envelope-from <andrew@lunn.ch>)
+        id 1gi6es-0004bZ-Oe; Sat, 12 Jan 2019 00:56:14 +0100
+From:   Andrew Lunn <andrew@lunn.ch>
+To:     Lee Jones <lee.jones@linaro.org>
+Cc:     linux-kernel@vger.kernel.org,
+        Emeric Dupont <emeric.dupont@zii.aero>,
+        Andrew Lunn <andrew@lunn.ch>
+Subject: [PATCH v3] mfd: tqmx86: IO controller with i2c, wachdog and gpio
+Date:   Sat, 12 Jan 2019 00:56:05 +0100
+Message-Id: <1547250965-17668-1-git-send-email-andrew@lunn.ch>
+X-Mailer: git-send-email 2.1.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Manivannan Sadhasivam (2018-12-31 10:55:16)
-> diff --git a/drivers/clk/actions/owl-s500.c b/drivers/clk/actions/owl-s50=
-0.c
-> new file mode 100644
-> index 000000000000..93feea8d71e2
-> --- /dev/null
-> +++ b/drivers/clk/actions/owl-s500.c
-> @@ -0,0 +1,524 @@
-> +// SPDX-License-Identifier: GPL-2.0+
-> +//
+The QMX86 is a PLD present on some TQ-Systems ComExpress modules. It
+provides 1 or 2 I2C bus masters, 8 GPIOs and a watchdog timer. Add an
+MFD which will instantiate the individual drivers.
 
-Please make the reset of these the typical /* type of comments.
+Signed-off-by: Andrew Lunn <andrew@lunn.ch>
+---
+v2:
 
-> +// Actions Semi Owl S500 SoC clock driver
-> +//
-> +// Copyright (c) 2014 Actions Semi Inc.
-> +// Author: David Liu <liuwei@actions-semi.com>
-> +//
-> +// Copyright (c) 2018 Linaro Ltd.
-> +// Author: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-> +//
-> +// Copyright (c) 2018 LSI-TEC - Caninos Loucos
-> +// Author: Edgar Bernardi Righi <edgar.righi@lsitec.org.br>
-> +
-> +#include <linux/clk-provider.h>
-> +#include <linux/platform_device.h>
+Drop setting i2c bus speed, which removes the build dependencies on
+the i2c ocores patches. This can be added back later.
 
-I'm amazed nothing else is required to be included.
+v3
+--
 
-[..]
-> +#define CMU_NANDPLLDEBUG               (0x00E4)
-> +#define CMU_DISPLAYPLLDEBUG            (0x00E8)
-> +#define CMU_TVOUTPLLDEBUG              (0x00EC)
-> +#define CMU_DEEPCOLORPLLDEBUG          (0x00F4)
-> +#define CMU_AUDIOPLL_ETHPLLDEBUG       (0x00F8)
-> +#define CMU_CVBSPLLDEBUG               (0x00FC)
-> +
-> +#define OWL_S500_COREPLL_DELAY         (150)
-> +#define OWL_S500_DDRPLL_DELAY          (63)
-> +#define OWL_S500_DEVPLL_DELAY          (28)
-> +#define OWL_S500_NANDPLL_DELAY         (44)
-> +#define OWL_S500_DISPLAYPLL_DELAY      (57)
-> +#define OWL_S500_ETHERNETPLL_DELAY     (25)
-> +#define OWL_S500_AUDIOPLL_DELAY                (100)
-> +
-> +static const struct clk_pll_table clk_audio_pll_table[] =3D {
-> +       { 0, 45158400 }, { 1, 49152000 },
-> +       { 0, 0 },
-> +};
-> +
-> +/* pll clocks */
-> +static OWL_PLL_NO_PARENT_DELAY(ethernet_pll_clk, "ethernet_pll_clk", CMU=
-_ETHERNETPLL, 500000000, 0, 0, 0, 0, 0, OWL_S500_ETHERNETPLL_DELAY, NULL, C=
-LK_IGNORE_UNUSED);
-> +static OWL_PLL_NO_PARENT_DELAY(core_pll_clk, "core_pll_clk", CMU_COREPLL=
-, 12000000, 9, 0, 8, 4, 134, OWL_S500_COREPLL_DELAY, NULL, CLK_IGNORE_UNUSE=
-D);
-> +static OWL_PLL_NO_PARENT_DELAY(ddr_pll_clk, "ddr_pll_clk", CMU_DDRPLL, 1=
-2000000, 8, 0, 8, 1, 67, OWL_S500_DDRPLL_DELAY, NULL, CLK_IGNORE_UNUSED);
-> +static OWL_PLL_NO_PARENT_DELAY(nand_pll_clk, "nand_pll_clk", CMU_NANDPLL=
-, 6000000, 8, 0, 7, 2, 86, OWL_S500_NANDPLL_DELAY, NULL, CLK_IGNORE_UNUSED);
-> +static OWL_PLL_NO_PARENT_DELAY(display_pll_clk, "display_pll_clk", CMU_D=
-ISPLAYPLL, 6000000, 8, 0, 8, 2, 126, OWL_S500_DISPLAYPLL_DELAY, NULL, CLK_I=
-GNORE_UNUSED);
-> +static OWL_PLL_NO_PARENT_DELAY(dev_pll_clk, "dev_pll_clk", CMU_DEVPLL, 6=
-000000, 8, 0, 7, 8, 126, OWL_S500_DEVPLL_DELAY, NULL, CLK_IGNORE_UNUSED);
-> +static OWL_PLL_NO_PARENT_DELAY(audio_pll_clk, "audio_pll_clk", CMU_AUDIO=
-PLL, 0, 4, 0, 1, 0, 0, OWL_S500_AUDIOPLL_DELAY, clk_audio_pll_table, CLK_IG=
-NORE_UNUSED);
-> +
-> +static const char *dev_clk_mux_p[] =3D { "hosc", "dev_pll_clk" };
+Fix indentation of help
+Fix SPDX to match MODULE_LICENSE
+Remove warranty text
+Add my Copyright
+Sort include files
+Add _REG_ to register defines
+Add #defines for all resources
+Replace magic numbers with #defines
+Rename pld_clock to pld_clock_rate
+Remove wrapper around ioread8()/iowrite8()
+Scatter const keyword in a few places
+Remove enum for cells
+Implement lookup for board in tq_board_if
+Rename ioeic to io_ext_int_val to make is more readable
+Handle optional calls in a different way
+Better group code and structures
+Kill all the sysfs attributes
+Use devm_mfd_add_devices()
+Don't exist silently for unknown board ID
 
-These can't be const char * const ?
+Not addressed, waiting for answers:
+MODULE_PARM for GPIO interrupts
+Not using regmap, intel IO not supported by regmap
+Setting GPIO irq on resource structure
+Global tqmx86_pdev
+Jumping through hoops
+---
+ drivers/mfd/Kconfig  |   8 ++
+ drivers/mfd/Makefile |   1 +
+ drivers/mfd/tqmx86.c | 303 +++++++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 312 insertions(+)
+ create mode 100644 drivers/mfd/tqmx86.c
 
-> +static const char *bisp_clk_mux_p[] =3D { "display_pll_clk", "dev_clk" };
-> +static const char *sensor_clk_mux_p[] =3D { "hosc", "bisp_clk" };
-> +static const char *sd_clk_mux_p[] =3D { "dev_clk", "nand_pll_clk" };
-> +static const char *pwm_clk_mux_p[] =3D { "losc", "hosc" };
-> +static const char *ahbprediv_clk_mux_p[] =3D { "dev_clk", "display_pll_c=
-lk", "nand_pll_clk", "ddr_pll_clk" };
-> +static const char *uart_clk_mux_p[] =3D { "hosc", "dev_pll_clk" };
-> +static const char *de_clk_mux_p[] =3D { "display_pll_clk", "dev_clk" };
-> +static const char *i2s_clk_mux_p[] =3D { "audio_pll_clk" };
-> +static const char *hde_clk_mux_p[] =3D { "dev_clk", "display_pll_clk", "=
-nand_pll_clk", "ddr_pll_clk" };
-> +static const char *nand_clk_mux_p[] =3D { "nand_pll_clk", "display_pll_c=
-lk", "dev_clk", "ddr_pll_clk" };
-> +
-> +static struct clk_factor_table sd_factor_table[] =3D {
+diff --git a/drivers/mfd/Kconfig b/drivers/mfd/Kconfig
+index 8c5dfdce4326..87cfb0afaf84 100644
+--- a/drivers/mfd/Kconfig
++++ b/drivers/mfd/Kconfig
+@@ -1676,6 +1676,14 @@ config MFD_TC6393XB
+ 	help
+ 	  Support for Toshiba Mobile IO Controller TC6393XB
+ 
++config MFD_TQMX86
++       tristate "TQ-Systems IO controller TQMX86"
++       select MFD_CORE
++       help
++	  Say yes here to enable support for various functions of the
++	  TQ-Systems IO controller and watchdog device, found on their
++	  ComExpress CPU modules.
++
+ config MFD_VX855
+ 	tristate "VIA VX855/VX875 integrated south bridge"
+ 	depends on PCI
+diff --git a/drivers/mfd/Makefile b/drivers/mfd/Makefile
+index 12980a4ad460..7f4790662988 100644
+--- a/drivers/mfd/Makefile
++++ b/drivers/mfd/Makefile
+@@ -36,6 +36,7 @@ obj-$(CONFIG_MFD_TC3589X)	+= tc3589x.o
+ obj-$(CONFIG_MFD_T7L66XB)	+= t7l66xb.o tmio_core.o
+ obj-$(CONFIG_MFD_TC6387XB)	+= tc6387xb.o tmio_core.o
+ obj-$(CONFIG_MFD_TC6393XB)	+= tc6393xb.o tmio_core.o
++obj-$(CONFIG_MFD_TQMX86)	+= tqmx86.o
+ 
+ obj-$(CONFIG_MFD_ARIZONA)	+= arizona-core.o
+ obj-$(CONFIG_MFD_ARIZONA)	+= arizona-irq.o
+diff --git a/drivers/mfd/tqmx86.c b/drivers/mfd/tqmx86.c
+new file mode 100644
+index 000000000000..144c176cf2bc
+--- /dev/null
++++ b/drivers/mfd/tqmx86.c
+@@ -0,0 +1,303 @@
++// SPDX-License-Identifier: GPL-2.0+
++/*
++ * TQ-Systems PLD MFD core driver, based on vendor driver by
++ * Vadim V.Vlasov <vvlasov@dev.rtsoft.ru>
++ *
++ * Copyright (c) 2015 TQ-Systems GmbH
++ * Copyright (c) 2019 Andrew Lunn <andrew@lunn.ch>
++ */
++
++#include <linux/delay.h>
++#include <linux/dmi.h>
++#include <linux/i2c.h>
++#include <linux/io.h>
++#include <linux/mfd/core.h>
++#include <linux/module.h>
++#include <linux/platform_data/i2c-ocores.h>
++#include <linux/platform_device.h>
++
++#define TQMX86_IOBASE	0x160
++#define TQMX86_IOSIZE	0x3f
++#define TQMX86_IOBASE_I2C	0x1a0
++#define TQMX86_IOSIZE_I2C	0xa
++#define TQMX86_IOBASE_WATCHDOG	0x18b
++#define TQMX86_IOSIZE_WATCHDOG	0x2
++#define TQMX86_IOBASE_GPIO	0x18d
++#define TQMX86_IOSIZE_GPIO	0x4
++
++#define TQMX86_REG_BOARD_ID	0x20
++#define TQMX86_REG_BOARD_REV	0x21
++#define TQMX86_REG_IO_EXT_INT	0x26
++#define TQMX86_REG_IO_EXT_INT_MASK		0x3
++#define TQMX86_REG_IO_EXT_INT_GPIO_SHIFT	4
++#define TQMX86_REG_I2C_DETECT	0x47
++#define TQMX86_REG_I2C_DETECT_SOFT		0xa5
++#define TQMX86_REG_I2C_INT_EN	0x49
++
++#define I2C_KIND_SOFT	1	/* Ocores I2C soft controller */
++#define I2C_KIND_HARD	2	/* Machxo2 I2C hard controller */
++
++/**
++ * struct tqmx86_device_data - Internal representation of the PLD device
++ * @io_base:		Pointer to the IO memory
++ * @pld_clock_rate:	PLD clock frequency
++ * @dev:		Pointer to kernel device structure
++ * @i2c_type:		Hard of soft I2C hardware macro
++ */
++struct tqmx86_device_ddata {
++	void __iomem	*io_base;
++	u32		pld_clock_rate;
++	u32		i2c_type;
++};
++
++/**
++ * struct tqmx86_platform_data - PLD hardware configuration structure
++ * @ioresource:		IO addresses of the PLD
++ */
++struct tqmx86_platform_ddata {
++	struct resource	*ioresource;
++};
++
++static uint gpio_irq;
++module_param(gpio_irq, uint, 0);
++MODULE_PARM_DESC(gpio_irq, "GPIO IRQ number (7, 9, 12)");
++
++static const u8 i2c_irq_ctl[] = {
++	[7] = 1,
++	[9] = 2,
++	[12] = 3
++};
++
++static const struct resource tqmx_i2c_soft_resources[] = {
++	DEFINE_RES_IO(TQMX86_IOBASE_I2C, TQMX86_IOSIZE_I2C),
++};
++
++static const struct resource tqmx_watchdog_resources[] = {
++	DEFINE_RES_IO(TQMX86_IOBASE_WATCHDOG, TQMX86_IOSIZE_WATCHDOG),
++};
++
++static struct resource tqmx_gpio_resources[] = {
++	DEFINE_RES_IO(TQMX86_IOBASE_GPIO, TQMX86_IOSIZE_GPIO),
++	DEFINE_RES_IRQ(0)
++};
++
++static struct i2c_board_info tqmx86_i2c_devices[] = {
++	{
++		/* 4K EEPROM at 0x50 */
++		I2C_BOARD_INFO("24c32", 0x50),
++	},
++};
++
++static struct ocores_i2c_platform_data ocores_platfom_ddata = {
++	.num_devices = ARRAY_SIZE(tqmx86_i2c_devices),
++	.devices = tqmx86_i2c_devices,
++};
++
++static const struct mfd_cell tqmx86_devs[] = {
++	{
++		.name = "ocores-i2c",
++		.platform_data = &ocores_platfom_ddata,
++		.pdata_size = sizeof(ocores_platfom_ddata),
++		.resources = tqmx_i2c_soft_resources,
++		.num_resources = ARRAY_SIZE(tqmx_i2c_soft_resources),
++	},
++	{
++		.name = "tqmx86-wdt",
++		.resources = tqmx_watchdog_resources,
++		.num_resources = 1,
++		.ignore_resource_conflicts = 1,
++	},
++	{
++		.name = "tqmx86-gpio",
++		.resources = tqmx_gpio_resources,
++		.num_resources = ARRAY_SIZE(tqmx_gpio_resources),
++		.ignore_resource_conflicts = 1,
++	},
++};
++
++static const struct tq_board_info {
++	u8 board_id;
++	char *name;
++	u32 pld_clock_rate;
++} tq_board_info[] = {
++	{ 0, "", 0 },
++	{ 1, "TQMxE38M", 33000 },
++	{ 2, "TQMx50UC", 24000 },
++	{ 3, "TQMxE38C", 33000 },
++	{ 4, "TQMx60EB", 24000 },
++	{ 5, "TQMxE39M", 25000 },
++	{ 6, "TQMxE39C", 25000 },
++	{ 7, "TQMxE39x", 25000 },
++	{ 8, "TQMx70EB", 24000 },
++	{ 9, "TQMx80UC", 24000 },
++	{10, "TQMx90UC", 24000 }
++};
++
++static int tqmx86_probe(struct platform_device *pdev)
++{
++	u8 board_id, rev, i2c_det, i2c_ien, io_ext_int_val;
++	struct device *dev = &pdev->dev;
++	struct tqmx86_device_ddata *pld;
++	struct resource *ioport;
++	int i;
++
++	pld = devm_kzalloc(dev, sizeof(*pld), GFP_KERNEL);
++	if (!pld)
++		return -ENOMEM;
++
++	ioport = platform_get_resource(pdev, IORESOURCE_IO, 0);
++	if (!ioport)
++		return -EINVAL;
++
++	pld->io_base = devm_ioport_map(dev, ioport->start,
++				       resource_size(ioport));
++	if (!pld->io_base)
++		return -ENOMEM;
++
++	platform_set_drvdata(pdev, pld);
++
++	board_id = ioread8(pld->io_base + TQMX86_REG_BOARD_ID);
++	for (i = 0; i < ARRAY_SIZE(tq_board_info); i++)
++		if (tq_board_info[i].board_id == board_id)
++			break;
++
++	if (i == ARRAY_SIZE(tq_board_info)) {
++		dev_info(&pdev->dev,
++			 "Board ID %d not supported by this driver\n",
++			 board_id);
++		return -ENODEV;
++	}
++
++	rev = ioread8(pld->io_base + TQMX86_REG_BOARD_REV);
++
++	dev_info(&pdev->dev,
++		 "Found %s - Board ID %d, PCB Revision %d, PLD Revision %d\n",
++		 tq_board_info[i].name, board_id, rev >> 4, rev & 0xf);
++
++	pld->pld_clock_rate = tq_board_info[i].pld_clock_rate;
++
++	i2c_det = ioread8(pld->io_base + TQMX86_REG_I2C_DETECT);
++	i2c_ien = ioread8(pld->io_base + TQMX86_REG_I2C_INT_EN);
++
++	if (i2c_det == TQMX86_REG_I2C_DETECT_SOFT)
++		pld->i2c_type = I2C_KIND_SOFT;
++	else
++		pld->i2c_type = I2C_KIND_HARD;
++
++	io_ext_int_val =
++		(i2c_irq_ctl[gpio_irq] & TQMX86_REG_IO_EXT_INT_MASK) <<
++		TQMX86_REG_IO_EXT_INT_GPIO_SHIFT;
++
++	if (io_ext_int_val) {
++		iowrite8(io_ext_int_val, pld->io_base + TQMX86_REG_IO_EXT_INT);
++		if (ioread8(pld->io_base + TQMX86_REG_IO_EXT_INT) !=
++		    io_ext_int_val) {
++			dev_warn(&pdev->dev,
++				 "gpio interrupts not supported.\n");
++			gpio_irq = 0;
++		}
++	}
++
++	ocores_platfom_ddata.clock_khz = pld->pld_clock_rate;
++	tqmx_gpio_resources[1].start = gpio_irq;
++
++	if (pld->i2c_type == I2C_KIND_SOFT)
++		return devm_mfd_add_devices(&pdev->dev, PLATFORM_DEVID_NONE,
++					    tqmx86_devs,
++					    ARRAY_SIZE(tqmx86_devs),
++					    NULL, 0, NULL);
++
++	/* Skip the soft I2C cell */
++	return devm_mfd_add_devices(&pdev->dev, PLATFORM_DEVID_NONE,
++				    &tqmx86_devs[1],
++				    ARRAY_SIZE(tqmx86_devs) - 1,
++				    NULL, 0, NULL);
++}
++
++static struct resource tqmx86_ioresource[] = {
++	DEFINE_RES_IO(TQMX86_IOBASE, TQMX86_IOSIZE),
++};
++
++static const struct tqmx86_platform_ddata tqmx86_platform_ddata_generic = {
++	.ioresource	= &tqmx86_ioresource[0],
++};
++
++static struct platform_device *tqmx86_pdev;
++
++static int tqmx86_create_platform_device(const struct dmi_system_id *id)
++{
++	struct tqmx86_platform_ddata *pdata = id->driver_data;
++	int ret;
++
++	tqmx86_pdev = platform_device_alloc("tqmx86", -1);
++	if (!tqmx86_pdev)
++		return -ENOMEM;
++
++	ret = platform_device_add_data(tqmx86_pdev, pdata, sizeof(*pdata));
++	if (ret)
++		goto err;
++
++	ret = platform_device_add_resources(tqmx86_pdev, pdata->ioresource, 1);
++	if (ret)
++		goto err;
++
++	ret = platform_device_add(tqmx86_pdev);
++	if (ret)
++		goto err;
++
++	return 0;
++err:
++	platform_device_put(tqmx86_pdev);
++	return ret;
++}
++
++static const struct dmi_system_id tqmx86_dmi_table[] __initconst = {
++	{
++		.ident = "TQMX86",
++		.matches = {
++			DMI_MATCH(DMI_SYS_VENDOR, "TQ-Group"),
++			DMI_MATCH(DMI_PRODUCT_NAME, "TQMx"),
++		},
++		.driver_data = (void *)&tqmx86_platform_ddata_generic,
++		.callback = tqmx86_create_platform_device,
++	},
++	{}
++};
++MODULE_DEVICE_TABLE(dmi, tqmx86_dmi_table);
++
++static struct platform_driver tqmx86_driver = {
++	.driver		= {
++		.name	= "tqmx86",
++	},
++	.probe		= tqmx86_probe,
++};
++
++static int __init tqmx86_init(void)
++{
++	if (gpio_irq != 0 && gpio_irq != 7 &&
++	    gpio_irq != 9 && gpio_irq != 12) {
++		pr_warn("tqmx86: Invalid GPIO IRQ (%d)\n", gpio_irq);
++		gpio_irq = 0;
++	}
++
++	if (!dmi_check_system(tqmx86_dmi_table))
++		return -ENODEV;
++
++	return platform_driver_register(&tqmx86_driver);
++}
++
++static void __exit tqmx86_exit(void)
++{
++	if (tqmx86_pdev)
++		platform_device_unregister(tqmx86_pdev);
++
++	platform_driver_unregister(&tqmx86_driver);
++}
++
++module_init(tqmx86_init);
++module_exit(tqmx86_exit);
++
++MODULE_DESCRIPTION("TQx86 PLD Core Driver");
++MODULE_AUTHOR("Andrew Lunn <andrew@lunn.ch>");
++MODULE_LICENSE("GPL");
++MODULE_ALIAS("platform:tqmx86");
+-- 
+2.20.1
 
-Can these tables be const?
-
-> +       /* bit0 ~ 4 */
-> +       { 0, 1, 1 }, { 1, 1, 2 }, { 2, 1, 3 }, { 3, 1, 4 },
-> +       { 4, 1, 5 }, { 5, 1, 6 }, { 6, 1, 7 }, { 7, 1, 8 },
-> +       { 8, 1, 9 }, { 9, 1, 10 }, { 10, 1, 11 }, { 11, 1, 12 },
-> +       { 12, 1, 13 }, { 13, 1, 14 }, { 14, 1, 15 }, { 15, 1, 16 },
-> +       { 16, 1, 17 }, { 17, 1, 18 }, { 18, 1, 19 }, { 19, 1, 20 },
-> +       { 20, 1, 21 }, { 21, 1, 22 }, { 22, 1, 23 }, { 23, 1, 24 },
-> +       { 24, 1, 25 }, { 25, 1, 26 }, { 26, 1, 27 }, { 27, 1, 28 },
-> +       { 28, 1, 29 }, { 29, 1, 30 }, { 30, 1, 31 }, { 31, 1, 32 },
-> +
-> +       /* bit8: /128 */
-> +       { 256, 1, 1 * 128 }, { 257, 1, 2 * 128 }, { 258, 1, 3 * 128 }, { =
-259, 1, 4 * 128 },
-> +       { 260, 1, 5 * 128 }, { 261, 1, 6 * 128 }, { 262, 1, 7 * 128 }, { =
-263, 1, 8 * 128 },
-> +       { 264, 1, 9 * 128 }, { 265, 1, 10 * 128 }, { 266, 1, 11 * 128 }, =
-{ 267, 1, 12 * 128 },
-> +       { 268, 1, 13 * 128 }, { 269, 1, 14 * 128 }, { 270, 1, 15 * 128 },=
- { 271, 1, 16 * 128 },
-> +       { 272, 1, 17 * 128 }, { 273, 1, 18 * 128 }, { 274, 1, 19 * 128 },=
- { 275, 1, 20 * 128 },
-> +       { 276, 1, 21 * 128 }, { 277, 1, 22 * 128 }, { 278, 1, 23 * 128 },=
- { 279, 1, 24 * 128 },
-> +       { 280, 1, 25 * 128 }, { 281, 1, 26 * 128 }, { 282, 1, 27 * 128 },=
- { 283, 1, 28 * 128 },
-> +       { 284, 1, 29 * 128 }, { 285, 1, 30 * 128 }, { 286, 1, 31 * 128 },=
- { 287, 1, 32 * 128 },
-> +       { 0, 0, 0 },
-> +};
-> +
-> +static struct clk_factor_table bisp_factor_table[] =3D {
-> +       { 0, 1, 1 }, { 1, 1, 2 }, { 2, 1, 3 }, { 3, 1, 4 },
-> +       { 4, 1, 5 }, { 5, 1, 6 }, { 6, 1, 7 }, { 7, 1, 8 },
-> +       { 0, 0, 0 },
-> +};
-> +
-> +static struct clk_factor_table ahb_factor_table[] =3D {
-> +       { 1, 1, 2 }, { 2, 1, 3 },
-> +       { 0, 0, 0 },
-> +};
-> +
-> +static struct clk_div_table rmii_ref_div_table[] =3D {
-> +       { 0, 4 }, { 1, 10 },
-> +       { 0, 0 },
-> +};
-> +
-> +static struct clk_div_table i2s_div_table[] =3D {
-> +       { 0, 1 }, { 1, 2 }, { 2, 3 }, { 3, 4 },
-> +       { 4, 6 }, { 5, 8 }, { 6, 12 }, { 7, 16 },
-> +       { 8, 24 },
-> +       { 0, 0 },
-> +};
-> +
-> +static struct clk_div_table nand_div_table[] =3D {
-> +       { 0, 1 }, { 1, 2 }, { 2, 4 }, { 3, 6 },
-> +       { 4, 8 }, { 5, 10 }, { 6, 12 }, { 7, 14 },
-> +       { 8, 16 }, { 9, 18 }, { 10, 20 }, { 11, 22 },
-> +       { 0, 0 },
-> +};
-> +
-> +/* mux clock */
-> +static OWL_MUX(dev_clk, "dev_clk", dev_clk_mux_p, CMU_DEVPLL, 12, 1, CLK=
-_SET_RATE_PARENT);
-> +static OWL_MUX(ahbprediv_clk, "ahbprediv_clk", ahbprediv_clk_mux_p, CMU_=
-BUSCLK1, 8, 3, CLK_SET_RATE_PARENT);
-> +
-> +/* gate clocks */
-> +static OWL_GATE(spi0_clk, "spi0_clk", "ahb_clk", CMU_DEVCLKEN1, 10, 0, C=
-LK_IGNORE_UNUSED);
-> +static OWL_GATE(spi1_clk, "spi1_clk", "ahb_clk", CMU_DEVCLKEN1, 11, 0, C=
-LK_IGNORE_UNUSED);
-[...]
-> +               [CLK_HDMI]              =3D &hdmi_clk.common.hw,
-> +               [CLK_VDE]               =3D &vde_clk.common.hw,
-> +               [CLK_VCE]               =3D &vce_clk.common.hw,
-> +               [CLK_SPDIF]             =3D &spdif_clk.common.hw,
-> +               [CLK_NAND]              =3D &nand_clk.common.hw,
-> +               [CLK_ECC]               =3D &ecc_clk.common.hw,
-> +       },
-> +       .num =3D CLK_NR_CLKS,
-> +};
-> +
-> +static struct owl_clk_desc s500_clk_desc =3D {
-
-This can't be const?
-
-> +       .clks       =3D s500_clks,
-> +       .num_clks   =3D ARRAY_SIZE(s500_clks),
-> +
-> +       .hw_clks    =3D &s500_hw_clks,
-> +};
-> +
