@@ -7,48 +7,47 @@ X-Spam-Status: No, score=-10.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 32DA8C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:40:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A6B3C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:40:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 04D2221848
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:40:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DD65A21841
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:40:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547217618;
-	bh=f4usFWsoSQt9cuazOO1Ma06SXWWYCstBb2QrwFfvKzE=;
+	s=default; t=1547217621;
+	bh=cGVaHaFpVlp46Bl4yfgmOul59RwIyk7iLGES9QFouCY=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=onXrsPr5e64v9Qzpmn1datXPu75FDoSY4b114cF9Jk5Mwreyal5igVroLK+LD4Ac/
-	 tFaChYst+EG60LXcGBhB2de1mH32yg0QQszk21wbATqFlNhfldOf9fNWCbTh3A3THv
-	 BLACSv8MI2oLKcSJV5PM9tzROnOSWKVIoKj636Lw=
+	b=zAWA9XuGIIEaP3+M1jWO8JpeBSpkhoM82vSDYUG9+sDCLmFZEQ/xGC03rycWn00Wa
+	 PmEyMk+WCUgeBzTw43bw9/1HF6HfiiKaoCOpLrNZU5e8Z9sn7RsRUc/Xn+fNdeDpUy
+	 J8uWihb5+EPPetlWeycZyBfgEpyRWbAzfkqwiNwo=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2403875AbfAKOkR (ORCPT
+        id S2391201AbfAKOkT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 11 Jan 2019 09:40:17 -0500
-Received: from mail.kernel.org ([198.145.29.99]:32840 "EHLO mail.kernel.org"
+        Fri, 11 Jan 2019 09:40:19 -0500
+Received: from mail.kernel.org ([198.145.29.99]:32892 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2391185AbfAKOkO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Jan 2019 09:40:14 -0500
+        id S2403872AbfAKOkR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 Jan 2019 09:40:17 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EADEC2063F;
-        Fri, 11 Jan 2019 14:40:12 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7C19621841;
+        Fri, 11 Jan 2019 14:40:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547217613;
-        bh=f4usFWsoSQt9cuazOO1Ma06SXWWYCstBb2QrwFfvKzE=;
+        s=default; t=1547217617;
+        bh=cGVaHaFpVlp46Bl4yfgmOul59RwIyk7iLGES9QFouCY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=hBoGXBLK6TIP2wcsW7beZwJ9dBDG5nogD17S3Ni1f4qZYiF66j4c+RF0NtIQ9iF7K
-         6q2CYofep3MlacJ9s3MAJMkUgckiaPMWJO9ZmJkHM27mK3Eybqxr8CZ9NEeXGHP+UW
-         Agnt/TUwASZRyhdPsfJ9c10MWYxk3ywHLy1T/cJw=
+        b=mvHOaJi3mrvCL1zM+5Ur8YVWfF9+JJdmTrJfPYlRGb8wYnI8VCXOBQ58JxuJTXrPg
+         S3oLUIN+QSiMBoyGSOY9uRHjqQxO8a30fcuF3Go1zbkOOz/kbmzP5Lu2s4Fy/frxH+
+         sNEEIPI2YB7ePGe6dHyUW/kGwmcbd05Y6nM4+SvY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Nick Desaulniers <ndesaulniers@google.com>,
-        Peter Smith <peter.smith@linaro.org>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Will Deacon <will.deacon@arm.com>
-Subject: [PATCH 4.19 126/148] arm64: relocatable: fix inconsistencies in linker script and options
-Date:   Fri, 11 Jan 2019 15:15:04 +0100
-Message-Id: <20190111131119.284436928@linuxfoundation.org>
+        stable@vger.kernel.org, Jerome Brunet <jbrunet@baylibre.com>,
+        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+        Benjamin Drung <bdrung@debian.org>
+Subject: [PATCH 4.19 127/148] leds: pwm: silently error out on EPROBE_DEFER
+Date:   Fri, 11 Jan 2019 15:15:05 +0100
+Message-Id: <20190111131119.361732998@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190111131114.337122649@linuxfoundation.org>
 References: <20190111131114.337122649@linuxfoundation.org>
@@ -67,96 +66,35 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+From: Jerome Brunet <jbrunet@baylibre.com>
 
-commit 3bbd3db86470c701091fb1d67f1fab6621debf50 upstream.
+commit 9aec30371fb095a0c9415f3f0146ae269c3713d8 upstream.
 
-readelf complains about the section layout of vmlinux when building
-with CONFIG_RELOCATABLE=y (for KASLR):
+When probing, if we fail to get the pwm due to probe deferal, we shouldn't
+print an error message. Just be silent in this case.
 
-  readelf: Warning: [21]: Link field (0) should index a symtab section.
-  readelf: Warning: [21]: Info field (0) should index a relocatable section.
-
-Also, it seems that our use of '-pie -shared' is contradictory, and
-thus ambiguous. In general, the way KASLR is wired up at the moment
-is highly tailored to how ld.bfd happens to implement (and conflate)
-PIE executables and shared libraries, so given the current effort to
-support other toolchains, let's fix some of these issues as well.
-
-- Drop the -pie linker argument and just leave -shared. In ld.bfd,
-  the differences between them are unclear (except for the ELF type
-  of the produced image [0]) but lld chokes on seeing both at the
-  same time.
-
-- Rename the .rela output section to .rela.dyn, as is customary for
-  shared libraries and PIE executables, so that it is not misidentified
-  by readelf as a static relocation section (producing the warnings
-  above).
-
-- Pass the -z notext and -z norelro options to explicitly instruct the
-  linker to permit text relocations, and to omit the RELRO program
-  header (which requires a certain section layout that we don't adhere
-  to in the kernel). These are the defaults for current versions of
-  ld.bfd.
-
-- Discard .eh_frame and .gnu.hash sections to avoid them from being
-  emitted between .head.text and .text, screwing up the section layout.
-
-These changes only affect the ELF image, and produce the same binary
-image.
-
-[0] b9dce7f1ba01 ("arm64: kernel: force ET_DYN ELF type for ...")
-
-Cc: Nick Desaulniers <ndesaulniers@google.com>
-Cc: Peter Smith <peter.smith@linaro.org>
-Tested-by: Nick Desaulniers <ndesaulniers@google.com>
-Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Signed-off-by: Will Deacon <will.deacon@arm.com>
+Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+Signed-off-by: Jacek Anaszewski <jacek.anaszewski@gmail.com>
+Cc: Benjamin Drung <bdrung@debian.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/arm64/Makefile             |    2 +-
- arch/arm64/kernel/vmlinux.lds.S |    9 +++++----
- 2 files changed, 6 insertions(+), 5 deletions(-)
+ drivers/leds/leds-pwm.c |    5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
---- a/arch/arm64/Makefile
-+++ b/arch/arm64/Makefile
-@@ -18,7 +18,7 @@ ifeq ($(CONFIG_RELOCATABLE), y)
- # Pass --no-apply-dynamic-relocs to restore pre-binutils-2.27 behaviour
- # for relative relocs, since this leads to better Image compression
- # with the relocation offsets always being zero.
--LDFLAGS_vmlinux		+= -pie -shared -Bsymbolic \
-+LDFLAGS_vmlinux		+= -shared -Bsymbolic -z notext -z norelro \
- 			$(call ld-option, --no-apply-dynamic-relocs)
- endif
- 
---- a/arch/arm64/kernel/vmlinux.lds.S
-+++ b/arch/arm64/kernel/vmlinux.lds.S
-@@ -99,7 +99,8 @@ SECTIONS
- 		*(.discard)
- 		*(.discard.*)
- 		*(.interp .dynamic)
--		*(.dynsym .dynstr .hash)
-+		*(.dynsym .dynstr .hash .gnu.hash)
-+		*(.eh_frame)
+--- a/drivers/leds/leds-pwm.c
++++ b/drivers/leds/leds-pwm.c
+@@ -100,8 +100,9 @@ static int led_pwm_add(struct device *de
+ 		led_data->pwm = devm_pwm_get(dev, led->name);
+ 	if (IS_ERR(led_data->pwm)) {
+ 		ret = PTR_ERR(led_data->pwm);
+-		dev_err(dev, "unable to request PWM for %s: %d\n",
+-			led->name, ret);
++		if (ret != -EPROBE_DEFER)
++			dev_err(dev, "unable to request PWM for %s: %d\n",
++				led->name, ret);
+ 		return ret;
  	}
  
- 	. = KIMAGE_VADDR + TEXT_OFFSET;
-@@ -176,12 +177,12 @@ SECTIONS
- 
- 	PERCPU_SECTION(L1_CACHE_BYTES)
- 
--	.rela : ALIGN(8) {
-+	.rela.dyn : ALIGN(8) {
- 		*(.rela .rela*)
- 	}
- 
--	__rela_offset	= ABSOLUTE(ADDR(.rela) - KIMAGE_VADDR);
--	__rela_size	= SIZEOF(.rela);
-+	__rela_offset	= ABSOLUTE(ADDR(.rela.dyn) - KIMAGE_VADDR);
-+	__rela_size	= SIZEOF(.rela.dyn);
- 
- 	. = ALIGN(SEGMENT_ALIGN);
- 	__initdata_end = .;
 
 
