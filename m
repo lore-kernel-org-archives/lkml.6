@@ -6,59 +6,57 @@ X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B605C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 12:22:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CD46FC43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 12:24:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E8F2120870
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 12:22:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 930682146F
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 12:24:01 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="RGR4Bqs5"
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="kaOtDabI"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732287AbfAKMWt (ORCPT
+        id S1732297AbfAKMYA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 11 Jan 2019 07:22:49 -0500
-Received: from mail-lf1-f65.google.com ([209.85.167.65]:35080 "EHLO
+        Fri, 11 Jan 2019 07:24:00 -0500
+Received: from mail-lf1-f65.google.com ([209.85.167.65]:45741 "EHLO
         mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725805AbfAKMWs (ORCPT
+        with ESMTP id S1725805AbfAKMYA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Jan 2019 07:22:48 -0500
-Received: by mail-lf1-f65.google.com with SMTP id e26so10670210lfc.2
-        for <linux-kernel@vger.kernel.org>; Fri, 11 Jan 2019 04:22:47 -0800 (PST)
+        Fri, 11 Jan 2019 07:24:00 -0500
+Received: by mail-lf1-f65.google.com with SMTP id b20so10631172lfa.12
+        for <linux-kernel@vger.kernel.org>; Fri, 11 Jan 2019 04:23:59 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=FaSKI4nvhnbCZeyaDFHOR9LECZaCcGkEr9VUMXpihjs=;
-        b=RGR4Bqs55LDe2TRrIBM0sivajev4ckMbJz60bum+N3t8J5V0OYgvMrxPdCh8XArzVZ
-         GzEKM4FI3pWPLZn08nMyJmR6MSqOBNEDTnarPfdU+/mz2HlRO84XPv5p8vx26GT0qDg7
-         1ymKhg0PKGjgu1CFBl7cWe5gbuo5o47Erwvos=
+        bh=qt0Y1dBvP1yZHLvTc7/Wi1C3TUVDJWGCqhdEKX/4bGo=;
+        b=kaOtDabIsRebwvz+nMvQ9QU7cPNo10cF9Bf9iRrMBPIAwqNZmMxwymVGSaejj92Tpg
+         pRCnQhED4RHC84hFFENoKoo4wb+ZX2XqSI4cFhyTGIwA9kt/XmUDL1LJzsJfj9sMo6IZ
+         NO1OxNYTFLVqYKrM/N5GuUZ+ablJfjTji1qJ4=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=FaSKI4nvhnbCZeyaDFHOR9LECZaCcGkEr9VUMXpihjs=;
-        b=R6pEvKy+4EgRk5bX0NgClXh0feGfcu9pak5//gTYiN0yeZrwmbm0U4ZJllW1nwizSl
-         XMt6Jnq1p0+uH9cIFMwnONaWaVxcFQbObZ4tkDVdE8hifBTb9wu472K1mIutGNGdmoBf
-         bcS4RPZdJ4XiiH480KB3hitIs1UGRH7gXQWPYhhEo36ZWIOLkrnkzG1WGy0IZcnV9/q0
-         Mndv96k5URQyIV9T6YE0pccRKTWaeFUL7QYT0jpeavswkY3T3XBJzYgio8OuzbbGpb8n
-         vX4fOa3TYjcVtkqFvTV1WI6XMrhG3tASO59wm2C+C4znmk2hYp543uU0kCLmMYC52iLW
-         xNLg==
-X-Gm-Message-State: AJcUuke0YqefzFCkILDefWfbU4wx3JhYQn5M2KvGeaF7LDxOFHg2g4IS
-        ZE7k7eFE1JYtJG3qBNzGRRnPOVfYPGLIFC1qF+IJxg==
-X-Google-Smtp-Source: ALg8bN49feO5dRHaTMUjkeNJP6CeQUf4AHE8OSPU96hXwEc7Ey6nRm936iiUJb8D3SK9XuI1uAlStmaswkDqCM6UZ/U=
-X-Received: by 2002:a19:5154:: with SMTP id f81mr8414427lfb.96.1547209366534;
- Fri, 11 Jan 2019 04:22:46 -0800 (PST)
+        bh=qt0Y1dBvP1yZHLvTc7/Wi1C3TUVDJWGCqhdEKX/4bGo=;
+        b=ix3C00r/oatCPy409tCe0NyysN7KXWbgbpGm5ly0spE05nCVX7k/nBCk2l7hOCAJGZ
+         eeGlhp8GIwNBQ1bu2yhaG4d00+3v0XgnfU8irgBb9ne/3WOV2Rzc5+N4gsm73ZhByOGa
+         ObVwsKoGZ29ethFSiNXYmTkUPP6LCxAlLlrZGRM9ZU7kJ5pG0KjcqwMZzB6p7CYtcZJE
+         ZmdVtU4RWXJKde8uHUu1cx9vcUSazj4wkBgXs7mTNqJrXcUy3Zgfv7acAyNdY9Kf1SfC
+         iAHnwOE9VJcfANf+6Xx+M+QW2oTOkUfikvz0JGPBZaLBKNuqvsMszyvAJ7PGUiK0tftw
+         Eywg==
+X-Gm-Message-State: AJcUukd60cYclJEem0txnnzhjR8PxuNczHvZlxZCw5Nwq6yCXhDgI5wP
+        yaqNC9RnzO9juincuAjVCZofwWsx/TzPyPnNQUAD6g==
+X-Google-Smtp-Source: ALg8bN4Zw186eFn7e8p4QqxWN8F9nIbXKgLuIgF0rK750r+nBqWvLxSKVQUE6fkz9rgH1zUuWSqRBecAmw7p9LaOtdc=
+X-Received: by 2002:a19:41c4:: with SMTP id o187mr8431759lfa.32.1547209438192;
+ Fri, 11 Jan 2019 04:23:58 -0800 (PST)
 MIME-Version: 1.0
-References: <cover.1546621488.git.gustavo@embeddedor.com> <84a16ed64a29984b11c34b4f31cdef0758ffbfb2.1546621488.git.gustavo@embeddedor.com>
-In-Reply-To: <84a16ed64a29984b11c34b4f31cdef0758ffbfb2.1546621488.git.gustavo@embeddedor.com>
+References: <20190104173733.GA29979@embeddedor>
+In-Reply-To: <20190104173733.GA29979@embeddedor>
 From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Fri, 11 Jan 2019 13:22:35 +0100
-Message-ID: <CACRpkdaEP=nnE5SQE0OZ7Mi_VCnVn9AK9bGu2tJ5XR3+uFHfvg@mail.gmail.com>
-Subject: Re: [PATCH 1/2] ARM: integrator: impd1: fix NULL pointer dereference
-To:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        Nicholas Mc Guire <hofrat@osadl.org>
-Cc:     Russell King <linux@armlinux.org.uk>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+Date:   Fri, 11 Jan 2019 13:23:46 +0100
+Message-ID: <CACRpkdavhVgmNzuS=CSouTNZjqGsD68acwvPwJPPz4gfE1jw+Q@mail.gmail.com>
+Subject: Re: [PATCH] pinctrl: mcp23s08: use struct_size() in devm_kzalloc()
+To:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Cc:     "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
@@ -66,23 +64,30 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jan 4, 2019 at 6:18 PM Gustavo A. R. Silva
+On Fri, Jan 4, 2019 at 6:37 PM Gustavo A. R. Silva
 <gustavo@embeddedor.com> wrote:
 
-> There is a potential NULL pointer dereference in case devm_kzalloc()
-> fails and returns NULL.
+> One of the more common cases of allocation size calculations is finding
+> the size of a structure that has a zero-sized array at the end, along
+> with memory for some number of elements for that array. For example:
 >
-> Fix this by adding a NULL check on lookup.
+> struct foo {
+>     int stuff;
+>     void *entry[];
+> };
 >
-> This issue was detected with the help of Coccinelle.
+> instance = devm_kzalloc(dev, sizeof(struct foo) + sizeof(void *) * count, GFP_KERNEL);
 >
-> Fixes: 684284b64aae ("ARM: integrator: add MMCI device to IM-PD1")
-> Cc: stable@vger.kernel.org
+> Instead of leaving these open-coded and prone to type mistakes, we can
+> now use the new struct_size() helper:
+>
+> instance = devm_kzalloc(dev, struct_size(instance, entry, count), GFP_KERNEL);
+>
+> This code was detected with the help of Coccinelle.
+>
 > Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
 
-I already have a patch fixing this from Nicholas Mc Guire, just that I
-forgot to push it upstream. I'll fix, sorry for not applying his patch
-earlier.
+Patch applied.
 
 Yours,
 Linus Walleij
