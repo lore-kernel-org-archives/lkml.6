@@ -7,63 +7,65 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A4ACC43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 13:41:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CB9DCC43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 13:41:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E6F7220874
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 13:41:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9339A2133F
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 13:41:12 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=brauner.io header.i=@brauner.io header.b="CfmANB18"
+	dkim=pass (2048-bit key) header.d=brauner.io header.i=@brauner.io header.b="Co4XwMqi"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732761AbfAKNlH (ORCPT
+        id S1732769AbfAKNlL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 11 Jan 2019 08:41:07 -0500
-Received: from mail-ed1-f66.google.com ([209.85.208.66]:44129 "EHLO
+        Fri, 11 Jan 2019 08:41:11 -0500
+Received: from mail-ed1-f66.google.com ([209.85.208.66]:42335 "EHLO
         mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731092AbfAKNlH (ORCPT
+        with ESMTP id S1732096AbfAKNlI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Jan 2019 08:41:07 -0500
-Received: by mail-ed1-f66.google.com with SMTP id y56so13106753edd.11
-        for <linux-kernel@vger.kernel.org>; Fri, 11 Jan 2019 05:41:05 -0800 (PST)
+        Fri, 11 Jan 2019 08:41:08 -0500
+Received: by mail-ed1-f66.google.com with SMTP id y20so13105274edw.9
+        for <linux-kernel@vger.kernel.org>; Fri, 11 Jan 2019 05:41:06 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=brauner.io; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=Lgx8qN5/ClfwRURmnecKs3R0HNWtmSbJ2awJbDvzByM=;
-        b=CfmANB18ib7O1BP5W4WI+0NQaOuT0b+3kfvhmkcivkgO26Hu9Ce9PKE+f+CRxvuSti
-         nTRBnrFTLblfXLZ/yxT9CYrMRz9GElmNwKFJyrXvkd5EEY0in24O0I5NS85SheIryGcK
-         e+jqmvEJtuccRphZO9PQweRc+y3YaBb47IEIqVSpJ3tqeY7azLUxqIR3mWldwwHelRDH
-         StbOebz68PVc5/2uGaMbZqLmsfSXlVYoa9cXZitya5BsFHls6u5b/vsp2SldQei9xwa1
-         WMoijG966+FhRcdhXbjE7wFVlxUfQJzgKK0ikj9D66bM6b4aq2pdqJKJnUkDi3TGYUvZ
-         ud9A==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=1umRdh9piMshUzKmNMUk5PrC5PY0/mUY/eZpS9XG6U0=;
+        b=Co4XwMqiADoxVdJdwEd5GRwt7nX7YyxmjawClKKPfKsbZeWWZ6aqT6JNmaMME02xQa
+         jei/KeZFlhJiAHkZu64WDPxskhWlBJUrraK0+eT0isTOKXNQsPAjp9SO53Xit1gE6sUB
+         TFwW41xnp8WnCPiSpjXocVAWPL+dnEWxrsk09hnBYXA6CjM95/H8ZzwC5T6vhxcjEG3Q
+         zBzmRXy+xS54IiP4nOIzARKDKjvfGp34tGeS6aO8Y2UfY3K+Jm75j2PTvAkde/32NCLj
+         kVIXMhDCWuJk8FXt8PRPRaFDFHt5+s3PGyHFfvTfbjcXg6c+mFFIvBBqIZZKgjVoEzPb
+         7dug==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=Lgx8qN5/ClfwRURmnecKs3R0HNWtmSbJ2awJbDvzByM=;
-        b=FRJ5dxrS5iQA6IlLVYcpb6cccT3sEEmNUGdWqkbd9LM0RspKMJLMvDO2Uuobi8lnKt
-         SODF/2UTpbPs+QgeIOjYR0QlLA3oC7sTDWR5aP4545jGk9Az9hGjzfPGTlgzLqVjpbVl
-         38ZCgxmD270f8HMuX1BIoT6OztGBL8kQnPRa10aV6RTh+BJX3He5KI0C7/Pi/IhfQazL
-         RYaSVPxKyStSXam0nRYsJs/s6bguH+4XvilnNW4nst2FhdlnHm4BSG9FF7yiVJsZ3DUp
-         VUr37cSW7lUxTH52JoRWGxhq3Zy2VQTFmoF7C1POGMRyAu9pPycKrcf/87N2B9joaoaj
-         XhXA==
-X-Gm-Message-State: AJcUukfaUak0AGoTWP5KWKsl/zvFc9SsWCn1LXQnr9LAcTlpayZ0hO/v
-        28qpLBnLYfK889aQHElABOm1DySZkeKp7Q==
-X-Google-Smtp-Source: ALg8bN5QbksTRLB7THrRv5GUUekOSWOGsSehtyhFdJCi2I/v8oYTbtYDafV9It1YKGdl1x9l3A3FRA==
-X-Received: by 2002:a50:aa68:: with SMTP id p37mr12994063edc.168.1547214065195;
-        Fri, 11 Jan 2019 05:41:05 -0800 (PST)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=1umRdh9piMshUzKmNMUk5PrC5PY0/mUY/eZpS9XG6U0=;
+        b=dcN35LAOItLtbaLjGBeg/ukok7l7OqLg9Fbym3mTOeieDRyeQuenszR8p2lMjeJFZ7
+         jSkjlLlarmm3HuJgfweODC5M605DLy9av35GQLldUDIz+aEL/6sjBF8PVgQxBvflH0em
+         M9FikQWt2iXMp/6B+6t1qo1pvcnsg63m6IgfxJvLIjXwE4qZTCVOykuET2aaPZ2ExVx2
+         c4uD+RAOvTUDXJ63haROKt7+476O1mxCVoLhWG+wm8jpoMkig0s80azE/U8QDWn2nm7M
+         Iv1/lw48jYBS8TtzLul+5fIycHZXnACc4UzcTUyrecJA/BVibhykGcHHZz3Qha+SFe41
+         cTxg==
+X-Gm-Message-State: AJcUukesJGE/wOH32pHaZ7KBeyPl6wuxURmq0pxspkLKqoBmpA1d5WQi
+        lfXJ/3tgSx18uHv1fYEmgUuK6EXodoP6eA==
+X-Google-Smtp-Source: ALg8bN4bRXesRD6972GHiQzasQNPy/lEEvqwOsrNgqXJxYSzs0nmBJZTPUAHi/0UUViR/fLUg8ZSNg==
+X-Received: by 2002:a17:906:6308:: with SMTP id p8-v6mr11907660ejk.100.1547214066122;
+        Fri, 11 Jan 2019 05:41:06 -0800 (PST)
 Received: from localhost.localdomain ([2a02:8109:b6c0:d6c:2520:8b:922b:4c43])
-        by smtp.gmail.com with ESMTPSA id a38sm2312070edd.44.2019.01.11.05.41.03
+        by smtp.gmail.com with ESMTPSA id a38sm2312070edd.44.2019.01.11.05.41.05
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 11 Jan 2019 05:41:04 -0800 (PST)
+        Fri, 11 Jan 2019 05:41:05 -0800 (PST)
 From:   Christian Brauner <christian@brauner.io>
 To:     corbet@lwn.net, linux-doc@vger.kernel.org,
         linux-kernel@vger.kernel.org
 Cc:     Christian Brauner <christian@brauner.io>
-Subject: [PATCH v1 1/2] Documentation/filesystems: add binderfs
-Date:   Fri, 11 Jan 2019 14:40:59 +0100
-Message-Id: <20190111134100.24095-1-christian@brauner.io>
+Subject: [PATCH v1 2/2] samples: add binderfs sample program
+Date:   Fri, 11 Jan 2019 14:41:00 +0100
+Message-Id: <20190111134100.24095-2-christian@brauner.io>
 X-Mailer: git-send-email 2.19.1
+In-Reply-To: <20190111134100.24095-1-christian@brauner.io>
+References: <20190111134100.24095-1-christian@brauner.io>
 MIME-Version: 1.0
 X-Patchwork-Bot: notify
 Content-Transfer-Encoding: 8bit
@@ -72,95 +74,151 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This documents the Android binderfs filesystem used to dynamically add and
-remove binder devices that are private to each instance.
+This adds a simple sample program mounting binderfs and adding, then
+removing a binder device.  Hopefully, it will be helpful to users who want
+to know how binderfs is supposed to be used.
 
 Signed-off-by: Christian Brauner <christian.brauner@ubuntu.com>
 ---
 /* Changelog */
 v1:
-- switch from *.txt to *.rst format
----
- Documentation/filesystems/binderfs.rst | 70 ++++++++++++++++++++++++++
- 1 file changed, 70 insertions(+)
- create mode 100644 Documentation/filesystems/binderfs.rst
+- patch introduced
 
-diff --git a/Documentation/filesystems/binderfs.rst b/Documentation/filesystems/binderfs.rst
+v0:
+- patch not present
+---
+ samples/Kconfig                     |  7 +++
+ samples/Makefile                    |  2 +-
+ samples/binderfs/Makefile           |  1 +
+ samples/binderfs/binderfs_example.c | 83 +++++++++++++++++++++++++++++
+ 4 files changed, 92 insertions(+), 1 deletion(-)
+ create mode 100644 samples/binderfs/Makefile
+ create mode 100644 samples/binderfs/binderfs_example.c
+
+diff --git a/samples/Kconfig b/samples/Kconfig
+index ad1ec7016d4c..d19754ccad08 100644
+--- a/samples/Kconfig
++++ b/samples/Kconfig
+@@ -147,6 +147,13 @@ config SAMPLE_VFIO_MDEV_MBOCHS
+ 	  Specifically it does *not* include any legacy vga stuff.
+ 	  Device looks a lot like "qemu -device secondary-vga".
+ 
++config SAMPLE_ANDROID_BINDERFS
++	bool "Build Android binderfs example"
++	depends on CONFIG_ANDROID_BINDERFS
++	help
++	  Builds a sample program to illustrate the use of the Android binderfs
++	  filesystem.
++
+ config SAMPLE_STATX
+ 	bool "Build example extended-stat using code"
+ 	depends on BROKEN
+diff --git a/samples/Makefile b/samples/Makefile
+index bd601c038b86..b1142a958811 100644
+--- a/samples/Makefile
++++ b/samples/Makefile
+@@ -3,4 +3,4 @@
+ obj-$(CONFIG_SAMPLES)	+= kobject/ kprobes/ trace_events/ livepatch/ \
+ 			   hw_breakpoint/ kfifo/ kdb/ hidraw/ rpmsg/ seccomp/ \
+ 			   configfs/ connector/ v4l/ trace_printk/ \
+-			   vfio-mdev/ statx/ qmi/
++			   vfio-mdev/ statx/ qmi/ binderfs/
+diff --git a/samples/binderfs/Makefile b/samples/binderfs/Makefile
 new file mode 100644
-index 000000000000..74a744b42db7
+index 000000000000..01ca9f2529a7
 --- /dev/null
-+++ b/Documentation/filesystems/binderfs.rst
-@@ -0,0 +1,70 @@
-+.. SPDX-License-Identifier: GPL-2.0
++++ b/samples/binderfs/Makefile
+@@ -0,0 +1 @@
++obj-$(CONFIG_SAMPLE_ANDROID_BINDERFS) += binderfs_example.o
+diff --git a/samples/binderfs/binderfs_example.c b/samples/binderfs/binderfs_example.c
+new file mode 100644
+index 000000000000..5bbd2ebc0aea
+--- /dev/null
++++ b/samples/binderfs/binderfs_example.c
+@@ -0,0 +1,83 @@
++// SPDX-License-Identifier: GPL-2.0
 +
-+The Android binderfs Filesystem
-+===============================
++#define _GNU_SOURCE
++#include <errno.h>
++#include <fcntl.h>
++#include <sched.h>
++#include <stdio.h>
++#include <stdlib.h>
++#include <string.h>
++#include <sys/ioctl.h>
++#include <sys/mount.h>
++#include <sys/stat.h>
++#include <sys/types.h>
++#include <unistd.h>
++#include <linux/android/binder.h>
++#include <linux/android/binderfs.h>
 +
-+Android binderfs is a filesystem for the Android binder IPC mechanism.  It
-+allows to dynamically add and remove binder devices at runtime.  Binder devices
-+located in a new binderfs instance are independent of binder devices located in
-+other binderfs instances.  Mounting a new binderfs instance makes it possible
-+to get a set of private binder devices.
++int main(int argc, char *argv[])
++{
++	int fd, ret, saved_errno;
++	size_t len;
++	struct binderfs_device device = { 0 };
 +
-+Mounting binderfs
-+-----------------
++	ret = unshare(CLONE_NEWNS);
++	if (ret < 0) {
++		fprintf(stderr, "%s - Failed to unshare mount namespace\n",
++			strerror(errno));
++		exit(EXIT_FAILURE);
++	}
 +
-+Android binderfs can be mounted with:
++	ret = mount(NULL, "/", NULL, MS_REC | MS_PRIVATE, 0);
++	if (ret < 0) {
++		fprintf(stderr, "%s - Failed to mount / as private\n",
++			strerror(errno));
++		exit(EXIT_FAILURE);
++	}
 +
-+::
++	ret = mkdir("/dev/binderfs", 0755);
++	if (ret < 0 && errno != EEXIST) {
++		fprintf(stderr, "%s - Failed to create binderfs mountpoint\n",
++			strerror(errno));
++		exit(EXIT_FAILURE);
++	}
 +
-+  mkdir /dev/binderfs
-+  mount -t binder binder /dev/binderfs
++	ret = mount(NULL, "/dev/binderfs", "binder", 0, 0);
++	if (ret < 0) {
++		fprintf(stderr, "%s - Failed to mount binderfs\n",
++			strerror(errno));
++		exit(EXIT_FAILURE);
++	}
 +
-+at which point a new instance of binderfs will show up at ``/dev/binderfs``.
-+In a fresh instance of binderfs no binder devices will be present.  There will
-+only be a ``binder-control`` device which serves as the request handler for
-+binderfs. Mounting another binderfs instance at a different location will
-+create a new and separate instance from all other binderfs mounts.  This is
-+identical to the behavior of e.g. ``devpts`` and ``tmpfs``. The Android
-+binderfs filesystem can be mounted in user namespaces.
++	memcpy(device.name, "my-binder", strlen("my-binder"));
 +
-+Options
-+-------
-+max
-+  binderfs instances can be mounted with a limit on the number of binder
-+  devices that can be allocated. The ``max=<count>`` mount option serves as
-+  a per-instance limit. If ``max=<count>`` is set then only ``<count>`` number
-+  of binder devices can be allocated in this binderfs instance.
++	fd = open("/dev/binderfs/binder-control", O_RDONLY | O_CLOEXEC);
++	if (fd < 0) {
++		fprintf(stderr, "%s - Failed to open binder-control device\n",
++			strerror(errno));
++		exit(EXIT_FAILURE);
++	}
 +
-+Allocating binder Devices
-+-------------------------
++	ret = ioctl(fd, BINDER_CTL_ADD, &device);
++	saved_errno = errno;
++	close(fd);
++	errno = saved_errno;
++	if (ret < 0) {
++		fprintf(stderr, "%s - Failed to allocate new binder device\n",
++			strerror(errno));
++		exit(EXIT_FAILURE);
++	}
 +
-+.. _ioctl: http://man7.org/linux/man-pages/man2/ioctl.2.html
++	printf("Allocated new binder device with major %d, minor %d, and name %s\n",
++	       device.major, device.minor, device.name);
 +
-+To allocate a new binder device in a binderfs instance a request needs to be
-+sent through the ``binder-control`` device node.  A request is sent in the form
-+of an `ioctl() <ioctl_>`_.
++	ret = unlink("/dev/binderfs/my-binder");
++	if (ret < 0) {
++		fprintf(stderr, "%s - Failed to delete binder device\n",
++			strerror(errno));
++		exit(EXIT_FAILURE);
++	}
 +
-+What a program needs to do is to open the ``binder-control`` device node and
-+send a ``BINDER_CTL_ADD`` request to the kernel.  Users of binderfs need to
-+tell the kernel which name the new binder device should get.  By default a name
-+can only contain up to ``BINDERFS_MAX_NAME`` chars including the terminating
-+zero byte.
-+
-+Once the request is made via an `ioctl() <ioctl_>`_ passing a ``struct
-+binder_device`` with the name to the kernel it will allocate a new binder
-+device and return the major and minor number of the new device in the struct
-+(This is necessary because binderfs allocates a major device number
-+dynamically.).  After the `ioctl() <ioctl_>`_ returns there will be a new
-+binder device located under /dev/binderfs with the chosen name.
-+
-+Deleting binder Devices
-+-----------------------
-+
-+.. _unlink: http://man7.org/linux/man-pages/man2/unlink.2.html
-+.. _rm: http://man7.org/linux/man-pages/man1/rm.1.html
-+
-+Binderfs binder devices can be deleted via `unlink() <unlink_>`_.  This means
-+that the `rm() <rm_>`_ tool can be used to delete them. Note that the
-+``binder-control`` device cannot be deleted since this would make the binderfs
-+instance unuseable.  The ``binder-control`` device will be deleted when the
-+binderfs instance is unmounted and all references to it have been dropped.
++	/* Cleanup happens when the mount namespace dies. */
++	exit(EXIT_SUCCESS);
++}
 -- 
 2.19.1
 
