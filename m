@@ -2,378 +2,89 @@ Return-Path: <SRS0=uvhX=PT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B4F51C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 20:08:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4468FC43612
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 20:09:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 694122133F
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 20:08:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 189522184A
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 20:09:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547237330;
-	bh=9cSynNTRd5L63r/Moo3kgHnlYM/P0sYfoLDJmQgTx0s=;
+	s=default; t=1547237386;
+	bh=dWmOn+R7TxUENgiI7ULkixE5UroSFRW6Q175NNhh4Io=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=yq2+QldCWOb91LrQJMI6gpZc5pvc4/5bnkD3n0+dXG8TbeAEt5j1cmOAnymtXAGdy
-	 QlIjkcXGTiJ+6vSYAdQ1/NlfS8TU1cy2WytX/QDyDIfAjPWVeV0whJ9KMQgiH5ly8s
-	 3qhyK6+BSlJLbuFq8JICSXWz4BwdGahhA77pVEf4=
+	b=fuiQio9/s7EZTqvvgLmb8hgzq+2kbdUMqckQuBIalGYVLS39dgIm35rcjFj2hPd4E
+	 7Vec7vO6B80E1iiz9HzED6f0YULoVP1Khpdh31MixgzvNc4GQr9r5NxXwEQauU5rTZ
+	 dIsJzkCynPOg0dR2/PdnIKIExp+T6H60WSUmAQy8=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388712AbfAKUIt (ORCPT
+        id S2388995AbfAKUJp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 11 Jan 2019 15:08:49 -0500
-Received: from mail-oi1-f195.google.com ([209.85.167.195]:37644 "EHLO
-        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731440AbfAKUIt (ORCPT
+        Fri, 11 Jan 2019 15:09:45 -0500
+Received: from mail-oi1-f193.google.com ([209.85.167.193]:37731 "EHLO
+        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731440AbfAKUJp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Jan 2019 15:08:49 -0500
-Received: by mail-oi1-f195.google.com with SMTP id y23so13219007oia.4;
-        Fri, 11 Jan 2019 12:08:47 -0800 (PST)
+        Fri, 11 Jan 2019 15:09:45 -0500
+Received: by mail-oi1-f193.google.com with SMTP id y23so13221320oia.4;
+        Fri, 11 Jan 2019 12:09:41 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=bHbhX/gb8e+qwY763NTphn/ry459cEIqwV9t6XEdBC4=;
-        b=QDUPScG0dZnuFMxkULIGmXlfqyXBKTEuJtEvX7WlEdeUjcSYsWF3/ZXqv1+tPogbMZ
-         U0nEmEqhBtczizuZYwts1Tob/wISqMPzQ0EKKZzkPVtYIvOYqbqJ1KnmlNKmAvWFAv9l
-         ZjDl8loF3PfAVBJf3GVB/7YKywFMRH7mheUNAJbk1psslfwIARYxAP1ZlhRt4WT2n2Bz
-         CoJBQIZfKI+6GMcA+njCwP2bsnqfGZcOV7YJvj/P4qG4e1Pgjm9ng5fcPBtNQUgns0RE
-         hyHk1UL58XC5DZgwap7y1wO+WyLcK8rNp4Tg1u+XyPziXkfdF1IxN0UkFLMrLCqStOpH
-         oaBQ==
-X-Gm-Message-State: AJcUukdaqgAVm0NsqBNB4k/9hyf8fmPcBLh8K3lCrj19HYT8fUKPQkqm
-        ++fc1Opv+PrNiMUh977OxaIC0mysCg==
-X-Google-Smtp-Source: ALg8bN66GqGPlf6VpBvlTVYBSH5fOSs16NW52Elq94oaHD5l8QucB5wvv+3mlPSum5As9TplaX4T4w==
-X-Received: by 2002:aca:4a56:: with SMTP id x83mr9469406oia.11.1547237326714;
-        Fri, 11 Jan 2019 12:08:46 -0800 (PST)
+        bh=ozLB4eItNh38XiaTZC1HQmCoOYneLP4TFm8jXIMT24k=;
+        b=C2W+3kNHHfi+1KNv4fKxUxzgI1FVZcQQEfdCPouADEd9g2ve62E8wrdOTrip2BO23l
+         2hW2zqk4s/f6B5NSiAdEIGtjVE9wH5VH2+4vS5Pa45F+MPQVM2ocWgCSFqi7qQ87tt++
+         NlgVQyzRtGkF3JXK5YD8eYzDJWzJwjYnRl+rvYsMBGBQfK9eirao1bm1bv9Br7swvdXZ
+         hG0qQ3fNTUG5nIt/r8YL/tw94PK6QOEyz/qDo7vzE5+EwmQsNobxbn3qJStQ+hj4WJqz
+         +rcynkof/IiITBRGzGbGUXZl3BNDkB4205SKXtBwMdePnpClN4H3dbvdM8t4QWbwthVJ
+         IsMw==
+X-Gm-Message-State: AJcUukd9xhXJoJ2nvJGMPfo5tMqa0FtiJHG5ma+1NwxjcGdC/KtOZiE9
+        VUlohPF8mcih9t84V/Y/XmfodD40tA==
+X-Google-Smtp-Source: ALg8bN7Y5g2FaX5SHmq2tpvInGk0fAzgfe8q3egnt+r9F57nTKQ9k2JINHKPRc4ORkyL1tKYtWYn/w==
+X-Received: by 2002:a05:6808:89:: with SMTP id s9mr10396347oic.131.1547237380583;
+        Fri, 11 Jan 2019 12:09:40 -0800 (PST)
 Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id 75sm75689393otc.67.2019.01.11.12.08.45
+        by smtp.gmail.com with ESMTPSA id z191sm42879549oig.3.2019.01.11.12.09.39
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 11 Jan 2019 12:08:46 -0800 (PST)
-Date:   Fri, 11 Jan 2019 14:08:45 -0600
+        Fri, 11 Jan 2019 12:09:39 -0800 (PST)
+Date:   Fri, 11 Jan 2019 14:09:39 -0600
 From:   Rob Herring <robh@kernel.org>
 To:     Jolly Shah <jolly.shah@xilinx.com>
-Cc:     mark.rutland@arm.com, michal.simek@xilinx.com, rajanv@xilinx.com,
-        nava.manne@xilinx.com, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        Rajan Vaja <rajan.vaja@xilinx.com>,
+Cc:     robh+dt@kernel.org, mark.rutland@arm.com, michal.simek@xilinx.com,
+        rajanv@xilinx.com, nava.manne@xilinx.com,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, Rajan Vaja <rajan.vaja@xilinx.com>,
         Jolly Shah <jollys@xilinx.com>
-Subject: Re: [PATCH v2 4/4] dt-bindings: pinctrl: Add ZynqMP pin controller
+Subject: Re: [PATCH v2 1/4] dt-bindings: power: Add ZynqMP power domain
  bindings
-Message-ID: <20190111200845.GA20325@bogus>
+Message-ID: <20190111200939.GA28260@bogus>
 References: <1546638982-12954-1-git-send-email-jollys@xilinx.com>
- <1546638982-12954-5-git-send-email-jollys@xilinx.com>
+ <1546638982-12954-2-git-send-email-jollys@xilinx.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1546638982-12954-5-git-send-email-jollys@xilinx.com>
+In-Reply-To: <1546638982-12954-2-git-send-email-jollys@xilinx.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jan 04, 2019 at 01:56:22PM -0800, Jolly Shah wrote:
+On Fri, 4 Jan 2019 13:56:19 -0800, Jolly Shah wrote:
 > From: Rajan Vaja <rajan.vaja@xilinx.com>
 > 
-> Add documentation to describe Xilinx ZynqMP pin controller
-> bindings.
+> Add documentation to describe ZynqMP power domain bindings.
 > 
 > Signed-off-by: Rajan Vaja <rajan.vaja@xilinx.com>
 > Signed-off-by: Jolly Shah <jollys@xilinx.com>
 > ---
->  .../bindings/pinctrl/xlnx,zynqmp-pinctrl.txt       | 275 +++++++++++++++++++++
->  1 file changed, 275 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/pinctrl/xlnx,zynqmp-pinctrl.txt
+>  .../bindings/power/xlnx,zynqmp-genpd.txt           | 34 +++++++++++++++++++
+>  include/dt-bindings/power/xlnx-zynqmp-power.h      | 39 ++++++++++++++++++++++
+>  2 files changed, 73 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/power/xlnx,zynqmp-genpd.txt
+>  create mode 100644 include/dt-bindings/power/xlnx-zynqmp-power.h
 > 
-> diff --git a/Documentation/devicetree/bindings/pinctrl/xlnx,zynqmp-pinctrl.txt b/Documentation/devicetree/bindings/pinctrl/xlnx,zynqmp-pinctrl.txt
-> new file mode 100644
-> index 0000000..acf44a5
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/pinctrl/xlnx,zynqmp-pinctrl.txt
-> @@ -0,0 +1,275 @@
-> +	Binding for Xilinx ZynqMP Pinctrl
-> +
-> +Required properties:
-> +- compatible: "xlnx,zynqmp-pinctrl"
-> +
-> +Please refer to pinctrl-bindings.txt in this directory for details of the
-> +common pinctrl bindings used by client devices, including the meaning of the
-> +phrase "pin configuration node".
-> +
-> +ZynqMP's pin configuration nodes act as a container for an arbitrary number of
-> +subnodes. Each of these subnodes represents some desired configuration for a
-> +pin, a group, or a list of pins or groups. This configuration can include the
-> +mux function to select on those pin(s)/group(s), and various pin configuration
-> +parameters, such as pull-up, slew rate, etc.
-> +
-> +Each configuration node can consist of multiple nodes describing the pinmux and
-> +pinconf options. Those nodes can be pinmux nodes or pinconf nodes.
-> +
-> +The name of each subnode is not important; all subnodes should be enumerated
-> +and processed purely based on their content.
-> +
-> +Required properties for pinmux nodes are:
-> + - groups: A list of pinmux groups.
-> + - function: The name of a pinmux function to activate for the specified set
-> +   of groups.
-> +
-> +Required properties for configuration nodes:
-> +One of:
-> + - pins: A list of pin names
-> + - groups: A list of pinmux groups.
-> +
-> +The following generic properties as defined in pinctrl-bindings.txt are valid
-> +to specify in a pinmux subnode:
-> + groups, function
-> +
-> +The following generic properties as defined in pinctrl-bindings.txt are valid
-> +to specify in a pinconf subnode:
-> + groups, pins, bias-disable, bias-pull-up, bias-pull-down, slew-rate
-> +
-> + Valid arguments for 'slew-rate' are 'SLEW_RATE_SLOW' and 'SLEW_RATE_FAST' to
-> + select between slow and fast respectively.
-> +
-> + Valid values for groups are:
-> + ethernet0_0_grp, ethernet1_0_grp, ethernet2_0_grp,
-> + ethernet3_0_grp, gemtsu0_0_grp, gemtsu0_1_grp,
-> + gemtsu0_2_grp, mdio0_0_grp, mdio1_0_grp,
-> + mdio1_1_grp, mdio2_0_grp, mdio3_0_grp,
-> + qspi0_0_grp, qspi_ss_0_grp, qspi_fbclk_0_grp,
-> + spi0_0_grp, spi0_ss_0_grp, spi0_ss_1_grp,
-> + spi0_ss_2_grp, spi0_1_grp, spi0_ss_3_grp,
-> + spi0_ss_4_grp, spi0_ss_5_grp, spi0_2_grp,
-> + spi0_ss_6_grp, spi0_ss_7_grp, spi0_ss_8_grp,
-> + spi0_3_grp, spi0_ss_9_grp, spi0_ss_10_grp,
-> + spi0_ss_11_grp, spi0_4_grp, spi0_ss_12_grp,
-> + spi0_ss_13_grp, spi0_ss_14_grp, spi0_5_grp,
-> + spi0_ss_15_grp, spi0_ss_16_grp, spi0_ss_17_grp,
-> + spi1_0_grp, spi1_ss_0_grp, spi1_ss_1_grp,
-> + spi1_ss_2_grp, spi1_1_grp, spi1_ss_3_grp,
-> + spi1_ss_4_grp, spi1_ss_5_grp, spi1_2_grp,
-> + spi1_ss_6_grp, spi1_ss_7_grp, spi1_ss_8_grp,
-> + spi1_3_grp, spi1_ss_9_grp, spi1_ss_10_grp,
-> + spi1_ss_11_grp, spi1_4_grp, spi1_ss_12_grp,
-> + spi1_ss_13_grp, spi1_ss_14_grp, spi1_5_grp,
-> + spi1_ss_15_grp, spi1_ss_16_grp, spi1_ss_17_grp,
-> + sdio0_0_grp, sdio0_1_grp, sdio0_2_grp,
-> + sdio0_3_grp, sdio0_4_grp, sdio0_5_grp,
-> + sdio0_6_grp, sdio0_7_grp, sdio0_8_grp,
-> + sdio0_9_grp, sdio0_10_grp, sdio0_11_grp,
-> + sdio0_12_grp, sdio0_13_grp, sdio0_14_grp,
-> + sdio0_15_grp, sdio0_16_grp, sdio0_17_grp,
-> + sdio0_18_grp, sdio0_19_grp, sdio0_20_grp,
-> + sdio0_21_grp, sdio0_22_grp, sdio0_23_grp,
-> + sdio0_24_grp, sdio0_25_grp, sdio0_26_grp,
-> + sdio0_27_grp, sdio0_28_grp, sdio0_29_grp,
-> + sdio0_30_grp, sdio0_31_grp, sdio0_32_grp,
-> + sdio0_pc_0_grp, sdio0_cd_0_grp, sdio0_wp_0_grp,
-> + sdio0_pc_1_grp, sdio0_cd_1_grp, sdio0_wp_1_grp,
-> + sdio0_pc_2_grp, sdio0_cd_2_grp, sdio0_wp_2_grp,
-> + sdio1_0_grp, sdio1_1_grp, sdio1_2_grp,
-> + sdio1_3_grp, sdio1_4_grp, sdio1_5_grp,
-> + sdio1_6_grp, sdio1_7_grp, sdio1_8_grp,
-> + sdio1_9_grp, sdio1_10_grp, sdio1_11_grp,
-> + sdio1_12_grp, sdio1_13_grp, sdio1_14_grp,
-> + sdio1_15_grp, sdio1_pc_0_grp, sdio1_cd_0_grp,
-> + sdio1_wp_0_grp, sdio1_pc_1_grp, sdio1_cd_1_grp,
-> + sdio1_wp_1_grp, nand0_0_grp, nand0_ce_0_grp,
-> + nand0_rb_0_grp, nand0_dqs_0_grp, nand0_ce_1_grp,
-> + nand0_rb_1_grp, nand0_dqs_1_grp, can0_0_grp,
-> + can0_1_grp, can0_2_grp, can0_3_grp,
-> + can0_4_grp, can0_5_grp, can0_6_grp,
-> + can0_7_grp, can0_8_grp, can0_9_grp,
-> + can0_10_grp, can0_11_grp, can0_12_grp,
-> + can0_13_grp, can0_14_grp, can0_15_grp,
-> + can0_16_grp, can0_17_grp, can0_18_grp,
-> + can1_0_grp, can1_1_grp, can1_2_grp,
-> + can1_3_grp, can1_4_grp, can1_5_grp,
-> + can1_6_grp, can1_7_grp, can1_8_grp,
-> + can1_9_grp, can1_10_grp, can1_11_grp,
-> + can1_12_grp, can1_13_grp, can1_14_grp,
-> + can1_15_grp, can1_16_grp, can1_17_grp,
-> + can1_18_grp, can1_19_grp, uart0_0_grp,
-> + uart0_1_grp, uart0_2_grp, uart0_3_grp,
-> + uart0_4_grp, uart0_5_grp, uart0_6_grp,
-> + uart0_7_grp, uart0_8_grp, uart0_9_grp,
-> + uart0_10_grp, uart0_11_grp, uart0_12_grp,
-> + uart0_13_grp, uart0_14_grp, uart0_15_grp,
-> + uart0_16_grp, uart0_17_grp, uart0_18_grp,
-> + uart1_0_grp, uart1_1_grp, uart1_2_grp,
-> + uart1_3_grp, uart1_4_grp, uart1_5_grp,
-> + uart1_6_grp, uart1_7_grp, uart1_8_grp,
-> + uart1_9_grp, uart1_10_grp, uart1_11_grp,
-> + uart1_12_grp, uart1_13_grp, uart1_14_grp,
-> + uart1_15_grp, uart1_16_grp, uart1_17_grp,
-> + uart1_18_grp, i2c0_0_grp, i2c0_1_grp,
-> + i2c0_2_grp, i2c0_3_grp, i2c0_4_grp,
-> + i2c0_5_grp, i2c0_6_grp, i2c0_7_grp,
-> + i2c0_8_grp, i2c0_9_grp, i2c0_10_grp,
-> + i2c0_11_grp, i2c0_12_grp, i2c0_13_grp,
-> + i2c0_14_grp, i2c0_15_grp, i2c0_16_grp,
-> + i2c0_17_grp, i2c0_18_grp, i2c1_0_grp,
-> + i2c1_1_grp, i2c1_2_grp, i2c1_3_grp,
-> + i2c1_4_grp, i2c1_5_grp, i2c1_6_grp,
-> + i2c1_7_grp, i2c1_8_grp, i2c1_9_grp,
-> + i2c1_10_grp, i2c1_11_grp, i2c1_12_grp,
-> + i2c1_13_grp, i2c1_14_grp, i2c1_15_grp,
-> + i2c1_16_grp, i2c1_17_grp, i2c1_18_grp,
-> + i2c1_19_grp, ttc0_clk_0_grp, ttc0_wav_0_grp,
-> + ttc0_clk_1_grp, ttc0_wav_1_grp, ttc0_clk_2_grp,
-> + ttc0_wav_2_grp, ttc0_clk_3_grp, ttc0_wav_3_grp,
-> + ttc0_clk_4_grp, ttc0_wav_4_grp, ttc0_clk_5_grp,
-> + ttc0_wav_5_grp, ttc0_clk_6_grp, ttc0_wav_6_grp,
-> + ttc0_clk_7_grp, ttc0_wav_7_grp, ttc0_clk_8_grp,
-> + ttc0_wav_8_grp, ttc1_clk_0_grp, ttc1_wav_0_grp,
-> + ttc1_clk_1_grp, ttc1_wav_1_grp, ttc1_clk_2_grp,
-> + ttc1_wav_2_grp, ttc1_clk_3_grp, ttc1_wav_3_grp,
-> + ttc1_clk_4_grp, ttc1_wav_4_grp, ttc1_clk_5_grp,
-> + ttc1_wav_5_grp, ttc1_clk_6_grp, ttc1_wav_6_grp,
-> + ttc1_clk_7_grp, ttc1_wav_7_grp, ttc1_clk_8_grp,
-> + ttc1_wav_8_grp, ttc2_clk_0_grp, ttc2_wav_0_grp,
-> + ttc2_clk_1_grp, ttc2_wav_1_grp, ttc2_clk_2_grp,
-> + ttc2_wav_2_grp, ttc2_clk_3_grp, ttc2_wav_3_grp,
-> + ttc2_clk_4_grp, ttc2_wav_4_grp, ttc2_clk_5_grp,
-> + ttc2_wav_5_grp, ttc2_clk_6_grp, ttc2_wav_6_grp,
-> + ttc2_clk_7_grp, ttc2_wav_7_grp, ttc2_clk_8_grp,
-> + ttc2_wav_8_grp, ttc3_clk_0_grp, ttc3_wav_0_grp,
-> + ttc3_clk_1_grp, ttc3_wav_1_grp, ttc3_clk_2_grp,
-> + ttc3_wav_2_grp, ttc3_clk_3_grp, ttc3_wav_3_grp,
-> + ttc3_clk_4_grp, ttc3_wav_4_grp, ttc3_clk_5_grp,
-> + ttc3_wav_5_grp, ttc3_clk_6_grp, ttc3_wav_6_grp,
-> + ttc3_clk_7_grp, ttc3_wav_7_grp, ttc3_clk_8_grp,
-> + ttc3_wav_8_grp, swdt0_clk_0_grp, swdt0_rst_0_grp,
-> + swdt0_clk_1_grp, swdt0_rst_1_grp, swdt0_clk_2_grp,
-> + swdt0_rst_2_grp, swdt0_clk_3_grp, swdt0_rst_3_grp,
-> + swdt0_clk_4_grp, swdt0_rst_4_grp, swdt0_clk_5_grp,
-> + swdt0_rst_5_grp, swdt0_clk_6_grp, swdt0_rst_6_grp,
-> + swdt0_clk_7_grp, swdt0_rst_7_grp, swdt0_clk_8_grp,
-> + swdt0_rst_8_grp, swdt0_clk_9_grp, swdt0_rst_9_grp,
-> + swdt0_clk_10_grp, swdt0_rst_10_grp, swdt0_clk_11_grp,
-> + swdt0_rst_11_grp, swdt0_clk_12_grp, swdt0_rst_12_grp,
-> + swdt1_clk_0_grp, swdt1_rst_0_grp, swdt1_clk_1_grp,
-> + swdt1_rst_1_grp, swdt1_clk_2_grp, swdt1_rst_2_grp,
-> + swdt1_clk_3_grp, swdt1_rst_3_grp, swdt1_clk_4_grp,
-> + swdt1_rst_4_grp, swdt1_clk_5_grp, swdt1_rst_5_grp,
-> + swdt1_clk_6_grp, swdt1_rst_6_grp, swdt1_clk_7_grp,
-> + swdt1_rst_7_grp, swdt1_clk_8_grp, swdt1_rst_8_grp,
-> + swdt1_clk_9_grp, swdt1_rst_9_grp, swdt1_clk_10_grp,
-> + swdt1_rst_10_grp, swdt1_clk_11_grp, swdt1_rst_11_grp,
-> + swdt1_clk_12_grp, swdt1_rst_12_grp, gpio0_0_grp,
-> + gpio0_1_grp, gpio0_2_grp, gpio0_3_grp,
-> + gpio0_4_grp, gpio0_5_grp, gpio0_6_grp,
-> + gpio0_7_grp, gpio0_8_grp, gpio0_9_grp,
-> + gpio0_10_grp, gpio0_11_grp, gpio0_12_grp,
-> + gpio0_13_grp, gpio0_14_grp, gpio0_15_grp,
-> + gpio0_16_grp, gpio0_17_grp, gpio0_18_grp,
-> + gpio0_19_grp, gpio0_20_grp, gpio0_21_grp,
-> + gpio0_22_grp, gpio0_23_grp, gpio0_24_grp,
-> + gpio0_25_grp, gpio0_26_grp, gpio0_27_grp,
-> + gpio0_28_grp, gpio0_29_grp, gpio0_30_grp,
-> + gpio0_31_grp, gpio0_32_grp, gpio0_33_grp,
-> + gpio0_34_grp, gpio0_35_grp, gpio0_36_grp,
-> + gpio0_37_grp, gpio0_38_grp, gpio0_39_grp,
-> + gpio0_40_grp, gpio0_41_grp, gpio0_42_grp,
-> + gpio0_43_grp, gpio0_44_grp, gpio0_45_grp,
-> + gpio0_46_grp, gpio0_47_grp, gpio0_48_grp,
-> + gpio0_49_grp, gpio0_50_grp, gpio0_51_grp,
-> + gpio0_52_grp, gpio0_53_grp, gpio0_54_grp,
-> + gpio0_55_grp, gpio0_56_grp, gpio0_57_grp,
-> + gpio0_58_grp, gpio0_59_grp, gpio0_60_grp,
-> + gpio0_61_grp, gpio0_62_grp, gpio0_63_grp,
-> + gpio0_64_grp, gpio0_65_grp, gpio0_66_grp,
-> + gpio0_67_grp, gpio0_68_grp, gpio0_69_grp,
-> + gpio0_70_grp, gpio0_71_grp, gpio0_72_grp,
-> + gpio0_73_grp, gpio0_74_grp, gpio0_75_grp,
-> + gpio0_76_grp, gpio0_77_grp, usb0_0_grp,
-> + usb1_0_grp, pmu0_0_grp, pmu0_1_grp,
-> + pmu0_2_grp, pmu0_3_grp, pmu0_4_grp,
-> + pmu0_5_grp, pmu0_6_grp, pmu0_7_grp,
-> + pmu0_8_grp, pmu0_9_grp, pmu0_10_grp,
-> + pmu0_11_grp, pcie0_0_grp, pcie0_1_grp,
-> + pcie0_2_grp, pcie0_3_grp, pcie0_4_grp,
-> + pcie0_5_grp, pcie0_6_grp, pcie0_7_grp,
-> + csu0_0_grp, csu0_1_grp, csu0_2_grp,
-> + csu0_3_grp, csu0_4_grp, csu0_5_grp,
-> + csu0_6_grp, csu0_7_grp, csu0_8_grp,
-> + csu0_9_grp, csu0_10_grp, csu0_11_grp,
-> + dpaux0_0_grp, dpaux0_1_grp, dpaux0_2_grp,
-> + dpaux0_3_grp, pjtag0_0_grp, pjtag0_1_grp,
-> + pjtag0_2_grp, pjtag0_3_grp, pjtag0_4_grp,
-> + pjtag0_5_grp, trace0_0_grp, trace0_clk_0_grp,
-> + trace0_1_grp, trace0_clk_1_grp, trace0_2_grp,
-> + trace0_clk_2_grp, testscan0_0_grp
-> +
-> + Valid values for pins are:
-> +   MIO0 - MIO77
-> +
-> + Valid values for function are:
-> +   ethernet0, ethernet1, ethernet2, ethernet3, gemtsu0, usb0, usb1, mdio0,
-> +   mdio1, mdio2, mdio3, qspi0, qspi_fbclk, qspi_ss, spi0, spi1, spi0_ss,
-> +   spi1_ss, sdio0, sdio0_pc, sdio0_wp, sdio0_cd, sdio1, sdio1_pc, sdio1_wp,
-> +   sdio1_cd, nand0, nand0_ce, nand0_rb, nand0_dqs, can0, can1, uart0, uart1,
-> +   i2c0, i2c1, ttc0_clk, ttc0_wav, ttc1_clk, ttc1_wav, ttc2_clk, ttc2_wav,
-> +   ttc3_clk, ttc3_wav, swdt0_clk, swdt0_rst, swdt1_clk, swdt1_rst, gpio0, pmu0,
-> +   pcie0, csu0, dpaux0, pjtag0, trace0, trace0_clk, testscan0
-> +
-> +The following driver-specific properties as defined here are valid to specify in
-> +a pin configuration subnode:
-> + - io-standard: Configure the pin to use the selected IO standard. Valid
-> +   arguments are 'IO_STANDARD_LVCMOS33' and 'IO_STANDARD_LVCMOS18'.
-> + - schmitt-cmos: Selects either Schmitt or CMOS input for MIO pins. Valid
-> +   arguments are 'PIN_INPUT_TYPE_SCHMITT' and 'PIN_INPUT_TYPE_CMOS'.
-> +
-> +Example:
-> +
-> +firmware {
-> +	zynqmp_firmware: zynqmp-firmware {
-> +		compatible = "xlnx,zynqmp-firmware";
-> +		method = "smc";
-> +
-> +		pinctrl0: pinctrl@ff180000 {
-
-The address here should be dropped.
-
-Otherwise, looks fine.
 
 Reviewed-by: Rob Herring <robh@kernel.org>
-
-> +			compatible = "xlnx,zynqmp-pinctrl";
-> +
-> +			pinctrl_uart1_default: uart1-default {
-> +				mux {
-> +					groups = "uart0_4_grp";
-> +					function = "uart0";
-> +				};
-> +
-> +				conf {
-> +					groups = "uart0_4_grp";
-> +					slew-rate = <SLEW_RATE_SLOW>;
-> +					io-standard = <IO_STANDARD_LVCMOS18>;
-> +				};
-> +
-> +				conf-rx {
-> +					pins = "MIO18";
-> +					bias-high-impedance;
-> +				};
-> +
-> +				conf-tx {
-> +					pins = "MIO19";
-> +					bias-disable;
-> +					schmitt-cmos = <PIN_INPUT_TYPE_CMOS>;
-> +				};
-> +			};
-> +		};
-> +	};
-> +};
-> +
-> +uart1 {
-> +	...
-> +        pinctrl-names = "default";
-> +        pinctrl-0 = <&pinctrl_uart1_default>;
-> +	...
-> +
-> +};
-> -- 
-> 2.7.4
-> 
