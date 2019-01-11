@@ -2,134 +2,156 @@ Return-Path: <SRS0=uvhX=PT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 71E7EC43612
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:23:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4EFE7C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:23:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3785520874
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:23:10 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=microchiptechnology.onmicrosoft.com header.i=@microchiptechnology.onmicrosoft.com header.b="0L//b2Uy"
+	by mail.kernel.org (Postfix) with ESMTP id 2083F20874
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:23:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1547216595;
+	bh=X7g7zLRb5N05f6ui152XAkkGEJtbWR4HbtAm9/2Oo9E=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=MWqscjoRlG6FMxIz0M3NtLTQV5OkQ/RqjuvO/zG0HHP534soVdIzCG0flKjeVR2Yj
+	 jz8G0x+ugJBvZ+kC2h5oAgUaDa9UmvXqvko4HIvK35fUCkME8ztLIuAx73cCW2jscL
+	 1+Rwyva+41HT291jT4RlLZAcZ2FvpZjpL8QaU2Gg=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731363AbfAKOTA (ORCPT
+        id S2387452AbfAKOXO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 11 Jan 2019 09:19:00 -0500
-Received: from esa3.microchip.iphmx.com ([68.232.153.233]:48960 "EHLO
-        esa3.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731550AbfAKOS5 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Jan 2019 09:18:57 -0500
-X-IronPort-AV: E=Sophos;i="5.56,466,1539673200"; 
-   d="scan'208";a="25369365"
-Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
-  by esa3.microchip.iphmx.com with ESMTP/TLS/DHE-RSA-AES256-SHA; 11 Jan 2019 07:18:37 -0700
-Received: from NAM01-BN3-obe.outbound.protection.outlook.com (10.10.215.89) by
- email.microchip.com (10.10.76.108) with Microsoft SMTP Server (TLS) id
- 14.3.352.0; Fri, 11 Jan 2019 07:18:37 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=microchiptechnology.onmicrosoft.com;
- s=selector1-microchiptechnology-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=bOdCH4rio62Tu9aQaHAy51ldI11moR/S69dG9CFyQJg=;
- b=0L//b2UyAIg3k/5GAwite7bBPtW1HEP0ETynN9EGGewh+WzbkhPsIss19MyfSPTC4rHcytVXaIH3bxZpXZ8Dot1gCJr62aTHQr4blOY1uWGKzt6A72AwqLqd2DUdU4VA/mSNwJlbpmwaQ+bjAZhGwFWYLkN55IdHT2H64OGLz8k=
-Received: from MWHPR11MB1662.namprd11.prod.outlook.com (10.172.55.15) by
- MWHPR11MB1664.namprd11.prod.outlook.com (10.172.55.17) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1516.17; Fri, 11 Jan 2019 14:18:35 +0000
-Received: from MWHPR11MB1662.namprd11.prod.outlook.com
- ([fe80::890b:3c0f:a8f4:5de5]) by MWHPR11MB1662.namprd11.prod.outlook.com
- ([fe80::890b:3c0f:a8f4:5de5%7]) with mapi id 15.20.1516.016; Fri, 11 Jan 2019
- 14:18:35 +0000
-From:   <Nicolas.Ferre@microchip.com>
-To:     <bbrezillon@kernel.org>, <peda@axentia.se>
-CC:     <linux-kernel@vger.kernel.org>, <alexandre.belloni@bootlin.com>,
-        <airlied@linux.ie>, <dri-devel@lists.freedesktop.org>,
-        <boris.brezillon@bootlin.com>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <Joshua.Henderson@microchip.com>
-Subject: Re: [PATCH 0/4] drm/atmel-hlcdc: fix plane clipping/rotation issues
-Thread-Topic: [PATCH 0/4] drm/atmel-hlcdc: fix plane clipping/rotation issues
-Thread-Index: AQHUqbiJnoZpqps6wk2bx1LYfOfUCQ==
-Date:   Fri, 11 Jan 2019 14:18:34 +0000
-Message-ID: <96578f9c-74f1-38ab-7993-460fd9bc42ee@microchip.com>
-References: <20190110151020.30468-1-peda@axentia.se>
- <20190110184446.75b4350a@bbrezillon>
-In-Reply-To: <20190110184446.75b4350a@bbrezillon>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: CWLP265CA0142.GBRP265.PROD.OUTLOOK.COM
- (2603:10a6:401:53::34) To MWHPR11MB1662.namprd11.prod.outlook.com
- (2603:10b6:301:e::15)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Nicolas.Ferre@microchip.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-originating-ip: [195.6.168.232]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;MWHPR11MB1664;6:oeW9YYzNpBImqNhZcy7pTGWeCF1NGDCsrVAEfXym/f9I5QZW8rVQbabaQezwIHhKBfhrfq9MbxDWRv1rKQAO88ExxudHHVPzWa2ouQSSpDf92SRn442Y3Q97nZvbzAOz64oZsArYm9HKus4YjMHygyFokwhwCl2X/XgnQOPPT59S+pCkegn6VJOz29feaXO3N8hgJomMLwpAdCXIQ6gyLXiKHGjMBVbUDmgqDRXZcTkl9Ye9I8XvPoy57Z0cP/mDWcMpZaFDFTqDpO7KJGGNOUkeUKgtBmhHCg2ye5bWVtIsvs1qBX3/n+nhLq/C26I1MtjMBUN89B3xC+YAHorre/UnIThSazQKD8kAzLgU5qxAZCdYzkj8CRF3tVMQDky1RZxv5qXr1zbEM/8/MvErHoVnb3jrffneBhqI+vBcmD+bHJEiFjqi0DIZnHxdi9O768iGwZzW+lkMDt74Wqxrjw==;5:WRRyEekPSobdXLRAQwWxdfTqkcSuA1sdd8ZmWjSxF+YxkCMR3AHX4SHbSy4WRaKDi3Ht1Jsq9h/3nlRamiNBgNScNFz7ib0kj3ntSn+j0+k6f5aP5ZfnEfLQFaKH/5c1vyBmd1XcX2nt4Z+JV7lCemWqcWHa/hZ/m1Wea3cO3SAOwqcEsTaUVP+lznNjxi3V+slO+hIlGoCwhcl1BuSVgg==;7:ZcicWsq9t9KChY0M/YiheA4aNyIPTFggVBMTUDaIZhAbYIA4It+ilXlDFKWwjmg639GscvBmYZrUswiXPFyNykHHHMfnT0T+25MJUKxjc9ub77vDoTXlrbynhX7XwcNt0JBlF36l9f/7YAp5FLMTDg==
-x-ms-office365-filtering-correlation-id: e1c40280-40a5-45f5-e02e-08d677cfabf5
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600109)(711020)(2017052603328)(7153060)(7193020);SRVR:MWHPR11MB1664;
-x-ms-traffictypediagnostic: MWHPR11MB1664:
-x-microsoft-antispam-prvs: <MWHPR11MB16646F8C8DA2DB35E336F734E0850@MWHPR11MB1664.namprd11.prod.outlook.com>
-x-forefront-prvs: 09144DB0F7
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(396003)(39860400002)(346002)(376002)(366004)(136003)(189003)(199004)(52314003)(52116002)(4326008)(54906003)(316002)(86362001)(229853002)(76176011)(31696002)(6436002)(6486002)(106356001)(14454004)(105586002)(6116002)(478600001)(6512007)(72206003)(53936002)(107886003)(6246003)(31686004)(486006)(5660300001)(7736002)(305945005)(3846002)(25786009)(97736004)(2906002)(99286004)(36756003)(186003)(14444005)(8676002)(6506007)(53546011)(102836004)(26005)(386003)(110136005)(68736007)(71200400001)(71190400001)(2616005)(66066001)(256004)(476003)(11346002)(8936002)(81156014)(81166006)(446003);DIR:OUT;SFP:1101;SCL:1;SRVR:MWHPR11MB1664;H:MWHPR11MB1662.namprd11.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: microchip.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: MYY6k8DEkGokQzAPFVCnHTNSdXV+LKWwjcapHR1ejud/L3lLLM+Zr59RaT9Jq/i4CPILlOYLbPPan0I3DP4+JULewU1R1Ujr+RV/UUOWNd4r7yRTlcaQ3mr4g5oFAEBCFtLVG2wFlTbsAAJ63qo6/M2mvFdpAVDveeC5/9kxUhy+TomwHftPp3b3paqc59TPDDDcOrqsdnUEeKWbZ/Ro2ghqnaG+5bjjdrEh90xQ24bFBlWRKwec/jHL1ry+UkGRZs/cQNxIikGh7eFdh0x75R3/5b/Y4Oy/Uwj1uPOcioHThjSY6GTuh5PKveUdmUjt0vkzvV3EHOfMU0niyjth8vhgYcBZ6UQe4uf+K8RLAyFnZtiTYLlBsvY7OrC0cF7dd/D6Vwa0jHlEqfA9KNmXPc+1Lw2tW+LAXHvhr+larIs=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <C6AF515EE756F04F910A90230508F347@namprd11.prod.outlook.com>
-Content-Transfer-Encoding: base64
+        Fri, 11 Jan 2019 09:23:14 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35522 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730291AbfAKOS7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 Jan 2019 09:18:59 -0500
+Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7168F21783;
+        Fri, 11 Jan 2019 14:18:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1547216337;
+        bh=X7g7zLRb5N05f6ui152XAkkGEJtbWR4HbtAm9/2Oo9E=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=wmWeaQ0fPfnGVWmOBcTTRW1OhuRuUcFH8e8vBbjtaCRmImIkfL7+zDNGcNt+wwZIn
+         5dcqZtqEUEdhMrY0E4miMhAUrxXTyfwpXBCCMXyNgCVc4vaMRTOCzqojilRGBMJNL9
+         KxGxqj3SFzRBJyvXp3FTxboXZw4PTECTTZ1PWdQM=
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Steffen Maier <maier@linux.ibm.com>,
+        Jens Remus <jremus@linux.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>
+Subject: [PATCH 4.4 63/88] scsi: zfcp: fix posting too many status read buffers leading to adapter shutdown
+Date:   Fri, 11 Jan 2019 15:08:32 +0100
+Message-Id: <20190111131056.636926513@linuxfoundation.org>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20190111131045.137499039@linuxfoundation.org>
+References: <20190111131045.137499039@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
+X-Patchwork-Hint: ignore
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-Network-Message-Id: e1c40280-40a5-45f5-e02e-08d677cfabf5
-X-MS-Exchange-CrossTenant-originalarrivaltime: 11 Jan 2019 14:18:34.9589
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 3f4057f3-b418-4d4e-ba84-d55b4e897d88
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR11MB1664
-X-OriginatorOrg: microchip.com
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-T24gMTAvMDEvMjAxOSBhdCAxODo0NSwgQm9yaXMgQnJlemlsbG9uIHdyb3RlOg0KPiBPbiBUaHUs
-IDEwIEphbiAyMDE5IDE1OjEwOjI4ICswMDAwDQo+IFBldGVyIFJvc2luIDxwZWRhQGF4ZW50aWEu
-c2U+IHdyb3RlOg0KPiANCj4+IEhpIQ0KPj4NCj4+IEkgZm91bmQgYW4gdW5mb3J0dW5hdGUgaXNz
-dWUgd2hpbGUgcmVjb2RpbmcgcGxhbmUgaGFuZGxpbmcgdG8gdXNlDQo+PiBkcm1fYXRvbWljX2hl
-bHBlcl9jaGVja19wbGFuZV9zdGF0ZSgpLiBUaGUgZHJpdmVyIHJvdGF0ZXMgY2xvY2t3aXNlLA0K
-Pj4gd2hpY2ggaXMgbm90IGNvcnJlY3QuIEkgc2ltcGx5IGZpeGVkIGl0IChwYXRjaCAxLzQpLCBi
-dXQgbWF5YmUgdGhhdA0KPj4gd2lsbCBjYXVzZSByZWdyZXNzaW9ucyBmb3IgdW5zdXNwZWN0aW5n
-IHVzZXJzIHdobyBzaW1wbHkgYXNzdW1lZA0KPj4gdGhhdCB0aGUgY2xvY2t3aXNlIHJvdGF0aW9u
-IHdhcyBjb3JyZWN0PyBJIGRvbid0IGtub3cgd2hhdCB0byBkbw0KPj4gYWJvdXQgdGhhdD8gQWRk
-aW5nIGFuIG9wdGlvbiB0byBnZXQgdGhlIG9sZCBicm9rZW4gYmVoYXZpb3Igc2VlbXMNCj4+IHVz
-ZWxlc3MsIHdvdWxkbid0IGl0IGJlIGp1c3QgYXMgZWFzeSB0byBqdXN0IGZpeCB3aGF0ZXZlciBh
-cHAgdG8NCj4+IHJvdGF0ZSB0aGUgb3RoZXIgd2F5IGluc3RlYWQgb2YgYWRkaW5nIGFuIG9wdGlv
-biBzb21ld2hlcmU/DQo+IA0KPiBIbSwgcm90YXRpb24gc3VwcG9ydCBoYXMgYmVlbiBhZGRlZCBi
-ZWZvcmUgdGhlIHN0YW5kYXJkIHJvdGF0aW9uDQo+IHByb3BlcnR5IHdhcyBjcmVhdGVkLCBhbmQg
-YXQgdGhhdCB0aW1lIEkgYXNzdW1lZCByb3RhdGlvbiB3YXMgY2xvY2t3aXNlDQo+ICh3aGljaCBh
-cHBhcmVudGx5IHdhcyBhbiB1bndpc2UgY2hvaWNlKS4gQW55d2F5LCBJIGRvbid0IGhhdmUgYQ0K
-PiBzb2x1dGlvbiBmb3IgdGhpcyBwcm9ibGVtLCBzbyBJJ2xsIGxldCBOaWNvbGFzIGRlY2lkZSBp
-ZiBpdCdzDQo+IGFjY2VwdGFibGUgdG8gY2hhbmdlIHRoZSByb3RhdGlvbiBiZWhhdmlvci4NCg0K
-WWVzLCBiZWluZyBjb25zaXN0ZW50IHdpdGggc3RhbmRhcmQgRFJNIHN1Yi1zeXN0ZW0gaXMgZmFy
-IG1vcmUgaW1wb3J0YW50IA0KaW4gbXkgb3Bpbmlvbi4NCg0KQmVzdCByZWdhcmRzLA0KICAgTmlj
-b2xhcw0KDQo+PiBJIGhhdmUgb25seSB0ZXN0ZWQgdGhpcyBzZXJpZXMgb24gc2FtYTVkMywgYnV0
-IEkgZGlkIGNoZWNrIHRoZSBkb2NzDQo+PiBmb3IgdmFyaW91cyBvdGhlciBjaGlwcyAoc2FtYTVk
-Miwgc2FtYTVkNCwgc2FtOW4xMiwgc2FtOWcxNSwgc2FtOWczNQ0KPj4gYW5kIHNhbTl4MzUpIHN1
-cHBvcnRlZCBieSB0aGUgZHJpdmVyIChyZWxldmFudCB0byBwYXRjaCA0LzQpLg0KPiANCj4gVGhh
-bmtzIGZvciBhZGRyZXNzaW5nIHRob3NlIHByb2JsZW1zLg0KPiANCj4+DQo+PiBDaGVlcnMsDQo+
-PiBQZXRlcg0KPj4NCj4+IFBldGVyIFJvc2luICg0KToNCj4+ICAgIGRybS9hdG1lbC1obGNkYzog
-cm90YXRlIHBsYW5lcyBjb3VudGVyY2xvY2t3aXNlDQo+PiAgICBkcm0vYXRtZWwtaGxjZGM6IGRv
-IG5vdCBzd2FwIHcvaCBvZiB0aGUgY3J0YyB3aGVuIGEgcGxhbmUgaXMgcm90YXRlZA0KPj4gICAg
-ZHJtL2F0bWVsLWhsY2RjOiBmaXggY2xpcHBpbmcgb2YgcGxhbmVzDQo+PiAgICBkcm0vYXRtZWwt
-aGxjZGM6IGRvIG5vdCBpbW1lZGlhdGVseSBkaXNhYmxlIHBsYW5lcywgd2FpdCBmb3IgbmV4dA0K
-Pj4gICAgICBmcmFtZQ0KPj4NCj4+ICAgZHJpdmVycy9ncHUvZHJtL2F0bWVsLWhsY2RjL2F0bWVs
-X2hsY2RjX3BsYW5lLmMgfCAxNzkgKysrKysrKysrLS0tLS0tLS0tLS0tLS0tDQo+PiAgIDEgZmls
-ZSBjaGFuZ2VkLCA2NyBpbnNlcnRpb25zKCspLCAxMTIgZGVsZXRpb25zKC0pDQo+Pg0KPiANCj4g
-DQoNCg0KLS0gDQpOaWNvbGFzIEZlcnJlDQo=
+4.4-stable review patch.  If anyone has any objections, please let me know.
+
+------------------
+
+From: Steffen Maier <maier@linux.ibm.com>
+
+commit 60a161b7e5b2a252ff0d4c622266a7d8da1120ce upstream.
+
+Suppose adapter (open) recovery is between opened QDIO queues and before
+(the end of) initial posting of status read buffers (SRBs). This time
+window can be seconds long due to FSF_PROT_HOST_CONNECTION_INITIALIZING
+causing by design looping with exponential increase sleeps in the function
+performing exchange config data during recovery
+[zfcp_erp_adapter_strat_fsf_xconf()]. Recovery triggered by local link up.
+
+Suppose an event occurs for which the FCP channel would send an unsolicited
+notification to zfcp by means of a previously posted SRB.  We saw it with
+local cable pull (link down) in multi-initiator zoning with multiple
+NPIV-enabled subchannels of the same shared FCP channel.
+
+As soon as zfcp_erp_adapter_strategy_open_fsf() starts posting the initial
+status read buffers from within the adapter's ERP thread, the channel does
+send an unsolicited notification.
+
+Since v2.6.27 commit d26ab06ede83 ("[SCSI] zfcp: receiving an unsolicted
+status can lead to I/O stall"), zfcp_fsf_status_read_handler() schedules
+adapter->stat_work to re-fill the just consumed SRB from a work item.
+
+Now the ERP thread and the work item post SRBs in parallel.  Both contexts
+call the helper function zfcp_status_read_refill().  The tracking of
+missing (to be posted / re-filled) SRBs is not thread-safe due to separate
+atomic_read() and atomic_dec(), in order to depend on posting
+success. Hence, both contexts can see
+atomic_read(&adapter->stat_miss) == 1. One of the two contexts posts
+one too many SRB. Zfcp gets QDIO_ERROR_SLSB_STATE on the output queue
+(trace tag "qdireq1") leading to zfcp_erp_adapter_shutdown() in
+zfcp_qdio_handler_error().
+
+An obvious and seemingly clean fix would be to schedule stat_work from the
+ERP thread and wait for it to finish. This would serialize all SRB
+re-fills. However, we already have another work item wait on the ERP
+thread: adapter->scan_work runs zfcp_fc_scan_ports() which calls
+zfcp_fc_eval_gpn_ft(). The latter calls zfcp_erp_wait() to wait for all the
+open port recoveries during zfcp auto port scan, but in fact it waits for
+any pending recovery including an adapter recovery. This approach leads to
+a deadlock.  [see also v3.19 commit 18f87a67e6d6 ("zfcp: auto port scan
+resiliency"); v2.6.37 commit d3e1088d6873
+("[SCSI] zfcp: No ERP escalation on gpn_ft eval");
+v2.6.28 commit fca55b6fb587
+("[SCSI] zfcp: fix deadlock between wq triggered port scan and ERP")
+fixing v2.6.27 commit c57a39a45a76
+("[SCSI] zfcp: wait until adapter is finished with ERP during auto-port");
+v2.6.27 commit cc8c282963bd
+("[SCSI] zfcp: Automatically attach remote ports")]
+
+Instead make the accounting of missing SRBs atomic for parallel execution
+in both the ERP thread and adapter->stat_work.
+
+Signed-off-by: Steffen Maier <maier@linux.ibm.com>
+Fixes: d26ab06ede83 ("[SCSI] zfcp: receiving an unsolicted status can lead to I/O stall")
+Cc: <stable@vger.kernel.org> #2.6.27+
+Reviewed-by: Jens Remus <jremus@linux.ibm.com>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
+---
+ drivers/s390/scsi/zfcp_aux.c |    6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+--- a/drivers/s390/scsi/zfcp_aux.c
++++ b/drivers/s390/scsi/zfcp_aux.c
+@@ -275,16 +275,16 @@ static void zfcp_free_low_mem_buffers(st
+  */
+ int zfcp_status_read_refill(struct zfcp_adapter *adapter)
+ {
+-	while (atomic_read(&adapter->stat_miss) > 0)
++	while (atomic_add_unless(&adapter->stat_miss, -1, 0))
+ 		if (zfcp_fsf_status_read(adapter->qdio)) {
++			atomic_inc(&adapter->stat_miss); /* undo add -1 */
+ 			if (atomic_read(&adapter->stat_miss) >=
+ 			    adapter->stat_read_buf_num) {
+ 				zfcp_erp_adapter_reopen(adapter, 0, "axsref1");
+ 				return 1;
+ 			}
+ 			break;
+-		} else
+-			atomic_dec(&adapter->stat_miss);
++		}
+ 	return 0;
+ }
+ 
+
+
