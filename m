@@ -7,50 +7,50 @@ X-Spam-Status: No, score=-10.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 89FB1C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:44:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C8E6C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:44:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 58FF1206B6
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:44:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3D674206B6
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:44:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547217867;
-	bh=N0lSpPT41xUhxm188eCX34il2LokFKjZDge80XPQQjc=;
+	s=default; t=1547217870;
+	bh=b+ha+dOpnQ1IN6Tsb2Jrr+wGN+7hPmOkgnOj1kRaw1A=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=srPef4Uk5v7lP52KVHOCX27FmqbaYcgIaE3ey+BQF/WJDfxbYgEoD0iI9XHTZQbo4
-	 WYm4+Awf7xvnk05yTo1gtgrP7SoQYOGDx8XQLQ0HVQM+3HStkyegai4dACht9Gr4gS
-	 5obNAOae6EOii9rEJD+G01x3T9hN3zBgmQWh5XZg=
+	b=n3kovR0jWyF4T5grcOoOXDEwCAL/DYHBVAAyf0G3Yg5IB/X+vQiXjRe7sRnbsXyuY
+	 c+BSwIOFo8vEHBT5RKohSJ+Qnx9G/GEdFNWQtKy394MALHjH3OdwFr5A8/lzT6GvZ5
+	 2gG5NCIHBEDqZg+MTlkowfWOrHwUjQnbU9mw5ITQ=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404613AbfAKOo0 (ORCPT
+        id S2391308AbfAKOo3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 11 Jan 2019 09:44:26 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37334 "EHLO mail.kernel.org"
+        Fri, 11 Jan 2019 09:44:29 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37386 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2403771AbfAKOoX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Jan 2019 09:44:23 -0500
+        id S2404607AbfAKOoZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 Jan 2019 09:44:25 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1E807206B6;
-        Fri, 11 Jan 2019 14:44:21 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A82A320872;
+        Fri, 11 Jan 2019 14:44:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547217862;
-        bh=N0lSpPT41xUhxm188eCX34il2LokFKjZDge80XPQQjc=;
+        s=default; t=1547217865;
+        bh=b+ha+dOpnQ1IN6Tsb2Jrr+wGN+7hPmOkgnOj1kRaw1A=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=FOeR84QZiXw/JN8hM1KcbvKa2lAnQhZCt2yg7unPvYGnEKHy7+ShZFTKA6RBpzV+6
-         UiITSwqU/v4s6enqbDxoH3x5hZyPYIykBcoEXvwevRgd+Evz23QE7FfUSt41gTBIiN
-         MwdiaaZfNTkfd+AQZ44fH6HgkW69nc694tUW8Eds=
+        b=rrhivgbH2yzRfMehNhjmYkMKcW8aBDNtCVe8DAOsZ7RUt5LR8mm9EyaIUUsZcyTfy
+         ZAAl+Axsap9V8xrKV/Xh/8bVS+q0mKzg6ShRSrv3K8qv+KULnLGD/Ru8Fp6az1mLfE
+         4xPnkgLGnbXpuwQfmkSLHbPPZndt+8K0qB4JdsLI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Daniel Jurgens <danielj@mellanox.com>,
-        Eli Cohen <eli@mellanox.com>, James Morris <jmorris@namei.org>,
-        Doug Ledford <dledford@redhat.com>,
-        Ondrej Mosnacek <omosnace@redhat.com>,
-        Stephen Smalley <sds@tycho.nsa.gov>,
-        Paul Moore <paul@paul-moore.com>
-Subject: [PATCH 4.20 36/65] selinux: policydb - fix byte order and alignment issues
-Date:   Fri, 11 Jan 2019 15:15:22 +0100
-Message-Id: <20190111131101.606156425@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        Jarkko Nikula <jarkko.nikula@linux.intel.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Jean Delvare <jdelvare@suse.de>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
+Subject: [PATCH 4.20 37/65] PCI / PM: Allow runtime PM without callback functions
+Date:   Fri, 11 Jan 2019 15:15:23 +0100
+Message-Id: <20190111131101.734528578@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190111131055.331350141@linuxfoundation.org>
 References: <20190111131055.331350141@linuxfoundation.org>
@@ -69,161 +69,118 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Ondrej Mosnacek <omosnace@redhat.com>
+From: Jarkko Nikula <jarkko.nikula@linux.intel.com>
 
-commit 5df275cd4cf51c86d49009f1397132f284ba515e upstream.
+commit c5eb1190074cfb14c5d9cac692f1912eecf1a5e4 upstream.
 
-Do the LE conversions before doing the Infiniband-related range checks.
-The incorrect checks are otherwise causing a failure to load any policy
-with an ibendportcon rule on BE systems. This can be reproduced by
-running (on e.g. ppc64):
+a9c8088c7988 ("i2c: i801: Don't restore config registers on runtime PM")
+nullified the runtime PM suspend/resume callback pointers while keeping the
+runtime PM enabled.
 
-cat >my_module.cil <<EOF
-(type test_ibendport_t)
-(roletype object_r test_ibendport_t)
-(ibendportcon mlx4_0 1 (system_u object_r test_ibendport_t ((s0) (s0))))
-EOF
-semodule -i my_module.cil
+This caused the SMBus PCI device to stay in D0 with
+/sys/devices/.../power/runtime_status showing "error" when the runtime PM
+framework attempted to autosuspend the device.  This is due to PCI bus
+runtime PM, which checks for driver runtime PM callbacks and returns
+-ENOSYS if they are not set.
 
-Also, fix loading/storing the 64-bit subnet prefix for OCON_IBPKEY to
-use a correctly aligned buffer.
+Since i2c-i801.c doesn't need to do anything device-specific for runtime
+PM, Jean Delvare proposed this be fixed in the PCI core rather than adding
+dummy runtime PM callback functions in the PCI drivers.
 
-Finally, do not use the 'nodebuf' (u32) buffer where 'buf' (__le32)
-should be used instead.
+Change pci_pm_runtime_suspend()/pci_pm_runtime_resume() so they allow
+changing the PCI device power state during runtime PM transitions even if
+the driver supplies no runtime PM callbacks.
 
-Tested internally on a ppc64 machine with a RHEL 7 kernel with this
-patch applied.
+This fixes the runtime PM regression on i2c-i801.c.
 
-Cc: Daniel Jurgens <danielj@mellanox.com>
-Cc: Eli Cohen <eli@mellanox.com>
-Cc: James Morris <jmorris@namei.org>
-Cc: Doug Ledford <dledford@redhat.com>
-Cc: <stable@vger.kernel.org> # 4.13+
-Fixes: a806f7a1616f ("selinux: Create policydb version for Infiniband support")
-Signed-off-by: Ondrej Mosnacek <omosnace@redhat.com>
-Acked-by: Stephen Smalley <sds@tycho.nsa.gov>
-Signed-off-by: Paul Moore <paul@paul-moore.com>
+It is not obvious why the code previously required the runtime PM
+callbacks.  The test has been there since the code was introduced by
+6cbf82148ff2 ("PCI PM: Run-time callbacks for PCI bus type").
+
+On the other hand, a similar change was done to generic runtime PM
+callbacks in 05aa55dddb9e ("PM / Runtime: Lenient generic runtime pm
+callbacks").
+
+Fixes: a9c8088c7988 ("i2c: i801: Don't restore config registers on runtime PM")
+Reported-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+Signed-off-by: Jarkko Nikula <jarkko.nikula@linux.intel.com>
+Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
+Reviewed-by: Jean Delvare <jdelvare@suse.de>
+Reviewed-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+Cc: stable@vger.kernel.org	# v4.18+
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- security/selinux/ss/policydb.c |   51 ++++++++++++++++++++++++++++-------------
- 1 file changed, 36 insertions(+), 15 deletions(-)
+ drivers/pci/pci-driver.c |   27 ++++++++++++---------------
+ 1 file changed, 12 insertions(+), 15 deletions(-)
 
---- a/security/selinux/ss/policydb.c
-+++ b/security/selinux/ss/policydb.c
-@@ -2108,6 +2108,7 @@ static int ocontext_read(struct policydb
- {
- 	int i, j, rc;
- 	u32 nel, len;
-+	__be64 prefixbuf[1];
- 	__le32 buf[3];
- 	struct ocontext *l, *c;
- 	u32 nodebuf[8];
-@@ -2217,21 +2218,30 @@ static int ocontext_read(struct policydb
- 					goto out;
- 				break;
- 			}
--			case OCON_IBPKEY:
--				rc = next_entry(nodebuf, fp, sizeof(u32) * 4);
-+			case OCON_IBPKEY: {
-+				u32 pkey_lo, pkey_hi;
-+
-+				rc = next_entry(prefixbuf, fp, sizeof(u64));
-+				if (rc)
-+					goto out;
-+
-+				/* we need to have subnet_prefix in CPU order */
-+				c->u.ibpkey.subnet_prefix = be64_to_cpu(prefixbuf[0]);
-+
-+				rc = next_entry(buf, fp, sizeof(u32) * 2);
- 				if (rc)
- 					goto out;
- 
--				c->u.ibpkey.subnet_prefix = be64_to_cpu(*((__be64 *)nodebuf));
-+				pkey_lo = le32_to_cpu(buf[0]);
-+				pkey_hi = le32_to_cpu(buf[1]);
- 
--				if (nodebuf[2] > 0xffff ||
--				    nodebuf[3] > 0xffff) {
-+				if (pkey_lo > U16_MAX || pkey_hi > U16_MAX) {
- 					rc = -EINVAL;
- 					goto out;
- 				}
- 
--				c->u.ibpkey.low_pkey = le32_to_cpu(nodebuf[2]);
--				c->u.ibpkey.high_pkey = le32_to_cpu(nodebuf[3]);
-+				c->u.ibpkey.low_pkey  = pkey_lo;
-+				c->u.ibpkey.high_pkey = pkey_hi;
- 
- 				rc = context_read_and_validate(&c->context[0],
- 							       p,
-@@ -2239,7 +2249,10 @@ static int ocontext_read(struct policydb
- 				if (rc)
- 					goto out;
- 				break;
--			case OCON_IBENDPORT:
-+			}
-+			case OCON_IBENDPORT: {
-+				u32 port;
-+
- 				rc = next_entry(buf, fp, sizeof(u32) * 2);
- 				if (rc)
- 					goto out;
-@@ -2249,12 +2262,13 @@ static int ocontext_read(struct policydb
- 				if (rc)
- 					goto out;
- 
--				if (buf[1] > 0xff || buf[1] == 0) {
-+				port = le32_to_cpu(buf[1]);
-+				if (port > U8_MAX || port == 0) {
- 					rc = -EINVAL;
- 					goto out;
- 				}
- 
--				c->u.ibendport.port = le32_to_cpu(buf[1]);
-+				c->u.ibendport.port = port;
- 
- 				rc = context_read_and_validate(&c->context[0],
- 							       p,
-@@ -2262,7 +2276,8 @@ static int ocontext_read(struct policydb
- 				if (rc)
- 					goto out;
- 				break;
--			}
-+			} /* end case */
-+			} /* end switch */
- 		}
+--- a/drivers/pci/pci-driver.c
++++ b/drivers/pci/pci-driver.c
+@@ -1251,30 +1251,29 @@ static int pci_pm_runtime_suspend(struct
+ 		return 0;
  	}
- 	rc = 0;
-@@ -3105,6 +3120,7 @@ static int ocontext_write(struct policyd
+ 
+-	if (!pm || !pm->runtime_suspend)
+-		return -ENOSYS;
+-
+ 	pci_dev->state_saved = false;
+-	error = pm->runtime_suspend(dev);
+-	if (error) {
++	if (pm && pm->runtime_suspend) {
++		error = pm->runtime_suspend(dev);
+ 		/*
+ 		 * -EBUSY and -EAGAIN is used to request the runtime PM core
+ 		 * to schedule a new suspend, so log the event only with debug
+ 		 * log level.
+ 		 */
+-		if (error == -EBUSY || error == -EAGAIN)
++		if (error == -EBUSY || error == -EAGAIN) {
+ 			dev_dbg(dev, "can't suspend now (%pf returned %d)\n",
+ 				pm->runtime_suspend, error);
+-		else
++			return error;
++		} else if (error) {
+ 			dev_err(dev, "can't suspend (%pf returned %d)\n",
+ 				pm->runtime_suspend, error);
+-
+-		return error;
++			return error;
++		}
+ 	}
+ 
+ 	pci_fixup_device(pci_fixup_suspend, pci_dev);
+ 
+-	if (!pci_dev->state_saved && pci_dev->current_state != PCI_D0
++	if (pm && pm->runtime_suspend
++	    && !pci_dev->state_saved && pci_dev->current_state != PCI_D0
+ 	    && pci_dev->current_state != PCI_UNKNOWN) {
+ 		WARN_ONCE(pci_dev->current_state != prev,
+ 			"PCI PM: State of device not saved by %pF\n",
+@@ -1292,7 +1291,7 @@ static int pci_pm_runtime_suspend(struct
+ 
+ static int pci_pm_runtime_resume(struct device *dev)
  {
- 	unsigned int i, j, rc;
- 	size_t nel, len;
-+	__be64 prefixbuf[1];
- 	__le32 buf[3];
- 	u32 nodebuf[8];
- 	struct ocontext *c;
-@@ -3192,12 +3208,17 @@ static int ocontext_write(struct policyd
- 					return rc;
- 				break;
- 			case OCON_IBPKEY:
--				*((__be64 *)nodebuf) = cpu_to_be64(c->u.ibpkey.subnet_prefix);
-+				/* subnet_prefix is in CPU order */
-+				prefixbuf[0] = cpu_to_be64(c->u.ibpkey.subnet_prefix);
+-	int rc;
++	int rc = 0;
+ 	struct pci_dev *pci_dev = to_pci_dev(dev);
+ 	const struct dev_pm_ops *pm = dev->driver ? dev->driver->pm : NULL;
  
--				nodebuf[2] = cpu_to_le32(c->u.ibpkey.low_pkey);
--				nodebuf[3] = cpu_to_le32(c->u.ibpkey.high_pkey);
-+				rc = put_entry(prefixbuf, sizeof(u64), 1, fp);
-+				if (rc)
-+					return rc;
-+
-+				buf[0] = cpu_to_le32(c->u.ibpkey.low_pkey);
-+				buf[1] = cpu_to_le32(c->u.ibpkey.high_pkey);
+@@ -1306,14 +1305,12 @@ static int pci_pm_runtime_resume(struct
+ 	if (!pci_dev->driver)
+ 		return 0;
  
--				rc = put_entry(nodebuf, sizeof(u32), 4, fp);
-+				rc = put_entry(buf, sizeof(u32), 2, fp);
- 				if (rc)
- 					return rc;
- 				rc = context_write(p, &c->context[0], fp);
+-	if (!pm || !pm->runtime_resume)
+-		return -ENOSYS;
+-
+ 	pci_fixup_device(pci_fixup_resume_early, pci_dev);
+ 	pci_enable_wake(pci_dev, PCI_D0, false);
+ 	pci_fixup_device(pci_fixup_resume, pci_dev);
+ 
+-	rc = pm->runtime_resume(dev);
++	if (pm && pm->runtime_resume)
++		rc = pm->runtime_resume(dev);
+ 
+ 	pci_dev->runtime_d3cold = false;
+ 
 
 
