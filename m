@@ -7,49 +7,47 @@ X-Spam-Status: No, score=-13.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7FF76C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:36:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B9850C43444
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:36:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4DB452133F
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:36:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 80BF52063F
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:36:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547217379;
-	bh=3V2g3psMch2BxkOYn9jnklxg3R2WAL043FYAASt2Wdg=;
+	s=default; t=1547217384;
+	bh=xTTGRTuV8UeEtbYnZJelZdevVfD1ktiwt731u+Bq+uU=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=jWNSHgNTbojib2TlNKgtSqr79BwfgMPnv5zsw0FRnRtPpwyfO/oV76Hr5zOCMsVMW
-	 7BORMzMVlCyuz5rgset8rxnKznICbWM5DeCD+ieiAq3wVrndhmhg1uMlZjn5qX+PLB
-	 lxgHvIPTiJ/GDm9UrljkpvVEKSXdnSMoOvml+jqg=
+	b=ijXXdGYnOpSQyaKsnFD1fj6RteCf/MFWee7ZUzq2N6RBzojRg3iDWhR6e2jpxpTC5
+	 syJTgNNkBAdgrOjRnDRqR8Q0LZZrs5Zza+ckuiP+32hVdr0hxop4VK5RUtPLr1t1JU
+	 ZvJcph7oDtVlG4UZ37okdX16gzuaVBquj5gEK+GI=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390343AbfAKOgS (ORCPT
+        id S2390371AbfAKOgX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 11 Jan 2019 09:36:18 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56564 "EHLO mail.kernel.org"
+        Fri, 11 Jan 2019 09:36:23 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56650 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389606AbfAKOgP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Jan 2019 09:36:15 -0500
+        id S2390347AbfAKOgU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 Jan 2019 09:36:20 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0176A204EC;
-        Fri, 11 Jan 2019 14:36:13 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3FA652063F;
+        Fri, 11 Jan 2019 14:36:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547217374;
-        bh=3V2g3psMch2BxkOYn9jnklxg3R2WAL043FYAASt2Wdg=;
+        s=default; t=1547217379;
+        bh=xTTGRTuV8UeEtbYnZJelZdevVfD1ktiwt731u+Bq+uU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=vwRwsX3ZNMBZYHibNrxcq159EnuznNnFmEDcJjse5s15U4hjZXCjwhAWT7C9KRfS2
-         1NWWBXsiXdX9QNeS9Yo5H73OIgvuxdI+rXmy5YM6Dib4OJYhMQp6JvyXJVW9kX/Rat
-         9TKFFECnNCy9Tj80aTSUYt/PVeC+WkIW8LrTNNHk=
+        b=gEePJl3apvuKk304J3fnh3F20WPV+gzeXhoM1lVJtwhoFkBjHUsY2bYtCNVYONtYr
+         FDso9iL6vqz2IYwgCL/IwjkvGi3rztPAEW9YT/BUhqx2lc7x4yZjU5P3SXgLNHR2gE
+         3CN7GzQgdp0DApugFB3D3cnjZz9U7pYswmNItacE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Sudarsana Reddy Kalluru <Sudarsana.Kalluru@cavium.com>,
-        Ariel Elior <ariel.elior@cavium.com>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org, Himanshu Madhani <hmadhani@marvell.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 038/148] bnx2x: Send update-svid ramrod with retry/poll flags enabled
-Date:   Fri, 11 Jan 2019 15:13:36 +0100
-Message-Id: <20190111131115.818025902@linuxfoundation.org>
+Subject: [PATCH 4.19 022/148] Revert "scsi: qla2xxx: Fix NVMe Target discovery"
+Date:   Fri, 11 Jan 2019 15:13:20 +0100
+Message-Id: <20190111131115.204846484@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190111131114.337122649@linuxfoundation.org>
 References: <20190111131114.337122649@linuxfoundation.org>
@@ -68,70 +66,37 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 9061193c4ee065d3240fde06767c2e06ec61decc ]
+[ Upstream commit c64a87f9518409d0a439895f09f6149ffdd427b8 ]
 
-Driver sends update-SVID ramrod in the MFW notification path.
-If there is a pending ramrod, driver doesn't retry the command
-and storm firmware will never be updated with the SVID value.
-The patch adds changes to send update-svid ramrod in process context with
-retry/poll flags set.
+This reverts commit db186382af21e926e90df19499475f2552192b77.
 
-Signed-off-by: Sudarsana Reddy Kalluru <Sudarsana.Kalluru@cavium.com>
-Signed-off-by: Ariel Elior <ariel.elior@cavium.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+This commit introduced regression with FCP discovery so revert it to fix
+discovery for FCP luns.
+
+Signed-off-by: Himanshu Madhani <hmadhani@marvell.com>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/broadcom/bnx2x/bnx2x.h      |  1 +
- drivers/net/ethernet/broadcom/bnx2x/bnx2x_main.c | 10 +++++++++-
- 2 files changed, 10 insertions(+), 1 deletion(-)
+ drivers/scsi/qla2xxx/qla_os.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/net/ethernet/broadcom/bnx2x/bnx2x.h b/drivers/net/ethernet/broadcom/bnx2x/bnx2x.h
-index 0de487a8f0eb..3db54b664aed 100644
---- a/drivers/net/ethernet/broadcom/bnx2x/bnx2x.h
-+++ b/drivers/net/ethernet/broadcom/bnx2x/bnx2x.h
-@@ -1282,6 +1282,7 @@ enum sp_rtnl_flag {
- 	BNX2X_SP_RTNL_TX_STOP,
- 	BNX2X_SP_RTNL_GET_DRV_VERSION,
- 	BNX2X_SP_RTNL_CHANGE_UDP_PORT,
-+	BNX2X_SP_RTNL_UPDATE_SVID,
- };
+diff --git a/drivers/scsi/qla2xxx/qla_os.c b/drivers/scsi/qla2xxx/qla_os.c
+index ae9fd2d01004..42b8f0d3e580 100644
+--- a/drivers/scsi/qla2xxx/qla_os.c
++++ b/drivers/scsi/qla2xxx/qla_os.c
+@@ -4808,10 +4808,10 @@ void qla24xx_create_new_sess(struct scsi_qla_host *vha, struct qla_work_evt *e)
+ 			fcport->d_id = e->u.new_sess.id;
+ 			fcport->flags |= FCF_FABRIC_DEVICE;
+ 			fcport->fw_login_state = DSC_LS_PLOGI_PEND;
+-			if (e->u.new_sess.fc4_type & FS_FC4TYPE_FCP)
++			if (e->u.new_sess.fc4_type == FS_FC4TYPE_FCP)
+ 				fcport->fc4_type = FC4_TYPE_FCP_SCSI;
  
- enum bnx2x_iov_flag {
-diff --git a/drivers/net/ethernet/broadcom/bnx2x/bnx2x_main.c b/drivers/net/ethernet/broadcom/bnx2x/bnx2x_main.c
-index 20e5cda6555e..7742bf5f8a18 100644
---- a/drivers/net/ethernet/broadcom/bnx2x/bnx2x_main.c
-+++ b/drivers/net/ethernet/broadcom/bnx2x/bnx2x_main.c
-@@ -2925,6 +2925,10 @@ static void bnx2x_handle_update_svid_cmd(struct bnx2x *bp)
- 	func_params.f_obj = &bp->func_obj;
- 	func_params.cmd = BNX2X_F_CMD_SWITCH_UPDATE;
- 
-+	/* Prepare parameters for function state transitions */
-+	__set_bit(RAMROD_COMP_WAIT, &func_params.ramrod_flags);
-+	__set_bit(RAMROD_RETRY, &func_params.ramrod_flags);
-+
- 	if (IS_MF_UFP(bp) || IS_MF_BD(bp)) {
- 		int func = BP_ABS_FUNC(bp);
- 		u32 val;
-@@ -4301,7 +4305,8 @@ static void bnx2x_attn_int_deasserted3(struct bnx2x *bp, u32 attn)
- 				bnx2x_handle_eee_event(bp);
- 
- 			if (val & DRV_STATUS_OEM_UPDATE_SVID)
--				bnx2x_handle_update_svid_cmd(bp);
-+				bnx2x_schedule_sp_rtnl(bp,
-+					BNX2X_SP_RTNL_UPDATE_SVID, 0);
- 
- 			if (bp->link_vars.periodic_flags &
- 			    PERIODIC_FLAGS_LINK_EVENT) {
-@@ -10376,6 +10381,9 @@ static void bnx2x_sp_rtnl_task(struct work_struct *work)
- 			       &bp->sp_rtnl_state))
- 		bnx2x_update_mng_version(bp);
- 
-+	if (test_and_clear_bit(BNX2X_SP_RTNL_UPDATE_SVID, &bp->sp_rtnl_state))
-+		bnx2x_handle_update_svid_cmd(bp);
-+
- 	if (test_and_clear_bit(BNX2X_SP_RTNL_CHANGE_UDP_PORT,
- 			       &bp->sp_rtnl_state)) {
- 		if (bnx2x_udp_port_update(bp)) {
+-			if (e->u.new_sess.fc4_type & FS_FC4TYPE_NVME) {
++			if (e->u.new_sess.fc4_type == FS_FC4TYPE_NVME) {
+ 				fcport->fc4_type = FC4_TYPE_OTHER;
+ 				fcport->fc4f_nvme = FC4_TYPE_NVME;
+ 			}
 -- 
 2.19.1
 
