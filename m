@@ -4,48 +4,50 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-10.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 78F6AC43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 15:06:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BC227C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 15:06:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3DC6D2084C
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 15:06:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8B99720874
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 15:06:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547219185;
-	bh=nmwhOyLv2F8PnzsqA8Ss5zM1GTsMlPSieoKWSW/uaXg=;
+	s=default; t=1547219194;
+	bh=66/xdMQJyrDEpBVJjKZHZYothFDNEDvRfMNrEb6UFkE=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=ncM4Z4e2OubtzuEObZ+GQNExnrj4z7FA0yvHP13qzj4BSKZqi6wtekLPxMZ3Ubfer
-	 s+hcI+uKdA3Bouy3DSPksV9cOHZ6ZxdSCzsbEojVVZmtRkj9JG3wxq4hNeUinP39Tx
-	 WHW7mnZF0rMl1wN+PBS7nCHXG0NE8pjwZML9zDIY=
+	b=RQydbtaamTwdzU/li2eaHj6qISu306pRfwuP9C0eI56u7qxuqgJ5XN+IRd0QKkqrL
+	 ZPBtQ9eN9US15u5KlaS+xwe+XynXIffXy+UAC5Ws4PmKnJoIj9z5evwClJnmpou9kW
+	 wNESTzussMofP10249ovrjBc7tEVq5065/TK4B4U=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391898AbfAKPGY (ORCPT
+        id S2389093AbfAKPGc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 11 Jan 2019 10:06:24 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47828 "EHLO mail.kernel.org"
+        Fri, 11 Jan 2019 10:06:32 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47796 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388614AbfAKO27 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Jan 2019 09:28:59 -0500
+        id S2388611AbfAKO24 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 Jan 2019 09:28:56 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 060892063F;
-        Fri, 11 Jan 2019 14:28:57 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6C8032133F;
+        Fri, 11 Jan 2019 14:28:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547216938;
-        bh=nmwhOyLv2F8PnzsqA8Ss5zM1GTsMlPSieoKWSW/uaXg=;
+        s=default; t=1547216935;
+        bh=66/xdMQJyrDEpBVJjKZHZYothFDNEDvRfMNrEb6UFkE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=F7GeaHcE2p1AtsYl5NR4KctdKu6N/cGPNZXyC25nsqUNPOBXxSJulkLdqIl2dQ1IM
-         M7FMB6HOqQ9addMF1dIpAj8WREi8iiQr4hLq5G5rZ9z0F7SXITrAl1jGZzDZxawMut
-         p6315ClTXo8OMDo/Xcd4eE7GfL73LPkvQRu2AtwU=
+        b=lfpL7d90AyYhDo9ud320XsvZqCWt0KxZY0zo8VHBj3nw5Hbkjs9EUlOXd4i7sLlHM
+         saITeqtu4+ICC8DBTkQ/2MZTAuROG8VnmitzkHFCSLRk74Iv7rqpVvrQ1emPlCW/UH
+         xJBhzaXeoE2oFbhCNEIXu7HQ3zh6UM9xXcoHfJN8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Takashi Iwai <tiwai@suse.de>
-Subject: [PATCH 4.9 46/63] ALSA: usb-audio: Avoid access before bLength check in build_audio_procunit()
-Date:   Fri, 11 Jan 2019 15:14:49 +0100
-Message-Id: <20190111131053.194181785@linuxfoundation.org>
+        stable@vger.kernel.org, "Yavuz, Tuba" <tuba@ece.ufl.edu>,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        Takashi Iwai <tiwai@suse.de>
+Subject: [PATCH 4.9 45/63] ALSA: cs46xx: Potential NULL dereference in probe
+Date:   Fri, 11 Jan 2019 15:14:48 +0100
+Message-Id: <20190111131053.075718019@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190111131046.387528003@linuxfoundation.org>
 References: <20190111131046.387528003@linuxfoundation.org>
@@ -64,48 +66,34 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Takashi Iwai <tiwai@suse.de>
+From: Dan Carpenter <dan.carpenter@oracle.com>
 
-commit f4351a199cc120ff9d59e06d02e8657d08e6cc46 upstream.
+commit 1524f4e47f90b27a3ac84efbdd94c63172246a6f upstream.
 
-The parser for the processing unit reads bNrInPins field before the
-bLength sanity check, which may lead to an out-of-bound access when a
-malformed descriptor is given.  Fix it by assignment after the bLength
-check.
+The "chip->dsp_spos_instance" can be NULL on some of the ealier error
+paths in snd_cs46xx_create().
 
+Reported-by: "Yavuz, Tuba" <tuba@ece.ufl.edu>
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 Cc: <stable@vger.kernel.org>
 Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- sound/usb/mixer.c |   10 ++++++++--
- 1 file changed, 8 insertions(+), 2 deletions(-)
+ sound/pci/cs46xx/dsp_spos.c |    3 +++
+ 1 file changed, 3 insertions(+)
 
---- a/sound/usb/mixer.c
-+++ b/sound/usb/mixer.c
-@@ -1882,7 +1882,7 @@ static int build_audio_procunit(struct m
- 				char *name)
- {
- 	struct uac_processing_unit_descriptor *desc = raw_desc;
--	int num_ins = desc->bNrInPins;
-+	int num_ins;
- 	struct usb_mixer_elem_info *cval;
- 	struct snd_kcontrol *kctl;
- 	int i, err, nameid, type, len;
-@@ -1897,7 +1897,13 @@ static int build_audio_procunit(struct m
- 		0, NULL, default_value_info
- 	};
+--- a/sound/pci/cs46xx/dsp_spos.c
++++ b/sound/pci/cs46xx/dsp_spos.c
+@@ -899,6 +899,9 @@ int cs46xx_dsp_proc_done (struct snd_cs4
+ 	struct dsp_spos_instance * ins = chip->dsp_spos_instance;
+ 	int i;
  
--	if (desc->bLength < 13 || desc->bLength < 13 + num_ins ||
-+	if (desc->bLength < 13) {
-+		usb_audio_err(state->chip, "invalid %s descriptor (id %d)\n", name, unitid);
-+		return -EINVAL;
-+	}
++	if (!ins)
++		return 0;
 +
-+	num_ins = desc->bNrInPins;
-+	if (desc->bLength < 13 + num_ins ||
- 	    desc->bLength < num_ins + uac_processing_unit_bControlSize(desc, state->mixer->protocol)) {
- 		usb_audio_err(state->chip, "invalid %s descriptor (id %d)\n", name, unitid);
- 		return -EINVAL;
+ 	snd_info_free_entry(ins->proc_sym_info_entry);
+ 	ins->proc_sym_info_entry = NULL;
+ 
 
 
