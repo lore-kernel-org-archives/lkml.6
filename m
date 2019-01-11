@@ -2,200 +2,161 @@ Return-Path: <SRS0=uvhX=PT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 26476C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 16:26:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8BF36C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 16:27:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DD00920872
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 16:26:39 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="A7k/Kaiz"
+	by mail.kernel.org (Postfix) with ESMTP id 5B78C20878
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 16:27:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1547224022;
+	bh=Df64R0ds1gTBKqW6Plh+JWVKE4RS6NsKe7pMORDq+yI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=VRn9ZwEIS6Nzq8w3+nXzSwvMdeHrSW7xeyrCh+pe4SItPKIR8O8eZK1h4SM4DtQdS
+	 jUr8NZUjX5lJTljjU8w+1VAifMyArk5gw2UboKaDcSbzjzpBoMyB8HOWyfURVgwP3Q
+	 LWqPSb3jO7aSOSsxCYMN3Z98hbN+xtFhWsFoweXs=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387980AbfAKQ0i (ORCPT
+        id S2388167AbfAKQ1B (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 11 Jan 2019 11:26:38 -0500
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:40495 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729902AbfAKQ0i (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Jan 2019 11:26:38 -0500
-Received: by mail-lj1-f195.google.com with SMTP id n18-v6so13460348lji.7
-        for <linux-kernel@vger.kernel.org>; Fri, 11 Jan 2019 08:26:35 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=vbenFxntMJJI3im+gr+rLb3/45Dw0c7ONogM+YwDZXY=;
-        b=A7k/KaizozfTI3rBrlvY3irlDJ5TfkFn1JQLsJSc13ang98zrx0HocnODrct6I3zRv
-         sXlVINnsBzbxsJRy2F0R8MOI6FDB9D8UqJgkszbOp9fTU/2qZpfc5E3qRvfiuagKxYTH
-         khvqSsnfI7FaBQLpIXqdntBzaFT9jEEhlEHik=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=vbenFxntMJJI3im+gr+rLb3/45Dw0c7ONogM+YwDZXY=;
-        b=M1eSocn5i8yDlahv8Rofmbx6MgDecInkYKWdXRMDV1OFZdqMGhgoxCzVIN7effE5Xw
-         kT/k6QH81yG8zIO1IL/s297LPGIDbP2KWZsmHweU+7ibGJDh+UOyuIGp9AWE/Py46YlA
-         CrvBxz+3busUZbDeYorUl0ls+6HHgpix9a7AuTk2AkpVcpifiMwZn7Mc33bJC/OzZoqT
-         DbaJCsIblRku36sTHtR3ZYO+APp3dmec/adTijM6lmPx9jTLP0t4sxhE48LL5JPod8hZ
-         XP85hZwC/F/c5nSqigxFx6zbhTS1yuc4CHY8Mv+CsomL9oH5SOxVrKptC6JnvmaBZ8EK
-         rgig==
-X-Gm-Message-State: AJcUukdAZhm9cHv5tLy3Jwo6qMGYVF3PTCr//fDgQBr+MHPqRnFSN7wi
-        g9j1h1kp/iXoRe9iM5nx6lpkmE7xX/8=
-X-Google-Smtp-Source: ALg8bN7NNPVhLsyXVvsZtb88h68cmXTMoUF4USDA9m3fscG4Oy6A800Ac5qiiv3oPbi9X7BmWSSC9g==
-X-Received: by 2002:a2e:4218:: with SMTP id p24-v6mr8820500lja.58.1547223993586;
-        Fri, 11 Jan 2019 08:26:33 -0800 (PST)
-Received: from mail-lj1-f173.google.com (mail-lj1-f173.google.com. [209.85.208.173])
-        by smtp.gmail.com with ESMTPSA id y14-v6sm15757414ljj.55.2019.01.11.08.26.31
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 11 Jan 2019 08:26:31 -0800 (PST)
-Received: by mail-lj1-f173.google.com with SMTP id x85-v6so13463536ljb.2
-        for <linux-kernel@vger.kernel.org>; Fri, 11 Jan 2019 08:26:31 -0800 (PST)
-X-Received: by 2002:a2e:310a:: with SMTP id x10-v6mr9708846ljx.6.1547223990982;
- Fri, 11 Jan 2019 08:26:30 -0800 (PST)
+        Fri, 11 Jan 2019 11:27:01 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35382 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729902AbfAKQ1A (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 Jan 2019 11:27:00 -0500
+Received: from quaco.ghostprotocols.net (unknown [190.15.121.82])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id D7A3020872;
+        Fri, 11 Jan 2019 16:26:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1547224019;
+        bh=Df64R0ds1gTBKqW6Plh+JWVKE4RS6NsKe7pMORDq+yI=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=fqVcD4ncc9QRZcomFiHeEltrkwrk/a7J6M1Xr9KQvsCUyYyQhu7t1fxU9fYRNDOaj
+         r7AOtnXbXB0RJWJ6eBWoZWEMm2wUk9cOvRif+2l3/zBkpkXrGWBdw7mZOH0oHFrwbW
+         EyWYctDvZxDbFkeXGKld6WZWUBVBRdx91C/FItRA=
+Received: by quaco.ghostprotocols.net (Postfix, from userid 1000)
+        id 5A03C41AB5; Fri, 11 Jan 2019 13:26:56 -0300 (-03)
+Date:   Fri, 11 Jan 2019 13:26:56 -0300
+From:   Arnaldo Carvalho de Melo <acme@kernel.org>
+To:     Song Liu <songliubraving@fb.com>
+Cc:     linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+        peterz@infradead.org, ast@kernel.org, daniel@iogearbox.net,
+        kernel-team@fb.com, dsahern@gmail.com
+Subject: Re: [PATCH v7 perf, bpf-next 0/8] reveal invisible bpf programs
+Message-ID: <20190111162656.GY22483@kernel.org>
+References: <20190111001933.4153792-1-songliubraving@fb.com>
 MIME-Version: 1.0
-References: <20190110004424.GH27534@dastard> <CAHk-=wg1jSQ-gq-M3+HeTBbDs1VCjyiwF4gqnnBhHeWizyrigg@mail.gmail.com>
- <20190110070355.GJ27534@dastard> <CAHk-=wigwXV_G-V1VxLs6BAvVkvW5=Oj+xrNHxE_7yxEVwoe3w@mail.gmail.com>
- <20190110122442.GA21216@nautica> <CAHk-=wip2CPrdOwgF0z4n2tsdW7uu+Egtcx9Mxxe3gPfPW_JmQ@mail.gmail.com>
- <20190111020340.GM27534@dastard> <CAHk-=wgLgAzs42=W0tPrTVpu7H7fQ=BP5gXKnoNxMxh9=9uXag@mail.gmail.com>
- <20190111040434.GN27534@dastard> <CAHk-=wh-kegfnPC_dmw0A72Sdk4B9tvce-cOR=jEfHDU1-4Eew@mail.gmail.com>
- <20190111073606.GP27534@dastard>
-In-Reply-To: <20190111073606.GP27534@dastard>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Fri, 11 Jan 2019 08:26:14 -0800
-X-Gmail-Original-Message-ID: <CAHk-=wj+xyz_GKjgKpU6SF3qeqouGmRoR8uFxzg_c1VpeGEJMw@mail.gmail.com>
-Message-ID: <CAHk-=wj+xyz_GKjgKpU6SF3qeqouGmRoR8uFxzg_c1VpeGEJMw@mail.gmail.com>
-Subject: Re: [PATCH] mm/mincore: allow for making sys_mincore() privileged
-To:     Dave Chinner <david@fromorbit.com>
-Cc:     Dominique Martinet <asmadeus@codewreck.org>,
-        Jiri Kosina <jikos@kernel.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        Jann Horn <jannh@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Michal Hocko <mhocko@suse.com>, Linux-MM <linux-mm@kvack.org>,
-        kernel list <linux-kernel@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190111001933.4153792-1-songliubraving@fb.com>
+X-Url:  http://acmel.wordpress.com
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jan 10, 2019 at 11:36 PM Dave Chinner <david@fromorbit.com> wrote:
->
-> > It's only that single page that *matters*. That's the page that the
-> > probe reveals the status of - but it's also the page that the probe
-> > then *changes* the status of.
->
-> It changes the state of it /after/ we've already got the information
-> we need from it. It's not up to date, it has to come from disk, we
-> return EAGAIN, which means it was not in the cache.
+Em Thu, Jan 10, 2019 at 04:19:25PM -0800, Song Liu escreveu:
+> This set catches symbol for all bpf programs loaded/unloaded
+> before/during/after perf-record run PERF_RECORD_KSYMBOL and
+> PERF_RECORD_BPF_EVENT.
+> 
+> PERF_RECORD_KSYMBOL and PERF_RECORD_BPF_EVENT includes key information
+> of a bpf program load and unload. They are sent through perf ringbuffer,
+> and stored in perf.data. PERF_RECORD_KSYMBOL includes basic information
+> for simple profiling. It is ON by default. PERF_RECORD_BPF_EVENT is
+> used to gather more information of the bpf program. It is necessary for
+> perf-annotate of bpf programs.
+> 
+> Before this patch, perf-report will not be able to recover symbols of
+> bpf programs once the programs are unloaded.
+> 
+> This is to follow up Alexei's early effort [2] to show bpf programs via
+> mmap events.
+> 
+> Thanks,
+> Song
+> 
+> Changes v6 -> PATCH v7:
+> 1. Split "[3/7] introduce PERF_RECORD_BPF_EVENT" into two commits:
+>      [3/8] introduce PERF_RECORD_BPF_EVENT
+>      [5/8] emit PERF_RECORD_KSYMBOL for BPF program load/unload
 
-Oh, I see the confusion.
+Thanks, I'm trying now to build a kernel/tools combo to test this.
+ 
+> Changes v5 -> PATCH v6:
+> 1. Reduce len in PERF_RECORD_KSYMBOL from u64 to u32. Use the 32 free bits
+>    for ksym_type (u16) and flags (u16).
+> 
+> Changes v4 -> PATCH v5:
+> 1. Fixed build error reported by kbuild test bot.
+> 
+> Changes v3 -> PATCH v4:
+> 1. Split information about bpf program  into PERF_RECORD_KSYMBOL (with
+>    name, addr, len); and PERF_RECORD_BPF_EVENT PERF_RECORD_BPF_EVENT
+>    (with id, tag);
+> 2. Split the implementation in kernel and user space.
+> 
+> Changes v2 -> PATCH v3:
+> 1. Rebase on bpf-next tree, and on top of BPF sub program tag patches [1]
+>    for latest information in bpf_prog_info.
+> 2. Complete handling and synthesizing PERF_RECORD_BPF_EVENT in perf.
+> 
+> Changes v1 -> PATCH v2:
+> 1. Only 3 of the 5 patches in v1, to focus on ABI first;
+> 2. Generate PERF_RECORD_BPF_EVENT per bpf sub program instead of per prog;
+> 3. Modify PERF_RECORD_BPF_EVENT with more details (addr, len, name),
+>    so that it can be used for basic profiling without calling sys_bpf.
+> 
+> Changes RFC -> PATCH v1:
+> 1. In perf-record, poll vip events in a separate thread;
+> 2. Add tag to bpf prog name;
+> 3. Small refactorings.
+> 
+> [1] https://patchwork.ozlabs.org/project/netdev/list/?series=81037
+> [2] https://www.spinics.net/lists/netdev/msg524232.html
+> 
+> Song Liu (8):
+>   perf, bpf: Introduce PERF_RECORD_KSYMBOL
+>   sync tools/include/uapi/linux/perf_event.h
+>   perf, bpf: introduce PERF_RECORD_BPF_EVENT
+>   sync tools/include/uapi/linux/perf_event.h
+>   perf, bpf: emit PERF_RECORD_KSYMBOL for BPF program load/unload
+>   perf util: handle PERF_RECORD_KSYMBOL
+>   perf util: handle PERF_RECORD_BPF_EVENT
+>   perf tools: synthesize PERF_RECORD_* for loaded BPF programs
+> 
+>  include/linux/filter.h                |   7 +
+>  include/linux/perf_event.h            |  19 +++
+>  include/uapi/linux/perf_event.h       |  53 ++++++-
+>  kernel/bpf/core.c                     |   2 +-
+>  kernel/bpf/syscall.c                  |   2 +
+>  kernel/events/core.c                  | 218 ++++++++++++++++++++++++-
+>  tools/include/uapi/linux/perf_event.h |  53 ++++++-
+>  tools/perf/builtin-record.c           |   7 +
+>  tools/perf/perf.h                     |   1 +
+>  tools/perf/util/Build                 |   2 +
+>  tools/perf/util/bpf-event.c           | 220 ++++++++++++++++++++++++++
+>  tools/perf/util/bpf-event.h           |  16 ++
+>  tools/perf/util/event.c               |  41 +++++
+>  tools/perf/util/event.h               |  36 +++++
+>  tools/perf/util/evsel.c               |  19 +++
+>  tools/perf/util/evsel.h               |   2 +
+>  tools/perf/util/machine.c             |  60 +++++++
+>  tools/perf/util/machine.h             |   3 +
+>  tools/perf/util/session.c             |   8 +
+>  tools/perf/util/tool.h                |   5 +-
+>  20 files changed, 769 insertions(+), 5 deletions(-)
+>  create mode 100644 tools/perf/util/bpf-event.c
+>  create mode 100644 tools/perf/util/bpf-event.h
+> 
+> --
+> 2.17.1
 
-Yes, you get the information about whether something was in the cache
-or not, so the side channel does exist to some degree.
+-- 
 
-But it's actually hugely reduced for a rather important reason: the
-_primary_ reason for needing to know whether some page is in the cache
-or not is not actually to see if it was ever accessed - it's to see
-that the cache has been scrubbed (and to _guide_ the scrubbing), and
-*when* it was accessed.
-
-Think of it this way: the buffer cache residency is actually a
-horribly bad signal on its own mainly because you generally have a
-very high hit-rate. In most normal non-streaming situations with
-sufficient amounts of memory you have pretty much everything cached.
-
-So in order to use it as a signal, first you have to first scrub the
-cache (because if the page was already there, there's no signal at
-all), and then for the signal to be as useful as possible, you're also
-going to want to try to get out more than one bit of information: you
-are going to try to see the patterns and the timings of how it gets
-filled.
-
-And that's actually quite painful. You don't know the initial cache
-state, and you're not (in general) controlling the machine entirely,
-because there's also that actual other entity that you're trying to
-attack and see what it does.
-
-So what you want to do is basically to first make sure the cache is
-scrubbed (only for the pages you're interested in!), then trigger
-whatever behavior you are looking for, and then look how that affected
-the cache.
-
-In other words,  you want *multiple* residency status check - first to
-see what the cache state is (because you're going to want that for
-scrubbing), then to see that "yes, it's gone" when doing the
-scrubbing, and then to see the *pattern* and timings of how things are
-brought in.
-
-And then you're likely to want to do this over and over again, so that
-you can get real data out of the signal.
-
-This is why something that doesn't perturb what you measure is really
-important. If the act of measurement brings the page in, then you
-can't use it for that "did I successfully scrub it" phase at all, and
-you can't use it for measurement but once, so your view into patterns
-and timings is going to be *much* worse.
-
-And notice that this is true even if the act of measurement only
-affects the *one* page you're measuring. Sure, any additional noise
-around it would likely be annoying too, but it's not really necessary
-to make the attack much harder to carry out. In fact, it's almost
-irrelevant, since the signal you're trying to *see* is going to be
-affected by prefetching etc too, so the patterns and timings you need
-to look at are in bigger chunks than the readahead thing.
-
-So yes, you as an attacker can remove the prefetching from *your*
-load, but you can't remove it from the target load anyway, so you'll
-just have to live with it.
-
-Can you brute-force scrubbing? Yes. For something like an L1 cache,
-that's easy (well, QoS domains make it harder). For something like a
-disk cache, it's much harder, and makes any attempt to read out state
-a lot slower. The paper that started this all uses mincore() not just
-to see "is the page now scrubbed", but also to guide the scrubbing
-itself (working set estimation etc).
-
-And note that in many ways, the *scrubbing* is really the harder part.
-Populating the cache is really easy: just read the data you want to
-populate.
-
-So if you are looking for a particular signal, say "did this error
-case trigger so that it faulted in *that* piece of information", you'd
-want to scrub the target, populate everything else, and then try to
-measure at "did I trigger that target". Except you wouldn't want to do
-it one page at a time but see as much pattern of "they were touched in
-this order" as you can, and you'd like to get timing information of
-how the pages you are interested were populated too.
-
-And you'd generally do this over and over and over again because
-you're trying to read out some signal.
-
-Notice what the expensive operation was? It's the scrubbing.The "did
-the target do IO" you might actually even see other ways for the
-trivial cases, like even just look at iostat: just pre-populate
-everything but the part you care about, then try to trigger whatever
-you're searching for, and see if it caused IO or not.
-
-So it's a bit like a chalkboard: in order to read out the result, you
-need to erase it first, and doing that blindly is nasty. And you want
-to look at timings, which is also really nasty if every time you look,
-you smudge the very place you looked at. It makes it hard to see what
-somebody else is writing on the board if you're always overwriting
-what you just looked at. Did you get some new information? If not, now
-you have to go back and do that scrubbing again, and you'll likely be
-missing what *else* the person wrote.
-
-Ans as always: there is no "black and white". There is no "absolute
-security", and similarly, there is no "absolute leak proof". It's all
-about making it inconvenient enough that it's not really practical.
-
-                 Linus
+- Arnaldo
