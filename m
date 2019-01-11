@@ -2,138 +2,343 @@ Return-Path: <SRS0=uvhX=PT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ADC2EC43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 01:18:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 86CDCC43444
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 01:18:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7E98D2173B
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 01:18:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 51D4320872
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 01:18:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729231AbfAKBSe (ORCPT
+        id S1729289AbfAKBSw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 10 Jan 2019 20:18:34 -0500
-Received: from mail.cn.fujitsu.com ([183.91.158.132]:36724 "EHLO
-        heian.cn.fujitsu.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726369AbfAKBSd (ORCPT
+        Thu, 10 Jan 2019 20:18:52 -0500
+Received: from mailgw01.mediatek.com ([210.61.82.183]:46734 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726369AbfAKBSv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Jan 2019 20:18:33 -0500
-X-IronPort-AV: E=Sophos;i="5.56,463,1539619200"; 
-   d="scan'208";a="51751907"
-Received: from unknown (HELO cn.fujitsu.com) ([10.167.33.5])
-  by heian.cn.fujitsu.com with ESMTP; 11 Jan 2019 09:18:32 +0800
-Received: from G08CNEXCHPEKD01.g08.fujitsu.local (unknown [10.167.33.80])
-        by cn.fujitsu.com (Postfix) with ESMTP id A4B154BAD7CC;
-        Fri, 11 Jan 2019 09:18:32 +0800 (CST)
-Received: from localhost.localdomain (10.167.225.56) by
- G08CNEXCHPEKD01.g08.fujitsu.local (10.167.33.89) with Microsoft SMTP Server
- (TLS) id 14.3.408.0; Fri, 11 Jan 2019 09:18:32 +0800
-Date:   Fri, 11 Jan 2019 09:17:36 +0800
-From:   Chao Fan <fanc.fnst@cn.fujitsu.com>
-To:     Borislav Petkov <bp@alien8.de>
-CC:     <linux-kernel@vger.kernel.org>, <x86@kernel.org>,
-        <tglx@linutronix.de>, <mingo@redhat.com>, <hpa@zytor.com>,
-        <keescook@chromium.org>, <bhe@redhat.com>, <msys.mizuma@gmail.com>,
-        <indou.takao@jp.fujitsu.com>, <caoj.fnst@cn.fujitsu.com>
-Subject: Re: [PATCH v15 2/6] x86/boot: Introduce get_acpi_rsdp() to parse
- RSDP in cmdline from KEXEC
-Message-ID: <20190111011736.GC2216@localhost.localdomain>
-References: <20190107032243.25324-1-fanc.fnst@cn.fujitsu.com>
- <20190107032243.25324-3-fanc.fnst@cn.fujitsu.com>
- <20190110170103.GF17621@zn.tnic>
+        Thu, 10 Jan 2019 20:18:51 -0500
+X-UUID: a40104ff98954846a198be59a53b4740-20190111
+X-UUID: a40104ff98954846a198be59a53b4740-20190111
+Received: from mtkcas09.mediatek.inc [(172.21.101.178)] by mailgw01.mediatek.com
+        (envelope-from <long.cheng@mediatek.com>)
+        (mhqrelay.mediatek.com ESMTP with TLS)
+        with ESMTP id 1260820821; Fri, 11 Jan 2019 09:18:46 +0800
+Received: from MTKMBS06N1.mediatek.inc (172.21.101.129) by
+ mtkmbs08n1.mediatek.inc (172.21.101.55) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Fri, 11 Jan 2019 09:18:45 +0800
+Received: from MTKCAS32.mediatek.inc (172.27.4.184) by mtkmbs06n1.mediatek.inc
+ (172.21.101.129) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Fri, 11 Jan
+ 2019 09:18:44 +0800
+Received: from [10.17.3.153] (10.17.3.153) by MTKCAS32.mediatek.inc
+ (172.27.4.170) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Fri, 11 Jan 2019 09:18:43 +0800
+Message-ID: <1547169522.3831.47.camel@mhfsdcap03>
+Subject: Re: [PATCH v9 1/2] dmaengine: 8250_mtk_dma: add MediaTek uart DMA
+ support
+From:   Long Cheng <long.cheng@mediatek.com>
+To:     Vinod Koul <vkoul@kernel.org>
+CC:     Randy Dunlap <rdunlap@infradead.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Ryder Lee <ryder.lee@mediatek.com>,
+        "Sean Wang" <sean.wang@kernel.org>,
+        Nicolas Boichat <drinkcat@chromium.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jslaby@suse.com>,
+        Sean Wang <sean.wang@mediatek.com>,
+        <dmaengine@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <linux-serial@vger.kernel.org>,
+        <srv_heupstream@mediatek.com>,
+        Yingjoe Chen <yingjoe.chen@mediatek.com>,
+        "YT Shen" <yt.shen@mediatek.com>,
+        Zhenbao Liu <zhenbao.liu@mediatek.com>,
+        "Long Cheng" <long.cheng@mediatek.com>
+Date:   Fri, 11 Jan 2019 09:18:42 +0800
+In-Reply-To: <1547116431.3831.43.camel@mhfsdcap03>
+References: <1546395178-8880-1-git-send-email-long.cheng@mediatek.com>
+         <1546395178-8880-2-git-send-email-long.cheng@mediatek.com>
+         <20190104171953.GQ13372@vkoul-mobl.Dlink>
+         <1547116431.3831.43.camel@mhfsdcap03>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.2.3-0ubuntu6 
+Content-Transfer-Encoding: 7bit
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20190110170103.GF17621@zn.tnic>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Originating-IP: [10.167.225.56]
-X-yoursite-MailScanner-ID: A4B154BAD7CC.ADA73
-X-yoursite-MailScanner: Found to be clean
-X-yoursite-MailScanner-From: fanc.fnst@cn.fujitsu.com
+X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jan 10, 2019 at 06:01:03PM +0100, Borislav Petkov wrote:
->On Mon, Jan 07, 2019 at 11:22:39AM +0800, Chao Fan wrote:
->> KASLR may randomly choose some positions which are located in movable
->> memory regions. This will make the movable memory chosen by KASLR
->> can't be removed.
->> 
->> Memory information in SRAT is necessary to fix the conflict between
->> KASLR and memory-hotremove.
->> 
->> ACPI SRAT (System/Static Resource Affinity Table) shows the details
->> about memory ranges, including ranges of memory provided by hot-added
->> memory devices. SRAT is introduced by Root System Description
->> Pointer(RSDP). So RSDP should be found firstly.
->> 
->> When booting form KEXEC/EFI/BIOS, the methods to find RSDP
->> are different. When booting from KEXEC, 'acpi_rsdp=' may have been
->> added to cmdline, so parse cmdline to find RSDP.
->> 
->> Signed-off-by: Chao Fan <fanc.fnst@cn.fujitsu.com>
->> ---
->>  arch/x86/boot/compressed/acpi.c | 30 ++++++++++++++++++++++++++++++
->>  1 file changed, 30 insertions(+)
->>  create mode 100644 arch/x86/boot/compressed/acpi.c
->> 
->> diff --git a/arch/x86/boot/compressed/acpi.c b/arch/x86/boot/compressed/acpi.c
->> new file mode 100644
->> index 000000000000..7ca5001d7639
->> --- /dev/null
->> +++ b/arch/x86/boot/compressed/acpi.c
->> @@ -0,0 +1,30 @@
->> +// SPDX-License-Identifier: GPL-2.0
->> +#define BOOT_CTYPE_H
->> +#include "misc.h"
->> +#include "error.h"
->> +#include "../string.h"
->> +
->> +#include <linux/acpi.h>
->
->Ok, I corrected it to this, please replace in your version:
->
->/*
-> * Max length of 64-bit hex address string is 19, prefix "0x" + 16 hex
-> * digits, and '\0' for termination.
-> */
->#define MAX_ADDR_LEN 19
->
->static acpi_physical_address get_acpi_rsdp(void)
->{
->	acpi_physical_address addr = 0;
->
->#ifdef CONFIG_KEXEC
->	char val[MAX_ADDR_LEN] = { };
->	int ret;
->
->	ret = cmdline_find_option("acpi_rsdp", val, MAX_ADDR_LEN);
->	if (ret < 0)
->		return 0;
->
->	if (kstrtoull(val, 16, &addr))
->		return 0;
->#endif
->	return addr;
->}
->
+On Thu, 2019-01-10 at 18:33 +0800, Long Cheng wrote:
+fix spell error
 
-Thanks for your suggestion, will change it.
+> On Fri, 2019-01-04 at 22:49 +0530, Vinod Koul wrote:
+> > On 02-01-19, 10:12, Long Cheng wrote:
+> > > In DMA engine framework, add 8250 uart dma to support MediaTek uart.
+> > > If MediaTek uart enabled(SERIAL_8250_MT6577), and want to improve
+> > > the performance, can enable the function.
+> > 
+> > Is the DMA controller UART specific, can it work with other controllers
+> > as well, if so you should get rid of uart name in patch
+> > 
+> 
+> I don't know that it can work or not on other controller. but it's for
+> MediaTek SOC
+> 
+> > > +#define MTK_UART_APDMA_CHANNELS		(CONFIG_SERIAL_8250_NR_UARTS * 2)
+> > 
+> > Why are the channels not coming from DT?
+> > 
+> 
+> i will using dma-requests install of it.
+> 
+i will using 'dma-requests' instead of it.
 
-Thanks,
-Chao Fan
+> > > +
+> > > +#define VFF_EN_B		BIT(0)
+> > > +#define VFF_STOP_B		BIT(0)
+> > > +#define VFF_FLUSH_B		BIT(0)
+> > > +#define VFF_4G_SUPPORT_B	BIT(0)
+> > > +#define VFF_RX_INT_EN0_B	BIT(0)	/*rx valid size >=  vff thre*/
+> > > +#define VFF_RX_INT_EN1_B	BIT(1)
+> > > +#define VFF_TX_INT_EN_B		BIT(0)	/*tx left size >= vff thre*/
+> > 
+> > space around /* space */ also run checkpatch to check for style errors
+> > 
+> 
+> ok.
+> 
+> > > +static void mtk_uart_apdma_start_tx(struct mtk_chan *c)
+> > > +{
+> > > +	unsigned int len, send, left, wpt, d_wpt, tmp;
+> > > +	int ret;
+> > > +
+> > > +	left = mtk_uart_apdma_read(c, VFF_LEFT_SIZE);
+> > > +	if (!left) {
+> > > +		mtk_uart_apdma_write(c, VFF_INT_EN, VFF_TX_INT_EN_B);
+> > > +		return;
+> > > +	}
+> > > +
+> > > +	/* Wait 1sec for flush,  can't sleep*/
+> > > +	ret = readx_poll_timeout(readl, c->base + VFF_FLUSH, tmp,
+> > > +			tmp != VFF_FLUSH_B, 0, 1000000);
+> > > +	if (ret)
+> > > +		dev_warn(c->vc.chan.device->dev, "tx: fail, debug=0x%x\n",
+> > > +			mtk_uart_apdma_read(c, VFF_DEBUG_STATUS));
+> > > +
+> > > +	send = min_t(unsigned int, left, c->desc->avail_len);
+> > > +	wpt = mtk_uart_apdma_read(c, VFF_WPT);
+> > > +	len = mtk_uart_apdma_read(c, VFF_LEN);
+> > > +
+> > > +	d_wpt = wpt + send;
+> > > +	if ((d_wpt & VFF_RING_SIZE) >= len) {
+> > > +		d_wpt = d_wpt - len;
+> > > +		d_wpt = d_wpt ^ VFF_RING_WRAP;
+> > > +	}
+> > > +	mtk_uart_apdma_write(c, VFF_WPT, d_wpt);
+> > > +
+> > > +	c->desc->avail_len -= send;
+> > > +
+> > > +	mtk_uart_apdma_write(c, VFF_INT_EN, VFF_TX_INT_EN_B);
+> > > +	if (mtk_uart_apdma_read(c, VFF_FLUSH) == 0U)
+> > > +		mtk_uart_apdma_write(c, VFF_FLUSH, VFF_FLUSH_B);
+> > > +}
+> > > +
+> > > +static void mtk_uart_apdma_start_rx(struct mtk_chan *c)
+> > > +{
+> > > +	struct mtk_uart_apdma_desc *d = c->desc;
+> > > +	unsigned int len, wg, rg, cnt;
+> > > +
+> > > +	if ((mtk_uart_apdma_read(c, VFF_VALID_SIZE) == 0U) ||
+> > > +		!d || !vchan_next_desc(&c->vc))
+> > > +		return;
+> > > +
+> > > +	len = mtk_uart_apdma_read(c, VFF_LEN);
+> > > +	rg = mtk_uart_apdma_read(c, VFF_RPT);
+> > > +	wg = mtk_uart_apdma_read(c, VFF_WPT);
+> > > +	if ((rg ^ wg) & VFF_RING_WRAP)
+> > > +		cnt = (wg & VFF_RING_SIZE) + len - (rg & VFF_RING_SIZE);
+> > > +	else
+> > > +		cnt = (wg & VFF_RING_SIZE) - (rg & VFF_RING_SIZE);
+> > > +
+> > > +	c->rx_status = cnt;
+> > > +	mtk_uart_apdma_write(c, VFF_RPT, wg);
+> > > +
+> > > +	list_del(&d->vd.node);
+> > > +	vchan_cookie_complete(&d->vd);
+> > > +}
+> > 
+> > this looks odd, why do you have different rx and tx start routines?
+> > 
+> 
+> Would you like explain it in more detail? thanks.
+> In tx function, will wait the last data flush done. and the count the
+> size that send.
+> In Rx function, will count the size that receive.
+> Any way, in rx / tx, need andle WPT or RPT.
+> 
+Any way, in rx / tx, need handle WPT or RPT.
 
->
->-- 
->Regards/Gruss,
->    Boris.
->
->Good mailing practices for 400: avoid top-posting and trim the reply.
->
->
+> > > +static int mtk_uart_apdma_alloc_chan_resources(struct dma_chan *chan)
+> > > +{
+> > > +	struct mtk_uart_apdmadev *mtkd = to_mtk_uart_apdma_dev(chan->device);
+> > > +	struct mtk_chan *c = to_mtk_uart_apdma_chan(chan);
+> > > +	u32 tmp;
+> > > +	int ret;
+> > > +
+> > > +	pm_runtime_get_sync(mtkd->ddev.dev);
+> > > +
+> > > +	mtk_uart_apdma_write(c, VFF_ADDR, 0);
+> > > +	mtk_uart_apdma_write(c, VFF_THRE, 0);
+> > > +	mtk_uart_apdma_write(c, VFF_LEN, 0);
+> > > +	mtk_uart_apdma_write(c, VFF_RST, VFF_WARM_RST_B);
+> > > +
+> > > +	ret = readx_poll_timeout(readl, c->base + VFF_EN, tmp,
+> > > +			tmp == 0, 10, 100);
+> > > +	if (ret) {
+> > > +		dev_err(chan->device->dev, "dma reset: fail, timeout\n");
+> > > +		return ret;
+> > > +	}
+> > 
+> > register read does reset?
+> > 
+> 
+> 'mtk_uart_apdma_write(c, VFF_RST, VFF_WARM_RST_B);' is reset. resd just
+> poll reset done.
+> 
+> > > +
+> > > +	if (!c->requested) {
+> > > +		c->requested = true;
+> > > +		ret = request_irq(mtkd->dma_irq[chan->chan_id],
+> > > +				  mtk_uart_apdma_irq_handler, IRQF_TRIGGER_NONE,
+> > > +				  KBUILD_MODNAME, chan);
+> > 
+> > why is the irq not requested in driver probe?
+> > 
+> 
+> I have explained in below,
+> http://lists.infradead.org/pipermail/linux-mediatek/2018-December/016418.html
+> 
+> > > +static enum dma_status mtk_uart_apdma_tx_status(struct dma_chan *chan,
+> > > +					 dma_cookie_t cookie,
+> > > +					 struct dma_tx_state *txstate)
+> > > +{
+> > > +	struct mtk_chan *c = to_mtk_uart_apdma_chan(chan);
+> > > +	enum dma_status ret;
+> > > +	unsigned long flags;
+> > > +
+> > > +	if (!txstate)
+> > > +		return DMA_ERROR;
+> > > +
+> > > +	ret = dma_cookie_status(chan, cookie, txstate);
+> > > +	spin_lock_irqsave(&c->vc.lock, flags);
+> > > +	if (ret == DMA_IN_PROGRESS) {
+> > > +		c->rx_status = mtk_uart_apdma_read(c, VFF_RPT) & VFF_RING_SIZE;
+> > > +		dma_set_residue(txstate, c->rx_status);
+> > > +	} else if (ret == DMA_COMPLETE && c->cfg.direction == DMA_DEV_TO_MEM) {
+> > 
+> > why set reside when it is complete? also reside can be null, that should
+> > be checked as well
+> > 
+> In different status, set different reside.
+> 
+> > > +static struct dma_async_tx_descriptor *mtk_uart_apdma_prep_slave_sg
+> > > +	(struct dma_chan *chan, struct scatterlist *sgl,
+> > > +	unsigned int sglen, enum dma_transfer_direction dir,
+> > > +	unsigned long tx_flags, void *context)
+> > > +{
+> > > +	struct mtk_chan *c = to_mtk_uart_apdma_chan(chan);
+> > > +	struct mtk_uart_apdma_desc *d;
+> > > +
+> > > +	if ((dir != DMA_DEV_TO_MEM) &&
+> > > +		(dir != DMA_MEM_TO_DEV)) {
+> > > +		dev_err(chan->device->dev, "bad direction\n");
+> > > +		return NULL;
+> > > +	}
+> > 
+> > we have a macro for this
+> 
+> Thanks for your suggestion. i will modify it.
+> > 
+> > > +
+> > > +	/* Now allocate and setup the descriptor */
+> > > +	d = kzalloc(sizeof(*d), GFP_ATOMIC);
+> > > +	if (!d)
+> > > +		return NULL;
+> > > +
+> > > +	/* sglen is 1 */
+> > 
+> > ?
+> > 
+> > > +static int mtk_uart_apdma_slave_config(struct dma_chan *chan,
+> > > +				struct dma_slave_config *cfg)
+> > > +{
+> > > +	struct mtk_chan *c = to_mtk_uart_apdma_chan(chan);
+> > > +	struct mtk_uart_apdmadev *mtkd =
+> > > +				to_mtk_uart_apdma_dev(c->vc.chan.device);
+> > > +
+> > > +	c->cfg = *cfg;
+> > > +
+> > > +	if (cfg->direction == DMA_DEV_TO_MEM) {
+> > 
+> > fg->direction is deprecated, in fact I have removed all users recently,
+> > please do not use this
+> 
+> You will remove 'direction' in 'struct dma_slave_config'? if remove, how
+> do confirm direction?
+> 
+> > 
+> > > +		unsigned int rx_len = cfg->src_addr_width * 1024;
+> > > +
+> > > +		mtk_uart_apdma_write(c, VFF_ADDR, cfg->src_addr);
+> > > +		mtk_uart_apdma_write(c, VFF_LEN, rx_len);
+> > > +		mtk_uart_apdma_write(c, VFF_THRE, VFF_RX_THRE(rx_len));
+> > > +		mtk_uart_apdma_write(c, VFF_INT_EN,
+> > > +				VFF_RX_INT_EN0_B | VFF_RX_INT_EN1_B);
+> > > +		mtk_uart_apdma_write(c, VFF_RPT, 0);
+> > > +		mtk_uart_apdma_write(c, VFF_INT_FLAG, VFF_RX_INT_FLAG_CLR_B);
+> > > +		mtk_uart_apdma_write(c, VFF_EN, VFF_EN_B);
+> > 
+> > why are we writing this here, we are supposed to do that when txn
+> > starts!
+> > 
+> 
+> also you can review the link
+> http://lists.infradead.org/pipermail/linux-mediatek/2018-December/016418.html
+> 
+> > > +static int mtk_uart_apdma_device_resume(struct dma_chan *chan)
+> > > +{
+> > > +	/* just for check caps pass */
+> > > +	return 0;
+> > > +}
+> > 
+> > if you do not support this please remove this!
+> > 
+> > > +static void mtk_uart_apdma_free(struct mtk_uart_apdmadev *mtkd)
+> > > +{
+> > > +	while (list_empty(&mtkd->ddev.channels) == 0) {
+> > > +		struct mtk_chan *c = list_first_entry(&mtkd->ddev.channels,
+> > > +			struct mtk_chan, vc.chan.device_node);
+> > > +
+> > > +		list_del(&c->vc.chan.device_node);
+> > > +		tasklet_kill(&c->vc.task);
+> > > +	}
+> > > +}
+> > > +
+> > > +static const struct of_device_id mtk_uart_apdma_match[] = {
+> > > +	{ .compatible = "mediatek,mt6577-uart-dma", },
+> > 
+> > where is the binding document for ediatek,mt6577-uart-dma ??
+> > 
+> 
+> http://lists.infradead.org/pipermail/linux-mediatek/2018-December/016154.html
+> 
 
 
