@@ -7,47 +7,49 @@ X-Spam-Status: No, score=-10.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 04FC7C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:41:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CEA81C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:41:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C114A218AF
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:41:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9F551206B6
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:41:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547217673;
-	bh=hX3hanhUoo1HvL5EwTpWprH5Ayn34TJwEXoOXuIcalA=;
+	s=default; t=1547217676;
+	bh=9EH/BuI1qT7BNmO0SFPLIzOeYvhtQel8qalD2WkM9Ew=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=PVtdiwoQxEYMrPrTiasjNCHy3NuTAJbtiDeKOHdvZOBK6sByFYb/rMj2k9JQfmy0U
-	 21/zYAialDRWe7MqTko14g0SNoN7RcjvOQeQDfXH0OzTOHMeDv7wpDAXPqhAIBU3ur
-	 vKIuO4Ps6/hh8qXjdjg8c9X2fr/hy7F5XmxcHVqw=
+	b=iJ8yaqoSoBftYECA2ZFHXlsxJ07GOc1fB9SBif4CiX1LDTTarcCtshII6ZoxSWN00
+	 lqUr8iPxUSz/mrVEd9yHrUATOQA8FhnOZ9IH7pmuuFV+BgXAYREp7M+ClNH4HGZDAA
+	 J1R7h0LruUeMHCNxuUTFTLbOplT0B0UCJyO0mW4A=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2403986AbfAKOlM (ORCPT
+        id S2387577AbfAKOlQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 11 Jan 2019 09:41:12 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33820 "EHLO mail.kernel.org"
+        Fri, 11 Jan 2019 09:41:16 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33868 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2403758AbfAKOlJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Jan 2019 09:41:09 -0500
+        id S2403979AbfAKOlL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 Jan 2019 09:41:11 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CB5332133F;
-        Fri, 11 Jan 2019 14:41:07 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 51CC32063F;
+        Fri, 11 Jan 2019 14:41:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547217668;
-        bh=hX3hanhUoo1HvL5EwTpWprH5Ayn34TJwEXoOXuIcalA=;
+        s=default; t=1547217670;
+        bh=9EH/BuI1qT7BNmO0SFPLIzOeYvhtQel8qalD2WkM9Ew=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=NRDVEfqhr27eYMJS4bohNjywCjP7GS7V7hnlRAQgDliAv4FZiFIkNsKUJSXzze8e0
-         P5Vf+tEyC8oa1J8cT52OXNGkg9lumRRixBrzccmomWYx7Fk6swTIYkZm4JrnpQKGnl
-         uFFWuaWvKlk6c8Jl8F4RwMAUpysA8TtbEDW8ZWF8=
+        b=i7y4zbxzJB5Xu6DyKGSN9m5GKmODulGCPN9Kbm0oGgDBHRBBo4h+fDp8xJTN7oMmP
+         t5vhG7zjUe7bKENFZp9KwpGb2nCJuU/6Dh4XfHKB/7ITx8TtOru4RbC1EYZ54NAn4o
+         rAdXmzI5MsamN8O36N/Zyueer+XbdqNuGYF0OH3o=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Mathias Payer <mathias.payer@nebelwelt.net>,
-        Hui Peng <benquike@163.com>, Takashi Iwai <tiwai@suse.de>
-Subject: [PATCH 4.19 108/148] ALSA: usb-audio: Always check descriptor sizes in parser code
-Date:   Fri, 11 Jan 2019 15:14:46 +0100
-Message-Id: <20190111131118.531077775@linuxfoundation.org>
+        stable@vger.kernel.org, Bart Van Assche <bvanassche@acm.org>,
+        Christoph Hellwig <hch@infradead.org>,
+        Sebastian Kuzminsky <seb.kuzminsky@gmail.com>,
+        Dennis Krein <Dennis.Krein@netapp.com>,
+        "Paul E. McKenney" <paulmck@linux.ibm.com>
+Subject: [PATCH 4.19 109/148] srcu: Lock srcu_data structure in srcu_gp_start()
+Date:   Fri, 11 Jan 2019 15:14:47 +0100
+Message-Id: <20190111131118.571242496@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190111131114.337122649@linuxfoundation.org>
 References: <20190111131114.337122649@linuxfoundation.org>
@@ -66,167 +68,48 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Takashi Iwai <tiwai@suse.de>
+From: Dennis Krein <Dennis.Krein@netapp.com>
 
-commit 3e96d7280f16e2f787307f695a31296b9e4a1cd7 upstream.
+commit eb4c2382272ae7ae5d81fdfa5b7a6c86146eaaa4 upstream.
 
-There are a few places where we access the data without checking the
-actual object size from the USB audio descriptor.  This may result in
-OOB access, as recently reported.
+The srcu_gp_start() function is called with the srcu_struct structure's
+->lock held, but not with the srcu_data structure's ->lock.  This is
+problematic because this function accesses and updates the srcu_data
+structure's ->srcu_cblist, which is protected by that lock.  Failing to
+hold this lock can result in corruption of the SRCU callback lists,
+which in turn can result in arbitrarily bad results.
 
-This patch addresses these missing checks.  Most of added codes are
-simple bLength checks in the caller side.  For the input and output
-terminal parsers, we put the length check in the parser functions.
-For the input terminal, a new argument is added to distinguish between
-UAC1 and the rest, as they treat different objects.
+This commit therefore makes srcu_gp_start() acquire the srcu_data
+structure's ->lock across the calls to rcu_segcblist_advance() and
+rcu_segcblist_accelerate(), thus preventing this corruption.
 
-Reported-by: Mathias Payer <mathias.payer@nebelwelt.net>
-Reported-by: Hui Peng <benquike@163.com>
-Tested-by: Hui Peng <benquike@163.com>
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
+Reported-by: Bart Van Assche <bvanassche@acm.org>
+Reported-by: Christoph Hellwig <hch@infradead.org>
+Reported-by: Sebastian Kuzminsky <seb.kuzminsky@gmail.com>
+Signed-off-by: Dennis Krein <Dennis.Krein@netapp.com>
+Signed-off-by: Paul E. McKenney <paulmck@linux.ibm.com>
+Tested-by: Dennis Krein <Dennis.Krein@netapp.com>
+Cc: <stable@vger.kernel.org> # 4.16.x
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- sound/usb/card.c   |    2 +-
- sound/usb/mixer.c  |    4 ++++
- sound/usb/stream.c |   36 +++++++++++++++++++++++++-----------
- 3 files changed, 30 insertions(+), 12 deletions(-)
+ kernel/rcu/srcutree.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/sound/usb/card.c
-+++ b/sound/usb/card.c
-@@ -246,7 +246,7 @@ static int snd_usb_create_streams(struct
- 		h1 = snd_usb_find_csint_desc(host_iface->extra,
- 							 host_iface->extralen,
- 							 NULL, UAC_HEADER);
--		if (!h1) {
-+		if (!h1 || h1->bLength < sizeof(*h1)) {
- 			dev_err(&dev->dev, "cannot find UAC_HEADER\n");
- 			return -EINVAL;
- 		}
---- a/sound/usb/mixer.c
-+++ b/sound/usb/mixer.c
-@@ -2075,11 +2075,15 @@ static int parse_audio_input_terminal(st
+--- a/kernel/rcu/srcutree.c
++++ b/kernel/rcu/srcutree.c
+@@ -448,10 +448,12 @@ static void srcu_gp_start(struct srcu_st
  
- 	if (state->mixer->protocol == UAC_VERSION_2) {
- 		struct uac2_input_terminal_descriptor *d_v2 = raw_desc;
-+		if (d_v2->bLength < sizeof(*d_v2))
-+			return -EINVAL;
- 		control = UAC2_TE_CONNECTOR;
- 		term_id = d_v2->bTerminalID;
- 		bmctls = le16_to_cpu(d_v2->bmControls);
- 	} else if (state->mixer->protocol == UAC_VERSION_3) {
- 		struct uac3_input_terminal_descriptor *d_v3 = raw_desc;
-+		if (d_v3->bLength < sizeof(*d_v3))
-+			return -EINVAL;
- 		control = UAC3_TE_INSERTION;
- 		term_id = d_v3->bTerminalID;
- 		bmctls = le32_to_cpu(d_v3->bmControls);
---- a/sound/usb/stream.c
-+++ b/sound/usb/stream.c
-@@ -596,12 +596,8 @@ static int parse_uac_endpoint_attributes
- 		csep = snd_usb_find_desc(alts->extra, alts->extralen, NULL, USB_DT_CS_ENDPOINT);
- 
- 	if (!csep || csep->bLength < 7 ||
--	    csep->bDescriptorSubtype != UAC_EP_GENERAL) {
--		usb_audio_warn(chip,
--			       "%u:%d : no or invalid class specific endpoint descriptor\n",
--			       iface_no, altsd->bAlternateSetting);
--		return 0;
--	}
-+	    csep->bDescriptorSubtype != UAC_EP_GENERAL)
-+		goto error;
- 
- 	if (protocol == UAC_VERSION_1) {
- 		attributes = csep->bmAttributes;
-@@ -609,6 +605,8 @@ static int parse_uac_endpoint_attributes
- 		struct uac2_iso_endpoint_descriptor *csep2 =
- 			(struct uac2_iso_endpoint_descriptor *) csep;
- 
-+		if (csep2->bLength < sizeof(*csep2))
-+			goto error;
- 		attributes = csep->bmAttributes & UAC_EP_CS_ATTR_FILL_MAX;
- 
- 		/* emulate the endpoint attributes of a v1 device */
-@@ -618,12 +616,20 @@ static int parse_uac_endpoint_attributes
- 		struct uac3_iso_endpoint_descriptor *csep3 =
- 			(struct uac3_iso_endpoint_descriptor *) csep;
- 
-+		if (csep3->bLength < sizeof(*csep3))
-+			goto error;
- 		/* emulate the endpoint attributes of a v1 device */
- 		if (le32_to_cpu(csep3->bmControls) & UAC2_CONTROL_PITCH)
- 			attributes |= UAC_EP_CS_ATTR_PITCH_CONTROL;
- 	}
- 
- 	return attributes;
-+
-+ error:
-+	usb_audio_warn(chip,
-+		       "%u:%d : no or invalid class specific endpoint descriptor\n",
-+		       iface_no, altsd->bAlternateSetting);
-+	return 0;
- }
- 
- /* find an input terminal descriptor (either UAC1 or UAC2) with the given
-@@ -631,13 +637,17 @@ static int parse_uac_endpoint_attributes
-  */
- static void *
- snd_usb_find_input_terminal_descriptor(struct usb_host_interface *ctrl_iface,
--					       int terminal_id)
-+				       int terminal_id, bool uac23)
- {
- 	struct uac2_input_terminal_descriptor *term = NULL;
-+	size_t minlen = uac23 ? sizeof(struct uac2_input_terminal_descriptor) :
-+		sizeof(struct uac_input_terminal_descriptor);
- 
- 	while ((term = snd_usb_find_csint_desc(ctrl_iface->extra,
- 					       ctrl_iface->extralen,
- 					       term, UAC_INPUT_TERMINAL))) {
-+		if (term->bLength < minlen)
-+			continue;
- 		if (term->bTerminalID == terminal_id)
- 			return term;
- 	}
-@@ -655,7 +665,8 @@ snd_usb_find_output_terminal_descriptor(
- 	while ((term = snd_usb_find_csint_desc(ctrl_iface->extra,
- 					       ctrl_iface->extralen,
- 					       term, UAC_OUTPUT_TERMINAL))) {
--		if (term->bTerminalID == terminal_id)
-+		if (term->bLength >= sizeof(*term) &&
-+		    term->bTerminalID == terminal_id)
- 			return term;
- 	}
- 
-@@ -729,7 +740,8 @@ snd_usb_get_audioformat_uac12(struct snd
- 		format = le16_to_cpu(as->wFormatTag); /* remember the format value */
- 
- 		iterm = snd_usb_find_input_terminal_descriptor(chip->ctrl_intf,
--							     as->bTerminalLink);
-+							       as->bTerminalLink,
-+							       false);
- 		if (iterm) {
- 			num_channels = iterm->bNrChannels;
- 			chconfig = le16_to_cpu(iterm->wChannelConfig);
-@@ -764,7 +776,8 @@ snd_usb_get_audioformat_uac12(struct snd
- 		 * to extract the clock
- 		 */
- 		input_term = snd_usb_find_input_terminal_descriptor(chip->ctrl_intf,
--								    as->bTerminalLink);
-+								    as->bTerminalLink,
-+								    true);
- 		if (input_term) {
- 			clock = input_term->bCSourceID;
- 			if (!chconfig && (num_channels == input_term->bNrChannels))
-@@ -998,7 +1011,8 @@ snd_usb_get_audioformat_uac3(struct snd_
- 	 * to extract the clock
- 	 */
- 	input_term = snd_usb_find_input_terminal_descriptor(chip->ctrl_intf,
--							    as->bTerminalLink);
-+							    as->bTerminalLink,
-+							    true);
- 	if (input_term) {
- 		clock = input_term->bCSourceID;
- 		goto found_clock;
+ 	lockdep_assert_held(&ACCESS_PRIVATE(sp, lock));
+ 	WARN_ON_ONCE(ULONG_CMP_GE(sp->srcu_gp_seq, sp->srcu_gp_seq_needed));
++	spin_lock_rcu_node(sdp);  /* Interrupts already disabled. */
+ 	rcu_segcblist_advance(&sdp->srcu_cblist,
+ 			      rcu_seq_current(&sp->srcu_gp_seq));
+ 	(void)rcu_segcblist_accelerate(&sdp->srcu_cblist,
+ 				       rcu_seq_snap(&sp->srcu_gp_seq));
++	spin_unlock_rcu_node(sdp);  /* Interrupts remain disabled. */
+ 	smp_mb(); /* Order prior store to ->srcu_gp_seq_needed vs. GP start. */
+ 	rcu_seq_start(&sp->srcu_gp_seq);
+ 	state = rcu_seq_state(READ_ONCE(sp->srcu_gp_seq));
 
 
