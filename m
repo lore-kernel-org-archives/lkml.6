@@ -2,51 +2,53 @@ Return-Path: <SRS0=uvhX=PT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-13.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B479C43444
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:29:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 12E57C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:29:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E8EAD2063F
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:29:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D58672177B
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:29:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547216951;
-	bh=IB/ZMhD12UTPdiYCk306BqaKB8gl7TFw2uvgaLCll3k=;
+	s=default; t=1547216953;
+	bh=zy5FmxTgWBVoVa9ZUo5FbYJEpz3Oawf0N9Wj+TpNheI=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=tF7HX+YBFFv2zf9JHIYthYDCv+MJNMf3JIF6alUdwq0eIMC7YrDUQbh2n9IbwRriU
-	 ZDrRcQM3xWn4hqrYl0j03MZE4RIydaK4Cv0RPQtXUpS93dKaPDcgM5bQ9F/oVNEVNC
-	 6ROd+VvWzJJFIqungOgJNzxo0i4NzRDjWhep0yW0=
+	b=t49u/1P+8rrcRbrVIvVR7Sug9sArkwsburnkEPBJARanA1flf7yQ8fUMtbY50iGIY
+	 P+zRLnYEqog33tHBkin+No6A5husY7nHlJwn5cMy0dAPEJTwdhtsX33cfgTRTs4V3t
+	 2fkxO2/ktBXTGSO7zcp//QWM0I+29QIN9dJiW2KA=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388244AbfAKO3J (ORCPT
+        id S2388248AbfAKO3M (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 11 Jan 2019 09:29:09 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47954 "EHLO mail.kernel.org"
+        Fri, 11 Jan 2019 09:29:12 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48018 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388647AbfAKO3E (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Jan 2019 09:29:04 -0500
+        id S2388658AbfAKO3I (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 Jan 2019 09:29:08 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D64282177B;
-        Fri, 11 Jan 2019 14:29:03 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id BD0132063F;
+        Fri, 11 Jan 2019 14:29:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547216944;
-        bh=IB/ZMhD12UTPdiYCk306BqaKB8gl7TFw2uvgaLCll3k=;
+        s=default; t=1547216947;
+        bh=zy5FmxTgWBVoVa9ZUo5FbYJEpz3Oawf0N9Wj+TpNheI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=e8xAQ2Lornsz/7/mWtZ4rgJymo4loFrvBnqlBx3bu8VlGdIziC2KPfIR1aPNGACVd
-         AQ9e/Y/G9L1ZJnnBaIhwmDEp58q8fVOx2NJiHoJ6awiI3e5vhwEZZNeT5PtlCTJ97q
-         CMnOnDhvv9vRJug9YEIsxeEEuoCa4zg7Yignw/p8=
+        b=LSJtWxm2RuSITCgQ0CHUknL/6GLYYhP2u22T1NyP6r7hYCA9zdRzP8tgtp8HoJEbP
+         yQznp3xkeBtOq8ZkqlIPsknRC9ZAgqgUv5CS1P1DAEy4YnZSWVxmmLWxAygQ9ZuXWw
+         tvJxpzNmcklJW0DYWiaUR6/tDAjGKBMrnWdqUH1E=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Vasily Averin <vvs@virtuozzo.com>,
-        David Teigland <teigland@redhat.com>, stable@kernel.org
-Subject: [PATCH 4.9 48/63] dlm: fixed memory leaks after failed ls_remove_names allocation
-Date:   Fri, 11 Jan 2019 15:14:51 +0100
-Message-Id: <20190111131053.424691682@linuxfoundation.org>
+        stable@vger.kernel.org, Yonglong Liu <liuyonglong@huawei.com>,
+        Peng Li <lipeng321@huawei.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.9 22/63] net: hns: Fixed bug that netdev was opened twice
+Date:   Fri, 11 Jan 2019 15:14:25 +0100
+Message-Id: <20190111131049.337962467@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190111131046.387528003@linuxfoundation.org>
 References: <20190111131046.387528003@linuxfoundation.org>
@@ -65,40 +67,74 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Vasily Averin <vvs@virtuozzo.com>
+[ Upstream commit 5778b13b64eca5549d242686f2f91a2c80c8fa40 ]
 
-commit b982896cdb6e6a6b89d86dfb39df489d9df51e14 upstream.
+After resetting dsaf to try to repair chip error such as ecc error,
+the net device will be open if net interface is up. But at this time
+if there is the users set the net device up with the command ifconfig,
+the net device will be opened twice consecutively.
 
-If allocation fails on last elements of array need to free already
-allocated elements.
+Function napi_enable was called when open device. And Kernel panic will
+be occurred if it was called twice consecutively. Such as follow:
+static inline void napi_enable(struct napi_struct *n)
+{
+         BUG_ON(!test_bit(NAPI_STATE_SCHED, &n->state));
+         smp_mb__before_clear_bit();
+         clear_bit(NAPI_STATE_SCHED, &n->state);
+}
 
-v2: just move existing out_rsbtbl label to right place
+[37255.571996] Kernel panic - not syncing: BUG!
+[37255.595234] Call trace:
+[37255.597694] [<ffff80000008ab48>] dump_backtrace+0x0/0x1a0
+[37255.603114] [<ffff80000008ad08>] show_stack+0x20/0x28
+[37255.608187] [<ffff8000009c4944>] dump_stack+0x98/0xb8
+[37255.613258] [<ffff8000009c149c>] panic+0x10c/0x26c
+[37255.618070] [<ffff80000070f134>] hns_nic_net_up+0x30c/0x4e0
+[37255.623664] [<ffff80000070f39c>] hns_nic_net_open+0x94/0x12c
+[37255.629346] [<ffff80000084be78>] __dev_open+0xf4/0x168
+[37255.634504] [<ffff80000084c1ac>] __dev_change_flags+0x98/0x15c
+[37255.640359] [<ffff80000084c29c>] dev_change_flags+0x2c/0x68
+[37255.769580] [<ffff8000008dc400>] devinet_ioctl+0x650/0x704
+[37255.775086] [<ffff8000008ddc38>] inet_ioctl+0x98/0xb4
+[37255.780159] [<ffff800000827b7c>] sock_do_ioctl+0x44/0x84
+[37255.785490] [<ffff800000828e04>] sock_ioctl+0x248/0x30c
+[37255.790737] [<ffff80000026dc6c>] do_vfs_ioctl+0x480/0x618
+[37255.796156] [<ffff80000026de94>] SyS_ioctl+0x90/0xa4
+[37255.801139] SMP: stopping secondary CPUs
+[37255.805079] kbox: catch panic event.
+[37255.809586] collected_len = 128928, LOG_BUF_LEN_LOCAL = 131072
+[37255.816103] flush cache 0xffff80003f000000  size 0x800000
+[37255.822192] flush cache 0xffff80003f000000  size 0x800000
+[37255.828289] flush cache 0xffff80003f000000  size 0x800000
+[37255.834378] kbox: no notify die func register. no need to notify
+[37255.840413] ---[ end Kernel panic - not syncing: BUG!
 
-Fixes 789924ba635f ("dlm: fix race between remove and lookup")
-Cc: stable@kernel.org # 3.6
+This patchset fix this bug according to the flag NIC_STATE_DOWN.
 
-Signed-off-by: Vasily Averin <vvs@virtuozzo.com>
-Signed-off-by: David Teigland <teigland@redhat.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Signed-off-by: Yonglong Liu <liuyonglong@huawei.com>
+Signed-off-by: Peng Li <lipeng321@huawei.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/dlm/lockspace.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/net/ethernet/hisilicon/hns/hns_enet.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
---- a/fs/dlm/lockspace.c
-+++ b/fs/dlm/lockspace.c
-@@ -673,11 +673,11 @@ static int new_lockspace(const char *nam
- 	kfree(ls->ls_recover_buf);
-  out_lkbidr:
- 	idr_destroy(&ls->ls_lkbidr);
-+ out_rsbtbl:
- 	for (i = 0; i < DLM_REMOVE_NAMES_MAX; i++) {
- 		if (ls->ls_remove_names[i])
- 			kfree(ls->ls_remove_names[i]);
- 	}
-- out_rsbtbl:
- 	vfree(ls->ls_rsbtbl);
-  out_lsfree:
- 	if (do_unreg)
+diff --git a/drivers/net/ethernet/hisilicon/hns/hns_enet.c b/drivers/net/ethernet/hisilicon/hns/hns_enet.c
+index 12d90c04931b..d96a64bc1db8 100644
+--- a/drivers/net/ethernet/hisilicon/hns/hns_enet.c
++++ b/drivers/net/ethernet/hisilicon/hns/hns_enet.c
+@@ -1238,6 +1238,9 @@ static int hns_nic_net_up(struct net_device *ndev)
+ 	int i, j;
+ 	int ret;
+ 
++	if (!test_bit(NIC_STATE_DOWN, &priv->state))
++		return 0;
++
+ 	ret = hns_nic_init_irq(priv);
+ 	if (ret != 0) {
+ 		netdev_err(ndev, "hns init irq failed! ret=%d\n", ret);
+-- 
+2.19.1
+
 
 
