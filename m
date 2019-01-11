@@ -7,48 +7,46 @@ X-Spam-Status: No, score=-10.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 480D1C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:42:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D6033C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:42:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 178D82184A
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:42:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A55842184A
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:42:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547217750;
-	bh=XywuONYUbvnpLPhto4LEM6fqvo8oSzWFxY/v/QPWoPA=;
+	s=default; t=1547217753;
+	bh=ya2H4zafnSXs90y/RmLA4RALINQUHsB9vrFMJBbUwsg=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=QNrZW1x1UIDH8v0ALjA/M1d81QgFyYk3IeHX0GRfYHw82kSLuW30g9Myp9fQ6y/0v
-	 uxeh2MXtOy7ZuneB8Yn281iLm/vyqSNhUz5buAZx8BX39nMIKbmSlkl/FeBmZA7p0d
-	 XjjTTS8hINaISVt+ZKc52HxUxgf5hOpkr7O+nyYc=
+	b=r7EwnCddiOkTMtGUtpsQ6pTJBbY7QXn4G9Bti/nggqMTgbIkSeV0+O9hi9ePkqV8N
+	 S/DXQJEzfvy4ap6wG3vidotJMRR9ci6uK1Uc8WCSqc4qUNRaGYU3p+y5j38iNPbZTy
+	 AWdSdD3ZbtGAFbB5dhNfoGD2FkhFVqnRPOdWjvsU=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404170AbfAKOm2 (ORCPT
+        id S2404181AbfAKOmd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 11 Jan 2019 09:42:28 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35186 "EHLO mail.kernel.org"
+        Fri, 11 Jan 2019 09:42:33 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35238 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404157AbfAKOm0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Jan 2019 09:42:26 -0500
+        id S2404166AbfAKOm3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 Jan 2019 09:42:29 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0FAA520872;
-        Fri, 11 Jan 2019 14:42:24 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C0209206B6;
+        Fri, 11 Jan 2019 14:42:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547217745;
-        bh=XywuONYUbvnpLPhto4LEM6fqvo8oSzWFxY/v/QPWoPA=;
+        s=default; t=1547217748;
+        bh=ya2H4zafnSXs90y/RmLA4RALINQUHsB9vrFMJBbUwsg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=U0zWScB/H1cd+Qv2ouZBjHcQ8E553G7NHZ4ajRqpDMC0bl/7uAsTKjQIwjYycZkP8
-         anxfMEpjYsPbhYhls+HIyDS4Pqets5AnsOASVsgwDs5rqxkmOg2Z6Bv9nxyc/YtEtg
-         anz/3JAnNyLg36pNYmMb0pgO7Q38BKCFsiWN21hk=
+        b=IF2TqD4mlkbvnnUwE0xhnUZUuuyBAAFPyAIK51eSSIHJHOGUccE206VZ4wqyuMn6i
+         J5M6lfIdjfcgWpE/mX1f/wyH41aSJwjniRqVoa2jgrzen+Grm9d2rAQbhsVgNmMt/S
+         7uTn3Ag9i8tuFvtyb4UeIMVlhZzrKgp33Ws8Oa+k=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Matthew Wilcox <willy@infradead.org>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH 4.20 25/65] Fix failure path in alloc_pid()
-Date:   Fri, 11 Jan 2019 15:15:11 +0100
-Message-Id: <20190111131059.825870605@linuxfoundation.org>
+        stable@vger.kernel.org, Paolo Valente <paolo.valente@linaro.org>,
+        Ming Lei <ming.lei@redhat.com>, Jens Axboe <axboe@kernel.dk>
+Subject: [PATCH 4.20 26/65] block: deactivate blk_stat timer in wbt_disable_default()
+Date:   Fri, 11 Jan 2019 15:15:12 +0100
+Message-Id: <20190111131059.971083279@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190111131055.331350141@linuxfoundation.org>
 References: <20190111131055.331350141@linuxfoundation.org>
@@ -67,40 +65,96 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Matthew Wilcox <willy@infradead.org>
+From: Ming Lei <ming.lei@redhat.com>
 
-commit 1a80dade010c7a7f4885a4c4c2a7ac22cc7b34df upstream.
+commit 544fbd16a461a318cd80537d1331c0df5c6cf930 upstream.
 
-The failure path removes the allocated PIDs from the wrong namespace.
-This could lead to us inadvertently reusing PIDs in the leaf namespace
-and leaking PIDs in parent namespaces.
+rwb_enabled() can't be changed when there is any inflight IO.
 
-Fixes: 95846ecf9dac ("pid: replace pid bitmap implementation with IDR API")
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Matthew Wilcox <willy@infradead.org>
-Acked-by: "Eric W. Biederman" <ebiederm@xmission.com>
-Reviewed-by: Oleg Nesterov <oleg@redhat.com>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+wbt_disable_default() may set rwb->wb_normal as zero, however the
+blk_stat timer may still be pending, and the timer function will update
+wrb->wb_normal again.
+
+This patch introduces blk_stat_deactivate() and applies it in
+wbt_disable_default(), then the following IO hang triggered when running
+parted & switching io scheduler can be fixed:
+
+[  369.937806] INFO: task parted:3645 blocked for more than 120 seconds.
+[  369.938941]       Not tainted 4.20.0-rc6-00284-g906c801e5248 #498
+[  369.939797] "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+[  369.940768] parted          D    0  3645   3239 0x00000000
+[  369.941500] Call Trace:
+[  369.941874]  ? __schedule+0x6d9/0x74c
+[  369.942392]  ? wbt_done+0x5e/0x5e
+[  369.942864]  ? wbt_cleanup_cb+0x16/0x16
+[  369.943404]  ? wbt_done+0x5e/0x5e
+[  369.943874]  schedule+0x67/0x78
+[  369.944298]  io_schedule+0x12/0x33
+[  369.944771]  rq_qos_wait+0xb5/0x119
+[  369.945193]  ? karma_partition+0x1c2/0x1c2
+[  369.945691]  ? wbt_cleanup_cb+0x16/0x16
+[  369.946151]  wbt_wait+0x85/0xb6
+[  369.946540]  __rq_qos_throttle+0x23/0x2f
+[  369.947014]  blk_mq_make_request+0xe6/0x40a
+[  369.947518]  generic_make_request+0x192/0x2fe
+[  369.948042]  ? submit_bio+0x103/0x11f
+[  369.948486]  ? __radix_tree_lookup+0x35/0xb5
+[  369.949011]  submit_bio+0x103/0x11f
+[  369.949436]  ? blkg_lookup_slowpath+0x25/0x44
+[  369.949962]  submit_bio_wait+0x53/0x7f
+[  369.950469]  blkdev_issue_flush+0x8a/0xae
+[  369.951032]  blkdev_fsync+0x2f/0x3a
+[  369.951502]  do_fsync+0x2e/0x47
+[  369.951887]  __x64_sys_fsync+0x10/0x13
+[  369.952374]  do_syscall_64+0x89/0x149
+[  369.952819]  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+[  369.953492] RIP: 0033:0x7f95a1e729d4
+[  369.953996] Code: Bad RIP value.
+[  369.954456] RSP: 002b:00007ffdb570dd48 EFLAGS: 00000246 ORIG_RAX: 000000000000004a
+[  369.955506] RAX: ffffffffffffffda RBX: 000055c2139c6be0 RCX: 00007f95a1e729d4
+[  369.956389] RDX: 0000000000000001 RSI: 0000000000001261 RDI: 0000000000000004
+[  369.957325] RBP: 0000000000000002 R08: 0000000000000000 R09: 000055c2139c6ce0
+[  369.958199] R10: 0000000000000000 R11: 0000000000000246 R12: 000055c2139c0380
+[  369.959143] R13: 0000000000000004 R14: 0000000000000100 R15: 0000000000000008
+
+Cc: stable@vger.kernel.org
+Cc: Paolo Valente <paolo.valente@linaro.org>
+Signed-off-by: Ming Lei <ming.lei@redhat.com>
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- kernel/pid.c |    6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ block/blk-stat.h |    5 +++++
+ block/blk-wbt.c  |    4 +++-
+ 2 files changed, 8 insertions(+), 1 deletion(-)
 
---- a/kernel/pid.c
-+++ b/kernel/pid.c
-@@ -233,8 +233,10 @@ out_unlock:
+--- a/block/blk-stat.h
++++ b/block/blk-stat.h
+@@ -145,6 +145,11 @@ static inline void blk_stat_activate_nse
+ 	mod_timer(&cb->timer, jiffies + nsecs_to_jiffies(nsecs));
+ }
  
- out_free:
- 	spin_lock_irq(&pidmap_lock);
--	while (++i <= ns->level)
--		idr_remove(&ns->idr, (pid->numbers + i)->nr);
-+	while (++i <= ns->level) {
-+		upid = pid->numbers + i;
-+		idr_remove(&upid->ns->idr, upid->nr);
++static inline void blk_stat_deactivate(struct blk_stat_callback *cb)
++{
++	del_timer_sync(&cb->timer);
++}
++
+ /**
+  * blk_stat_activate_msecs() - Gather block statistics during a time window in
+  * milliseconds.
+--- a/block/blk-wbt.c
++++ b/block/blk-wbt.c
+@@ -760,8 +760,10 @@ void wbt_disable_default(struct request_
+ 	if (!rqos)
+ 		return;
+ 	rwb = RQWB(rqos);
+-	if (rwb->enable_state == WBT_STATE_ON_DEFAULT)
++	if (rwb->enable_state == WBT_STATE_ON_DEFAULT) {
++		blk_stat_deactivate(rwb->cb);
+ 		rwb->wb_normal = 0;
 +	}
+ }
+ EXPORT_SYMBOL_GPL(wbt_disable_default);
  
- 	/* On failure to allocate the first pid, reset the state */
- 	if (ns->pid_allocated == PIDNS_ADDING)
 
 
