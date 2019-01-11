@@ -6,47 +6,52 @@ X-Spam-Status: No, score=-10.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 955EAC43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:15:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 39544C43444
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:15:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 64ED720874
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:15:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F30FF217D6
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:15:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547216116;
-	bh=fYi8dyqE9YKcazkjTKDUboTRSbEf+2q0mI4AuU7cRH0=;
+	s=default; t=1547216120;
+	bh=21PnQIyCanr20JrZ6oVVADLWkIBKOgHEnYAw8AbjNuE=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=m2mcrHwt3y0E2+lpoDd5GZD99VJaP5vtMsb4BlXfMKVk4zR3ZNOdPszZ3eD+6TEdp
-	 b6tzErdZe7tK/aUOxbqCiX21kqSRG2Xin7UR4/71ghSWJ6YtZ9zWCpGXlOv8DMBSLi
-	 KPKztD1w+2dIiPs6Su5QEqlW7cTR2DtnEdj03Mk0=
+	b=J7mwtuGAJIsNJTLNydRrgLgvDsHMXObTdJywq3qpSbWehk+f3vZm5GsjjTojmhsDJ
+	 7SxOZOHjAOi9uDawKluLNMLE5+ClhvhNArwf1GvgOEPVhcneKj1bRLDrbD0wnNkDVB
+	 ZzuhOkTW7zvK3sP5kfnz5n/W2wid8O9u6Y23Hkd0=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733257AbfAKOPO (ORCPT
+        id S1733277AbfAKOPT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 11 Jan 2019 09:15:14 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59230 "EHLO mail.kernel.org"
+        Fri, 11 Jan 2019 09:15:19 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59334 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1733238AbfAKOPL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Jan 2019 09:15:11 -0500
+        id S1733261AbfAKOPQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 Jan 2019 09:15:16 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 29DC2217D6;
-        Fri, 11 Jan 2019 14:15:10 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3AA2A2177B;
+        Fri, 11 Jan 2019 14:15:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547216110;
-        bh=fYi8dyqE9YKcazkjTKDUboTRSbEf+2q0mI4AuU7cRH0=;
+        s=default; t=1547216115;
+        bh=21PnQIyCanr20JrZ6oVVADLWkIBKOgHEnYAw8AbjNuE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=W/okXtP5xxUE95lWDR4vv4eq+0B2G74LoynaOO5ApddovlbJaijSXsDFX9OLO2Ayz
-         O8B5WV5rpXN+lVa7QSje1rQyY23YQVQ0JtmbVYD06je6BWoyqawMMjW53KDA1hTbi2
-         H3rZtuGeIyXo1I83QnpUw1wpdvnHZJ0mebVuTzXA=
+        b=w6/KIMf53bbTZE/mVQIcpVGaMM3Gl6bkSXl1V4Ah/q6BJCU8rEcaZuU09I23f1D0u
+         4LHgibTOhcFUmU914lbud47ghN25IoqXDfVoPfYsIVOcOiJOqihMJ+iphJPv1+Ab7E
+         zv2UjrYgRrj/bbHmynxctdFl6+c7RcTIR4jfBG80=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Macpaul Lin <macpaul.lin@mediatek.com>,
-        Johan Hovold <johan@kernel.org>,
-        Oliver Neukum <oneukum@suse.com>
-Subject: [PATCH 3.18 26/47] cdc-acm: fix abnormal DATA RX issue for Mediatek Preloader.
-Date:   Fri, 11 Jan 2019 15:08:11 +0100
-Message-Id: <20190111130959.422855289@linuxfoundation.org>
+        stable@vger.kernel.org, James Hogan <jhogan@kernel.org>,
+        Huacai Chen <chenhc@lemote.com>,
+        Paul Burton <paul.burton@mips.com>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        James Hogan <james.hogan@mips.com>,
+        "Steven J . Hill" <Steven.Hill@cavium.com>,
+        linux-mips@linux-mips.org, Fuxin Zhang <zhangfx@lemote.com>,
+        Zhangjin Wu <wuzhangjin@gmail.com>
+Subject: [PATCH 3.18 28/47] MIPS: Ensure pmd_present() returns false after pmd_mknotpresent()
+Date:   Fri, 11 Jan 2019 15:08:13 +0100
+Message-Id: <20190111130959.707527952@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190111130956.170952125@linuxfoundation.org>
 References: <20190111130956.170952125@linuxfoundation.org>
@@ -65,80 +70,44 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Macpaul Lin <macpaul.lin@mediatek.com>
+From: Huacai Chen <chenhc@lemote.com>
 
-commit eafb27fa5283599ce6c5492ea18cf636a28222bb upstream.
+commit 92aa0718c9fa5160ad2f0e7b5bffb52f1ea1e51a upstream.
 
-Mediatek Preloader is a proprietary embedded boot loader for loading
-Little Kernel and Linux into device DRAM.
+This patch is borrowed from ARM64 to ensure pmd_present() returns false
+after pmd_mknotpresent(). This is needed for THP.
 
-This boot loader also handle firmware update. Mediatek Preloader will be
-enumerated as a virtual COM port when the device is connected to Windows
-or Linux OS via CDC-ACM class driver. When the USB enumeration has been
-done, Mediatek Preloader will send out handshake command "READY" to PC
-actively instead of waiting command from the download tool.
-
-Since Linux 4.12, the commit "tty: reset termios state on device
-registration" (93857edd9829e144acb6c7e72d593f6e01aead66) causes Mediatek
-Preloader receiving some abnoraml command like "READYXX" as it sent.
-This will be recognized as an incorrect response. The behavior change
-also causes the download handshake fail. This change only affects
-subsequent connects if the reconnected device happens to get the same minor
-number.
-
-By disabling the ECHO termios flag could avoid this problem. However, it
-cannot be done by user space configuration when download tool open
-/dev/ttyACM0. This is because the device running Mediatek Preloader will
-send handshake command "READY" immediately once the CDC-ACM driver is
-ready.
-
-This patch wants to fix above problem by introducing "DISABLE_ECHO"
-property in driver_info. When Mediatek Preloader is connected, the
-CDC-ACM driver could disable ECHO flag in termios to avoid the problem.
-
-Signed-off-by: Macpaul Lin <macpaul.lin@mediatek.com>
-Cc: stable@vger.kernel.org
-Reviewed-by: Johan Hovold <johan@kernel.org>
-Acked-by: Oliver Neukum <oneukum@suse.com>
+References: 5bb1cc0ff9a6 ("arm64: Ensure pmd_present() returns false after pmd_mknotpresent()")
+Reviewed-by: James Hogan <jhogan@kernel.org>
+Signed-off-by: Huacai Chen <chenhc@lemote.com>
+Signed-off-by: Paul Burton <paul.burton@mips.com>
+Patchwork: https://patchwork.linux-mips.org/patch/21135/
+Cc: Ralf Baechle <ralf@linux-mips.org>
+Cc: James Hogan <james.hogan@mips.com>
+Cc: Steven J . Hill <Steven.Hill@cavium.com>
+Cc: linux-mips@linux-mips.org
+Cc: Fuxin Zhang <zhangfx@lemote.com>
+Cc: Zhangjin Wu <wuzhangjin@gmail.com>
+Cc: <stable@vger.kernel.org> # 3.8+
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/usb/class/cdc-acm.c |   10 ++++++++++
- drivers/usb/class/cdc-acm.h |    1 +
- 2 files changed, 11 insertions(+)
+ arch/mips/include/asm/pgtable-64.h |    5 +++++
+ 1 file changed, 5 insertions(+)
 
---- a/drivers/usb/class/cdc-acm.c
-+++ b/drivers/usb/class/cdc-acm.c
-@@ -502,6 +502,13 @@ static int acm_tty_install(struct tty_dr
- 	if (retval)
- 		goto error_init_termios;
+--- a/arch/mips/include/asm/pgtable-64.h
++++ b/arch/mips/include/asm/pgtable-64.h
+@@ -189,6 +189,11 @@ static inline int pmd_bad(pmd_t pmd)
  
-+	/*
-+	 * Suppress initial echoing for some devices which might send data
-+	 * immediately after acm driver has been installed.
-+	 */
-+	if (acm->quirks & DISABLE_ECHO)
-+		tty->termios.c_lflag &= ~ECHO;
+ static inline int pmd_present(pmd_t pmd)
+ {
++#ifdef CONFIG_MIPS_HUGE_TLB_SUPPORT
++	if (unlikely(pmd_val(pmd) & _PAGE_HUGE))
++		return pmd_val(pmd) & _PAGE_PRESENT;
++#endif
 +
- 	tty->driver_data = acm;
+ 	return pmd_val(pmd) != (unsigned long) invalid_pte_table;
+ }
  
- 	return 0;
-@@ -1694,6 +1701,9 @@ static const struct usb_device_id acm_id
- 	{ USB_DEVICE(0x0e8d, 0x0003), /* FIREFLY, MediaTek Inc; andrey.arapov@gmail.com */
- 	.driver_info = NO_UNION_NORMAL, /* has no union descriptor */
- 	},
-+	{ USB_DEVICE(0x0e8d, 0x2000), /* MediaTek Inc Preloader */
-+	.driver_info = DISABLE_ECHO, /* DISABLE ECHO in termios flag */
-+	},
- 	{ USB_DEVICE(0x0e8d, 0x3329), /* MediaTek Inc GPS */
- 	.driver_info = NO_UNION_NORMAL, /* has no union descriptor */
- 	},
---- a/drivers/usb/class/cdc-acm.h
-+++ b/drivers/usb/class/cdc-acm.h
-@@ -135,3 +135,4 @@ struct acm {
- #define QUIRK_CONTROL_LINE_STATE	BIT(6)
- #define CLEAR_HALT_CONDITIONS		BIT(7)
- #define SEND_ZERO_PACKET		BIT(8)
-+#define DISABLE_ECHO			BIT(9)
 
 
