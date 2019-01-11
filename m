@@ -4,49 +4,52 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-10.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A95DDC43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:40:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A78E8C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:40:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6ED1F218B0
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:40:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 79D3C2133F
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:40:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547217628;
-	bh=Sfuiqqti5g9rkazo/6CT/4BMvuQuaqpMbbuJAGVpWrg=;
+	s=default; t=1547217631;
+	bh=UOdzwU+SPY92oRjHbsCbeqtGlHkhSteNjOpf+XoZmeI=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=lIV1bR0Kx/G15v/Rv2tF1pvvI27QqqZkia8BjjHQkx66FqDF4Hr/0vBYqFurSSDjT
-	 Hbbgx6b/oQ8MENesYzXXLqOV8H7RqiFoTLc/72dY3fBJD2TPPiBLZH8VFul9kw0Nuv
-	 DsL4f/r4PhW+Ko77S5/feYxFh4RWCbHuNYv0Asrg=
+	b=gpFqb+91pI8me8ad6ZP6EmztSeoGW6JKJc7p+FLaJksgWdVdZXdCr4/+eD+CNRM42
+	 ngWpjcUFZ18lz5eZIs1oaubKEGOH1nd5KlH2lN7pRN+g5YVqhWEsEkFIVOveJ9W94G
+	 SFjQPY4ZX4tzb5Fe/qf+CZOQ9hPFRex32aFccSVI=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391226AbfAKOk1 (ORCPT
+        id S2391237AbfAKOka (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 11 Jan 2019 09:40:27 -0500
-Received: from mail.kernel.org ([198.145.29.99]:32992 "EHLO mail.kernel.org"
+        Fri, 11 Jan 2019 09:40:30 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33062 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2391207AbfAKOkX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Jan 2019 09:40:23 -0500
+        id S2391207AbfAKOk2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 Jan 2019 09:40:28 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 03FAF206B6;
-        Fri, 11 Jan 2019 14:40:21 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B8308206B6;
+        Fri, 11 Jan 2019 14:40:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547217622;
-        bh=Sfuiqqti5g9rkazo/6CT/4BMvuQuaqpMbbuJAGVpWrg=;
+        s=default; t=1547217628;
+        bh=UOdzwU+SPY92oRjHbsCbeqtGlHkhSteNjOpf+XoZmeI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=0tpuSHXky9Io2bcRL0jLzrH82NvS5ASdrXt4qbnN34vcYhCyV06fV0KESADMLxJSE
-         zP0qgFeS4yMSKLBO0Jwvsay7283R6BxIJfFpUIIx5U7Kq5VbSvXCWFPRrO6uL8spgr
-         FR0chnrYGgPjiDu2c4Y80Ee+3cp1uZe+bYUGjfmE=
+        b=btpBoXUp3PYeZ2/aomEruqQhflwtm/rDSpThjf1SdtTlNtBDQGz9pTW8BuRX93TQR
+         QPgStjtl3HBL+bdkK4YdoAyH4CTbqibVRPx+vIyoEFa+YSaHlxd+2tEDHhb0cXPnRH
+         Z32HD2WifyT7rjxaaf4an20oFsu/m88nF9U2siRg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Breno Leitao <leitao@debian.org>,
-        Michael Ellerman <mpe@ellerman.id.au>
-Subject: [PATCH 4.19 129/148] powerpc/tm: Set MSR[TS] just prior to recheckpoint
-Date:   Fri, 11 Jan 2019 15:15:07 +0100
-Message-Id: <20190111131119.437264481@linuxfoundation.org>
+        stable@vger.kernel.org,
+        syzbot+0c1d61e4db7db94102ca@syzkaller.appspotmail.com,
+        Dominique Martinet <dominique.martinet@cea.fr>,
+        Eric Van Hensbergen <ericvh@gmail.com>,
+        Latchesar Ionkov <lucho@ionkov.net>
+Subject: [PATCH 4.19 131/148] 9p/net: put a lower bound on msize
+Date:   Fri, 11 Jan 2019 15:15:09 +0100
+Message-Id: <20190111131119.509618306@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190111131114.337122649@linuxfoundation.org>
 References: <20190111131114.337122649@linuxfoundation.org>
@@ -65,189 +68,81 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Breno Leitao <leitao@debian.org>
+From: Dominique Martinet <dominique.martinet@cea.fr>
 
-commit e1c3743e1a20647c53b719dbf28b48f45d23f2cd upstream.
+commit 574d356b7a02c7e1b01a1d9cba8a26b3c2888f45 upstream.
 
-On a signal handler return, the user could set a context with MSR[TS] bits
-set, and these bits would be copied to task regs->msr.
+If the requested msize is too small (either from command line argument
+or from the server version reply), we won't get any work done.
+If it's *really* too small, nothing will work, and this got caught by
+syzbot recently (on a new kmem_cache_create_usercopy() call)
 
-At restore_tm_sigcontexts(), after current task regs->msr[TS] bits are set,
-several __get_user() are called and then a recheckpoint is executed.
+Just set a minimum msize to 4k in both code paths, until someone
+complains they have a use-case for a smaller msize.
 
-This is a problem since a page fault (in kernel space) could happen when
-calling __get_user(). If it happens, the process MSR[TS] bits were
-already set, but recheckpoint was not executed, and SPRs are still invalid.
+We need to check in both mount option and server reply individually
+because the msize for the first version request would be unchecked
+with just a global check on clnt->msize.
 
-The page fault can cause the current process to be de-scheduled, with
-MSR[TS] active and without tm_recheckpoint() being called.  More
-importantly, without TEXASR[FS] bit set also.
-
-Since TEXASR might not have the FS bit set, and when the process is
-scheduled back, it will try to reclaim, which will be aborted because of
-the CPU is not in the suspended state, and, then, recheckpoint. This
-recheckpoint will restore thread->texasr into TEXASR SPR, which might be
-zero, hitting a BUG_ON().
-
-	kernel BUG at /build/linux-sf3Co9/linux-4.9.30/arch/powerpc/kernel/tm.S:434!
-	cpu 0xb: Vector: 700 (Program Check) at [c00000041f1576d0]
-	    pc: c000000000054550: restore_gprs+0xb0/0x180
-	    lr: 0000000000000000
-	    sp: c00000041f157950
-	   msr: 8000000100021033
-	  current = 0xc00000041f143000
-	  paca    = 0xc00000000fb86300	 softe: 0	 irq_happened: 0x01
-	    pid   = 1021, comm = kworker/11:1
-	kernel BUG at /build/linux-sf3Co9/linux-4.9.30/arch/powerpc/kernel/tm.S:434!
-	Linux version 4.9.0-3-powerpc64le (debian-kernel@lists.debian.org) (gcc version 6.3.0 20170516 (Debian 6.3.0-18) ) #1 SMP Debian 4.9.30-2+deb9u2 (2017-06-26)
-	enter ? for help
-	[c00000041f157b30] c00000000001bc3c tm_recheckpoint.part.11+0x6c/0xa0
-	[c00000041f157b70] c00000000001d184 __switch_to+0x1e4/0x4c0
-	[c00000041f157bd0] c00000000082eeb8 __schedule+0x2f8/0x990
-	[c00000041f157cb0] c00000000082f598 schedule+0x48/0xc0
-	[c00000041f157ce0] c0000000000f0d28 worker_thread+0x148/0x610
-	[c00000041f157d80] c0000000000f96b0 kthread+0x120/0x140
-	[c00000041f157e30] c00000000000c0e0 ret_from_kernel_thread+0x5c/0x7c
-
-This patch simply delays the MSR[TS] set, so, if there is any page fault in
-the __get_user() section, it does not have regs->msr[TS] set, since the TM
-structures are still invalid, thus avoiding doing TM operations for
-in-kernel exceptions and possible process reschedule.
-
-With this patch, the MSR[TS] will only be set just before recheckpointing
-and setting TEXASR[FS] = 1, thus avoiding an interrupt with TM registers in
-invalid state.
-
-Other than that, if CONFIG_PREEMPT is set, there might be a preemption just
-after setting MSR[TS] and before tm_recheckpoint(), thus, this block must
-be atomic from a preemption perspective, thus, calling
-preempt_disable/enable() on this code.
-
-It is not possible to move tm_recheckpoint to happen earlier, because it is
-required to get the checkpointed registers from userspace, with
-__get_user(), thus, the only way to avoid this undesired behavior is
-delaying the MSR[TS] set.
-
-The 32-bits signal handler seems to be safe this current issue, but, it
-might be exposed to the preemption issue, thus, disabling preemption in
-this chunk of code.
-
-Changes from v2:
- * Run the critical section with preempt_disable.
-
-Fixes: 87b4e5393af7 ("powerpc/tm: Fix return of active 64bit signals")
-Cc: stable@vger.kernel.org (v3.9+)
-Signed-off-by: Breno Leitao <leitao@debian.org>
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+Link: http://lkml.kernel.org/r/1541407968-31350-1-git-send-email-asmadeus@codewreck.org
+Reported-by: syzbot+0c1d61e4db7db94102ca@syzkaller.appspotmail.com
+Signed-off-by: Dominique Martinet <dominique.martinet@cea.fr>
+Cc: Eric Van Hensbergen <ericvh@gmail.com>
+Cc: Latchesar Ionkov <lucho@ionkov.net>
+Cc: stable@vger.kernel.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/powerpc/kernel/signal_32.c |   20 +++++++++++++++++-
- arch/powerpc/kernel/signal_64.c |   44 +++++++++++++++++++++++++++-------------
- 2 files changed, 49 insertions(+), 15 deletions(-)
+ net/9p/client.c |   21 +++++++++++++++++++++
+ 1 file changed, 21 insertions(+)
 
---- a/arch/powerpc/kernel/signal_32.c
-+++ b/arch/powerpc/kernel/signal_32.c
-@@ -848,7 +848,23 @@ static long restore_tm_user_regs(struct
- 	/* If TM bits are set to the reserved value, it's an invalid context */
- 	if (MSR_TM_RESV(msr_hi))
- 		return 1;
--	/* Pull in the MSR TM bits from the user context */
-+
-+	/*
-+	 * Disabling preemption, since it is unsafe to be preempted
-+	 * with MSR[TS] set without recheckpointing.
-+	 */
-+	preempt_disable();
-+
-+	/*
-+	 * CAUTION:
-+	 * After regs->MSR[TS] being updated, make sure that get_user(),
-+	 * put_user() or similar functions are *not* called. These
-+	 * functions can generate page faults which will cause the process
-+	 * to be de-scheduled with MSR[TS] set but without calling
-+	 * tm_recheckpoint(). This can cause a bug.
-+	 *
-+	 * Pull in the MSR TM bits from the user context
-+	 */
- 	regs->msr = (regs->msr & ~MSR_TS_MASK) | (msr_hi & MSR_TS_MASK);
- 	/* Now, recheckpoint.  This loads up all of the checkpointed (older)
- 	 * registers, including FP and V[S]Rs.  After recheckpointing, the
-@@ -873,6 +889,8 @@ static long restore_tm_user_regs(struct
- 	}
- #endif
- 
-+	preempt_enable();
-+
- 	return 0;
- }
- #endif
---- a/arch/powerpc/kernel/signal_64.c
-+++ b/arch/powerpc/kernel/signal_64.c
-@@ -467,20 +467,6 @@ static long restore_tm_sigcontexts(struc
- 	if (MSR_TM_RESV(msr))
- 		return -EINVAL;
- 
--	/* pull in MSR TS bits from user context */
--	regs->msr = (regs->msr & ~MSR_TS_MASK) | (msr & MSR_TS_MASK);
--
--	/*
--	 * Ensure that TM is enabled in regs->msr before we leave the signal
--	 * handler. It could be the case that (a) user disabled the TM bit
--	 * through the manipulation of the MSR bits in uc_mcontext or (b) the
--	 * TM bit was disabled because a sufficient number of context switches
--	 * happened whilst in the signal handler and load_tm overflowed,
--	 * disabling the TM bit. In either case we can end up with an illegal
--	 * TM state leading to a TM Bad Thing when we return to userspace.
--	 */
--	regs->msr |= MSR_TM;
--
- 	/* pull in MSR LE from user context */
- 	regs->msr = (regs->msr & ~MSR_LE) | (msr & MSR_LE);
- 
-@@ -572,6 +558,34 @@ static long restore_tm_sigcontexts(struc
- 	tm_enable();
- 	/* Make sure the transaction is marked as failed */
- 	tsk->thread.tm_texasr |= TEXASR_FS;
-+
-+	/*
-+	 * Disabling preemption, since it is unsafe to be preempted
-+	 * with MSR[TS] set without recheckpointing.
-+	 */
-+	preempt_disable();
-+
-+	/* pull in MSR TS bits from user context */
-+	regs->msr = (regs->msr & ~MSR_TS_MASK) | (msr & MSR_TS_MASK);
-+
-+	/*
-+	 * Ensure that TM is enabled in regs->msr before we leave the signal
-+	 * handler. It could be the case that (a) user disabled the TM bit
-+	 * through the manipulation of the MSR bits in uc_mcontext or (b) the
-+	 * TM bit was disabled because a sufficient number of context switches
-+	 * happened whilst in the signal handler and load_tm overflowed,
-+	 * disabling the TM bit. In either case we can end up with an illegal
-+	 * TM state leading to a TM Bad Thing when we return to userspace.
-+	 *
-+	 * CAUTION:
-+	 * After regs->MSR[TS] being updated, make sure that get_user(),
-+	 * put_user() or similar functions are *not* called. These
-+	 * functions can generate page faults which will cause the process
-+	 * to be de-scheduled with MSR[TS] set but without calling
-+	 * tm_recheckpoint(). This can cause a bug.
-+	 */
-+	regs->msr |= MSR_TM;
-+
- 	/* This loads the checkpointed FP/VEC state, if used */
- 	tm_recheckpoint(&tsk->thread);
- 
-@@ -585,6 +599,8 @@ static long restore_tm_sigcontexts(struc
- 		regs->msr |= MSR_VEC;
+--- a/net/9p/client.c
++++ b/net/9p/client.c
+@@ -181,6 +181,12 @@ static int parse_opts(char *opts, struct
+ 				ret = r;
+ 				continue;
+ 			}
++			if (option < 4096) {
++				p9_debug(P9_DEBUG_ERROR,
++					 "msize should be at least 4k\n");
++				ret = -EINVAL;
++				continue;
++			}
+ 			clnt->msize = option;
+ 			break;
+ 		case Opt_trans:
+@@ -993,10 +999,18 @@ static int p9_client_version(struct p9_c
+ 	else if (!strncmp(version, "9P2000", 6))
+ 		c->proto_version = p9_proto_legacy;
+ 	else {
++		p9_debug(P9_DEBUG_ERROR,
++			 "server returned an unknown version: %s\n", version);
+ 		err = -EREMOTEIO;
+ 		goto error;
  	}
  
-+	preempt_enable();
++	if (msize < 4096) {
++		p9_debug(P9_DEBUG_ERROR,
++			 "server returned a msize < 4096: %d\n", msize);
++		err = -EREMOTEIO;
++		goto error;
++	}
+ 	if (msize < c->msize)
+ 		c->msize = msize;
+ 
+@@ -1055,6 +1069,13 @@ struct p9_client *p9_client_create(const
+ 	if (clnt->msize > clnt->trans_mod->maxsize)
+ 		clnt->msize = clnt->trans_mod->maxsize;
+ 
++	if (clnt->msize < 4096) {
++		p9_debug(P9_DEBUG_ERROR,
++			 "Please specify a msize of at least 4k\n");
++		err = -EINVAL;
++		goto free_client;
++	}
 +
- 	return err;
- }
- #endif
+ 	err = p9_client_version(clnt);
+ 	if (err)
+ 		goto close_trans;
 
 
