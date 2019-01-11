@@ -4,52 +4,51 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-13.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 18073C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:30:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 96456C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:30:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CF4F62177B
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:30:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6769E21841
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:30:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547217034;
-	bh=z4LqGmBoy30rZQLy0uaq+xAE8xqapRA4NAxvKhA+8yo=;
+	s=default; t=1547217038;
+	bh=AA/oXHHoWq48NNIY3LVcr5cXUukA083FZgQ5gVjdM90=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=wy6jL5vULHlKfBxVG0AM2kQ8UcVyNXuGw0yonKAz+hI/SwGDJhQ5mPJD5htzYMXgL
-	 U3uu5MW/Ym9n2NKysCHq9QEReektHpT+0+HDi0ITlErO9blMfBYFpapqSJrEPCy8Xb
-	 ETDDFHX0dA/q/UeaFlXc4y7FjiTPXq5nVKN0ka00=
+	b=2rmfi0r6Khs9Mxg3ByTcFjNGjuB9bQpapqQmLbNX86CG95/dx143BPdB1BTW92j0O
+	 9uZDitVNRtOYN3jGb93R+6jQDr5w7f1lUcNKP3YUmyJL+ReGiSsJq1Y4wXboKg2Q0i
+	 XVjx9nQ2hg9AqCnvxDoCIDK8QCkt2r7BVXPBP5zI=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388974AbfAKOad (ORCPT
+        id S2388987AbfAKOah (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 11 Jan 2019 09:30:33 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49754 "EHLO mail.kernel.org"
+        Fri, 11 Jan 2019 09:30:37 -0500
+Received: from mail.kernel.org ([198.145.29.99]:49702 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388925AbfAKOa0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Jan 2019 09:30:26 -0500
+        id S2387535AbfAKOaY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 Jan 2019 09:30:24 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BFBBD2063F;
-        Fri, 11 Jan 2019 14:30:25 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4455D2133F;
+        Fri, 11 Jan 2019 14:30:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547217026;
-        bh=z4LqGmBoy30rZQLy0uaq+xAE8xqapRA4NAxvKhA+8yo=;
+        s=default; t=1547217023;
+        bh=AA/oXHHoWq48NNIY3LVcr5cXUukA083FZgQ5gVjdM90=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=DQm7ODKNaxRGDWiLduxIlqZq9zjXQsqmQ8k2yKCSu9WBN7DnncRoEDP0exwFLc1JP
-         T2mlEJv+GdT6PeG46sUtMSqFjwl8rpupe2ELwTB4LgYyuDOYFFBeeOUj4E3GGMsjtZ
-         cVFoMIiDlgUN8+IwJz1oJJTbesJ9D8qV/mGgNdhw=
+        b=DCPvvTyUC1lCLKXKME4QntezeT6G0KhopxQDlLsK+eA82KDWQTaH06uFunt7Ibo2z
+         9rSIwSb6M9EDG72Pyds/QkIlQVbjH6+2KahJKz9WQOZxV9pTkcyXH8lNaPcHchTboX
+         97bKcN1MzbEXxlHbVUF5b0XqR2VT6TzyBRVvlr8Q=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
-        Yussuf Khalil <dev@pp3345.net>,
+        stable@vger.kernel.org, Pavel Machek <pavel@ucw.cz>,
+        Tony Lindgren <tony@atomide.com>,
         Dmitry Torokhov <dmitry.torokhov@gmail.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 015/105] Input: synaptics - enable RMI on ThinkPad T560
-Date:   Fri, 11 Jan 2019 15:13:46 +0100
-Message-Id: <20190111131104.471698079@linuxfoundation.org>
+Subject: [PATCH 4.14 014/105] Input: omap-keypad - fix idle configuration to not block SoC idle states
+Date:   Fri, 11 Jan 2019 15:13:45 +0100
+Message-Id: <20190111131104.361364164@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190111131102.899065735@linuxfoundation.org>
 References: <20190111131102.899065735@linuxfoundation.org>
@@ -68,33 +67,80 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit ca5047286c9c93a01e1f471d00a6019536992954 ]
+[ Upstream commit e2ca26ec4f01486661b55b03597c13e2b9c18b73 ]
 
-Before commit 7fd6d98b89f3 ("i2c: i801: Allow ACPI AML access I/O
-ports not reserved for SMBus"), enabling RMI on the T560 would cause
-the touchpad to stop working after resuming from suspend. Now that
-this issue is fixed, RMI can be enabled safely and works fine.
+With PM enabled, I noticed that pressing a key on the droid4 keyboard will
+block deeper idle states for the SoC. Let's fix this by using IRQF_ONESHOT
+and stop constantly toggling the device OMAP4_KBD_IRQENABLE register as
+suggested by Dmitry Torokhov <dmitry.torokhov@gmail.com>.
 
-Reviewed-by: Benjamin Tissoires <benjamin.tissoires@redhat.com>
-Signed-off-by: Yussuf Khalil <dev@pp3345.net>
+>From the hardware point of view, looks like we need to manage the registers
+for OMAP4_KBD_IRQENABLE and OMAP4_KBD_WAKEUPENABLE together to avoid
+blocking deeper SoC idle states. And with toggling of OMAP4_KBD_IRQENABLE
+register now gone with IRQF_ONESHOT, also the SoC idle state problem is
+gone during runtime. We still also need to clear OMAP4_KBD_WAKEUPENABLE in
+omap4_keypad_close() though to pair it with omap4_keypad_open() to prevent
+blocking deeper SoC idle states after rmmod omap4-keypad.
+
+Reported-by: Pavel Machek <pavel@ucw.cz>
+Signed-off-by: Tony Lindgren <tony@atomide.com>
 Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/input/mouse/synaptics.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/input/keyboard/omap4-keypad.c | 16 ++++------------
+ 1 file changed, 4 insertions(+), 12 deletions(-)
 
-diff --git a/drivers/input/mouse/synaptics.c b/drivers/input/mouse/synaptics.c
-index 54f0d037b5b6..515a0b0d48bf 100644
---- a/drivers/input/mouse/synaptics.c
-+++ b/drivers/input/mouse/synaptics.c
-@@ -171,6 +171,7 @@ static const char * const smbus_pnp_ids[] = {
- 	"LEN0046", /* X250 */
- 	"LEN004a", /* W541 */
- 	"LEN005b", /* P50 */
-+	"LEN005e", /* T560 */
- 	"LEN0071", /* T480 */
- 	"LEN0072", /* X1 Carbon Gen 5 (2017) - Elan/ALPS trackpoint */
- 	"LEN0073", /* X1 Carbon G5 (Elantech) */
+diff --git a/drivers/input/keyboard/omap4-keypad.c b/drivers/input/keyboard/omap4-keypad.c
+index ce8e2baf31bb..616fdd94b069 100644
+--- a/drivers/input/keyboard/omap4-keypad.c
++++ b/drivers/input/keyboard/omap4-keypad.c
+@@ -126,12 +126,8 @@ static irqreturn_t omap4_keypad_irq_handler(int irq, void *dev_id)
+ {
+ 	struct omap4_keypad *keypad_data = dev_id;
+ 
+-	if (kbd_read_irqreg(keypad_data, OMAP4_KBD_IRQSTATUS)) {
+-		/* Disable interrupts */
+-		kbd_write_irqreg(keypad_data, OMAP4_KBD_IRQENABLE,
+-				 OMAP4_VAL_IRQDISABLE);
++	if (kbd_read_irqreg(keypad_data, OMAP4_KBD_IRQSTATUS))
+ 		return IRQ_WAKE_THREAD;
+-	}
+ 
+ 	return IRQ_NONE;
+ }
+@@ -173,11 +169,6 @@ static irqreturn_t omap4_keypad_irq_thread_fn(int irq, void *dev_id)
+ 	kbd_write_irqreg(keypad_data, OMAP4_KBD_IRQSTATUS,
+ 			 kbd_read_irqreg(keypad_data, OMAP4_KBD_IRQSTATUS));
+ 
+-	/* enable interrupts */
+-	kbd_write_irqreg(keypad_data, OMAP4_KBD_IRQENABLE,
+-		OMAP4_DEF_IRQENABLE_EVENTEN |
+-				OMAP4_DEF_IRQENABLE_LONGKEY);
+-
+ 	return IRQ_HANDLED;
+ }
+ 
+@@ -214,9 +205,10 @@ static void omap4_keypad_close(struct input_dev *input)
+ 
+ 	disable_irq(keypad_data->irq);
+ 
+-	/* Disable interrupts */
++	/* Disable interrupts and wake-up events */
+ 	kbd_write_irqreg(keypad_data, OMAP4_KBD_IRQENABLE,
+ 			 OMAP4_VAL_IRQDISABLE);
++	kbd_writel(keypad_data, OMAP4_KBD_WAKEUPENABLE, 0);
+ 
+ 	/* clear pending interrupts */
+ 	kbd_write_irqreg(keypad_data, OMAP4_KBD_IRQSTATUS,
+@@ -364,7 +356,7 @@ static int omap4_keypad_probe(struct platform_device *pdev)
+ 	}
+ 
+ 	error = request_threaded_irq(keypad_data->irq, omap4_keypad_irq_handler,
+-				     omap4_keypad_irq_thread_fn, 0,
++				     omap4_keypad_irq_thread_fn, IRQF_ONESHOT,
+ 				     "omap4-keypad", keypad_data);
+ 	if (error) {
+ 		dev_err(&pdev->dev, "failed to register interrupt\n");
 -- 
 2.19.1
 
