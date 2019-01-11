@@ -2,113 +2,76 @@ Return-Path: <SRS0=uvhX=PT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 533B9C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 10:35:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DB786C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 10:37:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2266C2177B
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 10:35:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547202916;
-	bh=/ex2WFCiEWBQ8ieaAA/frmCPrfxMZuIzCx0ZD5jOknw=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=tphZWH8a54qpgcV3pP35pfYwOX2ZDCLhyvpZq8/Zc9mSiQ4zNlRKWlzHx07C/vcdd
-	 BPcURP6RsKyb/COlqXbRQiXNRTmvZc35mV6W3ZjdHF7eVDsGT7CxmXT+kj8KEKy2AN
-	 BS8Ku1wvaworpb0TcwZF1mL8LKNA+6yXKDOOMMXQ=
+	by mail.kernel.org (Postfix) with ESMTP id AC43F20874
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 10:37:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731843AbfAKKfO (ORCPT
+        id S1731854AbfAKKhH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 11 Jan 2019 05:35:14 -0500
-Received: from mail-ot1-f67.google.com ([209.85.210.67]:35178 "EHLO
-        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726503AbfAKKfN (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Jan 2019 05:35:13 -0500
-Received: by mail-ot1-f67.google.com with SMTP id 81so12730828otj.2;
-        Fri, 11 Jan 2019 02:35:13 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=1oZTLwB43REzaR6ZsWYQNqaM/kDEXb9ln+305udp67Q=;
-        b=U7al70SLp+RwyCiv09WUaAhUaBWbgIbhqdP8FaPtdcO0VailtmzkeaRfPKqq8/788k
-         ASpXEadLTNBbMHZhBMpr9a4BfRS2hOjCM1fh5CEQdcn+m4ykmJq5sJbAPJws/WD+n92n
-         yKoP3eQNqmHRdekdeDvspNzTwVjmoQwRDygi3fZEbERkFQll26z1rBeesVtbA43lqU93
-         U2y/q/J8gq/JgRv7k8qPi2cecQqEbKcpWyFEF6E9GJUsIkcS2X4OO2UpiYoDKnHXvmQH
-         sr7Ok9pj03Uc2j2VlxxmLvaOjMT14ATBulSbEOZR99kqLuSYCKSI9AuSTvOSRy4faazQ
-         vH4g==
-X-Gm-Message-State: AJcUukeZlh6KbAUdYSZSUpJmh2OfnJaiDDrujYUYoIelcpKUWGGoF7tM
-        xX0GP/F1/JzjsOvoKuLbDFmQvZ5yUg4xb4jtPeo=
-X-Google-Smtp-Source: ALg8bN70udkXRHiTYbU8Tl5vOLYkL4X7crHRdashU/FQJdFAe80jY/2K/Cgt3ONPEPTSZ7Vf9nxxY48vW+X+C/iaBlY=
-X-Received: by 2002:a9d:5e8c:: with SMTP id f12mr9842527otl.343.1547202912593;
- Fri, 11 Jan 2019 02:35:12 -0800 (PST)
-MIME-Version: 1.0
-References: <20190109165754.90072-1-andriy.shevchenko@linux.intel.com>
-In-Reply-To: <20190109165754.90072-1-andriy.shevchenko@linux.intel.com>
-From:   "Rafael J. Wysocki" <rafael@kernel.org>
-Date:   Fri, 11 Jan 2019 11:35:01 +0100
-Message-ID: <CAJZ5v0hzUAYDxneYUNjcpvN5H+F+=fH1PnVcHP5TgLr-5Jc6YA@mail.gmail.com>
-Subject: Re: [PATCH v2 1/3] x86/cpu: Introduce INTEL_CPU_FAM*_NODATA() helper macros
-To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "the arch/x86 maintainers" <x86@kernel.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Fri, 11 Jan 2019 05:37:07 -0500
+Received: from mail.monom.org ([188.138.9.77]:60324 "EHLO mail.monom.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726503AbfAKKhH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 Jan 2019 05:37:07 -0500
+X-Greylist: delayed 389 seconds by postgrey-1.27 at vger.kernel.org; Fri, 11 Jan 2019 05:37:06 EST
+Received: from mail.monom.org (localhost [127.0.0.1])
+        by filter.mynetwork.local (Postfix) with ESMTP id 8C357500722;
+        Fri, 11 Jan 2019 11:30:36 +0100 (CET)
+Received: from localhost (ppp-93-104-190-224.dynamic.mnet-online.de [93.104.190.224])
+        by mail.monom.org (Postfix) with ESMTPSA id 144F9500402;
+        Fri, 11 Jan 2019 11:30:36 +0100 (CET)
+Date:   Fri, 11 Jan 2019 11:30:35 +0100
+From:   Daniel Wagner <wagi@monom.org>
+Subject: [ANNOUNCE] 4.4.169-rt177
+Data:   Fri, 11 Jan 2019 10:27:23 -0000
+To:     LKML <linux-kernel@vger.kernel.org>,
+        linux-rt-users <linux-rt-users@vger.kernel.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Carsten Emde <C.Emde@osadl.org>,
+        John Kacur <jkacur@redhat.com>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        Daniel Wagner <daniel.wagner@siemens.com>,
+        Tom Zanussi <tom.zanussi@linux.intel.com>,
+        Julia Cartwright <julia@ni.com>
+Message-Id: <20190111103036.8C357500722@mail.monom.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 9, 2019 at 5:57 PM Andy Shevchenko
-<andriy.shevchenko@linux.intel.com> wrote:
->
-> These macros are often used by the drivers and we have already a lot of
-> duplication as ICPU() macro across them.
->
-> Provide a generic x86 macro for users.
->
-> This adds no driver data variants.
->
-> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Hello RT Folks!
 
-If you want me to apply the series, I need an ACK for this one.
+I'm pleased to announce the 4.4.169-rt177 stable release.
 
-Alternatively, if you want to apply it yourself, please feel free to
-add ACKs from me to the ACPI-related patches in it.
+This release is just an update to the new stable 4.4.169 version
+and no RT specific changes have been made.
 
-> ---
->  arch/x86/include/asm/intel-family.h | 10 ++++++++--
->  1 file changed, 8 insertions(+), 2 deletions(-)
->
-> diff --git a/arch/x86/include/asm/intel-family.h b/arch/x86/include/asm/intel-family.h
-> index 25b28760fada..afd70055a750 100644
-> --- a/arch/x86/include/asm/intel-family.h
-> +++ b/arch/x86/include/asm/intel-family.h
-> @@ -86,10 +86,16 @@
->         .family         = _family,                              \
->         .model          = _model,                               \
->         .feature        = X86_FEATURE_ANY,                      \
-> -       .driver_data    = (kernel_ulong_t)&_driver_data         \
-> +       .driver_data    = (kernel_ulong_t)_driver_data          \
->  }
->
->  #define INTEL_CPU_FAM6(_model, _driver_data)                   \
-> -       INTEL_CPU_FAM_ANY(6, INTEL_FAM6_##_model, _driver_data)
-> +       INTEL_CPU_FAM_ANY(6, INTEL_FAM6_##_model, &_driver_data)
-> +
-> +#define INTEL_CPU_FAM_ANY_NODATA(_family, _model)              \
-> +       INTEL_CPU_FAM_ANY(_family, _model, 0)
-> +
-> +#define INTEL_CPU_FAM6_NODATA(_model)                          \
-> +       INTEL_CPU_FAM_ANY_NODATA(6, INTEL_FAM6_##_model)
->
->  #endif /* _ASM_X86_INTEL_FAMILY_H */
-> --
-> 2.20.1
->
+You can get this release via the git tree at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/rt/linux-stable-rt.git
+
+  branch: v4.4-rt
+  Head SHA1: 2bb70c261fbb9c214b6d9e3c9136cf2bbba21f0e
+
+Or to build 4.4.169-rt177 directly, the following patches should be applied:
+
+  http://www.kernel.org/pub/linux/kernel/v4.x/linux-4.4.tar.xz
+
+  http://www.kernel.org/pub/linux/kernel/v4.x/patch-4.4.169.xz
+
+  http://www.kernel.org/pub/linux/kernel/projects/rt/4.4/4.4/patch-4.4.169-rt177.patch.xz
+
+
+You can also build from 4.4.164-rt176 by applying the incremental patch:
+
+  http://www.kernel.org/pub/linux/kernel/projects/rt/4.4/4.4/incr/patch-4.4.164-rt176-rt177.patch.xz
+
+Enjoy!
+   Daniel
