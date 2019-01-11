@@ -2,108 +2,106 @@ Return-Path: <SRS0=uvhX=PT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DA09AC43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 11:07:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 18670C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 11:07:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AB2A421783
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 11:07:23 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="JL6eU4dq"
+	by mail.kernel.org (Postfix) with ESMTP id E8FC62177B
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 11:07:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731525AbfAKLHW (ORCPT
+        id S1731363AbfAKLGP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 11 Jan 2019 06:07:22 -0500
-Received: from fllv0015.ext.ti.com ([198.47.19.141]:35816 "EHLO
-        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731484AbfAKLGV (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Jan 2019 06:06:21 -0500
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id x0BB6Csh084798;
-        Fri, 11 Jan 2019 05:06:12 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1547204772;
-        bh=YTo3voibGy5HyChSFJUNOuU9YPF7bAJb1qnXlL8qsKw=;
-        h=From:To:CC:Subject:Date:In-Reply-To:References;
-        b=JL6eU4dqznoHgTPL4UEVWrxk4iLj5uVSYz27H9pBhEjFdGlvWeJwQuWlmzHUqoMjQ
-         89Ir4pC09G7V311XZnnqFMFsZz/lNyPySmFXhaVz5UbO+YVzqbnBzqL56DZ9SFNWGw
-         vRLTh2US1tKqjrHHqf2+UNXVd53GwzLGZXB+IoFo=
-Received: from DLEE105.ent.ti.com (dlee105.ent.ti.com [157.170.170.35])
-        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x0BB6C2b086432
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Fri, 11 Jan 2019 05:06:12 -0600
-Received: from DLEE104.ent.ti.com (157.170.170.34) by DLEE105.ent.ti.com
- (157.170.170.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Fri, 11
- Jan 2019 05:06:12 -0600
-Received: from dlep32.itg.ti.com (157.170.170.100) by DLEE104.ent.ti.com
- (157.170.170.34) with Microsoft SMTP Server (version=TLS1_0,
- cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1591.10 via Frontend Transport;
- Fri, 11 Jan 2019 05:06:12 -0600
-Received: from a0230074-OptiPlex-7010.india.ti.com (ileax41-snat.itg.ti.com [10.172.224.153])
-        by dlep32.itg.ti.com (8.14.3/8.13.8) with ESMTP id x0BB5xEt024503;
-        Fri, 11 Jan 2019 05:06:09 -0600
-From:   Faiz Abbas <faiz_abbas@ti.com>
-To:     <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-mmc@vger.kernel.org>
-CC:     <zhang.chunyan@linaro.org>, <kishon@ti.com>,
-        <adrian.hunter@intel.com>, <mark.rutland@arm.com>,
-        <robh+dt@kernel.org>, <ulf.hansson@linaro.org>, <faiz_abbas@ti.com>
-Subject: [PATCH 3/7] dt-bindings: sdhci-omap: Add example for using external dma
-Date:   Fri, 11 Jan 2019 16:38:47 +0530
-Message-ID: <20190111110851.6805-4-faiz_abbas@ti.com>
-X-Mailer: git-send-email 2.19.2
-In-Reply-To: <20190111110851.6805-1-faiz_abbas@ti.com>
-References: <20190111110851.6805-1-faiz_abbas@ti.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+        Fri, 11 Jan 2019 06:06:15 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:44744 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1731513AbfAKLGJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 Jan 2019 06:06:09 -0500
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 9E464144194;
+        Fri, 11 Jan 2019 11:06:08 +0000 (UTC)
+Received: from localhost (ovpn-8-28.pek2.redhat.com [10.72.8.28])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id C618A6B460;
+        Fri, 11 Jan 2019 11:06:07 +0000 (UTC)
+From:   Ming Lei <ming.lei@redhat.com>
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, Theodore Ts'o <tytso@mit.edu>,
+        Omar Sandoval <osandov@fb.com>,
+        Sagi Grimberg <sagi@grimberg.me>,
+        Dave Chinner <dchinner@redhat.com>,
+        Kent Overstreet <kent.overstreet@gmail.com>,
+        Mike Snitzer <snitzer@redhat.com>, dm-devel@redhat.com,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel@vger.kernel.org, linux-raid@vger.kernel.org,
+        David Sterba <dsterba@suse.com>, linux-btrfs@vger.kernel.org,
+        "Darrick J . Wong" <darrick.wong@oracle.com>,
+        linux-xfs@vger.kernel.org, Gao Xiang <gaoxiang25@huawei.com>,
+        Christoph Hellwig <hch@lst.de>, linux-ext4@vger.kernel.org,
+        Coly Li <colyli@suse.de>, linux-bcache@vger.kernel.org,
+        Boaz Harrosh <ooo@electrozaur.com>,
+        Bob Peterson <rpeterso@redhat.com>, cluster-devel@redhat.com,
+        Ming Lei <ming.lei@redhat.com>
+Subject: [PATCH V13 17/19] block: document usage of bio iterator helpers
+Date:   Fri, 11 Jan 2019 19:01:25 +0800
+Message-Id: <20190111110127.21664-18-ming.lei@redhat.com>
+In-Reply-To: <20190111110127.21664-1-ming.lei@redhat.com>
+References: <20190111110127.21664-1-ming.lei@redhat.com>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.38]); Fri, 11 Jan 2019 11:06:08 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Chunyan Zhang <zhang.chunyan@linaro.org>
+Now multi-page bvec is supported, some helpers may return page by
+page, meantime some may return segment by segment, this patch
+documents the usage.
 
-sdhci-omap can support both external dma controller via dmaengine
-framework as well as ADMA which standard SD host controller
-provides.
-
-Signed-off-by: Chunyan Zhang <zhang.chunyan@linaro.org>
-Signed-off-by: Faiz Abbas <faiz_abbas@ti.com>
+Reviewed-by: Christoph Hellwig <hch@lst.de>
+Reviewed-by: Omar Sandoval <osandov@fb.com>
+Signed-off-by: Ming Lei <ming.lei@redhat.com>
 ---
- Documentation/devicetree/bindings/mmc/sdhci-omap.txt | 7 +++++++
- 1 file changed, 7 insertions(+)
+ Documentation/block/biovecs.txt | 25 +++++++++++++++++++++++++
+ 1 file changed, 25 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/mmc/sdhci-omap.txt b/Documentation/devicetree/bindings/mmc/sdhci-omap.txt
-index 72c4dec7e1db..f8914a2a2aec 100644
---- a/Documentation/devicetree/bindings/mmc/sdhci-omap.txt
-+++ b/Documentation/devicetree/bindings/mmc/sdhci-omap.txt
-@@ -14,6 +14,11 @@ Required properties:
- 		 "ddr_1_8v-rev11", "ddr_1_8v" or "ddr_3_3v", "hs200_1_8v-rev11",
- 		 "hs200_1_8v",
- - pinctrl-<n> : Pinctrl states as described in bindings/pinctrl/pinctrl-bindings.txt
-+- dmas:		List of DMA specifiers with the controller specific format as described
-+		in the generic DMA client binding. A tx and rx specifier is required.
-+- dma-names:	List of DMA request names. These strings correspond 1:1 with the
-+		DMA specifiers listed in dmas. The string naming is to be "rx"
-+		and "tx" for RX and TX DMA requests, respectively.
- 
- Example:
- 	mmc1: mmc@4809c000 {
-@@ -22,4 +27,6 @@ Example:
- 		ti,hwmods = "mmc1";
- 		bus-width = <4>;
- 		vmmc-supply = <&vmmc>; /* phandle to regulator node */
-+		dmas = <&sdma 61 &sdma 62>;
-+		dma-names = "tx", "rx";
- 	};
+diff --git a/Documentation/block/biovecs.txt b/Documentation/block/biovecs.txt
+index 25689584e6e0..ce6eccaf5df7 100644
+--- a/Documentation/block/biovecs.txt
++++ b/Documentation/block/biovecs.txt
+@@ -117,3 +117,28 @@ Other implications:
+    size limitations and the limitations of the underlying devices. Thus
+    there's no need to define ->merge_bvec_fn() callbacks for individual block
+    drivers.
++
++Usage of helpers:
++=================
++
++* The following helpers whose names have the suffix of "_all" can only be used
++on non-BIO_CLONED bio. They are usually used by filesystem code. Drivers
++shouldn't use them because the bio may have been split before it reached the
++driver.
++
++	bio_for_each_segment_all()
++	bio_first_bvec_all()
++	bio_first_page_all()
++	bio_last_bvec_all()
++
++* The following helpers iterate over single-page segment. The passed 'struct
++bio_vec' will contain a single-page IO vector during the iteration
++
++	bio_for_each_segment()
++	bio_for_each_segment_all()
++
++* The following helpers iterate over multi-page bvec. The passed 'struct
++bio_vec' will contain a multi-page IO vector during the iteration
++
++	bio_for_each_bvec()
++	rq_for_each_bvec()
 -- 
-2.19.2
+2.9.5
 
