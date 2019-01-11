@@ -2,172 +2,213 @@ Return-Path: <SRS0=uvhX=PT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4743AC43612
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 18:28:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BF490C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 18:29:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 228FF21872
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 18:28:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547231283;
-	bh=E5hwJ8WmRW653bLaAmz7zYyCrUUqBfwWB0EapN4nckM=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=bRMjdsQAZ5ocx35ORoUFD/UEeDK/n5JwEd0cCPM4lmMb2RZkHWg3IHRq4wtSJQ909
-	 jgvWpFexJEBQ1ujngLyEuA2P3RoMLrrV4cheuUjLAxCut7Y4ilRhhcbatSrd5e2XBh
-	 c+9+RQ8unxKvzA+8tywD0GLMZGXYyWa1bbHgd33A=
+	by mail.kernel.org (Postfix) with ESMTP id 7CEE32183F
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 18:29:11 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="zCo0V5QR"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388166AbfAKS2C (ORCPT
+        id S2388253AbfAKS3J (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 11 Jan 2019 13:28:02 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38958 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729711AbfAKS2C (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Jan 2019 13:28:02 -0500
-Received: from mail-qt1-f169.google.com (mail-qt1-f169.google.com [209.85.160.169])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1F6182133F;
-        Fri, 11 Jan 2019 18:28:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547231281;
-        bh=E5hwJ8WmRW653bLaAmz7zYyCrUUqBfwWB0EapN4nckM=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=njSU0dIfy6NaI8Bc7dARFDl1SADjp6tNHEn0YFE4a3OhRTjs1Ckw9gLknbVMBfAwV
-         HHt1HhjQp+5DKC5XqjfOxvhqsSil4Pc1H3Ai6gMnXZI3lBqWBOCjoubA1Epnb7Fmsf
-         2B+jjKrXEIcSQqZmcTo59MWXdW5474m9N5fYIjtE=
-Received: by mail-qt1-f169.google.com with SMTP id d19so19850354qtq.9;
-        Fri, 11 Jan 2019 10:28:01 -0800 (PST)
-X-Gm-Message-State: AJcUukf0BJ+bCnlcd/7MCrkYSSSiljFSU4osO7XsuuDeUjjaTfU0mQPf
-        kfB6p52xl6txArJaVIICvBpYZ/n3vBO4dfOgtg==
-X-Google-Smtp-Source: ALg8bN4wKSCf8mqtshJYUfpv4uWRG/RJbyPI2ReQ1boSa2Gbm7OcIn8a/mgIF8dkN/bzFXorbfztDbLwLE9SowOM8Jw=
-X-Received: by 2002:ac8:2d2b:: with SMTP id n40mr14263941qta.38.1547231280309;
- Fri, 11 Jan 2019 10:28:00 -0800 (PST)
+        Fri, 11 Jan 2019 13:29:09 -0500
+Received: from aserp2130.oracle.com ([141.146.126.79]:47440 "EHLO
+        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729711AbfAKS3I (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 Jan 2019 13:29:08 -0500
+Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
+        by aserp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id x0BIO1MC157825;
+        Fri, 11 Jan 2019 18:28:21 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type; s=corp-2018-07-02;
+ bh=/s71TfZYnT4b+cU9IZji4pYMHFgF8q3jPAT5srEn2UA=;
+ b=zCo0V5QR+ZscUJCIWaOQaUq0OqmWLt026J/fdBzB+sqU00wB2KiYvNjXVyAAnUoxvYRp
+ ZQsqrSs0CLIERis2TX3L3H1PNfgaY1WtO/DHwr5NXIW5FCG2496XBJZJCKa5eC08D7He
+ ECRzzcvtI+nA8NNAdvRzfQlK91lMI9CzNgsm2pg9OLg3xaTLBy9zmLSy4G1/0Hduxulu
+ LIqPmeLG8nx6a9QW8qulf6L8Qq/SF+1BcXjARB0Gb3sn6C9hZACDCibvS6UCh8MJEAKF
+ wqvnxs+OpLko9EK8989F2ALhNMTFSY5t1OlmVxv2e1GD9/NkJfe+3oDDGXNr0gOKeR+H NQ== 
+Received: from userv0022.oracle.com (userv0022.oracle.com [156.151.31.74])
+        by aserp2130.oracle.com with ESMTP id 2ptj3eenn2-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 11 Jan 2019 18:28:20 +0000
+Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
+        by userv0022.oracle.com (8.14.4/8.14.4) with ESMTP id x0BISJxY030482
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 11 Jan 2019 18:28:20 GMT
+Received: from abhmp0016.oracle.com (abhmp0016.oracle.com [141.146.116.22])
+        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x0BISIwN025077;
+        Fri, 11 Jan 2019 18:28:18 GMT
+Received: from [192.168.1.44] (/24.9.64.241)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Fri, 11 Jan 2019 10:28:18 -0800
+Subject: Re: [RFC PATCH v7 07/16] arm64/mm, xpfo: temporarily map dcache
+ regions
+To:     Tycho Andersen <tycho@tycho.ws>
+Cc:     juergh@gmail.com, jsteckli@amazon.de, ak@linux.intel.com,
+        torvalds@linux-foundation.org, liran.alon@oracle.com,
+        keescook@google.com, konrad.wilk@oracle.com,
+        Juerg Haefliger <juerg.haefliger@canonical.com>,
+        deepa.srinivasan@oracle.com, chris.hyser@oracle.com,
+        tyhicks@canonical.com, dwmw@amazon.co.uk,
+        andrew.cooper3@citrix.com, jcm@redhat.com,
+        boris.ostrovsky@oracle.com, kanth.ghatraju@oracle.com,
+        joao.m.martins@oracle.com, jmattson@google.com,
+        pradeep.vincent@oracle.com, john.haxby@oracle.com,
+        tglx@linutronix.de, kirill.shutemov@linux.intel.com, hch@lst.de,
+        steven.sistare@oracle.com, kernel-hardening@lists.openwall.com,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+References: <cover.1547153058.git.khalid.aziz@oracle.com>
+ <eba179acbfdea5a646c5548cb82138c1c3b74aa2.1547153058.git.khalid.aziz@oracle.com>
+ <20190111145445.GA4102@cisco>
+From:   Khalid Aziz <khalid.aziz@oracle.com>
+Organization: Oracle Corp
+Message-ID: <19e61a22-bbae-d0ae-8d41-158d4b46bf01@oracle.com>
+Date:   Fri, 11 Jan 2019 11:28:19 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-References: <20190110221903.3990-4-robh@kernel.org> <154722865051.169631.16957443589975628047@swboyd.mtv.corp.google.com>
-In-Reply-To: <154722865051.169631.16957443589975628047@swboyd.mtv.corp.google.com>
-From:   Rob Herring <robh@kernel.org>
-Date:   Fri, 11 Jan 2019 12:27:48 -0600
-X-Gmail-Original-Message-ID: <CAL_JsqJzNBYCMWbZtR37eZd4yx2kc590V+q3603Hg=kG2bZwhw@mail.gmail.com>
-Message-ID: <CAL_JsqJzNBYCMWbZtR37eZd4yx2kc590V+q3603Hg=kG2bZwhw@mail.gmail.com>
-Subject: Re: [PATCH] dt-bindings: clock: Convert fixed-clock binding to json-schema
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     devicetree@vger.kernel.org,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        linux-clk <linux-clk@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20190111145445.GA4102@cisco>
+Content-Type: multipart/mixed;
+ boundary="------------3BB60CD6A7EC85D34E24789D"
+Content-Language: en-US
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9133 signatures=668680
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1810050000 definitions=main-1901110147
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jan 11, 2019 at 11:44 AM Stephen Boyd <sboyd@kernel.org> wrote:
->
-> Quoting Rob Herring (2019-01-10 14:19:01)
-> > Convert the fixed-clock binding to DT schema format using json-schema.
-> >
->
-> Any pointer to the full schema?
+This is a multi-part message in MIME format.
+--------------3BB60CD6A7EC85D34E24789D
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-https://github.com/robherring/yaml-bindings/blob/master/schemas/
+On 1/11/19 7:54 AM, Tycho Andersen wrote:
+> On Thu, Jan 10, 2019 at 02:09:39PM -0700, Khalid Aziz wrote:
+>> From: Juerg Haefliger <juerg.haefliger@canonical.com>
+>>
+>> If the page is unmapped by XPFO, a data cache flush results in a fatal=
 
-And the clock schema in particular:
-https://github.com/robherring/yaml-bindings/blob/master/schemas/clock.yaml
+>> page fault, so let's temporarily map the region, flush the cache, and =
+then
+>> unmap it.
+>>
+>> v6: actually flush in the face of xpfo, and temporarily map the underl=
+ying
+>>     memory so it can be flushed correctly
+>>
+>> CC: linux-arm-kernel@lists.infradead.org
+>> Signed-off-by: Juerg Haefliger <juerg.haefliger@canonical.com>
+>> Signed-off-by: Tycho Andersen <tycho@docker.com>
+>> Signed-off-by: Khalid Aziz <khalid.aziz@oracle.com>
+>> ---
+>>  arch/arm64/mm/flush.c | 7 +++++++
+>>  1 file changed, 7 insertions(+)
+>>
+>> diff --git a/arch/arm64/mm/flush.c b/arch/arm64/mm/flush.c
+>> index 30695a868107..f12f26b60319 100644
+>> --- a/arch/arm64/mm/flush.c
+>> +++ b/arch/arm64/mm/flush.c
+>> @@ -20,6 +20,7 @@
+>>  #include <linux/export.h>
+>>  #include <linux/mm.h>
+>>  #include <linux/pagemap.h>
+>> +#include <linux/xpfo.h>
+>> =20
+>>  #include <asm/cacheflush.h>
+>>  #include <asm/cache.h>
+>> @@ -28,9 +29,15 @@
+>>  void sync_icache_aliases(void *kaddr, unsigned long len)
+>>  {
+>>  	unsigned long addr =3D (unsigned long)kaddr;
+>> +	unsigned long num_pages =3D XPFO_NUM_PAGES(addr, len);
+>> +	void *mapping[num_pages];
+>=20
+> Does this still compile with -Wvla? It was a bad hack on my part, and
+> we should probably just drop it and come up with something else :)
 
-> > Cc: Michael Turquette <mturquette@baylibre.com>
-> > Cc: Stephen Boyd <sboyd@kernel.org>
-> > Cc: linux-clk@vger.kernel.org
-> > Signed-off-by: Rob Herring <robh@kernel.org>
-> [...]
-> > diff --git a/Documentation/devicetree/bindings/clock/fixed-clock.yaml b/Documentation/devicetree/bindings/clock/fixed-clock.yaml
-> > new file mode 100644
-> > index 000000000000..8b5628463b90
-> > --- /dev/null
-> > +++ b/Documentation/devicetree/bindings/clock/fixed-clock.yaml
-> > @@ -0,0 +1,44 @@
-> > +# SPDX-License-Identifier: GPL-2.0
-> > +%YAML 1.2
-> > +---
-> > +$id: http://devicetree.org/schemas/clock/fixed-clock.yaml#
-> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> > +
-> > +title: Binding for simple fixed-rate clock sources.
->
-> Why does title have a full stop?
+I will make a note of it. I hope someone with better knowledge of arm64
+than me can come up with a better solution ;)
 
-Because it was there in the original. My script to extract just takes
-the first line of alphanumeric text.
+--
+Khalid
 
-> > +
-> > +maintainers:
-> > +  - Michael Turquette <mturquette@baylibre.com>
-> > +  - Stephen Boyd <sboyd@kernel.org>
-> > +
-> > +properties:
-> > +  compatible:
-> > +    const: fixed-clock
-> > +
-> > +  "#clock-cells":
-> > +    const: 0
-> > +
-> > +  clock-frequency: true
->
-> Why doesn't this need the $ref: /schemas/types.yaml#/... thing?
+>=20
+> Tycho
+>=20
+>>  	if (icache_is_aliasing()) {
+>> +		xpfo_temp_map(kaddr, len, mapping,
+>> +			      sizeof(mapping[0]) * num_pages);
+>>  		__clean_dcache_area_pou(kaddr, len);
+>> +		xpfo_temp_unmap(kaddr, len, mapping,
+>> +			        sizeof(mapping[0]) * num_pages);
+>>  		__flush_icache_all();
+>>  	} else {
+>>  		flush_icache_range(addr, addr + len);
+>> --=20
+>> 2.17.1
+>>
 
-You might want to read bindings/example-schema.yaml which tries to
-explain some of this.
 
-Standard properties are already defined in the core schemas. So we
-only have to say "we use this property" and any binding specific
-constraints. In this case, there aren't any other constraints. It is
-also needed to be listed here to mark it required and to satisfy
-'additionalProperties: false'.
+--------------3BB60CD6A7EC85D34E24789D
+Content-Type: application/pgp-keys;
+ name="pEpkey.asc"
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: attachment;
+ filename="pEpkey.asc"
 
-> > +  clock-accuracy:
-> > +    description: accuracy of clock in ppb (parts per billion).
-> > +    $ref: /schemas/types.yaml#/definitions/uint32
-> > +
-> > +  clock-output-names:
-> > +    maxItems: 1
->
-> Is there a schema for strings?
+-----BEGIN PGP PUBLIC KEY BLOCK-----
 
-Yes. The core already covers that '*-names' properties are a list of
-strings. So no need to do that again here and we just need to define
-how many strings are valid.
+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
++Wrj8Rwom6h21PXZRKnlkis7ibQfE+TxqOI7vg=3D=3D
+=3DnPqY
+-----END PGP PUBLIC KEY BLOCK-----
 
-> > +
-> > +required:
-> > +  - compatible
-> > +  - "#clock-cells"
-> > +  - clock-frequency
-> > +
-> > +additionalProperties: false
->
-> Does this always have to be specified even if it's false?
-
-Yes, the default defined as true by the json-schema spec. In some
-cases we don't want to specify it.
-
-> > +
-> > +examples:
-> > +  - |
-> > +    clock {
-> > +      compatible = "fixed-clock";
-> > +      #clock-cells = <0>;
-> > +      clock-frequency = <1000000000>;
-> > +      clock-accuracy = <100>;
-> > +    };
-> > +...
-> >
->
-> Is the triple dot part of the schema?
-
-Yes. Well, it is part of YAML. It's optional really as are the 2 lines
-at the start. It's just good hygiene.
-
-Rob
+--------------3BB60CD6A7EC85D34E24789D--
