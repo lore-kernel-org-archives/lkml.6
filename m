@@ -2,117 +2,134 @@ Return-Path: <SRS0=uvhX=PT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 92F33C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 16:57:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 69371C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 16:58:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 265FC20874
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 16:57:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 432D620874
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 16:58:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388208AbfAKQ5r (ORCPT
+        id S2388285AbfAKQ6B (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 11 Jan 2019 11:57:47 -0500
-Received: from ex13-edg-ou-001.vmware.com ([208.91.0.189]:46544 "EHLO
-        EX13-EDG-OU-001.vmware.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1731195AbfAKQ5r (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Jan 2019 11:57:47 -0500
-Received: from sc9-mailhost2.vmware.com (10.113.161.72) by
- EX13-EDG-OU-001.vmware.com (10.113.208.155) with Microsoft SMTP Server id
- 15.0.1156.6; Fri, 11 Jan 2019 08:57:29 -0800
-Received: from pa-dbc1104.eng.vmware.com (pa-dbc1104.eng.vmware.com [10.162.210.4])
-        by sc9-mailhost2.vmware.com (Postfix) with ESMTP id 7803FB1E8C;
-        Fri, 11 Jan 2019 11:57:45 -0500 (EST)
-From:   Jorgen Hansen <jhansen@vmware.com>
-To:     <linux-kernel@vger.kernel.org>,
-        <virtualization@lists.linux-foundation.org>
-CC:     <gregkh@linuxfoundation.org>, <pv-drivers@vmware.com>,
-        Jorgen Hansen <jhansen@vmware.com>
-Subject: [PATCH] VMCI: Verify PPNs before sending to device
-Date:   Fri, 11 Jan 2019 08:57:45 -0800
-Message-ID: <1547225865-53408-1-git-send-email-jhansen@vmware.com>
-X-Mailer: git-send-email 2.6.2
+        Fri, 11 Jan 2019 11:58:01 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:47624 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1731195AbfAKQ6A (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 Jan 2019 11:58:00 -0500
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id AE9657AE8B;
+        Fri, 11 Jan 2019 16:57:59 +0000 (UTC)
+Received: from treble (ovpn-122-231.rdu2.redhat.com [10.10.122.231])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id C068660851;
+        Fri, 11 Jan 2019 16:57:54 +0000 (UTC)
+Date:   Fri, 11 Jan 2019 10:57:52 -0600
+From:   Josh Poimboeuf <jpoimboe@redhat.com>
+To:     Alexandre Chartre <alexandre.chartre@oracle.com>
+Cc:     Sean Christopherson <sean.j.christopherson@intel.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Nadav Amit <namit@vmware.com>, X86 ML <x86@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Jason Baron <jbaron@akamai.com>, Jiri Kosina <jkosina@suse.cz>,
+        David Laight <David.Laight@ACULAB.COM>,
+        Borislav Petkov <bp@alien8.de>,
+        Julia Cartwright <julia@ni.com>, Jessica Yu <jeyu@kernel.org>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        Edward Cree <ecree@solarflare.com>,
+        Daniel Bristot de Oliveira <bristot@redhat.com>
+Subject: Re: [PATCH v3 5/6] x86/alternative: Use a single access in
+ text_poke() where possible
+Message-ID: <20190111165752.z6e2dfktj2caqi4n@treble>
+References: <279b8003f7f0a6831d090ab822d37bc958f974de.1547073843.git.jpoimboe@redhat.com>
+ <8138A1EE-359D-4CD2-8E96-5BF00313AB3B@vmware.com>
+ <20190110172004.wuh45xoafynfm2df@treble>
+ <20190110123243.3b9e0856@gandalf.local.home>
+ <20190110174257.GE16556@linux.intel.com>
+ <20190110125757.1c8d2870@gandalf.local.home>
+ <20190110180428.GG16556@linux.intel.com>
+ <e5ea3781-336d-7b03-a22e-5012e915affd@oracle.com>
+ <20190111152809.ejutcmqrx4ud3fli@treble>
+ <ad6fae93-4122-7854-aa4c-2facd67ca839@oracle.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-Received-SPF: None (EX13-EDG-OU-001.vmware.com: jhansen@vmware.com does not
- designate permitted sender hosts)
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <ad6fae93-4122-7854-aa4c-2facd67ca839@oracle.com>
+User-Agent: NeoMutt/20180716
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.25]); Fri, 11 Jan 2019 16:58:00 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The current version of the VMCI device only supports 32 bit PPNs,
-so check whether we are truncating PPNs, and fail the operation
-if we do. One such check did exist, but was wrong. Another
-check was missing.
+On Fri, Jan 11, 2019 at 05:46:36PM +0100, Alexandre Chartre wrote:
+> 
+> 
+> On 01/11/2019 04:28 PM, Josh Poimboeuf wrote:
+> > On Fri, Jan 11, 2019 at 01:10:52PM +0100, Alexandre Chartre wrote:
+> > > To avoid any issue with live patching the call instruction, what about
+> > > toggling between two call instructions: one would be the currently active
+> > > call, while the other would currently be inactive but to be used after a
+> > > change is made. You can safely patch the inactive call and then toggle
+> > > the call flow (using a jump label) between the active and inactive calls.
+> > > 
+> > > So instead of having a single call instruction:
+> > > 
+> > > 	call function
+> > > 
+> > > You would have:
+> > > 
+> > > 	STATIC_JUMP_IF_TRUE label, key
+> > > 	call function1
+> > > 	jmp done
+> > > label:
+> > > 	call function2
+> > > done:
+> > > 
+> > > If the key is set so that function1 is currently called then you can
+> > > safely update the call instruction for function2. Once this is done,
+> > > just flip the key to make the function2 call active. On a next update,
+> > > you would, of course, have to switch and update the call for function1.
+> > 
+> > What about the following race?
+> > 
+> > CPU1						CPU2
+> > static key is false, doesn't jump
+> > task gets preempted before calling function1
+> > 						change static key to true
+> > 						start patching "call function1"
+> > task resumes, sees inconsistent call instruction
+> > 
+> 
+> If the function1 call is active then it won't be changed, you will change
+> function2. However, I presume you can still have a race but if the function
+> is changed twice before calling function1:
+> 
+> CPU1						CPU2
+> static key is false, doesn't jump
+> task gets preempted before calling function1
+>                                                 -- first function change --
+>                                                 patch "call function2"
+>                                                 change static key to true
+>                                                 -- second function change --
+>                                                 start patching "call function1"
+> task resumes, sees inconsistent call instruction
+> 
+> So right, that's a problem.
 
-Testing through code modification: constructed PPN not representable
-by 32-bit and observed that failure was reported.
+Right, that's what I meant to say :-)
 
-Fixes: 1f166439917b ("VMCI: guest side driver implementation.")
-Fixes: 06164d2b72aa ("VMCI: queue pairs implementation.")
-
-Signed-off-by: Jorgen Hansen <jhansen@vmware.com>
-Reviewed-by: Adit Ranadive <aditr@vmware.com>
-Reviewed-by: Vishnu Dasa <vdasa@vmware.com>
----
- drivers/misc/vmw_vmci/vmci_guest.c      | 10 +++++++---
- drivers/misc/vmw_vmci/vmci_queue_pair.c | 10 ++++------
- 2 files changed, 11 insertions(+), 9 deletions(-)
-
-diff --git a/drivers/misc/vmw_vmci/vmci_guest.c b/drivers/misc/vmw_vmci/vmci_guest.c
-index dad5abee656e..02bb3866cf9e 100644
---- a/drivers/misc/vmw_vmci/vmci_guest.c
-+++ b/drivers/misc/vmw_vmci/vmci_guest.c
-@@ -532,10 +532,14 @@ static int vmci_guest_probe_device(struct pci_dev *pdev,
- 	if (capabilities & VMCI_CAPS_NOTIFICATIONS) {
- 		unsigned long bitmap_ppn =
- 			vmci_dev->notification_base >> PAGE_SHIFT;
--		if (!vmci_dbell_register_notification_bitmap(bitmap_ppn)) {
-+		u32 bitmap_ppn32 = bitmap_ppn;
-+
-+		if ((sizeof(bitmap_ppn) > sizeof(bitmap_ppn32)
-+		     && bitmap_ppn != bitmap_ppn32) ||
-+		    !vmci_dbell_register_notification_bitmap(bitmap_ppn)) {
- 			dev_warn(&pdev->dev,
--				 "VMCI device unable to register notification bitmap with PPN 0x%x\n",
--				 (u32) bitmap_ppn);
-+				 "VMCI device unable to register notification bitmap with PPN 0x%lx\n",
-+				 bitmap_ppn);
- 			error = -ENXIO;
- 			goto err_remove_vmci_dev_g;
- 		}
-diff --git a/drivers/misc/vmw_vmci/vmci_queue_pair.c b/drivers/misc/vmw_vmci/vmci_queue_pair.c
-index 264f4ed8eef2..1da4f6cb01b2 100644
---- a/drivers/misc/vmw_vmci/vmci_queue_pair.c
-+++ b/drivers/misc/vmw_vmci/vmci_queue_pair.c
-@@ -465,9 +465,8 @@ static int qp_alloc_ppn_set(void *prod_q,
- 	for (i = 0; i < num_produce_pages; i++) {
- 		unsigned long pfn;
- 
--		produce_ppns[i] =
--			produce_q->kernel_if->u.g.pas[i] >> PAGE_SHIFT;
--		pfn = produce_ppns[i];
-+		pfn = produce_q->kernel_if->u.g.pas[i] >> PAGE_SHIFT;
-+		produce_ppns[i] = pfn;
- 
- 		/* Fail allocation if PFN isn't supported by hypervisor. */
- 		if (sizeof(pfn) > sizeof(*produce_ppns)
-@@ -478,9 +477,8 @@ static int qp_alloc_ppn_set(void *prod_q,
- 	for (i = 0; i < num_consume_pages; i++) {
- 		unsigned long pfn;
- 
--		consume_ppns[i] =
--			consume_q->kernel_if->u.g.pas[i] >> PAGE_SHIFT;
--		pfn = consume_ppns[i];
-+		pfn = consume_q->kernel_if->u.g.pas[i] >> PAGE_SHIFT;
-+		consume_ppns[i] = pfn;
- 
- 		/* Fail allocation if PFN isn't supported by hypervisor. */
- 		if (sizeof(pfn) > sizeof(*consume_ppns)
 -- 
-2.17.1
-
+Josh
