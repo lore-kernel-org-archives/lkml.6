@@ -4,50 +4,49 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-10.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BC227C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 15:06:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 707BDC43612
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 15:06:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8B99720874
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 15:06:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3C5EF2084C
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 15:06:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547219194;
-	bh=66/xdMQJyrDEpBVJjKZHZYothFDNEDvRfMNrEb6UFkE=;
+	s=default; t=1547219198;
+	bh=ELX33Hhr/D1RkN1qSEHRvPEG0RIpCE4PAe9uXyjL1WY=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=RQydbtaamTwdzU/li2eaHj6qISu306pRfwuP9C0eI56u7qxuqgJ5XN+IRd0QKkqrL
-	 ZPBtQ9eN9US15u5KlaS+xwe+XynXIffXy+UAC5Ws4PmKnJoIj9z5evwClJnmpou9kW
-	 wNESTzussMofP10249ovrjBc7tEVq5065/TK4B4U=
+	b=skP649y4tf1k71t98xrTX7vB5y2ZBQK1cXlDUw7SeGc/Dyt1h2WmOYR/BobWXoUXw
+	 ycoNbHkBNFP1Q4rNpr2bKRtd30mYQG1ZmtE/IeSfgLbMffsWcyzo7E2rwLqBNJbJQW
+	 tkzdA4BiprNo1fsOR6vlSqhURr5SwheR5PQOIwH8=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389093AbfAKPGc (ORCPT
+        id S2388610AbfAKO2z (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 11 Jan 2019 10:06:32 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47796 "EHLO mail.kernel.org"
+        Fri, 11 Jan 2019 09:28:55 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47692 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388611AbfAKO24 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Jan 2019 09:28:56 -0500
+        id S2388581AbfAKO2v (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 Jan 2019 09:28:51 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6C8032133F;
-        Fri, 11 Jan 2019 14:28:55 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E42B62177B;
+        Fri, 11 Jan 2019 14:28:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547216935;
-        bh=66/xdMQJyrDEpBVJjKZHZYothFDNEDvRfMNrEb6UFkE=;
+        s=default; t=1547216930;
+        bh=ELX33Hhr/D1RkN1qSEHRvPEG0RIpCE4PAe9uXyjL1WY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=lfpL7d90AyYhDo9ud320XsvZqCWt0KxZY0zo8VHBj3nw5Hbkjs9EUlOXd4i7sLlHM
-         saITeqtu4+ICC8DBTkQ/2MZTAuROG8VnmitzkHFCSLRk74Iv7rqpVvrQ1emPlCW/UH
-         xJBhzaXeoE2oFbhCNEIXu7HQ3zh6UM9xXcoHfJN8=
+        b=04hPQSrqb4wPjiPMPQ4+/hOWAwI9U2Is7150IOsqqZIW54YuZ3X8pL2Gbt1/GPczd
+         2NlNCjpM8HkJbImPEzanQtpHjDpuSNGjeCRgpfvORwhgfYQwRlyaCtQ2AjAuLsOh7j
+         j8PhMIaM9A8oUcMJ+PUJUsX28C+CK68Lvo4/CGs4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, "Yavuz, Tuba" <tuba@ece.ufl.edu>,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        Takashi Iwai <tiwai@suse.de>
-Subject: [PATCH 4.9 45/63] ALSA: cs46xx: Potential NULL dereference in probe
-Date:   Fri, 11 Jan 2019 15:14:48 +0100
-Message-Id: <20190111131053.075718019@linuxfoundation.org>
+        stable@vger.kernel.org, Stefan Hajnoczi <stefanha@redhat.com>,
+        "Michael S. Tsirkin" <mst@redhat.com>,
+        Daniel Verkamp <dverkamp@chromium.org>
+Subject: [PATCH 4.9 43/63] vhost/vsock: fix uninitialized vhost_vsock->guest_cid
+Date:   Fri, 11 Jan 2019 15:14:46 +0100
+Message-Id: <20190111131052.822007121@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190111131046.387528003@linuxfoundation.org>
 References: <20190111131046.387528003@linuxfoundation.org>
@@ -66,34 +65,36 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
+From: Stefan Hajnoczi <stefanha@redhat.com>
 
-commit 1524f4e47f90b27a3ac84efbdd94c63172246a6f upstream.
+commit a72b69dc083a931422cc8a5e33841aff7d5312f2 upstream.
 
-The "chip->dsp_spos_instance" can be NULL on some of the ealier error
-paths in snd_cs46xx_create().
+The vhost_vsock->guest_cid field is uninitialized when /dev/vhost-vsock
+is opened until the VHOST_VSOCK_SET_GUEST_CID ioctl is called.
 
-Reported-by: "Yavuz, Tuba" <tuba@ece.ufl.edu>
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
+kvmalloc(..., GFP_KERNEL | __GFP_RETRY_MAYFAIL) does not zero memory.
+All other vhost_vsock fields are initialized explicitly so just
+initialize this field too.
+
+Signed-off-by: Stefan Hajnoczi <stefanha@redhat.com>
+Signed-off-by: Michael S. Tsirkin <mst@redhat.com>
+Cc: Daniel Verkamp <dverkamp@chromium.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- sound/pci/cs46xx/dsp_spos.c |    3 +++
- 1 file changed, 3 insertions(+)
+ drivers/vhost/vsock.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/sound/pci/cs46xx/dsp_spos.c
-+++ b/sound/pci/cs46xx/dsp_spos.c
-@@ -899,6 +899,9 @@ int cs46xx_dsp_proc_done (struct snd_cs4
- 	struct dsp_spos_instance * ins = chip->dsp_spos_instance;
- 	int i;
+--- a/drivers/vhost/vsock.c
++++ b/drivers/vhost/vsock.c
+@@ -520,6 +520,8 @@ static int vhost_vsock_dev_open(struct i
+ 		goto out;
+ 	}
  
-+	if (!ins)
-+		return 0;
++	vsock->guest_cid = 0; /* no CID assigned yet */
 +
- 	snd_info_free_entry(ins->proc_sym_info_entry);
- 	ins->proc_sym_info_entry = NULL;
+ 	atomic_set(&vsock->queued_replies, 0);
  
+ 	vqs[VSOCK_VQ_TX] = &vsock->vqs[VSOCK_VQ_TX];
 
 
