@@ -7,47 +7,47 @@ X-Spam-Status: No, score=-10.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D91BC43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:20:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B33FC43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:20:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6DB4521783
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:20:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EFF2F2177B
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:20:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547216438;
-	bh=oDLJoaTM2Brle5TEzL5p7mXtMUjx7ojUKVHTn/DZhgI=;
+	s=default; t=1547216449;
+	bh=DEyNysdr8FjzlK31tn3EDih7tFB+oH2Mn5IoAUTlLAs=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=KgoTtuwL6K/s58ngHWUW73hIHL2bXyjOKx5o9vxc6pMPv43g4tXMZbm1CVbTEFcKs
-	 j7bn59fEa86Vf19zs+b99FzZOzaXwAvG+P4JVwL2iJ1bsP5iXEdlwAs52EY5w1skZU
-	 aIXf01OJD97RqtvifuR3bI+OzsPqknJxDrWQbfiQ=
+	b=m7wlVkX2MzXcR4A+6abLR+kG3hfoNQG5BazBRX3eMJYgl0ug08hxI1Npf89URZRuq
+	 u/h1ppmj8ECi2nxbAhvuNUhSLxyKfurIZ/xbluityWy7OSLOCTvXi2t8AvwAc406ay
+	 0RD+9WWFhmjeqFRkPUzNpH18988eAvUf0sfqMcOc=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732421AbfAKOUg (ORCPT
+        id S1732682AbfAKOUs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 11 Jan 2019 09:20:36 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38192 "EHLO mail.kernel.org"
+        Fri, 11 Jan 2019 09:20:48 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37992 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732306AbfAKOUX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Jan 2019 09:20:23 -0500
+        id S2388084AbfAKOUS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 Jan 2019 09:20:18 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9D61D21783;
-        Fri, 11 Jan 2019 14:20:22 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 785A621783;
+        Fri, 11 Jan 2019 14:20:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547216423;
-        bh=oDLJoaTM2Brle5TEzL5p7mXtMUjx7ojUKVHTn/DZhgI=;
+        s=default; t=1547216417;
+        bh=DEyNysdr8FjzlK31tn3EDih7tFB+oH2Mn5IoAUTlLAs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=xQYJy4EQqnhBm4bamqdHYY4d4n85lMLOwTf3Y2trI4XTUQagGpq3muf4hDi3NVUZp
-         BYUdhlZk4Q8nwfxGmW3/h2CJ/ZOmXzRmzzda0Z2qh+vMKNQOj2Ci953SkfGcZjal2+
-         Bn5+X8tv4yb8rQux408GHrwFuOwFiULwohqrx878=
+        b=aC1xHM0fMYZgKYo2+BgZj3J7bCjzQau0IjiNc+hzCs8+7igzwQAvl0vwEWiFhqIkC
+         CfZGAU6EHVjx09dy/z/H879EPgfTag1v98YcqaHNVLgE6Xqak6+w55Ltso8henOacO
+         Gix5jTP0JRwe3jSNDWy9iHWfgVneuavIL7n9Ihzg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Lubomir Rintel <lkundrak@v3.sk>,
-        Pavel Machek <pavel@ucw.cz>,
-        Sebastian Reichel <sebastian.reichel@collabora.com>
-Subject: [PATCH 4.4 87/88] power: supply: olpc_battery: correct the temperature units
-Date:   Fri, 11 Jan 2019 15:08:56 +0100
-Message-Id: <20190111131100.051328893@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Christian Borntraeger <borntraeger@de.ibm.com>,
+        Frank Haverkamp <haver@linux.vnet.ibm.com>
+Subject: [PATCH 4.4 85/88] genwqe: Fix size check
+Date:   Fri, 11 Jan 2019 15:08:54 +0100
+Message-Id: <20190111131059.798830740@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190111131045.137499039@linuxfoundation.org>
 References: <20190111131045.137499039@linuxfoundation.org>
@@ -66,51 +66,65 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Lubomir Rintel <lkundrak@v3.sk>
+From: Christian Borntraeger <borntraeger@de.ibm.com>
 
-commit ed54ffbe554f0902689fd6d1712bbacbacd11376 upstream.
+commit fdd669684655c07dacbdb0d753fd13833de69a33 upstream.
 
-According to [1] and [2], the temperature values are in tenths of degree
-Celsius. Exposing the Celsius value makes the battery appear on fire:
+Calling the test program genwqe_cksum with the default buffer size of
+2MB triggers the following kernel warning on s390:
 
-  $ upower -i /org/freedesktop/UPower/devices/battery_olpc_battery
-  ...
-      temperature:         236.9 degrees C
+WARNING: CPU: 30 PID: 9311 at mm/page_alloc.c:3189 __alloc_pages_nodemask+0x45c/0xbe0
+CPU: 30 PID: 9311 Comm: genwqe_cksum Kdump: loaded Not tainted 3.10.0-957.el7.s390x #1
+task: 00000005e5d13980 ti: 00000005e7c6c000 task.ti: 00000005e7c6c000
+Krnl PSW : 0704c00180000000 00000000002780ac (__alloc_pages_nodemask+0x45c/0xbe0)
+           R:0 T:1 IO:1 EX:1 Key:0 M:1 W:0 P:0 AS:3 CC:0 PM:0 EA:3
+Krnl GPRS: 00000000002932b8 0000000000b73d7c 0000000000000010 0000000000000009
+           0000000000000041 00000005e7c6f9b8 0000000000000001 00000000000080d0
+           0000000000000000 0000000000b70500 0000000000000001 0000000000000000
+           0000000000b70528 00000000007682c0 0000000000277df2 00000005e7c6f9a0
+Krnl Code: 000000000027809e: de7195001000	ed	1280(114,%r9),0(%r1)
+	   00000000002780a4: a774fead		brc	7,277dfe
+	  #00000000002780a8: a7f40001		brc	15,2780aa
+	  >00000000002780ac: 92011000		mvi	0(%r1),1
+	   00000000002780b0: a7f4fea7		brc	15,277dfe
+	   00000000002780b4: 9101c6b6		tm	1718(%r12),1
+	   00000000002780b8: a784ff3a		brc	8,277f2c
+	   00000000002780bc: a7f4fe2e		brc	15,277d18
+Call Trace:
+([<0000000000277df2>] __alloc_pages_nodemask+0x1a2/0xbe0)
+ [<000000000013afae>] s390_dma_alloc+0xfe/0x310
+ [<000003ff8065f362>] __genwqe_alloc_consistent+0xfa/0x148 [genwqe_card]
+ [<000003ff80658f7a>] genwqe_mmap+0xca/0x248 [genwqe_card]
+ [<00000000002b2712>] mmap_region+0x4e2/0x778
+ [<00000000002b2c54>] do_mmap+0x2ac/0x3e0
+ [<0000000000292d7e>] vm_mmap_pgoff+0xd6/0x118
+ [<00000000002b081c>] SyS_mmap_pgoff+0xdc/0x268
+ [<00000000002b0a34>] SyS_old_mmap+0x8c/0xb0
+ [<000000000074e518>] sysc_tracego+0x14/0x1e
+ [<000003ffacf87dc6>] 0x3ffacf87dc6
 
-Tested on OLPC XO-1 and OLPC XO-1.75 laptops.
+turns out the check in __genwqe_alloc_consistent uses "> MAX_ORDER"
+while the mm code uses ">= MAX_ORDER". Fix genwqe.
 
-[1] include/linux/power_supply.h
-[2] Documentation/power/power_supply_class.txt
-
-Fixes: fb972873a767 ("[BATTERY] One Laptop Per Child power/battery driver")
 Cc: stable@vger.kernel.org
-Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
-Acked-by: Pavel Machek <pavel@ucw.cz>
-Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.com>
+Signed-off-by: Christian Borntraeger <borntraeger@de.ibm.com>
+Signed-off-by: Frank Haverkamp <haver@linux.vnet.ibm.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/power/olpc_battery.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/misc/genwqe/card_utils.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/power/olpc_battery.c
-+++ b/drivers/power/olpc_battery.c
-@@ -427,14 +427,14 @@ static int olpc_bat_get_property(struct
- 		if (ret)
- 			return ret;
+--- a/drivers/misc/genwqe/card_utils.c
++++ b/drivers/misc/genwqe/card_utils.c
+@@ -217,7 +217,7 @@ u32 genwqe_crc32(u8 *buff, size_t len, u
+ void *__genwqe_alloc_consistent(struct genwqe_dev *cd, size_t size,
+ 			       dma_addr_t *dma_handle)
+ {
+-	if (get_order(size) > MAX_ORDER)
++	if (get_order(size) >= MAX_ORDER)
+ 		return NULL;
  
--		val->intval = (s16)be16_to_cpu(ec_word) * 100 / 256;
-+		val->intval = (s16)be16_to_cpu(ec_word) * 10 / 256;
- 		break;
- 	case POWER_SUPPLY_PROP_TEMP_AMBIENT:
- 		ret = olpc_ec_cmd(EC_AMB_TEMP, NULL, 0, (void *)&ec_word, 2);
- 		if (ret)
- 			return ret;
- 
--		val->intval = (int)be16_to_cpu(ec_word) * 100 / 256;
-+		val->intval = (int)be16_to_cpu(ec_word) * 10 / 256;
- 		break;
- 	case POWER_SUPPLY_PROP_CHARGE_COUNTER:
- 		ret = olpc_ec_cmd(EC_BAT_ACR, NULL, 0, (void *)&ec_word, 2);
+ 	return dma_alloc_coherent(&cd->pci_dev->dev, size, dma_handle,
 
 
