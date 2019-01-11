@@ -4,51 +4,52 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-13.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 04856C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:31:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EF37CC43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:31:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CAC262133F
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:31:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BFD1E2063F
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:31:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547217100;
-	bh=6hfM0QvCVRM246k6i6h8NC6/FU9QBms7zSK00ym5LU8=;
+	s=default; t=1547217103;
+	bh=Yr8z7pzxdCSuawOkgEeSgb70oiGiEYBRC3g1U5Oo7x4=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=gdAlqGvY7o0Habi9b5kr/c9ahVispNZdSE0IKgNmEr7eVapc/SrwPs0M/vGQkcqu3
-	 rRQ05+4Mgr7Vm23b0AyhhSrxMguufQhgRh3PF9+gDFzHyX0us5es2iW6cC882Wmr7a
-	 5VS2X+t5jWSyYoqGwtYXhztyoBL292d1BmdWlVkA=
+	b=tdXC2u/uHtTnj4u1+B/V7R7mjHLPwd11+gDh2pl0QxH5fvPfX09qTw+JK/lZ+eqWQ
+	 4FxI3+fn9AiN3RJqelayw8Nw749Bn+Bhh9P1Dgz5UOH8LLZ4hfb7LMMr9M+Yv1ZHDS
+	 062fRT8AFLaAfZrPvUos+dR1GypdEMKPtpk9r6uk=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389211AbfAKObk (ORCPT
+        id S2389223AbfAKObn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 11 Jan 2019 09:31:40 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51172 "EHLO mail.kernel.org"
+        Fri, 11 Jan 2019 09:31:43 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51372 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389190AbfAKObb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Jan 2019 09:31:31 -0500
+        id S1731426AbfAKObj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 Jan 2019 09:31:39 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 154BF2133F;
-        Fri, 11 Jan 2019 14:31:29 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 285D42063F;
+        Fri, 11 Jan 2019 14:31:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547217090;
-        bh=6hfM0QvCVRM246k6i6h8NC6/FU9QBms7zSK00ym5LU8=;
+        s=default; t=1547217098;
+        bh=Yr8z7pzxdCSuawOkgEeSgb70oiGiEYBRC3g1U5Oo7x4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=U1ViCkoeVRlGMn0lBMXDyzKcS2QbPATNrHaQ61NDVRuwY1pTtuizDtkC1D+vF4NIL
-         Sj95B0qT9XvV4W/MxrJ3yQZA4LoLveUYKq8er1qvyQ23t4hnXI9Xz6Tsk3LgpgJvSM
-         rMxyH5EAflP7VAGSxVjkT7zQ/7/1vTSaqQWATa/I=
+        b=TuNiD95XH2a5rbhRs6BkGJlE1JDbdETHXR80VQk+QojbRfXW+zZ+QdekL7azwX0nI
+         p6mBN1iwxBxZSILTL+asmFM6VdH6lzaLIFv03XxQp80+9Og2L1WNfVjGQwdikuGDxw
+         zAmr8C3Zs/AWCCQwhIkFF41p4HQvxh0xn2dkDs6M=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Yonglong Liu <liuyonglong@huawei.com>,
-        Peng Li <lipeng321@huawei.com>,
+        stable@vger.kernel.org,
+        Sudarsana Reddy Kalluru <Sudarsana.Kalluru@cavium.com>,
+        Ariel Elior <ariel.elior@cavium.com>,
         "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 039/105] net: hns: Add mac pcs config when enable|disable mac
-Date:   Fri, 11 Jan 2019 15:14:10 +0100
-Message-Id: <20190111131106.464502562@linuxfoundation.org>
+Subject: [PATCH 4.14 024/105] bnx2x: Remove configured vlans as part of unload sequence.
+Date:   Fri, 11 Jan 2019 15:13:55 +0100
+Message-Id: <20190111131105.377370861@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190111131102.899065735@linuxfoundation.org>
 References: <20190111131102.899065735@linuxfoundation.org>
@@ -67,74 +68,112 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 726ae5c9e5f0c18eca8ea5296b526242c3e89822 ]
+[ Upstream commit 04f05230c5c13b1384f66f5186a68d7499e34622 ]
 
-In some case, when mac enable|disable and adjust link, may cause hard to
-link(or abnormal) between mac and phy. This patch adds the code for rx PCS
-to avoid this bug.
+Vlans are not getting removed when drivers are unloaded. The recent storm
+firmware versions had added safeguards against re-configuring an already
+configured vlan. As a result, PF inner reload flows (e.g., mtu change)
+might trigger an assertion.
+This change is going to remove vlans (same as we do for MACs) when doing
+a chip cleanup during unload.
 
-Disable the rx PCS when driver disable the gmac, and enable the rx PCS
-when driver enable the mac.
-
-Signed-off-by: Yonglong Liu <liuyonglong@huawei.com>
-Signed-off-by: Peng Li <lipeng321@huawei.com>
+Signed-off-by: Sudarsana Reddy Kalluru <Sudarsana.Kalluru@cavium.com>
+Signed-off-by: Ariel Elior <ariel.elior@cavium.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/hisilicon/hns/hns_dsaf_gmac.c | 14 ++++++++++----
- drivers/net/ethernet/hisilicon/hns/hns_dsaf_reg.h  |  1 +
- 2 files changed, 11 insertions(+), 4 deletions(-)
+ .../net/ethernet/broadcom/bnx2x/bnx2x_main.c  | 34 +++++++++++++++----
+ .../net/ethernet/broadcom/bnx2x/bnx2x_sp.h    |  4 ++-
+ 2 files changed, 30 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/net/ethernet/hisilicon/hns/hns_dsaf_gmac.c b/drivers/net/ethernet/hisilicon/hns/hns_dsaf_gmac.c
-index 8c7bc5cf193c..5e8930d02f50 100644
---- a/drivers/net/ethernet/hisilicon/hns/hns_dsaf_gmac.c
-+++ b/drivers/net/ethernet/hisilicon/hns/hns_dsaf_gmac.c
-@@ -67,11 +67,14 @@ static void hns_gmac_enable(void *mac_drv, enum mac_commom_mode mode)
- 	struct mac_driver *drv = (struct mac_driver *)mac_drv;
- 
- 	/*enable GE rX/tX */
--	if ((mode == MAC_COMM_MODE_TX) || (mode == MAC_COMM_MODE_RX_AND_TX))
-+	if (mode == MAC_COMM_MODE_TX || mode == MAC_COMM_MODE_RX_AND_TX)
- 		dsaf_set_dev_bit(drv, GMAC_PORT_EN_REG, GMAC_PORT_TX_EN_B, 1);
- 
--	if ((mode == MAC_COMM_MODE_RX) || (mode == MAC_COMM_MODE_RX_AND_TX))
-+	if (mode == MAC_COMM_MODE_RX || mode == MAC_COMM_MODE_RX_AND_TX) {
-+		/* enable rx pcs */
-+		dsaf_set_dev_bit(drv, GMAC_PCS_RX_EN_REG, 0, 0);
- 		dsaf_set_dev_bit(drv, GMAC_PORT_EN_REG, GMAC_PORT_RX_EN_B, 1);
-+	}
+diff --git a/drivers/net/ethernet/broadcom/bnx2x/bnx2x_main.c b/drivers/net/ethernet/broadcom/bnx2x/bnx2x_main.c
+index 688d84cd6187..433a7a37575d 100644
+--- a/drivers/net/ethernet/broadcom/bnx2x/bnx2x_main.c
++++ b/drivers/net/ethernet/broadcom/bnx2x/bnx2x_main.c
+@@ -8462,6 +8462,7 @@ int bnx2x_set_vlan_one(struct bnx2x *bp, u16 vlan,
+ 	/* Fill a user request section if needed */
+ 	if (!test_bit(RAMROD_CONT, ramrod_flags)) {
+ 		ramrod_param.user_req.u.vlan.vlan = vlan;
++		__set_bit(BNX2X_VLAN, &ramrod_param.user_req.vlan_mac_flags);
+ 		/* Set the command: ADD or DEL */
+ 		if (set)
+ 			ramrod_param.user_req.cmd = BNX2X_VLAN_MAC_ADD;
+@@ -8482,6 +8483,27 @@ int bnx2x_set_vlan_one(struct bnx2x *bp, u16 vlan,
+ 	return rc;
  }
  
- static void hns_gmac_disable(void *mac_drv, enum mac_commom_mode mode)
-@@ -79,11 +82,14 @@ static void hns_gmac_disable(void *mac_drv, enum mac_commom_mode mode)
- 	struct mac_driver *drv = (struct mac_driver *)mac_drv;
++static int bnx2x_del_all_vlans(struct bnx2x *bp)
++{
++	struct bnx2x_vlan_mac_obj *vlan_obj = &bp->sp_objs[0].vlan_obj;
++	unsigned long ramrod_flags = 0, vlan_flags = 0;
++	struct bnx2x_vlan_entry *vlan;
++	int rc;
++
++	__set_bit(RAMROD_COMP_WAIT, &ramrod_flags);
++	__set_bit(BNX2X_VLAN, &vlan_flags);
++	rc = vlan_obj->delete_all(bp, vlan_obj, &vlan_flags, &ramrod_flags);
++	if (rc)
++		return rc;
++
++	/* Mark that hw forgot all entries */
++	list_for_each_entry(vlan, &bp->vlan_reg, link)
++		vlan->hw = false;
++	bp->vlan_cnt = 0;
++
++	return 0;
++}
++
+ int bnx2x_del_all_macs(struct bnx2x *bp,
+ 		       struct bnx2x_vlan_mac_obj *mac_obj,
+ 		       int mac_type, bool wait_for_comp)
+@@ -9320,6 +9342,11 @@ void bnx2x_chip_cleanup(struct bnx2x *bp, int unload_mode, bool keep_link)
+ 		BNX2X_ERR("Failed to schedule DEL commands for UC MACs list: %d\n",
+ 			  rc);
  
- 	/*disable GE rX/tX */
--	if ((mode == MAC_COMM_MODE_TX) || (mode == MAC_COMM_MODE_RX_AND_TX))
-+	if (mode == MAC_COMM_MODE_TX || mode == MAC_COMM_MODE_RX_AND_TX)
- 		dsaf_set_dev_bit(drv, GMAC_PORT_EN_REG, GMAC_PORT_TX_EN_B, 0);
++	/* Remove all currently configured VLANs */
++	rc = bnx2x_del_all_vlans(bp);
++	if (rc < 0)
++		BNX2X_ERR("Failed to delete all VLANs\n");
++
+ 	/* Disable LLH */
+ 	if (!CHIP_IS_E1(bp))
+ 		REG_WR(bp, NIG_REG_LLH0_FUNC_EN + port*8, 0);
+@@ -13006,13 +13033,6 @@ static void bnx2x_vlan_configure(struct bnx2x *bp, bool set_rx_mode)
  
--	if ((mode == MAC_COMM_MODE_RX) || (mode == MAC_COMM_MODE_RX_AND_TX))
-+	if (mode == MAC_COMM_MODE_RX || mode == MAC_COMM_MODE_RX_AND_TX) {
-+		/* disable rx pcs */
-+		dsaf_set_dev_bit(drv, GMAC_PCS_RX_EN_REG, 0, 1);
- 		dsaf_set_dev_bit(drv, GMAC_PORT_EN_REG, GMAC_PORT_RX_EN_B, 0);
-+	}
- }
+ int bnx2x_vlan_reconfigure_vid(struct bnx2x *bp)
+ {
+-	struct bnx2x_vlan_entry *vlan;
+-
+-	/* The hw forgot all entries after reload */
+-	list_for_each_entry(vlan, &bp->vlan_reg, link)
+-		vlan->hw = false;
+-	bp->vlan_cnt = 0;
+-
+ 	/* Don't set rx mode here. Our caller will do it. */
+ 	bnx2x_vlan_configure(bp, false);
  
- /* hns_gmac_get_en - get port enable
-diff --git a/drivers/net/ethernet/hisilicon/hns/hns_dsaf_reg.h b/drivers/net/ethernet/hisilicon/hns/hns_dsaf_reg.h
-index 5ae3d017ddbc..ae97b203f73b 100644
---- a/drivers/net/ethernet/hisilicon/hns/hns_dsaf_reg.h
-+++ b/drivers/net/ethernet/hisilicon/hns/hns_dsaf_reg.h
-@@ -534,6 +534,7 @@
- #define GMAC_LD_LINK_COUNTER_REG		0x01D0UL
- #define GMAC_LOOP_REG				0x01DCUL
- #define GMAC_RECV_CONTROL_REG			0x01E0UL
-+#define GMAC_PCS_RX_EN_REG			0x01E4UL
- #define GMAC_VLAN_CODE_REG			0x01E8UL
- #define GMAC_RX_OVERRUN_CNT_REG			0x01ECUL
- #define GMAC_RX_LENGTHFIELD_ERR_CNT_REG		0x01F4UL
+diff --git a/drivers/net/ethernet/broadcom/bnx2x/bnx2x_sp.h b/drivers/net/ethernet/broadcom/bnx2x/bnx2x_sp.h
+index 0bf2fd470819..7a6e82db4231 100644
+--- a/drivers/net/ethernet/broadcom/bnx2x/bnx2x_sp.h
++++ b/drivers/net/ethernet/broadcom/bnx2x/bnx2x_sp.h
+@@ -265,6 +265,7 @@ enum {
+ 	BNX2X_ETH_MAC,
+ 	BNX2X_ISCSI_ETH_MAC,
+ 	BNX2X_NETQ_ETH_MAC,
++	BNX2X_VLAN,
+ 	BNX2X_DONT_CONSUME_CAM_CREDIT,
+ 	BNX2X_DONT_CONSUME_CAM_CREDIT_DEST,
+ };
+@@ -272,7 +273,8 @@ enum {
+ #define BNX2X_VLAN_MAC_CMP_MASK	(1 << BNX2X_UC_LIST_MAC | \
+ 				 1 << BNX2X_ETH_MAC | \
+ 				 1 << BNX2X_ISCSI_ETH_MAC | \
+-				 1 << BNX2X_NETQ_ETH_MAC)
++				 1 << BNX2X_NETQ_ETH_MAC | \
++				 1 << BNX2X_VLAN)
+ #define BNX2X_VLAN_MAC_CMP_FLAGS(flags) \
+ 	((flags) & BNX2X_VLAN_MAC_CMP_MASK)
+ 
 -- 
 2.19.1
 
