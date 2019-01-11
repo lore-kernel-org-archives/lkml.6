@@ -6,46 +6,47 @@ X-Spam-Status: No, score=-10.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 66921C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:43:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E7E3EC43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:43:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2CB902184B
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:43:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AD62A2184B
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:43:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547217793;
-	bh=VyfGrN0edJ0Tygvf5kUVmPfKBzqxzanREDbBMfKWiKE=;
+	s=default; t=1547217798;
+	bh=HSy0PShW78QjUYOCtkPfzlh9PHLODduW5SbZ5xurru8=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=Y7pLl7TQ6HdYJ33HDiQvhGIPwbVKxDRuJsCR8gBDcpB1vCHU3R4SplJErabpwq2YI
-	 uhBv3e6vxAUWzeeni8fSh/gJShrZ6o18E/CiPCN36ZYidVcOEjHsxifVDlieDiw4+/
-	 Ky7FaqHsmGyJJ3UvuxbAE6Rr0nH58jMR2NHRsXJI=
+	b=ONRALJlgFzTnwHydMM3BWv2j6/ejqgaxXFirp0qB+3CM8qKrSEHz4pwOfbs8g2IgB
+	 FJzzfw1v3DilBvfVak4KEZC6E/J4NGCA8QTLonaYIv8WZaCbQYV7BMM1xUhLJkd6yL
+	 oj7/rWbdR+68K8s4mwqxtDj4k8SBWb3MVUk6iM4E=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404335AbfAKOnM (ORCPT
+        id S2391222AbfAKOnR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 11 Jan 2019 09:43:12 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36016 "EHLO mail.kernel.org"
+        Fri, 11 Jan 2019 09:43:17 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36076 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2403832AbfAKOnK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Jan 2019 09:43:10 -0500
+        id S2403980AbfAKOnM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 Jan 2019 09:43:12 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5F21521848;
-        Fri, 11 Jan 2019 14:43:08 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id EC60B2184A;
+        Fri, 11 Jan 2019 14:43:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547217788;
-        bh=VyfGrN0edJ0Tygvf5kUVmPfKBzqxzanREDbBMfKWiKE=;
+        s=default; t=1547217791;
+        bh=HSy0PShW78QjUYOCtkPfzlh9PHLODduW5SbZ5xurru8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=byUuYWnGOaPuJQCit5+oTkcQfN3k0Vs1S9ZPOy5xrYby913vZ6p5mTPU/Q6B7Qmzm
-         XuHD/J5xPKd7mBjxFcy8Hn5hPAhxmN3Yi5cb3zac3xBJrFs9o5ke4yV5aBt5svNOgF
-         kcryN0RON/j14xYvBVuahkjkkB8bQwTrSXcK+ZKc=
+        b=tjgssrJug+tbo5Srr5Hbe49sPoa7XGYAFyIgoh+oct1QYE3Tx02QsLk5cyj0lKVSe
+         Ph1fluonKT/a9fbfR3pcJszkz3N/tjwlFwPdDwZ/Vq+8XPg3ODSKXtZbtq5Yr0v+d+
+         a74JuvUHjhj+H4W7Y7lWw7Dt0OxuYRR4LZ8Rfzf0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Breno Leitao <leitao@debian.org>,
-        Michael Ellerman <mpe@ellerman.id.au>
-Subject: [PATCH 4.20 42/65] powerpc/tm: Set MSR[TS] just prior to recheckpoint
-Date:   Fri, 11 Jan 2019 15:15:28 +0100
-Message-Id: <20190111131102.246464196@linuxfoundation.org>
+        stable@vger.kernel.org, Evan Green <evgreen@chromium.org>,
+        Matthias Kaehlcke <mka@chromium.org>, Stable@vger.kernel.org,
+        Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Subject: [PATCH 4.20 43/65] iio: adc: qcom-spmi-adc5: Initialize prescale properly
+Date:   Fri, 11 Jan 2019 15:15:29 +0100
+Message-Id: <20190111131102.331712210@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190111131055.331350141@linuxfoundation.org>
 References: <20190111131055.331350141@linuxfoundation.org>
@@ -64,189 +65,174 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Breno Leitao <leitao@debian.org>
+From: Evan Green <evgreen@chromium.org>
 
-commit e1c3743e1a20647c53b719dbf28b48f45d23f2cd upstream.
+commit db23d88756abd38e0995ea8449d0025b3de4b26b upstream.
 
-On a signal handler return, the user could set a context with MSR[TS] bits
-set, and these bits would be copied to task regs->msr.
+adc5_get_dt_data uses a local, prop, feeds it to adc5_get_dt_channel_data,
+and then puts the result into adc->chan_props. The problem is
+adc5_get_dt_channel_data may not initialize that structure fully, so a
+garbage value is used for prescale if the optional "qcom,pre-scaling" is
+not defined in DT. adc5_read_raw then uses this as an array index,
+generating a crash that looks like this:
 
-At restore_tm_sigcontexts(), after current task regs->msr[TS] bits are set,
-several __get_user() are called and then a recheckpoint is executed.
+[    6.683186] Unable to handle kernel paging request at virtual address ffffff90e78c7964
+Call trace:
+qcom_vadc_scale_code_voltage_factor+0x74/0x104
+qcom_vadc_scale_hw_calib_die_temp+0x20/0x60
+qcom_adc5_hw_scale+0x78/0xa4
+adc5_read_raw+0x3d0/0x65c
+iio_channel_read+0x240/0x30c
+iio_read_channel_processed+0x10c/0x150
+qpnp_tm_get_temp+0xc0/0x40c
+of_thermal_get_temp+0x7c/0x98
+thermal_zone_get_temp+0xac/0xd8
+thermal_zone_device_update+0xc0/0x38c
+qpnp_tm_probe+0x624/0x81c
+platform_drv_probe+0xe4/0x11c
+really_probe+0x188/0x3fc
+driver_probe_device+0xb8/0x188
+__device_attach_driver+0x114/0x180
+bus_for_each_drv+0xd8/0x118
+__device_attach+0x180/0x27c
+device_initial_probe+0x20/0x2c
+bus_probe_device+0x78/0x124
+deferred_probe_work_func+0xfc/0x138
+process_one_work+0x3d8/0x8b0
+process_scheduled_works+0x48/0x6c
+worker_thread+0x488/0x7cc
+kthread+0x24c/0x264
+ret_from_fork+0x10/0x18
 
-This is a problem since a page fault (in kernel space) could happen when
-calling __get_user(). If it happens, the process MSR[TS] bits were
-already set, but recheckpoint was not executed, and SPRs are still invalid.
+Unfortunately, when I went to add the initializer for this and tried to
+boot it, my machine shut down immediately, complaining that it was
+hotter than the sun. It appears that adc5_chans_pmic and adc5_chans_rev2
+were initializing prescale_index as if it were directly a divisor,
+rather than the index into adc5_prescale_ratios that it is.
 
-The page fault can cause the current process to be de-scheduled, with
-MSR[TS] active and without tm_recheckpoint() being called.  More
-importantly, without TEXASR[FS] bit set also.
+Fix the uninitialized value, and change the static initialization to use
+indices into adc5_prescale_ratios.
 
-Since TEXASR might not have the FS bit set, and when the process is
-scheduled back, it will try to reclaim, which will be aborted because of
-the CPU is not in the suspended state, and, then, recheckpoint. This
-recheckpoint will restore thread->texasr into TEXASR SPR, which might be
-zero, hitting a BUG_ON().
-
-	kernel BUG at /build/linux-sf3Co9/linux-4.9.30/arch/powerpc/kernel/tm.S:434!
-	cpu 0xb: Vector: 700 (Program Check) at [c00000041f1576d0]
-	    pc: c000000000054550: restore_gprs+0xb0/0x180
-	    lr: 0000000000000000
-	    sp: c00000041f157950
-	   msr: 8000000100021033
-	  current = 0xc00000041f143000
-	  paca    = 0xc00000000fb86300	 softe: 0	 irq_happened: 0x01
-	    pid   = 1021, comm = kworker/11:1
-	kernel BUG at /build/linux-sf3Co9/linux-4.9.30/arch/powerpc/kernel/tm.S:434!
-	Linux version 4.9.0-3-powerpc64le (debian-kernel@lists.debian.org) (gcc version 6.3.0 20170516 (Debian 6.3.0-18) ) #1 SMP Debian 4.9.30-2+deb9u2 (2017-06-26)
-	enter ? for help
-	[c00000041f157b30] c00000000001bc3c tm_recheckpoint.part.11+0x6c/0xa0
-	[c00000041f157b70] c00000000001d184 __switch_to+0x1e4/0x4c0
-	[c00000041f157bd0] c00000000082eeb8 __schedule+0x2f8/0x990
-	[c00000041f157cb0] c00000000082f598 schedule+0x48/0xc0
-	[c00000041f157ce0] c0000000000f0d28 worker_thread+0x148/0x610
-	[c00000041f157d80] c0000000000f96b0 kthread+0x120/0x140
-	[c00000041f157e30] c00000000000c0e0 ret_from_kernel_thread+0x5c/0x7c
-
-This patch simply delays the MSR[TS] set, so, if there is any page fault in
-the __get_user() section, it does not have regs->msr[TS] set, since the TM
-structures are still invalid, thus avoiding doing TM operations for
-in-kernel exceptions and possible process reschedule.
-
-With this patch, the MSR[TS] will only be set just before recheckpointing
-and setting TEXASR[FS] = 1, thus avoiding an interrupt with TM registers in
-invalid state.
-
-Other than that, if CONFIG_PREEMPT is set, there might be a preemption just
-after setting MSR[TS] and before tm_recheckpoint(), thus, this block must
-be atomic from a preemption perspective, thus, calling
-preempt_disable/enable() on this code.
-
-It is not possible to move tm_recheckpoint to happen earlier, because it is
-required to get the checkpointed registers from userspace, with
-__get_user(), thus, the only way to avoid this undesired behavior is
-delaying the MSR[TS] set.
-
-The 32-bits signal handler seems to be safe this current issue, but, it
-might be exposed to the preemption issue, thus, disabling preemption in
-this chunk of code.
-
-Changes from v2:
- * Run the critical section with preempt_disable.
-
-Fixes: 87b4e5393af7 ("powerpc/tm: Fix return of active 64bit signals")
-Cc: stable@vger.kernel.org (v3.9+)
-Signed-off-by: Breno Leitao <leitao@debian.org>
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+Signed-off-by: Evan Green <evgreen@chromium.org>
+Reviewed-by: Matthias Kaehlcke <mka@chromium.org>
+Cc: <Stable@vger.kernel.org>
+Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/powerpc/kernel/signal_32.c |   20 +++++++++++++++++-
- arch/powerpc/kernel/signal_64.c |   44 +++++++++++++++++++++++++++-------------
- 2 files changed, 49 insertions(+), 15 deletions(-)
+ drivers/iio/adc/qcom-spmi-adc5.c |   58 ++++++++++++++++++++-------------------
+ 1 file changed, 31 insertions(+), 27 deletions(-)
 
---- a/arch/powerpc/kernel/signal_32.c
-+++ b/arch/powerpc/kernel/signal_32.c
-@@ -848,7 +848,23 @@ static long restore_tm_user_regs(struct
- 	/* If TM bits are set to the reserved value, it's an invalid context */
- 	if (MSR_TM_RESV(msr_hi))
- 		return 1;
--	/* Pull in the MSR TM bits from the user context */
-+
-+	/*
-+	 * Disabling preemption, since it is unsafe to be preempted
-+	 * with MSR[TS] set without recheckpointing.
-+	 */
-+	preempt_disable();
-+
-+	/*
-+	 * CAUTION:
-+	 * After regs->MSR[TS] being updated, make sure that get_user(),
-+	 * put_user() or similar functions are *not* called. These
-+	 * functions can generate page faults which will cause the process
-+	 * to be de-scheduled with MSR[TS] set but without calling
-+	 * tm_recheckpoint(). This can cause a bug.
-+	 *
-+	 * Pull in the MSR TM bits from the user context
-+	 */
- 	regs->msr = (regs->msr & ~MSR_TS_MASK) | (msr_hi & MSR_TS_MASK);
- 	/* Now, recheckpoint.  This loads up all of the checkpointed (older)
- 	 * registers, including FP and V[S]Rs.  After recheckpointing, the
-@@ -873,6 +889,8 @@ static long restore_tm_user_regs(struct
+--- a/drivers/iio/adc/qcom-spmi-adc5.c
++++ b/drivers/iio/adc/qcom-spmi-adc5.c
+@@ -423,6 +423,7 @@ struct adc5_channels {
+ 	enum vadc_scale_fn_type scale_fn_type;
+ };
+ 
++/* In these definitions, _pre refers to an index into adc5_prescale_ratios. */
+ #define ADC5_CHAN(_dname, _type, _mask, _pre, _scale)			\
+ 	{								\
+ 		.datasheet_name = _dname,				\
+@@ -443,63 +444,63 @@ struct adc5_channels {
+ 		  _pre, _scale)						\
+ 
+ static const struct adc5_channels adc5_chans_pmic[ADC5_MAX_CHANNEL] = {
+-	[ADC5_REF_GND]		= ADC5_CHAN_VOLT("ref_gnd", 1,
++	[ADC5_REF_GND]		= ADC5_CHAN_VOLT("ref_gnd", 0,
+ 					SCALE_HW_CALIB_DEFAULT)
+-	[ADC5_1P25VREF]		= ADC5_CHAN_VOLT("vref_1p25", 1,
++	[ADC5_1P25VREF]		= ADC5_CHAN_VOLT("vref_1p25", 0,
+ 					SCALE_HW_CALIB_DEFAULT)
+-	[ADC5_VPH_PWR]		= ADC5_CHAN_VOLT("vph_pwr", 3,
++	[ADC5_VPH_PWR]		= ADC5_CHAN_VOLT("vph_pwr", 1,
+ 					SCALE_HW_CALIB_DEFAULT)
+-	[ADC5_VBAT_SNS]		= ADC5_CHAN_VOLT("vbat_sns", 3,
++	[ADC5_VBAT_SNS]		= ADC5_CHAN_VOLT("vbat_sns", 1,
+ 					SCALE_HW_CALIB_DEFAULT)
+-	[ADC5_DIE_TEMP]		= ADC5_CHAN_TEMP("die_temp", 1,
++	[ADC5_DIE_TEMP]		= ADC5_CHAN_TEMP("die_temp", 0,
+ 					SCALE_HW_CALIB_PMIC_THERM)
+-	[ADC5_USB_IN_I]		= ADC5_CHAN_VOLT("usb_in_i_uv", 1,
++	[ADC5_USB_IN_I]		= ADC5_CHAN_VOLT("usb_in_i_uv", 0,
+ 					SCALE_HW_CALIB_DEFAULT)
+-	[ADC5_USB_IN_V_16]	= ADC5_CHAN_VOLT("usb_in_v_div_16", 16,
++	[ADC5_USB_IN_V_16]	= ADC5_CHAN_VOLT("usb_in_v_div_16", 8,
+ 					SCALE_HW_CALIB_DEFAULT)
+-	[ADC5_CHG_TEMP]		= ADC5_CHAN_TEMP("chg_temp", 1,
++	[ADC5_CHG_TEMP]		= ADC5_CHAN_TEMP("chg_temp", 0,
+ 					SCALE_HW_CALIB_PM5_CHG_TEMP)
+ 	/* Charger prescales SBUx and MID_CHG to fit within 1.8V upper unit */
+-	[ADC5_SBUx]		= ADC5_CHAN_VOLT("chg_sbux", 3,
++	[ADC5_SBUx]		= ADC5_CHAN_VOLT("chg_sbux", 1,
+ 					SCALE_HW_CALIB_DEFAULT)
+-	[ADC5_MID_CHG_DIV6]	= ADC5_CHAN_VOLT("chg_mid_chg", 6,
++	[ADC5_MID_CHG_DIV6]	= ADC5_CHAN_VOLT("chg_mid_chg", 3,
+ 					SCALE_HW_CALIB_DEFAULT)
+-	[ADC5_XO_THERM_100K_PU]	= ADC5_CHAN_TEMP("xo_therm", 1,
++	[ADC5_XO_THERM_100K_PU]	= ADC5_CHAN_TEMP("xo_therm", 0,
+ 					SCALE_HW_CALIB_XOTHERM)
+-	[ADC5_AMUX_THM1_100K_PU] = ADC5_CHAN_TEMP("amux_thm1_100k_pu", 1,
++	[ADC5_AMUX_THM1_100K_PU] = ADC5_CHAN_TEMP("amux_thm1_100k_pu", 0,
+ 					SCALE_HW_CALIB_THERM_100K_PULLUP)
+-	[ADC5_AMUX_THM2_100K_PU] = ADC5_CHAN_TEMP("amux_thm2_100k_pu", 1,
++	[ADC5_AMUX_THM2_100K_PU] = ADC5_CHAN_TEMP("amux_thm2_100k_pu", 0,
+ 					SCALE_HW_CALIB_THERM_100K_PULLUP)
+-	[ADC5_AMUX_THM3_100K_PU] = ADC5_CHAN_TEMP("amux_thm3_100k_pu", 1,
++	[ADC5_AMUX_THM3_100K_PU] = ADC5_CHAN_TEMP("amux_thm3_100k_pu", 0,
+ 					SCALE_HW_CALIB_THERM_100K_PULLUP)
+-	[ADC5_AMUX_THM2]	= ADC5_CHAN_TEMP("amux_thm2", 1,
++	[ADC5_AMUX_THM2]	= ADC5_CHAN_TEMP("amux_thm2", 0,
+ 					SCALE_HW_CALIB_PM5_SMB_TEMP)
+ };
+ 
+ static const struct adc5_channels adc5_chans_rev2[ADC5_MAX_CHANNEL] = {
+-	[ADC5_REF_GND]		= ADC5_CHAN_VOLT("ref_gnd", 1,
++	[ADC5_REF_GND]		= ADC5_CHAN_VOLT("ref_gnd", 0,
+ 					SCALE_HW_CALIB_DEFAULT)
+-	[ADC5_1P25VREF]		= ADC5_CHAN_VOLT("vref_1p25", 1,
++	[ADC5_1P25VREF]		= ADC5_CHAN_VOLT("vref_1p25", 0,
+ 					SCALE_HW_CALIB_DEFAULT)
+-	[ADC5_VPH_PWR]		= ADC5_CHAN_VOLT("vph_pwr", 3,
++	[ADC5_VPH_PWR]		= ADC5_CHAN_VOLT("vph_pwr", 1,
+ 					SCALE_HW_CALIB_DEFAULT)
+-	[ADC5_VBAT_SNS]		= ADC5_CHAN_VOLT("vbat_sns", 3,
++	[ADC5_VBAT_SNS]		= ADC5_CHAN_VOLT("vbat_sns", 1,
+ 					SCALE_HW_CALIB_DEFAULT)
+-	[ADC5_VCOIN]		= ADC5_CHAN_VOLT("vcoin", 3,
++	[ADC5_VCOIN]		= ADC5_CHAN_VOLT("vcoin", 1,
+ 					SCALE_HW_CALIB_DEFAULT)
+-	[ADC5_DIE_TEMP]		= ADC5_CHAN_TEMP("die_temp", 1,
++	[ADC5_DIE_TEMP]		= ADC5_CHAN_TEMP("die_temp", 0,
+ 					SCALE_HW_CALIB_PMIC_THERM)
+-	[ADC5_AMUX_THM1_100K_PU] = ADC5_CHAN_TEMP("amux_thm1_100k_pu", 1,
++	[ADC5_AMUX_THM1_100K_PU] = ADC5_CHAN_TEMP("amux_thm1_100k_pu", 0,
+ 					SCALE_HW_CALIB_THERM_100K_PULLUP)
+-	[ADC5_AMUX_THM2_100K_PU] = ADC5_CHAN_TEMP("amux_thm2_100k_pu", 1,
++	[ADC5_AMUX_THM2_100K_PU] = ADC5_CHAN_TEMP("amux_thm2_100k_pu", 0,
+ 					SCALE_HW_CALIB_THERM_100K_PULLUP)
+-	[ADC5_AMUX_THM3_100K_PU] = ADC5_CHAN_TEMP("amux_thm3_100k_pu", 1,
++	[ADC5_AMUX_THM3_100K_PU] = ADC5_CHAN_TEMP("amux_thm3_100k_pu", 0,
+ 					SCALE_HW_CALIB_THERM_100K_PULLUP)
+-	[ADC5_AMUX_THM4_100K_PU] = ADC5_CHAN_TEMP("amux_thm4_100k_pu", 1,
++	[ADC5_AMUX_THM4_100K_PU] = ADC5_CHAN_TEMP("amux_thm4_100k_pu", 0,
+ 					SCALE_HW_CALIB_THERM_100K_PULLUP)
+-	[ADC5_AMUX_THM5_100K_PU] = ADC5_CHAN_TEMP("amux_thm5_100k_pu", 1,
++	[ADC5_AMUX_THM5_100K_PU] = ADC5_CHAN_TEMP("amux_thm5_100k_pu", 0,
+ 					SCALE_HW_CALIB_THERM_100K_PULLUP)
+-	[ADC5_XO_THERM_100K_PU]	= ADC5_CHAN_TEMP("xo_therm_100k_pu", 1,
++	[ADC5_XO_THERM_100K_PU]	= ADC5_CHAN_TEMP("xo_therm_100k_pu", 0,
+ 					SCALE_HW_CALIB_THERM_100K_PULLUP)
+ };
+ 
+@@ -558,6 +559,9 @@ static int adc5_get_dt_channel_data(stru
+ 			return ret;
+ 		}
+ 		prop->prescale = ret;
++	} else {
++		prop->prescale =
++			adc->data->adc_chans[prop->channel].prescale_index;
  	}
- #endif
  
-+	preempt_enable();
-+
- 	return 0;
- }
- #endif
---- a/arch/powerpc/kernel/signal_64.c
-+++ b/arch/powerpc/kernel/signal_64.c
-@@ -467,20 +467,6 @@ static long restore_tm_sigcontexts(struc
- 	if (MSR_TM_RESV(msr))
- 		return -EINVAL;
- 
--	/* pull in MSR TS bits from user context */
--	regs->msr = (regs->msr & ~MSR_TS_MASK) | (msr & MSR_TS_MASK);
--
--	/*
--	 * Ensure that TM is enabled in regs->msr before we leave the signal
--	 * handler. It could be the case that (a) user disabled the TM bit
--	 * through the manipulation of the MSR bits in uc_mcontext or (b) the
--	 * TM bit was disabled because a sufficient number of context switches
--	 * happened whilst in the signal handler and load_tm overflowed,
--	 * disabling the TM bit. In either case we can end up with an illegal
--	 * TM state leading to a TM Bad Thing when we return to userspace.
--	 */
--	regs->msr |= MSR_TM;
--
- 	/* pull in MSR LE from user context */
- 	regs->msr = (regs->msr & ~MSR_LE) | (msr & MSR_LE);
- 
-@@ -572,6 +558,34 @@ static long restore_tm_sigcontexts(struc
- 	tm_enable();
- 	/* Make sure the transaction is marked as failed */
- 	tsk->thread.tm_texasr |= TEXASR_FS;
-+
-+	/*
-+	 * Disabling preemption, since it is unsafe to be preempted
-+	 * with MSR[TS] set without recheckpointing.
-+	 */
-+	preempt_disable();
-+
-+	/* pull in MSR TS bits from user context */
-+	regs->msr = (regs->msr & ~MSR_TS_MASK) | (msr & MSR_TS_MASK);
-+
-+	/*
-+	 * Ensure that TM is enabled in regs->msr before we leave the signal
-+	 * handler. It could be the case that (a) user disabled the TM bit
-+	 * through the manipulation of the MSR bits in uc_mcontext or (b) the
-+	 * TM bit was disabled because a sufficient number of context switches
-+	 * happened whilst in the signal handler and load_tm overflowed,
-+	 * disabling the TM bit. In either case we can end up with an illegal
-+	 * TM state leading to a TM Bad Thing when we return to userspace.
-+	 *
-+	 * CAUTION:
-+	 * After regs->MSR[TS] being updated, make sure that get_user(),
-+	 * put_user() or similar functions are *not* called. These
-+	 * functions can generate page faults which will cause the process
-+	 * to be de-scheduled with MSR[TS] set but without calling
-+	 * tm_recheckpoint(). This can cause a bug.
-+	 */
-+	regs->msr |= MSR_TM;
-+
- 	/* This loads the checkpointed FP/VEC state, if used */
- 	tm_recheckpoint(&tsk->thread);
- 
-@@ -585,6 +599,8 @@ static long restore_tm_sigcontexts(struc
- 		regs->msr |= MSR_VEC;
- 	}
- 
-+	preempt_enable();
-+
- 	return err;
- }
- #endif
+ 	ret = of_property_read_u32(node, "qcom,hw-settle-time", &value);
 
 
