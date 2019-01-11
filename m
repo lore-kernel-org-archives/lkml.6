@@ -7,50 +7,50 @@ X-Spam-Status: No, score=-13.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 188C3C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 18:05:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BED16C43444
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 18:05:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DCE0520878
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 18:05:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9537520652
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 18:05:38 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="TXDJKDjx"
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="Fl+phRj0"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732967AbfAKSFe (ORCPT
+        id S1733142AbfAKSFh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 11 Jan 2019 13:05:34 -0500
-Received: from fllv0016.ext.ti.com ([198.47.19.142]:41814 "EHLO
+        Fri, 11 Jan 2019 13:05:37 -0500
+Received: from fllv0016.ext.ti.com ([198.47.19.142]:41836 "EHLO
         fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730629AbfAKSFe (ORCPT
+        with ESMTP id S1732941AbfAKSFf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Jan 2019 13:05:34 -0500
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id x0BI5QJ5058843;
-        Fri, 11 Jan 2019 12:05:26 -0600
+        Fri, 11 Jan 2019 13:05:35 -0500
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id x0BI5SJj058853;
+        Fri, 11 Jan 2019 12:05:28 -0600
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1547229926;
-        bh=iMs/08grKUKeyJNc16SBl6/0zIJKaQp+E/CCklxB6es=;
+        s=ti-com-17Q1; t=1547229928;
+        bh=lobGBbOQutWmgYVSxRfepXKumbyagYUcXFaOn08s+2c=;
         h=From:To:CC:Subject:Date:In-Reply-To:References;
-        b=TXDJKDjx5XtporYqu/JuqogHkUnYSvAHYhqhkevL2a7EimKDhcmExd9DcNGGt05NC
-         R3BwoJzIdiBfDM8FNLZT5g2EQPjJbw/70jDf1wrC65x2DJRtDcFoeX4pgc8lg4KL9T
-         yfV4kev16T9Uw051Jg3Apzxg6P4hTHac6Pn/IuPo=
-Received: from DFLE111.ent.ti.com (dfle111.ent.ti.com [10.64.6.32])
-        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x0BI5QMn022391
+        b=Fl+phRj0+M8rOyerH1axc/qIo4ZCMHo/4zWc5tZzZJ0nR01UCFuxuevxJ3pDZom4D
+         mQ86Z5sWzXyl1oDKU/1vTOOtM4Rrhe9/ih9114FHRqddO9io1M8EuyemmSPb24EDrV
+         VujasGk1ks7vsSvyf9qtPwaXTy9IibXHxuR/KUhk=
+Received: from DLEE109.ent.ti.com (dlee109.ent.ti.com [157.170.170.41])
+        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x0BI5She116666
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Fri, 11 Jan 2019 12:05:26 -0600
-Received: from DFLE111.ent.ti.com (10.64.6.32) by DFLE111.ent.ti.com
- (10.64.6.32) with Microsoft SMTP Server (version=TLS1_2,
+        Fri, 11 Jan 2019 12:05:28 -0600
+Received: from DLEE108.ent.ti.com (157.170.170.38) by DLEE109.ent.ti.com
+ (157.170.170.41) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Fri, 11
- Jan 2019 12:05:26 -0600
-Received: from dlep33.itg.ti.com (157.170.170.75) by DFLE111.ent.ti.com
- (10.64.6.32) with Microsoft SMTP Server (version=TLS1_0,
+ Jan 2019 12:05:28 -0600
+Received: from dlep32.itg.ti.com (157.170.170.100) by DLEE108.ent.ti.com
+ (157.170.170.38) with Microsoft SMTP Server (version=TLS1_0,
  cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1591.10 via Frontend Transport;
- Fri, 11 Jan 2019 12:05:26 -0600
+ Fri, 11 Jan 2019 12:05:28 -0600
 Received: from legion.dal.desgin.ti.com (legion.dal.design.ti.com [128.247.22.53])
-        by dlep33.itg.ti.com (8.14.3/8.13.8) with ESMTP id x0BI5Qmo022544;
-        Fri, 11 Jan 2019 12:05:26 -0600
+        by dlep32.itg.ti.com (8.14.3/8.13.8) with ESMTP id x0BI5ReW006399;
+        Fri, 11 Jan 2019 12:05:28 -0600
 Received: from localhost (uda0226330.dhcp.ti.com [172.22.109.196])
-        by legion.dal.desgin.ti.com (8.11.7p1+Sun/8.11.7) with ESMTP id x0BI5PU07710;
-        Fri, 11 Jan 2019 12:05:25 -0600 (CST)
+        by legion.dal.desgin.ti.com (8.11.7p1+Sun/8.11.7) with ESMTP id x0BI5RU07722;
+        Fri, 11 Jan 2019 12:05:27 -0600 (CST)
 From:   "Andrew F. Davis" <afd@ti.com>
 To:     Laura Abbott <labbott@redhat.com>,
         Sumit Semwal <sumit.semwal@linaro.org>,
@@ -58,9 +58,9 @@ To:     Laura Abbott <labbott@redhat.com>,
         =?UTF-8?q?Arve=20Hj=C3=B8nnev=C3=A5g?= <arve@android.com>
 CC:     <devel@driverdev.osuosl.org>, <dri-devel@lists.freedesktop.org>,
         <linux-kernel@vger.kernel.org>, "Andrew F . Davis" <afd@ti.com>
-Subject: [PATCH 02/14] staging: android: ion: Remove empty ion_ioctl_dir() function
-Date:   Fri, 11 Jan 2019 12:05:11 -0600
-Message-ID: <20190111180523.27862-3-afd@ti.com>
+Subject: [PATCH 04/14] staging: android: ion: Remove leftover comment
+Date:   Fri, 11 Jan 2019 12:05:13 -0600
+Message-ID: <20190111180523.27862-5-afd@ti.com>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190111180523.27862-1-afd@ti.com>
 References: <20190111180523.27862-1-afd@ti.com>
@@ -73,60 +73,30 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This function is empty of real function and can be replaced with
-_IOC_DIR().
+Since we use CMA APIs directly there is no device nor private heaps data,
+drop this comment.
 
+Fixes: 204f672255c2 ("staging: android: ion: Use CMA APIs directly")
 Signed-off-by: Andrew F. Davis <afd@ti.com>
 ---
- drivers/staging/android/ion/ion-ioctl.c | 16 ++--------------
- 1 file changed, 2 insertions(+), 14 deletions(-)
+ drivers/staging/android/ion/ion_cma_heap.c | 4 ----
+ 1 file changed, 4 deletions(-)
 
-diff --git a/drivers/staging/android/ion/ion-ioctl.c b/drivers/staging/android/ion/ion-ioctl.c
-index a8d3cc412fb9..b366f97a5728 100644
---- a/drivers/staging/android/ion/ion-ioctl.c
-+++ b/drivers/staging/android/ion/ion-ioctl.c
-@@ -31,23 +31,11 @@ static int validate_ioctl_arg(unsigned int cmd, union ion_ioctl_arg *arg)
- 	return 0;
- }
+diff --git a/drivers/staging/android/ion/ion_cma_heap.c b/drivers/staging/android/ion/ion_cma_heap.c
+index 7b557dd5e78b..bf65e67ef9d8 100644
+--- a/drivers/staging/android/ion/ion_cma_heap.c
++++ b/drivers/staging/android/ion/ion_cma_heap.c
+@@ -111,10 +111,6 @@ static struct ion_heap *__ion_cma_heap_create(struct cma *cma)
+ 		return ERR_PTR(-ENOMEM);
  
--/* fix up the cases where the ioctl direction bits are incorrect */
--static unsigned int ion_ioctl_dir(unsigned int cmd)
--{
--	switch (cmd) {
--	default:
--		return _IOC_DIR(cmd);
--	}
--}
--
- long ion_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
- {
- 	int ret = 0;
--	unsigned int dir;
- 	union ion_ioctl_arg data;
- 
--	dir = ion_ioctl_dir(cmd);
--
- 	if (_IOC_SIZE(cmd) > sizeof(data))
- 		return -EINVAL;
- 
-@@ -65,7 +53,7 @@ long ion_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
- 		return ret;
- 	}
- 
--	if (!(dir & _IOC_WRITE))
-+	if (!(_IOC_DIR(cmd) & _IOC_WRITE))
- 		memset(&data, 0, sizeof(data));
- 
- 	switch (cmd) {
-@@ -90,7 +78,7 @@ long ion_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
- 		return -ENOTTY;
- 	}
- 
--	if (dir & _IOC_READ) {
-+	if (_IOC_DIR(cmd) & _IOC_READ) {
- 		if (copy_to_user((void __user *)arg, &data, _IOC_SIZE(cmd)))
- 			return -EFAULT;
- 	}
+ 	cma_heap->heap.ops = &ion_cma_ops;
+-	/*
+-	 * get device from private heaps data, later it will be
+-	 * used to make the link with reserved CMA memory
+-	 */
+ 	cma_heap->cma = cma;
+ 	cma_heap->heap.type = ION_HEAP_TYPE_DMA;
+ 	return &cma_heap->heap;
 -- 
 2.19.1
 
