@@ -2,157 +2,105 @@ Return-Path: <SRS0=uvhX=PT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BF22BC43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 07:31:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C06C8C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 07:32:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8FD192084C
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 07:31:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 969C62146F
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 07:32:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731160AbfAKHbI (ORCPT
+        id S1729330AbfAKHcZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 11 Jan 2019 02:31:08 -0500
-Received: from mx2.suse.de ([195.135.220.15]:59154 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728468AbfAKHbH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Jan 2019 02:31:07 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id B4EA9B01F;
-        Fri, 11 Jan 2019 07:31:05 +0000 (UTC)
-Subject: Re: [PATCH] xen: Fix x86 sched_clock() interface for xen
-To:     Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        linux-kernel@vger.kernel.org, xen-devel@lists.xenproject.org,
-        x86@kernel.org
-Cc:     sstabellini@kernel.org, hpa@zytor.com, tglx@linutronix.de,
-        mingo@redhat.com, bp@alien8.de, hans@knorrie.org,
-        stable@vger.kernel.org
-References: <20190110100722.11216-1-jgross@suse.com>
- <e7ea12ca-93f1-2421-702b-b55806eb20bd@oracle.com>
- <e98d244f-1257-ed23-26f4-8909900590b4@suse.com>
- <21d24fe0-f9bd-c312-7773-b43a8ff39ef1@oracle.com>
- <d8cc08b1-0ec1-6d12-f0df-a41845a69ea0@oracle.com>
- <2325af4f-ec68-d775-e5d5-eb0b76bc72fe@suse.com>
-From:   Juergen Gross <jgross@suse.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=jgross@suse.com; prefer-encrypt=mutual; keydata=
- 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
-Message-ID: <119cbb5a-c145-36a6-5db8-d44575267b8f@suse.com>
-Date:   Fri, 11 Jan 2019 08:31:03 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.0
+        Fri, 11 Jan 2019 02:32:25 -0500
+Received: from nautica.notk.org ([91.121.71.147]:56667 "EHLO nautica.notk.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727578AbfAKHcY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 Jan 2019 02:32:24 -0500
+Received: by nautica.notk.org (Postfix, from userid 1001)
+        id CA660C01B; Fri, 11 Jan 2019 08:32:21 +0100 (CET)
+Date:   Fri, 11 Jan 2019 08:32:06 +0100
+From:   Dominique Martinet <asmadeus@codewreck.org>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Dave Chinner <david@fromorbit.com>, Jiri Kosina <jikos@kernel.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        Jann Horn <jannh@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Michal Hocko <mhocko@suse.com>, Linux-MM <linux-mm@kvack.org>,
+        kernel list <linux-kernel@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>
+Subject: Re: [PATCH] mm/mincore: allow for making sys_mincore() privileged
+Message-ID: <20190111073206.GA1303@nautica>
+References: <20190109043906.GF27534@dastard>
+ <CAHk-=wic28fSkwmPbBHZcJ3BGbiftprNy861M53k+=OAB9n0=w@mail.gmail.com>
+ <20190110004424.GH27534@dastard>
+ <CAHk-=wg1jSQ-gq-M3+HeTBbDs1VCjyiwF4gqnnBhHeWizyrigg@mail.gmail.com>
+ <20190110070355.GJ27534@dastard>
+ <CAHk-=wigwXV_G-V1VxLs6BAvVkvW5=Oj+xrNHxE_7yxEVwoe3w@mail.gmail.com>
+ <20190110122442.GA21216@nautica>
+ <CAHk-=wip2CPrdOwgF0z4n2tsdW7uu+Egtcx9Mxxe3gPfPW_JmQ@mail.gmail.com>
+ <20190111045750.GA27333@nautica>
+ <CAHk-=wiqfAdmmE+pR3O5zs=xtkd6A6ShyyCwpwSZ+341L=zVYw@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <2325af4f-ec68-d775-e5d5-eb0b76bc72fe@suse.com>
 Content-Type: text/plain; charset=utf-8
-Content-Language: de-DE
-Content-Transfer-Encoding: 8bit
+Content-Disposition: inline
+In-Reply-To: <CAHk-=wiqfAdmmE+pR3O5zs=xtkd6A6ShyyCwpwSZ+341L=zVYw@mail.gmail.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/01/2019 08:15, Juergen Gross wrote:
-> On 11/01/2019 00:10, Boris Ostrovsky wrote:
->> On 1/10/19 12:17 PM, Boris Ostrovsky wrote:
->>> On 1/10/19 11:14 AM, Juergen Gross wrote:
->>>> On 10/01/2019 16:34, Boris Ostrovsky wrote:
->>>>> On 1/10/19 5:07 AM, Juergen Gross wrote:
->>>>>>  
->>>>>> +void xen_clocksource_suspend(void)
->>>>>> +{
->>>>>> +	xen_clock_value_saved = xen_clocksource_read() - xen_sched_clock_offset;
->>>>> xen_clock_value_saved = xen_sched_clock() maybe? 
->>>> I wanted xen_clocksource_suspend() and xen_clocksource_resume() to
->>>> be symmetrical to each other.
->>> OK.
->>>
->>> Reviewed-by: Boris Ostrovsky <boris.ostrovsky@oracle.com>
->>>
->>>> In case you are feeling strong about that, I'm not. :-) So in case
->>>> you insist on it I can change it. Or you can do so while committing.
->>
->>
->> I did some basic testing and noticed this (at loglevel=8):
->>
->> [   64.336488] Freezing user space processes ... (elapsed 0.001 seconds)
->> done.
->> [   64.337805] OOM killer disabled.
->> [   64.337814] Freezing remaining freezable tasks ... (elapsed 0.000
->> seconds) done.
->> [   64.339066] suspending xenstore...
->> [   85.888340] xen:grant_table: Grant tables using version 1 layout
->> [   64.359729] OOM killer enabled.
->> [   64.359736] Restarting tasks ... done.
->>
->>
->> Which made me think that perhaps we should do suspend/restore of the
->> clocksource as close as possible to HYPERVISOR_suspend() call, e.g. in
->> xen_arch_pre_suspend()/xen_arch_post_suspend():
->>
->> diff --git a/arch/x86/xen/suspend.c b/arch/x86/xen/suspend.c
->> index 45fc9caf3880..80ecba3fcc8c 100644
->> --- a/arch/x86/xen/suspend.c
->> +++ b/arch/x86/xen/suspend.c
->> @@ -22,6 +22,7 @@ static DEFINE_PER_CPU(u64, spec_ctrl);
->>  
->>  void xen_arch_pre_suspend(void)
->>  {
->> +       xen_clocksource_suspend();
->>         xen_save_time_memory_area();
->>  
->>         if (xen_pv_domain())
->> @@ -36,6 +37,7 @@ void xen_arch_post_suspend(int cancelled)
->>                 xen_hvm_post_suspend(cancelled);
->>  
->>         xen_restore_time_memory_area();
->> +       xen_clocksource_resume();
->>  }
->>  
->>  static void xen_vcpu_notify_restore(void *data)
->>
->>
->> This still has a window of incorrect clock value (you can see it, for
->> example, when xen_hvm_post_suspend() does pr_info("Xen HVM callback
->> vector for event delivery is enabled\n")), but it's smaller than before.
->> In particular, we will make time right before dpm_resume_start() call.
+Linus Torvalds wrote on Thu, Jan 10, 2019:
+> But those numbers aren't about the mincore() change. That's just from
+> dropping caches.
 > 
-> You are right, this is better.
+> Now, what's the difference with the mincore change, and without? Is it
+> actually measurable?
+> 
+> Because that's all that matters: is the mincore change something you
+> can even notice? Is it a big regression?
+> 
+> The fact that things are slower when they are cold in the cache isn't
+> the issue. The issue is whether the change to mincore semantics makes
+> any difference to real loads.
 
-In fact, I can just handle this entirely inside arch/x86/xen/time.c by
-moving the required statements into xen_save_time_memory_area() and
-xen_restore_time_memory_area().
+mincore itself isn't used to reload the data, but is necessary to know
+*what* you need to reload.
+If you don't know what pages are hot, how can you preload them?
+
+For small enough a database and with enough memory you can act stupid
+and load the whole tables in cache, that's what I did because I was lazy
+and only had a big mysql data set around. But the container warming up
+automaton Dave mentioned and postgresql db preloading with pgfincore
+explicitely depend on being able to tell what they need to preload.
 
 
-Juergen
+pgfincore documentation states:
+----
+set of PostgreSQL functions to manage blocks in memory
+
+Those functions let you know which and how many disk block from a
+relation are in the page cache of the operating system, and eventually
+write the result to a file. Then using this file, it is possible to
+restore the page cache state for each block of the relation.
+----
+If you cannot dump an arbitrary "hot state" x, you cannot restore it.
+
+
+This is all basically a repeat of the other subthread; sure precaching
+itself doesn't need mincore and if you're all-knowing the syscall isn't
+needed, but mere mortals need it.
+
+
+If it's about the commit itself, vmtouch tells me 0 page in these
+database files are in cache when I reboot to a 5.0-rc1 kernel and run
+some queries, so the difference after a fresh boot is exactly what I
+stated. I'm probably missing something but I'm not quite sure in what
+situation the "new mincore" has any use right now.
+-- 
+Dominique Martinet | Asmadeus
