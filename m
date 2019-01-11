@@ -4,51 +4,51 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-13.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 41D33C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:32:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 04A00C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:33:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 129D1204EC
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:32:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CB24821848
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:32:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547217177;
-	bh=uo392R8DdE3C72s1a7WtAyp2z8E58SLVYTwhGLOy7wU=;
+	s=default; t=1547217179;
+	bh=E7ZcDDKDHT6syj1/76ZeFa69lf/szMedwlwkFKCAeLU=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=mvW1TlMhoD5/R0FJL5Hp/nDW95GQ2Ql51p0uBrN8w6ENWLkUsouviGCo1ANNXJQ+y
-	 cAwkH3EBzT7IABcnt10sDehROylIYGHEGgdx6yIK1pMHymml6hHC9x23ePGjDn13oa
-	 xtGUPgX14ewW4CLobJn2Rrqd5x81wd89yvWnW/gE=
+	b=0KLbgo6uiN2RFOiW4cKwPJSNBthXQSFBLcXn2XD8hCjPLAHCb0mLh5nv9Nkmok6z0
+	 jBsXZe7tPyxdHbLLvTJNwFLjAIw5A06kKQzOm++F0UuO9QYJW7z1jtGvu8A7UEGf7s
+	 BgIZQVyJ7cA1jW2AZU99FH1R99/K+JIyVVMHRVEc=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389544AbfAKOc4 (ORCPT
+        id S2389559AbfAKOc7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 11 Jan 2019 09:32:56 -0500
-Received: from mail.kernel.org ([198.145.29.99]:53006 "EHLO mail.kernel.org"
+        Fri, 11 Jan 2019 09:32:59 -0500
+Received: from mail.kernel.org ([198.145.29.99]:53052 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387920AbfAKOcx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Jan 2019 09:32:53 -0500
+        id S2387920AbfAKOc5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 Jan 2019 09:32:57 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EB1962177B;
-        Fri, 11 Jan 2019 14:32:52 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E38C82133F;
+        Fri, 11 Jan 2019 14:32:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547217173;
-        bh=uo392R8DdE3C72s1a7WtAyp2z8E58SLVYTwhGLOy7wU=;
+        s=default; t=1547217176;
+        bh=E7ZcDDKDHT6syj1/76ZeFa69lf/szMedwlwkFKCAeLU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=b60maH6RQZpk6DKoOj3/gkNnJ3bvwazHPfT6/vOl5E1tlApvMYikshSnO/456dFjx
-         6hWQjem4/UKK0OmUrX6HN1ooBvvul6FJax9wPSNAQLsZ7hKgl+zjH5r9LYtedGkIcj
-         h9itDAoQKySATWgdpaDQ5o32UbOvOndl0BKk7Omc=
+        b=rjREyh1h+2ChD8N6GEcdpltEPd134vAFQGoJwuewnJ2aW8O37ZsvHbL1bpdcRWqNr
+         O9L3zCi235vZZXvNycbSSuj/eXQMk9QG3uB5B8pQATnOVsKYidBpZglH5VtOfthG8s
+         pVH46yAFySJq2qYP68Ohd6Nk/v873L4J2igqvVrM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Yonglong Liu <liuyonglong@huawei.com>,
-        Peng Li <lipeng321@huawei.com>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org, Martin Zaharinov <micron10@gmail.com>,
+        Florian Westphal <fw@strlen.de>,
+        Pablo Neira Ayuso <pablo@netfilter.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 031/105] net: hns: Incorrect offset address used for some registers.
-Date:   Fri, 11 Jan 2019 15:14:02 +0100
-Message-Id: <20190111131105.893663074@linuxfoundation.org>
+Subject: [PATCH 4.14 022/105] netfilter: nat: cant use dst_hold on noref dst
+Date:   Fri, 11 Jan 2019 15:13:53 +0100
+Message-Id: <20190111131105.165943651@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190111131102.899065735@linuxfoundation.org>
 References: <20190111131102.899065735@linuxfoundation.org>
@@ -67,36 +67,47 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 4e1d4be681b2c26fd874adbf584bf034573ac45d ]
+[ Upstream commit 542fbda0f08f1cbbc250f9e59f7537649651d0c8 ]
 
-According to the hip06 Datasheet:
-1. The offset of INGRESS_SW_VLAN_TAG_DISC should be 0x1A00+4*all_chn_num
-2. The offset of INGRESS_IN_DATA_STP_DISC should be 0x1A50+4*all_chn_num
+The dst entry might already have a zero refcount, waiting on rcu list
+to be free'd.  Using dst_hold() transitions its reference count to 1, and
+next dst release will try to free it again -- resulting in a double free:
 
-Signed-off-by: Yonglong Liu <liuyonglong@huawei.com>
-Signed-off-by: Peng Li <lipeng321@huawei.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+  WARNING: CPU: 1 PID: 0 at include/net/dst.h:239 nf_xfrm_me_harder+0xe7/0x130 [nf_nat]
+  RIP: 0010:nf_xfrm_me_harder+0xe7/0x130 [nf_nat]
+  Code: 48 8b 5c 24 60 65 48 33 1c 25 28 00 00 00 75 53 48 83 c4 68 5b 5d 41 5c c3 85 c0 74 0d 8d 48 01 f0 0f b1 0a 74 86 85 c0 75 f3 <0f> 0b e9 7b ff ff ff 29 c6 31 d2 b9 20 00 48 00 4c 89 e7 e8 31 27
+  Call Trace:
+  nf_nat_ipv4_out+0x78/0x90 [nf_nat_ipv4]
+  nf_hook_slow+0x36/0xd0
+  ip_output+0x9f/0xd0
+  ip_forward+0x328/0x440
+  ip_rcv+0x8a/0xb0
+
+Use dst_hold_safe instead and bail out if we cannot take a reference.
+
+Fixes: a4c2fd7f7891 ("net: remove DST_NOCACHE flag")
+Reported-by: Martin Zaharinov <micron10@gmail.com>
+Signed-off-by: Florian Westphal <fw@strlen.de>
+Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/hisilicon/hns/hns_dsaf_main.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ net/netfilter/nf_nat_core.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/net/ethernet/hisilicon/hns/hns_dsaf_main.c b/drivers/net/ethernet/hisilicon/hns/hns_dsaf_main.c
-index 1f056a6b167e..bc020dddd253 100644
---- a/drivers/net/ethernet/hisilicon/hns/hns_dsaf_main.c
-+++ b/drivers/net/ethernet/hisilicon/hns/hns_dsaf_main.c
-@@ -2159,9 +2159,9 @@ void hns_dsaf_update_stats(struct dsaf_device *dsaf_dev, u32 node_num)
- 		DSAF_INODE_LOCAL_ADDR_FALSE_NUM_0_REG + 0x80 * (u64)node_num);
+diff --git a/net/netfilter/nf_nat_core.c b/net/netfilter/nf_nat_core.c
+index af8345fc4fbd..ed0ea64b8d04 100644
+--- a/net/netfilter/nf_nat_core.c
++++ b/net/netfilter/nf_nat_core.c
+@@ -97,7 +97,8 @@ int nf_xfrm_me_harder(struct net *net, struct sk_buff *skb, unsigned int family)
+ 	dst = skb_dst(skb);
+ 	if (dst->xfrm)
+ 		dst = ((struct xfrm_dst *)dst)->route;
+-	dst_hold(dst);
++	if (!dst_hold_safe(dst))
++		return -EHOSTUNREACH;
  
- 	hw_stats->vlan_drop += dsaf_read_dev(dsaf_dev,
--		DSAF_INODE_SW_VLAN_TAG_DISC_0_REG + 0x80 * (u64)node_num);
-+		DSAF_INODE_SW_VLAN_TAG_DISC_0_REG + 4 * (u64)node_num);
- 	hw_stats->stp_drop += dsaf_read_dev(dsaf_dev,
--		DSAF_INODE_IN_DATA_STP_DISC_0_REG + 0x80 * (u64)node_num);
-+		DSAF_INODE_IN_DATA_STP_DISC_0_REG + 4 * (u64)node_num);
- 
- 	/* pfc pause frame statistics stored in dsaf inode*/
- 	if ((node_num < DSAF_SERVICE_NW_NUM) && !is_ver1) {
+ 	dst = xfrm_lookup(net, dst, &fl, skb->sk, 0);
+ 	if (IS_ERR(dst))
 -- 
 2.19.1
 
