@@ -2,265 +2,300 @@ Return-Path: <SRS0=uvhX=PT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C3BB0C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 08:10:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C48E0C43612
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 08:11:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 87C1B2173B
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 08:10:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 916322173B
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 08:11:34 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=synopsys.com header.i=@synopsys.com header.b="iGy0gh1o"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729143AbfAKIKq (ORCPT
+        id S1729249AbfAKILd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 11 Jan 2019 03:10:46 -0500
-Received: from smtprelay0182.hostedemail.com ([216.40.44.182]:51666 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1725601AbfAKIKq (ORCPT
+        Fri, 11 Jan 2019 03:11:33 -0500
+Received: from us01smtprelay-2.synopsys.com ([198.182.47.9]:43160 "EHLO
+        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728997AbfAKILd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Jan 2019 03:10:46 -0500
-Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
-        by smtprelay02.hostedemail.com (Postfix) with ESMTP id 1B2DC6115;
-        Fri, 11 Jan 2019 08:10:43 +0000 (UTC)
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-HE-Tag: field83_233f9f6842661
-X-Filterd-Recvd-Size: 13023
-Received: from XPS-9350.home (unknown [47.151.153.53])
-        (Authenticated sender: joe@perches.com)
-        by omf14.hostedemail.com (Postfix) with ESMTPA;
-        Fri, 11 Jan 2019 08:10:42 +0000 (UTC)
-Message-ID: <6f3a66eb8edacd3b6813558e8a4e9220350b09d7.camel@perches.com>
-Subject: [utility perl script] strncmp() -> str_has_prefix() conversions
-From:   Joe Perches <joe@perches.com>
-To:     Steven Rostedt <rostedt@goodmis.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Cc:     Julia Lawall <julia.lawall@lip6.fr>
-Date:   Fri, 11 Jan 2019 00:10:40 -0800
-In-Reply-To: <20181221231924.4583e90b@vmware.local.home>
-References: <20181221231924.4583e90b@vmware.local.home>
-Content-Type: multipart/mixed; boundary="=-KygnV11JSGFAVPbcCxcO"
-User-Agent: Evolution 3.30.1-1build1 
-Mime-Version: 1.0
+        Fri, 11 Jan 2019 03:11:33 -0500
+Received: from mailhost.synopsys.com (mailhost1.synopsys.com [10.12.238.239])
+        by smtprelay.synopsys.com (Postfix) with ESMTP id 0E74124E0F62;
+        Fri, 11 Jan 2019 00:11:32 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
+        t=1547194292; bh=YpXgJdjATGMJJFiHOIq7KUjEgmNE1CWuZYddXFo+Ck4=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To:From;
+        b=iGy0gh1oUOShlvWrW3zIdd0whwHSWn9AKwZxbliv2EBsco+Xj3hNHccK/Qt0MLc/f
+         pIW4S1Pukd/1SCh2uDfQMoKOaS3J6JyDZtE2LMOC8egcle1BpvsBITOYOplhLYEj3w
+         FqmU30mlKKTKF3R5tciwN8i2xIoC8y66aaCfDDix1gtE2ekLszMT1g/775YCn42v9n
+         a2sXTIyz3JoLfZFBUnoMI6vwplxYbfPyBKvrIiSqpdXi5EQw5cRhxAeVGNaI1nkgLO
+         yBpV9jt1apicJ9Yc3lj4qgZiVkRvS+80RngPeCZemn41cq63MrtcWFQfdoloVAst7M
+         yRNUWPz3v9I7A==
+Received: from US01WXQAHTC1.internal.synopsys.com (us01wxqahtc1.internal.synopsys.com [10.12.238.230])
+        by mailhost.synopsys.com (Postfix) with ESMTP id 048D55785;
+        Fri, 11 Jan 2019 00:11:31 -0800 (PST)
+Received: from DE02WEHTCA.internal.synopsys.com (10.225.19.92) by
+ US01WXQAHTC1.internal.synopsys.com (10.12.238.230) with Microsoft SMTP Server
+ (TLS) id 14.3.408.0; Fri, 11 Jan 2019 00:11:31 -0800
+Received: from DE02WEHTCB.internal.synopsys.com (10.225.19.94) by
+ DE02WEHTCA.internal.synopsys.com (10.225.19.92) with Microsoft SMTP Server
+ (TLS) id 14.3.408.0; Fri, 11 Jan 2019 09:11:28 +0100
+Received: from [10.107.19.13] (10.107.19.13) by
+ DE02WEHTCB.internal.synopsys.com (10.225.19.80) with Microsoft SMTP Server
+ (TLS) id 14.3.408.0; Fri, 11 Jan 2019 09:11:28 +0100
+Subject: Re: [V3, 4/4] media: platform: dwc: Add MIPI CSI-2 controller driver
+To:     "Eugen.Hristev@microchip.com" <Eugen.Hristev@microchip.com>,
+        "luis.oliveira@synopsys.com" <luis.oliveira@synopsys.com>,
+        "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+CC:     "joao.pinto@synopsys.com" <joao.pinto@synopsys.com>,
+        "festevam@gmail.com" <festevam@gmail.com>,
+        "mchehab@kernel.org" <mchehab@kernel.org>,
+        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+        "davem@davemloft.net" <davem@davemloft.net>,
+        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+        "arnd@arndb.de" <arnd@arndb.de>,
+        "hans.verkuil@cisco.com" <hans.verkuil@cisco.com>,
+        "laurent.pinchart@ideasonboard.com" 
+        <laurent.pinchart@ideasonboard.com>,
+        "geert@linux-m68k.org" <geert@linux-m68k.org>,
+        "narmstrong@baylibre.com" <narmstrong@baylibre.com>,
+        "p.zabel@pengutronix.de" <p.zabel@pengutronix.de>,
+        "treding@nvidia.com" <treding@nvidia.com>,
+        "maxime.ripard@bootlin.com" <maxime.ripard@bootlin.com>,
+        "todor.tomov@linaro.org" <todor.tomov@linaro.org>
+References: <1539953556-35762-1-git-send-email-lolivei@synopsys.com>
+ <1539953556-35762-5-git-send-email-lolivei@synopsys.com>
+ <4db76eb2-460f-c644-6dbd-370b07b2def8@microchip.com>
+ <2407a3ca-1a83-5685-c26c-a922251b2943@synopsys.com>
+ <24f6a1fe-4790-91ba-ce21-72397c0a02df@microchip.com>
+From:   Luis de Oliveira <luis.oliveira@synopsys.com>
+Message-ID: <2c5b8a1b-c620-787b-9d83-6bfe099c4552@synopsys.com>
+Date:   Fri, 11 Jan 2019 08:11:24 +0000
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
+MIME-Version: 1.0
+In-Reply-To: <24f6a1fe-4790-91ba-ce21-72397c0a02df@microchip.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.107.19.13]
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
---=-KygnV11JSGFAVPbcCxcO
-Content-Type: text/plain; charset="ISO-8859-1"
-Content-Transfer-Encoding: 7bit
 
-On Fri, 2018-12-21 at 23:19 -0500, Steven Rostedt wrote:
-> str_has_prefix
+On 11-Jan-19 7:25, Eugen.Hristev@microchip.com wrote:
+> 
+> 
+> On 10.01.2019 18:18, Luis de Oliveira wrote:
+>>
+>>
+>> On 09-Jan-19 13:07, Eugen.Hristev@microchip.com wrote:
+>>>
+>>>
+>>> On 19.10.2018 15:52, Luis Oliveira wrote:
+>>>> Add the Synopsys MIPI CSI-2 controller driver. This
+>>>> controller driver is divided in platform dependent functions
+>>>> and core functions. It also includes a platform for future
+>>>> DesignWare drivers.
+>>>>
+>>>> Signed-off-by: Luis Oliveira <lolivei@synopsys.com>
+>>>> ---
+>>>> Changelog
+>>>> v2-V3
+>>>> - exposed IPI settings to userspace
+>>>> - fixed headers
+>>>>
+>>>>    MAINTAINERS                              |  11 +
+>>>>    drivers/media/platform/dwc/Kconfig       |  30 +-
+>>>>    drivers/media/platform/dwc/Makefile      |   2 +
+>>>>    drivers/media/platform/dwc/dw-csi-plat.c | 699 +++++++++++++++++++++++++++++++
+>>>>    drivers/media/platform/dwc/dw-csi-plat.h |  77 ++++
+>>>>    drivers/media/platform/dwc/dw-mipi-csi.c | 494 ++++++++++++++++++++++
+>>>>    drivers/media/platform/dwc/dw-mipi-csi.h | 202 +++++++++
+>>>>    include/media/dwc/dw-mipi-csi-pltfrm.h   | 102 +++++
+>>>>    8 files changed, 1616 insertions(+), 1 deletion(-)
+>>>>    create mode 100644 drivers/media/platform/dwc/dw-csi-plat.c
+>>>>    create mode 100644 drivers/media/platform/dwc/dw-csi-plat.h
+>>>>    create mode 100644 drivers/media/platform/dwc/dw-mipi-csi.c
+>>>>    create mode 100644 drivers/media/platform/dwc/dw-mipi-csi.h
+>>>>    create mode 100644 include/media/dwc/dw-mipi-csi-pltfrm.h
+>>>>
+>>>
+>>> [snip]
+>>>
+>>>> +/* Video formats supported by the MIPI CSI-2 */
+>>>> +const struct mipi_fmt dw_mipi_csi_formats[] = {
+>>>> +	{
+>>>> +		/* RAW 8 */
+>>>> +		.code = MEDIA_BUS_FMT_SBGGR8_1X8,
+>>>> +		.depth = 8,
+>>>> +	},
+>>>> +	{
+>>>> +		/* RAW 10 */
+>>>> +		.code = MEDIA_BUS_FMT_SBGGR10_2X8_PADHI_BE,
+>>>> +		.depth = 10,
+>>>> +	},
+>>>
+>>> Hi Luis,
+>>>
+>>> Any reason why RAW12 format is not handled here ?
+>>>
+>>> Here, namely MEDIA_BUS_FMT_SBGGR12_1X12 etc.
+>>>
+>> Hi Eugen,
+>>
+>> My Hw testing setup currently does not support it, so I didn't add it.
+>>
+>>>> +	{
+>>>> +		/* RGB 565 */
+>>>> +		.code = MEDIA_BUS_FMT_RGB565_2X8_BE,
+>>>> +		.depth = 16,
+>>>> +	},
+>>>> +	{
+>>>> +		/* BGR 565 */
+>>>> +		.code = MEDIA_BUS_FMT_RGB565_2X8_LE,
+>>>> +		.depth = 16,
+>>>> +	},
+>>>> +	{
+>>>> +		/* RGB 888 */
+>>>> +		.code = MEDIA_BUS_FMT_RGB888_2X12_LE,
+>>>> +		.depth = 24,
+>>>> +	},
+>>>> +	{
+>>>> +		/* BGR 888 */
+>>>> +		.code = MEDIA_BUS_FMT_RGB888_2X12_BE,
+>>>> +		.depth = 24,
+>>>> +	},
+>>>> +};
+>>>
+>>> [snip]
+>>>
+>>>> +
+>>>> +void dw_mipi_csi_set_ipi_fmt(struct mipi_csi_dev *csi_dev)
+>>>> +{
+>>>> +	struct device *dev = csi_dev->dev;
+>>>> +
+>>>> +	if (csi_dev->ipi_dt)
+>>>> +		dw_mipi_csi_write(csi_dev, reg.IPI_DATA_TYPE, csi_dev->ipi_dt);
+>>>> +	else {
+>>>> +		switch (csi_dev->fmt->code) {
+>>>> +		case MEDIA_BUS_FMT_RGB565_2X8_BE:
+>>>> +		case MEDIA_BUS_FMT_RGB565_2X8_LE:
+>>>> +			dw_mipi_csi_write(csi_dev,
+>>>> +					reg.IPI_DATA_TYPE, CSI_2_RGB565);
+>>>> +			dev_dbg(dev, "DT: RGB 565");
+>>>> +			break;
+>>>> +
+>>>> +		case MEDIA_BUS_FMT_RGB888_2X12_LE:
+>>>> +		case MEDIA_BUS_FMT_RGB888_2X12_BE:
+>>>> +			dw_mipi_csi_write(csi_dev,
+>>>> +					reg.IPI_DATA_TYPE, CSI_2_RGB888);
+>>>> +			dev_dbg(dev, "DT: RGB 888");
+>>>> +			break;
+>>>> +		case MEDIA_BUS_FMT_SBGGR10_2X8_PADHI_BE:
+>>>> +			dw_mipi_csi_write(csi_dev,
+>>>> +					reg.IPI_DATA_TYPE, CSI_2_RAW10);
+>>>> +			dev_dbg(dev, "DT: RAW 10");
+>>>> +			break;
+>>>> +		case MEDIA_BUS_FMT_SBGGR8_1X8:
+>>>> +			dw_mipi_csi_write(csi_dev,
+>>>> +					reg.IPI_DATA_TYPE, CSI_2_RAW8);
+>>>> +			dev_dbg(dev, "DT: RAW 8");
+>>>> +			break;
+>>>
+>>> Same here, in CSI_2_RAW12 case it will default to a RGB565 case.
+>>>
+>>> Thanks,
+>>>
+>>> Eugen
+>>>
+>>>
+>> I will try to add the support for this data type in my next patchset if not I
+>> will flag it as unsupported for now in the commit message and code.
+> 
+> Hi Luis,
+> 
+> I am currently trying to see if your driver works , and I need the RAW12 
+> type, that's why I am asking about it.
+> 
+> One question related to the subdevice you create here, how do you 
+> register this subdev into the media subsystem ? sync or async, or not at 
+> all ?
+> After the driver probes, there is no call to the set format functions, I 
+> added a node inside the Device tree, I see you are registering media 
+> pads, but the other endpoint needs to be an async waiting for completion 
+> node or your subdev registers in some other way ? (maybe some link 
+> validation required ?)
+> 
+> Thanks for your help,
+> 
+> Eugen
+> 
+Hi Eugen,
 
-A coccinelle script could be more thorough but here
-is a trivial perl script that can do most of the
-	strncmp() -> str_has_prefix()
-conversions where there is a constant string as one of
-the first two arguments of strncmp like any of:
+On top of this dphy+controller solution I use a wrapper driver that binds this
+two together and create the links.
+I use V4L2_ASYNC_MATCH_FWNODE and v4l2_async_notifier_operations to match and
+bound all my sensors until completion.
 
-	strncmp(foo, "bar", 3)
-	strncmp(foo, "bar", strlen("bar"))
-	strncmp(foo, "bar", sizeof("bar") - 1)
-	strncmp("foo", bar, 3)
-	strncmp("foo", bar, strlen("foo"))
-	strncmp("foo", bar",
-sizeof("foo") - 1)
+My dt looks like this:
 
-It could be used with a particular path or file:
+camera wrapper {
+ 	
+	video_dev {
+		dma
+	}
+	vif_1 @reg {
+		...
+	}
+	..
+	vif_n @reg {
+		...
+	}
+	csi_1 @reg {
+		...
+		phy
+		port 1..2 {}
+	}
+	csi_n @reg {
+		...
+		phy
+		port 1..2 {}
+	}
 
-$ git grep -w --name-only strncmp <path> | \
-  grep -vP '^(tools|scripts)' | \
-  while read file ; do \
-    echo $file ; \
-    perl -i ./strncmp.perl $file ; \
-  done
+Fundamentally It is the same principle as this
+drivers/media/platform/exynos4-is/media-dev.c but my solution has more entities
+for testing purposes.
+Check the exynos4-is because is very similar to my top solution.
 
-It mostly works, but there are a few uses that
-are not converted properly when the non const
-string argument to strncmp is an expression like
+When I started doing this patchset I was thinking of sending the wrapper also
+but I then decided to not do it because it is very narrow and focused in my
+tests. But I can include it in v4 if everyone think its best.
 
-	strncmp(a+b, "foo", 3)
-
-There are also strncmp uses that remain after
-this script is run where strncmp should just
-be converted to strcmp instead like:
-
-	strncmp(p, "foo", sizeof(foo))
-and
-	strncmp(p, "foo", 4)
-
-The script converts the most common cases:
-
-    ## counted length of string
-    # strncmp(arg, string, counted length of string) == 0
-    # strncmp(arg, string, counted length of string) != 0
-    # !strncmp(arg, string, counted length of string)
-    # strncmp(arg, string, counted length of string)
-
-    ## Reversed string/arg counted length of string uses
-    # strncmp(string, arg, counted length of string) == 0
-    # strncmp(string, arg, counted length of string) != 0
-    # !strncmp(string, arg, counted length of string)
-    # strncmp(string, arg, counted length of string)
-
-    ## strlen uses
-    # strncmp(arg, string, strlen(string)) == 0
-    # !strncmp(arg, string, strlen(string))
-
-    ## reversed string/arg strlen uses
-    # strncmp(string, arg, strlen(string)) == 0
-    # !strncmp(string, arg, strlen(string))
-
-    ## 'sizeof(string) - 1' uses
-    # strncmp(arg, string, sizeof(string) - 1) == 0
-    # !strncmp(arg, string, sizeof(string) - 1)
-
-
-On linux-next, running the script below
-
-$ git grep -w --name-only strncmp | \
-  grep -vP '^(tools|scripts)' | \
-  while read file ; do \
-    echo $file ; \
-    perl -i ./strncmp.perl $file ; \
-  done
-
-produces:
-
-$ git diff --shortstat
- 437 files changed, 1483 insertions(+), 1500 deletions(-)
-
-
---=-KygnV11JSGFAVPbcCxcO
-Content-Type: application/x-perl; name="strncmp.perl"
-Content-Disposition: attachment; filename="strncmp.perl"
-Content-Transfer-Encoding: base64
-
-b3VyICRJZGVudAk9IHFyewoJCQlbQS1aYS16X11bQS1aYS16XGRfXSoKCQkJKD86XHMqXCNcI1xz
-KltBLVphLXpfXVtBLVphLXpcZF9dKikqCgkJfXg7Cm91ciAkTWVtYmVyCT0gcXJ7LT4kSWRlbnR8
-XC4kSWRlbnR8XFtbXl1dKlxdfTsKb3VyICRMdmFsCT0gcXJ7JElkZW50KD86JE1lbWJlcikqfTsK
-Cm91ciAkSW50X3R5cGUJPSBxcnsoP2kpbGx1fHVsbHxsbHxsdXx1bHxsfHV9OwpvdXIgJEJpbmFy
-eQk9IHFyeyg/aSkwYlswMV0rJEludF90eXBlP307Cm91ciAkSGV4CT0gcXJ7KD9pKTB4WzAtOWEt
-Zl0rJEludF90eXBlP307Cm91ciAkSW50CT0gcXJ7WzAtOV0rJEludF90eXBlP307Cm91ciAkT2N0
-YWwJPSBxcnswWzAtN10rJEludF90eXBlP307Cm91ciAkU3RyaW5nCT0gcXJ7IlteIl0rIn07Cm91
-ciAkRmxvYXRfaGV4CT0gcXJ7KD9pKTB4WzAtOWEtZl0rcC0/WzAtOV0rW2ZsXT99OwpvdXIgJEZs
-b2F0X2RlYwk9IHFyeyg/aSkoPzpbMC05XStcLlswLTldKnxbMC05XSpcLlswLTldKykoPzplLT9b
-MC05XSspP1tmbF0/fTsKb3VyICRGbG9hdF9pbnQJPSBxcnsoP2kpWzAtOV0rZS0/WzAtOV0rW2Zs
-XT99OwpvdXIgJEZsb2F0CT0gcXJ7JEZsb2F0X2hleHwkRmxvYXRfZGVjfCRGbG9hdF9pbnR9Owpv
-dXIgJENvbnN0YW50CT0gcXJ7JEZsb2F0fCRCaW5hcnl8JE9jdGFsfCRIZXh8JEludH07CgpvdXIg
-JGJhbGFuY2VkX3BhcmVucyA9IHFyLyhcKCg/OlteXChcKV0rK3woPy0xKSkqXCkpLzsKb3VyICRM
-dmFsT3JGdW5jCT0gcXJ7KCg/OltcJlwqXVxzKik/JEx2YWwpXHMqKCRiYWxhbmNlZF9wYXJlbnN7
-MCwxfSlccyp9OwpvdXIgJEZ1bmNBcmcgPSBxcnsoJEx2YWxPckZ1bmN8JENvbnN0YW50fCRTdHJp
-bmcpfTsKCmxvY2FsICQvOwp3aGlsZSAoPD4pIHsKICAgIG15ICRjb250ZW50ID0gJF87CgogICAg
-IyMgY291bnRlZCBsZW5ndGggb2Ygc3RyaW5nCgogICAgIyBzdHJuY21wKGFyZywgc3RyaW5nLCBj
-b3VudGVkIGxlbmd0aCBvZiBzdHJpbmcpID09IDAKICAgIHBvcygkY29udGVudCkgPSAwOwogICAg
-d2hpbGUgKCRjb250ZW50ID1+IC9cYnN0cm5jbXBccypcKFxzKigkTHZhbE9yRnVuYylccyosXHMq
-KCRTdHJpbmcpXHMqLFxzKigkSW50KVxzKlwpXHMqPT1ccyowXGIvZykgewoJbXkgJGFyZzEgPSAk
-MTsKCW15ICRzdHJpbmcgPSAkNTsKCW15ICRsZW4gPSAkNjsKCWlmIChsZW5ndGgoJHN0cmluZykg
-LSAyID09ICRsZW4pIHsKCSAgICAkY29udGVudCA9fiBzL1xic3RybmNtcFxzKlwoXHMqXFEkYXJn
-MVxFLFxzKlxRJHN0cmluZ1xFXHMqLFxzKiRsZW5ccypcKVxzKj09XHMqMFxiL3N0cl9oYXNfcHJl
-Zml4KCRhcmcxLCAkc3RyaW5nKS87Cgl9CiAgICB9CgogICAgIyBzdHJuY21wKGFyZywgc3RyaW5n
-LCBjb3VudGVkIGxlbmd0aCBvZiBzdHJpbmcpICE9IDAKICAgIHBvcygkY29udGVudCkgPSAwOwog
-ICAgd2hpbGUgKCRjb250ZW50ID1+IC9cYnN0cm5jbXBccypcKFxzKigkTHZhbE9yRnVuYylccyos
-XHMqKCRTdHJpbmcpXHMqLFxzKigkSW50KVxzKlwpXHMqIT1ccyowXGIvZykgewoJbXkgJGFyZzEg
-PSAkMTsKCW15ICRzdHJpbmcgPSAkNTsKCW15ICRsZW4gPSAkNjsKCWlmIChsZW5ndGgoJHN0cmlu
-ZykgLSAyID09ICRsZW4pIHsKCSAgICAkY29udGVudCA9fiBzL1xic3RybmNtcFxzKlwoXHMqXFEk
-YXJnMVxFLFxzKlxRJHN0cmluZ1xFXHMqLFxzKiRsZW5ccypcKVxzKiE9XHMqMFxiLyFzdHJfaGFz
-X3ByZWZpeCgkYXJnMSwgJHN0cmluZykvOwoJfQogICAgfQoKICAgICMgIXN0cm5jbXAoYXJnLCBz
-dHJpbmcsIGNvdW50ZWQgbGVuZ3RoIG9mIHN0cmluZykKICAgIHBvcygkY29udGVudCkgPSAwOwog
-ICAgd2hpbGUgKCRjb250ZW50ID1+IC9cIVxzKnN0cm5jbXBccypcKFxzKigkTHZhbE9yRnVuYylc
-cyosXHMqKCRTdHJpbmcpXHMqLFxzKihcZCspXHMqXCkvZykgewoJbXkgJGFyZzEgPSAkMTsKCW15
-ICRzdHJpbmcgPSAkNTsKCW15ICRsZW4gPSAkNjsKCWlmIChsZW5ndGgoJHN0cmluZykgLSAyID09
-ICRsZW4pIHsKCSAgICAkY29udGVudCA9fiBzL1whXHMqc3RybmNtcFxzKlwoXHMqXFEkYXJnMVxF
-XHMqLFxzKlxRJHN0cmluZ1xFXHMqLFxzKiRsZW5ccypcKS9zdHJfaGFzX3ByZWZpeCgkYXJnMSwg
-JHN0cmluZykvOwoJfQogICAgfQoKICAgICMgc3RybmNtcChhcmcsIHN0cmluZywgY291bnRlZCBs
-ZW5ndGggb2Ygc3RyaW5nKQogICAgcG9zKCRjb250ZW50KSA9IDA7CiAgICB3aGlsZSAoJGNvbnRl
-bnQgPX4gL1xic3RybmNtcFxzKlwoXHMqKCRMdmFsT3JGdW5jKVxzKixccyooJFN0cmluZylccyos
-XHMqKFxkKylccypcKS9nKSB7CglteSAkYXJnMSA9ICQxOwoJbXkgJHN0cmluZyA9ICQ1OwoJbXkg
-JGxlbiA9ICQ2OwoJaWYgKGxlbmd0aCgkc3RyaW5nKSAtIDIgPT0gJGxlbikgewoJICAgICRjb250
-ZW50ID1+IHMvXGJzdHJuY21wXHMqXChccypcUSRhcmcxXEVccyosXHMqXFEkc3RyaW5nXEVccyos
-XHMqJGxlblxzKlwpLyFzdHJfaGFzX3ByZWZpeCgkYXJnMSwgJHN0cmluZykvOwoJfQogICAgfQoK
-ICAgICMjIFJldmVyc2VkIHN0cmluZy9hcmcgY291bnRlZCBsZW5ndGggb2Ygc3RyaW5nIHVzZXMK
-CiAgICAjIHN0cm5jbXAoc3RyaW5nLCBhcmcsIGNvdW50ZWQgbGVuZ3RoIG9mIHN0cmluZykgPT0g
-MAogICAgcG9zKCRjb250ZW50KSA9IDA7CiAgICB3aGlsZSAoJGNvbnRlbnQgPX4gL1xic3RybmNt
-cFxzKlwoXHMqKCRTdHJpbmcpXHMqLFxzKigkTHZhbE9yRnVuYylccyosXHMqKCRJbnQpXHMqXClc
-cyo9PVxzKjBcYi9nKSB7CglteSAkc3RyaW5nID0gJDE7CglteSAkYXJnMSA9ICQyOwoJbXkgJGxl
-biA9ICQ2OwoJaWYgKGxlbmd0aCgkc3RyaW5nKSAtIDIgPT0gJGxlbikgewoJICAgICRjb250ZW50
-ID1+IHMvXGJzdHJuY21wXHMqXChccypcUSRzdHJpbmdcRVxzKixccypcUSRhcmcxXEVccyosXHMq
-JGxlblxzKlwpXHMqPT1ccyowXGIvc3RyX2hhc19wcmVmaXgoJGFyZzEsICRzdHJpbmcpLzsKCX0K
-ICAgIH0KCiAgICAjIHN0cm5jbXAoc3RyaW5nLCBhcmcsIGNvdW50ZWQgbGVuZ3RoIG9mIHN0cmlu
-ZykgIT0gMAogICAgcG9zKCRjb250ZW50KSA9IDA7CiAgICB3aGlsZSAoJGNvbnRlbnQgPX4gL1xi
-c3RybmNtcFxzKlwoXHMqKCRTdHJpbmcpXHMqLFxzKigkTHZhbE9yRnVuYylccyosXHMqKCRJbnQp
-XHMqXClccyohPVxzKjBcYi9nKSB7CglteSAkc3RyaW5nID0gJDE7CglteSAkYXJnMSA9ICQyOwoJ
-bXkgJGxlbiA9ICQ2OwoJaWYgKGxlbmd0aCgkc3RyaW5nKSAtIDIgPT0gJGxlbikgewoJICAgICRj
-b250ZW50ID1+IHMvXGJzdHJuY21wXHMqXChccypcUSRzdHJpbmdcRVxzKixccypcUSRhcmcxXEUs
-XHMqJGxlblxzKlwpXHMqIT1ccyowXGIvIXN0cl9oYXNfcHJlZml4KCRhcmcxLCAkc3RyaW5nKS87
-Cgl9CiAgICB9CgogICAgIyAhc3RybmNtcChzdHJpbmcsIGFyZywgY291bnRlZCBsZW5ndGggb2Yg
-c3RyaW5nKQogICAgcG9zKCRjb250ZW50KSA9IDA7CiAgICB3aGlsZSAoJGNvbnRlbnQgPX4gL1wh
-XHMqc3RybmNtcFxzKlwoXHMqKCRTdHJpbmcpXHMqLFxzKigkTHZhbE9yRnVuYylccyosXHMqKFxk
-KylccypcKS9nKSB7CglteSAkc3RyaW5nID0gJDE7CglteSAkYXJnMSA9ICQyOwoJbXkgJGxlbiA9
-ICQ2OwoJaWYgKGxlbmd0aCgkc3RyaW5nKSAtIDIgPT0gJGxlbikgewoJICAgICRjb250ZW50ID1+
-IHMvXCFccypzdHJuY21wXHMqXChccypcUSRzdHJpbmdcRVxzKixccypcUSRhcmcxXEVccyosXHMq
-JGxlblxzKlwpL3N0cl9oYXNfcHJlZml4KCRhcmcxLCAkc3RyaW5nKS87Cgl9CiAgICB9CgogICAg
-IyBzdHJuY21wKHN0cmluZywgYXJnLCBjb3VudGVkIGxlbmd0aCBvZiBzdHJpbmcpCiAgICBwb3Mo
-JGNvbnRlbnQpID0gMDsKICAgIHdoaWxlICgkY29udGVudCA9fiAvXGJzdHJuY21wXHMqXChccyoo
-JFN0cmluZylccyosXHMqKCRMdmFsT3JGdW5jKVxzKixccyooXGQrKVxzKlwpL2cpIHsKCW15ICRz
-dHJpbmcgPSAkMTsKCW15ICRhcmcxID0gJDI7CglteSAkbGVuID0gJDY7CglpZiAobGVuZ3RoKCRz
-dHJpbmcpIC0gMiA9PSAkbGVuKSB7CgkgICAgJGNvbnRlbnQgPX4gcy9cYnN0cm5jbXBccypcKFxz
-KlxRJHN0cmluZ1xFXHMqLFxzKlxRJGFyZzFcRVxzKixccyokbGVuXHMqXCkvIXN0cl9oYXNfcHJl
-Zml4KCRhcmcxLCAkc3RyaW5nKS87Cgl9CiAgICB9CgogICAgIyMgc3RybGVuIHVzZXMKCiAgICAj
-IHN0cm5jbXAoYXJnLCBzdHJpbmcsIHN0cmxlbihzdHJpbmcpKSA9PSAwCiAgICBwb3MoJGNvbnRl
-bnQpID0gMDsKICAgIHdoaWxlICgkY29udGVudCA9fiAvXGJzdHJuY21wXHMqXChccyooJEx2YWxP
-ckZ1bmMpXHMqLFxzKigkU3RyaW5nKVxzKixccypzdHJsZW5ccypcKFxzKigkU3RyaW5nKVxzKlwp
-XHMqPT1ccyowXGIvZykgewoJbXkgJGFyZzEgPSAkMTsKCW15ICRzdHJpbmcgPSAkNTsKCW15ICRz
-aXplb2Zfc3RyaW5nID0gJDY7CglpZiAoJHN0cmluZyA9PSAkc2l6ZW9mX3N0cmluZykgewoJICAg
-ICRjb250ZW50ID1+IHMvXGJzdHJuY21wXHMqXChccypcUSRhcmcxXEVccyosXHMqXFEkc3RyaW5n
-XEVccyosXHMqc3RybGVuXHMqXChccypcUSRzaXplb2Zfc3RyaW5nXEVccypcKVxzKj09XHMqMFxi
-L3N0cl9oYXNfcHJlZml4KCRhcmcxLCAkc3RyaW5nKS87Cgl9CiAgICB9CgogICAgIyAhc3RybmNt
-cChhcmcsIHN0cmluZywgc3RybGVuKHN0cmluZykpCiAgICBwb3MoJGNvbnRlbnQpID0gMDsKICAg
-IHdoaWxlICgkY29udGVudCA9fiAvXCFccypzdHJuY21wXHMqXChccyooJEx2YWxPckZ1bmMpXHMq
-LFxzKigkU3RyaW5nKVxzKixccypzdHJsZW5ccypcKFxzKigkU3RyaW5nKVxzKlwpXHMqXCkvZykg
-ewoJbXkgJGFyZzEgPSAkMTsKCW15ICRzdHJpbmcgPSAkNTsKCW15ICRzaXplb2Zfc3RyaW5nID0g
-JDY7CglpZiAoJHN0cmluZyA9PSAkc2l6ZW9mX3N0cmluZykgewoJICAgICRjb250ZW50ID1+IHMv
-XCFccypzdHJuY21wXHMqXChccypcUSRhcmcxXEUsXHMqXFEkc3RyaW5nXEVccyosXHMqc3RybGVu
-XHMqXChccypcUSRzaXplb2Zfc3RyaW5nXEVccypcKVxzKlwpL3N0cl9oYXNfcHJlZml4KCRhcmcx
-LCAkc3RyaW5nKS87Cgl9CiAgICB9CgoKICAgICMjIHJldmVyc2VkIHN0cmxlbiB1c2VzCgogICAg
-IyBzdHJuY21wKHN0cmluZywgYXJnLCBzdHJsZW4oc3RyaW5nKSkgPT0gMAogICAgcG9zKCRjb250
-ZW50KSA9IDA7CiAgICB3aGlsZSAoJGNvbnRlbnQgPX4gL1xic3RybmNtcFxzKlwoXHMqKCRTdHJp
-bmcpXHMqLFxzKigkTHZhbE9yRnVuYylccyosXHMqc3RybGVuXHMqXChccyooJFN0cmluZylccypc
-KVxzKj09XHMqMFxiL2cpIHsKCW15ICRzdHJpbmcgPSAkMTsKCW15ICRhcmcxID0gJDI7CglteSAk
-c2l6ZW9mX3N0cmluZyA9ICQ2OwoJaWYgKCRzdHJpbmcgPT0gJHNpemVvZl9zdHJpbmcpIHsKCSAg
-ICAkY29udGVudCA9fiBzL1xic3RybmNtcFxzKlwoXHMqXFEkc3RyaW5nXEVccyosXHMqXFEkYXJn
-MVxFXHMqLFxzKnN0cmxlblxzKlwoXHMqXFEkc2l6ZW9mX3N0cmluZ1xFXHMqXClccyo9PVxzKjBc
-Yi9zdHJfaGFzX3ByZWZpeCgkYXJnMSwgJHN0cmluZykvOwoJfQogICAgfQoKICAgICMgIXN0cm5j
-bXAoc3RyaW5nLCBhcmcsIHN0cmxlbihzdHJpbmcpKQogICAgcG9zKCRjb250ZW50KSA9IDA7CiAg
-ICB3aGlsZSAoJGNvbnRlbnQgPX4gL1whXHMqc3RybmNtcFxzKlwoXHMqKCRTdHJpbmcpXHMqLFxz
-KigkTHZhbE9yRnVuYylccyosXHMqc3RybGVuXHMqXChccyooJFN0cmluZylccypcKVxzKlwpL2cp
-IHsKCW15ICRzdHJpbmcgPSAkMTsKCW15ICRhcmcxID0gJDI7CglteSAkc2l6ZW9mX3N0cmluZyA9
-ICQ2OwoJaWYgKCRzdHJpbmcgPT0gJHNpemVvZl9zdHJpbmcpIHsKCSAgICAkY29udGVudCA9fiBz
-L1whXHMqc3RybmNtcFxzKlwoXHMqXFEkc3RyaW5nXEVccyosXHMqXFEkYXJnMVxFLFxzKnN0cmxl
-blxzKlwoXHMqXFEkc2l6ZW9mX3N0cmluZ1xFXHMqXClccypcKS9zdHJfaGFzX3ByZWZpeCgkYXJn
-MSwgJHN0cmluZykvOwoJfQogICAgfQoKCiAgICAjIyAnc2l6ZW9mKHN0cmluZykgLSAxJyB1c2Vz
-CgogICAgIyBzdHJuY21wKGFyZywgc3RyaW5nLCBzaXplb2Yoc3RyaW5nKSAtIDEpID09IDAKICAg
-IHBvcygkY29udGVudCkgPSAwOwogICAgd2hpbGUgKCRjb250ZW50ID1+IC9cYnN0cm5jbXBccypc
-KFxzKigkTHZhbE9yRnVuYylccyosXHMqKCRTdHJpbmcpXHMqLFxzKnNpemVvZlxzKlwoXHMqKCRT
-dHJpbmcpXHMqXClccypcLVxzKjFccypcKVxzKj09XHMqMFxiL2cpIHsKCW15ICRhcmcxID0gJDE7
-CglteSAkc3RyaW5nID0gJDU7CglteSAkc2l6ZW9mX3N0cmluZyA9ICQ2OwoJaWYgKCRzdHJpbmcg
-PT0gJHNpemVvZl9zdHJpbmcpIHsKCSAgICAkY29udGVudCA9fiBzL1xic3RybmNtcFxzKlwoXHMq
-XFEkYXJnMVxFXHMqLFxzKlxRJHN0cmluZ1xFXHMqLFxzKnNpemVvZlxzKlwoXHMqXFEkc2l6ZW9m
-X3N0cmluZ1xFXHMqXClccypcLVxzKjFccypcKVxzKj09XHMqMFxiL3N0cl9oYXNfcHJlZml4KCRh
-cmcxLCAkc3RyaW5nKS87Cgl9CiAgICB9CgogICAgIyAhc3RybmNtcChhcmcsIHN0cmluZywgc2l6
-ZW9mKHN0cmluZykgLSAxKQogICAgcG9zKCRjb250ZW50KSA9IDA7CiAgICB3aGlsZSAoJGNvbnRl
-bnQgPX4gL1whXHMqc3RybmNtcFxzKlwoXHMqKCRMdmFsT3JGdW5jKVxzKixccyooJFN0cmluZylc
-cyosXHMqc2l6ZW9mXHMqXChccyooJFN0cmluZylccypcKVxzKi1ccyoxXHMqXCkvZykgewoJbXkg
-JGFyZzEgPSAkMTsKCW15ICRzdHJpbmcgPSAkNTsKCW15ICRzaXplb2Zfc3RyaW5nID0gJDY7Cglp
-ZiAoJHN0cmluZyA9PSAkc2l6ZW9mX3N0cmluZykgewoJICAgICRjb250ZW50ID1+IHMvXCFccypz
-dHJuY21wXHMqXChccypcUSRhcmcxXEUsXHMqXFEkc3RyaW5nXEVccyosXHMqc2l6ZW9mXHMqXChc
-cypcUSRzaXplb2Zfc3RyaW5nXEVccypcKVxzKlwtXHMqMVxzKlwpL3N0cl9oYXNfcHJlZml4KCRh
-cmcxLCAkc3RyaW5nKS87Cgl9CiAgICB9CgogICAgcHJpbnQgJGNvbnRlbnQ7Cn0K
-
-
---=-KygnV11JSGFAVPbcCxcO--
-
+Thank you,
+Luis
+>>
+>> Thanks for your review,
+>> Luis
+>>
+>>>
+>>>> +		default:
+>>>> +			dw_mipi_csi_write(csi_dev,
+>>>> +					reg.IPI_DATA_TYPE, CSI_2_RGB565);
+>>>> +			dev_dbg(dev, "Error");
+>>>> +			break;
+>>>> +		}
+>>>> +	}
+>>>> +}
+>>>> +
+>>>
+>>> [snip]
+>>>
+>>
