@@ -2,108 +2,91 @@ Return-Path: <SRS0=uvhX=PT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0CE70C43444
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 09:52:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 614D8C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 09:52:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C6C7920874
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 09:52:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3183320874
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 09:52:15 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="m1CrWt+K"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="tWXRdCZ2"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731441AbfAKJwJ (ORCPT
+        id S1731534AbfAKJwO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 11 Jan 2019 04:52:09 -0500
-Received: from conuserg-11.nifty.com ([210.131.2.78]:44615 "EHLO
-        conuserg-11.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730155AbfAKJwJ (ORCPT
+        Fri, 11 Jan 2019 04:52:14 -0500
+Received: from mail-lf1-f66.google.com ([209.85.167.66]:39641 "EHLO
+        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730155AbfAKJwL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Jan 2019 04:52:09 -0500
-Received: from pug.e01.socionext.com (p14092-ipngnfx01kyoto.kyoto.ocn.ne.jp [153.142.97.92]) (authenticated)
-        by conuserg-11.nifty.com with ESMTP id x0B9plH7031412;
-        Fri, 11 Jan 2019 18:51:48 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-11.nifty.com x0B9plH7031412
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1547200308;
-        bh=uPlhz8+UarIqj0moNDAT1BJxp5C9Ycepbh7Dp46T1VE=;
-        h=From:To:Cc:Subject:Date:From;
-        b=m1CrWt+KQBIGIL2AVDSjylS6NDLS5eHFsXFshZmb1OvKAY7OBL+aX8yDHBzIGfwWY
-         L0fn+wQYaGfqzG/b8kurmGTBiycShYwFG3ltKMxSeQe//OUkTfmbNxqkwDkAGkGb9T
-         V/s41VbyvsFnjmSUNC0U/L8f/HtjvohMwdaHOh8+SMxmU3CdzVh/K9/9T3U/dHlUfC
-         U29DQfIxFNjY6w3NF9K1R/VJNH2B+uGiaL9K8woTvsvpFaTgSYKn+3G0XUo6qjzp0B
-         cA9kPyws0qjqStfs0m4z0jr7q2jAo4WghmYLjOaI7n+1h0+7AAJSQUJWnD/CexE3Vw
-         +YwRCVQHLKwlQ==
-X-Nifty-SrcIP: [153.142.97.92]
-From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-To:     Luis Chamberlain <mcgrof@kernel.org>
-Cc:     Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] firmware_loader: move CONFIG_FW_LOADER_USER_HELPER switch to Makefile
-Date:   Fri, 11 Jan 2019 18:51:32 +0900
-Message-Id: <1547200292-17028-1-git-send-email-yamada.masahiro@socionext.com>
-X-Mailer: git-send-email 2.7.4
+        Fri, 11 Jan 2019 04:52:11 -0500
+Received: by mail-lf1-f66.google.com with SMTP id n18so10376815lfh.6;
+        Fri, 11 Jan 2019 01:52:10 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=XIQwehbPrlY7BUP6CB2B8k1PMAjTFQv50MV82hxeWcg=;
+        b=tWXRdCZ2D6dwuoxQCh+RSNF1sdTWe5eu6rGt1gdnelgAg+UpYdmuyd3uGqpm/xKggV
+         FwkYDfUC3iYLJORA37eEHgCPFduhyuXXTQgVWPGJ2RyG3pXAH8b9xci8KhOf2ycb7085
+         lYuzmfoke1FcGvVNSA1rJGdieywkiZ0Wix8XOBIy5kPlUilOpOYrEeLDU5bVE8eM2+dq
+         J8RWKsmM43a0R1dwLBx+ds+qwbfYWyyCNLs37LcrgFEXSg82lJqu8N2bJLTILEIfZww8
+         mLccx6gmDpiy3wSlc6DGHhDcgwK1ePCMqksJWB8fm4zvVUh6XQngVmjgmCTMAtxb0k2l
+         ldng==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=XIQwehbPrlY7BUP6CB2B8k1PMAjTFQv50MV82hxeWcg=;
+        b=DNgfrPxcYYHJXv6NaKbTAF/dWU16V5gUbTz0o0+vFsfbCzii9fiS1G+JXwLeGAJL8T
+         SMTj/coCl0Ls/9gQGE/Q6FV5hhNEaV6EEMgogfQjtXueymqMVzem0daKRzHoP3SUN+ft
+         tMaV7CmyDJJPpREyoyPfjtbIq92vcxSz+HVHOFNCA8/AAj7fllXPZ86sPZ7iU6aMfyfM
+         58L46ZNO4MDDuTZ0LPQD0vPIpj7lHXtv+L+esuhvyp6dLgMiDVOukdvarPFGufO4+Ns6
+         Vyoghn5EIDxOkHjUOX38NpBVMvnqcCDR7OhsNSGee+nBMeUZ+33ti9XAxXtdUejU/gx7
+         de9A==
+X-Gm-Message-State: AJcUukcInNv+hixeun9ZUS1zDHnvQGKDSKQ6hPBl3XQlYd9YyrO8PibL
+        kp5k9QICw5u6ihoZQ7YobKkqnLHZn93rph9twQk=
+X-Google-Smtp-Source: ALg8bN6zxUtJLmjmXaPX9LtyOP/4mys2mrMhfZc1+Cnkq876ds7Ktqb1cVBb8nfdZ4ageNNFRJlSkawQaiB4XK5g/xM=
+X-Received: by 2002:a19:6514:: with SMTP id z20mr5734838lfb.31.1547200328069;
+ Fri, 11 Jan 2019 01:52:08 -0800 (PST)
+MIME-Version: 1.0
+References: <CAA85sZt=Q4b_tn_vDx3g1ap7GNrXsHQk7Jki1T+zPbqVot90jg@mail.gmail.com>
+ <CANn89iLkciYGn7GyKc2QitSjjTms58_GKFqjOJ=6G8wEFi=SJA@mail.gmail.com>
+ <CAA85sZvciuNTc1NM1XbbBCqV-hWwjMZM+0i3vigtzmJ8CpPjHg@mail.gmail.com>
+ <351f5da149072c8c1165f8f205ac5c852a92dff8.camel@redhat.com> <CANn89i+h4Og42OKaqJ8dsrupHkt2Lg1vPo-j92Bos98yPJzoNw@mail.gmail.com>
+In-Reply-To: <CANn89i+h4Og42OKaqJ8dsrupHkt2Lg1vPo-j92Bos98yPJzoNw@mail.gmail.com>
+From:   Ian Kumlien <ian.kumlien@gmail.com>
+Date:   Fri, 11 Jan 2019 10:51:56 +0100
+Message-ID: <CAA85sZt3NBKgebX_Bdwbz7QH--W6zb3w3-qoxRHpcHMuSYzPZw@mail.gmail.com>
+Subject: Re: [BUG] moving fq back to clock monotonic breaks my setup
+To:     Eric Dumazet <edumazet@google.com>
+Cc:     Paolo Abeni <pabeni@redhat.com>, netdev <netdev@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The whole code of fallback_table.c is surrounded by #ifdef of
-CONFIG_FW_LOADER_USER_HELPER.
+On Fri, Jan 11, 2019 at 10:35 AM Eric Dumazet <edumazet@google.com> wrote:
+> On Thu, Jan 10, 2019 at 12:55 AM Paolo Abeni <pabeni@redhat.com> wrote:
+> > On Thu, 2019-01-10 at 09:25 +0100, Ian Kumlien wrote:
+>
+>
+> > > This works, and so does: https://marc.info/?l=linux-netdev&m=154696956604748&w=2
+> > >
+> > > Pointed out by Paolo (tested both separately)
+> >
+> > Note: I cleared the tstamp in br_forward_finish() instead of
+> > br_dev_queue_push_xmit() because I think the latter could be called
+> > also in the local xmit path, via br_nf_post_routing.
+> >
+> > We must preserve the tstamp in output path, right?
+> >
+>
+>  I was not aware of your patch, SGTM, thanks.
 
-Move the CONFIG_FW_LOADER_USER_HELPER switch to Makefile so that
-it is not compiled at all when this CONFIG option is disabled.
-
-I also removed the confusing comment, "Module or buit-in [sic]".
-CONFIG_FW_LOADER_USER_HELPER is a boolean option.
-(If it were a module, CONFIG_FW_LOADER_USER_HELPER_MODULE would
-be defined instead.)
-
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
----
-
- drivers/base/firmware_loader/Makefile         | 2 +-
- drivers/base/firmware_loader/fallback_table.c | 5 -----
- 2 files changed, 1 insertion(+), 6 deletions(-)
-
-diff --git a/drivers/base/firmware_loader/Makefile b/drivers/base/firmware_loader/Makefile
-index a97eeb0..5c7f422 100644
---- a/drivers/base/firmware_loader/Makefile
-+++ b/drivers/base/firmware_loader/Makefile
-@@ -1,7 +1,7 @@
- # SPDX-License-Identifier: GPL-2.0
- # Makefile for the Linux firmware loader
- 
--obj-y			:= fallback_table.o
-+obj-$(CONFIG_FW_LOADER_USER_HELPER) += fallback_table.o
- obj-$(CONFIG_FW_LOADER)	+= firmware_class.o
- firmware_class-objs := main.o
- firmware_class-$(CONFIG_FW_LOADER_USER_HELPER) += fallback.o
-diff --git a/drivers/base/firmware_loader/fallback_table.c b/drivers/base/firmware_loader/fallback_table.c
-index 7428659..776dd69 100644
---- a/drivers/base/firmware_loader/fallback_table.c
-+++ b/drivers/base/firmware_loader/fallback_table.c
-@@ -16,9 +16,6 @@
-  * firmware fallback configuration table
-  */
- 
--/* Module or buit-in */
--#ifdef CONFIG_FW_LOADER_USER_HELPER
--
- static unsigned int zero;
- static unsigned int one = 1;
- 
-@@ -51,5 +48,3 @@ struct ctl_table firmware_config_table[] = {
- 	{ }
- };
- EXPORT_SYMBOL_GPL(firmware_config_table);
--
--#endif
--- 
-2.7.4
-
+And you can add Tested-by: ian.kumlien@gmail.com
