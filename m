@@ -2,112 +2,235 @@ Return-Path: <SRS0=uvhX=PT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-17.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 27B57C43612
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:47:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 37738C43444
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:48:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E55EF21848
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:47:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F21422063F
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:48:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547218076;
-	bh=G9dmtG/SIaNaaazbFHrGp6KHhXVSFd+XRiyxcJNQcj0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=S6NlumulsrE37aotTwoy+bpxRLusBsA+F1AhqeVlK+GmwHnQec1KexwkNXxir9Ils
-	 Y56zlLCFE0XaWIDgL9YIu6CHLZAHC0bleE8JWZMK6+AMFRWSAVz1oQsk10PvZpWjcL
-	 LT7DcDH3EsHfmbkdwqASPMYwKnqTtIlejZZWtTT8=
+	s=default; t=1547218089;
+	bh=ALJSbr3o1WPgOeVXEOLA9T1IHgFEur3nJmIds5Seupc=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=x4jc1MHwi4+F7r2ydTYEdA00ZepHeWVEoGG9rqEoknf2o7m8xgOG3N7Q5FP7Gi/Ad
+	 WkyKmvT3HJsTm/HxcrZcXbGlr0/WqUL+IFOhOsZpn6iW8UW2LZeZHokunCYLAVtHeK
+	 RgWVB5gHDgmZrXcOpAftbI48FiZF5q+eN7DHlTx8=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391504AbfAKOrn (ORCPT
+        id S2391335AbfAKOmA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 11 Jan 2019 09:47:43 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38938 "EHLO mail.kernel.org"
+        Fri, 11 Jan 2019 09:42:00 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34704 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732865AbfAKOrj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Jan 2019 09:47:39 -0500
+        id S2404057AbfAKOly (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 Jan 2019 09:41:54 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8AD682063F;
-        Fri, 11 Jan 2019 14:47:38 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 712FC21841;
+        Fri, 11 Jan 2019 14:41:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547218059;
-        bh=G9dmtG/SIaNaaazbFHrGp6KHhXVSFd+XRiyxcJNQcj0=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=mhW2c1F99fhrMfSiyiwm9udnGEJqIskRnjeCpa4N+0t+9yuNlcZ0n3ZzYtpev6yoU
-         TL7CIwmQCM6xqj8UewrdMj5m7JLXfiIVgX3oQZpsCf3CTKapuylWy/uncrCUJcyN64
-         a9GAWe/JrubxhSsW8h3lIwHF7MNYgKAeXaN40loo=
-Date:   Fri, 11 Jan 2019 15:30:17 +0100
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Sasha Levin <sashal@kernel.org>
-Cc:     linux-kernel@microsoft.com, kys@microsoft.com,
-        haiyangz@microsoft.com, sthemmin@microsoft.com,
-        linux-kernel@vger.kernel.org
-Subject: Re: [GIT PULL v3] Hyper-V commits for 5.0
-Message-ID: <20190111143017.GA6301@kroah.com>
-References: <20190110152432.75529214C6@mail.kernel.org>
- <20190111091552.GA16264@kroah.com>
- <20190111141012.GO166797@sasha-vm>
+        s=default; t=1547217713;
+        bh=ALJSbr3o1WPgOeVXEOLA9T1IHgFEur3nJmIds5Seupc=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=YO8QfMw7t7H9ewpFJCizjt7ElDx7V+bTNFbazAF4xWRwA7EJ+D4nxS//RYUGqPJbv
+         42at+529sezckX8Spsi2s5VSxVRtg+1bd6nC7wulmPtwXH9CUzju8o1T2Lw6NOY51g
+         cx6gr8TIlAN3vScAeZ3JgsD/H0THA3JWdLetmdMk=
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Dan Williams <dan.j.williams@intel.com>,
+        Logan Gunthorpe <logang@deltatee.com>,
+        Christoph Hellwig <hch@lst.de>,
+        =?UTF-8?q?J=C3=A9r=C3=B4me=20Glisse?= <jglisse@redhat.com>,
+        Michal Hocko <mhocko@suse.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Balbir Singh <bsingharora@gmail.com>
+Subject: [PATCH 4.20 15/65] mm, hmm: mark hmm_devmem_{add, add_resource} EXPORT_SYMBOL_GPL
+Date:   Fri, 11 Jan 2019 15:15:01 +0100
+Message-Id: <20190111131058.494129031@linuxfoundation.org>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20190111131055.331350141@linuxfoundation.org>
+References: <20190111131055.331350141@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
+X-Patchwork-Hint: ignore
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190111141012.GO166797@sasha-vm>
-User-Agent: Mutt/1.11.2 (2019-01-07)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jan 11, 2019 at 09:10:12AM -0500, Sasha Levin wrote:
-> On Fri, Jan 11, 2019 at 10:15:52AM +0100, Greg KH wrote:
-> > On Thu, Jan 10, 2019 at 10:24:31AM -0500, Sasha Levin wrote:
-> > > -----BEGIN PGP SIGNED MESSAGE-----
-> > > Hash: SHA512
-> > > 
-> > > The following changes since commit bfeffd155283772bbe78c6a05dec7c0128ee500c:
-> > > 
-> > >   Linux 5.0-rc1 (2019-01-06 17:08:20 -0800)
-> > > 
-> > > are available in the Git repository at:
-> > > 
-> > >   git://git.kernel.org/pub/scm/linux/kernel/git/hyperv/linux.git tags/hyperv-fixes-signed
-> > > 
-> > > for you to fetch changes up to b5679cebf780c6f1c2451a73bf1842a4409840e7:
-> > > 
-> > >   vmbus: fix subchannel removal (2019-01-09 19:20:31 -0500)
-> > > 
-> > > - ----------------------------------------------------------------
-> > > Three bug fixes for different parts of the hyper-v code:
-> > > 
-> > >  - Fix for a lockup when changing NIC's MTU from Dexuan.
-> > >  - Fix of use of uninitialized memory from Dexuan.
-> > >  - Fix for memory corruption caused by ballooning from Vitaly.
-> > > 
-> > > All 3 were tested internally.
-> > > 
-> > > - ----------------------------------------------------------------
-> > 
-> > Did you really push out an updated tag?  I still get the following text
-> > when doing a pull of this tag:
-> > 
-> > -----------
-> > hyperv-fixes-signed
-> > -----------
-> > 
-> > So it looks like nothing changed from your previous request.
-> > 
-> > Note, when creating the signed tag, with 'git tag -s' you have to enter
-> > the text you want to show up in the tag into the editor at that time.
-> 
-> Ugh, I haven't actually pushed it, so while the text appeared on
-> git-request-pull because it was in my local tag, you didn't see it
-> because the remote tag with the same name didn't have it.
-> 
-> I've pushed it out and made sure the 'git pull' you'd do looks right.
-> Sorry!
+4.20-stable review patch.  If anyone has any objections, please let me know.
 
-Ok, that worked, now pulled and pushed out, thanks.
+------------------
 
-greg k-h
+From: Dan Williams <dan.j.williams@intel.com>
+
+commit 02917e9f8676207a4c577d4d94eae12bf348e9d7 upstream.
+
+At Maintainer Summit, Greg brought up a topic I proposed around
+EXPORT_SYMBOL_GPL usage.  The motivation was considerations for when
+EXPORT_SYMBOL_GPL is warranted and the criteria for taking the exceptional
+step of reclassifying an existing export.  Specifically, I wanted to make
+the case that although the line is fuzzy and hard to specify in abstract
+terms, it is nonetheless clear that devm_memremap_pages() and HMM
+(Heterogeneous Memory Management) have crossed it.  The
+devm_memremap_pages() facility should have been EXPORT_SYMBOL_GPL from the
+beginning, and HMM as a derivative of that functionality should have
+naturally picked up that designation as well.
+
+Contrary to typical rules, the HMM infrastructure was merged upstream with
+zero in-tree consumers.  There was a promise at the time that those users
+would be merged "soon", but it has been over a year with no drivers
+arriving.  While the Nouveau driver is about to belatedly make good on
+that promise it is clear that HMM was targeted first and foremost at an
+out-of-tree consumer.
+
+HMM is derived from devm_memremap_pages(), a facility Christoph and I
+spearheaded to support persistent memory.  It combines a device lifetime
+model with a dynamically created 'struct page' / memmap array for any
+physical address range.  It enables coordination and control of the many
+code paths in the kernel built to interact with memory via 'struct page'
+objects.  With HMM the integration goes even deeper by allowing device
+drivers to hook and manipulate page fault and page free events.
+
+One interpretation of when EXPORT_SYMBOL is suitable is when it is
+exporting stable and generic leaf functionality.  The
+devm_memremap_pages() facility continues to see expanding use cases,
+peer-to-peer DMA being the most recent, with no clear end date when it
+will stop attracting reworks and semantic changes.  It is not suitable to
+export devm_memremap_pages() as a stable 3rd party driver API due to the
+fact that it is still changing and manipulates core behavior.  Moreover,
+it is not in the best interest of the long term development of the core
+memory management subsystem to permit any external driver to effectively
+define its own system-wide memory management policies with no
+encouragement to engage with upstream.
+
+I am also concerned that HMM was designed in a way to minimize further
+engagement with the core-MM.  That, with these hooks in place,
+device-drivers are free to implement their own policies without much
+consideration for whether and how the core-MM could grow to meet that
+need.  Going forward not only should HMM be EXPORT_SYMBOL_GPL, but the
+core-MM should be allowed the opportunity and stimulus to change and
+address these new use cases as first class functionality.
+
+Original changelog:
+
+hmm_devmem_add(), and hmm_devmem_add_resource() duplicated
+devm_memremap_pages() and are now simple now wrappers around the core
+facility to inject a dev_pagemap instance into the global pgmap_radix and
+hook page-idle events.  The devm_memremap_pages() interface is base
+infrastructure for HMM.  HMM has more and deeper ties into the kernel
+memory management implementation than base ZONE_DEVICE which is itself a
+EXPORT_SYMBOL_GPL facility.
+
+Originally, the HMM page structure creation routines copied the
+devm_memremap_pages() code and reused ZONE_DEVICE.  A cleanup to unify the
+implementations was discussed during the initial review:
+http://lkml.iu.edu/hypermail/linux/kernel/1701.2/00812.html Recent work to
+extend devm_memremap_pages() for the peer-to-peer-DMA facility enabled
+this cleanup to move forward.
+
+In addition to the integration with devm_memremap_pages() HMM depends on
+other GPL-only symbols:
+
+    mmu_notifier_unregister_no_release
+    percpu_ref
+    region_intersects
+    __class_create
+
+It goes further to consume / indirectly expose functionality that is not
+exported to any other driver:
+
+    alloc_pages_vma
+    walk_page_range
+
+HMM is derived from devm_memremap_pages(), and extends deep core-kernel
+fundamentals. Similar to devm_memremap_pages(), mark its entry points
+EXPORT_SYMBOL_GPL().
+
+[logang@deltatee.com: PCI/P2PDMA: match interface changes to devm_memremap_pages()]
+  Link: http://lkml.kernel.org/r/20181130225911.2900-1-logang@deltatee.com
+Link: http://lkml.kernel.org/r/154275560565.76910.15919297436557795278.stgit@dwillia2-desk3.amr.corp.intel.com
+Signed-off-by: Dan Williams <dan.j.williams@intel.com>
+Signed-off-by: Logan Gunthorpe <logang@deltatee.com>
+Reviewed-by: Christoph Hellwig <hch@lst.de>
+Cc: Logan Gunthorpe <logang@deltatee.com>
+Cc: "Jérôme Glisse" <jglisse@redhat.com>
+Cc: Balbir Singh <bsingharora@gmail.com>,
+Cc: Michal Hocko <mhocko@suse.com>
+Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
+---
+ drivers/pci/p2pdma.c |   10 ++--------
+ mm/hmm.c             |    4 ++--
+ 2 files changed, 4 insertions(+), 10 deletions(-)
+
+--- a/drivers/pci/p2pdma.c
++++ b/drivers/pci/p2pdma.c
+@@ -82,10 +82,8 @@ static void pci_p2pdma_percpu_release(st
+ 	complete_all(&p2p->devmap_ref_done);
+ }
+ 
+-static void pci_p2pdma_percpu_kill(void *data)
++static void pci_p2pdma_percpu_kill(struct percpu_ref *ref)
+ {
+-	struct percpu_ref *ref = data;
+-
+ 	/*
+ 	 * pci_p2pdma_add_resource() may be called multiple times
+ 	 * by a driver and may register the percpu_kill devm action multiple
+@@ -198,6 +196,7 @@ int pci_p2pdma_add_resource(struct pci_d
+ 	pgmap->type = MEMORY_DEVICE_PCI_P2PDMA;
+ 	pgmap->pci_p2pdma_bus_offset = pci_bus_address(pdev, bar) -
+ 		pci_resource_start(pdev, bar);
++	pgmap->kill = pci_p2pdma_percpu_kill;
+ 
+ 	addr = devm_memremap_pages(&pdev->dev, pgmap);
+ 	if (IS_ERR(addr)) {
+@@ -211,11 +210,6 @@ int pci_p2pdma_add_resource(struct pci_d
+ 	if (error)
+ 		goto pgmap_free;
+ 
+-	error = devm_add_action_or_reset(&pdev->dev, pci_p2pdma_percpu_kill,
+-					  &pdev->p2pdma->devmap_ref);
+-	if (error)
+-		goto pgmap_free;
+-
+ 	pci_info(pdev, "added peer-to-peer DMA memory %pR\n",
+ 		 &pgmap->res);
+ 
+--- a/mm/hmm.c
++++ b/mm/hmm.c
+@@ -1110,7 +1110,7 @@ struct hmm_devmem *hmm_devmem_add(const
+ 		return result;
+ 	return devmem;
+ }
+-EXPORT_SYMBOL(hmm_devmem_add);
++EXPORT_SYMBOL_GPL(hmm_devmem_add);
+ 
+ struct hmm_devmem *hmm_devmem_add_resource(const struct hmm_devmem_ops *ops,
+ 					   struct device *device,
+@@ -1164,7 +1164,7 @@ struct hmm_devmem *hmm_devmem_add_resour
+ 		return result;
+ 	return devmem;
+ }
+-EXPORT_SYMBOL(hmm_devmem_add_resource);
++EXPORT_SYMBOL_GPL(hmm_devmem_add_resource);
+ 
+ /*
+  * A device driver that wants to handle multiple devices memory through a
+
+
