@@ -2,126 +2,99 @@ Return-Path: <SRS0=uvhX=PT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A23E1C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 03:08:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BE44FC43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 03:09:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 72A6D20872
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 03:08:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8AAB9214C6
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 03:09:22 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="onLbbVqD"
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="bT4LfCgp"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730141AbfAKDIw (ORCPT
+        id S1730180AbfAKDJV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 10 Jan 2019 22:08:52 -0500
-Received: from conssluserg-03.nifty.com ([210.131.2.82]:40059 "EHLO
-        conssluserg-03.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729236AbfAKDIv (ORCPT
+        Thu, 10 Jan 2019 22:09:21 -0500
+Received: from hqemgate14.nvidia.com ([216.228.121.143]:2672 "EHLO
+        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729236AbfAKDJU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Jan 2019 22:08:51 -0500
-Received: from mail-ua1-f54.google.com (mail-ua1-f54.google.com [209.85.222.54]) (authenticated)
-        by conssluserg-03.nifty.com with ESMTP id x0B38e4v022464
-        for <linux-kernel@vger.kernel.org>; Fri, 11 Jan 2019 12:08:41 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-03.nifty.com x0B38e4v022464
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1547176121;
-        bh=gaxhBMrxiaTkXMhUzpaE+DTNWXXVNmnaKXsC40qFtKM=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=onLbbVqDsewx+dJ9dhcavantSpXLMJsvJxb0mOWAgUq9ELRXYYisaqrwiF0OwDzfi
-         a4mkzcs2exr0+Ez6iy3eVleFl2vM5+OMiWXhhITSIqff34lb1o8hbhyRX/BY0WkGmO
-         GF/pOW+Z6s4/logd0N9nWtztU7RjAiWTIU1XpIBnN464dj4Eac7ll8JC/d9kNYDCx0
-         fZkIi8I5neipFaXsC4bG4xqA/V9ljUE/aur8K0eJ/frHfs+/Jby+FTl3ai/w5Re62f
-         UMFMo/L4w9VDGcl/SGIdJ2xvPeprnmX82dnIa3ZsC8LGauoJogrPhtR69uRvQ49zIR
-         GO+QLh6Aup+gg==
-X-Nifty-SrcIP: [209.85.222.54]
-Received: by mail-ua1-f54.google.com with SMTP id p9so4306733uaa.5
-        for <linux-kernel@vger.kernel.org>; Thu, 10 Jan 2019 19:08:41 -0800 (PST)
-X-Gm-Message-State: AJcUukfaP1WkAtoG2Z/V448USYPeRWM6aHEolxXunb1F8NtCzScuHlDx
-        Tbb9yYoo3oKiN0BQPJI1gUVQsU/YouURHWY4PuE=
-X-Google-Smtp-Source: ALg8bN5yNn7rtF3SmBrlBZKIYWH2L1cvvx8ESnDLVMX8f/PO9aEHv6ZgcrN1KSGSwBWHN0xOkI9BiiMhlb7+a6enrVQ=
-X-Received: by 2002:ab0:3402:: with SMTP id z2mr4854577uap.6.1547176120170;
- Thu, 10 Jan 2019 19:08:40 -0800 (PST)
+        Thu, 10 Jan 2019 22:09:20 -0500
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate14.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5c3808d30000>; Thu, 10 Jan 2019 19:09:07 -0800
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Thu, 10 Jan 2019 19:09:20 -0800
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Thu, 10 Jan 2019 19:09:20 -0800
+Received: from HQMAIL105.nvidia.com (172.20.187.12) by HQMAIL105.nvidia.com
+ (172.20.187.12) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Fri, 11 Jan
+ 2019 03:09:19 +0000
+Received: from hqnvemgw02.nvidia.com (172.16.227.111) by HQMAIL105.nvidia.com
+ (172.20.187.12) with Microsoft SMTP Server (TLS) id 15.0.1395.4 via Frontend
+ Transport; Fri, 11 Jan 2019 03:09:19 +0000
+Received: from skomatineni-linux.nvidia.com (Not Verified[10.110.103.52]) by hqnvemgw02.nvidia.com with Trustwave SEG (v7,5,8,10121)
+        id <B5c3808df0001>; Thu, 10 Jan 2019 19:09:19 -0800
+From:   Sowjanya Komatineni <skomatineni@nvidia.com>
+To:     <robh+dt@kernel.org>, <mark.rutland@arm.com>,
+        <mperttunen@nvidia.com>, <chunyan.zhang@unisoc.com>,
+        <thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
+        <adrian.hunter@intel.com>, <ulf.hansson@linaro.org>
+CC:     <anrao@nvidia.com>, <devicetree@vger.kernel.org>,
+        <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-mmc@vger.kernel.org>,
+        Sowjanya Komatineni <skomatineni@nvidia.com>
+Subject: [PATCH V8 1/3] dt-bindings: mmc: tegra: Add supports-cqe property
+Date:   Thu, 10 Jan 2019 19:08:53 -0800
+Message-ID: <1547176135-2470-1-git-send-email-skomatineni@nvidia.com>
+X-Mailer: git-send-email 2.7.4
+X-NVConfidentiality: public
 MIME-Version: 1.0
-References: <20190110054216.74248-1-aik@ozlabs.ru>
-In-Reply-To: <20190110054216.74248-1-aik@ozlabs.ru>
-From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-Date:   Fri, 11 Jan 2019 12:08:04 +0900
-X-Gmail-Original-Message-ID: <CAK7LNAQUDMhXxku2wqq=VX2cbntMWgsvrFL4C5Bk=x1TU79wjg@mail.gmail.com>
-Message-ID: <CAK7LNAQUDMhXxku2wqq=VX2cbntMWgsvrFL4C5Bk=x1TU79wjg@mail.gmail.com>
-Subject: Re: [RFC PATCH kernel] powerpc/stack_protector: Fix external modules building
-To:     Alexey Kardashevskiy <aik@ozlabs.ru>
-Cc:     linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Christophe Leroy <christophe.leroy@c-s.fr>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1547176147; bh=7LmrZ9OsZ3o9SobpreCnQv4ByFBfGKe0Dav4/9uMQ1U=;
+        h=X-PGP-Universal:From:To:CC:Subject:Date:Message-ID:X-Mailer:
+         X-NVConfidentiality:MIME-Version:Content-Type;
+        b=bT4LfCgpu8u2Wi4CrRUfTPqgHqnYUK3nenrT5bGaNr319m1W+gdCjt35MipzvPAK5
+         8aKpLIFxBc56KJ1gUMQrSDaM4W9SIcmAhicoco2vLe52pb0QGLON0GErVCgq6ApMZy
+         r9yruVNmR86+4ONYL/yf6bFjsTKZ8ZF1Ywwr7URr5hlGaNis8vXdnuSpCS4hRgWBMs
+         0Wv08CXiMQMHFVvQoZFRYdBuBz8ctGeYrHvYK/dTPg5bZ6w0zkZxAWJxnXrZYUDyFg
+         zu9uoYtGKuQDzLoNyOq42sGGC9WlFvc51bih4Px7bkgLgRCTj5bRFp2AZ6sljeSYSp
+         kio75y+Yu08jg==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jan 10, 2019 at 2:44 PM Alexey Kardashevskiy <aik@ozlabs.ru> wrote:
->
-> c3ff2a519 "powerpc/32: add stack protector support" addes stack protector
-> support so now powerpc's "prepare" target depends on prepare0 (via
-> stack_protector_prepare target).
->
-> It works fine until we try build an external module where it fails with:
-> Run: 'make -j128 SYSSRC=/home/aik/p/kernel SYSOUT=/home/aik/pbuild/kernel-le-pseries/ ARCH=powerpc'
-> make[1]: Entering directory '/home/aik/p/kernel'
-> make[2]: Entering directory '/home/aik/pbuild/kernel-le-pseries'
-> make[2]: *** No rule to make target 'prepare0', needed by 'stack_protector_prepare'.  Stop.
->
-> The reason for that is that the main Linux Makefile defines "prepare0"
-> only if KBUILD_EXTMOD=="".
->
-> This hacks powerpc's Makefile to make external modules build again.
->
-> Fixes: c3ff2a519 "powerpc/32: add stack protector support"
-> Signed-off-by: Alexey Kardashevskiy <aik@ozlabs.ru>
-> ---
->
->
-> It has been suggested that there is a better way of fixing this hence RFC.
->
->
-> ---
->  arch/powerpc/Makefile | 4 ++++
->  1 file changed, 4 insertions(+)
->
-> diff --git a/arch/powerpc/Makefile b/arch/powerpc/Makefile
-> index 488c9ed..0492f62 100644
-> --- a/arch/powerpc/Makefile
-> +++ b/arch/powerpc/Makefile
-> @@ -419,7 +419,11 @@ archheaders:
->  ifdef CONFIG_STACKPROTECTOR
->  prepare: stack_protector_prepare
->
-> +ifeq ($(KBUILD_EXTMOD),)
->  stack_protector_prepare: prepare0
-> +else
-> +stack_protector_prepare:
-> +endif
+Add supports-cqe optional property for Tegra SDMMC.
 
+Tegra186 and Tegra194 supports HW Command queue only
+on SDMMC4 controller. This property is used to identify
+command queue support controller in the tegra sdhci driver.
 
-Honestly, I think this is ugly.
+Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
+---
+ Documentation/devicetree/bindings/mmc/nvidia,tegra20-sdhci.txt | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-Do you want me to send an alternative solution?
-
-
-
-
->  ifdef CONFIG_PPC64
->         $(eval KBUILD_CFLAGS += -mstack-protector-guard-offset=$(shell awk '{if ($$2 == "PACA_CANARY") print $$3;}' include/generated/asm-offsets.h))
->  else
-> --
-> 2.17.1
->
-
-
+diff --git a/Documentation/devicetree/bindings/mmc/nvidia,tegra20-sdhci.txt b/Documentation/devicetree/bindings/mmc/nvidia,tegra20-sdhci.txt
+index 32b4b4e41923..fb14c2c8d7ee 100644
+--- a/Documentation/devicetree/bindings/mmc/nvidia,tegra20-sdhci.txt
++++ b/Documentation/devicetree/bindings/mmc/nvidia,tegra20-sdhci.txt
+@@ -72,6 +72,10 @@ Optional properties for Tegra210 and Tegra186:
+ - nvidia,default-trim : Specify the default outbound clock trimmer
+   value.
+ - nvidia,dqs-trim : Specify DQS trim value for HS400 timing
++- supports-cqe : The presence of this property indicates that the
++  corresponding controller supports HW command queue feature.
++  Tegra186 and Tegra194 has 4 SDMMC Controllers and only SDMMC4
++  controller supports HW Command Queue with eMMC device.
+ 
+   Notes on the pad calibration pull up and pulldown offset values:
+     - The property values are drive codes which are programmed into the
 -- 
-Best Regards
-Masahiro Yamada
+2.7.4
+
