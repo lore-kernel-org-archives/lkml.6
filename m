@@ -4,49 +4,49 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-10.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AB54AC43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:15:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C1BEAC43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:15:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 70EE72177B
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:15:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8171B214D8
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:15:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547216144;
-	bh=dou/STToZZ3vONY5LtHdDHOQ49X1/Y/iAoBpUPl8kkw=;
+	s=default; t=1547216148;
+	bh=fWvHTwTTFiXoQm0J4FRezHd87OK9bBGBKcXZk1rPevo=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=geg2OdKX/ycGC9lKltAIJGwkHwmdrcODdosJf39XzuUBrAvWGIhSsC8pw9ApflFMU
-	 9xenIF2XLPwHiCZ0rmBua+wjbo22iJMCRURPJt7v4UwD6vQw1zqjF13MJ+YHpgsLnI
-	 av55syBRlLj+X+LO+aaZW09ZyU7gZza6jgZjwZ7A=
+	b=cV2tczNoPpkXGgWXdc4rk6QnmIq6HV42m1KTiJc7Ggoc3/bhi11kffj6kxxds01Dn
+	 b4rx1vfuERAgq7/OizeU1Sok2/MWJGLCiMapRkWF6NiR4OeLrVcoZpl1wif0zFtTDP
+	 JDOmycCHEGFcAe0eSCxtu2TTdA4mx0yXbGRPzrf8=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387464AbfAKOPn (ORCPT
+        id S2387476AbfAKOPs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 11 Jan 2019 09:15:43 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59912 "EHLO mail.kernel.org"
+        Fri, 11 Jan 2019 09:15:48 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59980 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387453AbfAKOPm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Jan 2019 09:15:42 -0500
+        id S1732160AbfAKOPo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 Jan 2019 09:15:44 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0C1A320874;
-        Fri, 11 Jan 2019 14:15:40 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 88C4D214D8;
+        Fri, 11 Jan 2019 14:15:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547216141;
-        bh=dou/STToZZ3vONY5LtHdDHOQ49X1/Y/iAoBpUPl8kkw=;
+        s=default; t=1547216144;
+        bh=fWvHTwTTFiXoQm0J4FRezHd87OK9bBGBKcXZk1rPevo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=MGBU2FJEuHvDHBNDtMZh97UvYBa7hWtmA5OD0pKqnLhYulNSJCG+2ZfhdsFYCIoMw
-         QiQ/NcTX9bNH2sk7Kg5NJekvStUD8H+H5B3iFTMN2m0PePOY4Zwb/uUVxBw+5yyRqj
-         +b8RrYpD914BGo14mCYLpT8Czxp0WSO8qZABBBt8=
+        b=zArzpIOdsyhdooPPudSt5NO78p21BMqtqAkFkKTK73XudnkMFVOcBsgLmgX376HKv
+         Xdds7YaLuMtr/rmAnqop6bmzhL+VLyywu0qQaOMJBcNZ4CqHzxGycfJmR2FsWmKtmX
+         u/WGoWAKdS2BlyOvcB+qvm5GIB4epoIy0RplO+tw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Hui Peng <benquike@163.com>,
-        Takashi Iwai <tiwai@suse.de>
-Subject: [PATCH 3.18 37/47] ALSA: usb-audio: Fix an out-of-bound read in create_composite_quirks
-Date:   Fri, 11 Jan 2019 15:08:22 +0100
-Message-Id: <20190111131000.900626272@linuxfoundation.org>
+        stable@vger.kernel.org, Vasily Averin <vvs@virtuozzo.com>,
+        David Teigland <teigland@redhat.com>, stable@kernel.org
+Subject: [PATCH 3.18 38/47] dlm: fixed memory leaks after failed ls_remove_names allocation
+Date:   Fri, 11 Jan 2019 15:08:23 +0100
+Message-Id: <20190111131001.034217255@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190111130956.170952125@linuxfoundation.org>
 References: <20190111130956.170952125@linuxfoundation.org>
@@ -65,45 +65,40 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Hui Peng <benquike@163.com>
+From: Vasily Averin <vvs@virtuozzo.com>
 
-commit cbb2ebf70daf7f7d97d3811a2ff8e39655b8c184 upstream.
+commit b982896cdb6e6a6b89d86dfb39df489d9df51e14 upstream.
 
-In `create_composite_quirk`, the terminating condition of for loops is
-`quirk->ifnum < 0`. So any composite quirks should end with `struct
-snd_usb_audio_quirk` object with ifnum < 0.
+If allocation fails on last elements of array need to free already
+allocated elements.
 
-    for (quirk = quirk_comp->data; quirk->ifnum >= 0; ++quirk) {
+v2: just move existing out_rsbtbl label to right place
 
-    	.....
-    }
+Fixes 789924ba635f ("dlm: fix race between remove and lookup")
+Cc: stable@kernel.org # 3.6
 
-the data field of Bower's & Wilkins PX headphones usb device device quirks
-do not end with {.ifnum = -1}, wihch may result in out-of-bound read.
-
-This Patch fix the bug by adding an ending quirk object.
-
-Fixes: 240a8af929c7 ("ALSA: usb-audio: Add a quirck for B&W PX headphones")
-Signed-off-by: Hui Peng <benquike@163.com>
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
+Signed-off-by: Vasily Averin <vvs@virtuozzo.com>
+Signed-off-by: David Teigland <teigland@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- sound/usb/quirks-table.h |    3 +++
- 1 file changed, 3 insertions(+)
+ fs/dlm/lockspace.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/sound/usb/quirks-table.h
-+++ b/sound/usb/quirks-table.h
-@@ -3356,6 +3356,9 @@ AU0828_DEVICE(0x2040, 0x7270, "Hauppauge
- 					}
- 				}
- 			},
-+			{
-+				.ifnum = -1
-+			},
- 		}
+--- a/fs/dlm/lockspace.c
++++ b/fs/dlm/lockspace.c
+@@ -673,11 +673,11 @@ static int new_lockspace(const char *nam
+ 	kfree(ls->ls_recover_buf);
+  out_lkbidr:
+ 	idr_destroy(&ls->ls_lkbidr);
++ out_rsbtbl:
+ 	for (i = 0; i < DLM_REMOVE_NAMES_MAX; i++) {
+ 		if (ls->ls_remove_names[i])
+ 			kfree(ls->ls_remove_names[i]);
  	}
- },
+- out_rsbtbl:
+ 	vfree(ls->ls_rsbtbl);
+  out_lsfree:
+ 	if (do_unreg)
 
 
