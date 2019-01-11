@@ -4,55 +4,52 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-13.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 21C51C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:53:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E1177C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:53:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E43C6206B6
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:53:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B442820870
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:53:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547218435;
-	bh=12boeD+mYVo2SzzVJ9Ju7sZr/69+Y/8F6W4e4sg7B9g=;
+	s=default; t=1547218439;
+	bh=tZjU4mtD/KEG0TsG+wTWm/5iz3aRdfhpvQwWH8UEf9E=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=Xgp7Yoxn/CLFzn4pMRw01TOXr7JlDPR2N1yAcQzoMw4/LTXA3gwSjbXx5jnHOh60t
-	 Ft57KnEfbVE2jt2UcXbOQKlFOzLJnHJPuLHyLNSgGo0s7f7LxOrn+b2ryVyg0ov9nK
-	 fPnuHrrAVodo246WeyLFcWhPRvfSkAV6yLvlvZ/Q=
+	b=1kywEKrjv99SxZ/93lA8YwDAPyTOD4W2CgwttItYcXSx56gZwVxCwag/clJYRhYJf
+	 J64fdaIkC+j/QMPUFFhdWddl2+4w3dj07vGGbHg6JxJdDvaubyYU9VZUFxQsweTnmD
+	 c+vd1QyJ0jIVtXMugbMH0N4jLfyA0qNfSv0ZKD7g=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390699AbfAKOhs (ORCPT
+        id S2391177AbfAKOx6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 11 Jan 2019 09:37:48 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58178 "EHLO mail.kernel.org"
+        Fri, 11 Jan 2019 09:53:58 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58386 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390664AbfAKOhh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Jan 2019 09:37:37 -0500
+        id S2390697AbfAKOhs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 Jan 2019 09:37:48 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 45E502063F;
-        Fri, 11 Jan 2019 14:37:36 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7C982204EC;
+        Fri, 11 Jan 2019 14:37:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547217456;
-        bh=12boeD+mYVo2SzzVJ9Ju7sZr/69+Y/8F6W4e4sg7B9g=;
+        s=default; t=1547217468;
+        bh=tZjU4mtD/KEG0TsG+wTWm/5iz3aRdfhpvQwWH8UEf9E=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=BXZmZNBueT492pMTGJCvx2lNnHkUOUKYsK9kMAR2ssDjt8ulyOD/T8+p6Kw+4LpnX
-         xfpvg1R7uFCTS4txV5P75oSly/8TZu3sp1a3aY3RiK/w1MXHnEl3wKoJ0k+W5TIORh
-         CJZTpgsH0lUl7Ua3qdNegciS2kaURx9PqzAQcvWI=
+        b=dps2DJazt7UJuWHx52cvXZNoH2EZPUukQ37QsKeSjWAnx+GyIQs46IEbqH6Mz3Zfa
+         H+wrPPbxuhixwaIjje4FhNbTTAGONf+pgzQP4YGrlnRx1E0cvAGLStpAnMAAIc6Nr+
+         BIGgJxd8/+tFuZW6PIbNf6ladkgFvkFeJNW5FDmw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Hans van Kranenburg <hans.van.kranenburg@mendix.com>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Juergen Gross <jgross@suse.com>, bp@alien8.de, hpa@zytor.com,
-        dave.hansen@linux.intel.com, luto@kernel.org, peterz@infradead.org,
-        boris.ostrovsky@oracle.com, bhe@redhat.com, linux-mm@kvack.org,
-        xen-devel@lists.xenproject.org, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 029/148] x86/mm: Fix guard hole handling
-Date:   Fri, 11 Jan 2019 15:13:27 +0100
-Message-Id: <20190111131115.468401035@linuxfoundation.org>
+        =?UTF-8?q?Mantas=20Mikul=C4=97nas?= <grawity@gmail.com>,
+        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 072/148] Input: synaptics - enable SMBus for HP EliteBook 840 G4
+Date:   Fri, 11 Jan 2019 15:14:10 +0100
+Message-Id: <20190111131117.118105087@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190111131114.337122649@linuxfoundation.org>
 References: <20190111131114.337122649@linuxfoundation.org>
@@ -71,115 +68,47 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 16877a5570e0c5f4270d5b17f9bab427bcae9514 ]
+[ Upstream commit 7a71712293ba303aad928f580b89addb0be2892e ]
 
-There is a guard hole at the beginning of the kernel address space, also
-used by hypervisors. It occupies 16 PGD entries.
+dmesg reports that "Your touchpad (PNP: SYN3052 SYN0100 SYN0002 PNP0f13)
+says it can support a different bus."
 
-This reserved range is not defined explicitely, it is calculated relative
-to other entities: direct mapping and user space ranges.
+I've tested the offered psmouse.synaptics_intertouch=1 with 4.18.x and
+4.19.x and it seems to work well. No problems seen with suspend/resume.
 
-The calculation got broken by recent changes of the kernel memory layout:
-LDT remap range is now mapped before direct mapping and makes the
-calculation invalid.
+Also, it appears that RMI/SMBus mode is actually required for 3-4 finger
+multitouch gestures to work -- otherwise they are not reported at all.
 
-The breakage leads to crash on Xen dom0 boot[1].
+Information from dmesg in both modes:
 
-Define the reserved range explicitely. It's part of kernel ABI (hypervisors
-expect it to be stable) and must not depend on changes in the rest of
-kernel memory layout.
+  psmouse serio3: synaptics: Touchpad model: 1, fw: 8.2, id: 0x1e2b1,
+      caps: 0xf00123/0x840300/0x2e800/0x0, board id: 3139, fw id: 2000742
 
-[1] https://lists.xenproject.org/archives/html/xen-devel/2018-11/msg03313.html
+  psmouse serio3: synaptics: Trying to set up SMBus access
+  rmi4_smbus 6-002c: registering SMbus-connected sensor
+  rmi4_f01 rmi4-00.fn01: found RMI device,
+      manufacturer: Synaptics, product: TM3139-001, fw id: 2000742
 
-Fixes: d52888aa2753 ("x86/mm: Move LDT remap out of KASLR region on 5-level paging")
-Reported-by: Hans van Kranenburg <hans.van.kranenburg@mendix.com>
-Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Tested-by: Hans van Kranenburg <hans.van.kranenburg@mendix.com>
-Reviewed-by: Juergen Gross <jgross@suse.com>
-Cc: bp@alien8.de
-Cc: hpa@zytor.com
-Cc: dave.hansen@linux.intel.com
-Cc: luto@kernel.org
-Cc: peterz@infradead.org
-Cc: boris.ostrovsky@oracle.com
-Cc: bhe@redhat.com
-Cc: linux-mm@kvack.org
-Cc: xen-devel@lists.xenproject.org
-Link: https://lkml.kernel.org/r/20181130202328.65359-2-kirill.shutemov@linux.intel.com
+Signed-off-by: Mantas Mikulėnas <grawity@gmail.com>
+Reviewed-by: Benjamin Tissoires <benjamin.tissoires@redhat.com>
+Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/x86/include/asm/pgtable_64_types.h |  5 +++++
- arch/x86/mm/dump_pagetables.c           |  8 ++++----
- arch/x86/xen/mmu_pv.c                   | 11 ++++++-----
- 3 files changed, 15 insertions(+), 9 deletions(-)
+ drivers/input/mouse/synaptics.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/arch/x86/include/asm/pgtable_64_types.h b/arch/x86/include/asm/pgtable_64_types.h
-index 84bd9bdc1987..88bca456da99 100644
---- a/arch/x86/include/asm/pgtable_64_types.h
-+++ b/arch/x86/include/asm/pgtable_64_types.h
-@@ -111,6 +111,11 @@ extern unsigned int ptrs_per_p4d;
-  */
- #define MAXMEM			(1UL << MAX_PHYSMEM_BITS)
- 
-+#define GUARD_HOLE_PGD_ENTRY	-256UL
-+#define GUARD_HOLE_SIZE		(16UL << PGDIR_SHIFT)
-+#define GUARD_HOLE_BASE_ADDR	(GUARD_HOLE_PGD_ENTRY << PGDIR_SHIFT)
-+#define GUARD_HOLE_END_ADDR	(GUARD_HOLE_BASE_ADDR + GUARD_HOLE_SIZE)
-+
- #define LDT_PGD_ENTRY		-240UL
- #define LDT_BASE_ADDR		(LDT_PGD_ENTRY << PGDIR_SHIFT)
- #define LDT_END_ADDR		(LDT_BASE_ADDR + PGDIR_SIZE)
-diff --git a/arch/x86/mm/dump_pagetables.c b/arch/x86/mm/dump_pagetables.c
-index a12afff146d1..073755c89126 100644
---- a/arch/x86/mm/dump_pagetables.c
-+++ b/arch/x86/mm/dump_pagetables.c
-@@ -493,11 +493,11 @@ static inline bool is_hypervisor_range(int idx)
- {
- #ifdef CONFIG_X86_64
- 	/*
--	 * ffff800000000000 - ffff87ffffffffff is reserved for
--	 * the hypervisor.
-+	 * A hole in the beginning of kernel address space reserved
-+	 * for a hypervisor.
- 	 */
--	return	(idx >= pgd_index(__PAGE_OFFSET) - 16) &&
--		(idx <  pgd_index(__PAGE_OFFSET));
-+	return	(idx >= pgd_index(GUARD_HOLE_BASE_ADDR)) &&
-+		(idx <  pgd_index(GUARD_HOLE_END_ADDR));
- #else
- 	return false;
- #endif
-diff --git a/arch/x86/xen/mmu_pv.c b/arch/x86/xen/mmu_pv.c
-index 2c84c6ad8b50..c8f011e07a15 100644
---- a/arch/x86/xen/mmu_pv.c
-+++ b/arch/x86/xen/mmu_pv.c
-@@ -640,19 +640,20 @@ static int __xen_pgd_walk(struct mm_struct *mm, pgd_t *pgd,
- 			  unsigned long limit)
- {
- 	int i, nr, flush = 0;
--	unsigned hole_low, hole_high;
-+	unsigned hole_low = 0, hole_high = 0;
- 
- 	/* The limit is the last byte to be touched */
- 	limit--;
- 	BUG_ON(limit >= FIXADDR_TOP);
- 
-+#ifdef CONFIG_X86_64
- 	/*
- 	 * 64-bit has a great big hole in the middle of the address
--	 * space, which contains the Xen mappings.  On 32-bit these
--	 * will end up making a zero-sized hole and so is a no-op.
-+	 * space, which contains the Xen mappings.
- 	 */
--	hole_low = pgd_index(USER_LIMIT);
--	hole_high = pgd_index(PAGE_OFFSET);
-+	hole_low = pgd_index(GUARD_HOLE_BASE_ADDR);
-+	hole_high = pgd_index(GUARD_HOLE_END_ADDR);
-+#endif
- 
- 	nr = pgd_index(limit) + 1;
- 	for (i = 0; i < nr; i++) {
+diff --git a/drivers/input/mouse/synaptics.c b/drivers/input/mouse/synaptics.c
+index 7bdf8fc2c3b5..b6da0c1267e3 100644
+--- a/drivers/input/mouse/synaptics.c
++++ b/drivers/input/mouse/synaptics.c
+@@ -179,6 +179,7 @@ static const char * const smbus_pnp_ids[] = {
+ 	"LEN0096", /* X280 */
+ 	"LEN0097", /* X280 -> ALPS trackpoint */
+ 	"LEN200f", /* T450s */
++	"SYN3052", /* HP EliteBook 840 G4 */
+ 	"SYN3221", /* HP 15-ay000 */
+ 	NULL
+ };
 -- 
 2.19.1
 
