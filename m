@@ -2,68 +2,108 @@ Return-Path: <SRS0=uvhX=PT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D95ECC43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 20:25:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C5A0C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 20:31:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AA8472184A
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 20:25:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547238303;
-	bh=puRXmLJwGLnAgxEfXk7RmjVqO5vjMYUSJNSyqswx/9g=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc:List-ID:From;
-	b=g9IwRrVUmFXq1vzIxUJTVYGaGFzC1daEW0hLlxS2JSrbmmPq2B1ur7g7ZrOfWAcl8
-	 wignJDT2sIkVV3nWBUoyNgZDICz701bTXr/RwCgrUEA7A+JzNVICUGpps4mBeh01uu
-	 dTZ4P+QGkh3gku+qQFepASkTjnB1qtM9x6R8h7q8=
+	by mail.kernel.org (Postfix) with ESMTP id 357A220836
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 20:31:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390781AbfAKUZC (ORCPT
+        id S2390793AbfAKUbn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 11 Jan 2019 15:25:02 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37238 "EHLO mail.kernel.org"
+        Fri, 11 Jan 2019 15:31:43 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:34902 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389104AbfAKUZC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Jan 2019 15:25:02 -0500
-Subject: Re: [GIT PULL] Ceph updates for 5.0-rc2
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547238301;
-        bh=puRXmLJwGLnAgxEfXk7RmjVqO5vjMYUSJNSyqswx/9g=;
-        h=From:In-Reply-To:References:Date:To:Cc:From;
-        b=YHXGxolRWPIdcTgSgLL86gYyz3XuPjNlSyI5zOX4jEycBSvByzBw1FT8ffBemGrYs
-         lhQ+P3R2UZpWbzV4Uwccc2S+YqYMN91m2ptzN1d9TJeXuqRsYy+TGlKYb8eA1CgukH
-         phDSOz2rsfuDLI/izir8gasiKryHbqXfSyKY79lA=
-From:   pr-tracker-bot@kernel.org
-In-Reply-To: <20190111170226.19872-1-idryomov@gmail.com>
-References: <20190111170226.19872-1-idryomov@gmail.com>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20190111170226.19872-1-idryomov@gmail.com>
-X-PR-Tracked-Remote: https://github.com/ceph/ceph-client.git
- tags/ceph-for-5.0-rc2
-X-PR-Tracked-Commit-Id: 85f5a4d666fd9be73856ed16bb36c5af5b406b29
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: f87092c4337fc064b52bfad1df499a5b82f6d088
-Message-Id: <154723830150.26854.7747492024432343487.pr-tracker-bot@kernel.org>
-Date:   Fri, 11 Jan 2019 20:25:01 +0000
-To:     Ilya Dryomov <idryomov@gmail.com>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        ceph-devel@vger.kernel.org, linux-kernel@vger.kernel.org
+        id S2389191AbfAKUbm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 Jan 2019 15:31:42 -0500
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id B8056FD3DF;
+        Fri, 11 Jan 2019 20:31:41 +0000 (UTC)
+Received: from treble (ovpn-122-231.rdu2.redhat.com [10.10.122.231])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 454AB1001F50;
+        Fri, 11 Jan 2019 20:31:37 +0000 (UTC)
+Date:   Fri, 11 Jan 2019 14:31:35 -0600
+From:   Josh Poimboeuf <jpoimboe@redhat.com>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Nadav Amit <namit@vmware.com>, Andy Lutomirski <luto@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        the arch/x86 maintainers <x86@kernel.org>,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Jason Baron <jbaron@akamai.com>, Jiri Kosina <jkosina@suse.cz>,
+        David Laight <David.Laight@aculab.com>,
+        Borislav Petkov <bp@alien8.de>,
+        Julia Cartwright <julia@ni.com>, Jessica Yu <jeyu@kernel.org>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        Edward Cree <ecree@solarflare.com>,
+        Daniel Bristot de Oliveira <bristot@redhat.com>
+Subject: Re: [PATCH v3 0/6] Static calls
+Message-ID: <20190111203135.5clurevf34bkiy3o@treble>
+References: <cover.1547073843.git.jpoimboe@redhat.com>
+ <20190110203023.GL2861@worktop.programming.kicks-ass.net>
+ <20190110205226.iburt6mrddsxnjpk@treble>
+ <CAHk-=whR7LzKcuB9Z2km1T25DUkJcbE9rNhCzApAPADbDqMhmQ@mail.gmail.com>
+ <CALCETrWBwTVHWXahVXMMBL4QA1f+YdKgv1XANXPsk86FjFFH2Q@mail.gmail.com>
+ <B374297A-8298-4CED-8EC0-6A39BDBA5F05@vmware.com>
+ <20190111151525.tf7lhuycyyvjjxez@treble>
+ <CAHk-=wjJm8DpCsw=Wno01q4VFqUeiLKE8QmbAtUJurYhn3jRqA@mail.gmail.com>
+ <20190111200420.qtyffayxceysoarf@treble>
+ <CAHk-=whLu9kG3dqgXUkCrNrTp0NVtdOOWxvonXTfhtq-krXo+Q@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <CAHk-=whLu9kG3dqgXUkCrNrTp0NVtdOOWxvonXTfhtq-krXo+Q@mail.gmail.com>
+User-Agent: NeoMutt/20180716
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.38]); Fri, 11 Jan 2019 20:31:42 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The pull request you sent on Fri, 11 Jan 2019 18:02:26 +0100:
+On Fri, Jan 11, 2019 at 12:12:30PM -0800, Linus Torvalds wrote:
+> On Fri, Jan 11, 2019 at 12:04 PM Josh Poimboeuf <jpoimboe@redhat.com> wrote:
+> >
+> > But really, to me, having to create and manage all those custom
+> > trampolines still feels a lot more complex than just making a gap on the
+> > stack.
+> 
+> There are no "all those custom trampolines".
+> 
+> There is literally *one* custom trampoline that you generate as you do
+> the rewriting.
+> 
+> Well, two, since you need the version with the "sti" before the jmp.
+> 
+> It would be possible to generate the custom trampoline on the fly in
+> the BP handler itself, and just have a magic flag for that case. But
+> it's probably simpler to do it in the caller, since you need to
+> generate that special writable and executable code sequence. You
+> probably don't want to do that at BP time.
+> 
+> You probably want to use a FIX_TEXT_POKE2 page for the generated
+> sequence that just maps some generated code executably for a short
+> while. Or something like that.
 
-> https://github.com/ceph/ceph-client.git tags/ceph-for-5.0-rc2
+I was referring to the fact that a single static call key update will
+usually result in patching multiple call sites.  But you're right, it's
+only 1-2 trampolines per text_poke_bp() invocation.  Though eventually
+we may want to batch all the writes like what Daniel has proposed for
+jump labels, to reduce IPIs.
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/f87092c4337fc064b52bfad1df499a5b82f6d088
-
-Thank you!
+Regardless, the trampoline management seems more complex to me.  But
+it's easier to argue about actual code, so maybe I'll code it up to make
+it easier to compare solutions.
 
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.wiki.kernel.org/userdoc/prtracker
+Josh
