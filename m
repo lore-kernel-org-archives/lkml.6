@@ -7,47 +7,47 @@ X-Spam-Status: No, score=-10.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EF340C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 15:01:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C6B8C43444
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 15:01:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B757A2133F
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 15:01:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4F0632133F
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 15:01:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547218870;
-	bh=BCW1uAKkWF+5lq8cD7sp69W5/q6TYpgRQOKJ6z6k0ZM=;
+	s=default; t=1547218878;
+	bh=FFH5Lzh66n9nxFko4xW6pNdTQzbEvPIA5OuQQ9ZoE9w=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=k/4YLepuGuMUak8+45fbErcUEQv4xrD1Y436ULD2EaDZbldQOaGh3Rmb1ebKcr9ja
-	 AdzyZF3j+ak6Iz+FfW7UVn90Ggiv0igq1smNB049/joIBLrUzRtW7Wo3YGE0q0yMz8
-	 6Vx2ZEHGwHgQeyob/8j7Vm/dqZVe4kDBgmJ6gsts=
+	b=1M9mwDRAijLjc6zjDnVUj4EF+/4YBkyz3YuAPXjabnkfUDNDw8d2ata4oKQ2Javi9
+	 Nl3usO4xZti8cJe5o9IYYbZMy5KR3FJknIQ4FJmwdAdD5q7d4zxwt6c3otyu6byS60
+	 efKWd9tkU6ugHJuXD5tpdLBh+9hZEiSH9PFnkFec=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389410AbfAKOcY (ORCPT
+        id S2391786AbfAKPBQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 11 Jan 2019 09:32:24 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52360 "EHLO mail.kernel.org"
+        Fri, 11 Jan 2019 10:01:16 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52280 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389395AbfAKOcW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Jan 2019 09:32:22 -0500
+        id S2389380AbfAKOcT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 Jan 2019 09:32:19 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3F3722063F;
-        Fri, 11 Jan 2019 14:32:21 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1692A2133F;
+        Fri, 11 Jan 2019 14:32:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547217141;
-        bh=BCW1uAKkWF+5lq8cD7sp69W5/q6TYpgRQOKJ6z6k0ZM=;
+        s=default; t=1547217138;
+        bh=FFH5Lzh66n9nxFko4xW6pNdTQzbEvPIA5OuQQ9ZoE9w=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=t4q4mYjHlDmftHwDcUuF23jGEOQpaEH4YCq1zTJ9AvUWDTLROjwXW9YYh2JbLyS0p
-         4vOzTHK+znnXxe9PKhsIqVl5Uu+n0ocJ/12RvKP1U2Ztc2yJPHo1FDDDJmoarFyytt
-         W9sIjj4uTWspJ3q6V1WI0Hvp8xcXeQ3GUU8K5MrI=
+        b=HU3qtJh8wxOfwZnTsE1P0Spx/ot5afSZfElua1p7ppfVT2/2FCLaFBog3Brn7j+JG
+         49BRKsGzfZ0wGA0tHzKdsxTVcM/tzkh41I4Eu6fogxbaLfC7Yk6nDYDsJ0IgNxRX7Y
+         2WZfkmer46Bq4ei85QxAJ1UEs7jK7+lMMyy2rZT0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, "Ewan D. Milne" <emilne@redhat.com>,
-        Laurence Oberman <loberman@redhat.com>,
+        stable@vger.kernel.org, Steffen Maier <maier@linux.ibm.com>,
+        Jens Remus <jremus@linux.ibm.com>,
         "Martin K. Petersen" <martin.petersen@oracle.com>
-Subject: [PATCH 4.14 056/105] scsi: lpfc: do not set queue->page_count to 0 if pc_sli4_params.wqpcnt is invalid
-Date:   Fri, 11 Jan 2019 15:14:27 +0100
-Message-Id: <20190111131107.703166915@linuxfoundation.org>
+Subject: [PATCH 4.14 055/105] scsi: zfcp: fix posting too many status read buffers leading to adapter shutdown
+Date:   Fri, 11 Jan 2019 15:14:26 +0100
+Message-Id: <20190111131107.640822727@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190111131102.899065735@linuxfoundation.org>
 References: <20190111131102.899065735@linuxfoundation.org>
@@ -66,37 +66,92 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Ewan D. Milne <emilne@redhat.com>
+From: Steffen Maier <maier@linux.ibm.com>
 
-commit 4e87eb2f46ea547d12a276b2e696ab934d16cfb6 upstream.
+commit 60a161b7e5b2a252ff0d4c622266a7d8da1120ce upstream.
 
-Certain older adapters such as the OneConnect OCe10100 may not have a valid
-wqpcnt value.  In this case, do not set queue->page_count to 0 in
-lpfc_sli4_queue_alloc() as this will prevent the driver from initializing.
+Suppose adapter (open) recovery is between opened QDIO queues and before
+(the end of) initial posting of status read buffers (SRBs). This time
+window can be seconds long due to FSF_PROT_HOST_CONNECTION_INITIALIZING
+causing by design looping with exponential increase sleeps in the function
+performing exchange config data during recovery
+[zfcp_erp_adapter_strat_fsf_xconf()]. Recovery triggered by local link up.
 
-Fixes: 895427bd01 ("scsi: lpfc: NVME Initiator: Base modifications")
-Cc: stable@vger.kernel.org # 4.11+
-Signed-off-by: Ewan D. Milne <emilne@redhat.com>
-Reviewed-by: Laurence Oberman <loberman@redhat.com>
-Tested-by:   Laurence Oberman <loberman@redhat.com>
+Suppose an event occurs for which the FCP channel would send an unsolicited
+notification to zfcp by means of a previously posted SRB.  We saw it with
+local cable pull (link down) in multi-initiator zoning with multiple
+NPIV-enabled subchannels of the same shared FCP channel.
+
+As soon as zfcp_erp_adapter_strategy_open_fsf() starts posting the initial
+status read buffers from within the adapter's ERP thread, the channel does
+send an unsolicited notification.
+
+Since v2.6.27 commit d26ab06ede83 ("[SCSI] zfcp: receiving an unsolicted
+status can lead to I/O stall"), zfcp_fsf_status_read_handler() schedules
+adapter->stat_work to re-fill the just consumed SRB from a work item.
+
+Now the ERP thread and the work item post SRBs in parallel.  Both contexts
+call the helper function zfcp_status_read_refill().  The tracking of
+missing (to be posted / re-filled) SRBs is not thread-safe due to separate
+atomic_read() and atomic_dec(), in order to depend on posting
+success. Hence, both contexts can see
+atomic_read(&adapter->stat_miss) == 1. One of the two contexts posts
+one too many SRB. Zfcp gets QDIO_ERROR_SLSB_STATE on the output queue
+(trace tag "qdireq1") leading to zfcp_erp_adapter_shutdown() in
+zfcp_qdio_handler_error().
+
+An obvious and seemingly clean fix would be to schedule stat_work from the
+ERP thread and wait for it to finish. This would serialize all SRB
+re-fills. However, we already have another work item wait on the ERP
+thread: adapter->scan_work runs zfcp_fc_scan_ports() which calls
+zfcp_fc_eval_gpn_ft(). The latter calls zfcp_erp_wait() to wait for all the
+open port recoveries during zfcp auto port scan, but in fact it waits for
+any pending recovery including an adapter recovery. This approach leads to
+a deadlock.  [see also v3.19 commit 18f87a67e6d6 ("zfcp: auto port scan
+resiliency"); v2.6.37 commit d3e1088d6873
+("[SCSI] zfcp: No ERP escalation on gpn_ft eval");
+v2.6.28 commit fca55b6fb587
+("[SCSI] zfcp: fix deadlock between wq triggered port scan and ERP")
+fixing v2.6.27 commit c57a39a45a76
+("[SCSI] zfcp: wait until adapter is finished with ERP during auto-port");
+v2.6.27 commit cc8c282963bd
+("[SCSI] zfcp: Automatically attach remote ports")]
+
+Instead make the accounting of missing SRBs atomic for parallel execution
+in both the ERP thread and adapter->stat_work.
+
+Signed-off-by: Steffen Maier <maier@linux.ibm.com>
+Fixes: d26ab06ede83 ("[SCSI] zfcp: receiving an unsolicted status can lead to I/O stall")
+Cc: <stable@vger.kernel.org> #2.6.27+
+Reviewed-by: Jens Remus <jremus@linux.ibm.com>
 Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/scsi/lpfc/lpfc_sli.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/s390/scsi/zfcp_aux.c |    6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
---- a/drivers/scsi/lpfc/lpfc_sli.c
-+++ b/drivers/scsi/lpfc/lpfc_sli.c
-@@ -13941,7 +13941,8 @@ lpfc_sli4_queue_alloc(struct lpfc_hba *p
- 			hw_page_size))/hw_page_size;
+--- a/drivers/s390/scsi/zfcp_aux.c
++++ b/drivers/s390/scsi/zfcp_aux.c
+@@ -274,16 +274,16 @@ static void zfcp_free_low_mem_buffers(st
+  */
+ int zfcp_status_read_refill(struct zfcp_adapter *adapter)
+ {
+-	while (atomic_read(&adapter->stat_miss) > 0)
++	while (atomic_add_unless(&adapter->stat_miss, -1, 0))
+ 		if (zfcp_fsf_status_read(adapter->qdio)) {
++			atomic_inc(&adapter->stat_miss); /* undo add -1 */
+ 			if (atomic_read(&adapter->stat_miss) >=
+ 			    adapter->stat_read_buf_num) {
+ 				zfcp_erp_adapter_reopen(adapter, 0, "axsref1");
+ 				return 1;
+ 			}
+ 			break;
+-		} else
+-			atomic_dec(&adapter->stat_miss);
++		}
+ 	return 0;
+ }
  
- 	/* If needed, Adjust page count to match the max the adapter supports */
--	if (queue->page_count > phba->sli4_hba.pc_sli4_params.wqpcnt)
-+	if (phba->sli4_hba.pc_sli4_params.wqpcnt &&
-+	    (queue->page_count > phba->sli4_hba.pc_sli4_params.wqpcnt))
- 		queue->page_count = phba->sli4_hba.pc_sli4_params.wqpcnt;
- 
- 	INIT_LIST_HEAD(&queue->list);
 
 
