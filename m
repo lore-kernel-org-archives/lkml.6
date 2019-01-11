@@ -7,46 +7,52 @@ X-Spam-Status: No, score=-10.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 47A02C43444
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:41:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B43FC43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:41:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 15652206B6
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:41:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D204221841
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:41:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547217708;
-	bh=Jj0xYcj5qE1XO5cK+3rU8A3B74aeoWuqCLp5Y9tiSec=;
+	s=default; t=1547217711;
+	bh=7ZiFMw1oWMcKo5JsQal74LgtHTjT4MssxNse+xau43o=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=ztWJYkMDs5D1rc8eEGgoEM7ANvjPShxzRUElxqUC9qlHBK96k4BhSJguY2OukEVl0
-	 CZu5zCPZYgyNtJRN6+N3u0Gx1JOa40mnI2tAUlJc552ETVJIxexOjXVVo1BHbcWJ8j
-	 Zkw12FFECSqIfN6YTEuwqxwQxPhm6FjjG98loDJ0=
+	b=xBJgXAW0hbU3gegkykuddTVwoAehBTbogxWXBHGqTpxTOJ8u6Fe9B+OfrxKTvvu3k
+	 FTWtGvMK2V69KbGjdJacAal9uXPPboHzWxSbKLbK3HRfgkZ7ZyUY7ir5Xvc98c+eYK
+	 J0IPoOT3r58rdv3QM9Wlaoe3cflXtfl9NVVH/pAo=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404038AbfAKOlr (ORCPT
+        id S2404051AbfAKOlv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 11 Jan 2019 09:41:47 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34498 "EHLO mail.kernel.org"
+        Fri, 11 Jan 2019 09:41:51 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34542 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2391335AbfAKOlo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Jan 2019 09:41:44 -0500
+        id S2404035AbfAKOlr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 Jan 2019 09:41:47 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 43F14206B6;
-        Fri, 11 Jan 2019 14:41:43 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D95262133F;
+        Fri, 11 Jan 2019 14:41:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547217703;
-        bh=Jj0xYcj5qE1XO5cK+3rU8A3B74aeoWuqCLp5Y9tiSec=;
+        s=default; t=1547217706;
+        bh=7ZiFMw1oWMcKo5JsQal74LgtHTjT4MssxNse+xau43o=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=FcY1dmL6yJO098kkR9Wr3tmAoW8NwGNKHgeBJhIOUTCS/hNvd5sepvpuhw8XwI8Ff
-         ubbYXIVVjr0aeSp9plapOcu5e1VsvwSYWc2Qb9JaLMuiaGXPa8Wg25H6j5O+HiaeUm
-         4eOT0ZlXTlTX151aaujy8n7C1jm3Z/vGGyM8xdpU=
+        b=jVN6tXTkUQ9K/phBm8jJ1Ik4UmIQNnIMx/RimirAocx2q6gWkWeiR9ZM1aUJ5k8uE
+         bnUVJ7r5/AoOrQnYSD8tQEi/bxQ772Ew/2ED7m93muLC54tm3unABK1T2/4EAePqAa
+         08N9/slh5fjHzVCGKl58N5r40PvdYUoC6zRo8YIw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Vasily Averin <vvs@virtuozzo.com>,
-        "J. Bruce Fields" <bfields@redhat.com>
-Subject: [PATCH 4.20 11/65] sunrpc: use SVC_NET() in svcauth_gss_* functions
-Date:   Fri, 11 Jan 2019 15:14:57 +0100
-Message-Id: <20190111131057.914106954@linuxfoundation.org>
+        stable@vger.kernel.org, Dan Williams <dan.j.williams@intel.com>,
+        =?UTF-8?q?J=C3=A9r=C3=B4me=20Glisse?= <jglisse@redhat.com>,
+        Christoph Hellwig <hch@lst.de>,
+        Logan Gunthorpe <logang@deltatee.com>,
+        Balbir Singh <bsingharora@gmail.com>,
+        Michal Hocko <mhocko@suse.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: [PATCH 4.20 12/65] mm, devm_memremap_pages: add MEMORY_DEVICE_PRIVATE support
+Date:   Fri, 11 Jan 2019 15:14:58 +0100
+Message-Id: <20190111131058.081682210@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190111131055.331350141@linuxfoundation.org>
 References: <20190111131055.331350141@linuxfoundation.org>
@@ -65,56 +71,102 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Vasily Averin <vvs@virtuozzo.com>
+From: Dan Williams <dan.j.williams@intel.com>
 
-commit b8be5674fa9a6f3677865ea93f7803c4212f3e10 upstream.
+commit 69324b8f48339de2f90fdf2f774687fc6c47629a upstream.
 
-Signed-off-by: Vasily Averin <vvs@virtuozzo.com>
-Cc: stable@vger.kernel.org
-Signed-off-by: J. Bruce Fields <bfields@redhat.com>
+In preparation for consolidating all ZONE_DEVICE enabling via
+devm_memremap_pages(), teach it how to handle the constraints of
+MEMORY_DEVICE_PRIVATE ranges.
+
+[jglisse@redhat.com: call move_pfn_range_to_zone for MEMORY_DEVICE_PRIVATE]
+Link: http://lkml.kernel.org/r/154275559036.76910.12434636179931292607.stgit@dwillia2-desk3.amr.corp.intel.com
+Signed-off-by: Dan Williams <dan.j.williams@intel.com>
+Reviewed-by: Jérôme Glisse <jglisse@redhat.com>
+Acked-by: Christoph Hellwig <hch@lst.de>
+Reported-by: Logan Gunthorpe <logang@deltatee.com>
+Reviewed-by: Logan Gunthorpe <logang@deltatee.com>
+Cc: Balbir Singh <bsingharora@gmail.com>
+Cc: Michal Hocko <mhocko@suse.com>
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- net/sunrpc/auth_gss/svcauth_gss.c |    8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ kernel/memremap.c |   53 +++++++++++++++++++++++++++++++++++++++++------------
+ 1 file changed, 41 insertions(+), 12 deletions(-)
 
---- a/net/sunrpc/auth_gss/svcauth_gss.c
-+++ b/net/sunrpc/auth_gss/svcauth_gss.c
-@@ -1142,7 +1142,7 @@ static int svcauth_gss_legacy_init(struc
- 	struct kvec *resv = &rqstp->rq_res.head[0];
- 	struct rsi *rsip, rsikey;
- 	int ret;
--	struct sunrpc_net *sn = net_generic(rqstp->rq_xprt->xpt_net, sunrpc_net_id);
-+	struct sunrpc_net *sn = net_generic(SVC_NET(rqstp), sunrpc_net_id);
+--- a/kernel/memremap.c
++++ b/kernel/memremap.c
+@@ -98,9 +98,15 @@ static void devm_memremap_pages_release(
+ 		- align_start;
  
- 	memset(&rsikey, 0, sizeof(rsikey));
- 	ret = gss_read_verf(gc, argv, authp,
-@@ -1253,7 +1253,7 @@ static int svcauth_gss_proxy_init(struct
- 	uint64_t handle;
- 	int status;
- 	int ret;
--	struct net *net = rqstp->rq_xprt->xpt_net;
-+	struct net *net = SVC_NET(rqstp);
- 	struct sunrpc_net *sn = net_generic(net, sunrpc_net_id);
+ 	mem_hotplug_begin();
+-	arch_remove_memory(align_start, align_size, pgmap->altmap_valid ?
+-			&pgmap->altmap : NULL);
+-	kasan_remove_zero_shadow(__va(align_start), align_size);
++	if (pgmap->type == MEMORY_DEVICE_PRIVATE) {
++		pfn = align_start >> PAGE_SHIFT;
++		__remove_pages(page_zone(pfn_to_page(pfn)), pfn,
++				align_size >> PAGE_SHIFT, NULL);
++	} else {
++		arch_remove_memory(align_start, align_size,
++				pgmap->altmap_valid ? &pgmap->altmap : NULL);
++		kasan_remove_zero_shadow(__va(align_start), align_size);
++	}
+ 	mem_hotplug_done();
  
- 	memset(&ud, 0, sizeof(ud));
-@@ -1444,7 +1444,7 @@ svcauth_gss_accept(struct svc_rqst *rqst
- 	__be32		*rpcstart;
- 	__be32		*reject_stat = resv->iov_base + resv->iov_len;
- 	int		ret;
--	struct sunrpc_net *sn = net_generic(rqstp->rq_xprt->xpt_net, sunrpc_net_id);
-+	struct sunrpc_net *sn = net_generic(SVC_NET(rqstp), sunrpc_net_id);
+ 	untrack_pfn(NULL, PHYS_PFN(align_start), align_size);
+@@ -187,17 +193,40 @@ void *devm_memremap_pages(struct device
+ 		goto err_pfn_remap;
  
- 	dprintk("RPC:       svcauth_gss: argv->iov_len = %zd\n",
- 			argv->iov_len);
-@@ -1734,7 +1734,7 @@ svcauth_gss_release(struct svc_rqst *rqs
- 	struct rpc_gss_wire_cred *gc = &gsd->clcred;
- 	struct xdr_buf *resbuf = &rqstp->rq_res;
- 	int stat = -EINVAL;
--	struct sunrpc_net *sn = net_generic(rqstp->rq_xprt->xpt_net, sunrpc_net_id);
-+	struct sunrpc_net *sn = net_generic(SVC_NET(rqstp), sunrpc_net_id);
+ 	mem_hotplug_begin();
+-	error = kasan_add_zero_shadow(__va(align_start), align_size);
+-	if (error) {
+-		mem_hotplug_done();
+-		goto err_kasan;
++
++	/*
++	 * For device private memory we call add_pages() as we only need to
++	 * allocate and initialize struct page for the device memory. More-
++	 * over the device memory is un-accessible thus we do not want to
++	 * create a linear mapping for the memory like arch_add_memory()
++	 * would do.
++	 *
++	 * For all other device memory types, which are accessible by
++	 * the CPU, we do want the linear mapping and thus use
++	 * arch_add_memory().
++	 */
++	if (pgmap->type == MEMORY_DEVICE_PRIVATE) {
++		error = add_pages(nid, align_start >> PAGE_SHIFT,
++				align_size >> PAGE_SHIFT, NULL, false);
++	} else {
++		error = kasan_add_zero_shadow(__va(align_start), align_size);
++		if (error) {
++			mem_hotplug_done();
++			goto err_kasan;
++		}
++
++		error = arch_add_memory(nid, align_start, align_size, altmap,
++				false);
++	}
++
++	if (!error) {
++		struct zone *zone;
++
++		zone = &NODE_DATA(nid)->node_zones[ZONE_DEVICE];
++		move_pfn_range_to_zone(zone, align_start >> PAGE_SHIFT,
++				align_size >> PAGE_SHIFT, altmap);
+ 	}
  
- 	if (gc->gc_proc != RPC_GSS_PROC_DATA)
- 		goto out;
+-	error = arch_add_memory(nid, align_start, align_size, altmap, false);
+-	if (!error)
+-		move_pfn_range_to_zone(&NODE_DATA(nid)->node_zones[ZONE_DEVICE],
+-					align_start >> PAGE_SHIFT,
+-					align_size >> PAGE_SHIFT, altmap);
+ 	mem_hotplug_done();
+ 	if (error)
+ 		goto err_add_memory;
 
 
