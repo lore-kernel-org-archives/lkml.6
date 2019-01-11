@@ -2,240 +2,122 @@ Return-Path: <SRS0=uvhX=PT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 044ABC43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 04:00:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 07CF1C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 04:04:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BBDC220870
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 04:00:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D14E420870
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 04:04:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730607AbfAKEAm (ORCPT
+        id S1729503AbfAKEEr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 10 Jan 2019 23:00:42 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:46874 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728547AbfAKEAm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Jan 2019 23:00:42 -0500
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 521FB7EBBA;
-        Fri, 11 Jan 2019 04:00:41 +0000 (UTC)
-Received: from jason-ThinkPad-T450s.redhat.com (ovpn-12-143.pek2.redhat.com [10.72.12.143])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id A92EE5D9C6;
-        Fri, 11 Jan 2019 04:00:38 +0000 (UTC)
-From:   Jason Wang <jasowang@redhat.com>
-To:     mst@redhat.com, jasowang@redhat.com
-Cc:     kvm@vger.kernel.org, virtualization@lists.linux-foundation.org,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Jintack Lim <jintack@cs.columbia.edu>
-Subject: [PATCH net V3] vhost: log dirty page correctly
-Date:   Fri, 11 Jan 2019 12:00:36 +0800
-Message-Id: <20190111040036.12413-1-jasowang@redhat.com>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.27]); Fri, 11 Jan 2019 04:00:41 +0000 (UTC)
+        Thu, 10 Jan 2019 23:04:47 -0500
+Received: from ipmail06.adl2.internode.on.net ([150.101.137.129]:56140 "EHLO
+        ipmail06.adl2.internode.on.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728129AbfAKEEr (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 10 Jan 2019 23:04:47 -0500
+Received: from ppp59-167-129-252.static.internode.on.net (HELO dastard) ([59.167.129.252])
+  by ipmail06.adl2.internode.on.net with ESMTP; 11 Jan 2019 14:34:36 +1030
+Received: from dave by dastard with local (Exim 4.80)
+        (envelope-from <david@fromorbit.com>)
+        id 1gho3f-0003Sa-1b; Fri, 11 Jan 2019 15:04:35 +1100
+Date:   Fri, 11 Jan 2019 15:04:35 +1100
+From:   Dave Chinner <david@fromorbit.com>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Dominique Martinet <asmadeus@codewreck.org>,
+        Jiri Kosina <jikos@kernel.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        Jann Horn <jannh@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Michal Hocko <mhocko@suse.com>, Linux-MM <linux-mm@kvack.org>,
+        kernel list <linux-kernel@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>
+Subject: Re: [PATCH] mm/mincore: allow for making sys_mincore() privileged
+Message-ID: <20190111040434.GN27534@dastard>
+References: <20190109043906.GF27534@dastard>
+ <CAHk-=wic28fSkwmPbBHZcJ3BGbiftprNy861M53k+=OAB9n0=w@mail.gmail.com>
+ <20190110004424.GH27534@dastard>
+ <CAHk-=wg1jSQ-gq-M3+HeTBbDs1VCjyiwF4gqnnBhHeWizyrigg@mail.gmail.com>
+ <20190110070355.GJ27534@dastard>
+ <CAHk-=wigwXV_G-V1VxLs6BAvVkvW5=Oj+xrNHxE_7yxEVwoe3w@mail.gmail.com>
+ <20190110122442.GA21216@nautica>
+ <CAHk-=wip2CPrdOwgF0z4n2tsdW7uu+Egtcx9Mxxe3gPfPW_JmQ@mail.gmail.com>
+ <20190111020340.GM27534@dastard>
+ <CAHk-=wgLgAzs42=W0tPrTVpu7H7fQ=BP5gXKnoNxMxh9=9uXag@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAHk-=wgLgAzs42=W0tPrTVpu7H7fQ=BP5gXKnoNxMxh9=9uXag@mail.gmail.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Vhost dirty page logging API is designed to sync through GPA. But we
-try to log GIOVA when device IOTLB is enabled. This is wrong and may
-lead to missing data after migration.
+On Thu, Jan 10, 2019 at 06:18:16PM -0800, Linus Torvalds wrote:
+> On Thu, Jan 10, 2019 at 6:03 PM Dave Chinner <david@fromorbit.com> wrote:
+> >
+> > On Thu, Jan 10, 2019 at 02:11:01PM -0800, Linus Torvalds wrote:
+> > > And we *can* do sane things about RWF_NOWAIT. For example, we could
+> > > start async IO on RWF_NOWAIT, and suddenly it would go from "probe the
+> > > page cache" to "probe and fill", and be much harder to use as an
+> > > attack vector..
+> >
+> > We can only do that if the application submits the read via AIO and
+> > has an async IO completion reporting mechanism.
+> 
+> Oh, no, you misunderstand.
+> 
+> RWF_NOWAIT has a lot of situations where it will potentially return
+> early (the DAX and direct IO ones have their own), but I was thinking
+> of the one in generic_file_buffered_read(), which triggers when you
+> don't find a page mapping. That looks like the obvious "probe page
+> cache" case.
+> 
+> But we could literally move that test down just a few lines. Let it
+> start read-ahead.
+> 
+> .. and then it will actually trigger on the *second* case instead, where we have
+> 
+>                 if (!PageUptodate(page)) {
+>                         if (iocb->ki_flags & IOCB_NOWAIT) {
+>                                 put_page(page);
+>                                 goto would_block;
+>                         }
+> 
+> and that's where RWF_MNOWAIT would act.
+> 
+> It would still return EAGAIN.
+> 
+> But it would have started filling the page cache. So now the act of
+> probing would fill the page cache, and the attacker would be left high
+> and dry - the fact that the page cache now exists is because of the
+> attack, not because of whatever it was trying to measure.
+> 
+> See?
 
-To solve this issue, when logging with device IOTLB enabled, we will:
+Except for fadvise(POSIX_FADV_RANDOM) which triggers this code in
+page_cache_sync_readahead():
 
-1) reuse the device IOTLB translation result of GIOVA->HVA mapping to
-   get HVA, for writable descriptor, get HVA through iovec. For used
-   ring update, translate its GIOVA to HVA
-2) traverse the GPA->HVA mapping to get the possible GPA and log
-   through GPA. Pay attention this reverse mapping is not guaranteed
-   to be unique, so we should log each possible GPA in this case.
+        /* be dumb */
+        if (filp && (filp->f_mode & FMODE_RANDOM)) {
+                force_page_cache_readahead(mapping, filp, offset, req_size);
+                return;
+        }
 
-This fix the failure of scp to guest during migration. In -next, we
-will probably support passing GIOVA->GPA instead of GIOVA->HVA.
+So it will only read the single page we tried to access and won't
+perturb the rest of the message encoded into subsequent pages in
+file.
 
-Fixes: 6b1e6cc7855b ("vhost: new device IOTLB API")
-Reported-by: Jintack Lim <jintack@cs.columbia.edu>
-Cc: Jintack Lim <jintack@cs.columbia.edu>
-Signed-off-by: Jason Wang <jasowang@redhat.com>
----
-Changes from V2:
-- check and log the case of range overlap
-- remove unnecessary u64 cast
-- use smp_wmb() for the case of device IOTLB as well
-Changes from V1:
-- return error instead of warn
----
- drivers/vhost/net.c   |  3 +-
- drivers/vhost/vhost.c | 88 ++++++++++++++++++++++++++++++++++++-------
- drivers/vhost/vhost.h |  3 +-
- 3 files changed, 78 insertions(+), 16 deletions(-)
+Cheers,
 
-diff --git a/drivers/vhost/net.c b/drivers/vhost/net.c
-index 36f3d0f49e60..bca86bf7189f 100644
---- a/drivers/vhost/net.c
-+++ b/drivers/vhost/net.c
-@@ -1236,7 +1236,8 @@ static void handle_rx(struct vhost_net *net)
- 		if (nvq->done_idx > VHOST_NET_BATCH)
- 			vhost_net_signal_used(nvq);
- 		if (unlikely(vq_log))
--			vhost_log_write(vq, vq_log, log, vhost_len);
-+			vhost_log_write(vq, vq_log, log, vhost_len,
-+					vq->iov, in);
- 		total_len += vhost_len;
- 		if (unlikely(vhost_exceeds_weight(++recv_pkts, total_len))) {
- 			vhost_poll_queue(&vq->poll);
-diff --git a/drivers/vhost/vhost.c b/drivers/vhost/vhost.c
-index 9f7942cbcbb2..55a2e8f9f8ca 100644
---- a/drivers/vhost/vhost.c
-+++ b/drivers/vhost/vhost.c
-@@ -1733,13 +1733,78 @@ static int log_write(void __user *log_base,
- 	return r;
- }
- 
-+static int log_write_hva(struct vhost_virtqueue *vq, u64 hva, u64 len)
-+{
-+	struct vhost_umem *umem = vq->umem;
-+	struct vhost_umem_node *u;
-+	u64 start, end;
-+	int r;
-+	bool hit = false;
-+
-+	/* More than one GPAs can be mapped into a single HVA. So
-+	 * iterate all possible umems here to be safe.
-+	 */
-+	list_for_each_entry(u, &umem->umem_list, link) {
-+		if (u->userspace_addr > hva - 1 + len ||
-+		    u->userspace_addr - 1 + u->size < hva)
-+			continue;
-+		start = max(u->userspace_addr, hva);
-+		end = min(u->userspace_addr - 1 + u->size, hva - 1 + len);
-+		r = log_write(vq->log_base,
-+			      u->start + start - u->userspace_addr,
-+			      end - start + 1);
-+		if (r < 0)
-+			return r;
-+		hit = true;
-+	}
-+
-+	if (!hit)
-+		return -EFAULT;
-+
-+	return 0;
-+}
-+
-+static int log_used(struct vhost_virtqueue *vq, u64 used_offset, u64 len)
-+{
-+	struct iovec iov[64];
-+	int i, ret;
-+
-+	if (!vq->iotlb)
-+		return log_write(vq->log_base, vq->log_addr + used_offset, len);
-+
-+	ret = translate_desc(vq, (uintptr_t)vq->used + used_offset,
-+			     len, iov, 64, VHOST_ACCESS_WO);
-+	if (ret)
-+		return ret;
-+
-+	for (i = 0; i < ret; i++) {
-+		ret = log_write_hva(vq,	(uintptr_t)iov[i].iov_base,
-+				    iov[i].iov_len);
-+		if (ret)
-+			return ret;
-+	}
-+
-+	return 0;
-+}
-+
- int vhost_log_write(struct vhost_virtqueue *vq, struct vhost_log *log,
--		    unsigned int log_num, u64 len)
-+		    unsigned int log_num, u64 len, struct iovec *iov, int count)
- {
- 	int i, r;
- 
- 	/* Make sure data written is seen before log. */
- 	smp_wmb();
-+
-+	if (vq->iotlb) {
-+		for (i = 0; i < count; i++) {
-+			r = log_write_hva(vq, (uintptr_t)iov[i].iov_base,
-+					  iov[i].iov_len);
-+			if (r < 0)
-+				return r;
-+		}
-+		return 0;
-+	}
-+
- 	for (i = 0; i < log_num; ++i) {
- 		u64 l = min(log[i].len, len);
- 		r = log_write(vq->log_base, log[i].addr, l);
-@@ -1769,9 +1834,8 @@ static int vhost_update_used_flags(struct vhost_virtqueue *vq)
- 		smp_wmb();
- 		/* Log used flag write. */
- 		used = &vq->used->flags;
--		log_write(vq->log_base, vq->log_addr +
--			  (used - (void __user *)vq->used),
--			  sizeof vq->used->flags);
-+		log_used(vq, (used - (void __user *)vq->used),
-+			 sizeof vq->used->flags);
- 		if (vq->log_ctx)
- 			eventfd_signal(vq->log_ctx, 1);
- 	}
-@@ -1789,9 +1853,8 @@ static int vhost_update_avail_event(struct vhost_virtqueue *vq, u16 avail_event)
- 		smp_wmb();
- 		/* Log avail event write */
- 		used = vhost_avail_event(vq);
--		log_write(vq->log_base, vq->log_addr +
--			  (used - (void __user *)vq->used),
--			  sizeof *vhost_avail_event(vq));
-+		log_used(vq, (used - (void __user *)vq->used),
-+			 sizeof *vhost_avail_event(vq));
- 		if (vq->log_ctx)
- 			eventfd_signal(vq->log_ctx, 1);
- 	}
-@@ -2191,10 +2254,8 @@ static int __vhost_add_used_n(struct vhost_virtqueue *vq,
- 		/* Make sure data is seen before log. */
- 		smp_wmb();
- 		/* Log used ring entry write. */
--		log_write(vq->log_base,
--			  vq->log_addr +
--			   ((void __user *)used - (void __user *)vq->used),
--			  count * sizeof *used);
-+		log_used(vq, ((void __user *)used - (void __user *)vq->used),
-+			 count * sizeof *used);
- 	}
- 	old = vq->last_used_idx;
- 	new = (vq->last_used_idx += count);
-@@ -2236,9 +2297,8 @@ int vhost_add_used_n(struct vhost_virtqueue *vq, struct vring_used_elem *heads,
- 		/* Make sure used idx is seen before log. */
- 		smp_wmb();
- 		/* Log used index update. */
--		log_write(vq->log_base,
--			  vq->log_addr + offsetof(struct vring_used, idx),
--			  sizeof vq->used->idx);
-+		log_used(vq, offsetof(struct vring_used, idx),
-+			 sizeof vq->used->idx);
- 		if (vq->log_ctx)
- 			eventfd_signal(vq->log_ctx, 1);
- 	}
-diff --git a/drivers/vhost/vhost.h b/drivers/vhost/vhost.h
-index 466ef7542291..1b675dad5e05 100644
---- a/drivers/vhost/vhost.h
-+++ b/drivers/vhost/vhost.h
-@@ -205,7 +205,8 @@ bool vhost_vq_avail_empty(struct vhost_dev *, struct vhost_virtqueue *);
- bool vhost_enable_notify(struct vhost_dev *, struct vhost_virtqueue *);
- 
- int vhost_log_write(struct vhost_virtqueue *vq, struct vhost_log *log,
--		    unsigned int log_num, u64 len);
-+		    unsigned int log_num, u64 len,
-+		    struct iovec *iov, int count);
- int vq_iotlb_prefetch(struct vhost_virtqueue *vq);
- 
- struct vhost_msg_node *vhost_new_msg(struct vhost_virtqueue *vq, int type);
+Dave.
 -- 
-2.17.1
-
+Dave Chinner
+david@fromorbit.com
