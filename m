@@ -2,146 +2,251 @@ Return-Path: <SRS0=uvhX=PT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CEF1EC43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:29:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E40C3C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:29:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6322F21841
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:29:36 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=axentia.se header.i=@axentia.se header.b="HoLam4Ii"
+	by mail.kernel.org (Postfix) with ESMTP id A9C192177B
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:29:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1547216979;
+	bh=AXIaqBBA8Bcfy3W4tMXQ/SqISYOUYOUv0cPxKk7lsHM=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=1GKziLxZO4ExX50HAQMeBCsP9+INoZFfbl1YQhgt/IoCdxy+fdqAXTG7lDXYP7rlQ
+	 ypCMU+5kGSbNLrK0kdaHm0LyTL8siy2ABfDNWKh664QYXluwBdq0YXcsFLJGdgGnht
+	 JPU8cVBh0Q5bdjcNp+atEV3+h1OzjLfKDqGp6gC8=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388776AbfAKO3f (ORCPT
+        id S2388779AbfAKO3j (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 11 Jan 2019 09:29:35 -0500
-Received: from mail-eopbgr20091.outbound.protection.outlook.com ([40.107.2.91]:10704
-        "EHLO EUR02-VE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2388746AbfAKO3d (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Jan 2019 09:29:33 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=axentia.se;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=dkO8wB0FH59VSGFP1SfU7V7CEw38jL+1FPPct5jZdXA=;
- b=HoLam4Ii1XdDZzuJ9sJ4Bys+JBYQBX12TIP9txCYY30dWXpIifaF33HqqHj+pUYGeg2K4NBtjdgbx+s548QmkepFByegWudcR+DijQ1xq5pd8K9CBCQZmj4P8AWmD8wEeyw3MRWkBn867dkkIzLLeMXzHC9KaGa7ejQRs+Xp+b8=
-Received: from AM6PR02MB4470.eurprd02.prod.outlook.com (20.177.191.218) by
- AM6PR02MB5302.eurprd02.prod.outlook.com (20.178.91.83) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1516.14; Fri, 11 Jan 2019 14:29:28 +0000
-Received: from AM6PR02MB4470.eurprd02.prod.outlook.com
- ([fe80::e5f3:a239:2ec4:4453]) by AM6PR02MB4470.eurprd02.prod.outlook.com
- ([fe80::e5f3:a239:2ec4:4453%6]) with mapi id 15.20.1516.016; Fri, 11 Jan 2019
- 14:29:28 +0000
-From:   Peter Rosin <peda@axentia.se>
-To:     Boris Brezillon <bbrezillon@kernel.org>
-CC:     Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        David Airlie <airlied@linux.ie>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-        Boris Brezillon <boris.brezillon@bootlin.com>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>
-Subject: Re: [PATCH 4/4] drm/atmel-hlcdc: do not immediately disable planes,
- wait for next frame
-Thread-Topic: [PATCH 4/4] drm/atmel-hlcdc: do not immediately disable planes,
- wait for next frame
-Thread-Index: AQHUqParKHXTvsIK8EaTrDTiqxp7vKWowhmAgAAW64CAAAmEAIABP6SA
-Date:   Fri, 11 Jan 2019 14:29:28 +0000
-Message-ID: <e35d6894-fd62-efd1-38f7-cc5cbdbbacbb@axentia.se>
-References: <20190110151020.30468-1-peda@axentia.se>
- <20190110151020.30468-5-peda@axentia.se> <20190110182904.5efd08f2@bbrezillon>
- <a31e6514-1643-9e47-cbb4-3323183fd370@axentia.se>
- <20190110202522.10206f2d@bbrezillon>
-In-Reply-To: <20190110202522.10206f2d@bbrezillon>
-Accept-Language: en-US, sv-SE
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-user-agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.3
-x-originating-ip: [85.226.244.23]
-x-clientproxiedby: HE1PR07CA0039.eurprd07.prod.outlook.com
- (2603:10a6:7:66::25) To AM6PR02MB4470.eurprd02.prod.outlook.com
- (2603:10a6:20b:60::26)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=peda@axentia.se; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;AM6PR02MB5302;6:9UXOe+CKwDjR8ltumaP7WK81dqZm2NN3gboIGOmnV/4Scf+7MkmOg0w/9mWdhkywWd3+IrzCaDxcJEEUlEN/OWuEjCJhToBgKrPU9AQrlU5BEEHOWbjWXENCYiXms21CjVvaMCY7FZyVj7A0B8tiYwTwUnhJu8q4LzenvEf2loCi0jQ+l8X9jJ0MY2e/zUgS6d0Rl+uPOGqPyD5iz6yMy12nGnJiHF5X0CZoGFBZ6rWQZqI8ucLrfH1Dp27953SIT9PESGR94fMS6NsKBYb28yTjyZtiHPaWj58snoh9KCTHEMy2zxL8AKEOydZGnvqrd0gGdArF45C5Ln3sELi3Ifh8ogitpKcmvfCe8fTvTF1tyKLAmfK98wqbsojimDgP6y8qCD2R0bAYH03BEbR1cUnvTTfPan2VoV9T05TybvZ73Vyngm2UtVJ8rgy35d5dbju+0Lq6HNm64IqdqiMgmw==;5:PeNcFPI8vlgo8U6iLfsDOvvGv66sjeUI6XC3d6sVv02wfkp+DMvRartSeVc/H1nXF6oMRF5SB5KW2BY3fko2ZnY+7g/+n0UxL7ofqiMg3LKH2Cz0kyzlVJEzBI0tCa8Bgu7k3UXRE1pRoCIfkQzcOI+xnJpoGTETqNYa1RXQ5bed9JeE7IqC1hvdTpzkf+QA/SbmCuniL+0FGOxyfntluQ==;7:i/mmJyEWLsvq0wpXGstoGrtgiuPDxKETOQb5YUiiGYD+KbCYf1UoFkFvD5kXJjmcFu0fPcVZUuyVdhyrVFKooPgd2xQgptp+Mo/JifKKUvtmLWW9T1hn+6yNpwCQdCMhdEnVv9plbMeZVaYbD4MbYA==
-x-ms-office365-filtering-correlation-id: e4293c82-a24c-429c-ab13-08d677d13193
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(7021145)(8989299)(4534185)(7022145)(4603075)(4627221)(201702281549075)(8990200)(7048125)(7024125)(7027125)(7023125)(5600109)(711020)(2017052603328)(7153060)(7193020);SRVR:AM6PR02MB5302;
-x-ms-traffictypediagnostic: AM6PR02MB5302:
-x-microsoft-antispam-prvs: <AM6PR02MB5302D8DA862CDE0BCD4DFA50BC850@AM6PR02MB5302.eurprd02.prod.outlook.com>
-x-forefront-prvs: 09144DB0F7
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(39830400003)(376002)(366004)(136003)(396003)(346002)(189003)(199004)(52314003)(6512007)(65826007)(5660300001)(68736007)(8676002)(66066001)(65806001)(65956001)(81166006)(81156014)(6916009)(64126003)(7736002)(305945005)(76176011)(6116002)(31696002)(52116002)(3846002)(446003)(11346002)(2616005)(386003)(102836004)(476003)(186003)(26005)(97736004)(25786009)(36756003)(93886005)(71190400001)(99286004)(31686004)(6436002)(71200400001)(486006)(6246003)(6506007)(2906002)(53936002)(53546011)(86362001)(54906003)(4326008)(106356001)(14454004)(508600001)(105586002)(74482002)(8936002)(6486002)(316002)(58126008)(229853002)(14444005)(256004)(14773001);DIR:OUT;SFP:1102;SCL:1;SRVR:AM6PR02MB5302;H:AM6PR02MB4470.eurprd02.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: axentia.se does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: PolZWXxM77y0YUXNRgeXn5m2nlkM0XlZ1yZJEVd6lzqLf23ti8oWUPgfVT8Os00FYB4fg60b0/QVwoUouFrxBDWUYKfstUtzVHuQ7EgNvd/6IiUqPP5GgkOpREioIosYXV7wSYkDI/hu+VgrGdnoT5czsr6CqO1Ep8BIuNun80cunqTZGaqZwG/9v7Ihgde85HVrdyeF/vpiW76L5ENavezs5yvnLQLeSLQCUEgRn36VUxsJOnxZuFt85JAdfNxMAXuxH/kR3xWUPp9Gw7pMDKUdeFoaSgzyWl8DEFAe0lsroa+4kMTQV5QJT7r+dIu/Gr5qcpXXTHaLqVJBbfIZs8YJ/I5PJD7TRVyM8zqfvZA8itdWM78l1uh2ZfOQ1YwxA2mNwHzO4WGEwn+Yl2a4ujGS1/VjRVL/a8WzF7sXqjM=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <898D23C585639C4395B84DE60D6CBBA4@eurprd02.prod.outlook.com>
-Content-Transfer-Encoding: base64
+        Fri, 11 Jan 2019 09:29:39 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48448 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729705AbfAKO32 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 Jan 2019 09:29:28 -0500
+Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7DFB22177B;
+        Fri, 11 Jan 2019 14:29:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1547216967;
+        bh=AXIaqBBA8Bcfy3W4tMXQ/SqISYOUYOUv0cPxKk7lsHM=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=TrBVH0DAFO8mHC7prnKLLm6Eqq8Hd7CHdAOFIqfStrO95zQtNNn0Tz+WGrmU2Uqnu
+         aJ8730JCbVLY7PAglkb7hRP0aJ0keIj91jPCRakdbZihjBympcu15ZYwdXQTUAjbMU
+         L3k40/TjpEMWoiFX4/u1TWlJldQ02wp3fVOCC9ww=
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Breno Leitao <leitao@debian.org>,
+        Michael Ellerman <mpe@ellerman.id.au>
+Subject: [PATCH 4.9 55/63] powerpc/tm: Set MSR[TS] just prior to recheckpoint
+Date:   Fri, 11 Jan 2019 15:14:58 +0100
+Message-Id: <20190111131054.515256345@linuxfoundation.org>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20190111131046.387528003@linuxfoundation.org>
+References: <20190111131046.387528003@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
+X-Patchwork-Hint: ignore
 MIME-Version: 1.0
-X-OriginatorOrg: axentia.se
-X-MS-Exchange-CrossTenant-Network-Message-Id: e4293c82-a24c-429c-ab13-08d677d13193
-X-MS-Exchange-CrossTenant-originalarrivaltime: 11 Jan 2019 14:29:27.5830
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 4ee68585-03e1-4785-942a-df9c1871a234
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM6PR02MB5302
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-T24gMjAxOS0wMS0xMCAyMDoyNSwgQm9yaXMgQnJlemlsbG9uIHdyb3RlOg0KPiBPbiBUaHUsIDEw
-IEphbiAyMDE5IDE4OjUxOjIxICswMDAwDQo+IFBldGVyIFJvc2luIDxwZWRhQGF4ZW50aWEuc2U+
-IHdyb3RlOg0KPiANCj4+IE9uIDIwMTktMDEtMTAgMTg6MjksIEJvcmlzIEJyZXppbGxvbiB3cm90
-ZToNCj4+PiBPbiBUaHUsIDEwIEphbiAyMDE5IDE1OjEwOjQ4ICswMDAwDQo+Pj4gUGV0ZXIgUm9z
-aW4gPHBlZGFAYXhlbnRpYS5zZT4gd3JvdGU6DQo+Pj4gICANCj4+Pj4gVGhlIEEyUSBhbmQgVVBE
-QVRFIGJpdHMgaGF2ZSBubyBlZmZlY3QgaW4gdGhlIGNoYW5uZWwgZGlzYWJsZSByZWdpc3RlcnMu
-DQo+Pj4+IEhvd2V2ZXIsIHNpbmNlIHRoZXkgYXJlIHByZXNlbnQsIGFzc3VtZSB0aGF0IHRoZSBp
-bnRlbnRpb24gaXMgdG8gZGlzYWJsZQ0KPj4+PiBwbGFuZXMsIG5vdCBpbW1lZGlhdGVseSBhcyBp
-bmRpY2F0ZWQgYnkgdGhlIFJTVCBiaXQsIGJ1dCBvbiB0aGUgbmV4dA0KPj4+PiBmcmFtZSBzaGlm
-dCBzaW5jZSB0aGF0IGlzIHdoYXQgQTJRIGFuZCBVUERBVEUgbWVhbnMgaW4gdGhlIGNoYW5uZWwg
-ZW5hYmxlDQo+Pj4+IHJlZ2lzdGVycy4NCj4+Pj4NCj4+Pj4gRGlzYWJsaW5nIHRoZSBwbGFuZSBv
-biB0aGUgbmV4dCBmcmFtZSBzaGlmdCBpcyBkb25lIHdpdGggdGhlIEVOIGJpdCwNCj4+Pj4gc28g
-dXNlIHRoYXQuICANCj4+Pg0KPj4+IEl0J3MgYmVlbiBhIGxvbmcgdGltZSwgYnV0IEkgdGhpbmsg
-SSBoYWQgYSBnb29kIHJlYXNvbiBmb3IgZm9yY2luZyBhDQo+Pj4gcmVzZXQuIElJUkMsIHdoZW4g
-eW91IGRvbid0IGRvIHRoYXQgYW5kIHRoZSBDUlRDIGlzIGRpc2FibGVkIGJlZm9yZSB0aGUNCj4+
-PiBwbGFuZSwgdGhlIEVOIGJpdCBzdGF5cyBhcm91bmQsIGFuZCBuZXh0IHRpbWUgeW91IHF1ZXVl
-IGEgcGxhbmUgdXBkYXRlLA0KPj4+IHlvdSdsbCBzdGFydCB3aXRoIGFuIGludmFsaWQgYnVmIHBv
-aW50ZXIuICANCj4+DQo+PiBJdCBtaWdodCBiZSBwb3NzaWJsZSB0byBjbGVhciB0aGUgRU4gYml0
-IGluIC4uLkNIRFIgYmVmb3JlIGVuYWJsaW5nIHRoZQ0KPj4gcGxhbmUgaW4gLi4uQ0hFUi4gT3Ig
-aXMgdGhhdCB0b28gbGF0ZT8NCj4gDQo+IEkgdGhpbmsgSSB0cmllZCB0aGF0LCBidXQgSSdtIG5v
-dCBzdXJlIChCVFcsIHRoaXMgY2hhbmdlIHdhcyBkb25lIGluDQo+IGJkNDI0OGJiNWU4YiAoImRy
-bTogYXRtZWwtaGxjZGM6IHJlc2V0IGxheWVyIEEyUSBhbmQgVVBEQVRFIGJpdHMgd2hlbg0KDQpU
-aGF0IHBhdGNoIGlzIGEgYmlnIGZhdCBOT1AgaWYgeW91IHJlYWQgdGhlIGRvY3VtZW50YXRpb24u
-IFRob3NlIGJpdHMNCmFyZSBtYXJrZWQgd2l0aCBhICctJyBmb3IgYWxsIExDREMgY2hhbm5lbCBk
-aXNhYmxlIHJlZ2lzdGVycywgZm9yIGFsbA0Kc3VwcG9ydGVkIGNoaXBzIElJVUMuIEFyZSB0aGUg
-ZWZmZWN0cyBvZiB0aG9zZSBiaXRzIG1lbnRpb25lZCBpbiBhbnkNCmVycmF0YT8NCg0KSXQgd291
-bGQgYmUgZ29vZCB3aXRoIGEgY29tbWVudCB0aGF0IHRoZSBwcmVzZW50IHVuZG9jdW1lbnRlZCBk
-aXNhYmxlDQptZXRob2QgaXMgaW50ZW50aW9uYWwuIFRoYXQgd291bGQgaGF2ZSBrZXB0IG1lIGZy
-b20gYXNzdW1pbmcgdGhlIHdob2xlDQp0aGluZyB3YXMganVzdCBjb3B5LXBhc3RlIGp1bmsgZnJv
-bSAuLi5fZW5hYmxlIHRoYXQgaGFwcGVuZWQgdG8gd29yay4NCg0KPj4gZGlzYWJsaW5nIGl0Iikp
-LiBBbnl3YXksIEknbSBub3QgZXZlbiBzdXJlIHRoaXMgaXMgc3RpbGwgbmVlZGVkIG5vdw0KPj4g
-dGhhdCBhdG9taWMgdXBkYXRlcyBoYXZlIGEgd2FpdF9mb3JfZmxpcF9kb25lL3ZibGFuaygpIGlu
-IHRoZSBjb21taXQNCj4+IHBhdGguDQoNClRoZSBkb2N1bWVudGF0aW9uIGZvciB0aGUgUlNUIGJp
-dCBzdGF0ZXMgIlJlc2V0cyB0aGUgbGF5ZXIgaW1tZWRpYXRlbHkuDQpUaGUgZnJhbWUgaXMgYWJv
-cnRlZC4iIHdoaWNoIHNvdW5kcyBhIGJpdCBzY2FyeSBhbmQgaGVhdnktaGFuZGVkLiBCdXQNCmFn
-YWluLCBJIGRvbid0IGtub3cgd2hhdCB0aGF0IGFjdHVhbGx5IG1lYW5zIGFuZCB3aGF0IHRoZSBl
-ZmZlY3RzIGFyZQ0KYnV0IHRoYXQgd2FzIHRoZSByZWFzb24gZm9yIG1lIHdhbnRpbmcgdG8gYXZv
-aWQgdGhlIFJTVCBiaXQuDQoNCkNoZWVycywNClBldGVyDQoNCj4+IEJ1dCB0aGlzIHBhdGNoIGlz
-IG5vdCBvdmVybHkNCj4+IGltcG9ydGFudCwgSSBqdXN0IHdhbnRlZCB0byBhdm9pZCB0aGUgcmVz
-dWx0aW5nICJibGFjayBob2xlIiB3aGVuIHRoZQ0KPj4gcGxhbmUgRE1BIGlzIGRpc2FibGVkIG1p
-ZC1mcmFtZS4gQnV0IGRpc2FibGluZyBwbGFuZXMgaXMgcHJvYmFibHkgbm90DQo+PiBzb21ldGhp
-bmcgdGhhdCBoYXBwZW5zIGZyZXF1ZW50bHkgYW5kIHdpbGwgcGVyaGFwcyBub3QgYmUgbm90aWNl
-ZCBhdA0KPj4gYWxsLi4uDQo+IA0KPiBPa2F5LiBPdGhlciBwYXRjaGVzIGxvb2sgZ29vZCB0byBt
-ZSwgSSdtIGp1c3Qgd2FpdGluZyBmb3IgTmljb2xhcw0KPiBmZWVkYmFjayBiZWZvcmUgYXBwbHlp
-bmcgdGhlbS4NCj4gDQoNCg==
+4.9-stable review patch.  If anyone has any objections, please let me know.
+
+------------------
+
+From: Breno Leitao <leitao@debian.org>
+
+commit e1c3743e1a20647c53b719dbf28b48f45d23f2cd upstream.
+
+On a signal handler return, the user could set a context with MSR[TS] bits
+set, and these bits would be copied to task regs->msr.
+
+At restore_tm_sigcontexts(), after current task regs->msr[TS] bits are set,
+several __get_user() are called and then a recheckpoint is executed.
+
+This is a problem since a page fault (in kernel space) could happen when
+calling __get_user(). If it happens, the process MSR[TS] bits were
+already set, but recheckpoint was not executed, and SPRs are still invalid.
+
+The page fault can cause the current process to be de-scheduled, with
+MSR[TS] active and without tm_recheckpoint() being called.  More
+importantly, without TEXASR[FS] bit set also.
+
+Since TEXASR might not have the FS bit set, and when the process is
+scheduled back, it will try to reclaim, which will be aborted because of
+the CPU is not in the suspended state, and, then, recheckpoint. This
+recheckpoint will restore thread->texasr into TEXASR SPR, which might be
+zero, hitting a BUG_ON().
+
+	kernel BUG at /build/linux-sf3Co9/linux-4.9.30/arch/powerpc/kernel/tm.S:434!
+	cpu 0xb: Vector: 700 (Program Check) at [c00000041f1576d0]
+	    pc: c000000000054550: restore_gprs+0xb0/0x180
+	    lr: 0000000000000000
+	    sp: c00000041f157950
+	   msr: 8000000100021033
+	  current = 0xc00000041f143000
+	  paca    = 0xc00000000fb86300	 softe: 0	 irq_happened: 0x01
+	    pid   = 1021, comm = kworker/11:1
+	kernel BUG at /build/linux-sf3Co9/linux-4.9.30/arch/powerpc/kernel/tm.S:434!
+	Linux version 4.9.0-3-powerpc64le (debian-kernel@lists.debian.org) (gcc version 6.3.0 20170516 (Debian 6.3.0-18) ) #1 SMP Debian 4.9.30-2+deb9u2 (2017-06-26)
+	enter ? for help
+	[c00000041f157b30] c00000000001bc3c tm_recheckpoint.part.11+0x6c/0xa0
+	[c00000041f157b70] c00000000001d184 __switch_to+0x1e4/0x4c0
+	[c00000041f157bd0] c00000000082eeb8 __schedule+0x2f8/0x990
+	[c00000041f157cb0] c00000000082f598 schedule+0x48/0xc0
+	[c00000041f157ce0] c0000000000f0d28 worker_thread+0x148/0x610
+	[c00000041f157d80] c0000000000f96b0 kthread+0x120/0x140
+	[c00000041f157e30] c00000000000c0e0 ret_from_kernel_thread+0x5c/0x7c
+
+This patch simply delays the MSR[TS] set, so, if there is any page fault in
+the __get_user() section, it does not have regs->msr[TS] set, since the TM
+structures are still invalid, thus avoiding doing TM operations for
+in-kernel exceptions and possible process reschedule.
+
+With this patch, the MSR[TS] will only be set just before recheckpointing
+and setting TEXASR[FS] = 1, thus avoiding an interrupt with TM registers in
+invalid state.
+
+Other than that, if CONFIG_PREEMPT is set, there might be a preemption just
+after setting MSR[TS] and before tm_recheckpoint(), thus, this block must
+be atomic from a preemption perspective, thus, calling
+preempt_disable/enable() on this code.
+
+It is not possible to move tm_recheckpoint to happen earlier, because it is
+required to get the checkpointed registers from userspace, with
+__get_user(), thus, the only way to avoid this undesired behavior is
+delaying the MSR[TS] set.
+
+The 32-bits signal handler seems to be safe this current issue, but, it
+might be exposed to the preemption issue, thus, disabling preemption in
+this chunk of code.
+
+Changes from v2:
+ * Run the critical section with preempt_disable.
+
+Fixes: 87b4e5393af7 ("powerpc/tm: Fix return of active 64bit signals")
+Cc: stable@vger.kernel.org (v3.9+)
+Signed-off-by: Breno Leitao <leitao@debian.org>
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
+---
+ arch/powerpc/kernel/signal_32.c |   20 +++++++++++++++++-
+ arch/powerpc/kernel/signal_64.c |   44 +++++++++++++++++++++++++++-------------
+ 2 files changed, 49 insertions(+), 15 deletions(-)
+
+--- a/arch/powerpc/kernel/signal_32.c
++++ b/arch/powerpc/kernel/signal_32.c
+@@ -866,7 +866,23 @@ static long restore_tm_user_regs(struct
+ 	/* If TM bits are set to the reserved value, it's an invalid context */
+ 	if (MSR_TM_RESV(msr_hi))
+ 		return 1;
+-	/* Pull in the MSR TM bits from the user context */
++
++	/*
++	 * Disabling preemption, since it is unsafe to be preempted
++	 * with MSR[TS] set without recheckpointing.
++	 */
++	preempt_disable();
++
++	/*
++	 * CAUTION:
++	 * After regs->MSR[TS] being updated, make sure that get_user(),
++	 * put_user() or similar functions are *not* called. These
++	 * functions can generate page faults which will cause the process
++	 * to be de-scheduled with MSR[TS] set but without calling
++	 * tm_recheckpoint(). This can cause a bug.
++	 *
++	 * Pull in the MSR TM bits from the user context
++	 */
+ 	regs->msr = (regs->msr & ~MSR_TS_MASK) | (msr_hi & MSR_TS_MASK);
+ 	/* Now, recheckpoint.  This loads up all of the checkpointed (older)
+ 	 * registers, including FP and V[S]Rs.  After recheckpointing, the
+@@ -891,6 +907,8 @@ static long restore_tm_user_regs(struct
+ 	}
+ #endif
+ 
++	preempt_enable();
++
+ 	return 0;
+ }
+ #endif
+--- a/arch/powerpc/kernel/signal_64.c
++++ b/arch/powerpc/kernel/signal_64.c
+@@ -452,20 +452,6 @@ static long restore_tm_sigcontexts(struc
+ 	if (MSR_TM_RESV(msr))
+ 		return -EINVAL;
+ 
+-	/* pull in MSR TS bits from user context */
+-	regs->msr = (regs->msr & ~MSR_TS_MASK) | (msr & MSR_TS_MASK);
+-
+-	/*
+-	 * Ensure that TM is enabled in regs->msr before we leave the signal
+-	 * handler. It could be the case that (a) user disabled the TM bit
+-	 * through the manipulation of the MSR bits in uc_mcontext or (b) the
+-	 * TM bit was disabled because a sufficient number of context switches
+-	 * happened whilst in the signal handler and load_tm overflowed,
+-	 * disabling the TM bit. In either case we can end up with an illegal
+-	 * TM state leading to a TM Bad Thing when we return to userspace.
+-	 */
+-	regs->msr |= MSR_TM;
+-
+ 	/* pull in MSR LE from user context */
+ 	regs->msr = (regs->msr & ~MSR_LE) | (msr & MSR_LE);
+ 
+@@ -557,6 +543,34 @@ static long restore_tm_sigcontexts(struc
+ 	tm_enable();
+ 	/* Make sure the transaction is marked as failed */
+ 	tsk->thread.tm_texasr |= TEXASR_FS;
++
++	/*
++	 * Disabling preemption, since it is unsafe to be preempted
++	 * with MSR[TS] set without recheckpointing.
++	 */
++	preempt_disable();
++
++	/* pull in MSR TS bits from user context */
++	regs->msr = (regs->msr & ~MSR_TS_MASK) | (msr & MSR_TS_MASK);
++
++	/*
++	 * Ensure that TM is enabled in regs->msr before we leave the signal
++	 * handler. It could be the case that (a) user disabled the TM bit
++	 * through the manipulation of the MSR bits in uc_mcontext or (b) the
++	 * TM bit was disabled because a sufficient number of context switches
++	 * happened whilst in the signal handler and load_tm overflowed,
++	 * disabling the TM bit. In either case we can end up with an illegal
++	 * TM state leading to a TM Bad Thing when we return to userspace.
++	 *
++	 * CAUTION:
++	 * After regs->MSR[TS] being updated, make sure that get_user(),
++	 * put_user() or similar functions are *not* called. These
++	 * functions can generate page faults which will cause the process
++	 * to be de-scheduled with MSR[TS] set but without calling
++	 * tm_recheckpoint(). This can cause a bug.
++	 */
++	regs->msr |= MSR_TM;
++
+ 	/* This loads the checkpointed FP/VEC state, if used */
+ 	tm_recheckpoint(&tsk->thread, msr);
+ 
+@@ -570,6 +584,8 @@ static long restore_tm_sigcontexts(struc
+ 		regs->msr |= MSR_VEC;
+ 	}
+ 
++	preempt_enable();
++
+ 	return err;
+ }
+ #endif
+
+
