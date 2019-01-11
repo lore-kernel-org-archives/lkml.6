@@ -2,96 +2,43 @@ Return-Path: <SRS0=uvhX=PT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B4C7EC43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 09:01:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9CE16C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 09:06:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 825B220657
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 09:01:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6C94E20870
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 09:06:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731343AbfAKJBf (ORCPT
+        id S1728867AbfAKJGL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 11 Jan 2019 04:01:35 -0500
-Received: from foss.arm.com ([217.140.101.70]:51112 "EHLO foss.arm.com"
+        Fri, 11 Jan 2019 04:06:11 -0500
+Received: from foss.arm.com ([217.140.101.70]:51164 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727943AbfAKJBe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Jan 2019 04:01:34 -0500
+        id S1725768AbfAKJGK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 Jan 2019 04:06:10 -0500
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 7E598EBD;
-        Fri, 11 Jan 2019 01:01:34 -0800 (PST)
-Received: from [10.1.196.62] (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 7B5D73F694;
-        Fri, 11 Jan 2019 01:01:32 -0800 (PST)
-Subject: Re: [PATCH v3] irqchip: gicv3-its: Use NUMA aware memory allocation
- for ITS tables
-To:     Ganapatrao Kulkarni <gklkml16@gmail.com>
-Cc:     Shameer Kolothum <shameerali.kolothum.thodi@huawei.com>,
-        LKML <linux-kernel@vger.kernel.org>, shankerd@codeaurora.org,
-        Ganapatrao Kulkarni <ganapatrao.kulkarni@cavium.com>,
-        Robert Richter <Robert.Richter@cavium.com>,
-        Hanjun Guo <guohanjun@huawei.com>,
-        John Garry <john.garry@huawei.com>,
-        linux-arm-kernel@lists.infradead.org,
-        Linuxarm <linuxarm@huawei.com>,
-        "Nair, Jayachandran" <Jayachandran.Nair@cavium.com>,
-        gkulkarni@marvell.com
-References: <20181213105924.30384-1-shameerali.kolothum.thodi@huawei.com>
- <4fe81519-1ddc-1d73-8c7a-cd0865299b53@arm.com>
- <CAKTKpr4uvQtYKrcAMSoaA-sYv2MNCqZgRb2KQhYa23KaYptaUA@mail.gmail.com>
-From:   Marc Zyngier <marc.zyngier@arm.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=marc.zyngier@arm.com; prefer-encrypt=mutual; keydata=
- mQINBE6Jf0UBEADLCxpix34Ch3kQKA9SNlVQroj9aHAEzzl0+V8jrvT9a9GkK+FjBOIQz4KE
- g+3p+lqgJH4NfwPm9H5I5e3wa+Scz9wAqWLTT772Rqb6hf6kx0kKd0P2jGv79qXSmwru28vJ
- t9NNsmIhEYwS5eTfCbsZZDCnR31J6qxozsDHpCGLHlYym/VbC199Uq/pN5gH+5JHZyhyZiNW
- ozUCjMqC4eNW42nYVKZQfbj/k4W9xFfudFaFEhAf/Vb1r6F05eBP1uopuzNkAN7vqS8XcgQH
- qXI357YC4ToCbmqLue4HK9+2mtf7MTdHZYGZ939OfTlOGuxFW+bhtPQzsHiW7eNe0ew0+LaL
- 3wdNzT5abPBscqXWVGsZWCAzBmrZato+Pd2bSCDPLInZV0j+rjt7MWiSxEAEowue3IcZA++7
- ifTDIscQdpeKT8hcL+9eHLgoSDH62SlubO/y8bB1hV8JjLW/jQpLnae0oz25h39ij4ijcp8N
- t5slf5DNRi1NLz5+iaaLg4gaM3ywVK2VEKdBTg+JTg3dfrb3DH7ctTQquyKun9IVY8AsxMc6
- lxl4HxrpLX7HgF10685GG5fFla7R1RUnW5svgQhz6YVU33yJjk5lIIrrxKI/wLlhn066mtu1
- DoD9TEAjwOmpa6ofV6rHeBPehUwMZEsLqlKfLsl0PpsJwov8TQARAQABtCNNYXJjIFp5bmdp
- ZXIgPG1hcmMuenluZ2llckBhcm0uY29tPokCOwQTAQIAJQIbAwYLCQgHAwIGFQgCCQoLBBYC
- AwECHgECF4AFAk6NvYYCGQEACgkQI9DQutE9ekObww/+NcUATWXOcnoPflpYG43GZ0XjQLng
- LQFjBZL+CJV5+1XMDfz4ATH37cR+8gMO1UwmWPv5tOMKLHhw6uLxGG4upPAm0qxjRA/SE3LC
- 22kBjWiSMrkQgv5FDcwdhAcj8A+gKgcXBeyXsGBXLjo5UQOGvPTQXcqNXB9A3ZZN9vS6QUYN
- TXFjnUnzCJd+PVI/4jORz9EUVw1q/+kZgmA8/GhfPH3xNetTGLyJCJcQ86acom2liLZZX4+1
- 6Hda2x3hxpoQo7pTu+XA2YC4XyUstNDYIsE4F4NVHGi88a3N8yWE+Z7cBI2HjGvpfNxZnmKX
- 6bws6RQ4LHDPhy0yzWFowJXGTqM/e79c1UeqOVxKGFF3VhJJu1nMlh+5hnW4glXOoy/WmDEM
- UMbl9KbJUfo+GgIQGMp8mwgW0vK4HrSmevlDeMcrLdfbbFbcZLNeFFBn6KqxFZaTd+LpylIH
- bOPN6fy1Dxf7UZscogYw5Pt0JscgpciuO3DAZo3eXz6ffj2NrWchnbj+SpPBiH4srfFmHY+Y
- LBemIIOmSqIsjoSRjNEZeEObkshDVG5NncJzbAQY+V3Q3yo9og/8ZiaulVWDbcpKyUpzt7pv
- cdnY3baDE8ate/cymFP5jGJK++QCeA6u6JzBp7HnKbngqWa6g8qDSjPXBPCLmmRWbc5j0lvA
- 6ilrF8m5Ag0ETol/RQEQAM/2pdLYCWmf3rtIiP8Wj5NwyjSL6/UrChXtoX9wlY8a4h3EX6E3
- 64snIJVMLbyr4bwdmPKULlny7T/R8dx/mCOWu/DztrVNQiXWOTKJnd/2iQblBT+W5W8ep/nS
- w3qUIckKwKdplQtzSKeE+PJ+GMS+DoNDDkcrVjUnsoCEr0aK3cO6g5hLGu8IBbC1CJYSpple
- VVb/sADnWF3SfUvJ/l4K8Uk4B4+X90KpA7U9MhvDTCy5mJGaTsFqDLpnqp/yqaT2P7kyMG2E
- w+eqtVIqwwweZA0S+tuqput5xdNAcsj2PugVx9tlw/LJo39nh8NrMxAhv5aQ+JJ2I8UTiHLX
- QvoC0Yc/jZX/JRB5r4x4IhK34Mv5TiH/gFfZbwxd287Y1jOaD9lhnke1SX5MXF7eCT3cgyB+
- hgSu42w+2xYl3+rzIhQqxXhaP232t/b3ilJO00ZZ19d4KICGcakeiL6ZBtD8TrtkRiewI3v0
- o8rUBWtjcDRgg3tWx/PcJvZnw1twbmRdaNvsvnlapD2Y9Js3woRLIjSAGOijwzFXSJyC2HU1
- AAuR9uo4/QkeIrQVHIxP7TJZdJ9sGEWdeGPzzPlKLHwIX2HzfbdtPejPSXm5LJ026qdtJHgz
- BAb3NygZG6BH6EC1NPDQ6O53EXorXS1tsSAgp5ZDSFEBklpRVT3E0NrDABEBAAGJAh8EGAEC
- AAkFAk6Jf0UCGwwACgkQI9DQutE9ekMLBQ//U+Mt9DtFpzMCIHFPE9nNlsCm75j22lNiw6mX
- mx3cUA3pl+uRGQr/zQC5inQNtjFUmwGkHqrAw+SmG5gsgnM4pSdYvraWaCWOZCQCx1lpaCOl
- MotrNcwMJTJLQGc4BjJyOeSH59HQDitKfKMu/yjRhzT8CXhys6R0kYMrEN0tbe1cFOJkxSbV
- 0GgRTDF4PKyLT+RncoKxQe8lGxuk5614aRpBQa0LPafkirwqkUtxsPnarkPUEfkBlnIhAR8L
- kmneYLu0AvbWjfJCUH7qfpyS/FRrQCoBq9QIEcf2v1f0AIpA27f9KCEv5MZSHXGCdNcbjKw1
- 39YxYZhmXaHFKDSZIC29YhQJeXWlfDEDq6nIhvurZy3mSh2OMQgaIoFexPCsBBOclH8QUtMk
- a3jW/qYyrV+qUq9Wf3SKPrXf7B3xB332jFCETbyZQXqmowV+2b3rJFRWn5hK5B+xwvuxKyGq
- qDOGjof2dKl2zBIxbFgOclV7wqCVkhxSJi/QaOj2zBqSNPXga5DWtX3ekRnJLa1+ijXxmdjz
- hApihi08gwvP5G9fNGKQyRETePEtEAWt0b7dOqMzYBYGRVr7uS4uT6WP7fzOwAJC4lU7ZYWZ
- yVshCa0IvTtp1085RtT3qhh9mobkcZ+7cQOY+Tx2RGXS9WeOh2jZjdoWUv6CevXNQyOUXMM=
-Organization: ARM Ltd
-Message-ID: <6abeadae-99d7-bdb0-28bb-eb472cb7d783@arm.com>
-Date:   Fri, 11 Jan 2019 09:01:30 +0000
-User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.1
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 1C2CCEBD;
+        Fri, 11 Jan 2019 01:06:10 -0800 (PST)
+Received: from [10.1.197.45] (e112298-lin.cambridge.arm.com [10.1.197.45])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id DB12D3F694;
+        Fri, 11 Jan 2019 01:06:08 -0800 (PST)
+Subject: Re: [PATCH] perf/core: don't WARN for impossible rb sizes
+To:     Mark Rutland <mark.rutland@arm.com>, linux-kernel@vger.kernel.org
+Cc:     Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Ingo Molnar <mingo@redhat.com>, Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>
+References: <20190110142745.25495-1-mark.rutland@arm.com>
+From:   Julien Thierry <julien.thierry@arm.com>
+Message-ID: <839f4f8b-f749-57fd-f5ab-a0358f372471@arm.com>
+Date:   Fri, 11 Jan 2019 09:06:06 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-In-Reply-To: <CAKTKpr4uvQtYKrcAMSoaA-sYv2MNCqZgRb2KQhYa23KaYptaUA@mail.gmail.com>
+In-Reply-To: <20190110142745.25495-1-mark.rutland@arm.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -100,107 +47,98 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/01/2019 03:53, Ganapatrao Kulkarni wrote:
-> Hi Shameer,
-> 
-> Patch looks OK to me, please feel free to add,
-> Reviewed-by: Ganapatrao Kulkarni <gkulkarni@marvell.com>
-> 
-> On Thu, Dec 13, 2018 at 5:25 PM Marc Zyngier <marc.zyngier@arm.com> wrote:
->>
->> On 13/12/2018 10:59, Shameer Kolothum wrote:
->>> From: Shanker Donthineni <shankerd@codeaurora.org>
->>>
->>> The NUMA node information is visible to ITS driver but not being used
->>> other than handling hardware errata. ITS/GICR hardware accesses to the
->>> local NUMA node is usually quicker than the remote NUMA node. How slow
->>> the remote NUMA accesses are depends on the implementation details.
->>>
->>> This patch allocates memory for ITS management tables and command
->>> queue from the corresponding NUMA node using the appropriate NUMA
->>> aware functions. This change improves the performance of the ITS
->>> tables read latency on systems where it has more than one ITS block,
->>> and with the slower inter node accesses.
->>>
->>> Apache Web server benchmarking using ab tool on a HiSilicon D06
->>> board with multiple numa mem nodes shows Time per request and
->>> Transfer rate improvements of ~3.6% with this patch.
->>>
->>> Signed-off-by: Shanker Donthineni <shankerd@codeaurora.org>
->>> Signed-off-by: Hanjun Guo <guohanjun@huawei.com>
->>> Signed-off-by: Shameer Kolothum <shameerali.kolothum.thodi@huawei.com>
->>> ---
->>>
->>> This is to revive the patch originally sent by Shanker[1] and
->>> to back it up with a benchmark test. Any further testing of
->>> this is most welcome.
->>>
->>> v2-->v3
->>>  -Addressed comments to use page_address().
->>>  -Added Benchmark results to commit log.
->>>  -Removed T-by from Ganapatrao for now.
->>>
->>> v1-->v2
->>>  -Edited commit text.
->>>  -Added Ganapatrao's tested-by.
->>>
->>> Benchmark test details:
->>> --------------------------------
->>> Test Setup:
->>> -D06 with dimm on node 0(Sock#0) and 3 (Sock#1).
->>> -ITS belongs to numa node 0.
->>> -Filesystem mounted on a PCIe NVMe based disk.
->>> -Apache server installed on D06.
->>> -Running ab benchmark test in concurrency mode from a remote m/c
->>>  connected to D06 via  hns3(PCIe) n/w port.
->>>  "ab -k -c 750 -n 2000000 http://10.202.225.188/"
->>>
->>> Test results are avg. of 15 runs.
->>>
->>> For 4.20-rc1  Kernel,
->>> ----------------------------
->>> Time per request(mean, concurrent)  = 0.02753[ms]
->>> Transfer Rate = 416501[Kbytes/sec]
->>>
->>> For 4.20-rc1 +  this patch,
->>> ----------------------------------
->>> Time per request(mean, concurrent)  = 0.02653[ms]
->>> Transfer Rate = 431954[Kbytes/sec]
->>>
->>> % improvement ~3.6%
->>>
->>> vmstat shows around 170K-200K interrupts per second.
->>>
->>> ~# vmstat 1 -w
->>> procs -----------------------memory-- -  -system--
->>>  r  b         swpd         free            in
->>>  5  0            0     30166724          102794
->>>  9  0            0     30141828          171148
->>>  5  0            0     30150160          207185
->>> 13  0            0     30145924          175691
->>> 15  0            0     30140792          145250
->>> 13  0            0     30135556          201879
->>> 13  0            0     30134864          192391
->>> 10  0            0     30133632          168880
->>> ....
->>>
->>> [1] https://patchwork.kernel.org/patch/9833339/
->>
->> The figures certainly look convincing. I'd need someone from Cavium to
->> benchmark it on their hardware and come back with results so that we can
->> make a decision on this.
-> 
-> Hi Marc,
-> My setup got altered during Lab migration from Cavium to Marvell office.
-> I don't think, i will have same setup anytime soon.
+Hi Mark,
 
-Fair enough. If nobody objects, I'll take it.
+On 10/01/2019 14:27, Mark Rutland wrote:
+> The perf tool uses /proc/sys/kernel/perf_event_mlock_kb to determine how
+> large its ringbuffer mmap should be. This can be configured to arbitrary
+> values, which can be larger than the maximum possible allocation from
+> kmalloc.
+> 
+> When this is configured to a suitably large value (e.g. thanks to the
+> perf fuzzer), attempting to use perf record triggers a WARN_ON_ONCE() in
+> __alloc_pages_nodemask():
+> 
+> [  337.316688] WARNING: CPU: 2 PID: 5666 at mm/page_alloc.c:4511
+> __alloc_pages_nodemask+0x3f8/0xbc8
+> [  337.316694] Modules linked in:
+> [  337.316704] CPU: 2 PID: 5666 Comm: perf Not tainted 5.0.0-rc1 #2669
+> [  337.316708] Hardware name: ARM Juno development board (r0) (DT)
+> [  337.316714] pstate: 20000005 (nzCv daif -PAN -UAO)
+> [  337.316720] pc : __alloc_pages_nodemask+0x3f8/0xbc8
+> [  337.316728] lr : alloc_pages_current+0x80/0xe8
+> [  337.316732] sp : ffff000016eeb9e0
+> [  337.316736] x29: ffff000016eeb9e0 x28: 0000000000080001
+> [  337.316744] x27: 0000000000000000 x26: ffff0000111e21f0
+> [  337.316751] x25: 0000000000000001 x24: 0000000000000000
+> [  337.316757] x23: 0000000000080001 x22: 0000000000000000
+> [  337.316762] x21: 0000000000000000 x20: 000000000000000b
+> [  337.316768] x19: 000000000060c0c0 x18: 0000000000000000
+> [  337.316773] x17: 0000000000000000 x16: 0000000000000000
+> [  337.316779] x15: 0000000000000000 x14: 0000000000000000
+> [  337.316784] x13: 0000000000000000 x12: 0000000000000000
+> [  337.316789] x11: 0000000000100000 x10: 0000000000000000
+> [  337.316795] x9 : 0000000010044400 x8 : 0000000080001000
+> [  337.316800] x7 : 0000000000000000 x6 : ffff800975584700
+> [  337.316806] x5 : 0000000000000000 x4 : ffff0000111cd6c8
+> [  337.316811] x3 : 0000000000000000 x2 : 0000000000000000
+> [  337.316816] x1 : 000000000000000b x0 : 000000000060c0c0
+> [  337.316822] Call trace:
+> [  337.316828]  __alloc_pages_nodemask+0x3f8/0xbc8
+> [  337.316834]  alloc_pages_current+0x80/0xe8
+> [  337.316841]  kmalloc_order+0x14/0x30
+> [  337.316848]  __kmalloc+0x1dc/0x240
+> [  337.316854]  rb_alloc+0x3c/0x170
+> [  337.316860]  perf_mmap+0x3bc/0x470
+> [  337.316867]  mmap_region+0x374/0x4f8
+> [  337.316873]  do_mmap+0x300/0x430
+> [  337.316878]  vm_mmap_pgoff+0xe4/0x110
+> [  337.316884]  ksys_mmap_pgoff+0xc0/0x230
+> [  337.316892]  __arm64_sys_mmap+0x28/0x38
+> [  337.316899]  el0_svc_common+0xb4/0x118
+> [  337.316905]  el0_svc_handler+0x2c/0x80
+> [  337.316910]  el0_svc+0x8/0xc
+> [  337.316915] ---[ end trace fa29167e20ef0c62 ]---
+> 
+> Let's avoid this by checking that the requested allocation is possible
+> before calling kzalloc.
+> 
+> Reported-by: Julien Thierry <julien.thierry@arm.com>
+> Signed-off-by: Mark Rutland <mark.rutland@arm.com>
+> Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+> Cc: Ingo Molnar <mingo@redhat.com>
+> Cc: Jiri Olsa <jolsa@redhat.com>
+> Cc: Namhyung Kim <namhyung@kernel.org>
+> Cc: Peter Zijlstra <peterz@infradead.org>
+> ---
+>  kernel/events/ring_buffer.c | 3 +++
+>  1 file changed, 3 insertions(+)
+> 
+> diff --git a/kernel/events/ring_buffer.c b/kernel/events/ring_buffer.c
+> index 4a9937076331..309ef5a64af5 100644
+> --- a/kernel/events/ring_buffer.c
+> +++ b/kernel/events/ring_buffer.c
+> @@ -734,6 +734,9 @@ struct ring_buffer *rb_alloc(int nr_pages, long watermark, int cpu, int flags)
+>  	size = sizeof(struct ring_buffer);
+>  	size += nr_pages * sizeof(void *);
+>  
+> +	if (order_base_2(size) >= MAX_ORDER)
+> +		goto fail;
+> +
 
-Shameer, please repost this on top of 5.0-rc1, together with
-Ganapatrao's RB, and we'll take it from there.
+I see that in kernel/events/ring_buffer.c there are two versions of
+rb_alloc() (depending on whether CONFIG_PERF_USE_VMALLOC is defined or not).
+
+Since the warning comes from the kzalloc, I'd think we'd need to add
+this check in both implementations of rb_alloc().
+
+
+With that change (or if for some reason the other rb_alloc() version
+doesn't need the check):
+
+Reviewed-by: Julien Thierry <julien.thierry@arm.com>
 
 Thanks,
 
-	M.
 -- 
-Jazz is not dead. It just smells funny...
+Julien Thierry
