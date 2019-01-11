@@ -2,145 +2,107 @@ Return-Path: <SRS0=uvhX=PT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 78EA8C43444
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 23:20:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 11FAAC43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 23:20:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4C443206B6
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 23:20:49 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="m4HPGWnV"
+	by mail.kernel.org (Postfix) with ESMTP id D5B8A206B6
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 23:20:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1547248852;
+	bh=o2P8ttXrh+vvAaghmRZs97QsHcoinWVkF+uHKclR9J8=;
+	h=Subject:In-Reply-To:References:Cc:To:From:Date:List-ID:From;
+	b=QuF0L2Mg3PO/cXAJCMTQNw9HsyYvZo/bJeQQJrtr6whNfGs/9ixZo6C3gendRVN5/
+	 iObwQoTTOyJ/FZztd63nMK29LjPQhRx/R2+SHBKPq7k5J7skI3aMhsAUvbV5vSlOMN
+	 LoMZ2x2V0dUunvp9TljQqIZdNxNJk7pjtkM9u3S0=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726460AbfAKXUr (ORCPT
+        id S1726491AbfAKXUw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 11 Jan 2019 18:20:47 -0500
-Received: from sonic306-10.consmr.mail.bf2.yahoo.com ([74.6.132.49]:41288 "EHLO
-        sonic306-10.consmr.mail.bf2.yahoo.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725927AbfAKXUr (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Jan 2019 18:20:47 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1547248845; bh=X1nO4TLV5q/lESpL7/3rYZUXfbHdKSUAERQNufEYU6c=; h=Subject:From:To:References:Cc:Date:In-Reply-To:From:Subject; b=m4HPGWnVx02McGlA7Up3Jn5frADtUxjW5/rBO/ElQQabqIYW8QFrADFshUw/MQLYoP3uaALFYYgJIqQWMfDu4282CqyWYyzTcRyBkJv1h+LeZjspr4QeyOeg7tK/qEQzzF2pzSRYPRnnasnZry56C/9MPqf/YBVNnbQSk0rpxtaHYGe28rwxjNqtrG1Bv6dJyp6La7U/nwBzKGC6lOG2hWFwAJGWJAuheZfk2mFA9BxTwsZU7GfTpUB0MHvw4yd8LvO0czC2Sx/C4GbmMfG/45dPbB5Sv+4BkwMyZ8rfffsiFrN73mgIWqYblB4donPJJ/KUNgARYK/mmwKMocWaVg==
-X-YMail-OSG: 0_.OV7cVM1nGQ7KfBQuECFpGJOqoso3Fd.owSA9VxUpT9cVCBvEVA5K2H.04NwD
- YpBhGMC6_Q7PQGg570zR.CAasZl8ocZ_CseFEYJq1POreTJaFBW56dNliE8eZARv8kIe6amnqMOm
- 2hsvtLszPKxpA4CcFcVvii2WS8ED_sKfR1broN8BjG7HHGEKVF5K2y8aeOvLIl7R9L_kIMvnXOwe
- 4l5hXGrNmV3q4oCdEMR1.aWrHuLletLVNsy07gm5XzUKZf0rTfAlReJ5cBpVc_pDUMYBg5ACcc98
- 1IG_RnnTSteEDJid9zVUds3ZZ525oQZ7EgipBbsMSdqrbMbqj3Tu_.2w6Ewfttwd_ryCOOpXPOTJ
- oCgjCeqQz4kX4m7OQUpRWIhiDYMcN3hxQe7i9Th4bKC4CNDGdd_dPga0oJYLiP0J0CkJ80oA1AZ1
- 0G78jypcQtY9BmNK2.gBH0KE8ajzH1HNXKg74QbVeCUcn48_5x.Jt561noi3nANWZgILq0L775eN
- DEns1tCKBuJThAsBPlrZpPf8adxUPVgsWJkfPqYM_2X5H5hQfV2zBScd2OT6j1Wpr6pq4aK1hx_d
- il9Yjnz9IyJO7rdXLahbzGnX4nnUcGrfi850NfX6rcJYKNVL_09zW_HlaM.QiETQGJCWyHsee8og
- CYn6rMjzr04VWmtXKIk3ptj1JPi_3V2A1vIgCoWktxlqvVk_SITgfk5ByOJnDvlezIB_hBT6KB9H
- EdaxKZqLOLT6MPvRhWdwgNCnmUp1Zq5iCtbimqWtmzdyiMRYlNcUSjlcXgG6JhNhhx6vPU3pzZgV
- mWEEdwz03DzUXU7Iol3ox7XSGA3FJ_BZjz0wMdQ6zilwtxhx2IBLkS3dAy2emeayDK.NiyxlfVPS
- DtLWLLdjKy0Slz7kTkCFkhfQxeSUbhk6Ir9ycwc9acricRfyvgscFZP.0YCvpCLMYHE2xf7mOvOu
- sr6Ecj80bUrcDvXyjMgd6AeOzmKHhPRVQIDQ8Ns0ii17wBQHixREbcs1290FbEWhpFQX3feNzLP8
- wSLLKpgfJ2nhfsNSNsuyG75nOgDjjDcamnufxO1GzHUjKC1bhDaf0CX0Zc.S3sVOEGfy_KYrc0iS
- FxHm6bMaEM3wah8iSbCmalTR7dj2ahlMRN7RlOHBwHOlH8YdL0lrvMzLaBkzUY62oiOAXG6DNeQ-
- -
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic306.consmr.mail.bf2.yahoo.com with HTTP; Fri, 11 Jan 2019 23:20:45 +0000
-Received: from c-67-169-65-224.hsd1.ca.comcast.net (EHLO [192.168.0.102]) ([67.169.65.224])
-          by smtp409.mail.bf1.yahoo.com (Oath Hermes SMTP Server) with ESMTPA ID c4dd1ea14352e6c3449e62b7a5be8a9a;
-          Fri, 11 Jan 2019 23:20:45 +0000 (UTC)
-Subject: Re: WARNING in apparmor_cred_free
-From:   Casey Schaufler <casey@schaufler-ca.com>
-To:     John Johansen <john.johansen@canonical.com>, jmorris@namei.org,
-        linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org, serge@hallyn.com
-References: <0000000000007f604f057f2b8509@google.com>
- <6213e783-4377-489d-cdfb-1a83f4497076@schaufler-ca.com>
- <b0d2811e-87e4-21d4-c33a-2d2012a906cc@canonical.com>
- <2ccf6281-3f4b-a94a-ed71-31905e583fa6@schaufler-ca.com>
-Cc:     Casey Schaufler <casey@schaufler-ca.com>
-Message-ID: <234c868b-4521-0707-a135-d8c24bc179bd@schaufler-ca.com>
-Date:   Fri, 11 Jan 2019 15:20:41 -0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.3
+        Fri, 11 Jan 2019 18:20:52 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60166 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725927AbfAKXUu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 Jan 2019 18:20:50 -0500
+Received: from localhost (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9928D206B6;
+        Fri, 11 Jan 2019 23:20:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1547248849;
+        bh=o2P8ttXrh+vvAaghmRZs97QsHcoinWVkF+uHKclR9J8=;
+        h=Subject:In-Reply-To:References:Cc:To:From:Date:From;
+        b=RRLDs1jhx7WxNmB7onUwxdPl2E+U/xNp/VTdtErKSnkOT81zD31vsq3wdfkIgkubk
+         uERPxXwlAflhElksZVEPopZAWp0KuHi50syfn/y/A6uj4xDcBfV8qzAFSm1gYNxuiP
+         9/3RobCsRVxL3cHCr4zrl7WzHV034LtlTyY4iELQ=
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-In-Reply-To: <2ccf6281-3f4b-a94a-ed71-31905e583fa6@schaufler-ca.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH 4/7] dt-bindings: sdm845-pinctrl: add wakeup interrupt parent for GPIO
+User-Agent: alot/0.8
+In-Reply-To: <CAL_JsqL1z-iOewqBeE43n1cVSGiQyOPHBGbRmEm9zcVLJkoLEA@mail.gmail.com>
+References: <20181219221105.3004-1-ilina@codeaurora.org> <20181219221105.3004-5-ilina@codeaurora.org> <20181229000714.GA3654@bogus> <20190107185113.GH14960@codeaurora.org> <CAL_Jsq+McuN5F9_a2bmECegR65vziNATpUqt4hysKL7FT=b9RA@mail.gmail.com> <20190109173111.GB22547@codeaurora.org> <CAL_JsqL1z-iOewqBeE43n1cVSGiQyOPHBGbRmEm9zcVLJkoLEA@mail.gmail.com>
+Cc:     Evan Green <evgreen@chromium.org>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "Raju P.L.S.S.S.N" <rplsssn@codeaurora.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        devicetree@vger.kernel.org
+To:     Lina Iyer <ilina@codeaurora.org>, Rob Herring <robh@kernel.org>
+Message-ID: <154724884881.169631.9705938789464714812@swboyd.mtv.corp.google.com>
+From:   Stephen Boyd <sboyd@kernel.org>
+Date:   Fri, 11 Jan 2019 15:20:48 -0800
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 1/11/2019 2:43 PM, Casey Schaufler wrote:
-> On 1/11/2019 2:30 PM, John Johansen wrote:
->> On 1/11/19 2:11 PM, Casey Schaufler wrote:
->>> On 1/11/2019 1:43 AM, syzbot wrote:
->>>> Hello,
->>>>
->>>> syzbot found the following crash on:
->>>>
->>>> HEAD commit:    b808822a75a3 Add linux-next specific files for 20190111
->>>> git tree:       linux-next
->>>> console output: https://syzkaller.appspot.com/x/log.txt?x=179c22f7400000
->>>> kernel config:  https://syzkaller.appspot.com/x/.config?x=c052ead0aed5001b
->>>> dashboard link: https://syzkaller.appspot.com/bug?extid=69ca07954461f189e808
->>>> compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
->>>> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=162d947f400000
->>>> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=139f6c37400000
->>>>
->>>> IMPORTANT: if you fix the bug, please add the following tag to the commit:
->>>> Reported-by: syzbot+69ca07954461f189e808@syzkaller.appspotmail.com
->>>>
->>>> ------------[ cut here ]------------
->>>> AppArmor WARN cred_label: ((!blob)):
->>>> WARNING: CPU: 0 PID: 0 at security/apparmor/include/cred.h:30 cred_label security/apparmor/include/cred.h:30 [inline]
->>>> WARNING: CPU: 0 PID: 0 at security/apparmor/include/cred.h:30 apparmor_cred_free+0x12f/0x1a0 security/apparmor/lsm.c:62
->>>> Kernel panic - not syncing: panic_on_warn set ...
->>>> CPU: 0 PID: 0 Comm: swapper/0 Not tainted 5.0.0-rc1-next-20190111 #10
->>>> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
->>>> Call Trace:
->>>>  <IRQ>
->>>>  __dump_stack lib/dump_stack.c:77 [inline]
->>>>  dump_stack+0x1db/0x2d0 lib/dump_stack.c:113
->>>>  panic+0x2cb/0x65c kernel/panic.c:214
->>>>  __warn.cold+0x20/0x48 kernel/panic.c:571
->>>>  report_bug+0x263/0x2b0 lib/bug.c:186
->>>>  fixup_bug arch/x86/kernel/traps.c:178 [inline]
->>>>  fixup_bug arch/x86/kernel/traps.c:173 [inline]
->>>>  do_error_trap+0x11b/0x200 arch/x86/kernel/traps.c:271
->>>>  do_invalid_op+0x37/0x50 arch/x86/kernel/traps.c:290
->>>>  invalid_op+0x14/0x20 arch/x86/entry/entry_64.S:973
->>>> RIP: 0010:cred_label security/apparmor/include/cred.h:30 [inline]
->>>> RIP: 0010:apparmor_cred_free+0x12f/0x1a0 security/apparmor/lsm.c:62
->>>> Code: 7c 88 48 c7 c7 00 d0 7c 88 e8 fd 70 f2 fd 0f 0b eb a9 e8 54 3f 29 fe 48 c7 c6 c0 df 7c 88 48 c7 c7 00 d0 7c 88 e8 e1 70 f2 fd <0f> 0b 48 b8 00 00 00 00 00 fc ff df 80 38 00 75 4a 4c 8b 2c 25 00
->>>> RSP: 0018:ffff8880ae6079f8 EFLAGS: 00010286
->>>> RAX: 0000000000000000 RBX: 0000000000000000 RCX: 0000000000000000
->>>> RDX: 0000000000000100 RSI: ffffffff81687fa6 RDI: 0000000000000006
->>>> RBP: ffff8880ae607a18 R08: ffffffff8987dec0 R09: 0000000000000000
->>>> R10: 0000000000000000 R11: 0000000000000000 R12: ffff8880a86b3100
->>>> R13: ffff8880a86b3100 R14: ffff8880a86b3188 R15: dffffc0000000000
->>>>  security_cred_free+0x4b/0xf0 security/security.c:1490
->>> The obvious thing to do is put a check in security_cred_free
->>> for a NULL cred->security, in which case the LSM hooks
->>> wouldn't get called.
->> Right, but the question is should we? To my thinking we shouldn't
->> ever have a cred without cred->security, unless the cred was
->> allocated but a later step in its construction, say allocating
->> ->security failed.
-> If allocating ->security fails in security_cred_alloc_blank()
-> or security_prepare_creds() you don't have to do anything but
-> fail because the LSM hooks are not called before the allocation.
->
->> In which case I'd rather see the cred directly freed and not
->> call into security_cred_free() as I like being able to detect
->> corrupt creds.
-> I think we need to look for some bit of code that's setting
-> cred->security to NULL inappropriately.
+Quoting Rob Herring (2019-01-09 11:36:56)
+>=20
+> > >However, my main concern is documenting something genericish in a
+> > >device specific binding. It looks like Tegra is trying to add the same
+> > >thing, so this needs to be documented in a common place. One question
+> > >is whether wakeup is the only use or if this should be more generally
+> > >a secondary interrupt parent?
+> > >
+> > Yes, wakeup is the only use of this interrupt parent.
+>=20
+> Maybe for you, but I was wondering about this more generally. Should
+> we encode what the function (e.g. wakeup) is in the property name or
+> have something like aux-interrupt-controller? Maybe some platforms
+> have some need for a secondary interrupt-controller which is not
+> wakeup. Routing interrupts to other cores perhaps?
+>=20
 
-If security_cred_alloc_blank() fails for lack of memory
-in cred_alloc_blank() abort_creds() will be called. This
-in turn calls put_cred() and put_cred_rcu(), which will
-call security_cred_free() with ->security set to NULL.
+I'd say it's not the interrupt-parent, but a secondary-interrupt-parent,
+because it's another path that some GPIO interrupts will go through vs.
+the "normal" summary irq line that uses the interrupt-parent. Maybe
+that's similar to the interrupt partitioning that ARM is doing for PPIs
+that only go to some CPUs?
 
-put_cred_rcu() is the only caller of security_cred_free().
-The ->security == NULL check can be in either put_cred_rcu()
-or in security_cred_free(). I suggest the latter as the
-cleanest option.
+We don't really specify that some GPIO is corresponding to the secondary
+or primary interrupt controller for the GPIO controller in DT. If we
+did, then we could do something like the interrupt-map binding and have
+the index of that property be the gpio number and the interrupt parent
+that it maps to (either summary from the GIC or MPM pin number).
+
+ interrupt-map =3D <0 0 &gic GIC_SPI 208 0>,
+                 <1 0 &pdc 3 0>;
+ interrupt-map-mask =3D <0xfffffff 0>;
+
+And then we would pass the 2-cell GPIO interrupt specifier (gpio# and
+flags) through the table and remap it to arbitrary domain parents. We
+could use this same design for the SSBI and SPMI gpio interrupt
+controller where we're currently looking at hardcoding the base
+interrupt number in the driver (0xc0) and then adding the GPIO number to
+that to get the parent interrupt specifier.
+
+It's sort of an abuse of interrupt-map, but I don't know if it really
+matters because there isn't a child of the gpio controller that is going
+to go through this table.
 
