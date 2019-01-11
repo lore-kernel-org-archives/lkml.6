@@ -3,144 +3,89 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8154FC43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 05:38:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E2B68C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 05:38:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5927220870
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 05:38:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BBF2520675
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 05:38:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730760AbfAKFis (ORCPT
+        id S1730838AbfAKFi4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 11 Jan 2019 00:38:48 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:33628 "EHLO mx1.redhat.com"
+        Fri, 11 Jan 2019 00:38:56 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:60026 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730002AbfAKFiA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1730093AbfAKFiA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 11 Jan 2019 00:38:00 -0500
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id A48211393C3;
-        Fri, 11 Jan 2019 05:37:59 +0000 (UTC)
+        by mx1.redhat.com (Postfix) with ESMTPS id 470A05277D;
+        Fri, 11 Jan 2019 05:38:00 +0000 (UTC)
 Received: from sirius.home.kraxel.org (ovpn-116-203.ams2.redhat.com [10.36.116.203])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 9584768B1A;
-        Fri, 11 Jan 2019 05:37:58 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id C8FAB1019630;
+        Fri, 11 Jan 2019 05:37:57 +0000 (UTC)
 Received: by sirius.home.kraxel.org (Postfix, from userid 1000)
-        id D916B5EE5; Fri, 11 Jan 2019 06:37:54 +0100 (CET)
+        id A70189AB2; Fri, 11 Jan 2019 06:37:53 +0100 (CET)
 From:   Gerd Hoffmann <kraxel@redhat.com>
 To:     dri-devel@lists.freedesktop.org, David Airlie <airlied@redhat.com>
 Cc:     andr2000@gmail.com, noralf@tronnes.org,
         Gerd Hoffmann <kraxel@redhat.com>,
         David Airlie <airlied@linux.ie>,
-        linux-kernel@vger.kernel.org (open list),
         virtualization@lists.linux-foundation.org (open list:DRM DRIVER FOR
-        BOCHS VIRTUAL GPU)
-Subject: [PATCH v4 16/16] drm/bochs: move remaining fb bits to kms
-Date:   Fri, 11 Jan 2019 06:37:52 +0100
-Message-Id: <20190111053752.4004-17-kraxel@redhat.com>
+        BOCHS VIRTUAL GPU), linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH v4 08/16] drm/bochs: atomic: use suspend/resume helpers
+Date:   Fri, 11 Jan 2019 06:37:44 +0100
+Message-Id: <20190111053752.4004-9-kraxel@redhat.com>
 In-Reply-To: <20190111053752.4004-1-kraxel@redhat.com>
 References: <20190111053752.4004-1-kraxel@redhat.com>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.38]); Fri, 11 Jan 2019 05:37:59 +0000 (UTC)
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.29]); Fri, 11 Jan 2019 05:38:00 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-bochs_fbdev.c is almost empty now.  Move the remaining framebuffer bits
-over to bochs_kms.c.  Pure code motion. No functional change.
+Switch to atomic helpers: drm_mode_config_helper_suspend/resume().
 
 Signed-off-by: Gerd Hoffmann <kraxel@redhat.com>
-Reviewed-by: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
-Acked-by: Daniel Vetter <daniel.vetter@ffwll.ch>
 ---
- drivers/gpu/drm/bochs/bochs_fbdev.c | 29 -----------------------------
- drivers/gpu/drm/bochs/bochs_kms.c   | 17 +++++++++++++++++
- drivers/gpu/drm/bochs/Makefile      |  2 +-
- 3 files changed, 18 insertions(+), 30 deletions(-)
- delete mode 100644 drivers/gpu/drm/bochs/bochs_fbdev.c
+ drivers/gpu/drm/bochs/bochs_drv.c | 11 ++---------
+ 1 file changed, 2 insertions(+), 9 deletions(-)
 
-diff --git a/drivers/gpu/drm/bochs/bochs_fbdev.c b/drivers/gpu/drm/bochs/bochs_fbdev.c
-deleted file mode 100644
-index 7cac3f5253..0000000000
---- a/drivers/gpu/drm/bochs/bochs_fbdev.c
-+++ /dev/null
-@@ -1,29 +0,0 @@
--/*
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License as published by
-- * the Free Software Foundation; either version 2 of the License, or
-- * (at your option) any later version.
-- */
--
--#include "bochs.h"
--#include <drm/drm_atomic_helper.h>
--#include <drm/drm_gem_framebuffer_helper.h>
--
--/* ---------------------------------------------------------------------- */
--
--static struct drm_framebuffer *
--bochs_gem_fb_create(struct drm_device *dev, struct drm_file *file,
--		    const struct drm_mode_fb_cmd2 *mode_cmd)
--{
--	if (mode_cmd->pixel_format != DRM_FORMAT_XRGB8888 &&
--	    mode_cmd->pixel_format != DRM_FORMAT_BGRX8888)
--		return ERR_PTR(-EINVAL);
--
--	return drm_gem_fb_create(dev, file, mode_cmd);
--}
--
--const struct drm_mode_config_funcs bochs_mode_funcs = {
--	.fb_create = bochs_gem_fb_create,
--	.atomic_check = drm_atomic_helper_check,
--	.atomic_commit = drm_atomic_helper_commit,
--};
-diff --git a/drivers/gpu/drm/bochs/bochs_kms.c b/drivers/gpu/drm/bochs/bochs_kms.c
-index fc856a02a2..e9d5dbc346 100644
---- a/drivers/gpu/drm/bochs/bochs_kms.c
-+++ b/drivers/gpu/drm/bochs/bochs_kms.c
-@@ -9,6 +9,7 @@
- #include <drm/drm_atomic_helper.h>
- #include <drm/drm_plane_helper.h>
- #include <drm/drm_atomic_uapi.h>
-+#include <drm/drm_gem_framebuffer_helper.h>
+diff --git a/drivers/gpu/drm/bochs/bochs_drv.c b/drivers/gpu/drm/bochs/bochs_drv.c
+index f3dd66ae99..08ba6029d2 100644
+--- a/drivers/gpu/drm/bochs/bochs_drv.c
++++ b/drivers/gpu/drm/bochs/bochs_drv.c
+@@ -103,11 +103,8 @@ static int bochs_pm_suspend(struct device *dev)
+ 	struct drm_device *drm_dev = pci_get_drvdata(pdev);
+ 	struct bochs_device *bochs = drm_dev->dev_private;
  
- static int defx = 1024;
- static int defy = 768;
-@@ -256,6 +257,22 @@ static void bochs_connector_init(struct drm_device *dev)
- 	}
+-	drm_kms_helper_poll_disable(drm_dev);
+-
+ 	drm_fb_helper_set_suspend_unlocked(&bochs->fb.helper, 1);
+-
+-	return 0;
++	return drm_mode_config_helper_suspend(drm_dev);
  }
  
-+static struct drm_framebuffer *
-+bochs_gem_fb_create(struct drm_device *dev, struct drm_file *file,
-+		    const struct drm_mode_fb_cmd2 *mode_cmd)
-+{
-+	if (mode_cmd->pixel_format != DRM_FORMAT_XRGB8888 &&
-+	    mode_cmd->pixel_format != DRM_FORMAT_BGRX8888)
-+		return ERR_PTR(-EINVAL);
-+
-+	return drm_gem_fb_create(dev, file, mode_cmd);
-+}
-+
-+const struct drm_mode_config_funcs bochs_mode_funcs = {
-+	.fb_create = bochs_gem_fb_create,
-+	.atomic_check = drm_atomic_helper_check,
-+	.atomic_commit = drm_atomic_helper_commit,
-+};
+ static int bochs_pm_resume(struct device *dev)
+@@ -116,12 +113,8 @@ static int bochs_pm_resume(struct device *dev)
+ 	struct drm_device *drm_dev = pci_get_drvdata(pdev);
+ 	struct bochs_device *bochs = drm_dev->dev_private;
  
- int bochs_kms_init(struct bochs_device *bochs)
- {
-diff --git a/drivers/gpu/drm/bochs/Makefile b/drivers/gpu/drm/bochs/Makefile
-index 98ef60a19e..e9e0f8f5eb 100644
---- a/drivers/gpu/drm/bochs/Makefile
-+++ b/drivers/gpu/drm/bochs/Makefile
-@@ -1,3 +1,3 @@
--bochs-drm-y := bochs_drv.o bochs_mm.o bochs_kms.o bochs_fbdev.o bochs_hw.o
-+bochs-drm-y := bochs_drv.o bochs_mm.o bochs_kms.o bochs_hw.o
+-	drm_helper_resume_force_mode(drm_dev);
+-
+ 	drm_fb_helper_set_suspend_unlocked(&bochs->fb.helper, 0);
+-
+-	drm_kms_helper_poll_enable(drm_dev);
+-	return 0;
++	return drm_mode_config_helper_resume(drm_dev);
+ }
+ #endif
  
- obj-$(CONFIG_DRM_BOCHS)	+= bochs-drm.o
 -- 
 2.9.3
 
