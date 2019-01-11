@@ -2,86 +2,93 @@ Return-Path: <SRS0=uvhX=PT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8EA82C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 21:31:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 68356C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 21:32:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 61E2B2084C
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 21:31:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547242289;
-	bh=wTwNNBLK9XKCazXMD/eW1bS2NsXJImOUTCWAhVot3tk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=rjQTrtUmLO96TCqitxIhhUQnTGELiIHbLTGznxSkpi/chyGqvobTtkMyBYw5a6aAb
-	 dBZN/69P7uQOjGf0TFrOeQHWG7dUJ3dC4sysyClXAt3dggBTK5tbXTODmu/jpC6UxF
-	 kkojH1e9uCHxJ3Yv6+IgLUs8JQ3DG/9CbP+2RCtA=
+	by mail.kernel.org (Postfix) with ESMTP id 3E5A42084C
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 21:32:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726255AbfAKVb2 (ORCPT
+        id S1726275AbfAKVcM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 11 Jan 2019 16:31:28 -0500
-Received: from mail-ot1-f67.google.com ([209.85.210.67]:38541 "EHLO
-        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725554AbfAKVb2 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Jan 2019 16:31:28 -0500
-Received: by mail-ot1-f67.google.com with SMTP id e12so14421248otl.5;
-        Fri, 11 Jan 2019 13:31:27 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=gjKUWXoyBGsDaa8XCbDtSc0bf22b9KFq3QUlcdNswu8=;
-        b=MODSclUDgiUqgeoszXJNXvXOLXcdEVfRQsmttn09oVFzelhT59ErewuLj+QxbhXEI6
-         /CJTNiiObUdMhjgNm0kklPbMDtmLsphLetXtXR5Hul+LRIAkwL2tUJ3fLIf3wJ58nZkE
-         uypkNQZv3G52J+Geo72fDBTXa22bndnTs1VKLQ1TF485CdtZm7gHPSKcvWqdMCp9TMsf
-         wviY3J9ZA7tyRJSFBC4S1CaLgQi37L8y8qZL5R0tZJPo7b6golvJ79MeUSmMdGczj2fP
-         1qFL+1fWDADNyZgYv+yqLB0PT2N2djKSpBoG0as8E16uWPNR5XcIEqJZEx0MijxMhrXi
-         JLig==
-X-Gm-Message-State: AJcUukd4eh/in3zS5MaY/nJKLguuaF8TxqvQ1WJ3vDeFuVn0PjW9JDR5
-        OH4tr4gRYJLCEmjEHEsdMxw1xwzs6Q==
-X-Google-Smtp-Source: ALg8bN6d4Z8GKELVgQhwT9GQ8zNFKKcGCQ9iEoA7pZXP9S6unRhX+0lis370YTiwc/1j8/RfkY2pKg==
-X-Received: by 2002:a9d:3b21:: with SMTP id z30mr11596657otb.132.1547242287215;
-        Fri, 11 Jan 2019 13:31:27 -0800 (PST)
-Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id g138sm77317127oib.26.2019.01.11.13.31.26
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 11 Jan 2019 13:31:26 -0800 (PST)
-Date:   Fri, 11 Jan 2019 15:31:25 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Nicolin Chen <nicoleotsuka@gmail.com>
-Cc:     jdelvare@suse.com, linux@roeck-us.net, robh+dt@kernel.org,
-        mark.rutland@arm.com, linux-hwmon@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] dt-bindings: hwmon: ina3221: Add ti,single-shot
- property
-Message-ID: <20190111213125.GA17790@bogus>
-References: <20190105004904.17947-1-nicoleotsuka@gmail.com>
- <20190105004904.17947-2-nicoleotsuka@gmail.com>
+        Fri, 11 Jan 2019 16:32:12 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:44100 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725554AbfAKVcM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 Jan 2019 16:32:12 -0500
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 578487FD41;
+        Fri, 11 Jan 2019 21:32:11 +0000 (UTC)
+Received: from treble (ovpn-122-231.rdu2.redhat.com [10.10.122.231])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 52A3881644;
+        Fri, 11 Jan 2019 21:32:04 +0000 (UTC)
+Date:   Fri, 11 Jan 2019 15:32:02 -0600
+From:   Josh Poimboeuf <jpoimboe@redhat.com>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Andy Lutomirski <luto@kernel.org>, Nadav Amit <namit@vmware.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        the arch/x86 maintainers <x86@kernel.org>,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Jason Baron <jbaron@akamai.com>, Jiri Kosina <jkosina@suse.cz>,
+        David Laight <David.Laight@aculab.com>,
+        Borislav Petkov <bp@alien8.de>,
+        Julia Cartwright <julia@ni.com>, Jessica Yu <jeyu@kernel.org>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        Edward Cree <ecree@solarflare.com>,
+        Daniel Bristot de Oliveira <bristot@redhat.com>
+Subject: Re: [PATCH v3 0/6] Static calls
+Message-ID: <20190111213202.v4lem2euji5cwuch@treble>
+References: <CALCETrWBwTVHWXahVXMMBL4QA1f+YdKgv1XANXPsk86FjFFH2Q@mail.gmail.com>
+ <B374297A-8298-4CED-8EC0-6A39BDBA5F05@vmware.com>
+ <20190111151525.tf7lhuycyyvjjxez@treble>
+ <CAHk-=wjJm8DpCsw=Wno01q4VFqUeiLKE8QmbAtUJurYhn3jRqA@mail.gmail.com>
+ <20190111200420.qtyffayxceysoarf@treble>
+ <CAHk-=whLu9kG3dqgXUkCrNrTp0NVtdOOWxvonXTfhtq-krXo+Q@mail.gmail.com>
+ <20190111203135.5clurevf34bkiy3o@treble>
+ <CAHk-=whKabsg3N4uHHFkHXXf_mi6=T2OvkC-OUNG8Lt-bsCjFg@mail.gmail.com>
+ <CALCETrXZdzNS=Bbv=qyM8iBC82QWOQqcfN1GFfcn6UHvePatHQ@mail.gmail.com>
+ <CAHk-=whQJ-gj2M4ZJj8LnZXBK9k3fiRVjAXD9+M5D2Ja+N2mug@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20190105004904.17947-2-nicoleotsuka@gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <CAHk-=whQJ-gj2M4ZJj8LnZXBK9k3fiRVjAXD9+M5D2Ja+N2mug@mail.gmail.com>
+User-Agent: NeoMutt/20180716
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.27]); Fri, 11 Jan 2019 21:32:11 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri,  4 Jan 2019 16:49:03 -0800, Nicolin Chen wrote:
-> By default, ina3221, as a hardware monitor, continuously measures
-> the inputs and generates corresponding data. However, for battery
-> powered devices, this mode might be power consuming.
+On Fri, Jan 11, 2019 at 01:10:47PM -0800, Linus Torvalds wrote:
+> On Fri, Jan 11, 2019 at 1:05 PM Andy Lutomirski <luto@kernel.org> wrote:
+> >
+> > > Yeah, my suggestion doesn't allow for batching, since it would
+> > > basically generate one trampoline for every rewritten instruction.
+> >
+> > Sure it does.  Just make 1000 trampolines and patch 1000 sites in a
+> > batch :)  As long as the number of trampolines is smallish (e.g. fits
+> > in a page), then we should be in good shape.
 > 
-> This patch adds a "ti,single-shot" property to allow changing the
-> default continuous mode to single-shot operating mode.
+> Yeah, I guess that's true.
 > 
-> Signed-off-by: Nicolin Chen <nicoleotsuka@gmail.com>
-> ---
->  Documentation/devicetree/bindings/hwmon/ina3221.txt | 10 ++++++++++
->  1 file changed, 10 insertions(+)
-> 
+> But let's not worry about it. I don't think we do batching for any
+> alternative instruction rewriting right now, do we?
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+Not at the moment, but Daniel has been working on some patches to do so:
+
+  https://lkml.kernel.org/r/cover.1545228276.git.bristot@redhat.com
+
+-- 
+Josh
