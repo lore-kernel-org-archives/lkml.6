@@ -2,121 +2,134 @@ Return-Path: <SRS0=uvhX=PT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CDD4DC43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:22:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D742CC43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:22:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9D6222177B
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:22:48 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="H1qkV2mp"
+	by mail.kernel.org (Postfix) with ESMTP id A69562177B
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:22:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1547216571;
+	bh=OBdc61lQxiXNHbBuOCVX8JL08GRm5mznpK2z/dGS9A0=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=GoBcHAwKcQf1Cv1afFgOoxTNaBVHTAEKR7nFtXffSksgQdhAxiabiyXnHoL7WgQq8
+	 QM+YOyacmJOaJdVL4/7HfYQbYrngL4OLnDlBx5QD0q7L/KGnr2+UZ0jvDEhhNdPS7i
+	 P7oioMP6xpyZ8uANgIss7gtuL1ZsWgkP5vGi8zlg=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732996AbfAKOWr (ORCPT
+        id S1732796AbfAKOWp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 11 Jan 2019 09:22:47 -0500
-Received: from mail-it1-f195.google.com ([209.85.166.195]:52555 "EHLO
-        mail-it1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732713AbfAKOWn (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Jan 2019 09:22:43 -0500
-Received: by mail-it1-f195.google.com with SMTP id g76so2682406itg.2
-        for <linux-kernel@vger.kernel.org>; Fri, 11 Jan 2019 06:22:43 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=thXQpdJWQZ/pTw+bOVc6yKkxMnQgTw767BVi3ucL5wo=;
-        b=H1qkV2mpWBrnKbWhNU0h15hRnudYfHLkV0JuuAT8ZI3tB0DXJFaeUeHiyg/SY3s+uH
-         QwAC+D3/MKTe9L99ka65jr3UsWolVXkKb8wmYgCgdfDhGo4WO9wxe/EA2eUo3H47L/ve
-         5pW0PEDq1JbrzWny0gprxPkvjjWibgbTWH/8Q=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=thXQpdJWQZ/pTw+bOVc6yKkxMnQgTw767BVi3ucL5wo=;
-        b=R1fYkwaky1WKHpBDX13SG0vewRI9pv0WDFMjZzGYCxGMGIuVx0zrSCR0TWZaBPuDOZ
-         ArtRbuodXp9CikePLHf8O3mbsdhjJblbMn5J9cZp91oaiqAo4kuvh1lCFZrfXB89/Esz
-         d5dYTXWyuqYCCL3aCBlITxudPl03WK1+BFOqKs4XdRUoXqdLng1kkag9uqKn66L+lQa5
-         Ap2U40yRMVsnULg47Ah9oY6DpcA9b6O27kjJQJQtitb6bgo3rFeI14h4zV/mNipvfwuJ
-         7mGWYG5qS4nn3AIiVPxN6XVHYcn1SbStDqXOrz6ZQdm7JmWl5BQwtzWWjA5tKZ28IzXk
-         9mng==
-X-Gm-Message-State: AJcUukf5YmsxkaxYp2sdib58BciN4nE/K9ziAMJ1/1Couw1eRhN07JZx
-        LmIFSE92zwlGgYCc769DAlcBOJJ+kKdZMObI4R/e9Q==
-X-Google-Smtp-Source: ALg8bN6dcpYmsb8edqQg81GBagPiKfCZ/EdmgYuLrWRgVbJfXZqrIK3kZoACtVt9KZdZJ/0mv59Jb+XepJ6Xqc6FuJ8=
-X-Received: by 2002:a24:710:: with SMTP id f16mr1106990itf.121.1547216562905;
- Fri, 11 Jan 2019 06:22:42 -0800 (PST)
+        Fri, 11 Jan 2019 09:22:45 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35966 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730968AbfAKOTL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 Jan 2019 09:19:11 -0500
+Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 284932183F;
+        Fri, 11 Jan 2019 14:19:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1547216350;
+        bh=OBdc61lQxiXNHbBuOCVX8JL08GRm5mznpK2z/dGS9A0=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=GbeMoYZmU8Ds7FaeLTiWAUK75CbwvWj6nSzEujnd97nZBJ/FroTTx0RD/cHXaoXqC
+         wbyCF+aAM6To20Acyk9lV96IHUoxTKm77FvBCNdV6pEqk3trGL4BNqWeZTN0siWwbf
+         nmg87kBYRBZmD2qtR7fH5IPSdXmrfWlBGEJfy9js=
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org,
+        Pavel Tikhomirov <ptikhomirov@virtuozzo.com>,
+        Vasily Averin <vvs@virtuozzo.com>, NeilBrown <neilb@suse.com>,
+        "J. Bruce Fields" <bfields@redhat.com>, stable@kernel.org
+Subject: [PATCH 4.4 68/88] sunrpc: fix cache_head leak due to queued request
+Date:   Fri, 11 Jan 2019 15:08:37 +0100
+Message-Id: <20190111131057.402185567@linuxfoundation.org>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20190111131045.137499039@linuxfoundation.org>
+References: <20190111131045.137499039@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
+X-Patchwork-Hint: ignore
 MIME-Version: 1.0
-References: <20190111074614.GA68053@gmail.com>
-In-Reply-To: <20190111074614.GA68053@gmail.com>
-From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Date:   Fri, 11 Jan 2019 15:22:35 +0100
-Message-ID: <CAKv+Gu8oY6VFeuH3T0FU452W-rKGGQk3top5kEbuP2aCxzJTCQ@mail.gmail.com>
-Subject: Re: [GIT PULL] EFI fix
-To:     Ingo Molnar <mingo@kernel.org>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-efi <linux-efi@vger.kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Borislav Petkov <bp@alien8.de>,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>,
-        Andrew Morton <akpm@linux-foundation.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 11 Jan 2019 at 08:46, Ingo Molnar <mingo@kernel.org> wrote:
->
-> Linus,
->
-> Please pull the latest efi-urgent-for-linus git tree from:
->
->    git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git efi-urgent-for-linus
->
->    # HEAD: b12f5440d8ca02e8f9ab4f1461f9214295cc4f66 Merge branch 'linus' into efi/urgent, to resolve conflict
->
-> A single fix that adds an annotation to resolve a kmemleak false
-> positive.
->
->  Thanks,
->
->         Ingo
->
-> ------------------>
-> Qian Cai (1):
->       efi: Let kmemleak ignore false positives
->
->
->  drivers/firmware/efi/efi.c | 3 +++
->  1 file changed, 3 insertions(+)
->
-> diff --git a/drivers/firmware/efi/efi.c b/drivers/firmware/efi/efi.c
-> index 4c46ff6f2242..7ac09dd8f268 100644
-> --- a/drivers/firmware/efi/efi.c
-> +++ b/drivers/firmware/efi/efi.c
-> @@ -31,6 +31,7 @@
->  #include <linux/acpi.h>
->  #include <linux/ucs2_string.h>
->  #include <linux/memblock.h>
-> +#include <linux/kmemleak.h>
->
->  #include <asm/early_ioremap.h>
->
-> @@ -1026,6 +1027,8 @@ int __ref efi_mem_reserve_persistent(phys_addr_t addr, u64 size)
->         if (!rsv)
->                 return -ENOMEM;
->
-> +       kmemleak_ignore(rsv);
-> +
->         rsv->size = EFI_MEMRESERVE_COUNT(PAGE_SIZE);
->         atomic_set(&rsv->count, 1);
->         rsv->entry[0].base = addr;
+4.4-stable review patch.  If anyone has any objections, please let me know.
 
-I was hoping we could merge this patch (so we can backport it), but
-resolve the conflict by dropping the kmemleak_ignore() again, since it
-will now complain since the kmalloc() has been replaced with a
-__get_free_page() in the mean time (if that makes sense)
+------------------
+
+From: Vasily Averin <vvs@virtuozzo.com>
+
+commit 4ecd55ea074217473f94cfee21bb72864d39f8d7 upstream.
+
+After commit d202cce8963d, an expired cache_head can be removed from the
+cache_detail's hash.
+
+However, the expired cache_head may be waiting for a reply from a
+previously submitted request. Such a cache_head has an increased
+refcounter and therefore it won't be freed after cache_put(freeme).
+
+Because the cache_head was removed from the hash it cannot be found
+during cache_clean() and can be leaked forever, together with stalled
+cache_request and other taken resources.
+
+In our case we noticed it because an entry in the export cache was
+holding a reference on a filesystem.
+
+Fixes d202cce8963d ("sunrpc: never return expired entries in sunrpc_cache_lookup")
+Cc: Pavel Tikhomirov <ptikhomirov@virtuozzo.com>
+Cc: stable@kernel.org # 2.6.35
+Signed-off-by: Vasily Averin <vvs@virtuozzo.com>
+Reviewed-by: NeilBrown <neilb@suse.com>
+Signed-off-by: J. Bruce Fields <bfields@redhat.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
+---
+ net/sunrpc/cache.c |   10 +++++++++-
+ 1 file changed, 9 insertions(+), 1 deletion(-)
+
+--- a/net/sunrpc/cache.c
++++ b/net/sunrpc/cache.c
+@@ -54,6 +54,11 @@ static void cache_init(struct cache_head
+ 	h->last_refresh = now;
+ }
+ 
++static void cache_fresh_locked(struct cache_head *head, time_t expiry,
++				struct cache_detail *detail);
++static void cache_fresh_unlocked(struct cache_head *head,
++				struct cache_detail *detail);
++
+ struct cache_head *sunrpc_cache_lookup(struct cache_detail *detail,
+ 				       struct cache_head *key, int hash)
+ {
+@@ -95,6 +100,7 @@ struct cache_head *sunrpc_cache_lookup(s
+ 			if (cache_is_expired(detail, tmp)) {
+ 				hlist_del_init(&tmp->cache_list);
+ 				detail->entries --;
++				cache_fresh_locked(tmp, 0, detail);
+ 				freeme = tmp;
+ 				break;
+ 			}
+@@ -110,8 +116,10 @@ struct cache_head *sunrpc_cache_lookup(s
+ 	cache_get(new);
+ 	write_unlock(&detail->hash_lock);
+ 
+-	if (freeme)
++	if (freeme) {
++		cache_fresh_unlocked(freeme, detail);
+ 		cache_put(freeme, detail);
++	}
+ 	return new;
+ }
+ EXPORT_SYMBOL_GPL(sunrpc_cache_lookup);
+
+
