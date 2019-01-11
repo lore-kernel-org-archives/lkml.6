@@ -7,46 +7,48 @@ X-Spam-Status: No, score=-10.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1289AC43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:34:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 86BF2C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:34:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D6EA321848
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:34:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 55ECE21841
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:34:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547217275;
-	bh=PhFEWgCT+tPaknRN01tWeW7kH6b67eZiOYCcw4BZvPM=;
+	s=default; t=1547217279;
+	bh=dOAxQ0XWhFuLYCW+VXiYgWlXZCnDocutYTXWnWo7d7g=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=LxTo7Eq4mFOHhFl1Z5I2n5c8FAryU+PIyw46/0kgFORhJkubraawCVGja4pvf+Sce
-	 K0wJAjuPrqmPMP0bGc07HcF8OHP8sYBOfvJADkO2wndN2pin6L3BiIOVIL/1USerWf
-	 osc8TGiE1SJafwuYya0UlqaVjWMLUo1+etfEDmeo=
+	b=b5ubErwvbP5tl3+8T3iesJUiO7K7nwL7PzgHkH52Kh2tpJ4zdtVsslnX6mM6/wowI
+	 yYNQGkXlGqFOC8Gi5lpwQP5Kacctkls10EZDOPUuWwq18Az3YDT/TKA1YaolRDhvgy
+	 x87tlDhujTwcJv9PK+GJf4ZW43jTf2ZHDbcoyEWY=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728997AbfAKOee (ORCPT
+        id S2389933AbfAKOei (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 11 Jan 2019 09:34:34 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54734 "EHLO mail.kernel.org"
+        Fri, 11 Jan 2019 09:34:38 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54832 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389903AbfAKOe2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Jan 2019 09:34:28 -0500
+        id S2389952AbfAKOee (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 Jan 2019 09:34:34 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CB32A204EC;
-        Fri, 11 Jan 2019 14:34:27 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4EC06204EC;
+        Fri, 11 Jan 2019 14:34:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547217268;
-        bh=PhFEWgCT+tPaknRN01tWeW7kH6b67eZiOYCcw4BZvPM=;
+        s=default; t=1547217273;
+        bh=dOAxQ0XWhFuLYCW+VXiYgWlXZCnDocutYTXWnWo7d7g=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=lUdeQZB3CPR2B/72OIwZveoNQDvxMweEfDcCiFmDuDlWBSDIGjlNisQ2OH1btd94O
-         3tRAfmflHjnU7jWRoXXuT1o8T2M+v4T8NW9r5k4sLllFWQTD9hf+61aNuGry3N1WLD
-         8JKi/Ze4LfQgzDh9C4LIJLhgS82WtIouw8PPVevo=
+        b=yKdtXzB7G8TL1SVMgNWWKWi26fqsvWSsd1MDPSM/TOqCUltrqMqXxXFo3J7nb5Glt
+         jsneTWfjTvXOxijte1ugEUlMu4ZoYzzVe7zS90HXJ4aHlvQhGoUWoWzqHDVKWz7gX6
+         hbsFPOLgXQuLRfr9nm1+IdezecICzyuW3uG991WA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Vasily Averin <vvs@virtuozzo.com>,
-        "J. Bruce Fields" <bfields@redhat.com>
-Subject: [PATCH 4.14 068/105] sunrpc: use SVC_NET() in svcauth_gss_* functions
-Date:   Fri, 11 Jan 2019 15:14:39 +0100
-Message-Id: <20190111131108.726751496@linuxfoundation.org>
+        stable@vger.kernel.org, Joel Stanley <joel@jms.id.au>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Nathan Chancellor <natechancellor@gmail.com>
+Subject: [PATCH 4.14 070/105] powerpc: Disable -Wbuiltin-requires-header when setjmp is used
+Date:   Fri, 11 Jan 2019 15:14:41 +0100
+Message-Id: <20190111131108.890927318@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190111131102.899065735@linuxfoundation.org>
 References: <20190111131102.899065735@linuxfoundation.org>
@@ -65,56 +67,65 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Vasily Averin <vvs@virtuozzo.com>
+From: Joel Stanley <joel@jms.id.au>
 
-commit b8be5674fa9a6f3677865ea93f7803c4212f3e10 upstream.
+commit aea447141c7e7824b81b49acd1bc785506fba46e upstream.
 
-Signed-off-by: Vasily Averin <vvs@virtuozzo.com>
-Cc: stable@vger.kernel.org
-Signed-off-by: J. Bruce Fields <bfields@redhat.com>
+The powerpc kernel uses setjmp which causes a warning when building
+with clang:
+
+  In file included from arch/powerpc/xmon/xmon.c:51:
+  ./arch/powerpc/include/asm/setjmp.h:15:13: error: declaration of
+  built-in function 'setjmp' requires inclusion of the header <setjmp.h>
+        [-Werror,-Wbuiltin-requires-header]
+  extern long setjmp(long *);
+              ^
+  ./arch/powerpc/include/asm/setjmp.h:16:13: error: declaration of
+  built-in function 'longjmp' requires inclusion of the header <setjmp.h>
+        [-Werror,-Wbuiltin-requires-header]
+  extern void longjmp(long *, long);
+              ^
+
+This *is* the header and we're not using the built-in setjump but
+rather the one in arch/powerpc/kernel/misc.S. As the compiler warning
+does not make sense, it for the files where setjmp is used.
+
+Signed-off-by: Joel Stanley <joel@jms.id.au>
+Reviewed-by: Nick Desaulniers <ndesaulniers@google.com>
+[mpe: Move subdir-ccflags in xmon/Makefile to not clobber -Werror]
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- net/sunrpc/auth_gss/svcauth_gss.c |    8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ arch/powerpc/kernel/Makefile |    3 +++
+ arch/powerpc/xmon/Makefile   |    5 ++++-
+ 2 files changed, 7 insertions(+), 1 deletion(-)
 
---- a/net/sunrpc/auth_gss/svcauth_gss.c
-+++ b/net/sunrpc/auth_gss/svcauth_gss.c
-@@ -1120,7 +1120,7 @@ static int svcauth_gss_legacy_init(struc
- 	struct kvec *resv = &rqstp->rq_res.head[0];
- 	struct rsi *rsip, rsikey;
- 	int ret;
--	struct sunrpc_net *sn = net_generic(rqstp->rq_xprt->xpt_net, sunrpc_net_id);
-+	struct sunrpc_net *sn = net_generic(SVC_NET(rqstp), sunrpc_net_id);
+--- a/arch/powerpc/kernel/Makefile
++++ b/arch/powerpc/kernel/Makefile
+@@ -5,6 +5,9 @@
  
- 	memset(&rsikey, 0, sizeof(rsikey));
- 	ret = gss_read_verf(gc, argv, authp,
-@@ -1231,7 +1231,7 @@ static int svcauth_gss_proxy_init(struct
- 	uint64_t handle;
- 	int status;
- 	int ret;
--	struct net *net = rqstp->rq_xprt->xpt_net;
-+	struct net *net = SVC_NET(rqstp);
- 	struct sunrpc_net *sn = net_generic(net, sunrpc_net_id);
+ CFLAGS_ptrace.o		+= -DUTS_MACHINE='"$(UTS_MACHINE)"'
  
- 	memset(&ud, 0, sizeof(ud));
-@@ -1422,7 +1422,7 @@ svcauth_gss_accept(struct svc_rqst *rqst
- 	__be32		*rpcstart;
- 	__be32		*reject_stat = resv->iov_base + resv->iov_len;
- 	int		ret;
--	struct sunrpc_net *sn = net_generic(rqstp->rq_xprt->xpt_net, sunrpc_net_id);
-+	struct sunrpc_net *sn = net_generic(SVC_NET(rqstp), sunrpc_net_id);
++# Disable clang warning for using setjmp without setjmp.h header
++CFLAGS_crash.o		+= $(call cc-disable-warning, builtin-requires-header)
++
+ subdir-ccflags-$(CONFIG_PPC_WERROR) := -Werror
  
- 	dprintk("RPC:       svcauth_gss: argv->iov_len = %zd\n",
- 			argv->iov_len);
-@@ -1710,7 +1710,7 @@ svcauth_gss_release(struct svc_rqst *rqs
- 	struct rpc_gss_wire_cred *gc = &gsd->clcred;
- 	struct xdr_buf *resbuf = &rqstp->rq_res;
- 	int stat = -EINVAL;
--	struct sunrpc_net *sn = net_generic(rqstp->rq_xprt->xpt_net, sunrpc_net_id);
-+	struct sunrpc_net *sn = net_generic(SVC_NET(rqstp), sunrpc_net_id);
+ ifeq ($(CONFIG_PPC64),y)
+--- a/arch/powerpc/xmon/Makefile
++++ b/arch/powerpc/xmon/Makefile
+@@ -1,7 +1,10 @@
+ # SPDX-License-Identifier: GPL-2.0
+ # Makefile for xmon
  
- 	if (gc->gc_proc != RPC_GSS_PROC_DATA)
- 		goto out;
+-subdir-ccflags-$(CONFIG_PPC_WERROR) := -Werror
++# Disable clang warning for using setjmp without setjmp.h header
++subdir-ccflags-y := $(call cc-disable-warning, builtin-requires-header)
++
++subdir-ccflags-$(CONFIG_PPC_WERROR) += -Werror
+ 
+ GCOV_PROFILE := n
+ UBSAN_SANITIZE := n
 
 
