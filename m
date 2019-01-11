@@ -7,49 +7,50 @@ X-Spam-Status: No, score=-10.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3408CC43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:32:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 33D3BC43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:32:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 054412177B
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:32:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EF47D2177B
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:32:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547217156;
-	bh=30Mg7Myo8b2ye4XDAQ5F7pEA/8KlFULrrMb5EvCZHVw=;
+	s=default; t=1547217162;
+	bh=eWYZwYKBS0s+Dv6hl8UU9kFbmfiw5QDnHfRu7JxNceM=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=s2z4RPwFa70b7f/NT6qhGQZdG5A+NY1SYEjKSoT+Ycm6tsRskgjXresJNJviuAiVo
-	 zv5y4VHmk2BxnEzjVJbqNqUR5HBivBNpxpJ0rQycfWVOXEckhmr/UYdQJD3TyVcCPe
-	 pTN0XNy44ZWS0LgwvytuFeCKr0J26sr56NylHDQw=
+	b=G+A5ZB0xuV8KEVTk45FDQq+/qF6HiJowTSt7Yll8wjB/HI+7ulwfTF1Hj1LZwWYr9
+	 8YD4dysVgq/xU0iGtjx/J3laU7E7Bkm5iT3xLjIWiclWVpqoWQlNtQhx8GZW2zm/ft
+	 XVoJI9726AZqdbvyiTdUs9RJZSaR8LN9B4glv0R4=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389460AbfAKOcf (ORCPT
+        id S2389471AbfAKOcl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 11 Jan 2019 09:32:35 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52596 "EHLO mail.kernel.org"
+        Fri, 11 Jan 2019 09:32:41 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52634 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389428AbfAKOcd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Jan 2019 09:32:33 -0500
+        id S2389428AbfAKOcg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 Jan 2019 09:32:36 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6E47B2184A;
-        Fri, 11 Jan 2019 14:32:32 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E250A2063F;
+        Fri, 11 Jan 2019 14:32:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547217152;
-        bh=30Mg7Myo8b2ye4XDAQ5F7pEA/8KlFULrrMb5EvCZHVw=;
+        s=default; t=1547217155;
+        bh=eWYZwYKBS0s+Dv6hl8UU9kFbmfiw5QDnHfRu7JxNceM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=QYsCjmbGUiaLQ09PA3bDy2ni+jXPPURMlvjbQDZPo5Vn/X6mplhOBoUdR70LD9g1z
-         IwC7B189oUNd1tWSJFZYXvkYHl75HRXYKjpFDdt0Sh109FENUyNTGGQapIkxNdEjV3
-         3cRgZ4Ph8E2EjTpNq6Ex0yeMiiXqtcz6kYWTD3Pg=
+        b=glNK5Ib9VqGtu5//paY1qDN0JK11UZkzvpFI9/+DUGeNWQzRWoPMr6/L9I6BV2Gg6
+         agWGgey/MSUv2OFPQNb6Z9A84GtgT7msdE3ISqgL2D/nQmDolPn/hhB8JA9Wvynbfw
+         Ha0nX5GQdzgkxhT2COjGnJYWrl5Ap/76IdFlWOCw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Minchan Kim <minchan@kernel.org>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Joey Pabalinas <joeypabalinas@gmail.com>,
+        stable@vger.kernel.org, Michal Hocko <mhocko@suse.com>,
+        Oscar Salvador <osalvador@suse.com>,
+        David Hildenbrand <david@redhat.com>,
+        Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>,
         Andrew Morton <akpm@linux-foundation.org>,
         Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH 4.14 060/105] zram: fix double free backing device
-Date:   Fri, 11 Jan 2019 15:14:31 +0100
-Message-Id: <20190111131108.054108592@linuxfoundation.org>
+Subject: [PATCH 4.14 061/105] hwpoison, memory_hotplug: allow hwpoisoned pages to be offlined
+Date:   Fri, 11 Jan 2019 15:14:32 +0100
+Message-Id: <20190111131108.106821331@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190111131102.899065735@linuxfoundation.org>
 References: <20190111131102.899065735@linuxfoundation.org>
@@ -68,54 +69,169 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Minchan Kim <minchan@kernel.org>
+From: Michal Hocko <mhocko@suse.com>
 
-commit 5547932dc67a48713eece4fa4703bfdf0cfcb818 upstream.
+commit b15c87263a69272423771118c653e9a1d0672caa upstream.
 
-If blkdev_get fails, we shouldn't do blkdev_put.  Otherwise, kernel emits
-below log.  This patch fixes it.
+We have received a bug report that an injected MCE about faulty memory
+prevents memory offline to succeed on 4.4 base kernel.  The underlying
+reason was that the HWPoison page has an elevated reference count and the
+migration keeps failing.  There are two problems with that.  First of all
+it is dubious to migrate the poisoned page because we know that accessing
+that memory is possible to fail.  Secondly it doesn't make any sense to
+migrate a potentially broken content and preserve the memory corruption
+over to a new location.
 
-  WARNING: CPU: 0 PID: 1893 at fs/block_dev.c:1828 blkdev_put+0x105/0x120
-  Modules linked in:
-  CPU: 0 PID: 1893 Comm: swapoff Not tainted 4.19.0+ #453
-  Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.10.2-1 04/01/2014
-  RIP: 0010:blkdev_put+0x105/0x120
-  Call Trace:
-    __x64_sys_swapoff+0x46d/0x490
-    do_syscall_64+0x5a/0x190
-    entry_SYSCALL_64_after_hwframe+0x49/0xbe
-  irq event stamp: 4466
-  hardirqs last  enabled at (4465):  __free_pages_ok+0x1e3/0x490
-  hardirqs last disabled at (4466):  trace_hardirqs_off_thunk+0x1a/0x1c
-  softirqs last  enabled at (3420):  __do_softirq+0x333/0x446
-  softirqs last disabled at (3407):  irq_exit+0xd1/0xe0
+Oscar has found out that 4.4 and the current upstream kernels behave
+slightly differently with his simply testcase
 
-Link: http://lkml.kernel.org/r/20181127055429.251614-3-minchan@kernel.org
-Signed-off-by: Minchan Kim <minchan@kernel.org>
-Reviewed-by: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
-Reviewed-by: Joey Pabalinas <joeypabalinas@gmail.com>
-Cc: <stable@vger.kernel.org>	[4.14+]
+===
+
+int main(void)
+{
+        int ret;
+        int i;
+        int fd;
+        char *array = malloc(4096);
+        char *array_locked = malloc(4096);
+
+        fd = open("/tmp/data", O_RDONLY);
+        read(fd, array, 4095);
+
+        for (i = 0; i < 4096; i++)
+                array_locked[i] = 'd';
+
+        ret = mlock((void *)PAGE_ALIGN((unsigned long)array_locked), sizeof(array_locked));
+        if (ret)
+                perror("mlock");
+
+        sleep (20);
+
+        ret = madvise((void *)PAGE_ALIGN((unsigned long)array_locked), 4096, MADV_HWPOISON);
+        if (ret)
+                perror("madvise");
+
+        for (i = 0; i < 4096; i++)
+                array_locked[i] = 'd';
+
+        return 0;
+}
+===
+
++ offline this memory.
+
+In 4.4 kernels he saw the hwpoisoned page to be returned back to the LRU
+list
+kernel:  [<ffffffff81019ac9>] dump_trace+0x59/0x340
+kernel:  [<ffffffff81019e9a>] show_stack_log_lvl+0xea/0x170
+kernel:  [<ffffffff8101ac71>] show_stack+0x21/0x40
+kernel:  [<ffffffff8132bb90>] dump_stack+0x5c/0x7c
+kernel:  [<ffffffff810815a1>] warn_slowpath_common+0x81/0xb0
+kernel:  [<ffffffff811a275c>] __pagevec_lru_add_fn+0x14c/0x160
+kernel:  [<ffffffff811a2eed>] pagevec_lru_move_fn+0xad/0x100
+kernel:  [<ffffffff811a334c>] __lru_cache_add+0x6c/0xb0
+kernel:  [<ffffffff81195236>] add_to_page_cache_lru+0x46/0x70
+kernel:  [<ffffffffa02b4373>] extent_readpages+0xc3/0x1a0 [btrfs]
+kernel:  [<ffffffff811a16d7>] __do_page_cache_readahead+0x177/0x200
+kernel:  [<ffffffff811a18c8>] ondemand_readahead+0x168/0x2a0
+kernel:  [<ffffffff8119673f>] generic_file_read_iter+0x41f/0x660
+kernel:  [<ffffffff8120e50d>] __vfs_read+0xcd/0x140
+kernel:  [<ffffffff8120e9ea>] vfs_read+0x7a/0x120
+kernel:  [<ffffffff8121404b>] kernel_read+0x3b/0x50
+kernel:  [<ffffffff81215c80>] do_execveat_common.isra.29+0x490/0x6f0
+kernel:  [<ffffffff81215f08>] do_execve+0x28/0x30
+kernel:  [<ffffffff81095ddb>] call_usermodehelper_exec_async+0xfb/0x130
+kernel:  [<ffffffff8161c045>] ret_from_fork+0x55/0x80
+
+And that latter confuses the hotremove path because an LRU page is
+attempted to be migrated and that fails due to an elevated reference
+count.  It is quite possible that the reuse of the HWPoisoned page is some
+kind of fixed race condition but I am not really sure about that.
+
+With the upstream kernel the failure is slightly different.  The page
+doesn't seem to have LRU bit set but isolate_movable_page simply fails and
+do_migrate_range simply puts all the isolated pages back to LRU and
+therefore no progress is made and scan_movable_pages finds same set of
+pages over and over again.
+
+Fix both cases by explicitly checking HWPoisoned pages before we even try
+to get reference on the page, try to unmap it if it is still mapped.  As
+explained by Naoya:
+
+: Hwpoison code never unmapped those for no big reason because
+: Ksm pages never dominate memory, so we simply didn't have strong
+: motivation to save the pages.
+
+Also put WARN_ON(PageLRU) in case there is a race and we can hit LRU
+HWPoison pages which shouldn't happen but I couldn't convince myself about
+that.  Naoya has noted the following:
+
+: Theoretically no such gurantee, because try_to_unmap() doesn't have a
+: guarantee of success and then memory_failure() returns immediately
+: when hwpoison_user_mappings fails.
+: Or the following code (comes after hwpoison_user_mappings block) also impli=
+: es
+: that the target page can still have PageLRU flag.
+:
+:         /*
+:          * Torn down by someone else?
+:          */
+:         if (PageLRU(p) && !PageSwapCache(p) && p->mapping =3D=3D NULL) {
+:                 action_result(pfn, MF_MSG_TRUNCATED_LRU, MF_IGNORED);
+:                 res =3D -EBUSY;
+:                 goto out;
+:         }
+:
+: So I think it's OK to keep "if (WARN_ON(PageLRU(page)))" block in
+: current version of your patch.
+
+Link: http://lkml.kernel.org/r/20181206120135.14079-1-mhocko@kernel.org
+Signed-off-by: Michal Hocko <mhocko@suse.com>
+Reviewed-by: Oscar Salvador <osalvador@suse.com>
+Debugged-by: Oscar Salvador <osalvador@suse.com>
+Tested-by: Oscar Salvador <osalvador@suse.com>
+Acked-by: David Hildenbrand <david@redhat.com>
+Acked-by: Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
+Cc: <stable@vger.kernel.org>
 Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
 Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/block/zram/zram_drv.c |    4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ mm/memory_hotplug.c |   16 ++++++++++++++++
+ 1 file changed, 16 insertions(+)
 
---- a/drivers/block/zram/zram_drv.c
-+++ b/drivers/block/zram/zram_drv.c
-@@ -366,8 +366,10 @@ static ssize_t backing_dev_store(struct
+--- a/mm/memory_hotplug.c
++++ b/mm/memory_hotplug.c
+@@ -35,6 +35,7 @@
+ #include <linux/memblock.h>
+ #include <linux/bootmem.h>
+ #include <linux/compaction.h>
++#include <linux/rmap.h>
  
- 	bdev = bdgrab(I_BDEV(inode));
- 	err = blkdev_get(bdev, FMODE_READ | FMODE_WRITE | FMODE_EXCL, zram);
--	if (err < 0)
-+	if (err < 0) {
-+		bdev = NULL;
- 		goto out;
-+	}
+ #include <asm/tlbflush.h>
  
- 	nr_pages = i_size_read(inode) >> PAGE_SHIFT;
- 	bitmap_sz = BITS_TO_LONGS(nr_pages) * sizeof(long);
+@@ -1391,6 +1392,21 @@ do_migrate_range(unsigned long start_pfn
+ 			pfn = page_to_pfn(compound_head(page))
+ 				+ hpage_nr_pages(page) - 1;
+ 
++		/*
++		 * HWPoison pages have elevated reference counts so the migration would
++		 * fail on them. It also doesn't make any sense to migrate them in the
++		 * first place. Still try to unmap such a page in case it is still mapped
++		 * (e.g. current hwpoison implementation doesn't unmap KSM pages but keep
++		 * the unmap as the catch all safety net).
++		 */
++		if (PageHWPoison(page)) {
++			if (WARN_ON(PageLRU(page)))
++				isolate_lru_page(page);
++			if (page_mapped(page))
++				try_to_unmap(page, TTU_IGNORE_MLOCK | TTU_IGNORE_ACCESS);
++			continue;
++		}
++
+ 		if (!get_page_unless_zero(page))
+ 			continue;
+ 		/*
 
 
