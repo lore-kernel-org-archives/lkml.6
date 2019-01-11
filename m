@@ -7,49 +7,48 @@ X-Spam-Status: No, score=-13.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 14026C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:27:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CCA34C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:27:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C7C902183F
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:27:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8CBC82063F
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:27:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547216876;
-	bh=+Q1oL2xk9mMqTf0xLa6BZ8wTk8dp5L1ZtL21rb6E9HY=;
+	s=default; t=1547216879;
+	bh=Pp7Ogq7LFy84MAgTdaasxQ7HEBWpIArVGtb1+Gx7NTU=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=EW/L7fz39IwueqEvRK5HMjZqTieJun8GZdHeJSYlmFLn0m6Rqfhy2NARfGFIfjtaj
-	 08R192YeFd3C/q5rmgRrgkCgTZmZ4bSqosZ0WqM5pYzxmh9VfeV2LyOBuSFNiawT8p
-	 toF68ZUyn0df7DeSXTns0jcT7vyCtd8YmJZ3CQgY=
+	b=n8Nhuk9PWtT/9fujs2tm7zcL0lDK+50fawJvFXqdtgQnCDFITbsWtpzjkMzOtifYH
+	 GBrUUQU+uHDuFU/fcO3UPe57XgC22F9T4jCr5yQMRuVx56LA4n/v1epfxiSiik7+zK
+	 Fezs+0KQvKgYkseBvactNpKddg9eKTjZxOJq2794=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388416AbfAKO14 (ORCPT
+        id S2388428AbfAKO16 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 11 Jan 2019 09:27:56 -0500
-Received: from mail.kernel.org ([198.145.29.99]:46296 "EHLO mail.kernel.org"
+        Fri, 11 Jan 2019 09:27:58 -0500
+Received: from mail.kernel.org ([198.145.29.99]:46340 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388399AbfAKO1w (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Jan 2019 09:27:52 -0500
+        id S2388409AbfAKO1z (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 Jan 2019 09:27:55 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 509002133F;
-        Fri, 11 Jan 2019 14:27:51 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id EB05B2177B;
+        Fri, 11 Jan 2019 14:27:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547216871;
-        bh=+Q1oL2xk9mMqTf0xLa6BZ8wTk8dp5L1ZtL21rb6E9HY=;
+        s=default; t=1547216874;
+        bh=Pp7Ogq7LFy84MAgTdaasxQ7HEBWpIArVGtb1+Gx7NTU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=HGUHWtBxQL++SQVHqJ2PKvTW8SatVKgxDO5vqpOfxrXNto0LqPpmDQu5qH2hHeRES
-         eD3yPl85mNFT5spNGYKbBudIuNhNlVuhdmqAbsHCTYMnI8hbOtvq19tx9D5b8LYufa
-         KBKACLgZh5gV2xF4rNMw/CJFE1OV9Gy1OGp8LTpk=
+        b=cEXhDKON0P5wMGiUgI+qqDHE8Pd7LiogHlptOQWe/ACaV81upuUpqXSuiycWIMcvh
+         hjVOVXMx7uk4s/G7qYy74PrcEa+bLjViuDO0TCVT/5nR+oBL419YoOSwyuZpgeVUIq
+         6Yq++4KYSjKHVE1Wsx88vH1ifiTNGCznwPEedF9Y=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Peter Hutterer <peter.hutterer@who-t.net>,
-        Martin Kepplinger <martin.kepplinger@ginzinger.com>,
-        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        stable@vger.kernel.org, Qian Cai <cai@lca.pw>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 05/63] Input: restore EV_ABS ABS_RESERVED
-Date:   Fri, 11 Jan 2019 15:14:08 +0100
-Message-Id: <20190111131047.112682505@linuxfoundation.org>
+Subject: [PATCH 4.9 06/63] checkstack.pl: fix for aarch64
+Date:   Fri, 11 Jan 2019 15:14:09 +0100
+Message-Id: <20190111131047.229562076@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190111131046.387528003@linuxfoundation.org>
 References: <20190111131046.387528003@linuxfoundation.org>
@@ -68,41 +67,44 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit c201e3808e0e4be9b98d192802085a9f491bd80c ]
+[ Upstream commit f1733a1d3cd32a9492f4cf866be37bb46e10163d ]
 
-ABS_RESERVED was added in d9ca1c990a7 and accidentally removed as part of
-ffe0e7cf290f5c9 when the high-resolution scrolling code was removed.
+There is actually a space after "sp," like this,
 
-Signed-off-by: Peter Hutterer <peter.hutterer@who-t.net>
-Reviewed-by: Martin Kepplinger <martin.kepplinger@ginzinger.com>
-Acked-by: Benjamin Tissoires <benjamin.tissoires@redhat.com>
-Acked-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Signed-off-by: Benjamin Tissoires <benjamin.tissoires@redhat.com>
+    ffff2000080813c8:       a9bb7bfd        stp     x29, x30, [sp, #-80]!
+
+Right now, checkstack.pl isn't able to print anything on aarch64,
+because it won't be able to match the stating objdump line of a function
+due to this missing space.  Hence, it displays every stack as zero-size.
+
+After this patch, checkpatch.pl is able to match the start of a
+function's objdump, and is then able to calculate each function's stack
+correctly.
+
+Link: http://lkml.kernel.org/r/20181207195843.38528-1-cai@lca.pw
+Signed-off-by: Qian Cai <cai@lca.pw>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- include/uapi/linux/input-event-codes.h | 9 +++++++++
- 1 file changed, 9 insertions(+)
+ scripts/checkstack.pl | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/include/uapi/linux/input-event-codes.h b/include/uapi/linux/input-event-codes.h
-index 3af60ee69053..b584868e1b26 100644
---- a/include/uapi/linux/input-event-codes.h
-+++ b/include/uapi/linux/input-event-codes.h
-@@ -739,6 +739,15 @@
- 
- #define ABS_MISC		0x28
- 
-+/*
-+ * 0x2e is reserved and should not be used in input drivers.
-+ * It was used by HID as ABS_MISC+6 and userspace needs to detect if
-+ * the next ABS_* event is correct or is just ABS_MISC + n.
-+ * We define here ABS_RESERVED so userspace can rely on it and detect
-+ * the situation described above.
-+ */
-+#define ABS_RESERVED		0x2e
-+
- #define ABS_MT_SLOT		0x2f	/* MT slot being modified */
- #define ABS_MT_TOUCH_MAJOR	0x30	/* Major axis of touching ellipse */
- #define ABS_MT_TOUCH_MINOR	0x31	/* Minor axis (omit if circular) */
+diff --git a/scripts/checkstack.pl b/scripts/checkstack.pl
+index dd8397894d5c..12a6940741fe 100755
+--- a/scripts/checkstack.pl
++++ b/scripts/checkstack.pl
+@@ -46,8 +46,8 @@ my (@stack, $re, $dre, $x, $xs, $funcre);
+ 	$xs	= "[0-9a-f ]";	# hex character or space
+ 	$funcre = qr/^$x* <(.*)>:$/;
+ 	if ($arch eq 'aarch64') {
+-		#ffffffc0006325cc:       a9bb7bfd        stp     x29, x30, [sp,#-80]!
+-		$re = qr/^.*stp.*sp,\#-([0-9]{1,8})\]\!/o;
++		#ffffffc0006325cc:       a9bb7bfd        stp     x29, x30, [sp, #-80]!
++		$re = qr/^.*stp.*sp, \#-([0-9]{1,8})\]\!/o;
+ 	} elsif ($arch eq 'arm') {
+ 		#c0008ffc:	e24dd064	sub	sp, sp, #100	; 0x64
+ 		$re = qr/.*sub.*sp, sp, #(([0-9]{2}|[3-9])[0-9]{2})/o;
 -- 
 2.19.1
 
