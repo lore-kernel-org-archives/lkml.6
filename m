@@ -2,141 +2,100 @@ Return-Path: <SRS0=uvhX=PT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 101C8C43612
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 09:39:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A6D84C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 09:41:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D5FB92177B
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 09:39:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 732832177B
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 09:41:26 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="Pc8kxKjr"
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="GcCgZl30"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729973AbfAKJjJ (ORCPT
+        id S1730190AbfAKJlZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 11 Jan 2019 04:39:09 -0500
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:35494 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725616AbfAKJjI (ORCPT
+        Fri, 11 Jan 2019 04:41:25 -0500
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:43748 "EHLO
+        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727008AbfAKJlZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Jan 2019 04:39:08 -0500
-Received: by mail-wm1-f66.google.com with SMTP id t200so1700615wmt.0
-        for <linux-kernel@vger.kernel.org>; Fri, 11 Jan 2019 01:39:06 -0800 (PST)
+        Fri, 11 Jan 2019 04:41:25 -0500
+Received: by mail-pl1-f194.google.com with SMTP id gn14so6537309plb.10
+        for <linux-kernel@vger.kernel.org>; Fri, 11 Jan 2019 01:41:24 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=0zsaqiFcpYXcCFsq+FAdMLlkTpsvPBWVOZxTGMUhgoM=;
-        b=Pc8kxKjrXqxpNBROsHpISPINeN6qheusQQhAIklADat1GC2LXVcdnRTq5t9obDZ00V
-         y/UZEhWPDF0j1+8vRi54ONhwN6AyabgK8iifakz/qrL7lFaxJwx6f3H5Ja9fVshsvxCh
-         nwMlUnzI2NT3R0IR/0aGFnhDr3Hg+kvnVfCTA=
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=tbiaA4fJYcgLb1K4vUdUrbau2fblch5OFHfxAA3Jx6Y=;
+        b=GcCgZl30ekMXf9dQ34DPGjltcR8nc2we04mXPbjyfOoyXc2Zl1q1KcEV7bT/GppfwU
+         oCc4ZV+BHU4YBhAy0zRvvT/VxYJL/AL+L96pfD6qrNlhjdXs0JY645s2SMiSobmpUo9W
+         cilKLeB4DmMGU41ItqVFx1uh4Q5NHvHoxKkaE=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=0zsaqiFcpYXcCFsq+FAdMLlkTpsvPBWVOZxTGMUhgoM=;
-        b=Mgz4VoKno8Fm3iqhzMspH0jMsytx39sUlBFe6LIV/MQVe/P80WTrR58cNbu+oZdLNm
-         aerwKvCrj36jspIpxsNHAqciCBcbrN+QvkXKEvhQ3g4l5mL7xw0yXBTSIv2cY7WaEHiH
-         h3GGO+d4e2xvzYDp49qSccWxt3O73kkb673xh5joELa6TRP1htnveJvbglyNteVKHI57
-         58sFJAUD+Q95rToian20MLqdfAxbKmB7xm3x+SQhHVMD21ZlULz0d3wMV5oJv/KLDWU6
-         cPGD6uyP7j5Q7iowY/Gv57lkY2Dn+TM5/gUgMn8Oox3CtfFgKE7yL0NVDkJfBX45mPoj
-         g+aQ==
-X-Gm-Message-State: AJcUukcxAn62wRO+DOTJJHUHs98HQ8x4cFFsLen26nrPVA1gXhoPEwSq
-        58hTOxy9SQfxfVAxQKW132adVQ==
-X-Google-Smtp-Source: ALg8bN67P7vgoMl0PMJxpWcYivyBDHXNTowY5OD5ejJ409LH5XkyZ5FjRtxfFYUblCZ64cvSnHMsgw==
-X-Received: by 2002:a1c:1a8a:: with SMTP id a132mr1595849wma.109.1547199545827;
-        Fri, 11 Jan 2019 01:39:05 -0800 (PST)
-Received: from holly.lan (cpc141214-aztw34-2-0-cust773.18-1.cable.virginm.net. [86.9.19.6])
-        by smtp.gmail.com with ESMTPSA id t5sm12963321wmg.43.2019.01.11.01.39.04
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 11 Jan 2019 01:39:04 -0800 (PST)
-Date:   Fri, 11 Jan 2019 09:39:02 +0000
-From:   Daniel Thompson <daniel.thompson@linaro.org>
-To:     Sumit Garg <sumit.garg@linaro.org>
-Cc:     linux-arm-kernel@lists.infradead.org,
-        "open list:HARDWARE RANDOM NUMBER GENERATOR CORE" 
-        <linux-crypto@vger.kernel.org>, linux-kernel@vger.kernel.org,
-        Jens Wiklander <jens.wiklander@linaro.org>, mpm@selenic.com,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Bhupesh Sharma <bhsharma@redhat.com>, tee-dev@lists.linaro.org
-Subject: Re: [PATCH v2 2/4] tee: optee: add TEE bus device enumeration support
-Message-ID: <20190111093902.hfxb67txjhhlegzu@holly.lan>
-References: <1547123097-16431-1-git-send-email-sumit.garg@linaro.org>
- <1547123097-16431-3-git-send-email-sumit.garg@linaro.org>
- <20190110141856.p3evqyf34py74gkg@holly.lan>
- <CAFA6WYPHmtY4N9ruGLZ70FNeiDCbQE-fs+EP2px-S+GEj2nPTw@mail.gmail.com>
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=tbiaA4fJYcgLb1K4vUdUrbau2fblch5OFHfxAA3Jx6Y=;
+        b=uEzEQIa0ZfOIfEW//CyQ/ZTfXqIuw3Q2zOGMSNXqH8nwhZGdYQE/vrsFMm5+6o3HcL
+         MAIoiH7d1vOF8C83XKZQxgN+7Xv7kIPHF2MDdne26WXcKRTL2PW0ucaBfiZ0WLpKHoea
+         1PTK+ifXS+Bktr62L6f6NlHhgQgIZ+GQmrtrWyjiasPNH4Go2FpWE37hM8JZigIXIsfP
+         dgupwrYwhFuLbWxhnNqEFjyjSWfirIXvBkhUccakMkjLSLMUVb2UfWxTZgAceDQTJW37
+         cuJwnHU7dwAtrpDiQ9LHa6eGu41CVG8HUcwKU+huNaj2t9uF+n7TYqg5mUchJxZXULdq
+         hHYg==
+X-Gm-Message-State: AJcUukdTEy1q1ONmuRjQiw0gzYUSNr7S0apjpSBLJmexc8fZvYouAbqV
+        +Par8fuRttRsaRkmOerpgDKhgQ==
+X-Google-Smtp-Source: ALg8bN4IjpnAOTmlVspkQtv7ADosTvS3hRuvvcSpujqPY0ZxmJpnVeiMCadtsOt0Fk91YxcVy7jl0g==
+X-Received: by 2002:a17:902:bd0a:: with SMTP id p10mr13524931pls.322.1547199684113;
+        Fri, 11 Jan 2019 01:41:24 -0800 (PST)
+Received: from localhost ([122.172.34.203])
+        by smtp.gmail.com with ESMTPSA id 125sm139472770pfx.159.2019.01.11.01.41.22
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 11 Jan 2019 01:41:22 -0800 (PST)
+Date:   Fri, 11 Jan 2019 15:11:20 +0530
+From:   Viresh Kumar <viresh.kumar@linaro.org>
+To:     Krzysztof Kozlowski <krzk@kernel.org>
+Cc:     =?utf-8?B?UGF3ZcWC?= Chmiel <pawel.mikolaj.chmiel@gmail.com>,
+        kgene@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com,
+        linux@armlinux.org.uk, rjw@rjwysocki.net,
+        linux-arm-kernel@lists.infradead.org,
+        "linux-samsung-soc@vger.kernel.org" 
+        <linux-samsung-soc@vger.kernel.org>, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org
+Subject: Re: [PATCH v2 1/4] ARM: dts: s5pv210: Add dmc nodes
+Message-ID: <20190111094120.6dcnspccp6ufxd4y@vireshk-i7>
+References: <20190110205215.22030-1-pawel.mikolaj.chmiel@gmail.com>
+ <20190110205215.22030-2-pawel.mikolaj.chmiel@gmail.com>
+ <CAJKOXPcWOtTh5nDpZuX=NfrcOcQDPUXoFJLc8JtLs6UEY9LL6w@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <CAFA6WYPHmtY4N9ruGLZ70FNeiDCbQE-fs+EP2px-S+GEj2nPTw@mail.gmail.com>
-User-Agent: NeoMutt/20180716
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAJKOXPcWOtTh5nDpZuX=NfrcOcQDPUXoFJLc8JtLs6UEY9LL6w@mail.gmail.com>
+User-Agent: NeoMutt/20180323-120-3dd1ac
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jan 11, 2019 at 12:52:19PM +0530, Sumit Garg wrote:
-> On Thu, 10 Jan 2019 at 19:49, Daniel Thompson
-> <daniel.thompson@linaro.org> wrote:
-> > > +static int get_devices(struct tee_context *ctx, u32 session,
-> > > +                    struct tee_shm *device_uuid, u32 *shm_size)
+On 11-01-19, 09:32, Krzysztof Kozlowski wrote:
+> On Thu, 10 Jan 2019 at 21:53, Paweł Chmiel
+> <pawel.mikolaj.chmiel@gmail.com> wrote:
 > >
-> > Missing const on device_uuid?
+> > This commit adds dmc nodes, which are needed by s5pv210 cpufreq driver
+> > to work.
 > >
-> 
-> I don't think we should have a const for device_uuid here as this is
-> shared memory struct pointer which is dynamically allocated and used
-> to fetch device UUIDs.
-
-Agree. Perhaps device_uuid is misnamed though (part of the reason I
-misread this is that it is singular so I though it was a single UUID
-travelling into the TZ).
-
-> > > +     rc = get_devices(ctx, sess_arg.session, device_shm, &shm_size);
-> > > +     if (rc < 0)
-> > > +             goto out_shm;
-> > > +
-> > > +     device_uuid = tee_shm_get_va(device_shm, 0);
-> > > +     if (IS_ERR(device_uuid)) {
-> > > +             pr_err("tee_shm_get_va failed\n");
-> > > +             rc = PTR_ERR(device_uuid);
-> > > +             goto out_shm;
-> > > +     }
-> > > +
-> > > +     while (idx < shm_size / sizeof(uuid_t)) {
-> >
-> > This is a very uncommon way to write a for loop ;-).
+> > Signed-off-by: Paweł Chmiel <pawel.mikolaj.chmiel@gmail.com>
+> > ---
+> >  arch/arm/boot/dts/s5pv210.dtsi | 12 ++++++++++++
+> >  1 file changed, 12 insertions(+)
 > >
 > 
-> Ok, will add "num_devices" variable.
+> Thanks, applied (actually I applied v1 - I hope there were no changes).
 
-num_devices might add readability but that is not what I meant.
+Would you like to Ack the other patches so that I can apply them ?
 
-The most idiomatic way to write somthing that loops for every valid index
-value is:
-
-	for (i=0; i < limit; i++)
-
-You wrote it like this:
-
-	int idx=0;
-
-	/* lots of code between initializer and first use */
-
-	while (idx < limit) {
-		/* more code */
-		idx++;
-	}
-
-Sure, they are equivalent but the idiomatic form is easier to read.
-
-
-Daniel.
+-- 
+viresh
