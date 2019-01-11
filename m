@@ -8,54 +8,54 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 99E80C43444
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 05:13:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E698C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 05:13:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5E41F217F9
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 05:13:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 135DA2177E
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 05:13:56 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="U+2XdPO+"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YzFAotY+"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730016AbfAKFNs (ORCPT
+        id S1730614AbfAKFNz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 11 Jan 2019 00:13:48 -0500
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:42637 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728831AbfAKFNs (ORCPT
+        Fri, 11 Jan 2019 00:13:55 -0500
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:33348 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728831AbfAKFNy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Jan 2019 00:13:48 -0500
-Received: by mail-pg1-f196.google.com with SMTP id d72so5807802pga.9;
-        Thu, 10 Jan 2019 21:13:47 -0800 (PST)
+        Fri, 11 Jan 2019 00:13:54 -0500
+Received: by mail-pl1-f193.google.com with SMTP id z23so6253277plo.0;
+        Thu, 10 Jan 2019 21:13:54 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=sIr0XR9JtSIXTySKwYaIUFJCPnOMAPJJ3pzvm0xJRbI=;
-        b=U+2XdPO+b0Y5Wq2bgrVPFxop20iY3m6KFjB8cQoC5apiFJca48DoqliwuouseL3L/e
-         eh6IxYxOa85yqcUFI7BCKmI6qiniRhQs4coDnUm1DrT6aq+y0ZGeJojpjfjPTF4p3C3j
-         71eLod8/Ay0jeql+cTR0ld0+eiik2VnZ2Ni+V5FuXw+m2M6V3r1LFrkM/c1IwsPr3Kb6
-         /RV5KgQYyZojMXJCot4Oy09nUdkSs5Lb3MtSaAcPfax6+91pO+YyxiDL8q5JGbAIiBy8
-         5J5Vxglbrhf3xFYUfq5sC+t34E8jd78cEoOkmOMyEFk67vQfNXDtpt5ggBB0z0q1OtS8
-         /8LA==
+        bh=HyITMNdELPclxNoKcR1zVio3u+9JmLHOG25CjPlIULI=;
+        b=YzFAotY+NwCnyRx28zQm2g9r3fmR7pCjWvfroJkraJswxUAdRRZ3wswDAug/7D59rL
+         OcWULBgD5QWfA8kg2RcGMOk5TS5W5AJVPaKtuV20MwIueNXJIuGF9XBCaS9rx1Onb4Lq
+         FYIxRx4oe7IL0rqgK7eAkqukFsispBSCEpJEXtTWIlMipIpMcB2CJ9fFoOVZvf61AqWR
+         LI++l2sYxQL3hRHseTnz33T4U9gutvkdkmFCI3vcd7Im7W8FIJhnN5wkPoGKEXjeuHDr
+         kBLmbgH4mBdsPxXKacs3HRy8u2xHlzPJLM8oQQ/qaud6Q/BL65/zInLq8YApNIs/eJbA
+         ub0g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=sIr0XR9JtSIXTySKwYaIUFJCPnOMAPJJ3pzvm0xJRbI=;
-        b=WX/jHLqQtipAZRYUE4/loSaammMpadTLLWuzbeo9CQw3zV3OAYGrFDI3XrP+qdKjlm
-         7NfkRwjKFe+LUn8050Cr3fuN3q+2DBrCFvK7FzyvPj8V1eUACsRgwEOdQGy+z4skaFRO
-         Hc54mIWYLld3mbHAPvFROXeiOg2YihJulTVkh5LSmae3mCTBBXeYfpbMrmxncLitI2xI
-         h/JC6MMBMu4CTTF/zDHIIlxF0Yp92Rzom+ahY9FNqQ8CnfRoEgdwOEFvGA1WJLa/iwL5
-         COTHLDZbNERqjySbQLqbBjdC5jrZK2kabl0vY6UVmHD8JkhhDzEfBKczPctsSzybCWXN
-         cbyw==
-X-Gm-Message-State: AJcUukeAv10kA3bAnUvcj0hw1Fv+KtLIeChKN1lPPeAvxIBiYHcN6jeE
-        Tam5IFSJTL8WdgIZIEOeEm1fsoHry/42
-X-Google-Smtp-Source: ALg8bN6MrepyiJeI9/hkg0ePCAkRL+WmhJa6GehuKilZH1gz5v9005Y4X/lsU0mx1lt2nZCPdWtAfg==
-X-Received: by 2002:a63:7512:: with SMTP id q18mr11105826pgc.231.1547183626904;
-        Thu, 10 Jan 2019 21:13:46 -0800 (PST)
+        bh=HyITMNdELPclxNoKcR1zVio3u+9JmLHOG25CjPlIULI=;
+        b=SY1ELj5zPzelcdwk+bk/XvExPtFcySgw9PMz4dXphgI4T234UlAIefCbLqfuJ/fKix
+         dNi9w9tqaHzFvPr+bftkn0Jayk2drHYgmiDP05g7fkgxxq6Lsfu0/w1bohiXRFfok4ba
+         zx8c0+8nP2DJa3sXY8i6FSiDn05F9BUmY/lYp8pXmjrB+JLRFVj2AcQ5FH53Bm/Ec2Zt
+         651ZzMpXkyEoeIJnG/7yIJBECtu9ZXq9+9+1yWM0eR5OoZtlWUbh2Z7hE+p5Z8vRXPtQ
+         xtoKgCQ7XKLFz909fbvCpbtP+QBxKL/HyDyEAItvLNrKPZz7BoJnOBIsa1G80q6gHLi8
+         U2Bg==
+X-Gm-Message-State: AJcUukfYj7AL4VdAblexXmXVy+7LXnnFw/ofLJHir0vyKcxbc6dZl8ze
+        ltJeT57EmSQAWthkKZEeEX8MuOYARFpb
+X-Google-Smtp-Source: ALg8bN7Dh/zgZ+YLM8araolSDXBBTDY8kyLtFO6bcLu5ojQxeeEy88HPlwMpDDXIALPqfSiTGOIk3w==
+X-Received: by 2002:a17:902:82c2:: with SMTP id u2mr13234631plz.110.1547183633911;
+        Thu, 10 Jan 2019 21:13:53 -0800 (PST)
 Received: from mylaptop.redhat.com ([209.132.188.80])
-        by smtp.gmail.com with ESMTPSA id q7sm93490471pgp.40.2019.01.10.21.13.39
+        by smtp.gmail.com with ESMTPSA id q7sm93490471pgp.40.2019.01.10.21.13.47
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 10 Jan 2019 21:13:46 -0800 (PST)
+        Thu, 10 Jan 2019 21:13:53 -0800 (PST)
 From:   Pingfan Liu <kernelfans@gmail.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     Pingfan Liu <kernelfans@gmail.com>,
@@ -74,9 +74,9 @@ Cc:     Pingfan Liu <kernelfans@gmail.com>,
         Vlastimil Babka <vbabka@suse.cz>,
         Michal Hocko <mhocko@suse.com>, x86@kernel.org,
         linux-acpi@vger.kernel.org, linux-mm@kvack.org
-Subject: [PATCHv2 4/7] x86/setup: parse acpi to get hotplug info before init_mem_mapping()
-Date:   Fri, 11 Jan 2019 13:12:54 +0800
-Message-Id: <1547183577-20309-5-git-send-email-kernelfans@gmail.com>
+Subject: [PATCHv2 5/7] x86/mm: set allowed range for memblock allocator
+Date:   Fri, 11 Jan 2019 13:12:55 +0800
+Message-Id: <1547183577-20309-6-git-send-email-kernelfans@gmail.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1547183577-20309-1-git-send-email-kernelfans@gmail.com>
 References: <1547183577-20309-1-git-send-email-kernelfans@gmail.com>
@@ -85,14 +85,11 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-At present, memblock bottom-up allocation can help us against staining over
-movable node in very high probability. But if the hotplug info has already
-been parsed, the memblock allocator can step around the movable node by
-itself. This patch pushes the parsing step forward, just ahead of where,
-the memblock allocator can work. About how memblock allocator steps around
-the movable node, referring to the cond check on memblock_is_hotpluggable()
-in __next_mem_range().
-Later in this series, the bottom-up allocation style can be removed on x86_64.
+Due to the incoming divergence of x86_32 and x86_64, there is requirement
+to set the allowed allocating range at the early boot stage.
+This patch also includes minor change to remove redundat cond check, refer
+to memblock_find_in_range_node(), memblock_find_in_range() has already
+protect itself from the case: start > end.
 
 Signed-off-by: Pingfan Liu <kernelfans@gmail.com>
 Cc: Thomas Gleixner <tglx@linutronix.de>
@@ -117,92 +114,72 @@ Cc: x86@kernel.org
 Cc: linux-acpi@vger.kernel.org
 Cc: linux-mm@kvack.org
 ---
- arch/x86/kernel/setup.c | 39 ++++++++++++++++++++++++++++++---------
- include/linux/acpi.h    |  1 +
- 2 files changed, 31 insertions(+), 9 deletions(-)
+ arch/x86/mm/init.c | 24 +++++++++++++++++-------
+ 1 file changed, 17 insertions(+), 7 deletions(-)
 
-diff --git a/arch/x86/kernel/setup.c b/arch/x86/kernel/setup.c
-index a0122cd..9b57e01 100644
---- a/arch/x86/kernel/setup.c
-+++ b/arch/x86/kernel/setup.c
-@@ -804,6 +804,35 @@ dump_kernel_offset(struct notifier_block *self, unsigned long v, void *p)
- 	return 0;
- }
+diff --git a/arch/x86/mm/init.c b/arch/x86/mm/init.c
+index ef99f38..385b9cd 100644
+--- a/arch/x86/mm/init.c
++++ b/arch/x86/mm/init.c
+@@ -76,6 +76,14 @@ static unsigned long min_pfn_mapped;
  
-+static void early_acpi_parse(void)
+ static bool __initdata can_use_brk_pgt = true;
+ 
++static unsigned long min_pfn_allowed;
++static unsigned long max_pfn_allowed;
++void set_alloc_range(unsigned long low, unsigned long high)
 +{
-+	phys_addr_t start, end, orig_start, orig_end;
-+	bool enforcing;
-+
-+	enforcing = memblock_get_current_limit(&orig_start, &orig_end);
-+	/* find a 16MB slot for temporary usage by the following routines. */
-+	start = memblock_find_in_range(ISA_END_ADDRESS,
-+			max_pfn, 1 << 24, 1);
-+	end = start + 1 + (1 << 24);
-+	memblock_set_current_limit(start, end, true);
-+#ifdef CONFIG_BLK_DEV_INITRD
-+	if (get_ramdisk_size())
-+		acpi_table_upgrade(__va(get_ramdisk_image()),
-+			get_ramdisk_size());
-+#endif
-+	/*
-+	 * Parse the ACPI tables for possible boot-time SMP configuration.
-+	 */
-+	acpi_boot_table_init();
-+	early_acpi_boot_init();
-+	initmem_init();
-+	/* check whether memory is returned or not */
-+	start = memblock_find_in_range(start, end, 1<<24, 1);
-+	if (!start)
-+		pr_warn("the above acpi routines change and consume memory\n");
-+	memblock_set_current_limit(orig_start, orig_end, enforcing);
++	min_pfn_allowed = low;
++	max_pfn_allowed = high;
 +}
 +
  /*
-  * Determine if we were loaded by an EFI loader.  If so, then we have also been
-  * passed the efi memmap, systab, etc., so we should use these data structures
-@@ -1129,6 +1158,7 @@ void __init setup_arch(char **cmdline_p)
- 	if (movable_node_is_enabled())
- 		memblock_set_bottom_up(true);
- #endif
-+	early_acpi_parse();
- 	init_mem_mapping();
- 	memblock_set_current_limit(0, get_max_mapped(), false);
+  * Pages returned are already directly mapped.
+  *
+@@ -100,12 +108,10 @@ __ref void *alloc_low_pages(unsigned int num)
+ 	if ((pgt_buf_end + num) > pgt_buf_top || !can_use_brk_pgt) {
+ 		unsigned long ret = 0;
  
-@@ -1173,21 +1203,12 @@ void __init setup_arch(char **cmdline_p)
- 	reserve_initrd();
+-		if (min_pfn_mapped < max_pfn_mapped) {
+-			ret = memblock_find_in_range(
+-					min_pfn_mapped << PAGE_SHIFT,
+-					max_pfn_mapped << PAGE_SHIFT,
+-					PAGE_SIZE * num , PAGE_SIZE);
+-		}
++		ret = memblock_find_in_range(
++			min_pfn_allowed << PAGE_SHIFT,
++			max_pfn_allowed << PAGE_SHIFT,
++			PAGE_SIZE * num, PAGE_SIZE);
+ 		if (ret)
+ 			memblock_reserve(ret, PAGE_SIZE * num);
+ 		else if (can_use_brk_pgt)
+@@ -588,14 +594,17 @@ static void __init memory_map_top_down(unsigned long map_start,
+ 			start = map_start;
+ 		mapped_ram_size += init_range_memory_mapping(start,
+ 							last_start);
++		set_alloc_range(min_pfn_mapped, max_pfn_mapped);
+ 		last_start = start;
+ 		min_pfn_mapped = last_start >> PAGE_SHIFT;
+ 		if (mapped_ram_size >= step_size)
+ 			step_size = get_new_step_size(step_size);
+ 	}
  
+-	if (real_end < map_end)
++	if (real_end < map_end) {
+ 		init_range_memory_mapping(real_end, map_end);
++		set_alloc_range(min_pfn_mapped, max_pfn_mapped);
++	}
+ }
  
--	acpi_table_upgrade((void *)initrd_start, initrd_end - initrd_start);
- 	vsmp_init();
+ /**
+@@ -636,6 +645,7 @@ static void __init memory_map_bottom_up(unsigned long map_start,
+ 		}
  
- 	io_delay_init();
+ 		mapped_ram_size += init_range_memory_mapping(start, next);
++		set_alloc_range(min_pfn_mapped, max_pfn_mapped);
+ 		start = next;
  
- 	early_platform_quirks();
- 
--	/*
--	 * Parse the ACPI tables for possible boot-time SMP configuration.
--	 */
--	acpi_boot_table_init();
--
--	early_acpi_boot_init();
--
--	initmem_init();
- 	dma_contiguous_reserve(max_pfn_mapped << PAGE_SHIFT);
- 
- 	/*
-diff --git a/include/linux/acpi.h b/include/linux/acpi.h
-index 0b6e0b6..4f6b391 100644
---- a/include/linux/acpi.h
-+++ b/include/linux/acpi.h
-@@ -235,6 +235,7 @@ int acpi_mps_check (void);
- int acpi_numa_init (void);
- 
- int acpi_table_init (void);
-+void acpi_tb_terminate(void);
- int acpi_table_parse(char *id, acpi_tbl_table_handler handler);
- int __init acpi_table_parse_entries(char *id, unsigned long table_size,
- 			      int entry_id,
+ 		if (mapped_ram_size >= step_size)
 -- 
 2.7.4
 
