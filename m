@@ -4,50 +4,49 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-10.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B3867C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:33:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C15A9C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:33:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 832E921848
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:33:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 85EA321841
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:33:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547217214;
-	bh=y6WOEca+fnxvesbnqnUwYXB/rytkaO0KcAEe4f2vUj8=;
+	s=default; t=1547217218;
+	bh=yUaub11QHYhPmz5chVvkaZDQ1OVh6Ce+RL12oQWuIMk=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=jT2bgmRUXpGspwNedtIf8UJfD235TWdHMlS7n4y/d/CJo3EN8AX9uUu7Wp2DTtZbI
-	 oFhF+YPNPMiOrc6hBMAivORhM1O76MKOWjtxpCE2/6AdtdN0d964+RoBKIp94iXgs5
-	 m8d3c/e/8o/UCCl+o5DkS0iJWeFnqUlTjcZv02wo=
+	b=2EoUQzN+8JrJ4bY1FldlkplRFhQoHzAhFtaY7KWdj1UUHfsYHb4P9ikgqnJE5ctZi
+	 3nJnUi1QtRaDde7yny5TqmIUZmiI85Ix7Y/WbdR0Mz2Q/Ja1YFrXvOTtvKqE9UeX8b
+	 CiKNRrZuqrbAfbg0d99q4+RgGf7jNg/coFK4i0XY=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389677AbfAKOdd (ORCPT
+        id S2389691AbfAKOdh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 11 Jan 2019 09:33:33 -0500
-Received: from mail.kernel.org ([198.145.29.99]:53602 "EHLO mail.kernel.org"
+        Fri, 11 Jan 2019 09:33:37 -0500
+Received: from mail.kernel.org ([198.145.29.99]:53788 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389641AbfAKOdX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Jan 2019 09:33:23 -0500
+        id S2389641AbfAKOde (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 Jan 2019 09:33:34 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BAD9B2063F;
-        Fri, 11 Jan 2019 14:33:22 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E4A522133F;
+        Fri, 11 Jan 2019 14:33:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547217203;
-        bh=y6WOEca+fnxvesbnqnUwYXB/rytkaO0KcAEe4f2vUj8=;
+        s=default; t=1547217213;
+        bh=yUaub11QHYhPmz5chVvkaZDQ1OVh6Ce+RL12oQWuIMk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=2djv2/xhpbBjuqp5iD5a4eXW/WBV8YI8mrdqXHJAw9h/1EWkhjH0FMXPFW5cAtNQb
-         lm4ILfDfoN01fBlBCtUj0KmT6jDkyXbjTzU/OAZqd7C2CCFwX9jGSdLJ+oXmuBlK6S
-         vqUNo6TsDJRoa/K5JQu5KtAGqHLfancewG/AoVvM=
+        b=jehXyESPsQU6BU9rISossdT2WsMhgj8TLAfQu8jV4NYcU5mq88RrwowPNkvo0XKFd
+         DbKp3M6PAH5CQuXTrcnQV+kKrvQFY4BeWVFQo4ozxbOblsQuuJzaahZNqD25gAGuEk
+         u+UNwBswT6p5ufcBhERJ8AneaowQCfIXmsckFWok=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, "Yavuz, Tuba" <tuba@ece.ufl.edu>,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        Takashi Iwai <tiwai@suse.de>
-Subject: [PATCH 4.14 081/105] ALSA: cs46xx: Potential NULL dereference in probe
-Date:   Fri, 11 Jan 2019 15:14:52 +0100
-Message-Id: <20190111131109.785156783@linuxfoundation.org>
+        stable@vger.kernel.org, Vasily Averin <vvs@virtuozzo.com>,
+        David Teigland <teigland@redhat.com>, stable@kernel.org
+Subject: [PATCH 4.14 084/105] dlm: fixed memory leaks after failed ls_remove_names allocation
+Date:   Fri, 11 Jan 2019 15:14:55 +0100
+Message-Id: <20190111131110.007932844@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190111131102.899065735@linuxfoundation.org>
 References: <20190111131102.899065735@linuxfoundation.org>
@@ -66,34 +65,40 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
+From: Vasily Averin <vvs@virtuozzo.com>
 
-commit 1524f4e47f90b27a3ac84efbdd94c63172246a6f upstream.
+commit b982896cdb6e6a6b89d86dfb39df489d9df51e14 upstream.
 
-The "chip->dsp_spos_instance" can be NULL on some of the ealier error
-paths in snd_cs46xx_create().
+If allocation fails on last elements of array need to free already
+allocated elements.
 
-Reported-by: "Yavuz, Tuba" <tuba@ece.ufl.edu>
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
+v2: just move existing out_rsbtbl label to right place
+
+Fixes 789924ba635f ("dlm: fix race between remove and lookup")
+Cc: stable@kernel.org # 3.6
+
+Signed-off-by: Vasily Averin <vvs@virtuozzo.com>
+Signed-off-by: David Teigland <teigland@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- sound/pci/cs46xx/dsp_spos.c |    3 +++
- 1 file changed, 3 insertions(+)
+ fs/dlm/lockspace.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/sound/pci/cs46xx/dsp_spos.c
-+++ b/sound/pci/cs46xx/dsp_spos.c
-@@ -900,6 +900,9 @@ int cs46xx_dsp_proc_done (struct snd_cs4
- 	struct dsp_spos_instance * ins = chip->dsp_spos_instance;
- 	int i;
- 
-+	if (!ins)
-+		return 0;
-+
- 	snd_info_free_entry(ins->proc_sym_info_entry);
- 	ins->proc_sym_info_entry = NULL;
- 
+--- a/fs/dlm/lockspace.c
++++ b/fs/dlm/lockspace.c
+@@ -680,11 +680,11 @@ static int new_lockspace(const char *nam
+ 	kfree(ls->ls_recover_buf);
+  out_lkbidr:
+ 	idr_destroy(&ls->ls_lkbidr);
++ out_rsbtbl:
+ 	for (i = 0; i < DLM_REMOVE_NAMES_MAX; i++) {
+ 		if (ls->ls_remove_names[i])
+ 			kfree(ls->ls_remove_names[i]);
+ 	}
+- out_rsbtbl:
+ 	vfree(ls->ls_rsbtbl);
+  out_lsfree:
+ 	if (do_unreg)
 
 
