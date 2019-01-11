@@ -7,45 +7,49 @@ X-Spam-Status: No, score=-10.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D437EC43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:40:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C0123C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:40:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A6A93206B6
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:40:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 922EB218AE
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:40:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547217637;
-	bh=+YelnWGAPbmPZloWvCN2VABepBB6/XLTzyo/JoCdxzk=;
+	s=default; t=1547217640;
+	bh=lB2oQXXf2sKeHpznddeLVlKJ53HuKbRSodJHIcazVCI=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=ERZ9/ptS833U6vhLiX/M5rXG2qAKTahCHBCQQ5tOf2Mv/gEnfaCpd/Sd6rQieF+Qt
-	 h9AHasqShizId9AIVStxVqShcGUgyvuqMyPY+jSbrlaABHEA3N8OVFWUdQpiQZkB3Z
-	 t4GyaCAQCBMPvRbxPpiWnpnFQHzwKOz9RQewOEIg=
+	b=Q9SPi0ODroQbPoLUCaZWamKib7Yv/C6lWydpOAgca5cB0NC390RV362NB+J/Aaljp
+	 31Farpw/iDVhu3KnLCuyiqh99/0Pcdzx67G0VizxSk2H9Q42B4EzaTwUrlnoWBxadc
+	 FjtDbvvrkGEpDzBwPLbunSOVpFlfYkKmTweVLB20=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388119AbfAKOkh (ORCPT
+        id S2403892AbfAKOkj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 11 Jan 2019 09:40:37 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33174 "EHLO mail.kernel.org"
+        Fri, 11 Jan 2019 09:40:39 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33218 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2391246AbfAKOke (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Jan 2019 09:40:34 -0500
+        id S2390629AbfAKOkh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 Jan 2019 09:40:37 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 282092133F;
-        Fri, 11 Jan 2019 14:40:33 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B816121841;
+        Fri, 11 Jan 2019 14:40:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547217633;
-        bh=+YelnWGAPbmPZloWvCN2VABepBB6/XLTzyo/JoCdxzk=;
+        s=default; t=1547217636;
+        bh=lB2oQXXf2sKeHpznddeLVlKJ53HuKbRSodJHIcazVCI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=vlbSh5LPr4r03Ueje0oPOEalKQO0zdPTaUxyKJzYV1pEFsgJ5JLxDIEuUxANZvYc5
-         2lbyxB8iIIMMoY+5IivdgECOl06Kry7HS0HKhakvOlQ6zYXAwnLnM/zFjJE2oeDx+F
-         NFWrdXJH3KimEYPHnUaPRgkHi/Pguk+d+8WhdUO4=
+        b=No6Egf/2d1x3zF3oy9D1ESa7wNxkATyrbJ9ngL7gej2j54G3lj1qXMpZZA46eZhaP
+         uoQlQ+FpNl7wd1OQoRIh2QOycoFqDA4zBvs3fu1Cv/7O6dRO+wQt5hXJwSGamWi1EG
+         wU9bOZG5vzWJDqp4ZWOLkD1APOpAS8iEeflfVFeE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Takashi Iwai <tiwai@suse.de>
-Subject: [PATCH 4.19 106/148] ALSA: usb-audio: Check mixer unit descriptors more strictly
-Date:   Fri, 11 Jan 2019 15:14:44 +0100
-Message-Id: <20190111131118.454970179@linuxfoundation.org>
+        stable@vger.kernel.org, Sergey Gorenko <sergeygo@mellanox.com>,
+        Max Gurtovoy <maxg@mellanox.com>,
+        Laurence Oberman <loberman@redhat.com>,
+        Bart Van Assche <bvanassche@acm.org>,
+        Doug Ledford <dledford@redhat.com>
+Subject: [PATCH 4.19 133/148] RDMA/srpt: Fix a use-after-free in the channel release code
+Date:   Fri, 11 Jan 2019 15:15:11 +0100
+Message-Id: <20190111131119.580464530@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190111131114.337122649@linuxfoundation.org>
 References: <20190111131114.337122649@linuxfoundation.org>
@@ -64,81 +68,123 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Takashi Iwai <tiwai@suse.de>
+From: Bart Van Assche <bvanassche@acm.org>
 
-commit 0bfe5e434e6665b3590575ec3c5e4f86a1ce51c9 upstream.
+commit ed041919f0d23c109d52cde8da6ddc211c52d67e upstream.
 
-We've had some sanity checks of the mixer unit descriptors but they
-are too loose and some corner cases are overlooked.  Add more strict
-checks in uac_mixer_unit_get_channels() for avoiding possible OOB
-accesses by malformed descriptors.
+This patch avoids that KASAN sporadically reports the following:
 
-This also changes the semantics of uac_mixer_unit_get_channels()
-slightly.  Now it returns zero for the cases where the descriptor
-lacks of bmControls instead of -EINVAL.  Then the caller side skips
-the mixer creation for such unit while it keeps parsing it.
-This corresponds to the case like Maya44.
+BUG: KASAN: use-after-free in rxe_run_task+0x1e/0x60 [rdma_rxe]
+Read of size 1 at addr ffff88801c50d8f4 by task check/24830
 
+CPU: 4 PID: 24830 Comm: check Not tainted 4.20.0-rc6-dbg+ #3
+Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.10.2-1 04/01/2014
+Call Trace:
+ dump_stack+0x86/0xca
+ print_address_description+0x71/0x239
+ kasan_report.cold.5+0x242/0x301
+ __asan_load1+0x47/0x50
+ rxe_run_task+0x1e/0x60 [rdma_rxe]
+ rxe_post_send+0x4bd/0x8d0 [rdma_rxe]
+ srpt_zerolength_write+0xe1/0x160 [ib_srpt]
+ srpt_close_ch+0x8b/0xe0 [ib_srpt]
+ srpt_set_enabled+0xe7/0x150 [ib_srpt]
+ srpt_tpg_enable_store+0xc0/0x100 [ib_srpt]
+ configfs_write_file+0x157/0x1d0
+ __vfs_write+0xd7/0x3d0
+ vfs_write+0x102/0x290
+ ksys_write+0xab/0x130
+ __x64_sys_write+0x43/0x50
+ do_syscall_64+0x71/0x210
+ entry_SYSCALL_64_after_hwframe+0x49/0xbe
+
+Allocated by task 13856:
+ save_stack+0x43/0xd0
+ kasan_kmalloc+0xc7/0xe0
+ kasan_slab_alloc+0x11/0x20
+ kmem_cache_alloc+0x105/0x320
+ rxe_alloc+0xff/0x1f0 [rdma_rxe]
+ rxe_create_qp+0x9f/0x160 [rdma_rxe]
+ ib_create_qp+0xf5/0x690 [ib_core]
+ rdma_create_qp+0x6a/0x140 [rdma_cm]
+ srpt_cm_req_recv.cold.59+0x1588/0x237b [ib_srpt]
+ srpt_rdma_cm_req_recv.isra.35+0x1d5/0x220 [ib_srpt]
+ srpt_rdma_cm_handler+0x6f/0x100 [ib_srpt]
+ cma_listen_handler+0x59/0x60 [rdma_cm]
+ cma_ib_req_handler+0xd5b/0x2570 [rdma_cm]
+ cm_process_work+0x2e/0x110 [ib_cm]
+ cm_work_handler+0x2aae/0x502b [ib_cm]
+ process_one_work+0x481/0x9e0
+ worker_thread+0x67/0x5b0
+ kthread+0x1cf/0x1f0
+ ret_from_fork+0x24/0x30
+
+Freed by task 3440:
+ save_stack+0x43/0xd0
+ __kasan_slab_free+0x139/0x190
+ kasan_slab_free+0xe/0x10
+ kmem_cache_free+0xbc/0x330
+ rxe_elem_release+0x66/0xe0 [rdma_rxe]
+ rxe_destroy_qp+0x3f/0x50 [rdma_rxe]
+ ib_destroy_qp+0x140/0x360 [ib_core]
+ srpt_release_channel_work+0xdc/0x310 [ib_srpt]
+ process_one_work+0x481/0x9e0
+ worker_thread+0x67/0x5b0
+ kthread+0x1cf/0x1f0
+ ret_from_fork+0x24/0x30
+
+Cc: Sergey Gorenko <sergeygo@mellanox.com>
+Cc: Max Gurtovoy <maxg@mellanox.com>
+Cc: Laurence Oberman <loberman@redhat.com>
 Cc: <stable@vger.kernel.org>
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
+Signed-off-by: Bart Van Assche <bvanassche@acm.org>
+Signed-off-by: Doug Ledford <dledford@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- sound/usb/mixer.c |   15 +++++++++++----
- 1 file changed, 11 insertions(+), 4 deletions(-)
+ drivers/infiniband/ulp/srpt/ib_srpt.c |   18 +++++++++++++-----
+ 1 file changed, 13 insertions(+), 5 deletions(-)
 
---- a/sound/usb/mixer.c
-+++ b/sound/usb/mixer.c
-@@ -753,8 +753,9 @@ static int uac_mixer_unit_get_channels(s
- 				       struct uac_mixer_unit_descriptor *desc)
- {
- 	int mu_channels;
-+	void *c;
- 
--	if (desc->bLength < 11)
-+	if (desc->bLength < sizeof(*desc))
- 		return -EINVAL;
- 	if (!desc->bNrInPins)
- 		return -EINVAL;
-@@ -763,6 +764,8 @@ static int uac_mixer_unit_get_channels(s
- 	case UAC_VERSION_1:
- 	case UAC_VERSION_2:
- 	default:
-+		if (desc->bLength < sizeof(*desc) + desc->bNrInPins + 1)
-+			return 0; /* no bmControls -> skip */
- 		mu_channels = uac_mixer_unit_bNrChannels(desc);
- 		break;
- 	case UAC_VERSION_3:
-@@ -772,7 +775,11 @@ static int uac_mixer_unit_get_channels(s
- 	}
- 
- 	if (!mu_channels)
--		return -EINVAL;
-+		return 0;
-+
-+	c = uac_mixer_unit_bmControls(desc, state->mixer->protocol);
-+	if (c - (void *)desc + (mu_channels - 1) / 8 >= desc->bLength)
-+		return 0; /* no bmControls -> skip */
- 
- 	return mu_channels;
+--- a/drivers/infiniband/ulp/srpt/ib_srpt.c
++++ b/drivers/infiniband/ulp/srpt/ib_srpt.c
+@@ -2009,6 +2009,14 @@ static void srpt_free_ch(struct kref *kr
+ 	kfree_rcu(ch, rcu);
  }
-@@ -944,7 +951,7 @@ static int check_input_term(struct mixer
- 				struct uac_mixer_unit_descriptor *d = p1;
  
- 				err = uac_mixer_unit_get_channels(state, d);
--				if (err < 0)
-+				if (err <= 0)
- 					return err;
++/*
++ * Shut down the SCSI target session, tell the connection manager to
++ * disconnect the associated RDMA channel, transition the QP to the error
++ * state and remove the channel from the channel list. This function is
++ * typically called from inside srpt_zerolength_write_done(). Concurrent
++ * srpt_zerolength_write() calls from inside srpt_close_ch() are possible
++ * as long as the channel is on sport->nexus_list.
++ */
+ static void srpt_release_channel_work(struct work_struct *w)
+ {
+ 	struct srpt_rdma_ch *ch;
+@@ -2036,6 +2044,11 @@ static void srpt_release_channel_work(st
+ 	else
+ 		ib_destroy_cm_id(ch->ib_cm.cm_id);
  
- 				term->channels = err;
-@@ -2118,7 +2125,7 @@ static int parse_audio_mixer_unit(struct
- 		if (err < 0)
- 			continue;
- 		/* no bmControls field (e.g. Maya44) -> ignore */
--		if (desc->bLength <= 10 + input_pins)
-+		if (!num_outs)
- 			continue;
- 		err = check_input_term(state, desc->baSourceID[pin], &iterm);
- 		if (err < 0)
++	sport = ch->sport;
++	mutex_lock(&sport->mutex);
++	list_del_rcu(&ch->list);
++	mutex_unlock(&sport->mutex);
++
+ 	srpt_destroy_ch_ib(ch);
+ 
+ 	srpt_free_ioctx_ring((struct srpt_ioctx **)ch->ioctx_ring,
+@@ -2046,11 +2059,6 @@ static void srpt_release_channel_work(st
+ 			     sdev, ch->rq_size,
+ 			     srp_max_req_size, DMA_FROM_DEVICE);
+ 
+-	sport = ch->sport;
+-	mutex_lock(&sport->mutex);
+-	list_del_rcu(&ch->list);
+-	mutex_unlock(&sport->mutex);
+-
+ 	wake_up(&sport->ch_releaseQ);
+ 
+ 	kref_put(&ch->kref, srpt_free_ch);
 
 
