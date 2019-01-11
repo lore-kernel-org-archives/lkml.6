@@ -4,58 +4,58 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E7C4C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 17:22:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 03668C43612
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 17:23:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7062620665
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 17:22:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C6E3621841
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 17:23:05 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="ltbdWbyD"
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="KRWLRY0F"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388907AbfAKRW6 (ORCPT
+        id S2389245AbfAKRXF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 11 Jan 2019 12:22:58 -0500
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:34848 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388837AbfAKRWB (ORCPT
+        Fri, 11 Jan 2019 12:23:05 -0500
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:36115 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388794AbfAKRWA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Jan 2019 12:22:01 -0500
-Received: by mail-wr1-f65.google.com with SMTP id 96so16039808wrb.2
-        for <linux-kernel@vger.kernel.org>; Fri, 11 Jan 2019 09:22:00 -0800 (PST)
+        Fri, 11 Jan 2019 12:22:00 -0500
+Received: by mail-wm1-f66.google.com with SMTP id p6so3117884wmc.1
+        for <linux-kernel@vger.kernel.org>; Fri, 11 Jan 2019 09:21:59 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=ZCWTPLj1wbSsS1IA9/4GHyR1fEd02J/mQnVEGIGX0jg=;
-        b=ltbdWbyDi0jBWv2fbbnv1XubGMt4cHhglnamBW9t0GJo1n1uv6QcU3yKXXjRILz478
-         xndStFoLPYdJWGYWDzDnw33Ro+p/6OErGCtePhwLvb4PkESMpluH2f5Whrg/I/X/Q28L
-         5a8d2/UjTc7qe3ec/kPkwnBWHklnZgKLm7nNCT16ZkXZEdOsSrIrhXHzdcZV9PHFeSms
-         gB8bKxPJkRldTxu6LKo0rnDH7RZFrEF8kEKQm1n62ggdjeDMizcMVYNb+D5jTw6OLREi
-         LwMe4sqEqQ/ylf36pIosNZP5A+rFBq6gkPimybEzRnArKVwQSRFBX03mgCkpimb0Moin
-         yWvw==
+        bh=xBD70HL2qWO03paRwQIDmAlJlPVaPEi3eVQDU8YVxoo=;
+        b=KRWLRY0F0rlnDv+yevaEtVPd9HPVrX+LTdoU6A+ijvu7ZMOPU4qM7ax6P/rvDVMsGs
+         23AY5Oh/ZZrxMP9xaUabObPNgCxtJlkBfMzFeYZuZGnFmEMgEqd+Ulj3BppJ6QiXl4OH
+         kXrRre/lBt9z/FJYMTecJf/o2+VpnV4B1mAkZVnMhKLhVmUClQ70Z5Qw+VlW1lxzZ/yP
+         c0LX4YhDgojAKNy8JPPer8EbpOXz3LnrCGJoI9eA5MR6z5uJGzj4UG/8OI1ahP1Wdo38
+         Li5O6vdrBaG8A/wPmcqtjscRh/iddp3UxmSfWFMhgIKoLZU3aTrjhs4Es0RMXB38I+4+
+         SrFg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=ZCWTPLj1wbSsS1IA9/4GHyR1fEd02J/mQnVEGIGX0jg=;
-        b=kLwqO/9XsXehS5wj+auxtjf5bKk/l1Gze5O/6E3J93IXRpLSo66/Xp1d/HC8Syu3FU
-         DsuiZr3dAHyuJUgKRInFIUYRayAvgE59mG0xKtogzZmvWWhVNmAfWUVaHtMQulwBZ8LS
-         Hrhgj704PtB/7JD0+WSIQab9MdFemFlMG5rDx+GNRDdb0fmWthC8eVsKqE5qhocbjWJs
-         JCLlWRmos7z1CysM1g/ctVsa75J619f5BheEFFgIfUNgzKXdxYibO4syo2A3NKn0jeNh
-         wR7L6o6SYdyjPHRg/Kr8qIuglfwDkooAwMWTZL8lptGxrblKuGoflfflaDHsissaNb3l
-         pYkg==
-X-Gm-Message-State: AJcUukfbByusLm4tIL9la7xtHWIBTl8f4pqgHKRuxAwuKCaIMau5TFfp
-        /ooxW6B0luvKiht50up9/nn/ig==
-X-Google-Smtp-Source: ALg8bN4CbRi2RRXk862TNhcRJmqfRrGD5w/qHOZK8fNsp+aOcWTFAbyHJd6NmsUQGtkQLZJqaZv/8g==
-X-Received: by 2002:adf:8b83:: with SMTP id o3mr14965839wra.81.1547227320100;
-        Fri, 11 Jan 2019 09:22:00 -0800 (PST)
+        bh=xBD70HL2qWO03paRwQIDmAlJlPVaPEi3eVQDU8YVxoo=;
+        b=j1zUH74b6iYWcioSqElkLYTso4BwRqPfdTnRXoyxJUCawpMCqt7lliBtQKbY7TQEzS
+         NUcY2pn7IUYtnJVWiLd3QDQRV/APXBj6EqoAnIJqPWbVPfm5KmcwLjcwRY08xHR4EsDT
+         12Be4YQX06sRuiVhUIj4sXC1tyU7rENSBzzJAFbA0HlfXIDKgWZULoJZuyaA+DlOjEur
+         sosxq1F/8Izb7EH+2SIwJKIuSU1fy+PaE7HOIOU/hDVF3HDc8AkAVKeHm7gzSAy7Meua
+         vpFkidn1xqn6T77XiGJzg+/jR5hC4Quz2nO17ue3uIE42Q0SPJ1bzwh8WdfJEtW7TfhV
+         0HcA==
+X-Gm-Message-State: AJcUukfQkyq9G//lPAhpLXpcebDPixa3iWNtjTXZeUuXcRsVw0ZDvTsP
+        5cDk05mNXdmXPBL6Y5u/0d/v4A==
+X-Google-Smtp-Source: ALg8bN45wANz3c7rgmiuLR9X1ICgjFWDGdCeblsSLFC0KdscQ3VOCvOjBhNQluWu800clWt35Ce+DA==
+X-Received: by 2002:a1c:7616:: with SMTP id r22mr3084741wmc.35.1547227318742;
+        Fri, 11 Jan 2019 09:21:58 -0800 (PST)
 Received: from debian-brgl.home ([2a01:cb1d:af:5b00:6d6c:8493:1ab5:dad7])
-        by smtp.gmail.com with ESMTPSA id o16sm78534408wrn.11.2019.01.11.09.21.58
+        by smtp.gmail.com with ESMTPSA id o16sm78534408wrn.11.2019.01.11.09.21.57
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 11 Jan 2019 09:21:59 -0800 (PST)
+        Fri, 11 Jan 2019 09:21:58 -0800 (PST)
 From:   Bartosz Golaszewski <brgl@bgdev.pl>
 To:     Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@kernel.org>,
         Daniel Lezcano <daniel.lezcano@linaro.org>,
@@ -65,9 +65,9 @@ To:     Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@kernel.org>,
 Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         devicetree@vger.kernel.org,
         Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: [PATCH 08/17] ARM: davinci: dm644x: WARN() if clk_get() fails
-Date:   Fri, 11 Jan 2019 18:21:25 +0100
-Message-Id: <20190111172134.30147-9-brgl@bgdev.pl>
+Subject: [PATCH 07/17] ARM: davinci: dm365: WARN() if clk_get() fails
+Date:   Fri, 11 Jan 2019 18:21:24 +0100
+Message-Id: <20190111172134.30147-8-brgl@bgdev.pl>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190111172134.30147-1-brgl@bgdev.pl>
 References: <20190111172134.30147-1-brgl@bgdev.pl>
@@ -87,15 +87,15 @@ clk_get() fails.
 
 Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 ---
- arch/arm/mach-davinci/dm644x.c | 1 +
+ arch/arm/mach-davinci/dm365.c | 1 +
  1 file changed, 1 insertion(+)
 
-diff --git a/arch/arm/mach-davinci/dm644x.c b/arch/arm/mach-davinci/dm644x.c
-index 38f92b7d413e..85d69ac1bd70 100644
---- a/arch/arm/mach-davinci/dm644x.c
-+++ b/arch/arm/mach-davinci/dm644x.c
-@@ -681,6 +681,7 @@ void __init dm644x_init_time(void)
- 	dm644x_psc_init(NULL, psc);
+diff --git a/arch/arm/mach-davinci/dm365.c b/arch/arm/mach-davinci/dm365.c
+index 01fb2b0c82de..842b7e706ba1 100644
+--- a/arch/arm/mach-davinci/dm365.c
++++ b/arch/arm/mach-davinci/dm365.c
+@@ -786,6 +786,7 @@ void __init dm365_init_time(void)
+ 	dm365_psc_init(NULL, psc);
  
  	clk = clk_get(NULL, "timer0");
 +	WARN(IS_ERR(clk), "Unable to get the timer clock\n");
