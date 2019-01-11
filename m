@@ -2,151 +2,98 @@ Return-Path: <SRS0=uvhX=PT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 610D0C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 00:15:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C2366C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 00:15:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2B4522173B
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 00:15:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9129F2173B
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 00:15:13 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="VGCoASCn"
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="f/XbIiUg"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730799AbfAKAPD (ORCPT
+        id S1730818AbfAKAPK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 10 Jan 2019 19:15:03 -0500
-Received: from ozlabs.org ([203.11.71.1]:36781 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726745AbfAKAPC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Jan 2019 19:15:02 -0500
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 43bNfV1Jdzz9sLw;
-        Fri, 11 Jan 2019 11:14:56 +1100 (AEDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1547165699;
-        bh=2vfOaSG+Grg+tYIEE3HmcqdJZcSqtdL6VSg5mu+BshQ=;
-        h=Date:From:To:Cc:Subject:From;
-        b=VGCoASCnmajP21CxDvhngyVF3jObG22KzvtKIfRaF9+wcZ842i+BWtZQiIEdyVExi
-         QYQkjayHOQwB8FwV98IOgaff1zqK0ZTaBdJbKW9fYWJwgW0s24Zs2QrN/Acdg2gPBx
-         EHVhmkmi/f92PAkcSgGc2pUtxHm3tWDCb+3ULvVznE5cN8+wNPT7hONDcAgIEjyioX
-         geE4A2BB0U/H/ogg2/Cp3X1vnCKnnMPqRsEK5YByWbyAC+BZtGEHywYtUMFpXpsHeG
-         zyOBChe2MtrDnb3bJZJoopIqVzu4ZZR86cMBTfOj7s8oDOAmgQfmvH2hxJup7gzVC/
-         ctJtJdHOuZFAA==
-Date:   Fri, 11 Jan 2019 11:14:50 +1100
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Daniel Vetter <daniel.vetter@ffwll.ch>,
-        Intel Graphics <intel-gfx@lists.freedesktop.org>,
-        DRI <dri-devel@lists.freedesktop.org>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Sebastian Reichel <sebastian.reichel@collabora.com>,
-        Tomi Valkeinen <tomi.valkeinen@ti.com>,
-        Ville =?UTF-8?B?U3lyasOkbMOk?= <ville.syrjala@linux.intel.com>
-Subject: linux-next: manual merge of the drm-misc tree with Linus' tree
-Message-ID: <20190111111450.2358b6b9@canb.auug.org.au>
+        Thu, 10 Jan 2019 19:15:10 -0500
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:38130 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726745AbfAKAPI (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 10 Jan 2019 19:15:08 -0500
+Received: by mail-pf1-f196.google.com with SMTP id q1so6071646pfi.5
+        for <linux-kernel@vger.kernel.org>; Thu, 10 Jan 2019 16:15:08 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:in-reply-to:references:date:message-id
+         :mime-version;
+        bh=lrRYkQOX8oabBI7evmXJhlETKhOiCG5tJ57nJBVZseI=;
+        b=f/XbIiUg+sKbMwHVCYO1u5rTsudsHeZsgVXAtIuG8QXpvvdyWs1xIDFJIEgnr7cq27
+         vPbOApd2jwWdwhMSW6K53xmOkKq85kwxm5VCzRIRRxAKWM+ZvbHx8G9Uv/YvA7HTxuCK
+         qRrv6fJCITronI4nz8ipRMrXhCi8E1WXqczyqZHC8B5fggZZphKkiMwt2FAauHQ/jYCE
+         n2jrMeljN05Z0/GL3zQfiexo75lPpbvH39zNeAMBDv8bqE2MH0tSAIIKvriy0Rg/lOxN
+         UwQkCj61ACmlHSwWoJ2lnkQeDhXaOq2DHlIsIerp5NDpqa+MhQuC4qLWd1J+Jp6L+zVw
+         HGSw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:in-reply-to:references:date
+         :message-id:mime-version;
+        bh=lrRYkQOX8oabBI7evmXJhlETKhOiCG5tJ57nJBVZseI=;
+        b=evb7KSPetuqMOu2o+PfSTz8S87M5LxHW5JTJdcxEBvboQYUhvByFXXjY4+gbaznQPs
+         RMYYuAOXSrp7qFiK9Vk7FhntrxLG2SlYDx8tpTt5jXynPmS0zD/Trx9SVeFqYN5yodEU
+         vqhsiyTqKyEEYsMkN27ilXloGOTUiER2ocbHLTJapWzVPfieVnA0hXivkxzF3QJhdmPB
+         pG80W6zUGXTgKBRUSH3Aor2l3QiB6qbJsbRwHFqs56WsOzcJo61oZfuk0j37xmvWqy3a
+         dP211vTEGSZLT7cxQmgpxdsEu6MGuA3E5Q0760Z8r/uKiJril3PFg+Mlzpr8W6rl/+I2
+         30sA==
+X-Gm-Message-State: AJcUukcQusBBi7c29Y/XJy7FeH6VlXr4Y1lY+iak09cjQjQKAHltzJCG
+        XWbKTKqLfMlSvtdQIdupkma4dQ==
+X-Google-Smtp-Source: ALg8bN53KR6/M8+Mt+5jqUyjitraKHDVbewmPsYnLuVNvTwlPDbyhBscf+tOeAMebs9YqWXTlpBzZg==
+X-Received: by 2002:a63:9809:: with SMTP id q9mr11371259pgd.109.1547165708097;
+        Thu, 10 Jan 2019 16:15:08 -0800 (PST)
+Received: from localhost (c-71-197-186-152.hsd1.wa.comcast.net. [71.197.186.152])
+        by smtp.googlemail.com with ESMTPSA id i5sm19828838pfg.34.2019.01.10.16.15.07
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 10 Jan 2019 16:15:07 -0800 (PST)
+From:   Kevin Hilman <khilman@baylibre.com>
+To:     Jerome Brunet <jbrunet@baylibre.com>
+Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-amlogic@lists.infradead.org
+Subject: Re: [PATCH] arm64: defconfig: enable modules for amlogic s400 sound card
+In-Reply-To: <6770759de6ed04ecabaa163eb550769d43dfc901.camel@baylibre.com>
+References: <20180828122735.28919-1-jbrunet@baylibre.com> <7hmusmvw6z.fsf@baylibre.com> <6770759de6ed04ecabaa163eb550769d43dfc901.camel@baylibre.com>
+Date:   Thu, 10 Jan 2019 16:15:06 -0800
+Message-ID: <7htvigqcc5.fsf@baylibre.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/hVXfCvL.k0i.sH88Htde6NQ"; protocol="application/pgp-signature"
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/hVXfCvL.k0i.sH88Htde6NQ
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Jerome Brunet <jbrunet@baylibre.com> writes:
 
-Hi all,
+> On Wed, 2018-09-12 at 21:49 -0700, Kevin Hilman wrote:
+>> Jerome Brunet <jbrunet@baylibre.com> writes:
+>> 
+>> > Compile the necessary drivers as modules, including codecs, for the
+>> > s400 sound card.
+>> > 
+>> > Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+>> 
+>> Applied to v4.20/defconfig.
+>
+> Hi Kevin,
+>
+> This patch was supposed to be merged for v4.20 but I'm still not seing it in
+> the 5.0-rc1
+>
+> Could you tell me if there is a problem with it ?
 
-Today's linux-next merge of the drm-misc tree got a conflict in:
+No problem with the patch, just a problem with the maintainer.  Not sure
+how/why this one slipped through the cracks.
 
-  drivers/gpu/drm/omapdrm/omap_encoder.c
+Thanks for the ping, just sent a request to have it merge for v5.0-rc.
 
-between commit:
+Kevin
 
-  3c613a3bddd3 ("drm/omap: fix incorrect union usage")
-
-from Linus' tree and commit:
-
-  13d0add333af ("drm/edid: Pass connector to AVI infoframe functions")
-
-from the drm-misc tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
---=20
-Cheers,
-Stephen Rothwell
-
-diff --cc drivers/gpu/drm/omapdrm/omap_encoder.c
-index 933ebc9f9faa,4566e0a75cb8..000000000000
---- a/drivers/gpu/drm/omapdrm/omap_encoder.c
-+++ b/drivers/gpu/drm/omapdrm/omap_encoder.c
-@@@ -52,37 -52,6 +52,37 @@@ static const struct drm_encoder_funcs o
-  	.destroy =3D omap_encoder_destroy,
-  };
- =20
- +static void omap_encoder_hdmi_mode_set(struct drm_encoder *encoder,
- +				       struct drm_display_mode *adjusted_mode)
- +{
- +	struct drm_device *dev =3D encoder->dev;
- +	struct omap_encoder *omap_encoder =3D to_omap_encoder(encoder);
- +	struct omap_dss_device *dssdev =3D omap_encoder->output;
- +	struct drm_connector *connector;
- +	bool hdmi_mode;
- +
- +	hdmi_mode =3D false;
- +	list_for_each_entry(connector, &dev->mode_config.connector_list, head) {
- +		if (connector->encoder =3D=3D encoder) {
- +			hdmi_mode =3D omap_connector_get_hdmi_mode(connector);
- +			break;
- +		}
- +	}
- +
- +	if (dssdev->ops->hdmi.set_hdmi_mode)
- +		dssdev->ops->hdmi.set_hdmi_mode(dssdev, hdmi_mode);
- +
- +	if (hdmi_mode && dssdev->ops->hdmi.set_infoframe) {
- +		struct hdmi_avi_infoframe avi;
- +		int r;
- +
-- 		r =3D drm_hdmi_avi_infoframe_from_display_mode(&avi, adjusted_mode,
-- 							     false);
-++		r =3D drm_hdmi_avi_infoframe_from_display_mode(&avi, connector,
-++							     adjusted_mode);
- +		if (r =3D=3D 0)
- +			dssdev->ops->hdmi.set_infoframe(dssdev, &avi);
- +	}
- +}
- +
-  static void omap_encoder_mode_set(struct drm_encoder *encoder,
-  				  struct drm_display_mode *mode,
-  				  struct drm_display_mode *adjusted_mode)
-
---Sig_/hVXfCvL.k0i.sH88Htde6NQ
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlw33/oACgkQAVBC80lX
-0GwdPwf+L1iuXJ1KVz9RQrU0643VbuMDGjIidPlbyVDtUQc8vO+CjwK15i5H/qaQ
-MRM2LfTxqbOujRVtXPwq0Y+9ahgwhv/cqobXPAS6U5PIXOTnmdXkD+5kdxC2p8M6
-/tPMM8tssmszR+zAG1GGB9E2Q+sFhZpCrRUXhR39jcYNZbYb/XUerRUe6zdX5YAG
-nWS7Zn47fIKJSRZVxSn6nPKyzWrcT4FSQhUkSrxJphVYzKO8QY+Miye1/Sp9gc49
-XbvsGfzA46hkDc/o5a6k8ndlYwnSA0YxXpal4MVcXUXhXPANmgSLvhrvAsypoBIT
-atynkCUCEjxSZ92MfUAsfWbLfD5Vpw==
-=dFqU
------END PGP SIGNATURE-----
-
---Sig_/hVXfCvL.k0i.sH88Htde6NQ--
