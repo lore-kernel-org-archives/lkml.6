@@ -2,113 +2,126 @@ Return-Path: <SRS0=uvhX=PT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 40AF3C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:58:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B024C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:58:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 12F132133F
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:58:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F04C42133F
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:58:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547218684;
-	bh=vM62qAnFecUmuvbBauVtw/rgXu/Ayyo1Tcq01BHNOqc=;
-	h=Subject:To:Cc:References:From:Date:In-Reply-To:List-ID:From;
-	b=IecnmafFBmnBW+/qVIp6sk3GaEeu1u3USPxmRIVCmM4cCWoJu8URQHT5rOoEx2ztG
-	 6wUx0ZxWhwnXoJ3fbS++RDXPKQN0l8JDiIp+uIbRttpbSNYGfOD413mS7WjMsbaIFj
-	 awlG7YYIxzGyqMf43GbOSFSF/hDay52AO3agAfR4=
+	s=default; t=1547218693;
+	bh=S3YFbdCDHniyksJVtBYDFuy7OqIjkr7BacxKiRDG83E=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=0SFxEWQ6RJQqS5GV4110/q6C4ETVvFNWToRxJI3NSyMjW4BTnY8UfsQ6veBMGNKxD
+	 076dMvHIbX4sx3ox6Nhj8Ty1ftL8wDEtpoKW0W9y/NUZMhu15wm5snFBq5zXG5T/Oq
+	 WBpdUwXnLJxAnwTYLP0vNeB7Isy5QcrEIbNnadag=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391013AbfAKO6D (ORCPT
+        id S2389979AbfAKOer (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 11 Jan 2019 09:58:03 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45294 "EHLO mail.kernel.org"
+        Fri, 11 Jan 2019 09:34:47 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54978 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732297AbfAKO6B (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Jan 2019 09:58:01 -0500
-Received: from [192.168.1.112] (c-24-9-64-241.hsd1.co.comcast.net [24.9.64.241])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        id S2389960AbfAKOem (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 Jan 2019 09:34:42 -0500
+Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4F31A20872;
-        Fri, 11 Jan 2019 14:58:00 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7CEBB204EC;
+        Fri, 11 Jan 2019 14:34:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547218680;
-        bh=vM62qAnFecUmuvbBauVtw/rgXu/Ayyo1Tcq01BHNOqc=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=H+c8H2xbBV2GJbv6W8q0tntOtku01zGG3Us1bbygJhgUYmD0mTG91Litxfekc/pp2
-         h6enL8vWpYlg7d+P34tYkXRHqDCpkIvBp1mlcZR6cvJPx3Q6BrqApm5A1D7CNoorNX
-         FStvnL1VwIjf/XTCFf822Wo7d7CE9+17EOv4Jk7o=
-Subject: Re: [alsa-devel] [PATCH v9 4/4] sound/usb: Use Media Controller API
- to share media resources
-To:     mchehab@kernel.org
-Cc:     Takashi Iwai <tiwai@suse.de>, perex@perex.cz, tiwai@suse.com,
-        hverkuil@xs4all.nl, alsa-devel@alsa-project.org,
-        linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
-        shuah <shuah@kernel.org>
-References: <cover.1545154777.git.shuah@kernel.org>
- <2fb40852e4035b2a58010ce7416448918f12804f.1545154778.git.shuah@kernel.org>
- <s5hefadbp5m.wl-tiwai@suse.de>
-From:   shuah <shuah@kernel.org>
-Message-ID: <5f9588b5-657a-78ee-9614-ed0ef1fc5839@kernel.org>
-Date:   Fri, 11 Jan 2019 07:57:49 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        s=default; t=1547217282;
+        bh=S3YFbdCDHniyksJVtBYDFuy7OqIjkr7BacxKiRDG83E=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=h5Kw78Kg1ikGzwZ3qCd8yAnWaoCCOPcDfrfbiL4TxaXNkcdweX/ft9llVpNXvN/HL
+         /GqQ7ai0M48dfqxXto/jCe/6t81HmLk3/aNOkOyS2wtfMG8rw6bkQcvjiVu2NrrkuZ
+         y/LcB/5cSCPgRn5J4ScvwWlVZ9+HdTRZ3yn03OIA=
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Dan Williams <dan.j.williams@intel.com>,
+        =?UTF-8?q?J=C3=A9r=C3=B4me=20Glisse?= <jglisse@redhat.com>,
+        Christoph Hellwig <hch@lst.de>,
+        Logan Gunthorpe <logang@deltatee.com>,
+        Balbir Singh <bsingharora@gmail.com>,
+        Michal Hocko <mhocko@suse.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: [PATCH 4.14 063/105] mm, devm_memremap_pages: kill mapping "System RAM" support
+Date:   Fri, 11 Jan 2019 15:14:34 +0100
+Message-Id: <20190111131108.270826935@linuxfoundation.org>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20190111131102.899065735@linuxfoundation.org>
+References: <20190111131102.899065735@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
+X-Patchwork-Hint: ignore
 MIME-Version: 1.0
-In-Reply-To: <s5hefadbp5m.wl-tiwai@suse.de>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12/19/18 6:51 AM, Takashi Iwai wrote:
-> On Tue, 18 Dec 2018 18:59:39 +0100,
-> shuah@kernel.org wrote:
->>
->> From: Shuah Khan <shuah@kernel.org>
->>
->> Media Device Allocator API to allows multiple drivers share a media device.
->> This API solves a very common use-case for media devices where one physical
->> device (an USB stick) provides both audio and video. When such media device
->> exposes a standard USB Audio class, a proprietary Video class, two or more
->> independent drivers will share a single physical USB bridge. In such cases,
->> it is necessary to coordinate access to the shared resource.
->>
->> Using this API, drivers can allocate a media device with the shared struct
->> device as the key. Once the media device is allocated by a driver, other
->> drivers can get a reference to it. The media device is released when all
->> the references are released.
->>
->> Change the ALSA driver to use the Media Controller API to share media
->> resources with DVB, and V4L2 drivers on a AU0828 media device.
->>
->> The Media Controller specific initialization is done after sound card is
->> registered. ALSA creates Media interface and entity function graph nodes
->> for Control, Mixer, PCM Playback, and PCM Capture devices.
->>
->> snd_usb_hw_params() will call Media Controller enable source handler
->> interface to request the media resource. If resource request is granted,
->> it will release it from snd_usb_hw_free(). If resource is busy, -EBUSY is
->> returned.
->>
->> Media specific cleanup is done in usb_audio_disconnect().
->>
->> Signed-off-by: Shuah Khan <shuah@kernel.org>
-> 
-> Feel free to take my ack regarding the sound stuff:
->    Reviewed-by: Takashi Iwai <tiwai@suse.de>
-> 
-> 
-> Thanks!
-> 
-> Takashi
-> 
+4.14-stable review patch.  If anyone has any objections, please let me know.
 
-Hi Mauro,
+------------------
 
-Any update on this patch series?
+From: Dan Williams <dan.j.williams@intel.com>
 
-thanks,
--- Shuah
+commit 06489cfbd915ff36c8e36df27f1c2dc60f97ca56 upstream.
+
+Given the fact that devm_memremap_pages() requires a percpu_ref that is
+torn down by devm_memremap_pages_release() the current support for mapping
+RAM is broken.
+
+Support for remapping "System RAM" has been broken since the beginning and
+there is no existing user of this this code path, so just kill the support
+and make it an explicit error.
+
+This cleanup also simplifies a follow-on patch to fix the error path when
+setting a devm release action for devm_memremap_pages_release() fails.
+
+Link: http://lkml.kernel.org/r/154275557997.76910.14689813630968180480.stgit@dwillia2-desk3.amr.corp.intel.com
+Signed-off-by: Dan Williams <dan.j.williams@intel.com>
+Reviewed-by: "Jérôme Glisse" <jglisse@redhat.com>
+Reviewed-by: Christoph Hellwig <hch@lst.de>
+Reviewed-by: Logan Gunthorpe <logang@deltatee.com>
+Cc: Balbir Singh <bsingharora@gmail.com>
+Cc: Michal Hocko <mhocko@suse.com>
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
+---
+ kernel/memremap.c |    9 +++------
+ 1 file changed, 3 insertions(+), 6 deletions(-)
+
+--- a/kernel/memremap.c
++++ b/kernel/memremap.c
+@@ -379,15 +379,12 @@ void *devm_memremap_pages(struct device
+ 	is_ram = region_intersects(align_start, align_size,
+ 		IORESOURCE_SYSTEM_RAM, IORES_DESC_NONE);
+ 
+-	if (is_ram == REGION_MIXED) {
+-		WARN_ONCE(1, "%s attempted on mixed region %pr\n",
+-				__func__, res);
++	if (is_ram != REGION_DISJOINT) {
++		WARN_ONCE(1, "%s attempted on %s region %pr\n", __func__,
++				is_ram == REGION_MIXED ? "mixed" : "ram", res);
+ 		return ERR_PTR(-ENXIO);
+ 	}
+ 
+-	if (is_ram == REGION_INTERSECTS)
+-		return __va(res->start);
+-
+ 	if (!ref)
+ 		return ERR_PTR(-EINVAL);
+ 
+
+
