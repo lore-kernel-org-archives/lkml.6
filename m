@@ -2,101 +2,98 @@ Return-Path: <SRS0=uvhX=PT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A9BFEC43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 15:54:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 07972C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 15:55:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7EF55218A4
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 15:54:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D54C720872
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 15:55:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732980AbfAKPyT (ORCPT
+        id S1733034AbfAKPzG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 11 Jan 2019 10:54:19 -0500
-Received: from mail.bootlin.com ([62.4.15.54]:59189 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730850AbfAKPyS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Jan 2019 10:54:18 -0500
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id C2CF6209BC; Fri, 11 Jan 2019 16:54:16 +0100 (CET)
-Received: from localhost (aaubervilliers-681-1-45-241.w90-88.abo.wanadoo.fr [90.88.163.241])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 95F6B2074D;
-        Fri, 11 Jan 2019 16:54:16 +0100 (CET)
-Date:   Fri, 11 Jan 2019 16:54:16 +0100
-From:   Maxime Ripard <maxime.ripard@bootlin.com>
-To:     Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Eric Anholt <eric@anholt.net>, Sean Paul <sean@poorly.run>,
-        David Airlie <airlied@linux.ie>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Subject: Re: [PATCH] drm: Auto-set allow_fb_modifiers when given modifiers at
- plane init
-Message-ID: <20190111155416.otv563wki5rzhp4u@flea>
-References: <20190104085610.5829-1-paul.kocialkowski@bootlin.com>
- <20190107104916.GJ21184@phenom.ffwll.local>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="35vpbccfsjw7nhln"
-Content-Disposition: inline
-In-Reply-To: <20190107104916.GJ21184@phenom.ffwll.local>
-User-Agent: NeoMutt/20180716
+        Fri, 11 Jan 2019 10:55:06 -0500
+Received: from mail-pf1-f182.google.com ([209.85.210.182]:43165 "EHLO
+        mail-pf1-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730850AbfAKPzG (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 Jan 2019 10:55:06 -0500
+Received: by mail-pf1-f182.google.com with SMTP id w73so7126130pfk.10
+        for <linux-kernel@vger.kernel.org>; Fri, 11 Jan 2019 07:55:06 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=DVNv+L3D5rzXV4sCudk10OQd3dGwGv9if4k9ZxEJnN8=;
+        b=f6LWL7fqjP1gw5+odgJo5q+7uI/EvN5zQX0J95jd2lDevBkHdIpNfvOUW0tPQh9ALA
+         dHyatd68ja7Ljbtgrn/mnXNKoT3DVGTme0MUhiuJmJQCn+pI+5RToMplW/CAVhyy2gOU
+         urzvgO6tLkgSvjbTvhB7953JT2luR2FddN7WluAqo+LjG+56V+Kz6x2SQapEfHkxHQ55
+         8O5JImiFeeEiNEPOW9jh/RSoSCCuNFgFrjkWThSWUSAAD6CM98JC1u98fc+bQHiX0zu/
+         9535qLUBDuN6C/m0emHtoYnjjfZ1vj4vNfid9foPEtgu4HmIv+sf20xmCF9+WmgeRDGr
+         RHfg==
+X-Gm-Message-State: AJcUukcQ9UJ+nwpdG50ZOTD/5lqokfzBJePE87PXXQJAhYpehyNNUdIO
+        nf1ujoLh2z4Wt9iDVrrBKXU=
+X-Google-Smtp-Source: ALg8bN4j1rvXoN6PCmQXnBJdEsN/DatRgCKOCj0nKcr0JGN8AiDnIH/5+W/Tu/hoej3HHmlqPSx9MQ==
+X-Received: by 2002:a62:c21c:: with SMTP id l28mr14935750pfg.74.1547222105603;
+        Fri, 11 Jan 2019 07:55:05 -0800 (PST)
+Received: from ?IPv6:2620:15c:2cd:203:5cdc:422c:7b28:ebb5? ([2620:15c:2cd:203:5cdc:422c:7b28:ebb5])
+        by smtp.gmail.com with ESMTPSA id z9sm211455645pfd.99.2019.01.11.07.55.04
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 11 Jan 2019 07:55:04 -0800 (PST)
+Message-ID: <1547222103.83374.72.camel@acm.org>
+Subject: Re: [PATCH v6 00/16] locking/lockdep: Add support for dynamic keys
+From:   Bart Van Assche <bvanassche@acm.org>
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     mingo@redhat.com, tj@kernel.org, longman@redhat.com,
+        johannes.berg@intel.com, linux-kernel@vger.kernel.org
+Date:   Fri, 11 Jan 2019 07:55:03 -0800
+In-Reply-To: <20190111124835.GP1900@hirez.programming.kicks-ass.net>
+References: <20190109210204.192109-1-bvanassche@acm.org>
+         <20190111124835.GP1900@hirez.programming.kicks-ass.net>
+Content-Type: text/plain; charset="UTF-7"
+X-Mailer: Evolution 3.26.2-1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Fri, 2019-01-11 at 13:48 +-0100, Peter Zijlstra wrote:
++AD4 I spotted this new v6 in my inbox and have rebased to it.
 
---35vpbccfsjw7nhln
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Thanks+ACE
 
-On Mon, Jan 07, 2019 at 11:49:16AM +0100, Daniel Vetter wrote:
-> On Fri, Jan 04, 2019 at 09:56:10AM +0100, Paul Kocialkowski wrote:
-> > When drivers pass non-empty lists of modifiers for initializing their
-> > planes, we can infer that they allow framebuffer modifiers and set the
-> > driver's allow_fb_modifiers mode config element.
-> >=20
-> > In case the allow_fb_modifiers element was not set (some drivers tend
-> > to set them after registering planes), the modifiers will still be
-> > registered but won't be available to userspace unless the flag is set
-> > later. However in that case, the IN_FORMATS blob won't be created.
-> >=20
-> > In order to avoid this case and generally reduce the trouble associated
-> > with the flag, always set allow_fb_modifiers when a non-empty list of
-> > format modifiers is passed at plane init.
-> >=20
-> > Signed-off-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
->=20
-> The automatic primary plane drm_crtc_init() creates doesn't set this, so
-> looks correct in all cases.
->=20
-> Reviewed-by: Daniel Vetter <daniel.vetter@ffwll.ch>
->=20
-> (boolin.com has a bunch of drm-misc committers, so I'll leave pushing to
-> them).
++AD4 On Wed, Jan 09, 2019 at 01:01:48PM -0800, Bart Van Assche wrote:
++AD4 
++AD4 +AD4 The changes compared to v5 are:
++AD4 +AD4 - Modified zap+AF8-class() such that it doesn't try to free a list entry that
++AD4 +AD4   is already being freed.
++AD4 
++AD4 I however have a question on this+ADs this seems wrong. Once a list entry
++AD4 is enqueued it should not be reachable anymore. If we can reach an entry
++AD4 after call+AF8-rcu() happened, we've got a problem.
 
-Applied,
+Apparently I confused you - sorry that I was not more clear. What I meant is
+that I changed a single if test into a loop. The graph lock is held while that
+loop is being executed so the code below is serialized against the code called
+from inside the RCU callback:
 
-Maxime
++AEAAQA -4574,8 +-4563,9 +AEAAQA static void zap+AF8-class(struct pending+AF8-free +ACo-pf, struct lock
++AF8-class +ACo-class)
+                entry +AD0 list+AF8-entries +- i+ADs
+                if (entry-+AD4-class +ACEAPQ class +ACYAJg entry-+AD4-links+AF8-to +ACEAPQ class)
+                        continue+ADs
+-               if (+AF8AXw-test+AF8-and+AF8-set+AF8-bit(i, pf-+AD4-list+AF8-entries+AF8-being+AF8-freed))
++-               if (list+AF8-entry+AF8-being+AF8-freed(i))
+                        continue+ADs
++-               set+AF8-bit(i, pf-+AD4-list+AF8-entries+AF8-being+AF8-freed)+ADs
+                nr+AF8-list+AF8-entries--+ADs
+                list+AF8-del+AF8-rcu(+ACY-entry-+AD4-entry)+ADs
+        +AH0
 
---=20
-Maxime Ripard, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+Please let me know if you need more information.
 
---35vpbccfsjw7nhln
-Content-Type: application/pgp-signature; name="signature.asc"
+Bart.
 
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXDi8KAAKCRDj7w1vZxhR
-xeM8AQDB9O4Fg8A3CxY2GJsmFp1+ISyTd1kgJbLcB7c58IQtxwEAr8Eqeq40Xgzf
-yzjEdWojD0xRb1/8xYstm23q9tYszQ4=
-=HckO
------END PGP SIGNATURE-----
-
---35vpbccfsjw7nhln--
