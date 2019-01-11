@@ -7,49 +7,49 @@ X-Spam-Status: No, score=-10.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 22F90C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:43:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F97FC43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:43:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E9C21206B6
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:43:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 57728206B7
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:43:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547217803;
-	bh=J7MLIe9kx4UhEAnsTbN4LubRtANRoAQSk+fo99/988w=;
+	s=default; t=1547217805;
+	bh=2FKYDrv2RvWzwH1z43V3xN215TqJ5H87Tw6aOTxO3x0=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=lwdbLWqbSLjOVzYQ7NPgjvBgXSVk+FFZpr8v7fhuszcoGp15VnVIb2AlHKTjINEqa
-	 eUEF82mIpF7hyVWZsv1x/y0zlxA0UsGqYbMNgavTkLRgcySkQm3updhfWA/YRp2GMm
-	 hnv4rUGQQZ7avVI3PuFt+aAXdMEZe4gZ9Y5B+Xx4=
+	b=RSDDPkTOTDqVhTRIza5jvQ8954DlQ/Mkr+yuAnbaDtoYA033Erbu+nHYWJT6YyZnN
+	 AzY28DpkxzVa8Mi0vshWrI+zvbzVeIe2KQsaJMME0LgwtIUElG88YzNqAWKpI+2z5U
+	 IlV2igfkRSTvvJAKGOZAkjF3VRytpPO4Pnh8VCRM=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391387AbfAKOnV (ORCPT
+        id S2404361AbfAKOnY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 11 Jan 2019 09:43:21 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36164 "EHLO mail.kernel.org"
+        Fri, 11 Jan 2019 09:43:24 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36216 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2391057AbfAKOnR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Jan 2019 09:43:17 -0500
+        id S2391233AbfAKOnU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 Jan 2019 09:43:20 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2B1642184A;
-        Fri, 11 Jan 2019 14:43:16 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2515E206B6;
+        Fri, 11 Jan 2019 14:43:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547217796;
-        bh=J7MLIe9kx4UhEAnsTbN4LubRtANRoAQSk+fo99/988w=;
+        s=default; t=1547217799;
+        bh=2FKYDrv2RvWzwH1z43V3xN215TqJ5H87Tw6aOTxO3x0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=jW81x+d8mkoxjhOEcmHBdGJPTV+x9k816IPVQ/71jaj05TkLgvoezDgj0MUTgc46Y
-         zmco15uoeaU9tJUcCb0fvkivFtK5C+Ay9VPAUiS5sXU7KNzkmVFfpkbT2tMJV/b21d
-         ApgQZoOszBHEdpFlmFRyAJgohGXykq6MEDmfDiH0=
+        b=bTzHiVhgQ42P8hyDHizrLgWv3gnynchf2cp2RISD61QE10B2fspKUEmFkrZ5BNJma
+         T2GsP5chUQMDQ2X3tZ/IyjuWSIlGU3GpuxBY1SdF5DkmuQDRjHA12J7rImYcOGDJ1J
+         xzeMdAdKG9AGYMQiKApSMLfBbhy0IVBUysqbXZBw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        syzbot+0c1d61e4db7db94102ca@syzkaller.appspotmail.com,
-        Dominique Martinet <dominique.martinet@cea.fr>,
-        Eric Van Hensbergen <ericvh@gmail.com>,
-        Latchesar Ionkov <lucho@ionkov.net>
-Subject: [PATCH 4.20 45/65] 9p/net: put a lower bound on msize
-Date:   Fri, 11 Jan 2019 15:15:31 +0100
-Message-Id: <20190111131102.537703599@linuxfoundation.org>
+        Walker Benjamin <benjamin.walker@intel.com>,
+        Sagi Grimberg <sagi@grimberg.me>,
+        Zhu Yanjun <yanjun.zhu@oracle.com>,
+        Doug Ledford <dledford@redhat.com>
+Subject: [PATCH 4.20 46/65] rxe: fix error completion wr_id and qp_num
+Date:   Fri, 11 Jan 2019 15:15:32 +0100
+Message-Id: <20190111131102.638135073@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190111131055.331350141@linuxfoundation.org>
 References: <20190111131055.331350141@linuxfoundation.org>
@@ -68,81 +68,48 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Dominique Martinet <dominique.martinet@cea.fr>
+From: Sagi Grimberg <sagi@grimberg.me>
 
-commit 574d356b7a02c7e1b01a1d9cba8a26b3c2888f45 upstream.
+commit e48d8ed9c6193502d849b35767fd18e20bbd7ba2 upstream.
 
-If the requested msize is too small (either from command line argument
-or from the server version reply), we won't get any work done.
-If it's *really* too small, nothing will work, and this got caught by
-syzbot recently (on a new kmem_cache_create_usercopy() call)
+Error completions must still contain a valid wr_id and
+qp_num such that the consumer can rely on. Correctly
+fill these fields in receive error completions.
 
-Just set a minimum msize to 4k in both code paths, until someone
-complains they have a use-case for a smaller msize.
-
-We need to check in both mount option and server reply individually
-because the msize for the first version request would be unchecked
-with just a global check on clnt->msize.
-
-Link: http://lkml.kernel.org/r/1541407968-31350-1-git-send-email-asmadeus@codewreck.org
-Reported-by: syzbot+0c1d61e4db7db94102ca@syzkaller.appspotmail.com
-Signed-off-by: Dominique Martinet <dominique.martinet@cea.fr>
-Cc: Eric Van Hensbergen <ericvh@gmail.com>
-Cc: Latchesar Ionkov <lucho@ionkov.net>
+Reported-by: Walker Benjamin <benjamin.walker@intel.com>
 Cc: stable@vger.kernel.org
+Signed-off-by: Sagi Grimberg <sagi@grimberg.me>
+Reviewed-by: Zhu Yanjun <yanjun.zhu@oracle.com>
+Tested-by: Zhu Yanjun <yanjun.zhu@oracle.com>
+Signed-off-by: Doug Ledford <dledford@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- net/9p/client.c |   21 +++++++++++++++++++++
- 1 file changed, 21 insertions(+)
+ drivers/infiniband/sw/rxe/rxe_resp.c |   13 +++++++++----
+ 1 file changed, 9 insertions(+), 4 deletions(-)
 
---- a/net/9p/client.c
-+++ b/net/9p/client.c
-@@ -181,6 +181,12 @@ static int parse_opts(char *opts, struct
- 				ret = r;
- 				continue;
- 			}
-+			if (option < 4096) {
-+				p9_debug(P9_DEBUG_ERROR,
-+					 "msize should be at least 4k\n");
-+				ret = -EINVAL;
-+				continue;
-+			}
- 			clnt->msize = option;
- 			break;
- 		case Opt_trans:
-@@ -983,10 +989,18 @@ static int p9_client_version(struct p9_c
- 	else if (!strncmp(version, "9P2000", 6))
- 		c->proto_version = p9_proto_legacy;
- 	else {
-+		p9_debug(P9_DEBUG_ERROR,
-+			 "server returned an unknown version: %s\n", version);
- 		err = -EREMOTEIO;
- 		goto error;
- 	}
+--- a/drivers/infiniband/sw/rxe/rxe_resp.c
++++ b/drivers/infiniband/sw/rxe/rxe_resp.c
+@@ -844,11 +844,16 @@ static enum resp_states do_complete(stru
  
-+	if (msize < 4096) {
-+		p9_debug(P9_DEBUG_ERROR,
-+			 "server returned a msize < 4096: %d\n", msize);
-+		err = -EREMOTEIO;
-+		goto error;
+ 	memset(&cqe, 0, sizeof(cqe));
+ 
+-	wc->wr_id		= wqe->wr_id;
+-	wc->status		= qp->resp.status;
+-	wc->qp			= &qp->ibqp;
++	if (qp->rcq->is_user) {
++		uwc->status             = qp->resp.status;
++		uwc->qp_num             = qp->ibqp.qp_num;
++		uwc->wr_id              = wqe->wr_id;
++	} else {
++		wc->status              = qp->resp.status;
++		wc->qp                  = &qp->ibqp;
++		wc->wr_id               = wqe->wr_id;
 +	}
- 	if (msize < c->msize)
- 		c->msize = msize;
  
-@@ -1043,6 +1057,13 @@ struct p9_client *p9_client_create(const
- 	if (clnt->msize > clnt->trans_mod->maxsize)
- 		clnt->msize = clnt->trans_mod->maxsize;
- 
-+	if (clnt->msize < 4096) {
-+		p9_debug(P9_DEBUG_ERROR,
-+			 "Please specify a msize of at least 4k\n");
-+		err = -EINVAL;
-+		goto free_client;
-+	}
-+
- 	err = p9_client_version(clnt);
- 	if (err)
- 		goto close_trans;
+-	/* fields after status are not required for errors */
+ 	if (wc->status == IB_WC_SUCCESS) {
+ 		wc->opcode = (pkt->mask & RXE_IMMDT_MASK &&
+ 				pkt->mask & RXE_WRITE_MASK) ?
 
 
