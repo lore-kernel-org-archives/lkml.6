@@ -7,49 +7,47 @@ X-Spam-Status: No, score=-10.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F2936C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:40:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E2D3C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:40:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BB28A2133F
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:40:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D383C2063F
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:40:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547217651;
-	bh=2i4lM4e8z2H+yJ85029ZyjEEqHyXu/7apTdMFflQOrg=;
+	s=default; t=1547217655;
+	bh=LM94Qigtz5LtHH+8d0xXc6hDQf7dFfyG+Hcnku6unOc=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=YdlqasqgnMoQwLw88tRayw95C/Csxb90at/9x6h5LKMw0vSD+pRZbqRMe/xnRTzeJ
-	 aFnGGfnxMMv7SkZ6/dm+Q9OHaTLrRDqWhmVY+mpM7+2/SFni+DYFptojbAw83aePKQ
-	 QSgZ/suFhzJKsuSF1t4mgaBxH5/KbBczKrFlcIAc=
+	b=QGJmCU2CsooMcRv/X8WqQzDDUnioe292Cn6mW3R4EUrKV6/8cpsvwAN4JMK3kFd7o
+	 D5VTKUJadUqjzOfMOT7mhmeLrhYSOUpU66L1063jxn5OGYkaobtQUWapokTCZcPopn
+	 PO/sTvvByTKvhATpLpIR1Y68exwm+b/Lt6xavi6I=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391260AbfAKOku (ORCPT
+        id S2403928AbfAKOky (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 11 Jan 2019 09:40:50 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33410 "EHLO mail.kernel.org"
+        Fri, 11 Jan 2019 09:40:54 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33512 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2403907AbfAKOkq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Jan 2019 09:40:46 -0500
+        id S2391261AbfAKOkw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 Jan 2019 09:40:52 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 47CE82133F;
-        Fri, 11 Jan 2019 14:40:45 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B90162063F;
+        Fri, 11 Jan 2019 14:40:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547217645;
-        bh=2i4lM4e8z2H+yJ85029ZyjEEqHyXu/7apTdMFflQOrg=;
+        s=default; t=1547217651;
+        bh=LM94Qigtz5LtHH+8d0xXc6hDQf7dFfyG+Hcnku6unOc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=NcyBxNoE1d5eQFv+anyjQSa7+6RAel9S2yAzpaC4UtX4YOMqAG2PamfMa0HkwV7yZ
-         C0ZF5lFPo1qc29Ph6lVSvfTJTV/CegBE0EBQW0mPvESYiSX47C+ZTYeIQfyGKAwLKP
-         T+9Dns/vf2FbMqNN5PUjHZ/QdtPCQqTVW51ERP00=
+        b=mct/V6Cx2vJpvabDnBoavHuu0csdPYl0w/4M+EEvErLnysxt2aD+16rJC4m3s65jZ
+         KyXY0RuBM6ViY/NH+mtPY9nH4w5E+TE/OE//WkXT1/ogb6T+m7cusZXPLEMkIP9B4N
+         hqSxyKEAHudngGvOEWpJ6oFXtCm3h5fimYBjR4Ng=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, YueHaibing <yuehaibing@huawei.com>,
-        Daniel Mack <daniel@zonque.org>,
-        Robert Jarzmik <robert.jarzmik@free.fr>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        stable@kernel.org
-Subject: [PATCH 4.19 137/148] video: fbdev: pxafb: Fix "WARNING: invalid free of devm_ allocated data"
-Date:   Fri, 11 Jan 2019 15:15:15 +0100
-Message-Id: <20190111131119.761064331@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Christian Borntraeger <borntraeger@de.ibm.com>,
+        Frank Haverkamp <haver@linux.vnet.ibm.com>
+Subject: [PATCH 4.19 139/148] genwqe: Fix size check
+Date:   Fri, 11 Jan 2019 15:15:17 +0100
+Message-Id: <20190111131119.847409206@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190111131114.337122649@linuxfoundation.org>
 References: <20190111131114.337122649@linuxfoundation.org>
@@ -68,40 +66,65 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: YueHaibing <yuehaibing@huawei.com>
+From: Christian Borntraeger <borntraeger@de.ibm.com>
 
-commit 2607391882fca37463187e7f2a9c76dec286947e upstream.
+commit fdd669684655c07dacbdb0d753fd13833de69a33 upstream.
 
-'info->modes' got allocated with devm_kcalloc in of_get_pxafb_display.
+Calling the test program genwqe_cksum with the default buffer size of
+2MB triggers the following kernel warning on s390:
 
-This gives this error message:
-  ./drivers/video/fbdev/pxafb.c:2238:2-7: WARNING: invalid free of devm_ allocated data
+WARNING: CPU: 30 PID: 9311 at mm/page_alloc.c:3189 __alloc_pages_nodemask+0x45c/0xbe0
+CPU: 30 PID: 9311 Comm: genwqe_cksum Kdump: loaded Not tainted 3.10.0-957.el7.s390x #1
+task: 00000005e5d13980 ti: 00000005e7c6c000 task.ti: 00000005e7c6c000
+Krnl PSW : 0704c00180000000 00000000002780ac (__alloc_pages_nodemask+0x45c/0xbe0)
+           R:0 T:1 IO:1 EX:1 Key:0 M:1 W:0 P:0 AS:3 CC:0 PM:0 EA:3
+Krnl GPRS: 00000000002932b8 0000000000b73d7c 0000000000000010 0000000000000009
+           0000000000000041 00000005e7c6f9b8 0000000000000001 00000000000080d0
+           0000000000000000 0000000000b70500 0000000000000001 0000000000000000
+           0000000000b70528 00000000007682c0 0000000000277df2 00000005e7c6f9a0
+Krnl Code: 000000000027809e: de7195001000	ed	1280(114,%r9),0(%r1)
+	   00000000002780a4: a774fead		brc	7,277dfe
+	  #00000000002780a8: a7f40001		brc	15,2780aa
+	  >00000000002780ac: 92011000		mvi	0(%r1),1
+	   00000000002780b0: a7f4fea7		brc	15,277dfe
+	   00000000002780b4: 9101c6b6		tm	1718(%r12),1
+	   00000000002780b8: a784ff3a		brc	8,277f2c
+	   00000000002780bc: a7f4fe2e		brc	15,277d18
+Call Trace:
+([<0000000000277df2>] __alloc_pages_nodemask+0x1a2/0xbe0)
+ [<000000000013afae>] s390_dma_alloc+0xfe/0x310
+ [<000003ff8065f362>] __genwqe_alloc_consistent+0xfa/0x148 [genwqe_card]
+ [<000003ff80658f7a>] genwqe_mmap+0xca/0x248 [genwqe_card]
+ [<00000000002b2712>] mmap_region+0x4e2/0x778
+ [<00000000002b2c54>] do_mmap+0x2ac/0x3e0
+ [<0000000000292d7e>] vm_mmap_pgoff+0xd6/0x118
+ [<00000000002b081c>] SyS_mmap_pgoff+0xdc/0x268
+ [<00000000002b0a34>] SyS_old_mmap+0x8c/0xb0
+ [<000000000074e518>] sysc_tracego+0x14/0x1e
+ [<000003ffacf87dc6>] 0x3ffacf87dc6
 
-Fixes: c8f96304ec8b4 ("video: fbdev: pxafb: switch to devm_* API")
-Cc: stable@kernel.org [v4.19+]
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
-Reviewed-by: Daniel Mack <daniel@zonque.org>
-Cc: Robert Jarzmik <robert.jarzmik@free.fr>
-Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+turns out the check in __genwqe_alloc_consistent uses "> MAX_ORDER"
+while the mm code uses ">= MAX_ORDER". Fix genwqe.
+
+Cc: stable@vger.kernel.org
+Signed-off-by: Christian Borntraeger <borntraeger@de.ibm.com>
+Signed-off-by: Frank Haverkamp <haver@linux.vnet.ibm.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/video/fbdev/pxafb.c |    4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+ drivers/misc/genwqe/card_utils.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/video/fbdev/pxafb.c
-+++ b/drivers/video/fbdev/pxafb.c
-@@ -2234,10 +2234,8 @@ static struct pxafb_mach_info *of_pxafb_
- 	if (!info)
- 		return ERR_PTR(-ENOMEM);
- 	ret = of_get_pxafb_mode_info(dev, info);
--	if (ret) {
--		kfree(info->modes);
-+	if (ret)
- 		return ERR_PTR(ret);
--	}
+--- a/drivers/misc/genwqe/card_utils.c
++++ b/drivers/misc/genwqe/card_utils.c
+@@ -217,7 +217,7 @@ u32 genwqe_crc32(u8 *buff, size_t len, u
+ void *__genwqe_alloc_consistent(struct genwqe_dev *cd, size_t size,
+ 			       dma_addr_t *dma_handle)
+ {
+-	if (get_order(size) > MAX_ORDER)
++	if (get_order(size) >= MAX_ORDER)
+ 		return NULL;
  
- 	/*
- 	 * On purpose, neither lccrX registers nor video memory size can be
+ 	return dma_zalloc_coherent(&cd->pci_dev->dev, size, dma_handle,
 
 
