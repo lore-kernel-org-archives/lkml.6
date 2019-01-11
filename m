@@ -7,52 +7,47 @@ X-Spam-Status: No, score=-13.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2CD64C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 15:04:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E5CDC43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 15:04:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E7F9221848
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 15:04:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0CC452084C
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 15:04:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547219061;
-	bh=sL27qDBXpdMClx4vlWMvVCPWP+xP0FVw1IYbAL6O5Zc=;
+	s=default; t=1547219067;
+	bh=YBut7Mga1tVvDnCf6R/MxX3r0ivNENhFWLftwXDI5eU=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=1ygZnrjtFA11FAE0mH8696OyypkfiL6fyiWgqA9cWAjWXHU9bCFJXNR2JEDbg7tKq
-	 nkpYepjkYPeLvaLDzE/TfRwmfZIJVtS70LofSbEMv3rjeA44yCgfauJrJg7WRDaZ8n
-	 GGL1OQX5n8y1k9XZ39zOPhnQbU8syYWAE/IfBfDo=
+	b=zQwzQd6MbDyTC0qY08jcE6CFpVN89lxrqZa9wwEygdLyYdgOXubGdzx+1/wViUNO+
+	 +VzKPgGUUIHzm8AXeoWURrPBK/v5sbmYMxnyjqB2Rp8QC5A/h/wRSgfnIU/Q1px850
+	 dLlZKYXeGtHdBXcEXOB4i1w/6ctHA8prT03QJfmQ=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391866AbfAKPET (ORCPT
+        id S2388965AbfAKOac (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 11 Jan 2019 10:04:19 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49892 "EHLO mail.kernel.org"
+        Fri, 11 Jan 2019 09:30:32 -0500
+Received: from mail.kernel.org ([198.145.29.99]:49816 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388975AbfAKOae (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Jan 2019 09:30:34 -0500
+        id S1731202AbfAKOa3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 Jan 2019 09:30:29 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 568CF2063F;
-        Fri, 11 Jan 2019 14:30:33 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 625722133F;
+        Fri, 11 Jan 2019 14:30:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547217034;
-        bh=sL27qDBXpdMClx4vlWMvVCPWP+xP0FVw1IYbAL6O5Zc=;
+        s=default; t=1547217028;
+        bh=YBut7Mga1tVvDnCf6R/MxX3r0ivNENhFWLftwXDI5eU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=v+LPO2IW7D1o1PnBkiJ/KWA6zcLnpSovgHfmV6QJtsEVCWzafvvoygdYvzivOhZTF
-         XCKu7kqUSe5QsL8MUKAf0bRhdnGiTihauphYFRPGYGdgV3oO7k3rLlG4duuw8109P4
-         3ZoetcOKIA3li/TAbVxGRbshWwxw2hH/qvD7Tf+0=
+        b=biDtf2bjCMJhKnwkjw4T/wtGJF36lLQ64Hn11csITiYYz23Jj+KBumRXoeD7NlVM1
+         yp3Gw1BUlm2QwkZBkweNbxLaGRI8A1MgKJ3L2HaGhqmpEWYfhFVO7idw9NRoXAhzLH
+         01ey4/1OxE+dasi2YHAt2OIKngTBt9mwhHvNc4cQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Hans van Kranenburg <hans.van.kranenburg@mendix.com>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Juergen Gross <jgross@suse.com>, bp@alien8.de, hpa@zytor.com,
-        dave.hansen@linux.intel.com, luto@kernel.org, peterz@infradead.org,
-        boris.ostrovsky@oracle.com, bhe@redhat.com, linux-mm@kvack.org,
-        xen-devel@lists.xenproject.org, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 018/105] x86/mm: Fix guard hole handling
-Date:   Fri, 11 Jan 2019 15:13:49 +0100
-Message-Id: <20190111131104.761109114@linuxfoundation.org>
+        stable@vger.kernel.org, Thomas Falcon <tlfalcon@linux.ibm.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.14 016/105] ibmvnic: Fix non-atomic memory allocation in IRQ context
+Date:   Fri, 11 Jan 2019 15:13:47 +0100
+Message-Id: <20190111131104.581030036@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190111131102.899065735@linuxfoundation.org>
 References: <20190111131102.899065735@linuxfoundation.org>
@@ -71,115 +66,66 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 16877a5570e0c5f4270d5b17f9bab427bcae9514 ]
+[ Upstream commit 1d1bbc37f89b0559c9e913682f2489d89cfde6b8 ]
 
-There is a guard hole at the beginning of the kernel address space, also
-used by hypervisors. It occupies 16 PGD entries.
+ibmvnic_reset allocated new reset work item objects in a non-atomic
+context. This can be called from a tasklet, generating the output below.
+Allocate work items with the GFP_ATOMIC flag instead.
 
-This reserved range is not defined explicitely, it is calculated relative
-to other entities: direct mapping and user space ranges.
+BUG: sleeping function called from invalid context at mm/slab.h:421
+in_atomic(): 1, irqs_disabled(): 1, pid: 93, name: kworker/0:2
+INFO: lockdep is turned off.
+irq event stamp: 66049
+hardirqs last  enabled at (66048): [<c000000000122468>] tasklet_action_common.isra.12+0x78/0x1c0
+hardirqs last disabled at (66049): [<c000000000befce8>] _raw_spin_lock_irqsave+0x48/0xf0
+softirqs last  enabled at (66044): [<c000000000a8ac78>] dev_deactivate_queue.constprop.28+0xc8/0x160
+softirqs last disabled at (66045): [<c0000000000306e0>] call_do_softirq+0x14/0x24
+CPU: 0 PID: 93 Comm: kworker/0:2 Kdump: loaded Not tainted 4.20.0-rc6-00001-g1b50a8f03706 #7
+Workqueue: events linkwatch_event
+Call Trace:
+[c0000003fffe7ae0] [c000000000bc83e4] dump_stack+0xe8/0x164 (unreliable)
+[c0000003fffe7b30] [c00000000015ba0c] ___might_sleep+0x2dc/0x320
+[c0000003fffe7bb0] [c000000000391514] kmem_cache_alloc_trace+0x3e4/0x440
+[c0000003fffe7c30] [d000000005b2309c] ibmvnic_reset+0x16c/0x360 [ibmvnic]
+[c0000003fffe7cc0] [d000000005b29834] ibmvnic_tasklet+0x1054/0x2010 [ibmvnic]
+[c0000003fffe7e00] [c0000000001224c8] tasklet_action_common.isra.12+0xd8/0x1c0
+[c0000003fffe7e60] [c000000000bf1238] __do_softirq+0x1a8/0x64c
+[c0000003fffe7f90] [c0000000000306e0] call_do_softirq+0x14/0x24
+[c0000003f3967980] [c00000000001ba50] do_softirq_own_stack+0x60/0xb0
+[c0000003f39679c0] [c0000000001218a8] do_softirq+0xa8/0x100
+[c0000003f39679f0] [c000000000121a74] __local_bh_enable_ip+0x174/0x180
+[c0000003f3967a60] [c000000000bf003c] _raw_spin_unlock_bh+0x5c/0x80
+[c0000003f3967a90] [c000000000a8ac78] dev_deactivate_queue.constprop.28+0xc8/0x160
+[c0000003f3967ad0] [c000000000a8c8b0] dev_deactivate_many+0xd0/0x520
+[c0000003f3967b70] [c000000000a8cd40] dev_deactivate+0x40/0x60
+[c0000003f3967ba0] [c000000000a5e0c4] linkwatch_do_dev+0x74/0xd0
+[c0000003f3967bd0] [c000000000a5e694] __linkwatch_run_queue+0x1a4/0x1f0
+[c0000003f3967c30] [c000000000a5e728] linkwatch_event+0x48/0x60
+[c0000003f3967c50] [c0000000001444e8] process_one_work+0x238/0x710
+[c0000003f3967d20] [c000000000144a48] worker_thread+0x88/0x4e0
+[c0000003f3967db0] [c00000000014e3a8] kthread+0x178/0x1c0
+[c0000003f3967e20] [c00000000000bfd0] ret_from_kernel_thread+0x5c/0x6c
 
-The calculation got broken by recent changes of the kernel memory layout:
-LDT remap range is now mapped before direct mapping and makes the
-calculation invalid.
-
-The breakage leads to crash on Xen dom0 boot[1].
-
-Define the reserved range explicitely. It's part of kernel ABI (hypervisors
-expect it to be stable) and must not depend on changes in the rest of
-kernel memory layout.
-
-[1] https://lists.xenproject.org/archives/html/xen-devel/2018-11/msg03313.html
-
-Fixes: d52888aa2753 ("x86/mm: Move LDT remap out of KASLR region on 5-level paging")
-Reported-by: Hans van Kranenburg <hans.van.kranenburg@mendix.com>
-Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Tested-by: Hans van Kranenburg <hans.van.kranenburg@mendix.com>
-Reviewed-by: Juergen Gross <jgross@suse.com>
-Cc: bp@alien8.de
-Cc: hpa@zytor.com
-Cc: dave.hansen@linux.intel.com
-Cc: luto@kernel.org
-Cc: peterz@infradead.org
-Cc: boris.ostrovsky@oracle.com
-Cc: bhe@redhat.com
-Cc: linux-mm@kvack.org
-Cc: xen-devel@lists.xenproject.org
-Link: https://lkml.kernel.org/r/20181130202328.65359-2-kirill.shutemov@linux.intel.com
+Signed-off-by: Thomas Falcon <tlfalcon@linux.ibm.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/x86/include/asm/pgtable_64_types.h |  5 +++++
- arch/x86/mm/dump_pagetables.c           |  8 ++++----
- arch/x86/xen/mmu_pv.c                   | 11 ++++++-----
- 3 files changed, 15 insertions(+), 9 deletions(-)
+ drivers/net/ethernet/ibm/ibmvnic.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/x86/include/asm/pgtable_64_types.h b/arch/x86/include/asm/pgtable_64_types.h
-index 7764617b8f9c..bf6d2692fc60 100644
---- a/arch/x86/include/asm/pgtable_64_types.h
-+++ b/arch/x86/include/asm/pgtable_64_types.h
-@@ -94,6 +94,11 @@ typedef struct { pteval_t pte; } pte_t;
- # define __VMEMMAP_BASE		_AC(0xffffea0000000000, UL)
- #endif
+diff --git a/drivers/net/ethernet/ibm/ibmvnic.c b/drivers/net/ethernet/ibm/ibmvnic.c
+index 14c53ed5cca6..c914b338691b 100644
+--- a/drivers/net/ethernet/ibm/ibmvnic.c
++++ b/drivers/net/ethernet/ibm/ibmvnic.c
+@@ -1596,7 +1596,7 @@ static void ibmvnic_reset(struct ibmvnic_adapter *adapter,
+ 		}
+ 	}
  
-+#define GUARD_HOLE_PGD_ENTRY	-256UL
-+#define GUARD_HOLE_SIZE		(16UL << PGDIR_SHIFT)
-+#define GUARD_HOLE_BASE_ADDR	(GUARD_HOLE_PGD_ENTRY << PGDIR_SHIFT)
-+#define GUARD_HOLE_END_ADDR	(GUARD_HOLE_BASE_ADDR + GUARD_HOLE_SIZE)
-+
- #define LDT_PGD_ENTRY		-240UL
- #define LDT_BASE_ADDR		(LDT_PGD_ENTRY << PGDIR_SHIFT)
- 
-diff --git a/arch/x86/mm/dump_pagetables.c b/arch/x86/mm/dump_pagetables.c
-index 2a4849e92831..cf403e057f3f 100644
---- a/arch/x86/mm/dump_pagetables.c
-+++ b/arch/x86/mm/dump_pagetables.c
-@@ -465,11 +465,11 @@ static inline bool is_hypervisor_range(int idx)
- {
- #ifdef CONFIG_X86_64
- 	/*
--	 * ffff800000000000 - ffff87ffffffffff is reserved for
--	 * the hypervisor.
-+	 * A hole in the beginning of kernel address space reserved
-+	 * for a hypervisor.
- 	 */
--	return	(idx >= pgd_index(__PAGE_OFFSET) - 16) &&
--		(idx <  pgd_index(__PAGE_OFFSET));
-+	return	(idx >= pgd_index(GUARD_HOLE_BASE_ADDR)) &&
-+		(idx <  pgd_index(GUARD_HOLE_END_ADDR));
- #else
- 	return false;
- #endif
-diff --git a/arch/x86/xen/mmu_pv.c b/arch/x86/xen/mmu_pv.c
-index b33fa127a613..7631e6130d44 100644
---- a/arch/x86/xen/mmu_pv.c
-+++ b/arch/x86/xen/mmu_pv.c
-@@ -614,19 +614,20 @@ static int __xen_pgd_walk(struct mm_struct *mm, pgd_t *pgd,
- 			  unsigned long limit)
- {
- 	int i, nr, flush = 0;
--	unsigned hole_low, hole_high;
-+	unsigned hole_low = 0, hole_high = 0;
- 
- 	/* The limit is the last byte to be touched */
- 	limit--;
- 	BUG_ON(limit >= FIXADDR_TOP);
- 
-+#ifdef CONFIG_X86_64
- 	/*
- 	 * 64-bit has a great big hole in the middle of the address
--	 * space, which contains the Xen mappings.  On 32-bit these
--	 * will end up making a zero-sized hole and so is a no-op.
-+	 * space, which contains the Xen mappings.
- 	 */
--	hole_low = pgd_index(USER_LIMIT);
--	hole_high = pgd_index(PAGE_OFFSET);
-+	hole_low = pgd_index(GUARD_HOLE_BASE_ADDR);
-+	hole_high = pgd_index(GUARD_HOLE_END_ADDR);
-+#endif
- 
- 	nr = pgd_index(limit) + 1;
- 	for (i = 0; i < nr; i++) {
+-	rwi = kzalloc(sizeof(*rwi), GFP_KERNEL);
++	rwi = kzalloc(sizeof(*rwi), GFP_ATOMIC);
+ 	if (!rwi) {
+ 		mutex_unlock(&adapter->rwi_lock);
+ 		ibmvnic_close(netdev);
 -- 
 2.19.1
 
