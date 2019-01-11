@@ -2,153 +2,167 @@ Return-Path: <SRS0=uvhX=PT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 36FF0C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 11:03:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 32A6BC43444
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 11:03:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E69AD2183F
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 11:03:49 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fo52YPgW"
+	by mail.kernel.org (Postfix) with ESMTP id 0E25F2177B
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 11:03:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732041AbfAKLDs (ORCPT
+        id S1730674AbfAKLDy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 11 Jan 2019 06:03:48 -0500
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:33442 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725789AbfAKLDq (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Jan 2019 06:03:46 -0500
-Received: by mail-lj1-f195.google.com with SMTP id v1-v6so12583505ljd.0
-        for <linux-kernel@vger.kernel.org>; Fri, 11 Jan 2019 03:03:42 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-transfer-encoding:content-language;
-        bh=/w5gvclLd1jkuIiTozfSyJ/5AuGznvuoyQdobchRqls=;
-        b=fo52YPgWngnx00UJM6usLj3gPuJ69kNJmsWE0hVaLL19f+kRWvqOYM2kuIJI/WvxH6
-         Vp7Bq96VRWPq8hPgSlzQoFf+uSpsukVLL1LON2QydcbRk5U2jHrhwPJkRuDplxAbX35N
-         ALAlYuu3ht5sxpAambPyR09ogcifS2f/mjtIIXloLy5AfWG546KThoh4FFc7gvGtpuTb
-         HCtkk5KUV9WTXPuZ/d6Ycr0Kw69Q/MBOTzhGyIVR5Xg/Tb0XB72zpzqvdL3LQTerHXno
-         3XvOrkg8M0oKO6rSLkcqjwV0YQXZ4Ur6GIovwY/l2I9IbHhj2Mhpsr2YdHJIimz2odCN
-         1/OQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-transfer-encoding
-         :content-language;
-        bh=/w5gvclLd1jkuIiTozfSyJ/5AuGznvuoyQdobchRqls=;
-        b=jMQQ6ztDeGclzsJpDyf2cUrs3xMfzWreaXeby9I+vOptnIXtmiDQ0Jv2QefJ7n8mYV
-         KfHvyT/MhwkZIJfFFCa3BYsQJ2ShobQyIMBFxh8nVKt0N6lMj0y8L/i4UtJ3XeJJe+gA
-         pxgjCCyEn5X1QaQMFauMY6i34gtgg6ZtuWNm1xC8lJpK2kl4A4oax6Sd24tMqJMO7pS/
-         6jXJ1oUzhD849nrCBydV0vOSgOD8h58EZc8klWKFgSaXwqqTXOzS5I9/HI9J/N+CZZ68
-         EdRMj1N83WMGWVc2b74AIOt5j+e1nSYz+R+md+4P019Uk1EHW8Sr0L7izr4GdsnGBu7N
-         3dvg==
-X-Gm-Message-State: AJcUukcMWvmjoV5VLyoxDfzH2D1QVgtGfYob3bUUIVXc+V8ehrSnXpi2
-        nYS6w2mlvEgcyICw0n6cOuc=
-X-Google-Smtp-Source: ALg8bN4BRAOgX6fnopgXclXi4z+337xjruc6qKWpkvze+clkmj6If7X1D0TCFjpsaCuKaz7JiopqHw==
-X-Received: by 2002:a2e:4218:: with SMTP id p24-v6mr8118016lja.58.1547204621355;
-        Fri, 11 Jan 2019 03:03:41 -0800 (PST)
-Received: from [10.17.182.20] (ll-22.209.223.85.sovam.net.ua. [85.223.209.22])
-        by smtp.gmail.com with ESMTPSA id s17sm8543204lfk.9.2019.01.11.03.03.40
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 11 Jan 2019 03:03:40 -0800 (PST)
-Subject: Re: [PATCH] drm/virtio: drop prime import/export callbacks
-To:     Gerd Hoffmann <kraxel@redhat.com>, dri-devel@lists.freedesktop.org
-Cc:     David Airlie <airlied@linux.ie>,
-        open list <linux-kernel@vger.kernel.org>,
-        "open list:VIRTIO GPU DRIVER" 
-        <virtualization@lists.linux-foundation.org>
-References: <20190110111545.26768-1-kraxel@redhat.com>
-From:   Oleksandr Andrushchenko <andr2000@gmail.com>
-Message-ID: <1465b863-8ea4-9200-3332-11777f537390@gmail.com>
-Date:   Fri, 11 Jan 2019 13:03:39 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
-MIME-Version: 1.0
-In-Reply-To: <20190110111545.26768-1-kraxel@redhat.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+        Fri, 11 Jan 2019 06:03:54 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:33042 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725789AbfAKLDw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 Jan 2019 06:03:52 -0500
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id A2DF824C9D;
+        Fri, 11 Jan 2019 11:03:51 +0000 (UTC)
+Received: from localhost (ovpn-8-28.pek2.redhat.com [10.72.8.28])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 8656B27C57;
+        Fri, 11 Jan 2019 11:03:38 +0000 (UTC)
+From:   Ming Lei <ming.lei@redhat.com>
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, Theodore Ts'o <tytso@mit.edu>,
+        Omar Sandoval <osandov@fb.com>,
+        Sagi Grimberg <sagi@grimberg.me>,
+        Dave Chinner <dchinner@redhat.com>,
+        Kent Overstreet <kent.overstreet@gmail.com>,
+        Mike Snitzer <snitzer@redhat.com>, dm-devel@redhat.com,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel@vger.kernel.org, linux-raid@vger.kernel.org,
+        David Sterba <dsterba@suse.com>, linux-btrfs@vger.kernel.org,
+        "Darrick J . Wong" <darrick.wong@oracle.com>,
+        linux-xfs@vger.kernel.org, Gao Xiang <gaoxiang25@huawei.com>,
+        Christoph Hellwig <hch@lst.de>, linux-ext4@vger.kernel.org,
+        Coly Li <colyli@suse.de>, linux-bcache@vger.kernel.org,
+        Boaz Harrosh <ooo@electrozaur.com>,
+        Bob Peterson <rpeterso@redhat.com>, cluster-devel@redhat.com,
+        Ming Lei <ming.lei@redhat.com>
+Subject: [PATCH V13 08/19] block: use bio_for_each_bvec() to map sg
+Date:   Fri, 11 Jan 2019 19:01:16 +0800
+Message-Id: <20190111110127.21664-9-ming.lei@redhat.com>
+In-Reply-To: <20190111110127.21664-1-ming.lei@redhat.com>
+References: <20190111110127.21664-1-ming.lei@redhat.com>
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.26]); Fri, 11 Jan 2019 11:03:52 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 1/10/19 1:15 PM, Gerd Hoffmann wrote:
-> Also set prime_handle_to_fd and prime_fd_to_handle to NULL,
-> so drm will not advertive DRM_PRIME_CAP_{IMPORT,EXPORT} to
-> userspace.
->
-> Signed-off-by: Gerd Hoffmann <kraxel@redhat.com>
-Reviewed-by: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
-> ---
->   drivers/gpu/drm/virtio/virtgpu_drv.h   |  4 ----
->   drivers/gpu/drm/virtio/virtgpu_drv.c   |  4 ----
->   drivers/gpu/drm/virtio/virtgpu_prime.c | 14 --------------
->   3 files changed, 22 deletions(-)
->
-> diff --git a/drivers/gpu/drm/virtio/virtgpu_drv.h b/drivers/gpu/drm/virtio/virtgpu_drv.h
-> index cf896d8793..4f2f3c43a4 100644
-> --- a/drivers/gpu/drm/virtio/virtgpu_drv.h
-> +++ b/drivers/gpu/drm/virtio/virtgpu_drv.h
-> @@ -354,10 +354,6 @@ int virtio_gpu_object_wait(struct virtio_gpu_object *bo, bool no_wait);
->   /* virtgpu_prime.c */
->   int virtgpu_gem_prime_pin(struct drm_gem_object *obj);
->   void virtgpu_gem_prime_unpin(struct drm_gem_object *obj);
-> -struct sg_table *virtgpu_gem_prime_get_sg_table(struct drm_gem_object *obj);
-> -struct drm_gem_object *virtgpu_gem_prime_import_sg_table(
-> -	struct drm_device *dev, struct dma_buf_attachment *attach,
-> -	struct sg_table *sgt);
->   void *virtgpu_gem_prime_vmap(struct drm_gem_object *obj);
->   void virtgpu_gem_prime_vunmap(struct drm_gem_object *obj, void *vaddr);
->   int virtgpu_gem_prime_mmap(struct drm_gem_object *obj,
-> diff --git a/drivers/gpu/drm/virtio/virtgpu_drv.c b/drivers/gpu/drm/virtio/virtgpu_drv.c
-> index af92964b68..b996ac1d4f 100644
-> --- a/drivers/gpu/drm/virtio/virtgpu_drv.c
-> +++ b/drivers/gpu/drm/virtio/virtgpu_drv.c
-> @@ -205,14 +205,10 @@ static struct drm_driver driver = {
->   #if defined(CONFIG_DEBUG_FS)
->   	.debugfs_init = virtio_gpu_debugfs_init,
->   #endif
-> -	.prime_handle_to_fd = drm_gem_prime_handle_to_fd,
-> -	.prime_fd_to_handle = drm_gem_prime_fd_to_handle,
->   	.gem_prime_export = drm_gem_prime_export,
->   	.gem_prime_import = drm_gem_prime_import,
->   	.gem_prime_pin = virtgpu_gem_prime_pin,
->   	.gem_prime_unpin = virtgpu_gem_prime_unpin,
-> -	.gem_prime_get_sg_table = virtgpu_gem_prime_get_sg_table,
-> -	.gem_prime_import_sg_table = virtgpu_gem_prime_import_sg_table,
->   	.gem_prime_vmap = virtgpu_gem_prime_vmap,
->   	.gem_prime_vunmap = virtgpu_gem_prime_vunmap,
->   	.gem_prime_mmap = virtgpu_gem_prime_mmap,
-> diff --git a/drivers/gpu/drm/virtio/virtgpu_prime.c b/drivers/gpu/drm/virtio/virtgpu_prime.c
-> index 86ce0ae93f..c59ec34c80 100644
-> --- a/drivers/gpu/drm/virtio/virtgpu_prime.c
-> +++ b/drivers/gpu/drm/virtio/virtgpu_prime.c
-> @@ -39,20 +39,6 @@ void virtgpu_gem_prime_unpin(struct drm_gem_object *obj)
->   	WARN_ONCE(1, "not implemented");
->   }
->   
-> -struct sg_table *virtgpu_gem_prime_get_sg_table(struct drm_gem_object *obj)
-> -{
-> -	WARN_ONCE(1, "not implemented");
-> -	return ERR_PTR(-ENODEV);
-> -}
-> -
-> -struct drm_gem_object *virtgpu_gem_prime_import_sg_table(
-> -	struct drm_device *dev, struct dma_buf_attachment *attach,
-> -	struct sg_table *table)
-> -{
-> -	WARN_ONCE(1, "not implemented");
-> -	return ERR_PTR(-ENODEV);
-> -}
-> -
->   void *virtgpu_gem_prime_vmap(struct drm_gem_object *obj)
->   {
->   	struct virtio_gpu_object *bo = gem_to_virtio_gpu_obj(obj);
+It is more efficient to use bio_for_each_bvec() to map sg, meantime
+we have to consider splitting multipage bvec as done in blk_bio_segment_split().
+
+Reviewed-by: Omar Sandoval <osandov@fb.com>
+Reviewed-by: Christoph Hellwig <hch@lst.de>
+Signed-off-by: Ming Lei <ming.lei@redhat.com>
+---
+ block/blk-merge.c | 70 +++++++++++++++++++++++++++++++++++++++----------------
+ 1 file changed, 50 insertions(+), 20 deletions(-)
+
+diff --git a/block/blk-merge.c b/block/blk-merge.c
+index abe1c89c1253..bf736d2b3710 100644
+--- a/block/blk-merge.c
++++ b/block/blk-merge.c
+@@ -460,6 +460,54 @@ static int blk_phys_contig_segment(struct request_queue *q, struct bio *bio,
+ 	return biovec_phys_mergeable(q, &end_bv, &nxt_bv);
+ }
+ 
++static struct scatterlist *blk_next_sg(struct scatterlist **sg,
++		struct scatterlist *sglist)
++{
++	if (!*sg)
++		return sglist;
++
++	/*
++	 * If the driver previously mapped a shorter list, we could see a
++	 * termination bit prematurely unless it fully inits the sg table
++	 * on each mapping. We KNOW that there must be more entries here
++	 * or the driver would be buggy, so force clear the termination bit
++	 * to avoid doing a full sg_init_table() in drivers for each command.
++	 */
++	sg_unmark_end(*sg);
++	return sg_next(*sg);
++}
++
++static unsigned blk_bvec_map_sg(struct request_queue *q,
++		struct bio_vec *bvec, struct scatterlist *sglist,
++		struct scatterlist **sg)
++{
++	unsigned nbytes = bvec->bv_len;
++	unsigned nsegs = 0, total = 0, offset = 0;
++
++	while (nbytes > 0) {
++		unsigned seg_size;
++		struct page *pg;
++		unsigned idx;
++
++		*sg = blk_next_sg(sg, sglist);
++
++		seg_size = get_max_segment_size(q, bvec->bv_offset + total);
++		seg_size = min(nbytes, seg_size);
++
++		offset = (total + bvec->bv_offset) % PAGE_SIZE;
++		idx = (total + bvec->bv_offset) / PAGE_SIZE;
++		pg = nth_page(bvec->bv_page, idx);
++
++		sg_set_page(*sg, pg, seg_size, offset);
++
++		total += seg_size;
++		nbytes -= seg_size;
++		nsegs++;
++	}
++
++	return nsegs;
++}
++
+ static inline void
+ __blk_segment_map_sg(struct request_queue *q, struct bio_vec *bvec,
+ 		     struct scatterlist *sglist, struct bio_vec *bvprv,
+@@ -477,25 +525,7 @@ __blk_segment_map_sg(struct request_queue *q, struct bio_vec *bvec,
+ 		(*sg)->length += nbytes;
+ 	} else {
+ new_segment:
+-		if (!*sg)
+-			*sg = sglist;
+-		else {
+-			/*
+-			 * If the driver previously mapped a shorter
+-			 * list, we could see a termination bit
+-			 * prematurely unless it fully inits the sg
+-			 * table on each mapping. We KNOW that there
+-			 * must be more entries here or the driver
+-			 * would be buggy, so force clear the
+-			 * termination bit to avoid doing a full
+-			 * sg_init_table() in drivers for each command.
+-			 */
+-			sg_unmark_end(*sg);
+-			*sg = sg_next(*sg);
+-		}
+-
+-		sg_set_page(*sg, bvec->bv_page, nbytes, bvec->bv_offset);
+-		(*nsegs)++;
++		(*nsegs) += blk_bvec_map_sg(q, bvec, sglist, sg);
+ 	}
+ 	*bvprv = *bvec;
+ }
+@@ -517,7 +547,7 @@ static int __blk_bios_map_sg(struct request_queue *q, struct bio *bio,
+ 	int nsegs = 0;
+ 
+ 	for_each_bio(bio)
+-		bio_for_each_segment(bvec, bio, iter)
++		bio_for_each_bvec(bvec, bio, iter)
+ 			__blk_segment_map_sg(q, &bvec, sglist, &bvprv, sg,
+ 					     &nsegs);
+ 
+-- 
+2.9.5
 
