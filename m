@@ -2,99 +2,105 @@ Return-Path: <SRS0=uvhX=PT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-10.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F92EC43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:50:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B7BE3C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:50:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EA991206B6
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:50:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7FDD72063F
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:50:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547218248;
-	bh=GV/EfVMz+OLbZVHH+e5T7afCCfG0tjSoTIZZK0r4pXs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=mh69St8C/tkBcjCgtySYwkcrKEfkfrqXI7ak9wb+YDofpzGnxrTccImOSt7sZOWP/
-	 VTxddQaoVASlIU5FWjIV9QlL+XSyJ7DlHPAbKgUKQSS9Eqnq8vb37Bygt1gTEARZDk
-	 oNKSh+UEZmYzsLrSfmcGI8vvCVpTKCV0DfOYn4lg=
+	s=default; t=1547218251;
+	bh=ubcLXkBXxYTs9DUGIx9p4DZc9jBZnLU6qqa6jdzZMT4=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=X2MVALEUkEFbYNkdd0jLtMoiAHQQGPlQajX7Yp3jH9ZGYtX81XsuHGizAMT8aODXe
+	 T75oR9I3XPnHmUs/rwpA7R6Y6B2y2KEZ4sGUQQBiCtjR8UrIvrlqorGdafaZo7p1oF
+	 TJSKmgOKSgbShA5w+W9pgr+HD0dJ0V84B6rc4kCw=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391648AbfAKOur (ORCPT
+        id S1732411AbfAKOkC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 11 Jan 2019 09:50:47 -0500
-Received: from mail-oi1-f193.google.com ([209.85.167.193]:41400 "EHLO
-        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2391149AbfAKOkD (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Jan 2019 09:40:03 -0500
-Received: by mail-oi1-f193.google.com with SMTP id j21so12337323oii.8;
-        Fri, 11 Jan 2019 06:40:03 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=5AgKfumJTmCJZDmWpituxPz/5EgWlc5vUnvJmAPLvks=;
-        b=d9m71Ir50nB0gQA/89GuGD0kZyKm7ehJDsISZR2uYorsdC/TvAf+WZ56L4W/2Uhd3J
-         Acqs9LgQ8F5ztZzf0nnsv61r80bKN246CBQb6z94IFG8b564GsROpczKfT8r7Gjs/D5X
-         Y4sxdBgfw6RoxHW6ZTzhQKZPQ+UZPG5mPBG99NMLnoTzM2bBPXQWZyENJ5ZFom9u9sRs
-         4iIwWF3x4ik//WFKw76xUGtr8wL9XcEMtMlvjm/sPFlFdJnTI0xefwiSYYBkiO5PbOcV
-         n7YTNHUoKvkXhUsKgEXbvci37STVebX2cBOvt2fJMQcCBcJwl/k+MRL2RQVabfGxZRme
-         2x2g==
-X-Gm-Message-State: AJcUukfQZWUojMZLWfWt171UhtoaUw8NINAL/U+Yrtaaq5lukzS7fVub
-        Ox/6lzDnesKXQRUUcJ7v3bbxAQU=
-X-Google-Smtp-Source: ALg8bN4bJFgaKoQ7VYgBSgmYkRY3W7YKzzvZdns3BLB2bWN6DX1G1CMUvo4gxJZJ3WjHk8MKSlD0Tg==
-X-Received: by 2002:aca:5205:: with SMTP id g5mr9644565oib.149.1547217602122;
-        Fri, 11 Jan 2019 06:40:02 -0800 (PST)
-Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id k130sm36530903oia.47.2019.01.11.06.40.01
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 11 Jan 2019 06:40:01 -0800 (PST)
-Date:   Fri, 11 Jan 2019 08:40:01 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Loys Ollivier <lollivier@baylibre.com>
-Cc:     devicetree@vger.kernel.org, Johan Hovold <johan@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        linux-kernel@vger.kernel.org, Kevin Hilman <khilman@baylibre.com>,
-        linux-amlogic@lists.infradead.org
-Subject: Re: [PATCH 1/4] dt-bindings: Add vendor prefix for "GlobalTop
- Technology, Inc."
-Message-ID: <20190111144001.GA28255@bogus>
-References: <1545994235-8309-1-git-send-email-lollivier@baylibre.com>
- <1545994235-8309-2-git-send-email-lollivier@baylibre.com>
+        Fri, 11 Jan 2019 09:40:02 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60762 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2403838AbfAKOjz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 Jan 2019 09:39:55 -0500
+Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id E64DA2063F;
+        Fri, 11 Jan 2019 14:39:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1547217594;
+        bh=ubcLXkBXxYTs9DUGIx9p4DZc9jBZnLU6qqa6jdzZMT4=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=SZ3JnjHKnRKDIrHJm75gJrBxggMVH59Ns3r8be0jybYNlLu0dFngpq4fLZSDuEp9e
+         TPPR2DlAVSsvrs+pFGY3SbJ9BUITNyoXtHeiDBZjrJGkXVg0CGD5kDlvxl28HLcdZ6
+         HhcYICAelmmh5L0bJwvxkvmAYywZm0ZKQtWkQd4U=
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Priit Laes <plaes@plaes.org>,
+        =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>,
+        Larry Finger <Larry.Finger@lwfinger.net>,
+        Kalle Valo <kvalo@codeaurora.org>
+Subject: [PATCH 4.19 120/148] b43: Fix error in cordic routine
+Date:   Fri, 11 Jan 2019 15:14:58 +0100
+Message-Id: <20190111131119.049505468@linuxfoundation.org>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20190111131114.337122649@linuxfoundation.org>
+References: <20190111131114.337122649@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
+X-Patchwork-Hint: ignore
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1545994235-8309-2-git-send-email-lollivier@baylibre.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Dec 28, 2018 at 11:50:32AM +0100, Loys Ollivier wrote:
-> Add globaltop vendor definition.
-> 
-> Signed-off-by: Loys Ollivier <lollivier@baylibre.com>
-> ---
->  Documentation/devicetree/bindings/vendor-prefixes.txt | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/vendor-prefixes.txt b/Documentation/devicetree/bindings/vendor-prefixes.txt
-> index 4b1a2a8fcc16..a9214767afa8 100644
-> --- a/Documentation/devicetree/bindings/vendor-prefixes.txt
-> +++ b/Documentation/devicetree/bindings/vendor-prefixes.txt
-> @@ -153,6 +153,7 @@ goodix	Shenzhen Huiding Technology Co., Ltd.
->  google	Google, Inc.
->  grinn	Grinn
->  grmn	Garmin Limited
-> +globaltop	GlobalTop Technology, Inc.
+4.19-stable review patch.  If anyone has any objections, please let me know.
 
-Alphabetical order please.
+------------------
 
->  gumstix	Gumstix, Inc.
->  gw	Gateworks Corporation
->  hannstar	HannStar Display Corporation
-> -- 
-> 2.7.4
-> 
+From: Larry Finger <Larry.Finger@lwfinger.net>
+
+commit 8ea3819c0bbef57a51d8abe579e211033e861677 upstream.
+
+The cordic routine for calculating sines and cosines that was added in
+commit 6f98e62a9f1b ("b43: update cordic code to match current specs")
+contains an error whereby a quantity declared u32 can in fact go negative.
+
+This problem was detected by Priit Laes who is switching b43 to use the
+routine in the library functions of the kernel.
+
+Fixes: 986504540306 ("b43: make cordic common (LP-PHY and N-PHY need it)")
+Reported-by: Priit Laes <plaes@plaes.org>
+Cc: Rafał Miłecki <zajec5@gmail.com>
+Cc: Stable <stable@vger.kernel.org> # 2.6.34
+Signed-off-by: Larry Finger <Larry.Finger@lwfinger.net>
+Signed-off-by: Priit Laes <plaes@plaes.org>
+Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
+---
+ drivers/net/wireless/broadcom/b43/phy_common.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+--- a/drivers/net/wireless/broadcom/b43/phy_common.c
++++ b/drivers/net/wireless/broadcom/b43/phy_common.c
+@@ -616,7 +616,7 @@ struct b43_c32 b43_cordic(int theta)
+ 	u8 i;
+ 	s32 tmp;
+ 	s8 signx = 1;
+-	u32 angle = 0;
++	s32 angle = 0;
+ 	struct b43_c32 ret = { .i = 39797, .q = 0, };
+ 
+ 	while (theta > (180 << 16))
+
+
