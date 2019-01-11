@@ -2,94 +2,107 @@ Return-Path: <SRS0=uvhX=PT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7BAA5C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 15:46:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ECB70C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 15:47:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 532B220700
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 15:46:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C005E20700
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 15:47:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732356AbfAKPqt (ORCPT
+        id S1732407AbfAKPrz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 11 Jan 2019 10:46:49 -0500
-Received: from mx2.suse.de ([195.135.220.15]:35140 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729463AbfAKPqs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Jan 2019 10:46:48 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 68A80AFF4;
-        Fri, 11 Jan 2019 15:46:47 +0000 (UTC)
-Subject: Re: [PATCH] scsi: advansys: use struct_size() in kzalloc()
-To:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Hannes Reinecke <hare@suse.com>,
-        "James E.J. Bottomley" <jejb@linux.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>
-Cc:     linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20190104212209.GA15250@embeddedor>
-From:   Hannes Reinecke <hare@suse.de>
-Message-ID: <05420a5c-c268-b87d-9d75-f5d18a4b7f7a@suse.de>
-Date:   Fri, 11 Jan 2019 16:46:46 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.0
+        Fri, 11 Jan 2019 10:47:55 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:50680 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1731339AbfAKPrz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 Jan 2019 10:47:55 -0500
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id DCB4FC05D410;
+        Fri, 11 Jan 2019 15:47:54 +0000 (UTC)
+Received: from gondolin (ovpn-117-121.ams2.redhat.com [10.36.117.121])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 85EF31E7;
+        Fri, 11 Jan 2019 15:47:49 +0000 (UTC)
+Date:   Fri, 11 Jan 2019 16:47:46 +0100
+From:   Cornelia Huck <cohuck@redhat.com>
+To:     David Hildenbrand <david@redhat.com>
+Cc:     linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        Vasily Gorbik <gor@linux.ibm.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>
+Subject: Re: [PATCH v1] s390/smp: Fix calling smp_call_ipl_cpu() from ipl
+ CPU
+Message-ID: <20190111164746.015e16da.cohuck@redhat.com>
+In-Reply-To: <20190111141822.17262-1-david@redhat.com>
+References: <20190111141822.17262-1-david@redhat.com>
+Organization: Red Hat GmbH
 MIME-Version: 1.0
-In-Reply-To: <20190104212209.GA15250@embeddedor>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.32]); Fri, 11 Jan 2019 15:47:55 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 1/4/19 10:22 PM, Gustavo A. R. Silva wrote:
-> One of the more common cases of allocation size calculations is finding the
-> size of a structure that has a zero-sized array at the end, along with memory
-> for some number of elements for that array. For example:
+On Fri, 11 Jan 2019 15:18:22 +0100
+David Hildenbrand <david@redhat.com> wrote:
+
+> When calling smp_call_ipl_cpu() from the IPL CPU, we will try to read
+> from pcpu_devices->lowcore. However, due to prefixing, that will result
+> in reading from absolute address 0 on that CPU. We have to go via the
+> actual lowcore instead.
 > 
-> struct foo {
->      int stuff;
->      void *entry[];
-> };
+> This means that right now, we will read lc->nodat_stack == 0 and
+> therfore work on a very wrong stack.
 > 
-> instance = kzalloc(sizeof(struct foo) + sizeof(void *) * count, GFP_KERNEL);
+> This BUG essentially broke rebooting under QEMU TCG (which will report
+> a low address protection exception). And checking under KVM, it is
+> also broken under KVM. With 1 VCPU it can be easily triggered.
 > 
-> Instead of leaving these open-coded and prone to type mistakes, we can now
-> use the new struct_size() helper:
+> :/# echo 1 > /proc/sys/kernel/sysrq
+> :/# echo b > /proc/sysrq-trigger
+> [   28.476745] sysrq: SysRq : Resetting
+> [   28.476793] Kernel stack overflow.
+> [   28.476817] CPU: 0 PID: 424 Comm: sh Not tainted 5.0.0-rc1+ #13
+> [   28.476820] Hardware name: IBM 2964 NE1 716 (KVM/Linux)
+> [   28.476826] Krnl PSW : 0400c00180000000 0000000000115c0c (pcpu_delegate+0x12c/0x140)
+> [   28.476861]            R:0 T:1 IO:0 EX:0 Key:0 M:0 W:0 P:0 AS:3 CC:0 PM:0 RI:0 EA:3
+> [   28.476863] Krnl GPRS: ffffffffffffffff 0000000000000000 000000000010dff8 0000000000000000
+> [   28.476864]            0000000000000000 0000000000000000 0000000000ab7090 000003e0006efbf0
+> [   28.476864]            000000000010dff8 0000000000000000 0000000000000000 0000000000000000
+> [   28.476865]            000000007fffc000 0000000000730408 000003e0006efc58 0000000000000000
+> [   28.476887] Krnl Code: 0000000000115bfe: 4170f000            la      %r7,0(%r15)
+> [   28.476887]            0000000000115c02: 41f0a000            la      %r15,0(%r10)
+> [   28.476887]           #0000000000115c06: e370f0980024        stg     %r7,152(%r15)
+> [   28.476887]           >0000000000115c0c: c0e5fffff86e        brasl   %r14,114ce8
+> [   28.476887]            0000000000115c12: 41f07000            la      %r15,0(%r7)
+> [   28.476887]            0000000000115c16: a7f4ffa8            brc     15,115b66
+> [   28.476887]            0000000000115c1a: 0707                bcr     0,%r7
+> [   28.476887]            0000000000115c1c: 0707                bcr     0,%r7
+> [   28.476901] Call Trace:
+> [   28.476902] Last Breaking-Event-Address:
+> [   28.476920]  [<0000000000a01c4a>] arch_call_rest_init+0x22/0x80
+> [   28.476927] Kernel panic - not syncing: Corrupt kernel stack, can't continue.
+> [   28.476930] CPU: 0 PID: 424 Comm: sh Not tainted 5.0.0-rc1+ #13
+> [   28.476932] Hardware name: IBM 2964 NE1 716 (KVM/Linux)
+> [   28.476932] Call Trace:
 > 
-> instance = kzalloc(struct_size(instance, entry, count), GFP_KERNEL);
-> 
-> This code was detected with the help of Coccinelle.
-> 
-> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+> Reported-by: Cornelia Huck <cohuck@redhat.com>
+> Signed-off-by: David Hildenbrand <david@redhat.com>
 > ---
->   drivers/scsi/advansys.c | 4 ++--
->   1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/scsi/advansys.c b/drivers/scsi/advansys.c
-> index d37584403c33..6c274e6e1c33 100644
-> --- a/drivers/scsi/advansys.c
-> +++ b/drivers/scsi/advansys.c
-> @@ -7576,8 +7576,8 @@ static int asc_build_req(struct asc_board *boardp, struct scsi_cmnd *scp,
->   			return ASC_ERROR;
->   		}
->   
-> -		asc_sg_head = kzalloc(sizeof(asc_scsi_q->sg_head) +
-> -			use_sg * sizeof(struct asc_sg_list), GFP_ATOMIC);
-> +		asc_sg_head = kzalloc(struct_size(asc_sg_head, sg_list, use_sg),
-> +				      GFP_ATOMIC);
->   		if (!asc_sg_head) {
->   			scsi_dma_unmap(scp);
->   			scp->result = HOST_BYTE(DID_SOFT_ERROR);
-> 
-If you want ...
+>  arch/s390/kernel/smp.c | 7 ++++++-
+>  1 file changed, 6 insertions(+), 1 deletion(-)
 
-Reviewed-by: Hannes Reinecke <hare@suse.com>
+I can confirm that this patch fixes rebooting for me, both under
+QEMU/TCG and under QEMU/KVM (1 vcpu).
 
-Cheers,
-
-Hannes
+Tested-by: Cornelia Huck <cohuck@redhat.com>
