@@ -2,125 +2,290 @@ Return-Path: <SRS0=uvhX=PT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A480C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 21:28:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CA84EC43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 21:30:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0295B2084C
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 21:28:53 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="TJfjIkH8"
+	by mail.kernel.org (Postfix) with ESMTP id 98E492084C
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 21:30:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725805AbfAKV2w (ORCPT
+        id S1725927AbfAKVap (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 11 Jan 2019 16:28:52 -0500
-Received: from mail-yb1-f196.google.com ([209.85.219.196]:40627 "EHLO
-        mail-yb1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725730AbfAKV2v (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Jan 2019 16:28:51 -0500
-Received: by mail-yb1-f196.google.com with SMTP id i6so2782719ybo.7
-        for <linux-kernel@vger.kernel.org>; Fri, 11 Jan 2019 13:28:51 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-transfer-encoding:content-language;
-        bh=PW+iFYKiZXJTOX93yIrYnuspfcNtG9ovkhcDVYkM07w=;
-        b=TJfjIkH8TO3Qk/oz9gnIatmU8kPP/dYNSE8g6nonTzrgxX8fkbQ+jPI+niDmjYDrXe
-         dmGr9VE0FzgOkHkEKbM5G3srY/JC1PuUQ1GNLlW6NvWZNCGiJ+BD3vtSfO1JwYC1cS+4
-         V/x7zmxDGJH7im4xAM8VSxIzabErqi9+yvUMg=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-transfer-encoding
-         :content-language;
-        bh=PW+iFYKiZXJTOX93yIrYnuspfcNtG9ovkhcDVYkM07w=;
-        b=odaGPFzKV5yX62MmF7PvjriFrV/DkhIwJMrGLzdEzcf3EFYNxdWU38yi5Aw1qLEXQN
-         TauUoonP2STXkqZNOeiMWheyvi0Nx0N25/w6JtRkS7d856xYjInZo9+S6dbUd27UTfvx
-         BwMPsadGeY3IuQeobeAPFaGOFF/2EALEsu0cR40c14wGhxqHn3rNwBIHdCw74ZRjToww
-         gyo0R0uGY5vHKXjgrr8UvWJ6+Mq/qXsv9C850Pavdfd1WJgyDWBeqHVj59/4cp2vpGxF
-         SGvBODEyespI9jShLzcUC6qS3wTId/daPJKTBiQF8Fl6ytzBH/iwZd2wzqBGuD6LHgZO
-         pKZA==
-X-Gm-Message-State: AJcUukeMbuJfAd3I7zsA/8bxyJk4i3NAs/edUO3Z8o4IHETW36f2JmMA
-        XPRkXT6vC7ys91XUl4MtQiCt9DUVPOCx2zy9
-X-Google-Smtp-Source: ALg8bN6iQIhBjir5hLQlVAfbqJ7QYklFND9ZiZB4pJlTYGzS5alwjTXx+lmKirBAk8vFXD4vvT5wFA==
-X-Received: by 2002:a25:ad28:: with SMTP id y40mr8794374ybi.338.1547242130687;
-        Fri, 11 Jan 2019 13:28:50 -0800 (PST)
-Received: from [10.136.13.65] ([192.19.228.250])
-        by smtp.gmail.com with ESMTPSA id m126sm28904083ywd.39.2019.01.11.13.28.47
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 11 Jan 2019 13:28:49 -0800 (PST)
-Subject: Re: [PATCH 1/3] dt-bindings: pwm: kona: Add new compatible for new
- version pwm-kona
-To:     =?UTF-8?Q?Uwe_Kleine-K=c3=b6nig?= <u.kleine-koenig@pengutronix.de>,
-        Sheetal Tigadoli <sheetal.tigadoli@broadcom.com>
-Cc:     Thierry Reding <thierry.reding@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Ray Jui <rjui@broadcom.com>,
-        Scott Branden <sbranden@broadcom.com>,
-        bcm-kernel-feedback-list@broadcom.com, linux-pwm@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Praveen Kumar B <praveen.b@broadcom.com>
-References: <1547184076-20521-1-git-send-email-sheetal.tigadoli@broadcom.com>
- <1547184076-20521-2-git-send-email-sheetal.tigadoli@broadcom.com>
- <20190111204801.2ytdeblcai7lg3on@pengutronix.de>
-From:   Scott Branden <scott.branden@broadcom.com>
-Message-ID: <f1ec3121-a8e7-a1c0-008a-ea4ae6028157@broadcom.com>
-Date:   Fri, 11 Jan 2019 13:28:45 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Fri, 11 Jan 2019 16:30:45 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:35644 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725468AbfAKVap (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 Jan 2019 16:30:45 -0500
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id EEFB6C045776;
+        Fri, 11 Jan 2019 21:30:43 +0000 (UTC)
+Received: from x1.home (ovpn-116-25.phx2.redhat.com [10.3.116.25])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id B3A8D1710E;
+        Fri, 11 Jan 2019 21:30:42 +0000 (UTC)
+Date:   Fri, 11 Jan 2019 14:30:42 -0700
+From:   Alex Williamson <alex.williamson@redhat.com>
+To:     Eric Auger <eric.auger@redhat.com>
+Cc:     eric.auger.pro@gmail.com, iommu@lists.linux-foundation.org,
+        linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
+        kvmarm@lists.cs.columbia.edu, joro@8bytes.org,
+        jacob.jun.pan@linux.intel.com, yi.l.liu@linux.intel.com,
+        jean-philippe.brucker@arm.com, will.deacon@arm.com,
+        robin.murphy@arm.com, kevin.tian@intel.com, ashok.raj@intel.com,
+        marc.zyngier@arm.com, christoffer.dall@arm.com,
+        peter.maydell@linaro.org
+Subject: Re: [RFC v3 02/21] iommu: Introduce cache_invalidate API
+Message-ID: <20190111143042.183a27a7@x1.home>
+In-Reply-To: <20190108102633.17482-3-eric.auger@redhat.com>
+References: <20190108102633.17482-1-eric.auger@redhat.com>
+        <20190108102633.17482-3-eric.auger@redhat.com>
+Organization: Red Hat
 MIME-Version: 1.0
-In-Reply-To: <20190111204801.2ytdeblcai7lg3on@pengutronix.de>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.32]); Fri, 11 Jan 2019 21:30:44 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Uwe
+On Tue,  8 Jan 2019 11:26:14 +0100
+Eric Auger <eric.auger@redhat.com> wrote:
 
-On 2019-01-11 12:48 p.m., Uwe Kleine-König wrote:
-> On Fri, Jan 11, 2019 at 10:51:14AM +0530, Sheetal Tigadoli wrote:
->> From: Praveen Kumar B <praveen.b@broadcom.com>
->>
->> Add new compatible string for new version of pwm-kona
->>
->> Signed-off-by: Praveen Kumar B <praveen.b@broadcom.com>
->> Reviewed-by: Ray Jui <ray.jui@broadcom.com>
->> Reviewed-by: Scott Branden <scott.branden@broadcom.com>
->> Signed-off-by: Sheetal Tigadoli <sheetal.tigadoli@broadcom.com>
->> ---
->>   Documentation/devicetree/bindings/pwm/brcm,kona-pwm.txt | 2 +-
->>   1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/Documentation/devicetree/bindings/pwm/brcm,kona-pwm.txt b/Documentation/devicetree/bindings/pwm/brcm,kona-pwm.txt
->> index 8eae9fe..d37f697 100644
->> --- a/Documentation/devicetree/bindings/pwm/brcm,kona-pwm.txt
->> +++ b/Documentation/devicetree/bindings/pwm/brcm,kona-pwm.txt
->> @@ -3,7 +3,7 @@ Broadcom Kona PWM controller device tree bindings
->>   This controller has 6 channels.
->>   
->>   Required Properties :
->> -- compatible: should contain "brcm,kona-pwm"
->> +- compatible: should contain "brcm,kona-pwm" or "brcm,kona-pwm-v2"
-> Is v2 used on a newer generation of kona SoCs? On i.MX these variants
-> are usually named after the first SoC that came with the new variant. Is
-> this sensible here, too?
+> From: "Liu, Yi L" <yi.l.liu@linux.intel.com>
+> 
+> In any virtualization use case, when the first translation stage
+> is "owned" by the guest OS, the host IOMMU driver has no knowledge
+> of caching structure updates unless the guest invalidation activities
+> are trapped by the virtualizer and passed down to the host.
+> 
+> Since the invalidation data are obtained from user space and will be
+> written into physical IOMMU, we must allow security check at various
+> layers. Therefore, generic invalidation data format are proposed here,
+> model specific IOMMU drivers need to convert them into their own format.
+> 
+> Signed-off-by: Liu, Yi L <yi.l.liu@linux.intel.com>
+> Signed-off-by: Jean-Philippe Brucker <jean-philippe.brucker@arm.com>
+> Signed-off-by: Jacob Pan <jacob.jun.pan@linux.intel.com>
+> Signed-off-by: Ashok Raj <ashok.raj@intel.com>
+> Signed-off-by: Eric Auger <eric.auger@redhat.com>
+> 
+> ---
+> v1 -> v2:
+> - add arch_id field
+> - renamed tlb_invalidate into cache_invalidate as this API allows
+>   to invalidate context caches on top of IOTLBs
+> 
+> v1:
+> renamed sva_invalidate into tlb_invalidate and add iommu_ prefix in
+> header. Commit message reworded.
+> ---
+>  drivers/iommu/iommu.c      | 14 ++++++
+>  include/linux/iommu.h      | 14 ++++++
+>  include/uapi/linux/iommu.h | 95 ++++++++++++++++++++++++++++++++++++++
+>  3 files changed, 123 insertions(+)
+> 
+> diff --git a/drivers/iommu/iommu.c b/drivers/iommu/iommu.c
+> index 0f2b7f1fc7c8..b2e248770508 100644
+> --- a/drivers/iommu/iommu.c
+> +++ b/drivers/iommu/iommu.c
+> @@ -1403,6 +1403,20 @@ int iommu_set_pasid_table(struct iommu_domain *domain,
+>  }
+>  EXPORT_SYMBOL_GPL(iommu_set_pasid_table);
+>  
+> +int iommu_cache_invalidate(struct iommu_domain *domain, struct device *dev,
+> +			   struct iommu_cache_invalidate_info *inv_info)
+> +{
+> +	int ret = 0;
+> +
+> +	if (unlikely(!domain->ops->cache_invalidate))
+> +		return -ENODEV;
+> +
+> +	ret = domain->ops->cache_invalidate(domain, dev, inv_info);
+> +
+> +	return ret;
+> +}
+> +EXPORT_SYMBOL_GPL(iommu_cache_invalidate);
+> +
+>  static void __iommu_detach_device(struct iommu_domain *domain,
+>  				  struct device *dev)
+>  {
+> diff --git a/include/linux/iommu.h b/include/linux/iommu.h
+> index 1da2a2357ea4..96d59886f230 100644
+> --- a/include/linux/iommu.h
+> +++ b/include/linux/iommu.h
+> @@ -186,6 +186,7 @@ struct iommu_resv_region {
+>   * @of_xlate: add OF master IDs to iommu grouping
+>   * @pgsize_bitmap: bitmap of all possible supported page sizes
+>   * @set_pasid_table: set pasid table
+> + * @cache_invalidate: invalidate translation caches
+>   */
+>  struct iommu_ops {
+>  	bool (*capable)(enum iommu_cap);
+> @@ -231,6 +232,9 @@ struct iommu_ops {
+>  	int (*set_pasid_table)(struct iommu_domain *domain,
+>  			       struct iommu_pasid_table_config *cfg);
+>  
+> +	int (*cache_invalidate)(struct iommu_domain *domain, struct device *dev,
+> +				struct iommu_cache_invalidate_info *inv_info);
+> +
+>  	unsigned long pgsize_bitmap;
+>  };
+>  
+> @@ -294,6 +298,9 @@ extern void iommu_detach_device(struct iommu_domain *domain,
+>  				struct device *dev);
+>  extern int iommu_set_pasid_table(struct iommu_domain *domain,
+>  				 struct iommu_pasid_table_config *cfg);
+> +extern int iommu_cache_invalidate(struct iommu_domain *domain,
+> +				struct device *dev,
+> +				struct iommu_cache_invalidate_info *inv_info);
+>  extern struct iommu_domain *iommu_get_domain_for_dev(struct device *dev);
+>  extern struct iommu_domain *iommu_get_dma_domain(struct device *dev);
+>  extern int iommu_map(struct iommu_domain *domain, unsigned long iova,
+> @@ -709,6 +716,13 @@ int iommu_set_pasid_table(struct iommu_domain *domain,
+>  {
+>  	return -ENODEV;
+>  }
+> +static inline int
+> +iommu_cache_invalidate(struct iommu_domain *domain,
+> +		       struct device *dev,
+> +		       struct iommu_cache_invalidate_info *inv_info)
+> +{
+> +	return -ENODEV;
+> +}
+>  
+>  #endif /* CONFIG_IOMMU_API */
+>  
+> diff --git a/include/uapi/linux/iommu.h b/include/uapi/linux/iommu.h
+> index 7a7cf7a3de7c..4605f5cfac84 100644
+> --- a/include/uapi/linux/iommu.h
+> +++ b/include/uapi/linux/iommu.h
+> @@ -47,4 +47,99 @@ struct iommu_pasid_table_config {
+>  	};
+>  };
+>  
+> +/**
+> + * enum iommu_inv_granularity - Generic invalidation granularity
+> + * @IOMMU_INV_GRANU_DOMAIN_ALL_PASID:	TLB entries or PASID caches of all
+> + *					PASIDs associated with a domain ID
+> + * @IOMMU_INV_GRANU_PASID_SEL:		TLB entries or PASID cache associated
+> + *					with a PASID and a domain
+> + * @IOMMU_INV_GRANU_PAGE_PASID:		TLB entries of selected page range
+> + *					within a PASID
+> + *
+> + * When an invalidation request is passed down to IOMMU to flush translation
+> + * caches, it may carry different granularity levels, which can be specific
+> + * to certain types of translation caches.
+> + * This enum is a collection of granularities for all types of translation
+> + * caches. The idea is to make it easy for IOMMU model specific driver to
+> + * convert from generic to model specific value. Each IOMMU driver
+> + * can enforce check based on its own conversion table. The conversion is
+> + * based on 2D look-up with inputs as follows:
+> + * - translation cache types
+> + * - granularity
+> + *
+> + *             type |   DTLB    |    TLB    |   PASID   |
+> + *  granule         |           |           |   cache   |
+> + * -----------------+-----------+-----------+-----------+
+> + *  DN_ALL_PASID    |   Y       |   Y       |   Y       |
+> + *  PASID_SEL       |   Y       |   Y       |   Y       |
+> + *  PAGE_PASID      |   Y       |   Y       |   N/A     |
+> + *
+> + */
+> +enum iommu_inv_granularity {
+> +	IOMMU_INV_GRANU_DOMAIN_ALL_PASID,
+> +	IOMMU_INV_GRANU_PASID_SEL,
+> +	IOMMU_INV_GRANU_PAGE_PASID,
+> +	IOMMU_INV_NR_GRANU,
+> +};
+> +
+> +/**
+> + * enum iommu_inv_type - Generic translation cache types for invalidation
+> + *
+> + * @IOMMU_INV_TYPE_DTLB:	device IOTLB
+> + * @IOMMU_INV_TYPE_TLB:		IOMMU paging structure cache
+> + * @IOMMU_INV_TYPE_PASID:	PASID cache
+> + * Invalidation requests sent to IOMMU for a given device need to indicate
+> + * which type of translation cache to be operated on. Combined with enum
+> + * iommu_inv_granularity, model specific driver can do a simple lookup to
+> + * convert from generic to model specific value.
+> + */
+> +enum iommu_inv_type {
+> +	IOMMU_INV_TYPE_DTLB,
+> +	IOMMU_INV_TYPE_TLB,
+> +	IOMMU_INV_TYPE_PASID,
+> +	IOMMU_INV_NR_TYPE
+> +};
+> +
+> +/**
+> + * Translation cache invalidation header that contains mandatory meta data.
+> + * @version:	info format version, expecting future extesions
+> + * @type:	type of translation cache to be invalidated
+> + */
+> +struct iommu_cache_invalidate_hdr {
+> +	__u32 version;
+> +#define TLB_INV_HDR_VERSION_1 1
+> +	enum iommu_inv_type type;
+> +};
+> +
+> +/**
+> + * Translation cache invalidation information, contains generic IOMMU
+> + * data which can be parsed based on model ID by model specific drivers.
+> + * Since the invalidation of second level page tables are included in the
+> + * unmap operation, this info is only applicable to the first level
+> + * translation caches, i.e. DMA request with PASID.
+> + *
+> + * @granularity:	requested invalidation granularity, type dependent
+> + * @size:		2^size of 4K pages, 0 for 4k, 9 for 2MB, etc.
 
-It doesn't make as much sense here as different revs of the IP block are 
-picked up based on various decisions.
+Why is this a 4K page centric interface?
 
-A new SoC could decide to use an old version.
+> + * @nr_pages:		number of pages to invalidate
+> + * @pasid:		processor address space ID value per PCI spec.
+> + * @arch_id:		architecture dependent id characterizing a context
+> + *			and tagging the caches, ie. domain Identfier on VTD,
+> + *			asid on ARM SMMU
+> + * @addr:		page address to be invalidated
+> + * @flags		IOMMU_INVALIDATE_ADDR_LEAF: leaf paging entries
+> + *			IOMMU_INVALIDATE_GLOBAL_PAGE: global pages
 
->
-> Best regards
-> Uwe
->
+Shouldn't some of these be tied the the granularity of the
+invalidation?  It seems like this should be more similar to
+iommu_pasid_table_config where the granularity of the invalidation
+defines which entry within a union at the end of the structure is valid
+and populated.  Otherwise we have fields that don't make sense for
+certain invalidations.
+
+> + *
+> + */
+> +struct iommu_cache_invalidate_info {
+> +	struct iommu_cache_invalidate_hdr	hdr;
+> +	enum iommu_inv_granularity	granularity;
+
+A separate structure for hdr seems a little pointless.
+
+> +	__u32		flags;
+> +#define IOMMU_INVALIDATE_ADDR_LEAF	(1 << 0)
+> +#define IOMMU_INVALIDATE_GLOBAL_PAGE	(1 << 1)
+> +	__u8		size;
+
+Really need some padding or packing here for any hope of having
+consistency with userspace.
+
+> +	__u64		nr_pages;
+> +	__u32		pasid;
+
+Sub-optimal ordering for packing/padding.  Thanks,
+
+Alex
+
+> +	__u64		arch_id;
+> +	__u64		addr;
+> +};
+>  #endif /* _UAPI_IOMMU_H */
+
