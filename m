@@ -7,51 +7,49 @@ X-Spam-Status: No, score=-10.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EE482C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:16:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 294F0C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:16:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BE1D321841
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:16:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EADF521841
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:16:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547216194;
-	bh=8E8vV3zTeahPtaWlixZ1+kF44BcDjUEzkqlPB0iTtt8=;
+	s=default; t=1547216200;
+	bh=Yi7UWpode7Q2FAbhuyp5t7reHFre/Nh0HpwnsFO47KE=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=pAuET9V2cAsFcqJQ3lj8Tn05gJ2/KMxbpL0liPdtxPklTDh6YGiXgoC2Ev3ilVyDx
-	 LKfy1rLwnQCXbDD4PalkUKfNcIUOPI5gx2zmBRt9rxUU7gPPLK5jGfA2+BKbx2ofou
-	 +F1LcXZLw7MgJfQa8MeGUvyfI7B7z9f/Lqo1Jta0=
+	b=uWS/yIB3E2keFqpC/erG9PxivlFImz8xmoLQAIdDgOEZpIrM6nVm36M876V5UUkTS
+	 gWCBAZa0yhw6NUleCnY3B1I+wgmdymBhiGo+G7Qs7W9CVAi++7/stIQwtn1PAoQdCb
+	 0shg6+st9pCNkBy3INCymFLDp4hKPJOLiPopEn5Q=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387662AbfAKOQd (ORCPT
+        id S2387684AbfAKOQi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 11 Jan 2019 09:16:33 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60930 "EHLO mail.kernel.org"
+        Fri, 11 Jan 2019 09:16:38 -0500
+Received: from mail.kernel.org ([198.145.29.99]:32814 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731311AbfAKOQa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Jan 2019 09:16:30 -0500
+        id S1731311AbfAKOQf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 Jan 2019 09:16:35 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 11F09214D8;
-        Fri, 11 Jan 2019 14:16:28 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 587FA214D8;
+        Fri, 11 Jan 2019 14:16:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547216189;
-        bh=8E8vV3zTeahPtaWlixZ1+kF44BcDjUEzkqlPB0iTtt8=;
+        s=default; t=1547216194;
+        bh=Yi7UWpode7Q2FAbhuyp5t7reHFre/Nh0HpwnsFO47KE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=b2tWMSB9zRfXz4nRZNvn4qj8eCa0rLczbrBjaKD3ON7jwsidjAmkMVgYFIvmrCMv3
-         R5HmCs39vSrKNeCG6S/qOOl5fwXX1eMQ3PYFMsHGwUuKbJYOCtx2ZreSX0pL1908iQ
-         6ucyLMaxCjawz/JqFv2KcBd529OT3HGjoUb75VJc=
+        b=Bsp6vf2mUaWCtLzn8hMAhKeFEQCyKWkVRan4MrYPBIEoS68ioHLlgNSQ+3sQxF+cE
+         qwMFZs4xUh3S70jud5rH/Ee4FFvFC3gMji79HwBrmH4SA5ckY2Ozzh086BRUKqxto+
+         kYk7PZRcUA+so5KcSY9iR/lQZXwKmaTToe5O7txM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
-        syzbot <syzkaller@googlegroups.com>,
-        Karsten Keil <isdn@linux-pingi.de>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 3.18 11/47] isdn: fix kernel-infoleak in capi_unlocked_ioctl
-Date:   Fri, 11 Jan 2019 15:07:56 +0100
-Message-Id: <20190111130957.509297580@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Mathias Nyman <mathias.nyman@linux.intel.com>
+Subject: [PATCH 4.4 02/88] xhci: Dont prevent USB2 bus suspend in state check intended for USB3 only
+Date:   Fri, 11 Jan 2019 15:07:31 +0100
+Message-Id: <20190111131046.711762405@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190111130956.170952125@linuxfoundation.org>
-References: <20190111130956.170952125@linuxfoundation.org>
+In-Reply-To: <20190111131045.137499039@linuxfoundation.org>
+References: <20190111131045.137499039@linuxfoundation.org>
 User-Agent: quilt/0.65
 X-stable: review
 X-Patchwork-Hint: ignore
@@ -63,84 +61,43 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-3.18-stable review patch.  If anyone has any objections, please let me know.
+4.4-stable review patch.  If anyone has any objections, please let me know.
 
 ------------------
 
-From: Eric Dumazet <edumazet@google.com>
+From: Mathias Nyman <mathias.nyman@linux.intel.com>
 
-[ Upstream commit d63967e475ae10f286dbd35e189cb241e0b1f284 ]
+commit 45f750c16cae3625014c14c77bd9005eda975d35 upstream.
 
-Since capi_ioctl() copies 64 bytes after calling
-capi20_get_manufacturer() we need to ensure to not leak
-information to user.
+The code to prevent a bus suspend if a USB3 port was still in link training
+also reacted to USB2 port polling state.
+This caused bus suspend to busyloop in some cases.
+USB2 polling state is different from USB3, and should not prevent bus
+suspend.
 
-BUG: KMSAN: kernel-infoleak in _copy_to_user+0x16b/0x1f0 lib/usercopy.c:32
-CPU: 0 PID: 11245 Comm: syz-executor633 Not tainted 4.20.0-rc7+ #2
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-Call Trace:
- __dump_stack lib/dump_stack.c:77 [inline]
- dump_stack+0x173/0x1d0 lib/dump_stack.c:113
- kmsan_report+0x12e/0x2a0 mm/kmsan/kmsan.c:613
- kmsan_internal_check_memory+0x9d4/0xb00 mm/kmsan/kmsan.c:704
- kmsan_copy_to_user+0xab/0xc0 mm/kmsan/kmsan_hooks.c:601
- _copy_to_user+0x16b/0x1f0 lib/usercopy.c:32
- capi_ioctl include/linux/uaccess.h:177 [inline]
- capi_unlocked_ioctl+0x1a0b/0x1bf0 drivers/isdn/capi/capi.c:939
- do_vfs_ioctl+0xebd/0x2bf0 fs/ioctl.c:46
- ksys_ioctl fs/ioctl.c:713 [inline]
- __do_sys_ioctl fs/ioctl.c:720 [inline]
- __se_sys_ioctl+0x1da/0x270 fs/ioctl.c:718
- __x64_sys_ioctl+0x4a/0x70 fs/ioctl.c:718
- do_syscall_64+0xbc/0xf0 arch/x86/entry/common.c:291
- entry_SYSCALL_64_after_hwframe+0x63/0xe7
-RIP: 0033:0x440019
-Code: 18 89 d0 c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 0f 83 fb 13 fc ff c3 66 2e 0f 1f 84 00 00 00 00
-RSP: 002b:00007ffdd4659fb8 EFLAGS: 00000213 ORIG_RAX: 0000000000000010
-RAX: ffffffffffffffda RBX: 00000000004002c8 RCX: 0000000000440019
-RDX: 0000000020000080 RSI: 00000000c0044306 RDI: 0000000000000003
-RBP: 00000000006ca018 R08: 0000000000000000 R09: 00000000004002c8
-R10: 0000000000000000 R11: 0000000000000213 R12: 00000000004018a0
-R13: 0000000000401930 R14: 0000000000000000 R15: 0000000000000000
+Limit the USB3 link training state check to USB3 root hub ports only.
+The origial commit went to stable so this need to be applied there as well
 
-Local variable description: ----data.i@capi_unlocked_ioctl
-Variable was created at:
- capi_ioctl drivers/isdn/capi/capi.c:747 [inline]
- capi_unlocked_ioctl+0x82/0x1bf0 drivers/isdn/capi/capi.c:939
- do_vfs_ioctl+0xebd/0x2bf0 fs/ioctl.c:46
-
-Bytes 12-63 of 64 are uninitialized
-Memory access of size 64 starts at ffff88807ac5fce8
-Data copied to user address 0000000020000080
-
-Signed-off-by: Eric Dumazet <edumazet@google.com>
-Reported-by: syzbot <syzkaller@googlegroups.com>
-Cc: Karsten Keil <isdn@linux-pingi.de>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Fixes: 2f31a67f01a8 ("usb: xhci: Prevent bus suspend if a port connect change or polling state is detected")
+Cc: stable@vger.kernel.org
+Signed-off-by: Mathias Nyman <mathias.nyman@linux.intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- drivers/isdn/capi/kcapi.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/drivers/isdn/capi/kcapi.c
-+++ b/drivers/isdn/capi/kcapi.c
-@@ -851,7 +851,7 @@ u16 capi20_get_manufacturer(u32 contr, u
- 	u16 ret;
+---
+ drivers/usb/host/xhci-hub.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+--- a/drivers/usb/host/xhci-hub.c
++++ b/drivers/usb/host/xhci-hub.c
+@@ -1329,7 +1329,8 @@ int xhci_bus_suspend(struct usb_hcd *hcd
+ 		portsc_buf[port_index] = 0;
  
- 	if (contr == 0) {
--		strlcpy(buf, capi_manufakturer, CAPI_MANUFACTURER_LEN);
-+		strncpy(buf, capi_manufakturer, CAPI_MANUFACTURER_LEN);
- 		return CAPI_NOERROR;
- 	}
- 
-@@ -859,7 +859,7 @@ u16 capi20_get_manufacturer(u32 contr, u
- 
- 	ctr = get_capi_ctr_by_nr(contr);
- 	if (ctr && ctr->state == CAPI_CTR_RUNNING) {
--		strlcpy(buf, ctr->manu, CAPI_MANUFACTURER_LEN);
-+		strncpy(buf, ctr->manu, CAPI_MANUFACTURER_LEN);
- 		ret = CAPI_NOERROR;
- 	} else
- 		ret = CAPI_REGNOTINSTALLED;
+ 		/* Bail out if a USB3 port has a new device in link training */
+-		if ((t1 & PORT_PLS_MASK) == XDEV_POLLING) {
++		if ((hcd->speed >= HCD_USB3) &&
++		    (t1 & PORT_PLS_MASK) == XDEV_POLLING) {
+ 			bus_state->bus_suspended = 0;
+ 			spin_unlock_irqrestore(&xhci->lock, flags);
+ 			xhci_dbg(xhci, "Bus suspend bailout, port in polling\n");
 
 
