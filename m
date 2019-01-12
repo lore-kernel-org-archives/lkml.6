@@ -2,357 +2,126 @@ Return-Path: <SRS0=UXoZ=PU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A379C43387
-	for <linux-kernel@archiver.kernel.org>; Sat, 12 Jan 2019 21:56:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3EDBFC43387
+	for <linux-kernel@archiver.kernel.org>; Sat, 12 Jan 2019 22:04:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 30880206B7
-	for <linux-kernel@archiver.kernel.org>; Sat, 12 Jan 2019 21:56:32 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cm5dPluD"
+	by mail.kernel.org (Postfix) with ESMTP id 0D6CB20836
+	for <linux-kernel@archiver.kernel.org>; Sat, 12 Jan 2019 22:04:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726707AbfALV4b (ORCPT
+        id S1726483AbfALWEn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 12 Jan 2019 16:56:31 -0500
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:37609 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726255AbfALV4W (ORCPT
+        Sat, 12 Jan 2019 17:04:43 -0500
+Received: from dnvrco-outbound-snat.email.rr.com ([107.14.73.227]:28361 "EHLO
+        dnvrco-cmomta01.email.rr.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726387AbfALWEm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 12 Jan 2019 16:56:22 -0500
-Received: by mail-pg1-f194.google.com with SMTP id c25so7814922pgb.4;
-        Sat, 12 Jan 2019 13:56:19 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=8Nk0XoADViZryFQzZDdKMNcdDrWoNZ66XhBn0c5qcCg=;
-        b=cm5dPluDn4L9PH2qUBl+7JWkF4yRKQZRT51kyrVeEb9VwENIHwkrAtfSQVFgjMh7mZ
-         /F7ZT6URupXC5CvaoxDyA34vzrrVopNdOF0YQNdCx0LtLNVJE4lxxCrUJ70+dymg5tna
-         Vv69pnvgftLekOBTAFwZbtA0FkdDdJx8VImfiHSrnXttUpirDqB/PuIyW8YwmNvlv2Eg
-         5h9KGaUfaCcHC2ZorcyaCvbNNBY2FH9Z3DBo/nteiq9dGfwmzJldv2ajIKEXjPfiAIr7
-         hZuYz3fD/JNlXZCP4DdEYAvAChUYyeqjublqXS3sfAw9skfOPwYA/K/bDLjFr4VNbWN6
-         CDLw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=8Nk0XoADViZryFQzZDdKMNcdDrWoNZ66XhBn0c5qcCg=;
-        b=f/GFY7QdlYLayIiVC6pgAA98h7MnftNzYhP9Pve5JSXm4M8Hr7NfjFp5sK9hqRUPh/
-         Fl2fG9pj4ZFI7PwNZxwwkfuOcc13weiXGgtZDP6+DzQB4zYI2dlGpl10l3RL2uMVyLKM
-         9aVXOM505xmdp8wm5/gT9gth6VQjQosyRpCnQMt0qV6F0flXzsHyAcKURrPMp15M/lhK
-         GjulWRl3TeDa5z7JvUTS17mbHtB456QFBATlxLu2Mu27WT+j2VwlC00G8W55vUGOcepp
-         jUFss7YgGFBqEONxg8FWPzP6Qbb0gcH4kofEGkQ46YP44sf+OIlVYzdKmS2d/ekLwzOx
-         lfFA==
-X-Gm-Message-State: AJcUukc5lFy4E0/2Wan2NVd4bkXSTLi+R79gaZ85AUlIomIJi5CMbWZF
-        BsbJ+LvIDyIcVhLrq6A/zl4=
-X-Google-Smtp-Source: ALg8bN74NAwhIWvskqEFxwOJ7jYzJFXlhFhJZ6WxNUif2kLmHzIIAYGiZ71a7KRy6s5yhkMdNGOoyA==
-X-Received: by 2002:a63:4d0e:: with SMTP id a14mr18159879pgb.408.1547330179122;
-        Sat, 12 Jan 2019 13:56:19 -0800 (PST)
-Received: from squirtle.lan (c-24-22-235-96.hsd1.wa.comcast.net. [24.22.235.96])
-        by smtp.gmail.com with ESMTPSA id i72sm122284327pfe.181.2019.01.12.13.56.17
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Sat, 12 Jan 2019 13:56:18 -0800 (PST)
-From:   Andrey Smirnov <andrew.smirnov@gmail.com>
-To:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-Cc:     Andrey Smirnov <andrew.smirnov@gmail.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Chris Healy <cphealy@gmail.com>,
-        Lucas Stach <l.stach@pengutronix.de>,
-        Leonard Crestez <leonard.crestez@nxp.com>,
-        "A.s. Dong" <aisheng.dong@nxp.com>,
-        Richard Zhu <hongxing.zhu@nxp.com>, linux-imx@nxp.com,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-pci@vger.kernel.org
-Subject: [PATCH v5 4/4] PCI: imx6: Add support for i.MX8MQ
-Date:   Sat, 12 Jan 2019 13:56:01 -0800
-Message-Id: <20190112215601.9535-5-andrew.smirnov@gmail.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190112215601.9535-1-andrew.smirnov@gmail.com>
-References: <20190112215601.9535-1-andrew.smirnov@gmail.com>
+        Sat, 12 Jan 2019 17:04:42 -0500
+Received: from [192.168.1.87] ([70.114.195.161])
+        by cmsmtp with ESMTPA
+        id iROPgFzOUP088iRORgURBQ; Sat, 12 Jan 2019 22:04:41 +0000
+Subject: Re: [PATCH] Input: synaptics - add PNP IDs for Dell XPS models to
+ forcepad
+To:     Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc:     linux-kernel@vger.kernel.org, Paul Menzel <pmenzel@molgen.mpg.de>,
+        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
+        linux-input@vger.kernel.org
+References: <20190111205430.15371-1-kim@kimphillips.com>
+ <20190112014004.GA122403@dtor-ws>
+From:   Kim Phillips <kim@kimphillips.com>
+Message-ID: <22e2d619-0622-1816-2057-c9005288b46b@kimphillips.com>
+Date:   Sat, 12 Jan 2019 16:04:36 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190112014004.GA122403@dtor-ws>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-CMAE-Envelope: MS4wfEIFyKoIkw2KeB7CtD12PzO1y767hEuCmQwNt+ByBGDm6CYj8pdKG6JTlE5nAwz+/qPFTWLS1s8biXyX2pQgR91FIB0zbMkgc+hOXThj3KCb+uD6yep1
+ xmI13G5QktNNMM5lJqafNqNjOSpzq4NCKBUzmxLA5oyDKzR5jbkHU+3PZAguBaTFqng4J87iJwczPqM3xikqOj7065sRlVcQq9JwYWCJinTjsEpEI4YPrF9v
+ 5JxF49hv5T4PVmZm5UhmABZ6k6wNoduvGpfdmGIvTm5RwzREgDTJVIIfb2bN6IHZhsmR7ZmJVp4VEcNVEeLtVCRPs7Db1k2emp4YvYcUmkI=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add code needed to support i.MX8MQ variant.
+On 1/11/19 7:40 PM, Dmitry Torokhov wrote:
+> Hi Kim,
 
-Cc: Bjorn Helgaas <bhelgaas@google.com>
-Cc: Fabio Estevam <fabio.estevam@nxp.com>
-Cc: Chris Healy <cphealy@gmail.com>
-Cc: Lucas Stach <l.stach@pengutronix.de>
-Cc: Leonard Crestez <leonard.crestez@nxp.com>
-Cc: "A.s. Dong" <aisheng.dong@nxp.com>
-Cc: Richard Zhu <hongxing.zhu@nxp.com>
-Cc: linux-imx@nxp.com
-Cc: linux-arm-kernel@lists.infradead.org
-Cc: linux-kernel@vger.kernel.org
-Cc: linux-pci@vger.kernel.org
-Reviewed-by: Lucas Stach <l.stach@pengutronix.de>
-Signed-off-by: Andrey Smirnov <andrew.smirnov@gmail.com>
----
- .../bindings/pci/fsl,imx6q-pcie.txt           |  3 +-
- drivers/pci/controller/dwc/Kconfig            |  4 +-
- drivers/pci/controller/dwc/pci-imx6.c         | 77 ++++++++++++++++++-
- 3 files changed, 79 insertions(+), 5 deletions(-)
+Hi Dmitry,
 
-diff --git a/Documentation/devicetree/bindings/pci/fsl,imx6q-pcie.txt b/Documentation/devicetree/bindings/pci/fsl,imx6q-pcie.txt
-index d514c1f2365f..920ca93870a8 100644
---- a/Documentation/devicetree/bindings/pci/fsl,imx6q-pcie.txt
-+++ b/Documentation/devicetree/bindings/pci/fsl,imx6q-pcie.txt
-@@ -9,6 +9,7 @@ Required properties:
- 	- "fsl,imx6sx-pcie",
- 	- "fsl,imx6qp-pcie"
- 	- "fsl,imx7d-pcie"
-+	- "fsl,imx8mq-pcie"
- - reg: base address and length of the PCIe controller
- - interrupts: A list of interrupt outputs of the controller. Must contain an
-   entry for each entry in the interrupt-names property.
-@@ -45,7 +46,7 @@ Additional required properties for imx6sx-pcie:
-   PCIE_PHY power domains
- - power-domain-names: Must be "pcie", "pcie_phy"
- 
--Additional required properties for imx7d-pcie:
-+Additional required properties for imx7d-pcie and imx8mq-pcie:
- - power-domains: Must be set to a phandle pointing to PCIE_PHY power domain
- - resets: Must contain phandles to PCIe-related reset lines exposed by SRC
-   IP block
-diff --git a/drivers/pci/controller/dwc/Kconfig b/drivers/pci/controller/dwc/Kconfig
-index 6aafec3fad00..adf7f2061890 100644
---- a/drivers/pci/controller/dwc/Kconfig
-+++ b/drivers/pci/controller/dwc/Kconfig
-@@ -89,8 +89,8 @@ config PCI_EXYNOS
- 	select PCIE_DW_HOST
- 
- config PCI_IMX6
--	bool "Freescale i.MX6/7 PCIe controller"
--	depends on SOC_IMX6Q || SOC_IMX7D || (ARM && COMPILE_TEST)
-+	bool "Freescale i.MX6/7/8 PCIe controller"
-+	depends on SOC_IMX6Q || SOC_IMX7D || (ARM64 && ARCH_MXC) || COMPILE_TEST
- 	depends on PCI_MSI_IRQ_DOMAIN
- 	select PCIE_DW_HOST
- 
-diff --git a/drivers/pci/controller/dwc/pci-imx6.c b/drivers/pci/controller/dwc/pci-imx6.c
-index 75ee0cd7af3b..dd9d8732f6ba 100644
---- a/drivers/pci/controller/dwc/pci-imx6.c
-+++ b/drivers/pci/controller/dwc/pci-imx6.c
-@@ -8,6 +8,7 @@
-  * Author: Sean Cross <xobs@kosagi.com>
-  */
- 
-+#include <linux/bitfield.h>
- #include <linux/clk.h>
- #include <linux/delay.h>
- #include <linux/gpio.h>
-@@ -32,6 +33,12 @@
- 
- #include "pcie-designware.h"
- 
-+#define IMX8MQ_GPR_PCIE_REF_USE_PAD		BIT(9)
-+#define IMX8MQ_GPR_PCIE_CLK_REQ_OVERRIDE_EN	BIT(10)
-+#define IMX8MQ_GPR_PCIE_CLK_REQ_OVERRIDE	BIT(11)
-+#define IMX8MQ_GPR12_PCIE2_CTRL_DEVICE_TYPE	GENMASK(11, 8)
-+#define IMX8MQ_PCIE2_BASE_ADDR			0x33c00000
-+
- #define to_imx6_pcie(x)	dev_get_drvdata((x)->dev)
- 
- enum imx6_pcie_variants {
-@@ -39,6 +46,7 @@ enum imx6_pcie_variants {
- 	IMX6SX,
- 	IMX6QP,
- 	IMX7D,
-+	IMX8MQ,
- };
- 
- #define IMX6_PCIE_FLAG_IMX6_PHY			BIT(0)
-@@ -58,6 +66,7 @@ struct imx6_pcie {
- 	struct clk		*pcie_inbound_axi;
- 	struct clk		*pcie;
- 	struct regmap		*iomuxc_gpr;
-+	u32			controller_id;
- 	struct reset_control	*pciephy_reset;
- 	struct reset_control	*apps_reset;
- 	struct reset_control	*turnoff_reset;
-@@ -276,6 +285,7 @@ static void imx6_pcie_reset_phy(struct imx6_pcie *imx6_pcie)
- 	pcie_phy_write(imx6_pcie, PHY_RX_OVRD_IN_LO, tmp);
- }
- 
-+#ifdef CONFIG_ARM
- /*  Added for PCI abort handling */
- static int imx6q_pcie_abort_handler(unsigned long addr,
- 		unsigned int fsr, struct pt_regs *regs)
-@@ -309,6 +319,7 @@ static int imx6q_pcie_abort_handler(unsigned long addr,
- 
- 	return 1;
- }
-+#endif
- 
- static int imx6_pcie_attach_pd(struct device *dev)
- {
-@@ -353,6 +364,7 @@ static void imx6_pcie_assert_core_reset(struct imx6_pcie *imx6_pcie)
- 
- 	switch (imx6_pcie->drvdata->variant) {
- 	case IMX7D:
-+	case IMX8MQ:
- 		reset_control_assert(imx6_pcie->pciephy_reset);
- 		reset_control_assert(imx6_pcie->apps_reset);
- 		break;
-@@ -387,10 +399,17 @@ static void imx6_pcie_assert_core_reset(struct imx6_pcie *imx6_pcie)
- 	}
- }
- 
-+static unsigned int imx6_pcie_grp_offset(const struct imx6_pcie *imx6_pcie)
-+{
-+	WARN_ON(imx6_pcie->drvdata->variant != IMX8MQ);
-+	return imx6_pcie->controller_id == 1 ? IOMUXC_GPR16 : IOMUXC_GPR14;
-+}
-+
- static int imx6_pcie_enable_ref_clk(struct imx6_pcie *imx6_pcie)
- {
- 	struct dw_pcie *pci = imx6_pcie->pci;
- 	struct device *dev = pci->dev;
-+	unsigned int offset;
- 	int ret = 0;
- 
- 	switch (imx6_pcie->drvdata->variant) {
-@@ -421,6 +440,19 @@ static int imx6_pcie_enable_ref_clk(struct imx6_pcie *imx6_pcie)
- 		break;
- 	case IMX7D:
- 		break;
-+	case IMX8MQ:
-+		offset = imx6_pcie_grp_offset(imx6_pcie);
-+		/*
-+		 * Set the over ride low and enabled
-+		 * make sure that REF_CLK is turned on.
-+		 */
-+		regmap_update_bits(imx6_pcie->iomuxc_gpr, offset,
-+				   IMX8MQ_GPR_PCIE_CLK_REQ_OVERRIDE,
-+				   0);
-+		regmap_update_bits(imx6_pcie->iomuxc_gpr, offset,
-+				   IMX8MQ_GPR_PCIE_CLK_REQ_OVERRIDE_EN,
-+				   IMX8MQ_GPR_PCIE_CLK_REQ_OVERRIDE_EN);
-+		break;
- 	}
- 
- 	return ret;
-@@ -497,6 +529,9 @@ static void imx6_pcie_deassert_core_reset(struct imx6_pcie *imx6_pcie)
- 	}
- 
- 	switch (imx6_pcie->drvdata->variant) {
-+	case IMX8MQ:
-+		reset_control_deassert(imx6_pcie->pciephy_reset);
-+		break;
- 	case IMX7D:
- 		reset_control_deassert(imx6_pcie->pciephy_reset);
- 		imx7d_pcie_wait_for_phy_pll_lock(imx6_pcie);
-@@ -532,9 +567,37 @@ static void imx6_pcie_deassert_core_reset(struct imx6_pcie *imx6_pcie)
- 	}
- }
- 
-+static void imx6_pcie_configure_type(struct imx6_pcie *imx6_pcie)
-+{
-+	unsigned int mask, val;
-+
-+	if (imx6_pcie->drvdata->variant == IMX8MQ &&
-+	    imx6_pcie->controller_id == 1) {
-+		mask   = IMX8MQ_GPR12_PCIE2_CTRL_DEVICE_TYPE;
-+		val    = FIELD_PREP(IMX8MQ_GPR12_PCIE2_CTRL_DEVICE_TYPE,
-+				    PCI_EXP_TYPE_ROOT_PORT);
-+	} else {
-+		mask = IMX6Q_GPR12_DEVICE_TYPE;
-+		val  = FIELD_PREP(IMX6Q_GPR12_DEVICE_TYPE,
-+				  PCI_EXP_TYPE_ROOT_PORT);
-+	}
-+
-+	regmap_update_bits(imx6_pcie->iomuxc_gpr, IOMUXC_GPR12, mask, val);
-+}
-+
- static void imx6_pcie_init_phy(struct imx6_pcie *imx6_pcie)
- {
- 	switch (imx6_pcie->drvdata->variant) {
-+	case IMX8MQ:
-+		/*
-+		 * TODO: Currently this code assumes external
-+		 * oscillator is being used
-+		 */
-+		regmap_update_bits(imx6_pcie->iomuxc_gpr,
-+				   imx6_pcie_grp_offset(imx6_pcie),
-+				   IMX8MQ_GPR_PCIE_REF_USE_PAD,
-+				   IMX8MQ_GPR_PCIE_REF_USE_PAD);
-+		break;
- 	case IMX7D:
- 		regmap_update_bits(imx6_pcie->iomuxc_gpr, IOMUXC_GPR12,
- 				   IMX7D_GPR12_PCIE_PHY_REFCLK_SEL, 0);
-@@ -570,8 +633,7 @@ static void imx6_pcie_init_phy(struct imx6_pcie *imx6_pcie)
- 		break;
- 	}
- 
--	regmap_update_bits(imx6_pcie->iomuxc_gpr, IOMUXC_GPR12,
--			IMX6Q_GPR12_DEVICE_TYPE, PCI_EXP_TYPE_ROOT_PORT << 12);
-+	imx6_pcie_configure_type(imx6_pcie);
- }
- 
- static int imx6_setup_phy_mpll(struct imx6_pcie *imx6_pcie)
-@@ -668,6 +730,7 @@ static void imx6_pcie_ltssm_enable(struct device *dev)
- 				   IMX6Q_GPR12_PCIE_CTL_2);
- 		break;
- 	case IMX7D:
-+	case IMX8MQ:
- 		reset_control_deassert(imx6_pcie->apps_reset);
- 		break;
- 	}
-@@ -1008,6 +1071,10 @@ static int imx6_pcie_probe(struct platform_device *pdev)
- 		}
- 		break;
- 	case IMX7D:
-+	case IMX8MQ:
-+		if (dbi_base->start == IMX8MQ_PCIE2_BASE_ADDR)
-+			imx6_pcie->controller_id = 1;
-+
- 		imx6_pcie->pciephy_reset = devm_reset_control_get_exclusive(dev,
- 									    "pciephy");
- 		if (IS_ERR(imx6_pcie->pciephy_reset)) {
-@@ -1115,6 +1182,9 @@ static const struct imx6_pcie_drvdata drvdata[] = {
- 	[IMX7D] = {
- 		.variant = IMX7D,
- 	},
-+	[IMX8MQ] = {
-+		.variant = IMX8MQ,
-+	},
- };
- 
- static const struct of_device_id imx6_pcie_of_match[] = {
-@@ -1122,6 +1192,7 @@ static const struct of_device_id imx6_pcie_of_match[] = {
- 	{ .compatible = "fsl,imx6sx-pcie", .data = &drvdata[IMX6SX], },
- 	{ .compatible = "fsl,imx6qp-pcie", .data = &drvdata[IMX6QP], },
- 	{ .compatible = "fsl,imx7d-pcie",  .data = &drvdata[IMX7D],  },
-+	{ .compatible = "fsl,imx8mq-pcie", .data = &drvdata[IMX8MQ], } ,
- 	{},
- };
- 
-@@ -1138,6 +1209,7 @@ static struct platform_driver imx6_pcie_driver = {
- 
- static int __init imx6_pcie_init(void)
- {
-+#ifdef CONFIG_ARM
- 	/*
- 	 * Since probe() can be deferred we need to make sure that
- 	 * hook_fault_code is not called after __init memory is freed
-@@ -1147,6 +1219,7 @@ static int __init imx6_pcie_init(void)
- 	 */
- 	hook_fault_code(8, imx6q_pcie_abort_handler, SIGBUS, 0,
- 			"external abort on non-linefetch");
-+#endif
- 
- 	return platform_driver_register(&imx6_pcie_driver);
- }
--- 
-2.20.1
+> On Fri, Jan 11, 2019 at 02:54:30PM -0600, Kim Phillips wrote:
+>> This patch is the result of seeing this message:
+>>
+>> psmouse serio1: synaptics: Your touchpad (PNP: DLL087c PNP0f13) says it can support a different bus. If i2c-hid and hid-rmi are not used, you might want to try setting psmouse.synaptics_intertouch to 1 and report this to linux-input@vger.kernel.org.
+>>
+>> If I set psmouse.synaptics_intertouch=1, or add the PNP ID to
+>> smbus_pnp_ids, the touchpad continues to work, and the above message
+>> goes away, but we now get:
+>>
+>> psmouse serio1: synaptics: Trying to set up SMBus access
+>> psmouse serio1: synaptics: SMbus companion is not ready yet
+>>
+>> With this patch applied, i.e., the PNP IDs are added to the forcepad
+>> array, the touchpad continues to work and all of the above messages
+>> disappear.
+> 
+> Are you sure the touchpad in XPSes is a forcepad (i.e. it does not have
+> physical button underneath it)? As far as I know there were only couple
+> of HP laptops with forcepads and when switching to RMI mode forcepads
+> need F21 handler that we do not currently have in the kernel.
 
+I see, no, I'm not sure, but assuming you're right, the IDs 
+should be added to the smbus array instead, after fixing 
+the SMbus "companion not ready" problem?  Pointers for that and 
+the below interrupts when touchpad idle after resume, welcome.
+
+Also, the link to get the RMI4 spec in
+Documentation/devicetree/bindings/input/rmi4/rmi_2d_sensor.txt
+is broken.  Any pointers for that also appreciated.
+
+>> ---
+>> With or without this patch, I'm seeing a problem where when the XPS 15
+>> comes out of a resume, and without even touching the touchpad, I notice
+>> about 600 interrupts per second firing on the "IR-IO-APIC   51-fasteoi
+>> SYNA2393:00" line in /proc/interrupts.  If I start using the touchpad,
+>> then leave it alone, I check if there are still interrupts firing, and
+>> they have indeed stopped.  This adversely affects my battery life when
+>> using an external mouse.  Any ideas on how to debug the situation?
+>> Could it be related to the 'vdd not found' messages?:
+>>
+>> $ dmesg | grep -C 1 -i syna
+>> probe of 1-12 returned 1 after 2343 usecs
+>> psmouse serio1: synaptics: queried max coordinates: x [..5664], y [..4646]
+>> psmouse serio1: synaptics: queried min coordinates: x [1278..], y [1206..]
+>> psmouse serio1: synaptics: Touchpad model: 1, fw: 8.2, id: 0x1e2b1, caps: 0xf00123/0x840300/0x12e800/0x0, board id: 3125, fw id: 2378871
+>> input: SynPS/2 Synaptics TouchPad as /devices/platform/i8042/serio1/input/input6
+>> probe of serio1 returned 1 after 939332 usecs
+>> --
+>> probe of idma64.1 returned 1 after 72 usecs
+>> i2c_hid i2c-SYNA2393:00: i2c-SYNA2393:00 supply vdd not found, using dummy regulator
+>> i2c_hid i2c-SYNA2393:00: Linked as a consumer to regulator.0
+>> i2c_hid i2c-SYNA2393:00: i2c-SYNA2393:00 supply vddl not found, using dummy regulator
+>> ath10k_pci 0000:3b:00.0: qca6174 hw3.2 target 0x05030000 chip_id 0x00340aff sub 1a56:1535
+>> --
+>> ath10k_pci 0000:3b:00.0: firmware ver WLAN.RM.4.4.1-00079-QCARMSWPZ-1 api 6 features wowlan,ignore-otp crc32 fd869beb
+>> probe of i2c-SYNA2393:00 returned 1 after 23978 usecs
+>> ath10k_pci 0000:3b:00.0: board_file api 2 bmi_id N/A crc32 20d869c3
+>> --
+>> probe of 0018:056A:488F.0001 returned 1 after 1366 usecs
+>> input: SYNA2393:00 06CB:7A13 Mouse as /devices/pci0000:00/0000:00:15.1/i2c_designware.1/i2c-10/i2c-SYNA2393:00/0018:06CB:7A13.0002/input/input23
+>> input: SYNA2393:00 06CB:7A13 Touchpad as /devices/pci0000:00/0000:00:15.1/i2c_designware.1/i2c-10/i2c-SYNA2393:00/0018:06CB:7A13.0002/input/input24
+>> hid-generic 0018:06CB:7A13.0002: input,hidraw1: I2C HID v1.00 Mouse [SYNA2393:00 06CB:7A13] on i2c-SYNA2393:00
+>> probe of 0018:06CB:7A13.0002 returned 1 after 320 usecs
+>> --
+>> probe of 0018:06CB:7A13.0002 returned 0 after 5 usecs
+>> input: SYNA2393:00 06CB:7A13 Touchpad as /devices/pci0000:00/0000:00:15.1/i2c_designware.1/i2c-10/i2c-SYNA2393:00/0018:06CB:7A13.0002/input/input27
+>> hid-multitouch 0018:06CB:7A13.0002: input,hidraw1: I2C HID v1.00 Mouse [SYNA2393:00 06CB:7A13] on i2c-SYNA2393:00
+>> probe of 0018:06CB:7A13.0002 returned 1 after 25104 usecs
+
+Thanks,
+
+Kim
