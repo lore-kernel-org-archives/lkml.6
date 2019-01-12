@@ -2,195 +2,114 @@ Return-Path: <SRS0=UXoZ=PU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2733FC43387
-	for <linux-kernel@archiver.kernel.org>; Sat, 12 Jan 2019 04:14:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 98B44C43387
+	for <linux-kernel@archiver.kernel.org>; Sat, 12 Jan 2019 04:21:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E20E920872
-	for <linux-kernel@archiver.kernel.org>; Sat, 12 Jan 2019 04:14:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 47A0E20872
+	for <linux-kernel@archiver.kernel.org>; Sat, 12 Jan 2019 04:21:34 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=landley-net.20150623.gappssmtp.com header.i=@landley-net.20150623.gappssmtp.com header.b="gIA3zXLo"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726508AbfALEO0 (ORCPT
+        id S1726506AbfALEVd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 11 Jan 2019 23:14:26 -0500
-Received: from mx2.suse.de ([195.135.220.15]:49228 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726418AbfALEO0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Jan 2019 23:14:26 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 67A18AD3B;
-        Sat, 12 Jan 2019 04:14:24 +0000 (UTC)
-Subject: Re: [PATCH lora-next 3/4] dt-bindings: lora: sx125x: add clock
- bindings
-To:     Ben Whitten <ben.whitten@gmail.com>
-Cc:     linux-lpwan@lists.infradead.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        "David S. Miller" <davem@davemloft.net>
-References: <20190108084132.10214-1-ben.whitten@gmail.com>
- <20190108084132.10214-3-ben.whitten@gmail.com>
-From:   =?UTF-8?Q?Andreas_F=c3=a4rber?= <afaerber@suse.de>
-Openpgp: preference=signencrypt
-Autocrypt: addr=afaerber@suse.de; prefer-encrypt=mutual; keydata=
- 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
-Organization: SUSE Linux GmbH
-Message-ID: <cc85a823-74d4-7c35-16bd-1b278d5df732@suse.de>
-Date:   Sat, 12 Jan 2019 05:14:23 +0100
+        Fri, 11 Jan 2019 23:21:33 -0500
+Received: from mail-oi1-f195.google.com ([209.85.167.195]:42628 "EHLO
+        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726436AbfALEVc (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 Jan 2019 23:21:32 -0500
+Received: by mail-oi1-f195.google.com with SMTP id w13so13908443oiw.9
+        for <linux-kernel@vger.kernel.org>; Fri, 11 Jan 2019 20:21:32 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=landley-net.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=8eiHyWKZGcZUp+R6uaRKDmEv1IchLphQOgNqk4uTp7M=;
+        b=gIA3zXLoGIzf2axhoVoG/yJcS2FVN1/ldPtLWOsew5p3kO2pO7JzcK7rNKHuFbguXi
+         V/LnquXmPVpqsfVMKrykueyUwGmZ5Jlc72EL9MuGx/jVBFnzp5eZXaCEo/QpM+iYfeDt
+         wHrZN6a68AgZ6q8UVgcdlrWQjJ0+hkqR1eMlGm5wiwBsEtaZGIUF7dvy+PSfC2vflWmK
+         XZq2Beqp/wck7bR6lJecpPhCu7qYRrp/2IWg68p3BLKMapcqi0Fg3AxFaBUliPR/rGmR
+         iN7wUlMjWLggj+PkamihXOCUqbACM/L2elk5TPqSP9YbtwQorcvF4N9pMf1uxm88Sz1r
+         8D+Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=8eiHyWKZGcZUp+R6uaRKDmEv1IchLphQOgNqk4uTp7M=;
+        b=dpEuip11nPoEO9I4gbwOg310brWKodjER0DeIEsHZA5A8dd9Fqhn7trje+WgHYE+gF
+         vxP2E9sqdKymw0nAegaitivk1XZTMQHZW06oCRw5bweoADFsYLaxYLKFGm8ZCgRNl5wX
+         a4dRjNjNd88iL0QeYaG5WiMfNU72wUh7bvpo4OypeZHvCgDSGwQOW2PQG3zTurwSgesm
+         Yub9soKPsUjzErRRQq8wM4+GOgq+PJPI4F7uPSDQ7yXzDJaOxEKPdny3ct6YK/iXHEMU
+         kyimh6NXZVbK6pjXYvZpZo2DK9JkcDAuLBPqEvwNaSZqWARAJiYljB8Smcv/EEjHae1v
+         PIwA==
+X-Gm-Message-State: AJcUukfdcKY9ElBxkR8NKPM8DDUdREPrfhs8aP0nqEAjpTUSHoQ3OZZB
+        1mviBQiUNfgFru+WHlKx2vdXlQ==
+X-Google-Smtp-Source: ALg8bN4voZCvoahJV/YotWfC08cBgs/KqleFduWgMyk7iXk/3QcjXUwhRhBeG5kQ6pc3NHvSX3cZwQ==
+X-Received: by 2002:aca:1e17:: with SMTP id m23mr11241094oic.332.1547266891858;
+        Fri, 11 Jan 2019 20:21:31 -0800 (PST)
+Received: from [192.168.1.10] (072-182-052-210.res.spectrum.com. [72.182.52.210])
+        by smtp.googlemail.com with ESMTPSA id 14sm12048593otg.68.2019.01.11.20.21.30
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 11 Jan 2019 20:21:31 -0800 (PST)
+Subject: Re: [PATCH 2/2] sh: generate uapi header and syscall table header
+ files
+To:     Guenter Roeck <linux@roeck-us.net>,
+        Firoz Khan <firoz.khan@linaro.org>
+Cc:     Yoshinori Sato <ysato@users.sourceforge.jp>,
+        Rich Felker <dalias@libc.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Simon Horman <horms+renesas@verge.net.au>,
+        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+        linux-sh@vger.kernel.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        y2038@lists.linaro.org, linux-kernel@vger.kernel.org,
+        linux-arch@vger.kernel.org, arnd@arndb.de, deepa.kernel@gmail.com,
+        marcin.juszkiewicz@linaro.org
+References: <1546443445-21075-1-git-send-email-firoz.khan@linaro.org>
+ <1546443445-21075-3-git-send-email-firoz.khan@linaro.org>
+ <20190110235428.GA10016@roeck-us.net>
+From:   Rob Landley <rob@landley.net>
+Message-ID: <d329d7b8-62fb-9cb0-521e-ee7887f122a1@landley.net>
+Date:   Fri, 11 Jan 2019 22:21:30 -0600
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.0
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-In-Reply-To: <20190108084132.10214-3-ben.whitten@gmail.com>
+In-Reply-To: <20190110235428.GA10016@roeck-us.net>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Am 08.01.19 um 09:41 schrieb Ben Whitten:
-> The sx125x consumes a 32MHz clock and if it is coupled with a sx130x
-> concentrator may also provide a gated version of this 32MHz for the
-> concentrator.
-
-"SX125x", "SX130x", "32 MHz"
-
+On 1/10/19 5:54 PM, Guenter Roeck wrote:
+> On Wed, Jan 02, 2019 at 09:07:25PM +0530, Firoz Khan wrote:
+>> Unified system call table generation script must be run to
+>> generate unistd_32.h and syscall_table.h files. This patch
+>> will have changes which will invokes the script.
+>>
+>> This patch will generate unistd_32.h and syscall_table.h
+>> files by the syscall table generation script invoked by
+>> sh/Makefile and the generated files against the removed
+>> files must be identical.
+>>
+>> The generated uapi header file will be included in uapi/-
+>> asm/unistd.h and generated system call table header file
+>> will be included by kernel/syscall_32.S file.
+>>
+>> Signed-off-by: Firoz Khan <firoz.khan@linaro.org>
 > 
-> In the example we connect to output 0 of "txco" clock source. The radio
-> also provides a single clock output, hence "#clock-cells = <0>", named
-> "clk32m" for consumption by the sx130x concentrator.
+> Have you tested this patch ?
 
-No, as pointed out before, output 0 with #clock-cells = <0> is wrong!
-Either it's 1 and then you can use a single-cell index, or it's 0, in
-which case that's the next (invalid) clock.
+I tested it at one point, but not recently. (It was before 4.20 came out...)
 
-> 
-> Signed-off-by: Ben Whitten <ben.whitten@gmail.com>
-> ---
->  .../{ => net}/lora/semtech,sx125x.yaml        | 27 +++++++++++++++++++
->  1 file changed, 27 insertions(+)
->  rename Documentation/devicetree/bindings/{ => net}/lora/semtech,sx125x.yaml (67%)
-> 
-> diff --git a/Documentation/devicetree/bindings/lora/semtech,sx125x.yaml b/Documentation/devicetree/bindings/net/lora/semtech,sx125x.yaml
-> similarity index 67%
-> rename from Documentation/devicetree/bindings/lora/semtech,sx125x.yaml
-> rename to Documentation/devicetree/bindings/net/lora/semtech,sx125x.yaml
-
-In wrong patch?
-
-> index 5eadec860b70..c2fb4ac06341 100644
-> --- a/Documentation/devicetree/bindings/lora/semtech,sx125x.yaml
-> +++ b/Documentation/devicetree/bindings/net/lora/semtech,sx125x.yaml
-> @@ -33,13 +33,40 @@ properties:
->      description: The frequency of the SPI communication to the radio,
->        in Hz. Maximum SPI frequency is 10MHz.
->  
-> +  clocks:
-> +    maxItems: 1
-> +    description: 32MHz clock provider
-> +
-> +  clock-names:
-> +    items:
-> +      - const: txco
-
-The name TCXO and 32 MHz appear to come from the SX1301 manual's
-reference example?
-
-In the SX1257 manual I see XTA/XTB connected to an XTAL, and CLK_IN.
-Both CLK_IN and CLK_OUT are documented as 36 MHz (page 8). In table 2-4
-(page 11) however FXOSC is 32 to 36 MHz, typically 36 MHz; FCLK_IN also
-has a range of 32 to 36 MHz there. So I guess we should be having two
-named clocks here and be more permissive in the description?
-
-While getting into the hairy details of clock names, we should also
-prepare optional properties for supply voltages, in case they come from
-some PMIC that needs a regulator drifer. By my count there's 7 inputs:
-VBAT1/2/3, VR_PA, VR_ANA1/2, VR_DIG. Do we need a named -supply property
-for each?
-
-> +
-> +  clock-output-names:
-> +    items:
-> +      - const: clk32m
-> +    description: 32MHz output clock name
-> +
-> +  '#clock-cells':
-> +    const: 0
-> +
->  required:
->    - compatible
->    - reg
->  
->  examples:
->    - |
-> +    tcxo: dummy32m {
-> +      compatible = "fixed-clock";
-> +      clock-frequency = <32000000>;
-> +      clock-output-names = "tcxo";
-> +      #clock-cells = <0>;
-> +    };
-> +
->      radio0: lora@0 {
->        compatible = "semtech,sx1257";
->        reg = <0>;
-> +      clocks = <&tcxo 0>;
-
-just <&tcxo>
-
-> +      clock-names = "tcxo";
-> +      clock-output-names = "clk32m";
-> +      #clock-cells = <0>;
->      };
-> 
-
-Regards,
-Andreas
-
--- 
-SUSE Linux GmbH, Maxfeldstr. 5, 90409 Nürnberg, Germany
-GF: Felix Imendörffer, Jane Smithard, Graham Norton
-HRB 21284 (AG Nürnberg)
+Rob
