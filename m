@@ -2,139 +2,85 @@ Return-Path: <SRS0=UXoZ=PU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.9 required=3.0 tests=FROM_EXCESS_BASE64,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E5BD7C43387
-	for <linux-kernel@archiver.kernel.org>; Sat, 12 Jan 2019 08:08:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 12884C43387
+	for <linux-kernel@archiver.kernel.org>; Sat, 12 Jan 2019 08:08:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BF1502133F
-	for <linux-kernel@archiver.kernel.org>; Sat, 12 Jan 2019 08:08:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C9A752177B
+	for <linux-kernel@archiver.kernel.org>; Sat, 12 Jan 2019 08:08:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1547280509;
+	bh=Q5ouHoZfL3bx8f8tzhyUfdRQYsF0vB2+2NsGIiBPjn8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=NztABMJdyT1LgX33CDR0aIfM3Ic5ZfhzX4oTkm4WAmDfbEMD4L3Kz1Pb+wvKe7mN+
+	 +1Tpbrnp+qdNZtU0olTzttbpYvb6wSPf7W2STycSLR1o/Hi6z6n9omHc+/HzivNlp3
+	 1tZ++1EUuazoYCeX+wf9o//q7QO3lWCGCmsuUVAM=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726376AbfALIIO (ORCPT
+        id S1726427AbfALII2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 12 Jan 2019 03:08:14 -0500
-Received: from mailoutvs4.siol.net ([185.57.226.195]:57214 "EHLO mail.siol.net"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725791AbfALIIN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 12 Jan 2019 03:08:13 -0500
-Received: from localhost (localhost [127.0.0.1])
-        by mail.siol.net (Postfix) with ESMTP id 0B13A520991;
-        Sat, 12 Jan 2019 09:08:10 +0100 (CET)
-X-Virus-Scanned: amavisd-new at psrvmta11.zcs-production.pri
-Received: from mail.siol.net ([127.0.0.1])
-        by localhost (psrvmta11.zcs-production.pri [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id wtYuQKiFF0G7; Sat, 12 Jan 2019 09:08:09 +0100 (CET)
-Received: from mail.siol.net (localhost [127.0.0.1])
-        by mail.siol.net (Postfix) with ESMTPS id 94B43520AF5;
-        Sat, 12 Jan 2019 09:08:09 +0100 (CET)
-Received: from jernej-laptop.localnet (cpe1-8-82.cable.triera.net [213.161.8.82])
-        (Authenticated sender: 031275009)
-        by mail.siol.net (Postfix) with ESMTPA id 05832520991;
-        Sat, 12 Jan 2019 09:08:08 +0100 (CET)
-From:   Jernej =?utf-8?B?xaBrcmFiZWM=?= <jernej.skrabec@siol.net>
-To:     Chen-Yu Tsai <wens@csie.org>
-Cc:     Maxime Ripard <maxime.ripard@bootlin.com>,
-        Rob Herring <robh+dt@kernel.org>,
+        Sat, 12 Jan 2019 03:08:28 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43794 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725791AbfALII2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 12 Jan 2019 03:08:28 -0500
+Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9C54B2133F;
+        Sat, 12 Jan 2019 08:08:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1547280508;
+        bh=Q5ouHoZfL3bx8f8tzhyUfdRQYsF0vB2+2NsGIiBPjn8=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=t81IuJD223IZ0Yw+M3ZhHAT+r1Xge88Tc0qszv39SpPIW4szMzkAZbqajWiTH2H6+
+         lMVLGrGeE571IfO1FVvG1aeFgDqg1WHS9JQ5YDEbRaBCY0vgfpfvzBWzXiPBOm7EoT
+         ew+TNOH171ZEwAngMbUzQimhfHaFYwTbDs8ghHOU=
+Date:   Sat, 12 Jan 2019 09:08:25 +0100
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Nicolas Pitre <nico@fluxnic.net>
+Cc:     Dmitry Safonov <dima@arista.com>, Jiri Slaby <jslaby@suse.cz>,
         Mark Rutland <mark.rutland@arm.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Linux Media Mailing List <linux-media@vger.kernel.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-sunxi <linux-sunxi@googlegroups.com>
-Subject: Re: [PATCH 1/3] media: dt: bindings: sunxi-ir: Add A64 compatible
-Date:   Sat, 12 Jan 2019 09:08:08 +0100
-Message-ID: <4866484.1b519qCrCi@jernej-laptop>
-In-Reply-To: <CAGb2v66DiqK9sL-hQev4Wy08d9T7f1Yc2DFWJ0gYOnqChJyBRw@mail.gmail.com>
-References: <20190111173015.12119-1-jernej.skrabec@siol.net> <20190111173015.12119-2-jernej.skrabec@siol.net> <CAGb2v66DiqK9sL-hQev4Wy08d9T7f1Yc2DFWJ0gYOnqChJyBRw@mail.gmail.com>
+        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        Tycho Andersen <tycho@tycho.ws>, Dave Mielke <dave@mielke.cc>,
+        linux-kernel@vger.kernel.org
+Subject: Re: commit 83d817f410 broke my ability to use Linux with a braille
+ display
+Message-ID: <20190112080825.GA530@kroah.com>
+References: <nycvar.YSQ.7.76.1901111239510.1512@knanqh.ubzr>
+ <20190111193259.GA14966@kroah.com>
+ <nycvar.YSQ.7.76.1901111503390.2566@knanqh.ubzr>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <nycvar.YSQ.7.76.1901111503390.2566@knanqh.ubzr>
+User-Agent: Mutt/1.11.2 (2019-01-07)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Dne sobota, 12. januar 2019 ob 02:56:11 CET je Chen-Yu Tsai napisal(a):
-> On Sat, Jan 12, 2019 at 1:30 AM Jernej Skrabec <jernej.skrabec@siol.net> 
-wrote:
-> > A64 IR is compatible with A13, so add A64 compatible with A13 as a
-> > fallback.
+On Fri, Jan 11, 2019 at 03:10:04PM -0500, Nicolas Pitre wrote:
+> On Fri, 11 Jan 2019, Greg Kroah-Hartman wrote:
 > 
-> We ask people to add the SoC-specific compatible as a contigency,
-> in case things turn out to be not so "compatible".
+> > On Fri, Jan 11, 2019 at 01:33:09PM -0500, Nicolas Pitre wrote:
+> > > I use Linux with the help of a braille display and the brltty daemon. It 
+> > > turns out that the latest mainline kernel I can work with comes from 
+> > > commit 231f8fd0cc. Anything past that and I lose the ability to read the 
+> > > console barely a few seconds after the system has booted as brltty is 
+> > > thrown a wrench and the braille display becomes completely inoperable.
+> > 
+> > Please try the patch below, it was just queued up to my tree and should
+> > resolve the issue.  If not, please let us know.
 > 
-> To be consistent with all the other SoCs and other peripherals,
-> unless you already spotted a "compatible" difference in the
-> hardware, i.e. the hardware isn't completely the same, this
-> patch isn't needed. On the other hand, if you did, please mention
-> the differences in the commit log.
-
-When comparing registers descriptions between A13 and A64, I noticed few minor 
-differences:
-
-A13: RXINT: 11:6 RAL
-A64: RXINT: 13:8 RAL
-
-A13: IR_RXSTA: 12:6 RAC
-A64: IR_RXSTA: 14:8 RAC, 7 STAT (missing on A13)
-
-What is strange that  RAL and RAC field have offset defined as 8 in driver. I'm 
-not sure if that is a typo in A13 manual or driver issue. I assume the former, 
-otherwise it wouldn't work. I couldn't found original BSP driver source to 
-confirm, though.
-
-STAT bit is really not that important. It just tells if IR unit is busy or 
-not.
-
-The biggest difference is in 0x34 register. A64 has one more clock option 
-(without postdivider), although register values are backward compatible. A64 
-also has Active threshold setting (duration of CIR going from idle to active 
-state).
-
-If we dismiss RAC and RAL differences as manual error and don't care for new 
-clock option and active threshold, then having new compatible maybe really 
-doesn't make sense.
-
-Best regards,
-Jernej
-
+> Yes, it works. Thanks.
 > 
-> ChenYu
-> 
-> > Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
-> > ---
-> > 
-> >  Documentation/devicetree/bindings/media/sunxi-ir.txt | 5 ++++-
-> >  1 file changed, 4 insertions(+), 1 deletion(-)
-> > 
-> > diff --git a/Documentation/devicetree/bindings/media/sunxi-ir.txt
-> > b/Documentation/devicetree/bindings/media/sunxi-ir.txt index
-> > 278098987edb..ecac6964b69b 100644
-> > --- a/Documentation/devicetree/bindings/media/sunxi-ir.txt
-> > +++ b/Documentation/devicetree/bindings/media/sunxi-ir.txt
-> > @@ -1,7 +1,10 @@
-> > 
-> >  Device-Tree bindings for SUNXI IR controller found in sunXi SoC family
-> > 
-> >  Required properties:
-> > -- compatible       : "allwinner,sun4i-a10-ir" or "allwinner,sun5i-a13-ir"
-> > +- compatible       : value must be one of:
-> > +  * "allwinner,sun4i-a10-ir"
-> > +  * "allwinner,sun5i-a13-ir"
-> > +  * "allwinner,sun50i-a64-ir", "allwinner,sun5i-a13-ir"
-> > 
-> >  - clocks           : list of clock specifiers, corresponding to
-> >  
-> >                       entries in clock-names property;
-> >  
-> >  - clock-names      : should contain "apb" and "ir" entries;
-> > 
-> > --
-> > 2.20.1
+> I also re-validated all the vt/vcs patches I sent you this week for 
+> which I started entertaining some doubts about their stability. But they 
+> all work fine again with the tty fix applied.
 
+Great, thanks for testing, I will get this patch to Linus soon.
 
-
-
+greg k-h
