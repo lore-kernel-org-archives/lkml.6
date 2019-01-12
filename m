@@ -2,86 +2,68 @@ Return-Path: <SRS0=UXoZ=PU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,UNPARSEABLE_RELAY autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E7DCDC43387
-	for <linux-kernel@archiver.kernel.org>; Sat, 12 Jan 2019 02:39:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D048FC43387
+	for <linux-kernel@archiver.kernel.org>; Sat, 12 Jan 2019 02:43:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AD45720851
-	for <linux-kernel@archiver.kernel.org>; Sat, 12 Jan 2019 02:39:25 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="y4WilMOg"
+	by mail.kernel.org (Postfix) with ESMTP id 9483721783
+	for <linux-kernel@archiver.kernel.org>; Sat, 12 Jan 2019 02:43:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1547260994;
+	bh=4OR2Qjd898wbx9sACt2vql/Jl9STHa2ot64xGRxH0ks=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=emtO3UxC384DSUbGG2+zRnAknw6SLapUAXGQWqp/0InZadNM3yep2S3raS3TdDo1t
+	 ilKsUyf6kRw1hq279rkXyf/gloWOuUg9o0c08SPbRcFD7qVeiJT38RrQ+x4R8Pi+S6
+	 KWCEmS2dd20dGHg4ztbjwKcvVPLmz3yDbZajVH6k=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726570AbfALCjY (ORCPT
+        id S1726514AbfALCnN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 11 Jan 2019 21:39:24 -0500
-Received: from userp2130.oracle.com ([156.151.31.86]:59852 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726227AbfALCjY (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Jan 2019 21:39:24 -0500
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id x0C2YeVw144447;
-        Sat, 12 Jan 2019 02:39:18 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=to : cc : subject :
- from : references : date : in-reply-to : message-id : mime-version :
- content-type; s=corp-2018-07-02;
- bh=MER7wJ9kJYukArBOvRGOG//8rMoMZftyhEg2uPRiogM=;
- b=y4WilMOgoz/WCSuG7c0ZmTqn0I2qHQ/PIPIZUrvxWspiBIThfMDgy3G3qiFvSDujozmU
- M3NuQ5UHlUjpCvN7/rm/Kq59/+qHvj40uhRke9j1w4ti4Htd1K3xmcD/qlno1NXO6U/F
- cg/KV8mUcRFvzV3oytxW7vAoz80dbX4OKRopgUgKExNr2R55jPU53d0duAJg4PJeXa4m
- RHnLDvXJfb0xaAKtcytBfEgPRkwauK/XzUCvP45DoLOO5+yS21kiRQ3fZqYxIPvCfW6p
- S04qyPgTnAzqYA5fWtL3ljuig586UHB/b1K8hUGjbOFElMLqEdxaIolRtR+j3VtDELit 3Q== 
-Received: from userv0021.oracle.com (userv0021.oracle.com [156.151.31.71])
-        by userp2130.oracle.com with ESMTP id 2ptm0uqsw5-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Sat, 12 Jan 2019 02:39:17 +0000
-Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
-        by userv0021.oracle.com (8.14.4/8.14.4) with ESMTP id x0C2dGnx028181
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Sat, 12 Jan 2019 02:39:17 GMT
-Received: from abhmp0005.oracle.com (abhmp0005.oracle.com [141.146.116.11])
-        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x0C2dGIq032415;
-        Sat, 12 Jan 2019 02:39:16 GMT
-Received: from ca-mkp.ca.oracle.com (/10.159.214.123)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Fri, 11 Jan 2019 18:39:16 -0800
-To:     John Garry <john.garry@huawei.com>
-Cc:     <jejb@linux.vnet.ibm.com>, <martin.petersen@oracle.com>,
-        <linuxarm@huawei.com>, <linux-kernel@vger.kernel.org>,
-        <linux-scsi@vger.kernel.org>
-Subject: Re: [PATCH] scsi: hisi_sas: Set protection parameters prior to adding SCSI host
-From:   "Martin K. Petersen" <martin.petersen@oracle.com>
-Organization: Oracle Corporation
-References: <1547127161-213124-1-git-send-email-john.garry@huawei.com>
-Date:   Fri, 11 Jan 2019 21:39:13 -0500
-In-Reply-To: <1547127161-213124-1-git-send-email-john.garry@huawei.com> (John
-        Garry's message of "Thu, 10 Jan 2019 21:32:41 +0800")
-Message-ID: <yq1h8eey4z2.fsf@oracle.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
+        Fri, 11 Jan 2019 21:43:13 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54268 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726460AbfALCnN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 Jan 2019 21:43:13 -0500
+Received: from dragon (61-216-91-114.HINET-IP.hinet.net [61.216.91.114])
+        (using TLSv1.2 with cipher DHE-RSA-AES128-SHA (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8DE882084E;
+        Sat, 12 Jan 2019 02:43:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1547260992;
+        bh=4OR2Qjd898wbx9sACt2vql/Jl9STHa2ot64xGRxH0ks=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=uuwlfe2OnFsnakvI14MVQcaj1slDQCZF5Cy1N3kHN84B3bd0e9ESy6XqS1O1bjjdp
+         GUrCk6ZUKg3eXPknKQMvoOXLwvC0JN6Y5OE7SeBG8/KrhwK29b/TSdAqeJIXEaqdDW
+         gs9JmQYK6x7d7FHqR7bEL82ufDtmnSaD/rpw0gOw=
+Date:   Sat, 12 Jan 2019 10:42:59 +0800
+From:   Shawn Guo <shawnguo@kernel.org>
+To:     Ioana Ciocoi Radulescu <ruxandra.radulescu@nxp.com>
+Cc:     "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH 1/2] arm64: dts: lx2160a: Add fsl-mc node
+Message-ID: <20190112024257.GN32649@dragon>
+References: <1545325306-1681-1-git-send-email-ruxandra.radulescu@nxp.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9133 signatures=668680
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=923
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1810050000 definitions=main-1901120019
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1545325306-1681-1-git-send-email-ruxandra.radulescu@nxp.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Thu, Dec 20, 2018 at 05:02:03PM +0000, Ioana Ciocoi Radulescu wrote:
+> Add the fsl-mc node in the LX2160A device tree.
+> 
+> Signed-off-by: Ioana Radulescu <ruxandra.radulescu@nxp.com>
 
-John,
-
-> Currently we set the protection parameters after calling scsi_add_host()
-> for v3 hw.
->
-> They should be set beforehand, so make this change.
-
-Applied to 5.0/scsi-fixes. Thanks!
-
--- 
-Martin K. Petersen	Oracle Linux Engineering
+Applied both, thanks.
