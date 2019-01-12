@@ -3,64 +3,66 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-10.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 976E9C43387
-	for <linux-kernel@archiver.kernel.org>; Sat, 12 Jan 2019 18:45:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6CAE7C43387
+	for <linux-kernel@archiver.kernel.org>; Sat, 12 Jan 2019 18:45:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 69E602086C
-	for <linux-kernel@archiver.kernel.org>; Sat, 12 Jan 2019 18:45:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 454A7206B6
+	for <linux-kernel@archiver.kernel.org>; Sat, 12 Jan 2019 18:45:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547318704;
-	bh=C5ymzxxY7YY2rnXX5xr+loGxGQ6c1QHbvFVupptCn5w=;
+	s=default; t=1547318709;
+	bh=lL+E6+wi4i3WSKxx6DrB+vlrIHzjNGX5kVlqnwjpYlY=;
 	h=Subject:From:In-Reply-To:References:Date:To:Cc:List-ID:From;
-	b=dp+YjVE2BbH1hXIVrWLl1JLPk7HJccoToPRGzqTgm6gRE5dxP6m2WDM63HrNS881+
-	 DImdUv/UN/m2BphsmKYlS5hHbGPi5eP8tKnGy7disI1jsIxx1hrpqLOheUZm53Sh9S
-	 R75B/QN+9KTdepcshmJLl3z3lt1JWeiir+N4g7kI=
+	b=oUge+R+2KuUZipyrC/MayAbWZevfnSMg6GJx08A8HRcNn3Dx2QewDLcSKIOw3a+gR
+	 AOITJ26ZP8TfxCzHXlgrdhB0IXKseZWbGMfGdB9Okx2PfDwQYCfTEOkFaGPTi7/h59
+	 2nU9NGE479tDXnKYTRAXi4nEos0HTGjQ/Ytob60E=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726725AbfALSpD (ORCPT
+        id S1726709AbfALSpD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Sat, 12 Jan 2019 13:45:03 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36554 "EHLO mail.kernel.org"
+Received: from mail.kernel.org ([198.145.29.99]:36544 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725890AbfALSpD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 12 Jan 2019 13:45:03 -0500
-Subject: Re: [GIT PULL] KVM fixes for Linux 5.0-rc2
+        id S1725859AbfALSpC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 12 Jan 2019 13:45:02 -0500
+Subject: Re: [PULL] drm-fixes
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
         s=default; t=1547318702;
-        bh=C5ymzxxY7YY2rnXX5xr+loGxGQ6c1QHbvFVupptCn5w=;
+        bh=lL+E6+wi4i3WSKxx6DrB+vlrIHzjNGX5kVlqnwjpYlY=;
         h=From:In-Reply-To:References:Date:To:Cc:From;
-        b=nMKO7DTyQOGvfLL8KbBnwckjU8jKSQ1E0nIrKeoobp5TEtQIle/I96r1HNtZOdpkG
-         5UhNtPVqU4eNvEDw/We2LvrAqoJLw7031QL6yRD4+7M1+EEHEA2vZ0vkBh+a1zkDdt
-         QujSZlhLjQfPBPWhIHJCFfudxtODryDD7IVqkZcw=
+        b=KtheN62fVDywExVIrScIQfdxEPb/aQ2jDl5eMCUgj6bRWi8JNn52mpPe39gDJauuF
+         NLXgDBgeuYT3lJkKXdi+AHel35wGHlDu3Vz7DNCkNIkWupgDX0SQu0Ytvo9Ue9vxqt
+         I3YHYHotUmQaceK/jbOu4S7B0VJ59IAGwqdv7f5Q=
 From:   pr-tracker-bot@kernel.org
-In-Reply-To: <20190112123031.GA2992@flask>
-References: <20190112123031.GA2992@flask>
+In-Reply-To: <20190111230648.GA18543@phenom.ffwll.local>
+References: <20190111230648.GA18543@phenom.ffwll.local>
 X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20190112123031.GA2992@flask>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/virt/kvm/kvm tags/for-linus
-X-PR-Tracked-Commit-Id: 826c1362e79abcd36f99092acd083b5a2d576676
+X-PR-Tracked-Message-Id: <20190111230648.GA18543@phenom.ffwll.local>
+X-PR-Tracked-Remote: git://anongit.freedesktop.org/drm/drm
+ tags/drm-fixes-2019-01-11-1
+X-PR-Tracked-Commit-Id: e2d3c414ec0f9d1557c8c5ff2c32166e68bbc4ad
 X-PR-Merge-Tree: torvalds/linux.git
 X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 473348891c36ff6de3e224fefa0b3fc86a629178
-Message-Id: <154731870255.17522.14938699654155221137.pr-tracker-bot@kernel.org>
+X-PR-Merge-Commit-Id: 7b5c8f5226bd0eb77da8a055f43b2f1a06e92ba8
+Message-Id: <154731870230.17522.5266752045302273030.pr-tracker-bot@kernel.org>
 Date:   Sat, 12 Jan 2019 18:45:02 +0000
-To:     Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>
+To:     Daniel Vetter <daniel.vetter@ffwll.ch>
 Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        linux-kernel@vger.kernel.org, kvm@vger.kernel.org
+        Dave Airlie <airlied@gmail.com>,
+        DRI Development <dri-devel@lists.freedesktop.org>,
+        LKML <linux-kernel@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The pull request you sent on Sat, 12 Jan 2019 13:30:38 +0100:
+The pull request you sent on Sat, 12 Jan 2019 00:06:48 +0100:
 
-> git://git.kernel.org/pub/scm/virt/kvm/kvm tags/for-linus
+> git://anongit.freedesktop.org/drm/drm tags/drm-fixes-2019-01-11-1
 
 has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/473348891c36ff6de3e224fefa0b3fc86a629178
+https://git.kernel.org/torvalds/c/7b5c8f5226bd0eb77da8a055f43b2f1a06e92ba8
 
 Thank you!
 
