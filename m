@@ -2,163 +2,195 @@ Return-Path: <SRS0=UXoZ=PU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 776D8C43387
-	for <linux-kernel@archiver.kernel.org>; Sat, 12 Jan 2019 04:05:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2733FC43387
+	for <linux-kernel@archiver.kernel.org>; Sat, 12 Jan 2019 04:14:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 399872086C
-	for <linux-kernel@archiver.kernel.org>; Sat, 12 Jan 2019 04:05:44 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="rjZvmiHM"
+	by mail.kernel.org (Postfix) with ESMTP id E20E920872
+	for <linux-kernel@archiver.kernel.org>; Sat, 12 Jan 2019 04:14:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726480AbfALEFm (ORCPT
+        id S1726508AbfALEO0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 11 Jan 2019 23:05:42 -0500
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:43759 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726383AbfALEFl (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Jan 2019 23:05:41 -0500
-Received: by mail-pf1-f196.google.com with SMTP id w73so7848791pfk.10;
-        Fri, 11 Jan 2019 20:05:41 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=QHL2KuRAkECnHXOLptHd4M/L9NgINZ27nYWV6gTR1KQ=;
-        b=rjZvmiHM2ZNj+jiu3m4jAtKgbIxAFPmvBhHk249rifaUofkLymF/t6ODySmBw8BiBH
-         aK8G5oUuHISr/qmsTo3nHH1RGVRqyggZjik/e5L2vlir/Iy4hEf1OmOpuRNSi8YApTDj
-         rHjOt6Iu7mAm4rKfy2LiEc1Ivc0eRoA4b0OYZ6ZSjM7R8rXSPbfCvKxqcQ8eWECawh+S
-         UKPv2gZoxgsQyA0x0pAuKkzaTMe/isjzxEqAGYisEUXSnf/GPOYkm7+9ckXcuhcNYjsL
-         0DJvv7oQ6/dBG93RsQQyK/0mezJmHk2xSBrtrh5i5QD2U3FqyneeMMYoZGfPzoCj/pOs
-         3ogg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=QHL2KuRAkECnHXOLptHd4M/L9NgINZ27nYWV6gTR1KQ=;
-        b=gn6/RRk8PM3/vI9j+n/OTf7s5m9P8MhGynRUcJa87jYZUftBVYycCwbjzQWvhpJTQS
-         AHvbZBi+cGd/nAwIO7MbiQnxZJwpzYXybOdI6wxjnBtLY3xB4XNjjj7U5nwlU3cS61Tk
-         UxIEPvW8/9NkzBo6Wd9ctjnGYLpQu7z3gHdw3WCVxobuyXiXmOrVt1mgEl1nvdUf8ffu
-         CCeDC9cWSIISsvXIP/wqw6JW4igsJzCEopIJoxMr/tV1lJ2i+0nyOyaBJP++FIzaVVfG
-         mWRFh/qbijAfPE0T2T58B2be2ypAl51ivZ2Y7u9cbnHyiB1Kc4O3f+fDzKQTusLjxl5E
-         t3jQ==
-X-Gm-Message-State: AJcUukcGFrfSS9sz/12hi1P3hP76mO4PZS6nBhCQNHnGihgKqm7RcOL0
-        JX3yIuG7tkFKRlRusKftde4=
-X-Google-Smtp-Source: ALg8bN7BjYzDWGojWqNU7h2PI6CdeYfNYvsxcG+vLEGZsUheDFrW5CfA/+Jxj6ftZ6tPkeD9HIcdwA==
-X-Received: by 2002:a62:8a51:: with SMTP id y78mr17008047pfd.35.1547265940834;
-        Fri, 11 Jan 2019 20:05:40 -0800 (PST)
-Received: from mail.google.com ([207.246.99.41])
-        by smtp.gmail.com with ESMTPSA id 24sm338911899pfl.32.2019.01.11.20.05.37
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 11 Jan 2019 20:05:40 -0800 (PST)
-Date:   Sat, 12 Jan 2019 12:05:33 +0800
-From:   Changbin Du <changbin.du@gmail.com>
-To:     Changbin Du <changbin.du@gmail.com>
-Cc:     rostedt@goodmis.org, mingo@redhat.com, corbet@lwn.net,
-        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/5] Improve the latency tracers
-Message-ID: <20190112040531.w7wvt5x6ztxb6qcg@mail.google.com>
-References: <20190101154614.8887-1-changbin.du@gmail.com>
+        Fri, 11 Jan 2019 23:14:26 -0500
+Received: from mx2.suse.de ([195.135.220.15]:49228 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726418AbfALEO0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 Jan 2019 23:14:26 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 67A18AD3B;
+        Sat, 12 Jan 2019 04:14:24 +0000 (UTC)
+Subject: Re: [PATCH lora-next 3/4] dt-bindings: lora: sx125x: add clock
+ bindings
+To:     Ben Whitten <ben.whitten@gmail.com>
+Cc:     linux-lpwan@lists.infradead.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "David S. Miller" <davem@davemloft.net>
+References: <20190108084132.10214-1-ben.whitten@gmail.com>
+ <20190108084132.10214-3-ben.whitten@gmail.com>
+From:   =?UTF-8?Q?Andreas_F=c3=a4rber?= <afaerber@suse.de>
+Openpgp: preference=signencrypt
+Autocrypt: addr=afaerber@suse.de; prefer-encrypt=mutual; keydata=
+ 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
+Organization: SUSE Linux GmbH
+Message-ID: <cc85a823-74d4-7c35-16bd-1b278d5df732@suse.de>
+Date:   Sat, 12 Jan 2019 05:14:23 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190101154614.8887-1-changbin.du@gmail.com>
-User-Agent: NeoMutt/20180716
+In-Reply-To: <20190108084132.10214-3-ben.whitten@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Steven, Have you checked this serias yet? :)
+Am 08.01.19 um 09:41 schrieb Ben Whitten:
+> The sx125x consumes a 32MHz clock and if it is coupled with a sx130x
+> concentrator may also provide a gated version of this 32MHz for the
+> concentrator.
 
-On Tue, Jan 01, 2019 at 11:46:09PM +0800, Changbin Du wrote:
-> Happy new year!
+"SX125x", "SX130x", "32 MHz"
+
 > 
-> This series make some improments for the kernel latency tracers, especilly
-> for the wakeup tracers. The latency tracers will show us more useful
-> information. With this series, the wakeup tracers look like this
-> when display-graph is enabled:
+> In the example we connect to output 0 of "txco" clock source. The radio
+> also provides a single clock output, hence "#clock-cells = <0>", named
+> "clk32m" for consumption by the sx130x concentrator.
+
+No, as pointed out before, output 0 with #clock-cells = <0> is wrong!
+Either it's 1 and then you can use a single-cell index, or it's 0, in
+which case that's the next (invalid) clock.
+
 > 
-> # tracer: wakeup
-> #
-> # wakeup latency trace v1.1.5 on 4.20.0+
-> # --------------------------------------------------------------------
-> # latency: 593 us, #674/674, CPU#0 | (M:desktop VP:0, KP:0, SP:0 HP:0 #P:4)
-> #    -----------------
-> #    | task: kworker/0:1H-339 (uid:0 nice:-20 policy:0 rt_prio:0)
-> #    -----------------
-> #
-> #                                       _-----=> irqs-off        
-> #                                      / _----=> need-resched    
-> #                                     | / _---=> hardirq/softirq 
-> #                                     || / _--=> preempt-depth   
-> #                                     ||| /                      
-> #   REL TIME      CPU  TASK/PID       ||||     DURATION                  FUNCTION CALLS
-> #      |          |     |    |        ||||      |   |                     |   |   |   |
->         0 us |   0)    <idle>-0    |  dNs. |               |  /*      0:120:R   + [000]   339:100:R kworker/0:1H */
->         3 us |   0)    <idle>-0    |  dNs. |   0.000 us    |            (null)();
->   <idle>-0       0dNs.   66us : <stack trace>
->  => try_to_wake_up
->  => __queue_work
->  => queue_work_on
->  => call_timer_fn
->  => run_timer_softirq
->  => __do_softirq
->  => irq_exit
->  => smp_apic_timer_interrupt
->  => apic_timer_interrupt
->  => native_safe_halt
->  => default_idle
->  => default_idle_call
->  => do_idle
->  => cpu_startup_entry
->  => start_kernel
->  => secondary_startup_64
->        67 us |   0)    <idle>-0    |  dNs. |   0.721 us    |  ttwu_stat();
->        69 us |   0)    <idle>-0    |  dNs. |   0.607 us    |  _raw_spin_unlock_irqrestore();
->        71 us |   0)    <idle>-0    |  .Ns. |   0.598 us    |  _raw_spin_lock_irq();
->        72 us |   0)    <idle>-0    |  .Ns. |   0.584 us    |  _raw_spin_lock_irq();
->        73 us |   0)    <idle>-0    |  dNs. |   1.125 us    |  __next_timer_interrupt();
->        75 us |   0)    <idle>-0    |  dNs. |               |  call_timer_fn() {
->        76 us |   0)    <idle>-0    |  dNs. |               |    delayed_work_timer_fn() {
->       [...]
->       564 us |   0)   kworker-13   |  d... |               |      set_next_entity() {
->       565 us |   0)   kworker-13   |  d... |   0.524 us    |        __update_load_avg_se();
->       566 us |   0)   kworker-13   |  d... |   0.562 us    |        __update_load_avg_cfs_rq();
->       567 us |   0)   kworker-13   |  d... |   2.765 us    |      }
->       568 us |   0)   kworker-13   |  d... | + 10.077 us   |    }
->       569 us |   0)   kworker-13   |  d... |   0.000 us    |  __schedule();
-> kworker/-13      0d...  593us : <stack trace>
->  => schedule
->  => worker_thread
->  => kthread
->  => ret_from_fork
->       593 us |   0)   kworker-13   |  d... |               |  /*     13:120:I ==> [000]   339:100:R kworker/0:1H */
+> Signed-off-by: Ben Whitten <ben.whitten@gmail.com>
+> ---
+>  .../{ => net}/lora/semtech,sx125x.yaml        | 27 +++++++++++++++++++
+>  1 file changed, 27 insertions(+)
+>  rename Documentation/devicetree/bindings/{ => net}/lora/semtech,sx125x.yaml (67%)
 > 
-> Changbin Du (5):
->   function_graph: Support displaying relative timestamp
->   sched/tracing: Show more info for funcgraph wakeup tracers
->   sched/tracing: Put a margin between flags and duration for wakeup
->     tracers
->   sched/tracing: Show stacktrace for wakeup tracers
->   trace/doc: Add latency tracer funcgraph example
+> diff --git a/Documentation/devicetree/bindings/lora/semtech,sx125x.yaml b/Documentation/devicetree/bindings/net/lora/semtech,sx125x.yaml
+> similarity index 67%
+> rename from Documentation/devicetree/bindings/lora/semtech,sx125x.yaml
+> rename to Documentation/devicetree/bindings/net/lora/semtech,sx125x.yaml
+
+In wrong patch?
+
+> index 5eadec860b70..c2fb4ac06341 100644
+> --- a/Documentation/devicetree/bindings/lora/semtech,sx125x.yaml
+> +++ b/Documentation/devicetree/bindings/net/lora/semtech,sx125x.yaml
+> @@ -33,13 +33,40 @@ properties:
+>      description: The frequency of the SPI communication to the radio,
+>        in Hz. Maximum SPI frequency is 10MHz.
+>  
+> +  clocks:
+> +    maxItems: 1
+> +    description: 32MHz clock provider
+> +
+> +  clock-names:
+> +    items:
+> +      - const: txco
+
+The name TCXO and 32 MHz appear to come from the SX1301 manual's
+reference example?
+
+In the SX1257 manual I see XTA/XTB connected to an XTAL, and CLK_IN.
+Both CLK_IN and CLK_OUT are documented as 36 MHz (page 8). In table 2-4
+(page 11) however FXOSC is 32 to 36 MHz, typically 36 MHz; FCLK_IN also
+has a range of 32 to 36 MHz there. So I guess we should be having two
+named clocks here and be more permissive in the description?
+
+While getting into the hairy details of clock names, we should also
+prepare optional properties for supply voltages, in case they come from
+some PMIC that needs a regulator drifer. By my count there's 7 inputs:
+VBAT1/2/3, VR_PA, VR_ANA1/2, VR_DIG. Do we need a named -supply property
+for each?
+
+> +
+> +  clock-output-names:
+> +    items:
+> +      - const: clk32m
+> +    description: 32MHz output clock name
+> +
+> +  '#clock-cells':
+> +    const: 0
+> +
+>  required:
+>    - compatible
+>    - reg
+>  
+>  examples:
+>    - |
+> +    tcxo: dummy32m {
+> +      compatible = "fixed-clock";
+> +      clock-frequency = <32000000>;
+> +      clock-output-names = "tcxo";
+> +      #clock-cells = <0>;
+> +    };
+> +
+>      radio0: lora@0 {
+>        compatible = "semtech,sx1257";
+>        reg = <0>;
+> +      clocks = <&tcxo 0>;
+
+just <&tcxo>
+
+> +      clock-names = "tcxo";
+> +      clock-output-names = "clk32m";
+> +      #clock-cells = <0>;
+>      };
 > 
->  Documentation/trace/ftrace.rst       | 51 ++++++++++++++++++++++++++++
->  kernel/trace/trace.h                 |  9 ++---
->  kernel/trace/trace_functions_graph.c | 30 ++++++++++++++--
->  kernel/trace/trace_irqsoff.c         |  2 +-
->  kernel/trace/trace_sched_wakeup.c    | 11 ++++--
->  5 files changed, 94 insertions(+), 9 deletions(-)
-> 
-> -- 
-> 2.17.1
-> 
+
+Regards,
+Andreas
 
 -- 
-Cheers,
-Changbin Du
+SUSE Linux GmbH, Maxfeldstr. 5, 90409 Nürnberg, Germany
+GF: Felix Imendörffer, Jane Smithard, Graham Norton
+HRB 21284 (AG Nürnberg)
