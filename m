@@ -2,208 +2,128 @@ Return-Path: <SRS0=UXoZ=PU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 523D4C43387
-	for <linux-kernel@archiver.kernel.org>; Sat, 12 Jan 2019 20:38:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5FA81C43387
+	for <linux-kernel@archiver.kernel.org>; Sat, 12 Jan 2019 20:46:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 19BCF20835
-	for <linux-kernel@archiver.kernel.org>; Sat, 12 Jan 2019 20:38:44 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=joelfernandes.org header.i=@joelfernandes.org header.b="lmKUV/dU"
+	by mail.kernel.org (Postfix) with ESMTP id 32A0B2086C
+	for <linux-kernel@archiver.kernel.org>; Sat, 12 Jan 2019 20:46:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726660AbfALUih (ORCPT
+        id S1726537AbfALUqB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 12 Jan 2019 15:38:37 -0500
-Received: from mail-qt1-f195.google.com ([209.85.160.195]:35999 "EHLO
-        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726615AbfALUig (ORCPT
+        Sat, 12 Jan 2019 15:46:01 -0500
+Received: from smtprelay0092.hostedemail.com ([216.40.44.92]:54182 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1725883AbfALUqA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 12 Jan 2019 15:38:36 -0500
-Received: by mail-qt1-f195.google.com with SMTP id t13so22659421qtn.3
-        for <linux-kernel@vger.kernel.org>; Sat, 12 Jan 2019 12:38:35 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=joelfernandes.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=0MWo8Mkvt471260EQpjgHwB7ntQEkhWkiuroZZqGz7Q=;
-        b=lmKUV/dUsPcqBbfMgv9BdXHViFVQX4L9qEX5mzBe6yCJ3IgEoApudENEMiWX9PcSia
-         78dwptQY2hD/6JHzCY7HMGBemp+tgjZhQ05kPp4parsICyeHICoGCaoIMK0aQJFKc8sR
-         h8iqwys+YBCWX9ip/qKIEogwazXSfSq605vN4=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=0MWo8Mkvt471260EQpjgHwB7ntQEkhWkiuroZZqGz7Q=;
-        b=gSNkje1FGQY8ELbrmRGwqWReMJpID88vktvq+hAf0Ka9eQI+GRCfFZZq2DfQ+A9pN4
-         9r3MIt2VNjZY0h+gl0dORZEslexnRoKzWA+5AmzOUcqKJbPmWUtcJOYD5AJfEPcGwx1w
-         cWJrE5jR+kEvVAgF78bmH9RpH6GDkafZ7Uza/sADEyNcM21GaLd4wzKXal3AAwVcY0zQ
-         ulLcW71rqV69SbaoDM/KkGn4vC+5JeoL4uNIMNuASXiL8bn7VKYt05JgjVMBnHFCiYYu
-         zsse11C2+TV558xCmBIfJcU6meNbAOVdifKatfcUeU0z1X4PP76sYhljjZQpd9m+nDVa
-         BCMQ==
-X-Gm-Message-State: AJcUukeXLuM0kDjVGze63S6gSjFAfstdc5fUKibjmwpCzsHFmfVKrxhW
-        GC7ZSkE3kA3e2kIUGgOjMjn3FKo7u1Q=
-X-Google-Smtp-Source: ALg8bN4EPzx3WrCu4lodXwGRW7peAjqqjPCeB/57bYpl+61/kVhWIFRuqh/Sb/FiGO3i6UC8/M6CjA==
-X-Received: by 2002:a0c:e751:: with SMTP id g17mr18871160qvn.160.1547325514848;
-        Sat, 12 Jan 2019 12:38:34 -0800 (PST)
-Received: from joelaf.cam.corp.google.com ([2620:0:1004:1100:cfd0:d2ee:d54d:ab6d])
-        by smtp.gmail.com with ESMTPSA id c12sm55883402qka.42.2019.01.12.12.38.33
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sat, 12 Jan 2019 12:38:34 -0800 (PST)
-From:   Joel Fernandes <joel@joelfernandes.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     "Joel Fernandes (Google)" <joel@joelfernandes.org>,
-        dancol@google.com, minchan@kernel.org,
-        Jann Horn <jannh@google.com>,
-        John Stultz <john.stultz@linaro.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Hugh Dickins <hughd@google.com>,
-        "J. Bruce Fields" <bfields@fieldses.org>,
-        Jeff Layton <jlayton@kernel.org>, linux-api@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kselftest@vger.kernel.org,
-        linux-mm@kvack.org,
-        =?UTF-8?q?Marc-Andr=C3=A9=20Lureau?= <marcandre.lureau@redhat.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Shuah Khan <shuah@kernel.org>
-Subject: [PATCH v4 2/2] selftests/memfd: Add tests for F_SEAL_FUTURE_WRITE seal
-Date:   Sat, 12 Jan 2019 15:38:16 -0500
-Message-Id: <20190112203816.85534-3-joel@joelfernandes.org>
-X-Mailer: git-send-email 2.20.1.97.g81188d93c3-goog
-In-Reply-To: <20190112203816.85534-1-joel@joelfernandes.org>
-References: <20190112203816.85534-1-joel@joelfernandes.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Sat, 12 Jan 2019 15:46:00 -0500
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay08.hostedemail.com (Postfix) with ESMTP id 6ABA2182CED28;
+        Sat, 12 Jan 2019 20:45:59 +0000 (UTC)
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-HE-Tag: lead10_8b8053b338518
+X-Filterd-Recvd-Size: 3610
+Received: from XPS-9350.home (unknown [47.151.153.53])
+        (Authenticated sender: joe@perches.com)
+        by omf09.hostedemail.com (Postfix) with ESMTPA;
+        Sat, 12 Jan 2019 20:45:58 +0000 (UTC)
+Message-ID: <a5e60a2b93e10baf84af063f6c8e56402273105d.camel@perches.com>
+Subject: [PATCH] checkpatch: Add some new alloc functions to various tests
+From:   Joe Perches <joe@perches.com>
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Andy Whitcroft <apw@canonical.com>
+Date:   Sat, 12 Jan 2019 12:45:57 -0800
+Content-Type: text/plain; charset="ISO-8859-1"
+User-Agent: Evolution 3.30.1-1build1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: "Joel Fernandes (Google)" <joel@joelfernandes.org>
+Many new generic allocation functions like the
+kvmalloc family have been added recently to the kernel.
 
-Add tests to verify sealing memfds with the F_SEAL_FUTURE_WRITE works as
-expected.
+The allocation functions test now includes:
 
-Cc: dancol@google.com
-Cc: minchan@kernel.org
-Cc: Jann Horn <jannh@google.com>
-Cc: John Stultz <john.stultz@linaro.org>
-Signed-off-by: Joel Fernandes (Google) <joel@joelfernandes.org>
+o kvmalloc and variants
+o kstrdup_const
+o kmemdup_nul
+o dma_alloc_coherent
+o alloc_skb and variants
+
+Add a separate $allocFunctions variable to help make
+the allocation functions test a bit more readable.
+
+Miscellanea:
+
+o Use $allocFunctions in the unnecessary OOM message test and
+  add exclude uses with __GFP_NOWARN
+o Use $allocFunctions in the unnecessary cast test
+o Add the kvmalloc family to the preferred sizeof alloc style
+  foo = kvmalloc(sizeof(*foo), ...)
+
+Signed-off-by: Joe Perches <joe@perches.com>
 ---
- tools/testing/selftests/memfd/memfd_test.c | 74 ++++++++++++++++++++++
- 1 file changed, 74 insertions(+)
+ scripts/checkpatch.pl | 19 +++++++++++++++----
+ 1 file changed, 15 insertions(+), 4 deletions(-)
 
-diff --git a/tools/testing/selftests/memfd/memfd_test.c b/tools/testing/selftests/memfd/memfd_test.c
-index 10baa1652fc2..c67d32eeb668 100644
---- a/tools/testing/selftests/memfd/memfd_test.c
-+++ b/tools/testing/selftests/memfd/memfd_test.c
-@@ -54,6 +54,22 @@ static int mfd_assert_new(const char *name, loff_t sz, unsigned int flags)
- 	return fd;
- }
+diff --git a/scripts/checkpatch.pl b/scripts/checkpatch.pl
+index 155fa9305166..551da83cb00f 100755
+--- a/scripts/checkpatch.pl
++++ b/scripts/checkpatch.pl
+@@ -466,6 +466,16 @@ our $logFunctions = qr{(?x:
+ 	seq_vprintf|seq_printf|seq_puts
+ )};
  
-+static int mfd_assert_reopen_fd(int fd_in)
-+{
-+	int r, fd;
-+	char path[100];
++our $allocFunctions = qr{(?x:
++	(?:(?:devm_)?
++		(?:kv|k|v)[czm]alloc(?:_node|_array)? |
++		kstrdup(?:_const)? |
++		kmemdup(?:_nul)?) |
++	(?:\w+)?alloc_skb(?:ip_align)? |
++				# dev_alloc_skb/netdev_alloc_skb, et al
++	dma_alloc_coherent
++)};
 +
-+	sprintf(path, "/proc/self/fd/%d", fd_in);
-+
-+	fd = open(path, O_RDWR);
-+	if (fd < 0) {
-+		printf("re-open of existing fd %d failed\n", fd_in);
-+		abort();
-+	}
-+
-+	return fd;
-+}
-+
- static void mfd_fail_new(const char *name, unsigned int flags)
- {
- 	int r;
-@@ -255,6 +271,25 @@ static void mfd_assert_read(int fd)
- 	munmap(p, mfd_def_size);
- }
+ our $signature_tags = qr{(?xi:
+ 	Signed-off-by:|
+ 	Co-developed-by:|
+@@ -5547,7 +5557,8 @@ sub process {
+ 			my ($s, $c) = ctx_statement_block($linenr - 3, $realcnt, 0);
+ #			print("line: <$line>\nprevline: <$prevline>\ns: <$s>\nc: <$c>\n\n\n");
  
-+/* Test that PROT_READ + MAP_SHARED mappings work. */
-+static void mfd_assert_read_shared(int fd)
-+{
-+	void *p;
-+
-+	/* verify PROT_READ and MAP_SHARED *is* allowed */
-+	p = mmap(NULL,
-+		 mfd_def_size,
-+		 PROT_READ,
-+		 MAP_SHARED,
-+		 fd,
-+		 0);
-+	if (p == MAP_FAILED) {
-+		printf("mmap() failed: %m\n");
-+		abort();
-+	}
-+	munmap(p, mfd_def_size);
-+}
-+
- static void mfd_assert_write(int fd)
- {
- 	ssize_t l;
-@@ -692,6 +727,44 @@ static void test_seal_write(void)
- 	close(fd);
- }
+-			if ($s =~ /(?:^|\n)[ \+]\s*(?:$Type\s*)?\Q$testval\E\s*=\s*(?:\([^\)]*\)\s*)?\s*(?:devm_)?(?:[kv][czm]alloc(?:_node|_array)?\b|kstrdup|kmemdup|(?:dev_)?alloc_skb)/) {
++			if ($s =~ /(?:^|\n)[ \+]\s*(?:$Type\s*)?\Q$testval\E\s*=\s*(?:\([^\)]*\)\s*)?\s*$allocFunctions\s*\(/ &&
++			    $s !~ /\b__GFP_NOWARN\b/ ) {
+ 				WARN("OOM_MESSAGE",
+ 				     "Possible unnecessary 'out of memory' message\n" . $hereprev);
+ 			}
+@@ -6198,8 +6209,8 @@ sub process {
+ 			}
+ 		}
  
-+/*
-+ * Test SEAL_FUTURE_WRITE
-+ * Test whether SEAL_FUTURE_WRITE actually prevents modifications.
-+ */
-+static void test_seal_future_write(void)
-+{
-+	int fd, fd2;
-+	void *p;
-+
-+	printf("%s SEAL-FUTURE-WRITE\n", memfd_str);
-+
-+	fd = mfd_assert_new("kern_memfd_seal_future_write",
-+			    mfd_def_size,
-+			    MFD_CLOEXEC | MFD_ALLOW_SEALING);
-+
-+	p = mfd_assert_mmap_shared(fd);
-+
-+	mfd_assert_has_seals(fd, 0);
-+
-+	mfd_assert_add_seals(fd, F_SEAL_FUTURE_WRITE);
-+	mfd_assert_has_seals(fd, F_SEAL_FUTURE_WRITE);
-+
-+	/* read should pass, writes should fail */
-+	mfd_assert_read(fd);
-+	mfd_assert_read_shared(fd);
-+	mfd_fail_write(fd);
-+
-+	fd2 = mfd_assert_reopen_fd(fd);
-+	/* read should pass, writes should still fail */
-+	mfd_assert_read(fd2);
-+	mfd_assert_read_shared(fd2);
-+	mfd_fail_write(fd2);
-+
-+	munmap(p, mfd_def_size);
-+	close(fd2);
-+	close(fd);
-+}
-+
- /*
-  * Test SEAL_SHRINK
-  * Test whether SEAL_SHRINK actually prevents shrinking
-@@ -945,6 +1018,7 @@ int main(int argc, char **argv)
- 	test_basic();
- 
- 	test_seal_write();
-+	test_seal_future_write();
- 	test_seal_shrink();
- 	test_seal_grow();
- 	test_seal_resize();
--- 
-2.20.1.97.g81188d93c3-goog
+-# check for pointless casting of kmalloc return
+-		if ($line =~ /\*\s*\)\s*[kv][czm]alloc(_node){0,1}\b/) {
++# check for pointless casting of alloc functions
++		if ($line =~ /\*\s*\)\s*$allocFunctions\b/) {
+ 			WARN("UNNECESSARY_CASTS",
+ 			     "unnecessary cast may hide bugs, see http://c-faq.com/malloc/mallocnocast.html\n" . $herecurr);
+ 		}
+@@ -6207,7 +6218,7 @@ sub process {
+ # alloc style
+ # p = alloc(sizeof(struct foo), ...) should be p = alloc(sizeof(*p), ...)
+ 		if ($perl_version_ok &&
+-		    $line =~ /\b($Lval)\s*\=\s*(?:$balanced_parens)?\s*([kv][mz]alloc(?:_node)?)\s*\(\s*(sizeof\s*\(\s*struct\s+$Lval\s*\))/) {
++		    $line =~ /\b($Lval)\s*\=\s*(?:$balanced_parens)?\s*((?:kv|k|v)[mz]alloc(?:_node)?)\s*\(\s*(sizeof\s*\(\s*struct\s+$Lval\s*\))/) {
+ 			CHK("ALLOC_SIZEOF_STRUCT",
+ 			    "Prefer $3(sizeof(*$1)...) over $3($4...)\n" . $herecurr);
+ 		}
+
+
 
