@@ -6,32 +6,34 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 03D49C43387
-	for <linux-kernel@archiver.kernel.org>; Sat, 12 Jan 2019 15:29:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 817AEC43444
+	for <linux-kernel@archiver.kernel.org>; Sat, 12 Jan 2019 15:29:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D27BB20835
-	for <linux-kernel@archiver.kernel.org>; Sat, 12 Jan 2019 15:29:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 596192086C
+	for <linux-kernel@archiver.kernel.org>; Sat, 12 Jan 2019 15:29:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726452AbfALP3I (ORCPT
+        id S1726478AbfALP3K (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 12 Jan 2019 10:29:08 -0500
-Received: from wtarreau.pck.nerim.net ([62.212.114.60]:34292 "EHLO 1wt.eu"
+        Sat, 12 Jan 2019 10:29:10 -0500
+Received: from wtarreau.pck.nerim.net ([62.212.114.60]:34294 "EHLO 1wt.eu"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726416AbfALP3H (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 12 Jan 2019 10:29:07 -0500
+        id S1726427AbfALP3J (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 12 Jan 2019 10:29:09 -0500
 Received: (from willy@localhost)
-        by pcw.home.local (8.15.2/8.15.2/Submit) id x0CFSroA026602;
-        Sat, 12 Jan 2019 16:28:53 +0100
+        by pcw.home.local (8.15.2/8.15.2/Submit) id x0CFSpnp026599;
+        Sat, 12 Jan 2019 16:28:51 +0100
 From:   Willy Tarreau <w@1wt.eu>
 To:     Silvio Cesare <silvio.cesare@gmail.com>
-Cc:     linux-kernel@vger.kernel.org, Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
+Cc:     linux-kernel@vger.kernel.org, Timur Tabi <timur@kernel.org>,
+        Nicolin Chen <nicoleotsuka@gmail.com>,
+        Xiubo Li <Xiubo.Lee@gmail.com>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
         Dan Carpenter <dan.carpenter@oracle.com>,
         Kees Cook <keescook@chromium.org>,
         Will Deacon <will.deacon@arm.com>, Greg KH <greg@kroah.com>
-Subject: [PATCH 7/8] ASoC: dapm: change snprintf to scnprintf for possible overflow
-Date:   Sat, 12 Jan 2019 16:28:43 +0100
-Message-Id: <20190112152844.26550-7-w@1wt.eu>
+Subject: [PATCH 4/8] ASoC: change snprintf to scnprintf for possible overflow
+Date:   Sat, 12 Jan 2019 16:28:40 +0100
+Message-Id: <20190112152844.26550-4-w@1wt.eu>
 X-Mailer: git-send-email 2.9.0
 In-Reply-To: <20190112152844.26550-1-w@1wt.eu>
 References: <20190112152844.26550-1-w@1wt.eu>
@@ -65,8 +67,10 @@ characters actually written to the buffer, so the size variable will never
 exceed SIZE.
 
 Signed-off-by: Silvio Cesare <silvio.cesare@gmail.com>
-Cc: Liam Girdwood <lgirdwood@gmail.com>
-Cc: Mark Brown <broonie@kernel.org>
+Cc: Timur Tabi <timur@kernel.org>
+Cc: Nicolin Chen <nicoleotsuka@gmail.com>
+Cc: Xiubo Li <Xiubo.Lee@gmail.com>
+Cc: Fabio Estevam <fabio.estevam@nxp.com>
 Cc: Dan Carpenter <dan.carpenter@oracle.com>
 Cc: Kees Cook <keescook@chromium.org>
 Cc: Will Deacon <will.deacon@arm.com>
@@ -74,46 +78,75 @@ Cc: Greg KH <greg@kroah.com>
 Signed-off-by: Willy Tarreau <w@1wt.eu>
 
 ---
- sound/soc/soc-dapm.c | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+ sound/soc/fsl/imx-audmux.c | 24 ++++++++++++------------
+ 1 file changed, 12 insertions(+), 12 deletions(-)
 
-diff --git a/sound/soc/soc-dapm.c b/sound/soc/soc-dapm.c
-index a5178845065b..2c4c13419539 100644
---- a/sound/soc/soc-dapm.c
-+++ b/sound/soc/soc-dapm.c
-@@ -2019,19 +2019,19 @@ static ssize_t dapm_widget_power_read_file(struct file *file,
- 		out = is_connected_output_ep(w, NULL, NULL);
- 	}
+diff --git a/sound/soc/fsl/imx-audmux.c b/sound/soc/fsl/imx-audmux.c
+index 392d5eef356d..99e07b01a2ce 100644
+--- a/sound/soc/fsl/imx-audmux.c
++++ b/sound/soc/fsl/imx-audmux.c
+@@ -86,49 +86,49 @@ static ssize_t audmux_read_file(struct file *file, char __user *user_buf,
+ 	if (!buf)
+ 		return -ENOMEM;
  
--	ret = snprintf(buf, PAGE_SIZE, "%s: %s%s  in %d out %d",
-+	ret = scnprintf(buf, PAGE_SIZE, "%s: %s%s  in %d out %d",
- 		       w->name, w->power ? "On" : "Off",
- 		       w->force ? " (forced)" : "", in, out);
+-	ret = snprintf(buf, PAGE_SIZE, "PDCR: %08x\nPTCR: %08x\n",
++	ret = scnprintf(buf, PAGE_SIZE, "PDCR: %08x\nPTCR: %08x\n",
+ 		       pdcr, ptcr);
  
- 	if (w->reg >= 0)
+ 	if (ptcr & IMX_AUDMUX_V2_PTCR_TFSDIR)
 -		ret += snprintf(buf + ret, PAGE_SIZE - ret,
 +		ret += scnprintf(buf + ret, PAGE_SIZE - ret,
- 				" - R%d(0x%x) mask 0x%x",
- 				w->reg, w->reg, w->mask << w->shift);
+ 				"TxFS output from %s, ",
+ 				audmux_port_string((ptcr >> 27) & 0x7));
+ 	else
+-		ret += snprintf(buf + ret, PAGE_SIZE - ret,
++		ret += scnprintf(buf + ret, PAGE_SIZE - ret,
+ 				"TxFS input, ");
+ 
+ 	if (ptcr & IMX_AUDMUX_V2_PTCR_TCLKDIR)
+-		ret += snprintf(buf + ret, PAGE_SIZE - ret,
++		ret += scnprintf(buf + ret, PAGE_SIZE - ret,
+ 				"TxClk output from %s",
+ 				audmux_port_string((ptcr >> 22) & 0x7));
+ 	else
+-		ret += snprintf(buf + ret, PAGE_SIZE - ret,
++		ret += scnprintf(buf + ret, PAGE_SIZE - ret,
+ 				"TxClk input");
  
 -	ret += snprintf(buf + ret, PAGE_SIZE - ret, "\n");
 +	ret += scnprintf(buf + ret, PAGE_SIZE - ret, "\n");
  
- 	if (w->sname)
--		ret += snprintf(buf + ret, PAGE_SIZE - ret, " stream %s %s\n",
-+		ret += scnprintf(buf + ret, PAGE_SIZE - ret, " stream %s %s\n",
- 				w->sname,
- 				w->active ? "active" : "inactive");
- 
-@@ -2044,7 +2044,7 @@ static ssize_t dapm_widget_power_read_file(struct file *file,
- 			if (!p->connect)
- 				continue;
- 
+ 	if (ptcr & IMX_AUDMUX_V2_PTCR_SYN) {
+-		ret += snprintf(buf + ret, PAGE_SIZE - ret,
++		ret += scnprintf(buf + ret, PAGE_SIZE - ret,
+ 				"Port is symmetric");
+ 	} else {
+ 		if (ptcr & IMX_AUDMUX_V2_PTCR_RFSDIR)
 -			ret += snprintf(buf + ret, PAGE_SIZE - ret,
 +			ret += scnprintf(buf + ret, PAGE_SIZE - ret,
- 					" %s  \"%s\" \"%s\"\n",
- 					(rdir == SND_SOC_DAPM_DIR_IN) ? "in" : "out",
- 					p->name ? p->name : "static",
+ 					"RxFS output from %s, ",
+ 					audmux_port_string((ptcr >> 17) & 0x7));
+ 		else
+-			ret += snprintf(buf + ret, PAGE_SIZE - ret,
++			ret += scnprintf(buf + ret, PAGE_SIZE - ret,
+ 					"RxFS input, ");
+ 
+ 		if (ptcr & IMX_AUDMUX_V2_PTCR_RCLKDIR)
+-			ret += snprintf(buf + ret, PAGE_SIZE - ret,
++			ret += scnprintf(buf + ret, PAGE_SIZE - ret,
+ 					"RxClk output from %s",
+ 					audmux_port_string((ptcr >> 12) & 0x7));
+ 		else
+-			ret += snprintf(buf + ret, PAGE_SIZE - ret,
++			ret += scnprintf(buf + ret, PAGE_SIZE - ret,
+ 					"RxClk input");
+ 	}
+ 
+-	ret += snprintf(buf + ret, PAGE_SIZE - ret,
++	ret += scnprintf(buf + ret, PAGE_SIZE - ret,
+ 			"\nData received from %s\n",
+ 			audmux_port_string((pdcr >> 13) & 0x7));
+ 
 -- 
 2.19.2
 
