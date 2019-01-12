@@ -2,65 +2,106 @@ Return-Path: <SRS0=UXoZ=PU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A9332C43387
-	for <linux-kernel@archiver.kernel.org>; Sat, 12 Jan 2019 20:17:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6BA84C43387
+	for <linux-kernel@archiver.kernel.org>; Sat, 12 Jan 2019 20:38:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 83E77206B7
-	for <linux-kernel@archiver.kernel.org>; Sat, 12 Jan 2019 20:17:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3CB5D20870
+	for <linux-kernel@archiver.kernel.org>; Sat, 12 Jan 2019 20:38:34 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=joelfernandes.org header.i=@joelfernandes.org header.b="E8mhyDNE"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726561AbfALURH (ORCPT
+        id S1726603AbfALUid (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 12 Jan 2019 15:17:07 -0500
-Received: from gloria.sntech.de ([185.11.138.130]:42106 "EHLO gloria.sntech.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725876AbfALURG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 12 Jan 2019 15:17:06 -0500
-Received: from p54b26ced.dip0.t-ipconnect.de ([84.178.108.237] helo=phil.localnet)
-        by gloria.sntech.de with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <heiko@sntech.de>)
-        id 1giPiF-00070n-HS; Sat, 12 Jan 2019 21:16:59 +0100
-From:   Heiko Stuebner <heiko@sntech.de>
-To:     Otavio Salvador <otavio@ossystems.com.br>
-Cc:     linux-arm-kernel@lists.infradead.org,
-        Jason Zhu <jason.zhu@rock-chips.com>,
-        Vicent Chi <vicent.chi@rock-chips.com>,
-        Andy Yan <andy.yan@rock-chips.com>,
-        Philipp Tomsic <philipp.tomsich@theobroma-systems.com>,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-rockchip@lists.infradead.org,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Olof Johansson <olof@lixom.net>
-Subject: Re: [PATCH 4/4] ARM: dts: rv1108: Add support for rv1108-elgin-r1 board
-Date:   Sat, 12 Jan 2019 21:16:58 +0100
-Message-ID: <2576878.pKSbgTzd5o@phil>
-In-Reply-To: <20190104014023.17973-4-otavio@ossystems.com.br>
-References: <20190104014023.17973-1-otavio@ossystems.com.br> <20190104014023.17973-4-otavio@ossystems.com.br>
+        Sat, 12 Jan 2019 15:38:33 -0500
+Received: from mail-qt1-f196.google.com ([209.85.160.196]:33323 "EHLO
+        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726570AbfALUid (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 12 Jan 2019 15:38:33 -0500
+Received: by mail-qt1-f196.google.com with SMTP id l11so22681935qtp.0
+        for <linux-kernel@vger.kernel.org>; Sat, 12 Jan 2019 12:38:32 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=joelfernandes.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=iDfQAm97H4o7dVA5ibXAUXRtADRsDfZK0W4lOHvCcyE=;
+        b=E8mhyDNEc/DZK512mhs6N+jydr1x5ATsXKDHMHrN1k0N6w+JULc8c09ZB/9D8DG6H0
+         /Kmxsnf3ed5QaJnpY4Naw6hSllSj9hACDJTKOVQFNhdZELtZ5ZsMgEVaBFD4c+KvS3S9
+         Kmo/0G02HbyHxLnG/CGRM/iB3XUP5IHyN1GOA=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=iDfQAm97H4o7dVA5ibXAUXRtADRsDfZK0W4lOHvCcyE=;
+        b=afdSkmoab8pxQi1FvZQnUVlYTzETfotMNSdntZ108JHzcVdOAZCUZ/4SF1uCoxkqDh
+         AmwZZeckOIn41qzd8Jigfdf6gbZX3j2MRr0f92uNmAW9lUnSkYq93Z6cq8Luu1/ChdvD
+         f5fnj9ShIEwvG5zc4zNOYVBavd3MVeKD4qlBYqs2XAfsiTsBg79QYxDy1aa9XBBBv+wN
+         kk+4F0YC7Fk2jKvzSwXnVzqc/va4X6yow/HGj5hX61Sc9iLq0wbvA+/Ia5+4rX4wdAza
+         k9qYqXGTZtDIbehSU6qMoSHqjyeaiWnXnzYsEvIUivfgYSLtdK8gkH65pOd+TNblI4TP
+         qRqg==
+X-Gm-Message-State: AJcUukfSg6zL/3ZIB/uDpdTTsg+WgMj4+vvj+1Ax8sVjbfdpiqwFGhVn
+        hlF7lq2cVEiBTu8crFUTPBjYXMMg81o=
+X-Google-Smtp-Source: ALg8bN4E7rn9pHV+7ZlfIT/KIoyJGYP8hJ85YnG6ffaAiQtLgKGsihB8TYFh6+nRMYpYS3uJtEbPqg==
+X-Received: by 2002:ac8:6151:: with SMTP id d17mr18325188qtm.194.1547325511908;
+        Sat, 12 Jan 2019 12:38:31 -0800 (PST)
+Received: from joelaf.cam.corp.google.com ([2620:0:1004:1100:cfd0:d2ee:d54d:ab6d])
+        by smtp.gmail.com with ESMTPSA id c12sm55883402qka.42.2019.01.12.12.38.28
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sat, 12 Jan 2019 12:38:30 -0800 (PST)
+From:   Joel Fernandes <joel@joelfernandes.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     "Joel Fernandes (Google)" <joel@joelfernandes.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Andy Lutomirski <luto@kernel.org>, dancol@google.com,
+        Hugh Dickins <hughd@google.com>, Jann Horn <jannh@google.com>,
+        "J. Bruce Fields" <bfields@fieldses.org>,
+        Jeff Layton <jlayton@kernel.org>,
+        John Stultz <john.stultz@linaro.org>,
+        linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kselftest@vger.kernel.org, linux-mm@kvack.org,
+        =?UTF-8?q?Marc-Andr=C3=A9=20Lureau?= <marcandre.lureau@redhat.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Mike Kravetz <mike.kravetz@oracle.com>, minchan@kernel.org,
+        Shuah Khan <shuah@kernel.org>
+Subject: [PATCH v4 0/2] Add a future write seal to memfd
+Date:   Sat, 12 Jan 2019 15:38:14 -0500
+Message-Id: <20190112203816.85534-1-joel@joelfernandes.org>
+X-Mailer: git-send-email 2.20.1.97.g81188d93c3-goog
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Am Freitag, 4. Januar 2019, 02:40:23 CET schrieb Otavio Salvador:
-> rv1108-elgin-r1 board is based on Rockchip RV1108 SoC.
-> 
-> Signed-off-by: Otavio Salvador <otavio@ossystems.com.br>
+From: "Joel Fernandes (Google)" <joel@joelfernandes.org>
 
-applied all 4 patches (including the vendor-prefix) for 5.1
+This is just a resend of the previous series at
+https://lore.kernel.org/patchwork/patch/1014892/
+with a small if block refactor as Andy suggested:
+https://lore.kernel.org/patchwork/comment/1198679/
 
-I've rearranged some minor properties in the board-dts to follow
-alphabetical ordering (emmc and gmac).
+All,
+Could you please provide your Reviewed-by / Acked-by tags?
 
+I will also resend the manpage changes shortly.
 
-Thanks
-Heiko
+Joel Fernandes (Google) (2):
+mm/memfd: Add an F_SEAL_FUTURE_WRITE seal to memfd
+selftests/memfd: Add tests for F_SEAL_FUTURE_WRITE seal
 
+fs/hugetlbfs/inode.c                       |  2 +-
+include/uapi/linux/fcntl.h                 |  1 +
+mm/memfd.c                                 |  3 +-
+mm/shmem.c                                 | 25 +++++++-
+tools/testing/selftests/memfd/memfd_test.c | 74 ++++++++++++++++++++++
+5 files changed, 100 insertions(+), 5 deletions(-)
+
+--
+2.20.1.97.g81188d93c3-goog
 
