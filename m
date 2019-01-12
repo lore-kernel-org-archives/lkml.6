@@ -2,86 +2,104 @@ Return-Path: <SRS0=UXoZ=PU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 82BE4C43387
-	for <linux-kernel@archiver.kernel.org>; Sat, 12 Jan 2019 18:31:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 065D2C43387
+	for <linux-kernel@archiver.kernel.org>; Sat, 12 Jan 2019 18:33:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4DC6A2086C
-	for <linux-kernel@archiver.kernel.org>; Sat, 12 Jan 2019 18:31:56 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="IV8FAVV/"
+	by mail.kernel.org (Postfix) with ESMTP id D12A52086C
+	for <linux-kernel@archiver.kernel.org>; Sat, 12 Jan 2019 18:33:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1547318025;
+	bh=S41U4c+3kwO7mI53EVF66x9cJRkL93sNj00G2x4p4FY=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:List-ID:From;
+	b=Kf4XP/2o6UAjZFXVrtyTS7W01FAfH8DdMP6m0WAMF4G9Qj6Pakth56TcEoUcLjube
+	 8/bzdPYs8RzeIbMhYeNFtrjZo3dE0IIMIu4ubRlZ1+rG2b5DTRQ4jV98R+/vH4GrCr
+	 yHurHMtP8pyAHdIsZsmRh6urFfZgG+Kml7mbOR1I=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726691AbfALSbz (ORCPT
+        id S1726577AbfALSdn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 12 Jan 2019 13:31:55 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:55532 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726579AbfALSby (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 12 Jan 2019 13:31:54 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=PuUKVplxMywk83C+65L18YzmG9i8eJRR6aiIcOBhP2M=; b=IV8FAVV/OKtagL8q+V4Tzo7P0
-        xkSoj+L28bSIdKNCJchrgIEdwbAKlz18ZXNqLjRj+ZKpEm1l+6b0/CIap849SdAFzERylSz6O9628
-        4ELa3Aza3fNUdDha4B59rCpsGWMKzHbomjncmKIZhNSUZ5ZcnrgMboNYYvHro4FR8ug0Uv2txxZUD
-        2R/ktRPz11hn9IHR3qLeNdI9emffEvWO4EbxpunGKzP58Sav2bACsClUBkfZbTlg87LYTcNSvlqwu
-        FupDqs+HQ0FezIHaKt9nAxc5K5lRoUgnONxbGSyaJZXwYZoVvfM1m0oEfgxXd2sOoqSLjZ72waV7T
-        sEvtiVpIQ==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1giO4X-0002Sl-Vh; Sat, 12 Jan 2019 18:31:53 +0000
-Date:   Sat, 12 Jan 2019 10:31:53 -0800
-From:   Christoph Hellwig <hch@infradead.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Christoph Hellwig <hch@infradead.org>,
-        iommu@lists.linux-foundation.org,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>
-Subject: Re: [GIT PULL] remove dma_zalloc_coherent
-Message-ID: <20190112183153.GA4192@infradead.org>
-References: <20190112181355.GA31454@infradead.org>
- <CAHk-=wiYxY9H-XDgawJd+Y4AM4qtK=7RQZ_GhswcUSYWw=eckA@mail.gmail.com>
+        Sat, 12 Jan 2019 13:33:43 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33584 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725847AbfALSdn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 12 Jan 2019 13:33:43 -0500
+Received: from archlinux (cpc91196-cmbg18-2-0-cust659.5-4.cable.virginm.net [81.96.234.148])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 71CF42084C;
+        Sat, 12 Jan 2019 18:33:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1547318022;
+        bh=S41U4c+3kwO7mI53EVF66x9cJRkL93sNj00G2x4p4FY=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=KAxLlZ8ouVtxe5V3ZcOOyLrSdf3sYNdfDE7tEz54+MacfZCTx+kSyp30O8R9g2yHF
+         WQVx3mHuWKtznaTd0mnncq/yVZ7oH7YYTY+fLSZwNPgUt0mBxBzYD7WYa4L+59pdOv
+         XV2QJhg8v/jGfl6Gmli5qlqO4dkMH9Mj52FXF2qk=
+Date:   Sat, 12 Jan 2019 18:33:38 +0000
+From:   Jonathan Cameron <jic23@kernel.org>
+To:     Dan Murphy <dmurphy@ti.com>
+Cc:     <linux-iio@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <robh+dt@kernel.org>
+Subject: Re: [PATCH v3 3/3] iio: ti-ads8688: Update buffer allocation for
+ timestamps
+Message-ID: <20190112183338.59076438@archlinux>
+In-Reply-To: <20190111195707.2086-3-dmurphy@ti.com>
+References: <20190111195707.2086-1-dmurphy@ti.com>
+        <20190111195707.2086-3-dmurphy@ti.com>
+X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAHk-=wiYxY9H-XDgawJd+Y4AM4qtK=7RQZ_GhswcUSYWw=eckA@mail.gmail.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Jan 12, 2019 at 10:27:58AM -0800, Linus Torvalds wrote:
-> So I'm still debating this myself, which is why I haven't reacted.
+On Fri, 11 Jan 2019 13:57:07 -0600
+Dan Murphy <dmurphy@ti.com> wrote:
+
+> Per Jonathan Cameron, the buffer needs to allocate room for a
+> 64 bit timestamp as well as the channels.  Change the buffer
+> to allocate this additional space.
 > 
-> The reason I'm not entirely sure this makes sense is that not every
-> user actually mmaps things into user space.
+> Fixes: 2a86487786b5c ("iio: adc: ti-ads8688: add trigger and buffer support")
+> Signed-off-by: Dan Murphy <dmurphy@ti.com>
+Applied to the fixes-togreg branch of iio.git and marked for stable.
+Thanks for fixing this up!
 
-While that is the security reason for it, we also had quite a few
-drivers just plain relying on the fact and breaking on architectures
-where it didn't work.
+Jonathan
 
-> I'd be happier if there at least was an interface to specify "yes, I
-> want zeroing". But there isn't. You did not, for example, just make
-> __GFP_ZERO work. No. You just said "GFP_ZERO hasn't worked reliably,
-> so we had that other interface, and now we're doing it
-> unconditionally, so we can remove the other interface".
+> ---
 > 
-> This all *despite* the fact that as far as I can tell, 95% of the
-> users don't actually need or care about zeroing and don't really want
-> it.
+> v3 - Updated the buffer allocation definition I also dropped the device managed
+> patch as I don't have time to invest in that code - https://lore.kernel.org/patchwork/patch/1023971/
+> v2 - New patch suggested change by maintainer - https://lore.kernel.org/patchwork/patch/1021048/
+> 
+>  drivers/iio/adc/ti-ads8688.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/iio/adc/ti-ads8688.c b/drivers/iio/adc/ti-ads8688.c
+> index 184d686ebd99..8b4568edd5cb 100644
+> --- a/drivers/iio/adc/ti-ads8688.c
+> +++ b/drivers/iio/adc/ti-ads8688.c
+> @@ -41,6 +41,7 @@
+>  
+>  #define ADS8688_VREF_MV			4096
+>  #define ADS8688_REALBITS		16
+> +#define ADS8688_MAX_CHANNELS		8
+>  
+>  /*
+>   * enum ads8688_range - ADS8688 reference voltage range
+> @@ -385,7 +386,7 @@ static irqreturn_t ads8688_trigger_handler(int irq, void *p)
+>  {
+>  	struct iio_poll_func *pf = p;
+>  	struct iio_dev *indio_dev = pf->indio_dev;
+> -	u16 buffer[8];
+> +	u16 buffer[ADS8688_MAX_CHANNELS + sizeof(s64)/sizeof(u16)];
+>  	int i, j = 0;
+>  
+>  	for (i = 0; i < indio_dev->masklength; i++) {
 
-Many users don't need it for security reasons, but given that x86
-and arm have dont it forever various drivers started relying on the
-behavior.  That combined with the fact that DMA coherent allocation
-are a slow path interface it really doesn't make much sense to
-micro-optimize it and potentially break users.  If we have a user
-that really cares about not zeroing we can just offer a
-DMA_ATTR_SKIP_ZEROING flag for dma_alloc_attrs and switch the user
-that that cares to it.  But I don't really think it is needed.
