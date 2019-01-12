@@ -2,148 +2,121 @@ Return-Path: <SRS0=UXoZ=PU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.0 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FSL_HELO_FAKE,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AE289C43387
-	for <linux-kernel@archiver.kernel.org>; Sat, 12 Jan 2019 08:40:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 18D58C43387
+	for <linux-kernel@archiver.kernel.org>; Sat, 12 Jan 2019 08:53:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 80F8F20870
-	for <linux-kernel@archiver.kernel.org>; Sat, 12 Jan 2019 08:40:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CD6C02177B
+	for <linux-kernel@archiver.kernel.org>; Sat, 12 Jan 2019 08:53:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1547283204;
+	bh=TOKpdeToMutH6nkQE9S2pS837KiuhQJLbwhYtJW/7i4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=r/QYSuFaHD1jgRl5IebnEZW/Awg2hbwfzN5Er51K4e7UexPBgNZxG3YFqLIEdpqLm
+	 NX84GS6qOHOLxdYgB3E+suOAjATxh3V6t4hJtb7OU1DiG5+r26i4gp9oHsxSRDyZAG
+	 +jvRyLW1plSNWAyrCUSVaMfBlaw5zyws8U30mrkU=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725880AbfALIkh (ORCPT
+        id S1725853AbfALIxY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 12 Jan 2019 03:40:37 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:35407 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725806AbfALIkh (ORCPT
+        Sat, 12 Jan 2019 03:53:24 -0500
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:40469 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725806AbfALIxX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 12 Jan 2019 03:40:37 -0500
-Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x0C8dvSk1078706
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Sat, 12 Jan 2019 00:39:57 -0800
-Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x0C8dtil1078703;
-        Sat, 12 Jan 2019 00:39:55 -0800
-Date:   Sat, 12 Jan 2019 00:39:55 -0800
-X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for George Rimar <tipbot@zytor.com>
-Message-ID: <tip-927185c124d62a9a4d35878d7f6d432a166b74e3@git.kernel.org>
-Cc:     linux-kernel@vger.kernel.org, mingo@redhat.com, hpa@zytor.com,
-        bp@suse.de, trong@android.com, tglx@linutronix.de,
-        ndesaulniers@google.com, mingo@kernel.org, grimar@accesssoftek.com,
-        matz@suse.de, x86@kernel.org, dima@golovin.in
-Reply-To: mingo@redhat.com, hpa@zytor.com, linux-kernel@vger.kernel.org,
-          bp@suse.de, mingo@kernel.org, grimar@accesssoftek.com,
-          ndesaulniers@google.com, tglx@linutronix.de, trong@android.com,
-          dima@golovin.in, x86@kernel.org, matz@suse.de
-In-Reply-To: <20190111201012.71210-1-trong@android.com>
-References: <20190111201012.71210-1-trong@android.com>
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/build] x86/build: Specify elf_i386 linker emulation
- explicitly for i386 objects
-Git-Commit-ID: 927185c124d62a9a4d35878d7f6d432a166b74e3
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        Sat, 12 Jan 2019 03:53:23 -0500
+Received: by mail-wr1-f66.google.com with SMTP id p4so17595230wrt.7;
+        Sat, 12 Jan 2019 00:53:22 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=mixqIEbutU1pUp2sngMu3OOxiX4ZDBjrFIwUPLahwYs=;
+        b=kN1v4nw7BYpfdIJvLe1VhoOLAUZmmsoEmUBZuV6fImp9JhLOVGNffsm7hQS98+q+2I
+         PNA1hYTzn3WDOnlaRPC2q7mZ9DXPGr/tTv1GGvKP+1c93j5/Tn5YeUyGY2iXJYUA+4Ls
+         X3luWALkrj4xyfRDiSH9BBMse3cPn2eSjZSb49Li25dHJJSsVy+LS9tXynPX9gEP/4JW
+         VQ/6WY5fZjPxGpqgQUVoGgJ4+oS+7FDwFfAX6KJ3SRFXZlia12NfAt5e9HW2s+AzFqh2
+         Ks2XtYnIOiPa62LJQ9+C93/NTc9gYBa8GGNZpy/fphWHVD2L/UGC20kSZ5BfhJgoDPc1
+         MCYw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=mixqIEbutU1pUp2sngMu3OOxiX4ZDBjrFIwUPLahwYs=;
+        b=HJvT6NE/Tjz5OocI9LNJeCHPccIr9HmaEpkMldXVoHR0zwT4qrNBdmQEqb222bXpXS
+         Q6W+0djoWjD7N2VUhjYwf4tfTlL04MEGxCcHZKVy8zSDSdEd5Xj0m4n03IZpvPiYWAnp
+         I+fQc3A4AgK9kNYsV7ZJBr/BkwtduYhNDEmoVp+k9oZd6bjoCreI/k7dDYAIVEMtJfax
+         5jCHk27q7tvw3SMs60TfwZrvn4UiIq1MDICpCFCCTQiQNsrCeryjkYMuzLTZMFOQ588H
+         5EQruVR9Bk59aQ91dwH1C70aYCiNjUhxoiHdnUVrURkB0ioUUJZDfZTS//jxex0DN773
+         Xu/Q==
+X-Gm-Message-State: AJcUuke9fhEXqUz1yD+YfXxBU5lcD5ONvHQVxq8lIc5T5JzZGJy/qLEy
+        M8nuN7fegsfCCJgtGE3w6mM=
+X-Google-Smtp-Source: ALg8bN7bN3MgTL3eCJ3iBBOIugLrGT4QGvcRz6FCbLMaatFj7RtfndCrTtckBIiomwyTmz97lFB0nw==
+X-Received: by 2002:a5d:470b:: with SMTP id y11mr16535095wrq.16.1547283201329;
+        Sat, 12 Jan 2019 00:53:21 -0800 (PST)
+Received: from gmail.com (2E8B0CD5.catv.pool.telekom.hu. [46.139.12.213])
+        by smtp.gmail.com with ESMTPSA id k19sm89153616wre.5.2019.01.12.00.53.19
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Sat, 12 Jan 2019 00:53:20 -0800 (PST)
+Date:   Sat, 12 Jan 2019 09:53:18 +0100
+From:   Ingo Molnar <mingo@kernel.org>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-efi <linux-efi@vger.kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Borislav Petkov <bp@alien8.de>,
+        Peter Zijlstra <a.p.zijlstra@chello.nl>,
+        Andrew Morton <akpm@linux-foundation.org>
+Subject: Re: [GIT PULL] EFI fix
+Message-ID: <20190112085318.GA119110@gmail.com>
+References: <20190111074614.GA68053@gmail.com>
+ <CAKv+Gu8oY6VFeuH3T0FU452W-rKGGQk3top5kEbuP2aCxzJTCQ@mail.gmail.com>
+ <CAHk-=wjNhQsT2h0M25dDELgaCfkWYBGx_5gQw=yEM10uTO4Ycw@mail.gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <CAHk-=wjNhQsT2h0M25dDELgaCfkWYBGx_5gQw=yEM10uTO4Ycw@mail.gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  927185c124d62a9a4d35878d7f6d432a166b74e3
-Gitweb:     https://git.kernel.org/tip/927185c124d62a9a4d35878d7f6d432a166b74e3
-Author:     George Rimar <grimar@accesssoftek.com>
-AuthorDate: Fri, 11 Jan 2019 12:10:12 -0800
-Committer:  Borislav Petkov <bp@suse.de>
-CommitDate: Sat, 12 Jan 2019 00:11:39 +0100
 
-x86/build: Specify elf_i386 linker emulation explicitly for i386 objects
+* Linus Torvalds <torvalds@linux-foundation.org> wrote:
 
-The kernel uses the OUTPUT_FORMAT linker script command in it's linker
-scripts. Most of the time, the -m option is passed to the linker with
-correct architecture, but sometimes (at least for x86_64) the -m option
-contradicts the OUTPUT_FORMAT directive.
+> On Fri, Jan 11, 2019 at 6:22 AM Ard Biesheuvel
+> <ard.biesheuvel@linaro.org> wrote:
+> >
+> > I was hoping we could merge this patch (so we can backport it), but
+> > resolve the conflict by dropping the kmemleak_ignore() again [..]
+> 
+> Well, we'd drop the new #include line also, since it would be
+> pointless without the kmemleak_ignore().
+> 
+> End result: there would be nothing left. Better not to merge it at all.
 
-Specifically, arch/x86/boot and arch/x86/realmode/rm produce i386 object
-files, but are linked with the -m elf_x86_64 linker flag when building
-for x86_64.
+Indeed!
 
-The GNU linker manpage doesn't explicitly state any tie-breakers between
--m and OUTPUT_FORMAT. But with BFD and Gold linkers, OUTPUT_FORMAT
-overrides the emulation value specified with the -m option.
+> It's easy enough to backport, and just say "done differently upstream
+> in commit 80424b02d42b ("efi: Reduce the amount of memblock
+> reservations for persistent allocations").
+> 
+> The stable tree doesn't require that the *same* commits be upstream,
+> it only requires that the fixes be upstream and Greg&al want a pointer
+> to the upstream fix just so that they know they're not fixing
+> something that might still be broken upstream.
+> 
+> See for example (just random googling)
+> 
+>    https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git/commit/?id=37435f7e80ef9adc32a69013c18f135e3f434244
+> 
+> which shows that "fixed differently upstream" case and points to why.
 
-LLVM lld has a different behavior, however. When supplied with
-contradicting -m and OUTPUT_FORMAT values it fails with the following
-error message:
+Thanks - I'm dropping the commit from efi/urgent.
 
-  ld.lld: error: arch/x86/realmode/rm/header.o is incompatible with elf_x86_64
-
-Therefore, just add the correct -m after the incorrect one (it overrides
-it), so the linker invocation looks like this:
-
-  ld -m elf_x86_64 -z max-page-size=0x200000 -m elf_i386 --emit-relocs -T \
-    realmode.lds header.o trampoline_64.o stack.o reboot.o -o realmode.elf
-
-This is not a functional change for GNU ld, because (although not
-explicitly documented) OUTPUT_FORMAT overrides -m EMULATION.
-
-Tested by building x86_64 kernel with GNU gcc/ld toolchain and booting
-it in QEMU.
-
- [ bp: massage and clarify text. ]
-
-Suggested-by: Dmitry Golovin <dima@golovin.in>
-Signed-off-by: George Rimar <grimar@accesssoftek.com>
-Signed-off-by: Tri Vo <trong@android.com>
-Signed-off-by: Borislav Petkov <bp@suse.de>
-Tested-by: Tri Vo <trong@android.com>
-Tested-by: Nick Desaulniers <ndesaulniers@google.com>
-Cc: "H. Peter Anvin" <hpa@zytor.com>
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: Michael Matz <matz@suse.de>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: morbo@google.com
-Cc: ndesaulniers@google.com
-Cc: ruiu@google.com
-Cc: x86-ml <x86@kernel.org>
-Link: https://lkml.kernel.org/r/20190111201012.71210-1-trong@android.com
----
- arch/x86/boot/Makefile        | 2 +-
- arch/x86/realmode/rm/Makefile | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/arch/x86/boot/Makefile b/arch/x86/boot/Makefile
-index 9b5adae9cc40..e2839b5c246c 100644
---- a/arch/x86/boot/Makefile
-+++ b/arch/x86/boot/Makefile
-@@ -100,7 +100,7 @@ $(obj)/zoffset.h: $(obj)/compressed/vmlinux FORCE
- AFLAGS_header.o += -I$(objtree)/$(obj)
- $(obj)/header.o: $(obj)/zoffset.h
- 
--LDFLAGS_setup.elf	:= -T
-+LDFLAGS_setup.elf	:= -m elf_i386 -T
- $(obj)/setup.elf: $(src)/setup.ld $(SETUP_OBJS) FORCE
- 	$(call if_changed,ld)
- 
-diff --git a/arch/x86/realmode/rm/Makefile b/arch/x86/realmode/rm/Makefile
-index 4463fa72db94..96cb20de08af 100644
---- a/arch/x86/realmode/rm/Makefile
-+++ b/arch/x86/realmode/rm/Makefile
-@@ -47,7 +47,7 @@ $(obj)/pasyms.h: $(REALMODE_OBJS) FORCE
- targets += realmode.lds
- $(obj)/realmode.lds: $(obj)/pasyms.h
- 
--LDFLAGS_realmode.elf := --emit-relocs -T
-+LDFLAGS_realmode.elf := -m elf_i386 --emit-relocs -T
- CPPFLAGS_realmode.lds += -P -C -I$(objtree)/$(obj)
- 
- targets += realmode.elf
+	Ingo
