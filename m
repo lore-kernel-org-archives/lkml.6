@@ -2,148 +2,130 @@ Return-Path: <SRS0=UXoZ=PU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C6CCC43612
-	for <linux-kernel@archiver.kernel.org>; Sat, 12 Jan 2019 21:29:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 19902C43387
+	for <linux-kernel@archiver.kernel.org>; Sat, 12 Jan 2019 21:31:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6A5042086C
-	for <linux-kernel@archiver.kernel.org>; Sat, 12 Jan 2019 21:29:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6F9322086C
+	for <linux-kernel@archiver.kernel.org>; Sat, 12 Jan 2019 21:31:54 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="s8yimM9i"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=hartkopp.net header.i=@hartkopp.net header.b="thK7fyi4"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726542AbfALV3B (ORCPT
+        id S1726724AbfALVbx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 12 Jan 2019 16:29:01 -0500
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:39691 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726368AbfALV3B (ORCPT
+        Sat, 12 Jan 2019 16:31:53 -0500
+Received: from mo4-p01-ob.smtp.rzone.de ([85.215.255.50]:16537 "EHLO
+        mo4-p01-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725959AbfALVbx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 12 Jan 2019 16:29:01 -0500
-Received: by mail-wm1-f66.google.com with SMTP id y8so5430008wmi.4;
-        Sat, 12 Jan 2019 13:28:59 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=ooKEQ4ZeSh9S8Oavvq32L6+q3A5n2i2/6WZctBkb0Vs=;
-        b=s8yimM9iVaz9pdAISG/qdcdXUnl152PHsRguhegzVx/n7QqqLn3Ni0XG7gJG+eaPNL
-         pRUISQ8+BbZ+MRgmm1Eoku9DfwPE3gsnYvUNCYBGaFKffv9ojaHDEwFbg9UvZSg8rXis
-         +vkh11IaftcqHLDdq/ZaC+jyKb6SLK7o2VaLSdGCcanbl8oN8yDnUvr9lbISSCwD0gI5
-         lc0bxZiVaZUfhPTkpf2cAt58v48Ggn53lPuf0D6WitTIavN6Jugd2Gjsh/L5pCPCh62j
-         YFIOVfECz4xZ3yTqAxK/MglYwJ99Vz86P+yGTZx2T4O4Nd2AQM1gI82jTR/Ssd8WLHqG
-         Jy0A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=ooKEQ4ZeSh9S8Oavvq32L6+q3A5n2i2/6WZctBkb0Vs=;
-        b=nopGWLAVH3f//ze5mKQgK55+KWzPIst7YyNWHH7LleLQASy70HAKxiRoLN9CQDcfx8
-         zk2Dm9YeOqna9ejuN+X3+vDLpm2oBX3zUs3aTonb8hBxwXyS+ki1/PvX2OT289DCz3s5
-         WrMWHRM8fmaage0XnVoqr/pltXEhwJ9x+UyvmXw2EgOZ++F6FGo0HnD7anpXixX8eY0+
-         PeGypQ6BgqguKOiMpruK5tuhmrgZJo2oPb247BXx+hFy+5VbO8CbsIoKx/eiTRXonqj7
-         peBcSvv7+Qb76jE1ZNz4TOZ4r+rofFKSieyPkf9bo6roVGmm56lFbcjVv5Zk/4WqUecW
-         qzKg==
-X-Gm-Message-State: AJcUukcmHSQuaCZJBd1hckHu/PJ6DXndMRQlxFpMZHXM4ilr3QjudwBR
-        JuLHs77lqGBfbSC6Mhn/blvWVsXMZwxgjnWX1Ho=
-X-Google-Smtp-Source: ALg8bN7L73/bJgLbupcaiTT+puhQnterhUD7PlF4Bo413G1C/ACmTJmdJXT4aLbtaKGksYdrGuTX8PbjTxxI17fJZbY=
-X-Received: by 2002:a1c:f605:: with SMTP id w5mr6983677wmc.116.1547328538576;
- Sat, 12 Jan 2019 13:28:58 -0800 (PST)
+        Sat, 12 Jan 2019 16:31:53 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1547328711;
+        s=strato-dkim-0002; d=hartkopp.net;
+        h=In-Reply-To:Date:Message-ID:From:References:Cc:To:Subject:
+        X-RZG-CLASS-ID:X-RZG-AUTH:From:Subject:Sender;
+        bh=IIuWuBnpby15qzYk6DAfxFgsMwgnG/3nS9KOqgcuHpw=;
+        b=thK7fyi4BvlPrmgs3hFxrXdBsvirfL2r117kD7/t0mh50pALheZsq0buGjXD0xoKFD
+        nF96YoV+A5TLCgirFoGN5GvikO5qUam5q4q16qVGTZRMd0QEKvKxwYKyqZ8tAOq9omv7
+        cEx1ka6+GcbL2d7leN04f1x4AuqxXcPlQ3wAkW9kmGMIWeSU0sPdEBT7jnE1xlCmzt0f
+        ar4hryygbH5FWbsQNWyt8UXVj43iLPWMwC+YbaQhZJ2yRBMPrOmsirFXDNtNWweaDpsO
+        hPd9d9r1mXlvsoqq6nEOuVQr9Fz6RgohVPJvsGo/vs5Xkxxbznmth4YGA3QK90r2OeJp
+        ZkbQ==
+X-RZG-AUTH: ":P2MHfkW8eP4Mre39l357AZT/I7AY/7nT2yrDxb8mjG14FZxedJy6qgO1onTMal6I4rhexKszvVI="
+X-RZG-CLASS-ID: mo00
+Received: from [192.168.1.200]
+        by smtp.strato.de (RZmta 44.9 DYNA|AUTH)
+        with ESMTPSA id j01e49v0CLPkX0j
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (curve secp521r1 with 521 ECDH bits, eq. 15360 bits RSA))
+        (Client did not present a certificate);
+        Sat, 12 Jan 2019 22:25:46 +0100 (CET)
+Subject: Re: UBSAN: Undefined behaviour in net/can/bcm.c
+To:     Kyungtae Kim <kt0755@gmail.com>
+Cc:     davem@davemloft.net, Arnd Bergmann <arnd@arndb.de>,
+        mkl@pengutronix.de, Byoungyoung Lee <lifeasageek@gmail.com>,
+        DaeRyong Jeong <threeearcat@gmail.com>,
+        syzkaller@googlegroups.com, linux-can@vger.kernel.org,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <CAEAjamvf8LzpRauFhxeh-EGY_ttqeds6_UQwikc5sm7ORKdjjw@mail.gmail.com>
+ <c3a95ad5-5eae-6392-f263-9f05e7f51333@hartkopp.net>
+ <CAEAjamsw9uu-VwHtREqetCsQBrF4B_Hy87xxsZRhAbHUOvzF4w@mail.gmail.com>
+From:   Oliver Hartkopp <socketcan@hartkopp.net>
+Message-ID: <7436eb01-c022-aadc-0d53-b23515ea42aa@hartkopp.net>
+Date:   Sat, 12 Jan 2019 22:25:41 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.1
 MIME-Version: 1.0
-References: <20190104165335.13205-1-andrew.smirnov@gmail.com>
- <20190104165335.13205-5-andrew.smirnov@gmail.com> <20190111195302.GA18985@bogus>
-In-Reply-To: <20190111195302.GA18985@bogus>
-From:   Andrey Smirnov <andrew.smirnov@gmail.com>
-Date:   Sat, 12 Jan 2019 13:28:47 -0800
-Message-ID: <CAHQ1cqHO=aw0AoLCrO+r7uCG5tE=Ai9or+UAOM3MJ1Cu-fCZ-w@mail.gmail.com>
-Subject: Re: [PATCH v4 4/4] PCI: imx6: Add support for i.MX8MQ
-To:     Rob Herring <robh@kernel.org>
-Cc:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Chris Healy <cphealy@gmail.com>,
-        Lucas Stach <l.stach@pengutronix.de>,
-        Leonard Crestez <leonard.crestez@nxp.com>,
-        "A.s. Dong" <aisheng.dong@nxp.com>,
-        Richard Zhu <hongxing.zhu@nxp.com>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>, dl-linux-imx <linux-imx@nxp.com>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-pci@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <CAEAjamsw9uu-VwHtREqetCsQBrF4B_Hy87xxsZRhAbHUOvzF4w@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jan 11, 2019 at 11:53 AM Rob Herring <robh@kernel.org> wrote:
->
-> On Fri, Jan 04, 2019 at 08:53:35AM -0800, Andrey Smirnov wrote:
-> > Add code needed to support i.MX8MQ variant.
-> >
-> > Cc: Bjorn Helgaas <bhelgaas@google.com>
-> > Cc: Fabio Estevam <fabio.estevam@nxp.com>
-> > Cc: Chris Healy <cphealy@gmail.com>
-> > Cc: Lucas Stach <l.stach@pengutronix.de>
-> > Cc: Leonard Crestez <leonard.crestez@nxp.com>
-> > Cc: "A.s. Dong" <aisheng.dong@nxp.com>
-> > Cc: Richard Zhu <hongxing.zhu@nxp.com>
-> > Cc: Rob Herring <robh@kernel.org>,
-> > Cc: devicetree@vger.kernel.org,
-> > Cc: linux-imx@nxp.com
-> > Cc: linux-arm-kernel@lists.infradead.org
-> > Cc: linux-kernel@vger.kernel.org
-> > Cc: linux-pci@vger.kernel.org
-> > Signed-off-by: Andrey Smirnov <andrew.smirnov@gmail.com>
-> > ---
-> >  .../bindings/pci/fsl,imx6q-pcie.txt           |  3 +-
-> >  drivers/pci/controller/dwc/Kconfig            |  4 +-
-> >  drivers/pci/controller/dwc/pci-imx6.c         | 77 ++++++++++++++++++-
-> >  3 files changed, 79 insertions(+), 5 deletions(-)
-> >
-> > diff --git a/Documentation/devicetree/bindings/pci/fsl,imx6q-pcie.txt b/Documentation/devicetree/bindings/pci/fsl,imx6q-pcie.txt
-> > index d514c1f2365f..920ca93870a8 100644
-> > --- a/Documentation/devicetree/bindings/pci/fsl,imx6q-pcie.txt
-> > +++ b/Documentation/devicetree/bindings/pci/fsl,imx6q-pcie.txt
-> > @@ -9,6 +9,7 @@ Required properties:
-> >       - "fsl,imx6sx-pcie",
-> >       - "fsl,imx6qp-pcie"
-> >       - "fsl,imx7d-pcie"
-> > +     - "fsl,imx8mq-pcie"
-> >  - reg: base address and length of the PCIe controller
-> >  - interrupts: A list of interrupt outputs of the controller. Must contain an
-> >    entry for each entry in the interrupt-names property.
-> > @@ -45,7 +46,7 @@ Additional required properties for imx6sx-pcie:
-> >    PCIE_PHY power domains
-> >  - power-domain-names: Must be "pcie", "pcie_phy"
-> >
-> > -Additional required properties for imx7d-pcie:
-> > +Additional required properties for imx7d-pcie and imx8mq-pcie:
-> >  - power-domains: Must be set to a phandle pointing to PCIE_PHY power domain
-> >  - resets: Must contain phandles to PCIe-related reset lines exposed by SRC
-> >    IP block
-> > diff --git a/drivers/pci/controller/dwc/Kconfig b/drivers/pci/controller/dwc/Kconfig
-> > index 6aafec3fad00..83ea318ad989 100644
-> > --- a/drivers/pci/controller/dwc/Kconfig
-> > +++ b/drivers/pci/controller/dwc/Kconfig
-> > @@ -89,8 +89,8 @@ config PCI_EXYNOS
-> >       select PCIE_DW_HOST
-> >
-> >  config PCI_IMX6
-> > -     bool "Freescale i.MX6/7 PCIe controller"
-> > -     depends on SOC_IMX6Q || SOC_IMX7D || (ARM && COMPILE_TEST)
-> > +     bool "Freescale i.MX6/7/8 PCIe controller"
-> > +     depends on SOC_IMX6Q || SOC_IMX7D || (ARM64 && ARCH_MXC) || ((ARM || ARM64) && COMPILE_TEST)
->
-> Since you added the ifdef around the abort handler, I think you can drop
-> "(ARM || ARM64)" and enable building other arches.
->
 
-OK, makes sense. I'll give it a go in v5.
 
-Thanks,
-Andrey Smirnov
+On 1/12/19 10:03 PM, Kyungtae Kim wrote:
+> On Sat, Jan 12, 2019 at 3:02 PM Oliver Hartkopp <socketcan@hartkopp.net> wrote:
+>>
+>> So there could potentially be some other users of timeval_to_ktime()
+>> that might have the same issue.
+>>
+> 
+> The following would be the one related.
+
+Yes - it is also in bcm_rx_setup(). Same issue can potentially occur in 
+bcm_tx_setup().
+
+Will send a patch for testing in a minute.
+
+Many thanks,
+Oliver
+
+> 
+> =========================================
+> UBSAN: Undefined behaviour in ./include/linux/ktime.h:42:14
+> signed integer overflow:
+> -3428892174463270912 * 1000000000 cannot be represented in type 'long int'
+> CPU: 0 PID: 7024 Comm: syz-executor6 Not tainted 4.19.13 #1
+> Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS Bochs 01/01/2011
+> Call Trace:
+>   __dump_stack lib/dump_stack.c:77 [inline]
+>   dump_stack+0xd2/0x148 lib/dump_stack.c:113
+>   ubsan_epilogue+0x12/0x94 lib/ubsan.c:159
+>   handle_overflow+0x1cf/0x21a lib/ubsan.c:190
+>   __ubsan_handle_mul_overflow+0x2a/0x35 lib/ubsan.c:214
+>   bcm_timeval_to_ktime include/linux/ktime.h:42 [inline]
+>   bcm_rx_setup net/can/bcm.c:1189 [inline]
+>   bcm_sendmsg+0x35ea/0x3fd0 net/can/bcm.c:1355
+>   sock_sendmsg_nosec net/socket.c:621 [inline]
+>   sock_sendmsg+0xdd/0x130 net/socket.c:631
+>   sock_write_iter+0x24b/0x3d0 net/socket.c:900
+>   call_write_iter include/linux/fs.h:1811 [inline]
+>   new_sync_write fs/read_write.c:474 [inline]
+>   __vfs_write+0x538/0x6e0 fs/read_write.c:487
+>   vfs_write+0x1b3/0x520 fs/read_write.c:549
+>   ksys_write+0xde/0x1c0 fs/read_write.c:598
+>   __do_sys_write fs/read_write.c:610 [inline]
+>   __se_sys_write fs/read_write.c:607 [inline]
+>   __x64_sys_write+0x7e/0xc0 fs/read_write.c:607
+>   do_syscall_64+0xc4/0x510 arch/x86/entry/common.c:290
+>   entry_SYSCALL_64_after_hwframe+0x49/0xbe
+> RIP: 0033:0x4497b9
+> Code: e8 8c 9f 02 00 48 83 c4 18 c3 0f 1f 80 00 00 00 00 48 89 f8 48
+> 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d
+> 01 f0 ff ff 0f 83 9b 6b fc ff c3 66 2e 0f 1f 84 00 00 00 00
+> RSP: 002b:00007f6045f43c68 EFLAGS: 00000246 ORIG_RAX: 0000000000000001
+> RAX: ffffffffffffffda RBX: 00007f6045f446cc RCX: 00000000004497b9
+> RDX: 0000000000000048 RSI: 00000000200000c0 RDI: 0000000000000013
+> RBP: 000000000071bea0 R08: 0000000000000000 R09: 0000000000000000
+> R10: 0000000000000000 R11: 0000000000000246 R12: 00000000ffffffff
+> R13: 000000000000ba60 R14: 00000000006f4b00 R15: 00007f6045f44700
+> =========================================
+> 
+> Thanks,
+> Kyungtae Kim
+> 
