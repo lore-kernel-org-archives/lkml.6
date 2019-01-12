@@ -2,99 +2,114 @@ Return-Path: <SRS0=UXoZ=PU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 290D8C43387
-	for <linux-kernel@archiver.kernel.org>; Sat, 12 Jan 2019 21:12:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F3359C43444
+	for <linux-kernel@archiver.kernel.org>; Sat, 12 Jan 2019 21:19:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E48E92086C
-	for <linux-kernel@archiver.kernel.org>; Sat, 12 Jan 2019 21:12:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BD0012086C
+	for <linux-kernel@archiver.kernel.org>; Sat, 12 Jan 2019 21:19:27 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=alien8.de header.i=@alien8.de header.b="OvVZbedR"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AtFEkQXg"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726579AbfALVMw (ORCPT
+        id S1726606AbfALVT0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 12 Jan 2019 16:12:52 -0500
-Received: from mail.skyhub.de ([5.9.137.197]:52240 "EHLO mail.skyhub.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726399AbfALVMv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 12 Jan 2019 16:12:51 -0500
-Received: from zn.tnic (p200300EC2BD30C00FC7F8B8F8D7AFDB3.dip0.t-ipconnect.de [IPv6:2003:ec:2bd3:c00:fc7f:8b8f:8d7a:fdb3])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 7B2431EC034F;
-        Sat, 12 Jan 2019 22:12:49 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
-        t=1547327569;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
-        bh=ZWsTlyndiG2G+7rDMLl0qehg4sNFWeHdixsSM9i9BXk=;
-        b=OvVZbedRNJnP4Ew9H0Bkm5Nbr14V2eg7nP21fTeTI07ncpK6s4B2N6r9XnaSyB8obCn2+q
-        oSYQork4koAmZwsX1XxnbOendnFSkgGRCXG3R9ZNtbe6lKBd3Pgfa3LIVySEUgjDUAwBR7
-        r/pPrCxGYLPt6GiwzXFPIphOSZeITPo=
-Date:   Sat, 12 Jan 2019 22:12:42 +0100
-From:   Borislav Petkov <bp@alien8.de>
-To:     Faiz Abbas <faiz_abbas@ti.com>
-Cc:     linux-kernel@vger.kernel.org, linux-mmc@vger.kernel.org,
-        ulf.hansson@linaro.org, adrian.hunter@intel.com, j-keerthy@ti.com,
-        edubezval@gmail.com, olof@lixom.net
-Subject: Re: [PATCH] mmc: Fix Kconfig warnings on keystone_defconfig
-Message-ID: <20190112211242.GA4512@zn.tnic>
-References: <20190109124312.10154-1-faiz_abbas@ti.com>
+        Sat, 12 Jan 2019 16:19:26 -0500
+Received: from mail-oi1-f196.google.com ([209.85.167.196]:40585 "EHLO
+        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726260AbfALVT0 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 12 Jan 2019 16:19:26 -0500
+Received: by mail-oi1-f196.google.com with SMTP id t204so15025609oie.7;
+        Sat, 12 Jan 2019 13:19:26 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=r6NEv8OnAxCBAWP3N53NVanjafVjY+uoVLh/bevVheE=;
+        b=AtFEkQXgTUFiTF7HVIFrsydDJGkFJOeKyLuD7+lVrmZWQ58aa23b/+u4a02ZqHqIEa
+         rrQIj4vNTaOustR8reP2ZaP+wdzy8XgPOK/Pd/jM/sDnY543bQ3oCePUfuLCFisnueXQ
+         Nf+n0ve459M3YsIyekaozRYnav8KOPw8R7y1TT4PwP9kBI0qyIkhusQR295qmAZnTVBf
+         1OazHaL06LSk8S9oY8ZfWSUGSib3Jmuik34l2HNXMqPz1xwMIJHi/lva7qFjZCUkmsT3
+         wT2M9rvKGDRv5rfniAGf85xg+fDwBBIhrw9EuS+Q49yeGxst7fBETZRmc05/BhH+D5L8
+         EdBQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=r6NEv8OnAxCBAWP3N53NVanjafVjY+uoVLh/bevVheE=;
+        b=bVyVqsHDQdeFXl2flaLF9yx7fvzRNxxRKDA+zPEXnaFyqTrMoknQdBULILQ73jK2bc
+         aUg32H/RKwadlorttBOVv3wRmIwhBUkdQLjxsNM1CJJhjIa5Kcj8e8plhjx+T4i0zxOy
+         3uG16F75b8Mzm7Nbq4Tf3COOLIoHn8mU6szeimc7VlQwHF5FqWFX9MN1HaT0BICg1XrV
+         N/RPNrNMKnWnQNsr3zSwYYyEM3ud2fuywl+gnsZsyIH2cjj7dpkTs1orA4Wx9UyLw3TI
+         76TkpRWV3SGzNAvfXLuKIc6IIXV0XEw8Aayf5RQyiVAecMSzLm03r7JgJ+k/6bN5aCm/
+         Cb5g==
+X-Gm-Message-State: AJcUukdUpeX9jWLVPItUw5E1/zcvYnrNSP/bDhRAuvx+cRSfjSCQMjiU
+        S90Z0wegkjJt15GbXAvGG1Tc4f630FMFQRIVQ8DNHQQRv6RVeA==
+X-Google-Smtp-Source: ALg8bN5e8ZjjZ0tuJrx+cv1EnNX8RYe477OdnjFpvda64xyPB/ss/m5apC7Lj6fb9geFLM759ynvkD8+wzVooqC1VjM=
+X-Received: by 2002:aca:408b:: with SMTP id n133mr12833308oia.44.1547327965678;
+ Sat, 12 Jan 2019 13:19:25 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20190109124312.10154-1-faiz_abbas@ti.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20190111131102.899065735@linuxfoundation.org> <20190111131107.880515108@linuxfoundation.org>
+In-Reply-To: <20190111131107.880515108@linuxfoundation.org>
+From:   Sudip Mukherjee <sudipm.mukherjee@gmail.com>
+Date:   Sat, 12 Jan 2019 21:18:49 +0000
+Message-ID: <CADVatmMALKGQc3M3vyuHekDiR6zNhFzCiJCLrg00_9N0nDSChg@mail.gmail.com>
+Subject: Re: [PATCH 4.14 058/105] tools: fix cross-compile var clobbering
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     linux-kernel <linux-kernel@vger.kernel.org>,
+        Stable <stable@vger.kernel.org>,
+        Martin Kelly <martin@martingkelly.com>,
+        Mark Brown <broonie@kernel.org>, Tejun Heo <tj@kernel.org>,
+        Li Zefan <lizefan@huawei.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        "K. Y. Srinivasan" <kys@microsoft.com>,
+        Haiyang Zhang <haiyangz@microsoft.com>,
+        Stephen Hemminger <sthemmin@microsoft.com>,
+        Jonathan Cameron <jic23@kernel.org>,
+        Pali Rohar <pali.rohar@gmail.com>,
+        Richard Purdie <rpurdie@rpsys.net>,
+        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+        Pavel Machek <pavel@ucw.cz>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Robert Moore <robert.moore@intel.com>,
+        Lv Zheng <lv.zheng@intel.com>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        Valentina Manea <valentina.manea.m@gmail.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Mario Limonciello <mario.limonciello@dell.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Ignat Korchagin <ignat@cloudflare.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 09, 2019 at 06:13:12PM +0530, Faiz Abbas wrote:
-> Commit 961de0a856e3 ("mmc: sdhci-omap: Workaround errata regarding
-> SDR104/HS200 tuning failures (i929)") added a select on TI_SOC_THERMAL
-> for the driver to get temperature for tuning.
-> 
-> However, this causes the following warning on keystone_defconfig because
-> keystone does not support TI_SOC_THERMAL:
-> 
-> "WARNING: unmet direct dependencies detected for TI_SOC_THERMAL"
-> 
-> Fix this by changing the select to imply.
-> 
-> Fixes: 961de0a856e3 ("mmc: sdhci-omap: Workaround errata regarding
-> SDR104/HS200 tuning failures (i929)")
-> Signed-off-by: Faiz Abbas <faiz_abbas@ti.com>
-> ---
->  drivers/mmc/host/Kconfig | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/mmc/host/Kconfig b/drivers/mmc/host/Kconfig
-> index e26b8145efb3..bc61eefcb695 100644
-> --- a/drivers/mmc/host/Kconfig
-> +++ b/drivers/mmc/host/Kconfig
-> @@ -978,7 +978,7 @@ config MMC_SDHCI_OMAP
->  	tristate "TI SDHCI Controller Support"
->  	depends on MMC_SDHCI_PLTFM && OF
->  	select THERMAL
-> -	select TI_SOC_THERMAL
-> +	imply TI_SOC_THERMAL
->  	help
->  	  This selects the Secure Digital Host Controller Interface (SDHCI)
->  	  support present in TI's DRA7 SOCs. The controller supports
-> -- 
+Hi Greg,
 
-Fixes the warnings I'm seeing with randconfig builds.
+On Fri, Jan 11, 2019 at 2:34 PM Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
+>
+> 4.14-stable review patch.  If anyone has any objections, please let me know.
+>
+> ------------------
+>
+> From: Martin Kelly <martin@martingkelly.com>
+>
+> commit 7ed1c1901fe52e6c5828deb155920b44b0adabb1 upstream.
 
-Tested-by: Borislav Petkov <bp@suse.de>
+This was fixed upstream by 755396163148 ("tools: power/acpi, revert to
+LD = gcc")
+
 
 -- 
-Regards/Gruss,
-    Boris.
-
-Good mailing practices for 400: avoid top-posting and trim the reply.
+Regards
+Sudip
