@@ -2,143 +2,122 @@ Return-Path: <SRS0=UXoZ=PU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E1B86C43612
-	for <linux-kernel@archiver.kernel.org>; Sat, 12 Jan 2019 18:22:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 125B2C43387
+	for <linux-kernel@archiver.kernel.org>; Sat, 12 Jan 2019 18:24:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B830B20870
-	for <linux-kernel@archiver.kernel.org>; Sat, 12 Jan 2019 18:22:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547317348;
-	bh=KTU9HeytrPIth6NO0Wfle5VKWzDAw2lsi3pguDN8ces=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:List-ID:From;
-	b=E56DDXBHCJ+UsakooasmNyoTl0XnGMSpHfG3zWmhAC337FgU+kOKh5WKecMiPA6AX
-	 hjZyeFCIREr26gY8zJ9yv1c9k+X7yNZkLy8AHHhz22ifHwiAKi/QKywRqlg2btSQNO
-	 Wi8UcCBe4icBozSx3SW8/0Q17dMB1lP1xuPOgW78=
+	by mail.kernel.org (Postfix) with ESMTP id C73C820836
+	for <linux-kernel@archiver.kernel.org>; Sat, 12 Jan 2019 18:24:53 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=tycho-ws.20150623.gappssmtp.com header.i=@tycho-ws.20150623.gappssmtp.com header.b="RFlhbROx"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726448AbfALSW2 (ORCPT
+        id S1726524AbfALSYw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 12 Jan 2019 13:22:28 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58218 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725854AbfALSW1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 12 Jan 2019 13:22:27 -0500
-Received: from archlinux (cpc91196-cmbg18-2-0-cust659.5-4.cable.virginm.net [81.96.234.148])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2DB0D20836;
-        Sat, 12 Jan 2019 18:22:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547317347;
-        bh=KTU9HeytrPIth6NO0Wfle5VKWzDAw2lsi3pguDN8ces=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=eJaIC/2au8+hSzfJggXOBJ/oTyg9/Fhm/ZxUC+ammFN8b/DHZmc7LFDppDUym++HU
-         ZR6vQ/v/7nPU9HcKP6FNwi3YQhMRBgSqD2XrAG0wW89xLxtaW1YqOgvxZ3SUKg+iL+
-         xRbQZEemGK+7O0PNK7B0utCcapOvKLdDxgh2Ju00=
-Date:   Sat, 12 Jan 2019 18:22:21 +0000
-From:   Jonathan Cameron <jic23@kernel.org>
-To:     Sebastien Bourdelin <sebastien.bourdelin@gmail.com>
-Cc:     linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-iio@vger.kernel.org, himanshujha199640@gmail.com,
-        mark.rutland@arm.com, robh+dt@kernel.org, pmeerw@pmeerw.net,
-        lars@metafoo.de, knaack.h@gmx.de
-Subject: Re: [PATCH v2 1/2] iio: chemical: bme680: Add device-tree support
-Message-ID: <20190112182221.4765d287@archlinux>
-In-Reply-To: <20190111205359.14158-1-sebastien.bourdelin@gmail.com>
-References: <20190111205359.14158-1-sebastien.bourdelin@gmail.com>
-X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        Sat, 12 Jan 2019 13:24:52 -0500
+Received: from mail-it1-f196.google.com ([209.85.166.196]:55410 "EHLO
+        mail-it1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725842AbfALSYw (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 12 Jan 2019 13:24:52 -0500
+Received: by mail-it1-f196.google.com with SMTP id m62so7650042ith.5
+        for <linux-kernel@vger.kernel.org>; Sat, 12 Jan 2019 10:24:51 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=tycho-ws.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=FGdc6ZAHO71r4iEGIQRpzdsd9638cgOO1tSjP/bGKak=;
+        b=RFlhbROx7aNot7KsfcbtJ2UQAffPOeOOGK7CQF41bUUPIhK9An0q86JRDPQoppMVfK
+         RDHiKUC6k3ObfEchtaY6xuAawmP6xUWarpYRjxO/5kme/WlBVzp1O1TLtmAV6oDhTU9b
+         Pl3ZWRkmMUeMWnv5Ul1puxtY70KYSYCjGM5HdrP4R9t8hXm1RUC52qiMtzCGO3zBZQFE
+         zCClgoLs0J2CtQMXvJLlr+XlVQnAtX0GKNetF4s5SDwjsjzjKmCn128LWYo+405ziS5u
+         OLYpGEdikadzocLUpX65mjtZ176TktkrLXmp9rzZBBkAvmfvxSg2JXZUEaqmemssA37u
+         1PrQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=FGdc6ZAHO71r4iEGIQRpzdsd9638cgOO1tSjP/bGKak=;
+        b=UjBSCx4Z6bLxan0BR3O36ws2E6WJBphLmLmzwOhqWUQeSj0WfcbdmgSaDe2zheLZtU
+         4KiIXBGujquJdIYpmpa37T8sRv6N7GIpFXq8/MqTuYM/QDl4t+T1LWLoHPN/+oxus3+9
+         NNzs5oVpMe7iJXylhc9wU358tHdrUmmSHqkGiBCl4GHppO+X+fNdUUpUjV/CxYxpy/oC
+         KyLHt29c0zFsQGPiql3IVYJghaTNf/Z1RsVyBNOwcwRtWn2YS0JpbhSjUoq5qxrEY+7E
+         FzXQO7l0paq1vOwORgJlJe+L/F+Wt68pQTN3kAOs7zxp8FmMdFUvwgobwcocyYTKpIsQ
+         CvwA==
+X-Gm-Message-State: AJcUuke0+nbFuj9i64GFXaZQBtcM0kIILWOoLBAhzck3HCGPo43meWF7
+        YjD93yULIQPsXCtI4CEUnMtmhhhWyL+tZTP5
+X-Google-Smtp-Source: ALg8bN5kcwiYVommAv22zEZ5+/lgziY11qeKa08SHbwuElHDHk6KikP5SvZ/Omkick6WQYQ8WdXrxg==
+X-Received: by 2002:a24:fdc4:: with SMTP id m187mr4135396ith.75.1547317491262;
+        Sat, 12 Jan 2019 10:24:51 -0800 (PST)
+Received: from cisco.hsd1.co.comcast.net ([2601:282:901:dd7b:c69:9cc7:f9cf:ff1b])
+        by smtp.gmail.com with ESMTPSA id g186sm10968125ite.39.2019.01.12.10.24.49
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sat, 12 Jan 2019 10:24:50 -0800 (PST)
+From:   Tycho Andersen <tycho@tycho.ws>
+To:     Kees Cook <keescook@chromium.org>
+Cc:     Andy Lutomirski <luto@amacapital.net>,
+        Will Drewry <wad@chromium.org>, linux-kernel@vger.kernel.org,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
+        syzbot <syzbot+981c26489b2d1c6316ba@syzkaller.appspotmail.com>,
+        Tycho Andersen <tycho@tycho.ws>
+Subject: [PATCH] seccomp: fix UAF in user-trap code
+Date:   Sat, 12 Jan 2019 11:24:20 -0700
+Message-Id: <20190112182420.4669-1-tycho@tycho.ws>
+X-Mailer: git-send-email 2.19.1
+In-Reply-To: <CAGXu5j+9ETYcavj2x3Up0FhvkopZohbJcS4CMvrrCWOwDurSFw@mail.gmail.com>
+References: <CAGXu5j+9ETYcavj2x3Up0FhvkopZohbJcS4CMvrrCWOwDurSFw@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 11 Jan 2019 15:53:58 -0500
-Sebastien Bourdelin <sebastien.bourdelin@gmail.com> wrote:
+On the failure path, we do an fput() of the listener fd if the filter fails
+to install (e.g. because of a TSYNC race that's lost, or if the thread is
+killed, etc.). fput() doesn't actually release the fd, it just ads it to a
+work queue. Then the thread proceeds to free the filter, even though the
+listener struct file has a reference to it.
 
-> This commit allow the driver to work with device-tree.
-> 
-> Signed-off-by: Sebastien Bourdelin <sebastien.bourdelin@gmail.com>
-Minor stuff inline.
+To fix this, on the failure path let's set the private data to null, so we
+know in ->release() to ignore the filter.
 
-J
-> ---
-> v1 -> v2:
->   - add missing of.h header in bme680_spi.c
-> ---
->  drivers/iio/chemical/bme680_i2c.c | 7 +++++++
->  drivers/iio/chemical/bme680_spi.c | 9 +++++++++
->  2 files changed, 16 insertions(+)
-> 
-> diff --git a/drivers/iio/chemical/bme680_i2c.c b/drivers/iio/chemical/bme680_i2c.c
-> index 06d4be539d2e..94a36ebdf0b2 100644
-> --- a/drivers/iio/chemical/bme680_i2c.c
-> +++ b/drivers/iio/chemical/bme680_i2c.c
-> @@ -70,10 +70,17 @@ static const struct acpi_device_id bme680_acpi_match[] = {
->  };
->  MODULE_DEVICE_TABLE(acpi, bme680_acpi_match);
->  
-> +static const struct of_device_id bme680_of_i2c_match[] = {
-> +	{ .compatible = "bosch,bme680", },
-> +	{},
-> +}
-> +MODULE_DEVICE_TABLE(of, bme680_of_i2c_match);
-> +
->  static struct i2c_driver bme680_i2c_driver = {
->  	.driver = {
->  		.name			= "bme680_i2c",
->  		.acpi_match_table       = ACPI_PTR(bme680_acpi_match),
-> +		.of_match_table		= of_match_ptr(bme680_of_i2c_match),
+Reported-by: syzbot+981c26489b2d1c6316ba@syzkaller.appspotmail.com
+Fixes: 6a21cc50f0c7 ("seccomp: add a return code to trap to userspace")
+Signed-off-by: Tycho Andersen <tycho@tycho.ws>
+---
+This is a little ugly, but I can't really think of a better way (other than
+force freeing, but the fput function that does the actual work is declared
+static with four underscores :).
+---
+ kernel/seccomp.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-As below. just = bme680...
-
->  	},
->  	.probe = bme680_i2c_probe,
->  	.id_table = bme680_i2c_id,
-> diff --git a/drivers/iio/chemical/bme680_spi.c b/drivers/iio/chemical/bme680_spi.c
-> index c9fb05e8d0b9..caa57287a911 100644
-> --- a/drivers/iio/chemical/bme680_spi.c
-> +++ b/drivers/iio/chemical/bme680_spi.c
-> @@ -6,9 +6,11 @@
->   */
->  #include <linux/acpi.h>
->  #include <linux/module.h>
-> +#include <linux/of.h>
->  #include <linux/regmap.h>
->  #include <linux/spi/spi.h>
->  
-> +
-
-This white space change should not be here.
-
->  #include "bme680.h"
->  
->  static int bme680_regmap_spi_write(void *context, const void *data,
-> @@ -110,10 +112,17 @@ static const struct acpi_device_id bme680_acpi_match[] = {
->  };
->  MODULE_DEVICE_TABLE(acpi, bme680_acpi_match);
->  
-> +static const struct of_device_id bme680_of_spi_match[] = {
-> +	{ .compatible = "bosch,bme680", },
-> +	{},
-> +}
-> +MODULE_DEVICE_TABLE(of, bme680_of_spi_match);
-> +
->  static struct spi_driver bme680_spi_driver = {
->  	.driver = {
->  		.name			= "bme680_spi",
->  		.acpi_match_table	= ACPI_PTR(bme680_acpi_match),
-> +		.of_match_table		= of_match_ptr(bme680_of_spi_match),
-Please don't use of_match_ptr.  We actually want this entry to be there even
-if devicetree is not in use.  This is because there is a magic ACPI hid
-that can use this table even from ACPI.
-
->  	},
->  	.probe = bme680_spi_probe,
->  	.id_table = bme680_spi_id,
+diff --git a/kernel/seccomp.c b/kernel/seccomp.c
+index d7f538847b84..e815781ed751 100644
+--- a/kernel/seccomp.c
++++ b/kernel/seccomp.c
+@@ -976,6 +976,9 @@ static int seccomp_notify_release(struct inode *inode, struct file *file)
+ 	struct seccomp_filter *filter = file->private_data;
+ 	struct seccomp_knotif *knotif;
+ 
++	if (!filter)
++		return 0;
++
+ 	mutex_lock(&filter->notify_lock);
+ 
+ 	/*
+@@ -1300,6 +1303,7 @@ static long seccomp_set_mode_filter(unsigned int flags,
+ out_put_fd:
+ 	if (flags & SECCOMP_FILTER_FLAG_NEW_LISTENER) {
+ 		if (ret < 0) {
++			listener_f->private_data = NULL;
+ 			fput(listener_f);
+ 			put_unused_fd(listener);
+ 		} else {
+-- 
+2.19.1
 
