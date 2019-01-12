@@ -2,151 +2,114 @@ Return-Path: <SRS0=UXoZ=PU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D0657C43444
-	for <linux-kernel@archiver.kernel.org>; Sat, 12 Jan 2019 20:46:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 695CAC43387
+	for <linux-kernel@archiver.kernel.org>; Sat, 12 Jan 2019 20:51:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 92CE72084C
-	for <linux-kernel@archiver.kernel.org>; Sat, 12 Jan 2019 20:46:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EEC392084C
+	for <linux-kernel@archiver.kernel.org>; Sat, 12 Jan 2019 20:51:03 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="B6mdTEc8"
+	dkim=pass (1024-bit key) header.d=alien8.de header.i=@alien8.de header.b="TyxuJG7b"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726660AbfALUqY (ORCPT
+        id S1726445AbfALUvD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 12 Jan 2019 15:46:24 -0500
-Received: from hqemgate14.nvidia.com ([216.228.121.143]:1062 "EHLO
-        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725883AbfALUqY (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 12 Jan 2019 15:46:24 -0500
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate14.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5c3a520f0000>; Sat, 12 Jan 2019 12:46:07 -0800
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Sat, 12 Jan 2019 12:46:21 -0800
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Sat, 12 Jan 2019 12:46:21 -0800
-Received: from HQMAIL102.nvidia.com (172.18.146.10) by HQMAIL103.nvidia.com
- (172.20.187.11) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Sat, 12 Jan
- 2019 20:46:20 +0000
-Received: from [10.110.48.28] (172.20.13.39) by HQMAIL102.nvidia.com
- (172.18.146.10) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Sat, 12 Jan
- 2019 20:46:21 +0000
-Subject: Re: [PATCH 1/2] mm: introduce put_user_page*(), placeholder versions
-To:     Jerome Glisse <jglisse@redhat.com>
-CC:     Jan Kara <jack@suse.cz>, Matthew Wilcox <willy@infradead.org>,
-        "Dave Chinner" <david@fromorbit.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        "John Hubbard" <john.hubbard@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linux MM <linux-mm@kvack.org>, <tom@talpey.com>,
-        Al Viro <viro@zeniv.linux.org.uk>, <benve@cisco.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Christopher Lameter <cl@linux.com>,
-        "Dalessandro, Dennis" <dennis.dalessandro@intel.com>,
-        Doug Ledford <dledford@redhat.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Michal Hocko <mhocko@kernel.org>, <mike.marciniszyn@intel.com>,
-        <rcampbell@nvidia.com>,
-        "Linux Kernel Mailing List" <linux-kernel@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-References: <20190103015533.GA15619@redhat.com>
- <20190103092654.GA31370@quack2.suse.cz> <20190103144405.GC3395@redhat.com>
- <a79b259b-3982-b271-025a-0656f70506f4@nvidia.com>
- <20190111165141.GB3190@redhat.com>
- <1b37061c-5598-1b02-2983-80003f1c71f2@nvidia.com>
- <20190112020228.GA5059@redhat.com>
- <294bdcfa-5bf9-9c09-9d43-875e8375e264@nvidia.com>
- <20190112024625.GB5059@redhat.com>
- <b6f4ed36-fc8d-1f9b-8c74-b12f61d496ae@nvidia.com>
- <20190112032533.GD5059@redhat.com>
-From:   John Hubbard <jhubbard@nvidia.com>
-X-Nvconfidentiality: public
-Message-ID: <9c80b708-35fa-3264-f114-b4d568939437@nvidia.com>
-Date:   Sat, 12 Jan 2019 12:46:20 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        Sat, 12 Jan 2019 15:51:03 -0500
+Received: from mail.skyhub.de ([5.9.137.197]:49430 "EHLO mail.skyhub.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725883AbfALUvC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 12 Jan 2019 15:51:02 -0500
+Received: from zn.tnic (p200300EC2BD30C0094DD7F5E07197EF6.dip0.t-ipconnect.de [IPv6:2003:ec:2bd3:c00:94dd:7f5e:719:7ef6])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 84B9C1EC0A74;
+        Sat, 12 Jan 2019 21:51:00 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
+        t=1547326260;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:in-reply-to:references;
+        bh=WqHfWkjTe1Bun1m6sWoF7zQTXWUQllmgMsdkpGFSznM=;
+        b=TyxuJG7byp/esjc8VSRXFy/rkH2NKlCinhcSs6S0tFS2TAJIrjATdL4sHCcOVTPEHiNkRI
+        wtwUanx4rtyR24MFvCVKUNO5/ozXfjkuzOgnmOqqE9KUUSVpdmurY03F3QvWyzdnW21q34
+        xjBLMUEh+AE13TGZLh3JOKx9VR1dcb4=
+Date:   Sat, 12 Jan 2019 21:50:51 +0100
+From:   Borislav Petkov <bp@alien8.de>
+To:     dri-devel@lists.freedesktop.org
+Cc:     Alex Deucher <alexander.deucher@amd.com>,
+        Christian =?utf-8?B?S8O2bmln?= <christian.koenig@amd.com>,
+        "David (ChunMing) Zhou" <David1.Zhou@amd.com>,
+        amd-gfx@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: radeon 0000:1d:00.0: GPU lockup (current fence id 0x00000000017a66bf
+ last fence id 0x00000000017a67a1 on ring 0)
+Message-ID: <20190112205051.GA1908@zn.tnic>
 MIME-Version: 1.0
-In-Reply-To: <20190112032533.GD5059@redhat.com>
-X-Originating-IP: [172.20.13.39]
-X-ClientProxiedBy: HQMAIL106.nvidia.com (172.18.146.12) To
- HQMAIL102.nvidia.com (172.18.146.10)
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US-large
-Content-Transfer-Encoding: 7bit
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1547325967; bh=S5Ve03vaCXwHxIylHrHXTXq61SQp1ualr/VOmbbPK4M=;
-        h=X-PGP-Universal:Subject:To:CC:References:From:X-Nvconfidentiality:
-         Message-ID:Date:User-Agent:MIME-Version:In-Reply-To:
-         X-Originating-IP:X-ClientProxiedBy:Content-Type:Content-Language:
-         Content-Transfer-Encoding;
-        b=B6mdTEc8J4L+vxmPnvh2LMfZg62OITAz3mtChLxLDlNlNg/ULoNQEQKSGyJogwPYI
-         atHUfrgDu36CWs02kKFr3ogRiYUm5g5XM82JRt+BS9LVW27aCh0Bz5QrzmkJAUukTM
-         Nk9zhsXdbcZcNII2w1Oq24yK5PXnph07smMyZ/Ifvf2w0VoRJJs+8YWBHZ9n1IH1RU
-         iYeY+U0lhdSbBXXUUIkuyrjrwdS7+YAstGQflcQgTqtapsQuAWE0cAUgLjVD8ZXKfZ
-         X38BO8N+KDa0aQvHwFPHmYH+boWy5Ea1lFXjPritx/gmXyZ/uB4ooMnkTzXn60iRhM
-         4/yj0MtS91d7Q==
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 1/11/19 7:25 PM, Jerome Glisse wrote:
-[...]
->>>> Why is it that page lock cannot be used for gup fast, btw?
->>>
->>> Well it can not happen within the preempt disable section. But after
->>> as a post pass before GUP_fast return and after reenabling preempt then
->>> it is fine like it would be for regular GUP. But locking page for GUP
->>> is also likely to slow down some workload (with direct-IO).
->>>
->>
->> Right, and so to crux of the matter: taking an uncontended page lock involves
->> pretty much the same set of operations that your approach does. (If gup ends up
->> contended with the page lock for other reasons than these paths, that seems
->> surprising.) I'd expect very similar performance.
->>
->> But the page lock approach leads to really dramatically simpler code (and code
->> reviews, let's not forget). Any objection to my going that direction, and keeping
->> this idea as a Plan B? I think the next step will be, once again, to gather some
->> performance metrics, so maybe that will help us decide.
-> 
-> They are already work load that suffer from the page lock so adding more
-> code that need it will only worsen those situations. I guess i will do a
-> patchset with my solution as it is definitly lighter weight that having to
-> take the page lock.
-> 
+Hi guys,
 
-Hi Jerome,
+my odyssey with the GPU continues. This time it didn't reset itself
+but started spewing a single line about the hardware locking up.
 
-I expect that you're right, and in any case, having you code up the new 
-synchronization parts is probably a smart idea--you understand it best. To avoid
-duplicating work, may I propose these steps:
+The machine was responsive to sysrq so I was able to write out
+/var/log/messages and reboot.
 
-1. I'll post a new RFC, using your mapcount idea, but with a minor variation: 
-using the page lock to synchronize gup() and page_mkclean(). 
+This is still with 4.20-rc7 but I'm building 5.0-rc1 to see if there's a
+difference.
 
-   a) I'll also include a github path that has enough gup callsite conversions
-   done, to allow performance testing. 
+Any and all ideas what to do here are greatly appreciated.
 
-   b) And also, you and others have provided a lot of information that I want to
-   turn into nice neat comments and documentation.
+Thx.
 
-2. Then your proposed synchronization system would only need to replace probably
-one or two of the patches, instead of duplicating the whole patchset. I dread
-having two large, overlapping patchsets competing, and hope we can avoid that mess.
+Jan 12 21:38:16 zn vmunix: [257393.853806] radeon 0000:1d:00.0: GPU lockup (current fence id 0x00000000017a66bf last fence id 0x00000000017a67a0 on ring 0)
+Jan 12 21:38:16 zn vmunix: [257394.369780] radeon 0000:1d:00.0: GPU lockup (current fence id 0x00000000017a66bf last fence id 0x00000000017a67a0 on ring 0)
+Jan 12 21:38:17 zn vmunix: [257394.877795] radeon 0000:1d:00.0: GPU lockup (current fence id 0x00000000017a66bf last fence id 0x00000000017a67a1 on ring 0)
+Jan 12 21:38:17 zn vmunix: [257395.389789] radeon 0000:1d:00.0: GPU lockup (current fence id 0x00000000017a66bf last fence id 0x00000000017a67a1 on ring 0)
+Jan 12 21:38:18 zn vmunix: [257395.901786] radeon 0000:1d:00.0: GPU lockup (current fence id 0x00000000017a66bf last fence id 0x00000000017a67a1 on ring 0)
+Jan 12 21:38:18 zn vmunix: [257396.413787] radeon 0000:1d:00.0: GPU lockup (current fence id 0x00000000017a66bf last fence id 0x00000000017a67a1 on ring 0)
+Jan 12 21:38:19 zn vmunix: [257396.925790] radeon 0000:1d:00.0: GPU lockup (current fence id 0x00000000017a66bf last fence id 0x00000000017a67a1 on ring 0)
+Jan 12 21:38:19 zn vmunix: [257397.437787] radeon 0000:1d:00.0: GPU lockup (current fence id 0x00000000017a66bf last fence id 0x00000000017a67a1 on ring 0)
+Jan 12 21:38:20 zn vmunix: [257397.949788] radeon 0000:1d:00.0: GPU lockup (current fence id 0x00000000017a66bf last fence id 0x00000000017a67a1 on ring 0)
+Jan 12 21:38:20 zn vmunix: [257398.461786] radeon 0000:1d:00.0: GPU lockup (current fence id 0x00000000017a66bf last fence id 0x00000000017a67a1 on ring 0)
+Jan 12 21:38:21 zn vmunix: [257398.973824] radeon 0000:1d:00.0: GPU lockup (current fence id 0x00000000017a66bf last fence id 0x00000000017a67a1 on ring 0)
+Jan 12 21:38:21 zn vmunix: [257399.485828] radeon 0000:1d:00.0: GPU lockup (current fence id 0x00000000017a66bf last fence id 0x00000000017a67a1 on ring 0)
+Jan 12 21:38:22 zn vmunix: [257399.997842] radeon 0000:1d:00.0: GPU lockup (current fence id 0x00000000017a66bf last fence id 0x00000000017a67a1 on ring 0)
+Jan 12 21:38:22 zn vmunix: [257400.509852] radeon 0000:1d:00.0: GPU lockup (current fence id 0x00000000017a66bf last fence id 0x00000000017a67a1 on ring 0)
+Jan 12 21:38:23 zn vmunix: [257401.021845] radeon 0000:1d:00.0: GPU lockup (current fence id 0x00000000017a66bf last fence id 0x00000000017a67a1 on ring 0)
+Jan 12 21:38:23 zn vmunix: [257401.533826] radeon 0000:1d:00.0: GPU lockup (current fence id 0x00000000017a66bf last fence id 0x00000000017a67a1 on ring 0)
+Jan 12 21:38:24 zn vmunix: [257402.045822] radeon 0000:1d:00.0: GPU lockup (current fence id 0x00000000017a66bf last fence id 0x00000000017a67a1 on ring 0)
+Jan 12 21:38:24 zn vmunix: [257402.557826] radeon 0000:1d:00.0: GPU lockup (current fence id 0x00000000017a66bf last fence id 0x00000000017a67a1 on ring 0)
+Jan 12 21:38:25 zn vmunix: [257403.069833] radeon 0000:1d:00.0: GPU lockup (current fence id 0x00000000017a66bf last fence id 0x00000000017a67a1 on ring 0)
+Jan 12 21:38:25 zn vmunix: [257403.581826] radeon 0000:1d:00.0: GPU lockup (current fence id 0x00000000017a66bf last fence id 0x00000000017a67a1 on ring 0)
+Jan 12 21:38:26 zn vmunix: [257404.093828] radeon 0000:1d:00.0: GPU lockup (current fence id 0x00000000017a66bf last fence id 0x00000000017a67a1 on ring 0)
+Jan 12 21:38:26 zn vmunix: [257404.605827] radeon 0000:1d:00.0: GPU lockup (current fence id 0x00000000017a66bf last fence id 0x00000000017a67a1 on ring 0)
+Jan 12 21:38:27 zn vmunix: [257405.117821] radeon 0000:1d:00.0: GPU lockup (current fence id 0x00000000017a66bf last fence id 0x00000000017a67a1 on ring 0)
+Jan 12 21:38:27 zn vmunix: [257405.629883] radeon 0000:1d:00.0: GPU lockup (current fence id 0x00000000017a66bf last fence id 0x00000000017a67a1 on ring 0)
+Jan 12 21:38:28 zn vmunix: [257406.141842] radeon 0000:1d:00.0: GPU lockup (current fence id 0x00000000017a66bf last fence id 0x00000000017a67a1 on ring 0)
+Jan 12 21:38:28 zn vmunix: [257406.653828] radeon 0000:1d:00.0: GPU lockup (current fence id 0x00000000017a66bf last fence id 0x00000000017a67a1 on ring 0)
+Jan 12 21:38:29 zn vmunix: [257407.165827] radeon 0000:1d:00.0: GPU lockup (current fence id 0x00000000017a66bf last fence id 0x00000000017a67a1 on ring 0)
+Jan 12 21:38:29 zn vmunix: [257407.677827] radeon 0000:1d:00.0: GPU lockup (current fence id 0x00000000017a66bf last fence id 0x00000000017a67a1 on ring 0)
+Jan 12 21:38:30 zn vmunix: [257408.189823] radeon 0000:1d:00.0: GPU lockup (current fence id 0x00000000017a66bf last fence id 0x00000000017a67a1 on ring 0)
+Jan 12 21:38:30 zn vmunix: [257408.701827] radeon 0000:1d:00.0: GPU lockup (current fence id 0x00000000017a66bf last fence id 0x00000000017a67a1 on ring 0)
+Jan 12 21:38:31 zn vmunix: [257409.213827] radeon 0000:1d:00.0: GPU lockup (current fence id 0x00000000017a66bf last fence id 0x00000000017a67a1 on ring 0)
+Jan 12 21:38:32 zn vmunix: [257409.725822] radeon 0000:1d:00.0: GPU lockup (current fence id 0x00000000017a66bf last fence id 0x00000000017a67a1 on ring 0)
+Jan 12 21:38:32 zn vmunix: [257410.237827] radeon 0000:1d:00.0: GPU lockup (current fence id 0x00000000017a66bf last fence id 0x00000000017a67a1 on ring 0)
+Jan 12 21:38:33 zn vmunix: [257410.749833] radeon 0000:1d:00.0: GPU lockup (current fence id 0x00000000017a66bf last fence id 0x00000000017a67a1 on ring 0)
+Jan 12 21:38:33 zn vmunix: [257411.261824] radeon 0000:1d:00.0: GPU lockup (current fence id 0x00000000017a66bf last fence id 0x00000000017a67a1 on ring 0)
+Jan 12 21:38:34 zn vmunix: [257411.773828] radeon 0000:1d:00.0: GPU lockup (current fence id 0x00000000017a66bf last fence id 0x00000000017a67a1 on ring 0)
+Jan 12 21:38:34 zn vmunix: [257412.285827] radeon 0000:1d:00.0: GPU lockup (current fence id 0x00000000017a66bf last fence id 0x00000000017a67a1 on ring 0)
 
-3. We can run performance tests on both approaches, hopefully finding some test
-cases that will highlight whether page lock is a noticeable problem here.
 
-Or, the other thing that could happen is someone will jump in here and NAK anything
-involving the page lock, based on long experience, and we'll just go straight to
-your scheme anyway.  I'm sorta expecting that any minute now. :)
-
-thanks,
 -- 
-John Hubbard
-NVIDIA
+Regards/Gruss,
+    Boris.
+
+Good mailing practices for 400: avoid top-posting and trim the reply.
