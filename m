@@ -2,62 +2,63 @@ Return-Path: <SRS0=UXoZ=PU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6BA84C43387
-	for <linux-kernel@archiver.kernel.org>; Sat, 12 Jan 2019 20:38:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 97C4DC43387
+	for <linux-kernel@archiver.kernel.org>; Sat, 12 Jan 2019 20:38:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3CB5D20870
-	for <linux-kernel@archiver.kernel.org>; Sat, 12 Jan 2019 20:38:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5F91720835
+	for <linux-kernel@archiver.kernel.org>; Sat, 12 Jan 2019 20:38:37 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=joelfernandes.org header.i=@joelfernandes.org header.b="E8mhyDNE"
+	dkim=pass (1024-bit key) header.d=joelfernandes.org header.i=@joelfernandes.org header.b="ruN/Yr6i"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726603AbfALUid (ORCPT
+        id S1726640AbfALUig (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 12 Jan 2019 15:38:33 -0500
-Received: from mail-qt1-f196.google.com ([209.85.160.196]:33323 "EHLO
-        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726570AbfALUid (ORCPT
+        Sat, 12 Jan 2019 15:38:36 -0500
+Received: from mail-qk1-f195.google.com ([209.85.222.195]:34754 "EHLO
+        mail-qk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726608AbfALUif (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 12 Jan 2019 15:38:33 -0500
-Received: by mail-qt1-f196.google.com with SMTP id l11so22681935qtp.0
-        for <linux-kernel@vger.kernel.org>; Sat, 12 Jan 2019 12:38:32 -0800 (PST)
+        Sat, 12 Jan 2019 15:38:35 -0500
+Received: by mail-qk1-f195.google.com with SMTP id q8so8552679qke.1
+        for <linux-kernel@vger.kernel.org>; Sat, 12 Jan 2019 12:38:34 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=joelfernandes.org; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=iDfQAm97H4o7dVA5ibXAUXRtADRsDfZK0W4lOHvCcyE=;
-        b=E8mhyDNEc/DZK512mhs6N+jydr1x5ATsXKDHMHrN1k0N6w+JULc8c09ZB/9D8DG6H0
-         /Kmxsnf3ed5QaJnpY4Naw6hSllSj9hACDJTKOVQFNhdZELtZ5ZsMgEVaBFD4c+KvS3S9
-         Kmo/0G02HbyHxLnG/CGRM/iB3XUP5IHyN1GOA=
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=X59k2XX1UnzlfYoU2KHwT+sySFqpz7PmWxdvLhBDFIE=;
+        b=ruN/Yr6iLpU/LNFmr4FNMG9riPkTRrZHcofPj6AkffmGHzLg9yGAMCyuqktfSalvjd
+         VRygPhSJxT9EpoW1T2JkFtTddrI0H/nzgec4VrfLTtcwjUT/b4L3Tgzypq6BnZc+WxT6
+         hiXZQDCyvYvpxPkkkgCk02n19Nd0s1Ozqbqw8=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=iDfQAm97H4o7dVA5ibXAUXRtADRsDfZK0W4lOHvCcyE=;
-        b=afdSkmoab8pxQi1FvZQnUVlYTzETfotMNSdntZ108JHzcVdOAZCUZ/4SF1uCoxkqDh
-         AmwZZeckOIn41qzd8Jigfdf6gbZX3j2MRr0f92uNmAW9lUnSkYq93Z6cq8Luu1/ChdvD
-         f5fnj9ShIEwvG5zc4zNOYVBavd3MVeKD4qlBYqs2XAfsiTsBg79QYxDy1aa9XBBBv+wN
-         kk+4F0YC7Fk2jKvzSwXnVzqc/va4X6yow/HGj5hX61Sc9iLq0wbvA+/Ia5+4rX4wdAza
-         k9qYqXGTZtDIbehSU6qMoSHqjyeaiWnXnzYsEvIUivfgYSLtdK8gkH65pOd+TNblI4TP
-         qRqg==
-X-Gm-Message-State: AJcUukfSg6zL/3ZIB/uDpdTTsg+WgMj4+vvj+1Ax8sVjbfdpiqwFGhVn
-        hlF7lq2cVEiBTu8crFUTPBjYXMMg81o=
-X-Google-Smtp-Source: ALg8bN4E7rn9pHV+7ZlfIT/KIoyJGYP8hJ85YnG6ffaAiQtLgKGsihB8TYFh6+nRMYpYS3uJtEbPqg==
-X-Received: by 2002:ac8:6151:: with SMTP id d17mr18325188qtm.194.1547325511908;
-        Sat, 12 Jan 2019 12:38:31 -0800 (PST)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=X59k2XX1UnzlfYoU2KHwT+sySFqpz7PmWxdvLhBDFIE=;
+        b=Kp5wsJcj5gaetYakhVV3Lm6DTZccWWH/XqYlsoiMSrxpAdpHXnKo0Qoql/GuwJdPrL
+         XcCmioutFh+e+wN1Am0/+im5zaHUu+Y7iQBXwrWN1wkUThcTMAShbXtyyw/jFhH0iLUp
+         f+KEMG4jKfMjLyypKQx6KwuFfOMKF5AtMQJ/VjVROVv8jnQ5/0ybBn8D7rWczsKqf5tf
+         eSI6vMbgtv2cYwho9qRtVTEfE1wdENhGn1tilwNcOV46JTLuFx9+vQuZz4dcn5OCruqU
+         aXoZ6NYTPIJh9bUPiFSiAfh4ksILVQDG3dEruuwGDrHzy2ewxlmQ6ywAqU2b0ZNv/k8U
+         NFLg==
+X-Gm-Message-State: AJcUukemyLnsEyTq2hMHzhDA8BvbeNNVO4nJZThQhmcBlA+YYf80XC++
+        u+Nl7odb1+rpG98EfrbEWd9Uz56mdfE=
+X-Google-Smtp-Source: ALg8bN4jPXax4laIu1WzosZcAcZeXZ4Wm0QM14TQ9ICZoH3TjNgWJlkhwwFbm54ECOfxBEXe5f2MBw==
+X-Received: by 2002:a37:9906:: with SMTP id b6mr17565376qke.208.1547325513368;
+        Sat, 12 Jan 2019 12:38:33 -0800 (PST)
 Received: from joelaf.cam.corp.google.com ([2620:0:1004:1100:cfd0:d2ee:d54d:ab6d])
-        by smtp.gmail.com with ESMTPSA id c12sm55883402qka.42.2019.01.12.12.38.28
+        by smtp.gmail.com with ESMTPSA id c12sm55883402qka.42.2019.01.12.12.38.31
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sat, 12 Jan 2019 12:38:30 -0800 (PST)
+        Sat, 12 Jan 2019 12:38:32 -0800 (PST)
 From:   Joel Fernandes <joel@joelfernandes.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     "Joel Fernandes (Google)" <joel@joelfernandes.org>,
+        Andy Lutomirski <luto@kernel.org>,
         Al Viro <viro@zeniv.linux.org.uk>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Andy Lutomirski <luto@kernel.org>, dancol@google.com,
+        Andrew Morton <akpm@linux-foundation.org>, dancol@google.com,
         Hugh Dickins <hughd@google.com>, Jann Horn <jannh@google.com>,
         "J. Bruce Fields" <bfields@fieldses.org>,
         Jeff Layton <jlayton@kernel.org>,
@@ -68,10 +69,12 @@ Cc:     "Joel Fernandes (Google)" <joel@joelfernandes.org>,
         Matthew Wilcox <willy@infradead.org>,
         Mike Kravetz <mike.kravetz@oracle.com>, minchan@kernel.org,
         Shuah Khan <shuah@kernel.org>
-Subject: [PATCH v4 0/2] Add a future write seal to memfd
-Date:   Sat, 12 Jan 2019 15:38:14 -0500
-Message-Id: <20190112203816.85534-1-joel@joelfernandes.org>
+Subject: [PATCH v4 1/2] mm/memfd: Add an F_SEAL_FUTURE_WRITE seal to memfd
+Date:   Sat, 12 Jan 2019 15:38:15 -0500
+Message-Id: <20190112203816.85534-2-joel@joelfernandes.org>
 X-Mailer: git-send-email 2.20.1.97.g81188d93c3-goog
+In-Reply-To: <20190112203816.85534-1-joel@joelfernandes.org>
+References: <20190112203816.85534-1-joel@joelfernandes.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -81,27 +84,132 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: "Joel Fernandes (Google)" <joel@joelfernandes.org>
 
-This is just a resend of the previous series at
-https://lore.kernel.org/patchwork/patch/1014892/
-with a small if block refactor as Andy suggested:
-https://lore.kernel.org/patchwork/comment/1198679/
+Android uses ashmem for sharing memory regions.  We are looking forward to
+migrating all usecases of ashmem to memfd so that we can possibly remove
+the ashmem driver in the future from staging while also benefiting from
+using memfd and contributing to it.  Note staging drivers are also not ABI
+and generally can be removed at anytime.
 
-All,
-Could you please provide your Reviewed-by / Acked-by tags?
+One of the main usecases Android has is the ability to create a region and
+mmap it as writeable, then add protection against making any "future"
+writes while keeping the existing already mmap'ed writeable-region active.
+This allows us to implement a usecase where receivers of the shared
+memory buffer can get a read-only view, while the sender continues to
+write to the buffer.  See CursorWindow documentation in Android for more
+details:
+https://developer.android.com/reference/android/database/CursorWindow
 
-I will also resend the manpage changes shortly.
+This usecase cannot be implemented with the existing F_SEAL_WRITE seal.
+To support the usecase, this patch adds a new F_SEAL_FUTURE_WRITE seal
+which prevents any future mmap and write syscalls from succeeding while
+keeping the existing mmap active.
 
-Joel Fernandes (Google) (2):
-mm/memfd: Add an F_SEAL_FUTURE_WRITE seal to memfd
-selftests/memfd: Add tests for F_SEAL_FUTURE_WRITE seal
+A better way to do F_SEAL_FUTURE_WRITE seal was discussed [1] last week
+where we don't need to modify core VFS structures to get the same
+behavior of the seal. This solves several side-effects pointed by Andy.
+self-tests are provided in later patch to verify the expected semantics.
 
-fs/hugetlbfs/inode.c                       |  2 +-
-include/uapi/linux/fcntl.h                 |  1 +
-mm/memfd.c                                 |  3 +-
-mm/shmem.c                                 | 25 +++++++-
-tools/testing/selftests/memfd/memfd_test.c | 74 ++++++++++++++++++++++
-5 files changed, 100 insertions(+), 5 deletions(-)
+[1] https://lore.kernel.org/lkml/20181111173650.GA256781@google.com/
 
---
+[Thanks a lot to Andy for suggestions to improve code]
+Cc: Andy Lutomirski <luto@kernel.org>
+Signed-off-by: Joel Fernandes (Google) <joel@joelfernandes.org>
+---
+ fs/hugetlbfs/inode.c       |  2 +-
+ include/uapi/linux/fcntl.h |  1 +
+ mm/memfd.c                 |  3 ++-
+ mm/shmem.c                 | 25 ++++++++++++++++++++++---
+ 4 files changed, 26 insertions(+), 5 deletions(-)
+
+diff --git a/fs/hugetlbfs/inode.c b/fs/hugetlbfs/inode.c
+index 53ea3cef526e..3daf471bbd92 100644
+--- a/fs/hugetlbfs/inode.c
++++ b/fs/hugetlbfs/inode.c
+@@ -557,7 +557,7 @@ static long hugetlbfs_punch_hole(struct inode *inode, loff_t offset, loff_t len)
+ 		inode_lock(inode);
+ 
+ 		/* protected by i_mutex */
+-		if (info->seals & F_SEAL_WRITE) {
++		if (info->seals & (F_SEAL_WRITE | F_SEAL_FUTURE_WRITE)) {
+ 			inode_unlock(inode);
+ 			return -EPERM;
+ 		}
+diff --git a/include/uapi/linux/fcntl.h b/include/uapi/linux/fcntl.h
+index 6448cdd9a350..a2f8658f1c55 100644
+--- a/include/uapi/linux/fcntl.h
++++ b/include/uapi/linux/fcntl.h
+@@ -41,6 +41,7 @@
+ #define F_SEAL_SHRINK	0x0002	/* prevent file from shrinking */
+ #define F_SEAL_GROW	0x0004	/* prevent file from growing */
+ #define F_SEAL_WRITE	0x0008	/* prevent writes */
++#define F_SEAL_FUTURE_WRITE	0x0010  /* prevent future writes while mapped */
+ /* (1U << 31) is reserved for signed error codes */
+ 
+ /*
+diff --git a/mm/memfd.c b/mm/memfd.c
+index 97264c79d2cd..650e65a46b9c 100644
+--- a/mm/memfd.c
++++ b/mm/memfd.c
+@@ -131,7 +131,8 @@ static unsigned int *memfd_file_seals_ptr(struct file *file)
+ #define F_ALL_SEALS (F_SEAL_SEAL | \
+ 		     F_SEAL_SHRINK | \
+ 		     F_SEAL_GROW | \
+-		     F_SEAL_WRITE)
++		     F_SEAL_WRITE | \
++		     F_SEAL_FUTURE_WRITE)
+ 
+ static int memfd_add_seals(struct file *file, unsigned int seals)
+ {
+diff --git a/mm/shmem.c b/mm/shmem.c
+index 6ece1e2fe76e..3c98cc9655b4 100644
+--- a/mm/shmem.c
++++ b/mm/shmem.c
+@@ -2125,6 +2125,24 @@ int shmem_lock(struct file *file, int lock, struct user_struct *user)
+ 
+ static int shmem_mmap(struct file *file, struct vm_area_struct *vma)
+ {
++	struct shmem_inode_info *info = SHMEM_I(file_inode(file));
++
++	if (info->seals & F_SEAL_FUTURE_WRITE) {
++		/*
++		 * New PROT_WRITE and MAP_SHARED mmaps are not allowed when
++		 * "future write" seal active.
++		 */
++		if ((vma->vm_flags & VM_SHARED) && (vma->vm_flags & VM_WRITE))
++			return -EPERM;
++
++		/*
++		 * Since the F_SEAL_FUTURE_WRITE seals allow for a MAP_SHARED
++		 * read-only mapping, take care to not allow mprotect to revert
++		 * protections.
++		 */
++		vma->vm_flags &= ~(VM_MAYWRITE);
++	}
++
+ 	file_accessed(file);
+ 	vma->vm_ops = &shmem_vm_ops;
+ 	if (IS_ENABLED(CONFIG_TRANSPARENT_HUGE_PAGECACHE) &&
+@@ -2375,8 +2393,9 @@ shmem_write_begin(struct file *file, struct address_space *mapping,
+ 	pgoff_t index = pos >> PAGE_SHIFT;
+ 
+ 	/* i_mutex is held by caller */
+-	if (unlikely(info->seals & (F_SEAL_WRITE | F_SEAL_GROW))) {
+-		if (info->seals & F_SEAL_WRITE)
++	if (unlikely(info->seals & (F_SEAL_GROW |
++				   F_SEAL_WRITE | F_SEAL_FUTURE_WRITE))) {
++		if (info->seals & (F_SEAL_WRITE | F_SEAL_FUTURE_WRITE))
+ 			return -EPERM;
+ 		if ((info->seals & F_SEAL_GROW) && pos + len > inode->i_size)
+ 			return -EPERM;
+@@ -2639,7 +2658,7 @@ static long shmem_fallocate(struct file *file, int mode, loff_t offset,
+ 		DECLARE_WAIT_QUEUE_HEAD_ONSTACK(shmem_falloc_waitq);
+ 
+ 		/* protected by i_mutex */
+-		if (info->seals & F_SEAL_WRITE) {
++		if (info->seals & (F_SEAL_WRITE | F_SEAL_FUTURE_WRITE)) {
+ 			error = -EPERM;
+ 			goto out;
+ 		}
+-- 
 2.20.1.97.g81188d93c3-goog
 
