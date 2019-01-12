@@ -2,87 +2,206 @@ Return-Path: <SRS0=UXoZ=PU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6EDBBC43387
-	for <linux-kernel@archiver.kernel.org>; Sat, 12 Jan 2019 10:41:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CB04DC43387
+	for <linux-kernel@archiver.kernel.org>; Sat, 12 Jan 2019 10:46:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 42A6F20881
-	for <linux-kernel@archiver.kernel.org>; Sat, 12 Jan 2019 10:41:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 283B320675
+	for <linux-kernel@archiver.kernel.org>; Sat, 12 Jan 2019 10:46:43 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="TDdjwhlL"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725880AbfALKl1 (ORCPT
+        id S1726376AbfALKqm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 12 Jan 2019 05:41:27 -0500
-Received: from mout.kundenserver.de ([212.227.126.135]:56205 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725819AbfALKl0 (ORCPT
+        Sat, 12 Jan 2019 05:46:42 -0500
+Received: from mail-io1-f66.google.com ([209.85.166.66]:41947 "EHLO
+        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725819AbfALKql (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 12 Jan 2019 05:41:26 -0500
-Received: from oxbsltgw60.schlund.de ([212.227.220.198]) by
- mrelayeu.kundenserver.de (mreue011 [213.165.67.97]) with ESMTPSA (Nemesis) id
- 1MDQRy-1gb9SS2V78-00AYP6; Sat, 12 Jan 2019 11:41:10 +0100
-Date:   Sat, 12 Jan 2019 11:41:09 +0100 (CET)
-From:   Stefan Wahren <stefan.wahren@i2se.com>
-To:     Jeremy Linton <jeremy.linton@arm.com>,
-        linux-arm-kernel@lists.infradead.org
-Cc:     mlangsdo@redhat.com, suzuki.poulose@arm.com, marc.zyngier@arm.com,
-        catalin.marinas@arm.com, julien.thierry@arm.com,
-        will.deacon@arm.com, linux-kernel@vger.kernel.org,
-        steven.price@arm.com, ykaukab@suse.de, dave.martin@arm.com,
-        shankerd@codeaurora.org
-Message-ID: <2056332188.370448.1547289669205@email.ionos.de>
-In-Reply-To: <20190109235544.2992426-4-jeremy.linton@arm.com>
-References: <20190109235544.2992426-1-jeremy.linton@arm.com>
- <20190109235544.2992426-4-jeremy.linton@arm.com>
-Subject: Re: [PATCH v3 3/7] arm64: kpti: move check for non-vulnerable CPUs
- to a function
+        Sat, 12 Jan 2019 05:46:41 -0500
+Received: by mail-io1-f66.google.com with SMTP id s22so14159039ioc.8
+        for <linux-kernel@vger.kernel.org>; Sat, 12 Jan 2019 02:46:41 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=amarulasolutions.com; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=y4pv4Rbd0QxbOm7zJOHgqCCj023O1SjBfCx07d5B9+0=;
+        b=TDdjwhlL5g6u1fDAhllZ8zn0UjkSAyx16ze0vVrWqZ0MQ5ERC4n4v44qK3+2UiKjCB
+         UlzFe6Bg4r7cJ48QKUZxCr+xojobpgjWa1nvYe8PEkMNzRIgu5cJuir4gl/Ch5SAEGCr
+         4HfQhLFZ2uUSFmWt6akWxlScNJIyHOZZ0AT5A=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=y4pv4Rbd0QxbOm7zJOHgqCCj023O1SjBfCx07d5B9+0=;
+        b=ivbbz6wgkYAfprrLJc7rRBQpEQNq6aLC9Qk7CjvXze4QlQ1XSA8mkYARrp01jlUZjZ
+         U2NrS51epszJUh5jrdHTsc2ZHc3zyvN298RtFWPej4v1jXqcPLvEJH6VOn6JKQHKPgOx
+         oepFC1Ayryg804981SM9iEOtrU+ccSOlnqJoLaUuJCFlqAHoIZgnbfT+aLbaQQS1G4ol
+         5kr/BXAv2yOdngr3ZZCwtHmSOPCti/OCYiNAe5sPMSV7x5SGYTHV+uwI3lUpN5VMu89I
+         QoMYzGXuI6aoeX5iprGuJpfrqWGMMyhAMELEGQhKd48IO6YEonW42bihCaHvbTAthZ6F
+         Xacg==
+X-Gm-Message-State: AJcUukei7GCrc6g3W/t6JqeNwfNMru3V83tdDjrZzU4LdYh+VryWYB9t
+        L0YDEWtdWGRBtOMYDjbHHlTNts4m2PNtO61IwhONwg==
+X-Google-Smtp-Source: ALg8bN7cPIAeKhITR8Mq9x7duSyr5YpTotUnagsHjcFj2O3JqIxcVBlA+9Y5mJIfBeev28PV/JeUH8IZcpKKGshvnE4=
+X-Received: by 2002:a6b:7a0a:: with SMTP id h10mr10994139iom.114.1547290000431;
+ Sat, 12 Jan 2019 02:46:40 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Priority: 3
-Importance: Medium
-X-Mailer: Open-Xchange Mailer v7.8.4-Rev47
-X-Originating-Client: open-xchange-appsuite
-X-Provags-ID: V03:K1:NkEVyuRhBB3+Giz5nx3RkR/JlGYzKYoBEsS86FgMRln2tnLFED9
- ryTHdaWRzzjpLkawm96TGiKfPb+AQPYj6wN9HLmuT7QjBHnAOBkELdEfIZabbb/lr4ZEysH
- ne7dqRne1/XIIotwjSawTQng41mD07ZJylw8gYwrYMXf2n1JbpEcwboB91eA5SYjm8E0OYe
- 9vqGFaKviCNvvO6Fy06IQ==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:ixru4GyGl/A=:Ks82qJrtapA+IE17xD8+Kr
- A9aF0bJMYKMl5es+pQJD1jVhAEVvT7RvUUcmr1pDNq9ELhzjHoqYNttDm4pQVs72UyeSq6cuX
- My7gj23KxHXcYw6yZVTVSqoGRdb4mIMbkkRP3QZl9EaO15ojNeLan/PjDIKaHl8bjCcs/GJvO
- PicVVR51UgI+1mxBHekUA0r6N6B7t0AmCX/FJEJTkR5V0e1bR8J8Ot2eFcomfCgRl98Vq+sn5
- q78gHWouNn5OtpSEjzzicyux1ZBtz7+U2ML5kqceomU1QyIu4BhFHue+LeoKl2OOCLahq7OBt
- Srxy7Q917PSLOM9861fj6srqGoMv4wUKXmAj8xUkt8fJKHQN9JIppxC1IvjKuK0U36n8xNALj
- UVmtHxBoy+kZDtjE7PxFT2KwB9L1JqnKKepAYVfBuz8ayihAqrLB0rkucyoR5ZK0CfTe4b8a/
- /9Fz82ODDIVuoyCFL+E292/eLZ82riBAO6lp1AtZ5hPAbkWNe/A9wdZ2M8VplEMfyhvyWmwse
- lW5wHVdipP8D6NjB2EujPUYt8QhTtoldbGc8csgFtcIr3koijYs3z/F44Wyx/ep/nwHDeQrXh
- +bgc5oFRbE55R6brSLspFsy9eSQAtuD525tLp8c7tZfRrl3tH0XtMY1QzmBHZ1+nDLmvaP2hk
- C7WMYobMZ3O8MB14S79hsThXW/1avWdTxPCqMlq6aZtdBmOA93M1QtRpa15bBvD5rdmCXEAd0
- Rh1Iujm/83k50cfMhVgl9gHmWgT0PJGksFqC83KZokY9aRbyxYU5MeHSDds=
+References: <20190111124714.19566-1-jagan@amarulasolutions.com>
+ <20190111124714.19566-2-jagan@amarulasolutions.com> <20190111211931.GA29735@ravnborg.org>
+ <CAMty3ZArGPf8+M5GVhkzoMDhtYwT3aUS9bNbKt8=gqeb6-b82Q@mail.gmail.com> <20190112101409.GA14273@ravnborg.org>
+In-Reply-To: <20190112101409.GA14273@ravnborg.org>
+From:   Jagan Teki <jagan@amarulasolutions.com>
+Date:   Sat, 12 Jan 2019 16:16:28 +0530
+Message-ID: <CAMty3ZBUNeFvsHDRmBFUoZG=J+EfQuKtJDOhaezcfEOykhpOeQ@mail.gmail.com>
+Subject: Re: [PATCH V7 2/2] drm/panel: Add Sitronix ST7701 panel driver
+To:     Sam Ravnborg <sam@ravnborg.org>
+Cc:     David Airlie <airlied@linux.ie>,
+        linux-amarula@amarulasolutions.com,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Michael Trimarchi <michael@amarulasolutions.com>,
+        Sean Paul <sean@poorly.run>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Jeremy,
+On Sat, Jan 12, 2019 at 3:44 PM Sam Ravnborg <sam@ravnborg.org> wrote:
+>
+> Hi Jagan.
+>
+> > On Sat, Jan 12, 2019 at 2:49 AM Sam Ravnborg <sam@ravnborg.org> wrote:
+> > >
+> > > Hi Jagan.
+> > >
+> > > Gave this another more detailed read - triggered some additional comments.
+> > > Depite the comments it looks good, and this is all more or
+> > > less cosmetic improvements.
+> >
+> > Thanks for the review.
+> >
+> > >
+> > >         Sam
+> > >
+> > > > +struct st7701_panel_desc {
+> > > > +     const struct drm_display_mode *mode;
+> > > > +     unsigned int lanes;
+> > > > +     unsigned long flags;
+> > > > +     enum mipi_dsi_pixel_format format;
+> > > > +     const char *const *supply_names;
+> > > > +     unsigned int num_supplies;
+> > > > +     unsigned int panel_sleep_delay;
+> > > > +};
+> > > > +
+> > > > +struct st7701 {
+> > > > +     struct drm_panel panel;
+> > > > +     struct mipi_dsi_device *dsi;
+> > > > +     const struct st7701_panel_desc *desc;
+> > > > +
+> > > > +     struct backlight_device *backlight;
+> > > > +     struct regulator_bulk_data *supplies;
+> > > > +     unsigned int num_supplies;
+> > > I cannot see that num_supplies in this struct are used?
+> >
+> > Yes it is used in the code, please check in struct st7701_panel_desc.
+> I have applied the patch and deleted num_supplies - now build errors.
+> So num_supplies in struct st7701 is not used and should be deleted.
 
-> Jeremy Linton <jeremy.linton@arm.com> hat am 10. Januar 2019 um 00:55 geschrieben:
-> 
-> 
-> From: Mian Yousaf Kaukab <ykaukab@suse.de>
-> 
-> Add is_meltdown_safe() which is a whitelist of known safe cores.
-> 
-> Signed-off-by: Mian Yousaf Kaukab <ykaukab@suse.de>
-> [Moved location of function]
-> Signed-off-by: Jeremy Linton <jeremy.linton@arm.com>
-> ---
->  arch/arm64/kernel/cpufeature.c | 15 +++++++++++----
->  1 file changed, 11 insertions(+), 4 deletions(-)
+Sorry, now I found it thanks, will drop in next version.
 
-i only want to inform you that this patch doesn't cleanly apply against linux-next on Friday.
+>
+> > > > +static int st7701_prepare(struct drm_panel *panel)
+> > > > +{
+> > > > +     struct st7701 *st7701 = panel_to_st7701(panel);
+> > > > +     int ret;
+> > > > +
+> > > > +     gpiod_set_value(st7701->reset, 0);
+> > > > +     msleep(20);
+> > > > +
+> > > > +     ret = regulator_bulk_enable(st7701->desc->num_supplies,
+> > > > +                                 st7701->supplies);
+> > > > +     if (ret < 0)
+> > > > +             return ret;
+> > > > +     msleep(20);
+> > > > +
+> > > > +     gpiod_set_value(st7701->reset, 1);
+> > > > +     msleep(20);
+> > > > +
+> > > > +     gpiod_set_value(st7701->reset, 0);
+> > > > +     msleep(30);
+> > > > +
+> > > > +     gpiod_set_value(st7701->reset, 1);
+> > > > +     msleep(150);
+> > > > +
+> > > > +     st7701_init_sequence(st7701);
+> > > > +
+> > > > +     return 0;
+> > > > +}
+> > > > +
+> > >
+> > > > +static int st7701_unprepare(struct drm_panel *panel)
+> > > > +{
+> > > > +     struct st7701 *st7701 = panel_to_st7701(panel);
+> > > > +
+> > > > +     ST7701_DSI(st7701, MIPI_DCS_EXIT_SLEEP_MODE, 0x00);
+>
+> Should this be MIPI_DCS_ENTER_SLEEP_MODE?
+>
+> Note - you have shortcuts fot the standard commands like
+> in this case:
+>
+>         mipi_dsi_dcs_enter_sleep_mode(st7701->dsi);
 
-Best regards
-Stefan
+I even tried this, but the difference wrt ST7701 can pass, same
+command with type MIPI_DSI_DCS_SHORT_WRITE_PARAM but the default
+mipi_dsi_dcs_enter_sleep_mode has length 0 so it's
+MIPI_DSI_DCS_SHORT_WRITE type. ie reason I have not used.
+
+>
+> Thay could be introduced in many palces, but I also like how all the
+> commands follows a consistent way to be issued.
+> So consider this only if this was new for you.
+>
+>
+> > > > +
+> > > > +     msleep(st7701->sleep_delay);
+> > > > +
+> > > > +     gpiod_set_value(st7701->reset, 0);
+> > > > +
+> > > > +     gpiod_set_value(st7701->reset, 1);
+> > > > +
+> > > > +     gpiod_set_value(st7701->reset, 0);
+> > > No timing constrains here? In prepare there are sleeps intermixed.
+> >
+> > Delay while doing unprare is not needed I suppose.
+>
+> If the purpose is alone to reset the display then a single write '0'
+> should do it I think
+
+I even tried this just set 0, since prepare is doing a sequence, it
+good behavior to do the reverse during handoff. ie reason I just
+initiated this sequence.
+
+> And there is a requirement that it must be low for a minimum of 10 us
+> which would be good to have here.
+
+Sorry, I didn't get this requirement what is this for?
+
+>
+> I aslo found in chapter 9. (page 163 - second line) this statement:
+> "VDDA and VDDI must be powered down with minimum 120msec."
+
+Yes unprepare is doing the same, it exit from sleep out mode and wait
+for 120msec and do the reset.
+
+>
+> This is similar to the unprepare delay to be found in simple-panel.c
+> So an unprepare delay seems in order here.
+
+Look like simple-panel.c is doing delay after reset initiated and
+regulator disabled.
