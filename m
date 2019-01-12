@@ -2,55 +2,38 @@ Return-Path: <SRS0=UXoZ=PU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D4F53C43612
-	for <linux-kernel@archiver.kernel.org>; Sat, 12 Jan 2019 17:02:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0BB5BC43612
+	for <linux-kernel@archiver.kernel.org>; Sat, 12 Jan 2019 17:04:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9ACD62086C
-	for <linux-kernel@archiver.kernel.org>; Sat, 12 Jan 2019 17:02:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547312579;
-	bh=5/ODI8/PPQq1OJQJDtispd9AyGSlrSHuN0ar/3JzOLI=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:List-ID:From;
-	b=zhHzKoNuq2eaqIgVHTtg41V1A2dxxgUvhTD4mj41VtyZR+FdpIIV9oSKzhKGlZO+G
-	 8YPgbZsxttMhknV4W+T4+g96NniTl0aTDbS+1MHYoStrbza38cS28626VmtrQJwx2G
-	 XPCW5EchJ2uh5IiZGRYcaAp0TxnHrd37FZTtV+y0=
+	by mail.kernel.org (Postfix) with ESMTP id D59B42086C
+	for <linux-kernel@archiver.kernel.org>; Sat, 12 Jan 2019 17:04:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726483AbfALRC7 (ORCPT
+        id S1726484AbfALREy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 12 Jan 2019 12:02:59 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49092 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726431AbfALRC6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 12 Jan 2019 12:02:58 -0500
+        Sat, 12 Jan 2019 12:04:54 -0500
+Received: from saturn.retrosnub.co.uk ([46.235.226.198]:33754 "EHLO
+        saturn.retrosnub.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725843AbfALREy (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 12 Jan 2019 12:04:54 -0500
 Received: from archlinux (cpc91196-cmbg18-2-0-cust659.5-4.cable.virginm.net [81.96.234.148])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EB9802084C;
-        Sat, 12 Jan 2019 17:02:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547312577;
-        bh=5/ODI8/PPQq1OJQJDtispd9AyGSlrSHuN0ar/3JzOLI=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=1PJCE0D6N6jCmqtqUbZWBTAXZr6qg7EG52QS2cX5AS6vurHjOged0uTTOTKB7LvWX
-         9131bjqIXta0cBv2T/D80ol/YKAE0L8u9sSl4g9x6n5u5i+FvoCc299mIz4Kb591AQ
-         lvm5maV0q3nnm1NefJ+LRDPg35AyrVAtGPOqAAWc=
-Date:   Sat, 12 Jan 2019 17:02:52 +0000
-From:   Jonathan Cameron <jic23@kernel.org>
-To:     Jeremy Fertic <jeremyfertic@gmail.com>
-Cc:     Shreeya Patel <shreeya.patel23498@gmail.com>, lars@metafoo.de,
-        Michael.Hennerich@analog.com, knaack.h@gmx.de, pmeerw@pmeerw.net,
-        gregkh@linuxfoundation.org, linux-iio@vger.kernel.org,
-        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] Staging: iio: adt7316: Add regmap support
-Message-ID: <20190112170252.56406302@archlinux>
-In-Reply-To: <20190105220413.GA3449@r2700x.localdomain>
-References: <20181223140224.10958-1-shreeya.patel23498@gmail.com>
-        <20190105172037.7cc5006b@archlinux>
-        <20190105220413.GA3449@r2700x.localdomain>
+        by saturn.retrosnub.co.uk (Postfix; Retrosnub mail submission) with ESMTPSA id 36E789E789B;
+        Sat, 12 Jan 2019 17:04:51 +0000 (GMT)
+Date:   Sat, 12 Jan 2019 17:04:49 +0000
+From:   Jonathan Cameron <jic23@jic23.retrosnub.co.uk>
+To:     Tomasz Duszynski <tduszyns@gmail.com>
+Cc:     linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] iio: chemical: sps30: allow changing self cleaning
+ period
+Message-ID: <20190112170449.5418c9bf@archlinux>
+In-Reply-To: <20190106105730.GA6449@arch>
+References: <20181226193035.3144-1-tduszyns@gmail.com>
+        <20190105165447.0056fb2e@archlinux>
+        <20190106105730.GA6449@arch>
 X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
@@ -60,47 +43,84 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-...  
-> > > diff --git a/drivers/staging/iio/addac/adt7316.h b/drivers/staging/iio/addac/adt7316.h
-> > > index fd7c5c92b599..2c72cf3f71cd 100644
-> > > --- a/drivers/staging/iio/addac/adt7316.h
-> > > +++ b/drivers/staging/iio/addac/adt7316.h
-> > > @@ -11,16 +11,13 @@
-> > >  
-> > >  #include <linux/types.h>
-> > >  #include <linux/pm.h>
-> > > +#include <linux/regmap.h>
-> > >  
-> > >  #define ADT7316_REG_MAX_ADDR		0x3F
-> > >  
-> > > -struct adt7316_bus {
-> > > -	void *client;
-> > > -	int irq;
-> > > -	int (*read)(void *client, u8 reg, u8 *data);
-> > > -	int (*write)(void *client, u8 reg, u8 val);
-> > > -	int (*multi_read)(void *client, u8 first_reg, u8 count, u8 *data);
-> > > -	int (*multi_write)(void *client, u8 first_reg, u8 count, u8 *data);
-> > > +static const struct regmap_config adt7316_regmap_config = {
-> > > +	.reg_bits = 8,
-> > > +	.val_bits = 10,  
+On Sun, 6 Jan 2019 11:57:31 +0100
+Tomasz Duszynski <tduszyns@gmail.com> wrote:
+
+> On Sat, Jan 05, 2019 at 04:54:47PM +0000, Jonathan Cameron wrote:
+> > On Wed, 26 Dec 2018 20:30:35 +0100
+> > Tomasz Duszynski <tduszyns@gmail.com> wrote:
+> >  
+> > > Sensor can periodically trigger self cleaning. Period can be changed by
+> > > writing a new value to a dedicated attribute. Upon attribute read
+> > > triplet representing respectively current, minimum and maximum period is
+> > > returned.
+> > >
+> > > Signed-off-by: Tomasz Duszynski <tduszyns@gmail.com>  
+> >
+> > Code is fine, but to end up with predictable generic interface
+> > that fits with the rest of IIO we need a different userspace interface I think...
+> >
+> > See below.
+> >
+> > Jonathan  
+> > > ---
+> > >  Documentation/ABI/testing/sysfs-bus-iio-sps30 |  11 ++
+> > >  drivers/iio/chemical/sps30.c                  | 134 +++++++++++++++---
+> > >  2 files changed, 127 insertions(+), 18 deletions(-)
+> > >
+> > > diff --git a/Documentation/ABI/testing/sysfs-bus-iio-sps30 b/Documentation/ABI/testing/sysfs-bus-iio-sps30
+> > > index e7ce2c57635e..d83d9192a3e0 100644
+> > > --- a/Documentation/ABI/testing/sysfs-bus-iio-sps30
+> > > +++ b/Documentation/ABI/testing/sysfs-bus-iio-sps30
+> > > @@ -6,3 +6,14 @@ Description:
+> > >  		Writing 1 starts sensor self cleaning. Internal fan accelerates
+> > >  		to its maximum speed and keeps spinning for about 10 seconds in
+> > >  		order to blow out accumulated dust.
+> > > +
+> > > +What:		/sys/bus/iio/devices/iio:deviceX/cleaning_interval
+> > > +Date:		December 2018
+> > > +KernelVersion:	4.22
+> > > +Contact:	linux-iio@vger.kernel.org
+> > > +Description:
+> > > +		Sensor is capable of triggering self cleaning periodically.
+> > > +		Period can be changed by writing a new value here. Upon reading
+> > > +		three values are returned representing respectively current,
+> > > +		minimum and maximum period. All values are in seconds.
+> > > +		Writing 0 here disables periodical self cleaning entirely.  
+> > Hmm. The issue here is that the value isn't:
+> > 1. Intuitive
+> > 2. A single value (requirement for sysfs interfaces - we stretch the meaning
+> > a bit where there the values really don't have any meaning on their own but
+> > that isn't true here).
+> >  
 > 
-> I wonder if val_bits should be 8. The driver can read and write 8, 10,
-> or 12 bit values. In the 10 and 12 bit cases, the driver currently
-> (including with this patch) does two separate reads or writes and expects
-> an 8 bit result from each. It then parses these two values to come up with
-> the 10 or 12 bit value. I don't think the logic for this calculation is
-> known to regmap, so with the current form of the patch, I think val_bits
-> should be 8. Maybe there is a better way to do it though?
+> This is not uncommon in sysfs for attributes to list both available
+> range and current value. Hence I though I could try to sneak that here.
+> 
+> Turned out that without luck ;).
+Indeed, in general some drivers an subsystems do that.   We decided not
+to a long time ago.  Mainly because we already had an interface for
+the value itself without the extras and so couldn't change it without
+breaking the userspace ABI.
 
-Good point. I would assume they should be 8 as well.
-
+Even though we are looking at new interfaces, we need to be consistent!
 
 > 
-> I would have tested this but I couldn't get the patch to apply. Shreeya,
-> I think if you rebase against iio/testing that might take care of it. I
-> can then do some testing with v2.
->
-Great.
+> > We have a syntax in IIO use when we want to specify a range of acceptable
+> > values.  It's done for 'core' attributes using the available callback
+> > (I need to write some proper docs for it though...)
+> >
+> > cleaning_period - the actual value.
+> > cleaning_period_available
+> > The range version (rather than list of values) is formatted
+> > by iio_format_avail_range which generates [min step max]
+> >
+> > Please do something along those lines for this control as well.
+> >  
+> 
+> Agree.
+> 
 
-Jonathan 
-> Jeremy
+Thanks,
+
+Jonathan
