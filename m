@@ -3,103 +3,139 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-11.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 065D2C43387
-	for <linux-kernel@archiver.kernel.org>; Sat, 12 Jan 2019 18:33:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2CF53C43387
+	for <linux-kernel@archiver.kernel.org>; Sat, 12 Jan 2019 18:36:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D12A52086C
-	for <linux-kernel@archiver.kernel.org>; Sat, 12 Jan 2019 18:33:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547318025;
-	bh=S41U4c+3kwO7mI53EVF66x9cJRkL93sNj00G2x4p4FY=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:List-ID:From;
-	b=Kf4XP/2o6UAjZFXVrtyTS7W01FAfH8DdMP6m0WAMF4G9Qj6Pakth56TcEoUcLjube
-	 8/bzdPYs8RzeIbMhYeNFtrjZo3dE0IIMIu4ubRlZ1+rG2b5DTRQ4jV98R+/vH4GrCr
-	 yHurHMtP8pyAHdIsZsmRh6urFfZgG+Kml7mbOR1I=
+	by mail.kernel.org (Postfix) with ESMTP id E21BF2084C
+	for <linux-kernel@archiver.kernel.org>; Sat, 12 Jan 2019 18:36:48 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="XkcW+YmP"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726577AbfALSdn (ORCPT
+        id S1726637AbfALSgs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 12 Jan 2019 13:33:43 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33584 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725847AbfALSdn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 12 Jan 2019 13:33:43 -0500
-Received: from archlinux (cpc91196-cmbg18-2-0-cust659.5-4.cable.virginm.net [81.96.234.148])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 71CF42084C;
-        Sat, 12 Jan 2019 18:33:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547318022;
-        bh=S41U4c+3kwO7mI53EVF66x9cJRkL93sNj00G2x4p4FY=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=KAxLlZ8ouVtxe5V3ZcOOyLrSdf3sYNdfDE7tEz54+MacfZCTx+kSyp30O8R9g2yHF
-         WQVx3mHuWKtznaTd0mnncq/yVZ7oH7YYTY+fLSZwNPgUt0mBxBzYD7WYa4L+59pdOv
-         XV2QJhg8v/jGfl6Gmli5qlqO4dkMH9Mj52FXF2qk=
-Date:   Sat, 12 Jan 2019 18:33:38 +0000
-From:   Jonathan Cameron <jic23@kernel.org>
-To:     Dan Murphy <dmurphy@ti.com>
-Cc:     <linux-iio@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <robh+dt@kernel.org>
-Subject: Re: [PATCH v3 3/3] iio: ti-ads8688: Update buffer allocation for
- timestamps
-Message-ID: <20190112183338.59076438@archlinux>
-In-Reply-To: <20190111195707.2086-3-dmurphy@ti.com>
-References: <20190111195707.2086-1-dmurphy@ti.com>
-        <20190111195707.2086-3-dmurphy@ti.com>
-X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        Sat, 12 Jan 2019 13:36:48 -0500
+Received: from mail-ua1-f67.google.com ([209.85.222.67]:38834 "EHLO
+        mail-ua1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725847AbfALSgr (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 12 Jan 2019 13:36:47 -0500
+Received: by mail-ua1-f67.google.com with SMTP id p9so5795815uaa.5
+        for <linux-kernel@vger.kernel.org>; Sat, 12 Jan 2019 10:36:47 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=N+2nUVDOHGycsD0liXCBjsCmBJu5kZfTKeMx8kQh4n8=;
+        b=XkcW+YmPwFllIyGDzl3EXryZNOJnaEA2eECEYjp7fcUXkFWOhEGjrGF/cll/FVbf8q
+         3GJ56BNl6j708KbWwc9bvvvdRduFxMiL8bNKXP6yYWpbBZGPjynHTFVWcVPjMZLRj6PI
+         SZRvXNTWkEARPsyNilt5bHPk1haoMTxSjMDnA=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=N+2nUVDOHGycsD0liXCBjsCmBJu5kZfTKeMx8kQh4n8=;
+        b=B+2Sipq5y/CvwLmzguKMUZyemjtMfYZdul/7o3GKebxdea6shEDY1Ja/DXmeVEWZXK
+         FgZUiINvzG6JNYpPHRVx7L5BQKc/UM/EDooVAAvaIkIkkLRRZZQZD4Bpb//JqqmHpTxV
+         k5AYfQjCYvzeqVrqRcyyi7DLkx7/pPJvbS4ZW/miQnD2aI73S1ZCPoVhQYKKH8O6AbY0
+         B3+VMIyvhkevBqHeJpOtL3phc3znNZyuxFxH4SNTlsUErjo2nGqDk2Xgh0pxzTNrRGkc
+         qjpA19uZkARSHJelIbGAEgIR/4QqumYixVKKuPiORkUvnpb+E4RxZDjwYI5L+Yfjqrn5
+         knsg==
+X-Gm-Message-State: AJcUukduNLI1cztTO9mv52sZ1SrQ/VoCcGL2K7IQFcFI3a+AyPOgx0fz
+        KJcFFg+QXorkNFXKm7+7HznBBECbml0=
+X-Google-Smtp-Source: ALg8bN5VWwevPhga5lhwms5z/lh4eSc2sfyvxEIkVWsX1lTKDcZnAFmftjG1dYmp0rfqEc0YNZqF/Q==
+X-Received: by 2002:ab0:30b7:: with SMTP id b23mr7147896uam.109.1547318206779;
+        Sat, 12 Jan 2019 10:36:46 -0800 (PST)
+Received: from mail-ua1-f45.google.com (mail-ua1-f45.google.com. [209.85.222.45])
+        by smtp.gmail.com with ESMTPSA id e67sm43594943vsd.32.2019.01.12.10.36.45
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sat, 12 Jan 2019 10:36:45 -0800 (PST)
+Received: by mail-ua1-f45.google.com with SMTP id v24so5788424uap.13
+        for <linux-kernel@vger.kernel.org>; Sat, 12 Jan 2019 10:36:45 -0800 (PST)
+X-Received: by 2002:ab0:645:: with SMTP id f63mr2040025uaf.106.1547318205051;
+ Sat, 12 Jan 2019 10:36:45 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <CAGXu5j+9ETYcavj2x3Up0FhvkopZohbJcS4CMvrrCWOwDurSFw@mail.gmail.com>
+ <20190112182420.4669-1-tycho@tycho.ws>
+In-Reply-To: <20190112182420.4669-1-tycho@tycho.ws>
+From:   Kees Cook <keescook@chromium.org>
+Date:   Sat, 12 Jan 2019 10:36:33 -0800
+X-Gmail-Original-Message-ID: <CAGXu5jJKeO_-Vy5sffQugBKy4z1W7KGwUAySz=MN9ZvMsYqKFw@mail.gmail.com>
+Message-ID: <CAGXu5jJKeO_-Vy5sffQugBKy4z1W7KGwUAySz=MN9ZvMsYqKFw@mail.gmail.com>
+Subject: Re: [PATCH] seccomp: fix UAF in user-trap code
+To:     Tycho Andersen <tycho@tycho.ws>, James Morris <jmorris@namei.org>
+Cc:     Andy Lutomirski <luto@amacapital.net>,
+        Will Drewry <wad@chromium.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
+        syzbot <syzbot+981c26489b2d1c6316ba@syzkaller.appspotmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 11 Jan 2019 13:57:07 -0600
-Dan Murphy <dmurphy@ti.com> wrote:
+On Sat, Jan 12, 2019 at 10:24 AM Tycho Andersen <tycho@tycho.ws> wrote:
+>
+> On the failure path, we do an fput() of the listener fd if the filter fails
+> to install (e.g. because of a TSYNC race that's lost, or if the thread is
+> killed, etc.). fput() doesn't actually release the fd, it just ads it to a
+> work queue. Then the thread proceeds to free the filter, even though the
+> listener struct file has a reference to it.
+>
+> To fix this, on the failure path let's set the private data to null, so we
+> know in ->release() to ignore the filter.
+>
+> Reported-by: syzbot+981c26489b2d1c6316ba@syzkaller.appspotmail.com
+> Fixes: 6a21cc50f0c7 ("seccomp: add a return code to trap to userspace")
+> Signed-off-by: Tycho Andersen <tycho@tycho.ws>
+> ---
+> This is a little ugly, but I can't really think of a better way (other than
+> force freeing, but the fput function that does the actual work is declared
+> static with four underscores :).
 
-> Per Jonathan Cameron, the buffer needs to allocate room for a
-> 64 bit timestamp as well as the channels.  Change the buffer
-> to allocate this additional space.
-> 
-> Fixes: 2a86487786b5c ("iio: adc: ti-ads8688: add trigger and buffer support")
-> Signed-off-by: Dan Murphy <dmurphy@ti.com>
-Applied to the fixes-togreg branch of iio.git and marked for stable.
-Thanks for fixing this up!
+This makes sense to me. Thanks for fixing it!
 
-Jonathan
+Acked-by: Kees Cook <keescook@chromium.org>
+
+James, can you add this to your fixes tree for sending to Linus?
+
+-Kees
 
 > ---
-> 
-> v3 - Updated the buffer allocation definition I also dropped the device managed
-> patch as I don't have time to invest in that code - https://lore.kernel.org/patchwork/patch/1023971/
-> v2 - New patch suggested change by maintainer - https://lore.kernel.org/patchwork/patch/1021048/
-> 
->  drivers/iio/adc/ti-ads8688.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/iio/adc/ti-ads8688.c b/drivers/iio/adc/ti-ads8688.c
-> index 184d686ebd99..8b4568edd5cb 100644
-> --- a/drivers/iio/adc/ti-ads8688.c
-> +++ b/drivers/iio/adc/ti-ads8688.c
-> @@ -41,6 +41,7 @@
->  
->  #define ADS8688_VREF_MV			4096
->  #define ADS8688_REALBITS		16
-> +#define ADS8688_MAX_CHANNELS		8
->  
->  /*
->   * enum ads8688_range - ADS8688 reference voltage range
-> @@ -385,7 +386,7 @@ static irqreturn_t ads8688_trigger_handler(int irq, void *p)
->  {
->  	struct iio_poll_func *pf = p;
->  	struct iio_dev *indio_dev = pf->indio_dev;
-> -	u16 buffer[8];
-> +	u16 buffer[ADS8688_MAX_CHANNELS + sizeof(s64)/sizeof(u16)];
->  	int i, j = 0;
->  
->  	for (i = 0; i < indio_dev->masklength; i++) {
+>  kernel/seccomp.c | 4 ++++
+>  1 file changed, 4 insertions(+)
+>
+> diff --git a/kernel/seccomp.c b/kernel/seccomp.c
+> index d7f538847b84..e815781ed751 100644
+> --- a/kernel/seccomp.c
+> +++ b/kernel/seccomp.c
+> @@ -976,6 +976,9 @@ static int seccomp_notify_release(struct inode *inode, struct file *file)
+>         struct seccomp_filter *filter = file->private_data;
+>         struct seccomp_knotif *knotif;
+>
+> +       if (!filter)
+> +               return 0;
+> +
+>         mutex_lock(&filter->notify_lock);
+>
+>         /*
+> @@ -1300,6 +1303,7 @@ static long seccomp_set_mode_filter(unsigned int flags,
+>  out_put_fd:
+>         if (flags & SECCOMP_FILTER_FLAG_NEW_LISTENER) {
+>                 if (ret < 0) {
+> +                       listener_f->private_data = NULL;
+>                         fput(listener_f);
+>                         put_unused_fd(listener);
+>                 } else {
+> --
+> 2.19.1
+>
 
+
+-- 
+Kees Cook
