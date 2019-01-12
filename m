@@ -2,108 +2,90 @@ Return-Path: <SRS0=UXoZ=PU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 981B3C43387
-	for <linux-kernel@archiver.kernel.org>; Sat, 12 Jan 2019 12:52:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 76A61C43387
+	for <linux-kernel@archiver.kernel.org>; Sat, 12 Jan 2019 12:56:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 699782086C
-	for <linux-kernel@archiver.kernel.org>; Sat, 12 Jan 2019 12:52:58 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="q1pgoOHo"
+	by mail.kernel.org (Postfix) with ESMTP id 489342086C
+	for <linux-kernel@archiver.kernel.org>; Sat, 12 Jan 2019 12:56:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725890AbfALMwM (ORCPT
+        id S1725920AbfALM4B (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 12 Jan 2019 07:52:12 -0500
-Received: from mail-oi1-f194.google.com ([209.85.167.194]:43841 "EHLO
-        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725823AbfALMwL (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 12 Jan 2019 07:52:11 -0500
-Received: by mail-oi1-f194.google.com with SMTP id u18so14448776oie.10;
-        Sat, 12 Jan 2019 04:52:11 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=googlemail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=rc8PgVwzxQsHlZQUrvGoUgiJPD5Df1DMbVLjyQh0zEo=;
-        b=q1pgoOHotLgRiITJMwR3Nr21zMoGSFOGtz6P5PnhJRSfFw8BXzxKwQpM2T1Qc1ZMlr
-         SixSB9PBF882HCXbda+ZBauuRJ5F829xkYrydd192rBQpzSjrvIRkR3y0ptL17E+y9i7
-         nAefVELdfy25SJ9Dc16gwjRS/SuTXGMtIs9vf+z9t50lEMByk6Ro2a8pLUyJXGweN5P/
-         vpCj3oyB37wwXAf+TSEePtAo5o9FTBcAn2jhCcfB8frDfwBrLw8vZ3ipYcCq7DrXluyE
-         HloibFgd30nkhG2XuOLMNtt1WrGvBfe/R8J/ObRRi4naLp8OIf3A9Zx4qu9IV/JPRyEk
-         UNkw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=rc8PgVwzxQsHlZQUrvGoUgiJPD5Df1DMbVLjyQh0zEo=;
-        b=OnIDos0/EBRgze74Yv3FjFMt6vrnKbk9+5VvyPJhhPj0X1NcZnKks47/hCC88fAF3A
-         e+WjlyEnS1/D7660SlE5GGMesbgzIoxPqCghdcMFXHt4qq86FODz/vTutcBHN4BlMgWv
-         cR5QuY5QSjRaDs8rx/pmJOLe3ceYb137I+tXcSdcU6M1BoIEMLL2ZqX1HhHbP5gN9CKB
-         eeZ4SCqKLDYYXhNawtDLvNTxQoZoOmRkVJE+dB3zfhPNH9bJxU48g8JVj57Jivk2FYHO
-         tGiZ+2P+nbvevJoMoVsWEl6VZJ9Zqs5SX2C1ojcXeuayVGnmPjg32DJHbCyIWG25ocsr
-         B1fQ==
-X-Gm-Message-State: AJcUukd4RZY0ZD9Gz0T5uLqx3xgtn09JMtPhocREK/p4HCbfGG4204g8
-        rzB1MXw6nbWcJkkxHZOmAbr6rc75H1AjC21X5E2Z3g==
-X-Google-Smtp-Source: ALg8bN4s/+TIOtaCGkyhh7CyvpozXsXOtaZQJBwt7+upDR/L+/pzeM+4SuHESOQYRYmAIP/g3kFWjvWzYSNapsi+MGg=
-X-Received: by 2002:aca:4ace:: with SMTP id x197mr12016181oia.129.1547297530740;
- Sat, 12 Jan 2019 04:52:10 -0800 (PST)
+        Sat, 12 Jan 2019 07:56:01 -0500
+Received: from foss.arm.com ([217.140.101.70]:42140 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725823AbfALM4A (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 12 Jan 2019 07:56:00 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 08DDE80D;
+        Sat, 12 Jan 2019 04:56:00 -0800 (PST)
+Received: from [10.162.40.80] (p8cg001049571a15.blr.arm.com [10.162.40.80])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 21A493F70D;
+        Sat, 12 Jan 2019 04:55:49 -0800 (PST)
+Subject: Re: [PATCH] mm: Introduce GFP_PGTABLE
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     linux-mm@kvack.org, akpm@linux-foundation.org,
+        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-arm-kernel@lists.infradead.org, linux-sh@vger.kernel.org,
+        kvmarm@lists.cs.columbia.edu, linux@armlinux.org.uk,
+        catalin.marinas@arm.com, will.deacon@arm.com, mpe@ellerman.id.au,
+        tglx@linutronix.de, mingo@redhat.com, dave.hansen@linux.intel.com,
+        peterz@infradead.org, christoffer.dall@arm.com,
+        marc.zyngier@arm.com, kirill@shutemov.name,
+        rppt@linux.vnet.ibm.com, mhocko@suse.com,
+        ard.biesheuvel@linaro.org, mark.rutland@arm.com,
+        steve.capper@arm.com, james.morse@arm.com, robin.murphy@arm.com,
+        aneesh.kumar@linux.ibm.com, vbabka@suse.cz, shakeelb@google.com,
+        rientjes@google.com
+References: <1547288798-10243-1-git-send-email-anshuman.khandual@arm.com>
+ <20190112121230.GQ6310@bombadil.infradead.org>
+From:   Anshuman Khandual <anshuman.khandual@arm.com>
+Message-ID: <9dd9a8ef-8db8-891c-79a9-270ab033037c@arm.com>
+Date:   Sat, 12 Jan 2019 18:25:48 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-References: <20181202220847.24364-1-martin.blumenstingl@googlemail.com>
- <20181202220847.24364-3-martin.blumenstingl@googlemail.com>
- <85aa8e12-0bca-6432-e1a8-0faceff1dd5e@codethink.co.uk> <CAFBinCBDUxTc+ofCYm-zEeiFdU90U6DQOkX4B659q=MvRK64fg@mail.gmail.com>
- <CAFBinCAY7+-zA5-hY6oXmFz2i8aj9wFJsb-HBbKt_Swn9BtMMg@mail.gmail.com>
-In-Reply-To: <CAFBinCAY7+-zA5-hY6oXmFz2i8aj9wFJsb-HBbKt_Swn9BtMMg@mail.gmail.com>
-From:   Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Date:   Sat, 12 Jan 2019 13:52:00 +0100
-Message-ID: <CAFBinCCKeb+wGJ4h_PfsT-Ms8AtLmNSwStTpeMqA3shkySjGkg@mail.gmail.com>
-Subject: Re: [PATCH v5 2/2] rtc: support for the Amlogic Meson RTC
-To:     ben.dooks@codethink.co.uk
-Cc:     linux-amlogic@lists.infradead.org, linux-rtc@vger.kernel.org,
-        alexandre.belloni@bootlin.com, a.zummo@towertech.it,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        ccaione@baylibre.com
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20190112121230.GQ6310@bombadil.infradead.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Ben,
-
-On Tue, Dec 18, 2018 at 12:48 AM Martin Blumenstingl
-<martin.blumenstingl@googlemail.com> wrote:
->
-> Hi Ben,
->
-> On Wed, Dec 5, 2018 at 11:15 PM Martin Blumenstingl
-> <martin.blumenstingl@googlemail.com> wrote:
-> [...]
-> > > > Signed-off-by: Ben Dooks <ben.dooks@codethink.co.uk>
-> > > > [resurrected Ben's patches after 2 years]
-> > > > Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-> > >
-> > > Just checking if the change of author is deliberate?
-> > > not sure how to do >1 author on patches like this.
-> > I changed the author on purpose after seeing how much I changed
-> > (compared to your v4). this is also why I added you to the CC list
-> > however, I left in your copyright (just like you kept Carlo's
-> > copyright note) and MODULE_AUTHOR
-> please let me know:
-> 1. whether you want to be the author of the patch or if you're fine
-> with my name in there
-> 2. if you are fine with both of us being listed as Signed-off-by or if
-> you want me to switch to Co-authored-by
-> 3. about any other concerns you have
->
-> I would like to update this patch next weekend so it can be reviewed
-> (and merged once all is fine) for v4.22
-gentle ping on this one now that the holiday season is over.
 
 
-Regards
-Martin
+On 01/12/2019 05:42 PM, Matthew Wilcox wrote:
+> On Sat, Jan 12, 2019 at 03:56:38PM +0530, Anshuman Khandual wrote:
+>> All architectures have been defining their own PGALLOC_GFP as (GFP_KERNEL |
+>> __GFP_ZERO) and using it for allocating page table pages.
+> 
+> Except that's not true.
+> 
+>> +++ b/arch/x86/mm/pgtable.c
+>> @@ -13,19 +13,17 @@ phys_addr_t physical_mask __ro_after_init = (1ULL << __PHYSICAL_MASK_SHIFT) - 1;
+>>  EXPORT_SYMBOL(physical_mask);
+>>  #endif
+>>  
+>> -#define PGALLOC_GFP (GFP_KERNEL_ACCOUNT | __GFP_ZERO)
+>> -
+>>  #ifdef CONFIG_HIGHPTE
+> 
+> ...
+> 
+>>  pte_t *pte_alloc_one_kernel(struct mm_struct *mm)
+>>  {
+>> -	return (pte_t *)__get_free_page(PGALLOC_GFP & ~__GFP_ACCOUNT);
+>> +	return (pte_t *)__get_free_page(GFP_PGTABLE & ~__GFP_ACCOUNT);
+>>  }
+> 
+> I think x86 was the only odd one out here, but you'll need to try again ...
+
+IIUC the user page table pages need __GFP_ACCOUNT not the kernel ones. Hence
+in the above function it clears out __GFP_ACCOUNT for kernel page table page
+allocations but where as by default it has got __GFP_ACCOUNT which would be
+used for user page tables. Instead we can make X86 user allocations add
+__GFP_ACCOUNT (like other archs) to generic GFP_PGTABLE when ever required.
