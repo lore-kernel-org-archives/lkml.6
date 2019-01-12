@@ -2,106 +2,177 @@ Return-Path: <SRS0=UXoZ=PU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 57190C43387
-	for <linux-kernel@archiver.kernel.org>; Sat, 12 Jan 2019 09:23:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5056AC43612
+	for <linux-kernel@archiver.kernel.org>; Sat, 12 Jan 2019 09:42:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 26FB0206B6
-	for <linux-kernel@archiver.kernel.org>; Sat, 12 Jan 2019 09:23:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1FE2E2183F
+	for <linux-kernel@archiver.kernel.org>; Sat, 12 Jan 2019 09:42:38 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fVj6E578"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726410AbfALJXK (ORCPT
+        id S1725880AbfALJmh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 12 Jan 2019 04:23:10 -0500
-Received: from mail-vs1-f68.google.com ([209.85.217.68]:41622 "EHLO
-        mail-vs1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725819AbfALJXJ (ORCPT
+        Sat, 12 Jan 2019 04:42:37 -0500
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:39027 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725816AbfALJmg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 12 Jan 2019 04:23:09 -0500
-Received: by mail-vs1-f68.google.com with SMTP id t17so10775072vsc.8;
-        Sat, 12 Jan 2019 01:23:08 -0800 (PST)
+        Sat, 12 Jan 2019 04:42:36 -0500
+Received: by mail-pg1-f196.google.com with SMTP id w6so7366916pgl.6;
+        Sat, 12 Jan 2019 01:42:36 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=X1nWV4nBzlRo77/xlbjpztD7qUJA/hTJMXekGf8rO3M=;
+        b=fVj6E578g6OPv+K0qvR9DJatp+zMDOtYwl9amt3nykdmlugNae95tpFO4y5yW/vPHL
+         6IOZtC7hZy+UuFRXB7ubaRiGIeU05yfdql1Wfp6aL2WEtsT5s9wkMp7W2BYp8k17bb9v
+         g3uN95VAAlohZ1QXRUYHaKZb0JTlU5MNotjSC9H7HR8ezIp0351SvHOfM7XtdeycdLzQ
+         /Rrv9nRPormG5Vp5lr86XxfX/pYUPRjLCZUJqEPTYPeU0vJmAm8oT1QVzEYtDfFhtQUf
+         9NbPLlF4ZqrxRmk0We2NB9cqcxkWu70gNO5fdHjrL7K1jcn7JI82fX9jSrigQHb404Ev
+         /azQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=m3HeU2LQ/cz2Nrnvukv2BjoWfScL8eqQD3jP6qUNUCE=;
-        b=sLQxDRUG85MnY2vSkQsFm2026ZqSYhLQKj9JcELwZk4BJL7SwEz+/TEYHP/rsfHpHb
-         mu0dYTR/356Itv5u3rLpRztquY3xz7YPIHbiJF+PAszGbSL/clFGhJWxq/Lw0cveBCpA
-         R1eUmND2T7zLmF8EnEv21IyK12TaPW0KicvNDLUxYuqYRT07q3bnpT7C+kC108Wi9pCu
-         KnAoo5e1k+5Ezd7jaUNcn6tbfXK/yaW4Xr33ecWZe4PaFE+SiI79eIizXJODNpmTuTFq
-         6FZQmytap/7c0uIy8HYdEpLF2Ug1oTF1jNl0SEnLkoZ/JqyHlJDY/87rjGw/CANqte7O
-         K0Gw==
-X-Gm-Message-State: AJcUukctROZUKidFSXoMhKx78look9BhutkFOxKTWsLNFo01BNHlOU4H
-        8vis069Vz28BRAaTXL5hdNWVazLaYjs2DAa7Hvw=
-X-Google-Smtp-Source: ALg8bN79osmCDPndVCdoP3Td76wczipf1/s4RmmrvcLBlDa66E+mqz+0MUQ1OfAWTzfGfc4YIGSM4Q58LzJuA1p+UFQ=
-X-Received: by 2002:a67:b60d:: with SMTP id d13mr7621758vsm.152.1547284988136;
- Sat, 12 Jan 2019 01:23:08 -0800 (PST)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=X1nWV4nBzlRo77/xlbjpztD7qUJA/hTJMXekGf8rO3M=;
+        b=MBrLB4aDwLX7BTewAOD8btio0R3WuhCPbyna0sJ4u196tqmkP7sHl9U0KhX0gt1bl1
+         L9sFaSIfCyJ1V9ejY9yqXJjak8vddJ0H7qRpbbdRBOHNDQlf8L3RWLJ/BHiCTYTGBwSL
+         9FvLjOHd7AVhlen5kYER9yi3w5V7JZIDSMKArE0OUo6l0Xe7YAG+j9ZfGT1mSSwzcyYt
+         VpfLEQGMeoBCV52QiyNsmd3wIW0BU59HN9UZ9j2gP42p2SadpkHKBucWU6Go/mjWrxov
+         lQotg5pSSzF31quAe49+9AQOFgtAubMK7z2NVtF48L0DMENstIwiUXwyBBro62X3HwuZ
+         yYSg==
+X-Gm-Message-State: AJcUuked0rTpNSFwIUdrGMoAIrp+Z56NE5Zp6uZs3ZdgyvNelJ+anPpH
+        VjXT9H1L0b353W5OXIFh7ew=
+X-Google-Smtp-Source: ALg8bN6M+NminiLHRX1zNCXF1QAstOt5vuyLyP9SL47/MMORZ2/k+Oex+6VXbp7cCJHPxVdQQMTnVA==
+X-Received: by 2002:a63:f615:: with SMTP id m21mr16682707pgh.428.1547286155648;
+        Sat, 12 Jan 2019 01:42:35 -0800 (PST)
+Received: from himanshu-Vostro-3559 ([103.233.116.134])
+        by smtp.gmail.com with ESMTPSA id m67sm112806550pfm.73.2019.01.12.01.42.30
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Sat, 12 Jan 2019 01:42:34 -0800 (PST)
+Date:   Sat, 12 Jan 2019 15:12:26 +0530
+From:   Himanshu Jha <himanshujha199640@gmail.com>
+To:     Sebastien Bourdelin <sebastien.bourdelin@gmail.com>
+Cc:     linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-iio@vger.kernel.org, mark.rutland@arm.com,
+        robh+dt@kernel.org, pmeerw@pmeerw.net, lars@metafoo.de,
+        knaack.h@gmx.de, jic23@kernel.org
+Subject: Re: [PATCH v2 1/2] iio: chemical: bme680: Add device-tree support
+Message-ID: <20190112094226.GA910@himanshu-Vostro-3559>
+References: <20190111205359.14158-1-sebastien.bourdelin@gmail.com>
 MIME-Version: 1.0
-References: <1546443445-21075-1-git-send-email-firoz.khan@linaro.org>
- <1546443445-21075-3-git-send-email-firoz.khan@linaro.org> <20190110235428.GA10016@roeck-us.net>
-In-Reply-To: <20190110235428.GA10016@roeck-us.net>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Sat, 12 Jan 2019 10:22:56 +0100
-Message-ID: <CAMuHMdXuo1wMvwx-FZB6uBJahSSbqrmnxEAfepnhAS_odQkHDA@mail.gmail.com>
-Subject: Re: [PATCH 2/2] sh: generate uapi header and syscall table header files
-To:     Guenter Roeck <linux@roeck-us.net>
-Cc:     Firoz Khan <firoz.khan@linaro.org>,
-        Yoshinori Sato <ysato@users.sourceforge.jp>,
-        Rich Felker <dalias@libc.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Simon Horman <horms+renesas@verge.net.au>,
-        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-        Linux-sh list <linux-sh@vger.kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        y2038 Mailman List <y2038@lists.linaro.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux-Arch <linux-arch@vger.kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Deepa Dinamani <deepa.kernel@gmail.com>,
-        Marcin Juszkiewicz <marcin.juszkiewicz@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190111205359.14158-1-sebastien.bourdelin@gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jan 11, 2019 at 1:37 AM Guenter Roeck <linux@roeck-us.net> wrote:
-> On Wed, Jan 02, 2019 at 09:07:25PM +0530, Firoz Khan wrote:
-> > Unified system call table generation script must be run to
-> > generate unistd_32.h and syscall_table.h files. This patch
-> > will have changes which will invokes the script.
-> >
-> > This patch will generate unistd_32.h and syscall_table.h
-> > files by the syscall table generation script invoked by
-> > sh/Makefile and the generated files against the removed
-> > files must be identical.
-> >
-> > The generated uapi header file will be included in uapi/-
-> > asm/unistd.h and generated system call table header file
-> > will be included by kernel/syscall_32.S file.
-> >
-> > Signed-off-by: Firoz Khan <firoz.khan@linaro.org>
->
-> Have you tested this patch ?
+On Fri, Jan 11, 2019 at 03:53:58PM -0500, Sebastien Bourdelin wrote:
+> This commit allow the driver to work with device-tree.
+> 
+> Signed-off-by: Sebastien Bourdelin <sebastien.bourdelin@gmail.com>
+> ---
 
-All these series depend on "scripts: unify system call table generation
-scripts"
-https://lore.kernel.org/lkml/1546439331-18646-1-git-send-email-firoz.khan@linaro.org/
+I get the following compilation failure:
 
-Yeah, 0day also didn't know that.
+Below I have `allyesconfig` except 'BME680' configure as [M]
+in case you wish to reproduce.
 
-Gr{oetje,eeting}s,
+himanshu@himanshu-Vostro-3559:~/linux-next$ grep -i -w 'CONFIG_BME680\|CONFIG_ACPI\|CONFIG_OF' .config
+CONFIG_ACPI=y
+CONFIG_OF=y
+CONFIG_BME680=m
+himanshu@himanshu-Vostro-3559:~/linux-next$ sudo make drivers/iio/chemical/bme680_spi.o
+make[1]: Nothing to be done for 'all'.
+  CALL    scripts/checksyscalls.sh
+  DESCEND  objtool
+  CC [M]  drivers/iio/chemical/bme680_spi.o
+In file included from ./include/linux/acpi.h:41:0,
+                 from drivers/iio/chemical/bme680_spi.c:7:
+./include/linux/module.h:213:1: error: expected ‘,’ or ‘;’ before ‘extern’
+ extern typeof(name) __mod_##type##__##name##_device_table  \
+ ^
+drivers/iio/chemical/bme680_spi.c:119:1: note: in expansion of macro ‘MODULE_DEVICE_TABLE’
+ MODULE_DEVICE_TABLE(of, bme680_of_spi_match);
+ ^~~~~~~~~~~~~~~~~~~
+scripts/Makefile.build:291: recipe for target 'drivers/iio/chemical/bme680_spi.o' failed
+make[1]: *** [drivers/iio/chemical/bme680_spi.o] Error 1
+Makefile:1741: recipe for target 'drivers/iio/chemical/bme680_spi.o' failed
+make: *** [drivers/iio/chemical/bme680_spi.o] Error 2
 
-                        Geert
+BUT if:
 
+himanshu@himanshu-Vostro-3559:~/linux-next$ make allyesconfig
+scripts/kconfig/conf  --allyesconfig Kconfig
+#
+# configuration written to .config
+#
+
+himanshu@himanshu-Vostro-3559:~/linux-next$ sudo make drivers/iio/chemical/bme680_spi.o
+scripts/kconfig/conf  --syncconfig Kconfig
+make[1]: Nothing to be done for 'all'.
+  HOSTCC  scripts/dtc/dtc.o
+  HOSTCC  scripts/dtc/flattree.o
+  HOSTCC  scripts/dtc/fstree.o
+  HOSTCC  scripts/dtc/data.o
+  HOSTCC  scripts/dtc/livetree.o
+  HOSTCC  scripts/dtc/treesource.o
+  HOSTCC  scripts/dtc/srcpos.o
+  HOSTCC  scripts/dtc/checks.o
+  HOSTCC  scripts/dtc/util.o
+  LEX     scripts/dtc/dtc-lexer.lex.c
+  YACC    scripts/dtc/dtc-parser.tab.h
+  HOSTCC  scripts/dtc/dtc-lexer.lex.o
+  YACC    scripts/dtc/dtc-parser.tab.c
+  HOSTCC  scripts/dtc/dtc-parser.tab.o
+  HOSTLD  scripts/dtc/dtc
+  CC      scripts/mod/empty.o
+  MKELF   scripts/mod/elfconfig.h
+  HOSTCC  scripts/mod/modpost.o
+  CC      scripts/mod/devicetable-offsets.s
+  HOSTCC  scripts/mod/file2alias.o
+  HOSTCC  scripts/mod/sumversion.o
+  HOSTLD  scripts/mod/modpost
+  CC      kernel/bounds.s
+  CC      arch/x86/kernel/asm-offsets.s
+  CALL    scripts/checksyscalls.sh
+  DESCEND  objtool
+  CC      drivers/iio/chemical/bme680_spi.o
+
+Compiles without any issues. 
+
+Also, wondering when is 0x77 i2c address used, since I tested
+this on 3 different boards with 0x76(when SDO is connected to GND)
+
+And why do I connect SDO to ground everytime ?
+It is because if SDO pin is left floating then I2C address will be
+undefined as said in datasheet + I have observed this while testing.
+
+Actallly, I don't understand what "VDIDO" is, as explained in the
+datasheet.
+
+
+Anyway, if the above compilation issue is not a problem, then
+
+	Acked-by: Himanshu Jha <himanshujha199640@gmail.com>
+
+
+Thanks
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Himanshu Jha
+Undergraduate Student
+Department of Electronics & Communication
+Guru Tegh Bahadur Institute of Technology
