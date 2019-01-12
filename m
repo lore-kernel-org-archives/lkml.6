@@ -2,172 +2,116 @@ Return-Path: <SRS0=UXoZ=PU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 84523C43387
-	for <linux-kernel@archiver.kernel.org>; Sat, 12 Jan 2019 06:07:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7CEF5C43387
+	for <linux-kernel@archiver.kernel.org>; Sat, 12 Jan 2019 06:09:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 526B32084E
-	for <linux-kernel@archiver.kernel.org>; Sat, 12 Jan 2019 06:07:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 453C22184B
+	for <linux-kernel@archiver.kernel.org>; Sat, 12 Jan 2019 06:09:11 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="GzV8/jQ3";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="QbQylNkW"
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="U73qZGDo"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725873AbfALGHW (ORCPT
+        id S1725880AbfALGJE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 12 Jan 2019 01:07:22 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:40094 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725372AbfALGHV (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 12 Jan 2019 01:07:21 -0500
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 84B8E6089D; Sat, 12 Jan 2019 06:07:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1547273240;
-        bh=mBw7DLl4jJD0mClvSjX9nQGoB/UmCQJClyXsdkodJ5k=;
-        h=Date:From:To:CC:Subject:References:In-Reply-To:From;
-        b=GzV8/jQ3zw2VWMrbfXDzZ+mGnpp8WlynjP/yCCwnwczJ41HjOv09zfmrIq16IAJwm
-         L5PZMg88YTrCOB+zb2kVo9rzYl2Dzxi2JmLj8dwN+7WyLxCcjm33JCGR19iOZL/wFl
-         gChKqlvz5fNydQpvsRNDpjBBrlm7nsQekual879s=
-Received: from [192.168.100.15] (unknown [183.83.161.15])
-        (using TLSv1 with cipher ECDHE-RSA-AES256-SHA (256/256 bits))
+        Sat, 12 Jan 2019 01:09:04 -0500
+Received: from ozlabs.org ([203.11.71.1]:40045 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725372AbfALGJE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 12 Jan 2019 01:09:04 -0500
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
         (No client certificate requested)
-        (Authenticated sender: rohitkr@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 89609601B4;
-        Sat, 12 Jan 2019 06:07:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1547273239;
-        bh=mBw7DLl4jJD0mClvSjX9nQGoB/UmCQJClyXsdkodJ5k=;
-        h=Date:From:To:CC:Subject:References:In-Reply-To:From;
-        b=QbQylNkW0L1r5Ki/GFxB0lcBNA6cr+HILBmTXr445A5qeEd30mWLeqjPEaF1YfOS0
-         5eCqaTWOdHZ+dC4iKEWwgQkUBEyZNWXL1MrMv6+KfgjpIztSv7fucUQMUoyvgougxr
-         KzHGKcVbFVHS559SnFCarzmodkmANts0VBYnlm6s=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 89609601B4
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=rohitkr@codeaurora.org
-Message-ID: <5C39840A.7040005@codeaurora.org>
-Date:   Sat, 12 Jan 2019 11:37:06 +0530
-From:   Rohit kumar <rohitkr@codeaurora.org>
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:17.0) Gecko/20130801 Thunderbird/17.0.8
+        by ozlabs.org (Postfix) with ESMTPSA id 43c8SY430Xz9sCr;
+        Sat, 12 Jan 2019 17:09:01 +1100 (AEDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1547273341;
+        bh=uk6D+z3hLPk9r/8YxGxkTCEbnNtxul+Z5nEJ9P1cJZ0=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=U73qZGDoB43FaCSECeMvcb+EjZCkGZhMBeE2evsFIDWWk+FVUtvgSenSXEKuHx5b8
+         Nlut35d7Dlstpxx0dB+6aThu6h0QODJ0/g7sOvL5Hz6m+7xQjgU8AcRIFY57d2MRFz
+         PNfiKvc6eaZrfXBXOS2doLAHPsMeu1PcWKqkJ89XvDkFCuy98w99r5LYtKXhih4xvB
+         yKY0MsAJMVJC7+Hnrz8I35dNVXbEphOIrkbKF871H8vWbYDZXvW+yUks6zSEL1+bIW
+         3u/kpL3AdqeoYo49xOnVbKjVTMcCU97ksO43cT8fvjsn37hjR532Ofd8TVH5fOxIgV
+         n2QsicdWCrQWw==
+Date:   Sat, 12 Jan 2019 17:08:59 +1100
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Thierry Reding <thierry.reding@gmail.com>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Uwe =?UTF-8?B?S2xlaW5lLUs=?= =?UTF-8?B?w7ZuaWc=?= 
+        <u.kleine-koenig@pengutronix.de>, Mark Brown <broonie@kernel.org>
+Subject: Re: linux-next: build failure after merge of the pwm tree
+Message-ID: <20190112170859.2cee77d0@canb.auug.org.au>
+In-Reply-To: <20190112170117.0d4674fa@canb.auug.org.au>
+References: <20190112170117.0d4674fa@canb.auug.org.au>
 MIME-Version: 1.0
-To:     Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-CC:     plai@codeaurora.org, bgoswami@codeaurora.org,
-        asishb@codeaurora.org, lgirdwood@gmail.com, broonie@kernel.org,
-        perex@perex.cz, tiwai@suse.com, alsa-devel@alsa-project.org,
-        linux-kernel@vger.kernel.org, rohkumar@qti.qualcomm.com,
-        srinivas.kandagatla@linaro.org, vinod.koul@linaro.org,
-        Ajit Pandey <ajitp@codeaurora.org>,
-        Liam Girdwood <liam.r.girdwood@linux.intel.com>
-Subject: Re: [alsa-devel] [PATCH] ASoC: soc-core: Fix null pointer dereference
- in soc_find_component
-References: <1547194442-1487-1-git-send-email-rohitkr@codeaurora.org> <d8726e9a-3477-a573-8c1a-dd8245068802@linux.intel.com> <4886ed21-65d2-159d-afcd-bb26dcde636e@linux.intel.com>
-In-Reply-To: <4886ed21-65d2-159d-afcd-bb26dcde636e@linux.intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Antivirus: Avast (VPS 190111-4, 01/11/2019), Outbound message
-X-Antivirus-Status: Clean
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/NCyz0D41LjETSkwD3QrFoy6"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 1/12/2019 3:19 AM, Pierre-Louis Bossart wrote:
->
->> Thanks for the overnight fix. This update fixes the issue on my 
->> Skylake XPS13 test device (blind testing since I don't understand 
->> what the code does).
->>
->> Tested-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
->
-> I need to take this back, this set of changes (initial+fix) causes an 
-> error with our HDMI support
->
-> [   17.437684] sof-audio sof-audio: created machine bxt-pcm512x
-> [   17.585279] bxt-pcm512x bxt-pcm512x: ASoC: failed to init link iDisp1
-> [   17.585639] bxt-pcm512x bxt-pcm512x: snd_soc_register_card failed -517
->
-> Removing your changes restores the functionality
->
-Looks like we should revert generic implementation for defering probe 
-and move to call from machine driver as done in v1.
-https://lore.kernel.org/patchwork/patch/1027560/
-https://lore.kernel.org/patchwork/patch/1027561/
+--Sig_/NCyz0D41LjETSkwD3QrFoy6
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-@Mark, Do you have suggestion to refine current patch?
-> Adding some traces I can see that the the platform name we use doesn't 
-> seem compatible with your logic. All the Intel boards used a constant 
-> platform name matching the PCI ID, see e.g. [1], which IIRC is used to 
-> bind components. Liam, do you recall in more details if this is really 
-> required?
->
-> [1] 
-> https://elixir.bootlin.com/linux/latest/source/sound/soc/intel/boards/bxt_da7219_max98357a.c#L475
-I think if it does not set platform name as 0000:00:0e.0, it should take 
-snd-soc-dummy as platform name
-and that might fix the issue.
-snd-soc-dummy does have component associated with it.
-https://elixir.bootlin.com/linux/latest/source/sound/soc/soc-utils.c#L281
->
-> [   18.205812] plb: platform name sof-audio
-> [   18.206059] plb: cpu_name (null)
-> [   18.206234] plb: platform name 0000:00:0e.0
-> [   18.206459] plb: returning -EPROBE_DEFER 1
-> [   18.206686] bxt-pcm512x bxt-pcm512x: ASoC: failed to init link iDisp1
-> [   18.207054] bxt-pcm512x bxt-pcm512x: snd_soc_register_card failed -517
->
-> diff --git a/sound/soc/soc-core.c b/sound/soc/soc-core.c
-> index cbafbdd02483..ae731212f82b 100644
-> --- a/sound/soc/soc-core.c
-> +++ b/sound/soc/soc-core.c
-> @@ -1133,11 +1133,15 @@ static int soc_init_dai_link(struct 
-> snd_soc_card *card,
->          * Defer card registration if platform dai component is not 
-> added to
->          * component list.
->          */
-> +       pr_err("plb: platform name %s\n", link->platform->name);
->         if (link->platform->of_node || link->platform->name)
->                 if (!soc_find_component(link->platform->of_node,
-> link->platform->name))
-> -                       return -EPROBE_DEFER;
-> +                 {
-> +                         pr_err("plb: returning -EPROBE_DEFER 1\n");
-> +                         return -EPROBE_DEFER;
->
-> +                 }
->         /*
->          * CPU device may be specified by either name or OF node, but
->          * can be left unspecified, and will be matched based on DAI
-> @@ -1154,9 +1158,14 @@ static int soc_init_dai_link(struct 
-> snd_soc_card *card,
->          * Defer card registration if cpu dai component is not added to
->          * component list.
->          */
-> +       pr_err("plb: cpu_name %s\n", link->cpu_name);
->         if (link->cpu_of_node || link->cpu_name)
->                 if (!soc_find_component(link->cpu_of_node, 
-> link->cpu_name))
-> -                       return -EPROBE_DEFER;
-> +                 {
-> +                         pr_err("plb: returning -EPROBE_DEFER 2\n");
-> +                         return -EPROBE_DEFER;
-> +
-> +                 }
->
->         /*
->          * At least one of CPU DAI name or CPU device name/node must be
->
+Hi all,
 
-Thanks,
-Rohit
--- 
-Qualcomm INDIA, on behalf of Qualcomm Innovation Center, Inc.is a member
-of the Code Aurora Forum, hosted by the Linux Foundation.
+On Sat, 12 Jan 2019 17:01:17 +1100 Stephen Rothwell <sfr@canb.auug.org.au> =
+wrote:
+>
+> [Reported by "kernelci.org bot" <bot@kernelci.org>]
 
----
-This email has been checked for viruses by Avast antivirus software.
-https://www.avast.com/antivirus
+[Also reported by Mark Brown <broonie@kernel.org>]
 
+>=20
+> After merging the pwm tree, today's linux-next build (arm64-allmodconfig)
+> failed like this:
+>=20
+> In file included from drivers/pwm/pwm-imx27.c:15:
+> drivers/pwm/pwm-imx27.c:292:25: error: 'imx_pwm_dt_ids' undeclared here (=
+not in a function); did you mean 'pwm_imx27_dt_ids'?
+>  MODULE_DEVICE_TABLE(of, imx_pwm_dt_ids);
+>                          ^~~~~~~~~~~~~~
+> include/linux/module.h:213:15: note: in definition of macro 'MODULE_DEVIC=
+E_TABLE'
+>  extern typeof(name) __mod_##type##__##name##_device_table  \
+>                ^~~~
+> include/linux/module.h:213:21: error: '__mod_of__imx_pwm_dt_ids_device_ta=
+ble' aliased to undefined symbol 'imx_pwm_dt_ids'
+>  extern typeof(name) __mod_##type##__##name##_device_table  \
+>                      ^~~~~~
+> drivers/pwm/pwm-imx27.c:292:1: note: in expansion of macro 'MODULE_DEVICE=
+_TABLE'
+>  MODULE_DEVICE_TABLE(of, imx_pwm_dt_ids);
+>=20
+> Caused by commit
+>=20
+>   5a309d380019 ("pwm: imx: Split into two drivers")
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/NCyz0D41LjETSkwD3QrFoy6
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlw5hHsACgkQAVBC80lX
+0Gyipwf8DJ2WC3pLs3SOkW8TL5svLfIN+6kVEu8F1PPx0ZZQT9PlUCXonfGC3g/n
+T6dcY5UU63BbqGWQQzob44nxO3LWakHJ0O6z522aJvU478K0dEW+pSMrfJfM0yjE
+XHpM/HbbXr6acjfjckgsVF7lZ9Icl+rM3xUWN128JMfhWN+vZEG5XIKT0kAhR01U
+y+Hvzk7B97PTqCYHX1XXqzq48Nd6t5cjyeSdx9hDSmamCMD0Oz0ahJ+0lpOkAxgD
+XDQb0NhLaTokrDVE1mjYUtKEcY+NVgqcv1CfNglgrqV/NnabBvSoVTVXA3aX2FQx
+WLwINzAmWl20pRqYiBOS99iXYuZF0A==
+=VLlf
+-----END PGP SIGNATURE-----
+
+--Sig_/NCyz0D41LjETSkwD3QrFoy6--
