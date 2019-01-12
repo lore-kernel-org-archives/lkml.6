@@ -2,175 +2,139 @@ Return-Path: <SRS0=UXoZ=PU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C3802C43444
-	for <linux-kernel@archiver.kernel.org>; Sat, 12 Jan 2019 10:53:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6069DC43387
+	for <linux-kernel@archiver.kernel.org>; Sat, 12 Jan 2019 11:20:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9D830213A2
-	for <linux-kernel@archiver.kernel.org>; Sat, 12 Jan 2019 10:53:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2FA9020657
+	for <linux-kernel@archiver.kernel.org>; Sat, 12 Jan 2019 11:20:32 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=solid-run-com.20150623.gappssmtp.com header.i=@solid-run-com.20150623.gappssmtp.com header.b="q4bN6db5"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725890AbfALKxM (ORCPT
+        id S1726412AbfALLR1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 12 Jan 2019 05:53:12 -0500
-Received: from www262.sakura.ne.jp ([202.181.97.72]:14461 "EHLO
-        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725819AbfALKxM (ORCPT
+        Sat, 12 Jan 2019 06:17:27 -0500
+Received: from mail-yb1-f194.google.com ([209.85.219.194]:41122 "EHLO
+        mail-yb1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725819AbfALLR1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 12 Jan 2019 05:53:12 -0500
-Received: from fsav302.sakura.ne.jp (fsav302.sakura.ne.jp [153.120.85.133])
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id x0CAqwja055300;
-        Sat, 12 Jan 2019 19:52:58 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Received: from www262.sakura.ne.jp (202.181.97.72)
- by fsav302.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav302.sakura.ne.jp);
- Sat, 12 Jan 2019 19:52:58 +0900 (JST)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav302.sakura.ne.jp)
-Received: from [192.168.1.8] (softbank126126163036.bbtec.net [126.126.163.36])
-        (authenticated bits=0)
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id x0CAqnwr055109
-        (version=TLSv1.2 cipher=AES256-SHA bits=256 verify=NO);
-        Sat, 12 Jan 2019 19:52:58 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Subject: Re: [PATCH 0/2] oom, memcg: do not report racy no-eligible OOM
-To:     Michal Hocko <mhocko@kernel.org>
-Cc:     Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        LKML <linux-kernel@vger.kernel.org>
-References: <e55fb27c-f23b-0ac5-acfd-7265c0a3b8dc@i-love.sakura.ne.jp>
- <20190109120212.GT31793@dhcp22.suse.cz>
- <201901102359.x0ANxIbn020225@www262.sakura.ne.jp>
- <fbdfdfeb-5664-ddf3-4d65-c64f9851ac26@i-love.sakura.ne.jp>
- <20190111113354.GD14956@dhcp22.suse.cz>
- <0d67b389-91e2-18ab-b596-39361b895c89@i-love.sakura.ne.jp>
- <20190111133401.GA6997@dhcp22.suse.cz>
- <d9f7b139-d51b-93ae-b5ad-856fd9f2c168@i-love.sakura.ne.jp>
- <20190111150703.GI14956@dhcp22.suse.cz>
- <baa43a5a-6cae-bc4e-5911-13d4bfcd32f2@i-love.sakura.ne.jp>
- <20190111164536.GJ14956@dhcp22.suse.cz>
-From:   Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Message-ID: <0aacad13-3e91-646a-90b1-c70993b05701@i-love.sakura.ne.jp>
-Date:   Sat, 12 Jan 2019 19:52:50 +0900
-User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        Sat, 12 Jan 2019 06:17:27 -0500
+Received: by mail-yb1-f194.google.com with SMTP id j10so6869551ybj.8
+        for <linux-kernel@vger.kernel.org>; Sat, 12 Jan 2019 03:17:26 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=solid-run-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=hpB80OZch2doC79iwWSNYvVOSmB5piRkJwncHsc0O74=;
+        b=q4bN6db5xBhOi8U3b2R1nd4KoyCOUzZ5R2VFvhCL9+0QV8PQAmx1lIjXv6YVIqtoYP
+         QUjXG50uEqzh0+HXponj1qh9uS8qxqnUBaNopMl0evR8jnQrTejoC5FqQfS56tcvFBJE
+         UgoOsdc8VZvIOVRFPp3ano3+pJqiFB8+cW8kDv4h75UWc20idXZhG4eZ+QL+YShcjDOG
+         ZBtUx9qbRDluF4MoiCWXSSnSufnJY0oy5j9Xba+mwBAkCQNLHxjMbm5isMgC09X0swTc
+         fjB3WiSiSfJpwxRkKBAgsXsnp2kLb4R7wFMNCl9WI313DtKIumH0odYaVQ+0aZ5Y4SV0
+         M4tA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=hpB80OZch2doC79iwWSNYvVOSmB5piRkJwncHsc0O74=;
+        b=mxhQWPm7DcvdjLdu1xhn23ri1ODlgy6jwNq33Lr3cGF1OMHKeL11HU7nutkm6vk01R
+         rUKYoRUlsBcI0HjrHwg+DIy9QVy3urU5IFb2bAgWK4EKz/pQXHEirciFNgtrr9o4TNGj
+         Z8maF3xJpVAVkF/4kpYczvaJKJYnu5YGDbCk5FWPuqXFsa5slNPrYV3M+6vw/Q9iS0ym
+         PhD/j61zmTxd6EK56uN72XKxz5Hjyd3spp+Tc/8IpL1wOw1Vfq2ieIAp4+rqJjTDVSL4
+         yA25KGfCA+0VIxwO8OVcMF7P6S59sPxWFyrXZ/PeQW7rdV+lghJ56psFbJq7qSoR0Qf9
+         LbAA==
+X-Gm-Message-State: AJcUukeUgdk/3+bss7MXDDBhsT2cUB2HvWp8YmJfBXuAuoR5avMUuVmp
+        C2nk8JngH9BboHw8jNF2njfEW1YAdTZK2ekDJWuitQ==
+X-Google-Smtp-Source: ALg8bN7FMZtyBu5CDKszZ2dqst7IkBkpuxrFlys50U6BxQxiRPKiSdOJsgYbGaJ6TA0eb0ekwKYrLEf7/mxoWaBZ518=
+X-Received: by 2002:a25:8741:: with SMTP id e1mr16293634ybn.342.1547291845441;
+ Sat, 12 Jan 2019 03:17:25 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20190111164536.GJ14956@dhcp22.suse.cz>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20181110232034.17277-1-andreas@kemnade.info> <20181111024648.7rt7rlhaqihtqecv@earth.universe>
+ <20181112215812.18ebca35@aktux> <2C74C837-A6D3-47C9-BE59-CCA594289B94@goldelico.com>
+ <20181112222726.73m2oca7hankvcjs@earth.universe> <CABGGisxsdv+BTd5-HMzF8asEcWtL5F4CMzmkrBCwK=NibvqjLQ@mail.gmail.com>
+ <20181113170128.0f59ef0e@kemnade.info> <86A3A2E6-FC89-42FE-8410-9C8273EC9CF7@holtmann.org>
+ <20181116204601.4e1aa0de@kemnade.info> <09AFE47C-D188-4397-A2CD-C70FFAC3B677@holtmann.org>
+ <20190104064403.325771fd@kemnade.info> <B5CEA49A-0F54-40C5-BCEA-7875BE1358E3@holtmann.org>
+ <20190104205600.3e6b31c9@aktux>
+In-Reply-To: <20190104205600.3e6b31c9@aktux>
+From:   Jon Nettleton <jon@solid-run.com>
+Date:   Sat, 12 Jan 2019 12:16:49 +0100
+Message-ID: <CABdtJHuHrp6iPEWaCJ1_dMg0reED8ScKTjnW9aRa2JvMnHtH_A@mail.gmail.com>
+Subject: Re: [Letux-kernel] [PATCH RFC] bluetooth: add uart h4 devices via serdev/devicetree
+To:     Andreas Kemnade <andreas@kemnade.info>
+Cc:     Marcel Holtmann <marcel@holtmann.org>,
+        Rob Herring <robh@kernel.org>,
+        Sebastian Reichel <sebastian.reichel@collabora.com>,
+        "H . Nikolaus Schaller" <hns@goldelico.com>,
+        devicetree <devicetree@vger.kernel.org>,
+        Johan Hedberg <johan.hedberg@gmail.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-bluetooth@vger.kernel.org, letux-kernel@openphoenux.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2019/01/12 1:45, Michal Hocko wrote:
->>> Anyway, could you update your patch and abstract 
->>> 	if (unlikely(tsk_is_oom_victim(current) ||
->>> 		     fatal_signal_pending(current) ||
->>> 		     current->flags & PF_EXITING))
->>>
->>> in try_charge and reuse it in mem_cgroup_out_of_memory under the
->>> oom_lock with an explanation please?
->>
->> I don't think doing so makes sense, for
->>
->>   tsk_is_oom_victim(current) = T && fatal_signal_pending(current) == F
->>
->> can't happen for mem_cgroup_out_of_memory() under the oom_lock, and
->> current->flags cannot get PF_EXITING when current is inside
->> mem_cgroup_out_of_memory(). fatal_signal_pending(current) alone is
->> appropriate for mem_cgroup_out_of_memory() under the oom_lock because
->>
->>   tsk_is_oom_victim(current) = F && fatal_signal_pending(current) == T
->>
->> can happen there.
-> 
-> I meant to use the same check consistently. If we can bypass the charge
-> under a list of conditions in the charge path we should be surely be
-> able to the the same for the oom path. I will not insist but unless
-> there is a strong reason I would prefer that.
-> 
+On Fri, Jan 4, 2019 at 8:57 PM Andreas Kemnade <andreas@kemnade.info> wrote=
+:
+>
+> Hi Marcel,
+>
+> On Fri, 4 Jan 2019 10:07:34 +0100
+> Marcel Holtmann <marcel@holtmann.org> wrote:
+>
+> > Hi Andreas,
+> >
+> > >>>> Btw. I see nothing standing in the way of merging btuart.c driver =
+and then go from there. Either I dig this out and submit or someone else do=
+es.
+> > >>>>
+> > >>> Do you mean this?
+> > >>> https://patchwork.kernel.org/patch/10490651/
+> > >>
+> > >> yes, that one.
+> > >>
+> > > Hmm, there seemed to be nothing in the pull requests regarding btuart=
+.
+> > > Did you change plans?
+> >
+> > because I only submitted it as RFC. We can easily merge that one upstre=
+am since it is rather trivial. The main problem is how you want to do the d=
+evice matching. Do you have a DT entry for your really simple devices?
+> >
+> Hmm, in that link it is non-rfc. So someone picked you rfc patch up and
+> submitted it?
+>
+> You might see what we are already doing here:
+> http://git.goldelico.com/?p=3Dletux-kernel.git;a=3Dblobdiff;f=3Darch/arm/=
+boot/dts/omap3-gta04.dtsi;h=3D4d2bac4293938de4a15a59979616909cf8842524;hp=
+=3Dbfced960d63ec40cf9db4901374b331737a9a168;hb=3Df78bf51754e35010de40518b9a=
+8a148d0269bbc8;hpb=3Db6805813a9ab5b0d66b44cc54a0059eca4dd0a98
+>
+> We are using compatible =3D "wi2wi,w2cbw003-bluetooth"
+>
+> But I think we should also add a generic device string like
+> bluetooth,h4
+> So if people dig out older hardware, they can just add that to their
+> device trees and have bluetooth
+>
+> The full patchset we are currently using is here:
+> http://git.goldelico.com/?p=3Dletux-kernel.git;a=3Dshortlog;h=3Drefs/head=
+s/letux/bluetooth-h4-serdev
+>
+> Regards,
+> Andreas
 
-You mean something like this? I'm not sure this change is safe.
+Good timing for this thread.  I have just integrated the mynewt blehci
+firmware for the nina-b1 chip integrated onto our SOM.  This is
+exactly the functionality I need in the kernel to make the
+initialization seamless.  A generic device string is exactly what
+would be needed for most devices that are running in this
+configuration.  We may also want to have a generic reset_gpio handler.
 
- mm/memcontrol.c | 27 +++++++++++++++++++++++----
- 1 file changed, 23 insertions(+), 4 deletions(-)
-
-diff --git a/mm/memcontrol.c b/mm/memcontrol.c
-index 17189da..1733d019 100644
---- a/mm/memcontrol.c
-+++ b/mm/memcontrol.c
-@@ -248,6 +248,12 @@ enum res_type {
- 	     iter != NULL;				\
- 	     iter = mem_cgroup_iter(NULL, iter, NULL))
- 
-+static inline bool can_ignore_limit(void)
-+{
-+	return tsk_is_oom_victim(current) || fatal_signal_pending(current) ||
-+		(current->flags & PF_EXITING);
-+}
-+
- /* Some nice accessors for the vmpressure. */
- struct vmpressure *memcg_to_vmpressure(struct mem_cgroup *memcg)
- {
-@@ -1395,7 +1401,7 @@ static bool mem_cgroup_out_of_memory(struct mem_cgroup *memcg, gfp_t gfp_mask,
- 	 * A few threads which were not waiting at mutex_lock_killable() can
- 	 * fail to bail out. Therefore, check again after holding oom_lock.
- 	 */
--	ret = fatal_signal_pending(current) || out_of_memory(&oc);
-+	ret = can_ignore_limit() || out_of_memory(&oc);
- 	mutex_unlock(&oom_lock);
- 	return ret;
- }
-@@ -1724,6 +1730,10 @@ static enum oom_status mem_cgroup_oom(struct mem_cgroup *memcg, gfp_t mask, int
- 
- 	mem_cgroup_unmark_under_oom(memcg);
- 	if (mem_cgroup_out_of_memory(memcg, mask, order))
-+		/*
-+		 * Returning OOM_SUCCESS upon can_ignore_limit() is OK, for
-+		 * the caller will check can_ignore_limit() again.
-+		 */
- 		ret = OOM_SUCCESS;
- 	else
- 		ret = OOM_FAILED;
-@@ -1783,6 +1793,11 @@ bool mem_cgroup_oom_synchronize(bool handle)
- 		finish_wait(&memcg_oom_waitq, &owait.wait);
- 		mem_cgroup_out_of_memory(memcg, current->memcg_oom_gfp_mask,
- 					 current->memcg_oom_order);
-+		/*
-+		 * Returning upon can_ignore_limit() is OK, for the caller is
-+		 * already killed... CheckMe: Is this assumption correct?
-+		 * Page fault can't happen after getting PF_EXITING?
-+		 */
- 	} else {
- 		schedule();
- 		mem_cgroup_unmark_under_oom(memcg);
-@@ -2215,9 +2230,7 @@ static int try_charge(struct mem_cgroup *memcg, gfp_t gfp_mask,
- 	 * bypass the last charges so that they can exit quickly and
- 	 * free their memory.
- 	 */
--	if (unlikely(tsk_is_oom_victim(current) ||
--		     fatal_signal_pending(current) ||
--		     current->flags & PF_EXITING))
-+	if (unlikely(can_ignore_limit()))
- 		goto force;
- 
- 	/*
-@@ -5527,6 +5540,12 @@ static ssize_t memory_max_write(struct kernfs_open_file *of,
- 		memcg_memory_event(memcg, MEMCG_OOM);
- 		if (!mem_cgroup_out_of_memory(memcg, GFP_KERNEL, 0))
- 			break;
-+		/*
-+		 * There is no need to check can_ignore_limit() here, for
-+		 * signal_pending(current) above will break anyway.
-+		 */
-+		if (unlikely(can_ignore_limit()))
-+			break;
- 	}
- 
- 	memcg_wb_domain_size_changed(memcg);
--- 
-1.8.3.1
-
+-Jon
