@@ -2,164 +2,139 @@ Return-Path: <SRS0=UXoZ=PU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.9 required=3.0 tests=FROM_EXCESS_BASE64,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C4A8C43612
-	for <linux-kernel@archiver.kernel.org>; Sat, 12 Jan 2019 08:07:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E5BD7C43387
+	for <linux-kernel@archiver.kernel.org>; Sat, 12 Jan 2019 08:08:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1BE43205F4
-	for <linux-kernel@archiver.kernel.org>; Sat, 12 Jan 2019 08:07:58 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="OoPsd6XL"
+	by mail.kernel.org (Postfix) with ESMTP id BF1502133F
+	for <linux-kernel@archiver.kernel.org>; Sat, 12 Jan 2019 08:08:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725876AbfALIH5 (ORCPT
+        id S1726376AbfALIIO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 12 Jan 2019 03:07:57 -0500
-Received: from mail-lf1-f68.google.com ([209.85.167.68]:35052 "EHLO
-        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725791AbfALIH4 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 12 Jan 2019 03:07:56 -0500
-Received: by mail-lf1-f68.google.com with SMTP id e26so12433872lfc.2
-        for <linux-kernel@vger.kernel.org>; Sat, 12 Jan 2019 00:07:55 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=Zid+x5QBthhvD74nBBL3kZWn1j3Xjyjfxrw6LXE++jM=;
-        b=OoPsd6XL/twRscrTDVSWlWcoKVquE+OC2fYSocAtnJsvRwYgfC3Ele20zYdHBT6gck
-         s5UC9P/31zSv3XKgYR/kgkfxzDGAkLawxElci65XYYZUGATxpqqcZ99F4HmGmAhpKOL9
-         WxXsoXdmpDTSKP1oG964bepkMLV8z3lZQ397c=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=Zid+x5QBthhvD74nBBL3kZWn1j3Xjyjfxrw6LXE++jM=;
-        b=gAqAdknmO46mdFcaY3puS0BGx6VBsljUW8uS4lweuaa+m0DYTTiwYZSvnfMUHQXD0s
-         Exib4JSVzne9U4YFjW6+5/CKEBJsOzwR01DuB2kYZUr+QATyn1nHCcUITYVAwumlPZ69
-         hKc/U03wMqBhDwXvkj9jVVnb+NeveHrDHd7+h6Qnw7q59wg5KqlLGnm97AmEbCrEs29i
-         qJul4AtmuzNvQuCrt5EfXu8PsGIq8QuXEIes/nZjOMuQlcY5h3DzY9A5F2wFjH7J0Crg
-         xCBabzDlbmgTg4zbWZ/spIjoYbyGIBSiSWX2m8K96o2yY8VMmV9AIYEcZVxROWSFkOgy
-         LPXA==
-X-Gm-Message-State: AJcUukfr04/olOrA0zF9pgR8z16L39LNTeiRJIqM4VNVIhlwhpfNtYU4
-        2NUMkCWZFkApT8nYSSTRGuR5HC4tZO7lAwp2nFJsRw==
-X-Google-Smtp-Source: ALg8bN7GW8T69Ev7uYDd2En2LrQPhUrbEmuzIFk4PQEBR7AA2GBzaJvKimd8sLkIxrSbjlwdxEE5Fo0J/llgCCPPk/0=
-X-Received: by 2002:a19:750a:: with SMTP id y10mr9408750lfe.43.1547280474291;
- Sat, 12 Jan 2019 00:07:54 -0800 (PST)
+        Sat, 12 Jan 2019 03:08:14 -0500
+Received: from mailoutvs4.siol.net ([185.57.226.195]:57214 "EHLO mail.siol.net"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725791AbfALIIN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 12 Jan 2019 03:08:13 -0500
+Received: from localhost (localhost [127.0.0.1])
+        by mail.siol.net (Postfix) with ESMTP id 0B13A520991;
+        Sat, 12 Jan 2019 09:08:10 +0100 (CET)
+X-Virus-Scanned: amavisd-new at psrvmta11.zcs-production.pri
+Received: from mail.siol.net ([127.0.0.1])
+        by localhost (psrvmta11.zcs-production.pri [127.0.0.1]) (amavisd-new, port 10032)
+        with ESMTP id wtYuQKiFF0G7; Sat, 12 Jan 2019 09:08:09 +0100 (CET)
+Received: from mail.siol.net (localhost [127.0.0.1])
+        by mail.siol.net (Postfix) with ESMTPS id 94B43520AF5;
+        Sat, 12 Jan 2019 09:08:09 +0100 (CET)
+Received: from jernej-laptop.localnet (cpe1-8-82.cable.triera.net [213.161.8.82])
+        (Authenticated sender: 031275009)
+        by mail.siol.net (Postfix) with ESMTPA id 05832520991;
+        Sat, 12 Jan 2019 09:08:08 +0100 (CET)
+From:   Jernej =?utf-8?B?xaBrcmFiZWM=?= <jernej.skrabec@siol.net>
+To:     Chen-Yu Tsai <wens@csie.org>
+Cc:     Maxime Ripard <maxime.ripard@bootlin.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Linux Media Mailing List <linux-media@vger.kernel.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-sunxi <linux-sunxi@googlegroups.com>
+Subject: Re: [PATCH 1/3] media: dt: bindings: sunxi-ir: Add A64 compatible
+Date:   Sat, 12 Jan 2019 09:08:08 +0100
+Message-ID: <4866484.1b519qCrCi@jernej-laptop>
+In-Reply-To: <CAGb2v66DiqK9sL-hQev4Wy08d9T7f1Yc2DFWJ0gYOnqChJyBRw@mail.gmail.com>
+References: <20190111173015.12119-1-jernej.skrabec@siol.net> <20190111173015.12119-2-jernej.skrabec@siol.net> <CAGb2v66DiqK9sL-hQev4Wy08d9T7f1Yc2DFWJ0gYOnqChJyBRw@mail.gmail.com>
 MIME-Version: 1.0
-References: <20190111131046.387528003@linuxfoundation.org>
-In-Reply-To: <20190111131046.387528003@linuxfoundation.org>
-From:   Naresh Kamboju <naresh.kamboju@linaro.org>
-Date:   Sat, 12 Jan 2019 13:37:43 +0530
-Message-ID: <CA+G9fYsyNC=e8LpH2F_ck7GPFkBokENoc0zDf9jib0cAgvyxSA@mail.gmail.com>
-Subject: Re: [PATCH 4.9 00/63] 4.9.150-stable review
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     open list <linux-kernel@vger.kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Shuah Khan <shuah@kernel.org>, patches@kernelci.org,
-        Ben Hutchings <ben.hutchings@codethink.co.uk>,
-        lkft-triage@lists.linaro.org,
-        linux- stable <stable@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 11 Jan 2019 at 19:58, Greg Kroah-Hartman
-<gregkh@linuxfoundation.org> wrote:
->
-> This is the start of the stable review cycle for the 4.9.150 release.
-> There are 63 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
->
-> Responses should be made by Sun Jan 13 13:10:03 UTC 2019.
-> Anything received after that time might be too late.
->
-> The whole patch series can be found in one patch at:
->         https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-=
-4.9.150-rc1.gz
-> or in the git tree and branch at:
->         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
--rc.git linux-4.9.y
-> and the diffstat can be found below.
->
-> thanks,
->
-> greg k-h
+Dne sobota, 12. januar 2019 ob 02:56:11 CET je Chen-Yu Tsai napisal(a):
+> On Sat, Jan 12, 2019 at 1:30 AM Jernej Skrabec <jernej.skrabec@siol.net> 
+wrote:
+> > A64 IR is compatible with A13, so add A64 compatible with A13 as a
+> > fallback.
+> 
+> We ask people to add the SoC-specific compatible as a contigency,
+> in case things turn out to be not so "compatible".
+> 
+> To be consistent with all the other SoCs and other peripherals,
+> unless you already spotted a "compatible" difference in the
+> hardware, i.e. the hardware isn't completely the same, this
+> patch isn't needed. On the other hand, if you did, please mention
+> the differences in the commit log.
 
-Results from Linaro=E2=80=99s test farm.
-No regressions on arm64, arm, x86_64, and i386.
+When comparing registers descriptions between A13 and A64, I noticed few minor 
+differences:
 
-Summary
-------------------------------------------------------------------------
+A13: RXINT: 11:6 RAL
+A64: RXINT: 13:8 RAL
 
-kernel: 4.9.150-rc1
-git repo: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stab=
-le-rc.git
-git branch: linux-4.9.y
-git commit: fb624570c0534e3bec22973b31ee9fb85e8af1ea
-git describe: v4.9.149-64-gfb624570c053
-Test details: https://qa-reports.linaro.org/lkft/linux-stable-rc-4.9-oe/bui=
-ld/v4.9.149-64-gfb624570c053
+A13: IR_RXSTA: 12:6 RAC
+A64: IR_RXSTA: 14:8 RAC, 7 STAT (missing on A13)
 
-No regressions (compared to build v4.9.149)
+What is strange that  RAL and RAC field have offset defined as 8 in driver. I'm 
+not sure if that is a typo in A13 manual or driver issue. I assume the former, 
+otherwise it wouldn't work. I couldn't found original BSP driver source to 
+confirm, though.
 
-No fixes (compared to build v4.9.149)
+STAT bit is really not that important. It just tells if IR unit is busy or 
+not.
 
-Ran 21466 total tests in the following environments and test suites.
+The biggest difference is in 0x34 register. A64 has one more clock option 
+(without postdivider), although register values are backward compatible. A64 
+also has Active threshold setting (duration of CIR going from idle to active 
+state).
 
-Environments
---------------
-- dragonboard-410c - arm64
-- hi6220-hikey - arm64
-- i386
-- juno-r2 - arm64
-- qemu_arm
-- qemu_arm64
-- qemu_i386
-- qemu_x86_64
-- x15 - arm
-- x86_64
+If we dismiss RAC and RAL differences as manual error and don't care for new 
+clock option and active threshold, then having new compatible maybe really 
+doesn't make sense.
 
-Test Suites
------------
-* boot
-* install-android-platform-tools-r2600
-* kselftest
-* libhugetlbfs
-* ltp-cap_bounds-tests
-* ltp-containers-tests
-* ltp-cpuhotplug-tests
-* ltp-cve-tests
-* ltp-fcntl-locktests-tests
-* ltp-filecaps-tests
-* ltp-fs-tests
-* ltp-fs_bind-tests
-* ltp-fs_perms_simple-tests
-* ltp-fsx-tests
-* ltp-hugetlb-tests
-* ltp-io-tests
-* ltp-ipc-tests
-* ltp-math-tests
-* ltp-nptl-tests
-* ltp-pty-tests
-* ltp-sched-tests
-* ltp-securebits-tests
-* ltp-syscalls-tests
-* ltp-timers-tests
-* spectre-meltdown-checker-test
-* ltp-open-posix-tests
-* kselftest-vsyscall-mode-native
-* kselftest-vsyscall-mode-none
+Best regards,
+Jernej
 
---=20
-Linaro LKFT
-https://lkft.linaro.org
+> 
+> ChenYu
+> 
+> > Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
+> > ---
+> > 
+> >  Documentation/devicetree/bindings/media/sunxi-ir.txt | 5 ++++-
+> >  1 file changed, 4 insertions(+), 1 deletion(-)
+> > 
+> > diff --git a/Documentation/devicetree/bindings/media/sunxi-ir.txt
+> > b/Documentation/devicetree/bindings/media/sunxi-ir.txt index
+> > 278098987edb..ecac6964b69b 100644
+> > --- a/Documentation/devicetree/bindings/media/sunxi-ir.txt
+> > +++ b/Documentation/devicetree/bindings/media/sunxi-ir.txt
+> > @@ -1,7 +1,10 @@
+> > 
+> >  Device-Tree bindings for SUNXI IR controller found in sunXi SoC family
+> > 
+> >  Required properties:
+> > -- compatible       : "allwinner,sun4i-a10-ir" or "allwinner,sun5i-a13-ir"
+> > +- compatible       : value must be one of:
+> > +  * "allwinner,sun4i-a10-ir"
+> > +  * "allwinner,sun5i-a13-ir"
+> > +  * "allwinner,sun50i-a64-ir", "allwinner,sun5i-a13-ir"
+> > 
+> >  - clocks           : list of clock specifiers, corresponding to
+> >  
+> >                       entries in clock-names property;
+> >  
+> >  - clock-names      : should contain "apb" and "ir" entries;
+> > 
+> > --
+> > 2.20.1
+
+
+
+
