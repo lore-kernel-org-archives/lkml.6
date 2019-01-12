@@ -2,110 +2,108 @@ Return-Path: <SRS0=UXoZ=PU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 362C6C43387
-	for <linux-kernel@archiver.kernel.org>; Sat, 12 Jan 2019 05:54:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D1D71C43387
+	for <linux-kernel@archiver.kernel.org>; Sat, 12 Jan 2019 06:01:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EE37820870
-	for <linux-kernel@archiver.kernel.org>; Sat, 12 Jan 2019 05:54:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9A33E2084E
+	for <linux-kernel@archiver.kernel.org>; Sat, 12 Jan 2019 06:01:30 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="sR3mXbm5"
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="s+l8KSY0"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725841AbfALFyr (ORCPT
+        id S1725845AbfALGB2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 12 Jan 2019 00:54:47 -0500
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:47082 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725372AbfALFyr (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 12 Jan 2019 00:54:47 -0500
-Received: by mail-wr1-f67.google.com with SMTP id l9so17302682wrt.13;
-        Fri, 11 Jan 2019 21:54:46 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=EXdpAxMi+IjCkwtLHAcCwnnONOKeSMkg9N2RbHkuAjo=;
-        b=sR3mXbm50Oxnk03Ekn5Y7pbMOqSjRwSdUOwQ0vzASi+buqFi6CULFwjEX/ipTD1iw1
-         Iwqh92LSzSE8erL/pj8S8NX0w2Ko84MJ6TNSUCeUhcMxyoaj0M+5EKKx+sLSsO5cuPAV
-         3nKef7QCc0POsuYxQYFKSwulnqLBGKfB6N5GMzGo9p1t5eVQEXexNPOAaRfSb7uWXXGr
-         /ybR3/nGtvYuPawkKoweifx1ZgvaQrCmwGkmvlwhaF3o7lkdW49kN/ONupsy+/5dU6so
-         gPIg/kVzqOhfHfCsE/+hgk8UzRhOeEHqA6GjtAZGleALSWTttOSBH5BL6aFsYNhUaBU0
-         3Eww==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=EXdpAxMi+IjCkwtLHAcCwnnONOKeSMkg9N2RbHkuAjo=;
-        b=PQ2awEz/i5TcVoWja+IZ+PXS1LaRHT9H6Z1/bSLjIFWfPk2/E5unHkJbCA8rYbNJCL
-         b56hx2kkbiZAcd3NUEMWTaKAbWUjDim0+xolGhoI5dDIzE+kVJEQ2ELVujS8bnptwQ8E
-         u8hlKOfly7YvZMqlQf79Cch2F150se/n1O7Mlew4eHz5HK8Hx4NYd2wi7FZQyz1Y5vxH
-         ESnc4EOLFTLd/Uz5pcaLozgJeTFWGHXMPCwJtVHsuvXqfnJsANxGWYtWzEIxd5mpNnJJ
-         RGm8vYBxvMhI3wcdHRUSb4b1k/RAfyeWJXq2zvIS56zjieiPWgENpGT9cTuRyBWBLYAe
-         xLRA==
-X-Gm-Message-State: AJcUukcKuwijCE6JTPXgeEOLw6Qe+RWeZ2H1Ft2cv5Hda34vWm+zwCJt
-        7KpCY/9ILJ+4eDxuhItk7kY=
-X-Google-Smtp-Source: ALg8bN5A4BWAl8Q3XXo3GqdH9QoRpSz0hG8rpU2HB7o1ByT8Dt8biREavO5GC9xFg3VN1l8hKf+8Ng==
-X-Received: by 2002:adf:f211:: with SMTP id p17mr16041874wro.293.1547272485337;
-        Fri, 11 Jan 2019 21:54:45 -0800 (PST)
-Received: from felia.fritz.box ([2001:16b8:2d3c:9f00:9d02:40cb:9892:49cb])
-        by smtp.gmail.com with ESMTPSA id 124sm22989776wmh.22.2019.01.11.21.54.43
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 11 Jan 2019 21:54:44 -0800 (PST)
-From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
-To:     Alexander Viro <viro@zeniv.linux.org.uk>
-Cc:     Elena Reshetova <elena.reshetova@intel.com>,
-        Krystian Radlak <kradlak@exida.com>,
-        linux-fsdevel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Subject: [PATCH] fs: drop unused fput_atomic definition
-Date:   Sat, 12 Jan 2019 06:54:30 +0100
-Message-Id: <20190112055430.5860-1-lukas.bulwahn@gmail.com>
-X-Mailer: git-send-email 2.17.1
+        Sat, 12 Jan 2019 01:01:28 -0500
+Received: from ozlabs.org ([203.11.71.1]:58671 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725372AbfALGB1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 12 Jan 2019 01:01:27 -0500
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by ozlabs.org (Postfix) with ESMTPSA id 43c8Hm3p4Vz9sCr;
+        Sat, 12 Jan 2019 17:01:24 +1100 (AEDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1547272884;
+        bh=jRZhsgr44w2nxvj/el0IInVpBaRFklLMS55ewRbFJIA=;
+        h=Date:From:To:Cc:Subject:From;
+        b=s+l8KSY0rG7pOiNjZgBu+S6fzny3vbdaMJLMtNSR2BD8lO6rPVrGr13MJpzoMs/1f
+         3Va3x2F/UwSb5U97P/55PLn8KPrbs97QeZprqpTLOeNZssz8DgGkIdbWh3oN1aHLAc
+         URcCiWqLRzaQpglyxJKvQr2OHfExrnQ1UD9NIkEQtJCJ8FbHRFnV9Yb3xPyy0N5M4u
+         SqkgWMJ6NC6ihZoOLEbGx65O7ScogWMFVBiMOJSfuXUAVY6RGKcRkRaDgKBbB7B0Al
+         7T4XBB48yqnSbzS+DTDA/aQUmx3fu1OqF1d4A6evcs5Cnt21VkUK0Cpl/GSMBshB1o
+         H+VOt8eUZoyRQ==
+Date:   Sat, 12 Jan 2019 17:01:17 +1100
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Thierry Reding <thierry.reding@gmail.com>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Uwe =?UTF-8?B?S2xlaW5lLUs=?= =?UTF-8?B?w7ZuaWc=?= 
+        <u.kleine-koenig@pengutronix.de>
+Subject: linux-next: build failure after merge of the pwm tree
+Message-ID: <20190112170117.0d4674fa@canb.auug.org.au>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/ZESKFcVIB9NPtY2Bj7f7hPG"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-commit d7065da03822 ("get rid of the magic around f_count in aio") added
-fput_atomic to include/linux/fs.h, motivated by its use in __aio_put_req()
-in fs/aio.c.
+--Sig_/ZESKFcVIB9NPtY2Bj7f7hPG
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Later, commit 3ffa3c0e3f6e ("aio: now fput() is OK from interrupt context;
-get rid of manual delayed __fput()") removed the only use of fput_atomic
-in __aio_put_req(), but did not remove the since then unused fput_atomic
-definition in include/linux/fs.h.
+Hi all,
 
-We curate this now and finally remove the unused definition.
+[Reported by "kernelci.org bot" <bot@kernelci.org>]
 
-This issue was identified during a code review due to a coccinelle warning
-from the atomic_as_refcounter.cocci rule pointing to the use of atomic_t
-in fput_atomic.
+After merging the pwm tree, today's linux-next build (arm64-allmodconfig)
+failed like this:
 
-Suggested-by: Krystian Radlak <kradlak@exida.com>
-Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
----
-compile-tested with defconfig & allyesconfig on v4.20
+In file included from drivers/pwm/pwm-imx27.c:15:
+drivers/pwm/pwm-imx27.c:292:25: error: 'imx_pwm_dt_ids' undeclared here (no=
+t in a function); did you mean 'pwm_imx27_dt_ids'?
+ MODULE_DEVICE_TABLE(of, imx_pwm_dt_ids);
+                         ^~~~~~~~~~~~~~
+include/linux/module.h:213:15: note: in definition of macro 'MODULE_DEVICE_=
+TABLE'
+ extern typeof(name) __mod_##type##__##name##_device_table  \
+               ^~~~
+include/linux/module.h:213:21: error: '__mod_of__imx_pwm_dt_ids_device_tabl=
+e' aliased to undefined symbol 'imx_pwm_dt_ids'
+ extern typeof(name) __mod_##type##__##name##_device_table  \
+                     ^~~~~~
+drivers/pwm/pwm-imx27.c:292:1: note: in expansion of macro 'MODULE_DEVICE_T=
+ABLE'
+ MODULE_DEVICE_TABLE(of, imx_pwm_dt_ids);
 
- include/linux/fs.h | 1 -
- 1 file changed, 1 deletion(-)
+Caused by commit
 
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index 811c77743dad..ddf7de4d522b 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -952,7 +952,6 @@ static inline struct file *get_file(struct file *f)
- 	return f;
- }
- #define get_file_rcu(x) atomic_long_inc_not_zero(&(x)->f_count)
--#define fput_atomic(x)	atomic_long_add_unless(&(x)->f_count, -1, 1)
- #define file_count(x)	atomic_long_read(&(x)->f_count)
- 
- #define	MAX_NON_LFS	((1UL<<31) - 1)
--- 
-2.17.1
+  5a309d380019 ("pwm: imx: Split into two drivers")
 
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/ZESKFcVIB9NPtY2Bj7f7hPG
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlw5gq0ACgkQAVBC80lX
+0Gz+egf/WgHT/1rkRA3fJKK47K3izXK8iIuwLl1jaulPBkhFXVTt55oKXhgtxbOZ
+wHpdFXQ15cTLgQgG85E7jtSK5E5jzhZtnvilos8sfU6sKvmwGcGhU7PB1TW2H3y9
+lQZUuY/TJ/tt/6TCWtJA49MObpZeJqpinzuyb6Ig986sX5raOEBPq1WV8z/kAo4w
+1GTdByZuzjiaJkb7FQySQI3osn9L1DFyoR/szAoST010HXchgui2BqM1Mo2YIbPf
+SfpXGG0BLi84HAjVic8OgOXO3T2dE7WaglNOONio+ODI1HlDGCfLOj63Hbog1J3e
+gyOfFwpM6aEAxvdLAQb301NcAAMunw==
+=MDwn
+-----END PGP SIGNATURE-----
+
+--Sig_/ZESKFcVIB9NPtY2Bj7f7hPG--
