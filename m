@@ -6,38 +6,38 @@ X-Spam-Status: No, score=-13.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 27B22C43387
-	for <linux-kernel@archiver.kernel.org>; Sat, 12 Jan 2019 02:27:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C0E22C43387
+	for <linux-kernel@archiver.kernel.org>; Sat, 12 Jan 2019 02:27:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E98642177B
-	for <linux-kernel@archiver.kernel.org>; Sat, 12 Jan 2019 02:27:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8E0622177B
+	for <linux-kernel@archiver.kernel.org>; Sat, 12 Jan 2019 02:27:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547260028;
-	bh=M9BzOKcjSHrnF/hxoyZFdVlh1Oa72HK6z/2/YIL0ijY=;
+	s=default; t=1547260051;
+	bh=jCKgUH7uqc/x2GAyDS7k9iEgFpZYL45XwdcibUh1WEA=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=CMdb8f/ifwtdsURe60WU7BRI042bPAGE/HT3DyN4D/rWm/KdaoT2RJGaKV7MloK92
-	 Yhmsy50xab5r/vaGa8yFxKrOOLNToH/IPI/TIrtMhDSuuE5oPVx323qhBNIsY7EphI
-	 K/hZvPAzb5WpuHdkwcStNie6+NqC1jlJ6LMXPFZo=
+	b=vT6xzceP+UkjtVczhdNHrfFvTSuW/LNRCDs3LSk8+/32dYuaH+XeWBoZoDvbbO3e3
+	 mvDQcNy/L8uvbJHZIRAbPmSik0SGnob/WwSQncDcDQeHeMseRW0z5iU+Qr/nurD31F
+	 j6tJkrkLxHQopBPfokolMmo5FbrAMWto1MluZnfI=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726559AbfALC1B (ORCPT
+        id S1726577AbfALC1a (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 11 Jan 2019 21:27:01 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47940 "EHLO mail.kernel.org"
+        Fri, 11 Jan 2019 21:27:30 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48128 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726537AbfALC1A (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Jan 2019 21:27:00 -0500
+        id S1726227AbfALC13 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 Jan 2019 21:27:29 -0500
 Received: from localhost.localdomain (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2448220872;
-        Sat, 12 Jan 2019 02:26:59 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 83DF020870;
+        Sat, 12 Jan 2019 02:27:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547260020;
-        bh=M9BzOKcjSHrnF/hxoyZFdVlh1Oa72HK6z/2/YIL0ijY=;
+        s=default; t=1547260048;
+        bh=jCKgUH7uqc/x2GAyDS7k9iEgFpZYL45XwdcibUh1WEA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=tZi7+xDxsCBP5fDm9eyoCPLP+2Ms8oTJPrkM7O+UhE6CsBjm8OR/Lj019jjz9xbqR
-         m6UCB3JarYgTVXT4GeXqAD4uEaHPamaXlcAEq28qWfBqhsYBkmXuUhXR+NyzkrA6VM
-         oNMh949dO6ERLCTpSm3j5yE1zNLPeKL7xOwOPI7M=
+        b=wrRxBf7YG18slercGlCEDxRFXhR9rBAYosxBmTG1wylis6+F/gcfCDic5zFjlJK3X
+         wYaCjp9j91NE7FGjn11cO5eP5jBnIz3144O4o8mAn+tjgUYclWxElWa6qYbiOik82c
+         DxuVlsWAIUkQw/H9Rc0UrPhLrnxjMkvzduiC3HUg=
 From:   Masami Hiramatsu <mhiramat@kernel.org>
 To:     Ingo Molnar <mingo@redhat.com>
 Cc:     Masami Hiramatsu <mhiramat@kernel.org>, peterz@infradead.org,
@@ -45,9 +45,9 @@ Cc:     Masami Hiramatsu <mhiramat@kernel.org>, peterz@infradead.org,
         linux-kernel <linux-kernel@vger.kernel.org>,
         Andrea Righi <righi.andrea@gmail.com>,
         Steven Rostedt <rostedt@goodmis.org>
-Subject: [PATCH v2 2/9] x86/kprobes: Move trampoline code into RODATA
-Date:   Sat, 12 Jan 2019 11:26:37 +0900
-Message-Id: <154725999715.18060.12029300333454823166.stgit@devbox>
+Subject: [PATCH v2 3/9] x86/kprobes: Prohibit probing on functions before kprobe_int3_handler()
+Date:   Sat, 12 Jan 2019 11:27:05 +0900
+Message-Id: <154726002552.18060.16235456056729209714.stgit@devbox>
 X-Mailer: git-send-email 2.13.6
 In-Reply-To: <154725993986.18060.2759150647140353514.stgit@devbox>
 References: <154725993986.18060.2759150647140353514.stgit@devbox>
@@ -60,43 +60,95 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Move optprobe trampoline code into RODATA since it is
-not executed, but copied and modified to be used on
-a trampoline buffer.
+Prohibit probing on the functions called before kprobe_int3_handler()
+in do_int3(). More specifically, ftrace_int3_handler(),
+poke_int3_handler(), and ist_enter(). And since rcu_nmi_enter() is
+called by ist_enter(), it also should be marked as NOKPROBE_SYMBOL.
+
+Since those are handled before kprobe_int3_handler(), probing those
+functions can cause a breakpoint recursion and crash the kernel.
 
 Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
 ---
- arch/x86/kernel/kprobes/opt.c |    9 ++-------
- 1 file changed, 2 insertions(+), 7 deletions(-)
+ arch/x86/kernel/alternative.c |    3 ++-
+ arch/x86/kernel/ftrace.c      |    3 ++-
+ arch/x86/kernel/traps.c       |    1 +
+ kernel/rcu/tree.c             |    2 ++
+ 4 files changed, 7 insertions(+), 2 deletions(-)
 
-diff --git a/arch/x86/kernel/kprobes/opt.c b/arch/x86/kernel/kprobes/opt.c
-index 544bd41a514c..f14262952015 100644
---- a/arch/x86/kernel/kprobes/opt.c
-+++ b/arch/x86/kernel/kprobes/opt.c
-@@ -97,6 +97,7 @@ static void synthesize_set_arg1(kprobe_opcode_t *addr, unsigned long val)
+diff --git a/arch/x86/kernel/alternative.c b/arch/x86/kernel/alternative.c
+index ebeac487a20c..e8b628b1b279 100644
+--- a/arch/x86/kernel/alternative.c
++++ b/arch/x86/kernel/alternative.c
+@@ -11,6 +11,7 @@
+ #include <linux/stop_machine.h>
+ #include <linux/slab.h>
+ #include <linux/kdebug.h>
++#include <linux/kprobes.h>
+ #include <asm/text-patching.h>
+ #include <asm/alternative.h>
+ #include <asm/sections.h>
+@@ -764,8 +765,8 @@ int poke_int3_handler(struct pt_regs *regs)
+ 	regs->ip = (unsigned long) bp_int3_handler;
+ 
+ 	return 1;
+-
+ }
++NOKPROBE_SYMBOL(poke_int3_handler);
+ 
+ /**
+  * text_poke_bp() -- update instructions on live kernel on SMP
+diff --git a/arch/x86/kernel/ftrace.c b/arch/x86/kernel/ftrace.c
+index 7ee8067cbf45..22a548919228 100644
+--- a/arch/x86/kernel/ftrace.c
++++ b/arch/x86/kernel/ftrace.c
+@@ -269,7 +269,7 @@ int ftrace_update_ftrace_func(ftrace_func_t func)
+ 	return ret;
  }
  
- asm (
-+			".pushsection .rodata\n"
- 			"optprobe_template_func:\n"
- 			".global optprobe_template_entry\n"
- 			"optprobe_template_entry:\n"
-@@ -136,16 +137,10 @@ asm (
- #endif
- 			".global optprobe_template_end\n"
- 			"optprobe_template_end:\n"
--			".type optprobe_template_func, @function\n"
--			".size optprobe_template_func, .-optprobe_template_func\n");
-+			".popsection\n");
+-static int is_ftrace_caller(unsigned long ip)
++static nokprobe_inline int is_ftrace_caller(unsigned long ip)
+ {
+ 	if (ip == ftrace_update_func)
+ 		return 1;
+@@ -299,6 +299,7 @@ int ftrace_int3_handler(struct pt_regs *regs)
  
- void optprobe_template_func(void);
- STACK_FRAME_NON_STANDARD(optprobe_template_func);
--NOKPROBE_SYMBOL(optprobe_template_func);
--NOKPROBE_SYMBOL(optprobe_template_entry);
--NOKPROBE_SYMBOL(optprobe_template_val);
--NOKPROBE_SYMBOL(optprobe_template_call);
--NOKPROBE_SYMBOL(optprobe_template_end);
+ 	return 1;
+ }
++NOKPROBE_SYMBOL(ftrace_int3_handler);
  
- #define TMPL_MOVE_IDX \
- 	((long)optprobe_template_val - (long)optprobe_template_entry)
+ static int ftrace_write(unsigned long ip, const char *val, int size)
+ {
+diff --git a/arch/x86/kernel/traps.c b/arch/x86/kernel/traps.c
+index 9b7c4ca8f0a7..e289ce1332ab 100644
+--- a/arch/x86/kernel/traps.c
++++ b/arch/x86/kernel/traps.c
+@@ -111,6 +111,7 @@ void ist_enter(struct pt_regs *regs)
+ 	/* This code is a bit fragile.  Test it. */
+ 	RCU_LOCKDEP_WARN(!rcu_is_watching(), "ist_enter didn't work");
+ }
++NOKPROBE_SYMBOL(ist_enter);
+ 
+ void ist_exit(struct pt_regs *regs)
+ {
+diff --git a/kernel/rcu/tree.c b/kernel/rcu/tree.c
+index 9180158756d2..74db52a0a466 100644
+--- a/kernel/rcu/tree.c
++++ b/kernel/rcu/tree.c
+@@ -62,6 +62,7 @@
+ #include <linux/suspend.h>
+ #include <linux/ftrace.h>
+ #include <linux/tick.h>
++#include <linux/kprobes.h>
+ 
+ #include "tree.h"
+ #include "rcu.h"
+@@ -872,6 +873,7 @@ void rcu_nmi_enter(void)
+ {
+ 	rcu_nmi_enter_common(false);
+ }
++NOKPROBE_SYMBOL(rcu_nmi_enter);
+ 
+ /**
+  * rcu_irq_enter - inform RCU that current CPU is entering irq away from idle
 
