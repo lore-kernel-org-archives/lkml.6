@@ -2,117 +2,148 @@ Return-Path: <SRS0=UXoZ=PU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.0 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 74C59C43387
-	for <linux-kernel@archiver.kernel.org>; Sat, 12 Jan 2019 08:37:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AE289C43387
+	for <linux-kernel@archiver.kernel.org>; Sat, 12 Jan 2019 08:40:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 420F620870
-	for <linux-kernel@archiver.kernel.org>; Sat, 12 Jan 2019 08:37:16 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="to5SNGx9"
+	by mail.kernel.org (Postfix) with ESMTP id 80F8F20870
+	for <linux-kernel@archiver.kernel.org>; Sat, 12 Jan 2019 08:40:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725861AbfALIhK (ORCPT
+        id S1725880AbfALIkh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 12 Jan 2019 03:37:10 -0500
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:36956 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725806AbfALIhJ (ORCPT
+        Sat, 12 Jan 2019 03:40:37 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:35407 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725806AbfALIkh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 12 Jan 2019 03:37:09 -0500
-Received: by mail-pg1-f196.google.com with SMTP id c25so7324892pgb.4;
-        Sat, 12 Jan 2019 00:37:09 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=y5m+aNrUYSC4rSQdmuKQCdp7QvFw21AXRBfcsx1LdZ4=;
-        b=to5SNGx9lwEg0Zp0kIO20cFqCM8ihVAoG6y7bjCYdQu8xpERXrY8vl85RMaH5V01Od
-         PAI55YbbRT3c1WKOiEr6JXYDkHQbRFp+UhObYfsO/RVG6T3x49twY/nGODcn21x0ezMN
-         5lUFY7Up/NZ4oKDTiEYMMgKY/xtXRNb2QlOkUvGeXPiGohCgKmMBVkGRn6x8+ROrCho6
-         QYuZz5afKxu41H/1CyKqlgHwzOLcTe3FpLMZWI+C9O5Y4S/QLZokvG6rrRrMW/fjl/nM
-         cJmnXLMvjFUqzfXMMLKF9dM3v098+cpTKdVSHfkGFWIsgH7QHuB2OKO8B8741kuJtQ+m
-         iGFA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=y5m+aNrUYSC4rSQdmuKQCdp7QvFw21AXRBfcsx1LdZ4=;
-        b=jFlbYQoAv9cKoFV48p/e3rgnE8V2wfjyCCLlGrvz559s+FRU3ohDkHmD3tbtwVyTA/
-         QEeFEN98Wsrmsq4EOHEg5cBpDWO1eUe2Wyh/4dDcBoL7xoQ9eYrSuWX/aGL92Te5KxSG
-         hkEmG+8IGwDgagyXwGd+/tolY6HTLOs9i/0jba4H5ggfVcbdSuZwdVN0ZCzRxmnw3N7s
-         hOKpgLmH3vgVv2XBf1mxfAXlSdhUFk3mrNfqQHO39fPOth3y56ct8NPNl6by3a5+/LCn
-         bTCRSyXCcWlCawspfWVSlnbN0hK6KszpzXL7axalilYghO3hHcAVLSTuDgggz7+9PeyY
-         7pBQ==
-X-Gm-Message-State: AJcUukdru80QaejJcZRuHU7W654/YSh2voS2hBDc4uQFK6S+MwWwC8+U
-        xyYoeUo3qngaHkkCQHO4VvnqmNDAkIrygCfvM1w=
-X-Google-Smtp-Source: ALg8bN4D1Zsd7+YSDzLLIaCWfnIyPxkuW+BaZp/6X6VpVPEb/iQvZ7jVWrk5jqygO5vaFqxLmFTt0GWGBZ9OrATOwDU=
-X-Received: by 2002:a63:fe0a:: with SMTP id p10mr13904122pgh.265.1547282228557;
- Sat, 12 Jan 2019 00:37:08 -0800 (PST)
+        Sat, 12 Jan 2019 03:40:37 -0500
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x0C8dvSk1078706
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+        Sat, 12 Jan 2019 00:39:57 -0800
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x0C8dtil1078703;
+        Sat, 12 Jan 2019 00:39:55 -0800
+Date:   Sat, 12 Jan 2019 00:39:55 -0800
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for George Rimar <tipbot@zytor.com>
+Message-ID: <tip-927185c124d62a9a4d35878d7f6d432a166b74e3@git.kernel.org>
+Cc:     linux-kernel@vger.kernel.org, mingo@redhat.com, hpa@zytor.com,
+        bp@suse.de, trong@android.com, tglx@linutronix.de,
+        ndesaulniers@google.com, mingo@kernel.org, grimar@accesssoftek.com,
+        matz@suse.de, x86@kernel.org, dima@golovin.in
+Reply-To: mingo@redhat.com, hpa@zytor.com, linux-kernel@vger.kernel.org,
+          bp@suse.de, mingo@kernel.org, grimar@accesssoftek.com,
+          ndesaulniers@google.com, tglx@linutronix.de, trong@android.com,
+          dima@golovin.in, x86@kernel.org, matz@suse.de
+In-Reply-To: <20190111201012.71210-1-trong@android.com>
+References: <20190111201012.71210-1-trong@android.com>
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:x86/build] x86/build: Specify elf_i386 linker emulation
+ explicitly for i386 objects
+Git-Commit-ID: 927185c124d62a9a4d35878d7f6d432a166b74e3
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-References: <cover.1547257386.git.vilhelm.gray@gmail.com> <cca4dc59b4eb0a65fca8c6954059b71f305d28c9.1547257386.git.vilhelm.gray@gmail.com>
-In-Reply-To: <cca4dc59b4eb0a65fca8c6954059b71f305d28c9.1547257386.git.vilhelm.gray@gmail.com>
-From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-Date:   Sat, 12 Jan 2019 10:36:57 +0200
-Message-ID: <CAHp75VftRq7ABe_0dABN=XjTSNjMTROgh2n0YNoGOai+C1xOjg@mail.gmail.com>
-Subject: Re: [PATCH v7 1/8] bitops: Introduce the for_each_set_clump8 macro
-To:     William Breathitt Gray <vilhelm.gray@gmail.com>
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Linux-Arch <linux-arch@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        Arnd Bergmann <arnd@arndb.de>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Jan 12, 2019 at 3:47 AM William Breathitt Gray
-<vilhelm.gray@gmail.com> wrote:
->
-> This macro iterates for each 8-bit group of bits (clump) with set bits,
-> within a bitmap memory region. For each iteration, "start" is set to the
-> bit offset of the found clump, while the respective clump value is
-> stored to the location pointed by "clump". Additionally, the
-> bitmap_get_value8 and bitmap_set_value8 functions are introduced to
-> respectively get and set an 8-bit value in a bitmap memory region.
+Commit-ID:  927185c124d62a9a4d35878d7f6d432a166b74e3
+Gitweb:     https://git.kernel.org/tip/927185c124d62a9a4d35878d7f6d432a166b74e3
+Author:     George Rimar <grimar@accesssoftek.com>
+AuthorDate: Fri, 11 Jan 2019 12:10:12 -0800
+Committer:  Borislav Petkov <bp@suse.de>
+CommitDate: Sat, 12 Jan 2019 00:11:39 +0100
 
-> +unsigned int bitmap_get_value8(const unsigned long *const bitmap,
-> +                              const unsigned int start);
+x86/build: Specify elf_i386 linker emulation explicitly for i386 objects
 
-Hmm... Shouldn't be returned value of type unsigned long for sake of
-consistency?
+The kernel uses the OUTPUT_FORMAT linker script command in it's linker
+scripts. Most of the time, the -m option is passed to the linker with
+correct architecture, but sometimes (at least for x86_64) the -m option
+contradicts the OUTPUT_FORMAT directive.
 
-> +/**
-> + * bitmap_set_value8 - set an 8-bit value within a memory region
-> + * @bitmap: address to the bitmap memory region
+Specifically, arch/x86/boot and arch/x86/realmode/rm produce i386 object
+files, but are linked with the -m elf_x86_64 linker flag when building
+for x86_64.
 
-> + * @value: the 8-bit value
+The GNU linker manpage doesn't explicitly state any tie-breakers between
+-m and OUTPUT_FORMAT. But with BFD and Gold linkers, OUTPUT_FORMAT
+overrides the emulation value specified with the -m option.
 
-Put the same warning here as you did in cover letter
+LLVM lld has a different behavior, however. When supplied with
+contradicting -m and OUTPUT_FORMAT values it fails with the following
+error message:
 
-> + * @start: bit offset of the 8-bit value
-> + */
-> +void bitmap_set_value8(unsigned long *const bitmap,
-> +                      const unsigned long value,
-> +                      const unsigned int start)
-> +{
-> +       const size_t index = BIT_WORD(start);
-> +       const unsigned int offset = start % BITS_PER_LONG;
-> +       const unsigned long mask = GENMASK(7, offset);
-> +
-> +       bitmap[index] &= ~mask;
-> +       bitmap[index] |= value << offset;
-> +}
+  ld.lld: error: arch/x86/realmode/rm/header.o is incompatible with elf_x86_64
 
+Therefore, just add the correct -m after the incorrect one (it overrides
+it), so the linker invocation looks like this:
 
--- 
-With Best Regards,
-Andy Shevchenko
+  ld -m elf_x86_64 -z max-page-size=0x200000 -m elf_i386 --emit-relocs -T \
+    realmode.lds header.o trampoline_64.o stack.o reboot.o -o realmode.elf
+
+This is not a functional change for GNU ld, because (although not
+explicitly documented) OUTPUT_FORMAT overrides -m EMULATION.
+
+Tested by building x86_64 kernel with GNU gcc/ld toolchain and booting
+it in QEMU.
+
+ [ bp: massage and clarify text. ]
+
+Suggested-by: Dmitry Golovin <dima@golovin.in>
+Signed-off-by: George Rimar <grimar@accesssoftek.com>
+Signed-off-by: Tri Vo <trong@android.com>
+Signed-off-by: Borislav Petkov <bp@suse.de>
+Tested-by: Tri Vo <trong@android.com>
+Tested-by: Nick Desaulniers <ndesaulniers@google.com>
+Cc: "H. Peter Anvin" <hpa@zytor.com>
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: Michael Matz <matz@suse.de>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: morbo@google.com
+Cc: ndesaulniers@google.com
+Cc: ruiu@google.com
+Cc: x86-ml <x86@kernel.org>
+Link: https://lkml.kernel.org/r/20190111201012.71210-1-trong@android.com
+---
+ arch/x86/boot/Makefile        | 2 +-
+ arch/x86/realmode/rm/Makefile | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/arch/x86/boot/Makefile b/arch/x86/boot/Makefile
+index 9b5adae9cc40..e2839b5c246c 100644
+--- a/arch/x86/boot/Makefile
++++ b/arch/x86/boot/Makefile
+@@ -100,7 +100,7 @@ $(obj)/zoffset.h: $(obj)/compressed/vmlinux FORCE
+ AFLAGS_header.o += -I$(objtree)/$(obj)
+ $(obj)/header.o: $(obj)/zoffset.h
+ 
+-LDFLAGS_setup.elf	:= -T
++LDFLAGS_setup.elf	:= -m elf_i386 -T
+ $(obj)/setup.elf: $(src)/setup.ld $(SETUP_OBJS) FORCE
+ 	$(call if_changed,ld)
+ 
+diff --git a/arch/x86/realmode/rm/Makefile b/arch/x86/realmode/rm/Makefile
+index 4463fa72db94..96cb20de08af 100644
+--- a/arch/x86/realmode/rm/Makefile
++++ b/arch/x86/realmode/rm/Makefile
+@@ -47,7 +47,7 @@ $(obj)/pasyms.h: $(REALMODE_OBJS) FORCE
+ targets += realmode.lds
+ $(obj)/realmode.lds: $(obj)/pasyms.h
+ 
+-LDFLAGS_realmode.elf := --emit-relocs -T
++LDFLAGS_realmode.elf := -m elf_i386 --emit-relocs -T
+ CPPFLAGS_realmode.lds += -P -C -I$(objtree)/$(obj)
+ 
+ targets += realmode.elf
