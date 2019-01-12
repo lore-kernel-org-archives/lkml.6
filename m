@@ -2,86 +2,163 @@ Return-Path: <SRS0=UXoZ=PU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,UNPARSEABLE_RELAY autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 515A3C43387
-	for <linux-kernel@archiver.kernel.org>; Sat, 12 Jan 2019 02:45:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 72B96C43387
+	for <linux-kernel@archiver.kernel.org>; Sat, 12 Jan 2019 02:46:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1C9872084E
-	for <linux-kernel@archiver.kernel.org>; Sat, 12 Jan 2019 02:45:54 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="nMigRp4V"
+	by mail.kernel.org (Postfix) with ESMTP id 4B9EA2084E
+	for <linux-kernel@archiver.kernel.org>; Sat, 12 Jan 2019 02:46:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726528AbfALCpx (ORCPT
+        id S1726551AbfALCqc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 11 Jan 2019 21:45:53 -0500
-Received: from userp2130.oracle.com ([156.151.31.86]:37298 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726433AbfALCpw (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Jan 2019 21:45:52 -0500
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id x0C2jbNo151008;
-        Sat, 12 Jan 2019 02:45:37 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=to : cc : subject :
- from : references : date : in-reply-to : message-id : mime-version :
- content-type; s=corp-2018-07-02;
- bh=QTeyAwL1dhFY2maVOdeafDusy3rqeDFimH8Kkl+mWcI=;
- b=nMigRp4V81Ez2cn9oGpw6EAxyiP1TstQjVfSOprD5F0+29cKTy+GOTx8IgPUjh/neR8p
- /56CBe9jYJKa/ZloXxZFecVPWx/WJPRbsEHWlP0fn5TlMD1sOhqLOpc9B0wvYhlVMIoW
- 3MkRZGOIsAd2wW7PwaLF2mfrjUm1BBRirD9fouAYOHTx3SprGFKlky9HDpLNUji9yUHa
- qOtBe9sVRXij3T5s+wdqr7KL/eUrmK0SJL6GUjeKRhlnUL0rpDFOa4FkcIB3CgzrX1QC
- OUYu/BYSvRZD+hsWjbVHF9uFOM3gpkrdBjDYCX2ddbsdvLvNMq4kLhSczDVoehcf/Kas SQ== 
-Received: from userv0022.oracle.com (userv0022.oracle.com [156.151.31.74])
-        by userp2130.oracle.com with ESMTP id 2py7ntr03p-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Sat, 12 Jan 2019 02:45:36 +0000
-Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
-        by userv0022.oracle.com (8.14.4/8.14.4) with ESMTP id x0C2jagR006354
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Sat, 12 Jan 2019 02:45:36 GMT
-Received: from abhmp0002.oracle.com (abhmp0002.oracle.com [141.146.116.8])
-        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x0C2jZT6002578;
-        Sat, 12 Jan 2019 02:45:35 GMT
-Received: from ca-mkp.ca.oracle.com (/10.159.214.123)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Fri, 11 Jan 2019 18:45:35 -0800
-To:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Cc:     Bradley Grove <linuxdrivers@attotech.com>,
-        "James E.J. Bottomley" <jejb@linux.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 14/41] scsi: esas2r: esas2r_init: mark expected switch fall-throughs
-From:   "Martin K. Petersen" <martin.petersen@oracle.com>
-Organization: Oracle Corporation
-References: <cover.1543374820.git.gustavo@embeddedor.com>
-        <eb98d6f510cd93e45d7832837acd4e5811f3d20e.1543374820.git.gustavo@embeddedor.com>
-Date:   Fri, 11 Jan 2019 21:45:32 -0500
-In-Reply-To: <eb98d6f510cd93e45d7832837acd4e5811f3d20e.1543374820.git.gustavo@embeddedor.com>
-        (Gustavo A. R. Silva's message of "Tue, 27 Nov 2018 22:28:57 -0600")
-Message-ID: <yq15zuuy4oj.fsf@oracle.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
+        Fri, 11 Jan 2019 21:46:32 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:38952 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726433AbfALCqb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 Jan 2019 21:46:31 -0500
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 6E672C057F37;
+        Sat, 12 Jan 2019 02:46:30 +0000 (UTC)
+Received: from redhat.com (ovpn-120-63.rdu2.redhat.com [10.10.120.63])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 787A31019627;
+        Sat, 12 Jan 2019 02:46:27 +0000 (UTC)
+Date:   Fri, 11 Jan 2019 21:46:25 -0500
+From:   Jerome Glisse <jglisse@redhat.com>
+To:     John Hubbard <jhubbard@nvidia.com>
+Cc:     Jan Kara <jack@suse.cz>, Matthew Wilcox <willy@infradead.org>,
+        Dave Chinner <david@fromorbit.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        John Hubbard <john.hubbard@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linux MM <linux-mm@kvack.org>, tom@talpey.com,
+        Al Viro <viro@zeniv.linux.org.uk>, benve@cisco.com,
+        Christoph Hellwig <hch@infradead.org>,
+        Christopher Lameter <cl@linux.com>,
+        "Dalessandro, Dennis" <dennis.dalessandro@intel.com>,
+        Doug Ledford <dledford@redhat.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Michal Hocko <mhocko@kernel.org>, mike.marciniszyn@intel.com,
+        rcampbell@nvidia.com,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Subject: Re: [PATCH 1/2] mm: introduce put_user_page*(), placeholder versions
+Message-ID: <20190112024625.GB5059@redhat.com>
+References: <20181219020723.GD4347@redhat.com>
+ <20181219110856.GA18345@quack2.suse.cz>
+ <20190103015533.GA15619@redhat.com>
+ <20190103092654.GA31370@quack2.suse.cz>
+ <20190103144405.GC3395@redhat.com>
+ <a79b259b-3982-b271-025a-0656f70506f4@nvidia.com>
+ <20190111165141.GB3190@redhat.com>
+ <1b37061c-5598-1b02-2983-80003f1c71f2@nvidia.com>
+ <20190112020228.GA5059@redhat.com>
+ <294bdcfa-5bf9-9c09-9d43-875e8375e264@nvidia.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9133 signatures=668680
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=669
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1810050000 definitions=main-1901120021
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <294bdcfa-5bf9-9c09-9d43-875e8375e264@nvidia.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.32]); Sat, 12 Jan 2019 02:46:30 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Fri, Jan 11, 2019 at 06:38:44PM -0800, John Hubbard wrote:
+> On 1/11/19 6:02 PM, Jerome Glisse wrote:
+> > On Fri, Jan 11, 2019 at 05:04:05PM -0800, John Hubbard wrote:
+> >> On 1/11/19 8:51 AM, Jerome Glisse wrote:
+> >>> On Thu, Jan 10, 2019 at 06:59:31PM -0800, John Hubbard wrote:
+> >>>> On 1/3/19 6:44 AM, Jerome Glisse wrote:
+> >>>>> On Thu, Jan 03, 2019 at 10:26:54AM +0100, Jan Kara wrote:
+> >>>>>> On Wed 02-01-19 20:55:33, Jerome Glisse wrote:
+> >>>>>>> On Wed, Dec 19, 2018 at 12:08:56PM +0100, Jan Kara wrote:
+> >>>>>>>> On Tue 18-12-18 21:07:24, Jerome Glisse wrote:
+> >>>>>>>>> On Tue, Dec 18, 2018 at 03:29:34PM -0800, John Hubbard wrote:
+> >>> [...]
+> >>
+> >> Hi Jerome,
+> >>
+> >> Looks good, in a conceptual sense. Let me do a brain dump of how I see it,
+> >> in case anyone spots a disastrous conceptual error (such as the lock_page
+> >> point), while I'm putting together the revised patchset.
+> >>
+> >> I've studied this carefully, and I agree that using mapcount in 
+> >> this way is viable, *as long* as we use a lock (or a construct that looks just 
+> >> like one: your "memory barrier, check, retry" is really just a lock) in
+> >> order to hold off gup() while page_mkclean() is in progress. In other words,
+> >> nothing that increments mapcount may proceed while page_mkclean() is running.
+> > 
+> > No, increment to page->_mapcount are fine while page_mkclean() is running.
+> > The above solution do work no matter what happens thanks to the memory
+> > barrier. By clearing the pin flag first and reading the page->_mapcount
+> > after (and doing the reverse in GUP) we know that a racing GUP will either
+> > have its pin page clear but the incremented mapcount taken into account by
+> > page_mkclean() or page_mkclean() will miss the incremented mapcount but
+> > it will also no clear the pin flag set concurrently by any GUP.
+> > 
+> > Here are all the possible time line:
+> > [T1]:
+> > GUP on CPU0                      | page_mkclean() on CPU1
+> >                                  |
+> > [G2] atomic_inc(&page->mapcount) |
+> > [G3] smp_wmb();                  |
+> > [G4] SetPagePin(page);           |
+> >                                 ...
+> >                                  | [C1] pined = TestClearPagePin(page);
+> 
+> It appears that you're using the "page pin is clear" to indicate that
+> page_mkclean() is running. The problem is, that approach leads to toggling
+> the PagePin flag, and so an observer (other than gup or page_mkclean) will
+> see intervals during which the PagePin flag is clear, when conceptually it
+> should be set.
+> 
+> Jan and other FS people, is it definitely the case that we only have to take
+> action (defer, wait, revoke, etc) for gup-pinned pages, in page_mkclean()?
+> Because I recall from earlier experiments that there were several places, not 
+> just page_mkclean().
 
-Gustavo,
+Yes and it is fine to temporarily have the pin flag unstable. Anything
+that need stable page content will have to lock the page so will have
+to sync against any page_mkclean() and in the end the only thing were
+we want to check the pin flag is when doing write back ie after
+page_mkclean() while the page is still locked. If they are any other
+place that need to check the pin flag then they will need to lock the
+page. But i can not think of any other place right now.
 
-> In preparation to enabling -Wimplicit-fallthrough, mark switch cases
-> where we are expecting to fall through.
 
-Applied to 5.1/scsi-queue.
+[...]
 
--- 
-Martin K. Petersen	Oracle Linux Engineering
+> >> The other idea that you and Dan (and maybe others) pointed out was a debug
+> >> option, which we'll certainly need in order to safely convert all the call
+> >> sites. (Mirror the mappings at a different kernel offset, so that put_page()
+> >> and put_user_page() can verify that the right call was made.)  That will be
+> >> a separate patchset, as you recommended.
+> >>
+> >> I'll even go as far as recommending the page lock itself. I realize that this 
+> >> adds overhead to gup(), but we *must* hold off page_mkclean(), and I believe
+> >> that this (below) has similar overhead to the notes above--but is *much* easier
+> >> to verify correct. (If the page lock is unacceptable due to being so widely used,
+> >> then I'd recommend using another page bit to do the same thing.)
+> > 
+> > Please page lock is pointless and it will not work for GUP fast. The above
+> > scheme do work and is fine. I spend the day again thinking about all memory
+> > ordering and i do not see any issues.
+> > 
+> 
+> Why is it that page lock cannot be used for gup fast, btw?
+
+Well it can not happen within the preempt disable section. But after
+as a post pass before GUP_fast return and after reenabling preempt then
+it is fine like it would be for regular GUP. But locking page for GUP
+is also likely to slow down some workload (with direct-IO).
+
+Cheers,
+Jérôme
