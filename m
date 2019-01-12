@@ -7,64 +7,64 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6DDDFC43387
-	for <linux-kernel@archiver.kernel.org>; Sat, 12 Jan 2019 01:48:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E1936C43387
+	for <linux-kernel@archiver.kernel.org>; Sat, 12 Jan 2019 01:48:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3A09220878
-	for <linux-kernel@archiver.kernel.org>; Sat, 12 Jan 2019 01:48:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B2F5020870
+	for <linux-kernel@archiver.kernel.org>; Sat, 12 Jan 2019 01:48:28 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="R15Vlkdu"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="sRnxm6Xl"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726565AbfALBsG (ORCPT
+        id S1726579AbfALBs1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 11 Jan 2019 20:48:06 -0500
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:33375 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726270AbfALBsF (ORCPT
+        Fri, 11 Jan 2019 20:48:27 -0500
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:41295 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726227AbfALBs0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Jan 2019 20:48:05 -0500
-Received: by mail-pl1-f196.google.com with SMTP id z23so7560546plo.0;
-        Fri, 11 Jan 2019 17:48:05 -0800 (PST)
+        Fri, 11 Jan 2019 20:48:26 -0500
+Received: by mail-pf1-f196.google.com with SMTP id b7so7755488pfi.8;
+        Fri, 11 Jan 2019 17:48:26 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=QRpQERtbKh/21jrrs3pu0HDTwJ5Ec3WzG9pqSzCr2+g=;
-        b=R15VlkduRMAQy3j1tg+tp/SRVMObJbWXfb6snpuzaM2ozfURF5iLGORBdM2ez3kq16
-         q+vyWVownlBg/18AwUe7TYhUllIda5UhaqPEehy6vAZEbnMgGDt4NTkVYDZx18qaaCwx
-         mWGS+3Ca1YiZoWxsKr6LAWjFizBOM0WSVahjlhw3CyWAE04Tz19Edur8m8WtNrF6w1e6
-         yuCeN3b06naTC7dW6iXXlKJBdG+69npNaKnP5ehPEy/QAHLn6RYpt4BXIIbgSDL8ZVXt
-         zSOOUlL9OVXpVw6c+jNMNyLC5p8mz9L4wJfBLlys4oqoaqUhWsRVhMCGkAihH40Mc5a+
-         BMuw==
+        bh=ee1QyAa1N2Ih1UTUQsFUgosd6lppQCkmPJ1LX1IRxh8=;
+        b=sRnxm6XlguEcP7Y7xA94mg9LjdTv3VwEzOJWSan8l6mm37M8hHn9kH6fStS7SwHPq+
+         U+Rn/j0XRInBIGwBGP8SIBkyurk3yzzexWIJWq8I5+MXjY2yD9eo2PU0FuSAkIVVCV0E
+         tx7Scyc7nUTsRoqlPjh/XzAF4My9omT5Qt47l4MGVPNWtvlkCB/JXEsGg3BlCOJB1uSN
+         Tt0nZLZnju/m3nBzWA8rwhmUlsu9mdYqh8s0F6u5KDwvvfYLBcUa5FlAW0Ja2L1zEZSA
+         K1FNJSJYzarya6Sde2i1H8ZmqiS1CXy+ULm60vqv53Hzx4fNc33NdVBpNmJpszSQkMCD
+         J5iA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=QRpQERtbKh/21jrrs3pu0HDTwJ5Ec3WzG9pqSzCr2+g=;
-        b=JJRDp+qvPWXj5Sl50aCzgG/AGLRNziJ12hOpGabR1RI9/8/TJ6IB8B4hgb7D8lgFUj
-         TWaW3NAikFSQPgw9+2RJS+xgAq/2yLnE1t6KXesQd46bcGEA8NzMgcyEpCAyqPQ155Gr
-         3qs46t/WmgEGojMC+O9ciw67u+C2pYhi6VmwoFhV2hOilMLGjHv51tvioVTIimiugXGZ
-         buRGRp/QvhohE1hz0OWDJA06Ui69GZf/KDC8iL7XxiI8+v1vyXbGDT2Od1Aw0UnCNgUi
-         GWa1WU57U3FcKTyzb9PHPLwJ3KKQSySbNJQGCXxc7BRMGqrtad/lR3HItOfn/CJkOPPt
-         SmMw==
-X-Gm-Message-State: AJcUukcc42+d5+E+LLl0GqXtvVqejBd1dDNdG/v8FIP1iZrpa7UIHCDt
-        69akCo0F+t8jHXSz9IL5NA4=
-X-Google-Smtp-Source: ALg8bN6S2XwQ/uQx7rxzVVAkXQHcg+VdM8UhTG9tH+X2+nlsrHZtGRLtRwz+2mqOIHn8+tqUwmdyfw==
-X-Received: by 2002:a17:902:2ec1:: with SMTP id r59mr17098176plb.254.1547257684728;
-        Fri, 11 Jan 2019 17:48:04 -0800 (PST)
+        bh=ee1QyAa1N2Ih1UTUQsFUgosd6lppQCkmPJ1LX1IRxh8=;
+        b=ljJDGB7MfIbDjhhMefmsXRc2mJtTJU+zO0ZNELfXAZeWD9a7qdpn9ARyv5hO+4hrtK
+         oL7TfU9RmS/234ZJRyhmbLauvFxJLwNMSZwBf+Lcj4Pw9UZalx8JoNyhy3ZJdSwKaSdc
+         xFXinvOw+zkGVQGj5HqeMEIRR6ZfSC4jec3k81AF7uzVxBjSNUcqsLQFqZwapr9kJiWa
+         98LAEAKDfz7cCJ7uI0Ck5nx4DzpmRld9jvO0tQvMCyFASlnQiKmZ0Qpxfhm1x+0eht1D
+         ONKnH8hRj0CdH4TI7v75axvqUpmLqQwWD3fesgZzDh+p8CtTF8vzeXJOe+8y/fGPjFje
+         klMQ==
+X-Gm-Message-State: AJcUukeP4EpAWkkYuHij/sqFKSqdS7cmp+tKDdmeg5gxkWitHRlfV80J
+        9yoiiyILADw7pfZYebPOfcI=
+X-Google-Smtp-Source: ALg8bN5z0ml+/Qns/rYRpD4KNOMjYe+qqyIeCzAYOc79+rve4wjhs1p2W21VtC8wU0JnQt5mASMwbw==
+X-Received: by 2002:a63:6984:: with SMTP id e126mr15624649pgc.143.1547257705852;
+        Fri, 11 Jan 2019 17:48:25 -0800 (PST)
 Received: from localhost.localdomain ([2001:268:c0a3:ffc5:36e2:bccb:ba63:9e84])
-        by smtp.gmail.com with ESMTPSA id c13sm117586446pfo.121.2019.01.11.17.48.01
+        by smtp.gmail.com with ESMTPSA id j9sm102086832pfi.86.2019.01.11.17.48.22
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 11 Jan 2019 17:48:04 -0800 (PST)
+        Fri, 11 Jan 2019 17:48:25 -0800 (PST)
 From:   William Breathitt Gray <vilhelm.gray@gmail.com>
 To:     linus.walleij@linaro.org
 Cc:     akpm@linux-foundation.org, linux-gpio@vger.kernel.org,
         linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org,
         andriy.shevchenko@linux.intel.com, linux@rasmusvillemoes.dk,
         William Breathitt Gray <vilhelm.gray@gmail.com>
-Subject: [PATCH v7 3/8] gpio: 104-dio-48e: Utilize for_each_set_clump8 macro
-Date:   Sat, 12 Jan 2019 10:48:41 +0900
-Message-Id: <5a82cc7b828945a27d97b21f13410eb1404e5180.1547257386.git.vilhelm.gray@gmail.com>
+Subject: [PATCH v7 4/8] gpio: 104-idi-48: Utilize for_each_set_clump8 macro
+Date:   Sat, 12 Jan 2019 10:49:00 +0900
+Message-Id: <cc6a9aabc25caf246e2858c119b70f07e23355ac.1547257386.git.vilhelm.gray@gmail.com>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <cover.1547257386.git.vilhelm.gray@gmail.com>
 References: <cover.1547257386.git.vilhelm.gray@gmail.com>
@@ -80,33 +80,27 @@ with for_each_set_clump8 macro to simplify code and improve clarity.
 
 Signed-off-by: William Breathitt Gray <vilhelm.gray@gmail.com>
 ---
- drivers/gpio/gpio-104-dio-48e.c | 71 ++++++++++-----------------------
- 1 file changed, 20 insertions(+), 51 deletions(-)
+ drivers/gpio/gpio-104-idi-48.c | 36 +++++++---------------------------
+ 1 file changed, 7 insertions(+), 29 deletions(-)
 
-diff --git a/drivers/gpio/gpio-104-dio-48e.c b/drivers/gpio/gpio-104-dio-48e.c
-index 92c8f944bf64..1093a1403d77 100644
---- a/drivers/gpio/gpio-104-dio-48e.c
-+++ b/drivers/gpio/gpio-104-dio-48e.c
-@@ -183,46 +183,25 @@ static int dio48e_gpio_get(struct gpio_chip *chip, unsigned offset)
- 	return !!(port_state & mask);
- }
- 
-+static const size_t ports[] = { 0, 1, 2, 4, 5, 6 };
-+
- static int dio48e_gpio_get_multiple(struct gpio_chip *chip, unsigned long *mask,
+diff --git a/drivers/gpio/gpio-104-idi-48.c b/drivers/gpio/gpio-104-idi-48.c
+index 88dc6f2449f6..d58382958bd5 100644
+--- a/drivers/gpio/gpio-104-idi-48.c
++++ b/drivers/gpio/gpio-104-idi-48.c
+@@ -93,42 +93,20 @@ static int idi_48_gpio_get_multiple(struct gpio_chip *chip, unsigned long *mask,
  	unsigned long *bits)
  {
- 	struct dio48e_gpio *const dio48egpio = gpiochip_get_data(chip);
+ 	struct idi_48_gpio *const idi48gpio = gpiochip_get_data(chip);
 -	size_t i;
--	static const size_t ports[] = { 0, 1, 2, 4, 5, 6 };
++	unsigned int offset;
++	unsigned long gpio_mask;
+ 	static const size_t ports[] = { 0, 1, 2, 4, 5, 6 };
 -	const unsigned int gpio_reg_size = 8;
 -	unsigned int bits_offset;
 -	size_t word_index;
 -	unsigned int word_offset;
 -	unsigned long word_mask;
 -	const unsigned long port_mask = GENMASK(gpio_reg_size - 1, 0);
-+	unsigned int offset;
-+	unsigned long gpio_mask;
 +	unsigned int port_addr;
  	unsigned long port_state;
  
@@ -117,7 +111,10 @@ index 92c8f944bf64..1093a1403d77 100644
 -	for (i = 0; i < ARRAY_SIZE(ports); i++) {
 -		/* gpio offset in bits array */
 -		bits_offset = i * gpio_reg_size;
--
++	for_each_set_clump8(offset, gpio_mask, mask, ARRAY_SIZE(ports) * 8) {
++		port_addr = idi48gpio->base + ports[offset / 8];
++		port_state = inb(port_addr) & gpio_mask;
+ 
 -		/* word index for bits array */
 -		word_index = BIT_WORD(bits_offset);
 -
@@ -132,66 +129,14 @@ index 92c8f944bf64..1093a1403d77 100644
 -		}
 -
 -		/* read bits from current gpio port */
--		port_state = inb(dio48egpio->base + ports[i]);
-+	for_each_set_clump8(offset, gpio_mask, mask, ARRAY_SIZE(ports) * 8) {
-+		port_addr = dio48egpio->base + ports[offset / 8];
-+		port_state = inb(port_addr) & gpio_mask;
- 
+-		port_state = inb(idi48gpio->base + ports[i]);
+-
 -		/* store acquired bits at respective bits array offset */
 -		bits[word_index] |= (port_state << word_offset) & word_mask;
 +		bitmap_set_value8(bits, port_state, offset);
  	}
  
  	return 0;
-@@ -252,37 +231,27 @@ static void dio48e_gpio_set_multiple(struct gpio_chip *chip,
- 	unsigned long *mask, unsigned long *bits)
- {
- 	struct dio48e_gpio *const dio48egpio = gpiochip_get_data(chip);
--	unsigned int i;
--	const unsigned int gpio_reg_size = 8;
--	unsigned int port;
--	unsigned int out_port;
-+	unsigned int offset;
-+	unsigned long gpio_mask;
-+	size_t index;
-+	unsigned int port_addr;
- 	unsigned int bitmask;
- 	unsigned long flags;
- 
--	/* set bits are evaluated a gpio register size at a time */
--	for (i = 0; i < chip->ngpio; i += gpio_reg_size) {
--		/* no more set bits in this mask word; skip to the next word */
--		if (!mask[BIT_WORD(i)]) {
--			i = (BIT_WORD(i) + 1) * BITS_PER_LONG - gpio_reg_size;
--			continue;
--		}
-+	for_each_set_clump8(offset, gpio_mask, mask, ARRAY_SIZE(ports) * 8) {
-+		index = offset / 8;
-+		port_addr = dio48egpio->base + ports[index];
- 
--		port = i / gpio_reg_size;
--		out_port = (port > 2) ? port + 1 : port;
--		bitmask = mask[BIT_WORD(i)] & bits[BIT_WORD(i)];
-+		bitmask = bitmap_get_value8(bits, offset) & gpio_mask;
- 
- 		raw_spin_lock_irqsave(&dio48egpio->lock, flags);
- 
- 		/* update output state data and set device gpio register */
--		dio48egpio->out_state[port] &= ~mask[BIT_WORD(i)];
--		dio48egpio->out_state[port] |= bitmask;
--		outb(dio48egpio->out_state[port], dio48egpio->base + out_port);
-+		dio48egpio->out_state[index] &= ~gpio_mask;
-+		dio48egpio->out_state[index] |= bitmask;
-+		outb(dio48egpio->out_state[index], port_addr);
- 
- 		raw_spin_unlock_irqrestore(&dio48egpio->lock, flags);
--
--		/* prepare for next gpio register set */
--		mask[BIT_WORD(i)] >>= gpio_reg_size;
--		bits[BIT_WORD(i)] >>= gpio_reg_size;
- 	}
- }
- 
 -- 
 2.20.1
 
