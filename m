@@ -2,236 +2,540 @@ Return-Path: <SRS0=UXoZ=PU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 31FFDC43387
-	for <linux-kernel@archiver.kernel.org>; Sat, 12 Jan 2019 04:44:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D20CC43444
+	for <linux-kernel@archiver.kernel.org>; Sat, 12 Jan 2019 05:13:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F15DB218A4
-	for <linux-kernel@archiver.kernel.org>; Sat, 12 Jan 2019 04:44:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CF0F72084E
+	for <linux-kernel@archiver.kernel.org>; Sat, 12 Jan 2019 05:12:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1547269979;
+	bh=D17UknQHVPfr29u1eC1cac4xXP2PHxFdkCNANREZH3w=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=kfiDMpfaTCPIo71c1dgOkEs2Pjm8eX8lvdaIr00c/O+AmWGOa7rM74zIhmHXkOaBd
+	 EhHThOQ6BMCSI0NdX/LVyXRKlfEaXuWe3BUJt+DkR0g2WeEbjEO5/bVKvSzM0CIoZS
+	 Dem7sEjQlq/pEZiseZmJc7vPPODD2Ze/W9u3NvtI=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726494AbfALEox (ORCPT
+        id S1725843AbfALFM6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 11 Jan 2019 23:44:53 -0500
-Received: from mx2.suse.de ([195.135.220.15]:51948 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726376AbfALEow (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Jan 2019 23:44:52 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id D72ACAC8D;
-        Sat, 12 Jan 2019 04:44:48 +0000 (UTC)
-Subject: Re: [PATCH lora-next 4/4] dt-bindings: lora: sx130x: add clock
- bindings
-To:     Ben Whitten <ben.whitten@gmail.com>
-Cc:     linux-lpwan@lists.infradead.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        "David S. Miller" <davem@davemloft.net>
-References: <20190108084132.10214-1-ben.whitten@gmail.com>
- <20190108084132.10214-4-ben.whitten@gmail.com>
-From:   =?UTF-8?Q?Andreas_F=c3=a4rber?= <afaerber@suse.de>
-Openpgp: preference=signencrypt
-Autocrypt: addr=afaerber@suse.de; prefer-encrypt=mutual; keydata=
- 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
-Organization: SUSE Linux GmbH
-Message-ID: <56999005-89ca-c98c-0f5b-48eda15ea9fa@suse.de>
-Date:   Sat, 12 Jan 2019 05:44:47 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.0
+        Sat, 12 Jan 2019 00:12:58 -0500
+Received: from mail.kernel.org ([198.145.29.99]:57876 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725372AbfALFM6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 12 Jan 2019 00:12:58 -0500
+Received: from sol.localdomain (c-24-23-143-129.hsd1.ca.comcast.net [24.23.143.129])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id A101320870;
+        Sat, 12 Jan 2019 05:12:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1547269976;
+        bh=D17UknQHVPfr29u1eC1cac4xXP2PHxFdkCNANREZH3w=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=sXtDlGY4roeXE0AtH4I+hbY+V4LfSO7Tt7WwdhJNaZyiAy8yncTtvPKkO5tbZba6Z
+         CRjlJVs/i8RKVknWXkk/YB7qRtmAgmK11FV0HtuPsfwxCCz2JzqEfzkH3zykkLzlNg
+         BjNYVrDNw2LvQYK1VMAapKBP2VwSNhVTcnKiu2io=
+Date:   Fri, 11 Jan 2019 21:12:54 -0800
+From:   Eric Biggers <ebiggers@kernel.org>
+To:     Stephan =?iso-8859-1?Q?M=FCller?= <smueller@chronox.de>
+Cc:     Herbert Xu <herbert@gondor.apana.org.au>,
+        James Bottomley <James.Bottomley@hansenpartnership.com>,
+        Andy Lutomirski <luto@amacapital.net>,
+        "Lee, Chun-Yi" <joeyli.kernel@gmail.com>,
+        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
+        Pavel Machek <pavel@ucw.cz>, linux-kernel@vger.kernel.org,
+        linux-pm@vger.kernel.org, keyrings@vger.kernel.org,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        Chen Yu <yu.c.chen@intel.com>,
+        Oliver Neukum <oneukum@suse.com>,
+        Ryan Chen <yu.chen.surf@gmail.com>,
+        David Howells <dhowells@redhat.com>,
+        Giovanni Gherdovich <ggherdovich@suse.cz>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Jann Horn <jannh@google.com>,
+        Andy Lutomirski <luto@kernel.org>, linux-crypto@vger.kernel.org
+Subject: Re: [PATCH 4/6] crypto: hkdf - RFC5869 Key Derivation Function
+Message-ID: <20190112051252.GA639@sol.localdomain>
+References: <20190103143227.9138-1-jlee@suse.com>
+ <20190109082103.GA8586@sol.localdomain>
+ <9733066.Vrs4h5eWcW@positron.chronox.de>
+ <2423373.Zd5ThvQH5g@positron.chronox.de>
 MIME-Version: 1.0
-In-Reply-To: <20190108084132.10214-4-ben.whitten@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <2423373.Zd5ThvQH5g@positron.chronox.de>
+User-Agent: Mutt/1.11.2 (2019-01-07)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Am 08.01.19 um 09:41 schrieb Ben Whitten:
-> The sx130x family consumes two clocks, a 32MHz clock provided by a
-> connected IQ transceiver, and a 133MHz high speed clock.
-> 
-> In the example we connect the concentrator to output 0 of a fixed clock
-> providing the 133MHz high speed clock, and we connect to output 0 of a
-> connected transceiver 32MHz clock.
-> 
-> The connected radios are both fed from output 0 of a fixed 32MHz clock,
-> with only one being the clock source back with one output to the
-> sx130x concentrator.
+Hi Stephan,
 
-No, no, no... See below.
+On Fri, Jan 11, 2019 at 08:10:39PM +0100, Stephan M�ller wrote:
+> The RFC5869 compliant Key Derivation Function is implemented as a
+> random number generator considering that it behaves like a deterministic
+> RNG.
+> 
+
+Thanks for the proof of concept!  I guess it ended up okay.  But can you explain
+more the benefits of using the crypto_rng interface, as opposed to just some
+crypto_hkdf_*() helper functions that are exported for modules to use?
+
+> The extract and expand phases use different instances of the underlying
+> keyed message digest cipher to ensure that while the extraction phase
+> generates a new key for the expansion phase, the cipher for the
+> expansion phase can still be used. This approach is intended to aid
+> multi-threaded uses cases.
+
+I think you partially misunderstood what I was asking for.  One HMAC tfm is
+sufficient as long as HKDF-Expand is separated from HKDF-Extract, which you've
+done.  So just use one HMAC tfm, and in crypto_hkdf_seed() key it with the
+'salt', and then afterwards with the 'prk'.
+
+Also everywhere in this patchset, please avoid using the word "cipher" to refer
+to algorithms that are not encryption/decryption.  I know a lot of the crypto
+API docs do this, but I think it is a mistake and confusing.  Hash algorithms
+and KDFs are not "ciphers".
 
 > 
-> Signed-off-by: Ben Whitten <ben.whitten@gmail.com>
+> Signed-off-by: Stephan Mueller <smueller@chronox.de>
 > ---
->  .../{ => net}/lora/semtech,sx130x.yaml        | 39 ++++++++++++++++++-
->  1 file changed, 38 insertions(+), 1 deletion(-)
->  rename Documentation/devicetree/bindings/{ => net}/lora/semtech,sx130x.yaml (62%)
+>  crypto/Kconfig  |   6 +
+>  crypto/Makefile |   1 +
+>  crypto/hkdf.c   | 290 ++++++++++++++++++++++++++++++++++++++++++++++++
+>  3 files changed, 297 insertions(+)
+>  create mode 100644 crypto/hkdf.c
 > 
-> diff --git a/Documentation/devicetree/bindings/lora/semtech,sx130x.yaml b/Documentation/devicetree/bindings/net/lora/semtech,sx130x.yaml
-> similarity index 62%
-> rename from Documentation/devicetree/bindings/lora/semtech,sx130x.yaml
-> rename to Documentation/devicetree/bindings/net/lora/semtech,sx130x.yaml
-> index ad263bc4e60d..23a096ca2912 100644
-> --- a/Documentation/devicetree/bindings/lora/semtech,sx130x.yaml
-> +++ b/Documentation/devicetree/bindings/net/lora/semtech,sx130x.yaml
-> @@ -15,7 +15,8 @@ description: |
->    demodulating LoRa signals on 8 channels simultaneously.
+> diff --git a/crypto/Kconfig b/crypto/Kconfig
+> index cc80d89e0cf5..0eee5e129fa3 100644
+> --- a/crypto/Kconfig
+> +++ b/crypto/Kconfig
+> @@ -568,6 +568,12 @@ config CRYPTO_KDF
+>  	  Support for KDF compliant to SP800-108. All three types of
+>  	  KDF specified in SP800-108 are implemented.
 >  
->    It is typically paired with two sx125x IQ radios controlled over an
-> -  SPI directly from the concentrator.
-> +  SPI directly from the concentrator. One of the radios will provide
-> +  a 32MHz clock back into the concentrator.
-
-The SX125x does not seem to document the frequency of the output clock,
-so I assume it's pass-through of whatever went in, and 32 MHz seems
-correct for the SX130x input side.
-
->  
->    The concentrator itself it controlled over SPI.
->  
-> @@ -41,6 +42,20 @@ properties:
->        in Hz. Maximum SPI frequency is 10MHz although 8MHz is typically used
->        on a number of cards.
->  
-> +  clocks:
-> +    maxItems: 2
-> +    items:
-> +      - description: 32MHz clock provider
-> +      - description: 133MHz high speed clock provider
-> +    description: The chip requires two clock inputs; A 32MHz clock at CMOS
-> +      level which is provided from a connected radio.
-> +      And a 133MHz high speed clock at CMOS level provided by an oscillator.
+> +config CRYPTO_HKDF
+> +	tristate "HMAC-based Extract-and expand Key Derivation Function"
+> +	select CRYPTO_RNG
+> +	help
+> +	  Support for KDF compliant to RFC5869.
 > +
-> +  clock-names:
-> +    items:
-> +      - const: clk32m
 
-The pin is called CLK32M; in the specs there's XTAL32F/XTAL32T.
+Make the description
+"HMAC-based Extract-and-Expand Key Derivation Function (HKDF)"?
+There is a missing dash, and probably the acronym "HKDF" should be in there.
 
-> +      - const: clkhs
+>  config CRYPTO_XCBC
+>  	tristate "XCBC support"
+>  	select CRYPTO_HASH
+> diff --git a/crypto/Makefile b/crypto/Makefile
+> index 69a0bb64b0ac..6bbb0a4dea13 100644
+> --- a/crypto/Makefile
+> +++ b/crypto/Makefile
+> @@ -59,6 +59,7 @@ crypto_user-$(CONFIG_CRYPTO_STATS) += crypto_user_stat.o
+>  obj-$(CONFIG_CRYPTO_CMAC) += cmac.o
+>  obj-$(CONFIG_CRYPTO_HMAC) += hmac.o
+>  obj-$(CONFIG_CRYPTO_KDF) += kdf.o
+> +obj-$(CONFIG_CRYPTO_HKDF) += hkdf.o
+>  obj-$(CONFIG_CRYPTO_VMAC) += vmac.o
+>  obj-$(CONFIG_CRYPTO_XCBC) += xcbc.o
+>  obj-$(CONFIG_CRYPTO_NULL2) += crypto_null.o
+> diff --git a/crypto/hkdf.c b/crypto/hkdf.c
+> new file mode 100644
+> index 000000000000..35a975ed64a8
+> --- /dev/null
+> +++ b/crypto/hkdf.c
+> @@ -0,0 +1,290 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +
+> +/*
+> + * RFC 5869 Key-derivation function
+> + *
 
-The pin is called CLKHS; in the specs it's HSC_F.
+People don't know what RFC xyz is.  Please be more explicit than just the RFC
+number, e.g.
 
-So I assume both names are good, but wanted to double-check.
+"HKDF: HMAC-based Extract-and-Expand Key Derivation Function (RFC 5869)"
+
+> + * Copyright (C) 2019, Stephan Mueller <smueller@chronox.de>
+> + */
+> +
+> +/*
+> + * The HKDF extract phase is applied with crypto_rng_reset().
+> + * The HKDF expand phase is applied with crypto_rng_generate().
+> + *
+> + * NOTE: In-place cipher operations are not supported.
+> + */
+
+What does an "in-place cipher operation" mean in this context?  That the 'info'
+buffer must not overlap the 'dst' buffer?  Maybe crypto_rng_generate() should
+check that for all crypto_rngs?  Or is it different for different crypto_rngs?
 
 > +
->    radio-spi:
->      description: The concentrator has two radios connected which are contained
->        within the following node.
-> @@ -64,11 +79,27 @@ required:
->  
->  examples:
->    - |
-> +    tcxo: dummy32m {
-> +      compatible = "fixed-clock";
-> +      clock-frequency = <32000000>;
-> +      clock-output-names = "tcxo";
-> +      #clock-cells = <0>;
-> +    };
+> +#include <linux/module.h>
+> +#include <crypto/rng.h>
+> +#include <crypto/internal/rng.h>
+> +#include <crypto/hash.h>
+> +#include <crypto/internal/hash.h>
+> +#include <linux/rtnetlink.h>
 > +
-> +    clkhs: dummy133m {
-> +      compatible = "fixed-clock";
-> +      clock-frequency = <133000000>;
-> +      clock-output-names = "clkhs";
-> +      #clock-cells = <0>;
-> +    };
+> +struct crypto_hkdf_ctx {
+> +	struct crypto_shash *extract_kmd;
+> +	struct crypto_shash *expand_kmd;
+> +};
 > +
->      concentrator0: lora@0 {
->        compatible = "semtech,sx1301";
->        reg = <0>;
->        reset-gpios = <&pioB 27 GPIO_ACTIVE_HIGH>;
->        spi-max-frequency = <8000000>;
-> +      clocks = <&radio1 0>, <&clkhs 0>;
+> +#define CRYPTO_HKDF_MAX_DIGESTSIZE	64
+> +
+> +/*
+> + * HKDF expand phase
+> + */
+> +static int crypto_hkdf_random(struct crypto_rng *rng,
+> +			      const u8 *info, unsigned int infolen,
+> +			      u8 *dst, unsigned int dlen)
 
-Once again, this is wrong use of #clock-cells: <&radio1>, <&clkhs>
-Otherwise you have four clocks, and your "clkhs" will be <0>.
+Why call it crypto_hkdf_random() instead of crypto_hkdf_generate()?  The latter
+would match rng_alg::generate.
 
-> +      clock-names = "clk32m", "clkhs";
->  
->        radio-spi {
->          #address-cells = <1>;
-> @@ -77,11 +108,17 @@ examples:
->          radio0: lora@0 {
->            compatible = "semtech,sx1257";
->            reg = <0>;
-> +          clocks = <&tcxo 0>;
+> +{
+> +	struct crypto_hkdf_ctx *ctx = crypto_tfm_ctx(crypto_rng_tfm(rng));
 
-Ditto, <&tcxo>.
+const
 
-> +          clock-names = "tcxo";
->          };
->  
->          radio1: lora@1 {
->            compatible = "semtech,sx1257";
->            reg = <1>;
-> +          clocks = <&tcxo 0>;
+> +	struct crypto_shash *expand_kmd = ctx->expand_kmd;
+> +	SHASH_DESC_ON_STACK(desc, expand_kmd);
 
-<&tcxo>
+> +	unsigned int h = crypto_shash_digestsize(expand_kmd);
 
-> +          clock-names = "tcxo";
-> +          clock-output-names = "clk32m";
-> +          #clock-cells = <0>;
->          };
->        };
->      };
+const
 
-This example may need to be updated to use a fixed-clock instead of the
-radio'S output, due to unsolved clk provider implementation problems
-that will render the example unusable.
+> +	int err = 0;
+> +	u8 *dst_orig = dst;
+> +	const u8 *prev = NULL;
 
-Same as for the radio, we should also prepare optional regulator inputs.
-There's at least 1.8 V and 3.3 V supplies here.
+> +	uint8_t ctr = 0x01;
 
-Regards,
-Andreas
+u8 instead of uint8_t
 
--- 
-SUSE Linux GmbH, Maxfeldstr. 5, 90409 Nürnberg, Germany
-GF: Felix Imendörffer, Jane Smithard, Graham Norton
-HRB 21284 (AG Nürnberg)
+> +
+> +	if (dlen > h * 255)
+> +		return -EINVAL;
+> +
+> +	desc->tfm = expand_kmd;
+
+> +	desc->flags = crypto_shash_get_flags(expand_kmd) &
+> +		      CRYPTO_TFM_REQ_MAY_SLEEP;
+
+This line setting desc->flags doesn't make sense.  How is the user meant to
+control whether crypto_rng_generate() can sleep or not?  Or can it always sleep?
+Either way this part is wrong since the user can't get access to the HMAC tfm to
+set this flag being checked for.
+
+> +
+> +	/* T(1) and following */
+> +	while (dlen) {
+> +		err = crypto_shash_init(desc);
+> +		if (err)
+> +			goto out;
+> +
+> +		if (prev) {
+> +			err = crypto_shash_update(desc, prev, h);
+> +			if (err)
+> +				goto out;
+> +		}
+> +
+> +		if (info) {
+> +			err = crypto_shash_update(desc, info, infolen);
+> +			if (err)
+> +				goto out;
+> +		}
+> +
+> +		if (dlen < h) {
+> +			u8 tmpbuffer[CRYPTO_HKDF_MAX_DIGESTSIZE];
+> +
+> +			err = crypto_shash_finup(desc, &ctr, 1, tmpbuffer);
+> +			if (err)
+> +				goto out;
+> +			memcpy(dst, tmpbuffer, dlen);
+> +			memzero_explicit(tmpbuffer, h);
+> +			goto out;
+> +		} else {
+
+No need for the 'else'.
+
+> +			err = crypto_shash_finup(desc, &ctr, 1, dst);
+> +			if (err)
+> +				goto out;
+> +
+> +			prev = dst;
+> +			dst += h;
+> +			dlen -= h;
+> +			ctr++;
+> +		}
+> +	}
+> +
+> +out:
+> +	if (err)
+> +		memzero_explicit(dst_orig, dlen);
+> +	shash_desc_zero(desc);
+> +	return err;
+> +}
+> +
+> +/*
+> + * HKDF extract phase.
+> + *
+> + * The seed is defined to be a concatenation of the salt and the IKM.
+> + * The data buffer is pre-pended by an rtattr which provides an u32 value
+> + * with the length of the salt. Thus, the buffer length - salt length is the
+> + * IKM length.
+> + */
+> +static int crypto_hkdf_seed(struct crypto_rng *rng,
+> +			    const u8 *seed, unsigned int slen)
+> +{
+> +	struct crypto_hkdf_ctx *ctx = crypto_tfm_ctx(crypto_rng_tfm(rng));
+
+const
+
+> +	struct crypto_shash *extract_kmd = ctx->extract_kmd;
+> +	struct crypto_shash *expand_kmd = ctx->expand_kmd;
+> +	struct rtattr *rta = (struct rtattr *)seed;
+> +	SHASH_DESC_ON_STACK(desc, extract_kmd);
+> +	u32 saltlen;
+> +	unsigned int h = crypto_shash_digestsize(extract_kmd);
+> +	int err;
+> +	const uint8_t null_salt[CRYPTO_HKDF_MAX_DIGESTSIZE] = { 0 };
+
+static const
+
+> +	u8 prk[CRYPTO_HKDF_MAX_DIGESTSIZE] = { 0 };
+
+No need to initialize this.
+
+> +
+> +	/* Require aligned buffer to directly read out saltlen below */
+> +	if (WARN_ON((unsigned long)seed & (sizeof(saltlen) - 1)))
+> +		return -EINVAL;
+> +
+> +	if (!RTA_OK(rta, slen))
+> +		return -EINVAL;
+> +	if (rta->rta_type != 1)
+> +		return -EINVAL;
+> +	if (RTA_PAYLOAD(rta) < sizeof(saltlen))
+> +		return -EINVAL;
+> +	saltlen = *((u32 *)RTA_DATA(rta));
+
+I'm guessing you copied the weird "length as a rtattr payload" approach from the
+authenc template.  I think it's not necessary.  And it's overly error-prone, as
+shown by the authenc template getting the parsing wrong for years and you making
+the exact same mistake again here...
+(See https://patchwork.kernel.org/patch/10732803/)  How about just using a u32
+at the beginning without the 'rtattr' preceding it?
+
+Also it should use get_unaligned() so there is no alignment requirement the
+caller has to comply with.
+
+> +
+> +	seed += RTA_ALIGN(rta->rta_len);
+> +	slen -= RTA_ALIGN(rta->rta_len);
+> +
+> +	if (slen < saltlen)
+> +		return -EINVAL;
+> +
+
+> +	desc->tfm = extract_kmd;
+
+desc->flags needs to be set.
+
+> +
+> +	/* Set the salt as HMAC key */
+> +	if (saltlen)
+> +		err = crypto_shash_setkey(extract_kmd, seed, saltlen);
+> +	else
+> +		err = crypto_shash_setkey(extract_kmd, null_salt, h);
+> +	if (err)
+> +		return err;
+> +
+> +	/* Extract the PRK */
+> +	err = crypto_shash_digest(desc, seed + saltlen, slen - saltlen, prk);
+> +	if (err)
+> +		goto err;
+> +
+> +	/* Set the PRK for the expand phase */
+> +	err = crypto_shash_setkey(expand_kmd, prk, h);
+> +	if (err)
+> +		goto err;
+> +
+> +err:
+> +	shash_desc_zero(desc);
+> +	memzero_explicit(prk, h);
+> +	return err;
+> +}
+> +
+> +static int crypto_hkdf_init_tfm(struct crypto_tfm *tfm)
+> +{
+> +	struct crypto_instance *inst = crypto_tfm_alg_instance(tfm);
+> +	struct crypto_shash_spawn *spawn = crypto_instance_ctx(inst);
+> +	struct crypto_hkdf_ctx *ctx = crypto_tfm_ctx(tfm);
+> +	struct crypto_shash *extract_kmd = NULL, *expand_kmd = NULL;
+> +	unsigned int ds;
+> +
+> +	extract_kmd = crypto_spawn_shash(spawn);
+> +	if (IS_ERR(extract_kmd))
+> +		return PTR_ERR(extract_kmd);
+> +
+> +	expand_kmd = crypto_spawn_shash(spawn);
+> +	if (IS_ERR(expand_kmd)) {
+> +		crypto_free_shash(extract_kmd);
+> +		return PTR_ERR(expand_kmd);
+> +	}
+> +
+> +	ds = crypto_shash_digestsize(extract_kmd);
+> +	/* Hashes with no digest size are not allowed for KDFs. */
+> +	if (!ds || ds > CRYPTO_HKDF_MAX_DIGESTSIZE) {
+> +		crypto_free_shash(extract_kmd);
+> +		crypto_free_shash(expand_kmd);
+> +		return -EOPNOTSUPP;
+> +	}
+
+The digest size should be validated when instantiating the template, not here.
+
+> +
+> +	ctx->extract_kmd = extract_kmd;
+> +	ctx->expand_kmd = expand_kmd;
+> +
+> +	return 0;
+> +}
+> +
+> +static void crypto_hkdf_exit_tfm(struct crypto_tfm *tfm)
+> +{
+> +	struct crypto_hkdf_ctx *ctx = crypto_tfm_ctx(tfm);
+> +
+> +	crypto_free_shash(ctx->extract_kmd);
+> +	crypto_free_shash(ctx->expand_kmd);
+> +}
+> +
+> +static void crypto_kdf_free(struct rng_instance *inst)
+> +{
+> +	crypto_drop_spawn(rng_instance_ctx(inst));
+> +	kfree(inst);
+> +}
+> +
+> +static int crypto_hkdf_create(struct crypto_template *tmpl, struct rtattr **tb)
+> +{
+> +	struct rng_instance *inst;
+> +	struct crypto_alg *alg;
+> +	struct shash_alg *salg;
+> +	int err;
+> +	unsigned int ds, ss;
+> +
+> +	err = crypto_check_attr_type(tb, CRYPTO_ALG_TYPE_RNG);
+> +	if (err)
+> +		return err;
+> +
+> +	salg = shash_attr_alg(tb[1], 0, 0);
+> +	if (IS_ERR(salg))
+> +		return PTR_ERR(salg);
+> +
+> +	ds = salg->digestsize;
+> +	ss = salg->statesize;
+
+I don't see what the 'statesize' is needed for.
+
+> +	alg = &salg->base;
+
+Check here that the underlying algorithm really is "hmac(" something?
+
+Alternatively it may be a good idea to simplify usage by making the template
+just take the unkeyed hash directly, like "hkdf(sha512)".  And if any users
+really need to specify a specific HMAC implementation then another template
+usable as "hkdf_base(hmac(sha512))" could be added later.
+
+> +
+> +	inst = rng_alloc_instance("hkdf", alg);
+> +	err = PTR_ERR(inst);
+> +	if (IS_ERR(inst))
+> +		goto out_put_alg;
+> +
+> +	err = crypto_init_shash_spawn(rng_instance_ctx(inst), salg,
+> +				      rng_crypto_instance(inst));
+> +	if (err)
+> +		goto out_free_inst;
+
+This error path calls crypto_drop_spawn() without a prior successful
+crypto_init_spawn().
+
+> +
+> +	inst->alg.base.cra_priority	= alg->cra_priority;
+> +	inst->alg.base.cra_blocksize	= alg->cra_blocksize;
+> +	inst->alg.base.cra_alignmask	= alg->cra_alignmask;
+> +
+> +	inst->alg.generate		= crypto_hkdf_random;
+> +	inst->alg.seed			= crypto_hkdf_seed;
+> +	inst->alg.seedsize		= ds;
+
+What does the seedsize mean here, given that crypto_hkdf_seed() actually takes a
+variable length seed?
+
+> +
+> +	inst->alg.base.cra_init		= crypto_hkdf_init_tfm;
+> +	inst->alg.base.cra_exit		= crypto_hkdf_exit_tfm;
+
+> +	inst->alg.base.cra_ctxsize	= ALIGN(sizeof(struct crypto_hkdf_ctx) +
+> +					  ss * 2, crypto_tfm_ctx_alignment());
+
+Why isn't this simply sizeof(struct crypto_hkdf_ctx)?
+
+> +
+> +	inst->free			= crypto_kdf_free;
+> +
+> +	err = rng_register_instance(tmpl, inst);
+> +
+> +	if (err) {
+> +out_free_inst:
+> +		crypto_kdf_free(inst);
+> +	}
+> +
+> +out_put_alg:
+> +	crypto_mod_put(alg);
+> +	return err;
+> +}
+> +
+> +static struct crypto_template crypto_hkdf_tmpl = {
+> +	.name = "hkdf",
+> +	.create = crypto_hkdf_create,
+> +	.module = THIS_MODULE,
+> +};
+> +
+> +static int __init crypto_hkdf_init(void)
+> +{
+> +	return crypto_register_template(&crypto_hkdf_tmpl);
+> +}
+> +
+> +static void __exit crypto_hkdf_exit(void)
+> +{
+> +	crypto_unregister_template(&crypto_hkdf_tmpl);
+> +}
+> +
+> +module_init(crypto_hkdf_init);
+> +module_exit(crypto_hkdf_exit);
+> +
+> +MODULE_LICENSE("GPL");
+
+MODULE_LICENSE("GPL") means GPLv2+ but the SPDX header says GPLv2 only.
+
+> +MODULE_AUTHOR("Stephan Mueller <smueller@chronox.de>");
+> +MODULE_DESCRIPTION("Key Derivation Function according to RFC 5869");
+
+Mention "HKDF" in the module description?
+
+> +MODULE_ALIAS_CRYPTO("hkdf");
+> -- 
+> 2.20.1
+
+Thanks!
+
+- Eric
