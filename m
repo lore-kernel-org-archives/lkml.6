@@ -2,127 +2,162 @@ Return-Path: <SRS0=UXoZ=PU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2893CC43387
-	for <linux-kernel@archiver.kernel.org>; Sat, 12 Jan 2019 23:30:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7016FC43387
+	for <linux-kernel@archiver.kernel.org>; Sat, 12 Jan 2019 23:32:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D610620836
-	for <linux-kernel@archiver.kernel.org>; Sat, 12 Jan 2019 23:30:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 304CA20836
+	for <linux-kernel@archiver.kernel.org>; Sat, 12 Jan 2019 23:32:48 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="b2x40S3E"
+	dkim=pass (2048-bit key) header.d=sholland.org header.i=@sholland.org header.b="0qS+OE57";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="A+CivTrQ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726525AbfALXZv (ORCPT
+        id S1726563AbfALXcs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 12 Jan 2019 18:25:51 -0500
-Received: from conssluserg-03.nifty.com ([210.131.2.82]:29859 "EHLO
-        conssluserg-03.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726399AbfALXZv (ORCPT
+        Sat, 12 Jan 2019 18:32:48 -0500
+Received: from out1-smtp.messagingengine.com ([66.111.4.25]:33635 "EHLO
+        out1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726399AbfALXcr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 12 Jan 2019 18:25:51 -0500
-Received: from mail-vk1-f173.google.com (mail-vk1-f173.google.com [209.85.221.173]) (authenticated)
-        by conssluserg-03.nifty.com with ESMTP id x0CNPTG2030943
-        for <linux-kernel@vger.kernel.org>; Sun, 13 Jan 2019 08:25:29 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-03.nifty.com x0CNPTG2030943
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1547335529;
-        bh=0421Kp23+mQJUgC30L5JOfmL0OfavBvoQk0fduLsEA8=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=b2x40S3E+sfmL8hwiJ6nx2DgEUsZ3sPntLKfNvAqw4isAKSPTXBKXMqil2P7JaiPK
-         SPGRNqZNe2ZyzRMqRlTKtHmOwSSyJGODz9/G5NtEkRIMFO9sU1VF9oeMVqSwFEgzdz
-         bPbT88Ubn6ygqVFapXZL34laHxKCf8NFIWF82RKTtEMvgBDR2FwqfPzYuxRgBxzYWn
-         PsZzQaInS+Wsb/CHO3i35X0O1TW8i7pXnVzSRxKkaJjRgkluyjsMGiGNOQfL8xs7v5
-         Rdqqq9t2NREpSp7Zr/xaspfTpz7Zd9Opg+ga07UCwVPumEsZ13cYfuPwHqpv2BZlE+
-         aE6X5IyMp6g+Q==
-X-Nifty-SrcIP: [209.85.221.173]
-Received: by mail-vk1-f173.google.com with SMTP id b18so4116680vke.2
-        for <linux-kernel@vger.kernel.org>; Sat, 12 Jan 2019 15:25:29 -0800 (PST)
-X-Gm-Message-State: AJcUukfyuJEAoMv0lWgQZwcQObTtClhCDJcyp0ldVQ39lTHGNi9ByO8I
-        BXaTE0rF8GC2LLfusVrsgM4GYLbDmXcLicweUjE=
-X-Google-Smtp-Source: ALg8bN69Er6P3F2xuxPZ9l66T5D1nSmqMEiwhssBkpSq+4v2WOwADLWEiaHAMNk24sUj0zX+EzcqcXJQm/ZZ0OZ6nfM=
-X-Received: by 2002:a1f:91cb:: with SMTP id t194mr7646563vkd.74.1547335528323;
- Sat, 12 Jan 2019 15:25:28 -0800 (PST)
+        Sat, 12 Jan 2019 18:32:47 -0500
+Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
+        by mailout.nyi.internal (Postfix) with ESMTP id 1F8F621AAD;
+        Sat, 12 Jan 2019 18:32:44 -0500 (EST)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute5.internal (MEProxy); Sat, 12 Jan 2019 18:32:44 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sholland.org; h=
+        subject:to:cc:references:from:message-id:date:mime-version
+        :in-reply-to:content-type:content-transfer-encoding; s=fm1; bh=3
+        NxPxNIGiSzNWT0s/W2ZCnb7jgAT5mi9uinyciQgQYg=; b=0qS+OE57rXAooGNNb
+        rArDHRPMKxhpX6VJabM+AShz7kU6/Oeh7Tmygg8qW8qceWcVDssd98RYODtl0OiX
+        U4jJlNe7TpRyqyI3+x89Gey7KZkRqN0ewHSwgIxXIymgB0EzTLBF1fDoVhWcyjCg
+        yMlxMew7SXyDwv4NcofqibWbDkZT4OSR6HfwUewnYFLRiLB15WIZsdh4j+KA4rNQ
+        rXuqGi550bQw6RyKBNfNUlNxPaLeI/q5NEuVBjn05VQAMAOqop3gMTOdzh5rnyGe
+        XIR3Ekx6hd/dM24y/wVPn+L8GE0isQ42+YrK9mU9MiCyQ1xpdqb8UE61J6rwqQbW
+        nICyQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-transfer-encoding:content-type
+        :date:from:in-reply-to:message-id:mime-version:references
+        :subject:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
+        :x-sasl-enc; s=fm1; bh=3NxPxNIGiSzNWT0s/W2ZCnb7jgAT5mi9uinyciQgQ
+        Yg=; b=A+CivTrQx9vckpl+WJviaMFcSaWU7ZvGAHAEIdpjMSGxsBueqYAPwgjyJ
+        dt4+w8UbZ45wKUB9RQVlNerNlvAyiSxG65RozHESfPM8QJu0BLEVg8buarL2soLv
+        SBDPyKI+k/0v5fbBwyOmQ+I0KBZbd/7U5ciO8Af90wd5D5BafnAsAUKCUQVlciFm
+        I+Ihd3TPEF+BWEdZ97evxxr/bucSR4tS20N8Br6vRrll3dnZqlW7c1PQwGw0XBc2
+        owuO7mMk6u7aKVxV2gnpDkMKcGrIcekZazMyo1tm5kpMK/Y9lblFMwFOMVTGMUcV
+        GmuUCjOnABgRTvAeUvVPYHYhwnqpQ==
+X-ME-Sender: <xms:Gnk6XGrOgXrpP71bWIsdlTvNYg-bYPrYF87-BNypbxaMQFlUcwmWEQ>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedtledrfeejgddujeehucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfquhhtnecuuegrihhlohhuthemucef
+    tddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefuvfhfhffkff
+    gfgggjtgfgsehtjeertddtfeejnecuhfhrohhmpefurghmuhgvlhcujfholhhlrghnugcu
+    oehsrghmuhgvlhesshhhohhllhgrnhgurdhorhhgqeenucffohhmrghinhepkhgvrhhnvg
+    hlrdhorhhgnecukfhppeejtddrudefhedrudegkedrudehudenucfrrghrrghmpehmrghi
+    lhhfrhhomhepshgrmhhuvghlsehshhholhhlrghnugdrohhrghenucevlhhushhtvghruf
+    hiiigvpedt
+X-ME-Proxy: <xmx:Gnk6XNxMqGAgXCiOY-2ZsfyvaLS1XzAbZ97Ofp2Rcq-Y9xh0eO6_1g>
+    <xmx:Gnk6XEHUqpNBBiUVcqoLxZge4DpUDAL3mftDTm7C4gK_EKl1zaci3A>
+    <xmx:Gnk6XIi5dfReuShwwg3dVoOMDOqROzcifZkiYhjainwOFP6pGOP7-g>
+    <xmx:HHk6XMH3CO0XSDkO6vayjnDrqjwe5v9_IPH0OjKXnKZeetV02p01ow>
+Received: from [192.168.50.162] (70-135-148-151.lightspeed.stlsmo.sbcglobal.net [70.135.148.151])
+        by mail.messagingengine.com (Postfix) with ESMTPA id 3C994100E5;
+        Sat, 12 Jan 2019 18:32:42 -0500 (EST)
+Subject: Re: [PATCH v5 1/2] powerpc/32: add stack protector support
+To:     Christophe Leroy <christophe.leroy@c-s.fr>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        "Jason A. Donenfeld" <Jason@zx2c4.com>
+References: <8e81b0647fea15e533a73ad4e9063c059fdfc6df.1537987712.git.christophe.leroy@c-s.fr>
+From:   Samuel Holland <samuel@sholland.org>
+Message-ID: <f5600a1d-71ca-f1d7-3973-026462990059@sholland.org>
+Date:   Sat, 12 Jan 2019 17:32:40 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-References: <b2d62e31-a64c-4561-a7ad-1625acad8a3d.longchun.lc@alibaba-inc.com>
-In-Reply-To: <b2d62e31-a64c-4561-a7ad-1625acad8a3d.longchun.lc@alibaba-inc.com>
-From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-Date:   Sun, 13 Jan 2019 08:24:52 +0900
-X-Gmail-Original-Message-ID: <CAK7LNAQD6iD_BW9FgufYzw2Pd5LUAM8wPyRKvzAsA_feU0B=2w@mail.gmail.com>
-Message-ID: <CAK7LNAQD6iD_BW9FgufYzw2Pd5LUAM8wPyRKvzAsA_feU0B=2w@mail.gmail.com>
-Subject: Re: stack-protector: fix CC_HAS_STACKPROTECTOR_NONE depend on -fno-stack-protector
-To:     =?UTF-8?B?6ZqG5pil?= <longchun.lc@alibaba-inc.com>
-Cc:     =?UTF-8?B?5p2O6K+aKOWFgeivmik=?= <lc85446@alibaba-inc.com>,
-        =?UTF-8?B?5p2O5Li5KOaWl+mToCk=?= <doukai.ld@alibaba-inc.com>,
-        =?UTF-8?B?6K645p2l5YWJKOaclOmjnik=?= <laiguang.xlg@alibaba-inc.com>,
-        =?UTF-8?B?6YKs5qGF5qGFKOaXoOW4hik=?= <tom.www@alibaba-inc.com>,
-        =?UTF-8?B?5p2O6ICAKOi0peWkqSk=?= <yao.ly@alibaba-inc.com>,
-        =?UTF-8?B?546L5L2z55CmKOWHjOWknCk=?= <jiaqi.wjq@alibaba-inc.com>,
-        =?UTF-8?B?55Sz5pmoKOWtpOmfpyk=?= <shenchen@alibaba-inc.com>,
-        keescook <keescook@chromium.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        akpm <akpm@linux-foundation.org>, tglx <tglx@linutronix.de>,
-        mingo <mingo@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <8e81b0647fea15e533a73ad4e9063c059fdfc6df.1537987712.git.christophe.leroy@c-s.fr>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Jan 12, 2019 at 12:57 PM =E9=9A=86=E6=98=A5 <longchun.lc@alibaba-in=
-c.com> wrote:
->
-> commit=EF=BC=882a61f4747eeaa85ce26ca9fbd81421b15facd018=EF=BC=89rename CC=
-_STACKPROTECTOR_NONE
-> config. but unfortunately if the compiler support option -fno-stack-prote=
-ctor,
-> CC_HAS_STACKPROTECTOR_NONE will not be disabled.
+Hello all,
 
-You completely misunderstood that commit.
+On 09/27/18 02:05, Christophe Leroy wrote:
+[..snip..]
+> diff --git a/arch/powerpc/Makefile b/arch/powerpc/Makefile
+> index 07d9dce7eda6..45b8eb4d8fe7 100644
+> --- a/arch/powerpc/Makefile
+> +++ b/arch/powerpc/Makefile
+> @@ -112,6 +112,9 @@ KBUILD_LDFLAGS	+= -m elf$(BITS)$(LDEMULATION)
+>  KBUILD_ARFLAGS	+= --target=elf$(BITS)-$(GNUTARGET)
+>  endif
+>  
+> +cflags-$(CONFIG_STACKPROTECTOR)	+= -mstack-protector-guard=tls
+> +cflags-$(CONFIG_STACKPROTECTOR)	+= -mstack-protector-guard-reg=r2
+> +
+>  LDFLAGS_vmlinux-y := -Bstatic
+>  LDFLAGS_vmlinux-$(CONFIG_RELOCATABLE) := -pie
+>  LDFLAGS_vmlinux	:= $(LDFLAGS_vmlinux-y)
+> @@ -404,6 +407,13 @@ archclean:
+>  
+>  archprepare: checkbin
+>  
+> +ifdef CONFIG_STACKPROTECTOR
+> +prepare: stack_protector_prepare
+> +
+> +stack_protector_prepare: prepare0
+> +	$(eval KBUILD_CFLAGS += -mstack-protector-guard-offset=$(shell awk '{if ($$2 == "TASK_CANARY") print $$3;}' include/generated/asm-offsets.h))
+> +endif
+> +
 
+This breaks when building out-of-tree kernel modules. GCC is not getting passed
+the -mstack-protector-guard-offset argument, so the default offset is used. The
+kernel then panics the first time a function with stack protector is called.
 
-The meaning of CC_HAS_STACKPROTECTOR_NONE is
-"the compiler recognizes -fno-stack-protector option"
-instead of "disable the stack protector".
+I'm seeing this on powerpc64. It looks like it was reported for powerpc on
+kernel bugzilla: https://bugzilla.kernel.org/show_bug.cgi?id=201891
 
+Linux 4.20 does not have a "prepare" target when KBUILD_EXTMOD is set. One is
+added by:
 
+  commit e07db28eea38ed4e332b3a89f3995c86b713cb5b
+  Author: Masahiro Yamada <yamada.masahiro@socionext.com>
+  Date:   Thu Nov 22 08:11:54 2018 +0900
 
+      kbuild: fix single target build for external module
 
-Now that STACKPROTECTOR is a boolean option,
-CONFIG_STACKPROTECTOR=3Dn means "disable the stack protector".
+However, after cherry-picking that patch, the build fails because it's missing
+prepare0. I applied the patch below and I successfully built an out-of-tree
+module with CONFIG_STACKPROTECTOR=y.
 
+diff --git a/Makefile b/Makefile
+index 826826553085..f0a93e1ba1b6 100644
+--- a/Makefile
++++ b/Makefile
+@@ -1596,9 +1596,10 @@ help:
+        @echo  ''
 
+ # Dummies...
+-PHONY += prepare scripts
+-prepare:
++PHONY += prepare prepare0 scripts
++prepare: prepare0
+        $(cmd_crmodverdir)
++prepare0: ;
+ scripts: ;
+ endif # KBUILD_EXTMOD
 
+The context has been changed some in later patches, but I think a change like
+this one should go into 5.0, and it e07db28eea38 should go into 4.20.y.
 
-> CC_HAS_STACKPROTECTOR_NONE and CC_STACKPROTECTOR_STRONG will be enabled a=
-t once,
-> as the following conditions:
->         1. gcc support -fno-stack-protector & -fstack-protector-strong
->         2. enabled CC_STACKPROTECTOR_STRONG & STACKPROTECTOR
-
-
-CC_STACKPROTECTOR_STRONG does not exist any more.
-
-STACKPROTECTOR_STRONG and STACKPROTECTOR exist.
-
-
-
-
->         3. disabled CC_HAS_STACKPROTECTOR_NONE
-
-This represents the compiler capability.
-
-Not a user-configurable option.
-
-
-
->
->
->
-
-
---=20
-Best Regards
-Masahiro Yamada
+Thanks,
+Samuel
