@@ -2,102 +2,91 @@ Return-Path: <SRS0=UXoZ=PU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 052DCC43387
-	for <linux-kernel@archiver.kernel.org>; Sat, 12 Jan 2019 07:55:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B7F9C43612
+	for <linux-kernel@archiver.kernel.org>; Sat, 12 Jan 2019 08:03:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C813020836
-	for <linux-kernel@archiver.kernel.org>; Sat, 12 Jan 2019 07:55:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E57FE21783
+	for <linux-kernel@archiver.kernel.org>; Sat, 12 Jan 2019 08:03:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1547280200;
+	bh=UlifJNrotj4J+PKLrPF4upR0Ci0gE96phiEoZ9mxKGE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=bs/91XB7hWElbYOqIzXgzVq5OLu4smhk2GxjwduefUGoAMAfCyc9dOo9Rg7S6MBSV
+	 ptvGPFZyK1TzOqflpBCbzXokdxzG0804arM8oN/oTudxXATqxnV1DNUCYMUlz1h8uK
+	 rKcLB8RRd0IkM3jitBawOOW4FzayWQcPNdLDCaxw=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725851AbfALHzq (ORCPT
+        id S1725861AbfALIDT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 12 Jan 2019 02:55:46 -0500
-Received: from szxga05-in.huawei.com ([45.249.212.191]:17135 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725372AbfALHzp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 12 Jan 2019 02:55:45 -0500
-Received: from DGGEMS401-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id A1232ACA499D25C5CAB1;
-        Sat, 12 Jan 2019 15:55:42 +0800 (CST)
-Received: from [127.0.0.1] (10.57.115.182) by DGGEMS401-HUB.china.huawei.com
- (10.3.19.201) with Microsoft SMTP Server id 14.3.408.0; Sat, 12 Jan 2019
- 15:55:32 +0800
-Subject: Re: [PATCH rdma-rc 1/3] RDMA/hns: Fix the Oops during rmmod or insmod
- ko when reset occurs
-To:     Jason Gunthorpe <jgg@ziepe.ca>
-References: <1547128663-69220-1-git-send-email-xavier.huwei@huawei.com>
- <1547128663-69220-2-git-send-email-xavier.huwei@huawei.com>
- <20190111213411.GA22310@ziepe.ca>
-CC:     <dledford@redhat.com>, <linux-rdma@vger.kernel.org>,
-        <lijun_nudt@163.com>, <oulijun@huawei.com>,
-        <liudongdong3@huawei.com>, <liuyixian@huawei.com>,
-        <zhangxiping3@huawei.com>, <linuxarm@huawei.com>,
-        <linux-kernel@vger.kernel.org>, <xavier_huwei@163.com>
-From:   "Wei Hu (Xavier)" <xavier.huwei@huawei.com>
-Message-ID: <5C399D73.5000902@huawei.com>
-Date:   Sat, 12 Jan 2019 15:55:31 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:38.0) Gecko/20100101
- Thunderbird/38.5.1
+        Sat, 12 Jan 2019 03:03:19 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36668 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725372AbfALIDS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 12 Jan 2019 03:03:18 -0500
+Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id B3BC4205F4;
+        Sat, 12 Jan 2019 08:03:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1547280198;
+        bh=UlifJNrotj4J+PKLrPF4upR0Ci0gE96phiEoZ9mxKGE=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=PLz9A8LmDLEDjLD0Vy4UYW/a98b+4m8iUdw3dRVsVB19uNAygpAuUhiqPNRpbvJyp
+         RzpeOHFOH1wHfpFdEoWnxNXIct0kz1AB/B1uibxjLCq9MGpBz+WVvUnDJv4hZxzi1q
+         i17TbZhSItL/9rhP45GimjCFoDjmjrWxoPeiTBqQ=
+Date:   Sat, 12 Jan 2019 09:03:15 +0100
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Nick Desaulniers <ndesaulniers@google.com>
+Cc:     LKML <linux-kernel@vger.kernel.org>, stable@vger.kernel.org,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Will Deacon <will.deacon@arm.com>
+Subject: Re: [PATCH 4.14 093/105] arm64: drop linker script hack to hide
+ __efistub_ symbols
+Message-ID: <20190112080315.GB17489@kroah.com>
+References: <20190111131102.899065735@linuxfoundation.org>
+ <20190111131110.701589602@linuxfoundation.org>
+ <CAKwvOdmnpH=pCT7J44kL7ka0sRkhKCYGKxV7g4Ubeu80R98RwA@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20190111213411.GA22310@ziepe.ca>
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.57.115.182]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAKwvOdmnpH=pCT7J44kL7ka0sRkhKCYGKxV7g4Ubeu80R98RwA@mail.gmail.com>
+User-Agent: Mutt/1.11.2 (2019-01-07)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Fri, Jan 11, 2019 at 10:02:57AM -0800, Nick Desaulniers wrote:
+> On Fri, Jan 11, 2019 at 6:34 AM Greg Kroah-Hartman
+> <gregkh@linuxfoundation.org> wrote:
+> >
+> > 4.14-stable review patch.  If anyone has any objections, please let me know.
+> >
+> > ------------------
+> >
+> > From: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+> >
+> > commit dd6846d774693bfa27d7db4dae5ea67dfe373fa1 upstream.
+> >
+> > Commit 1212f7a16af4 ("scripts/kallsyms: filter arm64's __efistub_
+> > symbols") updated the kallsyms code to filter out symbols with
+> > the __efistub_ prefix explicitly, so we no longer require the
+> > hack in our linker script to emit them as absolute symbols.
+> 
+> !!!
+> Sorry, I think we should pick 1212f7a16af4 ("scripts/kallsyms: filter
+> arm64's __efistub_ symbols") for 4.14 to go with this patch.
+> 
+> My usual gitfu to see the first tag that contained a commit `git
+> describe --contains "$tag" | sed 's/~.*//'` says next-20180319 which
+> isn't something I recognize or would have expected.  I see the changed
+> code in 4.19.y LTS but not 4.14.y LTS.
 
+Now added, thanks.
 
-On 2019/1/12 5:34, Jason Gunthorpe wrote:
-> On Thu, Jan 10, 2019 at 09:57:41PM +0800, Wei Hu (Xavier) wrote:
->> +	/* Check the status of the current software reset process, if in
->> +	 * software reset process, wait until software reset process finished,
->> +	 * in order to ensure that reset process and this function will not call
->> +	 * __hns_roce_hw_v2_uninit_instance at the same time.
->> +	 * If a timeout occurs, it indicates that the network subsystem has
->> +	 * encountered a serious error and cannot be recovered from the reset
->> +	 * processing.
->> +	 */
->> +	if (ops->ae_dev_resetting(handle)) {
->> +		dev_warn(dev, "Device is busy in resetting state. waiting.\n");
->> +		end = msecs_to_jiffies(HNS_ROCE_V2_RST_PRC_MAX_TIME) + jiffies;
->> +		while (ops->ae_dev_resetting(handle) &&
->> +		       time_before(jiffies, end))
->> +			msleep(20);
-> Really? Does this have to be so ugly? Why isn't there just a simple
-> lock someplace that is held during reset?
->
-> I'm skeptical that all this strange looking stuff is properly locked
-> and concurrency safe.
-Hi, Jason
-
-The hns3 NIC driver notifies the hns RoCE driver to perform
-reset related processing by calling the .reset_notify() interface
-registered by the RoCE driver.
-
-There is a constraint on the hip08 chip, the NIC driver needs to
-stop the flow before hardware startup reset, otherwise the chip
-may hang up.
-
-We've also thought about using locks, but found using locks can
-lead to more serious problems because of that restriction of the
-chip.
-If using locks here, reset processing may wait for uninstallation
-to complete, this may lead that NIC driver fails to stop the flow
-in time in the reset process, thus causing the chip to hang up.
-
-Regards
-Xavier
-> Also, this series seems a bit big for -rc
->
-> Jason
->
-> .
->
-
-
+greg k-h
