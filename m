@@ -2,94 +2,86 @@ Return-Path: <SRS0=UXoZ=PU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,UNPARSEABLE_RELAY autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5BC17C43387
-	for <linux-kernel@archiver.kernel.org>; Sat, 12 Jan 2019 02:06:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9BEADC43387
+	for <linux-kernel@archiver.kernel.org>; Sat, 12 Jan 2019 02:07:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 22CED2084E
-	for <linux-kernel@archiver.kernel.org>; Sat, 12 Jan 2019 02:06:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 693C12084E
+	for <linux-kernel@archiver.kernel.org>; Sat, 12 Jan 2019 02:07:27 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="oiVF2fHO"
+	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="BX15Vu/e"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726498AbfALCGY (ORCPT
+        id S1726536AbfALCH0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 11 Jan 2019 21:06:24 -0500
-Received: from userp2120.oracle.com ([156.151.31.85]:35156 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726276AbfALCGY (ORCPT
+        Fri, 11 Jan 2019 21:07:26 -0500
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:33249 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726276AbfALCH0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Jan 2019 21:06:24 -0500
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id x0C2618E084971;
-        Sat, 12 Jan 2019 02:06:01 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=to : cc : subject :
- from : references : date : in-reply-to : message-id : mime-version :
- content-type; s=corp-2018-07-02;
- bh=i4emJfhY5esxDaGrfFa5KlZPJkM1H2p4Zwd6svnMOvQ=;
- b=oiVF2fHO2dy72cx61LYNGORo6DpoKru09sk2LDy35tNYy783Ocg2hj++s3IUiJzhe523
- b8zvDm1sziVqWNZZvRa1dJZB0heutSHF/ckgZqkuRmf1EpLnylvc9oNKDaWTUGZrdsUD
- VvyPAUhKMpwTfzHLBWFi6YDd9tUcrwPUDh5IMvPcxAFBLt0AcUfYxG5oeAekSf9nifGS
- WO7yaJRTGgc3QZMapLEmHHM93WG0LGghZ9mw/W4BUacZ/zb2Tkr0yWkUMG1+BKUxBP3w
- /ytHbNffzhWDS9X2xdK4BdsdkrY1lsbmvrzhJ6XffXyyx4HxDocWp6Xq1rCeiREgBfIh Wg== 
-Received: from userv0021.oracle.com (userv0021.oracle.com [156.151.31.71])
-        by userp2120.oracle.com with ESMTP id 2ptn7rfjc1-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Sat, 12 Jan 2019 02:06:01 +0000
-Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
-        by userv0021.oracle.com (8.14.4/8.14.4) with ESMTP id x0C260dm009831
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Sat, 12 Jan 2019 02:06:00 GMT
-Received: from abhmp0008.oracle.com (abhmp0008.oracle.com [141.146.116.14])
-        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x0C25xwk018010;
-        Sat, 12 Jan 2019 02:05:59 GMT
-Received: from ca-mkp.ca.oracle.com (/10.159.214.123)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Fri, 11 Jan 2019 18:05:59 -0800
-To:     Nilesh Javali <njavali@marvell.com>
-Cc:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        "Dept-Eng QLogic Storage Upstream" 
-        <QLogic-Storage-Upstream@cavium.com>,
-        "James E.J. Bottomley" <jejb@linux.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        "linux-scsi\@vger.kernel.org" <linux-scsi@vger.kernel.org>,
-        "linux-kernel\@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 36/41] scsi: qla4xxx: ql4_os: mark expected switch fall-through
-From:   "Martin K. Petersen" <martin.petersen@oracle.com>
-Organization: Oracle Corporation
-References: <cover.1543374820.git.gustavo@embeddedor.com>
-        <a118ae0eeeb3cdcd4846bc1031ea89ca62af1e00.1543374820.git.gustavo@embeddedor.com>
-        <D8469DE5.5427A%njavali@marvell.com>
-Date:   Fri, 11 Jan 2019 21:05:56 -0500
-In-Reply-To: <D8469DE5.5427A%njavali@marvell.com> (Nilesh Javali's message of
-        "Mon, 24 Dec 2018 09:01:26 +0000")
-Message-ID: <yq1tviey6ij.fsf@oracle.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
+        Fri, 11 Jan 2019 21:07:26 -0500
+Received: by mail-pf1-f195.google.com with SMTP id c123so7786888pfb.0
+        for <linux-kernel@vger.kernel.org>; Fri, 11 Jan 2019 18:07:25 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=sifive.com; s=google;
+        h=from:date:to:cc:subject:in-reply-to:message-id:references
+         :user-agent:mime-version;
+        bh=WUYxqEBLAWdKwx9jSHSlJcfQJizx3bVbCo6NWuPJtIc=;
+        b=BX15Vu/eL431OimxTdscWvbRzBpeUyRidoSWXdjfntlf89/WhYjH5ASZSqYKC6MsoO
+         whWD8pdAZdEM/SHpb1QgWGOV3FvqGs1XvE3c2h/vIWMDw8hGKoD6kpSSkvkY8xYk4lkf
+         KXXVl5d/k1g+T5akL5YplWSmDXavJ/c+6hD2xC32KoBUxWCFH2HUpuZQXu5N4u+EkzhQ
+         8ukxuqvQOjE4apEYbb7gwrTp5MJ50xGmB/ZBtAsfqg3knUORz49mvH9M5f6CEcOeGYMd
+         eczQ3gXN1UazJs7IU6aMDNh0Acmout+hd2iqBZjwvRTSRAzETIBUwIbxknkil9LKbTfG
+         gAyg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:date:to:cc:subject:in-reply-to:message-id
+         :references:user-agent:mime-version;
+        bh=WUYxqEBLAWdKwx9jSHSlJcfQJizx3bVbCo6NWuPJtIc=;
+        b=iRnzQP3/pD388iPfdV9NHFBs5ag/ysu8tjJNqXUuf3RmzJO8Z+g3oN6PTNr3Hx1zOg
+         niVq4fESRKllRwS4qSVhHauB/PPYgHESoW3iBJ9GDjMa7rZJmRh3j790ONF3e87pn7WX
+         eX4NmfRvZN4uklO5T7fQho8NzkzcEDkrkaF0PujG4fg8p+ttivCro+3K6atWaM8qNaL3
+         4+ub/cGcNSCFpuRQ2WY7i2uyflkoiby1kazluUOA1IVDTwrM9j6bAELAvyhNblakiXkX
+         oPyO2V2CZPd0xYFlO2NbXYB0h9JBYqgnj09Ho34kibg/fDPX+AZZhj9Uj3/syoqlQ3U+
+         ewQQ==
+X-Gm-Message-State: AJcUukexCND4C2eIq5inooh660vFw5kGFsxseRmNdSIzUg6JAS64y3g5
+        hFQxF2TWv6F+XmGc8LHoBovmJQ==
+X-Google-Smtp-Source: ALg8bN66h1ixfV8Ud5dcJ3dL884rN/RW0/4Dp5V7rGFYFFDbTjSzDDXn/LUVcSK/miT8nagJ8kd9ow==
+X-Received: by 2002:a63:66c6:: with SMTP id a189mr15494643pgc.167.1547258845208;
+        Fri, 11 Jan 2019 18:07:25 -0800 (PST)
+Received: from localhost ([12.206.222.5])
+        by smtp.gmail.com with ESMTPSA id c13sm160617376pfe.93.2019.01.11.18.07.24
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 11 Jan 2019 18:07:24 -0800 (PST)
+From:   Paul Walmsley <paul.walmsley@sifive.com>
+X-Google-Original-From: Paul Walmsley <paulw@sifive.com>
+Date:   Fri, 11 Jan 2019 18:07:23 -0800 (PST)
+To:     Alistair Francis <Alistair.Francis@wdc.com>
+cc:     "palmer@sifive.com" <palmer@sifive.com>,
+        "linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v4] RISC-V: defconfig: Enable Generic PCIE by default
+In-Reply-To: <20190112004117.28265-1-alistair.francis@wdc.com>
+Message-ID: <alpine.DEB.2.21.9999.1901111806590.3094@viisi.sifive.com>
+References: <20190112004117.28265-1-alistair.francis@wdc.com>
+User-Agent: Alpine 2.21.9999 (DEB 301 2018-08-15)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9133 signatures=668680
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=537
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1810050000 definitions=main-1901120014
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Sat, 12 Jan 2019, Alistair Francis wrote:
 
-Nilesh,
+> Enable generic PCIe by default in the RISC-V defconfig, this allows us
+> to use QEMU's PCIe support out of the box.
+> 
+> Signed-off-by: Alistair Francis <alistair.francis@wdc.com>
 
->>In preparation to enabling -Wimplicit-fallthrough, mark switch cases
->>where we are expecting to fall through.
->>
->>Notice that, in this particular case, I replaced "allow fall-through"
->>with a "fall through" annotation, which is what GCC is expecting to
->>find.
+Reviewed-by: Paul Walmsley <paul.walmsley@sifive.com>
 
-Applied to 5.1/scsi-queue. Thanks, Gustavo.
 
--- 
-Martin K. Petersen	Oracle Linux Engineering
+- Paul
