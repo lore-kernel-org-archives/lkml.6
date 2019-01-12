@@ -7,39 +7,39 @@ X-Spam-Status: No, score=-13.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 96A62C43387
-	for <linux-kernel@archiver.kernel.org>; Sat, 12 Jan 2019 05:19:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 69924C43387
+	for <linux-kernel@archiver.kernel.org>; Sat, 12 Jan 2019 05:26:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4CC7A20870
-	for <linux-kernel@archiver.kernel.org>; Sat, 12 Jan 2019 05:19:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3231920870
+	for <linux-kernel@archiver.kernel.org>; Sat, 12 Jan 2019 05:26:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547270360;
-	bh=MKpaPG2DHnH/vKTKpeMZbgMSRX0/ZtsiRiaPmzj/2AY=;
+	s=default; t=1547270812;
+	bh=2Q66eYeImLrPy5L7hPfPOW9Wo2sUYqNRiLld3K786cs=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=szH0QkAh80bqVbWqWLcfcswcIm9v5bga/0K3Cr5Db0m1i6brxLc9n6aFvx+Pxe0CD
-	 JSKFFTcOXVQFz4n5KZZfMtGmmeimx6UQTURAtI/XdJxeP/HJfDPB2ktj/YlvdPa6u5
-	 9/GAJV3FomlcJyghUH8zPm55T0RggOPtAJOYIql8=
+	b=LfecR369MrE8yEyYLVYZc/h+XUPXiHgOpjm2Mgdyi9cdbTdLZvlYwn+r6UI3EjAOK
+	 ycaV3rQDTkd2SjqJpOMYi27rZB7HvwHi5GAinpMmd4c45j+DkqccUM5USEbgOlNofr
+	 eV+8uZt+hEajtxO/yP0oUbU4mwtpIZ/aWRpzIin0=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725845AbfALFTT (ORCPT
+        id S1725841AbfALF0u (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 12 Jan 2019 00:19:19 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59352 "EHLO mail.kernel.org"
+        Sat, 12 Jan 2019 00:26:50 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60946 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725791AbfALFTS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 12 Jan 2019 00:19:18 -0500
+        id S1725372AbfALF0t (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 12 Jan 2019 00:26:49 -0500
 Received: from sol.localdomain (c-24-23-143-129.hsd1.ca.comcast.net [24.23.143.129])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9E21A2084E;
-        Sat, 12 Jan 2019 05:19:16 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7EC742084E;
+        Sat, 12 Jan 2019 05:26:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547270357;
-        bh=MKpaPG2DHnH/vKTKpeMZbgMSRX0/ZtsiRiaPmzj/2AY=;
+        s=default; t=1547270808;
+        bh=2Q66eYeImLrPy5L7hPfPOW9Wo2sUYqNRiLld3K786cs=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=NpvOHMJ+NG++wuQov3MHQYs0bVkbOOmLm4ATKk+MI030cq5FU5w0hi4hhurWM0ZaD
-         c1GrK+FO8IcKr8bcH/JfKVhlsCGfwWxhLEXBNNX/NokdNOJ++xuGBg1ufkAw9PR9HO
-         ZEJjpAIWRbPu/8JanAUTL39nZBdINGcvHRQSgr00=
-Date:   Fri, 11 Jan 2019 21:19:15 -0800
+        b=sLG53a2OJXWaptFMNZG/5us+oR2pxJUD3XYr7Bc63irnhF+j7nxgj8USm0A4OQVYD
+         tlMUZV9RCtjVVXcy5Se4seLvo6D70tCXJVqIshOHuJYFiOmYMBefA7uDOB3MmHBp5b
+         bjw+aZ2SkUqGF7BoPH2N6/8ygVqSmFSHlvffEoLw=
+Date:   Fri, 11 Jan 2019 21:26:46 -0800
 From:   Eric Biggers <ebiggers@kernel.org>
 To:     Stephan =?iso-8859-1?Q?M=FCller?= <smueller@chronox.de>
 Cc:     Herbert Xu <herbert@gondor.apana.org.au>,
@@ -58,230 +58,130 @@ Cc:     Herbert Xu <herbert@gondor.apana.org.au>,
         Randy Dunlap <rdunlap@infradead.org>,
         Jann Horn <jannh@google.com>,
         Andy Lutomirski <luto@kernel.org>, linux-crypto@vger.kernel.org
-Subject: Re: [PATCH 5/6] crypto: hkdf - add known answer tests
-Message-ID: <20190112051914.GB639@sol.localdomain>
+Subject: Re: [PATCH 3/6] crypto: kdf - add known answer tests
+Message-ID: <20190112052645.GC639@sol.localdomain>
 References: <20190103143227.9138-1-jlee@suse.com>
  <20190109082103.GA8586@sol.localdomain>
  <9733066.Vrs4h5eWcW@positron.chronox.de>
- <9857029.1Sm7LFDBlJ@positron.chronox.de>
+ <8456866.1rT4qWozqf@positron.chronox.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <9857029.1Sm7LFDBlJ@positron.chronox.de>
+In-Reply-To: <8456866.1rT4qWozqf@positron.chronox.de>
 User-Agent: Mutt/1.11.2 (2019-01-07)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jan 11, 2019 at 08:10:56PM +0100, Stephan Müller wrote:
-> Add known answer tests to the testmgr for the HKDF (RFC5869) cipher.
-> 
-> The known answer tests are derived from RFC 5869 appendix A.
-> 
-> Note, the HKDF is considered to be a FIPS 140-2 allowed (not approved)
-> cipher as of now. Yet, an allowed cipher is usable under FIPS 140-2
-> rules.
+On Fri, Jan 11, 2019 at 08:10:22PM +0100, Stephan Müller wrote:
+> Add known answer tests to the testmgr for the KDF (SP800-108) cipher.
 > 
 > Signed-off-by: Stephan Mueller <smueller@chronox.de>
 > ---
->  crypto/testmgr.c |  32 +++++++++++++
->  crypto/testmgr.h | 115 +++++++++++++++++++++++++++++++++++++++++++++++
->  2 files changed, 147 insertions(+)
+>  crypto/testmgr.c | 226 +++++++++++++++++++++++++++++++++++++++++++++++
+>  crypto/testmgr.h | 110 +++++++++++++++++++++++
+>  2 files changed, 336 insertions(+)
 > 
 > diff --git a/crypto/testmgr.c b/crypto/testmgr.c
-> index ff9051bffa1f..aba7a3645293 100644
+> index 0f684a414acb..ff9051bffa1f 100644
 > --- a/crypto/testmgr.c
 > +++ b/crypto/testmgr.c
-> @@ -3187,6 +3187,38 @@ static const struct alg_test_desc alg_test_descs[] = {
->  		.suite = {
->  			.hash = __VECS(ghash_tv_template)
->  		}
-> +	}, {
-> +		.alg = "hkdf(hmac(sha1))",
-> +		.test = alg_test_kdf,
-> +		.fips_allowed = 1,
-> +		.suite = {
-> +			.kdf = {
-> +				.vecs = hkdf_hmac_sha1_tv_template,
-> +				.count = ARRAY_SIZE(hkdf_hmac_sha1_tv_template)
-
-Use the __VECS() macro.
-
-> +			}
-> +		}
-> +	}, {
-> +		.alg = "hkdf(hmac(sha224))",
-> +		.test = alg_test_null,
-> +		.fips_allowed = 1,
-
-I think it is dumb to add algorithms to the testmgr with no tests just so the
-'fips_allowed' flag can be set.  And doesn't FIPS sometimes require tests
-anyway?  I don't think the "null test" should count as a test :-)
-
-Perhaps just include sha256 and sha512, and have tests for them?
-
-> +	}, {
-> +		.alg = "hkdf(hmac(sha256))",
-> +		.test = alg_test_kdf,
-> +		.fips_allowed = 1,
-> +		.suite = {
-> +			.kdf = {
-> +				.vecs = hkdf_hmac_sha256_tv_template,
-> +				.count = ARRAY_SIZE(hkdf_hmac_sha256_tv_template)
-> +			}
-> +		}
-> +	}, {
-> +		.alg = "hkdf(hmac(sha384))",
-> +		.test = alg_test_null,
-> +		.fips_allowed = 1,
-> +	}, {
-> +		.alg = "hkdf(hmac(sha512))",
-> +		.test = alg_test_null,
-> +		.fips_allowed = 1,
->  	}, {
->  		.alg = "hmac(md5)",
->  		.test = alg_test_hash,
-> diff --git a/crypto/testmgr.h b/crypto/testmgr.h
-> index a729b66f8757..7c4aa694e0f3 100644
-> --- a/crypto/testmgr.h
-> +++ b/crypto/testmgr.h
-> @@ -28002,6 +28002,121 @@ static struct kdf_testvec kdf_dpi_hmac_sha256_tv_template[] = {
->  	}
+> @@ -110,6 +110,11 @@ struct drbg_test_suite {
+>  	unsigned int count;
 >  };
 >  
-> +/* Test vectors from RFC 5869 appendix A */
-> +static struct kdf_testvec hkdf_hmac_sha256_tv_template[] = {
+> +struct kdf_test_suite {
+> +	struct kdf_testvec *vecs;
+> +	unsigned int count;
+> +};
+> +
+>  struct akcipher_test_suite {
+>  	const struct akcipher_testvec *vecs;
+>  	unsigned int count;
+> @@ -133,6 +138,7 @@ struct alg_test_desc {
+>  		struct hash_test_suite hash;
+>  		struct cprng_test_suite cprng;
+>  		struct drbg_test_suite drbg;
+> +		struct kdf_test_suite kdf;
+>  		struct akcipher_test_suite akcipher;
+>  		struct kpp_test_suite kpp;
+>  	} suite;
+> @@ -2020,6 +2026,64 @@ static int drbg_cavs_test(const struct drbg_testvec *test, int pr,
+>  	return ret;
+>  }
+>  
+> +static int kdf_cavs_test(struct kdf_testvec *test,
+> +			 const char *driver, u32 type, u32 mask)
+
+Why not just "kdf_test()"?
+
+> +{
+> +	int ret = -EAGAIN;
+> +	struct crypto_rng *drng;
+> +	unsigned char *buf = kzalloc(test->expectedlen, GFP_KERNEL);
+
+s/unsigned char/u8
+
+> +
+> +	if (!buf)
+> +		return -ENOMEM;
+> +
+> +	drng = crypto_alloc_rng(driver, type | CRYPTO_ALG_INTERNAL, mask);
+> +	if (IS_ERR(drng)) {
+> +		printk(KERN_ERR "alg: kdf: could not allocate cipher handle "
+> +		       "for %s\n", driver);
+
+pr_err
+
+> +		kzfree(buf);
+
+kfree is fine here.
+
+> +		return -ENOMEM;
+> +	}
+> +
+> +	ret = crypto_rng_reset(drng, test->K1, test->K1len);
+> +	if (ret) {
+> +		printk(KERN_ERR "alg: kdf: could not set key derivation key\n");
+
+pr_err
+
+> +		goto err;
+> +	}
+> +
+> +	ret = crypto_rng_generate(drng, test->context, test->contextlen,
+> +				  buf, test->expectedlen);
+> +	if (ret) {
+> +		printk(KERN_ERR "alg: kdf: could not obtain key data\n");
+
+pr_err
+
+> +		goto err;
+> +	}
+> +
+> +	ret = memcmp(test->expected, buf, test->expectedlen);
+
+Elsewhere this function returns an -errno value but this is different.
+
+> +
+> +err:
+> +	crypto_free_rng(drng);
+> +	kzfree(buf);
+
+kfree would be fine here too.
+
+> +	return ret;
+> +}
+> +
+> +static int alg_test_kdf(const struct alg_test_desc *desc, const char *driver,
+> +			u32 type, u32 mask)
+> +{
+> +	int err = 0;
+> +	unsigned int i = 0;
+> +	struct kdf_testvec *template = desc->suite.kdf.vecs;
 
 const
 
-Likewise for all other kdf_testvecs.
-
-> +	{
-> +		.K1 = (unsigned char *)
-
-No need for this cast if you make the pointers const in struct kdf_testvec.
-
-Likewise for all other testvecs.
-
-> +#ifdef __LITTLE_ENDIAN
-> +			"\x08\x00"			/* rta length */
-> +			"\x01\x00"			/* rta type */
-> +			"\x0d\x00\x00\x00"		/* salt length */
-> +#else
-> +			"\x00\x08"			/* rta length */
-> +			"\x00\x01"			/* rta type */
-> +			"\x00\x00\x00\x0d"		/* salt length */
-> +#endif
-> +			"\x00\x01\x02\x03\x04\x05\x06\x07"
-> +			"\x08\x09\x0a\x0b\x0c"		/* salt */
-> +			"\x0b\x0b\x0b\x0b\x0b\x0b\x0b\x0b"
-> +			"\x0b\x0b\x0b\x0b\x0b\x0b\x0b\x0b"
-> +			"\x0b\x0b\x0b\x0b\x0b\x0b",	/* IKM */
-> +		.K1len = 43,
-> +		.context = (unsigned char *)
-> +			"\xf0\xf1\xf2\xf3\xf4\xf5\xf6\xf7"
-> +			"\xf8\xf9",
-> +		.contextlen = 10,
-> +		.expected = (unsigned char *)
-> +			"\x3c\xb2\x5f\x25\xfa\xac\xd5\x7a"
-> +			"\x90\x43\x4f\x64\xd0\x36\x2f\x2a"
-> +			"\x2d\x2d\x0a\x90\xcf\x1a\x5a\x4c"
-> +			"\x5d\xb0\x2d\x56\xec\xc4\xc5\xbf"
-> +			"\x34\x00\x72\x08\xd5\xb8\x87\x18"
-> +			"\x58\x65",
-> +		.expectedlen = 42
-> +	}, {
-> +		.K1 = (unsigned char *)
-> +#ifdef __LITTLE_ENDIAN
-> +			"\x08\x00"			/* rta length */
-> +			"\x01\x00"			/* rta type */
-> +#else
-> +			"\x00\x08"			/* rta length */
-> +			"\x00\x01"			/* rta type */
-> +#endif
-> +			"\x00\x00\x00\x00"		/* salt length */
-> +			"\x0b\x0b\x0b\x0b\x0b\x0b\x0b\x0b"
-> +			"\x0b\x0b\x0b\x0b\x0b\x0b\x0b\x0b"
-> +			"\x0b\x0b\x0b\x0b\x0b\x0b",	/* IKM */
-> +		.K1len = 30,
-> +		.context = NULL,
-> +		.contextlen = 0,
-> +		.expected = (unsigned char *)
-> +			"\x8d\xa4\xe7\x75\xa5\x63\xc1\x8f"
-> +			"\x71\x5f\x80\x2a\x06\x3c\x5a\x31"
-> +			"\xb8\xa1\x1f\x5c\x5e\xe1\x87\x9e"
-> +			"\xc3\x45\x4e\x5f\x3c\x73\x8d\x2d"
-> +			"\x9d\x20\x13\x95\xfa\xa4\xb6\x1a"
-> +			"\x96\xc8",
-> +		.expectedlen = 42
-> +	}
-> +};
-> +
-> +/* Test vectors from RFC 5869 appendix A */
-> +static struct kdf_testvec hkdf_hmac_sha1_tv_template[] = {
-> +	{
-> +		.K1 = (unsigned char *)
-> +#ifdef __LITTLE_ENDIAN
-> +			"\x08\x00"			/* rta length */
-> +			"\x01\x00"			/* rta type */
-> +			"\x0d\x00\x00\x00"		/* salt length */
-> +#else
-> +			"\x00\x08"			/* rta length */
-> +			"\x00\x01"			/* rta type */
-> +			"\x00\x00\x00\x0d"		/* salt length */
-> +#endif
-> +			"\x00\x01\x02\x03\x04\x05\x06\x07"
-> +			"\x08\x09\x0a\x0b\x0c"		/* salt */
-> +			"\x0b\x0b\x0b\x0b\x0b\x0b\x0b\x0b"
-> +			"\x0b\x0b\x0b",			/* IKM */
-> +		.K1len = 32,
-> +		.context = (unsigned char *)
-> +			"\xf0\xf1\xf2\xf3\xf4\xf5\xf6\xf7"
-> +			"\xf8\xf9",
-> +		.contextlen = 10,
-> +		.expected = (unsigned char *)
-> +			"\x08\x5a\x01\xea\x1b\x10\xf3\x69"
-> +			"\x33\x06\x8b\x56\xef\xa5\xad\x81"
-> +			"\xa4\xf1\x4b\x82\x2f\x5b\x09\x15"
-> +			"\x68\xa9\xcd\xd4\xf1\x55\xfd\xa2"
-> +			"\xc2\x2e\x42\x24\x78\xd3\x05\xf3"
-> +			"\xf8\x96",
-> +		.expectedlen = 42
-> +	}, {
-> +		.K1 = (unsigned char *)
-> +#ifdef __LITTLE_ENDIAN
-> +			"\x08\x00"			/* rta length */
-> +			"\x01\x00"			/* rta type */
-> +#else
-> +			"\x00\x08"			/* rta length */
-> +			"\x00\x01"			/* rta type */
-> +#endif
-> +			"\x00\x00\x00\x00"		/* salt length */
-> +			"\x0b\x0b\x0b\x0b\x0b\x0b\x0b\x0b"
-> +			"\x0b\x0b\x0b\x0b\x0b\x0b\x0b\x0b"
-> +			"\x0b\x0b\x0b\x0b\x0b\x0b",	/* IKM */
-> +		.K1len = 30,
-> +		.context = NULL,
-> +		.contextlen = 0,
-> +		.expected = (unsigned char *)
-> +			"\x0a\xc1\xaf\x70\x02\xb3\xd7\x61"
-> +			"\xd1\xe5\x52\x98\xda\x9d\x05\x06"
-> +			"\xb9\xae\x52\x05\x72\x20\xa3\x06"
-> +			"\xe0\x7b\x6b\x87\xe8\xdf\x21\xd0"
-> +			"\xea\x00\x03\x3d\xe0\x39\x84\xd3"
-> +			"\x49\x18",
-> +		.expectedlen = 42
-> +	}
-> +};
-> +
->  /* Cast5 test vectors from RFC 2144 */
->  static const struct cipher_testvec cast5_tv_template[] = {
->  	{
-> -- 
-> 2.20.1
-> 
-> 
-> 
-> 
+- Eric
