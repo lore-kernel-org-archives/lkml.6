@@ -2,116 +2,188 @@ Return-Path: <SRS0=UXoZ=PU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=0.1 required=3.0 tests=DKIM_ADSP_ALL,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 635A1C43612
-	for <linux-kernel@archiver.kernel.org>; Sat, 12 Jan 2019 09:52:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 42E65C43387
+	for <linux-kernel@archiver.kernel.org>; Sat, 12 Jan 2019 09:55:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3E2D12177B
-	for <linux-kernel@archiver.kernel.org>; Sat, 12 Jan 2019 09:52:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 061C52184C
+	for <linux-kernel@archiver.kernel.org>; Sat, 12 Jan 2019 09:55:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725885AbfALJwV convert rfc822-to-8bit (ORCPT
+        id S1725961AbfALJzg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 12 Jan 2019 04:52:21 -0500
-Received: from sender-of-o53.zoho.com ([135.84.80.218]:21784 "EHLO
-        sender-of-o53.zoho.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725816AbfALJwU (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 12 Jan 2019 04:52:20 -0500
-ARC-Seal: i=1; a=rsa-sha256; t=1547286727; cv=none; 
-        d=zoho.com; s=zohoarc; 
-        b=UZRrDciQxH1j9OMNebZGsu0Qhw68cz7e9+x2qdd7GE8PvAEvo/P4sQfo4AU/qYLLYkF0IgOQuTKMNQoC/3GY9IU8FE8dtEfiq5CMIvPdOQ+GK18FzpTDZ8PBkrbLDH32dmbF96N6/GZSK9XrqwCbHp9TfqiBVTBQzXZ7a4I4BBU=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zoho.com; s=zohoarc; 
-        t=1547286727; h=Content-Type:Content-Transfer-Encoding:Cc:Date:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:To:ARC-Authentication-Results; 
-        bh=ARNOOvFj2diIzxlLWeNivkt/4FkJtP4zGRx+1Pey9bk=; 
-        b=AUAQGDv4fA8C2rhF+gII4U9JaKYwfYpP1kIBy6J6AwLvxRh/Ex1NT0o1jSKV2SGnZ3D6vcrjwLuoatkxkOiwVJDuyiogKnUNE9+bbnPG8TK7n34hBmGUvX9BV53Ghq1kpSm9Fhmgo75GqozuPSsxwGcRyV0QgaxZmW4ymaqqYgM=
-ARC-Authentication-Results: i=1; mx.zoho.com;
-        dkim=pass  header.i=mniewoehner.de;
-        spf=pass  smtp.mailfrom=linux@mniewoehner.de;
-        dmarc=pass header.from=<linux@mniewoehner.de> header.from=<linux@mniewoehner.de>
-Received: from z3r0 (31.187.91.78 [31.187.91.78]) by mx.zohomail.com
-        with SMTPS id 1547286726002108.85719570779668; Sat, 12 Jan 2019 01:52:06 -0800 (PST)
-Message-ID: <1ee67fe6cd7cc556a28e97529febf52ab0247ab4.camel@mniewoehner.de>
-Subject: Re: [BUG] Nuvoton NCPT650 TPM 2.0 mode not working
-From:   Michael =?ISO-8859-1?Q?Niew=F6hner?= <linux@mniewoehner.de>
-To:     Mimi Zohar <zohar@linux.ibm.com>
-Cc:     jarkko.sakkinen@linux.intel.com, linux-integrity@vger.kernel.org,
-        linux-kernel <linux-kernel@vger.kernel.org>
-In-Reply-To: <1547221227.19931.453.camel@linux.ibm.com>
-References: <776f384a81466642472beb4a34b10f26f1de88e9.camel@mniewoehner.de>
-         <1541960689.3190.4.camel@HansenPartnership.com>
-         <e8eb56fdab618770917fbe5b174328dc1240f934.camel@mniewoehner.de>
-         <1547221227.19931.453.camel@linux.ibm.com>
-Content-Type: text/plain; charset="UTF-8"
-Date:   Sat, 12 Jan 2019 10:52:02 +0100
-Mime-Version: 1.0
-User-Agent: Evolution 3.30.3 
-Content-Transfer-Encoding: 8BIT
-X-ZohoMailClient: External
+        Sat, 12 Jan 2019 04:55:36 -0500
+Received: from pegase1.c-s.fr ([93.17.236.30]:9575 "EHLO pegase1.c-s.fr"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725816AbfALJzf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 12 Jan 2019 04:55:35 -0500
+Received: from localhost (mailhub1-int [192.168.12.234])
+        by localhost (Postfix) with ESMTP id 43cFTt5B0Hz9vCJ9;
+        Sat, 12 Jan 2019 10:55:30 +0100 (CET)
+X-Virus-Scanned: Debian amavisd-new at c-s.fr
+Received: from pegase1.c-s.fr ([192.168.12.234])
+        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
+        with ESMTP id PcVw2wPtocs5; Sat, 12 Jan 2019 10:55:30 +0100 (CET)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+        by pegase1.c-s.fr (Postfix) with ESMTP id 43cFTt48lmz9vCJ7;
+        Sat, 12 Jan 2019 10:55:30 +0100 (CET)
+Received: from localhost (localhost [127.0.0.1])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 6DEDB8B77F;
+        Sat, 12 Jan 2019 10:55:33 +0100 (CET)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+        with ESMTP id nWBqRFaQ9eAB; Sat, 12 Jan 2019 10:55:33 +0100 (CET)
+Received: from po16846vm.idsi0.si.c-s.fr (unknown [192.168.4.90])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 1CC858B74C;
+        Sat, 12 Jan 2019 10:55:33 +0100 (CET)
+Received: by po16846vm.idsi0.si.c-s.fr (Postfix, from userid 0)
+        id C84C37183D; Sat, 12 Jan 2019 09:55:32 +0000 (UTC)
+Message-Id: <cover.1547195976.git.christophe.leroy@c-s.fr>
+From:   Christophe Leroy <christophe.leroy@c-s.fr>
+Subject: [PATCH v13 00/10] powerpc: Switch to CONFIG_THREAD_INFO_IN_TASK
+To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Mike Rapoport <rppt@linux.ibm.com>
+Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
+Date:   Sat, 12 Jan 2019 09:55:32 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Mimi,
+The purpose of this serie is to activate CONFIG_THREAD_INFO_IN_TASK which
+moves the thread_info into task_struct.
 
-On Fri, 2019-01-11 at 10:40 -0500, Mimi Zohar wrote:
-> Hi Michael,
-> 
-> On Sun, 2018-11-11 at 19:50 +0100, Michael Niewöhner wrote:
-> 
-> > Well, there are at least two implementations I know of:
-> > For my Lenovo X260 I can choose between Infineon TPM 1.2 or Intel PTT TPM
-> > 2.0
-> > This here is my ThinkStation P320 which can choose between PTT 1.2, PTT 2.0,
-> > Nuvoton 1.2 and 2.0. When switchting between 1.2 and 2.0 the Nuvoton gets
-> > reflashed with the appropriate firmware.
-> 
-> With IBM's LTC help, we finally found a Lenovo with the Nuvoton
-> NCPT650.  It's a System x3550 M5[1], not a ThinkStation P320, running
-> Fedora (vmlinuz-4.16.14-300.fc28.x86_64). I replaced the 4.16 kernel
-> with the latest stable 4.19.y kernel.  Both the TPM and IMA seem to be
-> working properly.  Not sure if this helps...
-> 
-> From dmesg:
-> # dmesg | grep -i tpm 
-> [    0.000000] Linux version 4.19.14 (mimi@x86tpm2Server.rtp.stglabs.i
-> bm.com) (gcc version 8.1.1 20180502 (Red Hat 8.1.1-1) (GCC)) #6 SMP
-> Thu Jan 10 22:32:54 EST 2019
-> [    0.000000] efi:  ACPI=0x7b786000  ACPI 2.0=0x7b786014 
-> SMBIOS=0x793fe000  TPMEventLog=0x426fa018 
-> [    0.014413] ACPI: SSDT 0x000000007B784000 0003A7 (v02 INTEL 
-> Tpm2Tabl 00001000 INTL 20130328)
-> [    0.014416] ACPI: TPM2 0x000000007B783000 000034 (v03 INTEL  EDK2  
->   00000002 INTL 01000013)
-> [    2.667052] tpm_tis MSFT0101:00: 2.0 TPM (device-id 0xFE, rev-id 2
-> 
-> # cat /sys/kernel/security/ima/ascii_runtime_measurements | head -2
-> 10 5425744ce804c8cae89a08d53b41ab20ff1b3ea6 ima-sig
-> sha1:7996f7339c3ce64e63f1232ef1aa6033247af784 boot_aggregate
-> 
-> I installed the ibmtpm2tss[2], built (eg. autoreconf -i; configure --
-> enable-hwtpm) and installed it.
-> 
-> # export LD_LIBRARY_PATH=/usr/local/lib/
-> # cd /usr/local/bin
-> # ./tsspcrread -ha 10 -halg sha256 -ns
-> f73ff9109b06d4f7a7cbe7eac32b20d2ca662e55cb4c81e152beea261989ad4b
-> 
-> Mimi
-> 
-> [1] https://lenovopress.com/lp0599.pdf
-> [2] https://git.code.sf.net/p/ibmtpm20tss/tss
-> 
+Moving thread_info into task_struct has the following advantages:
+- It protects thread_info from corruption in the case of stack
+overflows.
+- Its address is harder to determine if stack addresses are
+leaked, making a number of attacks more difficult.
 
-what UEFI version is installed on that machine?
-Is the TPM connected via LPC or I2C?
+Changes since v12:
+ - Patch 1: Taken comment from Mike (re-introduced the 'panic' in case memblock allocation fails in setup_64.c
+ - Patch 1: Added alloc_stack() function in setup_32.c to also panic in case of allocation failure.
 
-Best regards
-Michael
+Changes since v11:
+ - Rebased on 81775f5563fa ("Automatic merge of branches 'master', 'next' and 'fixes' into merge")
+ - Added a first patch to change memblock allocs to functions returning virtual addrs. This removes
+   the memset() which were the only remaining stuff in irq_ctx_init() and exc_lvl_ctx_init() at the end.
+ - dropping irq_ctx_init() and exc_lvl_ctx_init() in patch 5 (powerpc: Activate CONFIG_THREAD_INFO_IN_TASK)
+ - A few cosmetic changes in commit log and code.
 
+Changes since v10:
+ - Rebased on 21622a0d2023 ("Automatic merge of branches 'master', 'next' and 'fixes' into merge")
+  ==> Fixed conflict in setup_32.S
 
+Changes since v9:
+ - Rebased on 183cbf93be88 ("Automatic merge of branches 'master', 'next' and 'fixes' into merge")
+  ==> Fixed conflict on xmon
 
+Changes since v8:
+ - Rebased on e589b79e40d9 ("Automatic merge of branches 'master', 'next' and 'fixes' into merge")
+  ==> Main impact was conflicts due to commit 9a8dd708d547 ("memblock: rename memblock_alloc{_nid,_try_nid} to memblock_phys_alloc*")
+
+Changes since v7:
+ - Rebased on fb6c6ce7907d ("Automatic merge of branches 'master', 'next' and 'fixes' into merge")
+
+Changes since v6:
+ - Fixed validate_sp() to exclude NULL sp in 'regain entire stack space' patch (early crash with CONFIG_KMEMLEAK)
+
+Changes since v5:
+ - Fixed livepatch_sp setup by using end_of_stack() instead of hardcoding
+ - Fixed PPC_BPF_LOAD_CPU() macro
+
+Changes since v4:
+ - Fixed a build failure on 32bits SMP when include/generated/asm-offsets.h is not
+ already existing, was due to spaces instead of a tab in the Makefile
+
+Changes since RFC v3: (based on Nick's review)
+ - Renamed task_size.h to task_size_user64.h to better relate to what it contains.
+ - Handling of the isolation of thread_info cpu field inside CONFIG_SMP #ifdefs moved to a separate patch.
+ - Removed CURRENT_THREAD_INFO macro completely.
+ - Added a guard in asm/smp.h to avoid build failure before _TASK_CPU is defined.
+ - Added a patch at the end to rename 'tp' pointers to 'sp' pointers
+ - Renamed 'tp' into 'sp' pointers in preparation patch when relevant
+ - Fixed a few commit logs
+ - Fixed checkpatch report.
+
+Changes since RFC v2:
+ - Removed the modification of names in asm-offsets
+ - Created a rule in arch/powerpc/Makefile to append the offset of current->cpu in CFLAGS
+ - Modified asm/smp.h to use the offset set in CFLAGS
+ - Squashed the renaming of THREAD_INFO to TASK_STACK in the preparation patch
+ - Moved the modification of current_pt_regs in the patch activating CONFIG_THREAD_INFO_IN_TASK
+
+Changes since RFC v1:
+ - Removed the first patch which was modifying header inclusion order in timer
+ - Modified some names in asm-offsets to avoid conflicts when including asm-offsets in C files
+ - Modified asm/smp.h to avoid having to include linux/sched.h (using asm-offsets instead)
+ - Moved some changes from the activation patch to the preparation patch.
+
+Christophe Leroy (10):
+  powerpc/irq: use memblock functions returning virtual address
+  book3s/64: avoid circular header inclusion in mmu-hash.h
+  powerpc: Only use task_struct 'cpu' field on SMP
+  powerpc: Prepare for moving thread_info into task_struct
+  powerpc: Activate CONFIG_THREAD_INFO_IN_TASK
+  powerpc: regain entire stack space
+  powerpc: 'current_set' is now a table of task_struct pointers
+  powerpc/32: Remove CURRENT_THREAD_INFO and rename TI_CPU
+  powerpc/64: Remove CURRENT_THREAD_INFO
+  powerpc: clean stack pointers naming
+
+ arch/powerpc/Kconfig                           |   1 +
+ arch/powerpc/Makefile                          |   7 ++
+ arch/powerpc/include/asm/asm-prototypes.h      |   4 +-
+ arch/powerpc/include/asm/book3s/64/mmu-hash.h  |   2 +-
+ arch/powerpc/include/asm/exception-64s.h       |   4 +-
+ arch/powerpc/include/asm/irq.h                 |  18 ++--
+ arch/powerpc/include/asm/livepatch.h           |   6 +-
+ arch/powerpc/include/asm/processor.h           |  39 +--------
+ arch/powerpc/include/asm/ptrace.h              |   2 +-
+ arch/powerpc/include/asm/reg.h                 |   2 +-
+ arch/powerpc/include/asm/smp.h                 |  17 +++-
+ arch/powerpc/include/asm/task_size_user64.h    |  42 +++++++++
+ arch/powerpc/include/asm/thread_info.h         |  19 -----
+ arch/powerpc/kernel/asm-offsets.c              |  10 ++-
+ arch/powerpc/kernel/entry_32.S                 |  66 +++++---------
+ arch/powerpc/kernel/entry_64.S                 |  12 +--
+ arch/powerpc/kernel/epapr_hcalls.S             |   5 +-
+ arch/powerpc/kernel/exceptions-64e.S           |  13 +--
+ arch/powerpc/kernel/exceptions-64s.S           |   2 +-
+ arch/powerpc/kernel/head_32.S                  |  14 +--
+ arch/powerpc/kernel/head_40x.S                 |   4 +-
+ arch/powerpc/kernel/head_44x.S                 |   8 +-
+ arch/powerpc/kernel/head_64.S                  |   1 +
+ arch/powerpc/kernel/head_8xx.S                 |   2 +-
+ arch/powerpc/kernel/head_booke.h               |  12 +--
+ arch/powerpc/kernel/head_fsl_booke.S           |  16 ++--
+ arch/powerpc/kernel/idle_6xx.S                 |   8 +-
+ arch/powerpc/kernel/idle_book3e.S              |   2 +-
+ arch/powerpc/kernel/idle_e500.S                |   8 +-
+ arch/powerpc/kernel/idle_power4.S              |   2 +-
+ arch/powerpc/kernel/irq.c                      | 114 +++----------------------
+ arch/powerpc/kernel/kgdb.c                     |  28 ------
+ arch/powerpc/kernel/machine_kexec_64.c         |   6 +-
+ arch/powerpc/kernel/misc_32.S                  |  17 ++--
+ arch/powerpc/kernel/process.c                  |  40 ++++-----
+ arch/powerpc/kernel/setup-common.c             |   2 +-
+ arch/powerpc/kernel/setup_32.c                 |  25 +++---
+ arch/powerpc/kernel/setup_64.c                 |  51 +++--------
+ arch/powerpc/kernel/smp.c                      |  16 ++--
+ arch/powerpc/kernel/trace/ftrace_64_mprofile.S |   6 +-
+ arch/powerpc/kvm/book3s_hv_hmi.c               |   1 +
+ arch/powerpc/mm/hash_low_32.S                  |  14 ++-
+ arch/powerpc/net/bpf_jit32.h                   |   5 +-
+ arch/powerpc/sysdev/6xx-suspend.S              |   5 +-
+ arch/powerpc/xmon/xmon.c                       |   2 +-
+ 45 files changed, 249 insertions(+), 431 deletions(-)
+ create mode 100644 arch/powerpc/include/asm/task_size_user64.h
+
+-- 
+2.13.3
 
