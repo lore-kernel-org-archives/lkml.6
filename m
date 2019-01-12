@@ -2,104 +2,90 @@ Return-Path: <SRS0=UXoZ=PU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A4D05C43387
-	for <linux-kernel@archiver.kernel.org>; Sat, 12 Jan 2019 00:06:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4925CC43387
+	for <linux-kernel@archiver.kernel.org>; Sat, 12 Jan 2019 00:09:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5D06B20872
-	for <linux-kernel@archiver.kernel.org>; Sat, 12 Jan 2019 00:06:11 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=brauner.io header.i=@brauner.io header.b="TCxMNO3/"
+	by mail.kernel.org (Postfix) with ESMTP id 1360420878
+	for <linux-kernel@archiver.kernel.org>; Sat, 12 Jan 2019 00:09:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726448AbfALAGK (ORCPT
+        id S1726454AbfALAJq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 11 Jan 2019 19:06:10 -0500
-Received: from mail-ed1-f68.google.com ([209.85.208.68]:36170 "EHLO
-        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725927AbfALAGK (ORCPT
+        Fri, 11 Jan 2019 19:09:46 -0500
+Received: from icp-osb-irony-out3.external.iinet.net.au ([203.59.1.153]:46786
+        "EHLO icp-osb-irony-out3.external.iinet.net.au" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726193AbfALAJp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Jan 2019 19:06:10 -0500
-Received: by mail-ed1-f68.google.com with SMTP id f23so14428311edb.3
-        for <linux-kernel@vger.kernel.org>; Fri, 11 Jan 2019 16:06:09 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=brauner.io; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=9AfzvQk3cau2FMwrTkOsbY6w/WgfEJAi6VA5sZXF5lk=;
-        b=TCxMNO3/6/ud5HyRGvhxgdChtZeYhOGx8nE48jWz8xlZtjXV1Opt9/HCNrwHKq+ci1
-         NhhWJ7XPJu04i3zsGbg8ZRM2wZx51KXhA8iYr3GFB9Z3Cy+P3YMEq1G4PaffJ0vs05xi
-         XsCzLz6yJrHfZqVab8eBtGrgAQ5DLNPIubaN21oUJFbCOq+qGADdboPMKT6n5zYp68DJ
-         uenVtewWy0feSYJ0QMbw9Gd9skzNceaYBBEbFENfWcVKG21cPh0HWOwFk2tB4YHqVYAy
-         aapd5jAOdYrjtheIyKXgY8+T8TrG569DZJtmVarkTEmWlBPRZrOTyWAjHWJogDDvNlU9
-         Uyng==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=9AfzvQk3cau2FMwrTkOsbY6w/WgfEJAi6VA5sZXF5lk=;
-        b=gAbJ6zQDGe2yCBCMA1rloUrCZeTTsPZFCgwHAzCEnKziNCE/KPiK60gO75v85HDwyS
-         RP3JGIrI3NGSjC4dC4bROTP1PYUhEY6WNK33svQcS3UL1WbLZXWI+NxwFkTU18K+ZX/Y
-         2It6PoV1Rl1iNYHY19Ibih8AzW+e+XAEOc9eV4etmhp3K37hNef9HsFIWTLmm+drQDaH
-         H+xMvxXBSwXiYYxlmnIquCbUGUrH1EOT9QCS/KIXGJcBkDFXtgHmi4rhzUQb0gyXpEFk
-         z19otmD9FjzVFTnuI9YrRpXmXWNSvgyPc5vbAYCIpjy0fGVTLjFSQZPjsMzdWvfHJ/K2
-         Ksvg==
-X-Gm-Message-State: AJcUukcqzakd2dY/VAU8fIe667qvveneQnjZ9CDG5dPXeyckWfg6F0+X
-        5vGioVJE14cobUuaCpN4hGfbsQ==
-X-Google-Smtp-Source: ALg8bN6myAG797idZV2EbzVOaeMJdbCcyPpVmlzAlcURH7MPCcx1XgTb5KQlvSQF+NutaLdbJXwI9w==
-X-Received: by 2002:a17:906:340a:: with SMTP id c10-v6mr13368057ejb.130.1547251568300;
-        Fri, 11 Jan 2019 16:06:08 -0800 (PST)
-Received: from localhost.localdomain ([2a02:8109:b6c0:d6c:2520:8b:922b:4c43])
-        by smtp.gmail.com with ESMTPSA id b11-v6sm1614562ejd.16.2019.01.11.16.06.07
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 11 Jan 2019 16:06:07 -0800 (PST)
-From:   Christian Brauner <christian@brauner.io>
-To:     gregkh@linuxfoundation.org, tkjos@android.com,
-        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
-Cc:     arve@android.com, maco@android.com, joel@joelfernandes.org,
-        tkjos@google.com, Christian Brauner <christian@brauner.io>
-Subject: [PATCH] binderfs: handle !CONFIG_IPC_NS builds
-Date:   Sat, 12 Jan 2019 01:06:03 +0100
-Message-Id: <20190112000603.17925-1-christian@brauner.io>
-X-Mailer: git-send-email 2.19.1
+        Fri, 11 Jan 2019 19:09:45 -0500
+X-Greylist: delayed 555 seconds by postgrey-1.27 at vger.kernel.org; Fri, 11 Jan 2019 19:09:45 EST
+X-IronPort-Anti-Spam-Filtered: true
+X-IronPort-Anti-Spam-Result: =?us-ascii?q?A2ABAADXLDlc//yp0HYNVhoBAQEBAQI?=
+ =?us-ascii?q?BAQEBBwIBAQEBgVEFAQEBAQsBgmmBKYQBiBqMPwEBBoEQg2uFaY5LgXsohEw?=
+ =?us-ascii?q?DAoJNNAkNAQMBAQEBAQECgQmFWScEUigBBwUCJgJJFhODI4FpAwiuAHF8Mxq?=
+ =?us-ascii?q?HcQSCJoELgXOJWHiBB4FEhWSBRYNAglcCj3dJNpEFCYcaiwELAoFXiEgDD4c?=
+ =?us-ascii?q?/nCmCDk0uCoMnCYpRhg9liAqCTQEB?=
+X-IPAS-Result: =?us-ascii?q?A2ABAADXLDlc//yp0HYNVhoBAQEBAQIBAQEBBwIBAQEBg?=
+ =?us-ascii?q?VEFAQEBAQsBgmmBKYQBiBqMPwEBBoEQg2uFaY5LgXsohEwDAoJNNAkNAQMBA?=
+ =?us-ascii?q?QEBAQECgQmFWScEUigBBwUCJgJJFhODI4FpAwiuAHF8MxqHcQSCJoELgXOJW?=
+ =?us-ascii?q?HiBB4FEhWSBRYNAglcCj3dJNpEFCYcaiwELAoFXiEgDD4c/nCmCDk0uCoMnC?=
+ =?us-ascii?q?YpRhg9liAqCTQEB?=
+X-IronPort-AV: E=Sophos;i="5.56,467,1539619200"; 
+   d="scan'208";a="155670348"
+Received: from unknown (HELO [192.168.1.228]) ([118.208.169.252])
+  by icp-osb-irony-out3.iinet.net.au with ESMTP; 12 Jan 2019 08:00:27 +0800
+Subject: [PATCH 1/3] autofs: drop dentry reference only when it is never used
+From:   Ian Kent <raven@themaw.net>
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     autofs mailing list <autofs@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Pan Bian <bianpan2016@163.com>
+Date:   Sat, 12 Jan 2019 08:00:24 +0800
+Message-ID: <154725122396.11260.16053424107144453867.stgit@pluto-themaw-net>
+User-Agent: StGit/unknown-version
 MIME-Version: 1.0
-X-Patchwork-Bot: notify
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-kbuild reported a build faile in [1]. This is triggered when CONFIG_IPC_NS
-is not set. So let's make the use of init_ipc_ns conditional on
-CONFIG_IPC_NS being set.
+From: Pan Bian <bianpan2016@163.com>
 
-[1]: https://lists.01.org/pipermail/kbuild-all/2019-January/056903.html
+The function autofs_expire_run calls dput(dentry) to drop the reference
+count of dentry. However, dentry is read via autofs_dentry_ino(dentry)
+after that. This may result in a use-free-bug. The patch drops the
+reference count of dentry only when it is never used.
 
-Signed-off-by: Christian Brauner <christian.brauner@ubuntu.com>
+Signed-off-by: Pan Bian <bianpan2016@163.com>
+Acked-by: Ian Kent <raven@themaw.net>
 ---
- drivers/android/binderfs.c | 4 ++++
- 1 file changed, 4 insertions(+)
+ fs/autofs/expire.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/android/binderfs.c b/drivers/android/binderfs.c
-index ad3ad2f7f9f4..9518e2e7da05 100644
---- a/drivers/android/binderfs.c
-+++ b/drivers/android/binderfs.c
-@@ -129,7 +129,11 @@ static int binderfs_binder_device_create(struct inode *ref_inode,
- 	struct inode *inode = NULL;
- 	struct super_block *sb = ref_inode->i_sb;
- 	struct binderfs_info *info = sb->s_fs_info;
-+#if defined(CONFIG_IPC_NS)
- 	bool use_reserve = (info->ipc_ns == &init_ipc_ns);
-+#else
-+	bool use_reserve = true;
-+#endif
+diff --git a/fs/autofs/expire.c b/fs/autofs/expire.c
+index d441244b79df..28d9c2b1b3bb 100644
+--- a/fs/autofs/expire.c
++++ b/fs/autofs/expire.c
+@@ -596,7 +596,6 @@ int autofs_expire_run(struct super_block *sb,
+ 	pkt.len = dentry->d_name.len;
+ 	memcpy(pkt.name, dentry->d_name.name, pkt.len);
+ 	pkt.name[pkt.len] = '\0';
+-	dput(dentry);
  
- 	/* Reserve new minor number for the new device. */
- 	mutex_lock(&binderfs_minors_mutex);
--- 
-2.19.1
+ 	if (copy_to_user(pkt_p, &pkt, sizeof(struct autofs_packet_expire)))
+ 		ret = -EFAULT;
+@@ -609,6 +608,8 @@ int autofs_expire_run(struct super_block *sb,
+ 	complete_all(&ino->expire_complete);
+ 	spin_unlock(&sbi->fs_lock);
+ 
++	dput(dentry);
++
+ 	return ret;
+ }
+ 
 
