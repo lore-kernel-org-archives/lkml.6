@@ -6,31 +6,32 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A388DC43387
-	for <linux-kernel@archiver.kernel.org>; Sat, 12 Jan 2019 15:29:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 03D49C43387
+	for <linux-kernel@archiver.kernel.org>; Sat, 12 Jan 2019 15:29:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 77E0F20835
-	for <linux-kernel@archiver.kernel.org>; Sat, 12 Jan 2019 15:29:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D27BB20835
+	for <linux-kernel@archiver.kernel.org>; Sat, 12 Jan 2019 15:29:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726414AbfALP3E (ORCPT
+        id S1726452AbfALP3I (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 12 Jan 2019 10:29:04 -0500
-Received: from wtarreau.pck.nerim.net ([62.212.114.60]:34285 "EHLO 1wt.eu"
+        Sat, 12 Jan 2019 10:29:08 -0500
+Received: from wtarreau.pck.nerim.net ([62.212.114.60]:34292 "EHLO 1wt.eu"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725839AbfALP3E (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 12 Jan 2019 10:29:04 -0500
+        id S1726416AbfALP3H (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 12 Jan 2019 10:29:07 -0500
 Received: (from willy@localhost)
-        by pcw.home.local (8.15.2/8.15.2/Submit) id x0CFSo1l026597;
-        Sat, 12 Jan 2019 16:28:50 +0100
+        by pcw.home.local (8.15.2/8.15.2/Submit) id x0CFSroA026602;
+        Sat, 12 Jan 2019 16:28:53 +0100
 From:   Willy Tarreau <w@1wt.eu>
 To:     Silvio Cesare <silvio.cesare@gmail.com>
-Cc:     linux-kernel@vger.kernel.org, Kalle Valo <kvalo@codeaurora.org>,
+Cc:     linux-kernel@vger.kernel.org, Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
         Dan Carpenter <dan.carpenter@oracle.com>,
         Kees Cook <keescook@chromium.org>,
         Will Deacon <will.deacon@arm.com>, Greg KH <greg@kroah.com>
-Subject: [PATCH 2/8] libertas: change snprintf to scnprintf for possible overflow
-Date:   Sat, 12 Jan 2019 16:28:38 +0100
-Message-Id: <20190112152844.26550-2-w@1wt.eu>
+Subject: [PATCH 7/8] ASoC: dapm: change snprintf to scnprintf for possible overflow
+Date:   Sat, 12 Jan 2019 16:28:43 +0100
+Message-Id: <20190112152844.26550-7-w@1wt.eu>
 X-Mailer: git-send-email 2.9.0
 In-Reply-To: <20190112152844.26550-1-w@1wt.eu>
 References: <20190112152844.26550-1-w@1wt.eu>
@@ -64,7 +65,8 @@ characters actually written to the buffer, so the size variable will never
 exceed SIZE.
 
 Signed-off-by: Silvio Cesare <silvio.cesare@gmail.com>
-Cc: Kalle Valo <kvalo@codeaurora.org>
+Cc: Liam Girdwood <lgirdwood@gmail.com>
+Cc: Mark Brown <broonie@kernel.org>
 Cc: Dan Carpenter <dan.carpenter@oracle.com>
 Cc: Kees Cook <keescook@chromium.org>
 Cc: Will Deacon <will.deacon@arm.com>
@@ -72,79 +74,46 @@ Cc: Greg KH <greg@kroah.com>
 Signed-off-by: Willy Tarreau <w@1wt.eu>
 
 ---
- drivers/net/wireless/marvell/libertas/debugfs.c | 16 ++++++++--------
- 1 file changed, 8 insertions(+), 8 deletions(-)
+ sound/soc/soc-dapm.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/net/wireless/marvell/libertas/debugfs.c b/drivers/net/wireless/marvell/libertas/debugfs.c
-index c83f44f9ddf1..ec73bd3a10db 100644
---- a/drivers/net/wireless/marvell/libertas/debugfs.c
-+++ b/drivers/net/wireless/marvell/libertas/debugfs.c
-@@ -41,9 +41,9 @@ static ssize_t lbs_dev_info(struct file *file, char __user *userbuf,
- 	if (!buf)
- 		return -ENOMEM;
- 
--	pos += snprintf(buf+pos, len-pos, "state = %s\n",
-+	pos += scnprintf(buf+pos, len-pos, "state = %s\n",
- 				szStates[priv->connect_status]);
--	pos += snprintf(buf+pos, len-pos, "region_code = %02x\n",
-+	pos += scnprintf(buf+pos, len-pos, "region_code = %02x\n",
- 				(u32) priv->regioncode);
- 
- 	res = simple_read_from_buffer(userbuf, count, ppos, buf, pos);
-@@ -105,7 +105,7 @@ static ssize_t lbs_sleepparams_read(struct file *file, char __user *userbuf,
- 	if (ret)
- 		goto out_unlock;
- 
--	pos += snprintf(buf, len, "%d %d %d %d %d %d\n", sp.sp_error,
-+	pos += scnprintf(buf, len, "%d %d %d %d %d %d\n", sp.sp_error,
- 			sp.sp_offset, sp.sp_stabletime,
- 			sp.sp_calcontrol, sp.sp_extsleepclk,
- 			sp.sp_reserved);
-@@ -170,7 +170,7 @@ static ssize_t lbs_host_sleep_read(struct file *file, char __user *userbuf,
- 	if (!buf)
- 		return -ENOMEM;
- 
--	pos += snprintf(buf, len, "%d\n", priv->is_host_sleep_activated);
-+	pos += scnprintf(buf, len, "%d\n", priv->is_host_sleep_activated);
- 
- 	ret = simple_read_from_buffer(userbuf, count, ppos, buf, pos);
- 
-@@ -251,7 +251,7 @@ static ssize_t lbs_threshold_read(uint16_t tlv_type, uint16_t event_mask,
- 		freq  = got->freq;
- 		events = le16_to_cpu(subscribed->events);
- 
--		pos += snprintf(buf, len, "%d %d %d\n", value, freq,
-+		pos += scnprintf(buf, len, "%d %d %d\n", value, freq,
- 				!!(events & event_mask));
+diff --git a/sound/soc/soc-dapm.c b/sound/soc/soc-dapm.c
+index a5178845065b..2c4c13419539 100644
+--- a/sound/soc/soc-dapm.c
++++ b/sound/soc/soc-dapm.c
+@@ -2019,19 +2019,19 @@ static ssize_t dapm_widget_power_read_file(struct file *file,
+ 		out = is_connected_output_ep(w, NULL, NULL);
  	}
  
-@@ -446,7 +446,7 @@ static ssize_t lbs_rdmac_read(struct file *file, char __user *userbuf,
- 	ret = lbs_get_reg(priv, CMD_MAC_REG_ACCESS, priv->mac_offset, &val);
- 	mdelay(10);
- 	if (!ret) {
--		pos = snprintf(buf, len, "MAC[0x%x] = 0x%08x\n",
-+		pos = scnprintf(buf, len, "MAC[0x%x] = 0x%08x\n",
- 				priv->mac_offset, val);
- 		ret = simple_read_from_buffer(userbuf, count, ppos, buf, pos);
- 	}
-@@ -516,7 +516,7 @@ static ssize_t lbs_rdbbp_read(struct file *file, char __user *userbuf,
- 	ret = lbs_get_reg(priv, CMD_BBP_REG_ACCESS, priv->bbp_offset, &val);
- 	mdelay(10);
- 	if (!ret) {
--		pos = snprintf(buf, len, "BBP[0x%x] = 0x%08x\n",
-+		pos = scnprintf(buf, len, "BBP[0x%x] = 0x%08x\n",
- 				priv->bbp_offset, val);
- 		ret = simple_read_from_buffer(userbuf, count, ppos, buf, pos);
- 	}
-@@ -588,7 +588,7 @@ static ssize_t lbs_rdrf_read(struct file *file, char __user *userbuf,
- 	ret = lbs_get_reg(priv, CMD_RF_REG_ACCESS, priv->rf_offset, &val);
- 	mdelay(10);
- 	if (!ret) {
--		pos = snprintf(buf, len, "RF[0x%x] = 0x%08x\n",
-+		pos = scnprintf(buf, len, "RF[0x%x] = 0x%08x\n",
- 				priv->rf_offset, val);
- 		ret = simple_read_from_buffer(userbuf, count, ppos, buf, pos);
- 	}
+-	ret = snprintf(buf, PAGE_SIZE, "%s: %s%s  in %d out %d",
++	ret = scnprintf(buf, PAGE_SIZE, "%s: %s%s  in %d out %d",
+ 		       w->name, w->power ? "On" : "Off",
+ 		       w->force ? " (forced)" : "", in, out);
+ 
+ 	if (w->reg >= 0)
+-		ret += snprintf(buf + ret, PAGE_SIZE - ret,
++		ret += scnprintf(buf + ret, PAGE_SIZE - ret,
+ 				" - R%d(0x%x) mask 0x%x",
+ 				w->reg, w->reg, w->mask << w->shift);
+ 
+-	ret += snprintf(buf + ret, PAGE_SIZE - ret, "\n");
++	ret += scnprintf(buf + ret, PAGE_SIZE - ret, "\n");
+ 
+ 	if (w->sname)
+-		ret += snprintf(buf + ret, PAGE_SIZE - ret, " stream %s %s\n",
++		ret += scnprintf(buf + ret, PAGE_SIZE - ret, " stream %s %s\n",
+ 				w->sname,
+ 				w->active ? "active" : "inactive");
+ 
+@@ -2044,7 +2044,7 @@ static ssize_t dapm_widget_power_read_file(struct file *file,
+ 			if (!p->connect)
+ 				continue;
+ 
+-			ret += snprintf(buf + ret, PAGE_SIZE - ret,
++			ret += scnprintf(buf + ret, PAGE_SIZE - ret,
+ 					" %s  \"%s\" \"%s\"\n",
+ 					(rdir == SND_SOC_DAPM_DIR_IN) ? "in" : "out",
+ 					p->name ? p->name : "static",
 -- 
 2.19.2
 
