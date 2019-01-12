@@ -2,145 +2,181 @@ Return-Path: <SRS0=UXoZ=PU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 256DDC43387
-	for <linux-kernel@archiver.kernel.org>; Sat, 12 Jan 2019 15:33:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3AA2BC43387
+	for <linux-kernel@archiver.kernel.org>; Sat, 12 Jan 2019 15:39:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E8A712084C
-	for <linux-kernel@archiver.kernel.org>; Sat, 12 Jan 2019 15:33:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E7C4B2084C
+	for <linux-kernel@archiver.kernel.org>; Sat, 12 Jan 2019 15:39:04 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SOtf/dFA"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725870AbfALPdy (ORCPT
+        id S1725920AbfALPjD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 12 Jan 2019 10:33:54 -0500
-Received: from asavdk4.altibox.net ([109.247.116.15]:33892 "EHLO
-        asavdk4.altibox.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725844AbfALPdy (ORCPT
+        Sat, 12 Jan 2019 10:39:03 -0500
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:39181 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725842AbfALPjD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 12 Jan 2019 10:33:54 -0500
-Received: from ravnborg.org (unknown [158.248.194.18])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by asavdk4.altibox.net (Postfix) with ESMTPS id BA8038034E;
-        Sat, 12 Jan 2019 16:33:49 +0100 (CET)
-Date:   Sat, 12 Jan 2019 16:33:48 +0100
-From:   Sam Ravnborg <sam@ravnborg.org>
-To:     Jagan Teki <jagan@amarulasolutions.com>
-Cc:     David Airlie <airlied@linux.ie>, Sean Paul <sean@poorly.run>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Michael Trimarchi <michael@amarulasolutions.com>,
-        linux-amarula@amarulasolutions.com
-Subject: Re: [PATCH V7 2/2] drm/panel: Add Sitronix ST7701 panel driver
-Message-ID: <20190112153348.GA12461@ravnborg.org>
-References: <20190111124714.19566-1-jagan@amarulasolutions.com>
- <20190111124714.19566-2-jagan@amarulasolutions.com>
- <20190111211931.GA29735@ravnborg.org>
- <CAMty3ZArGPf8+M5GVhkzoMDhtYwT3aUS9bNbKt8=gqeb6-b82Q@mail.gmail.com>
- <20190112101409.GA14273@ravnborg.org>
- <CAMty3ZBUNeFvsHDRmBFUoZG=J+EfQuKtJDOhaezcfEOykhpOeQ@mail.gmail.com>
- <20190112120056.GA7374@ravnborg.org>
- <CAMty3ZAvEzatWMPbtPKUhVRMSzC9icarsxK7KfXAp+gvCR74Lw@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAMty3ZAvEzatWMPbtPKUhVRMSzC9icarsxK7KfXAp+gvCR74Lw@mail.gmail.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-CMAE-Score: 0
-X-CMAE-Analysis: v=2.3 cv=UpRNyd4B c=1 sm=1 tr=0
-        a=UWs3HLbX/2nnQ3s7vZ42gw==:117 a=UWs3HLbX/2nnQ3s7vZ42gw==:17
-        a=IkcTkHD0fZMA:10 a=_LFP0PS5GB3_aTSERa0A:9 a=QEXdDO2ut3YA:10
+        Sat, 12 Jan 2019 10:39:03 -0500
+Received: by mail-wr1-f66.google.com with SMTP id t27so18280619wra.6;
+        Sat, 12 Jan 2019 07:39:01 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=message-id:subject:from:to:cc:date:user-agent:mime-version
+         :content-transfer-encoding;
+        bh=nMwqmyNYMU4Y77Zqh2k3EBCoarap/68KCGLgVioocUU=;
+        b=SOtf/dFAR8yU+SCrjfEVybTk0f5OPYc9/sOa4FPSKMfsU++g/Z6keAeEG7Hs2WE+bn
+         AMsKOwbSs1mBedpRDdIVhOQWAlnXFtkav3VDgjaGOtd4Ao9vimBcfYPyO7cPKl3H8eL2
+         iCQhzHy1Mq/uUXbZK+gnMyJAqe1rptq+SscyD+zo0aPFYXP9PRjW8vl4HMumN4uSI4gT
+         sGPfTWvtJzdmjKp9FxjF4Q9U6IGEtwtpi2rnPuwsSa736DmLlcnOA9KgzdZLgsMZF/0j
+         odPmdQRM3XOqfMsfpvgNG2LtHaQLePehKGzsGkjCf5g3InTVeuh1tKhPmQni494LfR5R
+         Sfpg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:message-id:subject:from:to:cc:date:user-agent
+         :mime-version:content-transfer-encoding;
+        bh=nMwqmyNYMU4Y77Zqh2k3EBCoarap/68KCGLgVioocUU=;
+        b=q477d5i+t/SVxiK9Xga9GmAS1rvPjkOlmO6xH0NDD3gHS3IfJji2WRm0uSl1JypeyR
+         nCJuO7oLgOe5IDhADzBaJtpOhPQEAKCvwsOOZD710MlNAVSsrwXvwyHIKhGSmOjMWcZp
+         HUlc5i+kNM0zIQHoAM45S1MSVwQW7O+RNiNxI82DQx2bvNIVJ3wbddXmgS4msbl2KJVz
+         Xqo+LJAxwSGRXUQD+4Gg2fkgoLCiQ7uXvA9zJ2r6k9HZuoOfb3BeXKLKXM6xmzjweuua
+         xAlw85NuuV3O8W05sWf1oR1rZRwMiMs326aW/C1Nf3xXNONOWQ7wdxpfeIEB4lx/hm2+
+         pIBg==
+X-Gm-Message-State: AJcUukcBgRId2b/yO76urgJrUIqbc/s1Vg0MV/eX6VkfAgKGI8keK/Rl
+        63R8kBsHg/7/XMdDWPumrhc=
+X-Google-Smtp-Source: ALg8bN5NvFDYedcXTEQaePlc7FQiN2bOqTlXR+oWXim4hbsCsfc228aBI8cM06FJb1BwFkCOncZeZA==
+X-Received: by 2002:a5d:448f:: with SMTP id j15mr16643422wrq.108.1547307540319;
+        Sat, 12 Jan 2019 07:39:00 -0800 (PST)
+Received: from [192.168.1.100] ([93.51.16.173])
+        by smtp.gmail.com with ESMTPSA id u204sm38589501wmu.30.2019.01.12.07.38.59
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Sat, 12 Jan 2019 07:38:59 -0800 (PST)
+Message-ID: <2fcdf0e9b1eef55350911984064dd94f16f1fcd8.camel@gmail.com>
+Subject: [PATCH] clk: qcom: smd: Add support for MSM8956/76 RPM clocks
+From:   AngeloGioacchino Del Regno <kholk11@gmail.com>
+To:     Andy Gross <andy.gross@linaro.org>,
+        David Brown <david.brown@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     AngeloGioacchino Del Regno <kholk11@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Andy Gross <andy.gross@linaro.org>,
+        David Brown <david.brown@linaro.org>,
+        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org
+Date:   Sat, 12 Jan 2019 16:38:58 +0100
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.30.2 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Jagan.
+From 6aeefad77a2a5d47a9bd009d2d10db2a5dd153a2 Mon Sep 17 00:00:00 2001
+From: "Angelo G. Del Regno" <kholk11@gmail.com>
+Date: Sat, 12 Jan 2019 16:31:09 +0100
+Subject: [PATCH] clk: qcom: smd: Add support for MSM8956/76 RPM clocks
 
-> > But as we just assert reset (set it to 0), this timing constraint can be ignored.
-> 
-> But we unaware of reset pulse duration right? it's the hardware that
-> bring the reset assert if we set the line 0. am I correct or do we
-> need to explicitly wait 10us after reset initiated?
-> there is family of chip Sitronix st7789v which don't taking care of
-> this sequence (I don't know why?) in
-> drivers/gpu/drm/panel/panel-sitronix-st7789v.c with Page 48 of
-> datasheet[2]
+Add all RPM clocks found on MSM8956/MSM8976 SoCs.
+
+Signed-off-by: Angelo G. Del Regno <kholk11@gmail.com>
+---
+ .../devicetree/bindings/clock/qcom,rpmcc.txt  |  1 +
+ drivers/clk/qcom/clk-smd-rpm.c                | 53 +++++++++++++++++++
+ 2 files changed, 54 insertions(+)
+
+diff --git a/Documentation/devicetree/bindings/clock/qcom,rpmcc.txt b/Documentation/devicetree/bindings/clock/qcom,rpmcc.txt
+index 87b4949e9bc8..2aebc4db54f3 100644
+--- a/Documentation/devicetree/bindings/clock/qcom,rpmcc.txt
++++ b/Documentation/devicetree/bindings/clock/qcom,rpmcc.txt
+@@ -15,6 +15,7 @@ Required properties :
+ 			"qcom,rpmcc-msm8916", "qcom,rpmcc"
+ 			"qcom,rpmcc-msm8974", "qcom,rpmcc"
+ 			"qcom,rpmcc-apq8064", "qcom,rpmcc"
++			"qcom,rpmcc-msm8976", "qcom,rpmcc"
+ 			"qcom,rpmcc-msm8996", "qcom,rpmcc"
+ 			"qcom,rpmcc-qcs404", "qcom,rpmcc"
+ 
+diff --git a/drivers/clk/qcom/clk-smd-rpm.c b/drivers/clk/qcom/clk-smd-rpm.c
+index d3aadaeb2903..b916435e2759 100644
+--- a/drivers/clk/qcom/clk-smd-rpm.c
++++ b/drivers/clk/qcom/clk-smd-rpm.c
+@@ -531,6 +531,58 @@ static const struct rpm_smd_clk_desc rpm_clk_msm8974 = {
+ 	.num_clks = ARRAY_SIZE(msm8974_clks),
+ };
+ 
++/* msm8976 */
++DEFINE_CLK_SMD_RPM_BRANCH(msm8976, cxo, cxo_a,
++				QCOM_SMD_RPM_MISC_CLK, 0, 19200000);
++DEFINE_CLK_SMD_RPM(msm8976, bimc_clk, bimc_a_clk, QCOM_SMD_RPM_MEM_CLK, 0);
++DEFINE_CLK_SMD_RPM(msm8976, ipa_clk, ipa_a_clk, QCOM_SMD_RPM_IPA_CLK, 0);
++DEFINE_CLK_SMD_RPM(msm8976, pcnoc_clk, pcnoc_a_clk, QCOM_SMD_RPM_BUS_CLK, 0);
++DEFINE_CLK_SMD_RPM(msm8976, snoc_clk, snoc_a_clk, QCOM_SMD_RPM_BUS_CLK, 1);
++DEFINE_CLK_SMD_RPM(msm8976, mmssnoc_axi_clk, mmssnoc_axi_a_clk,
++				QCOM_SMD_RPM_BUS_CLK, 2);
++DEFINE_CLK_SMD_RPM_QDSS(msm8976, qdss_clk, qdss_a_clk,
++				QCOM_SMD_RPM_MISC_CLK, 1);
++DEFINE_CLK_SMD_RPM_XO_BUFFER(msm8976, bb_clk1, bb_clk1_a, 0x1);
++DEFINE_CLK_SMD_RPM_XO_BUFFER(msm8976, bb_clk2, bb_clk2_a, 0x2);
++DEFINE_CLK_SMD_RPM_XO_BUFFER(msm8976, rf_clk2, rf_clk2_a, 0x5);
++DEFINE_CLK_SMD_RPM_XO_BUFFER(msm8976, div_clk2, div_clk2_a, 0xC);
++DEFINE_CLK_SMD_RPM_XO_BUFFER_PINCTRL(msm8976, bb_clk1_pin, bb_clk1_a_pin, 1);
++DEFINE_CLK_SMD_RPM_XO_BUFFER_PINCTRL(msm8976, bb_clk2_pin, bb_clk2_a_pin, 2);
++
++static struct clk_smd_rpm *msm8976_clks[] = {
++	[RPM_SMD_XO_CLK_SRC] = &msm8976_cxo,
++	[RPM_SMD_XO_A_CLK_SRC] = &msm8976_cxo_a,
++	[RPM_SMD_BIMC_CLK] = &msm8976_bimc_clk,
++	[RPM_SMD_BIMC_A_CLK] = &msm8976_bimc_a_clk,
++	[RPM_SMD_MMAXI_CLK] = &msm8976_mmssnoc_axi_clk,
++	[RPM_SMD_MMAXI_A_CLK] = &msm8976_mmssnoc_axi_a_clk,
++	[RPM_SMD_IPA_CLK] = &msm8976_ipa_clk,
++	[RPM_SMD_IPA_A_CLK] = &msm8976_ipa_a_clk,
++	[RPM_SMD_PCNOC_CLK] = &msm8976_pcnoc_clk,
++	[RPM_SMD_PCNOC_A_CLK] = &msm8976_pcnoc_a_clk,
++	[RPM_SMD_SNOC_CLK] = &msm8976_snoc_clk,
++	[RPM_SMD_SNOC_A_CLK] = &msm8976_snoc_a_clk,
++	[RPM_SMD_QDSS_CLK] = &msm8976_qdss_clk,
++	[RPM_SMD_QDSS_A_CLK] = &msm8976_qdss_a_clk,
++	[RPM_SMD_BB_CLK1] = &msm8976_bb_clk1,
++	[RPM_SMD_BB_CLK1_A] = &msm8976_bb_clk1_a,
++	[RPM_SMD_BB_CLK1_PIN] = &msm8976_bb_clk1_pin,
++	[RPM_SMD_BB_CLK1_A_PIN] = &msm8976_bb_clk1_a_pin,
++	[RPM_SMD_BB_CLK2] = &msm8976_bb_clk2,
++	[RPM_SMD_BB_CLK2_A] = &msm8976_bb_clk2_a,
++	[RPM_SMD_BB_CLK2_PIN] = &msm8976_bb_clk2_pin,
++	[RPM_SMD_BB_CLK2_A_PIN] = &msm8976_bb_clk2_a_pin,
++	[RPM_SMD_RF_CLK2] = &msm8976_rf_clk2,
++	[RPM_SMD_RF_CLK2_A] = &msm8976_rf_clk2_a,
++	[RPM_SMD_DIV_CLK2] = &msm8976_div_clk2,
++	[RPM_SMD_DIV_A_CLK2] = &msm8976_div_clk2_a,
++};
++
++static const struct rpm_smd_clk_desc rpm_clk_msm8976 = {
++	.clks = msm8976_clks,
++	.num_clks = ARRAY_SIZE(msm8976_clks),
++};
++
+ /* msm8996 */
+ DEFINE_CLK_SMD_RPM(msm8996, pcnoc_clk, pcnoc_a_clk, QCOM_SMD_RPM_BUS_CLK, 0);
+ DEFINE_CLK_SMD_RPM(msm8996, snoc_clk, snoc_a_clk, QCOM_SMD_RPM_BUS_CLK, 1);
+@@ -658,6 +710,7 @@ static const struct rpm_smd_clk_desc rpm_clk_qcs404 = {
+ static const struct of_device_id rpm_smd_clk_match_table[] = {
+ 	{ .compatible = "qcom,rpmcc-msm8916", .data = &rpm_clk_msm8916 },
+ 	{ .compatible = "qcom,rpmcc-msm8974", .data = &rpm_clk_msm8974 },
++	{ .compatible = "qcom,rpmcc-msm8976", .data = &rpm_clk_msm8976 },
+ 	{ .compatible = "qcom,rpmcc-msm8996", .data = &rpm_clk_msm8996 },
+ 	{ .compatible = "qcom,rpmcc-qcs404",  .data = &rpm_clk_qcs404  },
+ 	{ }
+-- 
+2.19.1
 
 
-The prepare sequence used is:
-1) reset
-   20 ms
-2) regulator enable
-   20 ms
-3) unassert reset
-   20 ms
-4) assert reset
-   30 ms
-4) unassert reset
-   150 ms
-5) SOFT RESET
-   5 ms
-6) Exit SLEEP mode
-   sleep_delay (120 ms)
-7) COMMANDS
-
-The enable sequence is
-1) Display ON
-2) backlight enable
-
-
-The disable sequence is
-1) backlight disable
-2) Display OFF
-
-The unprepare sequence is
-1) Exit SLEEP mode  <= this should be Enter SLEEP mode (covered by previous mail)
-   sleep_delay (120 ms)
-2) assert reset
-3) unassert reset
-4) assert reset
-5) regulator disable
-
-
-The implementation in simple-panel supports a long list of panels so we
-can assume this is a good reference implementation.
-Unless your combo of st7701 + panel has special requirements.
-
-Prepare sequence:
------------------
-- Just set reset to 1 - no need to trigger an edge.
-  But if you somehow think the edge is required keep the current code
-  but drop the delays that are not required.
-  We can assume power is OK when it is enabled, no extra waiting required.
-- No reason to unassert and then assert and then unassert reset.
-
-In other words:
-- Delay between 1 and 2 can be dropped.
-- step 3 and step 4 can be dropped
-
-Unprepare sequence:
--------------------
-Enter SLEEP mode may take 120 ms so delay between 1) and 2) is OK.
-No reason to do the reset dance, drop 2) and 3)
-Make sure reset is completed, so wait before leaving the function.
-See note 3. on page 54 in datasheet:
-
-	"During the Resetting period, the display will be blanked
-	 (The display is entering blanking sequence, which maximum
-	 time is 120 ms, when Reset Starts in Sleep Out –mode.
-	 The display remains the blank state in Sleep In –mode.) and
-	  then return to Default condition for Hardware Reset."
-
-We have already sent an Enter SLEEP command but we have no timing constrains
-when panel is in SLEEP mode, So stick to the 120 ms.
-Just use sleep_delay.
-
-Thats my best understanding, your reading of the datasheet or your testing
-may prove different.
-
-	Sam
