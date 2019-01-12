@@ -2,109 +2,131 @@ Return-Path: <SRS0=UXoZ=PU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ACAFBC43387
-	for <linux-kernel@archiver.kernel.org>; Sat, 12 Jan 2019 13:59:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 17914C43387
+	for <linux-kernel@archiver.kernel.org>; Sat, 12 Jan 2019 14:21:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 709FF206B7
-	for <linux-kernel@archiver.kernel.org>; Sat, 12 Jan 2019 13:59:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C0BF32084E
+	for <linux-kernel@archiver.kernel.org>; Sat, 12 Jan 2019 14:21:13 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=mojatatu-com.20150623.gappssmtp.com header.i=@mojatatu-com.20150623.gappssmtp.com header.b="uHENRo29"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GimcIYZK"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725959AbfALN7p (ORCPT
+        id S1725863AbfALOVN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 12 Jan 2019 08:59:45 -0500
-Received: from mail-it1-f194.google.com ([209.85.166.194]:56150 "EHLO
-        mail-it1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725827AbfALN7p (ORCPT
+        Sat, 12 Jan 2019 09:21:13 -0500
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:43061 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725831AbfALOVM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 12 Jan 2019 08:59:45 -0500
-Received: by mail-it1-f194.google.com with SMTP id m62so7038442ith.5
-        for <linux-kernel@vger.kernel.org>; Sat, 12 Jan 2019 05:59:44 -0800 (PST)
+        Sat, 12 Jan 2019 09:21:12 -0500
+Received: by mail-pl1-f195.google.com with SMTP id gn14so8085739plb.10;
+        Sat, 12 Jan 2019 06:21:11 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=mojatatu-com.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=n4FYB8axrV+9C+zBDYMhP9KTrRYzd7Hzktn646gZa/k=;
-        b=uHENRo29L3D4xjTlZnFmmYnHm2sIRHEhtkRnlzOSfiDi1z4BaYIhS09scTPVlwjGAU
-         mE4b5/6cEeGpHaFlAxysmqocXtLoGJTVN6SQc5ntWTB4xIhjxlxbT1nt/fejH9NEyyem
-         gB0+OS6EVLidiNH6dhUIhC+UDa1Uq3HAAbSAIA6utRE1VATPqXZcMDEgz4dpEPjoJ/oW
-         PuEsWhokObsTP1ZFNIVYU5ddHWzXchhETrucurT2BMFDByZ1jjjr0oLGm+tIY/mkHq/G
-         a6K8w4jjNOngZMpgzr2O2DluyGzjWmgjTzApoYmZMjQ17Y4IiP+HK2/+D8DvG6/B93vp
-         k7lA==
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=AgztArJgeyI5akkyciYTqOnUwbkH9r4FP5+/k10NYlQ=;
+        b=GimcIYZKXTRu9g1J9k8L0qcyKVYBysJpjcAGwKF1FQ5PS+5A213ABMU3N4S60RJGjq
+         AYWlgFQpTN6dWDaz9zTgd15Hkin1sfazkfJIgaVQPA06xP02f6M7XJLDMcrstcXiCxhH
+         x5qdu8A9LyKyDxeTg0QzBbh/1eAuRnjgapXIrKV8FH5ifgS0tX4mDCI+qZKSAACtxsWm
+         UREh7KwBEpVh8jDG6bTAjt+v0CVyLr07jaDcV5wUtVrZDhN14AHu+Wkh4rpe798n+pLv
+         2gNLoXBbKmC/fxElnVHgD716ayuAjpv688SdllVuIma9V01oOVXu9VQrkT/yGC1uwzo/
+         DBSA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=n4FYB8axrV+9C+zBDYMhP9KTrRYzd7Hzktn646gZa/k=;
-        b=RPVbQXtShSM+FGmv9OU6o+Ad7DuWjQcJKGeHMOsj1EPDj2JcPucd+/nZyPURqze9yy
-         ucStXF+jJ8ioKCVU5fIpJvGGUYyOFweI20n5gE0xlrNonRLXFjiy/3WqtmdeL0c5MC5/
-         k6FkPsBUOIVyCGBxRN02rmiP+CM4glmnbuML9kmGqI2D4eujW0zTTMJeDZQUKa63WVzX
-         XED8TYGmAvx4MdMFkpx/IO9HLNJJC5kW/MdeI9uBxGiEi+lUT8VQqvIFX3tFJiWx7Jjq
-         H0F9c3KZQ0svu+KuLtPcXbvXhvLV2mTPM83rYmyLB1uf6aaAljeLmWkR2DY7+LycSJbg
-         gr4w==
-X-Gm-Message-State: AJcUukfbx/flp8AHl3undw9EyynytSp9gXMBmhP3xqLFQqXhFthsBOmS
-        5qBkhK1r20AxnKoniE2xlLExsw==
-X-Google-Smtp-Source: ALg8bN5OUKs8na0jH0ulGWhEPgkMt64qbkw1YllKI+WPQpyEMUHVsV8fQVlM+73JHcPUqmE7EXHKrA==
-X-Received: by 2002:a02:8a69:: with SMTP id e38mr13166408jal.81.1547301583965;
-        Sat, 12 Jan 2019 05:59:43 -0800 (PST)
-Received: from [10.0.0.135] (24-212-162-241.cable.teksavvy.com. [24.212.162.241])
-        by smtp.googlemail.com with ESMTPSA id y23sm5501330ita.1.2019.01.12.05.59.42
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sat, 12 Jan 2019 05:59:42 -0800 (PST)
-Subject: Re: [PATCH/RFC] Make perf_event_open() propagate errors for use in
- bpf_perf_event_open()
-To:     Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>
-Cc:     Ingo Molnar <mingo@kernel.org>,
-        Alexei Starovoitov <alexei.starovoitov@gmail.com>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux Networking Development Mailing List 
-        <netdev@vger.kernel.org>
-References: <20190111155538.GX22483@kernel.org>
-From:   Jamal Hadi Salim <jhs@mojatatu.com>
-Message-ID: <b7326024-de29-929d-e6f9-c24c230d45e8@mojatatu.com>
-Date:   Sat, 12 Jan 2019 08:59:41 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=AgztArJgeyI5akkyciYTqOnUwbkH9r4FP5+/k10NYlQ=;
+        b=PBRA/hBk1y7aBUgiAPv2a67BqgwoCekBzYlWrcGhJa2gGbfGrMd8VF+TrzWql2P+lG
+         Qsvhiitx1Pmuq+WVC+fZgMsUltiZZWOf60ON+c4nIjOhaKGvPVN+qeZWvb7hZuztnaJF
+         8m1oXAAgXE7dXJoA0QDqFg6ccg+2HljmwPkEtad0paqtq7a89ePNfDQUDb+2vbIiDS7Z
+         /O6bsvx7c3QXNkLFsCQwD7cUfrThoibNex4bbpyKRUCGuResMLLLHtcYKT2W2THay/aP
+         3n23+EfXWy7BPuSX4FbTRz2MNOBKhqlT+YM4rvLyb1XHYKibGH0CbtmUBx6p6id+9m/o
+         /xTQ==
+X-Gm-Message-State: AJcUukfWPBlYVHIr/1pJcKOhA5xid3/MN5Kc5iRpfoL6eSC5NbM3/f+a
+        L8Cd7xtJ6XWe6i8Qe/w6ISg=
+X-Google-Smtp-Source: ALg8bN4u0a09j0SanHRTuHYZDh38d4cZ9d5mkCKGk53kYwNpFybtGRJj6Z3KYuyRp2SrYrrFmRErIw==
+X-Received: by 2002:a17:902:d01:: with SMTP id 1mr19042800plu.127.1547302870972;
+        Sat, 12 Jan 2019 06:21:10 -0800 (PST)
+Received: from mail.google.com ([207.246.99.41])
+        by smtp.gmail.com with ESMTPSA id w184sm92667189pgd.34.2019.01.12.06.21.04
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Sat, 12 Jan 2019 06:21:10 -0800 (PST)
+Date:   Sat, 12 Jan 2019 22:20:58 +0800
+From:   Changbin Du <changbin.du@gmail.com>
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     Changbin Du <changbin.du@gmail.com>, rostedt@goodmis.org,
+        linux@armlinux.org.uk, x86@kernel.org, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH] fgraph: record function return value
+Message-ID: <20190112142056.6imezyzfw64qzg2x@mail.google.com>
+References: <20190112065701.30841-1-changbin.du@gmail.com>
+ <20190112122113.GR6310@bombadil.infradead.org>
 MIME-Version: 1.0
-In-Reply-To: <20190111155538.GX22483@kernel.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190112122113.GR6310@bombadil.infradead.org>
+User-Agent: NeoMutt/20171215
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2019-01-11 10:55 a.m., Arnaldo Carvalho de Melo wrote:
-> Hi Peter,
-> 
-> 	bpf_perf_event_open() already returns a value, but if
-> perf_event_output's output_begin (mostly perf_output_begin) fails,
-> the only way to know about that is looking before/after the rb->lost,
-> right?
-> 
-> 	For ring buffer users that is ok, we'll get a PERF_RECORD_LOST,
-> etc, but for BPF programs it would be convenient to get that -ENOSPC and
-> do some fallback, whatever makes sense, like in my augmented_syscalls
-> stuff for 'perf trace', i.e. don't augment it (i.e. push stuff at the
-> end of the normal payload), just don't filter the
-> raw_syscalls:sys_enter, 'perf trace' will get the enter syscall enter
-> event without the pointer dereference at the end, etc, warn the user but
-> don't lose a syscall in the strace-like output.	
-> 
-> 	What do you think? Am I missing something? Probably ;-)
-> 
-> 	Ah, its just test built.
 
-Works as advertised ;->
-Tested-by: Jamal Hadi Salim <jhs@mojatatu.com>
+Hi Matthew,
+On Sat, Jan 12, 2019 at 04:21:13AM -0800, Matthew Wilcox wrote:
+> On Sat, Jan 12, 2019 at 02:57:01PM +0800, Changbin Du wrote:
+> > This patch adds a new trace option 'funcgraph-retval' and is disabled by
+> > default. When this option is enabled, fgraph tracer will show the return
+> > value of each function. This is useful to find/analyze a original error
+> > source in a call graph.
+> > 
+> > One limitation is that kernel doesn't know the prototype of functions. So
+> > fgraph assumes all functions have a retvalue of type int. You must ignore
+> > the value of *void* function. And if the retvalue looks like an error code
+> > then both hexadecimal and decimal number are displayed.
+> 
+> I don't think we can do this.  You're leaking a _lot_ of kernel addresses
+> this way, and we've been trying very hard to avoid doing that because
+> it gives a lot of information to attackers.
+> 
+> Something more clever that prints out only errors (ie IS_ERR_VALUE())
+> might be acceptable.  I would think printing return values that are
+> between 0 and 4095 should also be OK since they can't be real pointers.
+> We'd leak whether a function called kmalloc(0, x) since that returns
+> 16, but that seems like a not-very-useful information leak.
+> 
+Regarding to security concern, I don't think this is a problem. Because using
+ftrace requires *root* permission. And if the attack has got root previlege,
+he/her can obtain nearly all kernel inner information through variant tools.
+For example, we can write an eBPF program to probe kernel functions and we
+just need root previlege to load our program. We also can use the *crash*
+tool to retreive kernel data.
 
-cheers,
-jamal
+> >  3)   0.247 us    |    mutex_unlock(); /* ret=0xffff8880738ed040 */
+> >  3)               |    kvm_arch_vcpu_create() {
+> >  3)               |      vmx_create_vcpu() {
+> >  3) + 17.969 us   |        kmem_cache_alloc(); /* ret=0xffff88813a980040 */
+> >  3) + 15.948 us   |        kmem_cache_alloc(); /* ret=0xffff88813aa99200 */
+> >  3)   0.653 us    |        allocate_vpid.part.88(); /* ret=0x1 */
+> >  3)   6.964 us    |        kvm_vcpu_init(); /* ret=0xfffffffb */
+> >  3)   0.323 us    |        free_vpid.part.89(); /* ret=0x1 */
+> >  3)   9.985 us    |        kmem_cache_free(); /* ret=0x80000000 */
+> >  3)   9.491 us    |        kmem_cache_free(); /* ret=0x80000000 */
+> >  3) + 69.858 us   |      } /* ret=0xfffffffffffffffb/-5 */
+> >  3) + 70.631 us   |    } /* ret=0xfffffffffffffffb/-5 */
+> >  3)               |    mutex_lock() {
+> >  3)               |      _cond_resched() {
+> >  3)   0.199 us    |        rcu_all_qs(); /* ret=0x80000000 */
+> >  3)   0.594 us    |      } /* ret=0x0 */
+> >  3)   1.067 us    |    } /* ret=0x0 */
+> >  3)   0.337 us    |    mutex_unlock(); /* ret=0xffff8880738ed040 */
+> >  3) + 92.730 us   |  } /* ret=0xfffffffffffffffb/-5 */
+
+-- 
+Cheers,
+Changbin Du
