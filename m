@@ -4,40 +4,41 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-13.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B1BF3C43387
-	for <linux-kernel@archiver.kernel.org>; Sat, 12 Jan 2019 02:28:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2358BC43387
+	for <linux-kernel@archiver.kernel.org>; Sat, 12 Jan 2019 02:28:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 828C32177B
-	for <linux-kernel@archiver.kernel.org>; Sat, 12 Jan 2019 02:28:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E85A020870
+	for <linux-kernel@archiver.kernel.org>; Sat, 12 Jan 2019 02:28:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547260107;
-	bh=YtrS9Eu6vSLzd1eZiv2zYRFV5MTPlYIgS5GA9OxPs3M=;
+	s=default; t=1547260136;
+	bh=PIWSRJem1EAE1MYY4OPom+YqR8dr2EsFg481ou2fjCk=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=mk0OWqrAd1Z5RadKHfiSWpvT8EMBW83yfePu3CY8cilb2GHD9g0x+3Fa9fuvVtkgG
-	 YKOIBjaxAv6Ru5DMOKxPPPbPExqhmHJ6ry5gcat6k5aV4rpoyUndLq4PT9KVoMyPfS
-	 9fMR5IM1/iCA8tCDCpZIV4X2rXlcjvFqtTeItMvA=
+	b=rJB25fyoN1nyPzIsXoMhfibl8S1PP3Ia0RfOYvG/c+qtQtkHHX0hHfyC/gbnz0CEd
+	 FioxpuDqvHSlcd3P3s96Z8zeO7KJ81/6decqj9Bu/hoyNKcRyNz3I2oc4N5vRfgDUy
+	 ipPrQMXAU7Uo6mpWE6rKdU4uy+GFdRgSFiPFAujU=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726616AbfALC20 (ORCPT
+        id S1726623AbfALC2y (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 11 Jan 2019 21:28:26 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48460 "EHLO mail.kernel.org"
+        Fri, 11 Jan 2019 21:28:54 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48600 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726227AbfALC20 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Jan 2019 21:28:26 -0500
+        id S1726227AbfALC2y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 Jan 2019 21:28:54 -0500
 Received: from localhost.localdomain (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4319B204FD;
-        Sat, 12 Jan 2019 02:28:24 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8A62E204FD;
+        Sat, 12 Jan 2019 02:28:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547260105;
-        bh=YtrS9Eu6vSLzd1eZiv2zYRFV5MTPlYIgS5GA9OxPs3M=;
+        s=default; t=1547260133;
+        bh=PIWSRJem1EAE1MYY4OPom+YqR8dr2EsFg481ou2fjCk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ebP93Dwf1++xq/hlbZMv2byQukpK6HwhrDLMdVFEBj1R66fMYzs2eJyc4SKLqtjSV
-         4xWYWX0cj9QF64SyOw5jY+bh2hoaM2bmD4R0yfy5BB2s9Dh5KHb38y7wnb6O6Uw339
-         ktTFYEGSQSJ3RpPSO6WxYKznaIshZTpV5IqtVEGA=
+        b=tC8a6M88sa+LRlcdppIV/RM2FJq3wZbvpouja49uv7k6QKILL31mdFuOEOITkqB+Z
+         ltLssYZZEYWq1lO2FPcRjRAqVTupRNm6x4W8Ew7p9XHHCYNzh920CAwnGgm0yD4DZg
+         Yr4zas1DCi+K64CRy4/NIbKIk4bQsajv2auzQElA=
 From:   Masami Hiramatsu <mhiramat@kernel.org>
 To:     Ingo Molnar <mingo@redhat.com>
 Cc:     Masami Hiramatsu <mhiramat@kernel.org>, peterz@infradead.org,
@@ -45,9 +46,9 @@ Cc:     Masami Hiramatsu <mhiramat@kernel.org>, peterz@infradead.org,
         linux-kernel <linux-kernel@vger.kernel.org>,
         Andrea Righi <righi.andrea@gmail.com>,
         Steven Rostedt <rostedt@goodmis.org>
-Subject: [PATCH v2 5/9] kprobes: Search non-suffixed symbol in blacklist
-Date:   Sat, 12 Jan 2019 11:28:02 +0900
-Message-Id: <154726008226.18060.9082091974811290044.stgit@devbox>
+Subject: [PATCH v2 6/9] kprobes: Prohibit probing on hardirq tracers
+Date:   Sat, 12 Jan 2019 11:28:30 +0900
+Message-Id: <154726011067.18060.14848714386408118073.stgit@devbox>
 X-Mailer: git-send-email 2.13.6
 In-Reply-To: <154725993986.18060.2759150647140353514.stgit@devbox>
 References: <154725993986.18060.2759150647140353514.stgit@devbox>
@@ -60,64 +61,122 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Newer gcc can generate some different instances of a function
-with suffixed symbols if the function is optimized and only
-has a part of that. (e.g. .constprop, .part etc.)
+Since kprobes breakpoint handling involves hardirq tracer,
+probing these functions cause breakpoint recursion problem.
 
-In this case, it is not enough to check the entry of kprobe
-blacklist because it only records non-suffixed symbol address.
-
-To fix this issue, search non-suffixed symbol in blacklist if
-given address is within a symbol which has a suffix.
-
-Note that this can cause false positive cases if a kprobe-safe
-function is optimized to suffixed instance and has same name
-symbol which is blacklisted.
-But I would like to chose a fail-safe design for this issue.
+Prohibit probing on those functions.
 
 Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
+Acked-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
 ---
- kernel/kprobes.c |   21 ++++++++++++++++++++-
- 1 file changed, 20 insertions(+), 1 deletion(-)
+ kernel/trace/trace_irqsoff.c    |    9 +++++++--
+ kernel/trace/trace_preemptirq.c |    5 +++++
+ 2 files changed, 12 insertions(+), 2 deletions(-)
 
-diff --git a/kernel/kprobes.c b/kernel/kprobes.c
-index e8c76164f541..faa519f07aad 100644
---- a/kernel/kprobes.c
-+++ b/kernel/kprobes.c
-@@ -1396,7 +1396,7 @@ bool __weak arch_within_kprobe_blacklist(unsigned long addr)
- 	       addr < (unsigned long)__kprobes_text_end;
+diff --git a/kernel/trace/trace_irqsoff.c b/kernel/trace/trace_irqsoff.c
+index 98ea6d28df15..829709bfec3d 100644
+--- a/kernel/trace/trace_irqsoff.c
++++ b/kernel/trace/trace_irqsoff.c
+@@ -14,6 +14,7 @@
+ #include <linux/uaccess.h>
+ #include <linux/module.h>
+ #include <linux/ftrace.h>
++#include <linux/kprobes.h>
+ 
+ #include "trace.h"
+ 
+@@ -368,7 +369,7 @@ check_critical_timing(struct trace_array *tr,
+ 	__trace_function(tr, CALLER_ADDR0, parent_ip, flags, pc);
  }
  
--bool within_kprobe_blacklist(unsigned long addr)
-+static bool __within_kprobe_blacklist(unsigned long addr)
+-static inline void
++static nokprobe_inline void
+ start_critical_timing(unsigned long ip, unsigned long parent_ip, int pc)
  {
- 	struct kprobe_blacklist_entry *ent;
- 
-@@ -1410,7 +1410,26 @@ bool within_kprobe_blacklist(unsigned long addr)
- 		if (addr >= ent->start_addr && addr < ent->end_addr)
- 			return true;
- 	}
-+	return false;
-+}
- 
-+bool within_kprobe_blacklist(unsigned long addr)
-+{
-+	char symname[KSYM_NAME_LEN], *p;
-+
-+	if (__within_kprobe_blacklist(addr))
-+		return true;
-+
-+	/* Check if the address is on a suffixed-symbol */
-+	if (!lookup_symbol_name(addr, symname)) {
-+		p = strchr(symname, '.');
-+		if (!p)
-+			return false;
-+		*p = '\0';
-+		addr = (unsigned long)kprobe_lookup_name(symname, 0);
-+		if (addr)
-+			return __within_kprobe_blacklist(addr);
-+	}
- 	return false;
+ 	int cpu;
+@@ -404,7 +405,7 @@ start_critical_timing(unsigned long ip, unsigned long parent_ip, int pc)
+ 	atomic_dec(&data->disabled);
  }
  
+-static inline void
++static nokprobe_inline void
+ stop_critical_timing(unsigned long ip, unsigned long parent_ip, int pc)
+ {
+ 	int cpu;
+@@ -446,6 +447,7 @@ void start_critical_timings(void)
+ 		start_critical_timing(CALLER_ADDR0, CALLER_ADDR1, pc);
+ }
+ EXPORT_SYMBOL_GPL(start_critical_timings);
++NOKPROBE_SYMBOL(start_critical_timings);
+ 
+ void stop_critical_timings(void)
+ {
+@@ -455,6 +457,7 @@ void stop_critical_timings(void)
+ 		stop_critical_timing(CALLER_ADDR0, CALLER_ADDR1, pc);
+ }
+ EXPORT_SYMBOL_GPL(stop_critical_timings);
++NOKPROBE_SYMBOL(stop_critical_timings);
+ 
+ #ifdef CONFIG_FUNCTION_TRACER
+ static bool function_enabled;
+@@ -615,6 +618,7 @@ void tracer_hardirqs_on(unsigned long a0, unsigned long a1)
+ 	if (!preempt_trace(pc) && irq_trace())
+ 		stop_critical_timing(a0, a1, pc);
+ }
++NOKPROBE_SYMBOL(tracer_hardirqs_on);
+ 
+ void tracer_hardirqs_off(unsigned long a0, unsigned long a1)
+ {
+@@ -623,6 +627,7 @@ void tracer_hardirqs_off(unsigned long a0, unsigned long a1)
+ 	if (!preempt_trace(pc) && irq_trace())
+ 		start_critical_timing(a0, a1, pc);
+ }
++NOKPROBE_SYMBOL(tracer_hardirqs_off);
+ 
+ static int irqsoff_tracer_init(struct trace_array *tr)
+ {
+diff --git a/kernel/trace/trace_preemptirq.c b/kernel/trace/trace_preemptirq.c
+index 71f553cceb3c..4d8e99fdbbbe 100644
+--- a/kernel/trace/trace_preemptirq.c
++++ b/kernel/trace/trace_preemptirq.c
+@@ -9,6 +9,7 @@
+ #include <linux/uaccess.h>
+ #include <linux/module.h>
+ #include <linux/ftrace.h>
++#include <linux/kprobes.h>
+ #include "trace.h"
+ 
+ #define CREATE_TRACE_POINTS
+@@ -30,6 +31,7 @@ void trace_hardirqs_on(void)
+ 	lockdep_hardirqs_on(CALLER_ADDR0);
+ }
+ EXPORT_SYMBOL(trace_hardirqs_on);
++NOKPROBE_SYMBOL(trace_hardirqs_on);
+ 
+ void trace_hardirqs_off(void)
+ {
+@@ -43,6 +45,7 @@ void trace_hardirqs_off(void)
+ 	lockdep_hardirqs_off(CALLER_ADDR0);
+ }
+ EXPORT_SYMBOL(trace_hardirqs_off);
++NOKPROBE_SYMBOL(trace_hardirqs_off);
+ 
+ __visible void trace_hardirqs_on_caller(unsigned long caller_addr)
+ {
+@@ -56,6 +59,7 @@ __visible void trace_hardirqs_on_caller(unsigned long caller_addr)
+ 	lockdep_hardirqs_on(CALLER_ADDR0);
+ }
+ EXPORT_SYMBOL(trace_hardirqs_on_caller);
++NOKPROBE_SYMBOL(trace_hardirqs_on_caller);
+ 
+ __visible void trace_hardirqs_off_caller(unsigned long caller_addr)
+ {
+@@ -69,6 +73,7 @@ __visible void trace_hardirqs_off_caller(unsigned long caller_addr)
+ 	lockdep_hardirqs_off(CALLER_ADDR0);
+ }
+ EXPORT_SYMBOL(trace_hardirqs_off_caller);
++NOKPROBE_SYMBOL(trace_hardirqs_off_caller);
+ #endif /* CONFIG_TRACE_IRQFLAGS */
+ 
+ #ifdef CONFIG_TRACE_PREEMPT_TOGGLE
 
