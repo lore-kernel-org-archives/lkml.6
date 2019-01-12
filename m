@@ -5,206 +5,107 @@ X-Spam-Level:
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ED54FC43387
-	for <linux-kernel@archiver.kernel.org>; Sat, 12 Jan 2019 05:34:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 362C6C43387
+	for <linux-kernel@archiver.kernel.org>; Sat, 12 Jan 2019 05:54:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AA94B2086C
-	for <linux-kernel@archiver.kernel.org>; Sat, 12 Jan 2019 05:34:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EE37820870
+	for <linux-kernel@archiver.kernel.org>; Sat, 12 Jan 2019 05:54:48 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YlV8HKMn"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="sR3mXbm5"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725851AbfALFem (ORCPT
+        id S1725841AbfALFyr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 12 Jan 2019 00:34:42 -0500
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:34648 "EHLO
+        Sat, 12 Jan 2019 00:54:47 -0500
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:47082 "EHLO
         mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725372AbfALFem (ORCPT
+        with ESMTP id S1725372AbfALFyr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 12 Jan 2019 00:34:42 -0500
-Received: by mail-wr1-f67.google.com with SMTP id j2so17397210wrw.1;
-        Fri, 11 Jan 2019 21:34:40 -0800 (PST)
+        Sat, 12 Jan 2019 00:54:47 -0500
+Received: by mail-wr1-f67.google.com with SMTP id l9so17302682wrt.13;
+        Fri, 11 Jan 2019 21:54:46 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id;
-        bh=7ShIJq766Qc8Y/A5T5dsWbItZEA7Q8RE8v6LaoGJ1gw=;
-        b=YlV8HKMnm/F7wBLC6aCmAmXrM36Ps+o5Sb0jW5P2t5uuoKLyTuG8uOhwswAu4evegb
-         mMrORjpbx+fiDXP++ahC0v1O82st3hNNSWI8gkHaj0VHgu/2aWZ0+akn4H7kOg2lZ36W
-         i5/Qmz3YWtnXOlGz0VQ1yGd27qK/3IjWQZtIygCzBpmurlHSobFnGLc8b6nOkVdWtq8o
-         oIlJnNsuNhIAkRGMipCSHdQtK6BAZ9fRflIhsR81hetOyn0Rui6KZP5wOEv1DAW1qbN6
-         lEE/ZU98hw7X8+PPNTFXL7sgLciJeVz27FLIrwmVSiPJa9m5o0Eu+SCMhQDMa80XJBhw
-         nMUA==
+        bh=EXdpAxMi+IjCkwtLHAcCwnnONOKeSMkg9N2RbHkuAjo=;
+        b=sR3mXbm50Oxnk03Ekn5Y7pbMOqSjRwSdUOwQ0vzASi+buqFi6CULFwjEX/ipTD1iw1
+         Iwqh92LSzSE8erL/pj8S8NX0w2Ko84MJ6TNSUCeUhcMxyoaj0M+5EKKx+sLSsO5cuPAV
+         3nKef7QCc0POsuYxQYFKSwulnqLBGKfB6N5GMzGo9p1t5eVQEXexNPOAaRfSb7uWXXGr
+         /ybR3/nGtvYuPawkKoweifx1ZgvaQrCmwGkmvlwhaF3o7lkdW49kN/ONupsy+/5dU6so
+         gPIg/kVzqOhfHfCsE/+hgk8UzRhOeEHqA6GjtAZGleALSWTttOSBH5BL6aFsYNhUaBU0
+         3Eww==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=7ShIJq766Qc8Y/A5T5dsWbItZEA7Q8RE8v6LaoGJ1gw=;
-        b=Cq3AwsyO71udseyNje3s8on5hfQJRvxOr+2TBlaF+Ycff9Xsg1DUVNCcFSuJ/oLRr2
-         NefxGBvTOKngUS9QMnMybUkO7F0A1W/zkqB09m1LRc1gxFIGCxztd9N1HbjzbJvlBdVO
-         QToJ4hAPwL95nTLj+5Hd2J01cUUz/VRjSxBE1cGx90uG3hdERWM3oO0KNzvF6HH0FMtY
-         BrFbhrIqLh3+flM9opnpIxomH8+1G0TQ/39XZANu3kPenNttwjugJYUsufYHCSAOenrv
-         PXEMAZjt8ZJi0HFCAd+UrNhNRKJqk7ghFsdmIFQGXs1QXBaMQiLIw5TLvxAGLq+1VIC+
-         FgRA==
-X-Gm-Message-State: AJcUukca6qH7A1Bf8G1XGDbZUupB99mATie/mue5VvdOwqjn1GSFOrhn
-        Iaypg9fGvXkJAWTU9PzW9Zc3PGdVAMQ=
-X-Google-Smtp-Source: ALg8bN7R6QiYdUUIYk4NU9BhGmdIjrTzvHKvp75pRKjCKadTIurNzjWfxYJ8RyhqnqAlxi/shonOjA==
-X-Received: by 2002:a5d:5111:: with SMTP id s17mr15690705wrt.43.1547271279218;
-        Fri, 11 Jan 2019 21:34:39 -0800 (PST)
-Received: from alpaca.bmw-carit.intra ([145.253.130.2])
-        by smtp.gmail.com with ESMTPSA id k19sm87681706wre.5.2019.01.11.21.34.38
+        bh=EXdpAxMi+IjCkwtLHAcCwnnONOKeSMkg9N2RbHkuAjo=;
+        b=PQ2awEz/i5TcVoWja+IZ+PXS1LaRHT9H6Z1/bSLjIFWfPk2/E5unHkJbCA8rYbNJCL
+         b56hx2kkbiZAcd3NUEMWTaKAbWUjDim0+xolGhoI5dDIzE+kVJEQ2ELVujS8bnptwQ8E
+         u8hlKOfly7YvZMqlQf79Cch2F150se/n1O7Mlew4eHz5HK8Hx4NYd2wi7FZQyz1Y5vxH
+         ESnc4EOLFTLd/Uz5pcaLozgJeTFWGHXMPCwJtVHsuvXqfnJsANxGWYtWzEIxd5mpNnJJ
+         RGm8vYBxvMhI3wcdHRUSb4b1k/RAfyeWJXq2zvIS56zjieiPWgENpGT9cTuRyBWBLYAe
+         xLRA==
+X-Gm-Message-State: AJcUukcKuwijCE6JTPXgeEOLw6Qe+RWeZ2H1Ft2cv5Hda34vWm+zwCJt
+        7KpCY/9ILJ+4eDxuhItk7kY=
+X-Google-Smtp-Source: ALg8bN5A4BWAl8Q3XXo3GqdH9QoRpSz0hG8rpU2HB7o1ByT8Dt8biREavO5GC9xFg3VN1l8hKf+8Ng==
+X-Received: by 2002:adf:f211:: with SMTP id p17mr16041874wro.293.1547272485337;
+        Fri, 11 Jan 2019 21:54:45 -0800 (PST)
+Received: from felia.fritz.box ([2001:16b8:2d3c:9f00:9d02:40cb:9892:49cb])
+        by smtp.gmail.com with ESMTPSA id 124sm22989776wmh.22.2019.01.11.21.54.43
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 11 Jan 2019 21:34:38 -0800 (PST)
+        Fri, 11 Jan 2019 21:54:44 -0800 (PST)
 From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
-To:     linux-scsi@vger.kernel.org
-Cc:     QLogic-Storage-Upstream@qlogic.com,
-        "James E.J. Bottomley" <jejb@linux.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Johannes Thumshirn <jth@kernel.org>,
-        QLogic-Storage-Upstream@cavium.com, linux-kernel@vger.kernel.org,
+To:     Alexander Viro <viro@zeniv.linux.org.uk>
+Cc:     Elena Reshetova <elena.reshetova@intel.com>,
+        Krystian Radlak <kradlak@exida.com>,
+        linux-fsdevel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
         Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Subject: [PATCH] fcoe: make use of fip_mode enum complete
-Date:   Sat, 12 Jan 2019 06:34:27 +0100
-Message-Id: <20190112053427.35696-1-lukas.bulwahn@gmail.com>
+Subject: [PATCH] fs: drop unused fput_atomic definition
+Date:   Sat, 12 Jan 2019 06:54:30 +0100
+Message-Id: <20190112055430.5860-1-lukas.bulwahn@gmail.com>
 X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-commit 1917d42d14b7 ("fcoe: use enum for fip_mode") introduces a separate
-enum for the fip_mode that shall be used during initialisation handling
-until it is passed to fcoe_ctrl_link_up to set the initial fip_state.
-That change was incomplete and gcc quietly converted in various places
-between the fip_mode and the fip_state enum values with implicit enum
-conversions, which fortunately cannot cause any issues in the actual
-code's execution.
+commit d7065da03822 ("get rid of the magic around f_count in aio") added
+fput_atomic to include/linux/fs.h, motivated by its use in __aio_put_req()
+in fs/aio.c.
 
-clang however warns about these implicit enum conversions in the scsi
-drivers. This commit consolidates the use of the two enums, guided by
-clang's enum-conversion warnings.
+Later, commit 3ffa3c0e3f6e ("aio: now fput() is OK from interrupt context;
+get rid of manual delayed __fput()") removed the only use of fput_atomic
+in __aio_put_req(), but did not remove the since then unused fput_atomic
+definition in include/linux/fs.h.
 
-This commit now completes the use of the fip_mode:
-It expects and uses fip_mode in {bnx2fc,fcoe}_interface_create and
-fcoe_ctlr_init, and it explicitly converts from fip_mode to fip_state
-only at the single point in fcoe_ctlr_link_up.
+We curate this now and finally remove the unused definition.
 
-To eliminate that adding or removing values from fip_mode or fip_state enum
-break the right mapping of values, all fip_mode values are assigned to
-their fip_state counterparts.
+This issue was identified during a code review due to a coccinelle warning
+from the atomic_as_refcounter.cocci rule pointing to the use of atomic_t
+in fput_atomic.
 
+Suggested-by: Krystian Radlak <kradlak@exida.com>
 Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
 ---
-resending of this patch:
-https://patchwork.kernel.org/patch/10589865/
+compile-tested with defconfig & allyesconfig on v4.20
 
- drivers/scsi/bnx2fc/bnx2fc_fcoe.c  | 2 +-
- drivers/scsi/fcoe/fcoe.c           | 2 +-
- drivers/scsi/fcoe/fcoe_ctlr.c      | 4 ++--
- drivers/scsi/fcoe/fcoe_transport.c | 2 +-
- drivers/scsi/qedf/qedf_main.c      | 2 +-
- include/scsi/libfcoe.h             | 8 ++++----
- 6 files changed, 10 insertions(+), 10 deletions(-)
+ include/linux/fs.h | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/drivers/scsi/bnx2fc/bnx2fc_fcoe.c b/drivers/scsi/bnx2fc/bnx2fc_fcoe.c
-index f00045813378..83aaab4fdab5 100644
---- a/drivers/scsi/bnx2fc/bnx2fc_fcoe.c
-+++ b/drivers/scsi/bnx2fc/bnx2fc_fcoe.c
-@@ -1445,7 +1445,7 @@ static struct bnx2fc_hba *bnx2fc_hba_create(struct cnic_dev *cnic)
- static struct bnx2fc_interface *
- bnx2fc_interface_create(struct bnx2fc_hba *hba,
- 			struct net_device *netdev,
--			enum fip_state fip_mode)
-+			enum fip_mode fip_mode)
- {
- 	struct fcoe_ctlr_device *ctlr_dev;
- 	struct bnx2fc_interface *interface;
-diff --git a/drivers/scsi/fcoe/fcoe.c b/drivers/scsi/fcoe/fcoe.c
-index f46b312d04bc..6768b2e8148a 100644
---- a/drivers/scsi/fcoe/fcoe.c
-+++ b/drivers/scsi/fcoe/fcoe.c
-@@ -390,7 +390,7 @@ static int fcoe_interface_setup(struct fcoe_interface *fcoe,
-  * Returns: pointer to a struct fcoe_interface or NULL on error
-  */
- static struct fcoe_interface *fcoe_interface_create(struct net_device *netdev,
--						    enum fip_state fip_mode)
-+						    enum fip_mode fip_mode)
- {
- 	struct fcoe_ctlr_device *ctlr_dev;
- 	struct fcoe_ctlr *ctlr;
-diff --git a/drivers/scsi/fcoe/fcoe_ctlr.c b/drivers/scsi/fcoe/fcoe_ctlr.c
-index 54da3166da8d..a52d3ad94876 100644
---- a/drivers/scsi/fcoe/fcoe_ctlr.c
-+++ b/drivers/scsi/fcoe/fcoe_ctlr.c
-@@ -147,7 +147,7 @@ static void fcoe_ctlr_map_dest(struct fcoe_ctlr *fip)
-  * fcoe_ctlr_init() - Initialize the FCoE Controller instance
-  * @fip: The FCoE controller to initialize
-  */
--void fcoe_ctlr_init(struct fcoe_ctlr *fip, enum fip_state mode)
-+void fcoe_ctlr_init(struct fcoe_ctlr *fip, enum fip_mode mode)
- {
- 	fcoe_ctlr_set_state(fip, FIP_ST_LINK_WAIT);
- 	fip->mode = mode;
-@@ -454,7 +454,7 @@ void fcoe_ctlr_link_up(struct fcoe_ctlr *fip)
- 		mutex_unlock(&fip->ctlr_mutex);
- 		fc_linkup(fip->lp);
- 	} else if (fip->state == FIP_ST_LINK_WAIT) {
--		fcoe_ctlr_set_state(fip, fip->mode);
-+		fcoe_ctlr_set_state(fip, (enum fip_state) fip->mode);
- 		switch (fip->mode) {
- 		default:
- 			LIBFCOE_FIP_DBG(fip, "invalid mode %d\n", fip->mode);
-diff --git a/drivers/scsi/fcoe/fcoe_transport.c b/drivers/scsi/fcoe/fcoe_transport.c
-index f4909cd206d3..b381ab066b9c 100644
---- a/drivers/scsi/fcoe/fcoe_transport.c
-+++ b/drivers/scsi/fcoe/fcoe_transport.c
-@@ -873,7 +873,7 @@ static int fcoe_transport_create(const char *buffer,
- 	int rc = -ENODEV;
- 	struct net_device *netdev = NULL;
- 	struct fcoe_transport *ft = NULL;
--	enum fip_state fip_mode = (enum fip_state)(long)kp->arg;
-+	enum fip_mode fip_mode = (enum fip_mode)(long)kp->arg;
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index 811c77743dad..ddf7de4d522b 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -952,7 +952,6 @@ static inline struct file *get_file(struct file *f)
+ 	return f;
+ }
+ #define get_file_rcu(x) atomic_long_inc_not_zero(&(x)->f_count)
+-#define fput_atomic(x)	atomic_long_add_unless(&(x)->f_count, -1, 1)
+ #define file_count(x)	atomic_long_read(&(x)->f_count)
  
- 	mutex_lock(&ft_mutex);
- 
-diff --git a/drivers/scsi/qedf/qedf_main.c b/drivers/scsi/qedf/qedf_main.c
-index 0a5dd5595dd3..cd61905ca2f5 100644
---- a/drivers/scsi/qedf/qedf_main.c
-+++ b/drivers/scsi/qedf/qedf_main.c
-@@ -1418,7 +1418,7 @@ static struct libfc_function_template qedf_lport_template = {
- 
- static void qedf_fcoe_ctlr_setup(struct qedf_ctx *qedf)
- {
--	fcoe_ctlr_init(&qedf->ctlr, FIP_ST_AUTO);
-+	fcoe_ctlr_init(&qedf->ctlr, FIP_MODE_AUTO);
- 
- 	qedf->ctlr.send = qedf_fip_send;
- 	qedf->ctlr.get_src_addr = qedf_get_src_mac;
-diff --git a/include/scsi/libfcoe.h b/include/scsi/libfcoe.h
-index cb8a273732cf..f8f1f039a611 100644
---- a/include/scsi/libfcoe.h
-+++ b/include/scsi/libfcoe.h
-@@ -80,9 +80,9 @@ enum fip_state {
-  */
- enum fip_mode {
- 	FIP_MODE_AUTO = FIP_ST_AUTO,
--	FIP_MODE_NON_FIP,
--	FIP_MODE_FABRIC,
--	FIP_MODE_VN2VN,
-+	FIP_MODE_NON_FIP = FIP_ST_NON_FIP,
-+	FIP_MODE_FABRIC = FIP_ST_ENABLED,
-+	FIP_MODE_VN2VN = FIP_ST_VNMP_START,
- };
- 
- /**
-@@ -250,7 +250,7 @@ struct fcoe_rport {
- };
- 
- /* FIP API functions */
--void fcoe_ctlr_init(struct fcoe_ctlr *, enum fip_state);
-+void fcoe_ctlr_init(struct fcoe_ctlr *fip, enum fip_mode);
- void fcoe_ctlr_destroy(struct fcoe_ctlr *);
- void fcoe_ctlr_link_up(struct fcoe_ctlr *);
- int fcoe_ctlr_link_down(struct fcoe_ctlr *);
+ #define	MAX_NON_LFS	((1UL<<31) - 1)
 -- 
 2.17.1
 
