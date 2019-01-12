@@ -2,111 +2,62 @@ Return-Path: <SRS0=UXoZ=PU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 90C41C43387
-	for <linux-kernel@archiver.kernel.org>; Sat, 12 Jan 2019 01:56:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 27E55C43387
+	for <linux-kernel@archiver.kernel.org>; Sat, 12 Jan 2019 01:57:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 613FF20870
-	for <linux-kernel@archiver.kernel.org>; Sat, 12 Jan 2019 01:56:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 009EA2084E
+	for <linux-kernel@archiver.kernel.org>; Sat, 12 Jan 2019 01:57:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726475AbfALB41 (ORCPT
+        id S1726524AbfALB5N (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 11 Jan 2019 20:56:27 -0500
-Received: from mail-ed1-f66.google.com ([209.85.208.66]:37567 "EHLO
-        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726227AbfALB40 (ORCPT
+        Fri, 11 Jan 2019 20:57:13 -0500
+Received: from shards.monkeyblade.net ([23.128.96.9]:39538 "EHLO
+        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726227AbfALB5N (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Jan 2019 20:56:26 -0500
-Received: by mail-ed1-f66.google.com with SMTP id h15so14534820edb.4;
-        Fri, 11 Jan 2019 17:56:25 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=9WCLRL4nc+FIeUAVSUDQFW8YoU/sIv0w+O0XhmejYKw=;
-        b=j5bAGEDuUCaQKTWq8rqeK3bOXUGNbhnqDVu1mltA5xdGI+W1NqcN2M2Yuu3+Uzvxf4
-         hNRlIFzX/95FLO7xiUQYdp//fiUL4tdKSjpMR6RVL6J1zoyjxC7wcmY5Ovl9W5ju71cC
-         hI6vBF5LO+4TGpdPT92XL7iQN3ymVsMFoS21IZ9UphpFYhmtxnE9b5IiNb4Q0+dnhwz4
-         dhaeVUI3BpfLQfgvrtbHXWvMsjtdRxyb3hWYpR2feATcbGz4bcO/3DICPEa7GfFI0TwM
-         J9sLQSa3NHpNImfoB7p3hTbuQ+GbNXXq0NDCRw0JBTaWRc9JUJTj676oSK32cuwG402i
-         CMHg==
-X-Gm-Message-State: AJcUukcV9TPtWwnrOimbIgwRc4D9jtf20r/a8J1Gm97BvUiB6BnlFHbw
-        RAqd3E75GakHij+LGryoVF5+g7Bt+hQ=
-X-Google-Smtp-Source: ALg8bN4h/0AZS41Xlqx+Nt8TBishApFfCozT2Bv4mSzO36opItZ0nYBGi4VSnxrCP9kPZwEX0mnqXQ==
-X-Received: by 2002:a17:906:33d9:: with SMTP id w25-v6mr13574877eja.190.1547258184384;
-        Fri, 11 Jan 2019 17:56:24 -0800 (PST)
-Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com. [209.85.221.54])
-        by smtp.gmail.com with ESMTPSA id g40sm2651327edg.39.2019.01.11.17.56.23
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 11 Jan 2019 17:56:24 -0800 (PST)
-Received: by mail-wr1-f54.google.com with SMTP id 96so17121802wrb.2;
-        Fri, 11 Jan 2019 17:56:23 -0800 (PST)
-X-Received: by 2002:adf:a1d2:: with SMTP id v18mr14898494wrv.87.1547258183588;
- Fri, 11 Jan 2019 17:56:23 -0800 (PST)
-MIME-Version: 1.0
-References: <20190111173015.12119-1-jernej.skrabec@siol.net> <20190111173015.12119-2-jernej.skrabec@siol.net>
-In-Reply-To: <20190111173015.12119-2-jernej.skrabec@siol.net>
-From:   Chen-Yu Tsai <wens@csie.org>
-Date:   Sat, 12 Jan 2019 09:56:11 +0800
-X-Gmail-Original-Message-ID: <CAGb2v66DiqK9sL-hQev4Wy08d9T7f1Yc2DFWJ0gYOnqChJyBRw@mail.gmail.com>
-Message-ID: <CAGb2v66DiqK9sL-hQev4Wy08d9T7f1Yc2DFWJ0gYOnqChJyBRw@mail.gmail.com>
-Subject: Re: [PATCH 1/3] media: dt: bindings: sunxi-ir: Add A64 compatible
-To:     Jernej Skrabec <jernej.skrabec@siol.net>
-Cc:     Maxime Ripard <maxime.ripard@bootlin.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Linux Media Mailing List <linux-media@vger.kernel.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-sunxi <linux-sunxi@googlegroups.com>
-Content-Type: text/plain; charset="UTF-8"
+        Fri, 11 Jan 2019 20:57:13 -0500
+Received: from localhost (unknown [IPv6:2601:601:9f80:35cd::bf5])
+        (using TLSv1 with cipher AES256-SHA (256/256 bits))
+        (Client did not present a certificate)
+        (Authenticated sender: davem-davemloft)
+        by shards.monkeyblade.net (Postfix) with ESMTPSA id 324FF14CCB476;
+        Fri, 11 Jan 2019 17:57:12 -0800 (PST)
+Date:   Fri, 11 Jan 2019 17:57:11 -0800 (PST)
+Message-Id: <20190111.175711.1689272658462652060.davem@davemloft.net>
+To:     baijiaju1990@gmail.com
+Cc:     isdn@linux-pingi.de, viro@zeniv.linux.org.uk, linux@roeck-us.net,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] isdn: i4l: isdn_tty: Fix some concurrency double-free
+ bugs
+From:   David Miller <davem@davemloft.net>
+In-Reply-To: <20190108130448.22102-1-baijiaju1990@gmail.com>
+References: <20190108130448.22102-1-baijiaju1990@gmail.com>
+X-Mailer: Mew version 6.8 on Emacs 26.1
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Fri, 11 Jan 2019 17:57:12 -0800 (PST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Jan 12, 2019 at 1:30 AM Jernej Skrabec <jernej.skrabec@siol.net> wrote:
->
-> A64 IR is compatible with A13, so add A64 compatible with A13 as a
-> fallback.
+From: Jia-Ju Bai <baijiaju1990@gmail.com>
+Date: Tue,  8 Jan 2019 21:04:48 +0800
 
-We ask people to add the SoC-specific compatible as a contigency,
-in case things turn out to be not so "compatible".
+> The functions isdn_tty_tiocmset() and isdn_tty_set_termios() may be
+> concurrently executed.
+ ...
+> These possible bugs are found by a static tool written by myself and 
+> my manual code review.
+> 
+> To fix these possible bugs, the mutex lock "modem_info_mutex" used in
+> isdn_tty_tiocmset() is added in isdn_tty_set_termios().
+> 
+> Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
 
-To be consistent with all the other SoCs and other peripherals,
-unless you already spotted a "compatible" difference in the
-hardware, i.e. the hardware isn't completely the same, this
-patch isn't needed. On the other hand, if you did, please mention
-the differences in the commit log.
-
-ChenYu
-
-> Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
-> ---
->  Documentation/devicetree/bindings/media/sunxi-ir.txt | 5 ++++-
->  1 file changed, 4 insertions(+), 1 deletion(-)
->
-> diff --git a/Documentation/devicetree/bindings/media/sunxi-ir.txt b/Documentation/devicetree/bindings/media/sunxi-ir.txt
-> index 278098987edb..ecac6964b69b 100644
-> --- a/Documentation/devicetree/bindings/media/sunxi-ir.txt
-> +++ b/Documentation/devicetree/bindings/media/sunxi-ir.txt
-> @@ -1,7 +1,10 @@
->  Device-Tree bindings for SUNXI IR controller found in sunXi SoC family
->
->  Required properties:
-> -- compatible       : "allwinner,sun4i-a10-ir" or "allwinner,sun5i-a13-ir"
-> +- compatible       : value must be one of:
-> +  * "allwinner,sun4i-a10-ir"
-> +  * "allwinner,sun5i-a13-ir"
-> +  * "allwinner,sun50i-a64-ir", "allwinner,sun5i-a13-ir"
->  - clocks           : list of clock specifiers, corresponding to
->                       entries in clock-names property;
->  - clock-names      : should contain "apb" and "ir" entries;
-> --
-> 2.20.1
->
+Applied.
