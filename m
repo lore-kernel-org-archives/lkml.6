@@ -2,90 +2,114 @@ Return-Path: <SRS0=UXoZ=PU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 76A61C43387
-	for <linux-kernel@archiver.kernel.org>; Sat, 12 Jan 2019 12:56:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F2A9C43387
+	for <linux-kernel@archiver.kernel.org>; Sat, 12 Jan 2019 13:29:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 489342086C
-	for <linux-kernel@archiver.kernel.org>; Sat, 12 Jan 2019 12:56:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9E33820854
+	for <linux-kernel@archiver.kernel.org>; Sat, 12 Jan 2019 13:29:20 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="WtYnVDeU"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725920AbfALM4B (ORCPT
+        id S1725854AbfALNZz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 12 Jan 2019 07:56:01 -0500
-Received: from foss.arm.com ([217.140.101.70]:42140 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725823AbfALM4A (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 12 Jan 2019 07:56:00 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 08DDE80D;
-        Sat, 12 Jan 2019 04:56:00 -0800 (PST)
-Received: from [10.162.40.80] (p8cg001049571a15.blr.arm.com [10.162.40.80])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 21A493F70D;
-        Sat, 12 Jan 2019 04:55:49 -0800 (PST)
-Subject: Re: [PATCH] mm: Introduce GFP_PGTABLE
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     linux-mm@kvack.org, akpm@linux-foundation.org,
-        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        linux-arm-kernel@lists.infradead.org, linux-sh@vger.kernel.org,
-        kvmarm@lists.cs.columbia.edu, linux@armlinux.org.uk,
-        catalin.marinas@arm.com, will.deacon@arm.com, mpe@ellerman.id.au,
-        tglx@linutronix.de, mingo@redhat.com, dave.hansen@linux.intel.com,
-        peterz@infradead.org, christoffer.dall@arm.com,
-        marc.zyngier@arm.com, kirill@shutemov.name,
-        rppt@linux.vnet.ibm.com, mhocko@suse.com,
-        ard.biesheuvel@linaro.org, mark.rutland@arm.com,
-        steve.capper@arm.com, james.morse@arm.com, robin.murphy@arm.com,
-        aneesh.kumar@linux.ibm.com, vbabka@suse.cz, shakeelb@google.com,
-        rientjes@google.com
-References: <1547288798-10243-1-git-send-email-anshuman.khandual@arm.com>
- <20190112121230.GQ6310@bombadil.infradead.org>
-From:   Anshuman Khandual <anshuman.khandual@arm.com>
-Message-ID: <9dd9a8ef-8db8-891c-79a9-270ab033037c@arm.com>
-Date:   Sat, 12 Jan 2019 18:25:48 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Sat, 12 Jan 2019 08:25:55 -0500
+Received: from mail-io1-f54.google.com ([209.85.166.54]:45930 "EHLO
+        mail-io1-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725830AbfALNZz (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 12 Jan 2019 08:25:55 -0500
+Received: by mail-io1-f54.google.com with SMTP id c2so14308189iom.12
+        for <linux-kernel@vger.kernel.org>; Sat, 12 Jan 2019 05:25:52 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=amarulasolutions.com; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=ZDbDzX71FLTRSuvpMryGFsUbRsJPTp3xT2ORfBYNPPU=;
+        b=WtYnVDeUp/pieE8wQ6haFwzvZHTj/jaTfOfmyYsd8HcO3YGA0+bV1HkC+PC8+zTF50
+         0SxHU65X7KQse9+99iprD72CWWs8w7bY9dHWddqPLy/hU3NyFIeGh6oHUK1MEWN/rpVt
+         TJvCMZHlzPOCie9v/NkLFYzjCd9OAhnkobsqE=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=ZDbDzX71FLTRSuvpMryGFsUbRsJPTp3xT2ORfBYNPPU=;
+        b=GdQ0pEYoh516jg9mo9ThTUyH7remQpcVid8R47F13fqx6snTrbvENN4mP3L/OMkBT5
+         TmBtFCOLghSEY2hPegbYG+aDY44p2BA4aBOGoDoD6fSgeRxto0hMtw3cidNEJfKuaCN8
+         7sGq6L1XGyDhKqv7UDRQRvjQ0hg8IXABv4LGii28XuUGrGaEVQTteZ647KjTtD8sFyc4
+         RdfRKp+024brt3cRRapSNN5aDSH4mpkKwMMnVBv5ow6xUg/gSHBZhE3PUcQe+b6lnmUD
+         WAeF3ccq7AmFvQ2AERtbapohW0pJ9gm+yK29akqsU9cln9jmuhyvaDD+SdjgD9ZRBGkA
+         yyCw==
+X-Gm-Message-State: AJcUukfZ1JguJf/90hjRCNaB+TWvFEiezI2kvFOYMMy9flMB6/FAEC98
+        0MpLjc2gdfMbbmUNJam+WmD/XOCSU3DwrsKrUZCYNQ==
+X-Google-Smtp-Source: ALg8bN4aaxLrZmCvwoxctceGY16brj+8DvEBTmTYgZjt+qBh5E0dFNWzbkfXpw7pnGDBmgQ5glewSi3EkF71Kr0QtXo=
+X-Received: by 2002:a6b:1411:: with SMTP id 17mr8934426iou.252.1547299551459;
+ Sat, 12 Jan 2019 05:25:51 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20190112121230.GQ6310@bombadil.infradead.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20190111124714.19566-1-jagan@amarulasolutions.com>
+ <20190111124714.19566-2-jagan@amarulasolutions.com> <20190111211931.GA29735@ravnborg.org>
+ <CAMty3ZArGPf8+M5GVhkzoMDhtYwT3aUS9bNbKt8=gqeb6-b82Q@mail.gmail.com>
+ <20190112101409.GA14273@ravnborg.org> <CAMty3ZBUNeFvsHDRmBFUoZG=J+EfQuKtJDOhaezcfEOykhpOeQ@mail.gmail.com>
+ <20190112120056.GA7374@ravnborg.org>
+In-Reply-To: <20190112120056.GA7374@ravnborg.org>
+From:   Jagan Teki <jagan@amarulasolutions.com>
+Date:   Sat, 12 Jan 2019 18:55:39 +0530
+Message-ID: <CAMty3ZAvEzatWMPbtPKUhVRMSzC9icarsxK7KfXAp+gvCR74Lw@mail.gmail.com>
+Subject: Re: [PATCH V7 2/2] drm/panel: Add Sitronix ST7701 panel driver
+To:     Sam Ravnborg <sam@ravnborg.org>
+Cc:     David Airlie <airlied@linux.ie>,
+        linux-amarula@amarulasolutions.com,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Michael Trimarchi <michael@amarulasolutions.com>,
+        Sean Paul <sean@poorly.run>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Sat, Jan 12, 2019 at 5:31 PM Sam Ravnborg <sam@ravnborg.org> wrote:
+>
+> > >
+> > > > > > +
+> > > > > > +     msleep(st7701->sleep_delay);
+> > > > > > +
+> > > > > > +     gpiod_set_value(st7701->reset, 0);
+> > > > > > +
+> > > > > > +     gpiod_set_value(st7701->reset, 1);
+> > > > > > +
+> > > > > > +     gpiod_set_value(st7701->reset, 0);
+> > > > > No timing constrains here? In prepare there are sleeps intermixed.
+> > > >
+> > > > Delay while doing unprare is not needed I suppose.
+> > >
+> > > If the purpose is alone to reset the display then a single write '0'
+> > > should do it I think
+> >
+> > I even tried this just set 0, since prepare is doing a sequence, it
+> > good behavior to do the reverse during handoff. ie reason I just
+> > initiated this sequence.
+> >
+> > > And there is a requirement that it must be low for a minimum of 10 us
+> > > which would be good to have here.
+> >
+> > Sorry, I didn't get this requirement what is this for?
+> The st7701 will ignore reset pulse shorter than 10 us - see Trw in
+> table 9 reset timing (page 54).
+>
+> But as we just assert reset (set it to 0), this timing constraint can be ignored.
 
+But we unaware of reset pulse duration right? it's the hardware that
+bring the reset assert if we set the line 0. am I correct or do we
+need to explicitly wait 10us after reset initiated?
+there is family of chip Sitronix st7789v which don't taking care of
+this sequence (I don't know why?) in
+drivers/gpu/drm/panel/panel-sitronix-st7789v.c with Page 48 of
+datasheet[2]
 
-On 01/12/2019 05:42 PM, Matthew Wilcox wrote:
-> On Sat, Jan 12, 2019 at 03:56:38PM +0530, Anshuman Khandual wrote:
->> All architectures have been defining their own PGALLOC_GFP as (GFP_KERNEL |
->> __GFP_ZERO) and using it for allocating page table pages.
-> 
-> Except that's not true.
-> 
->> +++ b/arch/x86/mm/pgtable.c
->> @@ -13,19 +13,17 @@ phys_addr_t physical_mask __ro_after_init = (1ULL << __PHYSICAL_MASK_SHIFT) - 1;
->>  EXPORT_SYMBOL(physical_mask);
->>  #endif
->>  
->> -#define PGALLOC_GFP (GFP_KERNEL_ACCOUNT | __GFP_ZERO)
->> -
->>  #ifdef CONFIG_HIGHPTE
-> 
-> ...
-> 
->>  pte_t *pte_alloc_one_kernel(struct mm_struct *mm)
->>  {
->> -	return (pte_t *)__get_free_page(PGALLOC_GFP & ~__GFP_ACCOUNT);
->> +	return (pte_t *)__get_free_page(GFP_PGTABLE & ~__GFP_ACCOUNT);
->>  }
-> 
-> I think x86 was the only odd one out here, but you'll need to try again ...
-
-IIUC the user page table pages need __GFP_ACCOUNT not the kernel ones. Hence
-in the above function it clears out __GFP_ACCOUNT for kernel page table page
-allocations but where as by default it has got __GFP_ACCOUNT which would be
-used for user page tables. Instead we can make X86 user allocations add
-__GFP_ACCOUNT (like other archs) to generic GFP_PGTABLE when ever required.
+[2] https://www.newhavendisplay.com/appnotes/datasheets/LCDs/ST7789V.pdf
