@@ -2,111 +2,170 @@ Return-Path: <SRS0=UXoZ=PU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C77F8C43387
-	for <linux-kernel@archiver.kernel.org>; Sat, 12 Jan 2019 18:43:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 874FFC43387
+	for <linux-kernel@archiver.kernel.org>; Sat, 12 Jan 2019 18:43:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9F7AF206B6
-	for <linux-kernel@archiver.kernel.org>; Sat, 12 Jan 2019 18:43:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5C1DA206B6
+	for <linux-kernel@archiver.kernel.org>; Sat, 12 Jan 2019 18:43:47 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="E8Z1SSkc"
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="O6RRkt91"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726579AbfALSnl (ORCPT
+        id S1726688AbfALSnq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 12 Jan 2019 13:43:41 -0500
-Received: from mail-vs1-f41.google.com ([209.85.217.41]:40487 "EHLO
-        mail-vs1-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725877AbfALSnl (ORCPT
+        Sat, 12 Jan 2019 13:43:46 -0500
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:40167 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725877AbfALSnp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 12 Jan 2019 13:43:41 -0500
-Received: by mail-vs1-f41.google.com with SMTP id z3so11291314vsf.7
-        for <linux-kernel@vger.kernel.org>; Sat, 12 Jan 2019 10:43:40 -0800 (PST)
+        Sat, 12 Jan 2019 13:43:45 -0500
+Received: by mail-pf1-f194.google.com with SMTP id i12so8458553pfo.7
+        for <linux-kernel@vger.kernel.org>; Sat, 12 Jan 2019 10:43:45 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=kFYTHlNee6tfYAfOphbB8cRVrLMf3yeMjA3SSmVwiHY=;
-        b=E8Z1SSkcoZqa50iPT/K42E+dymspPEubX0rDHLGYhvS6P4BbK9t8Zlb1Zq2oQuYDPu
-         gUH8Qwtr8XtE0SVVWKlXovGNdZhwrQB6aKqRMiU+oSRgdHBldGwYys+OioNWy0ND1Hof
-         TTGZ5qZr4TA+sbXFA7qc6TE8gej4sRaLgaeBo=
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=jwlrGJmJaVXX2Ajg43HSQJmv8eCwdwbYbM71JTgxfHg=;
+        b=O6RRkt911JGxGarLXNzQeyx6S6vMOmq7oQJhoCcbo65NqwrFDQly5y2rFkFQHeguXk
+         KAlkw8a9YS7Q33V538WP3vOyhV13AVO6gTo4aG7ChTB+m+uAk3JL9fzPrXQJFQbRudVZ
+         OD99UVJtedyU8ax9xyaOYDZ1C7Er5sR9bS+XA=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=kFYTHlNee6tfYAfOphbB8cRVrLMf3yeMjA3SSmVwiHY=;
-        b=eW0NLWvan4k+LP2zlV8WS0tNGzs7tYMEIWauiluYCICUmuGyfqqyxvdw6aSfTAhUJ9
-         +lI1H/O+VnPCAW5KrEdhVCr1wsPkrDMntEEfIej9EdpLOyhDrZBLJAtPrhHkYvCk0hyA
-         DqJ7B/K33ENk02TzYazg2wKthBM1c28z9pc0xtk4Y4iLPLvLTeEEBIphbwKBoMJP0H3M
-         EijJ6lgr1degm6M9V5TWfeseyaYtOEFll7ehbi3iIES3nzHqj6/ux2z18gO1Ff8Pweoy
-         fDBtNwGb82XhhZmXUnKhhswa4Q2nGKBJ1MmT9jfmSfLN7Q6tiNXQdUgZjbatdyttUtq9
-         IyRw==
-X-Gm-Message-State: AJcUukcv3EAl+wTTdqFt7eMOfktV6IZ/qio6VOHRg6d28mqe7QaQg2so
-        pUx6TOKwUwe5/DrTbiOl3TLeWp92rwc=
-X-Google-Smtp-Source: ALg8bN4teKOoSth+oIjEjI0Jq25g0RsX8x6l1IjLkrWXu4u6XcgLytiDX9SURvu0psY2wu4sZF0yuA==
-X-Received: by 2002:a67:c31d:: with SMTP id r29mr8123245vsj.130.1547318618919;
-        Sat, 12 Jan 2019 10:43:38 -0800 (PST)
-Received: from mail-vs1-f51.google.com (mail-vs1-f51.google.com. [209.85.217.51])
-        by smtp.gmail.com with ESMTPSA id y195sm34008580vkd.0.2019.01.12.10.43.37
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sat, 12 Jan 2019 10:43:38 -0800 (PST)
-Received: by mail-vs1-f51.google.com with SMTP id n13so11311403vsk.4
-        for <linux-kernel@vger.kernel.org>; Sat, 12 Jan 2019 10:43:37 -0800 (PST)
-X-Received: by 2002:a67:e199:: with SMTP id e25mr8057189vsl.188.1547318617179;
- Sat, 12 Jan 2019 10:43:37 -0800 (PST)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=jwlrGJmJaVXX2Ajg43HSQJmv8eCwdwbYbM71JTgxfHg=;
+        b=CKFgBSGlgSCMRiDlFstzW1+0sfM3acoD9Au9D01PzuKwNzNtzgk70M0JTV+benmnjk
+         1GNVvvblsH3GbdtzAHVrcixfUHhOXbbj4TdGhm8ELiU3vAPJ3xW2v7AFkIVFN4fefYy7
+         dY0x+MkBuLkhuWN9uEfOCjZgUa56qQKtkv7urMYhYWw+dfu7JoLLVjpduhn5YDzNkt5h
+         LYxuaXa4NmMPZnQcuLcoO1Xw842N2hKtUKTWf6C/L6l2wrIKbQaaxveDvHow921/BW9c
+         OLHHkerTbURpYLofXBZrXKEKoJsb+zSvz+ti5jBsAruqimIC0TqLjpSJp0JJvhWQqVI3
+         t1TQ==
+X-Gm-Message-State: AJcUukegVooTv83Qd1TcElvIil1xf3BiQukaB6NBGAFhLjBzzC5LpNov
+        9Vi3FF6qYQJO5s0yZdhWbaiVbQ==
+X-Google-Smtp-Source: ALg8bN5iI8p+Kk3pnRL/BsPh0Pab1O1GJO0NhssFXbIL4eoh8O3Ro1y+9PHGje0fiU+IKu5WISCzgw==
+X-Received: by 2002:a62:7a8b:: with SMTP id v133mr19765825pfc.159.1547318624443;
+        Sat, 12 Jan 2019 10:43:44 -0800 (PST)
+Received: from builder (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
+        by smtp.gmail.com with ESMTPSA id o66sm156052251pgo.75.2019.01.12.10.43.42
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Sat, 12 Jan 2019 10:43:43 -0800 (PST)
+Date:   Sat, 12 Jan 2019 10:42:55 -0800
+From:   Bjorn Andersson <bjorn.andersson@linaro.org>
+To:     Doug Anderson <dianders@chromium.org>
+Cc:     Sibi Sankar <sibis@codeaurora.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Andy Gross <andy.gross@linaro.org>,
+        David Brown <david.brown@linaro.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        "open list:ARM/QUALCOMM SUPPORT" <linux-soc@vger.kernel.org>,
+        devicetree@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        tsoni@codeaurora.org, clew@codeaurora.org, akdwived@codeaurora.org,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-remoteproc@vger.kernel.org,
+        Evan Green <evgreen@chromium.org>,
+        Brian Norris <briannorris@chromium.org>,
+        sricharan@codeaurora.org
+Subject: Re: [PATCH v5 8/8] arm64: dts: qcom: sdm845: Add Q6V5 MSS node
+Message-ID: <20190112184255.GA28907@builder>
+References: <20190109170010.15430-1-sibis@codeaurora.org>
+ <CAD=FV=Xu3m5=ByHo_38T=H2cm4VqkndVjJ1rUkD2gp-2SWFXdQ@mail.gmail.com>
 MIME-Version: 1.0
-References: <b2d62e31-a64c-4561-a7ad-1625acad8a3d.longchun.lc@alibaba-inc.com>
-In-Reply-To: <b2d62e31-a64c-4561-a7ad-1625acad8a3d.longchun.lc@alibaba-inc.com>
-From:   Kees Cook <keescook@chromium.org>
-Date:   Sat, 12 Jan 2019 10:43:25 -0800
-X-Gmail-Original-Message-ID: <CAGXu5j+-944eia65espZo9frWB865rcqswdRKpnH9NJOTqa3MA@mail.gmail.com>
-Message-ID: <CAGXu5j+-944eia65espZo9frWB865rcqswdRKpnH9NJOTqa3MA@mail.gmail.com>
-Subject: Re: stack-protector: fix CC_HAS_STACKPROTECTOR_NONE depend on -fno-stack-protector
-To:     =?UTF-8?B?6ZqG5pil?= <longchun.lc@alibaba-inc.com>
-Cc:     "yamada.masahiro" <yamada.masahiro@socionext.com>,
-        =?UTF-8?B?5p2O6K+aKOWFgeivmik=?= <lc85446@alibaba-inc.com>,
-        =?UTF-8?B?5p2O5Li5KOaWl+mToCk=?= <doukai.ld@alibaba-inc.com>,
-        =?UTF-8?B?6K645p2l5YWJKOaclOmjnik=?= <laiguang.xlg@alibaba-inc.com>,
-        =?UTF-8?B?6YKs5qGF5qGFKOaXoOW4hik=?= <tom.www@alibaba-inc.com>,
-        =?UTF-8?B?5p2O6ICAKOi0peWkqSk=?= <yao.ly@alibaba-inc.com>,
-        =?UTF-8?B?546L5L2z55CmKOWHjOWknCk=?= <jiaqi.wjq@alibaba-inc.com>,
-        =?UTF-8?B?55Sz5pmoKOWtpOmfpyk=?= <shenchen@alibaba-inc.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        akpm <akpm@linux-foundation.org>, tglx <tglx@linutronix.de>,
-        mingo <mingo@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAD=FV=Xu3m5=ByHo_38T=H2cm4VqkndVjJ1rUkD2gp-2SWFXdQ@mail.gmail.com>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jan 11, 2019 at 7:56 PM =E9=9A=86=E6=98=A5 <longchun.lc@alibaba-inc=
-.com> wrote:
->
-> commit=EF=BC=882a61f4747eeaa85ce26ca9fbd81421b15facd018=EF=BC=89rename CC=
-_STACKPROTECTOR_NONE
-> config. but unfortunately if the compiler support option -fno-stack-prote=
-ctor,
-> CC_HAS_STACKPROTECTOR_NONE will not be disabled.
->
-> CC_HAS_STACKPROTECTOR_NONE and CC_STACKPROTECTOR_STRONG will be enabled a=
-t once,
-> as the following conditions:
->         1. gcc support -fno-stack-protector & -fstack-protector-strong
->         2. enabled CC_STACKPROTECTOR_STRONG & STACKPROTECTOR
->         3. disabled CC_HAS_STACKPROTECTOR_NONE
+On Fri 11 Jan 13:06 PST 2019, Doug Anderson wrote:
 
-While it's not very obvious, it's safe to include both
--fno-stack-protector and -fstack-protector* on the gcc command line
-since the latter one is the only one that is used.
+> Hi,
+> 
+> On Wed, Jan 9, 2019 at 9:00 AM Sibi Sankar <sibis@codeaurora.org> wrote:
+> >
+> > This patch adds Q6V5 MSS remoteproc node for SDM845 SoCs.
+> >
+> > Signed-off-by: Sibi Sankar <sibis@codeaurora.org>
+> > Reviewed-by: Douglas Anderson <dianders@chromium.org>
+> > ---
+> >
+> > v5:
+> >   * Use qmp_aop updated dt binding
+> 
+> nit: since this is now a singleton patch in v5 (because patches #1 -
+> #7 landed), the general policy is to drop the "8/8" in the subject.
+> AKA I believe the subject of the patch ought to have been:
+> 
+> [PATCH v5] arm64: dts: qcom: sdm845: Add Q6V5 MSS node
+> 
+> 
+> > v3:
+> >   * with shutdown-ack irq redesign make it mandatory,
+> >     merge multiple patches into a single one
+> >
+> > v2:
+> >   * Fixed style changes
+> >   * Added missing clocks in the dt-bindings
+> >   * Split mss remoteproc node into a number of patches
+> >
+> > This patch depends on the following bindings:
+> > https://patchwork.kernel.org/patch/10662089/ - mba/mpss reserved regions
+> > https://patchwork.kernel.org/patch/10657325/ - pdc reset node
+> > https://patchwork.kernel.org/patch/10753659/ - rpmhpd dt node
+> > https://patchwork.kernel.org/patch/10749469/ - AOP QMP dt bindings
+> > https://patchwork.kernel.org/patch/10751757/ - shutdown-irq binding
+> >
+> >  arch/arm64/boot/dts/qcom/sdm845.dtsi | 60 ++++++++++++++++++++++++++++
+> >  1 file changed, 60 insertions(+)
+> >
+> > diff --git a/arch/arm64/boot/dts/qcom/sdm845.dtsi b/arch/arm64/boot/dts/qcom/sdm845.dtsi
+> > index 5da9fa1feb8a..e021b15f87fd 100644
+> > --- a/arch/arm64/boot/dts/qcom/sdm845.dtsi
+> > +++ b/arch/arm64/boot/dts/qcom/sdm845.dtsi
+> > @@ -1366,6 +1366,66 @@
+> >                         };
+> >                 };
+> >
+> > +               remoteproc@4080000 {
+> 
+> It would be handy if you added a label here, AKA:
+> 
+> mss_pil: remoteproc@4080000 {
+> 
+> It's expected that boards will need to refer to this node so that they
+> can provide a firmware-name, so you need to give them a label to grab
+> onto.
+> 
 
-Are you seeing miscompilation or error conditions without this patch?
+I agree.
 
--Kees
+> ...and actually, I wonder if boards will also need to be able to set
+> status = "okay"?  Right now they don't because you don't have a status
+> = "disabled" in sdm845.dtsi, but maybe you should?  Are there ever
+> going to be any boards with sdm845 that don't hook up the modem?
+> 
 
---=20
-Kees Cook
+The modem is status "ok" on my SDA845 device (but haven't verified
+upstream myself yet), so I think it's fine to leave it enabled.
+
+But merging this as is will cause the modem to crash repeatedly until
+rmtfs is present. Sibi is making progress on tying this to rmtfs, which
+would be accompanied by the following commit:
+
+https://lore.kernel.org/lkml/20180524192141.20323-1-ramon.fried@gmail.com/
+
+I'm okay with merging that now, to unblock the merge of this patch.
+Would appreciate an Ack on this.
+
+
+Also, Sibi, the glink-edge binding doesn't define the mbox-names
+property, so please drop it.
+
+Regards,
+Bjorn
