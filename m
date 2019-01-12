@@ -2,121 +2,102 @@ Return-Path: <SRS0=UXoZ=PU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FSL_HELO_FAKE,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CE5DBC43387
-	for <linux-kernel@archiver.kernel.org>; Sat, 12 Jan 2019 08:54:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 88E03C43387
+	for <linux-kernel@archiver.kernel.org>; Sat, 12 Jan 2019 08:54:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 945012133F
-	for <linux-kernel@archiver.kernel.org>; Sat, 12 Jan 2019 08:54:32 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="c3qptZS7";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="c3qptZS7"
+	by mail.kernel.org (Postfix) with ESMTP id 581582133F
+	for <linux-kernel@archiver.kernel.org>; Sat, 12 Jan 2019 08:54:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1547283298;
+	bh=SXPoPTa84r8uB2CPYWNNiCfqAtrJzJrKef6rFQW8Dx4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=EVkwtBhDi0Pqmye2fnpgOI5TfvV7WOxX3yg3rjfKneOIVdIWsikRH2D2LM/npfodZ
+	 Me5BjPNqYKmCmU10CK9P96pe0/UOpz5zydd1LjIhhKuHUYfRLAEsD3zd9ILzqX8l+5
+	 Uuhrr5eQGXGoWLfDuWOqDGwGt2RJRKgB8UvuslPc=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726094AbfALIyb (ORCPT
+        id S1726428AbfALIyi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 12 Jan 2019 03:54:31 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:56530 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725806AbfALIyb (ORCPT
+        Sat, 12 Jan 2019 03:54:38 -0500
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:44992 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725806AbfALIyi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 12 Jan 2019 03:54:31 -0500
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 811AB6053B; Sat, 12 Jan 2019 08:54:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1547283270;
-        bh=jKRDqJ+jd9AfNt0ojqb3Z11Sqon/z/R8vUXI9d1Al7k=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=c3qptZS7xRmDWxSQKZfvvAj8hro/RRrhCEG8ZRQ1gPK/1DqKXe99a3PKVTPUGEh6b
-         SufTmSG1PmH0OMcuZ7IxHXysvaZveHPlF8DcbbGElUWIjprjymE4KsAy+zhPwy9gS5
-         N0bucB31U7seHZyeBE92CxRXSW9AQzgiHxhpwz3o=
-Received: from [192.168.0.5] (unknown [183.83.164.247])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: gkohli@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 678476053B;
-        Sat, 12 Jan 2019 08:54:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1547283270;
-        bh=jKRDqJ+jd9AfNt0ojqb3Z11Sqon/z/R8vUXI9d1Al7k=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=c3qptZS7xRmDWxSQKZfvvAj8hro/RRrhCEG8ZRQ1gPK/1DqKXe99a3PKVTPUGEh6b
-         SufTmSG1PmH0OMcuZ7IxHXysvaZveHPlF8DcbbGElUWIjprjymE4KsAy+zhPwy9gS5
-         N0bucB31U7seHZyeBE92CxRXSW9AQzgiHxhpwz3o=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 678476053B
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=gkohli@codeaurora.org
-Subject: Re: kernel BUG at kernel/sched/core.c:3490!
-To:     Qian Cai <cai@lca.pw>, Oleg Nesterov <oleg@redhat.com>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        linux kernel <linux-kernel@vger.kernel.org>
-References: <ba9c5ad8-d78c-904d-0430-a67d8e3ea729@lca.pw>
- <20190107135215.GG14122@hirez.programming.kicks-ass.net>
- <46089f1c-ad72-c96c-2f35-c2f60e726462@lca.pw>
- <20190107175644.GB7636@redhat.com>
- <3a6d8f4c-d7ed-e888-601b-a379efec306a@codeaurora.org>
- <1547223444.6911.19.camel@lca.pw>
-From:   "Kohli, Gaurav" <gkohli@codeaurora.org>
-Message-ID: <5a65a014-9013-cfbd-48a9-67199d33e719@codeaurora.org>
-Date:   Sat, 12 Jan 2019 14:24:24 +0530
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        Sat, 12 Jan 2019 03:54:38 -0500
+Received: by mail-wr1-f65.google.com with SMTP id z5so17563804wrt.11;
+        Sat, 12 Jan 2019 00:54:36 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=6ACrcjoGuLrVpIFQUrVx3CnbXizvBtHaRSu5ux5eqzU=;
+        b=NIfeAu+NF+ed2XFweoX/GZl4U0QfgKzDN3/QqZDx3QM/i0AXOrdGIKnMha3K85GaHp
+         TjKkzDNlumfY3ziy6fdiau8k7MSwj4tPBzMUv1dyP985o5qNvSUsznoreB4zkQ8V4qGr
+         /5tC5N3AuPqphWl5MqNmsgCB4OVltf1Ig8kjJcJ8fPcw6TbCX45vDBX3LUhMYNIAVUyP
+         K2u1rjQfwYCKJuJ+C8f8XLSu0UMimtsUG28yJKtVtV197H5vs9zw0/uDUYPRShS9oLVv
+         KdLOpk33nXcetlP9XrovcoNbwog2vN49wqzZjPVYFX0R9zriiOrxpD9YjX2CV1bOzqd0
+         jrtA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=6ACrcjoGuLrVpIFQUrVx3CnbXizvBtHaRSu5ux5eqzU=;
+        b=CeD1NCuwOwwPv+uMaaFl1r/9bWQeWiGTHnYjvatmIxDHoOYH3xjyaUbnJBPoEp6aww
+         T6J1ZxM5qEtMDM16DxEXtiRzUYDsT2axjcxiFgcfvqctNFy4wyyFgqri0BcDHNy74Q9P
+         ak6Vw95mLlTsGBlYERmfmdN63VT88XgbNLbvm2xiHRc4H/dhEhx4eLDTLNDf2CwMRy5N
+         i+JJdGbQ69mkTeLh2VRpp6GHNZhrk4AAHeG2cgV0bPFpmVWz0jywgjfosVgOMTXaYXw0
+         VOY1S/9e9E7ZSd0jZmkD4hj6oWd9f08NSYqHzkFyaiHbYVCpp2xmHiDWkADK+6rGpOuR
+         Fjjg==
+X-Gm-Message-State: AJcUukf8m7Ybnt6Uml+T95D6ivzDJNXPxWeVlcIrGRvmtEq/DMQexx+V
+        fnTlyxhJ/fsP60CLYGu6keg=
+X-Google-Smtp-Source: ALg8bN7X3ZFsD2kJ3KHBxjFUS/mYEIciGc3gV1Kbywxi9Y53zFjSNRcHM9AvU/DW7KJ9qZhtiKc7dQ==
+X-Received: by 2002:a5d:46cd:: with SMTP id g13mr17315432wrs.49.1547283275453;
+        Sat, 12 Jan 2019 00:54:35 -0800 (PST)
+Received: from gmail.com (2E8B0CD5.catv.pool.telekom.hu. [46.139.12.213])
+        by smtp.gmail.com with ESMTPSA id m4sm14029835wmi.3.2019.01.12.00.54.34
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Sat, 12 Jan 2019 00:54:34 -0800 (PST)
+Date:   Sat, 12 Jan 2019 09:54:32 +0100
+From:   Ingo Molnar <mingo@kernel.org>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        linux-efi@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
+        Borislav Petkov <bp@alien8.de>,
+        Peter Zijlstra <a.p.zijlstra@chello.nl>,
+        Andrew Morton <akpm@linux-foundation.org>
+Subject: Re: [GIT PULL] EFI fix
+Message-ID: <20190112085432.GB119110@gmail.com>
+References: <20190111074614.GA68053@gmail.com>
+ <CAHk-=whU4L4qzCmKhGGSthCGWkSSVFiP-0v16fpZTUzWgp39hg@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <1547223444.6911.19.camel@lca.pw>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAHk-=whU4L4qzCmKhGGSthCGWkSSVFiP-0v16fpZTUzWgp39hg@mail.gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-HI Peter, Oleg,
 
-as per flag and state this seems to be possible only from below code:
-XXX: 0 1 0x40844c
-PF_NOFREEZE
-PF_RANDOMIZE
-PF_SIGNALED
-PF_FORKNOEXEC
-PF_EXITING
-PF_EXITPIDONE
+* Linus Torvalds <torvalds@linux-foundation.org> wrote:
 
-above state shows do_exit runs properely and  if somehow after parked 
-stated , TASK_WAKEKILL got set and signal_pending_state returns 1 in 
-below case:
-
-  switch_count = &prev->nivcsw;
-         if (!preempt && prev->state) {
-                 if (unlikely(signal_pending_state(prev->state, prev))) {
-                         prev->state = TASK_RUNNING;
-                 } else {
-                         deactivate_task(rq, prev, DEQUEUE_SLEEP | 
-DEQUEUE_NOCLOCK);
-
-Regards
-Gaurav
-
-
-On 1/11/2019 9:47 PM, Qian Cai wrote:
-> On Fri, 2019-01-11 at 16:07 +0530, Kohli, Gaurav wrote:
->>
->> On 1/7/2019 11:26 PM, Oleg Nesterov wrote:
->>> pr_crit("XXX: %ld %d\n", current->state, current->on_rq);
->>
->> Can we also add flags, this may help to know the path of problem:
->>
->>    pr_crit("XXX: %ld %d 0x%x\n", current->state, current->on_rq, 	
->> current->flags);
->>
+> On Thu, Jan 10, 2019 at 11:46 PM Ingo Molnar <mingo@kernel.org> wrote:
+> >
+> > A single fix that adds an annotation to resolve a kmemleak false
+> > positive.
 > 
-> XXX: 0 1 0x40844c
-> 
+> This one is apparently obviated by commit 80424b02d42b ("efi: Reduce
+> the amount of memblock reservations for persistent allocations")
 
--- 
-Qualcomm India Private Limited, on behalf of Qualcomm Innovation Center, 
-Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project.
+... and it turns out I mis-merged it in tip:master not realizing this 
+connection (hence the pull request) - so good thing that Ard warned about 
+this and you double checked it!
+
+Thanks,
+
+	Ingo
