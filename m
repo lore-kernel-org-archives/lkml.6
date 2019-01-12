@@ -2,103 +2,90 @@ Return-Path: <SRS0=UXoZ=PU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E5A24C43387
-	for <linux-kernel@archiver.kernel.org>; Sat, 12 Jan 2019 12:01:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C0241C43387
+	for <linux-kernel@archiver.kernel.org>; Sat, 12 Jan 2019 12:12:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A9FF520870
-	for <linux-kernel@archiver.kernel.org>; Sat, 12 Jan 2019 12:01:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8EE0720854
+	for <linux-kernel@archiver.kernel.org>; Sat, 12 Jan 2019 12:12:41 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="CeXJKRaX"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726412AbfALMBB (ORCPT
+        id S1725852AbfALMMj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 12 Jan 2019 07:01:01 -0500
-Received: from asavdk3.altibox.net ([109.247.116.14]:41654 "EHLO
-        asavdk3.altibox.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725823AbfALMBB (ORCPT
+        Sat, 12 Jan 2019 07:12:39 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:45906 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725823AbfALMMi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 12 Jan 2019 07:01:01 -0500
-Received: from ravnborg.org (unknown [158.248.194.18])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by asavdk3.altibox.net (Postfix) with ESMTPS id 1982A20054;
-        Sat, 12 Jan 2019 13:00:57 +0100 (CET)
-Date:   Sat, 12 Jan 2019 13:00:56 +0100
-From:   Sam Ravnborg <sam@ravnborg.org>
-To:     Jagan Teki <jagan@amarulasolutions.com>
-Cc:     David Airlie <airlied@linux.ie>,
-        linux-amarula@amarulasolutions.com,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Michael Trimarchi <michael@amarulasolutions.com>,
-        Sean Paul <sean@poorly.run>
-Subject: Re: [PATCH V7 2/2] drm/panel: Add Sitronix ST7701 panel driver
-Message-ID: <20190112120056.GA7374@ravnborg.org>
-References: <20190111124714.19566-1-jagan@amarulasolutions.com>
- <20190111124714.19566-2-jagan@amarulasolutions.com>
- <20190111211931.GA29735@ravnborg.org>
- <CAMty3ZArGPf8+M5GVhkzoMDhtYwT3aUS9bNbKt8=gqeb6-b82Q@mail.gmail.com>
- <20190112101409.GA14273@ravnborg.org>
- <CAMty3ZBUNeFvsHDRmBFUoZG=J+EfQuKtJDOhaezcfEOykhpOeQ@mail.gmail.com>
+        Sat, 12 Jan 2019 07:12:38 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=usOnlJ+n0ouIA825JYmyeYCXdfJgDQn6tYUepfZTml4=; b=CeXJKRaXRnkz6fpEkxa+HS++N
+        Nv+E3EXqQuvSm/yk5laLWDPmokTjURvDjfdZmxl+sIacD3JunbAZXgk/wDwCE6WvboTyW/u6XFJRd
+        Gdg+Zo4Y6iVTTeshlbpORnHbVfYde17ndn1oi8CxCdyGPeltug/EgPYeu+Huue8qXIG1FF0P+1/QE
+        OkI4MFeIUyV9CIYVFhzufJVxn8HHs5i26d0rVH1jBwAt+8BO5kc+cNzWSMKYdaRVgV2scxI+ny+G+
+        Wx4ZTWnSMg86Ie6pICfmg6HCsUzfLYDchz8liDQCBYyTo+POARPZOFYLKVhnbMr8FAxNbCCaSL5ho
+        5wuB4g8tw==;
+Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1giI9Q-0004Q7-1d; Sat, 12 Jan 2019 12:12:32 +0000
+Date:   Sat, 12 Jan 2019 04:12:31 -0800
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Anshuman Khandual <anshuman.khandual@arm.com>
+Cc:     linux-mm@kvack.org, akpm@linux-foundation.org,
+        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-arm-kernel@lists.infradead.org, linux-sh@vger.kernel.org,
+        kvmarm@lists.cs.columbia.edu, linux@armlinux.org.uk,
+        catalin.marinas@arm.com, will.deacon@arm.com, mpe@ellerman.id.au,
+        tglx@linutronix.de, mingo@redhat.com, dave.hansen@linux.intel.com,
+        peterz@infradead.org, christoffer.dall@arm.com,
+        marc.zyngier@arm.com, kirill@shutemov.name,
+        rppt@linux.vnet.ibm.com, mhocko@suse.com,
+        ard.biesheuvel@linaro.org, mark.rutland@arm.com,
+        steve.capper@arm.com, james.morse@arm.com, robin.murphy@arm.com,
+        aneesh.kumar@linux.ibm.com, vbabka@suse.cz, shakeelb@google.com,
+        rientjes@google.com
+Subject: Re: [PATCH] mm: Introduce GFP_PGTABLE
+Message-ID: <20190112121230.GQ6310@bombadil.infradead.org>
+References: <1547288798-10243-1-git-send-email-anshuman.khandual@arm.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAMty3ZBUNeFvsHDRmBFUoZG=J+EfQuKtJDOhaezcfEOykhpOeQ@mail.gmail.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-CMAE-Score: 0
-X-CMAE-Analysis: v=2.3 cv=dqr19Wo4 c=1 sm=1 tr=0
-        a=UWs3HLbX/2nnQ3s7vZ42gw==:117 a=UWs3HLbX/2nnQ3s7vZ42gw==:17
-        a=kj9zAlcOel0A:10 a=h2XvLM43PzkowCm6i1cA:9 a=CjuIK1q_8ugA:10
+In-Reply-To: <1547288798-10243-1-git-send-email-anshuman.khandual@arm.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> >
-> > > > > +
-> > > > > +     msleep(st7701->sleep_delay);
-> > > > > +
-> > > > > +     gpiod_set_value(st7701->reset, 0);
-> > > > > +
-> > > > > +     gpiod_set_value(st7701->reset, 1);
-> > > > > +
-> > > > > +     gpiod_set_value(st7701->reset, 0);
-> > > > No timing constrains here? In prepare there are sleeps intermixed.
-> > >
-> > > Delay while doing unprare is not needed I suppose.
-> >
-> > If the purpose is alone to reset the display then a single write '0'
-> > should do it I think
-> 
-> I even tried this just set 0, since prepare is doing a sequence, it
-> good behavior to do the reverse during handoff. ie reason I just
-> initiated this sequence.
-> 
-> > And there is a requirement that it must be low for a minimum of 10 us
-> > which would be good to have here.
-> 
-> Sorry, I didn't get this requirement what is this for?
-The st7701 will ignore reset pulse shorter than 10 us - see Trw in
-table 9 reset timing (page 54).
+On Sat, Jan 12, 2019 at 03:56:38PM +0530, Anshuman Khandual wrote:
+> All architectures have been defining their own PGALLOC_GFP as (GFP_KERNEL |
+> __GFP_ZERO) and using it for allocating page table pages.
 
-But as we just assert reset (set it to 0), this timing constraint can be ignored.
+Except that's not true.
 
-> > I aslo found in chapter 9. (page 163 - second line) this statement:
-> > "VDDA and VDDI must be powered down with minimum 120msec."
-> 
-> Yes unprepare is doing the same, it exit from sleep out mode and wait
-> for 120msec and do the reset.
-> 
-> >
-> > This is similar to the unprepare delay to be found in simple-panel.c
-> > So an unprepare delay seems in order here.
-> 
-> Look like simple-panel.c is doing delay after reset initiated and
-> regulator disabled.
+> +++ b/arch/x86/mm/pgtable.c
+> @@ -13,19 +13,17 @@ phys_addr_t physical_mask __ro_after_init = (1ULL << __PHYSICAL_MASK_SHIFT) - 1;
+>  EXPORT_SYMBOL(physical_mask);
+>  #endif
+>  
+> -#define PGALLOC_GFP (GFP_KERNEL_ACCOUNT | __GFP_ZERO)
+> -
+>  #ifdef CONFIG_HIGHPTE
 
+...
 
-	Sam
+>  pte_t *pte_alloc_one_kernel(struct mm_struct *mm)
+>  {
+> -	return (pte_t *)__get_free_page(PGALLOC_GFP & ~__GFP_ACCOUNT);
+> +	return (pte_t *)__get_free_page(GFP_PGTABLE & ~__GFP_ACCOUNT);
+>  }
 
+I think x86 was the only odd one out here, but you'll need to try again ...
