@@ -2,355 +2,179 @@ Return-Path: <SRS0=UXoZ=PU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.0 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 292D3C43612
-	for <linux-kernel@archiver.kernel.org>; Sat, 12 Jan 2019 18:31:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1198EC43387
+	for <linux-kernel@archiver.kernel.org>; Sat, 12 Jan 2019 18:31:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0932F20870
-	for <linux-kernel@archiver.kernel.org>; Sat, 12 Jan 2019 18:31:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E3DA92084C
+	for <linux-kernel@archiver.kernel.org>; Sat, 12 Jan 2019 18:31:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726565AbfALSbL (ORCPT
+        id S1726651AbfALSbn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 12 Jan 2019 13:31:11 -0500
-Received: from saturn.retrosnub.co.uk ([46.235.226.198]:34372 "EHLO
-        saturn.retrosnub.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725847AbfALSbK (ORCPT
+        Sat, 12 Jan 2019 13:31:43 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:36213 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725883AbfALSbn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 12 Jan 2019 13:31:10 -0500
-Received: from archlinux (cpc91196-cmbg18-2-0-cust659.5-4.cable.virginm.net [81.96.234.148])
-        by saturn.retrosnub.co.uk (Postfix; Retrosnub mail submission) with ESMTPSA id 28A6A9E7944;
-        Sat, 12 Jan 2019 18:31:08 +0000 (GMT)
-Date:   Sat, 12 Jan 2019 18:31:06 +0000
-From:   Jonathan Cameron <jic23@jic23.retrosnub.co.uk>
-To:     Tomasz Duszynski <tduszyns@gmail.com>
-Cc:     linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] iio: chemical: sps30: allow changing self cleaning
- period
-Message-ID: <20190112183106.16a572de@archlinux>
-In-Reply-To: <20190111203533.11930-1-tduszyns@gmail.com>
-References: <20190111203533.11930-1-tduszyns@gmail.com>
-X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        Sat, 12 Jan 2019 13:31:43 -0500
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x0CIUvPq1254424
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+        Sat, 12 Jan 2019 10:30:57 -0800
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x0CIUu2P1254418;
+        Sat, 12 Jan 2019 10:30:56 -0800
+Date:   Sat, 12 Jan 2019 10:30:56 -0800
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Rasmus Villemoes <tipbot@zytor.com>
+Message-ID: <tip-88ca66d8540ca26119b1428cddb96b37925bdf01@git.kernel.org>
+Cc:     linux-kernel@vger.kernel.org, linux@rasmusvillemoes.dk,
+        tglx@linutronix.de, mingo@kernel.org, peterz@infradead.org,
+        bp@suse.de, x86@kernel.org, hpa@zytor.com, geert@linux-m68k.org,
+        dan.j.williams@intel.com, mingo@redhat.com, willy@infradead.org
+Reply-To: geert@linux-m68k.org, hpa@zytor.com, x86@kernel.org, bp@suse.de,
+          willy@infradead.org, mingo@redhat.com, dan.j.williams@intel.com,
+          linux@rasmusvillemoes.dk, linux-kernel@vger.kernel.org,
+          peterz@infradead.org, mingo@kernel.org, tglx@linutronix.de
+In-Reply-To: <20190111084931.24601-1-linux@rasmusvillemoes.dk>
+References: <20190111084931.24601-1-linux@rasmusvillemoes.dk>
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:x86/asm] x86/asm: Remove dead __GNUC__ conditionals
+Git-Commit-ID: 88ca66d8540ca26119b1428cddb96b37925bdf01
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 11 Jan 2019 21:35:33 +0100
-Tomasz Duszynski <tduszyns@gmail.com> wrote:
+Commit-ID:  88ca66d8540ca26119b1428cddb96b37925bdf01
+Gitweb:     https://git.kernel.org/tip/88ca66d8540ca26119b1428cddb96b37925bdf01
+Author:     Rasmus Villemoes <linux@rasmusvillemoes.dk>
+AuthorDate: Fri, 11 Jan 2019 09:49:30 +0100
+Committer:  Borislav Petkov <bp@suse.de>
+CommitDate: Sat, 12 Jan 2019 17:50:48 +0100
 
-> Sensor can periodically trigger self cleaning. Period can be changed by
-> writing a new value to a dedicated attribute. Upon attribute read
-> current period gets returned.
-> 
-> Signed-off-by: Tomasz Duszynski <tduszyns@gmail.com>
-Looks good to me, but... The docs need to say what the unit is.
-I'd like seconds ideally but right now it doesn't say.
+x86/asm: Remove dead __GNUC__ conditionals
 
-Thanks,
+The minimum supported gcc version is >= 4.6, so these can be removed.
 
-Jonathan
+Signed-off-by: Rasmus Villemoes <linux@rasmusvillemoes.dk>
+Signed-off-by: Borislav Petkov <bp@suse.de>
+Cc: "H. Peter Anvin" <hpa@zytor.com>
+Cc: Dan Williams <dan.j.williams@intel.com>
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: Matthew Wilcox <willy@infradead.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: x86-ml <x86@kernel.org>
+Link: https://lkml.kernel.org/r/20190111084931.24601-1-linux@rasmusvillemoes.dk
+---
+ arch/x86/include/asm/bitops.h    |  6 ------
+ arch/x86/include/asm/string_32.h | 20 --------------------
+ arch/x86/include/asm/string_64.h | 15 ---------------
+ 3 files changed, 41 deletions(-)
 
-> ---
-> v2:
->  * return available values formated as a range
->  * tweak naming a little (interval -> period)
-> 
->  Documentation/ABI/testing/sysfs-bus-iio-sps30 |  19 +++
->  drivers/iio/chemical/sps30.c                  | 143 +++++++++++++++---
->  2 files changed, 144 insertions(+), 18 deletions(-)
-> 
-> diff --git a/Documentation/ABI/testing/sysfs-bus-iio-sps30 b/Documentation/ABI/testing/sysfs-bus-iio-sps30
-> index e7ce2c57635e..68fbaf2ad30d 100644
-> --- a/Documentation/ABI/testing/sysfs-bus-iio-sps30
-> +++ b/Documentation/ABI/testing/sysfs-bus-iio-sps30
-> @@ -6,3 +6,22 @@ Description:
->  		Writing 1 starts sensor self cleaning. Internal fan accelerates
->  		to its maximum speed and keeps spinning for about 10 seconds in
->  		order to blow out accumulated dust.
-> +
-> +What:		/sys/bus/iio/devices/iio:deviceX/cleaning_period
-> +Date:		January 2019
-> +KernelVersion:	5.1
-> +Contact:	linux-iio@vger.kernel.org
-> +Description:
-> +		Sensor is capable of triggering self cleaning periodically.
-> +		Period can be changed by writing a new value here. Upon reading
-> +		the current one is returned.
-
-Units?
-
-> +
-> +		Writing 0 disables periodical self cleaning entirely.
-> +
-> +What:		/sys/bus/iio/devices/iio:deviceX/cleaning_period_available
-> +Date:		January 2019
-> +KernelVersion:	5.1
-> +Contact:	linux-iio@vger.kernel.org
-> +Description:
-> +		The range of available values represented as the minimum value,
-> +		the step and the maximum value, all enclosed in square brackets.
-Also units?
-
-> diff --git a/drivers/iio/chemical/sps30.c b/drivers/iio/chemical/sps30.c
-> index f3b4390c8f5c..fe5f6309191b 100644
-> --- a/drivers/iio/chemical/sps30.c
-> +++ b/drivers/iio/chemical/sps30.c
-> @@ -5,9 +5,6 @@
->   * Copyright (c) Tomasz Duszynski <tduszyns@gmail.com>
->   *
->   * I2C slave address: 0x69
-> - *
-> - * TODO:
-> - *  - support for reading/setting auto cleaning interval
->   */
-> 
->  #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
-> @@ -21,6 +18,7 @@
->  #include <linux/iio/sysfs.h>
->  #include <linux/iio/trigger_consumer.h>
->  #include <linux/iio/triggered_buffer.h>
-> +#include <linux/kernel.h>
->  #include <linux/module.h>
-> 
->  #define SPS30_CRC8_POLYNOMIAL 0x31
-> @@ -28,6 +26,9 @@
->  #define SPS30_MAX_READ_SIZE 48
->  /* sensor measures reliably up to 3000 ug / m3 */
->  #define SPS30_MAX_PM 3000
-> +/* minimum and maximum self cleaning periods in seconds */
-> +#define SPS30_AUTO_CLEANING_PERIOD_MIN 0
-> +#define SPS30_AUTO_CLEANING_PERIOD_MAX 604800
-> 
->  /* SPS30 commands */
->  #define SPS30_START_MEAS 0x0010
-> @@ -37,6 +38,9 @@
->  #define SPS30_READ_DATA 0x0300
->  #define SPS30_READ_SERIAL 0xd033
->  #define SPS30_START_FAN_CLEANING 0x5607
-> +#define SPS30_AUTO_CLEANING_PERIOD 0x8004
-> +/* not a sensor command per se, used only to distinguish write from read */
-> +#define SPS30_READ_AUTO_CLEANING_PERIOD 0x8005
-> 
->  enum {
->  	PM1,
-> @@ -45,6 +49,11 @@ enum {
->  	PM10,
->  };
-> 
-> +enum {
-> +	RESET,
-> +	MEASURING,
-> +};
-> +
->  struct sps30_state {
->  	struct i2c_client *client;
->  	/*
-> @@ -52,6 +61,7 @@ struct sps30_state {
->  	 * Must be held whenever sequence of commands is to be executed.
->  	 */
->  	struct mutex lock;
-> +	int state;
->  };
-> 
->  DECLARE_CRC8_TABLE(sps30_crc8_table);
-> @@ -107,6 +117,9 @@ static int sps30_do_cmd(struct sps30_state *state, u16 cmd, u8 *data, int size)
->  	case SPS30_START_FAN_CLEANING:
->  		ret = sps30_write_then_read(state, buf, 2, NULL, 0);
->  		break;
-> +	case SPS30_READ_AUTO_CLEANING_PERIOD:
-> +		buf[0] = SPS30_AUTO_CLEANING_PERIOD >> 8;
-> +		buf[1] = (u8)SPS30_AUTO_CLEANING_PERIOD;
->  	case SPS30_READ_DATA_READY_FLAG:
->  	case SPS30_READ_DATA:
->  	case SPS30_READ_SERIAL:
-> @@ -114,6 +127,15 @@ static int sps30_do_cmd(struct sps30_state *state, u16 cmd, u8 *data, int size)
->  		size += size / 2;
->  		ret = sps30_write_then_read(state, buf, 2, buf, size);
->  		break;
-> +	case SPS30_AUTO_CLEANING_PERIOD:
-> +		buf[2] = data[0];
-> +		buf[3] = data[1];
-> +		buf[4] = crc8(sps30_crc8_table, &buf[2], 2, CRC8_INIT_VALUE);
-> +		buf[5] = data[2];
-> +		buf[6] = data[3];
-> +		buf[7] = crc8(sps30_crc8_table, &buf[5], 2, CRC8_INIT_VALUE);
-> +		ret = sps30_write_then_read(state, buf, 8, NULL, 0);
-> +		break;
->  	}
-> 
->  	if (ret)
-> @@ -170,6 +192,14 @@ static int sps30_do_meas(struct sps30_state *state, s32 *data, int size)
->  	int i, ret, tries = 5;
->  	u8 tmp[16];
-> 
-> +	if (state->state == RESET) {
-> +		ret = sps30_do_cmd(state, SPS30_START_MEAS, NULL, 0);
-> +		if (ret)
-> +			return ret;
-> +
-> +		state->state = MEASURING;
-> +	}
-> +
->  	while (tries--) {
->  		ret = sps30_do_cmd(state, SPS30_READ_DATA_READY_FLAG, tmp, 2);
->  		if (ret)
-> @@ -276,6 +306,24 @@ static int sps30_read_raw(struct iio_dev *indio_dev,
->  	return -EINVAL;
->  }
-> 
-> +static int sps30_do_cmd_reset(struct sps30_state *state)
-> +{
-> +	int ret;
-> +
-> +	ret = sps30_do_cmd(state, SPS30_RESET, NULL, 0);
-> +	msleep(300);
-> +	/*
-> +	 * Power-on-reset causes sensor to produce some glitch on i2c bus and
-> +	 * some controllers end up in error state. Recover simply by placing
-> +	 * some data on the bus, for example STOP_MEAS command, which
-> +	 * is NOP in this case.
-> +	 */
-> +	sps30_do_cmd(state, SPS30_STOP_MEAS, NULL, 0);
-> +	state->state = RESET;
-> +
-> +	return ret;
-> +}
-> +
->  static ssize_t start_cleaning_store(struct device *dev,
->  				    struct device_attribute *attr,
->  				    const char *buf, size_t len)
-> @@ -296,10 +344,82 @@ static ssize_t start_cleaning_store(struct device *dev,
->  	return len;
->  }
-> 
-> +static ssize_t cleaning_period_show(struct device *dev,
-> +				      struct device_attribute *attr,
-> +				      char *buf)
-> +{
-> +	struct iio_dev *indio_dev = dev_to_iio_dev(dev);
-> +	struct sps30_state *state = iio_priv(indio_dev);
-> +	u8 tmp[4];
-> +	int ret;
-> +
-> +	mutex_lock(&state->lock);
-> +	ret = sps30_do_cmd(state, SPS30_READ_AUTO_CLEANING_PERIOD, tmp, 4);
-> +	mutex_unlock(&state->lock);
-> +	if (ret)
-> +		return ret;
-> +
-> +	return sprintf(buf, "%d\n", get_unaligned_be32(tmp));
-> +}
-> +
-> +static ssize_t cleaning_period_store(struct device *dev,
-> +				       struct device_attribute *attr,
-> +				       const char *buf, size_t len)
-> +{
-> +	struct iio_dev *indio_dev = dev_to_iio_dev(dev);
-> +	struct sps30_state *state = iio_priv(indio_dev);
-> +	int val, ret;
-> +	u8 tmp[4];
-> +
-> +	if (kstrtoint(buf, 0, &val))
-> +		return -EINVAL;
-> +
-> +	if ((val < SPS30_AUTO_CLEANING_PERIOD_MIN) &&
-> +	    (val > SPS30_AUTO_CLEANING_PERIOD_MAX))
-> +		return -EINVAL;
-> +
-> +	put_unaligned_be32(val, tmp);
-> +
-> +	mutex_lock(&state->lock);
-> +	ret = sps30_do_cmd(state, SPS30_AUTO_CLEANING_PERIOD, tmp, 0);
-> +	if (ret) {
-> +		mutex_unlock(&state->lock);
-> +		return ret;
-> +	}
-> +
-> +	msleep(20);
-> +
-> +	/*
-> +	 * sensor requires reset in order to return up to date self cleaning
-> +	 * period
-> +	 */
-> +	ret = sps30_do_cmd_reset(state);
-> +	if (ret)
-> +		dev_warn(dev,
-> +			 "period changed but reads will return the old value\n");
-> +
-> +	mutex_unlock(&state->lock);
-> +
-> +	return len;
-> +}
-> +
-> +static ssize_t cleaning_period_available_show(struct device *dev,
-> +					      struct device_attribute *attr,
-> +					      char *buf)
-> +{
-> +	return snprintf(buf, PAGE_SIZE, "[%d %d %d]\n",
-> +			SPS30_AUTO_CLEANING_PERIOD_MIN, 1,
-> +			SPS30_AUTO_CLEANING_PERIOD_MAX);
-> +}
-> +
->  static IIO_DEVICE_ATTR_WO(start_cleaning, 0);
-> +static IIO_DEVICE_ATTR_RW(cleaning_period, 0);
-> +static IIO_DEVICE_ATTR_RO(cleaning_period_available, 0);
-> 
->  static struct attribute *sps30_attrs[] = {
->  	&iio_dev_attr_start_cleaning.dev_attr.attr,
-> +	&iio_dev_attr_cleaning_period.dev_attr.attr,
-> +	&iio_dev_attr_cleaning_period_available.dev_attr.attr,
->  	NULL
->  };
-> 
-> @@ -362,6 +482,7 @@ static int sps30_probe(struct i2c_client *client)
->  	state = iio_priv(indio_dev);
->  	i2c_set_clientdata(client, indio_dev);
->  	state->client = client;
-> +	state->state = RESET;
->  	indio_dev->dev.parent = &client->dev;
->  	indio_dev->info = &sps30_info;
->  	indio_dev->name = client->name;
-> @@ -373,19 +494,11 @@ static int sps30_probe(struct i2c_client *client)
->  	mutex_init(&state->lock);
->  	crc8_populate_msb(sps30_crc8_table, SPS30_CRC8_POLYNOMIAL);
-> 
-> -	ret = sps30_do_cmd(state, SPS30_RESET, NULL, 0);
-> +	ret = sps30_do_cmd_reset(state);
->  	if (ret) {
->  		dev_err(&client->dev, "failed to reset device\n");
->  		return ret;
->  	}
-> -	msleep(300);
-> -	/*
-> -	 * Power-on-reset causes sensor to produce some glitch on i2c bus and
-> -	 * some controllers end up in error state. Recover simply by placing
-> -	 * some data on the bus, for example STOP_MEAS command, which
-> -	 * is NOP in this case.
-> -	 */
-> -	sps30_do_cmd(state, SPS30_STOP_MEAS, NULL, 0);
-> 
->  	ret = sps30_do_cmd(state, SPS30_READ_SERIAL, buf, sizeof(buf));
->  	if (ret) {
-> @@ -395,12 +508,6 @@ static int sps30_probe(struct i2c_client *client)
->  	/* returned serial number is already NUL terminated */
->  	dev_info(&client->dev, "serial number: %s\n", buf);
-> 
-> -	ret = sps30_do_cmd(state, SPS30_START_MEAS, NULL, 0);
-> -	if (ret) {
-> -		dev_err(&client->dev, "failed to start measurement\n");
-> -		return ret;
-> -	}
-> -
->  	ret = devm_add_action_or_reset(&client->dev, sps30_stop_meas, state);
->  	if (ret)
->  		return ret;
-> --
-> 2.20.1
-> 
-
+diff --git a/arch/x86/include/asm/bitops.h b/arch/x86/include/asm/bitops.h
+index ad7b210aa3f6..d153d570bb04 100644
+--- a/arch/x86/include/asm/bitops.h
++++ b/arch/x86/include/asm/bitops.h
+@@ -36,13 +36,7 @@
+  * bit 0 is the LSB of addr; bit 32 is the LSB of (addr+1).
+  */
+ 
+-#if __GNUC__ < 4 || (__GNUC__ == 4 && __GNUC_MINOR__ < 1)
+-/* Technically wrong, but this avoids compilation errors on some gcc
+-   versions. */
+-#define BITOP_ADDR(x) "=m" (*(volatile long *) (x))
+-#else
+ #define BITOP_ADDR(x) "+m" (*(volatile long *) (x))
+-#endif
+ 
+ #define ADDR				BITOP_ADDR(addr)
+ 
+diff --git a/arch/x86/include/asm/string_32.h b/arch/x86/include/asm/string_32.h
+index 55d392c6bd29..2fd165f1cffa 100644
+--- a/arch/x86/include/asm/string_32.h
++++ b/arch/x86/include/asm/string_32.h
+@@ -179,14 +179,7 @@ static inline void *__memcpy3d(void *to, const void *from, size_t len)
+  *	No 3D Now!
+  */
+ 
+-#if (__GNUC__ >= 4)
+ #define memcpy(t, f, n) __builtin_memcpy(t, f, n)
+-#else
+-#define memcpy(t, f, n)				\
+-	(__builtin_constant_p((n))		\
+-	 ? __constant_memcpy((t), (f), (n))	\
+-	 : __memcpy((t), (f), (n)))
+-#endif
+ 
+ #endif
+ #endif /* !CONFIG_FORTIFY_SOURCE */
+@@ -282,12 +275,7 @@ void *__constant_c_and_count_memset(void *s, unsigned long pattern,
+ 
+ 	{
+ 		int d0, d1;
+-#if __GNUC__ == 4 && __GNUC_MINOR__ == 0
+-		/* Workaround for broken gcc 4.0 */
+-		register unsigned long eax asm("%eax") = pattern;
+-#else
+ 		unsigned long eax = pattern;
+-#endif
+ 
+ 		switch (count % 4) {
+ 		case 0:
+@@ -321,15 +309,7 @@ void *__constant_c_and_count_memset(void *s, unsigned long pattern,
+ #define __HAVE_ARCH_MEMSET
+ extern void *memset(void *, int, size_t);
+ #ifndef CONFIG_FORTIFY_SOURCE
+-#if (__GNUC__ >= 4)
+ #define memset(s, c, count) __builtin_memset(s, c, count)
+-#else
+-#define memset(s, c, count)						\
+-	(__builtin_constant_p(c)					\
+-	 ? __constant_c_x_memset((s), (0x01010101UL * (unsigned char)(c)), \
+-				 (count))				\
+-	 : __memset((s), (c), (count)))
+-#endif
+ #endif /* !CONFIG_FORTIFY_SOURCE */
+ 
+ #define __HAVE_ARCH_MEMSET16
+diff --git a/arch/x86/include/asm/string_64.h b/arch/x86/include/asm/string_64.h
+index 4e4194e21a09..75314c3dbe47 100644
+--- a/arch/x86/include/asm/string_64.h
++++ b/arch/x86/include/asm/string_64.h
+@@ -14,21 +14,6 @@
+ extern void *memcpy(void *to, const void *from, size_t len);
+ extern void *__memcpy(void *to, const void *from, size_t len);
+ 
+-#ifndef CONFIG_FORTIFY_SOURCE
+-#if (__GNUC__ == 4 && __GNUC_MINOR__ < 3) || __GNUC__ < 4
+-#define memcpy(dst, src, len)					\
+-({								\
+-	size_t __len = (len);					\
+-	void *__ret;						\
+-	if (__builtin_constant_p(len) && __len >= 64)		\
+-		__ret = __memcpy((dst), (src), __len);		\
+-	else							\
+-		__ret = __builtin_memcpy((dst), (src), __len);	\
+-	__ret;							\
+-})
+-#endif
+-#endif /* !CONFIG_FORTIFY_SOURCE */
+-
+ #define __HAVE_ARCH_MEMSET
+ void *memset(void *s, int c, size_t n);
+ void *__memset(void *s, int c, size_t n);
