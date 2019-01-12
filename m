@@ -2,206 +2,133 @@ Return-Path: <SRS0=UXoZ=PU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=0.1 required=3.0 tests=DKIM_ADSP_ALL,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CB04DC43387
-	for <linux-kernel@archiver.kernel.org>; Sat, 12 Jan 2019 10:46:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 11472C43612
+	for <linux-kernel@archiver.kernel.org>; Sat, 12 Jan 2019 10:49:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 283B320675
-	for <linux-kernel@archiver.kernel.org>; Sat, 12 Jan 2019 10:46:43 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="TDdjwhlL"
+	by mail.kernel.org (Postfix) with ESMTP id E02FC206B6
+	for <linux-kernel@archiver.kernel.org>; Sat, 12 Jan 2019 10:49:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726376AbfALKqm (ORCPT
+        id S1726412AbfALKtc convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 12 Jan 2019 05:46:42 -0500
-Received: from mail-io1-f66.google.com ([209.85.166.66]:41947 "EHLO
-        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725819AbfALKql (ORCPT
+        Sat, 12 Jan 2019 05:49:32 -0500
+Received: from sender-of-o53.zoho.com ([135.84.80.218]:21706 "EHLO
+        sender-of-o53.zoho.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725819AbfALKtb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 12 Jan 2019 05:46:41 -0500
-Received: by mail-io1-f66.google.com with SMTP id s22so14159039ioc.8
-        for <linux-kernel@vger.kernel.org>; Sat, 12 Jan 2019 02:46:41 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amarulasolutions.com; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=y4pv4Rbd0QxbOm7zJOHgqCCj023O1SjBfCx07d5B9+0=;
-        b=TDdjwhlL5g6u1fDAhllZ8zn0UjkSAyx16ze0vVrWqZ0MQ5ERC4n4v44qK3+2UiKjCB
-         UlzFe6Bg4r7cJ48QKUZxCr+xojobpgjWa1nvYe8PEkMNzRIgu5cJuir4gl/Ch5SAEGCr
-         4HfQhLFZ2uUSFmWt6akWxlScNJIyHOZZ0AT5A=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=y4pv4Rbd0QxbOm7zJOHgqCCj023O1SjBfCx07d5B9+0=;
-        b=ivbbz6wgkYAfprrLJc7rRBQpEQNq6aLC9Qk7CjvXze4QlQ1XSA8mkYARrp01jlUZjZ
-         U2NrS51epszJUh5jrdHTsc2ZHc3zyvN298RtFWPej4v1jXqcPLvEJH6VOn6JKQHKPgOx
-         oepFC1Ayryg804981SM9iEOtrU+ccSOlnqJoLaUuJCFlqAHoIZgnbfT+aLbaQQS1G4ol
-         5kr/BXAv2yOdngr3ZZCwtHmSOPCti/OCYiNAe5sPMSV7x5SGYTHV+uwI3lUpN5VMu89I
-         QoMYzGXuI6aoeX5iprGuJpfrqWGMMyhAMELEGQhKd48IO6YEonW42bihCaHvbTAthZ6F
-         Xacg==
-X-Gm-Message-State: AJcUukei7GCrc6g3W/t6JqeNwfNMru3V83tdDjrZzU4LdYh+VryWYB9t
-        L0YDEWtdWGRBtOMYDjbHHlTNts4m2PNtO61IwhONwg==
-X-Google-Smtp-Source: ALg8bN7cPIAeKhITR8Mq9x7duSyr5YpTotUnagsHjcFj2O3JqIxcVBlA+9Y5mJIfBeev28PV/JeUH8IZcpKKGshvnE4=
-X-Received: by 2002:a6b:7a0a:: with SMTP id h10mr10994139iom.114.1547290000431;
- Sat, 12 Jan 2019 02:46:40 -0800 (PST)
-MIME-Version: 1.0
-References: <20190111124714.19566-1-jagan@amarulasolutions.com>
- <20190111124714.19566-2-jagan@amarulasolutions.com> <20190111211931.GA29735@ravnborg.org>
- <CAMty3ZArGPf8+M5GVhkzoMDhtYwT3aUS9bNbKt8=gqeb6-b82Q@mail.gmail.com> <20190112101409.GA14273@ravnborg.org>
-In-Reply-To: <20190112101409.GA14273@ravnborg.org>
-From:   Jagan Teki <jagan@amarulasolutions.com>
-Date:   Sat, 12 Jan 2019 16:16:28 +0530
-Message-ID: <CAMty3ZBUNeFvsHDRmBFUoZG=J+EfQuKtJDOhaezcfEOykhpOeQ@mail.gmail.com>
-Subject: Re: [PATCH V7 2/2] drm/panel: Add Sitronix ST7701 panel driver
-To:     Sam Ravnborg <sam@ravnborg.org>
-Cc:     David Airlie <airlied@linux.ie>,
-        linux-amarula@amarulasolutions.com,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Michael Trimarchi <michael@amarulasolutions.com>,
-        Sean Paul <sean@poorly.run>
+        Sat, 12 Jan 2019 05:49:31 -0500
+ARC-Seal: i=1; a=rsa-sha256; t=1547290158; cv=none; 
+        d=zoho.com; s=zohoarc; 
+        b=g0YuCeHchVDkKQaLMJGZRyz73CXbupzAbeMJ5eH/oGYKJ3xcvpS2Su0Qt5nARhPlS5cmqqwmQv4TaM60ojkIsyPgwzWKE1wtL9jp2DbJaFj9FbLEKiBWCLWWrUyF3DU4oHXMYNMc+wxhj7Afct8E/8eCYdH3V4yRIvLWZG6Zpfc=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zoho.com; s=zohoarc; 
+        t=1547290158; h=Content-Type:Content-Transfer-Encoding:Cc:Date:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:To:ARC-Authentication-Results; 
+        bh=Ypi4uk5Wpkv03icPSbrSy4pPeONPwvjXIsI+G03pgas=; 
+        b=NbhOlRq9iqj5aJUmIeZrcsc790NBseLQqbLKxy6L3BnL7/YNUFzAPkH1N4o2SBmPhf9GLqHytUBH7X3KWcx9/khZdNXMQgYXdnFBA+vNEu3qtlfZW9ILdCOYPRz/ox5JjaN0wX8BMqp6Id2nuDbgsSxuaPRoI82Jk3y9BQ9AyZI=
+ARC-Authentication-Results: i=1; mx.zoho.com;
+        dkim=pass  header.i=mniewoehner.de;
+        spf=pass  smtp.mailfrom=linux@mniewoehner.de;
+        dmarc=pass header.from=<linux@mniewoehner.de> header.from=<linux@mniewoehner.de>
+Received: from z3r0 (31.187.91.78 [31.187.91.78]) by mx.zohomail.com
+        with SMTPS id 1547290155297989.0680485448781; Sat, 12 Jan 2019 02:49:15 -0800 (PST)
+Message-ID: <155f110265d7632261f11de794d973c12c1301a7.camel@mniewoehner.de>
+Subject: Re: [BUG] Nuvoton NCPT650 TPM 2.0 mode not working
+From:   Michael =?ISO-8859-1?Q?Niew=F6hner?= <linux@mniewoehner.de>
+To:     Mimi Zohar <zohar@linux.ibm.com>
+Cc:     jarkko.sakkinen@linux.intel.com, linux-integrity@vger.kernel.org,
+        linux-kernel <linux-kernel@vger.kernel.org>
+In-Reply-To: <1ee67fe6cd7cc556a28e97529febf52ab0247ab4.camel@mniewoehner.de>
+References: <776f384a81466642472beb4a34b10f26f1de88e9.camel@mniewoehner.de>
+         <1541960689.3190.4.camel@HansenPartnership.com>
+         <e8eb56fdab618770917fbe5b174328dc1240f934.camel@mniewoehner.de>
+         <1547221227.19931.453.camel@linux.ibm.com>
+         <1ee67fe6cd7cc556a28e97529febf52ab0247ab4.camel@mniewoehner.de>
 Content-Type: text/plain; charset="UTF-8"
+Date:   Sat, 12 Jan 2019 11:49:12 +0100
+Mime-Version: 1.0
+User-Agent: Evolution 3.30.3 
+Content-Transfer-Encoding: 8BIT
+X-ZohoMailClient: External
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Jan 12, 2019 at 3:44 PM Sam Ravnborg <sam@ravnborg.org> wrote:
->
-> Hi Jagan.
->
-> > On Sat, Jan 12, 2019 at 2:49 AM Sam Ravnborg <sam@ravnborg.org> wrote:
-> > >
-> > > Hi Jagan.
-> > >
-> > > Gave this another more detailed read - triggered some additional comments.
-> > > Depite the comments it looks good, and this is all more or
-> > > less cosmetic improvements.
-> >
-> > Thanks for the review.
-> >
-> > >
-> > >         Sam
-> > >
-> > > > +struct st7701_panel_desc {
-> > > > +     const struct drm_display_mode *mode;
-> > > > +     unsigned int lanes;
-> > > > +     unsigned long flags;
-> > > > +     enum mipi_dsi_pixel_format format;
-> > > > +     const char *const *supply_names;
-> > > > +     unsigned int num_supplies;
-> > > > +     unsigned int panel_sleep_delay;
-> > > > +};
-> > > > +
-> > > > +struct st7701 {
-> > > > +     struct drm_panel panel;
-> > > > +     struct mipi_dsi_device *dsi;
-> > > > +     const struct st7701_panel_desc *desc;
-> > > > +
-> > > > +     struct backlight_device *backlight;
-> > > > +     struct regulator_bulk_data *supplies;
-> > > > +     unsigned int num_supplies;
-> > > I cannot see that num_supplies in this struct are used?
-> >
-> > Yes it is used in the code, please check in struct st7701_panel_desc.
-> I have applied the patch and deleted num_supplies - now build errors.
-> So num_supplies in struct st7701 is not used and should be deleted.
+Hi again,
 
-Sorry, now I found it thanks, will drop in next version.
+On Sat, 2019-01-12 at 10:52 +0100, Michael Niewöhner wrote:
+> Hi Mimi,
+> 
+> On Fri, 2019-01-11 at 10:40 -0500, Mimi Zohar wrote:
+> > Hi Michael,
+> > 
+> > On Sun, 2018-11-11 at 19:50 +0100, Michael Niewöhner wrote:
+> > 
+> > > Well, there are at least two implementations I know of:
+> > > For my Lenovo X260 I can choose between Infineon TPM 1.2 or Intel PTT TPM
+> > > 2.0
+> > > This here is my ThinkStation P320 which can choose between PTT 1.2, PTT
+> > > 2.0,
+> > > Nuvoton 1.2 and 2.0. When switchting between 1.2 and 2.0 the Nuvoton gets
+> > > reflashed with the appropriate firmware.
+> > 
+> > With IBM's LTC help, we finally found a Lenovo with the Nuvoton
+> > NCPT650.  It's a System x3550 M5[1], not a ThinkStation P320, running
+> > Fedora (vmlinuz-4.16.14-300.fc28.x86_64). I replaced the 4.16 kernel
+> > with the latest stable 4.19.y kernel.  Both the TPM and IMA seem to be
+> > working properly.  Not sure if this helps...
+> > 
+> > From dmesg:
+> > # dmesg | grep -i tpm 
+> > [    0.000000] Linux version 4.19.14 (mimi@x86tpm2Server.rtp.stglabs.i
+> > bm.com) (gcc version 8.1.1 20180502 (Red Hat 8.1.1-1) (GCC)) #6 SMP
+> > Thu Jan 10 22:32:54 EST 2019
+> > [    0.000000] efi:  ACPI=0x7b786000  ACPI 2.0=0x7b786014 
+> > SMBIOS=0x793fe000  TPMEventLog=0x426fa018 
+> > [    0.014413] ACPI: SSDT 0x000000007B784000 0003A7 (v02 INTEL 
+> > Tpm2Tabl 00001000 INTL 20130328)
+> > [    0.014416] ACPI: TPM2 0x000000007B783000 000034 (v03 INTEL  EDK2  
+> >   00000002 INTL 01000013)
+> > [    2.667052] tpm_tis MSFT0101:00: 2.0 TPM (device-id 0xFE, rev-id 2
+> > 
+> > # cat /sys/kernel/security/ima/ascii_runtime_measurements | head -2
+> > 10 5425744ce804c8cae89a08d53b41ab20ff1b3ea6 ima-sig
+> > sha1:7996f7339c3ce64e63f1232ef1aa6033247af784 boot_aggregate
+> > 
+> > I installed the ibmtpm2tss[2], built (eg. autoreconf -i; configure --
+> > enable-hwtpm) and installed it.
+> > 
+> > # export LD_LIBRARY_PATH=/usr/local/lib/
+> > # cd /usr/local/bin
+> > # ./tsspcrread -ha 10 -halg sha256 -ns
+> > f73ff9109b06d4f7a7cbe7eac32b20d2ca662e55cb4c81e152beea261989ad4b
+> > 
+> > Mimi
+> > 
+> > [1] https://lenovopress.com/lp0599.pdf
+> > [2] https://git.code.sf.net/p/ibmtpm20tss/tss
+> > 
+> 
+> what UEFI version is installed on that machine?
+> Is the TPM connected via LPC or I2C?
+> 
+> Best regards
+> Michael
+> 
+> 
 
->
-> > > > +static int st7701_prepare(struct drm_panel *panel)
-> > > > +{
-> > > > +     struct st7701 *st7701 = panel_to_st7701(panel);
-> > > > +     int ret;
-> > > > +
-> > > > +     gpiod_set_value(st7701->reset, 0);
-> > > > +     msleep(20);
-> > > > +
-> > > > +     ret = regulator_bulk_enable(st7701->desc->num_supplies,
-> > > > +                                 st7701->supplies);
-> > > > +     if (ret < 0)
-> > > > +             return ret;
-> > > > +     msleep(20);
-> > > > +
-> > > > +     gpiod_set_value(st7701->reset, 1);
-> > > > +     msleep(20);
-> > > > +
-> > > > +     gpiod_set_value(st7701->reset, 0);
-> > > > +     msleep(30);
-> > > > +
-> > > > +     gpiod_set_value(st7701->reset, 1);
-> > > > +     msleep(150);
-> > > > +
-> > > > +     st7701_init_sequence(st7701);
-> > > > +
-> > > > +     return 0;
-> > > > +}
-> > > > +
-> > >
-> > > > +static int st7701_unprepare(struct drm_panel *panel)
-> > > > +{
-> > > > +     struct st7701 *st7701 = panel_to_st7701(panel);
-> > > > +
-> > > > +     ST7701_DSI(st7701, MIPI_DCS_EXIT_SLEEP_MODE, 0x00);
->
-> Should this be MIPI_DCS_ENTER_SLEEP_MODE?
->
-> Note - you have shortcuts fot the standard commands like
-> in this case:
->
->         mipi_dsi_dcs_enter_sleep_mode(st7701->dsi);
+I had a short look to an extracted x3550 UEFI firmware (tbe132l-2.52).
+This seems to be a very different implementation,  probably due to the fact that
+this is a server firmware but not a desktop/workstation firmware.
 
-I even tried this, but the difference wrt ST7701 can pass, same
-command with type MIPI_DSI_DCS_SHORT_WRITE_PARAM but the default
-mipi_dsi_dcs_enter_sleep_mode has length 0 so it's
-MIPI_DSI_DCS_SHORT_WRITE type. ie reason I have not used.
+I do not know how much UEFI has influence on the communication with the TPM but
+I assume we can not really compare x3550 with P320 :-(
 
->
-> Thay could be introduced in many palces, but I also like how all the
-> commands follows a consistent way to be issued.
-> So consider this only if this was new for you.
->
->
-> > > > +
-> > > > +     msleep(st7701->sleep_delay);
-> > > > +
-> > > > +     gpiod_set_value(st7701->reset, 0);
-> > > > +
-> > > > +     gpiod_set_value(st7701->reset, 1);
-> > > > +
-> > > > +     gpiod_set_value(st7701->reset, 0);
-> > > No timing constrains here? In prepare there are sleeps intermixed.
-> >
-> > Delay while doing unprare is not needed I suppose.
->
-> If the purpose is alone to reset the display then a single write '0'
-> should do it I think
+Best regards
+Michael
 
-I even tried this just set 0, since prepare is doing a sequence, it
-good behavior to do the reverse during handoff. ie reason I just
-initiated this sequence.
 
-> And there is a requirement that it must be low for a minimum of 10 us
-> which would be good to have here.
 
-Sorry, I didn't get this requirement what is this for?
 
->
-> I aslo found in chapter 9. (page 163 - second line) this statement:
-> "VDDA and VDDI must be powered down with minimum 120msec."
-
-Yes unprepare is doing the same, it exit from sleep out mode and wait
-for 120msec and do the reset.
-
->
-> This is similar to the unprepare delay to be found in simple-panel.c
-> So an unprepare delay seems in order here.
-
-Look like simple-panel.c is doing delay after reset initiated and
-regulator disabled.
