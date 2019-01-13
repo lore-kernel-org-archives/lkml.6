@@ -7,34 +7,34 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DDCF9C43444
-	for <linux-kernel@archiver.kernel.org>; Sun, 13 Jan 2019 15:47:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A13E9C43387
+	for <linux-kernel@archiver.kernel.org>; Sun, 13 Jan 2019 15:47:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AED5A20842
-	for <linux-kernel@archiver.kernel.org>; Sun, 13 Jan 2019 15:47:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7311320854
+	for <linux-kernel@archiver.kernel.org>; Sun, 13 Jan 2019 15:47:53 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=onstation.org header.i=@onstation.org header.b="eIDpInw6"
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=onstation.org header.i=@onstation.org header.b="RS9Tu0VI"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726847AbfAMPrw (ORCPT
+        id S1726865AbfAMPrw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Sun, 13 Jan 2019 10:47:52 -0500
-Received: from onstation.org ([52.200.56.107]:42682 "EHLO onstation.org"
+Received: from onstation.org ([52.200.56.107]:42726 "EHLO onstation.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726753AbfAMPrq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1726759AbfAMPrq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Sun, 13 Jan 2019 10:47:46 -0500
 Received: from localhost.localdomain (c-98-239-145-235.hsd1.wv.comcast.net [98.239.145.235])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
         (Authenticated sender: masneyb)
-        by onstation.org (Postfix) with ESMTPSA id 0292116A;
-        Sun, 13 Jan 2019 15:47:44 +0000 (UTC)
+        by onstation.org (Postfix) with ESMTPSA id 9C6FD7F3;
+        Sun, 13 Jan 2019 15:47:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=onstation.org;
-        s=default; t=1547394465;
-        bh=FUcOKWEzXBEnw/ZNj07ltRb8bTamJHF34nYP/RQuFXk=;
+        s=default; t=1547394466;
+        bh=g9+mUDEYA3MtZUonGHcZoPjhCLey/9kfSVLJthForEw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=eIDpInw6HFgHivQZ+4mNdZKDg/+qB6Kv5sfUmXuwClEwNx1hS624UyfA6DUzDiys8
-         XaUIhUIYxIg6V7qMYVj+I5azRrLCoPYOJdyUBNf8BravkP8T9q0zp8xy9/3L+6FReA
-         VIYTdilVU6uM6ciRlEDsSqgVYweDpdWjgGwITUMg=
+        b=RS9Tu0VIpkEaJyEtYiSAwStfOGo2JHD+C3HykRfoBBGYrXy2/7mCqwphGdr+ghMOY
+         s1rXzRDxFOYV3gXbHuCvpDxWiZ4OoYs/toTNe/rPt5+hG20ezKN0IZJSjtQp3cW0ic
+         /tR2mGbgAKvO8B81KCagwickrqNrThrgMJrUjKa8=
 From:   Brian Masney <masneyb@onstation.org>
 To:     linus.walleij@linaro.org, sboyd@kernel.org,
         bjorn.andersson@linaro.org, andy.gross@linaro.org
@@ -44,9 +44,9 @@ Cc:     marc.zyngier@arm.com, shawnguo@kernel.org, dianders@chromium.org,
         robh+dt@kernel.org, mark.rutland@arm.com, thierry.reding@gmail.com,
         linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
         devicetree@vger.kernel.org
-Subject: [PATCH v4 09/14] ARM: dts: qcom: pma8084: add interrupt controller properties
-Date:   Sun, 13 Jan 2019 10:47:11 -0500
-Message-Id: <20190113154716.5145-10-masneyb@onstation.org>
+Subject: [PATCH v4 10/14] arm64: dts: qcom: pm8005: add interrupt controller properties
+Date:   Sun, 13 Jan 2019 10:47:12 -0500
+Message-Id: <20190113154716.5145-11-masneyb@onstation.org>
 X-Mailer: git-send-email 2.17.2
 In-Reply-To: <20190113154716.5145-1-masneyb@onstation.org>
 References: <20190113154716.5145-1-masneyb@onstation.org>
@@ -64,49 +64,29 @@ tested on qcom-pm8941.dtsi using a LG Nexus 5 (hammerhead) phone with
 no issues.
 
 Signed-off-by: Brian Masney <masneyb@onstation.org>
-Reviewed-by: Stephen Boyd <sboyd@kernel.org>
 ---
-Chances since v3:
-- None
+This is a new patch introduced in V4.
 
- arch/arm/boot/dts/qcom-pma8084.dtsi | 24 ++----------------------
- 1 file changed, 2 insertions(+), 22 deletions(-)
+ arch/arm64/boot/dts/qcom/pm8005.dtsi | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
-diff --git a/arch/arm/boot/dts/qcom-pma8084.dtsi b/arch/arm/boot/dts/qcom-pma8084.dtsi
-index aac7e73b6872..8f5ea7add20f 100644
---- a/arch/arm/boot/dts/qcom-pma8084.dtsi
-+++ b/arch/arm/boot/dts/qcom-pma8084.dtsi
-@@ -32,28 +32,8 @@
+diff --git a/arch/arm64/boot/dts/qcom/pm8005.dtsi b/arch/arm64/boot/dts/qcom/pm8005.dtsi
+index 4d5aca3eeb69..c0ddf128136c 100644
+--- a/arch/arm64/boot/dts/qcom/pm8005.dtsi
++++ b/arch/arm64/boot/dts/qcom/pm8005.dtsi
+@@ -16,10 +16,8 @@
  			reg = <0xc000>;
  			gpio-controller;
  			#gpio-cells = <2>;
 -			interrupts = <0 0xc0 0 IRQ_TYPE_NONE>,
 -				     <0 0xc1 0 IRQ_TYPE_NONE>,
 -				     <0 0xc2 0 IRQ_TYPE_NONE>,
--				     <0 0xc3 0 IRQ_TYPE_NONE>,
--				     <0 0xc4 0 IRQ_TYPE_NONE>,
--				     <0 0xc5 0 IRQ_TYPE_NONE>,
--				     <0 0xc6 0 IRQ_TYPE_NONE>,
--				     <0 0xc7 0 IRQ_TYPE_NONE>,
--				     <0 0xc8 0 IRQ_TYPE_NONE>,
--				     <0 0xc9 0 IRQ_TYPE_NONE>,
--				     <0 0xca 0 IRQ_TYPE_NONE>,
--				     <0 0xcb 0 IRQ_TYPE_NONE>,
--				     <0 0xcc 0 IRQ_TYPE_NONE>,
--				     <0 0xcd 0 IRQ_TYPE_NONE>,
--				     <0 0xce 0 IRQ_TYPE_NONE>,
--				     <0 0xcf 0 IRQ_TYPE_NONE>,
--				     <0 0xd0 0 IRQ_TYPE_NONE>,
--				     <0 0xd1 0 IRQ_TYPE_NONE>,
--				     <0 0xd2 0 IRQ_TYPE_NONE>,
--				     <0 0xd3 0 IRQ_TYPE_NONE>,
--				     <0 0xd4 0 IRQ_TYPE_NONE>,
--				     <0 0xd5 0 IRQ_TYPE_NONE>;
+-				     <0 0xc3 0 IRQ_TYPE_NONE>;
 +			interrupt-controller;
 +			#interrupt-cells = <2>;
  		};
  
- 		pma8084_mpps: mpps@a000 {
+ 	};
 -- 
 2.17.2
 
