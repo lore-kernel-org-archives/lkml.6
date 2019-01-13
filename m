@@ -2,104 +2,128 @@ Return-Path: <SRS0=GEt/=PV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A85D8C43387
-	for <linux-kernel@archiver.kernel.org>; Sun, 13 Jan 2019 16:52:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 032F9C43387
+	for <linux-kernel@archiver.kernel.org>; Sun, 13 Jan 2019 17:20:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 72E1C2089F
-	for <linux-kernel@archiver.kernel.org>; Sun, 13 Jan 2019 16:52:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id ADEA4205C9
+	for <linux-kernel@archiver.kernel.org>; Sun, 13 Jan 2019 17:20:44 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="i4vN6VPI"
+	dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b="nzngVUsJ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726804AbfAMQw0 (ORCPT
+        id S1726731AbfAMRUn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 13 Jan 2019 11:52:26 -0500
-Received: from bedivere.hansenpartnership.com ([66.63.167.143]:39502 "EHLO
-        bedivere.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726596AbfAMQw0 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 13 Jan 2019 11:52:26 -0500
-Received: from localhost (localhost [127.0.0.1])
-        by bedivere.hansenpartnership.com (Postfix) with ESMTP id 06B128EE335;
-        Sun, 13 Jan 2019 08:52:25 -0800 (PST)
-Received: from bedivere.hansenpartnership.com ([127.0.0.1])
-        by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id OzwZyar6r92n; Sun, 13 Jan 2019 08:52:24 -0800 (PST)
-Received: from [153.66.254.242] (unknown [50.35.68.20])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id CC5578EE31D;
-        Sun, 13 Jan 2019 08:52:23 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=hansenpartnership.com;
-        s=20151216; t=1547398344;
-        bh=97Lr8uEcWLYZCfQ65MhD1fQLYDaPb+MVY/qOho5BHrk=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=i4vN6VPILuvlJrcNcY5cbZgiEzT4vGensEQ8uH+ALRauU3TvJTNmRl/WlRyLqNoRG
-         rgkpR/W2mQWSIKc5keILKgkKPXCe3OWm6JRgFq2EKQeW434jbpBvF4qRV8Uwlhy+Kh
-         VmwJbDdTZz4ZXzvriF/i6t8V5ipF4dQ9qvYM5NRg=
-Message-ID: <1547398342.4409.3.camel@HansenPartnership.com>
-Subject: Re: [PATCH 4/6] crypto: hkdf - RFC5869 Key Derivation Function
-From:   James Bottomley <James.Bottomley@HansenPartnership.com>
-To:     Stephan =?ISO-8859-1?Q?M=FCller?= <smueller@chronox.de>,
-        Herbert Xu <herbert@gondor.apana.org.au>
-Cc:     Eric Biggers <ebiggers@kernel.org>,
-        Andy Lutomirski <luto@amacapital.net>,
-        "Lee, Chun-Yi" <joeyli.kernel@gmail.com>,
-        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
-        Pavel Machek <pavel@ucw.cz>, linux-kernel@vger.kernel.org,
-        linux-pm@vger.kernel.org, keyrings@vger.kernel.org,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-        Chen Yu <yu.c.chen@intel.com>,
-        Oliver Neukum <oneukum@suse.com>,
-        Ryan Chen <yu.chen.surf@gmail.com>,
-        David Howells <dhowells@redhat.com>,
-        Giovanni Gherdovich <ggherdovich@suse.cz>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Jann Horn <jannh@google.com>,
-        Andy Lutomirski <luto@kernel.org>, linux-crypto@vger.kernel.org
-Date:   Sun, 13 Jan 2019 08:52:22 -0800
-In-Reply-To: <9795894.APlZEWIbOH@positron.chronox.de>
-References: <20190103143227.9138-1-jlee@suse.com>
-         <20190112051252.GA639@sol.localdomain>
-         <20190112095535.36rh3ptnrf7yxacv@gondor.apana.org.au>
-         <9795894.APlZEWIbOH@positron.chronox.de>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.22.6 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Sun, 13 Jan 2019 12:20:43 -0500
+Received: from mail-eopbgr810114.outbound.protection.outlook.com ([40.107.81.114]:6123
+        "EHLO NAM01-BY2-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726254AbfAMRUn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 13 Jan 2019 12:20:43 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=B318SwpE1j/FluarQ6jdTZJmXT8sb2TMDaofhmrxW3M=;
+ b=nzngVUsJNvB2i7W8TNCLD+faC0N12jlYpjhFWmNQSvxuKiHYODAcApjHk7rS/VMFhmJTB24gyE/bLdb4D3YolfkEamrMFRlk7JCdcmaqFLQyDnNZ0apPPzzTX3dTKgkwxL9Iuz4WBkMOr7fQ0apDsbtxjkcPIc/KngwiPp5vYpI=
+Received: from CY4PR21MB0773.namprd21.prod.outlook.com (10.173.192.19) by
+ CY4PR21MB0149.namprd21.prod.outlook.com (10.173.189.19) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1558.1; Sun, 13 Jan 2019 17:20:40 +0000
+Received: from CY4PR21MB0773.namprd21.prod.outlook.com
+ ([fe80::78f4:babd:9883:58b9]) by CY4PR21MB0773.namprd21.prod.outlook.com
+ ([fe80::78f4:babd:9883:58b9%4]) with mapi id 15.20.1558.000; Sun, 13 Jan 2019
+ 17:20:40 +0000
+From:   Michael Kelley <mikelley@microsoft.com>
+To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Sasha Levin <sashal@kernel.org>,
+        Dexuan Cui <decui@microsoft.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Christoph Hellwig <hch@lst.de>
+CC:     KY Srinivasan <kys@microsoft.com>,
+        Haiyang Zhang <haiyangz@microsoft.com>,
+        Stephen Hemminger <sthemmin@microsoft.com>,
+        "devel@linuxdriverproject.org" <devel@linuxdriverproject.org>
+Subject: RE: [PATCH v2] vmbus: Switch to use new generic UUID API
+Thread-Topic: [PATCH v2] vmbus: Switch to use new generic UUID API
+Thread-Index: AQHUqPBgQVPZGdO3OEOBM7brhn/+7aWtdj7Q
+Date:   Sun, 13 Jan 2019 17:20:40 +0000
+Message-ID: <CY4PR21MB0773F6E7AA18B8E6C9023D94D7870@CY4PR21MB0773.namprd21.prod.outlook.com>
+References: <20190110142532.52067-1-andriy.shevchenko@linux.intel.com>
+In-Reply-To: <20190110142532.52067-1-andriy.shevchenko@linux.intel.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+msip_labels: MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Enabled=True;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_SiteId=72f988bf-86f1-41af-91ab-2d7cd011db47;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Owner=mikelley@ntdev.microsoft.com;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_SetDate=2019-01-13T17:20:38.3835644Z;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Name=General;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Application=Microsoft Azure
+ Information Protection;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Extended_MSFT_Method=Automatic;
+ Sensitivity=General
+x-originating-ip: [24.22.167.197]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;CY4PR21MB0149;6:Y+7Tdusrjmi3CIApg0u5eRo0EDHF5ql01yE1NmcNyuYHS6F3Hc71w382tswTmpR8D5F8xhQs7TF/lwT84OyjqZko1mIvSj9sgedfzlBQBDwrAfXotKacibGQWi+WP+pOcr2eNr47CWg2YWdxzjySN4stpVQwZjRgbpr0MjKmbrs55nZAU4lXXLhK4JgInsZu6GPSwb+HqxvEYTU+aD6HOhxMSxD5OTMdUuAHK3BrTUuEofPoam//y2RnzYTy+Nj8sB7e3818+LLEe0/gLUU3H5mH3xkFK12ySiuIUXU2DgpxDCya8hDU5gPdbLIGuB79/cunhktiNzaQ2S14vb7kOWNkveP38RS9MDkNGYGO66l2FRenynibdBZHZi9y2jOMJIspQXeqclon3HUIxb5JwvAaSrBIRk8lTeVRavKYkrp8KQSAtrqOE8ulOEng3ItIOIBkoHSErXcBxaTbGI7i2Q==;5:SUSMIcJmRh0FbsmZ36M+Zxn5G1EiOFt01qAjppggtA7gMpfLLfYGfL5R5DnlCC0SqJjnhAKvkjuflIubYoWuHpXvL1jSJ7KS9IDGm0vXaevv9IPmXPOeFkZO/6yZp4x0guWXCWxWXCvwpaKb/5wIH6/JA9vdQarp5ycr+qrDRoRsCwwK/IPyI42jKRXSf3jvqMU2fvnNsQzcVWdjYJD/5Q==;7:Erj92J8Qm304uT41N0ewPnHrNXykTai6YDziaOMmsGW4LVy2Vr9O0EO3KzaqiK1zbch4MyzJXUiBHiMFhVjUjjtjp4zXyR/3tJoeyPRrnQH7Oseph+SUD9plbWWT59VATUNj28OFIKCrVgyJXb7iyg==
+x-ms-office365-filtering-correlation-id: 056738da-115b-413d-7a39-08d6797b7148
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600109)(711020)(4618075)(2017052603328)(7193020);SRVR:CY4PR21MB0149;
+x-ms-traffictypediagnostic: CY4PR21MB0149:
+x-ms-exchange-purlcount: -3
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=mikelley@microsoft.com; 
+x-microsoft-antispam-prvs: <CY4PR21MB0149C5F000BA6232CE3E7601D7870@CY4PR21MB0149.namprd21.prod.outlook.com>
+x-forefront-prvs: 0916FC3A18
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(346002)(136003)(39860400002)(376002)(366004)(396003)(189003)(199004)(110136005)(54906003)(305945005)(476003)(25786009)(229853002)(8936002)(446003)(9686003)(11346002)(7736002)(10090500001)(10290500003)(14454004)(76176011)(8990500004)(316002)(8676002)(2501003)(186003)(74316002)(102836004)(7696005)(4326008)(26005)(105586002)(106356001)(22452003)(68736007)(256004)(81156014)(6506007)(81166006)(478600001)(55016002)(99286004)(2906002)(71190400001)(66066001)(86612001)(5660300001)(486006)(86362001)(53936002)(6246003)(33656002)(1511001)(6116002)(3846002)(4744005)(6436002)(97736004)(71200400001)(41533002);DIR:OUT;SFP:1102;SCL:1;SRVR:CY4PR21MB0149;H:CY4PR21MB0773.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: microsoft.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: YKH/6CpYHW7JvYzXxhHWBFdJVNi1nGdbHFntG2skd1DQk/p0fqrt96PRL5uS4hXCqtX9MIMKCM1ynvw34BBFqXHJQnmaJ+dzMUFYlhKv2fQ5hUKyGIPawjmqrf1BZ66fuaziGlt6EEJHbivyph1SsGQ+7a9+UG9NGa3g5pkY4tHfkjGgVftNJo8iJrtBu6eJCbZmbB9CQys97snVUhhasl+l5KuTTQElY+/XZkgeMFuky6AyZUDzMzlrkHpevA1cje+Ow96fZKZEYF8DKquO4KpanFCyuJcWuDYQVpxrlfEUVO3PoW92+dG7u8AKo25qI2t/DjFAVCXio7jRPb+rT2SVfV5XByzYNJFCOu0VkauEXqfGGPTXK1M1q1HXUejw5izhvrdoKg5ynwpnPIq8cR46ENL2jfTs1AVP0Q0Z0m8=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-OriginatorOrg: microsoft.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 056738da-115b-413d-7a39-08d6797b7148
+X-MS-Exchange-CrossTenant-originalarrivaltime: 13 Jan 2019 17:20:40.6586
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY4PR21MB0149
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, 2019-01-13 at 08:56 +0100, Stephan Müller wrote:
-> The question may arise why to plug the KDFs into RNGs. The answer is
-> quite simple: KDFs are a form of random number generator. In that
-> they take some input for initialization (aka seed, salt, key,
-> personalization string). Then they produce pseudo-random bit
-> sequences of arbitrary length. Possibly the generation operation can
-> be modified by providing some additional input to be used by the
-> generation process (aka label, context, info string, additional 
-> information string). Thus, the RNG interface is a natural fit for the
-> KDFs.
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com> Sent: Thursday, J=
+anuary 10, 2019 6:26 AM
+>=20
+> There are new types and helpers that are supposed to be used in new code.
+>=20
+> As a preparation to get rid of legacy types and API functions do
+> the conversion here.
+>=20
+> Cc: "K. Y. Srinivasan" <kys@microsoft.com>
+> Cc: Haiyang Zhang <haiyangz@microsoft.com>
+> Cc: Stephen Hemminger <sthemmin@microsoft.com>
+> Cc: devel@linuxdriverproject.org
+> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> ---
+>=20
+> v2:
+> - leave uapi untouched (Christoph, Haiyang)
+> - rebase on top of latest linux-next
+>=20
+>  drivers/hv/channel.c      |  4 +-
+>  drivers/hv/channel_mgmt.c | 18 +++----
+>  drivers/hv/hyperv_vmbus.h |  4 +-
+>  drivers/hv/vmbus_drv.c    | 48 +++++++------------
+>  include/linux/hyperv.h    | 98 +++++++++++++++++++--------------------
+>  5 files changed, 79 insertions(+), 93 deletions(-)
 
-Philosophically, that's quite wrong.  KDFs are a class of pseudorandom
-functions (PRFs).  PRFs are designed so that the output is
-indistinguishable from a random number generator to observers who don't
-know the input but is deterministically useful for participants who do.
- That means the're definitely not RNGs they're functions whose output
-is designed to look like the output of an RNG.
-
-I suppose the mathematical thing that distinguishes PRFs and RNGs is
-entropy: PRFs have zero entropy because given the same inputs you
-expect the same output. Now whether it makes sense to use the RNG API
-or not I'll leave that up to the crypto people.  I would have expected
-any cryptographic RNG API to be mostly about entropy management (the
-Linux core internal one certainly is), but it appears that the one in
-crypto isn't.
-
-James
-
+Reviewed-by:  Michael Kelley <mikelley@microsoft.com>
