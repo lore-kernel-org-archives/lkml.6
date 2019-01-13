@@ -6,34 +6,35 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E35CBC43387
-	for <linux-kernel@archiver.kernel.org>; Sun, 13 Jan 2019 20:01:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 87901C43387
+	for <linux-kernel@archiver.kernel.org>; Sun, 13 Jan 2019 20:01:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C181820675
-	for <linux-kernel@archiver.kernel.org>; Sun, 13 Jan 2019 20:01:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 65B9820675
+	for <linux-kernel@archiver.kernel.org>; Sun, 13 Jan 2019 20:01:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726871AbfAMUBR (ORCPT
+        id S1726896AbfAMUB0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 13 Jan 2019 15:01:17 -0500
-Received: from mail5.windriver.com ([192.103.53.11]:47592 "EHLO mail5.wrs.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726469AbfAMUAo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 13 Jan 2019 15:00:44 -0500
-Received: from ALA-HCA.corp.ad.wrs.com (ala-hca.corp.ad.wrs.com [147.11.189.40])
-        by mail5.wrs.com (8.15.2/8.15.2) with ESMTPS id x0DIbEFR025097
+        Sun, 13 Jan 2019 15:01:26 -0500
+Received: from mail.windriver.com ([147.11.1.11]:65258 "EHLO
+        mail.windriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726545AbfAMUAE (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 13 Jan 2019 15:00:04 -0500
+Received: from ALA-HCA.corp.ad.wrs.com ([147.11.189.40])
+        by mail.windriver.com (8.15.2/8.15.1) with ESMTPS id x0DIdhjk029132
         (version=TLSv1 cipher=AES128-SHA bits=128 verify=FAIL);
-        Sun, 13 Jan 2019 10:37:24 -0800
+        Sun, 13 Jan 2019 10:39:43 -0800 (PST)
 Received: from yow-cube1.wrs.com (128.224.56.98) by ALA-HCA.corp.ad.wrs.com
  (147.11.189.40) with Microsoft SMTP Server id 14.3.408.0; Sun, 13 Jan 2019
- 10:37:04 -0800
+ 10:39:42 -0800
 From:   Paul Gortmaker <paul.gortmaker@windriver.com>
 To:     Lee Jones <lee.jones@linaro.org>
 CC:     <linux-kernel@vger.kernel.org>,
         Paul Gortmaker <paul.gortmaker@windriver.com>,
-        Jin Park <jinyoungp@nvidia.com>
-Subject: [PATCH 01/18] mfd: aat2870-core: Make it explicitly non-modular
-Date:   Sun, 13 Jan 2019 13:36:32 -0500
-Message-ID: <1547404609-14161-2-git-send-email-paul.gortmaker@windriver.com>
+        <patches@opensource.cirrus.com>
+Subject: [PATCH 13/18] mfd: wm831x-spi: Make it explicitly non-modular
+Date:   Sun, 13 Jan 2019 13:36:44 -0500
+Message-ID: <1547404609-14161-14-git-send-email-paul.gortmaker@windriver.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1547404609-14161-1-git-send-email-paul.gortmaker@windriver.com>
 References: <1547404609-14161-1-git-send-email-paul.gortmaker@windriver.com>
@@ -46,8 +47,8 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The Kconfig currently controlling compilation of this code is:
 
-drivers/mfd/Kconfig:config MFD_AAT2870_CORE
-drivers/mfd/Kconfig:    bool "AnalogicTech AAT2870"
+drivers/mfd/Kconfig:config MFD_WM831X_SPI
+drivers/mfd/Kconfig:    bool "Wolfson Microelectronics WM831x/2x PMICs with SPI"
 
 ...meaning that it currently is not being built as a module by anyone.
 
@@ -67,99 +68,75 @@ We also delete the MODULE_LICENSE tag etc. since all that information
 is already contained at the top of the file in the comments.
 
 Cc: Lee Jones <lee.jones@linaro.org>
-Cc: Jin Park <jinyoungp@nvidia.com>
+Cc: patches@opensource.cirrus.com
 Signed-off-by: Paul Gortmaker <paul.gortmaker@windriver.com>
 Acked-by: Linus Walleij <linus.walleij@linaro.org>
-Acked-by: Jin Park <jinyoungp@nvidia.com>
 ---
- drivers/mfd/aat2870-core.c | 40 +++-------------------------------------
- 1 file changed, 3 insertions(+), 37 deletions(-)
+ drivers/mfd/wm831x-spi.c | 24 ++----------------------
+ 1 file changed, 2 insertions(+), 22 deletions(-)
 
-diff --git a/drivers/mfd/aat2870-core.c b/drivers/mfd/aat2870-core.c
-index 3ba19a45f199..9d3d90d386c2 100644
---- a/drivers/mfd/aat2870-core.c
-+++ b/drivers/mfd/aat2870-core.c
-@@ -20,7 +20,6 @@
+diff --git a/drivers/mfd/wm831x-spi.c b/drivers/mfd/wm831x-spi.c
+index 018ce652ae57..dd4dab419940 100644
+--- a/drivers/mfd/wm831x-spi.c
++++ b/drivers/mfd/wm831x-spi.c
+@@ -13,7 +13,7 @@
   */
  
  #include <linux/kernel.h>
 -#include <linux/module.h>
- #include <linux/init.h>
- #include <linux/debugfs.h>
- #include <linux/slab.h>
-@@ -349,18 +348,10 @@ static void aat2870_init_debugfs(struct aat2870_data *aat2870)
- 			 "Failed to create debugfs register file\n");
++#include <linux/init.h>
+ #include <linux/of.h>
+ #include <linux/of_device.h>
+ #include <linux/pm.h>
+@@ -67,15 +67,6 @@ static int wm831x_spi_probe(struct spi_device *spi)
+ 	return wm831x_device_init(wm831x, spi->irq);
  }
  
--static void aat2870_uninit_debugfs(struct aat2870_data *aat2870)
+-static int wm831x_spi_remove(struct spi_device *spi)
 -{
--	debugfs_remove_recursive(aat2870->dentry_root);
--}
- #else
- static inline void aat2870_init_debugfs(struct aat2870_data *aat2870)
- {
- }
+-	struct wm831x *wm831x = spi_get_drvdata(spi);
 -
--static inline void aat2870_uninit_debugfs(struct aat2870_data *aat2870)
--{
--}
- #endif /* CONFIG_DEBUG_FS */
- 
- static int aat2870_i2c_probe(struct i2c_client *client,
-@@ -440,20 +431,6 @@ static int aat2870_i2c_probe(struct i2c_client *client,
- 	return ret;
- }
- 
--static int aat2870_i2c_remove(struct i2c_client *client)
--{
--	struct aat2870_data *aat2870 = i2c_get_clientdata(client);
--
--	aat2870_uninit_debugfs(aat2870);
--
--	mfd_remove_devices(aat2870->dev);
--	aat2870_disable(aat2870);
--	if (aat2870->uninit)
--		aat2870->uninit(aat2870);
+-	wm831x_device_exit(wm831x);
 -
 -	return 0;
 -}
 -
- #ifdef CONFIG_PM_SLEEP
- static int aat2870_i2c_suspend(struct device *dev)
+ static int wm831x_spi_suspend(struct device *dev)
  {
-@@ -492,15 +469,14 @@ static const struct i2c_device_id aat2870_i2c_id_table[] = {
- 	{ "aat2870", 0 },
- 	{ }
+ 	struct wm831x *wm831x = dev_get_drvdata(dev);
+@@ -108,17 +99,16 @@ static const struct spi_device_id wm831x_spi_ids[] = {
+ 	{ "wm8326", WM8326 },
+ 	{ },
  };
--MODULE_DEVICE_TABLE(i2c, aat2870_i2c_id_table);
+-MODULE_DEVICE_TABLE(spi, wm831x_spi_ids);
  
- static struct i2c_driver aat2870_i2c_driver = {
+ static struct spi_driver wm831x_spi_driver = {
  	.driver = {
--		.name	= "aat2870",
--		.pm	= &aat2870_pm_ops,
-+		.name			= "aat2870",
-+		.pm			= &aat2870_pm_ops,
-+		.suppress_bind_attrs	= true,
+ 		.name	= "wm831x",
+ 		.pm	= &wm831x_spi_pm,
+ 		.of_match_table = of_match_ptr(wm831x_of_match),
++		.suppress_bind_attrs = true,
  	},
- 	.probe		= aat2870_i2c_probe,
--	.remove		= aat2870_i2c_remove,
- 	.id_table	= aat2870_i2c_id_table,
+ 	.id_table	= wm831x_spi_ids,
+ 	.probe		= wm831x_spi_probe,
+-	.remove		= wm831x_spi_remove,
  };
  
-@@ -509,13 +485,3 @@ static int __init aat2870_init(void)
- 	return i2c_add_driver(&aat2870_i2c_driver);
+ static int __init wm831x_spi_init(void)
+@@ -132,13 +122,3 @@ static int __init wm831x_spi_init(void)
+ 	return 0;
  }
- subsys_initcall(aat2870_init);
+ subsys_initcall(wm831x_spi_init);
 -
--static void __exit aat2870_exit(void)
+-static void __exit wm831x_spi_exit(void)
 -{
--	i2c_del_driver(&aat2870_i2c_driver);
+-	spi_unregister_driver(&wm831x_spi_driver);
 -}
--module_exit(aat2870_exit);
+-module_exit(wm831x_spi_exit);
 -
--MODULE_DESCRIPTION("Core support for the AnalogicTech AAT2870");
+-MODULE_DESCRIPTION("SPI support for WM831x/2x AudioPlus PMICs");
 -MODULE_LICENSE("GPL");
--MODULE_AUTHOR("Jin Park <jinyoungp@nvidia.com>");
+-MODULE_AUTHOR("Mark Brown");
 -- 
 2.7.4
 
