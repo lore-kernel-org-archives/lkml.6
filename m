@@ -2,173 +2,215 @@ Return-Path: <SRS0=GEt/=PV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.1 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_NEOMUTT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F781C43387
-	for <linux-kernel@archiver.kernel.org>; Sun, 13 Jan 2019 18:18:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 920B3C43387
+	for <linux-kernel@archiver.kernel.org>; Sun, 13 Jan 2019 19:48:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DCD9120896
-	for <linux-kernel@archiver.kernel.org>; Sun, 13 Jan 2019 18:18:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4798120842
+	for <linux-kernel@archiver.kernel.org>; Sun, 13 Jan 2019 19:48:45 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="swFYHZlf"
+	dkim=pass (2048-bit key) header.d=lixom-net.20150623.gappssmtp.com header.i=@lixom-net.20150623.gappssmtp.com header.b="yINUIa+r"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726660AbfAMSSa (ORCPT
+        id S1726516AbfAMTsn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 13 Jan 2019 13:18:30 -0500
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:45651 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726436AbfAMSS3 (ORCPT
+        Sun, 13 Jan 2019 14:48:43 -0500
+Received: from mail-lf1-f65.google.com ([209.85.167.65]:43204 "EHLO
+        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726254AbfAMTsm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 13 Jan 2019 13:18:29 -0500
-Received: by mail-pg1-f195.google.com with SMTP id y4so8470640pgc.12;
-        Sun, 13 Jan 2019 10:18:29 -0800 (PST)
+        Sun, 13 Jan 2019 14:48:42 -0500
+Received: by mail-lf1-f65.google.com with SMTP id u18so14133161lff.10
+        for <linux-kernel@vger.kernel.org>; Sun, 13 Jan 2019 11:48:41 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=qh1Vvz9nFt0zbkJ37Q8bDQfJww+y6baj77fJu8mv98I=;
-        b=swFYHZlfdSg6jCEkobODwgnPuE6nEjJPb3gCppvr+w/wWhlYMhNhkpdli0TsuPs1xU
-         LiPfvXrWVD1YZenmBCRbBIUcU1NlxKLj6noaSmaDDwGEay1PQS82tug/nRt3b5ySrrib
-         JhQKHQI43TFPHc26H7D99Jyos/romqrC0+XSFier8LOeAasMYNDbUDjCNhVa6x0dow96
-         3aeCwoGWgnwlVFQ8xb/nTEd5B0kfJ3pq8t2W8BO+waZg/pvzoQ916HYusyXU6idwrx8q
-         nY1OMC/wh0r7BpKC1hLlyPmx4pJFx0r7h8epi8w8h6HnDQHHTO8nrzvp3eqbUvvOv/ey
-         ycKg==
+        d=lixom-net.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
+         :user-agent;
+        bh=re7/aNLLQBL9zd8wPf1h0I9182Lzz9Ue94vXz/CzSN4=;
+        b=yINUIa+rixKEqRCJLqW16A5uuIOB1M8pQ+L8BYWtAIbs6H2XcYifSIRHE0XK6fGykC
+         cYqGTsv6JopuRey4JDO7HyVMR5rSNvB/syWQ5jjgqetDBU1esaCSiCfj861USxEEbnQW
+         VjmSkAbeiegXRAUT87e1RRq3wIJ6D8TO7s7s2o28cNshl7PWqApmxfU2ZDQYTyuA1QO+
+         SnwnYd6+pFUcI5VZbr/kKyNrnHiSxq5qWeOZTu2zDx4Z5rCVYw8zrmk5OJPxaJuQKRo7
+         c/AlYoKY4F8x2JIj0+Dn9MBT3mKvRZz1H/5I+FpPRvO8x2Vb6kgHLcL/clk+8s/hITn/
+         Uzrg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=qh1Vvz9nFt0zbkJ37Q8bDQfJww+y6baj77fJu8mv98I=;
-        b=D8Wk9wzOZNZR63ZWAaM2WA/N/KWthjJpbZ+yTXbEtxq/iMYk//LqYt0pIGOAxxyhNY
-         rXFTQOHCmyoEl/QwGo9uqRnX0cYGr4Tv2h1DhTz/LI4x3Qic2DZOhCHo1Mbvrt6nEEWs
-         CoDTt3tS8KW91UOjqipUbYEoombVPSCHsKjGa7VCN3UE//Q5/AzXockMCgb01O6ycC7b
-         KETmn7FKbKm+Z8+jhOCYKxpqBg0+zBfYqqhqd8r02VGTZxVwGbdCRoSTBnAe9w5Iv6mL
-         YdkwUqY90WBL5GKSp5ZveMLlpo6MDbWomCI/2oZD0bxGqDMjL6CxcuBGjRIlC89mQZsj
-         jV6g==
-X-Gm-Message-State: AJcUukc+p2777uOvHb16ba1TAKuDK8T+AvUelN173ABdSfs+CqnsrghP
-        y/PZrcuW/kPSMLrMi6eYuXaFuJFd
-X-Google-Smtp-Source: ALg8bN5zH9qH94ZZJjYOfVGfLt2TvQIJ/wKbeMQOEPYGeoGwZN29QJ8K9d3ZnoCFHJQyGixOX2BN9A==
-X-Received: by 2002:a63:9b11:: with SMTP id r17mr20476965pgd.416.1547403508296;
-        Sun, 13 Jan 2019 10:18:28 -0800 (PST)
-Received: from localhost.localdomain ([103.51.74.105])
-        by smtp.gmail.com with ESMTPSA id i193sm157504416pgc.22.2019.01.13.10.18.25
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 13 Jan 2019 10:18:27 -0800 (PST)
-From:   Anand Moon <linux.amoon@gmail.com>
-To:     devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Emiliano Ingrassia <ingrassia@epigenesys.com>
-Subject: [PATCH 2/2] ARM: dts: meson8b: odroidc1: Fix usb phy regulator power failed warning
-Date:   Sun, 13 Jan 2019 18:18:08 +0000
-Message-Id: <20190113181808.5768-2-linux.amoon@gmail.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190113181808.5768-1-linux.amoon@gmail.com>
-References: <20190113181808.5768-1-linux.amoon@gmail.com>
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=re7/aNLLQBL9zd8wPf1h0I9182Lzz9Ue94vXz/CzSN4=;
+        b=FFqMXRz//LCQp8uOfjTGqQ9rsylWZ1+WJd3qQo1vdc0gijEaW0HBrUlHIPVUPlexY9
+         idsoimLqbrkNnXhXtjuiRxR1beQDyzlmIfF85jO4zQWxi9KsYlDCZ/Q5a48GcIa79Oh7
+         IdNPhdkaLJ20YElrjo8uBU6ZGYWZU4H+CahsLITy6RZXdm3Mc+uvpaHiHS6a0MDCVNFG
+         V9PfvItlevCWtCxxbuduvy+E+40rxWU56IWUUIoi+b1zyQiscUmRUaBr+Zk/O8npFK6/
+         3Ol+xvb34T76+jrQroIsBVVveajVjPrAo466v/4BPoOJooTgLiWMEumh3aYn5Jj+b2rC
+         vL0A==
+X-Gm-Message-State: AJcUukc1N0Om5rNWJuSkwgIJOUy4Co54/+/U5fl1TFM5c3SQnShoqqTW
+        o8z2KlRHg9mXuUpB1vYC6zLEn57L4w8nKw==
+X-Google-Smtp-Source: ALg8bN6L29b9ZMog+JySw768nPCe7xx+9zJeR6LoSAjubJev9aH00Albcfvm5SYF1vHiqK86n9susw==
+X-Received: by 2002:a19:1d0d:: with SMTP id d13mr11432625lfd.74.1547405315768;
+        Sun, 13 Jan 2019 10:48:35 -0800 (PST)
+Received: from localhost (h85-30-9-151.cust.a3fiber.se. [85.30.9.151])
+        by smtp.gmail.com with ESMTPSA id v64sm15619026lfa.48.2019.01.13.10.48.33
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Sun, 13 Jan 2019 10:48:33 -0800 (PST)
+Date:   Sun, 13 Jan 2019 10:48:25 -0800
+From:   Olof Johansson <olof@lixom.net>
+To:     torvalds@linux-foundation.org
+Cc:     olof@lixom.net, arm@kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [GIT PULL] ARM: SoC fixes
+Message-ID: <20190113184825.ogv3cmshi63hxlgj@localhost>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Override the dr_mode from "host" to "peripheral" for dwc2
-usb_phy0->usb0 initialization of OTG Micro-B type.
-Changes fix the below warning for phy poweron failed --> -22
+Hi Linus,
 
-This fix the initialization of c9040000.usb phy.
+The following changes since commit bfeffd155283772bbe78c6a05dec7c0128ee500c:
 
-[    1.639706] phy phy-c1108800.phy.0: USB ID detect failed!
-[    1.643850] phy phy-c1108800.phy.0: phy poweron failed --> -22
-[    1.649706] ------------[ cut here ]------------
-[    1.654273] WARNING: CPU: 0 PID: 29 at drivers/regulator/core.c:2054 _regulator_put.part.8+0xf8/0xfc
-[    1.663400] Modules linked in:
-[    1.666439] CPU: 0 PID: 29 Comm: kworker/0:1 Not tainted 4.20.0-xc1ml #11
-[    1.673192] Hardware name: Amlogic Meson platform
-[    1.677894] Workqueue: events deferred_probe_work_func
-[    1.683027] [<c0312204>] (unwind_backtrace) from [<c030cb8c>] (show_stack+0x10/0x14)
-[    1.690746] [<c030cb8c>] (show_stack) from [<c0e223b8>] (dump_stack+0x8c/0xa0)
-[    1.697953] [<c0e223b8>] (dump_stack) from [<c0346334>] (__warn.part.3+0xbc/0xd8)
-[    1.705418] [<c0346334>] (__warn.part.3) from [<c03464b0>] (warn_slowpath_null+0x44/0x4c)
-[    1.713579] [<c03464b0>] (warn_slowpath_null) from [<c07df6b8>] (_regulator_put.part.8+0xf8/0xfc)
-[    1.722437] [<c07df6b8>] (_regulator_put.part.8) from [<c07df6e4>] (regulator_put+0x28/0x38)
-[    1.730859] [<c07df6e4>] (regulator_put) from [<c07df71c>] (regulator_bulk_free+0x28/0x38)
-[    1.739112] [<c07df71c>] (regulator_bulk_free) from [<c0943858>] (release_nodes+0x1bc/0x200)
-[    1.747537] [<c0943858>] (release_nodes) from [<c093f82c>] (really_probe+0x110/0x2cc)
-[    1.755350] [<c093f82c>] (really_probe) from [<c093fb4c>] (driver_probe_device+0x60/0x16c)
-[    1.763599] [<c093fb4c>] (driver_probe_device) from [<c093dcd4>] (bus_for_each_drv+0x80/0xc4)
-[    1.772110] [<c093dcd4>] (bus_for_each_drv) from [<c093f6ac>] (__device_attach+0xd0/0x138)
-[    1.780359] [<c093f6ac>] (__device_attach) from [<c093eae4>] (bus_probe_device+0x84/0x8c)
-[    1.788522] [<c093eae4>] (bus_probe_device) from [<c093ef80>] (deferred_probe_work_func+0x60/0x8c)
-[    1.797470] [<c093ef80>] (deferred_probe_work_func) from [<c035fdb8>] (process_one_work+0x218/0x504)
-[    1.806585] [<c035fdb8>] (process_one_work) from [<c0360ea8>] (worker_thread+0x2a8/0x5bc)
-[    1.814748] [<c0360ea8>] (worker_thread) from [<c0365a18>] (kthread+0x14c/0x154)
-[    1.822128] [<c0365a18>] (kthread) from [<c03010e8>] (ret_from_fork+0x14/0x2c)
-[    1.829331] Exception stack(0xee0ebfb0 to 0xee0ebff8)
-[    1.834369] bfa0:                                     00000000 00000000 00000000 00000000
-[    1.842534] bfc0: 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000
-[    1.850695] bfe0: 00000000 00000000 00000000 00000000 00000013 00000000
-[    1.857311] ---[ end trace e28bbc26874282a4 ]---
-[    1.861984] ------------[ cut here ]------------
-[    1.866524] WARNING: CPU: 0 PID: 29 at drivers/regulator/core.c:2054 _regulator_put.part.8+0xf8/0xfc
-[    1.875629] Modules linked in:
-[    1.878658] CPU: 0 PID: 29 Comm: kworker/0:1 Tainted: GW         4.20.0-xc1ml #11
-[    1.886817] Hardware name: Amlogic Meson platform
-[    1.891513] Workqueue: events deferred_probe_work_func
-[    1.896641] [<c0312204>] (unwind_backtrace) from [<c030cb8c>] (show_stack+0x10/0x14)
-[    1.904366] [<c030cb8c>] (show_stack) from [<c0e223b8>] (dump_stack+0x8c/0xa0)
-[    1.911573] [<c0e223b8>] (dump_stack) from [<c0346334>] (__warn.part.3+0xbc/0xd8)
-[    1.919041] [<c0346334>] (__warn.part.3) from [<c03464b0>] (warn_slowpath_null+0x44/0x4c)
-[    1.927203] [<c03464b0>] (warn_slowpath_null) from [<c07df6b8>] (_regulator_put.part.8+0xf8/0xfc)
-[    1.936060] [<c07df6b8>] (_regulator_put.part.8) from [<c07df6e4>] (regulator_put+0x28/0x38)
-[    1.944483] [<c07df6e4>] (regulator_put) from [<c07df71c>] (regulator_bulk_free+0x28/0x38)
-[    1.952734] [<c07df71c>] (regulator_bulk_free) from [<c0943858>] (release_nodes+0x1bc/0x200)
-[    1.961159] [<c0943858>] (release_nodes) from [<c093f82c>] (really_probe+0x110/0x2cc)
-[    1.968974] [<c093f82c>] (really_probe) from [<c093fb4c>] (driver_probe_device+0x60/0x16c)
-[    1.977224] [<c093fb4c>] (driver_probe_device) from [<c093dcd4>] (bus_for_each_drv+0x80/0xc4)
-[    1.985734] [<c093dcd4>] (bus_for_each_drv) from [<c093f6ac>] (__device_attach+0xd0/0x138)
-[    1.993984] [<c093f6ac>] (__device_attach) from [<c093eae4>] (bus_probe_device+0x84/0x8c)
-[    2.002147] [<c093eae4>] (bus_probe_device) from [<c093ef80>] (deferred_probe_work_func+0x60/0x8c)
-[    2.011092] [<c093ef80>] (deferred_probe_work_func) from [<c035fdb8>] (process_one_work+0x218/0x504)
-[    2.020209] [<c035fdb8>] (process_one_work) from [<c0360ea8>] (worker_thread+0x2a8/0x5bc)
-[    2.028371] [<c0360ea8>] (worker_thread) from [<c0365a18>] (kthread+0x14c/0x154)
-[    2.035752] [<c0365a18>] (kthread) from [<c03010e8>] (ret_from_fork+0x14/0x2c)
-[    2.042955] Exception stack(0xee0ebfb0 to 0xee0ebff8)
-[    2.047993] bfa0:                                     00000000 00000000 00000000 00000000
-[    2.056158] bfc0: 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000
-[    2.064320] bfe0: 00000000 00000000 00000000 00000000 00000013 00000000
-[    2.070934] ---[ end trace e28bbc26874282a5 ]---
+  Linux 5.0-rc1 (2019-01-06 17:08:20 -0800)
 
-Cc: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Cc: Jerome Brunet <jbrunet@baylibre.com>
-Cc: Neil Armstrong <narmstrong@baylibre.com>
-Signed-off-by: Anand Moon <linux.amoon@gmail.com>
----
-Rebased on Kevin's amlogic/v5.0/fixes branch
-Note the warning is not getting produced on the latest kernel.
----
- arch/arm/boot/dts/meson8b-odroidc1.dts | 1 +
- 1 file changed, 1 insertion(+)
+are available in the git repository at:
 
-diff --git a/arch/arm/boot/dts/meson8b-odroidc1.dts b/arch/arm/boot/dts/meson8b-odroidc1.dts
-index a49a8509b288..9d7f725cfe35 100644
---- a/arch/arm/boot/dts/meson8b-odroidc1.dts
-+++ b/arch/arm/boot/dts/meson8b-odroidc1.dts
-@@ -318,6 +318,7 @@
- 
- &usb0 {
- 	status = "okay";
-+	dr_mode = "peripheral";
- };
- 
- &usb1 {
--- 
-2.20.1
+  git://git.kernel.org/pub/scm/linux/kernel/git/arm/arm-soc.git tags/armsoc-fixes
 
+for you to fetch changes up to 465612178b44840b2066e62c3bcfae80862011d4:
+
+  Merge tag 'reset-for-5.0-rc2' of git://git.pengutronix.de/git/pza/linux into fixes (2019-01-12 22:06:54 -0800)
+
+----------------------------------------------------------------
+ARM: SoC fixes
+
+A bigger batch than I anticipated this week, for two reasons:
+
+ - Some fallout on Davinci from board file -> DTB conversion, that also
+ includes a few longer-standing fixes (i.e. not recent regressions).
+
+ - drivers/reset material that has been in linux-next for a while, but
+ didn't get sent to us until now for a variety of reasons (maintainer out
+ sick, holidays, etc). There's a functional dependency in there such that
+ one platform (Altera's SoCFPGA) won't boot without one of the patches;
+ instead of reverting the patch that got merged, I looked at this set
+ and decided it was small enough that I'll pick it up anyway. If you
+ disagree I can revisit with a smaller set.
+
+That being said, there's also a handful of the usual stuff:
+
+ - Fix for a crash on Armada 7K/8K when the kernel touches PSCI-reserved
+ memory
+ - Fix for PCIe reset on Macchiatobin (Armada 8K development board, what
+ this email is sent from in fact :)
+ - Enable a few new-merged modules for Amlogic in arm64 defconfig
+ - Error path fixes on Integrator
+ - Build fix for Renesas and Qualcomm
+ - Initialization fix for Renesas RZ/G2E
+
+ + A few more fixlets.
+
+----------------------------------------------------------------
+Arnd Bergmann (1):
+      ARM: shmobile: fix build regressions
+
+Bartosz Golaszewski (5):
+      ARM: davinci: da830-evm: fix label names in GPIO lookup entries
+      ARM: davinci: da850-evm: fix label names in GPIO lookup entries
+      ARM: davinci: dm355-evm: fix label names in GPIO lookup entries
+      ARM: davinci: dm644x-evm: fix label names in GPIO lookup entries
+      ARM: davinci: omapl138-hawk: fix label names in GPIO lookup entries
+
+Baruch Siach (1):
+      arm64: dts: marvell: mcbin: fix PCIe reset signal
+
+Biju Das (1):
+      soc: renesas: r8a774c0-sysc: Fix initialization order of 3DG-{A,B}
+
+Colin Ian King (1):
+      reset: fix null pointer dereference on dev by dev_name
+
+Dinh Nguyen (2):
+      reset: socfpga: add an early reset driver for SoCFPGA
+      ARM: socfpga: dts: document "altr,stratix10-rst-mgr" binding
+
+Eugeniy Paltsev (1):
+      ARC: HSDK: improve reset driver
+
+Fabio Estevam (1):
+      qcom-scm: Include <linux/err.h> header
+
+Geert Uytterhoeven (2):
+      reset: Improve reset controller kernel docs
+      reset: Add reset_control_get_count()
+
+Gustavo A. R. Silva (1):
+      ARM: integrator: impd1: use struct_size() in devm_kzalloc()
+
+Heinrich Schuchardt (1):
+      arm64: dts: marvell: armada-ap806: reserve PSCI area
+
+Jerome Brunet (1):
+      arm64: defconfig: enable modules for amlogic s400 sound card
+
+Kunihiko Hayashi (4):
+      dt-bindings: reset: uniphier: Replace the expression of USB3 with generic peripherals
+      reset: uniphier-usb3: Rename to reset-uniphier-glue
+      dt-bindings: reset: uniphier: Add AHCI core reset description
+      reset: uniphier-glue: Add AHCI reset control support in glue layer
+
+Linus Walleij (1):
+      ARM: dts: kirkwood: Fix polarity of GPIO fan lines
+
+Nicholas Mc Guire (1):
+      gpio: pl061: handle failed allocations
+
+Olof Johansson (7):
+      Merge tag 'renesas-fixes-for-v5.0' of https://git.kernel.org/.../horms/renesas into fixes
+      Merge tag 'davinci-fixes-for-v5.0' of git://git.kernel.org/.../nsekhar/linux-davinci into fixes
+      Merge tag 'qcom-fixes-for-5.0-rc1' of git://git.kernel.org/.../agross/linux into fixes
+      Merge tag 'amlogic-fixes' of https://git.kernel.org/.../khilman/linux-amlogic into fixes
+      Merge tag 'integrator-fixes-armsoc' of git://git.kernel.org/.../linusw/linux-integrator into fixes
+      Merge tag 'mvebu-fixes-5.0-1' of git://git.infradead.org/linux-mvebu into fixes
+      Merge tag 'reset-for-5.0-rc2' of git://git.pengutronix.de/git/pza/linux into fixes
+
+Peter Ujfalusi (4):
+      ARM: dts: da850-evm: Correct the audio codec regulators
+      ARM: dts: da850-evm: Correct the sound card name
+      ARM: dts: da850-lcdk: Correct the audio codec regulators
+      ARM: dts: da850-lcdk: Correct the sound card name
+
+ .../devicetree/bindings/reset/socfpga-reset.txt    |  3 +-
+ .../devicetree/bindings/reset/uniphier-reset.txt   | 25 +++---
+ arch/arm/boot/dts/da850-evm.dts                    | 31 ++++++--
+ arch/arm/boot/dts/da850-lcdk.dts                   | 38 +++++++++-
+ arch/arm/boot/dts/kirkwood-dnskw.dtsi              |  4 +-
+ arch/arm/mach-davinci/board-da830-evm.c            |  4 +-
+ arch/arm/mach-davinci/board-da850-evm.c            |  4 +-
+ arch/arm/mach-davinci/board-dm355-evm.c            |  4 +-
+ arch/arm/mach-davinci/board-dm644x-evm.c           |  4 +-
+ arch/arm/mach-davinci/board-omapl138-hawk.c        |  4 +-
+ arch/arm/mach-integrator/impd1.c                   |  8 +-
+ arch/arm/mach-socfpga/socfpga.c                    |  4 +
+ arch/arm64/boot/dts/marvell/armada-8040-mcbin.dtsi |  2 +-
+ arch/arm64/boot/dts/marvell/armada-ap806.dtsi      | 17 +++++
+ arch/arm64/configs/defconfig                       |  4 +
+ drivers/reset/Kconfig                              | 20 +++--
+ drivers/reset/Makefile                             |  3 +-
+ drivers/reset/core.c                               | 42 +++++++++++
+ drivers/reset/reset-hsdk.c                         |  1 +
+ drivers/reset/reset-simple.c                       | 13 +---
+ drivers/reset/reset-socfpga.c                      | 88 ++++++++++++++++++++++
+ ...reset-uniphier-usb3.c => reset-uniphier-glue.c} | 50 +++++++-----
+ drivers/soc/renesas/Kconfig                        |  2 +-
+ drivers/soc/renesas/r8a774c0-sysc.c                | 23 +-----
+ include/linux/qcom_scm.h                           |  1 +
+ include/linux/reset.h                              | 15 +++-
+ 26 files changed, 321 insertions(+), 93 deletions(-)
+ create mode 100644 drivers/reset/reset-socfpga.c
+ rename drivers/reset/{reset-uniphier-usb3.c => reset-uniphier-glue.c} (73%)
