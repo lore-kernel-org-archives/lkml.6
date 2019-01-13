@@ -2,81 +2,111 @@ Return-Path: <SRS0=GEt/=PV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DAE77C43387
-	for <linux-kernel@archiver.kernel.org>; Sun, 13 Jan 2019 03:56:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 069C5C43387
+	for <linux-kernel@archiver.kernel.org>; Sun, 13 Jan 2019 03:57:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A76822086C
-	for <linux-kernel@archiver.kernel.org>; Sun, 13 Jan 2019 03:56:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C53DB20873
+	for <linux-kernel@archiver.kernel.org>; Sun, 13 Jan 2019 03:57:26 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="lawB02I0"
+	dkim=pass (2048-bit key) header.d=lixom-net.20150623.gappssmtp.com header.i=@lixom-net.20150623.gappssmtp.com header.b="WZouweCf"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726758AbfAMD4F (ORCPT
+        id S1726773AbfAMD5Z (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 12 Jan 2019 22:56:05 -0500
-Received: from conssluserg-06.nifty.com ([210.131.2.91]:25547 "EHLO
-        conssluserg-06.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726482AbfAMD4F (ORCPT
+        Sat, 12 Jan 2019 22:57:25 -0500
+Received: from mail-it1-f195.google.com ([209.85.166.195]:37784 "EHLO
+        mail-it1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726482AbfAMD5Z (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 12 Jan 2019 22:56:05 -0500
-Received: from mail-vs1-f51.google.com (mail-vs1-f51.google.com [209.85.217.51]) (authenticated)
-        by conssluserg-06.nifty.com with ESMTP id x0D3tfnP013694;
-        Sun, 13 Jan 2019 12:55:42 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-06.nifty.com x0D3tfnP013694
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1547351742;
-        bh=Cz+mUGPi0ZOxPey1yolKlUq6MURSCdMne9+w+ERo5Ak=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=lawB02I0dftRjhCy1oxCzyP1EvnjWwU3KH6viCLfD2uWaz4PtVG31YUlYjTJv/hBU
-         h8ujkG8bwd8TxIhU36NEZ0HkaznSHQCXlg/vxd83kGMUn6VnNbFNq8aH4DbPMjb6ij
-         1bLTbd0D43/RiUg2RoZm2tcmVcT0RzEqn5DCVjgvlMo3DbgV4pY0Xg+6vqpG4JU+3i
-         EEdbG7htwn+S24WJofHGLjOIsufEGtxUNlFoyRRGLIpSGui7APFP55hXpE67SjVZ9R
-         GyOam0QP7suLHEQoS8LCl1H1j6pDPmBcLqVKui1KeOMMBIV2YeBA5xWUmTpqq0NPMR
-         BJH7uriFv0/Cw==
-X-Nifty-SrcIP: [209.85.217.51]
-Received: by mail-vs1-f51.google.com with SMTP id e7so11702184vsc.2;
-        Sat, 12 Jan 2019 19:55:42 -0800 (PST)
-X-Gm-Message-State: AJcUukfT6bUBuc+1XH0ka+OK4Iklr+W/qrgjCO0RqA8Wz1yYMDgxKJMS
-        oyGi6MoKYvejvSHDSDHzv3s+wTVWdEjwXuGGJbo=
-X-Google-Smtp-Source: ALg8bN7N71gml+jJp/1U/XZAmJ1kC92bwJzd+jIyywRaIW1ko99xdKOEOjueGdbcbGT57eNImTh1Y2gFhKegCfZUAKs=
-X-Received: by 2002:a67:f1c2:: with SMTP id v2mr8377813vsm.181.1547351740782;
- Sat, 12 Jan 2019 19:55:40 -0800 (PST)
+        Sat, 12 Jan 2019 22:57:25 -0500
+Received: by mail-it1-f195.google.com with SMTP id b5so8135087iti.2
+        for <linux-kernel@vger.kernel.org>; Sat, 12 Jan 2019 19:57:24 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=lixom-net.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=pqu6axINzyiZQ74GsAFKNqQhj6wyvRbQQ23+z1nV1Eg=;
+        b=WZouweCff/bMf3//LHqqgxEgS9MI8g+8HbIsbhwHeTwSxTm41ylr5UB/1PoEREQm4F
+         nnAM2j7Pl9BOsrVz7RVg93aidyfn3X79wWnEk7GxZfLIVQ0xn/90xjbXgrtw5QDsE96j
+         CQzCxJY8E/sng6bC+lEvh/wGnLNt5raAXr8xZ8+sDnmIxUu7nZH4dQCFgUJAMydZnEGL
+         0WnuKJAjltX8SOUxzbdGHJ6ShhqqPHZMCcNe4c0EjJKRH4kWEiFbqyiXhEbm9BOydlhX
+         CAjWG1nJ2vYC8wK0VdAhCa/G0HcoMgDP8gHJoQ2amBwILY0lWbAiZqcnsKv+8UywnAYp
+         vgtA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=pqu6axINzyiZQ74GsAFKNqQhj6wyvRbQQ23+z1nV1Eg=;
+        b=lV6Ch2Q0XwSy7Y/pOIUE78Zyu/bsagBmajR7+MQQsh0o7JQ4S/g9rtFwYEbV+Fyn6x
+         Qz2k9gnj9n6punWK4I8Aza/8kmlZKtH2/aetnaRJXJzvPRMt/HCbw5BTK2cTS1dvbsfw
+         5UPswcqo6YMTyUueoodx0AYLe+lSMHHrhqpsK+3LkSIwvbEX+uibmqpmlpb6ceYjT5+t
+         qc/LG9c0dPaPPrOH42crIQVs8SgTpnMawaAY1HSMafMuEGP1mEUQpbzLVm5ur5vZw4Tf
+         NaHYDDL1VDHMPG60cHn6fLaV3yQVxujd3e1NR9gHjQcQygu1uA3L97tIPkIIvuEpUlql
+         x1rA==
+X-Gm-Message-State: AJcUukfxQU1VVWSxWZugoUG3w6U7D0+plh+huPXhUQ/mmS1j49oRASZJ
+        fylwgHFtJVYacxU/UFFYQtYwUJ+RWlgenM3pNiMy0A==
+X-Google-Smtp-Source: ALg8bN7NIdEtKvEeg25+nl0a/w/+8O05OcgWP8UwNtxdK7pWLv4eUi0zWs6UeeJfJZaG3g/58MwttmVQTKiPY/NJR2c=
+X-Received: by 2002:a24:6e88:: with SMTP id w130mr4797484itc.103.1547351844122;
+ Sat, 12 Jan 2019 19:57:24 -0800 (PST)
 MIME-Version: 1.0
-References: <1547175108-14744-1-git-send-email-yamada.masahiro@socionext.com>
-In-Reply-To: <1547175108-14744-1-git-send-email-yamada.masahiro@socionext.com>
-From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-Date:   Sun, 13 Jan 2019 12:55:05 +0900
-X-Gmail-Original-Message-ID: <CAK7LNAT6fB=97RMmxNxEc4vAJL8+3pS4SSpa8ntKXGqRAvPUSA@mail.gmail.com>
-Message-ID: <CAK7LNAT6fB=97RMmxNxEc4vAJL8+3pS4SSpa8ntKXGqRAvPUSA@mail.gmail.com>
-Subject: Re: [PATCH] kconfig: clean generated *conf-cfg files
-To:     Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <20190113012909.11986-1-jhubbard@nvidia.com> <20190113012909.11986-2-jhubbard@nvidia.com>
+ <9518922c-ab17-ba06-0670-f0202b436a8c@kernel.dk>
+In-Reply-To: <9518922c-ab17-ba06-0670-f0202b436a8c@kernel.dk>
+From:   Olof Johansson <olof@lixom.net>
+Date:   Sat, 12 Jan 2019 19:57:12 -0800
+Message-ID: <CAOesGMjiYkThVa5BQo0w3B1wC3NJpmsrYFwXVCN0VQqYqF_MWg@mail.gmail.com>
+Subject: Re: [PATCH 1/1] phy: fix build breakage: add PHY_MODE_SATA
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     john.hubbard@gmail.com, Kishon Vijay Abraham I <kishon@ti.com>,
+        Jisheng Zhang <Jisheng.Zhang@synaptics.com>,
+        Rob Herring <robh@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        John Hubbard <jhubbard@nvidia.com>,
+        Grzegorz Jaszczyk <jaz@semihalf.com>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Hans de Goede <hdegoede@redhat.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jan 11, 2019 at 2:12 PM Masahiro Yamada
-<yamada.masahiro@socionext.com> wrote:
+On Sat, Jan 12, 2019 at 6:05 PM Jens Axboe <axboe@kernel.dk> wrote:
 >
-> I accidentally dropped '*' in the previous renaming patch.
+> On 1/12/19 6:29 PM, john.hubbard@gmail.com wrote:
+> > From: John Hubbard <jhubbard@nvidia.com>
+> >
+> > Commit 49e54187ae0b ("ata: libahci_platform: comply to PHY framework") uses
+> > the PHY_MODE_SATA, but that enum had not yet been added. This caused a
+> > build failure for me, with today's linux.git.
+> >
+> > Also, there is a potentially conflicting (mis-named) PHY_MODE_SATA, hiding
+> > in the Marvell Berlin SATA PHY driver.
+> >
+> > Fix the build by:
+> >
+> >     1) Renaming Marvell's defined value to a more scoped name,
+> >        in order to avoid any potential conflicts: PHY_BERLIN_MODE_SATA.
+> >
+> >     2) Adding the missing enum, which was going to be added anyway as part
+> >        of [1].
+> >
+> > [1] https://lkml.kernel.org/r/20190108163124.6409-3-miquel.raynal@bootlin.com
+> >
+> > Fixes: 49e54187ae0b ("ata: libahci_platform: comply to PHY framework")
 >
-> Revive it so that 'make mrproper' can clean the generated files.
->
-> Fixes: d86271af6460 ("kconfig: rename generated .*conf-cfg to *conf-cfg")
-> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
-> ---
+> Linus, this is probably a better option in terms of what should go in to
+> fix that commit.
+
+I'm OK with this, but it does beg the question how the patch was
+tested before submitting, if it didn't build.
+
+Is there functional breakage behind it? I currently lack online
+hardware to test myself, unfortunately.
 
 
-Applied to linux-kbuild/fixes.
-
-
-
-
--- 
-Best Regards
-Masahiro Yamada
+-Olof
