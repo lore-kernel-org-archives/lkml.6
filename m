@@ -6,37 +6,39 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 49D0DC43612
-	for <linux-kernel@archiver.kernel.org>; Sun, 13 Jan 2019 11:31:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 07AB8C43387
+	for <linux-kernel@archiver.kernel.org>; Sun, 13 Jan 2019 11:31:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1A64E20879
-	for <linux-kernel@archiver.kernel.org>; Sun, 13 Jan 2019 11:31:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D58E82084C
+	for <linux-kernel@archiver.kernel.org>; Sun, 13 Jan 2019 11:31:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726496AbfAMLbI (ORCPT
+        id S1726561AbfAMLbK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 13 Jan 2019 06:31:08 -0500
+        Sun, 13 Jan 2019 06:31:10 -0500
 Received: from mga17.intel.com ([192.55.52.151]:22351 "EHLO mga17.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725875AbfAMLbI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 13 Jan 2019 06:31:08 -0500
+        id S1725875AbfAMLbJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 13 Jan 2019 06:31:09 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 13 Jan 2019 03:31:07 -0800
+  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 13 Jan 2019 03:31:09 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.56,473,1539673200"; 
-   d="scan'208";a="266762705"
+   d="scan'208";a="266762709"
 Received: from twinkler-lnx.jer.intel.com ([10.12.91.48])
-  by orsmga004.jf.intel.com with ESMTP; 13 Jan 2019 03:31:05 -0800
+  by orsmga004.jf.intel.com with ESMTP; 13 Jan 2019 03:31:07 -0800
 From:   Tomas Winkler <tomas.winkler@intel.com>
 To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Cc:     Alexander Usyskin <alexander.usyskin@intel.com>,
-        linux-kernel@vger.kernel.org,
-        Tomas Winkler <tomas.winkler@intel.com>, stable@vger.kernel.org
-Subject: [char-misc 1/3] mei: dma: silent the reject message
-Date:   Sun, 13 Jan 2019 14:24:46 +0200
-Message-Id: <20190113122449.7252-1-tomas.winkler@intel.com>
+        linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+        Tomas Winkler <tomas.winkler@intel.com>
+Subject: [char-misc 2/3] mei: me: mark LBG devices as having dma support
+Date:   Sun, 13 Jan 2019 14:24:47 +0200
+Message-Id: <20190113122449.7252-2-tomas.winkler@intel.com>
 X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20190113122449.7252-1-tomas.winkler@intel.com>
+References: <20190113122449.7252-1-tomas.winkler@intel.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -44,41 +46,30 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Not all FW versions support DMA on their first release,
-hence it is normal behavior to receive a reject response
-upon DMA setup request.
-In order to prevent confusion, the DMA setup reject message
-is printed only in debug level.
+From: Alexander Usyskin <alexander.usyskin@intel.com>
+
+The LBG server platform sports DMA support.
 
 Cc: <stable@vger.kernel.org> #v5.0+
+Signed-off-by: Alexander Usyskin <alexander.usyskin@intel.com>
 Signed-off-by: Tomas Winkler <tomas.winkler@intel.com>
 ---
- drivers/misc/mei/hbm.c | 12 +++++++++---
- 1 file changed, 9 insertions(+), 3 deletions(-)
+ drivers/misc/mei/pci-me.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/misc/mei/hbm.c b/drivers/misc/mei/hbm.c
-index 78c26cebf5d4..8f7616557c97 100644
---- a/drivers/misc/mei/hbm.c
-+++ b/drivers/misc/mei/hbm.c
-@@ -1187,9 +1187,15 @@ int mei_hbm_dispatch(struct mei_device *dev, struct mei_msg_hdr *hdr)
- 		dma_setup_res = (struct hbm_dma_setup_response *)mei_msg;
+diff --git a/drivers/misc/mei/pci-me.c b/drivers/misc/mei/pci-me.c
+index 73ace2d59dea..c2bf3e99955e 100644
+--- a/drivers/misc/mei/pci-me.c
++++ b/drivers/misc/mei/pci-me.c
+@@ -88,7 +88,7 @@ static const struct pci_device_id mei_me_pci_tbl[] = {
+ 	{MEI_PCI_DEVICE(MEI_DEV_ID_SPT_2, MEI_ME_PCH8_CFG)},
+ 	{MEI_PCI_DEVICE(MEI_DEV_ID_SPT_H, MEI_ME_PCH8_SPS_CFG)},
+ 	{MEI_PCI_DEVICE(MEI_DEV_ID_SPT_H_2, MEI_ME_PCH8_SPS_CFG)},
+-	{MEI_PCI_DEVICE(MEI_DEV_ID_LBG, MEI_ME_PCH8_CFG)},
++	{MEI_PCI_DEVICE(MEI_DEV_ID_LBG, MEI_ME_PCH12_CFG)},
  
- 		if (dma_setup_res->status) {
--			dev_info(dev->dev, "hbm: dma setup response: failure = %d %s\n",
--				 dma_setup_res->status,
--				 mei_hbm_status_str(dma_setup_res->status));
-+			u8 status = dma_setup_res->status;
-+
-+			if (status == MEI_HBMS_NOT_ALLOWED) {
-+				dev_dbg(dev->dev, "hbm: dma setup not allowed\n");
-+			} else {
-+				dev_info(dev->dev, "hbm: dma setup response: failure = %d %s\n",
-+					 status,
-+					 mei_hbm_status_str(status));
-+			}
- 			dev->hbm_f_dr_supported = 0;
- 			mei_dmam_ring_free(dev);
- 		}
+ 	{MEI_PCI_DEVICE(MEI_DEV_ID_BXT_M, MEI_ME_PCH8_CFG)},
+ 	{MEI_PCI_DEVICE(MEI_DEV_ID_APL_I, MEI_ME_PCH8_CFG)},
 -- 
 2.20.1
 
