@@ -2,176 +2,91 @@ Return-Path: <SRS0=GEt/=PV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
-	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 10BA7C43387
-	for <linux-kernel@archiver.kernel.org>; Sun, 13 Jan 2019 14:00:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B86BAC43387
+	for <linux-kernel@archiver.kernel.org>; Sun, 13 Jan 2019 14:23:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DF87F206B7
-	for <linux-kernel@archiver.kernel.org>; Sun, 13 Jan 2019 14:00:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7B6B92084C
+	for <linux-kernel@archiver.kernel.org>; Sun, 13 Jan 2019 14:23:05 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=ingics-com.20150623.gappssmtp.com header.i=@ingics-com.20150623.gappssmtp.com header.b="onJu+9em"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726676AbfAMN75 (ORCPT
+        id S1726599AbfAMOSO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 13 Jan 2019 08:59:57 -0500
-Received: from mout.gmx.net ([212.227.15.18]:58127 "EHLO mout.gmx.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726592AbfAMN7z (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 13 Jan 2019 08:59:55 -0500
-Received: from longitude ([109.90.232.48]) by mail.gmx.com (mrgmx002
- [212.227.17.190]) with ESMTPSA (Nemesis) id 0LjqLx-1hFYHI1BpB-00brUh; Sun, 13
- Jan 2019 14:59:53 +0100
-From:   =?UTF-8?q?Jonathan=20Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>
-To:     linux-gpio@vger.kernel.org
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        linux-kernel@vger.kernel.org,
-        =?UTF-8?q?Jonathan=20Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>
-Subject: [PATCH 2/2] gpio: hlwd: Implement edge trigger emulation
-Date:   Sun, 13 Jan 2019 14:58:44 +0100
-Message-Id: <20190113135844.13109-3-j.neuschaefer@gmx.net>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190113135844.13109-1-j.neuschaefer@gmx.net>
-References: <20190113135844.13109-1-j.neuschaefer@gmx.net>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Provags-ID: V03:K1:1EhH58A94aX1Skvgwv/M6Q4NdPL3ZMkYIVE1ofZyM7LmYs378Ry
- XBb8O+/Vnirf0rkseaXW0tbeXjTB/RtQ6ExAk5IyM72nfFN9SqnnuJYONbI00Zin1f1Tg2K
- gRGPxZyJ93EFAgjgGWMJbQeipuJspMycVtsQlYlek0x+BSha3QpFYoHxv9fYtPdxnfRHIW9
- MK/OKQlkFWL48g79zAJVg==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:QcFX0cIxZUs=:VCe7UW4P1yCILk5AccNlKh
- xWua8MtIS5hkdaF6UYVt4rX6d7n1n2rfDQIry3k8m9SXOywe+sNyd7gAAeXeKziSpdD13HG7Y
- MDjrlc1QTudZnVFoKEfXgi2RpeoiYpWD/EyLETXdo5/f183q2lrwhUlNYGLDojJYIA+EsxjQu
- /L0xfuovJzQLYPD8vnb7vR5ayd1cS8qGQUQ0COFVFVFcYksrKviofvENuwBqVUHWR78TvfwOV
- X3IFrq3rC9elVE9Ljc9g8xPm7YnGV+dfFvMltG8Gk7Zops9ARs+mV4m2TULJmzYr+XyihAVb7
- ev6dTB6L/LWAdFS+RxgyLMq/re8ZiuuPo7ruF6E7cQbXjZs8We9cOBSEVv9ujNh8rSPoSJW/f
- q+vTm/gRURaHul4uapglFc0UF7DpRa0cnYzdf0wO0EKN3rQdiwladvXpyWbRMJUPBe71ZSDRh
- l5qO9aIFdpernspHwSpX5dopzKOy+vPu4ZqhbuRTAMz4T7hHnVczdqnsxiNsMI98+Z50WSKZG
- nx0InafHVoX11uCbEHvn4KUSJMbF+kbeFptAVAwU1yUxNf6rMEf8OzkOdtKTHGiWtrAQ943n6
- mDmRzJzRgiaJipewSqUsJta0y5qIPMEeXfs1oOjucXAmk6Gagoa+cAHFffcX1gN0oWPd8/giS
- H1YzAq1d/+C5DaS3hLCxiDyJaXyCeuVyKElSDUoguXgkNGXX9LGO27yKTuDFo5jKdt6PErLWX
- GhDMfGpL54bBbl64W7k3pq9tdonUgsepDRAeoyC9LBsvA706rKv1NkN8i8KnULz/O4ApErzM6
- uC6pjpiC6gu5LGlQj67tytO9x+sz6AqOuAMYQeYpZii99fCd2Ra1OzHBjUXgnQldZ2uFEhOiI
- cSUlOID/cQujU2lwu6WDMyzQ1YiQZJXaQgxPSliUakhL5+bArN6b4snlhWbzhq004CR4Dcndi
- QUfebhVZZig==
+        Sun, 13 Jan 2019 09:18:14 -0500
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:39735 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726434AbfAMOSO (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 13 Jan 2019 09:18:14 -0500
+Received: by mail-pf1-f195.google.com with SMTP id r136so9137668pfc.6
+        for <linux-kernel@vger.kernel.org>; Sun, 13 Jan 2019 06:18:13 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ingics-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id;
+        bh=hXMoK136IGxcg3/dyumo6oJ8D4WIEYAtrVupg3DSiJE=;
+        b=onJu+9emzocjjZOUyzTd8gr4QXBxTFm5JKqLLVgEfbrY6I7+hqf5y/rIr6CEFxGuZK
+         vRJWO/U4LrtqYJlaarsGuKVC8yXV9M4YjHjZYkCBCt5w6im9nh3IoklfvyYiFkeF+BDm
+         HoO0slaFTGssijDr2kYYYdnnTRSBuZoCuSbPjlvnYlatNgKfNK7q1d3VJeSQZI6y+XrK
+         0+BujJUDCCsJQoJGLsaHhagm57yFbTw6gbSEI94O3ndnDuHLDWXIgQvpCHBES+g3aooQ
+         +pbkMbfTeKd9eMP3Zi139XJ3vO4Yfx/VYJDKkAKGTG89bsPtX5krUxSjO5SqRbypy638
+         ms/A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=hXMoK136IGxcg3/dyumo6oJ8D4WIEYAtrVupg3DSiJE=;
+        b=FlkIzu8WM7BJTPOSyy+0JiXq53RmIj7mn/j/nrau72YD5Y4d2rcyrcvX+5N9FOIg0z
+         1up7wYWXMNeZe1dSUK3g6192r4kEf4opaTuUA198XjhXRL7rAkVveYHjIhs14S94PYW0
+         jvSuhKF+AdQBMc1ky6SzCR089+xI1fvCNRG4jWnI4zR7Cy4O8FCyLgvS+r0cbamYzAe8
+         Z7ePh8JO6DXe976LHoM57U4K+edbYbnwp7hKG5WKEqvd/DJzRqmkGZVMMOdry2WcPViV
+         lGz4N/YbHVvdvaPtBJu+ahs07gFPEqJu0txICCqxoRQRUyPfNJY1dZqJPtZahTkZ1mNr
+         eDPw==
+X-Gm-Message-State: AJcUukfMwFCQPr7uJsrShpoRu6KExUSq5Jusc5NJvRRa5xqY+2mCj0q1
+        MKgVN08a8L3svVpI+/QtYY+Quw==
+X-Google-Smtp-Source: ALg8bN7xPPq1CtszkTD9dzHulBx+GAijV5VnufMGtMRek5jNCoPkdSImLUwkHoOlTCsZpz5Oe97uBA==
+X-Received: by 2002:a65:624c:: with SMTP id q12mr9708456pgv.379.1547389092784;
+        Sun, 13 Jan 2019 06:18:12 -0800 (PST)
+Received: from localhost.localdomain (36-239-240-185.dynamic-ip.hinet.net. [36.239.240.185])
+        by smtp.gmail.com with ESMTPSA id 7sm277070124pfm.8.2019.01.13.06.18.08
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sun, 13 Jan 2019 06:18:11 -0800 (PST)
+From:   Axel Lin <axel.lin@ingics.com>
+To:     Mark Brown <broonie@kernel.org>
+Cc:     Chen Feng <puck.chen@hisilicon.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        linux-kernel@vger.kernel.org, Axel Lin <axel.lin@ingics.com>
+Subject: [PATCH] regulator: hi655x: Removed unused ctrl_regs field from struct hi655x_regulator
+Date:   Sun, 13 Jan 2019 22:17:46 +0800
+Message-Id: <20190113141746.6256-1-axel.lin@ingics.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Like the Spreadtrum EIC driver[1], this driver needs to emulate edge
-triggered interrupts to support the generic gpio-keys driver.
+The ctrl_regs field is not used at all, remove it.
 
-[1]: https://www.spinics.net/lists/kernel/msg2764576.html
-
-Signed-off-by: Jonathan Neuschäfer <j.neuschaefer@gmx.net>
+Signed-off-by: Axel Lin <axel.lin@ingics.com>
 ---
- drivers/gpio/gpio-hlwd.c | 57 ++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 57 insertions(+)
+ drivers/regulator/hi655x-regulator.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/drivers/gpio/gpio-hlwd.c b/drivers/gpio/gpio-hlwd.c
-index 9a93546f3d11..3d85e6a71b35 100644
---- a/drivers/gpio/gpio-hlwd.c
-+++ b/drivers/gpio/gpio-hlwd.c
-@@ -51,6 +51,8 @@ struct hlwd_gpio {
- 	struct irq_chip irqc;
- 	void __iomem *regs;
- 	int irq;
-+	u32 edge_emulation;
-+	u32 rising_edge, falling_edge;
+diff --git a/drivers/regulator/hi655x-regulator.c b/drivers/regulator/hi655x-regulator.c
+index 36ae54b53814..bba24a6fdb1e 100644
+--- a/drivers/regulator/hi655x-regulator.c
++++ b/drivers/regulator/hi655x-regulator.c
+@@ -28,7 +28,6 @@
+ struct hi655x_regulator {
+ 	unsigned int disable_reg;
+ 	unsigned int status_reg;
+-	unsigned int ctrl_regs;
+ 	unsigned int ctrl_mask;
+ 	struct regulator_desc rdesc;
  };
- 
- static void hlwd_gpio_irqhandler(struct irq_desc *desc)
-@@ -61,10 +63,37 @@ static void hlwd_gpio_irqhandler(struct irq_desc *desc)
- 	unsigned long flags;
- 	unsigned long pending;
- 	int hwirq;
-+	u32 emulated_pending;
- 
- 	spin_lock_irqsave(&hlwd->gpioc.bgpio_lock, flags);
- 	pending = hlwd->gpioc.read_reg(hlwd->regs + HW_GPIOB_INTFLAG);
- 	pending &= hlwd->gpioc.read_reg(hlwd->regs + HW_GPIOB_INTMASK);
-+
-+	/* Treat interrupts due to edge trigger emulation separately */
-+	emulated_pending = hlwd->edge_emulation & pending;
-+	pending &= ~emulated_pending;
-+	if (emulated_pending) {
-+		u32 level, rising, falling;
-+
-+		level = hlwd->gpioc.read_reg(hlwd->regs + HW_GPIOB_INTLVL);
-+		rising = level & emulated_pending;
-+		falling = ~level & emulated_pending;
-+
-+		/* Invert the levels */
-+		hlwd->gpioc.write_reg(hlwd->regs + HW_GPIOB_INTLVL,
-+				level ^ emulated_pending);
-+
-+		/* Ack all emulated-edge interrupts */
-+		hlwd->gpioc.write_reg(hlwd->regs + HW_GPIOB_INTFLAG,
-+				emulated_pending);
-+
-+		/* Signal interrupts only on the correct edge */
-+		rising &= hlwd->rising_edge;
-+		falling &= hlwd->falling_edge;
-+
-+		/* Mark emulated interrupts as pending */
-+		pending |= rising | falling;
-+	}
- 	spin_unlock_irqrestore(&hlwd->gpioc.bgpio_lock, flags);
- 
- 	chained_irq_enter(chip, desc);
-@@ -120,6 +149,27 @@ static void hlwd_gpio_irq_enable(struct irq_data *data)
- 	hlwd_gpio_irq_unmask(data);
- }
- 
-+static void hlwd_gpio_irq_setup_emulation(struct hlwd_gpio *hlwd, int hwirq,
-+					  unsigned int flow_type)
-+{
-+	u32 level, state;
-+
-+	/* Set the trigger level to the inactive level */
-+	level = hlwd->gpioc.read_reg(hlwd->regs + HW_GPIOB_INTLVL);
-+	state = hlwd->gpioc.read_reg(hlwd->regs + HW_GPIOB_IN) & BIT(hwirq);
-+	level &= ~BIT(hwirq);
-+	level |= state ^ BIT(hwirq);
-+	hlwd->gpioc.write_reg(hlwd->regs + HW_GPIOB_INTLVL, level);
-+
-+	hlwd->edge_emulation |= BIT(hwirq);
-+	hlwd->rising_edge &= ~BIT(hwirq);
-+	hlwd->falling_edge &= ~BIT(hwirq);
-+	if (flow_type & IRQ_TYPE_EDGE_RISING)
-+		hlwd->rising_edge |= BIT(hwirq);
-+	if (flow_type & IRQ_TYPE_EDGE_FALLING)
-+		hlwd->falling_edge |= BIT(hwirq);
-+}
-+
- static int hlwd_gpio_irq_set_type(struct irq_data *data, unsigned int flow_type)
- {
- 	struct hlwd_gpio *hlwd =
-@@ -129,6 +179,8 @@ static int hlwd_gpio_irq_set_type(struct irq_data *data, unsigned int flow_type)
- 
- 	spin_lock_irqsave(&hlwd->gpioc.bgpio_lock, flags);
- 
-+	hlwd->edge_emulation &= ~BIT(data->hwirq);
-+
- 	switch (flow_type) {
- 	case IRQ_TYPE_LEVEL_HIGH:
- 		level = hlwd->gpioc.read_reg(hlwd->regs + HW_GPIOB_INTLVL);
-@@ -140,6 +192,11 @@ static int hlwd_gpio_irq_set_type(struct irq_data *data, unsigned int flow_type)
- 		level &= ~BIT(data->hwirq);
- 		hlwd->gpioc.write_reg(hlwd->regs + HW_GPIOB_INTLVL, level);
- 		break;
-+	case IRQ_TYPE_EDGE_RISING:
-+	case IRQ_TYPE_EDGE_FALLING:
-+	case IRQ_TYPE_EDGE_BOTH:
-+		hlwd_gpio_irq_setup_emulation(hlwd, data->hwirq, flow_type);
-+		break;
- 	default:
- 		spin_unlock_irqrestore(&hlwd->gpioc.bgpio_lock, flags);
- 		return -EINVAL;
 -- 
-2.20.1
+2.17.1
 
