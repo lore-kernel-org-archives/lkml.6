@@ -6,34 +6,35 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D8306C43387
-	for <linux-kernel@archiver.kernel.org>; Sun, 13 Jan 2019 20:00:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 10E1BC43387
+	for <linux-kernel@archiver.kernel.org>; Sun, 13 Jan 2019 20:00:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B784D20675
-	for <linux-kernel@archiver.kernel.org>; Sun, 13 Jan 2019 20:00:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D5F6920675
+	for <linux-kernel@archiver.kernel.org>; Sun, 13 Jan 2019 20:00:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726743AbfAMUAf (ORCPT
+        id S1726568AbfAMUAF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 13 Jan 2019 15:00:35 -0500
-Received: from mail5.windriver.com ([192.103.53.11]:47592 "EHLO mail5.wrs.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726437AbfAMUAd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 13 Jan 2019 15:00:33 -0500
-Received: from ALA-HCA.corp.ad.wrs.com (ala-hca.corp.ad.wrs.com [147.11.189.40])
-        by mail5.wrs.com (8.15.2/8.15.2) with ESMTPS id x0DIcLKJ025110
+        Sun, 13 Jan 2019 15:00:05 -0500
+Received: from mail.windriver.com ([147.11.1.11]:65258 "EHLO
+        mail.windriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726306AbfAMUAE (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 13 Jan 2019 15:00:04 -0500
+Received: from ALA-HCA.corp.ad.wrs.com ([147.11.189.40])
+        by mail.windriver.com (8.15.2/8.15.1) with ESMTPS id x0DIc9pR029093
         (version=TLSv1 cipher=AES128-SHA bits=128 verify=FAIL);
-        Sun, 13 Jan 2019 10:38:31 -0800
+        Sun, 13 Jan 2019 10:38:09 -0800 (PST)
 Received: from yow-cube1.wrs.com (128.224.56.98) by ALA-HCA.corp.ad.wrs.com
  (147.11.189.40) with Microsoft SMTP Server id 14.3.408.0; Sun, 13 Jan 2019
- 10:38:11 -0800
+ 10:38:09 -0800
 From:   Paul Gortmaker <paul.gortmaker@windriver.com>
 To:     Lee Jones <lee.jones@linaro.org>
 CC:     <linux-kernel@vger.kernel.org>,
         Paul Gortmaker <paul.gortmaker@windriver.com>,
-        Laxman Dewangan <ldewangan@nvidia.com>
-Subject: [PATCH 07/18] mfd: rc5t583: Make it explicitly non-modular
-Date:   Sun, 13 Jan 2019 13:36:38 -0500
-Message-ID: <1547404609-14161-8-git-send-email-paul.gortmaker@windriver.com>
+        Cory Maccarrone <darkstar6262@gmail.com>
+Subject: [PATCH 05/18] mfd: htc-i2cpld: Make it explicitly non-modular
+Date:   Sun, 13 Jan 2019 13:36:36 -0500
+Message-ID: <1547404609-14161-6-git-send-email-paul.gortmaker@windriver.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1547404609-14161-1-git-send-email-paul.gortmaker@windriver.com>
 References: <1547404609-14161-1-git-send-email-paul.gortmaker@windriver.com>
@@ -44,69 +45,69 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The Kconfig currently controlling compilation of this code is:
+The Kconfig for this option is currently:
 
-drivers/mfd/Kconfig:config MFD_RC5T583
-drivers/mfd/Kconfig:    bool "Ricoh RC5T583 Power Management system device"
+config HTC_I2CPLD
+        bool "HTC I2C PLD chip support"
 
 ...meaning that it currently is not being built as a module by anyone.
-
 Lets remove the modular code that is essentially orphaned, so that
 when reading the driver there is no doubt it is builtin-only.
 
-Since module_init was not in use by this code, the init ordering
-remains unchanged with this commit.
-
-Also note that MODULE_DEVICE_TABLE is a no-op for non-modular code.
+Since module_init translates to device_initcall in the non-modular
+case, the init ordering remains unchanged with this commit.
 
 We also delete the MODULE_LICENSE tag etc. since all that information
 is already contained at the top of the file in the comments.
 
+Cc: Cory Maccarrone <darkstar6262@gmail.com>
 Cc: Lee Jones <lee.jones@linaro.org>
-Cc: Laxman Dewangan <ldewangan@nvidia.com>
 Signed-off-by: Paul Gortmaker <paul.gortmaker@windriver.com>
 Acked-by: Linus Walleij <linus.walleij@linaro.org>
-Acked-by: Laxman Dewangan <ldewangan@nvidia.com>
 ---
- drivers/mfd/rc5t583.c | 14 --------------
- 1 file changed, 14 deletions(-)
+ drivers/mfd/htc-i2cpld.c | 18 +-----------------
+ 1 file changed, 1 insertion(+), 17 deletions(-)
 
-diff --git a/drivers/mfd/rc5t583.c b/drivers/mfd/rc5t583.c
-index fd46de02b715..c5cc5cb3dde7 100644
---- a/drivers/mfd/rc5t583.c
-+++ b/drivers/mfd/rc5t583.c
-@@ -23,7 +23,6 @@
- #include <linux/interrupt.h>
- #include <linux/irq.h>
- #include <linux/kernel.h>
--#include <linux/module.h>
- #include <linux/init.h>
- #include <linux/err.h>
- #include <linux/slab.h>
-@@ -298,8 +297,6 @@ static const struct i2c_device_id rc5t583_i2c_id[] = {
- 	{}
- };
+diff --git a/drivers/mfd/htc-i2cpld.c b/drivers/mfd/htc-i2cpld.c
+index 01572b5e79e8..af3c66355270 100644
+--- a/drivers/mfd/htc-i2cpld.c
++++ b/drivers/mfd/htc-i2cpld.c
+@@ -27,7 +27,6 @@
  
--MODULE_DEVICE_TABLE(i2c, rc5t583_i2c_id);
+ #include <linux/kernel.h>
+ #include <linux/init.h>
+-#include <linux/module.h>
+ #include <linux/interrupt.h>
+ #include <linux/platform_device.h>
+ #include <linux/i2c.h>
+@@ -614,8 +613,6 @@ static const struct i2c_device_id htcpld_chip_id[] = {
+ 	{ "htcpld-chip", 0 },
+ 	{ }
+ };
+-MODULE_DEVICE_TABLE(i2c, htcpld_chip_id);
 -
- static struct i2c_driver rc5t583_i2c_driver = {
+ 
+ static struct i2c_driver htcpld_chip_driver = {
  	.driver = {
- 		   .name = "rc5t583",
-@@ -313,14 +310,3 @@ static int __init rc5t583_i2c_init(void)
- 	return i2c_add_driver(&rc5t583_i2c_driver);
+@@ -643,17 +640,4 @@ static int __init htcpld_core_init(void)
+ 	/* Probe for our chips */
+ 	return platform_driver_probe(&htcpld_core_driver, htcpld_core_probe);
  }
- subsys_initcall(rc5t583_i2c_init);
 -
--static void __exit rc5t583_i2c_exit(void)
+-static void __exit htcpld_core_exit(void)
 -{
--	i2c_del_driver(&rc5t583_i2c_driver);
+-	i2c_del_driver(&htcpld_chip_driver);
+-	platform_driver_unregister(&htcpld_core_driver);
 -}
 -
--module_exit(rc5t583_i2c_exit);
+-module_init(htcpld_core_init);
+-module_exit(htcpld_core_exit);
 -
--MODULE_AUTHOR("Laxman Dewangan <ldewangan@nvidia.com>");
--MODULE_DESCRIPTION("RICOH RC5T583 power management system device driver");
--MODULE_LICENSE("GPL v2");
+-MODULE_AUTHOR("Cory Maccarrone <darkstar6262@gmail.com>");
+-MODULE_DESCRIPTION("I2C HTC PLD Driver");
+-MODULE_LICENSE("GPL");
+-
++device_initcall(htcpld_core_init);
 -- 
 2.7.4
 
