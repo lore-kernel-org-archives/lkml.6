@@ -2,109 +2,107 @@ Return-Path: <SRS0=GEt/=PV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7DCD7C43387
-	for <linux-kernel@archiver.kernel.org>; Sun, 13 Jan 2019 19:50:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B23C5C43387
+	for <linux-kernel@archiver.kernel.org>; Sun, 13 Jan 2019 19:53:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 424D820842
-	for <linux-kernel@archiver.kernel.org>; Sun, 13 Jan 2019 19:50:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7B16920842
+	for <linux-kernel@archiver.kernel.org>; Sun, 13 Jan 2019 19:53:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1547409225;
+	bh=ogmYSv4AoXUatWo0M7XfGzJSgF8nrmFWSHgGeCVre6E=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=U/0tQxexeM5fBd6s7cr/ijhD2NChMzh4RKYtv/PKmwZqA2R7zog1FpKC0QYu6fSum
+	 mZp012cLGYOJt3EpvApdb9NpTwhOACPvU4o726ke4eSGrItkiAXbNnROEe/w5yadxu
+	 a729faLGT6dWWZcf+uqrQPcrN7NX9+7Cvk/1TGZ4=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726538AbfAMTur (ORCPT
+        id S1726541AbfAMTxo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 13 Jan 2019 14:50:47 -0500
-Received: from pegase1.c-s.fr ([93.17.236.30]:17412 "EHLO pegase1.c-s.fr"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726254AbfAMTuq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 13 Jan 2019 14:50:46 -0500
-Received: from localhost (mailhub1-int [192.168.12.234])
-        by localhost (Postfix) with ESMTP id 43d6TM1420z9vBmY;
-        Sun, 13 Jan 2019 20:43:03 +0100 (CET)
-X-Virus-Scanned: Debian amavisd-new at c-s.fr
-Received: from pegase1.c-s.fr ([192.168.12.234])
-        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
-        with ESMTP id 27nKnvwlEY0Z; Sun, 13 Jan 2019 20:43:03 +0100 (CET)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-        by pegase1.c-s.fr (Postfix) with ESMTP id 43d6TM0S1bz9vBmX;
-        Sun, 13 Jan 2019 20:43:03 +0100 (CET)
-Received: from localhost (localhost [127.0.0.1])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 6F60E8B786;
-        Sun, 13 Jan 2019 20:43:08 +0100 (CET)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-        with ESMTP id 6JNNLbj4fb6g; Sun, 13 Jan 2019 20:43:08 +0100 (CET)
-Received: from PO15451 (unknown [192.168.4.90])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id F2D8B8B74C;
-        Sun, 13 Jan 2019 20:43:07 +0100 (CET)
-Subject: Re: [PATCH v2 00/15] powerpc/32s: Use BATs/LTLBs for
- STRICT_KERNEL_RWX
-To:     =?UTF-8?Q?Jonathan_Neusch=c3=a4fer?= <j.neuschaefer@gmx.net>
-Cc:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
-References: <cover.1547132681.git.christophe.leroy@c-s.fr>
- <20190113181621.GA22334@latitude>
-From:   Christophe Leroy <christophe.leroy@c-s.fr>
-Message-ID: <714e78ba-1e92-a856-3dd6-a1fb96ad3785@c-s.fr>
-Date:   Sun, 13 Jan 2019 20:43:07 +0100
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        Sun, 13 Jan 2019 14:53:44 -0500
+Received: from mx2.suse.de ([195.135.220.15]:43858 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726428AbfAMTxo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 13 Jan 2019 14:53:44 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id D9618AC3B;
+        Sun, 13 Jan 2019 18:34:03 +0000 (UTC)
+Date:   Sun, 13 Jan 2019 19:34:02 +0100
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Shakeel Butt <shakeelb@google.com>
+Cc:     Johannes Weiner <hannes@cmpxchg.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Vladimir Davydov <vdavydov.dev@gmail.com>,
+        Cgroups <cgroups@vger.kernel.org>, Linux MM <linux-mm@kvack.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v3] memcg: schedule high reclaim for remote memcgs on
+ high_work
+Message-ID: <20190113183402.GD1578@dhcp22.suse.cz>
+References: <20190110174432.82064-1-shakeelb@google.com>
+ <20190111205948.GA4591@cmpxchg.org>
+ <CALvZod7O2CJuhbuLUy9R-E4dTgL4WBg8CayW_AFnCCG6KCDjUA@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20190113181621.GA22334@latitude>
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Language: fr
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CALvZod7O2CJuhbuLUy9R-E4dTgL4WBg8CayW_AFnCCG6KCDjUA@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-Le 13/01/2019 à 19:16, Jonathan Neuschäfer a écrit :
-> On Thu, Jan 10, 2019 at 03:11:38PM +0000, Christophe Leroy wrote:
->> The purpose of this serie is to:
->> - use BATs with STRICT_KERNEL_RWX on book3s (See patch 12 for details.)
->> - use LTLBs with STRICT_KERNEL_RWX on 8xx (See patch 14 for a few details.)
+On Fri 11-01-19 14:54:32, Shakeel Butt wrote:
+> Hi Johannes,
 > 
-> Hi,
+> On Fri, Jan 11, 2019 at 12:59 PM Johannes Weiner <hannes@cmpxchg.org> wrote:
+> >
+> > Hi Shakeel,
+> >
+> > On Thu, Jan 10, 2019 at 09:44:32AM -0800, Shakeel Butt wrote:
+> > > If a memcg is over high limit, memory reclaim is scheduled to run on
+> > > return-to-userland.  However it is assumed that the memcg is the current
+> > > process's memcg.  With remote memcg charging for kmem or swapping in a
+> > > page charged to remote memcg, current process can trigger reclaim on
+> > > remote memcg.  So, schduling reclaim on return-to-userland for remote
+> > > memcgs will ignore the high reclaim altogether. So, record the memcg
+> > > needing high reclaim and trigger high reclaim for that memcg on
+> > > return-to-userland.  However if the memcg is already recorded for high
+> > > reclaim and the recorded memcg is not the descendant of the the memcg
+> > > needing high reclaim, punt the high reclaim to the work queue.
+> >
+> > The idea behind remote charging is that the thread allocating the
+> > memory is not responsible for that memory, but a different cgroup
+> > is. Why would the same thread then have to work off any high excess
+> > this could produce in that unrelated group?
+> >
+> > Say you have a inotify/dnotify listener that is restricted in its
+> > memory use - now everybody sending notification events from outside
+> > that listener's group would get throttled on a cgroup over which it
+> > has no control. That sounds like a recipe for priority inversions.
+> >
+> > It seems to me we should only do reclaim-on-return when current is in
+> > the ill-behaved cgroup, and punt everything else - interrupts and
+> > remote charges - to the workqueue.
 > 
-> I just tested the whole series on my Wii (I didn't test any intermediate
-> steps). Without CONFIG_STRICT_KERNEL_RWX, it seems to work fine, but
-> with it, I get the following error while booting:
+> This is what v1 of this patch was doing but Michal suggested to do
+> what this version is doing. Michal's argument was that the current is
+> already charging and maybe reclaiming a remote memcg then why not do
+> the high excess reclaim as well.
 
-Argh !
+Johannes has a good point about the priority inversion problems which I
+haven't thought about.
 
-Can you please send the System.map file generated at compile time ?
+> Personally I don't have any strong opinion either way. What I actually
+> wanted was to punt this high reclaim to some process in that remote
+> memcg. However I didn't explore much on that direction thinking if
+> that complexity is worth it. Maybe I should at least explore it, so,
+> we can compare the solutions. What do you think?
 
-Thanks
-Christophe
-
-> 
->> top of MEM2 @ 13F00000
->>
->> zImage starting: loaded at 0x01000000 (sp: 0x0178afa0)
->> Allocating 0x166b2c8 bytes for kernel...
->> Decompressing (0x00000000 <- 0x01011000:0x01788398)...
->> Done! Decompressed 0xf421f4 bytes
->>
->> Linux/PowerPC load: root=/dev/mmcblk0p2 rootwait console=usbgecko1
->> Finalizing device tree... flat tree at 0x178b7a0
->> [    0.000000] printk: bootconsole [udbg0] enabled
->> [    0.000000] Kernel panic - not syncing: ERROR: Failed to allocate 0x00100000 bytes below 0x00000000.
->> [    0.000000] CPU: 0 PID: 0 Comm: swapper Not tainted 5.0.0-rc1-wii-00038-g335347fa417f #1337
->> [    0.000000] Call Trace:
->> [    0.000000] [c0f1ff30] [c00280f0] panic+0x144/0x324 (unreliable)
->> [    0.000000] [c0f1ff90] [c0c18a34] memblock_alloc_base+0x34/0x44
->> [    0.000000] [c0f1ffa0] [c0c071e0] MMU_init_hw+0xcc/0x300
->> [    0.000000] [c0f1ffd0] [c0c06554] MMU_init+0x12c/0x198
->> [    0.000000] [c0f1fff0] [c0003418] start_here+0x40/0x78
->> [    0.000000] Rebooting in 180 seconds..
-> 
-> 
-> Jonathan
-> 
+My question would be whether we really care all that much. Do we know of
+workloads which would generate a large high limit excess?
+-- 
+Michal Hocko
+SUSE Labs
