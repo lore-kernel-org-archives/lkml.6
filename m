@@ -2,105 +2,156 @@ Return-Path: <SRS0=GEt/=PV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CED22C43387
-	for <linux-kernel@archiver.kernel.org>; Sun, 13 Jan 2019 07:50:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0CCCAC43444
+	for <linux-kernel@archiver.kernel.org>; Sun, 13 Jan 2019 07:57:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A240720879
-	for <linux-kernel@archiver.kernel.org>; Sun, 13 Jan 2019 07:50:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D10372084C
+	for <linux-kernel@archiver.kernel.org>; Sun, 13 Jan 2019 07:57:11 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=chronox.de header.i=@chronox.de header.b="dKE4iCyq"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726454AbfAMHuc (ORCPT
+        id S1726467AbfAMH5K (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 13 Jan 2019 02:50:32 -0500
-Received: from mail-ed1-f65.google.com ([209.85.208.65]:39660 "EHLO
-        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726339AbfAMHuc (ORCPT
+        Sun, 13 Jan 2019 02:57:10 -0500
+Received: from mo4-p01-ob.smtp.rzone.de ([81.169.146.166]:30429 "EHLO
+        mo4-p01-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726286AbfAMH5K (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 13 Jan 2019 02:50:32 -0500
-Received: by mail-ed1-f65.google.com with SMTP id b14so16279373edt.6
-        for <linux-kernel@vger.kernel.org>; Sat, 12 Jan 2019 23:50:31 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=I025xpD241uaN55YFkuyFumeY2Z2PvMYvk37nophzBw=;
-        b=pDnDFJ2FtLQ6msn2vzRvpSAHQfXRLhN7ahBNyEe11FVcSUzktuiFk03FOKZv9u8fgf
-         cD8PRRC1ufGZl4AC9WEk9V+qEk2cKqxWrfxvNSSX7TyqKT1qXD/G9kXa+nIaMQyK3lKx
-         qmkfOGo3ZpwY8v1GGVs/3bsDwwLQy1ZgwihJ0w6CF21J7utmiLFPOZgOfVjO+TiUmmiP
-         9LdW3F/J8ghAaHm3VTj6Ml/B7aPl6CalX8NqZ7Iw09CC48n1Hk4uTynXmPEIWKDRb5yM
-         znSyPimL+/VVRNFVcnuxw6JsCHc7qmGLutTuQCuMdFQKXP5u4NRtMPf9X1xoo+qYK4y4
-         btoQ==
-X-Gm-Message-State: AJcUukdsmsnRO3E5lkfQKBzMHu3cKq0g5NbCHJK7/dbv8XLq4cD4WNBN
-        DIcnMBp3AYlU9h4sVKkeKNkX21AkBQc=
-X-Google-Smtp-Source: ALg8bN42mdIOru5OQvKjXiVXDec5kxIdk6tbxl9lgt5kgvFA+/qVX1oaKgrmLfFeTTWVqyDCkDybHA==
-X-Received: by 2002:a17:906:c9c4:: with SMTP id hk4-v6mr5250940ejb.249.1547365830122;
-        Sat, 12 Jan 2019 23:50:30 -0800 (PST)
-Received: from shalem.localdomain (546A5441.cm-12-3b.dynamic.ziggo.nl. [84.106.84.65])
-        by smtp.gmail.com with ESMTPSA id i46sm3373327ede.62.2019.01.12.23.50.28
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sat, 12 Jan 2019 23:50:29 -0800 (PST)
-Subject: Re: [RFT][PATCH v1] gpiolib: acpi: Introduce
- ACPI_GPIO_QUIRK_ONLY_GPIOIO
-To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Linus Walleij <linus.walleij@linaro.org>
-Cc:     Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
-        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
-        Liam Girdwood <liam.r.girdwood@linux.intel.com>,
-        Jie Yang <yang.jie@linux.intel.com>,
-        Mark Brown <broonie@kernel.org>,
-        "moderated list:SOUND - SOC LAYER / DYNAMIC AUDIO POWER MANAGEM..." 
-        <alsa-devel@alsa-project.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-References: <20190108180205.55109-1-andriy.shevchenko@linux.intel.com>
- <CACRpkdYgBsvNR1PFuzmMegpjraWRi58ACb-=mBrUDvLoi_5J_g@mail.gmail.com>
- <20190111194929.GW9170@smile.fi.intel.com>
-From:   Hans de Goede <hdegoede@redhat.com>
-Message-ID: <fbb55ce7-0ca3-a1ad-249e-764840c46804@redhat.com>
-Date:   Sun, 13 Jan 2019 08:50:27 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.1
+        Sun, 13 Jan 2019 02:57:10 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1547366227;
+        s=strato-dkim-0002; d=chronox.de;
+        h=References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:
+        X-RZG-CLASS-ID:X-RZG-AUTH:From:Subject:Sender;
+        bh=Kv7YpH7UFC824CoWKI87SXAHQztivulsiD1lK0fyIxk=;
+        b=dKE4iCyqB3GN+dcsvbUBxfkJKJ//RymWMIehgSlP+45fou41JSNQ8T2H/+twCIGjf+
+        nQN5DkH9f4Tz7RByJTl8YiIigXNys/PazEJCT6kuzBpg1JsEJAr2U1m3q87FK/KaYtps
+        pQFA1sP8v3/+VhAawdQ6fAwcYXsMC8V8+nU51uT4UmKanX8ROxupEUGcHMUpGlaVUM9u
+        wNgbK5C0+1KZD9uKNi5hP7l2QhkqJnT2VjUSl3jxEfbSjH/902ZNuuIzTcuATBH/M5q0
+        15uSiPDFoGW0rF8VJYsDwOYobpjSEjPfZxyus7mVJyhKbFxgsyrpr2X5XEMmA1WragWu
+        9OJQ==
+X-RZG-AUTH: ":P2ERcEykfu11Y98lp/T7+hdri+uKZK8TKWEqNyiHySGSa9k9x2YdNp5Oujd4kpMBvCE="
+X-RZG-CLASS-ID: mo00
+Received: from positron.chronox.de
+        by smtp.strato.de (RZmta 44.9 DYNA|AUTH)
+        with ESMTPSA id 309bcfv0D7uXkgw
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (curve secp521r1 with 521 ECDH bits, eq. 15360 bits RSA))
+        (Client did not present a certificate);
+        Sun, 13 Jan 2019 08:56:33 +0100 (CET)
+From:   Stephan =?ISO-8859-1?Q?M=FCller?= <smueller@chronox.de>
+To:     Herbert Xu <herbert@gondor.apana.org.au>
+Cc:     Eric Biggers <ebiggers@kernel.org>,
+        James Bottomley <James.Bottomley@hansenpartnership.com>,
+        Andy Lutomirski <luto@amacapital.net>,
+        "Lee, Chun-Yi" <joeyli.kernel@gmail.com>,
+        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
+        Pavel Machek <pavel@ucw.cz>, linux-kernel@vger.kernel.org,
+        linux-pm@vger.kernel.org, keyrings@vger.kernel.org,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        Chen Yu <yu.c.chen@intel.com>,
+        Oliver Neukum <oneukum@suse.com>,
+        Ryan Chen <yu.chen.surf@gmail.com>,
+        David Howells <dhowells@redhat.com>,
+        Giovanni Gherdovich <ggherdovich@suse.cz>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Jann Horn <jannh@google.com>,
+        Andy Lutomirski <luto@kernel.org>, linux-crypto@vger.kernel.org
+Subject: Re: [PATCH 4/6] crypto: hkdf - RFC5869 Key Derivation Function
+Date:   Sun, 13 Jan 2019 08:56:32 +0100
+Message-ID: <9795894.APlZEWIbOH@positron.chronox.de>
+In-Reply-To: <20190112095535.36rh3ptnrf7yxacv@gondor.apana.org.au>
+References: <20190103143227.9138-1-jlee@suse.com> <20190112051252.GA639@sol.localdomain> <20190112095535.36rh3ptnrf7yxacv@gondor.apana.org.au>
 MIME-Version: 1.0
-In-Reply-To: <20190111194929.GW9170@smile.fi.intel.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="iso-8859-1"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+Am Samstag, 12. Januar 2019, 10:55:35 CET schrieb Herbert Xu:
 
-On 11-01-19 20:49, Andy Shevchenko wrote:
-> On Fri, Jan 11, 2019 at 03:21:39PM +0100, Linus Walleij wrote:
->> On Tue, Jan 8, 2019 at 7:02 PM Andy Shevchenko
->> <andriy.shevchenko@linux.intel.com> wrote:
->>
->>> New quirk enforces search for GPIO based on its type.
->>> Note, supplied index in the mapping table must be 0.
->>>
->>> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
->>
->> (...)
->>
->>>   sound/soc/intel/boards/bytcr_rt5651.c | 74 ++++-----------------------
->>
->> Do we have an ACK from the maintainer of this file?
->> It's Hans I think. Ideally also from Mark Brown.
-> 
-> I hope to get Hans' Tested-by on this.
+Hi Herbert,
 
-Yes I've testing this on my TODO.
+> On Fri, Jan 11, 2019 at 09:12:54PM -0800, Eric Biggers wrote:
+> > Hi Stephan,
+> >=20
+> > On Fri, Jan 11, 2019 at 08:10:39PM +0100, Stephan M=FCller wrote:
+> > > The RFC5869 compliant Key Derivation Function is implemented as a
+> > > random number generator considering that it behaves like a determinis=
+tic
+> > > RNG.
+> >=20
+> > Thanks for the proof of concept!  I guess it ended up okay.  But can you
+> > explain more the benefits of using the crypto_rng interface, as opposed
+> > to just some crypto_hkdf_*() helper functions that are exported for
+> > modules to use?
+> I agree.  I see no benefit in adding this through the RNG API as
+> opposed to just providing it as a helper.  If some form of hardware
+> acceleration were to eventuate in the future we could always revisit
+> this.
 
-Regards,
+The advantages for using the kernel crypto API to add KDFs as opposed to=20
+adding helper wrappers are the following in my view:
 
-Hans
+=2D employment of the kernel crypto API testmgr - invocation of the testmgr=
+ is=20
+transparent and thus already provided without any additional code to link t=
+o=20
+it
+
+=2D FIPS 140-2 compliance: To mark a KDF as FIPS 140-2 approved cipher, it =
+must=20
+be subject to a known-answer self test (implemented by the testmgr) as well=
+ as=20
+to an enforcement of the integrity check verification. In FIPS 140-2 mode, =
+the=20
+kernel crypto API panic()s when a kernel crypto API module is loaded and it=
+s=20
+signature does not check out. As this is only relevant for crypto modules (=
+and=20
+not arbitrary other kernel modules), this is implemented with the invocatio=
+ns=20
+the crypto_register_alg as well as crypto_register_template functions. Thus=
+,=20
+when using a wrapper code to implement the KDF, they can per definition not=
+ be=20
+=46IPS 140-2 approved.
+
+=2D The invoker of a KDF has one consistent API. This implies that the KDF=
+=20
+selection now becomes more of a "configuration" choice. For example, when y=
+ou=20
+look at the KDF use case for the keys subsystem (security/keys/dh.c),=20
+selecting the type of KDF would only necessitate a change of a string=20
+referencing the KDF. A lot of people somehow favor the extract-and-expand K=
+DFs=20
+over the traditional KDFs. Now, that the RFC5869 HKDF is also approved as p=
+er=20
+SP800-56A rev3, I could see that folks may want to switch to HKDF for the k=
+ey=20
+management. When we have a common API, this choice could even be left to th=
+e=20
+caller.
+
+The question may arise why to plug the KDFs into RNGs. The answer is quite=
+=20
+simple: KDFs are a form of random number generator. In that they take some=
+=20
+input for initialization (aka seed, salt, key, personalization string). The=
+n=20
+they produce pseudo-random bit sequences of arbitrary length. Possibly the=
+=20
+generation operation can be modified by providing some additional input to =
+be=20
+used by the generation process (aka label, context, info string, additional=
+=20
+information string). Thus, the RNG interface is a natural fit for the KDFs.
+
+Ciao
+Stephan
+
 
