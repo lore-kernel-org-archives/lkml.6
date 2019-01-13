@@ -4,64 +4,79 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-10.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E06F0C43387
-	for <linux-kernel@archiver.kernel.org>; Sun, 13 Jan 2019 03:35:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 09F46C43387
+	for <linux-kernel@archiver.kernel.org>; Sun, 13 Jan 2019 03:36:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9C48D20879
-	for <linux-kernel@archiver.kernel.org>; Sun, 13 Jan 2019 03:35:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C551D20879
+	for <linux-kernel@archiver.kernel.org>; Sun, 13 Jan 2019 03:36:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547350508;
-	bh=u2vMSmIuHlfqXLVniFjN6O/rjGNGMR1DQYLP94HDR7w=;
+	s=default; t=1547350595;
+	bh=bsAvnT/O+HhK0bVxJN/mwntmaRqADEppJty1Tdh41YA=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=WRQbHbQUVWuMPmkHnAiV5mW4imgTbo/4cUbzcF2fuLLtpMMcgQsA1QFzPTDkf+BUm
-	 2K24igMF7XJ45A7Xath6Dg/VCrs729oorSNDuUE0wEA3bvVFSdlTY7NvAZwghnfNsn
-	 JogRHl3O4PO/+VJh1KovmQDjcUe9LaVV32a6A9qI=
+	b=Yr1Ux0yCdsPPwhS2Uy7AHU7lDzj1HFkIeIqRq0ePQoSNE8PkQdyN3Q8hq2cnDmbXm
+	 CaO/SKQmnF0T6XAkyTjuTciTcVkxnFN2tguRCs1UERZJbo3Sa/N45bupBz43l4o64O
+	 wXOcn6iAgiaBV2mWDun8dYTEqQ0ca1CX6np/ZD9A=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726712AbfAMDfH (ORCPT
+        id S1726734AbfAMDge (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 12 Jan 2019 22:35:07 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51590 "EHLO mail.kernel.org"
+        Sat, 12 Jan 2019 22:36:34 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52270 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726482AbfAMDfH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 12 Jan 2019 22:35:07 -0500
+        id S1726482AbfAMDge (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 12 Jan 2019 22:36:34 -0500
 Received: from dragon (61-216-91-114.HINET-IP.hinet.net [61.216.91.114])
         (using TLSv1.2 with cipher DHE-RSA-AES128-SHA (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 76BB720842;
-        Sun, 13 Jan 2019 03:35:04 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7DF9D20842;
+        Sun, 13 Jan 2019 03:36:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547350506;
-        bh=u2vMSmIuHlfqXLVniFjN6O/rjGNGMR1DQYLP94HDR7w=;
+        s=default; t=1547350594;
+        bh=bsAvnT/O+HhK0bVxJN/mwntmaRqADEppJty1Tdh41YA=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=uBgxqFtARHwLBPCtpLCIUetEV0mdwg+ENhaTHCpFPMQOXBccFOSRnIrP/HRk35rh7
-         /yby5655BFeCB2tThHp20GNdEmX5WD41AwTS9+XqrsmZkeg1lK44paH2XClU1AID1f
-         6H3qsd+2DZJUAaZmL/As2JW6jWBp+vZL/Ln8C+CE=
-Date:   Sun, 13 Jan 2019 11:34:50 +0800
+        b=SW/gjgdVJdYa+WujbnaZlQS1MWC1yBU0oNAmmuel/nKKsPSz0fHP2Fim8I9pfRjnB
+         MlN7M1SS/H8pwmnx7NOanlLBh5qnwFcz0UlEF4u/WFpRaBT2m4XyHdTLf811urAVma
+         jpaS3Fde5waPO/SoyeePk8uJISfu04kdoOVxcB0w=
+Date:   Sun, 13 Jan 2019 11:36:16 +0800
 From:   Shawn Guo <shawnguo@kernel.org>
-To:     Stefan Agner <stefan@agner.ch>
-Cc:     s.hauer@pengutronix.de, kernel@pengutronix.de,
-        fabio.estevam@nxp.com, linux-imx@nxp.com, robh+dt@kernel.org,
-        mark.rutland@arm.com, linux-arm-kernel@lists.infradead.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] ARM: dts: imx6ul: add DMA properties for ECSPI
-Message-ID: <20190113033449.GI11426@dragon>
-References: <20190107132226.16216-1-stefan@agner.ch>
+To:     Leonard Crestez <leonard.crestez@nxp.com>
+Cc:     "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Aisheng Dong <aisheng.dong@nxp.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Richard Zhu <hongxing.zhu@nxp.com>,
+        dl-linux-imx <linux-imx@nxp.com>,
+        "kernel@pengutronix.de" <kernel@pengutronix.de>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Lucas Stach <l.stach@pengutronix.de>
+Subject: Re: [PATCH RESEND] ARM: dts: imx6sx: Add DISPLAY power domain support
+Message-ID: <20190113033615.GJ11426@dragon>
+References: <ca5d7f6be8e1cf7ef9b5c8ef322fbcf1a14ae7fa.1546866930.git.leonard.crestez@nxp.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190107132226.16216-1-stefan@agner.ch>
+In-Reply-To: <ca5d7f6be8e1cf7ef9b5c8ef322fbcf1a14ae7fa.1546866930.git.leonard.crestez@nxp.com>
 User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jan 07, 2019 at 02:22:25PM +0100, Stefan Agner wrote:
-> Allow to use DMA for SPI by adding the appropriate DMA properites
-> to the ecspi nodes.
+On Mon, Jan 07, 2019 at 01:28:48PM +0000, Leonard Crestez wrote:
+> This was implemented in the driver but not actually defined and
+> referenced in dts. This makes it always on.
 > 
-> Signed-off-by: Stefan Agner <stefan@agner.ch>
+> From reference manual in section "10.4.1.4.1 Power Distribution":
+> 
+> "Display domain - The DISPLAY domain contains GIS, CSI, PXP, LCDIF,
+> PCIe, DCIC, and LDB. It is supplied by internal regulator."
+> 
+> The current pd_pcie is actually only for PCIE_PHY, the PCIE ip block is
+> actually inside the DISPLAY domain. Handle this by adding the pcie node
+> in both power domains.
+> 
+> Signed-off-by: Leonard Crestez <leonard.crestez@nxp.com>
 
-Applied both, thanks.
+Applied, thanks.
