@@ -2,80 +2,248 @@ Return-Path: <SRS0=GEt/=PV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
-	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
+	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CF67EC43387
-	for <linux-kernel@archiver.kernel.org>; Sun, 13 Jan 2019 13:59:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 79BE5C43387
+	for <linux-kernel@archiver.kernel.org>; Sun, 13 Jan 2019 14:00:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9C94E20842
-	for <linux-kernel@archiver.kernel.org>; Sun, 13 Jan 2019 13:59:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 48DDE206B7
+	for <linux-kernel@archiver.kernel.org>; Sun, 13 Jan 2019 14:00:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726646AbfAMN7y (ORCPT
+        id S1726707AbfAMOAA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 13 Jan 2019 08:59:54 -0500
-Received: from mout.gmx.net ([212.227.17.20]:60117 "EHLO mout.gmx.net"
+        Sun, 13 Jan 2019 09:00:00 -0500
+Received: from mout.gmx.net ([212.227.15.18]:48931 "EHLO mout.gmx.net"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726434AbfAMN7y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 13 Jan 2019 08:59:54 -0500
-Received: from longitude ([109.90.232.48]) by mail.gmx.com (mrgmx102
- [212.227.17.168]) with ESMTPSA (Nemesis) id 0MJWAZ-1gffUy2EBv-0039LO; Sun, 13
- Jan 2019 14:59:51 +0100
+        id S1726545AbfAMN7z (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 13 Jan 2019 08:59:55 -0500
+Received: from longitude ([109.90.232.48]) by mail.gmx.com (mrgmx001
+ [212.227.17.190]) with ESMTPSA (Nemesis) id 0MMCFR-1gcvfZ234f-00846w; Sun, 13
+ Jan 2019 14:59:52 +0100
 From:   =?UTF-8?q?Jonathan=20Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>
 To:     linux-gpio@vger.kernel.org
 Cc:     Linus Walleij <linus.walleij@linaro.org>,
         Bartosz Golaszewski <bgolaszewski@baylibre.com>,
         linux-kernel@vger.kernel.org,
         =?UTF-8?q?Jonathan=20Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>
-Subject: [PATCH 0/2] GPIO: hlwd: Implement IRQ support
-Date:   Sun, 13 Jan 2019 14:58:42 +0100
-Message-Id: <20190113135844.13109-1-j.neuschaefer@gmx.net>
+Subject: [PATCH 1/2] gpio: hlwd: Add basic IRQ support
+Date:   Sun, 13 Jan 2019 14:58:43 +0100
+Message-Id: <20190113135844.13109-2-j.neuschaefer@gmx.net>
 X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20190113135844.13109-1-j.neuschaefer@gmx.net>
+References: <20190113135844.13109-1-j.neuschaefer@gmx.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-Provags-ID: V03:K1:+J01dWA1SlP1dD84qgC+sLk/06nfy+Jpnz8KEjqW/P9oJ+d1HxR
- uRCBGS1Je7PkNTlcQYxXXhmb9wx5R6RugEVN1r/iFGb6uvVi64qFT9Ow3nAEZVxVjwiFiq8
- mMMpum+0yu/m35mute5GGChc4pbigQ4qiS9Y90Du7u4XIH6qebdxyOaZnbiKmk94ckq62Aw
- fkbcSDxAd4l9AqGIdWBkw==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:1fQLNYQs5Pk=:g9o37CEgwJ8Ic7ExIrTXrY
- y1ueJ88PY/h3G2103vLUF1qo7VZ/WqTuLVJn8qOvKU+dSLMfwRJ+Xwqk78V3kEeu0whaMDdkk
- DNgj00mXGWG5G2iMSe+eHmjEAFxmFsXq9ck/ElltyvF1jhWHEvzKMlUJLqKJ+pskTtTnUoOBP
- o4AuSA5As3j8mV+GyZ4NngNJNBytXcd9Jt+Q4JK3sLvX/qbCi+f2OoJcMRAznuy8SbcKhTMnh
- 1QgVaHeZnz1Onb/mCe0EEfqmzAYS4xgmkz4Ej/hwbY+zOBjqZv+5UwpAiSJ0SssNLlDf4ZC1D
- z7BhjEWMeWXGILjwmIW28PqX7j9BntZzFvqfE+O6hLFdpss+5yQ4nkC9djqO7iYhRB5LtuW1y
- h9PE9HznfzeKCPPuggUuuZ51J/K5VrAEVPC+EKmKSFZQWa/SgdzwyLZStG5IOcggqpYI+Ep+V
- IAPrbAPSrW3n75m40wa+vqcYnWdV6FtrLKnpA8cFp9eE5FYG82NQ/3WqqfSC5IJZhn1S09X8N
- RDns4aLdo4CYBLbOjRSxwmESr3heIs2WTe7tHMHwky+NZ/SvYmEovPE2ptgX0NVsvJNf2jFk6
- 8xjR+BBOX/OXr0sBWJMu+4IMX8BjHZqdk62X+yhdLey8Gtzwm0t+WfBfihJ1vT9XefobnOLwR
- Zg8WMhsY1bkKE0iADlUeFAKt992g6s4BxPYDCSXlOR11MUFWO16vQBXrgrubl+sg3XA9E3NRx
- TOzkBhIo+pfKUZV3MFPIHT7POLUs6b/mg/pISL2ymWd1tJdl4GLXgKi/+54UD2QIeeo39DKAA
- wvYuxBraEM6YDcxEZy/DE+1MiNCrQb7xkuqC/XSgjlL198rbgqQ12AE11VkEr+MdtpvUxKfjs
- Ud3BBfBiA+br4NKWeQtrwkvxwxKWQP92Si7b/P3CD9gQ5Vg3vaGiGh+G/OVkPb6TfsKQRKvIW
- IT2fmYzEnog==
+X-Provags-ID: V03:K1:OLv5vUU5MJKzcb1LR5FhLhF2S8EKHzw5Qwu/e+gkSk9GHxVXUOs
+ aVh5aQY+YqFDYV7AeDFRFzcDUymO7MAe56ib+tZWXjhrUQkLR8aZ5koWEg4w7NPhfO56ARZ
+ 1kqkUzpoQ/JU6BmK9MtfkLG6p562J0Yll4yC3Q5c9PQUbiJJblSLCHGcuG2eDZJZ7/P9qYh
+ nb0LbDTZwDOWKNVvNiWNQ==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:z7OpcWq79zE=:05xWvybGWfohRlDtFApukx
+ 9w4n2v8H6kXyf+7rJs0PbWpu9EYax2N7USR+sryGvD/s6FXjb9T0p/k6zuibNZR+mvW+hiIDC
+ nxNkM7y+IJS0igrwh9oo2j+r4x36g8zbrK7hvdaFoRIckArlDfPInEd4F2NJ81g8jrSkShnC3
+ Uumw0dHHcEvq9x/7jCpA6DxLU4lb+REfzEtnFTwAjIVjq57AtTrPhxWERe1IdcKpjWyp1+cQA
+ Rwx2XhHVRnBonH+3MpHCiX1+OpXMUQmBDwmoG9g+3EcghM36tgNsG4eBZ7pLkuE4/tX/CbKoS
+ HdtrkLzFsbIkIDjm3tHqq7YzuARysYMHWLHYS69AJmJXcYUIelaBaaec7Q6eKjmOwoYgPkFYT
+ hfKrywhWxlOi1CQv8qTnq6OFrzfZ0mESN1RRLrEu95CdxIrl5GaO0YP7VZqkF1GMZMftDQl7K
+ DEt4OjlhTQepMqv3jg48EJrRPeJ4VGQU7PSbkxEq1rB9E+dsXjatcHSQJf10z1+HBn3sVziho
+ M2igLYD/w7GjwRhaS2rA8HMKEeGgvUSqV3bh3VMG8EqOQIKPtqJG1SQlVZlOEDv06RYxfMF8T
+ /vAFR059EOwjEVd8GIgJcNpdu0v/OHTEklmjQlhkMaXlPGTHQ/v9Xt3GDYfDd/7pf8gr84Q71
+ l28nz1AFlA7u5JnXZ0ZTnN3eAz3Vrdrk507EjdpkqWg4IZCdPBzAKdfVK1E+/x+4Q+jTno8Qq
+ lYdWSpFcvGTcgHWyxKXJN2eR1V/noY87efWdJvSBV43KccZjzaWAurSYsVyBPwEoAzxeLgrMt
+ YKRfcl2heVp8xrDhDHr6La4s5Bp1js/d2ZPAuaoFhRuwxa7Sx8tYgp1Fi1B3+Gfq1RPHqwbhp
+ vNnI3rCi3vSB3ZC7DDVPUrZ18X+aakZLzfOJPSCwUs1sDRvIC6d5GRQXVuKr+YatjRE1bteko
+ zN+dAG1cxZg==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patchset implements IRQ support for the Hollywood GPIO controller
-(Hollywood is one of the chips in the Nintendo Wii game console).
+This patch implements level-triggered IRQs in the Hollywood GPIO driver.
+Edge triggered interrupts are not supported in this GPIO controller, so
+I moved their emulation into a separate patch.
 
-Together with two device tree patches[1], I can use the buttons (via the
-gpio-keys driver) and the photoelectric sensor in the disc slot (via
-gpio-event-mon).
+Signed-off-by: Jonathan Neuschäfer <j.neuschaefer@gmx.net>
+---
 
-[1]: https://www.spinics.net/lists/kernel/msg3010459.html
-
-Jonathan Neuschäfer (2):
-  gpio: hlwd: Add basic IRQ support
-  gpio: hlwd: Implement edge trigger emulation
-
+I'm not entirely sure about the locking, but lockdep doesn't complain.
+---
  drivers/gpio/Kconfig     |   1 +
- drivers/gpio/gpio-hlwd.c | 193 ++++++++++++++++++++++++++++++++++++++-
- 2 files changed, 193 insertions(+), 1 deletion(-)
+ drivers/gpio/gpio-hlwd.c | 136 ++++++++++++++++++++++++++++++++++++++-
+ 2 files changed, 136 insertions(+), 1 deletion(-)
 
+diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
+index b5a2845347ec..f77180dd87bd 100644
+--- a/drivers/gpio/Kconfig
++++ b/drivers/gpio/Kconfig
+@@ -258,6 +258,7 @@ config GPIO_HLWD
+ 	tristate "Nintendo Wii (Hollywood) GPIO"
+ 	depends on OF_GPIO
+ 	select GPIO_GENERIC
++	select GPIOLIB_IRQCHIP
+ 	help
+ 	  Select this to support the GPIO controller of the Nintendo Wii.
+ 
+diff --git a/drivers/gpio/gpio-hlwd.c b/drivers/gpio/gpio-hlwd.c
+index a63136a68ba3..9a93546f3d11 100644
+--- a/drivers/gpio/gpio-hlwd.c
++++ b/drivers/gpio/gpio-hlwd.c
+@@ -48,9 +48,107 @@
+ 
+ struct hlwd_gpio {
+ 	struct gpio_chip gpioc;
++	struct irq_chip irqc;
+ 	void __iomem *regs;
++	int irq;
+ };
+ 
++static void hlwd_gpio_irqhandler(struct irq_desc *desc)
++{
++	struct hlwd_gpio *hlwd =
++		gpiochip_get_data(irq_desc_get_handler_data(desc));
++	struct irq_chip *chip = irq_desc_get_chip(desc);
++	unsigned long flags;
++	unsigned long pending;
++	int hwirq;
++
++	spin_lock_irqsave(&hlwd->gpioc.bgpio_lock, flags);
++	pending = hlwd->gpioc.read_reg(hlwd->regs + HW_GPIOB_INTFLAG);
++	pending &= hlwd->gpioc.read_reg(hlwd->regs + HW_GPIOB_INTMASK);
++	spin_unlock_irqrestore(&hlwd->gpioc.bgpio_lock, flags);
++
++	chained_irq_enter(chip, desc);
++
++	for_each_set_bit(hwirq, &pending, 32) {
++		int irq = irq_find_mapping(hlwd->gpioc.irq.domain, hwirq);
++
++		generic_handle_irq(irq);
++	}
++
++	chained_irq_exit(chip, desc);
++}
++
++static void hlwd_gpio_irq_ack(struct irq_data *data)
++{
++	struct hlwd_gpio *hlwd =
++		gpiochip_get_data(irq_data_get_irq_chip_data(data));
++
++	hlwd->gpioc.write_reg(hlwd->regs + HW_GPIOB_INTFLAG, BIT(data->hwirq));
++}
++
++static void hlwd_gpio_irq_mask(struct irq_data *data)
++{
++	struct hlwd_gpio *hlwd =
++		gpiochip_get_data(irq_data_get_irq_chip_data(data));
++	unsigned long flags;
++	u32 mask;
++
++	spin_lock_irqsave(&hlwd->gpioc.bgpio_lock, flags);
++	mask = hlwd->gpioc.read_reg(hlwd->regs + HW_GPIOB_INTMASK);
++	mask &= ~BIT(data->hwirq);
++	hlwd->gpioc.write_reg(hlwd->regs + HW_GPIOB_INTMASK, mask);
++	spin_unlock_irqrestore(&hlwd->gpioc.bgpio_lock, flags);
++}
++
++static void hlwd_gpio_irq_unmask(struct irq_data *data)
++{
++	struct hlwd_gpio *hlwd =
++		gpiochip_get_data(irq_data_get_irq_chip_data(data));
++	unsigned long flags;
++	u32 mask;
++
++	spin_lock_irqsave(&hlwd->gpioc.bgpio_lock, flags);
++	mask = hlwd->gpioc.read_reg(hlwd->regs + HW_GPIOB_INTMASK);
++	mask |= BIT(data->hwirq);
++	hlwd->gpioc.write_reg(hlwd->regs + HW_GPIOB_INTMASK, mask);
++	spin_unlock_irqrestore(&hlwd->gpioc.bgpio_lock, flags);
++}
++
++static void hlwd_gpio_irq_enable(struct irq_data *data)
++{
++	hlwd_gpio_irq_ack(data);
++	hlwd_gpio_irq_unmask(data);
++}
++
++static int hlwd_gpio_irq_set_type(struct irq_data *data, unsigned int flow_type)
++{
++	struct hlwd_gpio *hlwd =
++		gpiochip_get_data(irq_data_get_irq_chip_data(data));
++	unsigned long flags;
++	u32 level;
++
++	spin_lock_irqsave(&hlwd->gpioc.bgpio_lock, flags);
++
++	switch (flow_type) {
++	case IRQ_TYPE_LEVEL_HIGH:
++		level = hlwd->gpioc.read_reg(hlwd->regs + HW_GPIOB_INTLVL);
++		level |= BIT(data->hwirq);
++		hlwd->gpioc.write_reg(hlwd->regs + HW_GPIOB_INTLVL, level);
++		break;
++	case IRQ_TYPE_LEVEL_LOW:
++		level = hlwd->gpioc.read_reg(hlwd->regs + HW_GPIOB_INTLVL);
++		level &= ~BIT(data->hwirq);
++		hlwd->gpioc.write_reg(hlwd->regs + HW_GPIOB_INTLVL, level);
++		break;
++	default:
++		spin_unlock_irqrestore(&hlwd->gpioc.bgpio_lock, flags);
++		return -EINVAL;
++	}
++
++	spin_unlock_irqrestore(&hlwd->gpioc.bgpio_lock, flags);
++	return 0;
++}
++
+ static int hlwd_gpio_probe(struct platform_device *pdev)
+ {
+ 	struct hlwd_gpio *hlwd;
+@@ -92,7 +190,43 @@ static int hlwd_gpio_probe(struct platform_device *pdev)
+ 		ngpios = 32;
+ 	hlwd->gpioc.ngpio = ngpios;
+ 
+-	return devm_gpiochip_add_data(&pdev->dev, &hlwd->gpioc, hlwd);
++	res = devm_gpiochip_add_data(&pdev->dev, &hlwd->gpioc, hlwd);
++	if (res)
++		return res;
++
++	/* Mask and ack all interrupts */
++	iowrite32be(0, hlwd->regs + HW_GPIOB_INTMASK);
++	iowrite32be(0xffffffff, hlwd->regs + HW_GPIOB_INTFLAG);
++
++	/*
++	 * If this GPIO controller is not marked as an interrupt controller in
++	 * the DT, return.
++	 */
++	if (!of_property_read_bool(pdev->dev.of_node, "interrupt-controller"))
++		return 0;
++
++	hlwd->irq = platform_get_irq(pdev, 0);
++	if (hlwd->irq < 0) {
++		dev_info(&pdev->dev, "platform_get_irq returned %d\n",
++			 hlwd->irq);
++		return hlwd->irq;
++	}
++
++	hlwd->irqc.name = "GPIO";
++	hlwd->irqc.irq_mask = hlwd_gpio_irq_mask;
++	hlwd->irqc.irq_unmask = hlwd_gpio_irq_unmask;
++	hlwd->irqc.irq_enable = hlwd_gpio_irq_enable;
++	hlwd->irqc.irq_set_type = hlwd_gpio_irq_set_type;
++
++	res = gpiochip_irqchip_add(&hlwd->gpioc, &hlwd->irqc, 0,
++				   handle_level_irq, IRQ_TYPE_NONE);
++	if (res)
++		return res;
++
++	gpiochip_set_chained_irqchip(&hlwd->gpioc, &hlwd->irqc,
++				     hlwd->irq, hlwd_gpio_irqhandler);
++
++	return 0;
+ }
+ 
+ static const struct of_device_id hlwd_gpio_match[] = {
 -- 
 2.20.1
 
