@@ -2,127 +2,167 @@ Return-Path: <SRS0=GEt/=PV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
-	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 59E0FC43387
-	for <linux-kernel@archiver.kernel.org>; Sun, 13 Jan 2019 18:16:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 94672C43387
+	for <linux-kernel@archiver.kernel.org>; Sun, 13 Jan 2019 18:18:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2E7D8206B6
-	for <linux-kernel@archiver.kernel.org>; Sun, 13 Jan 2019 18:16:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6BC75206B6
+	for <linux-kernel@archiver.kernel.org>; Sun, 13 Jan 2019 18:18:27 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Lu8DqyCU"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726558AbfAMSQh (ORCPT
+        id S1726617AbfAMSS0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 13 Jan 2019 13:16:37 -0500
-Received: from mout.gmx.net ([212.227.17.21]:60343 "EHLO mout.gmx.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726469AbfAMSQh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 13 Jan 2019 13:16:37 -0500
-Received: from longitude ([109.90.232.48]) by mail.gmx.com (mrgmx101
- [212.227.17.168]) with ESMTPSA (Nemesis) id 0MK4fR-1gjZmu0ABp-001UC1; Sun, 13
- Jan 2019 19:16:25 +0100
-Date:   Sun, 13 Jan 2019 19:16:21 +0100
-From:   Jonathan =?utf-8?Q?Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>
-To:     Christophe Leroy <christophe.leroy@c-s.fr>
-Cc:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>, j.neuschaefer@gmx.net,
-        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
-Subject: Re: [PATCH v2 00/15] powerpc/32s: Use BATs/LTLBs for
- STRICT_KERNEL_RWX
-Message-ID: <20190113181621.GA22334@latitude>
-References: <cover.1547132681.git.christophe.leroy@c-s.fr>
+        Sun, 13 Jan 2019 13:18:26 -0500
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:41828 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726436AbfAMSS0 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 13 Jan 2019 13:18:26 -0500
+Received: by mail-pf1-f195.google.com with SMTP id b7so9279326pfi.8;
+        Sun, 13 Jan 2019 10:18:25 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=TB8imBtf4PAjNqPCC8uvdtsm3BgS79eWnXlUKq9cCOM=;
+        b=Lu8DqyCUTBNJTP2Zg+KMuvhg78dhNHDuYUrCNqHkIk5Y0lyXE+PP3blssrwJBUrBS2
+         f+qFZr7GVdTH66Mn+1KZmvdfS+wngEGvKFAWmQebB2N9dItWOtFoJ5UH0NWZnH+EYFed
+         vx3U/luIECC8l37riW1c2jL5q/X3iU2nEsMJp5vAVW236vyOraRK4E5UXbELGVtWZ5O/
+         FApS1PevImQJ0LStkptdWirEFrIRu161kcUkfTlcRBQ/jiTqD0UBIbnfMZ3ZA4UuV4NV
+         TrPSr6TjvN2tV8duA3jI4z4/ZOn2uYVtHq6fg/rVihCEVQykI8ZHPz/zm2/Gy1bCxHOY
+         WpPQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=TB8imBtf4PAjNqPCC8uvdtsm3BgS79eWnXlUKq9cCOM=;
+        b=Bx0XRmleqz+HbY5G7Zh8WqPs2vXB7GtRp9iGmv2iA8YmvsnW08d/1mhFEaCFWkmKTz
+         HuuzNTPHxg8ZVS+1RZJxiK2d7x5Uz0SKqjKoP4qHpCl6Vzp/J0G25Q9CUh+Heo6WSxW8
+         GH9F+fNErOPMVCbj2I5guaMbKG4QQedkcFB1VJwuwLtlCuV94QRvj1a0WBsTSOql2ox+
+         tQ3TX++kJzLu2Chu2t8XADsk5j1RUNhBdMwL49fQxeZhYHXkPR6nWseoXbAdRfPtNDuM
+         cuV9bzk7FXYLZEr6aj98ukRGZNRptHJ/5YEI/QoC9wF2MPJSKuq7XoyQopYxNC6jyC6v
+         aeDg==
+X-Gm-Message-State: AJcUukenr5NWfsStkWa/VzH6qfqrUPOSnn3TWdvIM/0ec9ktnejxXRYe
+        wnzRwL2q/D8/tcjP7F0YXjQwCjRR
+X-Google-Smtp-Source: ALg8bN4a2ZUCLZRINvNgsuR6mrYyrMJJLN5xkgJSj4vVCIJxdpGVcRBD33NTjum/uqUXRiR/2dFIVQ==
+X-Received: by 2002:a63:fc05:: with SMTP id j5mr20595026pgi.434.1547403504814;
+        Sun, 13 Jan 2019 10:18:24 -0800 (PST)
+Received: from localhost.localdomain ([103.51.74.105])
+        by smtp.gmail.com with ESMTPSA id i193sm157504416pgc.22.2019.01.13.10.18.21
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sun, 13 Jan 2019 10:18:24 -0800 (PST)
+From:   Anand Moon <linux.amoon@gmail.com>
+To:     devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Emiliano Ingrassia <ingrassia@epigenesys.com>
+Subject: [PATCH 1/2] ARM: dts: meson8b: odroidc1: Enable usb phy node
+Date:   Sun, 13 Jan 2019 18:18:07 +0000
+Message-Id: <20190113181808.5768-1-linux.amoon@gmail.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="OXfL5xGRrasGEqWY"
-Content-Disposition: inline
-In-Reply-To: <cover.1547132681.git.christophe.leroy@c-s.fr>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Provags-ID: V03:K1:GKiCI7OGxiERT7g/JQkZUi3BvJui19xv55rrbrTsdZrmiZdBs55
- LvDwV/XyL4yiX1x3w9T7sVSj+3Exqk5ckzju1NtRjAg2S+ECTgtRtp05qr6egCz7WrUM+YR
- 2v3J5UzRz8gk4Mo5PIbusOE27mVKIfqb2rrFy5eI95+WPGesnkJTsWDNXrbvU9te8FGvQI1
- voN69h2So2j5Ugnvm36tQ==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:O3BAtFjgAYk=:BAjeosuYluy3Fjj5lozd5Y
- ZGJQxh0gkNhEwnHf1fZH8Iz8EY3tEXrmX1KLxVyoDfiKyj0MPN1WHhD19LHM9UpXF5PYcur7L
- DoXCY/9/reFdAAuHXW0OSNkYqYUzstoiMHG6MenuNQOF+Q13UDCA1kLhWAHmsznVN1Yu+N099
- 0d4rQ0xUVf5AGCfbQlrJyCSitr5cHMCs12Wnc1suBcoulSyks5FMr4/ngEvhDTo2ZYn45veGk
- SNM3VrktEzgxSUdGXshpQl33wZ4FPH7CfRHZaoll5xpusp9Cjp7DTkRiNcOIxJYUOafsmTjxE
- 1zXpbcudk+0roH/J0xe2HOA5X5p+kCzMpZUfTek0VIUVHAwDQDysd4VcONQlG3hPA5pbdg8Al
- tGLsXicGh7cV2XeaGdjl8Y4e1SSVIARhCuEv/mRJnD12b2OLXCxGPxWjeflOfom52LvSLQeeV
- XwLGpdWCsAzODbugP96+i1BsZiSB2+Ofe8/zflUTGCs7UftB9DyLl487RV/9BSt4TQ/dJUT3g
- KnUk3W0F9lROMDoHOVcAUi8lQnsfd6rm+xR+soN3IdorjcSVcAs4bbAkTmIy7MXnJgHSKucVi
- ooQECZm5gSvhnPUtTEk8lQq8xS9f/GJ+dAbimIwbVEVtEzMSb5Fsl/GKJUqEU2oWnYsmTQAOf
- 9nQ3pLy3Fcd2KYobaXg8kNYDOc85zDVUAYYC3+vZh2olk6y14/6MysnJWDHDlckNBIJ1m5TOO
- nO13NHO9tPciwEm6gNsS+uUd+JZhaTbcfLgtWx/OolZS+cPOFi1Y5H4MqTuLufjN64FHWl9Ri
- PIXJYW1Cmq+etLDMI6NSK9yhfnuKWY1XkfxC8zD2DTkQ8u5fGQb+voYlJlK/zMqOZxX0AYe4O
- Ja78kV5OCs+EAPPBUdGtJOQvlsehgYdLxR0n4Mr8I/6qdcpoDRbDZjIHygkPYQ
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Add missing vbus-supply link to phy controller for usb_phy0
+and usb_phy1 nodes, this changes fixed the power issue
+on usb ports usb, changes help fix usb reset warning.
 
---OXfL5xGRrasGEqWY
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+[  821.991470] usb 1-1.2: reset high-speed USB device number 3 using dwc2
+[  825.243385] usb 1-1.2: reset high-speed USB device number 3 using dwc2
+[  828.151310] usb 1-1.2: reset high-speed USB device number 3 using dwc2
+[  830.991241] usb 1-1.2: reset high-speed USB device number 3 using dwc2
 
-On Thu, Jan 10, 2019 at 03:11:38PM +0000, Christophe Leroy wrote:
-> The purpose of this serie is to:
-> - use BATs with STRICT_KERNEL_RWX on book3s (See patch 12 for details.)
-> - use LTLBs with STRICT_KERNEL_RWX on 8xx (See patch 14 for a few details=
-=2E)
+Fixes: 2eb79a4d15ff (ARM: dts: meson: enabling the USB Host controller on Odroid-C1/C1+ board)
+Cc: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Cc: Jerome Brunet <jbrunet@baylibre.com>
+Cc: Neil Armstrong <narmstrong@baylibre.com>
+Signed-off-by: Anand Moon <linux.amoon@gmail.com>
+---
+Rebased on Kevin's amlogic/v5.0/fixes branch
 
-Hi,
+[alarm@archl-c1t ~]$ lsusb -t
+/:  Bus 01.Port 1: Dev 1, Class=root_hub, Driver=dwc2/1p, 480M
+    |__ Port 1: Dev 2, If 0, Class=Hub, Driver=hub/4p, 480M
+        |__ Port 1: Dev 4, If 0, Class=Mass Storage, Driver=usb-storage, 480M
+        |__ Port 3: Dev 3, If 0, Class=Video, Driver=uvcvideo, 480M
+        |__ Port 3: Dev 3, If 1, Class=Video, Driver=uvcvideo, 480M
+        |__ Port 3: Dev 3, If 2, Class=Audio, Driver=snd-usb-audio, 480M
+        |__ Port 3: Dev 3, If 3, Class=Audio, Driver=snd-usb-audio, 480M
+[alarm@archl-c1t ~]$
+[alarm@archl-c1t ~]$ lsusb -v|egrep "^Bus|MaxPower"
+Couldn't open device, some information will be missing
+Bus 001 Device 003: ID 1b71:0056 Fushicai
+    MaxPower              500mA
+Couldn't open device, some information will be missing
+Bus 001 Device 004: ID 152d:0578 JMicron Technology Corp. / JMicron USA Technology Corp. JMS567 SATA 6Gb/s bridge
+    MaxPower               30mA
+Couldn't open device, some information will be missing
+Couldn't open device, some information will be missing
+Bus 001 Device 002: ID 05e3:0610 Genesys Logic, Inc. 4-port hub
+    MaxPower              100mA
+Bus 001 Device 001: ID 1d6b:0002 Linux Foundation 2.0 root hub
+    MaxPower                0mA
+---
+ arch/arm/boot/dts/meson8b-odroidc1.dts | 23 +++++++++++++++++++++++
+ 1 file changed, 23 insertions(+)
 
-I just tested the whole series on my Wii (I didn't test any intermediate
-steps). Without CONFIG_STRICT_KERNEL_RWX, it seems to work fine, but
-with it, I get the following error while booting:
+diff --git a/arch/arm/boot/dts/meson8b-odroidc1.dts b/arch/arm/boot/dts/meson8b-odroidc1.dts
+index 0f0a46ddf3ff..a49a8509b288 100644
+--- a/arch/arm/boot/dts/meson8b-odroidc1.dts
++++ b/arch/arm/boot/dts/meson8b-odroidc1.dts
+@@ -83,6 +83,19 @@
+ 		regulator-max-microvolt = <5000000>;
+ 	};
+ 
++	usb_vbus: regulator-usb-vbus {
++		compatible = "regulator-fixed";
++
++		regulator-name = "USB_VBUS";
++		regulator-min-microvolt = <5000000>;
++		regulator-max-microvolt = <5000000>;
++
++		vin-supply = <&p5v0>;
++
++		gpio = <&gpio_ao GPIOAO_5 GPIO_ACTIVE_HIGH>;
++		enable-active-high;
++	};
++
+ 	tflash_vdd: regulator-tflash_vdd {
+ 		/*
+ 		 * signal name from schematics: TFLASH_VDD_EN
+@@ -293,8 +306,18 @@
+ 	pinctrl-names = "default";
+ };
+ 
++&usb0_phy {
++	status = "okay";
++	vbus-supply = <&usb_vbus>;
++};
++
+ &usb1_phy {
+ 	status = "okay";
++	vbus-supply = <&usb_vbus>;
++};
++
++&usb0 {
++	status = "okay";
+ };
+ 
+ &usb1 {
+-- 
+2.20.1
 
-> top of MEM2 @ 13F00000
->=20
-> zImage starting: loaded at 0x01000000 (sp: 0x0178afa0)
-> Allocating 0x166b2c8 bytes for kernel...
-> Decompressing (0x00000000 <- 0x01011000:0x01788398)...
-> Done! Decompressed 0xf421f4 bytes
->=20
-> Linux/PowerPC load: root=3D/dev/mmcblk0p2 rootwait console=3Dusbgecko1
-> Finalizing device tree... flat tree at 0x178b7a0
-> [    0.000000] printk: bootconsole [udbg0] enabled
-> [    0.000000] Kernel panic - not syncing: ERROR: Failed to allocate 0x00=
-100000 bytes below 0x00000000.
-> [    0.000000] CPU: 0 PID: 0 Comm: swapper Not tainted 5.0.0-rc1-wii-0003=
-8-g335347fa417f #1337
-> [    0.000000] Call Trace:
-> [    0.000000] [c0f1ff30] [c00280f0] panic+0x144/0x324 (unreliable)
-> [    0.000000] [c0f1ff90] [c0c18a34] memblock_alloc_base+0x34/0x44
-> [    0.000000] [c0f1ffa0] [c0c071e0] MMU_init_hw+0xcc/0x300
-> [    0.000000] [c0f1ffd0] [c0c06554] MMU_init+0x12c/0x198
-> [    0.000000] [c0f1fff0] [c0003418] start_here+0x40/0x78
-> [    0.000000] Rebooting in 180 seconds..
-
-
-Jonathan
-
---OXfL5xGRrasGEqWY
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEvHAHGBBjQPVy+qvDCDBEmo7zX9sFAlw7gGEACgkQCDBEmo7z
-X9sVVQ/7B0BQL0ny6kEQ4OShT740VnQ2CNr2HCjQc3OaveJJtn3/vvB1ooc/o48a
-h0ikTC2+uD88s8yErCK0J8qSU/4Oe4S3w6LA7sBQXBsZi4viYUcoB0ypzWAY/MfY
-wuzlbKxUxl7tQRlnHFVp1pxk7Uve0Z94q0XVTM/Vq9oUEKZYa+5Bus7dsgs1aHKQ
-rA80EP9Uj5iPB6QCP3wrynvxc4rfZb2vZJFKGQ6dn2A4bi8Cnz/hfPNQRaNLtuyS
-yjmvy0xYc6s59Um7NTMkKYxG2sR87lt5Ugkma3eOVk47W1nYmg/Whg2/qMZ3sES6
-epo8ygw1Ec2zOumLrKZzDMt3cKeeDL/EAgSIJb8Go57KvZP0iav8/qEJ4PJAXhqi
-X1AJeStpZVUK/DaTXCecfzj25Ct+R3dJIRDjPrZUbE43Oh2KvV965sXopFPdy1MK
-47QodYciVPId6cQ7MSHRpdum38vRU1w7SH3Oz0S02+t4FdAbT3YLiZxqnH80QPrf
-7BXizhM202aRctcg8fiQCZV//AiLtvoxVhCrrweY7Y6eb1AQjB35/Zg5kY/3v53k
-YhkbPLLqzi5P9PcTJHesjEVlCxk0E0aLh6yOBoETMujRk6Jq55YYgei3EdU/5KEW
-Mvd+ozhX62e+7RbePfsByi1fb+qJ7L8UZzGHZKpdUpCtCAzRswc=
-=EeTK
------END PGP SIGNATURE-----
-
---OXfL5xGRrasGEqWY--
