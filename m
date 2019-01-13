@@ -4,110 +4,77 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A3B74C43612
-	for <linux-kernel@archiver.kernel.org>; Sun, 13 Jan 2019 03:55:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DAE77C43387
+	for <linux-kernel@archiver.kernel.org>; Sun, 13 Jan 2019 03:56:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6FE2420879
-	for <linux-kernel@archiver.kernel.org>; Sun, 13 Jan 2019 03:55:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A76822086C
+	for <linux-kernel@archiver.kernel.org>; Sun, 13 Jan 2019 03:56:06 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="TYv4qvYA"
+	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="lawB02I0"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726741AbfAMDzE (ORCPT
+        id S1726758AbfAMD4F (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 12 Jan 2019 22:55:04 -0500
-Received: from conssluserg-02.nifty.com ([210.131.2.81]:17926 "EHLO
-        conssluserg-02.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726482AbfAMDzD (ORCPT
+        Sat, 12 Jan 2019 22:56:05 -0500
+Received: from conssluserg-06.nifty.com ([210.131.2.91]:25547 "EHLO
+        conssluserg-06.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726482AbfAMD4F (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 12 Jan 2019 22:55:03 -0500
-Received: from mail-ua1-f46.google.com (mail-ua1-f46.google.com [209.85.222.46]) (authenticated)
-        by conssluserg-02.nifty.com with ESMTP id x0D3srFW012197;
-        Sun, 13 Jan 2019 12:54:54 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-02.nifty.com x0D3srFW012197
+        Sat, 12 Jan 2019 22:56:05 -0500
+Received: from mail-vs1-f51.google.com (mail-vs1-f51.google.com [209.85.217.51]) (authenticated)
+        by conssluserg-06.nifty.com with ESMTP id x0D3tfnP013694;
+        Sun, 13 Jan 2019 12:55:42 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-06.nifty.com x0D3tfnP013694
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1547351694;
-        bh=MLmbrY6gJCTsikFhFlVTaYkEc7iRoLO5sQPpeaPromQ=;
+        s=dec2015msa; t=1547351742;
+        bh=Cz+mUGPi0ZOxPey1yolKlUq6MURSCdMne9+w+ERo5Ak=;
         h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=TYv4qvYAhAUY4Yf+xESqNRBLmxvN0q4t9JwZiJK6pVjZYXWNERrnS8zNkKeZu4/Uc
-         U6Mw57M16JtcRktQzJYRooRMZcUaPmNeNa7nY8KyGzvor5AUwnZ8MQGdQuIpEPCCo8
-         t+7HVH+voB7SpwWJB0Q9LwVaQNUgioQdDFl50L6rnxH4SQdL9M1s3RjROWx/5WRAQB
-         Uhy5KMWylWOOpnABTz50RjTwrpGSEpORaeVeRQku7vPefHEpAagH/U80G6Nb3aV1N4
-         46F8lKKDrIgFNOQdeBBiTsh9FgRnoyji61SS2BghUE7eicsv6ZpjxAoBhmT3wQSCQ6
-         I2NWLpHn9uk6g==
-X-Nifty-SrcIP: [209.85.222.46]
-Received: by mail-ua1-f46.google.com with SMTP id z11so6005602uaa.10;
-        Sat, 12 Jan 2019 19:54:54 -0800 (PST)
-X-Gm-Message-State: AJcUukfD+QQMg7ba0PKLnAHiwe6yVx2QJaDNKs+arF68wUYPInOLxyMr
-        rO2JHXMhAPPbGqydBUWJ0V1+I1y2a6iPZD0ObGs=
-X-Google-Smtp-Source: ALg8bN5M1A0NBZiSgrQWfrdkLRFMVTyjW2zzXhOQAi8esyI6dtiOu37jEhlUfiUKUUMrfP0agf3s1jssQG+hgB+Nb9Q=
-X-Received: by 2002:a9f:3193:: with SMTP id v19mr7671495uad.55.1547351693047;
- Sat, 12 Jan 2019 19:54:53 -0800 (PST)
+        b=lawB02I0dftRjhCy1oxCzyP1EvnjWwU3KH6viCLfD2uWaz4PtVG31YUlYjTJv/hBU
+         h8ujkG8bwd8TxIhU36NEZ0HkaznSHQCXlg/vxd83kGMUn6VnNbFNq8aH4DbPMjb6ij
+         1bLTbd0D43/RiUg2RoZm2tcmVcT0RzEqn5DCVjgvlMo3DbgV4pY0Xg+6vqpG4JU+3i
+         EEdbG7htwn+S24WJofHGLjOIsufEGtxUNlFoyRRGLIpSGui7APFP55hXpE67SjVZ9R
+         GyOam0QP7suLHEQoS8LCl1H1j6pDPmBcLqVKui1KeOMMBIV2YeBA5xWUmTpqq0NPMR
+         BJH7uriFv0/Cw==
+X-Nifty-SrcIP: [209.85.217.51]
+Received: by mail-vs1-f51.google.com with SMTP id e7so11702184vsc.2;
+        Sat, 12 Jan 2019 19:55:42 -0800 (PST)
+X-Gm-Message-State: AJcUukfT6bUBuc+1XH0ka+OK4Iklr+W/qrgjCO0RqA8Wz1yYMDgxKJMS
+        oyGi6MoKYvejvSHDSDHzv3s+wTVWdEjwXuGGJbo=
+X-Google-Smtp-Source: ALg8bN7N71gml+jJp/1U/XZAmJ1kC92bwJzd+jIyywRaIW1ko99xdKOEOjueGdbcbGT57eNImTh1Y2gFhKegCfZUAKs=
+X-Received: by 2002:a67:f1c2:: with SMTP id v2mr8377813vsm.181.1547351740782;
+ Sat, 12 Jan 2019 19:55:40 -0800 (PST)
 MIME-Version: 1.0
-References: <CAK7LNAS-r4gZOxdJCNaQwHtOYbxHbdupu57qncWkE+bhGfb_7g@mail.gmail.com>
- <20190111190538.6744-1-paul.burton@mips.com>
-In-Reply-To: <20190111190538.6744-1-paul.burton@mips.com>
+References: <1547175108-14744-1-git-send-email-yamada.masahiro@socionext.com>
+In-Reply-To: <1547175108-14744-1-git-send-email-yamada.masahiro@socionext.com>
 From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-Date:   Sun, 13 Jan 2019 12:54:17 +0900
-X-Gmail-Original-Message-ID: <CAK7LNATEs-+GcVohYPLW3sVMDfpLNtT3dbRYcO5FNqJTf9G5SA@mail.gmail.com>
-Message-ID: <CAK7LNATEs-+GcVohYPLW3sVMDfpLNtT3dbRYcO5FNqJTf9G5SA@mail.gmail.com>
-Subject: Re: [PATCH v2] kbuild: Disable LD_DEAD_CODE_DATA_ELIMINATION with
- ftrace & GCC <= 4.7
-To:     Paul Burton <paul.burton@mips.com>
-Cc:     "linux-kbuild@vger.kernel.org" <linux-kbuild@vger.kernel.org>,
-        "linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Paul Burton <pburton@wavecomp.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        "stable@vger.kernel.org" <stable@vger.kernel.org>
+Date:   Sun, 13 Jan 2019 12:55:05 +0900
+X-Gmail-Original-Message-ID: <CAK7LNAT6fB=97RMmxNxEc4vAJL8+3pS4SSpa8ntKXGqRAvPUSA@mail.gmail.com>
+Message-ID: <CAK7LNAT6fB=97RMmxNxEc4vAJL8+3pS4SSpa8ntKXGqRAvPUSA@mail.gmail.com>
+Subject: Re: [PATCH] kconfig: clean generated *conf-cfg files
+To:     Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Jan 12, 2019 at 6:00 AM Paul Burton <paul.burton@mips.com> wrote:
+On Fri, Jan 11, 2019 at 2:12 PM Masahiro Yamada
+<yamada.masahiro@socionext.com> wrote:
 >
-> When building using GCC 4.7 or older, -ffunction-sections & the -pg flag
-> used by ftrace are incompatible. This causes warnings or build failures
-> (where -Werror applies) such as the following:
+> I accidentally dropped '*' in the previous renaming patch.
 >
->   arch/mips/generic/init.c:
->     error: -ffunction-sections disabled; it makes profiling impossible
+> Revive it so that 'make mrproper' can clean the generated files.
 >
-> This used to be taken into account by the ordering of calls to cc-option
-> from within the top-level Makefile, which was introduced by commit
-> 90ad4052e85c ("kbuild: avoid conflict between -ffunction-sections and
-> -pg on gcc-4.7"). Unfortunately this was broken when the
-> CONFIG_LD_DEAD_CODE_DATA_ELIMINATION cc-option check was moved to
-> Kconfig in commit e85d1d65cd8a ("kbuild: test dead code/data elimination
-> support in Kconfig"), because the flags used by this check no longer
-> include -pg.
->
-> Fix this by not allowing CONFIG_LD_DEAD_CODE_DATA_ELIMINATION to be
-> enabled at the same time as ftrace/CONFIG_FUNCTION_TRACER when building
-> using GCC 4.7 or older.
->
-> Signed-off-by: Paul Burton <paul.burton@mips.com>
-> Fixes: e85d1d65cd8a ("kbuild: test dead code/data elimination support in Kconfig")
-> Reported-by: Geert Uytterhoeven <geert@linux-m68k.org>
-> Cc: Masahiro Yamada <yamada.masahiro@socionext.com>
-> Cc: Nicholas Piggin <npiggin@gmail.com>
-> Cc: stable@vger.kernel.org # v4.19+
-> Cc: linux-kbuild@vger.kernel.org
-> Cc: linux-mips@vger.kernel.org
-> Cc: linux-kernel@vger.kernel.org
+> Fixes: d86271af6460 ("kconfig: rename generated .*conf-cfg to *conf-cfg")
+> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
 > ---
-> Changes in v2:
-> - Invert the dependency as Masahiro suggested.
 
 
 Applied to linux-kbuild/fixes.
 
 
-Thanks!
 
 
 -- 
