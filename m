@@ -2,145 +2,75 @@ Return-Path: <SRS0=GEt/=PV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-10.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A5B7C43387
-	for <linux-kernel@archiver.kernel.org>; Sun, 13 Jan 2019 02:17:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DF58BC43387
+	for <linux-kernel@archiver.kernel.org>; Sun, 13 Jan 2019 02:40:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 21D6820870
-	for <linux-kernel@archiver.kernel.org>; Sun, 13 Jan 2019 02:17:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A9B722133F
+	for <linux-kernel@archiver.kernel.org>; Sun, 13 Jan 2019 02:40:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1547347254;
+	bh=a9m+OtFuKnp20GxOytToM0mpD+ugRqPkn6hncnYCeIk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=nZRG43suSmXoggc4C19UTPIzHuvgjHQxlU7Uiwi1HqAPHHWWSXPRaEEOMB6oq8Ffn
+	 +7AVeGI+EdOggseKwKvqGDNE+DX2QCXfxasiXpR150fJj6pwIoPjSAtT0dZCX+2zbl
+	 Zmhcd9pPH+/fX/7WUa8HyPXwz9xaCxfQRAqxos5o=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726751AbfAMCRu (ORCPT
+        id S1726622AbfAMCkx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 12 Jan 2019 21:17:50 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:59792 "EHLO mx1.redhat.com"
+        Sat, 12 Jan 2019 21:40:53 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60236 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726472AbfAMCRt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 12 Jan 2019 21:17:49 -0500
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        id S1726472AbfAMCkx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 12 Jan 2019 21:40:53 -0500
+Received: from dragon (61-216-91-114.HINET-IP.hinet.net [61.216.91.114])
+        (using TLSv1.2 with cipher DHE-RSA-AES128-SHA (128/128 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 30EBE83F46;
-        Sun, 13 Jan 2019 02:17:48 +0000 (UTC)
-Received: from colo-mx.corp.redhat.com (colo-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.20])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id C313B6C203;
-        Sun, 13 Jan 2019 02:17:47 +0000 (UTC)
-Received: from zmail21.collab.prod.int.phx2.redhat.com (zmail21.collab.prod.int.phx2.redhat.com [10.5.83.24])
-        by colo-mx.corp.redhat.com (Postfix) with ESMTP id 4C29518005AF;
-        Sun, 13 Jan 2019 02:17:47 +0000 (UTC)
-Date:   Sat, 12 Jan 2019 21:17:46 -0500 (EST)
-From:   Pankaj Gupta <pagupta@redhat.com>
-To:     Dan Williams <dan.j.williams@intel.com>
-Cc:     Jan Kara <jack@suse.cz>, KVM list <kvm@vger.kernel.org>,
-        David Hildenbrand <david@redhat.com>,
-        linux-nvdimm <linux-nvdimm@ml01.01.org>,
-        Jason Wang <jasowang@redhat.com>,
-        Dave Chinner <david@fromorbit.com>,
-        Qemu Developers <qemu-devel@nongnu.org>,
-        virtualization@lists.linux-foundation.org,
-        adilger kernel <adilger.kernel@dilger.ca>,
-        Ross Zwisler <zwisler@kernel.org>,
-        dave jiang <dave.jiang@intel.com>,
-        darrick wong <darrick.wong@oracle.com>,
-        vishal l verma <vishal.l.verma@intel.com>,
-        "Michael S. Tsirkin" <mst@redhat.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Christoph Hellwig <hch@infradead.org>,
-        Linux ACPI <linux-acpi@vger.kernel.org>,
-        jmoyer <jmoyer@redhat.com>,
-        linux-ext4 <linux-ext4@vger.kernel.org>,
-        Rik van Riel <riel@surriel.com>,
-        Stefan Hajnoczi <stefanha@redhat.com>,
-        Igor Mammedov <imammedo@redhat.com>, lcapitulino@redhat.com,
-        Kevin Wolf <kwolf@redhat.com>,
-        Nitesh Narayan Lal <nilal@redhat.com>,
-        Theodore Ts'o <tytso@mit.edu>,
-        xiaoguangrong eric <xiaoguangrong.eric@gmail.com>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-xfs <linux-xfs@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Paolo Bonzini <pbonzini@redhat.com>
-Message-ID: <540171952.63371441.1547345866585.JavaMail.zimbra@redhat.com>
-In-Reply-To: <CAPcyv4hwcgTUpgNCefCGu4DvgkYBp5b=f+hJ+FC=s5APYKoycg@mail.gmail.com>
-References: <20190109144736.17452-1-pagupta@redhat.com> <20190110012617.GA4205@dastard> <20190110101757.GC15790@quack2.suse.cz> <1354249849.63357171.1547343519970.JavaMail.zimbra@redhat.com> <CAPcyv4hwcgTUpgNCefCGu4DvgkYBp5b=f+hJ+FC=s5APYKoycg@mail.gmail.com>
-Subject: Re: [Qemu-devel] [PATCH v3 0/5] kvm "virtio pmem" device
+        by mail.kernel.org (Postfix) with ESMTPSA id BFF0C2063F;
+        Sun, 13 Jan 2019 02:40:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1547347252;
+        bh=a9m+OtFuKnp20GxOytToM0mpD+ugRqPkn6hncnYCeIk=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=2iPQ37gHteUV0q1Sr4gXuZ7UMSRC/ImlzB+Ihf5dzcH1dsjaNvQowNnGo0D0/cOBH
+         d2jG9qvME8mqO04My8W+ZvKPcxQKtQq0Ff44gZ7huYMiF/Vvhe1OanjQrkasYIAvAs
+         hdhTY8FK9JdAEFPWgrCTT/wdP2skplo4KegEEthQ=
+Date:   Sun, 13 Jan 2019 10:40:38 +0800
+From:   Shawn Guo <shawnguo@kernel.org>
+To:     Anson Huang <anson.huang@nxp.com>
+Cc:     "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
+        "kernel@pengutronix.de" <kernel@pengutronix.de>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        dl-linux-imx <linux-imx@nxp.com>
+Subject: Re: [PATCH] ARM: dts: imx6sx: correct backward compatible of gpt
+Message-ID: <20190113024036.GE11426@dragon>
+References: <1546077384-5343-1-git-send-email-Anson.Huang@nxp.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.67.116.34, 10.4.195.28]
-Thread-Topic: kvm "virtio pmem" device
-Thread-Index: fIS0FE80De2gpF0vmIHBYz9C3cIQtA==
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.27]); Sun, 13 Jan 2019 02:17:48 +0000 (UTC)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1546077384-5343-1-git-send-email-Anson.Huang@nxp.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-> >
-> >
-> >
-> > >
-> > > On Thu 10-01-19 12:26:17, Dave Chinner wrote:
-> > > > On Wed, Jan 09, 2019 at 08:17:31PM +0530, Pankaj Gupta wrote:
-> > > > >  This patch series has implementation for "virtio pmem".
-> > > > >  "virtio pmem" is fake persistent memory(nvdimm) in guest
-> > > > >  which allows to bypass the guest page cache. This also
-> > > > >  implements a VIRTIO based asynchronous flush mechanism.
-> > > >
-> > > > Hmmmm. Sharing the host page cache direct into the guest VM. Sounds
-> > > > like a good idea, but.....
-> > > >
-> > > > This means the guest VM can now run timing attacks to observe host
-> > > > side page cache residency, and depending on the implementation I'm
-> > > > guessing that the guest will be able to control host side page
-> > > > cache eviction, too (e.g. via discard or hole punch operations).
-> > > >
-> > > > Which means this functionality looks to me like a new vector for
-> > > > information leakage into and out of the guest VM via guest
-> > > > controlled host page cache manipulation.
-> > > >
-> > > > https://arxiv.org/pdf/1901.01161
-> > > >
-> > > > I might be wrong, but if I'm not we're going to have to be very
-> > > > careful about how guest VMs can access and manipulate host side
-> > > > resources like the page cache.....
-> > >
-> > > Right. Thinking about this I would be more concerned about the fact that
-> > > guest can effectively pin amount of host's page cache upto size of the
-> > > device/file passed to guest as PMEM, can't it Pankaj? Or is there some
-> > > QEMU
-> > > magic that avoids this?
-> >
-> > Yes, guest will pin these host page cache pages using 'get_user_pages' by
-> > elevating the page reference count. But these pages can be reclaimed by
-> > host
-> > at any time when there is memory pressure.
+On Sat, Dec 29, 2018 at 10:01:18AM +0000, Anson Huang wrote:
+> i.MX6SX has same GPT type as i.MX6DL, in GPT driver, it uses
+> below TIMER_OF_DECLARE, so the backward compatible should be
+> "fsl,imx6dl-gpt", correct it.
 > 
-> Wait, how can the guest pin the host pages? I would expect this to
-> happen only when using vfio and device assignment. Otherwise, no the
-> host can't reclaim a pinned page, that's the whole point of a pin to
-> prevent the mm from reclaiming ownership.
-
-yes. You are right I just used the pin word but it does not actually pin pages 
-permanently. I had gone through the discussion on existing problems with 
-get_user_pages and DMA e.g [1] to understand Jan's POV. It does mention GUP 
-pin pages so I also used the word 'pin'. But guest does not permanently pin 
-these pages and these pages can be reclaimed by host.
-
+> TIMER_OF_DECLARE(imx6sx_timer, "fsl,imx6sx-gpt", imx6dl_timer_init_dt);
 > 
-> > KVM does not permanently pin pages. vfio does that but we are not using
-> > it here.
-> 
-> Right, so I'm confused by your pin assertion above.
+> Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
 
-Sorry! for the confusion. 
-
-[1] https://lwn.net/Articles/753027/
-
-Thanks,
-Pankaj
+Applied, thanks.
