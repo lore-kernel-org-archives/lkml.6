@@ -2,83 +2,94 @@ Return-Path: <SRS0=GEt/=PV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 97DCDC43387
-	for <linux-kernel@archiver.kernel.org>; Sun, 13 Jan 2019 00:32:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 06BA5C43387
+	for <linux-kernel@archiver.kernel.org>; Sun, 13 Jan 2019 00:35:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 612662086C
-	for <linux-kernel@archiver.kernel.org>; Sun, 13 Jan 2019 00:32:50 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=araneo.si header.i=@araneo.si header.b="aTEaHLeO"
+	by mail.kernel.org (Postfix) with ESMTP id CC6142086C
+	for <linux-kernel@archiver.kernel.org>; Sun, 13 Jan 2019 00:35:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726570AbfAMAct (ORCPT
+        id S1726603AbfAMAft convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 12 Jan 2019 19:32:49 -0500
-Received: from BSN-77-101-244.static.siol.net ([193.77.101.244]:43480 "EHLO
-        araneo.si" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726412AbfAMAct (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 12 Jan 2019 19:32:49 -0500
-X-Greylist: delayed 398 seconds by postgrey-1.27 at vger.kernel.org; Sat, 12 Jan 2019 19:32:48 EST
-Received: from araneo.si (localhost.lan [127.0.0.1])
-        by araneo.si (OpenSMTPD) with ESMTP id b0aeee70;
-        Sun, 13 Jan 2019 00:26:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha1; c=relaxed; d=araneo.si; h=from:to:cc
-        :subject:date:message-id:mime-version:content-transfer-encoding;
-         s=20180623; bh=WYcNJzRkBf9RHhM51jGxPIUl8eY=; b=aTEaHLeOvRzZa6Ub
-        HXoBN6O4i7lDaWY0sSZaH+q9N/sNrKv46ZvtoWqosP0VZRFu0bk2n5dPH3El3EO6
-        AWW4Yky1ej87I4hBD7Ht1GkfAfJm3JnYSOEVJti07gxD6DCKW893SJrw7ZK1juz6
-        GFV/FVJtDKn3hBLrZ+99OeH7e0hQ1CoPEzhSAwEpYRcVprwjZr4XceAuDAVcEjnP
-        hJKyKGTNLY7qWeweRjhIRUzIu6IzXoGtX52gIBRSO1ee/bUYqWxLkHYQgyWRehy0
-        DJrmktcY1DJTccKQk772+eHyZqfETF/NwFzenIFwrgvkzsVVNqanrgoJBavZsr/j
-        RScdoQ==
-Received: by araneo.si (OpenSMTPD) with ESMTPSA id 25b476e9 (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256:NO);
-        Sun, 13 Jan 2019 00:26:07 +0000 (UTC)
-From:   Timotej Lazar <timotej.lazar@araneo.si>
-To:     "David S. Miller" <davem@davemloft.net>
-Cc:     Andrew Lunn <andrew@lunn.ch>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Heiner Kallweit <hkallweit1@gmail.com>,
-        Kevin Hilman <khilman@baylibre.com>, netdev@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Timotej Lazar <timotej.lazar@araneo.si>
-Subject: [PATCH net] net: phy: meson-gxl: Use the genphy_soft_reset callback
-Date:   Sun, 13 Jan 2019 01:22:55 +0100
-Message-Id: <20190113002255.15310-1-timotej.lazar@araneo.si>
-X-Mailer: git-send-email 2.19.1
+        Sat, 12 Jan 2019 19:35:49 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:53017 "EHLO
+        mail.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726412AbfAMAfs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 12 Jan 2019 19:35:48 -0500
+Received: from [IPv6:2607:fb90:3095:7b5f:c01c:f28c:b0dd:a254] ([172.58.39.235])
+        (authenticated bits=0)
+        by mail.zytor.com (8.15.2/8.15.2) with ESMTPSA id x0D0YWXP1361972
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NO);
+        Sat, 12 Jan 2019 16:34:33 -0800
+Date:   Sat, 12 Jan 2019 16:34:24 -0800
+User-Agent: K-9 Mail for Android
+In-Reply-To: <CAHk-=wgQR1RfjA9V70cL-vTrhYBF9FWhPRaZahQuDaSazL+kAQ@mail.gmail.com>
+References: <cover.1547073843.git.jpoimboe@redhat.com> <20190110203023.GL2861@worktop.programming.kicks-ass.net> <20190110205226.iburt6mrddsxnjpk@treble> <CAHk-=whR7LzKcuB9Z2km1T25DUkJcbE9rNhCzApAPADbDqMhmQ@mail.gmail.com> <CALCETrWBwTVHWXahVXMMBL4QA1f+YdKgv1XANXPsk86FjFFH2Q@mail.gmail.com> <B374297A-8298-4CED-8EC0-6A39BDBA5F05@vmware.com> <20190111151525.tf7lhuycyyvjjxez@treble> <CAHk-=wjJm8DpCsw=Wno01q4VFqUeiLKE8QmbAtUJurYhn3jRqA@mail.gmail.com> <12578A17-E695-4DD5-AEC7-E29FAB2C8322@zytor.com> <CAHk-=wgQR1RfjA9V70cL-vTrhYBF9FWhPRaZahQuDaSazL+kAQ@mail.gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: 8BIT
+Subject: Re: [PATCH v3 0/6] Static calls
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+CC:     Josh Poimboeuf <jpoimboe@redhat.com>,
+        Nadav Amit <namit@vmware.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        the arch/x86 maintainers <x86@kernel.org>,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Jason Baron <jbaron@akamai.com>, Jiri Kosina <jkosina@suse.cz>,
+        David Laight <David.Laight@aculab.com>,
+        Borislav Petkov <bp@alien8.de>,
+        Julia Cartwright <julia@ni.com>, Jessica Yu <jeyu@kernel.org>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        Edward Cree <ecree@solarflare.com>,
+        Daniel Bristot de Oliveira <bristot@redhat.com>
+From:   hpa@zytor.com
+Message-ID: <80677AF9-A8C9-404D-B30E-AE1A8D20EDD8@zytor.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Since the referenced commit, Ethernet fails to come up at boot on the
-board meson-gxl-s905x-libretech-cc. Fix this by re-enabling the
-genphy_soft_reset callback for the Amlogic Meson GXL PHY driver.
+On January 11, 2019 11:34:34 AM PST, Linus Torvalds <torvalds@linux-foundation.org> wrote:
+>On Fri, Jan 11, 2019 at 11:24 AM <hpa@zytor.com> wrote:
+>>
+>> I still don't see why can't simply spin in the #BP handler until the
+>patch is complete.
+>
+>So here's at least one problem:
+>
+>text_poke_bp()
+>  text_poke(addr, &int3, sizeof(int3));
+>   *interrupt*
+>      interrupt has a static call
+>        *BP*
+>          poke_int3_handler
+>             *BOOM*
+>
+>Note how at BOOM we cannot just spin (or return) to wait for the
+>'int3' to be switched back. Becuase it never will. Because we are
+>interrupting the thing that would do that switch-back.
+>
+>So we'd have to do the 'text_poke_bp()' sequence with interrupts
+>disabled. Which we can't do right now at least, because part of that
+>sequence involves that on_each_cpu(do_sync_core) thing, which needs
+>interrupts enabled.
+>
+>See?
+>
+>Or am I missing something?
+>
+>            Linus
 
-Fixes: 6e2d85ec0559 ("net: phy: Stop with excessive soft reset")
-Signed-off-by: Timotej Lazar <timotej.lazar@araneo.si>
----
- drivers/net/phy/meson-gxl.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/drivers/net/phy/meson-gxl.c b/drivers/net/phy/meson-gxl.c
-index b03bcf2c388a..3ddaf9595697 100644
---- a/drivers/net/phy/meson-gxl.c
-+++ b/drivers/net/phy/meson-gxl.c
-@@ -233,6 +233,7 @@ static struct phy_driver meson_gxl_phy[] = {
- 		.name		= "Meson GXL Internal PHY",
- 		.features	= PHY_BASIC_FEATURES,
- 		.flags		= PHY_IS_INTERNAL,
-+		.soft_reset     = genphy_soft_reset,
- 		.config_init	= meson_gxl_config_init,
- 		.aneg_done      = genphy_aneg_done,
- 		.read_status	= meson_gxl_read_status,
+Let me think about it.
 -- 
-2.20.1
-
+Sent from my Android device with K-9 Mail. Please excuse my brevity.
