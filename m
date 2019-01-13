@@ -6,61 +6,63 @@ X-Spam-Status: No, score=-10.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D828AC43387
-	for <linux-kernel@archiver.kernel.org>; Sun, 13 Jan 2019 18:05:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8ECB5C43387
+	for <linux-kernel@archiver.kernel.org>; Sun, 13 Jan 2019 18:05:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A7B582064C
-	for <linux-kernel@archiver.kernel.org>; Sun, 13 Jan 2019 18:05:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 660982064C
+	for <linux-kernel@archiver.kernel.org>; Sun, 13 Jan 2019 18:05:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547402703;
-	bh=rYRu6Bq4/JDvYGfL+BUCJKvae7pf2efD3mk2+Eha+O8=;
+	s=default; t=1547402708;
+	bh=/qdZ8pMA1wY1OqleipTZgM5qjSC2X0oxTcZFYnGDN/U=;
 	h=Subject:From:In-Reply-To:References:Date:To:Cc:List-ID:From;
-	b=K+hEAloHeiLAV9S8Lt58nvPSRPIsT/lZJC3qZ3Q8t3KLCkdYYD+yrFJ2l2eBp34F7
-	 oFEi1Abeiv//oJ931HsEIOcNqeav3XI9cY53Q/aKelEaUBgMWfSPN2i2gBxifFsBhX
-	 nIRcRglMMUIdmXAqcuwv8Hm3kvesRcRXFYjCtsLE=
+	b=euzjRgrDyONYAZngYra2mYpBhv/lzpjf4H3Fm5ysrDU3vr8SY0EgXnQNpBQwzXggp
+	 QUy4oAVSolpSwp56ek1+SIIL0IVsLy/SPdND804gTS5qk9s9Xau7jIidAYAfn2VVYr
+	 4p7xR9V1I7Hf/nBW2wNkX3KeO6ljwxll2rQ1SNuE=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726559AbfAMSFD (ORCPT
+        id S1726609AbfAMSFD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Sun, 13 Jan 2019 13:05:03 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34352 "EHLO mail.kernel.org"
+Received: from mail.kernel.org ([198.145.29.99]:34362 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726254AbfAMSFC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1726436AbfAMSFC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Sun, 13 Jan 2019 13:05:02 -0500
-Subject: Re: [GIT PULL] USB driver fixes for 5.0-rc2
+Subject: Re: [GIT PULL] TTY/Serial fixes for 5.0-rc2
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547402701;
-        bh=rYRu6Bq4/JDvYGfL+BUCJKvae7pf2efD3mk2+Eha+O8=;
+        s=default; t=1547402702;
+        bh=/qdZ8pMA1wY1OqleipTZgM5qjSC2X0oxTcZFYnGDN/U=;
         h=From:In-Reply-To:References:Date:To:Cc:From;
-        b=usm5eZl4XDFLEWKr0s5CaelU1hOCt0Pq2A2ZnjChC6UGq5WEuk2dLNVN7r+m42K4N
-         QmMOjwBWNwpwM9Crf/DBZ0vLB6lD5lQqwYfAmVymSWrWvQCJ39wr0HtOZWpoQWNAS8
-         xxjPQ32jNhvE65469mkFujchbnidNxwW9i3Hk5+w=
+        b=sCXJlKJUTGvG89e15BXS6h1qnISop9l+V8WKYsau4DUc64Cok4G3VeylBYpuNhiwb
+         f4CNUsUJp5uNdVQhHoCtOmwQMjJTsesEwq6h0AqGdhfT2iDpgMp3Y9UaWo5CMBV+Ah
+         UwSx867wJ8f3CepMXoZrdq8ys1WdZEBDXg8pY+2A=
 From:   pr-tracker-bot@kernel.org
-In-Reply-To: <20190113102252.GA12640@kroah.com>
-References: <20190113102252.GA12640@kroah.com>
+In-Reply-To: <20190113102316.GA17169@kroah.com>
+References: <20190113102316.GA17169@kroah.com>
 X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20190113102252.GA12640@kroah.com>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/usb.git tags/usb-5.0-rc2
-X-PR-Tracked-Commit-Id: b9fcb0e6b7052b7e2d18fed1d673f8247060c32c
+X-PR-Tracked-Message-Id: <20190113102316.GA17169@kroah.com>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/tty.git tags/tty-5.0-rc2
+X-PR-Tracked-Commit-Id: d3736d82e8169768218ee0ef68718875918091a0
 X-PR-Merge-Tree: torvalds/linux.git
 X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 1dd8a3f6c619723ab442d6a27247d2f2153f3b11
-Message-Id: <154740270186.11831.2910900591500460739.pr-tracker-bot@kernel.org>
-Date:   Sun, 13 Jan 2019 18:05:01 +0000
+X-PR-Merge-Commit-Id: 437e878a6c48028273e4b06be7e09d235b189e62
+Message-Id: <154740270208.11831.4173459838960263884.pr-tracker-bot@kernel.org>
+Date:   Sun, 13 Jan 2019 18:05:02 +0000
 To:     Greg KH <gregkh@linuxfoundation.org>
 Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Jiri Slaby <jslaby@suse.cz>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
         Andrew Morton <akpm@linux-foundation.org>,
-        linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org
+        linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The pull request you sent on Sun, 13 Jan 2019 11:22:52 +0100:
+The pull request you sent on Sun, 13 Jan 2019 11:23:16 +0100:
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/usb.git tags/usb-5.0-rc2
+> git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/tty.git tags/tty-5.0-rc2
 
 has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/1dd8a3f6c619723ab442d6a27247d2f2153f3b11
+https://git.kernel.org/torvalds/c/437e878a6c48028273e4b06be7e09d235b189e62
 
 Thank you!
 
