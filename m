@@ -2,152 +2,86 @@ Return-Path: <SRS0=GEt/=PV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B353BC43387
-	for <linux-kernel@archiver.kernel.org>; Sun, 13 Jan 2019 09:25:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D8E56C43387
+	for <linux-kernel@archiver.kernel.org>; Sun, 13 Jan 2019 09:34:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8BD5120873
-	for <linux-kernel@archiver.kernel.org>; Sun, 13 Jan 2019 09:25:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A2AAD2084C
+	for <linux-kernel@archiver.kernel.org>; Sun, 13 Jan 2019 09:34:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1547372064;
+	bh=tTmbG0fKjhYeY/6+BJTkustCMvgaIqQSPc2wC6EvWCM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=TcM0FOct/crQhwVgxiEu40hu2zK3efV47nTlLHnIvrq3jUCSwWcWCL2XORNFhIheq
+	 F4N19xzY5yuNvjy5z7mHQljYRywRyU6Qa2PB89L9ZImuhUDE+1N7iJMGrvzveMhnaN
+	 a2iSHNNPKwBwzOvSewwF/F0xOMK2v/qztoWtR82M=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726631AbfAMJZH (ORCPT
+        id S1726522AbfAMJeY convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 13 Jan 2019 04:25:07 -0500
-Received: from mail3-relais-sop.national.inria.fr ([192.134.164.104]:60664
-        "EHLO mail3-relais-sop.national.inria.fr" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726522AbfAMJYu (ORCPT
+        Sun, 13 Jan 2019 04:34:24 -0500
+Received: from mail-ed1-f68.google.com ([209.85.208.68]:36398 "EHLO
+        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725989AbfAMJeX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 13 Jan 2019 04:24:50 -0500
-X-IronPort-AV: E=Sophos;i="5.56,473,1539640800"; 
-   d="scan'208";a="291725800"
-Received: from palace.lip6.fr ([132.227.105.202])
-  by mail3-relais-sop.national.inria.fr with ESMTP/TLS/AES128-SHA256; 13 Jan 2019 10:24:46 +0100
-From:   Julia Lawall <Julia.Lawall@lip6.fr>
-To:     Philipp Zabel <p.zabel@pengutronix.de>
-Cc:     kernel-janitors@vger.kernel.org, David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 2/4] drm/imx: imx-ldb: add missing of_node_puts
-Date:   Sun, 13 Jan 2019 09:47:42 +0100
-Message-Id: <1547369264-24831-3-git-send-email-Julia.Lawall@lip6.fr>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1547369264-24831-1-git-send-email-Julia.Lawall@lip6.fr>
-References: <1547369264-24831-1-git-send-email-Julia.Lawall@lip6.fr>
+        Sun, 13 Jan 2019 04:34:23 -0500
+Received: by mail-ed1-f68.google.com with SMTP id f23so16383201edb.3;
+        Sun, 13 Jan 2019 01:34:21 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=bqtD+IZ9XT8e+fGQkEeRwvV8GURM2V1wPqLQ2hCv1EU=;
+        b=TTy3FA8WtesK6fo6GRECeuTCw+H+v/1EXn6Su+0yaxTKNbLVisqy35QnTm6pjBLKHx
+         sP+8pY1f7zcA9mAeGgFb4nIwsgLUW+KoHDg5OdPuyDNsxY8N9gdb+H2WacHifAcawkng
+         lX5uST1dgIz4XAHWsBIC+E429uRQz6MC2MW39zqSxFBNGds+Jwhgvt18/C11e5OxvfTs
+         gutykv2EW8kPHO1u+99/yjQLQPsuUS6EMIGBoAIOXpoRDJLxDTbNrgs7x+PwhLgQRGEn
+         u1/vbKWCwwQwwa1wzV8zczyOuUGCRlX+dPch8uIycT77RF3TUISGrinpmb3UKm6/FRKD
+         zpTw==
+X-Gm-Message-State: AJcUukeY0VyKSHfl03KJKrWmGFiMJuo6mtuR1SEKUhutih8Nr1wwm9pk
+        8pFJCdKT972tjqzqSOyXzm8=
+X-Google-Smtp-Source: ALg8bN5AE0So5HzFbet1Co/Lm594Nx/S201oca+dq0qIQG9W2aj62PRAxT06LnMYNrIrq1qd0zXwkw==
+X-Received: by 2002:a17:906:948d:: with SMTP id t13-v6mr16591106ejx.119.1547372060972;
+        Sun, 13 Jan 2019 01:34:20 -0800 (PST)
+Received: from kozik-lap ([194.230.155.148])
+        by smtp.googlemail.com with ESMTPSA id c29sm3490630eda.75.2019.01.13.01.34.18
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Sun, 13 Jan 2019 01:34:19 -0800 (PST)
+Date:   Sun, 13 Jan 2019 10:34:16 +0100
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+To:     =?utf-8?B?UGF3ZcWC?= Chmiel <pawel.mikolaj.chmiel@gmail.com>
+Cc:     kgene@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com,
+        linux@armlinux.org.uk, viresh.kumar@linaro.org, rjw@rjwysocki.net,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org
+Subject: Re: [PATCH v2 4/4] ARM: defconfig: s5pv210: Add cpufreq support
+Message-ID: <20190113093416.GA27934@kozik-lap>
+References: <20190110205215.22030-1-pawel.mikolaj.chmiel@gmail.com>
+ <20190110205215.22030-5-pawel.mikolaj.chmiel@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8BIT
+In-Reply-To: <20190110205215.22030-5-pawel.mikolaj.chmiel@gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The device node iterators perform an of_node_get on each
-iteration, so a jump out of the loop requires an of_node_put.
+On Thu, Jan 10, 2019 at 09:52:15PM +0100, Paweł Chmiel wrote:
+> This commit enables cpufreq support for all s5pv210 devices.
+> 
+> Signed-off-by: Paweł Chmiel <pawel.mikolaj.chmiel@gmail.com>
+> ---
+>  arch/arm/configs/s5pv210_defconfig | 6 ++++++
 
-Move the initialization channel->child = child; down to just
-before the call to imx_ldb_register so that intervening failures
-don't need to clear it.  Add a label at the end of the function to
-do all the of_node_puts.
+Thanks, applied.
 
-The semantic patch that finds part of this problem is as follows
-(http://coccinelle.lip6.fr):
-
-// <smpl>
-@@
-expression root,e;
-local idexpression child;
-iterator name for_each_child_of_node;
-@@
-
- for_each_child_of_node(root, child) {
-   ... when != of_node_put(child)
-       when != e = child
-(
-   return child;
-|
-*  return ...;
-)
-   ...
- }
-// </smpl>
-
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-
----
-This changes the semantics, with respect to the availability of the child
-field, and has not been tested.
-
- drivers/gpu/drm/imx/imx-ldb.c |   25 +++++++++++++++++--------
- 1 file changed, 17 insertions(+), 8 deletions(-)
-
-diff --git a/drivers/gpu/drm/imx/imx-ldb.c b/drivers/gpu/drm/imx/imx-ldb.c
-index 2c5bbe3..e31e263 100644
---- a/drivers/gpu/drm/imx/imx-ldb.c
-+++ b/drivers/gpu/drm/imx/imx-ldb.c
-@@ -643,8 +643,10 @@ static int imx_ldb_bind(struct device *dev, struct device *master, void *data)
- 		int bus_format;
- 
- 		ret = of_property_read_u32(child, "reg", &i);
--		if (ret || i < 0 || i > 1)
--			return -EINVAL;
-+		if (ret || i < 0 || i > 1) {
-+			ret = -EINVAL;
-+			goto free_child;
-+		}
- 
- 		if (!of_device_is_available(child))
- 			continue;
-@@ -657,7 +659,6 @@ static int imx_ldb_bind(struct device *dev, struct device *master, void *data)
- 		channel = &imx_ldb->channel[i];
- 		channel->ldb = imx_ldb;
- 		channel->chno = i;
--		channel->child = child;
- 
- 		/*
- 		 * The output port is port@4 with an external 4-port mux or
-@@ -667,13 +668,13 @@ static int imx_ldb_bind(struct device *dev, struct device *master, void *data)
- 						  imx_ldb->lvds_mux ? 4 : 2, 0,
- 						  &channel->panel, &channel->bridge);
- 		if (ret && ret != -ENODEV)
--			return ret;
-+			goto free_child;
- 
- 		/* panel ddc only if there is no bridge */
- 		if (!channel->bridge) {
- 			ret = imx_ldb_panel_ddc(dev, channel, child);
- 			if (ret)
--				return ret;
-+				goto free_child;
- 		}
- 
- 		bus_format = of_get_bus_format(dev, child);
-@@ -689,18 +690,26 @@ static int imx_ldb_bind(struct device *dev, struct device *master, void *data)
- 		if (bus_format < 0) {
- 			dev_err(dev, "could not determine data mapping: %d\n",
- 				bus_format);
--			return bus_format;
-+			ret = bus_format;
-+			goto free_child;
- 		}
- 		channel->bus_format = bus_format;
-+		channel->child = child;
- 
- 		ret = imx_ldb_register(drm, channel);
--		if (ret)
--			return ret;
-+		if (ret) {
-+			channel->child = NULL;
-+			goto free_child;
-+		}
- 	}
- 
- 	dev_set_drvdata(dev, imx_ldb);
- 
- 	return 0;
-+
-+free_child:
-+	of_node_put(child);
-+	return ret;
- }
- 
- static void imx_ldb_unbind(struct device *dev, struct device *master,
+Best regards,
+Krzysztof
 
