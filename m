@@ -6,35 +6,34 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 97262C43387
-	for <linux-kernel@archiver.kernel.org>; Sun, 13 Jan 2019 10:22:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0EA57C43387
+	for <linux-kernel@archiver.kernel.org>; Sun, 13 Jan 2019 10:22:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 71B562064C
-	for <linux-kernel@archiver.kernel.org>; Sun, 13 Jan 2019 10:22:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DDC612064C
+	for <linux-kernel@archiver.kernel.org>; Sun, 13 Jan 2019 10:22:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726745AbfAMKWC (ORCPT
+        id S1726771AbfAMKWL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 13 Jan 2019 05:22:02 -0500
-Received: from mail3-relais-sop.national.inria.fr ([192.134.164.104]:47950
+        Sun, 13 Jan 2019 05:22:11 -0500
+Received: from mail3-relais-sop.national.inria.fr ([192.134.164.104]:47959
         "EHLO mail3-relais-sop.national.inria.fr" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726628AbfAMKV5 (ORCPT
+        by vger.kernel.org with ESMTP id S1725875AbfAMKWA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 13 Jan 2019 05:21:57 -0500
+        Sun, 13 Jan 2019 05:22:00 -0500
 X-IronPort-AV: E=Sophos;i="5.56,473,1539640800"; 
-   d="scan'208";a="291728763"
+   d="scan'208";a="291728765"
 Received: from palace.lip6.fr ([132.227.105.202])
   by mail3-relais-sop.national.inria.fr with ESMTP/TLS/AES128-SHA256; 13 Jan 2019 11:21:54 +0100
 From:   Julia Lawall <Julia.Lawall@lip6.fr>
-To:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc:     kernel-janitors@vger.kernel.org,
-        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-        David Airlie <airlied@linux.ie>,
+To:     Neil Armstrong <narmstrong@baylibre.com>
+Cc:     kernel-janitors@vger.kernel.org, David Airlie <airlied@linux.ie>,
         Daniel Vetter <daniel@ffwll.ch>,
-        dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH 1/3] drm: rcar-du: add missing of_node_put
-Date:   Sun, 13 Jan 2019 10:44:49 +0100
-Message-Id: <1547372691-28324-2-git-send-email-Julia.Lawall@lip6.fr>
+        Kevin Hilman <khilman@baylibre.com>,
+        dri-devel@lists.freedesktop.org, linux-amlogic@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 3/3] drm/meson: add missing of_node_put
+Date:   Sun, 13 Jan 2019 10:44:51 +0100
+Message-Id: <1547372691-28324-4-git-send-email-Julia.Lawall@lip6.fr>
 X-Mailer: git-send-email 1.9.1
 In-Reply-To: <1547372691-28324-1-git-send-email-Julia.Lawall@lip6.fr>
 References: <1547372691-28324-1-git-send-email-Julia.Lawall@lip6.fr>
@@ -45,6 +44,9 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 Add an of_node_put when the result of of_graph_get_remote_port_parent is
 not available.
+
+An of_node_put is also needed when meson_probe_remote completes.  This was
+present at the recursive call, but not in the call from meson_drv_probe.
 
 The semantic match that finds this problem is as follows
 (http://coccinelle.lip6.fr):
@@ -69,19 +71,38 @@ return e;
 Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
 ---
- drivers/gpu/drm/rcar-du/rcar_du_kms.c |    1 +
- 1 file changed, 1 insertion(+)
+ drivers/gpu/drm/meson/meson_drv.c |    9 +++++++--
+ 1 file changed, 7 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/gpu/drm/rcar-du/rcar_du_kms.c b/drivers/gpu/drm/rcar-du/rcar_du_kms.c
-index 9c7007d..bc3fcb3 100644
---- a/drivers/gpu/drm/rcar-du/rcar_du_kms.c
-+++ b/drivers/gpu/drm/rcar-du/rcar_du_kms.c
-@@ -331,6 +331,7 @@ static int rcar_du_encoders_init_one(struct rcar_du_device *rcdu,
- 		dev_dbg(rcdu->dev,
- 			"connected entity %pOF is disabled, skipping\n",
- 			entity);
-+		of_node_put(entity);
- 		return -ENODEV;
+diff --git a/drivers/gpu/drm/meson/meson_drv.c b/drivers/gpu/drm/meson/meson_drv.c
+index 3ee4d4a4e..b59c757 100644
+--- a/drivers/gpu/drm/meson/meson_drv.c
++++ b/drivers/gpu/drm/meson/meson_drv.c
+@@ -388,8 +388,10 @@ static int meson_probe_remote(struct platform_device *pdev,
+ 		remote_node = of_graph_get_remote_port_parent(ep);
+ 		if (!remote_node ||
+ 		    remote_node == parent || /* Ignore parent endpoint */
+-		    !of_device_is_available(remote_node))
++		    !of_device_is_available(remote_node)) {
++			of_node_put(remote_node);
+ 			continue;
++		}
+ 
+ 		count += meson_probe_remote(pdev, match, remote, remote_node);
+ 
+@@ -408,10 +410,13 @@ static int meson_drv_probe(struct platform_device *pdev)
+ 
+ 	for_each_endpoint_of_node(np, ep) {
+ 		remote = of_graph_get_remote_port_parent(ep);
+-		if (!remote || !of_device_is_available(remote))
++		if (!remote || !of_device_is_available(remote)) {
++			of_node_put(remote);
+ 			continue;
++		}
+ 
+ 		count += meson_probe_remote(pdev, &match, np, remote);
++		of_node_put(remote);
  	}
  
+ 	if (count && !match)
 
