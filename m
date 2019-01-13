@@ -2,119 +2,114 @@ Return-Path: <SRS0=GEt/=PV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.7 required=3.0 tests=FROM_LOCAL_HEX,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B0D9C43387
-	for <linux-kernel@archiver.kernel.org>; Sun, 13 Jan 2019 03:43:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A3B74C43612
+	for <linux-kernel@archiver.kernel.org>; Sun, 13 Jan 2019 03:55:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 48CE72086C
-	for <linux-kernel@archiver.kernel.org>; Sun, 13 Jan 2019 03:43:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6FE2420879
+	for <linux-kernel@archiver.kernel.org>; Sun, 13 Jan 2019 03:55:06 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="TYv4qvYA"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726705AbfAMDnF (ORCPT
+        id S1726741AbfAMDzE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 12 Jan 2019 22:43:05 -0500
-Received: from mail-io1-f71.google.com ([209.85.166.71]:50084 "EHLO
-        mail-io1-f71.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726482AbfAMDnF (ORCPT
+        Sat, 12 Jan 2019 22:55:04 -0500
+Received: from conssluserg-02.nifty.com ([210.131.2.81]:17926 "EHLO
+        conssluserg-02.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726482AbfAMDzD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 12 Jan 2019 22:43:05 -0500
-Received: by mail-io1-f71.google.com with SMTP id c4so16906638ioh.16
-        for <linux-kernel@vger.kernel.org>; Sat, 12 Jan 2019 19:43:04 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=z6cEJsiELFw/+z00F7p6l5AyBLc0P/kEisQiUaVstkE=;
-        b=n2bpLwREb5veGqXivQM/chKUd7hhxdRe21Qbnq3KaJesY6Vwo0EElImMnaf6p6NkUX
-         SmcONdNWtP0y9+fdrMN8HsfwKOyqeflcpIMvL8HmXABPbq4Voip8T1Hr1yq6QvxvozV3
-         IcmDavVR3zVHVquysvbHgFCkILjGK1PYncyVi+ntsqWvHHzdolXP4vpTl3uNOUQK0ZUG
-         KNHNkxlxET3QUGi/mxG3z3BGQohWxZhOR14bhA+z1Dd61YFMspy0PA5M6rpJBK7yHwLK
-         tC35qmGdxqYZ4VarfTqs3EI9HqUs9+A3ApMNF4aKwXWQhV/vYlC6JdRVAGTfeOs9Q7v9
-         brmQ==
-X-Gm-Message-State: AJcUukeV2UNEeWSClomi7JKHgQtyctq3AGOW+BdBkO3EnxtEGdYIZBDu
-        Wxf6kRP/ZNuMUhCyd5jgx88uwBeDF3pspNo798H/GuaAhxwR
-X-Google-Smtp-Source: ALg8bN60AsZEvihc9AVoVBzqqXcAXp3EFTKnSG9jnYrb6Xv7sysxMHhsns6Jl4J0BG7Ta4lLepxIJG3EEfuxp+EeRVt2tg55IT9X
+        Sat, 12 Jan 2019 22:55:03 -0500
+Received: from mail-ua1-f46.google.com (mail-ua1-f46.google.com [209.85.222.46]) (authenticated)
+        by conssluserg-02.nifty.com with ESMTP id x0D3srFW012197;
+        Sun, 13 Jan 2019 12:54:54 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-02.nifty.com x0D3srFW012197
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1547351694;
+        bh=MLmbrY6gJCTsikFhFlVTaYkEc7iRoLO5sQPpeaPromQ=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=TYv4qvYAhAUY4Yf+xESqNRBLmxvN0q4t9JwZiJK6pVjZYXWNERrnS8zNkKeZu4/Uc
+         U6Mw57M16JtcRktQzJYRooRMZcUaPmNeNa7nY8KyGzvor5AUwnZ8MQGdQuIpEPCCo8
+         t+7HVH+voB7SpwWJB0Q9LwVaQNUgioQdDFl50L6rnxH4SQdL9M1s3RjROWx/5WRAQB
+         Uhy5KMWylWOOpnABTz50RjTwrpGSEpORaeVeRQku7vPefHEpAagH/U80G6Nb3aV1N4
+         46F8lKKDrIgFNOQdeBBiTsh9FgRnoyji61SS2BghUE7eicsv6ZpjxAoBhmT3wQSCQ6
+         I2NWLpHn9uk6g==
+X-Nifty-SrcIP: [209.85.222.46]
+Received: by mail-ua1-f46.google.com with SMTP id z11so6005602uaa.10;
+        Sat, 12 Jan 2019 19:54:54 -0800 (PST)
+X-Gm-Message-State: AJcUukfD+QQMg7ba0PKLnAHiwe6yVx2QJaDNKs+arF68wUYPInOLxyMr
+        rO2JHXMhAPPbGqydBUWJ0V1+I1y2a6iPZD0ObGs=
+X-Google-Smtp-Source: ALg8bN5M1A0NBZiSgrQWfrdkLRFMVTyjW2zzXhOQAi8esyI6dtiOu37jEhlUfiUKUUMrfP0agf3s1jssQG+hgB+Nb9Q=
+X-Received: by 2002:a9f:3193:: with SMTP id v19mr7671495uad.55.1547351693047;
+ Sat, 12 Jan 2019 19:54:53 -0800 (PST)
 MIME-Version: 1.0
-X-Received: by 2002:a24:a94:: with SMTP id 142mr5295600itw.15.1547350983887;
- Sat, 12 Jan 2019 19:43:03 -0800 (PST)
-Date:   Sat, 12 Jan 2019 19:43:03 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000bcd434057f4eb905@google.com>
-Subject: WARNING in tty_set_termios
-From:   syzbot <syzbot+a950165cbb86bdd023a4@syzkaller.appspotmail.com>
-To:     gregkh@linuxfoundation.org, jslaby@suse.com,
-        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+References: <CAK7LNAS-r4gZOxdJCNaQwHtOYbxHbdupu57qncWkE+bhGfb_7g@mail.gmail.com>
+ <20190111190538.6744-1-paul.burton@mips.com>
+In-Reply-To: <20190111190538.6744-1-paul.burton@mips.com>
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+Date:   Sun, 13 Jan 2019 12:54:17 +0900
+X-Gmail-Original-Message-ID: <CAK7LNATEs-+GcVohYPLW3sVMDfpLNtT3dbRYcO5FNqJTf9G5SA@mail.gmail.com>
+Message-ID: <CAK7LNATEs-+GcVohYPLW3sVMDfpLNtT3dbRYcO5FNqJTf9G5SA@mail.gmail.com>
+Subject: Re: [PATCH v2] kbuild: Disable LD_DEAD_CODE_DATA_ELIMINATION with
+ ftrace & GCC <= 4.7
+To:     Paul Burton <paul.burton@mips.com>
+Cc:     "linux-kbuild@vger.kernel.org" <linux-kbuild@vger.kernel.org>,
+        "linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Paul Burton <pburton@wavecomp.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        "stable@vger.kernel.org" <stable@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
-
-syzbot found the following crash on:
-
-HEAD commit:    66c56cfa64d9 Merge tag 'remove-dma_zalloc_coherent-5.0' of..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=167fd6d8c00000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=b05cfdb4ee8ab9b2
-dashboard link: https://syzkaller.appspot.com/bug?extid=a950165cbb86bdd023a4
-compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=121cee07400000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=16fdaed8c00000
-
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+a950165cbb86bdd023a4@syzkaller.appspotmail.com
-
-WARNING: CPU: 0 PID: 1171 at drivers/tty/tty_ioctl.c:319  
-tty_set_termios+0x93a/0xac0 drivers/tty/tty_ioctl.c:319
-Kernel panic - not syncing: panic_on_warn set ...
-CPU: 0 PID: 1171 Comm: kworker/u5:0 Not tainted 5.0.0-rc1+ #22
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-Workqueue: hci0 hci_power_on
-Call Trace:
-  __dump_stack lib/dump_stack.c:77 [inline]
-  dump_stack+0x1db/0x2d0 lib/dump_stack.c:113
-  panic+0x2cb/0x65c kernel/panic.c:214
-  __warn.cold+0x20/0x48 kernel/panic.c:571
-  report_bug+0x263/0x2b0 lib/bug.c:186
-  fixup_bug arch/x86/kernel/traps.c:178 [inline]
-  fixup_bug arch/x86/kernel/traps.c:173 [inline]
-  do_error_trap+0x11b/0x200 arch/x86/kernel/traps.c:271
-  do_invalid_op+0x37/0x50 arch/x86/kernel/traps.c:290
-  invalid_op+0x14/0x20 arch/x86/entry/entry_64.S:973
-RIP: 0010:tty_set_termios+0x93a/0xac0 drivers/tty/tty_ioctl.c:319
-Code: 0f b6 14 02 48 89 f8 83 e0 07 83 c0 03 38 d0 7c 08 84 d2 0f 85 ec 00  
-00 00 41 89 9f d0 03 00 00 e9 f6 fd ff ff e8 d6 18 a8 fd <0f> 0b e9 a9 f7  
-ff ff e8 4a 04 ec fd e9 48 f9 ff ff 4c 89 ef e8 9d
-RSP: 0018:ffff8880a74f7600 EFLAGS: 00010293
-RAX: ffff8880a74d4300 RBX: ffff8880a74f76c0 RCX: ffffffff83d9d62d
-RDX: 0000000000000000 RSI: ffffffff83d9de8a RDI: 0000000000000005
-RBP: ffff8880a74f76e8 R08: ffff8880a74d4300 R09: fffffbfff181d7b5
-R10: fffffbfff181d7b4 R11: 0000000000000003 R12: ffff8880a74f7728
-R13: 0000000000010004 R14: 000000000001c200 R15: ffff88808e3e60c0
-  hci_uart_set_baudrate+0x1cc/0x250 drivers/bluetooth/hci_ldisc.c:378
-  hci_uart_setup+0xa2/0x490 drivers/bluetooth/hci_ldisc.c:401
-  hci_dev_do_open+0x6b1/0x1920 net/bluetooth/hci_core.c:1423
-  hci_power_on+0x10d/0x880 net/bluetooth/hci_core.c:2130
-  process_one_work+0xd0c/0x1ce0 kernel/workqueue.c:2153
-  worker_thread+0x143/0x14a0 kernel/workqueue.c:2296
-  kthread+0x357/0x430 kernel/kthread.c:246
-  ret_from_fork+0x3a/0x50 arch/x86/entry/entry_64.S:352
-Kernel Offset: disabled
-Rebooting in 86400 seconds..
+On Sat, Jan 12, 2019 at 6:00 AM Paul Burton <paul.burton@mips.com> wrote:
+>
+> When building using GCC 4.7 or older, -ffunction-sections & the -pg flag
+> used by ftrace are incompatible. This causes warnings or build failures
+> (where -Werror applies) such as the following:
+>
+>   arch/mips/generic/init.c:
+>     error: -ffunction-sections disabled; it makes profiling impossible
+>
+> This used to be taken into account by the ordering of calls to cc-option
+> from within the top-level Makefile, which was introduced by commit
+> 90ad4052e85c ("kbuild: avoid conflict between -ffunction-sections and
+> -pg on gcc-4.7"). Unfortunately this was broken when the
+> CONFIG_LD_DEAD_CODE_DATA_ELIMINATION cc-option check was moved to
+> Kconfig in commit e85d1d65cd8a ("kbuild: test dead code/data elimination
+> support in Kconfig"), because the flags used by this check no longer
+> include -pg.
+>
+> Fix this by not allowing CONFIG_LD_DEAD_CODE_DATA_ELIMINATION to be
+> enabled at the same time as ftrace/CONFIG_FUNCTION_TRACER when building
+> using GCC 4.7 or older.
+>
+> Signed-off-by: Paul Burton <paul.burton@mips.com>
+> Fixes: e85d1d65cd8a ("kbuild: test dead code/data elimination support in Kconfig")
+> Reported-by: Geert Uytterhoeven <geert@linux-m68k.org>
+> Cc: Masahiro Yamada <yamada.masahiro@socionext.com>
+> Cc: Nicholas Piggin <npiggin@gmail.com>
+> Cc: stable@vger.kernel.org # v4.19+
+> Cc: linux-kbuild@vger.kernel.org
+> Cc: linux-mips@vger.kernel.org
+> Cc: linux-kernel@vger.kernel.org
+> ---
+> Changes in v2:
+> - Invert the dependency as Masahiro suggested.
 
 
----
-This bug is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+Applied to linux-kbuild/fixes.
 
-syzbot will keep track of this bug report. See:
-https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with  
-syzbot.
-syzbot can test patches for this bug, for details see:
-https://goo.gl/tpsmEJ#testing-patches
+
+Thanks!
+
+
+-- 
+Best Regards
+Masahiro Yamada
