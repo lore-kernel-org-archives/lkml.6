@@ -7,82 +7,76 @@ X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 59D18C43387
-	for <linux-kernel@archiver.kernel.org>; Sun, 13 Jan 2019 16:36:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DF127C43387
+	for <linux-kernel@archiver.kernel.org>; Sun, 13 Jan 2019 16:37:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 17798206B6
-	for <linux-kernel@archiver.kernel.org>; Sun, 13 Jan 2019 16:36:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A7B4C20842
+	for <linux-kernel@archiver.kernel.org>; Sun, 13 Jan 2019 16:37:37 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Siqs1CzX"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kEQAxP38"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726721AbfAMQg4 (ORCPT
+        id S1726759AbfAMQhg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 13 Jan 2019 11:36:56 -0500
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:39686 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726619AbfAMQgz (ORCPT
+        Sun, 13 Jan 2019 11:37:36 -0500
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:37424 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726642AbfAMQhg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 13 Jan 2019 11:36:55 -0500
-Received: by mail-lj1-f195.google.com with SMTP id t9-v6so16949386ljh.6;
-        Sun, 13 Jan 2019 08:36:53 -0800 (PST)
+        Sun, 13 Jan 2019 11:37:36 -0500
+Received: by mail-lj1-f193.google.com with SMTP id t18-v6so16940705ljd.4;
+        Sun, 13 Jan 2019 08:37:33 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:subject:to:cc:references:message-id:date:user-agent
+        h=subject:to:cc:references:from:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=Q3/z1xIwkt41XAHr9AISnbGWpHZIbMdKJRVX3kecyds=;
-        b=Siqs1CzX+0ozOj7gew4YdPDFgCRYvgb6Cre0f+GTlrXy+UcVsYYPlSZinoRgkosnqF
-         KwZjPpOY+Jm3Abhjim9WZo33LeoeVG6JLQOYamYyC8UPDPvXntfAL+pf9qn1bF2kcvn1
-         qtTnNeGq407VGbI8/s/hBtq8Qq5zmHEEb4IqujMiO9dOeNY6sXnvWAgzaIiMy4mCK56n
-         NCJTh9esTncbDmZVbuRXZwZzYrsUaTlaz6VVjKDYJnEjY9XP1WacrpdkoHK5emAQBIhc
-         Q9iE7352OS+r8c3H9mynRTBaUJRPngxbl8lX1poQvohX7e0VCshAGHxo7sHWGCfnnh8Q
-         CMPA==
+        bh=dalIR2/3RXjdf0tAuWAfL9lo1TZlPeqfwTim2qoVeWk=;
+        b=kEQAxP38FXUZZmIN0nwtqotddJPXVmBwUiOQvzOdCsNTy0imzL6GvZb4xq3m8CWL7S
+         UNo/kDMdWJkH+srnoTF+rvEiMPXkqCzOkRhh66JflqZi9Xotu8X0u9sbJZdHFF0bKaqz
+         Ksdb411lQgbuP6F8K0ITZ60usqTIb+jiuTnOpW/N9AxHIRsJcgSBlX+RvjdSh6VpYbAZ
+         Dn/CNotVAyvN4bUDP2Iriv0q++xeM6ENGT0rDrg4dOdemwXl1oHkoO9Jubi0/fLIu55h
+         hyZFOCgOCd5aWqc8eKDRdoO32EMcXZSDTAkYSaBapBWHJdhTZRsj/9TWT5eAiVQh82Lf
+         J5JQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:subject:to:cc:references:message-id:date
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=Q3/z1xIwkt41XAHr9AISnbGWpHZIbMdKJRVX3kecyds=;
-        b=lmVjHYiHKk448kZXpHrewI3SUGnejff5icwF45D31QWxOoaGr7E39hmhyYvmzBOqgp
-         LOCrNBPhphnPC0YEv0D335ecCIBIONuPt2kelPj27XNcr02B1A5BtPudCv4vImENNG5z
-         qgqJh7qufYHu7b2MWixRJmzSqTnbnXVb+IBQ31RNLjw8/dp68qzjG9f1/z3kTZ8tUkRh
-         80+xaBl4md5mf8rwcOjRSxal2TSeGNNU5cstEMLD/q8YUXp0JZEKvUfFNv+w6VCWmdKS
-         exZ2jGd2BzRP2L3hk0K37ymsrdwNJbWRqM0kAudqYp6QYIu+BkOTJaYSpzjW3Sdufy3S
-         7mZA==
-X-Gm-Message-State: AJcUukcT4qb917JqM/x2wKGjCGwQmADA9kEjhtpKDRSXhCS/KtH3LuhR
-        xH/9HpXUhY45o+JyKK+ROrRqnRnz
-X-Google-Smtp-Source: ALg8bN7jnzSMh8ng+SKT1db2QLA2VlXSnasNCM0zFwwC6v0WorsnHLOMO2T+U4z8GA/0gdHMEyGQUA==
-X-Received: by 2002:a2e:a289:: with SMTP id k9-v6mr12477959lja.24.1547397412072;
-        Sun, 13 Jan 2019 08:36:52 -0800 (PST)
+        bh=dalIR2/3RXjdf0tAuWAfL9lo1TZlPeqfwTim2qoVeWk=;
+        b=a6RMY0ibRG+duKlB51jYqdNPcvPMo+vNGp2jx6wsHfDR4kcGjqW3zgllYs6TWrJm02
+         l6rkozLWtK2zZfYKNhXaBkEM1keOqDJOlEBsHtHvf+yUA4hwiZQgBhFhO9ptkQNUMjMH
+         tQg4dDCTIHaPrWnlt0x0RoqL7rPN1MXw/oLNv65R9RV8rK1+H0jbh2wUM7NDw7hJhUxh
+         warvLgFXsBp4Q+7wZ/cPigFqWVFIvB8YV5YPxEuPFlPxNgBJR6dkm2wbf+0pzkBlQZ4q
+         K73jSOoZHzHKx818ajLPp6znRWHMMkK0v51VS17d/IYCkiX7SxiWRyUvEbfwarJ3glKV
+         d8Qw==
+X-Gm-Message-State: AJcUuke7rxvBJK374ZwcFZcE0paBtnigi35dZmPzHmGa5PQXrvZdMaz7
+        eJ6jBcKO1hQ18qSh33cGRcV1X111
+X-Google-Smtp-Source: ALg8bN7SmT2z7Ga6DmgemVif/Py+Dz/q0FvR3NdFwJholxW68wcaB6x0f76THYl1t6UF7uoow3EpRQ==
+X-Received: by 2002:a2e:80d3:: with SMTP id r19-v6mr4576559ljg.151.1547397452256;
+        Sun, 13 Jan 2019 08:37:32 -0800 (PST)
 Received: from [192.168.1.18] (chf153.neoplus.adsl.tpnet.pl. [83.31.3.153])
-        by smtp.gmail.com with ESMTPSA id 67-v6sm17017528ljc.26.2019.01.13.08.36.49
+        by smtp.gmail.com with ESMTPSA id r10-v6sm17067640ljj.71.2019.01.13.08.37.30
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 13 Jan 2019 08:36:51 -0800 (PST)
-From:   Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Subject: Re: [PATCH 2/2] leds: lp5024: Add the LP5024/18 RGB LED driver
+        Sun, 13 Jan 2019 08:37:31 -0800 (PST)
+Subject: Re: Generic RGB LED support was Re: [PATCH 2/2] leds: lp5024: Add the
+ LP5024/18 RGB LED driver
 To:     =?UTF-8?B?VmVzYSBKw6TDpHNrZWzDpGluZW4=?= <dachaac@gmail.com>,
-        Pavel Machek <pavel@ucw.cz>
-Cc:     Dan Murphy <dmurphy@ti.com>, robh+dt@kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-leds@vger.kernel.org
-References: <8740cfd6-a6b5-ad27-313b-984a9febf18a@ti.com>
- <20181219201047.GA23448@amd> <fd624cc1-9997-1cd5-c5cc-62e6897997cf@ti.com>
- <54f28115-0a7d-8e9c-3bec-6e91fb3981ec@gmail.com>
- <cd90f179-6c16-823f-496f-27f141e9c322@ti.com>
- <a72c11c0-949b-bdbc-df2c-4490e04a1065@gmail.com>
- <986b5105-2fdb-bd25-7c8a-ca8fd1ade821@gmail.com>
- <7f205102-e854-f1cb-cc03-1307d1cddc87@gmail.com>
- <c9f8965a-90f4-b456-8225-c70694c9f071@gmail.com>
+        Pavel Machek <pavel@ucw.cz>, Dan Murphy <dmurphy@ti.com>
+Cc:     robh+dt@kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org
+References: <c9f8965a-90f4-b456-8225-c70694c9f071@gmail.com>
  <cf6c0025-36e7-197b-b27a-1f31fb45cc38@gmail.com> <20190104201256.GA2931@amd>
- <a4e3a782-de76-ba91-3727-4db69cf27c3a@gmail.com>
- <90a2ed79-b437-af14-4538-430d8723cc6b@gmail.com>
- <38daf022-e4e4-799d-4c75-ee851315290d@gmail.com>
- <9ed1c2e6-62ff-6b4c-6b38-48d6176bcd88@gmail.com>
-Message-ID: <89bcd492-916e-10a1-d6a2-4f5614112c2c@gmail.com>
-Date:   Sun, 13 Jan 2019 17:36:48 +0100
+ <a4e3a782-de76-ba91-3727-4db69cf27c3a@gmail.com> <20190104220726.GA12395@amd>
+ <4cf79414-578e-eea7-4f46-fc8789206988@gmail.com> <20190105123146.GA16354@amd>
+ <8044cdd9-b9b3-fddd-6106-184b906859e2@gmail.com> <20190105221254.GA22322@amd>
+ <dac50714-9caf-2496-3208-fb62f886e31f@gmail.com> <20190108225952.GA13299@amd>
+ <1c53d379-64e5-4e72-5236-de8db77a5048@gmail.com>
+From:   Jacek Anaszewski <jacek.anaszewski@gmail.com>
+Message-ID: <1e37a036-bf46-5717-69e3-7cf9a1917fee@gmail.com>
+Date:   Sun, 13 Jan 2019 17:37:29 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.4.0
 MIME-Version: 1.0
-In-Reply-To: <9ed1c2e6-62ff-6b4c-6b38-48d6176bcd88@gmail.com>
+In-Reply-To: <1c53d379-64e5-4e72-5236-de8db77a5048@gmail.com>
 Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 8bit
@@ -93,211 +87,168 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 Hi Vesa,
 
-On 1/9/19 7:46 AM, Vesa Jääskeläinen wrote:
-> Hi Jacek,
+On 1/9/19 8:11 AM, Vesa Jääskeläinen wrote:
+> Hi Pavel,
 > 
-> On 07/01/2019 23.13, Jacek Anaszewski wrote:
->> Hi Vesa,
+> On 09/01/2019 0.59, Pavel Machek wrote:
+>> Hi!
 >>
->> On 1/5/19 1:39 AM, Vesa Jääskeläinen wrote:
->>> Hi Jacek,
+>>>>>> Grab yourself an RGB LED and play with it; you'll see what the
+>>>>>> problems are. It is hard to explain colors over email...
+>>>>>
+>>>>> Video [0] gives some overview of lp5024 capabilities.
+>>>>>
+>>>>> I don't see any problems in exposing separate red,green,blue
+>>>>> files and brightness for the devices with hardware support for
+>>>>> that.
+>>>>
+>>>> Well, that's what we do today, as three separate LEDs, right?
 >>>
->>> On 04/01/2019 23.37, Jacek Anaszewski wrote:
->>>> But, aside from that hypothetic issue, we need a solution for
->>>> LEDn_BRIGHTNESS feature of lp5024, i.e. setting color intensity
->>>> via a single register write. How would you propose to address that?
->>>
->>> You could model it to something like this in device tree:
->>>
->>> led-module @ <i2c-address> {
->>>      compatible = "lp5024";
->>>
->>>      // There is in hardware setup to use either linear or
->>>      // logarithmic scaling:
->>>      //enable-logarithmic-brightness;
->>>
->>>      led0 {
->>>          // this will create led instance for LED0 in lp5024
->>>          label = "lp-led0";
->>>
->>>          // This specifies LED number within lp5024
->>>          led-index = <0>;   // set output-base as 0*3 == 0
->>>
->>>          element-red {
->>>              // refers to OUT0
->>>              output-offset = <0>;
->>>          };
->>>
->>>          element-green {
->>>              // refers to OUT1
->>>              output-offset = <1>;
->>>          };
->>>
->>>          element-blue {
->>>              // refers to OUT2
->>>              output-offset = <2>;
->>>          };
->>>
->>>      };
->>>
->>>      led1 {
->>>          // this will create led instance for LED1 in lp5024
->>>          label = "lp-led1";
->>>
->>>          // This specifies LED number within lp5024
->>>          led-index = <1>;   // set output-base as 1*3 == 3
->>>
->>>          element-red {
->>>              // refers to OUT3
->>>              output-offset = <0>;
->>>          };
->>>
->>>          element-green {
->>>              // refers to OUT4
->>>              output-offset = <1>;
->>>          };
->>>
->>>          element-blue {
->>>              // refers to OUT5
->>>              output-offset = <2>;
->>>          };
->>>
->>>      };
->>>
->>>      bank-led {
->>>          // this will create led instance for bank leds in lp5024
->>>          label = "lp-bank-led";
->>>
->>>          // configured bank led configuration
->>>          led-index = <2 3 4 5 6 7>;
->>>          // As here is list of led-indices this entry is
->>>          // assumed to be bank configuration. Bank mode is enable
->>>          // for the indices.
->>>
->>>          // set output-base as BANK A
->>>
->>>          element-red {
->>>              // refers to BANK A
->>>              output-offset = <0>;
->>>          };
->>>
->>>          element-green {
->>>              // refers to BANK B
->>>              output-offset = <1>;
->>>          };
->>>
->>>          element-blue {
->>>              // refers to BANK C
->>>              output-offset = <2>;
->>>          };
->>>      };
->>> };
->>>
->>> This would then create three led instances and each led instance has 
->>> brightness setting and that goes straight to hardware.
->>>
->>> If one would want to override hardware control for brightness then I 
->>> suppose you would define in led node something like:
->>>
->>>      brightness-model = "hsl"
->>>
->>> This would then pick red, green and blue elements for hsl 
->>> calculations and others color elements for linear. LED specific 
->>> hardware brightness would then be either 0 or 0xFF depending if all 
->>> of LED color elements are zero or not.
->>>
->>> Would that kind of model work?
+>>> No. It doesn't allow for setting color intensity by having
+>>> the color fixed beforehand. Below is relevant excerpt from
+>>> the lp5024 documentation. This is not something that can be
+>>> mapped to RGB color space, but rather to HSV/HSL, with the
+>>> reservation that the hardware implementation uses PWM
+>>> for setting color intensity.
 >>
->> I'd prefer to have single RGB LED device. And your DT design
->> is unnecessarily complex and a bit confusing.
+>> So they have feature where they have independent controls for each
+>> channel, then one common control per three channels. Other chips have
+>> common control for all the LEDs, for example. We don't support that
+>> currently; lets focus on the RGB thing first.
+>>
+>>>> I don't have problem with that, either; other drivers already do
+>>>> that. He's free to use existing same interface.
+>>>>
+>>>> But that is insufficient, as it does not allow simple stuff, such as
+>>>> turning led "white".
+>>>>
+>>>> So... perhaps we should agree on requirements, first, and then we can
+>>>> discuss solutions?
+>>>>
+>>>> Requirements for RGB LED interface:
+>>>>
+>>>> 1) Userspace should be able to set the white color
+>>>>
+>>>> 2) Userspace should be able to arbitrary color from well known list
+>>>> and it should approximately match what would CRT, LCD or OLED 
+>>>> monitor display
+>>>
+>>> The difference is that monitor display driver is pre-calibrated
+>>> for given display by the manufacturer. With the LED controllers the
+>>> manufacturer has no control over what LEDs will be connected to the
+>>> iouts. Therefore it should be not surprising that colors produced
+>>> by custom LEDs are not as user would expect when comparing to
+>>> the RGB color displayed on the monitor display.
+>>
+>> It is true that _chip_ manufacturer can not know what LEDs will be
+>> connected. But _system_ manufacturer can and should know that, and
+>> should tell be able to tell us in the dts.
+>>
+>>> This renders your requirement 2) infeasible with use of custom LEDs
+>>> any fixed algorithm, since the final effect will always heavily depend
+>>> on the LED circuit design.
+>>
+>> Depending on LED circuit design and actual LEDs connected is okay.. we
+>> just need to get information from _system_ designer (not chip
+>> designer), and pass it to a place where color is computed.
+>>
+>>>> a) RGB LEDs are usually not balanced. Setting 100% PWM on
+>>>> red/green/blue channels will result in nothing close to white
+>>>> light. In fact, to get white light on N900, blue and green channel's
+>>>> PWM needs to be set pretty low, as in 5%.
+>>>>
+>>>> b) LED class does not define any relation between "brightness" in
+>>>> sysfs and ammount of light in lumens. Some drivers use close to linear
+>>>> relation, some use exponential relation. Human eyes percieve logarithm
+>>>> of lumens. RGB color model uses even more complex function.
+>>>
+>>> One general question: do you have any solutions in store?
+>>
+>> I played with LEDs on N900 over the weekend, yes.
+>>
+>> And getting reasonable colors seems to be possible, when a) and b) are
+>> solved... a) seems to be more important than b).
+>>
+>> Now... this does not tell us how we should design kernel<->user
+>> interface, but it should tell us that main goals - 1) and 2) are
+>> possible.
 > 
-> As this chip series is kinda designed for N x RGB LED's my idea was that 
-> if from user space point of view we model it as N times of individual 
-> RGB LED instances that may not even have anything to do with together. 
-> Eg. could be used for different purposes and such.
+> I was thinking about this calibration and color correctness thing and I 
+> am thinking a bit that it should be partly in kernel and partly in user 
+> space.
+> 
+> For displays and printers there are defined icc-profiles that define how 
+> colors are mapped to particular device in cases when you want to have 
+> accurate color representation. In theory to get accurate LED output one 
+> could model LEDs with icc profile and then pick your color and convert 
+> it with icc profile to actual raw hardware values. Then this raw 
+> hardware value could be written from user space to kernel.
 
-Actually the only differences between your DT design and that
-initially proposed by Dan are element-* nodes describing
-IOUT -> color mapping.
+icc-profiles idea sounds interesting. We would have to adjust hsv->rgb
+algorithm to take the profiles into account. I wonder how that would
+work in practice.
 
-I am not sure if LEDn_BRIGHTNESS feature would work as intended
-when colors are not assigned to IOUTs in the order shown on the
-Figure 14. in the data sheet. I'm afraid that we would be changing
-hue as well (sticking to the HSV nomenclature). Let's not bother with
-covering arrangements not being in line with the data sheet
-recommendations.
+> In kernel we could provide raw hardware value support and in case of PWM 
+> IC controlled LEDs we could provide curve mapping to linearize the 
+> behavior of values entered to enable use in cases where close enough is 
+> good enough.
+> 
+> Eg. if you want to have "white" then you have your color space picker 
+> like sRGB(255,255,255). Then you would define icc profile it might 
+> translate to hardware raw values 253%, 230%, 225%.
 
-Of course the element-color nodes will be necessary for leds-pwm,
-like in your github example.
-
-> And in device tree one would define logical connections for the leds so 
-> they would be mapped logically correct to user space.
+> Then you would write this to kernel with:
 > 
-> If one would define it like:
+> # set red, green and blue color elements
+> echo "253 230 225" > color
 > 
-> led1 {
->      // this will create led instance for LED1 in lp5024
->      label = "lp-led1";
+> In this case however behavior of brightness node is challening in 
+> accuracy domain. Britghtness value 255 would of course provide 1:1 
+> mapping in this case.
 > 
->      // This specifies LED number within lp5024
->      led-sources = <1>;
-> };
-> (note changed led-index to led-sources as that is what Pavel had and 
-> preferred)
+> To go right to correct color and brightness at one go we could have 
+> optional brightness at the end of color value array:
 > 
-> We could assume that it is RGB led in this driver's case and create it 
-> automatically with elements "red", "green", and "blue". And this could 
-> then be mapped automatically to HSL color elements or what ever the 
-> model would be.
+> # set red, green and blue color element and brightness setting:
+> echo "253 230 225 255" > color
 > 
-> If you would model it differently in your hardware design then you would 
-> need to define more device tree nodes. Eg. if your order of LEDs would 
-> not be red, green, blue. Or if you would have non-RGB led(s) in there.
+> If you want to have fancier behavior for brightness in your system then 
+> we probably need to have configurable brightness model.
 > 
->> Also, you provided scarce information about sysfs interface.
->> It would be nice to see the sequence of commands.
+> - hardware, like in lp5024 case would map to hardware register (would be 
+> omitted if there is no such register)
+> - onoff, would act like light switch ON/OFF eg. either configured value 
+> or all zeroes.
+> - scaled, would multiply the color elements
+> - hsl, would use hsl formula
+> - and this can be extended later with some other models and allows us to 
+> start with with some models now.
 > 
-> In this case it could be:
+> We could define this in devicetree and from sysfs a bit like with trigger:
 > 
-> # Note: Updated color to value array model.
+> $ cat brightness_model
+> [hardware] onoff scaled hsl
 > 
-> $ ls /sys/class/leds
-> lp-led0    lp-led1    lp-bank-led
+> $ echo "hsl" > brightness_model
 > 
-> $ ls /sys/class/leds/lp-led0
-> brightness    color
+> $ cat brightness_model
+> hardware onoff scaled [hsl]
 > 
-> $ ls /sys/class/leds/lp-led1
-> brightness    color
+> Then we could have "color_names" or such sysfs entry to determine allow 
+> user space auto detection of led elements):
 > 
-> $ ls /sys/class/leds/lp-bank-led
-> brightness    color
+> $ cat color_names
+> red green blue
 > 
-> # Idea of above is that as brightness is for triplet:
-> #   OUT(LED*3 + 0), OUT(LED*3 + 1), OUT(LED*3 + 2),
-> # Then if we model it like RGB LED then brightness would automatically
-> # map to correct OUTputs and be grouped from user space point of view
-> # logically in correct place.
+> I suppose this model would provide flexibilty for multiple cases. Make 
+> it simple for most uses, allow accuracy with icc profiles for advanced 
+> users, would allow atomic color setting.
 > 
-> # set first led to red
-> echo "255 0 0" > /sys/class/leds/lp-led0/color
+> I have updated (not yet in github) my tests to use color array model and 
+> color_names already and can play with brightness_model thing if this is 
+> something that is good path?
 > 
-> # set second led to green
-> echo "0 255 0" > /sys/class/leds/lp-led1/color
-> 
-> # set bank led to blue
-> echo "0 0 255" > /sys/class/leds/lp-bank-led/color
-> 
-> # Set hardware brightness control to middle
-> echo "128" > /sys/class/leds/lp-bank-led/brightness
-> 
-> # If we would have software controlled virtual brightness enabled for
-> # particular led classdev then there would be some math in either user
-> # or in kernel space.
-> 
-> Thanks,
-> Vesa Jääskeläinen
-> 
+> What do you think?
 
 -- 
 Best regards,
