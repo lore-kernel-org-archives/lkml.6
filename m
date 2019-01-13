@@ -2,151 +2,115 @@ Return-Path: <SRS0=GEt/=PV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 866F8C43444
-	for <linux-kernel@archiver.kernel.org>; Sun, 13 Jan 2019 14:23:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 97B04C43387
+	for <linux-kernel@archiver.kernel.org>; Sun, 13 Jan 2019 14:37:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 56B2020879
-	for <linux-kernel@archiver.kernel.org>; Sun, 13 Jan 2019 14:23:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547389409;
-	bh=1e+RLWNPAan2nk+hM4EKqEIL9x06MppQCoV5oOs/aEQ=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:List-ID:From;
-	b=RFogkXYhv6Lx1sXbZ0XxhyMcBoKMdZoMPGT1yswL8yYUTOKfmUkWLZENoTDmzpUkt
-	 yhdD6Q5g1GgXRStQJX+aFBPXTuHp4VnweT22bSyNGWS7rsQxcH2HwsnM++d4vLDODL
-	 3DmTh1G057PiGdPratiUSu3iGFqMEvGHzjaMDmW4=
+	by mail.kernel.org (Postfix) with ESMTP id 60BAE20842
+	for <linux-kernel@archiver.kernel.org>; Sun, 13 Jan 2019 14:37:29 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=alien8.de header.i=@alien8.de header.b="dwTAHoYD"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726652AbfAMOXS (ORCPT
+        id S1726650AbfAMOh2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 13 Jan 2019 09:23:18 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56584 "EHLO mail.kernel.org"
+        Sun, 13 Jan 2019 09:37:28 -0500
+Received: from mail.skyhub.de ([5.9.137.197]:60776 "EHLO mail.skyhub.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726559AbfAMOXR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 13 Jan 2019 09:23:17 -0500
-Received: from devbox (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
+        id S1726559AbfAMOh2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 13 Jan 2019 09:37:28 -0500
+Received: from zn.tnic (p200300EC2BE08000EDE322DDA64824A6.dip0.t-ipconnect.de [IPv6:2003:ec:2be0:8000:ede3:22dd:a648:24a6])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 55DFA2084C;
-        Sun, 13 Jan 2019 14:23:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547389396;
-        bh=1e+RLWNPAan2nk+hM4EKqEIL9x06MppQCoV5oOs/aEQ=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=R+Drnj8Q/fiLvKCk2ZdZn0q/UDo4RlGthmNzxBA4AzEQbRUQGyMLHeQQNxwVpdowq
-         M/aCcShS7gS4mmzaZScerxk12c4lImdifaQX7V4tS9iR3tAwHNVxvwgtuqg8b4+yNF
-         ZYk9cqe6FnPDI7mrsgppxdJprwb6Hzr4TriNOUSQ=
-Date:   Sun, 13 Jan 2019 23:23:13 +0900
-From:   Masami Hiramatsu <mhiramat@kernel.org>
-To:     Andrea Righi <righi.andrea@gmail.com>
-Cc:     Ingo Molnar <mingo@redhat.com>, peterz@infradead.org,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Steven Rostedt <rostedt@goodmis.org>
-Subject: Re: [PATCH v2 0/9] kprobes: Fix and improve blacklist symbols
-Message-Id: <20190113232313.33c2dd41b93eaf57a23ffbc2@kernel.org>
-In-Reply-To: <20190112133324.GA2009@xps-13>
-References: <154725993986.18060.2759150647140353514.stgit@devbox>
-        <20190112133324.GA2009@xps-13>
-X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-redhat-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id DDE981EC027A;
+        Sun, 13 Jan 2019 15:37:25 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
+        t=1547390246;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
+        bh=Tl7qcAZ8FNvp4oWx6utLsw1//jsL8nUvAjTmv+F2lD8=;
+        b=dwTAHoYDMaSYk2JNGi1ewBYra5ghgAdhf2+xEVZvhgud5CjQi2TJcCLDk1Ij4J/+d/KdY/
+        yUY80GT7z8u8XbBIsyAEPC8KIAyOI8rQwByS+rguhF15y1fjcQav0Urzi6r3GZfGpksHh6
+        Z/XNytubmRBtPs4+3gBR1cJi7eYBH+Q=
+Date:   Sun, 13 Jan 2019 15:37:19 +0100
+From:   Borislav Petkov <bp@alien8.de>
+To:     Paolo Bonzini <pbonzini@redhat.com>
+Cc:     KVM <kvm@vger.kernel.org>,
+        Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        Tom Lendacky <thomas.lendacky@amd.com>,
+        Tony Luck <tony.luck@intel.com>,
+        Yazen Ghannam <Yazen.Ghannam@amd.com>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v3 0/2] x86/kvm: Enable MCE injection in the guest
+Message-ID: <20190113143719.GA25673@zn.tnic>
+References: <20181114181507.6037-1-bp@alien8.de>
+ <64d0e75f-f292-7e63-dd66-4e05d4afed5b@redhat.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <64d0e75f-f292-7e63-dd66-4e05d4afed5b@redhat.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, 12 Jan 2019 14:33:24 +0100
-Andrea Righi <righi.andrea@gmail.com> wrote:
-
-> On Sat, Jan 12, 2019 at 11:25:40AM +0900, Masami Hiramatsu wrote:
-> ...
-> > And I found several functions which must be blacklisted.
-> >  - optprobe template code, which is just a template code and
-> >    never be executed. Moreover, since it can be copied and
-> >    reused, if we probe it, it modifies the template code and
-> >    can cause a crash. ([1/9][2/9])
-> >  - functions which is called before kprobe_int3_handler()
-> >    handles kprobes. This can cause a breakpoint recursion. ([3/9])
-> >  - IRQ entry text, which should not be probed since register/pagetable
-> >    status has not been stable at that point. ([4/9])
-> >  - Suffixed symbols, like .constprop, .part etc. Those suffixed
-> >    symbols never be blacklisted even if the non-suffixed version
-> >    has been blacklisted. ([5/9])
-> >  - hardirq tracer also works before int3 handling. ([6/9])
-> >  - preempt_check debug function also is involved in int3 handling.
-> >    ([7/9])
-> >  - RCU debug routine is also called before kprobe_int3_handler().
-> >    ([8/9])
-> >  - Some lockdep functions are also involved in int3 handling.
-> >    ([9/9])
+On Mon, Nov 26, 2018 at 05:41:21PM +0100, Paolo Bonzini wrote:
+> On 14/11/18 19:15, Borislav Petkov wrote:
+> > From: Borislav Petkov <bp@suse.de>
 > > 
-> > Of course there still may be some functions which can be called
-> > by configuration change, I'll continue to test it.
+> > Hi all,
+> > 
+> > here's a rediff ontop of -rc2. No changes, only added Yazen's Tested-by.
+> > 
+> > Please queue,
+> > thx.
+> > 
+> > Changelog:
+> > ==========
+> > 
+> > v2:
+> > 
+> > here's v2, dropping patch 3 and incorporating hopefully all of Radim's
+> > feedback.
+> > 
+> > v1:
+> > 
+> > there's this mce-inject.ko module in the kernel which allows for
+> > injecting real MCEs and thus test the MCE handling code.
+> > 
+> > It is doubly useful to be able to inject same MCEs in a guest so that
+> > testing of the MCE handling code can happen even easier/faster. In order
+> > to be able to do that on an AMD guest, we need to emulate some bits
+> > and pieces like the HWCR[McStatusWrEn] bit which allows writes to the
+> > MCi_STATUS registers without a #GP.
+> > 
+> > The below does that and with it I'm able to properly inject MCEs in said
+> > guest.
+> > 
+> > --
+> > 
+> > Borislav Petkov (2):
+> >   kvm/x86: Move MSR_K7_HWCR to svm.c
+> >   x86/kvm: Implement MSR_HWCR support
+> > 
+> >  arch/x86/kvm/svm.c | 20 ++++++++++++++++++++
+> >  arch/x86/kvm/x86.c | 46 +++++++++++++++++++++++++++++++---------------
+> >  2 files changed, 51 insertions(+), 15 deletions(-)
+> > 
 > 
-> Hi Masami,
-> 
-> I think I've found another recursion problem. Could you include also
-> this one?
+> Queued, thanks.
 
-Yeah, if I will make new version, but basically please feel free to
-send such blacklist update patch to LKML, me and Ingo :)
+Where?
 
-> 
-> Thanks,
-> 
-> From: Andrea Righi <righi.andrea@gmail.com>
-> Subject: [PATCH] kprobes: prohibit probing on bsearch()
-> 
-> Since kprobe breakpoing handler is using bsearch(), probing on this
-> routine can cause recursive breakpoint problem.
-> 
-> int3
->  ->do_int3()
->    ->ftrace_int3_handler()
->      ->ftrace_location()
->        ->ftrace_location_range()
->          ->bsearch() -> int3
-> 
-> Prohibit probing on bsearch().
-> 
-> Signed-off-by: Andrea Righi <righi.andrea@gmail.com>
-
-This looks good to me.
-
-Acked-by: Masami Hiramatsu <mhiramat@kernel.org>
-
-Thank you,
-
-
-> ---
->  lib/bsearch.c | 2 ++
->  1 file changed, 2 insertions(+)
-> 
-> diff --git a/lib/bsearch.c b/lib/bsearch.c
-> index 18b445b010c3..82512fe7b33c 100644
-> --- a/lib/bsearch.c
-> +++ b/lib/bsearch.c
-> @@ -11,6 +11,7 @@
->  
->  #include <linux/export.h>
->  #include <linux/bsearch.h>
-> +#include <linux/kprobes.h>
->  
->  /*
->   * bsearch - binary search an array of elements
-> @@ -53,3 +54,4 @@ void *bsearch(const void *key, const void *base, size_t num, size_t size,
->  	return NULL;
->  }
->  EXPORT_SYMBOL(bsearch);
-> +NOKPROBE_SYMBOL(bsearch);
-> -- 
-> 2.17.1
-> 
-
+I don't see them in rc1...
 
 -- 
-Masami Hiramatsu <mhiramat@kernel.org>
+Regards/Gruss,
+    Boris.
+
+Good mailing practices for 400: avoid top-posting and trim the reply.
