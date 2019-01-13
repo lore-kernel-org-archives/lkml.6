@@ -4,34 +4,32 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DDBD4C43387
-	for <linux-kernel@archiver.kernel.org>; Sun, 13 Jan 2019 09:57:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 370DAC43612
+	for <linux-kernel@archiver.kernel.org>; Sun, 13 Jan 2019 09:57:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B2B852084C
-	for <linux-kernel@archiver.kernel.org>; Sun, 13 Jan 2019 09:57:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 028E721734
+	for <linux-kernel@archiver.kernel.org>; Sun, 13 Jan 2019 09:57:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726623AbfAMJ5m (ORCPT
+        id S1726712AbfAMJ5q (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 13 Jan 2019 04:57:42 -0500
-Received: from mirror2.csie.ntu.edu.tw ([140.112.30.76]:56584 "EHLO
+        Sun, 13 Jan 2019 04:57:46 -0500
+Received: from mirror2.csie.ntu.edu.tw ([140.112.30.76]:56580 "EHLO
         wens.csie.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726534AbfAMJ5l (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 13 Jan 2019 04:57:41 -0500
+        id S1726513AbfAMJ5m (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 13 Jan 2019 04:57:42 -0500
 Received: by wens.csie.org (Postfix, from userid 1000)
-        id 0073E5F861; Sun, 13 Jan 2019 17:57:36 +0800 (CST)
+        id E6D645FD20; Sun, 13 Jan 2019 17:57:36 +0800 (CST)
 From:   Chen-Yu Tsai <wens@csie.org>
 To:     Maxime Ripard <maxime.ripard@bootlin.com>,
         Linus Walleij <linus.walleij@linaro.org>
 Cc:     Chen-Yu Tsai <wens@csie.org>, linux-arm-kernel@lists.infradead.org,
         linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2 2/2] pinctrl: sunxi: Consider pin_base when calculating regulator array index
-Date:   Sun, 13 Jan 2019 17:57:23 +0800
-Message-Id: <20190113095723.25295-2-wens@csie.org>
+Subject: [PATCH v2 1/2] pinctrl: sunxi: Fix and simplify pin bank regulator handling
+Date:   Sun, 13 Jan 2019 17:57:22 +0800
+Message-Id: <20190113095723.25295-1-wens@csie.org>
 X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190113095723.25295-1-wens@csie.org>
-References: <20190113095723.25295-1-wens@csie.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -39,75 +37,89 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On most newer Allwinner SoCs, there are two pinctrl devices, the PIO and
-R_PIO. PIO covers pin-banks PA to PI (PJ and PK have not been seen),
-while R_PIO covers PL to PN. The regulator array only has space for 12
-entries, which was designed to cover PA to PL. On the A80, the pin banks
-go up to PN, which would be the 14th entry in the regulator array.
-However since the driver only needs to track regulators for its own pin
-banks, the array only needs to have 9 entries, and also take in to
-account the value of pin_base, such that the regulator for the first
-pin-bank of the pinctrl device, be it "PA" or "PL" uses the first entry
-of the array.
+The new per-pin-bank regulator handling code in the sunxi pinctrl driver
+has mismatched conditions for enabling and disabling the regulator: it
+is enabled each time a pin is requested, but only disabled when the
+pin-bank's reference count reaches zero.
 
-Base the regulator array index on pin_base, such that "PA" for PIO and
-"PL" for R_PIO both take the first element within their respective
-device's regulator array.
-
-Also decrease the size of the regulator array to 9, just enough to cover
-"PA" to "PI".
+Since we are doing reference counting already, there's no need to enable
+the regulator each time a pin is requested. Instead we can just do it
+for the first requested pin of each pin-bank. Thus we can reverse the
+test and bail out early if it's not the first occurrence.
 
 Fixes: 9a2a566adb00 ("pinctrl: sunxi: Deal with per-bank regulators")
+Acked-by: Maxime Ripard <maxime.ripard@bootlin.com>
 Signed-off-by: Chen-Yu Tsai <wens@csie.org>
 ---
 Changes since v1:
 
-  - Take in to account pin_base when handling regulator array index
-    instead of enlarging the array to encompass PA - PN.
+  - Moved before the other fix. Both fixes are needed, but having this
+    one first made reworking the other one easier.
+
 ---
- drivers/pinctrl/sunxi/pinctrl-sunxi.c | 8 ++++++--
- drivers/pinctrl/sunxi/pinctrl-sunxi.h | 2 +-
- 2 files changed, 7 insertions(+), 3 deletions(-)
+ drivers/pinctrl/sunxi/pinctrl-sunxi.c | 36 ++++++++++++---------------
+ 1 file changed, 16 insertions(+), 20 deletions(-)
 
 diff --git a/drivers/pinctrl/sunxi/pinctrl-sunxi.c b/drivers/pinctrl/sunxi/pinctrl-sunxi.c
-index 9ad6e9c2adab..0e7fa69e93df 100644
+index 5d9184d18c16..9ad6e9c2adab 100644
 --- a/drivers/pinctrl/sunxi/pinctrl-sunxi.c
 +++ b/drivers/pinctrl/sunxi/pinctrl-sunxi.c
-@@ -698,7 +698,9 @@ static int sunxi_pmx_request(struct pinctrl_dev *pctldev, unsigned offset)
- {
+@@ -699,25 +699,21 @@ static int sunxi_pmx_request(struct pinctrl_dev *pctldev, unsigned offset)
  	struct sunxi_pinctrl *pctl = pinctrl_dev_get_drvdata(pctldev);
  	unsigned short bank = offset / PINS_PER_BANK;
--	struct sunxi_pinctrl_regulator *s_reg = &pctl->regulators[bank];
-+	unsigned short bank_offset = bank - pctl->desc->pin_base /
-+					    PINS_PER_BANK;
-+	struct sunxi_pinctrl_regulator *s_reg = &pctl->regulators[bank_offset];
- 	struct regulator *reg = s_reg->regulator;
- 	char supply[16];
+ 	struct sunxi_pinctrl_regulator *s_reg = &pctl->regulators[bank];
+-	struct regulator *reg;
++	struct regulator *reg = s_reg->regulator;
++	char supply[16];
  	int ret;
-@@ -738,7 +740,9 @@ static int sunxi_pmx_free(struct pinctrl_dev *pctldev, unsigned offset)
- {
- 	struct sunxi_pinctrl *pctl = pinctrl_dev_get_drvdata(pctldev);
- 	unsigned short bank = offset / PINS_PER_BANK;
--	struct sunxi_pinctrl_regulator *s_reg = &pctl->regulators[bank];
-+	unsigned short bank_offset = bank - pctl->desc->pin_base /
-+					    PINS_PER_BANK;
-+	struct sunxi_pinctrl_regulator *s_reg = &pctl->regulators[bank_offset];
  
- 	if (!refcount_dec_and_test(&s_reg->refcount))
- 		return 0;
-diff --git a/drivers/pinctrl/sunxi/pinctrl-sunxi.h b/drivers/pinctrl/sunxi/pinctrl-sunxi.h
-index e340d2a24b44..034c0317c8d6 100644
---- a/drivers/pinctrl/sunxi/pinctrl-sunxi.h
-+++ b/drivers/pinctrl/sunxi/pinctrl-sunxi.h
-@@ -136,7 +136,7 @@ struct sunxi_pinctrl {
- 	struct gpio_chip		*chip;
- 	const struct sunxi_pinctrl_desc	*desc;
- 	struct device			*dev;
--	struct sunxi_pinctrl_regulator	regulators[12];
-+	struct sunxi_pinctrl_regulator	regulators[9];
- 	struct irq_domain		*domain;
- 	struct sunxi_pinctrl_function	*functions;
- 	unsigned			nfunctions;
+-	reg = s_reg->regulator;
+-	if (!reg) {
+-		char supply[16];
+-
+-		snprintf(supply, sizeof(supply), "vcc-p%c", 'a' + bank);
+-		reg = regulator_get(pctl->dev, supply);
+-		if (IS_ERR(reg)) {
+-			dev_err(pctl->dev, "Couldn't get bank P%c regulator\n",
+-				'A' + bank);
+-			return PTR_ERR(reg);
+-		}
+-
+-		s_reg->regulator = reg;
+-		refcount_set(&s_reg->refcount, 1);
+-	} else {
++	if (reg) {
+ 		refcount_inc(&s_reg->refcount);
++		return 0;
++	}
++
++	snprintf(supply, sizeof(supply), "vcc-p%c", 'a' + bank);
++	reg = regulator_get(pctl->dev, supply);
++	if (IS_ERR(reg)) {
++		dev_err(pctl->dev, "Couldn't get bank P%c regulator\n",
++			'A' + bank);
++		return PTR_ERR(reg);
+ 	}
+ 
+ 	ret = regulator_enable(reg);
+@@ -727,13 +723,13 @@ static int sunxi_pmx_request(struct pinctrl_dev *pctldev, unsigned offset)
+ 		goto out;
+ 	}
+ 
++	s_reg->regulator = reg;
++	refcount_set(&s_reg->refcount, 1);
++
+ 	return 0;
+ 
+ out:
+-	if (refcount_dec_and_test(&s_reg->refcount)) {
+-		regulator_put(s_reg->regulator);
+-		s_reg->regulator = NULL;
+-	}
++	regulator_put(s_reg->regulator);
+ 
+ 	return ret;
+ }
 -- 
 2.20.1
 
