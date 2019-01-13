@@ -2,132 +2,250 @@ Return-Path: <SRS0=GEt/=PV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3FA08C43387
-	for <linux-kernel@archiver.kernel.org>; Sun, 13 Jan 2019 20:21:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 18A57C43387
+	for <linux-kernel@archiver.kernel.org>; Sun, 13 Jan 2019 20:23:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0B7E120663
-	for <linux-kernel@archiver.kernel.org>; Sun, 13 Jan 2019 20:21:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CB0A320663
+	for <linux-kernel@archiver.kernel.org>; Sun, 13 Jan 2019 20:23:31 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=lixom-net.20150623.gappssmtp.com header.i=@lixom-net.20150623.gappssmtp.com header.b="NSlR07vN"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="k/Lk8Q/8"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726561AbfAMUVJ (ORCPT
+        id S1726565AbfAMUX3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 13 Jan 2019 15:21:09 -0500
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:38211 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726428AbfAMUVI (ORCPT
+        Sun, 13 Jan 2019 15:23:29 -0500
+Received: from mail-qt1-f193.google.com ([209.85.160.193]:46403 "EHLO
+        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726428AbfAMUX3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 13 Jan 2019 15:21:08 -0500
-Received: by mail-pg1-f195.google.com with SMTP id g189so8552481pgc.5
-        for <linux-kernel@vger.kernel.org>; Sun, 13 Jan 2019 12:21:08 -0800 (PST)
+        Sun, 13 Jan 2019 15:23:29 -0500
+Received: by mail-qt1-f193.google.com with SMTP id y20so24455492qtm.13;
+        Sun, 13 Jan 2019 12:23:28 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=lixom-net.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id;
-        bh=SZMXyt3fuC9QgBICnVxppk8SU2DS4LuGTafrd6+uVBA=;
-        b=NSlR07vNw7hCKkP4Dm1iEyvlHGEFbw/HNpJ9p6WA66QsItXmm6/NeaUgdaRbedBQpc
-         5mSJ1ccEyL7yka8bFXv65GIWc7FDflr0G4JyUPQ01K2w7m3BymE3or5oUt+VG8IeMYQk
-         oGvu8kZ5A0TW+IN7uWddkgZz+HP2Spfd0ptnDNwvOxkqp9HMp9Gq4NL/A8gtH/Nhpmua
-         lQm5zJ9F6AA8I9zaIxpwdeIhGpAE3h/NAXS9BEjzMVxOc+0oEJgYtb5mNdpM3H+YMdnB
-         cikkotyUiFR0RqpcGrovh9bjd4S/DqCLUAHeAe6uEPivcV9Mvm0Hf38zs9h02YZ11TQF
-         uMng==
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=4XD1SHDzYh2nQxz2nn4PAa18fCDeSDyXBRc9vRQvBAQ=;
+        b=k/Lk8Q/8JjsjH3p8Fxc8tX8RzI50eWKPgDJfIZvVUd129ww8akm47XmBxUmkBCfiwx
+         8Jjl7g2K61fQhE7QEqXLablu98ypEnVmZlqBa+ln36+fAto33Wxot0GC8+Fmw1uQeTjq
+         2k0FkL+leynTm4zJH9zCUkMqnkjwH81/DoKzERMB3jaCqeUoMjT0jvPeJY0W1xYKhyjm
+         unYhMsyg9x1ZKW9nK7OJ4OKsBGtKDmf05IlOe0YWeLMJKsS0sLe4DAgrrZUEK361O64Q
+         gVYl1op3gVkscal/dL5x9+hflg7Iye4z4t8NG+XRLR7KXJbJBq2SMFj6pSHDVmWClXW5
+         PniA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=SZMXyt3fuC9QgBICnVxppk8SU2DS4LuGTafrd6+uVBA=;
-        b=cKAUp7QFbT2jFNLZ/9grHPOdZesXwrzKGr271pEZLr05pv4nwQ4MNzBX5xPXicHybN
-         AX762y4mWCz2FaB9wrpwcyNq6wRRy0arPe6gjQNb/B3n7+lUaP23lfyLt/hfseHSKCUv
-         8ron38X/Yu/vUkRRJJlig+Wt3K/SP9dz1yrw3409FNCWmkAczdOKZjldJzVHSCPCcUA2
-         T+BMTq7Pz6FaxnWBlqhpjXPQIOXMglP0KDMthCAbn8XZWFq2h/K3g9wp5QZITeNfEhK5
-         827N/k04i8Uuo/wqmU5/YSdFzjga8MiqbaZFc/Da/6mFq+5GRDx9iHBNq8ZQiIgLu5b4
-         iD+g==
-X-Gm-Message-State: AJcUukd3tS3LUbLJOwqlAJ4bOJR9JfHK9pSOb/8uSsxI3rLd03m0IUK2
-        yzI3muX3FfvSb0dANLGIIPOyUXT114THpg==
-X-Google-Smtp-Source: ALg8bN5TY6xCFwLSaRtI3UpeCSMUSNfbjwrsFhB7eP0pFZAmdKsYBvtG5sbm2iL/KHhNMeKUgg3k1g==
-X-Received: by 2002:a63:e051:: with SMTP id n17mr10258933pgj.258.1547404361662;
-        Sun, 13 Jan 2019 10:32:41 -0800 (PST)
-Received: from rip.lixom.net (99-152-116-91.lightspeed.sntcca.sbcglobal.net. [99.152.116.91])
-        by smtp.gmail.com with ESMTPSA id b4sm96702992pgq.65.2019.01.13.10.32.39
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 13 Jan 2019 10:32:39 -0800 (PST)
-From:   Olof Johansson <olof@lixom.net>
-To:     akpm@linux-foundation.org
-Cc:     jinb.park7@gmail.com, colin.king@canonical.com,
-        linux-kernel@vger.kernel.org, Olof Johansson <olof@lixom.net>,
-        Andrey Ryabinin <aryabinin@virtuozzo.com>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Kees Cook <keescook@chromium.org>
-Subject: [PATCH] lib: test_ubsan: VLA no longer used in kernel
-Date:   Sun, 13 Jan 2019 10:32:10 -0800
-Message-Id: <20190113183210.56154-1-olof@lixom.net>
-X-Mailer: git-send-email 2.11.0
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=4XD1SHDzYh2nQxz2nn4PAa18fCDeSDyXBRc9vRQvBAQ=;
+        b=TQBSTZmfG7LeaIo08hTZG2d9ATcyqVySTn/qGOXJOp+X9hr2VU/c7We/NcHW3M2294
+         YrbMkpPEX+NTAmS+irjFHJgAbYV7saJHD3LA0JVn4NikSoj2xQ7piPBcyhPyWZPhjj6c
+         3lLvXNquOSKkoj46fvEoB6mx1h9IY1V/d/29lV0XVQIz4e8IicofQN4oiL6l+kRAWW6C
+         EHEwGYu+luXz6AXTCC0wL1n405qQ+5s1ud7T29hkGD9y9BrJyh/t5wVFunLMxtVTNdjs
+         llqrhKopAPetQi9vwIXQM1xPsiRYg0iAk3p8h+9C5EEvb39Nlj3+gj51Qc7fDZShjugs
+         9kJQ==
+X-Gm-Message-State: AJcUukdiSo/QzPdtvR42A5t/tRq6KZSoEba0Xq4/uc1lkBqz8++y8zkr
+        w5wt04FuI5qi7Cyn7fdgYBw=
+X-Google-Smtp-Source: ALg8bN5xiKulS30v/pgk6GeZp2qGSlsRw8jyk3gieNkrgRWDTXBup368k/NQSJH50480ANqaKGTy3A==
+X-Received: by 2002:a0c:b517:: with SMTP id d23mr21935257qve.221.1547411007618;
+        Sun, 13 Jan 2019 12:23:27 -0800 (PST)
+Received: from smtp.gmail.com ([143.107.45.1])
+        by smtp.gmail.com with ESMTPSA id y68sm15516925qkd.49.2019.01.13.12.23.25
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Sun, 13 Jan 2019 12:23:26 -0800 (PST)
+Date:   Sun, 13 Jan 2019 18:23:23 -0200
+From:   Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>
+To:     Daniel Vetter <daniel@ffwll.ch>
+Cc:     Gustavo Padovan <gustavo@padovan.org>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Sean Paul <sean@poorly.run>, Dave Airlie <airlied@linux.ie>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH v2] drm/drm_vblank: Change EINVAL by the correct errno
+Message-ID: <20190113202323.co7upmn5fg32b7gn@smtp.gmail.com>
+References: <20181015170529.dgzpbm37hbuvqatc@smtp.gmail.com>
+ <20181016123541.GW31561@phenom.ffwll.local>
+ <20181017124315.khhlykapxnug6ej6@smtp.gmail.com>
+ <CAKMK7uF0ucof6gwAiY1SSp5oHt3BZ18Jkui5ugvkZc4u-NOJoA@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAKMK7uF0ucof6gwAiY1SSp5oHt3BZ18Jkui5ugvkZc4u-NOJoA@mail.gmail.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Since we now build with -Wvla, any use of VLA throws a warning.
-Including this test, so... maybe we should just remove the test?
+Hi,
 
-lib/test_ubsan.c: In function 'test_ubsan_vla_bound_not_positive':
-lib/test_ubsan.c:48:2: warning: ISO C90 forbids variable length array 'buf' [-Wvla]
+I resend this patch for CI via “intel-gfx@lists.freedesktop.org” as
+Daniel suggested, and I got a feedback that reported an issue as can be
+seen here:
 
-For the out-of-bounds test, switch to non-VLA setup.
+   https://patchwork.freedesktop.org/series/51147/
 
-lib/test_ubsan.c: In function 'test_ubsan_out_of_bounds':
-lib/test_ubsan.c:64:2: warning: ISO C90 forbids variable length array 'arr' [-Wvla]
+After a careful analysis of what happened, I concluded that the problem
+is related to the function “igt_wait_for_vblank_count()” in “igt_kms.c”.
+This function has the following assert:
 
-Cc: Colin Ian King <colin.king@canonical.com>
-Cc: Jinbum Park <jinb.park7@gmail.com>
-Cc: Andrey Ryabinin <aryabinin@virtuozzo.com>
-Cc: Dmitry Vyukov <dvyukov@google.com>
-Cc: Kees Cook <keescook@chromium.org>
-Signed-off-by: Olof Johansson <olof@lixom.net>
+   igt_assert(drmWaitVBlank(drm_fd, &wait_vbl) == 0)
 
----
- lib/test_ubsan.c | 11 +----------
- 1 file changed, 1 insertion(+), 10 deletions(-)
+This function only checks if everything went well with the
+drmWaitVBlank() operation and does not make any other validation. IMHO
+the patch is correct, and the problem pointed out by CI is not related
+to this change.
 
-diff --git a/lib/test_ubsan.c b/lib/test_ubsan.c
-index 280f4979d00ed..9ea10adf7a66f 100644
---- a/lib/test_ubsan.c
-+++ b/lib/test_ubsan.c
-@@ -42,14 +42,6 @@ static void test_ubsan_divrem_overflow(void)
- 	val /= val2;
- }
- 
--static void test_ubsan_vla_bound_not_positive(void)
--{
--	volatile int size = -1;
--	char buf[size];
--
--	(void)buf;
--}
--
- static void test_ubsan_shift_out_of_bounds(void)
- {
- 	volatile int val = -1;
-@@ -61,7 +53,7 @@ static void test_ubsan_shift_out_of_bounds(void)
- static void test_ubsan_out_of_bounds(void)
- {
- 	volatile int i = 4, j = 5;
--	volatile int arr[i];
-+	volatile int arr[4];
- 
- 	arr[j] = i;
- }
-@@ -113,7 +105,6 @@ static const test_ubsan_fp test_ubsan_array[] = {
- 	test_ubsan_mul_overflow,
- 	test_ubsan_negate_overflow,
- 	test_ubsan_divrem_overflow,
--	test_ubsan_vla_bound_not_positive,
- 	test_ubsan_shift_out_of_bounds,
- 	test_ubsan_out_of_bounds,
- 	test_ubsan_load_invalid_value,
--- 
-2.11.0
+Make sense?
 
+Best Regards
+
+On 10/17, Daniel Vetter wrote:
+> On Wed, Oct 17, 2018 at 2:43 PM Rodrigo Siqueira
+> <rodrigosiqueiramelo@gmail.com> wrote:
+> >
+> > Hi,
+> >
+> > First of all, thanks to all for the reviewers and feedbacks.
+> >
+> > On 10/16, Daniel Vetter wrote:
+> > > On Mon, Oct 15, 2018 at 02:05:29PM -0300, Rodrigo Siqueira wrote:
+> > > > For historical reason, the function drm_wait_vblank_ioctl always return
+> > > > -EINVAL if something gets wrong. This scenario limits the flexibility
+> > > > for the userspace make detailed verification of the problem and take
+> > > > some action. In particular, the validation of “if (!dev->irq_enabled)”
+> > > > in the drm_wait_vblank_ioctl is responsible for checking if the driver
+> > > > support vblank or not. If the driver does not support VBlank, the
+> > > > function drm_wait_vblank_ioctl returns EINVAL which does not represent
+> > > > the real issue; this patch changes this behavior by return EOPNOTSUPP.
+> > > > Additionally, some operations are unsupported by this function, and
+> > > > returns EINVAL; this patch also changes the return value to EOPNOTSUPP
+> > > > in this case. Lastly, the function drm_wait_vblank_ioctl is invoked by
+> > > > libdrm, which is used by many compositors; because of this, it is
+> > > > important to check if this change breaks any compositor. In this sense,
+> > > > the following projects were examined:
+> > > >
+> > > > * Drm-hwcomposer
+> > > > * Kwin
+> > > > * Sway
+> > > > * Wlroots
+> > > > * Wayland-core
+> > > > * Weston
+> > > > * Xorg (67 different drivers)
+> > > >
+> > > > For each repository the verification happened in three steps:
+> > > >
+> > > > * Update the main branch
+> > > > * Look for any occurrence "drmWaitVBlank" with the command:
+> > > >   git grep -n "drmWaitVBlank"
+> > > > * Look in the git history of the project with the command:
+> > > >   git log -SdrmWaitVBlank
+> > > >
+> > > > Finally, none of the above projects validate the use of EINVAL which
+> > > > make safe, at least for these projects, to change the return values.
+> > > >
+> > > > Change since V1:
+> > > >  Daniel Vetter and Chris Wilson
+> > > >  - Replace ENOTTY by EOPNOTSUPP
+> > > >  - Return EINVAL if the parameters are wrong
+> > > >
+> > > > Signed-off-by: Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>
+> > >
+> > > Reviewed-by: Daniel Vetter <daniel.vetter@ffwll.ch>
+> > >
+> > > Can you pls also let intel-gfx-ci test this patch? You just need to
+> > > include intel-gfx@lists.freedesktop.org in your recipient list.
+> >
+> > I did know about intel-gfx-ci, really nice:)
+> >
+> > Should I CC this mailing list if I send patches to the DRM core, amdgpu,
+> > i915, vc4, vgem, and virtio-gpu? I suppose that IGT is running on the
+> > CI, right?
+> 
+> It's only intel gpus (well and one special amd one) running igt on a
+> _lot_ of different machines.
+> 
+> > Another question, do I need to send a V3 with intel-gfx-ci?
+> 
+> If the patch-set is unchanged people use the "FOR CI" subject prefix
+> when resending, instead of incrementing the version number.
+> 
+> > > For merging, since you plan to stick around doing kms stuff a bit: Want
+> > > commit rights for drm-misc?
+> > >
+> > > https://drm.pages.freedesktop.org/maintainer-tools/getting-started.html
+> >
+> > Yes, I want :)
+> > I will need some guidance, in the beginning, to get confident about the
+> > processes. If you can help me with this, I will be glad to play around
+> > with 'dim' and the merging tasks.
+> 
+> Sure, just ping me on irc. First you need a freedesktop.org ssh account:
+> 
+> https://www.freedesktop.org/wiki/AccountRequests/
+> 
+> You need to request access to the drm-misc group. Once you have the
+> bugzilla, pls ping me so I can ack it.
+> 
+> Thanks, Daniel
+> 
+> >
+> > Best Regards
+> >
+> > > Cheers, Daniel
+> > >
+> > > > ---
+> > > >  drivers/gpu/drm/drm_vblank.c | 4 ++--
+> > > >  1 file changed, 2 insertions(+), 2 deletions(-)
+> > > >
+> > > > diff --git a/drivers/gpu/drm/drm_vblank.c b/drivers/gpu/drm/drm_vblank.c
+> > > > index 98e091175921..80f5a3bb427e 100644
+> > > > --- a/drivers/gpu/drm/drm_vblank.c
+> > > > +++ b/drivers/gpu/drm/drm_vblank.c
+> > > > @@ -1533,10 +1533,10 @@ int drm_wait_vblank_ioctl(struct drm_device *dev, void *data,
+> > > >     unsigned int flags, pipe, high_pipe;
+> > > >
+> > > >     if (!dev->irq_enabled)
+> > > > -           return -EINVAL;
+> > > > +           return -EOPNOTSUPP;
+> > > >
+> > > >     if (vblwait->request.type & _DRM_VBLANK_SIGNAL)
+> > > > -           return -EINVAL;
+> > > > +           return -EOPNOTSUPP;
+> > > >
+> > > >     if (vblwait->request.type &
+> > > >         ~(_DRM_VBLANK_TYPES_MASK | _DRM_VBLANK_FLAGS_MASK |
+> > > > --
+> > > > 2.19.1
+> > >
+> > > --
+> > > Daniel Vetter
+> > > Software Engineer, Intel Corporation
+> > > http://blog.ffwll.ch
+> >
+> > --
+> > Rodrigo Siqueira
+> > https://siqueira.tech
+> > https://twitter.com/siqueirajordao
+> > Graduate Student
+> > Department of Computer Science
+> > University of São Paulo
+> > _______________________________________________
+> > dri-devel mailing list
+> > dri-devel@lists.freedesktop.org
+> > https://lists.freedesktop.org/mailman/listinfo/dri-devel
+> 
+> 
+> 
+> -- 
+> Daniel Vetter
+> Software Engineer, Intel Corporation
+> +41 (0) 79 365 57 48 - http://blog.ffwll.ch
