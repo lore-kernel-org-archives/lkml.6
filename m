@@ -7,47 +7,46 @@ X-Spam-Status: No, score=-20.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,
 	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F2BC6C43387
-	for <linux-kernel@archiver.kernel.org>; Sun, 13 Jan 2019 10:23:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 168AEC43387
+	for <linux-kernel@archiver.kernel.org>; Sun, 13 Jan 2019 10:23:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B67AF20879
-	for <linux-kernel@archiver.kernel.org>; Sun, 13 Jan 2019 10:23:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DA73C20879
+	for <linux-kernel@archiver.kernel.org>; Sun, 13 Jan 2019 10:23:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547375000;
-	bh=RAJ93jZwo7OUsRc5S2wy9Yn0b2QS39ANhx2I9NF+5PE=;
+	s=default; t=1547375026;
+	bh=Ez69DLleDKB/eMBm5ccZpNOuyYQlravx0j477lqFiqc=;
 	h=Date:From:To:Cc:Subject:List-ID:From;
-	b=VMAe4Rhf0gcAhisc7rNzWTEbrnaftU4Jg1EqrvdAhtsOMJ8Mof/7tKuvPJp3j3+SO
-	 BTmBAcnpP+W6tIZUiAp3lmU15byNDLTM/xteU13fek9H8R+NxGCk7iQ9IAjF5580bb
-	 tSFNSkTqHZp2/T0sv545CeeKSJ8tuSUYPf0Xj89I=
+	b=EiMIU6G9xINWsX9in805eP+DVUzOiaEOqaXwhwkFhcMnpvh9wIyFW71IMer7zeNbu
+	 7+YGzk6XeL90xQdZHVZh0He+rQIqXhO1ss2mX1zIObNsd2oYep0RS2WtjtH5HFSYkV
+	 LQ0F+xhew09Hsd6MEX+ZHv8PSKCXSd5Pbo01zdis=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726812AbfAMKXT (ORCPT
+        id S1726816AbfAMKXp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 13 Jan 2019 05:23:19 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56556 "EHLO mail.kernel.org"
+        Sun, 13 Jan 2019 05:23:45 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56808 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725875AbfAMKXT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 13 Jan 2019 05:23:19 -0500
+        id S1726539AbfAMKXp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 13 Jan 2019 05:23:45 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5741920657;
-        Sun, 13 Jan 2019 10:23:18 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3E23C20657;
+        Sun, 13 Jan 2019 10:23:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547374998;
-        bh=RAJ93jZwo7OUsRc5S2wy9Yn0b2QS39ANhx2I9NF+5PE=;
+        s=default; t=1547375024;
+        bh=Ez69DLleDKB/eMBm5ccZpNOuyYQlravx0j477lqFiqc=;
         h=Date:From:To:Cc:Subject:From;
-        b=EtrVusSAcGl6aGnR76sIjsixZHIhwW+06rPEcXyKi3j2Vu5zn+x3wurEX36uNRUN9
-         Pc0Kwj6mX94g5EnlR84c4EsPD2Y3Qur+O4a9chazw89UIzP6Vqfg+IvncIMumim4xR
-         WdCX38aEDdrF+6/blJyicvr833WaUtp8yi5+R0Sw=
-Date:   Sun, 13 Jan 2019 11:23:16 +0100
+        b=ba4msl04pFXZeHpcgJOqrxq7du2CulRE2mzUmN58KDG8wvri8LZKjzbZ6/8xCoHhV
+         OhEI0NqiVbH3dYi2DLGWRW+HnSZrO6Spgk/8I11x8QmYBAMbKCK5WfsWAADiu6q+7k
+         tTDz4FQkv5F3IRcqzwxlyglRx//ktNY7D40vp4Vs=
+Date:   Sun, 13 Jan 2019 11:23:42 +0100
 From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Jiri Slaby <jslaby@suse.cz>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
+To:     Linus Torvalds <torvalds@linux-foundation.org>,
         Andrew Morton <akpm@linux-foundation.org>,
-        linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org
-Subject: [GIT PULL] TTY/Serial fixes for 5.0-rc2
-Message-ID: <20190113102316.GA17169@kroah.com>
+        Stephen Rothwell <sfr@canb.auug.org.au>
+Cc:     devel@linuxdriverproject.org, linux-kernel@vger.kernel.org
+Subject: [GIT PULL] Staging driver fixes for 5.0-rc2
+Message-ID: <20190113102342.GA27738@kroah.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
@@ -63,34 +62,37 @@ The following changes since commit bfeffd155283772bbe78c6a05dec7c0128ee500c:
 
 are available in the Git repository at:
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/tty.git tags/tty-5.0-rc2
+  git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/staging.git tags/staging-5.0-rc2
 
-for you to fetch changes up to d3736d82e8169768218ee0ef68718875918091a0:
+for you to fetch changes up to 06382deac2b8a49bbc5aaa3c9118fed6da4a1ac1:
 
-  tty: Don't hold ldisc lock in tty_reopen() if ldisc present (2019-01-11 17:03:42 +0100)
+  Revert "staging: rtl8723bs: Mark ACPI table declaration as used" (2019-01-11 10:40:13 +0100)
 
 ----------------------------------------------------------------
-tty/serial fixes for 5.0-rc2
+Staging driver fixes for 5.0-rc2
 
-Here are 2 tty and serial fixes for 5.0-rc2 that resolve some reported
-issues.
+Here are some small staging driver fixes for some reported issues.
 
-The first is a simple serial driver fix for a regression that showed up
-in 5.0-rc1.  The second one resolves a number of reported issues with
-the recent tty locking fixes that went into 5.0-rc1.  Lots of people
-have tested the second one and say it resolves their issues.
+One reverts a patch that was made to the rtl8723bs driver that turned
+out to not be needed at all as it was a bug in clang.  The others fix up
+some reported issues in the rtl8188eu driver and update the MAINTAINERS
+file to point to Larry for this driver so he can get the bug reports
+easier.
 
-Both have been in linux-next with no reported issues.
+All have been in linux-next with no reported issues.
 
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ----------------------------------------------------------------
-Dmitry Safonov (1):
-      tty: Don't hold ldisc lock in tty_reopen() if ldisc present
+Greg Kroah-Hartman (1):
+      Revert "staging: rtl8723bs: Mark ACPI table declaration as used"
 
-Hauke Mehrtens (1):
-      serial: lantiq: Do not swap register read/writes
+Larry Finger (3):
+      MAINTAINERS: Add entry for staging driver r8188eu
+      staging: rtl8188eu: Fix module loading from tasklet for CCMP encryption
+      staging: rtl8188eu: Fix module loading from tasklet for WEP encryption
 
- drivers/tty/serial/lantiq.c | 36 +++++++++++++++++++-----------------
- drivers/tty/tty_io.c        | 20 +++++++++++++-------
- 2 files changed, 32 insertions(+), 24 deletions(-)
+ MAINTAINERS                                   | 5 +++++
+ drivers/staging/rtl8188eu/core/rtw_security.c | 6 +++---
+ drivers/staging/rtl8723bs/os_dep/sdio_intf.c  | 2 +-
+ 3 files changed, 9 insertions(+), 4 deletions(-)
