@@ -7,243 +7,171 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 79BE5C43387
-	for <linux-kernel@archiver.kernel.org>; Sun, 13 Jan 2019 14:00:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 10BA7C43387
+	for <linux-kernel@archiver.kernel.org>; Sun, 13 Jan 2019 14:00:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 48DDE206B7
-	for <linux-kernel@archiver.kernel.org>; Sun, 13 Jan 2019 14:00:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DF87F206B7
+	for <linux-kernel@archiver.kernel.org>; Sun, 13 Jan 2019 14:00:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726707AbfAMOAA (ORCPT
+        id S1726676AbfAMN75 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 13 Jan 2019 09:00:00 -0500
-Received: from mout.gmx.net ([212.227.15.18]:48931 "EHLO mout.gmx.net"
+        Sun, 13 Jan 2019 08:59:57 -0500
+Received: from mout.gmx.net ([212.227.15.18]:58127 "EHLO mout.gmx.net"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726545AbfAMN7z (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1726592AbfAMN7z (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Sun, 13 Jan 2019 08:59:55 -0500
-Received: from longitude ([109.90.232.48]) by mail.gmx.com (mrgmx001
- [212.227.17.190]) with ESMTPSA (Nemesis) id 0MMCFR-1gcvfZ234f-00846w; Sun, 13
- Jan 2019 14:59:52 +0100
+Received: from longitude ([109.90.232.48]) by mail.gmx.com (mrgmx002
+ [212.227.17.190]) with ESMTPSA (Nemesis) id 0LjqLx-1hFYHI1BpB-00brUh; Sun, 13
+ Jan 2019 14:59:53 +0100
 From:   =?UTF-8?q?Jonathan=20Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>
 To:     linux-gpio@vger.kernel.org
 Cc:     Linus Walleij <linus.walleij@linaro.org>,
         Bartosz Golaszewski <bgolaszewski@baylibre.com>,
         linux-kernel@vger.kernel.org,
         =?UTF-8?q?Jonathan=20Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>
-Subject: [PATCH 1/2] gpio: hlwd: Add basic IRQ support
-Date:   Sun, 13 Jan 2019 14:58:43 +0100
-Message-Id: <20190113135844.13109-2-j.neuschaefer@gmx.net>
+Subject: [PATCH 2/2] gpio: hlwd: Implement edge trigger emulation
+Date:   Sun, 13 Jan 2019 14:58:44 +0100
+Message-Id: <20190113135844.13109-3-j.neuschaefer@gmx.net>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190113135844.13109-1-j.neuschaefer@gmx.net>
 References: <20190113135844.13109-1-j.neuschaefer@gmx.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-Provags-ID: V03:K1:OLv5vUU5MJKzcb1LR5FhLhF2S8EKHzw5Qwu/e+gkSk9GHxVXUOs
- aVh5aQY+YqFDYV7AeDFRFzcDUymO7MAe56ib+tZWXjhrUQkLR8aZ5koWEg4w7NPhfO56ARZ
- 1kqkUzpoQ/JU6BmK9MtfkLG6p562J0Yll4yC3Q5c9PQUbiJJblSLCHGcuG2eDZJZ7/P9qYh
- nb0LbDTZwDOWKNVvNiWNQ==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:z7OpcWq79zE=:05xWvybGWfohRlDtFApukx
- 9w4n2v8H6kXyf+7rJs0PbWpu9EYax2N7USR+sryGvD/s6FXjb9T0p/k6zuibNZR+mvW+hiIDC
- nxNkM7y+IJS0igrwh9oo2j+r4x36g8zbrK7hvdaFoRIckArlDfPInEd4F2NJ81g8jrSkShnC3
- Uumw0dHHcEvq9x/7jCpA6DxLU4lb+REfzEtnFTwAjIVjq57AtTrPhxWERe1IdcKpjWyp1+cQA
- Rwx2XhHVRnBonH+3MpHCiX1+OpXMUQmBDwmoG9g+3EcghM36tgNsG4eBZ7pLkuE4/tX/CbKoS
- HdtrkLzFsbIkIDjm3tHqq7YzuARysYMHWLHYS69AJmJXcYUIelaBaaec7Q6eKjmOwoYgPkFYT
- hfKrywhWxlOi1CQv8qTnq6OFrzfZ0mESN1RRLrEu95CdxIrl5GaO0YP7VZqkF1GMZMftDQl7K
- DEt4OjlhTQepMqv3jg48EJrRPeJ4VGQU7PSbkxEq1rB9E+dsXjatcHSQJf10z1+HBn3sVziho
- M2igLYD/w7GjwRhaS2rA8HMKEeGgvUSqV3bh3VMG8EqOQIKPtqJG1SQlVZlOEDv06RYxfMF8T
- /vAFR059EOwjEVd8GIgJcNpdu0v/OHTEklmjQlhkMaXlPGTHQ/v9Xt3GDYfDd/7pf8gr84Q71
- l28nz1AFlA7u5JnXZ0ZTnN3eAz3Vrdrk507EjdpkqWg4IZCdPBzAKdfVK1E+/x+4Q+jTno8Qq
- lYdWSpFcvGTcgHWyxKXJN2eR1V/noY87efWdJvSBV43KccZjzaWAurSYsVyBPwEoAzxeLgrMt
- YKRfcl2heVp8xrDhDHr6La4s5Bp1js/d2ZPAuaoFhRuwxa7Sx8tYgp1Fi1B3+Gfq1RPHqwbhp
- vNnI3rCi3vSB3ZC7DDVPUrZ18X+aakZLzfOJPSCwUs1sDRvIC6d5GRQXVuKr+YatjRE1bteko
- zN+dAG1cxZg==
+X-Provags-ID: V03:K1:1EhH58A94aX1Skvgwv/M6Q4NdPL3ZMkYIVE1ofZyM7LmYs378Ry
+ XBb8O+/Vnirf0rkseaXW0tbeXjTB/RtQ6ExAk5IyM72nfFN9SqnnuJYONbI00Zin1f1Tg2K
+ gRGPxZyJ93EFAgjgGWMJbQeipuJspMycVtsQlYlek0x+BSha3QpFYoHxv9fYtPdxnfRHIW9
+ MK/OKQlkFWL48g79zAJVg==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:QcFX0cIxZUs=:VCe7UW4P1yCILk5AccNlKh
+ xWua8MtIS5hkdaF6UYVt4rX6d7n1n2rfDQIry3k8m9SXOywe+sNyd7gAAeXeKziSpdD13HG7Y
+ MDjrlc1QTudZnVFoKEfXgi2RpeoiYpWD/EyLETXdo5/f183q2lrwhUlNYGLDojJYIA+EsxjQu
+ /L0xfuovJzQLYPD8vnb7vR5ayd1cS8qGQUQ0COFVFVFcYksrKviofvENuwBqVUHWR78TvfwOV
+ X3IFrq3rC9elVE9Ljc9g8xPm7YnGV+dfFvMltG8Gk7Zops9ARs+mV4m2TULJmzYr+XyihAVb7
+ ev6dTB6L/LWAdFS+RxgyLMq/re8ZiuuPo7ruF6E7cQbXjZs8We9cOBSEVv9ujNh8rSPoSJW/f
+ q+vTm/gRURaHul4uapglFc0UF7DpRa0cnYzdf0wO0EKN3rQdiwladvXpyWbRMJUPBe71ZSDRh
+ l5qO9aIFdpernspHwSpX5dopzKOy+vPu4ZqhbuRTAMz4T7hHnVczdqnsxiNsMI98+Z50WSKZG
+ nx0InafHVoX11uCbEHvn4KUSJMbF+kbeFptAVAwU1yUxNf6rMEf8OzkOdtKTHGiWtrAQ943n6
+ mDmRzJzRgiaJipewSqUsJta0y5qIPMEeXfs1oOjucXAmk6Gagoa+cAHFffcX1gN0oWPd8/giS
+ H1YzAq1d/+C5DaS3hLCxiDyJaXyCeuVyKElSDUoguXgkNGXX9LGO27yKTuDFo5jKdt6PErLWX
+ GhDMfGpL54bBbl64W7k3pq9tdonUgsepDRAeoyC9LBsvA706rKv1NkN8i8KnULz/O4ApErzM6
+ uC6pjpiC6gu5LGlQj67tytO9x+sz6AqOuAMYQeYpZii99fCd2Ra1OzHBjUXgnQldZ2uFEhOiI
+ cSUlOID/cQujU2lwu6WDMyzQ1YiQZJXaQgxPSliUakhL5+bArN6b4snlhWbzhq004CR4Dcndi
+ QUfebhVZZig==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch implements level-triggered IRQs in the Hollywood GPIO driver.
-Edge triggered interrupts are not supported in this GPIO controller, so
-I moved their emulation into a separate patch.
+Like the Spreadtrum EIC driver[1], this driver needs to emulate edge
+triggered interrupts to support the generic gpio-keys driver.
+
+[1]: https://www.spinics.net/lists/kernel/msg2764576.html
 
 Signed-off-by: Jonathan Neuschäfer <j.neuschaefer@gmx.net>
 ---
+ drivers/gpio/gpio-hlwd.c | 57 ++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 57 insertions(+)
 
-I'm not entirely sure about the locking, but lockdep doesn't complain.
----
- drivers/gpio/Kconfig     |   1 +
- drivers/gpio/gpio-hlwd.c | 136 ++++++++++++++++++++++++++++++++++++++-
- 2 files changed, 136 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
-index b5a2845347ec..f77180dd87bd 100644
---- a/drivers/gpio/Kconfig
-+++ b/drivers/gpio/Kconfig
-@@ -258,6 +258,7 @@ config GPIO_HLWD
- 	tristate "Nintendo Wii (Hollywood) GPIO"
- 	depends on OF_GPIO
- 	select GPIO_GENERIC
-+	select GPIOLIB_IRQCHIP
- 	help
- 	  Select this to support the GPIO controller of the Nintendo Wii.
- 
 diff --git a/drivers/gpio/gpio-hlwd.c b/drivers/gpio/gpio-hlwd.c
-index a63136a68ba3..9a93546f3d11 100644
+index 9a93546f3d11..3d85e6a71b35 100644
 --- a/drivers/gpio/gpio-hlwd.c
 +++ b/drivers/gpio/gpio-hlwd.c
-@@ -48,9 +48,107 @@
- 
- struct hlwd_gpio {
- 	struct gpio_chip gpioc;
-+	struct irq_chip irqc;
+@@ -51,6 +51,8 @@ struct hlwd_gpio {
+ 	struct irq_chip irqc;
  	void __iomem *regs;
-+	int irq;
+ 	int irq;
++	u32 edge_emulation;
++	u32 rising_edge, falling_edge;
  };
  
-+static void hlwd_gpio_irqhandler(struct irq_desc *desc)
-+{
-+	struct hlwd_gpio *hlwd =
-+		gpiochip_get_data(irq_desc_get_handler_data(desc));
-+	struct irq_chip *chip = irq_desc_get_chip(desc);
-+	unsigned long flags;
-+	unsigned long pending;
-+	int hwirq;
-+
-+	spin_lock_irqsave(&hlwd->gpioc.bgpio_lock, flags);
-+	pending = hlwd->gpioc.read_reg(hlwd->regs + HW_GPIOB_INTFLAG);
-+	pending &= hlwd->gpioc.read_reg(hlwd->regs + HW_GPIOB_INTMASK);
-+	spin_unlock_irqrestore(&hlwd->gpioc.bgpio_lock, flags);
-+
-+	chained_irq_enter(chip, desc);
-+
-+	for_each_set_bit(hwirq, &pending, 32) {
-+		int irq = irq_find_mapping(hlwd->gpioc.irq.domain, hwirq);
-+
-+		generic_handle_irq(irq);
-+	}
-+
-+	chained_irq_exit(chip, desc);
-+}
-+
-+static void hlwd_gpio_irq_ack(struct irq_data *data)
-+{
-+	struct hlwd_gpio *hlwd =
-+		gpiochip_get_data(irq_data_get_irq_chip_data(data));
-+
-+	hlwd->gpioc.write_reg(hlwd->regs + HW_GPIOB_INTFLAG, BIT(data->hwirq));
-+}
-+
-+static void hlwd_gpio_irq_mask(struct irq_data *data)
-+{
-+	struct hlwd_gpio *hlwd =
-+		gpiochip_get_data(irq_data_get_irq_chip_data(data));
-+	unsigned long flags;
-+	u32 mask;
-+
-+	spin_lock_irqsave(&hlwd->gpioc.bgpio_lock, flags);
-+	mask = hlwd->gpioc.read_reg(hlwd->regs + HW_GPIOB_INTMASK);
-+	mask &= ~BIT(data->hwirq);
-+	hlwd->gpioc.write_reg(hlwd->regs + HW_GPIOB_INTMASK, mask);
-+	spin_unlock_irqrestore(&hlwd->gpioc.bgpio_lock, flags);
-+}
-+
-+static void hlwd_gpio_irq_unmask(struct irq_data *data)
-+{
-+	struct hlwd_gpio *hlwd =
-+		gpiochip_get_data(irq_data_get_irq_chip_data(data));
-+	unsigned long flags;
-+	u32 mask;
-+
-+	spin_lock_irqsave(&hlwd->gpioc.bgpio_lock, flags);
-+	mask = hlwd->gpioc.read_reg(hlwd->regs + HW_GPIOB_INTMASK);
-+	mask |= BIT(data->hwirq);
-+	hlwd->gpioc.write_reg(hlwd->regs + HW_GPIOB_INTMASK, mask);
-+	spin_unlock_irqrestore(&hlwd->gpioc.bgpio_lock, flags);
-+}
-+
-+static void hlwd_gpio_irq_enable(struct irq_data *data)
-+{
-+	hlwd_gpio_irq_ack(data);
-+	hlwd_gpio_irq_unmask(data);
-+}
-+
-+static int hlwd_gpio_irq_set_type(struct irq_data *data, unsigned int flow_type)
-+{
-+	struct hlwd_gpio *hlwd =
-+		gpiochip_get_data(irq_data_get_irq_chip_data(data));
-+	unsigned long flags;
-+	u32 level;
-+
-+	spin_lock_irqsave(&hlwd->gpioc.bgpio_lock, flags);
-+
-+	switch (flow_type) {
-+	case IRQ_TYPE_LEVEL_HIGH:
-+		level = hlwd->gpioc.read_reg(hlwd->regs + HW_GPIOB_INTLVL);
-+		level |= BIT(data->hwirq);
-+		hlwd->gpioc.write_reg(hlwd->regs + HW_GPIOB_INTLVL, level);
-+		break;
-+	case IRQ_TYPE_LEVEL_LOW:
-+		level = hlwd->gpioc.read_reg(hlwd->regs + HW_GPIOB_INTLVL);
-+		level &= ~BIT(data->hwirq);
-+		hlwd->gpioc.write_reg(hlwd->regs + HW_GPIOB_INTLVL, level);
-+		break;
-+	default:
-+		spin_unlock_irqrestore(&hlwd->gpioc.bgpio_lock, flags);
-+		return -EINVAL;
-+	}
-+
-+	spin_unlock_irqrestore(&hlwd->gpioc.bgpio_lock, flags);
-+	return 0;
-+}
-+
- static int hlwd_gpio_probe(struct platform_device *pdev)
- {
- 	struct hlwd_gpio *hlwd;
-@@ -92,7 +190,43 @@ static int hlwd_gpio_probe(struct platform_device *pdev)
- 		ngpios = 32;
- 	hlwd->gpioc.ngpio = ngpios;
+ static void hlwd_gpio_irqhandler(struct irq_desc *desc)
+@@ -61,10 +63,37 @@ static void hlwd_gpio_irqhandler(struct irq_desc *desc)
+ 	unsigned long flags;
+ 	unsigned long pending;
+ 	int hwirq;
++	u32 emulated_pending;
  
--	return devm_gpiochip_add_data(&pdev->dev, &hlwd->gpioc, hlwd);
-+	res = devm_gpiochip_add_data(&pdev->dev, &hlwd->gpioc, hlwd);
-+	if (res)
-+		return res;
+ 	spin_lock_irqsave(&hlwd->gpioc.bgpio_lock, flags);
+ 	pending = hlwd->gpioc.read_reg(hlwd->regs + HW_GPIOB_INTFLAG);
+ 	pending &= hlwd->gpioc.read_reg(hlwd->regs + HW_GPIOB_INTMASK);
 +
-+	/* Mask and ack all interrupts */
-+	iowrite32be(0, hlwd->regs + HW_GPIOB_INTMASK);
-+	iowrite32be(0xffffffff, hlwd->regs + HW_GPIOB_INTFLAG);
++	/* Treat interrupts due to edge trigger emulation separately */
++	emulated_pending = hlwd->edge_emulation & pending;
++	pending &= ~emulated_pending;
++	if (emulated_pending) {
++		u32 level, rising, falling;
 +
-+	/*
-+	 * If this GPIO controller is not marked as an interrupt controller in
-+	 * the DT, return.
-+	 */
-+	if (!of_property_read_bool(pdev->dev.of_node, "interrupt-controller"))
-+		return 0;
++		level = hlwd->gpioc.read_reg(hlwd->regs + HW_GPIOB_INTLVL);
++		rising = level & emulated_pending;
++		falling = ~level & emulated_pending;
 +
-+	hlwd->irq = platform_get_irq(pdev, 0);
-+	if (hlwd->irq < 0) {
-+		dev_info(&pdev->dev, "platform_get_irq returned %d\n",
-+			 hlwd->irq);
-+		return hlwd->irq;
++		/* Invert the levels */
++		hlwd->gpioc.write_reg(hlwd->regs + HW_GPIOB_INTLVL,
++				level ^ emulated_pending);
++
++		/* Ack all emulated-edge interrupts */
++		hlwd->gpioc.write_reg(hlwd->regs + HW_GPIOB_INTFLAG,
++				emulated_pending);
++
++		/* Signal interrupts only on the correct edge */
++		rising &= hlwd->rising_edge;
++		falling &= hlwd->falling_edge;
++
++		/* Mark emulated interrupts as pending */
++		pending |= rising | falling;
 +	}
-+
-+	hlwd->irqc.name = "GPIO";
-+	hlwd->irqc.irq_mask = hlwd_gpio_irq_mask;
-+	hlwd->irqc.irq_unmask = hlwd_gpio_irq_unmask;
-+	hlwd->irqc.irq_enable = hlwd_gpio_irq_enable;
-+	hlwd->irqc.irq_set_type = hlwd_gpio_irq_set_type;
-+
-+	res = gpiochip_irqchip_add(&hlwd->gpioc, &hlwd->irqc, 0,
-+				   handle_level_irq, IRQ_TYPE_NONE);
-+	if (res)
-+		return res;
-+
-+	gpiochip_set_chained_irqchip(&hlwd->gpioc, &hlwd->irqc,
-+				     hlwd->irq, hlwd_gpio_irqhandler);
-+
-+	return 0;
+ 	spin_unlock_irqrestore(&hlwd->gpioc.bgpio_lock, flags);
+ 
+ 	chained_irq_enter(chip, desc);
+@@ -120,6 +149,27 @@ static void hlwd_gpio_irq_enable(struct irq_data *data)
+ 	hlwd_gpio_irq_unmask(data);
  }
  
- static const struct of_device_id hlwd_gpio_match[] = {
++static void hlwd_gpio_irq_setup_emulation(struct hlwd_gpio *hlwd, int hwirq,
++					  unsigned int flow_type)
++{
++	u32 level, state;
++
++	/* Set the trigger level to the inactive level */
++	level = hlwd->gpioc.read_reg(hlwd->regs + HW_GPIOB_INTLVL);
++	state = hlwd->gpioc.read_reg(hlwd->regs + HW_GPIOB_IN) & BIT(hwirq);
++	level &= ~BIT(hwirq);
++	level |= state ^ BIT(hwirq);
++	hlwd->gpioc.write_reg(hlwd->regs + HW_GPIOB_INTLVL, level);
++
++	hlwd->edge_emulation |= BIT(hwirq);
++	hlwd->rising_edge &= ~BIT(hwirq);
++	hlwd->falling_edge &= ~BIT(hwirq);
++	if (flow_type & IRQ_TYPE_EDGE_RISING)
++		hlwd->rising_edge |= BIT(hwirq);
++	if (flow_type & IRQ_TYPE_EDGE_FALLING)
++		hlwd->falling_edge |= BIT(hwirq);
++}
++
+ static int hlwd_gpio_irq_set_type(struct irq_data *data, unsigned int flow_type)
+ {
+ 	struct hlwd_gpio *hlwd =
+@@ -129,6 +179,8 @@ static int hlwd_gpio_irq_set_type(struct irq_data *data, unsigned int flow_type)
+ 
+ 	spin_lock_irqsave(&hlwd->gpioc.bgpio_lock, flags);
+ 
++	hlwd->edge_emulation &= ~BIT(data->hwirq);
++
+ 	switch (flow_type) {
+ 	case IRQ_TYPE_LEVEL_HIGH:
+ 		level = hlwd->gpioc.read_reg(hlwd->regs + HW_GPIOB_INTLVL);
+@@ -140,6 +192,11 @@ static int hlwd_gpio_irq_set_type(struct irq_data *data, unsigned int flow_type)
+ 		level &= ~BIT(data->hwirq);
+ 		hlwd->gpioc.write_reg(hlwd->regs + HW_GPIOB_INTLVL, level);
+ 		break;
++	case IRQ_TYPE_EDGE_RISING:
++	case IRQ_TYPE_EDGE_FALLING:
++	case IRQ_TYPE_EDGE_BOTH:
++		hlwd_gpio_irq_setup_emulation(hlwd, data->hwirq, flow_type);
++		break;
+ 	default:
+ 		spin_unlock_irqrestore(&hlwd->gpioc.bgpio_lock, flags);
+ 		return -EINVAL;
 -- 
 2.20.1
 
