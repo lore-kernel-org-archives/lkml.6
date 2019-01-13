@@ -2,151 +2,87 @@ Return-Path: <SRS0=GEt/=PV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
+	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 92D3CC43387
-	for <linux-kernel@archiver.kernel.org>; Sun, 13 Jan 2019 16:14:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 03BB8C43387
+	for <linux-kernel@archiver.kernel.org>; Sun, 13 Jan 2019 16:15:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3172620836
-	for <linux-kernel@archiver.kernel.org>; Sun, 13 Jan 2019 16:14:39 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="KSoiz+Fp"
+	by mail.kernel.org (Postfix) with ESMTP id CE30D20842
+	for <linux-kernel@archiver.kernel.org>; Sun, 13 Jan 2019 16:15:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726710AbfAMQOi (ORCPT
+        id S1726777AbfAMQPY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 13 Jan 2019 11:14:38 -0500
-Received: from pandora.armlinux.org.uk ([78.32.30.218]:34514 "EHLO
-        pandora.armlinux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726254AbfAMQOh (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 13 Jan 2019 11:14:37 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=armlinux.org.uk; s=pandora-2014; h=Sender:In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=R8WF8Lc/Hu2iKQhD6ijSeFw1ni/Wm67m4kCSLmSA9qw=; b=KSoiz+Fp6/UPmZuYgskoE/JK/
-        KLGhrbtmyR26fpvM3G/Vdatz6DUFkGmaB2i8/eeIGWmR1L/89sOZwCH7Dre5AP8a2XkEnF8Qar1Ah
-        HohL12z1NiA0RJtQPzht67L8EElxuWYQkaL8D6mU6fQpcv+mK9y63sb58rO2f49lKOPJU=;
-Received: from n2100.armlinux.org.uk ([fd8f:7570:feb6:1:214:fdff:fe10:4f86]:42495)
-        by pandora.armlinux.org.uk with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
-        (Exim 4.90_1)
-        (envelope-from <linux@armlinux.org.uk>)
-        id 1giiP4-00022f-Nt; Sun, 13 Jan 2019 16:14:26 +0000
-Received: from linux by n2100.armlinux.org.uk with local (Exim 4.90_1)
-        (envelope-from <linux@n2100.armlinux.org.uk>)
-        id 1giiP1-0001DU-L2; Sun, 13 Jan 2019 16:14:23 +0000
-Date:   Sun, 13 Jan 2019 16:14:20 +0000
-From:   Russell King - ARM Linux <linux@armlinux.org.uk>
-To:     Stefan Agner <stefan@agner.ch>
-Cc:     Jeremy Fertic <jeremyfertic@gmail.com>,
-        Arnd Bergmann <arnd@arndb.de>, rostedt@goodmis.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: ARM: config issue with ftrace function graph tracer
-Message-ID: <20190113161420.GE2392@n2100.armlinux.org.uk>
-Mail-Followup-To: Russell King - ARM Linux <linux@armlinux.org.uk>,
-        Stefan Agner <stefan@agner.ch>,
-        Jeremy Fertic <jeremyfertic@gmail.com>,
-        Arnd Bergmann <arnd@arndb.de>, rostedt@goodmis.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20190112010139.GA5288@r2700x.localdomain>
- <d9bc5937c5fc7a45f3aca14fdf68803d@agner.ch>
+        Sun, 13 Jan 2019 11:15:24 -0500
+Received: from mout.gmx.net ([212.227.17.22]:40503 "EHLO mout.gmx.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726619AbfAMQPX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 13 Jan 2019 11:15:23 -0500
+Received: from longitude ([109.90.232.48]) by mail.gmx.com (mrgmx102
+ [212.227.17.168]) with ESMTPSA (Nemesis) id 0MBIAz-1gahfo0DrR-00AGtc; Sun, 13
+ Jan 2019 17:15:05 +0100
+From:   =?UTF-8?q?Jonathan=20Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>
+To:     linux-arm-kernel@lists.infradead.org
+Cc:     =?UTF-8?q?Jonathan=20Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Chen-Yu Tsai <wens@csie.org>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] arm64: dts: allwinner: a64: Fix a typo
+Date:   Sun, 13 Jan 2019 17:14:13 +0100
+Message-Id: <20190113161413.14654-1-j.neuschaefer@gmx.net>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <d9bc5937c5fc7a45f3aca14fdf68803d@agner.ch>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Provags-ID: V03:K1:CK/EgY7EQx0Q4QI163sRiEttrNT3KpYgbe/wDTjbcIbVQ2v6VFf
+ 3YYkR2Nw5dDEFGuxwdm0eZ/5fgtF4ryRV1TYQLCR7UN8q4yWQs7qFo+13/5B/bzL9KqImum
+ 2rmMnGZ8FoyL+bbMq0xNiYqhBDp5ukT7IWXRdxN2rDnYx/RIbJer7SP6s7SGfAUaYZMEvKP
+ UzjP3blBT5m+ucMx0LzTg==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:k4EH+YnfaTw=:wtJgbtrL8NI1HOf9ahbVVc
+ jjKpRWQiDFNheW+WHtFGZiqy4UvipEXbP77li/AbciTu2F7zVOtvw8EqTzIwRAFlnY5IRVh9j
+ MRIZmpmhmB3YyfVGGvwxBfpfJzdARM4Bqx1hoKcpYrm+5uhUC5fv7hWgTgZo3XiWzGhNoCaVY
+ tGLhXOxfoXC6o4VwcCo6i5KfZOACn9IhQwMaxyt+bcyxHATEUqqumq37lJkw7uJn1ZqcXDO0U
+ uAYE70fKuvif0roa11XrPnQdRq0P0r89BVc8V9c/tNxFT3blizJQSxiNPbAgyGIWumXFaBjfd
+ LpjAHUmg+mxF06UMhodm9QimsYPqcrLmfESXTgrzEgsO/kWNIClNKkgJ+77gRg/CVcO6Yo1IG
+ oBBRtTyqS+3nV4YFqhbR5J84cApliXLuBkXsAAsM5ZhZuixfNKDByOoHP8yphPfVapdzCEMM1
+ t7odH6RFSeHN7BCz8+rOjrvxk26GVBiTkvzO30v4agC7QbLG18q5OI3dh9ASf5ayFAX9gcE07
+ nNBL779ZDqZCIGGzlVLI1zoF/bRykcco6Pt94a+0r00Z+pfkfntr0rUBow3ELCzcWAyPaaNEP
+ tMyRfsw2KMpWT0w6zMiCGT7uBzhIGcMXeLdM3ElFP0vIA7BkbHYPG05B4tOFNq/BKMKsNDJlA
+ gn4t7KPjy6mu921Y4PnrihRJyI+6so2ueG0SEBTqHxI+b1kfdPL7TCs29b3xz9NTLZYQSeJRN
+ XZycmvLptAIwx2AwjCjKjqBg3G+aFWpc7OkFwyru8uIhUpWYMHzeR5G7ZLXPLksK88C9seXN8
+ BHurpniVkb89ZKomPZ6a9nAw2yIeCR8O8Y24l1GsDgFRYB7GHQ10HOOxj8sIi+vBr9KHCoY3i
+ 6U2SBXamkODvET6VN2HguFhF2nIaJu8azP5WfA/+Y+v+eWWncD7gS5mkKMWUi9vr3P2ZirBjz
+ W/ws8sTV0aQ==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Jan 13, 2019 at 04:41:52PM +0100, Stefan Agner wrote:
-> Hi,
-> 
-> On 12.01.2019 02:01, Jeremy Fertic wrote:
-> > I'm having a problem with the ftrace function graph tracer on a 32 bit arm
-> > board (orangepi pc). A bisect points to the following commit:
-> > 
-> > f9b58e8c7d03 ("ARM: 8800/1: use choice for kernel unwinders")
-> > 
-> > Before this commit, if I use sunxi_defconfig and then menuconfig to enable
-> > FTRACE and FUNCTION_TRACER then the function graph tracer works. With this
-> > commit, and as of v5.0-rc1, doing the same as above results in a broken
-> > function graph tracer and often an oops as well. The commit introduces a
-> > choice group and it looks like it should default to UNWINDER_FRAME_POINTER
-> > if FUNCTION_GRAPH_TRACER is enabled. FUNCTION_GRAPH_TRACER is enabled by
-> > default when I enable FUNCTION_TRACER but this has no effect on the choice.
-> > The choice always defaults to the other option which is UNWINDER_ARM. If I
-> > manually choose UNWINDER_FRAME_POINTER then the function graph tracer works
-> > fine.
-> 
-> The default selection is there, but this is made at "make
-> sunxi_defconfig" time. At this point FUNCTION_GRAPH_TRACER is not
-> enabled, hence Kconfig uses UNWIDER_ARM. However, when enabling the
-> FUNCTION_GRAPH_TRACER Kconfig will _not_ reconsider and switch enable
-> UNWINDER_FRAME_POINTER.
-> 
-> Before that commit, when enabling FUNCTION_GRAPH_TRACER, we simply also
-> enabled FRAME_POINTER...
-> 
-> I guess we need to make sure that FUNCTION_GRAPH_TRACER depends on the
-> UNWINDER_FRAME_POINTER choice. There is already a similar dependency
-> with THUMB2_KERNEL. We can cleanup that dependency since
-> UNWINDER_FRAME_POINTER already depends on !THUMB2_KERNEL.
-> 
-> diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
-> index 664e918e2624..a2ac65a8b2cc 100644
-> --- a/arch/arm/Kconfig
-> +++ b/arch/arm/Kconfig
-> @@ -69,7 +69,7 @@ config ARM
->         select HAVE_EFFICIENT_UNALIGNED_ACCESS if (CPU_V6 || CPU_V6K ||
-> CPU_V7) && MMU
->         select HAVE_EXIT_THREAD
->         select HAVE_FTRACE_MCOUNT_RECORD if !XIP_KERNEL
-> -       select HAVE_FUNCTION_GRAPH_TRACER if !THUMB2_KERNEL
-> +       select HAVE_FUNCTION_GRAPH_TRACER if UNWINDER_FRAME_POINTER
->         select HAVE_FUNCTION_TRACER if !XIP_KERNEL
->         select HAVE_GCC_PLUGINS
->         select HAVE_GENERIC_DMA_COHERENT
-> diff --git a/arch/arm/Kconfig.debug b/arch/arm/Kconfig.debug
-> index 6d6e0330930b..8341649fa71d 100644
-> --- a/arch/arm/Kconfig.debug
-> +++ b/arch/arm/Kconfig.debug
-> @@ -47,8 +47,8 @@ config DEBUG_WX
-> 
->  choice
->         prompt "Choose kernel unwinder"
-> -       default UNWINDER_ARM if AEABI && !FUNCTION_GRAPH_TRACER
-> -       default UNWINDER_FRAME_POINTER if !AEABI ||
-> FUNCTION_GRAPH_TRACER
-> +       default UNWINDER_ARM if AEABI
-> +       default UNWINDER_FRAME_POINTER if !AEABI
->         help
->           This determines which method will be used for unwinding kernel
-> stack
->           traces for panics, oopses, bugs, warnings, perf,
-> /proc/<pid>/stack,
+This typo inverted the meaning of the comment, but the rest of the
+comment and the code reveal that the regulator in question needs to be
+on at all times.
 
-This looks rather horrid - the upshot of this means that the function
-tracer becomes unavailable on EABI unless you know that you must change
-the unwinder from its default.
+Signed-off-by: Jonathan Neuschäfer <j.neuschaefer@gmx.net>
+---
+ arch/arm64/boot/dts/allwinner/sun50i-a64-teres-i.dts | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Before the change to the choice statement, people could select the
-function graph tracer, and the correct unwinder would be selected
-for them.  That's knowledge that people never required before, and
-I think it's really quite unfair to require them to know this to use
-the function graph tracer.
-
-Maybe someone can put some effort into getting the function graph
-tracer working with non-framepointer kernels... but as the above
-currently stands, I really don't like the patch and I'd much rather
-revert the original change to fix this regression.
-
+diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64-teres-i.dts b/arch/arm64/boot/dts/allwinner/sun50i-a64-teres-i.dts
+index c455b24dd079..f9eede0a8bd3 100644
+--- a/arch/arm64/boot/dts/allwinner/sun50i-a64-teres-i.dts
++++ b/arch/arm64/boot/dts/allwinner/sun50i-a64-teres-i.dts
+@@ -239,7 +239,7 @@
+ };
+ 
+ /*
+- * The A64 chip cannot work without this regulator off, although
++ * The A64 chip cannot work with this regulator off, although
+  * it seems to be only driving the AR100 core.
+  * Maybe we don't still know well about CPUs domain.
+  */
 -- 
-RMK's Patch system: http://www.armlinux.org.uk/developer/patches/
-FTTC broadband for 0.8mile line in suburbia: sync at 12.1Mbps down 622kbps up
-According to speedtest.net: 11.9Mbps down 500kbps up
+2.20.1
+
