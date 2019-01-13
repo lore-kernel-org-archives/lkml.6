@@ -2,96 +2,104 @@ Return-Path: <SRS0=GEt/=PV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 43D5CC43387
-	for <linux-kernel@archiver.kernel.org>; Sun, 13 Jan 2019 16:49:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A85D8C43387
+	for <linux-kernel@archiver.kernel.org>; Sun, 13 Jan 2019 16:52:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 02BD1206B7
-	for <linux-kernel@archiver.kernel.org>; Sun, 13 Jan 2019 16:49:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 72E1C2089F
+	for <linux-kernel@archiver.kernel.org>; Sun, 13 Jan 2019 16:52:27 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="bnvOxTNc"
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="i4vN6VPI"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726776AbfAMQtp (ORCPT
+        id S1726804AbfAMQw0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 13 Jan 2019 11:49:45 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:55164 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726566AbfAMQto (ORCPT
+        Sun, 13 Jan 2019 11:52:26 -0500
+Received: from bedivere.hansenpartnership.com ([66.63.167.143]:39502 "EHLO
+        bedivere.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726596AbfAMQw0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 13 Jan 2019 11:49:44 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=wrZm73XoQCJ9+KwY5y7yjv8JJNYe/WdlAJUCzKjmak4=; b=bnvOxTNcPIsfTh7rVGKvYNIhY
-        2VyR6sCq5y8Z7HRM2cNWQvmi9QsuwB9D3QTcwBkKt2IU0WvPJqdCczlYuoUmT1GgEhiFaSNvLxZia
-        1e+OKkHFz0Z+CYhn/++w7S0zOcyTCy+S4X8eI/gNAknsU6wuy5WIA2tBGgTQ9/+iNexNPjOOCDJnv
-        qIzsOf5M1ybNwURSPjtdwOqyiSL2ASxKWafBqWS/V6gq2GpY7M2fEptT+cLsMOeHAWBm/RVybXHUD
-        4RiEQA8HGPSMORyQZc9mbcLAtihbNwgxIcgxldkd0U510htG4QWtV16E5vmNo6UFR7hW7UvyUVTcU
-        kxFxfscGg==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1giix6-00041e-Bt; Sun, 13 Jan 2019 16:49:36 +0000
-Date:   Sun, 13 Jan 2019 08:49:36 -0800
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Jason Gunthorpe <jgg@mellanox.com>
-Cc:     Joe Perches <joe@perches.com>, Gal Pressman <galpress@amazon.com>,
-        Bart Van Assche <bvanassche@acm.org>,
-        Stephen Warren <swarren@wwwdotorg.org>,
-        Tariq Toukan <tariqt@mellanox.com>,
-        "xavier.huwei@huawei.com" <xavier.huwei@huawei.com>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>,
-        Doug Ledford <dledford@redhat.com>,
-        Stephen Warren <swarren@nvidia.com>,
-        Christoph Hellwig <hch@lst.de>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v4] coding-style: Clarify the expectations around bool
-Message-ID: <20190113164936.GW6310@bombadil.infradead.org>
-References: <20190110234805.GN6890@ziepe.ca>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190110234805.GN6890@ziepe.ca>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+        Sun, 13 Jan 2019 11:52:26 -0500
+Received: from localhost (localhost [127.0.0.1])
+        by bedivere.hansenpartnership.com (Postfix) with ESMTP id 06B128EE335;
+        Sun, 13 Jan 2019 08:52:25 -0800 (PST)
+Received: from bedivere.hansenpartnership.com ([127.0.0.1])
+        by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id OzwZyar6r92n; Sun, 13 Jan 2019 08:52:24 -0800 (PST)
+Received: from [153.66.254.242] (unknown [50.35.68.20])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id CC5578EE31D;
+        Sun, 13 Jan 2019 08:52:23 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=hansenpartnership.com;
+        s=20151216; t=1547398344;
+        bh=97Lr8uEcWLYZCfQ65MhD1fQLYDaPb+MVY/qOho5BHrk=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=i4vN6VPILuvlJrcNcY5cbZgiEzT4vGensEQ8uH+ALRauU3TvJTNmRl/WlRyLqNoRG
+         rgkpR/W2mQWSIKc5keILKgkKPXCe3OWm6JRgFq2EKQeW434jbpBvF4qRV8Uwlhy+Kh
+         VmwJbDdTZz4ZXzvriF/i6t8V5ipF4dQ9qvYM5NRg=
+Message-ID: <1547398342.4409.3.camel@HansenPartnership.com>
+Subject: Re: [PATCH 4/6] crypto: hkdf - RFC5869 Key Derivation Function
+From:   James Bottomley <James.Bottomley@HansenPartnership.com>
+To:     Stephan =?ISO-8859-1?Q?M=FCller?= <smueller@chronox.de>,
+        Herbert Xu <herbert@gondor.apana.org.au>
+Cc:     Eric Biggers <ebiggers@kernel.org>,
+        Andy Lutomirski <luto@amacapital.net>,
+        "Lee, Chun-Yi" <joeyli.kernel@gmail.com>,
+        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
+        Pavel Machek <pavel@ucw.cz>, linux-kernel@vger.kernel.org,
+        linux-pm@vger.kernel.org, keyrings@vger.kernel.org,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        Chen Yu <yu.c.chen@intel.com>,
+        Oliver Neukum <oneukum@suse.com>,
+        Ryan Chen <yu.chen.surf@gmail.com>,
+        David Howells <dhowells@redhat.com>,
+        Giovanni Gherdovich <ggherdovich@suse.cz>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Jann Horn <jannh@google.com>,
+        Andy Lutomirski <luto@kernel.org>, linux-crypto@vger.kernel.org
+Date:   Sun, 13 Jan 2019 08:52:22 -0800
+In-Reply-To: <9795894.APlZEWIbOH@positron.chronox.de>
+References: <20190103143227.9138-1-jlee@suse.com>
+         <20190112051252.GA639@sol.localdomain>
+         <20190112095535.36rh3ptnrf7yxacv@gondor.apana.org.au>
+         <9795894.APlZEWIbOH@positron.chronox.de>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.22.6 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jan 10, 2019 at 11:48:13PM +0000, Jason Gunthorpe wrote:
-> +The Linux kernel bool type is an alias for the C99 _Bool type. bool values can
-> +only evaluate to 0 or 1, and implicit or explicit conversion to bool
-> +automatically converts the value to true or false. When using bool types the
-> +!! construction is not needed, which eliminates a class of bugs.
-> +
-> +When working with bool values the true and false definitions should be used
-> +instead of 0 and 1.
-> +
-> +bool function return types and stack variables are always fine to use whenever
-> +appropriate. Use of bool is encouraged to improve readability and is often a
-> +better option than 'int' for storing boolean values.
+On Sun, 2019-01-13 at 08:56 +0100, Stephan Müller wrote:
+> The question may arise why to plug the KDFs into RNGs. The answer is
+> quite simple: KDFs are a form of random number generator. In that
+> they take some input for initialization (aka seed, salt, key,
+> personalization string). Then they produce pseudo-random bit
+> sequences of arbitrary length. Possibly the generation operation can
+> be modified by providing some additional input to be used by the
+> generation process (aka label, context, info string, additional 
+> information string). Thus, the RNG interface is a natural fit for the
+> KDFs.
 
-It's awkward to start a sentence with a lower case letter.  How about
-rephrasing this paragraph and the following one as:
+Philosophically, that's quite wrong.  KDFs are a class of pseudorandom
+functions (PRFs).  PRFs are designed so that the output is
+indistinguishable from a random number generator to observers who don't
+know the input but is deterministically useful for participants who do.
+ That means the're definitely not RNGs they're functions whose output
+is designed to look like the output of an RNG.
 
-  Using bool as the return type of a function or as a variable is always
-  fine when appropriate.  It often improves readability and is a better option
-  than int for storing boolean values.  Using bool in data structures is
-  more debatable; its size and alignment can vary between architectures.
+I suppose the mathematical thing that distinguishes PRFs and RNGs is
+entropy: PRFs have zero entropy because given the same inputs you
+expect the same output. Now whether it makes sense to use the RNG API
+or not I'll leave that up to the crypto people.  I would have expected
+any cryptographic RNG API to be mostly about entropy management (the
+Linux core internal one certainly is), but it appears that the one in
+crypto isn't.
 
-> +Do not use bool if cache line layout or size of the value matters, its size
-> +and alignment varies based on the compiled architecture. Structures that are
-> +optimized for alignment and size should not use bool.
-> +
-> +If a structure has many true/false values, consider consolidating them into a
-> +bitfield with 1 bit members, or using an appropriate fixed width type, such as
-> +u8.
+James
+
