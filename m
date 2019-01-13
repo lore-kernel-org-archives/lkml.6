@@ -2,710 +2,288 @@ Return-Path: <SRS0=GEt/=PV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4320EC43387
-	for <linux-kernel@archiver.kernel.org>; Sun, 13 Jan 2019 05:36:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CF558C43387
+	for <linux-kernel@archiver.kernel.org>; Sun, 13 Jan 2019 06:27:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F220120873
-	for <linux-kernel@archiver.kernel.org>; Sun, 13 Jan 2019 05:36:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 828192084C
+	for <linux-kernel@archiver.kernel.org>; Sun, 13 Jan 2019 06:27:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726116AbfAMFdf (ORCPT
+        id S1726416AbfAMG1l (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 13 Jan 2019 00:33:35 -0500
-Received: from smtp.polymtl.ca ([132.207.4.11]:50644 "EHLO smtp.polymtl.ca"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725861AbfAMFdf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 13 Jan 2019 00:33:35 -0500
-Received: from abder-pad (c-67-170-74-158.hsd1.wa.comcast.net [67.170.74.158])
-        by smtp.polymtl.ca (8.14.7/8.14.7) with ESMTP id x0D5WXeW009804;
-        Sun, 13 Jan 2019 00:32:38 -0500
-Message-ID: <69fbfd44dc1698b0fb3f5e1963216eb35a7bc6bb.camel@polymtl.ca>
-Subject: [PATCH v5] ftrace: support early boot function tracing
-From:   Abderrahmane Benbachir <abderrahmane.benbachir@polymtl.ca>
-To:     rostedt@goodmis.org
-Cc:     mingo@redhat.com, peterz@infradead.org,
-        mathieu.desnoyers@efficios.com, linux-kernel@vger.kernel.org
-Date:   Sat, 12 Jan 2019 21:32:32 -0800
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.5-0ubuntu0.18.04.1 
-Mime-Version: 1.0
+        Sun, 13 Jan 2019 01:27:41 -0500
+Received: from szxga07-in.huawei.com ([45.249.212.35]:40622 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725905AbfAMG1l (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 13 Jan 2019 01:27:41 -0500
+Received: from DGGEMS404-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id E67812765DEA6B1F5EA2;
+        Sun, 13 Jan 2019 14:27:36 +0800 (CST)
+Received: from [127.0.0.1] (10.177.29.32) by DGGEMS404-HUB.china.huawei.com
+ (10.3.19.204) with Microsoft SMTP Server id 14.3.408.0; Sun, 13 Jan 2019
+ 14:27:29 +0800
+Subject: Re: [BUG] virtio-gpu hung when booting ARM64 virtual machine
+From:   Zheng Xiang <zhengxiang9@huawei.com>
+To:     <airlied@linux.ie>, <kraxel@redhat.com>, <daniel@ffwll.ch>,
+        <dri-devel@lists.freedesktop.org>,
+        <virtualization@lists.linux-foundation.org>,
+        <linux-kernel@vger.kernel.org>
+CC:     Wang Haibin <wanghaibin.wang@huawei.com>
+References: <091a9619-a9de-acde-0f7e-70b5bd5970dc@huawei.com>
+Message-ID: <35871aaf-98f5-f4e3-30d4-f41fb6bd6711@huawei.com>
+Date:   Sun, 13 Jan 2019 14:27:19 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:64.0) Gecko/20100101
+ Thunderbird/64.0
+MIME-Version: 1.0
+In-Reply-To: <091a9619-a9de-acde-0f7e-70b5bd5970dc@huawei.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-Poly-FromMTA: (c-67-170-74-158.hsd1.wa.comcast.net [67.170.74.158]) at Sun, 13 Jan 2019 05:32:33 +0000
+X-Originating-IP: [10.177.29.32]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Steven, just noticed that the last patch had issue with the formatting,
-this patch is the good one.
-Thanks.
+Sorry for that I missed typing 'd' in the email addreslist.
 
-Previous changes:
-PATCH v1: Initial patch
-PATCH v2:
-   Removed arch specific code and use the default clock.
-   Add more code re-usability
-   Add HAVE_EARLY_BOOT_FTRACE config option, which will be disabled by default
-PATCH v3:
-   Write early boot temporary buffer to a sub-buffer instead of the global one.
-   Improve Kconfig help text.
-
-PATCH v4 :
-	Some code refactoring.
-
-PATCH v5 :
-	fixing the build failers on arch i386.
-
-Patch starts here:
-----------------------------------------------------------------------
-
-The early boot tracing will start from the beginning of start_kernel()
-and will stop at ftrace_init()
-
-start_kernel()
-{
-  ftrace_early_init() <--- start early boot function tracing
-  ...
-  (calls)
-  ...
-  ftrace_init()       <--- stop early boot function tracing
-  early_trace_init();
-  ...
-}
-
-The events are placed in a temporary buffer, which will be copied to
-the trace buffer after memory setup.
-
-Dynamic tracing is not implemented with live patching, we use
-ftrace_filter and ftrace_notrace to find which functions to be
-filtered (traced / not traced), then during the callback from
-mcount hook, we do binary search lookup to decide which function
-to save and which one to discard.
-
-Signed-off-by: Abderrahmane Benbachir <abderrahmane.benbachir@polymtl.ca>
-Cc: Steven Rostedt <rostedt@goodmis.org>
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Cc: linux-kernel@vger.kernel.org
-
----
- arch/x86/Kconfig            |   1 +
- arch/x86/kernel/ftrace_32.S |  45 ++++--
- arch/x86/kernel/ftrace_64.S |  14 ++
- include/linux/ftrace.h      |  18 ++-
- init/main.c                 |   1 +
- kernel/trace/Kconfig        |  51 +++++++
- kernel/trace/ftrace.c       | 294 +++++++++++++++++++++++++++++++++++-
- kernel/trace/trace.c        |  41 +++++
- 8 files changed, 453 insertions(+), 12 deletions(-)
-
-diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
-index 8689e794a43c..f4f754d4aa7a 100644
---- a/arch/x86/Kconfig
-+++ b/arch/x86/Kconfig
-@@ -152,6 +152,7 @@ config X86
- 	select HAVE_FTRACE_MCOUNT_RECORD
- 	select HAVE_FUNCTION_GRAPH_TRACER
- 	select HAVE_FUNCTION_TRACER
-+	select HAVE_EARLY_BOOT_FTRACE
- 	select HAVE_GCC_PLUGINS
- 	select HAVE_HW_BREAKPOINT
- 	select HAVE_IDE
-diff --git a/arch/x86/kernel/ftrace_32.S b/arch/x86/kernel/ftrace_32.S
-index 4c8440de3355..a247cbf4c529 100644
---- a/arch/x86/kernel/ftrace_32.S
-+++ b/arch/x86/kernel/ftrace_32.S
-@@ -31,12 +31,8 @@ EXPORT_SYMBOL(mcount)
- # define MCOUNT_FRAME			0	/* using frame = false */
- #endif
- 
--ENTRY(function_hook)
--	ret
--END(function_hook)
--
--ENTRY(ftrace_caller)
- 
-+.macro save_mcount_regs
- #ifdef USING_FRAME_POINTER
- # ifdef CC_USING_FENTRY
- 	/*
-@@ -73,11 +69,9 @@ ENTRY(ftrace_caller)
- 
- 	movl	function_trace_op, %ecx
- 	subl	$MCOUNT_INSN_SIZE, %eax
-+	.endm
- 
--.globl ftrace_call
--ftrace_call:
--	call	ftrace_stub
--
-+.macro restore_mcount_regs
- 	addl	$4, %esp			/* skip NULL pointer */
- 	popl	%edx
- 	popl	%ecx
-@@ -90,6 +84,39 @@ ftrace_call:
- 	addl	$4, %esp			/* skip parent ip */
- # endif
- #endif
-+	.endm
-+
-+ENTRY(function_hook)
-+#ifdef CONFIG_EARLY_BOOT_FUNCTION_TRACER
-+	cmpl	$__PAGE_OFFSET, %esp
-+	jb	early_boot_stub			/* Paging not enabled yet? */
-+
-+	cmpl	$ftrace_stub, ftrace_early_boot_trace_function
-+	jnz early_boot_trace
-+
-+early_boot_stub:
-+	ret
-+
-+early_boot_trace:
-+	save_mcount_regs
-+	call	*ftrace_early_boot_trace_function
-+	restore_mcount_regs
-+
-+	jmp early_boot_stub
-+#else
-+	ret
-+#endif
-+END(function_hook)
-+
-+ENTRY(ftrace_caller)
-+	save_mcount_regs
-+
-+.globl ftrace_call
-+ftrace_call:
-+	call	ftrace_stub
-+
-+	restore_mcount_regs
-+
- .Lftrace_ret:
- #ifdef CONFIG_FUNCTION_GRAPH_TRACER
- .globl ftrace_graph_call
-diff --git a/arch/x86/kernel/ftrace_64.S b/arch/x86/kernel/ftrace_64.S
-index 91b2cff4b79a..81736c6e2f9b 100644
---- a/arch/x86/kernel/ftrace_64.S
-+++ b/arch/x86/kernel/ftrace_64.S
-@@ -151,7 +151,21 @@ EXPORT_SYMBOL(mcount)
- #ifdef CONFIG_DYNAMIC_FTRACE
- 
- ENTRY(function_hook)
-+# ifdef CONFIG_EARLY_BOOT_FUNCTION_TRACER
-+	cmpq $ftrace_stub, ftrace_early_boot_trace_function
-+	jnz early_boot_trace
-+
-+early_boot_stub:
- 	retq
-+
-+early_boot_trace:
-+	save_mcount_regs
-+	call *ftrace_early_boot_trace_function
-+	restore_mcount_regs
-+	jmp early_boot_stub
-+# else
-+	retq
-+# endif
- ENDPROC(function_hook)
- 
- ENTRY(ftrace_caller)
-diff --git a/include/linux/ftrace.h b/include/linux/ftrace.h
-index dd16e8218db3..b48382de1fd4 100644
---- a/include/linux/ftrace.h
-+++ b/include/linux/ftrace.h
-@@ -239,6 +239,18 @@ static inline void ftrace_free_init_mem(void) { }
- static inline void ftrace_free_mem(struct module *mod, void *start, void *end) { }
- #endif /* CONFIG_FUNCTION_TRACER */
- 
-+#ifdef CONFIG_EARLY_BOOT_FUNCTION_TRACER
-+extern void __init ftrace_early_boot_init(char *command_line);
-+extern void __init ftrace_early_boot_shutdown(void);
-+extern void __init ftrace_early_boot_fill_ringbuffer(void *data);
-+extern inline bool __init is_ftrace_early_boot_activated(void);
-+#else
-+static inline void __init ftrace_early_boot_init(char *command_line) { }
-+static inline void __init ftrace_early_boot_shutdown(void) { }
-+static inline void __init ftrace_early_boot_fill_ringbuffer(void *data) { }
-+static inline bool __init is_ftrace_early_boot_activated(void) { return false; }
-+#endif
-+
- #ifdef CONFIG_STACK_TRACER
- 
- #define STACK_TRACE_ENTRIES 500
-@@ -443,6 +455,10 @@ unsigned long ftrace_get_addr_curr(struct dyn_ftrace *rec);
- 
- extern ftrace_func_t ftrace_trace_function;
- 
-+#if defined(CONFIG_EARLY_BOOT_FUNCTION_TRACER) && defined(CONFIG_DYNAMIC_FTRACE)
-+extern ftrace_func_t ftrace_early_boot_trace_function;
-+#endif
-+
- int ftrace_regex_open(struct ftrace_ops *ops, int flag,
- 		  struct inode *inode, struct file *file);
- ssize_t ftrace_filter_write(struct file *file, const char __user *ubuf,
-@@ -716,7 +732,7 @@ static inline unsigned long get_lock_parent_ip(void)
- #ifdef CONFIG_FTRACE_MCOUNT_RECORD
- extern void ftrace_init(void);
- #else
--static inline void ftrace_init(void) { }
-+static inline void ftrace_init(void) { ftrace_early_boot_shutdown(); }
- #endif
- 
- /*
-diff --git a/init/main.c b/init/main.c
-index ee147103ba1b..07b83997b6a7 100644
---- a/init/main.c
-+++ b/init/main.c
-@@ -539,6 +539,7 @@ asmlinkage __visible void __init start_kernel(void)
- 	char *command_line;
- 	char *after_dashes;
- 
-+	ftrace_early_boot_init(boot_command_line);
- 	set_task_stack_end_magic(&init_task);
- 	smp_setup_processor_id();
- 	debug_objects_early_init();
-diff --git a/kernel/trace/Kconfig b/kernel/trace/Kconfig
-index 5e3de28c7677..e56bb2d4c395 100644
---- a/kernel/trace/Kconfig
-+++ b/kernel/trace/Kconfig
-@@ -19,6 +19,11 @@ config HAVE_FUNCTION_TRACER
- 	help
- 	  See Documentation/trace/ftrace-design.rst
- 
-+config HAVE_EARLY_BOOT_FTRACE
-+        bool
-+        help
-+          See Documentation/trace/ftrace-design.txt
-+
- config HAVE_FUNCTION_GRAPH_TRACER
- 	bool
- 	help
-@@ -155,6 +160,52 @@ config FUNCTION_TRACER
- 	  (the bootup default), then the overhead of the instructions is very
- 	  small and not measurable even in micro-benchmarks.
- 
-+config EARLY_BOOT_FUNCTION_TRACER
-+	bool "Early Boot Kernel Function Tracer"
-+	depends on FUNCTION_TRACER
-+	depends on HAVE_EARLY_BOOT_FTRACE
-+	help
-+	  Normally, function tracing can only start after memory has been
-+	  initialized early in boot. If "ftrace=function" is added to the
-+	  command line, then function tracing will start after memory setup.
-+	  In order to trace functions before that, this option will
-+	  have function tracing start before memory setup is complete, by
-+	  placing the trace in a temporary buffer, which will be copied to
-+	  the trace buffer after memory setup. The size of this temporary
-+	  buffer is defined by EARLY_BOOT_FTRACE_BUF_SHIFT.
-+
-+config EARLY_BOOT_FTRACE_BUF_SHIFT
-+	int "Temporary buffer size (17 => 128 KB, 24 => 16 MB)"
-+	depends on EARLY_BOOT_FUNCTION_TRACER
-+	range 8 24
-+	default 19
-+	help
-+	  Select the size of the buffer to be used for storing function calls at
-+	  early boot stage.
-+	  The value defines the size as a power of 2, must be in a range of 8 to 24.
-+	  Examples:
-+	    20 =>   1 MB
-+	    19 => 512 KB
-+	    17 => 128 KB
-+
-+config EARLY_BOOT_FTRACE_FILTER_SHIFT
-+	int "Temporary filter size (filter/notrace) (17 => 128 KB, 19 => 512 KB)"
-+	depends on EARLY_BOOT_FUNCTION_TRACER
-+	depends on FTRACE_MCOUNT_RECORD
-+	range 0 19
-+	default 17
-+	help
-+	  Select the size of the filter buffer to be used for filtering (trace/
-+	  no trace) functions at early boot stage.
-+	  Two buffers (trace and no_trace) will be created using this option.
-+	  These following kernel parameters control filtering during bootup :
-+	  "ftrace_filter", "ftrace_notrace".
-+	  The value defines the size as a power of 2, must be in a range of 0 to 19.
-+	  Examples:
-+	    19 => 512 KB for each buffer
-+	    18 => 256 KB for each buffer
-+	    17 => 128 KB for each buffer
-+
- config FUNCTION_GRAPH_TRACER
- 	bool "Kernel Function Graph Tracer"
- 	depends on HAVE_FUNCTION_GRAPH_TRACER
-diff --git a/kernel/trace/ftrace.c b/kernel/trace/ftrace.c
-index 77734451cb05..6d2c00f08f13 100644
---- a/kernel/trace/ftrace.c
-+++ b/kernel/trace/ftrace.c
-@@ -65,6 +65,11 @@
- #define FTRACE_HASH_DEFAULT_BITS 10
- #define FTRACE_HASH_MAX_BITS 12
- 
-+#ifdef CONFIG_FTRACE_MCOUNT_RECORD
-+extern unsigned long __start_mcount_loc[];
-+extern unsigned long __stop_mcount_loc[];
-+#endif
-+
- #ifdef CONFIG_DYNAMIC_FTRACE
- #define INIT_OPS_HASH(opsname)	\
- 	.func_hash		= &opsname.local_hash,			\
-@@ -6126,11 +6131,11 @@ void __init ftrace_free_init_mem(void)
- 
- void __init ftrace_init(void)
- {
--	extern unsigned long __start_mcount_loc[];
--	extern unsigned long __stop_mcount_loc[];
- 	unsigned long count, flags;
- 	int ret;
- 
-+    ftrace_early_boot_shutdown();
-+
- 	local_irq_save(flags);
- 	ret = ftrace_dyn_arch_init();
- 	local_irq_restore(flags);
-@@ -7095,3 +7100,288 @@ void ftrace_graph_exit_task(struct task_struct *t)
- 	kfree(ret_stack);
- }
- #endif
-+
-+
-+#ifdef CONFIG_EARLY_BOOT_FUNCTION_TRACER
-+
-+#define EARLY_BOOT_BUFF_LEN ((1 << CONFIG_EARLY_BOOT_FTRACE_BUF_SHIFT) / \
-+					sizeof(struct ftrace_early_boot_entry))
-+
-+struct ftrace_early_boot_entry {
-+	unsigned long ip;
-+	unsigned long parent_ip;
-+	unsigned long long timestamp;
-+};
-+/*
-+ * Only CPU0 is running in early stage, no need to have per-cpu buffer
-+ */
-+static struct ftrace_early_boot_entry ftrace_early_boot_entries[EARLY_BOOT_BUFF_LEN] __initdata;
-+static const unsigned long EARLY_BOOT_BUFF_MAX __initconst = EARLY_BOOT_BUFF_LEN;
-+static unsigned long early_boot_entries_count __initdata;
-+static char tmp_cmdline[COMMAND_LINE_SIZE] __initdata;
-+static bool ftrace_early_boot_activated __initdata = false;
-+
-+#ifdef CONFIG_DYNAMIC_FTRACE
-+ftrace_func_t ftrace_early_boot_trace_function __read_mostly = ftrace_stub;
-+#else
-+# define ftrace_early_boot_trace_function ftrace_trace_function
-+#endif
-+
-+inline bool __init is_ftrace_early_boot_activated(void)
-+{
-+	return ftrace_early_boot_activated;
-+}
-+
-+static inline __init void ftrace_early_boot_disable(void)
-+{
-+	ftrace_early_boot_trace_function = ftrace_stub;
-+}
-+
-+#ifdef CONFIG_FTRACE_MCOUNT_RECORD
-+#define EARLY_BOOT_FILTER_LEN ((1 << CONFIG_EARLY_BOOT_FTRACE_FILTER_SHIFT) / \
-+					sizeof(unsigned long))
-+
-+struct ftrace_early_boot_filtering {
-+	unsigned long list[EARLY_BOOT_FILTER_LEN];
-+	char buf[COMMAND_LINE_SIZE];
-+	int size;
-+};
-+
-+static const unsigned long EARLY_BOOT_FILTER_MAX __initconst = EARLY_BOOT_FILTER_LEN;
-+static struct ftrace_early_boot_filtering ftrace_data_notrace __initdata;
-+static struct ftrace_early_boot_filtering ftrace_data_filter __initdata;
-+
-+static __init int ftrace_early_boot_filter_has_addr(unsigned long addr,
-+	unsigned long *filter, int *size)
-+{
-+	int i;
-+
-+	for (i = 0; i < *size; i++) {
-+		if (filter[i] == addr)
-+			return 1;
-+	}
-+	return 0;
-+}
-+
-+static __init int
-+ftrace_early_boot_match_record(unsigned long ip, struct ftrace_glob *func_g)
-+{
-+	char str[KSYM_SYMBOL_LEN];
-+	char *modname;
-+
-+	kallsyms_lookup(ip, NULL, NULL, &modname, str);
-+	return ftrace_match(str, func_g);
-+}
-+
-+static __init void
-+ftrace_early_boot_regex(char *func, unsigned long *filter, int *size)
-+{
-+	struct ftrace_glob func_g = { .type = MATCH_FULL };
-+	unsigned long *start = __start_mcount_loc;
-+	unsigned long *end = __stop_mcount_loc;
-+	unsigned long count;
-+	unsigned long addr;
-+	unsigned long *p;
-+	int clear_filter = 0;
-+
-+	count = end - start;
-+
-+	if (!count)
-+		return;
-+
-+	if (func) {
-+		func_g.type = filter_parse_regex(func, strlen(func), &func_g.search,
-+						 &clear_filter);
-+		func_g.len = strlen(func_g.search);
-+	}
-+
-+	p = start;
-+	while (p < end) {
-+		addr = ftrace_call_adjust(*p++);
-+		if (!addr)
-+			continue;
-+
-+		if ((*size) > EARLY_BOOT_FILTER_MAX)
-+			return;
-+
-+		if (ftrace_early_boot_match_record(addr, &func_g)) {
-+			if (!ftrace_early_boot_filter_has_addr(addr, filter, size))
-+				filter[(*size)++] = addr;
-+		}
-+	}
-+}
-+
-+static __init int ftrace_addr_compare(const void *a, const void *b)
-+{
-+	if (*(unsigned long *)a > *(unsigned long *)b)
-+		return 1;
-+	if (*(unsigned long *)a < *(unsigned long *)b)
-+		return -1;
-+
-+	return 0;
-+}
-+
-+static __init void ftrace_addr_swap(void *a, void *b, int size)
-+{
-+	unsigned long t = *(unsigned long *)a;
-+	*(unsigned long *)a = *(unsigned long *)b;
-+	*(unsigned long *)b = t;
-+}
-+
-+static __init int set_ftrace_early_boot_filtering(void *data, char *str)
-+{
-+	struct ftrace_early_boot_filtering *ftrace_data = data;
-+	char *func;
-+	char *buf;
-+
-+	if (!ftrace_data)
-+		return 0;
-+	buf = ftrace_data->buf;
-+	strlcpy(buf, str, COMMAND_LINE_SIZE);
-+
-+	while (buf) {
-+		func = strsep(&buf, ",");
-+		ftrace_early_boot_regex(func, ftrace_data->list, &ftrace_data->size);
-+	}
-+	/* sort filter to use binary search on it */
-+	sort(ftrace_data->list, ftrace_data->size,
-+		sizeof(unsigned long), ftrace_addr_compare, ftrace_addr_swap);
-+
-+	return 1;
-+}
-+
-+#define ftrace_early_boot_bsearch_addr(addr, data) bsearch(&addr, data.list,\
-+	data.size, sizeof(unsigned long), ftrace_addr_compare)
-+
-+#endif /* CONFIG_FTRACE_MCOUNT_RECORD */
-+
-+
-+static __init void
-+ftrace_function_early_boot_trace_call(unsigned long ip, unsigned long parent_ip,
-+			struct ftrace_ops *op, struct pt_regs *regs)
-+{
-+	struct ftrace_early_boot_entry *entry;
-+
-+#ifdef CONFIG_FTRACE_MCOUNT_RECORD
-+	if (ftrace_data_notrace.size &&
-+			ftrace_early_boot_bsearch_addr(ip, ftrace_data_notrace))
-+		return;
-+
-+	if (ftrace_data_filter.size &&
-+			!ftrace_early_boot_bsearch_addr(ip, ftrace_data_filter))
-+		return;
-+#endif
-+
-+	if (early_boot_entries_count >= EARLY_BOOT_BUFF_MAX) {
-+		/* stop tracing when buffer is full */
-+		ftrace_early_boot_disable();
-+		return;
-+	}
-+
-+	entry = &ftrace_early_boot_entries[early_boot_entries_count++];
-+	entry->ip = ip;
-+	entry->parent_ip = parent_ip;
-+	entry->timestamp = trace_clock_local();
-+}
-+
-+/*
-+ * this will be used as __setup_param
-+ */
-+struct ftrace_early_boot_obs_param {
-+	int (*setup_func)(void *data, char *str);
-+	const char *str;
-+	void *data;
-+};
-+static struct ftrace_early_boot_obs_param ftrace_early_boot_params[] __initdata = {
-+#ifdef CONFIG_FTRACE_MCOUNT_RECORD
-+	{
-+		.str = "ftrace_notrace",
-+		.data = &ftrace_data_notrace,
-+		.setup_func = set_ftrace_early_boot_filtering,
-+	},
-+	{
-+		.str = "ftrace_filter",
-+		.data = &ftrace_data_filter,
-+		.setup_func = set_ftrace_early_boot_filtering,
-+	},
-+#endif
-+};
-+
-+static __init int ftrace_do_early_boot_param(char *param, char *val,
-+				 const char *unused, void *arg)
-+{
-+	int size = ARRAY_SIZE(ftrace_early_boot_params);
-+	struct ftrace_early_boot_obs_param *p;
-+	int i;
-+
-+	for (i = 0; i < size; i++) {
-+		p = &ftrace_early_boot_params[i];
-+		if (strcmp(param, p->str) == 0) {
-+			p->setup_func(p->data, val);
-+			return 0;
-+		}
-+	}
-+	return 0;
-+}
-+
-+void __init ftrace_early_boot_init(char *command_line)
-+{
-+	/* proceed only if function tracing was enabled */
-+	if (!strstr(command_line, "ftrace=function "))
-+		return;
-+
-+	strlcpy(tmp_cmdline, command_line, COMMAND_LINE_SIZE);
-+	parse_args("ftrace early boot options", tmp_cmdline, NULL, 0, 0, 0, NULL,
-+		ftrace_do_early_boot_param);
-+
-+	ftrace_early_boot_activated = true;
-+	// After this point, we enable early function tracing
-+	ftrace_early_boot_trace_function = ftrace_function_early_boot_trace_call;
-+}
-+
-+void __init ftrace_early_boot_shutdown(void)
-+{
-+	// Disable early tracing
-+	ftrace_early_boot_disable();
-+
-+#ifdef CONFIG_FTRACE_MCOUNT_RECORD
-+	pr_info("ftrace: early boot %lu entries, notrace=%d, filter=%d",
-+		early_boot_entries_count,
-+		ftrace_data_notrace.size,
-+		ftrace_data_filter.size);
-+#else
-+	pr_info("ftrace: early boot %lu recorded entries", early_boot_entries_count);
-+#endif
-+}
-+
-+/*
-+ * Will be passed to ringbuffer by early_boot_trace_clock
-+ */
-+static u64 early_timestamp __initdata;
-+
-+static __init u64 early_boot_trace_clock(void)
-+{
-+	return early_timestamp;
-+}
-+
-+void __init ftrace_early_boot_fill_ringbuffer(void *data)
-+{
-+	struct ftrace_early_boot_entry *entry;
-+	struct trace_array *tr = data;
-+	int i;
-+
-+	if (ftrace_early_boot_entries <= 0)
-+		return;
-+
-+	ring_buffer_set_clock(tr->trace_buffer.buffer, early_boot_trace_clock);
-+
-+	for (i = 0; i < early_boot_entries_count; i++) {
-+		entry = &ftrace_early_boot_entries[i];
-+		early_timestamp = entry->timestamp;
-+		trace_function(tr, entry->ip, entry->parent_ip, 0, 0);
-+	}
-+
-+	ring_buffer_set_clock(tr->trace_buffer.buffer, trace_clock_local);
-+}
-+
-+#endif /* CONFIG_EARLY_BOOT_FUNCTION_TRACER */
-diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
-index ff1c4b20cd0a..596ee5dcf108 100644
---- a/kernel/trace/trace.c
-+++ b/kernel/trace/trace.c
-@@ -8649,3 +8649,44 @@ __init static int tracing_set_default_clock(void)
- }
- late_initcall_sync(tracing_set_default_clock);
- #endif
-+
-+#ifdef CONFIG_EARLY_BOOT_FUNCTION_TRACER
-+/*
-+ * The early boot tracer should be the second trace array added,
-+ */
-+static __init struct trace_array *early_boot_trace_array(void)
-+{
-+	struct trace_array *tr;
-+
-+	if (list_empty(&ftrace_trace_arrays))
-+		return NULL;
-+
-+	tr = list_entry(ftrace_trace_arrays.next,
-+			typeof(*tr), list);
-+	WARN_ON(!(tr->flags & TRACE_ARRAY_FL_GLOBAL));
-+	return tr;
-+}
-+
-+static __init int early_boot_tracer_init_tracefs(void)
-+{
-+	struct trace_array *tr;
-+
-+	if (!is_ftrace_early_boot_activated())
-+		return 0;
-+
-+	if (instance_mkdir("early_boot"))
-+		return 0;
-+
-+	tr = early_boot_trace_array();
-+	if (!tr) {
-+		pr_info("ftrace: early_boot array tracer not found\n");
-+		return 0;
-+	}
-+	/* fill the ring buffer with early boot events */
-+	ftrace_early_boot_fill_ringbuffer(tr);
-+
-+	return 0;
-+}
-+
-+fs_initcall(early_boot_tracer_init_tracefs);
-+#endif /* CONFIG_EARLY_BOOT_FUNCTION_TRACER */
+On 2019/1/10 20:52, Zheng Xiang wrote:
+> Hi all,
+> 
+> Recently I encountered a problem that virtio-gpu driver would have a very low chance of getting hung
+> when I boot VM from linux kernel 4.19 on ARM64 server by using qemu. The dmesg log shows bellow:
+> 
+>     [  242.782731] INFO: task systemd:1 blocked for more than 120 seconds.
+>     [  242.782738]       Tainted: G            E     4.19.5-1.2.32.aarch64 #1
+>     [  242.782739] "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+>     [  242.782743] systemd         D    0     1      0 0x00000000
+>     [  242.782748] Call trace:
+>     [  242.782767]  __switch_to+0x94/0xd8
+>     [  242.782779]  __schedule+0x228/0x8a8
+>     [  242.782782]  schedule+0x2c/0x88
+>     [  242.782785]  schedule_timeout+0x234/0x470
+>     [  242.782787]  __down+0x88/0x108
+>     [  242.782792]  down+0x88/0xa0
+>     [  242.782798]  console_lock+0x24/0x48
+>     [  242.782799]  console_device+0x1c/0x88
+>     [  242.782806]  tty_lookup_driver+0xa8/0x128
+>     [  242.782808]  tty_open+0x1f4/0x418
+>     [  242.782813]  chrdev_open+0xd4/0x248
+>     [  242.782816]  do_dentry_open+0x1b0/0x380
+>     [  242.782818]  vfs_open+0x38/0x48
+>     [  242.782822]  do_last+0x294/0xf58
+>     [  242.782824]  path_openat+0x88/0x2a0
+>     [  242.782827]  do_filp_open+0x88/0x108
+>     [  242.782829]  do_sys_open+0x1a8/0x238
+>     [  242.782831]  __arm64_sys_openat+0x2c/0x38
+>     [  242.782834]  el0_svc_common+0x78/0x100
+>     [  242.782836]  el0_svc_handler+0x38/0x88
+>     [  242.782839]  el0_svc+0x8/0xc
+>     [  242.782850] INFO: task kworker/0:1:13 blocked for more than 120 seconds.
+>     [  242.782851]       Tainted: G            E     4.19.5-1.2.32.aarch64 #1
+>     [  242.782853] "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+>     [  242.782855] kworker/0:1     D    0    13      2 0x00000028
+>     [  242.782872] Workqueue: events drm_fb_helper_dirty_work
+>     [  242.782875] Call trace:
+>     [  242.782877]  __switch_to+0x94/0xd8
+>     [  242.782880]  __schedule+0x228/0x8a8
+>     [  242.782882]  schedule+0x2c/0x88
+>     [  242.782902]  virtio_gpu_queue_ctrl_buffer_locked+0x12c/0x220 [virtio_gpu]
+>     [  242.782906]  virtio_gpu_queue_ctrl_buffer+0x58/0x80 [virtio_gpu]
+>     [  242.782911]  virtio_gpu_cmd_resource_flush+0x8c/0xb0 [virtio_gpu]
+>     [  242.782915]  virtio_gpu_surface_dirty+0x60/0x110 [virtio_gpu]
+>     [  242.782920]  virtio_gpu_framebuffer_surface_dirty+0x34/0x48 [virtio_gpu]
+>     [  242.782922]  drm_fb_helper_dirty_work+0x170/0x1b0
+>     [  242.782928]  process_one_work+0x1f4/0x458
+>     [  242.782930]  worker_thread+0x50/0x4c8
+>     [  242.782932]  kthread+0x134/0x138
+>     [  242.782934]  ret_from_fork+0x10/0x1c
+>     [  242.782946] INFO: task kworker/1:1:34 blocked for more than 120 seconds.
+>     [  242.782948]       Tainted: G            E     4.19.5-1.2.32.aarch64 #1
+>     [  242.782949] "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+>     [  242.782950] kworker/1:1     D    0    34      2 0x00000028
+>     [  242.782960] Workqueue: events virtio_gpu_fb_dirty_work [virtio_gpu]
+>     [  242.782963] Call trace:
+>     [  242.782965]  __switch_to+0x94/0xd8
+>     [  242.782967]  __schedule+0x228/0x8a8
+>     [  242.782969]  schedule+0x2c/0x88
+>     [  242.782974]  virtio_gpu_queue_fenced_ctrl_buffer+0x12c/0x160 [virtio_gpu]
+>     [  242.782978]  virtio_gpu_cmd_transfer_to_host_2d+0xa4/0xd0 [virtio_gpu]
+>     [  242.782981]  virtio_gpu_dirty_update+0x184/0x200 [virtio_gpu]
+>     [  242.782986]  virtio_gpu_fb_dirty_work+0x3c/0x48 [virtio_gpu]
+>     [  242.782988]  process_one_work+0x1f4/0x458
+>     [  242.782990]  worker_thread+0x50/0x4c8
+>     [  242.782991]  kthread+0x134/0x138
+>     [  242.782993]  ret_from_fork+0x10/0x1c
+>     [  242.783033] INFO: task kworker/0:3:3706 blocked for more than 120 seconds.
+>     [  242.783034]       Tainted: G            E     4.19.5-1.2.32.aarch64 #1
+>     [  242.783035] "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+>     [  242.783037] kworker/0:3     D    0  3706      2 0x00000028
+>     [  242.783046] Workqueue: events console_callback
+>     [  242.783048] Call trace:
+>     [  242.783050]  __switch_to+0x94/0xd8
+>     [  242.783053]  __schedule+0x228/0x8a8
+>     [  242.783055]  schedule+0x2c/0x88
+>     [  242.783057]  schedule_timeout+0x234/0x470
+>     [  242.783059]  __down+0x88/0x108
+>     [  242.783061]  down+0x88/0xa0
+>     [  242.783063]  console_lock+0x24/0x48
+>     [  242.783065]  console_callback+0x40/0x198
+>     [  242.783067]  process_one_work+0x1f4/0x458
+>     [  242.783068]  worker_thread+0x50/0x4c8
+>     [  242.783070]  kthread+0x134/0x138
+>     [  242.783072]  ret_from_fork+0x10/0x1c
+>     [  242.783075] INFO: task kworker/u8:6:4901 blocked for more than 120 seconds.
+>     [  242.783077]       Tainted: G            E     4.19.5-1.2.32.aarch64 #1
+>     [  242.783077] "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+>     [  242.783079] kworker/u8:6    D    0  4901      2 0x00000028
+>     [  242.783087] Workqueue: events_unbound flush_to_ldisc
+>     [  242.783089] Call trace:
+>     [  242.783091]  __switch_to+0x94/0xd8
+>     [  242.783093]  __schedule+0x228/0x8a8
+>     [  242.783095]  schedule+0x2c/0x88
+>     [  242.783097]  schedule_timeout+0x234/0x470
+>     [  242.783099]  __down+0x88/0x108
+>     [  242.783101]  down+0x88/0xa0
+>     [  242.783103]  console_lock+0x24/0x48
+>     [  242.783105]  con_flush_chars+0x3c/0x58
+>     [  242.783107]  n_tty_receive_buf_common+0x3c4/0xa28
+>     [  242.783109]  n_tty_receive_buf2+0x40/0x50
+>     [  242.783111]  tty_ldisc_receive_buf+0x44/0x90
+>     [  242.783113]  tty_port_default_receive_buf+0x54/0xa0
+>     [  242.783114]  flush_to_ldisc+0xa4/0xc8
+>     [  242.783116]  process_one_work+0x1f4/0x458
+>     [  242.783118]  worker_thread+0x50/0x4c8
+>     [  242.783119]  kthread+0x134/0x138
+>     [  242.783121]  ret_from_fork+0x10/0x1c
+>     [  242.783125] INFO: task setfont:5118 blocked for more than 120 seconds.
+>     [  242.783127]       Tainted: G            E     4.19.5-1.2.32.aarch64 #1
+>     [  242.783128] "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+>     [  242.783129] setfont         D    0  5118      1 0x00000001
+>     [  242.783132] Call trace:
+>     [  242.783134]  __switch_to+0x94/0xd8
+>     [  242.783136]  __schedule+0x228/0x8a8
+>     [  242.783138]  schedule+0x2c/0x88
+>     [  242.783140]  schedule_timeout+0x234/0x470
+>     [  242.783142]  __down+0x88/0x108
+>     [  242.783144]  down+0x88/0xa0
+>     [  242.783146]  console_lock+0x24/0x48
+>     [  242.783148]  con_font_op+0x2a4/0x488
+>     [  242.783152]  vt_ioctl+0x119c/0x14a8
+>     [  242.783155]  tty_ioctl+0x118/0xc58
+>     [  242.783156]  do_vfs_ioctl+0xc4/0x8b0
+>     [  242.783158]  ksys_ioctl+0x8c/0xa0
+>     [  242.783160]  __arm64_sys_ioctl+0x28/0x38
+>     [  242.783161]  el0_svc_common+0x78/0x100
+>     [  242.783163]  el0_svc_handler+0x38/0x88
+>     [  242.783165]  el0_svc+0x8/0xc
+>     [  242.783167] INFO: task setfont:5121 blocked for more than 120 seconds.
+>     [  242.783169]       Tainted: G            E     4.19.5-1.2.32.aarch64 #1
+>     [  242.783170] "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+>     [  242.783172] setfont         D    0  5121      1 0x00000001
+>     [  242.783174] Call trace:
+>     [  242.783176]  __switch_to+0x94/0xd8
+>     [  242.783179]  __schedule+0x228/0x8a8
+>     [  242.783180]  schedule+0x2c/0x88
+>     [  242.783184]  virtio_gpu_queue_ctrl_buffer_locked+0x12c/0x220 [virtio_gpu]
+>     [  242.783188]  virtio_gpu_queue_ctrl_buffer+0x58/0x80 [virtio_gpu]
+>     [  242.783193]  virtio_gpu_cmd_set_scanout+0x90/0xb8 [virtio_gpu]
+>     [  242.783197]  virtio_gpu_primary_plane_update+0xc4/0x168 [virtio_gpu]
+>     [  242.783200]  drm_atomic_helper_commit_planes+0xd8/0x218
+>     [  242.783204]  vgdev_atomic_commit_tail+0x44/0x70 [virtio_gpu]
+>     [  242.783207]  commit_tail+0x4c/0x80
+>     [  242.783208]  drm_atomic_helper_commit+0xe0/0x160
+>     [  242.783215]  drm_atomic_commit+0x54/0x60
+>     [  242.783217]  restore_fbdev_mode_atomic+0x190/0x238
+>     [  242.783219]  drm_fb_helper_pan_display+0xac/0x1e8
+>     [  242.783226]  fb_pan_display+0x9c/0x120
+>     [  242.783229]  bit_update_start+0x28/0x50
+>     [  242.783231]  fbcon_switch+0x344/0x588
+>     [  242.783233]  redraw_screen+0x1a0/0x2a8
+>     [  242.783235]  fbcon_do_set_font+0x1cc/0x268
+>     [  242.783237]  fbcon_set_font+0x224/0x260
+>     [  242.783239]  con_font_op+0x2c8/0x488
+>     [  242.783240]  vt_ioctl+0x119c/0x14a8
+>     [  242.783243]  tty_ioctl+0x118/0xc58
+>     [  242.783245]  do_vfs_ioctl+0xc4/0x8b0
+>     [  242.783246]  ksys_ioctl+0x8c/0xa0
+>     [  242.783248]  __arm64_sys_ioctl+0x28/0x38
+>     [  242.783250]  el0_svc_common+0x78/0x100
+>     [  242.783252]  el0_svc_handler+0x38/0x88
+>     [  242.783253]  el0_svc+0x8/0xc
+>     [  363.614716] INFO: task systemd:1 blocked for more than 120 seconds.
+>     [  363.614721]       Tainted: G            E     4.19.5-1.2.32.aarch64 #1
+>     [  363.614722] "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+>     [  363.614726] systemd         D    0     1      0 0x00000000
+>     [  363.614732] Call trace:
+>     [  363.614751]  __switch_to+0x94/0xd8
+>     [  363.614763]  __schedule+0x228/0x8a8
+>     [  363.614766]  schedule+0x2c/0x88
+>     [  363.614769]  schedule_timeout+0x234/0x470
+>     [  363.614771]  __down+0x88/0x108
+>     [  363.614776]  down+0x88/0xa0
+>     [  363.614782]  console_lock+0x24/0x48
+>     [  363.614783]  console_device+0x1c/0x88
+>     [  363.614790]  tty_lookup_driver+0xa8/0x128
+>     [  363.614791]  tty_open+0x1f4/0x418
+>     [  363.614796]  chrdev_open+0xd4/0x248
+>     [  363.614799]  do_dentry_open+0x1b0/0x380
+>     [  363.614800]  vfs_open+0x38/0x48
+>     [  363.614805]  do_last+0x294/0xf58
+>     [  363.614807]  path_openat+0x88/0x2a0
+>     [  363.614809]  do_filp_open+0x88/0x108
+>     [  363.614811]  do_sys_open+0x1a8/0x238
+>     [  363.614813]  __arm64_sys_openat+0x2c/0x38
+>     [  363.614817]  el0_svc_common+0x78/0x100
+>     [  363.614819]  el0_svc_handler+0x38/0x88
+>     [  363.614822]  el0_svc+0x8/0xc
+>     [  363.614832] INFO: task kworker/0:1:13 blocked for more than 120 seconds.
+>     [  363.614833]       Tainted: G            E     4.19.5-1.2.32.aarch64 #1
+>     [  363.614834] "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+>     [  363.614836] kworker/0:1     D    0    13      2 0x00000028
+>     [  363.614851] Workqueue: events drm_fb_helper_dirty_work
+>     [  363.614854] Call trace:
+>     [  363.614856]  __switch_to+0x94/0xd8
+>     [  363.614859]  __schedule+0x228/0x8a8
+>     [  363.614860]  schedule+0x2c/0x88
+>     [  363.614881]  virtio_gpu_queue_ctrl_buffer_locked+0x12c/0x220 [virtio_gpu]
+>     [  363.614886]  virtio_gpu_queue_ctrl_buffer+0x58/0x80 [virtio_gpu]
+>     [  363.614891]  virtio_gpu_cmd_resource_flush+0x8c/0xb0 [virtio_gpu]
+>     [  363.614895]  virtio_gpu_surface_dirty+0x60/0x110 [virtio_gpu]
+>     [  363.614899]  virtio_gpu_framebuffer_surface_dirty+0x34/0x48 [virtio_gpu]
+>     [  363.614902]  drm_fb_helper_dirty_work+0x170/0x1b0
+>     [  363.614906]  process_one_work+0x1f4/0x458
+>     [  363.614908]  worker_thread+0x50/0x4c8
+>     [  363.614911]  kthread+0x134/0x138
+>     [  363.614913]  ret_from_fork+0x10/0x1c
+>     [  363.614922] INFO: task kworker/1:1:34 blocked for more than 120 seconds.
+>     [  363.614923]       Tainted: G            E     4.19.5-1.2.32.aarch64 #1
+>     [  363.614925] "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+>     [  363.614926] kworker/1:1     D    0    34      2 0x00000028
+>     [  363.614936] Workqueue: events virtio_gpu_fb_dirty_work [virtio_gpu]
+>     [  363.614938] Call trace:
+>     [  363.614940]  __switch_to+0x94/0xd8
+>     [  363.614943]  __schedule+0x228/0x8a8
+>     [  363.614945]  schedule+0x2c/0x88
+>     [  363.614948]  virtio_gpu_queue_fenced_ctrl_buffer+0x12c/0x160 [virtio_gpu]
+>     [  363.614953]  virtio_gpu_cmd_transfer_to_host_2d+0xa4/0xd0 [virtio_gpu]
+>     [  363.614957]  virtio_gpu_dirty_update+0x184/0x200 [virtio_gpu]
+>     [  363.614961]  virtio_gpu_fb_dirty_work+0x3c/0x48 [virtio_gpu]
+>     [  363.614964]  process_one_work+0x1f4/0x458
+>     [  363.614966]  worker_thread+0x50/0x4c8
+>     [  363.614967]  kthread+0x134/0x138
+>     [  363.614969]  ret_from_fork+0x10/0x1c
+> 
+> It seems that the commit d02d270014f70dcab0117776b81a37b6fca745ae(drm/virtio: fix vq wait_event condition) is relative to the above exception.
+> I don't know in which case the ctrl_vq.vq->num_free would be always less than 3 so that virtio_gpu_queue_fenced_ctrl_buffer and virtio_gpu_queue_ctrl_buffer_locked wait for schedule timeout.
+> 
+> 
 -- 
-2.17.1
+
+Thanks,
+Xiang
 
 
