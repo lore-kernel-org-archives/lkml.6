@@ -2,135 +2,78 @@ Return-Path: <SRS0=GEt/=PV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AEBB0C43387
-	for <linux-kernel@archiver.kernel.org>; Sun, 13 Jan 2019 20:01:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EEFA4C43387
+	for <linux-kernel@archiver.kernel.org>; Sun, 13 Jan 2019 20:11:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8CA4520675
-	for <linux-kernel@archiver.kernel.org>; Sun, 13 Jan 2019 20:01:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CAE2D20675
+	for <linux-kernel@archiver.kernel.org>; Sun, 13 Jan 2019 20:11:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726880AbfAMUBZ (ORCPT
+        id S1726557AbfAMULf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 13 Jan 2019 15:01:25 -0500
-Received: from mail1.windriver.com ([147.11.146.13]:50247 "EHLO
-        mail1.windriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726546AbfAMUAF (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 13 Jan 2019 15:00:05 -0500
-Received: from ALA-HCA.corp.ad.wrs.com ([147.11.189.40])
-        by mail1.windriver.com (8.15.2/8.15.1) with ESMTPS id x0DIditq026191
-        (version=TLSv1 cipher=AES128-SHA bits=128 verify=FAIL);
-        Sun, 13 Jan 2019 10:39:44 -0800 (PST)
-Received: from yow-cube1.wrs.com (128.224.56.98) by ALA-HCA.corp.ad.wrs.com
- (147.11.189.40) with Microsoft SMTP Server id 14.3.408.0; Sun, 13 Jan 2019
- 10:39:44 -0800
-From:   Paul Gortmaker <paul.gortmaker@windriver.com>
-To:     Lee Jones <lee.jones@linaro.org>
-CC:     <linux-kernel@vger.kernel.org>,
-        Paul Gortmaker <paul.gortmaker@windriver.com>,
-        <patches@opensource.cirrus.com>
-Subject: [PATCH 14/18] mfd: wm831x-i2c: Make it explicitly non-modular
-Date:   Sun, 13 Jan 2019 13:36:45 -0500
-Message-ID: <1547404609-14161-15-git-send-email-paul.gortmaker@windriver.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1547404609-14161-1-git-send-email-paul.gortmaker@windriver.com>
-References: <1547404609-14161-1-git-send-email-paul.gortmaker@windriver.com>
+        Sun, 13 Jan 2019 15:11:35 -0500
+Received: from gloria.sntech.de ([185.11.138.130]:46984 "EHLO gloria.sntech.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726428AbfAMULf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 13 Jan 2019 15:11:35 -0500
+Received: from p57b7799d.dip0.t-ipconnect.de ([87.183.121.157] helo=phil.localnet)
+        by gloria.sntech.de with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <heiko@sntech.de>)
+        id 1gikoU-0002Hp-KY; Sun, 13 Jan 2019 19:48:50 +0100
+From:   Heiko Stuebner <heiko@sntech.de>
+To:     Julia Lawall <Julia.Lawall@lip6.fr>
+Cc:     Sandy Huang <hjc@rock-chips.com>, kernel-janitors@vger.kernel.org,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        dri-devel@lists.freedesktop.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 3/4] drm/rockchip: add missing of_node_put
+Date:   Sun, 13 Jan 2019 19:48:49 +0100
+Message-ID: <3397932.PmTvevuZIG@phil>
+In-Reply-To: <1547369264-24831-4-git-send-email-Julia.Lawall@lip6.fr>
+References: <1547369264-24831-1-git-send-email-Julia.Lawall@lip6.fr> <1547369264-24831-4-git-send-email-Julia.Lawall@lip6.fr>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The Kconfig currently controlling compilation of this code is:
+Am Sonntag, 13. Januar 2019, 09:47:43 CET schrieb Julia Lawall:
+> The device node iterators perform an of_node_get on each iteration, so a
+> jump out of the loop requires an of_node_put.
+> 
+> The semantic patch that fixes this problem is as follows
+> (http://coccinelle.lip6.fr):
+> 
+> // <smpl>
+> @@
+> expression root,e;
+> local idexpression child;
+> iterator name for_each_child_of_node;
+> @@
+> 
+>  for_each_child_of_node(root, child) {
+>    ... when != of_node_put(child)
+>        when != e = child
+> +  of_node_put(child);
+> ?  break;
+>    ...
+> }
+> ... when != child
+> // </smpl>
+> 
+> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
-drivers/mfd/Kconfig:config MFD_WM831X_I2C
-drivers/mfd/Kconfig:    bool "Wolfson Microelectronics WM831x/2x PMICs with I2C"
+I've added a fixes+stable tag and applied it to drm-misc-fixes
 
-...meaning that it currently is not being built as a module by anyone.
+Thanks for catching that
+Heiko
 
-Lets remove the modular code that is essentially orphaned, so that
-when reading the driver there is no doubt it is builtin-only.
-
-We explicitly disallow a driver unbind, since that doesn't have a
-sensible use case anyway, and it allows us to drop the ".remove"
-code for non-modular drivers.
-
-Since module_init was not in use by this code, the init ordering
-remains unchanged with this commit.
-
-Also note that MODULE_DEVICE_TABLE is a no-op for non-modular code.
-
-Cc: Lee Jones <lee.jones@linaro.org>
-Cc: patches@opensource.cirrus.com
-Signed-off-by: Paul Gortmaker <paul.gortmaker@windriver.com>
-Acked-by: Linus Walleij <linus.walleij@linaro.org>
-Acked-by: Charles Keepax <ckeepax@opensource.cirrus.com>
----
- drivers/mfd/wm831x-i2c.c | 20 ++------------------
- 1 file changed, 2 insertions(+), 18 deletions(-)
-
-diff --git a/drivers/mfd/wm831x-i2c.c b/drivers/mfd/wm831x-i2c.c
-index 22f7054d1b28..0f3af42f7268 100644
---- a/drivers/mfd/wm831x-i2c.c
-+++ b/drivers/mfd/wm831x-i2c.c
-@@ -13,7 +13,7 @@
-  */
- 
- #include <linux/kernel.h>
--#include <linux/module.h>
-+#include <linux/init.h>
- #include <linux/i2c.h>
- #include <linux/delay.h>
- #include <linux/mfd/core.h>
-@@ -68,15 +68,6 @@ static int wm831x_i2c_probe(struct i2c_client *i2c,
- 	return wm831x_device_init(wm831x, i2c->irq);
- }
- 
--static int wm831x_i2c_remove(struct i2c_client *i2c)
--{
--	struct wm831x *wm831x = i2c_get_clientdata(i2c);
--
--	wm831x_device_exit(wm831x);
--
--	return 0;
--}
--
- static int wm831x_i2c_suspend(struct device *dev)
- {
- 	struct wm831x *wm831x = dev_get_drvdata(dev);
-@@ -103,7 +94,6 @@ static const struct i2c_device_id wm831x_i2c_id[] = {
- 	{ "wm8326", WM8326 },
- 	{ }
- };
--MODULE_DEVICE_TABLE(i2c, wm831x_i2c_id);
- 
- static const struct dev_pm_ops wm831x_pm_ops = {
- 	.suspend = wm831x_i2c_suspend,
-@@ -115,9 +105,9 @@ static struct i2c_driver wm831x_i2c_driver = {
- 		.name = "wm831x",
- 		.pm = &wm831x_pm_ops,
- 		.of_match_table = of_match_ptr(wm831x_of_match),
-+		.suppress_bind_attrs = true,
- 	},
- 	.probe = wm831x_i2c_probe,
--	.remove = wm831x_i2c_remove,
- 	.id_table = wm831x_i2c_id,
- };
- 
-@@ -132,9 +122,3 @@ static int __init wm831x_i2c_init(void)
- 	return ret;
- }
- subsys_initcall(wm831x_i2c_init);
--
--static void __exit wm831x_i2c_exit(void)
--{
--	i2c_del_driver(&wm831x_i2c_driver);
--}
--module_exit(wm831x_i2c_exit);
--- 
-2.7.4
 
