@@ -2,118 +2,132 @@ Return-Path: <SRS0=GEt/=PV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 13B72C43387
-	for <linux-kernel@archiver.kernel.org>; Sun, 13 Jan 2019 20:13:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3FA08C43387
+	for <linux-kernel@archiver.kernel.org>; Sun, 13 Jan 2019 20:21:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D0EEF20663
-	for <linux-kernel@archiver.kernel.org>; Sun, 13 Jan 2019 20:13:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0B7E120663
+	for <linux-kernel@archiver.kernel.org>; Sun, 13 Jan 2019 20:21:10 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=lixom-net.20150623.gappssmtp.com header.i=@lixom-net.20150623.gappssmtp.com header.b="TOfZ3G/t"
+	dkim=pass (2048-bit key) header.d=lixom-net.20150623.gappssmtp.com header.i=@lixom-net.20150623.gappssmtp.com header.b="NSlR07vN"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726565AbfAMUN5 (ORCPT
+        id S1726561AbfAMUVJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 13 Jan 2019 15:13:57 -0500
-Received: from mail-it1-f194.google.com ([209.85.166.194]:53553 "EHLO
-        mail-it1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726428AbfAMUN4 (ORCPT
+        Sun, 13 Jan 2019 15:21:09 -0500
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:38211 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726428AbfAMUVI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 13 Jan 2019 15:13:56 -0500
-Received: by mail-it1-f194.google.com with SMTP id g85so10252744ita.3
-        for <linux-kernel@vger.kernel.org>; Sun, 13 Jan 2019 12:13:56 -0800 (PST)
+        Sun, 13 Jan 2019 15:21:08 -0500
+Received: by mail-pg1-f195.google.com with SMTP id g189so8552481pgc.5
+        for <linux-kernel@vger.kernel.org>; Sun, 13 Jan 2019 12:21:08 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=lixom-net.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=tBEaCQcsIQTc8v6Be/2Rjso4xya55Sm4Y5LoVasWh1k=;
-        b=TOfZ3G/tzVZzTUjTji3MO0Mc/ZclNQccKN39Yl3KMAYkTgatbK1XMoZHInqS9pjxzV
-         oQj//kxKOV66yqW4Eej5+vfluY5MT31GzV3nwqyXKnIYcoQm3IoAJXsBc/LjLIIR2nPj
-         Uid9rRx58HFyOLjuL4F5IG7IyD75oaRzfje4aIHJOiulKt5xzJIivaxNkN60qEiklT5t
-         hlRo8xdCzl61xUej6S9/VS5YEbedt6k/UtPPCgIRfscKs0kHjWHm10tUK2nAKQ1N13XA
-         MpjFI/A7Ap3P+clGPRARkOpEzoQj2mWu1AmeAnfmHAnQC7UH800e7Me7RHKTco1/6c6G
-         aNZw==
+        h=from:to:cc:subject:date:message-id;
+        bh=SZMXyt3fuC9QgBICnVxppk8SU2DS4LuGTafrd6+uVBA=;
+        b=NSlR07vNw7hCKkP4Dm1iEyvlHGEFbw/HNpJ9p6WA66QsItXmm6/NeaUgdaRbedBQpc
+         5mSJ1ccEyL7yka8bFXv65GIWc7FDflr0G4JyUPQ01K2w7m3BymE3or5oUt+VG8IeMYQk
+         oGvu8kZ5A0TW+IN7uWddkgZz+HP2Spfd0ptnDNwvOxkqp9HMp9Gq4NL/A8gtH/Nhpmua
+         lQm5zJ9F6AA8I9zaIxpwdeIhGpAE3h/NAXS9BEjzMVxOc+0oEJgYtb5mNdpM3H+YMdnB
+         cikkotyUiFR0RqpcGrovh9bjd4S/DqCLUAHeAe6uEPivcV9Mvm0Hf38zs9h02YZ11TQF
+         uMng==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=tBEaCQcsIQTc8v6Be/2Rjso4xya55Sm4Y5LoVasWh1k=;
-        b=iWheOrxFm/SxSZfi3D0cFSZPnQK/hCeOUtKGllGDUxzhgrcvej3+H+1jveRlnXJ1Hr
-         eU1IOAgUitncawKD5tcXyk8IuzonBRx8+ehwY8yoaVIyrbalBHcj1S4gneWfcOMApuf7
-         qi1SiPRpq78QlUngRn+RgOqUTvjJwzgdNqteqT+YE2NvSlR7QazG02/z+X6JjrBg2OkL
-         qEXRHmli7SPMgD/MIvZYR2pbOlbrmIsYnJGFj7CaYX2GihXF5gKFsf/rNTPHacU3i0p5
-         W5sFr8TM/Ec4SsHAl1pmisVLzzofu3fnwAoHfzcH2budANBPu/TlSEMcKiokT6yL6Rby
-         1j4A==
-X-Gm-Message-State: AJcUukckihIrFlbutFPWd36rBTgZnakUnYWb5qOx0Zv5EXKQYoX45njD
-        CZauMKVTsq5LOqgBt/ogQgOHuDMdVJG35n/Ka/F61TJFBS4=
-X-Google-Smtp-Source: ALg8bN7LSVkMEEwBogZ0IDhesKc+PXzLrwPtBlBOSdsHZSmrh7LR0F+M5n3CaXoqrS2nulvBEoH+j5w2BSkI6xI0ogA=
-X-Received: by 2002:a02:63c9:: with SMTP id j192mr16187795jac.10.1547404551140;
- Sun, 13 Jan 2019 10:35:51 -0800 (PST)
-MIME-Version: 1.0
-References: <20190110111535.11235-1-anders.roxell@linaro.org>
-In-Reply-To: <20190110111535.11235-1-anders.roxell@linaro.org>
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=SZMXyt3fuC9QgBICnVxppk8SU2DS4LuGTafrd6+uVBA=;
+        b=cKAUp7QFbT2jFNLZ/9grHPOdZesXwrzKGr271pEZLr05pv4nwQ4MNzBX5xPXicHybN
+         AX762y4mWCz2FaB9wrpwcyNq6wRRy0arPe6gjQNb/B3n7+lUaP23lfyLt/hfseHSKCUv
+         8ron38X/Yu/vUkRRJJlig+Wt3K/SP9dz1yrw3409FNCWmkAczdOKZjldJzVHSCPCcUA2
+         T+BMTq7Pz6FaxnWBlqhpjXPQIOXMglP0KDMthCAbn8XZWFq2h/K3g9wp5QZITeNfEhK5
+         827N/k04i8Uuo/wqmU5/YSdFzjga8MiqbaZFc/Da/6mFq+5GRDx9iHBNq8ZQiIgLu5b4
+         iD+g==
+X-Gm-Message-State: AJcUukd3tS3LUbLJOwqlAJ4bOJR9JfHK9pSOb/8uSsxI3rLd03m0IUK2
+        yzI3muX3FfvSb0dANLGIIPOyUXT114THpg==
+X-Google-Smtp-Source: ALg8bN5TY6xCFwLSaRtI3UpeCSMUSNfbjwrsFhB7eP0pFZAmdKsYBvtG5sbm2iL/KHhNMeKUgg3k1g==
+X-Received: by 2002:a63:e051:: with SMTP id n17mr10258933pgj.258.1547404361662;
+        Sun, 13 Jan 2019 10:32:41 -0800 (PST)
+Received: from rip.lixom.net (99-152-116-91.lightspeed.sntcca.sbcglobal.net. [99.152.116.91])
+        by smtp.gmail.com with ESMTPSA id b4sm96702992pgq.65.2019.01.13.10.32.39
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sun, 13 Jan 2019 10:32:39 -0800 (PST)
 From:   Olof Johansson <olof@lixom.net>
-Date:   Sun, 13 Jan 2019 10:35:40 -0800
-Message-ID: <CAOesGMjo1cj7nOABKTM8a+7o_z6c=sMXDfyxcxz7kvT861cnyw@mail.gmail.com>
-Subject: Re: [PATCH] dma: ixm-dma: fix warning comparison of distinct pointer types
-To:     Anders Roxell <anders.roxell@linaro.org>
-Cc:     Vinod Koul <vkoul@kernel.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        dmaengine@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+To:     akpm@linux-foundation.org
+Cc:     jinb.park7@gmail.com, colin.king@canonical.com,
+        linux-kernel@vger.kernel.org, Olof Johansson <olof@lixom.net>,
+        Andrey Ryabinin <aryabinin@virtuozzo.com>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        Kees Cook <keescook@chromium.org>
+Subject: [PATCH] lib: test_ubsan: VLA no longer used in kernel
+Date:   Sun, 13 Jan 2019 10:32:10 -0800
+Message-Id: <20190113183210.56154-1-olof@lixom.net>
+X-Mailer: git-send-email 2.11.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jan 10, 2019 at 3:15 AM Anders Roxell <anders.roxell@linaro.org> wr=
-ote:
->
-> The warning got introduced by commit 930507c18304 ("arm64: add basic
-> Kconfig symbols for i.MX8"). Since it got enabled for arm64. The warning
-> haven't been seen before since size_t was 'unsigned int' when built on
-> arm32.
->
-> ../drivers/dma/imx-dma.c: In function =E2=80=98imxdma_sg_next=E2=80=99:
-> ../include/linux/kernel.h:846:29: warning: comparison of distinct pointer=
- types lacks a cast
->    (!!(sizeof((typeof(x) *)1 =3D=3D (typeof(y) *)1)))
->                              ^~
-> ../include/linux/kernel.h:860:4: note: in expansion of macro =E2=80=98__t=
-ypecheck=E2=80=99
->    (__typecheck(x, y) && __no_side_effects(x, y))
->     ^~~~~~~~~~~
-> ../include/linux/kernel.h:870:24: note: in expansion of macro =E2=80=98__=
-safe_cmp=E2=80=99
->   __builtin_choose_expr(__safe_cmp(x, y), \
->                         ^~~~~~~~~~
-> ../include/linux/kernel.h:879:19: note: in expansion of macro =E2=80=98__=
-careful_cmp=E2=80=99
->  #define min(x, y) __careful_cmp(x, y, <)
->                    ^~~~~~~~~~~~~
-> ../drivers/dma/imx-dma.c:288:8: note: in expansion of macro =E2=80=98min=
-=E2=80=99
->   now =3D min(d->len, sg_dma_len(sg));
->         ^~~
->
-> Rework so that we use min_t and pass in the size_t that returns the
-> minimum of two values, using the specified type.
->
-> Signed-off-by: Anders Roxell <anders.roxell@linaro.org>
+Since we now build with -Wvla, any use of VLA throws a warning.
+Including this test, so... maybe we should just remove the test?
 
-'now' should probably also be a size_t, but it can be done separately.
-imxdma_sg_next()'s return value is never checked anywhere, so the
-function can be changed to void as well.
+lib/test_ubsan.c: In function 'test_ubsan_vla_bound_not_positive':
+lib/test_ubsan.c:48:2: warning: ISO C90 forbids variable length array 'buf' [-Wvla]
 
-That being said, I think this specific patch should go in now to keep
-warnings out of our standard builds. The more we keep around, the
-harder it is to spot when a new legitimate one shows up.
+For the out-of-bounds test, switch to non-VLA setup.
 
-Acked-by: Olof Johansson <olof@lixom.net>
+lib/test_ubsan.c: In function 'test_ubsan_out_of_bounds':
+lib/test_ubsan.c:64:2: warning: ISO C90 forbids variable length array 'arr' [-Wvla]
 
+Cc: Colin Ian King <colin.king@canonical.com>
+Cc: Jinbum Park <jinb.park7@gmail.com>
+Cc: Andrey Ryabinin <aryabinin@virtuozzo.com>
+Cc: Dmitry Vyukov <dvyukov@google.com>
+Cc: Kees Cook <keescook@chromium.org>
+Signed-off-by: Olof Johansson <olof@lixom.net>
 
--Olof
+---
+ lib/test_ubsan.c | 11 +----------
+ 1 file changed, 1 insertion(+), 10 deletions(-)
+
+diff --git a/lib/test_ubsan.c b/lib/test_ubsan.c
+index 280f4979d00ed..9ea10adf7a66f 100644
+--- a/lib/test_ubsan.c
++++ b/lib/test_ubsan.c
+@@ -42,14 +42,6 @@ static void test_ubsan_divrem_overflow(void)
+ 	val /= val2;
+ }
+ 
+-static void test_ubsan_vla_bound_not_positive(void)
+-{
+-	volatile int size = -1;
+-	char buf[size];
+-
+-	(void)buf;
+-}
+-
+ static void test_ubsan_shift_out_of_bounds(void)
+ {
+ 	volatile int val = -1;
+@@ -61,7 +53,7 @@ static void test_ubsan_shift_out_of_bounds(void)
+ static void test_ubsan_out_of_bounds(void)
+ {
+ 	volatile int i = 4, j = 5;
+-	volatile int arr[i];
++	volatile int arr[4];
+ 
+ 	arr[j] = i;
+ }
+@@ -113,7 +105,6 @@ static const test_ubsan_fp test_ubsan_array[] = {
+ 	test_ubsan_mul_overflow,
+ 	test_ubsan_negate_overflow,
+ 	test_ubsan_divrem_overflow,
+-	test_ubsan_vla_bound_not_positive,
+ 	test_ubsan_shift_out_of_bounds,
+ 	test_ubsan_out_of_bounds,
+ 	test_ubsan_load_invalid_value,
+-- 
+2.11.0
+
