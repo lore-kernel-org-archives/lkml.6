@@ -2,140 +2,189 @@ Return-Path: <SRS0=GEt/=PV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 04FECC43387
-	for <linux-kernel@archiver.kernel.org>; Sun, 13 Jan 2019 00:15:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C1F3C43387
+	for <linux-kernel@archiver.kernel.org>; Sun, 13 Jan 2019 00:20:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C3F1A20836
-	for <linux-kernel@archiver.kernel.org>; Sun, 13 Jan 2019 00:15:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3AAE320836
+	for <linux-kernel@archiver.kernel.org>; Sun, 13 Jan 2019 00:20:32 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=joelfernandes.org header.i=@joelfernandes.org header.b="hbTkhyIl"
+	dkim=pass (2048-bit key) header.d=dilger-ca.20150623.gappssmtp.com header.i=@dilger-ca.20150623.gappssmtp.com header.b="zKWWvxYF"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726621AbfAMAPA (ORCPT
+        id S1726568AbfAMAUb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 12 Jan 2019 19:15:00 -0500
-Received: from mail-qk1-f195.google.com ([209.85.222.195]:40684 "EHLO
-        mail-qk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726566AbfAMAO5 (ORCPT
+        Sat, 12 Jan 2019 19:20:31 -0500
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:47091 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726427AbfAMAUa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 12 Jan 2019 19:14:57 -0500
-Received: by mail-qk1-f195.google.com with SMTP id y16so8684800qki.7
-        for <linux-kernel@vger.kernel.org>; Sat, 12 Jan 2019 16:14:56 -0800 (PST)
+        Sat, 12 Jan 2019 19:20:30 -0500
+Received: by mail-pl1-f193.google.com with SMTP id t13so8447312ply.13
+        for <linux-kernel@vger.kernel.org>; Sat, 12 Jan 2019 16:20:30 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=joelfernandes.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=OixqdVEoBSDrkAHasDpQua+Q1wKGVCQ1PcDyZD5bqY4=;
-        b=hbTkhyIl9mxXWsJKnfmpKmBukMyy1OtAJFhGQ7e0T/HrUS8ojkqzwvz89EbTDY4WJK
-         zlEg3dJdZNIBRT7AiAPWz/3ipLir0cbC9kXUIUy+K4bhvAQgF4UVnM+1dzePMa3ph92y
-         YE6uWxOQsN6qNHylFZzb60sbQQDyBuY11NiJ8=
+        d=dilger-ca.20150623.gappssmtp.com; s=20150623;
+        h=from:message-id:mime-version:subject:date:in-reply-to:cc:to
+         :references;
+        bh=4rxYN+2Kn5x/8JbzREZfT8Kn8ZnRW71eoeIQbqvRVc8=;
+        b=zKWWvxYFq/yhkCN/BAK+AJoELST4U6TM0y5gmS43W3lKk4NFBUNmVk4b8LD07O++gA
+         juwwx2aNYEhhqaJaOwnHUrIbHnjJ1XPtjFwYMcFgT6l9XaOsTptb53K1I4dFCFCi4R39
+         lHiO7nyJyHMNAQHV4dO2bJqbJq5HvfU2FvNdRic5uspuQyLJTsZ7wchtk3c7a016M1fg
+         QO7lnLQhaBl7Q4X6t2mzOvwABhAjCLd2oLKxxw+3TfeXWQ81D0ODdFFQG6Q4VxlndyS/
+         JlUnt3M55Gy5JvvGofVWdhkSieIzeleYLDFQEGtxmm+DzsXiSjRKRq1ILHtxBPWwICM5
+         pEsw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=OixqdVEoBSDrkAHasDpQua+Q1wKGVCQ1PcDyZD5bqY4=;
-        b=jnm0zaxzqQsRDoaNpDn6sGil3LnjF5nTY7Vftlh5EU2BZ35S4kKQaZxCtooC8/gSOV
-         00u7RcWuzQR05+1uGfEiBwfGYjRbVrLqXNTbcyOPd2W2EUHLuCGu/eAqtR1Q71pbljR0
-         Rj6dS//BfrjGPQPGJtjQGt8WhA4QF25ScoHw2Fq4k68tjvXaMFDNrMLBldbzL8Rtk5m3
-         xC+DF8pXYjKABYDSQ0+PAxqIku4tCkwRXFUHJsl4NxDeTQTo2rViADCeR4Cznru/UHFZ
-         3rAwH/mPSzcwTIsXTy+InyGdGh6PDoU8Gh70ZkCaLXPIAmZbkMXLhkvEWQkDLn8a2DnL
-         nCkA==
-X-Gm-Message-State: AJcUukdEZpl3HFT2aBLMOJ6lFMqvV3i2HT3PptWFR1PhUzQx4KNqCX+p
-        XMNBbpWo+d05zhv62+qisxmHhUEHoMY=
-X-Google-Smtp-Source: ALg8bN6i2Kb2QgUrD78QgT6UkYpMtASdWu0lYC1jWiGvfNkm9qvDZt5Xx76aZzrZNXTCkV0YxRvzEw==
-X-Received: by 2002:a37:ab03:: with SMTP id u3mr17667678qke.24.1547338495684;
-        Sat, 12 Jan 2019 16:14:55 -0800 (PST)
-Received: from joelaf.cam.corp.google.com ([2620:0:1004:1100:cfd0:d2ee:d54d:ab6d])
-        by smtp.gmail.com with ESMTPSA id p48sm50525149qtp.62.2019.01.12.16.14.54
+        h=x-gm-message-state:from:message-id:mime-version:subject:date
+         :in-reply-to:cc:to:references;
+        bh=4rxYN+2Kn5x/8JbzREZfT8Kn8ZnRW71eoeIQbqvRVc8=;
+        b=mODXOdPwANcZwiILM8lrM2LdZVxx3u4+UodwKhKjmKdtWYXS+nNEeR//K4MlMS0+kj
+         10O5bmWxeFe4Z0nfkabKHtcNLNg2PUWRfiIv3Wwk3FSf/ip8iu5KApWuAGnrsLqrouua
+         kwTfU0XsGwg6gG9ec/FjVikLiL9+42DQuJiX1JFCrWMrHt/4iLKHn0f1c6EpcXCGOsd0
+         GOz0hIsxes3b1mVlE3b1Ro1gcjPtkF3IcR4LKE61r2V10Uyf5JrQSq7JiS1KLAThLuSx
+         oJFe7BLwVmMWQG6+9HzHHwPkPCoRWwDhe0yAdP8vqPHRmhRiSjBMVcCOMydNwff/EQKR
+         e7YA==
+X-Gm-Message-State: AJcUukdom1s80CQToIPkh7WYL5VMYZxRvqPtT9TemiC3+j2tE2bbfDW1
+        XabPtI2A6QpwMNZRtDG/fCw4Ew==
+X-Google-Smtp-Source: ALg8bN4mz55lfXQ6B9+tuuqdkMD7wfHmfhWdVamsDmsop/tWJ548/x3LLua5FqVCNSQD5TD1nZ5FHA==
+X-Received: by 2002:a17:902:bf0c:: with SMTP id bi12mr20456247plb.0.1547338829683;
+        Sat, 12 Jan 2019 16:20:29 -0800 (PST)
+Received: from cabot.adilger.ext (S0106a84e3fe4b223.cg.shawcable.net. [70.77.216.213])
+        by smtp.gmail.com with ESMTPSA id o8sm157704678pfa.42.2019.01.12.16.20.28
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sat, 12 Jan 2019 16:14:54 -0800 (PST)
-From:   Joel Fernandes <joel@joelfernandes.org>
-To:     linux-kernel@vger.kernel.org, mtk.manpages@gmail.com
-Cc:     "Joel Fernandes (Google)" <joel@joelfernandes.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Andy Lutomirski <luto@kernel.org>, dancol@google.com,
-        Hugh Dickins <hughd@google.com>, Jann Horn <jannh@google.com>,
-        John Stultz <john.stultz@linaro.org>,
-        linux-api@vger.kernel.org, linux-man@vger.kernel.org,
-        linux-mm@kvack.org, marcandre.lureau@redhat.com,
-        Matthew Wilcox <willy@infradead.org>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Shuah Khan <shuah@kernel.org>,
-        Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: [PATCH -manpage 2/2] memfd_create.2: Update manpage with new memfd F_SEAL_FUTURE_WRITE seal
-Date:   Sat, 12 Jan 2019 19:14:46 -0500
-Message-Id: <20190113001446.158789-3-joel@joelfernandes.org>
-X-Mailer: git-send-email 2.20.1.97.g81188d93c3-goog
-In-Reply-To: <20190113001446.158789-1-joel@joelfernandes.org>
-References: <20190113001446.158789-1-joel@joelfernandes.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Sat, 12 Jan 2019 16:20:28 -0800 (PST)
+From:   Andreas Dilger <adilger@dilger.ca>
+Message-Id: <3A06C183-19FF-48B3-9C49-60353BEC9DB8@dilger.ca>
+Content-Type: multipart/signed;
+ boundary="Apple-Mail=_C7598959-E1B6-46CC-9E24-291F313FB146";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
+Mime-Version: 1.0 (Mac OS X Mail 10.3 \(3273\))
+Subject: Re: Preserving a rev 0.0 ext2 filesystem
+Date:   Sat, 12 Jan 2019 17:20:24 -0700
+In-Reply-To: <CAMuHMdULrGHfgF+RRGf5gXAc=V3KaB4549NezxEc3CvfsKWOyA@mail.gmail.com>
+Cc:     Theodore Tso <tytso@mit.edu>,
+        Ext4 Developers List <linux-ext4@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To:     Geert Uytterhoeven <geert@linux-m68k.org>, Jan Kara <jack@suse.com>
+References: <CAMuHMdULrGHfgF+RRGf5gXAc=V3KaB4549NezxEc3CvfsKWOyA@mail.gmail.com>
+X-Mailer: Apple Mail (2.3273)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: "Joel Fernandes (Google)" <joel@joelfernandes.org>
 
-More details of the seal can be found in the LKML patch:
-https://lore.kernel.org/lkml/20181120052137.74317-1-joel@joelfernandes.org/T/#t
+--Apple-Mail=_C7598959-E1B6-46CC-9E24-291F313FB146
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain;
+	charset=us-ascii
 
-Signed-off-by: Joel Fernandes (Google) <joel@joelfernandes.org>
----
- man2/memfd_create.2 | 15 ++++++++++++++-
- 1 file changed, 14 insertions(+), 1 deletion(-)
+On Jan 12, 2019, at 2:43 AM, Geert Uytterhoeven <geert@linux-m68k.org> =
+wrote:
+>=20
+> Hi Ted,
+>=20
+> I'm still regularly using a Linux rev 0.0 ext2 filesystem as a  =
+ramdisk
+> on m68k, containing mid-90's binaries, from right after the =
+a.out-to-ELF
+> transition, so I notice if someone breaks old syscall support.
+>=20
+> Recently I wanted to change /dev/console on that ramdisk from a =
+symlink
+> to chardev 5 0.  Unfortunately I cannot mount it, without it being
+> upgraded automatically to a rev 1.0 ext2 filesystem.  Apparently the
+> kernel has been doing that upgrade for ages.
+>=20
+> Do you have a suggestion how to make that change, while preserving the
+> ext2 revision?
 
-diff --git a/man2/memfd_create.2 b/man2/memfd_create.2
-index 3cd392d1b..fce2bf8d0 100644
---- a/man2/memfd_create.2
-+++ b/man2/memfd_create.2
-@@ -280,7 +280,15 @@ in order to restrict further modifications on the file.
- (If placing the seal
- .BR F_SEAL_WRITE ,
- then it will be necessary to first unmap the shared writable mapping
--created in the previous step.)
-+created in the previous step. Otherwise, behavior similar to
-+.BR F_SEAL_WRITE
-+can be achieved, by using
-+.BR F_SEAL_FUTURE_WRITE
-+which will prevent future writes via
-+.BR mmap (2)
-+and
-+.BR write (2)
-+from succeeding, while keeping existing shared writable mappings).
- .IP 4.
- A second process obtains a file descriptor for the
- .BR tmpfs (5)
-@@ -425,6 +433,7 @@ main(int argc, char *argv[])
-         fprintf(stderr, "\\t\\tg \- F_SEAL_GROW\\n");
-         fprintf(stderr, "\\t\\ts \- F_SEAL_SHRINK\\n");
-         fprintf(stderr, "\\t\\tw \- F_SEAL_WRITE\\n");
-+        fprintf(stderr, "\\t\\tW \- F_SEAL_FUTURE_WRITE\\n");
-         fprintf(stderr, "\\t\\tS \- F_SEAL_SEAL\\n");
-         exit(EXIT_FAILURE);
-     }
-@@ -463,6 +472,8 @@ main(int argc, char *argv[])
-             seals |= F_SEAL_SHRINK;
-         if (strchr(seals_arg, \(aqw\(aq) != NULL)
-             seals |= F_SEAL_WRITE;
-+        if (strchr(seals_arg, \(aqW\(aq) != NULL)
-+            seals |= F_SEAL_FUTURE_WRITE;
-         if (strchr(seals_arg, \(aqS\(aq) != NULL)
-             seals |= F_SEAL_SEAL;
- 
-@@ -518,6 +529,8 @@ main(int argc, char *argv[])
-         printf(" GROW");
-     if (seals & F_SEAL_WRITE)
-         printf(" WRITE");
-+    if (seals & F_SEAL_FUTURE_WRITE)
-+        printf(" FUTURE_WRITE");
-     if (seals & F_SEAL_SHRINK)
-         printf(" SHRINK");
-     printf("\\n");
--- 
-2.20.1.97.g81188d93c3-goog
+It looks like there is a "gratuitous" call to ext4_update_dynamic_rev() =
+in the
+mount path that is left over from when ext3 always set the =
+INCOMPAT_RECOVER and
+COMPAT_HAS_JOURNAL features on every mount.  With the "nojournal" mount =
+option
+these are no longer needed.  You could probably just remove this call =
+with no ill
+effects, or better yet apply the patch that I'll push shortly to this =
+effect.
+It's been there since the start of git history (2.6.12-rc2) in the ext3 =
+code
+that was later copied to become ext4, but digging through my email =
+archives it
+looks like adding the call to "ext3_update_fs_rev()" was actually one of =
+my first
+patches against the original ext3 code "[Ext2-devel] Re: RECOVER =
+INCOMPAT flag",
+dated Nov 18, 2000.
 
+The only thing ext4_update_dynamic_rev() does is update s_rev_level, and =
+set
+s_first_ino and s_inode_size on disk to the values that the kernel =
+already
+assumes to be true (newer kernels can use different values).  Those =
+fields are
+also set in memory later during the mount, so the rest of the code =
+should work
+OK (I haven't tested). This will probably only affect your filesysem =
+(everything
+else in the last 20 years uses EXT2_DYNAMIC_REV) so it won't be much of =
+a change.
+
+The "real" ext2 code looks like it does not call =
+ext2_update_dynamic_rev() for
+every filesystem during mount, only if you write a file > 2GB in size, =
+so it would
+also be possible to mount with the ext2.ko driver (if your kernel =
+provides it).
+There looks like a minor bug in ext2 that it doesn't call =
+ext2_update_dynamic_rev()
+if an xattr is stored on the filesystem and it sets =
+EXT2_FEATURE_COMPAT_EXT_ATTR
+in ext2_xattr_update_super_block().  However, nobody noticed in since =
+xattrs landed.
+
+
+In any case, it would be fun to give my patch a try to see if it allows =
+your old
+filesystem to be mounted and modified with a modern kernel and then =
+mounted on
+the old kernel again, as a testament to ext2/ext4 feature compatibility.
+
+Cheers, Andreas
+
+
+
+
+
+
+--Apple-Mail=_C7598959-E1B6-46CC-9E24-291F313FB146
+Content-Transfer-Encoding: 7bit
+Content-Disposition: attachment;
+	filename=signature.asc
+Content-Type: application/pgp-signature;
+	name=signature.asc
+Content-Description: Message signed with OpenPGP
+
+-----BEGIN PGP SIGNATURE-----
+Comment: GPGTools - http://gpgtools.org
+
+iQIzBAEBCAAdFiEEDb73u6ZejP5ZMprvcqXauRfMH+AFAlw6hEgACgkQcqXauRfM
+H+BuQQ/+J+9refoE5Qxjypw1Yip26O/uy9kKBuWkpl9QBs3FBn2qqxzRwT2rK2Vh
+/Rg4ObEJbqv0WzBw1Zo0OLnfTDyorcuIoWj730czhQ0ClGT0ZOSkQEgd1cuTgt2A
+pC32MpuXH6favWlfMU7KJRbloEElevtq2isYLOCSr61sSGY9bldY4mKMugED8m2m
+OBh50BGOuDLC8XvXFlayVImEGMFobJ/sGyjPWiqxjkSPkEhPPDdhiKvpF3euzbBf
+27cW7srA83+qUGOL4oheP4l4Ri65Go1RatHxRURAXOhrri/vrzIlzPFWr1+HnW5x
+jAV1llwlqj3G0XaRpmUerzBivJI467SlFGT5IdPxo8LVxWCMBt3LupHrPoh4UBi4
+yvMacTGAdyJjRcRyBzcRMrFxdclVbBAm/bO6sNcGT5Xmq61ZL95HFOW7V9Kd/0+i
+5EbY7AT1qsn+VbojpfwmvvCdRr24nFWXt0TGYL36PYq2t6q1Ntk74XlwMXj+WYg5
+Lp9NE+bm+8Jhedjexw5mb+NsQ62OvGkbZeNWV5JRjxAa33fy7upor83HrfgVOefM
+ZHIAqoQ5KNPQsPD9bo4uyPucaLZInCnhvboPF6+AvbujI9F1FzpAoSs/LwgB5km3
+6bm8Resy7gSYVirARdSUsHerlTdGmVHLAP0F3CHSXWj3Q2PNR2M=
+=IEHr
+-----END PGP SIGNATURE-----
+
+--Apple-Mail=_C7598959-E1B6-46CC-9E24-291F313FB146--
