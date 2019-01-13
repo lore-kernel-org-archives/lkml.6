@@ -6,33 +6,32 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D7FBC43614
-	for <linux-kernel@archiver.kernel.org>; Sun, 13 Jan 2019 09:25:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B353BC43387
+	for <linux-kernel@archiver.kernel.org>; Sun, 13 Jan 2019 09:25:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 16FC120873
-	for <linux-kernel@archiver.kernel.org>; Sun, 13 Jan 2019 09:25:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8BD5120873
+	for <linux-kernel@archiver.kernel.org>; Sun, 13 Jan 2019 09:25:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726606AbfAMJZC (ORCPT
+        id S1726631AbfAMJZH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 13 Jan 2019 04:25:02 -0500
+        Sun, 13 Jan 2019 04:25:07 -0500
 Received: from mail3-relais-sop.national.inria.fr ([192.134.164.104]:60664
         "EHLO mail3-relais-sop.national.inria.fr" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726551AbfAMJYw (ORCPT
+        by vger.kernel.org with ESMTP id S1726522AbfAMJYu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 13 Jan 2019 04:24:52 -0500
+        Sun, 13 Jan 2019 04:24:50 -0500
 X-IronPort-AV: E=Sophos;i="5.56,473,1539640800"; 
-   d="scan'208";a="291725802"
+   d="scan'208";a="291725800"
 Received: from palace.lip6.fr ([132.227.105.202])
-  by mail3-relais-sop.national.inria.fr with ESMTP/TLS/AES128-SHA256; 13 Jan 2019 10:24:47 +0100
+  by mail3-relais-sop.national.inria.fr with ESMTP/TLS/AES128-SHA256; 13 Jan 2019 10:24:46 +0100
 From:   Julia Lawall <Julia.Lawall@lip6.fr>
-To:     Maxime Ripard <maxime.ripard@bootlin.com>
+To:     Philipp Zabel <p.zabel@pengutronix.de>
 Cc:     kernel-janitors@vger.kernel.org, David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>, Chen-Yu Tsai <wens@csie.org>,
-        dri-devel@lists.freedesktop.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 4/4] drm/sun4i: backend: add missing of_node_puts
-Date:   Sun, 13 Jan 2019 09:47:44 +0100
-Message-Id: <1547369264-24831-5-git-send-email-Julia.Lawall@lip6.fr>
+        Daniel Vetter <daniel@ffwll.ch>,
+        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 2/4] drm/imx: imx-ldb: add missing of_node_puts
+Date:   Sun, 13 Jan 2019 09:47:42 +0100
+Message-Id: <1547369264-24831-3-git-send-email-Julia.Lawall@lip6.fr>
 X-Mailer: git-send-email 1.9.1
 In-Reply-To: <1547369264-24831-1-git-send-email-Julia.Lawall@lip6.fr>
 References: <1547369264-24831-1-git-send-email-Julia.Lawall@lip6.fr>
@@ -44,14 +43,13 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 The device node iterators perform an of_node_get on each
 iteration, so a jump out of the loop requires an of_node_put.
 
-Remote and port also have augmented reference counts, so drop them
-on each iteration and at the end of the function, respectively.
-Remote is only used for the address it contains, not for the
-contents of that address, so the reference count can be dropped
-immediately.
+Move the initialization channel->child = child; down to just
+before the call to imx_ldb_register so that intervening failures
+don't need to clear it.  Add a label at the end of the function to
+do all the of_node_puts.
 
-The semantic patch that fixes the first part of this problem is
-as follows (http://coccinelle.lip6.fr):
+The semantic patch that finds part of this problem is as follows
+(http://coccinelle.lip6.fr):
 
 // <smpl>
 @@
@@ -60,47 +58,96 @@ local idexpression child;
 iterator name for_each_child_of_node;
 @@
 
- for_each_available_child_of_node(root, child) {
+ for_each_child_of_node(root, child) {
    ... when != of_node_put(child)
        when != e = child
-+  of_node_put(child);
-?  break;
+(
+   return child;
+|
+*  return ...;
+)
    ...
-}
-... when != child
+ }
 // </smpl>
 
 Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
 ---
-Not tested.
+This changes the semantics, with respect to the availability of the child
+field, and has not been tested.
 
- drivers/gpu/drm/sun4i/sun4i_backend.c |    5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ drivers/gpu/drm/imx/imx-ldb.c |   25 +++++++++++++++++--------
+ 1 file changed, 17 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/gpu/drm/sun4i/sun4i_backend.c b/drivers/gpu/drm/sun4i/sun4i_backend.c
-index 9e9255e..a021bab 100644
---- a/drivers/gpu/drm/sun4i/sun4i_backend.c
-+++ b/drivers/gpu/drm/sun4i/sun4i_backend.c
-@@ -786,17 +786,18 @@ static struct sun4i_frontend *sun4i_backend_find_frontend(struct sun4i_drv *drv,
- 		remote = of_graph_get_remote_port_parent(ep);
- 		if (!remote)
- 			continue;
-+		of_node_put(remote);
+diff --git a/drivers/gpu/drm/imx/imx-ldb.c b/drivers/gpu/drm/imx/imx-ldb.c
+index 2c5bbe3..e31e263 100644
+--- a/drivers/gpu/drm/imx/imx-ldb.c
++++ b/drivers/gpu/drm/imx/imx-ldb.c
+@@ -643,8 +643,10 @@ static int imx_ldb_bind(struct device *dev, struct device *master, void *data)
+ 		int bus_format;
  
- 		/* does this node match any registered engines? */
- 		list_for_each_entry(frontend, &drv->frontend_list, list) {
- 			if (remote == frontend->node) {
--				of_node_put(remote);
- 				of_node_put(port);
-+				of_node_put(ep);
- 				return frontend;
- 			}
+ 		ret = of_property_read_u32(child, "reg", &i);
+-		if (ret || i < 0 || i > 1)
+-			return -EINVAL;
++		if (ret || i < 0 || i > 1) {
++			ret = -EINVAL;
++			goto free_child;
++		}
+ 
+ 		if (!of_device_is_available(child))
+ 			continue;
+@@ -657,7 +659,6 @@ static int imx_ldb_bind(struct device *dev, struct device *master, void *data)
+ 		channel = &imx_ldb->channel[i];
+ 		channel->ldb = imx_ldb;
+ 		channel->chno = i;
+-		channel->child = child;
+ 
+ 		/*
+ 		 * The output port is port@4 with an external 4-port mux or
+@@ -667,13 +668,13 @@ static int imx_ldb_bind(struct device *dev, struct device *master, void *data)
+ 						  imx_ldb->lvds_mux ? 4 : 2, 0,
+ 						  &channel->panel, &channel->bridge);
+ 		if (ret && ret != -ENODEV)
+-			return ret;
++			goto free_child;
+ 
+ 		/* panel ddc only if there is no bridge */
+ 		if (!channel->bridge) {
+ 			ret = imx_ldb_panel_ddc(dev, channel, child);
+ 			if (ret)
+-				return ret;
++				goto free_child;
  		}
+ 
+ 		bus_format = of_get_bus_format(dev, child);
+@@ -689,18 +690,26 @@ static int imx_ldb_bind(struct device *dev, struct device *master, void *data)
+ 		if (bus_format < 0) {
+ 			dev_err(dev, "could not determine data mapping: %d\n",
+ 				bus_format);
+-			return bus_format;
++			ret = bus_format;
++			goto free_child;
+ 		}
+ 		channel->bus_format = bus_format;
++		channel->child = child;
+ 
+ 		ret = imx_ldb_register(drm, channel);
+-		if (ret)
+-			return ret;
++		if (ret) {
++			channel->child = NULL;
++			goto free_child;
++		}
  	}
--
-+	of_node_put(port);
- 	return ERR_PTR(-EINVAL);
+ 
+ 	dev_set_drvdata(dev, imx_ldb);
+ 
+ 	return 0;
++
++free_child:
++	of_node_put(child);
++	return ret;
  }
  
+ static void imx_ldb_unbind(struct device *dev, struct device *master,
 
