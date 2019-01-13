@@ -2,43 +2,59 @@ Return-Path: <SRS0=GEt/=PV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DD242C43387
-	for <linux-kernel@archiver.kernel.org>; Sun, 13 Jan 2019 23:09:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D46E2C43612
+	for <linux-kernel@archiver.kernel.org>; Sun, 13 Jan 2019 23:10:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AA71720842
-	for <linux-kernel@archiver.kernel.org>; Sun, 13 Jan 2019 23:09:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A181C20854
+	for <linux-kernel@archiver.kernel.org>; Sun, 13 Jan 2019 23:10:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726625AbfAMXJu (ORCPT
+        id S1726644AbfAMXKF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 13 Jan 2019 18:09:50 -0500
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:46949 "EHLO
+        Sun, 13 Jan 2019 18:10:05 -0500
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:46956 "EHLO
         atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726471AbfAMXJu (ORCPT
+        with ESMTP id S1726471AbfAMXKE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 13 Jan 2019 18:09:50 -0500
+        Sun, 13 Jan 2019 18:10:04 -0500
 Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
-        id 22179809C5; Mon, 14 Jan 2019 00:09:41 +0100 (CET)
-Date:   Mon, 14 Jan 2019 00:09:46 +0100
+        id 7BB0E809C5; Mon, 14 Jan 2019 00:09:56 +0100 (CET)
+Date:   Mon, 14 Jan 2019 00:10:01 +0100
 From:   Pavel Machek <pavel@ucw.cz>
-To:     Benjamin Tissoires <benjamin.tissoires@redhat.com>
-Cc:     Anatoly Trosinenko <anatoly.trosinenko@gmail.com>,
+To:     Tim Chen <tim.c.chen@linux.intel.com>
+Cc:     Jonathan Corbet <corbet@lwn.net>,
+        Thomas Gleixner <tglx@linutronix.de>,
         Jiri Kosina <jikos@kernel.org>,
-        lkml <linux-kernel@vger.kernel.org>,
-        "open list:HID CORE LAYER" <linux-input@vger.kernel.org>,
-        Roderick Colenbrander <thunderbird2k@gmail.com>
-Subject: Re: NULL pointer dereference when writing fuzzed data to /dev/uhid
-Message-ID: <20190113230946.GA18710@amd>
-References: <CAE5jQCch70ZSmGZeA6RQxjXhL=LjgShdj_VZAGmqUzVRPSQBZw@mail.gmail.com>
- <CAO-hwJK29V7gT3WQXLvsM5qaQgRLsgm2HAnR81vtkrrQAsCuEg@mail.gmail.com>
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Tom Lendacky <thomas.lendacky@amd.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        David Woodhouse <dwmw@amazon.co.uk>,
+        Andi Kleen <ak@linux.intel.com>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Asit Mallick <asit.k.mallick@intel.com>,
+        Arjan van de Ven <arjan@linux.intel.com>,
+        Jon Masters <jcm@redhat.com>,
+        Waiman Long <longman9394@gmail.com>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Borislav Petkov <bp@alien8.de>, linux-kernel@vger.kernel.org,
+        x86@kernel.org, stable@vger.kernel.org
+Subject: Re: [PATCH] x86/speculation: Add document to describe Spectre and
+ its mitigations
+Message-ID: <20190113231001.GB18710@amd>
+References: <64efec3fda40c0758601bf9b1480a35d76d3c487.1545413988.git.tim.c.chen@linux.intel.com>
+ <20181228103437.4c03c181@lwn.net>
+ <aed62eaa-93b4-8dc5-1920-6a5547e349c8@linux.intel.com>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="5vNYLRcllDrimb99"
+        protocol="application/pgp-signature"; boundary="OwLcNYc0lM97+oe1"
 Content-Disposition: inline
-In-Reply-To: <CAO-hwJK29V7gT3WQXLvsM5qaQgRLsgm2HAnR81vtkrrQAsCuEg@mail.gmail.com>
+In-Reply-To: <aed62eaa-93b4-8dc5-1920-6a5547e349c8@linux.intel.com>
 User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -46,54 +62,55 @@ List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
---5vNYLRcllDrimb99
+--OwLcNYc0lM97+oe1
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
 Hi!
 
-I just want to note that while these may not be high-priority, they
-are still security holes to be fixed.
-
-> > When writing the attached file to /dev/uhid, a NULL dereference occurs
-> > in kernel. As I understand, the problem is not UHID-specific, but is
-> > related to HID subsystem.
+> >>
+> >> Signed-off-by: Andi Kleen <ak@linux.intel.com>
+> >> Signed-off-by: Tim Chen <tim.c.chen@linux.intel.com>
+> >> ---
+> >>  Documentation/admin-guide/spectre.rst | 502 +++++++++++++++++++++++++=
++++++++++
+> >>  1 file changed, 502 insertions(+)
+> >>  create mode 100644 Documentation/admin-guide/spectre.rst
+> >=20
+> > I only saw this now, seems I wasn't copied... I'll take a deeper look, =
+but
 >=20
-> Thanks for the report.
-> I wanted to tell you that I started investigating the other private
-> report you sent us, but couldn't find the time to properly come with a
-> fix as the fuzzed data is hard to discriminate from valid data.
+> Thanks for taking a look.  I'll make sure you are copied on the updates.
 >=20
-> A couple of notes though:
-> - writing to uhid needs to be done by root. Any distribution that
-> doesn't enforce that is doomed to have several security issues
+> > I have a couple of meta comments:
+> >=20
+> >  - This could arguably go in the security book rather than the admin
+> >    guide.  I don't really have a strong opinion on which is right at the
+> >    moment, but others might.
+>=20
+> Since l1tf.rst is already here in admin guide, that's why I keep spectre.=
+rst here as well.
 
-We want to protect kernel from root, too.
-
-> - we could somehow reproduce those fuzzed data on a USB or Bluetooth
-> connection, but that would require physical access to the device, so
-> you are doomed also
-
-Not neccessarily. Imagine a kiosk where PC is protected but keyboard
-uses USB connection. If our USB stack is buggy, you are doomed... but
-you should not be ;-).
+I believe l1tf is misplaced. That one really is Intel-specific (not
+even all x86s are affectd). Same for Meltdown.
 									Pavel
+
 --=20
 (english) http://www.livejournal.com/~pavelmachek
 (cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
 g.html
 
---5vNYLRcllDrimb99
+--OwLcNYc0lM97+oe1
 Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: Digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1
 
-iEYEARECAAYFAlw7xToACgkQMOfwapXb+vJlLACgm4d3vDsB9nJwfr2hXsDb7+K+
-yqUAoJgqQ2VnCZ52zQ9eptL+D5k5BLSb
-=zVPf
+iEUEARECAAYFAlw7xUkACgkQMOfwapXb+vLsxgCfSWBDJU6bmYfFCQokxS8T0N6B
+oAQAmO4yrw5u7p9CeFQotntnp0J04SY=
+=ItKU
 -----END PGP SIGNATURE-----
 
---5vNYLRcllDrimb99--
+--OwLcNYc0lM97+oe1--
