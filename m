@@ -6,49 +6,57 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E290C43387
-	for <linux-kernel@archiver.kernel.org>; Sun, 13 Jan 2019 11:03:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 49688C43612
+	for <linux-kernel@archiver.kernel.org>; Sun, 13 Jan 2019 11:03:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 68D7720657
-	for <linux-kernel@archiver.kernel.org>; Sun, 13 Jan 2019 11:03:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2386720657
+	for <linux-kernel@archiver.kernel.org>; Sun, 13 Jan 2019 11:03:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726524AbfAMLDF (ORCPT
+        id S1726584AbfAMLDJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 13 Jan 2019 06:03:05 -0500
-Received: from youngberry.canonical.com ([91.189.89.112]:49175 "EHLO
+        Sun, 13 Jan 2019 06:03:09 -0500
+Received: from youngberry.canonical.com ([91.189.89.112]:49180 "EHLO
         youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726221AbfAMLDF (ORCPT
+        with ESMTP id S1726221AbfAMLDI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 13 Jan 2019 06:03:05 -0500
+        Sun, 13 Jan 2019 06:03:08 -0500
 Received: from 61-220-137-37.hinet-ip.hinet.net ([61.220.137.37] helo=localhost)
         by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_256_CBC_SHA1:32)
         (Exim 4.76)
         (envelope-from <kai.heng.feng@canonical.com>)
-        id 1gidXf-0000n6-U9; Sun, 13 Jan 2019 11:03:00 +0000
+        id 1gidXj-0000nI-Uu; Sun, 13 Jan 2019 11:03:04 +0000
 From:   Kai-Heng Feng <kai.heng.feng@canonical.com>
 To:     gregkh@linuxfoundation.org
 Cc:     Larry.Finger@lwfinger.net, devel@driverdev.osuosl.org,
         linux-kernel@vger.kernel.org,
         Kai-Heng Feng <kai.heng.feng@canonical.com>
-Subject: [PATCH 1/2] staging: rtl8712u: Remove dummy reset-resume callback
-Date:   Sun, 13 Jan 2019 19:02:53 +0800
-Message-Id: <20190113110254.24721-1-kai.heng.feng@canonical.com>
+Subject: [PATCH 2/2] staging: rtl8712u: Fix suspend and resume callbacks
+Date:   Sun, 13 Jan 2019 19:02:54 +0800
+Message-Id: <20190113110254.24721-2-kai.heng.feng@canonical.com>
 X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20190113110254.24721-1-kai.heng.feng@canonical.com>
+References: <20190113110254.24721-1-kai.heng.feng@canonical.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-An USB wireless dongle uses rtl8712u stops working after system
-suspend/resume.
+When system resume and the rtl8712u dongle didn't lose its power, it
+doesn't work quite right:
+[  146.844241] r8712u 2-3:1.0 wlp0s4f1u3: Unable to resume
+...
+[  154.029573] r8712u 2-3:1.0 wlp0s4f1u3: In r8711_wx_set_scan: bDriverStopped=1
 
-When a USB device lost its power during suspend, the USB core knows the
-power was lost and a reset-resume or a re-probe is required. But rtl8712u
-provides a dummy reset-resume callback, which gets called and renders
-the device dead after resume.
+The !netif_running() check in PM callbacks aren't correct because
+rtl8712u doesn't support runtime suspend, so the when the PM ops get
+called, it's system suspend or system resume, hence we want to "stop
+everthing" or "resume everything".
 
-So remove the reset-resume call back, if power was lost during suspend,
-let the USB core unbind and probe the device to solve the issue.
+The NULL check on pnetdev is also redundant, the only place pnetdev can
+become NULL is the disconnect callback, which is mutually exclusive to
+PM callbacks.
+
+This can make rtl8712u starts working after system resume.
 
 Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
 ---
@@ -56,31 +64,31 @@ Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
  1 file changed, 8 deletions(-)
 
 diff --git a/drivers/staging/rtl8712/usb_intf.c b/drivers/staging/rtl8712/usb_intf.c
-index 92d75d7c51ae..9cf2a798cfca 100644
+index 9cf2a798cfca..005010de9997 100644
 --- a/drivers/staging/rtl8712/usb_intf.c
 +++ b/drivers/staging/rtl8712/usb_intf.c
-@@ -232,13 +232,6 @@ static int r871x_resume(struct usb_interface *pusb_intf)
- 	rtl871x_intf_resume(padapter);
- 	return 0;
- }
--
--static int r871x_reset_resume(struct usb_interface *pusb_intf)
--{
--	/* dummy routine */
--	return 0;
--}
--
- #endif
+@@ -196,10 +196,6 @@ static int r871x_suspend(struct usb_interface *pusb_intf, pm_message_t state)
+ 	struct _adapter *padapter = netdev_priv(pnetdev);
  
- static struct drv_priv drvpriv = {
-@@ -249,7 +242,6 @@ static struct drv_priv drvpriv = {
- #ifdef CONFIG_PM
- 	.r871xu_drv.suspend = r871x_suspend,
- 	.r871xu_drv.resume = r871x_resume,
--	.r871xu_drv.reset_resume = r871x_reset_resume,
- #endif
- };
+ 	netdev_info(pnetdev, "Suspending...\n");
+-	if (!pnetdev || !netif_running(pnetdev)) {
+-		netdev_info(pnetdev, "Unable to suspend\n");
+-		return 0;
+-	}
+ 	padapter->bSuspended = true;
+ 	rtl871x_intf_stop(padapter);
+ 	if (pnetdev->netdev_ops->ndo_stop)
+@@ -221,10 +217,6 @@ static int r871x_resume(struct usb_interface *pusb_intf)
+ 	struct _adapter *padapter = netdev_priv(pnetdev);
  
+ 	netdev_info(pnetdev,  "Resuming...\n");
+-	if (!pnetdev || !netif_running(pnetdev)) {
+-		netdev_info(pnetdev, "Unable to resume\n");
+-		return 0;
+-	}
+ 	netif_device_attach(pnetdev);
+ 	if (pnetdev->netdev_ops->ndo_open)
+ 		pnetdev->netdev_ops->ndo_open(pnetdev);
 -- 
 2.17.1
 
