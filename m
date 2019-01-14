@@ -2,111 +2,93 @@ Return-Path: <SRS0=tq6k=PW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 35A77C43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 19:14:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A581C43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 19:14:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0BCA120651
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 19:14:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 174BC20651
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 19:14:23 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="on3iahu6"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726796AbfANTN6 (ORCPT
+        id S1726849AbfANTOV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 14 Jan 2019 14:13:58 -0500
-Received: from foss.arm.com ([217.140.101.70]:39188 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726706AbfANTN6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 Jan 2019 14:13:58 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 6E13E80D;
-        Mon, 14 Jan 2019 11:13:57 -0800 (PST)
-Received: from fuggles.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 7A4283F5BD;
-        Mon, 14 Jan 2019 11:13:55 -0800 (PST)
-Date:   Mon, 14 Jan 2019 19:13:50 +0000
-From:   Will Deacon <will.deacon@arm.com>
-To:     "Koenig, Christian" <Christian.Koenig@amd.com>
-Cc:     Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Michel =?iso-8859-1?Q?D=E4nzer?= <michel@daenzer.net>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Carsten Haitzler <Carsten.Haitzler@arm.com>,
-        David Airlie <airlied@linux.ie>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        "Huang, Ray" <Ray.Huang@amd.com>,
-        "Zhang, Jerry" <Jerry.Zhang@amd.com>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        Bernhard =?iso-8859-1?Q?Rosenkr=E4nzer?= 
-        <Bernhard.Rosenkranzer@linaro.org>
-Subject: Re: [RFC PATCH] drm/ttm: force cached mappings for system RAM on ARM
-Message-ID: <20190114191350.GA29600@fuggles.cambridge.arm.com>
-References: <20190110072841.3283-1-ard.biesheuvel@linaro.org>
- <5d8135de-80fe-9c0e-2206-ecb809f64cdb@daenzer.net>
- <CAKv+Gu_X-DH6GZ0k8RYuL18rxTwBpb5=Qp9VCZfn_kh+9b3Zkg@mail.gmail.com>
- <55facfb9-92af-86b8-40e9-d63b887b5592@amd.com>
- <CAKv+Gu_JyO2KNtdN1-_TcoL_kqs0yswdwBrpAXA6-jyWuDrj+g@mail.gmail.com>
- <9f956898-7973-98ee-6bf1-e1d445e9d365@amd.com>
+        Mon, 14 Jan 2019 14:14:21 -0500
+Received: from mail-lf1-f44.google.com ([209.85.167.44]:43797 "EHLO
+        mail-lf1-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726728AbfANTOV (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 14 Jan 2019 14:14:21 -0500
+Received: by mail-lf1-f44.google.com with SMTP id u18so80334lff.10
+        for <linux-kernel@vger.kernel.org>; Mon, 14 Jan 2019 11:14:20 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=sdb3n8hW+RezyveEVPqgqXLkFpEMEzB1s5elBfxOWkQ=;
+        b=on3iahu6vJZCloHdZTQhB/A2g3CLRWf9oqz1p/VCsO6d98gA9FlL0ccauTbDUsXOEn
+         pL65RgrycOXwZH6afVk6ZmahEyHmgb/2dI1ZyRnrZEUd9zuabDdOdu74cxX5iTsZRw3V
+         Qt/JaVrpPYsxh3tZy4EngcDqkJk+7vxSYxe8CrhQs0f3eDXMI+b4vAzPqjIvAE8hR3WC
+         IQ7oszuM95lngOcTwAfvbnwPMJ57BsjtX9LJwgLbV6sGkHlCEqa+aEVxn0RZZo2BHEmx
+         Ri1GhJd+MHiqIhKbB8NRrgmn+Y7tA3Mh45wMmBKol0h2vOoQSDCEPDbgoirAniU+Hjg1
+         xOFg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=sdb3n8hW+RezyveEVPqgqXLkFpEMEzB1s5elBfxOWkQ=;
+        b=Cx4AttIpVuLuhqBt3GzhtsC51GXeVRdClN+TDY44ljoTze31sFqOU81c5ib69/aWh2
+         vQp7guPvDMu4MVHov2HsCraFnp3YUR8ztNCaoC11ewnxotPFzkrE7wbtz6Z/2YvPDUHk
+         S9kldfz6TW0Xiu1NIlbOEGhGC63EjLOilDBe44//Ead3JS7o+QZFlp+MftwCJycGK1/x
+         oJIs/vQISBbUFoiPZAjAhACanBq/QaRGMIfS9I0aCWECK/7u2QVZrHcZ2m0SYQQOZpf0
+         sN+icKZqhG0jN3vsr3k+GpPZ2W2px+NzBww6xNVO/WY2z0gkMLeM5GYvSHZlZwUY7rVe
+         UkTQ==
+X-Gm-Message-State: AJcUukey7i5QTqpuquhQrCs4vbYsQusxyF9X2PTzRcceTyRi5eiKEtoV
+        dyaT5hsnYySQBGeu3HrmU5U=
+X-Google-Smtp-Source: ALg8bN5kg3/iPY4/tK2XsJJbDL2Oe2J/sU/pKZrtB8t7+U8N53ytSd3cSW6PnwwfZUYlvQMWArkmwg==
+X-Received: by 2002:a19:4dd0:: with SMTP id a199mr7282lfb.42.1547493259194;
+        Mon, 14 Jan 2019 11:14:19 -0800 (PST)
+Received: from uranus.localdomain ([5.18.103.226])
+        by smtp.gmail.com with ESMTPSA id q2sm236278lfa.63.2019.01.14.11.14.18
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 14 Jan 2019 11:14:18 -0800 (PST)
+Received: by uranus.localdomain (Postfix, from userid 1000)
+        id 3E35A4608DD; Mon, 14 Jan 2019 22:14:18 +0300 (MSK)
+Date:   Mon, 14 Jan 2019 22:14:18 +0300
+From:   Cyrill Gorcunov <gorcunov@gmail.com>
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH]: xarray: Fix potential out of bounds access
+Message-ID: <20190114191418.GG17906@uranus.lan>
+References: <20190114184741.GF17906@uranus.lan>
+ <20190114190119.GZ6310@bombadil.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <9f956898-7973-98ee-6bf1-e1d445e9d365@amd.com>
-User-Agent: Mutt/1.11.1+86 (6f28e57d73f2) ()
+In-Reply-To: <20190114190119.GZ6310@bombadil.infradead.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jan 14, 2019 at 07:07:54PM +0000, Koenig, Christian wrote:
-> Am 14.01.19 um 18:32 schrieb Ard Biesheuvel:
->             - The reason remapping the CPU side as cacheable does work (which I
->             did test) is because the GPU's uncacheable accesses (which I assume
->             are made using the NoSnoop PCIe transaction attribute) are actually
->             emitted as cacheable in some cases.
->                . On my AMD Seattle, with or without SMMU (which is stage 2 only), I
->             must use cacheable accesses from the CPU side or things are broken.
->             This might be a h/w flaw, though.
->                . On systems with stage 1+2 SMMUs, the driver uses stage 1
->             translations which always override the memory attributes to cacheable
->             for DMA coherent devices. This is what is affecting the Cavium
->             ThunderX2 (although it appears the attributes emitted by the RC may be
->             incorrect as well.)
+On Mon, Jan 14, 2019 at 11:01:20AM -0800, Matthew Wilcox wrote:
+> On Mon, Jan 14, 2019 at 09:47:41PM +0300, Cyrill Gorcunov wrote:
+> > Since the mark is used as an array index we should use
+> > preincrement to not access the XA_MARK_MAX index.
 > 
->             The latter issue is a shortcoming in the SMMU driver that we have to
->             fix, i.e., it should take care not to modify the incoming attributes
->             of DMA coherent PCIe devices for NoSnoop to be able to work.
+> But XA_MARK_MAX is inclusive:
 > 
->             So in summary, the mismatch appears to be between the CPU accessing
->             the vmap region with non-cacheable attributes and the GPU accessing
->             the same memory with cacheable attributes, resulting in a loss of
->             coherency and lots of visible corruption.
-> 
->         Actually it is the other way around. The CPU thinks some data is in the
->         cache and the GPU only updates the system memory version because the
->         snoop flag is not set.
-> 
-> 
->     That doesn't seem to be what is happening. As far as we can tell from
->     our experiments, all inbound transactions are always cacheable, and so
->     the only way to make things work is to ensure that the CPU uses the
->     same attributes.
-> 
-> 
-> Ok that doesn't make any sense. If inbound transactions are cacheable or not is
-> irrelevant when the CPU always uses uncached accesses.
-> 
-> See on the PCIe side you have the snoop bit in the read/write transactions
-> which tells the root hub if the device wants to snoop caches or not.
-> 
-> When the CPU accesses some memory as cached then devices need to snoop the
-> cache for coherent accesses.
-> 
-> When the CPU accesses some memory as uncached then devices can disable snooping
-> to improve performance, but when they don't do this it is mandated by the spec
-> that this still works.
+> include/linux/xarray.h:#define XA_MARK_MAX              XA_MARK_2
 
-Which spec? The Arm architecture (and others including Power afaiu) doesn't
-guarantee coherency when memory is accessed using mismatched cacheability
-attributes.
+Indeed, I misread the variable name.
 
-Will
+> so we actually want to access XA_MARK_MAX.  Now, we don't have a test
+> in the test-suite that fails as a result of your patch, so that needs to get
+> fixed.  How about this:
+
+Looks great. Thank you!
