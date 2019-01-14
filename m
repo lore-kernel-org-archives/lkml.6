@@ -2,130 +2,169 @@ Return-Path: <SRS0=tq6k=PW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DBC91C43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 22:33:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 170C9C43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 22:36:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A665320656
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 22:33:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D095F20656
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 22:36:46 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="l3JRrbI1"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="oQdtf5gy"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727106AbfANWdy (ORCPT
+        id S1726871AbfANWgp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 14 Jan 2019 17:33:54 -0500
-Received: from ozlabs.org ([203.11.71.1]:49161 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726708AbfANWdy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 Jan 2019 17:33:54 -0500
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 43dpCx73sDz9sBQ;
-        Tue, 15 Jan 2019 09:33:49 +1100 (AEDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1547505231;
-        bh=Bn2wATY0GM8iF5+jDd90WZs8FyCiO3YM9PPlwnfcu3Y=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=l3JRrbI1q/UwBXQcIcKbJGlomKGNKzW/V/SC8G+DBOw1CMfywflsW9XKKLBmq28XW
-         hJjJouclcCm+U4rhEsn1Pp3+ZMjdwP2qGs6TCNDMIWesnjHmISk9a5PTIGJXEEg7IR
-         YzvtWtd1k46JzSjdDpEHPO2LyHmtAjh71liP/7o/8CduvrdUjguq3sQNpsrQdrM5hV
-         YeuUPDzcI74hfzw2tR8X5DyDgaddLdYdmpQnY++BHuk+jgn/rkTxKqqZjcfRnpmVvd
-         xm1xldeR4+1OpCg0d7E+Id8FMIXslqYDMQgYQ4rfoWVQGnILpyarpPlwArVnwzSccB
-         qSpTF13xfP22A==
-Date:   Tue, 15 Jan 2019 09:33:30 +1100
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Daniel Walker <dwalker@fifo99.com>
-Cc:     Al Viro <viro@ZenIV.linux.org.uk>,
-        Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        David Howells <dhowells@redhat.com>
-Subject: Re: linux-next: manual merge of the cisco tree with the vfs tree
-Message-ID: <20190115093330.1cbb0625@canb.auug.org.au>
-In-Reply-To: <20181002162923.13f3f8b1@canb.auug.org.au>
-References: <20181002162923.13f3f8b1@canb.auug.org.au>
+        Mon, 14 Jan 2019 17:36:45 -0500
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:33424 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726696AbfANWgp (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 14 Jan 2019 17:36:45 -0500
+Received: by mail-pg1-f194.google.com with SMTP id z11so301442pgu.0
+        for <linux-kernel@vger.kernel.org>; Mon, 14 Jan 2019 14:36:44 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:content-transfer-encoding:subject:user-agent
+         :in-reply-to:references:cc:to:message-id:from:date;
+        bh=FBtGMQQzwkDx7S78ZdCeNlaWOotQ5KuuYCpl9n/rBes=;
+        b=oQdtf5gyLkoxaw0wDA6ahRirwi1opkYD10vjK6poRtMWfz3l2r2/8NdipEJKygCc/L
+         IaRp94/X0mmdbrnn7GMdwdXzRsNTYxBlxZ5dncfcOh0heEe6JDnDaGJ0EZoVuNrd3U1r
+         LTGqfEf4htcyUyDim44VZk8WeaQO6BAwRCNwA=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:content-transfer-encoding:subject
+         :user-agent:in-reply-to:references:cc:to:message-id:from:date;
+        bh=FBtGMQQzwkDx7S78ZdCeNlaWOotQ5KuuYCpl9n/rBes=;
+        b=RaqNoKz6Vr/y/myFZlSsoCUPSOU24U/L1xn07QVIAuvQhdRzOOnYs+2MO7lXxnf5Ex
+         GRiyKyhEgvPnEWufu6HWtOrOYsGEaPPneuDfNZvrl0u4AMVKA8p4lWdZlWaP9VYt51n+
+         YHBKB5BQwNb79moOo0BoCsdt60BQ66s5SXItEv1msPDLztJwLgBsolROfi3rnZszc/ca
+         ek5Q4ng25e8OAPtcGlJOrWjv8ZQHqzxV+UnWudBcb7Girc2R0w4Cr5djryj7IM5PVW2S
+         wGoglDo5H14Ra+TBu4GLiCDySQ+/C5Aqt7109IVJwpYv9HfoX61DV4toXUx2eZPqvJIb
+         i22g==
+X-Gm-Message-State: AJcUukd4Wg3jBaCy+1JVhgLR6+7Ag+w/EEVY4FM76sEdqaQmktC7V7oE
+        7kXz/tvwrM8wkXUZ17tdkFn7JA==
+X-Google-Smtp-Source: ALg8bN4Syh1uQWTUUAlc34Q9FFOUevb5rd3n3iFvH8GMKEsKwS8jyP6agXchdvaHbTlbQRpH2ObUBg==
+X-Received: by 2002:a63:7154:: with SMTP id b20mr765022pgn.342.1547505404160;
+        Mon, 14 Jan 2019 14:36:44 -0800 (PST)
+Received: from localhost ([2620:15c:202:1:fa53:7765:582b:82b9])
+        by smtp.gmail.com with ESMTPSA id h8sm1453444pgv.27.2019.01.14.14.36.43
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 14 Jan 2019 14:36:43 -0800 (PST)
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_//A=/GjsJxw4P=Epi8/=Qf3V"; protocol="application/pgp-signature"
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v2 2/7] soc: qcom: Add AOSS QMP communication driver
+User-Agent: alot/0.8
+In-Reply-To: <20190106080915.4493-3-bjorn.andersson@linaro.org>
+References: <20190106080915.4493-1-bjorn.andersson@linaro.org> <20190106080915.4493-3-bjorn.andersson@linaro.org>
+Cc:     Russell King <linux@armlinux.org.uk>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Arun Kumar Neelakantam <aneela@codeaurora.org>,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+To:     Andy Gross <andy.gross@linaro.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        David Brown <david.brown@linaro.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Rob Herring <robh+dt@kernel.org>
+Message-ID: <154750540229.169631.4962369801600780946@swboyd.mtv.corp.google.com>
+From:   Stephen Boyd <swboyd@chromium.org>
+Date:   Mon, 14 Jan 2019 14:36:42 -0800
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_//A=/GjsJxw4P=Epi8/=Qf3V
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Quoting Bjorn Andersson (2019-01-06 00:09:10)
+> diff --git a/drivers/soc/qcom/aoss-qmp.c b/drivers/soc/qcom/aoss-qmp.c
+> new file mode 100644
+> index 000000000000..de52703b96b6
+> --- /dev/null
+> +++ b/drivers/soc/qcom/aoss-qmp.c
+> @@ -0,0 +1,313 @@
+[...]
+> +
+> +static int qmp_probe(struct platform_device *pdev)
+> +{
+> +       struct resource *res;
+> +       struct qmp *qmp;
+> +       int irq;
+> +       int ret;
+> +
+> +       qmp =3D devm_kzalloc(&pdev->dev, sizeof(*qmp), GFP_KERNEL);
+> +       if (!qmp)
+> +               return -ENOMEM;
+> +
+> +       qmp->dev =3D &pdev->dev;
+> +       init_waitqueue_head(&qmp->event);
+> +       mutex_init(&qmp->tx_lock);
+> +
+> +       res =3D platform_get_resource(pdev, IORESOURCE_MEM, 0);
+> +       qmp->msgram =3D devm_ioremap_resource(&pdev->dev, res);
+> +       if (IS_ERR(qmp->msgram))
+> +               return PTR_ERR(qmp->msgram);
+> +
+> +       qmp->mbox_client.dev =3D &pdev->dev;
+> +       qmp->mbox_client.knows_txdone =3D true;
+> +       qmp->mbox_chan =3D mbox_request_channel(&qmp->mbox_client, 0);
+> +       if (IS_ERR(qmp->mbox_chan)) {
+> +               dev_err(&pdev->dev, "failed to acquire ipc mailbox\n");
+> +               return PTR_ERR(qmp->mbox_chan);
+> +       }
+> +
+> +       irq =3D platform_get_irq(pdev, 0);
+> +       ret =3D devm_request_irq(&pdev->dev, irq, qmp_intr, IRQF_ONESHOT,
+> +                              "aoss-qmp", qmp);
+> +       if (ret < 0) {
+> +               dev_err(&pdev->dev, "failed to request interrupt\n");
 
-Hi Daniel,
+Don't we need to free_mbox_channel() all over the place here?
 
-On Tue, 2 Oct 2018 16:29:23 +1000 Stephen Rothwell <sfr@canb.auug.org.au> w=
-rote:
->
-> Today's linux-next merge of the cisco tree got a conflict in:
->=20
->   arch/x86/kernel/setup.c
->=20
-> between commit:
->=20
->   dcf8001d292b ("vfs: Suppress MS_* flag defs within the kernel unless ex=
-plicitly enabled")
->=20
-> from the vfs tree and commit:
->=20
->   2c070709ea75 ("This updates the x86 code to use the CONFIG_GENERIC_CMDL=
-INE")
->=20
-> from the cisco tree.
->=20
-> I fixed it up (see below) and can carry the fix as necessary. This
-> is now fixed as far as linux-next is concerned, but any non trivial
-> conflicts should be mentioned to your upstream maintainer when your tree
-> is submitted for merging.  You may also want to consider cooperating
-> with the maintainer of the conflicting tree to minimise any particularly
-> complex conflicts.
->=20
-> --=20
-> Cheers,
-> Stephen Rothwell
->=20
-> diff --cc arch/x86/kernel/setup.c
-> index e493202bf265,ee109f490b22..000000000000
-> --- a/arch/x86/kernel/setup.c
-> +++ b/arch/x86/kernel/setup.c
-> @@@ -51,7 -51,7 +51,8 @@@
->   #include <linux/kvm_para.h>
->   #include <linux/dma-contiguous.h>
->   #include <xen/xen.h>
->  +#include <uapi/linux/mount.h>
-> + #include <linux/cmdline.h>
->  =20
->   #include <linux/errno.h>
->   #include <linux/kernel.h>
+> +               return ret;
+> +       }
+> +
+> +       ret =3D qmp_open(qmp);
+> +       if (ret < 0)
+> +               return ret;
+> +
+> +       platform_set_drvdata(pdev, qmp);
+> +
+> +       if (of_property_read_bool(pdev->dev.of_node, "#power-domain-cells=
+")) {
+> +               qmp->pd_pdev =3D platform_device_register_data(&pdev->dev,
+> +                                                            "aoss_qmp_pd=
+",
+> +                                                            PLATFORM_DEV=
+ID_NONE,
+> +                                                            NULL, 0);
+> +               if (IS_ERR(qmp->pd_pdev))
+> +                       dev_err(&pdev->dev, "failed to register AOSS PD\n=
+");
+> +       }
+> +
+> +       return 0;
+> +}
+[...]
+> diff --git a/include/linux/soc/qcom/aoss-qmp.h b/include/linux/soc/qcom/a=
+oss-qmp.h
+> new file mode 100644
+> index 000000000000..32ccaa091a9f
+> --- /dev/null
+> +++ b/include/linux/soc/qcom/aoss-qmp.h
+> @@ -0,0 +1,12 @@
+> +/* SPDX-License-Identifier: GPL-2.0 */
+> +/*
+> + * Copyright (c) 2018, Linaro Ltd
+> + */
+> +#ifndef __AOP_QMP_H__
+> +#define __AOP_QMP_H__
 
-This is now a conflict between the cicso tree and Linus' tree.
+include <linux/types.h> for size_t usage?
 
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_//A=/GjsJxw4P=Epi8/=Qf3V
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlw9DjoACgkQAVBC80lX
-0GwNVQf/S0pWebPpo5F/IIino/Ko3GWl61ufOLwrj5mEgOxgGfI76sW6tV5YLZjL
-4J2JzKwU9KF5vf/dwZE9LLE38HDEQnUI9iUT6TsJPQs7aUsgSWTvTPqWI1dSdg7l
-tSYBmKRy+cpwiPpfcg5WIM+A0EKxKHo/dkceKbc3WSV9Oh4gnOXvmhdhoPlo8DuD
-k1L+uWP+qbStHF7ejDFLKa50t3VGZ6zW/Qd7Ml0EI8atMl70XwvxVMZ+xZFl01FT
-cN7Mgz8Cbcu8kJRCMJcD8gP/bGZ3eE20sZgnULWyJzpo/aDKVtBN68zjAXZMZ2mq
-IBoWByOz8BwMGqaH5sbg4AT9/A1nCg==
-=N42Y
------END PGP SIGNATURE-----
-
---Sig_//A=/GjsJxw4P=Epi8/=Qf3V--
+> +
+> +struct qmp;
+> +
+> +int qmp_send(struct qmp *qmp, const void *data, size_t len);
+> +
