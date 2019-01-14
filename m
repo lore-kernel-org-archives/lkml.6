@@ -2,138 +2,206 @@ Return-Path: <SRS0=tq6k=PW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 48A7AC43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 10:02:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 077D2C43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 10:04:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 206FC2086D
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 10:02:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B33C52086D
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 10:03:59 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="MOlTDAXD"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726665AbfANKC1 (ORCPT
+        id S1726645AbfANKD6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 14 Jan 2019 05:02:27 -0500
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:57740 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726649AbfANKC1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 Jan 2019 05:02:27 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 64C6CA78;
-        Mon, 14 Jan 2019 02:02:26 -0800 (PST)
-Received: from [10.1.196.93] (en101.cambridge.arm.com [10.1.196.93])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id EACA23F5AF;
-        Mon, 14 Jan 2019 02:02:22 -0800 (PST)
-Subject: Re: [PATCH v3 1/7] sysfs/cpu: Allow individual architectures to
- select vulnerabilities
-To:     jeremy.linton@arm.com, linux-arm-kernel@lists.infradead.org
-Cc:     catalin.marinas@arm.com, will.deacon@arm.com, marc.zyngier@arm.com,
-        dave.martin@arm.com, shankerd@codeaurora.org,
-        linux-kernel@vger.kernel.org, ykaukab@suse.de,
-        julien.thierry@arm.com, mlangsdo@redhat.com, Steven.Price@arm.com,
-        stefan.wahren@i2se.com, gregkh@linuxfoundation.org,
-        rafael@kernel.org, tglx@linutronix.de, jpoimboe@redhat.com,
-        konrad.wilk@oracle.com, mingo@kernel.org, longman@redhat.com,
-        ak@linux.intel.com, jkosina@suse.cz
-References: <20190109235544.2992426-1-jeremy.linton@arm.com>
- <20190109235544.2992426-2-jeremy.linton@arm.com>
-From:   Suzuki K Poulose <suzuki.poulose@arm.com>
-Message-ID: <901f2f29-aa06-13ad-1995-f9f22184e39d@arm.com>
-Date:   Mon, 14 Jan 2019 10:02:21 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Mon, 14 Jan 2019 05:03:58 -0500
+Received: from mail-ed1-f67.google.com ([209.85.208.67]:38907 "EHLO
+        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726320AbfANKD5 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 14 Jan 2019 05:03:57 -0500
+Received: by mail-ed1-f67.google.com with SMTP id h50so18148887ede.5
+        for <linux-kernel@vger.kernel.org>; Mon, 14 Jan 2019 02:03:55 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ffwll.ch; s=google;
+        h=sender:date:from:to:cc:subject:message-id:mail-followup-to
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=DEFF4eVaPrhpHLYfI/gU5IPcjjob7Hxij1oi4Hfp58Y=;
+        b=MOlTDAXDlldj1POnYQsDcJ1ScYatOlv7VbtSXbpsFqGAmBNa3wZwgYB8bv6B3IoDWu
+         jFCGlqLpKmqbcq3hJ5GB5NDBF1O1B5jz3qvXWKKm09xy9fUz1m09d90Guk9VxNIgyGo1
+         Aq/qbEFM7iXnH+Cp8jgd61qWbB94x7CVEpRHU=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :mail-followup-to:references:mime-version:content-disposition
+         :in-reply-to:user-agent;
+        bh=DEFF4eVaPrhpHLYfI/gU5IPcjjob7Hxij1oi4Hfp58Y=;
+        b=bLVQZ58DMEIBtJPtvdtJvs3g7vjLH1x4+0WKGmSDrknSA601eybOI2KAmzMCBwxQII
+         B+szdwZJ5OTskpv/82MGss7sQxi5tvtHwxiNK7jejgZYxylEILOgDRRfUtl2Vtz5efHj
+         1QQ4K5gqPn3ykpNznhi9PIumCBlUk6j0flLHrLQ2Zc9PnIaajdl1MwdSmTyscmZammo3
+         QYG/D+Wx7D6du5oSqiKesEGq1qKmFCUV5tMOkzCTzS9dlg8fJbqguDtZ55WffcPvEg9B
+         tXfruIIbyFMwxKj5zSGNs+r9mk+LBJt0406SLcvi3rQr4UT/10Kn96Ep4mkjNMNBrYFS
+         RI/w==
+X-Gm-Message-State: AJcUukdf0s9/eNTWSIElS6GytyLUDKBsK0Bnv5S0V3d52DyX9a71NeSZ
+        zgXDnKdp6iN3n3nEJM/N2O7mAA==
+X-Google-Smtp-Source: ALg8bN6EkNbhw0DK+UvGJ65rx5u6EFozDY56acHruHvZF13CuQYU4bDuCDyBUPbjnFpDW5xtFev1Bg==
+X-Received: by 2002:a17:906:d507:: with SMTP id ge7-v6mr19803551ejb.78.1547460235015;
+        Mon, 14 Jan 2019 02:03:55 -0800 (PST)
+Received: from phenom.ffwll.local ([2a02:168:569e:0:3106:d637:d723:e855])
+        by smtp.gmail.com with ESMTPSA id by5-v6sm2496380ejb.7.2019.01.14.02.03.53
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 14 Jan 2019 02:03:54 -0800 (PST)
+Date:   Mon, 14 Jan 2019 11:03:51 +0100
+From:   Daniel Vetter <daniel@ffwll.ch>
+To:     Sam Ravnborg <sam@ravnborg.org>
+Cc:     Alex Deucher <alexander.deucher@amd.com>,
+        Alexey Brodkin <abrodkin@synopsys.com>,
+        Andrzej Hajda <a.hajda@samsung.com>,
+        Benjamin Gaignard <benjamin.gaignard@linaro.org>,
+        Chen Feng <puck.chen@hisilicon.com>,
+        Christian Konig <christian.koenig@amd.com>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        David Airlie <airlied@linux.ie>,
+        David Zhou <David1.Zhou@amd.com>,
+        Eric Anholt <eric@anholt.net>,
+        Gerd Hoffmann <kraxel@redhat.com>,
+        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Philippe Cornu <philippe.cornu@st.com>,
+        Rob Clark <robdclark@gmail.com>,
+        Rongrong Zou <zourongrong@gmail.com>,
+        Sean Paul <sean@poorly.run>,
+        Tomi Valkeinen <tomi.valkeinen@ti.com>,
+        Vincent Abriou <vincent.abriou@st.com>,
+        Xinliang Liu <z.liuxinliang@hisilicon.com>,
+        Xinwei Kong <kong.kongxinwei@hisilicon.com>,
+        Yannick Fertre <yannick.fertre@st.com>,
+        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
+Subject: Re: [PATCH v4 8/8] drm: remove drmP.h from drm_modeset_helper.h
+Message-ID: <20190114100351.GB10517@phenom.ffwll.local>
+Mail-Followup-To: Sam Ravnborg <sam@ravnborg.org>,
+        Alex Deucher <alexander.deucher@amd.com>,
+        Alexey Brodkin <abrodkin@synopsys.com>,
+        Andrzej Hajda <a.hajda@samsung.com>,
+        Benjamin Gaignard <benjamin.gaignard@linaro.org>,
+        Chen Feng <puck.chen@hisilicon.com>,
+        Christian Konig <christian.koenig@amd.com>,
+        David Airlie <airlied@linux.ie>, David Zhou <David1.Zhou@amd.com>,
+        Eric Anholt <eric@anholt.net>, Gerd Hoffmann <kraxel@redhat.com>,
+        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Philippe Cornu <philippe.cornu@st.com>,
+        Rob Clark <robdclark@gmail.com>,
+        Rongrong Zou <zourongrong@gmail.com>, Sean Paul <sean@poorly.run>,
+        Tomi Valkeinen <tomi.valkeinen@ti.com>,
+        Vincent Abriou <vincent.abriou@st.com>,
+        Xinliang Liu <z.liuxinliang@hisilicon.com>,
+        Xinwei Kong <kong.kongxinwei@hisilicon.com>,
+        Yannick Fertre <yannick.fertre@st.com>,
+        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
+References: <20190112193251.20450-1-sam@ravnborg.org>
+ <20190112193251.20450-9-sam@ravnborg.org>
 MIME-Version: 1.0
-In-Reply-To: <20190109235544.2992426-2-jeremy.linton@arm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190112193251.20450-9-sam@ravnborg.org>
+X-Operating-System: Linux phenom 4.19.0-1-amd64 
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 09/01/2019 23:55, Jeremy Linton wrote:
-> As suggested on the list, https://lkml.org/lkml/2019/1/4/282, there are
-> a number of cases where its useful for a system to avoid exporting a
-> sysfs entry for a given vulnerability. This set adds an architecture
-> specific callback which returns the bitmap of vulnerabilities the
-> architecture would like to advertise.
+On Sat, Jan 12, 2019 at 08:32:51PM +0100, Sam Ravnborg wrote:
+> With the removal of drmP.h from drm_modeset_helper.h
+> the drmP.h are no longer included by any include files
+> in include/drm.
+> The drmP.h file is thus only included explicit
+> either in .c files or in local .h files.
+> This makes the process of deleting the drmP.h includes easier
+> as we have a more local dependency chain.
 > 
-> Signed-off-by: Jeremy Linton <jeremy.linton@arm.com>
-> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> Cc: Rafael J. Wysocki <rafael@kernel.org>
-> Cc: Thomas Gleixner <tglx@linutronix.de>
-> Cc: Josh Poimboeuf <jpoimboe@redhat.com>
-> Cc: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
-> Cc: Ingo Molnar <mingo@kernel.org>
-> Cc: Waiman Long <longman@redhat.com>
-> Cc: Andi Kleen <ak@linux.intel.com>
-> Cc: Jiri Kosina <jkosina@suse.cz>
+> Include build failures fixes in drm files after the drmP.h removal.
+> 
+> Signed-off-by: Sam Ravnborg <sam@ravnborg.org>
+> Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
+> Cc: Maxime Ripard <maxime.ripard@bootlin.com>
+> Cc: Sean Paul <sean@poorly.run>
+> Cc: David Airlie <airlied@linux.ie>
+> Cc: Daniel Vetter <daniel@ffwll.ch>
+
+Note that as soon as drm-intel-next lands in drm-misc-next this won't be
+enough. I have a patch which I think toghether with yours here should take
+care of things though.
+
+I merged the first 2 patches, I'll wait with the driver ones for a few
+more acks first.
+
+Thanks for respinning.
+-Daniel
+
 > ---
->   drivers/base/cpu.c  | 19 +++++++++++++++++++
->   include/linux/cpu.h |  7 +++++++
->   2 files changed, 26 insertions(+)
+>  drivers/gpu/drm/drm_damage_helper.c  | 1 +
+>  drivers/gpu/drm/drm_modeset_helper.c | 2 ++
+>  include/drm/drm_modeset_helper.h     | 6 +++++-
+>  3 files changed, 8 insertions(+), 1 deletion(-)
 > 
-> diff --git a/drivers/base/cpu.c b/drivers/base/cpu.c
-> index eb9443d5bae1..35f6dfb24cd6 100644
-> --- a/drivers/base/cpu.c
-> +++ b/drivers/base/cpu.c
-> @@ -561,6 +561,11 @@ static struct attribute *cpu_root_vulnerabilities_attrs[] = {
->   	NULL
->   };
->   
-> +uint __weak arch_supported_vuln_attr_fields(void)
-> +{
-> +	return VULN_MELTDOWN|VULN_SPECTREV1|VULN_SPECTREV2|VULN_SSB|VULN_L1TF;
-> +}
-> +
->   static const struct attribute_group cpu_root_vulnerabilities_group = {
->   	.name  = "vulnerabilities",
->   	.attrs = cpu_root_vulnerabilities_attrs,
-> @@ -568,6 +573,20 @@ static const struct attribute_group cpu_root_vulnerabilities_group = {
->   
->   static void __init cpu_register_vulnerabilities(void)
->   {
-> +	int fld;
-> +	int max_fields = ARRAY_SIZE(cpu_root_vulnerabilities_attrs) - 1;
-> +	struct attribute **hd = cpu_root_vulnerabilities_attrs;
-> +	uint enabled_fields = arch_supported_vuln_attr_fields();
-> +
-> +	/* only enable entries requested by the arch code */
-> +	for (fld = 0; fld < max_fields; fld++) {
-> +		if (enabled_fields & 1 << fld) {
-> +			*hd = cpu_root_vulnerabilities_attrs[fld];
-> +			hd++;
-> +		}
-> +	}
-> +	*hd = NULL;
-> +
+> diff --git a/drivers/gpu/drm/drm_damage_helper.c b/drivers/gpu/drm/drm_damage_helper.c
+> index 31032407254d..b575a768f51c 100644
+> --- a/drivers/gpu/drm/drm_damage_helper.c
+> +++ b/drivers/gpu/drm/drm_damage_helper.c
+> @@ -32,6 +32,7 @@
+>  
+>  #include <drm/drm_atomic.h>
+>  #include <drm/drm_damage_helper.h>
+> +#include <drm/drm_device.h>
+>  
+>  /**
+>   * DOC: overview
+> diff --git a/drivers/gpu/drm/drm_modeset_helper.c b/drivers/gpu/drm/drm_modeset_helper.c
+> index 9150fa385bba..9bc1ef788c77 100644
+> --- a/drivers/gpu/drm/drm_modeset_helper.c
+> +++ b/drivers/gpu/drm/drm_modeset_helper.c
+> @@ -23,8 +23,10 @@
+>  #include <drm/drm_atomic_helper.h>
+>  #include <drm/drm_crtc_helper.h>
+>  #include <drm/drm_fb_helper.h>
+> +#include <drm/drm_fourcc.h>
+>  #include <drm/drm_modeset_helper.h>
+>  #include <drm/drm_plane_helper.h>
+> +#include <drm/drm_print.h>
+>  
+>  /**
+>   * DOC: aux kms helpers
+> diff --git a/include/drm/drm_modeset_helper.h b/include/drm/drm_modeset_helper.h
+> index efa337f03129..995fd981cab0 100644
+> --- a/include/drm/drm_modeset_helper.h
+> +++ b/include/drm/drm_modeset_helper.h
+> @@ -23,7 +23,11 @@
+>  #ifndef __DRM_KMS_HELPER_H__
+>  #define __DRM_KMS_HELPER_H__
+>  
+> -#include <drm/drmP.h>
+> +struct drm_crtc;
+> +struct drm_crtc_funcs;
+> +struct drm_device;
+> +struct drm_framebuffer;
+> +struct drm_mode_fb_cmd2;
+>  
+>  void drm_helper_move_panel_connectors_to_head(struct drm_device *);
+>  
+> -- 
+> 2.12.0
+> 
 
-nit: Could we use "is_visible" callback in the attribute group to check this
-dynamically ?
-
->   	if (sysfs_create_group(&cpu_subsys.dev_root->kobj,
->   			       &cpu_root_vulnerabilities_group))
->   		pr_err("Unable to register CPU vulnerabilities\n");
-> diff --git a/include/linux/cpu.h b/include/linux/cpu.h
-> index 218df7f4d3e1..5e45814bcc24 100644
-> --- a/include/linux/cpu.h
-> +++ b/include/linux/cpu.h
-> @@ -189,4 +189,11 @@ static inline void cpu_smt_check_topology_early(void) { }
->   static inline void cpu_smt_check_topology(void) { }
->   #endif
->   
-> +/* generic cpu vulnerability attributes */
-> +#define VULN_MELTDOWN  0x01
-> +#define VULN_SPECTREV1 0x02
-> +#define VULN_SPECTREV2 0x04
-> +#define VULN_SSB       0x08
-> +#define VULN_L1TF      0x10
-
-nit: May use BIT() ?
-
-Cheers
-Suzuki
+-- 
+Daniel Vetter
+Software Engineer, Intel Corporation
+http://blog.ffwll.ch
