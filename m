@@ -2,198 +2,126 @@ Return-Path: <SRS0=tq6k=PW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E16C6C43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 18:50:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 74148C43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 18:52:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A1A622064C
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 18:50:40 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="j1y/CuG0"
+	by mail.kernel.org (Postfix) with ESMTP id 48B2C2064C
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 18:52:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726774AbfANSui (ORCPT
+        id S1726796AbfANSwZ convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 14 Jan 2019 13:50:38 -0500
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:33502 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726708AbfANSui (ORCPT
+        Mon, 14 Jan 2019 13:52:25 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:59522 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726734AbfANSwZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 Jan 2019 13:50:38 -0500
-Received: by mail-lj1-f195.google.com with SMTP id v1-v6so91857ljd.0
-        for <linux-kernel@vger.kernel.org>; Mon, 14 Jan 2019 10:50:36 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=2B7VI19DrAicxBf0NoXyl7xevOmr89Arr4gR1aROjUo=;
-        b=j1y/CuG080+avaPE31NjKvHOgKTXFvZtZHshmK9Th6Cj9VqcEywB9frTNVTWq+dRAQ
-         ZEQEnPq4rmmVUXRd1GwQts1cdgk+6XrmbYnXIy6mUN7qrKwvNwzRnW3233y0FsmEQDnx
-         NA/YgCP2AdL3rng3mq+J4Q5aH41tN4IRrOIlWmittszQ3tiXE8fAHzAsH6766qtxDOZW
-         DWVkScJEbz6WWZPE7X4p5FoOd5lTiT8V+zCNRLXh1NkdIJysPZRLpoXUggPnGTf4SVEu
-         o8Tq7cXeGDarBLMcaXs/9sINfWwlRcZB8ipGc28X45x58EQQ6gjLoHF3GjWcdMK6kqt8
-         wpbA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=2B7VI19DrAicxBf0NoXyl7xevOmr89Arr4gR1aROjUo=;
-        b=mjtjOaQ4mG2GEJf+22irXkPY2d74DvfTi0fyxvNWPCazbPwT5GATQy0auaNgISKPUP
-         DPIz/Db7RlsDJxoOfvpgJgnbyXbY26/EfgXMPH/b+JB1HpzcPIVNEN/M2BWxs4o+Zx7K
-         JdRaK7u/AhXbFqK/0aKr8/TQ6aaKdKVxCxg9Knw1tAkH/UpM/MtUENeV61hiWrJiZ/gr
-         PPVqEhs1nu4A6q39nNzKtB/bYOTkZ4TRlkt5NN18ihT5ZyoM6lXJzMWvtirirj3syXKF
-         8JCUM3uPP2upiRTrOrO4uM3DbQxe+qwbVuPMcdwa+xQm0KpzOnm8/TeWYFLUBkpqAyMn
-         L6Eg==
-X-Gm-Message-State: AJcUukfogKKbdiFXsysQLsZ8LAIKT0PUxBdteFKQO99nz+ZCicdgLmlk
-        NvXC8b8USob4WvIkf0vI2PN5oBS3nexmn9aWKHxWsNjXfkNeSQ==
-X-Google-Smtp-Source: ALg8bN6RVs2b1wcPqR4BTmZUZNIuBj4xbWE55tCmNvDCLg+BRimLA2wxyKAPNkGbuH/evtgIcPyARLtt2eJqTVat4Go=
-X-Received: by 2002:a2e:29d7:: with SMTP id p84-v6mr15482535ljp.12.1547491835384;
- Mon, 14 Jan 2019 10:50:35 -0800 (PST)
+        Mon, 14 Jan 2019 13:52:25 -0500
+Received: from pps.filterd (m0098396.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id x0EIiJaP090617
+        for <linux-kernel@vger.kernel.org>; Mon, 14 Jan 2019 13:52:24 -0500
+Received: from smtp.notes.na.collabserv.com (smtp.notes.na.collabserv.com [192.155.248.73])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2q0w5xg3yx-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Mon, 14 Jan 2019 13:52:23 -0500
+Received: from localhost
+        by smtp.notes.na.collabserv.com with smtp.notes.na.collabserv.com ESMTP
+        for <linux-kernel@vger.kernel.org> from <JOELN@il.ibm.com>;
+        Mon, 14 Jan 2019 18:52:23 -0000
+Received: from us1a3-smtp03.a3.dal06.isc4sb.com (10.106.154.98)
+        by smtp.notes.na.collabserv.com (10.106.227.90) with smtp.notes.na.collabserv.com ESMTP;
+        Mon, 14 Jan 2019 18:52:15 -0000
+Received: from us1a3-mail108.a3.dal06.isc4sb.com ([10.146.45.126])
+          by us1a3-smtp03.a3.dal06.isc4sb.com
+          with ESMTP id 2019011418521486-881154 ;
+          Mon, 14 Jan 2019 18:52:14 +0000 
+In-Reply-To: <20190114103421.7fef97c0@lwn.net>
+To:     Jonathan Corbet <corbet@lwn.net>
+Cc:     Doug Ledford <dledford@redhat.com>, Jason Gunthorpe <jgg@ziepe.ca>,
+        Leon Romanovsky <leon@kernel.org>, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Mike Rapoport <rppt@linux.ibm.com>
+Subject: Re: [PATCH 1/3] docs-rst: infiniband: Convert user verbs doc to rst
+From:   "Joel Nider" <JOELN@il.ibm.com>
+Date:   Mon, 14 Jan 2019 20:52:14 +0200
+References: <1547456451-7102-1-git-send-email-joeln@il.ibm.com><1547456451-7102-2-git-send-email-joeln@il.ibm.com><20190114165621.GD22910@ziepe.ca>
+ <20190114103421.7fef97c0@lwn.net>
 MIME-Version: 1.0
-References: <20190114171021.86171-1-tkjos@google.com> <20190114183316.GA199154@google.com>
-In-Reply-To: <20190114183316.GA199154@google.com>
-From:   Todd Kjos <tkjos@google.com>
-Date:   Mon, 14 Jan 2019 10:50:24 -0800
-Message-ID: <CAHRSSEx7BMMZ1CFoQiOxUzPfO1+MFuSEF4Xo=oN5h+gUZb=4JQ@mail.gmail.com>
-Subject: Re: [PATCH v3] binder: create node flag to request sender's security context
-To:     Joel Fernandes <joelaf@google.com>
-Cc:     Todd Kjos <tkjos@android.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        =?UTF-8?B?QXJ2ZSBIasO4bm5ldsOlZw==?= <arve@android.com>,
-        "open list:ANDROID DRIVERS" <devel@driverdev.osuosl.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Martijn Coenen <maco@google.com>, joel@joelfernandes.org,
-        Android Kernel Team <kernel-team@android.com>
-Content-Type: text/plain; charset="UTF-8"
+X-KeepSent: E572E930:5960E029-C2258382:00673730;
+ type=4; name=$KeepSent
+X-Mailer: IBM Notes Release 9.0.1FP7 August 18, 2016
+X-LLNOutbound: False
+X-Disclaimed: 16875
+X-TNEFEvaluated: 1
+x-cbid: 19011418-3107-0000-0000-00000999387C
+X-IBM-SpamModules-Scores: BY=0.142389; FL=0; FP=0; FZ=0; HX=0; KW=0; PH=0;
+ SC=0.40962; ST=0; TS=0; UL=0; ISC=; MB=0.000000
+X-IBM-SpamModules-Versions: BY=3.00010405; HX=3.00000242; KW=3.00000007;
+ PH=3.00000004; SC=3.00000274; SDB=6.01146463; UDB=6.00597114; IPR=6.00926749;
+ BA=6.00006200; NDR=6.00000001; ZLA=6.00000005; ZF=6.00000009; ZB=6.00000000;
+ ZP=6.00000000; ZH=6.00000000; ZU=6.00000002; MB=3.00025124; XFM=3.00000015;
+ UTC=2019-01-14 18:52:20
+X-IBM-AV-DETECTION: SAVI=unsuspicious REMOTE=unsuspicious XFE=unused
+X-IBM-AV-VERSION: SAVI=2019-01-14 15:23:34 - 6.00009464
+x-cbparentid: 19011418-3108-0000-0000-00001F5C6572
+Message-Id: <OFE572E930.5960E029-ONC2258382.00673730-C2258382.0067A91D@notes.na.collabserv.com>
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 8BIT
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-01-14_10:,,
+ signatures=0
+X-Proofpoint-Spam-Reason: safe
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jan 14, 2019 at 10:33 AM Joel Fernandes <joelaf@google.com> wrote:
->
-> On Mon, Jan 14, 2019 at 09:10:21AM -0800, Todd Kjos wrote:
-> > To allow servers to verify client identity, allow a node
-> > flag to be set that causes the sender's security context
-> > to be delivered with the transaction. The BR_TRANSACTION
-> > command is extended in BR_TRANSACTION_SEC_CTX to
-> > contain a pointer to the security context string.
-> >
-> > Signed-off-by: Todd Kjos <tkjos@google.com>
-> > ---
-> > v2: fix 32-bit build warning
-> > v3: fix smatch warning on unitialized struct element
-> >
-> >  drivers/android/binder.c            | 106 ++++++++++++++++++++++------
-> >  include/uapi/linux/android/binder.h |  19 +++++
-> >  2 files changed, 102 insertions(+), 23 deletions(-)
-> >
-> > diff --git a/drivers/android/binder.c b/drivers/android/binder.c
-> > index cdfc87629efb8..5f6ef5e63b91e 100644
-> > --- a/drivers/android/binder.c
-> > +++ b/drivers/android/binder.c
-> > @@ -329,6 +329,8 @@ struct binder_error {
-> >   *                        (invariant after initialized)
-> >   * @min_priority:         minimum scheduling priority
-> >   *                        (invariant after initialized)
-> > + * @txn_security_ctx:     require sender's security context
-> > + *                        (invariant after initialized)
-> >   * @async_todo:           list of async work items
-> >   *                        (protected by @proc->inner_lock)
-> >   *
-> > @@ -365,6 +367,7 @@ struct binder_node {
-> >                * invariant after initialization
-> >                */
-> >               u8 accept_fds:1;
-> > +             u8 txn_security_ctx:1;
-> >               u8 min_priority;
-> >       };
-> >       bool has_async_transaction;
-> > @@ -615,6 +618,7 @@ struct binder_transaction {
-> >       long    saved_priority;
-> >       kuid_t  sender_euid;
-> >       struct list_head fd_fixups;
-> > +     binder_uintptr_t security_ctx;
-> >       /**
-> >        * @lock:  protects @from, @to_proc, and @to_thread
-> >        *
-> > @@ -1152,6 +1156,7 @@ static struct binder_node *binder_init_node_ilocked(
-> >       node->work.type = BINDER_WORK_NODE;
-> >       node->min_priority = flags & FLAT_BINDER_FLAG_PRIORITY_MASK;
-> >       node->accept_fds = !!(flags & FLAT_BINDER_FLAG_ACCEPTS_FDS);
-> > +     node->txn_security_ctx = !!(flags & FLAT_BINDER_FLAG_TXN_SECURITY_CTX);
-> >       spin_lock_init(&node->lock);
-> >       INIT_LIST_HEAD(&node->work.entry);
-> >       INIT_LIST_HEAD(&node->async_todo);
-> > @@ -2778,6 +2783,8 @@ static void binder_transaction(struct binder_proc *proc,
-> >       binder_size_t last_fixup_min_off = 0;
-> >       struct binder_context *context = proc->context;
-> >       int t_debug_id = atomic_inc_return(&binder_last_id);
-> > +     char *secctx = NULL;
-> > +     u32 secctx_sz = 0;
-> >
-> >       e = binder_transaction_log_add(&binder_transaction_log);
-> >       e->debug_id = t_debug_id;
-> > @@ -3020,6 +3027,20 @@ static void binder_transaction(struct binder_proc *proc,
-> >       t->flags = tr->flags;
-> >       t->priority = task_nice(current);
-> >
-> > +     if (target_node && target_node->txn_security_ctx) {
-> > +             u32 secid;
-> > +
-> > +             security_task_getsecid(proc->tsk, &secid);
-> > +             ret = security_secid_to_secctx(secid, &secctx, &secctx_sz);
-> > +             if (ret) {
-> > +                     return_error = BR_FAILED_REPLY;
-> > +                     return_error_param = ret;
-> > +                     return_error_line = __LINE__;
-> > +                     goto err_get_secctx_failed;
-> > +             }
-> > +             extra_buffers_size += ALIGN(secctx_sz, sizeof(u64));
-> > +     }
-> > +
-> >       trace_binder_transaction(reply, t, target_node);
-> >
-> >       t->buffer = binder_alloc_new_buf(&target_proc->alloc, tr->data_size,
-> > @@ -3036,6 +3057,19 @@ static void binder_transaction(struct binder_proc *proc,
-> >               t->buffer = NULL;
-> >               goto err_binder_alloc_buf_failed;
-> >       }
-> > +     if (secctx) {
-> > +             size_t buf_offset = ALIGN(tr->data_size, sizeof(void *)) +
-> > +                                 ALIGN(tr->offsets_size, sizeof(void *)) +
-> > +                                 ALIGN(extra_buffers_size, sizeof(void *)) -
-> > +                                 ALIGN(secctx_sz, sizeof(u64));
-> > +             char *kptr = t->buffer->data + buf_offset;
-> > +
-> > +             t->security_ctx = (uintptr_t)kptr +
-> > +                 binder_alloc_get_user_buffer_offset(&target_proc->alloc);
-> > +             memcpy(kptr, secctx, secctx_sz);
->
-> Just for my clarification, instead of storing the string in the transaction
-> buffer, would it not be better to store the security context id in
-> t->security_ctx, and then do the conversion to string later, during
-> binder_thread_read? Then some space will also be saved in the transaction
-> buffer?
+Jonathan Corbet <corbet@lwn.net> wrote on 01/14/2019 07:34:21 PM:
 
-The string has to be somewhere in the address space of the target. We
-allocate the space in the binder buffer and copy it here. This is a
-convenient place to allocate the space since we know the size at the
-time of allocation. Presumably, in your proposal, we would copy it
-later into the output buffer...which is allocated by the userspace so
-we don't have complete control of it in the kernel. Doing that would
-make binder_thread_read() more complex since we'd need to make sure
-there is sizeof(tr) + secctx_sz always available in the output buffer
-(which is allocated by userspace). Saving a few bytes in the this
-buffer is of little value, but keeping the output buffer management
-simple is valuable.
+> From: Jonathan Corbet <corbet@lwn.net>
+> To: Jason Gunthorpe <jgg@ziepe.ca>
+> Cc: Joel Nider <joeln@il.ibm.com>, Leon Romanovsky <leon@kernel.org>, 
+Doug 
+> Ledford <dledford@redhat.com>, Mike Rapoport <rppt@linux.ibm.com>, 
+linux-
+> doc@vger.kernel.org, linux-kernel@vger.kernel.org
+> Date: 01/14/2019 07:37 PM
+> Subject: Re: [PATCH 1/3] docs-rst: infiniband: Convert user verbs doc to 
+rst
+> 
+> On Mon, 14 Jan 2019 09:56:21 -0700
+> Jason Gunthorpe <jgg@ziepe.ca> wrote:
+> 
+> > >  Documentation/infiniband/user_verbs.rst | 70 
++++++++++++++++++++++++++++++++++
+> > >  Documentation/infiniband/user_verbs.txt | 69 
+--------------------------------
+> > >  2 files changed, 70 insertions(+), 69 deletions(-)
+> > >  create mode 100644 Documentation/infiniband/user_verbs.rst
+> > >  delete mode 100644 Documentation/infiniband/user_verbs.txt 
+> > 
+> > Thanks for getting this going Joel, I've been mulling over writing 
+more
+> > docs for this area for a while now.
+> > 
+> > Jonathan/linux-doc: Can you Ack at least the build system parts of
+> > this please? I can take it through the rdma tree, unless you prefer
+> > otherwise?
+> 
+> Can I make a request?  This appears to be user-oriented documentation; 
+can
+> we please place it into the userspace-api manual, rather than keeping it
+> in its own silo?
 
->
-> thanks,
->
->  - Joel
->
->
+I knew someone was going to ask me to do that :-)
+I agree that userspace stuff should all be together, but I guess for 
+historical reasons this one stayed in the infiniband section. So if Jason 
+is ok with moving the doc, I'll take a look in the morning to see how best 
+to work that into the patchset.
+
+> Thanks,
+> 
+> jon
+> 
+
+
