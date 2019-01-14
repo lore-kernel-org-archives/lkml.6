@@ -2,103 +2,96 @@ Return-Path: <SRS0=tq6k=PW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_MUTT autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A2E9EC43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 23:00:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2EA98C43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 23:00:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6545520657
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 23:00:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547506847;
-	bh=i17pFvBR8ne7ThjBH0wTqjJW56Lhg7jsgKQDWcWmoWU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=vivapMTfixZpsqdXuOY0U1cSGQ9/a3ki/rpdg+0Jdy7pgNqnmpQP9YIo4jbUca+Jn
-	 pGeol/9MNVUZFdTEbFI3wwTo41XMH0G5ylBOowStvixyNsVuBDY4EvA9uXkr8OC1GH
-	 4SUP76Nu/h6guviZR2R5UX+PPJ+a4/1eU72aY6gM=
+	by mail.kernel.org (Postfix) with ESMTP id F1B5320657
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 23:00:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727146AbfANXAp (ORCPT
+        id S1727176AbfANXAu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 14 Jan 2019 18:00:45 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52952 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726769AbfANXAp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 Jan 2019 18:00:45 -0500
-Received: from localhost (unknown [69.71.4.100])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EECFC20657;
-        Mon, 14 Jan 2019 23:00:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547506844;
-        bh=i17pFvBR8ne7ThjBH0wTqjJW56Lhg7jsgKQDWcWmoWU=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=CRRT4rcnYqtzZhiEXbmarQ4Pk7hTeFEaXkI8usxFdEiaV7ypbZj8ihdtWzEoS7K6y
-         qlQplLoUQR2nmsSG4k9kvA9lwLH9ZW/w+FeG0BHgbj47QeMl8mfzpxaR0NvH2w2dyi
-         b3z9kscV5QcC2oOUytRBL3XeqLdB4w93vRGpmclU=
-Date:   Mon, 14 Jan 2019 17:00:42 -0600
-From:   Bjorn Helgaas <helgaas@kernel.org>
-To:     Mathieu Malaterre <malat@debian.org>
-Cc:     linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] PCI: annotate implicit fall throughs
-Message-ID: <20190114230042.GB33971@google.com>
-References: <20190114204137.21094-1-malat@debian.org>
+        Mon, 14 Jan 2019 18:00:50 -0500
+Received: from ec2-34-208-57-251.us-west-2.compute.amazonaws.com ([34.208.57.251]:46056
+        "EHLO ip-172-31-12-36.us-west-2.compute.internal"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726769AbfANXAt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 14 Jan 2019 18:00:49 -0500
+X-Greylist: delayed 396 seconds by postgrey-1.27 at vger.kernel.org; Mon, 14 Jan 2019 18:00:48 EST
+Received: by ip-172-31-12-36.us-west-2.compute.internal (Postfix, from userid 1001)
+        id 69BD24043D; Mon, 14 Jan 2019 14:54:12 -0800 (PST)
+Date:   Mon, 14 Jan 2019 14:54:12 -0800
+From:   Daniel Walker <dwalker@fifo99.com>
+To:     Stephen Rothwell <sfr@canb.auug.org.au>
+Cc:     Al Viro <viro@ZenIV.linux.org.uk>,
+        Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        David Howells <dhowells@redhat.com>
+Subject: Re: linux-next: manual merge of the cisco tree with the vfs tree
+Message-ID: <20190114225412.GD18707@fifo99.com>
+References: <20181002162923.13f3f8b1@canb.auug.org.au>
+ <20190115093330.1cbb0625@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20190114204137.21094-1-malat@debian.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20190115093330.1cbb0625@canb.auug.org.au>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jan 14, 2019 at 09:41:36PM +0100, Mathieu Malaterre wrote:
-> There is a plan to build the kernel with -Wimplicit-fallthrough and
-> these places in the code produced warnings (W=1). Fix them up.
+On Tue, Jan 15, 2019 at 09:33:30AM +1100, Stephen Rothwell wrote:
+> Hi Daniel,
 > 
-> In this particular case change a ‘:’ with either a ‘-’ or a ‘,’
-> so as to match the regular expression expected by GCC.
+> On Tue, 2 Oct 2018 16:29:23 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> >
+> > Today's linux-next merge of the cisco tree got a conflict in:
+> > 
+> >   arch/x86/kernel/setup.c
+> > 
+> > between commit:
+> > 
+> >   dcf8001d292b ("vfs: Suppress MS_* flag defs within the kernel unless explicitly enabled")
+> > 
+> > from the vfs tree and commit:
+> > 
+> >   2c070709ea75 ("This updates the x86 code to use the CONFIG_GENERIC_CMDLINE")
+> > 
+> > from the cisco tree.
+> > 
+> > I fixed it up (see below) and can carry the fix as necessary. This
+> > is now fixed as far as linux-next is concerned, but any non trivial
+> > conflicts should be mentioned to your upstream maintainer when your tree
+> > is submitted for merging.  You may also want to consider cooperating
+> > with the maintainer of the conflicting tree to minimise any particularly
+> > complex conflicts.
+> > 
+> > -- 
+> > Cheers,
+> > Stephen Rothwell
+> > 
+> > diff --cc arch/x86/kernel/setup.c
+> > index e493202bf265,ee109f490b22..000000000000
+> > --- a/arch/x86/kernel/setup.c
+> > +++ b/arch/x86/kernel/setup.c
+> > @@@ -51,7 -51,7 +51,8 @@@
+> >   #include <linux/kvm_para.h>
+> >   #include <linux/dma-contiguous.h>
+> >   #include <xen/xen.h>
+> >  +#include <uapi/linux/mount.h>
+> > + #include <linux/cmdline.h>
+> >   
+> >   #include <linux/errno.h>
+> >   #include <linux/kernel.h>
 > 
-> This commit remove the following warnings:
-> 
->   drivers/pci/pci.c:861:6: warning: this statement may fall through [-Wimplicit-fallthrough=]
->   drivers/pci/pci.c:2261:7: warning: this statement may fall through [-Wimplicit-fallthrough=]
-> 
-> Signed-off-by: Mathieu Malaterre <malat@debian.org>
+> This is now a conflict between the cicso tree and Linus' tree.
 
-I squashed these and applied the result to pci/misc for v5.1, thanks!
+I did a rebase after your original made this. I'm not sure it's needed any
+longer. However, I was planning to rebase my tree again on top of the latest
+Linus tree. How would you like to proceed ?
 
-> ---
->  drivers/pci/pci.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
-> index c9d8e3c837de..94069fc35e91 100644
-> --- a/drivers/pci/pci.c
-> +++ b/drivers/pci/pci.c
-> @@ -861,7 +861,7 @@ static int pci_raw_set_power_state(struct pci_dev *dev, pci_power_t state)
->  		if ((pmcsr & PCI_PM_CTRL_STATE_MASK) == PCI_D3hot
->  		 && !(pmcsr & PCI_PM_CTRL_NO_SOFT_RESET))
->  			need_restore = true;
-> -		/* Fall-through: force to D0 */
-> +		/* Fall-through - force to D0 */
->  	default:
->  		pmcsr = 0;
->  		break;
-> @@ -2260,7 +2260,7 @@ static pci_power_t pci_target_state(struct pci_dev *dev, bool wakeup)
->  		case PCI_D2:
->  			if (pci_no_d1d2(dev))
->  				break;
-> -			/* else: fall through */
-> +			/* else, fall through */
->  		default:
->  			target_state = state;
->  		}
-> -- 
-> 2.19.2
-> 
+Daniel
