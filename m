@@ -4,26 +4,26 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A654AC43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 13:39:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1179CC43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 13:39:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7A4A920651
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 13:39:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DBCC3206B7
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 13:39:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726639AbfANNjE (ORCPT
+        id S1726706AbfANNjR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 14 Jan 2019 08:39:04 -0500
-Received: from mail.bootlin.com ([62.4.15.54]:51445 "EHLO mail.bootlin.com"
+        Mon, 14 Jan 2019 08:39:17 -0500
+Received: from mail.bootlin.com ([62.4.15.54]:51475 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726515AbfANNjD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 Jan 2019 08:39:03 -0500
+        id S1726534AbfANNjE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 14 Jan 2019 08:39:04 -0500
 Received: by mail.bootlin.com (Postfix, from userid 110)
-        id E27AA20955; Mon, 14 Jan 2019 14:39:00 +0100 (CET)
+        id A9B9D20A0F; Mon, 14 Jan 2019 14:39:01 +0100 (CET)
 Received: from localhost.localdomain (aaubervilliers-681-1-45-241.w90-88.abo.wanadoo.fr [90.88.163.241])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 6D91620728;
-        Mon, 14 Jan 2019 14:39:00 +0100 (CET)
+        by mail.bootlin.com (Postfix) with ESMTPSA id 3D02E20728;
+        Mon, 14 Jan 2019 14:39:01 +0100 (CET)
 From:   Paul Kocialkowski <paul.kocialkowski@bootlin.com>
 To:     linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
         devel@driverdev.osuosl.org, linux-arm-kernel@lists.infradead.org,
@@ -43,9 +43,9 @@ Cc:     Pawel Osciak <pawel@osciak.com>,
         Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
         Sakari Ailus <sakari.ailus@linux.intel.com>,
         Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Subject: [PATCH RFC 1/4] media: vb2: Add helpers to access unselected buffers
-Date:   Mon, 14 Jan 2019 14:38:36 +0100
-Message-Id: <20190114133839.29967-2-paul.kocialkowski@bootlin.com>
+Subject: [PATCH RFC 3/4] media: cedrus: Request access to reference buffers when decoding
+Date:   Mon, 14 Jan 2019 14:38:38 +0100
+Message-Id: <20190114133839.29967-4-paul.kocialkowski@bootlin.com>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190114133839.29967-1-paul.kocialkowski@bootlin.com>
 References: <20190114133839.29967-1-paul.kocialkowski@bootlin.com>
@@ -56,100 +56,125 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Introduce helpers to request and release access to buffers that are
-not currently selected as current output or capture buffers.
-
-This is useful to ensure proper access to buffers imported via dma-buf
-that are used as reference and thus require associated map/unmap calls
-before access.
+Because we need to request and release access to reference buffers
+that are backed by a dma-buf import, keep track of the buffers used
+as reference and add the appropriate calls in the device_run and
+job_done m2m callbacks. The latter is introduced for this purpose.
 
 Signed-off-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
 ---
- .../media/common/videobuf2/videobuf2-core.c   | 46 +++++++++++++++++++
- include/media/videobuf2-core.h                | 15 ++++++
- 2 files changed, 61 insertions(+)
+ drivers/staging/media/sunxi/cedrus/cedrus.c    |  1 +
+ drivers/staging/media/sunxi/cedrus/cedrus.h    |  1 +
+ .../staging/media/sunxi/cedrus/cedrus_dec.c    | 18 ++++++++++++++++++
+ .../staging/media/sunxi/cedrus/cedrus_dec.h    |  1 +
+ .../staging/media/sunxi/cedrus/cedrus_mpeg2.c  |  8 ++++++++
+ 5 files changed, 29 insertions(+)
 
-diff --git a/drivers/media/common/videobuf2/videobuf2-core.c b/drivers/media/common/videobuf2/videobuf2-core.c
-index 70e8c3366f9c..2a0c5de4d683 100644
---- a/drivers/media/common/videobuf2/videobuf2-core.c
-+++ b/drivers/media/common/videobuf2/videobuf2-core.c
-@@ -986,6 +986,52 @@ void vb2_discard_done(struct vb2_queue *q)
- }
- EXPORT_SYMBOL_GPL(vb2_discard_done);
+diff --git a/drivers/staging/media/sunxi/cedrus/cedrus.c b/drivers/staging/media/sunxi/cedrus/cedrus.c
+index ff11cbeba205..a2c75eb01c2c 100644
+--- a/drivers/staging/media/sunxi/cedrus/cedrus.c
++++ b/drivers/staging/media/sunxi/cedrus/cedrus.c
+@@ -250,6 +250,7 @@ static const struct video_device cedrus_video_device = {
  
-+int vb2_buffer_access_request(struct vb2_buffer *vb)
+ static const struct v4l2_m2m_ops cedrus_m2m_ops = {
+ 	.device_run	= cedrus_device_run,
++	.job_done	= cedrus_job_done,
+ };
+ 
+ static const struct media_device_ops cedrus_m2m_media_ops = {
+diff --git a/drivers/staging/media/sunxi/cedrus/cedrus.h b/drivers/staging/media/sunxi/cedrus/cedrus.h
+index 4aedd24a9848..c1ce3c4ae2a1 100644
+--- a/drivers/staging/media/sunxi/cedrus/cedrus.h
++++ b/drivers/staging/media/sunxi/cedrus/cedrus.h
+@@ -77,6 +77,7 @@ struct cedrus_ctx {
+ 	struct v4l2_ctrl		**ctrls;
+ 
+ 	struct vb2_buffer		*dst_bufs[VIDEO_MAX_FRAME];
++	bool				reference_bufs[VIDEO_MAX_FRAME];
+ };
+ 
+ struct cedrus_dec_ops {
+diff --git a/drivers/staging/media/sunxi/cedrus/cedrus_dec.c b/drivers/staging/media/sunxi/cedrus/cedrus_dec.c
+index 2c295286766c..90bf51e71f4f 100644
+--- a/drivers/staging/media/sunxi/cedrus/cedrus_dec.c
++++ b/drivers/staging/media/sunxi/cedrus/cedrus_dec.c
+@@ -41,6 +41,7 @@ void cedrus_device_run(void *priv)
+ 	struct cedrus_dev *dev = ctx->dev;
+ 	struct cedrus_run run = {};
+ 	struct media_request *src_req;
++	unsigned int i;
+ 
+ 	run.src = v4l2_m2m_next_src_buf(ctx->fh.m2m_ctx);
+ 	run.dst = v4l2_m2m_next_dst_buf(ctx->fh.m2m_ctx);
+@@ -63,10 +64,17 @@ void cedrus_device_run(void *priv)
+ 		break;
+ 	}
+ 
++	for (i = 0; i < VIDEO_MAX_FRAME; i++)
++		ctx->reference_bufs[i] = false;
++
+ 	v4l2_m2m_buf_copy_data(run.src, run.dst, true);
+ 
+ 	dev->dec_ops[ctx->current_codec]->setup(ctx, &run);
+ 
++	for (i = 0; i < VIDEO_MAX_FRAME; i++)
++		if (ctx->reference_bufs[i] && ctx->dst_bufs[i])
++			vb2_buffer_access_request(ctx->dst_bufs[i]);
++
+ 	/* Complete request(s) controls if needed. */
+ 
+ 	if (src_req)
+@@ -74,3 +82,13 @@ void cedrus_device_run(void *priv)
+ 
+ 	dev->dec_ops[ctx->current_codec]->trigger(ctx);
+ }
++
++void cedrus_job_done(void *priv)
 +{
-+	struct vb2_queue *q = vb->vb2_queue;
-+	unsigned int plane;
-+	int ret;
++	struct cedrus_ctx *ctx = priv;
++	unsigned int i;
 +
-+	/* Only dmabuf-imported buffers need to be mapped before access. */
-+	if (q->memory != VB2_MEMORY_DMABUF)
-+		return -EINVAL;
-+
-+	for (plane = 0; plane < vb->num_planes; ++plane) {
-+		if (vb->planes[plane].dbuf_mapped)
-+			continue;
-+
-+		ret = call_memop(vb, map_dmabuf, vb->planes[plane].mem_priv);
-+		if (ret) {
-+			dprintk(1, "failed to map dmabuf for plane %d\n",
-+				plane);
-+			return ret;
-+		}
-+		vb->planes[plane].dbuf_mapped = 1;
-+	}
-+
-+	return 0;
++	for (i = 0; i < VIDEO_MAX_FRAME; i++)
++		if (ctx->reference_bufs[i] && ctx->dst_bufs[i])
++			vb2_buffer_access_release(ctx->dst_bufs[i]);
 +}
-+EXPORT_SYMBOL_GPL(vb2_buffer_access_request);
-+
-+void vb2_buffer_access_release(struct vb2_buffer *vb)
-+{
-+	struct vb2_queue *q = vb->vb2_queue;
-+	unsigned int plane;
-+
-+	/* Only dmabuf-imported buffers need to be unmapped after access. */
-+	if (q->memory != VB2_MEMORY_DMABUF)
+diff --git a/drivers/staging/media/sunxi/cedrus/cedrus_dec.h b/drivers/staging/media/sunxi/cedrus/cedrus_dec.h
+index 8d0fc248220f..9265f28e6dbe 100644
+--- a/drivers/staging/media/sunxi/cedrus/cedrus_dec.h
++++ b/drivers/staging/media/sunxi/cedrus/cedrus_dec.h
+@@ -19,5 +19,6 @@
+ int cedrus_reference_index_find(struct vb2_queue *queue,
+ 				struct vb2_buffer *vb2_buf, u64 timestamp);
+ void cedrus_device_run(void *priv);
++void cedrus_job_done(void *priv);
+ 
+ #endif
+diff --git a/drivers/staging/media/sunxi/cedrus/cedrus_mpeg2.c b/drivers/staging/media/sunxi/cedrus/cedrus_mpeg2.c
+index 81c66a8aa1ac..2e7deded17aa 100644
+--- a/drivers/staging/media/sunxi/cedrus/cedrus_mpeg2.c
++++ b/drivers/staging/media/sunxi/cedrus/cedrus_mpeg2.c
+@@ -162,6 +162,10 @@ static void cedrus_mpeg2_setup(struct cedrus_ctx *ctx, struct cedrus_run *run)
+ 	/* Forward and backward prediction reference buffers. */
+ 	forward_idx = cedrus_reference_index_find(cap_q, &run->dst->vb2_buf,
+ 						  slice_params->forward_ref_ts);
++	if (forward_idx < 0)
 +		return;
 +
-+	for (plane = 0; plane < vb->num_planes; ++plane) {
-+		if (!vb->planes[plane].dbuf_mapped)
-+			continue;
-+
-+		call_void_memop(vb, unmap_dmabuf, vb->planes[plane].mem_priv);
-+		vb->planes[plane].dbuf_mapped = 0;
-+	}
-+}
-+EXPORT_SYMBOL_GPL(vb2_buffer_access_release);
-+
- /*
-  * __prepare_mmap() - prepare an MMAP buffer
-  */
-diff --git a/include/media/videobuf2-core.h b/include/media/videobuf2-core.h
-index 4a737b2c610b..bf378c1e718b 100644
---- a/include/media/videobuf2-core.h
-+++ b/include/media/videobuf2-core.h
-@@ -1199,4 +1199,19 @@ bool vb2_request_object_is_buffer(struct media_request_object *obj);
-  */
- unsigned int vb2_request_buffer_cnt(struct media_request *req);
++	ctx->reference_bufs[forward_idx] = true;
  
-+/**
-+ * vb2_buffer_access_request() - request out-of-band data access to a buffer
-+ *
-+ * @vb:		buffer to request data access for
-+ */
-+int vb2_buffer_access_request(struct vb2_buffer *vb);
+ 	fwd_luma_addr = cedrus_dst_buf_addr(ctx, forward_idx, 0);
+ 	fwd_chroma_addr = cedrus_dst_buf_addr(ctx, forward_idx, 1);
+@@ -171,6 +175,10 @@ static void cedrus_mpeg2_setup(struct cedrus_ctx *ctx, struct cedrus_run *run)
+ 
+ 	backward_idx = cedrus_reference_index_find(cap_q, &run->dst->vb2_buf,
+ 						   slice_params->backward_ref_ts);
++	if (forward_idx < 0)
++		return;
 +
-+
-+/**
-+ * vb2_buffer_access_release() - release out-of-band data access to a buffer
-+ *
-+ * @vb:		buffer to release data access for
-+ */
-+void vb2_buffer_access_release(struct vb2_buffer *vb);
-+
- #endif /* _MEDIA_VIDEOBUF2_CORE_H */
++	ctx->reference_bufs[backward_idx] = true;
+ 
+ 	bwd_luma_addr = cedrus_dst_buf_addr(ctx, backward_idx, 0);
+ 	bwd_chroma_addr = cedrus_dst_buf_addr(ctx, backward_idx, 1);
 -- 
 2.20.1
 
