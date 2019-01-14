@@ -2,106 +2,175 @@ Return-Path: <SRS0=tq6k=PW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C273C43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 06:53:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 20422C43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 06:56:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EB07D20663
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 06:53:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C9C4E20663
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 06:56:09 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="tFW7WsSb"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Pc9s0Jis"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726614AbfANGxU (ORCPT
+        id S1726545AbfANG4H (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 14 Jan 2019 01:53:20 -0500
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:38630 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726551AbfANGxT (ORCPT
+        Mon, 14 Jan 2019 01:56:07 -0500
+Received: from mail-it1-f194.google.com ([209.85.166.194]:35298 "EHLO
+        mail-it1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726339AbfANG4H (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 Jan 2019 01:53:19 -0500
-Received: by mail-pl1-f193.google.com with SMTP id e5so9693823plb.5;
-        Sun, 13 Jan 2019 22:53:19 -0800 (PST)
+        Mon, 14 Jan 2019 01:56:07 -0500
+Received: by mail-it1-f194.google.com with SMTP id p197so10896936itp.0
+        for <linux-kernel@vger.kernel.org>; Sun, 13 Jan 2019 22:56:06 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=OFNsRig2am7lFZljbzB4OQRSTLw+lwJncAXZ7wH2QME=;
-        b=tFW7WsSbMHkBDVg72BG6cbW3JaSbKdbqd2KC5qlF4AlcoR3v9A14ANxwI/H8IAOzrs
-         bFeqqwWOdMh9cjQIhePgxQsFisZhSQ9+UKhwQa/mzyqQZNeWa54hJYjQ3ppgXkdSh0eg
-         E3x4e+MjSEe/GuY4if4zWzRED/eam+xLW/Cknnl/9mZA/xRGJ6AtY/cJYPp6OyF6ZrhR
-         Db3bSlQ3tPnHi1a/cbwboshv8otGk6In9wo2KzqHnEk9hYAsTFFHn/+tu8QfJwXxxLR5
-         LVIzF0a8eWvEpnQMMwiiLmnLjJapiUwmiCx0TMmJyrp/5KYLfIVRiw+4xuIQdx63WNrF
-         m/Zg==
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=IyO3EWfFoxVwx55CTR29Cf6WceOFVluBsi7qw67Cth0=;
+        b=Pc9s0JiszrQ0ycWBu9JFeBuynLnpknyUYkAUnHLQPJoZXRx5ENe96e4D5CEGGxkrn2
+         8Fau3LaYEgxIOHhCpEAP8//LRHRhxqmg3Jfb4kjUDDtI4w62yKPCwuq9JcNNrueNzvSb
+         a7Rdryp/FloamDVk4UK8/Ry3G1TQCTHbFyXOf8QZxhJeGmkilIZPR5sbbzq154FbInBL
+         v6wBh5LP+S+y9pwD+cJ4le3S8TJStDF4qQ/8EyNYkxxgbfSiMpQXHROghK2P7WMQsYKh
+         dQuH1uTUKM2tEYiP+53YKlfhq5PICnR3oR5DH40Jk5T48VuL9HZuEGdyj4iCAc2hDVRj
+         XQeQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=OFNsRig2am7lFZljbzB4OQRSTLw+lwJncAXZ7wH2QME=;
-        b=JEXDhg6XnqlvWZgDt0EN0htfJNZadrN/QpVuAGCaHo8Sb6TCxJapIDR4Yzw3Y2xS6p
-         sx+/fEWCkC86F+LvCCABS2J0hnRn3VLL7GceePTPupMSvFb9CGyfEajvJ6EEMCt1Z+f1
-         +AxnAGrKZ8CshiqRXZ+YVBfTgXInI9ictgTsIojnup3tqU3KfI7aUP1JSdg0IShSq4r4
-         M5vqa45X4rOsDmD3L9x0P1jBFzAxbtf/mlvHIzkPVQ1luS+/r8gp77TOk8D+swnNrAQi
-         YKAGGyVIUT6R+jawUx+BjvhZUDjkElsZXG1oLLYENcDT0/oDIpEaD2l6bVYMmfPw7HJA
-         +fWA==
-X-Gm-Message-State: AJcUukf3HuPyBJPNoOfiu1O4rQGg+rEnqqTh5r7GtasXeSkjzkYBsWCv
-        BJ7PBH6xlLG4x36m8A2+LR0=
-X-Google-Smtp-Source: ALg8bN4RDS/NrOJq5YBQRDT2XscM21PAxKDZH2/Uq6bQ9Jg1G/7X2OigZgDU/M2nbVc2Z1tRsVxP4Q==
-X-Received: by 2002:a17:902:9045:: with SMTP id w5mr23213733plz.32.1547448798667;
-        Sun, 13 Jan 2019 22:53:18 -0800 (PST)
-Received: from dtor-ws ([2620:15c:202:201:3adc:b08c:7acc:b325])
-        by smtp.gmail.com with ESMTPSA id 202sm154626308pfy.87.2019.01.13.22.53.17
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Sun, 13 Jan 2019 22:53:17 -0800 (PST)
-Date:   Sun, 13 Jan 2019 22:53:16 -0800
-From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To:     Brajeswar Ghosh <brajeswar.linux@gmail.com>
-Cc:     matthias.bgg@gmail.com, lee.jones@linaro.org,
-        chen.zhong@mediatek.com, jrdr.linux@gmail.com,
-        linux-input@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] keyboard/mtk-pmic-keys.c: Remove duplicate header
-Message-ID: <20190114065316.GC217283@dtor-ws>
-References: <20190105050907.GA2525@hp-pavilion-15-notebook-pc-brajeswar>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=IyO3EWfFoxVwx55CTR29Cf6WceOFVluBsi7qw67Cth0=;
+        b=EwcFDwYJdRdt7C5sMpBYAW0eM7JPaAj1s2YKN1aOXqKbA2igo3y8jc/cFFke2Oi6v/
+         f2mz1ZaFTzxICno++SUHdzOIUlzuB/Ylr7294IPfuU3swOSniWRjh/kysZOpelFVhXI3
+         GtuD14ICSh7FmjUbLcwV8o4T+SRfXoDwKlbhIPLVXKjxDkiWu33s5sBfQoKADPWoZFt3
+         HegjuB4UgNo8Ht5qLnoNY1MBxrvhoqwqyhGfNmyjiD8GdKaN65khz7x/WabSV++EDQRF
+         hYW1+vPSZ/AL7MjyN2TguczKDOmleSPRTg0ot2ediWNu6MDt0Nf7aEY3Hrqm0wUNFXEQ
+         8/oA==
+X-Gm-Message-State: AJcUukfbqG/stN/t/unnUbbwzSnXG/cJa5JPNJW6scXWURTvUkFkOrKt
+        PvXAJPvrAHahPZ/QuF4sJ2+/LWI2OAOS1aau1ltYb87dbgo=
+X-Google-Smtp-Source: ALg8bN5Ni24bg4d0ZHR7V4tpgBo7okIi3ceTDScXHOSvedaTdRxc0aTWfe1tN3k0rgml0527ltythAI5TkWTNa8fw6g=
+X-Received: by 2002:a05:660c:f94:: with SMTP id x20mr6340611itl.144.1547448965950;
+ Sun, 13 Jan 2019 22:56:05 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190105050907.GA2525@hp-pavilion-15-notebook-pc-brajeswar>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <00000000000075c0ef057f657b8d@google.com>
+In-Reply-To: <00000000000075c0ef057f657b8d@google.com>
+From:   Dmitry Vyukov <dvyukov@google.com>
+Date:   Mon, 14 Jan 2019 07:55:54 +0100
+Message-ID: <CACT4Y+ZbMipyaJnCCuxwMo4=S7TGVNm-0LO_RpX2iFwL4bk+cg@mail.gmail.com>
+Subject: Re: KASAN: null-ptr-deref Read in ip6_hold_safe
+To:     syzbot <syzbot+8433ca0841e308ef4cc7@syzkaller.appspotmail.com>
+Cc:     David Miller <davem@davemloft.net>,
+        Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>,
+        LKML <linux-kernel@vger.kernel.org>,
+        netdev <netdev@vger.kernel.org>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
+        Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>,
+        Wei Wang <weiwan@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Jan 05, 2019 at 10:39:07AM +0530, Brajeswar Ghosh wrote:
-> Remove linux/kernel.h which is included more than once
-> 
-> Signed-off-by: Brajeswar Ghosh <brajeswar.linux@gmail.com>
+On Mon, Jan 14, 2019 at 7:52 AM syzbot
+<syzbot+8433ca0841e308ef4cc7@syzkaller.appspotmail.com> wrote:
+>
+> Hello,
+>
+> syzbot found the following crash on:
+>
+> HEAD commit:    b71acb0e3721 Merge branch 'linus' of git://git.kernel.org/..
+> git tree:       net-next
+> console output: https://syzkaller.appspot.com/x/log.txt?x=1492759f400000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=b03c5892bb940c76
+> dashboard link: https://syzkaller.appspot.com/bug?extid=8433ca0841e308ef4cc7
+> compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
+>
+> Unfortunately, I don't have any reproducer for this crash yet.
+>
+> IMPORTANT: if you fix the bug, please add the following tag to the commit:
+> Reported-by: syzbot+8433ca0841e308ef4cc7@syzkaller.appspotmail.com
 
-Applied, thank you.
++Wei
 
+> kernel msg: ebtables bug: please report to author: EBT_ENTRY_OR_ENTRIES
+> shouldn't be set in distinguisher
+> ==================================================================
+> BUG: KASAN: null-ptr-deref in atomic_read
+> include/asm-generic/atomic-instrumented.h:21 [inline]
+> BUG: KASAN: null-ptr-deref in atomic_fetch_add_unless
+> include/linux/atomic.h:575 [inline]
+> BUG: KASAN: null-ptr-deref in atomic_add_unless include/linux/atomic.h:597
+> [inline]
+> BUG: KASAN: null-ptr-deref in dst_hold_safe include/net/dst.h:308 [inline]
+> BUG: KASAN: null-ptr-deref in ip6_hold_safe+0xca/0x620 net/ipv6/route.c:1021
+> Read of size 4 at addr 0000000000000068 by task syz-executor4/21421
+>
+> CPU: 0 PID: 21421 Comm: syz-executor4 Not tainted 4.20.0+ #3
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
+> Google 01/01/2011
+> Call Trace:
+>   __dump_stack lib/dump_stack.c:77 [inline]
+>   dump_stack+0x1db/0x2d0 lib/dump_stack.c:113
+>   kasan_report_error mm/kasan/report.c:352 [inline]
+>   kasan_report mm/kasan/report.c:412 [inline]
+>   kasan_report.cold+0x19f/0x2ba mm/kasan/report.c:396
+>   check_memory_region_inline mm/kasan/kasan.c:260 [inline]
+>   check_memory_region+0x123/0x190 mm/kasan/kasan.c:267
+>   kasan_check_read+0x11/0x20 mm/kasan/kasan.c:272
+>   atomic_read include/asm-generic/atomic-instrumented.h:21 [inline]
+>   atomic_fetch_add_unless include/linux/atomic.h:575 [inline]
+>   atomic_add_unless include/linux/atomic.h:597 [inline]
+>   dst_hold_safe include/net/dst.h:308 [inline]
+>   ip6_hold_safe+0xca/0x620 net/ipv6/route.c:1021
+>   rt6_get_pcpu_route net/ipv6/route.c:1241 [inline]
+>   ip6_pol_route+0x3a3/0x1490 net/ipv6/route.c:1890
+>   ip6_pol_route_output+0x54/0x70 net/ipv6/route.c:2066
+>   fib6_rule_lookup+0x277/0x870 net/ipv6/fib6_rules.c:122
+>   ip6_route_output_flags+0x2c4/0x350 net/ipv6/route.c:2095
+>   ip6_route_output include/net/ip6_route.h:88 [inline]
+>   ip6_dst_lookup_tail+0xe18/0x1d50 net/ipv6/ip6_output.c:958
+>   ip6_dst_lookup_flow+0xca/0x270 net/ipv6/ip6_output.c:1086
+>   ip6_sk_dst_lookup_flow net/ipv6/ip6_output.c:1124 [inline]
+>   ip6_sk_dst_lookup_flow+0x5d6/0xbf0 net/ipv6/ip6_output.c:1114
+>   udpv6_sendmsg+0x20d7/0x3550 net/ipv6/udp.c:1441
+>   inet_sendmsg+0x1af/0x740 net/ipv4/af_inet.c:798
+>   sock_sendmsg_nosec net/socket.c:621 [inline]
+>   sock_sendmsg+0xdd/0x130 net/socket.c:631
+>   ___sys_sendmsg+0x7ec/0x910 net/socket.c:2116
+>   __sys_sendmsg+0x112/0x270 net/socket.c:2154
+>   __do_sys_sendmsg net/socket.c:2163 [inline]
+>   __se_sys_sendmsg net/socket.c:2161 [inline]
+>   __x64_sys_sendmsg+0x78/0xb0 net/socket.c:2161
+> protocol 88fb is buggy, dev hsr_slave_0
+>   do_syscall_64+0x1a3/0x800 arch/x86/entry/common.c:290
+> protocol 88fb is buggy, dev hsr_slave_1
+>   entry_SYSCALL_64_after_hwframe+0x49/0xbe
+> RIP: 0033:0x457ec9
+> Code: 6d b7 fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 48 89 f8 48 89 f7
+> 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff
+> ff 0f 83 3b b7 fb ff c3 66 2e 0f 1f 84 00 00 00 00
+> RSP: 002b:00007fb05ac4ac78 EFLAGS: 00000246 ORIG_RAX: 000000000000002e
+> RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 0000000000457ec9
+> RDX: 0000000000000000 RSI: 0000000020013000 RDI: 0000000000000004
+> RBP: 000000000073bf00 R08: 0000000000000000 R09: 0000000000000000
+> R10: 0000000000000000 R11: 0000000000000246 R12: 00007fb05ac4b6d4
+> R13: 00000000004c4d2e R14: 00000000004d8650 R15: 00000000ffffffff
+> ==================================================================
+>
+>
 > ---
->  drivers/input/keyboard/mtk-pmic-keys.c | 1 -
->  1 file changed, 1 deletion(-)
-> 
-> diff --git a/drivers/input/keyboard/mtk-pmic-keys.c b/drivers/input/keyboard/mtk-pmic-keys.c
-> index 02c67a1749fc..5027ebb7b4e8 100644
-> --- a/drivers/input/keyboard/mtk-pmic-keys.c
-> +++ b/drivers/input/keyboard/mtk-pmic-keys.c
-> @@ -19,7 +19,6 @@
->  #include <linux/input.h>
->  #include <linux/interrupt.h>
->  #include <linux/platform_device.h>
-> -#include <linux/kernel.h>
->  #include <linux/of.h>
->  #include <linux/of_device.h>
->  #include <linux/regmap.h>
-> -- 
-> 2.17.1
-> 
-
--- 
-Dmitry
+> This bug is generated by a bot. It may contain errors.
+> See https://goo.gl/tpsmEJ for more information about syzbot.
+> syzbot engineers can be reached at syzkaller@googlegroups.com.
+>
+> syzbot will keep track of this bug report. See:
+> https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with
+> syzbot.
+>
+> --
+> You received this message because you are subscribed to the Google Groups "syzkaller-bugs" group.
+> To unsubscribe from this group and stop receiving emails from it, send an email to syzkaller-bugs+unsubscribe@googlegroups.com.
+> To view this discussion on the web visit https://groups.google.com/d/msgid/syzkaller-bugs/00000000000075c0ef057f657b8d%40google.com.
+> For more options, visit https://groups.google.com/d/optout.
