@@ -2,111 +2,118 @@ Return-Path: <SRS0=tq6k=PW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5987DC43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 09:58:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 90BD9C43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 09:58:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 27DDC20879
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 09:58:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 604EF20663
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 09:58:51 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="BYszJ07h";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="BdOXKNX+"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="EnB6rFYv"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726859AbfANJ6q (ORCPT
+        id S1726615AbfANJ6t (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 14 Jan 2019 04:58:46 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:51854 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726615AbfANJ6p (ORCPT
+        Mon, 14 Jan 2019 04:58:49 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:59932 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726857AbfANJ6q (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 Jan 2019 04:58:45 -0500
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 5CB2F61193; Mon, 14 Jan 2019 09:58:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1547459924;
-        bh=RlNPQrJ3EJ+myg10De+//B2pgBUzjuLDgUZiyrtCjA8=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=BYszJ07hvEQChyJpMnLLoCgu4Q1kUGD0Q+nKMWU1p3f89zpgADO05AOB6yiXuPJNP
-         sVpoO8aYJXl9tr+cxiTTMk5d6g5qK/rjrVZLvBimoO5JNTtpMz0uQ855enjUDpyDx+
-         GTXjpIKKJZknLcJU7yxzD5yZZUfe50k+1ewjnfUo=
-Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by smtp.codeaurora.org (Postfix) with ESMTP id 378B7611A8;
-        Mon, 14 Jan 2019 09:58:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1547459911;
-        bh=RlNPQrJ3EJ+myg10De+//B2pgBUzjuLDgUZiyrtCjA8=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=BdOXKNX+lK0PqypGRfKkot6dfbn8ihW7dKSO7Qntg4wMlWbZZC7eb9DVAgewG+o6N
-         39djhIHm550auVlRrkvwQUMINW0kXZ85DyoLwXCDjitLr7tVHaTJweaIpneiuYd6eY
-         rttZdwrBLPFxewUoVLTERgG5ofi4vGBjBCkLkquU=
+        Mon, 14 Jan 2019 04:58:46 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
+        MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
+        :Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:Resent-From
+        :Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=T4OCbupN7r9XzFe0NMLIX5QDout51/50IpzPj/iVSVU=; b=EnB6rFYvBStp+HzKG0KpV7/ZQF
+        9LALqZfaJGKhkdrZ/sio/2G9AOMAYji1BJfIcwaiRDYO4pSTiDlw1pGsFLO0YeVxbBcOaOMxTCQGM
+        PcrR6Rvn7aeg50pBWBDxVX3WjPhzoXSdIWU84LnUY8FnvqUKi+RgGYQr2gKeKU3gZLqKzxCvbyHH0
+        kwjMd88/WxRUZbyRyp7xvUf02OL3TO4+6ocV84/gXdwz/lGfh4+xUfy/Rub+SX8UmdsHllM09lTvS
+        h42FfN/Q5VaRacGxer8wIqMu6ntWEoWnwUpVs5RyoBooAOQGxaGWM3XqHcOSFnHd5sAqbUISdPcMh
+        REPDbtTw==;
+Received: from 089144213167.atnat0022.highway.a1.net ([89.144.213.167] helo=localhost)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1giz0v-0002Is-AA; Mon, 14 Jan 2019 09:58:38 +0000
+From:   Christoph Hellwig <hch@lst.de>
+To:     Ulf Hansson <ulf.hansson@linaro.org>
+Cc:     Russell King <linux@armlinux.org.uk>,
+        Nicolas Pitre <nico@fluxnic.net>,
+        Aaro Koskinen <aaro.koskinen@iki.fi>,
+        Ben Dooks <ben-linux@fluff.org>, linux-mmc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-omap@vger.kernel.org,
+        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 09/11] mmc: sh_mmcif: handle chained sglists
+Date:   Mon, 14 Jan 2019 10:58:02 +0100
+Message-Id: <20190114095804.27978-10-hch@lst.de>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20190114095804.27978-1-hch@lst.de>
+References: <20190114095804.27978-1-hch@lst.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date:   Mon, 14 Jan 2019 17:58:30 +0800
-From:   yuankuiz@codeaurora.org
-To:     mcgrof@kernel.org
-Cc:     linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] firmware: hardcode the debug message for -ENOENT
-In-Reply-To: <7e752055f72d67a4b963436d67965123@codeaurora.org>
-References: <7e752055f72d67a4b963436d67965123@codeaurora.org>
-Message-ID: <e1e9df03b288daf7258ab9e0f7402ca1@codeaurora.org>
-X-Sender: yuankuiz@codeaurora.org
-User-Agent: Roundcube Webmail/1.2.5
+Content-Transfer-Encoding: 8bit
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+Use the proper sg_next() helper to move to the next scatterlist element
+to support chained scatterlists.
 
-     Refined at below.
-
- From bbd0d9c8f28eb78ca34353347c3d4092e88f000c Mon Sep 17 00:00:00 2001
-
-When the return code of "-ENOENT" was printed inside
-of the debug message, which could be hardcoded meaningfully.
-
-Signed-off-by: John Zhao <yuankuiz@codeaurora.org>
+Signed-off-by: Christoph Hellwig <hch@lst.de>
 ---
-  drivers/base/firmware_loader/main.c | 8 ++++----
-  1 file changed, 4 insertions(+), 4 deletions(-)
+ drivers/mmc/host/sh_mmcif.c | 13 +++++--------
+ 1 file changed, 5 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/base/firmware_loader/main.c 
-b/drivers/base/firmware_loader/main.c
-index 8e9213b..7eaaf5e 100644
---- a/drivers/base/firmware_loader/main.c
-+++ b/drivers/base/firmware_loader/main.c
-@@ -328,12 +328,12 @@ fw_get_filesystem_firmware(struct device *device, 
-struct fw_priv *fw_priv)
-                 rc = kernel_read_file_from_path(path, &fw_priv->data, 
-&size,
-                                                 msize, id);
-                 if (rc) {
--                       if (rc == -ENOENT)
--                               dev_dbg(device, "loading %s failed with 
-error %d\n",
--                                        path, rc);
--                       else
-+                       if (rc != -ENOENT)
-                                 dev_warn(device, "loading %s failed with 
-error %d\n",
-                                          path, rc);
-+                       else
-+                               dev_dbg(device, "loading %s failed for 
-no such file or directory.\n",
-+                                        path);
-                         continue;
-                 }
-                 dev_dbg(device, "direct-loading %s\n", 
-fw_priv->fw_name);
+diff --git a/drivers/mmc/host/sh_mmcif.c b/drivers/mmc/host/sh_mmcif.c
+index 0d2bbb8943f5..a4116be5ebc7 100644
+--- a/drivers/mmc/host/sh_mmcif.c
++++ b/drivers/mmc/host/sh_mmcif.c
+@@ -234,7 +234,6 @@ struct sh_mmcif_host {
+ 	enum sh_mmcif_wait_for wait_for;
+ 	struct delayed_work timeout_work;
+ 	size_t blocksize;
+-	int sg_idx;
+ 	int sg_blkidx;
+ 	bool power;
+ 	bool ccs_enable;		/* Command Completion Signal support */
+@@ -606,13 +605,13 @@ static bool sh_mmcif_next_block(struct sh_mmcif_host *host)
+ 
+ 	if (host->sg_blkidx == data->sg->length) {
+ 		host->sg_blkidx = 0;
+-		if (++host->sg_idx < data->sg_len) {
+-			data->sg++;
+-			host->pio_offset = data->sg->offset / 4;
+-		}
++		data->sg = sg_next(data->sg);
++		if (!data->sg)
++			return false;
++		host->pio_offset = data->sg->offset / 4;
+ 	}
+ 
+-	return host->sg_idx != data->sg_len;
++	return true;
+ }
+ 
+ static void sh_mmcif_single_read(struct sh_mmcif_host *host,
+@@ -665,7 +664,6 @@ static void sh_mmcif_multi_read(struct sh_mmcif_host *host,
+ 		BLOCK_SIZE_MASK;
+ 
+ 	host->wait_for = MMCIF_WAIT_FOR_MREAD;
+-	host->sg_idx = 0;
+ 	host->sg_blkidx = 0;
+ 	host->pio_offset = data->sg->offset / 4;
+ 
+@@ -752,7 +750,6 @@ static void sh_mmcif_multi_write(struct sh_mmcif_host *host,
+ 		BLOCK_SIZE_MASK;
+ 
+ 	host->wait_for = MMCIF_WAIT_FOR_MWRITE;
+-	host->sg_idx = 0;
+ 	host->sg_blkidx = 0;
+ 	host->pio_offset = data->sg->offset / 4;
+ 
 -- 
-2.7.4
+2.20.1
 
-
-On 2019-01-14 03:19 PM, yuankuiz@codeaurora.org wrote:
-> From d6892f54a81bf85ad011bfb8822567690713d575 Mon Sep 17 00:00:00 2001
-> 
