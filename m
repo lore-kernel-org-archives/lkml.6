@@ -2,183 +2,101 @@ Return-Path: <SRS0=tq6k=PW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 70106C43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 11:45:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DCA95C43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 11:47:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4242520659
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 11:45:49 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="KefybJFj"
+	by mail.kernel.org (Postfix) with ESMTP id B145C20659
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 11:47:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726844AbfANLpr (ORCPT
+        id S1726592AbfANLrn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 14 Jan 2019 06:45:47 -0500
-Received: from mail-vk1-f193.google.com ([209.85.221.193]:33224 "EHLO
-        mail-vk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726339AbfANLpo (ORCPT
+        Mon, 14 Jan 2019 06:47:43 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:35682 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726478AbfANLrn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 Jan 2019 06:45:44 -0500
-Received: by mail-vk1-f193.google.com with SMTP id d201so4790261vka.0
-        for <linux-kernel@vger.kernel.org>; Mon, 14 Jan 2019 03:45:44 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=N5GvtAoNZhHeEA8ikbHXVTVTkT55HDIL3P0c9+r9xsI=;
-        b=KefybJFjQ5uTsZA+RPmXnykbQPKiSXuF4LGHDS/hMoWeJMOmoe3DJe3pFiGJg8T5g0
-         No+u54vx9Vzq8d2qBPZZ03Nw5wd3zKnC6KLVN3FlAtxocK9qSH8ujnTyZU49t42YWKPU
-         PVW69dcND6nwDPotgLqQFdp6sa17B2sMP6Pbc=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=N5GvtAoNZhHeEA8ikbHXVTVTkT55HDIL3P0c9+r9xsI=;
-        b=WJpN5xHKv/y6GFcQDYAOA8njIIRaZ6yrymt31hdzVBEYC32YJeRkO255N2o7A1Ga5/
-         pftXj62rkqg1sgNIDO8QLvjIbrBKLh9gbDU5pkHI8YiQYiNALgcYkbLkZJ2Wl5aQwUvZ
-         lKhK7DIB09j9PoOP1nl7I0pquFuuSe/S6DT4yWwolCx7WjnkCaocGsFuXuS/vncgUU8X
-         aGZ2N6ENGKf5wZWUIXhWIZvtusgY5xGft4riNYq/Z+WxCIUvg1RRwzn5cGGGkbqSRAgN
-         b8v3ciMnYm9/KKPyDGotTepHyD7F52r6olh+c/SqZxN8EBnV5ncuqn/je1u9ZmvnUzuf
-         7BGQ==
-X-Gm-Message-State: AJcUukeNQ07MqnJ+JgJq3YkmfgITH1x5+iEf0R3RptWo5FaPYXuJHqE2
-        aJbmL63s9JWXVPhfAEEhGgO7P9aRntcQbsAeLHkMlA==
-X-Google-Smtp-Source: ALg8bN4M+PHLL0qnibx8utyIYR5n2V3lpvI85XR+uHbiXtdLTpy3OgCROE3SeMg6zkFtZCyhHxSNizadGyq8yx8+qho=
-X-Received: by 2002:a1f:298e:: with SMTP id p136mr9453367vkp.40.1547466343611;
- Mon, 14 Jan 2019 03:45:43 -0800 (PST)
-MIME-Version: 1.0
-References: <20190110230135.19555-1-repk@triplefau.lt>
-In-Reply-To: <20190110230135.19555-1-repk@triplefau.lt>
-From:   Ulf Hansson <ulf.hansson@linaro.org>
-Date:   Mon, 14 Jan 2019 12:45:07 +0100
-Message-ID: <CAPDyKFokQOr1wyeJqe9=CLmw47jNXaQEmK0ZJYHwPkReSHcRXg@mail.gmail.com>
-Subject: Re: [PATCH v2] mmc: meson-gx: Free irq in release() callback
-To:     Remi Pommarel <repk@triplefau.lt>
-Cc:     Kevin Hilman <khilman@baylibre.com>,
-        Elie Roudninski <xademax@gmail.com>,
-        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
-        "open list:ARM/Amlogic Meson..." <linux-amlogic@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Mon, 14 Jan 2019 06:47:43 -0500
+Received: from pps.filterd (m0098419.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id x0EBiwov142738
+        for <linux-kernel@vger.kernel.org>; Mon, 14 Jan 2019 06:47:42 -0500
+Received: from e06smtp01.uk.ibm.com (e06smtp01.uk.ibm.com [195.75.94.97])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2q0pskr34e-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Mon, 14 Jan 2019 06:47:41 -0500
+Received: from localhost
+        by e06smtp01.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <rppt@linux.ibm.com>;
+        Mon, 14 Jan 2019 11:47:40 -0000
+Received: from b06cxnps3075.portsmouth.uk.ibm.com (9.149.109.195)
+        by e06smtp01.uk.ibm.com (192.168.101.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Mon, 14 Jan 2019 11:47:38 -0000
+Received: from d06av21.portsmouth.uk.ibm.com (d06av21.portsmouth.uk.ibm.com [9.149.105.232])
+        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x0EBlbGT51445822
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Mon, 14 Jan 2019 11:47:37 GMT
+Received: from d06av21.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 80C2652054;
+        Mon, 14 Jan 2019 11:47:37 +0000 (GMT)
+Received: from rapoport-lnx (unknown [9.148.207.170])
+        by d06av21.portsmouth.uk.ibm.com (Postfix) with ESMTPS id 007BF52051;
+        Mon, 14 Jan 2019 11:47:35 +0000 (GMT)
+Received: by rapoport-lnx (sSMTP sendmail emulation); Mon, 14 Jan 2019 13:47:35 +0200
+From:   Mike Rapoport <rppt@linux.ibm.com>
+To:     Jonathan Corbet <corbet@lwn.net>
+Cc:     linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, Mike Rapoport <rppt@linux.ibm.com>
+Subject: [PATCH] docs/core-api: memory-allocation: add mention of kmem_cache_create_userspace
+Date:   Mon, 14 Jan 2019 13:47:34 +0200
+X-Mailer: git-send-email 2.7.4
+X-TM-AS-GCONF: 00
+x-cbid: 19011411-4275-0000-0000-000002FEF2A6
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19011411-4276-0000-0000-0000380D0B8B
+Message-Id: <1547466454-29457-1-git-send-email-rppt@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-01-14_06:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1901140098
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 10 Jan 2019 at 23:52, Remi Pommarel <repk@triplefau.lt> wrote:
->
-> Because the irq was requested through device managed resources API
-> (devm_request_threaded_irq()) it was freed after meson_mmc_remove()
-> completion, thus after mmc_free_host() has reclaimed meson_host memory.
-> As this irq is IRQF_SHARED, while using CONFIG_DEBUG_SHIRQ, its handler
-> get called by free_irq(). So meson_mmc_irq() was called after the
-> meson_host memory reclamation and was using invalid memory.
->
-> We ended up with the following scenario:
-> device_release_driver()
->         meson_mmc_remove()
->                 mmc_free_host() /* Freeing host memory */
->         ...
->         devres_release_all()
->                 devm_irq_release()
->                         __free_irq()
->                                 meson_mmc_irq() /* Uses freed memory */
->
-> To avoid this, the irq is released in meson_mmc_remove() and in
-> mseon_mmc_probe() error path before mmc_free_host() gets called.
->
-> This fixes https://marc.info/?l=linux-mmc&m=154707415208716.
->
-> Signed-off-by: Remi Pommarel <repk@triplefau.lt>
+Mention that when a part of a slab cache might be exported to the
+userspace, the cache should be created using kmem_cache_create_usercopy()
 
-Applied for fixes! I also added a stable tag and a reported-by tag
-from Elie, thanks!
+Signed-off-by: Mike Rapoport <rppt@linux.ibm.com>
+---
+ Documentation/core-api/memory-allocation.rst | 8 +++++---
+ 1 file changed, 5 insertions(+), 3 deletions(-)
 
-Kind regards
-Uffe
+diff --git a/Documentation/core-api/memory-allocation.rst b/Documentation/core-api/memory-allocation.rst
+index 8954a88..51a200d 100644
+--- a/Documentation/core-api/memory-allocation.rst
++++ b/Documentation/core-api/memory-allocation.rst
+@@ -113,9 +113,11 @@ see :c:func:`kvmalloc_node` reference documentation. Note that
+ 
+ If you need to allocate many identical objects you can use the slab
+ cache allocator. The cache should be set up with
+-:c:func:`kmem_cache_create` before it can be used. Afterwards
+-:c:func:`kmem_cache_alloc` and its convenience wrappers can allocate
+-memory from that cache.
++:c:func:`kmem_cache_create` or :c:func:`kmem_cache_create_usercopy`
++before it can be used. The second function should be used if a part of
++the cache might be copied to the userspace.  After the cache is
++created :c:func:`kmem_cache_alloc` and its convenience wrappers can
++allocate memory from that cache.
+ 
+ When the allocated memory is no longer needed it must be freed. You
+ can use :c:func:`kvfree` for the memory allocated with `kmalloc`,
+-- 
+2.7.4
 
-
-> ---
-> Changes since v1:
-> - Fix it also in the error handling of probe callback
-> ---
->  drivers/mmc/host/meson-gx-mmc.c | 18 +++++++++++-------
->  1 file changed, 11 insertions(+), 7 deletions(-)
->
-> diff --git a/drivers/mmc/host/meson-gx-mmc.c b/drivers/mmc/host/meson-gx-mmc.c
-> index c2690c1a50ff..f115d7c63ffe 100644
-> --- a/drivers/mmc/host/meson-gx-mmc.c
-> +++ b/drivers/mmc/host/meson-gx-mmc.c
-> @@ -179,6 +179,8 @@ struct meson_host {
->         struct sd_emmc_desc *descs;
->         dma_addr_t descs_dma_addr;
->
-> +       int irq;
-> +
->         bool vqmmc_enabled;
->  };
->
-> @@ -1231,7 +1233,7 @@ static int meson_mmc_probe(struct platform_device *pdev)
->         struct resource *res;
->         struct meson_host *host;
->         struct mmc_host *mmc;
-> -       int ret, irq;
-> +       int ret;
->
->         mmc = mmc_alloc_host(sizeof(struct meson_host), &pdev->dev);
->         if (!mmc)
-> @@ -1276,8 +1278,8 @@ static int meson_mmc_probe(struct platform_device *pdev)
->                 goto free_host;
->         }
->
-> -       irq = platform_get_irq(pdev, 0);
-> -       if (irq <= 0) {
-> +       host->irq = platform_get_irq(pdev, 0);
-> +       if (host->irq <= 0) {
->                 dev_err(&pdev->dev, "failed to get interrupt resource.\n");
->                 ret = -EINVAL;
->                 goto free_host;
-> @@ -1331,9 +1333,8 @@ static int meson_mmc_probe(struct platform_device *pdev)
->         writel(IRQ_CRC_ERR | IRQ_TIMEOUTS | IRQ_END_OF_CHAIN,
->                host->regs + SD_EMMC_IRQ_EN);
->
-> -       ret = devm_request_threaded_irq(&pdev->dev, irq, meson_mmc_irq,
-> -                                       meson_mmc_irq_thread, IRQF_SHARED,
-> -                                       NULL, host);
-> +       ret = request_threaded_irq(host->irq, meson_mmc_irq,
-> +                       meson_mmc_irq_thread, IRQF_SHARED, NULL, host);
->         if (ret)
->                 goto err_init_clk;
->
-> @@ -1351,7 +1352,7 @@ static int meson_mmc_probe(struct platform_device *pdev)
->         if (host->bounce_buf == NULL) {
->                 dev_err(host->dev, "Unable to map allocate DMA bounce buffer.\n");
->                 ret = -ENOMEM;
-> -               goto err_init_clk;
-> +               goto err_free_irq;
->         }
->
->         host->descs = dma_alloc_coherent(host->dev, SD_EMMC_DESC_BUF_LEN,
-> @@ -1370,6 +1371,8 @@ static int meson_mmc_probe(struct platform_device *pdev)
->  err_bounce_buf:
->         dma_free_coherent(host->dev, host->bounce_buf_size,
->                           host->bounce_buf, host->bounce_dma_addr);
-> +err_free_irq:
-> +       free_irq(host->irq, host);
->  err_init_clk:
->         clk_disable_unprepare(host->mmc_clk);
->  err_core_clk:
-> @@ -1387,6 +1390,7 @@ static int meson_mmc_remove(struct platform_device *pdev)
->
->         /* disable interrupts */
->         writel(0, host->regs + SD_EMMC_IRQ_EN);
-> +       free_irq(host->irq, host);
->
->         dma_free_coherent(host->dev, SD_EMMC_DESC_BUF_LEN,
->                           host->descs, host->descs_dma_addr);
-> --
-> 2.20.1
->
