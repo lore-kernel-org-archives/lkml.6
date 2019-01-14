@@ -7,58 +7,58 @@ X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E8A62C43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 11:19:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A846C43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 11:19:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A408520656
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 11:19:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 254B020656
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 11:19:46 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YlvYUW3S"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="orYV5RsE"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726659AbfANLTV (ORCPT
+        id S1726752AbfANLTo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 14 Jan 2019 06:19:21 -0500
-Received: from mail-ed1-f68.google.com ([209.85.208.68]:42518 "EHLO
+        Mon, 14 Jan 2019 06:19:44 -0500
+Received: from mail-ed1-f68.google.com ([209.85.208.68]:36041 "EHLO
         mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726414AbfANLTV (ORCPT
+        with ESMTP id S1726676AbfANLTn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 Jan 2019 06:19:21 -0500
-Received: by mail-ed1-f68.google.com with SMTP id y20so18304384edw.9;
-        Mon, 14 Jan 2019 03:19:19 -0800 (PST)
+        Mon, 14 Jan 2019 06:19:43 -0500
+Received: by mail-ed1-f68.google.com with SMTP id f23so18337159edb.3;
+        Mon, 14 Jan 2019 03:19:41 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=subject:to:cc:references:from:openpgp:autocrypt:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=K8GPaP4kkyS8gkH0ZuFyBOS9ojy+hvM/Vcw4yYWQaiM=;
-        b=YlvYUW3SdTAYs1qWABu30y/5rZtd/hanLSoTpd5kJi19In9qlKlafMN6GSHQKfEqyu
-         ZGQ35xCPDwq4cUQI+r9zHgHu7B+a87NyTbcyWTTSwjlhq2mrvXtar9gG4nBZLK6dodzr
-         mlIuN5aaME7PpEBMG+oTuAk8FzX4ESTRFUSOwC9gk6fRQ/KHcOLt1a9Elb4FRMIrvK1p
-         080LDD2fm1YcZ/Qmb/aZU3e2JFKPVUr3beHfk8n4Y7UeCcHtY6yZa15s/AmzARmxQdlr
-         h7F5m1Tpwda40UXeCOAbLnZXpBr/mYcq8dXSUuPQfVN+OroCLzvpa/bSwL35zCr2l6Ax
-         K4AA==
+        bh=bBvpKhgWRB0cPHVfsDcT5tgoYPYVQ4QZJhoM3+1Kf3Y=;
+        b=orYV5RsEwou4FraXvWUyeKeTI8tj62XEGmTLHn6qczG2PweHiVk1eTN1VvjnxXGoq1
+         9O6Uu3IZ3SRqy0H2aQWWIBZeN1KyUWCazkowVevHPphODyCOj8aKZJTEobNYlI7xiS7U
+         k2gEoNOLfw4AyhQufAcNNWyPtMkfXZSPMV+9gvpZ2SirHAU++KEWU98cEqelzeqL0tGh
+         3gXf6WrBqeimOvPooJT9vqZuh40ojh1cyCqYl3u+1B+dmn6vJbq9DsyZjr4S34Dh5srQ
+         zdXDAu7yQ5Etdyh2ufTzSc3PYc6PZ/g51trpAJ4cvrGkdHj7lw+jzQ6eG6M9ixdi18t1
+         Ck6Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
          :message-id:date:user-agent:mime-version:in-reply-to
          :content-language:content-transfer-encoding;
-        bh=K8GPaP4kkyS8gkH0ZuFyBOS9ojy+hvM/Vcw4yYWQaiM=;
-        b=gWzzs9hKkWUIZO8ylXbj1vKhRlGevPTUwfLYi1yATEzxCL9W6r9pHfInmWIfTJNCt3
-         18ucypMtMs8W2Mz+b86nFZrW3GC0KE3m+syku9vMDJha871Pb51vw0Uih5U0xPmWAVlS
-         vLQSTtsXJjBZxA3QT5GIBlAtW3423B2iZBU0w8nIHSIrK1nHnKZ7cZRJqRYVwm29UONH
-         N1n76uPaFEGGpTyZzAy+MBqLDAANyFKuPSZkLDyH+oNGaKeKk5p+xSRbsh9Nw95gP1fr
-         pUVxQBcs9wn8xTl59rRJmg8p+Z1Q3jFfWbM84mby2aibLAX0h9GAkPU3ru0RuOihvg7r
-         nnOA==
-X-Gm-Message-State: AJcUukdjiLV3o54wcgxcCMYoIcPLAQXd1liltjmIFvyV9vPBepcfFSrx
-        mCDpnG5rm9eJWNQO6qcjBPShXzXZ
-X-Google-Smtp-Source: ALg8bN7vKrS83y7KofBnEJpWSQ2iK8rId+ArOEdiizmh0lN7MvTqUN3IGZx03SQk/V4piHco3nE7Qg==
-X-Received: by 2002:a17:906:f24a:: with SMTP id gy10-v6mr19577985ejb.64.1547464758713;
-        Mon, 14 Jan 2019 03:19:18 -0800 (PST)
+        bh=bBvpKhgWRB0cPHVfsDcT5tgoYPYVQ4QZJhoM3+1Kf3Y=;
+        b=PZRWuBEt+Dkasp9RPhgfWPICcI2sSzkpkFvGBdW+Lqh6To+oJnWuvXTTFDKq8/Iaf+
+         E64tLEt1V+g2keyh66AXlgHetXVVLhh+V2aChyaonA99vD1TWgo4eyBsmR8O/rMBNxeK
+         QfFd/ljLtFfuLNd4MMaE3nAowGm6Jx9//si6NHKYw9LffUSTLNb5egYqHW2ESFigb3Dy
+         i+xsYutMyheOobPuBsRZ2LoWrBKfi2N8WnLxJNY4/1hveRzSjMDb7iCh5Px5os3mXZ7Q
+         XsBZX/1mL3AC7vOpUZOBWMfiQifFldA4Ht+GtBP0pLW+/9+XtA7iTGzlud2AQzMZZxBM
+         9LZw==
+X-Gm-Message-State: AJcUukdY0i33y83Bthb1yrjTRr5JyAsXKXWN8TGZup4U2c/Mek/KL6rI
+        WkFKLLrPhP9D05O0vit5g7EGo7gf
+X-Google-Smtp-Source: ALg8bN58XQyyqteq+Wy5B6OSG08A3oNxpLuWhE7divzcw7Zk2k7AAWHF2FuQJXDktY5dGaaH9xGlhQ==
+X-Received: by 2002:a17:906:7b97:: with SMTP id s23-v6mr20448656ejo.57.1547464781161;
+        Mon, 14 Jan 2019 03:19:41 -0800 (PST)
 Received: from ziggy.stardust ([37.223.147.38])
-        by smtp.gmail.com with ESMTPSA id l51sm4271828edb.36.2019.01.14.03.19.17
+        by smtp.gmail.com with ESMTPSA id m14sm4999125edc.27.2019.01.14.03.19.39
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 14 Jan 2019 03:19:17 -0800 (PST)
-Subject: Re: [PATCH 2/5] dt-bindings: pwm: add a property "mediatek,num-pwms"
+        Mon, 14 Jan 2019 03:19:40 -0800 (PST)
+Subject: Re: [PATCH 5/5] dt-bindings: pwm: update bindings for MT7629 SoC
 To:     Ryder Lee <ryder.lee@mediatek.com>,
         Thierry Reding <thierry.reding@gmail.com>
 Cc:     Sean Wang <sean.wang@kernel.org>,
@@ -67,7 +67,7 @@ Cc:     Sean Wang <sean.wang@kernel.org>,
         linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-mediatek@lists.infradead.org
 References: <0c400cb1899c1afb4c9f021350cdc0c6ca3f6239.1547453586.git.ryder.lee@mediatek.com>
- <37e5b296c6e854b918049a548e7c79f26b0e8147.1547453586.git.ryder.lee@mediatek.com>
+ <d586ce5da1774e2b87af980990f9ac649529dfcf.1547453586.git.ryder.lee@mediatek.com>
 From:   Matthias Brugger <matthias.bgg@gmail.com>
 Openpgp: preference=signencrypt
 Autocrypt: addr=matthias.bgg@gmail.com; prefer-encrypt=mutual; keydata=
@@ -163,12 +163,12 @@ Autocrypt: addr=matthias.bgg@gmail.com; prefer-encrypt=mutual; keydata=
  pac005PuhxCWkKTJz3gCmznnoat4GCnL5gy/m0Qk45l4PFqwWXVLo9AQg2Kp3mlIFZ6fsEKI
  AN5hxlbNvNb9V2Zo5bFZjPWPFTxOteM0omUAS+QopwU0yPLLGJVf2iCmItHcUXI+r2JwH1CJ
  jrHWeQEI2ucSKsNa8FllDmG/fQ==
-Message-ID: <1ad9afa2-0306-8a60-eb25-92f8ce100d20@gmail.com>
-Date:   Mon, 14 Jan 2019 12:19:16 +0100
+Message-ID: <96a54b06-8d1a-a19f-6b56-6e6224da846a@gmail.com>
+Date:   Mon, 14 Jan 2019 12:19:39 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.3.3
 MIME-Version: 1.0
-In-Reply-To: <37e5b296c6e854b918049a548e7c79f26b0e8147.1547453586.git.ryder.lee@mediatek.com>
+In-Reply-To: <d586ce5da1774e2b87af980990f9ac649529dfcf.1547453586.git.ryder.lee@mediatek.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -180,33 +180,26 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 
 On 14/01/2019 09:21, Ryder Lee wrote:
-> This adds a property "mediatek,num-pwms" in example so that we could
-> set the number of PWM channels via device tree.
+> This updates bindings for MT7629 pwm controller.
 > 
 > Signed-off-by: Ryder Lee <ryder.lee@mediatek.com>
 
 Reviewed-by: Matthias Brugger <matthias.bgg@gmail.com>
 
 > ---
->  Documentation/devicetree/bindings/pwm/pwm-mediatek.txt | 2 ++
->  1 file changed, 2 insertions(+)
+>  Documentation/devicetree/bindings/pwm/pwm-mediatek.txt | 1 +
+>  1 file changed, 1 insertion(+)
 > 
 > diff --git a/Documentation/devicetree/bindings/pwm/pwm-mediatek.txt b/Documentation/devicetree/bindings/pwm/pwm-mediatek.txt
-> index 991728c..f9e2d1f 100644
+> index f9e2d1f..f7e7784 100644
 > --- a/Documentation/devicetree/bindings/pwm/pwm-mediatek.txt
 > +++ b/Documentation/devicetree/bindings/pwm/pwm-mediatek.txt
-> @@ -20,6 +20,7 @@ Required properties:
->   - pinctrl-names: Must contain a "default" entry.
->   - pinctrl-0: One property must exist for each entry in pinctrl-names.
->     See pinctrl/pinctrl-bindings.txt for details of the property values.
-> + - mediatek,num-pwms: the number of PWM channels.
->  
->  Example:
->  	pwm0: pwm@11006000 {
-> @@ -37,4 +38,5 @@ Example:
->  			      "pwm3", "pwm4", "pwm5";
->  		pinctrl-names = "default";
->  		pinctrl-0 = <&pwm0_pins>;
-> +		mediatek,num-pwms = <5>;
->  	};
+> @@ -6,6 +6,7 @@ Required properties:
+>     - "mediatek,mt7622-pwm": found on mt7622 SoC.
+>     - "mediatek,mt7623-pwm": found on mt7623 SoC.
+>     - "mediatek,mt7628-pwm": found on mt7628 SoC.
+> +   - "mediatek,mt7629-pwm", "mediatek,mt7622-pwm": found on mt7629 SoC.
+>   - reg: physical base address and length of the controller's registers.
+>   - #pwm-cells: must be 2. See pwm.txt in this directory for a description of
+>     the cell format.
 > 
