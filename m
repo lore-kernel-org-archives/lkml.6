@@ -2,109 +2,111 @@ Return-Path: <SRS0=tq6k=PW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 50435C43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 08:43:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 245CBC43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 08:44:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 28A5120659
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 08:43:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E907C20659
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 08:44:05 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="NX10aX+R"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726496AbfANInf (ORCPT
+        id S1726552AbfANIoE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 14 Jan 2019 03:43:35 -0500
-Received: from mga05.intel.com ([192.55.52.43]:32383 "EHLO mga05.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726306AbfANInf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 Jan 2019 03:43:35 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 14 Jan 2019 00:43:34 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,477,1539673200"; 
-   d="scan'208";a="125843102"
-Received: from linux.intel.com ([10.54.29.200])
-  by orsmga002.jf.intel.com with ESMTP; 14 Jan 2019 00:43:34 -0800
-Received: from [10.125.252.160] (abudanko-mobl.ccr.corp.intel.com [10.125.252.160])
-        by linux.intel.com (Postfix) with ESMTP id 82472580261;
-        Mon, 14 Jan 2019 00:43:32 -0800 (PST)
-From:   Alexey Budankov <alexey.budankov@linux.intel.com>
-Subject: Re: [PATCH v1 0/4] perf: enable compression of record mode trace to
- save storage space
-To:     Jiri Olsa <jolsa@redhat.com>
-Cc:     Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Andi Kleen <ak@linux.intel.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-References: <eaa8b5da-103f-61c8-bdca-2a2a27bf1715@linux.intel.com>
- <20190109172843.GE19455@krava>
-Organization: Intel Corp.
-Message-ID: <b1df6115-e03c-47f4-bdb8-29f1980763f0@linux.intel.com>
-Date:   Mon, 14 Jan 2019 11:43:31 +0300
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        Mon, 14 Jan 2019 03:44:04 -0500
+Received: from mail-lf1-f65.google.com ([209.85.167.65]:44913 "EHLO
+        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726513AbfANIoD (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 14 Jan 2019 03:44:03 -0500
+Received: by mail-lf1-f65.google.com with SMTP id z13so14942628lfe.11
+        for <linux-kernel@vger.kernel.org>; Mon, 14 Jan 2019 00:44:02 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=shEaCEuNwnJ1kazeHqfDD+QbcN+O6S8RuNKqqcokew8=;
+        b=NX10aX+RdQBFoGKgdbCgPdqYk2xTcbGXHcgGmQY7IVufNRtIh8A8WmDwktive4ctwK
+         WKkDzSoQbSIkDv17Ln6m7VRgChbGQRfZaPY6y643uaQuPSz+ZBm1pojE1n+ovRZrC4AH
+         07ocx6jV86BSFDWj5JFpGLh5fGjVyc8kk3ScY=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=shEaCEuNwnJ1kazeHqfDD+QbcN+O6S8RuNKqqcokew8=;
+        b=KrZmMWrJQ65cdLSswRTf0q4P6sCg74AHQZKwM2hH1oNqo6Uz7ayjywMZgpL0Njh0us
+         v0cg84hXrPsJsF+DoOepHx4G1IzGP9pz4Sxr7YE810bRyxs1nqUcPP2bRmQbqiqJupSG
+         uFEDt1MbcNoHcX1XLAq22TQlEjQfqopZMQOybT0nxg1n57hefOC3tBUf/5D45UWkQJZk
+         6/SfGvsuhosFYzbpbPZPFVxoXpfTJrsjyoKsdLPcqaFAwwu6r2RVC32xQurWDMilKcQP
+         0lXeN3rwxNklKjoYOSdv/rvbl4+cM+94EBfUX23yj7TvYhdpJ7XsnQfSblKsAR2wVm7b
+         2r5g==
+X-Gm-Message-State: AJcUukekMOUwaCNiRSUPFAXIu0TIVFyVtw+ok//Y6U0L03PqkyPI8fio
+        urc2RH4kl6we36zx0WJRu2an7L9/EXioRLHYb3vF4g==
+X-Google-Smtp-Source: ALg8bN53a/U4ZzrYjO6Vtj4xDwtL5symr5fYra6fWNfdJG3yf/Wg3Akr/6uQrx+EpEMuXjGIzQre5ZuJu48LBxRfN5M=
+X-Received: by 2002:a19:f813:: with SMTP id a19mr12234423lff.67.1547455441667;
+ Mon, 14 Jan 2019 00:44:01 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20190109172843.GE19455@krava>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20190113154716.5145-1-masneyb@onstation.org>
+In-Reply-To: <20190113154716.5145-1-masneyb@onstation.org>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Mon, 14 Jan 2019 09:43:50 +0100
+Message-ID: <CACRpkdbyiPwE8+onB0_Yu0i+6LZCFy8Z7MWWY7p-fjsb0JFVhw@mail.gmail.com>
+Subject: Re: [PATCH v4 00/14] qcom: spmi: add support for hierarchical IRQ chip
+To:     Brian Masney <masneyb@onstation.org>,
+        Andy Gross <andy.gross@linaro.org>
+Cc:     Stephen Boyd <sboyd@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Doug Anderson <dianders@chromium.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Nicolas Dechesne <nicolas.dechesne@linaro.org>,
+        Niklas Cassel <niklas.cassel@linaro.org>,
+        David Brown <david.brown@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "thierry.reding@gmail.com" <thierry.reding@gmail.com>,
+        linux-arm-msm@vger.kernel.org,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
-On 09.01.2019 20:28, Jiri Olsa wrote:
-> On Mon, Dec 24, 2018 at 04:21:33PM +0300, Alexey Budankov wrote:
->>
->> The patch set implements runtime record trace compression accompanied by 
->> trace file decompression implemented in the tool report mode. Zstandard 
->> library API [1] is used for compression/decompression of data that come 
->> from perf_events kernel data buffers.
->>
->> Realized -z,--compression_level=n option provides ~3-5x avg. trace file 
->> size reduction on the tested workloads what significantly saves user's 
->> storage space on larger server systems where trace file size can easily 
->> reach several tens or even hundreds of GiBs, especially when profiling 
->> with stacks for later dwarf unwinding, context-switches tracing and etc.
->>
->> The option is effective jointly with asynchronous trace writing because 
->> compression requires auxiliary memory buffers to operate on and memory 
->> buffers for asynchronous trace writing serve that purpose.
-> 
-> I dont like that it's onlt for aio only, I can't really see why it's
+On Sun, Jan 13, 2019 at 4:47 PM Brian Masney <masneyb@onstation.org> wrote:
 
-For serial streaming, on CPU bound codes, under full system utilization it 
-can induce more runtime overhead and increase data loss because amount of 
-code on performance critical path grows, of course size of written data 
-reduces but still. Feeding kernel buffer content by user space code to a 
-syscall is extended with intermediate copying to user space memory with 
-doing some math on it in the middle.
+> This patch series adds hierarchical IRQ chip support to spmi-gpio so
+> that device tree consumers can request an IRQ directly from the GPIO
+> block rather than having to request an IRQ from the underlying PMIC.
 
-> a problem for normal data.. can't we just have one layer before and
-> stream the data to the compress function instead of the file (or aio
-> buffers).. and that compress functions would spit out 64K size COMPRESSED
-> events, which would go to file (or aio buffers)
+I'm very happy with this series and no matter if it would cause some
+stir while merging, the kernel looks so much better for millions of
+phones after this patch that it is worth pursuing aggressively.
+It also shows the way for other platforms. (And taught me a great
+deal about hierarchical interrupts as well.)
 
-It is already almost like that. Compression could be bridged using AIO 
-buffers but then still streamed to file serially using record__pushfn() 
-and that would make some sense for moderate profiling cases on systems 
-without AIO support and trace streaming based on it.
+It'd be nice to have Stephen's ACK on the SPMI parts so I can merge
+all the code through the pin control subsystem.
 
-> 
-> the report side would process them (decompress) on the session layer
-> before the tool callbacks are called
+Regarding the device trees, I think we usually merge device tree
+changes in parallel (orthogonally) and as long as the end result
+after merging both driver code and device tree changes is correct
+we do not bother *too* much about any intermittent states.
 
-It is already pretty similar to that.
+That said I can of course merge the DTS changes in the pin control
+tree if I get some ACK from the Qualcomm maintainers.
 
-Thanks,
-Alexey
+Else I will just apply patches 1-7 to the pin control tree ASAP and
+the DTS changes need to go through qcom (Andy's tree) and
+ARM SoC.
 
-> 
-> jirka
-> 
+Thoughts?
+
+Yours,
+Linus Walleij
