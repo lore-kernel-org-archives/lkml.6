@@ -2,172 +2,121 @@ Return-Path: <SRS0=tq6k=PW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B2946C43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 11:48:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 15039C43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 11:56:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8243720659
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 11:48:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547466539;
-	bh=NvrUyPy0A3uWaEMDNX4FDMV+k0O809Dj1GBEiuyKzGg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=rphapupRlPlnydgUyIUDbHaSfePNV2mQ9aBr2F33Pn27W41jROf86K0xOmp2cL7x6
-	 M6PU/8ERzpFkrpy1L/P/SsEzdR+YU8YeOtyQJxYDWtyZBFPeS3b6J19xy4t6rIZfQC
-	 YWtqXRLsVOtWSI1LLlPZqN57H3t37ZeqYCgrjP6w=
+	by mail.kernel.org (Postfix) with ESMTP id E2E5A20659
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 11:56:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726644AbfANLs6 (ORCPT
+        id S1726561AbfANL4l (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 14 Jan 2019 06:48:58 -0500
-Received: from mx2.suse.de ([195.135.220.15]:55192 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726534AbfANLs5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 Jan 2019 06:48:57 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 0B748ADD6;
-        Mon, 14 Jan 2019 11:48:55 +0000 (UTC)
-Date:   Mon, 14 Jan 2019 12:48:53 +0100
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Michael Ellerman <mpe@ellerman.id.au>
-Cc:     linux-mm@kvack.org, Pingfan Liu <kernelfans@gmail.com>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Peter Zijlstra <peterz@infradead.org>, x86@kernel.org,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Tony Luck <tony.luck@intel.com>, linuxppc-dev@lists.ozlabs.org,
-        linux-ia64@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [RFC PATCH] x86, numa: always initialize all possible nodes
-Message-ID: <20190114114853.GE21345@dhcp22.suse.cz>
-References: <20190114082416.30939-1-mhocko@kernel.org>
- <87pnszzg9s.fsf@concordia.ellerman.id.au>
+        Mon, 14 Jan 2019 06:56:41 -0500
+Received: from wes1-so1-b.wedos.net ([46.28.106.43]:58209 "EHLO
+        wes1-so1.wedos.net" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726339AbfANL4l (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 14 Jan 2019 06:56:41 -0500
+Received: from localhost (ovpn-brq.redhat.com [213.175.37.11])
+        by wes1-so1.wedos.net (Postfix) with ESMTPSA id 43dX4k38YVz2fC;
+        Mon, 14 Jan 2019 12:56:38 +0100 (CET)
+Date:   Mon, 14 Jan 2019 12:56:36 +0100
+From:   Otto Sabart <ottosabart@seberm.com>
+To:     linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+        netdev@vger.kernel.org
+Cc:     "David S. Miller" <davem@davemloft.net>,
+        Jonathan Corbet <corbet@lwn.net>
+Subject: [PATCH 1/1 RESEND] doc: net: fix bad references to network drivers
+Message-ID: <f6af749d99cf7dd9e5ba90824d0fe898ae69c793.1547466751.git.ottosabart@seberm.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="GvXjxJ+pjyke8COw"
 Content-Disposition: inline
-In-Reply-To: <87pnszzg9s.fsf@concordia.ellerman.id.au>
+X-PGP-Key: http://seberm.com/pubkey.asc
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon 14-01-19 21:26:39, Michael Ellerman wrote:
-> Michal Hocko <mhocko@kernel.org> writes:
-> 
-> > From: Michal Hocko <mhocko@suse.com>
-> >
-> > Pingfan Liu has reported the following splat
-> > [    5.772742] BUG: unable to handle kernel paging request at 0000000000002088
-> > [    5.773618] PGD 0 P4D 0
-> > [    5.773618] Oops: 0000 [#1] SMP NOPTI
-> > [    5.773618] CPU: 2 PID: 1 Comm: swapper/0 Not tainted 4.20.0-rc1+ #3
-> > [    5.773618] Hardware name: Dell Inc. PowerEdge R7425/02MJ3T, BIOS 1.4.3 06/29/2018
-> > [    5.773618] RIP: 0010:__alloc_pages_nodemask+0xe2/0x2a0
-> > [    5.773618] Code: 00 00 44 89 ea 80 ca 80 41 83 f8 01 44 0f 44 ea 89 da c1 ea 08 83 e2 01 88 54 24 20 48 8b 54 24 08 48 85 d2 0f 85 46 01 00 00 <3b> 77 08 0f 82 3d 01 00 00 48 89 f8 44 89 ea 48 89
-> > e1 44 89 e6 89
-> > [    5.773618] RSP: 0018:ffffaa600005fb20 EFLAGS: 00010246
-> > [    5.773618] RAX: 0000000000000000 RBX: 00000000006012c0 RCX: 0000000000000000
-> > [    5.773618] RDX: 0000000000000000 RSI: 0000000000000002 RDI: 0000000000002080
-> > [    5.773618] RBP: 00000000006012c0 R08: 0000000000000000 R09: 0000000000000002
-> > [    5.773618] R10: 00000000006080c0 R11: 0000000000000002 R12: 0000000000000000
-> > [    5.773618] R13: 0000000000000001 R14: 0000000000000000 R15: 0000000000000002
-> > [    5.773618] FS:  0000000000000000(0000) GS:ffff8c69afe00000(0000) knlGS:0000000000000000
-> > [    5.773618] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> > [    5.773618] CR2: 0000000000002088 CR3: 000000087e00a000 CR4: 00000000003406e0
-> > [    5.773618] Call Trace:
-> > [    5.773618]  new_slab+0xa9/0x570
-> > [    5.773618]  ___slab_alloc+0x375/0x540
-> > [    5.773618]  ? pinctrl_bind_pins+0x2b/0x2a0
-> > [    5.773618]  __slab_alloc+0x1c/0x38
-> > [    5.773618]  __kmalloc_node_track_caller+0xc8/0x270
-> > [    5.773618]  ? pinctrl_bind_pins+0x2b/0x2a0
-> > [    5.773618]  devm_kmalloc+0x28/0x60
-> > [    5.773618]  pinctrl_bind_pins+0x2b/0x2a0
-> > [    5.773618]  really_probe+0x73/0x420
-> > [    5.773618]  driver_probe_device+0x115/0x130
-> > [    5.773618]  __driver_attach+0x103/0x110
-> > [    5.773618]  ? driver_probe_device+0x130/0x130
-> > [    5.773618]  bus_for_each_dev+0x67/0xc0
-> > [    5.773618]  ? klist_add_tail+0x3b/0x70
-> > [    5.773618]  bus_add_driver+0x41/0x260
-> > [    5.773618]  ? pcie_port_setup+0x4d/0x4d
-> > [    5.773618]  driver_register+0x5b/0xe0
-> > [    5.773618]  ? pcie_port_setup+0x4d/0x4d
-> > [    5.773618]  do_one_initcall+0x4e/0x1d4
-> > [    5.773618]  ? init_setup+0x25/0x28
-> > [    5.773618]  kernel_init_freeable+0x1c1/0x26e
-> > [    5.773618]  ? loglevel+0x5b/0x5b
-> > [    5.773618]  ? rest_init+0xb0/0xb0
-> > [    5.773618]  kernel_init+0xa/0x110
-> > [    5.773618]  ret_from_fork+0x22/0x40
-> > [    5.773618] Modules linked in:
-> > [    5.773618] CR2: 0000000000002088
-> > [    5.773618] ---[ end trace 1030c9120a03d081 ]---
-> >
-> > with his AMD machine with the following topology
-> >   NUMA node0 CPU(s):     0,8,16,24
-> >   NUMA node1 CPU(s):     2,10,18,26
-> >   NUMA node2 CPU(s):     4,12,20,28
-> >   NUMA node3 CPU(s):     6,14,22,30
-> >   NUMA node4 CPU(s):     1,9,17,25
-> >   NUMA node5 CPU(s):     3,11,19,27
-> >   NUMA node6 CPU(s):     5,13,21,29
-> >   NUMA node7 CPU(s):     7,15,23,31
-> >
-> > [    0.007418] Early memory node ranges
-> > [    0.007419]   node   1: [mem 0x0000000000001000-0x000000000008efff]
-> > [    0.007420]   node   1: [mem 0x0000000000090000-0x000000000009ffff]
-> > [    0.007422]   node   1: [mem 0x0000000000100000-0x000000005c3d6fff]
-> > [    0.007422]   node   1: [mem 0x00000000643df000-0x0000000068ff7fff]
-> > [    0.007423]   node   1: [mem 0x000000006c528000-0x000000006fffffff]
-> > [    0.007424]   node   1: [mem 0x0000000100000000-0x000000047fffffff]
-> > [    0.007425]   node   5: [mem 0x0000000480000000-0x000000087effffff]
-> >
-> > and nr_cpus set to 4. The underlying reason is tha the device is bound
-> > to node 2 which doesn't have any memory and init_cpu_to_node only
-> > initializes memory-less nodes for possible cpus which nr_cpus restrics.
-> > This in turn means that proper zonelists are not allocated and the page
-> > allocator blows up.
-> >
-> > Fix the issue by reworking how x86 initializes the memory less nodes.
-> > The current implementation is hacked into the workflow and it doesn't
-> > allow any flexibility. There is init_memory_less_node called for each
-> > offline node that has a CPU as already mentioned above. This will make
-> > sure that we will have a new online node without any memory. Much later
-> > on we build a zone list for this node and things seem to work, except
-> > they do not (e.g. due to nr_cpus). Not to mention that it doesn't really
-> > make much sense to consider an empty node as online because we just
-> > consider this node whenever we want to iterate nodes to use and empty
-> > node is obviously not the best candidate. This is all just too fragile.
-> >
-> > Reported-by: Pingfan Liu <kernelfans@gmail.com>
-> > Tested-by: Pingfan Liu <kernelfans@gmail.com>
-> > Signed-off-by: Michal Hocko <mhocko@suse.com>
-> > ---
-> >
-> > Hi,
-> > I am sending this as an RFC because I am not sure this is the proper way
-> > to go myself. I am especially not sure about other architectures
-> > supporting memoryless nodes (ppc and ia64 AFAICS or are there more?).
-> >
-> > I would appreciate a help with those architectures because I couldn't
-> > really grasp how the memoryless nodes are really initialized there. E.g.
-> > ppc only seem to call setup_node_data for online nodes but I couldn't
-> > find any special treatment for nodes without any memory.
-> 
-> We have a somewhat dubious hack in our hotplug code, see:
-> 
-> e67e02a544e9 ("powerpc/pseries: Fix cpu hotplug crash with memoryless nodes")
-> 
-> Which basically onlines the node when we hotplug a CPU into it.
 
-Hmm, interesting. So what happens if somebody tries to allocate a memory
-from a node when it is not online yet? E.g. something like the above.
+--GvXjxJ+pjyke8COw
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-And do I get it right that this patch will not break the current ppc
-code?
--- 
-Michal Hocko
-SUSE Labs
+Fix "reference to nonexisting document" warnings.
+
+Fixes: b255e500c8dc ("net: documentation: build a directory structure
+for drivers")
+Signed-off-by: Otto Sabart <ottosabart@seberm.com>
+---
+ Documentation/networking/index.rst | 26 +++++++++++++-------------
+ 1 file changed, 13 insertions(+), 13 deletions(-)
+
+diff --git a/Documentation/networking/index.rst b/Documentation/networking/=
+index.rst
+index 6a47629ef8ed..59e86de662cd 100644
+--- a/Documentation/networking/index.rst
++++ b/Documentation/networking/index.rst
+@@ -11,19 +11,19 @@ Contents:
+    batman-adv
+    can
+    can_ucan_protocol
+-   dpaa2/index
+-   e100
+-   e1000
+-   e1000e
+-   fm10k
+-   igb
+-   igbvf
+-   ixgb
+-   ixgbe
+-   ixgbevf
+-   i40e
+-   iavf
+-   ice
++   device_drivers/freescale/dpaa2/index
++   device_drivers/intel/e100
++   device_drivers/intel/e1000
++   device_drivers/intel/e1000e
++   device_drivers/intel/fm10k
++   device_drivers/intel/igb
++   device_drivers/intel/igbvf
++   device_drivers/intel/ixgb
++   device_drivers/intel/ixgbe
++   device_drivers/intel/ixgbevf
++   device_drivers/intel/i40e
++   device_drivers/intel/iavf
++   device_drivers/intel/ice
+    kapi
+    z8530book
+    msg_zerocopy
+--=20
+2.17.2
+
+
+--GvXjxJ+pjyke8COw
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCgAdFiEEb6VOpv2s03VHGoilgjuumfi+HjwFAlw8ePIACgkQgjuumfi+
+HjxgLw/+LVoxtrmmkC9y6jPbUymOiZnGUokAg7pf8ts10rCDfUMKBdvlDst5JybH
+FJ8v35LQ8YdpCQdtneLBcrQ0ZtbWfZA4RgFOr0TAu7bGLDVZ1vFqx1pR3mHflHhm
+vq9Y/V40XITnXQY1hSKB8UoA7A/tGSoXyCyF30oQX/QfZlnlO9h4xPJmX5Ncz+YT
+92DWXw3maWf3UiBbS7q4L3H5dyOtsKXWcLgtRbaEZSOFjMovAY9r5Wp7SqeMxxJK
+7cRnV8b1TjQc/jUQATFjhk4n2FCYHJIoswGE222RpfkONMTOJvRuKjDHfqd1NCPc
+E+enVQSxlhLDRg4OtUfgtueU4+uT+OtIGct54fOHndQ7q2gi8htzYyWNF4Hlk9aI
+NnnwjzGsdJy1OpPDpi66yesugUShH6/m893QN9MjXioV6ooP7Sh+/f1iy5kxMhZL
+UKGr2GQbHIrswcE0Y4FLcIP9rs3ZwIa0nJwuZ79Jvnb15q2CRTGoMdABmxifOtzM
+W2a3Sg7bUx/iysVz1zmzjq0We97pqxr7J1IWju6rhFiEqFvURf54Wa/Bb1xxdrmZ
+eLA5GfLFgL/Odx8lqaNrLUGt2FTEIG0fMt2y5tyBctDNnAdGTaG58YaoRdjQO8kI
+YAVWE3wwhCbOYv0lJ31G7EQf4pFUm6GZ8FU923DApjkmqyuqFhE=
+=XjHW
+-----END PGP SIGNATURE-----
+
+--GvXjxJ+pjyke8COw--
