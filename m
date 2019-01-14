@@ -2,82 +2,97 @@ Return-Path: <SRS0=tq6k=PW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BBE24C43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 08:28:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9398AC43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 08:29:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 88FA920675
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 08:28:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F1CE120660
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 08:29:52 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="e5qmJpOI"
+	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="WumxlcBr"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726526AbfANI2f (ORCPT
+        id S1726528AbfANI3v (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 14 Jan 2019 03:28:35 -0500
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:41040 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726138AbfANI2f (ORCPT
+        Mon, 14 Jan 2019 03:29:51 -0500
+Received: from conuserg-09.nifty.com ([210.131.2.76]:48887 "EHLO
+        conuserg-09.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725837AbfANI3u (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 Jan 2019 03:28:35 -0500
-Received: by mail-lj1-f194.google.com with SMTP id k15-v6so18157423ljc.8
-        for <linux-kernel@vger.kernel.org>; Mon, 14 Jan 2019 00:28:34 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=PK+o5wSfNSAi8nHTgkusBFI+usEcOqlS3NIt5HaMg9A=;
-        b=e5qmJpOIJCnTGIJsBcefQF4pczpWTlwUOulFSMHsESeMXkQShuduHIBQny5xjHEEGK
-         65rR+/isOJ6hG+1BJieFHbJLww9GMaPs8vHtIH1QelUN8f5efReeRt7CjZe5wRfVmE+Z
-         LxbItZC5dXwJ3nwS0Pt1kohi2cX2V5TIP3UaE=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=PK+o5wSfNSAi8nHTgkusBFI+usEcOqlS3NIt5HaMg9A=;
-        b=USyXRClH2Eil+3nQZ1jltYbOZTnumX4G5QGc4kcbXXTP+WCGjOq1DyBBj9h3RR3rO9
-         n71KEjYcoh6sNnemC13HwFajUle1WRrziyiZXEkAA1r0hgTnGY/AQB0WYWeuqnNsjgsI
-         DeXnf6vN9vg/uo5xg/nCAoN/SEo0dG6RsTgv1V3H4g7hhjV45BH45FJPUZS6uDqHYzD6
-         mR2PQL9hL3K3PG1Gkihe548fKaU85q/S8o10zQeyGcQwnbEARORXmTnm9mo6BFPZ/P1Q
-         l6G/oHFDQ61ujshgo/yEIkCrbbkAw/dC6ugodwJ17I9WprXVTipxjsMdnQ0CpjCtCfx8
-         /EeQ==
-X-Gm-Message-State: AJcUukdYz8KQTQjhIQMhvHXN/2eaDzPpwnufm1gWhu2zFcLFM3JyA+Oe
-        rIAgob71g2gJ5l4E514ggWIAkUqGOUKIlvPlSp9I3g==
-X-Google-Smtp-Source: ALg8bN59XwyzwevpO45r4pBAAEA8eEp4i9O/m05r7uvvx8aRYBrHspWiemAZF1S/QP8c0OphilKQdUS8JELRCYvCFbE=
-X-Received: by 2002:a2e:7e04:: with SMTP id z4-v6mr13711685ljc.97.1547454513248;
- Mon, 14 Jan 2019 00:28:33 -0800 (PST)
-MIME-Version: 1.0
-References: <1547454274-1674-1-git-send-email-vincent.guittot@linaro.org>
-In-Reply-To: <1547454274-1674-1-git-send-email-vincent.guittot@linaro.org>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Mon, 14 Jan 2019 09:28:21 +0100
-Message-ID: <CACRpkdY7c16C+NpoSXUV1QsLkQgNm3vjknOSea0p4aj-LM1xBg@mail.gmail.com>
-Subject: Re: [PATCH v2] arm64/hisilicon: fix SDcard detection
-To:     Vincent Guittot <vincent.guittot@linaro.org>
-Cc:     Xu Wei <xuwei5@hisilicon.com>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Mon, 14 Jan 2019 03:29:50 -0500
+Received: from grover.tkatk1.zaq.ne.jp (zaqdadce369.zaq.ne.jp [218.220.227.105]) (authenticated)
+        by conuserg-09.nifty.com with ESMTP id x0E8TYWL003366;
+        Mon, 14 Jan 2019 17:29:34 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-09.nifty.com x0E8TYWL003366
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1547454575;
+        bh=GBmRKDB8sT4EYoMMy3INKDBKyXzRNoRi4uVKOObqmLo=;
+        h=From:To:Cc:Subject:Date:From;
+        b=WumxlcBr8YFms4EXI20U2+WsNH4kMUQnuxZFICPSLiulCM1FzagnhUELoC9AAdf6Q
+         gxznAv+UfTXOFlp8wSiZ++X1YgryUSLrfLVWB8EqNoLFKdN2dhwORGujewh9s0c8pS
+         bxGJXTDuSfksJm84s4MHS5eKJ7p5oehcFuN7b+zbVSgkvQvWFOPS+bHI7dzFdjrxzh
+         Pb7VNESksIV7qRNX4Gt6wJxEwKKV1XsrUdd7Sl2BsJISHy6OfKHVOH56mCDj6Aa/JA
+         Omo+y+J29Jz1NoUeR0hIMm5VKcYMqSl6JIcpZ+d6YoruqVKu4rdmiqdJHYaFB7zEeD
+         hVXrw0Bj+k7rQ==
+X-Nifty-SrcIP: [218.220.227.105]
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+To:     linux-kbuild@vger.kernel.org
+Cc:     Masahiro Yamada <yamada.masahiro@socionext.com>,
+        uclinux-h8-devel@lists.sourceforge.jp,
+        Yoshinori Sato <ysato@users.sourceforge.jp>,
+        linux-kernel@vger.kernel.org,
+        Michal Marek <michal.lkml@markovi.net>
+Subject: [PATCH] kbuild: remove unused archmrproper
+Date:   Mon, 14 Jan 2019 17:29:29 +0900
+Message-Id: <1547454569-27319-1-git-send-email-yamada.masahiro@socionext.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jan 14, 2019 at 9:24 AM Vincent Guittot
-<vincent.guittot@linaro.org> wrote:
+No one uses archmrproper.
 
-> The SDcard detection of hikey960 is active low so cd-inverted is wrong.
-> Instead of adding cd-inverted, we should better set correctly cd-gpios
-> to use GPIO_ACTIVE_LOW.
->
-> Signed-off-by: Vincent Guittot <vincent.guittot@linaro.org>
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+---
 
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+ Makefile            | 4 ++--
+ arch/h8300/Makefile | 2 --
+ 2 files changed, 2 insertions(+), 4 deletions(-)
 
-Yours,
-Linus Walleij
+diff --git a/Makefile b/Makefile
+index 68898cc..a9c54e1 100644
+--- a/Makefile
++++ b/Makefile
+@@ -1360,11 +1360,11 @@ mrproper: rm-dirs  := $(wildcard $(MRPROPER_DIRS))
+ mrproper: rm-files := $(wildcard $(MRPROPER_FILES))
+ mrproper-dirs      := $(addprefix _mrproper_,scripts)
+ 
+-PHONY += $(mrproper-dirs) mrproper archmrproper
++PHONY += $(mrproper-dirs) mrproper
+ $(mrproper-dirs):
+ 	$(Q)$(MAKE) $(clean)=$(patsubst _mrproper_%,%,$@)
+ 
+-mrproper: clean archmrproper $(mrproper-dirs)
++mrproper: clean $(mrproper-dirs)
+ 	$(call cmd,rmdirs)
+ 	$(call cmd,rmfiles)
+ 
+diff --git a/arch/h8300/Makefile b/arch/h8300/Makefile
+index 4003ddc..f801f37 100644
+--- a/arch/h8300/Makefile
++++ b/arch/h8300/Makefile
+@@ -37,8 +37,6 @@ libs-y	+= arch/$(ARCH)/lib/
+ 
+ boot := arch/h8300/boot
+ 
+-archmrproper:
+-
+ archclean:
+ 	$(Q)$(MAKE) $(clean)=$(boot)
+ 
+-- 
+2.7.4
+
