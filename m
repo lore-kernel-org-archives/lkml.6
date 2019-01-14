@@ -2,404 +2,423 @@ Return-Path: <SRS0=tq6k=PW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 55A6EC43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 17:10:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F797C43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 17:11:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 08A7020659
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 17:10:36 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=android.com header.i=@android.com header.b="Tu4bJ1ta"
+	by mail.kernel.org (Postfix) with ESMTP id 46F032070B
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 17:11:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1547485899;
+	bh=26xhfANAfhy0SElrya5Q1iOqufPTFrRDrKX1VYf3cCw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=kfnP0crWcguL2nisFBVJR+fasS/qDQa+sW2+fu3VyzSpC1uOJutG9LKQcoTWMJvDK
+	 lZe1v38I0kSFgDf/V8TJBvSA1CdhWGHJOQ+Sq+JwXHaYwgdnHsEuWtzZMclm8K8IPv
+	 1ZrwZYC8+f4E/MehV/VosRpji5N4Ct3c/7hrLVus=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726826AbfANRKf (ORCPT
+        id S1726861AbfANRLi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 14 Jan 2019 12:10:35 -0500
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:36443 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726643AbfANRKe (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 Jan 2019 12:10:34 -0500
-Received: by mail-pg1-f193.google.com with SMTP id n2so9720413pgm.3
-        for <linux-kernel@vger.kernel.org>; Mon, 14 Jan 2019 09:10:34 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=android.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=ZvocJ7meRWkQbL+pJ1UQFPCDAO57SBDWHS/kM+WPoIA=;
-        b=Tu4bJ1tarOl4fke+uGh/wcuWivriQ7V8zVScsk4Ywn3qHRy1Hxw4zJ3ohieI5G+KlV
-         0O7K1B3iDavS8e6pS/CKpVPDvCbhU501xZQOgVbqR5ZhiClf5bsEV8fKlUcKwbqF2xB5
-         wBOHAjn/0luozaq2zRslTrACV1kT7lCALM6jp0JHpt83Kf8X7LDf7wwi9zErnghg11LA
-         RYSp7ixReMHUYBpdD4Xv6U+X7WS7q2M4HjBRyUxE1+H8burs4kOyfQYNfJpvPce0O6se
-         XAe/zyeDNzTt8yQJjYxZJhedXkbYxBU0PtmihCGBScBlYiLYUxCbRhRp45ltc2R9h/t/
-         LDZg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=ZvocJ7meRWkQbL+pJ1UQFPCDAO57SBDWHS/kM+WPoIA=;
-        b=AsskWt6PwUSscFsqZH+IikFS2I4fKrOg+XI7DHVuMrJ687BY/yS8coIAWyXmNCtHzC
-         2Gh5iiHpEcyTNppa+eZMOuVTr7/CiJ1RUXiBI2YzUuUYuMBRoVncxxpRH1q/niSdqkhz
-         qUeJGsy1jZwqgO+3MuFsAHxuRq/WcXeGL/0byPqe6TPHi1LrTdbVeYv6FFKk/nGQvFAv
-         P0YCE6x1iWVsIxKreJIfpWhtUGbyiNTZxvnuyEvN+IwCr0jZMXzQjJyadTU+0LD3n3NT
-         HJ2XvcIlW9+E2pXO15TklQrJ7mVrPMtcUMmekgfedr6telIzTydmErOdJ25SGH/UlIn9
-         klDQ==
-X-Gm-Message-State: AJcUukepf9tei9711gdHBYqTP5X1/adFR+mLf85BuqZHdMcfSNC1SByA
-        NCFNlUO19H346chA/7aJ/AjdLw==
-X-Google-Smtp-Source: ALg8bN5SMJfdKDMas7Cir+za5/QTYbOCJFbRwJ7B5bN6cTWWPnmLFFyfn54H/WM1mbmyy2vKZ8VS/A==
-X-Received: by 2002:a63:2ac9:: with SMTP id q192mr23773442pgq.58.1547485833759;
-        Mon, 14 Jan 2019 09:10:33 -0800 (PST)
-Received: from ava-linux2.mtv.corp.google.com ([2620:0:1000:1601:6cc0:d41d:b970:fd7])
-        by smtp.googlemail.com with ESMTPSA id q75sm1322924pfa.38.2019.01.14.09.10.32
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 14 Jan 2019 09:10:32 -0800 (PST)
-From:   Todd Kjos <tkjos@android.com>
-X-Google-Original-From: Todd Kjos <tkjos@google.com>
-To:     tkjos@google.com, gregkh@linuxfoundation.org, arve@android.com,
-        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
-        maco@google.com
-Cc:     joel@joelfernandes.org, kernel-team@android.com
-Subject: [PATCH v3] binder: create node flag to request sender's security context
-Date:   Mon, 14 Jan 2019 09:10:21 -0800
-Message-Id: <20190114171021.86171-1-tkjos@google.com>
-X-Mailer: git-send-email 2.20.1.97.g81188d93c3-goog
+        Mon, 14 Jan 2019 12:11:38 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47230 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726643AbfANRLh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 14 Jan 2019 12:11:37 -0500
+Received: from quaco.ghostprotocols.net (unknown [190.15.121.82])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8A00420659;
+        Mon, 14 Jan 2019 17:11:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1547485896;
+        bh=26xhfANAfhy0SElrya5Q1iOqufPTFrRDrKX1VYf3cCw=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=U9o7gsO6+q71drJDdwUOx7NPO36daIAKBuiwcq1lwKZQXk2dj+DXdZFKduGao0PuX
+         LzlH0Om8diLLBlKBSuhlpgoafwXA9Q5ZbLrJXjfVo9w5nV7eR5sbMsnnh10ml+RjIJ
+         +bHX1ceGrLI0s+Aa8qQVBzj4fQXv6WNeU/6ZgGnI=
+Received: by quaco.ghostprotocols.net (Postfix, from userid 1000)
+        id 122ED41AB5; Mon, 14 Jan 2019 14:11:33 -0300 (-03)
+Date:   Mon, 14 Jan 2019 14:11:33 -0300
+From:   Arnaldo Carvalho de Melo <acme@kernel.org>
+To:     Song Liu <songliubraving@fb.com>
+Cc:     linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+        peterz@infradead.org, ast@kernel.org, daniel@iogearbox.net,
+        kernel-team@fb.com, dsahern@gmail.com
+Subject: Re: [PATCH v7 perf, bpf-next 6/8] perf util: handle
+ PERF_RECORD_KSYMBOL
+Message-ID: <20190114171133.GB11922@kernel.org>
+References: <20190111001933.4153792-1-songliubraving@fb.com>
+ <20190111001933.4153792-7-songliubraving@fb.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190111001933.4153792-7-songliubraving@fb.com>
+X-Url:  http://acmel.wordpress.com
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-To allow servers to verify client identity, allow a node
-flag to be set that causes the sender's security context
-to be delivered with the transaction. The BR_TRANSACTION
-command is extended in BR_TRANSACTION_SEC_CTX to
-contain a pointer to the security context string.
+Em Thu, Jan 10, 2019 at 04:19:31PM -0800, Song Liu escreveu:
+> This patch handles PERF_RECORD_KSYMBOL in perf record/report.
+> Specifically, map and symbol are created for ksymbol register, and
+> removed for ksymbol unregister.
+> 
+> This patch also set perf_event_attr.ksymbol properly. The flag is
+> ON by default.
+> 
+> Signed-off-by: Song Liu <songliubraving@fb.com>
+> ---
+>  tools/perf/util/event.c   | 21 +++++++++++++++
+>  tools/perf/util/event.h   | 20 ++++++++++++++
+>  tools/perf/util/evsel.c   |  9 +++++++
+>  tools/perf/util/evsel.h   |  1 +
+>  tools/perf/util/machine.c | 57 +++++++++++++++++++++++++++++++++++++++
+>  tools/perf/util/machine.h |  3 +++
+>  tools/perf/util/session.c |  4 +++
+>  tools/perf/util/tool.h    |  4 ++-
+>  8 files changed, 118 insertions(+), 1 deletion(-)
+> 
+> diff --git a/tools/perf/util/event.c b/tools/perf/util/event.c
+> index 937a5a4f71cc..3c8a6a8dd260 100644
+> --- a/tools/perf/util/event.c
+> +++ b/tools/perf/util/event.c
+> @@ -24,6 +24,7 @@
+>  #include "symbol/kallsyms.h"
+>  #include "asm/bug.h"
+>  #include "stat.h"
+> +#include "session.h"
+>  
+>  #define DEFAULT_PROC_MAP_PARSE_TIMEOUT 500
+>  
+> @@ -45,6 +46,7 @@ static const char *perf_event__names[] = {
+>  	[PERF_RECORD_SWITCH]			= "SWITCH",
+>  	[PERF_RECORD_SWITCH_CPU_WIDE]		= "SWITCH_CPU_WIDE",
+>  	[PERF_RECORD_NAMESPACES]		= "NAMESPACES",
+> +	[PERF_RECORD_KSYMBOL]			= "KSYMBOL",
+>  	[PERF_RECORD_HEADER_ATTR]		= "ATTR",
+>  	[PERF_RECORD_HEADER_EVENT_TYPE]		= "EVENT_TYPE",
+>  	[PERF_RECORD_HEADER_TRACING_DATA]	= "TRACING_DATA",
+> @@ -1329,6 +1331,14 @@ int perf_event__process_switch(struct perf_tool *tool __maybe_unused,
+>  	return machine__process_switch_event(machine, event);
+>  }
+>  
+> +int perf_event__process_ksymbol(struct perf_tool *tool __maybe_unused,
+> +				union perf_event *event,
+> +				struct perf_sample *sample __maybe_unused,
+> +				struct machine *machine)
+> +{
+> +	return machine__process_ksymbol(machine, event, sample);
+> +}
+> +
+>  size_t perf_event__fprintf_mmap(union perf_event *event, FILE *fp)
+>  {
+>  	return fprintf(fp, " %d/%d: [%#" PRIx64 "(%#" PRIx64 ") @ %#" PRIx64 "]: %c %s\n",
+> @@ -1461,6 +1471,14 @@ static size_t perf_event__fprintf_lost(union perf_event *event, FILE *fp)
+>  	return fprintf(fp, " lost %" PRIu64 "\n", event->lost.lost);
+>  }
+>  
+> +size_t perf_event__fprintf_ksymbol(union perf_event *event, FILE *fp)
+> +{
+> +	return fprintf(fp, " ksymbol event with addr %lx len %u type %u flags 0x%x name %s\n",
+> +		       event->ksymbol_event.addr, event->ksymbol_event.len,
+> +		       event->ksymbol_event.ksym_type,
+> +		       event->ksymbol_event.flags, event->ksymbol_event.name);
+> +}
+> +
+>  size_t perf_event__fprintf(union perf_event *event, FILE *fp)
+>  {
+>  	size_t ret = fprintf(fp, "PERF_RECORD_%s",
+> @@ -1496,6 +1514,9 @@ size_t perf_event__fprintf(union perf_event *event, FILE *fp)
+>  	case PERF_RECORD_LOST:
+>  		ret += perf_event__fprintf_lost(event, fp);
+>  		break;
+> +	case PERF_RECORD_KSYMBOL:
+> +		ret += perf_event__fprintf_ksymbol(event, fp);
+> +		break;
+>  	default:
+>  		ret += fprintf(fp, "\n");
+>  	}
+> diff --git a/tools/perf/util/event.h b/tools/perf/util/event.h
+> index eb95f3384958..018322f2a13e 100644
+> --- a/tools/perf/util/event.h
+> +++ b/tools/perf/util/event.h
+> @@ -5,6 +5,7 @@
+>  #include <limits.h>
+>  #include <stdio.h>
+>  #include <linux/kernel.h>
+> +#include <linux/bpf.h>
+>  
+>  #include "../perf.h"
+>  #include "build-id.h"
+> @@ -84,6 +85,19 @@ struct throttle_event {
+>  	u64 stream_id;
+>  };
+>  
+> +#ifndef KSYM_NAME_LEN
+> +#define KSYM_NAME_LEN 256
+> +#endif
+> +
+> +struct ksymbol_event {
+> +	struct perf_event_header header;
+> +	u64 addr;
+> +	u32 len;
+> +	u16 ksym_type;
+> +	u16 flags;
+> +	char name[KSYM_NAME_LEN];
+> +};
+> +
+>  #define PERF_SAMPLE_MASK				\
+>  	(PERF_SAMPLE_IP | PERF_SAMPLE_TID |		\
+>  	 PERF_SAMPLE_TIME | PERF_SAMPLE_ADDR |		\
+> @@ -651,6 +665,7 @@ union perf_event {
+>  	struct stat_round_event		stat_round;
+>  	struct time_conv_event		time_conv;
+>  	struct feature_event		feat;
+> +	struct ksymbol_event		ksymbol_event;
+>  };
+>  
+>  void perf_event__print_totals(void);
+> @@ -748,6 +763,10 @@ int perf_event__process_exit(struct perf_tool *tool,
+>  			     union perf_event *event,
+>  			     struct perf_sample *sample,
+>  			     struct machine *machine);
+> +int perf_event__process_ksymbol(struct perf_tool *tool,
+> +				union perf_event *event,
+> +				struct perf_sample *sample,
+> +				struct machine *machine);
+>  int perf_tool__process_synth_event(struct perf_tool *tool,
+>  				   union perf_event *event,
+>  				   struct machine *machine,
+> @@ -811,6 +830,7 @@ size_t perf_event__fprintf_switch(union perf_event *event, FILE *fp);
+>  size_t perf_event__fprintf_thread_map(union perf_event *event, FILE *fp);
+>  size_t perf_event__fprintf_cpu_map(union perf_event *event, FILE *fp);
+>  size_t perf_event__fprintf_namespaces(union perf_event *event, FILE *fp);
+> +size_t perf_event__fprintf_ksymbol(union perf_event *event, FILE *fp);
+>  size_t perf_event__fprintf(union perf_event *event, FILE *fp);
+>  
+>  int kallsyms__get_function_start(const char *kallsyms_filename,
+> diff --git a/tools/perf/util/evsel.c b/tools/perf/util/evsel.c
+> index dbc0466db368..de34ce875648 100644
+> --- a/tools/perf/util/evsel.c
+> +++ b/tools/perf/util/evsel.c
+> @@ -1035,6 +1035,7 @@ void perf_evsel__config(struct perf_evsel *evsel, struct record_opts *opts,
+>  	attr->mmap  = track;
+>  	attr->mmap2 = track && !perf_missing_features.mmap2;
+>  	attr->comm  = track;
+> +	attr->ksymbol = track && !perf_missing_features.ksymbol;
+>  
+>  	if (opts->record_namespaces)
+>  		attr->namespaces  = track;
+> @@ -1652,6 +1653,7 @@ int perf_event_attr__fprintf(FILE *fp, struct perf_event_attr *attr,
+>  	PRINT_ATTRf(context_switch, p_unsigned);
+>  	PRINT_ATTRf(write_backward, p_unsigned);
+>  	PRINT_ATTRf(namespaces, p_unsigned);
+> +	PRINT_ATTRf(ksymbol, p_unsigned);
+>  
+>  	PRINT_ATTRn("{ wakeup_events, wakeup_watermark }", wakeup_events, p_unsigned);
+>  	PRINT_ATTRf(bp_type, p_unsigned);
+> @@ -1811,6 +1813,8 @@ int perf_evsel__open(struct perf_evsel *evsel, struct cpu_map *cpus,
+>  				     PERF_SAMPLE_BRANCH_NO_CYCLES);
+>  	if (perf_missing_features.group_read && evsel->attr.inherit)
+>  		evsel->attr.read_format &= ~(PERF_FORMAT_GROUP|PERF_FORMAT_ID);
+> +	if (perf_missing_features.ksymbol)
+> +		evsel->attr.ksymbol = 0;
+>  retry_sample_id:
+>  	if (perf_missing_features.sample_id_all)
+>  		evsel->attr.sample_id_all = 0;
+> @@ -1955,6 +1959,11 @@ int perf_evsel__open(struct perf_evsel *evsel, struct cpu_map *cpus,
+>  		perf_missing_features.exclude_guest = true;
+>  		pr_debug2("switching off exclude_guest, exclude_host\n");
+>  		goto fallback_missing_features;
+> +	} else if (!perf_missing_features.ksymbol &&
+> +		   evsel->attr.ksymbol) {
+> +		perf_missing_features.ksymbol = true;
+> +		pr_debug2("switching off ksymbol\n");
+> +		goto fallback_missing_features;
+>  	} else if (!perf_missing_features.sample_id_all) {
+>  		perf_missing_features.sample_id_all = true;
+>  		pr_debug2("switching off sample_id_all\n");
+> diff --git a/tools/perf/util/evsel.h b/tools/perf/util/evsel.h
+> index 82a289ce8b0c..4a8c3e7f4808 100644
+> --- a/tools/perf/util/evsel.h
+> +++ b/tools/perf/util/evsel.h
+> @@ -168,6 +168,7 @@ struct perf_missing_features {
+>  	bool lbr_flags;
+>  	bool write_backward;
+>  	bool group_read;
+> +	bool ksymbol;
+>  };
+>  
+>  extern struct perf_missing_features perf_missing_features;
+> diff --git a/tools/perf/util/machine.c b/tools/perf/util/machine.c
+> index 6fcb3bce0442..1734ca027661 100644
+> --- a/tools/perf/util/machine.c
+> +++ b/tools/perf/util/machine.c
+> @@ -681,6 +681,61 @@ int machine__process_switch_event(struct machine *machine __maybe_unused,
+>  	return 0;
+>  }
+>  
+> +static int machine__process_ksymbol_register(
+> +	struct machine *machine,
+> +	union perf_event *event,
+> +	struct perf_sample *sample __maybe_unused)
+> +{
+> +	struct symbol *sym;
+> +	struct map *map;
+> +
+> +	map = map_groups__find(&machine->kmaps, event->ksymbol_event.addr);
+> +	if (!map) {
+> +		map = dso__new_map("bpf_prog");
+> +		if (!map)
+> +			return -ENOMEM;
+> +
+> +		map->start = event->ksymbol_event.addr;
+> +		map->pgoff = map->start;
+> +		map->end = map->start + event->ksymbol_event.len;
+> +		map_groups__insert(&machine->kmaps, map);
+> +	}
+> +
+> +	sym = symbol__new(event->ksymbol_event.addr, event->ksymbol_event.len,
+> +			  0, 0, event->ksymbol_event.name);
+> +	if (!sym)
+> +		return -ENOMEM;
+> +	dso__insert_symbol(map->dso, sym);
+> +	return 0;
+> +}
+> +
+> +static int machine__process_ksymbol_unregister(
+> +	struct machine *machine,
+> +	union perf_event *event,
+> +	struct perf_sample *sample __maybe_unused)
+> +{
+> +	struct map *map;
+> +
+> +	map = map_groups__find(&machine->kmaps, event->ksymbol_event.addr);
+> +	if (map)
+> +		map_groups__remove(&machine->kmaps, map);
+> +
+> +	return 0;
+> +}
+> +
+> +int machine__process_ksymbol(struct machine *machine __maybe_unused,
+> +			     union perf_event *event,
+> +			     struct perf_sample *sample)
+> +{
+> +	if (dump_trace)
+> +		perf_event__fprintf_ksymbol(event, stderr);
 
-Signed-off-by: Todd Kjos <tkjos@google.com>
----
-v2: fix 32-bit build warning
-v3: fix smatch warning on unitialized struct element
+This should be stdout, otherwise we get garbled output from 'perf report
+-D', that is what sets dump_trace to true.
 
- drivers/android/binder.c            | 106 ++++++++++++++++++++++------
- include/uapi/linux/android/binder.h |  19 +++++
- 2 files changed, 102 insertions(+), 23 deletions(-)
+Ditto for the machine__process_bpf_event case, i.e. this patch, each
+hunk applied to the respective patch introducing the handling of those
+events:
 
-diff --git a/drivers/android/binder.c b/drivers/android/binder.c
-index cdfc87629efb8..5f6ef5e63b91e 100644
---- a/drivers/android/binder.c
-+++ b/drivers/android/binder.c
-@@ -329,6 +329,8 @@ struct binder_error {
-  *                        (invariant after initialized)
-  * @min_priority:         minimum scheduling priority
-  *                        (invariant after initialized)
-+ * @txn_security_ctx:     require sender's security context
-+ *                        (invariant after initialized)
-  * @async_todo:           list of async work items
-  *                        (protected by @proc->inner_lock)
-  *
-@@ -365,6 +367,7 @@ struct binder_node {
- 		 * invariant after initialization
- 		 */
- 		u8 accept_fds:1;
-+		u8 txn_security_ctx:1;
- 		u8 min_priority;
- 	};
- 	bool has_async_transaction;
-@@ -615,6 +618,7 @@ struct binder_transaction {
- 	long	saved_priority;
- 	kuid_t	sender_euid;
- 	struct list_head fd_fixups;
-+	binder_uintptr_t security_ctx;
- 	/**
- 	 * @lock:  protects @from, @to_proc, and @to_thread
- 	 *
-@@ -1152,6 +1156,7 @@ static struct binder_node *binder_init_node_ilocked(
- 	node->work.type = BINDER_WORK_NODE;
- 	node->min_priority = flags & FLAT_BINDER_FLAG_PRIORITY_MASK;
- 	node->accept_fds = !!(flags & FLAT_BINDER_FLAG_ACCEPTS_FDS);
-+	node->txn_security_ctx = !!(flags & FLAT_BINDER_FLAG_TXN_SECURITY_CTX);
- 	spin_lock_init(&node->lock);
- 	INIT_LIST_HEAD(&node->work.entry);
- 	INIT_LIST_HEAD(&node->async_todo);
-@@ -2778,6 +2783,8 @@ static void binder_transaction(struct binder_proc *proc,
- 	binder_size_t last_fixup_min_off = 0;
- 	struct binder_context *context = proc->context;
- 	int t_debug_id = atomic_inc_return(&binder_last_id);
-+	char *secctx = NULL;
-+	u32 secctx_sz = 0;
- 
- 	e = binder_transaction_log_add(&binder_transaction_log);
- 	e->debug_id = t_debug_id;
-@@ -3020,6 +3027,20 @@ static void binder_transaction(struct binder_proc *proc,
- 	t->flags = tr->flags;
- 	t->priority = task_nice(current);
- 
-+	if (target_node && target_node->txn_security_ctx) {
-+		u32 secid;
-+
-+		security_task_getsecid(proc->tsk, &secid);
-+		ret = security_secid_to_secctx(secid, &secctx, &secctx_sz);
-+		if (ret) {
-+			return_error = BR_FAILED_REPLY;
-+			return_error_param = ret;
-+			return_error_line = __LINE__;
-+			goto err_get_secctx_failed;
-+		}
-+		extra_buffers_size += ALIGN(secctx_sz, sizeof(u64));
-+	}
-+
- 	trace_binder_transaction(reply, t, target_node);
- 
- 	t->buffer = binder_alloc_new_buf(&target_proc->alloc, tr->data_size,
-@@ -3036,6 +3057,19 @@ static void binder_transaction(struct binder_proc *proc,
- 		t->buffer = NULL;
- 		goto err_binder_alloc_buf_failed;
- 	}
-+	if (secctx) {
-+		size_t buf_offset = ALIGN(tr->data_size, sizeof(void *)) +
-+				    ALIGN(tr->offsets_size, sizeof(void *)) +
-+				    ALIGN(extra_buffers_size, sizeof(void *)) -
-+				    ALIGN(secctx_sz, sizeof(u64));
-+		char *kptr = t->buffer->data + buf_offset;
-+
-+		t->security_ctx = (uintptr_t)kptr +
-+		    binder_alloc_get_user_buffer_offset(&target_proc->alloc);
-+		memcpy(kptr, secctx, secctx_sz);
-+		security_release_secctx(secctx, secctx_sz);
-+		secctx = NULL;
-+	}
- 	t->buffer->debug_id = t->debug_id;
- 	t->buffer->transaction = t;
- 	t->buffer->target_node = target_node;
-@@ -3305,6 +3339,9 @@ static void binder_transaction(struct binder_proc *proc,
- 	t->buffer->transaction = NULL;
- 	binder_alloc_free_buf(&target_proc->alloc, t->buffer);
- err_binder_alloc_buf_failed:
-+	if (secctx)
-+		security_release_secctx(secctx, secctx_sz);
-+err_get_secctx_failed:
- 	kfree(tcomplete);
- 	binder_stats_deleted(BINDER_STAT_TRANSACTION_COMPLETE);
- err_alloc_tcomplete_failed:
-@@ -4036,11 +4073,13 @@ static int binder_thread_read(struct binder_proc *proc,
- 
- 	while (1) {
- 		uint32_t cmd;
--		struct binder_transaction_data tr;
-+		struct binder_transaction_data_secctx tr;
-+		struct binder_transaction_data *trd = &tr.transaction_data;
- 		struct binder_work *w = NULL;
- 		struct list_head *list = NULL;
- 		struct binder_transaction *t = NULL;
- 		struct binder_thread *t_from;
-+		size_t trsize = sizeof(*trd);
- 
- 		binder_inner_proc_lock(proc);
- 		if (!binder_worklist_empty_ilocked(&thread->todo))
-@@ -4240,8 +4279,8 @@ static int binder_thread_read(struct binder_proc *proc,
- 		if (t->buffer->target_node) {
- 			struct binder_node *target_node = t->buffer->target_node;
- 
--			tr.target.ptr = target_node->ptr;
--			tr.cookie =  target_node->cookie;
-+			trd->target.ptr = target_node->ptr;
-+			trd->cookie =  target_node->cookie;
- 			t->saved_priority = task_nice(current);
- 			if (t->priority < target_node->min_priority &&
- 			    !(t->flags & TF_ONE_WAY))
-@@ -4251,22 +4290,23 @@ static int binder_thread_read(struct binder_proc *proc,
- 				binder_set_nice(target_node->min_priority);
- 			cmd = BR_TRANSACTION;
- 		} else {
--			tr.target.ptr = 0;
--			tr.cookie = 0;
-+			trd->target.ptr = 0;
-+			trd->cookie = 0;
- 			cmd = BR_REPLY;
- 		}
--		tr.code = t->code;
--		tr.flags = t->flags;
--		tr.sender_euid = from_kuid(current_user_ns(), t->sender_euid);
-+		trd->code = t->code;
-+		trd->flags = t->flags;
-+		trd->sender_euid = from_kuid(current_user_ns(), t->sender_euid);
- 
- 		t_from = binder_get_txn_from(t);
- 		if (t_from) {
- 			struct task_struct *sender = t_from->proc->tsk;
- 
--			tr.sender_pid = task_tgid_nr_ns(sender,
--							task_active_pid_ns(current));
-+			trd->sender_pid =
-+				task_tgid_nr_ns(sender,
-+						task_active_pid_ns(current));
- 		} else {
--			tr.sender_pid = 0;
-+			trd->sender_pid = 0;
- 		}
- 
- 		ret = binder_apply_fd_fixups(t);
-@@ -4297,15 +4337,20 @@ static int binder_thread_read(struct binder_proc *proc,
- 			}
- 			continue;
- 		}
--		tr.data_size = t->buffer->data_size;
--		tr.offsets_size = t->buffer->offsets_size;
--		tr.data.ptr.buffer = (binder_uintptr_t)
-+		trd->data_size = t->buffer->data_size;
-+		trd->offsets_size = t->buffer->offsets_size;
-+		trd->data.ptr.buffer = (binder_uintptr_t)
- 			((uintptr_t)t->buffer->data +
- 			binder_alloc_get_user_buffer_offset(&proc->alloc));
--		tr.data.ptr.offsets = tr.data.ptr.buffer +
-+		trd->data.ptr.offsets = trd->data.ptr.buffer +
- 					ALIGN(t->buffer->data_size,
- 					    sizeof(void *));
- 
-+		tr.secctx = t->security_ctx;
-+		if (t->security_ctx) {
-+			cmd = BR_TRANSACTION_SEC_CTX;
-+			trsize = sizeof(tr);
-+		}
- 		if (put_user(cmd, (uint32_t __user *)ptr)) {
- 			if (t_from)
- 				binder_thread_dec_tmpref(t_from);
-@@ -4316,7 +4361,7 @@ static int binder_thread_read(struct binder_proc *proc,
- 			return -EFAULT;
- 		}
- 		ptr += sizeof(uint32_t);
--		if (copy_to_user(ptr, &tr, sizeof(tr))) {
-+		if (copy_to_user(ptr, &tr, trsize)) {
- 			if (t_from)
- 				binder_thread_dec_tmpref(t_from);
- 
-@@ -4325,7 +4370,7 @@ static int binder_thread_read(struct binder_proc *proc,
- 
- 			return -EFAULT;
- 		}
--		ptr += sizeof(tr);
-+		ptr += trsize;
- 
- 		trace_binder_transaction_received(t);
- 		binder_stat_br(proc, thread, cmd);
-@@ -4333,16 +4378,18 @@ static int binder_thread_read(struct binder_proc *proc,
- 			     "%d:%d %s %d %d:%d, cmd %d size %zd-%zd ptr %016llx-%016llx\n",
- 			     proc->pid, thread->pid,
- 			     (cmd == BR_TRANSACTION) ? "BR_TRANSACTION" :
--			     "BR_REPLY",
-+				(cmd == BR_TRANSACTION_SEC_CTX) ?
-+				     "BR_TRANSACTION_SEC_CTX" : "BR_REPLY",
- 			     t->debug_id, t_from ? t_from->proc->pid : 0,
- 			     t_from ? t_from->pid : 0, cmd,
- 			     t->buffer->data_size, t->buffer->offsets_size,
--			     (u64)tr.data.ptr.buffer, (u64)tr.data.ptr.offsets);
-+			     (u64)trd->data.ptr.buffer,
-+			     (u64)trd->data.ptr.offsets);
- 
- 		if (t_from)
- 			binder_thread_dec_tmpref(t_from);
- 		t->buffer->allow_user_free = 1;
--		if (cmd == BR_TRANSACTION && !(t->flags & TF_ONE_WAY)) {
-+		if (cmd != BR_REPLY && !(t->flags & TF_ONE_WAY)) {
- 			binder_inner_proc_lock(thread->proc);
- 			t->to_parent = thread->transaction_stack;
- 			t->to_thread = thread;
-@@ -4690,7 +4737,8 @@ static int binder_ioctl_write_read(struct file *filp,
- 	return ret;
+diff --git a/tools/perf/util/bpf-event.c b/tools/perf/util/bpf-event.c
+index ee60c8b1e636..b06cd1789f1f 100644
+--- a/tools/perf/util/bpf-event.c
++++ b/tools/perf/util/bpf-event.c
+@@ -24,7 +24,7 @@ int machine__process_bpf_event(struct machine *machine __maybe_unused,
+ 			       struct perf_sample *sample __maybe_unused)
+ {
+ 	if (dump_trace)
+-		perf_event__fprintf_bpf_event(event, stderr);
++		perf_event__fprintf_bpf_event(event, stdout);
+ 	return 0;
  }
  
--static int binder_ioctl_set_ctx_mgr(struct file *filp)
-+static int binder_ioctl_set_ctx_mgr(struct file *filp,
-+				    struct flat_binder_object *fbo)
+diff --git a/tools/perf/util/machine.c b/tools/perf/util/machine.c
+index 292992d7b504..34bd8018e45a 100644
+--- a/tools/perf/util/machine.c
++++ b/tools/perf/util/machine.c
+@@ -729,7 +729,7 @@ int machine__process_ksymbol(struct machine *machine __maybe_unused,
+ 			     struct perf_sample *sample)
  {
- 	int ret = 0;
- 	struct binder_proc *proc = filp->private_data;
-@@ -4719,7 +4767,7 @@ static int binder_ioctl_set_ctx_mgr(struct file *filp)
- 	} else {
- 		context->binder_context_mgr_uid = curr_euid;
- 	}
--	new_node = binder_new_node(proc, NULL);
-+	new_node = binder_new_node(proc, fbo);
- 	if (!new_node) {
- 		ret = -ENOMEM;
- 		goto out;
-@@ -4842,8 +4890,20 @@ static long binder_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
- 		binder_inner_proc_unlock(proc);
- 		break;
- 	}
-+	case BINDER_SET_CONTEXT_MGR_EXT: {
-+		struct flat_binder_object fbo;
-+
-+		if (copy_from_user(&fbo, ubuf, sizeof(fbo))) {
-+			ret = -EINVAL;
-+			goto err;
-+		}
-+		ret = binder_ioctl_set_ctx_mgr(filp, &fbo);
-+		if (ret)
-+			goto err;
-+		break;
-+	}
- 	case BINDER_SET_CONTEXT_MGR:
--		ret = binder_ioctl_set_ctx_mgr(filp);
-+		ret = binder_ioctl_set_ctx_mgr(filp, NULL);
- 		if (ret)
- 			goto err;
- 		break;
-diff --git a/include/uapi/linux/android/binder.h b/include/uapi/linux/android/binder.h
-index b9ba520f7e4bb..2832134e53971 100644
---- a/include/uapi/linux/android/binder.h
-+++ b/include/uapi/linux/android/binder.h
-@@ -41,6 +41,14 @@ enum {
- enum {
- 	FLAT_BINDER_FLAG_PRIORITY_MASK = 0xff,
- 	FLAT_BINDER_FLAG_ACCEPTS_FDS = 0x100,
-+
-+	/**
-+	 * @FLAT_BINDER_FLAG_TXN_SECURITY_CTX: request security contexts
-+	 *
-+	 * Only when set, causes senders to include their security
-+	 * context
-+	 */
-+	FLAT_BINDER_FLAG_TXN_SECURITY_CTX = 0x1000,
- };
+ 	if (dump_trace)
+-		perf_event__fprintf_ksymbol(event, stderr);
++		perf_event__fprintf_ksymbol(event, stdout);
  
- #ifdef BINDER_IPC_32BIT
-@@ -218,6 +226,7 @@ struct binder_node_info_for_ref {
- #define BINDER_VERSION			_IOWR('b', 9, struct binder_version)
- #define BINDER_GET_NODE_DEBUG_INFO	_IOWR('b', 11, struct binder_node_debug_info)
- #define BINDER_GET_NODE_INFO_FOR_REF	_IOWR('b', 12, struct binder_node_info_for_ref)
-+#define BINDER_SET_CONTEXT_MGR_EXT	_IOW('b', 13, struct flat_binder_object)
- 
- /*
-  * NOTE: Two special error codes you should check for when calling
-@@ -276,6 +285,11 @@ struct binder_transaction_data {
- 	} data;
- };
- 
-+struct binder_transaction_data_secctx {
-+	struct binder_transaction_data transaction_data;
-+	binder_uintptr_t secctx;
-+};
-+
- struct binder_transaction_data_sg {
- 	struct binder_transaction_data transaction_data;
- 	binder_size_t buffers_size;
-@@ -311,6 +325,11 @@ enum binder_driver_return_protocol {
- 	BR_OK = _IO('r', 1),
- 	/* No parameters! */
- 
-+	BR_TRANSACTION_SEC_CTX = _IOR('r', 2,
-+				      struct binder_transaction_data_secctx),
-+	/*
-+	 * binder_transaction_data_secctx: the received command.
-+	 */
- 	BR_TRANSACTION = _IOR('r', 2, struct binder_transaction_data),
- 	BR_REPLY = _IOR('r', 3, struct binder_transaction_data),
- 	/*
--- 
-2.20.1.97.g81188d93c3-goog
+ 	if (event->ksymbol_event.flags & PERF_RECORD_KSYMBOL_FLAGS_UNREGISTER)
+ 		return machine__process_ksymbol_unregister(machine, event,
 
+> +
+> +	if (event->ksymbol_event.flags & PERF_RECORD_KSYMBOL_FLAGS_UNREGISTER)
+> +		return machine__process_ksymbol_unregister(machine, event,
+> +							   sample);
+> +	return machine__process_ksymbol_register(machine, event, sample);
+> +}
+> +
+>  static void dso__adjust_kmod_long_name(struct dso *dso, const char *filename)
+>  {
+>  	const char *dup_filename;
+> @@ -1812,6 +1867,8 @@ int machine__process_event(struct machine *machine, union perf_event *event,
+>  	case PERF_RECORD_SWITCH:
+>  	case PERF_RECORD_SWITCH_CPU_WIDE:
+>  		ret = machine__process_switch_event(machine, event); break;
+> +	case PERF_RECORD_KSYMBOL:
+> +		ret = machine__process_ksymbol(machine, event, sample); break;
+>  	default:
+>  		ret = -1;
+>  		break;
+> diff --git a/tools/perf/util/machine.h b/tools/perf/util/machine.h
+> index a5d1da60f751..4ecd380ce1b4 100644
+> --- a/tools/perf/util/machine.h
+> +++ b/tools/perf/util/machine.h
+> @@ -130,6 +130,9 @@ int machine__process_mmap_event(struct machine *machine, union perf_event *event
+>  				struct perf_sample *sample);
+>  int machine__process_mmap2_event(struct machine *machine, union perf_event *event,
+>  				 struct perf_sample *sample);
+> +int machine__process_ksymbol(struct machine *machine,
+> +			     union perf_event *event,
+> +			     struct perf_sample *sample);
+>  int machine__process_event(struct machine *machine, union perf_event *event,
+>  				struct perf_sample *sample);
+>  
+> diff --git a/tools/perf/util/session.c b/tools/perf/util/session.c
+> index 78a067777144..a9c98c3914ed 100644
+> --- a/tools/perf/util/session.c
+> +++ b/tools/perf/util/session.c
+> @@ -376,6 +376,8 @@ void perf_tool__fill_defaults(struct perf_tool *tool)
+>  		tool->itrace_start = perf_event__process_itrace_start;
+>  	if (tool->context_switch == NULL)
+>  		tool->context_switch = perf_event__process_switch;
+> +	if (tool->ksymbol == NULL)
+> +		tool->ksymbol = perf_event__process_ksymbol;
+>  	if (tool->read == NULL)
+>  		tool->read = process_event_sample_stub;
+>  	if (tool->throttle == NULL)
+> @@ -1305,6 +1307,8 @@ static int machines__deliver_event(struct machines *machines,
+>  	case PERF_RECORD_SWITCH:
+>  	case PERF_RECORD_SWITCH_CPU_WIDE:
+>  		return tool->context_switch(tool, event, sample, machine);
+> +	case PERF_RECORD_KSYMBOL:
+> +		return tool->ksymbol(tool, event, sample, machine);
+>  	default:
+>  		++evlist->stats.nr_unknown_events;
+>  		return -1;
+> diff --git a/tools/perf/util/tool.h b/tools/perf/util/tool.h
+> index 56e4ca54020a..9c81ca2f3cf7 100644
+> --- a/tools/perf/util/tool.h
+> +++ b/tools/perf/util/tool.h
+> @@ -53,7 +53,9 @@ struct perf_tool {
+>  			itrace_start,
+>  			context_switch,
+>  			throttle,
+> -			unthrottle;
+> +			unthrottle,
+> +			ksymbol;
+> +
+>  	event_attr_op	attr;
+>  	event_attr_op	event_update;
+>  	event_op2	tracing_data;
+> -- 
+> 2.17.1
+
+-- 
+
+- Arnaldo
