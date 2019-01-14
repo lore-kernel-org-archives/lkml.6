@@ -2,126 +2,102 @@ Return-Path: <SRS0=tq6k=PW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 15FF4C43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 20:18:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E5F4EC43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 20:18:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DA4F2206B7
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 20:18:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B63592064C
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 20:18:09 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hXcKbxBY"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Tl7N9JoK"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726940AbfANUR6 (ORCPT
+        id S1726986AbfANUSI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 14 Jan 2019 15:17:58 -0500
-Received: from mail-io1-f65.google.com ([209.85.166.65]:44396 "EHLO
-        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726774AbfANUR5 (ORCPT
+        Mon, 14 Jan 2019 15:18:08 -0500
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:43510 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726875AbfANUSH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 Jan 2019 15:17:57 -0500
-Received: by mail-io1-f65.google.com with SMTP id r200so236688iod.11;
-        Mon, 14 Jan 2019 12:17:57 -0800 (PST)
+        Mon, 14 Jan 2019 15:18:07 -0500
+Received: by mail-wr1-f68.google.com with SMTP id r10so349416wrs.10;
+        Mon, 14 Jan 2019 12:18:06 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-transfer-encoding:content-language;
-        bh=F29jFLdAuPQ8chk11jDxup2570edwRGoQbpMM9uafmA=;
-        b=hXcKbxBYn2I0epxMdLz7AeHF9MBW4wP4rWWlGoq8cwqolwSVjxQCjbhPiOBUBA3d/S
-         S6/Gj/CTNyzlB1chcG64rpVtu49vk89vOwGaF8P+Iwl8szCJRIhhc1m39NRglC1uCma5
-         9VNMyETtRGfnk/Ht0ps25teaOZAcpIhMwJ0eYv9Ew2I1pAx62tqNpuAPZa+NtwSGAK9t
-         gapSaUSR9uP1tK3A/PgJF3JrARXw4SSnFqxp5/Scx2bqNa8U33pgfMgRKxN738nO5UDY
-         +sg6wsYCk5ZlmT2Pym2ZB98/6T1jpYT3jfWNtPHLYFE2Hn5RmQfmT48QtdEgXmRiLdr8
-         XT4A==
+        h=sender:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=EnUk7Vfdk/xAtPXiFSxFZAr/2Ww8OZUZk/tQppj/ZsE=;
+        b=Tl7N9JoKz9qxCeOiMJ7uR/aL4XfuGYqrDEc5HxJ79R8D7ufHXmLqoKW/kcwpH9fsS+
+         8+btMry+Gg2yPcbzfAX4j+OzToyL+RRgiObEQDgMtZqfrB2Ysbujy1+Ofzkr/Mshvhis
+         hA88n/weKQrRbS1bDlw39JKb9qFhIHKcR6yCaoWfPt61PVQubye2n/ny+HxN6TCbPW9k
+         3iFPGC3KMN49cmJwkiqGfbiuQwJNa9T7ggCcTmaP9CTDhzWhbc9BATPBzOAxVvWX6ZRb
+         2hkVya3McFJeZRGweRAP/jWOAyDAp7EEo1QELIq54ox//DKITmllLG+/ui6RC1wpr4NT
+         kXgA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-transfer-encoding
-         :content-language;
-        bh=F29jFLdAuPQ8chk11jDxup2570edwRGoQbpMM9uafmA=;
-        b=GQCuYy+rCdUxO1srOjsd72wGI8EoMtVxUK1dNGi0EDIIlejX31VkTVIZtySj0upi7A
-         n5LmmFQJmcIjrhAo7JnJNiYzDyraCgn0oAtOvFzNl8M37vQ5fn719mzt3F7z90NtrwxH
-         CYiFlFMEEW8FPE9+i0eFFfz6dIST3904r/Icve71dcUSheTsNW5DTJmq/rfXh8s5AiPT
-         OkJGQGIqWxnydXySgUCB/B+NBXfMtJyl0jZXMKxzLu57pydoE8PE0QETnW1r+1fpYEdb
-         zv3OTAH/imB781cVq2SlVecqOR721hmqwNtJLOTdru5xAmuTRvp3TY3RvJ9QGaeUIFsH
-         6tOw==
-X-Gm-Message-State: AJcUukcoa2Lgw2596U3ef6qfb+tegW1EK7973gJSoZZrVUyKeYBMIr7e
-        IH4+wYCqCARQyD3AONVwjN0=
-X-Google-Smtp-Source: ALg8bN7PXz+XCuBZxtjgoPKKZQJsqZW+zuoADBpn0tccsZaVe0zONo2EXILZTBr6sMQdcyjkP3O6Iw==
-X-Received: by 2002:a5e:c00c:: with SMTP id u12mr157226iol.152.1547497076534;
-        Mon, 14 Jan 2019 12:17:56 -0800 (PST)
-Received: from [192.168.1.133] ([67.218.223.154])
-        by smtp.gmail.com with ESMTPSA id g21sm662855itg.44.2019.01.14.12.17.55
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 14 Jan 2019 12:17:55 -0800 (PST)
-Subject: Re: [PATCH v2 2/2] dt-bindings: iio: chemical: Add bindings for
- bme680
-To:     Jonathan Cameron <jic23@kernel.org>
-Cc:     linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-iio@vger.kernel.org, himanshujha199640@gmail.com,
-        mark.rutland@arm.com, robh+dt@kernel.org, pmeerw@pmeerw.net,
-        lars@metafoo.de, knaack.h@gmx.de
-References: <20190111205359.14158-1-sebastien.bourdelin@gmail.com>
- <20190111205359.14158-2-sebastien.bourdelin@gmail.com>
- <20190112182837.4cc42743@archlinux>
-From:   sebastien bourdelin <sebastien.bourdelin@gmail.com>
-Message-ID: <4768d945-61aa-a8ab-3e41-68b4f861cc69@gmail.com>
-Date:   Mon, 14 Jan 2019 15:17:10 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.3
+        h=x-gm-message-state:sender:from:to:cc:subject:date:message-id
+         :mime-version:content-transfer-encoding;
+        bh=EnUk7Vfdk/xAtPXiFSxFZAr/2Ww8OZUZk/tQppj/ZsE=;
+        b=GbqNjflYs2+0FH/+ajZnie28QnwuexBPtRXZ52Q9SfigA9NlkC3nKgwEzElbhSDLY1
+         NcS91fYxHHFg9JlgpEpDOr2QSBMhtgry/Q6JWQH8Nge7GVEyC1qGYZQT7G97C0dgNpx2
+         gbqO8LVrsX6f2AaxnRQ8d2MPu6PIW0+o7xOSZ+e1c6HgiFRWzkknjDDWLsah3dSDYQjy
+         z9wkBVMyZ1/TF4wJoG62Efglcvg87cFOzcqWm3WKNVubYMgCEOpOTi1mHGKAGZVd3nrO
+         DjHLO7afIAnxE2WgJbONVla/dsR2nFlx6QdLA6uExgRA8tmFFajUW4EEKjg7jr6WT4fE
+         +UHQ==
+X-Gm-Message-State: AJcUukfmvwaKbLR+WfjpoifVw149oPUJwUWLByv74DyECCNqzam/HqzG
+        FnxIJei0fzU8WesSmBWH/yo=
+X-Google-Smtp-Source: ALg8bN5NR290pUaF4gsZNeBkaXdp3qB0bfUDKPnKofybnSIAipjrsOmSpRJnzJ/UU93s57Rxc92XWw==
+X-Received: by 2002:a5d:56d2:: with SMTP id m18mr166855wrw.113.1547497085317;
+        Mon, 14 Jan 2019 12:18:05 -0800 (PST)
+Received: from macbookpro.malat.net (bru31-1-78-225-224-134.fbx.proxad.net. [78.225.224.134])
+        by smtp.gmail.com with ESMTPSA id c12sm70875285wrs.82.2019.01.14.12.18.04
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 14 Jan 2019 12:18:04 -0800 (PST)
+Received: by macbookpro.malat.net (Postfix, from userid 1000)
+        id 4C11511422AD; Mon, 14 Jan 2019 21:18:03 +0100 (CET)
+From:   Mathieu Malaterre <malat@debian.org>
+To:     David Howells <dhowells@redhat.com>
+Cc:     Mathieu Malaterre <malat@debian.org>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>, keyrings@vger.kernel.org,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 1/3] security: keys: annotate implicit fall through
+Date:   Mon, 14 Jan 2019 21:17:23 +0100
+Message-Id: <20190114201725.13289-1-malat@debian.org>
+X-Mailer: git-send-email 2.19.2
 MIME-Version: 1.0
-In-Reply-To: <20190112182837.4cc42743@archlinux>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+There is a plan to build the kernel with -Wimplicit-fallthrough and
+this place in the code produced a warning (W=1).
 
-On 1/12/19 1:28 PM, Jonathan Cameron wrote:
-> On Fri, 11 Jan 2019 15:53:59 -0500
-> Sebastien Bourdelin <sebastien.bourdelin@gmail.com> wrote:
->
->> BME680 is a pressure/temperature/humidity/voc sensor.
->>
->> Signed-off-by: Sebastien Bourdelin <sebastien.bourdelin@gmail.com>
-> Hmm. We could add the VDD and VDIO regulators perhaps.
-> Driver assumes they are on currently but we'll get a board where control
-> is needed sooner or later.  I'm not that fussed about this though.
+This commit remove the following warning:
 
-If that's fine with you, i prefer to leave it as it is right now as i 
-don't feel
+  security/keys/keyring.c:248:10: warning: this statement may fall through [-Wimplicit-fallthrough=]
 
-confident enough to correctly explain it in the Documentation.
+Signed-off-by: Mathieu Malaterre <malat@debian.org>
+---
+ security/keys/keyring.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-But if you have more input, you are more then welcome!
+diff --git a/security/keys/keyring.c b/security/keys/keyring.c
+index eadebb92986a..b1ff07d9ce37 100644
+--- a/security/keys/keyring.c
++++ b/security/keys/keyring.c
+@@ -246,6 +246,7 @@ static unsigned long keyring_get_key_chunk(const void *data, int level)
+ 				    (ASSOC_ARRAY_KEY_CHUNK_SIZE - 8));
+ 		n--;
+ 		offset = 1;
++		/* fall through */
+ 	default:
+ 		offset += sizeof(chunk) - 1;
+ 		offset += (level - 3) * sizeof(chunk);
+-- 
+2.19.2
 
-> Jonathan
->
->> ---
->>   .../devicetree/bindings/iio/chemical/bme680.txt       | 11 +++++++++++
->>   1 file changed, 11 insertions(+)
->>   create mode 100644 Documentation/devicetree/bindings/iio/chemical/bme680.txt
->>
->> diff --git a/Documentation/devicetree/bindings/iio/chemical/bme680.txt b/Documentation/devicetree/bindings/iio/chemical/bme680.txt
->> new file mode 100644
->> index 000000000000..885a1b918340
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/iio/chemical/bme680.txt
->> @@ -0,0 +1,11 @@
->> +Bosch Sensortec BME680 pressure/temperature/humidity/voc sensors
->> +
->> +Required properties:
->> +- compatible: must be "bosch,bme680"
->> +
->> +Example:
->> +
->> +bme680@77 {
->> +          compatible = "bosch,bme680";
->> +          reg = <0x77>;
->> +};
