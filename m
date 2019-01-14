@@ -2,92 +2,120 @@ Return-Path: <SRS0=tq6k=PW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SIGNED_OFF_BY,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 36C76C43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 07:20:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B25FBC43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 07:21:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EF05120659
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 07:20:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8128720659
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 07:21:14 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="cqmFd0L/"
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=dell.com header.i=@dell.com header.b="n7+Hxdpr"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726640AbfANHUm (ORCPT
+        id S1726647AbfANHVM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 14 Jan 2019 02:20:42 -0500
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:52577 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726067AbfANHUm (ORCPT
+        Mon, 14 Jan 2019 02:21:12 -0500
+Received: from esa4.dell-outbound.iphmx.com ([68.232.149.214]:4714 "EHLO
+        esa4.dell-outbound.iphmx.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726067AbfANHVM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 Jan 2019 02:20:42 -0500
-Received: by mail-wm1-f67.google.com with SMTP id m1so7756934wml.2
-        for <linux-kernel@vger.kernel.org>; Sun, 13 Jan 2019 23:20:41 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=uaEFQl7o7PIZISfh6e19MxEPCuPZawfHSjFd0EO2Ym8=;
-        b=cqmFd0L/W1Xdg7iTljRNGxIYnqYJbVQ2yoM9CJB7HxImPqwHrTGaiIQVZvR0ap/Rm4
-         IPng4jrz+Lc5B4Dl105FdTXHiSDT7xf7emujEYcuOEnw/nguWn6u/kn9EGC1k8bVHJRF
-         0eJuo8gFiXfr+1yFo0oEf9qASRban0kZCZ13k=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=uaEFQl7o7PIZISfh6e19MxEPCuPZawfHSjFd0EO2Ym8=;
-        b=Fc/y6t0U0VsyqebTiT0bBeYVRdvDpWQWkzOVWaqhmL+YvBUD4RX/oeRlcxm404tpB0
-         UCQkfvFNWA1m/gFz3rZiTlHVnnJ1Eiv4VG3ZJ4o7N4HH2BFl8xnLlVbVPTA+dKf2apQq
-         WXTeOAEQwPYPE9NsAh3oowJddXmWaZL05YT2tSdYv6eUagretZskHvr4Gi09TdFwJHCi
-         yGXubKZ4jcHEgO3RRbsdUycerpSuuRwwCtJQ0baGEr2HUJhZi6Yok/VGdsvwsPk0C5Fs
-         bZm5gHDSaTcUUeBL4SHY0VpBQKa3ueRs1cYiZz+pCpifT/eB8ynPJhoHLhGLlVUogRap
-         ZHeA==
-X-Gm-Message-State: AJcUukfO8lkBJJkQU0gWSImgfcoFi0lNki0IJzt5J3g/ZcfKw3cxRyxS
-        27D4H9CMCuaBDLreR4rrbE4+ReKrxJg=
-X-Google-Smtp-Source: ALg8bN43Ge4GpBzAatPGBywEzj3oWGM8gw7pW/0UFSTydLIu09OH5hWuqvL434yUYZLRe3rdk8/HZA==
-X-Received: by 2002:a7b:c08f:: with SMTP id r15mr10783660wmh.118.1547450440288;
-        Sun, 13 Jan 2019 23:20:40 -0800 (PST)
-Received: from dell ([2.27.35.240])
-        by smtp.gmail.com with ESMTPSA id h131sm39215260wmd.17.2019.01.13.23.20.38
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Sun, 13 Jan 2019 23:20:39 -0800 (PST)
-Date:   Mon, 14 Jan 2019 07:20:40 +0000
-From:   Lee Jones <lee.jones@linaro.org>
-To:     Pavel Machek <pavel@ucw.cz>
-Cc:     torvalds@linux-foundation.org, linux-kernel@vger.kernel.org
-Subject: [GIT PULL] MFD for v5.0
-Message-ID: <20190114072040.GA4703@dell>
-References: <20190109072018.GB27286@dell>
- <20190113231006.GC18710@amd>
+        Mon, 14 Jan 2019 02:21:12 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=dell.com; i=@dell.com; q=dns/txt; s=smtpout;
+  t=1547450471; x=1578986471;
+  h=from:subject:to:cc:references:message-id:date:
+   mime-version:in-reply-to:content-transfer-encoding;
+  bh=vA4wURFwSA2pl4yXFqldiufB3rYm4E7Kim5VtimXgIw=;
+  b=n7+HxdprirkTYx0GrYVvsvEN09xP6914ASSP4QBRqhIbaiA3erOEEyXd
+   o62ed2VIQd2wbLLjHXD95S+fgmnKLYObHc+Iu2xFxN5Pk2a1Mdpwh3HQ6
+   nlUP5Yan+UnGBdj0InxvACoxBWJolb6vKm/NO7ZbRqnGgGbNZCVNjO4Yp
+   g=;
+X-IronPort-Anti-Spam-Filtered: true
+X-IronPort-Anti-Spam-Result: =?us-ascii?q?A2EhAQCdNzxchiWd50NkHAEBAQQBAQc?=
+ =?us-ascii?q?EAQGBZYJqgQInhAGIeYsNgWAtg1qVYTwLAQEfD4Q0CgKCMiI4EgEDAQECAQE?=
+ =?us-ascii?q?CAQECEAEBARMLCCkjDII6KQEQBE07MAEBAQEBAQEBAQEBAQEBARoCDWQBAQE?=
+ =?us-ascii?q?DEhEVJxoQCxgCAhgOAgJXBgEKAgYCAQEegwABggEPoTY9AoFuiQcBAQFvgS+?=
+ =?us-ascii?q?KHAWBC4s0gVg+gTiCa4MFGQKBOoMwglcCkEQ2kQoDBAIChxqKZgYYkX+JdYU?=
+ =?us-ascii?q?RhFyDUYMSAgQCBAUCFIFdIIFYcIM8gjWDVIpbOAExAYgRAiQHgiABAQ?=
+X-IPAS-Result: =?us-ascii?q?A2EhAQCdNzxchiWd50NkHAEBAQQBAQcEAQGBZYJqgQInh?=
+ =?us-ascii?q?AGIeYsNgWAtg1qVYTwLAQEfD4Q0CgKCMiI4EgEDAQECAQECAQECEAEBARMLC?=
+ =?us-ascii?q?CkjDII6KQEQBE07MAEBAQEBAQEBAQEBAQEBARoCDWQBAQEDEhEVJxoQCxgCA?=
+ =?us-ascii?q?hgOAgJXBgEKAgYCAQEegwABggEPoTY9AoFuiQcBAQFvgS+KHAWBC4s0gVg+g?=
+ =?us-ascii?q?TiCa4MFGQKBOoMwglcCkEQ2kQoDBAIChxqKZgYYkX+JdYURhFyDUYMSAgQCB?=
+ =?us-ascii?q?AUCFIFdIIFYcIM8gjWDVIpbOAExAYgRAiQHgiABAQ?=
+Received: from mx0b-00154901.pphosted.com ([67.231.157.37])
+  by esa4.dell-outbound.iphmx.com with ESMTP/TLS/AES256-SHA256; 14 Jan 2019 01:21:10 -0600
+Received: from pps.filterd (m0144104.ppops.net [127.0.0.1])
+        by mx0b-00154901.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x0E7Kfss055260;
+        Mon, 14 Jan 2019 02:21:10 -0500
+Received: from esa6.dell-outbound2.iphmx.com (esa6.dell-outbound2.iphmx.com [68.232.154.99])
+        by mx0b-00154901.pphosted.com with ESMTP id 2q0juhgu70-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Mon, 14 Jan 2019 02:21:10 -0500
+From:   "Pandel, Sujith" <Sujith.Pandel@dell.com>
+Received: from ausxipps301.us.dell.com ([143.166.148.223])
+  by esa6.dell-outbound2.iphmx.com with ESMTP/TLS/DHE-RSA-AES256-SHA256; 14 Jan 2019 13:21:08 +0600
+X-LoopCount0: from 10.94.55.207
+X-IronPort-AV: E=Sophos;i="5.56,476,1539666000"; 
+   d="scan'208";a="286226852"
+Subject: Re: [PATCH] acpi/nfit: Fix command-supported detection
+To:     Dan Williams <dan.j.williams@intel.com>, linux-nvdimm@lists.01.org
+Cc:     stable@vger.kernel.org, linux-kernel@vger.kernel.org,
+        vishal.l.verma@intel.com
+References: <154725096972.1367907.12968253382302127133.stgit@dwillia2-desk3.amr.corp.intel.com>
+Message-ID: <29b49260-8b67-ec44-24f6-8fdc32e8f648@dell.com>
+Date:   Mon, 14 Jan 2019 12:51:03 +0530
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20190113231006.GC18710@amd>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <154725096972.1367907.12968253382302127133.stgit@dwillia2-desk3.amr.corp.intel.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-01-14_04:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1011 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1901140064
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 14 Jan 2019, Pavel Machek wrote:
+Hi Dan,
 
-> On Wed 2019-01-09 07:20:18, Lee Jones wrote:
-> > Good morning Linus,
-> > 
-> > Please accept my apologies for the lateness.
-> 
-> I'd say that for 5.1, you are pretty early :-).
+On 12-Jan-19 5:29 AM, Dan Williams wrote:
+> The _DSM function number validation only happens to succeed when the
+> generic Linux command number translation corresponds with a
+> DSM-family-specific function number. This breaks NVDIMM-N
+> implementations that correctly implement _LSR, _LSW, and _LSI, but do
+> not happen to publish support for DSM function numbers 4, 5, and 6.
+>
+> Recall that the support for _LS{I,R,W} family of methods results in the
+> DIMM being marked as supporting those command numbers at
+> acpi_nfit_register_dimms() time. The DSM function mask is only used for
+> ND_CMD_CALL support of non-NVDIMM_FAMILY_INTEL devices.
+>
+> Fixes: 31eca76ba2fc ("nfit, libnvdimm: limited/whitelisted dimm command...")
+> Cc: <stable@vger.kernel.org>
+> Link: https://github.com/pmem/ndctl/issues/78
+> Reported-by: Sujith Pandel <sujith_pandel@dell.com>
+> Signed-off-by: Dan Williams <dan.j.williams@intel.com>
+> ---
+> Sujith, this is a larger change than what you originally tested, but it
+> should behave the same. I wanted to consolidate all the code that
+> handles Linux command number to DIMM _DSM function number translation.
+>
+> If you have a chance to re-test with this it would be much appreciated.
+>
+> Thanks for the report!
+Re-verified by applying this patch over LTS kernel-4.20.2 with ndctl v62.
+namespace creation and modification works fine on Dell NVDIMM-Ns.
+Thanks for helping me on this!
 
-Ha ha!  Yes, indeed.  It seems sending late messes with the brain!
+Tested-by: Sujith Pandel <sujith_pandel@dell.com>
 
-Ideally I'd like this accepted for 5.0 please.
-
--- 
-Lee Jones [李琼斯]
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
