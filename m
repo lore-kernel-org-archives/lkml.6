@@ -2,97 +2,219 @@ Return-Path: <SRS0=tq6k=PW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 02E9AC43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 16:45:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 22DB1C43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 16:47:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C665A206B7
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 16:45:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E399A2086D
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 16:47:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726964AbfANQpC (ORCPT
+        id S1726806AbfANQrD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 14 Jan 2019 11:45:02 -0500
-Received: from mail3-relais-sop.national.inria.fr ([192.134.164.104]:37227
-        "EHLO mail3-relais-sop.national.inria.fr" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726789AbfANQpB (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 Jan 2019 11:45:01 -0500
-X-IronPort-AV: E=Sophos;i="5.56,478,1539640800"; 
-   d="scan'208";a="291885649"
-Received: from vaio-julia.rsr.lip6.fr ([132.227.76.33])
-  by mail3-relais-sop.national.inria.fr with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 14 Jan 2019 17:44:58 +0100
-Date:   Mon, 14 Jan 2019 17:44:56 +0100 (CET)
-From:   Julia Lawall <julia.lawall@lip6.fr>
-X-X-Sender: jll@hadrien
-To:     Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-cc:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        kernel-janitors@vger.kernel.org, David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH 1/3 v2] drm: rcar-du: add missing of_node_put
-Message-ID: <alpine.DEB.2.20.1901141743510.3522@hadrien>
-User-Agent: Alpine 2.20 (DEB 67 2015-01-07)
+        Mon, 14 Jan 2019 11:47:03 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:51444 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726724AbfANQrD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 14 Jan 2019 11:47:03 -0500
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 5C4FB8553D;
+        Mon, 14 Jan 2019 16:47:02 +0000 (UTC)
+Received: from redhat.com (dhcp-17-208.bos.redhat.com [10.18.17.208])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 40A7619C7C;
+        Mon, 14 Jan 2019 16:47:01 +0000 (UTC)
+Date:   Mon, 14 Jan 2019 11:46:59 -0500
+From:   Joe Lawrence <joe.lawrence@redhat.com>
+To:     Nicolai Stange <nstange@suse.de>
+Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        live-patching@vger.kernel.org, Torsten Duwe <duwe@lst.de>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Jiri Kosina <jkosina@suse.cz>,
+        Balbir Singh <bsingharora@gmail.com>
+Subject: Re: ppc64le reliable stack unwinder and scheduled tasks
+Message-ID: <20190114164659.GA18643@redhat.com>
+References: <7f468285-b149-37e2-e782-c9e538b997a9@redhat.com>
+ <87bm4ocbbt.fsf@suse.de>
+ <20190111010808.GA17858@redhat.com>
+ <87fttzbpid.fsf@suse.de>
+ <20190114040937.GA6739@redhat.com>
+ <877ef7bt6j.fsf@suse.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <877ef7bt6j.fsf@suse.de>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.28]); Mon, 14 Jan 2019 16:47:02 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add an of_node_put when the result of of_graph_get_remote_port_parent is
-not available.
+On Mon, Jan 14, 2019 at 08:21:40AM +0100, Nicolai Stange wrote:
+> Joe Lawrence <joe.lawrence@redhat.com> writes:
+> 
+> > We should be careful when inspecting the bottom-most stack frame (the
+> > first to be unwound), particularly for scheduled-out tasks.  As Nicolai
+> > Stange explains, "If I'm reading the code in _switch() correctly, the
+> > first frame is completely uninitialized except for the pointer back to
+> > the caller's stack frame."  If a previous do_IRQ() invocation, for
+> > example, has left a residual exception-marker on the first frame, the
+> > stack tracer would incorrectly report this task's trace as unreliable.
+> >
+> 
+> FWIW, it's not been do_IRQ() who wrote the exception marker, but it's
+> caller hardware_interrupt_common(), more specifically the
+> EXCEPTION_PROLOG_COMMON_3 part therof.
+> 
 
-Add a second of_node_put if no encoder is selected (encoder remains NULL).
+Hi Nicolai,
 
-The semantic match that finds the first problem is as follows
-(http://coccinelle.lip6.fr):
+Yeah, I was sloppy with the description there. :)
 
-// <smpl>
-@r exists@
-local idexpression e;
-expression x;
-@@
-e = of_graph_get_remote_port_parent(...);
-... when != x = e
-    when != true e == NULL
-    when != of_node_put(e)
-    when != of_fwnode_handle(e)
-(
-return e;
-|
-*return ...;
-)
-// </smpl>
+> I thought about this a little more and can't see anything that would
+> prevent higher, i.e. non-_switch() frames to also alias with prior
+> exception frames. That STACK_FRAME_REGS_MARKER is written to a stack
+> frame's "parameter area" and most functions probably don't initialize
+> this either. So, AFAICS, higher stack frames could potentially be
+> affected by the very same problem.
 
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+Hmm, I suppose a callee could leave that stack-word untouched and then
+make subsquent calls, which would be confusing for the unwinder.
 
+> I think the best solution would be to clear the STACK_FRAME_REGS_MARKER
+> upon exception return. I have a patch ready for that and will post it
+> after it has passed some basic testing -- hopefully later this day.
+> 
+
+I agree that this seems like the simplest way to clean up the exception
+stack frame state. 
+
+> That being said, I still think that your patch should also get applied
+> in some form -- looking at unitialized memory is just not a good thing
+> to do.
+> 
+> [ ... snip ...]
+
+> I would perhaps not limit this to the STACK_FRAME_REGS_MARKER, but also
+> not emit the ip obtained from the first frame into the resulting trace.
+> 
+> I.e., how about moving all the sp/newsp handling to the beginning of the
+> loop and doing an 'if (firstframe) continue;' right after that?
+
+Good point, there is a bunch of ip and trace entries bookkeeping that
+shouldn't apply in this case.
+
+I gave the following some very light testing (5.0.0-rc2 + Petr's atomic
+patches as to include and run the selftests) ... if you want to take a
+bigger hammer to refactor some of the sp/newsp code (perhaps it could be
+incorporated into the for() loop itself), feel free to go for it.  You
+could add something like this as a 2nd patch to the previously mentioned
+STACK_FRAME_REGS_MARKER cleanup fix.
+
+Thanks,
+
+-- Joe
+
+-->8-- -->8-- -->8-- -->8-- -->8-- -->8-- -->8-- -->8-- -->8-- -->8--
+
+From b87f9e81cf59a6e7e2309400e1b417562414cd5c Mon Sep 17 00:00:00 2001
+From: Joe Lawrence <joe.lawrence@redhat.com>
+Date: Sun, 13 Jan 2019 21:02:01 -0500
+Subject: [PATCH] powerpc/livepatch: relax reliable stack tracer checks for
+ first-frame
+
+The bottom-most stack frame (the first to be unwound) may be largely
+uninitialized, for the "Power Architecture 64-Bit ELF V2 ABI" only
+requires its backchain pointer to be set.
+
+The reliable stack tracer should be careful when verifying this frame:
+skip checks on STACK_FRAME_LR_SAVE and STACK_FRAME_MARKER offsets that
+may contain uninitialized residual data.
+
+Fixes: df78d3f61480 ("powerpc/livepatch: Implement reliable stack tracing for the consistency model")
+Suggested-by: Nicolai Stange <nstange@suse.de>
+Signed-off-by: Joe Lawrence <joe.lawrence@redhat.com>
 ---
-v2: Add the second of_node_put(entity);, as suggested by Kieran Bingham.
+ arch/powerpc/kernel/stacktrace.c | 33 +++++++++++++++++++++-----------
+ 1 file changed, 22 insertions(+), 11 deletions(-)
 
- drivers/gpu/drm/rcar-du/rcar_du_kms.c |    2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/drivers/gpu/drm/rcar-du/rcar_du_kms.c b/drivers/gpu/drm/rcar-du/rcar_du_kms.c
-index 9c7007d..f9a90ff 100644
---- a/drivers/gpu/drm/rcar-du/rcar_du_kms.c
-+++ b/drivers/gpu/drm/rcar-du/rcar_du_kms.c
-@@ -331,6 +331,7 @@ static int rcar_du_encoders_init_one(struct rcar_du_device *rcdu,
- 		dev_dbg(rcdu->dev,
- 			"connected entity %pOF is disabled, skipping\n",
- 			entity);
-+		of_node_put(entity);
- 		return -ENODEV;
+diff --git a/arch/powerpc/kernel/stacktrace.c b/arch/powerpc/kernel/stacktrace.c
+index e2c50b55138f..46096687a5a8 100644
+--- a/arch/powerpc/kernel/stacktrace.c
++++ b/arch/powerpc/kernel/stacktrace.c
+@@ -84,6 +84,12 @@ save_stack_trace_regs(struct pt_regs *regs, struct stack_trace *trace)
+ EXPORT_SYMBOL_GPL(save_stack_trace_regs);
+ 
+ #ifdef CONFIG_HAVE_RELIABLE_STACKTRACE
++/*
++ * This function returns an error if it detects any unreliable features of the
++ * stack.  Otherwise it guarantees that the stack trace is reliable.
++ *
++ * If the task is not 'current', the caller *must* ensure the task is inactive.
++ */
+ int
+ save_stack_trace_tsk_reliable(struct task_struct *tsk,
+ 				struct stack_trace *trace)
+@@ -142,12 +148,6 @@ save_stack_trace_tsk_reliable(struct task_struct *tsk,
+ 		if (sp & 0xF)
+ 			return 1;
+ 
+-		/* Mark stacktraces with exception frames as unreliable. */
+-		if (sp <= stack_end - STACK_INT_FRAME_SIZE &&
+-		    stack[STACK_FRAME_MARKER] == STACK_FRAME_REGS_MARKER) {
+-			return 1;
+-		}
+-
+ 		newsp = stack[0];
+ 		/* Stack grows downwards; unwinder may only go up. */
+ 		if (newsp <= sp)
+@@ -158,11 +158,21 @@ save_stack_trace_tsk_reliable(struct task_struct *tsk,
+ 			return 1; /* invalid backlink, too far up. */
+ 		}
+ 
++		/* We can only trust the bottom frame's backlink, the rest
++		 * of the frame may be uninitialized, continue to the next. */
++		if (firstframe--)
++			goto next;
++
++		/* Mark stacktraces with exception frames as unreliable. */
++		if (sp <= stack_end - STACK_INT_FRAME_SIZE &&
++		    stack[STACK_FRAME_MARKER] == STACK_FRAME_REGS_MARKER) {
++			return 1;
++		}
++
+ 		/* Examine the saved LR: it must point into kernel code. */
+ 		ip = stack[STACK_FRAME_LR_SAVE];
+-		if (!firstframe && !__kernel_text_address(ip))
++		if (!__kernel_text_address(ip))
+ 			return 1;
+-		firstframe = 0;
+ 
+ 		/*
+ 		 * FIXME: IMHO these tests do not belong in
+@@ -183,12 +193,13 @@ save_stack_trace_tsk_reliable(struct task_struct *tsk,
+ 		else
+ 			trace->skip--;
+ 
+-		if (newsp == stack_end)
+-			break;
+-
+ 		if (trace->nr_entries >= trace->max_entries)
+ 			return -E2BIG;
+ 
++next:
++		if (newsp == stack_end)
++			break;
++
+ 		sp = newsp;
  	}
+ 	return 0;
+-- 
+2.20.1
 
-@@ -366,6 +367,7 @@ static int rcar_du_encoders_init_one(struct rcar_du_device *rcdu,
- 		dev_warn(rcdu->dev,
- 			 "no encoder found for endpoint %pOF, skipping\n",
- 			 ep->local_node);
-+		of_node_put(entity);
- 		return -ENODEV;
- 	}
 
