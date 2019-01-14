@@ -2,101 +2,126 @@ Return-Path: <SRS0=tq6k=PW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+X-Spam-Status: No, score=-14.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D7782C43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 21:08:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D6C3C43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 21:12:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AD7D5214AE
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 21:08:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1F92E20659
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 21:12:09 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="NVyCm6OF"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727022AbfANVIz (ORCPT
+        id S1726882AbfANVMF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 14 Jan 2019 16:08:55 -0500
-Received: from gateway24.websitewelcome.com ([192.185.51.36]:16397 "EHLO
-        gateway24.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726788AbfANVIz (ORCPT
+        Mon, 14 Jan 2019 16:12:05 -0500
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:42305 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726777AbfANVMF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 Jan 2019 16:08:55 -0500
-Received: from cm14.websitewelcome.com (cm14.websitewelcome.com [100.42.49.7])
-        by gateway24.websitewelcome.com (Postfix) with ESMTP id 8A40569FF
-        for <linux-kernel@vger.kernel.org>; Mon, 14 Jan 2019 15:08:52 -0600 (CST)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id j9TYgKlhD2qH7j9TYgyX5d; Mon, 14 Jan 2019 15:08:52 -0600
-X-Authority-Reason: nr=8
-Received: from [189.250.130.205] (port=50892 helo=[192.168.43.131])
-        by gator4166.hostgator.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
-        (Exim 4.91)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1gj9TY-000d62-3D; Mon, 14 Jan 2019 15:08:52 -0600
-Subject: Re: [PATCH] lib/assoc_array: annotate implicit fall through
-To:     Mathieu Malaterre <malat@debian.org>,
-        David Howells <dhowells@redhat.com>
-Cc:     linux-kernel@vger.kernel.org
-References: <20190114202454.14551-1-malat@debian.org>
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Message-ID: <475381f8-3fdf-5b5e-da34-23d57ae757e7@embeddedor.com>
-Date:   Mon, 14 Jan 2019 15:08:46 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Mon, 14 Jan 2019 16:12:05 -0500
+Received: by mail-pl1-f195.google.com with SMTP id y1so190596plp.9
+        for <linux-kernel@vger.kernel.org>; Mon, 14 Jan 2019 13:12:04 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=EJpB+Q6ySg9/qHqPWr9mmqL7i7+Ucdth2nuHzirNUgg=;
+        b=NVyCm6OF4WPvnjGXTPqTJJbuBfShU3XoNMyHWGqvEdlKzMsROdN4ALsW2wmbYQXEPC
+         m4kTIKR6awWj02OwQ4cq2EzEjBW3VQmwWlAagVqvvkzcVes3TdOhlHfiTGkfFXpEISz8
+         DfCbSJ2ur26AkCqnjqWkKdVqwXbgwkBzSYjarl2C4gqJ2wVFc/m+ec4irRLcAYjL0ueN
+         +4YKZK2tyNTRDvZrjf/RGePsvj9LuOS2Za546GosH1ujprnVxTZYjbW6PmgiEDto0OVc
+         bVtOlV3K19SYKnWl4eHF9zaPrkz+HszlBCsUiCHi+5KdS0LSjTxyAS+w2hyEUOqNqfHC
+         76ng==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=EJpB+Q6ySg9/qHqPWr9mmqL7i7+Ucdth2nuHzirNUgg=;
+        b=YXMUtK2/oPjtC1yDwOEbearKFqW4hYL3GZuz3zoQQcrIyHYr79YwSxfEluqeKzQ96U
+         KguxxlxA3ysKdXWtBN1XqzbgGzjhZNKTt/y+2c8HU3hkwxpfJ7lVTt73UKwDnaeIA5MF
+         7M31lrzGAQPCqFJbgu83btmgZ+eXgC05Jpu2xpaeXQ5syddnLnzH62onTK8LHm3k6AbH
+         NroOAMcSjZLgFx72jjBzUtgcO5eO9NWWjomZTyX2w+nnGEamWCtmij7w7ZvM1D9hbZXT
+         QxHmn9xa/vfwss78gtSQqLjd0Z0lzpDBWCBK9dgjDkL2PQhjxwHo9GD1HbbAA51/waOO
+         3CbA==
+X-Gm-Message-State: AJcUukfoVp4kL8Inf0omCdrzIxxc1sTKjt7R7S1/yApY0FuL0RX1gDl2
+        xl3m2ZPiXbzSfxTtBid/ZGRjTHn7U2sxY8DMD8uldwJlUg4=
+X-Google-Smtp-Source: ALg8bN5ZK1YlC/QKMhbb05NveWaK2Hf/j/jJKwW2kNW5T3QXRHNFobjIOQSfWIsYcDyme/D7OxJCIlAWkYmkYyEf4Fc=
+X-Received: by 2002:a17:902:4464:: with SMTP id k91mr485840pld.13.1547500324073;
+ Mon, 14 Jan 2019 13:12:04 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20190114202454.14551-1-malat@debian.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 189.250.130.205
-X-Source-L: No
-X-Exim-ID: 1gj9TY-000d62-3D
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: ([192.168.43.131]) [189.250.130.205]:50892
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 9
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+References: <20190114210426.177543-1-trong@android.com> <20190114210426.177543-5-trong@android.com>
+In-Reply-To: <20190114210426.177543-5-trong@android.com>
+From:   Nick Desaulniers <ndesaulniers@google.com>
+Date:   Mon, 14 Jan 2019 13:11:52 -0800
+Message-ID: <CAKwvOd=RD0UgRo4WXKzBQ84q1P3Xmreb58_dfxLLYBoqHSStLA@mail.gmail.com>
+Subject: Re: [PATCH 4/4] gcov: clang: pick GCC vs Clang format depending on compiler
+To:     Tri Vo <trong@android.com>
+Cc:     oberpar@linux.ibm.com, ghackmann@android.com,
+        LKML <linux-kernel@vger.kernel.org>, kernel-team@android.com,
+        Masahiro Yamada <yamada.masahiro@socionext.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Mon, Jan 14, 2019 at 1:05 PM Tri Vo <trong@android.com> wrote:
+>
+> Clang gcov format is only supported by Clang compiler, and Clang
+> compiler only supports Clang format.
+>
+> We set gcov format to depend on which compiler (GCC or Clang) is used.
+>
+> Automatic format detection behavior is preserved because:
+> If GCC is used, one of the GCC gcov formats is selected.
+> If Clang is used, Clang gcov format is selected.
+>
+> Signed-off-by: Tri Vo <trong@android.com>
 
-
-On 1/14/19 2:24 PM, Mathieu Malaterre wrote:
-> There is a plan to build the kernel with -Wimplicit-fallthrough and
-> this place in the code produced a warning (W=1).
-> 
-> This commit remove the following warning:
-> 
->    lib/assoc_array.c:1110:3: warning: this statement may fall through [-Wimplicit-fallthrough=]
-> 
-> Signed-off-by: Mathieu Malaterre <malat@debian.org>
-
-Acked-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+Thanks for sending the series Tri.  I think this config change on the
+end is a nice little touch!
+Reviewed-by: Nick Desaulniers <ndesaulniers@google.com>
 
 > ---
->   lib/assoc_array.c | 1 +
->   1 file changed, 1 insertion(+)
-> 
-> diff --git a/lib/assoc_array.c b/lib/assoc_array.c
-> index c6659cb37033..0b61d3b77e5c 100644
-> --- a/lib/assoc_array.c
-> +++ b/lib/assoc_array.c
-> @@ -1115,6 +1115,7 @@ struct assoc_array_edit *assoc_array_delete(struct assoc_array *array,
->   						index_key))
->   				goto found_leaf;
->   		}
-> +		/* fall through */
->   	case assoc_array_walk_tree_empty:
->   	case assoc_array_walk_found_wrong_shortcut:
->   	default:
-> 
+>  kernel/gcov/Kconfig | 4 ++++
+>  1 file changed, 4 insertions(+)
+>
+> diff --git a/kernel/gcov/Kconfig b/kernel/gcov/Kconfig
+> index eb428e570923..37ec551d4039 100644
+> --- a/kernel/gcov/Kconfig
+> +++ b/kernel/gcov/Kconfig
+> @@ -60,6 +60,8 @@ choice
+>         In such a case, change this option to adjust the format used in the
+>         kernel accordingly.
+>
+> +       Select Clang gcov format if building with Clang compiler.
+> +
+>  config GCOV_FORMAT_3_4
+>         bool "GCC 3.4 format"
+>         depends on CC_IS_GCC && GCC_VERSION < 40700
+> @@ -68,11 +70,13 @@ config GCOV_FORMAT_3_4
+>
+>  config GCOV_FORMAT_4_7
+>         bool "GCC 4.7 format"
+> +       depends on CC_IS_GCC
+>         ---help---
+>         Select this option to use the format defined by GCC 4.7.
+>
+>  config GCOV_FORMAT_CLANG
+>         bool "Clang format"
+> +       depends on CC_IS_CLANG
+>         ---help---
+>         Select this option to use the format defined by Clang.
+>
+> --
+> 2.20.1.97.g81188d93c3-goog
+>
+
+
+-- 
+Thanks,
+~Nick Desaulniers
