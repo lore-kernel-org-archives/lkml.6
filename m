@@ -2,162 +2,136 @@ Return-Path: <SRS0=tq6k=PW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+X-Spam-Status: No, score=-13.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 56396C43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 10:00:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A100C43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 10:01:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2EC872086D
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 10:00:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DE88F2086D
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 10:01:07 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="MqVp7gy1"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727027AbfANKAZ (ORCPT
+        id S1726854AbfANKBG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 14 Jan 2019 05:00:25 -0500
-Received: from inva021.nxp.com ([92.121.34.21]:45002 "EHLO inva021.nxp.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726306AbfANKAX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 Jan 2019 05:00:23 -0500
-Received: from inva021.nxp.com (localhost [127.0.0.1])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 4F762200318;
-        Mon, 14 Jan 2019 11:00:21 +0100 (CET)
-Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 68C32200327;
-        Mon, 14 Jan 2019 11:00:17 +0100 (CET)
-Received: from titan.ap.freescale.net (TITAN.ap.freescale.net [10.192.208.233])
-        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id 960F1402BE;
-        Mon, 14 Jan 2019 18:00:12 +0800 (SGT)
-From:   Peng Ma <peng.ma@nxp.com>
-To:     shawnguo@kernel.org
-Cc:     leoyang.li@nxp.com, robh+dt@kernel.org, mark.rutland@arm.com,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Peng Ma <peng.ma@nxp.com>
-Subject: [v2] arm64: dts: lx2160a: add sata node support
-Date:   Mon, 14 Jan 2019 09:55:00 +0000
-Message-Id: <20190114095500.1600-1-peng.ma@nxp.com>
-X-Mailer: git-send-email 2.14.1
-X-Virus-Scanned: ClamAV using ClamSMTP
+        Mon, 14 Jan 2019 05:01:06 -0500
+Received: from mail-ed1-f68.google.com ([209.85.208.68]:32949 "EHLO
+        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726184AbfANKBF (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 14 Jan 2019 05:01:05 -0500
+Received: by mail-ed1-f68.google.com with SMTP id p6so18208268eds.0
+        for <linux-kernel@vger.kernel.org>; Mon, 14 Jan 2019 02:01:04 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ffwll.ch; s=google;
+        h=sender:date:from:to:cc:subject:message-id:mail-followup-to
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=LhIkfJqOCczaS6olU3SnHKo4Nt0dGbqqFJr/fHrj5qc=;
+        b=MqVp7gy1U1fkIdiOJUgj4mXZTrIJLumxfJOGO3djU4WW6oNQrUtX9O7Bo/CEJoQYRw
+         74aph/ENuvrGOzske77g3Lq1+7ZGhVu0Z3DdVgqygCbtcFK4pDG1hLDvyw+SgN1tHR6C
+         jlzW1JlovYNN80vmR/KJlCkmdNBHc7Tg6li5w=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :mail-followup-to:references:mime-version:content-disposition
+         :in-reply-to:user-agent;
+        bh=LhIkfJqOCczaS6olU3SnHKo4Nt0dGbqqFJr/fHrj5qc=;
+        b=d0xSTj/vo4HOqcZgQLS+LgZjsaj+45IJq6cLH53q8Ewjot1f6QCkuYWyoD/lRvbJO/
+         0GqZX3DQ7ou4nwNiZcizKz0Q2u8tTIp3q6tGmUPz/N5pfAmaO1d5OreADCGtLPeFis8P
+         m3jRkTvyD/yGxh2ACP7uajNComCLxnLB/0ioQysGUL5QKHUsc54yCuyOQjEADwFT3NlE
+         M1a7jMs1uFysA14I8UKuVlajPyfbUKQbYBde7v8GfKZ/WKTKIlPCBTAqFtfErFWQoTaH
+         LVQp2Efg1CirH+fzhFtv2l/AD7Ej4+Jw4J35SsFD0oJzf6o/QToX7FDjR2SwGFaWXu0Q
+         J3xg==
+X-Gm-Message-State: AJcUukfhlc26zpxA6JuP0oDkLJzAuCnbOa5DxaKJmLpQOOjrlgSWaLU6
+        /w8nAVpKVZjQLZ9jeRxBtwQlEg==
+X-Google-Smtp-Source: ALg8bN5jiXs/FHkalpSzyDu2v0zwq/EZNN59NsnoOAM2BKGtfYxVyBWpAdSmKbaQZdsRwDZ6mgOuYQ==
+X-Received: by 2002:a50:b286:: with SMTP id p6mr22508211edd.202.1547460063547;
+        Mon, 14 Jan 2019 02:01:03 -0800 (PST)
+Received: from phenom.ffwll.local ([2a02:168:569e:0:3106:d637:d723:e855])
+        by smtp.gmail.com with ESMTPSA id g31sm4055163eda.96.2019.01.14.02.01.02
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 14 Jan 2019 02:01:02 -0800 (PST)
+Date:   Mon, 14 Jan 2019 11:00:57 +0100
+From:   Daniel Vetter <daniel@ffwll.ch>
+To:     Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>
+Cc:     Daniel Vetter <daniel@ffwll.ch>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Sean Paul <sean@poorly.run>, David Airlie <airlied@linux.ie>,
+        Gustavo Padovan <gustavo@padovan.org>,
+        Haneen Mohammed <hamohammed.sa@gmail.com>,
+        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: Re: [RESEND] MAINTAINERS: Add entry for VKMS
+Message-ID: <20190114100056.GA10517@phenom.ffwll.local>
+Mail-Followup-To: Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Sean Paul <sean@poorly.run>, David Airlie <airlied@linux.ie>,
+        Gustavo Padovan <gustavo@padovan.org>,
+        Haneen Mohammed <hamohammed.sa@gmail.com>,
+        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+References: <20190113204038.bvdc6d5tyxjz6bzf@smtp.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190113204038.bvdc6d5tyxjz6bzf@smtp.gmail.com>
+X-Operating-System: Linux phenom 4.19.0-1-amd64 
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add sata node support and Enable sata support
+On Sun, Jan 13, 2019 at 06:40:38PM -0200, Rodrigo Siqueira wrote:
+> Add maintainers and reviewers for VKMS driver
+> 
+> Signed-off-by: Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>
 
-Signed-off-by: Peng Ma <peng.ma@nxp.com>
----
-changed for V2:
-	- put the 'status' at the end of property list
-	- add lx2160aqds sata support
+Reviewed-by: Daniel Vetter <daniel.vetter@ffwll.ch>
 
- arch/arm64/boot/dts/freescale/fsl-lx2160a-qds.dts |   16 +++++++
- arch/arm64/boot/dts/freescale/fsl-lx2160a-rdb.dts |   16 +++++++
- arch/arm64/boot/dts/freescale/fsl-lx2160a.dtsi    |   44 +++++++++++++++++++++
- 3 files changed, 76 insertions(+), 0 deletions(-)
+Since you have commit rights for drm-misc already I think best if you push
+this yourself using the dim tooling:
 
-diff --git a/arch/arm64/boot/dts/freescale/fsl-lx2160a-qds.dts b/arch/arm64/boot/dts/freescale/fsl-lx2160a-qds.dts
-index 99a22ab..0289955 100644
---- a/arch/arm64/boot/dts/freescale/fsl-lx2160a-qds.dts
-+++ b/arch/arm64/boot/dts/freescale/fsl-lx2160a-qds.dts
-@@ -110,3 +110,19 @@
- &usb1 {
- 	status = "okay";
- };
-+
-+&sata0 {
-+	status = "okay";
-+};
-+
-+&sata1 {
-+	status = "okay";
-+};
-+
-+&sata2 {
-+	status = "okay";
-+};
-+
-+&sata3 {
-+	status = "okay";
-+};
-diff --git a/arch/arm64/boot/dts/freescale/fsl-lx2160a-rdb.dts b/arch/arm64/boot/dts/freescale/fsl-lx2160a-rdb.dts
-index 6481e5f..aacca27 100644
---- a/arch/arm64/boot/dts/freescale/fsl-lx2160a-rdb.dts
-+++ b/arch/arm64/boot/dts/freescale/fsl-lx2160a-rdb.dts
-@@ -117,3 +117,19 @@
- &usb1 {
- 	status = "okay";
- };
-+
-+&sata0 {
-+	status = "okay";
-+};
-+
-+&sata1 {
-+	status = "okay";
-+};
-+
-+&sata2 {
-+	status = "okay";
-+};
-+
-+&sata3 {
-+	status = "okay";
-+};
-diff --git a/arch/arm64/boot/dts/freescale/fsl-lx2160a.dtsi b/arch/arm64/boot/dts/freescale/fsl-lx2160a.dtsi
-index a79f5c1..4390aea 100644
---- a/arch/arm64/boot/dts/freescale/fsl-lx2160a.dtsi
-+++ b/arch/arm64/boot/dts/freescale/fsl-lx2160a.dtsi
-@@ -762,5 +762,49 @@
- 				     <GIC_SPI 209 IRQ_TYPE_LEVEL_HIGH>;
- 			dma-coherent;
- 		};
-+
-+		sata0: sata@3200000 {
-+			compatible = "fsl,lx2160a-ahci";
-+			reg = <0x0 0x3200000 0x0 0x10000>,
-+			      <0x7 0x100520 0x0 0x4>;
-+			reg-names = "ahci", "sata-ecc";
-+			interrupts = <GIC_SPI 133 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&clockgen 4 3>;
-+			dma-coherent;
-+			status = "disabled";
-+		};
-+
-+		sata1: sata@3210000 {
-+			compatible = "fsl,lx2160a-ahci";
-+			reg = <0x0 0x3210000 0x0 0x10000>,
-+			      <0x7 0x100520 0x0 0x4>;
-+			reg-names = "ahci", "sata-ecc";
-+			interrupts = <GIC_SPI 136 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&clockgen 4 3>;
-+			dma-coherent;
-+			status = "disabled";
-+		};
-+
-+		sata2: sata@3220000 {
-+			compatible = "fsl,lx2160a-ahci";
-+			reg = <0x0 0x3220000 0x0 0x10000>,
-+			      <0x7 0x100520 0x0 0x4>;
-+			reg-names = "ahci", "sata-ecc";
-+			interrupts = <GIC_SPI 97 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&clockgen 4 3>;
-+			dma-coherent;
-+			status = "disabled";
-+		};
-+
-+		sata3: sata@3230000 {
-+			compatible = "fsl,lx2160a-ahci";
-+			reg = <0x0 0x3230000 0x0 0x10000>,
-+			      <0x7 0x100520 0x0 0x4>;
-+			reg-names = "ahci", "sata-ecc";
-+			interrupts = <GIC_SPI 100 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&clockgen 4 3>;
-+			dma-coherent;
-+			status = "disabled";
-+		};
- 	};
- };
+https://drm.pages.freedesktop.org/maintainer-tools/getting-started.html
+
+Cheers, Daniel
+
+> ---
+> Changes in v2:
+>   - Insert the section in alphabetical order
+> 
+> Resend:
+>   - Update patch due to changes in MAINTAINER file
+> 
+>  MAINTAINERS | 10 ++++++++++
+>  1 file changed, 10 insertions(+)
+> 
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 163c8f76a1c8..6e1cef2f21d9 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -4925,6 +4925,16 @@ S:	Odd Fixes
+>  F:	drivers/gpu/drm/udl/
+>  T:	git git://anongit.freedesktop.org/drm/drm-misc
+>  
+> +DRM DRIVER FOR VIRTUAL KERNEL MODESETTING (VKMS)
+> +M:	Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>
+> +R:	Haneen Mohammed <hamohammed.sa@gmail.com>
+> +R:	Daniel Vetter <daniel@ffwll.ch>
+> +T:	git git://anongit.freedesktop.org/drm/drm-misc
+> +S:	Maintained
+> +L:	dri-devel@lists.freedesktop.org
+> +F:	drivers/gpu/drm/vkms/
+> +F:	Documentation/gpu/vkms.rst
+> +
+>  DRM DRIVER FOR VMWARE VIRTUAL GPU
+>  M:	"VMware Graphics" <linux-graphics-maintainer@vmware.com>
+>  M:	Thomas Hellstrom <thellstrom@vmware.com>
+> -- 
+> 2.20.1
+
 -- 
-1.7.1
-
+Daniel Vetter
+Software Engineer, Intel Corporation
+http://blog.ffwll.ch
