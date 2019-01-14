@@ -6,178 +6,437 @@ X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B2B89C43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 15:53:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9BEDDC43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 15:54:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8DA85206B7
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 15:53:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6212E206B7
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 15:54:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726769AbfANPxr (ORCPT
+        id S1726823AbfANPy3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 14 Jan 2019 10:53:47 -0500
-Received: from mail-lf1-f67.google.com ([209.85.167.67]:45178 "EHLO
-        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726646AbfANPxr (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 Jan 2019 10:53:47 -0500
-Received: by mail-lf1-f67.google.com with SMTP id b20so15917615lfa.12
-        for <linux-kernel@vger.kernel.org>; Mon, 14 Jan 2019 07:53:45 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=wZITMFUMV0zEIamJ3VVbE4heK6bK4WYzVzsFXzCFVH0=;
-        b=cMTcKlW7mTmSsF5ns/M3RRi3GP1DJXgu/uuIeQ9i8YxHzSUOZxIAR/HvkjcxoquW5l
-         crhwNWjIbalJ9nmjtSYLhZaulMcC0Fsl23FLVU9h/KfJ/BVqtT0m4Q4gadpe13gKSqZ8
-         yRRDssIap0txMHXuTdI3HSGe72w2hZSpJiScpFP5pZwWDdryWy1hIoRyL0tZGzcxo09N
-         Cmz9IPBx07YJZ/vx7+B+akF8F6LhbDVTJ6UIR+jr6/8cDGaknVkN3doLTmeofPojDfCb
-         wRhSmWVv+ZtOMz3M82RfNtd0nlEYWJdaSbaxZSHR2tWDXs8n+yOAUNH7XTE09q69wbSK
-         rICQ==
-X-Gm-Message-State: AJcUukeZrnt5lsmCAYkS8BahTtX+WD3NpZxeKLhoTdtJ1n2sQONUHKoM
-        M2hDBlc4Qg+7EKCGTcgpJQWbP/FqUFi/lroeMLFuUQ==
-X-Google-Smtp-Source: ALg8bN74ZQTuDIjsqUhLgFMGYUxSw81lMr9Ia6Rp9LV1zOdpgU9nkrJsrZPjHC4E0QC4PQUfRTidFXCqru+uICR4BPA=
-X-Received: by 2002:ac2:51af:: with SMTP id f15mr13329880lfk.44.1547481224807;
- Mon, 14 Jan 2019 07:53:44 -0800 (PST)
+        Mon, 14 Jan 2019 10:54:29 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:35208 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726675AbfANPy3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 14 Jan 2019 10:54:29 -0500
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id F40A2C04B2F4;
+        Mon, 14 Jan 2019 15:54:27 +0000 (UTC)
+Received: from redhat.com (ovpn-123-100.rdu2.redhat.com [10.10.123.100])
+        by smtp.corp.redhat.com (Postfix) with SMTP id 086A55C7A0;
+        Mon, 14 Jan 2019 15:54:13 +0000 (UTC)
+Date:   Mon, 14 Jan 2019 10:54:13 -0500
+From:   "Michael S. Tsirkin" <mst@redhat.com>
+To:     Pankaj Gupta <pagupta@redhat.com>
+Cc:     linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
+        qemu-devel@nongnu.org, linux-nvdimm@ml01.01.org,
+        linux-fsdevel@vger.kernel.org,
+        virtualization@lists.linux-foundation.org,
+        linux-acpi@vger.kernel.org, linux-ext4@vger.kernel.org,
+        linux-xfs@vger.kernel.org, jack@suse.cz, stefanha@redhat.com,
+        dan.j.williams@intel.com, riel@surriel.com, nilal@redhat.com,
+        kwolf@redhat.com, pbonzini@redhat.com, zwisler@kernel.org,
+        vishal.l.verma@intel.com, dave.jiang@intel.com, david@redhat.com,
+        jmoyer@redhat.com, xiaoguangrong.eric@gmail.com, hch@infradead.org,
+        jasowang@redhat.com, lcapitulino@redhat.com, imammedo@redhat.com,
+        eblake@redhat.com, willy@infradead.org, tytso@mit.edu,
+        adilger.kernel@dilger.ca, darrick.wong@oracle.com,
+        rjw@rjwysocki.net
+Subject: Re: [PATCH v3 2/5]  virtio-pmem: Add virtio pmem driver
+Message-ID: <20190114105314-mutt-send-email-mst@kernel.org>
+References: <20190109144736.17452-1-pagupta@redhat.com>
+ <20190109144736.17452-3-pagupta@redhat.com>
 MIME-Version: 1.0
-References: <20190114125903.24845-1-david@redhat.com> <20190114125903.24845-8-david@redhat.com>
-In-Reply-To: <20190114125903.24845-8-david@redhat.com>
-From:   Bhupesh Sharma <bhsharma@redhat.com>
-Date:   Mon, 14 Jan 2019 21:22:49 +0530
-Message-ID: <CACi5LpPphoJzfKXPN5kSV42aF27=2ZjqXSVLQjEtMdSN8+6bsA@mail.gmail.com>
-Subject: Re: [PATCH v2 7/9] arm64: kdump: No need to mark crashkernel pages
- manually PG_reserved
-To:     David Hildenbrand <david@redhat.com>
-Cc:     linux-mm@kvack.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-m68k@lists.linux-m68k.org, linuxppc-dev@lists.ozlabs.org,
-        linux-riscv@lists.infradead.org, linux-s390@vger.kernel.org,
-        linux-mediatek@lists.infradead.org,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        James Morse <james.morse@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Dave Kleikamp <dave.kleikamp@oracle.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>,
-        Michal Hocko <mhocko@suse.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Stefan Agner <stefan@agner.ch>,
-        Laura Abbott <labbott@redhat.com>,
-        Greg Hackmann <ghackmann@android.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Kristina Martsenko <kristina.martsenko@arm.com>,
-        CHANDAN VN <chandan.vn@samsung.com>,
-        AKASHI Takahiro <takahiro.akashi@linaro.org>,
-        Logan Gunthorpe <logang@deltatee.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190109144736.17452-3-pagupta@redhat.com>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.32]); Mon, 14 Jan 2019 15:54:28 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi David,
-
-On Mon, Jan 14, 2019 at 6:30 PM David Hildenbrand <david@redhat.com> wrote:
->
-> The crashkernel is reserved via memblock_reserve(). memblock_free_all()
-> will call free_low_memory_core_early(), which will go over all reserved
-> memblocks, marking the pages as PG_reserved.
->
-> So manually marking pages as PG_reserved is not necessary, they are
-> already in the desired state (otherwise they would have been handed over
-> to the buddy as free pages and bad things would happen).
->
-> Cc: Catalin Marinas <catalin.marinas@arm.com>
-> Cc: Will Deacon <will.deacon@arm.com>
-> Cc: James Morse <james.morse@arm.com>
-> Cc: Bhupesh Sharma <bhsharma@redhat.com>
-> Cc: David Hildenbrand <david@redhat.com>
-> Cc: Mark Rutland <mark.rutland@arm.com>
-> Cc: Dave Kleikamp <dave.kleikamp@oracle.com>
-> Cc: Andrew Morton <akpm@linux-foundation.org>
-> Cc: Mike Rapoport <rppt@linux.vnet.ibm.com>
-> Cc: Michal Hocko <mhocko@suse.com>
-> Cc: Florian Fainelli <f.fainelli@gmail.com>
-> Cc: Stefan Agner <stefan@agner.ch>
-> Cc: Laura Abbott <labbott@redhat.com>
-> Cc: Greg Hackmann <ghackmann@android.com>
-> Cc: Johannes Weiner <hannes@cmpxchg.org>
-> Cc: Kristina Martsenko <kristina.martsenko@arm.com>
-> Cc: CHANDAN VN <chandan.vn@samsung.com>
-> Cc: AKASHI Takahiro <takahiro.akashi@linaro.org>
-> Cc: Logan Gunthorpe <logang@deltatee.com>
-> Reviewed-by: Matthias Brugger <mbrugger@suse.com>
-> Signed-off-by: David Hildenbrand <david@redhat.com>
+On Wed, Jan 09, 2019 at 08:17:33PM +0530, Pankaj Gupta wrote:
+> This patch adds virtio-pmem driver for KVM guest.
+> 
+> Guest reads the persistent memory range information from
+> Qemu over VIRTIO and registers it on nvdimm_bus. It also
+> creates a nd_region object with the persistent memory
+> range information so that existing 'nvdimm/pmem' driver
+> can reserve this into system memory map. This way
+> 'virtio-pmem' driver uses existing functionality of pmem
+> driver to register persistent memory compatible for DAX
+> capable filesystems.
+> 
+> This also provides function to perform guest flush over
+> VIRTIO from 'pmem' driver when userspace performs flush
+> on DAX memory range.
+> 
+> Signed-off-by: Pankaj Gupta <pagupta@redhat.com>
 > ---
->  arch/arm64/kernel/machine_kexec.c |  2 +-
->  arch/arm64/mm/init.c              | 27 ---------------------------
->  2 files changed, 1 insertion(+), 28 deletions(-)
->
-> diff --git a/arch/arm64/kernel/machine_kexec.c b/arch/arm64/kernel/machine_kexec.c
-> index 6f0587b5e941..66b5d697d943 100644
-> --- a/arch/arm64/kernel/machine_kexec.c
-> +++ b/arch/arm64/kernel/machine_kexec.c
-> @@ -321,7 +321,7 @@ void crash_post_resume(void)
->   * but does not hold any data of loaded kernel image.
->   *
->   * Note that all the pages in crash dump kernel memory have been initially
-> - * marked as Reserved in kexec_reserve_crashkres_pages().
-> + * marked as Reserved as memory was allocated via memblock_reserve().
->   *
->   * In hibernation, the pages which are Reserved and yet "nosave" are excluded
->   * from the hibernation iamge. crash_is_nosave() does thich check for crash
-> diff --git a/arch/arm64/mm/init.c b/arch/arm64/mm/init.c
-> index 7205a9085b4d..c38976b70069 100644
-> --- a/arch/arm64/mm/init.c
-> +++ b/arch/arm64/mm/init.c
-> @@ -118,35 +118,10 @@ static void __init reserve_crashkernel(void)
->         crashk_res.start = crash_base;
->         crashk_res.end = crash_base + crash_size - 1;
->  }
-> -
-> -static void __init kexec_reserve_crashkres_pages(void)
-> -{
-> -#ifdef CONFIG_HIBERNATION
-> -       phys_addr_t addr;
-> -       struct page *page;
-> -
-> -       if (!crashk_res.end)
-> -               return;
-> -
-> -       /*
-> -        * To reduce the size of hibernation image, all the pages are
-> -        * marked as Reserved initially.
-> -        */
-> -       for (addr = crashk_res.start; addr < (crashk_res.end + 1);
-> -                       addr += PAGE_SIZE) {
-> -               page = phys_to_page(addr);
-> -               SetPageReserved(page);
-> -       }
-> -#endif
-> -}
->  #else
->  static void __init reserve_crashkernel(void)
->  {
->  }
-> -
-> -static void __init kexec_reserve_crashkres_pages(void)
-> -{
-> -}
->  #endif /* CONFIG_KEXEC_CORE */
->
->  #ifdef CONFIG_CRASH_DUMP
-> @@ -586,8 +561,6 @@ void __init mem_init(void)
->         /* this will put all unused low memory onto the freelists */
->         memblock_free_all();
->
-> -       kexec_reserve_crashkres_pages();
-> -
->         mem_init_print_info(NULL);
->
->         /*
-> --
-> 2.17.2
+>  drivers/nvdimm/virtio_pmem.c     |  84 ++++++++++++++++++++++++++
+>  drivers/virtio/Kconfig           |  10 ++++
+>  drivers/virtio/Makefile          |   1 +
+>  drivers/virtio/pmem.c            | 124 +++++++++++++++++++++++++++++++++++++++
+>  include/linux/virtio_pmem.h      |  60 +++++++++++++++++++
+>  include/uapi/linux/virtio_ids.h  |   1 +
+>  include/uapi/linux/virtio_pmem.h |  10 ++++
 
-LGTM, so:
-Reviewed-by: Bhupesh Sharma <bhsharma@redhat.com>
+As with any uapi change, you need to CC the virtio dev
+mailing list (subscribers only, sorry about that).
+
+
+>  7 files changed, 290 insertions(+)
+>  create mode 100644 drivers/nvdimm/virtio_pmem.c
+>  create mode 100644 drivers/virtio/pmem.c
+>  create mode 100644 include/linux/virtio_pmem.h
+>  create mode 100644 include/uapi/linux/virtio_pmem.h
+> 
+> diff --git a/drivers/nvdimm/virtio_pmem.c b/drivers/nvdimm/virtio_pmem.c
+> new file mode 100644
+> index 0000000..2a1b1ba
+> --- /dev/null
+> +++ b/drivers/nvdimm/virtio_pmem.c
+> @@ -0,0 +1,84 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * virtio_pmem.c: Virtio pmem Driver
+> + *
+> + * Discovers persistent memory range information
+> + * from host and provides a virtio based flushing
+> + * interface.
+> + */
+> +#include <linux/virtio_pmem.h>
+> +#include "nd.h"
+> +
+> + /* The interrupt handler */
+> +void host_ack(struct virtqueue *vq)
+> +{
+> +	unsigned int len;
+> +	unsigned long flags;
+> +	struct virtio_pmem_request *req, *req_buf;
+> +	struct virtio_pmem *vpmem = vq->vdev->priv;
+> +
+> +	spin_lock_irqsave(&vpmem->pmem_lock, flags);
+> +	while ((req = virtqueue_get_buf(vq, &len)) != NULL) {
+> +		req->done = true;
+> +		wake_up(&req->host_acked);
+> +
+> +		if (!list_empty(&vpmem->req_list)) {
+> +			req_buf = list_first_entry(&vpmem->req_list,
+> +					struct virtio_pmem_request, list);
+> +			list_del(&vpmem->req_list);
+> +			req_buf->wq_buf_avail = true;
+> +			wake_up(&req_buf->wq_buf);
+> +		}
+> +	}
+> +	spin_unlock_irqrestore(&vpmem->pmem_lock, flags);
+> +}
+> +EXPORT_SYMBOL_GPL(host_ack);
+> +
+> + /* The request submission function */
+> +int virtio_pmem_flush(struct nd_region *nd_region)
+> +{
+> +	int err;
+> +	unsigned long flags;
+> +	struct scatterlist *sgs[2], sg, ret;
+> +	struct virtio_device *vdev = nd_region->provider_data;
+> +	struct virtio_pmem *vpmem = vdev->priv;
+> +	struct virtio_pmem_request *req;
+> +
+> +	might_sleep();
+> +	req = kmalloc(sizeof(*req), GFP_KERNEL);
+> +	if (!req)
+> +		return -ENOMEM;
+> +
+> +	req->done = req->wq_buf_avail = false;
+> +	strcpy(req->name, "FLUSH");
+> +	init_waitqueue_head(&req->host_acked);
+> +	init_waitqueue_head(&req->wq_buf);
+> +	sg_init_one(&sg, req->name, strlen(req->name));
+> +	sgs[0] = &sg;
+> +	sg_init_one(&ret, &req->ret, sizeof(req->ret));
+> +	sgs[1] = &ret;
+> +
+> +	spin_lock_irqsave(&vpmem->pmem_lock, flags);
+> +	err = virtqueue_add_sgs(vpmem->req_vq, sgs, 1, 1, req, GFP_ATOMIC);
+> +	if (err) {
+> +		dev_err(&vdev->dev, "failed to send command to virtio pmem device\n");
+> +
+> +		list_add_tail(&vpmem->req_list, &req->list);
+> +		spin_unlock_irqrestore(&vpmem->pmem_lock, flags);
+> +
+> +		/* When host has read buffer, this completes via host_ack */
+> +		wait_event(req->wq_buf, req->wq_buf_avail);
+> +		spin_lock_irqsave(&vpmem->pmem_lock, flags);
+> +	}
+> +	virtqueue_kick(vpmem->req_vq);
+> +	spin_unlock_irqrestore(&vpmem->pmem_lock, flags);
+> +
+> +	/* When host has read buffer, this completes via host_ack */
+> +	wait_event(req->host_acked, req->done);
+> +	err = req->ret;
+> +	kfree(req);
+> +
+> +	return err;
+> +};
+> +EXPORT_SYMBOL_GPL(virtio_pmem_flush);
+> +MODULE_LICENSE("GPL");
+> diff --git a/drivers/virtio/Kconfig b/drivers/virtio/Kconfig
+> index 3589764..9f634a2 100644
+> --- a/drivers/virtio/Kconfig
+> +++ b/drivers/virtio/Kconfig
+> @@ -42,6 +42,16 @@ config VIRTIO_PCI_LEGACY
+>  
+>  	  If unsure, say Y.
+>  
+> +config VIRTIO_PMEM
+> +	tristate "Support for virtio pmem driver"
+> +	depends on VIRTIO
+> +	depends on LIBNVDIMM
+> +	help
+> +	This driver provides support for virtio based flushing interface
+> +	for persistent memory range.
+> +
+> +	If unsure, say M.
+> +
+>  config VIRTIO_BALLOON
+>  	tristate "Virtio balloon driver"
+>  	depends on VIRTIO
+> diff --git a/drivers/virtio/Makefile b/drivers/virtio/Makefile
+> index 3a2b5c5..143ce91 100644
+> --- a/drivers/virtio/Makefile
+> +++ b/drivers/virtio/Makefile
+> @@ -6,3 +6,4 @@ virtio_pci-y := virtio_pci_modern.o virtio_pci_common.o
+>  virtio_pci-$(CONFIG_VIRTIO_PCI_LEGACY) += virtio_pci_legacy.o
+>  obj-$(CONFIG_VIRTIO_BALLOON) += virtio_balloon.o
+>  obj-$(CONFIG_VIRTIO_INPUT) += virtio_input.o
+> +obj-$(CONFIG_VIRTIO_PMEM) += pmem.o ../nvdimm/virtio_pmem.o
+> diff --git a/drivers/virtio/pmem.c b/drivers/virtio/pmem.c
+> new file mode 100644
+> index 0000000..51f5349
+> --- /dev/null
+> +++ b/drivers/virtio/pmem.c
+> @@ -0,0 +1,124 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * virtio_pmem.c: Virtio pmem Driver
+> + *
+> + * Discovers persistent memory range information
+> + * from host and registers the virtual pmem device
+> + * with libnvdimm core.
+> + */
+> +#include <linux/virtio_pmem.h>
+> +#include <../../drivers/nvdimm/nd.h>
+> +
+> +static struct virtio_device_id id_table[] = {
+> +	{ VIRTIO_ID_PMEM, VIRTIO_DEV_ANY_ID },
+> +	{ 0 },
+> +};
+> +
+> + /* Initialize virt queue */
+> +static int init_vq(struct virtio_pmem *vpmem)
+> +{
+> +	struct virtqueue *vq;
+> +
+> +	/* single vq */
+> +	vpmem->req_vq = vq = virtio_find_single_vq(vpmem->vdev,
+> +				host_ack, "flush_queue");
+> +	if (IS_ERR(vq))
+> +		return PTR_ERR(vq);
+> +
+> +	spin_lock_init(&vpmem->pmem_lock);
+> +	INIT_LIST_HEAD(&vpmem->req_list);
+> +
+> +	return 0;
+> +};
+> +
+> +static int virtio_pmem_probe(struct virtio_device *vdev)
+> +{
+> +	int err = 0;
+> +	struct resource res;
+> +	struct virtio_pmem *vpmem;
+> +	struct nvdimm_bus *nvdimm_bus;
+> +	struct nd_region_desc ndr_desc;
+> +	int nid = dev_to_node(&vdev->dev);
+> +	struct nd_region *nd_region;
+> +
+> +	if (!vdev->config->get) {
+> +		dev_err(&vdev->dev, "%s failure: config disabled\n",
+> +			__func__);
+> +		return -EINVAL;
+> +	}
+> +
+> +	vdev->priv = vpmem = devm_kzalloc(&vdev->dev, sizeof(*vpmem),
+> +			GFP_KERNEL);
+> +	if (!vpmem) {
+> +		err = -ENOMEM;
+> +		goto out_err;
+> +	}
+> +
+> +	vpmem->vdev = vdev;
+> +	err = init_vq(vpmem);
+> +	if (err)
+> +		goto out_err;
+> +
+> +	virtio_cread(vpmem->vdev, struct virtio_pmem_config,
+> +			start, &vpmem->start);
+> +	virtio_cread(vpmem->vdev, struct virtio_pmem_config,
+> +			size, &vpmem->size);
+> +
+> +	res.start = vpmem->start;
+> +	res.end   = vpmem->start + vpmem->size-1;
+> +	vpmem->nd_desc.provider_name = "virtio-pmem";
+> +	vpmem->nd_desc.module = THIS_MODULE;
+> +
+> +	vpmem->nvdimm_bus = nvdimm_bus = nvdimm_bus_register(&vdev->dev,
+> +						&vpmem->nd_desc);
+> +	if (!nvdimm_bus)
+> +		goto out_vq;
+> +
+> +	dev_set_drvdata(&vdev->dev, nvdimm_bus);
+> +	memset(&ndr_desc, 0, sizeof(ndr_desc));
+> +
+> +	ndr_desc.res = &res;
+> +	ndr_desc.numa_node = nid;
+> +	ndr_desc.flush = virtio_pmem_flush;
+> +	set_bit(ND_REGION_PAGEMAP, &ndr_desc.flags);
+> +	nd_region = nvdimm_pmem_region_create(nvdimm_bus, &ndr_desc);
+> +	nd_region->provider_data =  dev_to_virtio
+> +					(nd_region->dev.parent->parent);
+> +
+> +	if (!nd_region)
+> +		goto out_nd;
+> +
+> +	//virtio_device_ready(vdev);
+> +	return 0;
+> +out_nd:
+> +	err = -ENXIO;
+> +	nvdimm_bus_unregister(nvdimm_bus);
+> +out_vq:
+> +	vdev->config->del_vqs(vdev);
+> +out_err:
+> +	dev_err(&vdev->dev, "failed to register virtio pmem memory\n");
+> +	return err;
+> +}
+> +
+> +static void virtio_pmem_remove(struct virtio_device *vdev)
+> +{
+> +	struct virtio_pmem *vpmem = vdev->priv;
+> +	struct nvdimm_bus *nvdimm_bus = dev_get_drvdata(&vdev->dev);
+> +
+> +	nvdimm_bus_unregister(nvdimm_bus);
+> +	vdev->config->del_vqs(vdev);
+> +	kfree(vpmem);
+> +}
+> +
+> +static struct virtio_driver virtio_pmem_driver = {
+> +	.driver.name		= KBUILD_MODNAME,
+> +	.driver.owner		= THIS_MODULE,
+> +	.id_table		= id_table,
+> +	.probe			= virtio_pmem_probe,
+> +	.remove			= virtio_pmem_remove,
+> +};
+> +
+> +module_virtio_driver(virtio_pmem_driver);
+> +MODULE_DEVICE_TABLE(virtio, id_table);
+> +MODULE_DESCRIPTION("Virtio pmem driver");
+> +MODULE_LICENSE("GPL");
+> diff --git a/include/linux/virtio_pmem.h b/include/linux/virtio_pmem.h
+> new file mode 100644
+> index 0000000..224f9d9
+> --- /dev/null
+> +++ b/include/linux/virtio_pmem.h
+> @@ -0,0 +1,60 @@
+> +/* SPDX-License-Identifier: GPL-2.0 */
+> +/*
+> + * virtio_pmem.h: virtio pmem Driver
+> + *
+> + * Discovers persistent memory range information
+> + * from host and provides a virtio based flushing
+> + * interface.
+> + **/
+> +
+> +#ifndef _LINUX_VIRTIO_PMEM_H
+> +#define _LINUX_VIRTIO_PMEM_H
+> +
+> +#include <linux/virtio_ids.h>
+> +#include <linux/module.h>
+> +#include <linux/virtio_config.h>
+> +#include <uapi/linux/virtio_pmem.h>
+> +#include <linux/libnvdimm.h>
+> +#include <linux/spinlock.h>
+> +
+> +struct virtio_pmem_request {
+> +	/* Host return status corresponding to flush request */
+> +	int ret;
+> +
+> +	/* command name*/
+> +	char name[16];
+> +
+> +	/* Wait queue to process deferred work after ack from host */
+> +	wait_queue_head_t host_acked;
+> +	bool done;
+> +
+> +	/* Wait queue to process deferred work after virt queue buffer avail */
+> +	wait_queue_head_t wq_buf;
+> +	bool wq_buf_avail;
+> +	struct list_head list;
+> +};
+> +
+> +struct virtio_pmem {
+> +	struct virtio_device *vdev;
+> +
+> +	/* Virtio pmem request queue */
+> +	struct virtqueue *req_vq;
+> +
+> +	/* nvdimm bus registers virtio pmem device */
+> +	struct nvdimm_bus *nvdimm_bus;
+> +	struct nvdimm_bus_descriptor nd_desc;
+> +
+> +	/* List to store deferred work if virtqueue is full */
+> +	struct list_head req_list;
+> +
+> +	/* Synchronize virtqueue data */
+> +	spinlock_t pmem_lock;
+> +
+> +	/* Memory region information */
+> +	uint64_t start;
+> +	uint64_t size;
+> +};
+> +
+> +void host_ack(struct virtqueue *vq);
+> +int virtio_pmem_flush(struct nd_region *nd_region);
+> +#endif
+> diff --git a/include/uapi/linux/virtio_ids.h b/include/uapi/linux/virtio_ids.h
+> index 6d5c3b2..3463895 100644
+> --- a/include/uapi/linux/virtio_ids.h
+> +++ b/include/uapi/linux/virtio_ids.h
+> @@ -43,5 +43,6 @@
+>  #define VIRTIO_ID_INPUT        18 /* virtio input */
+>  #define VIRTIO_ID_VSOCK        19 /* virtio vsock transport */
+>  #define VIRTIO_ID_CRYPTO       20 /* virtio crypto */
+> +#define VIRTIO_ID_PMEM         25 /* virtio pmem */
+>  
+>  #endif /* _LINUX_VIRTIO_IDS_H */
+> diff --git a/include/uapi/linux/virtio_pmem.h b/include/uapi/linux/virtio_pmem.h
+> new file mode 100644
+> index 0000000..fa3f7d5
+> --- /dev/null
+> +++ b/include/uapi/linux/virtio_pmem.h
+> @@ -0,0 +1,10 @@
+> +/* SPDX-License-Identifier: GPL-2.0 */
+> +
+> +#ifndef _UAPI_LINUX_VIRTIO_PMEM_H
+> +#define _UAPI_LINUX_VIRTIO_PMEM_H
+> +
+> +struct virtio_pmem_config {
+> +	__le64 start;
+> +	__le64 size;
+> +};
+> +#endif
+> -- 
+> 2.9.3
