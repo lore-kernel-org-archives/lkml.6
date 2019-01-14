@@ -2,138 +2,603 @@ Return-Path: <SRS0=tq6k=PW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 94DB8C43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 15:37:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8014EC43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 15:37:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6933320873
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 15:37:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3C76320873
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 15:37:51 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=digitalocean.com header.i=@digitalocean.com header.b="OSIF8KeF"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726836AbfANPhF (ORCPT
+        id S1726839AbfANPht (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 14 Jan 2019 10:37:05 -0500
-Received: from youngberry.canonical.com ([91.189.89.112]:49021 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726609AbfANPhE (ORCPT
+        Mon, 14 Jan 2019 10:37:49 -0500
+Received: from mail-it1-f196.google.com ([209.85.166.196]:52013 "EHLO
+        mail-it1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726609AbfANPht (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 Jan 2019 10:37:04 -0500
-Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
-        by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_256_CBC_SHA1:32)
-        (Exim 4.76)
-        (envelope-from <colin.king@canonical.com>)
-        id 1gj4IP-0002nG-EL; Mon, 14 Jan 2019 15:37:01 +0000
-From:   Colin King <colin.king@canonical.com>
-To:     "David S . Miller" <davem@davemloft.net>, netdev@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] drivers: net: atp: fix various indentation issues
-Date:   Mon, 14 Jan 2019 15:37:01 +0000
-Message-Id: <20190114153701.18203-1-colin.king@canonical.com>
-X-Mailer: git-send-email 2.19.1
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+        Mon, 14 Jan 2019 10:37:49 -0500
+Received: by mail-it1-f196.google.com with SMTP id w18so13642377ite.1
+        for <linux-kernel@vger.kernel.org>; Mon, 14 Jan 2019 07:37:47 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=digitalocean.com; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=EGK8FxjT65DR9hrRCu+Ahze+MuHw+BznC4EXCvB3JQE=;
+        b=OSIF8KeFYvb4vSzQUwPIVCE6Iu4SYYnxOgUwiDBLDiIsVKs8yUe5Y+q2gO5yVuMcYn
+         JdIgxdfWMXHFSretzsUjnWwyjLl9LGTaPTjusQ5ZSopGJ9A7RljOQM7gcyWfvVnQhWqd
+         jnkdB1PhIHTJx803WR/uuaTExYuuajpGpAbYI=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=EGK8FxjT65DR9hrRCu+Ahze+MuHw+BznC4EXCvB3JQE=;
+        b=fPnsx+mTPNZladdFntHv/zOfBknnCxTHWHMfg/hKFmpnRc4FASfoYKnnbQWTshI5Nr
+         PU+fJ93hburPergd/98MyG1/UjzIRk/D3o2cxfGTxpooeV3x9Fcqs/6/2mW6lVUJuUK5
+         PdFG7xWjG5+tR3ErjQbRiyg5eZkh/PAc8sY7d9imEOb61MYWA2zMw1ixQNi1nP4lOorW
+         oCbkMVgLAyWTtxUYhz2meW21438TbEpwjuTjWfLHEVRrhNxQwFbjcHuE6iruweclpYbn
+         Lw79jjclaAgg8NFk6//khMkLb/7l2iLxg9boqhX6aYNwZEnbql0XIkKn9ayhe3tLoP/m
+         1Z5Q==
+X-Gm-Message-State: AJcUukfjh9FXu+XUWSSKf+q14iiRkUSINDu9QcFVGi+wVBXViCI1zTj1
+        nXcLQ5k7k19yG6q48cNMwyWmJw==
+X-Google-Smtp-Source: ALg8bN4H4XydhWwTwLNcOmNK6pCDNkmkImFbBD2jv10hSDgyaCxAWqlyqImjmo59vuDX41VZYQ2q+Q==
+X-Received: by 2002:a05:660c:6cc:: with SMTP id z12mr9115959itk.65.1547480267242;
+        Mon, 14 Jan 2019 07:37:47 -0800 (PST)
+Received: from swap-tester ([178.128.225.14])
+        by smtp.gmail.com with ESMTPSA id b22sm263537ios.45.2019.01.14.07.37.46
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 14 Jan 2019 07:37:46 -0800 (PST)
+From:   Vineeth Remanan Pillai <vpillai@digitalocean.com>
+To:     Huang Ying <ying.huang@intel.com>, Hugh Dickins <hughd@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Matthew Wilcox <willy@infradead.org>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+Cc:     Vineeth Remanan Pillai <vpillai@digitalocean.com>,
+        Kelley Nielsen <kelleynnn@gmail.com>,
+        Rik van Riel <riel@surriel.com>
+Subject: [PATCH v4 1/2] mm: Refactor swap-in logic out of shmem_getpage_gfp
+Date:   Mon, 14 Jan 2019 15:31:28 +0000
+Message-Id: <20190114153129.4852-1-vpillai@digitalocean.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+swap-in logic could be reused independently without rest of the logic
+in shmem_getpage_gfp. So lets refactor it out as an independent
+function.
 
-There are various lines that have indentation issues, fix these.
-
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: Vineeth Remanan Pillai <vpillai@digitalocean.com>
 ---
- drivers/net/ethernet/realtek/atp.c | 27 +++++++++++++++------------
- 1 file changed, 15 insertions(+), 12 deletions(-)
+ mm/shmem.c | 449 +++++++++++++++++++++++++++++------------------------
+ 1 file changed, 244 insertions(+), 205 deletions(-)
 
-diff --git a/drivers/net/ethernet/realtek/atp.c b/drivers/net/ethernet/realtek/atp.c
-index 7e011c1c1e6e..cfb67b746595 100644
---- a/drivers/net/ethernet/realtek/atp.c
-+++ b/drivers/net/ethernet/realtek/atp.c
-@@ -454,14 +454,14 @@ static void hardware_init(struct net_device *dev)
- {
- 	struct net_local *lp = netdev_priv(dev);
- 	long ioaddr = dev->base_addr;
--    int i;
-+	int i;
+diff --git a/mm/shmem.c b/mm/shmem.c
+index 6ece1e2fe76e..7cd7ee69f670 100644
+--- a/mm/shmem.c
++++ b/mm/shmem.c
+@@ -123,6 +123,10 @@ static unsigned long shmem_default_max_inodes(void)
+ static bool shmem_should_replace_page(struct page *page, gfp_t gfp);
+ static int shmem_replace_page(struct page **pagep, gfp_t gfp,
+ 				struct shmem_inode_info *info, pgoff_t index);
++static int shmem_swapin_page(struct inode *inode, pgoff_t index,
++			     struct page **pagep, enum sgp_type sgp,
++			     gfp_t gfp, struct vm_area_struct *vma,
++			     vm_fault_t *fault_type);
+ static int shmem_getpage_gfp(struct inode *inode, pgoff_t index,
+ 		struct page **pagep, enum sgp_type sgp,
+ 		gfp_t gfp, struct vm_area_struct *vma,
+@@ -1575,6 +1579,116 @@ static int shmem_replace_page(struct page **pagep, gfp_t gfp,
+ 	return error;
+ }
  
- 	/* Turn off the printer multiplexer on the 8012. */
- 	for (i = 0; i < 8; i++)
- 		outb(mux_8012[i], ioaddr + PAR_DATA);
- 	write_reg_high(ioaddr, CMR1, CMR1h_RESET);
++/*
++ * Swap in the page pointed to by *pagep.
++ * Caller has to make sure that *pagep contains a valid swapped page.
++ * Returns 0 and the page in pagep if success. On failure, returns the
++ * the error code and NULL in *pagep.
++ */
++static int shmem_swapin_page(struct inode *inode, pgoff_t index,
++			     struct page **pagep, enum sgp_type sgp,
++			     gfp_t gfp, struct vm_area_struct *vma,
++			     vm_fault_t *fault_type)
++{
++	struct address_space *mapping = inode->i_mapping;
++	struct shmem_inode_info *info = SHMEM_I(inode);
++	struct mm_struct *charge_mm = vma ? vma->vm_mm : current->mm;
++	struct mem_cgroup *memcg;
++	struct page *page;
++	swp_entry_t swap;
++	int error;
++
++	VM_BUG_ON(!*pagep || !xa_is_value(*pagep));
++	swap = radix_to_swp_entry(*pagep);
++	*pagep = NULL;
++
++	/* Look it up and read it in.. */
++	page = lookup_swap_cache(swap, NULL, 0);
++	if (!page) {
++		/* Or update major stats only when swapin succeeds?? */
++		if (fault_type) {
++			*fault_type |= VM_FAULT_MAJOR;
++			count_vm_event(PGMAJFAULT);
++			count_memcg_event_mm(charge_mm, PGMAJFAULT);
++		}
++		/* Here we actually start the io */
++		page = shmem_swapin(swap, gfp, info, index);
++		if (!page) {
++			error = -ENOMEM;
++			goto failed;
++		}
++	}
++
++	/* We have to do this with page locked to prevent races */
++	lock_page(page);
++	if (!PageSwapCache(page) || page_private(page) != swap.val ||
++	    !shmem_confirm_swap(mapping, index, swap)) {
++		error = -EEXIST;
++		goto unlock;
++	}
++	if (!PageUptodate(page)) {
++		error = -EIO;
++		goto failed;
++	}
++	wait_on_page_writeback(page);
++
++	if (shmem_should_replace_page(page, gfp)) {
++		error = shmem_replace_page(&page, gfp, info, index);
++		if (error)
++			goto failed;
++	}
++
++	error = mem_cgroup_try_charge_delay(page, charge_mm, gfp, &memcg,
++					    false);
++	if (!error) {
++		error = shmem_add_to_page_cache(page, mapping, index,
++						swp_to_radix_entry(swap), gfp);
++		/*
++		 * We already confirmed swap under page lock, and make
++		 * no memory allocation here, so usually no possibility
++		 * of error; but free_swap_and_cache() only trylocks a
++		 * page, so it is just possible that the entry has been
++		 * truncated or holepunched since swap was confirmed.
++		 * shmem_undo_range() will have done some of the
++		 * unaccounting, now delete_from_swap_cache() will do
++		 * the rest.
++		 */
++		if (error) {
++			mem_cgroup_cancel_charge(page, memcg, false);
++			delete_from_swap_cache(page);
++		}
++	}
++	if (error)
++		goto failed;
++
++	mem_cgroup_commit_charge(page, memcg, true, false);
++
++	spin_lock_irq(&info->lock);
++	info->swapped--;
++	shmem_recalc_inode(inode);
++	spin_unlock_irq(&info->lock);
++
++	if (sgp == SGP_WRITE)
++		mark_page_accessed(page);
++
++	delete_from_swap_cache(page);
++	set_page_dirty(page);
++	swap_free(swap);
++
++	*pagep = page;
++	return 0;
++failed:
++	if (!shmem_confirm_swap(mapping, index, swap))
++		error = -EEXIST;
++unlock:
++	if (page) {
++		unlock_page(page);
++		put_page(page);
++	}
++
++	return error;
++}
++
+ /*
+  * shmem_getpage_gfp - find page in cache, or get from swap, or allocate
+  *
+@@ -1596,7 +1710,6 @@ static int shmem_getpage_gfp(struct inode *inode, pgoff_t index,
+ 	struct mm_struct *charge_mm;
+ 	struct mem_cgroup *memcg;
+ 	struct page *page;
+-	swp_entry_t swap;
+ 	enum sgp_type sgp_huge = sgp;
+ 	pgoff_t hindex = index;
+ 	int error;
+@@ -1608,17 +1721,23 @@ static int shmem_getpage_gfp(struct inode *inode, pgoff_t index,
+ 	if (sgp == SGP_NOHUGE || sgp == SGP_HUGE)
+ 		sgp = SGP_CACHE;
+ repeat:
+-	swap.val = 0;
++	if (sgp <= SGP_CACHE &&
++	    ((loff_t)index << PAGE_SHIFT) >= i_size_read(inode)) {
++		return -EINVAL;
++	}
++
++	sbinfo = SHMEM_SB(inode->i_sb);
++	charge_mm = vma ? vma->vm_mm : current->mm;
++
+ 	page = find_lock_entry(mapping, index);
+ 	if (xa_is_value(page)) {
+-		swap = radix_to_swp_entry(page);
+-		page = NULL;
+-	}
++		error = shmem_swapin_page(inode, index, &page,
++					  sgp, gfp, vma, fault_type);
++		if (error == -EEXIST)
++			goto repeat;
  
--    for (i = 0; i < 6; i++)
-+	for (i = 0; i < 6; i++)
- 		write_reg_byte(ioaddr, PAR0 + i, dev->dev_addr[i]);
- 
- 	write_reg_high(ioaddr, CMR2, lp->addr_mode);
-@@ -471,15 +471,15 @@ static void hardware_init(struct net_device *dev)
- 			   (read_nibble(ioaddr, CMR2_h) >> 3) & 0x0f);
+-	if (sgp <= SGP_CACHE &&
+-	    ((loff_t)index << PAGE_SHIFT) >= i_size_read(inode)) {
+-		error = -EINVAL;
+-		goto unlock;
++		*pagep = page;
++		return error;
  	}
  
--    write_reg(ioaddr, CMR2, CMR2_IRQOUT);
--    write_reg_high(ioaddr, CMR1, CMR1h_RxENABLE | CMR1h_TxENABLE);
-+	write_reg(ioaddr, CMR2, CMR2_IRQOUT);
-+	write_reg_high(ioaddr, CMR1, CMR1h_RxENABLE | CMR1h_TxENABLE);
+ 	if (page && sgp == SGP_WRITE)
+@@ -1632,7 +1751,7 @@ static int shmem_getpage_gfp(struct inode *inode, pgoff_t index,
+ 		put_page(page);
+ 		page = NULL;
+ 	}
+-	if (page || (sgp == SGP_READ && !swap.val)) {
++	if (page || sgp == SGP_READ) {
+ 		*pagep = page;
+ 		return 0;
+ 	}
+@@ -1641,215 +1760,138 @@ static int shmem_getpage_gfp(struct inode *inode, pgoff_t index,
+ 	 * Fast cache lookup did not find it:
+ 	 * bring it back from swap or allocate.
+ 	 */
+-	sbinfo = SHMEM_SB(inode->i_sb);
+-	charge_mm = vma ? vma->vm_mm : current->mm;
+-
+-	if (swap.val) {
+-		/* Look it up and read it in.. */
+-		page = lookup_swap_cache(swap, NULL, 0);
+-		if (!page) {
+-			/* Or update major stats only when swapin succeeds?? */
+-			if (fault_type) {
+-				*fault_type |= VM_FAULT_MAJOR;
+-				count_vm_event(PGMAJFAULT);
+-				count_memcg_event_mm(charge_mm, PGMAJFAULT);
+-			}
+-			/* Here we actually start the io */
+-			page = shmem_swapin(swap, gfp, info, index);
+-			if (!page) {
+-				error = -ENOMEM;
+-				goto failed;
+-			}
+-		}
+-
+-		/* We have to do this with page locked to prevent races */
+-		lock_page(page);
+-		if (!PageSwapCache(page) || page_private(page) != swap.val ||
+-		    !shmem_confirm_swap(mapping, index, swap)) {
+-			error = -EEXIST;	/* try again */
+-			goto unlock;
+-		}
+-		if (!PageUptodate(page)) {
+-			error = -EIO;
+-			goto failed;
+-		}
+-		wait_on_page_writeback(page);
+-
+-		if (shmem_should_replace_page(page, gfp)) {
+-			error = shmem_replace_page(&page, gfp, info, index);
+-			if (error)
+-				goto failed;
+-		}
  
- 	/* Enable the interrupt line from the serial port. */
- 	outb(Ctrl_SelData + Ctrl_IRQEN, ioaddr + PAR_CONTROL);
- 
- 	/* Unmask the interesting interrupts. */
--    write_reg(ioaddr, IMR, ISR_RxOK | ISR_TxErr | ISR_TxOK);
--    write_reg_high(ioaddr, IMR, ISRh_RxErr);
-+	write_reg(ioaddr, IMR, ISR_RxOK | ISR_TxErr | ISR_TxOK);
-+	write_reg_high(ioaddr, IMR, ISRh_RxErr);
- 
- 	lp->tx_unit_busy = 0;
-     lp->pac_cnt_in_tx_buf = 0;
-@@ -610,10 +610,12 @@ static irqreturn_t atp_interrupt(int irq, void *dev_instance)
- 	write_reg(ioaddr, CMR2, CMR2_NULL);
- 	write_reg(ioaddr, IMR, 0);
- 
--	if (net_debug > 5) printk(KERN_DEBUG "%s: In interrupt ", dev->name);
--    while (--boguscount > 0) {
-+	if (net_debug > 5)
-+		printk(KERN_DEBUG "%s: In interrupt ", dev->name);
-+	while (--boguscount > 0) {
- 		int status = read_nibble(ioaddr, ISR);
--		if (net_debug > 5) printk("loop status %02x..", status);
-+		if (net_debug > 5)
-+			printk("loop status %02x..", status);
- 
- 		if (status & (ISR_RxOK<<3)) {
- 			handled = 1;
-@@ -640,7 +642,8 @@ static irqreturn_t atp_interrupt(int irq, void *dev_instance)
- 			} while (--boguscount > 0);
- 		} else if (status & ((ISR_TxErr + ISR_TxOK)<<3)) {
- 			handled = 1;
--			if (net_debug > 6)  printk("handling Tx done..");
-+			if (net_debug > 6)
-+				printk("handling Tx done..");
- 			/* Clear the Tx interrupt.  We should check for too many failures
- 			   and reinitialize the adapter. */
- 			write_reg(ioaddr, ISR, ISR_TxErr + ISR_TxOK);
-@@ -680,7 +683,7 @@ static irqreturn_t atp_interrupt(int irq, void *dev_instance)
- 			break;
- 		} else
- 			break;
--    }
+-		error = mem_cgroup_try_charge_delay(page, charge_mm, gfp, &memcg,
+-				false);
+-		if (!error) {
+-			error = shmem_add_to_page_cache(page, mapping, index,
+-						swp_to_radix_entry(swap), gfp);
+-			/*
+-			 * We already confirmed swap under page lock, and make
+-			 * no memory allocation here, so usually no possibility
+-			 * of error; but free_swap_and_cache() only trylocks a
+-			 * page, so it is just possible that the entry has been
+-			 * truncated or holepunched since swap was confirmed.
+-			 * shmem_undo_range() will have done some of the
+-			 * unaccounting, now delete_from_swap_cache() will do
+-			 * the rest.
+-			 * Reset swap.val? No, leave it so "failed" goes back to
+-			 * "repeat": reading a hole and writing should succeed.
+-			 */
+-			if (error) {
+-				mem_cgroup_cancel_charge(page, memcg, false);
+-				delete_from_swap_cache(page);
+-			}
+-		}
+-		if (error)
+-			goto failed;
+-
+-		mem_cgroup_commit_charge(page, memcg, true, false);
+-
+-		spin_lock_irq(&info->lock);
+-		info->swapped--;
+-		shmem_recalc_inode(inode);
+-		spin_unlock_irq(&info->lock);
+-
+-		if (sgp == SGP_WRITE)
+-			mark_page_accessed(page);
+-
+-		delete_from_swap_cache(page);
+-		set_page_dirty(page);
+-		swap_free(swap);
+-
+-	} else {
+-		if (vma && userfaultfd_missing(vma)) {
+-			*fault_type = handle_userfault(vmf, VM_UFFD_MISSING);
+-			return 0;
+-		}
++	if (vma && userfaultfd_missing(vma)) {
++		*fault_type = handle_userfault(vmf, VM_UFFD_MISSING);
++		return 0;
 +	}
  
- 	/* This following code fixes a rare (and very difficult to track down)
- 	   problem where the adapter forgets its ethernet address. */
-@@ -694,7 +697,7 @@ static irqreturn_t atp_interrupt(int irq, void *dev_instance)
+-		/* shmem_symlink() */
+-		if (mapping->a_ops != &shmem_aops)
+-			goto alloc_nohuge;
+-		if (shmem_huge == SHMEM_HUGE_DENY || sgp_huge == SGP_NOHUGE)
+-			goto alloc_nohuge;
+-		if (shmem_huge == SHMEM_HUGE_FORCE)
++	/* shmem_symlink() */
++	if (mapping->a_ops != &shmem_aops)
++		goto alloc_nohuge;
++	if (shmem_huge == SHMEM_HUGE_DENY || sgp_huge == SGP_NOHUGE)
++		goto alloc_nohuge;
++	if (shmem_huge == SHMEM_HUGE_FORCE)
++		goto alloc_huge;
++	switch (sbinfo->huge) {
++		loff_t i_size;
++		pgoff_t off;
++	case SHMEM_HUGE_NEVER:
++		goto alloc_nohuge;
++	case SHMEM_HUGE_WITHIN_SIZE:
++		off = round_up(index, HPAGE_PMD_NR);
++		i_size = round_up(i_size_read(inode), PAGE_SIZE);
++		if (i_size >= HPAGE_PMD_SIZE &&
++		    i_size >> PAGE_SHIFT >= off)
+ 			goto alloc_huge;
+-		switch (sbinfo->huge) {
+-			loff_t i_size;
+-			pgoff_t off;
+-		case SHMEM_HUGE_NEVER:
+-			goto alloc_nohuge;
+-		case SHMEM_HUGE_WITHIN_SIZE:
+-			off = round_up(index, HPAGE_PMD_NR);
+-			i_size = round_up(i_size_read(inode), PAGE_SIZE);
+-			if (i_size >= HPAGE_PMD_SIZE &&
+-					i_size >> PAGE_SHIFT >= off)
+-				goto alloc_huge;
+-			/* fallthrough */
+-		case SHMEM_HUGE_ADVISE:
+-			if (sgp_huge == SGP_HUGE)
+-				goto alloc_huge;
+-			/* TODO: implement fadvise() hints */
+-			goto alloc_nohuge;
+-		}
++		/* fallthrough */
++	case SHMEM_HUGE_ADVISE:
++		if (sgp_huge == SGP_HUGE)
++			goto alloc_huge;
++		/* TODO: implement fadvise() hints */
++		goto alloc_nohuge;
++	}
+ 
+ alloc_huge:
+-		page = shmem_alloc_and_acct_page(gfp, inode, index, true);
+-		if (IS_ERR(page)) {
+-alloc_nohuge:		page = shmem_alloc_and_acct_page(gfp, inode,
+-					index, false);
+-		}
+-		if (IS_ERR(page)) {
+-			int retry = 5;
+-			error = PTR_ERR(page);
+-			page = NULL;
+-			if (error != -ENOSPC)
+-				goto failed;
+-			/*
+-			 * Try to reclaim some spece by splitting a huge page
+-			 * beyond i_size on the filesystem.
+-			 */
+-			while (retry--) {
+-				int ret;
+-				ret = shmem_unused_huge_shrink(sbinfo, NULL, 1);
+-				if (ret == SHRINK_STOP)
+-					break;
+-				if (ret)
+-					goto alloc_nohuge;
+-			}
+-			goto failed;
+-		}
+-
+-		if (PageTransHuge(page))
+-			hindex = round_down(index, HPAGE_PMD_NR);
+-		else
+-			hindex = index;
++	page = shmem_alloc_and_acct_page(gfp, inode, index, true);
++	if (IS_ERR(page)) {
++alloc_nohuge:
++		page = shmem_alloc_and_acct_page(gfp, inode,
++						 index, false);
++	}
++	if (IS_ERR(page)) {
++		int retry = 5;
+ 
+-		if (sgp == SGP_WRITE)
+-			__SetPageReferenced(page);
++		error = PTR_ERR(page);
++		page = NULL;
++		if (error != -ENOSPC)
++			goto unlock;
++		/*
++		 * Try to reclaim some space by splitting a huge page
++		 * beyond i_size on the filesystem.
++		 */
++		while (retry--) {
++			int ret;
+ 
+-		error = mem_cgroup_try_charge_delay(page, charge_mm, gfp, &memcg,
+-				PageTransHuge(page));
+-		if (error)
+-			goto unacct;
+-		error = shmem_add_to_page_cache(page, mapping, hindex,
+-						NULL, gfp & GFP_RECLAIM_MASK);
+-		if (error) {
+-			mem_cgroup_cancel_charge(page, memcg,
+-					PageTransHuge(page));
+-			goto unacct;
++			ret = shmem_unused_huge_shrink(sbinfo, NULL, 1);
++			if (ret == SHRINK_STOP)
++				break;
++			if (ret)
++				goto alloc_nohuge;
+ 		}
+-		mem_cgroup_commit_charge(page, memcg, false,
+-				PageTransHuge(page));
+-		lru_cache_add_anon(page);
++		goto unlock;
++	}
+ 
+-		spin_lock_irq(&info->lock);
+-		info->alloced += 1 << compound_order(page);
+-		inode->i_blocks += BLOCKS_PER_PAGE << compound_order(page);
+-		shmem_recalc_inode(inode);
+-		spin_unlock_irq(&info->lock);
+-		alloced = true;
++	if (PageTransHuge(page))
++		hindex = round_down(index, HPAGE_PMD_NR);
++	else
++		hindex = index;
+ 
+-		if (PageTransHuge(page) &&
+-				DIV_ROUND_UP(i_size_read(inode), PAGE_SIZE) <
+-				hindex + HPAGE_PMD_NR - 1) {
+-			/*
+-			 * Part of the huge page is beyond i_size: subject
+-			 * to shrink under memory pressure.
+-			 */
+-			spin_lock(&sbinfo->shrinklist_lock);
+-			/*
+-			 * _careful to defend against unlocked access to
+-			 * ->shrink_list in shmem_unused_huge_shrink()
+-			 */
+-			if (list_empty_careful(&info->shrinklist)) {
+-				list_add_tail(&info->shrinklist,
+-						&sbinfo->shrinklist);
+-				sbinfo->shrinklist_len++;
+-			}
+-			spin_unlock(&sbinfo->shrinklist_lock);
+-		}
++	if (sgp == SGP_WRITE)
++		__SetPageReferenced(page);
++
++	error = mem_cgroup_try_charge_delay(page, charge_mm, gfp, &memcg,
++					    PageTransHuge(page));
++	if (error)
++		goto unacct;
++	error = shmem_add_to_page_cache(page, mapping, hindex,
++					NULL, gfp & GFP_RECLAIM_MASK);
++	if (error) {
++		mem_cgroup_cancel_charge(page, memcg,
++					 PageTransHuge(page));
++		goto unacct;
++	}
++	mem_cgroup_commit_charge(page, memcg, false,
++				 PageTransHuge(page));
++	lru_cache_add_anon(page);
++
++	spin_lock_irq(&info->lock);
++	info->alloced += 1 << compound_order(page);
++	inode->i_blocks += BLOCKS_PER_PAGE << compound_order(page);
++	shmem_recalc_inode(inode);
++	spin_unlock_irq(&info->lock);
++	alloced = true;
+ 
++	if (PageTransHuge(page) &&
++	    DIV_ROUND_UP(i_size_read(inode), PAGE_SIZE) <
++			hindex + HPAGE_PMD_NR - 1) {
+ 		/*
+-		 * Let SGP_FALLOC use the SGP_WRITE optimization on a new page.
++		 * Part of the huge page is beyond i_size: subject
++		 * to shrink under memory pressure.
+ 		 */
+-		if (sgp == SGP_FALLOC)
+-			sgp = SGP_WRITE;
+-clear:
++		spin_lock(&sbinfo->shrinklist_lock);
+ 		/*
+-		 * Let SGP_WRITE caller clear ends if write does not fill page;
+-		 * but SGP_FALLOC on a page fallocated earlier must initialize
+-		 * it now, lest undo on failure cancel our earlier guarantee.
++		 * _careful to defend against unlocked access to
++		 * ->shrink_list in shmem_unused_huge_shrink()
+ 		 */
+-		if (sgp != SGP_WRITE && !PageUptodate(page)) {
+-			struct page *head = compound_head(page);
+-			int i;
++		if (list_empty_careful(&info->shrinklist)) {
++			list_add_tail(&info->shrinklist,
++				      &sbinfo->shrinklist);
++			sbinfo->shrinklist_len++;
++		}
++		spin_unlock(&sbinfo->shrinklist_lock);
++	}
+ 
+-			for (i = 0; i < (1 << compound_order(head)); i++) {
+-				clear_highpage(head + i);
+-				flush_dcache_page(head + i);
+-			}
+-			SetPageUptodate(head);
++	/*
++	 * Let SGP_FALLOC use the SGP_WRITE optimization on a new page.
++	 */
++	if (sgp == SGP_FALLOC)
++		sgp = SGP_WRITE;
++clear:
++	/*
++	 * Let SGP_WRITE caller clear ends if write does not fill page;
++	 * but SGP_FALLOC on a page fallocated earlier must initialize
++	 * it now, lest undo on failure cancel our earlier guarantee.
++	 */
++	if (sgp != SGP_WRITE && !PageUptodate(page)) {
++		struct page *head = compound_head(page);
++		int i;
++
++		for (i = 0; i < (1 << compound_order(head)); i++) {
++			clear_highpage(head + i);
++			flush_dcache_page(head + i);
+ 		}
++		SetPageUptodate(head);
  	}
  
- 	/* Tell the adapter that it can go back to using the output line as IRQ. */
--    write_reg(ioaddr, CMR2, CMR2_IRQOUT);
-+	write_reg(ioaddr, CMR2, CMR2_IRQOUT);
- 	/* Enable the physical interrupt line, which is sure to be low until.. */
- 	outb(Ctrl_SelData + Ctrl_IRQEN, ioaddr + PAR_CONTROL);
- 	/* .. we enable the interrupt sources. */
+ 	/* Perhaps the file has been truncated since we checked */
+@@ -1879,9 +1921,6 @@ alloc_nohuge:		page = shmem_alloc_and_acct_page(gfp, inode,
+ 		put_page(page);
+ 		goto alloc_nohuge;
+ 	}
+-failed:
+-	if (swap.val && !shmem_confirm_swap(mapping, index, swap))
+-		error = -EEXIST;
+ unlock:
+ 	if (page) {
+ 		unlock_page(page);
 -- 
-2.19.1
+2.17.1
 
