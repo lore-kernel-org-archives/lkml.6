@@ -2,334 +2,215 @@ Return-Path: <SRS0=tq6k=PW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 26ADAC43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 23:04:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D4D12C43444
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 23:04:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E00EB20657
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 23:04:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9A1BA20659
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 23:04:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1547507076;
+	bh=Bmk2lqWpwsD+tggpMwOUSXkWTZW7+liEP4R9/AuuIPU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=ray5XDdN4yoDUYQ/xP4zxv8krWy5SrX9lNr3/IQauGkuljovvn9nqvgS2bkDUxtfQ
+	 ER5STSBS6QISMZH0yCyDAUbE6UCpKQULtngtI/5VW+jT480pPoO/t949B2KrKBm0nJ
+	 xFUOFtirabfwFb28lJeYNWNTKyflatefO2TosbOM=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727252AbfANXEZ (ORCPT
+        id S1727286AbfANXEe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 14 Jan 2019 18:04:25 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:37152 "EHLO mx1.redhat.com"
+        Mon, 14 Jan 2019 18:04:34 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54332 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727068AbfANXEY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 Jan 2019 18:04:24 -0500
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        id S1727019AbfANXEZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 14 Jan 2019 18:04:25 -0500
+Received: from localhost (unknown [69.71.4.100])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 2AD5D88E4F;
-        Mon, 14 Jan 2019 23:04:24 +0000 (UTC)
-Received: from x1.home (ovpn-116-25.phx2.redhat.com [10.3.116.25])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id C66A460157;
-        Mon, 14 Jan 2019 23:04:22 +0000 (UTC)
-Date:   Mon, 14 Jan 2019 16:04:22 -0700
-From:   Alex Williamson <alex.williamson@redhat.com>
-To:     Auger Eric <eric.auger@redhat.com>
-Cc:     eric.auger.pro@gmail.com, iommu@lists.linux-foundation.org,
-        linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
-        kvmarm@lists.cs.columbia.edu, joro@8bytes.org,
-        jacob.jun.pan@linux.intel.com, yi.l.liu@linux.intel.com,
-        jean-philippe.brucker@arm.com, will.deacon@arm.com,
-        robin.murphy@arm.com, kevin.tian@intel.com, ashok.raj@intel.com,
-        marc.zyngier@arm.com, christoffer.dall@arm.com,
-        peter.maydell@linaro.org
-Subject: Re: [RFC v3 18/21] vfio-pci: Add a new VFIO_REGION_TYPE_NESTED
- region type
-Message-ID: <20190114160422.6e320df9@x1.home>
-In-Reply-To: <497dad10-8832-3f2c-3ff8-fbcdd4c41ae4@redhat.com>
-References: <20190108102633.17482-1-eric.auger@redhat.com>
-        <20190108102633.17482-19-eric.auger@redhat.com>
-        <20190111165838.06a22ab8@x1.home>
-        <497dad10-8832-3f2c-3ff8-fbcdd4c41ae4@redhat.com>
-Organization: Red Hat
+        by mail.kernel.org (Postfix) with ESMTPSA id 3F4EB20657;
+        Mon, 14 Jan 2019 23:04:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1547507064;
+        bh=Bmk2lqWpwsD+tggpMwOUSXkWTZW7+liEP4R9/AuuIPU=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=unXL13xLDwTIcjSjDOd5012t6h/c7ULvuqWOY1N4E4TmKd4Pf3Mi6k/kffVbMkxNL
+         r3E/v5t1PkDu9DD9z8eHnFJrh+8QcNKBp0MR2z23QTWcXHLyMLziz0NxnsA6UB8bT7
+         rZM5uPv6HDpXHdg+4AXWDL4sthmsTdzr27BU1GrI=
+Date:   Mon, 14 Jan 2019 17:04:21 -0600
+From:   Bjorn Helgaas <helgaas@kernel.org>
+To:     Rob Herring <robh@kernel.org>
+Cc:     linux-kernel@vger.kernel.org, Christoph Hellwig <hch@lst.de>,
+        linux-pci@vger.kernel.org
+Subject: Re: [PATCH] PCI: Fix PCI kconfig menu organization
+Message-ID: <20190114230421.GC33971@google.com>
+References: <20190114213546.9921-1-robh@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.25]); Mon, 14 Jan 2019 23:04:24 +0000 (UTC)
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190114213546.9921-1-robh@kernel.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 14 Jan 2019 21:48:06 +0100
-Auger Eric <eric.auger@redhat.com> wrote:
-
-> Hi Alex,
+On Mon, Jan 14, 2019 at 03:35:46PM -0600, Rob Herring wrote:
+> After commit eb01d42a7778 ("PCI: consolidate PCI config entry in
+> drivers/pci"), all the PCI kconfig options appear below "PCI support"
+> rather than within a sub-menu. This is because menuconfig expects all
+> kconfig entries to be enclosed in an if/endif section. Add the missing
+> if/endif.
 > 
-> On 1/12/19 12:58 AM, Alex Williamson wrote:
-> > On Tue,  8 Jan 2019 11:26:30 +0100
-> > Eric Auger <eric.auger@redhat.com> wrote:
-> >   
-> >> This patch adds a new 64kB region aiming to report nested mode
-> >> translation faults.
-> >>
-> >> The region contains a header with the size of the queue,
-> >> the producer and consumer indices and then the actual
-> >> fault queue data. The producer is updated by the kernel while
-> >> the consumer is updated by the userspace.
-> >>
-> >> Signed-off-by: Eric Auger <eric.auger@redhat.com>
-> >>
-> >> ---
-> >> ---
-> >>  drivers/vfio/pci/vfio_pci.c         | 102 +++++++++++++++++++++++++++-
-> >>  drivers/vfio/pci/vfio_pci_private.h |   2 +
-> >>  include/uapi/linux/vfio.h           |  15 ++++
-> >>  3 files changed, 118 insertions(+), 1 deletion(-)
-> >>
-> >> diff --git a/drivers/vfio/pci/vfio_pci.c b/drivers/vfio/pci/vfio_pci.c
-> >> index ff60bd1ea587..2ba181ab2edd 100644
-> >> --- a/drivers/vfio/pci/vfio_pci.c
-> >> +++ b/drivers/vfio/pci/vfio_pci.c
-> >> @@ -56,6 +56,11 @@ module_param(disable_idle_d3, bool, S_IRUGO | S_IWUSR);
-> >>  MODULE_PARM_DESC(disable_idle_d3,
-> >>  		 "Disable using the PCI D3 low power state for idle, unused devices");
-> >>  
-> >> +#define VFIO_FAULT_REGION_SIZE 0x10000  
-> > 
-> > Why 64K?  
-> For the region to be mmappable with 64kB page size.
-
-Isn't hard coding 64K just as bad as hard coding 4K?  The kernel knows
-what PAGE_SIZE is after all.  Is there some target number of queue
-entries here that we could round up to a multiple of PAGE_SIZE?
- 
-> >> +#define VFIO_FAULT_QUEUE_SIZE	\
-> >> +	((VFIO_FAULT_REGION_SIZE - sizeof(struct vfio_fault_region_header)) / \
-> >> +	sizeof(struct iommu_fault))
-> >> +
-> >>  static inline bool vfio_vga_disabled(void)
-> >>  {
-> >>  #ifdef CONFIG_VFIO_PCI_VGA
-> >> @@ -1226,6 +1231,100 @@ static const struct vfio_device_ops vfio_pci_ops = {
-> >>  static int vfio_pci_reflck_attach(struct vfio_pci_device *vdev);
-> >>  static void vfio_pci_reflck_put(struct vfio_pci_reflck *reflck);
-> >>  
-> >> +static size_t
-> >> +vfio_pci_dma_fault_rw(struct vfio_pci_device *vdev, char __user *buf,
-> >> +		      size_t count, loff_t *ppos, bool iswrite)
-> >> +{
-> >> +	unsigned int i = VFIO_PCI_OFFSET_TO_INDEX(*ppos) - VFIO_PCI_NUM_REGIONS;
-> >> +	void *base = vdev->region[i].data;
-> >> +	loff_t pos = *ppos & VFIO_PCI_OFFSET_MASK;
-> >> +
-> >> +	if (pos >= vdev->region[i].size)
-> >> +		return -EINVAL;
-> >> +
-> >> +	count = min(count, (size_t)(vdev->region[i].size - pos));
-> >> +
-> >> +	if (copy_to_user(buf, base + pos, count))
-> >> +		return -EFAULT;
-> >> +
-> >> +	*ppos += count;
-> >> +
-> >> +	return count;
-> >> +}
-> >> +
-> >> +static int vfio_pci_dma_fault_mmap(struct vfio_pci_device *vdev,
-> >> +				   struct vfio_pci_region *region,
-> >> +				   struct vm_area_struct *vma)
-> >> +{
-> >> +	u64 phys_len, req_len, pgoff, req_start;
-> >> +	unsigned long long addr;
-> >> +	unsigned int index;
-> >> +
-> >> +	index = vma->vm_pgoff >> (VFIO_PCI_OFFSET_SHIFT - PAGE_SHIFT);
-> >> +
-> >> +	if (vma->vm_end < vma->vm_start)
-> >> +		return -EINVAL;
-> >> +	if ((vma->vm_flags & VM_SHARED) == 0)
-> >> +		return -EINVAL;
-> >> +
-> >> +	phys_len = VFIO_FAULT_REGION_SIZE;
-> >> +
-> >> +	req_len = vma->vm_end - vma->vm_start;
-> >> +	pgoff = vma->vm_pgoff &
-> >> +		((1U << (VFIO_PCI_OFFSET_SHIFT - PAGE_SHIFT)) - 1);
-> >> +	req_start = pgoff << PAGE_SHIFT;
-> >> +
-> >> +	if (req_start + req_len > phys_len)
-> >> +		return -EINVAL;
-> >> +
-> >> +	addr = virt_to_phys(vdev->fault_region);
-> >> +	vma->vm_private_data = vdev;
-> >> +	vma->vm_pgoff = (addr >> PAGE_SHIFT) + pgoff;
-> >> +
-> >> +	return remap_pfn_range(vma, vma->vm_start, vma->vm_pgoff,
-> >> +			       req_len, vma->vm_page_prot);
-> >> +}
-> >> +
-> >> +void vfio_pci_dma_fault_release(struct vfio_pci_device *vdev,
-> >> +				struct vfio_pci_region *region)
-> >> +{
-> >> +}
-> >> +
-> >> +static const struct vfio_pci_regops vfio_pci_dma_fault_regops = {
-> >> +	.rw		= vfio_pci_dma_fault_rw,
-> >> +	.mmap		= vfio_pci_dma_fault_mmap,
-> >> +	.release	= vfio_pci_dma_fault_release,
-> >> +};
-> >> +
-> >> +static int vfio_pci_init_dma_fault_region(struct vfio_pci_device *vdev)
-> >> +{
-> >> +	u32 flags = VFIO_REGION_INFO_FLAG_READ | VFIO_REGION_INFO_FLAG_WRITE |
-> >> +		    VFIO_REGION_INFO_FLAG_MMAP;
-> >> +	int ret;
-> >> +
-> >> +	spin_lock_init(&vdev->fault_queue_lock);
-> >> +
-> >> +	vdev->fault_region = kmalloc(VFIO_FAULT_REGION_SIZE, GFP_KERNEL);
-> >> +	if (!vdev->fault_region)
-> >> +		return -ENOMEM;
-> >> +
-> >> +	ret = vfio_pci_register_dev_region(vdev,
-> >> +		VFIO_REGION_TYPE_NESTED,
-> >> +		VFIO_REGION_SUBTYPE_NESTED_FAULT_REGION,
-> >> +		&vfio_pci_dma_fault_regops, VFIO_FAULT_REGION_SIZE,
-> >> +		flags, vdev->fault_region);
-> >> +	if (ret) {
-> >> +		kfree(vdev->fault_region);
-> >> +		return ret;
-> >> +	}
-> >> +
-> >> +	vdev->fault_region->header.prod = 0;
-> >> +	vdev->fault_region->header.cons = 0;
-> >> +	vdev->fault_region->header.reserved = 0;  
-> > 
-> > Use kzalloc above or else we're leaking kernel memory to userspace
-> > anyway.  
-> sure
-> >   
-> >> +	vdev->fault_region->header.size = VFIO_FAULT_QUEUE_SIZE;
-> >> +	return 0;
-> >> +}
-> >> +
-> >>  static int vfio_pci_probe(struct pci_dev *pdev, const struct pci_device_id *id)
-> >>  {
-> >>  	struct vfio_pci_device *vdev;
-> >> @@ -1300,7 +1399,7 @@ static int vfio_pci_probe(struct pci_dev *pdev, const struct pci_device_id *id)
-> >>  		pci_set_power_state(pdev, PCI_D3hot);
-> >>  	}
-> >>  
-> >> -	return ret;
-> >> +	return vfio_pci_init_dma_fault_region(vdev);  
-> > 
-> > Missing lots of cleanup should this fail.  Why is this done on probe
-> > anyway?  This looks like something we'd do from vfio_pci_enable() and
-> > therefore our release callback would free fault_region rather than what
-> > we have below.  
-> OK. That's fine to put in the vfio_pci_enable().
-> >   
-> >>  }
-> >>  
-> >>  static void vfio_pci_remove(struct pci_dev *pdev)
-> >> @@ -1315,6 +1414,7 @@ static void vfio_pci_remove(struct pci_dev *pdev)
-> >>  
-> >>  	vfio_iommu_group_put(pdev->dev.iommu_group, &pdev->dev);
-> >>  	kfree(vdev->region);
-> >> +	kfree(vdev->fault_region);
-> >>  	mutex_destroy(&vdev->ioeventfds_lock);
-> >>  	kfree(vdev);
-> >>  
-> >> diff --git a/drivers/vfio/pci/vfio_pci_private.h b/drivers/vfio/pci/vfio_pci_private.h
-> >> index 8c0009f00818..38b5d1764a26 100644
-> >> --- a/drivers/vfio/pci/vfio_pci_private.h
-> >> +++ b/drivers/vfio/pci/vfio_pci_private.h
-> >> @@ -120,6 +120,8 @@ struct vfio_pci_device {
-> >>  	int			ioeventfds_nr;
-> >>  	struct eventfd_ctx	*err_trigger;
-> >>  	struct eventfd_ctx	*req_trigger;
-> >> +	spinlock_t              fault_queue_lock;
-> >> +	struct vfio_fault_region *fault_region;
-> >>  	struct list_head	dummy_resources_list;
-> >>  	struct mutex		ioeventfds_lock;
-> >>  	struct list_head	ioeventfds_list;
-> >> diff --git a/include/uapi/linux/vfio.h b/include/uapi/linux/vfio.h
-> >> index 352e795a93c8..b78c2c62af6d 100644
-> >> --- a/include/uapi/linux/vfio.h
-> >> +++ b/include/uapi/linux/vfio.h
-> >> @@ -307,6 +307,9 @@ struct vfio_region_info_cap_type {
-> >>  #define VFIO_REGION_TYPE_GFX                    (1)
-> >>  #define VFIO_REGION_SUBTYPE_GFX_EDID            (1)
-> >>  
-> >> +#define VFIO_REGION_TYPE_NESTED			(2)
-> >> +#define VFIO_REGION_SUBTYPE_NESTED_FAULT_REGION	(1)
-> >> +
-> >>  /**
-> >>   * struct vfio_region_gfx_edid - EDID region layout.
-> >>   *
-> >> @@ -697,6 +700,18 @@ struct vfio_device_ioeventfd {
-> >>  
-> >>  #define VFIO_DEVICE_IOEVENTFD		_IO(VFIO_TYPE, VFIO_BASE + 16)
-> >>  
-> >> +struct vfio_fault_region_header {
-> >> +	__u32	size;		/* Read-Only */
-> >> +	__u32	prod;		/* Read-Only */  
-> > 
-> > We can't really enforce read-only if it's mmap'd.  
-> Do we really need to? Assuming the kernel always uses
-> VFIO_FAULT_QUEUE_SIZE to check prod and cons indice - which is not the
-> case at the moment by the way :-( -s, the queue cannot
-> be overflown .
+> With this, "depends on PCI" is redundant in the sub-menu  entries and
+> can be removed.
 > 
-> The header also can be checked each time the kernel fills any event in
-> the queue
-> (vfio_pci_iommu_dev_fault_handler). If inconsistent the kernel may stop
-> using the queue. If the user-space mangles with those RO fields, this
-> will break error reporting on the guest but the problem should be
-> confined here?
+> Fixes: eb01d42a7778 ("PCI: consolidate PCI config entry in drivers/pci")
+> Cc: Christoph Hellwig <hch@lst.de>
+> Cc: Bjorn Helgaas <bhelgaas@google.com>
+> Cc: linux-pci@vger.kernel.org
+> Signed-off-by: Rob Herring <robh@kernel.org>
 
-I guess this is a matter of whether the performance benefit is worth
-the hardening and I can imagine that it could be, but we do need that
-hardening and well defined behavior to the user.  If we put it into a
-single page then we need to define if a user write to the producer index
-resets the index or if it's just a shadow of internal state and will be
-restored on the next update.  Does a user write to the size register
-change the size of the queue or is it ignored?  Is there an event that
-will restore it?  Maybe the size should be exposed as a part of a
-region info capability like we've done for some of the new nvlink
-regions.
+Applied to for-linus for v5.0, thanks!
 
-> > I worry about synchronization here too, perhaps there should be a ring offset such
-> > that the ring can be in a separate page from the header and then sparse
-> > mmap support can ensure that the user access is restricted.  
+> ---
+>  drivers/pci/Kconfig | 22 ++++++++--------------
+>  1 file changed, 8 insertions(+), 14 deletions(-)
 > 
-> I was assuming a single writer and single reader lock-free circular
-> buffer here. My understanding was it was safe to consider concurrent
-> read and write. What I am missing anyway is atomic counter operations to
-> guarantee the indices are updated after the push/pop action as explained in
-> https://www.kernel.org/doc/Documentation/circular-buffers.txt. I am not
-> comfortable about how to enforce this on user side though.
-
-It doesn't seem enforceable to the user without slowing down the
-interface, either via ioctl or non-mmap.  I think it's fine to have
-acquire and release semantics, we just need to define them and have
-safe, predictable behavior when the user does something wrong (and
-expect them to do something wrong, intentionally or not).
-
-> In case I split the header and the actual buffer into 2 different
-> possible 64kB pages, the first one will be very scarcely used.
-
-Yes, it's wasteful, a shared page would be preferred, but it's also
-only a page.
-
-> > wonder if there are other transports that make sense here, this almost
-> > feels like a vhost sort of thing.  Thanks,  
-> Using something more sophisticated may be useful for PRI where answers
-> need to be provided. For the case of unrecoverable faults, I wonder
-> whether it is worth the pain exposing a fault region compared to the
-> original IOCTL approach introduced in
-> [RFC v2 18/20] vfio: VFIO_IOMMU_GET_FAULT_EVENTS
-> https://lkml.org/lkml/2018/9/18/1094
-
-Not sure I understand the pain aspect, if we don't support mmap on a
-region then we can fill a user read from a region just as easily as we
-can fill a buffer passed via ioctl.  Thanks,
-
-Alex
+> diff --git a/drivers/pci/Kconfig b/drivers/pci/Kconfig
+> index 4310c7a4212e..2ab92409210a 100644
+> --- a/drivers/pci/Kconfig
+> +++ b/drivers/pci/Kconfig
+> @@ -21,13 +21,14 @@ menuconfig PCI
+>  	  support for PCI-X and the foundations for PCI Express support.
+>  	  Say 'Y' here unless you know what you are doing.
+>  
+> +if PCI
+> +
+>  config PCI_DOMAINS
+>  	bool
+>  	depends on PCI
+>  
+>  config PCI_DOMAINS_GENERIC
+>  	bool
+> -	depends on PCI
+>  	select PCI_DOMAINS
+>  
+>  config PCI_SYSCALL
+> @@ -37,7 +38,6 @@ source "drivers/pci/pcie/Kconfig"
+>  
+>  config PCI_MSI
+>  	bool "Message Signaled Interrupts (MSI and MSI-X)"
+> -	depends on PCI
+>  	select GENERIC_MSI_IRQ
+>  	help
+>  	   This allows device drivers to enable MSI (Message Signaled
+> @@ -59,7 +59,6 @@ config PCI_MSI_IRQ_DOMAIN
+>  config PCI_QUIRKS
+>  	default y
+>  	bool "Enable PCI quirk workarounds" if EXPERT
+> -	depends on PCI
+>  	help
+>  	  This enables workarounds for various PCI chipset bugs/quirks.
+>  	  Disable this only if your target machine is unaffected by PCI
+> @@ -67,7 +66,7 @@ config PCI_QUIRKS
+>  
+>  config PCI_DEBUG
+>  	bool "PCI Debugging"
+> -	depends on PCI && DEBUG_KERNEL
+> +	depends on DEBUG_KERNEL
+>  	help
+>  	  Say Y here if you want the PCI core to produce a bunch of debug
+>  	  messages to the system log.  Select this if you are having a
+> @@ -77,7 +76,6 @@ config PCI_DEBUG
+>  
+>  config PCI_REALLOC_ENABLE_AUTO
+>  	bool "Enable PCI resource re-allocation detection"
+> -	depends on PCI
+>  	depends on PCI_IOV
+>  	help
+>  	  Say Y here if you want the PCI core to detect if PCI resource
+> @@ -90,7 +88,6 @@ config PCI_REALLOC_ENABLE_AUTO
+>  
+>  config PCI_STUB
+>  	tristate "PCI Stub driver"
+> -	depends on PCI
+>  	help
+>  	  Say Y or M here if you want be able to reserve a PCI device
+>  	  when it is going to be assigned to a guest operating system.
+> @@ -99,7 +96,6 @@ config PCI_STUB
+>  
+>  config PCI_PF_STUB
+>  	tristate "PCI PF Stub driver"
+> -	depends on PCI
+>  	depends on PCI_IOV
+>  	help
+>  	  Say Y or M here if you want to enable support for devices that
+> @@ -111,7 +107,7 @@ config PCI_PF_STUB
+>  
+>  config XEN_PCIDEV_FRONTEND
+>          tristate "Xen PCI Frontend"
+> -        depends on PCI && X86 && XEN
+> +        depends on X86 && XEN
+>          select PCI_XEN
+>  	select XEN_XENBUS_FRONTEND
+>          default y
+> @@ -133,7 +129,6 @@ config PCI_BRIDGE_EMUL
+>  
+>  config PCI_IOV
+>  	bool "PCI IOV support"
+> -	depends on PCI
+>  	select PCI_ATS
+>  	help
+>  	  I/O Virtualization is a PCI feature supported by some devices
+> @@ -144,7 +139,6 @@ config PCI_IOV
+>  
+>  config PCI_PRI
+>  	bool "PCI PRI support"
+> -	depends on PCI
+>  	select PCI_ATS
+>  	help
+>  	  PRI is the PCI Page Request Interface. It allows PCI devices that are
+> @@ -154,7 +148,6 @@ config PCI_PRI
+>  
+>  config PCI_PASID
+>  	bool "PCI PASID support"
+> -	depends on PCI
+>  	select PCI_ATS
+>  	help
+>  	  Process Address Space Identifiers (PASIDs) can be used by PCI devices
+> @@ -167,7 +160,7 @@ config PCI_PASID
+>  
+>  config PCI_P2PDMA
+>  	bool "PCI peer-to-peer transfer support"
+> -	depends on PCI && ZONE_DEVICE
+> +	depends on ZONE_DEVICE
+>  	select GENERIC_ALLOCATOR
+>  	help
+>  	  Enableѕ drivers to do PCI peer-to-peer transactions to and from
+> @@ -184,12 +177,11 @@ config PCI_P2PDMA
+>  
+>  config PCI_LABEL
+>  	def_bool y if (DMI || ACPI)
+> -	depends on PCI
+>  	select NLS
+>  
+>  config PCI_HYPERV
+>          tristate "Hyper-V PCI Frontend"
+> -        depends on PCI && X86 && HYPERV && PCI_MSI && PCI_MSI_IRQ_DOMAIN && X86_64
+> +        depends on X86 && HYPERV && PCI_MSI && PCI_MSI_IRQ_DOMAIN && X86_64
+>          help
+>            The PCI device frontend driver allows the kernel to import arbitrary
+>            PCI devices from a PCI backend to support PCI driver domains.
+> @@ -198,3 +190,5 @@ source "drivers/pci/hotplug/Kconfig"
+>  source "drivers/pci/controller/Kconfig"
+>  source "drivers/pci/endpoint/Kconfig"
+>  source "drivers/pci/switch/Kconfig"
+> +
+> +endif
+> -- 
+> 2.19.1
+> 
