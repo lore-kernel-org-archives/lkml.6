@@ -2,120 +2,210 @@ Return-Path: <SRS0=tq6k=PW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SIGNED_OFF_BY,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B25FBC43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 07:21:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C481C43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 07:21:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8128720659
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 07:21:14 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=dell.com header.i=@dell.com header.b="n7+Hxdpr"
+	by mail.kernel.org (Postfix) with ESMTP id 6AA9120659
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 07:21:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726647AbfANHVM (ORCPT
+        id S1726655AbfANHVn convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 14 Jan 2019 02:21:12 -0500
-Received: from esa4.dell-outbound.iphmx.com ([68.232.149.214]:4714 "EHLO
-        esa4.dell-outbound.iphmx.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726067AbfANHVM (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 Jan 2019 02:21:12 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=dell.com; i=@dell.com; q=dns/txt; s=smtpout;
-  t=1547450471; x=1578986471;
-  h=from:subject:to:cc:references:message-id:date:
-   mime-version:in-reply-to:content-transfer-encoding;
-  bh=vA4wURFwSA2pl4yXFqldiufB3rYm4E7Kim5VtimXgIw=;
-  b=n7+HxdprirkTYx0GrYVvsvEN09xP6914ASSP4QBRqhIbaiA3erOEEyXd
-   o62ed2VIQd2wbLLjHXD95S+fgmnKLYObHc+Iu2xFxN5Pk2a1Mdpwh3HQ6
-   nlUP5Yan+UnGBdj0InxvACoxBWJolb6vKm/NO7ZbRqnGgGbNZCVNjO4Yp
-   g=;
-X-IronPort-Anti-Spam-Filtered: true
-X-IronPort-Anti-Spam-Result: =?us-ascii?q?A2EhAQCdNzxchiWd50NkHAEBAQQBAQc?=
- =?us-ascii?q?EAQGBZYJqgQInhAGIeYsNgWAtg1qVYTwLAQEfD4Q0CgKCMiI4EgEDAQECAQE?=
- =?us-ascii?q?CAQECEAEBARMLCCkjDII6KQEQBE07MAEBAQEBAQEBAQEBAQEBARoCDWQBAQE?=
- =?us-ascii?q?DEhEVJxoQCxgCAhgOAgJXBgEKAgYCAQEegwABggEPoTY9AoFuiQcBAQFvgS+?=
- =?us-ascii?q?KHAWBC4s0gVg+gTiCa4MFGQKBOoMwglcCkEQ2kQoDBAIChxqKZgYYkX+JdYU?=
- =?us-ascii?q?RhFyDUYMSAgQCBAUCFIFdIIFYcIM8gjWDVIpbOAExAYgRAiQHgiABAQ?=
-X-IPAS-Result: =?us-ascii?q?A2EhAQCdNzxchiWd50NkHAEBAQQBAQcEAQGBZYJqgQInh?=
- =?us-ascii?q?AGIeYsNgWAtg1qVYTwLAQEfD4Q0CgKCMiI4EgEDAQECAQECAQECEAEBARMLC?=
- =?us-ascii?q?CkjDII6KQEQBE07MAEBAQEBAQEBAQEBAQEBARoCDWQBAQEDEhEVJxoQCxgCA?=
- =?us-ascii?q?hgOAgJXBgEKAgYCAQEegwABggEPoTY9AoFuiQcBAQFvgS+KHAWBC4s0gVg+g?=
- =?us-ascii?q?TiCa4MFGQKBOoMwglcCkEQ2kQoDBAIChxqKZgYYkX+JdYURhFyDUYMSAgQCB?=
- =?us-ascii?q?AUCFIFdIIFYcIM8gjWDVIpbOAExAYgRAiQHgiABAQ?=
-Received: from mx0b-00154901.pphosted.com ([67.231.157.37])
-  by esa4.dell-outbound.iphmx.com with ESMTP/TLS/AES256-SHA256; 14 Jan 2019 01:21:10 -0600
-Received: from pps.filterd (m0144104.ppops.net [127.0.0.1])
-        by mx0b-00154901.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x0E7Kfss055260;
-        Mon, 14 Jan 2019 02:21:10 -0500
-Received: from esa6.dell-outbound2.iphmx.com (esa6.dell-outbound2.iphmx.com [68.232.154.99])
-        by mx0b-00154901.pphosted.com with ESMTP id 2q0juhgu70-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 14 Jan 2019 02:21:10 -0500
-From:   "Pandel, Sujith" <Sujith.Pandel@dell.com>
-Received: from ausxipps301.us.dell.com ([143.166.148.223])
-  by esa6.dell-outbound2.iphmx.com with ESMTP/TLS/DHE-RSA-AES256-SHA256; 14 Jan 2019 13:21:08 +0600
-X-LoopCount0: from 10.94.55.207
-X-IronPort-AV: E=Sophos;i="5.56,476,1539666000"; 
-   d="scan'208";a="286226852"
-Subject: Re: [PATCH] acpi/nfit: Fix command-supported detection
-To:     Dan Williams <dan.j.williams@intel.com>, linux-nvdimm@lists.01.org
-Cc:     stable@vger.kernel.org, linux-kernel@vger.kernel.org,
-        vishal.l.verma@intel.com
-References: <154725096972.1367907.12968253382302127133.stgit@dwillia2-desk3.amr.corp.intel.com>
-Message-ID: <29b49260-8b67-ec44-24f6-8fdc32e8f648@dell.com>
-Date:   Mon, 14 Jan 2019 12:51:03 +0530
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        Mon, 14 Jan 2019 02:21:43 -0500
+Received: from mx2.suse.de ([195.135.220.15]:39030 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726067AbfANHVn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 14 Jan 2019 02:21:43 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 3CDBAAE1D;
+        Mon, 14 Jan 2019 07:21:41 +0000 (UTC)
+From:   Nicolai Stange <nstange@suse.de>
+To:     Joe Lawrence <joe.lawrence@redhat.com>
+Cc:     Nicolai Stange <nstange@suse.de>, linux-kernel@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org, live-patching@vger.kernel.org,
+        Torsten Duwe <duwe@lst.de>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Jiri Kosina <jkosina@suse.cz>,
+        Balbir Singh <bsingharora@gmail.com>
+Subject: Re: ppc64le reliable stack unwinder and scheduled tasks
+References: <7f468285-b149-37e2-e782-c9e538b997a9@redhat.com>
+        <87bm4ocbbt.fsf@suse.de> <20190111010808.GA17858@redhat.com>
+        <87fttzbpid.fsf@suse.de> <20190114040937.GA6739@redhat.com>
+Date:   Mon, 14 Jan 2019 08:21:40 +0100
+In-Reply-To: <20190114040937.GA6739@redhat.com> (Joe Lawrence's message of
+        "Sun, 13 Jan 2019 23:09:37 -0500")
+Message-ID: <877ef7bt6j.fsf@suse.de>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
 MIME-Version: 1.0
-In-Reply-To: <154725096972.1367907.12968253382302127133.stgit@dwillia2-desk3.amr.corp.intel.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-01-14_04:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1011 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1901140064
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Dan,
+Joe Lawrence <joe.lawrence@redhat.com> writes:
 
-On 12-Jan-19 5:29 AM, Dan Williams wrote:
-> The _DSM function number validation only happens to succeed when the
-> generic Linux command number translation corresponds with a
-> DSM-family-specific function number. This breaks NVDIMM-N
-> implementations that correctly implement _LSR, _LSW, and _LSI, but do
-> not happen to publish support for DSM function numbers 4, 5, and 6.
+> On Fri, Jan 11, 2019 at 08:51:54AM +0100, Nicolai Stange wrote:
+>> Joe Lawrence <joe.lawrence@redhat.com> writes:
+>> 
+>> > On Fri, Jan 11, 2019 at 01:00:38AM +0100, Nicolai Stange wrote:
 >
-> Recall that the support for _LS{I,R,W} family of methods results in the
-> DIMM being marked as supporting those command numbers at
-> acpi_nfit_register_dimms() time. The DSM function mask is only used for
-> ND_CMD_CALL support of non-NVDIMM_FAMILY_INTEL devices.
+> [ ... snip ... ]
 >
-> Fixes: 31eca76ba2fc ("nfit, libnvdimm: limited/whitelisted dimm command...")
-> Cc: <stable@vger.kernel.org>
-> Link: https://github.com/pmem/ndctl/issues/78
-> Reported-by: Sujith Pandel <sujith_pandel@dell.com>
-> Signed-off-by: Dan Williams <dan.j.williams@intel.com>
+>> >> For testing, could you try whether clearing the word at STACK_FRAME_MARKER
+>> >> from _switch() helps?
+>> >> 
+>> >> I.e. something like (completely untested):
+>> >
+>> > I'll kick off some builds tonight and try to get tests lined up
+>> > tomorrow.  Unfortunately these take a bit of time to run setup, schedule
+>> > and complete, so perhaps by next week.
+>> 
+>> Ok, that's probably still a good test for confirmation, but the solution
+>> you proposed below is much better.
+>
+> Good news, 40 tests (RHEL-7 backport) with clearing out the
+> STACK_FRAME_MARKER were all successful.  Previously I would see stalled
+> livepatch transitions due to the unreliable report in ~10% of test
+> cases.
+>
+>> >> diff --git a/arch/powerpc/kernel/entry_64.S b/arch/powerpc/kernel/entry_64.S
+>> >> index 435927f549c4..b747d0647ec4 100644
+>> >> --- a/arch/powerpc/kernel/entry_64.S
+>> >> +++ b/arch/powerpc/kernel/entry_64.S
+>> >> @@ -596,6 +596,10 @@ _GLOBAL(_switch)
+>> >>  	SAVE_8GPRS(14, r1)
+>> >>  	SAVE_10GPRS(22, r1)
+>> >>  	std	r0,_NIP(r1)	/* Return to switch caller */
+>> >> +
+>> >> +	li	r23,0
+>> >> +	std	r23,96(r1)	/* 96 == STACK_FRAME_MARKER * sizeof(long) */
+>> >> +
+>> >>  	mfcr	r23
+>> >>  	std	r23,_CCR(r1)
+>> >>  	std	r1,KSP(r3)	/* Set old stack pointer */
+>> >> 
+>> >> 
+>> >
+>> > This may be sufficient to avoid the condition, but if the contents of
+>> > frame 0 are truely uninitialized (not to be trusted), should the
+>> > unwinder be even looking at that frame (for STACK_FRAMES_REGS_MARKER),
+>> > aside from the LR and other stack size geometry sanity checks?
+>> 
+>> That's a very good point: we'll only ever be examining scheduled out tasks
+>> and current (which at that time is running klp_try_complete_transition()).
+>> 
+>> current won't be in an interrupt/exception when it's walking its own
+>> stack. And scheduled out tasks can't have an exception/interrupt frame
+>> as their frame 0, correct?
+>> 
+>> Thus, AFAICS, whenever klp_try_complete_transition() finds a
+>> STACK_FRAMES_REGS_MARKER in frame 0, it is known to be garbage, as you
+>> said.
+>
+> I gave this about 20 tests and they were also all successful, what do
+> you think?  (The log could probably use some trimming and cleanup.)  I
+> think either solution would fix the issue.
+>
+> -->8-- -->8-- -->8-- -->8-- -->8-- -->8-- -->8-- -->8-- -->8-- -->8--
+>
+> From edd3fb9e8a16d5a7ccc98759e9397f386f0e82ca Mon Sep 17 00:00:00 2001
+> From: Joe Lawrence <joe.lawrence@redhat.com>
+> Date: Fri, 11 Jan 2019 10:25:26 -0500
+> Subject: [PATCH] powerpc/livepatch: relax reliable stack tracer exception
+>  check
+>
+> The ppc64le reliable stack tracer iterates over a given task's stack,
+> verifying a set of conditions to determine whether the trace is
+> 'reliable'.  These checks include the presence of any exception frames.
+>
+> We should be careful when inspecting the bottom-most stack frame (the
+> first to be unwound), particularly for scheduled-out tasks.  As Nicolai
+> Stange explains, "If I'm reading the code in _switch() correctly, the
+> first frame is completely uninitialized except for the pointer back to
+> the caller's stack frame."  If a previous do_IRQ() invocation, for
+> example, has left a residual exception-marker on the first frame, the
+> stack tracer would incorrectly report this task's trace as unreliable.
+>
+
+FWIW, it's not been do_IRQ() who wrote the exception marker, but it's
+caller hardware_interrupt_common(), more specifically the
+EXCEPTION_PROLOG_COMMON_3 part therof.
+
+
+> save_stack_trace_tsk_reliable() already skips the first frame when
+> verifying the saved Link Register.  It should do the same when looking
+> for the STACK_FRAME_REGS_MARKER.  The task it is unwinding will be
+> either 'current', in which case the tracer will have never been called
+> from an exception path, or the task will be inactive and its first
+> frame's contents will be uninitialized (aside from backchain pointer).
+
+I thought about this a little more and can't see anything that would
+prevent higher, i.e. non-_switch() frames to also alias with prior
+exception frames. That STACK_FRAME_REGS_MARKER is written to a stack
+frame's "parameter area" and most functions probably don't initialize
+this either. So, AFAICS, higher stack frames could potentially be
+affected by the very same problem.
+
+I think the best solution would be to clear the STACK_FRAME_REGS_MARKER
+upon exception return. I have a patch ready for that and will post it
+after it has passed some basic testing -- hopefully later this day.
+
+That being said, I still think that your patch should also get applied
+in some form -- looking at unitialized memory is just not a good thing
+to do.
+
+
+>
+> Fixes: df78d3f61480 ("powerpc/livepatch: Implement reliable stack tracing for the consistency model")
+> Signed-off-by: Joe Lawrence <joe.lawrence@redhat.com>
 > ---
-> Sujith, this is a larger change than what you originally tested, but it
-> should behave the same. I wanted to consolidate all the code that
-> handles Linux command number to DIMM _DSM function number translation.
+>  arch/powerpc/kernel/stacktrace.c | 8 +++++++-
+>  1 file changed, 7 insertions(+), 1 deletion(-)
 >
-> If you have a chance to re-test with this it would be much appreciated.
->
-> Thanks for the report!
-Re-verified by applying this patch over LTS kernel-4.20.2 with ndctl v62.
-namespace creation and modification works fine on Dell NVDIMM-Ns.
-Thanks for helping me on this!
+> diff --git a/arch/powerpc/kernel/stacktrace.c b/arch/powerpc/kernel/stacktrace.c
+> index e2c50b55138f..0793e75c45a6 100644
+> --- a/arch/powerpc/kernel/stacktrace.c
+> +++ b/arch/powerpc/kernel/stacktrace.c
+> @@ -84,6 +84,12 @@ save_stack_trace_regs(struct pt_regs *regs, struct stack_trace *trace)
+>  EXPORT_SYMBOL_GPL(save_stack_trace_regs);
+>  
+>  #ifdef CONFIG_HAVE_RELIABLE_STACKTRACE
+> +/*
+> + * This function returns an error if it detects any unreliable features of the
+> + * stack.  Otherwise it guarantees that the stack trace is reliable.
+> + *
+> + * If the task is not 'current', the caller *must* ensure the task is inactive.
+> + */
+>  int
+>  save_stack_trace_tsk_reliable(struct task_struct *tsk,
+>  				struct stack_trace *trace)
+> @@ -143,7 +149,7 @@ save_stack_trace_tsk_reliable(struct task_struct *tsk,
+>  			return 1;
+>  
+>  		/* Mark stacktraces with exception frames as unreliable. */
+> -		if (sp <= stack_end - STACK_INT_FRAME_SIZE &&
+> +		if (!firstframe && sp <= stack_end - STACK_INT_FRAME_SIZE &&
+>  		    stack[STACK_FRAME_MARKER] == STACK_FRAME_REGS_MARKER) {
+>  			return 1;
+>  		}
 
-Tested-by: Sujith Pandel <sujith_pandel@dell.com>
+I would perhaps not limit this to the STACK_FRAME_REGS_MARKER, but also
+not emit the ip obtained from the first frame into the resulting trace.
 
+I.e., how about moving all the sp/newsp handling to the beginning of the
+loop and doing an 'if (firstframe) continue;' right after that?
+
+Thanks,
+
+Nicolai
+
+
+-- 
+SUSE Linux GmbH, GF: Felix Imendörffer, Jane Smithard, Graham Norton,
+HRB 21284 (AG Nürnberg)
