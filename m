@@ -2,149 +2,147 @@ Return-Path: <SRS0=tq6k=PW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 81056C43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 23:12:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B6B9EC43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 23:16:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4E80120659
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 23:12:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 80CEE20656
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 23:16:36 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="R2n+cZ+s"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727122AbfANXMO (ORCPT
+        id S1727138AbfANXQe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 14 Jan 2019 18:12:14 -0500
-Received: from mga07.intel.com ([134.134.136.100]:62835 "EHLO mga07.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726757AbfANXMN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 Jan 2019 18:12:13 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 14 Jan 2019 15:12:12 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,479,1539673200"; 
-   d="scan'208";a="108238861"
-Received: from ray.jf.intel.com (HELO [10.7.201.19]) ([10.7.201.19])
-  by orsmga006.jf.intel.com with ESMTP; 14 Jan 2019 15:12:12 -0800
-Subject: Re: [PATCHv2 2/7] acpi: change the topo of acpi_table_upgrade()
-To:     Pingfan Liu <kernelfans@gmail.com>, linux-kernel@vger.kernel.org
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Len Brown <lenb@kernel.org>, Yinghai Lu <yinghai@kernel.org>,
-        Tejun Heo <tj@kernel.org>, Chao Fan <fanc.fnst@cn.fujitsu.com>,
-        Baoquan He <bhe@redhat.com>, Juergen Gross <jgross@suse.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Michal Hocko <mhocko@suse.com>, x86@kernel.org,
-        linux-acpi@vger.kernel.org, linux-mm@kvack.org
-References: <1547183577-20309-1-git-send-email-kernelfans@gmail.com>
- <1547183577-20309-3-git-send-email-kernelfans@gmail.com>
-From:   Dave Hansen <dave.hansen@intel.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
-Message-ID: <a5fe4d86-3551-7da8-caca-fdd497ace99f@intel.com>
-Date:   Mon, 14 Jan 2019 15:12:12 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Mon, 14 Jan 2019 18:16:34 -0500
+Received: from mail-ua1-f65.google.com ([209.85.222.65]:36106 "EHLO
+        mail-ua1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726769AbfANXQe (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 14 Jan 2019 18:16:34 -0500
+Received: by mail-ua1-f65.google.com with SMTP id j3so301886uap.3
+        for <linux-kernel@vger.kernel.org>; Mon, 14 Jan 2019 15:16:33 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=6b50usfb2/6xcsB12gSXMOXGtg3RWJdvw6oM3Zulef8=;
+        b=R2n+cZ+sxdHPZuaC0CpOBNbV6uKdcOe7yHLx9ioHS8U8I8KQBxrvxoaSgV8LKAVEYh
+         GH34igpuoQq8t/BSQlur1DZuBz5FmXtilToCHUaWMCJ6nlfMi2kYpkMXeWctoNzhaMBV
+         JjnLGvxIpTVELhthop8U4M6UZXYVPnbyME9NU=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=6b50usfb2/6xcsB12gSXMOXGtg3RWJdvw6oM3Zulef8=;
+        b=VCyKmchMnTeW54wTtU0vy39JGJ5MYBiJW+9oz7Q1b3USoEQqxfhk4MKBS2tLX3du/A
+         AiKAuIckmHsi5jMDMiyd52Y2e8NhScoHChuQjPz3nXAXYAVZwvGM65EwUC39q5EDWwlm
+         Ymzec6nJ0H0wuWQc88CVJnzk+n68SmEXYQ5yfb9+3+JWPlJqW0iHBUt6zs3GDzAhOcKC
+         /I2g/yuCaszdoqLdJb0tLfwskni32pwuMPCWcAI4k/AbMHUgiZGrd1WDFFucL6yTfxSS
+         U4tKEmirbymVC2TCgd8kKdK+Ab+v1DtQbymd0rgUqfcZz9/P5kaKKP6wbcCkfSIu/GN8
+         lmYQ==
+X-Gm-Message-State: AJcUukd9CL/23cwTmcg7upL2hZNDkMwjCVPbaNJxhwNwOvpMSEgyL/NH
+        6q3Y1wkGT2PU0J/GsEUBoI6KH8sq6v0=
+X-Google-Smtp-Source: ALg8bN4+EKEmJ8H8rys627WHQjodg1BCUmeLHYjdf+xPMhW+Q93nTxSgZ9tz2ywaS34ya+y+CP26HQ==
+X-Received: by 2002:ab0:7581:: with SMTP id q1mr429155uap.17.1547507792516;
+        Mon, 14 Jan 2019 15:16:32 -0800 (PST)
+Received: from mail-vs1-f42.google.com (mail-vs1-f42.google.com. [209.85.217.42])
+        by smtp.gmail.com with ESMTPSA id n206sm47349825vkn.36.2019.01.14.15.16.30
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 14 Jan 2019 15:16:31 -0800 (PST)
+Received: by mail-vs1-f42.google.com with SMTP id x64so532467vsa.5
+        for <linux-kernel@vger.kernel.org>; Mon, 14 Jan 2019 15:16:30 -0800 (PST)
+X-Received: by 2002:a67:7d01:: with SMTP id y1mr447744vsc.48.1547507790430;
+ Mon, 14 Jan 2019 15:16:30 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <1547183577-20309-3-git-send-email-kernelfans@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+References: <20190114135144.26096-1-geert+renesas@glider.be> <20190114135144.26096-6-geert+renesas@glider.be>
+In-Reply-To: <20190114135144.26096-6-geert+renesas@glider.be>
+From:   Kees Cook <keescook@chromium.org>
+Date:   Mon, 14 Jan 2019 15:16:17 -0800
+X-Gmail-Original-Message-ID: <CAGXu5j+SHuqv0=gxdsYBqraPyZMWdVD+uxrtYrepVZBX3ZzTKw@mail.gmail.com>
+Message-ID: <CAGXu5j+SHuqv0=gxdsYBqraPyZMWdVD+uxrtYrepVZBX3ZzTKw@mail.gmail.com>
+Subject: Re: [PATCH 05/12] selftests: seccomp: Fix test dependencies and rules
+To:     Geert Uytterhoeven <geert+renesas@glider.be>
+Cc:     Shuah Khan <shuah@kernel.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Michal Marek <michal.lkml@markovi.net>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Bamvor Jian Zhang <bamv2005@gmail.com>,
+        "open list:KERNEL SELFTEST FRAMEWORK" 
+        <linux-kselftest@vger.kernel.org>,
+        linux-kbuild <linux-kbuild@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 1/10/19 9:12 PM, Pingfan Liu wrote:
-> The current acpi_table_upgrade() relies on initrd_start, but this var is
+On Mon, Jan 14, 2019 at 5:51 AM Geert Uytterhoeven
+<geert+renesas@glider.be> wrote:
+>
+> When building kselftest in a separate output directory, the seccomp_bpf
+> binary ends up in the source directory instead of in the output
+> directory, and the build of seccomp_benchmark fails:
+>
+>     make[5]: *** No rule to make target 'seccomp_benchmark', needed by 'all'.  Stop.
+>
+> Fix this by declaring both test binaries using TEST_GEN_PROGS, and using
+> the build support from lib.mk properly.
+>
+> Fixes: 967d7ba841513910 ("selftests/seccomp: Add simple seccomp overhead benchmark")
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> ---
+>  tools/testing/selftests/seccomp/Makefile | 15 +++------------
+>  1 file changed, 3 insertions(+), 12 deletions(-)
+>
+> diff --git a/tools/testing/selftests/seccomp/Makefile b/tools/testing/selftests/seccomp/Makefile
+> index fce7f4ce069251a6..c728bd7a366f78b9 100644
+> --- a/tools/testing/selftests/seccomp/Makefile
+> +++ b/tools/testing/selftests/seccomp/Makefile
+> @@ -1,17 +1,8 @@
+>  # SPDX-License-Identifier: GPL-2.0
+> -all:
+>
+> -include ../lib.mk
+> -
+> -.PHONY: all clean
+> -
+> -BINARIES := seccomp_bpf seccomp_benchmark
+>  CFLAGS += -Wl,-no-as-needed -Wall
+> +LDFLAGS += -lpthread
+>
+> -seccomp_bpf: seccomp_bpf.c ../kselftest_harness.h
+> -       $(CC) $(CFLAGS) $(LDFLAGS) -lpthread $< -o $@
+> +TEST_GEN_PROGS = seccomp_bpf seccomp_benchmark
 
-"var" meaning variable?
+This breaks the dep on ../kselftest_harness.h. Changes go unnoticed if
+this is changed:
 
-Could you please go back and try to ensure you spell out all the words
-you are intending to write?  I think "topo" probably means "topology",
-but it's a really odd word to use for changing the arguments of a
-function, so I'm not sure.
+$ touch tools/testing/selftests/kselftest_harness.h
+$ make O=/tmp/kselftest -C tools/testing/selftests
+...
+make[1]: Entering directory
+'/home/kees/src/linux/tools/testing/selftests/seccomp'
+make[1]: Nothing to be done for 'all'.
+make[1]: Leaving directory
+'/home/kees/src/linux/tools/testing/selftests/seccomp'
+...
 
-There are a couple more of these in this set.
+>
+> -TEST_PROGS += $(BINARIES)
+> -EXTRA_CLEAN := $(BINARIES)
+> -
+> -all: $(BINARIES)
+> +include ../lib.mk
+> --
+> 2.17.1
+>
 
-> only valid after relocate_initrd(). There is requirement to extract the
-> acpi info from initrd before memblock-allocator can work(see [2/4]), hence
-> acpi_table_upgrade() need to accept the input param directly.
 
-"[2/4]"
-
-It looks like you quickly resent this set without updating the patch
-descriptions.
-
-> diff --git a/drivers/acpi/tables.c b/drivers/acpi/tables.c
-> index 61203ee..84e0a79 100644
-> --- a/drivers/acpi/tables.c
-> +++ b/drivers/acpi/tables.c
-> @@ -471,10 +471,8 @@ static DECLARE_BITMAP(acpi_initrd_installed, NR_ACPI_INITRD_TABLES);
->  
->  #define MAP_CHUNK_SIZE   (NR_FIX_BTMAPS << PAGE_SHIFT)
->  
-> -void __init acpi_table_upgrade(void)
-> +void __init acpi_table_upgrade(void *data, size_t size)
->  {
-> -	void *data = (void *)initrd_start;
-> -	size_t size = initrd_end - initrd_start;
->  	int sig, no, table_nr = 0, total_offset = 0;
->  	long offset = 0;
->  	struct acpi_table_header *table;
-
-I know you are just replacing some existing variables, but we have a
-slightly higher standard for naming when you actually have to specify
-arguments to a function.  Can you please give these proper names?
-
+-- 
+Kees Cook
