@@ -2,151 +2,181 @@ Return-Path: <SRS0=tq6k=PW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EFE91C43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 17:20:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 84543C43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 17:21:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AABAB2070B
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 17:20:56 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=Mellanox.com header.i=@Mellanox.com header.b="WHIH13y6"
+	by mail.kernel.org (Postfix) with ESMTP id 53B3A2070B
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 17:21:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726807AbfANRUz (ORCPT
+        id S1726778AbfANRVc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 14 Jan 2019 12:20:55 -0500
-Received: from mail-eopbgr80052.outbound.protection.outlook.com ([40.107.8.52]:59872
-        "EHLO EUR04-VI1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726673AbfANRUz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 Jan 2019 12:20:55 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Mellanox.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=6XcuNSCDF56wQ6uFJEwLiijDZB4Zk52vqZUhFrSKmHE=;
- b=WHIH13y6CYHPRUNCkcKgEItQmaQ4YWhqHkIICxEyUtR4sK8dFEKBK2FOWY7XCM/NY5kcM+vRhU1KqG2jn0IaAR9HhkyHmy/2iqgg6TnP0ptTgY51yRu+5oEb48M6A+rGRjY5vLvWJhGxWr1MBhuEWlvQz6tL/M/kelOJ+sRrGh8=
-Received: from HE1PR05MB4601.eurprd05.prod.outlook.com (20.176.163.138) by
- HE1PR05MB3387.eurprd05.prod.outlook.com (10.170.246.161) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1516.18; Mon, 14 Jan 2019 17:20:50 +0000
-Received: from HE1PR05MB4601.eurprd05.prod.outlook.com
- ([fe80::75a0:a89d:1227:7ed3]) by HE1PR05MB4601.eurprd05.prod.outlook.com
- ([fe80::75a0:a89d:1227:7ed3%5]) with mapi id 15.20.1516.019; Mon, 14 Jan 2019
- 17:20:50 +0000
-From:   Jason Gunthorpe <jgg@mellanox.com>
-To:     Joey Pabalinas <joeypabalinas@gmail.com>,
-        Joe Perches <joe@perches.com>,
-        Gal Pressman <galpress@amazon.com>,
-        Bart Van Assche <bvanassche@acm.org>,
-        Stephen Warren <swarren@wwwdotorg.org>,
-        Tariq Toukan <tariqt@mellanox.com>,
-        "xavier.huwei@huawei.com" <xavier.huwei@huawei.com>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>,
-        Doug Ledford <dledford@redhat.com>,
-        Stephen Warren <swarren@nvidia.com>,
-        Christoph Hellwig <hch@lst.de>,
+        Mon, 14 Jan 2019 12:21:32 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:51792 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726673AbfANRVc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 14 Jan 2019 12:21:32 -0500
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id B9FD3811D9;
+        Mon, 14 Jan 2019 17:21:30 +0000 (UTC)
+Received: from redhat.com (ovpn-124-246.rdu2.redhat.com [10.10.124.246])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 7BEEF5C1B4;
+        Mon, 14 Jan 2019 17:21:27 +0000 (UTC)
+Date:   Mon, 14 Jan 2019 12:21:25 -0500
+From:   Jerome Glisse <jglisse@redhat.com>
+To:     Jan Kara <jack@suse.cz>
+Cc:     John Hubbard <jhubbard@nvidia.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Dave Chinner <david@fromorbit.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        John Hubbard <john.hubbard@gmail.com>,
         Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v4] coding-style: Clarify the expectations around bool
-Thread-Topic: [PATCH v4] coding-style: Clarify the expectations around bool
-Thread-Index: AQHUqT7yMz195OkzB0O1DFW0sNTtuKWqU/gAgAS0gAA=
-Date:   Mon, 14 Jan 2019 17:20:49 +0000
-Message-ID: <20190114172044.GE22875@mellanox.com>
-References: <20190110234805.GN6890@ziepe.ca>
- <20190111172940.zufmrhvukqo5hkat@gmail.com>
-In-Reply-To: <20190111172940.zufmrhvukqo5hkat@gmail.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: MWHPR11CA0025.namprd11.prod.outlook.com
- (2603:10b6:300:115::11) To HE1PR05MB4601.eurprd05.prod.outlook.com
- (2603:10a6:7:99::10)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=jgg@mellanox.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-originating-ip: [174.3.196.123]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;HE1PR05MB3387;6:REOL4wVuaX+GUY5bHtX9TV2lGhO5LBowaDe7gE8fIocEsdRSdiYmM3IYCuPSXp25qVDHLQVZ12yQdEBdFd/EZVPHH8sLoXzjKYss1in0iZAQohYKF54/O76B7TpmeDMv10YtQT5QBLV+6UCZCux57LJcww3PE5YdVyL2kVM912lO2ydVoHbL+NFnE1Dn6jDY0upJaIyCbQtIa2eJqdQIhEt0AIqOTJ0UacS9axSsa4G2ByDFMTOmbF6icIYee97xdtZQkNjgNhVS/fV3g2fjSjSrDbrDmH8dAGLYqgRIyIRxQ2vhPEkYYy9cCsy9c9HjY09LHTaVtoEF2zlo7fca0Wbnmrd3pAOA4cc2CCGA84u2QZbCIxgTvTKSqOtK77V3EO/lKL7w+I7Fvxhb3PZYogOmJnW568KjEHOP6UPauXVMQvS2wrudaRKAgP7Rule2KlkJsyQ52Wpr7coCPPpHgw==;5:obu8W8lM87BEMfKUHtllIAaDTNeYwg/0yF+z2hYNO8MAPetVQ//oFLzrk7ferv9hxZAxqZheO+OnuCdwBZd2Cp35H4VBN4Gcpd8v0GG0OrQHU/vSXRarmdhqFlap1bkbCfmCMiCewQLTE5TkDhDTkrF3VB+Phiesw08lZVj7CxyoxqhD32KkAi/4ttm3IkrFuu+orVK7pp0VMjYIwbjWww==;7:G/2/NmGy4pQBEQNWCaVRHK0UDqBJqZgDUrXIM/PqL3IWfxj4ZVdS3IHi16VwJeybNC0KZAbn4n3pAKWVNSubKv/KpRBK0uqpaUlq2y2MObPAyidc+abzfI0bCzPjei6oH6H1om/SLq70hKDkJ0VDeg==
-x-ms-office365-filtering-correlation-id: e452320e-8d92-436b-9068-08d67a44a0ca
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600109)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:HE1PR05MB3387;
-x-ms-traffictypediagnostic: HE1PR05MB3387:
-x-microsoft-antispam-prvs: <HE1PR05MB33877B3F755F2BA6B0F4BC93CF800@HE1PR05MB3387.eurprd05.prod.outlook.com>
-x-forefront-prvs: 0917DFAC67
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(136003)(366004)(376002)(39860400002)(346002)(396003)(199004)(189003)(2616005)(476003)(11346002)(478600001)(446003)(2501003)(486006)(39060400002)(97736004)(33656002)(53936002)(2906002)(6512007)(7736002)(305945005)(14454004)(66066001)(6246003)(36756003)(25786009)(8676002)(81156014)(81166006)(256004)(14444005)(71200400001)(71190400001)(229853002)(76176011)(52116002)(6486002)(6436002)(105586002)(106356001)(5660300001)(99286004)(7416002)(386003)(102836004)(316002)(68736007)(6506007)(110136005)(1076003)(6116002)(26005)(2201001)(186003)(86362001)(3846002)(8936002)(921003)(1121003);DIR:OUT;SFP:1101;SCL:1;SRVR:HE1PR05MB3387;H:HE1PR05MB4601.eurprd05.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: mellanox.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: Z2ZYaowOHWQWkrt5vYwS5KOVvmowcBJvD6FVN0D1w9GK5jd9PT8869GP+8AY9GlYz654Pz+Y0JI3ZEInbAkkm6fjkxLt6ZJ2OYZ3dBtjtAZA+jZrOutjdHH/AJtDKXtfQAG+vP2rsPsDBKQ9XMg0sINIWXlGRoEf3P52uV5oQaP3PHHVw3z+O5XkQO9t6BxYMHA3miPiOIt4rsz7sRWrxk+ckxnDOQHF+K/sFg80xEm63uDU+pxRs8na3s8RzSSCylM4LvRG8ZjnwUKXybh3RdngLlHjTSzgRqvKhHsq59D2NcYThpLaZ4/JUq99OfOkQydSupPR+rBAbCmrSRpTU/YrmR2SUG/nVsdYfDuvbAGL+4XuwANs2AFymZ3+KOhUT7G2Wez0FKcOFzeLVv7I7Qo8jX076Te51adAwAcVq08=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <420A43F343C15F47AEEDD50D202BF142@eurprd05.prod.outlook.com>
-Content-Transfer-Encoding: quoted-printable
+        Linux MM <linux-mm@kvack.org>, tom@talpey.com,
+        Al Viro <viro@zeniv.linux.org.uk>, benve@cisco.com,
+        Christoph Hellwig <hch@infradead.org>,
+        Christopher Lameter <cl@linux.com>,
+        "Dalessandro, Dennis" <dennis.dalessandro@intel.com>,
+        Doug Ledford <dledford@redhat.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Michal Hocko <mhocko@kernel.org>, mike.marciniszyn@intel.com,
+        rcampbell@nvidia.com,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Subject: Re: [PATCH 1/2] mm: introduce put_user_page*(), placeholder versions
+Message-ID: <20190114172124.GA3702@redhat.com>
+References: <20190103092654.GA31370@quack2.suse.cz>
+ <20190103144405.GC3395@redhat.com>
+ <a79b259b-3982-b271-025a-0656f70506f4@nvidia.com>
+ <20190111165141.GB3190@redhat.com>
+ <1b37061c-5598-1b02-2983-80003f1c71f2@nvidia.com>
+ <20190112020228.GA5059@redhat.com>
+ <294bdcfa-5bf9-9c09-9d43-875e8375e264@nvidia.com>
+ <20190112024625.GB5059@redhat.com>
+ <b6f4ed36-fc8d-1f9b-8c74-b12f61d496ae@nvidia.com>
+ <20190114145447.GJ13316@quack2.suse.cz>
 MIME-Version: 1.0
-X-OriginatorOrg: Mellanox.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: e452320e-8d92-436b-9068-08d67a44a0ca
-X-MS-Exchange-CrossTenant-originalarrivaltime: 14 Jan 2019 17:20:49.3468
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: a652971c-7d2e-4d9b-a6a4-d149256f461b
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: HE1PR05MB3387
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190114145447.GJ13316@quack2.suse.cz>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.27]); Mon, 14 Jan 2019 17:21:31 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jan 11, 2019 at 07:29:40AM -1000, Joey Pabalinas wrote:
-> On Thu, Jan 10, 2019 at 11:48:13PM +0000, Jason Gunthorpe wrote:
-> > There has been some confusion since checkpatch started warning about bo=
-ol
-> > use in structures, and people have been avoiding using it.
-> >=20
-> > Many people feel there is still a legitimate place for bool in structur=
-es,
-> > so provide some guidance on bool usage derived from the entire thread t=
-hat
-> > spawned the checkpatch warning.
->=20
-> Hey Jason,
->=20
-> I very much agree that the bool expectations could be much clearer, and t=
-his
-> patch is a nice step in that direction! Just a couple small nitpicks:
->=20
-> > +Do not use bool if cache line layout or size of the value matters, its=
- size
-> > +and alignment varies based on the compiled architecture. Structures th=
-at are
-> > +optimized for alignment and size should not use bool.
->=20
-> +Do not use bool if cache line layout or size of the value matters, as it=
-s size
->                                                                     ^
->                                                                     |
-> Adding an "as" makes the sentence flow a bit cleaner: --------------
->=20
-> > +into a single bitwise 'flags' argument and 'flags' can often a more re=
-adable
-> > +alternative if the call-sites have naked true/false constants.
->=20
-> +into a single bitwise 'flags' argument and 'flags' can often be a more r=
-eadable
->                                                               ^
->                                                               |
-> Missing a "be" here: -----------------------------------------
->=20
-> Ack from me after those two corrections.
->=20
-> Reviewed-by: Joey Pabalinas <joeypabalinas@gmail.com>
+On Mon, Jan 14, 2019 at 03:54:47PM +0100, Jan Kara wrote:
+> On Fri 11-01-19 19:06:08, John Hubbard wrote:
+> > On 1/11/19 6:46 PM, Jerome Glisse wrote:
+> > > On Fri, Jan 11, 2019 at 06:38:44PM -0800, John Hubbard wrote:
+> > > [...]
+> > > 
+> > >>>> The other idea that you and Dan (and maybe others) pointed out was a debug
+> > >>>> option, which we'll certainly need in order to safely convert all the call
+> > >>>> sites. (Mirror the mappings at a different kernel offset, so that put_page()
+> > >>>> and put_user_page() can verify that the right call was made.)  That will be
+> > >>>> a separate patchset, as you recommended.
+> > >>>>
+> > >>>> I'll even go as far as recommending the page lock itself. I realize that this 
+> > >>>> adds overhead to gup(), but we *must* hold off page_mkclean(), and I believe
+> > >>>> that this (below) has similar overhead to the notes above--but is *much* easier
+> > >>>> to verify correct. (If the page lock is unacceptable due to being so widely used,
+> > >>>> then I'd recommend using another page bit to do the same thing.)
+> > >>>
+> > >>> Please page lock is pointless and it will not work for GUP fast. The above
+> > >>> scheme do work and is fine. I spend the day again thinking about all memory
+> > >>> ordering and i do not see any issues.
+> > >>>
+> > >>
+> > >> Why is it that page lock cannot be used for gup fast, btw?
+> > > 
+> > > Well it can not happen within the preempt disable section. But after
+> > > as a post pass before GUP_fast return and after reenabling preempt then
+> > > it is fine like it would be for regular GUP. But locking page for GUP
+> > > is also likely to slow down some workload (with direct-IO).
+> > > 
+> > 
+> > Right, and so to crux of the matter: taking an uncontended page lock
+> > involves pretty much the same set of operations that your approach does.
+> > (If gup ends up contended with the page lock for other reasons than these
+> > paths, that seems surprising.) I'd expect very similar performance.
+> > 
+> > But the page lock approach leads to really dramatically simpler code (and
+> > code reviews, let's not forget). Any objection to my going that
+> > direction, and keeping this idea as a Plan B? I think the next step will
+> > be, once again, to gather some performance metrics, so maybe that will
+> > help us decide.
+> 
+> FWIW I agree that using page lock for protecting page pinning (and thus
+> avoid races with page_mkclean()) looks simpler to me as well and I'm not
+> convinced there will be measurable difference to the more complex scheme
+> with barriers Jerome suggests unless that page lock contended. Jerome is
+> right that you cannot just do lock_page() in gup_fast() path. There you
+> have to do trylock_page() and if that fails just bail out to the slow gup
+> path.
+> 
+> Regarding places other than page_mkclean() that need to check pinned state:
+> Definitely page migration will want to check whether the page is pinned or
+> not so that it can deal differently with short-term page references vs
+> longer-term pins.
+> 
+> Also there is one more idea I had how to record number of pins in the page:
+> 
+> #define PAGE_PIN_BIAS	1024
+> 
+> get_page_pin()
+> 	atomic_add(&page->_refcount, PAGE_PIN_BIAS);
+> 
+> put_page_pin();
+> 	atomic_add(&page->_refcount, -PAGE_PIN_BIAS);
+> 
+> page_pinned(page)
+> 	(atomic_read(&page->_refcount) - page_mapcount(page)) > PAGE_PIN_BIAS
+> 
+> This is pretty trivial scheme. It still gives us 22-bits for page pins
+> which should be plenty (but we should check for that and bail with error if
+> it would overflow). Also there will be no false negatives and false
+> positives only if there are more than 1024 non-page-table references to the
+> page which I expect to be rare (we might want to also subtract
+> hpage_nr_pages() for radix tree references to avoid excessive false
+> positives for huge pages although at this point I don't think they would
+> matter). Thoughts?
 
-done, thanks
+Racing PUP are as likely to cause issues:
 
-Jason
+CPU0                        | CPU1       | CPU2
+                            |            |
+                            | PUP()      |
+    page_pinned(page)       |            |
+      (page_count(page) -   |            |
+       page_mapcount(page)) |            |
+                            |            | GUP()
+
+So here the refcount snap-shot does not include the second GUP and
+we can have a false negative ie the page_pinned() will return false
+because of the PUP happening just before on CPU1 despite the racing
+GUP on CPU2 just after.
+
+I believe only either lock or memory ordering with barrier can
+guarantee that we do not miss GUP ie no false negative. Still the
+bias idea might be usefull as with it we should not need a flag.
+
+So to make the above safe it would still need the page write back
+double check that i described so that GUP back-off if it raced with
+page_mkclean,clear_page_dirty_for_io and the fs write page call back
+which call test_set_page_writeback() (yes it is very unlikely but
+might still happen).
+
+
+I still need to ponder some more on all the races.
+
+
+Cheers,
+Jérôme
