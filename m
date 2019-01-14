@@ -2,104 +2,126 @@ Return-Path: <SRS0=tq6k=PW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C4699C43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 10:05:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 49305C43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 10:05:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9E7932086D
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 10:05:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2392A2086D
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 10:05:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726666AbfANKFa (ORCPT
+        id S1726715AbfANKFn convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 14 Jan 2019 05:05:30 -0500
-Received: from Galois.linutronix.de ([146.0.238.70]:38977 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726320AbfANKF3 (ORCPT
+        Mon, 14 Jan 2019 05:05:43 -0500
+Received: from mx08-00178001.pphosted.com ([91.207.212.93]:7654 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726320AbfANKFm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 Jan 2019 05:05:29 -0500
-Received: from bigeasy by Galois.linutronix.de with local (Exim 4.80)
-        (envelope-from <bigeasy@linutronix.de>)
-        id 1giz7V-0001Zu-Uf; Mon, 14 Jan 2019 11:05:26 +0100
-Date:   Mon, 14 Jan 2019 11:05:25 +0100
-From:   Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-To:     Daniel Bristot de Oliveira <bristot@redhat.com>
-Cc:     linux-rt-users@vger.kernel.org,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Clark Williams <williams@redhat.com>,
-        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH RT] padata: Make padata_do_serial() use get_cpu_light()
-Message-ID: <20190114100525.4apnsblriimgjvkl@linutronix.de>
-References: <5894faebe7c816c6b210ab2616a49330f067a492.1547039140.git.bristot@redhat.com>
+        Mon, 14 Jan 2019 05:05:42 -0500
+Received: from pps.filterd (m0046660.ppops.net [127.0.0.1])
+        by mx08-00178001.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x0E9tvHe015568;
+        Mon, 14 Jan 2019 11:05:17 +0100
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx08-00178001.pphosted.com with ESMTP id 2pybxxybt6-1
+        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
+        Mon, 14 Jan 2019 11:05:17 +0100
+Received: from zeta.dmz-eu.st.com (zeta.dmz-eu.st.com [164.129.230.9])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id A695638;
+        Mon, 14 Jan 2019 10:05:15 +0000 (GMT)
+Received: from Webmail-eu.st.com (sfhdag6node3.st.com [10.75.127.18])
+        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 5EDE02AE9;
+        Mon, 14 Jan 2019 10:05:15 +0000 (GMT)
+Received: from SFHDAG6NODE2.st.com (10.75.127.17) by SFHDAG6NODE3.st.com
+ (10.75.127.18) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Mon, 14 Jan
+ 2019 11:05:14 +0100
+Received: from SFHDAG6NODE2.st.com ([fe80::a56f:c186:bab7:13d6]) by
+ SFHDAG6NODE2.st.com ([fe80::a56f:c186:bab7:13d6%20]) with mapi id
+ 15.00.1347.000; Mon, 14 Jan 2019 11:05:14 +0100
+From:   Pascal PAILLET-LME <p.paillet@st.com>
+To:     "dmitry.torokhov@gmail.com" <dmitry.torokhov@gmail.com>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "lee.jones@linaro.org" <lee.jones@linaro.org>,
+        "lgirdwood@gmail.com" <lgirdwood@gmail.com>,
+        "broonie@kernel.org" <broonie@kernel.org>,
+        "wim@linux-watchdog.org" <wim@linux-watchdog.org>,
+        "linux@roeck-us.net" <linux@roeck-us.net>,
+        "linux-input@vger.kernel.org" <linux-input@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-watchdog@vger.kernel.org" <linux-watchdog@vger.kernel.org>,
+        "benjamin.gaignard@linaro.org" <benjamin.gaignard@linaro.org>,
+        "eballetbo@gmail.com" <eballetbo@gmail.com>,
+        "axel.lin@ingics.com" <axel.lin@ingics.com>
+CC:     Pascal PAILLET-LME <p.paillet@st.com>
+Subject: [PATCH RESEND v8 0/6] Introduce STPMIC1 PMIC Driver
+Thread-Topic: [PATCH RESEND v8 0/6] Introduce STPMIC1 PMIC Driver
+Thread-Index: AQHUq/CkwxI635FyyUaeSDhRKlEYzw==
+Date:   Mon, 14 Jan 2019 10:05:14 +0000
+Message-ID: <1547460290-21049-1-git-send-email-p.paillet@st.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.75.127.48]
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: 8BIT
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <5894faebe7c816c6b210ab2616a49330f067a492.1547039140.git.bristot@redhat.com>
-User-Agent: NeoMutt/20180716
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-01-14_05:,,
+ signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2019-01-09 16:59:26 [+0100], Daniel Bristot de Oliveira wrote:
-> diff --git a/kernel/padata.c b/kernel/padata.c
-> index d568cc56405f..bfcbdeb20ba5 100644
-> --- a/kernel/padata.c
-> +++ b/kernel/padata.c
-> @@ -295,7 +295,7 @@ static void padata_reorder_timer(struct timer_list *t)
->  	unsigned int weight;
->  	int target_cpu, cpu;
->  
-> -	cpu = get_cpu();
-> +	cpu = get_cpu_light();
+The goal of this patch-set is to propose a driver for the STPMIC1 PMIC from 
+STMicroelectronics. 
+The STPMIC1 regulators supply power to an application processor as well as 
+to external system peripherals such as DDR, Flash memories and system
+devices. It also features onkey button input and an hardware watchdog.
+The STPMIC1 is controlled via I2C. 
 
-This can become a
-	cpu = smp_processor_id()
+Main driver is drivers/mfd/stpmic1 that handle I2C regmap configuration and
+irqchip. stpmic1_regulator, stpmic1_onkey and stpmic1_wdt need stpmic1 mfd
+as parent.
 
->  	/* We don't lock pd here to not interfere with parallel processing
->  	 * padata_reorder() calls on other CPUs. We just need any CPU out of
-> @@ -321,7 +321,7 @@ static void padata_reorder_timer(struct timer_list *t)
->  		padata_reorder(pd);
->  	}
->  
-> -	put_cpu();
-> +	put_cpu_light();
+STPMIC1 MFD and regulator drivers maybe mandatory at boot time.
 
-and this can go because this is invoked in a timer callback.
+Pascal Paillet (6):
+  dt-bindings: mfd: document stpmic1
+  mfd: stpmic1: add stpmic1 driver
+  dt-bindings: input: document stpmic1 pmic onkey
+  input: stpmic1: add stpmic1 onkey driver
+  dt-bindings: watchdog: document stpmic1 pmic watchdog
+  watchdog: stpmic1: add stpmic1 watchdog driver
 
->  }
->  
->  static void padata_serial_worker(struct work_struct *serial_work)
-> @@ -369,7 +369,7 @@ void padata_do_serial(struct padata_priv *padata)
->  
->  	pd = padata->pd;
->  
-> -	cpu = get_cpu();
-> +	cpu = get_cpu_light();
+ .../devicetree/bindings/input/st,stpmic1-onkey.txt |  28 +++
+ .../devicetree/bindings/mfd/st,stpmic1.txt         |  61 ++++++
+ .../bindings/watchdog/st,stpmic1-wdt.txt           |  11 ++
+ drivers/input/misc/Kconfig                         |  11 ++
+ drivers/input/misc/Makefile                        |   2 +
+ drivers/input/misc/stpmic1_onkey.c                 | 198 +++++++++++++++++++
+ drivers/mfd/Kconfig                                |  16 ++
+ drivers/mfd/Makefile                               |   1 +
+ drivers/mfd/stpmic1.c                              | 213 +++++++++++++++++++++
+ drivers/watchdog/Kconfig                           |  12 ++
+ drivers/watchdog/Makefile                          |   1 +
+ drivers/watchdog/stpmic1_wdt.c                     | 139 ++++++++++++++
+ include/dt-bindings/mfd/st,stpmic1.h               |  50 +++++
+ include/linux/mfd/stpmic1.h                        | 212 ++++++++++++++++++++
+ 14 files changed, 955 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/input/st,stpmic1-onkey.txt
+ create mode 100644 Documentation/devicetree/bindings/mfd/st,stpmic1.txt
+ create mode 100644 Documentation/devicetree/bindings/watchdog/st,stpmic1-wdt.txt
+ create mode 100644 drivers/input/misc/stpmic1_onkey.c
+ create mode 100644 drivers/mfd/stpmic1.c
+ create mode 100644 drivers/watchdog/stpmic1_wdt.c
+ create mode 100644 include/dt-bindings/mfd/st,stpmic1.h
+ create mode 100644 include/linux/mfd/stpmic1.h
 
-this is tricky but I would also say that this can become
-smp_processor_id() like in the upper hunk
-
->  	/* We need to run on the same CPU padata_do_parallel(.., padata, ..)
->  	 * was called on -- or, at least, enqueue the padata object into the
-> @@ -387,7 +387,7 @@ void padata_do_serial(struct padata_priv *padata)
->  	list_add_tail(&padata->list, &pqueue->reorder.list);
->  	spin_unlock(&pqueue->reorder.lock);
->  
-> -	put_cpu();
-> +	put_cpu_light();
-
-and than this can go, too. It looks like this invoked from a worker with
-BH disabled. If it does, it is all good. If not then it might be
-problematic because later we have
-	queue_work_on(cpu, pd->pinst->wq, &pqueue->reorder_work);
-
-and nothing guarantees that the work is carried out by the CPU specified
-if CPU-hotplug is involved.
-
->  	/* If we're running on the wrong CPU, call padata_reorder() via a
->  	 * kernel worker.
-
-Sebastian
+-- 
+1.9.1
