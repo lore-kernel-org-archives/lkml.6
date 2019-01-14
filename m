@@ -7,47 +7,47 @@ X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B5C99C43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 13:27:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1766EC43444
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 13:27:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 86BD320873
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 13:27:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DB97C2086D
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 13:27:38 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="bgyT0zhx"
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="r+bkx6Le"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726928AbfANN0v (ORCPT
+        id S1727039AbfANN1h (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 14 Jan 2019 08:26:51 -0500
-Received: from fllv0016.ext.ti.com ([198.47.19.142]:37452 "EHLO
+        Mon, 14 Jan 2019 08:27:37 -0500
+Received: from fllv0016.ext.ti.com ([198.47.19.142]:37648 "EHLO
         fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726653AbfANN0o (ORCPT
+        with ESMTP id S1726518AbfANN1e (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 Jan 2019 08:26:44 -0500
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id x0EDQIVD098267;
-        Mon, 14 Jan 2019 07:26:18 -0600
+        Mon, 14 Jan 2019 08:27:34 -0500
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id x0EDPZg6098110;
+        Mon, 14 Jan 2019 07:25:35 -0600
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1547472378;
-        bh=1cBzf8O7pgKPJLJpe2QIGf7wnuv4q+HWdzVaE+h4hbQ=;
+        s=ti-com-17Q1; t=1547472335;
+        bh=tWr3enOfHY/N1zh//XsnGspmWYu0ckIGK/nsnUn+GzQ=;
         h=From:To:CC:Subject:Date:In-Reply-To:References;
-        b=bgyT0zhx5yihzelR3UnzYLsdRrwtvMLZBQv1133Pw15tSLJDry174Vqrccylk2Enf
-         koOPPMuTnDtK7qMlQ+gJaVWzsENRihV3LeNXCLud6WVxwxMRLDBrR0s/BVhrLZkHVA
-         3Wu5aseWTX/8eIp+CssiQmY0bAqdW0Ov823EsLYo=
-Received: from DFLE111.ent.ti.com (dfle111.ent.ti.com [10.64.6.32])
-        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x0EDQIYC057353
+        b=r+bkx6LeW0pSvKeIOFzOA37U9B2R7sdKsI7CFyRpoUBLLGahmjzR8awEFLeUvIOMe
+         s7gm/PgXpsrFbUePRYAk73vSDWqRTKkuLR3aVdYPtITHd26/G4eVaCsr7x97ZLUzs0
+         Z/oATG0y6z8y9Ik+n+0TDAEm+6B98W0CLRw2bcAQ=
+Received: from DFLE103.ent.ti.com (dfle103.ent.ti.com [10.64.6.24])
+        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x0EDPZr6088866
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 14 Jan 2019 07:26:18 -0600
-Received: from DFLE100.ent.ti.com (10.64.6.21) by DFLE111.ent.ti.com
- (10.64.6.32) with Microsoft SMTP Server (version=TLS1_2,
+        Mon, 14 Jan 2019 07:25:35 -0600
+Received: from DFLE107.ent.ti.com (10.64.6.28) by DFLE103.ent.ti.com
+ (10.64.6.24) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Mon, 14
- Jan 2019 07:26:18 -0600
-Received: from dlep32.itg.ti.com (157.170.170.100) by DFLE100.ent.ti.com
- (10.64.6.21) with Microsoft SMTP Server (version=TLS1_0,
+ Jan 2019 07:25:34 -0600
+Received: from dlep32.itg.ti.com (157.170.170.100) by DFLE107.ent.ti.com
+ (10.64.6.28) with Microsoft SMTP Server (version=TLS1_0,
  cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1591.10 via Frontend Transport;
- Mon, 14 Jan 2019 07:26:18 -0600
+ Mon, 14 Jan 2019 07:25:34 -0600
 Received: from a0393678ub.india.ti.com (ileax41-snat.itg.ti.com [10.172.224.153])
-        by dlep32.itg.ti.com (8.14.3/8.13.8) with ESMTP id x0EDOoWd028516;
-        Mon, 14 Jan 2019 07:26:14 -0600
+        by dlep32.itg.ti.com (8.14.3/8.13.8) with ESMTP id x0EDOoWU028516;
+        Mon, 14 Jan 2019 07:25:30 -0600
 From:   Kishon Vijay Abraham I <kishon@ti.com>
 To:     Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
         Rob Herring <robh+dt@kernel.org>,
@@ -63,9 +63,9 @@ CC:     Kishon Vijay Abraham I <kishon@ti.com>,
         <linux-pci@vger.kernel.org>, <devicetree@vger.kernel.org>,
         <linux-kernel@vger.kernel.org>, <linux-omap@vger.kernel.org>,
         <linux-arm-kernel@lists.infradead.org>, <linux-arm-kernel@axis.com>
-Subject: [PATCH 17/24] PCI: dwc: Add const qualifier to struct dw_pcie_ep_ops
-Date:   Mon, 14 Jan 2019 18:54:17 +0530
-Message-ID: <20190114132424.6445-18-kishon@ti.com>
+Subject: [PATCH 08/24] PCI: keystone: Explicitly set the PCIe mode
+Date:   Mon, 14 Jan 2019 18:54:08 +0530
+Message-ID: <20190114132424.6445-9-kishon@ti.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190114132424.6445-1-kishon@ti.com>
 References: <20190114132424.6445-1-kishon@ti.com>
@@ -77,69 +77,77 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add const qualifier to struct dw_pcie_ep_ops member of
-struct dw_pcie_ep.
+Explicitly set the PCIe mode to BOOTCFG_DEVCFG instead of always
+relying on the default values. This is required when EP mode has to
+be explicitly written to BOOTCFG_DEVCFG register.
 
 Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
 ---
- drivers/pci/controller/dwc/pci-dra7xx.c           | 2 +-
- drivers/pci/controller/dwc/pcie-artpec6.c         | 2 +-
- drivers/pci/controller/dwc/pcie-designware-plat.c | 2 +-
- drivers/pci/controller/dwc/pcie-designware.h      | 2 +-
- 4 files changed, 4 insertions(+), 4 deletions(-)
+ drivers/pci/controller/dwc/pci-keystone.c | 37 +++++++++++++++++++++++
+ 1 file changed, 37 insertions(+)
 
-diff --git a/drivers/pci/controller/dwc/pci-dra7xx.c b/drivers/pci/controller/dwc/pci-dra7xx.c
-index 15620cfa617b..b4fbb4be212f 100644
---- a/drivers/pci/controller/dwc/pci-dra7xx.c
-+++ b/drivers/pci/controller/dwc/pci-dra7xx.c
-@@ -401,7 +401,7 @@ dra7xx_pcie_get_features(struct dw_pcie_ep *ep)
- 	return &dra7xx_pcie_epc_features;
+diff --git a/drivers/pci/controller/dwc/pci-keystone.c b/drivers/pci/controller/dwc/pci-keystone.c
+index ce2f5c25f7a3..d1ecf826dfe8 100644
+--- a/drivers/pci/controller/dwc/pci-keystone.c
++++ b/drivers/pci/controller/dwc/pci-keystone.c
+@@ -79,6 +79,15 @@
+ #define PCIE_RC_K2L			0xb00a
+ #define PCIE_RC_K2G			0xb00b
+ 
++#define KS_PCIE_DEV_TYPE_MASK		(0x3 << 1)
++#define KS_PCIE_DEV_TYPE(mode)		((mode) << 1)
++
++#define EP				0x0
++#define LEG_EP				0x1
++#define RC				0x2
++
++#define KS_PCIE_SYSCLOCKOUTEN		BIT(0)
++
+ #define to_keystone_pcie(x)		dev_get_drvdata((x)->dev)
+ 
+ struct keystone_pcie {
+@@ -859,6 +868,30 @@ static int ks_pcie_enable_phy(struct keystone_pcie *ks_pcie)
+ 	return ret;
  }
  
--static struct dw_pcie_ep_ops pcie_ep_ops = {
-+static const struct dw_pcie_ep_ops pcie_ep_ops = {
- 	.ep_init = dra7xx_pcie_ep_init,
- 	.raise_irq = dra7xx_pcie_raise_irq,
- 	.get_features = dra7xx_pcie_get_features,
-diff --git a/drivers/pci/controller/dwc/pcie-artpec6.c b/drivers/pci/controller/dwc/pcie-artpec6.c
-index dba83abfe764..d00252bd8fae 100644
---- a/drivers/pci/controller/dwc/pcie-artpec6.c
-+++ b/drivers/pci/controller/dwc/pcie-artpec6.c
-@@ -444,7 +444,7 @@ static int artpec6_pcie_raise_irq(struct dw_pcie_ep *ep, u8 func_no,
- 	return 0;
- }
++static int ks_pcie_set_mode(struct device *dev)
++{
++	struct device_node *np = dev->of_node;
++	struct regmap *syscon;
++	u32 val;
++	u32 mask;
++	int ret = 0;
++
++	syscon = syscon_regmap_lookup_by_phandle(np, "ti,syscon-pcie-mode");
++	if (IS_ERR(syscon))
++		return 0;
++
++	mask = KS_PCIE_DEV_TYPE_MASK | KS_PCIE_SYSCLOCKOUTEN;
++	val = KS_PCIE_DEV_TYPE(RC) | KS_PCIE_SYSCLOCKOUTEN;
++
++	ret = regmap_update_bits(syscon, 0, mask, val);
++	if (ret) {
++		dev_err(dev, "failed to set pcie mode\n");
++		return ret;
++	}
++
++	return 0;
++}
++
+ static int __init ks_pcie_probe(struct platform_device *pdev)
+ {
+ 	struct device *dev = &pdev->dev;
+@@ -971,6 +1004,10 @@ static int __init ks_pcie_probe(struct platform_device *pdev)
+ 		goto err_get_sync;
+ 	}
  
--static struct dw_pcie_ep_ops pcie_ep_ops = {
-+static const struct dw_pcie_ep_ops pcie_ep_ops = {
- 	.ep_init = artpec6_pcie_ep_init,
- 	.raise_irq = artpec6_pcie_raise_irq,
- };
-diff --git a/drivers/pci/controller/dwc/pcie-designware-plat.c b/drivers/pci/controller/dwc/pcie-designware-plat.c
-index 3be87126aef3..0852f42ad844 100644
---- a/drivers/pci/controller/dwc/pcie-designware-plat.c
-+++ b/drivers/pci/controller/dwc/pcie-designware-plat.c
-@@ -108,7 +108,7 @@ dw_plat_pcie_get_features(struct dw_pcie_ep *ep)
- 	return &dw_plat_pcie_epc_features;
- }
- 
--static struct dw_pcie_ep_ops pcie_ep_ops = {
-+static const struct dw_pcie_ep_ops pcie_ep_ops = {
- 	.ep_init = dw_plat_pcie_ep_init,
- 	.raise_irq = dw_plat_pcie_ep_raise_irq,
- 	.get_features = dw_plat_pcie_get_features,
-diff --git a/drivers/pci/controller/dwc/pcie-designware.h b/drivers/pci/controller/dwc/pcie-designware.h
-index 4ab2e3dbd6bb..8a941f2fffcb 100644
---- a/drivers/pci/controller/dwc/pcie-designware.h
-+++ b/drivers/pci/controller/dwc/pcie-designware.h
-@@ -193,7 +193,7 @@ struct dw_pcie_ep_ops {
- 
- struct dw_pcie_ep {
- 	struct pci_epc		*epc;
--	struct dw_pcie_ep_ops	*ops;
-+	const struct dw_pcie_ep_ops *ops;
- 	phys_addr_t		phys_base;
- 	size_t			addr_size;
- 	size_t			page_size;
++	ret = ks_pcie_set_mode(dev);
++	if (ret < 0)
++		goto err_get_sync;
++
+ 	ret = ks_pcie_add_pcie_port(ks_pcie, pdev);
+ 	if (ret < 0)
+ 		goto err_get_sync;
 -- 
 2.17.1
 
