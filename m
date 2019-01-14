@@ -2,149 +2,238 @@ Return-Path: <SRS0=tq6k=PW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 68B97C43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 06:13:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 28C97C43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 06:18:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2CBD120660
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 06:13:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C5C7F20660
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 06:18:34 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="UMyviwFB";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="OGpLhQi9"
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="bK4JnWGm"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726553AbfANGNG (ORCPT
+        id S1726516AbfANGS1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 14 Jan 2019 01:13:06 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:52620 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726306AbfANGNF (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 Jan 2019 01:13:05 -0500
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 4E7DE607F4; Mon, 14 Jan 2019 06:13:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1547446384;
-        bh=fW1r3TQqj2FVD409dPFR8ZPLfbWUYP9y0P5lXbVVAEY=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=UMyviwFBqlKo838J/ozNSQMuLzMf4WHLzWjNfcV8fgRYG4MZKna0hAv1TLIJS9WYG
-         6SyKSXN+ZzsMxZYHilvKosH07rajJ6LS6XiTYM4I6ZakmUDMKCDFxQf8sF9bQ6ZfqT
-         1aGoEYUKIyPcPLsX9vTNqUmXkNzTNADUFYoPaZNI=
-Received: from [192.168.225.247] (unknown [49.32.202.43])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: tdas@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id B9E64607F4;
-        Mon, 14 Jan 2019 06:12:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1547446383;
-        bh=fW1r3TQqj2FVD409dPFR8ZPLfbWUYP9y0P5lXbVVAEY=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=OGpLhQi9ehrmAgbF04J1kUxaU4kMj3Jd7f9WYq4WqIFjASeWZ+G3vEXByuFkMzKu4
-         zuroMZqkXEAKJpeo4xmyV6Ro71rIfGXmC9DHqyl5dbGSK9hsSTwIk/2XtpsBEGr1LQ
-         yOeFXVti+jLc0RsWN1Y1S8aaSNIm8FbMPQybIsto=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org B9E64607F4
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=tdas@codeaurora.org
-Subject: Re: [PATCH v1] clk: qcom: lpass: Add CLK_IGNORE_UNUSED for lpass
- clocks
-To:     Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>
-Cc:     Andy Gross <andy.gross@linaro.org>,
-        David Brown <david.brown@linaro.org>,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <1545306385-31240-1-git-send-email-tdas@codeaurora.org>
- <154533989563.79149.10213938035592547726@swboyd.mtv.corp.google.com>
- <b6397ef1-a6df-0040-9dcc-c491b76a2f8f@codeaurora.org>
- <154689507747.15366.6553307032295093169@swboyd.mtv.corp.google.com>
-From:   Taniya Das <tdas@codeaurora.org>
-Message-ID: <adc9235a-3700-7730-a473-8a6baf47a1e0@codeaurora.org>
-Date:   Mon, 14 Jan 2019 11:42:39 +0530
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
-MIME-Version: 1.0
-In-Reply-To: <154689507747.15366.6553307032295093169@swboyd.mtv.corp.google.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+        Mon, 14 Jan 2019 01:18:27 -0500
+Received: from mail-eopbgr130087.outbound.protection.outlook.com ([40.107.13.87]:51712
+        "EHLO EUR01-HE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726306AbfANGS1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 14 Jan 2019 01:18:27 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=wB2JVgVs8Or/pa9scm2WmFFGY7ikt6wObbbNUh+KyHI=;
+ b=bK4JnWGm8j0hR/8RMWaH/7rRRApAsUu6ZXyOSBgeyOmQgMpoMHwvia5ZZTMAUw3GvVlNXx9ktqUuxsdT7UbIFArTESieptPJn2+aDhIQR4hKHJxhZyItDxeSbmHko3dPgmzYc7yP9Sxe7iCmiji/FyFcpW9rs2H8rey+Q/Hf1jU=
+Received: from VI1PR0402MB3519.eurprd04.prod.outlook.com (52.134.4.24) by
+ VI1PR0402MB3775.eurprd04.prod.outlook.com (52.134.15.157) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1516.19; Mon, 14 Jan 2019 06:16:41 +0000
+Received: from VI1PR0402MB3519.eurprd04.prod.outlook.com
+ ([fe80::85ec:f90c:2a0c:20d3]) by VI1PR0402MB3519.eurprd04.prod.outlook.com
+ ([fe80::85ec:f90c:2a0c:20d3%2]) with mapi id 15.20.1516.019; Mon, 14 Jan 2019
+ 06:16:41 +0000
+From:   Jacky Bai <ping.bai@nxp.com>
+To:     "daniel.lezcano@linaro.org" <daniel.lezcano@linaro.org>,
+        "tglx@linutronix.de" <tglx@linutronix.de>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "shawnguo@kernel.org" <shawnguo@kernel.org>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        Aisheng Dong <aisheng.dong@nxp.com>
+CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        dl-linux-imx <linux-imx@nxp.com>
+Subject: RE: [PATCH v2 2/2] driver: clocksource: Add nxp system counter timer
+ driver support
+Thread-Topic: [PATCH v2 2/2] driver: clocksource: Add nxp system counter timer
+ driver support
+Thread-Index: AQHUkduDSPUR4D8ONkaAhIX2AZ1ft6WufVUQ
+Date:   Mon, 14 Jan 2019 06:16:41 +0000
+Message-ID: <VI1PR0402MB3519F9B77CEB63BC445C557D87800@VI1PR0402MB3519.eurprd04.prod.outlook.com>
+References: <1544592770-19996-1-git-send-email-ping.bai@nxp.com>
+ <1544592770-19996-2-git-send-email-ping.bai@nxp.com>
+In-Reply-To: <1544592770-19996-2-git-send-email-ping.bai@nxp.com>
+Accept-Language: zh-CN, en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [119.31.174.71]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;VI1PR0402MB3775;6:nDACr07gpLhuZbIoKRtvcvQu2keCtVRCtDgeSVigMul0deGw8BcnAuOfR/kbD5yV3V/K5qk0nSLXkWGv9lAEArdYuAMn67WVzPIWExPbUatKVCvmPnkM3zcx1RSj+UV6tn9TobTUgSeYIBaxvnpWPoZqmTbgJGSzz/sbe1c6RR9owk+akA9MkLapk6YwEb0qz8wp6SnsReuuzW66WNLyFK/35MBZwf39fJ1WWcbhdcHCrkgJlgPrHxAUL58EwUrypEFT0ugu+E/hWInpcnnSOLOrBJ7idY+x4hZXCLQRla60SFdDJqP/bFQpEpYha/nbxSk+XvzgdqdV1PwNhvVXkpBAIJRMQG/Oqi15rqmUFtT5fHsFtG++HRkVRHiwXMepDHIMaSaVB2toCzr7GZzFnMsidWkgB7arVPmy4osz9wD/Rnta+S/cKv+D/vXVQ4Xb6p1VgS7dGG5KArnuL8uN8A==;5:iTn/JUBE/zw9R5y+SlDkjH2r/A4wo8NEx0SSDOaZ6RuqSk/JkdXp6VL3K00Fs/h69lbjduBnd4TjpZV0TXAouYNYEC7Ec2lm7s1yV2NU2U4T0Uu9QucoFYdGcsbpF7Lvk9UxBrr9a/6wuliRkMAZn/5WrNa0S2hWNSVicPtKL2+ENQLbX4YX0gZTFcvx42bBJjjgWtsrP+z7x21hMrluJw==;7:1fvwmsJSQyRqxhnC3F2qVUTa7JJrQFnb5is/UkMIoWeBN1YOEZXxq6sLePcGzJz8am1EA+W47FwO8IdFp7j5GuQupPmLsHkokzKtVfRnulNCjY1dWswWtchntaEL2yiImuTrg+1LGlUvXAz+zNu4UA==
+x-ms-exchange-antispam-srfa-diagnostics: SOS;
+x-ms-office365-filtering-correlation-id: 612f39c9-ee95-4eb2-3ff1-08d679e7d983
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600109)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:VI1PR0402MB3775;
+x-ms-traffictypediagnostic: VI1PR0402MB3775:
+x-microsoft-antispam-prvs: <VI1PR0402MB3775C1A4D08739EA1BE674C587800@VI1PR0402MB3775.eurprd04.prod.outlook.com>
+x-forefront-prvs: 0917DFAC67
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(376002)(39860400002)(136003)(396003)(346002)(366004)(13464003)(189003)(199004)(6436002)(8676002)(14454004)(316002)(7736002)(229853002)(305945005)(55016002)(478600001)(6246003)(4326008)(53936002)(8936002)(6636002)(110136005)(81166006)(81156014)(9686003)(25786009)(66066001)(54906003)(6116002)(3846002)(71200400001)(71190400001)(476003)(11346002)(53546011)(102836004)(6506007)(99286004)(2501003)(68736007)(97736004)(6346003)(76176011)(26005)(7696005)(186003)(5660300001)(2906002)(86362001)(575784001)(33656002)(105586002)(446003)(106356001)(486006)(14444005)(256004)(74316002);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR0402MB3775;H:VI1PR0402MB3519.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=ping.bai@nxp.com; 
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: ShWFRH+9Qog76RToQ2MWlv3jrI6hpOzPeGoW9dORxgXP1LpSg6o7MgD0MAKg2eKmFdV5VS//Yjhke4c3YSIFVdYm/5vLel/VreKnJCXLp7x/1e0PbW6OsaTCehEeCNcheeoUy7knk+1DrbTwTFEM+RfEbAltvFy7bfj73BQQ2UjPKlCsNx0BO+nSYtTOk/eYA+IvDqZuRTABBHPIESFDgsLBTNNUXOuq/8E+QAlElbeijtethA7O+/3QIa2AvnSzascKJOCBisyUZiIAt11MUxeXrlNdXEjsD5xIUKu2pXNAP5xmkFgCEsBXTd/n5dz2PUSt27MsBKzwd/PxN+eqnrTKMAFTpDYjHvXxCyYxsDme/P4JFZdTOigrd5E5t/LiP7JVpMd9lTDYajC8PxkSleplaaw9gXQJotoYe9dWQy8=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="gb2312"
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 612f39c9-ee95-4eb2-3ff1-08d679e7d983
+X-MS-Exchange-CrossTenant-originalarrivaltime: 14 Jan 2019 06:16:41.1761
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR0402MB3775
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 1/8/2019 2:34 AM, Stephen Boyd wrote:
-> Quoting Taniya Das (2019-01-06 22:26:00)
->> Hello Stephen,
->>
->> On 12/21/2018 2:34 AM, Stephen Boyd wrote:
->>> Quoting Taniya Das (2018-12-20 03:46:25)
->>>> The LPASS clocks has a dependency on the GCC lpass clocks to be enabled
->>>> before accessing them and that was the reason to mark the gcc lpass clocks
->>>> as critical. But in the case where the lpass subsystem would require a
->>>> restart, toggling the lpass reset would from HW clear the SW enable bits
->>>> of the GCC lpass clocks. Thus the next time bringing up the lpass subsystem
->>>> out of reset would fail.
->>>>
->>>> Allow the lpass clock driver to enable/disable the gcc lpass clocks and
->>>> mark the lpass clocks not be accessed during late_init if no client vote.
->>>
->>> You need to add more details here. It feels like you wrote the beginning
->>> of a paragraph and then stopped abruptly, leaving the reader hanging for
->>> the whole story. Why is late_init important? Why do we need to leave
->>> them on from the bootloader? What if the bootloader doesn't leave them
->>> enabled? This is all rather hacky so I'm deeply confused. Does the lpass
->>> driver need to get these gcc clks and enable/prepare them during probe?
->>> But then it needs to also allow a reset happen and change the clk state?
->>>
->>> I suspect this situation is circling a larger problem where a reset is
->>> toggled and that changes some clk state without the clk framework
->>> knowing. There's not much we can do about that besides having some
->>> mechanism for the clks to know that their state is now out of sync. If
->>> that can be done on the provider driver side then we should have an
->>> easier time not needing to write a bunch of framework code to handle
->>> this. OMAP folks are dealing with the same problems from what I recall.
->>>
->>
->> Hmm, if I mark the CLK_IS_CRITICAL, I don't see a way to handle it in
->> provider. Please suggest if you think provider could handle it.
-> 
-> As far as I know, I'm not suggesting the use of CLK_IS_CRITICAL here.
-> But removing CLK_IS_CRITICAL and relying on some random bootloader
-> behavior also looks wrong. Can you clarify what's going on?
-> 
-
-To enable LPASS clocks the requirement is to enable the GCC_LPASS_SWAY 
-clock.
-1) If the LPASS drivers are enabled/probed before the clock late init 
-the client would take care to maintain the dependency to enable the 
-GCC_LPASS_SWAY clock before enabling the LPASS clocks.
-
-2) There could be a condition where the LPASS drivers would probe/init 
-later the clock late_init. When the clock_late_init would try to access 
-the LPASS clocks, since we cannot maintain the dependency this access 
-would fail. To avoid this the earlier patch has made the GCC_LPASS_SWAY 
-clock as CRITICAL.
-
-3) Marking the GCC_LPASS_SWAY clock as CRITICAL has a issue, in the case 
-where the LPASS subsystem would be restarted due to some critical 
-failure on LPASS. Toggling the restart register of LPASS would clear the 
-hardware state of this clock and thus the next access of the LPASS 
-clocks would result in failure of the system.
-
-4) To avoid issues happening in (2) and (3) all the LPASS clocks chould 
-be safely marked as CLK_IGNORE_UNUSED. And lpass drivers would take care 
-of the dependency to enable the required clocks.
-
-Hope the above helps.
-
--- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
-of Code Aurora Forum, hosted by The Linux Foundation.
-
---
+UGluZy4uLg0KDQpCUg0KSmFja3kgQmFpDQo+IC0tLS0tT3JpZ2luYWwgTWVzc2FnZS0tLS0tDQo+
+IEZyb206IEphY2t5IEJhaQ0KPiBTZW50OiAyMDE4xOoxMtTCMTLI1SAxMzoyOA0KPiBUbzogZGFu
+aWVsLmxlemNhbm9AbGluYXJvLm9yZzsgdGdseEBsaW51dHJvbml4LmRlOyByb2JoK2R0QGtlcm5l
+bC5vcmc7DQo+IHNoYXduZ3VvQGtlcm5lbC5vcmc7IG1hcmsucnV0bGFuZEBhcm0uY29tOyBBaXNo
+ZW5nIERvbmcNCj4gPGFpc2hlbmcuZG9uZ0BueHAuY29tPg0KPiBDYzogbGludXgta2VybmVsQHZn
+ZXIua2VybmVsLm9yZzsgZGV2aWNldHJlZUB2Z2VyLmtlcm5lbC5vcmc7IGRsLWxpbnV4LWlteA0K
+PiA8bGludXgtaW14QG54cC5jb20+DQo+IFN1YmplY3Q6IFtQQVRDSCB2MiAyLzJdIGRyaXZlcjog
+Y2xvY2tzb3VyY2U6IEFkZCBueHAgc3lzdGVtIGNvdW50ZXIgdGltZXINCj4gZHJpdmVyIHN1cHBv
+cnQNCj4gDQo+IFRoZSBzeXN0ZW0gY291bnRlciAoc3lzX2N0cikgaXMgYSBwcm9ncmFtbWFibGUg
+c3lzdGVtIGNvdW50ZXIgd2hpY2gNCj4gcHJvdmlkZXMgYSBzaGFyZWQgdGltZSBiYXNlIHRvIHRo
+ZSBDb3J0ZXggQTE1LCBBNywgQTUzIGV0YyBjb3Jlcy4NCj4gSXQgaXMgaW50ZW5kZWQgZm9yIHVz
+ZSBpbiBhcHBsaWNhdGlvbnMgd2hlcmUgdGhlIGNvdW50ZXIgaXMgYWx3YXlzIHBvd2VyZWQgb24N
+Cj4gYW5kIHN1cHBvcnRzIG11bHRpcGxlLCB1bnJlbGF0ZWQgY2xvY2tzLiBUaGUgc3lzX2N0ciBo
+YXJkd2FyZQ0KPiBzdXBwb3J0czoNCj4gIC0gNTYtYml0IGNvdW50ZXIgd2lkdGggKHJvbGwtb3Zl
+ciB0aW1lIGdyZWF0ZXIgdGhhbiA0MCB5ZWFycykNCj4gIC0gY29tcGFyZSBmcmFtZSg2NC1iaXQg
+Y29tcGFyZSB2YWx1ZSkgY29udGFpbnMgcHJvZ3JhbW1hYmxlIGludGVycnVwdA0KPiAgICBnZW5l
+cmF0aW9uDQo+IA0KPiBTaWduZWQtb2ZmLWJ5OiBCYWkgUGluZyA8cGluZy5iYWlAbnhwLmNvbT4N
+Cj4gLS0tDQo+IGNoYW5nZSB2MS0+djI6DQo+ICAtIG5vIGNoYW5nZQ0KPiAtLS0NCj4gIGRyaXZl
+cnMvY2xvY2tzb3VyY2UvS2NvbmZpZyAgICAgICAgICAgIHwgICA4ICsrDQo+ICBkcml2ZXJzL2Ns
+b2Nrc291cmNlL01ha2VmaWxlICAgICAgICAgICB8ICAgMSArDQo+ICBkcml2ZXJzL2Nsb2Nrc291
+cmNlL3RpbWVyLWlteC1zeXNjdHIuYyB8IDIwNA0KPiArKysrKysrKysrKysrKysrKysrKysrKysr
+KysrKysrKysNCj4gIDMgZmlsZXMgY2hhbmdlZCwgMjEzIGluc2VydGlvbnMoKykNCj4gIGNyZWF0
+ZSBtb2RlIDEwMDY0NCBkcml2ZXJzL2Nsb2Nrc291cmNlL3RpbWVyLWlteC1zeXNjdHIuYw0KPiAN
+Cj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvY2xvY2tzb3VyY2UvS2NvbmZpZyBiL2RyaXZlcnMvY2xv
+Y2tzb3VyY2UvS2NvbmZpZyBpbmRleA0KPiBjNTdiMTU2Li43ZTVmMmRlIDEwMDY0NA0KPiAtLS0g
+YS9kcml2ZXJzL2Nsb2Nrc291cmNlL0tjb25maWcNCj4gKysrIGIvZHJpdmVycy9jbG9ja3NvdXJj
+ZS9LY29uZmlnDQo+IEBAIC01NzksNiArNTc5LDE0IEBAIGNvbmZpZyBDTEtTUkNfSU1YX1RQTQ0K
+PiAgCSAgRW5hYmxlIHRoaXMgb3B0aW9uIHRvIHVzZSBJTVggVGltZXIvUFdNIE1vZHVsZSAoVFBN
+KSB0aW1lciBhcw0KPiAgCSAgY2xvY2tzb3VyY2UuDQo+IA0KPiArY29uZmlnIENMS1NSQ19JTVhf
+U1lTX0NUUg0KPiArCWJvb2wgIkNsb2Nrc291cmNlIHVzaW5nIGkuTVggc3lzdGVtIGNvdW50ZXIi
+IGlmIENPTVBJTEVfVEVTVA0KPiArCWRlcGVuZHMgb24gKEFSTSB8fCBBUk02NCkgJiYgQ0xLREVW
+X0xPT0tVUA0KPiArCXNlbGVjdCBDTEtTUkNfTU1JTw0KPiArCWhlbHANCj4gKwkgIEVuYWJsZSB0
+aGlzIG9wdGlvbiB0byB1c2UgSU1YIHN5c3RlbSBjb3VudGVyIHRpbWVyIGFzDQo+ICsJICBjbG9j
+a3NvdXJjZS4NCj4gKw0KPiAgY29uZmlnIENMS1NSQ19TVF9MUEMNCj4gIAlib29sICJMb3cgcG93
+ZXIgY2xvY2tzb3VyY2UgZm91bmQgaW4gdGhlIExQQyIgaWYgQ09NUElMRV9URVNUDQo+ICAJc2Vs
+ZWN0IFRJTUVSX09GIGlmIE9GDQo+IGRpZmYgLS1naXQgYS9kcml2ZXJzL2Nsb2Nrc291cmNlL01h
+a2VmaWxlIGIvZHJpdmVycy9jbG9ja3NvdXJjZS9NYWtlZmlsZQ0KPiBpbmRleCBkZDkxMzgxLi4z
+NzJiZjRlIDEwMDY0NA0KPiAtLS0gYS9kcml2ZXJzL2Nsb2Nrc291cmNlL01ha2VmaWxlDQo+ICsr
+KyBiL2RyaXZlcnMvY2xvY2tzb3VyY2UvTWFrZWZpbGUNCj4gQEAgLTcxLDYgKzcxLDcgQEAgb2Jq
+LSQoQ09ORklHX0NMS1NSQ19NSVBTX0dJQykJCSs9DQo+IG1pcHMtZ2ljLXRpbWVyLm8NCj4gIG9i
+ai0kKENPTkZJR19DTEtTUkNfVEFOR09fWFRBTCkJCSs9IHRhbmdvX3h0YWwubw0KPiAgb2JqLSQo
+Q09ORklHX0NMS1NSQ19JTVhfR1BUKQkJKz0gdGltZXItaW14LWdwdC5vDQo+ICBvYmotJChDT05G
+SUdfQ0xLU1JDX0lNWF9UUE0pCQkrPSB0aW1lci1pbXgtdHBtLm8NCj4gK29iai0kKENPTkZJR19D
+TEtTUkNfSU1YX1NZU19DVFIpCSs9IHRpbWVyLWlteC1zeXNjdHIubw0KPiAgb2JqLSQoQ09ORklH
+X0FTTTkyNjBfVElNRVIpCQkrPSBhc205MjYwX3RpbWVyLm8NCj4gIG9iai0kKENPTkZJR19IODMw
+MF9UTVI4KQkJKz0gaDgzMDBfdGltZXI4Lm8NCj4gIG9iai0kKENPTkZJR19IODMwMF9UTVIxNikJ
+CSs9IGg4MzAwX3RpbWVyMTYubw0KPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9jbG9ja3NvdXJjZS90
+aW1lci1pbXgtc3lzY3RyLmMNCj4gYi9kcml2ZXJzL2Nsb2Nrc291cmNlL3RpbWVyLWlteC1zeXNj
+dHIuYw0KPiBuZXcgZmlsZSBtb2RlIDEwMDY0NA0KPiBpbmRleCAwMDAwMDAwLi5hZDNjMjdmDQo+
+IC0tLSAvZGV2L251bGwNCj4gKysrIGIvZHJpdmVycy9jbG9ja3NvdXJjZS90aW1lci1pbXgtc3lz
+Y3RyLmMNCj4gQEAgLTAsMCArMSwyMDQgQEANCj4gKy8vIFNQRFgtTGljZW5zZS1JZGVudGlmaWVy
+OiBHUEwtMi4wKw0KPiArLy8NCj4gKy8vIENvcHlyaWdodCAyMDE3LTIwMTggTlhQDQo+ICsNCj4g
+KyNpbmNsdWRlIDxsaW51eC9pbnRlcnJ1cHQuaD4NCj4gKyNpbmNsdWRlIDxsaW51eC9jbG9ja2No
+aXBzLmg+DQo+ICsjaW5jbHVkZSA8bGludXgvY2xvY2tzb3VyY2UuaD4NCj4gKyNpbmNsdWRlIDxs
+aW51eC9kZWxheS5oPg0KPiArI2luY2x1ZGUgPGxpbnV4L29mX2FkZHJlc3MuaD4NCj4gKyNpbmNs
+dWRlIDxsaW51eC9vZl9pcnEuaD4NCj4gKyNpbmNsdWRlIDxsaW51eC9zY2hlZF9jbG9jay5oPg0K
+PiArDQo+ICsjZGVmaW5lIENOVENWX0xPCTB4OA0KPiArI2RlZmluZSBDTlRDVl9ISQkweGMNCj4g
+KyNkZWZpbmUgQ01QQ1ZfTE8JMHgyMA0KPiArI2RlZmluZSBDTVBDVl9ISQkweDI0DQo+ICsjZGVm
+aW5lIENNUENSCQkweDJjDQo+ICsNCj4gKyNkZWZpbmUgU1lTX0NUUl9FTgkJMHgxDQo+ICsjZGVm
+aW5lIFNZU19DVFJfSVJRX01BU0sJMHgyDQo+ICsNCj4gK3N0YXRpYyB2b2lkIF9faW9tZW0gKnN5
+c19jdHJfcmRfYmFzZTsNCj4gK3N0YXRpYyB2b2lkIF9faW9tZW0gKnN5c19jdHJfY21wX2Jhc2U7
+DQo+ICtzdGF0aWMgc3RydWN0IGNsb2NrX2V2ZW50X2RldmljZSBjbG9ja2V2ZW50X3N5c2N0cjsN
+Cj4gKw0KPiArc3RhdGljIGlubGluZSB2b2lkIHN5c2N0cl90aW1lcl9lbmFibGUoYm9vbCBlbmFi
+bGUpIHsNCj4gKwl1MzIgdmFsOw0KPiArDQo+ICsJdmFsID0gcmVhZGwoc3lzX2N0cl9jbXBfYmFz
+ZSArIENNUENSKTsNCj4gKwl2YWwgJj0gflNZU19DVFJfRU47DQo+ICsJaWYgKGVuYWJsZSkNCj4g
+KwkJdmFsIHw9IFNZU19DVFJfRU47DQo+ICsNCj4gKwl3cml0ZWwodmFsLCBzeXNfY3RyX2NtcF9i
+YXNlICsgQ01QQ1IpOyB9DQo+ICsNCj4gK3N0YXRpYyB2b2lkIHN5c2N0cl9pcnFfYWNrbm93bGVk
+Z2Uodm9pZCkgew0KPiArCXUzMiB2YWw7DQo+ICsNCj4gKwkvKiBjbGVhciB0aCBlbmFibGUgYml0
+KEVOPTApIHRvIGNsZWFyIHRoZSBJU1RBVCAqLw0KPiArCXZhbCA9IHJlYWRsKHN5c19jdHJfY21w
+X2Jhc2UgKyBDTVBDUik7DQo+ICsJdmFsICY9IH5TWVNfQ1RSX0VOOw0KPiArCXdyaXRlbCh2YWws
+IHN5c19jdHJfY21wX2Jhc2UgKyBDTVBDUik7IH0NCj4gKw0KPiArc3RhdGljIGlubGluZSB1NjQg
+c3lzY3RyX3JlYWRfY291bnRlcih2b2lkKSB7DQo+ICsJdTMyIGNudF9oaSwgdG1wX2hpLCBjbnRf
+bG87DQo+ICsNCj4gKwlkbyB7DQo+ICsJCWNudF9oaSA9IHJlYWRsX3JlbGF4ZWQoc3lzX2N0cl9y
+ZF9iYXNlICsgQ05UQ1ZfSEkpOw0KPiArCQljbnRfbG8gPSByZWFkbF9yZWxheGVkKHN5c19jdHJf
+cmRfYmFzZSArIENOVENWX0xPKTsNCj4gKwkJdG1wX2hpID0gcmVhZGxfcmVsYXhlZChzeXNfY3Ry
+X3JkX2Jhc2UgKyBDTlRDVl9ISSk7DQo+ICsJfSB3aGlsZSAodG1wX2hpICE9IGNudF9oaSk7DQo+
+ICsNCj4gKwlyZXR1cm4gICgodTY0KSBjbnRfaGkgPDwgMzIpIHwgY250X2xvOyB9DQo+ICsNCj4g
+K3N0YXRpYyB1NjQgbm90cmFjZSBzeXNjdHJfcmVhZF9zY2hlZF9jbG9jayh2b2lkKSB7DQo+ICsJ
+cmV0dXJuIHN5c2N0cl9yZWFkX2NvdW50ZXIoKTsNCj4gK30NCj4gKw0KPiArc3RhdGljIHU2NCBz
+eXNjdHJfY2xvY2tzb3VyY2VfcmVhZChzdHJ1Y3QgY2xvY2tzb3VyY2UgKmNzKSB7DQo+ICsJcmV0
+dXJuIHN5c2N0cl9yZWFkX2NvdW50ZXIoKTsNCj4gK30NCj4gKw0KPiArc3RhdGljIGludCBfX2lu
+aXQgc3lzY3RyX2Nsb2Nrc291cmNlX2luaXQodW5zaWduZWQgaW50IHJhdGUpIHsNCj4gKwlzY2hl
+ZF9jbG9ja19yZWdpc3RlcihzeXNjdHJfcmVhZF9zY2hlZF9jbG9jaywgNTYsIHJhdGUpOw0KPiAr
+CXJldHVybiBjbG9ja3NvdXJjZV9tbWlvX2luaXQoc3lzX2N0cl9yZF9iYXNlLCAiaS5NWCBzeXNf
+Y3RyIiwNCj4gKwkJCQkgICAgIHJhdGUsIDIwMCwgNTYsIHN5c2N0cl9jbG9ja3NvdXJjZV9yZWFk
+KTsgfQ0KPiArDQo+ICtzdGF0aWMgaW50IHN5c2N0cl9zZXRfbmV4dF9ldmVudCh1bnNpZ25lZCBs
+b25nIGRlbHRhLA0KPiArCQkJCSBzdHJ1Y3QgY2xvY2tfZXZlbnRfZGV2aWNlICpldnQpDQo+ICt7
+DQo+ICsJdTMyIGNtcF9oaSwgY21wX2xvOw0KPiArCXU2NCBuZXh0Ow0KPiArDQo+ICsJc3lzY3Ry
+X3RpbWVyX2VuYWJsZShmYWxzZSk7DQo+ICsNCj4gKwluZXh0ID0gc3lzY3RyX3JlYWRfY291bnRl
+cigpOw0KPiArDQo+ICsJbmV4dCArPSBkZWx0YTsNCj4gKw0KPiArCWNtcF9oaSA9IChuZXh0ID4+
+IDMyKSAmIDB4MDBmZmZmZjsNCj4gKwljbXBfbG8gPSBuZXh0ICYgMHhmZmZmZmZmZjsNCj4gKw0K
+PiArCXdyaXRlbF9yZWxheGVkKGNtcF9oaSwgc3lzX2N0cl9jbXBfYmFzZSArIENNUENWX0hJKTsN
+Cj4gKwl3cml0ZWxfcmVsYXhlZChjbXBfbG8sIHN5c19jdHJfY21wX2Jhc2UgKyBDTVBDVl9MTyk7
+DQo+ICsNCj4gKwlzeXNjdHJfdGltZXJfZW5hYmxlKHRydWUpOw0KPiArDQo+ICsJcmV0dXJuIDA7
+DQo+ICt9DQo+ICsNCj4gK3N0YXRpYyBpbnQgc3lzY3RyX3NldF9zdGF0ZV9vbmVzaG90KHN0cnVj
+dCBjbG9ja19ldmVudF9kZXZpY2UgKmV2dCkgew0KPiArCS8qIGVuYWJsZSB0aW1lciAqLw0KPiAr
+CXN5c2N0cl90aW1lcl9lbmFibGUodHJ1ZSk7DQo+ICsNCj4gKwlyZXR1cm4gMDsNCj4gK30NCj4g
+Kw0KPiArc3RhdGljIGludCBzeXNjdHJfc2V0X3N0YXRlX3NodXRkb3duKHN0cnVjdCBjbG9ja19l
+dmVudF9kZXZpY2UgKmV2dCkgew0KPiArCS8qIGRpc2FibGUgdGhlIHRpbWVyICovDQo+ICsJc3lz
+Y3RyX3RpbWVyX2VuYWJsZShmYWxzZSk7DQo+ICsNCj4gKwlyZXR1cm4gMDsNCj4gK30NCj4gKw0K
+PiArc3RhdGljIGlycXJldHVybl90IHN5c2N0cl90aW1lcl9pbnRlcnJ1cHQoaW50IGlycSwgdm9p
+ZCAqZGV2X2lkKSB7DQo+ICsJc3RydWN0IGNsb2NrX2V2ZW50X2RldmljZSAqZXZ0ID0gJmNsb2Nr
+ZXZlbnRfc3lzY3RyOw0KPiArDQo+ICsJc3lzY3RyX2lycV9hY2tub3dsZWRnZSgpOw0KPiArDQo+
+ICsJZXZ0LT5ldmVudF9oYW5kbGVyKGV2dCk7DQo+ICsNCj4gKwlyZXR1cm4gSVJRX0hBTkRMRUQ7
+DQo+ICt9DQo+ICsNCj4gK3N0YXRpYyBzdHJ1Y3QgY2xvY2tfZXZlbnRfZGV2aWNlIGNsb2NrZXZl
+bnRfc3lzY3RyID0gew0KPiArCS5uYW1lCQkJPSAiaS5NWCBzeXN0ZW0gY291bnRlciB0aW1lciIs
+DQo+ICsJLmZlYXR1cmVzCQk9IENMT0NLX0VWVF9GRUFUX09ORVNIT1QgfA0KPiBDTE9DS19FVlRf
+RkVBVF9EWU5JUlEsDQo+ICsJLnNldF9zdGF0ZV9vbmVzaG90CT0gc3lzY3RyX3NldF9zdGF0ZV9v
+bmVzaG90LA0KPiArCS5zZXRfbmV4dF9ldmVudAkJPSBzeXNjdHJfc2V0X25leHRfZXZlbnQsDQo+
+ICsJLnNldF9zdGF0ZV9zaHV0ZG93bgk9IHN5c2N0cl9zZXRfc3RhdGVfc2h1dGRvd24sDQo+ICsJ
+LnJhdGluZwkJCT0gMjAwLA0KPiArfTsNCj4gKw0KPiArc3RhdGljIGludCBfX2luaXQgc3lzY3Ry
+X2Nsb2NrZXZlbnRfaW5pdCh1bnNpZ25lZCBsb25nIHJhdGUsIGludCBpcnEpIHsNCj4gKwlpbnQg
+cmV0Ow0KPiArDQo+ICsJcmV0ID0gcmVxdWVzdF9pcnEoaXJxLCBzeXNjdHJfdGltZXJfaW50ZXJy
+dXB0LCBJUlFGX1RJTUVSIHwNCj4gSVJRRl9JUlFQT0xMLA0KPiArCQkgICAgImkuTVggc3lzdGVt
+IGNvdW50ZXIgdGltZXIiLCAmY2xvY2tldmVudF9zeXNjdHIpOw0KPiArCWlmIChyZXQpIHsNCj4g
+KwkJcHJfZXJyKCJGYWlsZWQgdG8gcmVxdWVzdCBpLk1YIHN5c2N0ciB0aW1lciBpcnFcbiIpOw0K
+PiArCQlyZXR1cm4gcmV0Ow0KPiArCX0NCj4gKw0KPiArCWNsb2NrZXZlbnRfc3lzY3RyLmNwdW1h
+c2sgPSBjcHVtYXNrX29mKDApOw0KPiArCWNsb2NrZXZlbnRfc3lzY3RyLmlycSA9IGlycTsNCj4g
+KwljbG9ja2V2ZW50c19jb25maWdfYW5kX3JlZ2lzdGVyKCZjbG9ja2V2ZW50X3N5c2N0ciwNCj4g
+KwkJCXJhdGUsIDB4ZmYsIDB4N2ZmZmZmZmYpOw0KPiArDQo+ICsJcmV0dXJuIDA7DQo+ICt9DQo+
+ICsNCj4gK3N0YXRpYyBpbnQgX19pbml0IHN5c2N0cl90aW1lcl9pbml0KHN0cnVjdCBkZXZpY2Vf
+bm9kZSAqbnApIHsNCj4gKwl1MzIgcmF0ZTsNCj4gKwlpbnQgaXJxLCByZXQgPSAwOw0KPiArDQo+
+ICsJLyogbWFwIHRoZSBzeXN0ZW0gY291bnRlcidzIENOVHJlYWRiYXNlICovDQo+ICsJc3lzX2N0
+cl9yZF9iYXNlID0gb2ZfaW9tYXAobnAsIDApOw0KPiArCWlmICghc3lzX2N0cl9yZF9iYXNlKSB7
+DQo+ICsJCXByX2VycigiRmFpbGVkIHRvIG1hcCBzeXNfY3RyIHJkIGJhc2UlcE9GXG4iLCBucCk7
+DQo+ICsJCXJldHVybiAtRU5YSU87DQo+ICsJfQ0KPiArDQo+ICsJLyogbWFwIHRoZSBzeXN0ZW0g
+Y291bnRlcidzIENOVGNvbXBhcmViYXNlICovDQo+ICsJc3lzX2N0cl9jbXBfYmFzZSA9IG9mX2lv
+bWFwKG5wLCAxKTsNCj4gKwlpZiAoIXN5c19jdHJfY21wX2Jhc2UpIHsNCj4gKwkJcHJfZXJyKCJG
+YWlsZWQgdG8gbWFwIHN5c19jdHIgY29tcGFyZSBiYXNlJXBPRlxuIiwgbnApOw0KPiArCQlyZXQg
+PSAtRU5YSU87DQo+ICsJCWdvdG8gb3V0X2ZyZWUyOw0KPiArCX0NCj4gKw0KPiArCS8qDQo+ICsJ
+ICogdGhlIHB1cnBvc2Ugb2YgdGhpcyBkcml2ZXIgaXMgdG8gcHJvdmlkZSBhIGdsb2JhbCB0aW1l
+ciwNCj4gKwkgKiBTbyBvbmx5IHVzZSBvbmUgY29tcGFyZSBmcmFtZSwgcmVxdWVzdCBmcmFtZTAn
+cyBpcnEgb25seS4NCj4gKwkgKi8NCj4gKwlpcnEgPSBpcnFfb2ZfcGFyc2VfYW5kX21hcChucCwg
+MCk7DQo+ICsJaWYgKCFpcnEpIHsNCj4gKwkJcHJfZXJyKCJGYWlsZWQgdG8gbWFwIGludGVycnVw
+dCBmb3IgJXBPRlxuIiwgbnApOw0KPiArCQlyZXQgPSAtRUlOVkFMOw0KPiArCQlnb3RvIG91dF9m
+cmVlMTsNCj4gKwl9DQo+ICsNCj4gKwlpZiAob2ZfcHJvcGVydHlfcmVhZF91MzIobnAsICJjbG9j
+ay1mcmVxdWVuY3kiLCAmcmF0ZSkpIHsNCj4gKwkJcHJfZXJyKCJGYWlsZWQgdG8gZ2V0IGNsb2Nr
+IGZyZXF1ZW5jeSAlcE9GXG4iLCBucCk7DQo+ICsJCXJldCA9IC1FSU5WQUw7DQo+ICsJCWdvdG8g
+b3V0X2ZyZWUxOw0KPiArCX0NCj4gKw0KPiArCXN5c2N0cl9jbG9ja3NvdXJjZV9pbml0KHJhdGUp
+Ow0KPiArCXN5c2N0cl9jbG9ja2V2ZW50X2luaXQocmF0ZSwgaXJxKTsNCj4gKw0KPiArCXJldHVy
+biAwOw0KPiArDQo+ICtvdXRfZnJlZTE6DQo+ICsJaW91bm1hcChzeXNfY3RyX2NtcF9iYXNlKTsN
+Cj4gK291dF9mcmVlMjoNCj4gKwlpb3VubWFwKHN5c19jdHJfcmRfYmFzZSk7DQo+ICsJcmV0dXJu
+IHJldDsNCj4gK30NCj4gK1RJTUVSX09GX0RFQ0xBUkUoc3lzY3RyX3RpbWVyLCAibnhwLHN5c2N0
+ci10aW1lciIsIHN5c2N0cl90aW1lcl9pbml0KTsNCj4gLS0NCj4gMS45LjENCg0K
