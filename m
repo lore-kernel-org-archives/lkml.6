@@ -2,126 +2,111 @@ Return-Path: <SRS0=tq6k=PW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E3571C43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 09:55:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 28DC3C43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 09:55:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B976620656
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 09:55:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F3E0720656
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 09:55:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726757AbfANJzS (ORCPT
+        id S1726783AbfANJzY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 14 Jan 2019 04:55:18 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:57180 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726717AbfANJzQ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 Jan 2019 04:55:16 -0500
-Received: from pps.filterd (m0098419.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id x0E9mWZt050523
-        for <linux-kernel@vger.kernel.org>; Mon, 14 Jan 2019 04:55:14 -0500
-Received: from e11.ny.us.ibm.com (e11.ny.us.ibm.com [129.33.205.201])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2q0pskkn9b-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Mon, 14 Jan 2019 04:55:14 -0500
-Received: from localhost
-        by e11.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <aneesh.kumar@linux.ibm.com>;
-        Mon, 14 Jan 2019 09:55:13 -0000
-Received: from b01cxnp23032.gho.pok.ibm.com (9.57.198.27)
-        by e11.ny.us.ibm.com (146.89.104.198) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Mon, 14 Jan 2019 09:55:10 -0000
-Received: from b01ledav005.gho.pok.ibm.com (b01ledav005.gho.pok.ibm.com [9.57.199.110])
-        by b01cxnp23032.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x0E9t99e20119786
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 14 Jan 2019 09:55:09 GMT
-Received: from b01ledav005.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 2F76CAE062;
-        Mon, 14 Jan 2019 09:55:09 +0000 (GMT)
-Received: from b01ledav005.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id B1C86AE060;
-        Mon, 14 Jan 2019 09:55:06 +0000 (GMT)
-Received: from skywalker.in.ibm.com (unknown [9.124.31.106])
-        by b01ledav005.gho.pok.ibm.com (Postfix) with ESMTP;
-        Mon, 14 Jan 2019 09:55:06 +0000 (GMT)
-From:   "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>
-To:     akpm@linux-foundation.org, Michal Hocko <mhocko@kernel.org>,
-        Alexey Kardashevskiy <aik@ozlabs.ru>,
-        David Gibson <david@gibson.dropbear.id.au>,
-        Andrea Arcangeli <aarcange@redhat.com>, mpe@ellerman.id.au
-Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org,
-        "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>
-Subject: [PATCH V7 5/5] testing
-Date:   Mon, 14 Jan 2019 15:24:38 +0530
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190114095438.32470-1-aneesh.kumar@linux.ibm.com>
-References: <20190114095438.32470-1-aneesh.kumar@linux.ibm.com>
+        Mon, 14 Jan 2019 04:55:24 -0500
+Received: from mx2.suse.de ([195.135.220.15]:33288 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726609AbfANJzX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 14 Jan 2019 04:55:23 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 51D1EAF15;
+        Mon, 14 Jan 2019 09:55:21 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id 7D5A91E157A; Mon, 14 Jan 2019 10:55:20 +0100 (CET)
+Date:   Mon, 14 Jan 2019 10:55:20 +0100
+From:   Jan Kara <jack@suse.cz>
+To:     Pankaj Gupta <pagupta@redhat.com>
+Cc:     Dan Williams <dan.j.williams@intel.com>, Jan Kara <jack@suse.cz>,
+        KVM list <kvm@vger.kernel.org>,
+        David Hildenbrand <david@redhat.com>,
+        linux-nvdimm <linux-nvdimm@ml01.01.org>,
+        Jason Wang <jasowang@redhat.com>,
+        Dave Chinner <david@fromorbit.com>,
+        Qemu Developers <qemu-devel@nongnu.org>,
+        virtualization@lists.linux-foundation.org,
+        adilger kernel <adilger.kernel@dilger.ca>,
+        Ross Zwisler <zwisler@kernel.org>,
+        dave jiang <dave.jiang@intel.com>,
+        darrick wong <darrick.wong@oracle.com>,
+        vishal l verma <vishal.l.verma@intel.com>,
+        "Michael S. Tsirkin" <mst@redhat.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Christoph Hellwig <hch@infradead.org>,
+        Linux ACPI <linux-acpi@vger.kernel.org>,
+        jmoyer <jmoyer@redhat.com>,
+        linux-ext4 <linux-ext4@vger.kernel.org>,
+        Rik van Riel <riel@surriel.com>,
+        Stefan Hajnoczi <stefanha@redhat.com>,
+        Igor Mammedov <imammedo@redhat.com>, lcapitulino@redhat.com,
+        Kevin Wolf <kwolf@redhat.com>,
+        Nitesh Narayan Lal <nilal@redhat.com>,
+        Theodore Ts'o <tytso@mit.edu>,
+        xiaoguangrong eric <xiaoguangrong.eric@gmail.com>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-xfs <linux-xfs@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Paolo Bonzini <pbonzini@redhat.com>
+Subject: Re: [Qemu-devel] [PATCH v3 0/5] kvm "virtio pmem" device
+Message-ID: <20190114095520.GC13316@quack2.suse.cz>
+References: <20190109144736.17452-1-pagupta@redhat.com>
+ <20190110012617.GA4205@dastard>
+ <20190110101757.GC15790@quack2.suse.cz>
+ <1354249849.63357171.1547343519970.JavaMail.zimbra@redhat.com>
+ <CAPcyv4hwcgTUpgNCefCGu4DvgkYBp5b=f+hJ+FC=s5APYKoycg@mail.gmail.com>
+ <540171952.63371441.1547345866585.JavaMail.zimbra@redhat.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-x-cbid: 19011409-2213-0000-0000-0000033D1069
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00010402; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000274; SDB=6.01146284; UDB=6.00597006; IPR=6.00926570;
- MB=3.00025118; MTD=3.00000008; XFM=3.00000015; UTC=2019-01-14 09:55:13
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19011409-2214-0000-0000-00005CF72F86
-Message-Id: <20190114095438.32470-7-aneesh.kumar@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-01-14_05:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=779 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1901140081
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <540171952.63371441.1547345866585.JavaMail.zimbra@redhat.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
----
- mm/gup.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+On Sat 12-01-19 21:17:46, Pankaj Gupta wrote:
+> > > > Right. Thinking about this I would be more concerned about the fact that
+> > > > guest can effectively pin amount of host's page cache upto size of the
+> > > > device/file passed to guest as PMEM, can't it Pankaj? Or is there some
+> > > > QEMU
+> > > > magic that avoids this?
+> > >
+> > > Yes, guest will pin these host page cache pages using 'get_user_pages' by
+> > > elevating the page reference count. But these pages can be reclaimed by
+> > > host
+> > > at any time when there is memory pressure.
+> > 
+> > Wait, how can the guest pin the host pages? I would expect this to
+> > happen only when using vfio and device assignment. Otherwise, no the
+> > host can't reclaim a pinned page, that's the whole point of a pin to
+> > prevent the mm from reclaiming ownership.
+> 
+> yes. You are right I just used the pin word but it does not actually pin pages 
+> permanently. I had gone through the discussion on existing problems with 
+> get_user_pages and DMA e.g [1] to understand Jan's POV. It does mention GUP 
+> pin pages so I also used the word 'pin'. But guest does not permanently pin 
+> these pages and these pages can be reclaimed by host.
 
-diff --git a/mm/gup.c b/mm/gup.c
-index 6e8152594e83..91849c39931a 100644
---- a/mm/gup.c
-+++ b/mm/gup.c
-@@ -1226,7 +1226,7 @@ static long check_and_migrate_cma_pages(unsigned long start, long nr_pages,
- 		 * be pinning these entries, we might as well move them out
- 		 * of the CMA zone if possible.
- 		 */
--		if (is_migrate_cma_page(pages[i])) {
-+		if (true || is_migrate_cma_page(pages[i])) {
- 
- 			struct page *head = compound_head(pages[i]);
- 
-@@ -1256,6 +1256,7 @@ static long check_and_migrate_cma_pages(unsigned long start, long nr_pages,
- 		for (i = 0; i < nr_pages; i++)
- 			put_page(pages[i]);
- 
-+		pr_emerg("migrating nr_pages");
- 		if (migrate_pages(&cma_page_list, new_non_cma_page,
- 				  NULL, 0, MIGRATE_SYNC, MR_CONTIG_RANGE)) {
- 			/*
-@@ -1274,10 +1275,11 @@ static long check_and_migrate_cma_pages(unsigned long start, long nr_pages,
- 		nr_pages = get_user_pages(start, nr_pages, gup_flags, pages, vmas);
- 		if ((nr_pages > 0) && migrate_allow) {
- 			drain_allow = true;
--			goto check_again;
-+			//goto check_again;
- 		}
- 	}
- 
-+	pr_emerg("Returning with %ld\n", nr_pages);
- 	return nr_pages;
- }
- #else
+OK, then I was just confused how virtio-pmem is going to work. Thanks for
+explanation! So can I imagine this as guest mmaping the host file and
+providing the mapped range as "NVDIMM pages" to the kernel inside the
+guest? Or is it more complex?
+
+								Honza
+
 -- 
-2.20.1
-
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
