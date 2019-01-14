@@ -2,141 +2,86 @@ Return-Path: <SRS0=tq6k=PW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E78BFC43444
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 09:25:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 34B5DC43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 09:26:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B8BB220660
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 09:25:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 02DEC20660
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 09:26:36 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="w7/OPUXY"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=chronox.de header.i=@chronox.de header.b="nv5kM9iD"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726581AbfANJZy (ORCPT
+        id S1726613AbfANJ0e (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 14 Jan 2019 04:25:54 -0500
-Received: from userp2130.oracle.com ([156.151.31.86]:55724 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726306AbfANJZy (ORCPT
+        Mon, 14 Jan 2019 04:26:34 -0500
+Received: from mo4-p02-ob.smtp.rzone.de ([85.215.255.81]:15251 "EHLO
+        mo4-p02-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726306AbfANJ0e (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 Jan 2019 04:25:54 -0500
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id x0E9OLiV102436;
-        Mon, 14 Jan 2019 09:25:42 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=mime-version :
- message-id : date : from : to : cc : subject : content-type :
- content-transfer-encoding; s=corp-2018-07-02;
- bh=PawYpizz0/DfJUnNnFd8yW+6KJqQFIbIu2k7H48az90=;
- b=w7/OPUXY1ibyStKNWDqOPZD700MflDVpfNcZk4sLWlSsffMBXilxCq2c4+Ygx1eVMGoO
- 5GNbxzeteDHgw4inPffyFnWk2IetZwal/6MRFh47tHhuxitmuA05Y41m2/9ua31s9eK/
- cWn2jj4wrxVZOE2Q5tQOSbNZoxUTj9ESwwZA2E8ZYTQ63eCoyTAyIQj26N4na6XKRa9I
- fMR4yi7K/rlVLkm1CF9XvP7zOflZlFzo6TVgaLPYfxE/1XCk1tjbPzWYPMIFOyBkBkY6
- vsspUkq1MyPk2WuwyUxYklB+Q2uwHzJRfGcQr1/wIr6MwpCBCetciDemh0zie61gCfC2 Xw== 
-Received: from userv0022.oracle.com (userv0022.oracle.com [156.151.31.74])
-        by userp2130.oracle.com with ESMTP id 2pybkc4a36-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 14 Jan 2019 09:25:42 +0000
-Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
-        by userv0022.oracle.com (8.14.4/8.14.4) with ESMTP id x0E9PgPV009777
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 14 Jan 2019 09:25:42 GMT
-Received: from abhmp0017.oracle.com (abhmp0017.oracle.com [141.146.116.23])
-        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x0E9Pf2l026452;
-        Mon, 14 Jan 2019 09:25:41 GMT
+        Mon, 14 Jan 2019 04:26:34 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1547457990;
+        s=strato-dkim-0002; d=chronox.de;
+        h=References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:
+        X-RZG-CLASS-ID:X-RZG-AUTH:From:Subject:Sender;
+        bh=xgRauBTiXdF+dBRc1NyD0+JM4m4TCB/mcjHmedwpxD8=;
+        b=nv5kM9iDP4fwlc+fsZL0FAkFeJ6NEVXusDy5C6z2lBUZCbKfuApmfDi7ZeeTn4RqzO
+        rIAcVd1Wb8o/INAwupzGUaSuJ0cnHg2+vmUMUlkcCLsM2Tob6q4aMIRMV50jnao36qHA
+        solhWBp9ade8QMLfNXgMbAx8oZHhOwAdW94CyY+TbVF3N8Ewdbir3CuQ7pUjq5EoY5DZ
+        lFaYUmu1pL1BqHl7tt1YDEvdvoafv9Lrxa04D+wJPqn0o1BodVUK/MYfYCp08sFB/9D5
+        UHf1K98YUbi/091Zmi0Y8OZTRRwZ1CElLqn3YiQQZw+Tvw4uVs1inrKVGRNVxARI/WVh
+        hLKA==
+X-RZG-AUTH: ":P2ERcEykfu11Y98lp/T7+hdri+uKZK8TKWEqNyiHySGSa9k9yWgdNs16dfA/c7fW145n"
+X-RZG-CLASS-ID: mo00
+Received: from positron.chronox.de
+        by smtp.strato.de (RZmta 44.9 AUTH)
+        with ESMTPSA id 309bcfv0E9QCq15
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (curve secp521r1 with 521 ECDH bits, eq. 15360 bits RSA))
+        (Client did not present a certificate);
+        Mon, 14 Jan 2019 10:26:12 +0100 (CET)
+From:   Stephan =?ISO-8859-1?Q?M=FCller?= <smueller@chronox.de>
+To:     Eric Biggers <ebiggers@kernel.org>
+Cc:     Herbert Xu <herbert@gondor.apana.org.au>,
+        James Bottomley <James.Bottomley@hansenpartnership.com>,
+        Andy Lutomirski <luto@amacapital.net>,
+        "Lee, Chun-Yi" <joeyli.kernel@gmail.com>,
+        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
+        Pavel Machek <pavel@ucw.cz>, linux-kernel@vger.kernel.org,
+        linux-pm@vger.kernel.org, keyrings@vger.kernel.org,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        Chen Yu <yu.c.chen@intel.com>,
+        Oliver Neukum <oneukum@suse.com>,
+        Ryan Chen <yu.chen.surf@gmail.com>,
+        David Howells <dhowells@redhat.com>,
+        Giovanni Gherdovich <ggherdovich@suse.cz>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Jann Horn <jannh@google.com>,
+        Andy Lutomirski <luto@kernel.org>, linux-crypto@vger.kernel.org
+Subject: Re: [PATCH 3/6] crypto: kdf - add known answer tests
+Date:   Mon, 14 Jan 2019 10:26:11 +0100
+Message-ID: <2231906.kSnl8ZBHjW@positron.chronox.de>
+In-Reply-To: <20190112052645.GC639@sol.localdomain>
+References: <20190103143227.9138-1-jlee@suse.com> <8456866.1rT4qWozqf@positron.chronox.de> <20190112052645.GC639@sol.localdomain>
 MIME-Version: 1.0
-Message-ID: <fa40ea62-5df8-4e18-af57-9ccd5c578e97@default>
-Date:   Mon, 14 Jan 2019 01:25:41 -0800 (PST)
-From:   Zhenzhong Duan <zhenzhong.duan@oracle.com>
-To:     <longman@redhat.com>
-Cc:     <srinivas.eeda@oracle.com>, <linux-kernel@vger.kernel.org>,
-        <peterz@infradead.org>
-Subject: Re: Question about qspinlock nest
-X-Mailer: Zimbra on Oracle Beehive
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9135 signatures=668680
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=1 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1810050000 definitions=main-1901140079
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Am Samstag, 12. Januar 2019, 06:26:46 CET schrieb Eric Biggers:
 
------ longman@redhat.com wrote:
+Hi Eric,
 
-> On 01/11/2019 12:06 AM, Zhenzhong Duan wrote:
-> >
-> >
-> > On 2019/1/10 22:43, Waiman Long wrote:
-> >> On 01/10/2019 03:02 AM, Zhenzhong Duan wrote:
-> >>> Hi Maintainer,
-> >>>
-> >>>
-> >>> There is a question confused me for days. Appreciate an answer.
-> >>>
-> >>> In below code, the comment says we never have more than 4 nested
-> >>> contexts.
-> >>>
-> >>> What happen if debug and mce exceptions nest with the four, or we
-> >>> ensure it never happen?
-> >>>
-> >>>
-> >>> /*
-> >>> =C2=A0* Per-CPU queue node structures; we can never have more than 4
-> nested
-> >>> =C2=A0* contexts: task, softirq, hardirq, nmi.
-> >>> =C2=A0*
-> >>> =C2=A0* Exactly fits one 64-byte cacheline on a 64-bit architecture.
-> >>> =C2=A0*
-> >>> =C2=A0* PV doubles the storage and uses the second cacheline for PV
-> state.
-> >>> =C2=A0*/
-> >>> static DEFINE_PER_CPU_ALIGNED(struct qnode, qnodes[MAX_NODES]);
-> >>>
-> >> Yes, both debug and mce exceptions are some kind of NMIs. So
-> >> theoretically, it is possible to have more than four. Are you aware
-> of
-> >> any debug and MCE exception handlers that need to take a spinlock
-> for
-> >> synchronization?
-> > Not for debug exception, for MCE exception handler I found below
-> two:
-> >
-> > do_machine_check->mce_report_event->schedule_work
-> > do_machine_check->force_sig->force_sig_info
-> >
-> > schedule_work() and force_sig_info() take spinlocks.
-> > --=20
-> > Thanks
-> > Zhenzhong
->=20
-> The comment for do_machine_scheck() has already state that:
->=20
-> =C2=A0* This is executed in NMI context not subject to normal locking
-> rules. This
-> =C2=A0* implies that most kernel services cannot be safely used. Don't
-> even
-> =C2=A0* think about putting a printk in there!
->=20
-> So even if it doesn't exceed the MAX_NODES limit, it could hit
-> deadlock
-> and other kind of locking hazards. So supporting MCE is not a reason
-> strong enough to extend MAX_NODES.
 
-Agree.
+[...]
 
->=20
-> In hindsight, we should have added a "BUG_ON(idx >=3D MAX_NODES);"
-> check
-> to avoid silent corruption because of that issue.
+Thanks. I integrated updates for all comments.
 
-Looks a good idea if it's hard to avoid using spinlock in MCE handler.
+Ciao
+Stephan
 
-Thanks
-Zhenzhong
+
