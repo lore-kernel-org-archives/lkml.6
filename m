@@ -2,144 +2,129 @@ Return-Path: <SRS0=tq6k=PW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.7 required=3.0 tests=FROM_LOCAL_HEX,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C8A58C43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 06:52:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D8CAC43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 06:52:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9A41F20663
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 06:52:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0DD1E20663
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 06:52:39 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OmZGGobM"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726558AbfANGwE (ORCPT
+        id S1726582AbfANGwi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 14 Jan 2019 01:52:04 -0500
-Received: from mail-it1-f197.google.com ([209.85.166.197]:35565 "EHLO
-        mail-it1-f197.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726067AbfANGwE (ORCPT
+        Mon, 14 Jan 2019 01:52:38 -0500
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:46505 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726067AbfANGwi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 Jan 2019 01:52:04 -0500
-Received: by mail-it1-f197.google.com with SMTP id v188so8750269ita.0
-        for <linux-kernel@vger.kernel.org>; Sun, 13 Jan 2019 22:52:03 -0800 (PST)
+        Mon, 14 Jan 2019 01:52:38 -0500
+Received: by mail-pf1-f195.google.com with SMTP id c73so9876697pfe.13;
+        Sun, 13 Jan 2019 22:52:37 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=eI1P4E2yI8ems4grYV5HYlHCRxtEgB2NKoxdLszE95s=;
+        b=OmZGGobMP5E4YfUJjI0q6MedykdC6igrgK9PnjPKi6fJVdUy+w3LSProf9R1zjQnXS
+         NwbPznWkJQP8wRaa7HthuAtWAJ6Hrg7C0q9j/98Hf1LPyDN7uXCTEjr/FlLbQspwQ+EN
+         7lkPqJvdB45MmK5CFdPSyTFB1wtLJE58fJSfuhBJIjKdhMzMwcR1kjc6pBYGzwKHK2kO
+         /ynahax5OuCCf8N74+DtOBzzdCPMZLvib0ezYZy16hxgXHpADSSDM1SuTBZZEANil/Q/
+         Mg3lHOp/B81glb+E5QwT4XhrXkEifzjQ3xjKxh1BjRFdn4a5rMvq4ofQrSR/Ig9nOSEI
+         Yu1Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=Sg3jCG61WRo3JOPAdxT3cOPxPNMbvwmtqGYpXlB4v5k=;
-        b=mBE6HhpnoPZ//tw8qD8ebwCODCitQWHApxSjNUHsn0Udy1G42dyV9yUGsk+Qz+RZPA
-         EiNcbB39Z1g4b270ZZcYKCJocDuwgykEPmMxDbWwhioD/ez5LVpBp/a5R7/RqLXUmcjc
-         MQkzgh1/glWswa/KAMpW2pgyA4AN0t7wdIt0oQcyclqOOsvUMySSyLMBh/TWdfb5T6dn
-         B+6RYcrAF2xWfaYUZq6m63DB6WZ7tMkSxCrnBKw7XGP9Ycj8m9z+8IqSxDcHCRZsfQfO
-         PNUr7bBkq3bH1tZsiSPLjj9sydDmvpSdEXFqj4StRlRzIdeprGqy9kWxdWnkwrUPk8+7
-         shug==
-X-Gm-Message-State: AJcUukdgRe9fhC197jOKUnXegND5VGm5N9RCqeBWnkOyH9Tz670+LGbB
-        fpZ2qcALO3FpftDFenHVvzawW0Ox0n0zvZgUy8DuOu6ahJkV
-X-Google-Smtp-Source: ALg8bN50zVhiJCIV2m8fv+5SUCe83M8TQdeF/Rl+DpUXQAdwnBNeOwRVr5ojzBlYkfiipftC55hnLeQfG5tfQqNjRNMl1AwYbEZz
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=eI1P4E2yI8ems4grYV5HYlHCRxtEgB2NKoxdLszE95s=;
+        b=t84bxNL2gl8wXcPbrDiuImfmIllkNVrcUj/5e/u/Ndno6DlfaWiK0ZSYejONg3iCTO
+         pMJ2b5NKom0ajCdT4M6BJftMnCkWWXHVeS2qgsZDwyyoyT4N2zAk9p+hDm+fY8W+iyW7
+         NbOCAe90rcU0SJTKhiaeUWkbvgxwP6BinK/++RD/o8xYdGc4kdKa2vaaskE8hP2hvPmf
+         tSLPS5/6k+9grmm0mDRuU5HxlRzAMbtrwcHbfXvgR58G9zJOHD23/IjVyIrcuQGguvrN
+         xrTxrfFmlIOeWNXxUVukfAi99WzNnmnzSFOke9QwbafF+WWXls7HXOPtzOX7U+2Sr2bJ
+         LtLw==
+X-Gm-Message-State: AJcUukemVUJ+LQ5bAumDlypJaRlBU2/yGTXOrApDUAl4ENQq5pVmf1Y/
+        nDAD3EGCRm/+UlO3eW+q8qQ=
+X-Google-Smtp-Source: ALg8bN6qInwlb8uQnAa1Df4dZWbgSQ91CBGRn6+H50eFJp7L0sHBKR4zq+PQqR19h8DZUmYUb2fKGw==
+X-Received: by 2002:a63:2109:: with SMTP id h9mr21559042pgh.277.1547448756587;
+        Sun, 13 Jan 2019 22:52:36 -0800 (PST)
+Received: from dtor-ws ([2620:15c:202:201:3adc:b08c:7acc:b325])
+        by smtp.gmail.com with ESMTPSA id a90sm152253295pfj.109.2019.01.13.22.52.35
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Sun, 13 Jan 2019 22:52:35 -0800 (PST)
+Date:   Sun, 13 Jan 2019 22:52:33 -0800
+From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To:     Deepa Dinamani <deepa.kernel@gmail.com>
+Cc:     linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
+        arnd@arndb.de, davem@davemloft.net, y2038@lists.linaro.org
+Subject: Re: [PATCH] input_event: Provide override for sparc64
+Message-ID: <20190114065233.GB217283@dtor-ws>
+References: <20181229183514.24644-1-deepa.kernel@gmail.com>
 MIME-Version: 1.0
-X-Received: by 2002:a5d:9a0b:: with SMTP id s11mr8558038iol.5.1547448723289;
- Sun, 13 Jan 2019 22:52:03 -0800 (PST)
-Date:   Sun, 13 Jan 2019 22:52:03 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000075c0ef057f657b8d@google.com>
-Subject: KASAN: null-ptr-deref Read in ip6_hold_safe
-From:   syzbot <syzbot+8433ca0841e308ef4cc7@syzkaller.appspotmail.com>
-To:     davem@davemloft.net, kuznet@ms2.inr.ac.ru,
-        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com, yoshfuji@linux-ipv6.org
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181229183514.24644-1-deepa.kernel@gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+On Sat, Dec 29, 2018 at 10:35:14AM -0800, Deepa Dinamani wrote:
+> The usec part of the timeval is defined as
+> __kernel_suseconds_t	tv_usec; /* microseconds */
+> 
+> Arnd noticed that sparc64 is the only architecture
+> that defines __kernel_suseconds_t as int rather than long.
+> 
+> This breaks the current y2038 fix for kernel as we only
+> access and define the timeval struct for non-kernel use cases.
+> But, this was hidden by an another typo in the use of __KERNEL__
+> qualifier.
+> 
+> Fix the typo, and provide an override for sparc64.
+> 
+> Fixes: 152194fe9c3f ("Input: extend usable life of event timestamps to 2106 on 32 bit systems")
+> Reported-by: Arnd Bergmann <arnd@arndb.de>
+> Signed-off-by: Deepa Dinamani <deepa.kernel@gmail.com>
 
-syzbot found the following crash on:
+Applied, thank you.
 
-HEAD commit:    b71acb0e3721 Merge branch 'linus' of git://git.kernel.org/..
-git tree:       net-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=1492759f400000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=b03c5892bb940c76
-dashboard link: https://syzkaller.appspot.com/bug?extid=8433ca0841e308ef4cc7
-compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
+> ---
+>  include/uapi/linux/input.h | 6 +++++-
+>  1 file changed, 5 insertions(+), 1 deletion(-)
+> 
+> diff --git a/include/uapi/linux/input.h b/include/uapi/linux/input.h
+> index fb78f6f500f3..ffab958bc512 100644
+> --- a/include/uapi/linux/input.h
+> +++ b/include/uapi/linux/input.h
+> @@ -26,13 +26,17 @@
+>   */
+>  
+>  struct input_event {
+> -#if (__BITS_PER_LONG != 32 || !defined(__USE_TIME_BITS64)) && !defined(__KERNEL)
+> +#if (__BITS_PER_LONG != 32 || !defined(__USE_TIME_BITS64)) && !defined(__KERNEL__)
+>  	struct timeval time;
+>  #define input_event_sec time.tv_sec
+>  #define input_event_usec time.tv_usec
+>  #else
+>  	__kernel_ulong_t __sec;
+> +#ifdef CONFIG_SPARC64
+> +	unsigned int __usec;
+> +#else
+>  	__kernel_ulong_t __usec;
+> +#endif
+>  #define input_event_sec  __sec
+>  #define input_event_usec __usec
+>  #endif
+> -- 
+> 2.17.1
+> 
 
-Unfortunately, I don't have any reproducer for this crash yet.
-
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+8433ca0841e308ef4cc7@syzkaller.appspotmail.com
-
-kernel msg: ebtables bug: please report to author: EBT_ENTRY_OR_ENTRIES  
-shouldn't be set in distinguisher
-==================================================================
-BUG: KASAN: null-ptr-deref in atomic_read  
-include/asm-generic/atomic-instrumented.h:21 [inline]
-BUG: KASAN: null-ptr-deref in atomic_fetch_add_unless  
-include/linux/atomic.h:575 [inline]
-BUG: KASAN: null-ptr-deref in atomic_add_unless include/linux/atomic.h:597  
-[inline]
-BUG: KASAN: null-ptr-deref in dst_hold_safe include/net/dst.h:308 [inline]
-BUG: KASAN: null-ptr-deref in ip6_hold_safe+0xca/0x620 net/ipv6/route.c:1021
-Read of size 4 at addr 0000000000000068 by task syz-executor4/21421
-
-CPU: 0 PID: 21421 Comm: syz-executor4 Not tainted 4.20.0+ #3
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-Call Trace:
-  __dump_stack lib/dump_stack.c:77 [inline]
-  dump_stack+0x1db/0x2d0 lib/dump_stack.c:113
-  kasan_report_error mm/kasan/report.c:352 [inline]
-  kasan_report mm/kasan/report.c:412 [inline]
-  kasan_report.cold+0x19f/0x2ba mm/kasan/report.c:396
-  check_memory_region_inline mm/kasan/kasan.c:260 [inline]
-  check_memory_region+0x123/0x190 mm/kasan/kasan.c:267
-  kasan_check_read+0x11/0x20 mm/kasan/kasan.c:272
-  atomic_read include/asm-generic/atomic-instrumented.h:21 [inline]
-  atomic_fetch_add_unless include/linux/atomic.h:575 [inline]
-  atomic_add_unless include/linux/atomic.h:597 [inline]
-  dst_hold_safe include/net/dst.h:308 [inline]
-  ip6_hold_safe+0xca/0x620 net/ipv6/route.c:1021
-  rt6_get_pcpu_route net/ipv6/route.c:1241 [inline]
-  ip6_pol_route+0x3a3/0x1490 net/ipv6/route.c:1890
-  ip6_pol_route_output+0x54/0x70 net/ipv6/route.c:2066
-  fib6_rule_lookup+0x277/0x870 net/ipv6/fib6_rules.c:122
-  ip6_route_output_flags+0x2c4/0x350 net/ipv6/route.c:2095
-  ip6_route_output include/net/ip6_route.h:88 [inline]
-  ip6_dst_lookup_tail+0xe18/0x1d50 net/ipv6/ip6_output.c:958
-  ip6_dst_lookup_flow+0xca/0x270 net/ipv6/ip6_output.c:1086
-  ip6_sk_dst_lookup_flow net/ipv6/ip6_output.c:1124 [inline]
-  ip6_sk_dst_lookup_flow+0x5d6/0xbf0 net/ipv6/ip6_output.c:1114
-  udpv6_sendmsg+0x20d7/0x3550 net/ipv6/udp.c:1441
-  inet_sendmsg+0x1af/0x740 net/ipv4/af_inet.c:798
-  sock_sendmsg_nosec net/socket.c:621 [inline]
-  sock_sendmsg+0xdd/0x130 net/socket.c:631
-  ___sys_sendmsg+0x7ec/0x910 net/socket.c:2116
-  __sys_sendmsg+0x112/0x270 net/socket.c:2154
-  __do_sys_sendmsg net/socket.c:2163 [inline]
-  __se_sys_sendmsg net/socket.c:2161 [inline]
-  __x64_sys_sendmsg+0x78/0xb0 net/socket.c:2161
-protocol 88fb is buggy, dev hsr_slave_0
-  do_syscall_64+0x1a3/0x800 arch/x86/entry/common.c:290
-protocol 88fb is buggy, dev hsr_slave_1
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x457ec9
-Code: 6d b7 fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 48 89 f8 48 89 f7  
-48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff  
-ff 0f 83 3b b7 fb ff c3 66 2e 0f 1f 84 00 00 00 00
-RSP: 002b:00007fb05ac4ac78 EFLAGS: 00000246 ORIG_RAX: 000000000000002e
-RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 0000000000457ec9
-RDX: 0000000000000000 RSI: 0000000020013000 RDI: 0000000000000004
-RBP: 000000000073bf00 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 00007fb05ac4b6d4
-R13: 00000000004c4d2e R14: 00000000004d8650 R15: 00000000ffffffff
-==================================================================
-
-
----
-This bug is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this bug report. See:
-https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with  
-syzbot.
+-- 
+Dmitry
