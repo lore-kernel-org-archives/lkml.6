@@ -2,98 +2,117 @@ Return-Path: <SRS0=tq6k=PW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DC7EDC43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 12:43:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D64A0C43444
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 12:44:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B90FA20656
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 12:43:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B1F7820656
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 12:44:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726623AbfANMnD (ORCPT
+        id S1726639AbfANMoR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 14 Jan 2019 07:43:03 -0500
-Received: from mx2.suse.de ([195.135.220.15]:34628 "EHLO mx1.suse.de"
+        Mon, 14 Jan 2019 07:44:17 -0500
+Received: from mx2.suse.de ([195.135.220.15]:34934 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726449AbfANMnD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 Jan 2019 07:43:03 -0500
+        id S1726467AbfANMoQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 14 Jan 2019 07:44:16 -0500
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id A3B18AB7D;
-        Mon, 14 Jan 2019 12:43:01 +0000 (UTC)
-Subject: Re: [PATCH v2] xen: Fix x86 sched_clock() interface for xen
-To:     Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        linux-kernel@vger.kernel.org, xen-devel@lists.xenproject.org,
-        x86@kernel.org
-Cc:     sstabellini@kernel.org, hpa@zytor.com, tglx@linutronix.de,
-        mingo@redhat.com, bp@alien8.de, hans@knorrie.org,
-        stable@vger.kernel.org
-References: <20190111120805.24852-1-jgross@suse.com>
- <f0b7963a-049f-e89e-a9cb-9e0f18f771a3@oracle.com>
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 522C1AB7D;
+        Mon, 14 Jan 2019 12:44:15 +0000 (UTC)
 From:   Juergen Gross <jgross@suse.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=jgross@suse.com; prefer-encrypt=mutual; keydata=
- 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
-Message-ID: <21fbef84-e84c-cdd0-ae1a-856c38a39cf3@suse.com>
-Date:   Mon, 14 Jan 2019 13:43:00 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.0
-MIME-Version: 1.0
-In-Reply-To: <f0b7963a-049f-e89e-a9cb-9e0f18f771a3@oracle.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: de-DE
-Content-Transfer-Encoding: 7bit
+To:     linux-kernel@vger.kernel.org, xen-devel@lists.xenproject.org,
+        x86@kernel.org
+Cc:     boris.ostrovsky@oracle.com, sstabellini@kernel.org, hpa@zytor.com,
+        tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
+        hans@knorrie.org, Juergen Gross <jgross@suse.com>,
+        stable@vger.kernel.org
+Subject: [PATCH v3] xen: Fix x86 sched_clock() interface for xen
+Date:   Mon, 14 Jan 2019 13:44:13 +0100
+Message-Id: <20190114124413.3742-1-jgross@suse.com>
+X-Mailer: git-send-email 2.16.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/01/2019 21:35, Boris Ostrovsky wrote:
-> On 1/11/19 7:08 AM, Juergen Gross wrote:
->> @@ -421,6 +424,11 @@ void xen_restore_time_memory_area(void)
->>  	if (ret != 0)
->>  		pr_notice("Cannot restore secondary vcpu_time_info (err %d)",
->>  			  ret);
->> +
->> +out:
->> +	/* Need pvclock_resume() before using xen_clocksource_read(). */
->> +	pvclock_resume();
-> 
-> Do we want to drop it from xen_timer_resume then?
+Commit f94c8d11699759 ("sched/clock, x86/tsc: Rework the x86 'unstable'
+sched_clock() interface") broke Xen guest time handling across
+migration:
 
-Yes. V3 on its way...
+[  187.249951] Freezing user space processes ... (elapsed 0.001 seconds) done.
+[  187.251137] OOM killer disabled.
+[  187.251137] Freezing remaining freezable tasks ... (elapsed 0.001 seconds) done.
+[  187.252299] suspending xenstore...
+[  187.266987] xen:grant_table: Grant tables using version 1 layout
+[18446743811.706476] OOM killer enabled.
+[18446743811.706478] Restarting tasks ... done.
+[18446743811.720505] Setting capacity to 16777216
 
+Fix that by setting xen_sched_clock_offset at resume time to ensure a
+monotonic clock value.
 
-Juergen
+Fixes: f94c8d11699759 ("sched/clock, x86/tsc: Rework the x86 'unstable' sched_clock() interface")
+Cc: <stable@vger.kernel.org> # 4.11
+Reported-by: Hans van Kranenburg <hans@knorrie.org>
+Signed-off-by: Juergen Gross <jgross@suse.com>
+---
+ arch/x86/xen/time.c | 12 +++++++++---
+ 1 file changed, 9 insertions(+), 3 deletions(-)
+
+diff --git a/arch/x86/xen/time.c b/arch/x86/xen/time.c
+index 72bf446c3fee..6e29794573b7 100644
+--- a/arch/x86/xen/time.c
++++ b/arch/x86/xen/time.c
+@@ -361,8 +361,6 @@ void xen_timer_resume(void)
+ {
+ 	int cpu;
+ 
+-	pvclock_resume();
+-
+ 	if (xen_clockevent != &xen_vcpuop_clockevent)
+ 		return;
+ 
+@@ -379,12 +377,15 @@ static const struct pv_time_ops xen_time_ops __initconst = {
+ };
+ 
+ static struct pvclock_vsyscall_time_info *xen_clock __read_mostly;
++static u64 xen_clock_value_saved;
+ 
+ void xen_save_time_memory_area(void)
+ {
+ 	struct vcpu_register_time_memory_area t;
+ 	int ret;
+ 
++	xen_clock_value_saved = xen_clocksource_read() - xen_sched_clock_offset;
++
+ 	if (!xen_clock)
+ 		return;
+ 
+@@ -404,7 +405,7 @@ void xen_restore_time_memory_area(void)
+ 	int ret;
+ 
+ 	if (!xen_clock)
+-		return;
++		goto out;
+ 
+ 	t.addr.v = &xen_clock->pvti;
+ 
+@@ -421,6 +422,11 @@ void xen_restore_time_memory_area(void)
+ 	if (ret != 0)
+ 		pr_notice("Cannot restore secondary vcpu_time_info (err %d)",
+ 			  ret);
++
++out:
++	/* Need pvclock_resume() before using xen_clocksource_read(). */
++	pvclock_resume();
++	xen_sched_clock_offset = xen_clocksource_read() - xen_clock_value_saved;
+ }
+ 
+ static void xen_setup_vsyscall_time_info(void)
+-- 
+2.16.4
 
