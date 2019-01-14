@@ -2,329 +2,404 @@ Return-Path: <SRS0=tq6k=PW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 30CFCC43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 17:09:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 55A6EC43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 17:10:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DF7A720659
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 17:09:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 08A7020659
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 17:10:36 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=android.com header.i=@android.com header.b="Tu4bJ1ta"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726953AbfANRJl (ORCPT
+        id S1726826AbfANRKf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 14 Jan 2019 12:09:41 -0500
-Received: from mx3.molgen.mpg.de ([141.14.17.11]:56911 "EHLO mx1.molgen.mpg.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726643AbfANRJj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 Jan 2019 12:09:39 -0500
-Received: from keineahnung.molgen.mpg.de (keineahnung.molgen.mpg.de [141.14.17.193])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: pmenzel)
-        by mx.molgen.mpg.de (Postfix) with ESMTPSA id 48A1D201353427;
-        Mon, 14 Jan 2019 18:09:36 +0100 (CET)
-Subject: Re: General protection fault in `switch_mm_irqs_off()`
-To:     Thomas Lendacky <Thomas.Lendacky@amd.com>,
-        Borislav Petkov <bp@alien8.de>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Jiri Kosina <jikos@kernel.org>,
-        "x86@kernel.org" <x86@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Tim Chen <tim.c.chen@linux.intel.com>
-References: <alpine.LRH.2.00.1901041737290.28043@gjva.wvxbf.pm>
- <cb7ba667-562b-1e4c-f16e-7c11804bc98a@molgen.mpg.de>
- <alpine.DEB.2.21.1901091410500.1755@nanos.tec.linutronix.de>
- <5c38f377-f088-5684-91a5-c2cc2d64dbbd@molgen.mpg.de>
- <ea49acb9-8165-80a3-e6fe-b29123ad5795@amd.com>
- <206f4322-c15e-6f0b-733d-fd19cd9c24a7@molgen.mpg.de>
- <98ed83c0-3077-848b-9de4-add70e9b417a@amd.com>
- <9bca3e26-1dfc-6e86-cf28-90cadd983ff4@molgen.mpg.de>
- <20190109211104.GG15665@zn.tnic>
- <9bbcbaa7-b164-fcef-0588-7c5f25aa2440@molgen.mpg.de>
- <20190110160054.GD17621@zn.tnic>
- <4de0b458-6028-3ab1-fef6-04c7fc440277@molgen.mpg.de>
- <3a35722f-969b-e720-1f3f-c60be7818ed1@amd.com>
- <8d6c854c-cbb9-adbf-345b-f04a40206573@amd.com>
-From:   Paul Menzel <pmenzel@molgen.mpg.de>
-Message-ID: <e45c8578-37e8-0aee-b235-d4d9bcedc8ee@molgen.mpg.de>
-Date:   Mon, 14 Jan 2019 18:09:35 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Mon, 14 Jan 2019 12:10:35 -0500
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:36443 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726643AbfANRKe (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 14 Jan 2019 12:10:34 -0500
+Received: by mail-pg1-f193.google.com with SMTP id n2so9720413pgm.3
+        for <linux-kernel@vger.kernel.org>; Mon, 14 Jan 2019 09:10:34 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=android.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=ZvocJ7meRWkQbL+pJ1UQFPCDAO57SBDWHS/kM+WPoIA=;
+        b=Tu4bJ1tarOl4fke+uGh/wcuWivriQ7V8zVScsk4Ywn3qHRy1Hxw4zJ3ohieI5G+KlV
+         0O7K1B3iDavS8e6pS/CKpVPDvCbhU501xZQOgVbqR5ZhiClf5bsEV8fKlUcKwbqF2xB5
+         wBOHAjn/0luozaq2zRslTrACV1kT7lCALM6jp0JHpt83Kf8X7LDf7wwi9zErnghg11LA
+         RYSp7ixReMHUYBpdD4Xv6U+X7WS7q2M4HjBRyUxE1+H8burs4kOyfQYNfJpvPce0O6se
+         XAe/zyeDNzTt8yQJjYxZJhedXkbYxBU0PtmihCGBScBlYiLYUxCbRhRp45ltc2R9h/t/
+         LDZg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=ZvocJ7meRWkQbL+pJ1UQFPCDAO57SBDWHS/kM+WPoIA=;
+        b=AsskWt6PwUSscFsqZH+IikFS2I4fKrOg+XI7DHVuMrJ687BY/yS8coIAWyXmNCtHzC
+         2Gh5iiHpEcyTNppa+eZMOuVTr7/CiJ1RUXiBI2YzUuUYuMBRoVncxxpRH1q/niSdqkhz
+         qUeJGsy1jZwqgO+3MuFsAHxuRq/WcXeGL/0byPqe6TPHi1LrTdbVeYv6FFKk/nGQvFAv
+         P0YCE6x1iWVsIxKreJIfpWhtUGbyiNTZxvnuyEvN+IwCr0jZMXzQjJyadTU+0LD3n3NT
+         HJ2XvcIlW9+E2pXO15TklQrJ7mVrPMtcUMmekgfedr6telIzTydmErOdJ25SGH/UlIn9
+         klDQ==
+X-Gm-Message-State: AJcUukepf9tei9711gdHBYqTP5X1/adFR+mLf85BuqZHdMcfSNC1SByA
+        NCFNlUO19H346chA/7aJ/AjdLw==
+X-Google-Smtp-Source: ALg8bN5SMJfdKDMas7Cir+za5/QTYbOCJFbRwJ7B5bN6cTWWPnmLFFyfn54H/WM1mbmyy2vKZ8VS/A==
+X-Received: by 2002:a63:2ac9:: with SMTP id q192mr23773442pgq.58.1547485833759;
+        Mon, 14 Jan 2019 09:10:33 -0800 (PST)
+Received: from ava-linux2.mtv.corp.google.com ([2620:0:1000:1601:6cc0:d41d:b970:fd7])
+        by smtp.googlemail.com with ESMTPSA id q75sm1322924pfa.38.2019.01.14.09.10.32
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 14 Jan 2019 09:10:32 -0800 (PST)
+From:   Todd Kjos <tkjos@android.com>
+X-Google-Original-From: Todd Kjos <tkjos@google.com>
+To:     tkjos@google.com, gregkh@linuxfoundation.org, arve@android.com,
+        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
+        maco@google.com
+Cc:     joel@joelfernandes.org, kernel-team@android.com
+Subject: [PATCH v3] binder: create node flag to request sender's security context
+Date:   Mon, 14 Jan 2019 09:10:21 -0800
+Message-Id: <20190114171021.86171-1-tkjos@google.com>
+X-Mailer: git-send-email 2.20.1.97.g81188d93c3-goog
 MIME-Version: 1.0
-In-Reply-To: <8d6c854c-cbb9-adbf-345b-f04a40206573@amd.com>
-Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha-256; boundary="------------ms050107040704030809010506"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This is a cryptographically signed message in MIME format.
+To allow servers to verify client identity, allow a node
+flag to be set that causes the sender's security context
+to be delivered with the transaction. The BR_TRANSACTION
+command is extended in BR_TRANSACTION_SEC_CTX to
+contain a pointer to the security context string.
 
---------------ms050107040704030809010506
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Todd Kjos <tkjos@google.com>
+---
+v2: fix 32-bit build warning
+v3: fix smatch warning on unitialized struct element
 
-Dear Thomas,
+ drivers/android/binder.c            | 106 ++++++++++++++++++++++------
+ include/uapi/linux/android/binder.h |  19 +++++
+ 2 files changed, 102 insertions(+), 23 deletions(-)
 
+diff --git a/drivers/android/binder.c b/drivers/android/binder.c
+index cdfc87629efb8..5f6ef5e63b91e 100644
+--- a/drivers/android/binder.c
++++ b/drivers/android/binder.c
+@@ -329,6 +329,8 @@ struct binder_error {
+  *                        (invariant after initialized)
+  * @min_priority:         minimum scheduling priority
+  *                        (invariant after initialized)
++ * @txn_security_ctx:     require sender's security context
++ *                        (invariant after initialized)
+  * @async_todo:           list of async work items
+  *                        (protected by @proc->inner_lock)
+  *
+@@ -365,6 +367,7 @@ struct binder_node {
+ 		 * invariant after initialization
+ 		 */
+ 		u8 accept_fds:1;
++		u8 txn_security_ctx:1;
+ 		u8 min_priority;
+ 	};
+ 	bool has_async_transaction;
+@@ -615,6 +618,7 @@ struct binder_transaction {
+ 	long	saved_priority;
+ 	kuid_t	sender_euid;
+ 	struct list_head fd_fixups;
++	binder_uintptr_t security_ctx;
+ 	/**
+ 	 * @lock:  protects @from, @to_proc, and @to_thread
+ 	 *
+@@ -1152,6 +1156,7 @@ static struct binder_node *binder_init_node_ilocked(
+ 	node->work.type = BINDER_WORK_NODE;
+ 	node->min_priority = flags & FLAT_BINDER_FLAG_PRIORITY_MASK;
+ 	node->accept_fds = !!(flags & FLAT_BINDER_FLAG_ACCEPTS_FDS);
++	node->txn_security_ctx = !!(flags & FLAT_BINDER_FLAG_TXN_SECURITY_CTX);
+ 	spin_lock_init(&node->lock);
+ 	INIT_LIST_HEAD(&node->work.entry);
+ 	INIT_LIST_HEAD(&node->async_todo);
+@@ -2778,6 +2783,8 @@ static void binder_transaction(struct binder_proc *proc,
+ 	binder_size_t last_fixup_min_off = 0;
+ 	struct binder_context *context = proc->context;
+ 	int t_debug_id = atomic_inc_return(&binder_last_id);
++	char *secctx = NULL;
++	u32 secctx_sz = 0;
+ 
+ 	e = binder_transaction_log_add(&binder_transaction_log);
+ 	e->debug_id = t_debug_id;
+@@ -3020,6 +3027,20 @@ static void binder_transaction(struct binder_proc *proc,
+ 	t->flags = tr->flags;
+ 	t->priority = task_nice(current);
+ 
++	if (target_node && target_node->txn_security_ctx) {
++		u32 secid;
++
++		security_task_getsecid(proc->tsk, &secid);
++		ret = security_secid_to_secctx(secid, &secctx, &secctx_sz);
++		if (ret) {
++			return_error = BR_FAILED_REPLY;
++			return_error_param = ret;
++			return_error_line = __LINE__;
++			goto err_get_secctx_failed;
++		}
++		extra_buffers_size += ALIGN(secctx_sz, sizeof(u64));
++	}
++
+ 	trace_binder_transaction(reply, t, target_node);
+ 
+ 	t->buffer = binder_alloc_new_buf(&target_proc->alloc, tr->data_size,
+@@ -3036,6 +3057,19 @@ static void binder_transaction(struct binder_proc *proc,
+ 		t->buffer = NULL;
+ 		goto err_binder_alloc_buf_failed;
+ 	}
++	if (secctx) {
++		size_t buf_offset = ALIGN(tr->data_size, sizeof(void *)) +
++				    ALIGN(tr->offsets_size, sizeof(void *)) +
++				    ALIGN(extra_buffers_size, sizeof(void *)) -
++				    ALIGN(secctx_sz, sizeof(u64));
++		char *kptr = t->buffer->data + buf_offset;
++
++		t->security_ctx = (uintptr_t)kptr +
++		    binder_alloc_get_user_buffer_offset(&target_proc->alloc);
++		memcpy(kptr, secctx, secctx_sz);
++		security_release_secctx(secctx, secctx_sz);
++		secctx = NULL;
++	}
+ 	t->buffer->debug_id = t->debug_id;
+ 	t->buffer->transaction = t;
+ 	t->buffer->target_node = target_node;
+@@ -3305,6 +3339,9 @@ static void binder_transaction(struct binder_proc *proc,
+ 	t->buffer->transaction = NULL;
+ 	binder_alloc_free_buf(&target_proc->alloc, t->buffer);
+ err_binder_alloc_buf_failed:
++	if (secctx)
++		security_release_secctx(secctx, secctx_sz);
++err_get_secctx_failed:
+ 	kfree(tcomplete);
+ 	binder_stats_deleted(BINDER_STAT_TRANSACTION_COMPLETE);
+ err_alloc_tcomplete_failed:
+@@ -4036,11 +4073,13 @@ static int binder_thread_read(struct binder_proc *proc,
+ 
+ 	while (1) {
+ 		uint32_t cmd;
+-		struct binder_transaction_data tr;
++		struct binder_transaction_data_secctx tr;
++		struct binder_transaction_data *trd = &tr.transaction_data;
+ 		struct binder_work *w = NULL;
+ 		struct list_head *list = NULL;
+ 		struct binder_transaction *t = NULL;
+ 		struct binder_thread *t_from;
++		size_t trsize = sizeof(*trd);
+ 
+ 		binder_inner_proc_lock(proc);
+ 		if (!binder_worklist_empty_ilocked(&thread->todo))
+@@ -4240,8 +4279,8 @@ static int binder_thread_read(struct binder_proc *proc,
+ 		if (t->buffer->target_node) {
+ 			struct binder_node *target_node = t->buffer->target_node;
+ 
+-			tr.target.ptr = target_node->ptr;
+-			tr.cookie =  target_node->cookie;
++			trd->target.ptr = target_node->ptr;
++			trd->cookie =  target_node->cookie;
+ 			t->saved_priority = task_nice(current);
+ 			if (t->priority < target_node->min_priority &&
+ 			    !(t->flags & TF_ONE_WAY))
+@@ -4251,22 +4290,23 @@ static int binder_thread_read(struct binder_proc *proc,
+ 				binder_set_nice(target_node->min_priority);
+ 			cmd = BR_TRANSACTION;
+ 		} else {
+-			tr.target.ptr = 0;
+-			tr.cookie = 0;
++			trd->target.ptr = 0;
++			trd->cookie = 0;
+ 			cmd = BR_REPLY;
+ 		}
+-		tr.code = t->code;
+-		tr.flags = t->flags;
+-		tr.sender_euid = from_kuid(current_user_ns(), t->sender_euid);
++		trd->code = t->code;
++		trd->flags = t->flags;
++		trd->sender_euid = from_kuid(current_user_ns(), t->sender_euid);
+ 
+ 		t_from = binder_get_txn_from(t);
+ 		if (t_from) {
+ 			struct task_struct *sender = t_from->proc->tsk;
+ 
+-			tr.sender_pid = task_tgid_nr_ns(sender,
+-							task_active_pid_ns(current));
++			trd->sender_pid =
++				task_tgid_nr_ns(sender,
++						task_active_pid_ns(current));
+ 		} else {
+-			tr.sender_pid = 0;
++			trd->sender_pid = 0;
+ 		}
+ 
+ 		ret = binder_apply_fd_fixups(t);
+@@ -4297,15 +4337,20 @@ static int binder_thread_read(struct binder_proc *proc,
+ 			}
+ 			continue;
+ 		}
+-		tr.data_size = t->buffer->data_size;
+-		tr.offsets_size = t->buffer->offsets_size;
+-		tr.data.ptr.buffer = (binder_uintptr_t)
++		trd->data_size = t->buffer->data_size;
++		trd->offsets_size = t->buffer->offsets_size;
++		trd->data.ptr.buffer = (binder_uintptr_t)
+ 			((uintptr_t)t->buffer->data +
+ 			binder_alloc_get_user_buffer_offset(&proc->alloc));
+-		tr.data.ptr.offsets = tr.data.ptr.buffer +
++		trd->data.ptr.offsets = trd->data.ptr.buffer +
+ 					ALIGN(t->buffer->data_size,
+ 					    sizeof(void *));
+ 
++		tr.secctx = t->security_ctx;
++		if (t->security_ctx) {
++			cmd = BR_TRANSACTION_SEC_CTX;
++			trsize = sizeof(tr);
++		}
+ 		if (put_user(cmd, (uint32_t __user *)ptr)) {
+ 			if (t_from)
+ 				binder_thread_dec_tmpref(t_from);
+@@ -4316,7 +4361,7 @@ static int binder_thread_read(struct binder_proc *proc,
+ 			return -EFAULT;
+ 		}
+ 		ptr += sizeof(uint32_t);
+-		if (copy_to_user(ptr, &tr, sizeof(tr))) {
++		if (copy_to_user(ptr, &tr, trsize)) {
+ 			if (t_from)
+ 				binder_thread_dec_tmpref(t_from);
+ 
+@@ -4325,7 +4370,7 @@ static int binder_thread_read(struct binder_proc *proc,
+ 
+ 			return -EFAULT;
+ 		}
+-		ptr += sizeof(tr);
++		ptr += trsize;
+ 
+ 		trace_binder_transaction_received(t);
+ 		binder_stat_br(proc, thread, cmd);
+@@ -4333,16 +4378,18 @@ static int binder_thread_read(struct binder_proc *proc,
+ 			     "%d:%d %s %d %d:%d, cmd %d size %zd-%zd ptr %016llx-%016llx\n",
+ 			     proc->pid, thread->pid,
+ 			     (cmd == BR_TRANSACTION) ? "BR_TRANSACTION" :
+-			     "BR_REPLY",
++				(cmd == BR_TRANSACTION_SEC_CTX) ?
++				     "BR_TRANSACTION_SEC_CTX" : "BR_REPLY",
+ 			     t->debug_id, t_from ? t_from->proc->pid : 0,
+ 			     t_from ? t_from->pid : 0, cmd,
+ 			     t->buffer->data_size, t->buffer->offsets_size,
+-			     (u64)tr.data.ptr.buffer, (u64)tr.data.ptr.offsets);
++			     (u64)trd->data.ptr.buffer,
++			     (u64)trd->data.ptr.offsets);
+ 
+ 		if (t_from)
+ 			binder_thread_dec_tmpref(t_from);
+ 		t->buffer->allow_user_free = 1;
+-		if (cmd == BR_TRANSACTION && !(t->flags & TF_ONE_WAY)) {
++		if (cmd != BR_REPLY && !(t->flags & TF_ONE_WAY)) {
+ 			binder_inner_proc_lock(thread->proc);
+ 			t->to_parent = thread->transaction_stack;
+ 			t->to_thread = thread;
+@@ -4690,7 +4737,8 @@ static int binder_ioctl_write_read(struct file *filp,
+ 	return ret;
+ }
+ 
+-static int binder_ioctl_set_ctx_mgr(struct file *filp)
++static int binder_ioctl_set_ctx_mgr(struct file *filp,
++				    struct flat_binder_object *fbo)
+ {
+ 	int ret = 0;
+ 	struct binder_proc *proc = filp->private_data;
+@@ -4719,7 +4767,7 @@ static int binder_ioctl_set_ctx_mgr(struct file *filp)
+ 	} else {
+ 		context->binder_context_mgr_uid = curr_euid;
+ 	}
+-	new_node = binder_new_node(proc, NULL);
++	new_node = binder_new_node(proc, fbo);
+ 	if (!new_node) {
+ 		ret = -ENOMEM;
+ 		goto out;
+@@ -4842,8 +4890,20 @@ static long binder_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
+ 		binder_inner_proc_unlock(proc);
+ 		break;
+ 	}
++	case BINDER_SET_CONTEXT_MGR_EXT: {
++		struct flat_binder_object fbo;
++
++		if (copy_from_user(&fbo, ubuf, sizeof(fbo))) {
++			ret = -EINVAL;
++			goto err;
++		}
++		ret = binder_ioctl_set_ctx_mgr(filp, &fbo);
++		if (ret)
++			goto err;
++		break;
++	}
+ 	case BINDER_SET_CONTEXT_MGR:
+-		ret = binder_ioctl_set_ctx_mgr(filp);
++		ret = binder_ioctl_set_ctx_mgr(filp, NULL);
+ 		if (ret)
+ 			goto err;
+ 		break;
+diff --git a/include/uapi/linux/android/binder.h b/include/uapi/linux/android/binder.h
+index b9ba520f7e4bb..2832134e53971 100644
+--- a/include/uapi/linux/android/binder.h
++++ b/include/uapi/linux/android/binder.h
+@@ -41,6 +41,14 @@ enum {
+ enum {
+ 	FLAT_BINDER_FLAG_PRIORITY_MASK = 0xff,
+ 	FLAT_BINDER_FLAG_ACCEPTS_FDS = 0x100,
++
++	/**
++	 * @FLAT_BINDER_FLAG_TXN_SECURITY_CTX: request security contexts
++	 *
++	 * Only when set, causes senders to include their security
++	 * context
++	 */
++	FLAT_BINDER_FLAG_TXN_SECURITY_CTX = 0x1000,
+ };
+ 
+ #ifdef BINDER_IPC_32BIT
+@@ -218,6 +226,7 @@ struct binder_node_info_for_ref {
+ #define BINDER_VERSION			_IOWR('b', 9, struct binder_version)
+ #define BINDER_GET_NODE_DEBUG_INFO	_IOWR('b', 11, struct binder_node_debug_info)
+ #define BINDER_GET_NODE_INFO_FOR_REF	_IOWR('b', 12, struct binder_node_info_for_ref)
++#define BINDER_SET_CONTEXT_MGR_EXT	_IOW('b', 13, struct flat_binder_object)
+ 
+ /*
+  * NOTE: Two special error codes you should check for when calling
+@@ -276,6 +285,11 @@ struct binder_transaction_data {
+ 	} data;
+ };
+ 
++struct binder_transaction_data_secctx {
++	struct binder_transaction_data transaction_data;
++	binder_uintptr_t secctx;
++};
++
+ struct binder_transaction_data_sg {
+ 	struct binder_transaction_data transaction_data;
+ 	binder_size_t buffers_size;
+@@ -311,6 +325,11 @@ enum binder_driver_return_protocol {
+ 	BR_OK = _IO('r', 1),
+ 	/* No parameters! */
+ 
++	BR_TRANSACTION_SEC_CTX = _IOR('r', 2,
++				      struct binder_transaction_data_secctx),
++	/*
++	 * binder_transaction_data_secctx: the received command.
++	 */
+ 	BR_TRANSACTION = _IOR('r', 2, struct binder_transaction_data),
+ 	BR_REPLY = _IOR('r', 3, struct binder_transaction_data),
+ 	/*
+-- 
+2.20.1.97.g81188d93c3-goog
 
-Thank you for checking this, and coming back with the results so quickly.=
-
-
-On 01/14/19 18:00, Lendacky, Thomas wrote:
-> On 1/10/19 12:34 PM, Lendacky, Thomas wrote:
->> On 1/10/19 10:49 AM, Paul Menzel wrote:
->>> Dear Boris, dear Thomas,
->>>
->>>
->>> On 01/10/19 17:00, Borislav Petkov wrote:
->>>> On Thu, Jan 10, 2019 at 02:57:40PM +0100, Paul Menzel wrote:
->>>>> Thank you very much. Indeed, the machine does not crash. I used Lin=
-us=E2=80=99
->>>>> master branch for testing, and applied your patch on top. Please fi=
-nd
->>>>> the full log attached.
->>>>
->>>>> 80.649: [    3.197107] Spectre V2 : spectre_v2_user_select_mitigati=
-on: set X86_FEATURE_USE_IBPB
->>>>
->>>> This is amazing.
->>>>
->>>> Ok, next diff, same exercise. Thx.>=20
->>>> ---
->>>> diff --git a/arch/x86/include/asm/nospec-branch.h b/arch/x86/include=
-/asm/nospec-branch.h
->>>> index dad12b767ba0..528ef8336f5f 100644
->>>> --- a/arch/x86/include/asm/nospec-branch.h
->>>> +++ b/arch/x86/include/asm/nospec-branch.h
->>>> @@ -284,6 +284,12 @@ static inline void indirect_branch_prediction_b=
-arrier(void)
->>>>  {
->>>>  	u64 val =3D PRED_CMD_IBPB;
->>>> =20
->>>> +	if (WARN_ON(boot_cpu_has(X86_FEATURE_USE_IBPB))) {
->>>> +		pr_info("%s: c: %px, array: 0x%x\n",
->>>> +			__func__, &boot_cpu_data, boot_cpu_data.x86_capability[7]);
->>>> +		return;
->>>> +	}
->>>> +
->>>>  	alternative_msr_write(MSR_IA32_PRED_CMD, val, X86_FEATURE_USE_IBPB=
-);
->>>>  }
->>>> =20
->>>> diff --git a/arch/x86/kernel/cpu/bugs.c b/arch/x86/kernel/cpu/bugs.c=
-
->>>> index 8654b8b0c848..e818e5abe611 100644
->>>> --- a/arch/x86/kernel/cpu/bugs.c
->>>> +++ b/arch/x86/kernel/cpu/bugs.c
->>>> @@ -371,6 +371,9 @@ spectre_v2_user_select_mitigation(enum spectre_v=
-2_mitigation_cmd v2_cmd)
->>>>  	if (boot_cpu_has(X86_FEATURE_IBPB)) {
->>>>  		setup_force_cpu_cap(X86_FEATURE_USE_IBPB);
->>>> =20
->>>> +		pr_err("%s: set X86_FEATURE_USE_IBPB, c: %px, array: 0x%x\n",
->>>> +			__func__, &boot_cpu_data, boot_cpu_data.x86_capability[7]);
->>>> +
->>>>  		switch (cmd) {
->>>>  		case SPECTRE_V2_USER_CMD_FORCE:
->>>>  		case SPECTRE_V2_USER_CMD_PRCTL_IBPB:
->>>> diff --git a/arch/x86/kernel/cpu/common.c b/arch/x86/kernel/cpu/comm=
-on.c
->>>> index cb28e98a0659..8566737fa500 100644
->>>> --- a/arch/x86/kernel/cpu/common.c
->>>> +++ b/arch/x86/kernel/cpu/common.c
->>>> @@ -765,6 +765,9 @@ static void apply_forced_caps(struct cpuinfo_x86=
- *c)
->>>>  		c->x86_capability[i] &=3D ~cpu_caps_cleared[i];
->>>>  		c->x86_capability[i] |=3D cpu_caps_set[i];
->>>>  	}
->>>> +
->>>> +	if (c =3D=3D &boot_cpu_data)
->>>> +		pr_info("%s: c: %px, array: 0x%x\n", __func__, c, c->x86_capabili=
-ty[7]);
->>>>  }
->>>> =20
->>>>  static void init_speculation_control(struct cpuinfo_x86 *c)
->>>> @@ -778,6 +781,10 @@ static void init_speculation_control(struct cpu=
-info_x86 *c)
->>>>  	if (cpu_has(c, X86_FEATURE_SPEC_CTRL)) {
->>>>  		set_cpu_cap(c, X86_FEATURE_IBRS);
->>>>  		set_cpu_cap(c, X86_FEATURE_IBPB);
->>>> +
->>>> +		pr_info("%s: X86_FEATURE_SPEC_CTRL: c: %px, array: 0x%x, CPUID: 0=
-x%x\n",
->>>> +			__func__, c, c->x86_capability[7], cpuid_edx(7));
->>>> +
->>>>  		set_cpu_cap(c, X86_FEATURE_MSR_SPEC_CTRL);
->>>>  	}
->>>> =20
->>>> @@ -793,9 +800,13 @@ static void init_speculation_control(struct cpu=
-info_x86 *c)
->>>>  		set_cpu_cap(c, X86_FEATURE_MSR_SPEC_CTRL);
->>>>  	}
->>>> =20
->>>> -	if (cpu_has(c, X86_FEATURE_AMD_IBPB))
->>>> +	if (cpu_has(c, X86_FEATURE_AMD_IBPB)) {
->>>>  		set_cpu_cap(c, X86_FEATURE_IBPB);
->>>> =20
->>>> +		pr_info("%s: X86_FEATURE_AMD_IBPB: c: %px, array: 0x%x, CPUID: 0x=
-%x\n",
->>>> +			__func__, c, c->x86_capability[7], cpuid_ebx(0x80000008));
->>>> +	}
->>>> +
->>>>  	if (cpu_has(c, X86_FEATURE_AMD_STIBP)) {
->>>>  		set_cpu_cap(c, X86_FEATURE_STIBP);
->>>>  		set_cpu_cap(c, X86_FEATURE_MSR_SPEC_CTRL);
->>>
->>> Please find the logs attached.
->>
->> Ah, so the CPUID value is showing X86_FEATURE_AMD_IBPB (not sure why t=
-he
->> cpuid command was showing a value of zero for EBX in your previous ema=
-il).
->> Let me see what I can find out about this processor/firmware relation.=
- I
->> wouldn't expect to see the #GP given that the firmware says IBPB is
->> supported.
->=20
-> I'm not able to reproduce this issue on my family 21, model 1, stepping=
- 2
-> processor (AMD Opteron(TM) Processor 6274) as I am able to successfully=
-
-> write to the PRED_CMD MSR.
-
-It=E2=80=99s not exactly the same processor, but I guess the same family =
-should be
-good enough. What board do you have? Do you have two sockets, and both
-populated?
-
-Here is an Asus KGPE-D16 with two AMD Opterons put in.
-
-Lastly, my microcode updates are applied in firmware, and not by GNU/Linu=
-x.
-
-> Let's check the firmware file that you're loading. The one I'm using is=
-:
->=20
-> $ sha1sum /lib/firmware/amd-ucode/microcode_amd_fam15h.bin=20
-> 90896256951d8edf7baf8181ae11e2dc618a5171  /lib/firmware/amd-ucode/micro=
-code_amd_fam15h.bin
->=20
-> Does that match what you have?
-
-Yes, that matches exactly.
-
-    90896256951d8edf7baf8181ae11e2dc618a5171  3rdparty/blobs/cpu/amd/fami=
-ly_15h/microcode_amd_fam15h.bin
-
-
-Kind regards,
-
-Paul
-
-
---------------ms050107040704030809010506
-Content-Type: application/pkcs7-signature; name="smime.p7s"
-Content-Transfer-Encoding: base64
-Content-Disposition: attachment; filename="smime.p7s"
-Content-Description: S/MIME Cryptographic Signature
-
-MIAGCSqGSIb3DQEHAqCAMIACAQExDzANBglghkgBZQMEAgEFADCABgkqhkiG9w0BBwEAAKCC
-EFowggUSMIID+qADAgECAgkA4wvV+K8l2YEwDQYJKoZIhvcNAQELBQAwgYIxCzAJBgNVBAYT
-AkRFMSswKQYDVQQKDCJULVN5c3RlbXMgRW50ZXJwcmlzZSBTZXJ2aWNlcyBHbWJIMR8wHQYD
-VQQLDBZULVN5c3RlbXMgVHJ1c3QgQ2VudGVyMSUwIwYDVQQDDBxULVRlbGVTZWMgR2xvYmFs
-Um9vdCBDbGFzcyAyMB4XDTE2MDIyMjEzMzgyMloXDTMxMDIyMjIzNTk1OVowgZUxCzAJBgNV
-BAYTAkRFMUUwQwYDVQQKEzxWZXJlaW4genVyIEZvZXJkZXJ1bmcgZWluZXMgRGV1dHNjaGVu
-IEZvcnNjaHVuZ3NuZXR6ZXMgZS4gVi4xEDAOBgNVBAsTB0RGTi1QS0kxLTArBgNVBAMTJERG
-Ti1WZXJlaW4gQ2VydGlmaWNhdGlvbiBBdXRob3JpdHkgMjCCASIwDQYJKoZIhvcNAQEBBQAD
-ggEPADCCAQoCggEBAMtg1/9moUHN0vqHl4pzq5lN6mc5WqFggEcVToyVsuXPztNXS43O+FZs
-FVV2B+pG/cgDRWM+cNSrVICxI5y+NyipCf8FXRgPxJiZN7Mg9mZ4F4fCnQ7MSjLnFp2uDo0p
-eQcAIFTcFV9Kltd4tjTTwXS1nem/wHdN6r1ZB+BaL2w8pQDcNb1lDY9/Mm3yWmpLYgHurDg0
-WUU2SQXaeMpqbVvAgWsRzNI8qIv4cRrKO+KA3Ra0Z3qLNupOkSk9s1FcragMvp0049ENF4N1
-xDkesJQLEvHVaY4l9Lg9K7/AjsMeO6W/VRCrKq4Xl14zzsjz9AkH4wKGMUZrAcUQDBHHWekC
-AwEAAaOCAXQwggFwMA4GA1UdDwEB/wQEAwIBBjAdBgNVHQ4EFgQUk+PYMiba1fFKpZFK4OpL
-4qIMz+EwHwYDVR0jBBgwFoAUv1kgNgB5oKAia4zV8mHSuCzLgkowEgYDVR0TAQH/BAgwBgEB
-/wIBAjAzBgNVHSAELDAqMA8GDSsGAQQBga0hgiwBAQQwDQYLKwYBBAGBrSGCLB4wCAYGZ4EM
-AQICMEwGA1UdHwRFMEMwQaA/oD2GO2h0dHA6Ly9wa2kwMzM2LnRlbGVzZWMuZGUvcmwvVGVs
-ZVNlY19HbG9iYWxSb290X0NsYXNzXzIuY3JsMIGGBggrBgEFBQcBAQR6MHgwLAYIKwYBBQUH
-MAGGIGh0dHA6Ly9vY3NwMDMzNi50ZWxlc2VjLmRlL29jc3ByMEgGCCsGAQUFBzAChjxodHRw
-Oi8vcGtpMDMzNi50ZWxlc2VjLmRlL2NydC9UZWxlU2VjX0dsb2JhbFJvb3RfQ2xhc3NfMi5j
-ZXIwDQYJKoZIhvcNAQELBQADggEBAIcL/z4Cm2XIVi3WO5qYi3FP2ropqiH5Ri71sqQPrhE4
-eTizDnS6dl2e6BiClmLbTDPo3flq3zK9LExHYFV/53RrtCyD2HlrtrdNUAtmB7Xts5et6u5/
-MOaZ/SLick0+hFvu+c+Z6n/XUjkurJgARH5pO7917tALOxrN5fcPImxHhPalR6D90Bo0fa3S
-PXez7vTXTf/D6OWST1k+kEcQSrCFWMBvf/iu7QhCnh7U3xQuTY+8npTD5+32GPg8SecmqKc2
-2CzeIs2LgtjZeOJVEqM7h0S2EQvVDFKvaYwPBt/QolOLV5h7z/0HJPT8vcP9SpIClxvyt7bP
-ZYoaorVyGTkwggWNMIIEdaADAgECAgwcOtRQhH7u81j4jncwDQYJKoZIhvcNAQELBQAwgZUx
-CzAJBgNVBAYTAkRFMUUwQwYDVQQKEzxWZXJlaW4genVyIEZvZXJkZXJ1bmcgZWluZXMgRGV1
-dHNjaGVuIEZvcnNjaHVuZ3NuZXR6ZXMgZS4gVi4xEDAOBgNVBAsTB0RGTi1QS0kxLTArBgNV
-BAMTJERGTi1WZXJlaW4gQ2VydGlmaWNhdGlvbiBBdXRob3JpdHkgMjAeFw0xNjExMDMxNTI0
-NDhaFw0zMTAyMjIyMzU5NTlaMGoxCzAJBgNVBAYTAkRFMQ8wDQYDVQQIDAZCYXllcm4xETAP
-BgNVBAcMCE11ZW5jaGVuMSAwHgYDVQQKDBdNYXgtUGxhbmNrLUdlc2VsbHNjaGFmdDEVMBMG
-A1UEAwwMTVBHIENBIC0gRzAyMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAnhx4
-59Lh4WqgOs/Md04XxU2yFtfM15ZuJV0PZP7BmqSJKLLPyqmOrADfNdJ5PIGBto2JBhtRRBHd
-G0GROOvTRHjzOga95WOTeura79T21FWwwAwa29OFnD3ZplQs6HgdwQrZWNi1WHNJxn/4mA19
-rNEBUc5urSIpZPvZi5XmlF3v3JHOlx3KWV7mUteB4pwEEfGTg4npPAJbp2o7arxQdoIq+Pu2
-OsvqhD7Rk4QeaX+EM1QS4lqd1otW4hE70h/ODPy1xffgbZiuotWQLC6nIwa65Qv6byqlIX0q
-Zuu99Vsu+r3sWYsL5SBkgecNI7fMJ5tfHrjoxfrKl/ErTAt8GQIDAQABo4ICBTCCAgEwEgYD
-VR0TAQH/BAgwBgEB/wIBATAOBgNVHQ8BAf8EBAMCAQYwKQYDVR0gBCIwIDANBgsrBgEEAYGt
-IYIsHjAPBg0rBgEEAYGtIYIsAQEEMB0GA1UdDgQWBBTEiKUH7rh7qgwTv9opdGNSG0lwFjAf
-BgNVHSMEGDAWgBST49gyJtrV8UqlkUrg6kviogzP4TCBjwYDVR0fBIGHMIGEMECgPqA8hjpo
-dHRwOi8vY2RwMS5wY2EuZGZuLmRlL2dsb2JhbC1yb290LWcyLWNhL3B1Yi9jcmwvY2Fjcmwu
-Y3JsMECgPqA8hjpodHRwOi8vY2RwMi5wY2EuZGZuLmRlL2dsb2JhbC1yb290LWcyLWNhL3B1
-Yi9jcmwvY2FjcmwuY3JsMIHdBggrBgEFBQcBAQSB0DCBzTAzBggrBgEFBQcwAYYnaHR0cDov
-L29jc3AucGNhLmRmbi5kZS9PQ1NQLVNlcnZlci9PQ1NQMEoGCCsGAQUFBzAChj5odHRwOi8v
-Y2RwMS5wY2EuZGZuLmRlL2dsb2JhbC1yb290LWcyLWNhL3B1Yi9jYWNlcnQvY2FjZXJ0LmNy
-dDBKBggrBgEFBQcwAoY+aHR0cDovL2NkcDIucGNhLmRmbi5kZS9nbG9iYWwtcm9vdC1nMi1j
-YS9wdWIvY2FjZXJ0L2NhY2VydC5jcnQwDQYJKoZIhvcNAQELBQADggEBABLpeD5FygzqOjj+
-/lAOy20UQOGWlx0RMuPcI4nuyFT8SGmK9lD7QCg/HoaJlfU/r78ex+SEide326evlFAoJXIF
-jVyzNltDhpMKrPIDuh2N12zyn1EtagqPL6hu4pVRzcBpl/F2HCvtmMx5K4WN1L1fmHWLcSap
-dhXLvAZ9RG/B3rqyULLSNN8xHXYXpmtvG0VGJAndZ+lj+BH7uvd3nHWnXEHC2q7iQlDUqg0a
-wIqWJgdLlx1Q8Dg/sodv0m+LN0kOzGvVDRCmowBdWGhhusD+duKV66pBl+qhC+4LipariWaM
-qK5ppMQROATjYeNRvwI+nDcEXr2vDaKmdbxgDVwwggWvMIIEl6ADAgECAgweKlJIhfynPMVG
-/KIwDQYJKoZIhvcNAQELBQAwajELMAkGA1UEBhMCREUxDzANBgNVBAgMBkJheWVybjERMA8G
-A1UEBwwITXVlbmNoZW4xIDAeBgNVBAoMF01heC1QbGFuY2stR2VzZWxsc2NoYWZ0MRUwEwYD
-VQQDDAxNUEcgQ0EgLSBHMDIwHhcNMTcxMTE0MTEzNDE2WhcNMjAxMTEzMTEzNDE2WjCBizEL
-MAkGA1UEBhMCREUxIDAeBgNVBAoMF01heC1QbGFuY2stR2VzZWxsc2NoYWZ0MTQwMgYDVQQL
-DCtNYXgtUGxhbmNrLUluc3RpdHV0IGZ1ZXIgbW9sZWt1bGFyZSBHZW5ldGlrMQ4wDAYDVQQL
-DAVNUElNRzEUMBIGA1UEAwwLUGF1bCBNZW56ZWwwggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAw
-ggEKAoIBAQDIh/UR/AX/YQ48VWWDMLTYtXjYJyhRHMc81ZHMMoaoG66lWB9MtKRTnB5lovLZ
-enTIUyPsCrMhTqV9CWzDf6v9gOTWVxHEYqrUwK5H1gx4XoK81nfV8oGV4EKuVmmikTXiztGz
-peyDmOY8o/EFNWP7YuRkY/lPQJQBeBHYq9AYIgX4StuXu83nusq4MDydygVOeZC15ts0tv3/
-6WmibmZd1OZRqxDOkoBbY3Djx6lERohs3IKS6RKiI7e90rCSy9rtidJBOvaQS9wvtOSKPx0a
-+2pAgJEVzZFjOAfBcXydXtqXhcpOi2VCyl+7+LnnTz016JJLsCBuWEcB3kP9nJYNAgMBAAGj
-ggIxMIICLTAJBgNVHRMEAjAAMA4GA1UdDwEB/wQEAwIF4DAdBgNVHSUEFjAUBggrBgEFBQcD
-AgYIKwYBBQUHAwQwHQYDVR0OBBYEFHM0Mc3XjMLlhWpp4JufRELL4A/qMB8GA1UdIwQYMBaA
-FMSIpQfuuHuqDBO/2il0Y1IbSXAWMCAGA1UdEQQZMBeBFXBtZW56ZWxAbW9sZ2VuLm1wZy5k
-ZTB9BgNVHR8EdjB0MDigNqA0hjJodHRwOi8vY2RwMS5wY2EuZGZuLmRlL21wZy1nMi1jYS9w
-dWIvY3JsL2NhY3JsLmNybDA4oDagNIYyaHR0cDovL2NkcDIucGNhLmRmbi5kZS9tcGctZzIt
-Y2EvcHViL2NybC9jYWNybC5jcmwwgc0GCCsGAQUFBwEBBIHAMIG9MDMGCCsGAQUFBzABhido
-dHRwOi8vb2NzcC5wY2EuZGZuLmRlL09DU1AtU2VydmVyL09DU1AwQgYIKwYBBQUHMAKGNmh0
-dHA6Ly9jZHAxLnBjYS5kZm4uZGUvbXBnLWcyLWNhL3B1Yi9jYWNlcnQvY2FjZXJ0LmNydDBC
-BggrBgEFBQcwAoY2aHR0cDovL2NkcDIucGNhLmRmbi5kZS9tcGctZzItY2EvcHViL2NhY2Vy
-dC9jYWNlcnQuY3J0MEAGA1UdIAQ5MDcwDwYNKwYBBAGBrSGCLAEBBDARBg8rBgEEAYGtIYIs
-AQEEAwYwEQYPKwYBBAGBrSGCLAIBBAMGMA0GCSqGSIb3DQEBCwUAA4IBAQCQs6bUDROpFO2F
-Qz2FMgrdb39VEo8P3DhmpqkaIMC5ZurGbbAL/tAR6lpe4af682nEOJ7VW86ilsIJgm1j0ueY
-aOuL8jrN4X7IF/8KdZnnNnImW3QVni6TCcc+7+ggci9JHtt0IDCj5vPJBpP/dKXLCN4M+exl
-GXYpfHgxh8gclJPY1rquhQrihCzHfKB01w9h9tWZDVMtSoy9EUJFhCXw7mYUsvBeJwZesN2B
-fndPkrXx6XWDdU3S1LyKgHlLIFtarLFm2Hb5zAUR33h+26cN6ohcGqGEEzgIG8tXS8gztEaj
-1s2RyzmKd4SXTkKR3GhkZNVWy+gM68J7jP6zzN+cMYIDmjCCA5YCAQEwejBqMQswCQYDVQQG
-EwJERTEPMA0GA1UECAwGQmF5ZXJuMREwDwYDVQQHDAhNdWVuY2hlbjEgMB4GA1UECgwXTWF4
-LVBsYW5jay1HZXNlbGxzY2hhZnQxFTATBgNVBAMMDE1QRyBDQSAtIEcwMgIMHipSSIX8pzzF
-RvyiMA0GCWCGSAFlAwQCAQUAoIIB8TAYBgkqhkiG9w0BCQMxCwYJKoZIhvcNAQcBMBwGCSqG
-SIb3DQEJBTEPFw0xOTAxMTQxNzA5MzZaMC8GCSqGSIb3DQEJBDEiBCB9esUeXcUSLzv7mrCl
-/T3klnXE1KxfSDr6D/ij5HQnLzBsBgkqhkiG9w0BCQ8xXzBdMAsGCWCGSAFlAwQBKjALBglg
-hkgBZQMEAQIwCgYIKoZIhvcNAwcwDgYIKoZIhvcNAwICAgCAMA0GCCqGSIb3DQMCAgFAMAcG
-BSsOAwIHMA0GCCqGSIb3DQMCAgEoMIGJBgkrBgEEAYI3EAQxfDB6MGoxCzAJBgNVBAYTAkRF
-MQ8wDQYDVQQIDAZCYXllcm4xETAPBgNVBAcMCE11ZW5jaGVuMSAwHgYDVQQKDBdNYXgtUGxh
-bmNrLUdlc2VsbHNjaGFmdDEVMBMGA1UEAwwMTVBHIENBIC0gRzAyAgweKlJIhfynPMVG/KIw
-gYsGCyqGSIb3DQEJEAILMXygejBqMQswCQYDVQQGEwJERTEPMA0GA1UECAwGQmF5ZXJuMREw
-DwYDVQQHDAhNdWVuY2hlbjEgMB4GA1UECgwXTWF4LVBsYW5jay1HZXNlbGxzY2hhZnQxFTAT
-BgNVBAMMDE1QRyBDQSAtIEcwMgIMHipSSIX8pzzFRvyiMA0GCSqGSIb3DQEBAQUABIIBACK1
-AJB28Qyv2b6rDAOGdDK1S6VgzCkLA3miueCY70M5idi3tpYtJtvWYshiW25IV33Ch9hY2G3C
-64vBuq7n1LQy8wodaBMjqbHvyE9r6Tru273bMHe+BIFI+ANNdhcv2MsZUvPW7FYZXJPfSf58
-upZUZZWrtUnmCS+p6PbyQ69+m4l41JVGs3K9mzZfCSjlSBA7upkUsUAk5Imc/4GdOrazK4Pl
-uRJGAKjaprx0Q9YCur69W+0JK8hB23Ak8h/kVIaazrimi4Y6nDUNWnbCR34W04YrgaJJqK4z
-VWoRRcZZlF0TKmcfBOyaCBoC3R4yh9mzc7EADYQxk4d/CZP6LdgAAAAAAAA=
---------------ms050107040704030809010506--
