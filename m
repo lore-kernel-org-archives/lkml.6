@@ -2,143 +2,99 @@ Return-Path: <SRS0=tq6k=PW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A8D4C43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 20:05:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 95033C43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 20:07:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 26DB4206B7
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 20:05:52 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="rCmQVILj"
+	by mail.kernel.org (Postfix) with ESMTP id 6A949206B7
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 20:07:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726927AbfANUFu (ORCPT
+        id S1726933AbfANUHe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 14 Jan 2019 15:05:50 -0500
-Received: from mail-wm1-f49.google.com ([209.85.128.49]:54829 "EHLO
-        mail-wm1-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726757AbfANUFu (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 Jan 2019 15:05:50 -0500
-Received: by mail-wm1-f49.google.com with SMTP id a62so937424wmh.4
-        for <linux-kernel@vger.kernel.org>; Mon, 14 Jan 2019 12:05:48 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
-         :user-agent;
-        bh=juHERBI2Pyr9Z+AdMxWULwvXR5fu0+7WgdHqG8oVV4Q=;
-        b=rCmQVILjlk+ldQdiMbF4o6XISCwqficcBWJ3tRrx5EMkYo1OJG1wRnorx+vlxQjy0x
-         iovHVfeSIT/BwsPpTPxvEkIYyLSIIHa+6UTt3mEVV5NVSU6Ukc3Z01yjV4wlTfulzCZM
-         oTN6dmZSV+VDiHECM9wgUPeS6BTf5Lc89wIJ3N8UolHYO+sccDQ608aBZbpszB7zItGj
-         ANw3emZOveG/q6txX/gIdUYdQPB3zYoNvd1QSyalgByFuQMJkKxG8BcJvvea+zRRtnVU
-         uupJlmkqLff4lRq09yMTlUNXzl0am3MlgTSCFn0VJDUkpzOcc0/Blq+USOOmkjgb2q8c
-         +lkw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition:user-agent;
-        bh=juHERBI2Pyr9Z+AdMxWULwvXR5fu0+7WgdHqG8oVV4Q=;
-        b=CKraKn165jJpxGgvEHx//eoJ89yr42hzi/2wt4g0CUfPw3ANVDLreAIhwxITQfJwM2
-         tAR8tqf0Qc1Y2XsihDQLR3Pm0pl2u2ujiiAAacOi+rGE55RtPgb2bRRKx8h+VeDAxAIB
-         hPGgvmXDZ7aSaFPaKRivLUWCA+YUb/U3ZYwL8H50l2x5LAEzfDcj6U5ocWAvT1Kw4Jpt
-         lUQepoRndEnDDXexwirEjfScH9YktALksc27lAr8/tbZEHDtrfnRFqBJuNPqHCV6qK5k
-         gDXfPdCHFVtpLoioiwraR3AEab2Iicpwn3xaNOVLw/4MYtF+WkgEGQJin6p0REypTe41
-         l0uw==
-X-Gm-Message-State: AJcUukc/8fNNaeVt47OFF8mKKcEtfPqYvYiFtRsd+VB2gVq/Yg5d1bzT
-        5jXQCMw6GBDbgQCgD2jZdo0AykQ=
-X-Google-Smtp-Source: ALg8bN7iUMSoG247s+k8oALIjUVHXs4dMHFuiYWBL1u2jm9jv1J4ihIyuctyENzJYkAZW8ssSworQA==
-X-Received: by 2002:a1c:c181:: with SMTP id r123mr626657wmf.8.1547496348122;
-        Mon, 14 Jan 2019 12:05:48 -0800 (PST)
-Received: from avx2 (nat-minsk-pool-46-53-201-92.telecom.by. [46.53.201.92])
-        by smtp.gmail.com with ESMTPSA id k19sm105272313wre.5.2019.01.14.12.05.47
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 14 Jan 2019 12:05:47 -0800 (PST)
-Date:   Mon, 14 Jan 2019 23:05:45 +0300
-From:   Alexey Dobriyan <adobriyan@gmail.com>
-To:     akpm@linux-foundation.org
-Cc:     linux-kernel@vger.kernel.org
-Subject: [PATCH] proc: use seq_puts() everywhere
-Message-ID: <20190114200545.GC9680@avx2>
+        Mon, 14 Jan 2019 15:07:34 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:59561 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726770AbfANUHe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 14 Jan 2019 15:07:34 -0500
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id ADDD13C2CF4;
+        Mon, 14 Jan 2019 20:07:33 +0000 (UTC)
+Received: from colo-mx.corp.redhat.com (colo-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.21])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 9536160BEC;
+        Mon, 14 Jan 2019 20:07:33 +0000 (UTC)
+Received: from zmail24.collab.prod.int.phx2.redhat.com (zmail24.collab.prod.int.phx2.redhat.com [10.5.83.30])
+        by colo-mx.corp.redhat.com (Postfix) with ESMTP id 751A73F602;
+        Mon, 14 Jan 2019 20:07:33 +0000 (UTC)
+Date:   Mon, 14 Jan 2019 15:07:33 -0500 (EST)
+From:   Dave Anderson <anderson@redhat.com>
+To:     Borislav Petkov <bp@alien8.de>
+Cc:     Kazuhito Hagio <k-hagio@ab.jp.nec.com>,
+        Lianbo Jiang <lijiang@redhat.com>,
+        linux-kernel@vger.kernel.org, kexec@lists.infradead.org,
+        tglx@linutronix.de, mingo@redhat.com, x86@kernel.org,
+        akpm@linux-foundation.org, bhe@redhat.com, dyoung@redhat.com,
+        linux-doc@vger.kernel.org
+Message-ID: <244986363.69770015.1547496453312.JavaMail.zimbra@redhat.com>
+In-Reply-To: <20190114195940.GS2773@zn.tnic>
+References: <20190110121944.6050-1-lijiang@redhat.com> <20190111123300.GE4729@zn.tnic> <4AE2DC15AC0B8543882A74EA0D43DBEC035661E8@BPXM09GP.gisp.nec.co.jp> <20190114180142.GO2773@zn.tnic> <2126185079.69727846.1547492312033.JavaMail.zimbra@redhat.com> <20190114192144.GQ2773@zn.tnic> <134663991.69764038.1547494607008.JavaMail.zimbra@redhat.com> <20190114195940.GS2773@zn.tnic>
+Subject: Re: [PATCH 1/2 v6] kdump: add the vmcoreinfo documentation
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.18.17.201, 10.4.195.29]
+Thread-Topic: kdump: add the vmcoreinfo documentation
+Thread-Index: 0Ciiy49e9Ln7f7dAvqAqpJJrb3q9Xw==
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.29]); Mon, 14 Jan 2019 20:07:33 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-seq_printf() without format specifiers == faster seq_puts()
 
-Signed-off-by: Alexey Dobriyan <adobriyan@gmail.com>
----
 
- fs/proc/array.c      |   16 ++++++++--------
- fs/proc/base.c       |    2 +-
- fs/proc/task_nommu.c |    2 +-
- 3 files changed, 10 insertions(+), 10 deletions(-)
+----- Original Message -----
+> On Mon, Jan 14, 2019 at 02:36:47PM -0500, Dave Anderson wrote:
+> > There's no reading of the dumpfile's memory involved, and that being the case,
+> > the vmlinux file is not utilized.  That's the whole point of the crash option, i.e.,
+> > taking a vmcore file, and trying to determine what kernel should be used
+> > with it:
+> > 
+> >   $ man crash
+> >   ...
+> >        --osrelease dumpfile
+> >               Display the OSRELEASE vmcoreinfo string from a kdump dumpfile header.
+> 
+> I don't understand - if you have the vmcoreinfo (which I assume is part
+> of the vmcore, yes, no?) you can go and dig out the kernel version from
+> it, no?
+> 
+> Why should you not utilize the vmcore file?
 
---- a/fs/proc/array.c
-+++ b/fs/proc/array.c
-@@ -343,28 +343,28 @@ static inline void task_seccomp(struct seq_file *m, struct task_struct *p)
- #ifdef CONFIG_SECCOMP
- 	seq_put_decimal_ull(m, "\nSeccomp:\t", p->seccomp.mode);
- #endif
--	seq_printf(m, "\nSpeculation_Store_Bypass:\t");
-+	seq_puts(m, "\nSpeculation_Store_Bypass:\t");
- 	switch (arch_prctl_spec_ctrl_get(p, PR_SPEC_STORE_BYPASS)) {
- 	case -EINVAL:
--		seq_printf(m, "unknown");
-+		seq_puts(m, "unknown");
- 		break;
- 	case PR_SPEC_NOT_AFFECTED:
--		seq_printf(m, "not vulnerable");
-+		seq_puts(m, "not vulnerable");
- 		break;
- 	case PR_SPEC_PRCTL | PR_SPEC_FORCE_DISABLE:
--		seq_printf(m, "thread force mitigated");
-+		seq_puts(m, "thread force mitigated");
- 		break;
- 	case PR_SPEC_PRCTL | PR_SPEC_DISABLE:
--		seq_printf(m, "thread mitigated");
-+		seq_puts(m, "thread mitigated");
- 		break;
- 	case PR_SPEC_PRCTL | PR_SPEC_ENABLE:
--		seq_printf(m, "thread vulnerable");
-+		seq_puts(m, "thread vulnerable");
- 		break;
- 	case PR_SPEC_DISABLE:
--		seq_printf(m, "globally mitigated");
-+		seq_puts(m, "globally mitigated");
- 		break;
- 	default:
--		seq_printf(m, "vulnerable");
-+		seq_puts(m, "vulnerable");
- 		break;
- 	}
- 	seq_putc(m, '\n');
---- a/fs/proc/base.c
-+++ b/fs/proc/base.c
-@@ -456,7 +456,7 @@ static int proc_pid_schedstat(struct seq_file *m, struct pid_namespace *ns,
- 			      struct pid *pid, struct task_struct *task)
- {
- 	if (unlikely(!sched_info_on()))
--		seq_printf(m, "0 0 0\n");
-+		seq_puts(m, "0 0 0\n");
- 	else
- 		seq_printf(m, "%llu %llu %lu\n",
- 		   (unsigned long long)task->se.sum_exec_runtime,
---- a/fs/proc/task_nommu.c
-+++ b/fs/proc/task_nommu.c
-@@ -178,7 +178,7 @@ static int nommu_vma_show(struct seq_file *m, struct vm_area_struct *vma)
- 		seq_file_path(m, file, "");
- 	} else if (mm && is_stack(vma)) {
- 		seq_pad(m, ' ');
--		seq_printf(m, "[stack]");
-+		seq_puts(m, "[stack]");
- 	}
- 
- 	seq_putc(m, '\n');
+That's what it *does* utilize -- it takes a standalone vmcore dumpfile, and 
+pulls out the OSRELEASE string from it, so that a user can determine what
+vmlinux file should be used with that vmcore for normal crash analysis.
+
+Dave
+
+> 
+> (I'm most likely missing something.)
+> 
+> > Well, I just don't agree that the OSRELEASE item is "frivolous". It's
+> > been in place, and depended upon, for many years.
+> 
+> Yeah, no. The ABI argument is moot in this case as in the last couple
+> of months people have been persuading me that vmcoreinfo is not ABI. So
+> you guys need to make up your mind what is it. And if it is an ABI, it
+> wasn't documented anywhere.
+> 
+> --
+> Regards/Gruss,
+>     Boris.
+> 
+> Good mailing practices for 400: avoid top-posting and trim the reply.
+> 
