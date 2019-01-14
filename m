@@ -4,50 +4,50 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 95872C43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 11:17:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B0ED0C43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 11:17:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5D79420656
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 11:17:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 82E4F20656
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 11:17:45 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="SE0tiVNd"
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="SqYYJelg"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726710AbfANLRa (ORCPT
+        id S1726940AbfANLRo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 14 Jan 2019 06:17:30 -0500
-Received: from lelv0142.ext.ti.com ([198.47.23.249]:45784 "EHLO
-        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726905AbfANLR1 (ORCPT
+        Mon, 14 Jan 2019 06:17:44 -0500
+Received: from lelv0143.ext.ti.com ([198.47.23.248]:45676 "EHLO
+        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726700AbfANLRm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 Jan 2019 06:17:27 -0500
+        Mon, 14 Jan 2019 06:17:42 -0500
 Received: from fllv0034.itg.ti.com ([10.64.40.246])
-        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id x0EBGblh003669;
-        Mon, 14 Jan 2019 05:16:37 -0600
+        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id x0EBGT4G112775;
+        Mon, 14 Jan 2019 05:16:29 -0600
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1547464597;
-        bh=f30RSmXMqhsV1n1NfMeTlD3ATOBh5scl1ryG7fV6mJI=;
+        s=ti-com-17Q1; t=1547464589;
+        bh=JHufpCFiR5hyFNaIpQ75Q1+qFFkM6nzfAJw54s+6OLU=;
         h=From:To:CC:Subject:Date:In-Reply-To:References;
-        b=SE0tiVNds2+gqS/c938UfuIh4RziUQlz0qIL3A7BOUs4UPPVZsTUrInYOZLGKCRPA
-         AhXMi31NfnwdASFvt8lRbTqLHuaXkMHtz76Sm1Tvsif4QBxMde/Rwz4dL5w0zX7/t/
-         8QLsTIPUM4k4wtzNWwAtCXOv0zfW582SCAxJnS6c=
+        b=SqYYJelg57ob8Fmhsh2hNCfdSJASPGbHEXplrNom2VAiPgy/fZIAnp5BG/NEcwzEr
+         XzN3DjrE8KEUUYiSOWVNvORanjFQmBeCjImlYzdjLe9dbU40oVggNT+KM8Tg1pSflp
+         hfuGOUlmXMrmB0LDwDqd3aGpN1O/F2iTq6m4tPq8=
 Received: from DFLE105.ent.ti.com (dfle105.ent.ti.com [10.64.6.26])
-        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x0EBGbdY068044
+        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x0EBGTWj067961
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 14 Jan 2019 05:16:37 -0600
-Received: from DFLE111.ent.ti.com (10.64.6.32) by DFLE105.ent.ti.com
+        Mon, 14 Jan 2019 05:16:29 -0600
+Received: from DFLE110.ent.ti.com (10.64.6.31) by DFLE105.ent.ti.com
  (10.64.6.26) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Mon, 14
- Jan 2019 05:16:37 -0600
-Received: from dflp32.itg.ti.com (10.64.6.15) by DFLE111.ent.ti.com
- (10.64.6.32) with Microsoft SMTP Server (version=TLS1_0,
+ Jan 2019 05:16:29 -0600
+Received: from dflp32.itg.ti.com (10.64.6.15) by DFLE110.ent.ti.com
+ (10.64.6.31) with Microsoft SMTP Server (version=TLS1_0,
  cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1591.10 via Frontend Transport;
- Mon, 14 Jan 2019 05:16:37 -0600
+ Mon, 14 Jan 2019 05:16:29 -0600
 Received: from a0393678ub.india.ti.com (ileax41-snat.itg.ti.com [10.172.224.153])
-        by dflp32.itg.ti.com (8.14.3/8.13.8) with ESMTP id x0EBFd1g011560;
-        Mon, 14 Jan 2019 05:16:33 -0600
+        by dflp32.itg.ti.com (8.14.3/8.13.8) with ESMTP id x0EBFd1e011560;
+        Mon, 14 Jan 2019 05:16:26 -0600
 From:   Kishon Vijay Abraham I <kishon@ti.com>
 To:     Kishon Vijay Abraham I <kishon@ti.com>,
         Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
@@ -61,9 +61,9 @@ CC:     Bjorn Helgaas <bhelgaas@google.com>,
         <linux-kernel@vger.kernel.org>,
         <linux-rockchip@lists.infradead.org>,
         <linux-arm-kernel@lists.infradead.org>
-Subject: [PATCH v2 14/15] PCI: designware-plat: Remove setting epc->features in Designware plat EP driver
-Date:   Mon, 14 Jan 2019 16:45:12 +0530
-Message-ID: <20190114111513.21618-15-kishon@ti.com>
+Subject: [PATCH v2 12/15] PCI: cadence: Remove pci_epf_linkup from Cadence EP driver
+Date:   Mon, 14 Jan 2019 16:45:10 +0530
+Message-ID: <20190114111513.21618-13-kishon@ti.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190114111513.21618-1-kishon@ti.com>
 References: <20190114111513.21618-1-kishon@ti.com>
@@ -75,35 +75,39 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Now that pci-epf-test uses get_features callback and
-dw_plat_pcie_epc_features in Designware plat EP driver already indicates
-it doesn't support linkup notification and is MSIX capable, remove setting
-epc->features which is not used anymore by the endpoint function driver.
+pci_epf_linkup is intended to be invoked if the EPC supports linkup
+notification. Now that pci-epf-test uses get_features callback, which
+indicates Cadence EP driver doesn't support linkup notification, remove
+pci_epf_linkup from Cadence EP driver.
 
 Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
 ---
- drivers/pci/controller/dwc/pcie-designware-plat.c | 4 ----
- 1 file changed, 4 deletions(-)
+ drivers/pci/controller/pcie-cadence-ep.c | 12 ------------
+ 1 file changed, 12 deletions(-)
 
-diff --git a/drivers/pci/controller/dwc/pcie-designware-plat.c b/drivers/pci/controller/dwc/pcie-designware-plat.c
-index bd0516afc86f..3be87126aef3 100644
---- a/drivers/pci/controller/dwc/pcie-designware-plat.c
-+++ b/drivers/pci/controller/dwc/pcie-designware-plat.c
-@@ -70,14 +70,10 @@ static const struct dw_pcie_ops dw_pcie_ops = {
- static void dw_plat_pcie_ep_init(struct dw_pcie_ep *ep)
- {
- 	struct dw_pcie *pci = to_dw_pcie_from_ep(ep);
--	struct pci_epc *epc = ep->epc;
- 	enum pci_barno bar;
+diff --git a/drivers/pci/controller/pcie-cadence-ep.c b/drivers/pci/controller/pcie-cadence-ep.c
+index 14c2545bb17e..def7820cb824 100644
+--- a/drivers/pci/controller/pcie-cadence-ep.c
++++ b/drivers/pci/controller/pcie-cadence-ep.c
+@@ -396,18 +396,6 @@ static int cdns_pcie_ep_start(struct pci_epc *epc)
+ 		cfg |= BIT(epf->func_no);
+ 	cdns_pcie_writel(pcie, CDNS_PCIE_LM_EP_FUNC_CFG, cfg);
  
- 	for (bar = BAR_0; bar <= BAR_5; bar++)
- 		dw_pcie_ep_reset_bar(pci, bar);
+-	/*
+-	 * The PCIe links are automatically established by the controller
+-	 * once for all at powerup: the software can neither start nor stop
+-	 * those links later at runtime.
+-	 *
+-	 * Then we only have to notify the EP core that our links are already
+-	 * established. However we don't call directly pci_epc_linkup() because
+-	 * we've already locked the epc->lock.
+-	 */
+-	list_for_each_entry(epf, &epc->pci_epf, list)
+-		pci_epf_linkup(epf);
 -
--	epc->features |= EPC_FEATURE_NO_LINKUP_NOTIFIER;
--	epc->features |= EPC_FEATURE_MSIX_AVAILABLE;
+ 	return 0;
  }
  
- static int dw_plat_pcie_ep_raise_irq(struct dw_pcie_ep *ep, u8 func_no,
 -- 
 2.17.1
 
