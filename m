@@ -2,319 +2,152 @@ Return-Path: <SRS0=tq6k=PW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 12DA8C43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 16:02:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 31164C43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 16:07:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C13FF2086D
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 16:02:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F05952086D
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 16:07:20 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="u6LF4EnM"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZGJNe2lO"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726759AbfANQCB (ORCPT
+        id S1726774AbfANQHT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 14 Jan 2019 11:02:01 -0500
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:37550 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726674AbfANQCB (ORCPT
+        Mon, 14 Jan 2019 11:07:19 -0500
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:45613 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726642AbfANQHT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 Jan 2019 11:02:01 -0500
-Received: by mail-pg1-f196.google.com with SMTP id c25so9638697pgb.4
-        for <linux-kernel@vger.kernel.org>; Mon, 14 Jan 2019 08:02:00 -0800 (PST)
+        Mon, 14 Jan 2019 11:07:19 -0500
+Received: by mail-pl1-f196.google.com with SMTP id a14so10322950plm.12;
+        Mon, 14 Jan 2019 08:07:18 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:in-reply-to:references:date:message-id
-         :mime-version;
-        bh=gxQ9Aw15DeoI4moC2VJqIEkTVG5aPdFcj18MDxQPjp8=;
-        b=u6LF4EnMcOiNZleiyUm60OYosTyyMBuTJkgzetBREixHUihHy64QhffGHhRwVYZOgn
-         713kL5F9xO9dm89eF9WjAHzRAo9ySU30/Xor0qQgljNkKYtirlBr2ctPAKNtRyu3GZ0g
-         0lu9ZM3YTFTMje+A5P2sB32oliaBRbEHr9cvFx1wmBQ/pxXarJjPUN+xQKGCEmsNbsNr
-         xFsYBusxfz0mf+1RZ0NRi3aDJa+eB2wXksZzBvsBggLpJXs+aB5ya90qjxEH/rAsbNZH
-         MqZiodIr8P1grE54/VuD2RiwDlRCr6hvQXvqXHfxEZQshHJlLluiltwfu7OAyQMkKI4J
-         u62g==
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=+h1lzJes7KKjLhWN6tcanBpRno5ZRwwBz4+zRwLkCtI=;
+        b=ZGJNe2lOzOp0XeX2Ok91XXVo23A7y4AuzC79cWQ/9tHsh251wOI3yCm0oj2E6re8bd
+         hN4MnJbqLCVZO+z3aUmigi15Txycdhxfd00VJbKMq8nbCeEP5dHLHJdMsOSDBvvhltge
+         eJQeIba4OtXvjvirJXoA4bkJ5TS3734uLzgxyyON4n4wZ2tA7XXd56c9Y09W0Z5w88lJ
+         WMl20il65exhzVkXLTvKLbri0AQydVyMpxXFIqwQkw3QdmkwMxWMMKVk6rbHeAGt5s3K
+         eX8l/Mr7FfHNtG9bGuJH+Is82QD0hcWpb3p4kvrJZomiQb7oS4OWiufB8o3OvesADMzz
+         Uuxw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:in-reply-to:references:date
-         :message-id:mime-version;
-        bh=gxQ9Aw15DeoI4moC2VJqIEkTVG5aPdFcj18MDxQPjp8=;
-        b=qY2yplQ6Q75sh0tBC5jL1DHl/MEtoPmOKnA/py2rQpkxwEjzGKMkYqrcoAZuYPBGVQ
-         y8X3HwW3tIqZQVzotJB+GWZQRVVInlXCoXZ8tqSr1yg4fdvmdG7dYvcJ+HwK52MzBDSi
-         /Sn86YCZAafCut7PqOeqhMP3r4a02TmC343Bn4ja4grtwnfnEtWvG4Or7G5vpMjGgdBD
-         zt0dDygKZ8ue6n7yFgVwm0MgwXHGrbBpRMzlMTcN5qwD3HRiV3nYPzTNlNMKkyH8t3y2
-         dK0Lc11s1bWWaoQ8nAel2McOJ3aXe4yJG2v0tISj8zzAlxY4zNm86pZqK0XQ415d2iqg
-         V5Xg==
-X-Gm-Message-State: AJcUukdCPq88DwnFBriZnFvEzeUAXza7nb++1Ka5fjpi/ed/G8ST6ORj
-        6102WaupMfWBeTvdkos0a2dy3g==
-X-Google-Smtp-Source: ALg8bN7V4VHmna7sTIrCzjOgXoN+d6ul2XCD6IFFD9PFMk7wYXCXYda1AUSEEWorhVnYNT+v2bGFng==
-X-Received: by 2002:a62:3141:: with SMTP id x62mr25828025pfx.12.1547481719762;
-        Mon, 14 Jan 2019 08:01:59 -0800 (PST)
-Received: from localhost ([2601:602:9200:a1a5:55a3:6ea4:4b91:28a5])
-        by smtp.googlemail.com with ESMTPSA id 5sm977151pfz.149.2019.01.14.08.01.58
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=+h1lzJes7KKjLhWN6tcanBpRno5ZRwwBz4+zRwLkCtI=;
+        b=mhQfOlu0alPrd8gdqFysVHGSWgZ22dggRtVV9dmEwxyMithgKHmoYtarqLmc6I3+5N
+         0ImcgZGX84tl/d8YrSWCGIjM6J5fb+CFH3LBc9oKUfvTjRLJTltJFRCFuCJRRhfz4Gsk
+         rXBFkgR2xYnoCsrWsUHVncoKFnHX7/EF/Sl2UtzU+oUKXAgVq0in5i9ZXzCT7NjgBPGK
+         73qkJEYQGimeA3BE9RhH+22wxZN+1GRrUOfa74h/kyj281/6ouwk+p5ZzRX8dJBSvKtR
+         ug+G7w8GbtQ7RhyV6JvY2/KZ8Ytvw/Jxxh53sXnwe9vEJ1xdWeXLDuABWAHC9/+WuWNu
+         BBtQ==
+X-Gm-Message-State: AJcUukd6NqW5lYt8mKilIeyFcEWFEuuHSwk+1tvLmL9WROAUzxLKB4bb
+        7TU+w00aG0BCcDY0Yz7UG1I=
+X-Google-Smtp-Source: ALg8bN73VzysWfFlrT+VyleX8zsqr66a7CwqQhbHUuPdJAnij9bArE5+ILz8dyKI/Sj8cFrEc5+MIw==
+X-Received: by 2002:a17:902:43e4:: with SMTP id j91mr15304165pld.147.1547482038271;
+        Mon, 14 Jan 2019 08:07:18 -0800 (PST)
+Received: from mail.google.com ([207.246.99.41])
+        by smtp.gmail.com with ESMTPSA id w88sm2636832pfk.11.2019.01.14.08.07.17
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 14 Jan 2019 08:01:58 -0800 (PST)
-From:   Kevin Hilman <khilman@baylibre.com>
-To:     Loys Ollivier <lollivier@baylibre.com>, devicetree@vger.kernel.org,
-        linux-amlogic@lists.infradead.org
-Cc:     Loys Ollivier <lollivier@baylibre.com>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-mmc@vger.kernel.org,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Subject: Re: [PATCH v4] arm64: dts: meson: Fix mmc cd-gpios polarity
-In-Reply-To: <1547477061-31543-1-git-send-email-lollivier@baylibre.com>
-References: <1547477061-31543-1-git-send-email-lollivier@baylibre.com>
-Date:   Mon, 14 Jan 2019 08:01:58 -0800
-Message-ID: <7hh8ebmdmx.fsf@baylibre.com>
+        Mon, 14 Jan 2019 08:07:17 -0800 (PST)
+Date:   Mon, 14 Jan 2019 16:07:16 +0000
+From:   Changbin Du <changbin.du@gmail.com>
+To:     Mark Rutland <mark.rutland@arm.com>
+Cc:     Changbin Du <changbin.du@gmail.com>, rostedt@goodmis.org,
+        linux@armlinux.org.uk, x86@kernel.org, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH] fgraph: record function return value
+Message-ID: <20190114160715.vfswtf6pzisbhxb4@mail.google.com>
+References: <20190112065701.30841-1-changbin.du@gmail.com>
+ <20190114121151.GC10258@lakrids.cambridge.arm.com>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190114121151.GC10258@lakrids.cambridge.arm.com>
+User-Agent: NeoMutt/20180716-508-7c9a6d
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Loys Ollivier <lollivier@baylibre.com> writes:
+On Mon, Jan 14, 2019 at 12:11:56PM +0000, Mark Rutland wrote:
+> On Sat, Jan 12, 2019 at 02:57:01PM +0800, Changbin Du wrote:
+> > This patch adds a new trace option 'funcgraph-retval' and is disabled by
+> > default. When this option is enabled, fgraph tracer will show the return
+> > value of each function. This is useful to find/analyze a original error
+> > source in a call graph.
+> > 
+> > One limitation is that kernel doesn't know the prototype of functions. So
+> > fgraph assumes all functions have a retvalue of type int. You must ignore
+> > the value of *void* function. And if the retvalue looks like an error code
+> > then both hexadecimal and decimal number are displayed.
+> 
+> This sounds more confusing than helpful, and it sounds like this has
+> overlap with FTRACE_WITH_REGS functionality.
+> 
+Acctually this is similar to Return Probes. The kprobe has same
+situation and it uses regs_return_value() to get retvalue. On x86 it is:
+static inline long regs_return_value(struct pt_regs *regs)
+{
+	return PT_REGS_AX(regs);
+}
 
-> Commit 89a5e15bcba8 ("gpio/mmc/of: Respect polarity in the device tree")
-> changed the behavior of "cd-inverted" to follow the device tree bindings
-> specification:
-> According to SDHCI standard, CD lines are specified as "active low".
-> Using the "cd-inverted" property means that the CD line is "active high".
->
-> Fix the SD card description for meson by setting the cd-gpios as
-> "active low", according to the boards specifications, and dropping the
-> "cd-inverted" property.
->
-> Fixes: 89a5e15bcba8 ("gpio/mmc/of: Respect polarity in the device tree")
-> Signed-off-by: Loys Ollivier <lollivier@baylibre.com>
+on arm it is:
+static inline long regs_return_value(struct pt_regs *regs)
+{
+        return regs->ARM_r0;
+}
+Due to lack of prototype info we cannot handle complex types.
 
-Queued as fix for v5.0-rc. (I replaced v3 in my fixes branch with this
-one)
+FTRACE_WITH_REGS saves all general registers but here only one.
+> > diff --git a/arch/arm64/kernel/entry-ftrace.S b/arch/arm64/kernel/entry-ftrace.S
+> > index 81b8eb5c4633..223f4ad269d4 100644
+> > --- a/arch/arm64/kernel/entry-ftrace.S
+> > +++ b/arch/arm64/kernel/entry-ftrace.S
+> > @@ -202,6 +202,7 @@ ENTRY(return_to_handler)
+> >  	stp x4, x5, [sp, #32]
+> >  	stp x6, x7, [sp, #48]
+> >  
+> > +	mov	x1, x0			// return value
+> >  	mov	x0, x29			//     parent's fp
+> >  	bl	ftrace_return_to_handler// addr = ftrace_return_to_hander(fp);
+> >  	mov	x30, x0			// restore the original return address
+> 
+> What about indirect return values? Those go via x8.
+> 
+> Additionally, in some cases (e.g. static functions with cross-function
+> optimization), the compiler might not follow the usual PCS, so the
+> return value might not be in x0 regardless. Maybe such functions aren't
+> hooked by ftrace today?
+I think these functions have been optimized out so ftrace will not trace
+them.
 
-Kevin
+> 
+> Generally, I don't think that this is going to be reliable.
+> 
+> > +config HAVE_FTRACE_RETVAL
+> > +	bool
+> > +
+> >  config HAVE_DYNAMIC_FTRACE
+> >  	bool
+> >  	help
+> > @@ -160,6 +163,7 @@ config FUNCTION_GRAPH_TRACER
+> >  	depends on HAVE_FUNCTION_GRAPH_TRACER
+> >  	depends on FUNCTION_TRACER
+> >  	depends on !X86_32 || !CC_OPTIMIZE_FOR_SIZE
+> > +	select HAVE_FTRACE_RETVAL if (X86 || ARM)
+> 
+> ... but not arm64?
+> 
+> Thanks,
+> Mark.
 
-> ---
->
-> v4: commit message clarification on the "cd-inverted" property and usage.
->
-> v3: fix typos in the commit message.
->
-> v2: fix more occurences, also in other meson boards.
->
->  arch/arm64/boot/dts/amlogic/meson-gx-p23x-q20x.dtsi            | 3 +--
->  arch/arm64/boot/dts/amlogic/meson-gxbb-nanopi-k2.dts           | 3 +--
->  arch/arm64/boot/dts/amlogic/meson-gxbb-nexbox-a95x.dts         | 3 +--
->  arch/arm64/boot/dts/amlogic/meson-gxbb-odroidc2.dts            | 3 +--
->  arch/arm64/boot/dts/amlogic/meson-gxbb-p20x.dtsi               | 3 +--
->  arch/arm64/boot/dts/amlogic/meson-gxbb-vega-s95.dtsi           | 3 +--
->  arch/arm64/boot/dts/amlogic/meson-gxbb-wetek.dtsi              | 3 +--
->  arch/arm64/boot/dts/amlogic/meson-gxl-s905x-hwacom-amazetv.dts | 3 +--
->  arch/arm64/boot/dts/amlogic/meson-gxl-s905x-libretech-cc.dts   | 3 +--
->  arch/arm64/boot/dts/amlogic/meson-gxl-s905x-nexbox-a95x.dts    | 3 +--
->  arch/arm64/boot/dts/amlogic/meson-gxl-s905x-p212.dtsi          | 3 +--
->  arch/arm64/boot/dts/amlogic/meson-gxm-khadas-vim2.dts          | 3 +--
->  arch/arm64/boot/dts/amlogic/meson-gxm-nexbox-a1.dts            | 3 +--
->  arch/arm64/boot/dts/amlogic/meson-gxm-rbox-pro.dts             | 3 +--
->  14 files changed, 14 insertions(+), 28 deletions(-)
->
-> diff --git a/arch/arm64/boot/dts/amlogic/meson-gx-p23x-q20x.dtsi b/arch/arm64/boot/dts/amlogic/meson-gx-p23x-q20x.dtsi
-> index e14e0ce7e89f..016641a41694 100644
-> --- a/arch/arm64/boot/dts/amlogic/meson-gx-p23x-q20x.dtsi
-> +++ b/arch/arm64/boot/dts/amlogic/meson-gx-p23x-q20x.dtsi
-> @@ -187,8 +187,7 @@
->  	max-frequency = <100000000>;
->  	disable-wp;
->  
-> -	cd-gpios = <&gpio CARD_6 GPIO_ACTIVE_HIGH>;
-> -	cd-inverted;
-> +	cd-gpios = <&gpio CARD_6 GPIO_ACTIVE_LOW>;
->  
->  	vmmc-supply = <&vddao_3v3>;
->  	vqmmc-supply = <&vddio_boot>;
-> diff --git a/arch/arm64/boot/dts/amlogic/meson-gxbb-nanopi-k2.dts b/arch/arm64/boot/dts/amlogic/meson-gxbb-nanopi-k2.dts
-> index 8cd50b75171d..ade2ee09ae96 100644
-> --- a/arch/arm64/boot/dts/amlogic/meson-gxbb-nanopi-k2.dts
-> +++ b/arch/arm64/boot/dts/amlogic/meson-gxbb-nanopi-k2.dts
-> @@ -305,8 +305,7 @@
->  	max-frequency = <200000000>;
->  	disable-wp;
->  
-> -	cd-gpios = <&gpio CARD_6 GPIO_ACTIVE_HIGH>;
-> -	cd-inverted;
-> +	cd-gpios = <&gpio CARD_6 GPIO_ACTIVE_LOW>;
->  
->  	vmmc-supply = <&vddio_ao3v3>;
->  	vqmmc-supply = <&vddio_tf>;
-> diff --git a/arch/arm64/boot/dts/amlogic/meson-gxbb-nexbox-a95x.dts b/arch/arm64/boot/dts/amlogic/meson-gxbb-nexbox-a95x.dts
-> index 4cf7f6e80c6a..25105ac96d55 100644
-> --- a/arch/arm64/boot/dts/amlogic/meson-gxbb-nexbox-a95x.dts
-> +++ b/arch/arm64/boot/dts/amlogic/meson-gxbb-nexbox-a95x.dts
-> @@ -238,8 +238,7 @@
->  	max-frequency = <100000000>;
->  	disable-wp;
->  
-> -	cd-gpios = <&gpio CARD_6 GPIO_ACTIVE_HIGH>;
-> -	cd-inverted;
-> +	cd-gpios = <&gpio CARD_6 GPIO_ACTIVE_LOW>;
->  
->  	vmmc-supply = <&vddao_3v3>;
->  	vqmmc-supply = <&vddio_card>;
-> diff --git a/arch/arm64/boot/dts/amlogic/meson-gxbb-odroidc2.dts b/arch/arm64/boot/dts/amlogic/meson-gxbb-odroidc2.dts
-> index 2e1cd5e3a246..1cc9dc68ef00 100644
-> --- a/arch/arm64/boot/dts/amlogic/meson-gxbb-odroidc2.dts
-> +++ b/arch/arm64/boot/dts/amlogic/meson-gxbb-odroidc2.dts
-> @@ -258,8 +258,7 @@
->  	max-frequency = <100000000>;
->  	disable-wp;
->  
-> -	cd-gpios = <&gpio CARD_6 GPIO_ACTIVE_HIGH>;
-> -	cd-inverted;
-> +	cd-gpios = <&gpio CARD_6 GPIO_ACTIVE_LOW>;
->  
->  	vmmc-supply = <&tflash_vdd>;
->  	vqmmc-supply = <&tf_io>;
-> diff --git a/arch/arm64/boot/dts/amlogic/meson-gxbb-p20x.dtsi b/arch/arm64/boot/dts/amlogic/meson-gxbb-p20x.dtsi
-> index ce862266b9aa..0be0f2a5d2fe 100644
-> --- a/arch/arm64/boot/dts/amlogic/meson-gxbb-p20x.dtsi
-> +++ b/arch/arm64/boot/dts/amlogic/meson-gxbb-p20x.dtsi
-> @@ -196,8 +196,7 @@
->  	max-frequency = <100000000>;
->  	disable-wp;
->  
-> -	cd-gpios = <&gpio CARD_6 GPIO_ACTIVE_HIGH>;
-> -	cd-inverted;
-> +	cd-gpios = <&gpio CARD_6 GPIO_ACTIVE_LOW>;
->  
->  	vmmc-supply = <&vddao_3v3>;
->  	vqmmc-supply = <&vddio_card>;
-> diff --git a/arch/arm64/boot/dts/amlogic/meson-gxbb-vega-s95.dtsi b/arch/arm64/boot/dts/amlogic/meson-gxbb-vega-s95.dtsi
-> index 93a4acf2c46c..ad4d50bd9d77 100644
-> --- a/arch/arm64/boot/dts/amlogic/meson-gxbb-vega-s95.dtsi
-> +++ b/arch/arm64/boot/dts/amlogic/meson-gxbb-vega-s95.dtsi
-> @@ -154,8 +154,7 @@
->  	max-frequency = <100000000>;
->  	disable-wp;
->  
-> -	cd-gpios = <&gpio CARD_6 GPIO_ACTIVE_HIGH>;
-> -	cd-inverted;
-> +	cd-gpios = <&gpio CARD_6 GPIO_ACTIVE_LOW>;
->  
->  	vmmc-supply = <&vcc_3v3>;
->  };
-> diff --git a/arch/arm64/boot/dts/amlogic/meson-gxbb-wetek.dtsi b/arch/arm64/boot/dts/amlogic/meson-gxbb-wetek.dtsi
-> index ec09bb5792b7..2d2db783c44c 100644
-> --- a/arch/arm64/boot/dts/amlogic/meson-gxbb-wetek.dtsi
-> +++ b/arch/arm64/boot/dts/amlogic/meson-gxbb-wetek.dtsi
-> @@ -211,8 +211,7 @@
->  	max-frequency = <100000000>;
->  	disable-wp;
->  
-> -	cd-gpios = <&gpio CARD_6 GPIO_ACTIVE_HIGH>;
-> -	cd-inverted;
-> +	cd-gpios = <&gpio CARD_6 GPIO_ACTIVE_LOW>;
->  
->  	vmmc-supply = <&vddao_3v3>;
->  	vqmmc-supply = <&vcc_3v3>;
-> diff --git a/arch/arm64/boot/dts/amlogic/meson-gxl-s905x-hwacom-amazetv.dts b/arch/arm64/boot/dts/amlogic/meson-gxl-s905x-hwacom-amazetv.dts
-> index f1c410e2da2b..796baea7a0bf 100644
-> --- a/arch/arm64/boot/dts/amlogic/meson-gxl-s905x-hwacom-amazetv.dts
-> +++ b/arch/arm64/boot/dts/amlogic/meson-gxl-s905x-hwacom-amazetv.dts
-> @@ -131,8 +131,7 @@
->  	max-frequency = <100000000>;
->  	disable-wp;
->  
-> -	cd-gpios = <&gpio CARD_6 GPIO_ACTIVE_HIGH>;
-> -	cd-inverted;
-> +	cd-gpios = <&gpio CARD_6 GPIO_ACTIVE_LOW>;
->  
->  	vmmc-supply = <&vddao_3v3>;
->  	vqmmc-supply = <&vddio_card>;
-> diff --git a/arch/arm64/boot/dts/amlogic/meson-gxl-s905x-libretech-cc.dts b/arch/arm64/boot/dts/amlogic/meson-gxl-s905x-libretech-cc.dts
-> index db293440e4ca..255cede7b447 100644
-> --- a/arch/arm64/boot/dts/amlogic/meson-gxl-s905x-libretech-cc.dts
-> +++ b/arch/arm64/boot/dts/amlogic/meson-gxl-s905x-libretech-cc.dts
-> @@ -238,8 +238,7 @@
->  	max-frequency = <100000000>;
->  	disable-wp;
->  
-> -	cd-gpios = <&gpio CARD_6 GPIO_ACTIVE_HIGH>;
-> -	cd-inverted;
-> +	cd-gpios = <&gpio CARD_6 GPIO_ACTIVE_LOW>;
->  
->  	vmmc-supply = <&vcc_3v3>;
->  	vqmmc-supply = <&vcc_card>;
-> diff --git a/arch/arm64/boot/dts/amlogic/meson-gxl-s905x-nexbox-a95x.dts b/arch/arm64/boot/dts/amlogic/meson-gxl-s905x-nexbox-a95x.dts
-> index 6739697be1de..9cbdb85fb591 100644
-> --- a/arch/arm64/boot/dts/amlogic/meson-gxl-s905x-nexbox-a95x.dts
-> +++ b/arch/arm64/boot/dts/amlogic/meson-gxl-s905x-nexbox-a95x.dts
-> @@ -183,8 +183,7 @@
->  	max-frequency = <100000000>;
->  	disable-wp;
->  
-> -	cd-gpios = <&gpio CARD_6 GPIO_ACTIVE_HIGH>;
-> -	cd-inverted;
-> +	cd-gpios = <&gpio CARD_6 GPIO_ACTIVE_LOW>;
->  
->  	vmmc-supply = <&vddao_3v3>;
->  	vqmmc-supply = <&vddio_card>;
-> diff --git a/arch/arm64/boot/dts/amlogic/meson-gxl-s905x-p212.dtsi b/arch/arm64/boot/dts/amlogic/meson-gxl-s905x-p212.dtsi
-> index a1b31013ab6e..bc811a2faf42 100644
-> --- a/arch/arm64/boot/dts/amlogic/meson-gxl-s905x-p212.dtsi
-> +++ b/arch/arm64/boot/dts/amlogic/meson-gxl-s905x-p212.dtsi
-> @@ -137,8 +137,7 @@
->  	max-frequency = <100000000>;
->  	disable-wp;
->  
-> -	cd-gpios = <&gpio CARD_6 GPIO_ACTIVE_HIGH>;
-> -	cd-inverted;
-> +	cd-gpios = <&gpio CARD_6 GPIO_ACTIVE_LOW>;
->  
->  	vmmc-supply = <&vddao_3v3>;
->  	vqmmc-supply = <&vddio_boot>;
-> diff --git a/arch/arm64/boot/dts/amlogic/meson-gxm-khadas-vim2.dts b/arch/arm64/boot/dts/amlogic/meson-gxm-khadas-vim2.dts
-> index 3c3a667a8df8..3f086ed7de05 100644
-> --- a/arch/arm64/boot/dts/amlogic/meson-gxm-khadas-vim2.dts
-> +++ b/arch/arm64/boot/dts/amlogic/meson-gxm-khadas-vim2.dts
-> @@ -356,8 +356,7 @@
->  	max-frequency = <100000000>;
->  	disable-wp;
->  
-> -	cd-gpios = <&gpio CARD_6 GPIO_ACTIVE_HIGH>;
-> -	cd-inverted;
-> +	cd-gpios = <&gpio CARD_6 GPIO_ACTIVE_LOW>;
->  
->  	vmmc-supply = <&vddao_3v3>;
->  	vqmmc-supply = <&vddio_boot>;
-> diff --git a/arch/arm64/boot/dts/amlogic/meson-gxm-nexbox-a1.dts b/arch/arm64/boot/dts/amlogic/meson-gxm-nexbox-a1.dts
-> index f7a1cffab4a8..8acfd40090d2 100644
-> --- a/arch/arm64/boot/dts/amlogic/meson-gxm-nexbox-a1.dts
-> +++ b/arch/arm64/boot/dts/amlogic/meson-gxm-nexbox-a1.dts
-> @@ -147,8 +147,7 @@
->  	max-frequency = <100000000>;
->  	disable-wp;
->  
-> -	cd-gpios = <&gpio CARD_6 GPIO_ACTIVE_HIGH>;
-> -	cd-inverted;
-> +	cd-gpios = <&gpio CARD_6 GPIO_ACTIVE_LOW>;
->  
->  	vmmc-supply = <&vddao_3v3>;
->  	vqmmc-supply = <&vddio_boot>;
-> diff --git a/arch/arm64/boot/dts/amlogic/meson-gxm-rbox-pro.dts b/arch/arm64/boot/dts/amlogic/meson-gxm-rbox-pro.dts
-> index 7212dc4531e4..7fa20a8ede17 100644
-> --- a/arch/arm64/boot/dts/amlogic/meson-gxm-rbox-pro.dts
-> +++ b/arch/arm64/boot/dts/amlogic/meson-gxm-rbox-pro.dts
-> @@ -170,8 +170,7 @@
->  	max-frequency = <100000000>;
->  	disable-wp;
->  
-> -	cd-gpios = <&gpio CARD_6 GPIO_ACTIVE_HIGH>;
-> -	cd-inverted;
-> +	cd-gpios = <&gpio CARD_6 GPIO_ACTIVE_LOW>;
->  
->  	vmmc-supply = <&vddao_3v3>;
->  	vqmmc-supply = <&vddio_boot>;
-> -- 
-> 2.7.4
+-- 
+Thanks,
+Changbin Du
