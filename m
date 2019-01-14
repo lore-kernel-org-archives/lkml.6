@@ -2,224 +2,120 @@ Return-Path: <SRS0=tq6k=PW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 15914C43612
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 16:40:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4CC3CC43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 16:41:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D98D820896
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 16:40:57 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="k9jh7n29"
+	by mail.kernel.org (Postfix) with ESMTP id 1C973206B7
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 16:41:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726886AbfANQk5 (ORCPT
+        id S1726849AbfANQla (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 14 Jan 2019 11:40:57 -0500
-Received: from userp2130.oracle.com ([156.151.31.86]:56698 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726656AbfANQk4 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 Jan 2019 11:40:56 -0500
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id x0EGcuB9076765;
-        Mon, 14 Jan 2019 16:39:40 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
- subject : date : message-id : in-reply-to : references; s=corp-2018-07-02;
- bh=bjG2+jD4y3xjhrpcGAAkButRYY8jiqy38ebHVxFGNhw=;
- b=k9jh7n292/wl4D9X1WRecr6eY3u5GsDAU4NFJGpKNAN+Fh07GiR7qGT+D2unIG9eQF/9
- Fg/hBZeKB1GKuATOK66kkXHyuMnEiMtIMoPnfoZGQmUYDdwmdn/tLRerDGWTyVngd564
- kM/Me7qYBqmAVg/xiW7AE3Csf9K8StioeQJOvUzwdOYgxZ4VjIL9R57TuQZzxtjcKhmm
- FLZuHEw4OEtdwGmj6dUkqnT/JsusFEeWqAfNNPQM3supETwzbfh0J+zwUrF6j9nExKJ6
- 9r+vHx5GWzA9OVGFddipnJBnSg0gQAH2CBCOaikr34yhA4MRrYvK99VcFuRiBGo5LP4y MA== 
-Received: from aserv0022.oracle.com (aserv0022.oracle.com [141.146.126.234])
-        by userp2130.oracle.com with ESMTP id 2pybkc6jvt-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 14 Jan 2019 16:39:40 +0000
-Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
-        by aserv0022.oracle.com (8.14.4/8.14.4) with ESMTP id x0EGdYxF014368
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 14 Jan 2019 16:39:34 GMT
-Received: from abhmp0016.oracle.com (abhmp0016.oracle.com [141.146.116.22])
-        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x0EGdXQm002318;
-        Mon, 14 Jan 2019 16:39:33 GMT
-Received: from linux.cn.oracle.com (/10.182.71.41)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Mon, 14 Jan 2019 08:39:33 -0800
-From:   Dongli Zhang <dongli.zhang@oracle.com>
-To:     xen-devel@lists.xenproject.org, linux-block@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc:     konrad.wilk@oracle.com, roger.pau@citrix.com, axboe@kernel.dk,
-        royger@freebsd.org, Paul.Durrant@citrix.com
-Subject: [PATCH v6 2/2] xen/blkback: rework connect_ring() to avoid inconsistent xenstore 'ring-page-order' set by malicious blkfront
-Date:   Tue, 15 Jan 2019 00:41:44 +0800
-Message-Id: <1547484104-20625-2-git-send-email-dongli.zhang@oracle.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1547484104-20625-1-git-send-email-dongli.zhang@oracle.com>
-References: <1547484104-20625-1-git-send-email-dongli.zhang@oracle.com>
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9136 signatures=668680
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1810050000 definitions=main-1901140137
+        Mon, 14 Jan 2019 11:41:30 -0500
+Received: from mga11.intel.com ([192.55.52.93]:14285 "EHLO mga11.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726656AbfANQl3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 14 Jan 2019 11:41:29 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 14 Jan 2019 08:41:29 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,478,1539673200"; 
+   d="scan'208";a="109783390"
+Received: from ahduyck-desk1.jf.intel.com ([10.7.198.76])
+  by orsmga008.jf.intel.com with ESMTP; 14 Jan 2019 08:41:29 -0800
+Message-ID: <d242b75461b38f4910ed619fabc0f9b52dce7f8b.camel@linux.intel.com>
+Subject: Re: [PATCH v9] mm/page_alloc.c: memory_hotplug: free pages as
+ higher order
+From:   Alexander Duyck <alexander.h.duyck@linux.intel.com>
+To:     Michal Hocko <mhocko@kernel.org>, Arun KS <arunks@codeaurora.org>
+Cc:     arunks.linux@gmail.com, akpm@linux-foundation.org, vbabka@suse.cz,
+        osalvador@suse.de, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, getarunks@gmail.com
+Date:   Mon, 14 Jan 2019 08:41:29 -0800
+In-Reply-To: <20190114143251.GI21345@dhcp22.suse.cz>
+References: <1547098543-26452-1-git-send-email-arunks@codeaurora.org>
+         <f65b1b22426855ff261b3af719e58eded576a168.camel@linux.intel.com>
+         <fa3dc06536a8ba980c4434806204017a@codeaurora.org>
+         <20190114143251.GI21345@dhcp22.suse.cz>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.5 (3.28.5-2.fc28) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The xenstore 'ring-page-order' is used globally for each blkback queue and
-therefore should be read from xenstore only once. However, it is obtained
-in read_per_ring_refs() which might be called multiple times during the
-initialization of each blkback queue.
+On Mon, 2019-01-14 at 15:32 +0100, Michal Hocko wrote:
+> On Mon 14-01-19 19:29:39, Arun KS wrote:
+> > On 2019-01-10 21:53, Alexander Duyck wrote:
+> 
+> [...]
+> > > Couldn't you just do something like the following:
+> > > 		if ((end - start) >= (1UL << (MAX_ORDER - 1))
+> > > 			order = MAX_ORDER - 1;
+> > > 		else
+> > > 			order = __fls(end - start);
+> > > 
+> > > I would think this would save you a few steps in terms of conversions
+> > > and such since you are already working in page frame numbers anyway so
+> > > a block of 8 pfns would represent an order 3 page wouldn't it?
+> > > 
+> > > Also it seems like an alternative to using "end" would be to just track
+> > > nr_pages. Then you wouldn't have to do the "end - start" math in a few
+> > > spots as long as you remembered to decrement nr_pages by the amount you
+> > > increment start by.
+> > 
+> > Thanks for that. How about this?
+> > 
+> > static int online_pages_blocks(unsigned long start, unsigned long nr_pages)
+> > {
+> >         unsigned long end = start + nr_pages;
+> >         int order;
+> > 
+> >         while (nr_pages) {
+> >                 if (nr_pages >= (1UL << (MAX_ORDER - 1)))
+> >                         order = MAX_ORDER - 1;
+> >                 else
+> >                         order = __fls(nr_pages);
+> > 
+> >                 (*online_page_callback)(pfn_to_page(start), order);
+> >                 nr_pages -= (1UL << order);
+> >                 start += (1UL << order);
+> >         }
+> >         return end - start;
+> > }
+> 
+> I find this much less readable so if this is really a big win
+> performance wise then make it a separate patch with some nubbers please.
 
-If the blkfront is malicious and the 'ring-page-order' is set in different
-value by blkfront every time before blkback reads it, this may end up at
-the "WARN_ON(i != (XEN_BLKIF_REQS_PER_PAGE * blkif->nr_ring_pages));" in
-xen_blkif_disconnect() when frontend is destroyed.
+I suppose we could look at simplifying this further. Maybe something
+like:
+	unsigned long end = start + nr_pages;
+	int order = MAX_ORDER - 1;
 
-This patch reworks connect_ring() to read xenstore 'ring-page-order' only
-once.
+	while (start < end) {
+		if ((end - start) < (1UL << (MAX_ORDER - 1))
+			order = __fls(end - start));
+		(*online_page_callback)(pfn_to_page(start), order);
+		start += 1UL << order;
+	}
 
-Signed-off-by: Dongli Zhang <dongli.zhang@oracle.com>
----
-Changed since v1:
-  * change the order of xenstore read in read_per_ring_refs
-  * use xenbus_read_unsigned() in connect_ring()
+	return nr_pages;
 
-Changed since v2:
-  * simplify the condition check as "(err != 1 && nr_grefs > 1)"
-  * avoid setting err as -EINVAL to remove extra one line of code
+I would argue it probably doesn't get much more readable than this. The
+basic idea is we are chopping off MAX_ORDER - 1 sized chunks and
+setting them online until we have to start working our way down in
+powers of 2.
 
-Changed since v3:
-  * exit at the beginning if !nr_grefs
-  * change the if statements to avoid test (err != 1) twice
-  * initialize a 'blkif' stack variable (refer to PATCH 1/2)
-
-Changed since v4:
-  * use BUG_ON() when (nr_grefs == 0) to reminder the developer
-  * set err = -EINVAL before xenbus_dev_fatal()
-
-Changed since v5:
-  * use WARN_ON() instead of BUG_ON()
-
- drivers/block/xen-blkback/xenbus.c | 72 +++++++++++++++++++++++---------------
- 1 file changed, 43 insertions(+), 29 deletions(-)
-
-diff --git a/drivers/block/xen-blkback/xenbus.c b/drivers/block/xen-blkback/xenbus.c
-index a4aadac..0878e55 100644
---- a/drivers/block/xen-blkback/xenbus.c
-+++ b/drivers/block/xen-blkback/xenbus.c
-@@ -926,7 +926,7 @@ static int read_per_ring_refs(struct xen_blkif_ring *ring, const char *dir)
- 	int err, i, j;
- 	struct xen_blkif *blkif = ring->blkif;
- 	struct xenbus_device *dev = blkif->be->dev;
--	unsigned int ring_page_order, nr_grefs, evtchn;
-+	unsigned int nr_grefs, evtchn;
- 
- 	err = xenbus_scanf(XBT_NIL, dir, "event-channel", "%u",
- 			  &evtchn);
-@@ -936,43 +936,42 @@ static int read_per_ring_refs(struct xen_blkif_ring *ring, const char *dir)
- 		return err;
- 	}
- 
--	err = xenbus_scanf(XBT_NIL, dev->otherend, "ring-page-order", "%u",
--			  &ring_page_order);
--	if (err != 1) {
--		err = xenbus_scanf(XBT_NIL, dir, "ring-ref", "%u", &ring_ref[0]);
-+	nr_grefs = blkif->nr_ring_pages;
-+
-+	if (unlikely(!nr_grefs)) {
-+		WARN_ON(true);
-+		return -EINVAL;
-+	}
-+
-+	for (i = 0; i < nr_grefs; i++) {
-+		char ring_ref_name[RINGREF_NAME_LEN];
-+
-+		snprintf(ring_ref_name, RINGREF_NAME_LEN, "ring-ref%u", i);
-+		err = xenbus_scanf(XBT_NIL, dir, ring_ref_name,
-+				   "%u", &ring_ref[i]);
-+
- 		if (err != 1) {
-+			if (nr_grefs == 1)
-+				break;
-+
- 			err = -EINVAL;
--			xenbus_dev_fatal(dev, err, "reading %s/ring-ref", dir);
-+			xenbus_dev_fatal(dev, err, "reading %s/%s",
-+					 dir, ring_ref_name);
- 			return err;
- 		}
--		nr_grefs = 1;
--	} else {
--		unsigned int i;
-+	}
-+
-+	if (err != 1) {
-+		WARN_ON(nr_grefs != 1);
- 
--		if (ring_page_order > xen_blkif_max_ring_order) {
-+		err = xenbus_scanf(XBT_NIL, dir, "ring-ref", "%u",
-+				   &ring_ref[0]);
-+		if (err != 1) {
- 			err = -EINVAL;
--			xenbus_dev_fatal(dev, err, "%s/request %d ring page order exceed max:%d",
--					 dir, ring_page_order,
--					 xen_blkif_max_ring_order);
-+			xenbus_dev_fatal(dev, err, "reading %s/ring-ref", dir);
- 			return err;
- 		}
--
--		nr_grefs = 1 << ring_page_order;
--		for (i = 0; i < nr_grefs; i++) {
--			char ring_ref_name[RINGREF_NAME_LEN];
--
--			snprintf(ring_ref_name, RINGREF_NAME_LEN, "ring-ref%u", i);
--			err = xenbus_scanf(XBT_NIL, dir, ring_ref_name,
--					   "%u", &ring_ref[i]);
--			if (err != 1) {
--				err = -EINVAL;
--				xenbus_dev_fatal(dev, err, "reading %s/%s",
--						 dir, ring_ref_name);
--				return err;
--			}
--		}
- 	}
--	blkif->nr_ring_pages = nr_grefs;
- 
- 	for (i = 0; i < nr_grefs * XEN_BLKIF_REQS_PER_PAGE; i++) {
- 		req = kzalloc(sizeof(*req), GFP_KERNEL);
-@@ -1031,6 +1030,7 @@ static int connect_ring(struct backend_info *be)
- 	size_t xspathsize;
- 	const size_t xenstore_path_ext_size = 11; /* sufficient for "/queue-NNN" */
- 	unsigned int requested_num_queues = 0;
-+	unsigned int ring_page_order;
- 
- 	pr_debug("%s %s\n", __func__, dev->otherend);
- 
-@@ -1076,6 +1076,20 @@ static int connect_ring(struct backend_info *be)
- 		 blkif->nr_rings, blkif->blk_protocol, protocol,
- 		 pers_grants ? "persistent grants" : "");
- 
-+	ring_page_order = xenbus_read_unsigned(dev->otherend,
-+					       "ring-page-order", 0);
-+
-+	if (ring_page_order > xen_blkif_max_ring_order) {
-+		err = -EINVAL;
-+		xenbus_dev_fatal(dev, err,
-+				 "requested ring page order %d exceed max:%d",
-+				 ring_page_order,
-+				 xen_blkif_max_ring_order);
-+		return err;
-+	}
-+
-+	blkif->nr_ring_pages = 1 << ring_page_order;
-+
- 	if (blkif->nr_rings == 1)
- 		return read_per_ring_refs(&blkif->rings[0], dev->otherend);
- 	else {
--- 
-2.7.4
+In terms of performance the loop itself isn't going to have that much
+impact. The bigger issue as I saw it was that we were going through and
+converting PFNs to a physical addresses just for the sake of contorting
+things to make them work with get_order when we already have the PFN
+numbers so all we really need to know is the most significant bit for
+the total page count.
 
