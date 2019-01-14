@@ -2,94 +2,146 @@ Return-Path: <SRS0=tq6k=PW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 877D3C43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 16:38:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E7573C43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 16:38:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 62286206B7
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 16:38:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B6ABA206B7
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 16:38:53 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="Oe5N8JYA"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726891AbfANQiY (ORCPT
+        id S1726900AbfANQiw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 14 Jan 2019 11:38:24 -0500
-Received: from foss.arm.com ([217.140.101.70]:37148 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726736AbfANQiY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 Jan 2019 11:38:24 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 8BEEEA78;
-        Mon, 14 Jan 2019 08:38:23 -0800 (PST)
-Received: from [10.1.196.75] (e110467-lin.cambridge.arm.com [10.1.196.75])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id E0FCD3F5BD;
-        Mon, 14 Jan 2019 08:38:21 -0800 (PST)
-Subject: Re: [PATCH] Revert "ARM: dma-mapping: Set proper DMA ops in
- arm_iommu_detach_device()"
-To:     Thierry Reding <treding@nvidia.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>
-Cc:     iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Christoph Hellwig <hch@lst.de>,
-        Russell King <rmk+kernel@armlinux.org.uk>,
-        Ben Skeggs <bskeggs@redhat.com>,
-        Tobias Jakobi <tjakobi@math.uni-bielefeld.de>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-References: <CGME20190114132250eucas1p2abdf2f36bad3554e37dfbf40e539f594@eucas1p2.samsung.com>
- <20190114132240.12125-1-m.szyprowski@samsung.com>
- <20190114160902.GB9218@ulmo>
-From:   Robin Murphy <robin.murphy@arm.com>
-Message-ID: <4f7fd8db-33e4-9c8d-2fee-1ca9c98a9276@arm.com>
-Date:   Mon, 14 Jan 2019 16:38:20 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
-MIME-Version: 1.0
-In-Reply-To: <20190114160902.GB9218@ulmo>
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+        Mon, 14 Jan 2019 11:38:52 -0500
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:43486 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726753AbfANQiv (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 14 Jan 2019 11:38:51 -0500
+Received: by mail-wr1-f68.google.com with SMTP id r10so23641718wrs.10
+        for <linux-kernel@vger.kernel.org>; Mon, 14 Jan 2019 08:38:49 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :in-reply-to:references;
+        bh=UIVW5Jk3h063m2TjLZyvAJQQxY5HQB8LVsVnZkvA3R0=;
+        b=Oe5N8JYAdaTMIzIXzxENuBPAAkXsaAkTXY1hQM2DXCEDtSRB8YPdZc1Z6ShWxktov2
+         ZR5kbfQP/Z5P2bFF+aECvR2FeAwTLxJfYGTN/b23rj/w3DzC6/CfVhH0RYRf86/RHvla
+         9LLdaJmiWToZ9s6mCd3GqK4FUZa4FppMCTyPQ=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:in-reply-to:references;
+        bh=UIVW5Jk3h063m2TjLZyvAJQQxY5HQB8LVsVnZkvA3R0=;
+        b=mFUjFK8Ryx9czmDxE0hyIoXz82TkinqrEZcBy83GfmE4X5V3bBtMy6ODLvYyEI3DIq
+         7Zl9Ast0GHrdBwB1TWgUZT6Ye6hBne93QJD49OPDBbACFfgDq1fmjzINxljxXZpG9UPK
+         yBeG/JoXH/HjshGzLwfyDWN/skpxSpwplZvtleHS8oQyonvhQstivYnWg+pt5b45sDo9
+         hMhSsErGR6/fQbXrMYuXPEZU4gC4GhXGnqwWLxMFEgAxV90HlpY4g3T5ePFAMbezr1FD
+         ZFK990TSMGae1UMLblzzjlYnLSPAZrfPfYNwHrDcoiO/HrHmz7og9KgbjooIacU22wS9
+         axAQ==
+X-Gm-Message-State: AJcUukebIrdGuN+gRnFISeAlKnMmJly12NZrpUOHmKrN6SoPoWU2MXpy
+        fMeW+HUMbeyEQp6o4lfFzLvmDkoZpTanfw==
+X-Google-Smtp-Source: ALg8bN5TJFhAq3WiiJC8MtbBDfqOB9t6XjcizM8ql0ft53jmW5lFv8c5QszGSfnasDSXogvq3rEOzg==
+X-Received: by 2002:adf:cc91:: with SMTP id p17mr25446735wrj.118.1547483928892;
+        Mon, 14 Jan 2019 08:38:48 -0800 (PST)
+Received: from localhost ([49.248.190.171])
+        by smtp.gmail.com with ESMTPSA id e9sm60948525wro.16.2019.01.14.08.38.47
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 14 Jan 2019 08:38:48 -0800 (PST)
+From:   Amit Kucheria <amit.kucheria@linaro.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     linux-arm-msm@vger.kernel.org, viresh.kumar@linaro.org,
+        edubezval@gmail.com, swboyd@chromium.org, dianders@chromium.org,
+        mka@chromium.org, "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Anson Huang <anson.huang@nxp.com>, linux-pm@vger.kernel.org
+Subject: [PATCH v1 05/10] cpufreq: imx6q: Use auto-registration of thermal cooling device
+Date:   Mon, 14 Jan 2019 22:04:57 +0530
+Message-Id: <49e531e140f299127ae6c0bc905b993b97c269e2.1547481320.git.amit.kucheria@linaro.org>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <cover.1547481320.git.amit.kucheria@linaro.org>
+References: <cover.1547481320.git.amit.kucheria@linaro.org>
+In-Reply-To: <cover.1547481320.git.amit.kucheria@linaro.org>
+References: <cover.1547481320.git.amit.kucheria@linaro.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 14/01/2019 16:09, Thierry Reding wrote:
-> On Mon, Jan 14, 2019 at 02:22:40PM +0100, Marek Szyprowski wrote:
->> This reverts commit 1874619a7df4b14b23b14877e705ae15325773e3.
->>
->> That patch broke IOMMU support for devices, which fails to probe for the
->> first time and use deferred probe approach. When non-NULL dma_ops is set
->> in arm_iommu_detach_device(), the given device later ignored by
->> arch_setup_dma_ops() and stays with non-IOMMU dma_ops.
->>
->> Reported-by: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
->> Fixes: 1874619a7df4 "ARM: dma-mapping: Set proper DMA ops in arm_iommu_detach_device()"
->> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
->> ---
->>   arch/arm/mm/dma-mapping.c | 12 ++++++------
->>   1 file changed, 6 insertions(+), 6 deletions(-)
-> 
-> Can you point out exactly what drivers break because of this change? We
-> need to find a solution that works for everyone. Reverting is only
-> marginally useful because somebody will just end up wanting to revert
-> the revert because a different driver is now broken.
+Use the CPUFREQ_AUTO_REGISTER_COOLING_DEV flag to allow cpufreq core to
+automatically register as a thermal cooling device.
 
-At first glance, it sounds like what we really want is for 
-arch_teardown_iommu_ops() to completely clear any ops that 
-arch_setup_dma_ops() installed - does the below suffice?
+This allows removal of boiler plate code from the driver.
 
-Robin.
+Signed-off-by: Amit Kucheria <amit.kucheria@linaro.org>
+---
+ drivers/cpufreq/imx6q-cpufreq.c | 18 ++----------------
+ 1 file changed, 2 insertions(+), 16 deletions(-)
 
------>8-----
-diff --git a/arch/arm/mm/dma-mapping.c b/arch/arm/mm/dma-mapping.c
-index f1e2922e447c..1e3e08a1c456 100644
---- a/arch/arm/mm/dma-mapping.c
-+++ b/arch/arm/mm/dma-mapping.c
-@@ -2390,4 +2390,6 @@ void arch_teardown_dma_ops(struct device *dev)
-  		return;
+diff --git a/drivers/cpufreq/imx6q-cpufreq.c b/drivers/cpufreq/imx6q-cpufreq.c
+index 9fedf627e000..ffb00291f48e 100644
+--- a/drivers/cpufreq/imx6q-cpufreq.c
++++ b/drivers/cpufreq/imx6q-cpufreq.c
+@@ -9,7 +9,6 @@
+ #include <linux/clk.h>
+ #include <linux/cpu.h>
+ #include <linux/cpufreq.h>
+-#include <linux/cpu_cooling.h>
+ #include <linux/err.h>
+ #include <linux/module.h>
+ #include <linux/nvmem-consumer.h>
+@@ -52,7 +51,6 @@ static struct clk_bulk_data clks[] = {
+ };
+ 
+ static struct device *cpu_dev;
+-static struct thermal_cooling_device *cdev;
+ static bool free_opp;
+ static struct cpufreq_frequency_table *freq_table;
+ static unsigned int max_freq;
+@@ -193,16 +191,6 @@ static int imx6q_set_target(struct cpufreq_policy *policy, unsigned int index)
+ 	return 0;
+ }
+ 
+-static void imx6q_cpufreq_ready(struct cpufreq_policy *policy)
+-{
+-	cdev = of_cpufreq_cooling_register(policy);
+-
+-	if (!cdev)
+-		dev_err(cpu_dev,
+-			"running cpufreq without cooling device: %ld\n",
+-			PTR_ERR(cdev));
+-}
+-
+ static int imx6q_cpufreq_init(struct cpufreq_policy *policy)
+ {
+ 	int ret;
+@@ -216,20 +204,18 @@ static int imx6q_cpufreq_init(struct cpufreq_policy *policy)
+ 
+ static int imx6q_cpufreq_exit(struct cpufreq_policy *policy)
+ {
+-	cpufreq_cooling_unregister(cdev);
+-
+ 	return 0;
+ }
+ 
+ static struct cpufreq_driver imx6q_cpufreq_driver = {
+-	.flags = CPUFREQ_NEED_INITIAL_FREQ_CHECK,
++	.flags = CPUFREQ_NEED_INITIAL_FREQ_CHECK |
++		 CPUFREQ_AUTO_REGISTER_COOLING_DEV,
+ 	.verify = cpufreq_generic_frequency_table_verify,
+ 	.target_index = imx6q_set_target,
+ 	.get = cpufreq_generic_get,
+ 	.init = imx6q_cpufreq_init,
+ 	.exit = imx6q_cpufreq_exit,
+ 	.name = "imx6q-cpufreq",
+-	.ready = imx6q_cpufreq_ready,
+ 	.attr = cpufreq_generic_attr,
+ 	.suspend = cpufreq_generic_suspend,
+ };
+-- 
+2.17.1
 
-  	arm_teardown_iommu_dma_ops(dev);
-+	/* Let arch_setup_dma_ops() start again from scratch upon re-probe */
-+	set_dma_ops(dev, NULL);
-  }
