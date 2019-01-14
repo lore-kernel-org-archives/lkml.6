@@ -2,94 +2,184 @@ Return-Path: <SRS0=tq6k=PW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.0 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5956FC43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 15:31:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 51C43C43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 15:31:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 311CC208E4
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 15:31:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1348720657
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 15:31:26 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="N8rrlIwD"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726752AbfANPbO (ORCPT
+        id S1726789AbfANPbY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 14 Jan 2019 10:31:14 -0500
-Received: from Galois.linutronix.de ([146.0.238.70]:39730 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726642AbfANPbN (ORCPT
+        Mon, 14 Jan 2019 10:31:24 -0500
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:44811 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726640AbfANPbX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 Jan 2019 10:31:13 -0500
-Received: from bigeasy by Galois.linutronix.de with local (Exim 4.80)
-        (envelope-from <bigeasy@linutronix.de>)
-        id 1gj4Ck-0007pQ-O3; Mon, 14 Jan 2019 16:31:10 +0100
-Date:   Mon, 14 Jan 2019 16:31:10 +0100
-From:   Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-To:     Thomas Gleixner <tglx@linutronix.de>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        linux-rt-users <linux-rt-users@vger.kernel.org>,
-        Steven Rostedt <rostedt@goodmis.org>
-Subject: [ANNOUNCE] v4.19.15-rt12
-Message-ID: <20190114153110.adzcpnmlegvivqkc@linutronix.de>
+        Mon, 14 Jan 2019 10:31:23 -0500
+Received: by mail-wr1-f68.google.com with SMTP id z5so23329020wrt.11
+        for <linux-kernel@vger.kernel.org>; Mon, 14 Jan 2019 07:31:22 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=kUIvlmAEcY+BZX4hQKddl2mhdBesFefUIZcyGleRk5A=;
+        b=N8rrlIwDdZa3XZ2aOcK0Pzlukp46q4rosZsiSPvmVjCUcN3qsMhkLETRpxWQBOzZm+
+         U5vBxWcde47yqquw/J5SdAz3vwdp23ogWKjluA5pAXXj+8JsCs1y3PwaYaM0xQ0frfPd
+         aIMvu8atMsVhocSz/KeDI5rPYNVYACPyP4U4QGigj5aoTpZKTk4Ok+5q0VEjszHOJbRK
+         3Sx4LpQ+gXuQ5kfpj66amwvpO8Kkr7HwyUjZ1Zj8wtgP8BFtg4cJ0bdZve+zGPvY/u/6
+         uHkVUn7odIAVeMh5egf75z0ggW9lIP/YeePMeBFVXiXCG3sCCgaJHzFrW6A4Ofbewqhn
+         nfXg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=kUIvlmAEcY+BZX4hQKddl2mhdBesFefUIZcyGleRk5A=;
+        b=N3f9XRIlrdFPUKYvDfLXDsU44k+wfou9qbvR/DQva7XUGgVWvTCMbA887ib3AB7HMe
+         tDA64UJ2o0tmbW0rUKGU9SPhtC91x8P7na/vo8iTHBAOl+n+emAc/lp5m/XdzPEHKnhj
+         2J/PhfcY+TOzasot6X5dJzgX5vD+AWW3Vc37vK5YarUwznL6MMD/041EIlGtB42IRKff
+         r3innPv3+41S7i985WQDxQbAPvhgnpGHwBXlQJnKYtVb7c2224YrFlP+IFXttizpAZHL
+         PwVXnYnKqvMMrFXXpU2iqlovYFfOFK1L42GjdHsKqWQyAyNK/ddcMzviTjDpTpFDZ18U
+         bztw==
+X-Gm-Message-State: AJcUukeBHrCbzaCbhC4FN0m48xz6UASucCBx/RsdrK295cbOuH+uVEs5
+        uyD9B7YayZdl/PP0Ij3bQsxi+Q==
+X-Google-Smtp-Source: ALg8bN6PEReudH+rmbahgzbAGTEDX8SWxzJrBkM3b/CGVjiA8uuFlvoM3xK3VTgQPGUUfEDoyywLlA==
+X-Received: by 2002:adf:e488:: with SMTP id i8mr25576717wrm.10.1547479881445;
+        Mon, 14 Jan 2019 07:31:21 -0800 (PST)
+Received: from bender.baylibre.local (lmontsouris-657-1-212-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
+        by smtp.gmail.com with ESMTPSA id z12sm63089470wrh.35.2019.01.14.07.31.20
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Mon, 14 Jan 2019 07:31:20 -0800 (PST)
+From:   Neil Armstrong <narmstrong@baylibre.com>
+To:     daniel@ffwll.ch
+Cc:     Neil Armstrong <narmstrong@baylibre.com>,
+        dri-devel@lists.freedesktop.org, linux-amlogic@lists.infradead.org,
+        linux-kernel@vger.kernel.org, Tony McKahan <tonymckahan@gmail.com>
+Subject: [PATCH v2] drm/meson: Fix atomic mode switching regression
+Date:   Mon, 14 Jan 2019 16:31:18 +0100
+Message-Id: <20190114153118.8024-1-narmstrong@baylibre.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-User-Agent: NeoMutt/20180716
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Dear RT folks!
+Since commit 2bcd3ecab773 when switching mode from X11 (ubuntu mate for
+example) the display gets blurry, looking like an invalid framebuffer width.
 
-I'm pleased to announce the v4.19.15-rt12 patch set. 
+This commit fixed atomic crtc modesetting in a totally wrong way and
+introduced a local unnecessary ->enabled crtc state.
 
-Changes since v4.19.15-rt11:
+This commit reverts the crctc _begin() and _enable() changes and simply
+adds drm_atomic_helper_commit_tail_rpm as helper.
 
-  - The read lock of a rwlock did not preserve the task state. This led
-    to a wrong state while using ptrace. Reported by Joe Korty.
+Reported-by: Tony McKahan <tonymckahan@gmail.com>
+Suggested-by: Daniel Vetter <daniel@ffwll.ch>
+Fixes: 2bcd3ecab773 ("drm/meson: Fixes for drm_crtc_vblank_on/off support")
+Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+---
+ drivers/gpu/drm/meson/meson_crtc.c | 23 ++---------------------
+ drivers/gpu/drm/meson/meson_drv.c  |  6 ++++++
+ 2 files changed, 8 insertions(+), 21 deletions(-)
 
-Known issues
-     - A warning triggered in "rcu_note_context_switch" originated from
-       SyS_timer_gettime(). The issue was always there, it is now
-       visible. Reported by Grygorii Strashko and Daniel Wagner.
+Changes since v1:
+- drop the unecessary local ->enabled logic
+- use drm_atomic_helper_commit_tail_rpm as atomic_commit_tail helper
 
-The delta patch against v4.19.15-rt11 is appended below and can be found here:
+diff --git a/drivers/gpu/drm/meson/meson_crtc.c b/drivers/gpu/drm/meson/meson_crtc.c
+index 75d97f1b2e8f..4f5c67f70c4d 100644
+--- a/drivers/gpu/drm/meson/meson_crtc.c
++++ b/drivers/gpu/drm/meson/meson_crtc.c
+@@ -46,7 +46,6 @@ struct meson_crtc {
+ 	struct drm_crtc base;
+ 	struct drm_pending_vblank_event *event;
+ 	struct meson_drm *priv;
+-	bool enabled;
+ };
+ #define to_meson_crtc(x) container_of(x, struct meson_crtc, base)
  
-     https://cdn.kernel.org/pub/linux/kernel/projects/rt/4.19/incr/patch-4.19.15-rt11-rt12.patch.xz
+@@ -82,7 +81,8 @@ static const struct drm_crtc_funcs meson_crtc_funcs = {
+ 
+ };
+ 
+-static void meson_crtc_enable(struct drm_crtc *crtc)
++static void meson_crtc_atomic_enable(struct drm_crtc *crtc,
++				     struct drm_crtc_state *old_state)
+ {
+ 	struct meson_crtc *meson_crtc = to_meson_crtc(crtc);
+ 	struct drm_crtc_state *crtc_state = crtc->state;
+@@ -108,20 +108,6 @@ static void meson_crtc_enable(struct drm_crtc *crtc)
+ 
+ 	drm_crtc_vblank_on(crtc);
+ 
+-	meson_crtc->enabled = true;
+-}
+-
+-static void meson_crtc_atomic_enable(struct drm_crtc *crtc,
+-				     struct drm_crtc_state *old_state)
+-{
+-	struct meson_crtc *meson_crtc = to_meson_crtc(crtc);
+-	struct meson_drm *priv = meson_crtc->priv;
+-
+-	DRM_DEBUG_DRIVER("\n");
+-
+-	if (!meson_crtc->enabled)
+-		meson_crtc_enable(crtc);
+-
+ 	priv->viu.osd1_enabled = true;
+ }
+ 
+@@ -153,8 +139,6 @@ static void meson_crtc_atomic_disable(struct drm_crtc *crtc,
+ 
+ 		crtc->state->event = NULL;
+ 	}
+-
+-	meson_crtc->enabled = false;
+ }
+ 
+ static void meson_crtc_atomic_begin(struct drm_crtc *crtc,
+@@ -163,9 +147,6 @@ static void meson_crtc_atomic_begin(struct drm_crtc *crtc,
+ 	struct meson_crtc *meson_crtc = to_meson_crtc(crtc);
+ 	unsigned long flags;
+ 
+-	if (crtc->state->enable && !meson_crtc->enabled)
+-		meson_crtc_enable(crtc);
+-
+ 	if (crtc->state->event) {
+ 		WARN_ON(drm_crtc_vblank_get(crtc) != 0);
+ 
+diff --git a/drivers/gpu/drm/meson/meson_drv.c b/drivers/gpu/drm/meson/meson_drv.c
+index 3ee4d4a4ecba..a74d861ddceb 100644
+--- a/drivers/gpu/drm/meson/meson_drv.c
++++ b/drivers/gpu/drm/meson/meson_drv.c
+@@ -75,6 +75,11 @@ static const struct drm_mode_config_funcs meson_mode_config_funcs = {
+ 	.fb_create           = drm_gem_fb_create,
+ };
+ 
++
++static const struct drm_mode_config_helper_funcs meson_mode_config_helpers = {
++	.atomic_commit_tail = drm_atomic_helper_commit_tail_rpm,
++};
++
+ static irqreturn_t meson_irq(int irq, void *arg)
+ {
+ 	struct drm_device *dev = arg;
+@@ -266,6 +271,7 @@ static int meson_drv_bind_master(struct device *dev, bool has_components)
+ 	drm->mode_config.max_width = 3840;
+ 	drm->mode_config.max_height = 2160;
+ 	drm->mode_config.funcs = &meson_mode_config_funcs;
++	drm->mode_config.helper_private	= &meson_mode_config_helpers;
+ 
+ 	/* Hardware Initialization */
+ 
+-- 
+2.20.1
 
-You can get this release via the git tree at:
-
-    git://git.kernel.org/pub/scm/linux/kernel/git/rt/linux-rt-devel.git v4.19.15-rt12
-
-The RT patch against v4.19.15 can be found here:
-
-    https://cdn.kernel.org/pub/linux/kernel/projects/rt/4.19/older/patch-4.19.15-rt12.patch.xz
-
-The split quilt queue is available at:
-
-    https://cdn.kernel.org/pub/linux/kernel/projects/rt/4.19/older/patches-4.19.15-rt12.tar.xz
-
-Sebastian
-
-diff --git a/kernel/locking/rwlock-rt.c b/kernel/locking/rwlock-rt.c
-index f2e155b2c4a8b..c3b91205161cc 100644
---- a/kernel/locking/rwlock-rt.c
-+++ b/kernel/locking/rwlock-rt.c
-@@ -128,7 +128,7 @@ void __sched __read_rt_lock(struct rt_rw_lock *lock)
- 	 * That would put Reader1 behind the writer waiting on
- 	 * Reader2 to call read_unlock() which might be unbound.
- 	 */
--	rt_mutex_init_waiter(&waiter, false);
-+	rt_mutex_init_waiter(&waiter, true);
- 	rt_spin_lock_slowlock_locked(m, &waiter, flags);
- 	/*
- 	 * The slowlock() above is guaranteed to return with the rtmutex is
-diff --git a/localversion-rt b/localversion-rt
-index 05c35cb580779..6e44e540b927b 100644
---- a/localversion-rt
-+++ b/localversion-rt
-@@ -1 +1 @@
---rt11
-+-rt12
