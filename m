@@ -2,98 +2,266 @@ Return-Path: <SRS0=tq6k=PW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=0.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FSL_HELO_FAKE,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A6A39C43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 17:53:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 974B2C43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 17:53:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 79BA920873
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 17:53:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 616BF2086D
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 17:53:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1547488404;
+	bh=crarXTLRjPkm4mi/C6i02aHQVW2h01Hh2oef2ymupaM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=BgwRnSK9LmseWf+a0nz59UziKw0BHEp++4oHKBExu98R/SCZWaHNbQOeSW8mhZHlr
+	 d/qIqtmWzycBlQsTUFxQEV8FuYTotPbWG6vOl24clCLt0nFROsvXapDfwisLpAVPN4
+	 8KvnFQ8KVIXjc2ajuhRNk6cXIGQOdHf/iQ9sHe9U=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726755AbfANRxR (ORCPT
+        id S1726782AbfANRxW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 14 Jan 2019 12:53:17 -0500
-Received: from tyo162.gate.nec.co.jp ([114.179.232.162]:49485 "EHLO
-        tyo162.gate.nec.co.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726724AbfANRxR (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 Jan 2019 12:53:17 -0500
-Received: from mailgate01.nec.co.jp ([114.179.233.122])
-        by tyo162.gate.nec.co.jp (8.15.1/8.15.1) with ESMTPS id x0EHqduL031134
-        (version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Tue, 15 Jan 2019 02:52:39 +0900
-Received: from mailsv02.nec.co.jp (mailgate-v.nec.co.jp [10.204.236.94])
-        by mailgate01.nec.co.jp (8.15.1/8.15.1) with ESMTP id x0EHqd30025776;
-        Tue, 15 Jan 2019 02:52:39 +0900
-Received: from mail02.kamome.nec.co.jp (mail02.kamome.nec.co.jp [10.25.43.5])
-        by mailsv02.nec.co.jp (8.15.1/8.15.1) with ESMTP id x0EHqd76031839;
-        Tue, 15 Jan 2019 02:52:39 +0900
-Received: from bpxc99gp.gisp.nec.co.jp ([10.38.151.139] [10.38.151.139]) by mail01b.kamome.nec.co.jp with ESMTP id BT-MMP-1426923; Tue, 15 Jan 2019 02:48:49 +0900
-Received: from BPXM09GP.gisp.nec.co.jp ([10.38.151.201]) by
- BPXC11GP.gisp.nec.co.jp ([10.38.151.139]) with mapi id 14.03.0319.002; Tue,
- 15 Jan 2019 02:48:49 +0900
-From:   Kazuhito Hagio <k-hagio@ab.jp.nec.com>
-To:     Borislav Petkov <bp@alien8.de>, Lianbo Jiang <lijiang@redhat.com>
-CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "kexec@lists.infradead.org" <kexec@lists.infradead.org>,
-        "tglx@linutronix.de" <tglx@linutronix.de>,
-        "mingo@redhat.com" <mingo@redhat.com>,
-        "x86@kernel.org" <x86@kernel.org>,
-        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-        "bhe@redhat.com" <bhe@redhat.com>,
-        "dyoung@redhat.com" <dyoung@redhat.com>,
-        "anderson@redhat.com" <anderson@redhat.com>,
-        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>
-Subject: RE: [PATCH 1/2 v6] kdump: add the vmcoreinfo documentation
-Thread-Topic: [PATCH 1/2 v6] kdump: add the vmcoreinfo documentation
-Thread-Index: AQHUqanRWrQHojgMdkmYmMqmVCp2bqWvBVMw
-Date:   Mon, 14 Jan 2019 17:48:48 +0000
-Message-ID: <4AE2DC15AC0B8543882A74EA0D43DBEC035661E8@BPXM09GP.gisp.nec.co.jp>
-References: <20190110121944.6050-1-lijiang@redhat.com>
- <20190110121944.6050-2-lijiang@redhat.com> <20190111123300.GE4729@zn.tnic>
-In-Reply-To: <20190111123300.GE4729@zn.tnic>
-Accept-Language: ja-JP, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [143.101.135.126]
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        Mon, 14 Jan 2019 12:53:22 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45446 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726708AbfANRxU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 14 Jan 2019 12:53:20 -0500
+Received: from gmail.com (unknown [104.132.1.77])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7D2C320659;
+        Mon, 14 Jan 2019 17:53:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1547488399;
+        bh=crarXTLRjPkm4mi/C6i02aHQVW2h01Hh2oef2ymupaM=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=DCJu6UWC3Oc0dVLmJc3+gHhnI2gW6gq8l+g14xbpYEXcoL0rKu8ixWUTabc7zeglF
+         R/tFGea9BMsyGVm1WwriuR7EdnEmG9sf4QMPrtB0YWZ+FUvEf97lJDg8vS6yoSjVBF
+         Z2n1aI9bgk6Yq3b6jVhDxP8T3AXiY3PYJK01NLCM=
+Date:   Mon, 14 Jan 2019 09:53:16 -0800
+From:   Eric Biggers <ebiggers@kernel.org>
+To:     Stephan =?iso-8859-1?Q?M=FCller?= <smueller@chronox.de>
+Cc:     Herbert Xu <herbert@gondor.apana.org.au>,
+        James Bottomley <James.Bottomley@hansenpartnership.com>,
+        Andy Lutomirski <luto@amacapital.net>,
+        "Lee, Chun-Yi" <joeyli.kernel@gmail.com>,
+        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
+        Pavel Machek <pavel@ucw.cz>, linux-kernel@vger.kernel.org,
+        linux-pm@vger.kernel.org, keyrings@vger.kernel.org,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        Chen Yu <yu.c.chen@intel.com>,
+        Oliver Neukum <oneukum@suse.com>,
+        Ryan Chen <yu.chen.surf@gmail.com>,
+        David Howells <dhowells@redhat.com>,
+        Giovanni Gherdovich <ggherdovich@suse.cz>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Jann Horn <jannh@google.com>,
+        Andy Lutomirski <luto@kernel.org>, linux-crypto@vger.kernel.org
+Subject: Re: [PATCH 4/6] crypto: hkdf - RFC5869 Key Derivation Function
+Message-ID: <20190114175315.GB7644@gmail.com>
+References: <20190103143227.9138-1-jlee@suse.com>
+ <2423373.Zd5ThvQH5g@positron.chronox.de>
+ <20190112051252.GA639@sol.localdomain>
+ <4734428.Gj5BGI4uxL@positron.chronox.de>
 MIME-Version: 1.0
-X-TM-AS-MML: disable
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <4734428.Gj5BGI4uxL@positron.chronox.de>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-T24gMS8xMS8yMDE5IDc6MzMgQU0sIEJvcmlzbGF2IFBldGtvdiB3cm90ZToNCj4gT24gVGh1LCBK
-YW4gMTAsIDIwMTkgYXQgMDg6MTk6NDNQTSArMDgwMCwgTGlhbmJvIEppYW5nIHdyb3RlOg0KPj4g
-K2luaXRfdXRzX25zLm5hbWUucmVsZWFzZQ0KPj4gKy0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLQ0K
-Pj4gKw0KPj4gK1RoZSB2ZXJzaW9uIG9mIHRoZSBMaW51eCBrZXJuZWwuIFVzZWQgdG8gZmluZCB0
-aGUgY29ycmVzcG9uZGluZyBzb3VyY2UNCj4+ICtjb2RlIGZyb20gd2hpY2ggdGhlIGtlcm5lbCBo
-YXMgYmVlbiBidWlsdC4NCj4+ICsNCj4gDQo+IC4uLg0KPiANCj4+ICsNCj4+ICtpbml0X3V0c19u
-cw0KPj4gKy0tLS0tLS0tLS0tDQo+PiArDQo+PiArVGhpcyBpcyB0aGUgVVRTIG5hbWVzcGFjZSwg
-d2hpY2ggaXMgdXNlZCB0byBpc29sYXRlIHR3byBzcGVjaWZpYw0KPj4gK2VsZW1lbnRzIG9mIHRo
-ZSBzeXN0ZW0gdGhhdCByZWxhdGUgdG8gdGhlIHVuYW1lKDIpIHN5c3RlbSBjYWxsLiBUaGUgVVRT
-DQo+PiArbmFtZXNwYWNlIGlzIG5hbWVkIGFmdGVyIHRoZSBkYXRhIHN0cnVjdHVyZSB1c2VkIHRv
-IHN0b3JlIGluZm9ybWF0aW9uDQo+PiArcmV0dXJuZWQgYnkgdGhlIHVuYW1lKDIpIHN5c3RlbSBj
-YWxsLg0KPj4gKw0KPj4gK1VzZXItc3BhY2UgdG9vbHMgY2FuIGdldCB0aGUga2VybmVsIG5hbWUs
-IGhvc3QgbmFtZSwga2VybmVsIHJlbGVhc2UNCj4+ICtudW1iZXIsIGtlcm5lbCB2ZXJzaW9uLCBh
-cmNoaXRlY3R1cmUgbmFtZSBhbmQgT1MgdHlwZSBmcm9tIGl0Lg0KPiANCj4gQWxyZWFkeSBhc2tl
-ZCB0aGlzIGJ1dCBubyByZXBseSBzbyBsZW1tZSBwYXN0ZSBteSBxdWVzdGlvbiBhZ2FpbjoNCj4g
-DQo+ICJBbmQgdGhpcyBkb2N1bWVudCBhbHJlYWR5IGZ1bGZpbGxzIGl0cyBwdXJwb3NlIC0gdGhv
-c2UgdHdvIHZtY29yZWluZm8NCj4gZXhwb3J0cyBhcmUgcmVkdW5kYW50IGFuZCB0aGUgZmlyc3Qg
-b25lIGNhbiBiZSByZW1vdmVkLg0KPiANCj4gQW5kIG5vdyB0aGF0IHdlIGFncmVlZCB0aGF0IFZN
-Q09SRUlORk8gaXMgbm90IGFuIEFCSSBhbmQgaXMgdmVyeSB0aWdodGx5DQo+IGNvdXBsZWQgdG8g
-dGhlIGtlcm5lbCB2ZXJzaW9uLCBpbml0X3V0c19ucy5uYW1lLnJlbGVhc2UgY2FuIGJlIHJlbW92
-ZWQsDQo+IHllcz8NCj4gDQo+IE9yIGlzIHRoZXJlIGFueXRoaW5nIHNwZWFraW5nIGFnYWluc3Qg
-dGhhdD8iDQoNCkFzIGZvciBtYWtlZHVtcGZpbGUsIGl0IHdpbGwgYmUgbm90IGltcG9zc2libGUg
-dG8gcmVtb3ZlIHRoZQ0KaW5pdF91dHNfbnMubmFtZS5yZWxhc2UgKE9TUkVMRUFTRSksIGJ1dCBz
-b21lIGZpeGVzIGFyZSBuZWVkZWQuDQpCZWNhdXNlIGhpc3RvcmljYWxseSBPU1JFTEVBU0UgaGFz
-IGJlZW4gYSBraW5kIG9mIGEgbWFuZGF0b3J5IGVudHJ5DQppbiB2bWNvcmVpbmZvIGZyb20gdGhl
-IGJlZ2lubmluZyBvZiB2bWNvcmVpbmZvLCBzbyBtYWtlZHVtcGZpbGUgdXNlcw0KaXRzIGV4aXN0
-ZW5jZSB0byBjaGVjayB3aGV0aGVyIGEgdm1jb3JlaW5mbyBpcyBzYW5lLg0KDQpBbHNvLCBJIHRo
-aW5rIGNyYXNoIGFsc28gd2lsbCBuZWVkIHRvIGJlIGZpeGVkIGlmIGl0IGlzIHJlbW92ZWQuDQpT
-byBJIGhvcGUgaXQgd2lsbCBiZSBsZWZ0IGFzIGl0IGlzLg0KDQpUaGFua3MsDQpLYXp1DQoNCg==
+On Mon, Jan 14, 2019 at 10:30:39AM +0100, Stephan Müller wrote:
+> Am Samstag, 12. Januar 2019, 06:12:54 CET schrieb Eric Biggers:
+> 
+> Hi Eric,
+> 
+> [...]
+> 
+> > > The extract and expand phases use different instances of the underlying
+> > > keyed message digest cipher to ensure that while the extraction phase
+> > > generates a new key for the expansion phase, the cipher for the
+> > > expansion phase can still be used. This approach is intended to aid
+> > > multi-threaded uses cases.
+> > 
+> > I think you partially misunderstood what I was asking for.  One HMAC tfm is
+> > sufficient as long as HKDF-Expand is separated from HKDF-Extract, which
+> > you've done.  So just use one HMAC tfm, and in crypto_hkdf_seed() key it
+> > with the 'salt', and then afterwards with the 'prk'.
+> 
+> Ok, thanks for the clarification. I will remove the 2nd HMAC TFM then.
+> > 
+> > Also everywhere in this patchset, please avoid using the word "cipher" to
+> > refer to algorithms that are not encryption/decryption.  I know a lot of
+> > the crypto API docs do this, but I think it is a mistake and confusing. 
+> > Hash algorithms and KDFs are not "ciphers".
+> 
+> As you wish, I will refer to specific name of the cryptographic operation.
+> 
+> [...]
+> 
+> > > + * NOTE: In-place cipher operations are not supported.
+> > > + */
+> > 
+> > What does an "in-place cipher operation" mean in this context?  That the
+> > 'info' buffer must not overlap the 'dst' buffer? 
+> 
+> Correct, no overlapping.
+> 
+> > Maybe
+> > crypto_rng_generate() should check that for all crypto_rngs?  Or is it
+> > different for different crypto_rngs?
+> 
+> This is the case in general for all KDFs (and even RNGs). It is no technical 
+> or cryptographic error to have overlapping buffers. The only issue is that the 
+> result will not match the expected value.
+> 
+> The issue is that the input buffer to the generate function is an input to 
+> every round of the KDF. If the input and output buffer overlap, starting with 
+> the 2nd iteration of the KDF, the input is the output of the 1st round. Again, 
+> I do not think it is a cryptographic error though.
+> 
+> (To support my conclusion: A colleague of mine has proposed an update to the 
+> HKDF specification where the input data changes for each KDF round. This 
+> proposal was considered appropriate by one of the authors of HKDF.)
+> 
+> If the requested output is smaller or equal to the output block size of the 
+> KDF, overlapping buffers are even harmless since the implementation will 
+> calculate the correct output.
+> 
+> Due to that, I removed the statement. But I am not sure we should add a 
+> technical block to deny overlapping input/output buffers.
+> 
+> [...]
+> > > 
+> > > +	desc->flags = crypto_shash_get_flags(expand_kmd) &
+> > > +		      CRYPTO_TFM_REQ_MAY_SLEEP;
+> > 
+> > This line setting desc->flags doesn't make sense.  How is the user meant to
+> > control whether crypto_rng_generate() can sleep or not?  Or can it always
+> > sleep? Either way this part is wrong since the user can't get access to the
+> > HMAC tfm to set this flag being checked for.
+> 
+> Could you please help me why a user should set this flag? Isn't the 
+> implementation specifying that flag to allow identifying whether the 
+> implementation could or could not sleep? Thus, we simply copy the sleeping 
+> flag from the lower level keyed message digest implementation.
+> 
+> At least that is also the implementation found in crypto/hmac.c.
+> 
+> [...]
 
+Whether the crypto_shash* stuff can sleep is controlled on a per-request basis,
+not a per-implementation basis.  So I don't understand what you are talking
+about here.
+
+> 
+> > > +		if (dlen < h) {
+> > > +			u8 tmpbuffer[CRYPTO_HKDF_MAX_DIGESTSIZE];
+> > > +
+> > > +			err = crypto_shash_finup(desc, &ctr, 1, tmpbuffer);
+> > > +			if (err)
+> > > +				goto out;
+> > > +			memcpy(dst, tmpbuffer, dlen);
+> > > +			memzero_explicit(tmpbuffer, h);
+> > > +			goto out;
+> > > +		} else {
+> > 
+> > No need for the 'else'.
+> 
+> Could you please help me why that else branch is not needed? If the buffer to 
+> be generated is equal or larger than the output block length of the keyed 
+> message digest, I would like to directly operate on the output buffer to avoid 
+> a memcpy.
+
+I'm simply saying you don't need the 'else' keyword as the previous block ends
+with a goto.
+
+> > 
+> > > +			err = crypto_shash_finup(desc, &ctr, 1, dst);
+> > > +			if (err)
+> > > +				goto out;
+> > > +
+> > > +			prev = dst;
+> > > +			dst += h;
+> > > +			dlen -= h;
+> > > +			ctr++;
+> > > +		}
+> > > +	}
+> 
+> [...]
+> > 
+> > > +	struct crypto_shash *extract_kmd = ctx->extract_kmd;
+> > > +	struct crypto_shash *expand_kmd = ctx->expand_kmd;
+> > > +	struct rtattr *rta = (struct rtattr *)seed;
+> > > +	SHASH_DESC_ON_STACK(desc, extract_kmd);
+> > > +	u32 saltlen;
+> > > +	unsigned int h = crypto_shash_digestsize(extract_kmd);
+> > > +	int err;
+> > > +	const uint8_t null_salt[CRYPTO_HKDF_MAX_DIGESTSIZE] = { 0 };
+> > 
+> > static const
+> > 
+> 
+> Why would I want to turn that buffer into a static variable? All we need it 
+> for is in case there is no salt provided.
+> 
+> [...]
+> 
+> > > +
+> > > +	if (!RTA_OK(rta, slen))
+> > > +		return -EINVAL;
+> > > +	if (rta->rta_type != 1)
+> > > +		return -EINVAL;
+> > > +	if (RTA_PAYLOAD(rta) < sizeof(saltlen))
+> > > +		return -EINVAL;
+> > > +	saltlen = *((u32 *)RTA_DATA(rta));
+> > 
+> > I'm guessing you copied the weird "length as a rtattr payload" approach from
+> > the authenc template.  I think it's not necessary.  And it's overly
+> > error-prone, as shown by the authenc template getting the parsing wrong for
+> > years and you making the exact same mistake again here...
+> > (See https://patchwork.kernel.org/patch/10732803/)  How about just using a
+> > u32 at the beginning without the 'rtattr' preceding it?
+> 
+> I was not sure whether this approach would be acceptable. I very much would 
+> love to have a u32 pre-pended only without the RTA business.
+> 
+> I updated the implementation accordingly.
+> > 
+> [...]
+> 
+> > 
+> > > +	alg = &salg->base;
+> > 
+> > Check here that the underlying algorithm really is "hmac(" something?
+> 
+> I added a check for the presence of salg->setkey.
+> > 
+> > Alternatively it may be a good idea to simplify usage by making the template
+> > just take the unkeyed hash directly, like "hkdf(sha512)".  And if any users
+> > really need to specify a specific HMAC implementation then another template
+> > usable as "hkdf_base(hmac(sha512))" could be added later.
+> > 
+> 
+> I would not suggest this, because that rounds contrary to the concept of the 
+> kernel crypto API IMHO. The caller has to provide the wrapping cipher. It is 
+> perfectly viable to allow a caller to invoke a specific keyed message digest.
+> 
+
+Sure, but it would not conform to the HKDF specification.  Are you sure it is
+okay to specify an arbitrary keyed hash?
+
+> [...]
+> 
+> Thank you very much for your code review.
+> 
+> Ciao
+> Stephan
+> 
+> 
+
+- Eric
