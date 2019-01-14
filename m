@@ -2,118 +2,259 @@ Return-Path: <SRS0=tq6k=PW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-14.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 37394C43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 15:26:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E715C43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 15:28:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F1CA52086D
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 15:26:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 05EA720657
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 15:28:36 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=amdcloud.onmicrosoft.com header.i=@amdcloud.onmicrosoft.com header.b="tkfXEQDX"
+	dkim=pass (1024-bit key) header.d=armh.onmicrosoft.com header.i=@armh.onmicrosoft.com header.b="nG7aR61m"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726705AbfANP0z (ORCPT
+        id S1726757AbfANP2e (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 14 Jan 2019 10:26:55 -0500
-Received: from mail-eopbgr740072.outbound.protection.outlook.com ([40.107.74.72]:35936
-        "EHLO NAM01-BN3-obe.outbound.protection.outlook.com"
+        Mon, 14 Jan 2019 10:28:34 -0500
+Received: from mail-eopbgr140075.outbound.protection.outlook.com ([40.107.14.75]:37910
+        "EHLO EUR01-VE1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726609AbfANP0y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 Jan 2019 10:26:54 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=amdcloud.onmicrosoft.com; s=selector1-amd-com;
+        id S1726609AbfANP2d (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 14 Jan 2019 10:28:33 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=armh.onmicrosoft.com;
+ s=selector1-arm-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=SseuCRrqCTHr/0KC0oJaNIXGL/XcJAxzB78EKopsnMQ=;
- b=tkfXEQDXTCiGul1JJb/976K5EaeVvk+M8DAA7kuZFnV2npAQpgkj/liFyBwyWRCmsC6FXLYV4X10yglm1qUupTR+ywhBnqdj2D9DtdFJmSfjqzpKhoUl33WjGELjA+t5Xnu84tXHDf+FaReOPCbCbGmS9reFgAqiPOOj1yOROU0=
-Received: from MN2PR12MB3248.namprd12.prod.outlook.com (20.179.82.219) by
- MN2PR12MB3581.namprd12.prod.outlook.com (20.178.242.21) with Microsoft SMTP
+ bh=zoQ9F+qNQxLPEiGz5fiqihNYRrqM6a5Q2GVAJk8tlDM=;
+ b=nG7aR61mOjjlzS6/KzJKBHTCTUcgE5slXwLf1I3FADLjdWLKYAToWykJl0T76riCL0Gx0kw2tBq9M25qxhQfe1W/nrY2/OVWNVk+697D9/sxsLnSs2h9w2F7qGorX0qytFXiGwGue0gMDGuFJU2R7akBz5UfxxXVDipAjPnx5Wo=
+Received: from AM0PR08MB3891.eurprd08.prod.outlook.com (20.178.82.147) by
+ AM0PR08MB3427.eurprd08.prod.outlook.com (20.177.109.145) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1516.18; Mon, 14 Jan 2019 15:26:51 +0000
-Received: from MN2PR12MB3248.namprd12.prod.outlook.com
- ([fe80::c818:e3a0:c248:802f]) by MN2PR12MB3248.namprd12.prod.outlook.com
- ([fe80::c818:e3a0:c248:802f%3]) with mapi id 15.20.1516.019; Mon, 14 Jan 2019
- 15:26:51 +0000
-From:   S@vger.kernel.org
-To:     Borislav Petkov <bp@alien8.de>, "S, Shirish" <Shirish.S@amd.com>
-CC:     Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H . Peter Anvin" <hpa@zytor.com>,
-        "maintainer : X86 ARCHITECTURE" <x86@kernel.org>,
-        Tony Luck <tony.luck@intel.com>,
-        Vishal Verma <vishal.l.verma@intel.com>,
-        "open list : X86 ARCHITECTURE" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 2/2] x86/mce/amd: Ensure quirks are applied in resume path
- as well
-Thread-Topic: [PATCH 2/2] x86/mce/amd: Ensure quirks are applied in resume
- path as well
-Thread-Index: AQHUpnT6RX1zZkZcBk29IptIsRwq2qWngtqAgACqJYCABm8wAIAAVaaA
-Date:   Mon, 14 Jan 2019 15:26:50 +0000
-Message-ID: <2ad4bb63-2b70-3652-3261-009cdbfc15a9@amd.com>
-References: <1546857399-2926-1-git-send-email-shirish.s@amd.com>
- <1546857399-2926-3-git-send-email-shirish.s@amd.com>
- <20190109220843.GK15665@zn.tnic>
- <7a9227c0-1bc3-67c5-14a8-a40d186a5ef8@amd.com>
- <20190114103312.GG2773@zn.tnic>
-In-Reply-To: <20190114103312.GG2773@zn.tnic>
+ 15.20.1516.19; Mon, 14 Jan 2019 15:28:27 +0000
+Received: from AM0PR08MB3891.eurprd08.prod.outlook.com
+ ([fe80::39a3:457f:3d5e:84ff]) by AM0PR08MB3891.eurprd08.prod.outlook.com
+ ([fe80::39a3:457f:3d5e:84ff%3]) with mapi id 15.20.1516.019; Mon, 14 Jan 2019
+ 15:28:27 +0000
+From:   Ayan Halder <Ayan.Halder@arm.com>
+To:     Ayan Halder <Ayan.Halder@arm.com>,
+        Liviu Dudau <Liviu.Dudau@arm.com>,
+        Brian Starkey <Brian.Starkey@arm.com>,
+        "john.stultz@linaro.org" <john.stultz@linaro.org>,
+        "seanpaul@google.com" <seanpaul@google.com>,
+        "malidp@foss.arm.com" <malidp@foss.arm.com>,
+        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+CC:     nd <nd@arm.com>
+Subject: [PATCH] [RFC] drm_hwcomposer: Add support for Arm Framebuffer
+ Compression (AFBC) modifiers.
+Thread-Topic: [PATCH] [RFC] drm_hwcomposer: Add support for Arm Framebuffer
+ Compression (AFBC) modifiers.
+Thread-Index: AQHUrB3LrXJMP7k9bUyTQbg+n7XNXg==
+Date:   Mon, 14 Jan 2019 15:28:27 +0000
+Message-ID: <1547479696-14376-1-git-send-email-ayan.halder@arm.com>
 Accept-Language: en-US
 Content-Language: en-US
 X-MS-Has-Attach: 
 X-MS-TNEF-Correlator: 
-x-clientproxiedby: SN4PR0401CA0038.namprd04.prod.outlook.com
- (2603:10b6:803:2a::24) To MN2PR12MB3248.namprd12.prod.outlook.com
- (2603:10b6:208:103::27)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Shirish.S@amd.com; 
+x-clientproxiedby: LNXP265CA0040.GBRP265.PROD.OUTLOOK.COM
+ (2603:10a6:600:5c::28) To AM0PR08MB3891.eurprd08.prod.outlook.com
+ (2603:10a6:208:109::19)
 x-ms-exchange-messagesentrepresentingtype: 1
-x-originating-ip: [165.204.77.1]
+x-mailer: git-send-email 2.7.4
+x-originating-ip: [217.140.106.53]
 x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;MN2PR12MB3581;20:yQS8w+UQYRXpDpoADHhcQT06e+ZMkSc0lmMEPCQzxC0g0FHSYtC8qSvFmmnvtvj4IrBEq9q9ZfRRt5I3olVc+UTeK4an9viVbz0UJosEBdBABDoBjokHhvQMzTDSe6Imis0rDsI1OuqHpBXoPFgGOYJyo8Sj/6Ld6k+c3o4I3a4cQMjzaMf3IT/DV5ygI+Em08diSiEPVcN6licysR8Y7944pCDOcFbwt4g+4WeJV3XPKB6Qn7HF5vfSVsyMCfLo
-x-ms-office365-filtering-correlation-id: f4de54c0-fbe5-492f-df3a-08d67a34b3d7
+x-microsoft-exchange-diagnostics: 1;AM0PR08MB3427;6:mJcA6KEG7JteWqE9pvhR2pWbZDfIpcdhDsK0iYQL3qJtOCnqJ+53hGBbMF75vjioEi+TD8VI2/IvdI5dfKhQC8iP9aK6ePr/lORx9eVFnjLd1j3GzH6FZLOIQZU1i7nMekuVxbM4502uxZqQyxu45BhrugvoAmrQD/T6msQFBZ7lGG9tYeSOcrNZHx/F3OWz6qG3RJgtig5VtiZTYqqrAFY92o7DgKcTPqXN4zydp8sdNQuzx2w19JMRboatK2vds1QW3guMAFiwBpjFDxzL98vcAhQnXpjKixi7P8PKifx5PVvhwzY5i0Ev/7AyzvIOjsWfy+07/SyG/szurFQOFyuHE67RN6jOyZMDPM5s/fmCN0H6mgITWtY0Q3olhUIReeJF0TJ2hZYXec101qiYv7b6v6+j4C1iX8e5awPoUONzSrrQREWYA8rI+RqMMmvWjaHKAHSyvKgpkkRveM5umQ==;5:4DRnYIT/hPV/cr09DQfu2M3psORjNjb7y2C/dx0BLPiy6hNIc1iqqQoxlwRbn13Aa6Cg0uY4UceJ5sPBkjTonHk8CNyLV21LfhqxYFCXGAlP0rpVZHSnaWGgat6PGULLGml+cTM4KRTBe/SVzQy/Ok/RcydOmJsMNKgkuneA66+7idbvXbNbKFhNb+p5xmUr5CNG6RfDkAHSWvUzSA5B2w==;7:oowmQdKHVaydNo4hwG8S6SMgSGIXc559L0aEdgyBMMqnniCQ7VXofo7z9IeRO93ipYEdkXMRN8Q2NxPrE1hMF3dvAEmJ2VehYClHF6S2a+zKXUu50gCJbdMVsWOkmxdbFUTy2bKNGzsdlVrvAw+mbQ==
+x-ms-office365-filtering-correlation-id: a33536bc-9689-4d1e-60a7-08d67a34ee0a
 x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600109)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:MN2PR12MB3581;
-x-ms-traffictypediagnostic: MN2PR12MB3581:
-x-microsoft-antispam-prvs: <MN2PR12MB3581CAD5CBF29027FADDC93FF2800@MN2PR12MB3581.namprd12.prod.outlook.com>
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600109)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:AM0PR08MB3427;
+x-ms-traffictypediagnostic: AM0PR08MB3427:
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=Ayan.Halder@arm.com; 
+nodisclaimer: True
+x-microsoft-antispam-prvs: <AM0PR08MB34275AA2B26D5C4D9FB66E51E4800@AM0PR08MB3427.eurprd08.prod.outlook.com>
 x-forefront-prvs: 0917DFAC67
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(39850400004)(136003)(396003)(346002)(376002)(366004)(199004)(189003)(478600001)(14454004)(14444005)(305945005)(6246003)(6636002)(256004)(54906003)(110136005)(186003)(36756003)(68736007)(97736004)(72206003)(4326008)(6436002)(6486002)(25786009)(31696002)(6512007)(93886005)(5660300001)(6116002)(7736002)(476003)(53936002)(3846002)(2906002)(229853002)(81166006)(81156014)(66066001)(8936002)(71190400001)(71200400001)(31686004)(6506007)(386003)(2616005)(99286004)(486006)(52116002)(446003)(11346002)(53546011)(316002)(105586002)(106356001)(8676002)(76176011)(26005)(102836004);DIR:OUT;SFP:1101;SCL:1;SRVR:MN2PR12MB3581;H:MN2PR12MB3248.namprd12.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: amd.com does not designate
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(376002)(346002)(366004)(136003)(39860400002)(396003)(199004)(189003)(26005)(102836004)(4326008)(52116002)(2616005)(476003)(14444005)(8936002)(8676002)(186003)(7736002)(305945005)(3846002)(6116002)(68736007)(86362001)(256004)(25786009)(2201001)(36756003)(66066001)(6306002)(6512007)(5660300001)(19627235002)(53936002)(6506007)(386003)(50226002)(99286004)(97736004)(478600001)(2501003)(72206003)(106356001)(105586002)(6486002)(44832011)(81166006)(81156014)(6436002)(486006)(2906002)(71200400001)(71190400001)(14454004)(110136005)(316002)(966005);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR08MB3427;H:AM0PR08MB3891.eurprd08.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: arm.com does not designate
  permitted sender hosts)
 x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: 7r6rday94FYNsRyg+S5SQar4VzsLETlywrFIItJjrxEfnszQ9R+cO0Q/ZR5lTau1z/Ob+46vg7bN0Ul1RWplRAq7upXTCtggz+CQ3EWFdvfcxb+TdljKIvKUh1GD9cLqy6YCV96WN7ZSjITBuD3YJ46uDOy9yHT4pjfJp7IzzqFG5L3RrXkdHqCmo/gkizVkTAA9lrCmeF56QzgEmxug0ODWx20zNPTTdhmvuquEZiTzCz2f+E1IQ+EbEDFB/sB/6+R/xu98Dcil1xrtUhoudTPIXMJckS3Cn0NoSrKJGJyrGdVfsUwUJZxqjpnfU+2uPxFTslz+GfMQj6/EzXNKHYQJWSayzUxbwYMnUlb5hmvId+7O8gLCFVV10cfztx8IXkzE8VIwXthjl7/EtwQgp7nayeuXSuBvguQUev+GOtE=
+x-microsoft-antispam-message-info: glIKih1vlRJdSrPfKSSPKUVe4KNM91CvNhBIdwn+m5e+EF4eSvEr8Vs5I7bYwrh6VaX0UeklB0JzJvaCFwfK2mm2dnoN6kMiRNKwPvVdDQxwKgmK1taHt6SFq7AFaUw70huPRq3QlkDC5Y2XYHYZ0dcd2UV4dPPMfzTlmBkSg+j7BrHQp7L6X6odxLspdLrJMVy0HFzxM271gmGVFJWRXXzRRpj/LKI8anLRs/RIK6Yhpf7/HbuZ1pivwcfjEJwdPijE7N6wuC2RufyZBBY/JhlWM2DUhHnvlyCVFuYDVyj3+i7k5XClWV7rhB+cdTtEfQYY806TC1lhA0L7LkwhzQimrlATdVrEzv5U0psUbzs243TO59W3dqqXLaeBISQOAkSbhTQyMuRIuhkaAgH+dgq1tvxqnbfDjgMMEjHW8TU=
 spamdiagnosticoutput: 1:99
 spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <3594A274C5888042A6DE01E207456541@namprd12.prod.outlook.com>
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: f4de54c0-fbe5-492f-df3a-08d67a34b3d7
-X-MS-Exchange-CrossTenant-originalarrivaltime: 14 Jan 2019 15:26:51.4599
+X-OriginatorOrg: arm.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: a33536bc-9689-4d1e-60a7-08d67a34ee0a
+X-MS-Exchange-CrossTenant-originalarrivaltime: 14 Jan 2019 15:28:26.8518
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR12MB3581
+X-MS-Exchange-CrossTenant-id: f34e5979-57d9-4aaa-ad4d-b122a662184d
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR08MB3427
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-DQpPbiAxLzE0LzIwMTkgNDowMyBQTSwgQm9yaXNsYXYgUGV0a292IHdyb3RlOg0KPiBPbiBUaHUs
-IEphbiAxMCwgMjAxOSBhdCAwODowNDo0OUFNICswMDAwLCBTIHdyb3RlOg0KPj4gUGVyaGFwcyBu
-byBuZWVkIHRvIGNoZWNrIHRoZSBtb2RlbCBhbHRvZ2V0aGVyLCB0aGlzIGlzIGFwcGxpY2FibGUg
-dG8NCj4+IGVudGlyZSBmYW1pbHkgMTUsIHNpbmNlIHRoZXJlIGlzIG5vIDh0aCBHZW4uDQo+IEkg
-d291bGRuJ3QgYmUgc28gc3VyZS4gQXQgdGhlIHRpbWUgSSBkaWQgdGhpcywgd2UgZXhjbHVkZWQg
-bW9kZWxzID49DQo+IDB4MTAgYnV0IEkgZG9uJ3QgcmVtZW1iZXIgd2h5IGFueW1vcmUuIFlvdSBu
-ZWVkIHRvIGNoZWNrIHdpdGggaHcgZm9sa3MNCj4gd2hldGhlciB5b3UgY2FuIHJlYWxseSBkbyB0
-aGlzIGZvciB0aGUgd2hvbGUgZmFtaWx5Lg0KDQpJIHdpbGwgZ2V0IGJhY2sgd2l0aCBhIHRob3Jv
-dWdoIGNvbmZpcm1hdGlvbiBmcm9tIHRoZSBodyBmb2xrcy4NCg0KU2luY2UgWWF6ZW4gaXMgb24g
-dmFjYXRpb24sIGkgd2lsbCBjb25zdWx0IHdpdGggaGltIHRvbyBvbmNlIGhlIGlzIGJhY2suDQoN
-ClRoYW5rcyBmb3IgYWxsIHRoZSBjb21tZW50cywgaSBzaGFsbCBpbXBsZW1lbnQgdGhlIHNhbWUg
-aW4gY2FzZSB0aGVyZSANCndvdWxkIGJlIGFub3RoZXIgcmUtc3Bpbi4NCg0KUmVnYXJkcywNCg0K
-U2hpcmlzaCBTDQoNCj4+IEkgaGF2ZSBzdW1tYXJpemVkIHRoaXMgc2VxdWVuY2UgYWZ0ZXIgY2Fw
-dHVyaW5nIHRoZSBjYWxsIHRyYWNlIGluIGJvdGgNCj4+IHNjZW5hcmlvcy4NCj4+DQo+PiBJdHMg
-Y2xlYXIgdGhhdCB0aGUgcXVpcmtzIGFyZSBub3QgYXBwbGllZCBkdXJpbmcgUzMtPiBTMCB0cmFu
-c2l0aW9uLA0KPj4gaGVuY2UgdGhlIHBhdGNoLg0KPiBPay4NCj4NCj4gQnR3LCBmaXggeW91ciBt
-YWlsZXI6IEl0IGhhcyBhbiBlbXB0eSBmcm9tOg0KPg0KPiBGcm9tOiBTDQo+DQo+IHdoaWNoLCB3
-aGVuIEkgZG8gInJlcGx5LXRvLWFsbCIgaGVyZSwgZ2VuZXJhdGVzIGFuIGVtcHR5IFRvOiB0b28u
-DQo+DQo+IFRoeC4NCj4NCi0tIA0KUmVnYXJkcywNClNoaXJpc2ggUw0KDQo=
+One needs to translate the Gralloc buffer flags for AFBC (eg
+MALI_GRALLOC_INTFMT_AFBC_BASIC) to the corresponding linux kernel drm modif=
+iers.
+This gets passed to libdrm via drmModeAddFB2WithModifiers.
+
+Signed-off-by: Ayan Kumar Halder <ayan.halder@arm.com>
+
+/-- Note for reviewer
+I was able to get this working for Android P on Juno with Mali DP650 and Ma=
+li
+T860 gpu(with some additional hacks). I have not yet validated this hikey96=
+0.
+
+I have used the following components:-
+1. Gralloc (from https://android.googlesource.com/device/linaro/hikey/+/mas=
+ter/gralloc960)
+  - Built with MALI_MMSS=3D1
+2. Libdrm (from git://anongit.freedesktop.org/mesa/drm)
+  - You would need drm_fourcc.h and gralloc_handle.h
+--/
+---
+ platformdrmgeneric.cpp | 42 ++++++++++++++++++++++++++++++++++++++++++
+ platformdrmgeneric.h   |  2 ++
+ platformhisi.cpp       | 14 ++++++++++++--
+ 3 files changed, 56 insertions(+), 2 deletions(-)
+
+diff --git a/platformdrmgeneric.cpp b/platformdrmgeneric.cpp
+index 503c04a..a520224 100644
+--- a/platformdrmgeneric.cpp
++++ b/platformdrmgeneric.cpp
+@@ -18,6 +18,7 @@
+=20
+ #include "platformdrmgeneric.h"
+ #include "drmdevice.h"
++#include "mali_gralloc_formats.h"
+ #include "platform.h"
+=20
+ #include <drm/drm_fourcc.h>
+@@ -83,6 +84,31 @@ uint32_t DrmGenericImporter::ConvertHalFormatToDrm(uint3=
+2_t hal_format) {
+   }
+ }
+=20
++uint64_t DrmGenericImporter::ConvertGrallocFormatToDrmModifiers(uint64_t f=
+lags,
++                                                                bool is_rg=
+b) {
++  uint64_t features =3D 0;
++
++  if (flags & MALI_GRALLOC_INTFMT_AFBC_BASIC)
++    features |=3D AFBC_FORMAT_MOD_BLOCK_SIZE_16x16;
++
++  if (is_rgb)
++    features |=3D AFBC_FORMAT_MOD_YTR;
++
++  if (flags & MALI_GRALLOC_INTFMT_AFBC_SPLITBLK)
++    features |=3D (AFBC_FORMAT_MOD_SPLIT | AFBC_FORMAT_MOD_SPARSE);
++
++  if (flags & MALI_GRALLOC_INTFMT_AFBC_WIDEBLK)
++    features |=3D AFBC_FORMAT_MOD_BLOCK_SIZE_32x8;
++
++  if (flags & MALI_GRALLOC_INTFMT_AFBC_TILED_HEADERS)
++    features |=3D AFBC_FORMAT_MOD_TILED;
++
++  if (features)
++    return DRM_FORMAT_MOD_ARM_AFBC(features);
++  else
++    return 0;
++}
++
+ uint32_t DrmGenericImporter::DrmFormatToBitsPerPixel(uint32_t drm_format) =
+{
+   switch (drm_format) {
+     case DRM_FORMAT_ARGB8888:
+@@ -101,6 +127,22 @@ uint32_t DrmGenericImporter::DrmFormatToBitsPerPixel(u=
+int32_t drm_format) {
+   }
+ }
+=20
++bool DrmGenericImporter::IsDrmFormatRgb(uint32_t drm_format) {
++  switch (drm_format) {
++    case DRM_FORMAT_ARGB8888:
++    case DRM_FORMAT_XBGR8888:
++    case DRM_FORMAT_ABGR8888:
++    case DRM_FORMAT_BGR888:
++    case DRM_FORMAT_BGR565:
++      return true;
++    case DRM_FORMAT_YVU420:
++      return false;
++    default:
++      ALOGE("Unsupported format %u assuming rgb?", drm_format);
++      return true;
++  }
++}
++
+ int DrmGenericImporter::ImportBuffer(buffer_handle_t handle, hwc_drm_bo_t =
+*bo) {
+   gralloc_handle_t *gr_handle =3D gralloc_handle(handle);
+   if (!gr_handle)
+diff --git a/platformdrmgeneric.h b/platformdrmgeneric.h
+index 233ba55..43cb618 100644
+--- a/platformdrmgeneric.h
++++ b/platformdrmgeneric.h
+@@ -36,6 +36,8 @@ class DrmGenericImporter : public Importer {
+   bool CanImportBuffer(buffer_handle_t handle) override;
+=20
+   uint32_t ConvertHalFormatToDrm(uint32_t hal_format);
++  uint64_t ConvertGrallocFormatToDrmModifiers(uint64_t flags, bool is_rgb)=
+;
++  bool IsDrmFormatRgb(uint32_t drm_format);
+   uint32_t DrmFormatToBitsPerPixel(uint32_t drm_format);
+=20
+  private:
+diff --git a/platformhisi.cpp b/platformhisi.cpp
+index 76fe1e7..1cb7e2c 100644
+--- a/platformhisi.cpp
++++ b/platformhisi.cpp
+@@ -71,6 +71,9 @@ int HisiImporter::Init() {
+ }
+=20
+ int HisiImporter::ImportBuffer(buffer_handle_t handle, hwc_drm_bo_t *bo) {
++  bool is_rgb;
++  uint64_t modifiers[4] =3D {0};
++
+   memset(bo, 0, sizeof(hwc_drm_bo_t));
+=20
+   private_handle_t const *hnd =3D reinterpret_cast<private_handle_t const =
+*>(
+@@ -94,6 +97,10 @@ int HisiImporter::ImportBuffer(buffer_handle_t handle, h=
+wc_drm_bo_t *bo) {
+   if (fmt < 0)
+     return fmt;
+=20
++  is_rgb =3D IsDrmFormatRgb(fmt);
++  modifiers[0] =3D ConvertGrallocFormatToDrmModifiers(hnd->internal_format=
+,
++                                                    is_rgb);
++
+   bo->width =3D hnd->width;
+   bo->height =3D hnd->height;
+   bo->hal_format =3D hnd->req_format;
+@@ -129,8 +136,11 @@ int HisiImporter::ImportBuffer(buffer_handle_t handle,=
+ hwc_drm_bo_t *bo) {
+       break;
+   }
+=20
+-  ret =3D drmModeAddFB2(drm_->fd(), bo->width, bo->height, bo->format,
+-                      bo->gem_handles, bo->pitches, bo->offsets, &bo->fb_i=
+d, 0);
++  ret =3D drmModeAddFB2WithModifiers(drm_->fd(), bo->width, bo->height,
++                                   bo->format, bo->gem_handles, bo->pitche=
+s,
++                                   bo->offsets, modifiers, &bo->fb_id,
++                                   modifiers[0] ? DRM_MODE_FB_MODIFIERS : =
+0);
++
+   if (ret) {
+     ALOGE("could not create drm fb %d", ret);
+     return ret;
+--=20
+2.7.4
+
