@@ -2,92 +2,148 @@ Return-Path: <SRS0=tq6k=PW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1EADEC43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 04:16:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ED683C43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 04:24:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D5D6720659
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 04:16:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B4EE120659
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 04:24:26 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="CoFafKY+"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="pSG2KbTW"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726545AbfANEQA (ORCPT
+        id S1726496AbfANEYD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 13 Jan 2019 23:16:00 -0500
-Received: from ozlabs.org ([203.11.71.1]:41307 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726306AbfANEQA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 13 Jan 2019 23:16:00 -0500
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 43dKs9393nz9s2P;
-        Mon, 14 Jan 2019 15:15:56 +1100 (AEDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1547439357;
-        bh=/vpAb7K7InaZQO7Rkz3RgeIKAh3MJcooyWZIyvqtz5g=;
-        h=Date:From:To:Cc:Subject:From;
-        b=CoFafKY+bgZEbLRkzurVvHfRF6G8u8Svgf+qOOPOjxFi3c7pACSeIWN8fnyeb6rCV
-         /R6yqULJvNov8nJA50KQFCmk6X4jasj11+3Vg1jta0+VuzKIb64gMVrgp63QYL6FQQ
-         dpXL/PhWNy40+5XNmzzBWu/4CYpu1CoCFDpYTTKcQp0wKnGOo+QQ5D68BHKbAzb9x6
-         1Lq66eX6tMbzHaT0zsDh24RD4NGBq9tva+G3uqd3UAt59OCjCf5phJu1paperKvKQ6
-         V5eAJR0i/0gW3+s9e/dax0gf2eI/Zjgy1OT1uiFwXCxFqM8Cy0LsZ58sI0pjKEb+wY
-         4UgyXbBloDXWQ==
-Date:   Mon, 14 Jan 2019 15:15:55 +1100
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     David Miller <davem@davemloft.net>,
-        Networking <netdev@vger.kernel.org>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Taehee Yoo <ap420073@gmail.com>
-Subject: linux-next: build warning after merge of the net tree
-Message-ID: <20190114151555.31c85f81@canb.auug.org.au>
+        Sun, 13 Jan 2019 23:24:03 -0500
+Received: from merlin.infradead.org ([205.233.59.134]:43596 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725837AbfANEYD (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 13 Jan 2019 23:24:03 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=Content-Transfer-Encoding:Content-Type:
+        In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender
+        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=RapyoANsZEgq8wZEnWtYjth+DkWWgcnZXvMTubFWxUM=; b=pSG2KbTW/TfQozAj6wqgFmH78T
+        /mlEwNT9ePEyUe07z8a8VUipT+IsVSsYfpfb+1+FaKPMDf0m0TL6hBTj7LgFBSSzo2KIx3D6PJNKh
+        f0bzhJZvmi13admggRxYK7V/gDaIMWFNu1XACc5aLuTUJyIJWlSAW443OI75ewHv3DF5rHBbe9zlZ
+        wYLH4SCAnXWINYqtPoQDfl8wsLUVIk6QpU3D/KN4sphpuJegjOfN0UtLKqhr4QFnklULcKgRnuwyK
+        Z+szdwERRjjJAxj+LUYXqmIqTaiWvVynn1anshllEu5xnqBN5x6hwZFdafcRrx3EgkMIwrOc4tgmr
+        syzLGylQ==;
+Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=midway.dunlab)
+        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gitmx-0002HH-Vn; Mon, 14 Jan 2019 04:23:52 +0000
+Subject: Re: [PATCHv6] x86/kdump: bugfix, make the behavior of crashkernel=X
+ consistent with kaslr
+To:     Pingfan Liu <kernelfans@gmail.com>, kexec@lists.infradead.org
+Cc:     linux-kernel@vger.kernel.org, Dave Young <dyoung@redhat.com>,
+        Baoquan He <bhe@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>, yinghai@kernel.org,
+        vgoyal@redhat.com
+References: <1547435711-5786-1-git-send-email-kernelfans@gmail.com>
+From:   Randy Dunlap <rdunlap@infradead.org>
+Message-ID: <8206281c-c4e6-278a-899b-27cf9affd0da@infradead.org>
+Date:   Sun, 13 Jan 2019 20:23:50 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/yf/8_zO68f+jchMjI852Q7E"; protocol="application/pgp-signature"
+In-Reply-To: <1547435711-5786-1-git-send-email-kernelfans@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/yf/8_zO68f+jchMjI852Q7E
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Hi,
 
-Hi all,
+Just fix a few of the commit log comments...
 
-After merging the net tree, today's linux-next build (powerpc
-allyesconfig) produced this warning:
+On 1/13/19 7:15 PM, Pingfan Liu wrote:
+> People reported a bug on a high end server with many pcie devices, where
+> kernel bootup with crashkernel=384M, and kaslr is enabled. Even
+> though we still see much memory under 896 MB, the finding still failed
+> intermittently. Because currently we can only find region under 896 MB,
+> if w/0 ',high' specified. Then KASLR breaks 896 MB into several parts
 
-ld: warning: orphan section `.bpfilter_umh' from `net/bpfilter/bpfilter_umh=
-_blob.o' being placed in section `.bpfilter_umh'
+  if w/o
+or preferably:
+  if without
 
-Introduced by commit
+> randomly, and crashkernel reservation need be aligned to 128 MB, that's
+> why failure is found. It raises confusion to the end user that sometimes
+> crashkernel=X works while sometimes fails.
+> If want to make it succeed, customer can change kernel option to
+> "crashkernel=384M, high". Just this give "crashkernel=xx@yy" a very
 
-  61fbf5933d42 ("net: bpfilter: restart bpfilter_umh when error occurred")
+no space?  just
+  "crashkernel=384M,high"
 
---=20
-Cheers,
-Stephen Rothwell
+> limited space to behave even though its grammer looks more generic.
 
---Sig_/yf/8_zO68f+jchMjI852Q7E
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
+                                          grammar
 
------BEGIN PGP SIGNATURE-----
+> And we can't answer questions raised from customer that confidently:
+> 1) why it doesn't succeed to reserve 896 MB;
+> 2) what's wrong with memory region under 4G;
+> 3) why I have to add ',high', I only require 384 MB, not 3840 MB.
+> This patch tries to get memory region from 896 MB firstly, then [896MB,4G],
+> finally above 4G.
+> Dave Young sent the original post, and I just re-post it with commit log
+> improvement as his requirement.
+> http://lists.infradead.org/pipermail/kexec/2017-October/019571.html
+> There was an old discussion below (previously posted by Chao Wang):
+> https://lkml.org/lkml/2013/10/15/601
+> 
+> Signed-off-by: Pingfan Liu <kernelfans@gmail.com>
+> Cc: Dave Young <dyoung@redhat.com>
+> Cc: Baoquan He <bhe@redhat.com>
+> Cc: Andrew Morton <akpm@linux-foundation.org>
+> Cc: Mike Rapoport <rppt@linux.vnet.ibm.com>
+> Cc: yinghai@kernel.org,
+> Cc: vgoyal@redhat.com
+> ---
+> v5 -> v6
+>   discard bottom-up allocation, just repost dyoung's original patch with commit log improved
+> ---
+>  arch/x86/kernel/setup.c | 16 ++++++++++++++++
+>  1 file changed, 16 insertions(+)
+> 
+> diff --git a/arch/x86/kernel/setup.c b/arch/x86/kernel/setup.c
+> index 3d872a5..fa62c81 100644
+> --- a/arch/x86/kernel/setup.c
+> +++ b/arch/x86/kernel/setup.c
+> @@ -551,6 +551,22 @@ static void __init reserve_crashkernel(void)
+>  						    high ? CRASH_ADDR_HIGH_MAX
+>  							 : CRASH_ADDR_LOW_MAX,
+>  						    crash_size, CRASH_ALIGN);
+> +#ifdef CONFIG_X86_64
+> +		/*
+> +		 * crashkernel=X reserve below 896M fails? Try below 4G
+> +		 */
+> +		if (!high && !crash_base)
+> +			crash_base = memblock_find_in_range(CRASH_ALIGN,
+> +						(1ULL << 32),
+> +						crash_size, CRASH_ALIGN);
+> +		/*
+> +		 * crashkernel=X reserve below 4G fails? Try MAXMEM
+> +		 */
+> +		if (!high && !crash_base)
+> +			crash_base = memblock_find_in_range(CRASH_ALIGN,
+> +						CRASH_ADDR_HIGH_MAX,
+> +						crash_size, CRASH_ALIGN);
+> +#endif
+>  		if (!crash_base) {
+>  			pr_info("crashkernel reservation failed - No suitable area found.\n");
+>  			return;
+> 
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlw8DPsACgkQAVBC80lX
-0GxZZAf+LKIiJM5K2/Z7NO8P6PCxpZoyEltYlQpGJKl00rc5DVktCV1mvgrYE0zQ
-qfNeQcjLYilRLq5ZCNWs0eNRDRkJTLeC5iYDKBUTQHfpw9UddDxtKRaUMf5yZ1G7
-N084G0Rq+PZ86B5Km7mZqFVjXcbSEIktwQPnsxTktoeAAs9KJXZhdjyBFZRkb2IQ
-YxswZXqczM/xNx+eYhclAeFi7Y7sxeHlPPKEz2ppobmg3brl/LRxKihaaYy8JrQo
-1EIwu+sJ3+SvsJEFtbyb3+xHY9QzhzHWGXyE9nzJL9Eaje3FU1lM6z+EiX3CCiRV
-yvT7dkJF5CWg6idv61IPMDP25qiqxQ==
-=ZJU/
------END PGP SIGNATURE-----
-
---Sig_/yf/8_zO68f+jchMjI852Q7E--
+ciao.
+-- 
+~Randy
