@@ -7,103 +7,178 @@ X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 419A5C43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 11:45:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 70106C43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 11:45:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 04D3E20659
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 11:45:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4242520659
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 11:45:49 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="SYpWQW+l"
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="KefybJFj"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726800AbfANLpj (ORCPT
+        id S1726844AbfANLpr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 14 Jan 2019 06:45:39 -0500
-Received: from mail-vk1-f193.google.com ([209.85.221.193]:33220 "EHLO
+        Mon, 14 Jan 2019 06:45:47 -0500
+Received: from mail-vk1-f193.google.com ([209.85.221.193]:33224 "EHLO
         mail-vk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726723AbfANLp1 (ORCPT
+        with ESMTP id S1726339AbfANLpo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 Jan 2019 06:45:27 -0500
-Received: by mail-vk1-f193.google.com with SMTP id d201so4790106vka.0
-        for <linux-kernel@vger.kernel.org>; Mon, 14 Jan 2019 03:45:26 -0800 (PST)
+        Mon, 14 Jan 2019 06:45:44 -0500
+Received: by mail-vk1-f193.google.com with SMTP id d201so4790261vka.0
+        for <linux-kernel@vger.kernel.org>; Mon, 14 Jan 2019 03:45:44 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=YOv9Qrq6hri4qiRM2sCo62WGAz+kbMcRK+rOBxv/WjM=;
-        b=SYpWQW+lbgoIZyB962f2Q9e/fJW9TMloKZChuJdxQBFCsdF0CeyUyYErRY9LLnNJRe
-         awAeMm6a8KbWUyXVckugLQRwIxViEWqgIYXN6JBKYcM2T9G7N7Sgl1Ur9dB9+qj39uGs
-         his75ew4PuQqeRZYSX+pOVnCBz6uWLAaTQ1zw=
+        bh=N5GvtAoNZhHeEA8ikbHXVTVTkT55HDIL3P0c9+r9xsI=;
+        b=KefybJFjQ5uTsZA+RPmXnykbQPKiSXuF4LGHDS/hMoWeJMOmoe3DJe3pFiGJg8T5g0
+         No+u54vx9Vzq8d2qBPZZ03Nw5wd3zKnC6KLVN3FlAtxocK9qSH8ujnTyZU49t42YWKPU
+         PVW69dcND6nwDPotgLqQFdp6sa17B2sMP6Pbc=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=YOv9Qrq6hri4qiRM2sCo62WGAz+kbMcRK+rOBxv/WjM=;
-        b=RmsmjiqgyBVD0oxMf8yC0z6r4raaDmjLUk3g7NAYZvY+MdI8NiT62ElCAMT/fayz14
-         BTYXeO2GjSCV7iZWUxNgbL8SYh+w5RAQB/rc+NC87oh/KoSnYn8TcvChSN1NwKeMvXO/
-         S2NAaVAG+JMnIU+wtJfeMqa0SPir9q46cTXB5pAxkBCAsuGt4EcV/sw8NumcwWFbe5oA
-         IEURZTquIGfLhDddw8YgftUScQw5uwuUfm/sXltu+WT+18XFAw5czvAgJwkYCzYMEE50
-         TfpwWPe8eitEnEI3vLuqpfR/y536yjx6+kM4fnozFkerA39/F26PPoNeX58F3Q464wVe
-         /j9A==
-X-Gm-Message-State: AJcUukdAbJrhxjevvsW0Di2A4dNoXJoPDii90o9o8q0WlNeRBBfXZ5U7
-        CeTGuGK031juNMWJDGArxxlISMzMjHgRE+GYlpPM3Q==
-X-Google-Smtp-Source: ALg8bN66qF3i+E4MfhNhpQVy6pgaACLMlC1v/v9pXKlpdaFw4jTRyWAaNfT9MfNtqV9Ngkg2MDJTrmJWXFYrlI/oE+0=
-X-Received: by 2002:a1f:4982:: with SMTP id w124mr9160121vka.4.1547466325905;
- Mon, 14 Jan 2019 03:45:25 -0800 (PST)
+        bh=N5GvtAoNZhHeEA8ikbHXVTVTkT55HDIL3P0c9+r9xsI=;
+        b=WJpN5xHKv/y6GFcQDYAOA8njIIRaZ6yrymt31hdzVBEYC32YJeRkO255N2o7A1Ga5/
+         pftXj62rkqg1sgNIDO8QLvjIbrBKLh9gbDU5pkHI8YiQYiNALgcYkbLkZJ2Wl5aQwUvZ
+         lKhK7DIB09j9PoOP1nl7I0pquFuuSe/S6DT4yWwolCx7WjnkCaocGsFuXuS/vncgUU8X
+         aGZ2N6ENGKf5wZWUIXhWIZvtusgY5xGft4riNYq/Z+WxCIUvg1RRwzn5cGGGkbqSRAgN
+         b8v3ciMnYm9/KKPyDGotTepHyD7F52r6olh+c/SqZxN8EBnV5ncuqn/je1u9ZmvnUzuf
+         7BGQ==
+X-Gm-Message-State: AJcUukeNQ07MqnJ+JgJq3YkmfgITH1x5+iEf0R3RptWo5FaPYXuJHqE2
+        aJbmL63s9JWXVPhfAEEhGgO7P9aRntcQbsAeLHkMlA==
+X-Google-Smtp-Source: ALg8bN4M+PHLL0qnibx8utyIYR5n2V3lpvI85XR+uHbiXtdLTpy3OgCROE3SeMg6zkFtZCyhHxSNizadGyq8yx8+qho=
+X-Received: by 2002:a1f:298e:: with SMTP id p136mr9453367vkp.40.1547466343611;
+ Mon, 14 Jan 2019 03:45:43 -0800 (PST)
 MIME-Version: 1.0
-References: <1547035833-3924-1-git-send-email-wdjjwb@163.com>
-In-Reply-To: <1547035833-3924-1-git-send-email-wdjjwb@163.com>
+References: <20190110230135.19555-1-repk@triplefau.lt>
+In-Reply-To: <20190110230135.19555-1-repk@triplefau.lt>
 From:   Ulf Hansson <ulf.hansson@linaro.org>
-Date:   Mon, 14 Jan 2019 12:44:50 +0100
-Message-ID: <CAPDyKFq=AY=9hDDAPMjLpNPhN06+ZFpX5DvpFshW7+de1_b=NA@mail.gmail.com>
-Subject: Re: [PATCH] mmc:sdio: Remove unneeded variable ret
-To:     wangbo <wdjjwb@163.com>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+Date:   Mon, 14 Jan 2019 12:45:07 +0100
+Message-ID: <CAPDyKFokQOr1wyeJqe9=CLmw47jNXaQEmK0ZJYHwPkReSHcRXg@mail.gmail.com>
+Subject: Re: [PATCH v2] mmc: meson-gx: Free irq in release() callback
+To:     Remi Pommarel <repk@triplefau.lt>
+Cc:     Kevin Hilman <khilman@baylibre.com>,
+        Elie Roudninski <xademax@gmail.com>,
         "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
-        wang.bo116@zte.com.cn
+        "open list:ARM/Amlogic Meson..." <linux-amlogic@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 9 Jan 2019 at 13:11, wangbo <wdjjwb@163.com> wrote:
+On Thu, 10 Jan 2019 at 23:52, Remi Pommarel <repk@triplefau.lt> wrote:
 >
-> In sdio_bus_remove the variable is unneeded,remove it now.
+> Because the irq was requested through device managed resources API
+> (devm_request_threaded_irq()) it was freed after meson_mmc_remove()
+> completion, thus after mmc_free_host() has reclaimed meson_host memory.
+> As this irq is IRQF_SHARED, while using CONFIG_DEBUG_SHIRQ, its handler
+> get called by free_irq(). So meson_mmc_irq() was called after the
+> meson_host memory reclamation and was using invalid memory.
 >
-> Signed-off-by: wangbo <wang.bo116@zte.com.cn>
+> We ended up with the following scenario:
+> device_release_driver()
+>         meson_mmc_remove()
+>                 mmc_free_host() /* Freeing host memory */
+>         ...
+>         devres_release_all()
+>                 devm_irq_release()
+>                         __free_irq()
+>                                 meson_mmc_irq() /* Uses freed memory */
+>
+> To avoid this, the irq is released in meson_mmc_remove() and in
+> mseon_mmc_probe() error path before mmc_free_host() gets called.
+>
+> This fixes https://marc.info/?l=linux-mmc&m=154707415208716.
+>
+> Signed-off-by: Remi Pommarel <repk@triplefau.lt>
 
-Thanks, applied for next!
+Applied for fixes! I also added a stable tag and a reported-by tag
+from Elie, thanks!
 
 Kind regards
 Uffe
 
 
 > ---
->  drivers/mmc/core/sdio_bus.c | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
+> Changes since v1:
+> - Fix it also in the error handling of probe callback
+> ---
+>  drivers/mmc/host/meson-gx-mmc.c | 18 +++++++++++-------
+>  1 file changed, 11 insertions(+), 7 deletions(-)
 >
-> diff --git a/drivers/mmc/core/sdio_bus.c b/drivers/mmc/core/sdio_bus.c
-> index b6d8203..62b0f5e 100644
-> --- a/drivers/mmc/core/sdio_bus.c
-> +++ b/drivers/mmc/core/sdio_bus.c
-> @@ -179,7 +179,6 @@ static int sdio_bus_remove(struct device *dev)
->  {
->         struct sdio_driver *drv = to_sdio_driver(dev->driver);
->         struct sdio_func *func = dev_to_sdio_func(dev);
-> -       int ret = 0;
+> diff --git a/drivers/mmc/host/meson-gx-mmc.c b/drivers/mmc/host/meson-gx-mmc.c
+> index c2690c1a50ff..f115d7c63ffe 100644
+> --- a/drivers/mmc/host/meson-gx-mmc.c
+> +++ b/drivers/mmc/host/meson-gx-mmc.c
+> @@ -179,6 +179,8 @@ struct meson_host {
+>         struct sd_emmc_desc *descs;
+>         dma_addr_t descs_dma_addr;
 >
->         /* Make sure card is powered before invoking ->remove() */
->         if (func->card->host->caps & MMC_CAP_POWER_OFF_CARD)
-> @@ -205,7 +204,7 @@ static int sdio_bus_remove(struct device *dev)
+> +       int irq;
+> +
+>         bool vqmmc_enabled;
+>  };
 >
->         dev_pm_domain_detach(dev, false);
+> @@ -1231,7 +1233,7 @@ static int meson_mmc_probe(struct platform_device *pdev)
+>         struct resource *res;
+>         struct meson_host *host;
+>         struct mmc_host *mmc;
+> -       int ret, irq;
+> +       int ret;
 >
-> -       return ret;
-> +       return 0;
->  }
+>         mmc = mmc_alloc_host(sizeof(struct meson_host), &pdev->dev);
+>         if (!mmc)
+> @@ -1276,8 +1278,8 @@ static int meson_mmc_probe(struct platform_device *pdev)
+>                 goto free_host;
+>         }
 >
->  static const struct dev_pm_ops sdio_bus_pm_ops = {
+> -       irq = platform_get_irq(pdev, 0);
+> -       if (irq <= 0) {
+> +       host->irq = platform_get_irq(pdev, 0);
+> +       if (host->irq <= 0) {
+>                 dev_err(&pdev->dev, "failed to get interrupt resource.\n");
+>                 ret = -EINVAL;
+>                 goto free_host;
+> @@ -1331,9 +1333,8 @@ static int meson_mmc_probe(struct platform_device *pdev)
+>         writel(IRQ_CRC_ERR | IRQ_TIMEOUTS | IRQ_END_OF_CHAIN,
+>                host->regs + SD_EMMC_IRQ_EN);
+>
+> -       ret = devm_request_threaded_irq(&pdev->dev, irq, meson_mmc_irq,
+> -                                       meson_mmc_irq_thread, IRQF_SHARED,
+> -                                       NULL, host);
+> +       ret = request_threaded_irq(host->irq, meson_mmc_irq,
+> +                       meson_mmc_irq_thread, IRQF_SHARED, NULL, host);
+>         if (ret)
+>                 goto err_init_clk;
+>
+> @@ -1351,7 +1352,7 @@ static int meson_mmc_probe(struct platform_device *pdev)
+>         if (host->bounce_buf == NULL) {
+>                 dev_err(host->dev, "Unable to map allocate DMA bounce buffer.\n");
+>                 ret = -ENOMEM;
+> -               goto err_init_clk;
+> +               goto err_free_irq;
+>         }
+>
+>         host->descs = dma_alloc_coherent(host->dev, SD_EMMC_DESC_BUF_LEN,
+> @@ -1370,6 +1371,8 @@ static int meson_mmc_probe(struct platform_device *pdev)
+>  err_bounce_buf:
+>         dma_free_coherent(host->dev, host->bounce_buf_size,
+>                           host->bounce_buf, host->bounce_dma_addr);
+> +err_free_irq:
+> +       free_irq(host->irq, host);
+>  err_init_clk:
+>         clk_disable_unprepare(host->mmc_clk);
+>  err_core_clk:
+> @@ -1387,6 +1390,7 @@ static int meson_mmc_remove(struct platform_device *pdev)
+>
+>         /* disable interrupts */
+>         writel(0, host->regs + SD_EMMC_IRQ_EN);
+> +       free_irq(host->irq, host);
+>
+>         dma_free_coherent(host->dev, SD_EMMC_DESC_BUF_LEN,
+>                           host->descs, host->descs_dma_addr);
 > --
-> 2.7.4
->
+> 2.20.1
 >
