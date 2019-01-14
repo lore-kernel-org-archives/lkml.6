@@ -2,210 +2,124 @@ Return-Path: <SRS0=tq6k=PW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C481C43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 07:21:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 32AC2C43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 07:21:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6AA9120659
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 07:21:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 00C5420659
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 07:21:55 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="TRlbeFNi"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726655AbfANHVn convert rfc822-to-8bit (ORCPT
+        id S1726674AbfANHVy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 14 Jan 2019 02:21:43 -0500
-Received: from mx2.suse.de ([195.135.220.15]:39030 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726067AbfANHVn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 Jan 2019 02:21:43 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 3CDBAAE1D;
-        Mon, 14 Jan 2019 07:21:41 +0000 (UTC)
-From:   Nicolai Stange <nstange@suse.de>
-To:     Joe Lawrence <joe.lawrence@redhat.com>
-Cc:     Nicolai Stange <nstange@suse.de>, linux-kernel@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org, live-patching@vger.kernel.org,
-        Torsten Duwe <duwe@lst.de>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Jiri Kosina <jkosina@suse.cz>,
-        Balbir Singh <bsingharora@gmail.com>
-Subject: Re: ppc64le reliable stack unwinder and scheduled tasks
-References: <7f468285-b149-37e2-e782-c9e538b997a9@redhat.com>
-        <87bm4ocbbt.fsf@suse.de> <20190111010808.GA17858@redhat.com>
-        <87fttzbpid.fsf@suse.de> <20190114040937.GA6739@redhat.com>
-Date:   Mon, 14 Jan 2019 08:21:40 +0100
-In-Reply-To: <20190114040937.GA6739@redhat.com> (Joe Lawrence's message of
-        "Sun, 13 Jan 2019 23:09:37 -0500")
-Message-ID: <877ef7bt6j.fsf@suse.de>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
+        Mon, 14 Jan 2019 02:21:54 -0500
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:52654 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726067AbfANHVy (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 14 Jan 2019 02:21:54 -0500
+Received: by mail-wm1-f65.google.com with SMTP id m1so7759395wml.2
+        for <linux-kernel@vger.kernel.org>; Sun, 13 Jan 2019 23:21:52 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=KiDJGN4dK6qvqeQXHOyzNMA5uUR2jqaLa82iAH5YyhY=;
+        b=TRlbeFNiHY5yc/R3S83A0JzEtwajuaM674ZUltHcTC1/3vpRlkoIGWedaUeta58qmw
+         HriAKR5xPBJG9z42YOxaWlhgWWRa6agq1l5xODHU4rSiFEBNvRBjrI406bPsGP64Toec
+         ZauF7JhgZHxhNTxbgayCQw9ef1ECpBvuIl1CU=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=KiDJGN4dK6qvqeQXHOyzNMA5uUR2jqaLa82iAH5YyhY=;
+        b=Hop1sRsJMQqGc9hYnrpOBiQYyAnfOF3qQCxpP7v+gk78pks3Rjy5WDJO9/2tpqIaHF
+         GH+vO/jvnGtncae4KjHs/GCcUiz7ZQGJtspLWrLXAWo6/+WMS4LW/yyJpaRgPoJpS/70
+         3G82iWgrXCX6+O6fQo8e+lvbTr/6cuzih9fGPQDTjpx0vcsYyQzTlxxX5/l+sZnLSy0B
+         Uy+TmearibIAj8BOFwvENX5DMjpd1R+RkHmU+DCPomFISgWhxWAfM60ciGIvmMBuDGgr
+         RkKTU2UkLJc5ZSs6FRDRvGtu1+Z31mGwR5EFUjSkS4kw1MDnoeRNARmPK9UtT5tChq16
+         Gzsg==
+X-Gm-Message-State: AJcUukdFf/kaazwrSZP1XdIO3nw9vGg/UwDa/OLGptOKCV2DHvvdLiq+
+        n31wveDx4K4ynaTBFWkP+01yV0JVB58=
+X-Google-Smtp-Source: ALg8bN67k+Fmsa6xiiD5jU4RBxScxWsAUISfhb7/woJkLPPoKVxtyJXH5rmab3FDpm2kkiQ9u82qqQ==
+X-Received: by 2002:a1c:834c:: with SMTP id f73mr10642588wmd.126.1547450512067;
+        Sun, 13 Jan 2019 23:21:52 -0800 (PST)
+Received: from dell ([2.27.35.240])
+        by smtp.gmail.com with ESMTPSA id a12sm76240999wro.18.2019.01.13.23.21.51
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Sun, 13 Jan 2019 23:21:51 -0800 (PST)
+Date:   Mon, 14 Jan 2019 07:21:53 +0000
+From:   Lee Jones <lee.jones@linaro.org>
+To:     torvalds@linux-foundation.org
+Cc:     linux-kernel@vger.kernel.org
+Subject: [GIT PULL] Backlight for v5.0
+Message-ID: <20190114072153.GB4703@dell>
+References: <20190109072252.GC27286@dell>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8BIT
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190109072252.GC27286@dell>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Joe Lawrence <joe.lawrence@redhat.com> writes:
+On Wed, 09 Jan 2019, Lee Jones wrote:
 
-> On Fri, Jan 11, 2019 at 08:51:54AM +0100, Nicolai Stange wrote:
->> Joe Lawrence <joe.lawrence@redhat.com> writes:
->> 
->> > On Fri, Jan 11, 2019 at 01:00:38AM +0100, Nicolai Stange wrote:
->
-> [ ... snip ... ]
->
->> >> For testing, could you try whether clearing the word at STACK_FRAME_MARKER
->> >> from _switch() helps?
->> >> 
->> >> I.e. something like (completely untested):
->> >
->> > I'll kick off some builds tonight and try to get tests lined up
->> > tomorrow.  Unfortunately these take a bit of time to run setup, schedule
->> > and complete, so perhaps by next week.
->> 
->> Ok, that's probably still a good test for confirmation, but the solution
->> you proposed below is much better.
->
-> Good news, 40 tests (RHEL-7 backport) with clearing out the
-> STACK_FRAME_MARKER were all successful.  Previously I would see stalled
-> livepatch transitions due to the unreliable report in ~10% of test
-> cases.
->
->> >> diff --git a/arch/powerpc/kernel/entry_64.S b/arch/powerpc/kernel/entry_64.S
->> >> index 435927f549c4..b747d0647ec4 100644
->> >> --- a/arch/powerpc/kernel/entry_64.S
->> >> +++ b/arch/powerpc/kernel/entry_64.S
->> >> @@ -596,6 +596,10 @@ _GLOBAL(_switch)
->> >>  	SAVE_8GPRS(14, r1)
->> >>  	SAVE_10GPRS(22, r1)
->> >>  	std	r0,_NIP(r1)	/* Return to switch caller */
->> >> +
->> >> +	li	r23,0
->> >> +	std	r23,96(r1)	/* 96 == STACK_FRAME_MARKER * sizeof(long) */
->> >> +
->> >>  	mfcr	r23
->> >>  	std	r23,_CCR(r1)
->> >>  	std	r1,KSP(r3)	/* Set old stack pointer */
->> >> 
->> >> 
->> >
->> > This may be sufficient to avoid the condition, but if the contents of
->> > frame 0 are truely uninitialized (not to be trusted), should the
->> > unwinder be even looking at that frame (for STACK_FRAMES_REGS_MARKER),
->> > aside from the LR and other stack size geometry sanity checks?
->> 
->> That's a very good point: we'll only ever be examining scheduled out tasks
->> and current (which at that time is running klp_try_complete_transition()).
->> 
->> current won't be in an interrupt/exception when it's walking its own
->> stack. And scheduled out tasks can't have an exception/interrupt frame
->> as their frame 0, correct?
->> 
->> Thus, AFAICS, whenever klp_try_complete_transition() finds a
->> STACK_FRAMES_REGS_MARKER in frame 0, it is known to be garbage, as you
->> said.
->
-> I gave this about 20 tests and they were also all successful, what do
-> you think?  (The log could probably use some trimming and cleanup.)  I
-> think either solution would fix the issue.
->
-> -->8-- -->8-- -->8-- -->8-- -->8-- -->8-- -->8-- -->8-- -->8-- -->8--
->
-> From edd3fb9e8a16d5a7ccc98759e9397f386f0e82ca Mon Sep 17 00:00:00 2001
-> From: Joe Lawrence <joe.lawrence@redhat.com>
-> Date: Fri, 11 Jan 2019 10:25:26 -0500
-> Subject: [PATCH] powerpc/livepatch: relax reliable stack tracer exception
->  check
->
-> The ppc64le reliable stack tracer iterates over a given task's stack,
-> verifying a set of conditions to determine whether the trace is
-> 'reliable'.  These checks include the presence of any exception frames.
->
-> We should be careful when inspecting the bottom-most stack frame (the
-> first to be unwound), particularly for scheduled-out tasks.  As Nicolai
-> Stange explains, "If I'm reading the code in _switch() correctly, the
-> first frame is completely uninitialized except for the pointer back to
-> the caller's stack frame."  If a previous do_IRQ() invocation, for
-> example, has left a residual exception-marker on the first frame, the
-> stack tracer would incorrectly report this task's trace as unreliable.
->
+> Good morning Linus,
+> 
+> Please accept my apologies for the lateness.
 
-FWIW, it's not been do_IRQ() who wrote the exception marker, but it's
-caller hardware_interrupt_common(), more specifically the
-EXCEPTION_PROLOG_COMMON_3 part therof.
+This should be v5.0 of course.
 
+Sending late seems to mess with the brain.
 
-> save_stack_trace_tsk_reliable() already skips the first frame when
-> verifying the saved Link Register.  It should do the same when looking
-> for the STACK_FRAME_REGS_MARKER.  The task it is unwinding will be
-> either 'current', in which case the tracer will have never been called
-> from an exception path, or the task will be inactive and its first
-> frame's contents will be uninitialized (aside from backchain pointer).
-
-I thought about this a little more and can't see anything that would
-prevent higher, i.e. non-_switch() frames to also alias with prior
-exception frames. That STACK_FRAME_REGS_MARKER is written to a stack
-frame's "parameter area" and most functions probably don't initialize
-this either. So, AFAICS, higher stack frames could potentially be
-affected by the very same problem.
-
-I think the best solution would be to clear the STACK_FRAME_REGS_MARKER
-upon exception return. I have a patch ready for that and will post it
-after it has passed some basic testing -- hopefully later this day.
-
-That being said, I still think that your patch should also get applied
-in some form -- looking at unitialized memory is just not a good thing
-to do.
-
-
->
-> Fixes: df78d3f61480 ("powerpc/livepatch: Implement reliable stack tracing for the consistency model")
-> Signed-off-by: Joe Lawrence <joe.lawrence@redhat.com>
-> ---
->  arch/powerpc/kernel/stacktrace.c | 8 +++++++-
->  1 file changed, 7 insertions(+), 1 deletion(-)
->
-> diff --git a/arch/powerpc/kernel/stacktrace.c b/arch/powerpc/kernel/stacktrace.c
-> index e2c50b55138f..0793e75c45a6 100644
-> --- a/arch/powerpc/kernel/stacktrace.c
-> +++ b/arch/powerpc/kernel/stacktrace.c
-> @@ -84,6 +84,12 @@ save_stack_trace_regs(struct pt_regs *regs, struct stack_trace *trace)
->  EXPORT_SYMBOL_GPL(save_stack_trace_regs);
->  
->  #ifdef CONFIG_HAVE_RELIABLE_STACKTRACE
-> +/*
-> + * This function returns an error if it detects any unreliable features of the
-> + * stack.  Otherwise it guarantees that the stack trace is reliable.
-> + *
-> + * If the task is not 'current', the caller *must* ensure the task is inactive.
-> + */
->  int
->  save_stack_trace_tsk_reliable(struct task_struct *tsk,
->  				struct stack_trace *trace)
-> @@ -143,7 +149,7 @@ save_stack_trace_tsk_reliable(struct task_struct *tsk,
->  			return 1;
->  
->  		/* Mark stacktraces with exception frames as unreliable. */
-> -		if (sp <= stack_end - STACK_INT_FRAME_SIZE &&
-> +		if (!firstframe && sp <= stack_end - STACK_INT_FRAME_SIZE &&
->  		    stack[STACK_FRAME_MARKER] == STACK_FRAME_REGS_MARKER) {
->  			return 1;
->  		}
-
-I would perhaps not limit this to the STACK_FRAME_REGS_MARKER, but also
-not emit the ip obtained from the first frame into the resulting trace.
-
-I.e., how about moving all the sp/newsp handling to the beginning of the
-loop and doing an 'if (firstframe) continue;' right after that?
-
-Thanks,
-
-Nicolai
-
+> Christmas holidays, yada yada yada! :)
+> 
+> The following changes since commit 651022382c7f8da46cb4872a545ee1da6d097d2a:
+> 
+>   Linux 4.20-rc1 (2018-11-04 15:37:52 -0800)
+> 
+> are available in the Git repository at:
+> 
+>   git://git.kernel.org/pub/scm/linux/kernel/git/lee/backlight.git tags/backlight-next-4.21
+> 
+> for you to fetch changes up to 3cee7a7d05b11038c8b5fa093e45c6f839ffc867:
+> 
+>   backlight: 88pm860x_bl: Use of_node_name_eq for node name comparisons (2018-12-14 12:30:24 +0000)
+> 
+> ----------------------------------------------------------------
+>  - Fix-ups
+>    - Use new of_node_name_eq() API call;
+> 
+>  - Bug Fixes
+>    - Internally track 'enabled' state; pwm_bl
+>    - Fix auto-generated brightness tables parsed by DT; pwm_bl
+> 
+> ----------------------------------------------------------------
+> Heiko Stuebner (2):
+>       backlight: pwm_bl: Re-add driver internal enabled tracking
+>       backlight: pwm_bl: Fix devicetree parsing with auto-generated brightness tables
+> 
+> Rob Herring (1):
+>       backlight: 88pm860x_bl: Use of_node_name_eq for node name comparisons
+> 
+>  drivers/video/backlight/88pm860x_bl.c |  2 +-
+>  drivers/video/backlight/pwm_bl.c      | 28 +++++++++++++++++-----------
+>  2 files changed, 18 insertions(+), 12 deletions(-)
+> 
 
 -- 
-SUSE Linux GmbH, GF: Felix Imendörffer, Jane Smithard, Graham Norton,
-HRB 21284 (AG Nürnberg)
+Lee Jones [李琼斯]
+Linaro Services Technical Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
