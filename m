@@ -2,133 +2,93 @@ Return-Path: <SRS0=tq6k=PW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D5E8C43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 22:08:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 656BCC43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 22:08:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 35394205F4
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 22:08:03 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SQU+bXrO"
+	by mail.kernel.org (Postfix) with ESMTP id 34EEF205F4
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 22:08:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1547503703;
+	bh=JdANIHcHPD3HVLALkXO2NpqLDhBxGDye2VixhEeQp3w=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=etHprRJKJWA+R6Juwi9fG+e7pm6zEKFrzVoLmEqOBVAkOBZeGkmASv8wYcnJOel5G
+	 NnWYQmqN3uYSwAOUXDWQQ3mtpaRfV0FB9Ahwb3BiPAc5tZVoQJgwqUhBwqrheSHa3x
+	 lv8xeYQPBkHg0/xYE4lf8iIF13mIN8N03du+CWK0=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726933AbfANWIB (ORCPT
+        id S1727068AbfANWIV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 14 Jan 2019 17:08:01 -0500
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:39023 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726591AbfANWIA (ORCPT
+        Mon, 14 Jan 2019 17:08:21 -0500
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:59170 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726708AbfANWIV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 Jan 2019 17:08:00 -0500
-Received: by mail-pl1-f195.google.com with SMTP id 101so260658pld.6;
-        Mon, 14 Jan 2019 14:08:00 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=shHou+66+RjSgcQd8m33V51MEprMke5m68diHVIUSQs=;
-        b=SQU+bXrOHhu6I3frFOYkIAxI1I04OlkuQHps4JykshNlzR87qkKlsLZlHYbVkcBQFW
-         6YBCkalfT47n9xxLJ2l9qzf+6uq4XuvIzNCi6OzKgwn3dkKJ9vUdGEhVV0Lsasq0p76W
-         R3C/ZAGVlqhdJGMKGu6kHPIQ1CB8II/oPz30Jw4ZEB3tSGmW4ps6yTGw2bCGWX5CdJZG
-         DDwKkQxSifhAKMplWSGBdaAkHa7qe9CHA+75JeVGGI1HBEUKTJEeeH/uKPI8xmLRpbZe
-         smRQ4zN/hOAvPoz0CRSis5dFs53IsbEvTIMOe4hrKsVEy4c7NY7hBlSCt+y0BdJ67FL8
-         I9eg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=shHou+66+RjSgcQd8m33V51MEprMke5m68diHVIUSQs=;
-        b=X6Gs77k5coNAgZxgHihdc0EWf4lFtQLY5bD/R5dbPQ27doDjmlWJudJA+f9rnOjxN9
-         pXewYLeXGij+Co2t4w5B87A6QBbWKNEqLy7kF+419SP/UUBk9C+z4uw21s1nYSEFmwKm
-         LMu6Ff5vNDRuOO2HwGSU6zZvo2mbFuEm5lOsDDqRflTk/8Xs2q3ZugfBjo/9Y88h8OuF
-         Ejqh1/BsIcQKB4QNPW9AZzrrY5nT6BnodkZdBy/TXOFhf63+Fwlg/RONMtZH2Eb9l0DT
-         xkS8OM6lWk+e5VV/sQd8Ck6Wc4nJnsiJxTvWFqIpr4pOxksyGiAlHtHcXgcNRUuDWVHx
-         lQgw==
-X-Gm-Message-State: AJcUukdxhlwtotWYphPppGaf3B9iZ9PeLnotnpTLqGxs+SkZrkcAHfnx
-        6qYarJK50w/PNjvJ1adDS6q6w4TW
-X-Google-Smtp-Source: ALg8bN72AF/IAKGPiBxnJGSMHbnsOOZKdVbatqVO4aPt9J49mKrzCVobuVCC7furIFpnj2y3sMz14w==
-X-Received: by 2002:a17:902:9a02:: with SMTP id v2mr725269plp.180.1547503679459;
-        Mon, 14 Jan 2019 14:07:59 -0800 (PST)
-Received: from dtor-ws ([2620:15c:202:201:3adc:b08c:7acc:b325])
-        by smtp.gmail.com with ESMTPSA id v89sm2593155pfj.164.2019.01.14.14.07.58
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 14 Jan 2019 14:07:58 -0800 (PST)
-Date:   Mon, 14 Jan 2019 14:07:56 -0800
-From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To:     linux-input@vger.kernel.org
-Cc:     Byoungyoung Lee <lifeasageek@gmail.com>, rydberg@bitmath.org,
-        DaeRyong Jeong <threeearcat@gmail.com>,
-        syzkaller@googlegroups.com,
-        Peter Hutterer <peter.hutterer@who-t.net>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] Input: uinput - fix undefined behavior in
- uinput_validate_absinfo()
-Message-ID: <20190114220756.GF117329@dtor-ws>
-References: <20190114220448.GA241112@dtor-ws>
+        Mon, 14 Jan 2019 17:08:21 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=JdANIHcHPD3HVLALkXO2NpqLDhBxGDye2VixhEeQp3w=; b=SWf3Zn43guAzjKi6iargRPy2V
+        97tIVoiDEwV6abHHC20NSYJdZhTeC3O2nbekwtCSC0r7ALlwbBPCpw1Judc10weaF+O3a88GdVuBM
+        YdxCPVdr4SURxE0n8gSl5yIWrJhHISFcbcF6ID3IPke5KN+XUmf6FU92c8QpJxdk5Rx+I=;
+Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
+        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1gjAP4-0008FI-DK; Mon, 14 Jan 2019 22:08:18 +0000
+Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
+        id EA2E51127AD0; Mon, 14 Jan 2019 22:08:17 +0000 (GMT)
+Date:   Mon, 14 Jan 2019 22:08:17 +0000
+From:   Mark Brown <broonie@kernel.org>
+To:     Rob Herring <robh@kernel.org>
+Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Liam Girdwood <lgirdwood@gmail.com>
+Subject: Re: [PATCH] regulator: dt-bindings: Convert fixed-regulator to
+ json-schema
+Message-ID: <20190114220817.GH11073@sirena.org.uk>
+References: <20190110221903.3990-6-robh@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="+Z7/5fzWRHDJ0o7Q"
 Content-Disposition: inline
-In-Reply-To: <20190114220448.GA241112@dtor-ws>
+In-Reply-To: <20190110221903.3990-6-robh@kernel.org>
+X-Cookie: From concentrate.
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jan 14, 2019 at 02:04:48PM -0800, Dmitry Torokhov wrote:
-> An integer overflow may arise in uinput_validate_absinfo() if "max - min"
-> can't be represented by an "int". We should check for overflow before
-> trying to use the result.
-> 
-> Reported-by: Kyungtae Kim <kt0755@gmail.com>
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-> ---
->  drivers/input/misc/uinput.c | 5 +++--
->  1 file changed, 3 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/input/misc/uinput.c b/drivers/input/misc/uinput.c
-> index 8ec483e8688b..26ec603fe220 100644
-> --- a/drivers/input/misc/uinput.c
-> +++ b/drivers/input/misc/uinput.c
-> @@ -39,6 +39,7 @@
->  #include <linux/init.h>
->  #include <linux/fs.h>
->  #include <linux/miscdevice.h>
-> +#include <linux/overflow.h>
->  #include <linux/input/mt.h>
->  #include "../input-compat.h"
->  
-> @@ -405,7 +406,7 @@ static int uinput_open(struct inode *inode, struct file *file)
->  static int uinput_validate_absinfo(struct input_dev *dev, unsigned int code,
->  				   const struct input_absinfo *abs)
->  {
-> -	int min, max;
-> +	int min, max, range;
->  
->  	min = abs->minimum;
->  	max = abs->maximum;
-> @@ -417,7 +418,7 @@ static int uinput_validate_absinfo(struct input_dev *dev, unsigned int code,
->  		return -EINVAL;
->  	}
->  
-> -	if (abs->flat > max - min) {
-> +	if (check_sub_overflow(max, min, &range) && abs->flat > range) {
 
-This should be !check_sub_overflow(...) of course.
+--+Z7/5fzWRHDJ0o7Q
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
->  		printk(KERN_DEBUG
->  		       "%s: abs_flat #%02x out of range: %d (min:%d/max:%d)\n",
->  		       UINPUT_NAME, code, abs->flat, min, max);
-> -- 
-> 2.20.1.97.g81188d93c3-goog
-> 
-> 
-> -- 
-> Dmitry
+On Thu, Jan 10, 2019 at 04:19:03PM -0600, Rob Herring wrote:
+> Convert the fixed-regulator binding to DT schema format using
+> json-schema.
 
--- 
-Dmitry
+Actually I've had to drop the series this conflicted with since it broke
+a bunch of platforms so I'll go ahead and apply this instead, no need to
+respin!
+
+--+Z7/5fzWRHDJ0o7Q
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlw9CFEACgkQJNaLcl1U
+h9D3Uwf/YdWRexgPnkLabs94GZD6T9erBqzrFnXhZf0b4SxxknkChZ9ahq+VDi1r
+pUsf/T5HKA75PiPQCcbn+TVM0fRQBlNDeb/2q1l1YWnU8fXSgY8VgYmWqgJGKpVg
+ytWAKmIo440zfYvyPOXwxedGaJ29xGUmAHiL96WXIZJZdqqBkrWLyrbRMpSCnwI/
+tO9Q5TntZM1TcaALSx2ooGCO+eqCXTKHfazMxco7qFYwqzVsEeYjNzIjBQ/Vx3q4
+ynf/SetNemGsPfIa+0gHkdn6eoC5e2nIGz1OhBEuW6CVhvpcFxDkoGAiYcin2Rc4
+zQwyCkCtS5kMSUCi+IoUijCgKqLOdw==
+=8G0B
+-----END PGP SIGNATURE-----
+
+--+Z7/5fzWRHDJ0o7Q--
