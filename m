@@ -2,463 +2,149 @@ Return-Path: <SRS0=tq6k=PW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+X-Spam-Status: No, score=-14.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,USER_IN_DEF_DKIM_WL
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A5063C43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 09:34:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 10519C43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 09:35:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5316C20659
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 09:34:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D5BBE20659
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 09:35:07 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="SJPNPEAU"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="cG3zM3rO"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726563AbfANJe0 (ORCPT
+        id S1726584AbfANJfG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 14 Jan 2019 04:34:26 -0500
-Received: from mail-ua1-f66.google.com ([209.85.222.66]:40482 "EHLO
-        mail-ua1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726306AbfANJe0 (ORCPT
+        Mon, 14 Jan 2019 04:35:06 -0500
+Received: from mail-io1-f67.google.com ([209.85.166.67]:43234 "EHLO
+        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726064AbfANJfF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 Jan 2019 04:34:26 -0500
-Received: by mail-ua1-f66.google.com with SMTP id n7so6829519uao.7
-        for <linux-kernel@vger.kernel.org>; Mon, 14 Jan 2019 01:34:24 -0800 (PST)
+        Mon, 14 Jan 2019 04:35:05 -0500
+Received: by mail-io1-f67.google.com with SMTP id b23so17068196ios.10
+        for <linux-kernel@vger.kernel.org>; Mon, 14 Jan 2019 01:35:04 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=sEoLPCDqV7IpifKpIOPw41nB+vl4eBBikaXYfxMoM3c=;
-        b=SJPNPEAUe7+3D36NbljiME8S7TbGuVbH4V80iZj3SUMHnskbxPgLIGEHF61G1mGca0
-         t/QTwA7QFolubHbG9Ej1kv4zmg0cHnGucP3uhVBIHRTixFKGCFOAl5t4CJVP1UFXWHJD
-         Diysu/frFqkze9Ym8Zf15V+0nVX4vAWBSF3kGV5BySJVpbMG/EvZ+WOXYR8gD6rBeUU9
-         mzYl1eR0o3+UBKMSCC41OjOa7Sc07nUmcImPvp8SNjiP8RyLVY4cmOLDiMEDLz4r60VQ
-         AJYC2Lj3Iiv043AzMgdJjPXE8X/Eo3LC1l7+jKsL0KFB3yALQfep8Q2ElxS6ZsN2GkPl
-         T/gA==
+         :cc;
+        bh=Pn0/rZ2B5GkSLOkvstRq19Y+ZB+KVKjQ5D4UTrTEcFQ=;
+        b=cG3zM3rOJqP9xq8n8LMwEKTXJUQ4xh2O+zaaNyos6gkTdiT0UhD5YRj4zebrVQCK79
+         lTszCU7lJZs+wRyNh/NZEjWDrwgO2XiRVx6xv0Ra/FQU9iclaLSOhmErIuO/HUVBzWr2
+         nP3swD1jtKwthtzn03IXwPV9QFMWMIlVuHp1iQ0d6KMQztjWe8TBkSZdAUMrRjMh6WUN
+         nStPiAZ/dUsrozxjVmfHco6C7wBa+7K1swBrAUHWvFubg/nw/9+fY4NJgHI7e9+NBb5/
+         WSU1YAmgtOKm2strY0meX98AhNuQy8M3JmpV81bLo/b6PGT3C4i+VArU5y5WdeeW+yk+
+         q0SQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=sEoLPCDqV7IpifKpIOPw41nB+vl4eBBikaXYfxMoM3c=;
-        b=kK5a4B+wCSTfJIItvzU1/nyCyu1IGum0cwEBP2ML1aKrdYf8Spfsq0qhuFnrJgLul1
-         vqJ92krbdyb3tZ7BPskP0bYGuV8K8Aiga6K4DJGqyvjeoRYComqHHA6CkLpBHGerSL5U
-         h4vfCmLYUO7ZFfqeu5H+haq2zCoG6suu41hblPTTJHVWn7jaSO5lBbuei/DLdekJvQVs
-         6rrUylNHkMQV/zjgz3sh+d2uEyHVUnp3mjZLOJgD6ws4DFsvD8Gi1Y72zCWz4asYKa4S
-         1mYQdfUqIXMb0m4rwdn0V+dAPXN0MuHYw4RTF7QmtLeCBzrJ1jDvEzMiw9tfm6hkDFlJ
-         H88w==
-X-Gm-Message-State: AJcUukc5UJJT+d3/82arPeuIjMIEWvoc8OpeJpB/naVzHaC5hEKNGdoD
-        n7rEvSs4h3BJrHy1Zvdt0uRApkaFr2/yg2c+Aoc3tg==
-X-Google-Smtp-Source: ALg8bN5IVNZIUF+k0y6VtugnMn/vkCxQkUzgUE4p420PVE14dx6PzCq89TLdCYiUHy4xUyRGmSc/db4PMfA+6N0g/n8=
-X-Received: by 2002:ab0:aa:: with SMTP id 39mr8948960uaj.120.1547458463957;
- Mon, 14 Jan 2019 01:34:23 -0800 (PST)
+         :message-id:subject:to:cc;
+        bh=Pn0/rZ2B5GkSLOkvstRq19Y+ZB+KVKjQ5D4UTrTEcFQ=;
+        b=Y3EwStg87R9NLL9B0EU3oNwpUUbYBIoiUijH3RkRFYeug9MiQjlsCPq2sJKcDe3eKv
+         rbfbkIMpo1dNM0VMdXt4xNlc6oBJUPZbz+kQWa7nEPYnkxS3BtMTPWhC16LhJpkeOVZN
+         22p4RGHj/sshDuKY/AiGjLDZYQJ4jbsrO4XTdndGS2Of2dH38Taj3DQcEos0uUzv8OV6
+         bIlOto5zXLm3KuM5oTzoc1A/gIWqyBDII+7JUYzDY6+3pNpPQm3J+YQOJ9Ex9XeuEa61
+         ZzJpisAHRHtRsAP3Iyhhq6028jyLWiUNQlc5ACuejraFb26gbqQ9STU4Q/Si1LaZTO5V
+         XgDg==
+X-Gm-Message-State: AJcUukfFupyeFef6Pi/0T5dBH/IzgZzN8FEGHM6skgv4U8LIWiYHWr3J
+        1ygqwqgMKFgkB/oe4WiYtGY98Nv6KiwUrYjIRhVXjg==
+X-Google-Smtp-Source: ALg8bN4Izjtfz8Gtik6EdgfSYlWSdQko5wrdsb98M1TQUO3p0k+tlZJCo9+xkTjkJb9IBNvEfs6/1WGPTInaXLkvDLg=
+X-Received: by 2002:a6b:fa01:: with SMTP id p1mr9451772ioh.271.1547458504276;
+ Mon, 14 Jan 2019 01:35:04 -0800 (PST)
 MIME-Version: 1.0
-References: <000000000000311344057c4b6cc3@google.com> <CAG_fn=WbOyQ0R35_OhCLjxTTnV7z=u5xnjtm2gXtiSRdHbDz=A@mail.gmail.com>
- <20181206110634.GA9056@localhost.localdomain> <CADvbK_f-F9hp8HwxCp8og8FmEf_4E3=HOr8DPq3sEmRA8wGepg@mail.gmail.com>
-In-Reply-To: <CADvbK_f-F9hp8HwxCp8og8FmEf_4E3=HOr8DPq3sEmRA8wGepg@mail.gmail.com>
-From:   Alexander Potapenko <glider@google.com>
-Date:   Mon, 14 Jan 2019 10:34:11 +0100
-Message-ID: <CAG_fn=VYn-QNoyfvQKOynAR0cyJx+Sczvyh8Gk0SukEgYMmAVw@mail.gmail.com>
-Subject: Re: KMSAN: kernel-infoleak in sctp_getsockopt
-To:     Xin Long <lucien.xin@gmail.com>
-Cc:     Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>,
-        syzbot+ad5d327e6936a2e284be@syzkaller.appspotmail.com,
-        davem <davem@davemloft.net>, LKML <linux-kernel@vger.kernel.org>,
-        linux-sctp@vger.kernel.org, network dev <netdev@vger.kernel.org>,
-        Neil Horman <nhorman@tuxdriver.com>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
-        Vlad Yasevich <vyasevich@gmail.com>
+References: <cover.1547289808.git.christophe.leroy@c-s.fr> <0c854dd6b110ac2b81ef1681f6e097f59f84af8b.1547289808.git.christophe.leroy@c-s.fr>
+In-Reply-To: <0c854dd6b110ac2b81ef1681f6e097f59f84af8b.1547289808.git.christophe.leroy@c-s.fr>
+From:   Dmitry Vyukov <dvyukov@google.com>
+Date:   Mon, 14 Jan 2019 10:34:52 +0100
+Message-ID: <CACT4Y+aEsLWqhJmXETNsGtKdbfHDFL1NF8ofv3KwvQPraXdFyw@mail.gmail.com>
+Subject: Re: [PATCH v3 1/3] powerpc/mm: prepare kernel for KAsan on PPC32
+To:     Christophe Leroy <christophe.leroy@c-s.fr>
+Cc:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>,
+        Andrey Ryabinin <aryabinin@virtuozzo.com>,
+        Alexander Potapenko <glider@google.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linuxppc-dev@lists.ozlabs.org,
+        kasan-dev <kasan-dev@googlegroups.com>,
+        Linux-MM <linux-mm@kvack.org>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Dec 10, 2018 at 9:56 AM Xin Long <lucien.xin@gmail.com> wrote:
+On Sat, Jan 12, 2019 at 12:16 PM Christophe Leroy
+<christophe.leroy@c-s.fr> wrote:
+&gt;
+&gt; In kernel/cputable.c, explicitly use memcpy() in order
+&gt; to allow GCC to replace it with __memcpy() when KASAN is
+&gt; selected.
+&gt;
+&gt; Since commit 400c47d81ca38 ("powerpc32: memset: only use dcbz once cache is
+&gt; enabled"), memset() can be used before activation of the cache,
+&gt; so no need to use memset_io() for zeroing the BSS.
+&gt;
+&gt; Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
+&gt; ---
+&gt;  arch/powerpc/kernel/cputable.c | 4 ++--
+&gt;  arch/powerpc/kernel/setup_32.c | 6 ++----
+&gt;  2 files changed, 4 insertions(+), 6 deletions(-)
+&gt;
+&gt; diff --git a/arch/powerpc/kernel/cputable.c
+b/arch/powerpc/kernel/cputable.c
+&gt; index 1eab54bc6ee9..84814c8d1bcb 100644
+&gt; --- a/arch/powerpc/kernel/cputable.c
+&gt; +++ b/arch/powerpc/kernel/cputable.c
+&gt; @@ -2147,7 +2147,7 @@ void __init set_cur_cpu_spec(struct cpu_spec *s)
+&gt;         struct cpu_spec *t = &amp;the_cpu_spec;
+&gt;
+&gt;         t = PTRRELOC(t);
+&gt; -       *t = *s;
+&gt; +       memcpy(t, s, sizeof(*t));
+
+Hi Christophe,
+
+I understand why you are doing this, but this looks a bit fragile and
+non-scalable. This may not work with the next version of compiler,
+just different than yours version of compiler, clang, etc.
+
+Does using -ffreestanding and/or -fno-builtin-memcpy (-memset) help?
+If it helps, perhaps it makes sense to add these flags to
+KASAN_SANITIZE := n files.
+
+
+>         *PTRRELOC(&cur_cpu_spec) = &the_cpu_spec;
+>  }
+> @@ -2162,7 +2162,7 @@ static struct cpu_spec * __init setup_cpu_spec(unsigned long offset,
+>         old = *t;
 >
-> On Thu, Dec 6, 2018 at 8:08 PM Marcelo Ricardo Leitner
-> <marcelo.leitner@gmail.com> wrote:
-> >
-> > On Thu, Dec 06, 2018 at 11:36:08AM +0100, Alexander Potapenko wrote:
-> > > On Wed, Dec 5, 2018 at 8:31 PM syzbot
-> > > <syzbot+ad5d327e6936a2e284be@syzkaller.appspotmail.com> wrote:
-> > > >
-> > > > Hello,
-> > > >
-> > > > syzbot found the following crash on:
-> > > >
-> > > > HEAD commit:    fffec98ae2a6 net: proper support for CONFIG_GENERIC=
-_CSUM o..
-> > > > git tree:       https://github.com/google/kmsan.git/master
-> > > > console output: https://syzkaller.appspot.com/x/log.txt?x=3D12e84a4=
-7400000
-> > > > kernel config:  https://syzkaller.appspot.com/x/.config?x=3D56b48b4=
-6dafe4516
-> > > > dashboard link: https://syzkaller.appspot.com/bug?extid=3Dad5d327e6=
-936a2e284be
-> > > > compiler:       clang version 8.0.0 (trunk 343298)
-> > > > syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=3D103cd=
-225400000
-> > > >
-> > > > IMPORTANT: if you fix the bug, please add the following tag to the =
-commit:
-> > > > Reported-by: syzbot+ad5d327e6936a2e284be@syzkaller.appspotmail.com
-> > > >
-> > > > 8021q: adding VLAN 0 to HW filter on device team0
-> > > > 8021q: adding VLAN 0 to HW filter on device team0
-> > > > 8021q: adding VLAN 0 to HW filter on device team0
-> > > > 8021q: adding VLAN 0 to HW filter on device team0
-> > > > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> > > > BUG: KMSAN: kernel-infoleak in _copy_to_user+0x19a/0x230 lib/userco=
-py.c:33
-> > > > CPU: 1 PID: 8164 Comm: syz-executor2 Not tainted 4.20.0-rc3+ #95
-> > > > Hardware name: Google Google Compute Engine/Google Compute Engine, =
-BIOS
-> > > > Google 01/01/2011
-> > > > Call Trace:
-> > > >   __dump_stack lib/dump_stack.c:77 [inline]
-> > > >   dump_stack+0x32d/0x480 lib/dump_stack.c:113
-> > > >   kmsan_report+0x12c/0x290 mm/kmsan/kmsan.c:683
-> > > >   kmsan_internal_check_memory+0x32a/0xa50 mm/kmsan/kmsan.c:743
-> > > >   kmsan_copy_to_user+0x78/0xd0 mm/kmsan/kmsan_hooks.c:634
-> > > >   _copy_to_user+0x19a/0x230 lib/usercopy.c:33
-> > > >   copy_to_user include/linux/uaccess.h:183 [inline]
-> > > >   sctp_getsockopt_local_addrs net/sctp/socket.c:5998 [inline]
-> > > >   sctp_getsockopt+0x15248/0x186f0 net/sctp/socket.c:7477
-> > > >   sock_common_getsockopt+0x13f/0x180 net/core/sock.c:2937
-> > > >   __sys_getsockopt+0x489/0x550 net/socket.c:1939
-> > > >   __do_sys_getsockopt net/socket.c:1950 [inline]
-> > > >   __se_sys_getsockopt+0xe1/0x100 net/socket.c:1947
-> > > >   __x64_sys_getsockopt+0x62/0x80 net/socket.c:1947
-> > > >   do_syscall_64+0xcf/0x110 arch/x86/entry/common.c:291
-> > > >   entry_SYSCALL_64_after_hwframe+0x63/0xe7
-> > > > RIP: 0033:0x457569
-> > > > Code: fd b3 fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 48 89 f8 4=
-8 89 f7
-> > > > 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01=
- f0 ff
-> > > > ff 0f 83 cb b3 fb ff c3 66 2e 0f 1f 84 00 00 00 00
-> > > > RSP: 002b:00007f4991886c78 EFLAGS: 00000246 ORIG_RAX: 0000000000000=
-037
-> > > > RAX: ffffffffffffffda RBX: 0000000000000005 RCX: 0000000000457569
-> > > > RDX: 000000000000006d RSI: 0000000000000084 RDI: 0000000000000003
-> > > > RBP: 000000000072bf00 R08: 0000000020000140 R09: 0000000000000000
-> > > > R10: 0000000020001100 R11: 0000000000000246 R12: 00007f49918876d4
-> > > > R13: 00000000004c7d88 R14: 00000000004ce348 R15: 00000000ffffffff
-> > > >
-> > > > Uninit was stored to memory at:
-> > > >   kmsan_save_stack_with_flags mm/kmsan/kmsan.c:246 [inline]
-> > > >   kmsan_save_stack mm/kmsan/kmsan.c:261 [inline]
-> > > >   kmsan_internal_chain_origin+0x13d/0x240 mm/kmsan/kmsan.c:469
-> > > >   kmsan_memcpy_memmove_metadata+0x1a9/0xf70 mm/kmsan/kmsan.c:344
-> > > >   kmsan_memcpy_metadata+0xb/0x10 mm/kmsan/kmsan.c:362
-> > > >   __msan_memcpy+0x61/0x70 mm/kmsan/kmsan_instr.c:162
-> > > >   sctp_copy_laddrs net/sctp/socket.c:5901 [inline]
-> > > >   sctp_getsockopt_local_addrs net/sctp/socket.c:5967 [inline]
-> > > >   sctp_getsockopt+0x14f41/0x186f0 net/sctp/socket.c:7477
-> > > >   sock_common_getsockopt+0x13f/0x180 net/core/sock.c:2937
-> > > >   __sys_getsockopt+0x489/0x550 net/socket.c:1939
-> > > >   __do_sys_getsockopt net/socket.c:1950 [inline]
-> > > >   __se_sys_getsockopt+0xe1/0x100 net/socket.c:1947
-> > > >   __x64_sys_getsockopt+0x62/0x80 net/socket.c:1947
-> > > >   do_syscall_64+0xcf/0x110 arch/x86/entry/common.c:291
-> > > >   entry_SYSCALL_64_after_hwframe+0x63/0xe7
-> > > >
-> > > > Uninit was stored to memory at:
-> > > >   kmsan_save_stack_with_flags mm/kmsan/kmsan.c:246 [inline]
-> > > >   kmsan_save_stack mm/kmsan/kmsan.c:261 [inline]
-> > > >   kmsan_internal_chain_origin+0x13d/0x240 mm/kmsan/kmsan.c:469
-> > > >   kmsan_memcpy_memmove_metadata+0x1a9/0xf70 mm/kmsan/kmsan.c:344
-> > > >   kmsan_memcpy_metadata+0xb/0x10 mm/kmsan/kmsan.c:362
-> > > >   __msan_memcpy+0x61/0x70 mm/kmsan/kmsan_instr.c:162
-> > > >   sctp_copy_laddrs net/sctp/socket.c:5890 [inline]
-> > > >   sctp_getsockopt_local_addrs net/sctp/socket.c:5967 [inline]
-> > > >   sctp_getsockopt+0x14de8/0x186f0 net/sctp/socket.c:7477
-> > > >   sock_common_getsockopt+0x13f/0x180 net/core/sock.c:2937
-> > > >   __sys_getsockopt+0x489/0x550 net/socket.c:1939
-> > > >   __do_sys_getsockopt net/socket.c:1950 [inline]
-> > > >   __se_sys_getsockopt+0xe1/0x100 net/socket.c:1947
-> > > >   __x64_sys_getsockopt+0x62/0x80 net/socket.c:1947
-> > > >   do_syscall_64+0xcf/0x110 arch/x86/entry/common.c:291
-> > > >   entry_SYSCALL_64_after_hwframe+0x63/0xe7
-> > > >
-> > > > Uninit was created at:
-> > > >   kmsan_save_stack_with_flags mm/kmsan/kmsan.c:246 [inline]
-> > > >   kmsan_internal_poison_shadow+0x6d/0x130 mm/kmsan/kmsan.c:170
-> > > >   kmsan_kmalloc+0xa1/0x100 mm/kmsan/kmsan_hooks.c:186
-> > > >   __kmalloc+0x14c/0x4d0 mm/slub.c:3825
-> > > >   kmalloc include/linux/slab.h:551 [inline]
-> > > >   sctp_inet6addr_event+0x60e/0xbd0 net/sctp/ipv6.c:100
-> > > >   notifier_call_chain kernel/notifier.c:93 [inline]
-> > > >   __atomic_notifier_call_chain kernel/notifier.c:183 [inline]
-> > > >   atomic_notifier_call_chain+0x13d/0x240 kernel/notifier.c:193
-> > > >   inet6addr_notifier_call_chain+0x76/0x90 net/ipv6/addrconf_core.c:=
-107
-> > > >   ipv6_add_addr+0x2597/0x2890 net/ipv6/addrconf.c:1115
-> > > >   inet6_addr_add+0xc86/0x1c10 net/ipv6/addrconf.c:2912
-> > > >   inet6_rtm_newaddr+0x167e/0x3d20 net/ipv6/addrconf.c:4750
-> > > >   rtnetlink_rcv_msg+0x1148/0x1540 net/core/rtnetlink.c:4947
-> > > >   netlink_rcv_skb+0x394/0x640 net/netlink/af_netlink.c:2477
-> > > >   rtnetlink_rcv+0x50/0x60 net/core/rtnetlink.c:4965
-> > > >   netlink_unicast_kernel net/netlink/af_netlink.c:1310 [inline]
-> > > >   netlink_unicast+0x1699/0x1740 net/netlink/af_netlink.c:1336
-> > > >   netlink_sendmsg+0x13c7/0x1440 net/netlink/af_netlink.c:1917
-> > > >   sock_sendmsg_nosec net/socket.c:621 [inline]
-> > > >   sock_sendmsg net/socket.c:631 [inline]
-> > > >   ___sys_sendmsg+0xe3b/0x1240 net/socket.c:2116
-> > > >   __sys_sendmsg net/socket.c:2154 [inline]
-> > > >   __do_sys_sendmsg net/socket.c:2163 [inline]
-> > > >   __se_sys_sendmsg+0x305/0x460 net/socket.c:2161
-> > > >   __x64_sys_sendmsg+0x4a/0x70 net/socket.c:2161
-> > > >   do_syscall_64+0xcf/0x110 arch/x86/entry/common.c:291
-> > > >   entry_SYSCALL_64_after_hwframe+0x63/0xe7
-> > > >
-> > > > Bytes 32-35 of 2100 are uninitialized
-> > > > Memory access of size 2100 starts at ffff888185d8b000
-> > > > Data copied to user address 0000000020001108
-> > > > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> > > When a network device goes up and sctp_inetaddr_event() is called, it
-> > > allocates a partially initialized struct sctp_sockaddr_entry to hold
-> > > the newly created address.
-> > > The attached reproducer can be then used to read up to 8 uninit bytes
-> > > for each of the local addresses.
-> > > I guess the devices aren't created so often that this can pose any
-> > > security risk, but we probably still need to allocate this structure
-> > > with __GFP_ZERO.
-> >
-> > Agree. Thanks Alexander.
-> > Looks like this is the last/only place left with this issue.
-Actually there's still a similar bug in IPv4. Memsetting addr->av4 should h=
-elp:
-
-diff --git a/net/sctp/protocol.c b/net/sctp/protocol.c
-index d5878ae55840..f1cbfb4d0c39 100644
---- a/net/sctp/protocol.c
-+++ b/net/sctp/protocol.c
-@@ -778,6 +778,7 @@ static int sctp_inetaddr_event(struct
-notifier_block *this, unsigned long ev,
-        case NETDEV_UP:
-                addr =3D kmalloc(sizeof(struct sctp_sockaddr_entry), GFP_AT=
-OMIC);
-                if (addr) {
-+                       memset(&addr->a.v4, 0, sizeof(struct sockaddr_in));
-                        addr->a.v4.sin_family =3D AF_INET;
-                        addr->a.v4.sin_port =3D 0;
-                        addr->a.v4.sin_addr.s_addr =3D ifa->ifa_local;
-
-
-> This field is not really used by sctp, I will just set it to 0.
+>         /* Copy everything, then do fixups */
+> -       *t = *s;
+> +       memcpy(t, s, sizeof(*t));
 >
-> diff --git a/net/sctp/ipv6.c b/net/sctp/ipv6.c
-> index fc6c5e4bffa5..7f0539db5604 100644
-> --- a/net/sctp/ipv6.c
-> +++ b/net/sctp/ipv6.c
-> @@ -101,6 +101,7 @@ static int sctp_inet6addr_event(struct
-> notifier_block *this, unsigned long ev,
->                 if (addr) {
->                         addr->a.v6.sin6_family =3D AF_INET6;
->                         addr->a.v6.sin6_port =3D 0;
-> +                       addr->a.v6.sin6_flowinfo =3D 0;
->                         addr->a.v6.sin6_addr =3D ifa->addr;
->                         addr->a.v6.sin6_scope_id =3D ifa->idev->dev->ifin=
-dex;
->                         addr->valid =3D 1;
+>         /*
+>          * If we are overriding a previous value derived from the real
+> diff --git a/arch/powerpc/kernel/setup_32.c b/arch/powerpc/kernel/setup_32.c
+> index 947f904688b0..5e761eb16a6d 100644
+> --- a/arch/powerpc/kernel/setup_32.c
+> +++ b/arch/powerpc/kernel/setup_32.c
+> @@ -73,10 +73,8 @@ notrace unsigned long __init early_init(unsigned long dt_ptr)
+>  {
+>         unsigned long offset = reloc_offset();
 >
-> >
-> > > >
-> > > > ---
-> > > > This bug is generated by a bot. It may contain errors.
-> > > > See https://goo.gl/tpsmEJ for more information about syzbot.
-> > > > syzbot engineers can be reached at syzkaller@googlegroups.com.
-> > > >
-> > > > syzbot will keep track of this bug report. See:
-> > > > https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate wi=
-th
-> > > > syzbot.
-> > > > syzbot can test patches for this bug, for details see:
-> > > > https://goo.gl/tpsmEJ#testing-patches
-> > > >
-> > > > --
-> > > > You received this message because you are subscribed to the Google =
-Groups "syzkaller-bugs" group.
-> > > > To unsubscribe from this group and stop receiving emails from it, s=
-end an email to syzkaller-bugs+unsubscribe@googlegroups.com.
-> > > > To view this discussion on the web visit https://groups.google.com/=
-d/msgid/syzkaller-bugs/000000000000311344057c4b6cc3%40google.com.
-> > > > For more options, visit https://groups.google.com/d/optout.
-> > >
-> > >
-> > >
-> > > --
-> > > Alexander Potapenko
-> > > Software Engineer
-> > >
-> > > Google Germany GmbH
-> > > Erika-Mann-Stra=C3=9Fe, 33
-> > > 80636 M=C3=BCnchen
-> > >
-> > > Gesch=C3=A4ftsf=C3=BChrer: Paul Manicle, Halimah DeLaine Prado
-> > > Registergericht und -nummer: Hamburg, HRB 86891
-> > > Sitz der Gesellschaft: Hamburg
-> >
-> > > #ifndef DUMP_BUF_H
-> > > #define DUMP_BUF_H
-> > >
-> > > #ifndef DUMP_MIN_STRLEN
-> > > #define DUMP_MIN_STRLEN 1
-> > > #endif
-> > >
-> > > #ifndef DUMP_PARALLEL
-> > > #define DUMP_PARALLEL 0
-> > > #endif
-> > >
-> > > #ifndef DUMP_PRINT_BUF_ADDR
-> > > #define DUMP_PRINT_BUF_ADDR 0
-> > > #endif
-> > >
-> > > #ifndef DUMP_PRINT_HEX
-> > > #define DUMP_PRINT_HEX 0
-> > > #endif
-> > >
-> > > #ifndef DUMP_PRINT_STRING
-> > > #define DUMP_PRINT_STRING 0
-> > > #endif
-> > >
-> > > #if DUMP_PARALLEL
-> > > pthread_mutex_t out_mutex =3D PTHREAD_MUTEX_INITIALIZER;
-> > > #endif
-> > >
-> > > void dump_buf(unsigned char *buf, int len) {
-> > >   int i, nz =3D 0;
-> > >   for (i =3D 0; i < len; i++) {
-> > >     if (buf[i]) {
-> > >       nz =3D 1;
-> > >       break;
-> > >     }
-> > >   }
-> > >   if (!nz) {
-> > >     // The buffer is empty.
-> > >     return;
-> > >   } else {
-> > > #if DUMP_PARALLEL
-> > >     pthread_mutex_lock(&out_mutex);
-> > > #endif
-> > > #if DUMP_PRINT_BUF_ADDR
-> > >     fprintf(stderr, "nonempty buffer at %p\n", buf);
-> > > #endif
-> > > #if DUMP_PRINT_HEX
-> > >     for (i=3D0; i < len; i++) {
-> > >       if (buf[i]) {
-> > >         fprintf(stderr, "buf[%d]: %x (%p)\n", i, buf[i], *(void**)&bu=
-f[i]);
-> > >       }
-> > >     }
-> > > #endif // DUMP_PRINT_HEX
-> > > #if DUMP_PARALLEL
-> > >     pthread_mutex_unlock(&out_mutex);
-> > > #endif
-> > >   }
-> > > #if DUMP_PARALLEL
-> > >   pthread_mutex_lock(&out_mutex);
-> > > #endif
-> > > #if DUMP_PRINT_STRING
-> > >   for (i =3D 0; i < len; i++) {
-> > >     if (buf[i]) {
-> > >       int str_len =3D strlen(&buf[i]);
-> > >       // Short string pieces are too boring.
-> > >       if (str_len >=3D DUMP_MIN_STRLEN) {
-> > >         unsigned char *c;
-> > >         for (c =3D &buf[i]; c < &buf[i + str_len]; c++) {
-> > >           if ((*c > 127) || ((*c < 32) && (*c !=3D 10) && (*c !=3D 13=
-)))  {
-> > >             *c =3D ' ';
-> > >             continue;
-> > >           }
-> > >         }
-> > >         // Dump the buffer.
-> > >         fprintf(stderr, "%s\n", &buf[i]);
-> > >       }
-> > >       i +=3D str_len;
-> > >     }
-> > >   }
-> > > #endif // DUMP_PRINT_STRING
-> > > #if DUMP_PARALLEL
-> > >   pthread_mutex_unlock(&out_mutex);
-> > > #endif
-> > > }
-> > >
-> > > #endif
-> >
-> > > #include <stdio.h>
-> > > #include <pthread.h>
-> > > #include <sys/types.h>          /* See NOTES */
-> > > #include <sys/socket.h>
-> > > #include <unistd.h>
-> > >
-> > > #define DUMP_PARALLEL 1
-> > > #define DUMP_PRINT_BUF_ADDR 1
-> > > #define DUMP_PRINT_STRING 1
-> > > #define DUMP_PRINT_HEX 1
-> > > #include "dump_buf.h"
-> > >
-> > > void *setsockopt_fn(void *arg) {
-> > >   int sock =3D (int)arg;
-> > >   struct sockaddr addr;
-> > >   memset(&addr, 0, sizeof(addr));
-> > >   addr.sa_family =3D 2;
-> > >   addr.sa_data[2] =3D 0xac;
-> > >   addr.sa_data[3] =3D 0x14;
-> > >   addr.sa_data[4] =3D 0x14;
-> > >   setsockopt(sock, 0x84, 0x6e, &addr, 0x10);
-> > > }
-> > >
-> > > #define BUFLEN (0x2c2)
-> > > void *getsockopt_fn(void *arg) {
-> > >   int sock =3D (int)arg;
-> > >   char buf[BUFLEN];
-> > >   memset(buf, 0, BUFLEN);
-> > >   int socklen =3D BUFLEN;
-> > >   getsockopt(sock, 0x84, /*SCTP_GET_LOCAL_ADDRS*/0x6d, buf, &socklen)=
-;
-> > >   dump_buf(&(buf[8]), 32);
-> > > }
-> > >
-> > > void do_work(int sock) {
-> > >   pthread_t t1, t2;
-> > >   for (int i =3D 0; i < 10; i++) {
-> > >     pthread_create(&t1, NULL, getsockopt_fn, (void*)sock);
-> > >     pthread_create(&t2, NULL, setsockopt_fn, (void*)sock);
-> > >     usleep(100);
-> > >   }
-> > > }
-> > >
-> > > int main(int argc, char *argv[]) {
-> > >   int res;
-> > >   int pid =3D fork();
-> > >   if (pid =3D=3D 0) {
-> > >     int sock =3D socket(0x2, 0x1, 0x84);
-> > >     do_work(sock);
-> > >   }
-> > >   sleep(10);
-> > >   return 0;
-> > > }
-> >
-
-
-
---=20
-Alexander Potapenko
-Software Engineer
-
-Google Germany GmbH
-Erika-Mann-Stra=C3=9Fe, 33
-80636 M=C3=BCnchen
-
-Gesch=C3=A4ftsf=C3=BChrer: Paul Manicle, Halimah DeLaine Prado
-Registergericht und -nummer: Hamburg, HRB 86891
-Sitz der Gesellschaft: Hamburg
+> -       /* First zero the BSS -- use memset_io, some platforms don't have
+> -        * caches on yet */
+> -       memset_io((void __iomem *)PTRRELOC(&__bss_start), 0,
+> -                       __bss_stop - __bss_start);
+> +       /* First zero the BSS */
+> +       memset(PTRRELOC(&__bss_start), 0, __bss_stop - __bss_start);
+>
+>         /*
+>          * Identify the CPU type and fix up code sections
+> --
+> 2.13.3
+>
