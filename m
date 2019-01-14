@@ -2,282 +2,176 @@ Return-Path: <SRS0=tq6k=PW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.0 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,UPPERCASE_50_75,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 82A8AC43444
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 16:37:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AC3F4C43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 16:37:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3E567206B7
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 16:37:17 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="ZoHI6luI";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="iAkowg/A"
+	by mail.kernel.org (Postfix) with ESMTP id 79622206B7
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 16:37:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726967AbfANQhQ (ORCPT
+        id S1726976AbfANQh2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 14 Jan 2019 11:37:16 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:45934 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726732AbfANQhP (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 Jan 2019 11:37:15 -0500
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 9430C609E2; Mon, 14 Jan 2019 16:37:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1547483833;
-        bh=T22JrNSaCbhJ2yWwEdhRWWnOlPYOqgVpIH8tbnHhV2k=;
-        h=From:To:Cc:Subject:Date:From;
-        b=ZoHI6luIrpsqS8xia8PSRBYHBh62TJJkuzYBbmuSGWR0befek4tXqMXtiIu3VcUun
-         nOd65KTSucFLM44IL8BgjSF+6cEIXUNcyU32sQv0fcRszHUobvjofdx4anHndVVPc9
-         4+HUmdJoT5jUEdqrHz2m55clzDPuh2fbNQHjl1qc=
-Received: from jhugo-perf-lnx.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: jhugo@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 896F06086B;
-        Mon, 14 Jan 2019 16:37:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1547483830;
-        bh=T22JrNSaCbhJ2yWwEdhRWWnOlPYOqgVpIH8tbnHhV2k=;
-        h=From:To:Cc:Subject:Date:From;
-        b=iAkowg/A9hTJnVgAUzPDEvGwylDetxv5PIGxiBnTzrmQseC4bxKjUwh397QcWpNiM
-         hhauiBHmZinXaFaWqYZf4FrwL+jJE9S/TYoOConw0Ci82840dUtTd69jvlZuyEQ917
-         Ia6ilsVDnd9tqFQSYJXv5Gr0xBTKItLdjrlHqP4s=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 896F06086B
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=jhugo@codeaurora.org
-From:   Jeffrey Hugo <jhugo@codeaurora.org>
-To:     kishon@ti.com
-Cc:     bjorn.andersson@linaro.org, andy.gross@linaro.org,
-        david.brown@linaro.org, linux-arm-msm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, robh+dt@kernel.org,
-        mark.rutland@arm.com, devicetree@vger.kernel.org,
-        gregkh@linuxfoundation.org, balbi@kernel.org,
-        linux-usb@vger.kernel.org, Jeffrey Hugo <jhugo@codeaurora.org>
-Subject: [PATCH v2 4/6] phy: qcom-qmp: Add QMP V3 USB3 PHY support for msm8998
-Date:   Mon, 14 Jan 2019 09:36:59 -0700
-Message-Id: <1547483819-5445-1-git-send-email-jhugo@codeaurora.org>
-X-Mailer: git-send-email 1.9.1
+        Mon, 14 Jan 2019 11:37:28 -0500
+Received: from foss.arm.com ([217.140.101.70]:37100 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726674AbfANQh2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 14 Jan 2019 11:37:28 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B3342A78;
+        Mon, 14 Jan 2019 08:37:27 -0800 (PST)
+Received: from [192.168.100.241] (usa-sjc-mx-foss1.foss.arm.com [217.140.101.70])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id F0E543F5BD;
+        Mon, 14 Jan 2019 08:37:26 -0800 (PST)
+Subject: Re: [PATCH v3 6/7] arm64: add sysfs vulnerability show for
+ speculative store bypass
+To:     Marc Zyngier <marc.zyngier@arm.com>,
+        linux-arm-kernel@lists.infradead.org
+Cc:     catalin.marinas@arm.com, will.deacon@arm.com,
+        suzuki.poulose@arm.com, dave.martin@arm.com,
+        shankerd@codeaurora.org, linux-kernel@vger.kernel.org,
+        ykaukab@suse.de, julien.thierry@arm.com, mlangsdo@redhat.com,
+        steven.price@arm.com, stefan.wahren@i2se.com
+References: <20190109235544.2992426-1-jeremy.linton@arm.com>
+ <20190109235544.2992426-7-jeremy.linton@arm.com>
+ <ac625845-fd40-ad87-4efd-ea0ed53274ec@arm.com>
+From:   Jeremy Linton <jeremy.linton@arm.com>
+Message-ID: <762faf42-6806-bba9-091c-c21e6955e17d@arm.com>
+Date:   Mon, 14 Jan 2019 10:37:26 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
+MIME-Version: 1.0
+In-Reply-To: <ac625845-fd40-ad87-4efd-ea0ed53274ec@arm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-MSM8998 contains a single QMP v3 USB3 phy similar to the existing sdm845
-support.
+Hi,
 
-Signed-off-by: Jeffrey Hugo <jhugo@codeaurora.org>
----
- drivers/phy/qualcomm/phy-qcom-qmp.c | 140 ++++++++++++++++++++++++++++++++++++
- drivers/phy/qualcomm/phy-qcom-qmp.h |   4 ++
- 2 files changed, 144 insertions(+)
+On 01/14/2019 04:15 AM, Marc Zyngier wrote:
+> On 09/01/2019 23:55, Jeremy Linton wrote:
+>> Return status based on ssbd_state and the arm64 SSBS feature. If
+>> the mitigation is disabled, or the firmware isn't responding then
+>> return the expected machine state based on a new blacklist of known
+>> vulnerable cores.
+>>
+>> Signed-off-by: Jeremy Linton <jeremy.linton@arm.com>
+>> ---
+>>   arch/arm64/kernel/cpu_errata.c | 48 ++++++++++++++++++++++++++++++++++
+>>   1 file changed, 48 insertions(+)
+>>
+>> diff --git a/arch/arm64/kernel/cpu_errata.c b/arch/arm64/kernel/cpu_errata.c
+>> index ee286d606d9b..c8ff96158b94 100644
+>> --- a/arch/arm64/kernel/cpu_errata.c
+>> +++ b/arch/arm64/kernel/cpu_errata.c
+>> @@ -288,6 +288,7 @@ enable_smccc_arch_workaround_1(const struct arm64_cpu_capabilities *entry)
+>>   DEFINE_PER_CPU_READ_MOSTLY(u64, arm64_ssbd_callback_required);
+>>   
+>>   int ssbd_state __read_mostly = ARM64_SSBD_KERNEL;
+>> +static bool __ssb_safe = true;
+>>   
+>>   static const struct ssbd_options {
+>>   	const char	*str;
+>> @@ -385,10 +386,18 @@ static bool has_ssbd_mitigation(const struct arm64_cpu_capabilities *entry,
+>>   {
+>>   	struct arm_smccc_res res;
+>>   	bool required = true;
+>> +	bool is_vul;
+>>   	s32 val;
+>>   
+>>   	WARN_ON(scope != SCOPE_LOCAL_CPU || preemptible());
+>>   
+>> +	is_vul = is_midr_in_range_list(read_cpuid_id(), entry->midr_range_list);
+>> +
+>> +	if (is_vul)
+>> +		__ssb_safe = false;
+>> +
+>> +	arm64_requested_vuln_attrs |= VULN_SSB;
+>> +
+>>   	if (this_cpu_has_cap(ARM64_SSBS)) {
+>>   		required = false;
+>>   		goto out_printmsg;
+>> @@ -422,6 +431,7 @@ static bool has_ssbd_mitigation(const struct arm64_cpu_capabilities *entry,
+>>   		ssbd_state = ARM64_SSBD_UNKNOWN;
+>>   		return false;
+>>   
+>> +	/* machines with mixed mitigation requirements must not return this */
+>>   	case SMCCC_RET_NOT_REQUIRED:
+>>   		pr_info_once("%s mitigation not required\n", entry->desc);
+>>   		ssbd_state = ARM64_SSBD_MITIGATED;
+>> @@ -476,6 +486,17 @@ static bool has_ssbd_mitigation(const struct arm64_cpu_capabilities *entry,
+>>   
+>>   	return required;
+>>   }
+>> +
+>> +/* known vulnerable cores */
+>> +static const struct midr_range arm64_ssb_cpus[] = {
+>> +	MIDR_ALL_VERSIONS(MIDR_CORTEX_A57),
+>> +	MIDR_ALL_VERSIONS(MIDR_CORTEX_A72),
+>> +	MIDR_ALL_VERSIONS(MIDR_CORTEX_A73),
+>> +	MIDR_ALL_VERSIONS(MIDR_CORTEX_A75),
+>> +	MIDR_ALL_VERSIONS(MIDR_CORTEX_A76),
+>> +	{},
+>> +};
+>> +
+>>   #endif	/* CONFIG_ARM64_SSBD */
+>>   
+>>   static void __maybe_unused
+>> @@ -762,6 +783,7 @@ const struct arm64_cpu_capabilities arm64_errata[] = {
+>>   		.capability = ARM64_SSBD,
+>>   		.type = ARM64_CPUCAP_LOCAL_CPU_ERRATUM,
+>>   		.matches = has_ssbd_mitigation,
+>> +		.midr_range_list = arm64_ssb_cpus,
+>>   	},
+>>   #endif
+>>   #ifdef CONFIG_ARM64_ERRATUM_1188873
+>> @@ -809,4 +831,30 @@ ssize_t cpu_show_spectre_v2(struct device *dev, struct device_attribute *attr,
+>>   	return sprintf(buf, "Vulnerable\n");
+>>   }
+>>   
+>> +ssize_t cpu_show_spec_store_bypass(struct device *dev,
+>> +		struct device_attribute *attr, char *buf)
+>> +{
+>> +	/*
+>> +	 *  Two assumptions: First, get_ssbd_state() reflects the worse case
+>> +	 *  for hetrogenous machines, and that if SSBS is supported its
+>> +	 *  supported by all cores.
+>> +	 */
+>> +	switch (arm64_get_ssbd_state()) {
+>> +	case ARM64_SSBD_MITIGATED:
+>> +		return sprintf(buf, "Not affected\n");
+>> +
+>> +	case ARM64_SSBD_KERNEL:
+>> +	case ARM64_SSBD_FORCE_ENABLE:
+>> +		if (cpus_have_cap(ARM64_SSBS))
+>> +			return sprintf(buf, "Not affected\n");
+>> +		return sprintf(buf,
+>> +			"Mitigation: Speculative Store Bypass disabled\n");
+>> +	}
+>> +
+>> +	if (__ssb_safe)
+>> +		return sprintf(buf, "Not affected\n");
+> 
+> The kbuild robot reports that this fails if CONFIG_ARM64_SSBD is not
+> selected. What should we print in this case? "Vulnerable"? Or "Unknown"?
 
-diff --git a/drivers/phy/qualcomm/phy-qcom-qmp.c b/drivers/phy/qualcomm/phy-qcom-qmp.c
-index b400681..daf7515 100644
---- a/drivers/phy/qualcomm/phy-qcom-qmp.c
-+++ b/drivers/phy/qualcomm/phy-qcom-qmp.c
-@@ -687,6 +687,116 @@ enum qphy_reg_layout {
- 	QMP_PHY_INIT_CFG(QPHY_V3_PCS_MULTI_LANE_CTRL1, 0x02),
- };
- 
-+static const struct qmp_phy_init_tbl msm8998_usb3_serdes_tbl[] = {
-+	QMP_PHY_INIT_CFG(QSERDES_V3_COM_CLK_SELECT, 0x30),
-+	QMP_PHY_INIT_CFG(QSERDES_V3_COM_BIAS_EN_CLKBUFLR_EN, 0x04),
-+	QMP_PHY_INIT_CFG(QSERDES_V3_COM_SYSCLK_EN_SEL, 0x14),
-+	QMP_PHY_INIT_CFG(QSERDES_V3_COM_SYS_CLK_CTRL, 0x06),
-+	QMP_PHY_INIT_CFG(QSERDES_V3_COM_RESETSM_CNTRL2, 0x08),
-+	QMP_PHY_INIT_CFG(QSERDES_V3_COM_CMN_CONFIG, 0x06),
-+	QMP_PHY_INIT_CFG(QSERDES_V3_COM_SVS_MODE_CLK_SEL, 0x01),
-+	QMP_PHY_INIT_CFG(QSERDES_V3_COM_HSCLK_SEL, 0x80),
-+	QMP_PHY_INIT_CFG(QSERDES_V3_COM_DEC_START_MODE0, 0x82),
-+	QMP_PHY_INIT_CFG(QSERDES_V3_COM_DIV_FRAC_START1_MODE0, 0xab),
-+	QMP_PHY_INIT_CFG(QSERDES_V3_COM_DIV_FRAC_START2_MODE0, 0xea),
-+	QMP_PHY_INIT_CFG(QSERDES_V3_COM_DIV_FRAC_START3_MODE0, 0x02),
-+	QMP_PHY_INIT_CFG(QSERDES_V3_COM_CP_CTRL_MODE0, 0x06),
-+	QMP_PHY_INIT_CFG(QSERDES_V3_COM_PLL_RCTRL_MODE0, 0x16),
-+	QMP_PHY_INIT_CFG(QSERDES_V3_COM_PLL_CCTRL_MODE0, 0x36),
-+	QMP_PHY_INIT_CFG(QSERDES_V3_COM_INTEGLOOP_GAIN1_MODE0, 0x00),
-+	QMP_PHY_INIT_CFG(QSERDES_V3_COM_INTEGLOOP_GAIN0_MODE0, 0x3f),
-+	QMP_PHY_INIT_CFG(QSERDES_V3_COM_VCO_TUNE2_MODE0, 0x01),
-+	QMP_PHY_INIT_CFG(QSERDES_V3_COM_VCO_TUNE1_MODE0, 0xc9),
-+	QMP_PHY_INIT_CFG(QSERDES_V3_COM_CORECLK_DIV_MODE0, 0x0a),
-+	QMP_PHY_INIT_CFG(QSERDES_V3_COM_LOCK_CMP3_MODE0, 0x00),
-+	QMP_PHY_INIT_CFG(QSERDES_V3_COM_LOCK_CMP2_MODE0, 0x34),
-+	QMP_PHY_INIT_CFG(QSERDES_V3_COM_LOCK_CMP1_MODE0, 0x15),
-+	QMP_PHY_INIT_CFG(QSERDES_V3_COM_LOCK_CMP_EN, 0x04),
-+	QMP_PHY_INIT_CFG(QSERDES_V3_COM_CORE_CLK_EN, 0x00),
-+	QMP_PHY_INIT_CFG(QSERDES_V3_COM_LOCK_CMP_CFG, 0x00),
-+	QMP_PHY_INIT_CFG(QSERDES_V3_COM_VCO_TUNE_MAP, 0x00),
-+	QMP_PHY_INIT_CFG(QSERDES_V3_COM_BG_TIMER, 0x0a),
-+	QMP_PHY_INIT_CFG(QSERDES_V3_COM_PLL_IVCO, 0x07),
-+	QMP_PHY_INIT_CFG(QSERDES_V3_COM_INTEGLOOP_INITVAL, 0x80),
-+	QMP_PHY_INIT_CFG(QSERDES_V3_COM_CMN_MODE, 0x01),
-+	QMP_PHY_INIT_CFG(QSERDES_V3_COM_SSC_EN_CENTER, 0x01),
-+	QMP_PHY_INIT_CFG(QSERDES_V3_COM_SSC_PER1, 0x31),
-+	QMP_PHY_INIT_CFG(QSERDES_V3_COM_SSC_PER2, 0x01),
-+	QMP_PHY_INIT_CFG(QSERDES_V3_COM_SSC_ADJ_PER1, 0x00),
-+	QMP_PHY_INIT_CFG(QSERDES_V3_COM_SSC_ADJ_PER2, 0x00),
-+	QMP_PHY_INIT_CFG(QSERDES_V3_COM_SSC_STEP_SIZE1, 0x85),
-+	QMP_PHY_INIT_CFG(QSERDES_V3_COM_SSC_STEP_SIZE2, 0x07),
-+};
-+
-+static const struct qmp_phy_init_tbl msm8998_usb3_tx_tbl[] = {
-+	QMP_PHY_INIT_CFG(QSERDES_V3_TX_HIGHZ_DRVR_EN, 0x10),
-+	QMP_PHY_INIT_CFG(QSERDES_V3_TX_RCV_DETECT_LVL_2, 0x12),
-+	QMP_PHY_INIT_CFG(QSERDES_V3_TX_LANE_MODE_1, 0x16),
-+	QMP_PHY_INIT_CFG(QSERDES_V3_TX_RES_CODE_LANE_OFFSET_TX, 0x00),
-+};
-+
-+static const struct qmp_phy_init_tbl msm8998_usb3_rx_tbl[] = {
-+	QMP_PHY_INIT_CFG(QSERDES_V3_RX_UCDR_FASTLOCK_FO_GAIN, 0x0b),
-+	QMP_PHY_INIT_CFG(QSERDES_V3_RX_RX_EQU_ADAPTOR_CNTRL2, 0x0f),
-+	QMP_PHY_INIT_CFG(QSERDES_V3_RX_RX_EQU_ADAPTOR_CNTRL3, 0x4e),
-+	QMP_PHY_INIT_CFG(QSERDES_V3_RX_RX_EQU_ADAPTOR_CNTRL4, 0x18),
-+	QMP_PHY_INIT_CFG(QSERDES_V3_RX_RX_EQ_OFFSET_ADAPTOR_CNTRL1, 0x07),
-+	QMP_PHY_INIT_CFG(QSERDES_V3_RX_RX_OFFSET_ADAPTOR_CNTRL2, 0x80),
-+	QMP_PHY_INIT_CFG(QSERDES_V3_RX_SIGDET_CNTRL, 0x43),
-+	QMP_PHY_INIT_CFG(QSERDES_V3_RX_SIGDET_DEGLITCH_CNTRL, 0x1c),
-+	QMP_PHY_INIT_CFG(QSERDES_V3_RX_UCDR_SO_SATURATION_AND_ENABLE, 0x75),
-+	QMP_PHY_INIT_CFG(QSERDES_V3_RX_UCDR_FASTLOCK_COUNT_LOW, 0x00),
-+	QMP_PHY_INIT_CFG(QSERDES_V3_RX_UCDR_FASTLOCK_COUNT_HIGH, 0x00),
-+	QMP_PHY_INIT_CFG(QSERDES_V3_RX_UCDR_PI_CONTROLS, 0x80),
-+	QMP_PHY_INIT_CFG(QSERDES_V3_RX_UCDR_FO_GAIN, 0x0a),
-+	QMP_PHY_INIT_CFG(QSERDES_V3_RX_UCDR_SO_GAIN, 0x06),
-+	QMP_PHY_INIT_CFG(QSERDES_V3_RX_SIGDET_ENABLES, 0x00),
-+	QMP_PHY_INIT_CFG(QSERDES_V3_RX_VGA_CAL_CNTRL2, 0x03),
-+	QMP_PHY_INIT_CFG(QSERDES_V3_RX_RX_MODE_00, 0x05),
-+};
-+
-+static const struct qmp_phy_init_tbl msm8998_usb3_pcs_tbl[] = {
-+	QMP_PHY_INIT_CFG(QPHY_V3_PCS_FLL_CNTRL2, 0x83),
-+	QMP_PHY_INIT_CFG(QPHY_V3_PCS_FLL_CNT_VAL_L, 0x09),
-+	QMP_PHY_INIT_CFG(QPHY_V3_PCS_FLL_CNT_VAL_H_TOL, 0xa2),
-+	QMP_PHY_INIT_CFG(QPHY_V3_PCS_FLL_MAN_CODE, 0x40),
-+	QMP_PHY_INIT_CFG(QPHY_V3_PCS_FLL_CNTRL1, 0x02),
-+	QMP_PHY_INIT_CFG(QPHY_V3_PCS_LOCK_DETECT_CONFIG1, 0xd1),
-+	QMP_PHY_INIT_CFG(QPHY_V3_PCS_LOCK_DETECT_CONFIG2, 0x1f),
-+	QMP_PHY_INIT_CFG(QPHY_V3_PCS_LOCK_DETECT_CONFIG3, 0x47),
-+	QMP_PHY_INIT_CFG(QPHY_V3_PCS_POWER_STATE_CONFIG2, 0x1b),
-+	QMP_PHY_INIT_CFG(QPHY_V3_PCS_TXMGN_V0, 0x9f),
-+	QMP_PHY_INIT_CFG(QPHY_V3_PCS_TXMGN_V1, 0x9f),
-+	QMP_PHY_INIT_CFG(QPHY_V3_PCS_TXMGN_V2, 0xb7),
-+	QMP_PHY_INIT_CFG(QPHY_V3_PCS_TXMGN_V3, 0x4e),
-+	QMP_PHY_INIT_CFG(QPHY_V3_PCS_TXMGN_V4, 0x65),
-+	QMP_PHY_INIT_CFG(QPHY_V3_PCS_TXMGN_LS, 0x6b),
-+	QMP_PHY_INIT_CFG(QPHY_V3_PCS_TXDEEMPH_M6DB_V0, 0x15),
-+	QMP_PHY_INIT_CFG(QPHY_V3_PCS_TXDEEMPH_M3P5DB_V0, 0x0d),
-+	QMP_PHY_INIT_CFG(QPHY_V3_PCS_TX_LARGE_AMP_DRV_LVL, 0x15),
-+	QMP_PHY_INIT_CFG(QPHY_V3_PCS_TXDEEMPH_M3P5DB_V1, 0x0d),
-+	QMP_PHY_INIT_CFG(QPHY_V3_PCS_TXDEEMPH_M6DB_V2, 0x15),
-+	QMP_PHY_INIT_CFG(QPHY_V3_PCS_TXDEEMPH_M3P5DB_V2, 0x0d),
-+	QMP_PHY_INIT_CFG(QPHY_V3_PCS_TXDEEMPH_M6DB_V3, 0x15),
-+	QMP_PHY_INIT_CFG(QPHY_V3_PCS_TXDEEMPH_M3P5DB_V3, 0x0d),
-+	QMP_PHY_INIT_CFG(QPHY_V3_PCS_TXDEEMPH_M6DB_V4, 0x15),
-+	QMP_PHY_INIT_CFG(QPHY_V3_PCS_TXDEEMPH_M3P5DB_V4, 0x0d),
-+	QMP_PHY_INIT_CFG(QPHY_V3_PCS_TXDEEMPH_M6DB_LS, 0x15),
-+	QMP_PHY_INIT_CFG(QPHY_V3_PCS_TXDEEMPH_M3P5DB_LS, 0x0d),
-+	QMP_PHY_INIT_CFG(QPHY_V3_PCS_RATE_SLEW_CNTRL, 0x02),
-+	QMP_PHY_INIT_CFG(QPHY_V3_PCS_PWRUP_RESET_DLY_TIME_AUXCLK, 0x04),
-+	QMP_PHY_INIT_CFG(QPHY_V3_PCS_TSYNC_RSYNC_TIME, 0x44),
-+	QMP_PHY_INIT_CFG(QPHY_V3_PCS_RCVR_DTCT_DLY_P1U2_L, 0xe7),
-+	QMP_PHY_INIT_CFG(QPHY_V3_PCS_RCVR_DTCT_DLY_P1U2_H, 0x03),
-+	QMP_PHY_INIT_CFG(QPHY_V3_PCS_RCVR_DTCT_DLY_U3_L, 0x40),
-+	QMP_PHY_INIT_CFG(QPHY_V3_PCS_RCVR_DTCT_DLY_U3_H, 0x00),
-+	QMP_PHY_INIT_CFG(QPHY_V3_PCS_RX_SIGDET_LVL, 0x8a),
-+	QMP_PHY_INIT_CFG(QPHY_V3_PCS_RXEQTRAINING_WAIT_TIME, 0x75),
-+	QMP_PHY_INIT_CFG(QPHY_V3_PCS_LFPS_TX_ECSTART_EQTLOCK, 0x86),
-+	QMP_PHY_INIT_CFG(QPHY_V3_PCS_RXEQTRAINING_RUN_TIME, 0x13),
-+};
-+
-+
- /* struct qmp_phy_cfg - per-PHY initialization config */
- struct qmp_phy_cfg {
- 	/* phy-type - PCIE/UFS/USB */
-@@ -1036,6 +1146,33 @@ static inline void qphy_clrbits(void __iomem *base, u32 offset, u32 val)
- 	.no_pcs_sw_reset	= true,
- };
- 
-+static const struct qmp_phy_cfg msm8998_usb3phy_cfg = {
-+	.type                   = PHY_TYPE_USB3,
-+	.nlanes                 = 1,
-+
-+	.serdes_tbl             = msm8998_usb3_serdes_tbl,
-+	.serdes_tbl_num         = ARRAY_SIZE(msm8998_usb3_serdes_tbl),
-+	.tx_tbl                 = msm8998_usb3_tx_tbl,
-+	.tx_tbl_num             = ARRAY_SIZE(msm8998_usb3_tx_tbl),
-+	.rx_tbl                 = msm8998_usb3_rx_tbl,
-+	.rx_tbl_num             = ARRAY_SIZE(msm8998_usb3_rx_tbl),
-+	.pcs_tbl                = msm8998_usb3_pcs_tbl,
-+	.pcs_tbl_num            = ARRAY_SIZE(msm8998_usb3_pcs_tbl),
-+	.clk_list               = msm8996_phy_clk_l,
-+	.num_clks               = ARRAY_SIZE(msm8996_phy_clk_l),
-+	.reset_list             = msm8996_usb3phy_reset_l,
-+	.num_resets             = ARRAY_SIZE(msm8996_usb3phy_reset_l),
-+	.vreg_list              = qmp_phy_vreg_l,
-+	.num_vregs              = ARRAY_SIZE(qmp_phy_vreg_l),
-+	.regs                   = qmp_v3_usb3phy_regs_layout,
-+
-+	.start_ctrl             = SERDES_START | PCS_START,
-+	.pwrdn_ctrl             = SW_PWRDN,
-+	.mask_pcs_ready         = PHYSTATUS,
-+
-+	.is_dual_lane_phy       = true,
-+};
-+
- static void qcom_qmp_phy_configure(void __iomem *base,
- 				   const unsigned int *regs,
- 				   const struct qmp_phy_init_tbl tbl[],
-@@ -1747,6 +1884,9 @@ int qcom_qmp_phy_create(struct device *dev, struct device_node *np, int id)
- 	}, {
- 		.compatible = "qcom,sdm845-qmp-ufs-phy",
- 		.data = &sdm845_ufsphy_cfg,
-+	}, {
-+		.compatible = "qcom,msm8998-qmp-usb3-phy",
-+		.data = &msm8998_usb3phy_cfg,
- 	},
- 	{ },
- };
-diff --git a/drivers/phy/qualcomm/phy-qcom-qmp.h b/drivers/phy/qualcomm/phy-qcom-qmp.h
-index d201cc3..a1b6cde 100644
---- a/drivers/phy/qualcomm/phy-qcom-qmp.h
-+++ b/drivers/phy/qualcomm/phy-qcom-qmp.h
-@@ -174,6 +174,7 @@
- #define QSERDES_V3_COM_DIV_FRAC_START1_MODE1		0x0c4
- #define QSERDES_V3_COM_DIV_FRAC_START2_MODE1		0x0c8
- #define QSERDES_V3_COM_DIV_FRAC_START3_MODE1		0x0cc
-+#define QSERDES_V3_COM_INTEGLOOP_INITVAL		0x0d0
- #define QSERDES_V3_COM_INTEGLOOP_GAIN0_MODE0		0x0d8
- #define QSERDES_V3_COM_INTEGLOOP_GAIN1_MODE0		0x0dc
- #define QSERDES_V3_COM_INTEGLOOP_GAIN0_MODE1		0x0e0
-@@ -201,6 +202,7 @@
- #define QSERDES_V3_COM_DEBUG_BUS2			0x170
- #define QSERDES_V3_COM_DEBUG_BUS3			0x174
- #define QSERDES_V3_COM_DEBUG_BUS_SEL			0x178
-+#define QSERDES_V3_COM_CMN_MODE				0x184
- 
- /* Only for QMP V3 PHY - TX registers */
- #define QSERDES_V3_TX_RES_CODE_LANE_OFFSET_TX		0x044
-@@ -211,6 +213,7 @@
- #define QSERDES_V3_TX_RCV_DETECT_LVL_2			0x0a4
- 
- /* Only for QMP V3 PHY - RX registers */
-+#define QSERDES_V3_RX_UCDR_FO_GAIN			0x008
- #define QSERDES_V3_RX_UCDR_SO_GAIN_HALF			0x00c
- #define QSERDES_V3_RX_UCDR_SO_GAIN			0x014
- #define QSERDES_V3_RX_UCDR_SVS_SO_GAIN_HALF		0x024
-@@ -219,6 +222,7 @@
- #define QSERDES_V3_RX_UCDR_FASTLOCK_FO_GAIN		0x030
- #define QSERDES_V3_RX_UCDR_SO_SATURATION_AND_ENABLE	0x034
- #define QSERDES_V3_RX_UCDR_FASTLOCK_COUNT_LOW		0x03c
-+#define QSERDES_V3_RX_UCDR_FASTLOCK_COUNT_HIGH		0x040
- #define QSERDES_V3_RX_UCDR_PI_CONTROLS			0x044
- #define QSERDES_V3_RX_RX_TERM_BW			0x07c
- #define QSERDES_V3_RX_VGA_CAL_CNTRL1			0x0bc
--- 
-Qualcomm Datacenter Technologies as an affiliate of Qualcomm Technologies, Inc.
-Qualcomm Technologies, Inc. is a member of the
-Code Aurora Forum, a Linux Foundation Collaborative Project.
+The immediate fix is that the __ssb_safe variable should be in its own 
+conditional block which is  CONFIG_GENERIC_CPU_VULNERABILITIES || 
+CONFIG_ARM64_SSBD. If the mitigation isn't built in then this code won't 
+be run anyway because the sysfs entry won't be populated.
+
+
+But, these CONFIG_ conditionals are less than ideal (and would be even 
+uglier if they were made more efficient). My own opinion at this point 
+is that we should really remove the compile time configs and leave the 
+mitigation built all the time. The raw code is fairly small, and we 
+could add in the nospectre_v2 command line options so that users can 
+choose to runtime disable them. That would also remove the need to 
+modify the core cpu vulnerabilities sysfs code.
 
