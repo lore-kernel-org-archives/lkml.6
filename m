@@ -2,128 +2,134 @@ Return-Path: <SRS0=tq6k=PW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EC6C0C43613
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 13:26:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DC167C43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 13:26:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B9AA52086D
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 13:26:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A568020659
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 13:26:20 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20150623.gappssmtp.com header.i=@kernel-dk.20150623.gappssmtp.com header.b="eCasF6U/"
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="SKjVgiWT"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726660AbfANN0P (ORCPT
+        id S1726756AbfANN0J (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 14 Jan 2019 08:26:15 -0500
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:37895 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726470AbfANN0O (ORCPT
+        Mon, 14 Jan 2019 08:26:09 -0500
+Received: from fllv0016.ext.ti.com ([198.47.19.142]:37304 "EHLO
+        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726545AbfANN0I (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 Jan 2019 08:26:14 -0500
-Received: by mail-pf1-f193.google.com with SMTP id q1so10355212pfi.5
-        for <linux-kernel@vger.kernel.org>; Mon, 14 Jan 2019 05:26:13 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=aubFD5Gq1gq/mvCOyz5wzJwe55pl3rSMUOZl6C6NQGM=;
-        b=eCasF6U/w30uMpy2O/9TVNs2Z2uMsSytK69FvPCCe+fff4Bfd/9JNBRAb6ai7/rs7K
-         4KOxMHQpmUtRoL9SmXNg+zE1mkMsegycBiCYl7DAYKumgoU4xl/v1buw44bosj1U0G18
-         PS2avHyCcLzCCWeqTPYDwFQBES9BpzGZS/pou5A/sDovRbXJNJlpc4k7aDb5Bn76EXuL
-         Hlg3LiL4er0eax7ftcJEmPu9FXrJwnN+eIfBJMOsLly2cOQPGZKpc8JEJ8L29yh4IUJO
-         SU+WVrj56wrwUCCR5exeKFke6sd0OuSgst/K4KWq2oJE8m9oAN13MbZg3AYBEHCgVzU4
-         j0MA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=aubFD5Gq1gq/mvCOyz5wzJwe55pl3rSMUOZl6C6NQGM=;
-        b=SrDsxJkNVhdS0lA+w7AXbOlyxGe7HwGHCM6xGZSGGnrkwIOcOa3jg874t6aH75V35Z
-         xztF6VXniEVSC2mfofWNnrHwlIdSiziVcOKOpwnve7kUMXkkhWBq31sOlJiicStP2O1f
-         ThmRzAZVWDD0p2GR0Qk1+BMZS9QWnhSN8ikPm93sjQvbXtaDgx4opuKOMaWlkGUgMIog
-         UE1xd7VuXDsjPNcP80NSnl8Wll0cx9juitfl+ikHn84QHEKXCKx+lZr6JEgH7/mpd7Bu
-         oRbHgXhzuubj0nuW5f+Fqb+60fzxwm4HH5H5UacGnnx4FmGrQknCLlYMlQ7JkiWEo27l
-         mG8A==
-X-Gm-Message-State: AJcUukdqVwCYIGQ8GZTuAfeJodYyJtjbGzd7qYKE9Nal9nCL2t3gOJC9
-        /ZYdv6Siocw/d3I5jGowTytkmw==
-X-Google-Smtp-Source: ALg8bN6spBFlTlaRU8DbIwhfRmuBtRDRr2lxpsmxwpLglDOfooxOj4I7osPpgRQC+NCiF3vAedPirA==
-X-Received: by 2002:a63:2f07:: with SMTP id v7mr21434916pgv.368.1547472373273;
-        Mon, 14 Jan 2019 05:26:13 -0800 (PST)
-Received: from [192.168.1.121] (66.29.188.166.static.utbb.net. [66.29.188.166])
-        by smtp.gmail.com with ESMTPSA id m19sm1024468pgn.35.2019.01.14.05.26.11
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 14 Jan 2019 05:26:12 -0800 (PST)
-Subject: Re: [PATCH BUGFIX 0/2] bfq: fix unbalanced decrements causing loss of
- throughput
-To:     Paolo Valente <paolo.valente@linaro.org>
-Cc:     linux-block <linux-block@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Mark Brown <broonie@kernel.org>, bfq-iosched@googlegroups.com,
-        oleksandr@natalenko.name, federico@willer.it
-References: <20181206181819.11148-1-paolo.valente@linaro.org>
- <09393ef1-9559-2042-6c83-75ed3fd529d3@kernel.dk>
- <8753C347-2BFD-40D4-A97E-DA955BC0207C@linaro.org>
- <16d4065e-c0d1-7a85-3d9a-242bfd92923e@kernel.dk>
- <F7FF3405-74FF-40C3-8C0E-12108170CEF0@linaro.org>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <cfe7c5d1-040a-33a7-bb63-ac591c6eec14@kernel.dk>
-Date:   Mon, 14 Jan 2019 06:26:09 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Mon, 14 Jan 2019 08:26:08 -0500
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id x0EDPKb0098063;
+        Mon, 14 Jan 2019 07:25:20 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1547472320;
+        bh=fRCs1u9heVGXhJdOX/5kFPoouLrzDR4CIAvdI4U5mZU=;
+        h=From:To:CC:Subject:Date:In-Reply-To:References;
+        b=SKjVgiWTPNKi9M141DjVIVi13fIItZeEen+LkOkVdfDjQkP02nfm8hhqkQZjn3wK2
+         VCyMies27BaNrsspb2Zyo0mcEtja9auPdzatQncPhF94AA+Q9TLDWneohJsyY0a/3z
+         4oAcmYCfikqghDVcIDrptGXvMrBAHKN60m7qypRs=
+Received: from DFLE104.ent.ti.com (dfle104.ent.ti.com [10.64.6.25])
+        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x0EDPKaf088730
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Mon, 14 Jan 2019 07:25:20 -0600
+Received: from DFLE113.ent.ti.com (10.64.6.34) by DFLE104.ent.ti.com
+ (10.64.6.25) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Mon, 14
+ Jan 2019 07:25:19 -0600
+Received: from dlep32.itg.ti.com (157.170.170.100) by DFLE113.ent.ti.com
+ (10.64.6.34) with Microsoft SMTP Server (version=TLS1_0,
+ cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1591.10 via Frontend Transport;
+ Mon, 14 Jan 2019 07:25:20 -0600
+Received: from a0393678ub.india.ti.com (ileax41-snat.itg.ti.com [10.172.224.153])
+        by dlep32.itg.ti.com (8.14.3/8.13.8) with ESMTP id x0EDOoWR028516;
+        Mon, 14 Jan 2019 07:25:15 -0600
+From:   Kishon Vijay Abraham I <kishon@ti.com>
+To:     Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+CC:     Kishon Vijay Abraham I <kishon@ti.com>,
+        Jingoo Han <jingoohan1@gmail.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Murali Karicheri <m-karicheri2@ti.com>,
+        Jesper Nilsson <jesper.nilsson@axis.com>,
+        <linux-pci@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-omap@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-arm-kernel@axis.com>
+Subject: [PATCH 05/24] PCI: keystone: Use platform_get_resource_byname to get memory resources
+Date:   Mon, 14 Jan 2019 18:54:05 +0530
+Message-ID: <20190114132424.6445-6-kishon@ti.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20190114132424.6445-1-kishon@ti.com>
+References: <20190114132424.6445-1-kishon@ti.com>
 MIME-Version: 1.0
-In-Reply-To: <F7FF3405-74FF-40C3-8C0E-12108170CEF0@linaro.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 1/14/19 2:09 AM, Paolo Valente wrote:
-> 
-> 
->> Il giorno 7 dic 2018, alle ore 15:40, Jens Axboe <axboe@kernel.dk> ha scritto:
->>
->> On 12/7/18 3:01 AM, Paolo Valente wrote:
->>>
->>>
->>>> Il giorno 7 dic 2018, alle ore 03:23, Jens Axboe <axboe@kernel.dk> ha scritto:
->>>>
->>>> On 12/6/18 11:18 AM, Paolo Valente wrote:
->>>>> Hi Jens,
->>>>> the first patch in this series fixes an error in the decrementing of
->>>>> the counter of the number of groups with pending I/O. This wrong
->>>>> decrement caused loss of throughput or, less likely, of control on
->>>>> I/O. The second patch is a fix of some wrong comments, which somehow
->>>>> contributed to making the above bug more difficult to find.
->>>>
->>>> Are you fine with this going into 4.21? I can't quite tell what your
->>>> intent is. The first patch has a Fixes for something
->>>
->>> yep, that fixes a serious error.
->>>
->>>> that went into
->>>> this series, but then patch 2 is a comment update that would not
->>>> normally be something to be applied at this stage.
->>>>
->>>
->>> and yes, only comments changed by the second one
->>>
->>> May it make sense to apply them in two steps, one in the 4.20 and the other one in the 4.21?
->>
->> I think so, I'll do that.
-> 
-> Hi Jens,
-> is the second patch still queued?
+Use platform_get_resource_byname() instead of platform_get_resource() which
+uses index to get memory resources. While at that get the memory resource
+defined specifically for configuration space instead of deriving the
+configuration space address from dbics address space. Since pci-keystone
+driver has never worked out of the box in mainline kernel, dt backward
+compatibility is ignored.
 
-That got dropped for some reason, I've applied it now.
+Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
+---
+ drivers/pci/controller/dwc/pci-keystone.c | 17 +++++++----------
+ 1 file changed, 7 insertions(+), 10 deletions(-)
 
+diff --git a/drivers/pci/controller/dwc/pci-keystone.c b/drivers/pci/controller/dwc/pci-keystone.c
+index 3f917ffa9105..88766d4cb50c 100644
+--- a/drivers/pci/controller/dwc/pci-keystone.c
++++ b/drivers/pci/controller/dwc/pci-keystone.c
+@@ -44,7 +44,6 @@
+ #define CFG_TYPE1			BIT(24)
+ 
+ #define OB_SIZE				0x030
+-#define SPACE0_REMOTE_CFG_OFFSET	0x1000
+ #define OB_OFFSET_INDEX(n)		(0x200 + (8 * (n)))
+ #define OB_OFFSET_HI(n)			(0x204 + (8 * (n)))
+ #define OB_ENABLEN			BIT(0)
+@@ -790,21 +789,19 @@ static int __init ks_pcie_add_pcie_port(struct keystone_pcie *ks_pcie,
+ 	struct resource *res;
+ 	int ret;
+ 
+-	/* Index 0 is the config reg. space address */
+-	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
++	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "dbics");
+ 	pci->dbi_base = devm_pci_remap_cfg_resource(dev, res);
+ 	if (IS_ERR(pci->dbi_base))
+ 		return PTR_ERR(pci->dbi_base);
+ 
+-	/*
+-	 * We set these same and is used in pcie rd/wr_other_conf
+-	 * functions
+-	 */
+-	pp->va_cfg0_base = pci->dbi_base + SPACE0_REMOTE_CFG_OFFSET;
++	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "config");
++	pp->va_cfg0_base = devm_pci_remap_cfg_resource(dev, res);
++	if (IS_ERR(pp->va_cfg0_base))
++		return PTR_ERR(pp->va_cfg0_base);
++
+ 	pp->va_cfg1_base = pp->va_cfg0_base;
+ 
+-	/* Index 1 is the application reg. space address */
+-	res = platform_get_resource(pdev, IORESOURCE_MEM, 1);
++	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "app");
+ 	ks_pcie->va_app_base = devm_ioremap_resource(dev, res);
+ 	if (IS_ERR(ks_pcie->va_app_base))
+ 		return PTR_ERR(ks_pcie->va_app_base);
 -- 
-Jens Axboe
+2.17.1
 
