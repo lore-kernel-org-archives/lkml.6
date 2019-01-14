@@ -2,215 +2,121 @@ Return-Path: <SRS0=tq6k=PW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C183AC43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 12:07:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7EDDBC43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 12:10:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8E20820659
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 12:07:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547467673;
-	bh=oyVeZhgtPBDRJLQhFvTNfAX3C2ei6o4VwNzKTQ4U6aM=;
-	h=From:To:Cc:Subject:In-Reply-To:Date:List-ID:From;
-	b=ZnN8GjPfIYgMkybzFos6/v+4CajVwszjdM6TnJZAEquEwkWURcPPdla5ljwsPsShV
-	 uVN1XeAR4bg6uUeNgFV2tBDnW3CRq1K81Gv5q5ukbFuPHlyInhQpaUJaiGQ8L10Ig5
-	 mfB6H0osc9RiZOkMlvvgbyyRlbKWtbxJH2/NBpTE=
+	by mail.kernel.org (Postfix) with ESMTP id 549AF20656
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 12:10:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726629AbfANMHw (ORCPT
+        id S1726565AbfANMKo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 14 Jan 2019 07:07:52 -0500
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:39350 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726470AbfANMHp (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 Jan 2019 07:07:45 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
-        Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
-        List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=s0HBF+CL3KiNtTHTo/Chu3WFRvm3PJBcAp/d4O9Znts=; b=ZDIa0dvpeFVj
-        9Zxjl5OgC5/gl/UITa+T8cPYTREqMarh32LA71Wx5TG8EtBdONdSCe1RG9WfTjoV4kZM9dVx6Tedv
-        MrN+m/ODPtYZ1eBcqv+DQQqUMl+XqaBPsH3bHJ2Tbityu6+44HUU9EGE0cnV5dAspWgKW/sLNul9Z
-        MTOWY=;
-Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
-        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1gj11q-0004uc-Uz; Mon, 14 Jan 2019 12:07:43 +0000
-Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
-        id 6F7351127AD1; Mon, 14 Jan 2019 12:07:37 +0000 (GMT)
-From:   Mark Brown <broonie@kernel.org>
-To:     Linus Walleij <linus.walleij@linaro.org>
-Cc:     Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org
-Subject: Applied "regulator: core: Only support passing enable GPIO descriptors" to the regulator tree
-In-Reply-To: 
-X-Patchwork-Hint: ignore
-Message-Id: <20190114120737.6F7351127AD1@debutante.sirena.org.uk>
-Date:   Mon, 14 Jan 2019 12:07:37 +0000 (GMT)
+        Mon, 14 Jan 2019 07:10:44 -0500
+Received: from szxga07-in.huawei.com ([45.249.212.35]:45742 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726436AbfANMKn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 14 Jan 2019 07:10:43 -0500
+Received: from DGGEMS407-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id 630A371401E80BC863A6;
+        Mon, 14 Jan 2019 20:10:41 +0800 (CST)
+Received: from [127.0.0.1] (10.202.226.43) by DGGEMS407-HUB.china.huawei.com
+ (10.3.19.207) with Microsoft SMTP Server id 14.3.408.0; Mon, 14 Jan 2019
+ 20:10:30 +0800
+Subject: Re: [PATCH] scsi: isci: initialize shost fully before calling
+ scsi_add_host()
+To:     "Martin K. Petersen" <martin.petersen@oracle.com>
+References: <20190108205043.3122-1-logang@deltatee.com>
+ <20190109184105.GB22070@lst.de>
+ <8d96b40d-fc83-9218-9479-3de423594ddb@huawei.com>
+ <yq1lg3qy578.fsf@oracle.com>
+CC:     Christoph Hellwig <hch@lst.de>,
+        Logan Gunthorpe <logang@deltatee.com>,
+        <linux-scsi@vger.kernel.org>, <linux-block@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        Intel SCU Linux support <intel-linux-scu@intel.com>,
+        Artur Paszkiewicz <artur.paszkiewicz@intel.com>,
+        "James E.J. Bottomley" <jejb@linux.ibm.com>,
+        Jens Axboe <axboe@kernel.dk>, Jeff Moyer <jmoyer@redhat.com>,
+        chenxiang <chenxiang66@hisilicon.com>
+From:   John Garry <john.garry@huawei.com>
+Message-ID: <0ffaf166-c7e5-b135-fdc5-bcac24148e62@huawei.com>
+Date:   Mon, 14 Jan 2019 12:10:23 +0000
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:45.0) Gecko/20100101
+ Thunderbird/45.3.0
+MIME-Version: 1.0
+In-Reply-To: <yq1lg3qy578.fsf@oracle.com>
+Content-Type: text/plain; charset="windows-1252"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.202.226.43]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The patch
+On 12/01/2019 02:34, Martin K. Petersen wrote:
+>
+> John,
+>
+>> So how about just drop these APIs and let the user set the shost
+>> protection parameters directly, like other shost parameters,
+>
+> The protection interfaces here obviously predate the block layer
+> allocation changes that made this particular issue pop up.
+>
+>> which should make it a bit clearer when these should be set,
+>> i.e. before scsi_add_host()?
+>
+> In general, I am not so keen on the somewhat messy intersection between
+> the host parameters and the host template. The static host templates
+> made lots of sense in the days of Seagate ST01 and fixed hardware
+> capabilities.  But reality is that most modern controllers have to query
+> firmware interfaces to figure out what their actual capabilities are.
 
-   regulator: core: Only support passing enable GPIO descriptors
+Hi Martin,
 
-has been applied to the regulator tree at
+I am not suggested setting the parameters via scsi host template, but 
+rather dynamically (as we currently do) but just drop the set helper 
+functions, like:
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git 
+     shost->max_channel = 1;
+     shost->max_cmd_len = 16;
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
+     ...
 
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
+     if (hisi_hba->prot_mask) {
+         dev_info(dev, "Registering for DIF/DIX prot_mask=0x%x\n",
+              prot_mask);
+-        scsi_host_set_prot(hisi_hba->shost, prot_mask);
++        shost->prot_capabilities = prot_mask;
+     }
 
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
+     rc = scsi_add_host(shost, dev);
+     if (rc)
+         goto err_out_ha;
 
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
+     rc = sas_register_ha(sha);
+     if (rc)
+         goto err_out_register_ha;
+
+I find that it is not crystal clear when scsi_host_set_prot() and 
+scsi_host_set_guard() should be called, but not so for setting the shost 
+parameters directly, which is common.
+
+>
+> So in this case I think that accessor functions are actually better
+> because they allow us to print a big fat warning when you twiddle
+> something you shouldn't post-initialization. So that's something I think
+> we could--and should--improve.
+>
+
+Sure, this is an alternative, but I would rather make it obvious when 
+these parameters should be set so that this would not be required.
 
 Thanks,
-Mark
+John
 
-From 5174d053ca62112d88e76398d4620589cf92fdfb Mon Sep 17 00:00:00 2001
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Mon, 7 Jan 2019 17:27:46 +0100
-Subject: [PATCH] regulator: core: Only support passing enable GPIO descriptors
-
-Now that we changed all providers to pass descriptors into the core
-for enable GPIOs instead of a global GPIO number, delete the support
-for passing GPIO numbers in, and we get a cleanup and size reduction
-in the core, and from a GPIO point of view we use the modern, cleaner
-interface.
-
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- drivers/regulator/core.c         | 32 ++++++--------------------------
- include/linux/regulator/driver.h | 12 +-----------
- 2 files changed, 7 insertions(+), 37 deletions(-)
-
-diff --git a/drivers/regulator/core.c b/drivers/regulator/core.c
-index 1778c5d1b2d0..4fb475a2e4f2 100644
---- a/drivers/regulator/core.c
-+++ b/drivers/regulator/core.c
-@@ -23,7 +23,6 @@
- #include <linux/mutex.h>
- #include <linux/suspend.h>
- #include <linux/delay.h>
--#include <linux/gpio.h>
- #include <linux/gpio/consumer.h>
- #include <linux/of.h>
- #include <linux/regmap.h>
-@@ -2236,35 +2235,19 @@ static int regulator_ena_gpio_request(struct regulator_dev *rdev,
- {
- 	struct regulator_enable_gpio *pin;
- 	struct gpio_desc *gpiod;
--	int ret;
- 
--	if (config->ena_gpiod)
--		gpiod = config->ena_gpiod;
--	else
--		gpiod = gpio_to_desc(config->ena_gpio);
-+	gpiod = config->ena_gpiod;
- 
- 	list_for_each_entry(pin, &regulator_ena_gpio_list, list) {
- 		if (pin->gpiod == gpiod) {
--			rdev_dbg(rdev, "GPIO %d is already used\n",
--				config->ena_gpio);
-+			rdev_dbg(rdev, "GPIO is already used\n");
- 			goto update_ena_gpio_to_rdev;
- 		}
- 	}
- 
--	if (!config->ena_gpiod) {
--		ret = gpio_request_one(config->ena_gpio,
--				       GPIOF_DIR_OUT | config->ena_gpio_flags,
--				       rdev_get_name(rdev));
--		if (ret)
--			return ret;
--	}
--
- 	pin = kzalloc(sizeof(struct regulator_enable_gpio), GFP_KERNEL);
--	if (pin == NULL) {
--		if (!config->ena_gpiod)
--			gpio_free(config->ena_gpio);
-+	if (pin == NULL)
- 		return -ENOMEM;
--	}
- 
- 	pin->gpiod = gpiod;
- 	list_add(&pin->list, &regulator_ena_gpio_list);
-@@ -2287,7 +2270,6 @@ static void regulator_ena_gpio_free(struct regulator_dev *rdev)
- 		if (pin->gpiod == rdev->ena_pin->gpiod) {
- 			if (pin->request_count <= 1) {
- 				pin->request_count = 0;
--				gpiod_put(pin->gpiod);
- 				list_del(&pin->list);
- 				kfree(pin);
- 				rdev->ena_pin = NULL;
-@@ -4971,15 +4953,13 @@ regulator_register(const struct regulator_desc *regulator_desc,
- 			goto clean;
- 	}
- 
--	if (config->ena_gpiod ||
--	    ((config->ena_gpio || config->ena_gpio_initialized) &&
--	     gpio_is_valid(config->ena_gpio))) {
-+	if (config->ena_gpiod) {
- 		mutex_lock(&regulator_list_mutex);
- 		ret = regulator_ena_gpio_request(rdev, config);
- 		mutex_unlock(&regulator_list_mutex);
- 		if (ret != 0) {
--			rdev_err(rdev, "Failed to request enable GPIO%d: %d\n",
--				 config->ena_gpio, ret);
-+			rdev_err(rdev, "Failed to request enable GPIO: %d\n",
-+				 ret);
- 			goto clean;
- 		}
- 		/* The regulator core took over the GPIO descriptor */
-diff --git a/include/linux/regulator/driver.h b/include/linux/regulator/driver.h
-index 795b38a06b6c..7f8345bff4e1 100644
---- a/include/linux/regulator/driver.h
-+++ b/include/linux/regulator/driver.h
-@@ -401,13 +401,7 @@ struct regulator_desc {
-  *           NULL).
-  * @regmap: regmap to use for core regmap helpers if dev_get_regmap() is
-  *          insufficient.
-- * @ena_gpio_initialized: GPIO controlling regulator enable was properly
-- *                        initialized, meaning that >= 0 is a valid gpio
-- *                        identifier and < 0 is a non existent gpio.
-- * @ena_gpio: GPIO controlling regulator enable.
-- * @ena_gpiod: GPIO descriptor controlling regulator enable.
-- * @ena_gpio_invert: Sense for GPIO enable control.
-- * @ena_gpio_flags: Flags to use when calling gpio_request_one()
-+ * @ena_gpiod: GPIO controlling regulator enable.
-  */
- struct regulator_config {
- 	struct device *dev;
-@@ -416,11 +410,7 @@ struct regulator_config {
- 	struct device_node *of_node;
- 	struct regmap *regmap;
- 
--	bool ena_gpio_initialized;
--	int ena_gpio;
- 	struct gpio_desc *ena_gpiod;
--	unsigned int ena_gpio_invert:1;
--	unsigned int ena_gpio_flags;
- };
- 
- /*
--- 
-2.20.1
 
