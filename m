@@ -2,132 +2,82 @@ Return-Path: <SRS0=tq6k=PW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C99D8C43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 08:27:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BBE24C43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 08:28:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A459B20660
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 08:27:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 88FA920675
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 08:28:37 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="e5qmJpOI"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726623AbfANI1X (ORCPT
+        id S1726526AbfANI2f (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 14 Jan 2019 03:27:23 -0500
-Received: from relay1-d.mail.gandi.net ([217.70.183.193]:53241 "EHLO
-        relay1-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726580AbfANI1U (ORCPT
+        Mon, 14 Jan 2019 03:28:35 -0500
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:41040 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726138AbfANI2f (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 Jan 2019 03:27:20 -0500
-X-Originating-IP: 141.70.45.131
-Received: from localhost (hadi-gate-vlan-851.hadiko.whka.de [141.70.45.131])
-        (Authenticated sender: hle@owl.eu.com)
-        by relay1-d.mail.gandi.net (Postfix) with ESMTPSA id 6A07C240010;
-        Mon, 14 Jan 2019 08:27:16 +0000 (UTC)
-Date:   Mon, 14 Jan 2019 09:27:15 +0100
-From:   Hugo Lefeuvre <hle@owl.eu.com>
-To:     Greg Kroah-Hartman <greg@kroah.com>
-Cc:     Arve =?iso-8859-1?B?SGr4bm5lduVn?= <arve@android.com>,
-        Riley Andrews <riandrews@android.com>,
-        Todd Kjos <tkjos@android.com>,
-        Martijn Coenen <maco@android.com>,
-        Joel Fernandes <joel@joelfernandes.org>,
-        Christian Brauner <christian@brauner.io>,
-        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
-Subject: staging/android: questions regarding TODO entries
-Message-ID: <20190114082715.GB3017@hle-laptop.local>
+        Mon, 14 Jan 2019 03:28:35 -0500
+Received: by mail-lj1-f194.google.com with SMTP id k15-v6so18157423ljc.8
+        for <linux-kernel@vger.kernel.org>; Mon, 14 Jan 2019 00:28:34 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=PK+o5wSfNSAi8nHTgkusBFI+usEcOqlS3NIt5HaMg9A=;
+        b=e5qmJpOIJCnTGIJsBcefQF4pczpWTlwUOulFSMHsESeMXkQShuduHIBQny5xjHEEGK
+         65rR+/isOJ6hG+1BJieFHbJLww9GMaPs8vHtIH1QelUN8f5efReeRt7CjZe5wRfVmE+Z
+         LxbItZC5dXwJ3nwS0Pt1kohi2cX2V5TIP3UaE=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=PK+o5wSfNSAi8nHTgkusBFI+usEcOqlS3NIt5HaMg9A=;
+        b=USyXRClH2Eil+3nQZ1jltYbOZTnumX4G5QGc4kcbXXTP+WCGjOq1DyBBj9h3RR3rO9
+         n71KEjYcoh6sNnemC13HwFajUle1WRrziyiZXEkAA1r0hgTnGY/AQB0WYWeuqnNsjgsI
+         DeXnf6vN9vg/uo5xg/nCAoN/SEo0dG6RsTgv1V3H4g7hhjV45BH45FJPUZS6uDqHYzD6
+         mR2PQL9hL3K3PG1Gkihe548fKaU85q/S8o10zQeyGcQwnbEARORXmTnm9mo6BFPZ/P1Q
+         l6G/oHFDQ61ujshgo/yEIkCrbbkAw/dC6ugodwJ17I9WprXVTipxjsMdnQ0CpjCtCfx8
+         /EeQ==
+X-Gm-Message-State: AJcUukdYz8KQTQjhIQMhvHXN/2eaDzPpwnufm1gWhu2zFcLFM3JyA+Oe
+        rIAgob71g2gJ5l4E514ggWIAkUqGOUKIlvPlSp9I3g==
+X-Google-Smtp-Source: ALg8bN59XwyzwevpO45r4pBAAEA8eEp4i9O/m05r7uvvx8aRYBrHspWiemAZF1S/QP8c0OphilKQdUS8JELRCYvCFbE=
+X-Received: by 2002:a2e:7e04:: with SMTP id z4-v6mr13711685ljc.97.1547454513248;
+ Mon, 14 Jan 2019 00:28:33 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="qlTNgmc+xy1dBmNv"
-Content-Disposition: inline
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <1547454274-1674-1-git-send-email-vincent.guittot@linaro.org>
+In-Reply-To: <1547454274-1674-1-git-send-email-vincent.guittot@linaro.org>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Mon, 14 Jan 2019 09:28:21 +0100
+Message-ID: <CACRpkdY7c16C+NpoSXUV1QsLkQgNm3vjknOSea0p4aj-LM1xBg@mail.gmail.com>
+Subject: Re: [PATCH v2] arm64/hisilicon: fix SDcard detection
+To:     Vincent Guittot <vincent.guittot@linaro.org>
+Cc:     Xu Wei <xuwei5@hisilicon.com>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Mon, Jan 14, 2019 at 9:24 AM Vincent Guittot
+<vincent.guittot@linaro.org> wrote:
 
---qlTNgmc+xy1dBmNv
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+> The SDcard detection of hikey960 is active low so cd-inverted is wrong.
+> Instead of adding cd-inverted, we should better set correctly cd-gpios
+> to use GPIO_ACTIVE_LOW.
+>
+> Signed-off-by: Vincent Guittot <vincent.guittot@linaro.org>
 
-Hi,
+Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
 
-This todo entry from staging/android/TODO intriguates me:
-
-    vsoc.c, uapi/vsoc_shm.h
-     - The current driver uses the same wait queue for all of the futexes i=
-n a
-       region. This will cause false wakeups in regions with a large number=
- of
-       waiting threads. We should eventually use multiple queues and select=
- the
-       queue based on the region.
-
-I am not sure to understand it very well.
-
-What does "select the queue based on the region" mean here ? We already
-have one queue per region, right ?
-
-What I understand: there is one wait queue per region, meaning that if
-threads T1 to Tn are waiting at offsets O1 to On (same region), then a
-wakeup at offset Om will wake them all. In this case there is a perf issue
-because only Tm (waiting for changes at offset Om) really wants to be
-waken up here, the rest is a bunch of spurious wakeups.
-
-Does the todo suggest to have one queue per offset ?
-
-Also, this comment (drivers/staging/android/vsoc.c) mentions a worst case
-of ten threads:
-
-    /*
-     * TODO(b/73664181): Use multiple futex wait queues.
-     * We need to wake every sleeper when the condition changes. Typically
-     * only a single thread will be waiting on the condition, but there
-     * are exceptions. The worst case is about 10 threads.
-     */
-
-It is not clear to me how this value has been obtained, nor under which
-conditions it might be true. There is no maximum to the number of threads
-fitting in the wait queue, so how can we be sure that at most ten threads
-will wait at the same offset ?
-
-second, unrelated question:
-
-In the VSOC_SELF_INTERRUPT ioctl (which might be removed in the future if
-VSOC_WAIT_FOR_INCOMING_INTERRUPT disappears, right ?), incoming_signalled
-is set to 1 but at no other place in the driver we reset it to zero. So,
-once VSOC_SELF_INTERRUPT has been executed once,
-VSOC_WAIT_FOR_INCOMING_INTERRUPT doesn't work anymore ?
-
-Thanks for your work !
-
-cheers,
-Hugo
-
-PS: cc-ing the result of get_maintainer.pl + contacts from todo. Please
-tell me if this is not the right way to go.
-
---=20
-                Hugo Lefeuvre (hle)    |    www.owl.eu.com
-RSA4096_ 360B 03B3 BF27 4F4D 7A3F D5E8 14AA 1EB8 A247 3DFD
-ed25519_ 37B2 6D38 0B25 B8A2 6B9F 3A65 A36F 5357 5F2D DC4C
-
---qlTNgmc+xy1dBmNv
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEUFZhdgIWqBhwqCvuZYVUZx9w0DQFAlw8R+MACgkQZYVUZx9w
-0DT2Lgf+IVb50XARwq3FBO8TxRzNnjJ+X+99fje3+ycwYgDGQCbD1Kx/kCVDlk6C
-JJp+9hlsyubFkXhgWhTMS1iOy7tPHSIq2n5UMYLxlwFQktQF3TyN1AKGXFioyBs5
-XwTykvLbAP8fIqdVPGC9nTCevSsZFCrGe2FzGHvNsi8pqpSVeXALeFwTtCNb3Y2g
-VzHoiRj0Fe3LjGntTU1n7pvvSriF7X91Bg1IFQ6ZZnSSVDVT9J+uKMy6p7XiKFOs
-5ZYPRDyMD4CnCNDIvkpsY1j71eEB1+7C8emHGl8k6faxQhnvenHTlERhCPpp8RDK
-jJnjm2XvGPqKwzSD6W9XTZS7VdFErQ==
-=/cu2
------END PGP SIGNATURE-----
-
---qlTNgmc+xy1dBmNv--
+Yours,
+Linus Walleij
