@@ -6,59 +6,57 @@ X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B5CB5C43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 15:54:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E000C43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 15:55:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 90E8D2087E
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 15:54:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 184AD206B7
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 15:55:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726872AbfANPyp (ORCPT
+        id S1726875AbfANPzP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 14 Jan 2019 10:54:45 -0500
-Received: from mga07.intel.com ([134.134.136.100]:23415 "EHLO mga07.intel.com"
+        Mon, 14 Jan 2019 10:55:15 -0500
+Received: from mga14.intel.com ([192.55.52.115]:2253 "EHLO mga14.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726854AbfANPym (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 Jan 2019 10:54:42 -0500
-X-Amp-Result: UNSCANNABLE
+        id S1726675AbfANPzO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 14 Jan 2019 10:55:14 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
 X-Amp-File-Uploaded: False
-Received: from fmsmga007.fm.intel.com ([10.253.24.52])
-  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 14 Jan 2019 07:54:41 -0800
+Received: from fmsmga008.fm.intel.com ([10.253.24.58])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 14 Jan 2019 07:55:13 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.56,478,1539673200"; 
-   d="scan'208";a="114571760"
+   d="scan'208";a="116654455"
 Received: from unknown (HELO localhost.localdomain) ([10.232.112.69])
-  by fmsmga007.fm.intel.com with ESMTP; 14 Jan 2019 07:54:37 -0800
-Date:   Mon, 14 Jan 2019 08:53:11 -0700
+  by fmsmga008.fm.intel.com with ESMTP; 14 Jan 2019 07:55:13 -0800
+Date:   Mon, 14 Jan 2019 08:53:54 -0700
 From:   Keith Busch <keith.busch@intel.com>
-To:     Pavel Machek <pavel@ucw.cz>
+To:     Mike Rapoport <rppt@linux.ibm.com>
 Cc:     linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org,
         linux-mm@kvack.org,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Rafael Wysocki <rafael@kernel.org>,
         Dave Hansen <dave.hansen@intel.com>,
         Dan Williams <dan.j.williams@intel.com>
-Subject: Re: [PATCHv3 08/13] Documentation/ABI: Add node performance
- attributes
-Message-ID: <20190114155310.GB22829@localhost.localdomain>
+Subject: Re: [PATCHv3 13/13] doc/mm: New documentation for memory performance
+Message-ID: <20190114155354.GC22829@localhost.localdomain>
 References: <20190109174341.19818-1-keith.busch@intel.com>
- <20190109174341.19818-9-keith.busch@intel.com>
- <20190113231012.GD18710@amd>
+ <20190109174341.19818-14-keith.busch@intel.com>
+ <20190113114230.GB8765@rapoport-lnx>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190113231012.GD18710@amd>
+In-Reply-To: <20190113114230.GB8765@rapoport-lnx>
 User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jan 14, 2019 at 12:10:12AM +0100, Pavel Machek wrote:
-> On Wed 2019-01-09 10:43:36, Keith Busch wrote:
-> > +		This node's write latency in nanosecondss available to memory
-> > +		initiators in nodes found in this class's
-> > initiators_nodelist.
+On Sun, Jan 13, 2019 at 01:42:30PM +0200, Mike Rapoport wrote:
+> There are a couple of nitpicks below, otherwise
 > 
-> "nanosecondss", twice.
+> Reviewed-by: Mike Rapoport <rppt@linux.ibm.com>
 
-Thanks for the catch, fixed up for the next rev.
+Thank you for the detailed review. I've incorporated all your
+recommmendations for the next revision.
