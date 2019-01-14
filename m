@@ -2,266 +2,85 @@ Return-Path: <SRS0=tq6k=PW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=0.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FSL_HELO_FAKE,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 974B2C43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 17:53:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E9049C43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 17:54:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 616BF2086D
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 17:53:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547488404;
-	bh=crarXTLRjPkm4mi/C6i02aHQVW2h01Hh2oef2ymupaM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=BgwRnSK9LmseWf+a0nz59UziKw0BHEp++4oHKBExu98R/SCZWaHNbQOeSW8mhZHlr
-	 d/qIqtmWzycBlQsTUFxQEV8FuYTotPbWG6vOl24clCLt0nFROsvXapDfwisLpAVPN4
-	 8KvnFQ8KVIXjc2ajuhRNk6cXIGQOdHf/iQ9sHe9U=
+	by mail.kernel.org (Postfix) with ESMTP id C498A20659
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 17:54:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726782AbfANRxW (ORCPT
+        id S1726794AbfANRyz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 14 Jan 2019 12:53:22 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45446 "EHLO mail.kernel.org"
+        Mon, 14 Jan 2019 12:54:55 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:34006 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726708AbfANRxU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 Jan 2019 12:53:20 -0500
-Received: from gmail.com (unknown [104.132.1.77])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1726559AbfANRyy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 14 Jan 2019 12:54:54 -0500
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7D2C320659;
-        Mon, 14 Jan 2019 17:53:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547488399;
-        bh=crarXTLRjPkm4mi/C6i02aHQVW2h01Hh2oef2ymupaM=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=DCJu6UWC3Oc0dVLmJc3+gHhnI2gW6gq8l+g14xbpYEXcoL0rKu8ixWUTabc7zeglF
-         R/tFGea9BMsyGVm1WwriuR7EdnEmG9sf4QMPrtB0YWZ+FUvEf97lJDg8vS6yoSjVBF
-         Z2n1aI9bgk6Yq3b6jVhDxP8T3AXiY3PYJK01NLCM=
-Date:   Mon, 14 Jan 2019 09:53:16 -0800
-From:   Eric Biggers <ebiggers@kernel.org>
-To:     Stephan =?iso-8859-1?Q?M=FCller?= <smueller@chronox.de>
-Cc:     Herbert Xu <herbert@gondor.apana.org.au>,
-        James Bottomley <James.Bottomley@hansenpartnership.com>,
-        Andy Lutomirski <luto@amacapital.net>,
-        "Lee, Chun-Yi" <joeyli.kernel@gmail.com>,
-        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
-        Pavel Machek <pavel@ucw.cz>, linux-kernel@vger.kernel.org,
-        linux-pm@vger.kernel.org, keyrings@vger.kernel.org,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-        Chen Yu <yu.c.chen@intel.com>,
-        Oliver Neukum <oneukum@suse.com>,
-        Ryan Chen <yu.chen.surf@gmail.com>,
-        David Howells <dhowells@redhat.com>,
-        Giovanni Gherdovich <ggherdovich@suse.cz>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Jann Horn <jannh@google.com>,
-        Andy Lutomirski <luto@kernel.org>, linux-crypto@vger.kernel.org
-Subject: Re: [PATCH 4/6] crypto: hkdf - RFC5869 Key Derivation Function
-Message-ID: <20190114175315.GB7644@gmail.com>
-References: <20190103143227.9138-1-jlee@suse.com>
- <2423373.Zd5ThvQH5g@positron.chronox.de>
- <20190112051252.GA639@sol.localdomain>
- <4734428.Gj5BGI4uxL@positron.chronox.de>
+        by mx1.redhat.com (Postfix) with ESMTPS id 76CD38667A;
+        Mon, 14 Jan 2019 17:54:54 +0000 (UTC)
+Received: from [10.18.17.208] (dhcp-17-208.bos.redhat.com [10.18.17.208])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 836465FCCE;
+        Mon, 14 Jan 2019 17:54:53 +0000 (UTC)
+Subject: Re: ppc64le reliable stack unwinder and scheduled tasks
+To:     Josh Poimboeuf <jpoimboe@redhat.com>
+Cc:     Nicolai Stange <nstange@suse.de>, linux-kernel@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org, live-patching@vger.kernel.org,
+        Torsten Duwe <duwe@lst.de>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Jiri Kosina <jkosina@suse.cz>,
+        Balbir Singh <bsingharora@gmail.com>
+References: <7f468285-b149-37e2-e782-c9e538b997a9@redhat.com>
+ <87bm4ocbbt.fsf@suse.de> <20190111010808.GA17858@redhat.com>
+ <87fttzbpid.fsf@suse.de> <20190114040937.GA6739@redhat.com>
+ <877ef7bt6j.fsf@suse.de> <20190114164659.GA18643@redhat.com>
+ <20190114170932.awhuv7livfxhrcee@treble>
+From:   Joe Lawrence <joe.lawrence@redhat.com>
+Message-ID: <4b95b2f3-c5e8-4d21-88fe-9de6cd346954@redhat.com>
+Date:   Mon, 14 Jan 2019 12:54:52 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <4734428.Gj5BGI4uxL@positron.chronox.de>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20190114170932.awhuv7livfxhrcee@treble>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.26]); Mon, 14 Jan 2019 17:54:54 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jan 14, 2019 at 10:30:39AM +0100, Stephan Müller wrote:
-> Am Samstag, 12. Januar 2019, 06:12:54 CET schrieb Eric Biggers:
+On 1/14/19 12:09 PM, Josh Poimboeuf wrote:
+> On Mon, Jan 14, 2019 at 11:46:59AM -0500, Joe Lawrence wrote:
+>> @@ -158,11 +158,21 @@ save_stack_trace_tsk_reliable(struct task_struct *tsk,
+>>   			return 1; /* invalid backlink, too far up. */
+>>   		}
+>>   
+>> +		/* We can only trust the bottom frame's backlink, the rest
+>> +		 * of the frame may be uninitialized, continue to the next. */
+>> +		if (firstframe--)
+>> +			goto next;
 > 
-> Hi Eric,
-> 
-> [...]
-> 
-> > > The extract and expand phases use different instances of the underlying
-> > > keyed message digest cipher to ensure that while the extraction phase
-> > > generates a new key for the expansion phase, the cipher for the
-> > > expansion phase can still be used. This approach is intended to aid
-> > > multi-threaded uses cases.
-> > 
-> > I think you partially misunderstood what I was asking for.  One HMAC tfm is
-> > sufficient as long as HKDF-Expand is separated from HKDF-Extract, which
-> > you've done.  So just use one HMAC tfm, and in crypto_hkdf_seed() key it
-> > with the 'salt', and then afterwards with the 'prk'.
-> 
-> Ok, thanks for the clarification. I will remove the 2nd HMAC TFM then.
-> > 
-> > Also everywhere in this patchset, please avoid using the word "cipher" to
-> > refer to algorithms that are not encryption/decryption.  I know a lot of
-> > the crypto API docs do this, but I think it is a mistake and confusing. 
-> > Hash algorithms and KDFs are not "ciphers".
-> 
-> As you wish, I will refer to specific name of the cryptographic operation.
-> 
-> [...]
-> 
-> > > + * NOTE: In-place cipher operations are not supported.
-> > > + */
-> > 
-> > What does an "in-place cipher operation" mean in this context?  That the
-> > 'info' buffer must not overlap the 'dst' buffer? 
-> 
-> Correct, no overlapping.
-> 
-> > Maybe
-> > crypto_rng_generate() should check that for all crypto_rngs?  Or is it
-> > different for different crypto_rngs?
-> 
-> This is the case in general for all KDFs (and even RNGs). It is no technical 
-> or cryptographic error to have overlapping buffers. The only issue is that the 
-> result will not match the expected value.
-> 
-> The issue is that the input buffer to the generate function is an input to 
-> every round of the KDF. If the input and output buffer overlap, starting with 
-> the 2nd iteration of the KDF, the input is the output of the 1st round. Again, 
-> I do not think it is a cryptographic error though.
-> 
-> (To support my conclusion: A colleague of mine has proposed an update to the 
-> HKDF specification where the input data changes for each KDF round. This 
-> proposal was considered appropriate by one of the authors of HKDF.)
-> 
-> If the requested output is smaller or equal to the output block size of the 
-> KDF, overlapping buffers are even harmless since the implementation will 
-> calculate the correct output.
-> 
-> Due to that, I removed the statement. But I am not sure we should add a 
-> technical block to deny overlapping input/output buffers.
-> 
-> [...]
-> > > 
-> > > +	desc->flags = crypto_shash_get_flags(expand_kmd) &
-> > > +		      CRYPTO_TFM_REQ_MAY_SLEEP;
-> > 
-> > This line setting desc->flags doesn't make sense.  How is the user meant to
-> > control whether crypto_rng_generate() can sleep or not?  Or can it always
-> > sleep? Either way this part is wrong since the user can't get access to the
-> > HMAC tfm to set this flag being checked for.
-> 
-> Could you please help me why a user should set this flag? Isn't the 
-> implementation specifying that flag to allow identifying whether the 
-> implementation could or could not sleep? Thus, we simply copy the sleeping 
-> flag from the lower level keyed message digest implementation.
-> 
-> At least that is also the implementation found in crypto/hmac.c.
-> 
-> [...]
-
-Whether the crypto_shash* stuff can sleep is controlled on a per-request basis,
-not a per-implementation basis.  So I don't understand what you are talking
-about here.
-
-> 
-> > > +		if (dlen < h) {
-> > > +			u8 tmpbuffer[CRYPTO_HKDF_MAX_DIGESTSIZE];
-> > > +
-> > > +			err = crypto_shash_finup(desc, &ctr, 1, tmpbuffer);
-> > > +			if (err)
-> > > +				goto out;
-> > > +			memcpy(dst, tmpbuffer, dlen);
-> > > +			memzero_explicit(tmpbuffer, h);
-> > > +			goto out;
-> > > +		} else {
-> > 
-> > No need for the 'else'.
-> 
-> Could you please help me why that else branch is not needed? If the buffer to 
-> be generated is equal or larger than the output block length of the keyed 
-> message digest, I would like to directly operate on the output buffer to avoid 
-> a memcpy.
-
-I'm simply saying you don't need the 'else' keyword as the previous block ends
-with a goto.
-
-> > 
-> > > +			err = crypto_shash_finup(desc, &ctr, 1, dst);
-> > > +			if (err)
-> > > +				goto out;
-> > > +
-> > > +			prev = dst;
-> > > +			dst += h;
-> > > +			dlen -= h;
-> > > +			ctr++;
-> > > +		}
-> > > +	}
-> 
-> [...]
-> > 
-> > > +	struct crypto_shash *extract_kmd = ctx->extract_kmd;
-> > > +	struct crypto_shash *expand_kmd = ctx->expand_kmd;
-> > > +	struct rtattr *rta = (struct rtattr *)seed;
-> > > +	SHASH_DESC_ON_STACK(desc, extract_kmd);
-> > > +	u32 saltlen;
-> > > +	unsigned int h = crypto_shash_digestsize(extract_kmd);
-> > > +	int err;
-> > > +	const uint8_t null_salt[CRYPTO_HKDF_MAX_DIGESTSIZE] = { 0 };
-> > 
-> > static const
-> > 
-> 
-> Why would I want to turn that buffer into a static variable? All we need it 
-> for is in case there is no salt provided.
-> 
-> [...]
-> 
-> > > +
-> > > +	if (!RTA_OK(rta, slen))
-> > > +		return -EINVAL;
-> > > +	if (rta->rta_type != 1)
-> > > +		return -EINVAL;
-> > > +	if (RTA_PAYLOAD(rta) < sizeof(saltlen))
-> > > +		return -EINVAL;
-> > > +	saltlen = *((u32 *)RTA_DATA(rta));
-> > 
-> > I'm guessing you copied the weird "length as a rtattr payload" approach from
-> > the authenc template.  I think it's not necessary.  And it's overly
-> > error-prone, as shown by the authenc template getting the parsing wrong for
-> > years and you making the exact same mistake again here...
-> > (See https://patchwork.kernel.org/patch/10732803/)  How about just using a
-> > u32 at the beginning without the 'rtattr' preceding it?
-> 
-> I was not sure whether this approach would be acceptable. I very much would 
-> love to have a u32 pre-pended only without the RTA business.
-> 
-> I updated the implementation accordingly.
-> > 
-> [...]
-> 
-> > 
-> > > +	alg = &salg->base;
-> > 
-> > Check here that the underlying algorithm really is "hmac(" something?
-> 
-> I added a check for the presence of salg->setkey.
-> > 
-> > Alternatively it may be a good idea to simplify usage by making the template
-> > just take the unkeyed hash directly, like "hkdf(sha512)".  And if any users
-> > really need to specify a specific HMAC implementation then another template
-> > usable as "hkdf_base(hmac(sha512))" could be added later.
-> > 
-> 
-> I would not suggest this, because that rounds contrary to the concept of the 
-> kernel crypto API IMHO. The caller has to provide the wrapping cipher. It is 
-> perfectly viable to allow a caller to invoke a specific keyed message digest.
+> Won't this decrement firstframe on every iteration, so when firstframe
+> is 0, it will decrement it to -1, causing it to 'goto next' on all
+> future iterations?
 > 
 
-Sure, but it would not conform to the HKDF specification.  Are you sure it is
-okay to specify an arbitrary keyed hash?
+Argg, yes, that should be:
 
-> [...]
-> 
-> Thank you very much for your code review.
-> 
-> Ciao
-> Stephan
-> 
-> 
+if (!firstframe) {
+	firstframe = 0;
+	goto next;
+}
 
-- Eric
+Apologies for the monday-morning crap-patch.
+
+/runsoff to find some more caffeine
+
+-- Joe
