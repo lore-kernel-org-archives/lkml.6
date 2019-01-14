@@ -2,117 +2,119 @@ Return-Path: <SRS0=tq6k=PW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D11F6C43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 05:12:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E29FC43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 05:12:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 83AE5206B7
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 05:12:14 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="O2C92bNB"
+	by mail.kernel.org (Postfix) with ESMTP id 1B6BA206B7
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 05:12:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726566AbfANFMN (ORCPT
+        id S1726595AbfANFM3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 14 Jan 2019 00:12:13 -0500
-Received: from mail-eopbgr20063.outbound.protection.outlook.com ([40.107.2.63]:15360
-        "EHLO EUR02-VE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725910AbfANFMM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 Jan 2019 00:12:12 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Kfp5DM7bQiq35wf+mlByfZd52IzYVeJWWPblxgYPipY=;
- b=O2C92bNBpJqVps4exj3fPrp4ctDfhLJNESOGNdy+qsn38ZGtqIc3mb1OYqRFHUZNIYPz3KbSHx/X9IeBgOV/hPhLEmB+27eLBCJL69msK9scAIGFBTpfOna5L0Uo1YZP5CYVFlFSLKrIgzGfGIx+jokYMgBNRyrlj7cXxkH/4Ts=
-Received: from VI1PR04MB4845.eurprd04.prod.outlook.com (20.177.49.14) by
- VI1PR04MB5038.eurprd04.prod.outlook.com (20.177.50.95) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1516.14; Mon, 14 Jan 2019 05:12:08 +0000
-Received: from VI1PR04MB4845.eurprd04.prod.outlook.com
- ([fe80::a13c:ebf5:6fb5:8c7]) by VI1PR04MB4845.eurprd04.prod.outlook.com
- ([fe80::a13c:ebf5:6fb5:8c7%2]) with mapi id 15.20.1516.019; Mon, 14 Jan 2019
- 05:12:08 +0000
-From:   Bharat Bhushan <bharat.bhushan@nxp.com>
-To:     Roy Pledge <roy.pledge@nxp.com>, Leo Li <leoyang.li@nxp.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>
-CC:     "bharatb.yadav@gmail.com" <bharatb.yadav@gmail.com>,
-        Bharat Bhushan <bharat.bhushan@nxp.com>
-Subject: [PATCH] soc: fsl: dpio: fix cpu range check
-Thread-Topic: [PATCH] soc: fsl: dpio: fix cpu range check
-Thread-Index: AQHUq8eyjXksS82nRkmGUg0ZzKV3Dg==
-Date:   Mon, 14 Jan 2019 05:12:08 +0000
-Message-ID: <20190114050237.32140-1-Bharat.Bhushan@nxp.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-mailer: git-send-email 2.20.1
-x-clientproxiedby: BM1PR01CA0113.INDPRD01.PROD.OUTLOOK.COM (2603:1096:b00::29)
- To VI1PR04MB4845.eurprd04.prod.outlook.com (2603:10a6:803:54::14)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=bharat.bhushan@nxp.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-originating-ip: [14.143.254.130]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;VI1PR04MB5038;6:P5k3tMpxjjKRh2dMyMWtcXYTbE4kwPt6dyx20s7V6VKOapOx3nIuF+uMUAme6D6rU05UDIBQFj5GTPNUKsf3O7c1QRPmPjca70nU4HEmuFzUv2iDs1H6Tw2/K4aipKaHtY9ksgSFZoQntN4C+Nn5FnD3/V8AR1lEKneiix6JjFkrW61WOl8qrtK5iacDXI7p8td0zfZPWjrKkCkVPRdh5WC7I7Z5/eo+KFeNl9n7OBg7tahYP+QgeH8cZQNb4hOUeXveAyrk9bTIfXdVjGfqoBfmQKDDtpsjebnjxvaR5LC808uAiNXy/j7ohPRErAVuJkaJ54i55szu4/Dl4OSMtq163I7xnZ9dxhWa+EOStFCi2LNmYE/6Wx2WFWx54eilgDWAq+WfP8ZMaQgsXKF4BzYJNdDXi+6OM0EtDRGwZLjIjjo+Pb/1WMZOmQbmHXRNRo5noTBCYWPsF4ONGUkLqA==;5:XccgK3V1u04zieokYIPCDKi6dkeYV8QIVU9KOOmgKG65wA7D9W4lrlwS7XOGLGe654nv7KavHOQnljIJEsB2vxC47CPbLHmcf419paXE0t2zN7qmwqI8C3W6i1bBrv+M/NrhAMTTuQT5E9Z0g6/zB8jRne8O+aQHW57uP9EPKDJEwgKqHOzPhPxJMcjrSIjANycwz/BYScJgezmZLVxiaQ==;7:vMQf+XMF8Ge5RQXUwkHl054qMCOIU7zfSr6vyntatNq7HIQwS3FwLzflOA0yp2IvTIc2qy72eLCrBqmG+pOvIfsHvsjB/bgoxfpUtROatjhXr/rQH2SNyxcIU1C8D1EumUCALeJ2OMR5PqF55AFUiA==
-x-ms-office365-filtering-correlation-id: 61a4e7e0-58fa-420e-b5f2-08d679ded4b0
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(7168020)(4627221)(201703031133081)(201702281549075)(8990200)(5600109)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:VI1PR04MB5038;
-x-ms-traffictypediagnostic: VI1PR04MB5038:
-x-microsoft-antispam-prvs: <VI1PR04MB50386E95ED5CE89607AA35DB9A800@VI1PR04MB5038.eurprd04.prod.outlook.com>
-x-forefront-prvs: 0917DFAC67
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(366004)(346002)(39860400002)(136003)(376002)(396003)(189003)(199004)(71200400001)(53936002)(14444005)(305945005)(6486002)(6436002)(4326008)(71190400001)(256004)(99286004)(4744005)(97736004)(7736002)(476003)(2616005)(486006)(50226002)(1076003)(78486014)(478600001)(8936002)(6512007)(81156014)(81166006)(8676002)(110136005)(6506007)(386003)(316002)(52116002)(2201001)(575784001)(86362001)(54906003)(3846002)(6116002)(2501003)(105586002)(2906002)(36756003)(14454004)(66066001)(39060400002)(26005)(55236004)(5660300001)(68736007)(102836004)(106356001)(186003)(25786009);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR04MB5038;H:VI1PR04MB4845.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: t1R0p6LJwFAXtLr2boopCsYeEfvifzRlIviTfmCxpv2a4U8ciObV9kPJHbXKJ0aAbBM/YaJD1N7BF6oC1JCKqqXrNlTtwsYhuu+AbXehoTJSTBf+ZYuQnMN6+87CluCLIM/SL43k50WsCqwfSADNcbeprhdNCXf6X2g1yLykoGOcvOZdK6hmeMDB5MjNPwjCVXeE4/9mJ/fi0Be9wXrC8M/MvNzJDEMZaCBhKmjC0ZeJDK6LE4eBNQjm8V4PTGLiYZUAfl/HmfvM4tPFuwqvxbx4sKCUMx7SZYtBbZ0etM+MHj9gN1GGESiNp7jlpE6uTRf94UjzY2NwD8EwiUEzjW8O769uZjPuh9B2v2kHopNrQs9Ybw7F+uE97rydJv0fYSL2KFHdFrld1Bwcr7u6fyW5TmsHEC9hXKZvkHSugao=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+        Mon, 14 Jan 2019 00:12:29 -0500
+Received: from mailgw01.mediatek.com ([210.61.82.183]:12134 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1725910AbfANFM3 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 14 Jan 2019 00:12:29 -0500
+X-UUID: 4182c9c28c074d87a5aa85f153b2db86-20190114
+X-UUID: 4182c9c28c074d87a5aa85f153b2db86-20190114
+Received: from mtkcas08.mediatek.inc [(172.21.101.126)] by mailgw01.mediatek.com
+        (envelope-from <ryder.lee@mediatek.com>)
+        (mhqrelay.mediatek.com ESMTP with TLS)
+        with ESMTP id 993000548; Mon, 14 Jan 2019 13:12:24 +0800
+Received: from MTKCAS06.mediatek.inc (172.21.101.30) by
+ mtkmbs08n1.mediatek.inc (172.21.101.55) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Mon, 14 Jan 2019 13:12:23 +0800
+Received: from mtkslt306.mediatek.inc (10.21.14.136) by MTKCAS06.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Mon, 14 Jan 2019 13:12:23 +0800
+From:   Ryder Lee <ryder.lee@mediatek.com>
+To:     Marek Vasut <marek.vasut@gmail.com>,
+        Brian Norris <computersforpeace@gmail.com>,
+        Boris Brezillon <boris.brezillon@bootlin.com>
+CC:     Rob Herring <robh+dt@kernel.org>,
+        Weijie Gao <weijie.gao@mediatek.com>,
+        <linux-mtd@lists.infradead.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>,
+        Ryder Lee <ryder.lee@mediatek.com>
+Subject: [PATCH v1 3/3] mtd: spi-nor: mtk-quadspi: rename config to a common one
+Date:   Mon, 14 Jan 2019 13:12:20 +0800
+Message-ID: <45dc2817e7f4baf5113de247b1a2cb30bf252d93.1547442452.git.ryder.lee@mediatek.com>
+X-Mailer: git-send-email 1.9.1
+In-Reply-To: <67e650ca4fcaaddbbc98bf4e1cbe04647c990dc3.1547442452.git.ryder.lee@mediatek.com>
+References: <67e650ca4fcaaddbbc98bf4e1cbe04647c990dc3.1547442452.git.ryder.lee@mediatek.com>
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 61a4e7e0-58fa-420e-b5f2-08d679ded4b0
-X-MS-Exchange-CrossTenant-originalarrivaltime: 14 Jan 2019 05:12:06.3023
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR04MB5038
+Content-Type: text/plain
+X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-cpu_possible(cpu) will always return true when cpu parameter
-is from cpumask_next().
-Check for nr_cpu_ids rather than !cpu_possible(cpu).
+The quadspi is a generic communication interface which could be shared
+with other MediaTek SoCs. Hence rename it to a common one.
 
-Signed-off-by: Bharat Bhushan <Bharat.Bhushan@nxp.com>
+Signed-off-by: Ryder Lee <ryder.lee@mediatek.com>
 ---
- drivers/soc/fsl/dpio/dpio-driver.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Changes since v1: rebase to v5.0-rc1. 
+---
+ drivers/mtd/spi-nor/Kconfig  | 16 ++++++++--------
+ drivers/mtd/spi-nor/Makefile |  2 +-
+ 2 files changed, 9 insertions(+), 9 deletions(-)
 
-diff --git a/drivers/soc/fsl/dpio/dpio-driver.c b/drivers/soc/fsl/dpio/dpio=
--driver.c
-index e58fcc9096e8..eb369dd9e0a7 100644
---- a/drivers/soc/fsl/dpio/dpio-driver.c
-+++ b/drivers/soc/fsl/dpio/dpio-driver.c
-@@ -133,7 +133,7 @@ static int dpaa2_dpio_probe(struct fsl_mc_device *dpio_=
-dev)
- 	else
- 		next_cpu =3D cpumask_next(next_cpu, cpu_online_mask);
-=20
--	if (!cpu_possible(next_cpu)) {
-+	if (next_cpu >=3D nr_cpu_ids) {
- 		dev_err(dev, "probe failed. Number of DPIOs exceeds NR_CPUS.\n");
- 		err =3D -ERANGE;
- 		goto err_allocate_irqs;
---=20
-2.20.1
+diff --git a/drivers/mtd/spi-nor/Kconfig b/drivers/mtd/spi-nor/Kconfig
+index b433e5f..99d9d53 100644
+--- a/drivers/mtd/spi-nor/Kconfig
++++ b/drivers/mtd/spi-nor/Kconfig
+@@ -7,14 +7,6 @@ menuconfig MTD_SPI_NOR
+ 
+ if MTD_SPI_NOR
+ 
+-config MTD_MT81xx_NOR
+-	tristate "Mediatek MT81xx SPI NOR flash controller"
+-	depends on HAS_IOMEM
+-	help
+-	  This enables access to SPI NOR flash, using MT81xx SPI NOR flash
+-	  controller. This controller does not support generic SPI BUS, it only
+-	  supports SPI NOR Flash.
+-
+ config MTD_SPI_NOR_USE_4K_SECTORS
+ 	bool "Use small 4096 B erase sectors"
+ 	default y
+@@ -68,6 +60,14 @@ config SPI_NXP_SPIFI
+ 	  Flash. Enable this option if you have a device with a SPIFI
+ 	  controller and want to access the Flash as a mtd device.
+ 
++config SPI_MTK_QUADSPI
++	tristate "MediaTek Quad SPI controller"
++	depends on HAS_IOMEM
++	help
++	  This enables support for the Quad SPI controller in master mode.
++	  This controller does not support generic SPI. It only supports
++	  SPI NOR.
++
+ config SPI_INTEL_SPI
+ 	tristate
+ 
+diff --git a/drivers/mtd/spi-nor/Makefile b/drivers/mtd/spi-nor/Makefile
+index 2adedbe..189a15c 100644
+--- a/drivers/mtd/spi-nor/Makefile
++++ b/drivers/mtd/spi-nor/Makefile
+@@ -3,7 +3,7 @@ obj-$(CONFIG_MTD_SPI_NOR)	+= spi-nor.o
+ obj-$(CONFIG_SPI_ASPEED_SMC)	+= aspeed-smc.o
+ obj-$(CONFIG_SPI_CADENCE_QUADSPI)	+= cadence-quadspi.o
+ obj-$(CONFIG_SPI_HISI_SFC)	+= hisi-sfc.o
+-obj-$(CONFIG_MTD_MT81xx_NOR)    += mtk-quadspi.o
++obj-$(CONFIG_SPI_MTK_QUADSPI)    += mtk-quadspi.o
+ obj-$(CONFIG_SPI_NXP_SPIFI)	+= nxp-spifi.o
+ obj-$(CONFIG_SPI_INTEL_SPI)	+= intel-spi.o
+ obj-$(CONFIG_SPI_INTEL_SPI_PCI)	+= intel-spi-pci.o
+-- 
+1.9.1
 
