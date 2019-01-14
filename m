@@ -2,92 +2,92 @@ Return-Path: <SRS0=tq6k=PW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F305C43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 18:58:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 62D19C43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 19:00:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E61B42070B
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 18:58:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3117120659
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 19:00:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726794AbfANS6e (ORCPT
+        id S1726777AbfANTAd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 14 Jan 2019 13:58:34 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:52794 "EHLO mx1.redhat.com"
+        Mon, 14 Jan 2019 14:00:33 -0500
+Received: from foss.arm.com ([217.140.101.70]:39054 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726643AbfANS6d (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 Jan 2019 13:58:33 -0500
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 7E535C05FEF1;
-        Mon, 14 Jan 2019 18:58:33 +0000 (UTC)
-Received: from colo-mx.corp.redhat.com (colo-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.21])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 62DA2608E5;
-        Mon, 14 Jan 2019 18:58:32 +0000 (UTC)
-Received: from zmail24.collab.prod.int.phx2.redhat.com (zmail24.collab.prod.int.phx2.redhat.com [10.5.83.30])
-        by colo-mx.corp.redhat.com (Postfix) with ESMTP id 3D90F4ED25;
-        Mon, 14 Jan 2019 18:58:32 +0000 (UTC)
-Date:   Mon, 14 Jan 2019 13:58:32 -0500 (EST)
-From:   Dave Anderson <anderson@redhat.com>
-To:     Borislav Petkov <bp@alien8.de>
-Cc:     Kazuhito Hagio <k-hagio@ab.jp.nec.com>,
-        Lianbo Jiang <lijiang@redhat.com>,
-        linux-kernel@vger.kernel.org, kexec@lists.infradead.org,
-        tglx@linutronix.de, mingo@redhat.com, x86@kernel.org,
-        akpm@linux-foundation.org, bhe@redhat.com, dyoung@redhat.com,
-        linux-doc@vger.kernel.org
-Message-ID: <2126185079.69727846.1547492312033.JavaMail.zimbra@redhat.com>
-In-Reply-To: <20190114180142.GO2773@zn.tnic>
-References: <20190110121944.6050-1-lijiang@redhat.com> <20190110121944.6050-2-lijiang@redhat.com> <20190111123300.GE4729@zn.tnic> <4AE2DC15AC0B8543882A74EA0D43DBEC035661E8@BPXM09GP.gisp.nec.co.jp> <20190114180142.GO2773@zn.tnic>
-Subject: Re: [PATCH 1/2 v6] kdump: add the vmcoreinfo documentation
+        id S1726643AbfANTAd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 14 Jan 2019 14:00:33 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 5D07480D;
+        Mon, 14 Jan 2019 11:00:32 -0800 (PST)
+Received: from fuggles.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 8F0243F5BD;
+        Mon, 14 Jan 2019 11:00:30 -0800 (PST)
+Date:   Mon, 14 Jan 2019 19:00:25 +0000
+From:   Will Deacon <will.deacon@arm.com>
+To:     Vineet Gupta <vineet.gupta1@synopsys.com>
+Cc:     linux-kernel@vger.kernel.org, linux-snps-arc@lists.infradead.org,
+        linux-mm@kvack.org, peterz@infradead.org,
+        Miklos Szeredi <mszeredi@redhat.com>,
+        Ingo Molnar <mingo@kernel.org>,
+        Jani Nikula <jani.nikula@intel.com>,
+        Chris Wilson <chris@chris-wilson.co.uk>,
+        Andrew Morton <akpm@linux-foundation.org>
+Subject: Re: [PATCH 3/3] bitops.h: set_mask_bits() to return old value
+Message-ID: <20190114190025.GA29167@fuggles.cambridge.arm.com>
+References: <1547166387-19785-1-git-send-email-vgupta@synopsys.com>
+ <1547166387-19785-4-git-send-email-vgupta@synopsys.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.18.17.201, 10.4.195.19]
-Thread-Topic: kdump: add the vmcoreinfo documentation
-Thread-Index: OZlyqBKuhECC5AsJ7Gtu5R02sg8UoA==
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.31]); Mon, 14 Jan 2019 18:58:33 +0000 (UTC)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1547166387-19785-4-git-send-email-vgupta@synopsys.com>
+User-Agent: Mutt/1.11.1+86 (6f28e57d73f2) ()
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Thu, Jan 10, 2019 at 04:26:27PM -0800, Vineet Gupta wrote:
+> | > Also, set_mask_bits is used in fs quite a bit and we can possibly come up
+> | > with a generic llsc based implementation (w/o the cmpxchg loop)
+> |
+> | May I also suggest changing the return value of set_mask_bits() to old.
+> |
+> | You can compute the new value given old, but you cannot compute the old
+> | value given new, therefore old is the better return value. Also, no
+> | current user seems to use the return value, so changing it is without
+> | risk.
+> 
+> Link: http://lkml.kernel.org/g/20150807110955.GH16853@twins.programming.kicks-ass.net
+> Suggested-by: Peter Zijlstra <peterz@infradead.org>
+> Cc: Miklos Szeredi <mszeredi@redhat.com>
+> Cc: Ingo Molnar <mingo@kernel.org>
+> Cc: Jani Nikula <jani.nikula@intel.com>
+> Cc: Chris Wilson <chris@chris-wilson.co.uk>
+> Cc: Andrew Morton <akpm@linux-foundation.org>
+> Cc: Will Deacon <will.deacon@arm.com>
+> Signed-off-by: Vineet Gupta <vgupta@synopsys.com>
+> ---
+>  include/linux/bitops.h | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/include/linux/bitops.h b/include/linux/bitops.h
+> index 705f7c442691..602af23b98c7 100644
+> --- a/include/linux/bitops.h
+> +++ b/include/linux/bitops.h
+> @@ -246,7 +246,7 @@ static __always_inline void __assign_bit(long nr, volatile unsigned long *addr,
+>  		new__ = (old__ & ~mask__) | bits__;		\
+>  	} while (cmpxchg(ptr, old__, new__) != old__);		\
+>  								\
+> -	new__;							\
+> +	old__;							\
+>  })
+>  #endif
 
+Acked-by: Will Deacon <will.deacon@arm.com>
 
------ Original Message -----
-> On Mon, Jan 14, 2019 at 05:48:48PM +0000, Kazuhito Hagio wrote:
-> > As for makedumpfile, it will be not impossible to remove the
-> > init_uts_ns.name.relase (OSRELEASE), but some fixes are needed.
-> > Because historically OSRELEASE has been a kind of a mandatory entry
-> > in vmcoreinfo from the beginning of vmcoreinfo, so makedumpfile uses
-> > its existence to check whether a vmcoreinfo is sane.
-> 
-> Well, init_uts_ns is exported in vmcoreinfo anyway - makedumpfile
-> can simply test init_uts_ns.name.release just as well. And the
-> "historically" argument doesn't matter because vmcoreinfo is not an ABI.
-> 
-> So makedumpfile needs to be changed to check that new export.
-> 
-> > Also, I think crash also will need to be fixed if it is removed.
+May also explain why no in-tree users appear to use the return value!
 
-Preferably it would be left as-is.  The crash utility has a "crash --osrelease vmcore"
-option that only looks at the dumpfile header, and just dump the string.  With respect
-to compressed kdumps, crash could alternatively look at the utsname data that is stored
-in the diskdump_header.utsname field, but with ELF vmcores, there is no such back-up.
-What's the problem with leaving it alone?
-
-Dave
-
-
-> 
-> Yes, I'm expecting user tools to be fixed and then exports removed.
-> 
-> --
-> Regards/Gruss,
->     Boris.
-> 
-> Good mailing practices for 400: avoid top-posting and trim the reply.
-> 
+Will
