@@ -2,162 +2,110 @@ Return-Path: <SRS0=tq6k=PW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B623C43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 22:01:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 91CBBC43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 22:01:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 11D48205C9
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 22:01:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5DCCC205C9
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 22:01:11 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Mh0NpHKj"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="MB0fVuOL"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727064AbfANWBF (ORCPT
+        id S1726911AbfANWBE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 14 Jan 2019 17:01:05 -0500
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:43507 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726646AbfANWBE (ORCPT
+        Mon, 14 Jan 2019 17:01:04 -0500
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:40458 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726591AbfANWBE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 14 Jan 2019 17:01:04 -0500
-Received: by mail-pf1-f196.google.com with SMTP id w73so243238pfk.10
+Received: by mail-pg1-f194.google.com with SMTP id z10so244328pgp.7
         for <linux-kernel@vger.kernel.org>; Mon, 14 Jan 2019 14:01:03 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=0uNm3/KE9zU5eRRsW127BOpJbJx8eoSOd0/7kP4DHoI=;
-        b=Mh0NpHKjRA01BqbYdHc1iEvmIZ2EgIAPZMoiZZAitWhUtnN+x+nQvYaa8aeF+e1ReQ
-         j1djWWyDFlERHpzis6dRxbiNCVzR5iD+s/zsj6MgmO2uwCSbYGGiGHRLBn5Dim6T5iWv
-         mDTyFwWBXCkt4LEvHlPsb02oanGejUmXdd6d4=
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=COA4+y8BR+vzlMXulf2QmLFF6N6buS8a74k/Xy/7vFw=;
+        b=MB0fVuOLyz1WkhggvnB37sMqe1T8gyl51XE+R59wRNERF/txILXSvReUgja7ePaUur
+         xplNBSXnnEiJHfxocvFW9hxHYajnh9gQy7R7b6BVpn6516x2pWtvg08w7y7P5nq6ZtHC
+         i2whOf0/WxfO/ur/F/IrZhR4c6W1K7fPeXnK5IlW68E3qAY7/GZULTOEQbpY/bWy9LPV
+         a4/5TX8Pz+/v4nOLXnQOVa0nw0CzKB3U9/9hpt/7tQlGD3NgmuMvf1UtHe8nfzyXeGQF
+         KRkOYZV4/xTUxwsWlJwA/UgzfsDrTYjMIVsFaygUDPuVT7U8oz0fo5FwH7k6s9+Ua+Ub
+         kjIw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=0uNm3/KE9zU5eRRsW127BOpJbJx8eoSOd0/7kP4DHoI=;
-        b=WeJmbchpK0q8FpqennKlAQYO0rSOEMRlbi9kfuy7dgBSkizcKf3wxFpEEsxtjUZ7GX
-         xR+RjzEqLJLgalmneOkPeKQaqM/sbh3t6DZwWOkYUqBR9pMl6mYX+Iiw0LiqtXluOdlR
-         xtaTBf0sOnxb6DxUOZVjyC6reS6FcSkbbLOqrJqObuaelV5fnl4XEhAAygoKrSSYs+mx
-         KGu+t6Os+gbTZsKu5cslkS0u0Na/TsoRjw6coKBGcTMccXtAuMSAZZyhm9CWGylA6sAb
-         TpG6bET1EDAAPzcHDi+tKxbgHrTb8drluo4j7Vd1PmvwJ25DRqJnDjCN4pOR2HSkBJFT
-         kRSQ==
-X-Gm-Message-State: AJcUukdyvZ0jV9uFDm1MEBPsEuQyAkt50dbaISH/ROCPPz6rxBqKeLMV
-        3/PuwlrCYmI9PpGPj9B8d+Aa7A==
-X-Google-Smtp-Source: ALg8bN6Kz4i0FkHCz5rR9MWR7MCLbQSKSNlFK3xx3GhdDNwc5ZDflJ6qzmW7+gzSBbm3NijmSzlRJw==
-X-Received: by 2002:a65:6645:: with SMTP id z5mr598242pgv.351.1547503263309;
-        Mon, 14 Jan 2019 14:01:03 -0800 (PST)
-Received: from localhost ([2620:15c:202:1:75a:3f6e:21d:9374])
-        by smtp.gmail.com with ESMTPSA id v9sm2082053pfe.49.2019.01.14.14.01.02
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 14 Jan 2019 14:01:02 -0800 (PST)
-Date:   Mon, 14 Jan 2019 14:01:01 -0800
-From:   Matthias Kaehlcke <mka@chromium.org>
-To:     Amit Kucheria <amit.kucheria@linaro.org>
-Cc:     linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        bjorn.andersson@linaro.org, viresh.kumar@linaro.org,
-        edubezval@gmail.com, andy.gross@linaro.org, tdas@codeaurora.org,
-        swboyd@chromium.org, dianders@chromium.org,
-        David Brown <david.brown@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>
-Subject: Re: [PATCH v2 8/9] arm64: dts: sdm845: wireup the thermal trip
- points to cpufreq
-Message-ID: <20190114220101.GN261387@google.com>
-References: <cover.1547458732.git.amit.kucheria@linaro.org>
- <7f94696460848a6bcfe5aee5ffda7fe556240736.1547458732.git.amit.kucheria@linaro.org>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=COA4+y8BR+vzlMXulf2QmLFF6N6buS8a74k/Xy/7vFw=;
+        b=i0pb5F/oIwZUIDA8p9GrX6LNsPDO46uGG50POmAxsDkS4wMVAkSO9IUUBYGAP4ni/p
+         N82IE/v8d0ykFvFgn6Q+suDGtxxZ7uZIPEh0QB09cAgj+Mcm5yaSJTJNbUYMxwpBE8U8
+         vlHeaDr3VsyqYACZCkwn6A1y1M6dOPt17Jw7CdRWPf6ZTUAumR52rFVUkYkT7ikghVn2
+         WK0Hindew6wJGERQ3CJwYmueWR6HN/9jEgqvfbtE11JtTZmNsYabhpQT6+XB8GTGgyte
+         wRPI342rbbcV2Adt2fxV4AQXcaGKxuFTstOXV+T8j9QeIWpR4By/F2SHhE20ymCN3HOI
+         uw2A==
+X-Gm-Message-State: AJcUukct20JwRe6EqGJP4ztM32M2E9kN4Sz5exEYSEEfRfcRX4yBY0rz
+        vRTXINmk015TTr/UkSQ/TlUm3BccG2bzHmpA+19WLg==
+X-Google-Smtp-Source: ALg8bN7rKvGWzQ7lP2eNg0CvEBFgMbngKttkMT446J8hbFttrQQ//Y2jmz4UYaBK/qcKZxImZYsaf+RzlTPtvoheLIc=
+X-Received: by 2002:a62:13c3:: with SMTP id 64mr608260pft.93.1547503263001;
+ Mon, 14 Jan 2019 14:01:03 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <7f94696460848a6bcfe5aee5ffda7fe556240736.1547458732.git.amit.kucheria@linaro.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20190114210426.177543-1-trong@android.com> <CAKwvOdkoN1myuDM1OFga+v30LQ9pV5VD9J_KCJN1Z7AY+kaXxQ@mail.gmail.com>
+ <CANA+-vDLJAHFLZADBM_2JhRy5-OR1tsLCJRqk-7mUfFxNO8dEw@mail.gmail.com>
+In-Reply-To: <CANA+-vDLJAHFLZADBM_2JhRy5-OR1tsLCJRqk-7mUfFxNO8dEw@mail.gmail.com>
+From:   Nick Desaulniers <ndesaulniers@google.com>
+Date:   Mon, 14 Jan 2019 14:00:51 -0800
+Message-ID: <CAKwvOdnfMFmDm-DdbFEZxQdXzP47mnZ27hWw5vqe8Lqh21hBhg@mail.gmail.com>
+Subject: Re: [PATCH 0/4] gcov: add Clang support
+To:     Tri Vo <trong@android.com>
+Cc:     oberpar@linux.ibm.com, Greg Hackmann <ghackmann@android.com>,
+        LKML <linux-kernel@vger.kernel.org>, kernel-team@android.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jan 14, 2019 at 03:51:10PM +0530, Amit Kucheria wrote:
-> Since all cpus in the big and little clusters, respectively, are in the
-> same frequency domain, use all of them for mitigation in the
-> cooling-map. We end up with two cooling devices - one each for the big
-> and little clusters.
-> 
-> At the lower trip points we restrict ourselves to throttling only a few
-> OPPs. At higher trip temperatures, allow ourselves to be throttled to
-> any extent.
-> 
-> Signed-off-by: Amit Kucheria <amit.kucheria@linaro.org>
-> ---
->  arch/arm64/boot/dts/qcom/sdm845.dtsi | 177 ++++++++++++++++++++++++---
->  1 file changed, 161 insertions(+), 16 deletions(-)
-> 
-> diff --git a/arch/arm64/boot/dts/qcom/sdm845.dtsi b/arch/arm64/boot/dts/qcom/sdm845.dtsi
-> index fb7da678b116..7973e88bdf94 100644
-> --- a/arch/arm64/boot/dts/qcom/sdm845.dtsi
-> +++ b/arch/arm64/boot/dts/qcom/sdm845.dtsi
+On Mon, Jan 14, 2019 at 1:53 PM Tri Vo <trong@android.com> wrote:
 >
-> ...
+> On Mon, Jan 14, 2019 at 1:33 PM Nick Desaulniers
+> <ndesaulniers@google.com> wrote:
+> >
+> > On Mon, Jan 14, 2019 at 1:04 PM Tri Vo <trong@android.com> wrote:
+> > >
+> > > This patch series adds Clang supoprt for gcov.
+> > >
+> > > Patch 1 refactors existing code in preparation for Clang support. Patches
+> > > 2-3 implement necessary LLVM runtime hooks and gcov kernel interfaces.
+> > > Patch 4 simplifies config selection.
+> > >
+> > > Greg Hackmann (2):
+> > >   gcov: clang: move common gcc code into gcc_base.c
+> > >   gcov: clang support
+> > >
+> > > Nick Desaulniers (1):
+> > >   gcov: clang: link/unlink profiling data set.
+> > >
+> > > Tri Vo (1):
+> > >   gcov: clang: pick GCC vs Clang format depending on compiler
+> >
+> > Thanks for sending Tri!  Doesn't the output format require llvm-cov, or no?
 >
-> @@ -1719,18 +1728,35 @@
->  			thermal-sensors = <&tsens0 1>;
->  
->  			trips {
-> -				cpu_alert0: trip0 {
-> +				cpu0_alert0: trip-point@0 {
+> Yes, .gcda files generated by a Clang-built kernel could only be
+> parsed by llvm-cov, but not gcc gcov (at least in my local tests).
+>
+> llvm-cov documentation also indicates that GCC and LLVM gcov tools are
+> not necessarily compatible. "[llvm-cov] is compatible with the gcov
+> tool from version 4.2 of GCC and may also be compatible with some
+> later versions of gcov."
+> https://llvm.org/docs/CommandGuide/llvm-cov.html
 
-Thanks for adapting the trip point names and labels in anticipation of
-further additions!
+Thanks, that's good to know for folks looking to help test.  Note to
+reviewers that we're actively using this patch set on arm64 devices.
 
-Seems you aren't overly convinced about the 'target/threshold'
-terminology used by some other arm64 platforms ;-)
-
->  					temperature = <95000>;
->  					hysteresis = <2000>;
->  					type = "passive";
->  				};
-
-I realized that we still have the potential problem of a name change
-in the trip point node name if a 'threshold' node for IPA is added,
-since this node will have a lower temperature than 95°. If this is
-something to be concerned about it might be worth to add that extra
-trip point already to avoid headaches or funky trip point enumeration,
-even if we know that the value might not be the final one.
-
-(I'm aware that we are also changing the node names and labels right
-now, it seems less problematic at this point since the SDM845 thermal
-zones are a fairly recent addition)
-
-> -				cpu_crit0: trip1 {
-> +				cpu0_crit: cpu_crit@0 {
-
-nit: does the @0 add any value here? IIUC there can be only one
-critical trip point, hence there will never be a cpu_crit@1 or
-higher.
-
->  					temperature = <110000>;
->  					hysteresis = <1000>;
->  					type = "critical";
->  				};
->  			};
-> +
-> +			cooling-maps {
-> +				map0 {
-> +					trip = <&cpu0_alert0>;
-> +					cooling-device = <&CPU0 THERMAL_NO_LIMIT 4>,
-> +							 <&CPU1 THERMAL_NO_LIMIT 4>,
-> +							 <&CPU2 THERMAL_NO_LIMIT 4>,
-> +							 <&CPU3 THERMAL_NO_LIMIT 4>;
-> +				};
-
-Out of curiosity: how did you determing the max cooling state of 4?
-
-Cheers
-
-Matthias
+-- 
+Thanks,
+~Nick Desaulniers
