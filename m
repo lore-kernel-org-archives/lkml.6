@@ -2,119 +2,117 @@ Return-Path: <SRS0=tq6k=PW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 741CBC43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 11:43:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F6D3C43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 11:45:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4395320659
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 11:43:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 61CAA20659
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 11:45:25 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=jms.id.au header.i=@jms.id.au header.b="dl1Tod/+"
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="AyFjc9Lp"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726856AbfANLnc (ORCPT
+        id S1726712AbfANLpX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 14 Jan 2019 06:43:32 -0500
-Received: from mail-qt1-f194.google.com ([209.85.160.194]:44633 "EHLO
-        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726449AbfANLn3 (ORCPT
+        Mon, 14 Jan 2019 06:45:23 -0500
+Received: from mail-vs1-f66.google.com ([209.85.217.66]:43021 "EHLO
+        mail-vs1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726644AbfANLpX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 Jan 2019 06:43:29 -0500
-Received: by mail-qt1-f194.google.com with SMTP id n32so26046169qte.11;
-        Mon, 14 Jan 2019 03:43:28 -0800 (PST)
+        Mon, 14 Jan 2019 06:45:23 -0500
+Received: by mail-vs1-f66.google.com with SMTP id x1so13390761vsc.10
+        for <linux-kernel@vger.kernel.org>; Mon, 14 Jan 2019 03:45:22 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=jms.id.au; s=google;
+        d=linaro.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=YSsm5KHK1vgCekTlZkLBW7Oe/copp0QlvQ1V9CXjt5o=;
-        b=dl1Tod/+fmKMxz4fSs5uM5OM9EYe6up7FyBft3vlu7o6dlsBOasONH5bd4nc3hvSZl
-         E5WQMXS2tLJKQ2lT5FUVS8T/vygn+OgEKcvdctm8G3V+cXd+LFDgdKSyHN9JnabIRRqN
-         pQH2AL8bnVeS0u8feuE6mAnJEYTOYe4BiZwRg=
+        bh=SfKdG5lSxJYjRQSxMaX6wj1ewmDr2/7r6OEuU4WHQKw=;
+        b=AyFjc9LpXq3lkDCzVrJDGpGGb9gUtmx6Xn+Eh0JgNYWSR0JrhHfu/eiANxYBWD613c
+         ouiremyvmZ0c2yNw4lqCxPTJkZA4q3sCb2eid7zTObDBx3lbhN+LI52RYM31T22GTuDz
+         SaALdXHVnfDNDvbtMoWgykObAh9+72y0adEaI=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=YSsm5KHK1vgCekTlZkLBW7Oe/copp0QlvQ1V9CXjt5o=;
-        b=GPcIaFriXCFOsT7URf/ECXtLTuEzfzsA0a+z8Vm3shEKs5bwJ+pdIEd+ElSfA7qoBG
-         24LkMTnQ3PhZU2IDgYftdsz295K6UG0JQu3En8RJ0mKnSDNI6oQIwq5BOXnECNunGQiw
-         j2NZb+xV/HzwI+70fOeFj0gp61qSH4nynq1+MvdcHiYDiIrsfdc+yFC+3VwsiKIYsdpF
-         cDhx8B+ObzLpb0Ye+aHRajl976UNOiay2EU3n3KXxLrvOO82V1+C1hR5KFjfqIyj2qS6
-         qBFYhqVRVaDOEzwzQCnUo0u9RC86wHyn5uIuTUqccvUUeLHevri3YQN2iS86OMbbPi6O
-         OGsg==
-X-Gm-Message-State: AJcUukfV+BB/x/aPLLHubdMnwJCJ7uZYNTqBo7/E4WeO/IDwcLVyLP2J
-        g4zlmYyFW7vSc0hMcryd43kEgv2d16tPpUGUDQk=
-X-Google-Smtp-Source: ALg8bN5msTpaMGdDNrcEC56t+z7OMLr65M73GRhD2on6tc5RQReecFM8zdmQ4xtnRFOpjFrk5SvU3HtNxMx0mTaG++o=
-X-Received: by 2002:a0c:89b4:: with SMTP id 49mr23814949qvr.85.1547466207923;
- Mon, 14 Jan 2019 03:43:27 -0800 (PST)
+        bh=SfKdG5lSxJYjRQSxMaX6wj1ewmDr2/7r6OEuU4WHQKw=;
+        b=R+STY7b5B6mw4ONB5c6rPAQdKVSYMstq0J9Krdm+QGoYMATbf1WoM6q+s5ya6Jv9Gf
+         xU4pWgKqtIMwjOI81UhGOJzV0uPELQcNMmpnJOminkrrhvsmtMcnDpRG41u+F9xV4Q2o
+         Y01cKOL/S37rBEJMFoqQXv3ehlIxGxG/kM4LHQBlYXD+peG//vWvjpguxkmUQzGmFche
+         4m6MJqC7C6+HQU1TSVtBsi7UzAPhd6L/MfltxaUulu6yYZMKVAc6hVvxVdXRHa1UFRYA
+         M0fwD4D/GI0LQ1O0fE2QxbcruCTIQ119W7yytWFjPSmqNHf9cey5gBR5qvJa3+fc3xaR
+         7Nmw==
+X-Gm-Message-State: AJcUukcO399e7TIxbkbYqYcbgG9qwuyxcvM4qBMJW5BgzG0vSmGnq1MX
+        mzt4XkCkL0gXEInt43tzGuTskglC7qy7+M7zEf/rKw==
+X-Google-Smtp-Source: ALg8bN6GhrJhGuj48hZglZkpy7ousMgrvE7uy4/EJR24e/LTQvHItE9/I0z4XNs0xM8tPDFsIXAWhtDh6PMynGUuZ/E=
+X-Received: by 2002:a67:d00f:: with SMTP id r15mr10274998vsi.191.1547466321776;
+ Mon, 14 Jan 2019 03:45:21 -0800 (PST)
 MIME-Version: 1.0
-References: <20190107214136.5256-1-jae.hyun.yoo@linux.intel.com> <20190107214136.5256-10-jae.hyun.yoo@linux.intel.com>
-In-Reply-To: <20190107214136.5256-10-jae.hyun.yoo@linux.intel.com>
-From:   Joel Stanley <joel@jms.id.au>
-Date:   Mon, 14 Jan 2019 22:13:17 +1030
-Message-ID: <CACPK8XdK-VpV7y1UT81QUo7CXuUp=gjjnZmTbvLvRVERtv5fDA@mail.gmail.com>
-Subject: Re: [PATCH v10 09/12] Documentation: hwmon: Add documents for PECI
- hwmon client drivers
-To:     Jae Hyun Yoo <jae.hyun.yoo@linux.intel.com>
-Cc:     Lee Jones <lee.jones@linaro.org>, Rob Herring <robh+dt@kernel.org>,
-        Jean Delvare <jdelvare@suse.com>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Andrew Jeffery <andrew@aj.id.au>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
-        Kishon Vijay Abraham I <kishon@ti.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        "Darrick J . Wong" <darrick.wong@oracle.com>,
-        Eric Sandeen <sandeen@redhat.com>,
-        Arnd Bergmann <arnd@arndb.de>, Wu Hao <hao.wu@intel.com>,
-        Tomohiro Kusumi <kusumi.tomohiro@gmail.com>,
-        "Bryant G . Ly" <bryantly@linux.vnet.ibm.com>,
-        Frederic Barrat <fbarrat@linux.vnet.ibm.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        Vinod Koul <vkoul@kernel.org>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        David Kershner <david.kershner@unisys.com>,
-        Uwe Kleine-Konig <u.kleine-koenig@pengutronix.de>,
-        Sagar Dharia <sdharia@codeaurora.org>,
-        Johan Hovold <johan@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Juergen Gross <jgross@suse.com>,
-        Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>,
-        linux-hwmon@vger.kernel.org,
-        devicetree <devicetree@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-doc@vger.kernel.org,
-        OpenBMC Maillist <openbmc@lists.ozlabs.org>,
-        Jason M Biils <jason.m.bills@linux.intel.com>,
-        Haiyue Wang <haiyue.wang@linux.intel.com>,
-        James Feist <james.feist@linux.intel.com>,
-        Vernon Mauery <vernon.mauery@linux.intel.com>
+References: <20190105100606.6673-1-okaya@kernel.org> <20190105100606.6673-10-okaya@kernel.org>
+In-Reply-To: <20190105100606.6673-10-okaya@kernel.org>
+From:   Ulf Hansson <ulf.hansson@linaro.org>
+Date:   Mon, 14 Jan 2019 12:44:45 +0100
+Message-ID: <CAPDyKFo7gQCZQbKhCaTukf8cRnRg5TzgDdOprHyeRbps=sjNWA@mail.gmail.com>
+Subject: Re: [PATCH v6 09/11] mmc: sdhci-acpi: Make PCI dependency explicit
+To:     Sinan Kaya <okaya@kernel.org>
+Cc:     linux-next@vger.kernel.org,
+        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Shawn Lin <shawn.lin@rock-chips.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Paul Cercueil <paul@crapouillou.net>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Faiz Abbas <faiz_abbas@ti.com>,
+        Chunyan Zhang <chunyan.zhang@unisoc.com>,
+        Jisheng Zhang <Jisheng.Zhang@synaptics.com>,
+        Ludovic Barre <ludovic.barre@st.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Alex Smith <alex.smith@imgtec.com>,
+        Chris Brandt <chris.brandt@renesas.com>,
+        "open list:MULTIMEDIA CARD (MMC), SECURE DIGITAL (SD) AND..." 
+        <linux-mmc@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 8 Jan 2019 at 08:11, Jae Hyun Yoo <jae.hyun.yoo@linux.intel.com> wrote:
+On Sat, 5 Jan 2019 at 11:06, Sinan Kaya <okaya@kernel.org> wrote:
 >
-> This commit adds hwmon documents for PECI cputemp and dimmtemp drivers.
+> After 'commit 5d32a66541c4 ("PCI/ACPI: Allow ACPI to be built without
+> CONFIG_PCI set")' dependencies on CONFIG_PCI that previously were
+> satisfied implicitly through dependencies on CONFIG_ACPI have to be
+> specified directly. This driver relies on IOSF_MBI and IOSF_MBI depends
+> on PCI. For this reason, add a direct dependency to CONFIG_PCI here.
 >
-> Cc: Guenter Roeck <linux@roeck-us.net>
-> Cc: Jean Delvare <jdelvare@suse.com>
-> Cc: Jonathan Corbet <corbet@lwn.net>
-> Cc: Jason M Biils <jason.m.bills@linux.intel.com>
-> Cc: Randy Dunlap <rdunlap@infradead.org>
-> Signed-off-by: Jae Hyun Yoo <jae.hyun.yoo@linux.intel.com>
-> Reviewed-by: Haiyue Wang <haiyue.wang@linux.intel.com>
-> Reviewed-by: James Feist <james.feist@linux.intel.com>
-> Reviewed-by: Vernon Mauery <vernon.mauery@linux.intel.com>
-> Acked-by: Guenter Roeck <linux@roeck-us.net>
+> Fixes: 5d32a66541c46 ("PCI/ACPI: Allow ACPI to be built without CONFIG_PCI set")
+> Signed-off-by: Sinan Kaya <okaya@kernel.org>
 
-Reviewed-by: Joel Stanley <joel@jms.id.au>
+Applied for fixes, thanks!
+
+Kind regards
+Uffe
+
+
+> ---
+>  drivers/mmc/host/Kconfig | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/mmc/host/Kconfig b/drivers/mmc/host/Kconfig
+> index e26b8145efb3..1b9401fe94c0 100644
+> --- a/drivers/mmc/host/Kconfig
+> +++ b/drivers/mmc/host/Kconfig
+> @@ -116,7 +116,7 @@ config MMC_RICOH_MMC
+>
+>  config MMC_SDHCI_ACPI
+>         tristate "SDHCI support for ACPI enumerated SDHCI controllers"
+> -       depends on MMC_SDHCI && ACPI
+> +       depends on MMC_SDHCI && ACPI && PCI
+>         select IOSF_MBI if X86
+>         help
+>           This selects support for ACPI enumerated SDHCI controllers,
+> --
+> 2.19.0
+>
