@@ -5,90 +5,69 @@ X-Spam-Level:
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D886C43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 16:52:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ED06BC43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 16:52:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 637F8206B7
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 16:52:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C8309206B7
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 16:52:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726783AbfANQwg (ORCPT
+        id S1726819AbfANQwo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 14 Jan 2019 11:52:36 -0500
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:46752 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726646AbfANQwg (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 Jan 2019 11:52:36 -0500
-Received: by mail-pg1-f196.google.com with SMTP id w7so9678382pgp.13
-        for <linux-kernel@vger.kernel.org>; Mon, 14 Jan 2019 08:52:35 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=rxGTL3eAhAyiNG9YeBFSl+V+ony1pLTRYYou0v8pRo4=;
-        b=fY8iCaJZ1ZipmB2wVFm8WSRzZ40+/06BirTTRMRFQxk3W5OqbJP9KQO4tr4d6kaM8W
-         Addsz7XmYIwCv/iSfB1/HJ7Cnf1k56RbO9+17G1c0icPNGMXnDvbvRj8K6ECiSSB1q4Y
-         uPuN8YNiIzistKymyadMMaEd5o8X+xRA4VTYpF5q2Ab5xMmrWWCUbkY1FXBkKKjK5A8l
-         LZJ0i5yFu9HnkaJHGswqYdl4sH+CXbSFXcl/ThmWkl6k6GdJYSFM2++dDzmLxOmf7fPy
-         uIxuaZrYOLgM7Jp4RCQRoRqztPHlamYIl+1yCMqy6Ijq6kPjz5G0Lz3+mHq+MbGRNQ9Y
-         QjZQ==
-X-Gm-Message-State: AJcUukdPfIEbgLB/GZ5NkFnlkIoLPVPlMGaCVNMZ1yjPxWfhxFRzbpdu
-        Y8WOaPFNu4Ki2MwSiR55wYCCiVgo
-X-Google-Smtp-Source: ALg8bN7Uwant+jBKqSh2Q+MgkAn4OkBbIap8apaXL7RYYe9ahnMtWi90jq7bGedvR9hGuRiYjBlmHg==
-X-Received: by 2002:a62:109b:: with SMTP id 27mr25835499pfq.227.1547484755243;
-        Mon, 14 Jan 2019 08:52:35 -0800 (PST)
-Received: from ?IPv6:2620:15c:2cd:203:5cdc:422c:7b28:ebb5? ([2620:15c:2cd:203:5cdc:422c:7b28:ebb5])
-        by smtp.gmail.com with ESMTPSA id m3sm1186184pfi.102.2019.01.14.08.52.34
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 14 Jan 2019 08:52:34 -0800 (PST)
-Message-ID: <1547484753.83374.109.camel@acm.org>
-Subject: Re: [PATCH v6 00/16] locking/lockdep: Add support for dynamic keys
-From:   Bart Van Assche <bvanassche@acm.org>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     mingo@redhat.com, tj@kernel.org, longman@redhat.com,
-        johannes.berg@intel.com, linux-kernel@vger.kernel.org
-Date:   Mon, 14 Jan 2019 08:52:33 -0800
-In-Reply-To: <20190114125235.GB20726@hirez.programming.kicks-ass.net>
-References: <20190109210204.192109-1-bvanassche@acm.org>
-         <20190111124835.GP1900@hirez.programming.kicks-ass.net>
-         <1547222103.83374.72.camel@acm.org>
-         <20190111165529.GA14054@worktop.programming.kicks-ass.net>
-         <1547226101.83374.80.camel@acm.org>
-         <20190114125235.GB20726@hirez.programming.kicks-ass.net>
-Content-Type: text/plain; charset="UTF-7"
-X-Mailer: Evolution 3.26.2-1 
-Mime-Version: 1.0
+        Mon, 14 Jan 2019 11:52:44 -0500
+Received: from foss.arm.com ([217.140.101.70]:37492 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726646AbfANQwo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 14 Jan 2019 11:52:44 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 32C8EA78;
+        Mon, 14 Jan 2019 08:52:44 -0800 (PST)
+Received: from [10.1.196.75] (e110467-lin.cambridge.arm.com [10.1.196.75])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 5C21A3F5BD;
+        Mon, 14 Jan 2019 08:52:42 -0800 (PST)
+Subject: Re: remove block layer bounce buffering for MMC
+To:     Christoph Hellwig <hch@lst.de>,
+        Ulf Hansson <ulf.hansson@linaro.org>
+Cc:     Aaro Koskinen <aaro.koskinen@iki.fi>,
+        Nicolas Pitre <nico@fluxnic.net>, linux-mmc@vger.kernel.org,
+        Russell King <linux@armlinux.org.uk>,
+        linux-kernel@vger.kernel.org, iommu@lists.linux-foundation.org,
+        Ben Dooks <ben-linux@fluff.org>, linux-omap@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+References: <20190114095804.27978-1-hch@lst.de>
+From:   Robin Murphy <robin.murphy@arm.com>
+Message-ID: <5d09d233-8631-2a35-cbcf-ba87b0314b3a@arm.com>
+Date:   Mon, 14 Jan 2019 16:52:40 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
+MIME-Version: 1.0
+In-Reply-To: <20190114095804.27978-1-hch@lst.de>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-GB
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 2019-01-14 at 13:52 +-0100, Peter Zijlstra wrote:
-+AD4 On Fri, Jan 11, 2019 at 09:01:41AM -0800, Bart Van Assche wrote:
-+AD4 +AD4 The list+AF8-del+AF8-rcu() call must only happen once. 
-+AD4 
-+AD4 Yes+ADs obviously. But if we need to check all +AEA-pf's, that means the entry
-+AD4 is still reachable after a single reset+AF8-lock()/free+AF8-key+AF8-range(), which
-+AD4 is a bug.
-+AD4 
-+AD4 +AD4 I ran into complaints reporting that
-+AD4 +AD4 the list+AF8-del+AF8-rcu() call triggered list corruption. This change made these complaints
-+AD4 +AD4 disappear.
-+AD4 
-+AD4 I'm saying this solution buggy, because that means the entry is still
-+AD4 reachable after we do call+AF8-rcu() (which is a straight up UAF).
-+AD4 
-+AD4 Also put it differently, what guarantees checking those two +AEA-pf's is
-+AD4 sufficient. Suppose your earlier +AEA-pf already did the RCU callback and
-+AD4 freed stuff while the second is in progress. Then you're poking into
-+AD4 dead space.
+On 14/01/2019 09:57, Christoph Hellwig wrote:
+> Hi everyone,
+> 
+> this series converts the remaining MMC host drivers to properly kmap the
+> scatterlist entries it does PIO operations on, and then goes on to
+> remove the usage of block layer bounce buffering (which I plan to remove
+> eventually) from the MMC layer.
+> 
+> As a bonus I've converted various drivers to the proper scatterlist
+> helpers so that at least in theory they are ready for chained
+> scatterlists.
+> 
+> All the changes are compile tested only as I don't have any of the
+> hardware, so a careful review would be appreciated.
 
-zap+AF8-class() only examines elements of the list+AF8-entries+AFsAXQ array for which the
-corresponding bit in list+AF8-entries+AF8-in+AF8-use has been set. The RCU callback clears 
-the bits in the list+AF8-entries+AF8-in+AF8-use that correspond to elements that have been
-freed. The graph lock serializes zap+AF8-class() calls and the code inside the
-RCU callback. So it's not clear to me why you are claiming that zap+AF8-class()
-would trigger a use-after-free?
+One general point for the kmap() conversions - it's not obvious (to me 
+at least) whether or how that would work for a segment where sg->length 
+ > PAGE_SIZE. Or is there some cast-iron guarantee from the MMC 
+mid-layer that it will never let the block layer generate such things in 
+the first place?
 
-Bart.
+Robin.
