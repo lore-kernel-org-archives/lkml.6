@@ -2,98 +2,88 @@ Return-Path: <SRS0=tq6k=PW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3FA47C43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 17:08:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D0B6C43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 17:09:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 151C020659
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 17:08:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 329EB20659
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 17:09:24 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="H3DRVPsl"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726812AbfANRI6 (ORCPT
+        id S1726856AbfANRJX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 14 Jan 2019 12:08:58 -0500
-Received: from verein.lst.de ([213.95.11.211]:47826 "EHLO newverein.lst.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726643AbfANRI5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 Jan 2019 12:08:57 -0500
-Received: by newverein.lst.de (Postfix, from userid 2407)
-        id 0861268D93; Mon, 14 Jan 2019 18:08:56 +0100 (CET)
-Date:   Mon, 14 Jan 2019 18:08:55 +0100
-From:   Christoph Hellwig <hch@lst.de>
-To:     Robin Murphy <robin.murphy@arm.com>
-Cc:     Christoph Hellwig <hch@lst.de>, Pawel Osciak <pawel@osciak.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Niklas =?iso-8859-1?Q?S=F6derlund?= 
-        <niklas.soderlund+renesas@ragnatech.se>,
-        Russell King <linux@armlinux.org.uk>,
-        linux-kernel@vger.kernel.org, iommu@lists.linux-foundation.org,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        linuxppc-dev@lists.ozlabs.org,
-        linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org
-Subject: Re: [PATCH 1/3] dma-mapping: remove the default map_resource
- implementation
-Message-ID: <20190114170855.GA7485@lst.de>
-References: <20190111181731.11782-1-hch@lst.de> <20190111181731.11782-2-hch@lst.de> <c882430e-1dbd-df86-d686-0381dcaa668e@arm.com>
+        Mon, 14 Jan 2019 12:09:23 -0500
+Received: from mail-wm1-f52.google.com ([209.85.128.52]:35288 "EHLO
+        mail-wm1-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726643AbfANRJX (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 14 Jan 2019 12:09:23 -0500
+Received: by mail-wm1-f52.google.com with SMTP id t200so336911wmt.0;
+        Mon, 14 Jan 2019 09:09:21 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:from:to:cc:subject:date:message-id:reply-to:mime-version
+         :content-transfer-encoding;
+        bh=cBh/R8QFlqdOJanUFgZG7/gDC9AxWeBJjXXokBd25PE=;
+        b=H3DRVPslPl0PgrTxWO1V8PUHDgXn/VjNYoYSiYxOq/Am5I6Q/94JfHVv9XuYbmTx3W
+         9sCDT46l+6z0MUt9mQWxa0uu06kDZQ4MBDqPXBohFVpC5w9AFd/L6u+IiT7mnQ+/eUrV
+         fGcjphUJ9ODRpZsQdxEqkDlN9Opvk84G6cmkpYv/yngyYAy6Tr1FGMd7zLr1KeF0Q0b5
+         CHk40bZ8TCtOPHSIjAJ/yEv7aGtR+ttuPsE4VGRLRhMaS2QeWUgW0bALzLpTvfbAtC5K
+         WKh3uMbtI1PDgP+GgFMvKOvSk3KYIMQXDN+PXCZIoZEcecjNNakfTPT0/cwYGUSa9y8O
+         y1wA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:from:to:cc:subject:date:message-id
+         :reply-to:mime-version:content-transfer-encoding;
+        bh=cBh/R8QFlqdOJanUFgZG7/gDC9AxWeBJjXXokBd25PE=;
+        b=O+o3Yk6SloP8oBOhNqMgZDDDf9ZBQ8HfZISzcZBCUNlfFVhtafYtwBwNwzyXfOX3sx
+         gNQFyPuRECBvW34NmI4cMTGUZVjyfovv09PIum7u68UBrBWkEpx5qqhP8LFhUGzZZbZy
+         eCMlCvvQRi7/XuNBewUxFj6s1nOG/AxFgL9UYah2zxvVfvCeQYeZ8s/NNscXnbwHDf17
+         l61E6iLVf+A1SV/4zDXYFXDqYuRitrn8IX0P0T1M18ajx7Jecj+vCFR0GVUfZxhJ4pWx
+         jpmHeytC/Zp99JqufivkY6gPJDLy06HMgAcqR/ByJ3J9MR8nT3Y6UpIe6s0CUibEh2fR
+         r6NA==
+X-Gm-Message-State: AJcUukcwbUwjkYDHeQjzXKMs51SPqK7ZanNbBwkazvnqcWGpYU7rqUVb
+        ZqOWplXZx2Dwss9uAyQALKP6eUFm
+X-Google-Smtp-Source: ALg8bN6cKXmN9f91OjGEAyjjiIpTr/c8T6kuvPW3GNhZu29wCVoUE09dgU7SQ1mqi7hlsUYb+4gORg==
+X-Received: by 2002:a1c:934b:: with SMTP id v72mr95978wmd.5.1547485761058;
+        Mon, 14 Jan 2019 09:09:21 -0800 (PST)
+Received: from planxty.redhat.com ([2a02:8108:1700:1960:91dd:e2f9:ed05:ee2b])
+        by smtp.gmail.com with ESMTPSA id q9sm103717562wrp.0.2019.01.14.09.09.19
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 14 Jan 2019 09:09:20 -0800 (PST)
+From:   John Kacur <jkacur@redhat.com>
+To:     Joe Korty <Joe.Korty@concurrent-rt.com>
+Cc:     Clark Williams <williams@redhat.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        "julia @ ni . com" <julia@ni.com>,
+        "tglx @ linutronix . de" <tglx@linutronix.de>,
+        "oleg @ redhat . com" <oleg@redhat.com>,
+        "linux-rt-users @ vger . kernel . org" 
+        <linux-rt-users@vger.kernel.org>,
+        "linux-kernel @ vger . kernel . org" <linux-kernel@vger.kernel.org>
+Subject: Re: [ptrace, rt] erratic behaviour in PTRACE_SINGLESET on 4.13-rt and later. 
+Date:   Mon, 14 Jan 2019 18:09:07 +0100
+Message-Id: <20190114170908.5287-1-jkacur@redhat.com>
+X-Mailer: git-send-email 2.20.1
+Reply-To: "bigeasy@linutronix.de" <bigeasy@linutronix.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <c882430e-1dbd-df86-d686-0381dcaa668e@arm.com>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jan 14, 2019 at 01:12:33PM +0000, Robin Murphy wrote:
-> Ignoring the offset was kind of intentional there, because at the time I 
-> was primarily thinking about it in terms of the Keystone 2 platform where 
-> the peripherals are all in the same place (0-2GB) in both the bus and CPU 
-> physical address maps, and only the view of RAM differs between the two 
-> (2-4GB vs. 32-34GB). However, on something like BCM283x, the peripherals 
-> region is also offset from its bus address in the CPU view, but at a 
-> *different* offset relative to that of RAM.
 
-I was more thinking of the PCIe P2P case, where we need to apply a
-consistent offset to translate between the CPU and the bus view.
+Sebastian: I added the test from Joe Korty to rt-tests. Working on integrating it into the build, but I wanted to make it available before that so you
+could send me your patches.
 
-But this isn't really used for PCIe P2P, so I guess keeping the original
-sematics might be a better idea.  That being said the videobuf code seems
-to rely on these offsets, so we might be between a rock and a hard place.
+Repo:   git://git.kernel.org/pub/scm/utils/rt-tests/rt-tests.git
+Branch: unstable/devel/latest
 
-> Fortunately, I'm not aware of any platform which has a DMA engine behind an 
-> IOMMU (and thus *needs* to use dma_map_resource() to avoid said IOMMU 
-> blocking the slave device register reads/writes) and also has any nonzero 
-> offsets, and AFAIK the IOMMU-less platforms above aren't using 
-> dma_map_resource() at all, so this change shouldn't actually break 
-> anything, but I guess we have a bit of a problem making it truly generic 
-> and robust :(
+Thanks
+John Kacur
 
-Note that we don't actually use the code in this patch for ARM/ARM64
-platforms with IOMMUs, as both the ARM and the ARM64 iommu code have
-their own implementations of ->map_resource that actually program
-the iommu (which at least for the PCIe P2P case would be wrong).
-
-> Is this perhaps another shove in the direction of overhauling 
-> dma_pfn_offset into an arbitrary "DMA ranges" lookup table?
-
-It is long overdue anyway.
-
->>   		addr = ops->map_resource(dev, phys_addr, size, dir, attrs);
->
-> Might it be reasonable to do:
->
-> 	if (!dma_is_direct(ops) && ops->map_resource)
-> 		addr = ops->map_resource(...);
-> 	else
-> 		addr = dma_direct_map_resource(...);
->
-> and avoid having to explicitly wire up the dma_direct callback elsewhere?
-
-No, I absolutely _want_ the callback explicitly wired up.  That is the
-only way to ensure we actually intentionally support it and don't just
-get a default that often won't work.  Same issue for ->mmap and
-->get_sgtable.
