@@ -2,152 +2,222 @@ Return-Path: <SRS0=tq6k=PW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+X-Spam-Status: No, score=-0.7 required=3.0 tests=FROM_LOCAL_HEX,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 609F4C43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 17:26:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 142B6C43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 17:27:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 261632070B
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 17:26:19 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=Mellanox.com header.i=@Mellanox.com header.b="mAk8e4ar"
+	by mail.kernel.org (Postfix) with ESMTP id D6AD72070B
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 17:27:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726839AbfANR0R (ORCPT
+        id S1726804AbfANR1G (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 14 Jan 2019 12:26:17 -0500
-Received: from mail-eopbgr130059.outbound.protection.outlook.com ([40.107.13.59]:22070
-        "EHLO EUR01-HE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726811AbfANR0P (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 Jan 2019 12:26:15 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Mellanox.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=pN7Naei5elJO3w8Y/ky1akyiE1fMqJDKCr6W/PoBNw0=;
- b=mAk8e4aroVTKygOeZhrQelJw/zA2jXwNYuOsqDYo5WU3/8jQdoRNV48hOAck5lHo1uKbEpmXJpJDOKy+k1ABouO+dH0u2og1Px2+665uGEyFK5CDyCtla2ivqmCIUmOYKNov6p4KORx4+G6sGcRDd1rW6PenATTC0oN5iox/IW4=
-Received: from HE1PR05MB4601.eurprd05.prod.outlook.com (20.176.163.138) by
- HE1PR05MB3404.eurprd05.prod.outlook.com (10.170.244.18) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1516.18; Mon, 14 Jan 2019 17:26:10 +0000
-Received: from HE1PR05MB4601.eurprd05.prod.outlook.com
- ([fe80::75a0:a89d:1227:7ed3]) by HE1PR05MB4601.eurprd05.prod.outlook.com
- ([fe80::75a0:a89d:1227:7ed3%5]) with mapi id 15.20.1516.019; Mon, 14 Jan 2019
- 17:26:10 +0000
-From:   Jason Gunthorpe <jgg@mellanox.com>
-To:     Matthew Wilcox <willy@infradead.org>
-CC:     Joe Perches <joe@perches.com>, Gal Pressman <galpress@amazon.com>,
-        Bart Van Assche <bvanassche@acm.org>,
-        Stephen Warren <swarren@wwwdotorg.org>,
-        Tariq Toukan <tariqt@mellanox.com>,
-        "xavier.huwei@huawei.com" <xavier.huwei@huawei.com>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>,
-        Doug Ledford <dledford@redhat.com>,
-        Stephen Warren <swarren@nvidia.com>,
-        Christoph Hellwig <hch@lst.de>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v4] coding-style: Clarify the expectations around bool
-Thread-Topic: [PATCH v4] coding-style: Clarify the expectations around bool
-Thread-Index: AQHUqT7yMz195OkzB0O1DFW0sNTtuKWtbXAAgAGchIA=
-Date:   Mon, 14 Jan 2019 17:26:10 +0000
-Message-ID: <20190114172603.GF22875@mellanox.com>
-References: <20190110234805.GN6890@ziepe.ca>
- <20190113164936.GW6310@bombadil.infradead.org>
-In-Reply-To: <20190113164936.GW6310@bombadil.infradead.org>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: MWHPR2201CA0005.namprd22.prod.outlook.com
- (2603:10b6:301:28::18) To HE1PR05MB4601.eurprd05.prod.outlook.com
- (2603:10a6:7:99::10)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=jgg@mellanox.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-originating-ip: [174.3.196.123]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;HE1PR05MB3404;6:YcCZp7R6K6ZPu9TMX5CmNA1Gc7CUs9CwDLUg5Lz5UOgjRpRgk2jfgEAhk5dqw1fdeU9BaQwz9EH8RmC7509Xnl1xAx0XLZizFEAo1rw6GWR6GxFVwMnofieumSGPLf00sX09fQdnIxWYnk3BkpLn/wc8u/yRA1Ek2bcubJM34kNELkL3kFbt1F1RyFCdkZUHQ75YR4fKT3ZuzhIuZLOp8w72EYh3E7CaDYoYB45mCWcmZ876q4qSg2YizF2WxaFSSg8IbQMlE7IxgmtD/ARQqTuBTpbynfvfOYV2SEsXza8pHjF8+1ACDhFQ8LpkkbX+awRIdYLpHG1yBxN78Td/qNfK6nueUW0arg5YCP6vCKOSnKfrpuZ0Ni1uODbXIaRX4w6eL6x+8glAk6AU8xuhv+erZ/RTxL5f8YWGoYqMavsw1qOPXrpnH5KLfly33xsT/OWa4TAyLqWynYQFTcw+bA==;5:mHhFZVQYG9BlN/G8gy4hLF9SNzYHTWeTd9yR4sRZKQSbLNh39tW6izlL+3lQaDb9lLrhZ/ZI0Onfu9o3zHWjXLgkbv8dsnMdMNdd9YKH7UNdS1Yb9O0XdSdp2x0jqZGs+A+LvoPjWK8HeqGD7q11m83eLvdQK46/9CVAUZe9QGlo/r7aeRedhGeytFkFRumaQzU39zVTOuPOJUkCoxwvcg==;7:vyHRyqtjeIeSE1NfrpDPsbBBzyFtDUQZFMkL+uMKvBo1Ti/ySauNTdSx9+e/12zUt9ZjxY3YK4rpXOj6cd4IOc9dThVSN62/Rf/iMD0RteJ1elMOipHKbJ1trWtiOJEEBn93eWrqY/wr2u3BYoIXzw==
-x-ms-office365-filtering-correlation-id: fc89a19a-f2cd-4fe5-456f-08d67a455fd3
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600109)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:HE1PR05MB3404;
-x-ms-traffictypediagnostic: HE1PR05MB3404:
-x-microsoft-antispam-prvs: <HE1PR05MB3404F239164E608B6FE61F12CF800@HE1PR05MB3404.eurprd05.prod.outlook.com>
-x-forefront-prvs: 0917DFAC67
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(396003)(136003)(366004)(39860400002)(376002)(346002)(189003)(199004)(7736002)(106356001)(2906002)(97736004)(6916009)(7416002)(6436002)(54906003)(316002)(102836004)(386003)(6506007)(305945005)(86362001)(76176011)(26005)(5660300001)(105586002)(8936002)(99286004)(66066001)(14454004)(256004)(14444005)(478600001)(36756003)(81156014)(81166006)(8676002)(486006)(71190400001)(6486002)(71200400001)(11346002)(1076003)(446003)(476003)(33656002)(52116002)(25786009)(6246003)(68736007)(186003)(3846002)(6116002)(229853002)(4326008)(53936002)(6512007)(2616005);DIR:OUT;SFP:1101;SCL:1;SRVR:HE1PR05MB3404;H:HE1PR05MB4601.eurprd05.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: mellanox.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: D6zAmNd4+QzM0fl6G/0mFoaBh2QRRNjnKYPLk/f97sBt2ghpOPW1LOygAg6cnAFsx4nv9rBR7AmYejfu3+c1eW2K58ZfwyfHlGNcS7nqUlV3SngntYdlQa9XV+MZ6WLIXgRrp3JaQyCM8owf7T+RpqFE1G9Jzaut0TDbs6jIiLOgRot0lv04r7bSNb/SqqJrNUUQQzcKp2U/1J0iCdtsScuErV31yRKeXV0IJ7Hy0tVuJIJFE/ZhbUDQzW2qHKVqSKy4+tbdBAqp+PHqy6pN90g/1xqqBMStlUAa0SGjVQqf08OQ8bfmFa8/JUZt9J3iqOpVZ7ySQplIwdzUwM27aZV11CwutUDDmxUJAsDyIjnuKWxHWVDURNF0LIwzCr0wRopF71OPdofj2rrKdwzcbOD5C30Rxmh6RcYn+0hLjKE=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <9B58898B74CCDD49A5E17C8658896DD4@eurprd05.prod.outlook.com>
-Content-Transfer-Encoding: quoted-printable
+        Mon, 14 Jan 2019 12:27:06 -0500
+Received: from mail-it1-f198.google.com ([209.85.166.198]:40746 "EHLO
+        mail-it1-f198.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726643AbfANR1F (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 14 Jan 2019 12:27:05 -0500
+Received: by mail-it1-f198.google.com with SMTP id 135so250152itk.5
+        for <linux-kernel@vger.kernel.org>; Mon, 14 Jan 2019 09:27:04 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=n9eXPeh6fdyLYdAPXoceTkoK2KxS7kHyP43kOh8aCNI=;
+        b=JAoIdOd0JJn+bKIg8vNbTEp/29SxEuDSwWRlIpCVg+97X1n2gXiBBhms+ud9V4Jots
+         9nW7BcUxZpktZEZI/zDD1Q5lnghGQhpIYBZ3k+L9i1osK6QYoJa1oqDWVhLpU1H+c0T2
+         MWj+6IcjN4OncjURdhG5LO3nhi2Du5Cl4J9fdxpfuGPG8YIAnhJO+r77xdSCD/Bt4ejo
+         dg3cEs+pGee8akkyOY1j3R7ixS0dxBUxATbtFJVfc8bPeRENLMamJQALMS9+Fr0hWqIo
+         P1Qjl4ORMEqIi1xT4ndl5l3HjisaxxybX46xOa5sEJclRAZUCGIO+eXByKuUPVU7++0M
+         U33Q==
+X-Gm-Message-State: AJcUukc6giJ4OYJngziztChyeYpTffGT4MKG88HH0J8uLmufBOhZxvhn
+        E7tKd7Q5SmEH64S/VZ1zUEst08jIYBOF9LQKB1mm5AY78X2/
+X-Google-Smtp-Source: ALg8bN7o6KrrjTyyVwImDRwdnDeSbXHOoDoP+unlvEk3gVB0ght26eMHQn77XGR0ZzgP6Bi3kErUto5h/C6ZYjjKl9atMDHMBq87
 MIME-Version: 1.0
-X-OriginatorOrg: Mellanox.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: fc89a19a-f2cd-4fe5-456f-08d67a455fd3
-X-MS-Exchange-CrossTenant-originalarrivaltime: 14 Jan 2019 17:26:09.8487
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: a652971c-7d2e-4d9b-a6a4-d149256f461b
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: HE1PR05MB3404
+X-Received: by 2002:a6b:e519:: with SMTP id y25mr9902352ioc.36.1547486824334;
+ Mon, 14 Jan 2019 09:27:04 -0800 (PST)
+Date:   Mon, 14 Jan 2019 09:27:04 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <00000000000075901d057f6e5a97@google.com>
+Subject: KASAN: use-after-free Read in ip_tunnel_lookup
+From:   syzbot <syzbot+4a0034797afb7e908ab4@syzkaller.appspotmail.com>
+To:     davem@davemloft.net, kuznet@ms2.inr.ac.ru,
+        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com, yoshfuji@linux-ipv6.org
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Jan 13, 2019 at 08:49:36AM -0800, Matthew Wilcox wrote:
-> On Thu, Jan 10, 2019 at 11:48:13PM +0000, Jason Gunthorpe wrote:
-> > +The Linux kernel bool type is an alias for the C99 _Bool type. bool va=
-lues can
-> > +only evaluate to 0 or 1, and implicit or explicit conversion to bool
-> > +automatically converts the value to true or false. When using bool typ=
-es the
-> > +!! construction is not needed, which eliminates a class of bugs.
-> > +
-> > +When working with bool values the true and false definitions should be=
- used
-> > +instead of 0 and 1.
-> > +
-> > +bool function return types and stack variables are always fine to use =
-whenever
-> > +appropriate. Use of bool is encouraged to improve readability and is o=
-ften a
-> > +better option than 'int' for storing boolean values.
->=20
-> It's awkward to start a sentence with a lower case letter.  How about
-> rephrasing this paragraph and the following one as:
->=20
->   Using bool as the return type of a function or as a variable is always
->   fine when appropriate.  It often improves readability and is a better o=
-ption
->   than int for storing boolean values.  Using bool in data structures is
->   more debatable; its size and alignment can vary between architectures.
+Hello,
 
-This is more concise, but I think if the coding style is not going to
-give a concrete advise then it should at least provide some general
-information so the reader can try and make an informed choice.
+syzbot found the following crash on:
 
-That is why I had it expand on some of the rationals a little bit,
-along with a concrete direction to not use bool in the cases Linus
-specifically called out.
+HEAD commit:    f0c928d878e7 tcp: fix a race in inet_diag_dump_icsk()
+git tree:       net
+console output: https://syzkaller.appspot.com/x/log.txt?x=1732c797400000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=861a3573f4e78ba1
+dashboard link: https://syzkaller.appspot.com/bug?extid=4a0034797afb7e908ab4
+compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
 
-> > +Do not use bool if cache line layout or size of the value matters, its=
- size
-> > +and alignment varies based on the compiled architecture. Structures th=
-at are
-> > +optimized for alignment and size should not use bool.
-> > +
-> > +If a structure has many true/false values, consider consolidating them=
- into a
-> > +bitfield with 1 bit members, or using an appropriate fixed width type,=
- such as
-> > +u8.
+Unfortunately, I don't have any reproducer for this crash yet.
 
-JAson
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+4a0034797afb7e908ab4@syzkaller.appspotmail.com
+
+IPv6: ADDRCONF(NETDEV_UP): veth0_to_bridge: link is not ready
+IPv6: ADDRCONF(NETDEV_UP): veth1_to_bridge: link is not ready
+device bridge_slave_1 left promiscuous mode
+bridge0: port 2(bridge_slave_1) entered disabled state
+==================================================================
+BUG: KASAN: use-after-free in ip_tunnel_lookup+0x108a/0x12b0  
+net/ipv4/ip_tunnel.c:142
+Read of size 4 at addr ffff8881cc0e32c4 by task swapper/0/0
+
+CPU: 0 PID: 0 Comm: swapper/0 Not tainted 4.20.0-rc7+ #243
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+Call Trace:
+  <IRQ>
+  __dump_stack lib/dump_stack.c:77 [inline]
+  dump_stack+0x244/0x39d lib/dump_stack.c:113
+  print_address_description.cold.7+0x9/0x1ff mm/kasan/report.c:256
+  kasan_report_error mm/kasan/report.c:354 [inline]
+  kasan_report.cold.8+0x242/0x309 mm/kasan/report.c:412
+  __asan_report_load4_noabort+0x14/0x20 mm/kasan/report.c:432
+  ip_tunnel_lookup+0x108a/0x12b0 net/ipv4/ip_tunnel.c:142
+  ipgre_err net/ipv4/ip_gre.c:188 [inline]
+  gre_err+0xade/0x1460 net/ipv4/ip_gre.c:251
+  gre_err+0x2b1/0x450 net/ipv4/gre_demux.c:166
+  icmp_socket_deliver+0x2a1/0x470 net/ipv4/icmp.c:766
+  icmp_unreach+0x3c8/0xca0 net/ipv4/icmp.c:883
+  icmp_rcv+0x8dc/0x1570 net/ipv4/icmp.c:1065
+  ip_local_deliver_finish+0x2e9/0xda0 net/ipv4/ip_input.c:215
+  NF_HOOK include/linux/netfilter.h:289 [inline]
+  ip_local_deliver+0x1e9/0x750 net/ipv4/ip_input.c:256
+  dst_input include/net/dst.h:450 [inline]
+  ip_rcv_finish+0x1f9/0x300 net/ipv4/ip_input.c:415
+  NF_HOOK include/linux/netfilter.h:289 [inline]
+  ip_rcv+0xed/0x600 net/ipv4/ip_input.c:524
+  __netif_receive_skb_one_core+0x14d/0x200 net/core/dev.c:4946
+  __netif_receive_skb+0x2c/0x1e0 net/core/dev.c:5056
+  process_backlog+0x24e/0x7a0 net/core/dev.c:5864
+  napi_poll net/core/dev.c:6287 [inline]
+  net_rx_action+0x7fa/0x19b0 net/core/dev.c:6353
+  __do_softirq+0x308/0xb7e kernel/softirq.c:292
+  invoke_softirq kernel/softirq.c:373 [inline]
+  irq_exit+0x17f/0x1c0 kernel/softirq.c:413
+  exiting_irq arch/x86/include/asm/apic.h:536 [inline]
+  smp_apic_timer_interrupt+0x1cb/0x760 arch/x86/kernel/apic/apic.c:1061
+  apic_timer_interrupt+0xf/0x20 arch/x86/entry/entry_64.S:807
+  </IRQ>
+RIP: 0010:native_safe_halt+0x6/0x10 arch/x86/include/asm/irqflags.h:58
+Code: e9 2c ff ff ff 48 89 c7 48 89 45 d8 e8 83 98 e7 f9 48 8b 45 d8 e9 ca  
+fe ff ff 48 89 df e8 72 98 e7 f9 eb 82 55 48 89 e5 fb f4 <5d> c3 0f 1f 84  
+00 00 00 00 00 55 48 89 e5 f4 5d c3 90 90 90 90 90
+RSP: 0018:ffffffff89407c10 EFLAGS: 00000282 ORIG_RAX: ffffffffffffff13
+RAX: dffffc0000000000 RBX: 1ffffffff1280f86 RCX: 0000000000000000
+RDX: 1ffffffff12a4021 RSI: 0000000000000001 RDI: ffffffff89520108
+RBP: ffffffff89407c10 R08: ffffffff89476ec0 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000000 R12: ffffffff89407cd0
+R13: ffffffff8a1640e0 R14: 0000000000000000 R15: 0000000000000000
+  arch_safe_halt arch/x86/include/asm/paravirt.h:151 [inline]
+  default_idle+0xbf/0x490 arch/x86/kernel/process.c:561
+  arch_cpu_idle+0x10/0x20 arch/x86/kernel/process.c:552
+  default_idle_call+0x6d/0x90 kernel/sched/idle.c:93
+  cpuidle_idle_call kernel/sched/idle.c:153 [inline]
+  do_idle+0x49b/0x5c0 kernel/sched/idle.c:262
+  cpu_startup_entry+0x18/0x20 kernel/sched/idle.c:353
+  rest_init+0x243/0x372 init/main.c:443
+  arch_call_rest_init+0xe/0x1b
+  start_kernel+0x9f5/0xa30 init/main.c:745
+  x86_64_start_reservations+0x29/0x2b arch/x86/kernel/head64.c:470
+  x86_64_start_kernel+0x76/0x79 arch/x86/kernel/head64.c:451
+  secondary_startup_64+0xa4/0xb0 arch/x86/kernel/head_64.S:243
+
+Allocated by task 6066:
+  save_stack+0x43/0xd0 mm/kasan/kasan.c:448
+  set_track mm/kasan/kasan.c:460 [inline]
+  kasan_kmalloc+0xc7/0xe0 mm/kasan/kasan.c:553
+  __do_kmalloc_node mm/slab.c:3684 [inline]
+  __kmalloc_node+0x50/0x70 mm/slab.c:3691
+  kmalloc_node include/linux/slab.h:589 [inline]
+  kvmalloc_node+0x65/0xf0 mm/util.c:416
+  kvmalloc include/linux/mm.h:577 [inline]
+  kvzalloc include/linux/mm.h:585 [inline]
+  alloc_netdev_mqs+0x17b/0xfe0 net/core/dev.c:8949
+  __ip_tunnel_create+0x1d9/0x550 net/ipv4/ip_tunnel.c:269
+  ip_tunnel_init_net+0x3fc/0xac0 net/ipv4/ip_tunnel.c:1029
+  ipgre_tap_init_net+0x29/0x30 net/ipv4/ip_gre.c:1639
+  ops_init+0x101/0x560 net/core/net_namespace.c:129
+  setup_net+0x362/0x8d0 net/core/net_namespace.c:314
+  copy_net_ns+0x2b1/0x4a0 net/core/net_namespace.c:437
+  create_new_namespaces+0x6ad/0x900 kernel/nsproxy.c:107
+  unshare_nsproxy_namespaces+0xc3/0x1f0 kernel/nsproxy.c:206
+  ksys_unshare+0x79c/0x10b0 kernel/fork.c:2539
+  __do_sys_unshare kernel/fork.c:2607 [inline]
+  __se_sys_unshare kernel/fork.c:2605 [inline]
+  __x64_sys_unshare+0x31/0x40 kernel/fork.c:2605
+  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+
+Freed by task 7:
+  save_stack+0x43/0xd0 mm/kasan/kasan.c:448
+  set_track mm/kasan/kasan.c:460 [inline]
+  __kasan_slab_free+0x102/0x150 mm/kasan/kasan.c:521
+  kasan_slab_free+0xe/0x10 mm/kasan/kasan.c:528
+  __cache_free mm/slab.c:3498 [inline]
+  kfree+0xcf/0x230 mm/slab.c:3817
+  kvfree+0x61/0x70 mm/util.c:445
+  netdev_freemem+0x4c/0x60 net/core/dev.c:8903
+  netdev_release+0x121/0x180 net/core/net-sysfs.c:1640
+  device_release+0x7e/0x210 drivers/base/core.c:891
+  kobject_cleanup lib/kobject.c:662 [inline]
+  kobject_release lib/kobject.c:691 [inline]
+  kref_put include/linux/kref.h:70 [inline]
+  kobject_put.cold.9+0x287/0x2e4 lib/kobject.c:708
+  netdev_run_todo+0x715/0xa60 net/core/dev.c:8808
+  rtnl_unlock+0xe/0x10 net/core/rtnetlink.c:117
+  ip_tunnel_delete_nets+0x4d7/0x6d0 net/ipv4/ip_tunnel.c:1083
+  ipgre_tap_exit_batch_net+0x22/0x30 net/ipv4/ip_gre.c:1644
+  ops_exit_list.isra.5+0x105/0x160 net/core/net_namespace.c:156
+  cleanup_net+0x555/0xb10 net/core/net_namespace.c:551
+  process_one_work+0xc90/0x1c40 kernel/workqueue.c:2153
+  worker_thread+0x17f/0x1390 kernel/workqueue.c:2296
+  kthread+0x35a/0x440 kernel/kthread.c:246
+  ret_from_fork+0x3a/0x50 arch/x86/entry/entry_64.S:352
+
+The buggy address belongs to the object at ffff8881cc0e2780
+  which belongs to the cache kmalloc-4k of size 4096
+The buggy address is located 2884 bytes inside of
+  4096-byte region [ffff8881cc0e2780, ffff8881cc0e3780)
+The buggy address belongs to the page:
+page:ffffea0007303880 count:1 mapcount:0 mapping:ffff8881da800dc0 index:0x0  
+compound_mapcount: 0
+flags: 0x2fffc0000010200(slab|head)
+raw: 02fffc0000010200 ffffea00070b3788 ffffea0007336808 ffff8881da800dc0
+raw: 0000000000000000 ffff8881cc0e2780 0000000100000001 0000000000000000
+page dumped because: kasan: bad access detected
+
+Memory state around the buggy address:
+  ffff8881cc0e3180: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+  ffff8881cc0e3200: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+> ffff8881cc0e3280: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+                                            ^
+  ffff8881cc0e3300: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+  ffff8881cc0e3380: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+==================================================================
+
+
+---
+This bug is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this bug report. See:
+https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with  
+syzbot.
