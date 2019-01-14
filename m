@@ -2,237 +2,348 @@ Return-Path: <SRS0=tq6k=PW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=DKIM_ADSP_CUSTOM_MED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_ADSP_CUSTOM_MED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 561EAC43612
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 22:04:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 78153C43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 22:04:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 25564205C9
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 22:04:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 44732205C9
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 22:04:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726821AbfANWEG (ORCPT
+        id S1727085AbfANWEP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 14 Jan 2019 17:04:06 -0500
-Received: from mail-vk1-f198.google.com ([209.85.221.198]:39345 "EHLO
-        mail-vk1-f198.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726592AbfANWEG (ORCPT
+        Mon, 14 Jan 2019 17:04:15 -0500
+Received: from mail-yw1-f71.google.com ([209.85.161.71]:53472 "EHLO
+        mail-yw1-f71.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726684AbfANWEO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 Jan 2019 17:04:06 -0500
-Received: by mail-vk1-f198.google.com with SMTP id k8so205645vke.6
-        for <linux-kernel@vger.kernel.org>; Mon, 14 Jan 2019 14:04:05 -0800 (PST)
+        Mon, 14 Jan 2019 17:04:14 -0500
+Received: by mail-yw1-f71.google.com with SMTP id h3so282503ywc.20
+        for <linux-kernel@vger.kernel.org>; Mon, 14 Jan 2019 14:04:13 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
-        bh=R24EoOsZ/INWMt6gZzg3TgbDQOWy4WLd/+llaYzCFU8=;
-        b=tZCAB7EKIqThS6+2qIs1QGogjxBGeQSK7WrF+ZAAK6/3WyR0BYtf1aIQ3zKUqrL27Z
-         S62pnhPyst0tnUGN7ecD1wQYQedUA/fSOe8w9jtA8y5VtpjyIdsZCr3YWamA8ng4MDie
-         3vcNq8F5zpoOrOsT6OcgDXr2mTdnnUQnuegWmSlUluLIOnqeLl3ocKEtVlBvAbNR7HJp
-         mo2uABqWB0pjtOPKdi515u5dzzuYoiIw/KF+bbGzd3M1RX0W5zRPryRYhLEZdBLP57aM
-         YxiucH9XbWx9FSsADsyEw7NHFjOkBr8Fm14WGxExg7qgz1OlFyNo0Ki5u5jgQX/N7wGZ
-         WLkg==
-X-Gm-Message-State: AJcUukeJWQOJ9Za8CPoUZC4RjB0ho22rJNPcfNIRHG2n449AsyofjzaA
-        8CSV4Pk294kYUmdBOPiPBnq5eMyhUoqcPCzT8F+UYns6ahlYEIRBH0A6HZWdu/biPliH8a1HKn3
-        85R9wOZYP4zP43RJL1I7Ido4L1QmH6OyK/+E/yU3lCsPu5Y9FpyhBJvjfcmeHtuLoeIykVFAZOS
-        0=
-X-Google-Smtp-Source: ALg8bN4tmPr5veI2z7H4maDHZdriYKM2jHIfLY5OGpcVg/p8VQ/M299ek/mFBI3jkGvOZkZY8YTGGsurW+H+Khiu
-X-Received: by 2002:a67:8542:: with SMTP id h63mr436773vsd.43.1547503444689;
- Mon, 14 Jan 2019 14:04:04 -0800 (PST)
-Date:   Mon, 14 Jan 2019 15:03:47 -0700
-Message-Id: <20190114220356.108916-1-ncrews@google.com>
+        h=x-gm-message-state:date:in-reply-to:message-id:mime-version
+         :references:subject:from:to:cc;
+        bh=AEz/lA1ykJDg2del3qhR92C/0GyQH3oyqANQCrlMD98=;
+        b=sJZE2lAgr9Y+MLJ4wj8Gf15qqNudVY0PiKiDOvk5TgDVpjPqfTkT3NPIUfQU/SLy4K
+         9zKymdV5FNH/E18rO+OpCdb2h0UJ2o4P/v7vtWsnHE5BSTOUg6NoYcMJdPWDsv3NHTYH
+         mDnug0pUsLsaVIEpQVlCh2LEf2+oHw2H7KaCHASGa6lzoVpkyxTXUuoj1u/kVGySOUBp
+         I0qDxNj70a874XlbDQhOdmEGGJpeYKU25vUnLLowTQT1T63mMIPOPHEfPNS39coXyKxa
+         SgDRda3ERZ3TWt/gPGXcvHD0++xkrP27AxKcqil+L+vMp2vvL0ZM+P5pcF3UUQBGe5DN
+         YE2g==
+X-Gm-Message-State: AJcUukeAMKRhw0nIQPIYjofBRQK57iNJW3CpgjJqAyUOk2kj5zd4a4Db
+        hTIRwuIx81w2AmfInHl2cj7US191j2tGvLs+HduFQw4UBSN5Uv8icn63ZbLI7NEUYP6OOQmNZQi
+        bkv6qxqO8qHw2zBfZmKnAvyJ/VHnHTmKhxuamFL4qHfKtO5vQms3PNeo43RjFdT2//Y6a9QDzSV
+        s=
+X-Google-Smtp-Source: ALg8bN6Me9XVrKw5vxZ4jlmFDhTPPAIJp2LDf+5h+9xMRDqGge1Lhx62lXpAo+VwfGOSJfARDeul6YIYgXXGPjvr
+X-Received: by 2002:a25:4d8a:: with SMTP id a132mr283996ybb.10.1547503450687;
+ Mon, 14 Jan 2019 14:04:10 -0800 (PST)
+Date:   Mon, 14 Jan 2019 15:03:48 -0700
+In-Reply-To: <20190114220356.108916-1-ncrews@google.com>
+Message-Id: <20190114220356.108916-2-ncrews@google.com>
 Mime-Version: 1.0
+References: <20190114220356.108916-1-ncrews@google.com>
 X-Mailer: git-send-email 2.20.1.97.g81188d93c3-goog
-Subject: [PATCH v2 0/9] platform/chrome: rtc: Add support for Wilco EC
+Subject: [PATCH v2 1/9] platform/chrome: Remove cros_ec dependency in lpc_mec
 From:   Nick Crews <ncrews@google.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     groeck@chromium.org, sjg@chromium.org, dlaurie@chromium.org,
-        Nick Crews <ncrews@google.com>, linux-rtc@vger.kernel.org,
-        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
-        Alessandro Zummo <a.zummo@towertech.it>,
-        Benson Leung <bleung@chromium.org>,
         Duncan Laurie <dlaurie@google.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>
+        Nick Crews <ncrews@google.com>,
+        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
+        Benson Leung <bleung@chromium.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+From: Duncan Laurie <dlaurie@google.com>
 
-There is a new chromebook that contains a different Embedded Controller
-(codename Wilco) than the rest of the chromebook series. Thus the kernel
-requires a different driver than the already existing and generalized
-cros_ec_* drivers. Specifically, this driver adds support for getting
-and setting the RTC on the EC, adding a binary sysfs attribute
-that receives ACPI events from the EC, adding a binary sysfs
-attribute to request telemetry data from the EC (useful for enterprise
-applications), and adding normal sysfs attributes to get/set various
-other properties on the EC. The core of the communication with the EC
-is implemented in wilco_ec/mailbox.c, using a simple byte-level protocol
-with a checksum, transmitted over an eSPI bus. For debugging purposes,
-a raw attribute is also provided which can write/read arbitrary
-bytes to/from the eSPI bus.
+In order to allow this code to be re-used, remove the dependency
+on the rest of the cros_ec code from the cros_ec_lpc_mec functions.
 
-We attempted to adhere to the sysfs principles of "one piece of data per
-attribute" as much as possible, and mostly succeded. However, with the
-wilco_ec/adv_power.h attributes, which deal with scheduling power usage,
-we found it most elegant to bundle setting event times for an entire day
-into a single attribute, so at most you are using attributes formatted
-as "%d %d %d %d %d %d". With the telemetry attribute, we had to use a
-binary attribute, instead of the preferable human-readable ascii, in
-order to keep secure the information which is proprietary to the
-enterprise service provider. This opaque binary data will be read and
-sent using a proprietary daemon running on the OS. Finally, the
-"version" attribute returns a formatted result that looks something
-like:
-> cat /sys/bus/platform/devices/GOOG000C\:00/version
-Label        : 95.00.06
-SVN Revision : 5960a.06
-Model Number : 08;8
-Build Date   : 11/29/18
+Instead of using a hardcoded register base address of 0x800 have
+this be passed in to cros_ec_lpc_mec_init().  The existing cros_ec
+use case now passes in the 0x800 base address this way.
 
-The RTC driver is exposed as a standard RTC class driver with
-read/write functionality.
+There are some error checks that happen in cros_ec_lpc_mec_in_range()
+that probably shouldn't be there, as they are checking kernel-space
+callers and not user-space input. However, we'll just do the refactor in
+this patch, and in a future patch might remove this error checking and
+fix all the instances of code that calls this.
 
-For event notification, the Wilco EC can return extended events that
-are not handled by standard ACPI objects. These events can
-include hotkeys which map to standard functions like brightness
-controls, or information about EC controlled features like the
-charger or battery. These events are triggered with an
-ACPI Notify(0x90) and the event data buffer is read through an ACPI
-method provided by the BIOS which reads the event buffer from EC RAM.
-These events are then processed, with hotkey events being sent
-to the input subsystem and other events put into a queue which
-can be read by a userspace daemon via a sysfs attribute.
+There's a similar problem in cros_ec_lpc_read_bytes(), where we return a
+checksum, but on error just return 0. This should probably be changed so
+that it returns int, but we don't want to have to mess with all the
+calling code for this fix. Maybe we'll come back through later and fix
+this.
 
-The rest of the attributes are categorized as either "properties" or
-"legacy". "legacy" implies that the attribute existed on the EC before it
-was modified for ChromeOS, and "properties" implies that the attribute
-exposes functionality that was added to the EC specifically for
-ChromeOS. They are mostly boolean flags or percentages.
-
-A full thread of the development of these patches can be found at
-https://chromium-review.googlesource.com/c/1371034. This thread contains
-comments and revisions that could be helpful in understanding how the
-driver arrived at the state it is in now. The thread also contains some
-ChromeOS specific patches that actually enable the driver. If you want
-to test the patch yourself, you would have to install the ChromeOS SDK
-and cherry pick in these patches.
-
-I also wrote some integration tests using the Tast testing framework that
-ChromeOS uses. It would require a full ChromeOS SDK to actually run the
-tests, but the source of the tests, written in Go, are useful for
-understanding what the desired behavior is. You can view the tests here:
-https://chromium-review.googlesource.com/c/1372575
-
-Thank you for your comments!
+Signed-off-by: Duncan Laurie <dlaurie@google.com>
+Signed-off-by: Nick Crews <ncrews@google.com>
+---
 
 Changes in v2:
 - Fixed kernel-doc comments
 - Fixed include of linux/mfd/cros_ec_lpc_mec.h
 - cros_ec_lpc_mec_in_range() returns -EINVAL on error
 - Added parens around macro variables
-- Removed COMPILE_TEST from Kconfig because inb()/outb()
-won't work on anything but X86
-- Moved everything to wilco_ec/ subdirectory
-- Moved header file to include/platform_data/
-so could be used by future sub-drivers
-- Tweaked mailbox()
-- Removed duplicate EC_MAILBOX_DATA_SIZE defs
-- Removed some error messages / converted to dbg()
-- Remove license boiler plate
-- Remove "wilco_ec_sysfs -" docstring prefix
-- Fix accidental Makefile deletion
-- Add documentation for sysfs entries
-- Change "enable ? 0 : 1" to "!enable"
-- No longer override error code from sysfs_init()
-- Put attributes in the legacy file to begin with, don't move later
-- Remove duplicate error messages in sysfs_init() and its caller
-- Add sysfs documentation
-- rm duplicate EC_MAILBOX_DATA_SIZE defs
-- Make docstrings follow kernel style
-- Fix tags in commit msg
-- Reading raw now includes ASCII translation
-- rm license boiler plate
-- rm "wilco_ec_rtc -" prefix in docstring
-- Make rtc driver its own module within the drivers/rtc/ directory
-- Register a rtc device from core.c that is picked up by this driver
-- rm unused rtc_sync() function
-- rm "wilco_ec_event -" prefix from docstring
-- rm license boiler plate
-- Add sysfs directory documentation
-- Fix cosmetics
-- Remove duplicate error messages
-- rm license boiler plate
-- rm "wilco_ec_properties -" prefix from docstring
-- Add documentation
-- rm license boiler plate
-- rm "wilco_ec_adv_power - " prefix from docstring
-- Add documentation
-- Made format strings in store() and read() functions static
-- rm "wilco_ec_telemetry - " prefix from docstring
-- rm license boiler plate
-- Fix commit msg tag
 
-Duncan Laurie (6):
-  platform/chrome: Remove cros_ec dependency in lpc_mec
-  platform/chrome: Add new driver for Wilco EC
-  platform/chrome: Add sysfs attributes
-  platform/chrome: Add support for raw commands in sysfs
-  platform/chrome: rtc: Add RTC driver for Wilco EC
-  platform/chrome: Add event handling
+ drivers/platform/chrome/cros_ec_lpc_mec.c | 52 +++++++++++++++++++----
+ drivers/platform/chrome/cros_ec_lpc_mec.h | 43 ++++++++++---------
+ drivers/platform/chrome/cros_ec_lpc_reg.c | 43 ++++++-------------
+ 3 files changed, 79 insertions(+), 59 deletions(-)
 
-Nick Crews (3):
-  platform/chrome: Add EC properties
-  platform/chrome: Add peakshift and adv_batt_charging
-  platform/chrome: Add binary telemetry attributes
-
- .../ABI/testing/sysfs-platform-wilcoec        | 176 ++++++
- drivers/platform/chrome/Kconfig               |   4 +-
- drivers/platform/chrome/Makefile              |   2 +
- drivers/platform/chrome/cros_ec_lpc_mec.c     |  52 +-
- drivers/platform/chrome/cros_ec_lpc_mec.h     |  43 +-
- drivers/platform/chrome/cros_ec_lpc_reg.c     |  43 +-
- drivers/platform/chrome/wilco_ec/Kconfig      |  33 ++
- drivers/platform/chrome/wilco_ec/Makefile     |   6 +
- drivers/platform/chrome/wilco_ec/adv_power.c  | 544 ++++++++++++++++++
- drivers/platform/chrome/wilco_ec/adv_power.h  | 183 ++++++
- drivers/platform/chrome/wilco_ec/core.c       | 144 +++++
- drivers/platform/chrome/wilco_ec/event.c      | 347 +++++++++++
- drivers/platform/chrome/wilco_ec/legacy.c     | 190 ++++++
- drivers/platform/chrome/wilco_ec/legacy.h     |  93 +++
- drivers/platform/chrome/wilco_ec/mailbox.c    | 237 ++++++++
- drivers/platform/chrome/wilco_ec/properties.c | 344 +++++++++++
- drivers/platform/chrome/wilco_ec/properties.h | 179 ++++++
- drivers/platform/chrome/wilco_ec/sysfs.c      | 238 ++++++++
- drivers/platform/chrome/wilco_ec/telemetry.c  |  66 +++
- drivers/platform/chrome/wilco_ec/telemetry.h  |  41 ++
- drivers/platform/chrome/wilco_ec/util.h       |  38 ++
- drivers/rtc/Kconfig                           |  11 +
- drivers/rtc/Makefile                          |   1 +
- drivers/rtc/rtc-wilco-ec.c                    | 178 ++++++
- include/linux/platform_data/wilco-ec.h        | 186 ++++++
- 25 files changed, 3319 insertions(+), 60 deletions(-)
- create mode 100644 Documentation/ABI/testing/sysfs-platform-wilcoec
- create mode 100644 drivers/platform/chrome/wilco_ec/Kconfig
- create mode 100644 drivers/platform/chrome/wilco_ec/Makefile
- create mode 100644 drivers/platform/chrome/wilco_ec/adv_power.c
- create mode 100644 drivers/platform/chrome/wilco_ec/adv_power.h
- create mode 100644 drivers/platform/chrome/wilco_ec/core.c
- create mode 100644 drivers/platform/chrome/wilco_ec/event.c
- create mode 100644 drivers/platform/chrome/wilco_ec/legacy.c
- create mode 100644 drivers/platform/chrome/wilco_ec/legacy.h
- create mode 100644 drivers/platform/chrome/wilco_ec/mailbox.c
- create mode 100644 drivers/platform/chrome/wilco_ec/properties.c
- create mode 100644 drivers/platform/chrome/wilco_ec/properties.h
- create mode 100644 drivers/platform/chrome/wilco_ec/sysfs.c
- create mode 100644 drivers/platform/chrome/wilco_ec/telemetry.c
- create mode 100644 drivers/platform/chrome/wilco_ec/telemetry.h
- create mode 100644 drivers/platform/chrome/wilco_ec/util.h
- create mode 100644 drivers/rtc/rtc-wilco-ec.c
- create mode 100644 include/linux/platform_data/wilco-ec.h
-
+diff --git a/drivers/platform/chrome/cros_ec_lpc_mec.c b/drivers/platform/chrome/cros_ec_lpc_mec.c
+index c4edfa83e493..36f22aacfeb4 100644
+--- a/drivers/platform/chrome/cros_ec_lpc_mec.c
++++ b/drivers/platform/chrome/cros_ec_lpc_mec.c
+@@ -23,7 +23,6 @@
+ 
+ #include <linux/delay.h>
+ #include <linux/io.h>
+-#include <linux/mfd/cros_ec_commands.h>
+ #include <linux/mutex.h>
+ #include <linux/types.h>
+ 
+@@ -34,6 +33,7 @@
+  * EC mutex because memmap data may be accessed without it being held.
+  */
+ static struct mutex io_mutex;
++static u16 mec_emi_base, mec_emi_end;
+ 
+ /*
+  * cros_ec_lpc_mec_emi_write_address
+@@ -46,10 +46,37 @@ static struct mutex io_mutex;
+ static void cros_ec_lpc_mec_emi_write_address(u16 addr,
+ 			enum cros_ec_lpc_mec_emi_access_mode access_type)
+ {
+-	/* Address relative to start of EMI range */
+-	addr -= MEC_EMI_RANGE_START;
+-	outb((addr & 0xfc) | access_type, MEC_EMI_EC_ADDRESS_B0);
+-	outb((addr >> 8) & 0x7f, MEC_EMI_EC_ADDRESS_B1);
++	outb((addr & 0xfc) | access_type, MEC_EMI_EC_ADDRESS_B0(mec_emi_base));
++	outb((addr >> 8) & 0x7f, MEC_EMI_EC_ADDRESS_B1(mec_emi_base));
++}
++
++/**
++ * cros_ec_lpc_mec_in_range() - Determine if addresses are in MEC EMI range.
++ *
++ * @offset: Address offset
++ * @length: Number of bytes to check
++ *
++ * Return: 1 if in range, 0 if not, and -EINVAL on failure
++ *         such as the mec range not being initialized
++ */
++int cros_ec_lpc_mec_in_range(unsigned int offset, unsigned int length)
++{
++	if (length == 0)
++		return -EINVAL;
++
++	if (WARN_ON(mec_emi_base == 0 || mec_emi_end == 0))
++		return -EINVAL;
++
++	if (offset >= mec_emi_base && offset < mec_emi_end) {
++		if (WARN_ON(offset + length - 1 <= mec_emi_end))
++			return -EINVAL;
++		return 1;
++	}
++
++	if (WARN_ON(offset + length > mec_emi_base && offset < mec_emi_end))
++		return -EINVAL;
++
++	return 0;
+ }
+ 
+ /*
+@@ -71,6 +98,11 @@ u8 cros_ec_lpc_io_bytes_mec(enum cros_ec_lpc_mec_io_type io_type,
+ 	u8 sum = 0;
+ 	enum cros_ec_lpc_mec_emi_access_mode access, new_access;
+ 
++	/* Return checksum of 0 if window is not initialized */
++	WARN_ON(mec_emi_base == 0 || mec_emi_end == 0);
++	if (mec_emi_base == 0 || mec_emi_end == 0)
++		return 0;
++
+ 	/*
+ 	 * Long access cannot be used on misaligned data since reading B0 loads
+ 	 * the data register and writing B3 flushes.
+@@ -86,9 +118,9 @@ u8 cros_ec_lpc_io_bytes_mec(enum cros_ec_lpc_mec_io_type io_type,
+ 	cros_ec_lpc_mec_emi_write_address(offset, access);
+ 
+ 	/* Skip bytes in case of misaligned offset */
+-	io_addr = MEC_EMI_EC_DATA_B0 + (offset & 0x3);
++	io_addr = MEC_EMI_EC_DATA_B0(mec_emi_base) + (offset & 0x3);
+ 	while (i < length) {
+-		while (io_addr <= MEC_EMI_EC_DATA_B3) {
++		while (io_addr <= MEC_EMI_EC_DATA_B3(mec_emi_base)) {
+ 			if (io_type == MEC_IO_READ)
+ 				buf[i] = inb(io_addr++);
+ 			else
+@@ -118,7 +150,7 @@ u8 cros_ec_lpc_io_bytes_mec(enum cros_ec_lpc_mec_io_type io_type,
+ 		}
+ 
+ 		/* Access [B0, B3] on each loop pass */
+-		io_addr = MEC_EMI_EC_DATA_B0;
++		io_addr = MEC_EMI_EC_DATA_B0(mec_emi_base);
+ 	}
+ 
+ done:
+@@ -128,9 +160,11 @@ u8 cros_ec_lpc_io_bytes_mec(enum cros_ec_lpc_mec_io_type io_type,
+ }
+ EXPORT_SYMBOL(cros_ec_lpc_io_bytes_mec);
+ 
+-void cros_ec_lpc_mec_init(void)
++void cros_ec_lpc_mec_init(unsigned int base, unsigned int end)
+ {
+ 	mutex_init(&io_mutex);
++	mec_emi_base = base;
++	mec_emi_end = end;
+ }
+ EXPORT_SYMBOL(cros_ec_lpc_mec_init);
+ 
+diff --git a/drivers/platform/chrome/cros_ec_lpc_mec.h b/drivers/platform/chrome/cros_ec_lpc_mec.h
+index 105068c0e919..896fffd174b3 100644
+--- a/drivers/platform/chrome/cros_ec_lpc_mec.h
++++ b/drivers/platform/chrome/cros_ec_lpc_mec.h
+@@ -24,8 +24,6 @@
+ #ifndef __CROS_EC_LPC_MEC_H
+ #define __CROS_EC_LPC_MEC_H
+ 
+-#include <linux/mfd/cros_ec_commands.h>
+-
+ enum cros_ec_lpc_mec_emi_access_mode {
+ 	/* 8-bit access */
+ 	ACCESS_TYPE_BYTE = 0x0,
+@@ -45,27 +43,23 @@ enum cros_ec_lpc_mec_io_type {
+ 	MEC_IO_WRITE,
+ };
+ 
+-/* Access IO ranges 0x800 thru 0x9ff using EMI interface instead of LPC */
+-#define MEC_EMI_RANGE_START EC_HOST_CMD_REGION0
+-#define MEC_EMI_RANGE_END   (EC_LPC_ADDR_MEMMAP + EC_MEMMAP_SIZE)
+-
+ /* EMI registers are relative to base */
+-#define MEC_EMI_BASE 0x800
+-#define MEC_EMI_HOST_TO_EC (MEC_EMI_BASE + 0)
+-#define MEC_EMI_EC_TO_HOST (MEC_EMI_BASE + 1)
+-#define MEC_EMI_EC_ADDRESS_B0 (MEC_EMI_BASE + 2)
+-#define MEC_EMI_EC_ADDRESS_B1 (MEC_EMI_BASE + 3)
+-#define MEC_EMI_EC_DATA_B0 (MEC_EMI_BASE + 4)
+-#define MEC_EMI_EC_DATA_B1 (MEC_EMI_BASE + 5)
+-#define MEC_EMI_EC_DATA_B2 (MEC_EMI_BASE + 6)
+-#define MEC_EMI_EC_DATA_B3 (MEC_EMI_BASE + 7)
++#define MEC_EMI_HOST_TO_EC(MEC_EMI_BASE)	((MEC_EMI_BASE) + 0)
++#define MEC_EMI_EC_TO_HOST(MEC_EMI_BASE)	((MEC_EMI_BASE) + 1)
++#define MEC_EMI_EC_ADDRESS_B0(MEC_EMI_BASE)	((MEC_EMI_BASE) + 2)
++#define MEC_EMI_EC_ADDRESS_B1(MEC_EMI_BASE)	((MEC_EMI_BASE) + 3)
++#define MEC_EMI_EC_DATA_B0(MEC_EMI_BASE)	((MEC_EMI_BASE) + 4)
++#define MEC_EMI_EC_DATA_B1(MEC_EMI_BASE)	((MEC_EMI_BASE) + 5)
++#define MEC_EMI_EC_DATA_B2(MEC_EMI_BASE)	((MEC_EMI_BASE) + 6)
++#define MEC_EMI_EC_DATA_B3(MEC_EMI_BASE)	((MEC_EMI_BASE) + 7)
+ 
+-/*
+- * cros_ec_lpc_mec_init
++/**
++ * cros_ec_lpc_mec_init() - Initialize MEC I/O.
+  *
+- * Initialize MEC I/O.
++ * @base: MEC EMI Base address
++ * @end: MEC EMI End address
+  */
+-void cros_ec_lpc_mec_init(void);
++void cros_ec_lpc_mec_init(unsigned int base, unsigned int end);
+ 
+ /*
+  * cros_ec_lpc_mec_destroy
+@@ -74,6 +68,17 @@ void cros_ec_lpc_mec_init(void);
+  */
+ void cros_ec_lpc_mec_destroy(void);
+ 
++/**
++ * cros_ec_lpc_mec_in_range() - Determine if addresses are in MEC EMI range.
++ *
++ * @offset: Address offset
++ * @length: Number of bytes to check
++ *
++ * Return: 1 if in range, 0 if not, and -EINVAL on failure
++ *         such as the mec range not being initialized
++ */
++int cros_ec_lpc_mec_in_range(unsigned int offset, unsigned int length);
++
+ /**
+  * cros_ec_lpc_io_bytes_mec - Read / write bytes to MEC EMI port
+  *
+diff --git a/drivers/platform/chrome/cros_ec_lpc_reg.c b/drivers/platform/chrome/cros_ec_lpc_reg.c
+index fc23d535c404..4cba259b5b1e 100644
+--- a/drivers/platform/chrome/cros_ec_lpc_reg.c
++++ b/drivers/platform/chrome/cros_ec_lpc_reg.c
+@@ -59,51 +59,32 @@ static u8 lpc_write_bytes(unsigned int offset, unsigned int length, u8 *msg)
+ 
+ u8 cros_ec_lpc_read_bytes(unsigned int offset, unsigned int length, u8 *dest)
+ {
+-	if (length == 0)
+-		return 0;
+-
+-	/* Access desired range through EMI interface */
+-	if (offset >= MEC_EMI_RANGE_START && offset <= MEC_EMI_RANGE_END) {
+-		/* Ensure we don't straddle EMI region */
+-		if (WARN_ON(offset + length - 1 > MEC_EMI_RANGE_END))
+-			return 0;
++	int in_range = cros_ec_lpc_mec_in_range(offset, length);
+ 
+-		return cros_ec_lpc_io_bytes_mec(MEC_IO_READ, offset, length,
+-						dest);
+-	}
+-
+-	if (WARN_ON(offset + length > MEC_EMI_RANGE_START &&
+-		    offset < MEC_EMI_RANGE_START))
++	if (in_range < 0)
+ 		return 0;
+ 
+-	return lpc_read_bytes(offset, length, dest);
++	return in_range ?
++		cros_ec_lpc_io_bytes_mec(MEC_IO_READ, offset, length, dest) :
++		lpc_read_bytes(offset, length, dest);
+ }
+ 
+ u8 cros_ec_lpc_write_bytes(unsigned int offset, unsigned int length, u8 *msg)
+ {
+-	if (length == 0)
+-		return 0;
+-
+-	/* Access desired range through EMI interface */
+-	if (offset >= MEC_EMI_RANGE_START && offset <= MEC_EMI_RANGE_END) {
+-		/* Ensure we don't straddle EMI region */
+-		if (WARN_ON(offset + length - 1 > MEC_EMI_RANGE_END))
+-			return 0;
++	int in_range = cros_ec_lpc_mec_in_range(offset, length);
+ 
+-		return cros_ec_lpc_io_bytes_mec(MEC_IO_WRITE, offset, length,
+-						msg);
+-	}
+-
+-	if (WARN_ON(offset + length > MEC_EMI_RANGE_START &&
+-		    offset < MEC_EMI_RANGE_START))
++	if (in_range < 0)
+ 		return 0;
+ 
+-	return lpc_write_bytes(offset, length, msg);
++	return in_range ?
++		cros_ec_lpc_io_bytes_mec(MEC_IO_WRITE, offset, length, msg) :
++		lpc_write_bytes(offset, length, msg);
+ }
+ 
+ void cros_ec_lpc_reg_init(void)
+ {
+-	cros_ec_lpc_mec_init();
++	cros_ec_lpc_mec_init(EC_HOST_CMD_REGION0,
++			     EC_LPC_ADDR_MEMMAP + EC_MEMMAP_SIZE);
+ }
+ 
+ void cros_ec_lpc_reg_destroy(void)
 -- 
 2.20.1.97.g81188d93c3-goog
 
