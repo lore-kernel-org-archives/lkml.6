@@ -2,103 +2,103 @@ Return-Path: <SRS0=tq6k=PW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=BITCOIN_SPAM_02,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B463EC43444
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 18:20:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F0774C43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 18:23:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 90FD320659
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 18:20:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CAECC20659
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 18:23:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726780AbfANSUs (ORCPT
+        id S1726783AbfANSXL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 14 Jan 2019 13:20:48 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:45244 "EHLO mx1.redhat.com"
+        Mon, 14 Jan 2019 13:23:11 -0500
+Received: from pegase1.c-s.fr ([93.17.236.30]:18543 "EHLO pegase1.c-s.fr"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726744AbfANSUs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 Jan 2019 13:20:48 -0500
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id AA04C9FDCC;
-        Mon, 14 Jan 2019 18:20:47 +0000 (UTC)
-Received: from redhat.com (ovpn-124-229.rdu2.redhat.com [10.10.124.229])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id BB42219744;
-        Mon, 14 Jan 2019 18:20:45 +0000 (UTC)
-Date:   Mon, 14 Jan 2019 13:20:45 -0500
-From:   "Michael S. Tsirkin" <mst@redhat.com>
-To:     Jason Wang <jasowang@redhat.com>
-Cc:     Christoph Hellwig <hch@lst.de>, Joerg Roedel <joro@8bytes.org>,
-        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
-        Jens Axboe <axboe@kernel.dk>,
-        virtualization@lists.linux-foundation.org,
-        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-        iommu@lists.linux-foundation.org, jfehlig@suse.com,
-        jon.grimm@amd.com, brijesh.singh@amd.com
-Subject: Re: [PATCH 0/3] Fix virtio-blk issue with SWIOTLB
-Message-ID: <20190114131114-mutt-send-email-mst@kernel.org>
-References: <20190110134433.15672-1-joro@8bytes.org>
- <5ae1341e-62ec-0478-552b-259eabf9fb17@redhat.com>
- <20190111091502.GC5825@8bytes.org>
- <38bcbd46-674c-348a-cbd6-66bd431e986a@redhat.com>
- <20190114095002.GA29874@lst.de>
- <ac6d83d8-02de-dbdf-e309-3a1115642d50@redhat.com>
+        id S1726732AbfANSXL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 14 Jan 2019 13:23:11 -0500
+Received: from localhost (mailhub1-int [192.168.12.234])
+        by localhost (Postfix) with ESMTP id 43dhfh3075z9vCHq;
+        Mon, 14 Jan 2019 19:23:08 +0100 (CET)
+X-Virus-Scanned: Debian amavisd-new at c-s.fr
+Received: from pegase1.c-s.fr ([192.168.12.234])
+        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
+        with ESMTP id iZ-ulGqJOV6r; Mon, 14 Jan 2019 19:23:08 +0100 (CET)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+        by pegase1.c-s.fr (Postfix) with ESMTP id 43dhfh2Vmlz9vCHp;
+        Mon, 14 Jan 2019 19:23:08 +0100 (CET)
+Received: from localhost (localhost [127.0.0.1])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id D3C2C8B7CF;
+        Mon, 14 Jan 2019 19:23:08 +0100 (CET)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+        with ESMTP id VMAGwYmdKohg; Mon, 14 Jan 2019 19:23:08 +0100 (CET)
+Received: from PO15451 (unknown [192.168.4.90])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id D752E8B7AC;
+        Mon, 14 Jan 2019 19:23:07 +0100 (CET)
+Subject: Re: [PATCH v2 00/15] powerpc/32s: Use BATs/LTLBs for
+ STRICT_KERNEL_RWX
+To:     =?UTF-8?Q?Jonathan_Neusch=c3=a4fer?= <j.neuschaefer@gmx.net>
+Cc:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
+References: <cover.1547132681.git.christophe.leroy@c-s.fr>
+ <20190113181621.GA22334@latitude>
+ <714e78ba-1e92-a856-3dd6-a1fb96ad3785@c-s.fr>
+ <20190113210227.GB22334@latitude>
+From:   Christophe Leroy <christophe.leroy@c-s.fr>
+Message-ID: <334b1b02-b652-499c-904e-09e6f7164b8c@c-s.fr>
+Date:   Mon, 14 Jan 2019 19:23:07 +0100
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+In-Reply-To: <20190113210227.GB22334@latitude>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: fr
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <ac6d83d8-02de-dbdf-e309-3a1115642d50@redhat.com>
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.39]); Mon, 14 Jan 2019 18:20:48 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jan 14, 2019 at 08:41:37PM +0800, Jason Wang wrote:
-> 
-> On 2019/1/14 下午5:50, Christoph Hellwig wrote:
-> > On Mon, Jan 14, 2019 at 05:41:56PM +0800, Jason Wang wrote:
-> > > On 2019/1/11 下午5:15, Joerg Roedel wrote:
-> > > > On Fri, Jan 11, 2019 at 11:29:31AM +0800, Jason Wang wrote:
-> > > > > Just wonder if my understanding is correct IOMMU_PLATFORM must be set for
-> > > > > all virtio devices under AMD-SEV guests?
-> > > > Yes, that is correct. Emulated DMA can only happen on the SWIOTLB
-> > > > aperture, because that memory is not encrypted. The guest bounces the
-> > > > data then to its encrypted memory.
-> > > > 
-> > > > Regards,
-> > > > 
-> > > > 	Joerg
-> > > 
-> > > Thanks, have you tested vhost-net in this case. I suspect it may not work
-> > Which brings me back to my pet pevee that we need to take actions
-> > that virtio uses the proper dma mapping API by default with quirks
-> > for legacy cases.  The magic bypass it uses is just causing problems
-> > over problems.
-> 
-> 
-> Yes, I fully agree with you. This is probably an exact example of such
-> problem.
-> 
-> Thanks
 
-I don't think so - the issue is really that DMA API does not yet handle
-the SEV case 100% correctly. I suspect passthrough devices would have
-the same issue.
 
-In fact whoever sets IOMMU_PLATFORM is completely unaffected by
-Christoph's pet peeve.
+Le 13/01/2019 à 22:02, Jonathan Neuschäfer a écrit :
+> On Sun, Jan 13, 2019 at 08:43:07PM +0100, Christophe Leroy wrote:
+>> Le 13/01/2019 à 19:16, Jonathan Neuschäfer a écrit :
+>>> I just tested the whole series on my Wii (I didn't test any intermediate
+>>> steps). Without CONFIG_STRICT_KERNEL_RWX, it seems to work fine, but
+>>> with it, I get the following error while booting:
+>>
+>> Argh !
+>>
+>> Can you please send the System.map file generated at compile time ?
+> 
+> Here:
+>    https://gist.githubusercontent.com/neuschaefer/12ccc87ff8aeff543fad558e8742cd2b/raw/d49d321709cac364779e6893bbd91ff5a80bcb03/System.map
+> 
+> And here's the config, reduced with 'make savedefconfig':
+>    https://gist.githubusercontent.com/neuschaefer/12ccc87ff8aeff543fad558e8742cd2b/raw/d49d321709cac364779e6893bbd91ff5a80bcb03/config
+> 
+> The exact code I used is here:
+>    https://github.com/neuschaefer/linux/tree/ppcbat-test
 
-Christoph is saying that !IOMMU_PLATFORM devices should hide the
-compatibility code in a special per-device DMA API implementation.
-Which would be fine especially if we can manage not to introduce a bunch
-of indirect calls all over the place and hurt performance.  It's just
-that the benefit is unlikely to be big (e.g. we can't also get rid of
-the virtio specific memory barriers) so no one was motivated enough to
-work on it.
+Thanks
 
--- 
-MST
+I can't see anything special in your setup, and this failure looks 
+rather unexpected because I can't see anything done that early when 
+CONFIG_STRICT_KERNEL_RWX is selected.
+
+Does CONFIG_STRICT_KERNEL_RWX works properly without my serie ?
+
+Christophe
+
+> 
+> 
+> Thanks,
+> Jonathan
+> 
