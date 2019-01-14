@@ -2,121 +2,148 @@ Return-Path: <SRS0=tq6k=PW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 41074C43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 16:36:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BD9B5C43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 16:36:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0DF7D206B7
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 16:36:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8D50E206B7
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 16:36:36 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="W+BVKe0L";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="kkqKlr+r"
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="cD1FRQJ9"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726857AbfANQg0 (ORCPT
+        id S1726869AbfANQgf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 14 Jan 2019 11:36:26 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:44218 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726646AbfANQgZ (ORCPT
+        Mon, 14 Jan 2019 11:36:35 -0500
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:37083 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726744AbfANQgd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 Jan 2019 11:36:25 -0500
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 080AB6086B; Mon, 14 Jan 2019 16:36:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1547483784;
-        bh=+2bcDl0Zo8wZ9KYE2I79+vgoN7vzuMRAQs/hwSAvQpA=;
-        h=From:To:Cc:Subject:Date:From;
-        b=W+BVKe0LjzGQzQk5NnFoW6nXSo+MrkRCouQIlGLSbcpO5LRmkkPtKaJF5xXBveka6
-         oxybA15nAmAc9q/RqQz56DelVuxTQiaYlPaoPvlAZ7nzI9RYY02jJZh4utJ/nm+13Y
-         P+buYZ+z2XXLtf1C0p4gscziF9hSCTZmsHDIoHf4=
-Received: from jhugo-perf-lnx.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: jhugo@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id A6ACE6086B;
-        Mon, 14 Jan 2019 16:36:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1547483782;
-        bh=+2bcDl0Zo8wZ9KYE2I79+vgoN7vzuMRAQs/hwSAvQpA=;
-        h=From:To:Cc:Subject:Date:From;
-        b=kkqKlr+rD2aFnbD49Ttl2sXvZKus1MrVVMdkmltGUI0JEXG5ZJ38/arlrfArXX5a3
-         SbgLe4771IQo92C7CEwakQXVZqe6xaOkS883blZiUnw+Ez4PCK9RhS5CYHUtYOV1al
-         9q0txeg6FJFLelPQJaIGrBuR4ksQ8XiuMvP+22Q8=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org A6ACE6086B
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=jhugo@codeaurora.org
-From:   Jeffrey Hugo <jhugo@codeaurora.org>
-To:     robh+dt@kernel.org, mark.rutland@arm.com
-Cc:     bjorn.andersson@linaro.org, andy.gross@linaro.org,
-        david.brown@linaro.org, linux-arm-msm@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kishon@ti.com, devicetree@vger.kernel.org,
-        gregkh@linuxfoundation.org, balbi@kernel.org,
-        linux-usb@vger.kernel.org, Jeffrey Hugo <jhugo@codeaurora.org>
-Subject: [PATCH v2 1/6] dt-bindings: phy-qcom: Add support for msm8998 usb
-Date:   Mon, 14 Jan 2019 09:36:11 -0700
-Message-Id: <1547483771-5334-1-git-send-email-jhugo@codeaurora.org>
-X-Mailer: git-send-email 1.9.1
+        Mon, 14 Jan 2019 11:36:33 -0500
+Received: by mail-wr1-f66.google.com with SMTP id s12so23655459wrt.4
+        for <linux-kernel@vger.kernel.org>; Mon, 14 Jan 2019 08:36:32 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :in-reply-to:references;
+        bh=raje0KyJSfgQ1XlDTxNcMYQ5pbNyRq5aHVfsy61nUJY=;
+        b=cD1FRQJ9YR5b0pY9h+iFZO5Qu66uT5l+f3/g0UlwezD4Nm21Mr0qEp89AKa8ZCsduo
+         qnnMSZQEbjrf82PDdkpbDOvX+VURzTsa8nMTXJtSDk/ojD90Y2odKyIyd6wES5/N9zki
+         qXNFRjl+o64wM5WEZ+3BYizUFbMV/ZZ056DnU=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:in-reply-to:references;
+        bh=raje0KyJSfgQ1XlDTxNcMYQ5pbNyRq5aHVfsy61nUJY=;
+        b=JXsa0SWmWVLbc3V4zoJXObKr7I2EDi9k8B04UqlxVcyknX5PNxmbiwJVyiABEob4ZC
+         QRrX4KQ164fUUZ5i29ryyPGJl8LgBLGhQ+IT1+F64E0I7lEfVzMkws2bSre+xN+auDdY
+         vXr56Zjua62GEH4S0ttZvqUqDt1aaUiQpIY4niCVspSHdH4I5E3mdaFHHWy5uTPC2Otv
+         LrHVUKNLtfxQzBttAUpVyDgiJw6ENpStOTCtxbonrYnslI5CrOAsbHSYa7hNPY2gF6va
+         UWHYqnO/kTlHP6Y9hN7q/AUwVLfJpPdr7il80Kyg3wKM2hOgCqOl9lshZKBYuMuXpCqM
+         2Jew==
+X-Gm-Message-State: AJcUukePfGr88Q0gZfJnXUTxnhi9fwkdyASSkhihq+8Hzdi01cD8VW/q
+        4NM60Py5tqkYGPvZUZvReF5PBLm6ISsknw==
+X-Google-Smtp-Source: ALg8bN4lij1dpdGV7bwphfErzCs7iI99p85Y4s5ruLqiJVtfgpNIKpU8D8YgvrCWFZckl9PQBDdsHQ==
+X-Received: by 2002:adf:f091:: with SMTP id n17mr22754144wro.292.1547483791612;
+        Mon, 14 Jan 2019 08:36:31 -0800 (PST)
+Received: from localhost ([49.248.190.171])
+        by smtp.gmail.com with ESMTPSA id o82sm26166937wmo.29.2019.01.14.08.36.29
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 14 Jan 2019 08:36:30 -0800 (PST)
+From:   Amit Kucheria <amit.kucheria@linaro.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     linux-arm-msm@vger.kernel.org, viresh.kumar@linaro.org,
+        edubezval@gmail.com, swboyd@chromium.org, dianders@chromium.org,
+        mka@chromium.org, "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        linux-pm@vger.kernel.org
+Subject: [PATCH v1 02/10] cpufreq: Add a flag to auto-register a cooling device
+Date:   Mon, 14 Jan 2019 22:04:54 +0530
+Message-Id: <c1e460c49ad2f16b15ace909514a770c9753d1b1.1547481320.git.amit.kucheria@linaro.org>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <cover.1547481320.git.amit.kucheria@linaro.org>
+References: <cover.1547481320.git.amit.kucheria@linaro.org>
+In-Reply-To: <cover.1547481320.git.amit.kucheria@linaro.org>
+References: <cover.1547481320.git.amit.kucheria@linaro.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-USB on msm8998 utilizes the QUSB2 and QMP phys, similar to sdm845.
+All cpufreq drivers do similar things to register as a cooling device.
+Provide a cpufreq driver flag so drivers can just ask the cpufreq core
+to register the cooling device on their behalf. This allows us to get
+rid of duplicated code in the drivers.
 
-Signed-off-by: Jeffrey Hugo <jhugo@codeaurora.org>
+Suggested-by: Stephen Boyd <swboyd@chromium.org>
+Suggested-by: Viresh Kumar <viresh.kumar@linaro.org>
+Signed-off-by: Amit Kucheria <amit.kucheria@linaro.org>
 ---
- Documentation/devicetree/bindings/phy/qcom-qmp-phy.txt   | 5 +++++
- Documentation/devicetree/bindings/phy/qcom-qusb2-phy.txt | 1 +
- 2 files changed, 6 insertions(+)
+ drivers/cpufreq/cpufreq.c | 17 +++++++++++++++++
+ include/linux/cpufreq.h   |  6 ++++++
+ 2 files changed, 23 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/phy/qcom-qmp-phy.txt b/Documentation/devicetree/bindings/phy/qcom-qmp-phy.txt
-index 41a1074..6061b6f 100644
---- a/Documentation/devicetree/bindings/phy/qcom-qmp-phy.txt
-+++ b/Documentation/devicetree/bindings/phy/qcom-qmp-phy.txt
-@@ -9,6 +9,7 @@ Required properties:
- 	       "qcom,ipq8074-qmp-pcie-phy" for PCIe phy on IPQ8074
- 	       "qcom,msm8996-qmp-pcie-phy" for 14nm PCIe phy on msm8996,
- 	       "qcom,msm8996-qmp-usb3-phy" for 14nm USB3 phy on msm8996,
-+	       "qcom,msm8998-qmp-usb3-phy" for USB3 QMP V3 phy on msm8998,
- 	       "qcom,sdm845-qmp-usb3-phy" for USB3 QMP V3 phy on sdm845,
- 	       "qcom,sdm845-qmp-usb3-uni-phy" for USB3 QMP V3 UNI phy on sdm845,
- 	       "qcom,sdm845-qmp-ufs-phy" for UFS QMP phy on sdm845.
-@@ -42,6 +43,8 @@ Required properties:
- 			"aux", "cfg_ahb", "ref".
- 		For "qcom,msm8996-qmp-usb3-phy" must contain:
- 			"aux", "cfg_ahb", "ref".
-+		For "qcom,msm8998-qmp-usb3-phy" must contain:
-+			"aux", "cfg_ahb", "ref".
- 		For "qcom,sdm845-qmp-usb3-phy" must contain:
- 			"aux", "cfg_ahb", "ref", "com_aux".
- 		For "qcom,sdm845-qmp-usb3-uni-phy" must contain:
-@@ -60,6 +63,8 @@ Required properties:
- 		For "qcom,msm8996-qmp-pcie-phy" must contain:
- 			"phy", "common", "cfg".
- 		For "qcom,msm8996-qmp-usb3-phy" must contain
-+		 "phy", "common".
-+		For "qcom,msm8998-qmp-usb3-phy" must contain
- 			"phy", "common".
- 		For "qcom,sdm845-qmp-usb3-phy" must contain:
- 			"phy", "common".
-diff --git a/Documentation/devicetree/bindings/phy/qcom-qusb2-phy.txt b/Documentation/devicetree/bindings/phy/qcom-qusb2-phy.txt
-index 03025d9..fe29f9e 100644
---- a/Documentation/devicetree/bindings/phy/qcom-qusb2-phy.txt
-+++ b/Documentation/devicetree/bindings/phy/qcom-qusb2-phy.txt
-@@ -6,6 +6,7 @@ QUSB2 controller supports LS/FS/HS usb connectivity on Qualcomm chipsets.
- Required properties:
-  - compatible: compatible list, contains
- 	       "qcom,msm8996-qusb2-phy" for 14nm PHY on msm8996,
-+	       "qcom,msm8998-qusb2-phy" for 10nm PHY on msm8998,
- 	       "qcom,sdm845-qusb2-phy" for 10nm PHY on sdm845.
+diff --git a/drivers/cpufreq/cpufreq.c b/drivers/cpufreq/cpufreq.c
+index 6f23ebb395f1..cd6e750d3d82 100644
+--- a/drivers/cpufreq/cpufreq.c
++++ b/drivers/cpufreq/cpufreq.c
+@@ -30,6 +30,7 @@
+ #include <linux/syscore_ops.h>
+ #include <linux/tick.h>
+ #include <trace/events/power.h>
++#include <linux/cpu_cooling.h>
  
-  - reg: offset and length of the PHY register set.
+ static LIST_HEAD(cpufreq_policy_list);
+ 
+@@ -1318,6 +1319,14 @@ static int cpufreq_online(unsigned int cpu)
+ 	if (cpufreq_driver->ready)
+ 		cpufreq_driver->ready(policy);
+ 
++#ifdef CONFIG_CPU_THERMAL
++	if (cpufreq_driver->flags & CPUFREQ_AUTO_REGISTER_COOLING_DEV) {
++		struct thermal_cooling_device **cdev = &policy->cooldev;
++
++		*cdev = of_cpufreq_cooling_register(policy);
++	}
++#endif
++
+ 	pr_debug("initialization complete\n");
+ 
+ 	return 0;
+@@ -1411,6 +1420,14 @@ static int cpufreq_offline(unsigned int cpu)
+ 	if (has_target())
+ 		cpufreq_exit_governor(policy);
+ 
++#ifdef CONFIG_CPU_THERMAL
++	if (cpufreq_driver->flags & CPUFREQ_AUTO_REGISTER_COOLING_DEV) {
++		struct thermal_cooling_device **cdev = &policy->cooldev;
++
++		cpufreq_cooling_unregister(*cdev);
++	}
++#endif
++
+ 	/*
+ 	 * Perform the ->exit() even during light-weight tear-down,
+ 	 * since this is a core component, and is essential for the
+diff --git a/include/linux/cpufreq.h b/include/linux/cpufreq.h
+index 7d0cf54125fa..70ad02088825 100644
+--- a/include/linux/cpufreq.h
++++ b/include/linux/cpufreq.h
+@@ -390,6 +390,12 @@ struct cpufreq_driver {
+  */
+ #define CPUFREQ_NO_AUTO_DYNAMIC_SWITCHING (1 << 6)
+ 
++/*
++ * Set by drivers that want the core to automatically register the cpufreq
++ * driver as a thermal cooling device
++ */
++#define CPUFREQ_AUTO_REGISTER_COOLING_DEV (1 << 7)
++
+ int cpufreq_register_driver(struct cpufreq_driver *driver_data);
+ int cpufreq_unregister_driver(struct cpufreq_driver *driver_data);
+ 
 -- 
-Qualcomm Datacenter Technologies as an affiliate of Qualcomm Technologies, Inc.
-Qualcomm Technologies, Inc. is a member of the
-Code Aurora Forum, a Linux Foundation Collaborative Project.
+2.17.1
 
