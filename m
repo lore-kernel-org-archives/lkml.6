@@ -2,238 +2,158 @@ Return-Path: <SRS0=tq6k=PW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 28C97C43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 06:18:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B7327C43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 06:19:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C5C7F20660
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 06:18:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7D4C520660
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 06:19:04 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="bK4JnWGm"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="C/izQO1Z"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726516AbfANGS1 (ORCPT
+        id S1726555AbfANGTD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 14 Jan 2019 01:18:27 -0500
-Received: from mail-eopbgr130087.outbound.protection.outlook.com ([40.107.13.87]:51712
-        "EHLO EUR01-HE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726306AbfANGS1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 Jan 2019 01:18:27 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=wB2JVgVs8Or/pa9scm2WmFFGY7ikt6wObbbNUh+KyHI=;
- b=bK4JnWGm8j0hR/8RMWaH/7rRRApAsUu6ZXyOSBgeyOmQgMpoMHwvia5ZZTMAUw3GvVlNXx9ktqUuxsdT7UbIFArTESieptPJn2+aDhIQR4hKHJxhZyItDxeSbmHko3dPgmzYc7yP9Sxe7iCmiji/FyFcpW9rs2H8rey+Q/Hf1jU=
-Received: from VI1PR0402MB3519.eurprd04.prod.outlook.com (52.134.4.24) by
- VI1PR0402MB3775.eurprd04.prod.outlook.com (52.134.15.157) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1516.19; Mon, 14 Jan 2019 06:16:41 +0000
-Received: from VI1PR0402MB3519.eurprd04.prod.outlook.com
- ([fe80::85ec:f90c:2a0c:20d3]) by VI1PR0402MB3519.eurprd04.prod.outlook.com
- ([fe80::85ec:f90c:2a0c:20d3%2]) with mapi id 15.20.1516.019; Mon, 14 Jan 2019
- 06:16:41 +0000
-From:   Jacky Bai <ping.bai@nxp.com>
-To:     "daniel.lezcano@linaro.org" <daniel.lezcano@linaro.org>,
-        "tglx@linutronix.de" <tglx@linutronix.de>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "shawnguo@kernel.org" <shawnguo@kernel.org>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        Aisheng Dong <aisheng.dong@nxp.com>
-CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        dl-linux-imx <linux-imx@nxp.com>
-Subject: RE: [PATCH v2 2/2] driver: clocksource: Add nxp system counter timer
- driver support
-Thread-Topic: [PATCH v2 2/2] driver: clocksource: Add nxp system counter timer
- driver support
-Thread-Index: AQHUkduDSPUR4D8ONkaAhIX2AZ1ft6WufVUQ
-Date:   Mon, 14 Jan 2019 06:16:41 +0000
-Message-ID: <VI1PR0402MB3519F9B77CEB63BC445C557D87800@VI1PR0402MB3519.eurprd04.prod.outlook.com>
-References: <1544592770-19996-1-git-send-email-ping.bai@nxp.com>
- <1544592770-19996-2-git-send-email-ping.bai@nxp.com>
-In-Reply-To: <1544592770-19996-2-git-send-email-ping.bai@nxp.com>
-Accept-Language: zh-CN, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [119.31.174.71]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;VI1PR0402MB3775;6:nDACr07gpLhuZbIoKRtvcvQu2keCtVRCtDgeSVigMul0deGw8BcnAuOfR/kbD5yV3V/K5qk0nSLXkWGv9lAEArdYuAMn67WVzPIWExPbUatKVCvmPnkM3zcx1RSj+UV6tn9TobTUgSeYIBaxvnpWPoZqmTbgJGSzz/sbe1c6RR9owk+akA9MkLapk6YwEb0qz8wp6SnsReuuzW66WNLyFK/35MBZwf39fJ1WWcbhdcHCrkgJlgPrHxAUL58EwUrypEFT0ugu+E/hWInpcnnSOLOrBJ7idY+x4hZXCLQRla60SFdDJqP/bFQpEpYha/nbxSk+XvzgdqdV1PwNhvVXkpBAIJRMQG/Oqi15rqmUFtT5fHsFtG++HRkVRHiwXMepDHIMaSaVB2toCzr7GZzFnMsidWkgB7arVPmy4osz9wD/Rnta+S/cKv+D/vXVQ4Xb6p1VgS7dGG5KArnuL8uN8A==;5:iTn/JUBE/zw9R5y+SlDkjH2r/A4wo8NEx0SSDOaZ6RuqSk/JkdXp6VL3K00Fs/h69lbjduBnd4TjpZV0TXAouYNYEC7Ec2lm7s1yV2NU2U4T0Uu9QucoFYdGcsbpF7Lvk9UxBrr9a/6wuliRkMAZn/5WrNa0S2hWNSVicPtKL2+ENQLbX4YX0gZTFcvx42bBJjjgWtsrP+z7x21hMrluJw==;7:1fvwmsJSQyRqxhnC3F2qVUTa7JJrQFnb5is/UkMIoWeBN1YOEZXxq6sLePcGzJz8am1EA+W47FwO8IdFp7j5GuQupPmLsHkokzKtVfRnulNCjY1dWswWtchntaEL2yiImuTrg+1LGlUvXAz+zNu4UA==
-x-ms-exchange-antispam-srfa-diagnostics: SOS;
-x-ms-office365-filtering-correlation-id: 612f39c9-ee95-4eb2-3ff1-08d679e7d983
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600109)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:VI1PR0402MB3775;
-x-ms-traffictypediagnostic: VI1PR0402MB3775:
-x-microsoft-antispam-prvs: <VI1PR0402MB3775C1A4D08739EA1BE674C587800@VI1PR0402MB3775.eurprd04.prod.outlook.com>
-x-forefront-prvs: 0917DFAC67
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(376002)(39860400002)(136003)(396003)(346002)(366004)(13464003)(189003)(199004)(6436002)(8676002)(14454004)(316002)(7736002)(229853002)(305945005)(55016002)(478600001)(6246003)(4326008)(53936002)(8936002)(6636002)(110136005)(81166006)(81156014)(9686003)(25786009)(66066001)(54906003)(6116002)(3846002)(71200400001)(71190400001)(476003)(11346002)(53546011)(102836004)(6506007)(99286004)(2501003)(68736007)(97736004)(6346003)(76176011)(26005)(7696005)(186003)(5660300001)(2906002)(86362001)(575784001)(33656002)(105586002)(446003)(106356001)(486006)(14444005)(256004)(74316002);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR0402MB3775;H:VI1PR0402MB3519.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=ping.bai@nxp.com; 
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: ShWFRH+9Qog76RToQ2MWlv3jrI6hpOzPeGoW9dORxgXP1LpSg6o7MgD0MAKg2eKmFdV5VS//Yjhke4c3YSIFVdYm/5vLel/VreKnJCXLp7x/1e0PbW6OsaTCehEeCNcheeoUy7knk+1DrbTwTFEM+RfEbAltvFy7bfj73BQQ2UjPKlCsNx0BO+nSYtTOk/eYA+IvDqZuRTABBHPIESFDgsLBTNNUXOuq/8E+QAlElbeijtethA7O+/3QIa2AvnSzascKJOCBisyUZiIAt11MUxeXrlNdXEjsD5xIUKu2pXNAP5xmkFgCEsBXTd/n5dz2PUSt27MsBKzwd/PxN+eqnrTKMAFTpDYjHvXxCyYxsDme/P4JFZdTOigrd5E5t/LiP7JVpMd9lTDYajC8PxkSleplaaw9gXQJotoYe9dWQy8=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="gb2312"
-Content-Transfer-Encoding: base64
+        Mon, 14 Jan 2019 01:19:03 -0500
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:32947 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726306AbfANGTC (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 14 Jan 2019 01:19:02 -0500
+Received: by mail-pl1-f193.google.com with SMTP id z23so9681958plo.0;
+        Sun, 13 Jan 2019 22:19:02 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=zsXFwmbpsiTV4bqdgsTDehtlnVkqSR+lpAsrgqf2K44=;
+        b=C/izQO1ZfK3FJlvOHV3RS95z6px/7oQkxYC4XndHiUu9AwKO0AXmgu6+hkPfcRwRj0
+         Ashmt+8vXaaoXWmdSKrg/97ib1IOIPi63NB0i68TSdXQq9U9bV8/6BLjlFxVmKgyOF6c
+         0jLJe8s2EGu/X2y96nhqO1F2wr9SRFGB+DaavfeuDcBcFWeZ6yxLJ4kjPH3MRcUjXeWb
+         8r9yTgD7znL+tspCAUGn3gFkO6WlJGA9AowpJO1RkoYnN6Y/ztINSztF+eMWcbNHDp2W
+         BJyWH9KL0D+a84mpGU/TklERKb9eTARroEjOUPyaSb+Zd+gdFuvckRfIuvpwZx4FXCKC
+         beGA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=zsXFwmbpsiTV4bqdgsTDehtlnVkqSR+lpAsrgqf2K44=;
+        b=hGpkgh6ZTqGbOXs5piNQWcHFHDgcmaaX0KYDmePYyCSTGUrRbPHbvzLIr5AogiPCfD
+         yOAwzIDud1H8ey7xG5YJDW4G/UfE4mFCswXm41E8Uff28HS+ZSooaOyAttCFeHC9FwA3
+         cchNQLJTaegTBTxPBbEjbTeASiKRrwYtNkKfOZMNFkD0mnlpt9vuWKTEnNlPHnhNtSJf
+         QW0xRe5vnS7Tlj5DUm50yh4c3xsHaY/RrM1ioNl83L/aaH1ruFsShcLR+iYP/IRmF5B+
+         cKRylwGz44OfLVKEaP1uGPNlyijvKrjx2XoQryan3JKRAq8/RZ2TOKIUj5abJIbJuQzK
+         t4EQ==
+X-Gm-Message-State: AJcUukevQhnatWTFNbMzw25Uq+EoQO0hwHKZoVoFR6j4ZuSeK9pb3ReN
+        7pO0UCX0FY2Y/HOYRrpzXsk=
+X-Google-Smtp-Source: ALg8bN52h9ACekRUFDToLii3Jin/uMLm3jURZH2xgwwGoxfTjYu3uiF9/IKWtT7aS1OzlUHD6hZAOw==
+X-Received: by 2002:a17:902:8b88:: with SMTP id ay8mr24416504plb.55.1547446741425;
+        Sun, 13 Jan 2019 22:19:01 -0800 (PST)
+Received: from localhost.localdomain ([2001:268:c0a3:70f2:4411:7de2:8afe:823b])
+        by smtp.gmail.com with ESMTPSA id s79sm126849884pgs.50.2019.01.13.22.18.57
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sun, 13 Jan 2019 22:19:00 -0800 (PST)
+From:   William Breathitt Gray <vilhelm.gray@gmail.com>
+To:     linus.walleij@linaro.org
+Cc:     akpm@linux-foundation.org, linux-gpio@vger.kernel.org,
+        linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org,
+        andriy.shevchenko@linux.intel.com, linux@rasmusvillemoes.dk,
+        William Breathitt Gray <vilhelm.gray@gmail.com>
+Subject: [PATCH v8 0/8] Introduce the for_each_set_clump8 macro
+Date:   Mon, 14 Jan 2019 15:19:17 +0900
+Message-Id: <cover.1547445576.git.vilhelm.gray@gmail.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 612f39c9-ee95-4eb2-3ff1-08d679e7d983
-X-MS-Exchange-CrossTenant-originalarrivaltime: 14 Jan 2019 06:16:41.1761
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR0402MB3775
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-UGluZy4uLg0KDQpCUg0KSmFja3kgQmFpDQo+IC0tLS0tT3JpZ2luYWwgTWVzc2FnZS0tLS0tDQo+
-IEZyb206IEphY2t5IEJhaQ0KPiBTZW50OiAyMDE4xOoxMtTCMTLI1SAxMzoyOA0KPiBUbzogZGFu
-aWVsLmxlemNhbm9AbGluYXJvLm9yZzsgdGdseEBsaW51dHJvbml4LmRlOyByb2JoK2R0QGtlcm5l
-bC5vcmc7DQo+IHNoYXduZ3VvQGtlcm5lbC5vcmc7IG1hcmsucnV0bGFuZEBhcm0uY29tOyBBaXNo
-ZW5nIERvbmcNCj4gPGFpc2hlbmcuZG9uZ0BueHAuY29tPg0KPiBDYzogbGludXgta2VybmVsQHZn
-ZXIua2VybmVsLm9yZzsgZGV2aWNldHJlZUB2Z2VyLmtlcm5lbC5vcmc7IGRsLWxpbnV4LWlteA0K
-PiA8bGludXgtaW14QG54cC5jb20+DQo+IFN1YmplY3Q6IFtQQVRDSCB2MiAyLzJdIGRyaXZlcjog
-Y2xvY2tzb3VyY2U6IEFkZCBueHAgc3lzdGVtIGNvdW50ZXIgdGltZXINCj4gZHJpdmVyIHN1cHBv
-cnQNCj4gDQo+IFRoZSBzeXN0ZW0gY291bnRlciAoc3lzX2N0cikgaXMgYSBwcm9ncmFtbWFibGUg
-c3lzdGVtIGNvdW50ZXIgd2hpY2gNCj4gcHJvdmlkZXMgYSBzaGFyZWQgdGltZSBiYXNlIHRvIHRo
-ZSBDb3J0ZXggQTE1LCBBNywgQTUzIGV0YyBjb3Jlcy4NCj4gSXQgaXMgaW50ZW5kZWQgZm9yIHVz
-ZSBpbiBhcHBsaWNhdGlvbnMgd2hlcmUgdGhlIGNvdW50ZXIgaXMgYWx3YXlzIHBvd2VyZWQgb24N
-Cj4gYW5kIHN1cHBvcnRzIG11bHRpcGxlLCB1bnJlbGF0ZWQgY2xvY2tzLiBUaGUgc3lzX2N0ciBo
-YXJkd2FyZQ0KPiBzdXBwb3J0czoNCj4gIC0gNTYtYml0IGNvdW50ZXIgd2lkdGggKHJvbGwtb3Zl
-ciB0aW1lIGdyZWF0ZXIgdGhhbiA0MCB5ZWFycykNCj4gIC0gY29tcGFyZSBmcmFtZSg2NC1iaXQg
-Y29tcGFyZSB2YWx1ZSkgY29udGFpbnMgcHJvZ3JhbW1hYmxlIGludGVycnVwdA0KPiAgICBnZW5l
-cmF0aW9uDQo+IA0KPiBTaWduZWQtb2ZmLWJ5OiBCYWkgUGluZyA8cGluZy5iYWlAbnhwLmNvbT4N
-Cj4gLS0tDQo+IGNoYW5nZSB2MS0+djI6DQo+ICAtIG5vIGNoYW5nZQ0KPiAtLS0NCj4gIGRyaXZl
-cnMvY2xvY2tzb3VyY2UvS2NvbmZpZyAgICAgICAgICAgIHwgICA4ICsrDQo+ICBkcml2ZXJzL2Ns
-b2Nrc291cmNlL01ha2VmaWxlICAgICAgICAgICB8ICAgMSArDQo+ICBkcml2ZXJzL2Nsb2Nrc291
-cmNlL3RpbWVyLWlteC1zeXNjdHIuYyB8IDIwNA0KPiArKysrKysrKysrKysrKysrKysrKysrKysr
-KysrKysrKysNCj4gIDMgZmlsZXMgY2hhbmdlZCwgMjEzIGluc2VydGlvbnMoKykNCj4gIGNyZWF0
-ZSBtb2RlIDEwMDY0NCBkcml2ZXJzL2Nsb2Nrc291cmNlL3RpbWVyLWlteC1zeXNjdHIuYw0KPiAN
-Cj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvY2xvY2tzb3VyY2UvS2NvbmZpZyBiL2RyaXZlcnMvY2xv
-Y2tzb3VyY2UvS2NvbmZpZyBpbmRleA0KPiBjNTdiMTU2Li43ZTVmMmRlIDEwMDY0NA0KPiAtLS0g
-YS9kcml2ZXJzL2Nsb2Nrc291cmNlL0tjb25maWcNCj4gKysrIGIvZHJpdmVycy9jbG9ja3NvdXJj
-ZS9LY29uZmlnDQo+IEBAIC01NzksNiArNTc5LDE0IEBAIGNvbmZpZyBDTEtTUkNfSU1YX1RQTQ0K
-PiAgCSAgRW5hYmxlIHRoaXMgb3B0aW9uIHRvIHVzZSBJTVggVGltZXIvUFdNIE1vZHVsZSAoVFBN
-KSB0aW1lciBhcw0KPiAgCSAgY2xvY2tzb3VyY2UuDQo+IA0KPiArY29uZmlnIENMS1NSQ19JTVhf
-U1lTX0NUUg0KPiArCWJvb2wgIkNsb2Nrc291cmNlIHVzaW5nIGkuTVggc3lzdGVtIGNvdW50ZXIi
-IGlmIENPTVBJTEVfVEVTVA0KPiArCWRlcGVuZHMgb24gKEFSTSB8fCBBUk02NCkgJiYgQ0xLREVW
-X0xPT0tVUA0KPiArCXNlbGVjdCBDTEtTUkNfTU1JTw0KPiArCWhlbHANCj4gKwkgIEVuYWJsZSB0
-aGlzIG9wdGlvbiB0byB1c2UgSU1YIHN5c3RlbSBjb3VudGVyIHRpbWVyIGFzDQo+ICsJICBjbG9j
-a3NvdXJjZS4NCj4gKw0KPiAgY29uZmlnIENMS1NSQ19TVF9MUEMNCj4gIAlib29sICJMb3cgcG93
-ZXIgY2xvY2tzb3VyY2UgZm91bmQgaW4gdGhlIExQQyIgaWYgQ09NUElMRV9URVNUDQo+ICAJc2Vs
-ZWN0IFRJTUVSX09GIGlmIE9GDQo+IGRpZmYgLS1naXQgYS9kcml2ZXJzL2Nsb2Nrc291cmNlL01h
-a2VmaWxlIGIvZHJpdmVycy9jbG9ja3NvdXJjZS9NYWtlZmlsZQ0KPiBpbmRleCBkZDkxMzgxLi4z
-NzJiZjRlIDEwMDY0NA0KPiAtLS0gYS9kcml2ZXJzL2Nsb2Nrc291cmNlL01ha2VmaWxlDQo+ICsr
-KyBiL2RyaXZlcnMvY2xvY2tzb3VyY2UvTWFrZWZpbGUNCj4gQEAgLTcxLDYgKzcxLDcgQEAgb2Jq
-LSQoQ09ORklHX0NMS1NSQ19NSVBTX0dJQykJCSs9DQo+IG1pcHMtZ2ljLXRpbWVyLm8NCj4gIG9i
-ai0kKENPTkZJR19DTEtTUkNfVEFOR09fWFRBTCkJCSs9IHRhbmdvX3h0YWwubw0KPiAgb2JqLSQo
-Q09ORklHX0NMS1NSQ19JTVhfR1BUKQkJKz0gdGltZXItaW14LWdwdC5vDQo+ICBvYmotJChDT05G
-SUdfQ0xLU1JDX0lNWF9UUE0pCQkrPSB0aW1lci1pbXgtdHBtLm8NCj4gK29iai0kKENPTkZJR19D
-TEtTUkNfSU1YX1NZU19DVFIpCSs9IHRpbWVyLWlteC1zeXNjdHIubw0KPiAgb2JqLSQoQ09ORklH
-X0FTTTkyNjBfVElNRVIpCQkrPSBhc205MjYwX3RpbWVyLm8NCj4gIG9iai0kKENPTkZJR19IODMw
-MF9UTVI4KQkJKz0gaDgzMDBfdGltZXI4Lm8NCj4gIG9iai0kKENPTkZJR19IODMwMF9UTVIxNikJ
-CSs9IGg4MzAwX3RpbWVyMTYubw0KPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9jbG9ja3NvdXJjZS90
-aW1lci1pbXgtc3lzY3RyLmMNCj4gYi9kcml2ZXJzL2Nsb2Nrc291cmNlL3RpbWVyLWlteC1zeXNj
-dHIuYw0KPiBuZXcgZmlsZSBtb2RlIDEwMDY0NA0KPiBpbmRleCAwMDAwMDAwLi5hZDNjMjdmDQo+
-IC0tLSAvZGV2L251bGwNCj4gKysrIGIvZHJpdmVycy9jbG9ja3NvdXJjZS90aW1lci1pbXgtc3lz
-Y3RyLmMNCj4gQEAgLTAsMCArMSwyMDQgQEANCj4gKy8vIFNQRFgtTGljZW5zZS1JZGVudGlmaWVy
-OiBHUEwtMi4wKw0KPiArLy8NCj4gKy8vIENvcHlyaWdodCAyMDE3LTIwMTggTlhQDQo+ICsNCj4g
-KyNpbmNsdWRlIDxsaW51eC9pbnRlcnJ1cHQuaD4NCj4gKyNpbmNsdWRlIDxsaW51eC9jbG9ja2No
-aXBzLmg+DQo+ICsjaW5jbHVkZSA8bGludXgvY2xvY2tzb3VyY2UuaD4NCj4gKyNpbmNsdWRlIDxs
-aW51eC9kZWxheS5oPg0KPiArI2luY2x1ZGUgPGxpbnV4L29mX2FkZHJlc3MuaD4NCj4gKyNpbmNs
-dWRlIDxsaW51eC9vZl9pcnEuaD4NCj4gKyNpbmNsdWRlIDxsaW51eC9zY2hlZF9jbG9jay5oPg0K
-PiArDQo+ICsjZGVmaW5lIENOVENWX0xPCTB4OA0KPiArI2RlZmluZSBDTlRDVl9ISQkweGMNCj4g
-KyNkZWZpbmUgQ01QQ1ZfTE8JMHgyMA0KPiArI2RlZmluZSBDTVBDVl9ISQkweDI0DQo+ICsjZGVm
-aW5lIENNUENSCQkweDJjDQo+ICsNCj4gKyNkZWZpbmUgU1lTX0NUUl9FTgkJMHgxDQo+ICsjZGVm
-aW5lIFNZU19DVFJfSVJRX01BU0sJMHgyDQo+ICsNCj4gK3N0YXRpYyB2b2lkIF9faW9tZW0gKnN5
-c19jdHJfcmRfYmFzZTsNCj4gK3N0YXRpYyB2b2lkIF9faW9tZW0gKnN5c19jdHJfY21wX2Jhc2U7
-DQo+ICtzdGF0aWMgc3RydWN0IGNsb2NrX2V2ZW50X2RldmljZSBjbG9ja2V2ZW50X3N5c2N0cjsN
-Cj4gKw0KPiArc3RhdGljIGlubGluZSB2b2lkIHN5c2N0cl90aW1lcl9lbmFibGUoYm9vbCBlbmFi
-bGUpIHsNCj4gKwl1MzIgdmFsOw0KPiArDQo+ICsJdmFsID0gcmVhZGwoc3lzX2N0cl9jbXBfYmFz
-ZSArIENNUENSKTsNCj4gKwl2YWwgJj0gflNZU19DVFJfRU47DQo+ICsJaWYgKGVuYWJsZSkNCj4g
-KwkJdmFsIHw9IFNZU19DVFJfRU47DQo+ICsNCj4gKwl3cml0ZWwodmFsLCBzeXNfY3RyX2NtcF9i
-YXNlICsgQ01QQ1IpOyB9DQo+ICsNCj4gK3N0YXRpYyB2b2lkIHN5c2N0cl9pcnFfYWNrbm93bGVk
-Z2Uodm9pZCkgew0KPiArCXUzMiB2YWw7DQo+ICsNCj4gKwkvKiBjbGVhciB0aCBlbmFibGUgYml0
-KEVOPTApIHRvIGNsZWFyIHRoZSBJU1RBVCAqLw0KPiArCXZhbCA9IHJlYWRsKHN5c19jdHJfY21w
-X2Jhc2UgKyBDTVBDUik7DQo+ICsJdmFsICY9IH5TWVNfQ1RSX0VOOw0KPiArCXdyaXRlbCh2YWws
-IHN5c19jdHJfY21wX2Jhc2UgKyBDTVBDUik7IH0NCj4gKw0KPiArc3RhdGljIGlubGluZSB1NjQg
-c3lzY3RyX3JlYWRfY291bnRlcih2b2lkKSB7DQo+ICsJdTMyIGNudF9oaSwgdG1wX2hpLCBjbnRf
-bG87DQo+ICsNCj4gKwlkbyB7DQo+ICsJCWNudF9oaSA9IHJlYWRsX3JlbGF4ZWQoc3lzX2N0cl9y
-ZF9iYXNlICsgQ05UQ1ZfSEkpOw0KPiArCQljbnRfbG8gPSByZWFkbF9yZWxheGVkKHN5c19jdHJf
-cmRfYmFzZSArIENOVENWX0xPKTsNCj4gKwkJdG1wX2hpID0gcmVhZGxfcmVsYXhlZChzeXNfY3Ry
-X3JkX2Jhc2UgKyBDTlRDVl9ISSk7DQo+ICsJfSB3aGlsZSAodG1wX2hpICE9IGNudF9oaSk7DQo+
-ICsNCj4gKwlyZXR1cm4gICgodTY0KSBjbnRfaGkgPDwgMzIpIHwgY250X2xvOyB9DQo+ICsNCj4g
-K3N0YXRpYyB1NjQgbm90cmFjZSBzeXNjdHJfcmVhZF9zY2hlZF9jbG9jayh2b2lkKSB7DQo+ICsJ
-cmV0dXJuIHN5c2N0cl9yZWFkX2NvdW50ZXIoKTsNCj4gK30NCj4gKw0KPiArc3RhdGljIHU2NCBz
-eXNjdHJfY2xvY2tzb3VyY2VfcmVhZChzdHJ1Y3QgY2xvY2tzb3VyY2UgKmNzKSB7DQo+ICsJcmV0
-dXJuIHN5c2N0cl9yZWFkX2NvdW50ZXIoKTsNCj4gK30NCj4gKw0KPiArc3RhdGljIGludCBfX2lu
-aXQgc3lzY3RyX2Nsb2Nrc291cmNlX2luaXQodW5zaWduZWQgaW50IHJhdGUpIHsNCj4gKwlzY2hl
-ZF9jbG9ja19yZWdpc3RlcihzeXNjdHJfcmVhZF9zY2hlZF9jbG9jaywgNTYsIHJhdGUpOw0KPiAr
-CXJldHVybiBjbG9ja3NvdXJjZV9tbWlvX2luaXQoc3lzX2N0cl9yZF9iYXNlLCAiaS5NWCBzeXNf
-Y3RyIiwNCj4gKwkJCQkgICAgIHJhdGUsIDIwMCwgNTYsIHN5c2N0cl9jbG9ja3NvdXJjZV9yZWFk
-KTsgfQ0KPiArDQo+ICtzdGF0aWMgaW50IHN5c2N0cl9zZXRfbmV4dF9ldmVudCh1bnNpZ25lZCBs
-b25nIGRlbHRhLA0KPiArCQkJCSBzdHJ1Y3QgY2xvY2tfZXZlbnRfZGV2aWNlICpldnQpDQo+ICt7
-DQo+ICsJdTMyIGNtcF9oaSwgY21wX2xvOw0KPiArCXU2NCBuZXh0Ow0KPiArDQo+ICsJc3lzY3Ry
-X3RpbWVyX2VuYWJsZShmYWxzZSk7DQo+ICsNCj4gKwluZXh0ID0gc3lzY3RyX3JlYWRfY291bnRl
-cigpOw0KPiArDQo+ICsJbmV4dCArPSBkZWx0YTsNCj4gKw0KPiArCWNtcF9oaSA9IChuZXh0ID4+
-IDMyKSAmIDB4MDBmZmZmZjsNCj4gKwljbXBfbG8gPSBuZXh0ICYgMHhmZmZmZmZmZjsNCj4gKw0K
-PiArCXdyaXRlbF9yZWxheGVkKGNtcF9oaSwgc3lzX2N0cl9jbXBfYmFzZSArIENNUENWX0hJKTsN
-Cj4gKwl3cml0ZWxfcmVsYXhlZChjbXBfbG8sIHN5c19jdHJfY21wX2Jhc2UgKyBDTVBDVl9MTyk7
-DQo+ICsNCj4gKwlzeXNjdHJfdGltZXJfZW5hYmxlKHRydWUpOw0KPiArDQo+ICsJcmV0dXJuIDA7
-DQo+ICt9DQo+ICsNCj4gK3N0YXRpYyBpbnQgc3lzY3RyX3NldF9zdGF0ZV9vbmVzaG90KHN0cnVj
-dCBjbG9ja19ldmVudF9kZXZpY2UgKmV2dCkgew0KPiArCS8qIGVuYWJsZSB0aW1lciAqLw0KPiAr
-CXN5c2N0cl90aW1lcl9lbmFibGUodHJ1ZSk7DQo+ICsNCj4gKwlyZXR1cm4gMDsNCj4gK30NCj4g
-Kw0KPiArc3RhdGljIGludCBzeXNjdHJfc2V0X3N0YXRlX3NodXRkb3duKHN0cnVjdCBjbG9ja19l
-dmVudF9kZXZpY2UgKmV2dCkgew0KPiArCS8qIGRpc2FibGUgdGhlIHRpbWVyICovDQo+ICsJc3lz
-Y3RyX3RpbWVyX2VuYWJsZShmYWxzZSk7DQo+ICsNCj4gKwlyZXR1cm4gMDsNCj4gK30NCj4gKw0K
-PiArc3RhdGljIGlycXJldHVybl90IHN5c2N0cl90aW1lcl9pbnRlcnJ1cHQoaW50IGlycSwgdm9p
-ZCAqZGV2X2lkKSB7DQo+ICsJc3RydWN0IGNsb2NrX2V2ZW50X2RldmljZSAqZXZ0ID0gJmNsb2Nr
-ZXZlbnRfc3lzY3RyOw0KPiArDQo+ICsJc3lzY3RyX2lycV9hY2tub3dsZWRnZSgpOw0KPiArDQo+
-ICsJZXZ0LT5ldmVudF9oYW5kbGVyKGV2dCk7DQo+ICsNCj4gKwlyZXR1cm4gSVJRX0hBTkRMRUQ7
-DQo+ICt9DQo+ICsNCj4gK3N0YXRpYyBzdHJ1Y3QgY2xvY2tfZXZlbnRfZGV2aWNlIGNsb2NrZXZl
-bnRfc3lzY3RyID0gew0KPiArCS5uYW1lCQkJPSAiaS5NWCBzeXN0ZW0gY291bnRlciB0aW1lciIs
-DQo+ICsJLmZlYXR1cmVzCQk9IENMT0NLX0VWVF9GRUFUX09ORVNIT1QgfA0KPiBDTE9DS19FVlRf
-RkVBVF9EWU5JUlEsDQo+ICsJLnNldF9zdGF0ZV9vbmVzaG90CT0gc3lzY3RyX3NldF9zdGF0ZV9v
-bmVzaG90LA0KPiArCS5zZXRfbmV4dF9ldmVudAkJPSBzeXNjdHJfc2V0X25leHRfZXZlbnQsDQo+
-ICsJLnNldF9zdGF0ZV9zaHV0ZG93bgk9IHN5c2N0cl9zZXRfc3RhdGVfc2h1dGRvd24sDQo+ICsJ
-LnJhdGluZwkJCT0gMjAwLA0KPiArfTsNCj4gKw0KPiArc3RhdGljIGludCBfX2luaXQgc3lzY3Ry
-X2Nsb2NrZXZlbnRfaW5pdCh1bnNpZ25lZCBsb25nIHJhdGUsIGludCBpcnEpIHsNCj4gKwlpbnQg
-cmV0Ow0KPiArDQo+ICsJcmV0ID0gcmVxdWVzdF9pcnEoaXJxLCBzeXNjdHJfdGltZXJfaW50ZXJy
-dXB0LCBJUlFGX1RJTUVSIHwNCj4gSVJRRl9JUlFQT0xMLA0KPiArCQkgICAgImkuTVggc3lzdGVt
-IGNvdW50ZXIgdGltZXIiLCAmY2xvY2tldmVudF9zeXNjdHIpOw0KPiArCWlmIChyZXQpIHsNCj4g
-KwkJcHJfZXJyKCJGYWlsZWQgdG8gcmVxdWVzdCBpLk1YIHN5c2N0ciB0aW1lciBpcnFcbiIpOw0K
-PiArCQlyZXR1cm4gcmV0Ow0KPiArCX0NCj4gKw0KPiArCWNsb2NrZXZlbnRfc3lzY3RyLmNwdW1h
-c2sgPSBjcHVtYXNrX29mKDApOw0KPiArCWNsb2NrZXZlbnRfc3lzY3RyLmlycSA9IGlycTsNCj4g
-KwljbG9ja2V2ZW50c19jb25maWdfYW5kX3JlZ2lzdGVyKCZjbG9ja2V2ZW50X3N5c2N0ciwNCj4g
-KwkJCXJhdGUsIDB4ZmYsIDB4N2ZmZmZmZmYpOw0KPiArDQo+ICsJcmV0dXJuIDA7DQo+ICt9DQo+
-ICsNCj4gK3N0YXRpYyBpbnQgX19pbml0IHN5c2N0cl90aW1lcl9pbml0KHN0cnVjdCBkZXZpY2Vf
-bm9kZSAqbnApIHsNCj4gKwl1MzIgcmF0ZTsNCj4gKwlpbnQgaXJxLCByZXQgPSAwOw0KPiArDQo+
-ICsJLyogbWFwIHRoZSBzeXN0ZW0gY291bnRlcidzIENOVHJlYWRiYXNlICovDQo+ICsJc3lzX2N0
-cl9yZF9iYXNlID0gb2ZfaW9tYXAobnAsIDApOw0KPiArCWlmICghc3lzX2N0cl9yZF9iYXNlKSB7
-DQo+ICsJCXByX2VycigiRmFpbGVkIHRvIG1hcCBzeXNfY3RyIHJkIGJhc2UlcE9GXG4iLCBucCk7
-DQo+ICsJCXJldHVybiAtRU5YSU87DQo+ICsJfQ0KPiArDQo+ICsJLyogbWFwIHRoZSBzeXN0ZW0g
-Y291bnRlcidzIENOVGNvbXBhcmViYXNlICovDQo+ICsJc3lzX2N0cl9jbXBfYmFzZSA9IG9mX2lv
-bWFwKG5wLCAxKTsNCj4gKwlpZiAoIXN5c19jdHJfY21wX2Jhc2UpIHsNCj4gKwkJcHJfZXJyKCJG
-YWlsZWQgdG8gbWFwIHN5c19jdHIgY29tcGFyZSBiYXNlJXBPRlxuIiwgbnApOw0KPiArCQlyZXQg
-PSAtRU5YSU87DQo+ICsJCWdvdG8gb3V0X2ZyZWUyOw0KPiArCX0NCj4gKw0KPiArCS8qDQo+ICsJ
-ICogdGhlIHB1cnBvc2Ugb2YgdGhpcyBkcml2ZXIgaXMgdG8gcHJvdmlkZSBhIGdsb2JhbCB0aW1l
-ciwNCj4gKwkgKiBTbyBvbmx5IHVzZSBvbmUgY29tcGFyZSBmcmFtZSwgcmVxdWVzdCBmcmFtZTAn
-cyBpcnEgb25seS4NCj4gKwkgKi8NCj4gKwlpcnEgPSBpcnFfb2ZfcGFyc2VfYW5kX21hcChucCwg
-MCk7DQo+ICsJaWYgKCFpcnEpIHsNCj4gKwkJcHJfZXJyKCJGYWlsZWQgdG8gbWFwIGludGVycnVw
-dCBmb3IgJXBPRlxuIiwgbnApOw0KPiArCQlyZXQgPSAtRUlOVkFMOw0KPiArCQlnb3RvIG91dF9m
-cmVlMTsNCj4gKwl9DQo+ICsNCj4gKwlpZiAob2ZfcHJvcGVydHlfcmVhZF91MzIobnAsICJjbG9j
-ay1mcmVxdWVuY3kiLCAmcmF0ZSkpIHsNCj4gKwkJcHJfZXJyKCJGYWlsZWQgdG8gZ2V0IGNsb2Nr
-IGZyZXF1ZW5jeSAlcE9GXG4iLCBucCk7DQo+ICsJCXJldCA9IC1FSU5WQUw7DQo+ICsJCWdvdG8g
-b3V0X2ZyZWUxOw0KPiArCX0NCj4gKw0KPiArCXN5c2N0cl9jbG9ja3NvdXJjZV9pbml0KHJhdGUp
-Ow0KPiArCXN5c2N0cl9jbG9ja2V2ZW50X2luaXQocmF0ZSwgaXJxKTsNCj4gKw0KPiArCXJldHVy
-biAwOw0KPiArDQo+ICtvdXRfZnJlZTE6DQo+ICsJaW91bm1hcChzeXNfY3RyX2NtcF9iYXNlKTsN
-Cj4gK291dF9mcmVlMjoNCj4gKwlpb3VubWFwKHN5c19jdHJfcmRfYmFzZSk7DQo+ICsJcmV0dXJu
-IHJldDsNCj4gK30NCj4gK1RJTUVSX09GX0RFQ0xBUkUoc3lzY3RyX3RpbWVyLCAibnhwLHN5c2N0
-ci10aW1lciIsIHN5c2N0cl90aW1lcl9pbml0KTsNCj4gLS0NCj4gMS45LjENCg0K
+Changes in v8:
+  - Return unsigned long for bitmap_get_value8 for consistency
+  - Add clobbering risk warning to bitmap_set_value8 documentation
+  - Reimplement bitmap_get_value8 and bitmap_set_value8 to account for
+    clumps that fall across bitmap word boundaries
+  - Add a bitmap size argument to the bitmap_get_value8 and
+    bitmap_set_value8 functions
+
+While adding GPIO get_multiple/set_multiple callback support for various
+drivers, I noticed a pattern of looping manifesting that would be useful
+standardized as a macro.
+
+This patchset introduces the for_each_set_clump8 macro and utilizes it
+in several GPIO drivers. The for_each_set_clump macro8 facilitates a
+for-loop syntax that iterates over a memory region entire groups of set
+bits at a time.
+
+For example, suppose you would like to iterate over a 32-bit integer 8
+bits at a time, skipping over 8-bit groups with no set bit, where
+XXXXXXXX represents the current 8-bit group:
+
+    Example:        10111110 00000000 11111111 00110011
+    First loop:     10111110 00000000 11111111 XXXXXXXX
+    Second loop:    10111110 00000000 XXXXXXXX 00110011
+    Third loop:     XXXXXXXX 00000000 11111111 00110011
+
+Each iteration of the loop returns the next 8-bit group that has at
+least one set bit.
+
+The for_each_set_clump8 macro has four parameters:
+
+    * start: set to the bit offset of the current clump
+    * clump: set to the current clump value
+    * bits: bitmap to search within
+    * size: bitmap size in number of bits
+
+In this version of the patchset, the for_each_set_clump macro has been
+reimplemented and simplified based on the suggestions provided by Rasmus
+Villemoes and Andy Shevchenko in the version 4 submission.
+
+In particular, the function of the for_each_set_clump macro has been
+restricted to handle only 8-bit clumps; the drivers that use the
+for_each_set_clump macro only handle 8-bit ports so a generic
+for_each_set_clump implementation is not necessary. Thus, a solution for
+large clumps (i.e. those larger than the width of a bitmap word) can be
+postponed until a driver appears that actually requires such a generic
+for_each_set_clump implementation.
+
+For what it's worth, a semi-generic for_each_set_clump (i.e. for clumps
+smaller than the width of a bitmap word) can be implemented by simply
+replacing the hardcoded '8' and '0xFF' instances with respective
+variables. I have not yet had a need for such an implementation, and
+since it falls short of a true generic for_each_set_clump function, I
+have decided to forgo such an implementation for now.
+
+In addition, the bitmap_get_value8 and bitmap_set_value8 functions are
+introduced to get and set 8-bit values respectively. Their use is based
+on the behavior suggested in the patchset version 4 review.
+
+William Breathitt Gray (8):
+  bitops: Introduce the for_each_set_clump8 macro
+  lib/test_bitmap.c: Add for_each_set_clump8 test cases
+  gpio: 104-dio-48e: Utilize for_each_set_clump8 macro
+  gpio: 104-idi-48: Utilize for_each_set_clump8 macro
+  gpio: gpio-mm: Utilize for_each_set_clump8 macro
+  gpio: ws16c48: Utilize for_each_set_clump8 macro
+  gpio: pci-idio-16: Utilize for_each_set_clump8 macro
+  gpio: pcie-idio-24: Utilize for_each_set_clump8 macro
+
+ drivers/gpio/gpio-104-dio-48e.c   |  73 ++++++--------------
+ drivers/gpio/gpio-104-idi-48.c    |  37 +++-------
+ drivers/gpio/gpio-gpio-mm.c       |  73 ++++++--------------
+ drivers/gpio/gpio-pci-idio-16.c   |  75 ++++++++------------
+ drivers/gpio/gpio-pcie-idio-24.c  | 111 +++++++++++-------------------
+ drivers/gpio/gpio-ws16c48.c       |  72 ++++++-------------
+ include/asm-generic/bitops/find.h |  14 ++++
+ include/linux/bitops.h            |   5 ++
+ lib/find_bit.c                    |  81 ++++++++++++++++++++++
+ lib/test_bitmap.c                 |  65 +++++++++++++++++
+ 10 files changed, 307 insertions(+), 299 deletions(-)
+
+-- 
+2.20.1
+
