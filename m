@@ -2,438 +2,147 @@ Return-Path: <SRS0=tq6k=PW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 59122C43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 19:09:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C451C43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 19:10:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1458E20659
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 19:09:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E5B8B20659
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 19:10:06 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="m2uNk6dL"
+	dkim=pass (1024-bit key) header.d=amdcloud.onmicrosoft.com header.i=@amdcloud.onmicrosoft.com header.b="rSB5Dtes"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726806AbfANTJ0 (ORCPT
+        id S1726838AbfANTKF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 14 Jan 2019 14:09:26 -0500
-Received: from hqemgate14.nvidia.com ([216.228.121.143]:17804 "EHLO
-        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726643AbfANTJZ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 Jan 2019 14:09:25 -0500
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate14.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5c3cde530000>; Mon, 14 Jan 2019 11:09:07 -0800
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Mon, 14 Jan 2019 11:09:21 -0800
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Mon, 14 Jan 2019 11:09:21 -0800
-Received: from [10.110.48.28] (10.124.1.5) by HQMAIL101.nvidia.com
- (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Mon, 14 Jan
- 2019 19:09:21 +0000
-Subject: Re: [PATCH 1/2] mm: introduce put_user_page*(), placeholder versions
-To:     Jerome Glisse <jglisse@redhat.com>, Jan Kara <jack@suse.cz>
-CC:     Matthew Wilcox <willy@infradead.org>,
-        Dave Chinner <david@fromorbit.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        John Hubbard <john.hubbard@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linux MM <linux-mm@kvack.org>, <tom@talpey.com>,
-        Al Viro <viro@zeniv.linux.org.uk>, <benve@cisco.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Christopher Lameter <cl@linux.com>,
-        "Dalessandro, Dennis" <dennis.dalessandro@intel.com>,
-        Doug Ledford <dledford@redhat.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Michal Hocko <mhocko@kernel.org>, <mike.marciniszyn@intel.com>,
-        <rcampbell@nvidia.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-References: <20190103092654.GA31370@quack2.suse.cz>
- <20190103144405.GC3395@redhat.com>
- <a79b259b-3982-b271-025a-0656f70506f4@nvidia.com>
- <20190111165141.GB3190@redhat.com>
- <1b37061c-5598-1b02-2983-80003f1c71f2@nvidia.com>
- <20190112020228.GA5059@redhat.com>
- <294bdcfa-5bf9-9c09-9d43-875e8375e264@nvidia.com>
- <20190112024625.GB5059@redhat.com>
- <b6f4ed36-fc8d-1f9b-8c74-b12f61d496ae@nvidia.com>
- <20190114145447.GJ13316@quack2.suse.cz> <20190114172124.GA3702@redhat.com>
-X-Nvconfidentiality: public
-From:   John Hubbard <jhubbard@nvidia.com>
-Message-ID: <fdece7f8-7e4f-f679-821f-1d05ed748c15@nvidia.com>
-Date:   Mon, 14 Jan 2019 11:09:20 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
-MIME-Version: 1.0
-In-Reply-To: <20190114172124.GA3702@redhat.com>
-X-Originating-IP: [10.124.1.5]
-X-ClientProxiedBy: HQMAIL101.nvidia.com (172.20.187.10) To
- HQMAIL101.nvidia.com (172.20.187.10)
+        Mon, 14 Jan 2019 14:10:05 -0500
+Received: from mail-eopbgr700051.outbound.protection.outlook.com ([40.107.70.51]:39840
+        "EHLO NAM04-SN1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726753AbfANTKE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 14 Jan 2019 14:10:04 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=amdcloud.onmicrosoft.com; s=selector1-amd-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=/fvInwuFURrRZ0Bo4JK8m338ucZgHrI57VpfumCKE5g=;
+ b=rSB5DtesCkNvmRC4hpH5kjpeFid+2JZKZX5GwfVNPS4EyIBevA//SEDmrnLzXKXLxsjr82l3Vgf8vVKexWk05+TKdhX+6WU4UXSwNu5K7z2uIjorAl6amUVgW81fiUQiQmnvY2PiaEVf53TqBkJ+vOLjE+ho9kanLt4lymMJI6Y=
+Received: from DM6PR12MB2682.namprd12.prod.outlook.com (20.176.116.31) by
+ DM6PR12MB3531.namprd12.prod.outlook.com (20.179.106.202) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1516.13; Mon, 14 Jan 2019 19:09:21 +0000
+Received: from DM6PR12MB2682.namprd12.prod.outlook.com
+ ([fe80::10bf:617c:4515:4ad2]) by DM6PR12MB2682.namprd12.prod.outlook.com
+ ([fe80::10bf:617c:4515:4ad2%2]) with mapi id 15.20.1516.019; Mon, 14 Jan 2019
+ 19:09:21 +0000
+From:   "Singh, Brijesh" <brijesh.singh@amd.com>
+To:     "Michael S. Tsirkin" <mst@redhat.com>,
+        Jason Wang <jasowang@redhat.com>
+CC:     "Singh, Brijesh" <brijesh.singh@amd.com>,
+        Christoph Hellwig <hch@lst.de>, Joerg Roedel <joro@8bytes.org>,
+        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+        Jens Axboe <axboe@kernel.dk>,
+        "virtualization@lists.linux-foundation.org" 
+        <virtualization@lists.linux-foundation.org>,
+        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
+        "jfehlig@suse.com" <jfehlig@suse.com>,
+        "Grimm, Jon" <Jon.Grimm@amd.com>
+Subject: Re: [PATCH 0/3] Fix virtio-blk issue with SWIOTLB
+Thread-Topic: [PATCH 0/3] Fix virtio-blk issue with SWIOTLB
+Thread-Index: AQHUqOqihHxlw0AWx0aoCF210KZLPKWpaeWAgABgiQCABL6DAIAAAkMAgAAv8YCAAF7AgIAADY4A
+Date:   Mon, 14 Jan 2019 19:09:20 +0000
+Message-ID: <b0dad138-cc87-9e51-9303-f29696e68385@amd.com>
+References: <20190110134433.15672-1-joro@8bytes.org>
+ <5ae1341e-62ec-0478-552b-259eabf9fb17@redhat.com>
+ <20190111091502.GC5825@8bytes.org>
+ <38bcbd46-674c-348a-cbd6-66bd431e986a@redhat.com>
+ <20190114095002.GA29874@lst.de>
+ <ac6d83d8-02de-dbdf-e309-3a1115642d50@redhat.com>
+ <20190114131114-mutt-send-email-mst@kernel.org>
+In-Reply-To: <20190114131114-mutt-send-email-mst@kernel.org>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-clientproxiedby: SN1PR12CA0072.namprd12.prod.outlook.com
+ (2603:10b6:802:20::43) To DM6PR12MB2682.namprd12.prod.outlook.com
+ (2603:10b6:5:4a::31)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=brijesh.singh@amd.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-originating-ip: [165.204.77.1]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;DM6PR12MB3531;20:M5ClJ67lv8vYY2YaueA5OkXWA35+iLEvwGM9LXKoHqdMK2uM1QYAaSgG9BtE+VS5KM+RGR0lKBw3znzVyybwr9pabT75nSKXvuL4dHtxTDjn5CyLoRW/yOWXTPhli+RpVzUxZwJh/AG2GmlGiJWMY4LVXjlKLNyEL4++ceZed+uU5OtWQ2EET6MrZLSD36X9WDkjBZI1fY1X9E8NJh+LKR2VoacJcBkDqs+et7ZNZPsdFiT9j2u8P1z17oNzzOrS
+x-ms-office365-filtering-correlation-id: b9c661e3-1829-48d9-9954-08d67a53c9d5
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600109)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:DM6PR12MB3531;
+x-ms-traffictypediagnostic: DM6PR12MB3531:
+x-microsoft-antispam-prvs: <DM6PR12MB35315AA2B84C25CF02E46843E5800@DM6PR12MB3531.namprd12.prod.outlook.com>
+x-forefront-prvs: 0917DFAC67
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(396003)(366004)(376002)(136003)(39860400002)(346002)(199004)(189003)(478600001)(68736007)(53936002)(6512007)(486006)(14444005)(256004)(106356001)(105586002)(31686004)(97736004)(6246003)(31696002)(99286004)(5660300001)(7416002)(6436002)(36756003)(4326008)(86362001)(229853002)(25786009)(2616005)(476003)(11346002)(102836004)(7736002)(76176011)(446003)(305945005)(26005)(2906002)(6116002)(8676002)(3846002)(81156014)(14454004)(71190400001)(8936002)(66066001)(81166006)(54906003)(316002)(186003)(110136005)(386003)(53546011)(6506007)(71200400001)(6486002)(93886005)(52116002);DIR:OUT;SFP:1101;SCL:1;SRVR:DM6PR12MB3531;H:DM6PR12MB2682.namprd12.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: amd.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: id6268mR9E8nsRP82pG8mfpBzeLtGcwTPCBMcbDIa8gtjkhUZ/BwRBCWjjWNlY/14oliPhiqpnisX3qwBltCYypa7PN5Z+2JwLI8z3SsNsa7xTXfnK6AFr8Xp3/4Oa4EADD0ZPze3zsXFZTC6gqL9VDA+cUHWDk567nZ0aMf03xg8ZKezdvLPTOEjQmq1H2sY/rsHH1nAhH5X8H+ZvY/017zw12wsjnev6slZ5XuB1yYeQNrfcZ2nJRbwIE8LfKgKzspI09VmVuOq3/fXejm0gEL2qbjw3v7mEscem+xgIFBRbZZUS9TXITW8+6/DNVjB0A3IGaolV1ryPZl3zbmwOAz9h0GAb8FPQgoYeSilg5rFg962D93vKtzpXMe/dOmhOKYveKWYSoZeAR6yP/6B4VPF29W1yIwpeEizUrTOMU=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
 Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US-large
-Content-Transfer-Encoding: 7bit
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1547492947; bh=rZtJhh0vCOrPh5Z9XADf58DeD2/uNzjSHU5sr1L08tQ=;
-        h=X-PGP-Universal:Subject:To:CC:References:X-Nvconfidentiality:From:
-         Message-ID:Date:User-Agent:MIME-Version:In-Reply-To:
-         X-Originating-IP:X-ClientProxiedBy:Content-Type:Content-Language:
-         Content-Transfer-Encoding;
-        b=m2uNk6dLaQLzyP25r7JJSiIqXJP52IFuJhjJqASwCwpiSf2XDxHZOfoVZDTchczWu
-         gdCKYHmyGjo3+Xc1nEEkOmYhIT0untw6vzTZ/9iRVZtP3Xb2yrsjrssRRz56Op3FjP
-         Egt+xLR4Ck/HaJ0NXpBwzplBtF3/2odLbRsV/cYZAkR5eJVG9uMMCYyRTdNik4V+MJ
-         c54WAeow4jr1xzCSTrYay9SYoP86VG/ft3KHPT+Dnr1T124t346rWJSnSZKmLqPOD3
-         ZzLi7r9ifT92XuAZdUErIpkp/pFrbPWD9BbhKKX8s9EZMFWhKv35Tz0r08IGhs5n4H
-         HBe6uQ0/6KKUg==
+Content-ID: <9EA19D22B291F445A177EDECC5289AD3@namprd12.prod.outlook.com>
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: b9c661e3-1829-48d9-9954-08d67a53c9d5
+X-MS-Exchange-CrossTenant-originalarrivaltime: 14 Jan 2019 19:09:21.0269
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR12MB3531
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 1/14/19 9:21 AM, Jerome Glisse wrote:
-> On Mon, Jan 14, 2019 at 03:54:47PM +0100, Jan Kara wrote:
->> On Fri 11-01-19 19:06:08, John Hubbard wrote:
->>> On 1/11/19 6:46 PM, Jerome Glisse wrote:
->>>> On Fri, Jan 11, 2019 at 06:38:44PM -0800, John Hubbard wrote:
->>>> [...]
->>>>
->>>>>>> The other idea that you and Dan (and maybe others) pointed out was a debug
->>>>>>> option, which we'll certainly need in order to safely convert all the call
->>>>>>> sites. (Mirror the mappings at a different kernel offset, so that put_page()
->>>>>>> and put_user_page() can verify that the right call was made.)  That will be
->>>>>>> a separate patchset, as you recommended.
->>>>>>>
->>>>>>> I'll even go as far as recommending the page lock itself. I realize that this 
->>>>>>> adds overhead to gup(), but we *must* hold off page_mkclean(), and I believe
->>>>>>> that this (below) has similar overhead to the notes above--but is *much* easier
->>>>>>> to verify correct. (If the page lock is unacceptable due to being so widely used,
->>>>>>> then I'd recommend using another page bit to do the same thing.)
->>>>>>
->>>>>> Please page lock is pointless and it will not work for GUP fast. The above
->>>>>> scheme do work and is fine. I spend the day again thinking about all memory
->>>>>> ordering and i do not see any issues.
->>>>>>
->>>>>
->>>>> Why is it that page lock cannot be used for gup fast, btw?
->>>>
->>>> Well it can not happen within the preempt disable section. But after
->>>> as a post pass before GUP_fast return and after reenabling preempt then
->>>> it is fine like it would be for regular GUP. But locking page for GUP
->>>> is also likely to slow down some workload (with direct-IO).
->>>>
->>>
->>> Right, and so to crux of the matter: taking an uncontended page lock
->>> involves pretty much the same set of operations that your approach does.
->>> (If gup ends up contended with the page lock for other reasons than these
->>> paths, that seems surprising.) I'd expect very similar performance.
->>>
->>> But the page lock approach leads to really dramatically simpler code (and
->>> code reviews, let's not forget). Any objection to my going that
->>> direction, and keeping this idea as a Plan B? I think the next step will
->>> be, once again, to gather some performance metrics, so maybe that will
->>> help us decide.
->>
->> FWIW I agree that using page lock for protecting page pinning (and thus
->> avoid races with page_mkclean()) looks simpler to me as well and I'm not
->> convinced there will be measurable difference to the more complex scheme
->> with barriers Jerome suggests unless that page lock contended. Jerome is
->> right that you cannot just do lock_page() in gup_fast() path. There you
->> have to do trylock_page() and if that fails just bail out to the slow gup
->> path.
->>
-
-Yes, understood about gup fast.
-
->> Regarding places other than page_mkclean() that need to check pinned state:
->> Definitely page migration will want to check whether the page is pinned or
->> not so that it can deal differently with short-term page references vs
->> longer-term pins.
-
-OK.
-
->>
->> Also there is one more idea I had how to record number of pins in the page:
->>
->> #define PAGE_PIN_BIAS	1024
->>
->> get_page_pin()
->> 	atomic_add(&page->_refcount, PAGE_PIN_BIAS);
->>
->> put_page_pin();
->> 	atomic_add(&page->_refcount, -PAGE_PIN_BIAS);
->>
->> page_pinned(page)
->> 	(atomic_read(&page->_refcount) - page_mapcount(page)) > PAGE_PIN_BIAS
->>
->> This is pretty trivial scheme. It still gives us 22-bits for page pins
->> which should be plenty (but we should check for that and bail with error if
->> it would overflow). Also there will be no false negatives and false
->> positives only if there are more than 1024 non-page-table references to the
->> page which I expect to be rare (we might want to also subtract
->> hpage_nr_pages() for radix tree references to avoid excessive false
->> positives for huge pages although at this point I don't think they would
->> matter). Thoughts?
-> 
-> Racing PUP are as likely to cause issues:
-> 
-> CPU0                        | CPU1       | CPU2
->                             |            |
->                             | PUP()      |
->     page_pinned(page)       |            |
->       (page_count(page) -   |            |
->        page_mapcount(page)) |            |
->                             |            | GUP()
-> 
-> So here the refcount snap-shot does not include the second GUP and
-> we can have a false negative ie the page_pinned() will return false
-> because of the PUP happening just before on CPU1 despite the racing
-> GUP on CPU2 just after.
-> 
-> I believe only either lock or memory ordering with barrier can
-> guarantee that we do not miss GUP ie no false negative. Still the
-> bias idea might be usefull as with it we should not need a flag.
-> 
-> So to make the above safe it would still need the page write back
-> double check that i described so that GUP back-off if it raced with
-> page_mkclean,clear_page_dirty_for_io and the fs write page call back
-> which call test_set_page_writeback() (yes it is very unlikely but
-> might still happen).
-> 
-> 
-> I still need to ponder some more on all the races.
-> 
-
-Tentatively, so far I prefer the _mapcount scheme, because it seems more
-accurate to add mapcounts than to overload the _refcount field. And the 
-implementation is going to be cleaner. And we've already figured out the
-races.
-
-For example, the following already survives a basic boot to graphics mode.
-It requires a bunch of callsite conversions, and a page flag (neither of which
-is shown here), and may also have "a few" gross conceptual errors, but take a 
-peek:
-
-From 1b6e611238a45badda7e63d3ffc089cefb621cb2 Mon Sep 17 00:00:00 2001
-From: John Hubbard <jhubbard@nvidia.com>
-Date: Sun, 13 Jan 2019 15:10:31 -0800
-Subject: [PATCH 2/2] mm: track gup-pinned pages
-X-NVConfidentiality: public
-Cc: John Hubbard <jhubbard@nvidia.com>
-
-Track GUP-pinned pages.
-
-Signed-off-by: John Hubbard <jhubbard@nvidia.com>
----
- include/linux/mm.h |  8 ++++---
- mm/gup.c           | 59 +++++++++++++++++++++++++++++++++++++++++++---
- mm/rmap.c          | 23 ++++++++++++++----
- 3 files changed, 79 insertions(+), 11 deletions(-)
-
-diff --git a/include/linux/mm.h b/include/linux/mm.h
-index 809b7397d41e..3221a13b4891 100644
---- a/include/linux/mm.h
-+++ b/include/linux/mm.h
-@@ -1004,12 +1004,14 @@ static inline void put_page(struct page *page)
-  * particular, interactions with RDMA and filesystems need special
-  * handling.
-  *
-- * put_user_page() and put_page() are not interchangeable, despite this early
-- * implementation that makes them look the same. put_user_page() calls must
-- * be perfectly matched up with get_user_page() calls.
-+ * put_user_page() and put_page() are not interchangeable. put_user_page()
-+ * calls must be perfectly matched up with get_user_page() calls.
-  */
- static inline void put_user_page(struct page *page)
- {
-+	page = compound_head(page);
-+
-+	atomic_dec(&page->_mapcount);
- 	put_page(page);
- }
- 
-diff --git a/mm/gup.c b/mm/gup.c
-index 05acd7e2eb22..af3909814be7 100644
---- a/mm/gup.c
-+++ b/mm/gup.c
-@@ -615,6 +615,48 @@ static int check_vma_flags(struct vm_area_struct *vma, unsigned long gup_flags)
- 	return 0;
- }
- 
-+/*
-+ * Manages the PG_gup_pinned flag.
-+ *
-+ * Note that page->_mapcount counting part of managing that flag, because the
-+ * _mapcount is used to determine if PG_gup_pinned can be cleared, in
-+ * page_mkclean().
-+ */
-+static void track_gup_page(struct page *page)
-+{
-+	page = compound_head(page);
-+
-+	lock_page(page);
-+
-+	wait_on_page_writeback(page);
-+
-+	atomic_inc(&page->_mapcount);
-+	SetPageGupPinned(page);
-+
-+	unlock_page(page);
-+}
-+
-+/*
-+ * A variant of track_gup_page() that returns -EBUSY, instead of waiting.
-+ */
-+static int track_gup_page_atomic(struct page *page)
-+{
-+	page = compound_head(page);
-+
-+	if (PageWriteback(page) || !trylock_page(page))
-+		return -EBUSY;
-+
-+	if (PageWriteback(page)) {
-+		unlock_page(page);
-+		return -EBUSY;
-+	}
-+	atomic_inc(&page->_mapcount);
-+	SetPageGupPinned(page);
-+
-+	unlock_page(page);
-+	return 0;
-+}
-+
- /**
-  * __get_user_pages() - pin user pages in memory
-  * @tsk:	task_struct of target task
-@@ -761,6 +803,9 @@ static long __get_user_pages(struct task_struct *tsk, struct mm_struct *mm,
- 			ret = PTR_ERR(page);
- 			goto out;
- 		}
-+
-+		track_gup_page(page);
-+
- 		if (pages) {
- 			pages[i] = page;
- 			flush_anon_page(vma, page, start);
-@@ -1439,6 +1484,11 @@ static int gup_pte_range(pmd_t pmd, unsigned long addr, unsigned long end,
- 
- 		VM_BUG_ON_PAGE(compound_head(page) != head, page);
- 
-+		if (track_gup_page_atomic(page)) {
-+			put_page(head);
-+			goto pte_unmap;
-+		}
-+
- 		SetPageReferenced(page);
- 		pages[*nr] = page;
- 		(*nr)++;
-@@ -1574,7 +1624,8 @@ static int gup_huge_pmd(pmd_t orig, pmd_t *pmdp, unsigned long addr,
- 		return 0;
- 	}
- 
--	if (unlikely(pmd_val(orig) != pmd_val(*pmdp))) {
-+	if (unlikely(pmd_val(orig) != pmd_val(*pmdp)) ||
-+	    track_gup_page_atomic(head)) {
- 		*nr -= refs;
- 		while (refs--)
- 			put_page(head);
-@@ -1612,7 +1663,8 @@ static int gup_huge_pud(pud_t orig, pud_t *pudp, unsigned long addr,
- 		return 0;
- 	}
- 
--	if (unlikely(pud_val(orig) != pud_val(*pudp))) {
-+	if (unlikely(pud_val(orig) != pud_val(*pudp)) ||
-+	    track_gup_page_atomic(head)) {
- 		*nr -= refs;
- 		while (refs--)
- 			put_page(head);
-@@ -1649,7 +1701,8 @@ static int gup_huge_pgd(pgd_t orig, pgd_t *pgdp, unsigned long addr,
- 		return 0;
- 	}
- 
--	if (unlikely(pgd_val(orig) != pgd_val(*pgdp))) {
-+	if (unlikely(pgd_val(orig) != pgd_val(*pgdp)) ||
-+	    track_gup_page_atomic(head)) {
- 		*nr -= refs;
- 		while (refs--)
- 			put_page(head);
-diff --git a/mm/rmap.c b/mm/rmap.c
-index 0454ecc29537..434283898bb0 100644
---- a/mm/rmap.c
-+++ b/mm/rmap.c
-@@ -880,6 +880,11 @@ int page_referenced(struct page *page,
- 	return pra.referenced;
- }
- 
-+struct page_mkclean_args {
-+	int cleaned;
-+	int mapcount;
-+};
-+
- static bool page_mkclean_one(struct page *page, struct vm_area_struct *vma,
- 			    unsigned long address, void *arg)
- {
-@@ -890,7 +895,7 @@ static bool page_mkclean_one(struct page *page, struct vm_area_struct *vma,
- 		.flags = PVMW_SYNC,
- 	};
- 	struct mmu_notifier_range range;
--	int *cleaned = arg;
-+	struct page_mkclean_args *pma = arg;
- 
- 	/*
- 	 * We have to assume the worse case ie pmd for invalidation. Note that
-@@ -940,6 +945,8 @@ static bool page_mkclean_one(struct page *page, struct vm_area_struct *vma,
- #endif
- 		}
- 
-+		pma->mapcount++;
-+
- 		/*
- 		 * No need to call mmu_notifier_invalidate_range() as we are
- 		 * downgrading page table protection not changing it to point
-@@ -948,7 +955,7 @@ static bool page_mkclean_one(struct page *page, struct vm_area_struct *vma,
- 		 * See Documentation/vm/mmu_notifier.rst
- 		 */
- 		if (ret)
--			(*cleaned)++;
-+			pma->cleaned++;
- 	}
- 
- 	mmu_notifier_invalidate_range_end(&range);
-@@ -966,10 +973,13 @@ static bool invalid_mkclean_vma(struct vm_area_struct *vma, void *arg)
- 
- int page_mkclean(struct page *page)
- {
--	int cleaned = 0;
-+	struct page_mkclean_args pma = {
-+		.cleaned = 0,
-+		.mapcount = 0
-+	};
- 	struct address_space *mapping;
- 	struct rmap_walk_control rwc = {
--		.arg = (void *)&cleaned,
-+		.arg = (void *)&pma,
- 		.rmap_one = page_mkclean_one,
- 		.invalid_vma = invalid_mkclean_vma,
- 	};
-@@ -985,7 +995,10 @@ int page_mkclean(struct page *page)
- 
- 	rmap_walk(page, &rwc);
- 
--	return cleaned;
-+	if (pma.mapcount == page_mapcount(page))
-+		ClearPageGupPinned(page);
-+
-+	return pma.cleaned;
- }
- EXPORT_SYMBOL_GPL(page_mkclean);
- 
--- 
-2.20.1
-
-
-
-thanks,
--- 
-John Hubbard
-NVIDIA
+DQoNCk9uIDEvMTQvMTkgMTI6MjAgUE0sIE1pY2hhZWwgUy4gVHNpcmtpbiB3cm90ZToNCj4gT24g
+TW9uLCBKYW4gMTQsIDIwMTkgYXQgMDg6NDE6MzdQTSArMDgwMCwgSmFzb24gV2FuZyB3cm90ZToN
+Cj4+DQo+PiBPbiAyMDE5LzEvMTQg5LiL5Y2INTo1MCwgQ2hyaXN0b3BoIEhlbGx3aWcgd3JvdGU6
+DQo+Pj4gT24gTW9uLCBKYW4gMTQsIDIwMTkgYXQgMDU6NDE6NTZQTSArMDgwMCwgSmFzb24gV2Fu
+ZyB3cm90ZToNCj4+Pj4gT24gMjAxOS8xLzExIOS4i+WNiDU6MTUsIEpvZXJnIFJvZWRlbCB3cm90
+ZToNCj4+Pj4+IE9uIEZyaSwgSmFuIDExLCAyMDE5IGF0IDExOjI5OjMxQU0gKzA4MDAsIEphc29u
+IFdhbmcgd3JvdGU6DQo+Pj4+Pj4gSnVzdCB3b25kZXIgaWYgbXkgdW5kZXJzdGFuZGluZyBpcyBj
+b3JyZWN0IElPTU1VX1BMQVRGT1JNIG11c3QgYmUgc2V0IGZvcg0KPj4+Pj4+IGFsbCB2aXJ0aW8g
+ZGV2aWNlcyB1bmRlciBBTUQtU0VWIGd1ZXN0cz8NCj4+Pj4+IFllcywgdGhhdCBpcyBjb3JyZWN0
+LiBFbXVsYXRlZCBETUEgY2FuIG9ubHkgaGFwcGVuIG9uIHRoZSBTV0lPVExCDQo+Pj4+PiBhcGVy
+dHVyZSwgYmVjYXVzZSB0aGF0IG1lbW9yeSBpcyBub3QgZW5jcnlwdGVkLiBUaGUgZ3Vlc3QgYm91
+bmNlcyB0aGUNCj4+Pj4+IGRhdGEgdGhlbiB0byBpdHMgZW5jcnlwdGVkIG1lbW9yeS4NCj4+Pj4+
+DQo+Pj4+PiBSZWdhcmRzLA0KPj4+Pj4NCj4+Pj4+IAlKb2VyZw0KPj4+Pg0KPj4+PiBUaGFua3Ms
+IGhhdmUgeW91IHRlc3RlZCB2aG9zdC1uZXQgaW4gdGhpcyBjYXNlLiBJIHN1c3BlY3QgaXQgbWF5
+IG5vdCB3b3JrDQo+Pj4gV2hpY2ggYnJpbmdzIG1lIGJhY2sgdG8gbXkgcGV0IHBldmVlIHRoYXQg
+d2UgbmVlZCB0byB0YWtlIGFjdGlvbnMNCj4+PiB0aGF0IHZpcnRpbyB1c2VzIHRoZSBwcm9wZXIg
+ZG1hIG1hcHBpbmcgQVBJIGJ5IGRlZmF1bHQgd2l0aCBxdWlya3MNCj4+PiBmb3IgbGVnYWN5IGNh
+c2VzLiAgVGhlIG1hZ2ljIGJ5cGFzcyBpdCB1c2VzIGlzIGp1c3QgY2F1c2luZyBwcm9ibGVtcw0K
+Pj4+IG92ZXIgcHJvYmxlbXMuDQo+Pg0KPj4NCj4+IFllcywgSSBmdWxseSBhZ3JlZSB3aXRoIHlv
+dS4gVGhpcyBpcyBwcm9iYWJseSBhbiBleGFjdCBleGFtcGxlIG9mIHN1Y2gNCj4+IHByb2JsZW0u
+DQo+Pg0KPj4gVGhhbmtzDQo+IA0KPiBJIGRvbid0IHRoaW5rIHNvIC0gdGhlIGlzc3VlIGlzIHJl
+YWxseSB0aGF0IERNQSBBUEkgZG9lcyBub3QgeWV0IGhhbmRsZQ0KPiB0aGUgU0VWIGNhc2UgMTAw
+JSBjb3JyZWN0bHkuIEkgc3VzcGVjdCBwYXNzdGhyb3VnaCBkZXZpY2VzIHdvdWxkIGhhdmUNCj4g
+dGhlIHNhbWUgaXNzdWUuDQo+IA0KDQoNCkluIGNhc2Ugb2YgU0VWLCBlbXVsYXRlZCBETUEgaXMg
+cGVyZm9ybWVkIHRocm91Z2ggdGhlIFNXSU9UTEINCih3aGljaCBib3VuY2VzIHRoZSBlbmNyeXB0
+ZWQgYnVmZmVycykuIFRoZSBpc3N1ZSByZXBvcnRlZCBoZXJlIHdpbGwNCmhhcHBlbiBvbiBhbnkg
+cGxhdGZvcm0gd2hpY2ggaXMgbWFraW5nIHVzZSBvZiBTV0lPVExCLiBXZSBjb3VsZA0KZWFzaWx5
+IHJlcHJvZHVjZSB0aGUgdGhlIHZpcnRpby1ibGsgZmFpbHVyZSBpZiB3ZSBjb25maWd1cmUNCnN3
+aW90bGI9Zm9yY2UgaW4gbm9uIFNFViBndWVzdC4gVW5mb3J0dW5hdGVseSBpbiBjYXNlIG9mIFNF
+ViB0aGUNClNXSU9UTEIgaXMgbXVzdC4gQXMgSm9yZ2UgaGlnaGxpZ2h0ZWQgdGhlIG1haW4gaXNz
+dWUgaXMgbGltaXRhdGlvbg0Kb2YgdGhlIFNXSU9UTEIsIGl0IGRvZXMgbm90IHN1cHBvcnQgYWxs
+b2NhdGlvbi9tYXAgbGFyZ2VyIHRoYW4gMjU2S2IuDQoNCg0KPiBJbiBmYWN0IHdob2V2ZXIgc2V0
+cyBJT01NVV9QTEFURk9STSBpcyBjb21wbGV0ZWx5IHVuYWZmZWN0ZWQgYnkNCj4gQ2hyaXN0b3Bo
+J3MgcGV0IHBlZXZlLg0KPiANCj4gQ2hyaXN0b3BoIGlzIHNheWluZyB0aGF0ICFJT01NVV9QTEFU
+Rk9STSBkZXZpY2VzIHNob3VsZCBoaWRlIHRoZQ0KPiBjb21wYXRpYmlsaXR5IGNvZGUgaW4gYSBz
+cGVjaWFsIHBlci1kZXZpY2UgRE1BIEFQSSBpbXBsZW1lbnRhdGlvbi4NCj4gV2hpY2ggd291bGQg
+YmUgZmluZSBlc3BlY2lhbGx5IGlmIHdlIGNhbiBtYW5hZ2Ugbm90IHRvIGludHJvZHVjZSBhIGJ1
+bmNoDQo+IG9mIGluZGlyZWN0IGNhbGxzIGFsbCBvdmVyIHRoZSBwbGFjZSBhbmQgaHVydCBwZXJm
+b3JtYW5jZS4gIEl0J3MganVzdA0KPiB0aGF0IHRoZSBiZW5lZml0IGlzIHVubGlrZWx5IHRvIGJl
+IGJpZyAoZS5nLiB3ZSBjYW4ndCBhbHNvIGdldCByaWQgb2YNCj4gdGhlIHZpcnRpbyBzcGVjaWZp
+YyBtZW1vcnkgYmFycmllcnMpIHNvIG5vIG9uZSB3YXMgbW90aXZhdGVkIGVub3VnaCB0bw0KPiB3
+b3JrIG9uIGl0Lg0KPiANCg==
