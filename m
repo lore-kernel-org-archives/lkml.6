@@ -2,106 +2,89 @@ Return-Path: <SRS0=tq6k=PW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E94F4C43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 09:05:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 93127C43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 09:08:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A37E32086D
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 09:05:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547456723;
-	bh=Y4Zmd+oGVfsCSlTymsoH6JK+rl66AdTTVZwYKk/tRQ8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=gSK0HvzNGLdPpdQnqKG/0XgaIXodUwj9qJivs9/nHb7p7b0ijIHgfwOc7u+cdorub
-	 uEsZmEIZaFUZDYRG+ueyLWFykmS4sIskCGGm1rybAvPXHu1bZuzWH/Ok027E1pJD1R
-	 7R0Ed6IYdyjHRKwUUXhnAc+xYCPn4MgI6uhBCIEM=
+	by mail.kernel.org (Postfix) with ESMTP id 4C2AF20663
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 09:08:06 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=alien8.de header.i=@alien8.de header.b="grM8VzcD"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726469AbfANJFV (ORCPT
+        id S1726496AbfANJIE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 14 Jan 2019 04:05:21 -0500
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:45482 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726064AbfANJFV (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 Jan 2019 04:05:21 -0500
-Received: by mail-lj1-f196.google.com with SMTP id s5-v6so18259924ljd.12
-        for <linux-kernel@vger.kernel.org>; Mon, 14 Jan 2019 01:05:20 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=B3yeXNADdUT3tvPE58CoKhKcUyQIi+GuM9fymG8S/bQ=;
-        b=qG7DK715MDp3iUanEJi8PFOq08mKU3UlVpaQI4gFyXlCiWLjJ01Hmvf5F2gUFB3skD
-         J0eg1GxrFaUNrn/9HpjbcTQneeLFeoczr5VitXedSTausu1wdp3c+l18vsV0mY7vawRJ
-         7vmidEP+Yrw9KBpVhnY75k6dVunGhh1+qp/jdKfmfaTd1RGB50tPsIje+faemDq1pZNC
-         3qyaJxGph+ExTFFbGIpBP3eLsK6dtVsWsL0MK0QKZZqGtdy0gOyJ+wUkAk51gU3V318C
-         nZOtdbd+G/rWxpv6klnJ/guuIwRMHhp2ib1S4MeLDRW+2W3DajTeFBr4yay0h5hdlhiT
-         cuaQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=B3yeXNADdUT3tvPE58CoKhKcUyQIi+GuM9fymG8S/bQ=;
-        b=pAv0j08VfiV3ttqbDUQbEgL4Ta3uWx38229jYMhWq92savKt87ThKLJqmu35g7AA1H
-         qzEzQY2wfApmgwoel0l2iMyPw+eCNmDTmT2zeCelgQhLTHEldoKVFOSkvLAHpF+FrfIp
-         Adu9IDGVUKmrBHjgUBRNrD8MEwcAMNnjpiHB3NgqiEO4kQ3MyFnnpPWsh1YqxnSaGq1U
-         CjZX7wo/FEF+g99gDlOoQkWoUAMoBWzoR05/lN9B6DKm3Rh0tyvVwY0flwXG+R/F9wQJ
-         kLSh7L9Mknfjqmle5C49iyH9MsjqBHZJXwGtuA8uOp4E3DlplMU8Qw/JT3dGdjWFROlg
-         kqMQ==
-X-Gm-Message-State: AJcUuke6c7gpc5LvDSaPkI/KR5Rg5bv3jaZSbsC/v7XHKSOmMyuQR65x
-        alOfkcGuXjvk+X5wsuXvlnk=
-X-Google-Smtp-Source: ALg8bN4x+Dd9jcyDibyR3xfPMdLEanv/rzHDQ4p9geTOjRbLZKZliRx85WWoxH6zAy/t+a9ImveL7Q==
-X-Received: by 2002:a2e:974a:: with SMTP id f10-v6mr15271260ljj.61.1547456719286;
-        Mon, 14 Jan 2019 01:05:19 -0800 (PST)
-Received: from xi.terra (c-74bee655.07-184-6d6c6d4.bbcust.telenor.se. [85.230.190.116])
-        by smtp.gmail.com with ESMTPSA id y1-v6sm17335041ljh.39.2019.01.14.01.05.18
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 14 Jan 2019 01:05:18 -0800 (PST)
-Received: from johan by xi.terra with local (Exim 4.91)
-        (envelope-from <johan@kernel.org>)
-        id 1giyBJ-0000J7-IV; Mon, 14 Jan 2019 10:05:17 +0100
-Date:   Mon, 14 Jan 2019 10:05:17 +0100
-From:   Johan Hovold <johan@kernel.org>
-To:     Nishad Kamdar <nishadkamdar@gmail.com>
-Cc:     Johan Hovold <johan@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Alex Elder <elder@kernel.org>,
-        Rui Miguel Silva <rmfrfs@gmail.com>,
-        greybus-dev@lists.linaro.org, devel@driverdev.osuosl.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v6 0/2]  greybus: gpio: Switch to the gpio descriptor
- interface
-Message-ID: <20190114090517.GB3691@localhost>
-References: <cover.1547219996.git.nishadkamdar@gmail.com>
+        Mon, 14 Jan 2019 04:08:04 -0500
+Received: from mail.skyhub.de ([5.9.137.197]:41198 "EHLO mail.skyhub.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726092AbfANJIE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 14 Jan 2019 04:08:04 -0500
+Received: from zn.tnic (p200300EC2BC4CA00116FEC2D9C4463FB.dip0.t-ipconnect.de [IPv6:2003:ec:2bc4:ca00:116f:ec2d:9c44:63fb])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 67AD51EC058B;
+        Mon, 14 Jan 2019 10:08:02 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
+        t=1547456882;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
+        bh=F3O9IqkNzwz/8Etq42lTyFj7inkLRyVqs29On1dc020=;
+        b=grM8VzcDZx8VtVXsoLC5uDLMd267OC7Gn3SBVPV4I3m45NfbxRc8mxCZnym6ISyFE+Tpsz
+        ffZjobKB8rHNd0RjcASLkJCY83PKGIBkeQ1HeRcL+UyXWAEizfPh0lYWd/OZzb6iMn0+7h
+        2p+uzmi4G24UKTop15rMqfb4rPB6/Qw=
+Date:   Mon, 14 Jan 2019 10:07:56 +0100
+From:   Borislav Petkov <bp@alien8.de>
+To:     Chao Fan <fanc.fnst@cn.fujitsu.com>
+Cc:     linux-kernel@vger.kernel.org, x86@kernel.org, tglx@linutronix.de,
+        mingo@redhat.com, hpa@zytor.com, keescook@chromium.org,
+        bhe@redhat.com, msys.mizuma@gmail.com, indou.takao@jp.fujitsu.com,
+        caoj.fnst@cn.fujitsu.com
+Subject: Re: [PATCH v15 3/6] x86/boot: Introduce efi_get_rsdp_addr() to find
+ RSDP from EFI table
+Message-ID: <20190114090756.GA2773@zn.tnic>
+References: <20190107032243.25324-1-fanc.fnst@cn.fujitsu.com>
+ <20190107032243.25324-4-fanc.fnst@cn.fujitsu.com>
+ <20190110211523.GG17621@zn.tnic>
+ <20190111012353.GD2216@localhost.localdomain>
+ <20190111103225.GA4729@zn.tnic>
+ <20190113094704.GC13263@localhost.localdomain>
+ <20190113110544.GA7398@zn.tnic>
+ <20190114012641.GA30900@localhost.localdomain>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <cover.1547219996.git.nishadkamdar@gmail.com>
-User-Agent: Mutt/1.11.2 (2019-01-07)
+In-Reply-To: <20190114012641.GA30900@localhost.localdomain>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jan 11, 2019 at 09:03:16PM +0530, Nishad Kamdar wrote:
-> This patch series converts uses of the old GPIO API to the GPIO
-> descriptor API. It also converts the GPIO driver to use the
-> GPIO irqchip library GPIOLIB_IRQCHIP instead of repimplementing
-> the same.
+On Mon, Jan 14, 2019 at 09:26:42AM +0800, Chao Fan wrote:
+> According to the code, I saw:
+> #ifdef ACPI_ASL_COMPILER
+> #define ACPI_32BIT_PHYSICAL_ADDRESS
+> #endif
 > 
-> Changes in v6:
->  - Patchset now contains two patches as the patch
->    1 has been accepted.
+> and then
+> #ifdef ACPI_32BIT_PHYSICAL_ADDRESS
+> typedef u32 acpi_physical_address;
+> 
+> As for ACPI_ASL_COMPILER, I saw iASL in documention, but can't find more
+> information in the code. If I miss something, please let me know.
 
-All three patches look good now, but since Greg picks these up directly
-and applies them to the staging tree, it is best if you submit all three
-patches (with my reviewed-by tag) in a series.
+And, as a result, can acpi_physical_address ever be u32 in a kernel
+build?
 
-One last resend as v7?
+git annotate is also very helpful when doing git archeology like, for
+example, finding the patch which added the ifdeffery and looking at its
+commit message for more hints.
 
-Thanks again for doing this.
+-- 
+Regards/Gruss,
+    Boris.
 
-Johan
+Good mailing practices for 400: avoid top-posting and trim the reply.
