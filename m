@@ -2,324 +2,152 @@ Return-Path: <SRS0=tq6k=PW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E9A5C43444
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 13:24:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 555F4C43444
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 13:25:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 49B362086D
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 13:24:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 19C2220659
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 13:25:14 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="M0gahmUK"
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="wZ+nNZnA"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726609AbfANNYQ (ORCPT
+        id S1726641AbfANNZM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 14 Jan 2019 08:24:16 -0500
-Received: from mail-io1-f65.google.com ([209.85.166.65]:39023 "EHLO
-        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726513AbfANNYQ (ORCPT
+        Mon, 14 Jan 2019 08:25:12 -0500
+Received: from lelv0142.ext.ti.com ([198.47.23.249]:40762 "EHLO
+        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726614AbfANNZM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 Jan 2019 08:24:16 -0500
-Received: by mail-io1-f65.google.com with SMTP id k7so17555097iob.6
-        for <linux-kernel@vger.kernel.org>; Mon, 14 Jan 2019 05:24:15 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=BszPOXukd/CRgTGG7KPUfaCo5gW2bXdM+YoCchVA5ec=;
-        b=M0gahmUK46IwVZQFlJr02IUlbdXcgG1a4pJGRzQQMjkDsPRRluRSpxmipOFZ5HBEeG
-         d9zejSLeM8P2SdMoTI6WtluYNmgHoBUdyrLj/kNHmU85x9776vlb3h03rrXyBpdLIsNj
-         lgq5cPngAjK4gzOpO032GWHUws841Rk3hVRIf+s9igEbrRumdVnmfd+0hlmgwxEKDIht
-         bHa6mq/BNoN6H9tFee0qZGxblEvtQPjVE9jt+C0AULgASGskiihiavAEmwH5mEeJoR5v
-         oiyTSP/TvXfIshXjUIiNZHGxCfRfi4yzvqSylZbJaU3MKr0IyE8XcvzJcvWNFOkX8DMz
-         DvsA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=BszPOXukd/CRgTGG7KPUfaCo5gW2bXdM+YoCchVA5ec=;
-        b=ixHVkTq4sQagkBRd+RWmCXlvw1rp+GW0swH3MiH2Xf4Ln5T/YAF4B0qqEmu9zRkZxB
-         dW/EkMYAyU4JtDqJR7J9vH0cUjDk/nqxvr126zMKqZMwYYeTHPhS8Cb6amvMAB6Ivzmd
-         RXmuP+7qyIC7hxHjw14v41ObDaH8Wq48dOZokGNVWbvRmzGTlPTw+ZBdKebcLTKeOLyl
-         UtcfXSdiewED7Az/P6C2W1SyAciRnXFqjIjtogVpuPp5N3NSBT+zYgFu8zGuIsljpWFy
-         qz5izZxyJq7xKBJO6OW0WV/52Vay9hFwZdTEEO1FkGAc/VQWej/WEWiegUmKEvWmhiYp
-         /3Ag==
-X-Gm-Message-State: AJcUukdnBafxgW7IpVcnrxhpbOpw9M+LAGzO+AoSpvqYWrGil3e3vkLY
-        j8IqjN4WFa2u3sxT65IUdGnqwcpXuZXk3pG1b03ntw==
-X-Google-Smtp-Source: ALg8bN7UJ4bYVPQqImOJGWIZZmUioMOn4hBC6sxvYKeuVEGzryuRUWNTY0nkT7C6Ew5hCHvtCD0eY/cmQbvAFVu6pmA=
-X-Received: by 2002:a6b:fa01:: with SMTP id p1mr9893214ioh.271.1547472254932;
- Mon, 14 Jan 2019 05:24:14 -0800 (PST)
+        Mon, 14 Jan 2019 08:25:12 -0500
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id x0EDOuS2041042;
+        Mon, 14 Jan 2019 07:24:56 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1547472296;
+        bh=Pe22Tq67JuwkZ4HI9R0wNt+HBA7RzmUCpXtDqdHv2bw=;
+        h=From:To:CC:Subject:Date;
+        b=wZ+nNZnAR1w7wSCItLPm6pcHNjNv+3scvGAoPAJRswnv8FsgFpIMbnDuaFhQvN0jf
+         3xeNwczfp8wq62qWW4WN0NjbfcJDRYaaenLhO3S/Pm3qmJmSNCgL+bbRYOjmhYD51X
+         jkY3xmccSNQQfwt6sMvianNMNB6CGC5bMsz7eQy8=
+Received: from DFLE113.ent.ti.com (dfle113.ent.ti.com [10.64.6.34])
+        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x0EDOupT093509
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Mon, 14 Jan 2019 07:24:56 -0600
+Received: from DFLE104.ent.ti.com (10.64.6.25) by DFLE113.ent.ti.com
+ (10.64.6.34) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Mon, 14
+ Jan 2019 07:24:56 -0600
+Received: from dlep32.itg.ti.com (157.170.170.100) by DFLE104.ent.ti.com
+ (10.64.6.25) with Microsoft SMTP Server (version=TLS1_0,
+ cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1591.10 via Frontend Transport;
+ Mon, 14 Jan 2019 07:24:55 -0600
+Received: from a0393678ub.india.ti.com (ileax41-snat.itg.ti.com [10.172.224.153])
+        by dlep32.itg.ti.com (8.14.3/8.13.8) with ESMTP id x0EDOoWM028516;
+        Mon, 14 Jan 2019 07:24:51 -0600
+From:   Kishon Vijay Abraham I <kishon@ti.com>
+To:     Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+CC:     Kishon Vijay Abraham I <kishon@ti.com>,
+        Jingoo Han <jingoohan1@gmail.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Murali Karicheri <m-karicheri2@ti.com>,
+        Jesper Nilsson <jesper.nilsson@axis.com>,
+        <linux-pci@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-omap@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-arm-kernel@axis.com>
+Subject: [PATCH 00/24] Add support for PCIe RC and EP mode in TI's AM654 SoC
+Date:   Mon, 14 Jan 2019 18:54:00 +0530
+Message-ID: <20190114132424.6445-1-kishon@ti.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-References: <20190111185842.13978-1-aryabinin@virtuozzo.com>
-In-Reply-To: <20190111185842.13978-1-aryabinin@virtuozzo.com>
-From:   Dmitry Vyukov <dvyukov@google.com>
-Date:   Mon, 14 Jan 2019 14:24:03 +0100
-Message-ID: <CACT4Y+YV+jjcXE1oa=Gf031KAgEy40Nq83x3_nj3TwQpw3b+Ug@mail.gmail.com>
-Subject: Re: [PATCH] kasan: Remove use after scope bugs detection.
-To:     Andrey Ryabinin <aryabinin@virtuozzo.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        kasan-dev <kasan-dev@googlegroups.com>,
-        Linux-MM <linux-mm@kvack.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Qian Cai <cai@lca.pw>, Alexander Potapenko <glider@google.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jan 11, 2019 at 7:58 PM Andrey Ryabinin <aryabinin@virtuozzo.com> wrote:
->
-> Use after scope bugs detector seems to be almost entirely useless
-> for the linux kernel. It exists over two years, but I've seen only
-> one valid bug so far [1]. And the bug was fixed before it has been
-> reported. There were some other use-after-scope reports, but they
-> were false-positives due to different reasons like incompatibility
-> with structleak plugin.
->
-> This feature significantly increases stack usage, especially with
-> GCC < 9 version, and causes a 32K stack overflow. It probably
-> adds performance penalty too.
->
-> Given all that, let's remove use-after-scope detector entirely.
->
-> While preparing this patch I've noticed that we mistakenly enable
-> use-after-scope detection for clang compiler regardless of
-> CONFIG_KASAN_EXTRA setting. This is also fixed now.
+Add PCIe RC support for TI's AM654 SoC. The PCIe controller in AM654
+uses Synopsys core revision 4.90a and uses the same TI wrapper as used
+in keystone2 with certain modification. Hence AM654 will use the same
+pci wrapper driver pci-keystone.c
 
-Hi Andrey,
+This series was initially part of [1]. This series only includes patches
+that has to be merged via Lorenzo's tree. The PHY patches and dt patches
+will be sent separately.
 
-I am on a fence. On one hand removing bug detection sucks and each
-case of a missed memory corruption leads to a splash of assorted bug
-reports by syzbot. On the other hand everything you said is true.
-Maybe support for CONFIG_VMAP_STACK will enable stacks larger then
-PAGE_ALLOC_COSTLY_ORDER?
+This series is created over my keystone MSI cleanup series [2] and EPC
+features series [3].
 
+This series:
+*) Cleanup pci-keystone driver so that both RC mode and EP mode of
+   AM654 can be supported
+*) Modify epc-core to support allocation of aligned buffers required for
+   AM654
+*) Fix ATU unroll identification
+*) Add support for both host mode and device mode in AM654    
 
+[1] -> https://lore.kernel.org/patchwork/cover/989487/
+[2] -> https://www.mail-archive.com/linux-kernel@vger.kernel.org/msg1883081.html
+[3] -> https://www.mail-archive.com/linux-kernel@vger.kernel.org/msg1899011.html
 
+Kishon Vijay Abraham I (24):
+  PCI: keystone: Add start_link/stop_link dw_pcie_ops
+  PCI: keystone: Cleanup error_irq configuration
+  dt-bindings: PCI: keystone: Add "reg-names" binding information
+  PCI: keystone: Perform host initialization in a single function
+  PCI: keystone: Use platform_get_resource_byname to get memory
+    resources
+  PCI: keystone: Move initializations to appropriate places
+  dt-bindings: PCI: Add dt-binding to configure PCIe mode
+  PCI: keystone: Explicitly set the PCIe mode
+  dt-bindings: PCI: Document "atu" reg-names
+  PCI: dwc: Enable iATU unroll for endpoint too
+  PCI: dwc: Fix ATU identification for designware version >= 4.80
+  PCI: keystone: Prevent ARM32 specific code to be compiled for ARM64
+  dt-bindings: PCI: Add PCI RC dt binding documentation for AM654
+  PCI: keystone: Add support for PCIe RC in AM654x Platforms
+  PCI: keystone: Invoke phy_reset API before enabling PHY
+  PCI: endpoint: Add support to allocate aligned buffers to be mapped in
+    BARs
+  PCI: dwc: Add const qualifier to struct dw_pcie_ep_ops
+  PCI: dwc: Fix dw_pcie_ep_find_capability to return correct capability
+    offset
+  PCI: dwc: Add callbacks for accessing dbi2 address space
+  PCI: keystone: Add support for PCIe EP in AM654x Platforms
+  PCI: designware-ep: Configure RESBAR to advertise the smallest size
+  PCI: designware-ep: Use aligned ATU window for raising MSI interrupts
+  misc: pci_endpoint_test: Add support to test PCI EP in AM654x
+  misc: pci_endpoint_test: Fix test_reg_bar to be updated in
+    pci_endpoint_test
 
-> [1] http://lkml.kernel.org/r/<20171129052106.rhgbjhhis53hkgfn@wfg-t540p.sh.intel.com>
->
-> Signed-off-by: Andrey Ryabinin <aryabinin@virtuozzo.com>
-> Cc: Qian Cai <cai@lca.pw>
-> Cc: Alexander Potapenko <glider@google.com>
-> Cc: Dmitry Vyukov <dvyukov@google.com>
-> Cc: Catalin Marinas <catalin.marinas@arm.com>
-> Cc: Will Deacon <will.deacon@arm.com>
-> ---
->  arch/arm64/include/asm/memory.h |  4 ----
->  lib/Kconfig.debug               |  1 -
->  lib/Kconfig.kasan               | 10 ----------
->  lib/test_kasan.c                | 24 ------------------------
->  mm/kasan/generic.c              | 19 -------------------
->  mm/kasan/generic_report.c       |  3 ---
->  mm/kasan/kasan.h                |  3 ---
->  scripts/Makefile.kasan          |  5 -----
->  scripts/gcc-plugins/Kconfig     |  4 ----
->  9 files changed, 73 deletions(-)
->
-> diff --git a/arch/arm64/include/asm/memory.h b/arch/arm64/include/asm/memory.h
-> index e1ec947e7c0c..0e236a99b3ef 100644
-> --- a/arch/arm64/include/asm/memory.h
-> +++ b/arch/arm64/include/asm/memory.h
-> @@ -80,11 +80,7 @@
->   */
->  #ifdef CONFIG_KASAN
->  #define KASAN_SHADOW_SIZE      (UL(1) << (VA_BITS - KASAN_SHADOW_SCALE_SHIFT))
-> -#ifdef CONFIG_KASAN_EXTRA
-> -#define KASAN_THREAD_SHIFT     2
-> -#else
->  #define KASAN_THREAD_SHIFT     1
-> -#endif /* CONFIG_KASAN_EXTRA */
->  #else
->  #define KASAN_SHADOW_SIZE      (0)
->  #define KASAN_THREAD_SHIFT     0
-> diff --git a/lib/Kconfig.debug b/lib/Kconfig.debug
-> index d4df5b24d75e..a219f3488ad7 100644
-> --- a/lib/Kconfig.debug
-> +++ b/lib/Kconfig.debug
-> @@ -222,7 +222,6 @@ config ENABLE_MUST_CHECK
->  config FRAME_WARN
->         int "Warn for stack frames larger than (needs gcc 4.4)"
->         range 0 8192
-> -       default 3072 if KASAN_EXTRA
->         default 2048 if GCC_PLUGIN_LATENT_ENTROPY
->         default 1280 if (!64BIT && PARISC)
->         default 1024 if (!64BIT && !PARISC)
-> diff --git a/lib/Kconfig.kasan b/lib/Kconfig.kasan
-> index d8c474b6691e..67d7d1309c52 100644
-> --- a/lib/Kconfig.kasan
-> +++ b/lib/Kconfig.kasan
-> @@ -78,16 +78,6 @@ config KASAN_SW_TAGS
->
->  endchoice
->
-> -config KASAN_EXTRA
-> -       bool "KASAN: extra checks"
-> -       depends on KASAN_GENERIC && DEBUG_KERNEL && !COMPILE_TEST
-> -       help
-> -         This enables further checks in generic KASAN, for now it only
-> -         includes the address-use-after-scope check that can lead to
-> -         excessive kernel stack usage, frame size warnings and longer
-> -         compile time.
-> -         See https://gcc.gnu.org/bugzilla/show_bug.cgi?id=81715
-> -
->  choice
->         prompt "Instrumentation type"
->         depends on KASAN
-> diff --git a/lib/test_kasan.c b/lib/test_kasan.c
-> index 51b78405bf24..7de2702621dc 100644
-> --- a/lib/test_kasan.c
-> +++ b/lib/test_kasan.c
-> @@ -480,29 +480,6 @@ static noinline void __init copy_user_test(void)
->         kfree(kmem);
->  }
->
-> -static noinline void __init use_after_scope_test(void)
-> -{
-> -       volatile char *volatile p;
-> -
-> -       pr_info("use-after-scope on int\n");
-> -       {
-> -               int local = 0;
-> -
-> -               p = (char *)&local;
-> -       }
-> -       p[0] = 1;
-> -       p[3] = 1;
-> -
-> -       pr_info("use-after-scope on array\n");
-> -       {
-> -               char local[1024] = {0};
-> -
-> -               p = local;
-> -       }
-> -       p[0] = 1;
-> -       p[1023] = 1;
-> -}
-> -
->  static noinline void __init kasan_alloca_oob_left(void)
->  {
->         volatile int i = 10;
-> @@ -682,7 +659,6 @@ static int __init kmalloc_tests_init(void)
->         kasan_alloca_oob_right();
->         ksize_unpoisons_memory();
->         copy_user_test();
-> -       use_after_scope_test();
->         kmem_cache_double_free();
->         kmem_cache_invalid_free();
->         kasan_memchr();
-> diff --git a/mm/kasan/generic.c b/mm/kasan/generic.c
-> index ccb6207276e3..504c79363a34 100644
-> --- a/mm/kasan/generic.c
-> +++ b/mm/kasan/generic.c
-> @@ -275,25 +275,6 @@ EXPORT_SYMBOL(__asan_storeN_noabort);
->  void __asan_handle_no_return(void) {}
->  EXPORT_SYMBOL(__asan_handle_no_return);
->
-> -/* Emitted by compiler to poison large objects when they go out of scope. */
-> -void __asan_poison_stack_memory(const void *addr, size_t size)
-> -{
-> -       /*
-> -        * Addr is KASAN_SHADOW_SCALE_SIZE-aligned and the object is surrounded
-> -        * by redzones, so we simply round up size to simplify logic.
-> -        */
-> -       kasan_poison_shadow(addr, round_up(size, KASAN_SHADOW_SCALE_SIZE),
-> -                           KASAN_USE_AFTER_SCOPE);
-> -}
-> -EXPORT_SYMBOL(__asan_poison_stack_memory);
-> -
-> -/* Emitted by compiler to unpoison large objects when they go into scope. */
-> -void __asan_unpoison_stack_memory(const void *addr, size_t size)
-> -{
-> -       kasan_unpoison_shadow(addr, size);
-> -}
-> -EXPORT_SYMBOL(__asan_unpoison_stack_memory);
-> -
->  /* Emitted by compiler to poison alloca()ed objects. */
->  void __asan_alloca_poison(unsigned long addr, size_t size)
->  {
-> diff --git a/mm/kasan/generic_report.c b/mm/kasan/generic_report.c
-> index 5e12035888f2..36c645939bc9 100644
-> --- a/mm/kasan/generic_report.c
-> +++ b/mm/kasan/generic_report.c
-> @@ -82,9 +82,6 @@ static const char *get_shadow_bug_type(struct kasan_access_info *info)
->         case KASAN_KMALLOC_FREE:
->                 bug_type = "use-after-free";
->                 break;
-> -       case KASAN_USE_AFTER_SCOPE:
-> -               bug_type = "use-after-scope";
-> -               break;
->         case KASAN_ALLOCA_LEFT:
->         case KASAN_ALLOCA_RIGHT:
->                 bug_type = "alloca-out-of-bounds";
-> diff --git a/mm/kasan/kasan.h b/mm/kasan/kasan.h
-> index ea51b2d898ec..3e0c11f7d7a1 100644
-> --- a/mm/kasan/kasan.h
-> +++ b/mm/kasan/kasan.h
-> @@ -34,7 +34,6 @@
->  #define KASAN_STACK_MID         0xF2
->  #define KASAN_STACK_RIGHT       0xF3
->  #define KASAN_STACK_PARTIAL     0xF4
-> -#define KASAN_USE_AFTER_SCOPE   0xF8
->
->  /*
->   * alloca redzone shadow values
-> @@ -187,8 +186,6 @@ void __asan_unregister_globals(struct kasan_global *globals, size_t size);
->  void __asan_loadN(unsigned long addr, size_t size);
->  void __asan_storeN(unsigned long addr, size_t size);
->  void __asan_handle_no_return(void);
-> -void __asan_poison_stack_memory(const void *addr, size_t size);
-> -void __asan_unpoison_stack_memory(const void *addr, size_t size);
->  void __asan_alloca_poison(unsigned long addr, size_t size);
->  void __asan_allocas_unpoison(const void *stack_top, const void *stack_bottom);
->
-> diff --git a/scripts/Makefile.kasan b/scripts/Makefile.kasan
-> index 25c259df8ffa..f1fb8e502657 100644
-> --- a/scripts/Makefile.kasan
-> +++ b/scripts/Makefile.kasan
-> @@ -27,14 +27,9 @@ else
->          $(call cc-param,asan-globals=1) \
->          $(call cc-param,asan-instrumentation-with-call-threshold=$(call_threshold)) \
->          $(call cc-param,asan-stack=1) \
-> -        $(call cc-param,asan-use-after-scope=1) \
->          $(call cc-param,asan-instrument-allocas=1)
->  endif
->
-> -ifdef CONFIG_KASAN_EXTRA
-> -CFLAGS_KASAN += $(call cc-option, -fsanitize-address-use-after-scope)
-> -endif
-> -
->  endif # CONFIG_KASAN_GENERIC
->
->  ifdef CONFIG_KASAN_SW_TAGS
-> diff --git a/scripts/gcc-plugins/Kconfig b/scripts/gcc-plugins/Kconfig
-> index d45f7f36b859..d9fd9988ef27 100644
-> --- a/scripts/gcc-plugins/Kconfig
-> +++ b/scripts/gcc-plugins/Kconfig
-> @@ -68,10 +68,6 @@ config GCC_PLUGIN_LATENT_ENTROPY
->
->  config GCC_PLUGIN_STRUCTLEAK
->         bool "Force initialization of variables containing userspace addresses"
-> -       # Currently STRUCTLEAK inserts initialization out of live scope of
-> -       # variables from KASAN point of view. This leads to KASAN false
-> -       # positive reports. Prohibit this combination for now.
-> -       depends on !KASAN_EXTRA
->         help
->           This plugin zero-initializes any structures containing a
->           __user attribute. This can prevent some classes of information
-> --
-> 2.19.2
->
-> --
-> You received this message because you are subscribed to the Google Groups "kasan-dev" group.
-> To unsubscribe from this group and stop receiving emails from it, send an email to kasan-dev+unsubscribe@googlegroups.com.
-> To post to this group, send email to kasan-dev@googlegroups.com.
-> To view this discussion on the web visit https://groups.google.com/d/msgid/kasan-dev/20190111185842.13978-1-aryabinin%40virtuozzo.com.
-> For more options, visit https://groups.google.com/d/optout.
+ .../bindings/pci/designware-pcie.txt          |   7 +-
+ .../devicetree/bindings/pci/pci-keystone.txt  |  14 +-
+ drivers/misc/pci_endpoint_test.c              |  17 +
+ drivers/pci/controller/dwc/Kconfig            |  25 +-
+ drivers/pci/controller/dwc/pci-dra7xx.c       |   2 +-
+ drivers/pci/controller/dwc/pci-keystone.c     | 505 ++++++++++++++----
+ drivers/pci/controller/dwc/pcie-artpec6.c     |   2 +-
+ .../pci/controller/dwc/pcie-designware-ep.c   |  55 +-
+ .../pci/controller/dwc/pcie-designware-host.c |  19 -
+ .../pci/controller/dwc/pcie-designware-plat.c |   2 +-
+ drivers/pci/controller/dwc/pcie-designware.c  |  52 ++
+ drivers/pci/controller/dwc/pcie-designware.h  |  15 +-
+ drivers/pci/endpoint/functions/pci-epf-test.c |   5 +-
+ drivers/pci/endpoint/pci-epf-core.c           |  10 +-
+ include/linux/pci-epc.h                       |   2 +
+ include/linux/pci-epf.h                       |   3 +-
+ 16 files changed, 587 insertions(+), 148 deletions(-)
+
+-- 
+2.17.1
+
