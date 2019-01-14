@@ -2,347 +2,190 @@ Return-Path: <SRS0=RZO6=PX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4EF49C43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 15:58:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C85B3C43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 16:00:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 071B020645
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 15:58:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 929BE20675
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 16:00:38 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="p4wURC7e"
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=kemnade.info header.i=@kemnade.info header.b="FbNN8gLj"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731356AbfAOP6L (ORCPT
+        id S1731358AbfAOQAg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 15 Jan 2019 10:58:11 -0500
-Received: from fllv0016.ext.ti.com ([198.47.19.142]:47530 "EHLO
-        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728836AbfAOP6K (ORCPT
+        Tue, 15 Jan 2019 11:00:36 -0500
+Received: from mail.andi.de1.cc ([85.214.239.24]:51972 "EHLO
+        h2641619.stratoserver.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728812AbfAOQAg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Jan 2019 10:58:10 -0500
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id x0FFw19b030311;
-        Tue, 15 Jan 2019 09:58:01 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1547567881;
-        bh=3hhz4Z94l9ISOZzVNuJC94AnVjhRJvDOtnuNov9Wj/A=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=p4wURC7eXmNsz7WqdvCBSTMlv5r+kDin/eZ8iBtCrMAeYXJbC5qUaXEgbPucaBf64
-         XNW9REL8vRz6CT0nJQM0SWCi0SQKiIYDI4tdXK98Ny6FiHdbHwKXxVcl9/iI/DpNOt
-         cmEinIp23EqY7tGZSRnLhPsf7H6IYx/FUtuw0Kx8=
-Received: from DFLE100.ent.ti.com (dfle100.ent.ti.com [10.64.6.21])
-        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x0FFw14e117616
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 15 Jan 2019 09:58:01 -0600
-Received: from DFLE100.ent.ti.com (10.64.6.21) by DFLE100.ent.ti.com
- (10.64.6.21) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Tue, 15
- Jan 2019 09:58:01 -0600
-Received: from dflp32.itg.ti.com (10.64.6.15) by DFLE100.ent.ti.com
- (10.64.6.21) with Microsoft SMTP Server (version=TLS1_0,
- cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1591.10 via Frontend Transport;
- Tue, 15 Jan 2019 09:58:01 -0600
-Received: from [172.22.120.117] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by dflp32.itg.ti.com (8.14.3/8.13.8) with ESMTP id x0FFw0Gk029884;
-        Tue, 15 Jan 2019 09:58:01 -0600
-Subject: Re: [PATCH 14/14] staging: android: ion: Add UNMAPPED heap type and
- helper
-To:     Laura Abbott <labbott@redhat.com>,
-        Sumit Semwal <sumit.semwal@linaro.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        =?UTF-8?Q?Arve_Hj=c3=b8nnev=c3=a5g?= <arve@android.com>
-CC:     <devel@driverdev.osuosl.org>, <dri-devel@lists.freedesktop.org>,
-        <linux-kernel@vger.kernel.org>
-References: <20190111180523.27862-1-afd@ti.com>
- <20190111180523.27862-15-afd@ti.com>
- <bd3c15f2-2635-588e-80b4-18e8e44d27b3@redhat.com>
-From:   "Andrew F. Davis" <afd@ti.com>
-Message-ID: <ee3bb691-8c9b-457c-5da3-522a4baff140@ti.com>
-Date:   Tue, 15 Jan 2019 09:58:00 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Tue, 15 Jan 2019 11:00:36 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=kemnade.info; s=20180802; h=Content-Type:MIME-Version:References:
+        In-Reply-To:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=WiksQJdXitBtyKoazXrz7uLmJ7KtELkPGCoAE0rEw5s=; b=FbNN8gLjkhoh9CFnFQg0NkvWP
+        EstRZGGRFF5RxQJ2yvDbnvjVHxhnKKqQ4HjFtB6+rpWnpRrHkpHLiCjAJrvOA7fsDH60jK4Hys+b8
+        qYb0L/39FwmZndKUQSQJTNT/rtvsaLAHV8DmRbLBUNLeLpmKO62FXoHkGf3RiLM0ZHzBs=;
+Received: from hsvpn34.hotsplots.net ([176.74.57.181] helo=localhost)
+        by h2641619.stratoserver.net with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <andreas@kemnade.info>)
+        id 1gjR8g-0002Vz-Vp; Tue, 15 Jan 2019 17:00:31 +0100
+Received: from [::1] (helo=localhost)
+        by eeepc with esmtp (Exim 4.89)
+        (envelope-from <andreas@kemnade.info>)
+        id 1gj17r-0005J9-Nq; Mon, 14 Jan 2019 13:13:55 +0100
+Date:   Mon, 14 Jan 2019 13:13:46 +0100
+From:   Andreas Kemnade <andreas@kemnade.info>
+To:     Johan Hovold <johan@kernel.org>
+Cc:     robh+dt@kernel.org, mark.rutland@arm.com,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Discussions about the Letux Kernel 
+        <letux-kernel@openphoenux.org>
+Subject: Re: [PATCH v2 2/5] gnss: sirf: power on logic for devices without
+ wakeup signal
+Message-ID: <20190114131346.4d476055@kemnade.info>
+In-Reply-To: <20190114105129.GE3691@localhost>
+References: <20181209195150.5192-1-andreas@kemnade.info>
+        <20181209195150.5192-3-andreas@kemnade.info>
+        <20190110121038.GA9725@localhost>
+        <20190110230223.18ecbd87@kemnade.info>
+        <20190114105129.GE3691@localhost>
+X-Mailer: Claws Mail 3.14.1 (GTK+ 2.24.31; i686-pc-linux-gnu)
 MIME-Version: 1.0
-In-Reply-To: <bd3c15f2-2635-588e-80b4-18e8e44d27b3@redhat.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/H2LTfQ6y3PanNW8K.0kxQa_"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 1/14/19 8:32 PM, Laura Abbott wrote:
-> On 1/11/19 10:05 AM, Andrew F. Davis wrote:
->> The "unmapped" heap is very similar to the carveout heap except
->> the backing memory is presumed to be unmappable by the host, in
->> my specific case due to firewalls. This memory can still be
->> allocated from and used by devices that do have access to the
->> backing memory.
->>
->> Based originally on the secure/unmapped heap from Linaro for
->> the OP-TEE SDP implementation, this was re-written to match
->> the carveout heap helper code.
->>
->> Suggested-by: Etienne Carriere <etienne.carriere@linaro.org>
->> Signed-off-by: Andrew F. Davis <afd@ti.com>
->> ---
->>   drivers/staging/android/ion/Kconfig           |  10 ++
->>   drivers/staging/android/ion/Makefile          |   1 +
->>   drivers/staging/android/ion/ion.h             |  16 +++
->>   .../staging/android/ion/ion_unmapped_heap.c   | 123 ++++++++++++++++++
->>   drivers/staging/android/uapi/ion.h            |   3 +
->>   5 files changed, 153 insertions(+)
->>   create mode 100644 drivers/staging/android/ion/ion_unmapped_heap.c
->>
->> diff --git a/drivers/staging/android/ion/Kconfig
->> b/drivers/staging/android/ion/Kconfig
->> index 0fdda6f62953..a117b8b91b14 100644
->> --- a/drivers/staging/android/ion/Kconfig
->> +++ b/drivers/staging/android/ion/Kconfig
->> @@ -42,3 +42,13 @@ config ION_CMA_HEAP
->>         Choose this option to enable CMA heaps with Ion. This heap is
->> backed
->>         by the Contiguous Memory Allocator (CMA). If your system has
->> these
->>         regions, you should say Y here.
->> +
->> +config ION_UNMAPPED_HEAP
->> +    bool "ION unmapped heap support"
->> +    depends on ION
->> +    help
->> +      Choose this option to enable UNMAPPED heaps with Ion. This heap is
->> +      backed in specific memory pools, carveout from the Linux memory.
->> +      Unlike carveout heaps these are assumed to be not mappable by
->> +      kernel or user-space.
->> +      Unless you know your system has these regions, you should say N
->> here.
->> diff --git a/drivers/staging/android/ion/Makefile
->> b/drivers/staging/android/ion/Makefile
->> index 17f3a7569e3d..c71a1f3de581 100644
->> --- a/drivers/staging/android/ion/Makefile
->> +++ b/drivers/staging/android/ion/Makefile
->> @@ -4,3 +4,4 @@ obj-$(CONFIG_ION_SYSTEM_HEAP) += ion_system_heap.o
->> ion_page_pool.o
->>   obj-$(CONFIG_ION_CARVEOUT_HEAP) += ion_carveout_heap.o
->>   obj-$(CONFIG_ION_CHUNK_HEAP) += ion_chunk_heap.o
->>   obj-$(CONFIG_ION_CMA_HEAP) += ion_cma_heap.o
->> +obj-$(CONFIG_ION_UNMAPPED_HEAP) += ion_unmapped_heap.o
->> diff --git a/drivers/staging/android/ion/ion.h
->> b/drivers/staging/android/ion/ion.h
->> index 97b2876b165a..ce74332018ba 100644
->> --- a/drivers/staging/android/ion/ion.h
->> +++ b/drivers/staging/android/ion/ion.h
->> @@ -341,4 +341,20 @@ static inline struct ion_heap
->> *ion_chunk_heap_create(phys_addr_t base, size_t si
->>   }
->>   #endif
->>   +#ifdef CONFIG_ION_UNMAPPED_HEAP
->> +/**
->> + * ion_unmapped_heap_create
->> + * @base:        base address of carveout memory
->> + * @size:        size of carveout memory region
->> + *
->> + * Creates an unmapped ion_heap using the passed in data
->> + */
->> +struct ion_heap *ion_unmapped_heap_create(phys_addr_t base, size_t
->> size);
->> +#else
->> +struct ion_heap *ion_unmapped_heap_create(phys_addr_t base, size_t size)
->> +{
->> +    return ERR_PTR(-ENODEV);
->> +}
->> +#endif
->> +
->>   #endif /* _ION_H */
->> diff --git a/drivers/staging/android/ion/ion_unmapped_heap.c
->> b/drivers/staging/android/ion/ion_unmapped_heap.c
->> new file mode 100644
->> index 000000000000..7602b659c2ec
->> --- /dev/null
->> +++ b/drivers/staging/android/ion/ion_unmapped_heap.c
->> @@ -0,0 +1,123 @@
->> +// SPDX-License-Identifier: GPL-2.0
->> +/*
->> + * ION Memory Allocator unmapped heap helper
->> + *
->> + * Copyright (C) 2015-2016 Texas Instruments Incorporated -
->> http://www.ti.com/
->> + *    Andrew F. Davis <afd@ti.com>
->> + *
->> + * ION "unmapped" heaps are physical memory heaps not by default
->> mapped into
->> + * a virtual address space. The buffer owner can explicitly request
->> kernel
->> + * space mappings but the underlying memory may still not be
->> accessible for
->> + * various reasons, such as firewalls.
->> + */
->> +
->> +#include <linux/err.h>
->> +#include <linux/genalloc.h>
->> +#include <linux/scatterlist.h>
->> +#include <linux/slab.h>
->> +
->> +#include "ion.h"
->> +
->> +#define ION_UNMAPPED_ALLOCATE_FAIL -1
->> +
->> +struct ion_unmapped_heap {
->> +    struct ion_heap heap;
->> +    struct gen_pool *pool;
->> +};
->> +
->> +static phys_addr_t ion_unmapped_allocate(struct ion_heap *heap,
->> +                     unsigned long size)
->> +{
->> +    struct ion_unmapped_heap *unmapped_heap =
->> +        container_of(heap, struct ion_unmapped_heap, heap);
->> +    unsigned long offset;
->> +
->> +    offset = gen_pool_alloc(unmapped_heap->pool, size);
->> +    if (!offset)
->> +        return ION_UNMAPPED_ALLOCATE_FAIL;
->> +
->> +    return offset;
->> +}
->> +
->> +static void ion_unmapped_free(struct ion_heap *heap, phys_addr_t addr,
->> +                  unsigned long size)
->> +{
->> +    struct ion_unmapped_heap *unmapped_heap =
->> +        container_of(heap, struct ion_unmapped_heap, heap);
->> +
->> +    gen_pool_free(unmapped_heap->pool, addr, size);
->> +}
->> +
->> +static int ion_unmapped_heap_allocate(struct ion_heap *heap,
->> +                      struct ion_buffer *buffer,
->> +                      unsigned long size,
->> +                      unsigned long flags)
->> +{
->> +    struct sg_table *table;
->> +    phys_addr_t paddr;
->> +    int ret;
->> +
->> +    table = kmalloc(sizeof(*table), GFP_KERNEL);
->> +    if (!table)
->> +        return -ENOMEM;
->> +    ret = sg_alloc_table(table, 1, GFP_KERNEL);
->> +    if (ret)
->> +        goto err_free;
->> +
->> +    paddr = ion_unmapped_allocate(heap, size);
->> +    if (paddr == ION_UNMAPPED_ALLOCATE_FAIL) {
->> +        ret = -ENOMEM;
->> +        goto err_free_table;
->> +    }
->> +
->> +    sg_set_page(table->sgl, pfn_to_page(PFN_DOWN(paddr)), size, 0);
->> +    buffer->sg_table = table;
->> +
-> 
-> 
-> If this memory is actually unmapped this is not going to work because
-> the struct page will not be valid.
-> 
+--Sig_/H2LTfQ6y3PanNW8K.0kxQa_
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-If it will never get mapped then it doesn't need a valid struct page as
-far as I can tell. We only use it as a marker to where the start of
-backing memory is, and that is calculated based on the struct page
-pointer address, not its contents.
+On Mon, 14 Jan 2019 11:51:29 +0100
+Johan Hovold <johan@kernel.org> wrote:
 
->> +    return 0;
->> +
->> +err_free_table:
->> +    sg_free_table(table);
->> +err_free:
->> +    kfree(table);
->> +    return ret;
->> +}
->> +
->> +static void ion_unmapped_heap_free(struct ion_buffer *buffer)
->> +{
->> +    struct ion_heap *heap = buffer->heap;
->> +    struct sg_table *table = buffer->sg_table;
->> +    struct page *page = sg_page(table->sgl);
->> +    phys_addr_t paddr = PFN_PHYS(page_to_pfn(page));
->> +
->> +    ion_unmapped_free(heap, paddr, buffer->size);
->> +    sg_free_table(buffer->sg_table);
->> +    kfree(buffer->sg_table);
->> +}
->> +
->> +static struct ion_heap_ops unmapped_heap_ops = {
->> +    .allocate = ion_unmapped_heap_allocate,
->> +    .free = ion_unmapped_heap_free,
->> +    /* no .map_user, user mapping of unmapped heaps not allowed */
->> +    .map_kernel = ion_heap_map_kernel,
->> +    .unmap_kernel = ion_heap_unmap_kernel,
->> +};
->> +
->> +struct ion_heap *ion_unmapped_heap_create(phys_addr_t base, size_t size)
->> +{
->> +    struct ion_unmapped_heap *unmapped_heap;
->> +
->> +    unmapped_heap = kzalloc(sizeof(*unmapped_heap), GFP_KERNEL);
->> +    if (!unmapped_heap)
->> +        return ERR_PTR(-ENOMEM);
->> +
->> +    unmapped_heap->pool = gen_pool_create(PAGE_SHIFT, -1);
->> +    if (!unmapped_heap->pool) {
->> +        kfree(unmapped_heap);
->> +        return ERR_PTR(-ENOMEM);
->> +    }
->> +    gen_pool_add(unmapped_heap->pool, base, size, -1);
->> +    unmapped_heap->heap.ops = &unmapped_heap_ops;
->> +    unmapped_heap->heap.type = ION_HEAP_TYPE_UNMAPPED;
->> +
->> +    return &unmapped_heap->heap;
->> +}
->> diff --git a/drivers/staging/android/uapi/ion.h
->> b/drivers/staging/android/uapi/ion.h
->> index 5d7009884c13..d5f98bc5f340 100644
->> --- a/drivers/staging/android/uapi/ion.h
->> +++ b/drivers/staging/android/uapi/ion.h
->> @@ -19,6 +19,8 @@
->>    *                 carveout heap, allocations are physically
->>    *                 contiguous
->>    * @ION_HEAP_TYPE_DMA:         memory allocated via DMA API
->> + * @ION_HEAP_TYPE_UNMAPPED:     memory not intended to be mapped into
->> the
->> + *                 linux address space unless for debug cases
->>    * @ION_NUM_HEAPS:         helper for iterating over heaps, a bit mask
->>    *                 is used to identify the heaps, so only 32
->>    *                 total heap types are supported
->> @@ -29,6 +31,7 @@ enum ion_heap_type {
->>       ION_HEAP_TYPE_CARVEOUT,
->>       ION_HEAP_TYPE_CHUNK,
->>       ION_HEAP_TYPE_DMA,
->> +    ION_HEAP_TYPE_UNMAPPED,
->>       ION_HEAP_TYPE_CUSTOM, /*
->>                      * must be last so device specific heaps always
->>                      * are at the end of this enum
->>
-> 
-> Overall this seems way too similar to the carveout heap
-> to justify adding another heap type. It also still missing
-> the part of where exactly you call ion_unmapped_heap_create.
-> Figuring that out is one of the blocking items for moving
-> Ion out of staging.
-> 
+> On Thu, Jan 10, 2019 at 11:02:23PM +0100, Andreas Kemnade wrote:
+> > Hi Johan,
+> >=20
+> > On Thu, 10 Jan 2019 13:10:38 +0100
+> > Johan Hovold <johan@kernel.org> wrote: =20
+>=20
+> > > On Sun, Dec 09, 2018 at 08:51:47PM +0100, Andreas Kemnade wrote: =20
+>=20
+> > > > Additionally it checks for the initial state of the device during
+> > > > probing to ensure it is off.   =20
+> > >=20
+> > > Is this really needed? If so, it should probably go in a separate pat=
+ch.
+> > >  =20
+> > Well, it is the main motivation for the new try of upstreaming this aga=
+in.
+> > You know the loooong history...
+> > It has several times messed up my power consumption statistics. As I try
+> > to test patches on top of mainline, this has often led to false alarms
+> > regarding pm bugs in other drivers.
+> >=20
+> > We could also come from another kernel here via kexec having the
+> > device in another state.=20
+> >=20
+> > And why we do not want to check for uncommon things here? We e.g. do
+> > multiple tries for changing power state.  =20
+>=20
+> You still need to argue why it is needed (e.g. the kexec case) and that
+> needs to go in the commit message of a separate patch adding something
+> like that as it is orthogonal to supporting configurations without
+> wakeup.
+>=20
+yes, totally agreed, there is already a separate patch with an extensive
+commit message.
 
-I agree with this being almost a 1:1 copy of the carveout heap, I'm just
-not sure of a good way to do this without a new heap type. Adding flags
-to the existing carveout type seem a bit messy. Plus then those flags
-should be valid for other heap types, gets complicated quickly..
+> This may also be better handled by a shutdown() callback which is where
+> such kexec concerns are supposed to be handled, and that would also take
+> care of the reboot case. This way, not everyone has to pay a penalty on
+> every boot for the arguable rare use case of kexec.
+>=20
+there are more possibilities than kexec.
 
-I'll reply to the second part in your other top level response.
+> > GPS chips will have usually some boot messages. So it is not the
+> > "send nmea data set every X seconds" for the wakeup case, it is
+> > another situation deserving IMHO another name. =20
+>=20
+> Ok, but unless all supported (sirf-star-based) chips have boot messages,
+> we'd still need to wait that long for wakeup.
+>=20
+I have never seen one without. But that could also be attached
+to the dtb compatible name or a separate property.
 
-Andrew
+> Are these messages you refer to output also on wake from hibernate, and
+> not just on boot?
+>=20
+also wake from hibernate.
+I mean
+$PSRF150,1*3E
 
-> Thanks,
-> Laura
+
+> > > In pseudo code we have:
+> > >=20
+> > >   activate:
+> > >    - toggle on-off
+> > >    - wait(data-received, ACTIVATE_TIMEOUT + REPORT_CYCLE)
+> > >      - reception: success  =20
+> >=20
+> > Note: we can also get the goodbye/shutdown message from the chip here
+> > so there are chances of a false success, but since we initially power d=
+own,
+> > we will rule out wrong state here. =20
+>=20
+> Good point. Unless we know the current state, we'd need to sleep for
+> HIBERNATE_TIMEOUT before waiting for data reception.
+>=20
+> > >      - timeout: failure
+> > >=20
+> > >   hibernate:
+> > >    - toggle on-off
+> > >    - sleep(HIBERNATE_TIMEOUT) =20
+> > we could also additionally check here for=20
+> >    if (last_bytes_received =3D=3D GOODBYE_MSG) =20
+>=20
+> Caching and parsing the stream for this could get messy. And is the
+> expected message clearly defined somewhere, or would it be device (and
+> firmware) dependent?
+>=20
+I think so but I must check.
+$PSRF150.0
+
+But as said, these ideas are be for a possibly later patchset.
+
+Regards,
+Andreas
+
+--Sig_/H2LTfQ6y3PanNW8K.0kxQa_
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCAAdFiEE7sDbhY5mwNpwYgrAfb1qx03ikyQFAlw8fPoACgkQfb1qx03i
+kySFrBAAvpGg96XdxyLbKXGNzKqjw29OVeG6TKHXRwgEHzYS9Y01CrQwVAEec5Gv
+p8OfGryP5s1uhBlaCJnPO3fbu/bEPAZCApQlWP115xf7pFX/83511zH+nflz6aqa
+tB5UZsxO2viJFJszukwg8/ThdZ0rHbdwsG2X+ABl5QJxAx51QA5e8ouYtBjwUQgC
+DfnNP7b67WJZ8q2stCI6BP/efvuhyeWcsH4Fj86ZuAY+zUCYlP3Qj7F6tjz03tZx
+sdV6ayfL45QjvLOeZp69UrabMz0s2lgGuNzbgvFWJLpwUqr8KLmiFg6CRtKvzzFy
+iKU3dbzi4RKzwS4any34SGLwGXBDSwnohOH7RGv9uMnZqL9KJKzCHcNyDXpCYI/1
+uNqBQdDdNNVeZkHcTh5Ca90a1Q5p0QY6p3nifJP2TWtgsgjSE4bJQ+bmkFwrXFcr
+ifSEJtSukCTH3+g+AeK+hRrekf+QAIcvAbZh5R1X3thiwINuxtVFp6wU1jpcRRXm
+3CAF4Vjinz8cNPJWw1iRH+GYuGUEFVbiYvje7V09kv/t4pJuY9dIXzZIl7PYKroO
+hm+gT1Y9lcrxLX0+hsxxazp7C/nx5s6FDOnkl00wAsAwf6RKiQBYD0ohlwry1qx5
+hqwWXKE9L8VbjxMtGf2XjFF3cgxtO8DQcBdulpT6an4QohXQHO0=
+=jeL8
+-----END PGP SIGNATURE-----
+
+--Sig_/H2LTfQ6y3PanNW8K.0kxQa_--
