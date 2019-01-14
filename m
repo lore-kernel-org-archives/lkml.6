@@ -2,185 +2,157 @@ Return-Path: <SRS0=tq6k=PW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-13.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,
+	UNPARSEABLE_RELAY,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A4FDC43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 23:46:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F990C43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 23:46:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 40EC820883
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 23:46:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 557E520883
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 23:46:45 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="cG9kME2L"
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="5Fr01GVM"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727188AbfANXq0 (ORCPT
+        id S1727226AbfANXqn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 14 Jan 2019 18:46:26 -0500
-Received: from ozlabs.org ([203.11.71.1]:43265 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726776AbfANXq0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 Jan 2019 18:46:26 -0500
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 43dqqc3733z9sCs;
-        Tue, 15 Jan 2019 10:46:20 +1100 (AEDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1547509582;
-        bh=V0N+ql6Xd+1ucZVPI7EGKvOljcTl+xEmGq45eKCJhWY=;
-        h=Date:From:To:Cc:Subject:From;
-        b=cG9kME2LGpXmDa62ClrKMuzw4tTHO8kSShR76AoHzCXpN7HFHJkEpdMKWU1vbrRnY
-         urVZQZ7VfOQhWCGdINcx1R43keWQAHwuhJTe6rqLLhQsCKcY3hJL3CJgqYJvdWFTvR
-         9kw6XG9RmBXuO7Ao/xmDD7Ip0mvbYDTYGUl/F3BiuLvHY6PLCueY2LVlqofUAGPTPa
-         AYE8zfWWHd5HrLoPnliI/jXfm9UxaTmB0J1HtVOQGhodD3q7lO3/0AWLwzP4CI1Fma
-         rStE+nCuxnyxBqMFr4RZDcqxEwtIrYfCDy9n436A4gkOd5JAopbuK2r9LlbrNqwnga
-         63n775FSIKAOQ==
-Date:   Tue, 15 Jan 2019 10:46:19 +1100
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Liviu Dudau <Liviu.Dudau@arm.com>, Dave Airlie <airlied@linux.ie>,
-        DRI <dri-devel@lists.freedesktop.org>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Rob Clark <robdclark@gmail.com>,
-        Boris Brezillon <boris.brezillon@bootlin.com>,
-        "James Qian Wang (Arm Technology China)" <james.qian.wang@arm.com>
-Subject: linux-next: build failure after merge of the mali-dp tree
-Message-ID: <20190115104619.516be4b9@canb.auug.org.au>
+        Mon, 14 Jan 2019 18:46:43 -0500
+Received: from userp2130.oracle.com ([156.151.31.86]:37010 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726776AbfANXqn (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 14 Jan 2019 18:46:43 -0500
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id x0ENiF6D040510;
+        Mon, 14 Jan 2019 23:45:34 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2018-07-02;
+ bh=nMirkyrCUw2W4gWqwdDPoqVg6Pckt1ulx/XtJhQxe1Q=;
+ b=5Fr01GVMtmug/LH0ppIZaXFUghihdj2awPW3BE73h+hLEfH7LwQi8Ufcl8Y7OyA5YE8n
+ l8pUkQQaEESVAUssYnQ9/tDvEG/jtCDmWnmec+UTSsL3IwddvzlRp6wbTzpDj0WeMA4w
+ 1r3AaX8VCCD2ir+63ldVaqfaUIHj49dQJfII8co6mYRPhu8q+azJo9ZvvzpCZefqggtv
+ aYzN2lxgGGm47HNX5Q8UXmUZDx1b+V6U8Ys6q0t2mRJmz731+A2SGUmxyYLPtkJkfppX
+ 3aXR5iQNSx9KxkbNv3o4bwK/gg6SJmuaDXStsHX35AajZ38dtjd0ucWcelN9nLmjHUNe ag== 
+Received: from userv0021.oracle.com (userv0021.oracle.com [156.151.31.71])
+        by userp2130.oracle.com with ESMTP id 2pybkc8w3s-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 14 Jan 2019 23:45:34 +0000
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by userv0021.oracle.com (8.14.4/8.14.4) with ESMTP id x0ENjXs8003746
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 14 Jan 2019 23:45:34 GMT
+Received: from abhmp0005.oracle.com (abhmp0005.oracle.com [141.146.116.11])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x0ENjWZB022111;
+        Mon, 14 Jan 2019 23:45:32 GMT
+Received: from dhcp-burlington7-2nd-B-east-10-152-55-162.usdhcp.oraclecorp.com (/10.152.32.65)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Mon, 14 Jan 2019 15:45:31 -0800
+Subject: Re: [Xen-devel] [PATCH] pvcalls-front: Replace GFP_KERNEL with
+ GFP_ATOMIC in create_active
+To:     wangbo <wdjjwb@163.com>, linux-kernel@vger.kernel.org
+Cc:     jgross@suse.com, xen-devel@lists.xenproject.org,
+        wang.bo116@zte.com.cn, sstabellini@kernel.org
+References: <1547480909-11844-1-git-send-email-wdjjwb@163.com>
+From:   Boris Ostrovsky <boris.ostrovsky@oracle.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=boris.ostrovsky@oracle.com; prefer-encrypt=mutual; keydata=
+ mQINBFH8CgsBEAC0KiOi9siOvlXatK2xX99e/J3OvApoYWjieVQ9232Eb7GzCWrItCzP8FUV
+ PQg8rMsSd0OzIvvjbEAvaWLlbs8wa3MtVLysHY/DfqRK9Zvr/RgrsYC6ukOB7igy2PGqZd+M
+ MDnSmVzik0sPvB6xPV7QyFsykEgpnHbvdZAUy/vyys8xgT0PVYR5hyvhyf6VIfGuvqIsvJw5
+ C8+P71CHI+U/IhsKrLrsiYHpAhQkw+Zvyeml6XSi5w4LXDbF+3oholKYCkPwxmGdK8MUIdkM
+ d7iYdKqiP4W6FKQou/lC3jvOceGupEoDV9botSWEIIlKdtm6C4GfL45RD8V4B9iy24JHPlom
+ woVWc0xBZboQguhauQqrBFooHO3roEeM1pxXjLUbDtH4t3SAI3gt4dpSyT3EvzhyNQVVIxj2
+ FXnIChrYxR6S0ijSqUKO0cAduenhBrpYbz9qFcB/GyxD+ZWY7OgQKHUZMWapx5bHGQ8bUZz2
+ SfjZwK+GETGhfkvNMf6zXbZkDq4kKB/ywaKvVPodS1Poa44+B9sxbUp1jMfFtlOJ3AYB0WDS
+ Op3d7F2ry20CIf1Ifh0nIxkQPkTX7aX5rI92oZeu5u038dHUu/dO2EcuCjl1eDMGm5PLHDSP
+ 0QUw5xzk1Y8MG1JQ56PtqReO33inBXG63yTIikJmUXFTw6lLJwARAQABtDNCb3JpcyBPc3Ry
+ b3Zza3kgKFdvcmspIDxib3Jpcy5vc3Ryb3Zza3lAb3JhY2xlLmNvbT6JAjgEEwECACIFAlH8
+ CgsCGwMGCwkIBwMCBhUIAgkKCwQWAgMBAh4BAheAAAoJEIredpCGysGyasEP/j5xApopUf4g
+ 9Fl3UxZuBx+oduuw3JHqgbGZ2siA3EA4bKwtKq8eT7ekpApn4c0HA8TWTDtgZtLSV5IdH+9z
+ JimBDrhLkDI3Zsx2CafL4pMJvpUavhc5mEU8myp4dWCuIylHiWG65agvUeFZYK4P33fGqoaS
+ VGx3tsQIAr7MsQxilMfRiTEoYH0WWthhE0YVQzV6kx4wj4yLGYPPBtFqnrapKKC8yFTpgjaK
+ jImqWhU9CSUAXdNEs/oKVR1XlkDpMCFDl88vKAuJwugnixjbPFTVPyoC7+4Bm/FnL3iwlJVE
+ qIGQRspt09r+datFzPqSbp5Fo/9m4JSvgtPp2X2+gIGgLPWp2ft1NXHHVWP19sPgEsEJXSr9
+ tskM8ScxEkqAUuDs6+x/ISX8wa5Pvmo65drN+JWA8EqKOHQG6LUsUdJolFM2i4Z0k40BnFU/
+ kjTARjrXW94LwokVy4x+ZYgImrnKWeKac6fMfMwH2aKpCQLlVxdO4qvJkv92SzZz4538az1T
+ m+3ekJAimou89cXwXHCFb5WqJcyjDfdQF857vTn1z4qu7udYCuuV/4xDEhslUq1+GcNDjAhB
+ nNYPzD+SvhWEsrjuXv+fDONdJtmLUpKs4Jtak3smGGhZsqpcNv8nQzUGDQZjuCSmDqW8vn2o
+ hWwveNeRTkxh+2x1Qb3GT46uuQINBFH8CgsBEADGC/yx5ctcLQlB9hbq7KNqCDyZNoYu1HAB
+ Hal3MuxPfoGKObEktawQPQaSTB5vNlDxKihezLnlT/PKjcXC2R1OjSDinlu5XNGc6mnky03q
+ yymUPyiMtWhBBftezTRxWRslPaFWlg/h/Y1iDuOcklhpr7K1h1jRPCrf1yIoxbIpDbffnuyz
+ kuto4AahRvBU4Js4sU7f/btU+h+e0AcLVzIhTVPIz7PM+Gk2LNzZ3/on4dnEc/qd+ZZFlOQ4
+ KDN/hPqlwA/YJsKzAPX51L6Vv344pqTm6Z0f9M7YALB/11FO2nBB7zw7HAUYqJeHutCwxm7i
+ BDNt0g9fhviNcJzagqJ1R7aPjtjBoYvKkbwNu5sWDpQ4idnsnck4YT6ctzN4I+6lfkU8zMzC
+ gM2R4qqUXmxFIS4Bee+gnJi0Pc3KcBYBZsDK44FtM//5Cp9DrxRQOh19kNHBlxkmEb8kL/pw
+ XIDcEq8MXzPBbxwHKJ3QRWRe5jPNpf8HCjnZz0XyJV0/4M1JvOua7IZftOttQ6KnM4m6WNIZ
+ 2ydg7dBhDa6iv1oKdL7wdp/rCulVWn8R7+3cRK95SnWiJ0qKDlMbIN8oGMhHdin8cSRYdmHK
+ kTnvSGJNlkis5a+048o0C6jI3LozQYD/W9wq7MvgChgVQw1iEOB4u/3FXDEGulRVko6xCBU4
+ SQARAQABiQIfBBgBAgAJBQJR/AoLAhsMAAoJEIredpCGysGyfvMQAIywR6jTqix6/fL0Ip8G
+ jpt3uk//QNxGJE3ZkUNLX6N786vnEJvc1beCu6EwqD1ezG9fJKMl7F3SEgpYaiKEcHfoKGdh
+ 30B3Hsq44vOoxR6zxw2B/giADjhmWTP5tWQ9548N4VhIZMYQMQCkdqaueSL+8asp8tBNP+TJ
+ PAIIANYvJaD8xA7sYUXGTzOXDh2THWSvmEWWmzok8er/u6ZKdS1YmZkUy8cfzrll/9hiGCTj
+ u3qcaOM6i/m4hqtvsI1cOORMVwjJF4+IkC5ZBoeRs/xW5zIBdSUoC8L+OCyj5JETWTt40+lu
+ qoqAF/AEGsNZTrwHJYu9rbHH260C0KYCNqmxDdcROUqIzJdzDKOrDmebkEVnxVeLJBIhYZUd
+ t3Iq9hdjpU50TA6sQ3mZxzBdfRgg+vaj2DsJqI5Xla9QGKD+xNT6v14cZuIMZzO7w0DoojM4
+ ByrabFsOQxGvE0w9Dch2BDSI2Xyk1zjPKxG1VNBQVx3flH37QDWpL2zlJikW29Ws86PHdthh
+ Fm5PY8YtX576DchSP6qJC57/eAAe/9ztZdVAdesQwGb9hZHJc75B+VNm4xrh/PJO6c1THqdQ
+ 19WVJ+7rDx3PhVncGlbAOiiiE3NOFPJ1OQYxPKtpBUukAlOTnkKE6QcA4zckFepUkfmBV1wM
+ Jg6OxFYd01z+a+oL
+Message-ID: <87b463b5-9013-d878-9c30-64dfc3640514@oracle.com>
+Date:   Mon, 14 Jan 2019 18:45:28 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/ORRWyQUNNFs.5NO+mj+mV2/"; protocol="application/pgp-signature"
+In-Reply-To: <1547480909-11844-1-git-send-email-wdjjwb@163.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9136 signatures=668680
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1810050000 definitions=main-1901140182
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/ORRWyQUNNFs.5NO+mj+mV2/
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On 1/14/19 10:48 AM, wangbo wrote:
+> Create_active may called inside spinlock,replace GFP_KERNEL with GFP_ATOMIC
 
-Hi Liviu,
+https://git.kernel.org/pub/scm/linux/kernel/git/xen/tip.git/commit/?h=for-linus-4.21&id=9f51c05dc41a6d69423e3d03d18eb7ab22f9ec19
+is queued and addresses this problem.
 
-After merging the mali-dp tree, today's linux-next build (x86_64
-allmodconfig) failed like this:
+(Please run scripts/get_maintainer.pl on your patches, otherwise they
+may be missed and delayed)
 
-drivers/gpu/drm/arm/display/komeda/komeda_private_obj.c: In function 'komed=
-a_pipeline_obj_add':
-drivers/gpu/drm/arm/display/komeda/komeda_private_obj.c:48:30: error: passi=
-ng argument 1 of 'drm_atomic_private_obj_init' from incompatible pointer ty=
-pe [-Werror=3Dincompatible-pointer-types]
-  drm_atomic_private_obj_init(&pipe->obj, &st->obj,
-                              ^~~~~~~~~~
-In file included from drivers/gpu/drm/arm/display/komeda/komeda_pipeline.h:=
-11,
-                 from drivers/gpu/drm/arm/display/komeda/komeda_dev.h:12,
-                 from drivers/gpu/drm/arm/display/komeda/komeda_private_obj=
-.c:7:
-include/drm/drm_atomic.h:437:53: note: expected 'struct drm_device *' but a=
-rgument is of type 'struct drm_private_obj *'
- void drm_atomic_private_obj_init(struct drm_device *dev,
-                                  ~~~~~~~~~~~~~~~~~~~^~~
-drivers/gpu/drm/arm/display/komeda/komeda_private_obj.c:48:42: error: passi=
-ng argument 2 of 'drm_atomic_private_obj_init' from incompatible pointer ty=
-pe [-Werror=3Dincompatible-pointer-types]
-  drm_atomic_private_obj_init(&pipe->obj, &st->obj,
-                                          ^~~~~~~~
-In file included from drivers/gpu/drm/arm/display/komeda/komeda_pipeline.h:=
-11,
-                 from drivers/gpu/drm/arm/display/komeda/komeda_dev.h:12,
-                 from drivers/gpu/drm/arm/display/komeda/komeda_private_obj=
-.c:7:
-include/drm/drm_atomic.h:438:30: note: expected 'struct drm_private_obj *' =
-but argument is of type 'struct drm_private_state *'
-      struct drm_private_obj *obj,
-      ~~~~~~~~~~~~~~~~~~~~~~~~^~~
-drivers/gpu/drm/arm/display/komeda/komeda_private_obj.c:49:9: error: passin=
-g argument 3 of 'drm_atomic_private_obj_init' from incompatible pointer typ=
-e [-Werror=3Dincompatible-pointer-types]
-         &komeda_pipeline_obj_funcs);
-         ^~~~~~~~~~~~~~~~~~~~~~~~~~
-In file included from drivers/gpu/drm/arm/display/komeda/komeda_pipeline.h:=
-11,
-                 from drivers/gpu/drm/arm/display/komeda/komeda_dev.h:12,
-                 from drivers/gpu/drm/arm/display/komeda/komeda_private_obj=
-.c:7:
-include/drm/drm_atomic.h:439:32: note: expected 'struct drm_private_state *=
-' but argument is of type 'const struct drm_private_state_funcs *'
-      struct drm_private_state *state,
-      ~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~
-drivers/gpu/drm/arm/display/komeda/komeda_private_obj.c:48:2: error: too fe=
-w arguments to function 'drm_atomic_private_obj_init'
-  drm_atomic_private_obj_init(&pipe->obj, &st->obj,
-  ^~~~~~~~~~~~~~~~~~~~~~~~~~~
-In file included from drivers/gpu/drm/arm/display/komeda/komeda_pipeline.h:=
-11,
-                 from drivers/gpu/drm/arm/display/komeda/komeda_dev.h:12,
-                 from drivers/gpu/drm/arm/display/komeda/komeda_private_obj=
-.c:7:
-include/drm/drm_atomic.h:437:6: note: declared here
- void drm_atomic_private_obj_init(struct drm_device *dev,
-      ^~~~~~~~~~~~~~~~~~~~~~~~~~~
+-boris
 
-Caused by commit
 
-  61f1c4a8ab75 ("drm/komeda: Attach komeda_dev to DRM-KMS")
+>
+> Signed-off-by: wangbo <wang.bo116@zte.com.cn>
+> ---
+>  drivers/xen/pvcalls-front.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+>
+> diff --git a/drivers/xen/pvcalls-front.c b/drivers/xen/pvcalls-front.c
+> index 77224d8..31bd3c9 100644
+> --- a/drivers/xen/pvcalls-front.c
+> +++ b/drivers/xen/pvcalls-front.c
+> @@ -344,11 +344,11 @@ static int create_active(struct sock_mapping *map, int *evtchn)
+>  	init_waitqueue_head(&map->active.inflight_conn_req);
+>  
+>  	map->active.ring = (struct pvcalls_data_intf *)
+> -		__get_free_page(GFP_KERNEL | __GFP_ZERO);
+> +		__get_free_page(GFP_ATOMIC | __GFP_ZERO);
+>  	if (map->active.ring == NULL)
+>  		goto out_error;
+>  	map->active.ring->ring_order = PVCALLS_RING_ORDER;
+> -	bytes = (void *)__get_free_pages(GFP_KERNEL | __GFP_ZERO,
+> +	bytes = (void *)__get_free_pages(GFP_ATOMIC | __GFP_ZERO,
+>  					PVCALLS_RING_ORDER);
+>  	if (bytes == NULL)
+>  		goto out_error;
 
-interacting with commit
-
-  b962a12050a3 ("drm/atomic: integrate modeset lock with private objects")
-
-from the drm tree.
-
-I have applied the following merge fix patch:
-
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Tue, 15 Jan 2019 10:42:04 +1100
-Subject: [PATCH] drm/komeda: merge fix for drm_atomic_private_obj_init() AP=
-I change
-
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
----
- drivers/gpu/drm/arm/display/komeda/komeda_private_obj.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/gpu/drm/arm/display/komeda/komeda_private_obj.c b/driv=
-ers/gpu/drm/arm/display/komeda/komeda_private_obj.c
-index 9edfd6ab0c12..f1c9e3fefa86 100644
---- a/drivers/gpu/drm/arm/display/komeda/komeda_private_obj.c
-+++ b/drivers/gpu/drm/arm/display/komeda/komeda_private_obj.c
-@@ -45,7 +45,7 @@ static int komeda_pipeline_obj_add(struct komeda_kms_dev =
-*kms,
- 		return -ENOMEM;
-=20
- 	st->pipe =3D pipe;
--	drm_atomic_private_obj_init(&pipe->obj, &st->obj,
-+	drm_atomic_private_obj_init(&kms->base, &pipe->obj, &st->obj,
- 				    &komeda_pipeline_obj_funcs);
-=20
- 	return 0;
---=20
-2.20.1
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/ORRWyQUNNFs.5NO+mj+mV2/
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlw9H0sACgkQAVBC80lX
-0Gwjlwf/fLC7NhKAYLX0MfKAV3Sx4pyviHg7su3pI8w3NV2t77JA0IQkb1DkHlDt
-SaxCtG0XjnG26nvWduG1RoESnHyVvtKX2uXFdS+nT06PxRjMbbLrqLsJ34Z6GHdr
-G2CJxpz/wjmhVELrCY+StBs4+AN/y7Kp5PmSsugdsUBhX+NTOnsfCRKy+IoSGDrn
-tUdC2oH5u/W1NxCA7rrggCmA371GJRt2eEiTElpnurcuiv5ZPVb7qkPRyIjZGF3G
-CUMaJtISlQLNCir1bVILE21l69PItX5omR/VL6Bk7yIrCtFGXMavpazO4ZS5LqBr
-0vBRBDPjVH9mjGebfHe/FHSgOXMJsA==
-=W9EV
------END PGP SIGNATURE-----
-
---Sig_/ORRWyQUNNFs.5NO+mj+mV2/--
