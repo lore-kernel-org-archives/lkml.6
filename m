@@ -4,50 +4,50 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 974EDC43444
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 13:27:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 93EA0C43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 13:27:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 66DE320656
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 13:27:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5F452206B7
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 13:27:10 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="fv7lvd0y"
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="LgOlGy4N"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726958AbfANN05 (ORCPT
+        id S1726986AbfANN1I (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 14 Jan 2019 08:26:57 -0500
-Received: from fllv0016.ext.ti.com ([198.47.19.142]:37530 "EHLO
-        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726570AbfANN0z (ORCPT
+        Mon, 14 Jan 2019 08:27:08 -0500
+Received: from lelv0142.ext.ti.com ([198.47.23.249]:41038 "EHLO
+        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726624AbfANN04 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 Jan 2019 08:26:55 -0500
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id x0EDQ9U3098224;
-        Mon, 14 Jan 2019 07:26:09 -0600
+        Mon, 14 Jan 2019 08:26:56 -0500
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id x0EDQNdX041522;
+        Mon, 14 Jan 2019 07:26:23 -0600
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1547472369;
-        bh=4d1hv974DlQuBmZ/Ggs87YZnRdDcz6OLaZ5/NqWUvn4=;
+        s=ti-com-17Q1; t=1547472383;
+        bh=jYEVHutp0v29B4vfiqJTI22HzuJxQ7SOmOLmjmfhfQ0=;
         h=From:To:CC:Subject:Date:In-Reply-To:References;
-        b=fv7lvd0yI0YqvB+Bmfx/l6qx2gCvEwKD1lzBoE69GFO9XpgTJIq9AiBzzNLKoSSNT
-         Fati1EOsDVxi8Fvo/fZelkO2lr+A+tk+oMtcA+dbVVdb6VVjynLwcONmY805lEDa/b
-         sEqMNS2SsfoWpF0c4338QThzH9rKao+kHIxVSbSU=
-Received: from DFLE106.ent.ti.com (dfle106.ent.ti.com [10.64.6.27])
-        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x0EDQ9kF012402
+        b=LgOlGy4NgpIjpvhvjeFNp7k+EJqQaC1dStD2NaujHPGsfVGi23pgkpuDx/erK03sg
+         doJ9gkfcp6JxCExzgpHNFAQP5N6B4UTHEFD4XihreaEcNP6b0y9OWxlln5wg8QdHJI
+         KRCXx5OH1HjHTbr0/3UfrtrGuZqPxO6o3cFJDwJ4=
+Received: from DLEE113.ent.ti.com (dlee113.ent.ti.com [157.170.170.24])
+        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x0EDQNPu089642
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 14 Jan 2019 07:26:09 -0600
-Received: from DFLE113.ent.ti.com (10.64.6.34) by DFLE106.ent.ti.com
- (10.64.6.27) with Microsoft SMTP Server (version=TLS1_2,
+        Mon, 14 Jan 2019 07:26:23 -0600
+Received: from DLEE104.ent.ti.com (157.170.170.34) by DLEE113.ent.ti.com
+ (157.170.170.24) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Mon, 14
- Jan 2019 07:26:08 -0600
-Received: from dlep32.itg.ti.com (157.170.170.100) by DFLE113.ent.ti.com
- (10.64.6.34) with Microsoft SMTP Server (version=TLS1_0,
+ Jan 2019 07:26:23 -0600
+Received: from dlep32.itg.ti.com (157.170.170.100) by DLEE104.ent.ti.com
+ (157.170.170.34) with Microsoft SMTP Server (version=TLS1_0,
  cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1591.10 via Frontend Transport;
- Mon, 14 Jan 2019 07:26:08 -0600
+ Mon, 14 Jan 2019 07:26:23 -0600
 Received: from a0393678ub.india.ti.com (ileax41-snat.itg.ti.com [10.172.224.153])
-        by dlep32.itg.ti.com (8.14.3/8.13.8) with ESMTP id x0EDOoWb028516;
-        Mon, 14 Jan 2019 07:26:04 -0600
+        by dlep32.itg.ti.com (8.14.3/8.13.8) with ESMTP id x0EDOoWe028516;
+        Mon, 14 Jan 2019 07:26:19 -0600
 From:   Kishon Vijay Abraham I <kishon@ti.com>
 To:     Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
         Rob Herring <robh+dt@kernel.org>,
@@ -63,9 +63,9 @@ CC:     Kishon Vijay Abraham I <kishon@ti.com>,
         <linux-pci@vger.kernel.org>, <devicetree@vger.kernel.org>,
         <linux-kernel@vger.kernel.org>, <linux-omap@vger.kernel.org>,
         <linux-arm-kernel@lists.infradead.org>, <linux-arm-kernel@axis.com>
-Subject: [PATCH 15/24] PCI: keystone: Invoke phy_reset API before enabling PHY
-Date:   Mon, 14 Jan 2019 18:54:15 +0530
-Message-ID: <20190114132424.6445-16-kishon@ti.com>
+Subject: [PATCH 18/24] PCI: dwc: Fix dw_pcie_ep_find_capability to return correct capability offset
+Date:   Mon, 14 Jan 2019 18:54:18 +0530
+Message-ID: <20190114132424.6445-19-kishon@ti.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190114132424.6445-1-kishon@ti.com>
 References: <20190114132424.6445-1-kishon@ti.com>
@@ -77,32 +77,58 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-SERDES connected to the PCIe controller in AM654 requires
-power on reset enable (POR_EN) to be set in the SERDES. The
-SERDES driver sets POR_EN in the reset ops and it has to be
-invoked before init or enable ops. In order for SERDES driver
-to set POR_EN, invoke phy_reset API in pci-keystone driver.
+commit beb4641a787df79a ("PCI: dwc: Add MSI-X callbacks handler") while
+adding MSI-X callback handler, introduced dw_pcie_ep_find_capability and
+__dw_pcie_ep_find_next_cap for finding the MSI and MSIX capability.
 
+However if MSI or MSIX capability is the last capability (i.e there are
+no additional items in the capabilities list and the Next Capability
+Pointer is set to '0'), __dw_pcie_ep_find_next_cap will return '0'
+even though MSI or MSIX capability may be present. This is because of
+incorrect ordering of "next_cap_ptr" check. Fix it here.
+
+Fixes: beb4641a787df79a142 ("PCI: dwc: Add MSI-X callbacks handler")
 Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
 ---
- drivers/pci/controller/dwc/pci-keystone.c | 4 ++++
- 1 file changed, 4 insertions(+)
+ drivers/pci/controller/dwc/pcie-designware-ep.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/pci/controller/dwc/pci-keystone.c b/drivers/pci/controller/dwc/pci-keystone.c
-index c2873339809a..e2f4e7c01b5a 100644
---- a/drivers/pci/controller/dwc/pci-keystone.c
-+++ b/drivers/pci/controller/dwc/pci-keystone.c
-@@ -873,6 +873,10 @@ static int ks_pcie_enable_phy(struct keystone_pcie *ks_pcie)
- 	int num_lanes = ks_pcie->num_lanes;
+diff --git a/drivers/pci/controller/dwc/pcie-designware-ep.c b/drivers/pci/controller/dwc/pcie-designware-ep.c
+index d5144781005b..cd51b008858c 100644
+--- a/drivers/pci/controller/dwc/pcie-designware-ep.c
++++ b/drivers/pci/controller/dwc/pcie-designware-ep.c
+@@ -46,16 +46,19 @@ static u8 __dw_pcie_ep_find_next_cap(struct dw_pcie *pci, u8 cap_ptr,
+ 	u8 cap_id, next_cap_ptr;
+ 	u16 reg;
  
- 	for (i = 0; i < num_lanes; i++) {
-+		ret = phy_reset(ks_pcie->phy[i]);
-+		if (ret < 0)
-+			goto err_phy;
++	if (!cap_ptr)
++		return 0;
 +
- 		ret = phy_init(ks_pcie->phy[i]);
- 		if (ret < 0)
- 			goto err_phy;
+ 	reg = dw_pcie_readw_dbi(pci, cap_ptr);
+-	next_cap_ptr = (reg & 0xff00) >> 8;
+ 	cap_id = (reg & 0x00ff);
+ 
+-	if (!next_cap_ptr || cap_id > PCI_CAP_ID_MAX)
++	if (cap_id > PCI_CAP_ID_MAX)
+ 		return 0;
+ 
+ 	if (cap_id == cap)
+ 		return cap_ptr;
+ 
++	next_cap_ptr = (reg & 0xff00) >> 8;
+ 	return __dw_pcie_ep_find_next_cap(pci, next_cap_ptr, cap);
+ }
+ 
+@@ -67,9 +70,6 @@ static u8 dw_pcie_ep_find_capability(struct dw_pcie *pci, u8 cap)
+ 	reg = dw_pcie_readw_dbi(pci, PCI_CAPABILITY_LIST);
+ 	next_cap_ptr = (reg & 0x00ff);
+ 
+-	if (!next_cap_ptr)
+-		return 0;
+-
+ 	return __dw_pcie_ep_find_next_cap(pci, next_cap_ptr, cap);
+ }
+ 
 -- 
 2.17.1
 
