@@ -7,47 +7,47 @@ X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2120AC43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 13:25:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 00935C43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 13:26:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E2D4720659
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 13:25:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C4AB920659
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 13:26:11 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="mF9gl4t4"
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="I7BLWIMk"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726734AbfANNZi (ORCPT
+        id S1726515AbfANN0K (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 14 Jan 2019 08:25:38 -0500
-Received: from fllv0016.ext.ti.com ([198.47.19.142]:37158 "EHLO
+        Mon, 14 Jan 2019 08:26:10 -0500
+Received: from fllv0016.ext.ti.com ([198.47.19.142]:37306 "EHLO
         fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726563AbfANNZg (ORCPT
+        with ESMTP id S1726554AbfANN0I (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 Jan 2019 08:25:36 -0500
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id x0EDPFgY098049;
-        Mon, 14 Jan 2019 07:25:15 -0600
+        Mon, 14 Jan 2019 08:26:08 -0500
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id x0EDPUeB098095;
+        Mon, 14 Jan 2019 07:25:30 -0600
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1547472315;
-        bh=ZOxErDAenCR4nywVOJbopTCQfMydSgJQFf0ad6hjYzM=;
+        s=ti-com-17Q1; t=1547472330;
+        bh=Oy9h1kP8jbCXe+8kD93AkYommSwhxCLq/ir/s6HONHk=;
         h=From:To:CC:Subject:Date:In-Reply-To:References;
-        b=mF9gl4t4rXakuReor+2NmekbjsQHsDqFnPgnchwmK4VZN6lkWMgbMt2i9Hrbs9sVA
-         5OjgHTqe7DqYPpyhsRIKH7tVjh0J2pQSEKQzrbFFNzrIbF6HrP7Ynw+qoh7LXh1csZ
-         vwFIz4CZLWkI424EW72IKOGyj+wr0H50ETrC7zlE=
-Received: from DFLE113.ent.ti.com (dfle113.ent.ti.com [10.64.6.34])
-        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x0EDPFhj011765
+        b=I7BLWIMkCXUivjd681dUFmq9w/8i0HBJxqyMjwzlhD6gZVkxjv9NSCKZ9cHLWJozz
+         gNL7mZSacsXulhaqrB71ZNrD/e0a+/JcIa7294hkMz8BuxMpfBgGj6tUymevrAhYGw
+         gVMADyVZk9/IIPqteaKo5Zce70edB/Sv7omySTY4=
+Received: from DLEE111.ent.ti.com (dlee111.ent.ti.com [157.170.170.22])
+        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x0EDPU5q056610
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 14 Jan 2019 07:25:15 -0600
-Received: from DFLE101.ent.ti.com (10.64.6.22) by DFLE113.ent.ti.com
- (10.64.6.34) with Microsoft SMTP Server (version=TLS1_2,
+        Mon, 14 Jan 2019 07:25:30 -0600
+Received: from DLEE108.ent.ti.com (157.170.170.38) by DLEE111.ent.ti.com
+ (157.170.170.22) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Mon, 14
- Jan 2019 07:25:15 -0600
-Received: from dlep32.itg.ti.com (157.170.170.100) by DFLE101.ent.ti.com
- (10.64.6.22) with Microsoft SMTP Server (version=TLS1_0,
+ Jan 2019 07:25:29 -0600
+Received: from dlep32.itg.ti.com (157.170.170.100) by DLEE108.ent.ti.com
+ (157.170.170.38) with Microsoft SMTP Server (version=TLS1_0,
  cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1591.10 via Frontend Transport;
- Mon, 14 Jan 2019 07:25:15 -0600
+ Mon, 14 Jan 2019 07:25:30 -0600
 Received: from a0393678ub.india.ti.com (ileax41-snat.itg.ti.com [10.172.224.153])
-        by dlep32.itg.ti.com (8.14.3/8.13.8) with ESMTP id x0EDOoWQ028516;
-        Mon, 14 Jan 2019 07:25:11 -0600
+        by dlep32.itg.ti.com (8.14.3/8.13.8) with ESMTP id x0EDOoWT028516;
+        Mon, 14 Jan 2019 07:25:25 -0600
 From:   Kishon Vijay Abraham I <kishon@ti.com>
 To:     Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
         Rob Herring <robh+dt@kernel.org>,
@@ -63,9 +63,9 @@ CC:     Kishon Vijay Abraham I <kishon@ti.com>,
         <linux-pci@vger.kernel.org>, <devicetree@vger.kernel.org>,
         <linux-kernel@vger.kernel.org>, <linux-omap@vger.kernel.org>,
         <linux-arm-kernel@lists.infradead.org>, <linux-arm-kernel@axis.com>
-Subject: [PATCH 04/24] PCI: keystone: Perform host initialization in a single function
-Date:   Mon, 14 Jan 2019 18:54:04 +0530
-Message-ID: <20190114132424.6445-5-kishon@ti.com>
+Subject: [PATCH 07/24] dt-bindings: PCI: Add dt-binding to configure PCIe mode
+Date:   Mon, 14 Jan 2019 18:54:07 +0530
+Message-ID: <20190114132424.6445-8-kishon@ti.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190114132424.6445-1-kishon@ti.com>
 References: <20190114132424.6445-1-kishon@ti.com>
@@ -77,99 +77,27 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-No functional change. Instead of having two functions
-ks_pcie_add_pcie_port and ks_pcie_dw_host_init for initializing host,
-have a single function to perform all the host initialization.
+Add "ti,syscon-pcie-mode" dt-binding to hold phandle to the syscon
+register that should be used to configure PCIe in RC mode or EP mode.
 
 Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
 ---
- drivers/pci/controller/dwc/pci-keystone.c | 63 +++++++++--------------
- 1 file changed, 23 insertions(+), 40 deletions(-)
+ Documentation/devicetree/bindings/pci/pci-keystone.txt | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/pci/controller/dwc/pci-keystone.c b/drivers/pci/controller/dwc/pci-keystone.c
-index f63268aee2de..3f917ffa9105 100644
---- a/drivers/pci/controller/dwc/pci-keystone.c
-+++ b/drivers/pci/controller/dwc/pci-keystone.c
-@@ -446,45 +446,6 @@ static int ks_pcie_start_link(struct dw_pcie *pci)
- 	return 0;
- }
+diff --git a/Documentation/devicetree/bindings/pci/pci-keystone.txt b/Documentation/devicetree/bindings/pci/pci-keystone.txt
+index 3a551687cfa2..8ee07197a063 100644
+--- a/Documentation/devicetree/bindings/pci/pci-keystone.txt
++++ b/Documentation/devicetree/bindings/pci/pci-keystone.txt
+@@ -23,6 +23,8 @@ pcie_msi_intc : Interrupt controller device node for MSI IRQ chip
  
--/**
-- * ks_pcie_dw_host_init() - initialize host for v3_65 dw hardware
-- *
-- * Ioremap the register resources, initialize legacy irq domain
-- * and call dw_pcie_v3_65_host_init() API to initialize the Keystone
-- * PCI host controller.
-- */
--static int __init ks_pcie_dw_host_init(struct keystone_pcie *ks_pcie)
--{
--	struct dw_pcie *pci = ks_pcie->pci;
--	struct pcie_port *pp = &pci->pp;
--	struct device *dev = pci->dev;
--	struct platform_device *pdev = to_platform_device(dev);
--	struct resource *res;
--
--	/* Index 0 is the config reg. space address */
--	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	pci->dbi_base = devm_pci_remap_cfg_resource(dev, res);
--	if (IS_ERR(pci->dbi_base))
--		return PTR_ERR(pci->dbi_base);
--
--	/*
--	 * We set these same and is used in pcie rd/wr_other_conf
--	 * functions
--	 */
--	pp->va_cfg0_base = pci->dbi_base + SPACE0_REMOTE_CFG_OFFSET;
--	pp->va_cfg1_base = pp->va_cfg0_base;
--
--	/* Index 1 is the application reg. space address */
--	res = platform_get_resource(pdev, IORESOURCE_MEM, 1);
--	ks_pcie->va_app_base = devm_ioremap_resource(dev, res);
--	if (IS_ERR(ks_pcie->va_app_base))
--		return PTR_ERR(ks_pcie->va_app_base);
--
--	ks_pcie->app = *res;
--
--	return dw_pcie_host_init(pp);
--}
--
- static void ks_pcie_quirk(struct pci_dev *dev)
- {
- 	struct pci_bus *bus = dev->bus;
-@@ -826,10 +787,32 @@ static int __init ks_pcie_add_pcie_port(struct keystone_pcie *ks_pcie,
- 	struct dw_pcie *pci = ks_pcie->pci;
- 	struct pcie_port *pp = &pci->pp;
- 	struct device *dev = &pdev->dev;
-+	struct resource *res;
- 	int ret;
+ ti,syscon-pcie-id : phandle to the device control module required to set device
+ 		    id and vendor id.
++ti,syscon-pcie-mode : phandle to the device control module required to configure
++		      PCI in either RC mode or EP mode.
  
-+	/* Index 0 is the config reg. space address */
-+	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-+	pci->dbi_base = devm_pci_remap_cfg_resource(dev, res);
-+	if (IS_ERR(pci->dbi_base))
-+		return PTR_ERR(pci->dbi_base);
-+
-+	/*
-+	 * We set these same and is used in pcie rd/wr_other_conf
-+	 * functions
-+	 */
-+	pp->va_cfg0_base = pci->dbi_base + SPACE0_REMOTE_CFG_OFFSET;
-+	pp->va_cfg1_base = pp->va_cfg0_base;
-+
-+	/* Index 1 is the application reg. space address */
-+	res = platform_get_resource(pdev, IORESOURCE_MEM, 1);
-+	ks_pcie->va_app_base = devm_ioremap_resource(dev, res);
-+	if (IS_ERR(ks_pcie->va_app_base))
-+		return PTR_ERR(ks_pcie->va_app_base);
-+
-+	ks_pcie->app = *res;
-+
- 	pp->ops = &ks_pcie_host_ops;
--	ret = ks_pcie_dw_host_init(ks_pcie);
-+	ret = dw_pcie_host_init(pp);
- 	if (ret) {
- 		dev_err(dev, "failed to initialize host\n");
- 		return ret;
+  Example:
+ 	pcie_msi_intc: msi-interrupt-controller {
 -- 
 2.17.1
 
