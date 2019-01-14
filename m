@@ -2,218 +2,239 @@ Return-Path: <SRS0=tq6k=PW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+X-Spam-Status: No, score=-12.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 82145C43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 13:12:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A2DCC43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 13:14:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5173B2086D
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 13:12:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CF44D20659
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 13:14:19 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernelci-org.20150623.gappssmtp.com header.i=@kernelci-org.20150623.gappssmtp.com header.b="D/znuH38"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726658AbfANNMi (ORCPT
+        id S1726641AbfANNOS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 14 Jan 2019 08:12:38 -0500
-Received: from foss.arm.com ([217.140.101.70]:33102 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726470AbfANNMi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 Jan 2019 08:12:38 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 523E8A78;
-        Mon, 14 Jan 2019 05:12:37 -0800 (PST)
-Received: from [10.1.196.75] (e110467-lin.cambridge.arm.com [10.1.196.75])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 5F4F73F5AF;
-        Mon, 14 Jan 2019 05:12:35 -0800 (PST)
-Subject: Re: [PATCH 1/3] dma-mapping: remove the default map_resource
- implementation
-To:     Christoph Hellwig <hch@lst.de>, Pawel Osciak <pawel@osciak.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        =?UTF-8?Q?Niklas_S=c3=b6derlund?= 
-        <niklas.soderlund+renesas@ragnatech.se>
-Cc:     Russell King <linux@armlinux.org.uk>, linux-kernel@vger.kernel.org,
-        iommu@lists.linux-foundation.org,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        linuxppc-dev@lists.ozlabs.org,
-        linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org
-References: <20190111181731.11782-1-hch@lst.de>
- <20190111181731.11782-2-hch@lst.de>
-From:   Robin Murphy <robin.murphy@arm.com>
-Message-ID: <c882430e-1dbd-df86-d686-0381dcaa668e@arm.com>
-Date:   Mon, 14 Jan 2019 13:12:33 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Mon, 14 Jan 2019 08:14:18 -0500
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:37372 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726482AbfANNOR (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 14 Jan 2019 08:14:17 -0500
+Received: by mail-wr1-f68.google.com with SMTP id s12so22801830wrt.4
+        for <linux-kernel@vger.kernel.org>; Mon, 14 Jan 2019 05:14:16 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernelci-org.20150623.gappssmtp.com; s=20150623;
+        h=message-id:date:mime-version:content-transfer-encoding:subject:to
+         :from:cc;
+        bh=4BlWf+oE0v3vn+Udzow7GeCcIpcUX+2BJfw6o2hkcKA=;
+        b=D/znuH38fpee18FZ5BV7ueyutgroJDnDgle1n8VzsU1f2N8RYqx1KbxNhpWqFQMVYP
+         2TiI2Yd1PjCza8P0fsGKx7NRLx9qx185Ytja8N9gX1PRyvZMUOOofKV6T54skpm5h6zK
+         NH389G6fvuk2XSgCFP1NhleVV0bO8pVaqh5cIX2Mz32mlN0DUU0mlX9GgQ2dRJX4hG2B
+         A5RcMCtyNX5aukz7Kjn6sjhUyy5EZ6BcmWZD9s4xYbn4ZAxOX/FnmXzalWMee9Z0mEmb
+         OI86tfGq7zQs9yXmFR5V7CDFq98ovBYT/vGdxPCoJG+sXCPSESy9CTsfgHEncNHRsbCn
+         h83g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:message-id:date:mime-version
+         :content-transfer-encoding:subject:to:from:cc;
+        bh=4BlWf+oE0v3vn+Udzow7GeCcIpcUX+2BJfw6o2hkcKA=;
+        b=s4HBeH96mVY7d4iub9fjZAsiwB8E0VovWEe7PrkgRY8B9RRbERIX25hedFlsZQtGJS
+         xBiE4plVgWXl6DkMjR41QQasbL82/JN68yvDSgJh5stI4PaNWdVFfETnpBc/pgvGdhC8
+         H/d4ahIp2wPBVVs8fYVBlq9JQ2s4528d8+Hp+C5jPC5qCdJz/x+piRmuJsJOLpMwdRei
+         muwBbZqNrZsCWzE31+M95+5Xj+XLMLLQlzgtsqkx0MCpgaG0NRZ2mgSjjCv/fKyOrA4W
+         H+4+0/ZM2xcsu012WEBH8pwi/eSMtSt/1JVv6y/ORYvVPx0i/9Wl/ypAGorkR5sHkIO8
+         HF9w==
+X-Gm-Message-State: AJcUuke3ldwim151O+aEWzQgpIwC4S0YG45dG1D2WcNfg8+qCFUINIOe
+        033pl1NmRM7j21c1jcpOyroxCQ==
+X-Google-Smtp-Source: ALg8bN7NIartSrkzcJ1rfk02cwbB+uDIjTyfYfTnotkwx/gYT4Id5VtGP8TGjlF/4by8aLkErufwDg==
+X-Received: by 2002:adf:9205:: with SMTP id 5mr24271840wrj.189.1547471655904;
+        Mon, 14 Jan 2019 05:14:15 -0800 (PST)
+Received: from [148.251.42.114] ([2a01:4f8:201:9271::2])
+        by smtp.gmail.com with ESMTPSA id p12sm35146338wmi.5.2019.01.14.05.14.15
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 14 Jan 2019 05:14:15 -0800 (PST)
+Message-ID: <5c3c8b27.1c69fb81.76f1f.6e38@mx.google.com>
+Date:   Mon, 14 Jan 2019 05:14:15 -0800 (PST)
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-In-Reply-To: <20190111181731.11782-2-hch@lst.de>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
+X-Kernelci-Report-Type: bisect
+X-Kernelci-Lab-Name: lab-baylibre
+X-Kernelci-Tree: next
+X-Kernelci-Branch: master
+X-Kernelci-Kernel: next-20190114
+Subject: next/master boot bisection: next-20190114 on
+ sun8i-h3-libretech-all-h3-cc
+To:     Ajit Pandey <ajitp@codeaurora.org>, tomeu.vizoso@collabora.com,
+        Rohit kumar <rohitkr@codeaurora.org>,
+        guillaume.tucker@collabora.com, Mark Brown <broonie@kernel.org>,
+        broonie@kernel.org, matthew.hart@linaro.org, khilman@baylibre.com,
+        enric.balletbo@collabora.com
+From:   "kernelci.org bot" <bot@kernelci.org>
+Cc:     Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+        alsa-devel@alsa-project.org, Liam Girdwood <lgirdwood@gmail.com>,
+        linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/01/2019 18:17, Christoph Hellwig wrote:
-> Just returning the physical address when not map_resource method is
-> present is highly dangerous as it doesn't take any offset in the
-> direct mapping into account and does the completely wrong thing for
-> IOMMUs.  Instead provide a proper implementation in the direct mapping
-> code, and also wire it up for arm and powerpc.
+* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+* This automated bisection report was sent to you on the basis  *
+* that you may be involved with the breaking commit it has      *
+* found.  No manual investigation has been done to verify it,   *
+* and the root cause of the problem may be somewhere else.      *
+* Hope this helps!                                              *
+* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
-Ignoring the offset was kind of intentional there, because at the time I 
-was primarily thinking about it in terms of the Keystone 2 platform 
-where the peripherals are all in the same place (0-2GB) in both the bus 
-and CPU physical address maps, and only the view of RAM differs between 
-the two (2-4GB vs. 32-34GB). However, on something like BCM283x, the 
-peripherals region is also offset from its bus address in the CPU view, 
-but at a *different* offset relative to that of RAM.
+next/master boot bisection: next-20190114 on sun8i-h3-libretech-all-h3-cc
 
-Fortunately, I'm not aware of any platform which has a DMA engine behind 
-an IOMMU (and thus *needs* to use dma_map_resource() to avoid said IOMMU 
-blocking the slave device register reads/writes) and also has any 
-nonzero offsets, and AFAIK the IOMMU-less platforms above aren't using 
-dma_map_resource() at all, so this change shouldn't actually break 
-anything, but I guess we have a bit of a problem making it truly generic 
-and robust :(
+Summary:
+  Start:      8ce4d582f564 Add linux-next specific files for 20190114
+  Details:    https://kernelci.org/boot/id/5c3c41ac59b5145b496edd2a
+  Plain log:  https://storage.kernelci.org//next/master/next-20190114/arm/s=
+unxi_defconfig/lab-baylibre/boot-sun8i-h3-libretech-all-h3-cc.txt
+  HTML log:   https://storage.kernelci.org//next/master/next-20190114/arm/s=
+unxi_defconfig/lab-baylibre/boot-sun8i-h3-libretech-all-h3-cc.html
+  Result:     8780cf1142a5 ASoC: soc-core: defer card probe until all compo=
+nent is added to list
 
-Is this perhaps another shove in the direction of overhauling 
-dma_pfn_offset into an arbitrary "DMA ranges" lookup table?
+Checks:
+  revert:     PASS
+  verify:     PASS
 
-> Signed-off-by: Christoph Hellwig <hch@lst.de>
-> ---
->   arch/arm/mm/dma-mapping.c         |  2 ++
->   arch/powerpc/kernel/dma-swiotlb.c |  1 +
->   arch/powerpc/kernel/dma.c         |  1 +
->   include/linux/dma-mapping.h       | 12 +++++++-----
->   kernel/dma/direct.c               | 14 ++++++++++++++
->   5 files changed, 25 insertions(+), 5 deletions(-)
-> 
-> diff --git a/arch/arm/mm/dma-mapping.c b/arch/arm/mm/dma-mapping.c
-> index f1e2922e447c..3c8534904209 100644
-> --- a/arch/arm/mm/dma-mapping.c
-> +++ b/arch/arm/mm/dma-mapping.c
-> @@ -188,6 +188,7 @@ const struct dma_map_ops arm_dma_ops = {
->   	.unmap_page		= arm_dma_unmap_page,
->   	.map_sg			= arm_dma_map_sg,
->   	.unmap_sg		= arm_dma_unmap_sg,
-> +	.map_resource		= dma_direct_map_resource,
->   	.sync_single_for_cpu	= arm_dma_sync_single_for_cpu,
->   	.sync_single_for_device	= arm_dma_sync_single_for_device,
->   	.sync_sg_for_cpu	= arm_dma_sync_sg_for_cpu,
-> @@ -211,6 +212,7 @@ const struct dma_map_ops arm_coherent_dma_ops = {
->   	.get_sgtable		= arm_dma_get_sgtable,
->   	.map_page		= arm_coherent_dma_map_page,
->   	.map_sg			= arm_dma_map_sg,
-> +	.map_resource		= dma_direct_map_resource,
->   	.dma_supported		= arm_dma_supported,
->   };
->   EXPORT_SYMBOL(arm_coherent_dma_ops);
-> diff --git a/arch/powerpc/kernel/dma-swiotlb.c b/arch/powerpc/kernel/dma-swiotlb.c
-> index 7d5fc9751622..fbb2506a414e 100644
-> --- a/arch/powerpc/kernel/dma-swiotlb.c
-> +++ b/arch/powerpc/kernel/dma-swiotlb.c
-> @@ -55,6 +55,7 @@ const struct dma_map_ops powerpc_swiotlb_dma_ops = {
->   	.dma_supported = swiotlb_dma_supported,
->   	.map_page = dma_direct_map_page,
->   	.unmap_page = dma_direct_unmap_page,
-> +	.map_resource = dma_direct_map_resource,
->   	.sync_single_for_cpu = dma_direct_sync_single_for_cpu,
->   	.sync_single_for_device = dma_direct_sync_single_for_device,
->   	.sync_sg_for_cpu = dma_direct_sync_sg_for_cpu,
-> diff --git a/arch/powerpc/kernel/dma.c b/arch/powerpc/kernel/dma.c
-> index b1903ebb2e9c..258b9e8ebb99 100644
-> --- a/arch/powerpc/kernel/dma.c
-> +++ b/arch/powerpc/kernel/dma.c
-> @@ -273,6 +273,7 @@ const struct dma_map_ops dma_nommu_ops = {
->   	.dma_supported			= dma_nommu_dma_supported,
->   	.map_page			= dma_nommu_map_page,
->   	.unmap_page			= dma_nommu_unmap_page,
-> +	.map_resource			= dma_direct_map_resource,
->   	.get_required_mask		= dma_nommu_get_required_mask,
->   #ifdef CONFIG_NOT_COHERENT_CACHE
->   	.sync_single_for_cpu 		= dma_nommu_sync_single,
-> diff --git a/include/linux/dma-mapping.h b/include/linux/dma-mapping.h
-> index cef2127e1d70..d3087829a6df 100644
-> --- a/include/linux/dma-mapping.h
-> +++ b/include/linux/dma-mapping.h
-> @@ -208,6 +208,8 @@ dma_addr_t dma_direct_map_page(struct device *dev, struct page *page,
->   		unsigned long attrs);
->   int dma_direct_map_sg(struct device *dev, struct scatterlist *sgl, int nents,
->   		enum dma_data_direction dir, unsigned long attrs);
-> +dma_addr_t dma_direct_map_resource(struct device *dev, phys_addr_t paddr,
-> +		size_t size, enum dma_data_direction dir, unsigned long attrs);
->   
->   #if defined(CONFIG_ARCH_HAS_SYNC_DMA_FOR_DEVICE) || \
->       defined(CONFIG_SWIOTLB)
-> @@ -346,19 +348,19 @@ static inline dma_addr_t dma_map_resource(struct device *dev,
->   					  unsigned long attrs)
->   {
->   	const struct dma_map_ops *ops = get_dma_ops(dev);
-> -	dma_addr_t addr;
-> +	dma_addr_t addr = DMA_MAPPING_ERROR;
->   
->   	BUG_ON(!valid_dma_direction(dir));
->   
->   	/* Don't allow RAM to be mapped */
->   	BUG_ON(pfn_valid(PHYS_PFN(phys_addr)));
->   
-> -	addr = phys_addr;
-> -	if (ops && ops->map_resource)
-> +	if (dma_is_direct(ops))
-> +		addr = dma_direct_map_resource(dev, phys_addr, size, dir, attrs);
-> +	else if (ops->map_resource)
->   		addr = ops->map_resource(dev, phys_addr, size, dir, attrs);
+Parameters:
+  Tree:       next
+  URL:        http://git.kernel.org/pub/scm/linux/kernel/git/next/linux-nex=
+t.git
+  Branch:     master
+  Target:     sun8i-h3-libretech-all-h3-cc
+  CPU arch:   arm
+  Lab:        lab-baylibre
+  Config:     sunxi_defconfig
+  Test suite: boot
 
-Might it be reasonable to do:
+Breaking commit found:
 
-	if (!dma_is_direct(ops) && ops->map_resource)
-		addr = ops->map_resource(...);
-	else
-		addr = dma_direct_map_resource(...);
+---------------------------------------------------------------------------=
+----
+commit 8780cf1142a59568a3aa77959cbd76b2edb6fd81
+Author: Ajit Pandey <ajitp@codeaurora.org>
+Date:   Wed Jan 9 14:17:07 2019 +0530
 
-and avoid having to explicitly wire up the dma_direct callback elsewhere?
+    ASoC: soc-core: defer card probe until all component is added to list
+    =
 
-Robin.
+    DAI component probe is not called if it is not present
+    in component list during sound card registration.
+    Check if component is available in component list for
+    platform and cpu dai before soundcard registration.
+    =
 
->   
->   	debug_dma_map_resource(dev, phys_addr, size, dir, addr);
-> -
->   	return addr;
->   }
->   
-> @@ -369,7 +371,7 @@ static inline void dma_unmap_resource(struct device *dev, dma_addr_t addr,
->   	const struct dma_map_ops *ops = get_dma_ops(dev);
->   
->   	BUG_ON(!valid_dma_direction(dir));
-> -	if (ops && ops->unmap_resource)
-> +	if (!dma_is_direct(ops) && ops->unmap_resource)
->   		ops->unmap_resource(dev, addr, size, dir, attrs);
->   	debug_dma_unmap_resource(dev, addr, size, dir);
->   }
-> diff --git a/kernel/dma/direct.c b/kernel/dma/direct.c
-> index 355d16acee6d..8e0359b04957 100644
-> --- a/kernel/dma/direct.c
-> +++ b/kernel/dma/direct.c
-> @@ -356,6 +356,20 @@ int dma_direct_map_sg(struct device *dev, struct scatterlist *sgl, int nents,
->   }
->   EXPORT_SYMBOL(dma_direct_map_sg);
->   
-> +dma_addr_t dma_direct_map_resource(struct device *dev, phys_addr_t paddr,
-> +		size_t size, enum dma_data_direction dir, unsigned long attrs)
-> +{
-> +	dma_addr_t dma_addr = phys_to_dma(dev, paddr);
-> +
-> +	if (unlikely(!dma_direct_possible(dev, dma_addr, size))) {
-> +		report_addr(dev, dma_addr, size);
-> +		return DMA_MAPPING_ERROR;
-> +	}
-> +
-> +	return dma_addr;
-> +}
-> +EXPORT_SYMBOL(dma_direct_map_resource);
-> +
->   /*
->    * Because 32-bit DMA masks are so common we expect every architecture to be
->    * able to satisfy them - either by not supporting more physical memory, or by
-> 
+    Signed-off-by: Ajit Pandey <ajitp@codeaurora.org>
+    Signed-off-by: Rohit kumar <rohitkr@codeaurora.org>
+    Signed-off-by: Mark Brown <broonie@kernel.org>
+
+diff --git a/sound/soc/soc-core.c b/sound/soc/soc-core.c
+index 0462b3ec977a..eec92f17dd15 100644
+--- a/sound/soc/soc-core.c
++++ b/sound/soc/soc-core.c
+@@ -1027,7 +1027,6 @@ static int snd_soc_init_platform(struct snd_soc_card =
+*card,
+ 				 struct snd_soc_dai_link *dai_link)
+ {
+ 	struct snd_soc_dai_link_component *platform =3D dai_link->platform;
+-
+ 	/*
+ 	 * FIXME
+ 	 *
+@@ -1129,6 +1128,14 @@ static int soc_init_dai_link(struct snd_soc_card *ca=
+rd,
+ 			link->name);
+ 		return -EINVAL;
+ 	}
++
++	/*
++	 * Defer card registartion if platform dai component is not added to
++	 * component list.
++	 */
++	if (!soc_find_component(link->platform->of_node, link->platform->name))
++		return -EPROBE_DEFER;
++
+ 	/*
+ 	 * CPU device may be specified by either name or OF node, but
+ 	 * can be left unspecified, and will be matched based on DAI
+@@ -1140,6 +1147,14 @@ static int soc_init_dai_link(struct snd_soc_card *ca=
+rd,
+ 			link->name);
+ 		return -EINVAL;
+ 	}
++
++	/*
++	 * Defer card registartion if cpu dai component is not added to
++	 * component list.
++	 */
++	if (!soc_find_component(link->cpu_of_node, link->cpu_name))
++		return -EPROBE_DEFER;
++
+ 	/*
+ 	 * At least one of CPU DAI name or CPU device name/node must be
+ 	 * specified
+---------------------------------------------------------------------------=
+----
+
+
+Git bisection log:
+
+---------------------------------------------------------------------------=
+----
+git bisect start
+# good: [6b529fb0a3eabf9c4cc3e94c11477250379ce6d8] Merge tag 'for-5.0-rc1-t=
+ag' of git://git.kernel.org/pub/scm/linux/kernel/git/kdave/linux
+git bisect good 6b529fb0a3eabf9c4cc3e94c11477250379ce6d8
+# bad: [8ce4d582f5647052b86f364a070aa26268810d7e] Add linux-next specific f=
+iles for 20190114
+git bisect bad 8ce4d582f5647052b86f364a070aa26268810d7e
+# bad: [bb937d2e6697b49f6e3fa55ec09951ebbc8717ac] Merge remote-tracking bra=
+nch 'crypto/master'
+git bisect bad bb937d2e6697b49f6e3fa55ec09951ebbc8717ac
+# bad: [04bab95e799a00ffe1b2980e1c786ac9a94f8026] Merge remote-tracking bra=
+nch 'renesas/next'
+git bisect bad 04bab95e799a00ffe1b2980e1c786ac9a94f8026
+# bad: [5726796d7b631fe9af2202c1ce66232a79984a19] Merge remote-tracking bra=
+nch 'devicetree-fixes/dt/linus'
+git bisect bad 5726796d7b631fe9af2202c1ce66232a79984a19
+# good: [34aea5d2c46b2581ddf0b78a6119f85c1b3a8d1d] Merge remote-tracking br=
+anch 'net/master'
+git bisect good 34aea5d2c46b2581ddf0b78a6119f85c1b3a8d1d
+# bad: [e1faf5c97ee3194c3f3e0b5dc86b3e1490c323d9] Merge remote-tracking bra=
+nch 'usb-serial-fixes/usb-linus'
+git bisect bad e1faf5c97ee3194c3f3e0b5dc86b3e1490c323d9
+# good: [49ff71f99a8826eda5cee76b69f15600d1cbf4b2] Merge remote-tracking br=
+anch 'rdma-fixes/for-rc'
+git bisect good 49ff71f99a8826eda5cee76b69f15600d1cbf4b2
+# bad: [04eb1efcd614d6f067b76a355b3a3599667959dc] ASoC: soc-core: Hold clie=
+nt_mutex around soc_init_dai_link()
+git bisect bad 04eb1efcd614d6f067b76a355b3a3599667959dc
+# good: [a41d9dbf5dac5b6a1283ee8001f22807d18352ea] ASoC: qdsp6: q6asm-dai: =
+Fix a small memory leak
+git bisect good a41d9dbf5dac5b6a1283ee8001f22807d18352ea
+# good: [6175471755075d256c1c654151fc1cad183c1e33] ASoC: ti: davinci-mcasp:=
+ Move context save/restore to runtime_pm callbacks
+git bisect good 6175471755075d256c1c654151fc1cad183c1e33
+# good: [44fabd8cdaaa3acb80ad2bb3b5c61ae2136af661] ASoC: atom: fix a missin=
+g check of snd_pcm_lib_malloc_pages
+git bisect good 44fabd8cdaaa3acb80ad2bb3b5c61ae2136af661
+# bad: [239b8b34a856777e562373ae0de605536a7ccade] ASoC: Intel: Boards: move=
+ the codec PLL configuration to _init
+git bisect bad 239b8b34a856777e562373ae0de605536a7ccade
+# bad: [8780cf1142a59568a3aa77959cbd76b2edb6fd81] ASoC: soc-core: defer car=
+d probe until all component is added to list
+git bisect bad 8780cf1142a59568a3aa77959cbd76b2edb6fd81
+# first bad commit: [8780cf1142a59568a3aa77959cbd76b2edb6fd81] ASoC: soc-co=
+re: defer card probe until all component is added to list
+---------------------------------------------------------------------------=
+----
