@@ -2,102 +2,115 @@ Return-Path: <SRS0=tq6k=PW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C71E5C43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 20:49:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 04736C43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 20:50:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9124820656
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 20:49:31 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="j5bohni8"
+	by mail.kernel.org (Postfix) with ESMTP id D14EB20656
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 20:50:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727134AbfANUta (ORCPT
+        id S1726979AbfANUuT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 14 Jan 2019 15:49:30 -0500
-Received: from userp2120.oracle.com ([156.151.31.85]:60744 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726776AbfANUt3 (ORCPT
+        Mon, 14 Jan 2019 15:50:19 -0500
+Received: from gateway32.websitewelcome.com ([192.185.145.122]:45578 "EHLO
+        gateway32.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726767AbfANUuT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 Jan 2019 15:49:29 -0500
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id x0EKhovE050365;
-        Mon, 14 Jan 2019 20:49:11 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2018-07-02;
- bh=M7yTvV85CXKlk2OQTXaB03OCKthpB5GDQoYEHcoraG0=;
- b=j5bohni8Q0Xa1NmHjjlYA4wRqu0Er/bDNoOVX3uECdyXSzrWLmjXZ8SySrzFbzYl2ZEX
- 7ieAb1y43AjCnTS/TxBd19dF9dg7EhnoSOPB4qnN//F82cLXBXz00euHcpgfOC0o+LcH
- wfyvT9TUENpmeG5cFPhDHr7asPjm1+NR82xdqV189/uTC8d11qE9h5XkpOMGzxfxFO+u
- M6mqyPWqIeoK6BE5Mped2nTRo5aBNfvqnqmLSjYUoWG0dv+ZgGcH7GyYZzGDY3ERz/Uf
- XHDEm33HI5ll3kxNUO2UvnYE/Zw+hqxpB3nRWiIR6HYcr4HG1tc5xeKinj5zxceDfZqp Lw== 
-Received: from aserv0021.oracle.com (aserv0021.oracle.com [141.146.126.233])
-        by userp2120.oracle.com with ESMTP id 2pybjs0491-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 14 Jan 2019 20:49:11 +0000
-Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
-        by aserv0021.oracle.com (8.14.4/8.14.4) with ESMTP id x0EKnA0d027940
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 14 Jan 2019 20:49:10 GMT
-Received: from abhmp0002.oracle.com (abhmp0002.oracle.com [141.146.116.8])
-        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x0EKn9Bo026097;
-        Mon, 14 Jan 2019 20:49:09 GMT
-Received: from char.us.oracle.com (/10.152.32.25)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Mon, 14 Jan 2019 12:49:09 -0800
-Received: by char.us.oracle.com (Postfix, from userid 1000)
-        id 6C1356A0128; Mon, 14 Jan 2019 15:49:07 -0500 (EST)
-Date:   Mon, 14 Jan 2019 15:49:07 -0500
-From:   Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
-To:     Joerg Roedel <joro@8bytes.org>
-Cc:     "Michael S . Tsirkin" <mst@redhat.com>,
-        Jason Wang <jasowang@redhat.com>, Jens Axboe <axboe@kernel.dk>,
-        virtualization@lists.linux-foundation.org,
-        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-        iommu@lists.linux-foundation.org, jfehlig@suse.com,
-        jon.grimm@amd.com, brijesh.singh@amd.com, hch@lst.de,
-        Joerg Roedel <jroedel@suse.de>
-Subject: Re: [PATCH 1/3] swiotlb: Export maximum allocation size
-Message-ID: <20190114204907.GH32038@char.us.oracle.com>
-References: <20190110134433.15672-1-joro@8bytes.org>
- <20190110134433.15672-2-joro@8bytes.org>
- <20190110170205.GB27546@char.us.oracle.com>
- <20190111091231.GB5825@8bytes.org>
+        Mon, 14 Jan 2019 15:50:19 -0500
+Received: from cm14.websitewelcome.com (cm14.websitewelcome.com [100.42.49.7])
+        by gateway32.websitewelcome.com (Postfix) with ESMTP id 566CFCB37
+        for <linux-kernel@vger.kernel.org>; Mon, 14 Jan 2019 14:50:18 -0600 (CST)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id j9BagKNlX2qH7j9Bagy9JM; Mon, 14 Jan 2019 14:50:18 -0600
+X-Authority-Reason: nr=8
+Received: from [189.250.130.205] (port=50824 helo=[192.168.43.131])
+        by gator4166.hostgator.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
+        (Exim 4.91)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1gj9BZ-000SQK-Ln; Mon, 14 Jan 2019 14:50:18 -0600
+Subject: Re: [PATCH] vt: annotate implicit fall throughs
+To:     Mathieu Malaterre <malat@debian.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Jiri Slaby <jslaby@suse.com>, linux-kernel@vger.kernel.org
+References: <20190114204114.20814-1-malat@debian.org>
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Message-ID: <287bad0a-ec15-aeac-618a-48673b6bf5f2@embeddedor.com>
+Date:   Mon, 14 Jan 2019 14:50:11 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190111091231.GB5825@8bytes.org>
-User-Agent: Mutt/1.8.3 (2017-05-23)
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9136 signatures=668680
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1810050000 definitions=main-1901140160
+In-Reply-To: <20190114204114.20814-1-malat@debian.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 189.250.130.205
+X-Source-L: No
+X-Exim-ID: 1gj9BZ-000SQK-Ln
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: ([192.168.43.131]) [189.250.130.205]:50824
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 7
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jan 11, 2019 at 10:12:31AM +0100, Joerg Roedel wrote:
-> On Thu, Jan 10, 2019 at 12:02:05PM -0500, Konrad Rzeszutek Wilk wrote:
-> > Why not use swiotlb_nr_tbl ? That is how drivers/gpu/drm use to figure if they
-> > need to limit the size of pages.
-> 
-> That function just exports the overall size of the swiotlb aperture, no?
-> What I need here is the maximum size for a single mapping.
 
-Yes. The other drivers just assumed that if there is SWIOTLB they would use
-the smaller size by default (as in they knew the limitation).
 
-But I agree it would be better to have something smarter - and also convert the
-DRM drivers to piggy back on this.
+On 1/14/19 2:41 PM, Mathieu Malaterre wrote:
+> There is a plan to build the kernel with -Wimplicit-fallthrough and
+> these places in the code produced warnings (W=1). Fix them up.
+> 
+> This commit remove the following warning:
+> 
+>    drivers/tty/vt/vt.c:2112:6: warning: this statement may fall through [-Wimplicit-fallthrough=]
+>    drivers/tty/vt/vt.c:2237:6: warning: this statement may fall through [-Wimplicit-fallthrough=]
+> 
+> Signed-off-by: Mathieu Malaterre <malat@debian.org>
 
-Or alternatively we could make SWIOTLB handle bigger sizes..
+Acked-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+
+Thanks, Mathieu.
+
+--
+Gustavo
+
+> ---
+>   drivers/tty/vt/vt.c | 2 ++
+>   1 file changed, 2 insertions(+)
 > 
-> Regards,
+> diff --git a/drivers/tty/vt/vt.c b/drivers/tty/vt/vt.c
+> index 41ec8e5010f3..e4f8caed26af 100644
+> --- a/drivers/tty/vt/vt.c
+> +++ b/drivers/tty/vt/vt.c
+> @@ -2111,6 +2111,7 @@ static void do_con_trol(struct tty_struct *tty, struct vc_data *vc, int c)
+>   		lf(vc);
+>   		if (!is_kbd(vc, lnm))
+>   			return;
+> +		/* fall through */
+>   	case 13:
+>   		cr(vc);
+>   		return;
+> @@ -2236,6 +2237,7 @@ static void do_con_trol(struct tty_struct *tty, struct vc_data *vc, int c)
+>   		vc->vc_ques = (c == '?');
+>   		if (vc->vc_ques)
+>   			return;
+> +		/* fall through */
+>   	case ESgetpars:
+>   		if (c == ';' && vc->vc_npar < NPAR - 1) {
+>   			vc->vc_npar++;
 > 
-> 	Joerg
