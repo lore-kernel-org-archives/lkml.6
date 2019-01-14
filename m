@@ -2,179 +2,197 @@ Return-Path: <SRS0=tq6k=PW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 43460C43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 10:23:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 596E5C43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 10:25:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 127E520659
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 10:23:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1778520873
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 10:25:47 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="LlA9HX/7";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="CZBQqILl"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726690AbfANKXo (ORCPT
+        id S1726584AbfANKZp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 14 Jan 2019 05:23:44 -0500
-Received: from mail-ua1-f66.google.com ([209.85.222.66]:38404 "EHLO
-        mail-ua1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726306AbfANKXn (ORCPT
+        Mon, 14 Jan 2019 05:25:45 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:49662 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726187AbfANKZp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 Jan 2019 05:23:43 -0500
-Received: by mail-ua1-f66.google.com with SMTP id p9so6865009uaa.5;
-        Mon, 14 Jan 2019 02:23:42 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=ftr3ho5g2SH93QR9dEHmihHBvfo/NmbS/pC9RbN78Os=;
-        b=S0CSXImFTUkcjy+OZSl33WBnL4enRlr0PFk6lsu4EGCDOqcsI4m445+kuRJ3zZTTs9
-         Mr4/Oa4asqi+ypBseuWMJsLVrbxNpFOYIvr4I5hhPo6AFN8kd28jtm5BJinaPsXQt1g0
-         dca3FC6DrDxFk7Vlwi3w7tjboo7IZJMVgxP3ePZZ9yDWzLwoUqIO4R5zMIG4EVs+NhQD
-         NnUXSglbj1jp+mxsRr64tb3ZhGwSoEp8xpGDlKs8gTtdHdNcjsvjvQt+jQG4DR/xIO2o
-         duV0yFnMAnXJv1dRPLsqHEZrNReAioW0ilA/OJfb6UHMYrmvHMoTsFceVG/gJtA94+5S
-         OXUQ==
-X-Gm-Message-State: AJcUukdzfdJH8qa/gYa56Yw56WH4bMfhEY1FjJKEGhTAAi3BY6nLyhmB
-        0haR6QApcAadXFqUyuyWYVmXR8bVjkuqw1ku3xF5wBvbzjw=
-X-Google-Smtp-Source: ALg8bN6wpVg/TZxWBXr33RFKIkdcJNrYzBppXuc2SpkokohcHFAVA99Q3Y4BlI8myvDfmVb4lCer/Zkjpl0SFrNy764=
-X-Received: by 2002:ab0:216:: with SMTP id 22mr9019734uas.28.1547461421871;
- Mon, 14 Jan 2019 02:23:41 -0800 (PST)
+        Mon, 14 Jan 2019 05:25:45 -0500
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id C3075615CB; Mon, 14 Jan 2019 10:25:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1547461543;
+        bh=aAMMPNo/h1q0W5/G3jJnCg9rHAdVifyaehaS7bzz7ZE=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=LlA9HX/7Epwr3h0EkbfafsBP0H2PUA8v19ddnBP5D2iOfs3SSR2/RmjCJNA/q7ziw
+         Mm7uZGF5O45vpbNoPhPL/IC5yUoPuDbYeOTUpeDNuph6A5ob8AfKMP+YDp8uMiqi6a
+         dKVTZfaL3KV0UgjasxYBgfXcAym6HBaOKzh3/Vfc=
+Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
+        by smtp.codeaurora.org (Postfix) with ESMTP id 4D47A6079C;
+        Mon, 14 Jan 2019 10:25:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1547461541;
+        bh=aAMMPNo/h1q0W5/G3jJnCg9rHAdVifyaehaS7bzz7ZE=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=CZBQqILl6Xz7Fl4L98fFKjVZH4OSprOwhVoyoH/2fsBekjwyAPo45/Q+9Dv2R4fDj
+         la5evxmZsZdAPfCKsgkEktruFRGCLG+OeMjjCqyP71OcPyx5ZbQzjPbjMCpy9PS0ZT
+         vcc1xnu0R2kmNJqVqZQXtWJurhQpq2K3XEYHHodY=
 MIME-Version: 1.0
-References: <CAMuHMdULrGHfgF+RRGf5gXAc=V3KaB4549NezxEc3CvfsKWOyA@mail.gmail.com>
- <3A06C183-19FF-48B3-9C49-60353BEC9DB8@dilger.ca>
-In-Reply-To: <3A06C183-19FF-48B3-9C49-60353BEC9DB8@dilger.ca>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Mon, 14 Jan 2019 11:23:30 +0100
-Message-ID: <CAMuHMdWt+6Aeius=PFr9vQgF7LGde78f9nyai4m1P8QL+oqY0A@mail.gmail.com>
-Subject: Re: Preserving a rev 0.0 ext2 filesystem
-To:     Andreas Dilger <adilger@dilger.ca>
-Cc:     Jan Kara <jack@suse.com>, Theodore Tso <tytso@mit.edu>,
-        Ext4 Developers List <linux-ext4@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date:   Mon, 14 Jan 2019 15:55:41 +0530
+From:   Balakrishna Godavarthi <bgodavar@codeaurora.org>
+To:     Matthias Kaehlcke <mka@chromium.org>
+Cc:     Johan Hovold <johan@kernel.org>, marcel@holtmann.org,
+        johan.hedberg@gmail.com, linux-kernel@vger.kernel.org,
+        linux-bluetooth@vger.kernel.org, hemantg@codeaurora.org,
+        linux-arm-msm@vger.kernel.org, Johan Hovold <jhovold@gmail.com>
+Subject: Re: [PATCH v5 1/5] Bluetooth: hci_qca: use wait_until_sent() for
+ power pulses
+In-Reply-To: <20190111233812.GJ261387@google.com>
+References: <20181220144639.15928-1-bgodavar@codeaurora.org>
+ <20181220144639.15928-2-bgodavar@codeaurora.org>
+ <20181222015947.GF261387@google.com> <20190109143822.GM14782@localhost>
+ <2d4ee183e3c2fa964c14a5ac702043c0@codeaurora.org>
+ <20190111005532.GC261387@google.com>
+ <5e4b077bbcc81b624c851643bebc45f7@codeaurora.org>
+ <20190111233812.GJ261387@google.com>
+Message-ID: <7c8badfceab6c4f7188156a8a9abd8ef@codeaurora.org>
+X-Sender: bgodavar@codeaurora.org
+User-Agent: Roundcube Webmail/1.2.5
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Andreas,
+Hi Matthias,
 
-On Sun, Jan 13, 2019 at 1:20 AM Andreas Dilger <adilger@dilger.ca> wrote:
-> On Jan 12, 2019, at 2:43 AM, Geert Uytterhoeven <geert@linux-m68k.org> wrote:
-> > I'm still regularly using a Linux rev 0.0 ext2 filesystem as a  ramdisk
-> > on m68k, containing mid-90's binaries, from right after the a.out-to-ELF
-> > transition, so I notice if someone breaks old syscall support.
-> >
-> > Recently I wanted to change /dev/console on that ramdisk from a symlink
-> > to chardev 5 0.  Unfortunately I cannot mount it, without it being
-> > upgraded automatically to a rev 1.0 ext2 filesystem.  Apparently the
-> > kernel has been doing that upgrade for ages.
-> >
-> > Do you have a suggestion how to make that change, while preserving the
-> > ext2 revision?
->
-> It looks like there is a "gratuitous" call to ext4_update_dynamic_rev() in the
-> mount path that is left over from when ext3 always set the INCOMPAT_RECOVER and
-> COMPAT_HAS_JOURNAL features on every mount.  With the "nojournal" mount option
-> these are no longer needed.  You could probably just remove this call with no ill
-> effects, or better yet apply the patch that I'll push shortly to this effect.
-> It's been there since the start of git history (2.6.12-rc2) in the ext3 code
-> that was later copied to become ext4, but digging through my email archives it
-> looks like adding the call to "ext3_update_fs_rev()" was actually one of my first
-> patches against the original ext3 code "[Ext2-devel] Re: RECOVER INCOMPAT flag",
-> dated Nov 18, 2000.
->
-> The only thing ext4_update_dynamic_rev() does is update s_rev_level, and set
-> s_first_ino and s_inode_size on disk to the values that the kernel already
-> assumes to be true (newer kernels can use different values).  Those fields are
-> also set in memory later during the mount, so the rest of the code should work
-> OK (I haven't tested). This will probably only affect your filesysem (everything
-> else in the last 20 years uses EXT2_DYNAMIC_REV) so it won't be much of a change.
+On 2019-01-12 05:08, Matthias Kaehlcke wrote:
+> On Fri, Jan 11, 2019 at 08:02:00PM +0530, Balakrishna Godavarthi wrote:
+>> On 2019-01-11 06:25, Matthias Kaehlcke wrote:
+>> > On Thu, Jan 10, 2019 at 08:18:37PM +0530, Balakrishna Godavarthi wrote:
+>> > > Hi Johan,
+>> > >
+>> > > On 2019-01-09 20:08, Johan Hovold wrote:
+>> > > > On Fri, Dec 21, 2018 at 05:59:47PM -0800, Matthias Kaehlcke wrote:
+>> > > > > On Thu, Dec 20, 2018 at 08:16:35PM +0530, Balakrishna Godavarthi
+>> > > > > wrote:
+>> > > > > > wcn3990 requires a power pulse to turn ON/OFF along with
+>> > > > > > regulators. Sometimes we are observing the power pulses are sent
+>> > > > > > out with some time delay, due to queuing these commands. This is
+>> > > > > > causing synchronization issues with chip, which intern delay the
+>> > > > > > chip setup or may end up with communication issues.
+>> > > > > >
+>> > > > > > Signed-off-by: Balakrishna Godavarthi <bgodavar@codeaurora.org>
+>> > > > > > ---
+>> > > > > >  drivers/bluetooth/hci_qca.c | 38 ++++++++++++++-----------------------
+>> > > > > >  1 file changed, 14 insertions(+), 24 deletions(-)
+>> > > > > >
+>> > > > > > diff --git a/drivers/bluetooth/hci_qca.c b/drivers/bluetooth/hci_qca.c
+>> > > > > > index f036c8f98ea3..5a07c2370289 100644
+>> > > > > > --- a/drivers/bluetooth/hci_qca.c
+>> > > > > > +++ b/drivers/bluetooth/hci_qca.c
+>> > > > > > @@ -1013,11 +1013,9 @@ static inline void host_set_baudrate(struct hci_uart *hu, unsigned int speed)
+>> > > > > >  		hci_uart_set_baudrate(hu, speed);
+>> > > > > >  }
+>> > > > > >
+>> > > > > > -static int qca_send_power_pulse(struct hci_dev *hdev, u8 cmd)
+>> > > > > > +static int qca_send_power_pulse(struct hci_uart *hu, u8 cmd)
+>> > > > > >  {
+>> > > > > > -	struct hci_uart *hu = hci_get_drvdata(hdev);
+>> > > > > > -	struct qca_data *qca = hu->priv;
+>> > > > > > -	struct sk_buff *skb;
+>> > > > > > +	int ret;
+>> > > > > >
+>> > > > > >  	/* These power pulses are single byte command which are sent
+>> > > > > >  	 * at required baudrate to wcn3990. On wcn3990, we have an external
+>> > > > > > @@ -1029,19 +1027,16 @@ static int qca_send_power_pulse(struct hci_dev *hdev, u8 cmd)
+>> > > > > >  	 * save power. Disabling hardware flow control is mandatory while
+>> > > > > >  	 * sending power pulses to SoC.
+>> > > > > >  	 */
+>> > > > > > -	bt_dev_dbg(hdev, "sending power pulse %02x to SoC", cmd);
+>> > > > > > -
+>> > > > > > -	skb = bt_skb_alloc(sizeof(cmd), GFP_KERNEL);
+>> > > > > > -	if (!skb)
+>> > > > > > -		return -ENOMEM;
+>> > > > > > -
+>> > > > > > +	bt_dev_dbg(hu->hdev, "sending power pulse %02x to SoC", cmd);
+>> > > > > >  	hci_uart_set_flow_control(hu, true);
+>> > > > > > +	ret = serdev_device_write_buf(hu->serdev, &cmd, sizeof(cmd));
+>> > > > > > +	if (ret < 0) {
+>> > > > > > +		bt_dev_err(hu->hdev, "failed to send power pulse %02x to SoC",
+>> > > > > > +			   cmd);
+>> > > > > > +		return ret;
+>> > > > > > +	}
+>> > > > > >
+>> > > > > > -	skb_put_u8(skb, cmd);
+>> > > > > > -	hci_skb_pkt_type(skb) = HCI_COMMAND_PKT;
+>> > > > > > -
+>> > > > > > -	skb_queue_tail(&qca->txq, skb);
+>> > > > > > -	hci_uart_tx_wakeup(hu);
+>> > > > > > +	serdev_device_wait_until_sent(hu->serdev, 0);
+>> > > >
+>> > > > Again, do you really want to wait indefinitely here?
+>> > > >
+>> > > [Bala]: these commands are mandatory to turn ON or OFF the chip.
+>> > >         so blocking to the max time is required.
+>> > >         these commands are sent during the BT chip ON & OFF.
+>> > >         in the latest series, i have flushed the uart before sending
+>> > > this
+>> > > commands
+>> > >         so the uart FIFO(as just opened the port before calling this
+>> > > function) or the circular
+>> > >         buffer will be empty and also i am disabling the flow
+>> > > control too.
+>> > >        https://patchwork.kernel.org/patch/10744435/
+>> >
+>> > The commands may be mandatory for switching the chip on or off, but
+>> > what is better if there is a problem with sending them (e.g. a buggy
+>> > UART driver):
+>> >
+>> > 1. wait a reasonable time, report an error
+>> > 2. wait forever
+>> >
+>> > ?
+>> >
+>> > If the single byte command couldn't be sent after a few milliseconds,
+>> > it likely never will, waiting forever doesn't fix that. An error
+>> > report at least provides some information about the problem and the
+>> > driver is in a not-hanging state.
+>> >
+>> > Cheers
+>> >
+>> > Matthias
+>> 
+>> [Bala]: will update this with a bound TIMEOUT value. But 
+>> wait_until_sent()
+>> is void return
+>>         type how could we know that the data is sent out on the lines.
+> 
+> Good point, I didn't check and expected it to return an error. If you
+> feel really motivated and have maintainer support you could possibly
+> change the API, however it seems this would be a somewhat larger
+> change.
+> 
+> I guess the next best thing to do is to proceed as if all data was
+> sent and if there was a problem it will likely manifest through
+> another error (especially for the ON pulse), which still seems better
+> than a hanging driver.
+> 
+> Cheers
+> 
+> Matthias
 
-JFYI, this is what was changed by mounting and unmounting the filesystem
-using the ext4 driver (with a modified version of your patch applied):
+[Bala]: sure, will add the timeout to one second and if data didn't sent 
+to the lines anyways
+         we will get an version command timeouts errors.
 
---- ramdisk.orig 2019-01-14 09:23:15.578434706 +0100
-+++ ramdisk.mounted-by-ext4 2019-01-14 09:23:15.966434482 +0100
-@@ -2,16 +2,19 @@
- *
- 00000400  f8 00 00 00 78 05 00 00  00 00 00 00 20 00 00 00  |....x....... ...|
- 00000410  09 00 00 00 01 00 00 00  00 00 00 00 00 00 00 00  |................|
--00000420  00 20 00 00 00 20 00 00  f8 00 00 00 f7 5e a3 32  |. ... .......^.2|
--00000430  9e 5e a3 32 03 00 14 00  53 ef 01 00 01 00 00 00  |.^.2....S.......|
-+00000420  00 20 00 00 00 20 00 00  f8 00 00 00 26 44 3c 5c  |. ... ......&D<\|
-+00000430  33 44 3c 5c 04 00 14 00  53 ef 01 00 01 00 00 00  |3D<\....S.......|
-
-Which is just the last mount and last write time, and mount count, as
-expected.
-
-00000440  53 5d a3 32 00 4e ed 00  00 00 00 00 00 00 00 00  |S].2.N..........|
- 00000450  00 00 00 00 00 00 00 00  00 00 00 00 00 00 00 00  |................|
- 00000460  00 00 00 00 00 00 00 00  87 6b 6d 86 4c 96 11 d0  |.........km.L...|
- 00000470  90 2d 00 60 30 00 02 1a  00 00 00 00 00 00 00 00  |.-.`0...........|
- 00000480  00 00 00 00 00 00 00 00  00 00 00 00 00 00 00 00  |................|
- *
-+00000570  00 00 00 00 00 00 00 00  02 00 00 00 00 00 00 00  |................|
-
-s_kbytes_written was updated, although this field does not exist, and is
-reserved, on ext2.
-
-+00000580  00 00 00 00 00 00 00 00  00 00 00 00 00 00 00 00  |................|
-+*
- 00000800  03 00 00 00 04 00 00 00  05 00 00 00 20 00 09 00  |............ ...|
--00000810  0c 00 00 00 00 00 00 00  00 00 00 00 00 00 00 00  |................|
-+00000810  0c 00 04 00 00 00 00 00  00 00 00 00 00 00 00 00  |................|
-
-Is this bg_flags being set to EXT4_BG_INODE_ZEROED?
-
- 00000820  00 00 00 00 00 00 00 00  00 00 00 00 00 00 00 00  |................|
- *
- 00000c00  ff ff ff ff ff ff ff ff  ff ff ff ff ff ff ff ff  |................|
-
-> The "real" ext2 code looks like it does not call ext2_update_dynamic_rev() for
-> every filesystem during mount, only if you write a file > 2GB in size, so it would
-> also be possible to mount with the ext2.ko driver (if your kernel provides it).
-> There looks like a minor bug in ext2 that it doesn't call ext2_update_dynamic_rev()
-> if an xattr is stored on the filesystem and it sets EXT2_FEATURE_COMPAT_EXT_ATTR
-> in ext2_xattr_update_super_block().  However, nobody noticed in since xattrs landed.
-
-Thanks, since ext2 also has the ext2_update_dynamic_rev() function, I
-assumed it would be called as well.  But indeed, mounting the old file system
-using the real ext2 driver retains its revision.
-
-JFYI, this is what was changed by mounting and unmounting it using the
-ext2 driver:
-
---- ramdisk.orig 2019-01-14 09:23:15.578434706 +0100
-+++ ramdisk.mounted-by-ext2 2019-01-14 09:23:16.362434253 +0100
-@@ -3,7 +3,7 @@
- 00000400  f8 00 00 00 78 05 00 00  00 00 00 00 20 00 00 00  |....x....... ...|
- 00000410  09 00 00 00 01 00 00 00  00 00 00 00 00 00 00 00  |................|
- 00000420  00 20 00 00 00 20 00 00  f8 00 00 00 f7 5e a3 32  |. ... .......^.2|
--00000430  9e 5e a3 32 03 00 14 00  53 ef 01 00 01 00 00 00  |.^.2....S.......|
-+00000430  84 46 3c 5c 04 00 14 00  53 ef 01 00 01 00 00 00  |.F<\....S.......|
- 00000440  53 5d a3 32 00 4e ed 00  00 00 00 00 00 00 00 00  |S].2.N..........|
- 00000450  00 00 00 00 00 00 00 00  00 00 00 00 00 00 00 00  |................|
- 00000460  00 00 00 00 00 00 00 00  87 6b 6d 86 4c 96 11 d0  |.........km.L...|
-
-Which is just the last write time, and mount count, as expected.
-Interestingly, the last mount time was not updated.
-
-> In any case, it would be fun to give my patch a try to see if it allows your old
-> filesystem to be mounted and modified with a modern kernel and then mounted on
-> the old kernel again, as a testament to ext2/ext4 feature compatibility.
-
-The oldest kernel image binary I still have lying around is 2.0.28, and it
-groks a ramdisk modified by a v5.0-rc1 ext4 driver just fine.
-
-Thanks!
-
-Gr{oetje,eeting}s,
-
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+-- 
+Regards
+Balakrishna.
