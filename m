@@ -2,106 +2,137 @@ Return-Path: <SRS0=tq6k=PW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BFBD9C43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 07:01:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C289DC43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 07:15:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8E29F20660
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 07:01:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547449305;
-	bh=WpOyRXTNI8YMiheEIG3L/ffj7kQTvirfsL6uM660SHA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=Xrv5ehj/JDXdm+1yKmGWWu+1l15QPBd5WXIrkXOkTKHwKAqcBBw1PVpYFe6K5YiYX
-	 k/OF/IpgaR5+whKpUR0K0SaU76ZYe582l/B1HuFvi4Sm9sOtwkgGl3eja7hVu11q3s
-	 uQo+NIHnSXNovP2KL42R+c9KlmApPzCpTCgmwuRs=
+	by mail.kernel.org (Postfix) with ESMTP id 9C2A120659
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 07:15:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726552AbfANHBn (ORCPT
+        id S1726542AbfANHPb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 14 Jan 2019 02:01:43 -0500
-Received: from mx2.suse.de ([195.135.220.15]:36658 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726460AbfANHBn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 Jan 2019 02:01:43 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 4F069AE72;
-        Mon, 14 Jan 2019 07:01:41 +0000 (UTC)
-Date:   Mon, 14 Jan 2019 08:01:37 +0100
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Anshuman Khandual <anshuman.khandual@arm.com>
-Cc:     linux-mm@kvack.org, akpm@linux-foundation.org,
-        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        linux-arm-kernel@lists.infradead.org, linux-sh@vger.kernel.org,
-        kvmarm@lists.cs.columbia.edu, linux@armlinux.org.uk,
-        catalin.marinas@arm.com, will.deacon@arm.com, mpe@ellerman.id.au,
-        tglx@linutronix.de, mingo@redhat.com, dave.hansen@linux.intel.com,
-        peterz@infradead.org, christoffer.dall@arm.com,
-        marc.zyngier@arm.com, kirill@shutemov.name,
-        rppt@linux.vnet.ibm.com, ard.biesheuvel@linaro.org,
-        mark.rutland@arm.com, steve.capper@arm.com, james.morse@arm.com,
-        robin.murphy@arm.com, aneesh.kumar@linux.ibm.com, vbabka@suse.cz,
-        shakeelb@google.com, rientjes@google.com
-Subject: Re: [PATCH] mm: Introduce GFP_PGTABLE
-Message-ID: <20190114070137.GB21345@dhcp22.suse.cz>
-References: <1547288798-10243-1-git-send-email-anshuman.khandual@arm.com>
- <20190113173555.GC1578@dhcp22.suse.cz>
- <f9f333a5-5533-996a-dc8e-1ff1096c1d19@arm.com>
+        Mon, 14 Jan 2019 02:15:31 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:53376 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726067AbfANHPb (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 14 Jan 2019 02:15:31 -0500
+Received: from pps.filterd (m0098399.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id x0E7Dt3i045410
+        for <linux-kernel@vger.kernel.org>; Mon, 14 Jan 2019 02:15:29 -0500
+Received: from e06smtp02.uk.ibm.com (e06smtp02.uk.ibm.com [195.75.94.98])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2q0mxwj5g9-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Mon, 14 Jan 2019 02:15:29 -0500
+Received: from localhost
+        by e06smtp02.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <joeln@il.ibm.com>;
+        Mon, 14 Jan 2019 07:15:27 -0000
+Received: from b06cxnps3075.portsmouth.uk.ibm.com (9.149.109.195)
+        by e06smtp02.uk.ibm.com (192.168.101.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Mon, 14 Jan 2019 07:15:25 -0000
+Received: from d06av22.portsmouth.uk.ibm.com (d06av22.portsmouth.uk.ibm.com [9.149.105.58])
+        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x0E7FNCS61014190
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Mon, 14 Jan 2019 07:15:23 GMT
+Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 84FA44C050;
+        Mon, 14 Jan 2019 07:15:23 +0000 (GMT)
+Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 148DB4C040;
+        Mon, 14 Jan 2019 07:15:22 +0000 (GMT)
+Received: from tal (unknown [9.148.32.96])
+        by d06av22.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
+        Mon, 14 Jan 2019 07:15:21 +0000 (GMT)
+Received: by tal (sSMTP sendmail emulation); Mon, 14 Jan 2019 09:15:21 +0200
+From:   Joel Nider <joeln@il.ibm.com>
+To:     Jonathan Corbet <corbet@lwn.net>
+Cc:     Matthew Wilcox <willy@infradead.org>,
+        Mike Rapoport <rppt@linux.ibm.com>, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Joel Nider <joeln@il.ibm.com>
+Subject: [PATCH v2] docs-rst: doc-guide: Minor grammar fixes
+Date:   Mon, 14 Jan 2019 09:14:59 +0200
+X-Mailer: git-send-email 2.7.4
+X-TM-AS-GCONF: 00
+x-cbid: 19011407-0008-0000-0000-000002B0AC83
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19011407-0009-0000-0000-0000221CBB81
+Message-Id: <1547450099-3534-1-git-send-email-joeln@il.ibm.com>
+Content-Type:   text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7BIT
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <f9f333a5-5533-996a-dc8e-1ff1096c1d19@arm.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-01-14_04:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=563 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1901140062
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon 14-01-19 09:30:55, Anshuman Khandual wrote:
-> 
-> 
-> On 01/13/2019 11:05 PM, Michal Hocko wrote:
-> > On Sat 12-01-19 15:56:38, Anshuman Khandual wrote:
-> >> All architectures have been defining their own PGALLOC_GFP as (GFP_KERNEL |
-> >> __GFP_ZERO) and using it for allocating page table pages. This causes some
-> >> code duplication which can be easily avoided. GFP_KERNEL allocated and
-> >> cleared out pages (__GFP_ZERO) are required for page tables on any given
-> >> architecture. This creates a new generic GFP flag flag which can be used
-> >> for any page table page allocation. Does not cause any functional change.
-> > 
-> > I agree that some unification is due but GFP_PGTABLE is not something to
-> > expose in generic gfp.h IMHO. It just risks an abuse. I would be looking
-> 
-> Why would you think that it risks an abuse ? It does not create new semantics
-> of allocation in the buddy. Its just uses existing GFP_KERNEL allocation which
-> is then getting zeroed out. The risks (if any) is exactly same as GFP_KERNEL.
+While using this guide to learn the new documentation method, I saw
+a few phrases that I felt could be improved. These small changes
+improve the grammar and choice of words to further enhance the
+installation instructions.
 
-Beucase my experience just tells me that people tend to use whatever
-they find and name fits what they think they need.
+Signed-off-by: Joel Nider <joeln@il.ibm.com>
+Acked-by: Matthew Wilcox <willy@infradead.org>
+---
+v2: address Matthew's comment
 
-> > at providing asm-generic implementation and reuse it to remove the code
-> 
-> Does that mean GFP_PGTABLE can be created but not in gfp.h but in some other
-> memory related header file ?
+ Documentation/doc-guide/sphinx.rst | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
-I would just keep it close to its users. If that is a single arch
-generic place then only better. But I suspect some arches have special
-requirements.
-
-> > duplication. But I haven't tried that to know that it will work out due
-> > to small/subtle differences between arches.
-> 
-> IIUC from the allocation perspective GFP_ACCOUNT is the only thing which gets
-> added with GFP_PGTABLE for user page table for memcg accounting purpose. There
-> does not seem to be any other differences unless I am missing something.
-
-It's been some time since I've checked the last time. Some arches were
-using GPF_REPEAT (__GFP_RETRY_MAYFAIL) back then. I have removed most of
-those but some were doing a higher order allocations so they probably
-have stayed.
+diff --git a/Documentation/doc-guide/sphinx.rst b/Documentation/doc-guide/sphinx.rst
+index 02605ee..c039224 100644
+--- a/Documentation/doc-guide/sphinx.rst
++++ b/Documentation/doc-guide/sphinx.rst
+@@ -27,8 +27,8 @@ Sphinx Install
+ ==============
+ 
+ The ReST markups currently used by the Documentation/ files are meant to be
+-built with ``Sphinx`` version 1.3 or upper. If you're desiring to build
+-PDF outputs, it is recommended to use version 1.4.6 or upper.
++built with ``Sphinx`` version 1.3 or higher. If you desire to build
++PDF output, it is recommended to use version 1.4.6 or higher.
+ 
+ There's a script that checks for the Sphinx requirements. Please see
+ :ref:`sphinx-pre-install` for further details.
+@@ -37,15 +37,15 @@ Most distributions are shipped with Sphinx, but its toolchain is fragile,
+ and it is not uncommon that upgrading it or some other Python packages
+ on your machine would cause the documentation build to break.
+ 
+-A way to get rid of that is to use a different version than the one shipped
+-on your distributions. In order to do that, it is recommended to install
++A way to avoid that is to use a different version than the one shipped
++with your distributions. In order to do so, it is recommended to install
+ Sphinx inside a virtual environment, using ``virtualenv-3``
+ or ``virtualenv``, depending on how your distribution packaged Python 3.
+ 
+ .. note::
+ 
+    #) Sphinx versions below 1.5 don't work properly with Python's
+-      docutils version 0.13.1 or upper. So, if you're willing to use
++      docutils version 0.13.1 or higher. So, if you're willing to use
+       those versions, you should run ``pip install 'docutils==0.12'``.
+ 
+    #) It is recommended to use the RTD theme for html output. Depending
+@@ -82,7 +82,7 @@ output.
+ PDF and LaTeX builds
+ --------------------
+ 
+-Such builds are currently supported only with Sphinx versions 1.4 and upper.
++Such builds are currently supported only with Sphinx versions 1.4 and higher.
+ 
+ For PDF and LaTeX output, you'll also need ``XeLaTeX`` version 3.14159265.
+ 
 -- 
-Michal Hocko
-SUSE Labs
+2.7.4
+
