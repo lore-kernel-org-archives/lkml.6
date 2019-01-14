@@ -7,63 +7,64 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 062F6C43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 10:21:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CA119C43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 10:21:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CB27820659
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 10:21:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 99C0720873
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 10:21:35 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="BeXpdXPJ"
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="RFTdFL04"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726725AbfANKVa (ORCPT
+        id S1726748AbfANKVe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 14 Jan 2019 05:21:30 -0500
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:39847 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726709AbfANKV1 (ORCPT
+        Mon, 14 Jan 2019 05:21:34 -0500
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:52397 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726731AbfANKVc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 Jan 2019 05:21:27 -0500
-Received: by mail-wm1-f65.google.com with SMTP id y8so8202360wmi.4
-        for <linux-kernel@vger.kernel.org>; Mon, 14 Jan 2019 02:21:26 -0800 (PST)
+        Mon, 14 Jan 2019 05:21:32 -0500
+Received: by mail-wm1-f67.google.com with SMTP id m1so8296304wml.2
+        for <linux-kernel@vger.kernel.org>; Mon, 14 Jan 2019 02:21:32 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :in-reply-to:references;
-        bh=CxA8ebFB4r9OLZ96bqgPVVsxsgvpcqnBcZSvktTXPrA=;
-        b=BeXpdXPJWTOyjVfEKcnsuBOavIGy7gWpa7ZK+wmEiGluSGhnRKP5bxARIEJBza1dh7
-         6h+HXqgf8LjTMw+8387u5M56b796rChvDvvHl7Gw96PhKYFnajv8VpE9Xre7z6pjeSZ0
-         MGK+1bHBoivW1wC05g3MczWDHDCj8gSOdsvj0=
+        bh=9SBw2Z8hokpAYRi9yYWIqHgwrnBSoCdeIR1YxJHRWTA=;
+        b=RFTdFL04O0QYIhX0JBnUjQGAz3APxexoATMRsqvN4V8qZZgP+ccNCDl2usSW0Yp29y
+         Nb5EVStf6xppuRlyc1Jov52MVq+vpMsi7C9J2BqcCfgcFJYb2kRtynQc1LyfZDLD/C0V
+         bwJOnezzKErTQq8dgddkCsY5zpP8pCyaO5phY=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:in-reply-to:references;
-        bh=CxA8ebFB4r9OLZ96bqgPVVsxsgvpcqnBcZSvktTXPrA=;
-        b=hltpkrEJQtgPomiU63q2+v8znoUZQR26HitG6YZyabUW5UBlpxBn597OFmzKSGygEY
-         MqvkZlptY51maXkfnF1b4I2cq5KI6vxQuiFlnTG3Uy7E1JYbReUJgVRxxm0KXhEd9Gqt
-         yODW19QFa+yaLIYxnO8hJZ7QY0/OP6RXs8UUjxTgWsqkZaekgortL7vW+A4Bo3VvOj5N
-         N0Z+vq/lZdsA7DmCgnvSxfX4ZyFAaQYWUwsrVZCU8DurtUBXCbqgNVRp2Q27gR/g2hY/
-         qdoedB4XDdGABteixPswfdA/WoA/3HQiyF6bhUDSi1Q5BfxDHvpW+jZIoTVFVE8NSFOL
-         K3bw==
-X-Gm-Message-State: AJcUukcyTZnl02Ze7DEfao+uv6GQOiMpf3SklJCuvlqlvkGGCQC/0RZa
-        pa64O7ZlRWocJSQfvTE0Jk7099IUWAE=
-X-Google-Smtp-Source: ALg8bN4tZ1gdXoiZAfGmOsdJ0DEeokQS/vuwjwKn6VKlGSotSb246Hw43rTqz8tsZFkHibwqg3mliw==
-X-Received: by 2002:a1c:ab87:: with SMTP id u129mr11368856wme.104.1547461285223;
-        Mon, 14 Jan 2019 02:21:25 -0800 (PST)
+        bh=9SBw2Z8hokpAYRi9yYWIqHgwrnBSoCdeIR1YxJHRWTA=;
+        b=B0qobJZ6sB5DFkHT0eXR39qfpGyotfE9DTdTC5zcgnFcNCX3X4JVCM6UM5o664Rcj8
+         8Y/3LYPoM609PCdftOm19RYzZhtBiKe3CHaJtaz3Qv0ORHlJrIL6xlSwqHOfqrXzZHEZ
+         fhvo2kdr3HapcsFRFHWd9ZF2yTIXxM5i6ndthvHPGD5eg1L6jsVPcosh70xiuK+2FIdt
+         wBJ6P+iTzcKpWCTeDJDq91ap1W8gFaWhDlUuz5s8dgKpe98XjZwVmswa/0PH54qpxyIH
+         MR97550HmXAsUH6G1qBWYyyEF9EURRsqfUIqhxwcHNJjxGJvWr8P2hwpXYcYjWYqHWKg
+         i2Ig==
+X-Gm-Message-State: AJcUukezRAKAWsgaYjR6/3Bm5ihn+zJiUazsBw8fUtvA198ky7C3UQFE
+        PDDCFO/n8w5w7ymUHXuM1ocdwZrmoy8=
+X-Google-Smtp-Source: ALg8bN6G6klT2ZY5A1/WibAL7ZNVVxAHhcPpHOtgGC/X8+p0l9Jx/vnS0cO3VxjzdXwQFgbd7E+2eg==
+X-Received: by 2002:a7b:c5cc:: with SMTP id n12mr11292507wmk.149.1547461291120;
+        Mon, 14 Jan 2019 02:21:31 -0800 (PST)
 Received: from localhost ([49.248.81.155])
-        by smtp.gmail.com with ESMTPSA id d16sm56370701wru.52.2019.01.14.02.21.23
+        by smtp.gmail.com with ESMTPSA id x81sm27364850wmg.17.2019.01.14.02.21.29
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 14 Jan 2019 02:21:24 -0800 (PST)
+        Mon, 14 Jan 2019 02:21:30 -0800 (PST)
 From:   Amit Kucheria <amit.kucheria@linaro.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     linux-arm-msm@vger.kernel.org, bjorn.andersson@linaro.org,
         viresh.kumar@linaro.org, edubezval@gmail.com,
         andy.gross@linaro.org, tdas@codeaurora.org, swboyd@chromium.org,
         dianders@chromium.org, mka@chromium.org,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        linux-pm@vger.kernel.org (open list:CPU FREQUENCY DRIVERS)
-Subject: [PATCH v2 1/9] [ALREADY QUEUED] cpufreq: qcom-hw: Move to device_initcall
-Date:   Mon, 14 Jan 2019 15:51:03 +0530
-Message-Id: <2ae45b9263f51a14a7f672f40da2193caf174971.1547458732.git.amit.kucheria@linaro.org>
+        Zhang Rui <rui.zhang@intel.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        linux-pm@vger.kernel.org (open list:THERMAL)
+Subject: [PATCH v2 2/9] drivers: thermal: of-thermal: Print name of device node with error
+Date:   Mon, 14 Jan 2019 15:51:04 +0530
+Message-Id: <f7c145e6d5164c3386f0a325a4cdcc726362f6db.1547458732.git.amit.kucheria@linaro.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <cover.1547458732.git.amit.kucheria@linaro.org>
 References: <cover.1547458732.git.amit.kucheria@linaro.org>
@@ -74,33 +75,34 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-(Resent to allow people testing the series to test it easily)
-
-subsys_initcall causes problems registering the driver as a thermal
-cooling device.
-
-If "faster boot" is the main reason for doing subsys_initcall, this
-should be handled in the bootloader or another boot constraint
-framework.
+Make it easier to debug devicetree definition in case of errors.
 
 Signed-off-by: Amit Kucheria <amit.kucheria@linaro.org>
 ---
- drivers/cpufreq/qcom-cpufreq-hw.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/thermal/of-thermal.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/cpufreq/qcom-cpufreq-hw.c b/drivers/cpufreq/qcom-cpufreq-hw.c
-index d83939a1b3d4..649dddd72749 100644
---- a/drivers/cpufreq/qcom-cpufreq-hw.c
-+++ b/drivers/cpufreq/qcom-cpufreq-hw.c
-@@ -296,7 +296,7 @@ static int __init qcom_cpufreq_hw_init(void)
- {
- 	return platform_driver_register(&qcom_cpufreq_hw_driver);
- }
--subsys_initcall(qcom_cpufreq_hw_init);
-+device_initcall(qcom_cpufreq_hw_init);
+diff --git a/drivers/thermal/of-thermal.c b/drivers/thermal/of-thermal.c
+index 4bfdb4a1e47d..08c3ccbdacf8 100644
+--- a/drivers/thermal/of-thermal.c
++++ b/drivers/thermal/of-thermal.c
+@@ -867,14 +867,14 @@ __init *thermal_of_build_thermal_zone(struct device_node *np)
  
- static void __exit qcom_cpufreq_hw_exit(void)
- {
+ 	ret = of_property_read_u32(np, "polling-delay-passive", &prop);
+ 	if (ret < 0) {
+-		pr_err("missing polling-delay-passive property\n");
++		pr_err("%pOFn: missing polling-delay-passive property\n", np->name);
+ 		goto free_tz;
+ 	}
+ 	tz->passive_delay = prop;
+ 
+ 	ret = of_property_read_u32(np, "polling-delay", &prop);
+ 	if (ret < 0) {
+-		pr_err("missing polling-delay property\n");
++		pr_err("%pOFn: missing polling-delay property\n", np->name);
+ 		goto free_tz;
+ 	}
+ 	tz->polling_delay = prop;
 -- 
 2.17.1
 
