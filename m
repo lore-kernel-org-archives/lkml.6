@@ -2,226 +2,118 @@ Return-Path: <SRS0=tq6k=PW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9AA69C43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 15:26:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 37394C43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 15:26:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 54D492086D
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 15:26:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F1CA52086D
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 15:26:56 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="ufKcEV09"
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=amdcloud.onmicrosoft.com header.i=@amdcloud.onmicrosoft.com header.b="tkfXEQDX"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726771AbfANP0E (ORCPT
+        id S1726705AbfANP0z (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 14 Jan 2019 10:26:04 -0500
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:37542 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726609AbfANP0E (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 Jan 2019 10:26:04 -0500
-Received: by mail-wr1-f68.google.com with SMTP id s12so23340941wrt.4
-        for <linux-kernel@vger.kernel.org>; Mon, 14 Jan 2019 07:26:02 -0800 (PST)
+        Mon, 14 Jan 2019 10:26:55 -0500
+Received: from mail-eopbgr740072.outbound.protection.outlook.com ([40.107.74.72]:35936
+        "EHLO NAM01-BN3-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726609AbfANP0y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 14 Jan 2019 10:26:54 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:openpgp:autocrypt:organization
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=sTTzeO8m1Id1UGNvqucxuX+eg7mPinyJrVlTnA9mEWY=;
-        b=ufKcEV09k6V/koHwAGp2Ic8BU5oclkxwMq2JdWj4Sdr0mA5txTkJuYDPKU60tixwdt
-         vtfawlM8Ds73Rb7u9xYWVGuspry/ltN5KWsVK3aha58iAHfLRTbGdHNN+1CD3dW7gHsR
-         caSaRRVc76A/QtDVdyKwwveerP7isNEz16xS2X5cEHUA2b3Ql17wZ/5xjNoM102M9YCO
-         rA4514gD5Me71PtHywTrDbFwN9lvJ3IjRgz2Cw4MknfY/4rfZOxBHyFF4KO4O7ws/zXq
-         7RFrL6zo75/KXHA7hTMTzJ/I0CYz+AKpzI3ZccAAFKEA425iu/EmHwxKb7QTb38/+TrM
-         bLmw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
-         :organization:message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=sTTzeO8m1Id1UGNvqucxuX+eg7mPinyJrVlTnA9mEWY=;
-        b=ui73lyzJoY3DZWI3AyZVifq+BiBjAIgFEYFRksYprvmp+b4NukD0ehGLBMMdDwgT2u
-         if6IWy8R7VOCliHc4Nai7VSUVJSfxDa2BSF83OUJ9/2zoi+MHQL03jnGhL8buJtVn8Xj
-         tE2CyCTO2a8uUjgrJXIbPya6n1d0bK+rbWon+0XnfM9CT6r+TMFEKmE/Eni1eiIqt8PX
-         4w84Y44RcKmJptpU/CT8CSrMlbMVykPy4V4wtNAWmtMxrPcBYaVNP1YuVCj02tB63jbj
-         cVK5lmSdCiM5H6Rok92SsFIKp+9n7KpFGMMyGYK9NNjlwytS4eOegJmZy+eCzu8zLiLG
-         YxQw==
-X-Gm-Message-State: AJcUukc0Mh1fo+qC8EMwa/NDYziwGJO8TzVl6NqQks9juCQVD1GYL22C
-        yAoMFd9IxmbQwvbSQ8GBgt8mnA==
-X-Google-Smtp-Source: ALg8bN7MT4oMt4Ru24uyQ/KzffTg0dgAllD5jISu+ZQpwEPl/HX+4EZOyv2dV1X7ho8WGiBQ403SeA==
-X-Received: by 2002:adf:9bda:: with SMTP id e26mr23743489wrc.295.1547479560992;
-        Mon, 14 Jan 2019 07:26:00 -0800 (PST)
-Received: from [10.1.2.12] (lmontsouris-657-1-212-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
-        by smtp.gmail.com with ESMTPSA id 125sm48588530wmm.26.2019.01.14.07.25.59
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 14 Jan 2019 07:25:59 -0800 (PST)
-Subject: Re: [PATCH] drm/meson: Fix atomic mode switching regression
-To:     Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Cc:     daniel@ffwll.ch, linux-amlogic@lists.infradead.org,
-        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
-References: <20190109133644.27459-1-narmstrong@baylibre.com>
- <CAFBinCAGGDx_9g3Y16fczUPGaBC0Ep=ULkY__n3WdrQRnDSsyA@mail.gmail.com>
-From:   Neil Armstrong <narmstrong@baylibre.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=narmstrong@baylibre.com; prefer-encrypt=mutual; keydata=
- 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
- ZaTUOEkgIor5losDrePdPgE=
-Organization: Baylibre
-Message-ID: <a3d36c98-9d90-ff63-7ca8-77aff89f7f1a@baylibre.com>
-Date:   Mon, 14 Jan 2019 16:25:58 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
-MIME-Version: 1.0
-In-Reply-To: <CAFBinCAGGDx_9g3Y16fczUPGaBC0Ep=ULkY__n3WdrQRnDSsyA@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
+ d=amdcloud.onmicrosoft.com; s=selector1-amd-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=SseuCRrqCTHr/0KC0oJaNIXGL/XcJAxzB78EKopsnMQ=;
+ b=tkfXEQDXTCiGul1JJb/976K5EaeVvk+M8DAA7kuZFnV2npAQpgkj/liFyBwyWRCmsC6FXLYV4X10yglm1qUupTR+ywhBnqdj2D9DtdFJmSfjqzpKhoUl33WjGELjA+t5Xnu84tXHDf+FaReOPCbCbGmS9reFgAqiPOOj1yOROU0=
+Received: from MN2PR12MB3248.namprd12.prod.outlook.com (20.179.82.219) by
+ MN2PR12MB3581.namprd12.prod.outlook.com (20.178.242.21) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1516.18; Mon, 14 Jan 2019 15:26:51 +0000
+Received: from MN2PR12MB3248.namprd12.prod.outlook.com
+ ([fe80::c818:e3a0:c248:802f]) by MN2PR12MB3248.namprd12.prod.outlook.com
+ ([fe80::c818:e3a0:c248:802f%3]) with mapi id 15.20.1516.019; Mon, 14 Jan 2019
+ 15:26:51 +0000
+From:   S@vger.kernel.org
+To:     Borislav Petkov <bp@alien8.de>, "S, Shirish" <Shirish.S@amd.com>
+CC:     Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H . Peter Anvin" <hpa@zytor.com>,
+        "maintainer : X86 ARCHITECTURE" <x86@kernel.org>,
+        Tony Luck <tony.luck@intel.com>,
+        Vishal Verma <vishal.l.verma@intel.com>,
+        "open list : X86 ARCHITECTURE" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 2/2] x86/mce/amd: Ensure quirks are applied in resume path
+ as well
+Thread-Topic: [PATCH 2/2] x86/mce/amd: Ensure quirks are applied in resume
+ path as well
+Thread-Index: AQHUpnT6RX1zZkZcBk29IptIsRwq2qWngtqAgACqJYCABm8wAIAAVaaA
+Date:   Mon, 14 Jan 2019 15:26:50 +0000
+Message-ID: <2ad4bb63-2b70-3652-3261-009cdbfc15a9@amd.com>
+References: <1546857399-2926-1-git-send-email-shirish.s@amd.com>
+ <1546857399-2926-3-git-send-email-shirish.s@amd.com>
+ <20190109220843.GK15665@zn.tnic>
+ <7a9227c0-1bc3-67c5-14a8-a40d186a5ef8@amd.com>
+ <20190114103312.GG2773@zn.tnic>
+In-Reply-To: <20190114103312.GG2773@zn.tnic>
+Accept-Language: en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-clientproxiedby: SN4PR0401CA0038.namprd04.prod.outlook.com
+ (2603:10b6:803:2a::24) To MN2PR12MB3248.namprd12.prod.outlook.com
+ (2603:10b6:208:103::27)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=Shirish.S@amd.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-originating-ip: [165.204.77.1]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;MN2PR12MB3581;20:yQS8w+UQYRXpDpoADHhcQT06e+ZMkSc0lmMEPCQzxC0g0FHSYtC8qSvFmmnvtvj4IrBEq9q9ZfRRt5I3olVc+UTeK4an9viVbz0UJosEBdBABDoBjokHhvQMzTDSe6Imis0rDsI1OuqHpBXoPFgGOYJyo8Sj/6Ld6k+c3o4I3a4cQMjzaMf3IT/DV5ygI+Em08diSiEPVcN6licysR8Y7944pCDOcFbwt4g+4WeJV3XPKB6Qn7HF5vfSVsyMCfLo
+x-ms-office365-filtering-correlation-id: f4de54c0-fbe5-492f-df3a-08d67a34b3d7
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600109)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:MN2PR12MB3581;
+x-ms-traffictypediagnostic: MN2PR12MB3581:
+x-microsoft-antispam-prvs: <MN2PR12MB3581CAD5CBF29027FADDC93FF2800@MN2PR12MB3581.namprd12.prod.outlook.com>
+x-forefront-prvs: 0917DFAC67
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(39850400004)(136003)(396003)(346002)(376002)(366004)(199004)(189003)(478600001)(14454004)(14444005)(305945005)(6246003)(6636002)(256004)(54906003)(110136005)(186003)(36756003)(68736007)(97736004)(72206003)(4326008)(6436002)(6486002)(25786009)(31696002)(6512007)(93886005)(5660300001)(6116002)(7736002)(476003)(53936002)(3846002)(2906002)(229853002)(81166006)(81156014)(66066001)(8936002)(71190400001)(71200400001)(31686004)(6506007)(386003)(2616005)(99286004)(486006)(52116002)(446003)(11346002)(53546011)(316002)(105586002)(106356001)(8676002)(76176011)(26005)(102836004);DIR:OUT;SFP:1101;SCL:1;SRVR:MN2PR12MB3581;H:MN2PR12MB3248.namprd12.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: amd.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: 7r6rday94FYNsRyg+S5SQar4VzsLETlywrFIItJjrxEfnszQ9R+cO0Q/ZR5lTau1z/Ob+46vg7bN0Ul1RWplRAq7upXTCtggz+CQ3EWFdvfcxb+TdljKIvKUh1GD9cLqy6YCV96WN7ZSjITBuD3YJ46uDOy9yHT4pjfJp7IzzqFG5L3RrXkdHqCmo/gkizVkTAA9lrCmeF56QzgEmxug0ODWx20zNPTTdhmvuquEZiTzCz2f+E1IQ+EbEDFB/sB/6+R/xu98Dcil1xrtUhoudTPIXMJckS3Cn0NoSrKJGJyrGdVfsUwUJZxqjpnfU+2uPxFTslz+GfMQj6/EzXNKHYQJWSayzUxbwYMnUlb5hmvId+7O8gLCFVV10cfztx8IXkzE8VIwXthjl7/EtwQgp7nayeuXSuBvguQUev+GOtE=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <3594A274C5888042A6DE01E207456541@namprd12.prod.outlook.com>
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: f4de54c0-fbe5-492f-df3a-08d67a34b3d7
+X-MS-Exchange-CrossTenant-originalarrivaltime: 14 Jan 2019 15:26:51.4599
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR12MB3581
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Martin,
-
-On 09/01/2019 23:18, Martin Blumenstingl wrote:
-> Hi Neil,
-> 
-> On Wed, Jan 9, 2019 at 2:36 PM Neil Armstrong <narmstrong@baylibre.com> wrote:
->>
->> Since commit 2bcd3ecab773 when switching mode from X11 (ubuntu mate for
->> example) the display gets blurry, looking like an invalid framebuffer width.
->>
->> This commit fixed atomic crtc modesetting but didn't update the display
->> parameters when changing mode, but only when starting a mode setting after
->> a crtc disable.
->>
->> This commit setups the crctc parameter in _begin() and _enable() to
->> take in account the current ctrc parameters.
->>
->> Reported-by: Tony McKahan <tonymckahan@gmail.com>
->> Fixes: 2bcd3ecab773 ("drm/meson: Fixes for drm_crtc_vblank_on/off support")
->> Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
->> ---
->>  drivers/gpu/drm/meson/meson_crtc.c | 16 +++++++++++++---
->>  1 file changed, 13 insertions(+), 3 deletions(-)
->>
->> diff --git a/drivers/gpu/drm/meson/meson_crtc.c b/drivers/gpu/drm/meson/meson_crtc.c
->> index 75d97f1b2e8f..5bb432021caf 100644
->> --- a/drivers/gpu/drm/meson/meson_crtc.c
->> +++ b/drivers/gpu/drm/meson/meson_crtc.c
->> @@ -82,14 +82,12 @@ static const struct drm_crtc_funcs meson_crtc_funcs = {
->>
->>  };
->>
->> -static void meson_crtc_enable(struct drm_crtc *crtc)
->> +static void meson_crtc_setup(struct drm_crtc *crtc)
->>  {
->>         struct meson_crtc *meson_crtc = to_meson_crtc(crtc);
->>         struct drm_crtc_state *crtc_state = crtc->state;
->>         struct meson_drm *priv = meson_crtc->priv;
->>
->> -       DRM_DEBUG_DRIVER("\n");
->> -
->>         if (!crtc_state) {
->>                 DRM_ERROR("Invalid crtc_state\n");
->>                 return;
->> @@ -98,6 +96,16 @@ static void meson_crtc_enable(struct drm_crtc *crtc)
->>         /* Enable VPP Postblend */
-> nit-pick: this "enable" comment is now in meson_crtc_setup().
-> I would drop it because my interpretation of the following lines is
-> now "setting VPP_POSTBLEND_H_SIZE enables the VPP postblend"
-> 
->>         writel(crtc_state->mode.hdisplay,
->>                priv->io_base + _REG(VPP_POSTBLEND_H_SIZE));
->> +}
->> +
->> +static void meson_crtc_enable(struct drm_crtc *crtc)
->> +{
->> +       struct meson_crtc *meson_crtc = to_meson_crtc(crtc);
->> +       struct meson_drm *priv = meson_crtc->priv;
->> +
->> +       DRM_DEBUG_DRIVER("\n");
->> +
->> +       meson_crtc_setup(crtc);
->>
->>         /* VD1 Preblend vertical start/end */
->>         writel(FIELD_PREP(GENMASK(11, 0), 2303),
->> @@ -121,6 +129,8 @@ static void meson_crtc_atomic_enable(struct drm_crtc *crtc,
->>
->>         if (!meson_crtc->enabled)
->>                 meson_crtc_enable(crtc);
->> +       else
->> +               meson_crtc_setup(crtc);
-> it's probably only personal preference, but have you thought about
-> re-ordering this:
->   meson_crtc_setup(crtc);
-> 
->   if (!meson_crtc->enabled)
->     meson_crtc_enable(crtc);
-> 
-> with that you could get rid of the meson_crtc_setup() call in
-> meson_crtc_enable(), leaving only one code-path (instead of two) which
-> calls meson_crtc_setup()
-
-All of this is wrong, I only needed to use `atomic_commit_tail = drm_atomic_helper_commit_tail_rpm`
-in meson_drv for the fbdev.
-
-This fix is wrong, pushing a right one.
-
-Neil
-
-> 
-> 
-> Regards
-> Martin
-> 
-
+DQpPbiAxLzE0LzIwMTkgNDowMyBQTSwgQm9yaXNsYXYgUGV0a292IHdyb3RlOg0KPiBPbiBUaHUs
+IEphbiAxMCwgMjAxOSBhdCAwODowNDo0OUFNICswMDAwLCBTIHdyb3RlOg0KPj4gUGVyaGFwcyBu
+byBuZWVkIHRvIGNoZWNrIHRoZSBtb2RlbCBhbHRvZ2V0aGVyLCB0aGlzIGlzIGFwcGxpY2FibGUg
+dG8NCj4+IGVudGlyZSBmYW1pbHkgMTUsIHNpbmNlIHRoZXJlIGlzIG5vIDh0aCBHZW4uDQo+IEkg
+d291bGRuJ3QgYmUgc28gc3VyZS4gQXQgdGhlIHRpbWUgSSBkaWQgdGhpcywgd2UgZXhjbHVkZWQg
+bW9kZWxzID49DQo+IDB4MTAgYnV0IEkgZG9uJ3QgcmVtZW1iZXIgd2h5IGFueW1vcmUuIFlvdSBu
+ZWVkIHRvIGNoZWNrIHdpdGggaHcgZm9sa3MNCj4gd2hldGhlciB5b3UgY2FuIHJlYWxseSBkbyB0
+aGlzIGZvciB0aGUgd2hvbGUgZmFtaWx5Lg0KDQpJIHdpbGwgZ2V0IGJhY2sgd2l0aCBhIHRob3Jv
+dWdoIGNvbmZpcm1hdGlvbiBmcm9tIHRoZSBodyBmb2xrcy4NCg0KU2luY2UgWWF6ZW4gaXMgb24g
+dmFjYXRpb24sIGkgd2lsbCBjb25zdWx0IHdpdGggaGltIHRvbyBvbmNlIGhlIGlzIGJhY2suDQoN
+ClRoYW5rcyBmb3IgYWxsIHRoZSBjb21tZW50cywgaSBzaGFsbCBpbXBsZW1lbnQgdGhlIHNhbWUg
+aW4gY2FzZSB0aGVyZSANCndvdWxkIGJlIGFub3RoZXIgcmUtc3Bpbi4NCg0KUmVnYXJkcywNCg0K
+U2hpcmlzaCBTDQoNCj4+IEkgaGF2ZSBzdW1tYXJpemVkIHRoaXMgc2VxdWVuY2UgYWZ0ZXIgY2Fw
+dHVyaW5nIHRoZSBjYWxsIHRyYWNlIGluIGJvdGgNCj4+IHNjZW5hcmlvcy4NCj4+DQo+PiBJdHMg
+Y2xlYXIgdGhhdCB0aGUgcXVpcmtzIGFyZSBub3QgYXBwbGllZCBkdXJpbmcgUzMtPiBTMCB0cmFu
+c2l0aW9uLA0KPj4gaGVuY2UgdGhlIHBhdGNoLg0KPiBPay4NCj4NCj4gQnR3LCBmaXggeW91ciBt
+YWlsZXI6IEl0IGhhcyBhbiBlbXB0eSBmcm9tOg0KPg0KPiBGcm9tOiBTDQo+DQo+IHdoaWNoLCB3
+aGVuIEkgZG8gInJlcGx5LXRvLWFsbCIgaGVyZSwgZ2VuZXJhdGVzIGFuIGVtcHR5IFRvOiB0b28u
+DQo+DQo+IFRoeC4NCj4NCi0tIA0KUmVnYXJkcywNClNoaXJpc2ggUw0KDQo=
