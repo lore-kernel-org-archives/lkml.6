@@ -2,153 +2,131 @@ Return-Path: <SRS0=tq6k=PW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9CDEEC43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 12:55:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 69FF7C43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 12:57:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6AD2B20656
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 12:55:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 393B520657
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 12:57:02 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=pados.hu header.i=@pados.hu header.b="usYSW0gf"
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="g8Uogyfy"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726616AbfANMzq (ORCPT
+        id S1726629AbfANM5A (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 14 Jan 2019 07:55:46 -0500
-Received: from erza.pados.hu ([176.9.136.194]:39010 "EHLO erza.pados.hu"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726449AbfANMzq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 Jan 2019 07:55:46 -0500
-X-Greylist: delayed 1534 seconds by postgrey-1.27 at vger.kernel.org; Mon, 14 Jan 2019 07:55:44 EST
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=pados.hu;
-         s=february2016; h=Content-Transfer-Encoding:MIME-Version:Message-Id:Date:
-        Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
-        List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=rXbiEf79sJoWrz/kAiUQbcyFCnrDzGwpuOg3buNZrsE=; b=usYSW0gfDdcgT53AYroiC1TlVf
-        06mJhCAQtxkj42lyu7IABEAzxTtbQTjuSZeswVNfw0rTMDR4LSnESny/O6r0UrShHvuGAIrYnzRDI
-        NjkFQR2Q30eFTIPMM11iTkORfaCDxuqsULPzIQaFuSZRBFXRANEFqAQ+g63jXtJi/+SJdSSNFs2Cq
-        SvXUaJUujP2yxbKPKPwC5alM/H9FhcOIiGrhRYGa6kXs2d7TOVkZeu5L146kP1jA56rWQDmIu5zRZ
-        vmMj98r5B1PG5kJdbzpYYchZ7xave8UVHz4mrlzCcSq9nftvdxwGrx1N0CC/T+zRRJLkz9eHn+fDf
-        jtjkwVDA==;
-Received: from 188-143-5-0.pool.digikabel.hu ([188.143.5.0] helo=localhost)
-        by erza with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <pados@pados.hu>)
-        id 1gj1NX-00045P-WF; Mon, 14 Jan 2019 13:30:08 +0100
-From:   Karoly Pados <pados@pados.hu>
-To:     "Johan Hovold" <johan@kernel.org>,
-        "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
-        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
-        "Loic Poulain" <loic.poulain@linaro.org>
-Cc:     Karoly Pados <pados@pados.hu>
-Subject: [PATCH] USB: serial: ftdi_sio: Fix GPIO not working in autosuspend
-Date:   Mon, 14 Jan 2019 13:30:03 +0100
-Message-Id: <20190114123003.8228-1-pados@pados.hu>
-X-Mailer: git-send-email 2.20.1
+        Mon, 14 Jan 2019 07:57:00 -0500
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:53940 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726449AbfANM47 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 14 Jan 2019 07:56:59 -0500
+Received: by mail-wm1-f68.google.com with SMTP id d15so8793178wmb.3
+        for <linux-kernel@vger.kernel.org>; Mon, 14 Jan 2019 04:56:58 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=eE6TJ5VZ3Nk1FjdARea1smiBFbzx1XYTfg4oJ2JGHJs=;
+        b=g8UogyfyF0r7CuNlezSUf9iYT+RPRjoDO3uSz6mkbnuX//PjptXFIYAVK7rVeOrQ24
+         5nMTLDJRVxI34R3QTHgPQHZe/r5rYJ1EVouM7l+ZQGaIU2hq9N1IG2uiUdOTLV/EQ0yI
+         RKztBsreD1gDWBPCG0c+aPZIToZ0LEDFqzkGc=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=eE6TJ5VZ3Nk1FjdARea1smiBFbzx1XYTfg4oJ2JGHJs=;
+        b=X986XT7g23AiitOsJCSYa7y7Sw1YzIHw/9IWG61geEV17cFpqXgcGWs7yusKIphvUp
+         mqi4pSzqS0t75uOTVKFz3JGHSsET1IqDEYvqlvrSMyocdeymzEt+HSsQ84LkPY3KMgo3
+         3mAtQ478x8y6x1thQYFxHnfVwZAb0cCT0OCE4K6SAbVQueO+HU5p/EiZJJiLVJNy2YLk
+         ZhuOU+2WZ4xHS3WKGsrF6hSjctUOUH9+rOQaq2UsBLCkyAksu33ONJ7KxwqLnrAn0pvJ
+         F34tYj5xUoqHhC/jE/pZ1Xjk7qwUGVPy49C17w6w/uqa3k2o+7239jazwYvgsAyqjiTR
+         7ClQ==
+X-Gm-Message-State: AJcUukeXLSRVZaMdrf7uzeH6hvcYfbBT8es3QJZBTX411vkWHiVVuQrC
+        aRmi2PKxk8DWHYa/qkdsRlVtcQ==
+X-Google-Smtp-Source: ALg8bN5NhSGY+TVdXYyzaakXfLtjuIvc/XiBQFmC7Emp99x4wNII47joUaHwiYlnjHKyGw4Iw3Eozg==
+X-Received: by 2002:a1c:834c:: with SMTP id f73mr11802641wmd.126.1547470617138;
+        Mon, 14 Jan 2019 04:56:57 -0800 (PST)
+Received: from [192.168.0.41] (45.70.136.77.rev.sfr.net. [77.136.70.45])
+        by smtp.googlemail.com with ESMTPSA id 129sm45849167wmd.18.2019.01.14.04.56.55
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 14 Jan 2019 04:56:56 -0800 (PST)
+Subject: Re: [PATCH v3 0/2] Allwinner A64 timer workaround
+To:     Samuel Holland <samuel@sholland.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Chen-Yu Tsai <wens@csie.org>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <Mark.Rutland@arm.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Marc Zyngier <marc.zyngier@arm.com>
+Cc:     devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com
+References: <20190113021719.46457-1-samuel@sholland.org>
+From:   Daniel Lezcano <daniel.lezcano@linaro.org>
+Message-ID: <9738319a-4154-62be-2325-2873dfb326dc@linaro.org>
+Date:   Mon, 14 Jan 2019 13:56:55 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
+In-Reply-To: <20190113021719.46457-1-samuel@sholland.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
-X-Spam_score: -2.9
-X-Spam_report: Spam detection software, running on the system "erza",
- has NOT identified this incoming email as spam.  The original
- message has been attached to this so you can view it or label
- similar future email.  If you have any questions, see
- the administrator of that system for details.
- Content preview:  There is a bug in the current GPIO code for ftdi_sio: it failed
-    to take USB autosuspend into account. If the device is in autosuspend, calls
-    to usb_control_msg() fail with -EHOSTUNREACH. Because the s [...] 
- Content analysis details:   (-2.9 points, 5.0 required)
-  pts rule name              description
- ---- ---------------------- --------------------------------------------------
-  0.0 URIBL_BLOCKED          ADMINISTRATOR NOTICE: The query to URIBL was
-                             blocked.  See
-                             http://wiki.apache.org/spamassassin/DnsBlocklists#dnsbl-block
-                              for more information.
-                             [URIs: pados.hu]
- -1.0 ALL_TRUSTED            Passed through trusted hosts only via SMTP
- -1.9 BAYES_00               BODY: Bayes spam probability is 0 to 1%
-                             [score: 0.0000]
-  0.0 TVD_RCVD_IP            Message was received from an IP address
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-There is a bug in the current GPIO code for ftdi_sio: it failed to take USB
-autosuspend into account. If the device is in autosuspend, calls to
-usb_control_msg() fail with -EHOSTUNREACH. Because the standard value for
-autosuspend timeout is usually 2-5 seconds, this made it almost impossible
-to use the GPIOs on machines that have USB autosuspend enabled. This patch
-fixes the issue by acquiring a PM lock on the device for the duration of
-the USB transfers. Tested on an FT231X device.
+On 13/01/2019 03:17, Samuel Holland wrote:
+> This is the third version of a patch series to fix system clock jumps
+> and other timer instability on the Allwinner A64 SoC. It has now been
+> tested for a week, and I've received no reports of date jumps with this
+> version. So this is, as far as I can tell, a complete workaround.
+> 
+> See the commit messages for a detailed description of the issue, but the
+> summary is that, when a high counter bit rolls over, indeterminance in
+> the low bits causes CNTPCT/CNTVCT and their respective TVAL registers to
+> jump forward or backward. Backward jumps (or the next read after forward
+> jumps) are sometimes seen by the kernel and interpreted as the timer
+> wrapping around after 2^56 cycles. This causes the system clock to jump
+> forward approximately 91 years.
+> 
+> changes since v2;
+> - Reduced workaround threshold from 11 to 10 bits based on reports from
+>   other hardare and the U-Boot version of this workaround
+> - Added TVAL handling based on Marc's suggestion
+> - Added erratum documentation and renamed symbols to match
+> - Added Maxime's Acked-by
+> 
+> changes since v1:
+> - Add an iteration limit like most other arch timer workarounds
+> - Added Andre's Tested-by
+> 
+> Samuel Holland (2):
+>   arm64: arch_timer: Workaround for Allwinner A64 timer instability
+>   arm64: dts: allwinner: a64: Enable A64 timer workaround
+> 
+>  Documentation/arm64/silicon-errata.txt        |  2 +
+>  arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi |  1 +
+>  drivers/clocksource/Kconfig                   | 10 ++++
+>  drivers/clocksource/arm_arch_timer.c          | 55 +++++++++++++++++++
+>  4 files changed, 68 insertions(+)
+> 
 
-Signed-off-by: Karoly Pados <pados@pados.hu>
----
-Please consider backporting to 4.20.x, otherwise the GPIO driver is not
-really usable for anybody with USB autosuspend enabled (eg. many laptops),
-at least not without manual configuration.
+Applied. Took the opportunity to add the stable@ tag.
 
- drivers/usb/serial/ftdi_sio.c | 21 ++++++++++++++++++++-
- 1 file changed, 20 insertions(+), 1 deletion(-)
+Thanks
 
-diff --git a/drivers/usb/serial/ftdi_sio.c b/drivers/usb/serial/ftdi_sio.c
-index 1ab2a6191013..01813dce37f2 100644
---- a/drivers/usb/serial/ftdi_sio.c
-+++ b/drivers/usb/serial/ftdi_sio.c
-@@ -1783,6 +1783,13 @@ static int ftdi_set_bitmode(struct usb_serial_port *port, u8 mode)
- 	int result;
- 	u16 val;
- 
-+	result = usb_autopm_get_interface(port->serial->interface);
-+	if (result) {
-+		dev_err(&port->serial->interface->dev,
-+			"Failed to wake device from autosuspend.\n");
-+		return result;
-+	}
-+
- 	val = (mode << 8) | (priv->gpio_output << 4) | priv->gpio_value;
- 	result = usb_control_msg(serial->dev,
- 				 usb_sndctrlpipe(serial->dev, 0),
-@@ -1795,6 +1802,8 @@ static int ftdi_set_bitmode(struct usb_serial_port *port, u8 mode)
- 			val, result);
- 	}
- 
-+	usb_autopm_put_interface(port->serial->interface);
-+
- 	return result;
- }
- 
-@@ -1846,9 +1855,18 @@ static int ftdi_read_cbus_pins(struct usb_serial_port *port)
- 	unsigned char *buf;
- 	int result;
- 
-+	result = usb_autopm_get_interface(port->serial->interface);
-+	if (result) {
-+		dev_err(&port->serial->interface->dev,
-+			"Failed to wake device from autosuspend.\n");
-+		return result;
-+	}
-+
- 	buf = kmalloc(1, GFP_KERNEL);
--	if (!buf)
-+	if (!buf) {
-+		usb_autopm_put_interface(port->serial->interface);
- 		return -ENOMEM;
-+	}
- 
- 	result = usb_control_msg(serial->dev,
- 				 usb_rcvctrlpipe(serial->dev, 0),
-@@ -1863,6 +1881,7 @@ static int ftdi_read_cbus_pins(struct usb_serial_port *port)
- 	}
- 
- 	kfree(buf);
-+	usb_autopm_put_interface(port->serial->interface);
- 
- 	return result;
- }
+  -- Daniel
+
+
 -- 
-2.20.1
+ <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
+
+Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
 
