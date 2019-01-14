@@ -2,181 +2,167 @@ Return-Path: <SRS0=tq6k=PW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-5.7 required=3.0 tests=FROM_LOCAL_HEX,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 84543C43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 17:21:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 13FAAC43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 17:23:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 53B3A2070B
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 17:21:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C55152070B
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 17:23:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726778AbfANRVc (ORCPT
+        id S1726736AbfANRXG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 14 Jan 2019 12:21:32 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:51792 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726673AbfANRVc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 Jan 2019 12:21:32 -0500
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id B9FD3811D9;
-        Mon, 14 Jan 2019 17:21:30 +0000 (UTC)
-Received: from redhat.com (ovpn-124-246.rdu2.redhat.com [10.10.124.246])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 7BEEF5C1B4;
-        Mon, 14 Jan 2019 17:21:27 +0000 (UTC)
-Date:   Mon, 14 Jan 2019 12:21:25 -0500
-From:   Jerome Glisse <jglisse@redhat.com>
-To:     Jan Kara <jack@suse.cz>
-Cc:     John Hubbard <jhubbard@nvidia.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Dave Chinner <david@fromorbit.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        John Hubbard <john.hubbard@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linux MM <linux-mm@kvack.org>, tom@talpey.com,
-        Al Viro <viro@zeniv.linux.org.uk>, benve@cisco.com,
-        Christoph Hellwig <hch@infradead.org>,
-        Christopher Lameter <cl@linux.com>,
-        "Dalessandro, Dennis" <dennis.dalessandro@intel.com>,
-        Doug Ledford <dledford@redhat.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Michal Hocko <mhocko@kernel.org>, mike.marciniszyn@intel.com,
-        rcampbell@nvidia.com,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Subject: Re: [PATCH 1/2] mm: introduce put_user_page*(), placeholder versions
-Message-ID: <20190114172124.GA3702@redhat.com>
-References: <20190103092654.GA31370@quack2.suse.cz>
- <20190103144405.GC3395@redhat.com>
- <a79b259b-3982-b271-025a-0656f70506f4@nvidia.com>
- <20190111165141.GB3190@redhat.com>
- <1b37061c-5598-1b02-2983-80003f1c71f2@nvidia.com>
- <20190112020228.GA5059@redhat.com>
- <294bdcfa-5bf9-9c09-9d43-875e8375e264@nvidia.com>
- <20190112024625.GB5059@redhat.com>
- <b6f4ed36-fc8d-1f9b-8c74-b12f61d496ae@nvidia.com>
- <20190114145447.GJ13316@quack2.suse.cz>
+        Mon, 14 Jan 2019 12:23:06 -0500
+Received: from mail-io1-f72.google.com ([209.85.166.72]:43778 "EHLO
+        mail-io1-f72.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726646AbfANRXF (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 14 Jan 2019 12:23:05 -0500
+Received: by mail-io1-f72.google.com with SMTP id k4so20459313ioc.10
+        for <linux-kernel@vger.kernel.org>; Mon, 14 Jan 2019 09:23:04 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to
+         :content-transfer-encoding;
+        bh=TWkZHAn9M2EumQUvazEJb+Fq0irbxtXkPOMZsVy/Sfw=;
+        b=YBjLRZVSgivKVpOUxTGCeWEek/T/PJNYaWkG4MnfSm/o+nvfPzVeiPN9fuGC2nkqLr
+         ovwTHurI2D0wMHPYIAMg5d2zgIAikHGMkO/7BmIh7qUC91dTfj29wiuF/t41up79u3nX
+         iZVuPqUBaWNJaXG3LvMQpd5Gqo4/QWL9DwsI3AGe/k90k4yjoaXm6HahsDBr24ROp9b5
+         iwqLxjoSwSlX+tueXiWcD0tiFYD/7rliy8Hd0ul8cEh/IM3B8xnRzlFxe/gevTec7ZC2
+         PxWS5ohHPLwFWZ8ApfYMheEMi6fPi9dcE7nBFVtJXWN8Xg9ecfg3Gvnfdi3ZcS65z4Xe
+         S2bQ==
+X-Gm-Message-State: AJcUukeTwbqZHpGJaY66I4XW5PAk0bdyjCNSQ0zyy2jZV4JPl+UYGtHv
+        nGvlZz2A8wh34wYX/OqNo91F5vtgtt5wdMfCbVORb3GiEqv1
+X-Google-Smtp-Source: ALg8bN5gFihspewWCLhZ0+juIDZpJBgJMSKtIn9s8PAKGxA2AT5eLWIezNJAy1gaEM/ylrjJakK8BFxknr/Y0LQUmy07jEVrXF6c
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20190114145447.GJ13316@quack2.suse.cz>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.27]); Mon, 14 Jan 2019 17:21:31 +0000 (UTC)
+X-Received: by 2002:a5e:df44:: with SMTP id g4mr9962107ioq.0.1547486584517;
+ Mon, 14 Jan 2019 09:23:04 -0800 (PST)
+Date:   Mon, 14 Jan 2019 09:23:04 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000002a3bfb057f6e4c96@google.com>
+Subject: KASAN: stack-out-of-bounds Read in swake_up_one
+From:   syzbot <syzbot+af057431e1ebbdadd4d1@syzkaller.appspotmail.com>
+To:     linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com,
+        tglx@linutronix.de
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+Content-Transfer-Encoding: base64
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jan 14, 2019 at 03:54:47PM +0100, Jan Kara wrote:
-> On Fri 11-01-19 19:06:08, John Hubbard wrote:
-> > On 1/11/19 6:46 PM, Jerome Glisse wrote:
-> > > On Fri, Jan 11, 2019 at 06:38:44PM -0800, John Hubbard wrote:
-> > > [...]
-> > > 
-> > >>>> The other idea that you and Dan (and maybe others) pointed out was a debug
-> > >>>> option, which we'll certainly need in order to safely convert all the call
-> > >>>> sites. (Mirror the mappings at a different kernel offset, so that put_page()
-> > >>>> and put_user_page() can verify that the right call was made.)  That will be
-> > >>>> a separate patchset, as you recommended.
-> > >>>>
-> > >>>> I'll even go as far as recommending the page lock itself. I realize that this 
-> > >>>> adds overhead to gup(), but we *must* hold off page_mkclean(), and I believe
-> > >>>> that this (below) has similar overhead to the notes above--but is *much* easier
-> > >>>> to verify correct. (If the page lock is unacceptable due to being so widely used,
-> > >>>> then I'd recommend using another page bit to do the same thing.)
-> > >>>
-> > >>> Please page lock is pointless and it will not work for GUP fast. The above
-> > >>> scheme do work and is fine. I spend the day again thinking about all memory
-> > >>> ordering and i do not see any issues.
-> > >>>
-> > >>
-> > >> Why is it that page lock cannot be used for gup fast, btw?
-> > > 
-> > > Well it can not happen within the preempt disable section. But after
-> > > as a post pass before GUP_fast return and after reenabling preempt then
-> > > it is fine like it would be for regular GUP. But locking page for GUP
-> > > is also likely to slow down some workload (with direct-IO).
-> > > 
-> > 
-> > Right, and so to crux of the matter: taking an uncontended page lock
-> > involves pretty much the same set of operations that your approach does.
-> > (If gup ends up contended with the page lock for other reasons than these
-> > paths, that seems surprising.) I'd expect very similar performance.
-> > 
-> > But the page lock approach leads to really dramatically simpler code (and
-> > code reviews, let's not forget). Any objection to my going that
-> > direction, and keeping this idea as a Plan B? I think the next step will
-> > be, once again, to gather some performance metrics, so maybe that will
-> > help us decide.
-> 
-> FWIW I agree that using page lock for protecting page pinning (and thus
-> avoid races with page_mkclean()) looks simpler to me as well and I'm not
-> convinced there will be measurable difference to the more complex scheme
-> with barriers Jerome suggests unless that page lock contended. Jerome is
-> right that you cannot just do lock_page() in gup_fast() path. There you
-> have to do trylock_page() and if that fails just bail out to the slow gup
-> path.
-> 
-> Regarding places other than page_mkclean() that need to check pinned state:
-> Definitely page migration will want to check whether the page is pinned or
-> not so that it can deal differently with short-term page references vs
-> longer-term pins.
-> 
-> Also there is one more idea I had how to record number of pins in the page:
-> 
-> #define PAGE_PIN_BIAS	1024
-> 
-> get_page_pin()
-> 	atomic_add(&page->_refcount, PAGE_PIN_BIAS);
-> 
-> put_page_pin();
-> 	atomic_add(&page->_refcount, -PAGE_PIN_BIAS);
-> 
-> page_pinned(page)
-> 	(atomic_read(&page->_refcount) - page_mapcount(page)) > PAGE_PIN_BIAS
-> 
-> This is pretty trivial scheme. It still gives us 22-bits for page pins
-> which should be plenty (but we should check for that and bail with error if
-> it would overflow). Also there will be no false negatives and false
-> positives only if there are more than 1024 non-page-table references to the
-> page which I expect to be rare (we might want to also subtract
-> hpage_nr_pages() for radix tree references to avoid excessive false
-> positives for huge pages although at this point I don't think they would
-> matter). Thoughts?
-
-Racing PUP are as likely to cause issues:
-
-CPU0                        | CPU1       | CPU2
-                            |            |
-                            | PUP()      |
-    page_pinned(page)       |            |
-      (page_count(page) -   |            |
-       page_mapcount(page)) |            |
-                            |            | GUP()
-
-So here the refcount snap-shot does not include the second GUP and
-we can have a false negative ie the page_pinned() will return false
-because of the PUP happening just before on CPU1 despite the racing
-GUP on CPU2 just after.
-
-I believe only either lock or memory ordering with barrier can
-guarantee that we do not miss GUP ie no false negative. Still the
-bias idea might be usefull as with it we should not need a flag.
-
-So to make the above safe it would still need the page write back
-double check that i described so that GUP back-off if it raced with
-page_mkclean,clear_page_dirty_for_io and the fs write page call back
-which call test_set_page_writeback() (yes it is very unlikely but
-might still happen).
-
-
-I still need to ponder some more on all the races.
-
-
-Cheers,
-Jérôme
+SGVsbG8sDQoNCnN5emJvdCBmb3VuZCB0aGUgZm9sbG93aW5nIGNyYXNoIG9uOg0KDQpIRUFEIGNv
+bW1pdDogICAgZGU2NjI5ZWIyNjJlIE1lcmdlIHRhZyAncGNpLXY1LjAtZml4ZXMtMScgb2YgZ2l0
+Oi8vZ2l0Lmtlci4uDQpnaXQgdHJlZTogICAgICAgdXBzdHJlYW0NCmNvbnNvbGUgb3V0cHV0OiBo
+dHRwczovL3N5emthbGxlci5hcHBzcG90LmNvbS94L2xvZy50eHQ/eD0xMGRkMmZhYjQwMDAwMA0K
+a2VybmVsIGNvbmZpZzogIGh0dHBzOi8vc3l6a2FsbGVyLmFwcHNwb3QuY29tL3gvLmNvbmZpZz94
+PWVkZjFjMzAzMTA5N2MzMDQNCmRhc2hib2FyZCBsaW5rOiBodHRwczovL3N5emthbGxlci5hcHBz
+cG90LmNvbS9idWc/ZXh0aWQ9YWYwNTc0MzFlMWViYmRhZGQ0ZDENCmNvbXBpbGVyOiAgICAgICBn
+Y2MgKEdDQykgOS4wLjAgMjAxODEyMzEgKGV4cGVyaW1lbnRhbCkNCnN5eiByZXBybzogICAgICBo
+dHRwczovL3N5emthbGxlci5hcHBzcG90LmNvbS94L3JlcHJvLnN5ej94PTEwYmQwMjM3NDAwMDAw
+DQoNCklNUE9SVEFOVDogaWYgeW91IGZpeCB0aGUgYnVnLCBwbGVhc2UgYWRkIHRoZSBmb2xsb3dp
+bmcgdGFnIHRvIHRoZSBjb21taXQ6DQpSZXBvcnRlZC1ieTogc3l6Ym90K2FmMDU3NDMxZTFlYmJk
+YWRkNGQxQHN5emthbGxlci5hcHBzcG90bWFpbC5jb20NCg0KSVB2NjogQUREUkNPTkYoTkVUREVW
+X1VQKTogaHNyMDogbGluayBpcyBub3QgcmVhZHkNCklQdjY6IEFERFJDT05GKE5FVERFVl9DSEFO
+R0UpOiBoc3IwOiBsaW5rIGJlY29tZXMgcmVhZHkNCklQdjY6IEFERFJDT05GKE5FVERFVl9VUCk6
+IHZ4Y2FuMTogbGluayBpcyBub3QgcmVhZHkNCjgwMjFxOiBhZGRpbmcgVkxBTiAwIHRvIEhXIGZp
+bHRlciBvbiBkZXZpY2UgYmF0YWR2MA0KPT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09
+PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09DQpCVUc6IEtBU0FOOiBzdGFjay1vdXQt
+b2YtYm91bmRzIGluIHN3YWtlX3VwX2xvY2tlZCBrZXJuZWwvc2NoZWQvc3dhaXQuYzozMCAgDQpb
+aW5saW5lXQ0KQlVHOiBLQVNBTjogc3RhY2stb3V0LW9mLWJvdW5kcyBpbiBzd2FrZV91cF9sb2Nr
+ZWQga2VybmVsL3NjaGVkL3N3YWl0LmM6MjIgIA0KW2lubGluZV0NCkJVRzogS0FTQU46IHN0YWNr
+LW91dC1vZi1ib3VuZHMgaW4gc3dha2VfdXBfb25lKzB4MmJmLzB4M2MwICANCmtlcm5lbC9zY2hl
+ZC9zd2FpdC5jOjQwDQprYXNhbjogQ09ORklHX0tBU0FOX0lOTElORSBlbmFibGVkDQpSZWFkIG9m
+IHNpemUgOCBhdCBhZGRyIGZmZmY4ODgwYTk0ODdhODggYnkgdGFzayBzeXotZXhlY3V0b3I1Lzgz
+NjgNCmthc2FuOiBHUEYgY291bGQgYmUgY2F1c2VkIGJ5IE5VTEwtcHRyIGRlcmVmIG9yIHVzZXIg
+bWVtb3J5IGFjY2Vzcw0KDQpnZW5lcmFsIHByb3RlY3Rpb24gZmF1bHQ6IDAwMDAgWyMxXSBQUkVF
+TVBUIFNNUCBLQVNBTg0KQ1BVOiAwIFBJRDogODM2OCBDb21tOiBzeXotZXhlY3V0b3I1IE5vdCB0
+YWludGVkIDUuMC4wLXJjMSsgIzIwDQpDUFU6IDEgUElEOiA2NCBDb21tOiBrc29mdGlyce+/ve+/
+vTEgTm90IHRhaW50ZWQgNS4wLjAtcmMxKyAjMjANCkhhcmR3YXJlIG5hbWU6IEdvb2dsZSBHb29n
+bGUgQ29tcHV0ZSBFbmdpbmUvR29vZ2xlIENvbXB1dGUgRW5naW5lLCBCSU9TICANCkdvb2dsZSAw
+MS8wMS8yMDExDQpIYXJkd2FyZSBuYW1lOiBHb29nbGUgR29vZ2xlIENvbXB1dGUgRW5naW5lL0dv
+b2dsZSBDb21wdXRlIEVuZ2luZSwgQklPUyAgDQpHb29nbGUgMDEvMDEvMjAxMQ0KQ2FsbCBUcmFj
+ZToNClJJUDogMDAxMDpsb29rdXBfb2JqZWN0IGxpYi9kZWJ1Z29iamVjdHMuYzoxNTYgW2lubGlu
+ZV0NClJJUDogMDAxMDpkZWJ1Z19vYmplY3RfZGVhY3RpdmF0ZSBsaWIvZGVidWdvYmplY3RzLmM6
+NTQyIFtpbmxpbmVdDQpSSVA6IDAwMTA6ZGVidWdfb2JqZWN0X2RlYWN0aXZhdGUrMHgxNmMvMHg0
+YjAgbGliL2RlYnVnb2JqZWN0cy5jOjUyOQ0KICBfX2R1bXBfc3RhY2sgbGliL2R1bXBfc3RhY2su
+Yzo3NyBbaW5saW5lXQ0KICBkdW1wX3N0YWNrKzB4MWRiLzB4MmQwIGxpYi9kdW1wX3N0YWNrLmM6
+MTEzDQpDb2RlOiBjMSBlYSAwMyA0MiA4MCAzYyAyYSAwMCAwZiA4NSA0OSAwMiAwMCAwMCA0ZCA4
+YiAyNCAyNCA0ZCA4NSBlNCAwZiA4NCAgDQpkMSAwMCAwMCAwMCA0OSA4ZCA3YyAyNCAxOCA4MyBj
+MyAwMSA0OCA4OSBmYSA0OCBjMSBlYSAwMyA8NDI+IDgwIDNjIDJhIDAwICANCjBmIDg1IGZhIDAx
+IDAwIDAwIDQ5IDNiIDRjIDI0IDE4IDc1IGMwIDQ5IDhkIDdjIDI0DQpSU1A6IDAwMTg6ZmZmZjg4
+ODBhZTcwN2I4MCBFRkxBR1M6IDAwMDEwMDAzDQpSQVg6IDFmZmZmZmZmZjE2ZDYwYmMgUkJYOiAw
+MDAwMDAwMDAwMDAwMDA0IFJDWDogZmZmZjg4ODBhZTcyNjYyMA0KICBwcmludF9hZGRyZXNzX2Rl
+c2NyaXB0aW9uLmNvbGQrMHg3Yy8weDIwZCBtbS9rYXNhbi9yZXBvcnQuYzoxODcNClJEWDogMDAw
+MDAwMDAwMDAwMDE5ZCBSU0k6IDAwMDAwMDAwMDAwMDAwMDQgUkRJOiAwMDAwMDAwMDAwMDAwY2Vk
+DQpSQlA6IGZmZmY4ODgwYWU3MDdjNzAgUjA4OiAxZmZmZjExMDE1Y2UwZjVjIFIwOTogZmZmZmZm
+ZmY4OTliMTNlMA0KUjEwOiAwMDAwMDAwMDAwMDAwMDg2IFIxMTogMDAwMDAwMDAwMDAwMDAwMyBS
+MTI6IDAwMDAwMDAwMDAwMDBjZDUNClIxMzogZGZmZmZjMDAwMDAwMDAwMCBSMTQ6IDFmZmZmMTEw
+MTVjZTBmNzQgUjE1OiBmZmZmZmZmZjhiNmIwNWU4DQogIGthc2FuX3JlcG9ydC5jb2xkKzB4MWIv
+MHg0MCBtbS9rYXNhbi9yZXBvcnQuYzozMTcNCkZTOiAgMDAwMDAwMDAwMDAwMDAwMCgwMDAwKSBH
+UzpmZmZmODg4MGFlNzAwMDAwKDAwMDApIGtubEdTOjAwMDAwMDAwMDAwMDAwMDANCkNTOiAgMDAx
+MCBEUzogMDAwMCBFUzogMDAwMCBDUjA6IDAwMDAwMDAwODAwNTAwMzMNCkNSMjogMDAwMDAwMDAw
+MDAwMDA2OCBDUjM6IDAwMDAwMDAwOTZmZjcwMDAgQ1I0OiAwMDAwMDAwMDAwMTQwNmUwDQogIF9f
+YXNhbl9yZXBvcnRfbG9hZDhfbm9hYm9ydCsweDE0LzB4MjAgbW0va2FzYW4vZ2VuZXJpY19yZXBv
+cnQuYzoxMzUNCkRSMDogMDAwMDAwMDAwMDAwMDAwMCBEUjE6IDAwMDAwMDAwMDAwMDAwMDAgRFIy
+OiAwMDAwMDAwMDAwMDAwMDAwDQogIHN3YWtlX3VwX2xvY2tlZCBrZXJuZWwvc2NoZWQvc3dhaXQu
+YzozMCBbaW5saW5lXQ0KICBzd2FrZV91cF9sb2NrZWQga2VybmVsL3NjaGVkL3N3YWl0LmM6MjIg
+W2lubGluZV0NCiAgc3dha2VfdXBfb25lKzB4MmJmLzB4M2MwIGtlcm5lbC9zY2hlZC9zd2FpdC5j
+OjQwDQpEUjM6IDAwMDAwMDAwMDAwMDAwMDAgRFI2OiAwMDAwMDAwMGZmZmUwZmYwIERSNzogMDAw
+MDAwMDAwMDAwMDQwMA0KQ2FsbCBUcmFjZToNCiAgPElSUT4NCiAgcmN1X2dwX2t0aHJlYWRfd2Fr
+ZSsweGMzLzB4MTAwIGtlcm5lbC9yY3UvdHJlZS5jOjE1NzENCiAgZGVidWdfaHJ0aW1lcl9kZWFj
+dGl2YXRlIGtlcm5lbC90aW1lL2hydGltZXIuYzo0MTIgW2lubGluZV0NCiAgZGVidWdfZGVhY3Rp
+dmF0ZSBrZXJuZWwvdGltZS9ocnRpbWVyLmM6NDYyIFtpbmxpbmVdDQogIF9fcnVuX2hydGltZXIg
+a2VybmVsL3RpbWUvaHJ0aW1lci5jOjEzNTkgW2lubGluZV0NCiAgX19ocnRpbWVyX3J1bl9xdWV1
+ZXMrMHgyMjUvMHgxMDUwIGtlcm5lbC90aW1lL2hydGltZXIuYzoxNDUxDQogIHJjdV9yZXBvcnRf
+cXNfcnNwKzB4MTc3LzB4MjIwIGtlcm5lbC9yY3UvdHJlZS5jOjIxMzENCiAgcmN1X3JlcG9ydF91
+bmJsb2NrX3FzX3JucCBrZXJuZWwvcmN1L3RyZWUuYzoyMjM1IFtpbmxpbmVdDQogIHJjdV9wcmVl
+bXB0X2RlZmVycmVkX3FzX2lycXJlc3RvcmUrMHhjMDMvMHhmZDAga2VybmVsL3JjdS90cmVlX3Bs
+dWdpbi5oOjU3NA0KICBocnRpbWVyX2ludGVycnVwdCsweDMxNC8weDc3MCBrZXJuZWwvdGltZS9o
+cnRpbWVyLmM6MTUwOQ0KICBsb2NhbF9hcGljX3RpbWVyX2ludGVycnVwdCBhcmNoL3g4Ni9rZXJu
+ZWwvYXBpYy9hcGljLmM6MTAzNSBbaW5saW5lXQ0KICBzbXBfYXBpY190aW1lcl9pbnRlcnJ1cHQr
+MHgxOGQvMHg3NjAgYXJjaC94ODYva2VybmVsL2FwaWMvYXBpYy5jOjEwNjANCiAgcmN1X3JlYWRf
+dW5sb2NrX3NwZWNpYWwrMHgxY2QvMHgzODAga2VybmVsL3JjdS90cmVlX3BsdWdpbi5oOjY2NQ0K
+ICBhcGljX3RpbWVyX2ludGVycnVwdCsweGYvMHgyMCBhcmNoL3g4Ni9lbnRyeS9lbnRyeV82NC5T
+OjgwNw0KICBfX3JjdV9yZWFkX3VubG9jaysweDIwNC8weDIxMCBrZXJuZWwvcmN1L3RyZWVfcGx1
+Z2luLmg6NDM3DQogIDwvSVJRPg0KTW9kdWxlcyBsaW5rZWQgaW46DQotLS1bIGVuZCB0cmFjZSBk
+NGFkM2YxMGVmYzczZTgxIF0tLS0NClJJUDogMDAxMDpsb29rdXBfb2JqZWN0IGxpYi9kZWJ1Z29i
+amVjdHMuYzoxNTYgW2lubGluZV0NClJJUDogMDAxMDpkZWJ1Z19vYmplY3RfZGVhY3RpdmF0ZSBs
+aWIvZGVidWdvYmplY3RzLmM6NTQyIFtpbmxpbmVdDQpSSVA6IDAwMTA6ZGVidWdfb2JqZWN0X2Rl
+YWN0aXZhdGUrMHgxNmMvMHg0YjAgbGliL2RlYnVnb2JqZWN0cy5jOjUyOQ0KICByY3VfcmVhZF91
+bmxvY2sgaW5jbHVkZS9saW51eC9yY3VwZGF0ZS5oOjY2MCBbaW5saW5lXQ0KICBpc19icGZfdGV4
+dF9hZGRyZXNzKzB4YjYvMHgxNzAga2VybmVsL2JwZi9jb3JlLmM6NjY4DQpDb2RlOiBjMSBlYSAw
+MyA0MiA4MCAzYyAyYSAwMCAwZiA4NSA0OSAwMiAwMCAwMCA0ZCA4YiAyNCAyNCA0ZCA4NSBlNCAw
+ZiA4NCAgDQpkMSAwMCAwMCAwMCA0OSA4ZCA3YyAyNCAxOCA4MyBjMyAwMSA0OCA4OSBmYSA0OCBj
+MSBlYSAwMyA8NDI+IDgwIDNjIDJhIDAwICANCjBmIDg1IGZhIDAxIDAwIDAwIDQ5IDNiIDRjIDI0
+IDE4IDc1IGMwIDQ5IDhkIDdjIDI0DQogIGtlcm5lbF90ZXh0X2FkZHJlc3MrMHg3My8weGYwIGtl
+cm5lbC9leHRhYmxlLmM6MTUyDQpSU1A6IDAwMTg6ZmZmZjg4ODBhZTcwN2I4MCBFRkxBR1M6IDAw
+MDEwMDAzDQogIF9fa2VybmVsX3RleHRfYWRkcmVzcysweGQvMHg0MCBrZXJuZWwvZXh0YWJsZS5j
+OjEwNw0KUkFYOiAxZmZmZmZmZmYxNmQ2MGJjIFJCWDogMDAwMDAwMDAwMDAwMDAwNCBSQ1g6IGZm
+ZmY4ODgwYWU3MjY2MjANCiAgdW53aW5kX2dldF9yZXR1cm5fYWRkcmVzcyBhcmNoL3g4Ni9rZXJu
+ZWwvdW53aW5kX2ZyYW1lLmM6MTggW2lubGluZV0NCiAgdW53aW5kX2dldF9yZXR1cm5fYWRkcmVz
+cysweDYxLzB4YTAgYXJjaC94ODYva2VybmVsL3Vud2luZF9mcmFtZS5jOjEzDQpSRFg6IDAwMDAw
+MDAwMDAwMDAxOWQgUlNJOiAwMDAwMDAwMDAwMDAwMDA0IFJESTogMDAwMDAwMDAwMDAwMGNlZA0K
+ICBfX3NhdmVfc3RhY2tfdHJhY2UrMHg4YS8weGYwIGFyY2gveDg2L2tlcm5lbC9zdGFja3RyYWNl
+LmM6NDUNClJCUDogZmZmZjg4ODBhZTcwN2M3MCBSMDg6IDFmZmZmMTEwMTVjZTBmNWMgUjA5OiBm
+ZmZmZmZmZjg5OWIxM2UwDQogIHNhdmVfc3RhY2tfdHJhY2UrMHgxYS8weDIwIGFyY2gveDg2L2tl
+cm5lbC9zdGFja3RyYWNlLmM6NjANClIxMDogMDAwMDAwMDAwMDAwMDA4NiBSMTE6IDAwMDAwMDAw
+MDAwMDAwMDMgUjEyOiAwMDAwMDAwMDAwMDAwY2Q1DQpSMTM6IGRmZmZmYzAwMDAwMDAwMDAgUjE0
+OiAxZmZmZjExMDE1Y2UwZjc0IFIxNTogZmZmZmZmZmY4YjZiMDVlOA0KICBzYXZlX3N0YWNrKzB4
+NDUvMHhkMCBtbS9rYXNhbi9jb21tb24uYzo3Mw0KRlM6ICAwMDAwMDAwMDAwMDAwMDAwKDAwMDAp
+IEdTOmZmZmY4ODgwYWU3MDAwMDAoMDAwMCkga25sR1M6MDAwMDAwMDAwMDAwMDAwMA0KQ1M6ICAw
+MDEwIERTOiAwMDAwIEVTOiAwMDAwIENSMDogMDAwMDAwMDA4MDA1MDAzMw0KQ1IyOiAwMDAwMDAw
+MDAwMDAwMDY4IENSMzogMDAwMDAwMDA5NmZmNzAwMCBDUjQ6IDAwMDAwMDAwMDAxNDA2ZTANCkRS
+MDogMDAwMDAwMDAwMDAwMDAwMCBEUjE6IDAwMDAwMDAwMDAwMDAwMDAgRFIyOiAwMDAwMDAwMDAw
+MDAwMDAwDQpEUjM6IDAwMDAwMDAwMDAwMDAwMDAgRFI2OiAwMDAwMDAwMGZmZmUwZmYwIERSNzog
+MDAwMDAwMDAwMDAwMDQwMA0KDQoNCi0tLQ0KVGhpcyBidWcgaXMgZ2VuZXJhdGVkIGJ5IGEgYm90
+LiBJdCBtYXkgY29udGFpbiBlcnJvcnMuDQpTZWUgaHR0cHM6Ly9nb28uZ2wvdHBzbUVKIGZvciBt
+b3JlIGluZm9ybWF0aW9uIGFib3V0IHN5emJvdC4NCnN5emJvdCBlbmdpbmVlcnMgY2FuIGJlIHJl
+YWNoZWQgYXQgc3l6a2FsbGVyQGdvb2dsZWdyb3Vwcy5jb20uDQoNCnN5emJvdCB3aWxsIGtlZXAg
+dHJhY2sgb2YgdGhpcyBidWcgcmVwb3J0LiBTZWU6DQpodHRwczovL2dvby5nbC90cHNtRUojYnVn
+LXN0YXR1cy10cmFja2luZyBmb3IgaG93IHRvIGNvbW11bmljYXRlIHdpdGggIA0Kc3l6Ym90Lg0K
+c3l6Ym90IGNhbiB0ZXN0IHBhdGNoZXMgZm9yIHRoaXMgYnVnLCBmb3IgZGV0YWlscyBzZWU6DQpo
+dHRwczovL2dvby5nbC90cHNtRUojdGVzdGluZy1wYXRjaGVzDQo=
