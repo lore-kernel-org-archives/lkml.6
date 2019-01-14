@@ -2,215 +2,148 @@ Return-Path: <SRS0=tq6k=PW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-14.0 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D4D12C43444
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 23:04:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 805DBC43444
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 23:04:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9A1BA20659
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 23:04:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547507076;
-	bh=Bmk2lqWpwsD+tggpMwOUSXkWTZW7+liEP4R9/AuuIPU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=ray5XDdN4yoDUYQ/xP4zxv8krWy5SrX9lNr3/IQauGkuljovvn9nqvgS2bkDUxtfQ
-	 ER5STSBS6QISMZH0yCyDAUbE6UCpKQULtngtI/5VW+jT480pPoO/t949B2KrKBm0nJ
-	 xFUOFtirabfwFb28lJeYNWNTKyflatefO2TosbOM=
+	by mail.kernel.org (Postfix) with ESMTP id 5BAB020657
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 23:04:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727286AbfANXEe (ORCPT
+        id S1727300AbfANXEt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 14 Jan 2019 18:04:34 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54332 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727019AbfANXEZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 Jan 2019 18:04:25 -0500
-Received: from localhost (unknown [69.71.4.100])
+        Mon, 14 Jan 2019 18:04:49 -0500
+Received: from nblzone-211-213.nblnetworks.fi ([83.145.211.213]:37766 "EHLO
+        hillosipuli.retiisi.org.uk" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726776AbfANXEt (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 14 Jan 2019 18:04:49 -0500
+Received: from valkosipuli.localdomain (valkosipuli.retiisi.org.uk [IPv6:2001:1bc8:1a6:d3d5::80:2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3F4EB20657;
-        Mon, 14 Jan 2019 23:04:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547507064;
-        bh=Bmk2lqWpwsD+tggpMwOUSXkWTZW7+liEP4R9/AuuIPU=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=unXL13xLDwTIcjSjDOd5012t6h/c7ULvuqWOY1N4E4TmKd4Pf3Mi6k/kffVbMkxNL
-         r3E/v5t1PkDu9DD9z8eHnFJrh+8QcNKBp0MR2z23QTWcXHLyMLziz0NxnsA6UB8bT7
-         rZM5uPv6HDpXHdg+4AXWDL4sthmsTdzr27BU1GrI=
-Date:   Mon, 14 Jan 2019 17:04:21 -0600
-From:   Bjorn Helgaas <helgaas@kernel.org>
-To:     Rob Herring <robh@kernel.org>
-Cc:     linux-kernel@vger.kernel.org, Christoph Hellwig <hch@lst.de>,
-        linux-pci@vger.kernel.org
-Subject: Re: [PATCH] PCI: Fix PCI kconfig menu organization
-Message-ID: <20190114230421.GC33971@google.com>
-References: <20190114213546.9921-1-robh@kernel.org>
+        by hillosipuli.retiisi.org.uk (Postfix) with ESMTPS id 1D1E3634C85;
+        Tue, 15 Jan 2019 01:03:08 +0200 (EET)
+Received: from sailus by valkosipuli.localdomain with local (Exim 4.89)
+        (envelope-from <sakari.ailus@retiisi.org.uk>)
+        id 1gjBG7-0004Fk-FH; Tue, 15 Jan 2019 01:03:07 +0200
+Date:   Tue, 15 Jan 2019 01:03:07 +0200
+From:   Sakari Ailus <sakari.ailus@iki.fi>
+To:     Lubomir Rintel <lkundrak@v3.sk>
+Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Jonathan Corbet <corbet@lwn.net>, linux-media@vger.kernel.org,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        James Cameron <quozl@laptop.org>, Pavel Machek <pavel@ucw.cz>,
+        Libin Yang <lbyang@marvell.com>,
+        Albert Wang <twang13@marvell.com>
+Subject: Re: [PATCH v3 02/14] media: ov7670: split register setting from
+ set_framerate() logic
+Message-ID: <20190114230307.h5poc22jfs32hly3@valkosipuli.retiisi.org.uk>
+References: <20181120100318.367987-1-lkundrak@v3.sk>
+ <20181120100318.367987-3-lkundrak@v3.sk>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20190114213546.9921-1-robh@kernel.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20181120100318.367987-3-lkundrak@v3.sk>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jan 14, 2019 at 03:35:46PM -0600, Rob Herring wrote:
-> After commit eb01d42a7778 ("PCI: consolidate PCI config entry in
-> drivers/pci"), all the PCI kconfig options appear below "PCI support"
-> rather than within a sub-menu. This is because menuconfig expects all
-> kconfig entries to be enclosed in an if/endif section. Add the missing
-> if/endif.
+On Tue, Nov 20, 2018 at 11:03:07AM +0100, Lubomir Rintel wrote:
+> This will allow us to restore the last set frame rate after the device
+> returns from a power off.
 > 
-> With this, "depends on PCI" is redundant in the sub-menu  entries and
-> can be removed.
+> Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
 > 
-> Fixes: eb01d42a7778 ("PCI: consolidate PCI config entry in drivers/pci")
-> Cc: Christoph Hellwig <hch@lst.de>
-> Cc: Bjorn Helgaas <bhelgaas@google.com>
-> Cc: linux-pci@vger.kernel.org
-> Signed-off-by: Rob Herring <robh@kernel.org>
-
-Applied to for-linus for v5.0, thanks!
-
 > ---
->  drivers/pci/Kconfig | 22 ++++++++--------------
->  1 file changed, 8 insertions(+), 14 deletions(-)
+> Changes since v2:
+> - This patch was added to the series
 > 
-> diff --git a/drivers/pci/Kconfig b/drivers/pci/Kconfig
-> index 4310c7a4212e..2ab92409210a 100644
-> --- a/drivers/pci/Kconfig
-> +++ b/drivers/pci/Kconfig
-> @@ -21,13 +21,14 @@ menuconfig PCI
->  	  support for PCI-X and the foundations for PCI Express support.
->  	  Say 'Y' here unless you know what you are doing.
->  
-> +if PCI
-> +
->  config PCI_DOMAINS
->  	bool
->  	depends on PCI
->  
->  config PCI_DOMAINS_GENERIC
->  	bool
-> -	depends on PCI
->  	select PCI_DOMAINS
->  
->  config PCI_SYSCALL
-> @@ -37,7 +38,6 @@ source "drivers/pci/pcie/Kconfig"
->  
->  config PCI_MSI
->  	bool "Message Signaled Interrupts (MSI and MSI-X)"
-> -	depends on PCI
->  	select GENERIC_MSI_IRQ
->  	help
->  	   This allows device drivers to enable MSI (Message Signaled
-> @@ -59,7 +59,6 @@ config PCI_MSI_IRQ_DOMAIN
->  config PCI_QUIRKS
->  	default y
->  	bool "Enable PCI quirk workarounds" if EXPERT
-> -	depends on PCI
->  	help
->  	  This enables workarounds for various PCI chipset bugs/quirks.
->  	  Disable this only if your target machine is unaffected by PCI
-> @@ -67,7 +66,7 @@ config PCI_QUIRKS
->  
->  config PCI_DEBUG
->  	bool "PCI Debugging"
-> -	depends on PCI && DEBUG_KERNEL
-> +	depends on DEBUG_KERNEL
->  	help
->  	  Say Y here if you want the PCI core to produce a bunch of debug
->  	  messages to the system log.  Select this if you are having a
-> @@ -77,7 +76,6 @@ config PCI_DEBUG
->  
->  config PCI_REALLOC_ENABLE_AUTO
->  	bool "Enable PCI resource re-allocation detection"
-> -	depends on PCI
->  	depends on PCI_IOV
->  	help
->  	  Say Y here if you want the PCI core to detect if PCI resource
-> @@ -90,7 +88,6 @@ config PCI_REALLOC_ENABLE_AUTO
->  
->  config PCI_STUB
->  	tristate "PCI Stub driver"
-> -	depends on PCI
->  	help
->  	  Say Y or M here if you want be able to reserve a PCI device
->  	  when it is going to be assigned to a guest operating system.
-> @@ -99,7 +96,6 @@ config PCI_STUB
->  
->  config PCI_PF_STUB
->  	tristate "PCI PF Stub driver"
-> -	depends on PCI
->  	depends on PCI_IOV
->  	help
->  	  Say Y or M here if you want to enable support for devices that
-> @@ -111,7 +107,7 @@ config PCI_PF_STUB
->  
->  config XEN_PCIDEV_FRONTEND
->          tristate "Xen PCI Frontend"
-> -        depends on PCI && X86 && XEN
-> +        depends on X86 && XEN
->          select PCI_XEN
->  	select XEN_XENBUS_FRONTEND
->          default y
-> @@ -133,7 +129,6 @@ config PCI_BRIDGE_EMUL
->  
->  config PCI_IOV
->  	bool "PCI IOV support"
-> -	depends on PCI
->  	select PCI_ATS
->  	help
->  	  I/O Virtualization is a PCI feature supported by some devices
-> @@ -144,7 +139,6 @@ config PCI_IOV
->  
->  config PCI_PRI
->  	bool "PCI PRI support"
-> -	depends on PCI
->  	select PCI_ATS
->  	help
->  	  PRI is the PCI Page Request Interface. It allows PCI devices that are
-> @@ -154,7 +148,6 @@ config PCI_PRI
->  
->  config PCI_PASID
->  	bool "PCI PASID support"
-> -	depends on PCI
->  	select PCI_ATS
->  	help
->  	  Process Address Space Identifiers (PASIDs) can be used by PCI devices
-> @@ -167,7 +160,7 @@ config PCI_PASID
->  
->  config PCI_P2PDMA
->  	bool "PCI peer-to-peer transfer support"
-> -	depends on PCI && ZONE_DEVICE
-> +	depends on ZONE_DEVICE
->  	select GENERIC_ALLOCATOR
->  	help
->  	  Enableѕ drivers to do PCI peer-to-peer transactions to and from
-> @@ -184,12 +177,11 @@ config PCI_P2PDMA
->  
->  config PCI_LABEL
->  	def_bool y if (DMI || ACPI)
-> -	depends on PCI
->  	select NLS
->  
->  config PCI_HYPERV
->          tristate "Hyper-V PCI Frontend"
-> -        depends on PCI && X86 && HYPERV && PCI_MSI && PCI_MSI_IRQ_DOMAIN && X86_64
-> +        depends on X86 && HYPERV && PCI_MSI && PCI_MSI_IRQ_DOMAIN && X86_64
->          help
->            The PCI device frontend driver allows the kernel to import arbitrary
->            PCI devices from a PCI backend to support PCI driver domains.
-> @@ -198,3 +190,5 @@ source "drivers/pci/hotplug/Kconfig"
->  source "drivers/pci/controller/Kconfig"
->  source "drivers/pci/endpoint/Kconfig"
->  source "drivers/pci/switch/Kconfig"
-> +
-> +endif
-> -- 
-> 2.19.1
+>  drivers/media/i2c/ov7670.c | 30 ++++++++++++++----------------
+>  1 file changed, 14 insertions(+), 16 deletions(-)
 > 
+> diff --git a/drivers/media/i2c/ov7670.c b/drivers/media/i2c/ov7670.c
+> index ee2302fbdeee..ead0c360df33 100644
+> --- a/drivers/media/i2c/ov7670.c
+> +++ b/drivers/media/i2c/ov7670.c
+> @@ -810,13 +810,24 @@ static void ov7675_get_framerate(struct v4l2_subdev *sd,
+>  			(4 * clkrc);
+>  }
+>  
+> +static int ov7675_apply_framerate(struct v4l2_subdev *sd)
+> +{
+> +	struct ov7670_info *info = to_state(sd);
+> +	int ret;
+> +
+> +	ret = ov7670_write(sd, REG_CLKRC, info->clkrc);
+> +	if (ret < 0)
+> +		return ret;
+> +
+> +	return ov7670_write(sd, REG_DBLV, info->pll_bypass ? DBLV_BYPASS : DBLV_X4);
+> +}
+> +
+>  static int ov7675_set_framerate(struct v4l2_subdev *sd,
+>  				 struct v4l2_fract *tpf)
+>  {
+>  	struct ov7670_info *info = to_state(sd);
+>  	u32 clkrc;
+>  	int pll_factor;
+> -	int ret;
+>  
+>  	/*
+>  	 * The formula is fps = 5/4*pixclk for YUV/RGB and
+> @@ -825,19 +836,10 @@ static int ov7675_set_framerate(struct v4l2_subdev *sd,
+>  	 * pixclk = clock_speed / (clkrc + 1) * PLLfactor
+>  	 *
+>  	 */
+> -	if (info->pll_bypass) {
+> -		pll_factor = 1;
+> -		ret = ov7670_write(sd, REG_DBLV, DBLV_BYPASS);
+> -	} else {
+> -		pll_factor = PLL_FACTOR;
+> -		ret = ov7670_write(sd, REG_DBLV, DBLV_X4);
+> -	}
+> -	if (ret < 0)
+> -		return ret;
+> -
+>  	if (tpf->numerator == 0 || tpf->denominator == 0) {
+>  		clkrc = 0;
+>  	} else {
+> +		pll_factor = info->pll_bypass ? 1 : PLL_FACTOR;
+>  		clkrc = (5 * pll_factor * info->clock_speed * tpf->numerator) /
+>  			(4 * tpf->denominator);
+>  		if (info->fmt->mbus_code == MEDIA_BUS_FMT_SBGGR8_1X8)
+> @@ -859,11 +861,7 @@ static int ov7675_set_framerate(struct v4l2_subdev *sd,
+>  	/* Recalculate frame rate */
+>  	ov7675_get_framerate(sd, tpf);
+>  
+> -	ret = ov7670_write(sd, REG_CLKRC, info->clkrc);
+> -	if (ret < 0)
+> -		return ret;
+> -
+> -	return ov7670_write(sd, REG_DBLV, DBLV_X4);
+> +	return ov7675_apply_framerate(sd);
+>  }
+>  
+>  static void ov7670_get_framerate_legacy(struct v4l2_subdev *sd,
+
+Unfortunately this one no longer applies due to Jacopo's patch "v4l2: i2c:
+ov7670: Fix PLL bypass register values" in my tree. Could you resend it if
+you still think it's useful, please?
+
+My tree is here:
+
+<URL:https://git.linuxtv.org/sailus/media_tree.git/log/>
+
+I've applied the rest there, with a trivial patch I'll send briefly.
+
+Thanks.
+
+-- 
+Sakari Ailus
