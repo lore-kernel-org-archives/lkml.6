@@ -4,50 +4,50 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D469C43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 13:27:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B5C99C43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 13:27:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 32DAD206B7
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 13:27:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 86BD320873
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 13:27:36 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="x62GVg5Y"
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="bgyT0zhx"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727020AbfANN1T (ORCPT
+        id S1726928AbfANN0v (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 14 Jan 2019 08:27:19 -0500
-Received: from fllv0016.ext.ti.com ([198.47.19.142]:37566 "EHLO
+        Mon, 14 Jan 2019 08:26:51 -0500
+Received: from fllv0016.ext.ti.com ([198.47.19.142]:37452 "EHLO
         fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726680AbfANN1N (ORCPT
+        with ESMTP id S1726653AbfANN0o (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 Jan 2019 08:27:13 -0500
+        Mon, 14 Jan 2019 08:26:44 -0500
 Received: from fllv0034.itg.ti.com ([10.64.40.246])
-        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id x0EDQqpT098392;
-        Mon, 14 Jan 2019 07:26:52 -0600
+        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id x0EDQIVD098267;
+        Mon, 14 Jan 2019 07:26:18 -0600
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1547472412;
-        bh=yRUr73ZiS5aNXYVmbXRtJ0JSqktNkC+89EIMn+yRODs=;
+        s=ti-com-17Q1; t=1547472378;
+        bh=1cBzf8O7pgKPJLJpe2QIGf7wnuv4q+HWdzVaE+h4hbQ=;
         h=From:To:CC:Subject:Date:In-Reply-To:References;
-        b=x62GVg5YvVaKS6/uQKvz32FziutO1EpLH1sHg6A/rpxXMq3mevZ1inmhKQVsln9/T
-         zFWfOSPhII8wq3ipSpFNcWpkF1tuA5CniQ+QisLkL2tmYtu7bfsoCLQSabBooIlHQc
-         Hw2bPkVvwVqx8Aq3vY5VNoXGdx96oEqWf/bcJGJQ=
-Received: from DFLE105.ent.ti.com (dfle105.ent.ti.com [10.64.6.26])
-        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x0EDQqKK057603
+        b=bgyT0zhx5yihzelR3UnzYLsdRrwtvMLZBQv1133Pw15tSLJDry174Vqrccylk2Enf
+         koOPPMuTnDtK7qMlQ+gJaVWzsENRihV3LeNXCLud6WVxwxMRLDBrR0s/BVhrLZkHVA
+         3Wu5aseWTX/8eIp+CssiQmY0bAqdW0Ov823EsLYo=
+Received: from DFLE111.ent.ti.com (dfle111.ent.ti.com [10.64.6.32])
+        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x0EDQIYC057353
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 14 Jan 2019 07:26:52 -0600
-Received: from DFLE104.ent.ti.com (10.64.6.25) by DFLE105.ent.ti.com
- (10.64.6.26) with Microsoft SMTP Server (version=TLS1_2,
+        Mon, 14 Jan 2019 07:26:18 -0600
+Received: from DFLE100.ent.ti.com (10.64.6.21) by DFLE111.ent.ti.com
+ (10.64.6.32) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Mon, 14
- Jan 2019 07:26:52 -0600
-Received: from dlep32.itg.ti.com (157.170.170.100) by DFLE104.ent.ti.com
- (10.64.6.25) with Microsoft SMTP Server (version=TLS1_0,
+ Jan 2019 07:26:18 -0600
+Received: from dlep32.itg.ti.com (157.170.170.100) by DFLE100.ent.ti.com
+ (10.64.6.21) with Microsoft SMTP Server (version=TLS1_0,
  cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1591.10 via Frontend Transport;
- Mon, 14 Jan 2019 07:26:51 -0600
+ Mon, 14 Jan 2019 07:26:18 -0600
 Received: from a0393678ub.india.ti.com (ileax41-snat.itg.ti.com [10.172.224.153])
-        by dlep32.itg.ti.com (8.14.3/8.13.8) with ESMTP id x0EDOoWk028516;
-        Mon, 14 Jan 2019 07:26:48 -0600
+        by dlep32.itg.ti.com (8.14.3/8.13.8) with ESMTP id x0EDOoWd028516;
+        Mon, 14 Jan 2019 07:26:14 -0600
 From:   Kishon Vijay Abraham I <kishon@ti.com>
 To:     Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
         Rob Herring <robh+dt@kernel.org>,
@@ -63,9 +63,9 @@ CC:     Kishon Vijay Abraham I <kishon@ti.com>,
         <linux-pci@vger.kernel.org>, <devicetree@vger.kernel.org>,
         <linux-kernel@vger.kernel.org>, <linux-omap@vger.kernel.org>,
         <linux-arm-kernel@lists.infradead.org>, <linux-arm-kernel@axis.com>
-Subject: [PATCH 24/24] misc: pci_endpoint_test: Fix test_reg_bar to be updated in pci_endpoint_test
-Date:   Mon, 14 Jan 2019 18:54:24 +0530
-Message-ID: <20190114132424.6445-25-kishon@ti.com>
+Subject: [PATCH 17/24] PCI: dwc: Add const qualifier to struct dw_pcie_ep_ops
+Date:   Mon, 14 Jan 2019 18:54:17 +0530
+Message-ID: <20190114132424.6445-18-kishon@ti.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190114132424.6445-1-kishon@ti.com>
 References: <20190114132424.6445-1-kishon@ti.com>
@@ -77,32 +77,69 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-commit 834b9051992580ac8fd3966d023b ("misc: pci_endpoint_test: Add support
-for PCI_ENDPOINT_TEST regs to be mapped to any BAR") while adding
-test_reg_bar in order to map PCI_ENDPOINT_TEST regs to be mapped to any
-BAR failed to update test_reg_bar in pci_endpoint_test. This results in
-test_reg_bar having invalid value when used outside probe. Fix it here.
-
-Fixes: 834b9051992580ac8fd3966d023b ("misc: pci_endpoint_test: Add support
-for PCI_ENDPOINT_TEST regs to be mapped to any BAR")
+Add const qualifier to struct dw_pcie_ep_ops member of
+struct dw_pcie_ep.
 
 Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
 ---
- drivers/misc/pci_endpoint_test.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/pci/controller/dwc/pci-dra7xx.c           | 2 +-
+ drivers/pci/controller/dwc/pcie-artpec6.c         | 2 +-
+ drivers/pci/controller/dwc/pcie-designware-plat.c | 2 +-
+ drivers/pci/controller/dwc/pcie-designware.h      | 2 +-
+ 4 files changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/misc/pci_endpoint_test.c b/drivers/misc/pci_endpoint_test.c
-index 6dfaeeaeec0a..46788fe854e4 100644
---- a/drivers/misc/pci_endpoint_test.c
-+++ b/drivers/misc/pci_endpoint_test.c
-@@ -670,6 +670,7 @@ static int pci_endpoint_test_probe(struct pci_dev *pdev,
- 	data = (struct pci_endpoint_test_data *)ent->driver_data;
- 	if (data) {
- 		test_reg_bar = data->test_reg_bar;
-+		test->test_reg_bar = test_reg_bar;
- 		test->alignment = data->alignment;
- 		irq_type = data->irq_type;
- 	}
+diff --git a/drivers/pci/controller/dwc/pci-dra7xx.c b/drivers/pci/controller/dwc/pci-dra7xx.c
+index 15620cfa617b..b4fbb4be212f 100644
+--- a/drivers/pci/controller/dwc/pci-dra7xx.c
++++ b/drivers/pci/controller/dwc/pci-dra7xx.c
+@@ -401,7 +401,7 @@ dra7xx_pcie_get_features(struct dw_pcie_ep *ep)
+ 	return &dra7xx_pcie_epc_features;
+ }
+ 
+-static struct dw_pcie_ep_ops pcie_ep_ops = {
++static const struct dw_pcie_ep_ops pcie_ep_ops = {
+ 	.ep_init = dra7xx_pcie_ep_init,
+ 	.raise_irq = dra7xx_pcie_raise_irq,
+ 	.get_features = dra7xx_pcie_get_features,
+diff --git a/drivers/pci/controller/dwc/pcie-artpec6.c b/drivers/pci/controller/dwc/pcie-artpec6.c
+index dba83abfe764..d00252bd8fae 100644
+--- a/drivers/pci/controller/dwc/pcie-artpec6.c
++++ b/drivers/pci/controller/dwc/pcie-artpec6.c
+@@ -444,7 +444,7 @@ static int artpec6_pcie_raise_irq(struct dw_pcie_ep *ep, u8 func_no,
+ 	return 0;
+ }
+ 
+-static struct dw_pcie_ep_ops pcie_ep_ops = {
++static const struct dw_pcie_ep_ops pcie_ep_ops = {
+ 	.ep_init = artpec6_pcie_ep_init,
+ 	.raise_irq = artpec6_pcie_raise_irq,
+ };
+diff --git a/drivers/pci/controller/dwc/pcie-designware-plat.c b/drivers/pci/controller/dwc/pcie-designware-plat.c
+index 3be87126aef3..0852f42ad844 100644
+--- a/drivers/pci/controller/dwc/pcie-designware-plat.c
++++ b/drivers/pci/controller/dwc/pcie-designware-plat.c
+@@ -108,7 +108,7 @@ dw_plat_pcie_get_features(struct dw_pcie_ep *ep)
+ 	return &dw_plat_pcie_epc_features;
+ }
+ 
+-static struct dw_pcie_ep_ops pcie_ep_ops = {
++static const struct dw_pcie_ep_ops pcie_ep_ops = {
+ 	.ep_init = dw_plat_pcie_ep_init,
+ 	.raise_irq = dw_plat_pcie_ep_raise_irq,
+ 	.get_features = dw_plat_pcie_get_features,
+diff --git a/drivers/pci/controller/dwc/pcie-designware.h b/drivers/pci/controller/dwc/pcie-designware.h
+index 4ab2e3dbd6bb..8a941f2fffcb 100644
+--- a/drivers/pci/controller/dwc/pcie-designware.h
++++ b/drivers/pci/controller/dwc/pcie-designware.h
+@@ -193,7 +193,7 @@ struct dw_pcie_ep_ops {
+ 
+ struct dw_pcie_ep {
+ 	struct pci_epc		*epc;
+-	struct dw_pcie_ep_ops	*ops;
++	const struct dw_pcie_ep_ops *ops;
+ 	phys_addr_t		phys_base;
+ 	size_t			addr_size;
+ 	size_t			page_size;
 -- 
 2.17.1
 
