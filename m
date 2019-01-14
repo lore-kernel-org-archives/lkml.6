@@ -2,97 +2,83 @@ Return-Path: <SRS0=tq6k=PW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 63C66C43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 10:37:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C52DC43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 10:38:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3D49920656
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 10:37:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C675720656
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 10:38:51 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=yandex-team.ru header.i=@yandex-team.ru header.b="Vd0hZaf+"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726618AbfANKhD (ORCPT
+        id S1726598AbfANKiu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 14 Jan 2019 05:37:03 -0500
-Received: from nbd.name ([46.4.11.11]:46040 "EHLO nbd.name"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726064AbfANKhD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 Jan 2019 05:37:03 -0500
-Subject: Re: [PATCH] netfilter: fix checking method of conntrack helper
-To:     Henry Yen <henry.yen@mediatek.com>,
-        Pablo Neira Ayuso <pablo@netfilter.org>,
-        "David S. Miller" <davem@davemloft.net>
-Cc:     Ryder Lee <ryder.lee@mediatek.com>, netdev@vger.kernel.org,
-        Sean Wang <sean.wang@kernel.org>,
-        Weijie Gao <weijie.gao@mediatek.com>,
-        linux-kernel@vger.kernel.org, netfilter-devel@vger.kernel.org,
-        linux-mediatek@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org
-References: <1547459983-15724-1-git-send-email-henry.yen@mediatek.com>
-From:   John Crispin <john@phrozen.org>
-Message-ID: <ac699d64-cb0d-8cf2-99cb-54d6da52d6a8@phrozen.org>
-Date:   Mon, 14 Jan 2019 11:36:57 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        Mon, 14 Jan 2019 05:38:50 -0500
+Received: from forwardcorp1j.cmail.yandex.net ([5.255.227.105]:39354 "EHLO
+        forwardcorp1j.cmail.yandex.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725837AbfANKit (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 14 Jan 2019 05:38:49 -0500
+Received: from mxbackcorp2j.mail.yandex.net (mxbackcorp2j.mail.yandex.net [IPv6:2a02:6b8:0:1619::119])
+        by forwardcorp1j.cmail.yandex.net (Yandex) with ESMTP id A99D22025B;
+        Mon, 14 Jan 2019 13:38:46 +0300 (MSK)
+Received: from smtpcorp1j.mail.yandex.net (smtpcorp1j.mail.yandex.net [2a02:6b8:0:1619::137])
+        by mxbackcorp2j.mail.yandex.net (nwsmtp/Yandex) with ESMTP id kWYqzNfIgA-ckJi8bVY;
+        Mon, 14 Jan 2019 13:38:46 +0300
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yandex-team.ru; s=default;
+        t=1547462326; bh=IbTxmx0Pu5CMvH65woOVWKB1adaR0WOjfKk8NlGN6Aw=;
+        h=Subject:From:To:Cc:Date:Message-ID;
+        b=Vd0hZaf+UauTrLgurJLbAhZoGUzvb0NU3T2c/9P/5IKyZtCrhQV/4Ms1K7fbMZtnl
+         oIQFUyumSsWQJM7qOwxYNDcT0ACfI3SepPAPi942m4WOWZ0h4tEaCSRIaf5kCgca+Y
+         UkEXv/9Znd/NMEjhnsqzFzExiHIer/IL2ahRMzOE=
+Authentication-Results: mxbackcorp2j.mail.yandex.net; dkim=pass header.i=@yandex-team.ru
+Received: from dynamic-red.dhcp.yndx.net (dynamic-red.dhcp.yndx.net [2a02:6b8:0:40c:ddac:7ad6:150c:c9b3])
+        by smtpcorp1j.mail.yandex.net (nwsmtp/Yandex) with ESMTPSA id DQeHvy6JIl-ckhWpDGD;
+        Mon, 14 Jan 2019 13:38:46 +0300
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (Client certificate not present)
+Subject: [PATCH] net/core/neighbour: fix kmemleak minimal reference count
+ for hash tables
+From:   Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
+To:     netdev@vger.kernel.org, "David S. Miller" <davem@davemloft.net>
+Cc:     Cong Wang <xiyou.wangcong@gmail.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Catalin Marinas <catalin.marinas@arm.com>
+Date:   Mon, 14 Jan 2019 13:38:43 +0300
+Message-ID: <154746232378.234732.3976012997312897852.stgit@buzz>
+User-Agent: StGit/0.17.1-dirty
 MIME-Version: 1.0
-In-Reply-To: <1547459983-15724-1-git-send-email-henry.yen@mediatek.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+This should be 1 for normal allocations, 0 disables leak reporting.
 
-On 14/01/2019 10:59, Henry Yen wrote:
-> This patch uses nfct_help() to detect whether an
-> established connection needs conntrack helper instead of using
-> test_bit(IPS_HELPER_BIT, &ct->status).
->
-> The reason is that IPS_HELPER_BIT is only set when using explicit
-> CT target.
->
-> However, in the case that a device enables conntrack helper via
-> command "echo 1 > /proc/sys/net/netfilter/nf_conntrack_helper",
-> the status of IPS_HELPER_BIT will not present any change, and
-> consequently it loses the checking ability in the context.
->
-> Signed-off-by: Henry Yen <henry.yen@mediatek.com>
-> Reviewed-by: Ryder Lee <ryder.lee@mediatek.com>
-Tested-by: John Crispin <john@phrozen.org>
-> ---
->   net/netfilter/nft_flow_offload.c | 5 ++++-
->   1 file changed, 4 insertions(+), 1 deletion(-)
->
-> diff --git a/net/netfilter/nft_flow_offload.c b/net/netfilter/nft_flow_offload.c
-> index 974525eb92df..de4684cc4633 100644
-> --- a/net/netfilter/nft_flow_offload.c
-> +++ b/net/netfilter/nft_flow_offload.c
-> @@ -12,6 +12,7 @@
->   #include <net/netfilter/nf_conntrack_core.h>
->   #include <linux/netfilter/nf_conntrack_common.h>
->   #include <net/netfilter/nf_flow_table.h>
-> +#include <net/netfilter/nf_conntrack_helper.h>
->   
->   struct nft_flow_offload {
->   	struct nft_flowtable	*flowtable;
-> @@ -71,6 +72,7 @@ static void nft_flow_offload_eval(const struct nft_expr *expr,
->   	struct flow_offload *flow;
->   	enum ip_conntrack_dir dir;
->   	struct nf_conn *ct;
-> +	const struct nf_conn_help *help;
->   	int ret;
->   
->   	if (nft_flow_offload_skip(pkt->skb))
-> @@ -88,7 +90,8 @@ static void nft_flow_offload_eval(const struct nft_expr *expr,
->   		goto out;
->   	}
->   
-> -	if (test_bit(IPS_HELPER_BIT, &ct->status))
-> +	help = nfct_help(ct);
-> +	if (help)
->   		goto out;
->   
->   	if (ctinfo == IP_CT_NEW ||
+Signed-off-by: Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
+Reported-by: Cong Wang <xiyou.wangcong@gmail.com>
+Fixes: 85704cb8dcfd ("net/core/neighbour: tell kmemleak about hash tables")
+---
+ net/core/neighbour.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/net/core/neighbour.c b/net/core/neighbour.c
+index 3e27a779f288..96fdc9134726 100644
+--- a/net/core/neighbour.c
++++ b/net/core/neighbour.c
+@@ -450,7 +450,7 @@ static struct neigh_hash_table *neigh_hash_alloc(unsigned int shift)
+ 		buckets = (struct neighbour __rcu **)
+ 			  __get_free_pages(GFP_ATOMIC | __GFP_ZERO,
+ 					   get_order(size));
+-		kmemleak_alloc(buckets, size, 0, GFP_ATOMIC);
++		kmemleak_alloc(buckets, size, 1, GFP_ATOMIC);
+ 	}
+ 	if (!buckets) {
+ 		kfree(ret);
+
