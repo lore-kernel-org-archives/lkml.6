@@ -2,145 +2,181 @@ Return-Path: <SRS0=tq6k=PW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIMWL_WL_MED,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B173C43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 19:26:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A6BA7C43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 19:29:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3E86320651
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 19:26:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6C47A2064C
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 19:29:14 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="3BVlzjTy"
+	dkim=pass (1024-bit key) header.d=fb.com header.i=@fb.com header.b="H3puoZq9";
+	dkim=pass (1024-bit key) header.d=fb.onmicrosoft.com header.i=@fb.onmicrosoft.com header.b="Iq46gVBq"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726853AbfANT0r (ORCPT
+        id S1726841AbfANT3M (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 14 Jan 2019 14:26:47 -0500
-Received: from userp2130.oracle.com ([156.151.31.86]:40026 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726745AbfANT0r (ORCPT
+        Mon, 14 Jan 2019 14:29:12 -0500
+Received: from mx0a-00082601.pphosted.com ([67.231.145.42]:51372 "EHLO
+        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726760AbfANT3M (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 Jan 2019 14:26:47 -0500
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id x0EJNU7f024088;
-        Mon, 14 Jan 2019 19:26:32 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
- references : from : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=corp-2018-07-02;
- bh=LRxXWiyehqYbBuW7O6LgTqYIsTc7dhOgAUatOAhhu4E=;
- b=3BVlzjTykqS4UCw/Q0TvJR6awo5C0DlBqkRAp4zrrEWhSwy8WcV0I0rsCQI3Ue4XcGLB
- 9NUG2qzWzjp8+CO0rHwk+O4zIOpkovIU+p+DfvYWbwCmO8rNGuunrGgxPb/qxeD+9VbT
- X4y9vQVEwcpO8EpQwBE45KKcj2RKrXNjKBW9550Fkp44ObKPXb7yI068nr4i4JcBeiEs
- CHQB3szYOLEe67COPcjT/NXN44zFq3O/4pmr5kRGSPQa4aTQqxb9+BxBzAaZfCwOTVge
- tbx5Lud47rWvrVjDa54fqV8+zcdYjqdBFoAt32BeGgc4mPKq0m2hEiag0yGjIwezgCNT sg== 
-Received: from aserv0022.oracle.com (aserv0022.oracle.com [141.146.126.234])
-        by userp2130.oracle.com with ESMTP id 2pybkc7kvr-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 14 Jan 2019 19:26:32 +0000
-Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
-        by aserv0022.oracle.com (8.14.4/8.14.4) with ESMTP id x0EJQVnR029436
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 14 Jan 2019 19:26:31 GMT
-Received: from abhmp0003.oracle.com (abhmp0003.oracle.com [141.146.116.9])
-        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x0EJQU8n006387;
-        Mon, 14 Jan 2019 19:26:30 GMT
-Received: from [10.152.35.100] (/10.152.35.100)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Mon, 14 Jan 2019 11:26:29 -0800
-Subject: Re: [RFC PATCH] mm: align anon mmap for THP
-To:     Mike Kravetz <mike.kravetz@oracle.com>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        linux_lkml_grp@oracle.com
-Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        Hugh Dickins <hughd@google.com>,
-        Michal Hocko <mhocko@kernel.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Toshi Kani <toshi.kani@hpe.com>,
-        Boaz Harrosh <boazh@netapp.com>,
-        Andrew Morton <akpm@linux-foundation.org>
-References: <20190111201003.19755-1-mike.kravetz@oracle.com>
- <20190111215506.jmp2s5end2vlzhvb@black.fi.intel.com>
- <ebd57b51-117b-4a3d-21d9-fc0287f437d6@oracle.com>
- <ad3a53ba-82e2-2dc7-1cd2-feef7def0bc3@oracle.com>
- <50c6abdc-b906-d16a-2f8f-8647b3d129aa@oracle.com>
-From:   Steven Sistare <steven.sistare@oracle.com>
-Organization: Oracle Corporation
-Message-ID: <7d1ccbc3-7dad-99de-1b15-77bb1196f9a3@oracle.com>
-Date:   Mon, 14 Jan 2019 14:26:26 -0500
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
-MIME-Version: 1.0
-In-Reply-To: <50c6abdc-b906-d16a-2f8f-8647b3d129aa@oracle.com>
-Content-Type: text/plain; charset=utf-8
+        Mon, 14 Jan 2019 14:29:12 -0500
+Received: from pps.filterd (m0044012.ppops.net [127.0.0.1])
+        by mx0a-00082601.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x0EJLbCq026478;
+        Mon, 14 Jan 2019 11:28:45 -0800
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
+ : date : message-id : references : in-reply-to : content-type : content-id
+ : content-transfer-encoding : mime-version; s=facebook;
+ bh=nMWjnX8Li/rqjrKtr49iOm5cvEGMcBNILHXXJut3e+g=;
+ b=H3puoZq91UdZe0a5wm+3JnxP+HuhxDyhLK+R2LCQNvnhcRDPKz2uHDGKLpBI4OV7vE6A
+ GmLGot9VlCdUT2mZ2Kerko/rnbyUbXIWT0Un2n5v+4dHcHeQZITP8V2MUlb49Buj9uu5
+ ieOfKf0csRQjbdNHawSMcEBEMbg76cR7iYs= 
+Received: from mail.thefacebook.com ([199.201.64.23])
+        by mx0a-00082601.pphosted.com with ESMTP id 2q0x5rggs7-10
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT);
+        Mon, 14 Jan 2019 11:28:45 -0800
+Received: from prn-hub06.TheFacebook.com (2620:10d:c081:35::130) by
+ prn-hub01.TheFacebook.com (2620:10d:c081:35::125) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ 15.1.1531.3; Mon, 14 Jan 2019 11:28:43 -0800
+Received: from NAM02-SN1-obe.outbound.protection.outlook.com (192.168.54.28)
+ by o365-in.thefacebook.com (192.168.16.30) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.1.1531.3
+ via Frontend Transport; Mon, 14 Jan 2019 11:28:43 -0800
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.onmicrosoft.com;
+ s=selector1-fb-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=nMWjnX8Li/rqjrKtr49iOm5cvEGMcBNILHXXJut3e+g=;
+ b=Iq46gVBqZJOps2lMDZmQFNz69T2qQ9cwkciDZ3eTnW0F41ZgsaUeMmkAnss3VO0QdlFbTnZ1m8S63RXnDhqeMlBD4Yzo8o2Qd8KQKvZNJYUSiZes82pmztZvOKiVvw54hg361FMJ1wzGxrNhQI6U0Dq/vMbMicWCcKn2x9adj/o=
+Received: from CY4PR15MB1269.namprd15.prod.outlook.com (10.172.180.139) by
+ CY4PR15MB1687.namprd15.prod.outlook.com (10.175.121.16) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1516.20; Mon, 14 Jan 2019 19:28:41 +0000
+Received: from CY4PR15MB1269.namprd15.prod.outlook.com
+ ([fe80::f9c6:952c:8b66:cc9d]) by CY4PR15MB1269.namprd15.prod.outlook.com
+ ([fe80::f9c6:952c:8b66:cc9d%10]) with mapi id 15.20.1516.019; Mon, 14 Jan
+ 2019 19:28:41 +0000
+From:   Vijay Khemka <vijaykhemka@fb.com>
+To:     Andrew Jeffery <andrew@aj.id.au>, Rob Herring <robh+dt@kernel.org>,
+        "Mark Rutland" <mark.rutland@arm.com>,
+        Joel Stanley <joel@jms.id.au>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-aspeed@lists.ozlabs.org" <linux-aspeed@lists.ozlabs.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+CC:     "openbmc @ lists . ozlabs . org" <openbmc@lists.ozlabs.org>
+Subject: Re: [Potential Spoof] Re: [Potential Spoof] Re: [PATCH v2 4/4] ARM:
+ dts: aspeed: Add lpc ctrl for Facebook
+Thread-Topic: [Potential Spoof] Re: [Potential Spoof] Re: [PATCH v2 4/4] ARM:
+ dts: aspeed: Add lpc ctrl for Facebook
+Thread-Index: AQHUqg5kq5zkppfjDEupYTurooq9yKWtzaAAgADW2wA=
+Date:   Mon, 14 Jan 2019 19:28:41 +0000
+Message-ID: <B36B9550-0E17-442C-974A-908736EB2980@fb.com>
+References: <5972B57A-23D5-43F4-9476-229379B96C7C@fb.com>
+ <1547419180.2315773.1633559160.3F7D29CF@webmail.messagingengine.com>
+In-Reply-To: <1547419180.2315773.1633559160.3F7D29CF@webmail.messagingengine.com>
+Accept-Language: en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9136 signatures=668680
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1810050000 definitions=main-1901140150
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [2620:10d:c090:200::5:6dbd]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;CY4PR15MB1687;20:23YTfYa1mlMSCbFxlSnuYn8hbKfw20BNGuhW7TkobcLCVR5v3R+2j7kPK/jLP/tHvOz13eRhMH05xkYHJvCJQA7vB2uCh+BAkCnbeVNl3/0RbkS/LdcKb3r6Iu0CVK8GFW7zvojYw5gAsmB7rhDjfSMXDYUnyYkoTERSkux1rPg=
+x-ms-exchange-antispam-srfa-diagnostics: SOS;
+x-ms-office365-filtering-correlation-id: 2586ad57-fa12-4af3-6ef8-08d67a567db3
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600109)(711020)(2017052603328)(7153060)(7193020);SRVR:CY4PR15MB1687;
+x-ms-traffictypediagnostic: CY4PR15MB1687:
+x-microsoft-antispam-prvs: <CY4PR15MB1687A48D006037278CDBA000DD800@CY4PR15MB1687.namprd15.prod.outlook.com>
+x-forefront-prvs: 0917DFAC67
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(39860400002)(376002)(396003)(346002)(366004)(136003)(47680400002)(43544003)(189003)(199004)(6486002)(2201001)(2616005)(11346002)(446003)(110136005)(4326008)(6436002)(486006)(97736004)(86362001)(316002)(476003)(2906002)(8936002)(81156014)(36756003)(81166006)(8676002)(256004)(14444005)(478600001)(14454004)(6116002)(106356001)(186003)(105586002)(82746002)(99286004)(6506007)(53546011)(7736002)(305945005)(46003)(33656002)(5660300001)(102836004)(68736007)(25786009)(6512007)(6246003)(53936002)(76176011)(71200400001)(229853002)(83716004)(2501003)(71190400001);DIR:OUT;SFP:1102;SCL:1;SRVR:CY4PR15MB1687;H:CY4PR15MB1269.namprd15.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: fb.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: Qs8fNVkdNbK+K5rOWK0WN3s5vjgDCWP/nncKc1z1/ME+rYa+0t6jKADNLTaRQwp0pBjWWswljOZD4+JymvMW8qs/CtUgVpx+LJcVLzA+hy5R/Xslfircdqzo8UaivisCii7e2HZm0Sa+Jsi5VFdfHZ2p63v4w5/kS932bqbZE5NDPjAZY8JJdUNkC7LSqEaC8LlMONtVlsxTMwAU+nTBiWpOO7mtGGD5Bse1YTSwsV+E1ZRVi6YWrHkOAh4uRle8hFAJ7d2bYU9dvo6fHa4uqF69xPxtcmWeNV6QMj+p8gbULUAfUAwLwGuNoJaiZd2CuPSB2oX3sxYGH88D0ylPgC5hvRvrO2jXiol9PakIPdNSyS99lfAks2fz7rEF7JK9g4pspbArx5NnIDGc4QvWxDthsFDf+LzIq1HsKka1njo=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <2F0D47D5C7865C44ADAACD1CBC68E370@namprd15.prod.outlook.com>
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
+X-MS-Exchange-CrossTenant-Network-Message-Id: 2586ad57-fa12-4af3-6ef8-08d67a567db3
+X-MS-Exchange-CrossTenant-originalarrivaltime: 14 Jan 2019 19:28:41.3270
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 8ae927fe-1255-47a7-a2af-5f3a069daaa2
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY4PR15MB1687
+X-OriginatorOrg: fb.com
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-01-14_10:,,
+ signatures=0
+X-Proofpoint-Spam-Reason: safe
+X-FB-Internal: Safe
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 1/14/2019 1:54 PM, Mike Kravetz wrote:
-> On 1/14/19 7:35 AM, Steven Sistare wrote:
->> On 1/11/2019 6:28 PM, Mike Kravetz wrote:
->>> On 1/11/19 1:55 PM, Kirill A. Shutemov wrote:
->>>> On Fri, Jan 11, 2019 at 08:10:03PM +0000, Mike Kravetz wrote:
->>>>> At LPC last year, Boaz Harrosh asked why he had to 'jump through hoops'
->>>>> to get an address returned by mmap() suitably aligned for THP.  It seems
->>>>> that if mmap is asking for a mapping length greater than huge page
->>>>> size, it should align the returned address to huge page size.
->>
->> A better heuristic would be to return an aligned address if the length
->> is a multiple of the huge page size.  The gap (if any) between the end of
->> the previous VMA and the start of this VMA would be filled by subsequent
->> smaller mmap requests.  The new behavior would need to become part of the
->> mmap interface definition so apps can rely on it and omit their hoop-jumping
->> code.
-> 
-> Yes, the heuristic really should be 'length is a multiple of the huge page
-> size'.  As you mention, this would still leave gaps.  I need to look closer
-> but this may not be any worse than the trick of mapping an area with rounded
-> up length and then unmapping pages at the beginning.
-> 
-> When I sent this out, the thought in the back of my mind was that this doesn't
-> really matter unless there is some type of alignment guarantee.  Otherwise,
-> user space code needs continue employing their code to check/force alignment.
-> Making matters somewhat worse is that I do not believe there is C interface to
-> query huge page size.  I thought there was discussion about adding one, but I
-> can not find it.
-
-Right. Solaris provides getpagesizes().
-
->> Personally I would like to see a new MAP_ALIGN flag and treat the addr
->> argument as the alignment (like Solaris), but I am told that adding flags
->> is problematic because old kernels accept undefined flag bits from userland
->> without complaint, so their behavior would change.
-> 
-> Well, a flag would clearly define desired behavior.
-> 
-> As others have been mentioned, there are mechanisms in place that allow user
-> space code to get the alignment it wants.  However, it is at the expense of
-> an additional system call or two.  Perhaps the question is, "Is it worth
-> defining new behavior to eliminate this overhead?".
-> 
-> One other thing to consider is that at mmap time, we likely do not know if
-> the vma will/can use THP.  We would know if system wide THP configuration
-> is set to never or always.  However, I 'think' the default for most distros
-> is madvize.  Therefore, it is not until a subsequent madvise call that we
-> know THP will be employed.  If the application code will need to make this
-> separate madvise call, then perhaps it is not too much to expect that it
-> take explicit action to optimally align the mapping.
-
-True.  It is annoying to write the extra code, but the power user will do it.
-
-The heuristic alignment would primarily benefit applications that are not as
-carefully optimized.
-
-- Steve
-
+DQoNCu+7v09uIDEvMTMvMTksIDI6MzkgUE0sICJBbmRyZXcgSmVmZmVyeSIgPGFuZHJld0Bhai5p
+ZC5hdT4gd3JvdGU6DQoNCiAgICBIaSBWaWpheSwNCiAgICANCiAgICBTb3JyeSBmb3IgcHJvdmlk
+aW5nIGFuIG9waW5pb24gc28gbGF0ZSwgaG93ZXZlcjoNCiAgICANCiAgICBPbiBTYXQsIDEyIEph
+biAyMDE5LCBhdCAxMTowMywgVmlqYXkgS2hlbWthIHdyb3RlOg0KICAgID4gSm9lbCwNCiAgICA+
+IFBsZWFzZSBtZXJnZSB0aGVzZSBwYXRjaGVzIGFzIGl0IGlzIHJlcXVpcmVkIGJ5IGZhY2Vib29r
+IHBsYXRmb3JtLg0KICAgID4gDQogICAgPiBSZWdhcmRzDQogICAgPiAtVmlqYXkNCiAgICA+IA0K
+ICAgID4gT24gMS83LzE5LCAxMToyNSBBTSwgIkxpbnV4LWFzcGVlZCBvbiBiZWhhbGYgb2YgVmlq
+YXkgS2hlbWthIiA8bGludXgtDQogICAgPiBhc3BlZWQtYm91bmNlcyt2aWpheWtoZW1rYT1mYi5j
+b21AbGlzdHMub3psYWJzLm9yZyBvbiBiZWhhbGYgb2YgDQogICAgPiB2aWpheWtoZW1rYUBmYi5j
+b20+IHdyb3RlOg0KICAgID4gDQogICAgPiAgICAgUGxlYXNlIG1lcmdlIHRoZXNlIHBhdGNoZXMg
+aW4gdXBzdHJlYW0ga2VybmVsLg0KICAgID4gICAgIA0KICAgID4gICAgIFJlZ2FyZHMNCiAgICA+
+ICAgICAtVmlqYXkNCiAgICA+ICAgICANCiAgICA+ICAgICBPbiAxMi8yMC8xOCwgMTA6MDYgQU0s
+ICJMaW51eC1hc3BlZWQgb24gYmVoYWxmIG9mIFZpamF5IEtoZW1rYSIgDQogICAgPiA8bGludXgt
+YXNwZWVkLWJvdW5jZXMrdmlqYXlraGVta2E9ZmIuY29tQGxpc3RzLm96bGFicy5vcmcgb24gYmVo
+YWxmIG9mIA0KICAgID4gdmlqYXlraGVta2FAZmIuY29tPiB3cm90ZToNCiAgICA+ICAgICANCiAg
+ICA+ICAgICAgICAgSm9lbCwgQ2FuIHlvdSBwbGVhc2UgdGFrZSBjYXJlIG9mIHRoZXNlIHBhdGNo
+ZXMgbWVyZ2UuDQogICAgPiAgICAgICAgIA0KICAgID4gICAgICAgICBPbiAxMi8xNy8xOCwgMTI6
+MDQgUE0sICJWaWpheSBLaGVta2EiIDx2aWpheWtoZW1rYUBmYi5jb20+IHdyb3RlOg0KICAgID4g
+ICAgICAgICANCiAgICA+ICAgICAgICAgICAgIEFkZGVkIGxwYyBjdHJsIGRldmljZSB0byBlbmFi
+bGUgTFBDIGNsb2NrIGluIEZhY2Vib29rDQogICAgPiAgICAgICAgICAgICBUaW9nYXBhc3MgZGV2
+aWNlIHRyZWUuDQogICAgPiAgICAgICAgICAgICANCiAgICA+ICAgICAgICAgICAgIFNpZ25lZC1v
+ZmYtYnk6IFZpamF5IEtoZW1rYSA8dmlqYXlraGVta2FAZmIuY29tPg0KICAgID4gICAgICAgICAg
+ICAgLS0tDQogICAgPiAgICAgICAgICAgICAgLi4uL2Jvb3QvZHRzL2FzcGVlZC1ibWMtZmFjZWJv
+b2stdGlvZ2FwYXNzLmR0cyAgfCAxNyArKysrKysNCiAgICA+ICsrKysrKysrKysrDQogICAgPiAg
+ICAgICAgICAgICAgMSBmaWxlIGNoYW5nZWQsIDE3IGluc2VydGlvbnMoKykNCiAgICA+ICAgICAg
+ICAgICAgIA0KICAgID4gICAgICAgICAgICAgZGlmZiAtLWdpdCBhL2FyY2gvYXJtL2Jvb3QvZHRz
+L2FzcGVlZC1ibWMtZmFjZWJvb2stDQogICAgPiB0aW9nYXBhc3MuZHRzIGIvYXJjaC9hcm0vYm9v
+dC9kdHMvYXNwZWVkLWJtYy1mYWNlYm9vay10aW9nYXBhc3MuZHRzDQogICAgPiAgICAgICAgICAg
+ICBpbmRleCA3M2U1OGE4MjE2MTMuLmVmNzg3NWI1NDU2MiAxMDA2NDQNCiAgICA+ICAgICAgICAg
+ICAgIC0tLSBhL2FyY2gvYXJtL2Jvb3QvZHRzL2FzcGVlZC1ibWMtZmFjZWJvb2stdGlvZ2FwYXNz
+LmR0cw0KICAgID4gICAgICAgICAgICAgKysrIGIvYXJjaC9hcm0vYm9vdC9kdHMvYXNwZWVkLWJt
+Yy1mYWNlYm9vay10aW9nYXBhc3MuZHRzDQogICAgPiAgICAgICAgICAgICBAQCAtMjIsNiArMjIs
+MTcgQEANCiAgICA+ICAgICAgICAgICAgICAJCXJlZyA9IDwweDgwMDAwMDAwIDB4MjAwMDAwMDA+
+Ow0KICAgID4gICAgICAgICAgICAgIAl9Ow0KICAgID4gICAgICAgICAgICAgIA0KICAgID4gICAg
+ICAgICAgICAgKwlyZXNlcnZlZC1tZW1vcnkgew0KICAgID4gICAgICAgICAgICAgKwkJI2FkZHJl
+c3MtY2VsbHMgPSA8MT47DQogICAgPiAgICAgICAgICAgICArCQkjc2l6ZS1jZWxscyA9IDwxPjsN
+CiAgICA+ICAgICAgICAgICAgICsJCXJhbmdlczsNCiAgICA+ICAgICAgICAgICAgICsNCiAgICA+
+ICAgICAgICAgICAgICsJCWZsYXNoX21lbW9yeTogcmVnaW9uQDk4MDAwMDAwIHsNCiAgICA+ICAg
+ICAgICAgICAgICsJCQluby1tYXA7DQogICAgPiAgICAgICAgICAgICArCQkJcmVnID0gPDB4OTgw
+MDAwMDAgMHgwMDAwMTAwMD47IC8qIDRLICovDQogICAgPiAgICAgICAgICAgICArCQl9Ow0KICAg
+ID4gICAgICAgICAgICAgKwl9Ow0KICAgID4gICAgICAgICAgICAgKw0KICAgID4gICAgICAgICAg
+ICAgIAlpaW8taHdtb24gew0KICAgID4gICAgICAgICAgICAgIAkJY29tcGF0aWJsZSA9ICJpaW8t
+aHdtb24iOw0KICAgID4gICAgICAgICAgICAgIAkJaW8tY2hhbm5lbHMgPSA8JmFkYyAwPiwgPCZh
+ZGMgMT4sIDwmYWRjIDI+LCA8JmFkYyAzPiwNCiAgICA+ICAgICAgICAgICAgIEBAIC01NCw2ICs2
+NSwxMiBAQA0KICAgID4gICAgICAgICAgICAgIAl9Ow0KICAgID4gICAgICAgICAgICAgIH07DQog
+ICAgPiAgICAgICAgICAgICAgDQogICAgPiAgICAgICAgICAgICArJmxwY19jdHJsIHsNCiAgICA+
+ICAgICAgICAgICAgICsJc3RhdHVzID0gIm9rYXkiOw0KICAgID4gICAgICAgICAgICAgKwltZW1v
+cnktcmVnaW9uID0gPCZmbGFzaF9tZW1vcnk+Ow0KICAgID4gICAgICAgICAgICAgKwlmbGFzaCA9
+IDwmc3BpMT47DQogICAgPiAgICAgICAgICAgICArfTsNCiAgICA+ICAgICAgICAgICAgICsNCiAg
+ICA+ICAgICAgICAgICAgICAmdWFydDEgew0KICAgID4gICAgICAgICAgICAgIAkvLyBIb3N0IENv
+bnNvbGUNCiAgICA+ICAgICAgICAgICAgICAJc3RhdHVzID0gIm9rYXkiOw0KICAgID4gICAgICAg
+ICAgICAgLS0gDQogICAgPiAgICAgICAgICAgICAyLjE3LjENCiAgICANCiAgICBJIHVuZGVyc3Rh
+bmQgeW91IGp1c3Qgd2FudCB0byBtYWtlIHlvdXIgc3lzdGVtIHdvcmssIGJ1dCB0aGlzIGlzIGEN
+CiAgICBicm9rZW4gd2F5IHRvIGRvIGl0LiBBbmQgdGhhdCdzIG5vdCB5b3VyIGZhdWx0IC0gd2Ug
+c2hvdWxkIHJlYWxseSBmaXgNCiAgICB0aGUgZHJpdmVyLiBJIHRoaW5rIHRoZSBtZW1vcnktcmVn
+aW9uIHBoYW5kbGUgc2hvdWxkIGJlIG9wdGlvbmFsDQogICAgYW5kIHRoZSBkcml2ZXIgc2hvdWxk
+IHNpbXBseSBsaW1pdCB0aGUgb3B0aW9ucyBhdmFpbGFibGUgdG8gdGhlIGlvY3RsDQogICAgdG8g
+anVzdCB0aGUgZmxhc2ggcmVnaW9uIGlmIHRoZSBtZW1vcnkgbm9kZSBpcyBub3QgcHJlc2VudCAo
+aS5lLiByZXR1cm4NCiAgICBhbiBlcnJvciBpZiB0aGUgbWVtb3J5IHJlZ2lvbiBpcyByZXF1ZXN0
+ZWQgYnV0IG5vdCBkZXNjcmliZWQgaW4gdGhlDQogICAgZGV2aWNldHJlZSkuDQpMZXQgbWUgZml4
+IGRyaXZlciBpdHNlbGYgZmlyc3QuDQogICAgDQogICAgQW5kcmV3DQogICAgDQoNCg==
