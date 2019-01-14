@@ -2,82 +2,81 @@ Return-Path: <SRS0=tq6k=PW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E51F9C43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 12:49:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E1420C43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 12:50:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AB19920656
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 12:49:31 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="jZ/2VbWo"
+	by mail.kernel.org (Postfix) with ESMTP id AFA7B20656
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 12:50:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726618AbfANMta (ORCPT
+        id S1726641AbfANMuV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 14 Jan 2019 07:49:30 -0500
-Received: from mail-yw1-f68.google.com ([209.85.161.68]:33947 "EHLO
-        mail-yw1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726449AbfANMt3 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 Jan 2019 07:49:29 -0500
-Received: by mail-yw1-f68.google.com with SMTP id g75so8548484ywb.1
-        for <linux-kernel@vger.kernel.org>; Mon, 14 Jan 2019 04:49:29 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=AoU2MB9V748XAdgv8g50kB8PjZCqixoPjUfuVZcI3/M=;
-        b=jZ/2VbWo5p9+//eQLBwcjubuXDZmmRc/4idHyhx6McQQh2YuV6TTsDEhrYn1n5CGHh
-         IUgm+2xWKbY8Ck6biGXWrWOd3R3jrPuajPupz5wS0C0Ey2CcS5oy4/VlQmGyZzv1wxLA
-         uGXifypWr4L55+PDfVRCqUXgVchUjP+D6dMX4=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=AoU2MB9V748XAdgv8g50kB8PjZCqixoPjUfuVZcI3/M=;
-        b=hHAxeaw8TBA/PCAVHpJrp/qIQC4HnL80yJnparvRteZyR8rGL92Q6z56Kgf0pAsKm2
-         HRw22ko5Zv7KOCR7GXMA8HQy+ObIk/hinv0VOKaTV0Jr/gXtmpZJZdpgHgNyroC8jVdR
-         TtA/4mH/aq+TVG/SEA6jFOEZAq2RjWZaJLtjx+POr0X5PUQOY614YCj8JGMhycBK3yMy
-         enX8e94BJCvI2Kse44aefG3uuwkUK2GIJwd/g1RNSwRmp2ADapa4lNes22CMJ7qEKYoS
-         SwOuT3GCUYL+Tkj4/ptN4Y/db5d8jVRqPBiMsZie7EfmnU3L5tuZ6+ZZbVOKS9tEs000
-         RYeg==
-X-Gm-Message-State: AJcUukcEWd95MmFHqHx5nZXMkVTZ7nT0MRBAdkU2D0xCMzgUddUaUGjz
-        BEWXddvjpFkJEuIim+joqTTIlae+NX+g1AjStZroAw==
-X-Google-Smtp-Source: ALg8bN6xsjHg/OVq7TDrNKQtOOcUNTgQ8J2aOdvYMoJYvd9rVa9czlDbaR8C32wgxTvm+YycyieWKoHdMny2xghsck0=
-X-Received: by 2002:a81:2bc2:: with SMTP id r185mr22871377ywr.425.1547470168720;
- Mon, 14 Jan 2019 04:49:28 -0800 (PST)
-MIME-Version: 1.0
-References: <20190114095540.22956-1-anders.roxell@linaro.org> <20190114112443.GA11073@sirena.org.uk>
-In-Reply-To: <20190114112443.GA11073@sirena.org.uk>
-From:   Anders Roxell <anders.roxell@linaro.org>
-Date:   Mon, 14 Jan 2019 13:49:17 +0100
-Message-ID: <CADYN=9LU2fngmUZrM_E7qS7rGB7y4b45H12yZOW=X7JfaS1qqQ@mail.gmail.com>
-Subject: Re: [PATCH 1/3] ASoC: cs4341: fix waring unused-function
-To:     Mark Brown <broonie@kernel.org>
-Cc:     perex@perex.cz, tiwai@suse.com, brian.austin@cirrus.com,
-        Paul.Handrigan@cirrus.com, Liam Girdwood <lgirdwood@gmail.com>,
-        alsa-devel@alsa-project.org,
+        Mon, 14 Jan 2019 07:50:21 -0500
+Received: from mx2.suse.de ([195.135.220.15]:36078 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726449AbfANMuU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 14 Jan 2019 07:50:20 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 829F3AE86;
+        Mon, 14 Jan 2019 12:50:18 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id D078A1E157A; Mon, 14 Jan 2019 13:50:17 +0100 (CET)
+Date:   Mon, 14 Jan 2019 13:50:17 +0100
+From:   Jan Kara <jack@suse.cz>
+To:     Geert Uytterhoeven <geert@linux-m68k.org>
+Cc:     Andreas Dilger <adilger@dilger.ca>, Jan Kara <jack@suse.com>,
+        Theodore Tso <tytso@mit.edu>,
+        Ext4 Developers List <linux-ext4@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Subject: Re: Preserving a rev 0.0 ext2 filesystem
+Message-ID: <20190114125017.GI13316@quack2.suse.cz>
+References: <CAMuHMdULrGHfgF+RRGf5gXAc=V3KaB4549NezxEc3CvfsKWOyA@mail.gmail.com>
+ <3A06C183-19FF-48B3-9C49-60353BEC9DB8@dilger.ca>
+ <CAMuHMdWt+6Aeius=PFr9vQgF7LGde78f9nyai4m1P8QL+oqY0A@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdWt+6Aeius=PFr9vQgF7LGde78f9nyai4m1P8QL+oqY0A@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 14 Jan 2019 at 12:24, Mark Brown <broonie@kernel.org> wrote:
->
-> On Mon, Jan 14, 2019 at 10:55:40AM +0100, Anders Roxell wrote:
-> > The driver cs4341 can be built with SPI and/or I2C, but it has to be one
-> > of them at least. When I2C is set as a module we see the warning below:
->
-> I'm missing patches 2 and 3 of this series and there's no cover letter.
-> What's the story with dependencies?
+On Mon 14-01-19 11:23:30, Geert Uytterhoeven wrote:
+> Thanks, since ext2 also has the ext2_update_dynamic_rev() function, I
+> assumed it would be called as well.  But indeed, mounting the old file
+> system using the real ext2 driver retains its revision.
 
-oh, I made a mistake. It Should not be any dependencies, just this patch.
+Thanks for trying that out and I'm glad that it still works ;)
 
-Do you want me to resend it without " 1/3]... " in the subject?
+> JFYI, this is what was changed by mounting and unmounting it using the
+> ext2 driver:
+> 
+> --- ramdisk.orig 2019-01-14 09:23:15.578434706 +0100
+> +++ ramdisk.mounted-by-ext2 2019-01-14 09:23:16.362434253 +0100
+> @@ -3,7 +3,7 @@
+>  00000400  f8 00 00 00 78 05 00 00  00 00 00 00 20 00 00 00  |....x....... ...|
+>  00000410  09 00 00 00 01 00 00 00  00 00 00 00 00 00 00 00  |................|
+>  00000420  00 20 00 00 00 20 00 00  f8 00 00 00 f7 5e a3 32  |. ... .......^.2|
+> -00000430  9e 5e a3 32 03 00 14 00  53 ef 01 00 01 00 00 00  |.^.2....S.......|
+> +00000430  84 46 3c 5c 04 00 14 00  53 ef 01 00 01 00 00 00  |.F<\....S.......|
+>  00000440  53 5d a3 32 00 4e ed 00  00 00 00 00 00 00 00 00  |S].2.N..........|
+>  00000450  00 00 00 00 00 00 00 00  00 00 00 00 00 00 00 00  |................|
+>  00000460  00 00 00 00 00 00 00 00  87 6b 6d 86 4c 96 11 d0  |.........km.L...|
+> 
+> Which is just the last write time, and mount count, as expected.
+> Interestingly, the last mount time was not updated.
 
-Cheers,
-Anders
+Yeah, that looks like a bug that got introduced in 269c8db30cf5b6 "ext2:
+Set the write time in ext2_sync_fs()" in 2010. I'll fix it. Thanks for
+report.
+
+								Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
