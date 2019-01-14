@@ -2,109 +2,162 @@ Return-Path: <SRS0=tq6k=PW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7CA9AC43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 21:59:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B623C43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 22:01:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4C383205C9
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 21:59:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547503185;
-	bh=E7sZyLHEqEiBbEoFckXPL+EdZQJ8o3bUFV6EpNqa9B0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=k541Fd53bKHPgzowLZWEQ7OCq3KQ3kYSv937GzUpxjD5oALiRQ6rRnt0LH+xD84GL
-	 xgyoLFMWW403RwBi0dbh1KlWEn1xBNapMDbUFSimEovQtg9nlZTzbg5ueeEPG41tvL
-	 8zegxJwjtZrcuMivFDHfloDF/XvPMsH9hjMNf8eg=
+	by mail.kernel.org (Postfix) with ESMTP id 11D48205C9
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 22:01:07 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Mh0NpHKj"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726993AbfANV7o (ORCPT
+        id S1727064AbfANWBF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 14 Jan 2019 16:59:44 -0500
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:44678 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726591AbfANV7n (ORCPT
+        Mon, 14 Jan 2019 17:01:05 -0500
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:43507 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726646AbfANWBE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 Jan 2019 16:59:43 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=g/V2nRjS6jVFRmTQrwvA7n1d8TlDMApw/1IW5XWeqFY=; b=esgOqX/vHBS4mJ5QcTyi9qOvU
-        suIYT3HjvntXAT0gtvgL1JULn6Uw5lm8A/uEkG+N7NfLzsUK4z9C8erYcQ4Obo2Zaae1xyCzrWhSI
-        cDseFPkqMwnxxG8adEwIHin+GtRTNr5UlwXIdgmioi5SOugsR7jTOge3ttsd/oZ6g+25w=;
-Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
-        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1gjAGV-0008Di-Gg; Mon, 14 Jan 2019 21:59:27 +0000
-Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
-        id D23D71127AD0; Mon, 14 Jan 2019 21:59:26 +0000 (GMT)
-Date:   Mon, 14 Jan 2019 21:59:26 +0000
-From:   Mark Brown <broonie@kernel.org>
-To:     "kernelci.org bot" <bot@kernelci.org>
-Cc:     tomeu.vizoso@collabora.com, guillaume.tucker@collabora.com,
-        Linus Walleij <linus.walleij@linaro.org>,
-        matthew.hart@linaro.org, khilman@baylibre.com,
-        enric.balletbo@collabora.com,
-        Robert Jarzmik <robert.jarzmik@free.fr>,
-        Haojian Zhuang <haojian.zhuang@gmail.com>,
-        linux-kernel@vger.kernel.org,
-        Philipp Zabel <philipp.zabel@gmail.com>,
-        Paul Parsons <lost.distance@yahoo.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Daniel Mack <daniel@zonque.org>,
-        Russell King <linux@armlinux.org.uk>,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: broonie-regulator/for-next boot bisection:
- v5.0-rc2-20-g61b67608c6b9 on meson8b-odroidc1
-Message-ID: <20190114215926.GF11073@sirena.org.uk>
-References: <5c3cf3a4.1c69fb81.e81c0.fb80@mx.google.com>
+        Mon, 14 Jan 2019 17:01:04 -0500
+Received: by mail-pf1-f196.google.com with SMTP id w73so243238pfk.10
+        for <linux-kernel@vger.kernel.org>; Mon, 14 Jan 2019 14:01:03 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=0uNm3/KE9zU5eRRsW127BOpJbJx8eoSOd0/7kP4DHoI=;
+        b=Mh0NpHKjRA01BqbYdHc1iEvmIZ2EgIAPZMoiZZAitWhUtnN+x+nQvYaa8aeF+e1ReQ
+         j1djWWyDFlERHpzis6dRxbiNCVzR5iD+s/zsj6MgmO2uwCSbYGGiGHRLBn5Dim6T5iWv
+         mDTyFwWBXCkt4LEvHlPsb02oanGejUmXdd6d4=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=0uNm3/KE9zU5eRRsW127BOpJbJx8eoSOd0/7kP4DHoI=;
+        b=WeJmbchpK0q8FpqennKlAQYO0rSOEMRlbi9kfuy7dgBSkizcKf3wxFpEEsxtjUZ7GX
+         xR+RjzEqLJLgalmneOkPeKQaqM/sbh3t6DZwWOkYUqBR9pMl6mYX+Iiw0LiqtXluOdlR
+         xtaTBf0sOnxb6DxUOZVjyC6reS6FcSkbbLOqrJqObuaelV5fnl4XEhAAygoKrSSYs+mx
+         KGu+t6Os+gbTZsKu5cslkS0u0Na/TsoRjw6coKBGcTMccXtAuMSAZZyhm9CWGylA6sAb
+         TpG6bET1EDAAPzcHDi+tKxbgHrTb8drluo4j7Vd1PmvwJ25DRqJnDjCN4pOR2HSkBJFT
+         kRSQ==
+X-Gm-Message-State: AJcUukdyvZ0jV9uFDm1MEBPsEuQyAkt50dbaISH/ROCPPz6rxBqKeLMV
+        3/PuwlrCYmI9PpGPj9B8d+Aa7A==
+X-Google-Smtp-Source: ALg8bN6Kz4i0FkHCz5rR9MWR7MCLbQSKSNlFK3xx3GhdDNwc5ZDflJ6qzmW7+gzSBbm3NijmSzlRJw==
+X-Received: by 2002:a65:6645:: with SMTP id z5mr598242pgv.351.1547503263309;
+        Mon, 14 Jan 2019 14:01:03 -0800 (PST)
+Received: from localhost ([2620:15c:202:1:75a:3f6e:21d:9374])
+        by smtp.gmail.com with ESMTPSA id v9sm2082053pfe.49.2019.01.14.14.01.02
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 14 Jan 2019 14:01:02 -0800 (PST)
+Date:   Mon, 14 Jan 2019 14:01:01 -0800
+From:   Matthias Kaehlcke <mka@chromium.org>
+To:     Amit Kucheria <amit.kucheria@linaro.org>
+Cc:     linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        bjorn.andersson@linaro.org, viresh.kumar@linaro.org,
+        edubezval@gmail.com, andy.gross@linaro.org, tdas@codeaurora.org,
+        swboyd@chromium.org, dianders@chromium.org,
+        David Brown <david.brown@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>
+Subject: Re: [PATCH v2 8/9] arm64: dts: sdm845: wireup the thermal trip
+ points to cpufreq
+Message-ID: <20190114220101.GN261387@google.com>
+References: <cover.1547458732.git.amit.kucheria@linaro.org>
+ <7f94696460848a6bcfe5aee5ffda7fe556240736.1547458732.git.amit.kucheria@linaro.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="8TaQrIeukR7mmbKf"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <5c3cf3a4.1c69fb81.e81c0.fb80@mx.google.com>
-X-Cookie: From concentrate.
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <7f94696460848a6bcfe5aee5ffda7fe556240736.1547458732.git.amit.kucheria@linaro.org>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Mon, Jan 14, 2019 at 03:51:10PM +0530, Amit Kucheria wrote:
+> Since all cpus in the big and little clusters, respectively, are in the
+> same frequency domain, use all of them for mitigation in the
+> cooling-map. We end up with two cooling devices - one each for the big
+> and little clusters.
+> 
+> At the lower trip points we restrict ourselves to throttling only a few
+> OPPs. At higher trip temperatures, allow ourselves to be throttled to
+> any extent.
+> 
+> Signed-off-by: Amit Kucheria <amit.kucheria@linaro.org>
+> ---
+>  arch/arm64/boot/dts/qcom/sdm845.dtsi | 177 ++++++++++++++++++++++++---
+>  1 file changed, 161 insertions(+), 16 deletions(-)
+> 
+> diff --git a/arch/arm64/boot/dts/qcom/sdm845.dtsi b/arch/arm64/boot/dts/qcom/sdm845.dtsi
+> index fb7da678b116..7973e88bdf94 100644
+> --- a/arch/arm64/boot/dts/qcom/sdm845.dtsi
+> +++ b/arch/arm64/boot/dts/qcom/sdm845.dtsi
+>
+> ...
+>
+> @@ -1719,18 +1728,35 @@
+>  			thermal-sensors = <&tsens0 1>;
+>  
+>  			trips {
+> -				cpu_alert0: trip0 {
+> +				cpu0_alert0: trip-point@0 {
 
---8TaQrIeukR7mmbKf
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Thanks for adapting the trip point names and labels in anticipation of
+further additions!
 
-On Mon, Jan 14, 2019 at 12:40:04PM -0800, kernelci.org bot wrote:
+Seems you aren't overly convinced about the 'target/threshold'
+terminology used by some other arm64 platforms ;-)
 
-> Author: Linus Walleij <linus.walleij@linaro.org>
-> Date:   Mon Jan 7 17:27:42 2019 +0100
->=20
->     regulator: gpio: Convert to use descriptors
->    =20
->     This converts the GPIO regulator driver to use decriptors only.
+>  					temperature = <95000>;
+>  					hysteresis = <2000>;
+>  					type = "passive";
+>  				};
 
-Linus, I'm going to revert this whole series - not sure what's gone
-wrong here but I guess we can test easily with kernelci which is good.
+I realized that we still have the potential problem of a name change
+in the trip point node name if a 'threshold' node for IPA is added,
+since this node will have a lower temperature than 95°. If this is
+something to be concerned about it might be worth to add that extra
+trip point already to avoid headaches or funky trip point enumeration,
+even if we know that the value might not be the final one.
 
---8TaQrIeukR7mmbKf
-Content-Type: application/pgp-signature; name="signature.asc"
+(I'm aware that we are also changing the node names and labels right
+now, it seems less problematic at this point since the SDM845 thermal
+zones are a fairly recent addition)
 
------BEGIN PGP SIGNATURE-----
+> -				cpu_crit0: trip1 {
+> +				cpu0_crit: cpu_crit@0 {
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlw9Bj4ACgkQJNaLcl1U
-h9CQSQf/ZNxeO8TP3IdeM1f4m+PzX0ZvVQeav8eiT2IToghzAw5DzKDK+0KUuQNr
-am1pypt00MWC3VF1jLJ6udoDgHFpEK+3EO8OBNTOJWaFS80F+FuCmiqp7qUMDsxh
-YS9WF+Pj4OGUBQUhtErMkianCNMPcqSAlsl8pEQE6aHUrvQWJj4eh6Tqs7U/fQXp
-0ZnUgpO6BoqmA70HdyQffwT4mEioLp050UH8fppAZyS58wYoa3Z95tKpGe9x9pss
-uAYh5ScW16LglwaoXIrb8VardCQekGkfXIK3KuRyn7y8f94Ri62GIy3B6PR+9ijM
-g4Rd4hJiDd2yIbF/wfs6CDOI0kX3Zw==
-=m49H
------END PGP SIGNATURE-----
+nit: does the @0 add any value here? IIUC there can be only one
+critical trip point, hence there will never be a cpu_crit@1 or
+higher.
 
---8TaQrIeukR7mmbKf--
+>  					temperature = <110000>;
+>  					hysteresis = <1000>;
+>  					type = "critical";
+>  				};
+>  			};
+> +
+> +			cooling-maps {
+> +				map0 {
+> +					trip = <&cpu0_alert0>;
+> +					cooling-device = <&CPU0 THERMAL_NO_LIMIT 4>,
+> +							 <&CPU1 THERMAL_NO_LIMIT 4>,
+> +							 <&CPU2 THERMAL_NO_LIMIT 4>,
+> +							 <&CPU3 THERMAL_NO_LIMIT 4>;
+> +				};
+
+Out of curiosity: how did you determing the max cooling state of 4?
+
+Cheers
+
+Matthias
