@@ -2,122 +2,224 @@ Return-Path: <SRS0=tq6k=PW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1967CC43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 04:58:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DB354C43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 04:59:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CF2F320659
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 04:58:00 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="C0v3vL9I"
+	by mail.kernel.org (Postfix) with ESMTP id 9C5F020659
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 04:59:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1547441981;
+	bh=aTrL4Ggh/aveLAt8mewf0Pmq4CJkaa9RMEaomqFM/Fg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=sCSTT+dH+ywMWo7CRQz750WV2BpEG3bj2w0hSh10ZUIi0lHPTYeA16e+h1AsoRNhE
+	 6Jd2HOe2MYCHrM8zXiZTzk53B/0+0IUxkckBeHzJP86wZ70kpnZk14qkQNcdCLWJRl
+	 ZBUj4Yf8yMXHsLh2fb1IGk7qYnWyDR2tSQ//+2w4=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726551AbfANE57 (ORCPT
+        id S1726559AbfANE7j (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 13 Jan 2019 23:57:59 -0500
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:39554 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726450AbfANE56 (ORCPT
+        Sun, 13 Jan 2019 23:59:39 -0500
+Received: from lgeamrelo12.lge.com ([156.147.23.52]:33973 "EHLO
+        lgeamrelo11.lge.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726450AbfANE7j (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 13 Jan 2019 23:57:58 -0500
-Received: by mail-wr1-f68.google.com with SMTP id t27so21291234wra.6;
-        Sun, 13 Jan 2019 20:57:57 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=Vbyy6BhIkMnlI786LqA6OILBoYgAW+jACwvZwPI69Gg=;
-        b=C0v3vL9ISWoa1uCG8l1TPyQ+DZCnqzPAcL+k/ReUDuS9Zlj+CChSx74S7tC6knb2nF
-         RTV5m/Pkm2hYt3Cg+ULLDZ6/N+e2YwKrv0RzESkD4eA6GWKEQ5WfPFKeLcIzQ03BIttE
-         mXITk47Ft0y8nLN7P4rb57dvX2faeCBUI7M9hIGi4htGaIkM0XXf6vwonQmtrBija237
-         RnOqleUwfV5LTJ/a87IWaQD0V72xEmIwYGdfo4Yt6N67GEU59aRd95J8WfzzbEx9YpML
-         BME0CNo3zN6Ub+KAJK5cUuV/m2/oThIZcpQk/URD+HLWoTrQ6WGsJ2jLJtk/bgHlSNzt
-         fBaA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=Vbyy6BhIkMnlI786LqA6OILBoYgAW+jACwvZwPI69Gg=;
-        b=nE5hQ7kERFdIcHXDoivIv8ZAhm+5MIzczuZYJ3AI2oVLDiYIoK11S7lh8b0jd6Jdk+
-         19xdasDiaNzetpW4mji74uluyslXAfnr2thH6p+uNyvPkxM48+AQ3Cef885BqpnYK1jn
-         CpJG0sj2O6Ryd9XIqu7hSR1lKhEDWl4v5jismuvm/hARy098eKNK/exSpWYGMFwoM3yy
-         SrVeiT5wJW6y1gFbBrvxsO7xlYGC0mFTfcX75zvQkZhb6Dvwxw1D5Y2C4ySeXf6uODS8
-         b183yN9BtLrxJDyFu2LfDAAkyPdSi0qJ7tu6DfbNDKNRy/ldKm20R0pr36IxjIzEOI5d
-         uhsQ==
-X-Gm-Message-State: AJcUukcfw1EEGlh4mQGy5ePVBJzOqpzFWx0q4RPFIORt6PE/5vpNr197
-        Rv5MczXzYjclrZ7ILDG5/gs=
-X-Google-Smtp-Source: ALg8bN6Gd5vaakzTHVzIPhFmAoiZXspSdU1d4H977jEqcY+RD1nOvyeh/pU1okg3WYaRIg2XMAZp+Q==
-X-Received: by 2002:adf:8b4d:: with SMTP id v13mr21838152wra.282.1547441876516;
-        Sun, 13 Jan 2019 20:57:56 -0800 (PST)
-Received: from flashbox ([2a01:4f8:10b:24a5::2])
-        by smtp.gmail.com with ESMTPSA id e16sm103491133wrn.72.2019.01.13.20.57.55
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Sun, 13 Jan 2019 20:57:55 -0800 (PST)
-Date:   Sun, 13 Jan 2019 21:57:54 -0700
-From:   Nathan Chancellor <natechancellor@gmail.com>
-To:     Bart Van Assche <bvanassche@acm.org>
-Cc:     Jens Axboe <axboe@kernel.dk>,
-        "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Adaptec OEM Raid Solutions <aacraid@microsemi.com>,
-        "Manoj N. Kumar" <manoj@linux.ibm.com>,
-        "Matthew R. Ochs" <mrochs@linux.ibm.com>,
-        Uma Krishnan <ukrishn@linux.ibm.com>,
-        Bradley Grove <linuxdrivers@attotech.com>,
-        Don Brace <don.brace@microsemi.com>,
-        Brian King <brking@us.ibm.com>, linux-ide@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-scsi@vger.kernel.org,
-        esc.storagedev@microsemi.com,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Joel Stanley <joel@jms.id.au>
-Subject: Re: [PATCH v3] scsi/ata: Use unsigned int for cmd's type in ioctls
- in scsi_host_template
-Message-ID: <20190114045754.GA8440@flashbox>
-References: <20181020050143.589-1-natechancellor@gmail.com>
- <20190114044206.6351-1-natechancellor@gmail.com>
- <c1f7f039-04b2-a660-2408-8d4ac0ea63c4@acm.org>
+        Sun, 13 Jan 2019 23:59:39 -0500
+Received: from unknown (HELO lgeamrelo02.lge.com) (156.147.1.126)
+        by 156.147.23.52 with ESMTP; 14 Jan 2019 13:59:36 +0900
+X-Original-SENDERIP: 156.147.1.126
+X-Original-MAILFROM: namhyung@kernel.org
+Received: from unknown (HELO sejong) (10.177.227.17)
+        by 156.147.1.126 with ESMTP; 14 Jan 2019 13:59:36 +0900
+X-Original-SENDERIP: 10.177.227.17
+X-Original-MAILFROM: namhyung@kernel.org
+Date:   Mon, 14 Jan 2019 13:59:35 +0900
+From:   Namhyung Kim <namhyung@kernel.org>
+To:     Tom Zanussi <zanussi@kernel.org>
+Cc:     rostedt@goodmis.org, tglx@linutronix.de, mhiramat@kernel.org,
+        vedang.patel@intel.com, bigeasy@linutronix.de,
+        joel@joelfernandes.org, mathieu.desnoyers@efficios.com,
+        julia@ni.com, linux-kernel@vger.kernel.org,
+        linux-rt-users@vger.kernel.org, kernel-team@lge.com
+Subject: Re: [PATCH v11 10/15] tracing: Add alternative synthetic event trace
+ action syntax
+Message-ID: <20190114045935.GA20802@sejong>
+References: <cover.1547062835.git.tom.zanussi@linux.intel.com>
+ <f41e107a68bd018b388f7bd962d22a5bbc152598.1547062835.git.tom.zanussi@linux.intel.com>
+ <20190111060752.GC625@sejong>
+ <1547223940.7869.8.camel@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <c1f7f039-04b2-a660-2408-8d4ac0ea63c4@acm.org>
-User-Agent: Mutt/1.11.2 (2019-01-07)
+In-Reply-To: <1547223940.7869.8.camel@kernel.org>
+User-Agent: Mutt/1.11.1 (2018-12-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Jan 13, 2019 at 08:54:35PM -0800, Bart Van Assche wrote:
-> On 1/13/19 8:42 PM, Nathan Chancellor wrote:
-> > @@ -1292,7 +1292,7 @@ int esas2r_ioctl_handler(void *hostdata, int cmd, void __user *arg)
-> >   	ioctl = memdup_user(arg, sizeof(struct atto_express_ioctl));
-> >   	if (IS_ERR(ioctl)) {
-> >   		esas2r_log(ESAS2R_LOG_WARN,
-> > -			   "ioctl_handler access_ok failed for cmd %d, "
-> > +			   "ioctl_handler access_ok failed for cmd %u, "
-> >   			   "address %p", cmd,
-> >   			   arg);
-> >   		return PTR_ERR(ioctl);
+Hi Tom,
+
+On Fri, Jan 11, 2019 at 10:25:40AM -0600, Tom Zanussi wrote:
+> Hi Namhyung,
 > 
-> If you have to repost this patch, please use that opportunity to join the
-> above split strings. Additionally, since this patch touches much more SCSI
-
-Sorry, I should have caught that. If I have to post again, I will fix
-that.
-
-> code than ATA code I think it should have been sent to Martin instead of to
-> Jens. Anyway:
+> On Fri, 2019-01-11 at 15:07 +0900, Namhyung Kim wrote:
+> > On Wed, Jan 09, 2019 at 01:49:17PM -0600, Tom Zanussi wrote:
+> > > From: Tom Zanussi <tom.zanussi@linux.intel.com>
+> > > 
+> > > Add a 'trace(synthetic_event_name, params)' alternative to
+> > > synthetic_event_name(params).
+> > > 
+> > > Currently, the syntax used for generating synthetic events is to
+> > > invoke synthetic_event_name(params) i.e. use the synthetic event
+> > > name
+> > > as a function call.
+> > > 
+> > > Users requested a new form that more explicitly shows that the
+> > > synthetic event is in effect being traced.  In this version, a new
+> > > 'trace()' keyword is used, and the synthetic event name is passed
+> > > in
+> > > as the first argument.
+> > > 
+> > > Signed-off-by: Tom Zanussi <tom.zanussi@linux.intel.com>
+> > > ---
+> > >  Documentation/trace/histogram.rst | 21 ++++++++++++++++++++
+> > >  kernel/trace/trace.c              |  1 +
+> > >  kernel/trace/trace_events_hist.c  | 42
+> > > +++++++++++++++++++++++++++++++++++----
+> > >  3 files changed, 60 insertions(+), 4 deletions(-)
+> > > 
+> > > diff --git a/Documentation/trace/histogram.rst
+> > > b/Documentation/trace/histogram.rst
+> > > index 79476c906b1a..4939bad1c1cd 100644
+> > > --- a/Documentation/trace/histogram.rst
+> > > +++ b/Documentation/trace/histogram.rst
+> > > @@ -1874,6 +1874,7 @@ The available handlers are:
+> > >  The available actions are:
+> > >  
+> > >    - <synthetic_event_name>(param list)         - generate
+> > > synthetic event
+> > > +  - trace(<synthetic_event_name>,(param list)) - generate
+> > > synthetic event
+> > 
+> > Shouldn't it be
+> > 
+> > 	"trace(<synthetic_event_name>,param list)"
+> > 
+> > ?  Otherwise it looks like we need two parentheses.
 > 
-
-I had Jens, Martin, and James on the 'to' line, with all of the other
-maintainers of the individual files on cc. If I should have done it
-differently, please let me know.
-
-> Reviewed-by: Bart Van Assche <bvanassche@acm.org>
+> Good point, I'll remove the params.
 > 
+> > 
+> > IMHO, it seems better for consistency using this new syntax only.
+> > Of course it should support the old syntax as well for compatibility
+> > (and maybe make it undocumented?).  But I won't insist strongly..
+> > 
+> 
+> OK, yeah, I really hate when things are undocumented, so I think
+> removing the documentation would be a step backward, but maybe changing
+> the emphasis to the trace() form would suffice.  How about the below?:
 
-Thank you, I will carry this forward if I need to.
+Looks good to me!
 
-Nathan
+Thanks,
+Namhyung
+
+
+> 
+> 
+> diff --git a/Documentation/trace/histogram.rst b/Documentation/trace/histogram.rst
+> index e5bcef360997..0ea59d45aef1 100644
+> --- a/Documentation/trace/histogram.rst
+> +++ b/Documentation/trace/histogram.rst
+> @@ -1873,46 +1873,45 @@ The available handlers are:
+>  
+>  The available actions are:
+>  
+> -  - <synthetic_event_name>(param list)         - generate synthetic event
+>    - trace(<synthetic_event_name>,param list)   - generate synthetic event
+>    - save(field,...)                            - save current event fields
+>    - snapshot()                                 - snapshot the trace buffer
+>  
+>  The following commonly-used handler.action pairs are available:
+>  
+> -  - onmatch(matching.event).<synthetic_event_name>(param list)
+> -
+> -    or
+> -
+>    - onmatch(matching.event).trace(<synthetic_event_name>,param list)
+>  
+> -    The 'onmatch(matching.event).<synthetic_event_name>(params)' hist
+> -    trigger action is invoked whenever an event matches and the
+> -    histogram entry would be added or updated.  It causes the named
+> -    synthetic event to be generated with the values given in the
+> +    The 'onmatch(matching.event).trace(<synthetic_event_name>,param
+> +    list)' hist trigger action is invoked whenever an event matches
+> +    and the histogram entry would be added or updated.  It causes the
+> +    named synthetic event to be generated with the values given in the
+>      'param list'.  The result is the generation of a synthetic event
+>      that consists of the values contained in those variables at the
+> -    time the invoking event was hit.
+> -
+> -    There are two equivalent forms available for generating synthetic
+> -    events.  In the first form, the synthetic event name is used as if
+> -    it were a function name.  For example, if the synthetic event name
+> -    is 'wakeup_latency', the wakeup_latency event would be generated
+> -    by invoking it as if it were a function call, with the event field
+> -    values passed in as arguments: wakeup_latency(arg1,arg2).  The
+> -    second form simply uses the 'trace' keyword as the function name
+> -    and passes in the synthetic event name as the first argument,
+> -    followed by the field values: trace(wakeup_latency,arg1,arg2).
+> -
+> -    The 'param list' consists of one or more parameters which may be
+> -    either variables or fields defined on either the 'matching.event'
+> -    or the target event.  The variables or fields specified in the
+> -    param list may be either fully-qualified or unqualified.  If a
+> -    variable is specified as unqualified, it must be unique between
+> -    the two events.  A field name used as a param can be unqualified
+> -    if it refers to the target event, but must be fully qualified if
+> -    it refers to the matching event.  A fully-qualified name is of the
+> -    form 'system.event_name.$var_name' or 'system.event_name.field'.
+> +    time the invoking event was hit.  For example, if the synthetic
+> +    event name is 'wakeup_latency', a wakeup_latency event is
+> +    generated using onmatch(event).trace(wakeup_latency,arg1,arg2).
+> +
+> +    There is also an equivalent alternative form available for
+> +    generating synthetic events.  In this form, the synthetic event
+> +    name is used as if it were a function name.  For example, using
+> +    the 'wakeup_latency' synthetic event name again, the
+> +    wakeup_latency event would be generated by invoking it as if it
+> +    were a function call, with the event field values passed in as
+> +    arguments: onmatch(event).wakeup_latency(arg1,arg2).  The syntax
+> +    for this form is:
+> +
+> +      onmatch(matching.event).<synthetic_event_name>(param list)
+> +
+> +    In either case, the 'param list' consists of one or more
+> +    parameters which may be either variables or fields defined on
+> +    either the 'matching.event' or the target event.  The variables or
+> +    fields specified in the param list may be either fully-qualified
+> +    or unqualified.  If a variable is specified as unqualified, it
+> +    must be unique between the two events.  A field name used as a
+> +    param can be unqualified if it refers to the target event, but
+> +    must be fully qualified if it refers to the matching event.  A
+> +    fully-qualified name is of the form 'system.event_name.$var_name'
+> +    or 'system.event_name.field'.
+>  
+>      The 'matching.event' specification is simply the fully qualified
+>      event name of the event that matches the target event for the
+> diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
+> index 84981b61d45f..8c220d97c214 100644
+> --- a/kernel/trace/trace.c
+> +++ b/kernel/trace/trace.c
+> @@ -4899,7 +4899,6 @@ static const char readme_msg[] =
+>  	"\t        onmax(var)               - invoke if var exceeds current max\n"
+>  	"\t        onchange(var)            - invoke action if var changes\n\n"
+>  	"\t    The available actions are:\n\n"
+> -	"\t        <synthetic_event>(param list)        - generate synthetic event\n"
+>  	"\t        trace(<synthetic_event>,param list)  - generate synthetic event\n"
+>  	"\t        save(field,...)                      - save current event fields\n"
+>  	"\t        snapshot()                           - snapshot the trace buffer\n"
