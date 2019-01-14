@@ -2,81 +2,102 @@ Return-Path: <SRS0=tq6k=PW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1854AC43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 20:49:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C71E5C43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 20:49:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E1C5D20656
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 20:49:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9124820656
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 20:49:31 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="j5bohni8"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727095AbfANUtQ (ORCPT
+        id S1727134AbfANUta (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 14 Jan 2019 15:49:16 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:57930 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726776AbfANUtP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 Jan 2019 15:49:15 -0500
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 570302D7E7;
-        Mon, 14 Jan 2019 20:49:15 +0000 (UTC)
-Received: from colo-mx.corp.redhat.com (colo-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.21])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 43D9760CCF;
-        Mon, 14 Jan 2019 20:49:15 +0000 (UTC)
-Received: from zmail24.collab.prod.int.phx2.redhat.com (zmail24.collab.prod.int.phx2.redhat.com [10.5.83.30])
-        by colo-mx.corp.redhat.com (Postfix) with ESMTP id 231593F7CB;
-        Mon, 14 Jan 2019 20:49:15 +0000 (UTC)
-Date:   Mon, 14 Jan 2019 15:49:14 -0500 (EST)
-From:   Dave Anderson <anderson@redhat.com>
-To:     Borislav Petkov <bp@alien8.de>
-Cc:     Kazuhito Hagio <k-hagio@ab.jp.nec.com>,
-        Lianbo Jiang <lijiang@redhat.com>,
-        linux-kernel@vger.kernel.org, kexec@lists.infradead.org,
-        tglx@linutronix.de, mingo@redhat.com, x86@kernel.org,
-        akpm@linux-foundation.org, bhe@redhat.com, dyoung@redhat.com,
-        linux-doc@vger.kernel.org
-Message-ID: <1862896935.69778880.1547498954956.JavaMail.zimbra@redhat.com>
-In-Reply-To: <20190114203500.GU2773@zn.tnic>
-References: <20190110121944.6050-1-lijiang@redhat.com> <20190114192144.GQ2773@zn.tnic> <134663991.69764038.1547494607008.JavaMail.zimbra@redhat.com> <20190114195940.GS2773@zn.tnic> <244986363.69770015.1547496453312.JavaMail.zimbra@redhat.com> <20190114201812.GT2773@zn.tnic> <221183717.69773903.1547497592624.JavaMail.zimbra@redhat.com> <20190114203500.GU2773@zn.tnic>
-Subject: Re: [PATCH 1/2 v6] kdump: add the vmcoreinfo documentation
+        Mon, 14 Jan 2019 15:49:30 -0500
+Received: from userp2120.oracle.com ([156.151.31.85]:60744 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726776AbfANUt3 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 14 Jan 2019 15:49:29 -0500
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id x0EKhovE050365;
+        Mon, 14 Jan 2019 20:49:11 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2018-07-02;
+ bh=M7yTvV85CXKlk2OQTXaB03OCKthpB5GDQoYEHcoraG0=;
+ b=j5bohni8Q0Xa1NmHjjlYA4wRqu0Er/bDNoOVX3uECdyXSzrWLmjXZ8SySrzFbzYl2ZEX
+ 7ieAb1y43AjCnTS/TxBd19dF9dg7EhnoSOPB4qnN//F82cLXBXz00euHcpgfOC0o+LcH
+ wfyvT9TUENpmeG5cFPhDHr7asPjm1+NR82xdqV189/uTC8d11qE9h5XkpOMGzxfxFO+u
+ M6mqyPWqIeoK6BE5Mped2nTRo5aBNfvqnqmLSjYUoWG0dv+ZgGcH7GyYZzGDY3ERz/Uf
+ XHDEm33HI5ll3kxNUO2UvnYE/Zw+hqxpB3nRWiIR6HYcr4HG1tc5xeKinj5zxceDfZqp Lw== 
+Received: from aserv0021.oracle.com (aserv0021.oracle.com [141.146.126.233])
+        by userp2120.oracle.com with ESMTP id 2pybjs0491-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 14 Jan 2019 20:49:11 +0000
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by aserv0021.oracle.com (8.14.4/8.14.4) with ESMTP id x0EKnA0d027940
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 14 Jan 2019 20:49:10 GMT
+Received: from abhmp0002.oracle.com (abhmp0002.oracle.com [141.146.116.8])
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x0EKn9Bo026097;
+        Mon, 14 Jan 2019 20:49:09 GMT
+Received: from char.us.oracle.com (/10.152.32.25)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Mon, 14 Jan 2019 12:49:09 -0800
+Received: by char.us.oracle.com (Postfix, from userid 1000)
+        id 6C1356A0128; Mon, 14 Jan 2019 15:49:07 -0500 (EST)
+Date:   Mon, 14 Jan 2019 15:49:07 -0500
+From:   Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+To:     Joerg Roedel <joro@8bytes.org>
+Cc:     "Michael S . Tsirkin" <mst@redhat.com>,
+        Jason Wang <jasowang@redhat.com>, Jens Axboe <axboe@kernel.dk>,
+        virtualization@lists.linux-foundation.org,
+        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+        iommu@lists.linux-foundation.org, jfehlig@suse.com,
+        jon.grimm@amd.com, brijesh.singh@amd.com, hch@lst.de,
+        Joerg Roedel <jroedel@suse.de>
+Subject: Re: [PATCH 1/3] swiotlb: Export maximum allocation size
+Message-ID: <20190114204907.GH32038@char.us.oracle.com>
+References: <20190110134433.15672-1-joro@8bytes.org>
+ <20190110134433.15672-2-joro@8bytes.org>
+ <20190110170205.GB27546@char.us.oracle.com>
+ <20190111091231.GB5825@8bytes.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.18.17.201, 10.4.195.25]
-Thread-Topic: kdump: add the vmcoreinfo documentation
-Thread-Index: 1w3RLd9A9qEHPbJGj05Nd5Aij519rA==
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.30]); Mon, 14 Jan 2019 20:49:15 +0000 (UTC)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190111091231.GB5825@8bytes.org>
+User-Agent: Mutt/1.8.3 (2017-05-23)
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9136 signatures=668680
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1810050000 definitions=main-1901140160
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
------ Original Message -----
-> On Mon, Jan 14, 2019 at 03:26:32PM -0500, Dave Anderson wrote:
-> > No.  It needs *both* the vmlinux file and the vmcore file in order to read
-> > kernel
-> > virtual memory, so just having a kernel virtual address is insufficient.
-> > 
-> > So it's a chicken-and-egg situation.  This particular --osrelease option is used
-> > to determine *what* vmlinux file would be required for an actual crash analysis
-> > session.
+On Fri, Jan 11, 2019 at 10:12:31AM +0100, Joerg Roedel wrote:
+> On Thu, Jan 10, 2019 at 12:02:05PM -0500, Konrad Rzeszutek Wilk wrote:
+> > Why not use swiotlb_nr_tbl ? That is how drivers/gpu/drm use to figure if they
+> > need to limit the size of pages.
 > 
-> Ok, that makes sense. I could've used that explanation when reviewing
-> the documentation. Do you mind skimming through this:
-> 
-> https://lkml.kernel.org/r/20190111145650.GG4729@zn.tnic
-> 
-> in case we've missed explaining relevant usage - like that above - of
-> some of the vmcoreinfo members?
+> That function just exports the overall size of the swiotlb aperture, no?
+> What I need here is the maximum size for a single mapping.
 
-Yeah, I've been watching the thread, and the document looks fine to me.
-It's just that when I saw the discussion of this one being removed that
-I felt the need to respond...  ;-)
+Yes. The other drivers just assumed that if there is SWIOTLB they would use
+the smaller size by default (as in they knew the limitation).
 
-Dave
+But I agree it would be better to have something smarter - and also convert the
+DRM drivers to piggy back on this.
+
+Or alternatively we could make SWIOTLB handle bigger sizes..
+> 
+> Regards,
+> 
+> 	Joerg
