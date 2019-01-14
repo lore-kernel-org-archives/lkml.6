@@ -2,139 +2,123 @@ Return-Path: <SRS0=tq6k=PW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E0B3C43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 22:55:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 64882C43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 22:59:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 53D112063F
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 22:55:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2EDCD20657
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 22:59:14 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=paul-moore-com.20150623.gappssmtp.com header.i=@paul-moore-com.20150623.gappssmtp.com header.b="vkZEzOyr"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727122AbfANWzg (ORCPT
+        id S1726976AbfANW7M (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 14 Jan 2019 17:55:36 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:54601 "EHLO
-        mail.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726723AbfANWzg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 Jan 2019 17:55:36 -0500
-Received: from hanvin-mobl2.amr.corp.intel.com ([134.134.139.82])
-        (authenticated bits=0)
-        by mail.zytor.com (8.15.2/8.15.2) with ESMTPSA id x0EMsCZn2255335
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NO);
-        Mon, 14 Jan 2019 14:54:13 -0800
-Subject: Re: [PATCH v3 0/6] Static calls
-From:   "H. Peter Anvin" <hpa@zytor.com>
-To:     Jiri Kosina <jikos@kernel.org>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Nadav Amit <namit@vmware.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        the arch/x86 maintainers <x86@kernel.org>,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Jason Baron <jbaron@akamai.com>,
-        David Laight <David.Laight@aculab.com>,
-        Borislav Petkov <bp@alien8.de>,
-        Julia Cartwright <julia@ni.com>, Jessica Yu <jeyu@kernel.org>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        Edward Cree <ecree@solarflare.com>,
-        Daniel Bristot de Oliveira <bristot@redhat.com>
-References: <cover.1547073843.git.jpoimboe@redhat.com>
- <20190110203023.GL2861@worktop.programming.kicks-ass.net>
- <20190110205226.iburt6mrddsxnjpk@treble>
- <CAHk-=whR7LzKcuB9Z2km1T25DUkJcbE9rNhCzApAPADbDqMhmQ@mail.gmail.com>
- <CALCETrWBwTVHWXahVXMMBL4QA1f+YdKgv1XANXPsk86FjFFH2Q@mail.gmail.com>
- <B374297A-8298-4CED-8EC0-6A39BDBA5F05@vmware.com>
- <20190111151525.tf7lhuycyyvjjxez@treble>
- <CAHk-=wjJm8DpCsw=Wno01q4VFqUeiLKE8QmbAtUJurYhn3jRqA@mail.gmail.com>
- <12578A17-E695-4DD5-AEC7-E29FAB2C8322@zytor.com>
- <nycvar.YFH.7.76.1901112035570.6626@cbobk.fhfr.pm>
- <5cbd249a-3b2b-6b3b-fb52-67571617403f@zytor.com>
- <207c865e-a92a-1647-b1b0-363010383cc3@zytor.com>
- <9f60be8c-47fb-195b-fdb4-4098f1df3dc2@zytor.com>
-Message-ID: <8ca16cca-101d-1d1b-b3da-c9727665fec8@zytor.com>
-Date:   Mon, 14 Jan 2019 14:54:12 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        Mon, 14 Jan 2019 17:59:12 -0500
+Received: from mail-lf1-f66.google.com ([209.85.167.66]:46424 "EHLO
+        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726653AbfANW7M (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 14 Jan 2019 17:59:12 -0500
+Received: by mail-lf1-f66.google.com with SMTP id y14so518680lfg.13
+        for <linux-kernel@vger.kernel.org>; Mon, 14 Jan 2019 14:59:10 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=G5DVVvlBscBC6EIYomzKqD7HcRhB/c47Kegc7+dnBU8=;
+        b=vkZEzOyrN8qgZ2yRg0AdBzIuYJtOjCrFShNySQmgBpmaBOvtge30S823E1Ow7UgxGR
+         ucWxHUWlXb6qp/cn7gZ6U7VAIFnGnFdutA86R0TQRUqW9SHAPQbMC5B81hYLxsOGbCrO
+         FqdRYro6xYiQRSsbCa7dHHInAIlhttYISUtwAv18TrPCp6IPUxscdZhamlFBUDy7iw4C
+         LIie4gXfyX/SYigtSrjjk8ntoqCF3U+v49trffVUR2KFdvwCGs17z3aunpQImVLfWtS5
+         IrGAj+403/0n1qBOvDbs9szYYYrj9kby/ETMNbXwKOU04GmYRtfpiwrXFLVX834f56eu
+         Q94Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=G5DVVvlBscBC6EIYomzKqD7HcRhB/c47Kegc7+dnBU8=;
+        b=ZfXqPs+itcBU4rDGB0tbwUfwk33Uxxd8ePmwYWps+y/S0RUw1Q/5wjbqVa4MGrBHlz
+         NFa5qNFANkVNRGiiaQWwKGKeTLLN1y2lcoQ9S3BxWqBOIMxroxlr8lrPa/aYy8tUmK2M
+         1S5pBwHvQLExG3VyhSVC00MC6NbH2ZKtW/L8DhPcgLmctdpqLZCmRsK4uvu6WwW5huQk
+         C1WjGdi7am2yUmBX8pANqkLSHj6VMB2/QGpq84VPvvAkB9KrboxoykhPPjpktno/jRdu
+         DP16DQNnmMYUuJlPdQzjlvQhHljlB9QQBDUl6gMENA2dEtWnkojI8eqpJ7h3r46w5jnG
+         Vitg==
+X-Gm-Message-State: AJcUukdWMHj9d8jpeT9xzRQi//qigCKmPdrAvQN3TsNv9SNzh/jUzeNw
+        gHUxpbX9oPTi/YEgXX7j99Fhiplk5obAfi7m3RXc
+X-Google-Smtp-Source: ALg8bN6DAOMSBNiwxutsSIzxSfCmR090nBRh7M8jdODuXjAQg16qQSwf4xqvnlv3R2pZO8uVn2Hqnw67vE0FGvjFXy4=
+X-Received: by 2002:a19:f115:: with SMTP id p21mr576681lfh.20.1547506749653;
+ Mon, 14 Jan 2019 14:59:09 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <9f60be8c-47fb-195b-fdb4-4098f1df3dc2@zytor.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <cover.1544477629.git.rgb@redhat.com> <43548fafdfa98ee64ecfd0d7a69a2f5cb2c31c50.1544477629.git.rgb@redhat.com>
+In-Reply-To: <43548fafdfa98ee64ecfd0d7a69a2f5cb2c31c50.1544477629.git.rgb@redhat.com>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Mon, 14 Jan 2019 17:58:58 -0500
+Message-ID: <CAHC9VhSaTvVgSWVWo42Ur2k6hVNJ1XBkLwrd-J4-SUuidwXUYg@mail.gmail.com>
+Subject: Re: [PATCH ghak59 V3 2/4] audit: add syscall information to
+ CONFIG_CHANGE records
+To:     Richard Guy Briggs <rgb@redhat.com>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Linux-Audit Mailing List <linux-audit@redhat.com>,
+        Eric Paris <eparis@redhat.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Steve Grubb <sgrubb@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-I think this sequence ought to work (keep in mind we are already under a
-mutex, so the global data is safe even if we are preempted):
+On Mon, Dec 10, 2018 at 5:18 PM Richard Guy Briggs <rgb@redhat.com> wrote:
+>
+> Tie syscall information to all CONFIG_CHANGE calls since they are all a
+> result of user actions.
+>
+> Exclude user records from syscall context:
+> Since the function audit_log_common_recv_msg() is shared by a number of
+> AUDIT_CONFIG_CHANGE and the entire range of AUDIT_USER_* record types,
+> and since the AUDIT_CONFIG_CHANGE message type has been converted to a
+> syscall accompanied record type, special-case the AUDIT_USER_* range of
+> messages so they remain standalone records.
+>
+> See: https://github.com/linux-audit/audit-kernel/issues/59
+> See: https://github.com/linux-audit/audit-kernel/issues/50
+> Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
+> ---
+>  kernel/audit.c          | 27 +++++++++++++++++++--------
+>  kernel/audit_fsnotify.c |  2 +-
+>  kernel/audit_tree.c     |  2 +-
+>  kernel/audit_watch.c    |  2 +-
+>  kernel/auditfilter.c    |  2 +-
+>  5 files changed, 23 insertions(+), 12 deletions(-)
+>
+> diff --git a/kernel/audit.c b/kernel/audit.c
+> index 0e8026423fbd..a321fea94cc6 100644
+> --- a/kernel/audit.c
+> +++ b/kernel/audit.c
+> @@ -1072,6 +1073,16 @@ static void audit_log_common_recv_msg(struct audit_buffer **ab, u16 msg_type)
+>         audit_log_task_context(*ab);
+>  }
+>
+> +static inline void audit_log_user_recv_msg(struct audit_buffer **ab, u16 msg_type)
+> +{
+> +       audit_log_common_recv_msg(NULL, ab, msg_type);
+> +}
 
-	set up page table entries
-	invlpg
-	set up bp patching global data
+This makes sense because this is used by "user" records ...
 
-	cpu = get_cpu()
+> +static inline void audit_log_config_change_alt(struct audit_buffer **ab)
+> +{
+> +       audit_log_common_recv_msg(audit_context(), ab, AUDIT_CONFIG_CHANGE);
+> +}
 
-	bp_old_value = atomic_read(bp_write_addr)
+... and I don't believe this makes sense because there is no real
+logical grouping with the callers like there is for
+audit_log_user_recv_msg().
 
-	do {
-		atomic_write(&bp_poke_state, 1)
-
-		atomic_write(bp_write_addr, 0xcc)
-
-		mask <- online_cpu_mask - self
-		send IPIs
-		wait for mask = 0
-
-	} while (cmpxchg(&bp_poke_state, 1, 2) != 1);
-
-	patch sites, remove breakpoints after patching each one
-
-	atomic_write(&bp_poke_state, 3);
-
-	mask <- online_cpu_mask - self
-	send IPIs
-	wait for mask = 0
-
-	atomic_write(&bp_poke_state, 0);
-
-	tear down patching global data
-	tear down page table entries
-
-
-
-The #BP handler would then look like:
-
-	state = cmpxchg(&bp_poke_state, 1, 4);
-	switch (state) {
-		case 1:
-		case 4:
-			invlpg
-			cmpxchg(bp_write_addr, 0xcc, bp_old_value)
-			break;
-		case 2:
-			invlpg
-			complete patch sequence
-			remove breakpoint
-			break;
-		case 3:
-			/* If we are here, the #BP will go away on its own */
-			break;
-		case 0:
-			/* No patching in progress!!! */
-			return 0;
-	}
-
-	clear bit in mask
-	return 1;
-
-The IPI handler:
-
-	clear bit in mask
-	sync_core	/* Needed if multiple IPI events are chained */
+-- 
+paul moore
+www.paul-moore.com
