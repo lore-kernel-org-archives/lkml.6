@@ -2,93 +2,111 @@ Return-Path: <SRS0=tq6k=PW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A258C43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 20:12:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E19C5C43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 20:13:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 573162070B
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 20:12:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AE6912064C
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 20:13:37 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="W+8m9gVN"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LJeLztXb"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726957AbfANUMA (ORCPT
+        id S1726899AbfANUNf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 14 Jan 2019 15:12:00 -0500
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:43888 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726755AbfANUMA (ORCPT
+        Mon, 14 Jan 2019 15:13:35 -0500
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:33911 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726755AbfANUNf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 Jan 2019 15:12:00 -0500
-Received: by mail-wr1-f65.google.com with SMTP id r10so329872wrs.10;
-        Mon, 14 Jan 2019 12:11:59 -0800 (PST)
+        Mon, 14 Jan 2019 15:13:35 -0500
+Received: by mail-wr1-f67.google.com with SMTP id j2so400805wrw.1
+        for <linux-kernel@vger.kernel.org>; Mon, 14 Jan 2019 12:13:34 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=E4SBl3U0kVyqGqSUxFZSpYSw0A7I9Y7IH1FMPBhTXVc=;
-        b=W+8m9gVNzHwIm55Z22NUfBozWEpa4sNqH4vFj3l6bGoumlezuvwlL5kv14o65/qqBy
-         BI0vRbCRebK9bK4W0AY4mABm1BrLMlfZHQj15aFiz5tDV/8J8sKUNM6HWCP1HITxE8ye
-         qu3Yp/rXYLZkTRKmlkzajy1rkZo0tymJ+vuDfHVueCCqr1iH0IzwwtWnA4RMucX6OakY
-         sF7fHRUSx4LUk1h/6W3HuuAMTf7kAiR5Kb4tac/wtzxSALV77tC7Pbs1nGzeaDWE2Vty
-         CGAcGFgtsAagN6KL3+fXYIxKXJzKAvdhCEYZiRPv/drovA0dFCWteeLyNkde28BF1dsm
-         +deg==
+        h=sender:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=wWmKbA5d1oGoKuQguYAEN7zBM2H2HtNTPi7BgyT+znE=;
+        b=LJeLztXb9zgZvHzDWbseGTWidNnpW/yFUY8r0TRpnoVtSGfyr+9cFKpMGTtbygxsgK
+         EgXfYwfB9M8h/ktpa3VziHuaHkuqqWAwPJOXZ4D++YHxdi6zcf94D0CUTVRQhrnN9P4K
+         tFMJLetWqC7sNybYyHUclTfS/A5oCIyzb6JmWOs4eVlNErNMvNDNXkGvX0KleqXd64yB
+         YzNlZyMJyPhu6mRBEF79jK9+qMe9VWrx1V4Q8ZJpIyE7jnY6wFRBu4N6dx3+Fy370gw3
+         HMyQT9VDw9ehIpGJE1J0Gk7SPI0k4st4NyUmWqRMnvx9TXibRhjw8uuj+PM5cNFFsxfV
+         Uc5g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=E4SBl3U0kVyqGqSUxFZSpYSw0A7I9Y7IH1FMPBhTXVc=;
-        b=rHlF2h66vZjz1QU21Sjbox+Qquea1Lu0SmLT4gdIO+gjjDz3j2m2elX31mBgW5TM31
-         pIw/GF7pudKdj0SJ33etQL3r2nnhh/7o5w+74gB85caNbcG8QVCnVwr4F6sZgisRepYY
-         jhJ8GhOIHw1v8eW7eR28zhbiD55y2Nx6AUFrQJhR5sAWWa3YTvuFvWlmyf/aNq9+jt/c
-         fUeyr0geZf1OXvWPJJRgIcBKoGGNEPxDIh/7QJNT3ybXpsKX898xbMElD3d0k708iiPp
-         H5e9jWoYAe0fqbUpS4ph7nOyZ64BZuPJp9mb0AYzUZOlxNRjBHSgsw6jW1agJ+SdHOls
-         i4Yg==
-X-Gm-Message-State: AJcUukduWs61hO08wenv91GHIn+z7Gc2HmnJIkRx8k6Px2W1UJa93Wbq
-        HAtp6ab/eR6EkexknmXtoTYWmi0=
-X-Google-Smtp-Source: ALg8bN4yb81uLhiw1HmtohMiQQ6ixMR4VnMDE8XudEU08HGa38JtY+JLYpK70n2yz2tRkcf8DU3Q/Q==
-X-Received: by 2002:adf:b102:: with SMTP id l2mr145895wra.296.1547496718309;
-        Mon, 14 Jan 2019 12:11:58 -0800 (PST)
-Received: from avx2 (nat-minsk-pool-46-53-201-92.telecom.by. [46.53.201.92])
-        by smtp.gmail.com with ESMTPSA id y185sm19124033wmg.34.2019.01.14.12.11.57
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 14 Jan 2019 12:11:57 -0800 (PST)
-Date:   Mon, 14 Jan 2019 23:11:55 +0300
-From:   Alexey Dobriyan <adobriyan@gmail.com>
-To:     Thiago Jung Bauermann <bauerman@linux.ibm.com>
-Cc:     akpm@linux-foundation.org, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH] proc: return exit code 4 for skipped tests
-Message-ID: <20190114201155.GA9978@avx2>
-References: <20190108193108.GA12259@avx2>
- <87zhsahm1s.fsf@morokweng.localdomain>
+        h=x-gm-message-state:sender:from:to:cc:subject:date:message-id
+         :mime-version:content-transfer-encoding;
+        bh=wWmKbA5d1oGoKuQguYAEN7zBM2H2HtNTPi7BgyT+znE=;
+        b=NRtSjs/K0DFAk/aoqR1HSzR06MIzmotaSA8Yamz2CuJmUyiB1wxoZYre7/aFnFGEQB
+         lwDR81GnosvTnoYQ5LPlotIcsdOVkAMNr3okw1jAc5vJLYGf73uGDVyx1H9vi83qiEOd
+         /si9dDfkcUPy/x2Ul+SsczistTbKTIOWq7P/15GGLiVLLJd2c+qIgBGh35HHlJlj1P4Y
+         KrX6FoqyJV5X6KTdeDo2CBQESIKkV/1P7PBlw+v+gN/vKKktyQP/q4BCz0XBFy5yMgcp
+         eFMWvDE64zweg6TtoVA5NmqiDLuZvop2Vz47hsyQdV05ebhsxassHsr32bXpHpNMew3w
+         GqqA==
+X-Gm-Message-State: AJcUukeWQiBSF19hONwaOltCNcoM1twxorCH+Ze/ORpIvi7RQJAur40z
+        c6/Qy0mvmWVr9C+GSnimGpPin/MB
+X-Google-Smtp-Source: ALg8bN7bqye7llULIjL7t/Z3TLbFTkFMfki7ki2Lrd+nu5U0G8/6XBBCi0iF7q74/cXWuqyYK4jwqg==
+X-Received: by 2002:a5d:5409:: with SMTP id g9mr176312wrv.88.1547496813706;
+        Mon, 14 Jan 2019 12:13:33 -0800 (PST)
+Received: from macbookpro.malat.net (bru31-1-78-225-224-134.fbx.proxad.net. [78.225.224.134])
+        by smtp.gmail.com with ESMTPSA id c15sm24265536wml.27.2019.01.14.12.13.31
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 14 Jan 2019 12:13:31 -0800 (PST)
+Received: by macbookpro.malat.net (Postfix, from userid 1000)
+        id ADE5D11422AD; Mon, 14 Jan 2019 21:13:30 +0100 (CET)
+From:   Mathieu Malaterre <malat@debian.org>
+To:     Michael Ellerman <mpe@ellerman.id.au>
+Cc:     Mathieu Malaterre <malat@debian.org>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] powerpc: Allow CPU selection of G4/74xx variant
+Date:   Mon, 14 Jan 2019 21:13:04 +0100
+Message-Id: <20190114201304.10783-1-malat@debian.org>
+X-Mailer: git-send-email 2.19.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <87zhsahm1s.fsf@morokweng.localdomain>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 08, 2019 at 07:33:19PM -0200, Thiago Jung Bauermann wrote:
-> Alexey Dobriyan <adobriyan@gmail.com> writes:
-> > --- a/tools/testing/selftests/proc/proc-loadavg-001.c
-> > +++ b/tools/testing/selftests/proc/proc-loadavg-001.c
-> > @@ -30,7 +30,7 @@ int main(void)
-> >
-> >  	if (unshare(CLONE_NEWPID) == -1) {
-> >  		if (errno == ENOSYS || errno == EPERM)
-> > -			return 2;
-> > +			return 4;
-> >  		return 1;
-> >  	}
-> 
-> Can't these tests use the KSFT_SKIP macro defined in kselftest.h?
+GCC supports -mcpu=G4
 
-They can! I tried to find a single use of XPASS and XFAIL and failed and
-now I just don't want to have anything to do with that header.
+This patch gives the opportunity to select ALTIVEC for this variant.
+
+Signed-off-by: Mathieu Malaterre <malat@debian.org>
+---
+ arch/powerpc/platforms/Kconfig.cputype | 6 ++++++
+ 1 file changed, 6 insertions(+)
+
+diff --git a/arch/powerpc/platforms/Kconfig.cputype b/arch/powerpc/platforms/Kconfig.cputype
+index 8c7464c3f27f..7c544607ba32 100644
+--- a/arch/powerpc/platforms/Kconfig.cputype
++++ b/arch/powerpc/platforms/Kconfig.cputype
+@@ -153,6 +153,11 @@ config E300C3_CPU
+ 	bool "e300c3 (831x)"
+ 	depends on PPC_BOOK3S_32
+ 
++config G4_CPU
++	bool "G4 (74xx)"
++	depends on PPC_BOOK3S_32
++	select ALTIVEC
++
+ endchoice
+ 
+ config TARGET_CPU_BOOL
+@@ -171,6 +176,7 @@ config TARGET_CPU
+ 	default "860" if 860_CPU
+ 	default "e300c2" if E300C2_CPU
+ 	default "e300c3" if E300C3_CPU
++	default "G4" if G4_CPU
+ 
+ config PPC_BOOK3S
+ 	def_bool y
+-- 
+2.19.2
+
