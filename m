@@ -4,69 +4,69 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D48FC43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 20:30:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 91FF6C43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 20:31:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E0A98206B7
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 20:30:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5A8F820659
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 20:31:30 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="sCF5WnaI"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jmk9nqiK"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727127AbfANUas (ORCPT
+        id S1727062AbfANUb2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 14 Jan 2019 15:30:48 -0500
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:45088 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726767AbfANUaq (ORCPT
+        Mon, 14 Jan 2019 15:31:28 -0500
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:52079 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726773AbfANUb2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 Jan 2019 15:30:46 -0500
-Received: by mail-wr1-f65.google.com with SMTP id t6so375014wrr.12
-        for <linux-kernel@vger.kernel.org>; Mon, 14 Jan 2019 12:30:45 -0800 (PST)
+        Mon, 14 Jan 2019 15:31:28 -0500
+Received: by mail-wm1-f66.google.com with SMTP id b11so1035688wmj.1;
+        Mon, 14 Jan 2019 12:31:26 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=sender:from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=Bl+VSsa/k2JFsJMmLzL5WuyF7dqWgT2jkpk91luYwhc=;
-        b=sCF5WnaIJBIfsWb1nd7m5vlYU6EHwl90+LBwtwFcoO+Xbu0B5twXnnnBYowMxeW7w3
-         zlc9JMrPdk2MXvi60YrWTYU4BgyNCjje0nG7efgqptuzfwQtD6Abw7aJsrDrNcpWcn1Q
-         G1CboBHs5Lou2lGUaMPE5PlSHr24lD3ZEMLrmFABtZT8ctA/RNRmQ7vVP0ArxWQ1C3Hn
-         IEluOlaoFsOpDqNc5hh71XafUcWuhP8geqjoW5evB1ClzpS8r3jfjheDrboTYFnQknVI
-         uZUNc3BN1bDGUyXUYGGp5HSyrLLvwsueWc3NZEH3jgfz2UZFFNzkO6vUlvLiVr0txpXq
-         0VHw==
+        h=sender:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=g8nh8jBjJAPoF6fwDqu+/8Aopkkx0WnNQl3TsCm7S+4=;
+        b=jmk9nqiKRQnRph8+ihehwHC6+N6POFsW5em+96L2quuU1a0aH0JkdvmOZOaSqB4rdH
+         9UCmkRMVE9XD9HWSW5Movh6Wm2xHXg3ZArhIQ/hQWcFLFgjBttkHnwpY6Jr94jNBckUb
+         JHEOAol2TAuTRyO67y/9G0iKsgx7a8Bp9/wVlTtJSEV/eUjzZeLIoegcQSrPYVzEXhYc
+         UBEFv9zRo95WSwUWRBy8kUZd6O72boMN1dtGPyQ6r+ql+utjWELRbePX9poHHU5ioRPW
+         96WSvzPIhVjd3aak/DjAlRBjXIFjE8JwR7ivfT2zTEPgW1Wa0DJPfBuYU2KjJ+wnJcCB
+         qQvg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:sender:from:to:cc:subject:date:message-id
-         :in-reply-to:references:mime-version:content-transfer-encoding;
-        bh=Bl+VSsa/k2JFsJMmLzL5WuyF7dqWgT2jkpk91luYwhc=;
-        b=b9X0ugU/oFmnY70j432X5IOvkNB1Pcl7c6szpE8h4bATMC1ms3zy/yRQhfyu4NJ3he
-         TuJPu4MbvUTUJ2JJjcYBjOvgJOzEiCFf1mpS/PVJ7w1ktgCxs/BUotJD8FxR0MnP82Yr
-         Xcs3Yqr6DuxV71V6OwHRuwVqNZdhJtrXlApnnpcX2Bt0f516Bx7N/djcxXU2bDc8AJ5Y
-         4+7Wh7nRzQ6PjCacJiDfiTZDyctRqRLB6BxcV57/jq3b0wEJL43X9e2MEhRyKGgTdqPL
-         vS2kznmcDFNOtytiUca6Xf24Jq+wXxqfgiNiwbrx6+e3vGB7A86fHM9weQnJP/54ZiU7
-         b0tA==
-X-Gm-Message-State: AJcUukfQqFAXrP0RHJ5n/pg4gyOkhZymbU4y+HLB0065ozPobgVCKLMl
-        Ry07BhefLcHWIN2ca2ZPW4k=
-X-Google-Smtp-Source: ALg8bN5OwmOUsIXIsHx0o1wMT450VcHz2mkos4psMXMo/tN51WffDP01QvsF0MuIjIWYaAImHYdoZw==
-X-Received: by 2002:adf:9083:: with SMTP id i3mr210218wri.124.1547497844207;
-        Mon, 14 Jan 2019 12:30:44 -0800 (PST)
-Received: from macbookpro.malat.net ([2a01:e34:ee1e:860:6f23:82e6:aa2d:bbd1])
-        by smtp.gmail.com with ESMTPSA id p12sm36358603wmi.5.2019.01.14.12.30.43
+         :mime-version:content-transfer-encoding;
+        bh=g8nh8jBjJAPoF6fwDqu+/8Aopkkx0WnNQl3TsCm7S+4=;
+        b=D6HL2Vzbhk4lhEwpJd3S4qQE6cMuOM9IHUhR0j8bu3/SgZB2Xa6DsU/b0LakdoXqxl
+         a1Fl/bmJcdR0/easVtUsi22ExKA6DqlpxOB1nkoNquKHIOp5PK00BSs7AO6E0nTESRSO
+         uNJEMuO89eN2yXh+XmTUQ6+ZLiVlVwGe4Nd78NY0n2WY7eXbC6nhqT2+GhcvEvl/EfGN
+         rI1qNkxzRmKYIMlABBS5EOkGreqrM5Uj8EfQ3qZ7EWhzg2FoApuyofZNBWOVk9KdYvWW
+         4NIOlQSae8VuWUD+mVgj5dHYa6O+bfXP/WQkK+1cdF3D9o6MnfdxuW2TEAYL4YB4lyrJ
+         AdiA==
+X-Gm-Message-State: AJcUukes41us79q0Y2/h4IWP4QbYiuB+j7Xs21lkeR4xDsT6e91+AVw4
+        NzR1429MLy8UpIFF5EJ6+54=
+X-Google-Smtp-Source: ALg8bN4YoDRIGRew0RuZZCLsD5+NxAljXGAzbXiT2W2yTeC3p/eFP4GU/x5aJRD4FWUgGy4yI0cJFQ==
+X-Received: by 2002:a1c:578e:: with SMTP id l136mr642857wmb.124.1547497886017;
+        Mon, 14 Jan 2019 12:31:26 -0800 (PST)
+Received: from macbookpro.malat.net (bru31-1-78-225-224-134.fbx.proxad.net. [78.225.224.134])
+        by smtp.gmail.com with ESMTPSA id t5sm19019357wmg.43.2019.01.14.12.31.24
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 14 Jan 2019 12:30:43 -0800 (PST)
+        Mon, 14 Jan 2019 12:31:25 -0800 (PST)
 Received: by macbookpro.malat.net (Postfix, from userid 1000)
-        id 8B6C811422AD; Mon, 14 Jan 2019 21:30:42 +0100 (CET)
+        id 29F4E11422AD; Mon, 14 Jan 2019 21:31:19 +0100 (CET)
 From:   Mathieu Malaterre <malat@debian.org>
-To:     Steven Rostedt <rostedt@goodmis.org>
+To:     Jens Axboe <axboe@kernel.dk>
 Cc:     Mathieu Malaterre <malat@debian.org>,
-        Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org
-Subject: [PATCH 2/2] tracing: annotate implicit fall through
-Date:   Mon, 14 Jan 2019 21:30:38 +0100
-Message-Id: <20190114203039.16535-2-malat@debian.org>
+        Steven Rostedt <rostedt@goodmis.org>,
+        Ingo Molnar <mingo@redhat.com>, linux-block@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] blkcg: annotate implicit fall through
+Date:   Mon, 14 Jan 2019 21:31:13 +0100
+Message-Id: <20190114203113.16832-1-malat@debian.org>
 X-Mailer: git-send-email 2.19.2
-In-Reply-To: <20190114203039.16535-1-malat@debian.org>
-References: <20190114203039.16535-1-malat@debian.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -79,25 +79,25 @@ this place in the code produced a warning (W=1).
 
 This commit remove the following warning:
 
-  kernel/trace/trace_events_filter.c:494:8: warning: this statement may fall through [-Wimplicit-fallthrough=]
+  kernel/trace/blktrace.c:725:9: warning: this statement may fall through [-Wimplicit-fallthrough=]
 
 Signed-off-by: Mathieu Malaterre <malat@debian.org>
 ---
- kernel/trace/trace_events_filter.c | 1 +
+ kernel/trace/blktrace.c | 1 +
  1 file changed, 1 insertion(+)
 
-diff --git a/kernel/trace/trace_events_filter.c b/kernel/trace/trace_events_filter.c
-index 27821480105e..eb694756c4bb 100644
---- a/kernel/trace/trace_events_filter.c
-+++ b/kernel/trace/trace_events_filter.c
-@@ -495,6 +495,7 @@ predicate_parse(const char *str, int nr_parens, int nr_preds,
- 					ptr++;
- 					break;
- 				}
-+				/* fall through */
- 			default:
- 				parse_error(pe, FILT_ERR_TOO_MANY_PREDS,
- 					    next - str);
+diff --git a/kernel/trace/blktrace.c b/kernel/trace/blktrace.c
+index fac0ddf8a8e2..e1c6d79fb4cc 100644
+--- a/kernel/trace/blktrace.c
++++ b/kernel/trace/blktrace.c
+@@ -723,6 +723,7 @@ int blk_trace_ioctl(struct block_device *bdev, unsigned cmd, char __user *arg)
+ #endif
+ 	case BLKTRACESTART:
+ 		start = 1;
++		/* fall through */
+ 	case BLKTRACESTOP:
+ 		ret = __blk_trace_startstop(q, start);
+ 		break;
 -- 
 2.19.2
 
