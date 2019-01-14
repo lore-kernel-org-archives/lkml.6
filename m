@@ -2,276 +2,130 @@ Return-Path: <SRS0=tq6k=PW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D532EC43444
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 10:05:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B2D12C43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 10:06:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A70DF20873
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 10:05:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 84AE020873
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 10:06:03 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="GzMIrTld"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726437AbfANKFz convert rfc822-to-8bit (ORCPT
+        id S1726873AbfANKGC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 14 Jan 2019 05:05:55 -0500
-Received: from mx08-00178001.pphosted.com ([91.207.212.93]:22730 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726749AbfANKFs (ORCPT
+        Mon, 14 Jan 2019 05:06:02 -0500
+Received: from mail-ed1-f66.google.com ([209.85.208.66]:36650 "EHLO
+        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726482AbfANKGA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 Jan 2019 05:05:48 -0500
-Received: from pps.filterd (m0046660.ppops.net [127.0.0.1])
-        by mx08-00178001.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x0E9ttTl015560;
-        Mon, 14 Jan 2019 11:05:20 +0100
-Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx08-00178001.pphosted.com with ESMTP id 2pybxxybtp-1
-        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
-        Mon, 14 Jan 2019 11:05:20 +0100
-Received: from zeta.dmz-eu.st.com (zeta.dmz-eu.st.com [164.129.230.9])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 3A5C038;
-        Mon, 14 Jan 2019 10:05:19 +0000 (GMT)
-Received: from Webmail-eu.st.com (sfhdag6node3.st.com [10.75.127.18])
-        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id DA1AB2AF7;
-        Mon, 14 Jan 2019 10:05:18 +0000 (GMT)
-Received: from SFHDAG6NODE2.st.com (10.75.127.17) by SFHDAG6NODE3.st.com
- (10.75.127.18) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Mon, 14 Jan
- 2019 11:05:18 +0100
-Received: from SFHDAG6NODE2.st.com ([fe80::a56f:c186:bab7:13d6]) by
- SFHDAG6NODE2.st.com ([fe80::a56f:c186:bab7:13d6%20]) with mapi id
- 15.00.1347.000; Mon, 14 Jan 2019 11:05:18 +0100
-From:   Pascal PAILLET-LME <p.paillet@st.com>
-To:     "dmitry.torokhov@gmail.com" <dmitry.torokhov@gmail.com>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "lee.jones@linaro.org" <lee.jones@linaro.org>,
-        "lgirdwood@gmail.com" <lgirdwood@gmail.com>,
-        "broonie@kernel.org" <broonie@kernel.org>,
-        "wim@linux-watchdog.org" <wim@linux-watchdog.org>,
-        "linux@roeck-us.net" <linux@roeck-us.net>,
-        "linux-input@vger.kernel.org" <linux-input@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-watchdog@vger.kernel.org" <linux-watchdog@vger.kernel.org>,
-        "benjamin.gaignard@linaro.org" <benjamin.gaignard@linaro.org>,
-        "eballetbo@gmail.com" <eballetbo@gmail.com>,
-        "axel.lin@ingics.com" <axel.lin@ingics.com>
-CC:     Pascal PAILLET-LME <p.paillet@st.com>
-Subject: [PATCH RESEND v8 6/6] watchdog: stpmic1: add stpmic1 watchdog driver
-Thread-Topic: [PATCH RESEND v8 6/6] watchdog: stpmic1: add stpmic1 watchdog
- driver
-Thread-Index: AQHUq/CmppWkm+knw0+yRVT1/4g2xA==
-Date:   Mon, 14 Jan 2019 10:05:18 +0000
-Message-ID: <1547460290-21049-7-git-send-email-p.paillet@st.com>
-References: <1547460290-21049-1-git-send-email-p.paillet@st.com>
-In-Reply-To: <1547460290-21049-1-git-send-email-p.paillet@st.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.75.127.48]
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: 8BIT
+        Mon, 14 Jan 2019 05:06:00 -0500
+Received: by mail-ed1-f66.google.com with SMTP id f23so18160445edb.3
+        for <linux-kernel@vger.kernel.org>; Mon, 14 Jan 2019 02:05:59 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ffwll.ch; s=google;
+        h=sender:date:from:to:cc:subject:message-id:mail-followup-to
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=31n6q9gHjvwQ8HUcLFEyEeRyWzXo+P9WHYJIC1waV1I=;
+        b=GzMIrTldTY5X354pq6qiV+EXzAMdM86Sg6lGpmfcDNZVI4880Yj6bX+93vsfPuoIPI
+         S4VPGjtU5zju+vsYOsJVm9OBVymSF33Sq0qyid79WYqnsmzG6DxOyjYk38kSRNB4mXo2
+         /uFDcvkMbpc8m0gojkYCN0tDMPJSJNmoZM5Rg=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :mail-followup-to:references:mime-version:content-disposition
+         :in-reply-to:user-agent;
+        bh=31n6q9gHjvwQ8HUcLFEyEeRyWzXo+P9WHYJIC1waV1I=;
+        b=iyk/yaYKQWdJ6UaHMnCDBN47heOgl3CQAc5HX/A3/IqOrd/VwnwT8tOl9dEDpwJkce
+         XdjPwr76GsC+keGuo53TksA4jByxx4ZNGgWgbr0Bjn6x0jWekAX2Z1nkeDyt/z96V/Ai
+         j1j2ZDQAvQrvYB0oEP4V2YSiRJqD7hynaIw3GTR+YeGLm44CY/KxFEk/ZBmfEvtlmAsK
+         eCp1a+W9hfmPy/noUG4U7ufqfP2Wp1Qhfi4PxUXMUcw4mTd4d3/e0hTuWNWgdfyaJybe
+         j95z/j0GYHKf6l8BIiUoB9LkPil1J4caLmNPXmfBIAcvqVnk51yV0wnQ41fFHfkrjHC1
+         k9xw==
+X-Gm-Message-State: AJcUukej83PYJdLign13p6nNOr1YoKsHYTUWgZMBukFImS77nzYaHfSO
+        Tl+AYOp38t5ZWnLOv0bm1btk3Q==
+X-Google-Smtp-Source: ALg8bN4nZrWkCsQEb2QLSbmu7yWl951UtmaS41OrKfjpqVinoMnVAMbr5lU2HQbwuQRUJhm4APVzHA==
+X-Received: by 2002:a17:906:340a:: with SMTP id c10-v6mr19939655ejb.130.1547460358897;
+        Mon, 14 Jan 2019 02:05:58 -0800 (PST)
+Received: from phenom.ffwll.local ([2a02:168:569e:0:3106:d637:d723:e855])
+        by smtp.gmail.com with ESMTPSA id s5-v6sm2265009eji.25.2019.01.14.02.05.57
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 14 Jan 2019 02:05:58 -0800 (PST)
+Date:   Mon, 14 Jan 2019 11:05:56 +0100
+From:   Daniel Vetter <daniel@ffwll.ch>
+To:     Heiko Stuebner <heiko@sntech.de>
+Cc:     Julia Lawall <Julia.Lawall@lip6.fr>,
+        Sandy Huang <hjc@rock-chips.com>,
+        kernel-janitors@vger.kernel.org, David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        dri-devel@lists.freedesktop.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 3/4] drm/rockchip: add missing of_node_put
+Message-ID: <20190114100556.GC10517@phenom.ffwll.local>
+Mail-Followup-To: Heiko Stuebner <heiko@sntech.de>,
+        Julia Lawall <Julia.Lawall@lip6.fr>,
+        Sandy Huang <hjc@rock-chips.com>, kernel-janitors@vger.kernel.org,
+        David Airlie <airlied@linux.ie>, dri-devel@lists.freedesktop.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <1547369264-24831-1-git-send-email-Julia.Lawall@lip6.fr>
+ <1547369264-24831-4-git-send-email-Julia.Lawall@lip6.fr>
+ <3397932.PmTvevuZIG@phil>
 MIME-Version: 1.0
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-01-14_05:,,
- signatures=0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <3397932.PmTvevuZIG@phil>
+X-Operating-System: Linux phenom 4.19.0-1-amd64 
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The stpmic1 PMIC embeds a watchdog which is disabled by default. As soon
-as the watchdog is started, it must be refreshed periodically otherwise
-the PMIC goes off.
+On Sun, Jan 13, 2019 at 07:48:49PM +0100, Heiko Stuebner wrote:
+> Am Sonntag, 13. Januar 2019, 09:47:43 CET schrieb Julia Lawall:
+> > The device node iterators perform an of_node_get on each iteration, so a
+> > jump out of the loop requires an of_node_put.
+> > 
+> > The semantic patch that fixes this problem is as follows
+> > (http://coccinelle.lip6.fr):
+> > 
+> > // <smpl>
+> > @@
+> > expression root,e;
+> > local idexpression child;
+> > iterator name for_each_child_of_node;
+> > @@
+> > 
+> >  for_each_child_of_node(root, child) {
+> >    ... when != of_node_put(child)
+> >        when != e = child
+> > +  of_node_put(child);
+> > ?  break;
+> >    ...
+> > }
+> > ... when != child
+> > // </smpl>
+> > 
+> > Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+> 
+> I've added a fixes+stable tag and applied it to drm-misc-fixes
 
-Signed-off-by: Pascal Paillet <p.paillet@st.com>
-Reviewed-by: Guenter Roeck <linux@roeck-us.net>
----
-changes in v8: nothing
+All of them or just this one here? These cleanup patches have a high
+chance of falling through cracks, so taking them all usually works out
+better ...
+-Daniel
 
- drivers/watchdog/Kconfig       |  12 ++++
- drivers/watchdog/Makefile      |   1 +
- drivers/watchdog/stpmic1_wdt.c | 139 +++++++++++++++++++++++++++++++++++++++++
- 3 files changed, 152 insertions(+)
- create mode 100644 drivers/watchdog/stpmic1_wdt.c
+> 
+> Thanks for catching that
+> Heiko
+> 
+> 
 
-diff --git a/drivers/watchdog/Kconfig b/drivers/watchdog/Kconfig
-index 2d64333..cc5155b 100644
---- a/drivers/watchdog/Kconfig
-+++ b/drivers/watchdog/Kconfig
-@@ -817,6 +817,18 @@ config STM32_WATCHDOG
- 	  To compile this driver as a module, choose M here: the
- 	  module will be called stm32_iwdg.
- 
-+config STPMIC1_WATCHDOG
-+	tristate "STPMIC1 PMIC watchdog support"
-+	depends on MFD_STPMIC1
-+	select WATCHDOG_CORE
-+	help
-+	  Say Y here to include watchdog support embedded into STPMIC1 PMIC.
-+	  If the watchdog timer expires, stpmic1 will shut down all its power
-+	  supplies.
-+
-+	  To compile this driver as a module, choose M here: the
-+	  module will be called spmic1_wdt.
-+
- config UNIPHIER_WATCHDOG
- 	tristate "UniPhier watchdog support"
- 	depends on ARCH_UNIPHIER || COMPILE_TEST
-diff --git a/drivers/watchdog/Makefile b/drivers/watchdog/Makefile
-index f69cdff..bdc072c 100644
---- a/drivers/watchdog/Makefile
-+++ b/drivers/watchdog/Makefile
-@@ -218,3 +218,4 @@ obj-$(CONFIG_SOFT_WATCHDOG) += softdog.o
- obj-$(CONFIG_MENF21BMC_WATCHDOG) += menf21bmc_wdt.o
- obj-$(CONFIG_MENZ069_WATCHDOG) += menz69_wdt.o
- obj-$(CONFIG_RAVE_SP_WATCHDOG) += rave-sp-wdt.o
-+obj-$(CONFIG_STPMIC1_WATCHDOG) += stpmic1_wdt.o
-diff --git a/drivers/watchdog/stpmic1_wdt.c b/drivers/watchdog/stpmic1_wdt.c
-new file mode 100644
-index 0000000..ad431d8
---- /dev/null
-+++ b/drivers/watchdog/stpmic1_wdt.c
-@@ -0,0 +1,139 @@
-+// SPDX-License-Identifier: GPL-2.0
-+// Copyright (C) STMicroelectronics 2018
-+// Author: Pascal Paillet <p.paillet@st.com> for STMicroelectronics.
-+
-+#include <linux/kernel.h>
-+#include <linux/mfd/stpmic1.h>
-+#include <linux/module.h>
-+#include <linux/platform_device.h>
-+#include <linux/of.h>
-+#include <linux/regmap.h>
-+#include <linux/slab.h>
-+#include <linux/watchdog.h>
-+
-+/* WATCHDOG CONTROL REGISTER bit */
-+#define WDT_START		BIT(0)
-+#define WDT_PING		BIT(1)
-+#define WDT_START_MASK		BIT(0)
-+#define WDT_PING_MASK		BIT(1)
-+#define WDT_STOP		0
-+
-+#define PMIC_WDT_MIN_TIMEOUT 1
-+#define PMIC_WDT_MAX_TIMEOUT 256
-+#define PMIC_WDT_DEFAULT_TIMEOUT 30
-+
-+static bool nowayout = WATCHDOG_NOWAYOUT;
-+module_param(nowayout, bool, 0);
-+MODULE_PARM_DESC(nowayout, "Watchdog cannot be stopped once started (default="
-+		 __MODULE_STRING(WATCHDOG_NOWAYOUT) ")");
-+
-+struct stpmic1_wdt {
-+	struct stpmic1 *pmic;
-+	struct watchdog_device wdtdev;
-+};
-+
-+static int pmic_wdt_start(struct watchdog_device *wdd)
-+{
-+	struct stpmic1_wdt *wdt = watchdog_get_drvdata(wdd);
-+
-+	return regmap_update_bits(wdt->pmic->regmap,
-+				  WCHDG_CR, WDT_START_MASK, WDT_START);
-+}
-+
-+static int pmic_wdt_stop(struct watchdog_device *wdd)
-+{
-+	struct stpmic1_wdt *wdt = watchdog_get_drvdata(wdd);
-+
-+	return regmap_update_bits(wdt->pmic->regmap,
-+				  WCHDG_CR, WDT_START_MASK, WDT_STOP);
-+}
-+
-+static int pmic_wdt_ping(struct watchdog_device *wdd)
-+{
-+	struct stpmic1_wdt *wdt = watchdog_get_drvdata(wdd);
-+
-+	return regmap_update_bits(wdt->pmic->regmap,
-+				  WCHDG_CR, WDT_PING_MASK, WDT_PING);
-+}
-+
-+static int pmic_wdt_set_timeout(struct watchdog_device *wdd,
-+				unsigned int timeout)
-+{
-+	struct stpmic1_wdt *wdt = watchdog_get_drvdata(wdd);
-+
-+	wdd->timeout = timeout;
-+	/* timeout is equal to register value + 1 */
-+	return regmap_write(wdt->pmic->regmap, WCHDG_TIMER_CR, timeout - 1);
-+}
-+
-+static const struct watchdog_info pmic_watchdog_info = {
-+	.options = WDIOF_SETTIMEOUT | WDIOF_KEEPALIVEPING | WDIOF_MAGICCLOSE,
-+	.identity = "STPMIC1 PMIC Watchdog",
-+};
-+
-+static const struct watchdog_ops pmic_watchdog_ops = {
-+	.owner = THIS_MODULE,
-+	.start = pmic_wdt_start,
-+	.stop = pmic_wdt_stop,
-+	.ping = pmic_wdt_ping,
-+	.set_timeout = pmic_wdt_set_timeout,
-+};
-+
-+static int pmic_wdt_probe(struct platform_device *pdev)
-+{
-+	int ret;
-+	struct stpmic1 *pmic;
-+	struct stpmic1_wdt *wdt;
-+
-+	if (!pdev->dev.parent)
-+		return -EINVAL;
-+
-+	pmic = dev_get_drvdata(pdev->dev.parent);
-+	if (!pmic)
-+		return -EINVAL;
-+
-+	wdt = devm_kzalloc(&pdev->dev, sizeof(struct stpmic1_wdt), GFP_KERNEL);
-+	if (!wdt)
-+		return -ENOMEM;
-+
-+	wdt->pmic = pmic;
-+
-+	wdt->wdtdev.info = &pmic_watchdog_info;
-+	wdt->wdtdev.ops = &pmic_watchdog_ops;
-+	wdt->wdtdev.min_timeout = PMIC_WDT_MIN_TIMEOUT;
-+	wdt->wdtdev.max_timeout = PMIC_WDT_MAX_TIMEOUT;
-+	wdt->wdtdev.parent = &pdev->dev;
-+
-+	wdt->wdtdev.timeout = PMIC_WDT_DEFAULT_TIMEOUT;
-+	watchdog_init_timeout(&wdt->wdtdev, 0, &pdev->dev);
-+
-+	watchdog_set_nowayout(&wdt->wdtdev, nowayout);
-+	watchdog_set_drvdata(&wdt->wdtdev, wdt);
-+
-+	ret = devm_watchdog_register_device(&pdev->dev, &wdt->wdtdev);
-+	if (ret)
-+		return ret;
-+
-+	dev_dbg(wdt->pmic->dev, "PMIC Watchdog driver probed\n");
-+	return 0;
-+}
-+
-+static const struct of_device_id of_pmic_wdt_match[] = {
-+	{ .compatible = "st,stpmic1-wdt" },
-+	{ },
-+};
-+
-+MODULE_DEVICE_TABLE(of, of_pmic_wdt_match);
-+
-+static struct platform_driver stpmic1_wdt_driver = {
-+	.probe = pmic_wdt_probe,
-+	.driver = {
-+		.name = "stpmic1-wdt",
-+		.of_match_table = of_pmic_wdt_match,
-+	},
-+};
-+module_platform_driver(stpmic1_wdt_driver);
-+
-+MODULE_DESCRIPTION("Watchdog driver for STPMIC1 device");
-+MODULE_AUTHOR("Pascal Paillet <p.paillet@st.com>");
-+MODULE_LICENSE("GPL v2");
 -- 
-1.9.1
+Daniel Vetter
+Software Engineer, Intel Corporation
+http://blog.ffwll.ch
