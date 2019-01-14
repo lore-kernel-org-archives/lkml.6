@@ -2,71 +2,98 @@ Return-Path: <SRS0=tq6k=PW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E9E0C43613
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 17:05:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CC841C43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 17:05:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 68AD120659
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 17:05:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9DD9220659
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 17:05:04 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="qjHe9qzd"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726823AbfANRE7 (ORCPT
+        id S1726854AbfANRFD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 14 Jan 2019 12:04:59 -0500
-Received: from mga17.intel.com ([192.55.52.151]:50801 "EHLO mga17.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726646AbfANRE6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 Jan 2019 12:04:58 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga005.fm.intel.com ([10.253.24.32])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 14 Jan 2019 09:04:57 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,478,1539673200"; 
-   d="scan'208";a="311711062"
-Received: from unknown (HELO localhost.localdomain) ([10.232.112.69])
-  by fmsmga005.fm.intel.com with ESMTP; 14 Jan 2019 09:04:57 -0800
-Date:   Mon, 14 Jan 2019 10:03:39 -0700
-From:   Keith Busch <keith.busch@intel.com>
-To:     Bjorn Helgaas <bhelgaas@google.com>
-Cc:     fin4478 fin4478 <fin4478@hotmail.com>,
-        Dou Liyang <douliyangs@gmail.com>,
-        Jens Axboe <axboe@kernel.dk>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Christoph Hellwig <hch@lst.de>, linux-pci@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Ming Lei <ming.lei@redhat.com>
-Subject: Re: Please remove warnings from msi.c:1269 and blk-mq-pci.c:52 some
- day
-Message-ID: <20190114170338.GA27149@localhost.localdomain>
-References: <AM0PR06MB3969BE1DFD53EFF6228E1A0AA1800@AM0PR06MB3969.eurprd06.prod.outlook.com>
- <CAErSpo5B2m406Mk6SUUcnmF31OEa8vC5YQTKB0ws3z3F5y_fEw@mail.gmail.com>
+        Mon, 14 Jan 2019 12:05:03 -0500
+Received: from userp2120.oracle.com ([156.151.31.85]:59126 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726646AbfANRFC (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 14 Jan 2019 12:05:02 -0500
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id x0EGrksQ047505;
+        Mon, 14 Jan 2019 17:04:27 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2018-07-02;
+ bh=7AFiiHYy7HBKm+Dazr0Agt4+SEq1G0/dENZ+3Arm9gQ=;
+ b=qjHe9qzd1FfaQNDamwF5UBGPJppNtog/e/3cKn2kM6lv+CtkAtGIxoc7RYjjNFVsvz1Y
+ S3j8suPhEGJuhw9t9H3KJoWkNMuLMkirVg7e76mzInPA93KmT/M4QMa+VKyz/uLZYdWy
+ gAyRFMy7IahU86qt5Q0pP3szm8rWc6P6YPnTCZX9a8zw6SpHhnjL7PCsJiS/Uh16Hg0N
+ 5uxb9BIjzIFlhN+GX7Zau1576tW097yMDaGyuEAbPWw9ZUt41nAxAjoYucVqh+sXb9Yi
+ 5np3DOAL/47Tg38czK4UZzj5toypLcdBRWp/DIQDgyV8Tm6mWiF2anZY8X2x8a5J1UXx HQ== 
+Received: from aserv0022.oracle.com (aserv0022.oracle.com [141.146.126.234])
+        by userp2120.oracle.com with ESMTP id 2pybjrxqrj-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 14 Jan 2019 17:04:27 +0000
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by aserv0022.oracle.com (8.14.4/8.14.4) with ESMTP id x0EH4Ptm002298
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 14 Jan 2019 17:04:26 GMT
+Received: from abhmp0004.oracle.com (abhmp0004.oracle.com [141.146.116.10])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x0EH4NGA016660;
+        Mon, 14 Jan 2019 17:04:24 GMT
+Received: from [10.152.35.100] (/10.152.35.100)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Mon, 14 Jan 2019 09:04:22 -0800
+Subject: Re: [PATCH v4 10/10] sched/fair: Provide idle search schedstats
+To:     Rick Lindsley <ricklind@linux.vnet.ibm.com>, mingo@redhat.com,
+        peterz@infradead.org
+Cc:     subhra.mazumdar@oracle.com, dhaval.giani@oracle.com,
+        daniel.m.jordan@oracle.com, pavel.tatashin@microsoft.com,
+        matt@codeblueprint.co.uk, umgwanakikbuti@gmail.com,
+        riel@redhat.com, jbacik@fb.com, juri.lelli@redhat.com,
+        valentin.schneider@arm.com, vincent.guittot@linaro.org,
+        quentin.perret@arm.com, linux-kernel@vger.kernel.org
+References: <1544131696-2888-1-git-send-email-steven.sistare@oracle.com>
+ <1544131696-2888-11-git-send-email-steven.sistare@oracle.com>
+ <6966a01e-8144-f268-ac9b-3e6fad3a5b2d@linux.vnet.ibm.com>
+From:   Steven Sistare <steven.sistare@oracle.com>
+Organization: Oracle Corporation
+Message-ID: <5447e3b5-db58-1ace-9974-6dfc250b4a1e@oracle.com>
+Date:   Mon, 14 Jan 2019 12:04:19 -0500
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAErSpo5B2m406Mk6SUUcnmF31OEa8vC5YQTKB0ws3z3F5y_fEw@mail.gmail.com>
-User-Agent: Mutt/1.9.1 (2017-09-22)
+In-Reply-To: <6966a01e-8144-f268-ac9b-3e6fad3a5b2d@linux.vnet.ibm.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9136 signatures=668680
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=635
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1810050000 definitions=main-1901140139
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[+Ming]
-
-On Mon, Jan 14, 2019 at 08:31:45AM -0600, Bjorn Helgaas wrote:
-> [+cc Dou, Jens, Thomas, Christoph, linux-pci, LKML]
+On 12/24/2018 7:25 AM, Rick Lindsley wrote:
+> On 12/06/2018 01:28 PM, Steve Sistare wrote:
+>> Add schedstats to measure the effectiveness of searching for idle CPUs
+>> and stealing tasks.  This is a temporary patch intended for use during
+>> development only.  SCHEDSTAT_VERSION is bumped to 16, and the following
+>> fields are added to the per-CPU statistics of /proc/schedstat:
 > 
-> On Sun, Jan 13, 2019 at 11:24 PM fin4478 fin4478 <fin4478@hotmail.com> wrote:
-> >
-> > Hi,
-> >
-> > A regression from the 4.20 kernel: I have the Asgard 256GB nvme drive
-> > and my custom non debug 1000Hz timer kernel 5.0 started to throw a
-> > couple of warning messages at boot. My system works ok:
+> Why only temporary?  It would seem that this might be useful information in the future too, for other developers with either new code or new use cases.
+> 
+> Rick
 
-I think Ming's patch here fixes this:
+Yes, they could be useful.  I suspect it would take a while to reach consensus
+on new field definition, and whether their usefulness outweighs the downside
+of breaking out of tree tools that assume version 15.
 
-  http://lists.infradead.org/pipermail/linux-nvme/2019-January/021902.html
+- Steve
