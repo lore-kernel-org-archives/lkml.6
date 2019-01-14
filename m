@@ -2,131 +2,136 @@ Return-Path: <SRS0=tq6k=PW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 131C6C43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 10:29:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B2994C43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 10:30:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D29BF20656
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 10:29:28 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="sr1nhQ1V"
+	by mail.kernel.org (Postfix) with ESMTP id 2C52720656
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 10:30:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726555AbfANK30 (ORCPT
+        id S1726592AbfANKaO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 14 Jan 2019 05:29:26 -0500
-Received: from mail-qk1-f196.google.com ([209.85.222.196]:44481 "EHLO
-        mail-qk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726064AbfANK30 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 Jan 2019 05:29:26 -0500
-Received: by mail-qk1-f196.google.com with SMTP id o8so10181176qkk.11;
-        Mon, 14 Jan 2019 02:29:25 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=7+n4S7s8xP2UHtxxNTfeXcSB/EYybkNW3ME7o7n7iOM=;
-        b=sr1nhQ1Vv9QHhFjm3UVhk50gHn4fuF88CH+gZFtYBX0I4Kh3+hdg8UAx3d81PxxQav
-         fHafuA9BnnAhbS0vrmGEGo1xgBQFvYzDuqLiZ/bUav4SwU3uNzL2MgdJQiAE2zz6DAFQ
-         n1eB9emonBLwaR3KXsyjaA7ZOJRHcMj8F+Lc9Z7UYkJjBoa9uWApDIXE6YVJdeyGP8pl
-         +6gwzEN5ejfwAniARBeBVbjiDxkiB2Z57MaaI0lDfQxsOFFWzedryIzbpOiV7jp5L0NZ
-         +U+ii8C9XXMqCA/N3TCD2JMaeApFzByAPNCzoCBxs270MZBx8P7PJFAoEvCqkW5q0Nwq
-         b+Kg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=7+n4S7s8xP2UHtxxNTfeXcSB/EYybkNW3ME7o7n7iOM=;
-        b=NkFypSlxXl/gcjvK1LXUJHDACfxk/hxAhJD51CCy3B1jJNcv38FNGpSeeMVwApA3vN
-         9UCz/N5NLXY+q9odq8uHq9c1NQjrAAz4v3Q3KY6PsLc0iND20auwgfYzj+aJl6YDtQlB
-         0EoVpqNH5g7epkUiS+nsL8wIST+SR2/x46WsCNhHL4/Qa3dZB21tl1ytpyQHgKXCtilL
-         s76r+8Pl0/vDLSAyDkF5PJX9dXjN2izot2IXOA6W68cq1MWzkEvMNa/qBPWVC9QLzf+T
-         ZUvQk+21nRKYbicRfRWBO0MlTJ7IOGqDun4kG6bh3VQwbi9VbpatkID8gySWUV6u3LSb
-         slXA==
-X-Gm-Message-State: AJcUukdFoBjahHZHz/I/KaqQcT2KoYwn0ndsmyKtRxTh1OUh2U57XVTJ
-        e+b9ofyaAYARAnUCB5dyWoE=
-X-Google-Smtp-Source: ALg8bN5QZ7bvR+eXT1Za0qIa6sFzJ+qjz2pwIkulIUDzIVMhfLEQ03A3s/sqVtAjOTPCLijQ1NmL3A==
-X-Received: by 2002:a37:688c:: with SMTP id d134mr22086553qkc.57.1547461765061;
-        Mon, 14 Jan 2019 02:29:25 -0800 (PST)
-Received: from smtp.gmail.com ([143.107.45.1])
-        by smtp.gmail.com with ESMTPSA id y12sm56537438qta.13.2019.01.14.02.29.22
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 14 Jan 2019 02:29:24 -0800 (PST)
-Date:   Mon, 14 Jan 2019 08:29:20 -0200
-From:   Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>
-To:     Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
-Cc:     Daniel Vetter <daniel@ffwll.ch>,
-        Gustavo Padovan <gustavo@padovan.org>,
-        Sean Paul <sean@poorly.run>, Dave Airlie <airlied@linux.ie>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH v2] drm/drm_vblank: Change EINVAL by the correct errno
-Message-ID: <20190114102920.h5guwpshzludwk2z@smtp.gmail.com>
-References: <20181015170529.dgzpbm37hbuvqatc@smtp.gmail.com>
- <20181016123541.GW31561@phenom.ffwll.local>
- <20181017124315.khhlykapxnug6ej6@smtp.gmail.com>
- <CAKMK7uF0ucof6gwAiY1SSp5oHt3BZ18Jkui5ugvkZc4u-NOJoA@mail.gmail.com>
- <20190113202323.co7upmn5fg32b7gn@smtp.gmail.com>
- <f4e3966d-bdc5-2816-2e4d-1b9046757b0f@linux.intel.com>
+        Mon, 14 Jan 2019 05:30:14 -0500
+Received: from mx2.suse.de ([195.135.220.15]:40890 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726064AbfANKaO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 14 Jan 2019 05:30:14 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 358B0AE4C;
+        Mon, 14 Jan 2019 10:30:12 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id E17511E157A; Mon, 14 Jan 2019 11:30:11 +0100 (CET)
+Date:   Mon, 14 Jan 2019 11:30:11 +0100
+From:   Jan Kara <jack@suse.cz>
+To:     Kevin Weidemann <kwe-lnx@postn.eu>
+Cc:     Jan Kara <jack@suse.cz>, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org,
+        Pali =?iso-8859-1?Q?Roh=E1r?= <pali.rohar@gmail.com>
+Subject: Re: udf: Prevent write-unsupported filesystem to be remounted
+ read-write
+Message-ID: <20190114103011.GD13316@quack2.suse.cz>
+References: <124cc6ea-ca79-20f2-651e-c2f909729ac0@gmx.de>
+ <8cf39b7c-505b-91e6-849d-e66ba980042f@postn.eu>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <f4e3966d-bdc5-2816-2e4d-1b9046757b0f@linux.intel.com>
-User-Agent: NeoMutt/20180716
+In-Reply-To: <8cf39b7c-505b-91e6-849d-e66ba980042f@postn.eu>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 01/14, Maarten Lankhorst wrote:
-> Op 13-01-2019 om 21:23 schreef Rodrigo Siqueira:
-> > Hi,
-> >
-> > I resend this patch for CI via “intel-gfx@lists.freedesktop.org” as
-> > Daniel suggested, and I got a feedback that reported an issue as can be
-> > seen here:
-> >
-> >    https://patchwork.freedesktop.org/series/51147/
-> >
-> > After a careful analysis of what happened, I concluded that the problem
-> > is related to the function “igt_wait_for_vblank_count()” in “igt_kms.c”.
-> > This function has the following assert:
-> >
-> >    igt_assert(drmWaitVBlank(drm_fd, &wait_vbl) == 0)
-> >
-> > This function only checks if everything went well with the
-> > drmWaitVBlank() operation and does not make any other validation. IMHO
-> > the patch is correct, and the problem pointed out by CI is not related
-> > to this change.
+Hello,
+
+On Mon 14-01-19 01:33:30, Kevin Weidemann wrote:
+> this is RE the patch 8515b9edf7a0c9dcf1ad218ccc783700db217336 (Upstream
+> commit a9ad01bc759df79b0012f43ee52164391e31cd96) in 4.18.20.
 > 
-> Hey,
-
-Hi,
-
-Thanks for the feedback :)
-
-> Thanks for finding the root cause. Before upstreaming can you send a fix for i-g-t so we don't lose CI coverage after changing the behavior?
-
-I'm just confused on my next step, should I fix the IGT test and then
-resend the patch? Additionally, I noticed that tests related to vblank
-wait have others issues as I pointed out here (see my last message):
-
-	https://patchwork.freedesktop.org/patch/245784/
-
-Is it enough if I handling EINVAL and EOPNOTSUPP in the tests?  I'm
-afraid, that the tests will still fail if I consider these two case;
-however, I suppose that handling only EOPNOTSUPP can fix the problem,
-but I'm not sure if it is the best solution.
-
-Best Regards
- 
-> ~Maarten
+> I have an issue with UDF. I used to be able to create a UDF fs in a way
+> that is very similar to this:
 > 
+> `# mkudffs --label=.... -m dvd -b 512 /dev/mapper/cryptdev1`
+> 
+> I used to proceed mounting it, noticing it got mounted as readonly
+> (because the accesstype of the udf fs is readonly (as decided per -m
+> dvd)), so I remounted it as rw and then was able to fill it with data.[1]
+> 
+> Now, this doesn't work anymore since the last time I did that. I figured
+> out it must have to do with the commit mentioned above.  All I get now,
+> during a remount-as-rw attempt, is:
+> `cannot remount /dev/mapper/cryptdev1 read-write, is write-protected`.
+> 
+> I am not sure if this counts as a regression, because I see the point in
+> not only auto-mounting such filesystems as readonly, but also preventing
+> remounting as rw, however it breaks my use case.
+> 
+> However, I noticed the following, too:
+> case A) when having a "readonly udf" on a readwrite device, the
+> filesystem mounts as readonly (old behavior) and also prevents remounting
+> as rw (new behavior)
+
+This works as intended.
+
+> case B) when having a "readwrite udf" on a readonly device, the
+> filesystem mounts as readwrite (!), but the writes end up being invisibly
+> discarded
+
+That's a bug. I'll fix it. Thanks for reporting this!
+
+> To me, B) sounds just like the kind of issue that the commit, that I
+> mentioned above, promised to fix.
+
+Actually A) is what the commit a9ad01bc75 "udf: Prevent write-unsupported
+filesystem to be remounted read-write" intended to fix.
+
+> In fact, I believe case B to be more severe, because it automatically
+> mounts as rw on a ro device, while the old (pre-patch) behavior of case A
+> correctly mounted as ro and required manual remounting intervention to
+> mount as rw on (potentially) rw - and even then, it's still less of an
+> issue, when the underlying device is writeable.
+> 
+> I feel like the correct solution would be to:
+> - disallow mounting as rw if the UDF is ro
+> - disallow mounting as rw if the device is ro
+> - disallow remounting as rw if the device is ro
+
+Agreed on these.
+
+> As for the case of remounting as rw if the UDF is ro but the device is
+> rw, I am not sure what the best idea is to deal with this.  If this new
+> behavior doesn't count as a regression, is there any way to end up with a
+> UDF filesystem as specced by the command above (-m dvd -b 512, so with it
+> being read-only), but still allow for mounting it as rw if the device
+> supports it? Does udftools offer a way to manipulate the UDF partition
+> descriptor flag in a pre-existing filesystem after it had already been
+> created that I am missing?
+
+So I would really prefer to keep the behavior of disallowing remounting
+read-only partition read write. After all ECMA-167 standard is pretty clear
+on this saying that for read-only partitions no sectors can be recorded. I
+understand it is inconvenient if you try to create e.g. a DVD image. So you
+want partition to be read-only in the end but initially you need it to be
+writeable so that you can fill-in the contents.
+
+Generally I think a clean solution for this is to provide a way in udftools
+to switch partition read-only / read-write. Also this is how similar things
+are achieved for other filesystems. Pali, is there a way to switch
+accessType of a partition on existing media with udftools? If not, can you
+look into implementing that please? It should be rather straightforward,
+the biggest question really is which tool should do this...
+
+								Honza
+
+> [1] sanity check: people actually do this:
+> - https://unix.stackexchange.com/a/17613
+> - https://www.g-loaded.eu/2005/11/10/packet-writing-on-cdrw-and-dvdrw-media/
+> - https://www.altlinux.org/WritingLargeFilesOnDVD
+> - https://computador.docow.com/como-usair-dvd-rw-udf-tanto-no-windows-quanto-no-linux.html (case 4)
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
