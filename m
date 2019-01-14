@@ -2,130 +2,115 @@ Return-Path: <SRS0=tq6k=PW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B2D12C43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 10:06:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BCFECC43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 10:06:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 84AE020873
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 10:06:03 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="GzMIrTld"
+	by mail.kernel.org (Postfix) with ESMTP id 994A72086D
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 10:06:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726873AbfANKGC (ORCPT
+        id S1726898AbfANKGJ convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 14 Jan 2019 05:06:02 -0500
-Received: from mail-ed1-f66.google.com ([209.85.208.66]:36650 "EHLO
-        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726482AbfANKGA (ORCPT
+        Mon, 14 Jan 2019 05:06:09 -0500
+Received: from mx08-00178001.pphosted.com ([91.207.212.93]:43383 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726779AbfANKFv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 Jan 2019 05:06:00 -0500
-Received: by mail-ed1-f66.google.com with SMTP id f23so18160445edb.3
-        for <linux-kernel@vger.kernel.org>; Mon, 14 Jan 2019 02:05:59 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ffwll.ch; s=google;
-        h=sender:date:from:to:cc:subject:message-id:mail-followup-to
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=31n6q9gHjvwQ8HUcLFEyEeRyWzXo+P9WHYJIC1waV1I=;
-        b=GzMIrTldTY5X354pq6qiV+EXzAMdM86Sg6lGpmfcDNZVI4880Yj6bX+93vsfPuoIPI
-         S4VPGjtU5zju+vsYOsJVm9OBVymSF33Sq0qyid79WYqnsmzG6DxOyjYk38kSRNB4mXo2
-         /uFDcvkMbpc8m0gojkYCN0tDMPJSJNmoZM5Rg=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :mail-followup-to:references:mime-version:content-disposition
-         :in-reply-to:user-agent;
-        bh=31n6q9gHjvwQ8HUcLFEyEeRyWzXo+P9WHYJIC1waV1I=;
-        b=iyk/yaYKQWdJ6UaHMnCDBN47heOgl3CQAc5HX/A3/IqOrd/VwnwT8tOl9dEDpwJkce
-         XdjPwr76GsC+keGuo53TksA4jByxx4ZNGgWgbr0Bjn6x0jWekAX2Z1nkeDyt/z96V/Ai
-         j1j2ZDQAvQrvYB0oEP4V2YSiRJqD7hynaIw3GTR+YeGLm44CY/KxFEk/ZBmfEvtlmAsK
-         eCp1a+W9hfmPy/noUG4U7ufqfP2Wp1Qhfi4PxUXMUcw4mTd4d3/e0hTuWNWgdfyaJybe
-         j95z/j0GYHKf6l8BIiUoB9LkPil1J4caLmNPXmfBIAcvqVnk51yV0wnQ41fFHfkrjHC1
-         k9xw==
-X-Gm-Message-State: AJcUukej83PYJdLign13p6nNOr1YoKsHYTUWgZMBukFImS77nzYaHfSO
-        Tl+AYOp38t5ZWnLOv0bm1btk3Q==
-X-Google-Smtp-Source: ALg8bN4nZrWkCsQEb2QLSbmu7yWl951UtmaS41OrKfjpqVinoMnVAMbr5lU2HQbwuQRUJhm4APVzHA==
-X-Received: by 2002:a17:906:340a:: with SMTP id c10-v6mr19939655ejb.130.1547460358897;
-        Mon, 14 Jan 2019 02:05:58 -0800 (PST)
-Received: from phenom.ffwll.local ([2a02:168:569e:0:3106:d637:d723:e855])
-        by smtp.gmail.com with ESMTPSA id s5-v6sm2265009eji.25.2019.01.14.02.05.57
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 14 Jan 2019 02:05:58 -0800 (PST)
-Date:   Mon, 14 Jan 2019 11:05:56 +0100
-From:   Daniel Vetter <daniel@ffwll.ch>
-To:     Heiko Stuebner <heiko@sntech.de>
-Cc:     Julia Lawall <Julia.Lawall@lip6.fr>,
-        Sandy Huang <hjc@rock-chips.com>,
-        kernel-janitors@vger.kernel.org, David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        dri-devel@lists.freedesktop.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 3/4] drm/rockchip: add missing of_node_put
-Message-ID: <20190114100556.GC10517@phenom.ffwll.local>
-Mail-Followup-To: Heiko Stuebner <heiko@sntech.de>,
-        Julia Lawall <Julia.Lawall@lip6.fr>,
-        Sandy Huang <hjc@rock-chips.com>, kernel-janitors@vger.kernel.org,
-        David Airlie <airlied@linux.ie>, dri-devel@lists.freedesktop.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <1547369264-24831-1-git-send-email-Julia.Lawall@lip6.fr>
- <1547369264-24831-4-git-send-email-Julia.Lawall@lip6.fr>
- <3397932.PmTvevuZIG@phil>
+        Mon, 14 Jan 2019 05:05:51 -0500
+Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
+        by mx08-00178001.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x0E9uF3O014157;
+        Mon, 14 Jan 2019 11:05:21 +0100
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx08-00178001.pphosted.com with ESMTP id 2pyby0ybsf-1
+        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
+        Mon, 14 Jan 2019 11:05:21 +0100
+Received: from zeta.dmz-eu.st.com (zeta.dmz-eu.st.com [164.129.230.9])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id E025D34;
+        Mon, 14 Jan 2019 10:05:18 +0000 (GMT)
+Received: from Webmail-eu.st.com (sfhdag6node1.st.com [10.75.127.16])
+        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 2C40F2AF4;
+        Mon, 14 Jan 2019 10:05:18 +0000 (GMT)
+Received: from SFHDAG6NODE2.st.com (10.75.127.17) by SFHDAG6NODE1.st.com
+ (10.75.127.16) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Mon, 14 Jan
+ 2019 11:05:17 +0100
+Received: from SFHDAG6NODE2.st.com ([fe80::a56f:c186:bab7:13d6]) by
+ SFHDAG6NODE2.st.com ([fe80::a56f:c186:bab7:13d6%20]) with mapi id
+ 15.00.1347.000; Mon, 14 Jan 2019 11:05:17 +0100
+From:   Pascal PAILLET-LME <p.paillet@st.com>
+To:     "dmitry.torokhov@gmail.com" <dmitry.torokhov@gmail.com>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "lee.jones@linaro.org" <lee.jones@linaro.org>,
+        "lgirdwood@gmail.com" <lgirdwood@gmail.com>,
+        "broonie@kernel.org" <broonie@kernel.org>,
+        "wim@linux-watchdog.org" <wim@linux-watchdog.org>,
+        "linux@roeck-us.net" <linux@roeck-us.net>,
+        "linux-input@vger.kernel.org" <linux-input@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-watchdog@vger.kernel.org" <linux-watchdog@vger.kernel.org>,
+        "benjamin.gaignard@linaro.org" <benjamin.gaignard@linaro.org>,
+        "eballetbo@gmail.com" <eballetbo@gmail.com>,
+        "axel.lin@ingics.com" <axel.lin@ingics.com>
+CC:     Pascal PAILLET-LME <p.paillet@st.com>
+Subject: [PATCH RESEND v8 5/6] dt-bindings: watchdog: document stpmic1 pmic
+ watchdog
+Thread-Topic: [PATCH RESEND v8 5/6] dt-bindings: watchdog: document stpmic1
+ pmic watchdog
+Thread-Index: AQHUq/Cm2l6CZjyB+UKg+FupXT3gNw==
+Date:   Mon, 14 Jan 2019 10:05:17 +0000
+Message-ID: <1547460290-21049-6-git-send-email-p.paillet@st.com>
+References: <1547460290-21049-1-git-send-email-p.paillet@st.com>
+In-Reply-To: <1547460290-21049-1-git-send-email-p.paillet@st.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.75.127.48]
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: 8BIT
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <3397932.PmTvevuZIG@phil>
-X-Operating-System: Linux phenom 4.19.0-1-amd64 
-User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-01-14_05:,,
+ signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Jan 13, 2019 at 07:48:49PM +0100, Heiko Stuebner wrote:
-> Am Sonntag, 13. Januar 2019, 09:47:43 CET schrieb Julia Lawall:
-> > The device node iterators perform an of_node_get on each iteration, so a
-> > jump out of the loop requires an of_node_put.
-> > 
-> > The semantic patch that fixes this problem is as follows
-> > (http://coccinelle.lip6.fr):
-> > 
-> > // <smpl>
-> > @@
-> > expression root,e;
-> > local idexpression child;
-> > iterator name for_each_child_of_node;
-> > @@
-> > 
-> >  for_each_child_of_node(root, child) {
-> >    ... when != of_node_put(child)
-> >        when != e = child
-> > +  of_node_put(child);
-> > ?  break;
-> >    ...
-> > }
-> > ... when != child
-> > // </smpl>
-> > 
-> > Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-> 
-> I've added a fixes+stable tag and applied it to drm-misc-fixes
+The stpmic1 PMIC embeds a watchdog which is disabled by default.
+In case of watchdog, the PMIC goes off.
 
-All of them or just this one here? These cleanup patches have a high
-chance of falling through cracks, so taking them all usually works out
-better ...
--Daniel
+Signed-off-by: Pascal Paillet <p.paillet@st.com>
+Reviewed-by: Rob Herring <robh@kernel.org>
+Reviewed-by: Guenter Roeck <linux@roeck-us.net>
+---
+changes in v8: nothing
 
-> 
-> Thanks for catching that
-> Heiko
-> 
-> 
+ Documentation/devicetree/bindings/watchdog/st,stpmic1-wdt.txt | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/watchdog/st,stpmic1-wdt.txt
 
+diff --git a/Documentation/devicetree/bindings/watchdog/st,stpmic1-wdt.txt b/Documentation/devicetree/bindings/watchdog/st,stpmic1-wdt.txt
+new file mode 100644
+index 0000000..7cc1407
+--- /dev/null
++++ b/Documentation/devicetree/bindings/watchdog/st,stpmic1-wdt.txt
+@@ -0,0 +1,11 @@
++STMicroelectronics STPMIC1 Watchdog
++
++Required properties:
++
++- compatible : should be "st,stpmic1-wdt"
++
++Example:
++
++watchdog {
++	compatible = "st,stpmic1-wdt";
++};
 -- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
+1.9.1
