@@ -2,88 +2,100 @@ Return-Path: <SRS0=tq6k=PW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D1B9C43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 18:45:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F926C43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 18:47:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C527420645
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 18:45:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 58A9A20645
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 18:47:46 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Z0zvzzg1"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726824AbfANSpJ (ORCPT
+        id S1726804AbfANSro (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 14 Jan 2019 13:45:09 -0500
-Received: from proxima.lasnet.de ([78.47.171.185]:43482 "EHLO
-        proxima.lasnet.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726741AbfANSpI (ORCPT
+        Mon, 14 Jan 2019 13:47:44 -0500
+Received: from mail-lj1-f174.google.com ([209.85.208.174]:38937 "EHLO
+        mail-lj1-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726745AbfANSro (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 Jan 2019 13:45:08 -0500
-Received: from localhost.localdomain (p200300E9D70DB1A9F35C53A5883DC5AE.dip0.t-ipconnect.de [IPv6:2003:e9:d70d:b1a9:f35c:53a5:883d:c5ae])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        (Authenticated sender: stefan@datenfreihafen.org)
-        by proxima.lasnet.de (Postfix) with ESMTPSA id 4862FC8C28;
-        Mon, 14 Jan 2019 19:45:05 +0100 (CET)
-Subject: Re: [PATCH] ieee802154: mcr20a: fix indentation, remove tabs
-To:     Colin King <colin.king@canonical.com>,
-        Xue Liu <liuxuenetmail@gmail.com>,
-        Alexander Aring <alex.aring@gmail.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        linux-wpan@vger.kernel.org, netdev@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20190114154834.18693-1-colin.king@canonical.com>
-From:   Stefan Schmidt <stefan@datenfreihafen.org>
-Message-ID: <497c64f0-c242-8ef1-b57b-5d4c8f2557f8@datenfreihafen.org>
-Date:   Mon, 14 Jan 2019 19:45:01 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.1
+        Mon, 14 Jan 2019 13:47:44 -0500
+Received: by mail-lj1-f174.google.com with SMTP id t9-v6so48177ljh.6
+        for <linux-kernel@vger.kernel.org>; Mon, 14 Jan 2019 10:47:43 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
+         :user-agent;
+        bh=dThSdtJskhfxCKpEStbcjO4U+BnLsz/sqiq0gz9PYL0=;
+        b=Z0zvzzg1SwHpBlWMM2Tc4LylgEVrl7QocyTlvbI9rjQlSP2QwireydmetU3F//D9OV
+         IySzf8fOP3YxG6z9lp/M+Ta1sDYYMDqiJGnIM5pljPoNIAJIXEDlYTo6jYcwpK8baItX
+         h1CfSdjAYUjH9nyx6+gFCwPp9SBniNNZZwnVclcK1Miao+HxJThnbo/DDbPVUiv0J97Y
+         iRzroJXDcBkYzHBjq2lPga4GVB0GTWMRy4doiYkS6sexoeWQhGDThJv71Oe8tk44N0ms
+         IIYSxQUH8hFu7at9fa7BwPX9ewapiEgm+yK/XETcsI/Jl8O6Oud1SRO593XB7uJnFYUh
+         gWaQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=dThSdtJskhfxCKpEStbcjO4U+BnLsz/sqiq0gz9PYL0=;
+        b=nEIIW0gllaaONQ43sdbHGHwDYXU3XIsHCC/irDraYGig3HK68V592/F9NThmpQtcA1
+         bD5RIbOwLOf5ZdE4CheYkAvOhjw1KrE4AwGK+Ej2Gd3SUWbPX1lR5NlOVnCNuZtyVhQx
+         mo6TV9JMKL2rV8YOTGiADNsuXY6LUEjHKkaqzwbSV5GSGg836f4sKNf7qq84oMjB1tGU
+         RNwHQTupd7Q89b6czEH4bNuZZre37Hz9SC/U/6vE/EUvzSxEuXLCAxC57TMtFccVoMob
+         7KaTOjKVc/8CFIIT1r9ofDcS11RNE0UOJpF/9VaCVVwTmRBbcgmTHcufz1lpAytpwPN/
+         5OrQ==
+X-Gm-Message-State: AJcUukcWvXOILWuDNLG99sY0Q0ZE0WzsQlGoNnQGr/k4bshPK15RWgge
+        6dcZa7nZ+Zc4zLJCAhtVyUi98BF0
+X-Google-Smtp-Source: ALg8bN7/H3LFJXogcN/XzDKaIuEufLLTfNMwBjS3FAWWJegipFJx0Cx2NQu7ZEIPWAp1q+A1ZjfRiA==
+X-Received: by 2002:a2e:a0d3:: with SMTP id f19-v6mr15174967ljm.48.1547491662381;
+        Mon, 14 Jan 2019 10:47:42 -0800 (PST)
+Received: from uranus.localdomain ([5.18.103.226])
+        by smtp.gmail.com with ESMTPSA id h3sm214702lfb.49.2019.01.14.10.47.41
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 14 Jan 2019 10:47:41 -0800 (PST)
+Received: by uranus.localdomain (Postfix, from userid 1000)
+        id 4EEF44608DD; Mon, 14 Jan 2019 21:47:41 +0300 (MSK)
+Date:   Mon, 14 Jan 2019 21:47:41 +0300
+From:   Cyrill Gorcunov <gorcunov@gmail.com>
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     LKML <linux-kernel@vger.kernel.org>
+Subject: [PATCH]: xarray: Fix potential out of bounds access
+Message-ID: <20190114184741.GF17906@uranus.lan>
 MIME-Version: 1.0
-In-Reply-To: <20190114154834.18693-1-colin.king@canonical.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello.
+Since the mark is used as an array index we should use
+preincrement to not access the XA_MARK_MAX index.
 
-On 14.01.19 16:48, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> The are a couple of statments that are one level too deep, fix this by
-> removing tabs.
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  drivers/net/ieee802154/mcr20a.c | 6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/net/ieee802154/mcr20a.c b/drivers/net/ieee802154/mcr20a.c
-> index 44de81e5f140..c589f5ae75bb 100644
-> --- a/drivers/net/ieee802154/mcr20a.c
-> +++ b/drivers/net/ieee802154/mcr20a.c
-> @@ -905,9 +905,9 @@ mcr20a_irq_clean_complete(void *context)
->  		}
->  		break;
->  	case (DAR_IRQSTS1_RXIRQ | DAR_IRQSTS1_SEQIRQ):
-> -			/* rx is starting */
-> -			dev_dbg(printdev(lp), "RX is starting\n");
-> -			mcr20a_handle_rx(lp);
-> +		/* rx is starting */
-> +		dev_dbg(printdev(lp), "RX is starting\n");
-> +		mcr20a_handle_rx(lp);
->  		break;
->  	case (DAR_IRQSTS1_RXIRQ | DAR_IRQSTS1_TXIRQ | DAR_IRQSTS1_SEQIRQ):
->  		if (lp->is_tx) {
-> 
+Cc: Matthew Wilcox <willy@infradead.org>
+Signed-off-by: Cyrill Gorcunov <gorcunov@gmail.com>
+---
+Matthew, take a look please, I suspect we may access the
+mark index out of allocated one. Compile tested only.
+It comes from 58d6ea3085f2e53714810a513c61629f6d2be0a6
 
+ lib/xarray.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-This patch has been applied to the wpan tree and will be
-part of the next pull request to net. Thanks!
-
-regards
-Stefan Schmidt
+Index: linux-next.git/lib/xarray.c
+===================================================================
+--- linux-next.git.orig/lib/xarray.c
++++ linux-next.git/lib/xarray.c
+@@ -129,7 +129,7 @@ static void xas_squash_marks(const struc
+ 			continue;
+ 		__set_bit(xas->xa_offset, marks);
+ 		bitmap_clear(marks, xas->xa_offset + 1, xas->xa_sibs);
+-	} while (mark++ != (__force unsigned)XA_MARK_MAX);
++	} while (++mark != (__force unsigned)XA_MARK_MAX);
+ }
+ 
+ /* extracts the offset within this node from the index */
