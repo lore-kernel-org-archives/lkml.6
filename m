@@ -2,57 +2,96 @@ Return-Path: <SRS0=tq6k=PW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 17378C43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 08:39:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C169C43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 08:40:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E54D320660
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 08:39:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 20DB220660
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 08:40:52 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jkE9ONLS"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726526AbfANIjo (ORCPT
+        id S1726542AbfANIku (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 14 Jan 2019 03:39:44 -0500
-Received: from mga06.intel.com ([134.134.136.31]:25543 "EHLO mga06.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725837AbfANIjn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 Jan 2019 03:39:43 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 14 Jan 2019 00:39:43 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,477,1539673200"; 
-   d="scan'208";a="109682226"
-Received: from apaszkie-desk.igk.intel.com (HELO [10.102.11.138]) ([10.102.11.138])
-  by orsmga008.jf.intel.com with ESMTP; 14 Jan 2019 00:39:41 -0800
-Subject: Re: [PATCH] drivers/md.c: Make bio_alloc_mddev return
- bio_alloc_bioset
-To:     Marcos Paulo de Souza <marcos.souza.org@gmail.com>,
-        linux-kernel@vger.kernel.org
-Cc:     shli@kernel.org, linux-raid@vger.kernel.org
-References: <20181222100845.566772-1-marcos.souza.org@gmail.com>
-From:   Artur Paszkiewicz <artur.paszkiewicz@intel.com>
-Message-ID: <88ac62d2-3f31-fbe4-4463-ff9d23b5e200@intel.com>
-Date:   Mon, 14 Jan 2019 09:39:41 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.3
+        Mon, 14 Jan 2019 03:40:50 -0500
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:45186 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726469AbfANIku (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 14 Jan 2019 03:40:50 -0500
+Received: by mail-lj1-f195.google.com with SMTP id s5-v6so18196010ljd.12
+        for <linux-kernel@vger.kernel.org>; Mon, 14 Jan 2019 00:40:49 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
+         :user-agent;
+        bh=tia2ltSvicA7t4H7Sb9ZU3S2L2tUXeOOk7qBWNokv5o=;
+        b=jkE9ONLSDc9lSPk9I+O2VEoph+1Wgt66CxTWvqBCYedcXHq25D/xfB1LnHbcZ2LM3R
+         210inoEDQZLqSZJHsY/E50yfzhz1YKzu3oJX38TjoWX/tvc42lpszOZupQcoXPh7TTEG
+         XqMzR05Y7XOlPmvLYAWUa5CMMzjRRDESyoW8HdzmLLrKC2cIlqgvDYYdDcY2fraoE5rd
+         B7gHHQZBozWXg90ePIcc/gWyz9z5ndeKTvw/A3YvFeESzm9h2M74dp9BT/5eKevjKh2t
+         fyF5NP7ImRe4P3oIUs0X+RiGBeGMqyyWnaq9bkpT6wzkmsiN0uRqjWL1UUOQLRh2VADR
+         X16A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=tia2ltSvicA7t4H7Sb9ZU3S2L2tUXeOOk7qBWNokv5o=;
+        b=al3GOoEvmDW3791f6dxlcaTJ5zn6ieSTVHiG9NL15E2cU5rtRZC6NauFjpjlMCUeyv
+         F0YgQAc9T8Uea45ycnjB9XKy3WHqf2OZq2udZF8tcDn0zRSnPs2WLE8yZD1KTn5XdrF1
+         PiU02WTNP6/JZHFTk7plY4SVCuRealtpuzL9nY8dewLOXArjXYtZ/v44Om3JEwFkw3vf
+         7zxWXfA1YWIv/+GACy9flrhapLNccdd+/6nYcLRkSdASyJ1Nxf/DSFyrMBqo/ssyHNl+
+         hZBIXcp+jcsIzBTBErao388ZExrHuWGoJwJKiPhHts6Qic9GlxV/r+DYX3kKcLEn9EO/
+         kzoQ==
+X-Gm-Message-State: AJcUukdwTzfe7Uk6CXjT4ZEBK2JEQb8XgG3a9UpjcnJngsFcnXlP+lqs
+        ekdapOpIuwBArgO1Qmm0x+766biUH10=
+X-Google-Smtp-Source: ALg8bN4H/aaVNdp0NQwcpfRrEskduzWHy1oh8c1fACjj0QcKMAeUXmLYte0acBUwNdbpjpE0h/2frw==
+X-Received: by 2002:a2e:2d4:: with SMTP id y81-v6mr13649552lje.62.1547455248224;
+        Mon, 14 Jan 2019 00:40:48 -0800 (PST)
+Received: from uranus.localdomain ([5.18.103.226])
+        by smtp.gmail.com with ESMTPSA id t18sm15849964lft.93.2019.01.14.00.40.47
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 14 Jan 2019 00:40:47 -0800 (PST)
+Received: by uranus.localdomain (Postfix, from userid 1000)
+        id 19FDD4608D7; Mon, 14 Jan 2019 11:40:47 +0300 (MSK)
+Date:   Mon, 14 Jan 2019 11:40:47 +0300
+From:   Cyrill Gorcunov <gorcunov@gmail.com>
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     Andrew Morton <akpm@linuxfoundation.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: [PATCH next]: xarray: Fix typo in comment
+Message-ID: <20190114084047.GE17906@uranus.lan>
 MIME-Version: 1.0
-In-Reply-To: <20181222100845.566772-1-marcos.souza.org@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12/22/18 11:08 AM, Marcos Paulo de Souza wrote:
-> bio_alloc_bioset return a bio pointer or NULL, so we can avoid storing
-> the returned data into a new variable.
-> 
-> Signed-off-by: Marcos Paulo de Souza <marcos.souza.org@gmail.com>
+Seems copy and paste typo, not a big deal but still
+for consistency sake better to fix.
 
-Acked-by: Artur Paszkiewicz <artur.paszkiewicz@intel.com>
+Signed-off-by: Cyrill Gorcunov <gorcunov@gmail.com>
+---
+ include/linux/xarray.h |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+Index: linux-next.git/include/linux/xarray.h
+===================================================================
+--- linux-next.git.orig/include/linux/xarray.h
++++ linux-next.git/include/linux/xarray.h
+@@ -496,7 +496,7 @@ static inline void *xa_store_bh(struct x
+ }
+ 
+ /**
+- * xa_store_irq() - Erase this entry from the XArray.
++ * xa_store_irq() - Store this entry in the XArray.
+  * @xa: XArray.
+  * @index: Index into array.
+  * @entry: New entry.
