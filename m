@@ -2,90 +2,82 @@ Return-Path: <SRS0=tq6k=PW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 78AE4C43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 21:33:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 563F0C43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 21:34:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4140C20659
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 21:33:07 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="noUuiEjm"
+	by mail.kernel.org (Postfix) with ESMTP id 2A0EF206B7
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 21:34:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727085AbfANVdF (ORCPT
+        id S1727013AbfANVeS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 14 Jan 2019 16:33:05 -0500
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:33952 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726830AbfANVdF (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 Jan 2019 16:33:05 -0500
-Received: by mail-pg1-f196.google.com with SMTP id j10so229792pga.1
-        for <linux-kernel@vger.kernel.org>; Mon, 14 Jan 2019 13:33:04 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=fZ8gvssZ/nyR2KF9Y+HMZ8ajKxpeRu6X+yi4Xwckv+A=;
-        b=noUuiEjm7ZTOlMjIop0ki/e6FXW6XvVqVnzSKjjzhNF2f21QxAtOzlmCIzswTQ6fM0
-         jbRtnsCh2nXVk6b4CzEcs+RPpTRH+NbgRQtbhGYKZZdRlO1Vof5Jb2375YFzq0IFkd4N
-         MB4Bv2eep+FxSzaP/PDg6xnVXCoPJ4FAsCfwwJWtqvoW6b+55vE7WwcmlxwQP67ufgEf
-         oRu8Z2glWsXD3YPtL4cyButlM0yOJBpNXd43e7CwuhLKyLol6uzIhLy8anP4T0q7Xpag
-         A0WnRai9N8XV1c3u7TpCg8gBSY1DzPtDypX4BRWXtTzjZvBEmGcdUpDwONIhp8nfbWWe
-         sdkg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=fZ8gvssZ/nyR2KF9Y+HMZ8ajKxpeRu6X+yi4Xwckv+A=;
-        b=VEXUO+T6sfArj05Enp42hbH5/T4A1D5svv4nTw6ygD7GPoygMvivgpxpGgwwe/HQAn
-         hE0AhJMHccSgLWOzV4cAGk0PoeaJq5zi3zij7LAelXEEDh4/u1COzvvr4Fue8cShKscv
-         jybxTxcZ9Lo/IGMcyKb1EJNhLvpDHMjp2PBmTyJhazpq8c4W3La/d5hIDTqUlPNAp7Wc
-         mF8Ekm3ukBLoHw8fQj9ocRa5w5on+aXgnI5LREBopBBdFDAuNMRUFrKWfMqwqcfb8qiD
-         zmXLJTVySjs9h0QaCyVPDAtbcieiNTDd9iqxKYx2typ3ZKINz1UdmsCSMQFiqdNXAW4E
-         9TNw==
-X-Gm-Message-State: AJcUukcMzr5lIP+CdtF6lTE7TvLL2rnSBRoEiMUhh4Xjk4lKZHRJLKGH
-        H7E7x63JYII9s5WT3t+GmHvTj7vEv29CxANpRFuWtg==
-X-Google-Smtp-Source: ALg8bN5QQ6Be7HN9dE0aXTtj8PFff0Bhs2BAi6+cLvCn6afLUqOkRFpIEYFhWNnm9+5mm7WJFnEw46HNkNmKtU3qYzI=
-X-Received: by 2002:a65:4683:: with SMTP id h3mr492422pgr.225.1547501583977;
- Mon, 14 Jan 2019 13:33:03 -0800 (PST)
+        Mon, 14 Jan 2019 16:34:18 -0500
+Received: from mail.kernel.org ([198.145.29.99]:53632 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726809AbfANVeS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 14 Jan 2019 16:34:18 -0500
+Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5FE2220659;
+        Mon, 14 Jan 2019 21:34:17 +0000 (UTC)
+Date:   Mon, 14 Jan 2019 16:34:15 -0500
+From:   Steven Rostedt <rostedt@goodmis.org>
+To:     Mathieu Malaterre <malat@debian.org>
+Cc:     Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] tracing: annotate implicit fall through
+Message-ID: <20190114163415.6245b939@gandalf.local.home>
+In-Reply-To: <20190114203039.16535-1-malat@debian.org>
+References: <20190114203039.16535-1-malat@debian.org>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-References: <20190114210426.177543-1-trong@android.com>
-In-Reply-To: <20190114210426.177543-1-trong@android.com>
-From:   Nick Desaulniers <ndesaulniers@google.com>
-Date:   Mon, 14 Jan 2019 13:32:52 -0800
-Message-ID: <CAKwvOdkoN1myuDM1OFga+v30LQ9pV5VD9J_KCJN1Z7AY+kaXxQ@mail.gmail.com>
-Subject: Re: [PATCH 0/4] gcov: add Clang support
-To:     Tri Vo <trong@android.com>
-Cc:     oberpar@linux.ibm.com, ghackmann@android.com,
-        LKML <linux-kernel@vger.kernel.org>, kernel-team@android.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jan 14, 2019 at 1:04 PM Tri Vo <trong@android.com> wrote:
->
-> This patch series adds Clang supoprt for gcov.
->
-> Patch 1 refactors existing code in preparation for Clang support. Patches
-> 2-3 implement necessary LLVM runtime hooks and gcov kernel interfaces.
-> Patch 4 simplifies config selection.
->
-> Greg Hackmann (2):
->   gcov: clang: move common gcc code into gcc_base.c
->   gcov: clang support
->
-> Nick Desaulniers (1):
->   gcov: clang: link/unlink profiling data set.
->
-> Tri Vo (1):
->   gcov: clang: pick GCC vs Clang format depending on compiler
+On Mon, 14 Jan 2019 21:30:37 +0100
+Mathieu Malaterre <malat@debian.org> wrote:
 
-Thanks for sending Tri!  Doesn't the output format require llvm-cov, or no?
--- 
-Thanks,
-~Nick Desaulniers
+> There is a plan to build the kernel with -Wimplicit-fallthrough and
+> this place in the code produced a warning (W=1).
+> 
+> This commit remove the following warning:
+> 
+>   kernel/trace/trace_probe.c:302:6: warning: this statement may fall through [-Wimplicit-fallthrough=]
+> 
+> Signed-off-by: Mathieu Malaterre <malat@debian.org>
+
+I'm pulling this in, but I'm changing the subject. Even when doing
+clean ups, don't use the exact same subject for multiple patches, it
+gets confusing when looking for a specific change.
+
+Also, Linus prefers that a subject header starts with a capital letter.
+
+ [PATCH 1/2] tracing: Annotate implicit fall through in parse_probe_arg()
+
+-- Steve
+
+
+> ---
+>  kernel/trace/trace_probe.c | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/kernel/trace/trace_probe.c b/kernel/trace/trace_probe.c
+> index 9962cb5da8ac..89da34b326e3 100644
+> --- a/kernel/trace/trace_probe.c
+> +++ b/kernel/trace/trace_probe.c
+> @@ -300,6 +300,7 @@ parse_probe_arg(char *arg, const struct fetch_type *type,
+>  
+>  	case '+':	/* deref memory */
+>  		arg++;	/* Skip '+', because kstrtol() rejects it. */
+> +		/* fall through */
+>  	case '-':
+>  		tmp = strchr(arg, '(');
+>  		if (!tmp)
+
