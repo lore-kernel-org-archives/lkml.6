@@ -2,134 +2,328 @@ Return-Path: <SRS0=tq6k=PW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DC167C43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 13:26:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E989AC43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 13:26:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A568020659
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 13:26:20 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="SKjVgiWT"
+	by mail.kernel.org (Postfix) with ESMTP id ADBAA2086D
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 13:26:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726756AbfANN0J (ORCPT
+        id S1726821AbfANN02 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 14 Jan 2019 08:26:09 -0500
-Received: from fllv0016.ext.ti.com ([198.47.19.142]:37304 "EHLO
-        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726545AbfANN0I (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 Jan 2019 08:26:08 -0500
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id x0EDPKb0098063;
-        Mon, 14 Jan 2019 07:25:20 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1547472320;
-        bh=fRCs1u9heVGXhJdOX/5kFPoouLrzDR4CIAvdI4U5mZU=;
-        h=From:To:CC:Subject:Date:In-Reply-To:References;
-        b=SKjVgiWTPNKi9M141DjVIVi13fIItZeEen+LkOkVdfDjQkP02nfm8hhqkQZjn3wK2
-         VCyMies27BaNrsspb2Zyo0mcEtja9auPdzatQncPhF94AA+Q9TLDWneohJsyY0a/3z
-         4oAcmYCfikqghDVcIDrptGXvMrBAHKN60m7qypRs=
-Received: from DFLE104.ent.ti.com (dfle104.ent.ti.com [10.64.6.25])
-        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x0EDPKaf088730
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 14 Jan 2019 07:25:20 -0600
-Received: from DFLE113.ent.ti.com (10.64.6.34) by DFLE104.ent.ti.com
- (10.64.6.25) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Mon, 14
- Jan 2019 07:25:19 -0600
-Received: from dlep32.itg.ti.com (157.170.170.100) by DFLE113.ent.ti.com
- (10.64.6.34) with Microsoft SMTP Server (version=TLS1_0,
- cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1591.10 via Frontend Transport;
- Mon, 14 Jan 2019 07:25:20 -0600
-Received: from a0393678ub.india.ti.com (ileax41-snat.itg.ti.com [10.172.224.153])
-        by dlep32.itg.ti.com (8.14.3/8.13.8) with ESMTP id x0EDOoWR028516;
-        Mon, 14 Jan 2019 07:25:15 -0600
-From:   Kishon Vijay Abraham I <kishon@ti.com>
-To:     Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-CC:     Kishon Vijay Abraham I <kishon@ti.com>,
-        Jingoo Han <jingoohan1@gmail.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Murali Karicheri <m-karicheri2@ti.com>,
-        Jesper Nilsson <jesper.nilsson@axis.com>,
-        <linux-pci@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-omap@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-arm-kernel@axis.com>
-Subject: [PATCH 05/24] PCI: keystone: Use platform_get_resource_byname to get memory resources
-Date:   Mon, 14 Jan 2019 18:54:05 +0530
-Message-ID: <20190114132424.6445-6-kishon@ti.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190114132424.6445-1-kishon@ti.com>
-References: <20190114132424.6445-1-kishon@ti.com>
+        Mon, 14 Jan 2019 08:26:28 -0500
+Received: from mga07.intel.com ([134.134.136.100]:10390 "EHLO mga07.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726579AbfANN0Y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 14 Jan 2019 08:26:24 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga005.fm.intel.com ([10.253.24.32])
+  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 14 Jan 2019 05:26:23 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,477,1539673200"; 
+   d="scan'208";a="311658197"
+Received: from ahunter-desktop.fi.intel.com (HELO [10.237.72.56]) ([10.237.72.56])
+  by fmsmga005.fm.intel.com with ESMTP; 14 Jan 2019 05:26:20 -0800
+Subject: Re: [PATCH V4 3/3] mmc: tegra: SDMMC pads auto-calibration
+To:     Sowjanya Komatineni <skomatineni@nvidia.com>, robh+dt@kernel.org,
+        mark.rutland@arm.com, mperttunen@nvidia.com,
+        thierry.reding@gmail.com, jonathanh@nvidia.com,
+        ulf.hansson@linaro.org
+Cc:     anrao@nvidia.com, devicetree@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mmc@vger.kernel.org
+References: <1547160363-25323-1-git-send-email-skomatineni@nvidia.com>
+ <1547160363-25323-3-git-send-email-skomatineni@nvidia.com>
+From:   Adrian Hunter <adrian.hunter@intel.com>
+Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
+ Business Identity Code: 0357606 - 4, Domiciled in Helsinki
+Message-ID: <82fc633c-3c27-a9d4-2048-83e884b65c35@intel.com>
+Date:   Mon, 14 Jan 2019 15:24:52 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+In-Reply-To: <1547160363-25323-3-git-send-email-skomatineni@nvidia.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Use platform_get_resource_byname() instead of platform_get_resource() which
-uses index to get memory resources. While at that get the memory resource
-defined specifically for configuration space instead of deriving the
-configuration space address from dbics address space. Since pci-keystone
-driver has never worked out of the box in mainline kernel, dt backward
-compatibility is ignored.
+On 11/01/19 12:46 AM, Sowjanya Komatineni wrote:
+> Program initial drive code offsets which will be used by auto
+> calibration process.
+> 
+> Program fixed drive strengths for SDMMC pads in pad control
+> register when auto cal timeouts.
+> Fixed settings are based on Pre-SI analysis of the pad design.
+> 
+> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
 
-Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
----
- drivers/pci/controller/dwc/pci-keystone.c | 17 +++++++----------
- 1 file changed, 7 insertions(+), 10 deletions(-)
+Acked-by: Adrian Hunter <adrian.hunter@intel.com>
 
-diff --git a/drivers/pci/controller/dwc/pci-keystone.c b/drivers/pci/controller/dwc/pci-keystone.c
-index 3f917ffa9105..88766d4cb50c 100644
---- a/drivers/pci/controller/dwc/pci-keystone.c
-+++ b/drivers/pci/controller/dwc/pci-keystone.c
-@@ -44,7 +44,6 @@
- #define CFG_TYPE1			BIT(24)
- 
- #define OB_SIZE				0x030
--#define SPACE0_REMOTE_CFG_OFFSET	0x1000
- #define OB_OFFSET_INDEX(n)		(0x200 + (8 * (n)))
- #define OB_OFFSET_HI(n)			(0x204 + (8 * (n)))
- #define OB_ENABLEN			BIT(0)
-@@ -790,21 +789,19 @@ static int __init ks_pcie_add_pcie_port(struct keystone_pcie *ks_pcie,
- 	struct resource *res;
- 	int ret;
- 
--	/* Index 0 is the config reg. space address */
--	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-+	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "dbics");
- 	pci->dbi_base = devm_pci_remap_cfg_resource(dev, res);
- 	if (IS_ERR(pci->dbi_base))
- 		return PTR_ERR(pci->dbi_base);
- 
--	/*
--	 * We set these same and is used in pcie rd/wr_other_conf
--	 * functions
--	 */
--	pp->va_cfg0_base = pci->dbi_base + SPACE0_REMOTE_CFG_OFFSET;
-+	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "config");
-+	pp->va_cfg0_base = devm_pci_remap_cfg_resource(dev, res);
-+	if (IS_ERR(pp->va_cfg0_base))
-+		return PTR_ERR(pp->va_cfg0_base);
-+
- 	pp->va_cfg1_base = pp->va_cfg0_base;
- 
--	/* Index 1 is the application reg. space address */
--	res = platform_get_resource(pdev, IORESOURCE_MEM, 1);
-+	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "app");
- 	ks_pcie->va_app_base = devm_ioremap_resource(dev, res);
- 	if (IS_ERR(ks_pcie->va_app_base))
- 		return PTR_ERR(ks_pcie->va_app_base);
--- 
-2.17.1
+> ---
+>  drivers/mmc/host/sdhci-tegra.c | 160 ++++++++++++++++++++++++++++++-----------
+>  1 file changed, 119 insertions(+), 41 deletions(-)
+> 
+> diff --git a/drivers/mmc/host/sdhci-tegra.c b/drivers/mmc/host/sdhci-tegra.c
+> index e6ace31e2a41..7d681a8fa4ba 100644
+> --- a/drivers/mmc/host/sdhci-tegra.c
+> +++ b/drivers/mmc/host/sdhci-tegra.c
+> @@ -75,6 +75,7 @@
+>  #define SDHCI_TEGRA_SDMEM_COMP_PADCTRL_VREF_SEL_MASK	0x0000000f
+>  #define SDHCI_TEGRA_SDMEM_COMP_PADCTRL_VREF_SEL_VAL	0x7
+>  #define SDHCI_TEGRA_SDMEM_COMP_PADCTRL_E_INPUT_E_PWRD	BIT(31)
+> +#define SDHCI_COMP_PADCTRL_DRVUPDN_OFFSET_MASK		0x07FFF000
+>  
+>  #define SDHCI_TEGRA_AUTO_CAL_STATUS			0x1ec
+>  #define SDHCI_TEGRA_AUTO_CAL_ACTIVE			BIT(31)
+> @@ -121,6 +122,8 @@ struct sdhci_tegra {
+>  	struct pinctrl *pinctrl_sdmmc;
+>  	struct pinctrl_state *pinctrl_state_3v3;
+>  	struct pinctrl_state *pinctrl_state_1v8;
+> +	struct pinctrl_state *pinctrl_state_3v3_drv;
+> +	struct pinctrl_state *pinctrl_state_1v8_drv;
+>  
+>  	struct sdhci_tegra_autocal_offsets autocal_offsets;
+>  	ktime_t last_calib;
+> @@ -411,6 +414,76 @@ static void tegra_sdhci_set_pad_autocal_offset(struct sdhci_host *host,
+>  	sdhci_writel(host, reg, SDHCI_TEGRA_AUTO_CAL_CONFIG);
+>  }
+>  
+> +static int tegra_sdhci_set_padctrl(struct sdhci_host *host, int voltage,
+> +				   bool state_drvupdn)
+> +{
+> +	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
+> +	struct sdhci_tegra *tegra_host = sdhci_pltfm_priv(pltfm_host);
+> +	struct sdhci_tegra_autocal_offsets *offsets =
+> +						&tegra_host->autocal_offsets;
+> +	struct pinctrl_state *pinctrl_drvupdn = NULL;
+> +	int ret = 0;
+> +	u8 drvup = 0, drvdn = 0;
+> +	u32 reg;
+> +
+> +	if (!state_drvupdn) {
+> +		/* PADS Drive Strength */
+> +		if (voltage == MMC_SIGNAL_VOLTAGE_180) {
+> +			if (tegra_host->pinctrl_state_1v8_drv) {
+> +				pinctrl_drvupdn =
+> +					tegra_host->pinctrl_state_1v8_drv;
+> +			} else {
+> +				drvup = offsets->pull_up_1v8_timeout;
+> +				drvdn = offsets->pull_down_1v8_timeout;
+> +			}
+> +		} else {
+> +			if (tegra_host->pinctrl_state_3v3_drv) {
+> +				pinctrl_drvupdn =
+> +					tegra_host->pinctrl_state_3v3_drv;
+> +			} else {
+> +				drvup = offsets->pull_up_3v3_timeout;
+> +				drvdn = offsets->pull_down_3v3_timeout;
+> +			}
+> +		}
+> +
+> +		if (pinctrl_drvupdn != NULL) {
+> +			ret = pinctrl_select_state(tegra_host->pinctrl_sdmmc,
+> +							pinctrl_drvupdn);
+> +			if (ret < 0)
+> +				dev_err(mmc_dev(host->mmc),
+> +					"failed pads drvupdn, ret: %d\n", ret);
+> +		} else if ((drvup) || (drvdn)) {
+> +			reg = sdhci_readl(host,
+> +					SDHCI_TEGRA_SDMEM_COMP_PADCTRL);
+> +			reg &= ~SDHCI_COMP_PADCTRL_DRVUPDN_OFFSET_MASK;
+> +			reg |= (drvup << 20) | (drvdn << 12);
+> +			sdhci_writel(host, reg,
+> +					SDHCI_TEGRA_SDMEM_COMP_PADCTRL);
+> +		}
+> +
+> +	} else {
+> +		/* Dual Voltage PADS Voltage selection */
+> +		if (!tegra_host->pad_control_available)
+> +			return 0;
+> +
+> +		if (voltage == MMC_SIGNAL_VOLTAGE_180) {
+> +			ret = pinctrl_select_state(tegra_host->pinctrl_sdmmc,
+> +						tegra_host->pinctrl_state_1v8);
+> +			if (ret < 0)
+> +				dev_err(mmc_dev(host->mmc),
+> +					"setting 1.8V failed, ret: %d\n", ret);
+> +		} else {
+> +			ret = pinctrl_select_state(tegra_host->pinctrl_sdmmc,
+> +						tegra_host->pinctrl_state_3v3);
+> +			if (ret < 0)
+> +				dev_err(mmc_dev(host->mmc),
+> +					"setting 3.3V failed, ret: %d\n", ret);
+> +		}
+> +	}
+> +
+> +	return ret;
+> +}
+> +
+>  static void tegra_sdhci_pad_autocalib(struct sdhci_host *host)
+>  {
+>  	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
+> @@ -437,6 +510,7 @@ static void tegra_sdhci_pad_autocalib(struct sdhci_host *host)
+>  			pdpu = offsets.pull_down_3v3 << 8 | offsets.pull_up_3v3;
+>  	}
+>  
+> +	/* Set initial offset before auto-calibration */
+>  	tegra_sdhci_set_pad_autocal_offset(host, pdpu);
+>  
+>  	card_clk_enabled = tegra_sdhci_configure_card_clk(host, false);
+> @@ -460,19 +534,15 @@ static void tegra_sdhci_pad_autocalib(struct sdhci_host *host)
+>  	if (ret) {
+>  		dev_err(mmc_dev(host->mmc), "Pad autocal timed out\n");
+>  
+> -		if (ios->signal_voltage == MMC_SIGNAL_VOLTAGE_180)
+> -			pdpu = offsets.pull_down_1v8_timeout << 8 |
+> -			       offsets.pull_up_1v8_timeout;
+> -		else
+> -			pdpu = offsets.pull_down_3v3_timeout << 8 |
+> -			       offsets.pull_up_3v3_timeout;
+> -
+> -		/* Disable automatic calibration and use fixed offsets */
+> +		/* Disable automatic cal and use fixed Drive Strengths */
+>  		reg = sdhci_readl(host, SDHCI_TEGRA_AUTO_CAL_CONFIG);
+>  		reg &= ~SDHCI_AUTO_CAL_ENABLE;
+>  		sdhci_writel(host, reg, SDHCI_TEGRA_AUTO_CAL_CONFIG);
+>  
+> -		tegra_sdhci_set_pad_autocal_offset(host, pdpu);
+> +		ret = tegra_sdhci_set_padctrl(host, ios->signal_voltage, false);
+> +		if (ret < 0)
+> +			dev_err(mmc_dev(host->mmc),
+> +				"Setting drive strengths failed: %d\n", ret);
+>  	}
+>  }
+>  
+> @@ -511,26 +581,46 @@ static void tegra_sdhci_parse_pad_autocal_dt(struct sdhci_host *host)
+>  	err = device_property_read_u32(host->mmc->parent,
+>  			"nvidia,pad-autocal-pull-up-offset-3v3-timeout",
+>  			&autocal->pull_up_3v3_timeout);
+> -	if (err)
+> +	if (err) {
+> +		if (!IS_ERR(tegra_host->pinctrl_state_3v3) &&
+> +			(tegra_host->pinctrl_state_3v3_drv == NULL))
+> +			pr_warn("%s: Missing autocal timeout 3v3-pad drvs\n",
+> +				mmc_hostname(host->mmc));
+>  		autocal->pull_up_3v3_timeout = 0;
+> +	}
+>  
+>  	err = device_property_read_u32(host->mmc->parent,
+>  			"nvidia,pad-autocal-pull-down-offset-3v3-timeout",
+>  			&autocal->pull_down_3v3_timeout);
+> -	if (err)
+> +	if (err) {
+> +		if (!IS_ERR(tegra_host->pinctrl_state_3v3) &&
+> +			(tegra_host->pinctrl_state_3v3_drv == NULL))
+> +			pr_warn("%s: Missing autocal timeout 3v3-pad drvs\n",
+> +				mmc_hostname(host->mmc));
+>  		autocal->pull_down_3v3_timeout = 0;
+> +	}
+>  
+>  	err = device_property_read_u32(host->mmc->parent,
+>  			"nvidia,pad-autocal-pull-up-offset-1v8-timeout",
+>  			&autocal->pull_up_1v8_timeout);
+> -	if (err)
+> +	if (err) {
+> +		if (!IS_ERR(tegra_host->pinctrl_state_1v8) &&
+> +			(tegra_host->pinctrl_state_1v8_drv == NULL))
+> +			pr_warn("%s: Missing autocal timeout 1v8-pad drvs\n",
+> +				mmc_hostname(host->mmc));
+>  		autocal->pull_up_1v8_timeout = 0;
+> +	}
+>  
+>  	err = device_property_read_u32(host->mmc->parent,
+>  			"nvidia,pad-autocal-pull-down-offset-1v8-timeout",
+>  			&autocal->pull_down_1v8_timeout);
+> -	if (err)
+> +	if (err) {
+> +		if (!IS_ERR(tegra_host->pinctrl_state_1v8) &&
+> +			(tegra_host->pinctrl_state_1v8_drv == NULL))
+> +			pr_warn("%s: Missing autocal timeout 1v8-pad drvs\n",
+> +				mmc_hostname(host->mmc));
+>  		autocal->pull_down_1v8_timeout = 0;
+> +	}
+>  
+>  	err = device_property_read_u32(host->mmc->parent,
+>  			"nvidia,pad-autocal-pull-up-offset-sdr104",
+> @@ -743,32 +833,6 @@ static int tegra_sdhci_execute_tuning(struct sdhci_host *host, u32 opcode)
+>  	return mmc_send_tuning(host->mmc, opcode, NULL);
+>  }
+>  
+> -static int tegra_sdhci_set_padctrl(struct sdhci_host *host, int voltage)
+> -{
+> -	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
+> -	struct sdhci_tegra *tegra_host = sdhci_pltfm_priv(pltfm_host);
+> -	int ret;
+> -
+> -	if (!tegra_host->pad_control_available)
+> -		return 0;
+> -
+> -	if (voltage == MMC_SIGNAL_VOLTAGE_180) {
+> -		ret = pinctrl_select_state(tegra_host->pinctrl_sdmmc,
+> -					   tegra_host->pinctrl_state_1v8);
+> -		if (ret < 0)
+> -			dev_err(mmc_dev(host->mmc),
+> -				"setting 1.8V failed, ret: %d\n", ret);
+> -	} else {
+> -		ret = pinctrl_select_state(tegra_host->pinctrl_sdmmc,
+> -					   tegra_host->pinctrl_state_3v3);
+> -		if (ret < 0)
+> -			dev_err(mmc_dev(host->mmc),
+> -				"setting 3.3V failed, ret: %d\n", ret);
+> -	}
+> -
+> -	return ret;
+> -}
+> -
+>  static int sdhci_tegra_start_signal_voltage_switch(struct mmc_host *mmc,
+>  						   struct mmc_ios *ios)
+>  {
+> @@ -778,7 +842,7 @@ static int sdhci_tegra_start_signal_voltage_switch(struct mmc_host *mmc,
+>  	int ret = 0;
+>  
+>  	if (ios->signal_voltage == MMC_SIGNAL_VOLTAGE_330) {
+> -		ret = tegra_sdhci_set_padctrl(host, ios->signal_voltage);
+> +		ret = tegra_sdhci_set_padctrl(host, ios->signal_voltage, true);
+>  		if (ret < 0)
+>  			return ret;
+>  		ret = sdhci_start_signal_voltage_switch(mmc, ios);
+> @@ -786,7 +850,7 @@ static int sdhci_tegra_start_signal_voltage_switch(struct mmc_host *mmc,
+>  		ret = sdhci_start_signal_voltage_switch(mmc, ios);
+>  		if (ret < 0)
+>  			return ret;
+> -		ret = tegra_sdhci_set_padctrl(host, ios->signal_voltage);
+> +		ret = tegra_sdhci_set_padctrl(host, ios->signal_voltage, true);
+>  	}
+>  
+>  	if (tegra_host->pad_calib_required)
+> @@ -805,6 +869,20 @@ static int tegra_sdhci_init_pinctrl_info(struct device *dev,
+>  		return -1;
+>  	}
+>  
+> +	tegra_host->pinctrl_state_1v8_drv = pinctrl_lookup_state(
+> +				tegra_host->pinctrl_sdmmc, "sdmmc-1v8-drv");
+> +	if (IS_ERR(tegra_host->pinctrl_state_1v8_drv)) {
+> +		if (PTR_ERR(tegra_host->pinctrl_state_1v8_drv) == -ENODEV)
+> +			tegra_host->pinctrl_state_1v8_drv = NULL;
+> +	}
+> +
+> +	tegra_host->pinctrl_state_3v3_drv = pinctrl_lookup_state(
+> +				tegra_host->pinctrl_sdmmc, "sdmmc-3v3-drv");
+> +	if (IS_ERR(tegra_host->pinctrl_state_3v3_drv)) {
+> +		if (PTR_ERR(tegra_host->pinctrl_state_3v3_drv) == -ENODEV)
+> +			tegra_host->pinctrl_state_3v3_drv = NULL;
+> +	}
+> +
+>  	tegra_host->pinctrl_state_3v3 =
+>  		pinctrl_lookup_state(tegra_host->pinctrl_sdmmc, "sdmmc-3v3");
+>  	if (IS_ERR(tegra_host->pinctrl_state_3v3)) {
+> 
 
