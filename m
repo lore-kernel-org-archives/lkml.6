@@ -2,133 +2,134 @@ Return-Path: <SRS0=tq6k=PW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham
-	autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C0B2BC43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 13:39:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C2D0C43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 13:42:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 911B3206B7
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 13:39:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D6A8E20657
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 13:42:51 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="uIrsZhku"
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="UCip00fT"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726747AbfANNjh (ORCPT
+        id S1726625AbfANNmu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 14 Jan 2019 08:39:37 -0500
-Received: from mail-io1-f66.google.com ([209.85.166.66]:38114 "EHLO
-        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726526AbfANNjh (ORCPT
+        Mon, 14 Jan 2019 08:42:50 -0500
+Received: from lelv0143.ext.ti.com ([198.47.23.248]:45152 "EHLO
+        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726534AbfANNmt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 Jan 2019 08:39:37 -0500
-Received: by mail-io1-f66.google.com with SMTP id l14so17574057ioj.5
-        for <linux-kernel@vger.kernel.org>; Mon, 14 Jan 2019 05:39:36 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=U+T3Ma75OKN0I9Jhu85GvuMPan5gU8uO+XETBD0TYtQ=;
-        b=uIrsZhkuOvnMkRgC3DvMsbL0nrH/fK8CaMwtVwvCLH93jVqVECCYTkmtiWtMfqtMNa
-         T/XhSpK/dYiMY+IpVpBFli8Nk/9042A77gxyfzHSyzD9VUIaUPQZKuD8jffuv9JxFhQD
-         LBxS9UwI62m+LpeapwGruOmnJTld85Fhj6KecJhxU3gL8YgRLxOenC/TGdelWqL8cCy+
-         9sx3jis6btHXII3Z8zSGJWvgbPqSkuD5py5cW1UOdZeEjsdo3v9PUmCZHuv0XkhJRWIp
-         wkNPD7ZM8OpTX13kdxkrra5TlB/Mnxwjv2Mj9x5Zg4f1UkN8CXFnSkFaLGiRkcIBAgpW
-         Dsvg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=U+T3Ma75OKN0I9Jhu85GvuMPan5gU8uO+XETBD0TYtQ=;
-        b=Mr9du0iyN6PQ+qTI3Qx3AM/418zRHD+pgBd9rKbJi4dHyHVkd5tS9eg/gGuB1qhlYV
-         K+v1BHilL4oaT/Y5pQq3i7CDq16JxnLLej7dl39bcdxFu003Pnaaq3MeGVqiJsdVh2Ya
-         hGnZyVd6mEpwWkoNvj36kilqf7LjqYUtJcKwqAxreBjhF/1kaGkOKSNWOzrfR2RBnVIY
-         9ZNuQosrUOnzRBpMH34xZydTPb7TqtipW+ifc58rn2zq6JliVI+Yuhriv0TeD+trwbxK
-         KCsGnMQ95ONyr4lgo5d9Ri0nWN3s+jBKYseHEPfjXID4LOaVgH8DXPBSiN3bwzJ6N1jA
-         Qmbg==
-X-Gm-Message-State: AJcUukeGmE3TMHpd9PlTr/haVVZQIb8Egj+OOOK/xHs5vRxqriR4KmT6
-        RQqXIcCrFZFPGouZch2ZSduBJT9NTNv4t+Zyqt4VEg==
-X-Google-Smtp-Source: ALg8bN6dXelJIdQMKH+tPTN1a4IgllGYmcPEyy154m7djrvWl3bi42tlpN9wtQ32+0CUJ5aGpkprmXjE3IvJU/z6l34=
-X-Received: by 2002:a5d:8491:: with SMTP id t17mr16123213iom.11.1547473175952;
- Mon, 14 Jan 2019 05:39:35 -0800 (PST)
-MIME-Version: 1.0
-References: <1547093005-26085-1-git-send-email-longman@redhat.com>
- <CACT4Y+YJYSo5GtSvMSqh4y_w7jWC1S-RYu+exuR3DU9NyrpJqA@mail.gmail.com> <20190114133650.GC10486@hirez.programming.kicks-ass.net>
-In-Reply-To: <20190114133650.GC10486@hirez.programming.kicks-ass.net>
-From:   Dmitry Vyukov <dvyukov@google.com>
-Date:   Mon, 14 Jan 2019 14:39:25 +0100
-Message-ID: <CACT4Y+bF2D_SpEi_Z5rQ80kqt4fqPdGPa==ggHrCj+NHh2GHMA@mail.gmail.com>
-Subject: Re: [PATCH] locking/lockdep: Add debug_locks check in __lock_downgrade()
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     Waiman Long <longman@redhat.com>, Ingo Molnar <mingo@redhat.com>,
-        Will Deacon <will.deacon@arm.com>,
+        Mon, 14 Jan 2019 08:42:49 -0500
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id x0EDgdgx025608;
+        Mon, 14 Jan 2019 07:42:39 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1547473359;
+        bh=q/Jei6rT+ZDcSWlH6Zqw6iD1MFlpHsinovfIpAYGoQs=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=UCip00fTzEWlm95TlA/2uEtzUp+eS5JwuUWk35GDjGVgIx0Og3JWqdufk4phXUbd/
+         kLDWrASV564skGEXHbtPETeSVHb2y2euzVifz1U7kp4MNsnvQqXtUUfn8kpsT9g2/T
+         upz35hur4DQJ2d1QPO0exbbhA155jm0VNyyy8ER0=
+Received: from DLEE100.ent.ti.com (dlee100.ent.ti.com [157.170.170.30])
+        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x0EDgd6Y113086
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Mon, 14 Jan 2019 07:42:39 -0600
+Received: from DLEE102.ent.ti.com (157.170.170.32) by DLEE100.ent.ti.com
+ (157.170.170.30) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Mon, 14
+ Jan 2019 07:42:38 -0600
+Received: from dlep33.itg.ti.com (157.170.170.75) by DLEE102.ent.ti.com
+ (157.170.170.32) with Microsoft SMTP Server (version=TLS1_0,
+ cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1591.10 via Frontend Transport;
+ Mon, 14 Jan 2019 07:42:38 -0600
+Received: from [172.24.190.233] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by dlep33.itg.ti.com (8.14.3/8.13.8) with ESMTP id x0EDgZ2N028966;
+        Mon, 14 Jan 2019 07:42:35 -0600
+Subject: Re: [PATCH 1/1] phy: fix build breakage: add PHY_MODE_SATA
+To:     Miquel Raynal <miquel.raynal@bootlin.com>,
+        Olof Johansson <olof@lixom.net>
+CC:     Jens Axboe <axboe@kernel.dk>, <john.hubbard@gmail.com>,
+        Jisheng Zhang <Jisheng.Zhang@synaptics.com>,
+        Rob Herring <robh@kernel.org>,
         LKML <linux-kernel@vger.kernel.org>,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Content-Type: text/plain; charset="UTF-8"
+        John Hubbard <jhubbard@nvidia.com>,
+        Grzegorz Jaszczyk <jaz@semihalf.com>,
+        Hans de Goede <hdegoede@redhat.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+References: <20190113012909.11986-1-jhubbard@nvidia.com>
+ <20190113012909.11986-2-jhubbard@nvidia.com>
+ <9518922c-ab17-ba06-0670-f0202b436a8c@kernel.dk>
+ <CAOesGMjiYkThVa5BQo0w3B1wC3NJpmsrYFwXVCN0VQqYqF_MWg@mail.gmail.com>
+ <20190114095745.04027f37@xps13>
+From:   Kishon Vijay Abraham I <kishon@ti.com>
+Message-ID: <db6acfd5-645c-1231-aaac-c4ec0dda8e5e@ti.com>
+Date:   Mon, 14 Jan 2019 19:12:13 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
+MIME-Version: 1.0
+In-Reply-To: <20190114095745.04027f37@xps13>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jan 14, 2019 at 2:37 PM Peter Zijlstra <peterz@infradead.org> wrote:
->
-> On Thu, Jan 10, 2019 at 11:21:13AM +0100, Dmitry Vyukov wrote:
-> > On Thu, Jan 10, 2019 at 5:04 AM Waiman Long <longman@redhat.com> wrote:
-> > >
-> > > Tetsuo Handa had reported he saw an incorrect "downgrading a read lock"
-> > > warning right after a previous lockdep warning. It is likely that the
-> > > previous warning turned off lock debugging causing the lockdep to have
-> > > inconsistency states leading to the lock downgrade warning.
-> > >
-> > > Fix that by add a check for debug_locks at the beginning of
-> > > __lock_downgrade().
-> > >
-> > > Signed-off-by: Waiman Long <longman@redhat.com>
-> > > Reported-by: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-> >
-> > Please also add:
-> >
-> > Reported-by: syzbot+53383ae265fb161ef488@syzkaller.appspotmail.com
-> >
-> > for tracking purposes. But Tetsuo deserves lots of credit for debugging it.
->
-> I made that:
->
-> Reported-by: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-> Debugged-by: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-> Reported-by: syzbot+53383ae265fb161ef488@syzkaller.appspotmail.com
->
-> > > index 9593233..e805fe3 100644
-> > > --- a/kernel/locking/lockdep.c
-> > > +++ b/kernel/locking/lockdep.c
-> > > @@ -3535,6 +3535,9 @@ static int __lock_downgrade(struct lockdep_map *lock, unsigned long ip)
-> > >         unsigned int depth;
-> > >         int i;
-> > >
-> > > +       if (unlikely(!debug_locks))
-> > > +               return 0;
-> > > +
-> >
-> > Are we sure this resolves the problem rather than makes the
-> > inconsistency window smaller?
-> > I don't understand all surrounding code, but looking just at this
-> > function it looks like it may just pepper over the problem. Say, we
-> > pass this check when lockdep was still turned on. Then this thread is
-> > preempted for some time (e.g. a virtual CPU), then another thread
-> > started reporting a warning, turned lockdep off, some information
-> > wasn't collected, and this this task resumes and reports a false
-> > warning.
->
-> Theoretically possible I suppose; but this is analogous to many of the
-> other lockdep hooks.
->
-> > Or we are holding the mutex here, and the fact that we are holding it
-> > ensures that no other task will take it and no information will be
-> > lost?
->
-> There is no lock here; for performance reasons we prefer not to acquire
-> a global spinlock on every lockdep hook, that would be horrific.
 
-I mean the user mutex itself. Some invariants may hold while we are
-holding it as Tetsuo noted.
+
+On 14/01/19 2:27 PM, Miquel Raynal wrote:
+> Hi Olof,
+> 
+> Olof Johansson <olof@lixom.net> wrote on Sat, 12 Jan 2019 19:57:12
+> -0800:
+> 
+>> On Sat, Jan 12, 2019 at 6:05 PM Jens Axboe <axboe@kernel.dk> wrote:
+>>>
+>>> On 1/12/19 6:29 PM, john.hubbard@gmail.com wrote:  
+>>>> From: John Hubbard <jhubbard@nvidia.com>
+>>>>
+>>>> Commit 49e54187ae0b ("ata: libahci_platform: comply to PHY framework") uses
+>>>> the PHY_MODE_SATA, but that enum had not yet been added. This caused a
+>>>> build failure for me, with today's linux.git.
+>>>>
+>>>> Also, there is a potentially conflicting (mis-named) PHY_MODE_SATA, hiding
+>>>> in the Marvell Berlin SATA PHY driver.
+>>>>
+>>>> Fix the build by:
+>>>>
+>>>>     1) Renaming Marvell's defined value to a more scoped name,
+>>>>        in order to avoid any potential conflicts: PHY_BERLIN_MODE_SATA.
+>>>>
+>>>>     2) Adding the missing enum, which was going to be added anyway as part
+>>>>        of [1].
+>>>>
+>>>> [1] https://lkml.kernel.org/r/20190108163124.6409-3-miquel.raynal@bootlin.com
+>>>>
+>>>> Fixes: 49e54187ae0b ("ata: libahci_platform: comply to PHY framework")  
+>>>
+>>> Linus, this is probably a better option in terms of what should go in to
+>>> fix that commit.  
+>>
+>> I'm OK with this, but it does beg the question how the patch was
+>> tested before submitting, if it didn't build.
+>>
+>> Is there functional breakage behind it? I currently lack online
+>> hardware to test myself, unfortunately.
+> 
+> This is my mistake, I forgot to tell Jens about this dependency,
+> I am very sorry about that. As reported by John, this patch depends on
+> the addition of PHY_MODE_SATA in the PHY type enumeration. This series
+> ([1]) has been delayed and I should have warned Jens about it. I'm fine
+> with the above fix though.
+> 
+> Kishon, will you be able to base phy-next on top of this fix? It will
+> be needed for the addition of the COMPHY driver.
+
+Sure, I'll include this in my tree.
+
+Thanks
+Kishon
