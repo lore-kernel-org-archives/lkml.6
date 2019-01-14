@@ -2,160 +2,80 @@ Return-Path: <SRS0=tq6k=PW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D3636C43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 03:28:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A4ABC43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 03:29:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A5BCA206DD
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 03:28:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D2541206DD
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 03:29:03 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="daBCP+Au"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="JCe4Tn9G"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726770AbfAND2y (ORCPT
+        id S1726794AbfAND3C (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 13 Jan 2019 22:28:54 -0500
-Received: from conuserg-07.nifty.com ([210.131.2.74]:34178 "EHLO
-        conuserg-07.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726709AbfAND2u (ORCPT
+        Sun, 13 Jan 2019 22:29:02 -0500
+Received: from merlin.infradead.org ([205.233.59.134]:43474 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726709AbfAND3B (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 13 Jan 2019 22:28:50 -0500
-Received: from grover.tkatk1.zaq.ne.jp (zaqdadce369.zaq.ne.jp [218.220.227.105]) (authenticated)
-        by conuserg-07.nifty.com with ESMTP id x0E3S96S029303;
-        Mon, 14 Jan 2019 12:28:10 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-07.nifty.com x0E3S96S029303
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1547436490;
-        bh=s/3mCKfgXz9syY3gRwtXC4jZgLZsJr7G5HuVD6z088c=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=daBCP+Auc7UR4wB+IdOUdH9wyz4MATTUmVVD/XQuRc0GEtGYUx7WpSgy7uQWBLdhb
-         8T5x2nEnfA/gQwLHMBHPhzjZ8xZ5RlxUefYICdeGuuTkYRLjiBbirwQkCJs1S5H98s
-         aA1ztyZeyK1U9koVi1lk9u5keQraK1fofqojePCGsN3V2shzZDZ5esZxhkvkY4xINc
-         v9cKSRyBP5MRwRnmBBuhfXlTHF3L9CdEfjbfobOxmZ6xEFk57xC2ADhSFtsBSIYvLQ
-         oI334rY+IhLdiADyM6xZcrvgotndz4dZJeaUODUFsGUz6v+4wHIcN0BEx7Fg4fWpkI
-         2u898mTlwdF/w==
-X-Nifty-SrcIP: [218.220.227.105]
-From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-To:     linux-kbuild@vger.kernel.org
-Cc:     Nicholas Piggin <npiggin@gmail.com>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Michal Marek <michal.lkml@markovi.net>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH 2/2] kbuild: merge KBUILD_VMLINUX_{INIT,MAIN} into KBUILD_VMLINUX_OBJS
-Date:   Mon, 14 Jan 2019 12:27:59 +0900
-Message-Id: <1547436479-10491-2-git-send-email-yamada.masahiro@socionext.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1547436479-10491-1-git-send-email-yamada.masahiro@socionext.com>
-References: <1547436479-10491-1-git-send-email-yamada.masahiro@socionext.com>
+        Sun, 13 Jan 2019 22:29:01 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=Content-Transfer-Encoding:Content-Type:
+        MIME-Version:Date:Message-ID:Subject:From:Cc:To:Sender:Reply-To:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+        List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=jgmD70YCWYdTwUkF/DJ8i5CEN1q2++mFEoyRjUrzX1w=; b=JCe4Tn9GgEjMdG9tELbBAr7EQn
+        tpqxaR8Eq6xIkn93X2kkTjPoo1jqwg9jfwZWbHMU8dsACkN6Hejn9FS3qvNuAAI4ahYE98yeclhFe
+        oEaEX4y7y4HanZJc9F/rohc/a79KxIFXrFcEYvtqbp+oxs5pfBy6119S8eBnriUTnLGyUwBpKC2pr
+        RS5v7mrwxOTuvHPEZOiQTyhPF23IwLK7z1g9nwFn38rm7rrgeg0tE5Qyf4U7nGKgzMRGTcNqJrRmw
+        bOk0RBNkXuDKH9YCwninjV7knhN9ErJHdKpJRzMRlbutmw76B9tCivIPw/mLWjKByU4VdVIhe/NU9
+        GpE9cnEg==;
+Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=midway.dunlab)
+        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gisvs-0000jq-8w; Mon, 14 Jan 2019 03:29:00 +0000
+To:     "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+        Jonathan Corbet <corbet@lwn.net>
+Cc:     LKML <linux-kernel@vger.kernel.org>
+From:   Randy Dunlap <rdunlap@infradead.org>
+Subject: [PATCH] Documentation: fix coding-style.rst Sphinx warning
+Message-ID: <bfeeb533-3909-30aa-a117-0b4179e8cfc3@infradead.org>
+Date:   Sun, 13 Jan 2019 19:28:58 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.0
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The top Makefile does not need to export KBUILD_VMLINUX_INIT and
-KBUILD_VMLINUX_MAIN separately.
+From: Randy Dunlap <rdunlap@infradead.org>
 
-Put every built-in.a into KBUILD_VMLINUX_OBJS. The order of
-$(head-y), $(init-y), $(core-y), ... is still retained.
+Fix Sphinx warning in coding-style.rst:
 
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+Documentation/process/coding-style.rst:446: WARNING: Inline interpreted text or phrase reference start-string without end-string.
+
+Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
 ---
+ Documentation/process/coding-style.rst |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
- Makefile                |  6 +++---
- scripts/link-vmlinux.sh | 28 ++++++++++------------------
- 2 files changed, 13 insertions(+), 21 deletions(-)
+--- lnx-50-rc2.orig/Documentation/process/coding-style.rst
++++ lnx-50-rc2/Documentation/process/coding-style.rst
+@@ -443,7 +443,7 @@ In function prototypes, include paramete
+ Although this is not required by the C language, it is preferred in Linux
+ because it is a simple way to add valuable information for the reader.
+ 
+-Do not use the `extern' keyword with function prototypes as this makes
++Do not use the ``extern`` keyword with function prototypes as this makes
+ lines longer and isn't strictly necessary.
+ 
+ 
 
-diff --git a/Makefile b/Makefile
-index 499b968..68898cc 100644
---- a/Makefile
-+++ b/Makefile
-@@ -975,15 +975,15 @@ libs-y2		:= $(patsubst %/, %/built-in.a, $(filter-out %.a, $(libs-y)))
- virt-y		:= $(patsubst %/, %/built-in.a, $(virt-y))
- 
- # Externally visible symbols (used by link-vmlinux.sh)
--export KBUILD_VMLINUX_INIT := $(head-y) $(init-y)
--export KBUILD_VMLINUX_MAIN := $(core-y) $(libs-y2) $(drivers-y) $(net-y) $(virt-y)
-+export KBUILD_VMLINUX_OBJS := $(head-y) $(init-y) $(core-y) $(libs-y2) \
-+			      $(drivers-y) $(net-y) $(virt-y)
- export KBUILD_VMLINUX_LIBS := $(libs-y1)
- export KBUILD_LDS          := arch/$(SRCARCH)/kernel/vmlinux.lds
- export LDFLAGS_vmlinux
- # used by scripts/package/Makefile
- export KBUILD_ALLDIRS := $(sort $(filter-out arch/%,$(vmlinux-alldirs)) arch Documentation include samples scripts tools)
- 
--vmlinux-deps := $(KBUILD_LDS) $(KBUILD_VMLINUX_INIT) $(KBUILD_VMLINUX_MAIN) $(KBUILD_VMLINUX_LIBS)
-+vmlinux-deps := $(KBUILD_LDS) $(KBUILD_VMLINUX_OBJS) $(KBUILD_VMLINUX_LIBS)
- 
- # Recurse until adjust_autoksyms.sh is satisfied
- PHONY += autoksyms_recursive
-diff --git a/scripts/link-vmlinux.sh b/scripts/link-vmlinux.sh
-index 4788def..bc7f1fc 100755
---- a/scripts/link-vmlinux.sh
-+++ b/scripts/link-vmlinux.sh
-@@ -3,22 +3,17 @@
- #
- # link vmlinux
- #
--# vmlinux is linked from the objects selected by $(KBUILD_VMLINUX_INIT) and
--# $(KBUILD_VMLINUX_MAIN) and $(KBUILD_VMLINUX_LIBS). Most are built-in.a files
--# from top-level directories in the kernel tree, others are specified in
--# arch/$(ARCH)/Makefile. Ordering when linking is important, and
--# $(KBUILD_VMLINUX_INIT) must be first. $(KBUILD_VMLINUX_LIBS) are archives
--# which are linked conditionally (not within --whole-archive), and do not
--# require symbol indexes added.
-+# vmlinux is linked from the objects selected by $(KBUILD_VMLINUX_OBJS) and
-+# $(KBUILD_VMLINUX_LIBS). Most are built-in.a files from top-level directories
-+# in the kernel tree, others are specified in arch/$(ARCH)/Makefile.
-+# $(KBUILD_VMLINUX_LIBS) are archives which are linked conditionally
-+# (not within --whole-archive), and do not require symbol indexes added.
- #
- # vmlinux
- #   ^
- #   |
--#   +-< $(KBUILD_VMLINUX_INIT)
--#   |   +--< init/version.o + more
--#   |
--#   +--< $(KBUILD_VMLINUX_MAIN)
--#   |    +--< drivers/built-in.a mm/built-in.a + more
-+#   +--< $(KBUILD_VMLINUX_OBJS)
-+#   |    +--< init/built-in.a drivers/built-in.a mm/built-in.a + more
- #   |
- #   +--< $(KBUILD_VMLINUX_LIBS)
- #   |    +--< lib/lib.a + more
-@@ -51,8 +46,7 @@ modpost_link()
- 	local objects
- 
- 	objects="--whole-archive				\
--		${KBUILD_VMLINUX_INIT}				\
--		${KBUILD_VMLINUX_MAIN}				\
-+		${KBUILD_VMLINUX_OBJS}				\
- 		--no-whole-archive				\
- 		--start-group					\
- 		${KBUILD_VMLINUX_LIBS}				\
-@@ -71,8 +65,7 @@ vmlinux_link()
- 
- 	if [ "${SRCARCH}" != "um" ]; then
- 		objects="--whole-archive			\
--			${KBUILD_VMLINUX_INIT}			\
--			${KBUILD_VMLINUX_MAIN}			\
-+			${KBUILD_VMLINUX_OBJS}			\
- 			--no-whole-archive			\
- 			--start-group				\
- 			${KBUILD_VMLINUX_LIBS}			\
-@@ -83,8 +76,7 @@ vmlinux_link()
- 			-T ${lds} ${objects}
- 	else
- 		objects="-Wl,--whole-archive			\
--			${KBUILD_VMLINUX_INIT}			\
--			${KBUILD_VMLINUX_MAIN}			\
-+			${KBUILD_VMLINUX_OBJS}			\
- 			-Wl,--no-whole-archive			\
- 			-Wl,--start-group			\
- 			${KBUILD_VMLINUX_LIBS}			\
--- 
-2.7.4
 
