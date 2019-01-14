@@ -2,110 +2,99 @@ Return-Path: <SRS0=tq6k=PW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F239C43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 20:35:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 32888C43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 20:35:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 67E9120659
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 20:35:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F221A20659
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 20:35:19 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="H2BoAnZt"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727001AbfANUfO (ORCPT
+        id S1727036AbfANUfS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 14 Jan 2019 15:35:14 -0500
-Received: from gateway34.websitewelcome.com ([192.185.149.105]:11124 "EHLO
-        gateway34.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726755AbfANUfO (ORCPT
+        Mon, 14 Jan 2019 15:35:18 -0500
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:44569 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726755AbfANUfQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 Jan 2019 15:35:14 -0500
-Received: from cm11.websitewelcome.com (cm11.websitewelcome.com [100.42.49.5])
-        by gateway34.websitewelcome.com (Postfix) with ESMTP id 3C82585F64
-        for <linux-kernel@vger.kernel.org>; Mon, 14 Jan 2019 14:35:13 -0600 (CST)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id j8wzgbClGdnCej8wzgg1EW; Mon, 14 Jan 2019 14:35:13 -0600
-X-Authority-Reason: nr=8
-Received: from [189.250.130.205] (port=59138 helo=embeddedor)
-        by gator4166.hostgator.com with esmtpa (Exim 4.91)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1gj8wx-000L18-R5; Mon, 14 Jan 2019 14:35:12 -0600
-Date:   Mon, 14 Jan 2019 14:35:07 -0600
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To:     Stephen Rothwell <sfr@canb.auug.org.au>,
-        Kees Cook <keescook@google.com>
-Cc:     linux-kernel@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Subject: [PATCH] adfs: mark expected switch fall-throughs
-Message-ID: <20190114203507.GA17953@embeddedor>
+        Mon, 14 Jan 2019 15:35:16 -0500
+Received: by mail-wr1-f65.google.com with SMTP id z5so395844wrt.11
+        for <linux-kernel@vger.kernel.org>; Mon, 14 Jan 2019 12:35:15 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=6aH85HXvGaBst6AsfmYEtc1Lgu3C/G7wpGvW82yl+3Y=;
+        b=H2BoAnZt2R0LlPoCUmzpLYx3NE+Kh7mZC1qZTWmPXxzk42xeuNLJ4QfFQw4MD863o7
+         fRGpEVoTTY5acp5C/JdYamFheEzHw7YH5zCxU1VrBDbJmilq3apx5gOywqXabXluo+aE
+         5A9kTZn0fhYti2QgCKYdbXTGJ4NcFq1q/eIdHUggaXAexQfSV/WPAxrpPI5PKXquzVzG
+         gVlPrEaJEZHElA8TWjqG69YEFIW3xUvbq9Jy5o+NuU7glBRYFL+2CjweMNwMaZZ65xyg
+         2EORvdX1ATp+r+DXSvLXhTCEDeJCfFwZoYAdsZj1A8zn7N+81+0qs7j7E22UFKmASF6h
+         YezA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:from:to:cc:subject:date:message-id
+         :mime-version:content-transfer-encoding;
+        bh=6aH85HXvGaBst6AsfmYEtc1Lgu3C/G7wpGvW82yl+3Y=;
+        b=cKto8PaFJrl/ETxi//m9Qz1wmq/Z4ivOmgqiMAA07/h5RwIH35iwYQH7bibN86/rL0
+         ZSv0ijBXQvNO8J4BM1TmYXDoN+gtMYt10eo4nWKBYcLHc9QlTpd4MSqwhx26vc8AQAY2
+         kiIFYCpJ530tFOPNLidGu9sr4WjvW0npIz//65JNxoQgcTnUIr1HET4RMiCXer2snQNR
+         ixea/gkWevXLKhE8JECcsS1+5KKyo1FBD5sTpxb5sUkH3/tX5N1R6EUS6SpKOB4SX/Ty
+         ZHbiJTfom5Hhe7iAYksmpdyKyDP1w9h7hTwpA/N48LhkIeGXm4QKGR32oAbFbrn4h6fH
+         zysQ==
+X-Gm-Message-State: AJcUukcsDl5tEXJshgyGJnkXx7o0ETBdJ0a73LKPFyGlw37SPAkzOqTT
+        dX82hQTOZGkUhhEpmJfAb3w=
+X-Google-Smtp-Source: ALg8bN5+su0WA6sjhe0bxHHDZDtljUE8nZTMN7tcm9hxGuqbKQSIavGZGBDKsLZfctsZiQrXeoF21Q==
+X-Received: by 2002:adf:fc89:: with SMTP id g9mr219882wrr.96.1547498114804;
+        Mon, 14 Jan 2019 12:35:14 -0800 (PST)
+Received: from macbookpro.malat.net (bru31-1-78-225-224-134.fbx.proxad.net. [78.225.224.134])
+        by smtp.gmail.com with ESMTPSA id c10sm66016268wrw.49.2019.01.14.12.35.13
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 14 Jan 2019 12:35:14 -0800 (PST)
+Received: by macbookpro.malat.net (Postfix, from userid 1000)
+        id 185B111422AD; Mon, 14 Jan 2019 21:35:13 +0100 (CET)
+From:   Mathieu Malaterre <malat@debian.org>
+To:     "Eric W. Biederman" <ebiederm@xmission.com>
+Cc:     Mathieu Malaterre <malat@debian.org>, linux-kernel@vger.kernel.org
+Subject: [PATCH] signal: annotate implicit fall through
+Date:   Mon, 14 Jan 2019 21:35:04 +0100
+Message-Id: <20190114203505.17875-1-malat@debian.org>
+X-Mailer: git-send-email 2.19.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 189.250.130.205
-X-Source-L: No
-X-Exim-ID: 1gj8wx-000L18-R5
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: (embeddedor) [189.250.130.205]:59138
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 3
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In preparation to enabling -Wimplicit-fallthrough, mark switch cases
-where we are expecting to fall through.
+There is a plan to build the kernel with -Wimplicit-fallthrough and
+this place in the code produced a warning (W=1).
 
-Warning level 3 was used: -Wimplicit-fallthrough=3
+This commit remove the following warning:
 
-This patch is part of the ongoing efforts to enabling
--Wimplicit-fallthrough
+  kernel/signal.c:795:13: warning: this statement may fall through [-Wimplicit-fallthrough=]
 
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+Signed-off-by: Mathieu Malaterre <malat@debian.org>
 ---
- fs/adfs/dir_f.c | 6 ++++++
- 1 file changed, 6 insertions(+)
+ kernel/signal.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/fs/adfs/dir_f.c b/fs/adfs/dir_f.c
-index 0fbfd0b04ae0..382c9d7ad375 100644
---- a/fs/adfs/dir_f.c
-+++ b/fs/adfs/dir_f.c
-@@ -24,8 +24,11 @@ static inline unsigned int adfs_readval(unsigned char *p, int len)
- 
- 	switch (len) {
- 	case 4:		val |= p[3] << 24;
+diff --git a/kernel/signal.c b/kernel/signal.c
+index e1d7ad8e6ab1..aa7a507757d7 100644
+--- a/kernel/signal.c
++++ b/kernel/signal.c
+@@ -794,6 +794,7 @@ static int check_kill_permission(int sig, struct kernel_siginfo *info,
+ 			 */
+ 			if (!sid || sid == task_session(current))
+ 				break;
 +			/* fall through */
- 	case 3:		val |= p[2] << 16;
-+			/* fall through */
- 	case 2:		val |= p[1] << 8;
-+			/* fall through */
- 	default:	val |= p[0];
- 	}
- 	return val;
-@@ -35,8 +38,11 @@ static inline void adfs_writeval(unsigned char *p, int len, unsigned int val)
- {
- 	switch (len) {
- 	case 4:		p[3] = val >> 24;
-+			/* fall through */
- 	case 3:		p[2] = val >> 16;
-+			/* fall through */
- 	case 2:		p[1] = val >> 8;
-+			/* fall through */
- 	default:	p[0] = val;
- 	}
- }
+ 		default:
+ 			return -EPERM;
+ 		}
 -- 
-2.20.1
+2.19.2
 
