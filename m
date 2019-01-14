@@ -2,107 +2,210 @@ Return-Path: <SRS0=tq6k=PW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EC64BC43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 22:25:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3DBB4C43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 22:26:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B7BDB20657
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 22:25:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547504714;
-	bh=fXgvGEPvJuxiKA4UO/eJVYuVwSVyczNhU6jRW0Q5AII=;
-	h=Subject:In-Reply-To:References:Cc:To:From:Date:List-ID:From;
-	b=htBZajDLiYvjkjaSs8b35Uy7zTv+8pgjVGalVq6a2SU/mK7ZIIulngF843CrdHZ9r
-	 ZoJ0R5/B7+3zj3woeYtzIq4srZ/bb7VMu5UW/RR11OY5VHUlr+IKaU+r2aqWIXAW34
-	 BuOfNGR4yyPTXWxIcp7EDHRyiurZ1IQgbdcdSXFY=
+	by mail.kernel.org (Postfix) with ESMTP id 0E90620657
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 22:26:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726886AbfANWZN (ORCPT
+        id S1727036AbfANW0E (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 14 Jan 2019 17:25:13 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43916 "EHLO mail.kernel.org"
+        Mon, 14 Jan 2019 17:26:04 -0500
+Received: from mail.bootlin.com ([62.4.15.54]:35547 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726653AbfANWZM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 Jan 2019 17:25:12 -0500
-Received: from localhost (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B58A320657;
-        Mon, 14 Jan 2019 22:25:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547504711;
-        bh=fXgvGEPvJuxiKA4UO/eJVYuVwSVyczNhU6jRW0Q5AII=;
-        h=Subject:In-Reply-To:References:Cc:To:From:Date:From;
-        b=O2VKReb573qYJo+Y3K2Bpqf7qOH/TYL4Rhpyy8Zb57QzvfYQH/sZ+PxXN1SFfEYG2
-         jGiZTtZUCeeC2JvWHuhISP4PJaMjd6xiOvxtpjikCErYFvHlobmzs5u3R+9DIDycm2
-         FLLwuBz9Yfe0Epf+4uaflW/BrpvPs/KJuSjouqg8=
-Content-Type: text/plain; charset="utf-8"
+        id S1726592AbfANW0E (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 14 Jan 2019 17:26:04 -0500
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id B08C82074F; Mon, 14 Jan 2019 23:26:01 +0100 (CET)
+Received: from localhost (lfbn-1-17122-186.w86-248.abo.wanadoo.fr [86.248.186.186])
+        by mail.bootlin.com (Postfix) with ESMTPSA id 7DC85206A6;
+        Mon, 14 Jan 2019 23:25:51 +0100 (CET)
+Date:   Mon, 14 Jan 2019 23:25:51 +0100
+From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
+To:     Nick Crews <ncrews@google.com>
+Cc:     linux-kernel@vger.kernel.org, groeck@chromium.org,
+        sjg@chromium.org, dlaurie@chromium.org,
+        Duncan Laurie <dlaurie@google.com>, linux-rtc@vger.kernel.org,
+        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
+        Alessandro Zummo <a.zummo@towertech.it>,
+        Benson Leung <bleung@chromium.org>
+Subject: Re: [PATCH v2 5/9] platform/chrome: rtc: Add RTC driver for Wilco EC
+Message-ID: <20190114222551.GC2589@piout.net>
+References: <20190114220356.108916-1-ncrews@google.com>
+ <20190114220356.108916-6-ncrews@google.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v1] clk: qcom: lpass: Add CLK_IGNORE_UNUSED for lpass clocks
-User-Agent: alot/0.8
-In-Reply-To: <adc9235a-3700-7730-a473-8a6baf47a1e0@codeaurora.org>
-References: <1545306385-31240-1-git-send-email-tdas@codeaurora.org> <154533989563.79149.10213938035592547726@swboyd.mtv.corp.google.com> <b6397ef1-a6df-0040-9dcc-c491b76a2f8f@codeaurora.org> <154689507747.15366.6553307032295093169@swboyd.mtv.corp.google.com> <adc9235a-3700-7730-a473-8a6baf47a1e0@codeaurora.org>
-Cc:     Andy Gross <andy.gross@linaro.org>,
-        David Brown <david.brown@linaro.org>,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Taniya Das <tdas@codeaurora.org>
-Message-ID: <154750471090.169631.5712250327468594228@swboyd.mtv.corp.google.com>
-From:   Stephen Boyd <sboyd@kernel.org>
-Date:   Mon, 14 Jan 2019 14:25:10 -0800
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190114220356.108916-6-ncrews@google.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Taniya Das (2019-01-13 22:12:39)
->=20
->=20
-> On 1/8/2019 2:34 AM, Stephen Boyd wrote:
-> >=20
-> > As far as I know, I'm not suggesting the use of CLK_IS_CRITICAL here.
-> > But removing CLK_IS_CRITICAL and relying on some random bootloader
-> > behavior also looks wrong. Can you clarify what's going on?
-> >=20
->=20
-> To enable LPASS clocks the requirement is to enable the GCC_LPASS_SWAY=20
-> clock.
-> 1) If the LPASS drivers are enabled/probed before the clock late init=20
-> the client would take care to maintain the dependency to enable the=20
-> GCC_LPASS_SWAY clock before enabling the LPASS clocks.
->=20
-> 2) There could be a condition where the LPASS drivers would probe/init=20
-> later the clock late_init. When the clock_late_init would try to access=20
-> the LPASS clocks, since we cannot maintain the dependency this access=20
-> would fail. To avoid this the earlier patch has made the GCC_LPASS_SWAY=20
-> clock as CRITICAL.
->=20
-> 3) Marking the GCC_LPASS_SWAY clock as CRITICAL has a issue, in the case =
+Hello,
 
-> where the LPASS subsystem would be restarted due to some critical=20
-> failure on LPASS. Toggling the restart register of LPASS would clear the =
+On 14/01/2019 15:03:52-0700, Nick Crews wrote:
+> diff --git a/drivers/rtc/rtc-wilco-ec.c b/drivers/rtc/rtc-wilco-ec.c
+> new file mode 100644
+> index 000000000000..d8ed791da82d
+> --- /dev/null
+> +++ b/drivers/rtc/rtc-wilco-ec.c
+> @@ -0,0 +1,178 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * RTC interface for Wilco Embedded Controller with R/W abilities
+> + *
+> + * Copyright 2018 Google LLC
+> + *
+> + * The corresponding platform device is typically registered in
+> + * drivers/platform/chrome/wilco_ec/core.c
+> + */
+> +
+> +#include <linux/bcd.h>
+> +#include <linux/err.h>
+> +#include <linux/kernel.h>
+> +#include <linux/module.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/platform_data/wilco-ec.h>
+> +#include <linux/rtc.h>
+> +#include <linux/timekeeping.h>
+> +
+> +#define DRV_NAME "rtc-wilco-ec"
 
-> hardware state of this clock and thus the next access of the LPASS=20
-> clocks would result in failure of the system.
->=20
-> 4) To avoid issues happening in (2) and (3) all the LPASS clocks chould=20
-> be safely marked as CLK_IGNORE_UNUSED. And lpass drivers would take care =
+Please get rid of that define.
 
-> of the dependency to enable the required clocks.
->=20
+> +int wilco_ec_rtc_read(struct device *dev, struct rtc_time *tm)
+> +{
+> +	struct wilco_ec_device *ec = dev_get_drvdata(dev->parent);
+> +	u8 param = EC_CMOS_TOD_READ;
+> +	struct ec_rtc_read rtc;
+> +	struct wilco_ec_message msg = {
+> +		.type = WILCO_EC_MSG_LEGACY,
+> +		.flags = WILCO_EC_FLAG_RAW_RESPONSE,
+> +		.command = EC_COMMAND_CMOS,
+> +		.request_data = &param,
+> +		.request_size = sizeof(param),
+> +		.response_data = &rtc,
+> +		.response_size = sizeof(rtc),
+> +	};
+> +	struct rtc_time calc_tm;
+> +	unsigned long time;
+> +	int ret;
+> +
+> +	ret = wilco_ec_mailbox(ec, &msg);
+> +	if (ret < 0)
+> +		return ret;
+> +
+> +	tm->tm_sec	= rtc.second;
+> +	tm->tm_min	= rtc.minute;
+> +	tm->tm_hour	= rtc.hour;
+> +	tm->tm_mday	= rtc.day;
+> +	/*
+> +	 * The RTC stores the month value as 1-12 but the kernel expects 0-11,
+> +	 * so ensure invalid/zero month value from RTC is not converted to -1.
 
-Ok, so why can't we enable/disable the lpass sway clk in the
-prepare/unprepare phase of the lpass clk driver paths? Or why can't we
-forcibly enable this lpass sway clk after the reset is deasserted? Which
-clk controller is the reset part of? GCC or LPASS?
+I'm pretty sure this is not necessary and will certainly make the core
+think the date is valid when it has obviously been corrupted.
 
-It still sounds like the LPASS clk driver isn't handling dependencies it
-has on accessing registers, but maybe we can get away with not handling
-the dependency still if we make the reset "do the right thing" and turn
-the clk back on so it stays "critical".
+> +	 */
+> +	tm->tm_mon	= rtc.month ? rtc.month - 1 : 0;
+> +	tm->tm_year	= rtc.year + (rtc.century * 100) - 1900;
+> +	tm->tm_yday	= rtc_year_days(tm->tm_mday, tm->tm_mon, tm->tm_year);
+> +
+> +	/* Compute day of week */
+> +	rtc_tm_to_time(tm, &time);
+> +	rtc_time_to_tm(time, &calc_tm);
+> +	tm->tm_wday = calc_tm.tm_wday;
 
+Do you really need an accurate wday? There are no userspace applications
+that I know of that care and converting back and forth is quite
+expensive.
+
+> +
+> +	return 0;
+> +}
+> +
+> +int wilco_ec_rtc_write(struct device *dev, struct rtc_time *tm)
+> +{
+> +	struct wilco_ec_device *ec = dev_get_drvdata(dev->parent);
+> +	struct ec_rtc_write rtc;
+> +	struct wilco_ec_message msg = {
+> +		.type = WILCO_EC_MSG_LEGACY,
+> +		.flags = WILCO_EC_FLAG_RAW_RESPONSE,
+> +		.command = EC_COMMAND_CMOS,
+> +		.request_data = &rtc,
+> +		.request_size = sizeof(rtc),
+> +	};
+> +	int year = tm->tm_year + 1900;
+> +	/* Convert from 0=Sunday to 0=Saturday for the EC */
+> +	int wday = tm->tm_wday == 6 ? 0 : tm->tm_wday + 1;
+
+I'm not sure how useful it is to set an accurate wday when the RTC is
+not able to give it back.
+
+> +	int ret;
+> +
+> +	rtc.param	= EC_CMOS_TOD_WRITE;
+> +	rtc.century	= bin2bcd(year / 100);
+> +	rtc.year	= bin2bcd(year % 100);
+> +	rtc.month	= bin2bcd(tm->tm_mon + 1);
+> +	rtc.day		= bin2bcd(tm->tm_mday);
+> +	rtc.hour	= bin2bcd(tm->tm_hour);
+> +	rtc.minute	= bin2bcd(tm->tm_min);
+> +	rtc.second	= bin2bcd(tm->tm_sec);
+> +	rtc.weekday	= bin2bcd(wday);
+> +
+> +	ret = wilco_ec_mailbox(ec, &msg);
+> +	if (ret < 0)
+> +		return ret;
+> +
+> +	return 0;
+> +}
+> +
+> +static const struct rtc_class_ops wilco_ec_rtc_ops = {
+> +	.read_time = wilco_ec_rtc_read,
+> +	.set_time = wilco_ec_rtc_write,
+> +};
+> +
+> +static int wilco_ec_rtc_probe(struct platform_device *pdev)
+> +{
+> +	struct rtc_device *rtc = devm_rtc_device_register(&pdev->dev,
+> +							  DRV_NAME,
+> +							  &wilco_ec_rtc_ops,
+> +							  THIS_MODULE);
+
+Please use devm_rtc_allocate_device() and set rtc->range_min and
+rtc->range_max before registering with rtc_register_device().
+
+> +	if (IS_ERR(rtc))
+> +		return PTR_ERR(rtc);
+> +
+> +	return 0;
+> +}
+> +
+> +static struct platform_driver wilco_ec_rtc_driver = {
+> +	.driver = {
+> +		.name = DRV_NAME,
+> +	},
+> +	.probe = wilco_ec_rtc_probe,
+> +};
+> +
+> +module_platform_driver(wilco_ec_rtc_driver);
+> +
+> +MODULE_ALIAS("platform:" DRV_NAME);
+> +MODULE_AUTHOR("Nick Crews <ncrews@google.com>");
+> +MODULE_LICENSE("GPL v2");
+> +MODULE_DESCRIPTION("Wilco EC RTC driver");
+> -- 
+> 2.20.1.97.g81188d93c3-goog
+> 
+
+-- 
+Alexandre Belloni, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
