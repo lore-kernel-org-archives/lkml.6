@@ -2,121 +2,97 @@ Return-Path: <SRS0=tq6k=PW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7EDDBC43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 12:10:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 33A11C43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 12:12:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 549AF20656
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 12:10:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 098AF2063F
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 12:12:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726565AbfANMKo (ORCPT
+        id S1726600AbfANMMB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 14 Jan 2019 07:10:44 -0500
-Received: from szxga07-in.huawei.com ([45.249.212.35]:45742 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726436AbfANMKn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 Jan 2019 07:10:43 -0500
-Received: from DGGEMS407-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id 630A371401E80BC863A6;
-        Mon, 14 Jan 2019 20:10:41 +0800 (CST)
-Received: from [127.0.0.1] (10.202.226.43) by DGGEMS407-HUB.china.huawei.com
- (10.3.19.207) with Microsoft SMTP Server id 14.3.408.0; Mon, 14 Jan 2019
- 20:10:30 +0800
-Subject: Re: [PATCH] scsi: isci: initialize shost fully before calling
- scsi_add_host()
-To:     "Martin K. Petersen" <martin.petersen@oracle.com>
-References: <20190108205043.3122-1-logang@deltatee.com>
- <20190109184105.GB22070@lst.de>
- <8d96b40d-fc83-9218-9479-3de423594ddb@huawei.com>
- <yq1lg3qy578.fsf@oracle.com>
-CC:     Christoph Hellwig <hch@lst.de>,
-        Logan Gunthorpe <logang@deltatee.com>,
-        <linux-scsi@vger.kernel.org>, <linux-block@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>,
-        Intel SCU Linux support <intel-linux-scu@intel.com>,
-        Artur Paszkiewicz <artur.paszkiewicz@intel.com>,
-        "James E.J. Bottomley" <jejb@linux.ibm.com>,
-        Jens Axboe <axboe@kernel.dk>, Jeff Moyer <jmoyer@redhat.com>,
-        chenxiang <chenxiang66@hisilicon.com>
-From:   John Garry <john.garry@huawei.com>
-Message-ID: <0ffaf166-c7e5-b135-fdc5-bcac24148e62@huawei.com>
-Date:   Mon, 14 Jan 2019 12:10:23 +0000
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:45.0) Gecko/20100101
- Thunderbird/45.3.0
+        Mon, 14 Jan 2019 07:12:01 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:60556 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726449AbfANMMA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 14 Jan 2019 07:12:00 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 261B680D;
+        Mon, 14 Jan 2019 04:12:00 -0800 (PST)
+Received: from lakrids.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id C2FBA3F5BD;
+        Mon, 14 Jan 2019 04:11:58 -0800 (PST)
+Date:   Mon, 14 Jan 2019 12:11:56 +0000
+From:   Mark Rutland <mark.rutland@arm.com>
+To:     Changbin Du <changbin.du@gmail.com>
+Cc:     rostedt@goodmis.org, linux@armlinux.org.uk, x86@kernel.org,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH] fgraph: record function return value
+Message-ID: <20190114121151.GC10258@lakrids.cambridge.arm.com>
+References: <20190112065701.30841-1-changbin.du@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <yq1lg3qy578.fsf@oracle.com>
-Content-Type: text/plain; charset="windows-1252"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.202.226.43]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190112065701.30841-1-changbin.du@gmail.com>
+User-Agent: Mutt/1.11.1+11 (2f07cb52) (2018-12-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12/01/2019 02:34, Martin K. Petersen wrote:
->
-> John,
->
->> So how about just drop these APIs and let the user set the shost
->> protection parameters directly, like other shost parameters,
->
-> The protection interfaces here obviously predate the block layer
-> allocation changes that made this particular issue pop up.
->
->> which should make it a bit clearer when these should be set,
->> i.e. before scsi_add_host()?
->
-> In general, I am not so keen on the somewhat messy intersection between
-> the host parameters and the host template. The static host templates
-> made lots of sense in the days of Seagate ST01 and fixed hardware
-> capabilities.  But reality is that most modern controllers have to query
-> firmware interfaces to figure out what their actual capabilities are.
+On Sat, Jan 12, 2019 at 02:57:01PM +0800, Changbin Du wrote:
+> This patch adds a new trace option 'funcgraph-retval' and is disabled by
+> default. When this option is enabled, fgraph tracer will show the return
+> value of each function. This is useful to find/analyze a original error
+> source in a call graph.
+> 
+> One limitation is that kernel doesn't know the prototype of functions. So
+> fgraph assumes all functions have a retvalue of type int. You must ignore
+> the value of *void* function. And if the retvalue looks like an error code
+> then both hexadecimal and decimal number are displayed.
 
-Hi Martin,
+This sounds more confusing than helpful, and it sounds like this has
+overlap with FTRACE_WITH_REGS functionality.
 
-I am not suggested setting the parameters via scsi host template, but 
-rather dynamically (as we currently do) but just drop the set helper 
-functions, like:
+> diff --git a/arch/arm64/kernel/entry-ftrace.S b/arch/arm64/kernel/entry-ftrace.S
+> index 81b8eb5c4633..223f4ad269d4 100644
+> --- a/arch/arm64/kernel/entry-ftrace.S
+> +++ b/arch/arm64/kernel/entry-ftrace.S
+> @@ -202,6 +202,7 @@ ENTRY(return_to_handler)
+>  	stp x4, x5, [sp, #32]
+>  	stp x6, x7, [sp, #48]
+>  
+> +	mov	x1, x0			// return value
+>  	mov	x0, x29			//     parent's fp
+>  	bl	ftrace_return_to_handler// addr = ftrace_return_to_hander(fp);
+>  	mov	x30, x0			// restore the original return address
 
-     shost->max_channel = 1;
-     shost->max_cmd_len = 16;
+What about indirect return values? Those go via x8.
 
-     ...
+Additionally, in some cases (e.g. static functions with cross-function
+optimization), the compiler might not follow the usual PCS, so the
+return value might not be in x0 regardless. Maybe such functions aren't
+hooked by ftrace today?
 
-     if (hisi_hba->prot_mask) {
-         dev_info(dev, "Registering for DIF/DIX prot_mask=0x%x\n",
-              prot_mask);
--        scsi_host_set_prot(hisi_hba->shost, prot_mask);
-+        shost->prot_capabilities = prot_mask;
-     }
+Generally, I don't think that this is going to be reliable.
 
-     rc = scsi_add_host(shost, dev);
-     if (rc)
-         goto err_out_ha;
+> +config HAVE_FTRACE_RETVAL
+> +	bool
+> +
+>  config HAVE_DYNAMIC_FTRACE
+>  	bool
+>  	help
+> @@ -160,6 +163,7 @@ config FUNCTION_GRAPH_TRACER
+>  	depends on HAVE_FUNCTION_GRAPH_TRACER
+>  	depends on FUNCTION_TRACER
+>  	depends on !X86_32 || !CC_OPTIMIZE_FOR_SIZE
+> +	select HAVE_FTRACE_RETVAL if (X86 || ARM)
 
-     rc = sas_register_ha(sha);
-     if (rc)
-         goto err_out_register_ha;
-
-I find that it is not crystal clear when scsi_host_set_prot() and 
-scsi_host_set_guard() should be called, but not so for setting the shost 
-parameters directly, which is common.
-
->
-> So in this case I think that accessor functions are actually better
-> because they allow us to print a big fat warning when you twiddle
-> something you shouldn't post-initialization. So that's something I think
-> we could--and should--improve.
->
-
-Sure, this is an alternative, but I would rather make it obvious when 
-these parameters should be set so that this would not be required.
+... but not arm64?
 
 Thanks,
-John
-
-
+Mark.
