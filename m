@@ -2,109 +2,125 @@ Return-Path: <SRS0=tq6k=PW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E1156C43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 18:42:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 94A82C43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 18:43:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AA43620645
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 18:42:25 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="m5OiRxIf"
+	by mail.kernel.org (Postfix) with ESMTP id 6350A20645
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 18:43:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726807AbfANSmY (ORCPT
+        id S1726830AbfANSnN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 14 Jan 2019 13:42:24 -0500
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:35417 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726754AbfANSmX (ORCPT
+        Mon, 14 Jan 2019 13:43:13 -0500
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:33745 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726745AbfANSnN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 Jan 2019 13:42:23 -0500
-Received: by mail-lj1-f193.google.com with SMTP id x85-v6so58410ljb.2
-        for <linux-kernel@vger.kernel.org>; Mon, 14 Jan 2019 10:42:22 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=vVB1DILAKbvLonh3NQAAphM1XDF2/wNMQUrNj/QPbtk=;
-        b=m5OiRxIfBf1TNb/WOI5Cxq+5/d/i4Ha9+lyIHO/g+xT5suC5ta2jCCZSwj+j1Exek6
-         zvOfBm4Cgi3UjB+yZRUTdtnuQTGatjh29x0mGuZ96pknNccB3VXzIHpJ6uQDKnBc8r8F
-         RgpKyTtnAjbcmqxEet136Mp/Z+Wr5eQmiEON0=
+        Mon, 14 Jan 2019 13:43:13 -0500
+Received: by mail-pg1-f196.google.com with SMTP id z11so29977pgu.0
+        for <linux-kernel@vger.kernel.org>; Mon, 14 Jan 2019 10:43:13 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=vVB1DILAKbvLonh3NQAAphM1XDF2/wNMQUrNj/QPbtk=;
-        b=cmNQfVVqhzVPlEOSL5RswwJ94rQasfWLb1E0kDvazEeG8aQcgTPA00933M6BXc5eKN
-         z/wx27jYyYc5rP03tsu226sgrro61a1dOI3iAINYZhmIAXrYXdg7jvuunyJ3BtqGBSy0
-         dkzfyYCh1J64rdqQos1FOD1RcgjQY6PpYjiDjJYc8pHbHzgvIEZukontCSw6ttFRf/g6
-         Ds/EyUI5GeThO7w0/NCvksqoirzE0qcRPejbVzGElIdvV7l9nnTiOl8JLcFSyMk7kBLK
-         IZDKiONd5Jnas3XH80QDovSsYOwmUsAWOUWi4WSB8W8fnTsx+eQIsZJtli6f3KWBL6sn
-         kSlQ==
-X-Gm-Message-State: AJcUukcNRjH9NDrg1obVDC4I8RjfwDK0V9eFa/17M+7YBVxM/ieQ4Rjg
-        m1Kj+637NHKWD/8sOMx2leiF8BHcOzQ=
-X-Google-Smtp-Source: ALg8bN5WDzlPxoEwmhIvwp0e5Q36gUq0/WWelS2x8EBllwCKtUQ3LsQd/eSC9RbbxH+IHqK+/7mZ9A==
-X-Received: by 2002:a2e:612:: with SMTP id 18-v6mr15029873ljg.125.1547491340934;
-        Mon, 14 Jan 2019 10:42:20 -0800 (PST)
-Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com. [209.85.208.182])
-        by smtp.gmail.com with ESMTPSA id c5-v6sm202818lja.62.2019.01.14.10.42.19
-        for <linux-kernel@vger.kernel.org>
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=iEPj3gwfHL0lmQt8i9cpEJHC7YdOzae9+2BrYxoGEH8=;
+        b=kxODf2BUPXe6qpbMT6sYczQw/BEcQQwJONNLhWorw3hAgE7k8P+WwucaxY3899hCwQ
+         JgJQYF20asreFBqL+gopPExOAiIw3R+NQXcRLD/jFPu6y34CHGw1dqRvV6+llhoxPTrD
+         EXr6gQDvdOBjGCrWQb1r0yHuZ3qtb1AVzX4UPiCDzJs2TE1MOmVTo/E+35k7h9WGOp/a
+         w4fKgll26vrfSWAKflqo1Gvp/cT6JofR/LqhQbWN1xM7CE2WwXlDd7kH+aafoxfMEriA
+         DlYDeHSv1MjsD/Xo3pRnn9ug9lo07pEThc/rnvwCC/50CunHixhpqQqLIuGrnf4td4ew
+         Qavg==
+X-Gm-Message-State: AJcUuke+bCmZ+wulRW4/KF7Bx9sfUv25PBa+bN2TdfRXrGC18GzABWdu
+        IfTxRYAuxdl2sLFiTs/ehCKAhw==
+X-Google-Smtp-Source: ALg8bN4wHpFDmuWairamlt1Mix3xcf+GUbdNTZWE9nY+Mlw3dJCAkh+fcjiqMcETF5TBRV26bLCG9g==
+X-Received: by 2002:aa7:8802:: with SMTP id c2mr19461747pfo.20.1547491392444;
+        Mon, 14 Jan 2019 10:43:12 -0800 (PST)
+Received: from mka.mtv.corp.google.com ([2620:15c:202:1:75a:3f6e:21d:9374])
+        by smtp.gmail.com with ESMTPSA id v191sm1197512pgb.77.2019.01.14.10.43.10
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 14 Jan 2019 10:42:20 -0800 (PST)
-Received: by mail-lj1-f182.google.com with SMTP id u89-v6so61853lje.1
-        for <linux-kernel@vger.kernel.org>; Mon, 14 Jan 2019 10:42:19 -0800 (PST)
-X-Received: by 2002:a2e:8446:: with SMTP id u6-v6mr17329495ljh.74.1547491339523;
- Mon, 14 Jan 2019 10:42:19 -0800 (PST)
+        Mon, 14 Jan 2019 10:43:11 -0800 (PST)
+From:   Matthias Kaehlcke <mka@chromium.org>
+To:     Andy Gross <andy.gross@linaro.org>,
+        David Brown <david.brown@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Cc:     linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Douglas Anderson <dianders@chromium.org>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        Matthias Kaehlcke <mka@chromium.org>
+Subject: [PATCH] arm64: dts: sdm845: Add CPU topology
+Date:   Mon, 14 Jan 2019 10:42:55 -0800
+Message-Id: <20190114184255.258318-1-mka@chromium.org>
+X-Mailer: git-send-email 2.20.1.97.g81188d93c3-goog
 MIME-Version: 1.0
-References: <20190111233159.218342-1-evgreen@chromium.org> <yq1imyuv95c.fsf@oracle.com>
- <CAD=FV=ULU0JA1LAruHh2KyXOc0dzuQNZTjV0PAEX2J_Ra2=ZRw@mail.gmail.com>
-In-Reply-To: <CAD=FV=ULU0JA1LAruHh2KyXOc0dzuQNZTjV0PAEX2J_Ra2=ZRw@mail.gmail.com>
-From:   Evan Green <evgreen@chromium.org>
-Date:   Mon, 14 Jan 2019 10:41:43 -0800
-X-Gmail-Original-Message-ID: <CAE=gft7OhomkDT7pMBbRRgKK89CVhmigbebgqiDEqTZtjeXhcg@mail.gmail.com>
-Message-ID: <CAE=gft7OhomkDT7pMBbRRgKK89CVhmigbebgqiDEqTZtjeXhcg@mail.gmail.com>
-Subject: Re: [PATCH] scsi: ufs: Remove select of phy-qcom-ufs from ufs-qcom
-To:     Doug Anderson <dianders@chromium.org>
-Cc:     "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Andy Gross <andy.gross@linaro.org>, masneyb@onstation.org,
-        "James E.J. Bottomley" <jejb@linux.ibm.com>,
-        Vinayak Holikatti <vinholikatti@gmail.com>,
-        linux-scsi@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jan 14, 2019 at 9:08 AM Doug Anderson <dianders@chromium.org> wrote:
->
-> Hi,
->
-> On Fri, Jan 11, 2019 at 7:37 PM Martin K. Petersen
-> <martin.petersen@oracle.com> wrote:
-> >
-> >
-> > Evan,
-> >
-> > > CONFIG_SCSI_UFS_QCOM selects CONFIG_PHY_QCOM_UFS, assuming that
-> > > this was the only possible PHY driver Qualcomm's UFS controller
-> > > would use. But in SDM845, the UFS driver is bundled into phy-qcom-qmp,
-> > > and phy-qcom-ufs is unused.
-> > >
-> > > Remove the select, since for SDM845 it adds useless drivers to the
-> > > build.
-> >
-> > Applied to 5.1/scsi-queue.
->
-> Should this be accompanied by a change to arch/arm64/configs/defconfig
-> that sets 'CONFIG_PHY_QCOM_UFS=m'?  I don't personally have any
-> non-SDM845 devices to test on, but I'm sorta assuming they will all
-> break without the defconfig update?
+The 8 CPU cores of the SDM845 are organized in two clusters of 4 big
+("gold") and 4 little ("silver") cores. Add a cpu-map node to the DT
+that describes this topology.
 
-Right, thanks for pointing that out. I'll send out another patch to
-tweak the defconfig.
--Evan
+Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
+---
+ arch/arm64/boot/dts/qcom/sdm845.dtsi | 38 ++++++++++++++++++++++++++++
+ 1 file changed, 38 insertions(+)
+
+diff --git a/arch/arm64/boot/dts/qcom/sdm845.dtsi b/arch/arm64/boot/dts/qcom/sdm845.dtsi
+index c27cbd3bcb0a6..f6c0d87e663f3 100644
+--- a/arch/arm64/boot/dts/qcom/sdm845.dtsi
++++ b/arch/arm64/boot/dts/qcom/sdm845.dtsi
+@@ -192,6 +192,44 @@
+ 				next-level-cache = <&L3_0>;
+ 			};
+ 		};
++
++		cpu-map {
++			cluster0 {
++				core0 {
++					cpu = <&CPU0>;
++				};
++
++				core1 {
++					cpu = <&CPU1>;
++				};
++
++				core2 {
++					cpu = <&CPU2>;
++				};
++
++				core3 {
++					cpu = <&CPU3>;
++				};
++			};
++
++			cluster1 {
++				core0 {
++					cpu = <&CPU4>;
++				};
++
++				core1 {
++					cpu = <&CPU5>;
++				};
++
++				core2 {
++					cpu = <&CPU6>;
++				};
++
++				core3 {
++					cpu = <&CPU7>;
++				};
++			};
++		};
+ 	};
+ 
+ 	pmu {
+-- 
+2.20.1.97.g81188d93c3-goog
+
