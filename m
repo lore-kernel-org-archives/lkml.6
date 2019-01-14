@@ -7,52 +7,52 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D0BEBC43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 10:21:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7CB93C43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 10:22:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A29E420659
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 10:21:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4EA6520659
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 10:22:00 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="OcGf/FTB"
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="jmgzWA3D"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726820AbfANKVw (ORCPT
+        id S1726833AbfANKV6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 14 Jan 2019 05:21:52 -0500
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:55370 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726803AbfANKVv (ORCPT
+        Mon, 14 Jan 2019 05:21:58 -0500
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:40961 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726595AbfANKV4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 Jan 2019 05:21:51 -0500
-Received: by mail-wm1-f65.google.com with SMTP id y139so8221654wmc.5
-        for <linux-kernel@vger.kernel.org>; Mon, 14 Jan 2019 02:21:49 -0800 (PST)
+        Mon, 14 Jan 2019 05:21:56 -0500
+Received: by mail-wr1-f68.google.com with SMTP id x10so22112125wrs.8
+        for <linux-kernel@vger.kernel.org>; Mon, 14 Jan 2019 02:21:55 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :in-reply-to:references;
-        bh=VetZdY4CkpnIoseIMJiUu8n+JdK4ZfAqKf1jE2X0vFM=;
-        b=OcGf/FTBqUMQkD9F05ac/NUQru8v7tpBP4vbtbbKVS/UChYWbb5hB7GTgeHar/vGlK
-         2c0g4PbEeuAcy+Y4+qKsBNp0HKDprBkO3MZkttoz7tfjSaTipbAZmuxRKe3zIsTw+goQ
-         Nohy8SbKuperex8IV74nfYPaOA0hNbrOMjj/I=
+        bh=cNYNQ5KauWNer74TDBHyi3aVg7qesm9a6f/suNN7BOE=;
+        b=jmgzWA3DtEZ+pp9ewQZONx3Svz0g4mDEuJnlXIKx1f05yBEZeouIq0rjNWQS/7qvCV
+         ErmFWPp/V40JeP3IvUQIiYvuCzpgj1jmU5olayPUhLnyeYsXCfYmdQvEJx6asF7tzlLH
+         FFyQKblrYrHS5q4KrQQ80EFEA0pDUo9DJxUdE=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:in-reply-to:references;
-        bh=VetZdY4CkpnIoseIMJiUu8n+JdK4ZfAqKf1jE2X0vFM=;
-        b=eCzU+oQEbZNUAh041Yc9JJLLAblxdKX5dWsvXswRYSwzo/EzmGxonq8XJvt5MFK8Il
-         VkjFn0ZGpH8EYC0/lKNykj6ob90/obgBSPacJ6skupoYDf3/LA1MGVfkVv8n4StRwR6+
-         OB5lwtN6RaCgdNrp58L+MTKkq7bR7WwDvG9XeNaZlFf67plHhCx8XgeddixbPfgdxy5X
-         aHCS6hOEAB9+rozepqA4eSkC6veBajVMWQ8vNu+xUBzHZ/RSt5bMAGmMT46TcMaqBTpI
-         ZVby/Lxz0xdDVJRytgiy7bIhVEXsJupXBWShqruBg+zgr54kDKMh8xTOAzOcpyisBCcc
-         oh8g==
-X-Gm-Message-State: AJcUukcwMuFu1He77aKq+II22DYyuNMKxaOWq7BcBknH/oeBU+AfRpZz
-        SNHio3qZLrLyfFvDCkYKSFYimpRbwa4=
-X-Google-Smtp-Source: ALg8bN62n6bBdmLwVMyLNefLVcgESRJXuDGGrQCadTVvrEezHFv4ngWEmOvwkDONq0ke/HZWQ/BtBg==
-X-Received: by 2002:a1c:c60e:: with SMTP id w14mr11816664wmf.18.1547461308945;
-        Mon, 14 Jan 2019 02:21:48 -0800 (PST)
+        bh=cNYNQ5KauWNer74TDBHyi3aVg7qesm9a6f/suNN7BOE=;
+        b=gbCiBIPQyS3aazfXgj+Lv1cPWCfLSZ1QIN6WM7f/yMnilEQ9KAVnH2LS8OhiB3zGXZ
+         EiWWIm4NuN1k0xmB0XDaJjXWkxoBkib7cg/eNKqtOcgpmZbIVaFDujDQj2k3tMEktdlC
+         PBSi6aZbDfmsdCQ70T6cJo3ZY/FfYVZng78AENkGBaOhTqs6hg8hWGeL13d3DHCgT8d0
+         nuDGhCK5MgPdaDRWVajn3ZIAHImnT2Y8rc9dB3Op1e7H9vXdfhTNyJEwBdVox64uWbXN
+         EGsRdwJAlBwtiTS4Tu2kcQzuJY1B+0pYqlu/NNzddKmDCz/ZRxt/njcbc8VEl0ClGQ4j
+         dtUg==
+X-Gm-Message-State: AJcUukdMK8LTMmBA00qWmg1ibmRp5j22TsuV3eiMFmiDU0o/7/nX9hmi
+        9zVGmJIN9rjjHwNXFmOitQT2D2AqsfE=
+X-Google-Smtp-Source: ALg8bN6N4nPyi7ryYyTPveVcVLN2AW+0ZijVlkHW606l7wjb8pm8Fe6xBBuOd8LoiM6pkSnmBQKXrA==
+X-Received: by 2002:adf:8421:: with SMTP id 30mr24392096wrf.153.1547461314750;
+        Mon, 14 Jan 2019 02:21:54 -0800 (PST)
 Received: from localhost ([49.248.81.155])
-        by smtp.gmail.com with ESMTPSA id v6sm54612203wro.57.2019.01.14.02.21.47
+        by smtp.gmail.com with ESMTPSA id y185sm17801534wmg.34.2019.01.14.02.21.53
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 14 Jan 2019 02:21:48 -0800 (PST)
+        Mon, 14 Jan 2019 02:21:54 -0800 (PST)
 From:   Amit Kucheria <amit.kucheria@linaro.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     linux-arm-msm@vger.kernel.org, bjorn.andersson@linaro.org,
@@ -61,9 +61,9 @@ Cc:     linux-arm-msm@vger.kernel.org, bjorn.andersson@linaro.org,
         dianders@chromium.org, mka@chromium.org,
         "Rafael J. Wysocki" <rjw@rjwysocki.net>,
         linux-pm@vger.kernel.org (open list:CPU FREQUENCY DRIVERS)
-Subject: [PATCH v2 5/9] cpufreq: Replace open-coded << with BIT()
-Date:   Mon, 14 Jan 2019 15:51:07 +0530
-Message-Id: <59ce8ef9777ab0ae3636d8d10110a7f331456ba6.1547458732.git.amit.kucheria@linaro.org>
+Subject: [PATCH v2 6/9] cpufreq: qcom-hw: Register as a cpufreq cooling device
+Date:   Mon, 14 Jan 2019 15:51:08 +0530
+Message-Id: <b5e5698973c156f16af825ee92b8c94af224e634.1547458732.git.amit.kucheria@linaro.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <cover.1547458732.git.amit.kucheria@linaro.org>
 References: <cover.1547458732.git.amit.kucheria@linaro.org>
@@ -74,82 +74,28 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Minor clean-up to use BIT() and keep checkpatch happy. Clean-up the
-comment formatting to while we're at it to make it easier to read.
+Add the CPUFREQ_AUTO_REGISTER_COOLING_DEV flag to allow the cpufreq core
+to auto-register the driver as a cooling device.
 
 Signed-off-by: Amit Kucheria <amit.kucheria@linaro.org>
 ---
- include/linux/cpufreq.h | 27 ++++++++++++++-------------
- 1 file changed, 14 insertions(+), 13 deletions(-)
+ drivers/cpufreq/qcom-cpufreq-hw.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/include/linux/cpufreq.h b/include/linux/cpufreq.h
-index 0c51d5ce7350..c87989c97834 100644
---- a/include/linux/cpufreq.h
-+++ b/include/linux/cpufreq.h
-@@ -349,14 +349,15 @@ struct cpufreq_driver {
- };
+diff --git a/drivers/cpufreq/qcom-cpufreq-hw.c b/drivers/cpufreq/qcom-cpufreq-hw.c
+index 649dddd72749..47c7cea22da1 100644
+--- a/drivers/cpufreq/qcom-cpufreq-hw.c
++++ b/drivers/cpufreq/qcom-cpufreq-hw.c
+@@ -231,7 +231,8 @@ static struct freq_attr *qcom_cpufreq_hw_attr[] = {
  
- /* flags */
--#define CPUFREQ_STICKY		(1 << 0)	/* driver isn't removed even if
--						   all ->init() calls failed */
--#define CPUFREQ_CONST_LOOPS	(1 << 1)	/* loops_per_jiffy or other
--						   kernel "constants" aren't
--						   affected by frequency
--						   transitions */
--#define CPUFREQ_PM_NO_WARN	(1 << 2)	/* don't warn on suspend/resume
--						   speed mismatches */
-+
-+/* driver isn't removed even if all ->init() calls failed */
-+#define CPUFREQ_STICKY				BIT(0)
-+
-+/* loops_per_jiffy or other kernel "constants" aren't affected by frequency transitions */
-+#define CPUFREQ_CONST_LOOPS			BIT(1)
-+
-+/* don't warn on suspend/resume speed mismatches */
-+#define CPUFREQ_PM_NO_WARN			BIT(2)
- 
- /*
-  * This should be set by platforms having multiple clock-domains, i.e.
-@@ -364,14 +365,14 @@ struct cpufreq_driver {
-  * be created in cpu/cpu<num>/cpufreq/ directory and so they can use the same
-  * governor with different tunables for different clusters.
-  */
--#define CPUFREQ_HAVE_GOVERNOR_PER_POLICY (1 << 3)
-+#define CPUFREQ_HAVE_GOVERNOR_PER_POLICY	BIT(3)
- 
- /*
-  * Driver will do POSTCHANGE notifications from outside of their ->target()
-  * routine and so must set cpufreq_driver->flags with this flag, so that core
-  * can handle them specially.
-  */
--#define CPUFREQ_ASYNC_NOTIFICATION  (1 << 4)
-+#define CPUFREQ_ASYNC_NOTIFICATION		BIT(4)
- 
- /*
-  * Set by drivers which want cpufreq core to check if CPU is running at a
-@@ -380,19 +381,19 @@ struct cpufreq_driver {
-  * from the table. And if that fails, we will stop further boot process by
-  * issuing a BUG_ON().
-  */
--#define CPUFREQ_NEED_INITIAL_FREQ_CHECK	(1 << 5)
-+#define CPUFREQ_NEED_INITIAL_FREQ_CHECK	BIT(5)
- 
- /*
-  * Set by drivers to disallow use of governors with "dynamic_switching" flag
-  * set.
-  */
--#define CPUFREQ_NO_AUTO_DYNAMIC_SWITCHING (1 << 6)
-+#define CPUFREQ_NO_AUTO_DYNAMIC_SWITCHING	BIT(6)
- 
- /*
-  * Set by drivers that want the core to automatically register the cpufreq
-  * driver as a thermal cooling device
-  */
--#define CPUFREQ_AUTO_REGISTER_COOLING_DEV (1 << 7)
-+#define CPUFREQ_AUTO_REGISTER_COOLING_DEV	BIT(7)
- 
- int cpufreq_register_driver(struct cpufreq_driver *driver_data);
- int cpufreq_unregister_driver(struct cpufreq_driver *driver_data);
+ static struct cpufreq_driver cpufreq_qcom_hw_driver = {
+ 	.flags		= CPUFREQ_STICKY | CPUFREQ_NEED_INITIAL_FREQ_CHECK |
+-			  CPUFREQ_HAVE_GOVERNOR_PER_POLICY,
++			  CPUFREQ_HAVE_GOVERNOR_PER_POLICY |
++			  CPUFREQ_AUTO_REGISTER_COOLING_DEV,
+ 	.verify		= cpufreq_generic_frequency_table_verify,
+ 	.target_index	= qcom_cpufreq_hw_target_index,
+ 	.get		= qcom_cpufreq_hw_get,
 -- 
 2.17.1
 
