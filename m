@@ -2,119 +2,121 @@ Return-Path: <SRS0=tq6k=PW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 64EE3C43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 21:05:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B7D1C43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 21:07:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3328C20896
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 21:05:32 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=android.com header.i=@android.com header.b="dKl6W2km"
+	by mail.kernel.org (Postfix) with ESMTP id 67C38214AE
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 21:07:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727119AbfANVFa (ORCPT
+        id S1726946AbfANVHS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 14 Jan 2019 16:05:30 -0500
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:53040 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727006AbfANVF3 (ORCPT
+        Mon, 14 Jan 2019 16:07:18 -0500
+Received: from gateway32.websitewelcome.com ([192.185.145.122]:15094 "EHLO
+        gateway32.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726777AbfANVHR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 Jan 2019 16:05:29 -0500
-Received: by mail-wm1-f67.google.com with SMTP id m1so1123198wml.2
-        for <linux-kernel@vger.kernel.org>; Mon, 14 Jan 2019 13:05:27 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=android.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=GD+EBvrWZeLBiLbVYUmorj631pUkIjHc9+6iZNpQcXU=;
-        b=dKl6W2kmX3JEWaXye7fKLgBiYCdvVxyGhuaVpfv341sIiYHAHNdkV+CP4AAgFz4yZL
-         Xr/L1ONJeNWUS2wHbC3onHHM64N+yG6BLgjNaiBhPBJ2lpaufhHp53wb41aebETT51EE
-         eHDFwp3r+6Ykht2fKufHU+UzpC2ApJLJWUKNgG8kosLuYmcBDj6iCR/rX5FDAMllF0GG
-         gnOdU9MFlqnl3O7Rl+WHVwRiW5b0F3LHl5LXrEAfp5TgYk3BGFrFlE9ZdjsQwadVeck/
-         wu/RcP4SJ2K2B+pNhH5tWaizL3Vy5RWY3Kw94oeO0h4CNB4VLr02iZjbEF90ivNpb80U
-         9FEA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=GD+EBvrWZeLBiLbVYUmorj631pUkIjHc9+6iZNpQcXU=;
-        b=HyjWRICfVIECgMC+NsVznvFBeMUaebiWVVVCleSKbWbP1nX/AYM7z4ffhqJdunbtF6
-         e4n8p2LDAkN4A8MQM1XFaUug+HplIqE6zc/fVJfu4CO/j21DSWI6pdK/B7JxVZWGBp3B
-         eK1N0roOWu7kDSRYcNZhUeHLwtJ72wJEdZlfvTol+S0mG9lIvfH+qAkmsmg9nuQRy+9h
-         ccJVadRYtGIhQytqPSn5heElBBG3yH+kyXG4XZzsf5/nYJDmZqpnDE8W8kSOZUBCfwRg
-         2Sx7+hXDBMzdtO/GQFgPhFev0FYcAFiM3dXl0Rb2MbDnfHgjc4TC/xs+yqcOhjbyMhYU
-         fwhg==
-X-Gm-Message-State: AJcUukelm3b9qHuYOn/Yto10bgyNkJW07U/2198kUwAH3rmLVgOhFfbw
-        /bvjaIMz20XrKhFNfvR4qAKLQw==
-X-Google-Smtp-Source: ALg8bN4LwDvpdFX3lgkbQDGJAIsL+mbTgLeJLDHBtbwn4SRmnLC2BXnQBdC1GcapVn0QLhExjn+2Wg==
-X-Received: by 2002:a7b:c5cc:: with SMTP id n12mr709714wmk.149.1547499927083;
-        Mon, 14 Jan 2019 13:05:27 -0800 (PST)
-Received: from trong0.mtv.corp.google.com ([2620:0:1000:1601:c43f:8c1b:f6ef:3dce])
-        by smtp.gmail.com with ESMTPSA id s1sm106981548wro.9.2019.01.14.13.05.25
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 14 Jan 2019 13:05:26 -0800 (PST)
-From:   Tri Vo <trong@android.com>
-To:     oberpar@linux.ibm.com
-Cc:     ghackmann@android.com, ndesaulniers@google.com,
-        linux-kernel@vger.kernel.org, kernel-team@android.com,
-        Tri Vo <trong@android.com>
-Subject: [PATCH 4/4] gcov: clang: pick GCC vs Clang format depending on compiler
-Date:   Mon, 14 Jan 2019 13:04:26 -0800
-Message-Id: <20190114210426.177543-5-trong@android.com>
-X-Mailer: git-send-email 2.20.1.97.g81188d93c3-goog
-In-Reply-To: <20190114210426.177543-1-trong@android.com>
-References: <20190114210426.177543-1-trong@android.com>
+        Mon, 14 Jan 2019 16:07:17 -0500
+Received: from cm16.websitewelcome.com (cm16.websitewelcome.com [100.42.49.19])
+        by gateway32.websitewelcome.com (Postfix) with ESMTP id E8FC24E924
+        for <linux-kernel@vger.kernel.org>; Mon, 14 Jan 2019 15:07:16 -0600 (CST)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id j9S0g1CZK4FKpj9S0gRX3R; Mon, 14 Jan 2019 15:07:16 -0600
+X-Authority-Reason: nr=8
+Received: from [189.250.130.205] (port=50882 helo=[192.168.43.131])
+        by gator4166.hostgator.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
+        (Exim 4.91)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1gj9S0-000bzK-El; Mon, 14 Jan 2019 15:07:16 -0600
+Subject: Re: [PATCH] lib/cmdline.c:: annotate implicit fall throughs
+To:     Mathieu Malaterre <malat@debian.org>,
+        Andrew Morton <akpm@linux-foundation.org>
+Cc:     linux-kernel@vger.kernel.org
+References: <20190114202143.14130-1-malat@debian.org>
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Message-ID: <5f05caf6-836e-bc2b-cd2b-009ed1073a5b@embeddedor.com>
+Date:   Mon, 14 Jan 2019 15:07:12 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190114202143.14130-1-malat@debian.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 189.250.130.205
+X-Source-L: No
+X-Exim-ID: 1gj9S0-000bzK-El
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: ([192.168.43.131]) [189.250.130.205]:50882
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 6
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Clang gcov format is only supported by Clang compiler, and Clang
-compiler only supports Clang format.
 
-We set gcov format to depend on which compiler (GCC or Clang) is used.
 
-Automatic format detection behavior is preserved because:
-If GCC is used, one of the GCC gcov formats is selected.
-If Clang is used, Clang gcov format is selected.
+On 1/14/19 2:21 PM, Mathieu Malaterre wrote:
+> There is a plan to build the kernel with -Wimplicit-fallthrough and
+> these places in the code produced warnings (W=1). Fix them up.
+> 
+> This commit remove the following warnings:
+> 
+>    lib/cmdline.c:137:7: warning: this statement may fall through [-Wimplicit-fallthrough=]
+>    lib/cmdline.c:140:7: warning: this statement may fall through [-Wimplicit-fallthrough=]
+>    lib/cmdline.c:143:7: warning: this statement may fall through [-Wimplicit-fallthrough=]
+>    lib/cmdline.c:146:7: warning: this statement may fall through [-Wimplicit-fallthrough=]
+>    lib/cmdline.c:149:7: warning: this statement may fall through [-Wimplicit-fallthrough=]
+> 
+> Signed-off-by: Mathieu Malaterre <malat@debian.org>
 
-Signed-off-by: Tri Vo <trong@android.com>
----
- kernel/gcov/Kconfig | 4 ++++
- 1 file changed, 4 insertions(+)
+Acked-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
 
-diff --git a/kernel/gcov/Kconfig b/kernel/gcov/Kconfig
-index eb428e570923..37ec551d4039 100644
---- a/kernel/gcov/Kconfig
-+++ b/kernel/gcov/Kconfig
-@@ -60,6 +60,8 @@ choice
- 	In such a case, change this option to adjust the format used in the
- 	kernel accordingly.
- 
-+	Select Clang gcov format if building with Clang compiler.
-+
- config GCOV_FORMAT_3_4
- 	bool "GCC 3.4 format"
- 	depends on CC_IS_GCC && GCC_VERSION < 40700
-@@ -68,11 +70,13 @@ config GCOV_FORMAT_3_4
- 
- config GCOV_FORMAT_4_7
- 	bool "GCC 4.7 format"
-+	depends on CC_IS_GCC
- 	---help---
- 	Select this option to use the format defined by GCC 4.7.
- 
- config GCOV_FORMAT_CLANG
- 	bool "Clang format"
-+	depends on CC_IS_CLANG
- 	---help---
- 	Select this option to use the format defined by Clang.
- 
--- 
-2.20.1.97.g81188d93c3-goog
-
+> ---
+>   lib/cmdline.c | 5 +++++
+>   1 file changed, 5 insertions(+)
+> 
+> diff --git a/lib/cmdline.c b/lib/cmdline.c
+> index 171c19b6888e..dc59d6216318 100644
+> --- a/lib/cmdline.c
+> +++ b/lib/cmdline.c
+> @@ -135,18 +135,23 @@ unsigned long long memparse(const char *ptr, char **retptr)
+>   	case 'E':
+>   	case 'e':
+>   		ret <<= 10;
+> +		/* fall through */
+>   	case 'P':
+>   	case 'p':
+>   		ret <<= 10;
+> +		/* fall through */
+>   	case 'T':
+>   	case 't':
+>   		ret <<= 10;
+> +		/* fall through */
+>   	case 'G':
+>   	case 'g':
+>   		ret <<= 10;
+> +		/* fall through */
+>   	case 'M':
+>   	case 'm':
+>   		ret <<= 10;
+> +		/* fall through */
+>   	case 'K':
+>   	case 'k':
+>   		ret <<= 10;
+> 
