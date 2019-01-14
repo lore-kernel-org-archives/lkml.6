@@ -2,195 +2,180 @@ Return-Path: <SRS0=tq6k=PW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 69CCEC43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 23:28:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 07C30C43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 23:29:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2EE4B206B7
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 23:28:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547508493;
-	bh=DEq14WzBxstnUexN+m7W9/GWkheN71REW6EU5LEtzEM=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=jhsJ6OqwTugd9hXX9RQOeIzR3EQh2ztLEkjo4HC30K7rlCMfPxqODeebdNYCdjWZx
-	 1Nmh0jVE9uai+pxcElAiN910LMvPTRLm+CmY+I5IzQkA3rvYuYocV0wQ/zd5J7gntV
-	 ryPlpoXH/ySYOCkISF4P6yIDYlBcyUmuVhLbeqgM=
+	by mail.kernel.org (Postfix) with ESMTP id C0A3D20645
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 23:29:33 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="upy9TKku"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727174AbfANX2L (ORCPT
+        id S1727184AbfANX3c (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 14 Jan 2019 18:28:11 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59044 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726745AbfANX2L (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 Jan 2019 18:28:11 -0500
-Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 07400214DA
-        for <linux-kernel@vger.kernel.org>; Mon, 14 Jan 2019 23:28:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547508490;
-        bh=DEq14WzBxstnUexN+m7W9/GWkheN71REW6EU5LEtzEM=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=FINHLqoL3wbXfboOSrPDwRBvpOFRUVdRBVqAAXg/n0EKlvheFGuXPm70LpGcNKFqe
-         mrzupNs8DIainHQYdaPHPIN+/hS02XRv5wZoD7mm43g51O/zQfvsKz2b8AY/Eva/yW
-         AEkzq1IKed+mmjJkTaFgkVXBTbZaU6VHwCxUT4ho=
-Received: by mail-wr1-f47.google.com with SMTP id u4so917143wrp.3
-        for <linux-kernel@vger.kernel.org>; Mon, 14 Jan 2019 15:28:09 -0800 (PST)
-X-Gm-Message-State: AJcUukeOHl11vzEHLRG1K5chK6X2JcnF4tv3Bs5OMvoWFberkX04Oefq
-        bU0d3zxSuIDWqjZrlV7amRHbYVnB8WXdiSxL4b9Jbw==
-X-Google-Smtp-Source: ALg8bN7eVkVXesoHGGkhEgQcZ9WUEw8fPUFhWdQsKyWmSBe9obXbPKSj4n5FlKwu4iFpRNZNNn0Bw3eLTyM6IPc1GFM=
-X-Received: by 2002:adf:f0c5:: with SMTP id x5mr599212wro.77.1547508488275;
- Mon, 14 Jan 2019 15:28:08 -0800 (PST)
+        Mon, 14 Jan 2019 18:29:32 -0500
+Received: from userp2130.oracle.com ([156.151.31.86]:47342 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726745AbfANX3b (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 14 Jan 2019 18:29:31 -0500
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id x0ENOS39024939;
+        Mon, 14 Jan 2019 23:28:00 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2018-07-02;
+ bh=ghUiQ10Oj6kwawKc/rWc3QuNTfKE2oPe7wmMDB8dtyk=;
+ b=upy9TKku2BrGcbxLrCTUNQBHunRZaUm+ZvmrEhqjmGa1KuvGpiHk9fNpCG6QpOV/1uSE
+ ept4XkhoQAtHiyVw01S3EVYxU6vv8rfyAOLe1q21vokzzU23rtQwJhq2q0iiiheYQruN
+ 9GPB7+gq2ma87+P+NDSCEQJR3NmT9+VEHAYMRkcVODSuAxAH9Iyik+GsZ8GbXkyhbpRv
+ lx6x8YMmdpdCI3ZE4iKqO9Bo4gKYReGRsBg7psSte3awNubZGf/Cm3GZcmCcfQ01kXe3
+ NONKZs74V65HRu6bVZr/ZtpxywxxFi4ppVGbCbuanSQ9Hz4F4ppKBfV5qmZxQsb2pi/f sw== 
+Received: from userv0021.oracle.com (userv0021.oracle.com [156.151.31.71])
+        by userp2130.oracle.com with ESMTP id 2pybkc8ues-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 14 Jan 2019 23:27:59 +0000
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by userv0021.oracle.com (8.14.4/8.14.4) with ESMTP id x0ENRwFO029258
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 14 Jan 2019 23:27:59 GMT
+Received: from abhmp0007.oracle.com (abhmp0007.oracle.com [141.146.116.13])
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x0ENRvL2029106;
+        Mon, 14 Jan 2019 23:27:58 GMT
+Received: from dhcp-burlington7-2nd-B-east-10-152-55-162.usdhcp.oraclecorp.com (/10.152.32.65)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Mon, 14 Jan 2019 15:27:57 -0800
+Subject: Re: [PATCH 8/9] xen/gntdev.c: Convert to use vm_insert_range
+To:     Souptick Joarder <jrdr.linux@gmail.com>, akpm@linux-foundation.org,
+        willy@infradead.org, mhocko@suse.com, jgross@suse.com,
+        linux@armlinux.org.uk, robin.murphy@arm.com
+Cc:     xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org
+References: <20190111151235.GA2836@jordon-HP-15-Notebook-PC>
+From:   Boris Ostrovsky <boris.ostrovsky@oracle.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=boris.ostrovsky@oracle.com; prefer-encrypt=mutual; keydata=
+ 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
+ Jg6OxFYd01z+a+oL
+Message-ID: <f6eef305-daf3-dad8-96e3-d2f93d169fd4@oracle.com>
+Date:   Mon, 14 Jan 2019 18:27:53 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.1
 MIME-Version: 1.0
-References: <cover.1547073843.git.jpoimboe@redhat.com> <20190110203023.GL2861@worktop.programming.kicks-ass.net>
- <20190110205226.iburt6mrddsxnjpk@treble> <CAHk-=whR7LzKcuB9Z2km1T25DUkJcbE9rNhCzApAPADbDqMhmQ@mail.gmail.com>
- <CALCETrWBwTVHWXahVXMMBL4QA1f+YdKgv1XANXPsk86FjFFH2Q@mail.gmail.com>
- <B374297A-8298-4CED-8EC0-6A39BDBA5F05@vmware.com> <20190111151525.tf7lhuycyyvjjxez@treble>
- <CAHk-=wjJm8DpCsw=Wno01q4VFqUeiLKE8QmbAtUJurYhn3jRqA@mail.gmail.com>
- <12578A17-E695-4DD5-AEC7-E29FAB2C8322@zytor.com> <nycvar.YFH.7.76.1901112035570.6626@cbobk.fhfr.pm>
- <5cbd249a-3b2b-6b3b-fb52-67571617403f@zytor.com> <207c865e-a92a-1647-b1b0-363010383cc3@zytor.com>
- <9f60be8c-47fb-195b-fdb4-4098f1df3dc2@zytor.com>
-In-Reply-To: <9f60be8c-47fb-195b-fdb4-4098f1df3dc2@zytor.com>
-From:   Andy Lutomirski <luto@kernel.org>
-Date:   Mon, 14 Jan 2019 15:27:55 -0800
-X-Gmail-Original-Message-ID: <CALCETrWE-GYr=bUF-RsSNNW5A-=jd2Oy_4yPisKTUiPZTAHm6A@mail.gmail.com>
-Message-ID: <CALCETrWE-GYr=bUF-RsSNNW5A-=jd2Oy_4yPisKTUiPZTAHm6A@mail.gmail.com>
-Subject: Re: [PATCH v3 0/6] Static calls
-To:     "H. Peter Anvin" <hpa@zytor.com>
-Cc:     Jiri Kosina <jikos@kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Nadav Amit <namit@vmware.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        "the arch/x86 maintainers" <x86@kernel.org>,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Jason Baron <jbaron@akamai.com>,
-        David Laight <David.Laight@aculab.com>,
-        Borislav Petkov <bp@alien8.de>,
-        Julia Cartwright <julia@ni.com>, Jessica Yu <jeyu@kernel.org>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        Edward Cree <ecree@solarflare.com>,
-        Daniel Bristot de Oliveira <bristot@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20190111151235.GA2836@jordon-HP-15-Notebook-PC>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9136 signatures=668680
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1810050000 definitions=main-1901140179
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jan 14, 2019 at 2:01 PM H. Peter Anvin <hpa@zytor.com> wrote:
+On 1/11/19 10:12 AM, Souptick Joarder wrote:
+> Convert to use vm_insert_range() to map range of kernel
+> memory to user vma.
 >
-> So I was already in the middle of composing this message when Andy posted:
->
-> > I don't even think this is sufficient.  I think we also need everyone
-> > who clears the bit to check if all bits are clear and, if so, remove
-> > the breakpoint.  Otherwise we have a situation where, if you are in
-> > text_poke_bp() and you take an NMI (or interrupt or MCE or whatever)
-> > and that interrupt then hits the breakpoint, then you deadlock because
-> > no one removes the breakpoint.
-> >
-> > If we do this, and if we can guarantee that all CPUs make forward
-> > progress, then maybe the problem is solved. Can we guarantee something
-> > like all NMI handlers that might wait in a spinlock or for any other
-> > reason will periodically check if a sync is needed while they're
-> > spinning?
->
-> So the really, really nasty case is when an asynchronous event on the
-> *patching* processor gets stuck spinning on a resource which is
-> unavailable due to another processor spinning on the #BP. We can disable
-> interrupts, but we can't stop NMIs from coming in (although we could
-> test in the NMI handler if we are in that condition and return
-> immediately; I'm not sure we want to do that, and we still have to deal
-> with #MC and what not.)
->
-> The fundamental problem here is that we don't see the #BP on the
-> patching processor, in which case we could simply complete the patching
-> from the #BP handler on that processor.
->
-> On 1/13/19 6:40 PM, H. Peter Anvin wrote:
-> > On 1/13/19 6:31 PM, H. Peter Anvin wrote:
-> >>
-> >> static cpumask_t text_poke_cpumask;
-> >>
-> >> static void text_poke_sync(void)
-> >> {
-> >>      smp_wmb();
-> >>      text_poke_cpumask = cpu_online_mask;
-> >>      smp_wmb();      /* Should be optional on x86 */
-> >>      cpumask_clear_cpu(&text_poke_cpumask, smp_processor_id());
-> >>      on_each_cpu_mask(&text_poke_cpumask, text_poke_sync_cpu, NULL, false);
-> >>      while (!cpumask_empty(&text_poke_cpumask)) {
-> >>              cpu_relax();
-> >>              smp_rmb();
-> >>      }
-> >> }
-> >>
-> >> static void text_poke_sync_cpu(void *dummy)
-> >> {
-> >>      (void)dummy;
-> >>
-> >>      smp_rmb();
-> >>      cpumask_clear_cpu(&poke_bitmask, smp_processor_id());
-> >>      /*
-> >>       * We are guaranteed to return with an IRET, either from the
-> >>       * IPI or the #BP handler; this provides serialization.
-> >>       */
-> >> }
-> >>
-> >
-> > The invariants here are:
-> >
-> > 1. The patching routine must set each bit in the cpumask after each event
-> >    that requires synchronization is complete.
-> > 2. The bit can be (atomically) cleared on the target CPU only, and only in a
-> >    place that guarantees a synchronizing event (e.g. IRET) before it may
-> >    reaching the poked instruction.
-> > 3. At a minimum the IPI handler and #BP handler needs to clear the bit. It
-> >    *is* also possible to clear it in other places, e.g. the NMI handler, if
-> >    necessary as long as condition 2 is satisfied.
-> >
->
-> OK, so with interrupts enabled *on the processor doing the patching* we
-> still have a problem if it takes an interrupt which in turn takes a #BP.
->  Disabling interrupts would not help, because but an NMI and #MC could
-> still cause problems unless we can guarantee that no path which may be
-> invoked by NMI/#MC can do text_poke, which seems to be a very aggressive
-> assumption.
->
-> Note: I am assuming preemption is disabled.
->
-> The easiest/sanest way to deal with this might be to switch the IDT (or
-> provide a hook in the generic exception entry code) on the patching
-> processor, such that if an asynchronous event comes in, we either roll
-> forward or revert. This is doable because the second sync we currently
-> do is not actually necessary per the hardware guys.
+> Signed-off-by: Souptick Joarder <jrdr.linux@gmail.com>
 
-This is IMO insanely complicated.  I much prefer the kind of
-complexity that is more or less deterministic and easy to test to the
-kind of complexity (like this) that only happens in corner cases.
+Reviewed-by: Boris Ostrovsky <boris.ostrovsky@oracle.com>
 
-I see two solutions here:
+(although it would be good to mention in the commit that you are also
+replacing count with vma_pages(vma), and why)
 
-1. Just suck it up and emulate the CALL.  And find a way to write a
-test case so we know it works.
 
-2. Find a non-deadlocky way to make the breakpoint handler wait for
-the breakpoint to get removed, without any mucking at all with the
-entry code.  And find a way to write a test case so we know it works.
-(E.g. stick an actual static_call call site *in text_poke_bp()* that
-fires once on boot so that the really awful recursive case gets
-exercised all the time.
+> ---
+>  drivers/xen/gntdev.c | 16 ++++++----------
+>  1 file changed, 6 insertions(+), 10 deletions(-)
+>
+> diff --git a/drivers/xen/gntdev.c b/drivers/xen/gntdev.c
+> index b0b02a5..ca4acee 100644
+> --- a/drivers/xen/gntdev.c
+> +++ b/drivers/xen/gntdev.c
+> @@ -1082,18 +1082,17 @@ static int gntdev_mmap(struct file *flip, struct vm_area_struct *vma)
+>  {
+>  	struct gntdev_priv *priv = flip->private_data;
+>  	int index = vma->vm_pgoff;
+> -	int count = vma_pages(vma);
+>  	struct gntdev_grant_map *map;
+> -	int i, err = -EINVAL;
+> +	int err = -EINVAL;
+>  
+>  	if ((vma->vm_flags & VM_WRITE) && !(vma->vm_flags & VM_SHARED))
+>  		return -EINVAL;
+>  
+>  	pr_debug("map %d+%d at %lx (pgoff %lx)\n",
+> -			index, count, vma->vm_start, vma->vm_pgoff);
+> +			index, vma_pages(vma), vma->vm_start, vma->vm_pgoff);
+>  
+>  	mutex_lock(&priv->lock);
+> -	map = gntdev_find_map_index(priv, index, count);
+> +	map = gntdev_find_map_index(priv, index, vma_pages(vma));
+>  	if (!map)
+>  		goto unlock_out;
+>  	if (use_ptemod && map->vma)
+> @@ -1145,12 +1144,9 @@ static int gntdev_mmap(struct file *flip, struct vm_area_struct *vma)
+>  		goto out_put_map;
+>  
+>  	if (!use_ptemod) {
+> -		for (i = 0; i < count; i++) {
+> -			err = vm_insert_page(vma, vma->vm_start + i*PAGE_SIZE,
+> -				map->pages[i]);
+> -			if (err)
+> -				goto out_put_map;
+> -		}
+> +		err = vm_insert_range(vma, map->pages, map->count);
+> +		if (err)
+> +			goto out_put_map;
+>  	} else {
+>  #ifdef CONFIG_X86
+>  		/*
 
-But if we're going to do any mucking with the entry code, let's just
-do the simple mucking to make emulating CALL work.
-
---Andy
