@@ -2,297 +2,438 @@ Return-Path: <SRS0=tq6k=PW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DFBEFC43444
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 19:04:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 59122C43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 19:09:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A863220659
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 19:04:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1458E20659
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 19:09:28 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="m2uNk6dL"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726782AbfANTEV convert rfc822-to-8bit (ORCPT
+        id S1726806AbfANTJ0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 14 Jan 2019 14:04:21 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:38282 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726643AbfANTEV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 Jan 2019 14:04:21 -0500
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 1B0E03680B;
-        Mon, 14 Jan 2019 19:04:20 +0000 (UTC)
-Received: from llong.remote.csb (dhcp-17-223.bos.redhat.com [10.18.17.223])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id BA1B819C7C;
-        Mon, 14 Jan 2019 19:04:18 +0000 (UTC)
-Subject: Re: [PATCH v3 4/4] /proc/stat: Call kstat_irqs_usr() only for active
- IRQs
-To:     Thomas Gleixner <tglx@linutronix.de>,
-        Matthew Wilcox <willy@infradead.org>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Kees Cook <keescook@chromium.org>,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        Davidlohr Bueso <dave@stgolabs.net>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        Daniel Colascione <dancol@google.com>,
+        Mon, 14 Jan 2019 14:09:26 -0500
+Received: from hqemgate14.nvidia.com ([216.228.121.143]:17804 "EHLO
+        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726643AbfANTJZ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 14 Jan 2019 14:09:25 -0500
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate14.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5c3cde530000>; Mon, 14 Jan 2019 11:09:07 -0800
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Mon, 14 Jan 2019 11:09:21 -0800
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Mon, 14 Jan 2019 11:09:21 -0800
+Received: from [10.110.48.28] (10.124.1.5) by HQMAIL101.nvidia.com
+ (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Mon, 14 Jan
+ 2019 19:09:21 +0000
+Subject: Re: [PATCH 1/2] mm: introduce put_user_page*(), placeholder versions
+To:     Jerome Glisse <jglisse@redhat.com>, Jan Kara <jack@suse.cz>
+CC:     Matthew Wilcox <willy@infradead.org>,
         Dave Chinner <david@fromorbit.com>,
-        Randy Dunlap <rdunlap@infradead.org>
-References: <1547061648-16080-1-git-send-email-longman@redhat.com>
- <1547061648-16080-5-git-send-email-longman@redhat.com>
- <alpine.DEB.2.21.1901111750280.4957@nanos.tec.linutronix.de>
- <alpine.DEB.2.21.1901112017000.1661@nanos.tec.linutronix.de>
- <20190111192357.GK6310@bombadil.infradead.org>
- <alpine.DEB.2.21.1901112146180.1661@nanos.tec.linutronix.de>
-From:   Waiman Long <longman@redhat.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=longman@redhat.com; prefer-encrypt=mutual; keydata=
- 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
- weim8xU=
-Organization: Red Hat
-Message-ID: <3b863edf-1a3e-1436-93e7-717550c7256f@redhat.com>
-Date:   Mon, 14 Jan 2019 14:04:18 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Dan Williams <dan.j.williams@intel.com>,
+        John Hubbard <john.hubbard@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linux MM <linux-mm@kvack.org>, <tom@talpey.com>,
+        Al Viro <viro@zeniv.linux.org.uk>, <benve@cisco.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Christopher Lameter <cl@linux.com>,
+        "Dalessandro, Dennis" <dennis.dalessandro@intel.com>,
+        Doug Ledford <dledford@redhat.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Michal Hocko <mhocko@kernel.org>, <mike.marciniszyn@intel.com>,
+        <rcampbell@nvidia.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+References: <20190103092654.GA31370@quack2.suse.cz>
+ <20190103144405.GC3395@redhat.com>
+ <a79b259b-3982-b271-025a-0656f70506f4@nvidia.com>
+ <20190111165141.GB3190@redhat.com>
+ <1b37061c-5598-1b02-2983-80003f1c71f2@nvidia.com>
+ <20190112020228.GA5059@redhat.com>
+ <294bdcfa-5bf9-9c09-9d43-875e8375e264@nvidia.com>
+ <20190112024625.GB5059@redhat.com>
+ <b6f4ed36-fc8d-1f9b-8c74-b12f61d496ae@nvidia.com>
+ <20190114145447.GJ13316@quack2.suse.cz> <20190114172124.GA3702@redhat.com>
+X-Nvconfidentiality: public
+From:   John Hubbard <jhubbard@nvidia.com>
+Message-ID: <fdece7f8-7e4f-f679-821f-1d05ed748c15@nvidia.com>
+Date:   Mon, 14 Jan 2019 11:09:20 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-In-Reply-To: <alpine.DEB.2.21.1901112146180.1661@nanos.tec.linutronix.de>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8BIT
-Content-Language: en-US
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.30]); Mon, 14 Jan 2019 19:04:20 +0000 (UTC)
+In-Reply-To: <20190114172124.GA3702@redhat.com>
+X-Originating-IP: [10.124.1.5]
+X-ClientProxiedBy: HQMAIL101.nvidia.com (172.20.187.10) To
+ HQMAIL101.nvidia.com (172.20.187.10)
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US-large
+Content-Transfer-Encoding: 7bit
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1547492947; bh=rZtJhh0vCOrPh5Z9XADf58DeD2/uNzjSHU5sr1L08tQ=;
+        h=X-PGP-Universal:Subject:To:CC:References:X-Nvconfidentiality:From:
+         Message-ID:Date:User-Agent:MIME-Version:In-Reply-To:
+         X-Originating-IP:X-ClientProxiedBy:Content-Type:Content-Language:
+         Content-Transfer-Encoding;
+        b=m2uNk6dLaQLzyP25r7JJSiIqXJP52IFuJhjJqASwCwpiSf2XDxHZOfoVZDTchczWu
+         gdCKYHmyGjo3+Xc1nEEkOmYhIT0untw6vzTZ/9iRVZtP3Xb2yrsjrssRRz56Op3FjP
+         Egt+xLR4Ck/HaJ0NXpBwzplBtF3/2odLbRsV/cYZAkR5eJVG9uMMCYyRTdNik4V+MJ
+         c54WAeow4jr1xzCSTrYay9SYoP86VG/ft3KHPT+Dnr1T124t346rWJSnSZKmLqPOD3
+         ZzLi7r9ifT92XuAZdUErIpkp/pFrbPWD9BbhKKX8s9EZMFWhKv35Tz0r08IGhs5n4H
+         HBe6uQ0/6KKUg==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 01/11/2019 04:02 PM, Thomas Gleixner wrote:
-> On Fri, 11 Jan 2019, Matthew Wilcox wrote:
->> On Fri, Jan 11, 2019 at 08:19:33PM +0100, Thomas Gleixner wrote:
->>> On Fri, 11 Jan 2019, Thomas Gleixner wrote:
->>>> --- a/kernel/irq/internals.h
->>>> +++ b/kernel/irq/internals.h
->>>> @@ -246,6 +246,7 @@ static inline void kstat_incr_irqs_this_
->>>>  {
->>>>  	__this_cpu_inc(*desc->kstat_irqs);
->>>>  	__this_cpu_inc(kstat.irqs_sum);
->>>> +	desc->tot_count++;
->>> There is one issue here. True percpu interrupts, like the timer interrupts
->>> on ARM(64), will access that in parallel. But that's not rocket science to
->>> fix.
->> I was wondering about that from an efficiency point of view.  Since
->> interrupts are generally targetted to a single CPU, there's no cacheline
->> bouncing to speak of, except for interrupts like TLB shootdown on x86.
->> It might make sense for the percpu interrupts to still sum them at read
->> time, and not sum them at interrupt time.
-> Yes, for regular interrupts the stats are properly serialized and the patch
-> works just fine. For true percpu interrupts we just can avoid the update of
-> tot_count and sum them up as before. The special vectors on x86 are
-> accounted separately anyway and not part of the problem here. That
-> show_all_irqs() code only deals with device interrupts which are backed by
-> irq descriptors. TLB/IPI/.... are different beasts and handled low level in
-> the architecture code. Though ARM and some others have these interrupts as
-> regular Linux interrupt numbers. That's why we need to care.
->
-> Updated untested patch below.
->
-> Thanks,
->
-> 	tglx
->
-> 8<-------------
->
->  fs/proc/stat.c          |   28 +++++++++++++++++++++++++---
->  include/linux/irqdesc.h |    3 ++-
->  kernel/irq/chip.c       |   12 ++++++++++--
->  kernel/irq/internals.h  |    8 +++++++-
->  kernel/irq/irqdesc.c    |    7 ++++++-
->  5 files changed, 50 insertions(+), 8 deletions(-)
->
-> --- a/fs/proc/stat.c
-> +++ b/fs/proc/stat.c
-> @@ -79,6 +79,30 @@ static u64 get_iowait_time(int cpu)
->  
->  #endif
->  
-> +static void show_irq_gap(struct seq_file *p, int gap)
-> +{
-> +	static const char zeros[] = " 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0";
-> +
-> +	while (gap > 0) {
-> +		int inc = min_t(int, gap, ARRAY_SIZE(zeros) / 2);
-> +
-> +		seq_write(p, zeros, 2 * inc);
-> +		gap -= inc;
-> +	}
-> +}
-> +
-> +static void show_all_irqs(struct seq_file *p)
-> +{
-> +	int i, next = 0;
-> +
-> +	for_each_active_irq(i) {
-> +		show_irq_gap(p, i - next);
-> +		seq_put_decimal_ull(p, " ", kstat_irqs_usr(i));
-> +		next = i + 1;
-> +	}
-> +	show_irq_gap(p, nr_irqs - next);
-> +}
-> +
->  static int show_stat(struct seq_file *p, void *v)
->  {
->  	int i, j;
-> @@ -156,9 +180,7 @@ static int show_stat(struct seq_file *p,
->  	}
->  	seq_put_decimal_ull(p, "intr ", (unsigned long long)sum);
->  
-> -	/* sum again ? it could be updated? */
-> -	for_each_irq_nr(j)
-> -		seq_put_decimal_ull(p, " ", kstat_irqs_usr(j));
-> +	show_all_irqs(p);
->  
->  	seq_printf(p,
->  		"\nctxt %llu\n"
-> --- a/include/linux/irqdesc.h
-> +++ b/include/linux/irqdesc.h
-> @@ -65,9 +65,10 @@ struct irq_desc {
->  	unsigned int		core_internal_state__do_not_mess_with_it;
->  	unsigned int		depth;		/* nested irq disables */
->  	unsigned int		wake_depth;	/* nested wake enables */
-> +	unsigned int		tot_count;
->  	unsigned int		irq_count;	/* For detecting broken IRQs */
-> -	unsigned long		last_unhandled;	/* Aging timer for unhandled count */
->  	unsigned int		irqs_unhandled;
-> +	unsigned long		last_unhandled;	/* Aging timer for unhandled count */
->  	atomic_t		threads_handled;
->  	int			threads_handled_last;
->  	raw_spinlock_t		lock;
-> --- a/kernel/irq/chip.c
-> +++ b/kernel/irq/chip.c
-> @@ -855,7 +855,11 @@ void handle_percpu_irq(struct irq_desc *
->  {
->  	struct irq_chip *chip = irq_desc_get_chip(desc);
->  
-> -	kstat_incr_irqs_this_cpu(desc);
-> +	/*
-> +	 * PER CPU interrupts are not serialized. Do not touch
-> +	 * desc->tot_count.
-> +	 */
-> +	__kstat_incr_irqs_this_cpu(desc);
->  
->  	if (chip->irq_ack)
->  		chip->irq_ack(&desc->irq_data);
-> @@ -884,7 +888,11 @@ void handle_percpu_devid_irq(struct irq_
->  	unsigned int irq = irq_desc_get_irq(desc);
->  	irqreturn_t res;
->  
-> -	kstat_incr_irqs_this_cpu(desc);
-> +	/*
-> +	 * PER CPU interrupts are not serialized. Do not touch
-> +	 * desc->tot_count.
-> +	 */
-> +	__kstat_incr_irqs_this_cpu(desc);
->  
->  	if (chip->irq_ack)
->  		chip->irq_ack(&desc->irq_data);
-> --- a/kernel/irq/internals.h
-> +++ b/kernel/irq/internals.h
-> @@ -242,12 +242,18 @@ static inline void irq_state_set_masked(
->  
->  #undef __irqd_to_state
->  
-> -static inline void kstat_incr_irqs_this_cpu(struct irq_desc *desc)
-> +static inline void __kstat_incr_irqs_this_cpu(struct irq_desc *desc)
->  {
->  	__this_cpu_inc(*desc->kstat_irqs);
->  	__this_cpu_inc(kstat.irqs_sum);
->  }
->  
-> +static inline void kstat_incr_irqs_this_cpu(struct irq_desc *desc)
-> +{
-> +	__kstat_incr_irqs_this_cpu(desc);
-> +	desc->tot_count++;
-> +}
-> +
->  static inline int irq_desc_get_node(struct irq_desc *desc)
->  {
->  	return irq_common_data_get_node(&desc->irq_common_data);
-> --- a/kernel/irq/irqdesc.c
-> +++ b/kernel/irq/irqdesc.c
-> @@ -119,6 +119,7 @@ static void desc_set_defaults(unsigned i
->  	desc->depth = 1;
->  	desc->irq_count = 0;
->  	desc->irqs_unhandled = 0;
-> +	desc->tot_count = 0;
->  	desc->name = NULL;
->  	desc->owner = owner;
->  	for_each_possible_cpu(cpu)
-> @@ -919,11 +920,15 @@ unsigned int kstat_irqs_cpu(unsigned int
->  unsigned int kstat_irqs(unsigned int irq)
->  {
->  	struct irq_desc *desc = irq_to_desc(irq);
-> -	int cpu;
->  	unsigned int sum = 0;
-> +	int cpu;
->  
->  	if (!desc || !desc->kstat_irqs)
->  		return 0;
-> +	if (!irq_settings_is_per_cpu_devid(desc) &&
-> +	    !irq_settings_is_per_cpu(desc))
-> +	    return desc->tot_count;
-> +
->  	for_each_possible_cpu(cpu)
->  		sum += *per_cpu_ptr(desc->kstat_irqs, cpu);
->  	return sum;
->
->
-That looks good to me. Thanks for providing a more simple solution.
+On 1/14/19 9:21 AM, Jerome Glisse wrote:
+> On Mon, Jan 14, 2019 at 03:54:47PM +0100, Jan Kara wrote:
+>> On Fri 11-01-19 19:06:08, John Hubbard wrote:
+>>> On 1/11/19 6:46 PM, Jerome Glisse wrote:
+>>>> On Fri, Jan 11, 2019 at 06:38:44PM -0800, John Hubbard wrote:
+>>>> [...]
+>>>>
+>>>>>>> The other idea that you and Dan (and maybe others) pointed out was a debug
+>>>>>>> option, which we'll certainly need in order to safely convert all the call
+>>>>>>> sites. (Mirror the mappings at a different kernel offset, so that put_page()
+>>>>>>> and put_user_page() can verify that the right call was made.)  That will be
+>>>>>>> a separate patchset, as you recommended.
+>>>>>>>
+>>>>>>> I'll even go as far as recommending the page lock itself. I realize that this 
+>>>>>>> adds overhead to gup(), but we *must* hold off page_mkclean(), and I believe
+>>>>>>> that this (below) has similar overhead to the notes above--but is *much* easier
+>>>>>>> to verify correct. (If the page lock is unacceptable due to being so widely used,
+>>>>>>> then I'd recommend using another page bit to do the same thing.)
+>>>>>>
+>>>>>> Please page lock is pointless and it will not work for GUP fast. The above
+>>>>>> scheme do work and is fine. I spend the day again thinking about all memory
+>>>>>> ordering and i do not see any issues.
+>>>>>>
+>>>>>
+>>>>> Why is it that page lock cannot be used for gup fast, btw?
+>>>>
+>>>> Well it can not happen within the preempt disable section. But after
+>>>> as a post pass before GUP_fast return and after reenabling preempt then
+>>>> it is fine like it would be for regular GUP. But locking page for GUP
+>>>> is also likely to slow down some workload (with direct-IO).
+>>>>
+>>>
+>>> Right, and so to crux of the matter: taking an uncontended page lock
+>>> involves pretty much the same set of operations that your approach does.
+>>> (If gup ends up contended with the page lock for other reasons than these
+>>> paths, that seems surprising.) I'd expect very similar performance.
+>>>
+>>> But the page lock approach leads to really dramatically simpler code (and
+>>> code reviews, let's not forget). Any objection to my going that
+>>> direction, and keeping this idea as a Plan B? I think the next step will
+>>> be, once again, to gather some performance metrics, so maybe that will
+>>> help us decide.
+>>
+>> FWIW I agree that using page lock for protecting page pinning (and thus
+>> avoid races with page_mkclean()) looks simpler to me as well and I'm not
+>> convinced there will be measurable difference to the more complex scheme
+>> with barriers Jerome suggests unless that page lock contended. Jerome is
+>> right that you cannot just do lock_page() in gup_fast() path. There you
+>> have to do trylock_page() and if that fails just bail out to the slow gup
+>> path.
+>>
 
-BTW, if the percpu IRQ is known at allocation time, maybe we should just
-not allocate a percpu count for the corresponding descriptor.
+Yes, understood about gup fast.
 
-Cheers,
-Longman
+>> Regarding places other than page_mkclean() that need to check pinned state:
+>> Definitely page migration will want to check whether the page is pinned or
+>> not so that it can deal differently with short-term page references vs
+>> longer-term pins.
+
+OK.
+
+>>
+>> Also there is one more idea I had how to record number of pins in the page:
+>>
+>> #define PAGE_PIN_BIAS	1024
+>>
+>> get_page_pin()
+>> 	atomic_add(&page->_refcount, PAGE_PIN_BIAS);
+>>
+>> put_page_pin();
+>> 	atomic_add(&page->_refcount, -PAGE_PIN_BIAS);
+>>
+>> page_pinned(page)
+>> 	(atomic_read(&page->_refcount) - page_mapcount(page)) > PAGE_PIN_BIAS
+>>
+>> This is pretty trivial scheme. It still gives us 22-bits for page pins
+>> which should be plenty (but we should check for that and bail with error if
+>> it would overflow). Also there will be no false negatives and false
+>> positives only if there are more than 1024 non-page-table references to the
+>> page which I expect to be rare (we might want to also subtract
+>> hpage_nr_pages() for radix tree references to avoid excessive false
+>> positives for huge pages although at this point I don't think they would
+>> matter). Thoughts?
+> 
+> Racing PUP are as likely to cause issues:
+> 
+> CPU0                        | CPU1       | CPU2
+>                             |            |
+>                             | PUP()      |
+>     page_pinned(page)       |            |
+>       (page_count(page) -   |            |
+>        page_mapcount(page)) |            |
+>                             |            | GUP()
+> 
+> So here the refcount snap-shot does not include the second GUP and
+> we can have a false negative ie the page_pinned() will return false
+> because of the PUP happening just before on CPU1 despite the racing
+> GUP on CPU2 just after.
+> 
+> I believe only either lock or memory ordering with barrier can
+> guarantee that we do not miss GUP ie no false negative. Still the
+> bias idea might be usefull as with it we should not need a flag.
+> 
+> So to make the above safe it would still need the page write back
+> double check that i described so that GUP back-off if it raced with
+> page_mkclean,clear_page_dirty_for_io and the fs write page call back
+> which call test_set_page_writeback() (yes it is very unlikely but
+> might still happen).
+> 
+> 
+> I still need to ponder some more on all the races.
+> 
+
+Tentatively, so far I prefer the _mapcount scheme, because it seems more
+accurate to add mapcounts than to overload the _refcount field. And the 
+implementation is going to be cleaner. And we've already figured out the
+races.
+
+For example, the following already survives a basic boot to graphics mode.
+It requires a bunch of callsite conversions, and a page flag (neither of which
+is shown here), and may also have "a few" gross conceptual errors, but take a 
+peek:
+
+From 1b6e611238a45badda7e63d3ffc089cefb621cb2 Mon Sep 17 00:00:00 2001
+From: John Hubbard <jhubbard@nvidia.com>
+Date: Sun, 13 Jan 2019 15:10:31 -0800
+Subject: [PATCH 2/2] mm: track gup-pinned pages
+X-NVConfidentiality: public
+Cc: John Hubbard <jhubbard@nvidia.com>
+
+Track GUP-pinned pages.
+
+Signed-off-by: John Hubbard <jhubbard@nvidia.com>
+---
+ include/linux/mm.h |  8 ++++---
+ mm/gup.c           | 59 +++++++++++++++++++++++++++++++++++++++++++---
+ mm/rmap.c          | 23 ++++++++++++++----
+ 3 files changed, 79 insertions(+), 11 deletions(-)
+
+diff --git a/include/linux/mm.h b/include/linux/mm.h
+index 809b7397d41e..3221a13b4891 100644
+--- a/include/linux/mm.h
++++ b/include/linux/mm.h
+@@ -1004,12 +1004,14 @@ static inline void put_page(struct page *page)
+  * particular, interactions with RDMA and filesystems need special
+  * handling.
+  *
+- * put_user_page() and put_page() are not interchangeable, despite this early
+- * implementation that makes them look the same. put_user_page() calls must
+- * be perfectly matched up with get_user_page() calls.
++ * put_user_page() and put_page() are not interchangeable. put_user_page()
++ * calls must be perfectly matched up with get_user_page() calls.
+  */
+ static inline void put_user_page(struct page *page)
+ {
++	page = compound_head(page);
++
++	atomic_dec(&page->_mapcount);
+ 	put_page(page);
+ }
+ 
+diff --git a/mm/gup.c b/mm/gup.c
+index 05acd7e2eb22..af3909814be7 100644
+--- a/mm/gup.c
++++ b/mm/gup.c
+@@ -615,6 +615,48 @@ static int check_vma_flags(struct vm_area_struct *vma, unsigned long gup_flags)
+ 	return 0;
+ }
+ 
++/*
++ * Manages the PG_gup_pinned flag.
++ *
++ * Note that page->_mapcount counting part of managing that flag, because the
++ * _mapcount is used to determine if PG_gup_pinned can be cleared, in
++ * page_mkclean().
++ */
++static void track_gup_page(struct page *page)
++{
++	page = compound_head(page);
++
++	lock_page(page);
++
++	wait_on_page_writeback(page);
++
++	atomic_inc(&page->_mapcount);
++	SetPageGupPinned(page);
++
++	unlock_page(page);
++}
++
++/*
++ * A variant of track_gup_page() that returns -EBUSY, instead of waiting.
++ */
++static int track_gup_page_atomic(struct page *page)
++{
++	page = compound_head(page);
++
++	if (PageWriteback(page) || !trylock_page(page))
++		return -EBUSY;
++
++	if (PageWriteback(page)) {
++		unlock_page(page);
++		return -EBUSY;
++	}
++	atomic_inc(&page->_mapcount);
++	SetPageGupPinned(page);
++
++	unlock_page(page);
++	return 0;
++}
++
+ /**
+  * __get_user_pages() - pin user pages in memory
+  * @tsk:	task_struct of target task
+@@ -761,6 +803,9 @@ static long __get_user_pages(struct task_struct *tsk, struct mm_struct *mm,
+ 			ret = PTR_ERR(page);
+ 			goto out;
+ 		}
++
++		track_gup_page(page);
++
+ 		if (pages) {
+ 			pages[i] = page;
+ 			flush_anon_page(vma, page, start);
+@@ -1439,6 +1484,11 @@ static int gup_pte_range(pmd_t pmd, unsigned long addr, unsigned long end,
+ 
+ 		VM_BUG_ON_PAGE(compound_head(page) != head, page);
+ 
++		if (track_gup_page_atomic(page)) {
++			put_page(head);
++			goto pte_unmap;
++		}
++
+ 		SetPageReferenced(page);
+ 		pages[*nr] = page;
+ 		(*nr)++;
+@@ -1574,7 +1624,8 @@ static int gup_huge_pmd(pmd_t orig, pmd_t *pmdp, unsigned long addr,
+ 		return 0;
+ 	}
+ 
+-	if (unlikely(pmd_val(orig) != pmd_val(*pmdp))) {
++	if (unlikely(pmd_val(orig) != pmd_val(*pmdp)) ||
++	    track_gup_page_atomic(head)) {
+ 		*nr -= refs;
+ 		while (refs--)
+ 			put_page(head);
+@@ -1612,7 +1663,8 @@ static int gup_huge_pud(pud_t orig, pud_t *pudp, unsigned long addr,
+ 		return 0;
+ 	}
+ 
+-	if (unlikely(pud_val(orig) != pud_val(*pudp))) {
++	if (unlikely(pud_val(orig) != pud_val(*pudp)) ||
++	    track_gup_page_atomic(head)) {
+ 		*nr -= refs;
+ 		while (refs--)
+ 			put_page(head);
+@@ -1649,7 +1701,8 @@ static int gup_huge_pgd(pgd_t orig, pgd_t *pgdp, unsigned long addr,
+ 		return 0;
+ 	}
+ 
+-	if (unlikely(pgd_val(orig) != pgd_val(*pgdp))) {
++	if (unlikely(pgd_val(orig) != pgd_val(*pgdp)) ||
++	    track_gup_page_atomic(head)) {
+ 		*nr -= refs;
+ 		while (refs--)
+ 			put_page(head);
+diff --git a/mm/rmap.c b/mm/rmap.c
+index 0454ecc29537..434283898bb0 100644
+--- a/mm/rmap.c
++++ b/mm/rmap.c
+@@ -880,6 +880,11 @@ int page_referenced(struct page *page,
+ 	return pra.referenced;
+ }
+ 
++struct page_mkclean_args {
++	int cleaned;
++	int mapcount;
++};
++
+ static bool page_mkclean_one(struct page *page, struct vm_area_struct *vma,
+ 			    unsigned long address, void *arg)
+ {
+@@ -890,7 +895,7 @@ static bool page_mkclean_one(struct page *page, struct vm_area_struct *vma,
+ 		.flags = PVMW_SYNC,
+ 	};
+ 	struct mmu_notifier_range range;
+-	int *cleaned = arg;
++	struct page_mkclean_args *pma = arg;
+ 
+ 	/*
+ 	 * We have to assume the worse case ie pmd for invalidation. Note that
+@@ -940,6 +945,8 @@ static bool page_mkclean_one(struct page *page, struct vm_area_struct *vma,
+ #endif
+ 		}
+ 
++		pma->mapcount++;
++
+ 		/*
+ 		 * No need to call mmu_notifier_invalidate_range() as we are
+ 		 * downgrading page table protection not changing it to point
+@@ -948,7 +955,7 @@ static bool page_mkclean_one(struct page *page, struct vm_area_struct *vma,
+ 		 * See Documentation/vm/mmu_notifier.rst
+ 		 */
+ 		if (ret)
+-			(*cleaned)++;
++			pma->cleaned++;
+ 	}
+ 
+ 	mmu_notifier_invalidate_range_end(&range);
+@@ -966,10 +973,13 @@ static bool invalid_mkclean_vma(struct vm_area_struct *vma, void *arg)
+ 
+ int page_mkclean(struct page *page)
+ {
+-	int cleaned = 0;
++	struct page_mkclean_args pma = {
++		.cleaned = 0,
++		.mapcount = 0
++	};
+ 	struct address_space *mapping;
+ 	struct rmap_walk_control rwc = {
+-		.arg = (void *)&cleaned,
++		.arg = (void *)&pma,
+ 		.rmap_one = page_mkclean_one,
+ 		.invalid_vma = invalid_mkclean_vma,
+ 	};
+@@ -985,7 +995,10 @@ int page_mkclean(struct page *page)
+ 
+ 	rmap_walk(page, &rwc);
+ 
+-	return cleaned;
++	if (pma.mapcount == page_mapcount(page))
++		ClearPageGupPinned(page);
++
++	return pma.cleaned;
+ }
+ EXPORT_SYMBOL_GPL(page_mkclean);
+ 
+-- 
+2.20.1
 
 
+
+thanks,
+-- 
+John Hubbard
+NVIDIA
