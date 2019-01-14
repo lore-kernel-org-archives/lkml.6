@@ -2,118 +2,101 @@ Return-Path: <SRS0=tq6k=PW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.0 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2211EC43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 15:19:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 23AFBC43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 15:24:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F130A20896
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 15:19:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E081D2086D
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 15:24:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726756AbfANPTY (ORCPT
+        id S1726678AbfANPYq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 14 Jan 2019 10:19:24 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:38996 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726705AbfANPTX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 Jan 2019 10:19:23 -0500
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 24736C06778B;
-        Mon, 14 Jan 2019 15:19:23 +0000 (UTC)
-Received: from localhost.localdomain (unknown [10.18.25.74])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 70BA2100194B;
-        Mon, 14 Jan 2019 15:19:22 +0000 (UTC)
-From:   Jeff Moyer <jmoyer@redhat.com>
-To:     Dan Williams <dan.j.williams@intel.com>
-Cc:     linux-nvdimm@lists.01.org, Sujith Pandel <sujith_pandel@dell.com>,
-        linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Subject: Re: [PATCH] acpi/nfit: Fix command-supported detection
-References: <154725096972.1367907.12968253382302127133.stgit@dwillia2-desk3.amr.corp.intel.com>
-X-PGP-KeyID: 1F78E1B4
-X-PGP-CertKey: F6FE 280D 8293 F72C 65FD  5A58 1FF8 A7CA 1F78 E1B4
-Date:   Mon, 14 Jan 2019 10:19:21 -0500
-In-Reply-To: <154725096972.1367907.12968253382302127133.stgit@dwillia2-desk3.amr.corp.intel.com>
-        (Dan Williams's message of "Fri, 11 Jan 2019 15:59:16 -0800")
-Message-ID: <x49sgxvclmu.fsf@redhat.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
+        Mon, 14 Jan 2019 10:24:46 -0500
+Received: from iolanthe.rowland.org ([192.131.102.54]:40976 "HELO
+        iolanthe.rowland.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with SMTP id S1726629AbfANPYp (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 14 Jan 2019 10:24:45 -0500
+Received: (qmail 1674 invoked by uid 2102); 14 Jan 2019 10:24:44 -0500
+Received: from localhost (sendmail-bs@127.0.0.1)
+  by localhost with SMTP; 14 Jan 2019 10:24:44 -0500
+Date:   Mon, 14 Jan 2019 10:24:44 -0500 (EST)
+From:   Alan Stern <stern@rowland.harvard.edu>
+X-X-Sender: stern@iolanthe.rowland.org
+To:     Paul Elder <paul.elder@ideasonboard.com>
+cc:     laurent.pinchart@ideasonboard.com,
+        <kieran.bingham@ideasonboard.com>, <b-liu@ti.com>, <rogerq@ti.com>,
+        <balbi@kernel.org>, <gregkh@linuxfoundation.org>,
+        <linux-usb@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v5 4/6] usb: gadget: add mechanism to specify an explicit
+ status stage
+In-Reply-To: <20190114051113.GD32268@localhost.localdomain>
+Message-ID: <Pine.LNX.4.44L0.1901141015500.1366-100000@iolanthe.rowland.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.32]); Mon, 14 Jan 2019 15:19:23 +0000 (UTC)
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Dan Williams <dan.j.williams@intel.com> writes:
+On Mon, 14 Jan 2019, Paul Elder wrote:
 
-> The _DSM function number validation only happens to succeed when the
-> generic Linux command number translation corresponds with a
-> DSM-family-specific function number. This breaks NVDIMM-N
-> implementations that correctly implement _LSR, _LSW, and _LSI, but do
-> not happen to publish support for DSM function numbers 4, 5, and 6.
->
-> Recall that the support for _LS{I,R,W} family of methods results in the
-> DIMM being marked as supporting those command numbers at
-> acpi_nfit_register_dimms() time. The DSM function mask is only used for
-> ND_CMD_CALL support of non-NVDIMM_FAMILY_INTEL devices.
->
-> Fixes: 31eca76ba2fc ("nfit, libnvdimm: limited/whitelisted dimm command...")
-> Cc: <stable@vger.kernel.org>
-> Link: https://github.com/pmem/ndctl/issues/78
-> Reported-by: Sujith Pandel <sujith_pandel@dell.com>
-> Signed-off-by: Dan Williams <dan.j.williams@intel.com>
-> ---
-> Sujith, this is a larger change than what you originally tested, but it
-> should behave the same. I wanted to consolidate all the code that
-> handles Linux command number to DIMM _DSM function number translation.
->
-> If you have a chance to re-test with this it would be much appreciated.
->
-> Thanks for the report!
->
->  drivers/acpi/nfit/core.c |   43 +++++++++++++++++++++++++++++--------------
->  1 file changed, 29 insertions(+), 14 deletions(-)
->
-> diff --git a/drivers/acpi/nfit/core.c b/drivers/acpi/nfit/core.c
-> index 790691d9a982..d5d64e90ae71 100644
-> --- a/drivers/acpi/nfit/core.c
-> +++ b/drivers/acpi/nfit/core.c
-> @@ -409,6 +409,29 @@ static bool payload_dumpable(struct nvdimm *nvdimm, unsigned int func)
->  	return true;
->  }
->  
-> +static int cmd_to_func(struct nvdimm *nvdimm, unsigned int cmd,
-> +		struct nd_cmd_pkg *call_pkg)
-> +{
-> +	struct nfit_mem *nfit_mem = nvdimm_provider_data(nvdimm);
+> > > > Can you check your uvc
+> > > > changes using dummy_hcd with the patch below?
+> > > 
+> > > I'm not sure what to make of the test results. I get the same results
+> > > with or without the patch. Which I guess makes sense... in dummy_queue,
+> > > this is getting hit when the uvc function driver tries to complete the
+> > > delayed status:
+> > > 
+> > > 	req = usb_request_to_dummy_request(_req);
+> > > 	if (!_req || !list_empty(&req->queue) || !_req->complete)
+> > > 		return -EINVAL;
+> > > 
+> > > So the delayed/explicit status stage is never completed, afaict.
+> > 
+> > I presume you are hitting the !list_empty(&req->queue) test, yes?  The 
+> > other two tests are trivial.
+> 
+> Yes, that is what's happening.
+> 
+> > Triggering the !list_empty() test means the request has already been
+> > submitted and not yet completed.  This probably indicates there is a
+> > bug in the uvc function driver code.
+> 
+> The uvc function driver works with musb, though :/
+> 
+> I compared the sequence of calls to the uvc setup, completion handler,
+> and status stage sending, and for some reason dummy_hcd, after an OUT
+> setup-completion-status sequence, calls a completion-status-completion
+> sequence, and then goes on the the next request. musb simply goes on to
+> the next request after the setup-completion-status sequence.
 
-Minor nit: Seems like the function could take an nfit_mem parameter instead of an nvdimm.
+I don't quite understand.  There's a control-OUT transfer, the setup, 
+data, and status transactions all complete normally, and then what 
+happens?  What do you mean by "a completion-status-completion 
+sequence"?  A more detailed description would help.
 
-> +
-> +	if (cmd == ND_CMD_CALL) {
-> +		int i;
-> +
-> +		if (call_pkg && nfit_mem->family != call_pkg->nd_family)
-> +			return -ENOTTY;
-> +
-> +		for (i = 0; i < ARRAY_SIZE(call_pkg->nd_reserved2); i++)
-> +			if (call_pkg->nd_reserved2[i])
-> +				return -EINVAL;
-> +		return call_pkg->nd_command;
-> +	}
-> +
-> +	/* Linux ND commands == NVDIMM_FAMILY_INTEL function numbers */
-> +	if (nfit_mem->family == NVDIMM_FAMILY_INTEL)
-> +		return cmd;
-> +	return 0;
+> I commented out the paranoia block in dummy_timer, and dummy_hcd still
+> does the extra completion, but it doesn't error out anymore. I doubt
+> that's the/a solution though, especially since I get:
+> 
+> [   22.616577] uvcvideo: Failed to query (129) UVC probe control : -75 (exp. 26).
+> [   22.624481] uvcvideo: Failed to initialize the device (-5).
+> 
+> Not sure if that's a result of dummy_hcd not supporting isochronous
+> transfers or not.
+> 
+> I'm not sure where to continue investigating :/
 
-Function zero?  Is that really the right thing to return here?
+Perhaps removing the "#if 0" protecting the dev_dbg line in 
+dummy_queue() would provide some helpful output.
 
-Cheers,
-Jeff
+Another thing to check would be if the "implement an emulated 
+single-request FIFO" in dummy_queue() is causing trouble.  There's no 
+harm in replacing the long "if" condition with "if (0)".
+
+Alan Stern
+
