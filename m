@@ -2,91 +2,127 @@ Return-Path: <SRS0=tq6k=PW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ECA99C43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 14:39:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ABD66C43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 14:42:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C8F642086D
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 14:39:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 800CE20657
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 14:42:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726724AbfANOjf (ORCPT
+        id S1726673AbfANOmo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 14 Jan 2019 09:39:35 -0500
-Received: from mga18.intel.com ([134.134.136.126]:45789 "EHLO mga18.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726554AbfANOjf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 Jan 2019 09:39:35 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 14 Jan 2019 06:39:34 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,477,1539673200"; 
-   d="scan'208";a="118113579"
-Received: from avandeve-mobl.amr.corp.intel.com (HELO [10.251.20.134]) ([10.251.20.134])
-  by orsmga003.jf.intel.com with ESMTP; 14 Jan 2019 06:39:34 -0800
-Subject: Re: [PATCH] x86/speculation: Add document to describe Spectre and its
- mitigations
-To:     Jiri Kosina <jikos@kernel.org>, Pavel Machek <pavel@ucw.cz>
-Cc:     Tim Chen <tim.c.chen@linux.intel.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Tom Lendacky <thomas.lendacky@amd.com>,
-        Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        David Woodhouse <dwmw@amazon.co.uk>,
-        Andi Kleen <ak@linux.intel.com>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Asit Mallick <asit.k.mallick@intel.com>,
-        Jon Masters <jcm@redhat.com>,
-        Waiman Long <longman9394@gmail.com>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Borislav Petkov <bp@alien8.de>, linux-kernel@vger.kernel.org,
-        x86@kernel.org, stable@vger.kernel.org
-References: <64efec3fda40c0758601bf9b1480a35d76d3c487.1545413988.git.tim.c.chen@linux.intel.com>
- <20181228103437.4c03c181@lwn.net>
- <aed62eaa-93b4-8dc5-1920-6a5547e349c8@linux.intel.com>
- <20190113231001.GB18710@amd>
- <nycvar.YFH.7.76.1901140012110.6626@cbobk.fhfr.pm>
- <20190114120157.GB21544@amd>
- <nycvar.YFH.7.76.1901141305220.6626@cbobk.fhfr.pm>
- <20190114130153.GC21544@amd>
- <nycvar.YFH.7.76.1901141403550.6626@cbobk.fhfr.pm>
-From:   Arjan van de Ven <arjan@linux.intel.com>
-Message-ID: <5907b2bc-8498-2f28-eb90-13627d492496@linux.intel.com>
-Date:   Mon, 14 Jan 2019 06:39:33 -0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        Mon, 14 Jan 2019 09:42:44 -0500
+Received: from mx08-00178001.pphosted.com ([91.207.212.93]:7999 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726542AbfANOmo (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 14 Jan 2019 09:42:44 -0500
+Received: from pps.filterd (m0046660.ppops.net [127.0.0.1])
+        by mx08-00178001.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x0EEaOnt031477;
+        Mon, 14 Jan 2019 15:42:38 +0100
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx08-00178001.pphosted.com with ESMTP id 2pybxy0gq2-1
+        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
+        Mon, 14 Jan 2019 15:42:38 +0100
+Received: from zeta.dmz-eu.st.com (zeta.dmz-eu.st.com [164.129.230.9])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 849363A;
+        Mon, 14 Jan 2019 14:42:37 +0000 (GMT)
+Received: from Webmail-eu.st.com (Safex1hubcas22.st.com [10.75.90.92])
+        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 625B052AB;
+        Mon, 14 Jan 2019 14:42:37 +0000 (GMT)
+Received: from SAFEX1HUBCAS24.st.com (10.75.90.95) by Safex1hubcas22.st.com
+ (10.75.90.92) with Microsoft SMTP Server (TLS) id 14.3.361.1; Mon, 14 Jan
+ 2019 15:42:37 +0100
+Received: from localhost (10.201.20.122) by webmail-ga.st.com (10.75.90.48)
+ with Microsoft SMTP Server (TLS) id 14.3.361.1; Mon, 14 Jan 2019 15:42:36
+ +0100
+From:   Benjamin Gaignard <benjamin.gaignard@st.com>
+To:     <broonie@kernel.org>, <robh@kernel.org>, <arnd@arndb.de>
+CC:     <linux-kernel@vger.kernel.org>, <loic.pallardy@st.com>,
+        <benjamin.gaignard@linaro.org>,
+        Benjamin Gaignard <benjamin.gaignard@st.com>
+Subject: [RFC 0/7] Introduce bus domains controller framework
+Date:   Mon, 14 Jan 2019 15:41:55 +0100
+Message-ID: <20190114144202.27315-1-benjamin.gaignard@st.com>
+X-Mailer: git-send-email 2.15.0
 MIME-Version: 1.0
-In-Reply-To: <nycvar.YFH.7.76.1901141403550.6626@cbobk.fhfr.pm>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
+X-Originating-IP: [10.201.20.122]
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-01-14_07:,,
+ signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 1/14/2019 5:06 AM, Jiri Kosina wrote:
-> On Mon, 14 Jan 2019, Pavel Machek wrote:
-> 
->> Frankly I'd not call it Meltdown, as it works only on data in the cache,
->> so the defense is completely different. Seems more like a l1tf
->> :-).
-> 
-> Meltdown on x86 also seems to work only for data in L1D, but the pipeline
-> could be constructed in a way that data are actually fetched into L1D
-> before speculation gives up, which is not the case on ppc (speculation
-> aborts on L2->L1 propagation IIRC). That's why flushing L1D on ppc is
-> sufficient, but on x86 it's not.
+The goal of this framework is to offer an interface for the
+hardware blocks controlling bus accesses rights.
 
-assuming L1D is not shared between SMT threads obviously :)
+Bus domains controllers are typically used to control if a
+hardware block can perform read or write operations on bus.
 
-> 
+Smarter domains controllers could be able to define accesses
+rights per hardware blocks to control where they can read
+or write.
+
+Domains controller configurations are provided in device node,
+parsed by the framework and send to the driver to apply them.
+Each controller may need different number and type of inputs
+to configure a domain so device-tree properties size have to
+be define by using "#domainctrl-cells".
+Domains configurations properties have to be named "domainsctrl-X"
+on device node.
+"domainsctrl-names" keyword can also be used to give a name to
+a specific configuration.
+
+An example of bus domains controller is STM32 ETZPC hardware block
+which got 3 domains:
+- secure: hardware blocks are only accessible by software running on trust
+  zone.
+- non-secure: hardware blocks are accessible by non-secure software (i.e.
+  linux kernel).
+- coprocessor: hardware blocks are only accessible by the corpocessor.
+Up to 94 hardware blocks of the soc could be managed by ETZPC and 
+assigned to one of the three domains.
+
+It is an RFC, comments are welcome to help to create this framework, thanks.
+Benjamin
+
+Benjamin Gaignard (7):
+  devicetree: bindings: Document domains controller bindings
+  domainsctrl: Introduce domains controller framework
+  base: Add calls to domains controller
+  devicetree: bindings: domainsctrl: Add STM32 ETZPC bindings
+  bus: domainsctrl: Add driver for STM32 ETZPC controller
+  ARM: dts: stm32: Add domainsctrl node for stm32mp157 SoC
+  ARM: dts: stm32: enable domains controller node on stm32mp157c-ed1
+
+ .../bindings/bus/domains/domainsctrl.txt           |  35 +++
+ .../bindings/bus/domains/st,stm32-etzpc.txt        |  14 ++
+ arch/arm/boot/dts/stm32mp157c-ev1.dts              |   2 +
+ arch/arm/boot/dts/stm32mp157c.dtsi                 |   7 +
+ drivers/base/dd.c                                  |   9 +
+ drivers/bus/Kconfig                                |   2 +
+ drivers/bus/Makefile                               |   2 +
+ drivers/bus/domains/Kconfig                        |  14 ++
+ drivers/bus/domains/Makefile                       |   2 +
+ drivers/bus/domains/domainsctrl.c                  | 234 +++++++++++++++++++++
+ drivers/bus/domains/stm32-etzpc.c                  | 140 ++++++++++++
+ include/dt-bindings/bus/domains/stm32-etzpc.h      |  25 +++
+ include/linux/domainsctrl.h                        |  70 ++++++
+ 13 files changed, 556 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/bus/domains/domainsctrl.txt
+ create mode 100644 Documentation/devicetree/bindings/bus/domains/st,stm32-etzpc.txt
+ create mode 100644 drivers/bus/domains/Kconfig
+ create mode 100644 drivers/bus/domains/Makefile
+ create mode 100644 drivers/bus/domains/domainsctrl.c
+ create mode 100644 drivers/bus/domains/stm32-etzpc.c
+ create mode 100644 include/dt-bindings/bus/domains/stm32-etzpc.h
+ create mode 100644 include/linux/domainsctrl.h
+
+-- 
+2.15.0
 
