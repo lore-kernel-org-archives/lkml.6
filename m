@@ -2,140 +2,141 @@ Return-Path: <SRS0=tq6k=PW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 75AEDC43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 09:25:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E78BFC43444
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 09:25:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 134D120870
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 09:25:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B8BB220660
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 09:25:56 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=chronox.de header.i=@chronox.de header.b="ouEM/a0F"
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="w7/OPUXY"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726553AbfANJZt (ORCPT
+        id S1726581AbfANJZy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 14 Jan 2019 04:25:49 -0500
-Received: from mo4-p01-ob.smtp.rzone.de ([81.169.146.164]:16679 "EHLO
-        mo4-p01-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726306AbfANJZt (ORCPT
+        Mon, 14 Jan 2019 04:25:54 -0500
+Received: from userp2130.oracle.com ([156.151.31.86]:55724 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726306AbfANJZy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 Jan 2019 04:25:49 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1547457946;
-        s=strato-dkim-0002; d=chronox.de;
-        h=References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:
-        X-RZG-CLASS-ID:X-RZG-AUTH:From:Subject:Sender;
-        bh=AS3UVO9VUy/yA9TAuYUKM0GaFeRpzoT5J7TlCsaSwF4=;
-        b=ouEM/a0Flkvy+Ja1BzzHcepwQM15zaHrULmODDHm0pubzqc7WCwRidHMWQU0Uw3Dij
-        jyGduHHtDqrcN2BSoar2rzEs9H1dnAmRnBJzCt1Q8Os8+YYvv+8gIZYSn7GtqV2BGx0M
-        khuVbSwRNOe37vOT4/kXVlA4bh5qoiZQJ4NK3LnT/OJzd2BKZG6EKEyLBY45qbwzwVoX
-        VsZGAuA6z3oQwzWxjB9Ta0SRnwNNx/9XyRUDWIBvvwngUSxAqhaQq0Yq+k1aSld9g2Uq
-        Vpwpg8EDa5wswQ0QHT+fmxw0E0Rvwrv7LL3o0Pijlt38b/4nukUaVHUjMrMBfdU2gUHh
-        xvqA==
-X-RZG-AUTH: ":P2ERcEykfu11Y98lp/T7+hdri+uKZK8TKWEqNyiHySGSa9k9yWgdNs16dfA/c7fW145n"
-X-RZG-CLASS-ID: mo00
-Received: from positron.chronox.de
-        by smtp.strato.de (RZmta 44.9 AUTH)
-        with ESMTPSA id 309bcfv0E9PHq0c
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (curve secp521r1 with 521 ECDH bits, eq. 15360 bits RSA))
-        (Client did not present a certificate);
-        Mon, 14 Jan 2019 10:25:17 +0100 (CET)
-From:   Stephan =?ISO-8859-1?Q?M=FCller?= <smueller@chronox.de>
-To:     Eric Biggers <ebiggers@kernel.org>
-Cc:     Herbert Xu <herbert@gondor.apana.org.au>,
-        James Bottomley <James.Bottomley@hansenpartnership.com>,
-        Andy Lutomirski <luto@amacapital.net>,
-        "Lee, Chun-Yi" <joeyli.kernel@gmail.com>,
-        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
-        Pavel Machek <pavel@ucw.cz>, linux-kernel@vger.kernel.org,
-        linux-pm@vger.kernel.org, keyrings@vger.kernel.org,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-        Chen Yu <yu.c.chen@intel.com>,
-        Oliver Neukum <oneukum@suse.com>,
-        Ryan Chen <yu.chen.surf@gmail.com>,
-        David Howells <dhowells@redhat.com>,
-        Giovanni Gherdovich <ggherdovich@suse.cz>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Jann Horn <jannh@google.com>,
-        Andy Lutomirski <luto@kernel.org>, linux-crypto@vger.kernel.org
-Subject: Re: [PATCH 5/6] crypto: hkdf - add known answer tests
-Date:   Mon, 14 Jan 2019 10:25:16 +0100
-Message-ID: <2750733.sbdFDJOICv@positron.chronox.de>
-In-Reply-To: <20190112051914.GB639@sol.localdomain>
-References: <20190103143227.9138-1-jlee@suse.com> <9857029.1Sm7LFDBlJ@positron.chronox.de> <20190112051914.GB639@sol.localdomain>
+        Mon, 14 Jan 2019 04:25:54 -0500
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id x0E9OLiV102436;
+        Mon, 14 Jan 2019 09:25:42 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=mime-version :
+ message-id : date : from : to : cc : subject : content-type :
+ content-transfer-encoding; s=corp-2018-07-02;
+ bh=PawYpizz0/DfJUnNnFd8yW+6KJqQFIbIu2k7H48az90=;
+ b=w7/OPUXY1ibyStKNWDqOPZD700MflDVpfNcZk4sLWlSsffMBXilxCq2c4+Ygx1eVMGoO
+ 5GNbxzeteDHgw4inPffyFnWk2IetZwal/6MRFh47tHhuxitmuA05Y41m2/9ua31s9eK/
+ cWn2jj4wrxVZOE2Q5tQOSbNZoxUTj9ESwwZA2E8ZYTQ63eCoyTAyIQj26N4na6XKRa9I
+ fMR4yi7K/rlVLkm1CF9XvP7zOflZlFzo6TVgaLPYfxE/1XCk1tjbPzWYPMIFOyBkBkY6
+ vsspUkq1MyPk2WuwyUxYklB+Q2uwHzJRfGcQr1/wIr6MwpCBCetciDemh0zie61gCfC2 Xw== 
+Received: from userv0022.oracle.com (userv0022.oracle.com [156.151.31.74])
+        by userp2130.oracle.com with ESMTP id 2pybkc4a36-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 14 Jan 2019 09:25:42 +0000
+Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
+        by userv0022.oracle.com (8.14.4/8.14.4) with ESMTP id x0E9PgPV009777
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 14 Jan 2019 09:25:42 GMT
+Received: from abhmp0017.oracle.com (abhmp0017.oracle.com [141.146.116.23])
+        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x0E9Pf2l026452;
+        Mon, 14 Jan 2019 09:25:41 GMT
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Message-ID: <fa40ea62-5df8-4e18-af57-9ccd5c578e97@default>
+Date:   Mon, 14 Jan 2019 01:25:41 -0800 (PST)
+From:   Zhenzhong Duan <zhenzhong.duan@oracle.com>
+To:     <longman@redhat.com>
+Cc:     <srinivas.eeda@oracle.com>, <linux-kernel@vger.kernel.org>,
+        <peterz@infradead.org>
+Subject: Re: Question about qspinlock nest
+X-Mailer: Zimbra on Oracle Beehive
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9135 signatures=668680
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=1 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1810050000 definitions=main-1901140079
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Am Samstag, 12. Januar 2019, 06:19:15 CET schrieb Eric Biggers:
 
-Hi Eric,
+----- longman@redhat.com wrote:
 
-[...]
-> 
-> > +			}
-> > +		}
-> > +	}, {
-> > +		.alg = "hkdf(hmac(sha224))",
-> > +		.test = alg_test_null,
-> > +		.fips_allowed = 1,
-> 
-> I think it is dumb to add algorithms to the testmgr with no tests just so
-> the 'fips_allowed' flag can be set. 
+> On 01/11/2019 12:06 AM, Zhenzhong Duan wrote:
+> >
+> >
+> > On 2019/1/10 22:43, Waiman Long wrote:
+> >> On 01/10/2019 03:02 AM, Zhenzhong Duan wrote:
+> >>> Hi Maintainer,
+> >>>
+> >>>
+> >>> There is a question confused me for days. Appreciate an answer.
+> >>>
+> >>> In below code, the comment says we never have more than 4 nested
+> >>> contexts.
+> >>>
+> >>> What happen if debug and mce exceptions nest with the four, or we
+> >>> ensure it never happen?
+> >>>
+> >>>
+> >>> /*
+> >>> =C2=A0* Per-CPU queue node structures; we can never have more than 4
+> nested
+> >>> =C2=A0* contexts: task, softirq, hardirq, nmi.
+> >>> =C2=A0*
+> >>> =C2=A0* Exactly fits one 64-byte cacheline on a 64-bit architecture.
+> >>> =C2=A0*
+> >>> =C2=A0* PV doubles the storage and uses the second cacheline for PV
+> state.
+> >>> =C2=A0*/
+> >>> static DEFINE_PER_CPU_ALIGNED(struct qnode, qnodes[MAX_NODES]);
+> >>>
+> >> Yes, both debug and mce exceptions are some kind of NMIs. So
+> >> theoretically, it is possible to have more than four. Are you aware
+> of
+> >> any debug and MCE exception handlers that need to take a spinlock
+> for
+> >> synchronization?
+> > Not for debug exception, for MCE exception handler I found below
+> two:
+> >
+> > do_machine_check->mce_report_event->schedule_work
+> > do_machine_check->force_sig->force_sig_info
+> >
+> > schedule_work() and force_sig_info() take spinlocks.
+> > --=20
+> > Thanks
+> > Zhenzhong
+>=20
+> The comment for do_machine_scheck() has already state that:
+>=20
+> =C2=A0* This is executed in NMI context not subject to normal locking
+> rules. This
+> =C2=A0* implies that most kernel services cannot be safely used. Don't
+> even
+> =C2=A0* think about putting a printk in there!
+>=20
+> So even if it doesn't exceed the MAX_NODES limit, it could hit
+> deadlock
+> and other kind of locking hazards. So supporting MCE is not a reason
+> strong enough to extend MAX_NODES.
 
-Currently it is the only way. But I agree that it could be done better.
+Agree.
 
-> And doesn't FIPS sometimes require
-> tests anyway?  I don't think the "null test" should count as a test :-)
+>=20
+> In hindsight, we should have added a "BUG_ON(idx >=3D MAX_NODES);"
+> check
+> to avoid silent corruption because of that issue.
 
-Yes, it DOES count as a test (as strange as it may sound)! :-)
+Looks a good idea if it's hard to avoid using spinlock in MCE handler.
 
-The FIPS requirements are as follows:
-
-- raw ciphers must be subject to a FIPS test with one block chaining mode to 
-cover that cipher with all block chaining modes (e.g. you can test ecb(aes) to 
-cover AES with *all* existing block chaining modes).
-
-- for compound crypto algorithm (like RSA with respect to hashes, KDF with 
-respect to the keyed message digest, HMAC with respect to hashes), the 
-wrapping crypto algorithm needs to be tested with *one* wrapped cipher at 
-least (but also not more. E.g. if you have a self test for, say, all SHA-1 and 
-SHA-2, you only need one HMAC SHA test or one KDF HMAC SHA test.
-
-- in some circumstances, it is even permissible to test wrapping crypto 
-algorithms where the underlying algo is implicitly tested. E.g. if you have a 
-HMAC SHA-256 test, you do not need an individual SHA-256 test.
-
-
-> 
-> Perhaps just include sha256 and sha512, and have tests for them?
-
-Do you happen to have an official SHA-512 HKDF test vector? RFC5869 only has 
-SHA-1 and SHA-256 tests.
-> 
-
-[...]
-> > 
-> > +/* Test vectors from RFC 5869 appendix A */
-> > +static struct kdf_testvec hkdf_hmac_sha256_tv_template[] = {
-> 
-> const
-> 
-> Likewise for all other kdf_testvecs.
-
-const does not work with __VECS :-(
-
-I leave it without const at the moment. I think the __VECS should be updated 
-along with all test vectors.
-
-[...]
-
-Ciao
-Stephan
-
-
+Thanks
+Zhenzhong
