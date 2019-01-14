@@ -2,113 +2,108 @@ Return-Path: <SRS0=tq6k=PW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8BF2EC43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 19:11:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5763DC43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 19:12:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5C39320659
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 19:11:52 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="IHJuPRO4"
+	by mail.kernel.org (Postfix) with ESMTP id 33B6020651
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 19:12:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726853AbfANTLu (ORCPT
+        id S1726865AbfANTMN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 14 Jan 2019 14:11:50 -0500
-Received: from mail-lf1-f68.google.com ([209.85.167.68]:41513 "EHLO
-        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726761AbfANTLs (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 Jan 2019 14:11:48 -0500
-Received: by mail-lf1-f68.google.com with SMTP id c16so85466lfj.8
-        for <linux-kernel@vger.kernel.org>; Mon, 14 Jan 2019 11:11:46 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=qsCTTx0oFensVFkkXkJGLtB8gGuyhNbRv5xayXdo3HQ=;
-        b=IHJuPRO4X81fGl5zruwPNqJ3KKUbtPiuFqXdMbsbTAXmoVjdZbQ3YFQxoO43Q+9XQY
-         MjxI0EuChCqrYOZ0j0b4oLoh9garSQpxUI6fMZlHL8gGiRkFGs1/sMstOx9m0sWIERZR
-         2ECfhfOkUT0obgorusS28fB/9uQFE5jU9YSfo=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=qsCTTx0oFensVFkkXkJGLtB8gGuyhNbRv5xayXdo3HQ=;
-        b=fITbOMlwHWVvl0DXGg9RTQyM5nEffoB0Dz8SpMZ4r+A3Wqwz5QLVMkv6eTD4t1AeWQ
-         g48MjhM6gA6n17c/jmHHE+UTLWBaAa5CYmn4TVJ7aDRb62KBDTy9HutxOhLkqY419Rhv
-         8S48rSCyENV5ukvEMgicnJt+OK4mgUUkXz/VgnVuJ6VwbDHxaKerBEX7qeaS88J95Lkp
-         3cx9cZBhfaDTng81qUFdlCsUo9fPF8br3KIFPZT80iyU7AtWZ1Nduw5SpZGNhYmnfpHv
-         IQTezSBKiRfLIXpj1i3PuKRTwuiXWv8k1hDOgQS+4bA/aRtumuxVokCPTfy8goUYqqCC
-         olvA==
-X-Gm-Message-State: AJcUukcFNgmhV5nC7S9AFj60jJGPGXRFfuuvyWvgOgk95+RIqcuvUvoL
-        QtpM0lYD+IdeUJiaIhV+c5mX1ZRBeB8=
-X-Google-Smtp-Source: ALg8bN5ue2yuexf88UihQax2D/HD+4URGWUMhmZuxCKJ5Et4ALR15gcebVt5zPcQfxtGPhPCkMChTA==
-X-Received: by 2002:a19:9a8c:: with SMTP id c134mr13962240lfe.152.1547493106036;
-        Mon, 14 Jan 2019 11:11:46 -0800 (PST)
-Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com. [209.85.167.43])
-        by smtp.gmail.com with ESMTPSA id p186sm218659lfd.83.2019.01.14.11.11.44
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 14 Jan 2019 11:11:45 -0800 (PST)
-Received: by mail-lf1-f43.google.com with SMTP id z13so71100lfe.11
-        for <linux-kernel@vger.kernel.org>; Mon, 14 Jan 2019 11:11:44 -0800 (PST)
-X-Received: by 2002:a19:c014:: with SMTP id q20mr6125lff.16.1547493103716;
- Mon, 14 Jan 2019 11:11:43 -0800 (PST)
+        Mon, 14 Jan 2019 14:12:13 -0500
+Received: from foss.arm.com ([217.140.101.70]:39164 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726758AbfANTMM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 14 Jan 2019 14:12:12 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 3893F80D;
+        Mon, 14 Jan 2019 11:12:12 -0800 (PST)
+Received: from [10.1.196.75] (e110467-lin.cambridge.arm.com [10.1.196.75])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 3FDAF3F5BD;
+        Mon, 14 Jan 2019 11:12:10 -0800 (PST)
+Subject: Re: [PATCH 0/3] Fix virtio-blk issue with SWIOTLB
+To:     "Michael S. Tsirkin" <mst@redhat.com>,
+        Jason Wang <jasowang@redhat.com>
+Cc:     Jens Axboe <axboe@kernel.dk>, brijesh.singh@amd.com,
+        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+        jon.grimm@amd.com, jfehlig@suse.com, linux-kernel@vger.kernel.org,
+        virtualization@lists.linux-foundation.org,
+        linux-block@vger.kernel.org, iommu@lists.linux-foundation.org,
+        Christoph Hellwig <hch@lst.de>
+References: <20190110134433.15672-1-joro@8bytes.org>
+ <5ae1341e-62ec-0478-552b-259eabf9fb17@redhat.com>
+ <20190111091502.GC5825@8bytes.org>
+ <38bcbd46-674c-348a-cbd6-66bd431e986a@redhat.com>
+ <20190114095002.GA29874@lst.de>
+ <ac6d83d8-02de-dbdf-e309-3a1115642d50@redhat.com>
+ <20190114131114-mutt-send-email-mst@kernel.org>
+From:   Robin Murphy <robin.murphy@arm.com>
+Message-ID: <cb290df3-4e17-a403-6d69-cf5a8a41c987@arm.com>
+Date:   Mon, 14 Jan 2019 19:12:08 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-References: <20190111233159.218342-1-evgreen@chromium.org> <yq1imyuv95c.fsf@oracle.com>
- <CAD=FV=ULU0JA1LAruHh2KyXOc0dzuQNZTjV0PAEX2J_Ra2=ZRw@mail.gmail.com> <CAE=gft7OhomkDT7pMBbRRgKK89CVhmigbebgqiDEqTZtjeXhcg@mail.gmail.com>
-In-Reply-To: <CAE=gft7OhomkDT7pMBbRRgKK89CVhmigbebgqiDEqTZtjeXhcg@mail.gmail.com>
-From:   Evan Green <evgreen@chromium.org>
-Date:   Mon, 14 Jan 2019 11:11:07 -0800
-X-Gmail-Original-Message-ID: <CAE=gft5ThU-hrbfV5bubZeU9okeZjvjbf3+7vGi_hS9k0ekx3Q@mail.gmail.com>
-Message-ID: <CAE=gft5ThU-hrbfV5bubZeU9okeZjvjbf3+7vGi_hS9k0ekx3Q@mail.gmail.com>
-Subject: Re: [PATCH] scsi: ufs: Remove select of phy-qcom-ufs from ufs-qcom
-To:     Doug Anderson <dianders@chromium.org>
-Cc:     "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Andy Gross <andy.gross@linaro.org>, masneyb@onstation.org,
-        "James E.J. Bottomley" <jejb@linux.ibm.com>,
-        Vinayak Holikatti <vinholikatti@gmail.com>,
-        linux-scsi@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20190114131114-mutt-send-email-mst@kernel.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-GB
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jan 14, 2019 at 10:41 AM Evan Green <evgreen@chromium.org> wrote:
->
-> On Mon, Jan 14, 2019 at 9:08 AM Doug Anderson <dianders@chromium.org> wrote:
-> >
-> > Hi,
-> >
-> > On Fri, Jan 11, 2019 at 7:37 PM Martin K. Petersen
-> > <martin.petersen@oracle.com> wrote:
-> > >
-> > >
-> > > Evan,
-> > >
-> > > > CONFIG_SCSI_UFS_QCOM selects CONFIG_PHY_QCOM_UFS, assuming that
-> > > > this was the only possible PHY driver Qualcomm's UFS controller
-> > > > would use. But in SDM845, the UFS driver is bundled into phy-qcom-qmp,
-> > > > and phy-qcom-ufs is unused.
-> > > >
-> > > > Remove the select, since for SDM845 it adds useless drivers to the
-> > > > build.
-> > >
-> > > Applied to 5.1/scsi-queue.
-> >
-> > Should this be accompanied by a change to arch/arm64/configs/defconfig
-> > that sets 'CONFIG_PHY_QCOM_UFS=m'?  I don't personally have any
-> > non-SDM845 devices to test on, but I'm sorta assuming they will all
-> > break without the defconfig update?
->
-> Right, thanks for pointing that out. I'll send out another patch to
-> tweak the defconfig.
+On 14/01/2019 18:20, Michael S. Tsirkin wrote:
+> On Mon, Jan 14, 2019 at 08:41:37PM +0800, Jason Wang wrote:
+>>
+>> On 2019/1/14 下午5:50, Christoph Hellwig wrote:
+>>> On Mon, Jan 14, 2019 at 05:41:56PM +0800, Jason Wang wrote:
+>>>> On 2019/1/11 下午5:15, Joerg Roedel wrote:
+>>>>> On Fri, Jan 11, 2019 at 11:29:31AM +0800, Jason Wang wrote:
+>>>>>> Just wonder if my understanding is correct IOMMU_PLATFORM must be set for
+>>>>>> all virtio devices under AMD-SEV guests?
+>>>>> Yes, that is correct. Emulated DMA can only happen on the SWIOTLB
+>>>>> aperture, because that memory is not encrypted. The guest bounces the
+>>>>> data then to its encrypted memory.
+>>>>>
+>>>>> Regards,
+>>>>>
+>>>>> 	Joerg
+>>>>
+>>>> Thanks, have you tested vhost-net in this case. I suspect it may not work
+>>> Which brings me back to my pet pevee that we need to take actions
+>>> that virtio uses the proper dma mapping API by default with quirks
+>>> for legacy cases.  The magic bypass it uses is just causing problems
+>>> over problems.
+>>
+>>
+>> Yes, I fully agree with you. This is probably an exact example of such
+>> problem.
+>>
+>> Thanks
+> 
+> I don't think so - the issue is really that DMA API does not yet handle
+> the SEV case 100% correctly. I suspect passthrough devices would have
+> the same issue.
 
-Sent out at:
-https://lore.kernel.org/lkml/20190114190112.167922-1-evgreen@chromium.org/T/#u
+Huh? Regardless of which virtio devices use it or not, the DMA API is 
+handling the SEV case as correctly as it possibly can, by forcing 
+everything through the unencrypted bounce buffer. If the segments being 
+mapped are too big for that bounce buffer in the first place, there's 
+nothing it can possibly do except fail, gracefully or otherwise.
+
+Now, in theory, yes, the real issue at hand is not unique to virtio-blk 
+nor SEV - any driver whose device has a sufficiently large DMA segment 
+size and who manages to get sufficient physically-contiguous memory 
+could technically generate a scatterlist segment longer than SWIOTLB can 
+handle. However, in practice that basically never happens, not least 
+because very few drivers ever override the default 64K DMA segment 
+limit. AFAICS nothing in drivers/virtio is calling 
+dma_set_max_seg_size() or otherwise assigning any dma_parms to replace 
+the defaults either, so the really interesting question here is how are 
+these apparently-out-of-spec 256K segments getting generated at all?
+
+Robin.
