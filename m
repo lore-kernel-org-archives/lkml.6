@@ -2,96 +2,111 @@ Return-Path: <SRS0=tq6k=PW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E861C43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 08:34:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B8F88C43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 08:36:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 377BB20660
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 08:34:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7E95120660
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 08:36:47 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="ZW0YtRU7"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726560AbfANIed (ORCPT
+        id S1726469AbfANIgp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 14 Jan 2019 03:34:33 -0500
-Received: from mga01.intel.com ([192.55.52.88]:31303 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725837AbfANIed (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 Jan 2019 03:34:33 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 14 Jan 2019 00:34:32 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,477,1539673200"; 
-   d="scan'208";a="125839695"
-Received: from ahunter-desktop.fi.intel.com (HELO [10.237.72.56]) ([10.237.72.56])
-  by orsmga002.jf.intel.com with ESMTP; 14 Jan 2019 00:34:26 -0800
-Subject: Re: [PATCH v6 09/11] mmc: sdhci-acpi: Make PCI dependency explicit
-To:     Sinan Kaya <okaya@kernel.org>, linux-next@vger.kernel.org
-Cc:     linux-acpi@vger.kernel.org, Ulf Hansson <ulf.hansson@linaro.org>,
-        Shawn Lin <shawn.lin@rock-chips.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Paul Cercueil <paul@crapouillou.net>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Faiz Abbas <faiz_abbas@ti.com>,
-        Chunyan Zhang <chunyan.zhang@unisoc.com>,
-        Jisheng Zhang <Jisheng.Zhang@synaptics.com>,
-        Ludovic Barre <ludovic.barre@st.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Alex Smith <alex.smith@imgtec.com>,
-        Chris Brandt <chris.brandt@renesas.com>,
-        "open list:MULTIMEDIA CARD (MMC), SECURE DIGITAL (SD) AND..." 
-        <linux-mmc@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>
-References: <20190105100606.6673-1-okaya@kernel.org>
- <20190105100606.6673-10-okaya@kernel.org>
-From:   Adrian Hunter <adrian.hunter@intel.com>
-Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
- Business Identity Code: 0357606 - 4, Domiciled in Helsinki
-Message-ID: <91a69725-f96f-cdb8-3cc0-8a9b9ca26791@intel.com>
-Date:   Mon, 14 Jan 2019 10:32:58 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        Mon, 14 Jan 2019 03:36:45 -0500
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:41531 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725837AbfANIgp (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 14 Jan 2019 03:36:45 -0500
+Received: by mail-pl1-f193.google.com with SMTP id u6so9824501plm.8
+        for <linux-kernel@vger.kernel.org>; Mon, 14 Jan 2019 00:36:44 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=Eyav2Xd4vPIbQq+IXEwcBzhuQ0gqy8aeKKbOWnFHlow=;
+        b=ZW0YtRU78Dc20Bwt9j0gcxCswyNmcX6SDlpyvA4f7oXu2bEl9pmO9Zc9RZkG1gWZdH
+         qKo+FBfo+fd53pWJrXW15qOurdpzkqGwU0Kcw5RBvkYHfS9sjCsP9WtwcVgmNAz4D8vG
+         QPOWUwF3HwLG034qbAFikR2lZ2Rgufzg4A+Hk=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=Eyav2Xd4vPIbQq+IXEwcBzhuQ0gqy8aeKKbOWnFHlow=;
+        b=nJ+hZoQIaFPIX3Mrp3/nC0EGqxTOTQA6n+6AIStXAnaGFdIVBF4F7ikcfkBtDgr65R
+         Cc3FSf3vxv5ef4uTOmfDO4biMYnWW8WypAqKhlhcHQwzjRMZUc0g52rHSWYYAYslTeA3
+         +QQMPXFcROPKS4KDmGCWQiiHZaHchCVtbMb9wTmCgVo5do6d4oReJWHS2RT0VS2clFDJ
+         M2eUgM2lGzS/ucEdhLGZo9bH7wD8EFlqZjIllT1MHnGgT25GecrEVp8DmJLxoS3miLvy
+         2p3ThdBIhmYX1Uhf1IiUatefCBfT/SPhtQfIMjhzQnIZkUl/q0zZ5dzNfg6DD96rEKcr
+         lwBA==
+X-Gm-Message-State: AJcUukeTjPZFY1tdGPYpNWh/WP3GfI4CbyB4XXAqT64kqbQxkHS4Blb7
+        Dohila1XXMAf5wYMSTvYlQEIfA==
+X-Google-Smtp-Source: ALg8bN5AKnOcdFbgQl6BzYaNZaVwpK57EQrzb60ctv+Sq0OKOZMNpxJr4blxpMNaqhlfRQeFYnRhvA==
+X-Received: by 2002:a17:902:bf0c:: with SMTP id bi12mr24723607plb.0.1547455004352;
+        Mon, 14 Jan 2019 00:36:44 -0800 (PST)
+Received: from leoy-ThinkPad-X240s (li421-24.members.linode.com. [50.116.3.24])
+        by smtp.gmail.com with ESMTPSA id 4sm141415516pfq.10.2019.01.14.00.36.41
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 14 Jan 2019 00:36:43 -0800 (PST)
+Date:   Mon, 14 Jan 2019 16:36:38 +0800
+From:   Leo Yan <leo.yan@linaro.org>
+To:     Vincent Guittot <vincent.guittot@linaro.org>
+Cc:     xuwei5@hisilicon.com, robh+dt@kernel.org, mark.rutland@arm.com,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linus.walleij@linaro.org
+Subject: Re: [PATCH v2] arm64/hisilicon: fix SDcard detection
+Message-ID: <20190114083638.GA12459@leoy-ThinkPad-X240s>
+References: <1547454274-1674-1-git-send-email-vincent.guittot@linaro.org>
 MIME-Version: 1.0
-In-Reply-To: <20190105100606.6673-10-okaya@kernel.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1547454274-1674-1-git-send-email-vincent.guittot@linaro.org>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 5/01/19 12:06 PM, Sinan Kaya wrote:
-> After 'commit 5d32a66541c4 ("PCI/ACPI: Allow ACPI to be built without
-> CONFIG_PCI set")' dependencies on CONFIG_PCI that previously were
-> satisfied implicitly through dependencies on CONFIG_ACPI have to be
-> specified directly. This driver relies on IOSF_MBI and IOSF_MBI depends
-> on PCI. For this reason, add a direct dependency to CONFIG_PCI here.
-> 
-> Fixes: 5d32a66541c46 ("PCI/ACPI: Allow ACPI to be built without CONFIG_PCI set")
-> Signed-off-by: Sinan Kaya <okaya@kernel.org>
+Hi Vincent,
 
-Acked-by: Adrian Hunter <adrian.hunter@intel.com>
+On Mon, Jan 14, 2019 at 09:24:34AM +0100, Vincent Guittot wrote:
+> The SDcard detection of hikey960 is active low so cd-inverted is wrong.
+> Instead of adding cd-inverted, we should better set correctly cd-gpios
+> to use GPIO_ACTIVE_LOW.
 
+Just remind, usually ARM maintainer has requirement for subject as:
+'arm64: dts: hikey960: xxxx'.
+
+> Signed-off-by: Vincent Guittot <vincent.guittot@linaro.org>
 > ---
->  drivers/mmc/host/Kconfig | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> diff --git a/drivers/mmc/host/Kconfig b/drivers/mmc/host/Kconfig
-> index e26b8145efb3..1b9401fe94c0 100644
-> --- a/drivers/mmc/host/Kconfig
-> +++ b/drivers/mmc/host/Kconfig
-> @@ -116,7 +116,7 @@ config MMC_RICOH_MMC
->  
->  config MMC_SDHCI_ACPI
->  	tristate "SDHCI support for ACPI enumerated SDHCI controllers"
-> -	depends on MMC_SDHCI && ACPI
-> +	depends on MMC_SDHCI && ACPI && PCI
->  	select IOSF_MBI if X86
->  	help
->  	  This selects support for ACPI enumerated SDHCI controllers,
+> SD card detection was not working on v5.0-rc1 but patch
+> https://marc.info/?l=linux-mmc&m=154637189021211&w=2 makes it work.
+> Nevertheles, latest changes in of_mmc_detection makes possible to have 
+> a correct DT config.
 > 
-
+>  arch/arm64/boot/dts/hisilicon/hi3660-hikey960.dts | 3 +--
+>  1 file changed, 1 insertion(+), 2 deletions(-)
+> 
+> diff --git a/arch/arm64/boot/dts/hisilicon/hi3660-hikey960.dts b/arch/arm64/boot/dts/hisilicon/hi3660-hikey960.dts
+> index 71bfe41..dc314e7 100644
+> --- a/arch/arm64/boot/dts/hisilicon/hi3660-hikey960.dts
+> +++ b/arch/arm64/boot/dts/hisilicon/hi3660-hikey960.dts
+> @@ -665,8 +665,7 @@
+>  	sd-uhs-sdr50;
+>  	sd-uhs-sdr104;
+>  	disable-wp;
+> -	cd-inverted;
+> -	cd-gpios = <&gpio25 3 0>;
+> +	cd-gpios = <&gpio25 3 GPIO_ACTIVE_LOW>;
+>  	pinctrl-names = "default";
+>  	pinctrl-0 = <&sd_pmx_func
+>  		     &sd_clk_cfg_func
+> -- 
+> 2.7.4
+> 
