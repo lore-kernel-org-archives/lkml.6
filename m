@@ -6,66 +6,66 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C5815C43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 20:39:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B81EC43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 20:39:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7F851206B7
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 20:39:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4BB4620659
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 20:39:15 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="f5tYkQYF"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FilRKiE9"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727094AbfANUjK (ORCPT
+        id S1727146AbfANUjO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 14 Jan 2019 15:39:10 -0500
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:44083 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726776AbfANUjI (ORCPT
+        Mon, 14 Jan 2019 15:39:14 -0500
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:44084 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726767AbfANUjK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 Jan 2019 15:39:08 -0500
-Received: by mail-wr1-f68.google.com with SMTP id z5so409872wrt.11;
-        Mon, 14 Jan 2019 12:39:07 -0800 (PST)
+        Mon, 14 Jan 2019 15:39:10 -0500
+Received: by mail-wr1-f67.google.com with SMTP id z5so409924wrt.11;
+        Mon, 14 Jan 2019 12:39:09 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=sender:from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=vskZecaLZ3Ce4nmVjqV884dirkDxuHp6UAD0akN6aAI=;
-        b=f5tYkQYFRUOTV8pl/0id4s9HyzXzddWso5ICwSVIcotgtoSsmE+ZlUYhJVtaEY7xoS
-         4wetRt6Yhprx+EDRfP7jtyARork8O9MV8y7xsAXd/8OWbgvpfhLthQfsqtDm89nmJePR
-         foDBzZHCuvhQMjq8CbfIZjpMvlQnnPZV2bE0+ubirHWzSMhv/JWmPPs8yH8Qqm/GPCIp
-         /gdyL36HFVgZpsklvzEmASUeTVRUJqiNh3rDbKQoWKIcw5UvC0PwBUuCFOzkDnpxWKvv
-         0P08Wfwb9FsDbqNb7ui2FSQxB83f323RBTBbeCT4wlXSDrNeNM2eKdAz+OUxA/aqeSwf
-         CTcA==
+        bh=7OB8l1HfewCN1zRGPnCcAWYhfDZSLytYFckK0OsM5qo=;
+        b=FilRKiE9Zd0zSrjWFWt8vqwpFgSmF9QfZrf5UHUSw+qb4PEd4ds3aTvtQ/A65vuXRn
+         JNzf6rbbFTs83IsS2lT+kZsNMcX4uWoWQsvQM69DRymJoz6UE21VnN4pS+Hngdu7L47F
+         DJDkvSQbU6MYOlvSU5ws4PfW0DlK/nREc5pDe0cbPQcBSU8o98die3BLDh23hVKbNhkO
+         hnQYGRhDPpPmddgECujATYxwb4CihDMQN3mAmQT1wx8SM0P7g6wEVug4byGRyYu4O4lO
+         pe65znHquHn7lqRNHGWlH5xw/TL0Lhf2jwItkCYMpMhRN6D7MjwXF/ITUFFLB558t+u4
+         S19g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:sender:from:to:cc:subject:date:message-id
          :in-reply-to:references:mime-version:content-transfer-encoding;
-        bh=vskZecaLZ3Ce4nmVjqV884dirkDxuHp6UAD0akN6aAI=;
-        b=eWrvVdFGR216v8jSeWw4z414tTSqR82+hgPcSQbnqethXNsMFh+oNQbreSJTAqSNEu
-         1GkqcnXwIUwfv6d/V5gg35ew4VBQXbCDhN9gDX4X/IMBT1hlMxcLlnVkvjao9IAI5y0W
-         Qd0gBPjOyDeRBSYQi+7dytMrAmdVmKQO8vWVQ8cjQP84XubFUQBuFulB2r/zZpxDAEms
-         jAeVgDVr88rP0iBk8zCmymdunVwpeSM251skWcHmDAPrvpWQ7rnWHZTtaYR4BXxv3VdY
-         RDQhaP90H8Tc/1jT5nNAIacdWQFX9M5PCNdF+JMb4dmpt/YsllAH8AgY16Aygn2jbje2
-         WifA==
-X-Gm-Message-State: AJcUukdyPhlsY8928WMJ5epTj0QZjEE55X9Km6ALa+MrdXndjERzPycl
-        hZ3Af8nU9/gd4JsPjur+to4=
-X-Google-Smtp-Source: ALg8bN4QiSy3xc6IISod1GH1WRrv3E3Sjt6eBisxCh0vI8HAzOj3JdMEU1GPLJajgUMkVhaOC91+NA==
-X-Received: by 2002:adf:fb0d:: with SMTP id c13mr212961wrr.285.1547498346714;
-        Mon, 14 Jan 2019 12:39:06 -0800 (PST)
+        bh=7OB8l1HfewCN1zRGPnCcAWYhfDZSLytYFckK0OsM5qo=;
+        b=A1f8p/wS9kqQ0weLdvNTY852gH6veVpBRZJqPH26T8vsNZs0EMwcDg/CQzloEobtvA
+         kMJPjkwEg0gJwZTa5887+CI6O54xaf+OJTbgdr0h4c+PmGc/wOCGxVgOVN/gS+i4FebG
+         D5sN1eDLrMrWObTCEC9vnfPzPffDaUQrG0opORwg/n/EU/QLH0W5b4aLy7bpaMpznUfs
+         +EYy2iYQ7l3wIusVGy+4UIhF6ZtkYN8qLKJaELu5if2ihFf4iylb9aYPjt1lNltvtUJP
+         x2iqzYxpkHABu+ldTDfT+LtrbmErF4iZC2tuiQ7EWjU0gO/jGHOPGqlS+vDxlX6dMICu
+         hpGQ==
+X-Gm-Message-State: AJcUukdrIRopkqQE47Phvcqpl7vQxHM0C0AEB25ItdruvtuZ89XYDXQN
+        R2kIrsUsLymbrp8IGPnu7KQ=
+X-Google-Smtp-Source: ALg8bN4hHr+Qv5rWGyplun6OuMg4qWO0fzlMGO4MdU2mxbsilIhdxt/txLwa3GCRu96zIfDwNA2GAQ==
+X-Received: by 2002:adf:9f10:: with SMTP id l16mr233373wrf.206.1547498348124;
+        Mon, 14 Jan 2019 12:39:08 -0800 (PST)
 Received: from macbookpro.malat.net (bru31-1-78-225-224-134.fbx.proxad.net. [78.225.224.134])
-        by smtp.gmail.com with ESMTPSA id 207sm15595578wmb.12.2019.01.14.12.39.05
+        by smtp.gmail.com with ESMTPSA id i186sm33660913wmd.19.2019.01.14.12.39.07
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 14 Jan 2019 12:39:06 -0800 (PST)
+        Mon, 14 Jan 2019 12:39:07 -0800 (PST)
 Received: by macbookpro.malat.net (Postfix, from userid 1000)
-        id 0B30011422D0; Mon, 14 Jan 2019 21:39:05 +0100 (CET)
+        id F3B5111422AD; Mon, 14 Jan 2019 21:39:05 +0100 (CET)
 From:   Mathieu Malaterre <malat@debian.org>
 To:     Alexander Viro <viro@zeniv.linux.org.uk>
 Cc:     Mathieu Malaterre <malat@debian.org>,
         Jeff Layton <jlayton@kernel.org>,
         "J. Bruce Fields" <bfields@fieldses.org>,
         linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 2/3] fs: annotate implicit fall through
-Date:   Mon, 14 Jan 2019 21:38:57 +0100
-Message-Id: <20190114203859.19875-2-malat@debian.org>
+Subject: [PATCH 3/3] fs/fcntl: annotate implicit fall through
+Date:   Mon, 14 Jan 2019 21:38:58 +0100
+Message-Id: <20190114203859.19875-3-malat@debian.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20190114203859.19875-1-malat@debian.org>
 References: <20190114203859.19875-1-malat@debian.org>
@@ -80,30 +80,30 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 There is a plan to build the kernel with -Wimplicit-fallthrough and
 this place in the code produced a warning (W=1).
 
-In this particular case remove a ‘:’ so as to match the regular
-expression expected by GCC.
+In this particular case change a ‘:’ with a ‘-’ so as to match the
+regular expression expected by GCC.
 
 This commit remove the following warning:
 
-  fs/locks.c:1473:16: warning: this statement may fall through [-Wimplicit-fallthrough=]
+  fs/fcntl.c:770:7: warning: this statement may fall through [-Wimplicit-fallthrough=]
 
 Signed-off-by: Mathieu Malaterre <malat@debian.org>
 ---
- fs/locks.c | 2 +-
+ fs/fcntl.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/fs/locks.c b/fs/locks.c
-index ff6af2c32601..d958c3863b4b 100644
---- a/fs/locks.c
-+++ b/fs/locks.c
-@@ -1471,7 +1471,7 @@ static void lease_clear_pending(struct file_lock *fl, int arg)
- 	switch (arg) {
- 	case F_UNLCK:
- 		fl->fl_flags &= ~FL_UNLOCK_PENDING;
--		/* fall through: */
-+		/* fall through */
- 	case F_RDLCK:
- 		fl->fl_flags &= ~FL_DOWNGRADE_PENDING;
+diff --git a/fs/fcntl.c b/fs/fcntl.c
+index 083185174c6d..3d40771e8e7c 100644
+--- a/fs/fcntl.c
++++ b/fs/fcntl.c
+@@ -769,7 +769,7 @@ static void send_sigio_to_task(struct task_struct *p,
+ 			si.si_fd    = fd;
+ 			if (!do_send_sig_info(signum, &si, p, type))
+ 				break;
+-		/* fall-through: fall back on the old plain SIGIO signal */
++		/* fall-through - fall back on the old plain SIGIO signal */
+ 		case 0:
+ 			do_send_sig_info(SIGIO, SEND_SIG_PRIV, p, type);
  	}
 -- 
 2.19.2
