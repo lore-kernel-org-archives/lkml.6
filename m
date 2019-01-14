@@ -2,120 +2,116 @@ Return-Path: <SRS0=tq6k=PW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 633F9C43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 09:15:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DE497C43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 09:19:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 31D512086D
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 09:15:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547457324;
-	bh=pS+Kas6AYsqX5nlheLdriFDcYaAFA5fTQ4pS2CyKYT8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=vOSACPXDdpiTTgTGlLHnQjIciR7DXWEa8bdaSsnUAq+6n+fjwVeZLxIiamwPeLDB4
-	 bZ4iP+WXQW1fgJO4dhE5lvfuTB4uywHccervyXdsB+nLJH/UsFaOFs4Z5yeggirlzu
-	 of69z+aDTPBWKIA3y9cG/KZBDtbFKPJvGy4UWUB4=
+	by mail.kernel.org (Postfix) with ESMTP id AB73820660
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 09:19:02 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="VpLH4LRc"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726586AbfANJPW (ORCPT
+        id S1726526AbfANJTB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 14 Jan 2019 04:15:22 -0500
-Received: from mail-lf1-f65.google.com ([209.85.167.65]:41682 "EHLO
-        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726437AbfANJPV (ORCPT
+        Mon, 14 Jan 2019 04:19:01 -0500
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:41168 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726449AbfANJTA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 Jan 2019 04:15:21 -0500
-Received: by mail-lf1-f65.google.com with SMTP id c16so15014669lfj.8;
-        Mon, 14 Jan 2019 01:15:20 -0800 (PST)
+        Mon, 14 Jan 2019 04:19:00 -0500
+Received: by mail-pf1-f195.google.com with SMTP id b7so10071244pfi.8
+        for <linux-kernel@vger.kernel.org>; Mon, 14 Jan 2019 01:19:00 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=pAl0NRe/IOMpdeJNTCxP6GfLep4vIhxtuy8P4HVR5WA=;
-        b=AEynDroNcMTthSh+xYmPZFyl8le2P5JsaUlNweZJF5XweRx+xhafItxuxTdXm4eHBJ
-         qgWdjdW1l0r/3D34R5geAgasAK9Ff95zowqie1vyBk7VeWeiAoH9M14pX94TYD8zimbR
-         dtXnO3zOFebs3uAzXEbdQSZ37sLKfrUMuQLTEu0kg0/6DTUdKVmrU8RnZSfRL1+q3lCv
-         ixmlB1CbGdW7HDgnXqn9Hsv3UoR/IMKQg5PaTu4nPWzP3qztIjyoTSRQrVlteI3mr4Ht
-         L4FyNWYeRC8ElcXWapPSXDeruGWNWKi2hhC95TnqqgjRfINgqyQAR8aLM/t1dfpjfJ8g
-         opbw==
+        bh=NKxgYoIUcONgbn8ufUpcNn9ZL20a+ylRBVSbkZW3TEY=;
+        b=VpLH4LRcoO6Zjsq8bpGf/7JP6fVTCBxALOVWuhGEtxgKz3T5nKIA7ukHbtJ/75a9IW
+         5/Upibc1vEQGhsRT3EYFRcU/ciGxhG/qRQD7JyLRsUakBRgWYWQTCJjihPdY4dJcsUgo
+         /4OWAd1+HFOAmFbr/vtoN8B1ckpaBuxHcb0Lk=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=pAl0NRe/IOMpdeJNTCxP6GfLep4vIhxtuy8P4HVR5WA=;
-        b=jgJyUkcaKiKWwfK4kMeAtXQH6PkYwnbP/evc6O5sOBf0x4QKj2oOTO2lWGpEroB/Vo
-         /Vrn3zWjAW6d/Mh7BUaYqzwjUN+cBUfff4Jrzj/hwSCfDIQjb5fxZs6AWpUneRUHoYsj
-         SCxWbxivESUigVOGUtmsSN1nbo3b2L82Mn6N3Zxi1SUISmPd7ntmAq6DHA+t/yxxX4bF
-         dh7ZucaGi6dDiYTHTzdOp8mJv5mE8ri1EBJf6z2DPkhP22utB1if/HRvP7hzbyYmo3DG
-         zxkopVoM9f1hOq3lX4iah1TvsFEyoUJTAJtI0LZsKu6qKPh5T0Nmeu1TqXp7tsXUncfU
-         ip0g==
-X-Gm-Message-State: AJcUukepq5nSwV2PpDoGn4fCwMNWjtfeRpMEnIbUNUL2cCQzWmlI8+Fx
-        7Bh28oMgjgPWE18bj6WfzIU=
-X-Google-Smtp-Source: ALg8bN517u39kh+oJWbED5/0FtXr8ELM9hlrKcxPHg5eJI5PsTDHouP7chKL3MBzirGaHsyiLa49+A==
-X-Received: by 2002:a19:2584:: with SMTP id l126mr12334696lfl.69.1547457319513;
-        Mon, 14 Jan 2019 01:15:19 -0800 (PST)
-Received: from xi.terra (c-74bee655.07-184-6d6c6d4.bbcust.telenor.se. [85.230.190.116])
-        by smtp.gmail.com with ESMTPSA id h85-v6sm17414485ljf.68.2019.01.14.01.15.18
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 14 Jan 2019 01:15:18 -0800 (PST)
-Received: from johan by xi.terra with local (Exim 4.91)
-        (envelope-from <johan@kernel.org>)
-        id 1giyKz-0000Na-HD; Mon, 14 Jan 2019 10:15:17 +0100
-Date:   Mon, 14 Jan 2019 10:15:17 +0100
-From:   Johan Hovold <johan@kernel.org>
-To:     Andreas Kemnade <andreas@kemnade.info>
-Cc:     Johan Hovold <johan@kernel.org>, robh+dt@kernel.org,
-        mark.rutland@arm.com, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Discussions about the Letux Kernel 
-        <letux-kernel@openphoenux.org>
-Subject: Re: [PATCH v2 5/5] dt-bindings: gnss: add lna-supply property
-Message-ID: <20190114091517.GD3691@localhost>
-References: <20181209195150.5192-1-andreas@kemnade.info>
- <20181209195150.5192-6-andreas@kemnade.info>
- <20190110122757.GB9725@localhost>
- <20190110180732.75490757@kemnade.info>
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=NKxgYoIUcONgbn8ufUpcNn9ZL20a+ylRBVSbkZW3TEY=;
+        b=A30EDv6BG9pjf6+n0yFyBnHan7Q0QTBftyEQlNtYdO+1EQvIeOHABGt3zTgtf7PIDu
+         I94nCa6rZOwbeaIHte1VOxdOM+NufUVqwapQjo0rrwfxWh5uBhASyf6X9F6iYhrNGDvn
+         HIcOCocCyKLmLyf/+YcrQL4n47iphGYjvoADImEEBr6tphAkzBiX0uo0mZJsCdZ5whok
+         y3xp+1kCFpjRlEr8RxYWbBTRyh8Vg7P+KMUf12gmIuP4XJZwaXOj+/OMCfaRPzWZUQ8x
+         ubsCeTM6r2e9u+VOJwPIPtvUQhlDCbRZhYxn8eTC+ympsEABbZ19knbGjlR7cr8eKgE5
+         7BTw==
+X-Gm-Message-State: AJcUukccX4xqUh8f++1Y5t0PHUIJP0ImEkdOYDFotlNU5ctEgXXnhlFm
+        nRBKEkRxotFmJyCOwPu40YKD
+X-Google-Smtp-Source: ALg8bN4hHNIddDDH2wJowj13Ec3GzhUcCxPt7u0SyCRXCXQNXkASOZkydHFVl7H+jB/Yt6/LVH7b3Q==
+X-Received: by 2002:a62:7c47:: with SMTP id x68mr24767559pfc.209.1547457539354;
+        Mon, 14 Jan 2019 01:18:59 -0800 (PST)
+Received: from Mani-XPS-13-9360 ([2409:4072:6306:f12b:7d9b:d1a4:6536:aa21])
+        by smtp.gmail.com with ESMTPSA id l19sm191860928pfi.71.2019.01.14.01.18.53
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 14 Jan 2019 01:18:58 -0800 (PST)
+Date:   Mon, 14 Jan 2019 14:48:50 +0530
+From:   Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To:     Stephen Boyd <sboyd@kernel.org>
+Cc:     afaerber@suse.de, mturquette@baylibre.com, robh+dt@kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-actions@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH 0/6] Add clock support for Actions Semi S500 SoC
+Message-ID: <20190114091850.GB13162@Mani-XPS-13-9360>
+References: <20181231185517.18517-1-manivannan.sadhasivam@linaro.org>
+ <154724706468.169631.2903523518830581075@swboyd.mtv.corp.google.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190110180732.75490757@kemnade.info>
-User-Agent: Mutt/1.11.2 (2019-01-07)
+In-Reply-To: <154724706468.169631.2903523518830581075@swboyd.mtv.corp.google.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jan 10, 2019 at 06:07:32PM +0100, Andreas Kemnade wrote:
-> On Thu, 10 Jan 2019 13:27:57 +0100
-> Johan Hovold <johan@kernel.org> wrote:
-> 
-> > On Sun, Dec 09, 2018 at 08:51:50PM +0100, Andreas Kemnade wrote:
-> > > Add lna-supply property.
-> > > 
-> > > Signed-off-by: Andreas Kemnade <andreas@kemnade.info>
-> > > ---
-> > > Changes in v2:
-> > >  - reordering
-> > > Original order had a
-> > > Reviewed-by: Rob Herring <robh@kernel.org>
-> > > 
-> > >  Documentation/devicetree/bindings/gnss/sirfstar.txt | 1 +
-> > >  1 file changed, 1 insertion(+)  
-> > 
-> > Ah, missed this one at first.
-> > 
-> > But shouldn't this go into the generic binding since it isn't specific
-> > for sirf-star based receivers?
-> 
-> That idea was formulated with a question mark towards Rob.
-> And no reaction from Rob about that.
+Hi Stephen,
 
-Right, maybe that suggestion wasn't very clear.
+On Fri, Jan 11, 2019 at 02:51:04PM -0800, Stephen Boyd wrote:
+> Quoting Manivannan Sadhasivam (2018-12-31 10:55:11)
+> > Hello,
+> > 
+> > This patchset adds common clock support for Actions Semi S500 SoC of
+> > the Owl family SoCs. This series is based on the initial work done
+> > by Edgar Bernardi Righi. https://patchwork.kernel.org/cover/10587527/
+> > 
+> > Since there isn't any update from him for long time, I took the liberty
+> > to modify his patches, address review comments and send to list for review.
+> > 
+> > This series has been tested on Allo Sparky SBC.
+> > 
+> > Thanks,
+> > Mani
+> > 
+> > Edgar Bernardi Righi (1):
+> >   dt-bindings: clock: Add DT bindings for Actions Semi S500 CMU
+> > 
+> > Manivannan Sadhasivam (5):
+> >   clk: actions: Add configurable PLL delay
+> >   ARM: dts: Add CMU support for Actions Semi Owl S500 SoC
+> >   ARM: dts: Remove fake UART clock for S500 based SBCs
+> >   clk: actions: Add clock driver for S500 SoC
+> >   MAINTAINERS: Add linux-actions mailing list for Actions Semi
+> 
+> What's the merge strategy for these patches? Some are for clk, others
+> are for arm-soc, etc. I see a sandwich of patches too so it sounds like
+> I can't even take just the clk ones for fear of breaking something that
+> the dts bits in the middle clear out of the way.
+> 
 
-But since this property is not specific to sirf-star based devices, it
-needs to go in the generic binding.
+As we did with previous patchsets, clk patches will go through your tree
+and I'll take the ARM/MAINTAINERS patches through Actions sub-tree. Let's
+target these for 5.1. Even if your patches reach first, there won't be
+any regression with existing DTS.
 
 Thanks,
-Johan
+Mani
+
