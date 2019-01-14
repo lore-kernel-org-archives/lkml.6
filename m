@@ -4,56 +4,58 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_ADSP_CUSTOM_MED,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D8DECC43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 22:04:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 19837C43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 22:04:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A50B1205C9
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 22:04:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D23CC205C9
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 22:04:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727180AbfANWEd (ORCPT
+        id S1727196AbfANWEk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 14 Jan 2019 17:04:33 -0500
-Received: from mail-qt1-f197.google.com ([209.85.160.197]:35818 "EHLO
-        mail-qt1-f197.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726684AbfANWEc (ORCPT
+        Mon, 14 Jan 2019 17:04:40 -0500
+Received: from mail-io1-f72.google.com ([209.85.166.72]:37901 "EHLO
+        mail-io1-f72.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727182AbfANWEj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 Jan 2019 17:04:32 -0500
-Received: by mail-qt1-f197.google.com with SMTP id p24so610796qtl.2
-        for <linux-kernel@vger.kernel.org>; Mon, 14 Jan 2019 14:04:31 -0800 (PST)
+        Mon, 14 Jan 2019 17:04:39 -0500
+Received: by mail-io1-f72.google.com with SMTP id q18so454545ioj.5
+        for <linux-kernel@vger.kernel.org>; Mon, 14 Jan 2019 14:04:37 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:in-reply-to:message-id:mime-version
          :references:subject:from:to:cc;
-        bh=lUV2j/I+da7UyJkODFTHM3UBusg4tJTVdYckzT83YNA=;
-        b=nlNqurXfpocgM/2t+W8J9SG3NtxJrivtzgyluV4UYpOvaszE42zEJlI+JHmt/caeMG
-         JkM+40ErYQCID8NnSHIQZ6amlcPCtn/ZIl3PxcfUZ1AByPSGIXtN78amXMfmFFxmLy7+
-         mQbhBKM/cps5J9ccs4C4x6NysihDUTjRCmQ+dPpOIK3a5ZdqgNZ7XUxfjr75wEYtooZG
-         bbJYo1GgfmelQBfvz3DnEN7OPqrGcyyR39gV3nnfNwf+kuq0yt4YuREma9bW86QQ95yQ
-         Sl1FmKcVgUXx2IHY61vgGO3uz4nx+Amd+xyLbNjUr5jfBTNq+hpZbSKwLxKc5Wts4cX8
-         rxVg==
-X-Gm-Message-State: AJcUukeJfKfoPGlDuKGISxgPt8OF+XjGTvhrgcFKuAmg7mPUPF10xwCV
-        UQZtOIKxyrCD0NY+s5hcSpB9YkA4QIuVll+UXraF8JovosCIPSvQbgDsYE7VhHip2nIGIxhiRGD
-        6/Hho0CE5Aq2Y75WsbBogMl9Bvrh9q2eI2AADW3fgJ61fwREoNfW/qkD+KBXEc8HX8nSebh89+D
-        U=
-X-Google-Smtp-Source: ALg8bN4Fx4WfRCVVlk6BUtZJgOGkswh1OrJpPDT3VjjuQQyHrtJ712NKGdBm+0CvpDKtJy/HcSdZtwFOSTxMTnqo
-X-Received: by 2002:a0c:ae41:: with SMTP id z1mr402833qvc.11.1547503471381;
- Mon, 14 Jan 2019 14:04:31 -0800 (PST)
-Date:   Mon, 14 Jan 2019 15:03:51 -0700
+        bh=rySSR2KDMZkETr4V4BQFEx4ktKifj7vZUBfqiMKizs0=;
+        b=dhDcUDPgVLvyfzPoT6KpT3hR1wrn6haLpsiXBfo4s0wCX6Xp+35wRInJ0jd8Kv1xcV
+         XIR+ZXQCHld1nlFDOpXq6+zJF6BRZb981f9Ou9+Jxdj6lARHgOTTmi3imeLQ38dhY7RZ
+         Ha3I1IWdUW+KYSOgwrvVYWMKxLZYmDDjR+0tv1Ru/zC8v9vrVMdLfPU8zS3ir1iy1x0u
+         n+ngGaSaQMll/qGs7l03HM9rek0rloue7jz0ev1EjbptSzJ5kOGzItZezFeqLSGcSxC+
+         +ckNjfNolpDV4NWRNMLK2JO6q/n/9zxDzXk90/x/VOFze2uKYGwi+oMyu1SlDXGbeYWb
+         5AVQ==
+X-Gm-Message-State: AJcUukewr2QUylA1gFN/rpbt8ducvlgqWdl0ry6cWMkc+w0jK6IDIi69
+        XLSmiV4w6V4tlo7YLv8nHY7fsud7/m+DA7WNnktwBc19UbwSv8bQRmGGQK50iMtZrHm68MtzOg5
+        DR9mOJuxnPdhni6OjYG5J+KxkL+qYD1qWWv1Ga8Prk49wYoH0sPH7rdNOqSaFTXcnnrAazVFUdh
+        I=
+X-Google-Smtp-Source: ALg8bN4Y3o8vqqWGkw2e1ZZUsSKeSEyUiracaTyAFtCt9VlAuDurEchZIZ55zB2Y6X/8KbUsbwr7KcLa8dIS9q4j
+X-Received: by 2002:a24:7d55:: with SMTP id b82mr831086itc.0.1547503477403;
+ Mon, 14 Jan 2019 14:04:37 -0800 (PST)
+Date:   Mon, 14 Jan 2019 15:03:52 -0700
 In-Reply-To: <20190114220356.108916-1-ncrews@google.com>
-Message-Id: <20190114220356.108916-5-ncrews@google.com>
+Message-Id: <20190114220356.108916-6-ncrews@google.com>
 Mime-Version: 1.0
 References: <20190114220356.108916-1-ncrews@google.com>
 X-Mailer: git-send-email 2.20.1.97.g81188d93c3-goog
-Subject: [PATCH v2 4/9] platform/chrome: Add support for raw commands in sysfs
+Subject: [PATCH v2 5/9] platform/chrome: rtc: Add RTC driver for Wilco EC
 From:   Nick Crews <ncrews@google.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     groeck@chromium.org, sjg@chromium.org, dlaurie@chromium.org,
         Duncan Laurie <dlaurie@google.com>,
-        Nick Crews <ncrews@google.com>,
+        Nick Crews <ncrews@google.com>, linux-rtc@vger.kernel.org,
         Enric Balletbo i Serra <enric.balletbo@collabora.com>,
-        Benson Leung <bleung@chromium.org>
+        Alessandro Zummo <a.zummo@towertech.it>,
+        Benson Leung <bleung@chromium.org>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -62,266 +64,293 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Duncan Laurie <dlaurie@google.com>
 
-Add a sysfs attribute that allows sending raw commands to the EC.
-This is useful for development and debug but should not be enabled
-in a production environment.
+This Embedded Controller has an internal RTC that is exposed
+as a standard RTC class driver with read/write functionality.
 
-> echo 00 f0 38 00 03 00 > /sys/bus/platform/devices/GOOG000C\:00/raw
-> cat /sys/bus/platform/devices/GOOG000C\:00/raw
-00 37 33 38 65 64 00...
+The driver is added to the drivers/rtc/ so that the maintainer of that
+directory will be able to comment on this change, as that maintainer is
+the expert on this system. In addition, the driver code is called
+indirectly after a corresponding device is registered from core.c,
+as opposed to core.c registering the driver callbacks directly.
+
+> hwclock --show --rtc /dev/rtc1
+2007-12-31 16:01:20.460959-08:00
+> hwclock --systohc --rtc /dev/rtc1
+> hwclock --show --rtc /dev/rtc1
+2018-11-29 17:08:00.780793-08:00
 
 Signed-off-by: Duncan Laurie <dlaurie@google.com>
 Signed-off-by: Nick Crews <ncrews@google.com>
 ---
 
 Changes in v2:
-- Add sysfs documentation
-- rm duplicate EC_MAILBOX_DATA_SIZE defs
-- Make docstrings follow kernel style
-- Fix tags in commit msg
-- Reading raw now includes ASCII translation
+- rm license boiler plate
+- rm "wilco_ec_rtc -" prefix in docstring
+- Make rtc driver its own module within the drivers/rtc/ directory
+- Register a rtc device from core.c that is picked up by this driver
+- rm unused rtc_sync() function
 
- .../ABI/testing/sysfs-platform-wilcoec        | 21 ++++
- drivers/platform/chrome/wilco_ec/Kconfig      |  9 ++
- drivers/platform/chrome/wilco_ec/legacy.c     | 99 +++++++++++++++++++
- drivers/platform/chrome/wilco_ec/legacy.h     | 46 +++++++++
- drivers/platform/chrome/wilco_ec/sysfs.c      |  6 ++
- 5 files changed, 181 insertions(+)
+ drivers/platform/chrome/wilco_ec/core.c |  18 +++
+ drivers/rtc/Kconfig                     |  11 ++
+ drivers/rtc/Makefile                    |   1 +
+ drivers/rtc/rtc-wilco-ec.c              | 178 ++++++++++++++++++++++++
+ 4 files changed, 208 insertions(+)
+ create mode 100644 drivers/rtc/rtc-wilco-ec.c
 
-diff --git a/Documentation/ABI/testing/sysfs-platform-wilcoec b/Documentation/ABI/testing/sysfs-platform-wilcoec
-index 09552338c160..cac2cf11835f 100644
---- a/Documentation/ABI/testing/sysfs-platform-wilcoec
-+++ b/Documentation/ABI/testing/sysfs-platform-wilcoec
-@@ -24,3 +24,24 @@ Description:
- 		off and remain off even if activated from the off state.
- 		External monitors connected to the system are not affected.
- 		In addition Wireless devices are turned off.
-+
-+What:		/sys/bus/platform/devices/GOOG000C\:00/raw
-+Date:		January 2019
-+KernelVersion:	4.19
-+Description:
-+		Write and read raw mailbox commands to the EC.
-+
-+		For writing:
-+		Bytes 0-1 indicate the message type:
-+			00 F0 = Execute Legacy Command
-+			00 F2 = Read/Write NVRAM Property
-+		Byte 2 provides the command code
-+		Bytes 3+ consist of the data passed in the request
-+
-+		Example:
-+		// Request EC info type 3 (EC firmware build date)
-+		$ echo 00 f0 38 00 03 00 > raw
-+		// View the result. The decoded ASCII result "12/21/18" is
-+		// included after the raw hex.
-+		$ cat raw
-+		00 31 32 2f 32 31 2f 31 38 00 38 00 01 00 2f 00  .12/21/18.8...
-diff --git a/drivers/platform/chrome/wilco_ec/Kconfig b/drivers/platform/chrome/wilco_ec/Kconfig
-index f8e6c9e8c5cd..0bd84c98b79b 100644
---- a/drivers/platform/chrome/wilco_ec/Kconfig
-+++ b/drivers/platform/chrome/wilco_ec/Kconfig
-@@ -21,4 +21,13 @@ config WILCO_EC
- 	  To compile this driver as a module, choose M here: the
- 	  module will be called wilco_ec.
+diff --git a/drivers/platform/chrome/wilco_ec/core.c b/drivers/platform/chrome/wilco_ec/core.c
+index 3193e8b2ec91..61dacd582582 100644
+--- a/drivers/platform/chrome/wilco_ec/core.c
++++ b/drivers/platform/chrome/wilco_ec/core.c
+@@ -37,6 +37,7 @@ static int wilco_ec_probe(struct platform_device *pdev)
+ {
+ 	struct device *dev = &pdev->dev;
+ 	struct wilco_ec_device *ec;
++	struct platform_device *child_pdev;
+ 	int ret;
  
-+config WILCO_EC_SYSFS_RAW
-+	bool "Enable raw access to EC via sysfs"
+ 	ec = devm_kzalloc(dev, sizeof(*ec), GFP_KERNEL);
+@@ -70,8 +71,25 @@ static int wilco_ec_probe(struct platform_device *pdev)
+ 		dev_err(dev, "Failed to create sysfs attributes\n");
+ 		goto destroy_lpc_mec;
+ 	}
++
++	/*
++	 * Register a RTC platform device that will get picked up by the RTC
++	 * subsystem. This platform device will get freed when its parent device
++	 * dev is unregistered.
++	 */
++	child_pdev = platform_device_register_data(dev, "rtc-wilco-ec",
++						   PLATFORM_DEVID_AUTO,
++						   NULL, 0);
++	if (IS_ERR(child_pdev)) {
++		dev_err(dev, "Failed to create RTC platform device\n");
++		ret = PTR_ERR(child_pdev);
++		goto remove_sysfs;
++	}
++
+ 	return 0;
+ 
++remove_sysfs:
++	wilco_ec_sysfs_remove(ec);
+ destroy_lpc_mec:
+ 	cros_ec_lpc_mec_destroy();
+ 	return ret;
+diff --git a/drivers/rtc/Kconfig b/drivers/rtc/Kconfig
+index 225b0b8516f3..d5063c791515 100644
+--- a/drivers/rtc/Kconfig
++++ b/drivers/rtc/Kconfig
+@@ -1814,4 +1814,15 @@ config RTC_DRV_GOLDFISH
+ 	  Goldfish is a code name for the virtual platform developed by Google
+ 	  for Android emulation.
+ 
++config RTC_DRV_WILCO_EC
++	tristate "Wilco EC RTC"
 +	depends on WILCO_EC
++	default m
 +	help
-+	  If you say Y here, you get support for sending raw commands to
-+	  the Wilco EC via sysfs.  These commands do not do any byte
-+	  manipulation and allow for testing arbitrary commands.  This
-+	  interface is intended for debug only and is disabled by default.
++	  If you say yes here, you get read/write support for the Real Time
++	  Clock on the Wilco Embedded Controller (Wilco is a kind of Chromebook)
 +
- endif # WILCO_EC_PLATFORM
-diff --git a/drivers/platform/chrome/wilco_ec/legacy.c b/drivers/platform/chrome/wilco_ec/legacy.c
-index 1fdf94d22f57..79bac5dccb39 100644
---- a/drivers/platform/chrome/wilco_ec/legacy.c
-+++ b/drivers/platform/chrome/wilco_ec/legacy.c
-@@ -11,6 +11,105 @@
- 
- #include "legacy.h"
- 
-+#ifdef CONFIG_WILCO_EC_SYSFS_RAW
++	  This can also be built as a module. If so, the module will
++	  be named "rtc_wilco_ec".
 +
-+/* Raw data buffer, large enough to hold extended responses */
-+static size_t raw_response_size;
-+static u8 raw_response_data[EC_MAILBOX_DATA_SIZE_EXTENDED];
+ endif # RTC_CLASS
+diff --git a/drivers/rtc/Makefile b/drivers/rtc/Makefile
+index df022d820bee..6255ea78da25 100644
+--- a/drivers/rtc/Makefile
++++ b/drivers/rtc/Makefile
+@@ -172,6 +172,7 @@ obj-$(CONFIG_RTC_DRV_V3020)	+= rtc-v3020.o
+ obj-$(CONFIG_RTC_DRV_VR41XX)	+= rtc-vr41xx.o
+ obj-$(CONFIG_RTC_DRV_VRTC)	+= rtc-mrst.o
+ obj-$(CONFIG_RTC_DRV_VT8500)	+= rtc-vt8500.o
++obj-$(CONFIG_RTC_DRV_WILCO_EC)	+= rtc-wilco-ec.o
+ obj-$(CONFIG_RTC_DRV_WM831X)	+= rtc-wm831x.o
+ obj-$(CONFIG_RTC_DRV_WM8350)	+= rtc-wm8350.o
+ obj-$(CONFIG_RTC_DRV_X1205)	+= rtc-x1205.o
+diff --git a/drivers/rtc/rtc-wilco-ec.c b/drivers/rtc/rtc-wilco-ec.c
+new file mode 100644
+index 000000000000..d8ed791da82d
+--- /dev/null
++++ b/drivers/rtc/rtc-wilco-ec.c
+@@ -0,0 +1,178 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * RTC interface for Wilco Embedded Controller with R/W abilities
++ *
++ * Copyright 2018 Google LLC
++ *
++ * The corresponding platform device is typically registered in
++ * drivers/platform/chrome/wilco_ec/core.c
++ */
 +
-+ssize_t wilco_ec_raw_store(struct device *dev, struct device_attribute *attr,
-+			   const char *buf, size_t count)
++#include <linux/bcd.h>
++#include <linux/err.h>
++#include <linux/kernel.h>
++#include <linux/module.h>
++#include <linux/platform_device.h>
++#include <linux/platform_data/wilco-ec.h>
++#include <linux/rtc.h>
++#include <linux/timekeeping.h>
++
++#define DRV_NAME "rtc-wilco-ec"
++
++#define EC_COMMAND_CMOS			0x7c
++#define EC_CMOS_TOD_WRITE		0x02
++#define EC_CMOS_TOD_READ		0x08
++
++/**
++ * struct ec_rtc_read - Format of RTC returned by EC.
++ * @second: Second value (0..59)
++ * @minute: Minute value (0..59)
++ * @hour: Hour value (0..23)
++ * @day: Day value (1..31)
++ * @month: Month value (1..12)
++ * @year: Year value (full year % 100)
++ * @century: Century value (full year / 100)
++ *
++ * All values are presented in binary (not BCD).
++ */
++struct ec_rtc_read {
++	u8 second;
++	u8 minute;
++	u8 hour;
++	u8 day;
++	u8 month;
++	u8 year;
++	u8 century;
++} __packed;
++
++/**
++ * struct ec_rtc_write - Format of RTC sent to the EC.
++ * @param: EC_CMOS_TOD_WRITE
++ * @century: Century value (full year / 100)
++ * @year: Year value (full year % 100)
++ * @month: Month value (1..12)
++ * @day: Day value (1..31)
++ * @hour: Hour value (0..23)
++ * @minute: Minute value (0..59)
++ * @second: Second value (0..59)
++ * @weekday: Day of the week (0=Saturday)
++ *
++ * All values are presented in BCD.
++ */
++struct ec_rtc_write {
++	u8 param;
++	u8 century;
++	u8 year;
++	u8 month;
++	u8 day;
++	u8 hour;
++	u8 minute;
++	u8 second;
++	u8 weekday;
++} __packed;
++
++int wilco_ec_rtc_read(struct device *dev, struct rtc_time *tm)
 +{
-+	struct wilco_ec_device *ec = dev_get_drvdata(dev);
-+	struct wilco_ec_message msg;
-+	u8 raw_request_data[EC_MAILBOX_DATA_SIZE];
-+	int in_offset = 0;
-+	int out_offset = 0;
++	struct wilco_ec_device *ec = dev_get_drvdata(dev->parent);
++	u8 param = EC_CMOS_TOD_READ;
++	struct ec_rtc_read rtc;
++	struct wilco_ec_message msg = {
++		.type = WILCO_EC_MSG_LEGACY,
++		.flags = WILCO_EC_FLAG_RAW_RESPONSE,
++		.command = EC_COMMAND_CMOS,
++		.request_data = &param,
++		.request_size = sizeof(param),
++		.response_data = &rtc,
++		.response_size = sizeof(rtc),
++	};
++	struct rtc_time calc_tm;
++	unsigned long time;
 +	int ret;
-+
-+	while (in_offset < count) {
-+		char word_buf[EC_MAILBOX_DATA_SIZE];
-+		u8 byte;
-+		int start_offset = in_offset;
-+		int end_offset;
-+
-+		/* Find the start of the byte */
-+		while (buf[start_offset] && isspace(buf[start_offset]))
-+			start_offset++;
-+		if (!buf[start_offset])
-+			break;
-+
-+		/* Find the start of the next byte, if any */
-+		end_offset = start_offset;
-+		while (buf[end_offset] && !isspace(buf[end_offset]))
-+			end_offset++;
-+		if (start_offset > count || end_offset > count)
-+			break;
-+		if (start_offset > EC_MAILBOX_DATA_SIZE ||
-+		    end_offset > EC_MAILBOX_DATA_SIZE)
-+			break;
-+
-+		/* Copy to a new NULL terminated string */
-+		memcpy(word_buf, buf + start_offset, end_offset - start_offset);
-+		word_buf[end_offset - start_offset] = '\0';
-+
-+		/* Convert from hex string */
-+		ret = kstrtou8(word_buf, 16, &byte);
-+		if (ret)
-+			break;
-+
-+		/* Fill this byte into the request buffer */
-+		raw_request_data[out_offset++] = byte;
-+		if (out_offset >= EC_MAILBOX_DATA_SIZE)
-+			break;
-+
-+		in_offset = end_offset;
-+	}
-+	if (out_offset == 0)
-+		return -EINVAL;
-+
-+	/* Clear response data buffer */
-+	memset(raw_response_data, '\0', EC_MAILBOX_DATA_SIZE_EXTENDED);
-+
-+	msg.type = raw_request_data[0] << 8 | raw_request_data[1];
-+	msg.flags = WILCO_EC_FLAG_RAW;
-+	msg.command = raw_request_data[2];
-+	msg.request_data = raw_request_data + 3;
-+	msg.request_size = out_offset - 3;
-+	msg.response_data = raw_response_data;
-+	msg.response_size = EC_MAILBOX_DATA_SIZE;
-+
-+	/* Telemetry commands use extended response data */
-+	if (msg.type == WILCO_EC_MSG_TELEMETRY) {
-+		msg.flags |= WILCO_EC_FLAG_EXTENDED_DATA;
-+		msg.response_size = EC_MAILBOX_DATA_SIZE_EXTENDED;
-+	}
 +
 +	ret = wilco_ec_mailbox(ec, &msg);
 +	if (ret < 0)
 +		return ret;
-+	raw_response_size = ret;
-+	return count;
++
++	tm->tm_sec	= rtc.second;
++	tm->tm_min	= rtc.minute;
++	tm->tm_hour	= rtc.hour;
++	tm->tm_mday	= rtc.day;
++	/*
++	 * The RTC stores the month value as 1-12 but the kernel expects 0-11,
++	 * so ensure invalid/zero month value from RTC is not converted to -1.
++	 */
++	tm->tm_mon	= rtc.month ? rtc.month - 1 : 0;
++	tm->tm_year	= rtc.year + (rtc.century * 100) - 1900;
++	tm->tm_yday	= rtc_year_days(tm->tm_mday, tm->tm_mon, tm->tm_year);
++
++	/* Compute day of week */
++	rtc_tm_to_time(tm, &time);
++	rtc_time_to_tm(time, &calc_tm);
++	tm->tm_wday = calc_tm.tm_wday;
++
++	return 0;
 +}
 +
-+ssize_t wilco_ec_raw_show(struct device *dev, struct device_attribute *attr,
-+			  char *buf)
++int wilco_ec_rtc_write(struct device *dev, struct rtc_time *tm)
 +{
-+	ssize_t count = 0;
++	struct wilco_ec_device *ec = dev_get_drvdata(dev->parent);
++	struct ec_rtc_write rtc;
++	struct wilco_ec_message msg = {
++		.type = WILCO_EC_MSG_LEGACY,
++		.flags = WILCO_EC_FLAG_RAW_RESPONSE,
++		.command = EC_COMMAND_CMOS,
++		.request_data = &rtc,
++		.request_size = sizeof(rtc),
++	};
++	int year = tm->tm_year + 1900;
++	/* Convert from 0=Sunday to 0=Saturday for the EC */
++	int wday = tm->tm_wday == 6 ? 0 : tm->tm_wday + 1;
++	int ret;
 +
-+	if (raw_response_size) {
-+		count = hex_dump_to_buffer(raw_response_data, raw_response_size,
-+					   16, 1, buf, PAGE_SIZE, true);
++	rtc.param	= EC_CMOS_TOD_WRITE;
++	rtc.century	= bin2bcd(year / 100);
++	rtc.year	= bin2bcd(year % 100);
++	rtc.month	= bin2bcd(tm->tm_mon + 1);
++	rtc.day		= bin2bcd(tm->tm_mday);
++	rtc.hour	= bin2bcd(tm->tm_hour);
++	rtc.minute	= bin2bcd(tm->tm_min);
++	rtc.second	= bin2bcd(tm->tm_sec);
++	rtc.weekday	= bin2bcd(wday);
 +
-+		/* Only return response the first time it is read */
-+		raw_response_size = 0;
-+	}
++	ret = wilco_ec_mailbox(ec, &msg);
++	if (ret < 0)
++		return ret;
 +
-+	return count;
++	return 0;
 +}
 +
-+#endif /* CONFIG_WILCO_EC_SYSFS_RAW */
++static const struct rtc_class_ops wilco_ec_rtc_ops = {
++	.read_time = wilco_ec_rtc_read,
++	.set_time = wilco_ec_rtc_write,
++};
 +
- struct ec_info {
- 	u8 index;
- 	const char *label;
-diff --git a/drivers/platform/chrome/wilco_ec/legacy.h b/drivers/platform/chrome/wilco_ec/legacy.h
-index 5c857cb57fa9..340787d25d44 100644
---- a/drivers/platform/chrome/wilco_ec/legacy.h
-+++ b/drivers/platform/chrome/wilco_ec/legacy.h
-@@ -14,6 +14,52 @@
- #define EC_INFO_SIZE			9
- #define EC_COMMAND_STEALTH_MODE		0xfc
- 
-+#ifdef CONFIG_WILCO_EC_SYSFS_RAW
++static int wilco_ec_rtc_probe(struct platform_device *pdev)
++{
++	struct rtc_device *rtc = devm_rtc_device_register(&pdev->dev,
++							  DRV_NAME,
++							  &wilco_ec_rtc_ops,
++							  THIS_MODULE);
++	if (IS_ERR(rtc))
++		return PTR_ERR(rtc);
 +
-+/**
-+ * wilco_ec_raw_store() - Write a raw command to EC, store result to view later
-+ * @dev: Device representing the EC
-+ * @attr: The attribute in question
-+ * @buf: Input buffer, format explained below
-+ * @count: Number of bytes in input buffer
-+ *
-+ * Bytes 0-1 indicate the message type:
-+ *  00 F0 = Execute Legacy Command
-+ *  00 F2 = Read/Write NVRAM Property
-+ * Byte 2 provides the command code
-+ * Bytes 3+ consist of the data passed in the request
-+ *
-+ * example: read the EC info type 3 (EC firmware build date):
-+ *  # echo 00 f0 38 00 03 00 > raw
-+ *
-+ * After calling this function, read the result by using raw_show()
-+ *
-+ * Return: Number of bytes consumed from input, negative error code on failure
-+ */
-+ssize_t wilco_ec_raw_store(struct device *dev, struct device_attribute *attr,
-+			   const char *buf, size_t count);
++	return 0;
++}
 +
-+/**
-+ * wilco_ec_raw_show() - Show result from previous call to raw_store()
-+ * @dev: Device representing the EC
-+ * @attr: The attribute in question
-+ * @buf: Output buffer to be filled
-+ *
-+ * Example usage:
-+ *	// Call raw_store(), read EC info type 3 (EC firmware build date)
-+ *	# echo 00 f0 38 00 03 00 > raw
-+ *	// Call this function, view the result. The decoded ASCII result
-+ *	// "12/21/18" is included after the raw hex.
-+ *	# cat raw
-+ *	00 31 32 2f 32 31 2f 31 38 00 38 00 01 00 2f 00  .12/21/18.8.../.
-+ *
-+ * Return: Number of bytes written to output, negative error code on failure
-+ */
-+ssize_t wilco_ec_raw_show(struct device *dev, struct device_attribute *attr,
-+			  char *buf);
++static struct platform_driver wilco_ec_rtc_driver = {
++	.driver = {
++		.name = DRV_NAME,
++	},
++	.probe = wilco_ec_rtc_probe,
++};
 +
-+#endif /* CONFIG_WILCO_EC_SYSFS_RAW */
++module_platform_driver(wilco_ec_rtc_driver);
 +
- /**
-  * wilco_ec_version_show() - Display Wilco Embedded Controller version info
-  *
-diff --git a/drivers/platform/chrome/wilco_ec/sysfs.c b/drivers/platform/chrome/wilco_ec/sysfs.c
-index e78a3ec3506b..0611a73fcdce 100644
---- a/drivers/platform/chrome/wilco_ec/sysfs.c
-+++ b/drivers/platform/chrome/wilco_ec/sysfs.c
-@@ -28,9 +28,15 @@ __ATTR(_name, 0644, wilco_ec_##_name##_show, wilco_ec_##_name##_store)
- /* Make top-level attributes, which will live inside GOOG000C:00/ */
- static struct device_attribute version_attr = WILCO_EC_ATTR_RO(version);
- static struct device_attribute stealth_attr = WILCO_EC_ATTR_WO(stealth_mode);
-+#ifdef CONFIG_WILCO_EC_SYSFS_RAW
-+static struct device_attribute raw_attr = WILCO_EC_ATTR_RW(raw);
-+#endif
- static struct attribute *wilco_ec_toplevel_attrs[] = {
- 	&version_attr.attr,
- 	&stealth_attr.attr,
-+#ifdef CONFIG_WILCO_EC_SYSFS_RAW
-+	&raw_attr.attr,
-+#endif
- 	NULL
- };
- ATTRIBUTE_GROUPS(wilco_ec_toplevel);
++MODULE_ALIAS("platform:" DRV_NAME);
++MODULE_AUTHOR("Nick Crews <ncrews@google.com>");
++MODULE_LICENSE("GPL v2");
++MODULE_DESCRIPTION("Wilco EC RTC driver");
 -- 
 2.20.1.97.g81188d93c3-goog
 
