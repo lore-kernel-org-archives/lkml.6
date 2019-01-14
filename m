@@ -7,47 +7,47 @@ X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A219CC43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 13:27:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 51031C43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 13:28:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 725C720651
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 13:27:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2237420651
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 13:28:09 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="hFhA8QE8"
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="oQwcW9+v"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727073AbfANN15 (ORCPT
+        id S1726893AbfANN0q (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 14 Jan 2019 08:27:57 -0500
-Received: from lelv0143.ext.ti.com ([198.47.23.248]:41344 "EHLO
-        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726717AbfANN1z (ORCPT
+        Mon, 14 Jan 2019 08:26:46 -0500
+Received: from fllv0016.ext.ti.com ([198.47.19.142]:37448 "EHLO
+        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726854AbfANN0n (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 Jan 2019 08:27:55 -0500
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id x0EDQmWa019648;
-        Mon, 14 Jan 2019 07:26:48 -0600
+        Mon, 14 Jan 2019 08:26:43 -0500
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id x0EDPs7b098170;
+        Mon, 14 Jan 2019 07:25:54 -0600
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1547472408;
-        bh=0PiaQYnV59ccfwEhn8gPR5j82jBP2sS0jMXzDzaA8TY=;
+        s=ti-com-17Q1; t=1547472354;
+        bh=GogJmhPjCHQln5mVKUVQZbQ+wSVFSwsYqqaCZro7fL4=;
         h=From:To:CC:Subject:Date:In-Reply-To:References;
-        b=hFhA8QE82uMeSb5OF7qMlUx6XubeLPJNUbOTu8pcgaQaL98xcm7YrnF8fMnDsopih
-         7trFXBk+ZF6gKvoVgNkgxThAyfJOGvhWTOXhA+L2cb8LCuqsAyoBQnprtQsrnsGoCv
-         mUKcD/laa7eRygEsk9MHJAKduAPXVkBzQRUa1WBg=
-Received: from DFLE104.ent.ti.com (dfle104.ent.ti.com [10.64.6.25])
-        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x0EDQmfb095069
+        b=oQwcW9+vGGXoQFzkFFMkyS+/zrvRPAh6e8C6iKuoM321++ugdV9tsIdhwMx4bUefT
+         q2c6YRMMK5tmUormImD1GnWa5OSED4Q1P9ROShpg0uhaRBPXB2zI1b+ETJyqCPIlw0
+         eOOzcDA/5QjxHbYmskQxV04UEJWa8F7ohOM13sac=
+Received: from DLEE109.ent.ti.com (dlee109.ent.ti.com [157.170.170.41])
+        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x0EDPsSB088982
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 14 Jan 2019 07:26:48 -0600
-Received: from DFLE101.ent.ti.com (10.64.6.22) by DFLE104.ent.ti.com
- (10.64.6.25) with Microsoft SMTP Server (version=TLS1_2,
+        Mon, 14 Jan 2019 07:25:54 -0600
+Received: from DLEE100.ent.ti.com (157.170.170.30) by DLEE109.ent.ti.com
+ (157.170.170.41) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Mon, 14
- Jan 2019 07:26:46 -0600
-Received: from dlep32.itg.ti.com (157.170.170.100) by DFLE101.ent.ti.com
- (10.64.6.22) with Microsoft SMTP Server (version=TLS1_0,
+ Jan 2019 07:25:54 -0600
+Received: from dlep32.itg.ti.com (157.170.170.100) by DLEE100.ent.ti.com
+ (157.170.170.30) with Microsoft SMTP Server (version=TLS1_0,
  cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1591.10 via Frontend Transport;
- Mon, 14 Jan 2019 07:26:47 -0600
+ Mon, 14 Jan 2019 07:25:54 -0600
 Received: from a0393678ub.india.ti.com (ileax41-snat.itg.ti.com [10.172.224.153])
-        by dlep32.itg.ti.com (8.14.3/8.13.8) with ESMTP id x0EDOoWj028516;
-        Mon, 14 Jan 2019 07:26:43 -0600
+        by dlep32.itg.ti.com (8.14.3/8.13.8) with ESMTP id x0EDOoWY028516;
+        Mon, 14 Jan 2019 07:25:49 -0600
 From:   Kishon Vijay Abraham I <kishon@ti.com>
 To:     Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
         Rob Herring <robh+dt@kernel.org>,
@@ -63,85 +63,64 @@ CC:     Kishon Vijay Abraham I <kishon@ti.com>,
         <linux-pci@vger.kernel.org>, <devicetree@vger.kernel.org>,
         <linux-kernel@vger.kernel.org>, <linux-omap@vger.kernel.org>,
         <linux-arm-kernel@lists.infradead.org>, <linux-arm-kernel@axis.com>
-Subject: [PATCH 23/24] misc: pci_endpoint_test: Add support to test PCI EP in AM654x
-Date:   Mon, 14 Jan 2019 18:54:23 +0530
-Message-ID: <20190114132424.6445-24-kishon@ti.com>
+Subject: [PATCH 12/24] PCI: keystone: Prevent ARM32 specific code to be compiled for ARM64
+Date:   Mon, 14 Jan 2019 18:54:12 +0530
+Message-ID: <20190114132424.6445-13-kishon@ti.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190114132424.6445-1-kishon@ti.com>
 References: <20190114132424.6445-1-kishon@ti.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-TI's AM654x PCIe EP has a restriction that BAR_0 is mapped to
-application registers. "PCIe Inbound Address Translation" section in
-AM65x Sitara Processors TRM (SPRUID7 – April 2018) describes BAR0 is
-reserved. Configure pci_endpoint_test to use BAR_2 instead.
-Also set alignment to 64K since "PCIe Subsystem Address Translation"
-section in TRM indicates minimum ATU window size is 64K.
+hook_fault_code is an ARM32 specific API for hooking into data abort.
+Since pci-keystone.c will be used for AM65X platforms which is an
+ARM64 platform, allow hook_fault_code to be compiled only for ARM32.
 
 Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
 ---
- drivers/misc/pci_endpoint_test.c | 16 ++++++++++++++++
- 1 file changed, 16 insertions(+)
+ drivers/pci/controller/dwc/pci-keystone.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/drivers/misc/pci_endpoint_test.c b/drivers/misc/pci_endpoint_test.c
-index 896e2df9400f..6dfaeeaeec0a 100644
---- a/drivers/misc/pci_endpoint_test.c
-+++ b/drivers/misc/pci_endpoint_test.c
-@@ -75,6 +75,11 @@
- #define PCI_ENDPOINT_TEST_IRQ_TYPE		0x24
- #define PCI_ENDPOINT_TEST_IRQ_NUMBER		0x28
- 
-+#define PCI_DEVICE_ID_TI_AM654			0xb00c
-+
-+#define is_am654_pci_dev(pdev)		\
-+		((pdev)->device == PCI_DEVICE_ID_TI_AM654)
-+
- static DEFINE_IDA(pci_endpoint_test_ida);
- 
- #define to_endpoint_test(priv) container_of((priv), struct pci_endpoint_test, \
-@@ -588,6 +593,7 @@ static long pci_endpoint_test_ioctl(struct file *file, unsigned int cmd,
- 	int ret = -EINVAL;
- 	enum pci_barno bar;
- 	struct pci_endpoint_test *test = to_endpoint_test(file->private_data);
-+	struct pci_dev *pdev = test->pdev;
- 
- 	mutex_lock(&test->mutex);
- 	switch (cmd) {
-@@ -595,6 +601,8 @@ static long pci_endpoint_test_ioctl(struct file *file, unsigned int cmd,
- 		bar = arg;
- 		if (bar < 0 || bar > 5)
- 			goto ret;
-+		if (is_am654_pci_dev(pdev) && bar == BAR_0)
-+			goto ret;
- 		ret = pci_endpoint_test_bar(test, bar);
- 		break;
- 	case PCITEST_LEGACY_IRQ:
-@@ -785,10 +793,18 @@ static void pci_endpoint_test_remove(struct pci_dev *pdev)
- 	pci_disable_device(pdev);
+diff --git a/drivers/pci/controller/dwc/pci-keystone.c b/drivers/pci/controller/dwc/pci-keystone.c
+index d1ecf826dfe8..9d7cedd96505 100644
+--- a/drivers/pci/controller/dwc/pci-keystone.c
++++ b/drivers/pci/controller/dwc/pci-keystone.c
+@@ -693,6 +693,7 @@ static int ks_pcie_config_legacy_irq(struct keystone_pcie *ks_pcie)
+ 	return ret;
  }
  
-+static const struct pci_endpoint_test_data am654_data = {
-+	.test_reg_bar = BAR_2,
-+	.alignment = SZ_64K,
-+};
-+
- static const struct pci_device_id pci_endpoint_test_tbl[] = {
- 	{ PCI_DEVICE(PCI_VENDOR_ID_TI, PCI_DEVICE_ID_TI_DRA74x) },
- 	{ PCI_DEVICE(PCI_VENDOR_ID_TI, PCI_DEVICE_ID_TI_DRA72x) },
- 	{ PCI_DEVICE(PCI_VENDOR_ID_SYNOPSYS, 0xedda) },
-+	{ PCI_DEVICE(PCI_VENDOR_ID_TI, PCI_DEVICE_ID_TI_AM654),
-+	  .driver_data = (kernel_ulong_t)&am654_data
-+	},
- 	{ }
- };
- MODULE_DEVICE_TABLE(pci, pci_endpoint_test_tbl);
++#ifdef CONFIG_ARM
+ /*
+  * When a PCI device does not exist during config cycles, keystone host gets a
+  * bus error instead of returning 0xffffffff. This handler always returns 0
+@@ -712,6 +713,7 @@ static int ks_pcie_fault(unsigned long addr, unsigned int fsr,
+ 
+ 	return 0;
+ }
++#endif
+ 
+ static int __init ks_pcie_init_id(struct keystone_pcie *ks_pcie)
+ {
+@@ -761,12 +763,14 @@ static int __init ks_pcie_host_init(struct pcie_port *pp)
+ 	if (ret < 0)
+ 		return ret;
+ 
++#ifdef CONFIG_ARM
+ 	/*
+ 	 * PCIe access errors that result into OCP errors are caught by ARM as
+ 	 * "External aborts"
+ 	 */
+ 	hook_fault_code(17, ks_pcie_fault, SIGBUS, 0,
+ 			"Asynchronous external abort");
++#endif
+ 
+ 	ks_pcie_start_link(pci);
+ 	dw_pcie_wait_for_link(pci);
 -- 
 2.17.1
 
