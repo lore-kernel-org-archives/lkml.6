@@ -2,88 +2,86 @@ Return-Path: <SRS0=tq6k=PW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 01CC8C43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 17:34:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EB025C43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 17:37:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BAECF206B7
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 17:34:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B9927206B7
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 17:37:04 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="b/tRj+Uo"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="LzRSVic2"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726790AbfANRem (ORCPT
+        id S1726780AbfANRhD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 14 Jan 2019 12:34:42 -0500
-Received: from mail-ot1-f46.google.com ([209.85.210.46]:35854 "EHLO
-        mail-ot1-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726559AbfANRel (ORCPT
+        Mon, 14 Jan 2019 12:37:03 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:42436 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726559AbfANRhC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 Jan 2019 12:34:41 -0500
-Received: by mail-ot1-f46.google.com with SMTP id k98so20039286otk.3
-        for <linux-kernel@vger.kernel.org>; Mon, 14 Jan 2019 09:34:41 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=iZoINDsCogDlsBtTm9onwfox9UQ/Qsv94qIAFZtz2Mo=;
-        b=b/tRj+UotVPcCvbk0eEJFGS/w3zWdHT+s6pnyfLRLq8mOH/yoe++jpmApILhxkevsq
-         I20pjPA/nlRx/eH7qPKTMQ/nNGz2H+syU9M90hKldtEH+1dF3jiAW7OZ0ix7Qug61AMT
-         za3mxScFkTwkxmiqAGmq2XdixiL4p98yRdQIhHUOc7Mi0ym/S0fDZIFqKNGVIeH60G2O
-         JM4mNGf+YByTP0IF9QJ/XNS3hjjV5X+YM8a56mRBTJ5ed5vmS6jcy15SwAutj2l6c47C
-         CwX7WmLCAe5WK6JX/38HViTECNknzXjGNm5+NzMpR1ARern1yDoMa4Rnbt2v3I4+WvaP
-         FYnQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=iZoINDsCogDlsBtTm9onwfox9UQ/Qsv94qIAFZtz2Mo=;
-        b=HfM27GYONrZ22TIqDJa7TzVNW1JP4bM5ZlrxtBTpBc9I7hT87gLMry9152p73SANMq
-         4Ap2+/xcotxnz90K2+o+g3Vy9geiaJLw9P7CMH5I+m5/ny44Hnzb/ZI+wBEfk9H79E1w
-         6RG8KSV+ISVcPLJ9Pn7oTT1kzXDfizw76Uq1Oz8uardz/kb7VGrwj40pB9pusYMzyJHJ
-         EJZJALXRIWiL9+QzpfV77vjAQmYnkIsUpT9r6Mt0f6BPhr6i+tnb1HlEaEF/EZb3Uu6M
-         aPWnaa+Ub3nlCTmK7kP9uqw/A0cDcmYBvqiN6by/cVBVBRzSE2OcMRYDO/V45TrkAApM
-         2s8Q==
-X-Gm-Message-State: AJcUukdUJnHrI6BQ/4RpO+jijJxVEybUJUayAnXOIpHmJEC7Swr5ta3W
-        GcMnmi06C7dN+yP1WBFaNOeXw/hTJqHX8o+rtCU=
-X-Google-Smtp-Source: ALg8bN5f8RWUlVwmbQwj7J+WRzC0IQve+/U2IIHJGeI0cGvyxBgZZNIldMG8i5Kj6CgnnR6Vw5bT52fJN7BEIuh6aHU=
-X-Received: by 2002:a9d:7e87:: with SMTP id m7mr698945otp.225.1547487280922;
- Mon, 14 Jan 2019 09:34:40 -0800 (PST)
+        Mon, 14 Jan 2019 12:37:02 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=rqdUcD6zWC7vTK5KKyPK6+xpPlOHeOPj/wHvCYm6p8k=; b=LzRSVic2vRQu0ZaoUWvxnGDiJ
+        UIAQA2+SjZNjAhWxjDBV2Um1c9kJX0wzVzuLfaQkStaosGff9IiIvex3CxcB3HuEmfOzyZFOxBX0I
+        PhxlgPiSTYHDg4ybQgjdH23ue5kr6Dm/a5xBbvEtk1oLKCv0tYgCavrbWM6OYdWLgOjetRSstVk4D
+        W023aC5B5alraBTcPwUYKpLkoFHKgFg5DwbckgtmTIF+OA2afS6puHSP2S/INbpKI5wcJZc9bShRp
+        VQwwmkoupCESUQlux46GSHJ0r14pBVUQg0nprVkaOlog7cBzC6vBRz1GFxox4jryxz2GRLmN4swJz
+        SlVPouXtA==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gj6AV-0004vL-E7; Mon, 14 Jan 2019 17:36:59 +0000
+Date:   Mon, 14 Jan 2019 09:36:59 -0800
+From:   Christoph Hellwig <hch@infradead.org>
+To:     Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc:     Christoph Hellwig <hch@infradead.org>,
+        Vinayak Holikatti <vinholikatti@gmail.com>,
+        "James E.J. Bottomley" <jejb@linux.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org,
+        Douglas Anderson <dianders@chromium.org>
+Subject: Re: [PATCH] scsi: ufs: Consider device limitations for dma_mask
+Message-ID: <20190114173659.GA17788@infradead.org>
+References: <20190111225402.6133-1-bjorn.andersson@linaro.org>
+ <20190114111109.GA18673@infradead.org>
+ <20190114173051.GA9278@minitux>
 MIME-Version: 1.0
-References: <e1b63429-30d6-1f52-ce6a-72b1171286f9@nextfour.com>
- <CAOMZO5CB_b3QbPQRPEW-0ybU1j1Vg1qah0xZhxynf-5d13-ogg@mail.gmail.com> <8b6b2967-9ca7-b7dc-49c6-1cd5cd77851f@nextfour.com>
-In-Reply-To: <8b6b2967-9ca7-b7dc-49c6-1cd5cd77851f@nextfour.com>
-From:   Fabio Estevam <festevam@gmail.com>
-Date:   Mon, 14 Jan 2019 15:35:08 -0200
-Message-ID: <CAOMZO5AjQcLbAWR7jR27nu3pH+XVFgX3P8k8rocqYxsibKv0sA@mail.gmail.com>
-Subject: Re: Regression: i.MX6: pinctrl: fsl: add scu based pinctrl support
-To:     =?UTF-8?Q?Mika_Penttil=C3=A4?= <mika.penttila@nextfour.com>
-Cc:     "aisheng.dong@nxp.com" <aisheng.dong@nxp.com>,
-        "shawnguo@kernel.org" <shawnguo@kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190114173051.GA9278@minitux>
+User-Agent: Mutt/1.9.2 (2017-12-15)
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Mika,
+On Mon, Jan 14, 2019 at 09:30:51AM -0800, Bjorn Andersson wrote:
+> The problem here is that the capability bit states that the controller
+> itself claim to be able to deal with 64-bit addresses, which is probably
+> true. The thing that the struct device represents (the integrated
+> controller, on a bus in this SoC) doesn't.
+> 
+> The device model accurately handles this and carries a dma_mask that's
+> appropriate for the device in this system - the capability is not.
+> 
+> > You either need to introduce a quirk or a way to communicate the
+> > different limit so that it can be set by the core.
+> 
+> The system's limit is already communicated in hba->dev->dma_mask, but
+> the ufshcd driver overwrites this. I expect that this would make sense
+> if the device model claims we can do e.g. 40 bit addressing, but the
+> 64-bit capability is not set in the controller - in which case ufshcd
+> would accurately lower this to 32-bits.
 
-On Mon, Jan 14, 2019 at 3:17 PM Mika Penttil=C3=A4
-<mika.penttila@nextfour.com> wrote:
-
-> I am merging mainline and this regression is present in 5.0-rc2 so it sho=
-uld have the mentioned patch applied.
-
-Merging mainline? Could you test this against a clean mainline tree?
-
-> Obviously I had to revert them both ("pinctrl: imx: fix NO_PAD_CTL settin=
-g for MMIO pads"
->  and "pinctrl: fsl: add scu based pinctrl support"), and after that it wo=
-rks. Is there something more I could test?
-
-Please share your dts so that we can try to understand what is going on.
+No, that is absolutely not true.  dev->dma_mask is set by the driver
+to what the driver based on the device specsheet/register claims to
+support.  dev->bus_dma_mask contains any additional limits imposed
+by the bus/system, but that is handled transparently by the dma mapping
+code.
