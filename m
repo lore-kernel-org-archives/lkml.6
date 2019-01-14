@@ -4,50 +4,50 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EEE25C43444
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 13:25:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2120AC43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 13:25:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B78502086D
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 13:25:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E2D4720659
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 13:25:39 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="nYzVyI5K"
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="mF9gl4t4"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726712AbfANNZ3 (ORCPT
+        id S1726734AbfANNZi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 14 Jan 2019 08:25:29 -0500
-Received: from lelv0143.ext.ti.com ([198.47.23.248]:40930 "EHLO
-        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726525AbfANNZ1 (ORCPT
+        Mon, 14 Jan 2019 08:25:38 -0500
+Received: from fllv0016.ext.ti.com ([198.47.19.142]:37158 "EHLO
+        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726563AbfANNZg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 Jan 2019 08:25:27 -0500
+        Mon, 14 Jan 2019 08:25:36 -0500
 Received: from lelv0266.itg.ti.com ([10.180.67.225])
-        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id x0EDPAxx019305;
-        Mon, 14 Jan 2019 07:25:10 -0600
+        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id x0EDPFgY098049;
+        Mon, 14 Jan 2019 07:25:15 -0600
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1547472310;
-        bh=TXLdx2SAosMFqyOjlSQie8ZcUaPTkakA6by1/PgLXHo=;
+        s=ti-com-17Q1; t=1547472315;
+        bh=ZOxErDAenCR4nywVOJbopTCQfMydSgJQFf0ad6hjYzM=;
         h=From:To:CC:Subject:Date:In-Reply-To:References;
-        b=nYzVyI5KUJ+mMVZEpLIUqw5HX93v3kPPKjIRord7C45K+29Cc7nLbKzK0WvK716Hb
-         4OvbRZCAzQe3eOtpwps2Vgj5Uv4zo5DQuPP8Dce298Yltlu7oo6yIu39fw0saQQme/
-         odVtamfyu8iqSd4HWCE5Qf2DKoVUK+lOZy2tomUs=
-Received: from DFLE103.ent.ti.com (dfle103.ent.ti.com [10.64.6.24])
-        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x0EDPAOb011734
+        b=mF9gl4t4rXakuReor+2NmekbjsQHsDqFnPgnchwmK4VZN6lkWMgbMt2i9Hrbs9sVA
+         5OjgHTqe7DqYPpyhsRIKH7tVjh0J2pQSEKQzrbFFNzrIbF6HrP7Ynw+qoh7LXh1csZ
+         vwFIz4CZLWkI424EW72IKOGyj+wr0H50ETrC7zlE=
+Received: from DFLE113.ent.ti.com (dfle113.ent.ti.com [10.64.6.34])
+        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x0EDPFhj011765
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 14 Jan 2019 07:25:10 -0600
-Received: from DFLE109.ent.ti.com (10.64.6.30) by DFLE103.ent.ti.com
- (10.64.6.24) with Microsoft SMTP Server (version=TLS1_2,
+        Mon, 14 Jan 2019 07:25:15 -0600
+Received: from DFLE101.ent.ti.com (10.64.6.22) by DFLE113.ent.ti.com
+ (10.64.6.34) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Mon, 14
- Jan 2019 07:25:10 -0600
-Received: from dlep32.itg.ti.com (157.170.170.100) by DFLE109.ent.ti.com
- (10.64.6.30) with Microsoft SMTP Server (version=TLS1_0,
+ Jan 2019 07:25:15 -0600
+Received: from dlep32.itg.ti.com (157.170.170.100) by DFLE101.ent.ti.com
+ (10.64.6.22) with Microsoft SMTP Server (version=TLS1_0,
  cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1591.10 via Frontend Transport;
- Mon, 14 Jan 2019 07:25:10 -0600
+ Mon, 14 Jan 2019 07:25:15 -0600
 Received: from a0393678ub.india.ti.com (ileax41-snat.itg.ti.com [10.172.224.153])
-        by dlep32.itg.ti.com (8.14.3/8.13.8) with ESMTP id x0EDOoWP028516;
-        Mon, 14 Jan 2019 07:25:06 -0600
+        by dlep32.itg.ti.com (8.14.3/8.13.8) with ESMTP id x0EDOoWQ028516;
+        Mon, 14 Jan 2019 07:25:11 -0600
 From:   Kishon Vijay Abraham I <kishon@ti.com>
 To:     Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
         Rob Herring <robh+dt@kernel.org>,
@@ -63,9 +63,9 @@ CC:     Kishon Vijay Abraham I <kishon@ti.com>,
         <linux-pci@vger.kernel.org>, <devicetree@vger.kernel.org>,
         <linux-kernel@vger.kernel.org>, <linux-omap@vger.kernel.org>,
         <linux-arm-kernel@lists.infradead.org>, <linux-arm-kernel@axis.com>
-Subject: [PATCH 03/24] dt-bindings: PCI: keystone: Add "reg-names" binding information
-Date:   Mon, 14 Jan 2019 18:54:03 +0530
-Message-ID: <20190114132424.6445-4-kishon@ti.com>
+Subject: [PATCH 04/24] PCI: keystone: Perform host initialization in a single function
+Date:   Mon, 14 Jan 2019 18:54:04 +0530
+Message-ID: <20190114132424.6445-5-kishon@ti.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190114132424.6445-1-kishon@ti.com>
 References: <20190114132424.6445-1-kishon@ti.com>
@@ -77,35 +77,99 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add "reg-names" binding information in order for device tree node
-to be populated with the correct register strings. This will break
-old dt compatibility. However Keystone PCI has never worked
-in upstream kernel due to lack of SERDES support. Before SERDES
-support is added, cleanup the Keystone PCI dt-bindngs. This new
-binding will also be used by PCI in AM654 platform.
+No functional change. Instead of having two functions
+ks_pcie_add_pcie_port and ks_pcie_dw_host_init for initializing host,
+have a single function to perform all the host initialization.
 
 Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
 ---
- Documentation/devicetree/bindings/pci/pci-keystone.txt | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ drivers/pci/controller/dwc/pci-keystone.c | 63 +++++++++--------------
+ 1 file changed, 23 insertions(+), 40 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/pci/pci-keystone.txt b/Documentation/devicetree/bindings/pci/pci-keystone.txt
-index 2030ee0dc4f9..3a551687cfa2 100644
---- a/Documentation/devicetree/bindings/pci/pci-keystone.txt
-+++ b/Documentation/devicetree/bindings/pci/pci-keystone.txt
-@@ -12,8 +12,10 @@ described here as well as properties that are not applicable.
- Required Properties:-
+diff --git a/drivers/pci/controller/dwc/pci-keystone.c b/drivers/pci/controller/dwc/pci-keystone.c
+index f63268aee2de..3f917ffa9105 100644
+--- a/drivers/pci/controller/dwc/pci-keystone.c
++++ b/drivers/pci/controller/dwc/pci-keystone.c
+@@ -446,45 +446,6 @@ static int ks_pcie_start_link(struct dw_pcie *pci)
+ 	return 0;
+ }
  
- compatibility: "ti,keystone-pcie"
--reg:	index 1 is the base address and length of DW application registers.
--	index 2 is the base address and length of PCI device ID register.
-+reg: Three register ranges as listed in the reg-names property
-+reg-names: "dbics" for the DesignWare PCIe registers, "app" for the
-+	   TI specific application registers, "config" for the
-+	   configuration space address
+-/**
+- * ks_pcie_dw_host_init() - initialize host for v3_65 dw hardware
+- *
+- * Ioremap the register resources, initialize legacy irq domain
+- * and call dw_pcie_v3_65_host_init() API to initialize the Keystone
+- * PCI host controller.
+- */
+-static int __init ks_pcie_dw_host_init(struct keystone_pcie *ks_pcie)
+-{
+-	struct dw_pcie *pci = ks_pcie->pci;
+-	struct pcie_port *pp = &pci->pp;
+-	struct device *dev = pci->dev;
+-	struct platform_device *pdev = to_platform_device(dev);
+-	struct resource *res;
+-
+-	/* Index 0 is the config reg. space address */
+-	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	pci->dbi_base = devm_pci_remap_cfg_resource(dev, res);
+-	if (IS_ERR(pci->dbi_base))
+-		return PTR_ERR(pci->dbi_base);
+-
+-	/*
+-	 * We set these same and is used in pcie rd/wr_other_conf
+-	 * functions
+-	 */
+-	pp->va_cfg0_base = pci->dbi_base + SPACE0_REMOTE_CFG_OFFSET;
+-	pp->va_cfg1_base = pp->va_cfg0_base;
+-
+-	/* Index 1 is the application reg. space address */
+-	res = platform_get_resource(pdev, IORESOURCE_MEM, 1);
+-	ks_pcie->va_app_base = devm_ioremap_resource(dev, res);
+-	if (IS_ERR(ks_pcie->va_app_base))
+-		return PTR_ERR(ks_pcie->va_app_base);
+-
+-	ks_pcie->app = *res;
+-
+-	return dw_pcie_host_init(pp);
+-}
+-
+ static void ks_pcie_quirk(struct pci_dev *dev)
+ {
+ 	struct pci_bus *bus = dev->bus;
+@@ -826,10 +787,32 @@ static int __init ks_pcie_add_pcie_port(struct keystone_pcie *ks_pcie,
+ 	struct dw_pcie *pci = ks_pcie->pci;
+ 	struct pcie_port *pp = &pci->pp;
+ 	struct device *dev = &pdev->dev;
++	struct resource *res;
+ 	int ret;
  
- pcie_msi_intc : Interrupt controller device node for MSI IRQ chip
- 	interrupt-cells: should be set to 1
++	/* Index 0 is the config reg. space address */
++	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
++	pci->dbi_base = devm_pci_remap_cfg_resource(dev, res);
++	if (IS_ERR(pci->dbi_base))
++		return PTR_ERR(pci->dbi_base);
++
++	/*
++	 * We set these same and is used in pcie rd/wr_other_conf
++	 * functions
++	 */
++	pp->va_cfg0_base = pci->dbi_base + SPACE0_REMOTE_CFG_OFFSET;
++	pp->va_cfg1_base = pp->va_cfg0_base;
++
++	/* Index 1 is the application reg. space address */
++	res = platform_get_resource(pdev, IORESOURCE_MEM, 1);
++	ks_pcie->va_app_base = devm_ioremap_resource(dev, res);
++	if (IS_ERR(ks_pcie->va_app_base))
++		return PTR_ERR(ks_pcie->va_app_base);
++
++	ks_pcie->app = *res;
++
+ 	pp->ops = &ks_pcie_host_ops;
+-	ret = ks_pcie_dw_host_init(ks_pcie);
++	ret = dw_pcie_host_init(pp);
+ 	if (ret) {
+ 		dev_err(dev, "failed to initialize host\n");
+ 		return ret;
 -- 
 2.17.1
 
