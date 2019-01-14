@@ -2,199 +2,152 @@ Return-Path: <SRS0=tq6k=PW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 42C2CC43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 11:36:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F610C43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 11:37:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1B878205F4
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 11:36:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0CB332086D
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 11:37:49 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=jms.id.au header.i=@jms.id.au header.b="K6nSldNn"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726643AbfANLgy (ORCPT
+        id S1726686AbfANLhr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 14 Jan 2019 06:36:54 -0500
-Received: from g9t1613g.houston.hpe.com ([15.241.32.99]:55611 "EHLO
-        g9t1613g.houston.hpe.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726552AbfANLgx (ORCPT
+        Mon, 14 Jan 2019 06:37:47 -0500
+Received: from mail-qk1-f193.google.com ([209.85.222.193]:34520 "EHLO
+        mail-qk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726552AbfANLhq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 Jan 2019 06:36:53 -0500
-X-Greylist: delayed 390 seconds by postgrey-1.27 at vger.kernel.org; Mon, 14 Jan 2019 06:36:52 EST
-Received: from g4t3428.houston.hpe.com (g4t3428.houston.hpe.com [15.241.140.76])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by g9t1613g.houston.hpe.com (Postfix) with ESMTPS id 57368611E6;
-        Mon, 14 Jan 2019 11:30:29 +0000 (UTC)
-Received: from sarge.linuxathome.me (unknown [16.214.81.200])
-        by g4t3428.houston.hpe.com (Postfix) with SMTP id 1B22C53;
-        Mon, 14 Jan 2019 11:30:17 +0000 (UTC)
-Date:   Mon, 14 Jan 2019 11:30:16 +0000
-From:   Hedi Berriche <hedi.berriche@hpe.com>
-To:     Bhupesh Sharma <bhsharma@redhat.com>
-Cc:     Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
-        linux-efi@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Russ Anderson <rja@hpe.com>, Mike Travis <mike.travis@hpe.com>,
-        Dimitri Sivanich <sivanich@hpe.com>,
-        Steve Wahl <steve.wahl@hpe.com>,
-        Bhupesh SHARMA <bhupesh.linux@gmail.com>
-Subject: Re: [PATCH 3/3] x86/platform/UV: use efi_runtime_sem to serialise
- BIOS calls
-Message-ID: <20190114113016.GS12284@sarge.linuxathome.me>
-Mail-Followup-To: Bhupesh Sharma <bhsharma@redhat.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
-        linux-efi@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Russ Anderson <rja@hpe.com>, Mike Travis <mike.travis@hpe.com>,
-        Dimitri Sivanich <sivanich@hpe.com>,
-        Steve Wahl <steve.wahl@hpe.com>,
-        Bhupesh SHARMA <bhupesh.linux@gmail.com>
-References: <20190109104541.25733-1-hedi.berriche@hpe.com>
- <20190109104541.25733-4-hedi.berriche@hpe.com>
- <134565bb-0f5e-27c7-199c-af6132dc0dc3@redhat.com>
+        Mon, 14 Jan 2019 06:37:46 -0500
+Received: by mail-qk1-f193.google.com with SMTP id q8so10314320qke.1;
+        Mon, 14 Jan 2019 03:37:45 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=jms.id.au; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=UmEzO4e1e6vFLZAGRiwbe+TNqzVuSwUaxHWL6mc1/OU=;
+        b=K6nSldNnEVLux1II+czubi/ovE96RuKcxERez8EcGBmtEfO4+Ky5lsl31tamkrhQXZ
+         sKR6TYzarSTA9+JzTd7SQRVRtzfIOVvcjyCiD/zQ/FSSR1AOl6JorN0iG0w+1e77vjD0
+         mvt71MncS+1oUEsk0Hx68K6Sx19Kugsne8V6k=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=UmEzO4e1e6vFLZAGRiwbe+TNqzVuSwUaxHWL6mc1/OU=;
+        b=bmRJOa9sNolVJNdDzgvlCNuhVjIEZ4tBa0ym8gpbXEJXozwMVLJSTzUUhLy+KSmko8
+         jzHiuFAtvJTZc/mCAD38lOgfOz8V385n+AMKgqc1IFvPUvM8qiqsMiXkRj09jC6JX6ap
+         A70oV2Lpq0UUq6NV90QbDzyFAsOnwdBrL5lvp5z+Dr49aXQo+tMZpHj5qeqzPBNlh9uS
+         cOoH/yt6Xhz8ATch7WQy5dNkm6Gnzy3vaWIBldWRr8bs3XZmbMngiPWpMyQo8/gm9vYf
+         6qziyViss8/w/SocgvR4vgNFRL4rBYNi+0wzd/NRFbCGiPMhlgk6ck/qDrpZs9K/ZJmu
+         noaA==
+X-Gm-Message-State: AJcUukdhWbhod0hxTQeyG/bQFeRSHMCxHZsUoPK2WhxOLsZFQXK8KqDK
+        Fhdm8QUFODatM/duWPws9XKOHqiDmObVWSJgaJrr41MsasY=
+X-Google-Smtp-Source: ALg8bN7LPJ07kFDCuOMIc6pxJ5nGRgnv7nRFpcAdAx9MGwowUaOAStHoGffUAT1A2DWZwCw8wqnUau8msM9pg6jy5XM=
+X-Received: by 2002:a37:bc06:: with SMTP id m6mr22839295qkf.336.1547465865164;
+ Mon, 14 Jan 2019 03:37:45 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Disposition: inline
-In-Reply-To: <134565bb-0f5e-27c7-199c-af6132dc0dc3@redhat.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20190107214136.5256-1-jae.hyun.yoo@linux.intel.com> <20190107214136.5256-7-jae.hyun.yoo@linux.intel.com>
+In-Reply-To: <20190107214136.5256-7-jae.hyun.yoo@linux.intel.com>
+From:   Joel Stanley <joel@jms.id.au>
+Date:   Mon, 14 Jan 2019 22:07:33 +1030
+Message-ID: <CACPK8XfMyXfomepZEPJCr=A-cCPw-CVAZ0B2CuKn7oXCNz6LbQ@mail.gmail.com>
+Subject: Re: [PATCH v10 06/12] peci: Add a PECI adapter driver for Aspeed AST24xx/AST25xx
+To:     Jae Hyun Yoo <jae.hyun.yoo@linux.intel.com>
+Cc:     Andrew Jeffery <andrew@aj.id.au>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        devicetree <devicetree@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        OpenBMC Maillist <openbmc@lists.ozlabs.org>,
+        Andy Shevchenko <andriy.shevchenko@intel.com>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Ryan Chen <ryan_chen@aspeedtech.com>,
+        Haiyue Wang <haiyue.wang@linux.intel.com>,
+        James Feist <james.feist@linux.intel.com>,
+        Vernon Mauery <vernon.mauery@linux.intel.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jan 10, 2019 at 07:14 Bhupesh Sharma wrote:
->Hi Hedi,
+On Tue, 8 Jan 2019 at 08:11, Jae Hyun Yoo <jae.hyun.yoo@linux.intel.com> wrote:
+> +       ret = of_property_read_u32(priv->dev->of_node, "cmd-timeout-ms",
+> +                                  &priv->cmd_timeout_ms);
+> +       if (ret || priv->cmd_timeout_ms > PECI_CMD_TIMEOUT_MS_MAX ||
+> +           priv->cmd_timeout_ms == 0) {
+> +               if (!ret)
+> +                       dev_warn(priv->dev,
+> +                                "Invalid cmd-timeout-ms : %u. Use default : %u\n",
+> +                                priv->cmd_timeout_ms,
+> +                                PECI_CMD_TIMEOUT_MS_DEFAULT);
 
-Hi Bhupesh,
+As this property is documented as optional, I'd split out the checks
+so you only warn when the value provided is invalid.
 
->Thanks for the patchset.
+> +
+> +       regmap_write(priv->regmap, ASPEED_PECI_CTRL,
+> +                    FIELD_PREP(PECI_CTRL_CLK_DIV_MASK, PECI_CLK_DIV_DEFAULT) |
+> +                    PECI_CTRL_PECI_CLK_EN);
+> +
+> +       /**
 
-Thanks for looking at it.
+Just the one *.
 
->I will give this a go on my sgi-uv300 machine and come back with more 
->detailed inputs,
+> +        * Timing negotiation period setting.
+> +        * The unit of the programmed value is 4 times of PECI clock period.
+> +        */
+> +       regmap_write(priv->regmap, ASPEED_PECI_TIMING,
+> +                    FIELD_PREP(PECI_TIMING_MESSAGE_MASK, msg_timing) |
+> +                    FIELD_PREP(PECI_TIMING_ADDRESS_MASK, addr_timing));
 
-and for testing it.
+> +static int aspeed_peci_xfer(struct peci_adapter *adapter,
+> +                           struct peci_xfer_msg *msg)
+> +{
+> +       struct aspeed_peci *priv = peci_get_adapdata(adapter);
+> +
+> +       return aspeed_peci_xfer_native(priv, msg);
+> +}
 
->but I wanted to ask about the hang/panic you 
->mentioned in the cover letter when efi_scratch gets clobbered. Can you 
->describe the same (for e.g. how to reproduce this).
+It looks like you could do the peci_get_adapdata in
+aspeed_peci_xfer_native and drop the need for this wrapper.
 
-When efi_switch_mm() gets called concurrently from two different CPUs
---via arch_efi_call_virt_setup()-- due to lack of serialisation in
-uv_bios_call(), efi_scratch.prev_mm is overwritten and that's how all
-hell breaks loose, and that's when you see either a hang (the more
-frequent failure mode) or a panic.
+> +
+> +static int aspeed_peci_probe(struct platform_device *pdev)
+> +{
 
-In order to reproduce the problem you'd need, for example, a kernel
-module that makes use of uv_bios_call(), in which case a test case
-would be a loop with:
-
-	- 2 concurrent tasks both invoking uv_bios_call()
-
-or
-	- 2 concurrent tasks
-		- one invoking uv_bios_call()
-		- one, for example, accessing an EFI vars via efivars
-
->Nitpicks below:
 >
->
->On 01/09/2019 04:15 PM, Hedi Berriche wrote:
->>Calls into UV firmware must be protected against concurrency, use the
->>now visible efi_runtime_sem lock to serialise them.
->>
->>Signed-off-by: Hedi Berriche <hedi.berriche@hpe.com>
->>Reviewed-by: Russ Anderson <rja@hpe.com>
->>Reviewed-by: Mike Travis <mike.travis@hpe.com>
->>Reviewed-by: Dimitri Sivanich <sivanich@hpe.com>
->>Reviewed-by: Steve Wahl <steve.wahl@hpe.com>
->>---
->>  arch/x86/include/asm/uv/bios.h |  3 ++-
->>  arch/x86/platform/uv/bios_uv.c | 25 ++++++++++++++++++++++---
->>  2 files changed, 24 insertions(+), 4 deletions(-)
->>
->>diff --git a/arch/x86/include/asm/uv/bios.h b/arch/x86/include/asm/uv/bios.h
->>index 4eee646544b2..33e94aa0b1ff 100644
->>--- a/arch/x86/include/asm/uv/bios.h
->>+++ b/arch/x86/include/asm/uv/bios.h
->>@@ -48,7 +48,8 @@ enum {
->>  	BIOS_STATUS_SUCCESS		=  0,
->>  	BIOS_STATUS_UNIMPLEMENTED	= -ENOSYS,
->>  	BIOS_STATUS_EINVAL		= -EINVAL,
->>-	BIOS_STATUS_UNAVAIL		= -EBUSY
->>+	BIOS_STATUS_UNAVAIL		= -EBUSY,
->>+	BIOS_STATUS_ABORT		= -EINTR
->>  };
->>  /* Address map parameters */
->>diff --git a/arch/x86/platform/uv/bios_uv.c b/arch/x86/platform/uv/bios_uv.c
->>index cd05af157763..92f960798e20 100644
->>--- a/arch/x86/platform/uv/bios_uv.c
->>+++ b/arch/x86/platform/uv/bios_uv.c
->>@@ -29,7 +29,8 @@
->>  struct uv_systab *uv_systab;
->>-s64 uv_bios_call(enum uv_bios_cmd which, u64 a1, u64 a2, u64 a3, u64 a4, u64 a5)
->>+s64 __uv_bios_call(enum uv_bios_cmd which, u64 a1, u64 a2, u64 a3,
->>+			u64 a4, u64 a5)
->
->Can we make this static?
+> +       res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+> +       base = devm_ioremap_resource(&pdev->dev, res);
+> +       if (IS_ERR(base)) {
+> +               ret = PTR_ERR(base);
+> +               goto err_put_adapter_dev;
+> +       }
+> +
+> +       priv->regmap = devm_regmap_init_mmio(&pdev->dev, base,
+> +                                            &aspeed_peci_regmap_config);
+> +       if (IS_ERR(priv->regmap)) {
+> +               ret = PTR_ERR(priv->regmap);
+> +               goto err_put_adapter_dev;
+> +       }
+> +
+> +       /**
+> +        * We check that the regmap works on this very first access,
+> +        * but as this is an MMIO-backed regmap, subsequent regmap
+> +        * access is not going to fail and we skip error checks from
+> +        * this point.
 
-Will do.
+Why do you use a regmap for this driver? AFAICT it has exclusive
+ownership over the register range it uses, which is sometimes a reason
+to use a regmap over a mmio region.
 
->>  {
->>  	struct uv_systab *tab = uv_systab;
->>  	s64 ret;
->>@@ -44,13 +45,26 @@ s64 uv_bios_call(enum uv_bios_cmd which, u64 a1, u64 a2, u64 a3, u64 a4, u64 a5)
->>  	 * If EFI_OLD_MEMMAP is set, we need to fall back to using our old EFI
->>  	 * callback method, which uses efi_call() directly, with the kernel page tables:
->>  	 */
->>-	if (unlikely(test_bit(EFI_OLD_MEMMAP, &efi.flags)))
->>+	if (unlikely(efi_enabled(EFI_OLD_MEMMAP)))
->>  		ret = efi_call((void *)__va(tab->function), (u64)which, a1, a2, a3, a4, a5);
->>  	else
->>  		ret = efi_call_virt_pointer(tab, function, (u64)which, a1, a2, a3, a4, a5);
->>  	return ret;
->>  }
->>+
->>+s64 uv_bios_call(enum uv_bios_cmd which, u64 a1, u64 a2, u64 a3, u64 a4, u64 a5)
->>+{
->>+	s64 ret;
->>+
->>+	if (down_interruptible(&efi_runtime_sem))
->>+		return BIOS_STATUS_ABORT;
->>+
->>+	ret = __uv_bios_call(which, a1, a2, a3, a4, a5);
->>+	up(&efi_runtime_sem);
->>+
->>+	return ret;
->>+}
->>  EXPORT_SYMBOL_GPL(uv_bios_call);
->>  s64 uv_bios_call_irqsave(enum uv_bios_cmd which, u64 a1, u64 a2, u64 a3,
->>@@ -59,10 +73,15 @@ s64 uv_bios_call_irqsave(enum uv_bios_cmd which, u64 a1, u64 a2, u64 a3,
->>  	unsigned long bios_flags;
->>  	s64 ret;
->>+	if (down_interruptible(&efi_runtime_sem))
->>+		return BIOS_STATUS_ABORT;
->>+
->>  	local_irq_save(bios_flags);
->>-	ret = uv_bios_call(which, a1, a2, a3, a4, a5);
->>+	ret = __uv_bios_call(which, a1, a2, a3, a4, a5);
->>  	local_irq_restore(bios_flags);
->>+	up(&efi_runtime_sem);
->>+
->>  	return ret;
->>  }
->
->Thanks,
->Bhupesh
+I'm not sure if you've ever disassembled drivers/base/regmap/regmap.o,
+but if you do you will find that a single mmio read turns into
+hundreds of instructions.
 
 Cheers,
-Hedi.
--- 
-Be careful of reading health books, you might die of a misprint.
-	-- Mark Twain
+
+Joel
