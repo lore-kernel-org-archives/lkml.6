@@ -2,92 +2,106 @@ Return-Path: <SRS0=tq6k=PW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 860E7C43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 11:24:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0EB2DC43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 11:26:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5722C20656
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 11:24:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547465098;
-	bh=7ndevwlRaT+QtfbMG/d+aSukcRO/1iUNSKK8QOsDbF0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=Vgh4n/MwGrfZlAz1sZ3mqItnG6Sn8Q88s3+wIBpkbb2y/9Os0hFrPbgvJkmnk2aT0
-	 ijmZ8T0f9K5zFSjHvQP+oyFBs3z+XUehreQc10Xd7/bFyLrcbYWJA9QMfOdkaPd5ty
-	 MipbzPYwicZ+nG6oeoR++ebJvpdcE8c3YlVchPSA=
+	by mail.kernel.org (Postfix) with ESMTP id D29F720656
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 11:26:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726881AbfANLY4 (ORCPT
+        id S1726615AbfANL0n (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 14 Jan 2019 06:24:56 -0500
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:51968 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726552AbfANLY4 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 Jan 2019 06:24:56 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=7ndevwlRaT+QtfbMG/d+aSukcRO/1iUNSKK8QOsDbF0=; b=alH+b6sZd4l1viNIaIep12nNj
-        fMLOExAUhIgM3z+sqM8Xu6oUqEGyMAYukVmuH85JpZ3wMByqMV2sYTh3tfty58mmixTeVJrWKmCU6
-        rskQqx8kR+bVz1aC4HbjQ6zevYdGCy4m9s3XVR/MuGsOjkbWGGfYtWcQOQNxoqkA92VXQ=;
-Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
-        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1gj0MG-0004rp-2H; Mon, 14 Jan 2019 11:24:44 +0000
-Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
-        id 70A87112708A; Mon, 14 Jan 2019 11:24:43 +0000 (GMT)
-Date:   Mon, 14 Jan 2019 11:24:43 +0000
-From:   Mark Brown <broonie@kernel.org>
-To:     Anders Roxell <anders.roxell@linaro.org>
-Cc:     perex@perex.cz, tiwai@suse.com, brian.austin@cirrus.com,
-        Paul.Handrigan@cirrus.com, lgirdwood@gmail.com,
-        alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/3] ASoC: cs4341: fix waring unused-function
-Message-ID: <20190114112443.GA11073@sirena.org.uk>
-References: <20190114095540.22956-1-anders.roxell@linaro.org>
+        Mon, 14 Jan 2019 06:26:43 -0500
+Received: from mga11.intel.com ([192.55.52.93]:50339 "EHLO mga11.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726469AbfANL0m (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 14 Jan 2019 06:26:42 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 14 Jan 2019 03:26:42 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,477,1539673200"; 
+   d="scan'208";a="125732315"
+Received: from linux.intel.com ([10.54.29.200])
+  by FMSMGA003.fm.intel.com with ESMTP; 14 Jan 2019 03:26:42 -0800
+Received: from [10.125.252.160] (abudanko-mobl.ccr.corp.intel.com [10.125.252.160])
+        by linux.intel.com (Postfix) with ESMTP id 70B5C580261;
+        Mon, 14 Jan 2019 03:26:39 -0800 (PST)
+Subject: Re: [PATCH v1 0/4] perf: enable compression of record mode trace to
+ save storage space
+To:     Jiri Olsa <jolsa@redhat.com>
+Cc:     Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Andi Kleen <ak@linux.intel.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+References: <eaa8b5da-103f-61c8-bdca-2a2a27bf1715@linux.intel.com>
+ <20190109172843.GE19455@krava>
+ <b1df6115-e03c-47f4-bdb8-29f1980763f0@linux.intel.com>
+ <20190114110325.GB22336@krava>
+From:   Alexey Budankov <alexey.budankov@linux.intel.com>
+Organization: Intel Corp.
+Message-ID: <b59c9aa8-5747-4c37-490d-ccd3d4ede35c@linux.intel.com>
+Date:   Mon, 14 Jan 2019 14:26:38 +0300
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="8t9RHnE3ZwKMSgU+"
-Content-Disposition: inline
-In-Reply-To: <20190114095540.22956-1-anders.roxell@linaro.org>
-X-Cookie: From concentrate.
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20190114110325.GB22336@krava>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 14.01.2019 14:03, Jiri Olsa wrote:
+> On Mon, Jan 14, 2019 at 11:43:31AM +0300, Alexey Budankov wrote:
+>> Hi,
+>> On 09.01.2019 20:28, Jiri Olsa wrote:
+>>> On Mon, Dec 24, 2018 at 04:21:33PM +0300, Alexey Budankov wrote:
+>>>>
+>>>> buffers for asynchronous trace writing serve that purpose.
+<SNIP>
+>>>
+>>> I dont like that it's onlt for aio only, I can't really see why it's
+>>
+>> For serial streaming, on CPU bound codes, under full system utilization it 
+>> can induce more runtime overhead and increase data loss because amount of 
+>> code on performance critical path grows, of course size of written data 
+>> reduces but still. Feeding kernel buffer content by user space code to a 
+>> syscall is extended with intermediate copying to user space memory with 
+>> doing some math on it in the middle.
+>>
+>>> a problem for normal data.. can't we just have one layer before and
+>>> stream the data to the compress function instead of the file (or aio
+>>> buffers).. and that compress functions would spit out 64K size COMPRESSED
+>>> events, which would go to file (or aio buffers)
+>>
+>> It is already almost like that. Compression could be bridged using AIO 
+>> buffers but then still streamed to file serially using record__pushfn() 
+>> and that would make some sense for moderate profiling cases on systems 
+>> without AIO support and trace streaming based on it.
+>>
+>>>
+>>> the report side would process them (decompress) on the session layer
+>>> before the tool callbacks are called
+>>
+>> It is already pretty similar to that.
+> 
+> hum, AFAICS you do that in report code not in on the session layer
 
---8t9RHnE3ZwKMSgU+
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Correct. Decompressor and handling of compressed data chunks could be 
+moved to session related code.
 
-On Mon, Jan 14, 2019 at 10:55:40AM +0100, Anders Roxell wrote:
-> The driver cs4341 can be built with SPI and/or I2C, but it has to be one
-> of them at least. When I2C is set as a module we see the warning below:
+Thanks,
+Alexey
 
-I'm missing patches 2 and 3 of this series and there's no cover letter.
-What's the story with dependencies?
-
---8t9RHnE3ZwKMSgU+
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlw8cXoACgkQJNaLcl1U
-h9AJHwgAgiocrClStcUh92WnpSwD5nQrZmRdfx6j4EVsN+EA+bRasylhwousCfCQ
-vk/8h6FWqMkjGuIAdHw8X0OBgSAfOzFz8YJD68CAgFpWmH0FMwBDFny+uAkKm/tA
-O8xQcfLZRpQbD/0+9Tw/EL6AfreE3x6g/h3EB1Uz5JEhBGMQB6rAZTmNpb9Yj0ow
-sYE9KZVW2DDo557PAAVBPOvgjTYuXi+L0YsHzI7AUjPDjBEEnq/P1eWkUIIhZexJ
-PQg1nGXw/FTmvgokIKi/DLiHC2Vh7LFZDsUjxbahMyu3cAc93m+cNvUc1OoP37Dg
-ono2CIsZYCht49G3n0ly2eyxfqznaQ==
-=WnUQ
------END PGP SIGNATURE-----
-
---8t9RHnE3ZwKMSgU+--
+> 
+> jirka
+> 
