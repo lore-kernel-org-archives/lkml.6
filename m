@@ -7,46 +7,49 @@ X-Spam-Status: No, score=-13.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 655DBC43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 22:10:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B2F26C43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 22:10:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 29A72205F4
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 22:10:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 831CF205F4
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 22:10:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547503803;
-	bh=SV0/QMYk+sKHgFwE2WXIgntB3EaqKvZNRb+3hDFrjh8=;
+	s=default; t=1547503806;
+	bh=sb6uN5X8IEdSGB5NUtQsserbDYpuwI3wT5Brvi+ZxBo=;
 	h=From:To:Cc:Subject:In-Reply-To:Date:List-ID:From;
-	b=ek3s8sBi5+h+jWDsw4VhMN1OTIa9kvyeo4UmbkeHefzG2DOK+wIak+6HbDYZGo1BY
-	 P2dpqVYIoNSzbERxQcLc91JO3UxAjol1KO5cfNfzvcD0lUAXvWZx7UAm6pTPsOQQRM
-	 NPTPkQ0h2RkBJg3yJ3R3b/FB01wlzC9m3WYU5tQE=
+	b=CSFnN1ECs4e6N6BHHSQ0WosE5eIO7lmIlhPCoCkL+nOv2D+Aa2sHxuldQJpQ8aivl
+	 JPp8Z1/ElOodcUTSiLPFzIKB3tTvADItBiPZS0sNNBvB/A0iUpQrL2bTqvYGwHCZoR
+	 qg0SCD1b96dHZD6ZWY/GbMnJmeVYOnacGc0+OeUQ=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727085AbfANWKB (ORCPT
+        id S1727133AbfANWKF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 14 Jan 2019 17:10:01 -0500
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:33752 "EHLO
+        Mon, 14 Jan 2019 17:10:05 -0500
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:33816 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726592AbfANWKB (ORCPT
+        with ESMTP id S1726592AbfANWKD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 Jan 2019 17:10:01 -0500
+        Mon, 14 Jan 2019 17:10:03 -0500
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
         Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
         List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=Jibu305MxvbFEi+SyUbJ6S4gPyhpb+7LaLU2rRsdfwM=; b=Q/Ax7OIdapQd
-        9oBdLiyLQhsmCvurSYcw3azEwx8H8Qhpk4RdyqnyE5/Mgk3WYl9CeGuM60I8aVnr+wj091Ah4L9J8
-        PdaiZhEeHC5xAi7Dvwe4IVhfnww9Wg+155VXKwP990rvFpUdXBG1X0fsw0s7FbQyUyaxE1ktnPP85
-        5i67Y=;
+        List-Archive; bh=NIv7FRd5qMooomDEccBdxx5EOc2s7GD6FXjXCoavcIw=; b=cuikkp5q9vxI
+        JTKinbrfe96tkjC37SNbYxo5PcZplyHG6wUk+/bo5wYrpSGwnCZb4rT56uUKFCqhKLZhHY7dWdd+O
+        qR+G799klPlFEJ9dc5SUFy36r8HHhNzpWOaxBDAvGZWz8jgwQrREQ0+cqndDnDVw3p1krzcstVNKC
+        xNkaA=;
 Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
         by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
         (envelope-from <broonie@sirena.org.uk>)
-        id 1gjAQf-0008Go-7b; Mon, 14 Jan 2019 22:09:57 +0000
+        id 1gjAQh-0008Gu-2v; Mon, 14 Jan 2019 22:09:59 +0000
 Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
-        id D5D971127AD0; Mon, 14 Jan 2019 22:09:56 +0000 (GMT)
+        id B623E1127AD0; Mon, 14 Jan 2019 22:09:58 +0000 (GMT)
 From:   Mark Brown <broonie@kernel.org>
 To:     Stephen Boyd <swboyd@chromium.org>
-Cc:     Douglas Anderson <dianders@chromium.org>,
+Cc:     Girish Mahadevan <girishm@codeaurora.org>,
+        Dilip Kota <dkota@codeaurora.org>,
+        Alok Chauhan <alokc@codeaurora.org>,
+        Douglas Anderson <dianders@chromium.org>,
         Mark Brown <broonie@kernel.org>,
         Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org,
         linux-spi@vger.kernel.org, linux-arm-msm@vger.kernel.org,
@@ -55,11 +58,11 @@ Cc:     Douglas Anderson <dianders@chromium.org>,
         Alok Chauhan <alokc@codeaurora.org>,
         Douglas Anderson <dianders@chromium.org>,
         linux-spi@vger.kernel.org
-Subject: Applied "spi: spi-geni-qcom: Get rid of forward declaration" to the spi tree
-In-Reply-To:  <20190110210253.23219-2-swboyd@chromium.org>
+Subject: Applied "spi: spi-geni-qcom: Don't initialize completion for normal message" to the spi tree
+In-Reply-To:  <20190110210253.23219-1-swboyd@chromium.org>
 X-Patchwork-Hint: ignore
-Message-Id: <20190114220956.D5D971127AD0@debutante.sirena.org.uk>
-Date:   Mon, 14 Jan 2019 22:09:56 +0000 (GMT)
+Message-Id: <20190114220958.B623E1127AD0@debutante.sirena.org.uk>
+Date:   Mon, 14 Jan 2019 22:09:58 +0000 (GMT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -67,7 +70,7 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   spi: spi-geni-qcom: Get rid of forward declaration
+   spi: spi-geni-qcom: Don't initialize completion for normal message
 
 has been applied to the spi tree at
 
@@ -92,104 +95,40 @@ to this mail.
 Thanks,
 Mark
 
-From de43affed77b1bd9f246235dbd94eb23b07ab657 Mon Sep 17 00:00:00 2001
+From 0357a3daada3236da59be5d692f02ae07e2a145e Mon Sep 17 00:00:00 2001
 From: Stephen Boyd <swboyd@chromium.org>
-Date: Thu, 10 Jan 2019 13:02:53 -0800
-Subject: [PATCH] spi: spi-geni-qcom: Get rid of forward declaration
+Date: Thu, 10 Jan 2019 13:02:52 -0800
+Subject: [PATCH] spi: spi-geni-qcom: Don't initialize completion for normal
+ message
 
-We don't need this forward declaration. Move the function to where it
-needed so we can drop it and shave some lines of code.
+We only use this completion when we're doing something that isn't a
+message transfer. For example, changing CS or aborting/canceling a
+command. All of those situations properly reinitialize the completion
+before sending the GENI the special command to change CS or cancel, etc.
+Given that, let's remove the initialization here.
 
-CC: Girish Mahadevan <girishm@codeaurora.org>
-CC: Dilip Kota <dkota@codeaurora.org>
-CC: Alok Chauhan <alokc@codeaurora.org>
+Cc: Girish Mahadevan <girishm@codeaurora.org>
+Cc: Dilip Kota <dkota@codeaurora.org>
+Cc: Alok Chauhan <alokc@codeaurora.org>
 Cc: Douglas Anderson <dianders@chromium.org>
 Signed-off-by: Stephen Boyd <swboyd@chromium.org>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- drivers/spi/spi-geni-qcom.c | 55 ++++++++++++++++++-------------------
- 1 file changed, 26 insertions(+), 29 deletions(-)
+ drivers/spi/spi-geni-qcom.c | 1 -
+ 1 file changed, 1 deletion(-)
 
 diff --git a/drivers/spi/spi-geni-qcom.c b/drivers/spi/spi-geni-qcom.c
-index c3e9464027d4..5f0b0d5bfef4 100644
+index fdb7cb88fb56..c3e9464027d4 100644
 --- a/drivers/spi/spi-geni-qcom.c
 +++ b/drivers/spi/spi-geni-qcom.c
-@@ -89,9 +89,6 @@ struct spi_geni_master {
- 	int irq;
- };
+@@ -233,7 +233,6 @@ static int spi_geni_prepare_message(struct spi_master *spi,
+ 	struct geni_se *se = &mas->se;
  
--static void handle_fifo_timeout(struct spi_master *spi,
--				struct spi_message *msg);
--
- static int get_spi_clk_cfg(unsigned int speed_hz,
- 			struct spi_geni_master *mas,
- 			unsigned int *clk_idx,
-@@ -122,6 +119,32 @@ static int get_spi_clk_cfg(unsigned int speed_hz,
- 	return ret;
- }
- 
-+static void handle_fifo_timeout(struct spi_master *spi,
-+				struct spi_message *msg)
-+{
-+	struct spi_geni_master *mas = spi_master_get_devdata(spi);
-+	unsigned long time_left, flags;
-+	struct geni_se *se = &mas->se;
-+
-+	spin_lock_irqsave(&mas->lock, flags);
-+	reinit_completion(&mas->xfer_done);
-+	mas->cur_mcmd = CMD_CANCEL;
-+	geni_se_cancel_m_cmd(se);
-+	writel(0, se->base + SE_GENI_TX_WATERMARK_REG);
-+	spin_unlock_irqrestore(&mas->lock, flags);
-+	time_left = wait_for_completion_timeout(&mas->xfer_done, HZ);
-+	if (time_left)
-+		return;
-+
-+	spin_lock_irqsave(&mas->lock, flags);
-+	reinit_completion(&mas->xfer_done);
-+	geni_se_abort_m_cmd(se);
-+	spin_unlock_irqrestore(&mas->lock, flags);
-+	time_left = wait_for_completion_timeout(&mas->xfer_done, HZ);
-+	if (!time_left)
-+		dev_err(mas->dev, "Failed to cancel/abort m_cmd\n");
-+}
-+
- static void spi_geni_set_cs(struct spi_device *slv, bool set_flag)
- {
- 	struct spi_geni_master *mas = spi_master_get_devdata(slv->master);
-@@ -356,32 +379,6 @@ static void setup_fifo_xfer(struct spi_transfer *xfer,
- 		writel(mas->tx_wm, se->base + SE_GENI_TX_WATERMARK_REG);
- }
- 
--static void handle_fifo_timeout(struct spi_master *spi,
--				struct spi_message *msg)
--{
--	struct spi_geni_master *mas = spi_master_get_devdata(spi);
--	unsigned long time_left, flags;
--	struct geni_se *se = &mas->se;
--
--	spin_lock_irqsave(&mas->lock, flags);
+ 	geni_se_select_mode(se, GENI_SE_FIFO);
 -	reinit_completion(&mas->xfer_done);
--	mas->cur_mcmd = CMD_CANCEL;
--	geni_se_cancel_m_cmd(se);
--	writel(0, se->base + SE_GENI_TX_WATERMARK_REG);
--	spin_unlock_irqrestore(&mas->lock, flags);
--	time_left = wait_for_completion_timeout(&mas->xfer_done, HZ);
--	if (time_left)
--		return;
--
--	spin_lock_irqsave(&mas->lock, flags);
--	reinit_completion(&mas->xfer_done);
--	geni_se_abort_m_cmd(se);
--	spin_unlock_irqrestore(&mas->lock, flags);
--	time_left = wait_for_completion_timeout(&mas->xfer_done, HZ);
--	if (!time_left)
--		dev_err(mas->dev, "Failed to cancel/abort m_cmd\n");
--}
--
- static int spi_geni_transfer_one(struct spi_master *spi,
- 				struct spi_device *slv,
- 				struct spi_transfer *xfer)
+ 	ret = setup_fifo_params(spi_msg->spi, spi);
+ 	if (ret)
+ 		dev_err(mas->dev, "Couldn't select mode %d\n", ret);
 -- 
 2.20.1
 
