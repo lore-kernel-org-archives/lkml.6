@@ -2,56 +2,49 @@ Return-Path: <SRS0=tq6k=PW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 894D7C43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 08:46:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 821F4C43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 08:46:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 55BA320659
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 08:46:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 393E92086D
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 08:46:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726558AbfANIqS (ORCPT
+        id S1726582AbfANIqf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 14 Jan 2019 03:46:18 -0500
-Received: from mga17.intel.com ([192.55.52.151]:7567 "EHLO mga17.intel.com"
+        Mon, 14 Jan 2019 03:46:35 -0500
+Received: from mga09.intel.com ([134.134.136.24]:26120 "EHLO mga09.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726184AbfANIqS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 Jan 2019 03:46:18 -0500
+        id S1726064AbfANIqe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 14 Jan 2019 03:46:34 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 14 Jan 2019 00:46:18 -0800
+Received: from orsmga002.jf.intel.com ([10.7.209.21])
+  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 14 Jan 2019 00:46:34 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.56,477,1539673200"; 
-   d="scan'208";a="106408421"
-Received: from linux.intel.com ([10.54.29.200])
-  by orsmga007.jf.intel.com with ESMTP; 14 Jan 2019 00:46:17 -0800
-Received: from [10.125.252.160] (abudanko-mobl.ccr.corp.intel.com [10.125.252.160])
-        by linux.intel.com (Postfix) with ESMTP id B24C2580261;
-        Mon, 14 Jan 2019 00:46:15 -0800 (PST)
-Subject: Re: [PATCH v1 2/4] perf record: introduce z, mmap-flush options and
- PERF_RECORD_COMPRESSED record
-To:     Jiri Olsa <jolsa@redhat.com>
-Cc:     Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Andi Kleen <ak@linux.intel.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-References: <eaa8b5da-103f-61c8-bdca-2a2a27bf1715@linux.intel.com>
- <d8b15698-67da-3fea-8bd5-32e18d223e99@linux.intel.com>
- <20190109165833.GD19455@krava>
-From:   Alexey Budankov <alexey.budankov@linux.intel.com>
-Organization: Intel Corp.
-Message-ID: <5281536b-b336-21c3-5251-82ec6a676341@linux.intel.com>
-Date:   Mon, 14 Jan 2019 11:46:14 +0300
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+   d="scan'208";a="125846531"
+Received: from ahunter-desktop.fi.intel.com (HELO [10.237.72.56]) ([10.237.72.56])
+  by orsmga002.jf.intel.com with ESMTP; 14 Jan 2019 00:46:31 -0800
+Subject: Re: [PATCH 1/7] mmc: sdhci: add support for using external DMA
+ devices
+To:     Faiz Abbas <faiz_abbas@ti.com>, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-mmc@vger.kernel.org
+Cc:     zhang.chunyan@linaro.org, kishon@ti.com, mark.rutland@arm.com,
+        robh+dt@kernel.org, ulf.hansson@linaro.org
+References: <20190111110851.6805-1-faiz_abbas@ti.com>
+ <20190111110851.6805-2-faiz_abbas@ti.com>
+From:   Adrian Hunter <adrian.hunter@intel.com>
+Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
+ Business Identity Code: 0357606 - 4, Domiciled in Helsinki
+Message-ID: <1324fd22-e879-6ee6-910b-baada4779670@intel.com>
+Date:   Mon, 14 Jan 2019 10:45:02 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.4.0
 MIME-Version: 1.0
-In-Reply-To: <20190109165833.GD19455@krava>
+In-Reply-To: <20190111110851.6805-2-faiz_abbas@ti.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -60,59 +53,433 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
-On 09.01.2019 19:58, Jiri Olsa wrote:
-> On Mon, Dec 24, 2018 at 04:45:21PM +0300, Alexey Budankov wrote:
->>
->> Introduce --compression_level=n, --mmap-flush options and PERF_RECORD_COMPRESSED 
->> event record that contains compressed parts of mmap kernel buffer data.
->>
->> Signed-off-by: Alexey Budankov <alexey.budankov@linux.intel.com>
->> ---
->>  tools/perf/Documentation/perf-record.txt | 11 +++
->>  tools/perf/builtin-record.c              | 97 ++++++++++++++++++++----
->>  tools/perf/perf.h                        |  2 +
->>  tools/perf/util/env.h                    | 10 +++
->>  tools/perf/util/event.c                  |  1 +
->>  tools/perf/util/event.h                  |  7 ++
->>  tools/perf/util/evlist.c                 |  6 +-
->>  tools/perf/util/evlist.h                 |  2 +-
->>  tools/perf/util/header.c                 | 47 +++++++++++-
->>  tools/perf/util/header.h                 |  1 +
->>  tools/perf/util/mmap.c                   |  4 +-
->>  tools/perf/util/mmap.h                   |  3 +-
->>  12 files changed, 169 insertions(+), 22 deletions(-)
+On 11/01/19 1:08 PM, Faiz Abbas wrote:
+> From: Chunyan Zhang <zhang.chunyan@linaro.org>
 > 
-> also I'm getting here similar error (like for the affinity patchset)
+> Some standard SD host controllers can support both external dma
+> controllers as well as ADMA/SDMA in which the SD host controller
+> acts as DMA master. TI's omap controller is the case as an example.
+> 
+> Currently the generic SDHCI code supports ADMA/SDMA integrated in
+> the host controller but does not have any support for external DMA
+> controllers implemented using dmaengine, meaning that custom code is
+> needed for any systems that use an external DMA controller with SDHCI.
+> 
+> Fixes by Faiz Abbas <faiz_abbas@ti.com>:
+> 1. Map scatterlists before dmaengine_prep_slave_sg()
+> 2. Use dma_async() functions inside of the send_command() path and
+> synchronize once at the start of each request.
+> 
+> Signed-off-by: Chunyan Zhang <zhang.chunyan@linaro.org>
+> Signed-off-by: Faiz Abbas <faiz_abbas@ti.com>
 
-Really weird. Hopefully it can be resolved in the next version of the patch set.
+Acked-by: Adrian Hunter <adrian.hunter@intel.com>
 
-Thanks,
-Alexey
+> ---
+>  drivers/mmc/host/Kconfig |   3 +
+>  drivers/mmc/host/sdhci.c | 266 ++++++++++++++++++++++++++++++++++++++-
+>  drivers/mmc/host/sdhci.h |   8 ++
+>  3 files changed, 273 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/mmc/host/Kconfig b/drivers/mmc/host/Kconfig
+> index e26b8145efb3..333292e8ecdd 100644
+> --- a/drivers/mmc/host/Kconfig
+> +++ b/drivers/mmc/host/Kconfig
+> @@ -999,3 +999,6 @@ config MMC_SDHCI_AM654
+>  	  If you have a controller with this interface, say Y or M here.
+>  
+>  	  If unsure, say N.
+> +
+> +config MMC_SDHCI_EXTERNAL_DMA
+> +        bool
+> diff --git a/drivers/mmc/host/sdhci.c b/drivers/mmc/host/sdhci.c
+> index a22e11a65658..4a9044c06e21 100644
+> --- a/drivers/mmc/host/sdhci.c
+> +++ b/drivers/mmc/host/sdhci.c
+> @@ -14,6 +14,7 @@
+>   */
+>  
+>  #include <linux/delay.h>
+> +#include <linux/dmaengine.h>
+>  #include <linux/ktime.h>
+>  #include <linux/highmem.h>
+>  #include <linux/io.h>
+> @@ -1118,6 +1119,226 @@ static void sdhci_prepare_data(struct sdhci_host *host, struct mmc_command *cmd)
+>  	}
+>  }
+>  
+> +#if IS_ENABLED(CONFIG_MMC_SDHCI_EXTERNAL_DMA)
+> +static int sdhci_external_dma_init(struct sdhci_host *host)
+> +{
+> +	int ret = 0;
+> +	struct mmc_host *mmc = host->mmc;
+> +
+> +	host->tx_chan = dma_request_chan(mmc->parent, "tx");
+> +	if (IS_ERR(host->tx_chan)) {
+> +		ret = PTR_ERR(host->tx_chan);
+> +		if (ret != -EPROBE_DEFER)
+> +			pr_warn("Failed to request TX DMA channel.\n");
+> +		host->tx_chan = NULL;
+> +		return ret;
+> +	}
+> +
+> +	host->rx_chan = dma_request_chan(mmc->parent, "rx");
+> +	if (IS_ERR(host->rx_chan)) {
+> +		if (host->tx_chan) {
+> +			dma_release_channel(host->tx_chan);
+> +			host->tx_chan = NULL;
+> +		}
+> +
+> +		ret = PTR_ERR(host->rx_chan);
+> +		if (ret != -EPROBE_DEFER)
+> +			pr_warn("Failed to request RX DMA channel.\n");
+> +		host->rx_chan = NULL;
+> +	}
+> +
+> +	return ret;
+> +}
+> +
+> +static inline struct dma_chan *
+> +sdhci_external_dma_channel(struct sdhci_host *host, struct mmc_data *data)
+> +{
+> +	return data->flags & MMC_DATA_WRITE ? host->tx_chan : host->rx_chan;
+> +}
+> +
+> +static int sdhci_external_dma_setup(struct sdhci_host *host,
+> +				    struct mmc_command *cmd)
+> +{
+> +	int ret, i;
+> +	struct dma_async_tx_descriptor *desc;
+> +	struct mmc_data *data = cmd->data;
+> +	struct dma_chan *chan;
+> +	struct dma_slave_config cfg;
+> +	dma_cookie_t cookie;
+> +	int sg_cnt;
+> +
+> +	if (!host->mapbase)
+> +		return -EINVAL;
+> +
+> +	cfg.src_addr = host->mapbase + SDHCI_BUFFER;
+> +	cfg.dst_addr = host->mapbase + SDHCI_BUFFER;
+> +	cfg.src_addr_width = DMA_SLAVE_BUSWIDTH_4_BYTES;
+> +	cfg.dst_addr_width = DMA_SLAVE_BUSWIDTH_4_BYTES;
+> +	cfg.src_maxburst = data->blksz / 4;
+> +	cfg.dst_maxburst = data->blksz / 4;
+> +
+> +	/* Sanity check: all the SG entries must be aligned by block size. */
+> +	for (i = 0; i < data->sg_len; i++) {
+> +		if ((data->sg + i)->length % data->blksz)
+> +			return -EINVAL;
+> +	}
+> +
+> +	chan = sdhci_external_dma_channel(host, data);
+> +
+> +	ret = dmaengine_slave_config(chan, &cfg);
+> +	if (ret)
+> +		return ret;
+> +
+> +	sg_cnt = sdhci_pre_dma_transfer(host, data, COOKIE_MAPPED);
+> +	if (sg_cnt <= 0)
+> +		return -EINVAL;
+> +
+> +	desc = dmaengine_prep_slave_sg(chan, data->sg, data->sg_len,
+> +				       mmc_get_dma_dir(data),
+> +				       DMA_PREP_INTERRUPT | DMA_CTRL_ACK);
+> +	if (!desc)
+> +		return -EINVAL;
+> +
+> +	desc->callback = NULL;
+> +	desc->callback_param = NULL;
+> +
+> +	cookie = dmaengine_submit(desc);
+> +	if (cookie < 0)
+> +		ret = cookie;
+> +
+> +	return ret;
+> +}
+> +
+> +static void sdhci_external_dma_release(struct sdhci_host *host)
+> +{
+> +	if (host->tx_chan) {
+> +		dma_release_channel(host->tx_chan);
+> +		host->tx_chan = NULL;
+> +	}
+> +
+> +	if (host->rx_chan) {
+> +		dma_release_channel(host->rx_chan);
+> +		host->rx_chan = NULL;
+> +	}
+> +
+> +	sdhci_switch_external_dma(host, false);
+> +}
+> +
+> +static int __sdhci_external_dma_prepare_data(struct sdhci_host *host,
+> +					     struct mmc_command *cmd)
+> +{
+> +	struct mmc_data *data = cmd->data;
+> +
+> +	host->data_timeout = 0;
+> +
+> +	if (sdhci_data_line_cmd(cmd))
+> +		sdhci_set_timeout(host, cmd);
+> +
+> +	WARN_ON(host->data);
+> +
+> +	/* Sanity checks */
+> +	WARN_ON(data->blksz * data->blocks > 524288);
+> +	WARN_ON(data->blksz > host->mmc->max_blk_size);
+> +	WARN_ON(data->blocks > 65535);
+> +
+> +	host->flags |= SDHCI_REQ_USE_DMA;
+> +	host->data = data;
+> +	host->data_early = 0;
+> +	host->data->bytes_xfered = 0;
+> +
+> +	sdhci_set_transfer_irqs(host);
+> +
+> +	/*
+> +	 * For Version 4.10 onwards, if v4 mode is enabled, 32-bit Block Count
+> +	 * can be supported, in that case 16-bit block count register must be 0.
+> +	 */
+> +	if (host->version >= SDHCI_SPEC_410 && host->v4_mode &&
+> +	    (host->quirks2 & SDHCI_QUIRK2_USE_32BIT_BLK_CNT)) {
+> +		if (sdhci_readw(host, SDHCI_BLOCK_COUNT))
+> +			sdhci_writew(host, 0, SDHCI_BLOCK_COUNT);
+> +		sdhci_writew(host, data->blocks, SDHCI_32BIT_BLK_CNT);
+> +	} else {
+> +		sdhci_writew(host, data->blocks, SDHCI_BLOCK_COUNT);
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +static void sdhci_external_dma_prepare_data(struct sdhci_host *host,
+> +					    struct mmc_command *cmd)
+> +{
+> +	struct mmc_data *data = cmd->data;
+> +
+> +	if (!data)
+> +		return;
+> +
+> +	if (sdhci_external_dma_setup(host, cmd) ||
+> +	    __sdhci_external_dma_prepare_data(host, cmd)) {
+> +		sdhci_external_dma_release(host);
+> +		pr_err("%s: Cannot use external DMA, switch to the DMA/PIO which standard SDHCI provides.\n",
+> +		       mmc_hostname(host->mmc));
+> +		sdhci_prepare_data(host, cmd);
+> +	}
+> +}
+> +
+> +static void sdhci_external_dma_pre_transfer(struct sdhci_host *host,
+> +					    struct mmc_command *cmd)
+> +{
+> +	struct dma_chan *chan;
+> +
+> +	if (!cmd->data || cmd->opcode == MMC_SET_BLOCK_COUNT)
+> +		return;
+> +
+> +	sdhci_writew(host, cmd->data->blksz, SDHCI_BLOCK_SIZE);
+> +	chan = sdhci_external_dma_channel(host, cmd->data);
+> +	if (chan)
+> +		dma_async_issue_pending(chan);
+> +}
+> +
+> +static int sdhci_external_dma_cleanup(struct sdhci_host *host,
+> +				    struct mmc_data *data)
+> +{
+> +	struct dma_chan *chan = sdhci_external_dma_channel(host, data);
+> +	int ret = 0;
+> +
+> +	if (chan)
+> +		ret = dmaengine_terminate_async(chan);
+> +
+> +	return ret;
+> +}
+> +#else
+> +static int sdhci_external_dma_init(struct sdhci_host *host)
+> +{
+> +	return -EOPNOTSUPP;
+> +}
+> +
+> +static void sdhci_external_dma_release(struct sdhci_host *host)
+> +{}
+> +
+> +static void sdhci_external_dma_prepare_data(struct sdhci_host *host,
+> +					    struct mmc_command *cmd)
+> +{
+> +	/* If MMC_SDHCI_EXTERNAL_DMA not supported, PIO will be used */
+> +	sdhci_prepare_data(host, cmd);
+> +}
+> +
+> +static void sdhci_external_dma_pre_transfer(struct sdhci_host *host,
+> +					    struct mmc_command *cmd)
+> +{}
+> +
+> +static int sdhci_external_dma_cleanup(struct sdhci_host *host,
+> +				    struct mmc_data *data)
+> +{
+> +	return 0;
+> +}
+> +#endif
+> +
+> +void sdhci_switch_external_dma(struct sdhci_host *host, bool en)
+> +{
+> +	host->use_external_dma = en;
+> +}
+> +EXPORT_SYMBOL_GPL(sdhci_switch_external_dma);
+> +
+>  static inline bool sdhci_auto_cmd12(struct sdhci_host *host,
+>  				    struct mmc_request *mrq)
+>  {
+> @@ -1374,7 +1595,10 @@ void sdhci_send_command(struct sdhci_host *host, struct mmc_command *cmd)
+>  		host->data_cmd = cmd;
+>  	}
+>  
+> -	sdhci_prepare_data(host, cmd);
+> +	if (host->use_external_dma)
+> +		sdhci_external_dma_prepare_data(host, cmd);
+> +	else
+> +		sdhci_prepare_data(host, cmd);
+>  
+>  	sdhci_writel(host, cmd->arg, SDHCI_ARGUMENT);
+>  
+> @@ -1416,6 +1640,9 @@ void sdhci_send_command(struct sdhci_host *host, struct mmc_command *cmd)
+>  		timeout += 10 * HZ;
+>  	sdhci_mod_timer(host, cmd->mrq, timeout);
+>  
+> +	if (host->use_external_dma)
+> +		sdhci_external_dma_pre_transfer(host, cmd);
+> +
+>  	sdhci_writew(host, SDHCI_MAKE_CMD(cmd->opcode, flags), SDHCI_COMMAND);
+>  }
+>  EXPORT_SYMBOL_GPL(sdhci_send_command);
+> @@ -1781,6 +2008,11 @@ void sdhci_request(struct mmc_host *mmc, struct mmc_request *mrq)
+>  
+>  	sdhci_led_activate(host);
+>  
+> +	if (host->use_external_dma && mrq->data) {
+> +		struct dma_chan *chan = sdhci_external_dma_channel(host,
+> +								   mrq->data);
+> +		dmaengine_synchronize(chan);
+> +	}
+>  	/*
+>  	 * Ensure we don't send the STOP for non-SET_BLOCK_COUNTED
+>  	 * requests if Auto-CMD12 is enabled.
+> @@ -2658,6 +2890,8 @@ static bool sdhci_request_done(struct sdhci_host *host)
+>  				dma_unmap_sg(mmc_dev(host->mmc), data->sg,
+>  					     data->sg_len,
+>  					     mmc_get_dma_dir(data));
+> +				if (host->use_external_dma)
+> +					sdhci_external_dma_cleanup(host, data);
+>  			}
+>  			data->host_cookie = COOKIE_UNMAPPED;
+>  		}
+> @@ -3692,12 +3926,15 @@ int sdhci_setup_host(struct sdhci_host *host)
+>  		       mmc_hostname(mmc), host->version);
+>  	}
+>  
+> -	if (host->quirks & SDHCI_QUIRK_FORCE_DMA)
+> +	if (host->quirks & SDHCI_QUIRK_FORCE_DMA) {
+>  		host->flags |= SDHCI_USE_SDMA;
+> -	else if (!(host->caps & SDHCI_CAN_DO_SDMA))
+> +	} else if (!(host->caps & SDHCI_CAN_DO_SDMA)) {
+>  		DBG("Controller doesn't have SDMA capability\n");
+> -	else
+> +	} else if (host->use_external_dma) {
+> +		/* Using dma-names to detect external dma capability */
+> +	} else {
+>  		host->flags |= SDHCI_USE_SDMA;
+> +	}
+>  
+>  	if ((host->quirks & SDHCI_QUIRK_BROKEN_DMA) &&
+>  		(host->flags & SDHCI_USE_SDMA)) {
+> @@ -3785,6 +4022,19 @@ int sdhci_setup_host(struct sdhci_host *host)
+>  		}
+>  	}
+>  
+> +	if (host->use_external_dma) {
+> +		ret = sdhci_external_dma_init(host);
+> +		if (ret == -EPROBE_DEFER)
+> +			goto unreg;
+> +
+> +		/*
+> +		 * Fall back to use the DMA/PIO integrated in standard SDHCI
+> +		 * instead of external DMA devices.
+> +		 */
+> +		if (ret)
+> +			sdhci_switch_external_dma(host, false);
+> +	}
+> +
+>  	/*
+>  	 * If we use DMA, then it's up to the caller to set the DMA
+>  	 * mask, but PIO does not need the hw shim so we set a new
+> @@ -4201,6 +4451,10 @@ void sdhci_cleanup_host(struct sdhci_host *host)
+>  		dma_free_coherent(mmc_dev(mmc), host->align_buffer_sz +
+>  				  host->adma_table_sz, host->align_buffer,
+>  				  host->align_addr);
+> +
+> +	if (host->use_external_dma)
+> +		sdhci_external_dma_release(host);
+> +
+>  	host->adma_table = NULL;
+>  	host->align_buffer = NULL;
+>  }
+> @@ -4247,6 +4501,7 @@ int __sdhci_add_host(struct sdhci_host *host)
+>  
+>  	pr_info("%s: SDHCI controller on %s [%s] using %s\n",
+>  		mmc_hostname(mmc), host->hw_name, dev_name(mmc_dev(mmc)),
+> +		host->use_external_dma ? "External DMA" :
+>  		(host->flags & SDHCI_USE_ADMA) ?
+>  		(host->flags & SDHCI_USE_64_BIT_DMA) ? "ADMA 64-bit" : "ADMA" :
+>  		(host->flags & SDHCI_USE_SDMA) ? "DMA" : "PIO");
+> @@ -4335,6 +4590,9 @@ void sdhci_remove_host(struct sdhci_host *host, int dead)
+>  				  host->adma_table_sz, host->align_buffer,
+>  				  host->align_addr);
+>  
+> +	if (host->use_external_dma)
+> +		sdhci_external_dma_release(host);
+> +
+>  	host->adma_table = NULL;
+>  	host->align_buffer = NULL;
+>  }
+> diff --git a/drivers/mmc/host/sdhci.h b/drivers/mmc/host/sdhci.h
+> index 6cc9a3c2ac66..7a52823ebef4 100644
+> --- a/drivers/mmc/host/sdhci.h
+> +++ b/drivers/mmc/host/sdhci.h
+> @@ -482,6 +482,7 @@ struct sdhci_host {
+>  
+>  	int irq;		/* Device IRQ */
+>  	void __iomem *ioaddr;	/* Mapped address */
+> +	phys_addr_t mapbase;	/* physical address base */
+>  	char *bounce_buffer;	/* For packing SDMA reads/writes */
+>  	dma_addr_t bounce_addr;
+>  	unsigned int bounce_buffer_size;
+> @@ -531,6 +532,7 @@ struct sdhci_host {
+>  	bool pending_reset;	/* Cmd/data reset is pending */
+>  	bool irq_wake_enabled;	/* IRQ wakeup is enabled */
+>  	bool v4_mode;		/* Host Version 4 Enable */
+> +	bool use_external_dma; /* Host selects to use external DMA */
+>  
+>  	struct mmc_request *mrqs_done[SDHCI_MAX_MRQS];	/* Requests done */
+>  	struct mmc_command *cmd;	/* Current command */
+> @@ -559,6 +561,11 @@ struct sdhci_host {
+>  	struct timer_list timer;	/* Timer for timeouts */
+>  	struct timer_list data_timer;	/* Timer for data timeouts */
+>  
+> +#if IS_ENABLED(CONFIG_MMC_SDHCI_EXTERNAL_DMA)
+> +	struct dma_chan	*rx_chan;
+> +	struct dma_chan	*tx_chan;
+> +#endif
+> +
+>  	u32 caps;		/* CAPABILITY_0 */
+>  	u32 caps1;		/* CAPABILITY_1 */
+>  	bool read_caps;		/* Capability flags have been read */
+> @@ -792,5 +799,6 @@ void sdhci_start_tuning(struct sdhci_host *host);
+>  void sdhci_end_tuning(struct sdhci_host *host);
+>  void sdhci_reset_tuning(struct sdhci_host *host);
+>  void sdhci_send_tuning(struct sdhci_host *host, u32 opcode);
+> +void sdhci_switch_external_dma(struct sdhci_host *host, bool en);
+>  
+>  #endif /* __SDHCI_HW_H */
+> 
 
-> 
-> [jolsa@krava perf]$ git am /tmp/comp
-> Applying: feature: build libzstd feature check, LIBZSTD_DIR and NO_LIBZSTD defines
-> Applying: perf record: introduce z, mmap-flush options and PERF_RECORD_COMPRESSED record
-> error: corrupt patch at line 526
-> Patch failed at 0002 perf record: introduce z, mmap-flush options and PERF_RECORD_COMPRESSED record
-> 
-> again the raw patch applies correctly:
-> 
-> [jolsa@krava perf]$ patch -p3 < /tmp/comp2
-> patching file Documentation/perf-record.txt
-> patching file builtin-record.c
-> patching file perf.h
-> patching file util/env.h
-> patching file util/event.c
-> patching file util/event.h
-> patching file util/evlist.c
-> patching file util/evlist.h
-> patching file util/header.c
-> patching file util/header.h
-> patching file util/mmap.c
-> patching file util/mmap.h
-> 
-> 
-> jirka
-> 
