@@ -2,132 +2,165 @@ Return-Path: <SRS0=tq6k=PW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 01C07C43444
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 16:40:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E9591C43612
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 16:40:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BB007206B7
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 16:40:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B324F206B7
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 16:40:46 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=netapp.onmicrosoft.com header.i=@netapp.onmicrosoft.com header.b="K1dRdnLY"
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="ZJddo/Wz"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726859AbfANQkT (ORCPT
+        id S1726838AbfANQkq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 14 Jan 2019 11:40:19 -0500
-Received: from mail-eopbgr810074.outbound.protection.outlook.com ([40.107.81.74]:5138
-        "EHLO NAM01-BY2-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726656AbfANQkT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 Jan 2019 11:40:19 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=netapp.onmicrosoft.com; s=selector1-netapp-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=g6qSD5+oQHSG8QBG3NfFkhshvFevXwGd9XXlEVc5/bk=;
- b=K1dRdnLYywSwVuklYkAxHvNbitgNhDhcBCCFQHZSeAK23HO+HsB4yy/7Eb66rvgZ/h2UvXWcfDNSKN5ESRvD5q7JKExrnyQcx/dAezISY7HM40WkxBnJVo/J99AU6U4vpbFv2pTDC9DfX2bunNvykgp6qSzhth3ephtVQpoqRu0=
-Received: from MWHPR06MB2896.namprd06.prod.outlook.com (10.175.138.137) by
- MWHPR06MB2478.namprd06.prod.outlook.com (10.168.248.14) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1516.19; Mon, 14 Jan 2019 16:40:16 +0000
-Received: from MWHPR06MB2896.namprd06.prod.outlook.com
- ([fe80::d992:bb7d:56ec:8946]) by MWHPR06MB2896.namprd06.prod.outlook.com
- ([fe80::d992:bb7d:56ec:8946%8]) with mapi id 15.20.1516.019; Mon, 14 Jan 2019
- 16:40:16 +0000
-From:   "Harrosh, Boaz" <Boaz.Harrosh@netapp.com>
-To:     Steven Sistare <steven.sistare@oracle.com>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        "linux_lkml_grp@oracle.com" <linux_lkml_grp@oracle.com>
-CC:     "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Hugh Dickins <hughd@google.com>,
-        Michal Hocko <mhocko@kernel.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Toshi Kani <toshi.kani@hpe.com>,
-        Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: [RFC PATCH] mm: align anon mmap for THP
-Thread-Topic: [RFC PATCH] mm: align anon mmap for THP
-Thread-Index: AQHUqeoAUFTCAIIvn0CcxSCAmIzKA6WqnMwAgAAaIICABDLiAIAAEBAL
-Date:   Mon, 14 Jan 2019 16:40:16 +0000
-Message-ID: <MWHPR06MB2896124A4B2B7C9F38383817EE800@MWHPR06MB2896.namprd06.prod.outlook.com>
-References: <20190111201003.19755-1-mike.kravetz@oracle.com>
- <20190111215506.jmp2s5end2vlzhvb@black.fi.intel.com>
- <ebd57b51-117b-4a3d-21d9-fc0287f437d6@oracle.com>,<ad3a53ba-82e2-2dc7-1cd2-feef7def0bc3@oracle.com>
-In-Reply-To: <ad3a53ba-82e2-2dc7-1cd2-feef7def0bc3@oracle.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Boaz.Harrosh@netapp.com; 
-x-originating-ip: [207.232.55.62]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;MWHPR06MB2478;6:f41Cbm7lezw9OnspoiA3BdWGu2hhRiQZ9M99k5O7FVd24+bZ00vxKuoi8RmENZXsBFfw4OWT06D+snP5Sni42NbdwRI3AJyvY5GX0jaMiefCPiw69WXl6UdPJ3z0hPZ1KLUaI0cpG/G+Fphyj+NWUaodJuvrAvdfAbfsBDah9vDuM/nC3PIGGGrdIec2aWQ7BG3WhsytDFEd/FHe6aFfpqJwKRCvvKGbs/vmQ6AClvwwPZ8uDYkUHjOSDy8gQAa0d4QHtiUnfEGfhVQCMHZoHWdGoC5b2rSrBsPsySU+RJkW/NB+kFD3koVENPzI37dIWLLcec+SKxQG1bSQBXzV7DaqP07oOB3mE91UDKiGfwLMrMUXNZmbDq6pGmsLGDiIhjgR58slBCbq/feXawaRbbHN63xYbwE+juSkkE5U+zt80gEEsT9neeWJV5Moyp2XRY/P19ba1rirRZKlCrKkcg==;5:rPKUT5H7Ir6hEcUeoxuszMafJi4OZ4S7B0kOarQ7MZdeQCqAunjEmjc2ZNK+hXCYW3KDKmMkhlOXNMAgMEwcDvqtNvWrnA/ejryiL6NhbF2lNFgaBZuoXkM16hZE1vNWv1QADunqQ4uA1eja1f3U7xEyhQUnTScczEFXCfd/dNoi336ZrEk7N3i2FGf9c1zcczvQDuhfKNJLdHrJI332wA==;7:ZQWTfj5h5bktU5c8PX7Nw6rGyGa3kFBIwcLeu5IX1/GeGFEDxT+TSmEBs72ECBzA397JkQ+uY3ly2w31+Wa+Iv5RLmEQqNW76UZnvyXO3ep6MHnlm6vs22Z1UKbhlz6W2vgsueJjdgbfEGS+7IZfGA==
-x-ms-exchange-antispam-srfa-diagnostics: SOS;
-x-ms-office365-filtering-correlation-id: 3b5078bd-3825-4a67-5c6b-08d67a3ef6bc
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600109)(711020)(2017052603328)(7193020);SRVR:MWHPR06MB2478;
-x-ms-traffictypediagnostic: MWHPR06MB2478:
-x-microsoft-antispam-prvs: <MWHPR06MB247802D9FEA1752F9E6A658AEE800@MWHPR06MB2478.namprd06.prod.outlook.com>
-x-forefront-prvs: 0917DFAC67
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(396003)(136003)(39860400002)(366004)(376002)(346002)(199004)(189003)(316002)(486006)(110136005)(54906003)(93886005)(72206003)(33656002)(14454004)(478600001)(53936002)(86362001)(2501003)(74316002)(68736007)(76176011)(7696005)(6246003)(9686003)(7416002)(4326008)(25786009)(5660300001)(81166006)(8676002)(81156014)(8936002)(14444005)(71190400001)(256004)(186003)(26005)(105586002)(106356001)(3846002)(7736002)(446003)(11346002)(305945005)(102836004)(476003)(6506007)(6116002)(97736004)(55016002)(99286004)(229853002)(6436002)(71200400001)(66066001)(2906002)(21314003);DIR:OUT;SFP:1101;SCL:1;SRVR:MWHPR06MB2478;H:MWHPR06MB2896.namprd06.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: netapp.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: coJqLksDD4w42r5Zof6gt4se1NCmQ04268Co0odm53YV3CTnH+Tj8BpMMmcT/mqE/aCrEnttOHAb90n/yRkkMSewsgdpjF/y+Rzu/Hiuel8DGhHEIWbJ6IqNApxlEe0ALbFQ9DhT5iid2c/7LNE1UayLyLnV7nbW8UFs43m7n3LFah9wTwjXuqFPdq8ee/EYM4DZbfUHJQH83EIkJmuEqutplGrcbHKJZO6fBPBGVG3NcfGwYZ+7cGKMC87PNBnH92qyiNadUGG/vWQ3ej9mnKnzh+iLzWeEICQ14cjQa4WFquEXjJjcxj7pMHmdh+x/k+7XOjOQSY/Cktn4G37Z+XXxpQTttNkfEh36tRDTPiqhZlXc6PaDMQIRd0HNRx3xLbM7+jldzOwcCIzcQY4phb9aDJy7iPvdcI1uClXeQLE=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+        Mon, 14 Jan 2019 11:40:46 -0500
+Received: from userp2120.oracle.com ([156.151.31.85]:55830 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726656AbfANQkp (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 14 Jan 2019 11:40:45 -0500
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id x0EGcubo033797;
+        Mon, 14 Jan 2019 16:39:32 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
+ subject : date : message-id : mime-version : content-type :
+ content-transfer-encoding; s=corp-2018-07-02;
+ bh=WSAc1PrUxV217qpEoJIJGE/bDMBd/wJqWFbATuzxKGw=;
+ b=ZJddo/WznIErK+unfz3zaC0ve2P0PD+t/cpO6O7M+glrRDnbLd2zEmDPQlOrInJ1nHyX
+ pi035DHIYuIiWy5znaCrguZ02HYNcp3QxUtSTUWLyuxzXeCcWZ75amYdcSiGeM2Zipkz
+ Fa8J0tXUy/nlca279cbgIKEBwXO4GdipPHkJVdRGakOtz81WJQ5dDXyTdFWnaBnCeGLz
+ FvBTH99ifWVzvULmU5DOTnLiMh9AXKThjkLpqO9y5TS3y/7U3CICQ1aknp3zYuNvkoj6
+ YFAQR4gWrJReWnwxXaJmxJl7I74FMz6U6M1VkMjzOS4R6rUzZOD60GlUodBPN4L0AUgS gQ== 
+Received: from userv0021.oracle.com (userv0021.oracle.com [156.151.31.71])
+        by userp2120.oracle.com with ESMTP id 2pybjrxjxd-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 14 Jan 2019 16:39:32 +0000
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by userv0021.oracle.com (8.14.4/8.14.4) with ESMTP id x0EGdVL6010035
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 14 Jan 2019 16:39:31 GMT
+Received: from abhmp0016.oracle.com (abhmp0016.oracle.com [141.146.116.22])
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x0EGdUp3011768;
+        Mon, 14 Jan 2019 16:39:30 GMT
+Received: from linux.cn.oracle.com (/10.182.71.41)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Mon, 14 Jan 2019 08:39:30 -0800
+From:   Dongli Zhang <dongli.zhang@oracle.com>
+To:     xen-devel@lists.xenproject.org, linux-block@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc:     konrad.wilk@oracle.com, roger.pau@citrix.com, axboe@kernel.dk,
+        royger@freebsd.org, Paul.Durrant@citrix.com
+Subject: [PATCH v6 1/2] xen/blkback: add stack variable 'blkif' in connect_ring()
+Date:   Tue, 15 Jan 2019 00:41:43 +0800
+Message-Id: <1547484104-20625-1-git-send-email-dongli.zhang@oracle.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-X-OriginatorOrg: netapp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 3b5078bd-3825-4a67-5c6b-08d67a3ef6bc
-X-MS-Exchange-CrossTenant-originalarrivaltime: 14 Jan 2019 16:40:16.3573
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 4b0911a0-929b-4715-944b-c03745165b3a
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR06MB2478
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9136 signatures=668680
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1810050000 definitions=main-1901140137
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Sistare <steven.sistare@oracle.com> wrote:
->=20
-> A better heuristic would be to return an aligned address if the length
-> is a multiple of the huge page size.  The gap (if any) between the end of
-> the previous VMA and the start of this VMA would be filled by subsequent
-> smaller mmap requests.  The new behavior would need to become part of the
-> mmap interface definition so apps can rely on it and omit their hoop-jump=
-ing
-> code.
->=20
+As 'be->blkif' is used for many times in connect_ring(), the stack variable
+'blkif' is added to substitute 'be-blkif'.
 
-Yes that was my original request
+Suggested-by: Paul Durrant <paul.durrant@citrix.com>
+Signed-off-by: Dongli Zhang <dongli.zhang@oracle.com>
+Reviewed-by: Paul Durrant <paul.durrant@citrix.com>
+Reviewed-by: Roger Pau Monné <roger.pau@citrix.com>
+---
+ drivers/block/xen-blkback/xenbus.c | 27 ++++++++++++++-------------
+ 1 file changed, 14 insertions(+), 13 deletions(-)
 
-> Personally I would like to see a new MAP_ALIGN flag and treat the addr
-> argument as the alignment (like Solaris),=20
+diff --git a/drivers/block/xen-blkback/xenbus.c b/drivers/block/xen-blkback/xenbus.c
+index a4bc74e..a4aadac 100644
+--- a/drivers/block/xen-blkback/xenbus.c
++++ b/drivers/block/xen-blkback/xenbus.c
+@@ -1023,6 +1023,7 @@ static int read_per_ring_refs(struct xen_blkif_ring *ring, const char *dir)
+ static int connect_ring(struct backend_info *be)
+ {
+ 	struct xenbus_device *dev = be->dev;
++	struct xen_blkif *blkif = be->blkif;
+ 	unsigned int pers_grants;
+ 	char protocol[64] = "";
+ 	int err, i;
+@@ -1033,25 +1034,25 @@ static int connect_ring(struct backend_info *be)
+ 
+ 	pr_debug("%s %s\n", __func__, dev->otherend);
+ 
+-	be->blkif->blk_protocol = BLKIF_PROTOCOL_DEFAULT;
++	blkif->blk_protocol = BLKIF_PROTOCOL_DEFAULT;
+ 	err = xenbus_scanf(XBT_NIL, dev->otherend, "protocol",
+ 			   "%63s", protocol);
+ 	if (err <= 0)
+ 		strcpy(protocol, "unspecified, assuming default");
+ 	else if (0 == strcmp(protocol, XEN_IO_PROTO_ABI_NATIVE))
+-		be->blkif->blk_protocol = BLKIF_PROTOCOL_NATIVE;
++		blkif->blk_protocol = BLKIF_PROTOCOL_NATIVE;
+ 	else if (0 == strcmp(protocol, XEN_IO_PROTO_ABI_X86_32))
+-		be->blkif->blk_protocol = BLKIF_PROTOCOL_X86_32;
++		blkif->blk_protocol = BLKIF_PROTOCOL_X86_32;
+ 	else if (0 == strcmp(protocol, XEN_IO_PROTO_ABI_X86_64))
+-		be->blkif->blk_protocol = BLKIF_PROTOCOL_X86_64;
++		blkif->blk_protocol = BLKIF_PROTOCOL_X86_64;
+ 	else {
+ 		xenbus_dev_fatal(dev, err, "unknown fe protocol %s", protocol);
+ 		return -ENOSYS;
+ 	}
+ 	pers_grants = xenbus_read_unsigned(dev->otherend, "feature-persistent",
+ 					   0);
+-	be->blkif->vbd.feature_gnt_persistent = pers_grants;
+-	be->blkif->vbd.overflow_max_grants = 0;
++	blkif->vbd.feature_gnt_persistent = pers_grants;
++	blkif->vbd.overflow_max_grants = 0;
+ 
+ 	/*
+ 	 * Read the number of hardware queues from frontend.
+@@ -1067,16 +1068,16 @@ static int connect_ring(struct backend_info *be)
+ 				requested_num_queues, xenblk_max_queues);
+ 		return -ENOSYS;
+ 	}
+-	be->blkif->nr_rings = requested_num_queues;
+-	if (xen_blkif_alloc_rings(be->blkif))
++	blkif->nr_rings = requested_num_queues;
++	if (xen_blkif_alloc_rings(blkif))
+ 		return -ENOMEM;
+ 
+ 	pr_info("%s: using %d queues, protocol %d (%s) %s\n", dev->nodename,
+-		 be->blkif->nr_rings, be->blkif->blk_protocol, protocol,
++		 blkif->nr_rings, blkif->blk_protocol, protocol,
+ 		 pers_grants ? "persistent grants" : "");
+ 
+-	if (be->blkif->nr_rings == 1)
+-		return read_per_ring_refs(&be->blkif->rings[0], dev->otherend);
++	if (blkif->nr_rings == 1)
++		return read_per_ring_refs(&blkif->rings[0], dev->otherend);
+ 	else {
+ 		xspathsize = strlen(dev->otherend) + xenstore_path_ext_size;
+ 		xspath = kmalloc(xspathsize, GFP_KERNEL);
+@@ -1085,10 +1086,10 @@ static int connect_ring(struct backend_info *be)
+ 			return -ENOMEM;
+ 		}
+ 
+-		for (i = 0; i < be->blkif->nr_rings; i++) {
++		for (i = 0; i < blkif->nr_rings; i++) {
+ 			memset(xspath, 0, xspathsize);
+ 			snprintf(xspath, xspathsize, "%s/queue-%u", dev->otherend, i);
+-			err = read_per_ring_refs(&be->blkif->rings[i], xspath);
++			err = read_per_ring_refs(&blkif->rings[i], xspath);
+ 			if (err) {
+ 				kfree(xspath);
+ 				return err;
+-- 
+2.7.4
 
-Yes I would like that. So app can know when to do the old thing ...
-
-> but I am told that adding flags
-> is problematic because old kernels accept undefined flag bits from userla=
-nd
-> without complaint, so their behavior would change.
->=20
-
-There is already a mechanism in place since 4.14 I think or even before on
-how to add new MMAP_XXX flags. This is done by combining MMAP_SHARED & MMAP=
-_PRIVATE
-flags together with the new set of flags. If there are present new flags th=
-is is allowed and means
-requesting some new flag. Else and in old Kernels the combination above is =
-not allowed in POSIX
-and would fail in old Kernels.
-
-Cheers
-Boaz
-
-> - Steve
