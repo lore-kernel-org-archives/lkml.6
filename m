@@ -6,65 +6,70 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B308C43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 20:44:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 52466C43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 20:44:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CB1B420656
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 20:43:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1EFE120656
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 20:44:21 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GS9Kdm5S"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HSx68K5s"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727029AbfANUn6 (ORCPT
+        id S1727075AbfANUoT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 14 Jan 2019 15:43:58 -0500
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:46931 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726782AbfANUn5 (ORCPT
+        Mon, 14 Jan 2019 15:44:19 -0500
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:42977 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726796AbfANUoS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 Jan 2019 15:43:57 -0500
-Received: by mail-wr1-f66.google.com with SMTP id l9so409492wrt.13
-        for <linux-kernel@vger.kernel.org>; Mon, 14 Jan 2019 12:43:56 -0800 (PST)
+        Mon, 14 Jan 2019 15:44:18 -0500
+Received: by mail-wr1-f67.google.com with SMTP id q18so439763wrx.9;
+        Mon, 14 Jan 2019 12:44:17 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=sender:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=BPW/TPOsfK8EVwwui1CBCtoZzoIlZFL9ga9+cAosqO4=;
-        b=GS9Kdm5SfAWny0c/T3FjpwOTPBEz+28qg+BLN3Tl+bgkk9idmCx6iGcW96BjGG38O4
-         wP+siSGII8489GMfekKQccX6cv3BNYCeh8sJbOQbu5LVOI53I/e6nlvU2D1dd+X9BhQG
-         aj6dn3ij/uzboHPMQvIsbT86dtLXTyR449Z8VY7k/0XFaUwq/R0pB6nFto+ghWQl8k2U
-         fszQeOAea2+gmXHUsM+vFyNWX4ykD86TMkQMF7f59LQ8i9bmp29I/HoGbyNhjwxmqnZU
-         b4Kkjx6++cJkvVpjZCEQh78yu4l3zlt3YgMxp4ymNiT5jEigH5gXys0fME5/G/rCH0Oz
-         8HdQ==
+        bh=tINskAOSN2QPN6hfBcEmRWZQ3qB/w4in6szGvz0cmes=;
+        b=HSx68K5suQsFcXRZdjJPkLPF8YuMaoiMqnIIh9PGVbH7wOUrE9PIQxTZDB0hSSDe3j
+         uYNALxeDW+Si1XZ9OMs6qK6Y6zYR972NvlNbceIqrhY+YtzCVv5zIMaFvAug701HTV2G
+         OaYvGsIb+08AlaIcVJixnDcgUJxl3TjWi+i8zewkgLAY4D+lxhVBK82MjndMP/fyloDp
+         JfewSjtsw+KesxwFWQ4xdAk0wmEye6P4xoSZP/Z+kydC8rUo8/hVyQSvyq9CEtrQYAb0
+         klGBovh3692WJl/NpnREIlHMrrHFJpCVbj7u9TnWvkgrH9ffJJw+z3PDTgzDNP6OQGGH
+         182A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:sender:from:to:cc:subject:date:message-id
          :mime-version:content-transfer-encoding;
-        bh=BPW/TPOsfK8EVwwui1CBCtoZzoIlZFL9ga9+cAosqO4=;
-        b=HedAUG5sZVyHr6oUDHk11z//S97MXIGxdip7yZ4MG1O8FoecJm5zVJNdsiEpLb/nAp
-         gDKWzJOQ1fndGEdFlmAY1Xm7cyRcKj1DZoQniOCGpo+6dgwsh9flGFG95JW7YC9SvgsZ
-         j1ivSKMsmVtvaFFSv9KL8BiViJJfQg/fae7UcuqgUTfQHRMKB7Bf552KlTHcmgwCdj8d
-         vAXJ62L053CzBafXdutzINGF/n49SBuWmwOZv72m+mTzXyOG/kKDbaUjPcswhG3jywkA
-         WHge+42OEmlZgrn3lhGW4vTU5ACrmnhWkUEgCW+e20HV9lmFJ8XfD48rvO2Gikco+7wZ
-         5uDg==
-X-Gm-Message-State: AJcUukfp44G8sBY/oKTnLR6nUNz49sfr/ezomRkwecGyBjLfT/5amGh8
-        SuIgEkwXkne+lG68lyUXg24=
-X-Google-Smtp-Source: ALg8bN7EdutVFzIqkS/3yO7sJDaHZdD4AamfbUZVY7GfS/C6GbmeEpidj1E3Rx5BDlJZRrQN7ZQ3Gw==
-X-Received: by 2002:adf:8068:: with SMTP id 95mr217196wrk.181.1547498635982;
-        Mon, 14 Jan 2019 12:43:55 -0800 (PST)
-Received: from macbookpro.malat.net (bru31-1-78-225-224-134.fbx.proxad.net. [78.225.224.134])
-        by smtp.gmail.com with ESMTPSA id c10sm66049695wrw.49.2019.01.14.12.43.54
+        bh=tINskAOSN2QPN6hfBcEmRWZQ3qB/w4in6szGvz0cmes=;
+        b=qFE/uJYsAXPX0WA3XM85bybK6pofXqlHXHPvbCt8LqXIQbMXXX1GlPjwrpsA2dyty3
+         wmL+a2qU1dxDdIbjsdhgltJMJDRjt5UD9FgGgbY0r8wSMsd0pJeLvbBlRg53m6DZw7W7
+         OJz7nUIRSJvV/GeXIC0IJgfj+gOGBgvq5bVypiPHDgKxv9thJt08VzW0nqVaGOJorLU0
+         l2oQ4JTzd4roSEFIy0rsAgJt8LAVBAkbdl462OY237IBoBUfypZ4F1uMprAuplVrMBcz
+         hCvgoOqv2RYB6iZe1apusaozR6Cp7b28gHE+XK5P3Y+MTZcp5NVUPJPBtUdnRcACkubD
+         R3AA==
+X-Gm-Message-State: AJcUukdsqauhmjSjqQ3O8KEEkUwc1FTxMeuzA3SIBLPU3uvHPLaszR1q
+        4LtOHmeOosRQ+loOI2Wq+Ze10XgdUDg=
+X-Google-Smtp-Source: ALg8bN4kX6JV1nzgWApM3sj7f8hZjXFd0V0pl9Y5W2i6IqG+lpfJKkG0nLyRgw8RKjALbGE3ASbPuw==
+X-Received: by 2002:adf:f984:: with SMTP id f4mr241149wrr.234.1547498656722;
+        Mon, 14 Jan 2019 12:44:16 -0800 (PST)
+Received: from planxty.redhat.com ([2a02:8108:1700:1960:91dd:e2f9:ed05:ee2b])
+        by smtp.gmail.com with ESMTPSA id h17sm71158913wrt.59.2019.01.14.12.44.14
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 14 Jan 2019 12:43:54 -0800 (PST)
-Received: by macbookpro.malat.net (Postfix, from userid 1000)
-        id E90F111422AD; Mon, 14 Jan 2019 21:43:53 +0100 (CET)
-From:   Mathieu Malaterre <malat@debian.org>
-To:     Stefan Richter <stefanr@s5r6.in-berlin.de>
-Cc:     Mathieu Malaterre <malat@debian.org>,
-        linux1394-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
-Subject: [PATCH] firewire: annotate implicit fall through
-Date:   Mon, 14 Jan 2019 21:43:51 +0100
-Message-Id: <20190114204352.22012-1-malat@debian.org>
-X-Mailer: git-send-email 2.19.2
+        Mon, 14 Jan 2019 12:44:16 -0800 (PST)
+From:   John Kacur <jkacur@redhat.com>
+To:     Joe Korty <Joe.Korty@concurrent-rt.com>
+Cc:     Clark Williams <williams@redhat.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        "julia @ ni . com" <julia@ni.com>,
+        "tglx @ linutronix . de" <tglx@linutronix.de>,
+        "oleg @ redhat . com" <oleg@redhat.com>,
+        "linux-rt-users @ vger . kernel . org" 
+        <linux-rt-users@vger.kernel.org>,
+        "linux-kernel @ vger . kernel . org" <linux-kernel@vger.kernel.org>,
+        John Kacur <jkacur@redhat.com>
+Subject: [PATCH] rt-tests: Makefile: ssdd: Incoroporate ssdd into the rt-tests Makefile
+Date:   Mon, 14 Jan 2019 21:43:58 +0100
+Message-Id: <20190114204358.15550-1-jkacur@redhat.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -72,30 +77,45 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-There is a plan to build the kernel with -Wimplicit-fallthrough and
-this place in the code produced a warning (W=1).
+Incoroporate ssdd into the rt-tests build
 
-This commit remove the following warning:
-
-  drivers/firewire/core-topology.c:69:23: warning: this statement may fall through [-Wimplicit-fallthrough=]
-
-Signed-off-by: Mathieu Malaterre <malat@debian.org>
+Signed-off-by: John Kacur <jkacur@redhat.com>
 ---
- drivers/firewire/core-topology.c | 1 +
- 1 file changed, 1 insertion(+)
+ Makefile | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/firewire/core-topology.c b/drivers/firewire/core-topology.c
-index 7db234d3fbdd..82c67e900aad 100644
---- a/drivers/firewire/core-topology.c
-+++ b/drivers/firewire/core-topology.c
-@@ -67,6 +67,7 @@ static u32 *count_ports(u32 *sid, int *total_port_count, int *child_port_count)
- 		switch (port_type) {
- 		case SELFID_PORT_CHILD:
- 			(*child_port_count)++;
-+			/* fall through */
- 		case SELFID_PORT_PARENT:
- 		case SELFID_PORT_NCONN:
- 			(*total_port_count)++;
+diff --git a/Makefile b/Makefile
+index 06f399cc629d..16cd2f9bdd03 100644
+--- a/Makefile
++++ b/Makefile
+@@ -16,7 +16,8 @@ sources = cyclictest.c \
+ 	  svsematest.c  \
+ 	  cyclicdeadline.c \
+ 	  deadline_test.c \
+-	  queuelat.c 
++	  queuelat.c \
++	  ssdd.c
+ 
+ TARGETS = $(sources:.c=)
+ LIBS	= -lrt -lpthread
+@@ -86,6 +87,7 @@ VPATH	+= src/lib:
+ VPATH	+= src/hackbench:
+ VPATH	+= src/sched_deadline:
+ VPATH	+= src/queuelat:	
++VPATH	+= src/ssdd:
+ 
+ $(OBJDIR)/%.o: %.c | $(OBJDIR)
+ 	$(CC) -D VERSION=$(VERSION) -c $< $(CFLAGS) $(CPPFLAGS) -o $@
+@@ -146,6 +148,9 @@ hackbench: $(OBJDIR)/hackbench.o
+ queuelat: $(OBJDIR)/queuelat.o $(OBJDIR)/librttest.a
+ 	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $< $(LIBS) $(RTTESTLIB)
+ 
++ssdd: $(OBJDIR)/ssdd.o $(OBJDIR)/librttest.a
++	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $< $(LIBS) $(RTTESTLIB)
++
+ LIBOBJS =$(addprefix $(OBJDIR)/,error.o rt-get_cpu.o rt-sched.o rt-utils.o)
+ $(OBJDIR)/librttest.a: $(LIBOBJS)
+ 	$(AR) rcs $@ $^
 -- 
-2.19.2
+2.20.1
 
