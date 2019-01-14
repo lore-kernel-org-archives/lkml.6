@@ -2,151 +2,92 @@ Return-Path: <SRS0=tq6k=PW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F0E9CC43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 20:51:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 19546C43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 20:51:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BE96B20656
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 20:51:39 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="PulFaOoj"
+	by mail.kernel.org (Postfix) with ESMTP id E565720656
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 20:51:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727031AbfANUvi (ORCPT
+        id S1727131AbfANUvw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 14 Jan 2019 15:51:38 -0500
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:35680 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726871AbfANUvh (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 Jan 2019 15:51:37 -0500
-Received: by mail-pg1-f195.google.com with SMTP id s198so180379pgs.2
-        for <linux-kernel@vger.kernel.org>; Mon, 14 Jan 2019 12:51:36 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=e1hQzf8kQPwGBBXZxeEhzx3i1sbMBtFzu/Gc4YZq6XY=;
-        b=PulFaOojxywb0s4CTsuhM1yjWRpethCD8QoP5W93/PNGNgjfPAQwrU5PuYRSVeGEHb
-         ONIkIxo+ahutubjxWnzMjrVYhHmI5u3YEufTKvr1l2e8r2xlyiqbZOOFfxS/EaodNX4q
-         pnUTYt/EFzZIkY0VWxSUOxq8UpD+A+BX8nWPw=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=e1hQzf8kQPwGBBXZxeEhzx3i1sbMBtFzu/Gc4YZq6XY=;
-        b=YGKm6fJ5cTSvKdzJ0/EbrwymcQqqSfZQ6F6HjZJC2uj6sMYf9e3/j/Tnx7NszebaXo
-         Dg2vNoXovPurBFSNXGxBproa+dD2KhiaQR+bV1D4p4g5bI4u5v0b55MlVS3Wg37Nxf0b
-         uoPmVNcutGU//xuZjoFIWWFHMR6SQobWs6UYc5/Z5T64sjjj+2sXsUoGj+e9n6vJgLVM
-         TkWwnQ45gIrbZqdSQmyBXyEnIa20OxYw47TtDPlUGig1MGn5QG83AqdHO/hQQ+fWqfaU
-         Cq0n/2Wo8omtWJBSHE57gBpu5fl6rPF/Z7njjqnc3z3iAjPIXRdSXmUzCL//xevWb3er
-         Qd+w==
-X-Gm-Message-State: AJcUukfaKI1jbvO60YOuP2UyhWtsBq+3AIWmoT6l5AEmaHTMZpg7PSVF
-        V1dRPS1xOAsyRE8YtBNPIlg0VhcPPqdI5w==
-X-Google-Smtp-Source: ALg8bN6V/ogGC0UJrdWtZxIj1thJm4PaHtlZaZPlup3M33qBvkcFs1ZQv0zC0xgCB/cFvg2t10tH4g==
-X-Received: by 2002:a62:140a:: with SMTP id 10mr356103pfu.157.1547499096411;
-        Mon, 14 Jan 2019 12:51:36 -0800 (PST)
-Received: from localhost ([2620:15c:202:1:75a:3f6e:21d:9374])
-        by smtp.gmail.com with ESMTPSA id h185sm1605257pfg.143.2019.01.14.12.51.35
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 14 Jan 2019 12:51:35 -0800 (PST)
-Date:   Mon, 14 Jan 2019 12:51:35 -0800
-From:   Matthias Kaehlcke <mka@chromium.org>
-To:     Amit Kucheria <amit.kucheria@linaro.org>
-Cc:     linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        viresh.kumar@linaro.org, edubezval@gmail.com, swboyd@chromium.org,
-        dianders@chromium.org, "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        linux-pm@vger.kernel.org
-Subject: Re: [PATCH v1 02/10] cpufreq: Add a flag to auto-register a cooling
- device
-Message-ID: <20190114205135.GL261387@google.com>
-References: <cover.1547481320.git.amit.kucheria@linaro.org>
- <c1e460c49ad2f16b15ace909514a770c9753d1b1.1547481320.git.amit.kucheria@linaro.org>
+        Mon, 14 Jan 2019 15:51:52 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:43090 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726809AbfANUvv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 14 Jan 2019 15:51:51 -0500
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 64C5E637FC;
+        Mon, 14 Jan 2019 20:51:51 +0000 (UTC)
+Received: from localhost.localdomain (unknown [10.18.25.74])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id A12205D75F;
+        Mon, 14 Jan 2019 20:51:50 +0000 (UTC)
+From:   Jeff Moyer <jmoyer@redhat.com>
+To:     Dan Williams <dan.j.williams@intel.com>
+Cc:     linux-nvdimm <linux-nvdimm@lists.01.org>,
+        Sujith Pandel <sujith_pandel@dell.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        stable <stable@vger.kernel.org>
+Subject: Re: [PATCH] acpi/nfit: Fix command-supported detection
+References: <154725096972.1367907.12968253382302127133.stgit@dwillia2-desk3.amr.corp.intel.com>
+        <x49sgxvclmu.fsf@redhat.com>
+        <CAPcyv4hLGB-=UcHykgAO5X3Oakp_erw_62_gpUD2cqXLXKpJVQ@mail.gmail.com>
+        <CAPcyv4hANufJYNnu+tc5yaun3xG8Ht6MirobG4Fj_CaafXE+7g@mail.gmail.com>
+X-PGP-KeyID: 1F78E1B4
+X-PGP-CertKey: F6FE 280D 8293 F72C 65FD  5A58 1FF8 A7CA 1F78 E1B4
+Date:   Mon, 14 Jan 2019 15:51:49 -0500
+In-Reply-To: <CAPcyv4hANufJYNnu+tc5yaun3xG8Ht6MirobG4Fj_CaafXE+7g@mail.gmail.com>
+        (Dan Williams's message of "Mon, 14 Jan 2019 08:47:49 -0800")
+Message-ID: <x498sznaroa.fsf@redhat.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <c1e460c49ad2f16b15ace909514a770c9753d1b1.1547481320.git.amit.kucheria@linaro.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.28]); Mon, 14 Jan 2019 20:51:51 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jan 14, 2019 at 10:04:54PM +0530, Amit Kucheria wrote:
-> All cpufreq drivers do similar things to register as a cooling device.
-> Provide a cpufreq driver flag so drivers can just ask the cpufreq core
-> to register the cooling device on their behalf. This allows us to get
-> rid of duplicated code in the drivers.
-> 
-> Suggested-by: Stephen Boyd <swboyd@chromium.org>
-> Suggested-by: Viresh Kumar <viresh.kumar@linaro.org>
-> Signed-off-by: Amit Kucheria <amit.kucheria@linaro.org>
-> ---
->  drivers/cpufreq/cpufreq.c | 17 +++++++++++++++++
->  include/linux/cpufreq.h   |  6 ++++++
->  2 files changed, 23 insertions(+)
-> 
-> diff --git a/drivers/cpufreq/cpufreq.c b/drivers/cpufreq/cpufreq.c
-> index 6f23ebb395f1..cd6e750d3d82 100644
-> --- a/drivers/cpufreq/cpufreq.c
-> +++ b/drivers/cpufreq/cpufreq.c
-> @@ -30,6 +30,7 @@
->  #include <linux/syscore_ops.h>
->  #include <linux/tick.h>
->  #include <trace/events/power.h>
-> +#include <linux/cpu_cooling.h>
->  
->  static LIST_HEAD(cpufreq_policy_list);
->  
-> @@ -1318,6 +1319,14 @@ static int cpufreq_online(unsigned int cpu)
->  	if (cpufreq_driver->ready)
->  		cpufreq_driver->ready(policy);
->  
-> +#ifdef CONFIG_CPU_THERMAL
-> +	if (cpufreq_driver->flags & CPUFREQ_AUTO_REGISTER_COOLING_DEV) {
-> +		struct thermal_cooling_device **cdev = &policy->cooldev;
-> +
-> +		*cdev = of_cpufreq_cooling_register(policy);
-> +	}
-> +#endif
-> +
->  	pr_debug("initialization complete\n");
->  
->  	return 0;
-> @@ -1411,6 +1420,14 @@ static int cpufreq_offline(unsigned int cpu)
->  	if (has_target())
->  		cpufreq_exit_governor(policy);
->  
-> +#ifdef CONFIG_CPU_THERMAL
-> +	if (cpufreq_driver->flags & CPUFREQ_AUTO_REGISTER_COOLING_DEV) {
-> +		struct thermal_cooling_device **cdev = &policy->cooldev;
-> +
-> +		cpufreq_cooling_unregister(*cdev);
-> +	}
-> +#endif
-> +
->  	/*
->  	 * Perform the ->exit() even during light-weight tear-down,
->  	 * since this is a core component, and is essential for the
-> diff --git a/include/linux/cpufreq.h b/include/linux/cpufreq.h
-> index 7d0cf54125fa..70ad02088825 100644
-> --- a/include/linux/cpufreq.h
-> +++ b/include/linux/cpufreq.h
-> @@ -390,6 +390,12 @@ struct cpufreq_driver {
->   */
->  #define CPUFREQ_NO_AUTO_DYNAMIC_SWITCHING (1 << 6)
->  
-> +/*
-> + * Set by drivers that want the core to automatically register the cpufreq
-> + * driver as a thermal cooling device
-> + */
-> +#define CPUFREQ_AUTO_REGISTER_COOLING_DEV (1 << 7)
-> +
->  int cpufreq_register_driver(struct cpufreq_driver *driver_data);
->  int cpufreq_unregister_driver(struct cpufreq_driver *driver_data);
+Dan Williams <dan.j.williams@intel.com> writes:
 
-Reviewed-by: Matthias Kaehlcke <mka@chromium.org>
-Tested-by: Matthias Kaehlcke <mka@chromium.org>
+> On Mon, Jan 14, 2019 at 8:43 AM Dan Williams <dan.j.williams@intel.com> wrote:
+>> On Mon, Jan 14, 2019 at 7:19 AM Jeff Moyer <jmoyer@redhat.com> wrote:
+> [..]
+>> > > +
+>> > > +     if (cmd == ND_CMD_CALL) {
+>> > > +             int i;
+>> > > +
+>> > > +             if (call_pkg && nfit_mem->family != call_pkg->nd_family)
+>> > > +                     return -ENOTTY;
+>> > > +
+>> > > +             for (i = 0; i < ARRAY_SIZE(call_pkg->nd_reserved2); i++)
+>> > > +                     if (call_pkg->nd_reserved2[i])
+>> > > +                             return -EINVAL;
+>> > > +             return call_pkg->nd_command;
+>> > > +     }
+>> > > +
+>> > > +     /* Linux ND commands == NVDIMM_FAMILY_INTEL function numbers */
+>> > > +     if (nfit_mem->family == NVDIMM_FAMILY_INTEL)
+>> > > +             return cmd;
+>> > > +     return 0;
+>> >
+>> > Function zero?  Is that really the right thing to return here?
+>>
+>> Yes, function zero is never set in n
+>
+> ...whoops fumble fingered "send"
+>
+> Function zero should never be set in nfit_mem->dsm_mask, although the
+> NVDIMM_FAMILY_MSFT mask violates this assumption. I'll fix that up.
+
+OK, I think I see how it all fits together now, thanks.  It would be
+nice if you documented this magical 0 return somehow.
+
+Cheers,
+Jeff
