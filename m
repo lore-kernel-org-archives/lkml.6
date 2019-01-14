@@ -2,186 +2,86 @@ Return-Path: <SRS0=tq6k=PW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 77450C43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 22:17:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 95B95C43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 22:18:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3895620659
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 22:17:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 647F720657
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 22:18:23 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="cJHckXEt"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="WneJxw+d"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727027AbfANWQ5 (ORCPT
+        id S1727062AbfANWSV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 14 Jan 2019 17:16:57 -0500
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:37114 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726592AbfANWQ5 (ORCPT
+        Mon, 14 Jan 2019 17:18:21 -0500
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:37919 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726684AbfANWSV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 Jan 2019 17:16:57 -0500
-Received: by mail-pf1-f193.google.com with SMTP id y126so276647pfb.4
-        for <linux-kernel@vger.kernel.org>; Mon, 14 Jan 2019 14:16:56 -0800 (PST)
+        Mon, 14 Jan 2019 17:18:21 -0500
+Received: by mail-pf1-f195.google.com with SMTP id q1so275872pfi.5
+        for <linux-kernel@vger.kernel.org>; Mon, 14 Jan 2019 14:18:21 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=kmhjZK5mRNchXvBdcB0fkbXb96cvlvZwjT2+5bWrsaE=;
-        b=cJHckXEtwM/1cjx+aLuiesMvysoLqvJG29OSWhLqJmywQtcE717tzhqVhbNmB8GBfk
-         VfFMVx3pkfLFhNMy6Vyqtp/kCi4BcWkDScuR98Zkoy/exrWEd342qXDgvfD/killyoE6
-         h1LUSl3F+xTAh1zggZlTZhRaCKxZYLgyTUAWse1B7gSvDpCHg+8ymLfkWi30xsQT3+5V
-         Kcl+GHqQgBgaRlTGRygnYVkYYrl4kRsE8sIsOR61X4nX5oqFcr7RqvTKXrNZ7grVeAjP
-         mhhbljLcY73Au5pcaQYqwNzZ1evgIzRcx8C+jFL+20H9G7jfyUVtUEPH/ZowNIGo2SyX
-         SnlQ==
+        d=chromium.org; s=google;
+        h=mime-version:content-transfer-encoding:subject:user-agent
+         :in-reply-to:references:cc:to:message-id:from:date;
+        bh=jIt/iyaErjWY9gXu0JzTVlEHXQtIz8xJ/iRs/6v2cDw=;
+        b=WneJxw+dZGD160JajiyvyPPZ1Zg2iBDoRwaNgwzqguSjQOVbIxpFGIKsuJJle94DbF
+         BVDQWaRUO34Z4QpLLmV8yM0KRKc7cJTno1NvBvFx0yWd1rngtvgXKT+ZIrfmsieCKOhs
+         gqGMkO0vN3tncIGK/1zA+KGgwx9H31d0UovK8=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=kmhjZK5mRNchXvBdcB0fkbXb96cvlvZwjT2+5bWrsaE=;
-        b=dA6zplQaM/DEv7gfbaJbUVsoZ1MoAJ8XfadKCSjQAvB61xQrGVcG9zq7A27k5E2GdG
-         uLWnktmC4rjP7MepTBvR1W4pCzoT44Rj7jfFHQVqvibz44QWxWpyBaCQYZXIcG6Iq9h9
-         4rmhTCt3t1dIJbQkNnXfxGCoRq7FOTDYfrhqYeDeiU+xtstX074oqal4MMnZVyiO4/pp
-         XWgDA+C45z8eVAoTdBYhqJadY9ehiCheymS9eoH24aLryBp/ixI1NkGwxM3p9MQ1qLsG
-         6TfCdqyOyrVZDa5VQklweiQ1KjiH4sWRr01n9O3FlbWlokPYWI2/4bk9KBGYSaPufjKK
-         VseQ==
-X-Gm-Message-State: AJcUukch+0Wr2JfH7NrbsaSNbepAc0SjYzA66AKWyH4o2G7woGkHpT8g
-        GoYfDkgObS4rwKQEu4q0rQ5e5A==
-X-Google-Smtp-Source: ALg8bN6rX0XT0UyOxLHd5HvY5eqwF7ViiLWlZwxAKffiAGkGQp2TwwaZt0syfAG1ehYxz0lFEnyCpw==
-X-Received: by 2002:a62:e201:: with SMTP id a1mr663560pfi.75.1547504216384;
-        Mon, 14 Jan 2019 14:16:56 -0800 (PST)
-Received: from ziepe.ca (S010614cc2056d97f.ed.shawcable.net. [174.3.196.123])
-        by smtp.gmail.com with ESMTPSA id o8sm1741943pfa.42.2019.01.14.14.16.55
+        h=x-gm-message-state:mime-version:content-transfer-encoding:subject
+         :user-agent:in-reply-to:references:cc:to:message-id:from:date;
+        bh=jIt/iyaErjWY9gXu0JzTVlEHXQtIz8xJ/iRs/6v2cDw=;
+        b=r29zs5URLpg0UuS2WJvTqLze37RyapUHX86qjGX8CE6ERK5/2fWId4OmNYlmVwYvA+
+         qrjFS7osgoULRCe9xsgiEuCMXzLG4vQnchPGnQ7n6ozeVaMRahilh4cC5blTvbjRiQOD
+         V1LDIL4f+hiZjv8erCVk3KqRRqu4AWU8rMxGZx8ElsxMY8daTjhmYXWbqltJbZSYaANR
+         l7DKaOXD8JslvO+ttGjb01Plo6xeNtz0UzjJpMOkjQyHjn3ACe31CC94z+lHld4aJxZL
+         oh2AZtUvC18yk0g2Ufr8oFHBVSuo3cNeYnkU7Ep++GKo7U1mIP8Q99CTIF8QWnnXWG+E
+         q9oQ==
+X-Gm-Message-State: AJcUukeCakJxhLMWi21yZa4Wa3k/L0nyyKOrjuPDs7bloW72eynOzleK
+        oS+/3vgaE+NTfMIa+cL3SJSVCw==
+X-Google-Smtp-Source: ALg8bN4OCDykDd72YtAQuGXXxnGDiO4izVeRexs1wAyWoniTLN9ebLTSqnzZB2m+GRA/IDSaUC5Ivw==
+X-Received: by 2002:a65:4646:: with SMTP id k6mr664602pgr.153.1547504300606;
+        Mon, 14 Jan 2019 14:18:20 -0800 (PST)
+Received: from localhost ([2620:15c:202:1:fa53:7765:582b:82b9])
+        by smtp.gmail.com with ESMTPSA id m67sm2003856pfb.25.2019.01.14.14.18.19
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 14 Jan 2019 14:16:55 -0800 (PST)
-Received: from jgg by mlx.ziepe.ca with local (Exim 4.90_1)
-        (envelope-from <jgg@ziepe.ca>)
-        id 1gjAXO-00059T-Ma; Mon, 14 Jan 2019 15:16:54 -0700
-Date:   Mon, 14 Jan 2019 15:16:54 -0700
-From:   Jason Gunthorpe <jgg@ziepe.ca>
-To:     Shiraz Saleem <shiraz.saleem@intel.com>
-Cc:     "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Christoph Hellwig <hch@lst.de>,
-        Imre Deak <imre.deak@intel.com>,
-        Daniel Vetter <daniel.vetter@ffwll.ch>,
-        "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>,
-        Yong Zhi <yong.zhi@intel.com>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Bingbu Cao <bingbu.cao@intel.com>,
-        Tian Shu Qiu <tian.shu.qiu@intel.com>,
-        Jian Xu Zheng <jian.xu.zheng@intel.com>,
-        Sinclair Yeh <syeh@vmware.com>,
-        Thomas Hellstrom <thellstrom@vmware.com>,
-        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>
-Subject: Re: [PATCH] lib/scatterlist: Provide a DMA page iterator
-Message-ID: <20190114221654.GE1208@ziepe.ca>
-References: <20190104223531.GA1705@ziepe.ca>
- <20190112182704.GA15320@ssaleem-MOBL4.amr.corp.intel.com>
- <20190112183752.GC16457@mellanox.com>
- <20190112190305.GA19436@ssaleem-MOBL4.amr.corp.intel.com>
+        Mon, 14 Jan 2019 14:18:19 -0800 (PST)
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190112190305.GA19436@ssaleem-MOBL4.amr.corp.intel.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH 1/2] arm64: dts: qcom: Correct "gpiio" typo in msm8996-pins
+User-Agent: alot/0.8
+In-Reply-To: <1544806891-12516-1-git-send-email-jakob.wuhrer@gmail.com>
+References: <1544806891-12516-1-git-send-email-jakob.wuhrer@gmail.com>
+Cc:     Jakob Wuhrer <jakobwuhrer@airmail.cc>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+To:     andy.gross@linaro.org, david.brown@linaro.org,
+        jakob.wuhrer@gmail.com
+Message-ID: <154750429886.169631.16525331290505403625@swboyd.mtv.corp.google.com>
+From:   Stephen Boyd <swboyd@chromium.org>
+Date:   Mon, 14 Jan 2019 14:18:18 -0800
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Jan 12, 2019 at 01:03:05PM -0600, Shiraz Saleem wrote:
-> On Sat, Jan 12, 2019 at 06:37:58PM +0000, Jason Gunthorpe wrote:
-> > On Sat, Jan 12, 2019 at 12:27:05PM -0600, Shiraz Saleem wrote:
-> > > On Fri, Jan 04, 2019 at 10:35:43PM +0000, Jason Gunthorpe wrote:
-> > > > Commit 2db76d7c3c6d ("lib/scatterlist: sg_page_iter: support sg lists w/o
-> > > > backing pages") introduced the sg_page_iter_dma_address() function without
-> > > > providing a way to use it in the general case. If the sg_dma_len is not
-> > > > equal to the dma_length callers cannot safely use the
-> > > > for_each_sg_page/sg_page_iter_dma_address combination.
-> > > > 
-> > > > Resolve this API mistake by providing a DMA specific iterator,
-> > > > for_each_sg_dma_page(), that uses the right length so
-> > > > sg_page_iter_dma_address() works as expected with all sglists. A new
-> > > > iterator type is introduced to provide compile-time safety against wrongly
-> > > > mixing accessors and iterators.
-> > > [..]
-> > > 
-> > > >  
-> > > > +/*
-> > > > + * sg page iterator for DMA addresses
-> > > > + *
-> > > > + * This is the same as sg_page_iter however you can call
-> > > > + * sg_page_iter_dma_address(@dma_iter) to get the page's DMA
-> > > > + * address. sg_page_iter_page() cannot be called on this iterator.
-> > > > + */
-> > > Does it make sense to have a variant of sg_page_iter_page() to get the
-> > > page descriptor with this dma_iter? This can be used when walking DMA-mapped
-> > > SG lists with for_each_sg_dma_page.
-> > 
-> > I think that would be a complicated cacluation to find the right
-> > offset into the page sg list to get the page pointer back. We can't
-> > just naively use the existing iterator location.
-> > 
-> > Probably places that need this are better to run with two iterators,
-> > less computationally expensive.
-> > 
-> > Did you find a need for this? 
-> > 
-> 
-> Well I was trying convert the RDMA drivers to use your new iterator variant
-> and saw the need for it in locations where we need virtual address of the pages
-> contained in the SGEs.
-> 
-> diff --git a/drivers/infiniband/hw/bnxt_re/qplib_res.c b/drivers/infiniband/hw/bnxt_re/qplib_res.c
-> index 59eeac5..7d26903 100644
-> --- a/drivers/infiniband/hw/bnxt_re/qplib_res.c
-> +++ b/drivers/infiniband/hw/bnxt_re/qplib_res.c
-> @@ -85,7 +85,7 @@ static void __free_pbl(struct pci_dev *pdev, struct bnxt_qplib_pbl *pbl,
->  static int __alloc_pbl(struct pci_dev *pdev, struct bnxt_qplib_pbl *pbl,
->                        struct scatterlist *sghead, u32 pages, u32 pg_size)
->  {
-> -       struct scatterlist *sg;
-> +       struct sg_dma_page_iter sg_iter;
->         bool is_umem = false;
->         int i;
-> 
-> @@ -116,12 +116,13 @@ static int __alloc_pbl(struct pci_dev *pdev, struct bnxt_qplib_pbl *pbl,
->         } else {
->                 i = 0;
->                 is_umem = true;
-> -               for_each_sg(sghead, sg, pages, i) {
-> -                       pbl->pg_map_arr[i] = sg_dma_address(sg);
-> -                       pbl->pg_arr[i] = sg_virt(sg);
-> +               for_each_sg_dma_page(sghead, &sg_iter, pages, 0) {
-> +                       pbl->pg_map_arr[i] = sg_page_iter_dma_address(&sg_iter);
-> +                       pbl->pg_arr[i] = page_address(sg_page_iter_page(&sg_iter.base)); ???
-> 					^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Quoting jakob.wuhrer@gmail.com (2018-12-14 09:01:30)
+> From: Jakob Wuhrer <jakobwuhrer@airmail.cc>
+>=20
+> gpiio5 is missspelt in msm8996-pins.dtsi, fix that.
+>=20
+> Signed-off-by: Jakob Wuhrer <jakobwuhrer@airmail.cc>
+> ---
 
-I concur with CH, pg_arr only looks used in the !umem case, so set to
-NULL here. Check with Selvin & Devesh ?
+Reviewed-by: Stephen Boyd <swboyd@chromium.org>
 
-> @@ -191,16 +190,16 @@ int rxe_mem_init_user(struct rxe_pd *pd, u64 start,
->                 goto err1;
->         }
-> 
-> -       mem->page_shift         = umem->page_shift;
-> -       mem->page_mask          = BIT(umem->page_shift) - 1;
-> +       mem->page_shift         = PAGE_SHIFT;
-> +       mem->page_mask          = PAGE_SIZE - 1;
-> 
->         num_buf                 = 0;
->         map                     = mem->map;
->         if (length > 0) {
->                 buf = map[0]->buf;
-> 
-> -               for_each_sg(umem->sg_head.sgl, sg, umem->nmap, entry) {
-> -                       vaddr = page_address(sg_page(sg));
-> +               for_each_sg_dma_page(umem->sg_head.sgl, &sg_iter, umem->nmap, 0) {
-> +                       vaddr = page_address(sg_page_iter_page(&sg_iter.base));   ?????
-> 				^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-rxe doesn't use DMA addreses, so just leave as for_each_sg_page
-
-Jason
