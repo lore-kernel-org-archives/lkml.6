@@ -6,48 +6,48 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A287C43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 09:55:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F1D0C43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 09:55:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 08CA220656
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 09:55:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C8CBB20663
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 09:55:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726664AbfANJzB (ORCPT
+        id S1726697AbfANJzG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 14 Jan 2019 04:55:01 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:41086 "EHLO
+        Mon, 14 Jan 2019 04:55:06 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:54842 "EHLO
         mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726306AbfANJy7 (ORCPT
+        by vger.kernel.org with ESMTP id S1726306AbfANJzD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 Jan 2019 04:54:59 -0500
-Received: from pps.filterd (m0098420.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id x0E9nYLt102128
-        for <linux-kernel@vger.kernel.org>; Mon, 14 Jan 2019 04:54:57 -0500
-Received: from e14.ny.us.ibm.com (e14.ny.us.ibm.com [129.33.205.204])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2q0p2yw61c-1
+        Mon, 14 Jan 2019 04:55:03 -0500
+Received: from pps.filterd (m0098419.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id x0E9mV0G050475
+        for <linux-kernel@vger.kernel.org>; Mon, 14 Jan 2019 04:55:02 -0500
+Received: from e13.ny.us.ibm.com (e13.ny.us.ibm.com [129.33.205.203])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2q0pskkn1k-1
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Mon, 14 Jan 2019 04:54:57 -0500
+        for <linux-kernel@vger.kernel.org>; Mon, 14 Jan 2019 04:55:02 -0500
 Received: from localhost
-        by e14.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        by e13.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
         for <linux-kernel@vger.kernel.org> from <aneesh.kumar@linux.ibm.com>;
-        Mon, 14 Jan 2019 09:54:56 -0000
-Received: from b01cxnp23034.gho.pok.ibm.com (9.57.198.29)
-        by e14.ny.us.ibm.com (146.89.104.201) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        Mon, 14 Jan 2019 09:55:01 -0000
+Received: from b01cxnp22034.gho.pok.ibm.com (9.57.198.24)
+        by e13.ny.us.ibm.com (146.89.104.200) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
         (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Mon, 14 Jan 2019 09:54:54 -0000
+        Mon, 14 Jan 2019 09:54:58 -0000
 Received: from b01ledav005.gho.pok.ibm.com (b01ledav005.gho.pok.ibm.com [9.57.199.110])
-        by b01cxnp23034.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x0E9srW523527472
+        by b01cxnp22034.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x0E9svCI20971746
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 14 Jan 2019 09:54:53 GMT
+        Mon, 14 Jan 2019 09:54:57 GMT
 Received: from b01ledav005.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 70495AE060;
-        Mon, 14 Jan 2019 09:54:53 +0000 (GMT)
+        by IMSVA (Postfix) with ESMTP id 6C3FBAE064;
+        Mon, 14 Jan 2019 09:54:57 +0000 (GMT)
 Received: from b01ledav005.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id E320AAE06A;
-        Mon, 14 Jan 2019 09:54:50 +0000 (GMT)
+        by IMSVA (Postfix) with ESMTP id DF6FCAE063;
+        Mon, 14 Jan 2019 09:54:54 +0000 (GMT)
 Received: from skywalker.in.ibm.com (unknown [9.124.31.106])
         by b01ledav005.gho.pok.ibm.com (Postfix) with ESMTP;
-        Mon, 14 Jan 2019 09:54:50 +0000 (GMT)
+        Mon, 14 Jan 2019 09:54:54 +0000 (GMT)
 From:   "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>
 To:     akpm@linux-foundation.org, Michal Hocko <mhocko@kernel.org>,
         Alexey Kardashevskiy <aik@ozlabs.ru>,
@@ -57,21 +57,21 @@ Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
         linuxppc-dev@lists.ozlabs.org,
         "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>
 Subject: [PATCH V7 2/4] mm: Update get_user_pages_longterm to migrate pages allocated from CMA region
-Date:   Mon, 14 Jan 2019 15:24:34 +0530
+Date:   Mon, 14 Jan 2019 15:24:35 +0530
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190114095438.32470-1-aneesh.kumar@linux.ibm.com>
 References: <20190114095438.32470-1-aneesh.kumar@linux.ibm.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-TM-AS-GCONF: 00
-x-cbid: 19011409-0052-0000-0000-000003780AE9
+x-cbid: 19011409-0064-0000-0000-0000039658E1
 X-IBM-SpamModules-Scores: 
 X-IBM-SpamModules-Versions: BY=3.00010402; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000274; SDB=6.01146283; UDB=6.00597007; IPR=6.00926570;
- MB=3.00025118; MTD=3.00000008; XFM=3.00000015; UTC=2019-01-14 09:54:56
+ PH=3.00000004; SC=3.00000274; SDB=6.01146284; UDB=6.00597007; IPR=6.00926570;
+ MB=3.00025118; MTD=3.00000008; XFM=3.00000015; UTC=2019-01-14 09:55:01
 X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19011409-0053-0000-0000-00005F75E2D8
-Message-Id: <20190114095438.32470-3-aneesh.kumar@linux.ibm.com>
+x-cbparentid: 19011409-0065-0000-0000-00003C07A8A8
+Message-Id: <20190114095438.32470-4-aneesh.kumar@linux.ibm.com>
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-01-14_05:,,
  signatures=0
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
