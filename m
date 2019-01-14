@@ -2,176 +2,92 @@ Return-Path: <SRS0=tq6k=PW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AC3F4C43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 16:37:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 726FFC43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 16:37:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 79622206B7
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 16:37:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 40F4D206B7
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 16:37:33 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="oa3AQz9p";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="Q/pDh5/t"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726976AbfANQh2 (ORCPT
+        id S1726991AbfANQhc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 14 Jan 2019 11:37:28 -0500
-Received: from foss.arm.com ([217.140.101.70]:37100 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726674AbfANQh2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 Jan 2019 11:37:28 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B3342A78;
-        Mon, 14 Jan 2019 08:37:27 -0800 (PST)
-Received: from [192.168.100.241] (usa-sjc-mx-foss1.foss.arm.com [217.140.101.70])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id F0E543F5BD;
-        Mon, 14 Jan 2019 08:37:26 -0800 (PST)
-Subject: Re: [PATCH v3 6/7] arm64: add sysfs vulnerability show for
- speculative store bypass
-To:     Marc Zyngier <marc.zyngier@arm.com>,
-        linux-arm-kernel@lists.infradead.org
-Cc:     catalin.marinas@arm.com, will.deacon@arm.com,
-        suzuki.poulose@arm.com, dave.martin@arm.com,
-        shankerd@codeaurora.org, linux-kernel@vger.kernel.org,
-        ykaukab@suse.de, julien.thierry@arm.com, mlangsdo@redhat.com,
-        steven.price@arm.com, stefan.wahren@i2se.com
-References: <20190109235544.2992426-1-jeremy.linton@arm.com>
- <20190109235544.2992426-7-jeremy.linton@arm.com>
- <ac625845-fd40-ad87-4efd-ea0ed53274ec@arm.com>
-From:   Jeremy Linton <jeremy.linton@arm.com>
-Message-ID: <762faf42-6806-bba9-091c-c21e6955e17d@arm.com>
-Date:   Mon, 14 Jan 2019 10:37:26 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
-MIME-Version: 1.0
-In-Reply-To: <ac625845-fd40-ad87-4efd-ea0ed53274ec@arm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        Mon, 14 Jan 2019 11:37:32 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:46416 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726674AbfANQha (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 14 Jan 2019 11:37:30 -0500
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 9C53360928; Mon, 14 Jan 2019 16:37:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1547483849;
+        bh=Gd+QtjCybC5WjWQoVGUj9Esn6Z1wlVmCqXn+WxECaKY=;
+        h=From:To:Cc:Subject:Date:From;
+        b=oa3AQz9p8kWWCBqv1jmMRVbURpxouVe/G4ULCOs2HoU0lf7z/6t5wbZfGg+2I3cdD
+         MKeBJAO4HTEAuFbCFUJXaH9DAtiELJ9QrPnq7AAi1+4R7z23X0H89QpSv/N/kzMRtI
+         GnfOMNdZ3Q+HmWjNyhyiFuj7Y/N7b784G+bekxpo=
+Received: from jhugo-perf-lnx.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: jhugo@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 7FB716092B;
+        Mon, 14 Jan 2019 16:37:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1547483846;
+        bh=Gd+QtjCybC5WjWQoVGUj9Esn6Z1wlVmCqXn+WxECaKY=;
+        h=From:To:Cc:Subject:Date:From;
+        b=Q/pDh5/tCMXj6mYozrEqzxd1xZ9CsbymKtMDdM1ML1Xg1dY4Rybu2VZrWesh3xx23
+         VUJirXRFsRYkoj8wI1xxGDT93k9XdHOAPW9rZ+RLS/zAF2z9rUPOt5QGs2cCC28lVw
+         w7Bm0nNQ2Ga83Ui/olXa6Ju8wbBOkLTnVsOCv7Es=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 7FB716092B
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=jhugo@codeaurora.org
+From:   Jeffrey Hugo <jhugo@codeaurora.org>
+To:     balbi@kernel.org
+Cc:     bjorn.andersson@linaro.org, andy.gross@linaro.org,
+        david.brown@linaro.org, linux-arm-msm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kishon@ti.com, robh+dt@kernel.org,
+        mark.rutland@arm.com, devicetree@vger.kernel.org,
+        gregkh@linuxfoundation.org, linux-usb@vger.kernel.org,
+        Jeffrey Hugo <jhugo@codeaurora.org>
+Subject: [PATCH v2 5/6] usb: dwc3: qcom: Add support for MSM8998
+Date:   Mon, 14 Jan 2019 09:37:18 -0700
+Message-Id: <1547483838-5482-1-git-send-email-jhugo@codeaurora.org>
+X-Mailer: git-send-email 1.9.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+Add a MSM8998 specific DT compatible so that we can properly bind to the
+device and enable the USB controller.
 
-On 01/14/2019 04:15 AM, Marc Zyngier wrote:
-> On 09/01/2019 23:55, Jeremy Linton wrote:
->> Return status based on ssbd_state and the arm64 SSBS feature. If
->> the mitigation is disabled, or the firmware isn't responding then
->> return the expected machine state based on a new blacklist of known
->> vulnerable cores.
->>
->> Signed-off-by: Jeremy Linton <jeremy.linton@arm.com>
->> ---
->>   arch/arm64/kernel/cpu_errata.c | 48 ++++++++++++++++++++++++++++++++++
->>   1 file changed, 48 insertions(+)
->>
->> diff --git a/arch/arm64/kernel/cpu_errata.c b/arch/arm64/kernel/cpu_errata.c
->> index ee286d606d9b..c8ff96158b94 100644
->> --- a/arch/arm64/kernel/cpu_errata.c
->> +++ b/arch/arm64/kernel/cpu_errata.c
->> @@ -288,6 +288,7 @@ enable_smccc_arch_workaround_1(const struct arm64_cpu_capabilities *entry)
->>   DEFINE_PER_CPU_READ_MOSTLY(u64, arm64_ssbd_callback_required);
->>   
->>   int ssbd_state __read_mostly = ARM64_SSBD_KERNEL;
->> +static bool __ssb_safe = true;
->>   
->>   static const struct ssbd_options {
->>   	const char	*str;
->> @@ -385,10 +386,18 @@ static bool has_ssbd_mitigation(const struct arm64_cpu_capabilities *entry,
->>   {
->>   	struct arm_smccc_res res;
->>   	bool required = true;
->> +	bool is_vul;
->>   	s32 val;
->>   
->>   	WARN_ON(scope != SCOPE_LOCAL_CPU || preemptible());
->>   
->> +	is_vul = is_midr_in_range_list(read_cpuid_id(), entry->midr_range_list);
->> +
->> +	if (is_vul)
->> +		__ssb_safe = false;
->> +
->> +	arm64_requested_vuln_attrs |= VULN_SSB;
->> +
->>   	if (this_cpu_has_cap(ARM64_SSBS)) {
->>   		required = false;
->>   		goto out_printmsg;
->> @@ -422,6 +431,7 @@ static bool has_ssbd_mitigation(const struct arm64_cpu_capabilities *entry,
->>   		ssbd_state = ARM64_SSBD_UNKNOWN;
->>   		return false;
->>   
->> +	/* machines with mixed mitigation requirements must not return this */
->>   	case SMCCC_RET_NOT_REQUIRED:
->>   		pr_info_once("%s mitigation not required\n", entry->desc);
->>   		ssbd_state = ARM64_SSBD_MITIGATED;
->> @@ -476,6 +486,17 @@ static bool has_ssbd_mitigation(const struct arm64_cpu_capabilities *entry,
->>   
->>   	return required;
->>   }
->> +
->> +/* known vulnerable cores */
->> +static const struct midr_range arm64_ssb_cpus[] = {
->> +	MIDR_ALL_VERSIONS(MIDR_CORTEX_A57),
->> +	MIDR_ALL_VERSIONS(MIDR_CORTEX_A72),
->> +	MIDR_ALL_VERSIONS(MIDR_CORTEX_A73),
->> +	MIDR_ALL_VERSIONS(MIDR_CORTEX_A75),
->> +	MIDR_ALL_VERSIONS(MIDR_CORTEX_A76),
->> +	{},
->> +};
->> +
->>   #endif	/* CONFIG_ARM64_SSBD */
->>   
->>   static void __maybe_unused
->> @@ -762,6 +783,7 @@ const struct arm64_cpu_capabilities arm64_errata[] = {
->>   		.capability = ARM64_SSBD,
->>   		.type = ARM64_CPUCAP_LOCAL_CPU_ERRATUM,
->>   		.matches = has_ssbd_mitigation,
->> +		.midr_range_list = arm64_ssb_cpus,
->>   	},
->>   #endif
->>   #ifdef CONFIG_ARM64_ERRATUM_1188873
->> @@ -809,4 +831,30 @@ ssize_t cpu_show_spectre_v2(struct device *dev, struct device_attribute *attr,
->>   	return sprintf(buf, "Vulnerable\n");
->>   }
->>   
->> +ssize_t cpu_show_spec_store_bypass(struct device *dev,
->> +		struct device_attribute *attr, char *buf)
->> +{
->> +	/*
->> +	 *  Two assumptions: First, get_ssbd_state() reflects the worse case
->> +	 *  for hetrogenous machines, and that if SSBS is supported its
->> +	 *  supported by all cores.
->> +	 */
->> +	switch (arm64_get_ssbd_state()) {
->> +	case ARM64_SSBD_MITIGATED:
->> +		return sprintf(buf, "Not affected\n");
->> +
->> +	case ARM64_SSBD_KERNEL:
->> +	case ARM64_SSBD_FORCE_ENABLE:
->> +		if (cpus_have_cap(ARM64_SSBS))
->> +			return sprintf(buf, "Not affected\n");
->> +		return sprintf(buf,
->> +			"Mitigation: Speculative Store Bypass disabled\n");
->> +	}
->> +
->> +	if (__ssb_safe)
->> +		return sprintf(buf, "Not affected\n");
-> 
-> The kbuild robot reports that this fails if CONFIG_ARM64_SSBD is not
-> selected. What should we print in this case? "Vulnerable"? Or "Unknown"?
+Signed-off-by: Jeffrey Hugo <jhugo@codeaurora.org>
+---
+ drivers/usb/dwc3/dwc3-qcom.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-The immediate fix is that the __ssb_safe variable should be in its own 
-conditional block which is  CONFIG_GENERIC_CPU_VULNERABILITIES || 
-CONFIG_ARM64_SSBD. If the mitigation isn't built in then this code won't 
-be run anyway because the sysfs entry won't be populated.
-
-
-But, these CONFIG_ conditionals are less than ideal (and would be even 
-uglier if they were made more efficient). My own opinion at this point 
-is that we should really remove the compile time configs and leave the 
-mitigation built all the time. The raw code is fairly small, and we 
-could add in the nospectre_v2 command line options so that users can 
-choose to runtime disable them. That would also remove the need to 
-modify the core cpu vulnerabilities sysfs code.
+diff --git a/drivers/usb/dwc3/dwc3-qcom.c b/drivers/usb/dwc3/dwc3-qcom.c
+index a6d0203..184df4d 100644
+--- a/drivers/usb/dwc3/dwc3-qcom.c
++++ b/drivers/usb/dwc3/dwc3-qcom.c
+@@ -595,6 +595,7 @@ static int __maybe_unused dwc3_qcom_runtime_resume(struct device *dev)
+ static const struct of_device_id dwc3_qcom_of_match[] = {
+ 	{ .compatible = "qcom,dwc3" },
+ 	{ .compatible = "qcom,msm8996-dwc3" },
++	{ .compatible = "qcom,msm8998-dwc3" },
+ 	{ .compatible = "qcom,sdm845-dwc3" },
+ 	{ }
+ };
+-- 
+Qualcomm Datacenter Technologies as an affiliate of Qualcomm Technologies, Inc.
+Qualcomm Technologies, Inc. is a member of the
+Code Aurora Forum, a Linux Foundation Collaborative Project.
 
