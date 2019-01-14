@@ -2,99 +2,117 @@ Return-Path: <SRS0=tq6k=PW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6DFB4C43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 08:46:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 894D7C43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 08:46:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3597520659
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 08:46:02 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="GicSc8C1"
+	by mail.kernel.org (Postfix) with ESMTP id 55BA320659
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 08:46:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726533AbfANIqA (ORCPT
+        id S1726558AbfANIqS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 14 Jan 2019 03:46:00 -0500
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:45659 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726092AbfANIqA (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 Jan 2019 03:46:00 -0500
-Received: by mail-lj1-f193.google.com with SMTP id s5-v6so18209168ljd.12
-        for <linux-kernel@vger.kernel.org>; Mon, 14 Jan 2019 00:45:59 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=fjZuUldNUjrhkHo06a67Tr1tbf/tCp9SyXzYuO+sgiI=;
-        b=GicSc8C1VvprFvghz6A2N6xmNIyCkuACYm3Q77MEtijD4BtZ/hlmWXbxRiqsr1aVbU
-         DA1YLy52B1PSIVizKNxHr2BlrhZqpkKI0zPjRjQI0LlUszTj0HM4y6ViQOLfnf9K+qCe
-         tvKYPyobXgZ1WRWNLrZeMO4nbcNy9/4FaFD80=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=fjZuUldNUjrhkHo06a67Tr1tbf/tCp9SyXzYuO+sgiI=;
-        b=jsJqlTy6la6/hhLHlBcNrGb2O3tfriBpmbLmSP/GpVph/7/lHFODwhWKuSolhesRO6
-         +p6q6+ACJ5EQkjU5fJ7TSxye76HMK6GDdCWWKBcINAZvikx+BqfmSQI9AzeiQPyN+1I1
-         4Zf4sx5wNhtB0AlV3mhVAe5Ry0G42WJu4KEBI0N+Rig8kicKVukyOXjbkTXy3tN8p0AO
-         /rXBs79fMr+9VmlR8DtzmBgP/C1a6uL3Hlv79Qy8nDxvP3JfYv4sMKz6NYXqYHRz43ku
-         p9f0lD/zxGTN6bCIn/B1aJNwUKGMFH8x56DqvnYD+Ge3YxpZ5B53hfJ4zqfdAEzJzMaq
-         wL3g==
-X-Gm-Message-State: AJcUukfHNG9kJunlRtX7q1c8GkbQmAeXEGLpqiwEH0hekCGfxjhNkGZN
-        8U7euKm63xtMzBU7jiaVnWovc8f1HhsAA2/BrBIVBA==
-X-Google-Smtp-Source: ALg8bN4zY9/0tw9s1Uwy8gidnfrbp6YorOXPonIS5YWH6l7poytTGoCvBySRtLC+dtSRLrQvfMWxXWKr5Ywu49vdYNY=
-X-Received: by 2002:a2e:7e04:: with SMTP id z4-v6mr13746084ljc.97.1547455558185;
- Mon, 14 Jan 2019 00:45:58 -0800 (PST)
+        Mon, 14 Jan 2019 03:46:18 -0500
+Received: from mga17.intel.com ([192.55.52.151]:7567 "EHLO mga17.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726184AbfANIqS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 14 Jan 2019 03:46:18 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga007.jf.intel.com ([10.7.209.58])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 14 Jan 2019 00:46:18 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,477,1539673200"; 
+   d="scan'208";a="106408421"
+Received: from linux.intel.com ([10.54.29.200])
+  by orsmga007.jf.intel.com with ESMTP; 14 Jan 2019 00:46:17 -0800
+Received: from [10.125.252.160] (abudanko-mobl.ccr.corp.intel.com [10.125.252.160])
+        by linux.intel.com (Postfix) with ESMTP id B24C2580261;
+        Mon, 14 Jan 2019 00:46:15 -0800 (PST)
+Subject: Re: [PATCH v1 2/4] perf record: introduce z, mmap-flush options and
+ PERF_RECORD_COMPRESSED record
+To:     Jiri Olsa <jolsa@redhat.com>
+Cc:     Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Andi Kleen <ak@linux.intel.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+References: <eaa8b5da-103f-61c8-bdca-2a2a27bf1715@linux.intel.com>
+ <d8b15698-67da-3fea-8bd5-32e18d223e99@linux.intel.com>
+ <20190109165833.GD19455@krava>
+From:   Alexey Budankov <alexey.budankov@linux.intel.com>
+Organization: Intel Corp.
+Message-ID: <5281536b-b336-21c3-5251-82ec6a676341@linux.intel.com>
+Date:   Mon, 14 Jan 2019 11:46:14 +0300
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-References: <20190113154716.5145-1-masneyb@onstation.org> <CACRpkdbyiPwE8+onB0_Yu0i+6LZCFy8Z7MWWY7p-fjsb0JFVhw@mail.gmail.com>
-In-Reply-To: <CACRpkdbyiPwE8+onB0_Yu0i+6LZCFy8Z7MWWY7p-fjsb0JFVhw@mail.gmail.com>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Mon, 14 Jan 2019 09:45:46 +0100
-Message-ID: <CACRpkdYFCid1Hr1auSezwo83Djm9C82L7WF4LzfW1a8gKLLsaQ@mail.gmail.com>
-Subject: Re: [PATCH v4 00/14] qcom: spmi: add support for hierarchical IRQ chip
-To:     Brian Masney <masneyb@onstation.org>,
-        Andy Gross <andy.gross@linaro.org>
-Cc:     Stephen Boyd <sboyd@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Doug Anderson <dianders@chromium.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Nicolas Dechesne <nicolas.dechesne@linaro.org>,
-        Niklas Cassel <niklas.cassel@linaro.org>,
-        David Brown <david.brown@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        "thierry.reding@gmail.com" <thierry.reding@gmail.com>,
-        linux-arm-msm@vger.kernel.org,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20190109165833.GD19455@krava>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jan 14, 2019 at 9:43 AM Linus Walleij <linus.walleij@linaro.org> wrote:
+Hi,
+On 09.01.2019 19:58, Jiri Olsa wrote:
+> On Mon, Dec 24, 2018 at 04:45:21PM +0300, Alexey Budankov wrote:
+>>
+>> Introduce --compression_level=n, --mmap-flush options and PERF_RECORD_COMPRESSED 
+>> event record that contains compressed parts of mmap kernel buffer data.
+>>
+>> Signed-off-by: Alexey Budankov <alexey.budankov@linux.intel.com>
+>> ---
+>>  tools/perf/Documentation/perf-record.txt | 11 +++
+>>  tools/perf/builtin-record.c              | 97 ++++++++++++++++++++----
+>>  tools/perf/perf.h                        |  2 +
+>>  tools/perf/util/env.h                    | 10 +++
+>>  tools/perf/util/event.c                  |  1 +
+>>  tools/perf/util/event.h                  |  7 ++
+>>  tools/perf/util/evlist.c                 |  6 +-
+>>  tools/perf/util/evlist.h                 |  2 +-
+>>  tools/perf/util/header.c                 | 47 +++++++++++-
+>>  tools/perf/util/header.h                 |  1 +
+>>  tools/perf/util/mmap.c                   |  4 +-
+>>  tools/perf/util/mmap.h                   |  3 +-
+>>  12 files changed, 169 insertions(+), 22 deletions(-)
+> 
+> also I'm getting here similar error (like for the affinity patchset)
 
-> Regarding the device trees, I think we usually merge device tree
-> changes in parallel (orthogonally) and as long as the end result
-> after merging both driver code and device tree changes is correct
-> we do not bother *too* much about any intermittent states.
->
-> That said I can of course merge the DTS changes in the pin control
-> tree if I get some ACK from the Qualcomm maintainers.
->
-> Else I will just apply patches 1-7 to the pin control tree ASAP and
-> the DTS changes need to go through qcom (Andy's tree) and
-> ARM SoC.
+Really weird. Hopefully it can be resolved in the next version of the patch set.
 
-PS that would mean dropping patches 6 and 14 obviously.
-If I merge all patches, I can keep them around.
+Thanks,
+Alexey
 
-Yours,
-Linus Walleij
+> 
+> [jolsa@krava perf]$ git am /tmp/comp
+> Applying: feature: build libzstd feature check, LIBZSTD_DIR and NO_LIBZSTD defines
+> Applying: perf record: introduce z, mmap-flush options and PERF_RECORD_COMPRESSED record
+> error: corrupt patch at line 526
+> Patch failed at 0002 perf record: introduce z, mmap-flush options and PERF_RECORD_COMPRESSED record
+> 
+> again the raw patch applies correctly:
+> 
+> [jolsa@krava perf]$ patch -p3 < /tmp/comp2
+> patching file Documentation/perf-record.txt
+> patching file builtin-record.c
+> patching file perf.h
+> patching file util/env.h
+> patching file util/event.c
+> patching file util/event.h
+> patching file util/evlist.c
+> patching file util/evlist.h
+> patching file util/header.c
+> patching file util/header.h
+> patching file util/mmap.c
+> patching file util/mmap.h
+> 
+> 
+> jirka
+> 
