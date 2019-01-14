@@ -2,157 +2,155 @@ Return-Path: <SRS0=tq6k=PW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A73EC43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 02:29:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E8AE2C43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 02:33:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1CC7120657
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 02:29:09 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=lechnology.com header.i=@lechnology.com header.b="rMohatD8"
+	by mail.kernel.org (Postfix) with ESMTP id BCEBA20657
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 02:33:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726696AbfANCUR (ORCPT
+        id S1726699AbfANCdE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 13 Jan 2019 21:20:17 -0500
-Received: from vern.gendns.com ([98.142.107.122]:51826 "EHLO vern.gendns.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726631AbfANCUR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 13 Jan 2019 21:20:17 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=lechnology.com; s=default; h=Content-Transfer-Encoding:Content-Type:
-        In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender
-        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=LSCJrilXSGYqK3aJwSPv20MWlxip3Z4F3ABQ1V09Cvk=; b=rMohatD8mOLHnIjhUGgvsCl7Ov
-        I+mP1FpSMJ90fwzkulggkYV6WSA5q7DSXOaWUR80lqu0keTno91m6lYkiZInR5ybxZzn4zSrqwmcU
-        ishjO83lxuzAYotDa1OEzus3N4bS4I9fK2vHM66XisDYjE0q1QwHJ8gIQjjc/6OSDs4JmyZ87rGsn
-        6+CzBWvDkBwZIODBu5VRbcZGrglPjUv4y8STJW7uOYu9xR6McbyQFLp9lrX8zLS0VSx6KnVkLNqm9
-        xjtucofrCBtyVq8hNKWeJPZ8KuaFUSaWMR1SrAbk0YUjiUWbBpUTVR0pMfuIQelqn/8CWji4kXeSO
-        bOcxpshw==;
-Received: from 108-198-5-147.lightspeed.okcbok.sbcglobal.net ([108.198.5.147]:58330 helo=[192.168.0.134])
-        by vern.gendns.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
-        (Exim 4.91)
-        (envelope-from <david@lechnology.com>)
-        id 1girog-0004Cz-F4; Sun, 13 Jan 2019 21:17:30 -0500
-Subject: Re: [PATCH v2] rbtree: fix the red root
-To:     Michel Lespinasse <walken@google.com>
-Cc:     Qian Cai <cai@lca.pw>, Andrew Morton <akpm@linux-foundation.org>,
-        esploit@protonmail.ch, jejb@linux.ibm.com, dgilbert@interlog.com,
-        martin.petersen@oracle.com, joeypabalinas@gmail.com,
-        linux-mm <linux-mm@kvack.org>,
-        LKML <linux-kernel@vger.kernel.org>
-References: <20190111181600.GJ6310@bombadil.infradead.org>
- <20190111205843.25761-1-cai@lca.pw>
- <a783f23d-77ab-a7d3-39d1-4008d90094c3@lechnology.com>
- <CANN689G0zbk7sMbQ+p9NQGQ=NWq-Q0mQOOjeFkLp19YrTfgcLg@mail.gmail.com>
-From:   David Lechner <david@lechnology.com>
-Message-ID: <864d6b85-3336-4040-7c95-7d9615873777@lechnology.com>
-Date:   Sun, 13 Jan 2019 20:20:12 -0600
+        Sun, 13 Jan 2019 21:33:04 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:35867 "EHLO
+        mail.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726631AbfANCdD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 13 Jan 2019 21:33:03 -0500
+Received: from carbon-x1.hos.anvin.org (c-24-5-245-234.hsd1.ca.comcast.net [24.5.245.234] (may be forged))
+        (authenticated bits=0)
+        by mail.zytor.com (8.15.2/8.15.2) with ESMTPSA id x0E2VOgp1848340
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NO);
+        Sun, 13 Jan 2019 18:31:25 -0800
+Subject: Re: [PATCH v3 0/6] Static calls
+To:     Jiri Kosina <jikos@kernel.org>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Nadav Amit <namit@vmware.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        the arch/x86 maintainers <x86@kernel.org>,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Jason Baron <jbaron@akamai.com>,
+        David Laight <David.Laight@aculab.com>,
+        Borislav Petkov <bp@alien8.de>,
+        Julia Cartwright <julia@ni.com>, Jessica Yu <jeyu@kernel.org>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        Edward Cree <ecree@solarflare.com>,
+        Daniel Bristot de Oliveira <bristot@redhat.com>
+References: <cover.1547073843.git.jpoimboe@redhat.com>
+ <20190110203023.GL2861@worktop.programming.kicks-ass.net>
+ <20190110205226.iburt6mrddsxnjpk@treble>
+ <CAHk-=whR7LzKcuB9Z2km1T25DUkJcbE9rNhCzApAPADbDqMhmQ@mail.gmail.com>
+ <CALCETrWBwTVHWXahVXMMBL4QA1f+YdKgv1XANXPsk86FjFFH2Q@mail.gmail.com>
+ <B374297A-8298-4CED-8EC0-6A39BDBA5F05@vmware.com>
+ <20190111151525.tf7lhuycyyvjjxez@treble>
+ <CAHk-=wjJm8DpCsw=Wno01q4VFqUeiLKE8QmbAtUJurYhn3jRqA@mail.gmail.com>
+ <12578A17-E695-4DD5-AEC7-E29FAB2C8322@zytor.com>
+ <nycvar.YFH.7.76.1901112035570.6626@cbobk.fhfr.pm>
+From:   "H. Peter Anvin" <hpa@zytor.com>
+Message-ID: <5cbd249a-3b2b-6b3b-fb52-67571617403f@zytor.com>
+Date:   Sun, 13 Jan 2019 18:31:19 -0800
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-In-Reply-To: <CANN689G0zbk7sMbQ+p9NQGQ=NWq-Q0mQOOjeFkLp19YrTfgcLg@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+In-Reply-To: <nycvar.YFH.7.76.1901112035570.6626@cbobk.fhfr.pm>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - vern.gendns.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - lechnology.com
-X-Get-Message-Sender-Via: vern.gendns.com: authenticated_id: davidmain+lechnology.com/only user confirmed/virtual account not confirmed
-X-Authenticated-Sender: vern.gendns.com: davidmain@lechnology.com
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 1/11/19 8:58 PM, Michel Lespinasse wrote:
-> On Fri, Jan 11, 2019 at 3:47 PM David Lechner <david@lechnology.com> wrote:
->>
->> On 1/11/19 2:58 PM, Qian Cai wrote:
->>> A GPF was reported,
->>>
->>> kasan: CONFIG_KASAN_INLINE enabled
->>> kasan: GPF could be caused by NULL-ptr deref or user memory access
->>> general protection fault: 0000 [#1] SMP KASAN
->>>           kasan_die_handler.cold.22+0x11/0x31
->>>           notifier_call_chain+0x17b/0x390
->>>           atomic_notifier_call_chain+0xa7/0x1b0
->>>           notify_die+0x1be/0x2e0
->>>           do_general_protection+0x13e/0x330
->>>           general_protection+0x1e/0x30
->>>           rb_insert_color+0x189/0x1480
->>>           create_object+0x785/0xca0
->>>           kmemleak_alloc+0x2f/0x50
->>>           kmem_cache_alloc+0x1b9/0x3c0
->>>           getname_flags+0xdb/0x5d0
->>>           getname+0x1e/0x20
->>>           do_sys_open+0x3a1/0x7d0
->>>           __x64_sys_open+0x7e/0xc0
->>>           do_syscall_64+0x1b3/0x820
->>>           entry_SYSCALL_64_after_hwframe+0x49/0xbe
->>>
->>> It turned out,
->>>
->>> gparent = rb_red_parent(parent);
->>> tmp = gparent->rb_right; <-- GPF was triggered here.
->>>
->>> Apparently, "gparent" is NULL which indicates "parent" is rbtree's root
->>> which is red. Otherwise, it will be treated properly a few lines above.
->>>
->>> /*
->>>    * If there is a black parent, we are done.
->>>    * Otherwise, take some corrective action as,
->>>    * per 4), we don't want a red root or two
->>>    * consecutive red nodes.
->>>    */
->>> if(rb_is_black(parent))
->>>        break;
->>>
->>> Hence, it violates the rule #1 (the root can't be red) and need a fix
->>> up, and also add a regression test for it. This looks like was
->>> introduced by 6d58452dc06 where it no longer always paint the root as
->>> black.
->>>
->>> Fixes: 6d58452dc06 (rbtree: adjust root color in rb_insert_color() only
->>> when necessary)
->>> Reported-by: Esme <esploit@protonmail.ch>
->>> Tested-by: Joey Pabalinas <joeypabalinas@gmail.com>
->>> Signed-off-by: Qian Cai <cai@lca.pw>
->>> ---
->>
->> Tested-by: David Lechner <david@lechnology.com>
->> FWIW, this fixed the following crash for me:
->>
->> Unable to handle kernel NULL pointer dereference at virtual address 00000004
+On 1/11/19 11:39 AM, Jiri Kosina wrote:
+> On Fri, 11 Jan 2019, hpa@zytor.com wrote:
 > 
-> Just to clarify, do you have a way to reproduce this crash without the fix ?
-
-I am starting to suspect that my crash was caused by some new code
-in the drm-misc-next tree that might be causing a memory corruption.
-It threw me off that the stack trace didn't contain anything related
-to drm.
-
-See: https://patchwork.freedesktop.org/patch/276719/
-
+>> I still don't see why can't simply spin in the #BP handler until the 
+>> patch is complete.
 > 
-> I don't think the fix is correct, because it just silently ignores a
-> corrupted rbtree (red root node). But the code that creates this
-> situation certainly needs to be fixed - having a reproduceable test
-> case would certainly help here.
+> I think this brings us to the already discussed possible deadlock, when 
+> one CPU#0 is in the middle of text_poke_bp(), CPU#1 is spinning inside 
+> spin_lock_irq*(&lock) and CPU#2 hits the breakpont while holding that very 
+> 'lock'.
 > 
-> Regarding 6d58452dc06, the reasoning was that this code expects to be
-> called after inserting a new (red) leaf into an rbtree that had all of
-> its data structure invariants satisfied. So in this context, it should
-> not be necessary to always reset the root to black, as this should
-> already be the case...
+> Then we're stuck forever, because CPU#1 will never handle the pending 
+> sync_core() IPI (it's not NMI).
+> 
+> Or have I misunderstood what you meant?
 > 
 
+OK, I was thinking about this quite a while ago, and even started hacking on
+it, but apparently I managed to forget some key details.
+
+Specifically, you do *not* want to use the acknowledgment of the IPI as the
+blocking condition, so don't use a waiting IPI.
+
+Instead, you want a CPU bitmap (or percpu variable) that the IPI handler
+clears.  When you are spinning in the IPI handler, you *also* need to clear
+that bit.  Doing so is safe even in the case of batched updates, because you
+are guaranteed to execute an IRET before you get to patched code.
+
+So the synchronization part of the patching routine becomes:
+
+static cpumask_t text_poke_cpumask;
+
+static void text_poke_sync(void)
+{
+	smp_wmb();
+	text_poke_cpumask = cpu_online_mask;
+	smp_wmb();	/* Optional on x86 */
+	cpumask_clear_cpu(&text_poke_cpumask, smp_processor_id());
+	on_each_cpu_mask(&text_poke_cpumask, text_poke_sync_cpu, NULL, false);
+	while (!cpumask_empty(&text_poke_cpumask)) {
+		cpu_relax();
+		smp_rmb();
+	}
+}
+
+static void text_poke_sync_cpu(void *dummy)
+{
+	(void)dummy;
+
+	smp_rmb();
+	cpumask_clear_cpu(&poke_bitmask, smp_processor_id());
+	/*
+	 * We are guaranteed to return with an IRET, either from the
+	 * IPI or the #BP handler; this provides serialization.
+	 */
+}
+
+The spin routine then needs add a call to do something like this. By
+(optionally) not comparing to a specific breakpoint address we allow for
+batching, but we may end up spinning on a breakpoint that is not actually a
+patching breakpoint until the patching is done.
+
+int poke_int3_handler(struct pt_regs *regs)
+{
+	/* In the current handler, but shouldn't be needed... */
+	smp_rmb();
+
+	if (likely(!atomic_read(bp_patching_in_progress)))
+		return 0;
+
+	if (user_mode(regs) unlikely(!user_mode(regs) &&
+	    atomic_read(&bp_patching_in_progress)) {
+		text_poke_sync();
+		regs->ip--;
+		return 1;	/* May end up retaking the trap */
+	} else {
+		return 0;
+	}
+}
+
+Unless I'm totally mistaken, the worst thing that will happen with this code
+is that it may end up taking a harmless spurious IPI at a later time.
+
+	-hpa
