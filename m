@@ -2,162 +2,113 @@ Return-Path: <SRS0=tq6k=PW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0CC94C43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 11:45:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E6AC1C43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 11:45:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D8BD420659
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 11:45:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AEE7620659
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 11:45:34 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="QpucYbgQ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726757AbfANLp2 (ORCPT
+        id S1726782AbfANLpd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 14 Jan 2019 06:45:28 -0500
-Received: from szxga06-in.huawei.com ([45.249.212.32]:57428 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726644AbfANLp0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 Jan 2019 06:45:26 -0500
-Received: from DGGEMS402-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id 67862C4D9E7F820EF91A;
-        Mon, 14 Jan 2019 19:45:21 +0800 (CST)
-Received: from localhost (10.206.48.115) by DGGEMS402-HUB.china.huawei.com
- (10.3.19.202) with Microsoft SMTP Server id 14.3.408.0; Mon, 14 Jan 2019
- 19:45:15 +0800
-Date:   Mon, 14 Jan 2019 11:45:03 +0000
-From:   Jonathan Cameron <Jonathan.Cameron@huawei.com>
-To:     Lu Baolu <baolu.lu@linux.intel.com>,
-        Kirti Wankhede <kwankhede@nvidia.com>
-CC:     Joerg Roedel <joro@8bytes.org>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        <kevin.tian@intel.com>, <ashok.raj@intel.com>,
-        <tiwei.bie@intel.com>,
-        Jean-Philippe Brucker <jean-philippe.brucker@arm.com>,
-        <sanjay.k.kumar@intel.com>, <iommu@lists.linux-foundation.org>,
-        <linux-kernel@vger.kernel.org>, <Zeng@mail.linuxfoundation.org>,
-        <yi.y.sun@intel.com>, <jacob.jun.pan@intel.com>,
-        <kvm@vger.kernel.org>
-Subject: Re: [PATCH v5 3/8] iommu/vt-d: Move common code out of
- iommu_attch_device()
-Message-ID: <20190114114503.00007eac@huawei.com>
-In-Reply-To: <20190110030027.31447-4-baolu.lu@linux.intel.com>
-References: <20190110030027.31447-1-baolu.lu@linux.intel.com>
-        <20190110030027.31447-4-baolu.lu@linux.intel.com>
-Organization: Huawei
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; i686-w64-mingw32)
+        Mon, 14 Jan 2019 06:45:33 -0500
+Received: from mail-vs1-f65.google.com ([209.85.217.65]:34878 "EHLO
+        mail-vs1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726759AbfANLpa (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 14 Jan 2019 06:45:30 -0500
+Received: by mail-vs1-f65.google.com with SMTP id e7so13408818vsc.2
+        for <linux-kernel@vger.kernel.org>; Mon, 14 Jan 2019 03:45:29 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=vdREFb/h1cgiJuv6msebW3MKi9PJWb+jT0u3Yjseat0=;
+        b=QpucYbgQ4v8Ly5hS3gBEhxxIrX3ye+AE2QIWf18BTxFjA8vv8CNj2PfDM1dhCvVA2D
+         NbwhSVPTbNK6/ynLCiaPmbepj2nK6jGqaBh1h7GdccmE3wOBeLYwTsQJb2cP/r0dy0sz
+         rFmuhBnMb56AsANVIAaRJv+4XMtJGj2sGEQw0=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=vdREFb/h1cgiJuv6msebW3MKi9PJWb+jT0u3Yjseat0=;
+        b=so4fvN6cabw/6f5pXB2QlCMJGj+Iw9teJ7zEdi65ttCmLSxM7/iEcWD9gcCA0fZ50r
+         aeecCqiDIXM1+LRgTPJ7IJD+P5Osj2uTA7W9wZJLn6Dmv1VQDKyeCqalGPp/zUCyg+qa
+         bwGfEVdbQ+ZSZylDGu3hCS7g38ZN33yWzTlL1HI+CyJ9VkLAXunSS2/b42uVeyldM2qS
+         vmwHxKp3m63o6xhwUVMWEtbg7u9y00rl8e6Nv5hfnT2RYWWYyoi7AFsue+G1qtLvssLl
+         3M4pergu2/wXsdFMZQ50kRWxlQHdkLEjfL4hWzHD0yrJ5zywSSgFVIzGBSTHg3QkzCIk
+         4ZpA==
+X-Gm-Message-State: AJcUukdvq4zjCN6/DzW3YnYb04xKhqZD4EQPiV3tUClem4CWXT9Q9eWo
+        MFLbty2xOvhxuqXAuwUpCAeCxZ9XL8ER9CsSNfVrcVy8qD0=
+X-Google-Smtp-Source: ALg8bN4fnF2vm40ubEFDoDv53xBTaSWS7lnoLKZPwfaXVXvf0MwWjZq1uNr9gF2x9fxV4sQPIrS49cCNcmNA5VeYGKQ=
+X-Received: by 2002:a67:74c2:: with SMTP id p185mr3842574vsc.34.1547466329532;
+ Mon, 14 Jan 2019 03:45:29 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.206.48.115]
-X-CFilter-Loop: Reflected
+References: <20190109124312.10154-1-faiz_abbas@ti.com>
+In-Reply-To: <20190109124312.10154-1-faiz_abbas@ti.com>
+From:   Ulf Hansson <ulf.hansson@linaro.org>
+Date:   Mon, 14 Jan 2019 12:44:53 +0100
+Message-ID: <CAPDyKFr9e2MvhU2HTAEaKydfQ5=0hB-Qmcw5FUw=T7z0XDYKFA@mail.gmail.com>
+Subject: Re: [PATCH] mmc: Fix Kconfig warnings on keystone_defconfig
+To:     Faiz Abbas <faiz_abbas@ti.com>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Keerthy <j-keerthy@ti.com>,
+        Eduardo Valentin <edubezval@gmail.com>,
+        Olof Johansson <olof@lixom.net>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 10 Jan 2019 11:00:22 +0800
-Lu Baolu <baolu.lu@linux.intel.com> wrote:
+On Wed, 9 Jan 2019 at 13:40, Faiz Abbas <faiz_abbas@ti.com> wrote:
+>
+> Commit 961de0a856e3 ("mmc: sdhci-omap: Workaround errata regarding
+> SDR104/HS200 tuning failures (i929)") added a select on TI_SOC_THERMAL
+> for the driver to get temperature for tuning.
+>
+> However, this causes the following warning on keystone_defconfig because
+> keystone does not support TI_SOC_THERMAL:
+>
+> "WARNING: unmet direct dependencies detected for TI_SOC_THERMAL"
+>
+> Fix this by changing the select to imply.
+>
+> Fixes: 961de0a856e3 ("mmc: sdhci-omap: Workaround errata regarding
+> SDR104/HS200 tuning failures (i929)")
+> Signed-off-by: Faiz Abbas <faiz_abbas@ti.com>
 
-> This part of code could be used by both normal and aux
-> domain specific attach entries. Hence move them into a
-> common function to avoid duplication.
-> 
-> Cc: Ashok Raj <ashok.raj@intel.com>
-> Cc: Jacob Pan <jacob.jun.pan@linux.intel.com>
-> Cc: Kevin Tian <kevin.tian@intel.com>
-> Signed-off-by: Lu Baolu <baolu.lu@linux.intel.com>
-Another trivial one (it's going to be one of those days).
-Typo in the patch title.
+Applied for fixes, thanks!
+
+Kind regards
+Uffe
+
 
 > ---
->  drivers/iommu/intel-iommu.c | 60 ++++++++++++++++++++++---------------
->  1 file changed, 36 insertions(+), 24 deletions(-)
-> 
-> diff --git a/drivers/iommu/intel-iommu.c b/drivers/iommu/intel-iommu.c
-> index ee8832d26f7e..e9119d45a29d 100644
-> --- a/drivers/iommu/intel-iommu.c
-> +++ b/drivers/iommu/intel-iommu.c
-> @@ -5058,35 +5058,14 @@ static void intel_iommu_domain_free(struct iommu_domain *domain)
->  	domain_exit(to_dmar_domain(domain));
->  }
->  
-> -static int intel_iommu_attach_device(struct iommu_domain *domain,
-> -				     struct device *dev)
-> +static int prepare_domain_attach_device(struct iommu_domain *domain,
-> +					struct device *dev)
->  {
->  	struct dmar_domain *dmar_domain = to_dmar_domain(domain);
->  	struct intel_iommu *iommu;
->  	int addr_width;
->  	u8 bus, devfn;
->  
-> -	if (device_is_rmrr_locked(dev)) {
-> -		dev_warn(dev, "Device is ineligible for IOMMU domain attach due to platform RMRR requirement.  Contact your platform vendor.\n");
-> -		return -EPERM;
-> -	}
-> -
-> -	/* normally dev is not mapped */
-> -	if (unlikely(domain_context_mapped(dev))) {
-> -		struct dmar_domain *old_domain;
-> -
-> -		old_domain = find_domain(dev);
-> -		if (old_domain) {
-> -			rcu_read_lock();
-> -			dmar_remove_one_dev_info(old_domain, dev);
-> -			rcu_read_unlock();
-> -
-> -			if (!domain_type_is_vm_or_si(old_domain) &&
-> -			     list_empty(&old_domain->devices))
-> -				domain_exit(old_domain);
-> -		}
-> -	}
-> -
->  	iommu = device_to_iommu(dev, &bus, &devfn);
->  	if (!iommu)
->  		return -ENODEV;
-> @@ -5119,7 +5098,40 @@ static int intel_iommu_attach_device(struct iommu_domain *domain,
->  		dmar_domain->agaw--;
->  	}
->  
-> -	return domain_add_dev_info(dmar_domain, dev);
-> +	return 0;
-> +}
-> +
-> +static int intel_iommu_attach_device(struct iommu_domain *domain,
-> +				     struct device *dev)
-> +{
-> +	int ret;
-> +
-> +	if (device_is_rmrr_locked(dev)) {
-> +		dev_warn(dev, "Device is ineligible for IOMMU domain attach due to platform RMRR requirement.  Contact your platform vendor.\n");
-> +		return -EPERM;
-> +	}
-> +
-> +	/* normally dev is not mapped */
-> +	if (unlikely(domain_context_mapped(dev))) {
-> +		struct dmar_domain *old_domain;
-> +
-> +		old_domain = find_domain(dev);
-> +		if (old_domain) {
-> +			rcu_read_lock();
-> +			dmar_remove_one_dev_info(old_domain, dev);
-> +			rcu_read_unlock();
-> +
-> +			if (!domain_type_is_vm_or_si(old_domain) &&
-> +			    list_empty(&old_domain->devices))
-> +				domain_exit(old_domain);
-> +		}
-> +	}
-> +
-> +	ret = prepare_domain_attach_device(domain, dev);
-> +	if (ret)
-> +		return ret;
-> +
-> +	return domain_add_dev_info(to_dmar_domain(domain), dev);
->  }
->  
->  static void intel_iommu_detach_device(struct iommu_domain *domain,
-
-
+>  drivers/mmc/host/Kconfig | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/mmc/host/Kconfig b/drivers/mmc/host/Kconfig
+> index e26b8145efb3..bc61eefcb695 100644
+> --- a/drivers/mmc/host/Kconfig
+> +++ b/drivers/mmc/host/Kconfig
+> @@ -978,7 +978,7 @@ config MMC_SDHCI_OMAP
+>         tristate "TI SDHCI Controller Support"
+>         depends on MMC_SDHCI_PLTFM && OF
+>         select THERMAL
+> -       select TI_SOC_THERMAL
+> +       imply TI_SOC_THERMAL
+>         help
+>           This selects the Secure Digital Host Controller Interface (SDHCI)
+>           support present in TI's DRA7 SOCs. The controller supports
+> --
+> 2.19.2
+>
