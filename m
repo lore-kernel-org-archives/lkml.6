@@ -2,201 +2,131 @@ Return-Path: <SRS0=tq6k=PW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1065DC43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 03:59:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E4AAFC43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 03:59:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C9D1620657
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 03:59:15 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=protonmail.ch header.i=@protonmail.ch header.b="jP5b6vuV"
+	by mail.kernel.org (Postfix) with ESMTP id BC8E820657
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 03:59:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726744AbfAND7O (ORCPT
+        id S1726770AbfAND7u (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 13 Jan 2019 22:59:14 -0500
-Received: from mail-40135.protonmail.ch ([185.70.40.135]:38085 "EHLO
-        mail-40135.protonmail.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726697AbfAND7N (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 13 Jan 2019 22:59:13 -0500
-Date:   Mon, 14 Jan 2019 03:59:04 +0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=protonmail.ch;
-        s=default; t=1547438350;
-        bh=b+qt26x7rYf58bwLSFESIhyi4ktw5t21LfR8snoG+6g=;
-        h=Date:To:From:Cc:Reply-To:Subject:In-Reply-To:References:
-         Feedback-ID:From;
-        b=jP5b6vuVFneZ0g/ibDX+BxkZF4Zp65KMmyffXyKPf+bqHo7Gq8W2l2F16sdV+ni+k
-         ZDHwsxlqvxcZ5n3zym6pig78axAFXM+kS95q6zmLUUbPx2GA3rgFEL6lUrstBJiNmw
-         tLhgnypt47UiShMmge07Jcimk42LF4K5lIpM4a0M=
-To:     "dgilbert@interlog.com" <dgilbert@interlog.com>
-From:   Esme <esploit@protonmail.ch>
-Cc:     Qian Cai <cai@lca.pw>, David Lechner <david@lechnology.com>,
-        Michel Lespinasse <walken@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        "jejb@linux.ibm.com" <jejb@linux.ibm.com>,
-        "martin.petersen@oracle.com" <martin.petersen@oracle.com>,
-        "joeypabalinas@gmail.com" <joeypabalinas@gmail.com>,
-        linux-mm <linux-mm@kvack.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Reply-To: Esme <esploit@protonmail.ch>
-Subject: Re: [PATCH v2] rbtree: fix the red root
-Message-ID: <UKsodHRZU8smIdO2MHHL4Yzde_YB4iWX43TaHI1uY2tMo4nii4ucbaw4XC31XIY-Pe4oEovjF62qbkeMsIMTrvT1TdCCP4Fs_fxciAzXYVc=@protonmail.ch>
-In-Reply-To: <c6265fc0-4089-9d1a-ba7c-b267b847747e@interlog.com>
-References: <20190111181600.GJ6310@bombadil.infradead.org>
- <20190111205843.25761-1-cai@lca.pw>
- <a783f23d-77ab-a7d3-39d1-4008d90094c3@lechnology.com>
- <CANN689G0zbk7sMbQ+p9NQGQ=NWq-Q0mQOOjeFkLp19YrTfgcLg@mail.gmail.com>
- <864d6b85-3336-4040-7c95-7d9615873777@lechnology.com>
- <b1033d96-ebdd-e791-650a-c6564f030ce1@lca.pw>
- <8v11ZOLyufY7NLAHDFApGwXOO_wGjVHtsbw1eiZ__YvI9EZCDe_4FNmlp0E-39lnzGQHhHAczQ6Q6lQPzVU2V6krtkblM8IFwIXPHZCuqGE=@protonmail.ch>
- <c6265fc0-4089-9d1a-ba7c-b267b847747e@interlog.com>
-Feedback-ID: pQGzDYT_k6dzic_kf3kwsxmTXzjnqMJxtC9J3KGyZBepPHdXRBM0BHuwPfpm1pFdJLAMwtJT5KKNaGlRVnFRQw==:Ext:ProtonMail
+        Sun, 13 Jan 2019 22:59:50 -0500
+Received: from ozlabs.org ([203.11.71.1]:34977 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726697AbfAND7t (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 13 Jan 2019 22:59:49 -0500
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by ozlabs.org (Postfix) with ESMTPSA id 43dKVQ4Bklz9s9G;
+        Mon, 14 Jan 2019 14:59:42 +1100 (AEDT)
+From:   Michael Ellerman <mpe@ellerman.id.au>
+To:     Arnd Bergmann <arnd@arndb.de>, y2038@lists.linaro.org,
+        linux-api@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     Arnd Bergmann <arnd@arndb.de>, ink@jurassic.park.msu.ru,
+        mattst88@gmail.com, linux@armlinux.org.uk, catalin.marinas@arm.com,
+        will.deacon@arm.com, tony.luck@intel.com, fenghua.yu@intel.com,
+        geert@linux-m68k.org, monstr@monstr.eu, paul.burton@mips.com,
+        deller@gmx.de, schwidefsky@de.ibm.com, heiko.carstens@de.ibm.com,
+        dalias@libc.org, davem@davemloft.net, luto@kernel.org,
+        tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com,
+        x86@kernel.org, jcmvbkbc@gmail.com, firoz.khan@linaro.org,
+        ebiederm@xmission.com, deepa.kernel@gmail.com,
+        linux@dominikbrodowski.net, akpm@linux-foundation.org,
+        dave@stgolabs.net, linux-alpha@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-ia64@vger.kernel.org,
+        linux-m68k@lists.linux-m68k.org, linux-mips@vger.kernel.org,
+        linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-s390@vger.kernel.org, linux-sh@vger.kernel.org,
+        sparclinux@vger.kernel.org
+Subject: Re: [PATCH 14/15] arch: add split IPC system calls where needed
+In-Reply-To: <20190110162435.309262-15-arnd@arndb.de>
+References: <20190110162435.309262-1-arnd@arndb.de> <20190110162435.309262-15-arnd@arndb.de>
+Date:   Mon, 14 Jan 2019 14:59:41 +1100
+Message-ID: <87pnsz28k2.fsf@concordia.ellerman.id.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-=E2=80=90=E2=80=90=E2=80=90=E2=80=90=E2=80=90=E2=80=90=E2=80=90 Original Me=
-ssage =E2=80=90=E2=80=90=E2=80=90=E2=80=90=E2=80=90=E2=80=90=E2=80=90
-On Sunday, January 13, 2019 10:52 PM, Douglas Gilbert <dgilbert@interlog.co=
-m> wrote:
+Hi Arnd,
 
-> On 2019-01-13 10:07 p.m., Esme wrote:
+Arnd Bergmann <arnd@arndb.de> writes:
+> The IPC system call handling is highly inconsistent across architectures,
+> some use sys_ipc, some use separate calls, and some use both.  We also
+> have some architectures that require passing IPC_64 in the flags, and
+> others that set it implicitly.
 >
-> > =E2=80=90=E2=80=90=E2=80=90=E2=80=90=E2=80=90=E2=80=90=E2=80=90 Origina=
-l Message =E2=80=90=E2=80=90=E2=80=90=E2=80=90=E2=80=90=E2=80=90=E2=80=
-=90
-> > On Sunday, January 13, 2019 9:33 PM, Qian Cai cai@lca.pw wrote:
-> >
-> > > On 1/13/19 9:20 PM, David Lechner wrote:
-> > >
-> > > > On 1/11/19 8:58 PM, Michel Lespinasse wrote:
-> > > >
-> > > > > On Fri, Jan 11, 2019 at 3:47 PM David Lechner david@lechnology.co=
-m wrote:
-> > > > >
-> > > > > > On 1/11/19 2:58 PM, Qian Cai wrote:
-> > > > > >
-> > > > > > > A GPF was reported,
-> > > > > > > kasan: CONFIG_KASAN_INLINE enabled
-> > > > > > > kasan: GPF could be caused by NULL-ptr deref or user memory a=
-ccess
-> > > > > > > general protection fault: 0000 [#1] SMP KASAN
-> > > > > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 kasan_=
-die_handler.cold.22+0x11/0x31
-> > > > > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 notifi=
-er_call_chain+0x17b/0x390
-> > > > > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 atomic=
-_notifier_call_chain+0xa7/0x1b0
-> > > > > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 notify=
-_die+0x1be/0x2e0
-> > > > > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 do_gen=
-eral_protection+0x13e/0x330
-> > > > > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 genera=
-l_protection+0x1e/0x30
-> > > > > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 rb_ins=
-ert_color+0x189/0x1480
-> > > > > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 create=
-_object+0x785/0xca0
-> > > > > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 kmemle=
-ak_alloc+0x2f/0x50
-> > > > > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 kmem_c=
-ache_alloc+0x1b9/0x3c0
-> > > > > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 getnam=
-e_flags+0xdb/0x5d0
-> > > > > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 getnam=
-e+0x1e/0x20
-> > > > > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 do_sys=
-_open+0x3a1/0x7d0
-> > > > > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 __x64_=
-sys_open+0x7e/0xc0
-> > > > > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 do_sys=
-call_64+0x1b3/0x820
-> > > > > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 entry_=
-SYSCALL_64_after_hwframe+0x49/0xbe
-> > > > > > > It turned out,
-> > > > > > > gparent =3D rb_red_parent(parent);
-> > > > > > > tmp =3D gparent->rb_right; <-- GPF was triggered here.
-> > > > > > > Apparently, "gparent" is NULL which indicates "parent" is rbt=
-ree's root
-> > > > > > > which is red. Otherwise, it will be treated properly a few li=
-nes above.
-> > > > > > > /*
-> > > > > > > =C2=A0=C2=A0 * If there is a black parent, we are done.
-> > > > > > > =C2=A0=C2=A0 * Otherwise, take some corrective action as,
-> > > > > > > =C2=A0=C2=A0 * per 4), we don't want a red root or two
-> > > > > > > =C2=A0=C2=A0 * consecutive red nodes.
-> > > > > > > =C2=A0=C2=A0 */
-> > > > > > > if(rb_is_black(parent))
-> > > > > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 break;
-> > > > > > > Hence, it violates the rule #1 (the root can't be red) and ne=
-ed a fix
-> > > > > > > up, and also add a regression test for it. This looks like wa=
-s
-> > > > > > > introduced by 6d58452dc06 where it no longer always paint the=
- root as
-> > > > > > > black.
-> > > > > > > Fixes: 6d58452dc06 (rbtree: adjust root color in rb_insert_co=
-lor() only
-> > > > > > > when necessary)
-> > > > > > > Reported-by: Esme esploit@protonmail.ch
-> > > > > > > Tested-by: Joey Pabalinas joeypabalinas@gmail.com
-> > > > > > > Signed-off-by: Qian Cai cai@lca.pw
-> > > > > >
-> > > > > > Tested-by: David Lechner david@lechnology.com
-> > > > > > FWIW, this fixed the following crash for me:
-> > > > > > Unable to handle kernel NULL pointer dereference at virtual add=
-ress 00000004
-> > > > >
-> > > > > Just to clarify, do you have a way to reproduce this crash withou=
-t the fix ?
-> > > >
-> > > > I am starting to suspect that my crash was caused by some new code
-> > > > in the drm-misc-next tree that might be causing a memory corruption=
-.
-> > > > It threw me off that the stack trace didn't contain anything relate=
-d
-> > > > to drm.
-> > > > See: https://patchwork.freedesktop.org/patch/276719/
-> > >
-> > > It may be useful for those who could reproduce this issue to turn on =
-those
-> > > memory corruption debug options to narrow down a bit.
-> > > CONFIG_DEBUG_PAGEALLOC=3Dy
-> > > CONFIG_DEBUG_PAGEALLOC_ENABLE_DEFAULT=3Dy
-> > > CONFIG_KASAN=3Dy
-> > > CONFIG_KASAN_GENERIC=3Dy
-> > > CONFIG_SLUB_DEBUG_ON=3Dy
-> >
-> > I have been on SLAB, I configured SLAB DEBUG with a fresh pull from git=
-hub. Linux syzkaller 5.0.0-rc2 #9 SMP Sun Jan 13 21:57:40 EST 2019 x86_64
-> > ...
-> > In an effort to get a different stack into the kernel, I felt that noth=
-ing works better than fork bomb? :)
-> > Let me know if that helps.
-> > root@syzkaller:~# gcc -o test3 test3.c
-> > root@syzkaller:~# while : ; do ./test3 & done
+> For the additon of a y2083 safe semtimedop() system call, I chose to only
+> support the separate entry points, but that requires first supporting
+> the regular ones with their own syscall numbers.
 >
-> And is test3 the same multi-threaded program that enters the kernel via
-> /dev/sg0 and then calls SCSI_IOCTL_SEND_COMMAND which goes to the SCSI
-> mid-level and thence to the block layer?
+> The IPC_64 is now implied by the new semctl/shmctl/msgctl system
+> calls even on the architectures that require passing it with the ipc()
+> multiplexer.
 >
-> And please remind me, does it also fail on lk 4.20.2 ?
+> I'm not adding the new semtimedop() or semop() on 32-bit architectures,
+> those will get implemented using the new semtimedop_time64() version
+> that gets added along with the other time64 calls.
+> Three 64-bit architectures (powerpc, s390 and sparc) get semtimedop().
 >
-> Doug Gilbert
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> ---
+> One aspect here that might be a bit controversial is the use of
+> the same system call numbers across all architectures, synchronizing
+> all of them with the x86-32 numbers. With the new syscall.tbl
+> files, I hope we can just keep doing that in the future, and no
+> longer require the architecture maintainers to assign a number.
+>
+> This is mainly useful for implementers of the C libraries: if
+> we can add future system calls everywhere at the same time, using
+> a particular version of the kernel headers also guarantees that
+> the system call number macro is visible.
+> ---
+>  arch/m68k/kernel/syscalls/syscall.tbl     | 11 +++++++++++
+>  arch/mips/kernel/syscalls/syscall_o32.tbl | 11 +++++++++++
+>  arch/powerpc/kernel/syscalls/syscall.tbl  | 12 ++++++++++++
 
-Yes, the same C repro from the earlier thread.  It was a 4.20.0 kernel wher=
-e it was first detected.  I can move to 4.20.2 and see if that changes anyt=
-hing.
+I have some changes I'd like to make to our syscall table that will
+clash with this.
 
-Esme
+I'll try and send them today.
 
+> diff --git a/arch/powerpc/kernel/syscalls/syscall.tbl b/arch/powerpc/kernel/syscalls/syscall.tbl
+> index db3bbb8744af..1bffab54ff35 100644
+> --- a/arch/powerpc/kernel/syscalls/syscall.tbl
+> +++ b/arch/powerpc/kernel/syscalls/syscall.tbl
+> @@ -425,3 +425,15 @@
+>  386	nospu	pkey_mprotect			sys_pkey_mprotect
+>  387	nospu	rseq				sys_rseq
+>  388	nospu	io_pgetevents			sys_io_pgetevents		compat_sys_io_pgetevents
+> +# room for arch specific syscalls
+> +392	64	semtimedop			sys_semtimedop
+> +393	common	semget				sys_semget
+> +394	common	semctl				sys_semctl			compat_sys_semctl
+> +395	common	shmget				sys_shmget
+> +396	common	shmctl				sys_shmctl			compat_sys_shmctl
+> +397	common	shmat				sys_shmat			compat_sys_shmat
+> +398	common	shmdt				sys_shmdt
+> +399	common	msgget				sys_msgget
+> +400	common	msgsnd				sys_msgsnd			compat_sys_msgsnd
+> +401	common	msgrcv				sys_msgrcv			compat_sys_msgrcv
+> +402	common	msgctl				sys_msgctl			compat_sys_msgctl
 
+We already have a gap at 366-377 from when we tried to add the split IPC
+calls a few years back.
 
+I guess I don't mind leaving that gap and using the common numbers as
+you've done here.
+
+But it would be good to add a comment pointing out that we have room
+at 366 for more arch specific syscalls as well.
+
+cheers
