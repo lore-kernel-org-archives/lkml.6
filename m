@@ -3,114 +3,80 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 65013C43444
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 20:48:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1854AC43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 20:49:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3EE7B20656
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 20:48:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E1C5D20656
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 20:49:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727053AbfANUsu (ORCPT
+        id S1727095AbfANUtQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 14 Jan 2019 15:48:50 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:60206 "EHLO mx1.redhat.com"
+        Mon, 14 Jan 2019 15:49:16 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:57930 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726776AbfANUsu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 Jan 2019 15:48:50 -0500
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        id S1726776AbfANUtP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 14 Jan 2019 15:49:15 -0500
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id C550AC02938F;
-        Mon, 14 Jan 2019 20:48:49 +0000 (UTC)
-Received: from redhat.com (ovpn-124-229.rdu2.redhat.com [10.10.124.229])
-        by smtp.corp.redhat.com (Postfix) with SMTP id 047015D73F;
-        Mon, 14 Jan 2019 20:48:47 +0000 (UTC)
-Date:   Mon, 14 Jan 2019 15:48:47 -0500
-From:   "Michael S. Tsirkin" <mst@redhat.com>
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     Jason Wang <jasowang@redhat.com>, Joerg Roedel <joro@8bytes.org>,
-        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
-        Jens Axboe <axboe@kernel.dk>,
-        virtualization@lists.linux-foundation.org,
-        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-        iommu@lists.linux-foundation.org, jfehlig@suse.com,
-        jon.grimm@amd.com, brijesh.singh@amd.com
-Subject: Re: [PATCH 0/3] Fix virtio-blk issue with SWIOTLB
-Message-ID: <20190114153004-mutt-send-email-mst@kernel.org>
-References: <20190110134433.15672-1-joro@8bytes.org>
- <5ae1341e-62ec-0478-552b-259eabf9fb17@redhat.com>
- <20190111091502.GC5825@8bytes.org>
- <38bcbd46-674c-348a-cbd6-66bd431e986a@redhat.com>
- <20190114095002.GA29874@lst.de>
- <ac6d83d8-02de-dbdf-e309-3a1115642d50@redhat.com>
- <20190114131114-mutt-send-email-mst@kernel.org>
- <20190114201935.GA10781@lst.de>
+        by mx1.redhat.com (Postfix) with ESMTPS id 570302D7E7;
+        Mon, 14 Jan 2019 20:49:15 +0000 (UTC)
+Received: from colo-mx.corp.redhat.com (colo-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.21])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 43D9760CCF;
+        Mon, 14 Jan 2019 20:49:15 +0000 (UTC)
+Received: from zmail24.collab.prod.int.phx2.redhat.com (zmail24.collab.prod.int.phx2.redhat.com [10.5.83.30])
+        by colo-mx.corp.redhat.com (Postfix) with ESMTP id 231593F7CB;
+        Mon, 14 Jan 2019 20:49:15 +0000 (UTC)
+Date:   Mon, 14 Jan 2019 15:49:14 -0500 (EST)
+From:   Dave Anderson <anderson@redhat.com>
+To:     Borislav Petkov <bp@alien8.de>
+Cc:     Kazuhito Hagio <k-hagio@ab.jp.nec.com>,
+        Lianbo Jiang <lijiang@redhat.com>,
+        linux-kernel@vger.kernel.org, kexec@lists.infradead.org,
+        tglx@linutronix.de, mingo@redhat.com, x86@kernel.org,
+        akpm@linux-foundation.org, bhe@redhat.com, dyoung@redhat.com,
+        linux-doc@vger.kernel.org
+Message-ID: <1862896935.69778880.1547498954956.JavaMail.zimbra@redhat.com>
+In-Reply-To: <20190114203500.GU2773@zn.tnic>
+References: <20190110121944.6050-1-lijiang@redhat.com> <20190114192144.GQ2773@zn.tnic> <134663991.69764038.1547494607008.JavaMail.zimbra@redhat.com> <20190114195940.GS2773@zn.tnic> <244986363.69770015.1547496453312.JavaMail.zimbra@redhat.com> <20190114201812.GT2773@zn.tnic> <221183717.69773903.1547497592624.JavaMail.zimbra@redhat.com> <20190114203500.GU2773@zn.tnic>
+Subject: Re: [PATCH 1/2 v6] kdump: add the vmcoreinfo documentation
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190114201935.GA10781@lst.de>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.32]); Mon, 14 Jan 2019 20:48:50 +0000 (UTC)
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.18.17.201, 10.4.195.25]
+Thread-Topic: kdump: add the vmcoreinfo documentation
+Thread-Index: 1w3RLd9A9qEHPbJGj05Nd5Aij519rA==
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.30]); Mon, 14 Jan 2019 20:49:15 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jan 14, 2019 at 09:19:35PM +0100, Christoph Hellwig wrote:
-> > Christoph is saying that !IOMMU_PLATFORM devices should hide the
-> > compatibility code in a special per-device DMA API implementation.
-> > Which would be fine especially if we can manage not to introduce a bunch
-> > of indirect calls all over the place and hurt performance.  It's just
-> > that the benefit is unlikely to be big (e.g. we can't also get rid of
-> > the virtio specific memory barriers) so no one was motivated enough to
-> > work on it.
+
+
+----- Original Message -----
+> On Mon, Jan 14, 2019 at 03:26:32PM -0500, Dave Anderson wrote:
+> > No.  It needs *both* the vmlinux file and the vmcore file in order to read
+> > kernel
+> > virtual memory, so just having a kernel virtual address is insufficient.
+> > 
+> > So it's a chicken-and-egg situation.  This particular --osrelease option is used
+> > to determine *what* vmlinux file would be required for an actual crash analysis
+> > session.
 > 
-> No.  
-
-Oh ok then.
-
-> The problem is that we still haven't fully specified what
-> IOMMU_PLATFORM and !IOMMU_PLATFORM actually mean.  Your
-> "ACCESS_PLATFORM/ORDER_PLATFORM" commit in the virtio-spec repo
-> improves it a little bit, but it is still far from enough.
+> Ok, that makes sense. I could've used that explanation when reviewing
+> the documentation. Do you mind skimming through this:
 > 
-> As a start VIRTIO_F_ORDER_PLATFORM and VIRTIO_F_ACCESS_PLATFORM
-> absolutely MUST be set for hardware implementations.  Otherwise said
-> hardware has no chance of working on anything but the most x86-like
-> systems.
+> https://lkml.kernel.org/r/20190111145650.GG4729@zn.tnic
+> 
+> in case we've missed explaining relevant usage - like that above - of
+> some of the vmcoreinfo members?
 
-I think you are exaggerating a little here.  Limited access with e.g.
-need to flush caches is common on lower end but less common on higher
-end systems used for virtualization.  As you point out that changes with
-e.g. SEV but then SEV is a pretty niche thing so far.
+Yeah, I've been watching the thread, and the document looks fine to me.
+It's just that when I saw the discussion of this one being removed that
+I felt the need to respond...  ;-)
 
-So I would make that a SHOULD probably.
-
-> Second software implementations SHOULD set VIRTIO_F_ACCESS_PLATFORM,
-> because otherwise we can't add proper handling for things like SEV or
-> the IBM "secure hypervisor" thing.
-
-Yes. If host does not have access to all of memory it SHOULD set
-VIRTIO_F_ACCESS_PLATFORM.
-
-It seems rather straight-forward to add conformance clauses
-for this, thanks for reminding me.
-
-
-> Last but not least a lot of wording outside the area describing these
-> flags really needs some major updates in terms of DMA access.
-
-Thanks for the reminder. Yes generally spec tends to still say e.g.
-"physical address" where it really means a "DMA address" in Linux terms.
-Whether changing that will make things much clearer I'm not sure. E.g.
-hardware designers don't much care I guess.
-
-If you want to list the most problematic cases, e.g. in a github issue,
-we might get to clarifying them sooner.
-
-Thanks!
-
--- 
-MST
+Dave
