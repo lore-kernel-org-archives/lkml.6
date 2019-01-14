@@ -2,127 +2,106 @@ Return-Path: <SRS0=tq6k=PW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D65B3C43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 19:18:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D6160C43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 19:18:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A812120651
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 19:18:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A5D2B20651
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 19:18:22 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ofpEuWDh"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=chronox.de header.i=@chronox.de header.b="L5jrlTMu"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726933AbfANTSK (ORCPT
+        id S1726952AbfANTSU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 14 Jan 2019 14:18:10 -0500
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:46479 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726643AbfANTSJ (ORCPT
+        Mon, 14 Jan 2019 14:18:20 -0500
+Received: from mo4-p01-ob.smtp.rzone.de ([85.215.255.51]:20868 "EHLO
+        mo4-p01-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726643AbfANTSU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 Jan 2019 14:18:09 -0500
-Received: by mail-pg1-f195.google.com with SMTP id w7so38036pgp.13;
-        Mon, 14 Jan 2019 11:18:08 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=h+sbqrLenk60F3eDSH1lBbRS/HpdojEGX59+/RMk3xw=;
-        b=ofpEuWDh8iVbXpfpnZTDbkvUkcyWwJdR3CNDcCMArhhmSnAS+RGVyjaz06CMtNRZ6K
-         y9h7bQRSd11Tp4lgO0dKQgGgsQaSSl+J3IMR51CpmKb4dG3i2SjNFiZ/0btMxvKYewse
-         pjupwmDIfVooI6GFqE4f92cZGHcK5AlGz9rIQBF47gnme/MVGJBsR7N/jMsUxLkOWCUg
-         kscO9w+WuNV5/6qp+6UdsqlJEIde+p5L9RHzFGOVf2n/tdaOuCXKRS2C0oelKMwsHFr4
-         l1RbfIjPpdFWZJIRvbnjCA3aRpwgjcLOJXuBsa4kLEP8DDcB9GhB68JQAsyZ1t1bFa81
-         xSkg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=h+sbqrLenk60F3eDSH1lBbRS/HpdojEGX59+/RMk3xw=;
-        b=bbhv47XY/vuZrLx0YX8HIgjCCotLv2ODu9ldFHcG7YzEZSozHsQXm/QMrjjt9f4dNY
-         T8DM9a7gWTdXcy00xC/1sjap2oL196Y1020HMCEBgqDSP7iOM52X8UyjuXvehqMZUpAs
-         UpP3pigVMiNWBNBuL2UDuU8DArN+ayOCSbuXhsEE0oBjnLlaYunxo64gcckZeo0jNJQJ
-         lmqYiuou0tIgWfZ2UTShXiGmPlpTJZHNuX45RavvuDp6Y3khmtfnnSEIkIZN7lNmGiOC
-         3LzeTkBVAvd2ROJBghWwhnTqeUjm6byxBame6Q6W1MjbNmqt6/LYacK/zvspLfwFx/pX
-         Q9jw==
-X-Gm-Message-State: AJcUukcpEnY91YoPBn1hXcj07KEuAIOdR2/I54ZDwb1J/zlFcLAbTggU
-        8ZVZCxBIZdY42FgRuRBCDZ8=
-X-Google-Smtp-Source: ALg8bN79DnmFa88eYecS7YjlGHwMgeH99MXWpQHppNqjY/JMQmhayxToewLEOGUuPU3x69oYahUMGA==
-X-Received: by 2002:a62:3c1:: with SMTP id 184mr30042pfd.56.1547493488702;
-        Mon, 14 Jan 2019 11:18:08 -0800 (PST)
-Received: from localhost.localdomain ([216.13.234.27])
-        by smtp.gmail.com with ESMTPSA id b2sm2672771pgg.87.2019.01.14.11.18.07
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 14 Jan 2019 11:18:08 -0800 (PST)
-From:   Alamy Liu <alamy.liu@gmail.com>
-To:     Ulf Hansson <ulf.hansson@linaro.org>
-Cc:     Alamy Liu <alamy.liu@gmail.com>, linux-mmc@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH 2/2] mmc: cqhci: replace DCMD_SLOT with cq_host->dcmd_slot
-Date:   Mon, 14 Jan 2019 11:17:22 -0800
-Message-Id: <20190114191724.29960-2-alamy.liu@gmail.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190114191724.29960-1-alamy.liu@gmail.com>
-References: <20190114191724.29960-1-alamy.liu@gmail.com>
+        Mon, 14 Jan 2019 14:18:20 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1547493497;
+        s=strato-dkim-0002; d=chronox.de;
+        h=References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:
+        X-RZG-CLASS-ID:X-RZG-AUTH:From:Subject:Sender;
+        bh=ruNGl6IL1R0cLWsOjqtzI7WYAcpoPSicC26aThCRNhM=;
+        b=L5jrlTMuclVwdCIzA6O9pEXVPsOtCk8+XdpQ9Ygr4J8/T4kpEXP8ij7hM5TiQoO7Ob
+        OL+8kJ09uuwV9PL02Vz8BkjxDLA0TiIrLUqVhEAD34AFPIdFqPEYxUbZn98wiQk+gM8l
+        wKlNw49/2Hd8i8xQi2M6U5V8+BFgSK58Rjq10Uu3cacQI+gkhGsZQKJhNvAfiL0hTMJY
+        W3kJSwHwSlcaWtnIuq8RUFwgWTfyioyVphMgt0HsdBz9WcC9D7rBPQZdc3XAjYrg+oq4
+        SuL+K/QZEbT/mrIucgPiPgZVNQqJ2lXmiW9F4j90iWvvvmDTr+pTeb37s7p47H1fGhAO
+        /PIw==
+X-RZG-AUTH: ":P2ERcEykfu11Y98lp/T7+hdri+uKZK8TKWEqNyiHySGSa9k9zmkBKV/U3+81ReqJahw="
+X-RZG-CLASS-ID: mo00
+Received: from tauon.chronox.de
+        by smtp.strato.de (RZmta 44.9 DYNA|AUTH)
+        with ESMTPSA id 309bcfv0EJHitrw
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (curve secp521r1 with 521 ECDH bits, eq. 15360 bits RSA))
+        (Client did not present a certificate);
+        Mon, 14 Jan 2019 20:17:44 +0100 (CET)
+From:   Stephan Mueller <smueller@chronox.de>
+To:     Eric Biggers <ebiggers@kernel.org>
+Cc:     Herbert Xu <herbert@gondor.apana.org.au>,
+        James Bottomley <James.Bottomley@hansenpartnership.com>,
+        Andy Lutomirski <luto@amacapital.net>,
+        "Lee, Chun-Yi" <joeyli.kernel@gmail.com>,
+        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
+        Pavel Machek <pavel@ucw.cz>, linux-kernel@vger.kernel.org,
+        linux-pm@vger.kernel.org, keyrings@vger.kernel.org,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        Chen Yu <yu.c.chen@intel.com>,
+        Oliver Neukum <oneukum@suse.com>,
+        Ryan Chen <yu.chen.surf@gmail.com>,
+        David Howells <dhowells@redhat.com>,
+        Giovanni Gherdovich <ggherdovich@suse.cz>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Jann Horn <jannh@google.com>,
+        Andy Lutomirski <luto@kernel.org>, linux-crypto@vger.kernel.org
+Subject: Re: [PATCH 4/6] crypto: hkdf - RFC5869 Key Derivation Function
+Date:   Mon, 14 Jan 2019 19:44:22 +0100
+Message-ID: <1693060.JDmgY16SMQ@tauon.chronox.de>
+In-Reply-To: <20190114175315.GB7644@gmail.com>
+References: <20190103143227.9138-1-jlee@suse.com> <4734428.Gj5BGI4uxL@positron.chronox.de> <20190114175315.GB7644@gmail.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Prevent to use fixed value (DCMD_SLOT) after it had been determined
-and saved in a variable (cq_host->dcmd).
+Am Montag, 14. Januar 2019, 18:53:16 CET schrieb Eric Biggers:
 
-Signed-off-by: Alamy Liu <alamy.liu@gmail.com>
----
- drivers/mmc/host/cqhci.c | 11 ++++++-----
- 1 file changed, 6 insertions(+), 5 deletions(-)
+Hi Eric,
 
-diff --git a/drivers/mmc/host/cqhci.c b/drivers/mmc/host/cqhci.c
-index 26d63594b7..4cc7863c13 100644
---- a/drivers/mmc/host/cqhci.c
-+++ b/drivers/mmc/host/cqhci.c
-@@ -76,7 +76,8 @@ static void setup_trans_desc(struct cqhci_host *cq_host, u8 tag)
- 	if (cq_host->link_desc_len > 8)
- 		*(link_temp + 8) = 0;
- 
--	if (tag == DCMD_SLOT && (cq_host->mmc->caps2 & MMC_CAP2_CQE_DCMD)) {
-+	if ((tag == cq_host->dcmd_slot)
-+	    && (cq_host->mmc->caps2 & MMC_CAP2_CQE_DCMD)) {
- 		*link_temp = CQHCI_VALID(0) | CQHCI_ACT(0) | CQHCI_END(1);
- 		return;
- 	}
-@@ -548,9 +549,9 @@ static void cqhci_post_req(struct mmc_host *host, struct mmc_request *mrq)
- 	}
- }
- 
--static inline int cqhci_tag(struct mmc_request *mrq)
-+static inline int cqhci_tag(struct mmc_request *mrq, struct cqhci_host *cq_host)
- {
--	return mrq->cmd ? DCMD_SLOT : mrq->tag;
-+	return mrq->cmd ? cq_host->dcmd_slot : mrq->tag;
- }
- 
- static int cqhci_request(struct mmc_host *mmc, struct mmc_request *mrq)
-@@ -558,8 +559,8 @@ static int cqhci_request(struct mmc_host *mmc, struct mmc_request *mrq)
- 	int err = 0;
- 	u64 data = 0;
- 	u64 *task_desc = NULL;
--	int tag = cqhci_tag(mrq);
- 	struct cqhci_host *cq_host = mmc->cqe_private;
-+	int tag = cqhci_tag(mrq, cq_host);
- 	unsigned long flags;
- 
- 	if (!cq_host->enabled) {
-@@ -824,7 +825,7 @@ static bool cqhci_timeout(struct mmc_host *mmc, struct mmc_request *mrq,
- 			  bool *recovery_needed)
- {
- 	struct cqhci_host *cq_host = mmc->cqe_private;
--	int tag = cqhci_tag(mrq);
-+	int tag = cqhci_tag(mrq, cq_host);
- 	struct cqhci_slot *slot = &cq_host->slot[tag];
- 	unsigned long flags;
- 	bool timed_out;
--- 
-2.17.1
+> > I would not suggest this, because that rounds contrary to the concept of
+> > the kernel crypto API IMHO. The caller has to provide the wrapping
+> > cipher. It is perfectly viable to allow a caller to invoke a specific
+> > keyed message digest.
+> Sure, but it would not conform to the HKDF specification.  Are you sure it
+> is okay to specify an arbitrary keyed hash?
+
+Technically, I see no issue why this should not be possible. You see that with 
+the SP800-108 KDF implementations where using CMAC is perfectly legal (and 
+which I also test).
+
+Though, using another keyed hash implementation like CMAC is not covered by 
+the HKDF spec. If a caller would use hkdf(cmac(aes)), it would produce 
+cryptographically strong values. Though this implementation does not conform 
+to any standard. I do not think we should prevent a caller to select such 
+combination in the kernel crypto API.
+
+IMHO there would even be valid reasons why one would use cmac(aes) for a kdf. 
+For example, when you would want to use a hardware AES which somehow also 
+employs a hardware key that is inaccessible to software in order to tie the 
+KDF result to the local hardware. This could even be a valid use case for Ext4 
+FBE encryption where you derive a key. The KDF could be used to link the 
+derived key to the local hardware to prevent the encrypted data could be 
+copied to another system and decrypted successfully there.
+
+Ciao
+Stephan
+
 
