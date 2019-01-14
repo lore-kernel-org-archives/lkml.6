@@ -2,111 +2,100 @@ Return-Path: <SRS0=tq6k=PW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A91AC43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 20:37:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C8E12C43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 20:37:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 676CD20659
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 20:37:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9797320659
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 20:37:48 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="X96IbwxP"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mjFyBcUf"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727096AbfANUhh (ORCPT
+        id S1727112AbfANUhr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 14 Jan 2019 15:37:37 -0500
-Received: from mail-it1-f193.google.com ([209.85.166.193]:52173 "EHLO
-        mail-it1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726776AbfANUhh (ORCPT
+        Mon, 14 Jan 2019 15:37:47 -0500
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:35788 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726776AbfANUhq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 Jan 2019 15:37:37 -0500
-Received: by mail-it1-f193.google.com with SMTP id w18so1648820ite.1;
-        Mon, 14 Jan 2019 12:37:36 -0800 (PST)
+        Mon, 14 Jan 2019 15:37:46 -0500
+Received: by mail-wr1-f65.google.com with SMTP id 96so470982wrb.2;
+        Mon, 14 Jan 2019 12:37:44 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=uHx/tBNv0XiIGAnQUaDsznrgTpkI55fwt+sl3UVxk78=;
-        b=X96IbwxP/MSsUvZ6fTQOUWYL2S2Nhm3tcIPvq5tlultQurncIajso0w1RnOI1xiWM8
-         +KqGsNd/dSzhz0BJmiWiuBPUjtbp/LT6WLNIzgVyrEpW1GWG5kYTlGHgFa92yJBhYXJZ
-         33BdvxRpba3jASQi6BSZp6I3a1Z/x6jHlecxObS8C3h92IBTmZt4i43J5RcagIyGhpqj
-         mBoh7/3up14XQp4f6WOoWHiganraKkN1167j52RpN6nb/1UJipSLdlYWpg+IOKfs8XQq
-         2nb3HvlBUTiOqI1yhfI2Od+js5btTmT+7CiFFp7jcVng/StwU5iwmo/jNKPsN05xdTND
-         IwKA==
+        h=sender:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=qNsUCW3IX5YhvZ4wutoYkRwo7UB+mjQVCtnUyjE5oVw=;
+        b=mjFyBcUfgGtxROVMFfVLlkeZbF38nROKq8P4UVZ+kDAX30+37/qLihGi+lq969DQR+
+         SMRXJVlD3DRv5/IVITKlFUwZLev60SN+JtLqCRtzv+lPO3D0qAlO3PuWRCvoTsceqW70
+         qkSd+epzkSvJVz6IA8rC5SMpWQqilvXAaG58ld7/OdzCPxORR/vuJ1PgdpaszEw7H4jH
+         8WHcSXoaZqu9vDJEfl6wGlxM5PP0Mpq3sFh1tjyJxJ7VKTK04pH15r90w7E7BBpb7Zcx
+         Yki8X9gfb9BsabOaeRQ8oNqxueXbzqEalPvm0Z12fd+Qr2VJPpcNH8qtcU1mzm1YMS+W
+         cGxw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=uHx/tBNv0XiIGAnQUaDsznrgTpkI55fwt+sl3UVxk78=;
-        b=qNjHGksXIlm2OsBXW1mJ6WWRZCNEh30uOPyjMaW2Nrb1CahzhtTjQWCp+d7OaD4YNX
-         c2FfS+zl6AmnVgfRvEd1hrCrvrNT0KbivYQ4gTySUul0HSiccTN2CQi8PDtmA4szeOaU
-         avb7DRdAVUEY0zEz4HJwKBWgrx6TISXwGZBiNc+nB24CNm2H0BPVtwV7ccY/NOr6ZJqr
-         gJLsPrvL8ccJectmOeASe3uINmu1fhxc+CW1eVwLq4NW6CJcgsc+3VD8t+9hZd+sNldF
-         7hHAwP90BRJJYqPL7Yc/t7QA9efr/+pXbZfs0N7ftrA6U6eI+X3wZAwL4sQhgy7wFwLP
-         URcw==
-X-Gm-Message-State: AJcUukfZVfcaMMk5/6TgGjJ7I6zE+2ZcSY3cWB8QQGojShw6etZy0RnJ
-        7Fg8bkQpoijtke7k7G68h0oqS0XJ1MwkJvVjrio=
-X-Google-Smtp-Source: ALg8bN5QUArnWHCO85LPqcFHwlBLEdVhENbPrluPT652uHqucScJ8KgSERKuTRKdwyNXO17fqIvDASYjZjkTZQ94AO8=
-X-Received: by 2002:a02:7b09:: with SMTP id q9mr191737jac.39.1547498256382;
- Mon, 14 Jan 2019 12:37:36 -0800 (PST)
+        h=x-gm-message-state:sender:from:to:cc:subject:date:message-id
+         :mime-version:content-transfer-encoding;
+        bh=qNsUCW3IX5YhvZ4wutoYkRwo7UB+mjQVCtnUyjE5oVw=;
+        b=gkSswtNBXCNNBXFPcYz5ypHDbbFG8PmbEM6e3MaREwj19/xpu1mPF/S781dst5sdV7
+         TSeHCyZ4JKlPogEPlKZYQ8ugiKtKHWJHvf8CBY1fXUlzS2wjP8X4BP3/EVuZ9wjTbM4W
+         v2lTUV9S8ntswuSsQ185hr43G3S0fnYznjFwS8W7vyRFTgRBtPp+BFkGDBW97LOP+Ric
+         7r+3oIHqBmfB7TIgC+bRCHtn2xLSrgodL1g/XLmcmH2+T47SNvdsu4RNrn5TRPy6hhMo
+         Li1Zc0wrl86jeUXlgPa3Vu+qb8AGDFARspueAXmCFDNBxCS+FLnR1oPw2CfOMVmtHNMN
+         f8EQ==
+X-Gm-Message-State: AJcUukf4lGW99JdDA++qJOTIqlUYCUnw6DOCRa5ERY8YrqqbjEata8dr
+        jD76uqlh6/hAK+m07/Y41sEAGKc1
+X-Google-Smtp-Source: ALg8bN6+OWF+tVwpI5vAbJ7ax91jQQdel8+qLuxfP8y/6zj+BDeO6JPXx5X2TI8CxZPxAPF2trv1kg==
+X-Received: by 2002:adf:9f10:: with SMTP id l16mr229944wrf.206.1547498264049;
+        Mon, 14 Jan 2019 12:37:44 -0800 (PST)
+Received: from macbookpro.malat.net (bru31-1-78-225-224-134.fbx.proxad.net. [78.225.224.134])
+        by smtp.gmail.com with ESMTPSA id b18sm70803460wrw.83.2019.01.14.12.37.43
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 14 Jan 2019 12:37:43 -0800 (PST)
+Received: by macbookpro.malat.net (Postfix, from userid 1000)
+        id 468EA11422AD; Mon, 14 Jan 2019 21:37:37 +0100 (CET)
+From:   Mathieu Malaterre <malat@debian.org>
+To:     Alexander Viro <viro@zeniv.linux.org.uk>
+Cc:     Mathieu Malaterre <malat@debian.org>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] fs/signalfd: annotate implicit fall through
+Date:   Mon, 14 Jan 2019 21:37:34 +0100
+Message-Id: <20190114203734.19294-1-malat@debian.org>
+X-Mailer: git-send-email 2.19.2
 MIME-Version: 1.0
-References: <20181227190842.GA19565@myunghoj-Precision-5530>
- <CAOi1vP9G=-ZLBKH6Y5MoDRUjX4YkN6GUWKm1=fnM02odQX8GWA@mail.gmail.com> <20190103035027.GA26674@myunghoj-Precision-5530>
-In-Reply-To: <20190103035027.GA26674@myunghoj-Precision-5530>
-From:   Ilya Dryomov <idryomov@gmail.com>
-Date:   Mon, 14 Jan 2019 21:37:25 +0100
-Message-ID: <CAOi1vP-FC+X+DeLMBcefYuSjxzLgAsxQg+RNskaZsUvVbmXuYA@mail.gmail.com>
-Subject: Re: [PATCH] libceph: protect pending flags in ceph_con_keepalive()
-To:     Myungho Jung <mhjungk@gmail.com>
-Cc:     "Yan, Zheng" <zyan@redhat.com>, Sage Weil <sage@redhat.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Ceph Development <ceph-devel@vger.kernel.org>,
-        netdev <netdev@vger.kernel.org>, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jan 3, 2019 at 4:50 AM Myungho Jung <mhjungk@gmail.com> wrote:
-> I reproduced on vm using syzkaller utils and verified the fix by syzbot.
+There is a plan to build the kernel with -Wimplicit-fallthrough and
+this place in the code produced a warning (W=1).
 
-Hi Myungho,
+This commit remove the following warning:
 
-I think this might be a better fix:
+  fs/signalfd.c:178:7: warning: this statement may fall through [-Wimplicit-fallthrough=]
 
-diff --git a/net/ceph/messenger.c b/net/ceph/messenger.c
-index d5718284db57..c5f5313e3537 100644
---- a/net/ceph/messenger.c
-+++ b/net/ceph/messenger.c
-@@ -3205,10 +3205,11 @@ void ceph_con_keepalive(struct ceph_connection *con)
- {
-        dout("con_keepalive %p\n", con);
-        mutex_lock(&con->mutex);
-+       con_flag_set(con, CON_FLAG_KEEPALIVE_PENDING);
-        clear_standby(con);
-        mutex_unlock(&con->mutex);
--       if (con_flag_test_and_set(con, CON_FLAG_KEEPALIVE_PENDING) == 0 &&
--           con_flag_test_and_set(con, CON_FLAG_WRITE_PENDING) == 0)
-+
-+       if (con_flag_test_and_set(con, CON_FLAG_WRITE_PENDING) == 0)
-                queue_con(con);
- }
- EXPORT_SYMBOL(ceph_con_keepalive);
+Signed-off-by: Mathieu Malaterre <malat@debian.org>
+---
+ fs/signalfd.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-WRITE_PENDING can be set without con->mutex held from socket callbacks.
-This is the reason we use atomic bit ops here, so testing WRITE_PENDING
-under the lock didn't make sense to me.
+diff --git a/fs/signalfd.c b/fs/signalfd.c
+index 757afc7c5895..44b6845b071c 100644
+--- a/fs/signalfd.c
++++ b/fs/signalfd.c
+@@ -176,6 +176,7 @@ static ssize_t signalfd_dequeue(struct signalfd_ctx *ctx, kernel_siginfo_t *info
+ 		if (!nonblock)
+ 			break;
+ 		ret = -EAGAIN;
++		/* fall through */
+ 	default:
+ 		spin_unlock_irq(&current->sighand->siglock);
+ 		return ret;
+-- 
+2.19.2
 
-At the same time, KEEPALIVE_PENDING could have been a non-atomic flag.
-I spent some time trying to make sense of conditioning queue_con() call
-on the previous value of KEEPALIVE_PENDING and couldn't see any, so I'm
-setting it with con_flag_set(), making ceph_con_keepalive() symmetric
-with ceph_con_send().
-
-Thanks,
-
-                Ilya
