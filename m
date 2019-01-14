@@ -2,167 +2,93 @@ Return-Path: <SRS0=tq6k=PW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.7 required=3.0 tests=FROM_LOCAL_HEX,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 13FAAC43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 17:23:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F888C43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 17:25:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C55152070B
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 17:23:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 78F9F2070B
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 17:25:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726736AbfANRXG (ORCPT
+        id S1726761AbfANRZF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 14 Jan 2019 12:23:06 -0500
-Received: from mail-io1-f72.google.com ([209.85.166.72]:43778 "EHLO
-        mail-io1-f72.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726646AbfANRXF (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 Jan 2019 12:23:05 -0500
-Received: by mail-io1-f72.google.com with SMTP id k4so20459313ioc.10
-        for <linux-kernel@vger.kernel.org>; Mon, 14 Jan 2019 09:23:04 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to
-         :content-transfer-encoding;
-        bh=TWkZHAn9M2EumQUvazEJb+Fq0irbxtXkPOMZsVy/Sfw=;
-        b=YBjLRZVSgivKVpOUxTGCeWEek/T/PJNYaWkG4MnfSm/o+nvfPzVeiPN9fuGC2nkqLr
-         ovwTHurI2D0wMHPYIAMg5d2zgIAikHGMkO/7BmIh7qUC91dTfj29wiuF/t41up79u3nX
-         iZVuPqUBaWNJaXG3LvMQpd5Gqo4/QWL9DwsI3AGe/k90k4yjoaXm6HahsDBr24ROp9b5
-         iwqLxjoSwSlX+tueXiWcD0tiFYD/7rliy8Hd0ul8cEh/IM3B8xnRzlFxe/gevTec7ZC2
-         PxWS5ohHPLwFWZ8ApfYMheEMi6fPi9dcE7nBFVtJXWN8Xg9ecfg3Gvnfdi3ZcS65z4Xe
-         S2bQ==
-X-Gm-Message-State: AJcUukeTwbqZHpGJaY66I4XW5PAk0bdyjCNSQ0zyy2jZV4JPl+UYGtHv
-        nGvlZz2A8wh34wYX/OqNo91F5vtgtt5wdMfCbVORb3GiEqv1
-X-Google-Smtp-Source: ALg8bN5gFihspewWCLhZ0+juIDZpJBgJMSKtIn9s8PAKGxA2AT5eLWIezNJAy1gaEM/ylrjJakK8BFxknr/Y0LQUmy07jEVrXF6c
+        Mon, 14 Jan 2019 12:25:05 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:38048 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726646AbfANRZF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 14 Jan 2019 12:25:05 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 1692BA78;
+        Mon, 14 Jan 2019 09:25:05 -0800 (PST)
+Received: from [10.1.196.105] (eglon.cambridge.arm.com [10.1.196.105])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id D24033F5BD;
+        Mon, 14 Jan 2019 09:25:02 -0800 (PST)
+Subject: Re: [PATCH v8 01/26] arm64: Fix HCR.TGE status for NMI contexts
+To:     Julien Thierry <julien.thierry@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>
+Cc:     linux-arm-kernel@lists.infradead.org, mark.rutland@arm.com,
+        linux-arch@vger.kernel.org, daniel.thompson@linaro.org,
+        Arnd Bergmann <arnd@arndb.de>, marc.zyngier@arm.com,
+        will.deacon@arm.com, linux-kernel@vger.kernel.org,
+        stable@vger.kernel.org, christoffer.dall@arm.com,
+        joel@joelfernandes.org
+References: <1546956464-48825-1-git-send-email-julien.thierry@arm.com>
+ <1546956464-48825-2-git-send-email-julien.thierry@arm.com>
+ <20190114155634.GB84430@arrakis.emea.arm.com>
+ <229aade3-5bb3-aad4-bd9a-d6220db836c0@arm.com>
+From:   James Morse <james.morse@arm.com>
+Message-ID: <41c6dc69-3bdc-2ea1-4862-5f4df9b843dd@arm.com>
+Date:   Mon, 14 Jan 2019 17:25:00 +0000
+User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.1
 MIME-Version: 1.0
-X-Received: by 2002:a5e:df44:: with SMTP id g4mr9962107ioq.0.1547486584517;
- Mon, 14 Jan 2019 09:23:04 -0800 (PST)
-Date:   Mon, 14 Jan 2019 09:23:04 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000002a3bfb057f6e4c96@google.com>
-Subject: KASAN: stack-out-of-bounds Read in swake_up_one
-From:   syzbot <syzbot+af057431e1ebbdadd4d1@syzkaller.appspotmail.com>
-To:     linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com,
-        tglx@linutronix.de
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
-Content-Transfer-Encoding: base64
+In-Reply-To: <229aade3-5bb3-aad4-bd9a-d6220db836c0@arm.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-SGVsbG8sDQoNCnN5emJvdCBmb3VuZCB0aGUgZm9sbG93aW5nIGNyYXNoIG9uOg0KDQpIRUFEIGNv
-bW1pdDogICAgZGU2NjI5ZWIyNjJlIE1lcmdlIHRhZyAncGNpLXY1LjAtZml4ZXMtMScgb2YgZ2l0
-Oi8vZ2l0Lmtlci4uDQpnaXQgdHJlZTogICAgICAgdXBzdHJlYW0NCmNvbnNvbGUgb3V0cHV0OiBo
-dHRwczovL3N5emthbGxlci5hcHBzcG90LmNvbS94L2xvZy50eHQ/eD0xMGRkMmZhYjQwMDAwMA0K
-a2VybmVsIGNvbmZpZzogIGh0dHBzOi8vc3l6a2FsbGVyLmFwcHNwb3QuY29tL3gvLmNvbmZpZz94
-PWVkZjFjMzAzMTA5N2MzMDQNCmRhc2hib2FyZCBsaW5rOiBodHRwczovL3N5emthbGxlci5hcHBz
-cG90LmNvbS9idWc/ZXh0aWQ9YWYwNTc0MzFlMWViYmRhZGQ0ZDENCmNvbXBpbGVyOiAgICAgICBn
-Y2MgKEdDQykgOS4wLjAgMjAxODEyMzEgKGV4cGVyaW1lbnRhbCkNCnN5eiByZXBybzogICAgICBo
-dHRwczovL3N5emthbGxlci5hcHBzcG90LmNvbS94L3JlcHJvLnN5ej94PTEwYmQwMjM3NDAwMDAw
-DQoNCklNUE9SVEFOVDogaWYgeW91IGZpeCB0aGUgYnVnLCBwbGVhc2UgYWRkIHRoZSBmb2xsb3dp
-bmcgdGFnIHRvIHRoZSBjb21taXQ6DQpSZXBvcnRlZC1ieTogc3l6Ym90K2FmMDU3NDMxZTFlYmJk
-YWRkNGQxQHN5emthbGxlci5hcHBzcG90bWFpbC5jb20NCg0KSVB2NjogQUREUkNPTkYoTkVUREVW
-X1VQKTogaHNyMDogbGluayBpcyBub3QgcmVhZHkNCklQdjY6IEFERFJDT05GKE5FVERFVl9DSEFO
-R0UpOiBoc3IwOiBsaW5rIGJlY29tZXMgcmVhZHkNCklQdjY6IEFERFJDT05GKE5FVERFVl9VUCk6
-IHZ4Y2FuMTogbGluayBpcyBub3QgcmVhZHkNCjgwMjFxOiBhZGRpbmcgVkxBTiAwIHRvIEhXIGZp
-bHRlciBvbiBkZXZpY2UgYmF0YWR2MA0KPT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09
-PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09DQpCVUc6IEtBU0FOOiBzdGFjay1vdXQt
-b2YtYm91bmRzIGluIHN3YWtlX3VwX2xvY2tlZCBrZXJuZWwvc2NoZWQvc3dhaXQuYzozMCAgDQpb
-aW5saW5lXQ0KQlVHOiBLQVNBTjogc3RhY2stb3V0LW9mLWJvdW5kcyBpbiBzd2FrZV91cF9sb2Nr
-ZWQga2VybmVsL3NjaGVkL3N3YWl0LmM6MjIgIA0KW2lubGluZV0NCkJVRzogS0FTQU46IHN0YWNr
-LW91dC1vZi1ib3VuZHMgaW4gc3dha2VfdXBfb25lKzB4MmJmLzB4M2MwICANCmtlcm5lbC9zY2hl
-ZC9zd2FpdC5jOjQwDQprYXNhbjogQ09ORklHX0tBU0FOX0lOTElORSBlbmFibGVkDQpSZWFkIG9m
-IHNpemUgOCBhdCBhZGRyIGZmZmY4ODgwYTk0ODdhODggYnkgdGFzayBzeXotZXhlY3V0b3I1Lzgz
-NjgNCmthc2FuOiBHUEYgY291bGQgYmUgY2F1c2VkIGJ5IE5VTEwtcHRyIGRlcmVmIG9yIHVzZXIg
-bWVtb3J5IGFjY2Vzcw0KDQpnZW5lcmFsIHByb3RlY3Rpb24gZmF1bHQ6IDAwMDAgWyMxXSBQUkVF
-TVBUIFNNUCBLQVNBTg0KQ1BVOiAwIFBJRDogODM2OCBDb21tOiBzeXotZXhlY3V0b3I1IE5vdCB0
-YWludGVkIDUuMC4wLXJjMSsgIzIwDQpDUFU6IDEgUElEOiA2NCBDb21tOiBrc29mdGlyce+/ve+/
-vTEgTm90IHRhaW50ZWQgNS4wLjAtcmMxKyAjMjANCkhhcmR3YXJlIG5hbWU6IEdvb2dsZSBHb29n
-bGUgQ29tcHV0ZSBFbmdpbmUvR29vZ2xlIENvbXB1dGUgRW5naW5lLCBCSU9TICANCkdvb2dsZSAw
-MS8wMS8yMDExDQpIYXJkd2FyZSBuYW1lOiBHb29nbGUgR29vZ2xlIENvbXB1dGUgRW5naW5lL0dv
-b2dsZSBDb21wdXRlIEVuZ2luZSwgQklPUyAgDQpHb29nbGUgMDEvMDEvMjAxMQ0KQ2FsbCBUcmFj
-ZToNClJJUDogMDAxMDpsb29rdXBfb2JqZWN0IGxpYi9kZWJ1Z29iamVjdHMuYzoxNTYgW2lubGlu
-ZV0NClJJUDogMDAxMDpkZWJ1Z19vYmplY3RfZGVhY3RpdmF0ZSBsaWIvZGVidWdvYmplY3RzLmM6
-NTQyIFtpbmxpbmVdDQpSSVA6IDAwMTA6ZGVidWdfb2JqZWN0X2RlYWN0aXZhdGUrMHgxNmMvMHg0
-YjAgbGliL2RlYnVnb2JqZWN0cy5jOjUyOQ0KICBfX2R1bXBfc3RhY2sgbGliL2R1bXBfc3RhY2su
-Yzo3NyBbaW5saW5lXQ0KICBkdW1wX3N0YWNrKzB4MWRiLzB4MmQwIGxpYi9kdW1wX3N0YWNrLmM6
-MTEzDQpDb2RlOiBjMSBlYSAwMyA0MiA4MCAzYyAyYSAwMCAwZiA4NSA0OSAwMiAwMCAwMCA0ZCA4
-YiAyNCAyNCA0ZCA4NSBlNCAwZiA4NCAgDQpkMSAwMCAwMCAwMCA0OSA4ZCA3YyAyNCAxOCA4MyBj
-MyAwMSA0OCA4OSBmYSA0OCBjMSBlYSAwMyA8NDI+IDgwIDNjIDJhIDAwICANCjBmIDg1IGZhIDAx
-IDAwIDAwIDQ5IDNiIDRjIDI0IDE4IDc1IGMwIDQ5IDhkIDdjIDI0DQpSU1A6IDAwMTg6ZmZmZjg4
-ODBhZTcwN2I4MCBFRkxBR1M6IDAwMDEwMDAzDQpSQVg6IDFmZmZmZmZmZjE2ZDYwYmMgUkJYOiAw
-MDAwMDAwMDAwMDAwMDA0IFJDWDogZmZmZjg4ODBhZTcyNjYyMA0KICBwcmludF9hZGRyZXNzX2Rl
-c2NyaXB0aW9uLmNvbGQrMHg3Yy8weDIwZCBtbS9rYXNhbi9yZXBvcnQuYzoxODcNClJEWDogMDAw
-MDAwMDAwMDAwMDE5ZCBSU0k6IDAwMDAwMDAwMDAwMDAwMDQgUkRJOiAwMDAwMDAwMDAwMDAwY2Vk
-DQpSQlA6IGZmZmY4ODgwYWU3MDdjNzAgUjA4OiAxZmZmZjExMDE1Y2UwZjVjIFIwOTogZmZmZmZm
-ZmY4OTliMTNlMA0KUjEwOiAwMDAwMDAwMDAwMDAwMDg2IFIxMTogMDAwMDAwMDAwMDAwMDAwMyBS
-MTI6IDAwMDAwMDAwMDAwMDBjZDUNClIxMzogZGZmZmZjMDAwMDAwMDAwMCBSMTQ6IDFmZmZmMTEw
-MTVjZTBmNzQgUjE1OiBmZmZmZmZmZjhiNmIwNWU4DQogIGthc2FuX3JlcG9ydC5jb2xkKzB4MWIv
-MHg0MCBtbS9rYXNhbi9yZXBvcnQuYzozMTcNCkZTOiAgMDAwMDAwMDAwMDAwMDAwMCgwMDAwKSBH
-UzpmZmZmODg4MGFlNzAwMDAwKDAwMDApIGtubEdTOjAwMDAwMDAwMDAwMDAwMDANCkNTOiAgMDAx
-MCBEUzogMDAwMCBFUzogMDAwMCBDUjA6IDAwMDAwMDAwODAwNTAwMzMNCkNSMjogMDAwMDAwMDAw
-MDAwMDA2OCBDUjM6IDAwMDAwMDAwOTZmZjcwMDAgQ1I0OiAwMDAwMDAwMDAwMTQwNmUwDQogIF9f
-YXNhbl9yZXBvcnRfbG9hZDhfbm9hYm9ydCsweDE0LzB4MjAgbW0va2FzYW4vZ2VuZXJpY19yZXBv
-cnQuYzoxMzUNCkRSMDogMDAwMDAwMDAwMDAwMDAwMCBEUjE6IDAwMDAwMDAwMDAwMDAwMDAgRFIy
-OiAwMDAwMDAwMDAwMDAwMDAwDQogIHN3YWtlX3VwX2xvY2tlZCBrZXJuZWwvc2NoZWQvc3dhaXQu
-YzozMCBbaW5saW5lXQ0KICBzd2FrZV91cF9sb2NrZWQga2VybmVsL3NjaGVkL3N3YWl0LmM6MjIg
-W2lubGluZV0NCiAgc3dha2VfdXBfb25lKzB4MmJmLzB4M2MwIGtlcm5lbC9zY2hlZC9zd2FpdC5j
-OjQwDQpEUjM6IDAwMDAwMDAwMDAwMDAwMDAgRFI2OiAwMDAwMDAwMGZmZmUwZmYwIERSNzogMDAw
-MDAwMDAwMDAwMDQwMA0KQ2FsbCBUcmFjZToNCiAgPElSUT4NCiAgcmN1X2dwX2t0aHJlYWRfd2Fr
-ZSsweGMzLzB4MTAwIGtlcm5lbC9yY3UvdHJlZS5jOjE1NzENCiAgZGVidWdfaHJ0aW1lcl9kZWFj
-dGl2YXRlIGtlcm5lbC90aW1lL2hydGltZXIuYzo0MTIgW2lubGluZV0NCiAgZGVidWdfZGVhY3Rp
-dmF0ZSBrZXJuZWwvdGltZS9ocnRpbWVyLmM6NDYyIFtpbmxpbmVdDQogIF9fcnVuX2hydGltZXIg
-a2VybmVsL3RpbWUvaHJ0aW1lci5jOjEzNTkgW2lubGluZV0NCiAgX19ocnRpbWVyX3J1bl9xdWV1
-ZXMrMHgyMjUvMHgxMDUwIGtlcm5lbC90aW1lL2hydGltZXIuYzoxNDUxDQogIHJjdV9yZXBvcnRf
-cXNfcnNwKzB4MTc3LzB4MjIwIGtlcm5lbC9yY3UvdHJlZS5jOjIxMzENCiAgcmN1X3JlcG9ydF91
-bmJsb2NrX3FzX3JucCBrZXJuZWwvcmN1L3RyZWUuYzoyMjM1IFtpbmxpbmVdDQogIHJjdV9wcmVl
-bXB0X2RlZmVycmVkX3FzX2lycXJlc3RvcmUrMHhjMDMvMHhmZDAga2VybmVsL3JjdS90cmVlX3Bs
-dWdpbi5oOjU3NA0KICBocnRpbWVyX2ludGVycnVwdCsweDMxNC8weDc3MCBrZXJuZWwvdGltZS9o
-cnRpbWVyLmM6MTUwOQ0KICBsb2NhbF9hcGljX3RpbWVyX2ludGVycnVwdCBhcmNoL3g4Ni9rZXJu
-ZWwvYXBpYy9hcGljLmM6MTAzNSBbaW5saW5lXQ0KICBzbXBfYXBpY190aW1lcl9pbnRlcnJ1cHQr
-MHgxOGQvMHg3NjAgYXJjaC94ODYva2VybmVsL2FwaWMvYXBpYy5jOjEwNjANCiAgcmN1X3JlYWRf
-dW5sb2NrX3NwZWNpYWwrMHgxY2QvMHgzODAga2VybmVsL3JjdS90cmVlX3BsdWdpbi5oOjY2NQ0K
-ICBhcGljX3RpbWVyX2ludGVycnVwdCsweGYvMHgyMCBhcmNoL3g4Ni9lbnRyeS9lbnRyeV82NC5T
-OjgwNw0KICBfX3JjdV9yZWFkX3VubG9jaysweDIwNC8weDIxMCBrZXJuZWwvcmN1L3RyZWVfcGx1
-Z2luLmg6NDM3DQogIDwvSVJRPg0KTW9kdWxlcyBsaW5rZWQgaW46DQotLS1bIGVuZCB0cmFjZSBk
-NGFkM2YxMGVmYzczZTgxIF0tLS0NClJJUDogMDAxMDpsb29rdXBfb2JqZWN0IGxpYi9kZWJ1Z29i
-amVjdHMuYzoxNTYgW2lubGluZV0NClJJUDogMDAxMDpkZWJ1Z19vYmplY3RfZGVhY3RpdmF0ZSBs
-aWIvZGVidWdvYmplY3RzLmM6NTQyIFtpbmxpbmVdDQpSSVA6IDAwMTA6ZGVidWdfb2JqZWN0X2Rl
-YWN0aXZhdGUrMHgxNmMvMHg0YjAgbGliL2RlYnVnb2JqZWN0cy5jOjUyOQ0KICByY3VfcmVhZF91
-bmxvY2sgaW5jbHVkZS9saW51eC9yY3VwZGF0ZS5oOjY2MCBbaW5saW5lXQ0KICBpc19icGZfdGV4
-dF9hZGRyZXNzKzB4YjYvMHgxNzAga2VybmVsL2JwZi9jb3JlLmM6NjY4DQpDb2RlOiBjMSBlYSAw
-MyA0MiA4MCAzYyAyYSAwMCAwZiA4NSA0OSAwMiAwMCAwMCA0ZCA4YiAyNCAyNCA0ZCA4NSBlNCAw
-ZiA4NCAgDQpkMSAwMCAwMCAwMCA0OSA4ZCA3YyAyNCAxOCA4MyBjMyAwMSA0OCA4OSBmYSA0OCBj
-MSBlYSAwMyA8NDI+IDgwIDNjIDJhIDAwICANCjBmIDg1IGZhIDAxIDAwIDAwIDQ5IDNiIDRjIDI0
-IDE4IDc1IGMwIDQ5IDhkIDdjIDI0DQogIGtlcm5lbF90ZXh0X2FkZHJlc3MrMHg3My8weGYwIGtl
-cm5lbC9leHRhYmxlLmM6MTUyDQpSU1A6IDAwMTg6ZmZmZjg4ODBhZTcwN2I4MCBFRkxBR1M6IDAw
-MDEwMDAzDQogIF9fa2VybmVsX3RleHRfYWRkcmVzcysweGQvMHg0MCBrZXJuZWwvZXh0YWJsZS5j
-OjEwNw0KUkFYOiAxZmZmZmZmZmYxNmQ2MGJjIFJCWDogMDAwMDAwMDAwMDAwMDAwNCBSQ1g6IGZm
-ZmY4ODgwYWU3MjY2MjANCiAgdW53aW5kX2dldF9yZXR1cm5fYWRkcmVzcyBhcmNoL3g4Ni9rZXJu
-ZWwvdW53aW5kX2ZyYW1lLmM6MTggW2lubGluZV0NCiAgdW53aW5kX2dldF9yZXR1cm5fYWRkcmVz
-cysweDYxLzB4YTAgYXJjaC94ODYva2VybmVsL3Vud2luZF9mcmFtZS5jOjEzDQpSRFg6IDAwMDAw
-MDAwMDAwMDAxOWQgUlNJOiAwMDAwMDAwMDAwMDAwMDA0IFJESTogMDAwMDAwMDAwMDAwMGNlZA0K
-ICBfX3NhdmVfc3RhY2tfdHJhY2UrMHg4YS8weGYwIGFyY2gveDg2L2tlcm5lbC9zdGFja3RyYWNl
-LmM6NDUNClJCUDogZmZmZjg4ODBhZTcwN2M3MCBSMDg6IDFmZmZmMTEwMTVjZTBmNWMgUjA5OiBm
-ZmZmZmZmZjg5OWIxM2UwDQogIHNhdmVfc3RhY2tfdHJhY2UrMHgxYS8weDIwIGFyY2gveDg2L2tl
-cm5lbC9zdGFja3RyYWNlLmM6NjANClIxMDogMDAwMDAwMDAwMDAwMDA4NiBSMTE6IDAwMDAwMDAw
-MDAwMDAwMDMgUjEyOiAwMDAwMDAwMDAwMDAwY2Q1DQpSMTM6IGRmZmZmYzAwMDAwMDAwMDAgUjE0
-OiAxZmZmZjExMDE1Y2UwZjc0IFIxNTogZmZmZmZmZmY4YjZiMDVlOA0KICBzYXZlX3N0YWNrKzB4
-NDUvMHhkMCBtbS9rYXNhbi9jb21tb24uYzo3Mw0KRlM6ICAwMDAwMDAwMDAwMDAwMDAwKDAwMDAp
-IEdTOmZmZmY4ODgwYWU3MDAwMDAoMDAwMCkga25sR1M6MDAwMDAwMDAwMDAwMDAwMA0KQ1M6ICAw
-MDEwIERTOiAwMDAwIEVTOiAwMDAwIENSMDogMDAwMDAwMDA4MDA1MDAzMw0KQ1IyOiAwMDAwMDAw
-MDAwMDAwMDY4IENSMzogMDAwMDAwMDA5NmZmNzAwMCBDUjQ6IDAwMDAwMDAwMDAxNDA2ZTANCkRS
-MDogMDAwMDAwMDAwMDAwMDAwMCBEUjE6IDAwMDAwMDAwMDAwMDAwMDAgRFIyOiAwMDAwMDAwMDAw
-MDAwMDAwDQpEUjM6IDAwMDAwMDAwMDAwMDAwMDAgRFI2OiAwMDAwMDAwMGZmZmUwZmYwIERSNzog
-MDAwMDAwMDAwMDAwMDQwMA0KDQoNCi0tLQ0KVGhpcyBidWcgaXMgZ2VuZXJhdGVkIGJ5IGEgYm90
-LiBJdCBtYXkgY29udGFpbiBlcnJvcnMuDQpTZWUgaHR0cHM6Ly9nb28uZ2wvdHBzbUVKIGZvciBt
-b3JlIGluZm9ybWF0aW9uIGFib3V0IHN5emJvdC4NCnN5emJvdCBlbmdpbmVlcnMgY2FuIGJlIHJl
-YWNoZWQgYXQgc3l6a2FsbGVyQGdvb2dsZWdyb3Vwcy5jb20uDQoNCnN5emJvdCB3aWxsIGtlZXAg
-dHJhY2sgb2YgdGhpcyBidWcgcmVwb3J0LiBTZWU6DQpodHRwczovL2dvby5nbC90cHNtRUojYnVn
-LXN0YXR1cy10cmFja2luZyBmb3IgaG93IHRvIGNvbW11bmljYXRlIHdpdGggIA0Kc3l6Ym90Lg0K
-c3l6Ym90IGNhbiB0ZXN0IHBhdGNoZXMgZm9yIHRoaXMgYnVnLCBmb3IgZGV0YWlscyBzZWU6DQpo
-dHRwczovL2dvby5nbC90cHNtRUojdGVzdGluZy1wYXRjaGVzDQo=
+Hi guys,
+
+On 14/01/2019 16:12, Julien Thierry wrote:
+> On 14/01/2019 15:56, Catalin Marinas wrote:
+>> On Tue, Jan 08, 2019 at 02:07:19PM +0000, Julien Thierry wrote:
+>>> When using VHE, the host needs to clear HCR_EL2.TGE bit in order
+>>> to interract with guest TLBs, switching from EL2&0 translation regime
+>>> to EL1&0.
+>>>
+>>> However, some non-maskable asynchronous event could happen while TGE is
+>>> cleared like SDEI. Because of this address translation operations
+>>> relying on EL2&0 translation regime could fail (tlb invalidation,
+>>> userspace access, ...).
+>>
+>> Why would an NMI context need to access user space? (just curious what
+>> breaks exactly without this patch; otherwise it looks fine)
+> 
+> If I remember correctly, the SDEI interrupt might perform cache
+> maintenance with EL2&0 translation regime, but James can probably give
+> more detail (or correct me if I'm wrong).
+
+Yup, spot on.
+The APEI driver has to map/unmap memory using the fixmap. If it interrupts a
+guest, the TLB maintenance would affect EL1&0 instead.
+
+
+> Otherwise, if we decide to use the pseudo NMI for profiling with perf, I
+> believe the perf interrupt can access user space (although I'm not
+> completely sure whether that might be to record profiling data in
+> buffers shared with user space or something else).
+
+It does a stack walk, I think its the PERF_SAMPLE_CALLCHAIN feature, and the
+code is:
+arch/arm64/kernel/perf_callchain.c::user_backtrace()
+
+
+Thanks,
+
+James
