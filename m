@@ -2,131 +2,225 @@ Return-Path: <SRS0=tq6k=PW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2AFD1C43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 13:48:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A2A38C43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 13:48:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ED98B20657
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 13:48:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547473707;
-	bh=kfV03/WRC7tGVD6coZg5NFSQRMrDPiRuum+tS6CyZdk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=nXzroMHOKPKn46CVWJugdXZwIhMOKgV6RL0pDVpgdmgqhu+EOkYoD/FmzIi5UeUYG
-	 iKRFbQHlim2ryw6tnIkeOVYrgbXghHYdXKluZswX3BjMxUb62hNRHTQdbosSRV5Eh5
-	 IDBnttl+nhYZ2lRNuXK1EFKg2WoHMSYLmGg7WY0k=
+	by mail.kernel.org (Postfix) with ESMTP id 5A34B20657
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 13:48:45 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=synopsys.com header.i=@synopsys.com header.b="QmU0JWrR"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726678AbfANNsZ (ORCPT
+        id S1726680AbfANNsn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 14 Jan 2019 08:48:25 -0500
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:34269 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726586AbfANNsY (ORCPT
+        Mon, 14 Jan 2019 08:48:43 -0500
+Received: from smtprelay.synopsys.com ([198.182.60.111]:58160 "EHLO
+        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726552AbfANNsn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 Jan 2019 08:48:24 -0500
-Received: by mail-lj1-f196.google.com with SMTP id u89-v6so19091262lje.1;
-        Mon, 14 Jan 2019 05:48:22 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=XgL1f+ntB35z83VdEAJq+RYgAW/AsBrWQxuF6AIvDWc=;
-        b=MiXzjUKa9mw2r1nE8YmOnL3XpddlF7C692ymjJifoV2Ya4CA/gz0oAlAWKD1FkDewO
-         GlItB8pjJOKz2StLqrp5nyZ7eZKmxc415IlVEUZ/Y2Vp6VtKjVqTin6Ev/V9zPKJ1JQg
-         UpW58arGk3sSpHZcW47HKHbI7GcN5mL/CChebfzHYDAPu/ezCn99Y3eHA54isOxhTulf
-         R88U/TiTNARzy8tzAt0xfVH9nqcd/zermRNl+PvXGu9RIeX5ZPSbTTHXLOhMSUN8938B
-         z+DKmCqSwwV93C55nK1OCCZ4fURlLurfDmpCDaD/pMMOf+egjBPM+eG5wGXJxDPV0Yz7
-         H1/Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=XgL1f+ntB35z83VdEAJq+RYgAW/AsBrWQxuF6AIvDWc=;
-        b=bjqJ7u7cWqe8HZSnOKyKqzCUfPO+wqs5tQokUaHPLUvfmvyWg7LbWfTr5nRr/K6bUT
-         s/H+6+c2Omj0y1mk3BWXatkZj118gQkB9UniJTJpClQ8ZVksA+LGk2OAeEOQwonNBbd/
-         wf/g+kQyo962U0igUN128PnPAg3u+4pT0XbzkoTdxXg9yFB6kgEVpxuwwW4u1xXc7zhs
-         UXvwdnce6hSZ8hgPkpaeg6Ks7/J576/cFu36Kdnmb9QKuwvUnns2KTFRGeoxA7IYib2P
-         Jyjv3Tbae+69e1Wyi4y5xvv4Na8jqhedK2TMOC+OJB/ETl78q/Tg4b2e57FFUCi2bhoy
-         H7Yg==
-X-Gm-Message-State: AJcUukdeuUdNEsBFnWWcMRBtPaVzRGWRX/K/NSaAX3xbYZ5DlXH2+OhD
-        WzaTCy2E49YYxqfgUUBy3h4=
-X-Google-Smtp-Source: ALg8bN45laRHI4Z0jFmYuLBE3wMw14no2sUQwdJQ+ELtxBXpeWwwmUgOJU1/6gA7wwk1Lg46Q3p1TQ==
-X-Received: by 2002:a2e:851a:: with SMTP id j26-v6mr14433182lji.163.1547473702118;
-        Mon, 14 Jan 2019 05:48:22 -0800 (PST)
-Received: from xi.terra (c-74bee655.07-184-6d6c6d4.bbcust.telenor.se. [85.230.190.116])
-        by smtp.gmail.com with ESMTPSA id m10-v6sm88223ljj.34.2019.01.14.05.48.21
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 14 Jan 2019 05:48:21 -0800 (PST)
-Received: from johan by xi.terra with local (Exim 4.91)
-        (envelope-from <johan@kernel.org>)
-        id 1gj2bF-00050s-1e; Mon, 14 Jan 2019 14:48:21 +0100
-Date:   Mon, 14 Jan 2019 14:48:21 +0100
-From:   Johan Hovold <johan@kernel.org>
-To:     Karoly Pados <pados@pados.hu>
-Cc:     Johan Hovold <johan@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Loic Poulain <loic.poulain@linaro.org>
-Subject: Re: [PATCH] USB: serial: ftdi_sio: Fix GPIO not working in
- autosuspend
-Message-ID: <20190114134821.GH3691@localhost>
-References: <20190114123003.8228-1-pados@pados.hu>
+        Mon, 14 Jan 2019 08:48:43 -0500
+Received: from mailhost.synopsys.com (mailhost2.synopsys.com [10.13.184.66])
+        by smtprelay.synopsys.com (Postfix) with ESMTP id E67E810C0DAB;
+        Mon, 14 Jan 2019 05:48:40 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
+        t=1547473722; bh=wyiH8IQEf50c5LeflhDznNDw/W2Zb2xJee7ZAyIQHjM=;
+        h=From:To:CC:Subject:Date:References:In-Reply-To:From;
+        b=QmU0JWrRPxEuPJubOK0DvjQvtCth4H2Zjjh+4B3OwiElVOcATe31t0/zP95l0sWdV
+         avFTv6CcwXW5mA9pnVMzpJgC6IjrY2kdNRoaQYjmoR4B79VWzKkXUS5HPpzkGwWjPW
+         GDoypzp47wRo4C7iulXU10BvokoHRHDaVrpjEuivhnMoTG26ZVZkGHLQwq1jUJWHL7
+         +9nGmuKv1ZRVsjDVeA2UguW24KNZ2aPoVRfR2K0e5/6Ci+UKcFthRZs7eJ6YC856uc
+         Lpcq8C4O09LlWUJrcH62V6WmbP3QDlJjScug8PGzNzdi7ZX3aX3kVVRrDTF3W4dUtU
+         C089PJC1prU2Q==
+Received: from us01wehtc1.internal.synopsys.com (us01wehtc1-vip.internal.synopsys.com [10.12.239.236])
+        by mailhost.synopsys.com (Postfix) with ESMTP id 882473F5D;
+        Mon, 14 Jan 2019 05:48:38 -0800 (PST)
+Received: from DE02WEHTCB.internal.synopsys.com (10.225.19.94) by
+ us01wehtc1.internal.synopsys.com (10.12.239.235) with Microsoft SMTP Server
+ (TLS) id 14.3.408.0; Mon, 14 Jan 2019 05:48:38 -0800
+Received: from DE02WEMBXB.internal.synopsys.com ([fe80::95ce:118a:8321:a099])
+ by DE02WEHTCB.internal.synopsys.com ([::1]) with mapi id 14.03.0415.000; Mon,
+ 14 Jan 2019 14:48:36 +0100
+From:   Alexey Brodkin <alexey.brodkin@synopsys.com>
+To:     Sam Ravnborg <sam@ravnborg.org>
+CC:     Alex Deucher <alexander.deucher@amd.com>,
+        Andrzej Hajda <a.hajda@samsung.com>,
+        Benjamin Gaignard <benjamin.gaignard@linaro.org>,
+        Chen Feng <puck.chen@hisilicon.com>,
+        Christian Konig <christian.koenig@amd.com>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        David Airlie <airlied@linux.ie>,
+        David Zhou <David1.Zhou@amd.com>,
+        Eric Anholt <eric@anholt.net>,
+        Gerd Hoffmann <kraxel@redhat.com>,
+        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Philippe Cornu <philippe.cornu@st.com>,
+        "Rob Clark" <robdclark@gmail.com>,
+        Rongrong Zou <zourongrong@gmail.com>,
+        Sean Paul <sean@poorly.run>,
+        Tomi Valkeinen <tomi.valkeinen@ti.com>,
+        Vincent Abriou <vincent.abriou@st.com>,
+        Xinliang Liu <z.liuxinliang@hisilicon.com>,
+        "Xinwei Kong" <kong.kongxinwei@hisilicon.com>,
+        Yannick Fertre <yannick.fertre@st.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>
+Subject: RE: [PATCH v4 5/8] drm/arcpgu: prepare for drmP.h removal from
+ drm_modeset_helper.h
+Thread-Topic: [PATCH v4 5/8] drm/arcpgu: prepare for drmP.h removal from
+ drm_modeset_helper.h
+Thread-Index: AQHUqq243SIDzrkYKE+OJ1kKNnwp3qWuyexA
+Date:   Mon, 14 Jan 2019 13:48:35 +0000
+Message-ID: <4881796E12491D4BB15146FE0209CE64681C548A@DE02WEMBXB.internal.synopsys.com>
+References: <20190112193251.20450-1-sam@ravnborg.org>
+ <20190112193251.20450-6-sam@ravnborg.org>
+In-Reply-To: <20190112193251.20450-6-sam@ravnborg.org>
+Accept-Language: en-US, ru-RU
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-dg-ref: =?us-ascii?Q?PG1ldGE+PGF0IG5tPSJib2R5LnR4dCIgcD0iYzpcdXNlcnNcYWJyb2RraW5c?=
+ =?us-ascii?Q?YXBwZGF0YVxyb2FtaW5nXDA5ZDg0OWI2LTMyZDMtNGE0MC04NWVlLTZiODRi?=
+ =?us-ascii?Q?YTI5ZTM1Ylxtc2dzXG1zZy0xNTI2Zjc5NC0xODAzLTExZTktYmViYy0wMGUw?=
+ =?us-ascii?Q?NGM2ZTAzNDJcYW1lLXRlc3RcMTUyNmY3OTYtMTgwMy0xMWU5LWJlYmMtMDBl?=
+ =?us-ascii?Q?MDRjNmUwMzQyYm9keS50eHQiIHN6PSIyMTc4IiB0PSIxMzE5MTk0NzMxNDA1?=
+ =?us-ascii?Q?NzYxNjAiIGg9IlNaWk9sU3d5Qlpyckc0cWZGb3RQTHJMeUp6VT0iIGlkPSIi?=
+ =?us-ascii?Q?IGJsPSIwIiBibz0iMSIgY2k9ImNBQUFBRVJIVTFSU1JVRk5DZ1VBQUJRSkFB?=
+ =?us-ascii?Q?Q2dMNERYRDZ6VUFYcTQ4V2NGTktmNGVyanhad1UwcC9nT0FBQUFBQUFBQUFB?=
+ =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFIQUFBQUNrQ0FBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
+ =?us-ascii?Q?QUFFQUFRQUJBQUFBUDhQcGVnQUFBQUFBQUFBQUFBQUFBSjRBQUFCbUFHa0Fi?=
+ =?us-ascii?Q?Z0JoQUc0QVl3QmxBRjhBY0FCc0FHRUFiZ0J1QUdrQWJnQm5BRjhBZHdCaEFI?=
+ =?us-ascii?Q?UUFaUUJ5QUcwQVlRQnlBR3NBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
+ =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
+ =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
+ =?us-ascii?Q?QUVBQUFBQUFBQUFBZ0FBQUFBQW5nQUFBR1lBYndCMUFHNEFaQUJ5QUhrQVh3?=
+ =?us-ascii?Q?QndBR0VBY2dCMEFHNEFaUUJ5QUhNQVh3Qm5BR1lBQUFBQUFBQUFBQUFBQUFB?=
+ =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
+ =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
+ =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFRQUFBQUFBQUFBQ0FB?=
+ =?us-ascii?Q?QUFBQUNlQUFBQVpnQnZBSFVBYmdCa0FISUFlUUJmQUhBQVlRQnlBSFFBYmdC?=
+ =?us-ascii?Q?bEFISUFjd0JmQUhNQVlRQnRBSE1BZFFCdUFHY0FYd0JqQUc4QWJnQm1BQUFB?=
+ =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
+ =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
+ =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFCQUFBQUFBQUFBQUlBQUFBQUFKNEFBQUJtQUc4?=
+ =?us-ascii?Q?QWRRQnVBR1FBY2dCNUFGOEFjQUJoQUhJQWRBQnVBR1VBY2dCekFGOEFjd0Jo?=
+ =?us-ascii?Q?QUcwQWN3QjFBRzRBWndCZkFISUFaUUJ6QUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
+ =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
+ =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
+ =?us-ascii?Q?QUFBRUFBQUFBQUFBQUFnQUFBQUFBbmdBQUFHWUFid0IxQUc0QVpBQnlBSGtB?=
+ =?us-ascii?Q?WHdCd0FHRUFjZ0IwQUc0QVpRQnlBSE1BWHdCekFHMEFhUUJqQUFBQUFBQUFB?=
+ =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
+ =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
+ =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQVFBQUFBQUFBQUFD?=
+ =?us-ascii?Q?QUFBQUFBQ2VBQUFBWmdCdkFIVUFiZ0JrQUhJQWVRQmZBSEFBWVFCeUFIUUFi?=
+ =?us-ascii?Q?Z0JsQUhJQWN3QmZBSE1BZEFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
+ =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
+ =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
+ =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUJBQUFBQUFBQUFBSUFBQUFBQUo0QUFBQm1B?=
+ =?us-ascii?Q?RzhBZFFCdUFHUUFjZ0I1QUY4QWNBQmhBSElBZEFCdUFHVUFjZ0J6QUY4QWRB?=
+ =?us-ascii?Q?QnpBRzBBWXdBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
+ =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
+ =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
+ =?us-ascii?Q?QUFBQUFFQUFBQUFBQUFBQWdBQUFBQUFuZ0FBQUdZQWJ3QjFBRzRBWkFCeUFI?=
+ =?us-ascii?Q?a0FYd0J3QUdFQWNnQjBBRzRBWlFCeUFITUFYd0IxQUcwQVl3QUFBQUFBQUFB?=
+ =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
+ =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
+ =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBUUFBQUFBQUFB?=
+ =?us-ascii?Q?QUNBQUFBQUFDZUFBQUFad0IwQUhNQVh3QndBSElBYndCa0FIVUFZd0IwQUY4?=
+ =?us-ascii?Q?QWRBQnlBR0VBYVFCdUFHa0FiZ0JuQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
+ =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
+ =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
+ =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUFBQkFBQUFBQUFBQUFJQUFBQUFBSjRBQUFC?=
+ =?us-ascii?Q?ekFHRUFiQUJsQUhNQVh3QmhBR01BWXdCdkFIVUFiZ0IwQUY4QWNBQnNBR0VB?=
+ =?us-ascii?Q?YmdBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
+ =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
+ =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
+ =?us-ascii?Q?QUFBQUFBQUVBQUFBQUFBQUFBZ0FBQUFBQW5nQUFBSE1BWVFCc0FHVUFjd0Jm?=
+ =?us-ascii?Q?QUhFQWRRQnZBSFFBWlFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
+ =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
+ =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
+ =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFRQUFBQUFB?=
+ =?us-ascii?Q?QUFBQ0FBQUFBQUNlQUFBQWN3QnVBSEFBY3dCZkFHd0FhUUJqQUdVQWJnQnpB?=
+ =?us-ascii?Q?R1VBWHdCMEFHVUFjZ0J0QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
+ =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
+ =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
+ =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFCQUFBQUFBQUFBQUlBQUFBQUFKNEFB?=
+ =?us-ascii?Q?QUJ6QUc0QWNBQnpBRjhBYkFCcEFHTUFaUUJ1QUhNQVpRQmZBSFFBWlFCeUFH?=
+ =?us-ascii?Q?MEFYd0J6QUhRQWRRQmtBR1VBYmdCMEFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
+ =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
+ =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
+ =?us-ascii?Q?QUFBQUFBQUFBRUFBQUFBQUFBQUFnQUFBQUFBbmdBQUFIWUFad0JmQUdzQVpR?=
+ =?us-ascii?Q?QjVBSGNBYndCeUFHUUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
+ =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
+ =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
+ =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQVFBQUFB?=
+ =?us-ascii?Q?QUFBQUFDQUFBQUFBQT0iLz48L21ldGE+?=
+x-dg-rorf: 
+x-originating-ip: [10.225.15.89]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190114123003.8228-1-pados@pados.hu>
-User-Agent: Mutt/1.11.2 (2019-01-07)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jan 14, 2019 at 01:30:03PM +0100, Karoly Pados wrote:
-> There is a bug in the current GPIO code for ftdi_sio: it failed to take USB
-> autosuspend into account. If the device is in autosuspend, calls to
-> usb_control_msg() fail with -EHOSTUNREACH. Because the standard value for
-> autosuspend timeout is usually 2-5 seconds, this made it almost impossible
-> to use the GPIOs on machines that have USB autosuspend enabled. This patch
-> fixes the issue by acquiring a PM lock on the device for the duration of
-> the USB transfers. Tested on an FT231X device.
-> 
-> Signed-off-by: Karoly Pados <pados@pados.hu>
-> ---
-> Please consider backporting to 4.20.x, otherwise the GPIO driver is not
-> really usable for anybody with USB autosuspend enabled (eg. many laptops),
-> at least not without manual configuration.
-> 
->  drivers/usb/serial/ftdi_sio.c | 21 ++++++++++++++++++++-
->  1 file changed, 20 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/usb/serial/ftdi_sio.c b/drivers/usb/serial/ftdi_sio.c
-> index 1ab2a6191013..01813dce37f2 100644
-> --- a/drivers/usb/serial/ftdi_sio.c
-> +++ b/drivers/usb/serial/ftdi_sio.c
-> @@ -1783,6 +1783,13 @@ static int ftdi_set_bitmode(struct usb_serial_port *port, u8 mode)
->  	int result;
->  	u16 val;
->  
-> +	result = usb_autopm_get_interface(port->serial->interface);
+Hi Sam,
 
-Both of the functions where you add autopm calls already have a local
-variable for port->serial.
+> -----Original Message-----
+> From: Sam Ravnborg [mailto:sam.ravnborg@gmail.com] On Behalf Of Sam Ravnb=
+org
+> Sent: Saturday, January 12, 2019 10:33 PM
+> To: Alex Deucher <alexander.deucher@amd.com>; Alexey Brodkin <alexey.brod=
+kin@synopsys.com>; Andrzej
+> Hajda <a.hajda@samsung.com>; Benjamin Gaignard <benjamin.gaignard@linaro.=
+org>; Chen Feng
+> <puck.chen@hisilicon.com>; Christian Konig <christian.koenig@amd.com>; Da=
+niel Vetter
+> <daniel@ffwll.ch>; David Airlie <airlied@linux.ie>; David Zhou <David1.Zh=
+ou@amd.com>; Eric Anholt
+> <eric@anholt.net>; Gerd Hoffmann <kraxel@redhat.com>; Kieran Bingham
+> <kieran.bingham+renesas@ideasonboard.com>; Laurent Pinchart <laurent.pinc=
+hart@ideasonboard.com>;
+> Laurent Pinchart <Laurent.pinchart@ideasonboard.com>; Maarten Lankhorst
+> <maarten.lankhorst@linux.intel.com>; Maxime Ripard <maxime.ripard@bootlin=
+.com>; Philippe Cornu
+> <philippe.cornu@st.com>; Rob Clark <robdclark@gmail.com>; Rongrong Zou <z=
+ourongrong@gmail.com>; Sean
+> Paul <sean@poorly.run>; Tomi Valkeinen <tomi.valkeinen@ti.com>; Vincent A=
+briou
+> <vincent.abriou@st.com>; Xinliang Liu <z.liuxinliang@hisilicon.com>; Xinw=
+ei Kong
+> <kong.kongxinwei@hisilicon.com>; Yannick Fertre <yannick.fertre@st.com>; =
+linux-kernel@vger.kernel.org;
+> dri-devel@lists.freedesktop.org
+> Cc: Sam Ravnborg <sam@ravnborg.org>
+> Subject: [PATCH v4 5/8] drm/arcpgu: prepare for drmP.h removal from drm_m=
+odeset_helper.h
+>=20
+> The use of drmP.h is discouraged and removal of it from
+> drm_modeset_helper.h caused arcgpu to fail to build.
+>=20
+> This patch introduce the necessary fixes to prepare for the
+> drmP.h removal from drm_modeset_helper.h.
+> List of include files sorted alphabetically.
+>=20
+> Build tested on arm x86 and arm allmodconfig.
+>=20
+> Signed-off-by: Sam Ravnborg <sam@ravnborg.org>
+> Cc: Alexey Brodkin <abrodkin@synopsys.com>
+> Cc: David Airlie <airlied@linux.ie>
+> Cc: Daniel Vetter <daniel@ffwll.ch>
 
-> +	if (result) {
-> +		dev_err(&port->serial->interface->dev,
-> +			"Failed to wake device from autosuspend.\n");
+Thanks for your patch!
 
-And we tend not to log errors for these calls.
+Build tested for ARC AXS103 board.
 
-> +		return result;
-> +	}
+Acked-by: Alexey Brodkin <abrodkin@synopsys.com>
 
-I replaced and port->serial with serial and dropped the dev_err:s before
-applying for -rc3 with a Fixes and CC-stable tag.
-
-Thanks,
-Johan
