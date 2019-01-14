@@ -5,57 +5,57 @@ X-Spam-Level:
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B9F8C43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 20:20:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D4A1C43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 20:20:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 09A7D2064C
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 20:20:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DF97A2064C
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 20:20:25 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="E7QHgD9d"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aJXVQx8e"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727010AbfANUUP (ORCPT
+        id S1727054AbfANUUY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 14 Jan 2019 15:20:15 -0500
-Received: from mail-it1-f196.google.com ([209.85.166.196]:35839 "EHLO
+        Mon, 14 Jan 2019 15:20:24 -0500
+Received: from mail-it1-f196.google.com ([209.85.166.196]:34729 "EHLO
         mail-it1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726760AbfANUUO (ORCPT
+        with ESMTP id S1726760AbfANUUY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 Jan 2019 15:20:14 -0500
-Received: by mail-it1-f196.google.com with SMTP id p197so1342057itp.0;
-        Mon, 14 Jan 2019 12:20:13 -0800 (PST)
+        Mon, 14 Jan 2019 15:20:24 -0500
+Received: by mail-it1-f196.google.com with SMTP id x124so9197253itd.1;
+        Mon, 14 Jan 2019 12:20:23 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=r7/vljl9wcoslPN7/8KEh45eFBFCMxetW0Cqy/5oxxQ=;
-        b=E7QHgD9duPz+gnRc2u6DwA2n0U2nX+1R2MgkCV0sJc16rkvYhAxma7KygNBz4cXA2M
-         ValihZGYgm4prV3qZQxmvmlV3E+a2bOkDgYqQ5VuGP7LaMNndKItew8VlOD6GQL+wys0
-         Hm7bwN0H9YeU0c6owmG2J9BiseIBnls9Ns4dQg12FFDcuhI2mxuaY2+CGY1cjPjbPdz/
-         MXWRRnPKTcDTj65z4TOkuhR+gqunnjji/5ZWkb+r3I+gy1oZawiwqeF9+fOnJgel87RG
-         KnCA7JwIJdVQXFT6UMxPGoJ0ULqoArpYV7zHmNgn97HTZe0sLrSfK8MYz4/IYgU7HANl
-         S3lw==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=kWWBhP1h9Hc8koqBL0WoAsnfwYMffg2tUxcLnb26314=;
+        b=aJXVQx8eoVLqaPznpemApvysfNRT9YNBTAlc8CFA5GA6iAFEBSy10RAYRmLas+MH5E
+         uYdVStblctanEoV85psNUu7YUSGJolSoPzfFG/xZZZEUduNXHZ5cNnC0qqq6KuwXRr13
+         L8PJs1ctAefWGe7Fj1rFhq7IvugVthgBnNVqGtJCWTkb6rnpvsdvzBMKoslzZbcYsNF0
+         +EnowJx25DNBr2GvO8BgeV3dWgWVL0cxKgtfoSPnG2QPfdhyjKGgLOXJ+BVn2MW1gRQW
+         +ATK8M+LE+reqna71alsfP/2v/1W9MFVNZxk/4eCm2iFgVZsUv/XySuq04oihqOgp9ky
+         ZsSA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=r7/vljl9wcoslPN7/8KEh45eFBFCMxetW0Cqy/5oxxQ=;
-        b=PvPBCigK8tBdm3Ux+CGoc0oYm/0qnmvz9TcQhrrO67ho3892s67EDEmCY1KKQda3Hq
-         ur/vd9PAXi+q60jRvTYhw+KEdmamPJdnszBmyL32D0Kdz/CBzrnoKqblLtkEP57ZDtWU
-         TVD77DlOwKc5t5dxk+voKB1GPHGrnAzkmlyQ+3q6u7i2n3NE8gnFVXuL84T0sv0ptyz7
-         c01wp7vQ1kjaNE0XhF18yJUvol+0auccTwoNwJdGyGwArqpVlTWXw6AYVZp4nWi0W8Tg
-         LUoblvM4bSOdiqfrTjJyo11sCXeW4Rc5tLgOKD4hKc28H6GXs+3oMlp0zjucYkz6vVOm
-         htpA==
-X-Gm-Message-State: AJcUukdoBM9lRQiYFGJKkwY7TdBIF7mODexxDsZ6nABRpCptu81m2iKs
-        bMfZGLXNHY6ot4QttUYr+5khyiCkoME=
-X-Google-Smtp-Source: ALg8bN5hiQIH/S3mEzwLbYo7t3s+JiqywbbS7H9vxmRYJ+15ExKHO1hSKnU/JmJSdHPxJLxN06I8mQ==
-X-Received: by 2002:a05:660c:914:: with SMTP id s20mr571441itj.160.1547497213108;
-        Mon, 14 Jan 2019 12:20:13 -0800 (PST)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=kWWBhP1h9Hc8koqBL0WoAsnfwYMffg2tUxcLnb26314=;
+        b=cXIF6XJ8ktwWUj4NPo+Izvzag1yYjo6kTOljfpGmWJPPh7BlQV69vb75QzN2RrGTd5
+         e0OM4MczdvVGQe8ShtNmwl6LsPQVmTn/dELqANEyqUpkSOLGvGWJbg2n5KDpjjXSwpZc
+         KGAlWw0AavT8nFw1uDJNsxbYDX2T093Br8cGgei7H4/GyYeX1aIi8/+hWlRTVmEwW4M9
+         30n12ag/zoAPQ5Uk9fqcBjvEyv0UY2Xiu7PYgayHI9txMRI3SpyQy2ilKdpgCIKrmWPP
+         TgwjHeb06coP2AgXMMVdaR3NpWh5UYZEqmdF+FaM8HTa1c/MMgH/DXD2fCUwKTA6FTxt
+         Tpqg==
+X-Gm-Message-State: AJcUukccMIoU70DQAZFzbFgTyjnQatB4UVi5wciiFKFcaucGfUneTjsk
+        uW2Sc9wNFUkOfcgMdohUL0kwnTUBKL8=
+X-Google-Smtp-Source: ALg8bN4hCJb1RQg2UKXVpEnvXFFDMk0GFlTlupPrTb8+pWeCe99Va1z69cH6ySbQgnkbVz2zWufJnw==
+X-Received: by 2002:a24:32c5:: with SMTP id j188mr556895ita.139.1547497223149;
+        Mon, 14 Jan 2019 12:20:23 -0800 (PST)
 Received: from localhost ([67.218.223.154])
-        by smtp.gmail.com with ESMTPSA id m37sm704233iti.6.2019.01.14.12.20.12
+        by smtp.gmail.com with ESMTPSA id x128sm697210itb.8.2019.01.14.12.20.22
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 14 Jan 2019 12:20:12 -0800 (PST)
+        Mon, 14 Jan 2019 12:20:22 -0800 (PST)
 From:   Sebastien Bourdelin <sebastien.bourdelin@gmail.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     devicetree@vger.kernel.org, linux-iio@vger.kernel.org,
@@ -63,10 +63,12 @@ Cc:     devicetree@vger.kernel.org, linux-iio@vger.kernel.org,
         robh+dt@kernel.org, pmeerw@pmeerw.net, lars@metafoo.de,
         knaack.h@gmx.de, jic23@kernel.org,
         Sebastien Bourdelin <sebastien.bourdelin@gmail.com>
-Subject: [PATCH v3 1/2] iio: chemical: bme680: Add device-tree support
-Date:   Mon, 14 Jan 2019 15:19:13 -0500
-Message-Id: <20190114201914.24572-1-sebastien.bourdelin@gmail.com>
+Subject: [PATCH v3 2/2] dt-bindings: iio: chemical: Add bindings for bme680
+Date:   Mon, 14 Jan 2019 15:19:14 -0500
+Message-Id: <20190114201914.24572-2-sebastien.bourdelin@gmail.com>
 X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20190114201914.24572-1-sebastien.bourdelin@gmail.com>
+References: <20190114201914.24572-1-sebastien.bourdelin@gmail.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -74,73 +76,35 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This commit allow the driver to work with device-tree.
+BME680 is a pressure/temperature/humidity/voc sensor.
 
 Signed-off-by: Sebastien Bourdelin <sebastien.bourdelin@gmail.com>
 ---
 v2 -> v3:
-  - remove of_match_ptr: Suggested by Jonathan Cameron <jic23@kernel.org>
-  - minor style fixup
+  - change i2c address to 0x76 as it seems more reliable: Suggested by Himanshu Jha <himanshujha199640@gmail.com>
   - rebase on master
-v1 -> v2:
-  - add missing of.h header in bme680_spi.c
 ---
- drivers/iio/chemical/bme680_i2c.c | 7 +++++++
- drivers/iio/chemical/bme680_spi.c | 8 ++++++++
- 2 files changed, 15 insertions(+)
+ .../devicetree/bindings/iio/chemical/bme680.txt       | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/iio/chemical/bme680.txt
 
-diff --git a/drivers/iio/chemical/bme680_i2c.c b/drivers/iio/chemical/bme680_i2c.c
-index 06d4be539d2e..b2f805b6b36a 100644
---- a/drivers/iio/chemical/bme680_i2c.c
-+++ b/drivers/iio/chemical/bme680_i2c.c
-@@ -70,10 +70,17 @@ static const struct acpi_device_id bme680_acpi_match[] = {
- };
- MODULE_DEVICE_TABLE(acpi, bme680_acpi_match);
- 
-+static const struct of_device_id bme680_of_i2c_match[] = {
-+	{ .compatible = "bosch,bme680", },
-+	{},
-+};
-+MODULE_DEVICE_TABLE(of, bme680_of_i2c_match);
+diff --git a/Documentation/devicetree/bindings/iio/chemical/bme680.txt b/Documentation/devicetree/bindings/iio/chemical/bme680.txt
+new file mode 100644
+index 000000000000..7f3827cfb2ff
+--- /dev/null
++++ b/Documentation/devicetree/bindings/iio/chemical/bme680.txt
+@@ -0,0 +1,11 @@
++Bosch Sensortec BME680 pressure/temperature/humidity/voc sensors
 +
- static struct i2c_driver bme680_i2c_driver = {
- 	.driver = {
- 		.name			= "bme680_i2c",
- 		.acpi_match_table       = ACPI_PTR(bme680_acpi_match),
-+		.of_match_table		= bme680_of_i2c_match,
- 	},
- 	.probe = bme680_i2c_probe,
- 	.id_table = bme680_i2c_id,
-diff --git a/drivers/iio/chemical/bme680_spi.c b/drivers/iio/chemical/bme680_spi.c
-index c9fb05e8d0b9..d0b7bdd3f066 100644
---- a/drivers/iio/chemical/bme680_spi.c
-+++ b/drivers/iio/chemical/bme680_spi.c
-@@ -6,6 +6,7 @@
-  */
- #include <linux/acpi.h>
- #include <linux/module.h>
-+#include <linux/of.h>
- #include <linux/regmap.h>
- #include <linux/spi/spi.h>
- 
-@@ -110,10 +111,17 @@ static const struct acpi_device_id bme680_acpi_match[] = {
- };
- MODULE_DEVICE_TABLE(acpi, bme680_acpi_match);
- 
-+static const struct of_device_id bme680_of_spi_match[] = {
-+	{ .compatible = "bosch,bme680", },
-+	{},
-+};
-+MODULE_DEVICE_TABLE(of, bme680_of_spi_match);
++Required properties:
++- compatible: must be "bosch,bme680"
 +
- static struct spi_driver bme680_spi_driver = {
- 	.driver = {
- 		.name			= "bme680_spi",
- 		.acpi_match_table	= ACPI_PTR(bme680_acpi_match),
-+		.of_match_table		= bme680_of_spi_match,
- 	},
- 	.probe = bme680_spi_probe,
- 	.id_table = bme680_spi_id,
++Example:
++
++bme680@76 {
++          compatible = "bosch,bme680";
++          reg = <0x76>;
++};
 -- 
 2.20.1
 
