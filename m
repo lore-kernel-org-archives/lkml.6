@@ -2,136 +2,138 @@ Return-Path: <SRS0=tq6k=PW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A100C43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 10:01:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 48A7AC43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 10:02:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DE88F2086D
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 10:01:07 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="MqVp7gy1"
+	by mail.kernel.org (Postfix) with ESMTP id 206FC2086D
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 10:02:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726854AbfANKBG (ORCPT
+        id S1726665AbfANKC1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 14 Jan 2019 05:01:06 -0500
-Received: from mail-ed1-f68.google.com ([209.85.208.68]:32949 "EHLO
-        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726184AbfANKBF (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 Jan 2019 05:01:05 -0500
-Received: by mail-ed1-f68.google.com with SMTP id p6so18208268eds.0
-        for <linux-kernel@vger.kernel.org>; Mon, 14 Jan 2019 02:01:04 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ffwll.ch; s=google;
-        h=sender:date:from:to:cc:subject:message-id:mail-followup-to
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=LhIkfJqOCczaS6olU3SnHKo4Nt0dGbqqFJr/fHrj5qc=;
-        b=MqVp7gy1U1fkIdiOJUgj4mXZTrIJLumxfJOGO3djU4WW6oNQrUtX9O7Bo/CEJoQYRw
-         74aph/ENuvrGOzske77g3Lq1+7ZGhVu0Z3DdVgqygCbtcFK4pDG1hLDvyw+SgN1tHR6C
-         jlzW1JlovYNN80vmR/KJlCkmdNBHc7Tg6li5w=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :mail-followup-to:references:mime-version:content-disposition
-         :in-reply-to:user-agent;
-        bh=LhIkfJqOCczaS6olU3SnHKo4Nt0dGbqqFJr/fHrj5qc=;
-        b=d0xSTj/vo4HOqcZgQLS+LgZjsaj+45IJq6cLH53q8Ewjot1f6QCkuYWyoD/lRvbJO/
-         0GqZX3DQ7ou4nwNiZcizKz0Q2u8tTIp3q6tGmUPz/N5pfAmaO1d5OreADCGtLPeFis8P
-         m3jRkTvyD/yGxh2ACP7uajNComCLxnLB/0ioQysGUL5QKHUsc54yCuyOQjEADwFT3NlE
-         M1a7jMs1uFysA14I8UKuVlajPyfbUKQbYBde7v8GfKZ/WKTKIlPCBTAqFtfErFWQoTaH
-         LVQp2Efg1CirH+fzhFtv2l/AD7Ej4+Jw4J35SsFD0oJzf6o/QToX7FDjR2SwGFaWXu0Q
-         J3xg==
-X-Gm-Message-State: AJcUukfhlc26zpxA6JuP0oDkLJzAuCnbOa5DxaKJmLpQOOjrlgSWaLU6
-        /w8nAVpKVZjQLZ9jeRxBtwQlEg==
-X-Google-Smtp-Source: ALg8bN5jiXs/FHkalpSzyDu2v0zwq/EZNN59NsnoOAM2BKGtfYxVyBWpAdSmKbaQZdsRwDZ6mgOuYQ==
-X-Received: by 2002:a50:b286:: with SMTP id p6mr22508211edd.202.1547460063547;
-        Mon, 14 Jan 2019 02:01:03 -0800 (PST)
-Received: from phenom.ffwll.local ([2a02:168:569e:0:3106:d637:d723:e855])
-        by smtp.gmail.com with ESMTPSA id g31sm4055163eda.96.2019.01.14.02.01.02
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 14 Jan 2019 02:01:02 -0800 (PST)
-Date:   Mon, 14 Jan 2019 11:00:57 +0100
-From:   Daniel Vetter <daniel@ffwll.ch>
-To:     Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>
-Cc:     Daniel Vetter <daniel@ffwll.ch>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Sean Paul <sean@poorly.run>, David Airlie <airlied@linux.ie>,
-        Gustavo Padovan <gustavo@padovan.org>,
-        Haneen Mohammed <hamohammed.sa@gmail.com>,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: Re: [RESEND] MAINTAINERS: Add entry for VKMS
-Message-ID: <20190114100056.GA10517@phenom.ffwll.local>
-Mail-Followup-To: Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Sean Paul <sean@poorly.run>, David Airlie <airlied@linux.ie>,
-        Gustavo Padovan <gustavo@padovan.org>,
-        Haneen Mohammed <hamohammed.sa@gmail.com>,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-References: <20190113204038.bvdc6d5tyxjz6bzf@smtp.gmail.com>
+        Mon, 14 Jan 2019 05:02:27 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:57740 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726649AbfANKC1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 14 Jan 2019 05:02:27 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 64C6CA78;
+        Mon, 14 Jan 2019 02:02:26 -0800 (PST)
+Received: from [10.1.196.93] (en101.cambridge.arm.com [10.1.196.93])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id EACA23F5AF;
+        Mon, 14 Jan 2019 02:02:22 -0800 (PST)
+Subject: Re: [PATCH v3 1/7] sysfs/cpu: Allow individual architectures to
+ select vulnerabilities
+To:     jeremy.linton@arm.com, linux-arm-kernel@lists.infradead.org
+Cc:     catalin.marinas@arm.com, will.deacon@arm.com, marc.zyngier@arm.com,
+        dave.martin@arm.com, shankerd@codeaurora.org,
+        linux-kernel@vger.kernel.org, ykaukab@suse.de,
+        julien.thierry@arm.com, mlangsdo@redhat.com, Steven.Price@arm.com,
+        stefan.wahren@i2se.com, gregkh@linuxfoundation.org,
+        rafael@kernel.org, tglx@linutronix.de, jpoimboe@redhat.com,
+        konrad.wilk@oracle.com, mingo@kernel.org, longman@redhat.com,
+        ak@linux.intel.com, jkosina@suse.cz
+References: <20190109235544.2992426-1-jeremy.linton@arm.com>
+ <20190109235544.2992426-2-jeremy.linton@arm.com>
+From:   Suzuki K Poulose <suzuki.poulose@arm.com>
+Message-ID: <901f2f29-aa06-13ad-1995-f9f22184e39d@arm.com>
+Date:   Mon, 14 Jan 2019 10:02:21 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190113204038.bvdc6d5tyxjz6bzf@smtp.gmail.com>
-X-Operating-System: Linux phenom 4.19.0-1-amd64 
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20190109235544.2992426-2-jeremy.linton@arm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Jan 13, 2019 at 06:40:38PM -0200, Rodrigo Siqueira wrote:
-> Add maintainers and reviewers for VKMS driver
+
+
+On 09/01/2019 23:55, Jeremy Linton wrote:
+> As suggested on the list, https://lkml.org/lkml/2019/1/4/282, there are
+> a number of cases where its useful for a system to avoid exporting a
+> sysfs entry for a given vulnerability. This set adds an architecture
+> specific callback which returns the bitmap of vulnerabilities the
+> architecture would like to advertise.
 > 
-> Signed-off-by: Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>
-
-Reviewed-by: Daniel Vetter <daniel.vetter@ffwll.ch>
-
-Since you have commit rights for drm-misc already I think best if you push
-this yourself using the dim tooling:
-
-https://drm.pages.freedesktop.org/maintainer-tools/getting-started.html
-
-Cheers, Daniel
-
+> Signed-off-by: Jeremy Linton <jeremy.linton@arm.com>
+> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> Cc: Rafael J. Wysocki <rafael@kernel.org>
+> Cc: Thomas Gleixner <tglx@linutronix.de>
+> Cc: Josh Poimboeuf <jpoimboe@redhat.com>
+> Cc: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+> Cc: Ingo Molnar <mingo@kernel.org>
+> Cc: Waiman Long <longman@redhat.com>
+> Cc: Andi Kleen <ak@linux.intel.com>
+> Cc: Jiri Kosina <jkosina@suse.cz>
 > ---
-> Changes in v2:
->   - Insert the section in alphabetical order
+>   drivers/base/cpu.c  | 19 +++++++++++++++++++
+>   include/linux/cpu.h |  7 +++++++
+>   2 files changed, 26 insertions(+)
 > 
-> Resend:
->   - Update patch due to changes in MAINTAINER file
-> 
->  MAINTAINERS | 10 ++++++++++
->  1 file changed, 10 insertions(+)
-> 
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 163c8f76a1c8..6e1cef2f21d9 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -4925,6 +4925,16 @@ S:	Odd Fixes
->  F:	drivers/gpu/drm/udl/
->  T:	git git://anongit.freedesktop.org/drm/drm-misc
->  
-> +DRM DRIVER FOR VIRTUAL KERNEL MODESETTING (VKMS)
-> +M:	Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>
-> +R:	Haneen Mohammed <hamohammed.sa@gmail.com>
-> +R:	Daniel Vetter <daniel@ffwll.ch>
-> +T:	git git://anongit.freedesktop.org/drm/drm-misc
-> +S:	Maintained
-> +L:	dri-devel@lists.freedesktop.org
-> +F:	drivers/gpu/drm/vkms/
-> +F:	Documentation/gpu/vkms.rst
+> diff --git a/drivers/base/cpu.c b/drivers/base/cpu.c
+> index eb9443d5bae1..35f6dfb24cd6 100644
+> --- a/drivers/base/cpu.c
+> +++ b/drivers/base/cpu.c
+> @@ -561,6 +561,11 @@ static struct attribute *cpu_root_vulnerabilities_attrs[] = {
+>   	NULL
+>   };
+>   
+> +uint __weak arch_supported_vuln_attr_fields(void)
+> +{
+> +	return VULN_MELTDOWN|VULN_SPECTREV1|VULN_SPECTREV2|VULN_SSB|VULN_L1TF;
+> +}
 > +
->  DRM DRIVER FOR VMWARE VIRTUAL GPU
->  M:	"VMware Graphics" <linux-graphics-maintainer@vmware.com>
->  M:	Thomas Hellstrom <thellstrom@vmware.com>
-> -- 
-> 2.20.1
+>   static const struct attribute_group cpu_root_vulnerabilities_group = {
+>   	.name  = "vulnerabilities",
+>   	.attrs = cpu_root_vulnerabilities_attrs,
+> @@ -568,6 +573,20 @@ static const struct attribute_group cpu_root_vulnerabilities_group = {
+>   
+>   static void __init cpu_register_vulnerabilities(void)
+>   {
+> +	int fld;
+> +	int max_fields = ARRAY_SIZE(cpu_root_vulnerabilities_attrs) - 1;
+> +	struct attribute **hd = cpu_root_vulnerabilities_attrs;
+> +	uint enabled_fields = arch_supported_vuln_attr_fields();
+> +
+> +	/* only enable entries requested by the arch code */
+> +	for (fld = 0; fld < max_fields; fld++) {
+> +		if (enabled_fields & 1 << fld) {
+> +			*hd = cpu_root_vulnerabilities_attrs[fld];
+> +			hd++;
+> +		}
+> +	}
+> +	*hd = NULL;
+> +
 
--- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
+nit: Could we use "is_visible" callback in the attribute group to check this
+dynamically ?
+
+>   	if (sysfs_create_group(&cpu_subsys.dev_root->kobj,
+>   			       &cpu_root_vulnerabilities_group))
+>   		pr_err("Unable to register CPU vulnerabilities\n");
+> diff --git a/include/linux/cpu.h b/include/linux/cpu.h
+> index 218df7f4d3e1..5e45814bcc24 100644
+> --- a/include/linux/cpu.h
+> +++ b/include/linux/cpu.h
+> @@ -189,4 +189,11 @@ static inline void cpu_smt_check_topology_early(void) { }
+>   static inline void cpu_smt_check_topology(void) { }
+>   #endif
+>   
+> +/* generic cpu vulnerability attributes */
+> +#define VULN_MELTDOWN  0x01
+> +#define VULN_SPECTREV1 0x02
+> +#define VULN_SPECTREV2 0x04
+> +#define VULN_SSB       0x08
+> +#define VULN_L1TF      0x10
+
+nit: May use BIT() ?
+
+Cheers
+Suzuki
