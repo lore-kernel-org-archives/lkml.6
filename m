@@ -7,110 +7,99 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 43FFBC43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 09:57:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F2297C43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 09:58:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 163AF20660
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 09:57:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BEFB720660
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 09:58:01 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="QhIPD/xg"
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="BAHt31rl"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726629AbfANJ5F (ORCPT
+        id S1726656AbfANJ6A (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 14 Jan 2019 04:57:05 -0500
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:36714 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726553AbfANJ5F (ORCPT
+        Mon, 14 Jan 2019 04:58:00 -0500
+Received: from mail-lf1-f67.google.com ([209.85.167.67]:41793 "EHLO
+        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726513AbfANJ57 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 Jan 2019 04:57:05 -0500
-Received: by mail-lj1-f195.google.com with SMTP id g11-v6so18446527ljk.3
-        for <linux-kernel@vger.kernel.org>; Mon, 14 Jan 2019 01:57:03 -0800 (PST)
+        Mon, 14 Jan 2019 04:57:59 -0500
+Received: by mail-lf1-f67.google.com with SMTP id c16so15101609lfj.8
+        for <linux-kernel@vger.kernel.org>; Mon, 14 Jan 2019 01:57:58 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id;
-        bh=wfaWNb2b+4rhgwfXb/ymqYiM5h5NpIm3LLHjGWRlmy8=;
-        b=QhIPD/xggrsyG6bM2Jtax8BmR0+YMpQLOA7lXMEdCMV6tLoZvEvjgpoiyDrjBrE/Jg
-         l7PihnO3HJgueg3SO7zYGEuamtTAJ/m8uTmJHViEjxvrI6sbS8V5o9tq6hVtrbmRoFBO
-         CwG49w4k0ANEBC6rpr/O/b91jgu9BsmYlV4kA=
+        bh=TZeGN3rlRP+BY2QvEk3qQEzkoTkwqoKfmJP5E6E9R+U=;
+        b=BAHt31rlG9ugX7GNkSQ9IQMxQXOCNsAl+g2MFZgDG1d35EKxagIDsIaPKF3jB2BQ9F
+         BQIh1bzTmWWLRSQZXu7H6fBgtTuNOERB7JS2MqG5JxBUAl+ga/gL72fwDFy7/lm+Trk0
+         RtMlLl/ZdNGx7FtNfiKbRQRaT4LQrOh4QRIqQ=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=wfaWNb2b+4rhgwfXb/ymqYiM5h5NpIm3LLHjGWRlmy8=;
-        b=eRA4gBaVeTr6CVEDacoSI211usswAJPc/cH5b9ov4R/iAeCQJgv5az+7tyr7OztEiu
-         1vzHWtRRNcSxW/ETk5fnC43apOUlOQZryrCFkKyL0fr/vwd+GQLq8EE2kwvRAKQKgJ+3
-         Wbkc9WDrIUVGkUDAOZKyy0UQCUIYEMWKUiJeQGFX4pRnuS7/XaYCAt9MGXD6Fq/bCNvJ
-         +YqxtbdBnlD3pcm/OiMIUCMwKPSu26ZR1upEHfh+cMcoIIze5P1GmmWKjSHaZ+fHZfc7
-         qL5EMwMoKjCkuzMO079EmEOnWvhpZpDgC27R9aXvlH/Cyt/9lpxa+LSTx1V65kAPN5Hz
-         0KQA==
-X-Gm-Message-State: AJcUukd0MFAnXzDmX8ZtYj1gJyHE/AV0UbAyzgv6PoUVCfpyB48VcvzS
-        K1ibKXHSFgrcxm6SOB1XOj+fhg==
-X-Google-Smtp-Source: ALg8bN4Ufifi/lQKFNFlfyHp/mDWPcx/2YKEzAdRpj9lcfk8gQD7F3cnf4g0eWQhk96D61hWvO6WoA==
-X-Received: by 2002:a2e:2e1a:: with SMTP id u26-v6mr15274568lju.8.1547459822786;
-        Mon, 14 Jan 2019 01:57:02 -0800 (PST)
+        bh=TZeGN3rlRP+BY2QvEk3qQEzkoTkwqoKfmJP5E6E9R+U=;
+        b=G7pOv+ccTuQ9o0hvMJQ27UZvnCYgRpmMsn+ToDH3DoW7bWfL4YSrzyJ2nvtsX74gDf
+         pKAE9ROixxbZcZuJ8UXVfmntzn6VybeKn3ESDnowmnKV7Jy1TXTSTNEjjAHoCaC4el4b
+         MHYfn43Tiw9xtQwE4L8KwAL18ctcDBtW/vxRbIxSpyc1Hkuf9U0HDW0/LjlV+T8ksfsX
+         ieC2YzDsVQqTXNZl1mcfTVSlbn+ZMZ07GxyWusUrbrr4iZ0Mko4DLFGIUijeTQ/IqF5u
+         GBrWcKgSWgHtDNa4m2XsSxE2U/0gHgVYCsf5xPviggmCrXxpKxrvh8ILF4KRl76vs7tG
+         JYOw==
+X-Gm-Message-State: AJcUukfR6Vo4xbFBo0psnEmi/hL41SqRj/lgF8ssfqhRfmCIsIv6+jsN
+        nfXUIyX5ZzpyDQyiK9ZsGXpsWg==
+X-Google-Smtp-Source: ALg8bN4CuKicsbu2IVtGrvUr+ISks7OeB2qmc+DMq6H9Dt1jTVYyN84SqAB7x0/EVF5NVmKsvca7CQ==
+X-Received: by 2002:a19:ee08:: with SMTP id g8mr13283753lfb.72.1547459877456;
+        Mon, 14 Jan 2019 01:57:57 -0800 (PST)
 Received: from localhost (c-573670d5.07-21-73746f28.bbcust.telenor.se. [213.112.54.87])
-        by smtp.gmail.com with ESMTPSA id 4-v6sm17077049ljw.84.2019.01.14.01.57.02
+        by smtp.gmail.com with ESMTPSA id u12-v6sm17389497ljk.79.2019.01.14.01.57.56
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 14 Jan 2019 01:57:02 -0800 (PST)
+        Mon, 14 Jan 2019 01:57:56 -0800 (PST)
 From:   Anders Roxell <anders.roxell@linaro.org>
-To:     aisheng.dong@nxp.com, festevam@gmail.com, shawnguo@kernel.org,
-        stefan@agner.ch, linus.walleij@linaro.org
-Cc:     linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+To:     dmitry.torokhov@gmail.com
+Cc:     linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
         Anders Roxell <anders.roxell@linaro.org>
-Subject: [PATCH 2/3] pinctrl: freescale: fix link errors
-Date:   Mon, 14 Jan 2019 10:56:59 +0100
-Message-Id: <20190114095659.23082-1-anders.roxell@linaro.org>
+Subject: [PATCH 3/3] input: touchscreen: fix link error
+Date:   Mon, 14 Jan 2019 10:57:54 +0100
+Message-Id: <20190114095754.23175-1-anders.roxell@linaro.org>
 X-Mailer: git-send-email 2.11.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Fix link errors when PINCTRL_IMX_SCU or PINCTRL_IMXBQXP is enabled as a
-module and the dependent module is built-in.
+Fix link error when TOUCHSCREEN_RASPBERRYPI_FW is enabled as a module
+and the dependent module is built-in.
+The 'depends on RASPBERRYPI_FIRMWARE' by itself prevents the touchscreen
+driver from being built-in when the firmware is configured as a module.
+However, the '|| COMPILE_TEST' still allows it unless we explicitly
+prevent that configuration with '|| (RASPBERRYPI_FIRMWARE=n &&
+COMPILE_TEST)'
 
-ld: drivers/pinctrl/freescale/pinctrl-scu.o: in function `imx_pinctrl_sc_ipc_init':
-pinctrl-scu.c:(.text+0x10): undefined reference to `imx_scu_get_handle'
-ld: pinctrl-scu.c:(.text+0x10): relocation truncated to fit: R_AARCH64_CALL26 against undefined symbol `imx_scu_get_handle'
-ld: drivers/pinctrl/freescale/pinctrl-scu.o: in function `imx_pinconf_get_scu':
-pinctrl-scu.c:(.text+0xa0): undefined reference to `imx_scu_call_rpc'
-ld: pinctrl-scu.c:(.text+0xa0): relocation truncated to fit: R_AARCH64_CALL26 against undefined symbol `imx_scu_call_rpc'
-ld: drivers/pinctrl/freescale/pinctrl-scu.o: in function `imx_pinconf_set_scu':
-pinctrl-scu.c:(.text+0x1b4): undefined reference to `imx_scu_call_rpc'
-ld: pinctrl-scu.c:(.text+0x1b4): relocation truncated to fit: R_AARCH64_CALL26 against undefined symbol `imx_scu_call_rpc'
-ld: drivers/pinctrl/freescale/pinctrl-imx8qxp.o: in function `imx8qxp_pinctrl_probe':
-pinctrl-imx8qxp.c:(.text+0x28): undefined reference to `imx_pinctrl_probe'
-ld: pinctrl-imx8qxp.c:(.text+0x28): relocation truncated to fit: R_AARCH64_CALL26 against undefined symbol `imx_pinctrl_probe'
+ld: drivers/input/touchscreen/raspberrypi-ts.o: in function `rpi_ts_probe':
+raspberrypi-ts.c:(.text+0x3a8): undefined reference to `rpi_firmware_get'
+ld: raspberrypi-ts.c:(.text+0x3a8): relocation truncated to fit: R_AARCH64_CALL26 against undefined symbol `rpi_firmware_get'
+ld: raspberrypi-ts.c:(.text+0x4c8): undefined reference to `rpi_firmware_property'
+ld: raspberrypi-ts.c:(.text+0x4c8): relocation truncated to fit: R_AARCH64_CALL26 against undefined symbol `rpi_firmware_property'
 
-Rework so both depends on IMX_SCU=y.
+Rework so that TOUCHSCREEN_RASPBERRYPI_FW depends on
+RASPBERRYPI_FIRMWARE=n if COMPILE_TEST is enabled.
 
 Suggested-by: Arnd Bergmann <arnd@arndb.de>
 Signed-off-by: Anders Roxell <anders.roxell@linaro.org>
 ---
- drivers/pinctrl/freescale/Kconfig | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/input/touchscreen/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/pinctrl/freescale/Kconfig b/drivers/pinctrl/freescale/Kconfig
-index b318c24b61be..ac158309cfe9 100644
---- a/drivers/pinctrl/freescale/Kconfig
-+++ b/drivers/pinctrl/freescale/Kconfig
-@@ -7,7 +7,7 @@ config PINCTRL_IMX
+diff --git a/drivers/input/touchscreen/Kconfig b/drivers/input/touchscreen/Kconfig
+index af6027cc7bbf..068dbbc610fc 100644
+--- a/drivers/input/touchscreen/Kconfig
++++ b/drivers/input/touchscreen/Kconfig
+@@ -698,7 +698,7 @@ config TOUCHSCREEN_EDT_FT5X06
  
- config PINCTRL_IMX_SCU
- 	bool
--	depends on IMX_SCU
-+	depends on IMX_SCU=y
- 	select PINCTRL_IMX
- 
- config PINCTRL_IMX1_CORE
-@@ -138,7 +138,7 @@ config PINCTRL_IMX8QM
- 
- config PINCTRL_IMX8QXP
- 	bool "IMX8QXP pinctrl driver"
--	depends on ARCH_MXC && ARM64
-+	depends on IMX_SCU=y && ARCH_MXC && ARM64
- 	select PINCTRL_IMX_SCU
+ config TOUCHSCREEN_RASPBERRYPI_FW
+ 	tristate "Raspberry Pi's firmware base touch screen support"
+-	depends on RASPBERRYPI_FIRMWARE || COMPILE_TEST
++	depends on RASPBERRYPI_FIRMWARE || (RASPBERRYPI_FIRMWARE=n && COMPILE_TEST)
  	help
- 	  Say Y here to enable the imx8qxp pinctrl driver
+ 	  Say Y here if you have the official Raspberry Pi 7 inch screen on
+ 	  your system.
 -- 
 2.19.2
 
