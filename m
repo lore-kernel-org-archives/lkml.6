@@ -2,132 +2,171 @@ Return-Path: <SRS0=tq6k=PW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F065AC43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 17:13:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C2089C43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 17:14:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BCA752070B
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 17:13:34 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="E1AjFzik";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="B5HoLqBl"
+	by mail.kernel.org (Postfix) with ESMTP id 9AA332086D
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 17:14:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726782AbfANRNe (ORCPT
+        id S1726832AbfANROT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 14 Jan 2019 12:13:34 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:52002 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726643AbfANRNd (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 Jan 2019 12:13:33 -0500
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 6288960851; Mon, 14 Jan 2019 17:13:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1547486012;
-        bh=aRCnqLJEuNYnNcQ1Ed6XhLUR2YS6+c7qQb41LIDJdNg=;
-        h=Date:From:To:cc:Subject:In-Reply-To:References:From;
-        b=E1AjFzikG7V5pwYoB1f/vwhPl9YXZ6bzONjaQK1uoTKszg5v1T55YJa7Mxya+CQ81
-         9U02BneeYDdJdUmV1fOJzrvdymSQg1nBEf5lLMFHNpkU5BH7LaVCZ/Kun8vY7IY7Yz
-         EEQbwtfUOjWQuaPHJjW4G8eQqEiT0jVRy9iSbfj4=
-Received: from lmark-linux.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+        Mon, 14 Jan 2019 12:14:19 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48312 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726643AbfANROT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 14 Jan 2019 12:14:19 -0500
+Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        (Authenticated sender: lmark@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id E51D5602FC;
-        Mon, 14 Jan 2019 17:13:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1547486011;
-        bh=aRCnqLJEuNYnNcQ1Ed6XhLUR2YS6+c7qQb41LIDJdNg=;
-        h=Date:From:To:cc:Subject:In-Reply-To:References:From;
-        b=B5HoLqBl1pz5CsbymXctOK+QzpQPUDxTSab+/j6WJCalAY/sXrdOfMb+lW3O87c4F
-         519KM1iTYoeRpftEWFQGG+kZK7n6LPmdxv8bqwO50VoL3Pcn4iiAbVumDPHNKQeVYv
-         E0CRhDHY0AGCQD8z5Hp9CfwWdmjCBq19j16PjlQ4=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org E51D5602FC
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=lmark@codeaurora.org
-Date:   Mon, 14 Jan 2019 09:13:30 -0800 (PST)
-From:   Liam Mark <lmark@codeaurora.org>
-X-X-Sender: lmark@lmark-linux.qualcomm.com
-To:     "Andrew F. Davis" <afd@ti.com>
-cc:     Laura Abbott <labbott@redhat.com>,
-        Sumit Semwal <sumit.semwal@linaro.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        =?ISO-8859-15?Q?Arve_Hj=F8nnev=E5g?= <arve@android.com>,
-        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org
-Subject: Re: [PATCH 13/14] staging: android: ion: Do not sync CPU cache on
- map/unmap
-In-Reply-To: <20190111180523.27862-14-afd@ti.com>
-Message-ID: <alpine.DEB.2.10.1901140910130.23879@lmark-linux.qualcomm.com>
-References: <20190111180523.27862-1-afd@ti.com> <20190111180523.27862-14-afd@ti.com>
-User-Agent: Alpine 2.10 (DEB 1266 2009-07-14)
+        by mail.kernel.org (Postfix) with ESMTPSA id 78DA32070B;
+        Mon, 14 Jan 2019 17:14:16 +0000 (UTC)
+Date:   Mon, 14 Jan 2019 12:14:14 -0500
+From:   Steven Rostedt <rostedt@goodmis.org>
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@kernel.org>,
+        Clark Williams <williams@redhat.com>,
+        Bart Van Assche <bvanassche@acm.org>,
+        Ming Lei <ming.lei@redhat.com>
+Subject: Real deadlock being suppressed in sbitmap
+Message-ID: <20190114121414.450ab4ea@gandalf.local.home>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 11 Jan 2019, Andrew F. Davis wrote:
+It was brought to my attention (by this creating a splat in the RT tree
+too) this code:
 
-> Buffers may not be mapped from the CPU so skip cache maintenance here.
-> Accesses from the CPU to a cached heap should be bracketed with
-> {begin,end}_cpu_access calls so maintenance should not be needed anyway.
-> 
-> Signed-off-by: Andrew F. Davis <afd@ti.com>
-> ---
->  drivers/staging/android/ion/ion.c | 7 ++++---
->  1 file changed, 4 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/staging/android/ion/ion.c b/drivers/staging/android/ion/ion.c
-> index 14e48f6eb734..09cb5a8e2b09 100644
-> --- a/drivers/staging/android/ion/ion.c
-> +++ b/drivers/staging/android/ion/ion.c
-> @@ -261,8 +261,8 @@ static struct sg_table *ion_map_dma_buf(struct dma_buf_attachment *attachment,
->  
->  	table = a->table;
->  
-> -	if (!dma_map_sg(attachment->dev, table->sgl, table->nents,
-> -			direction))
-> +	if (!dma_map_sg_attrs(attachment->dev, table->sgl, table->nents,
-> +			      direction, DMA_ATTR_SKIP_CPU_SYNC))
+static inline bool sbitmap_deferred_clear(struct sbitmap *sb, int index)
+{
+	unsigned long mask, val;
+	unsigned long __maybe_unused flags;
+	bool ret = false;
 
-Unfortunately I don't think you can do this for a couple reasons.
-You can't rely on {begin,end}_cpu_access calls to do cache maintenance.
-If the calls to {begin,end}_cpu_access were made before the call to 
-dma_buf_attach then there won't have been a device attached so the calls 
-to {begin,end}_cpu_access won't have done any cache maintenance.
+	/* Silence bogus lockdep warning */
+#if defined(CONFIG_LOCKDEP)
+	local_irq_save(flags);
+#endif
+	spin_lock(&sb->map[index].swap_lock);
 
-Also ION no longer provides DMA ready memory, so if you are not doing CPU 
-access then there is no requirement (that I am aware of) for you to call 
-{begin,end}_cpu_access before passing the buffer to the device and if this 
-buffer is cached and your device is not IO-coherent then the cache maintenance
-in ion_map_dma_buf and ion_unmap_dma_buf is required.
+Commit 58ab5e32e6f ("sbitmap: silence bogus lockdep IRQ warning")
+states the following:
 
->  		return ERR_PTR(-ENOMEM);
->  
->  	return table;
-> @@ -272,7 +272,8 @@ static void ion_unmap_dma_buf(struct dma_buf_attachment *attachment,
->  			      struct sg_table *table,
->  			      enum dma_data_direction direction)
->  {
-> -	dma_unmap_sg(attachment->dev, table->sgl, table->nents, direction);
-> +	dma_unmap_sg_attrs(attachment->dev, table->sgl, table->nents,
-> +			   direction, DMA_ATTR_SKIP_CPU_SYNC);
->  }
->  
->  static int ion_mmap(struct dma_buf *dmabuf, struct vm_area_struct *vma)
-> -- 
-> 2.19.1
-> 
-> _______________________________________________
-> devel mailing list
-> devel@linuxdriverproject.org
-> http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel
-> 
+    For this case, it's a false positive. The swap_lock is used from process
+    context only, when we swap the bits in the word and cleared mask. We
+    also end up doing that when we are getting a driver tag, from the
+    blk_mq_mark_tag_wait(), and from there we hold the waitqueue lock with
+    IRQs disabled. However, this isn't from an actual IRQ, it's still
+    process context.
 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+The thing is, lockdep doesn't define a lock as "irq-safe" based on it
+being taken under interrupts disabled or not. It detects when locks are
+used in actual interrupts. Further in that commit we have this:
+
+   [  106.097386] fio/1043 [HC0[0]:SC0[0]:HE0:SE1] is trying to acquire:
+    [  106.098231] 000000004c43fa71
+    (&(&sb->map[i].swap_lock)->rlock){+.+.}, at: sbitmap_get+0xd5/0x22c
+    [  106.099431]
+    [  106.099431] and this task is already holding:
+    [  106.100229] 000000007eec8b2f
+    (&(&hctx->dispatch_wait_lock)->rlock){....}, at:
+    blk_mq_dispatch_rq_list+0x4c1/0xd7c
+    [  106.101630] which would create a new lock dependency:
+    [  106.102326]  (&(&hctx->dispatch_wait_lock)->rlock){....} ->
+    (&(&sb->map[i].swap_lock)->rlock){+.+.}
+
+Saying that you are trying to take the swap_lock while holding the
+dispatch_wait_lock.
+
+
+    [  106.103553] but this new dependency connects a SOFTIRQ-irq-safe lock:
+    [  106.104580]  (&sbq->ws[i].wait){..-.}
+
+Which means that there's already a chain of:
+
+ sbq->ws[i].wait -> dispatch_wait_lock
+
+    [  106.104582]
+    [  106.104582] ... which became SOFTIRQ-irq-safe at:
+    [  106.105751]   _raw_spin_lock_irqsave+0x4b/0x82
+    [  106.106284]   __wake_up_common_lock+0x119/0x1b9
+    [  106.106825]   sbitmap_queue_wake_up+0x33f/0x383
+    [  106.107456]   sbitmap_queue_clear+0x4c/0x9a
+    [  106.108046]   __blk_mq_free_request+0x188/0x1d3
+    [  106.108581]   blk_mq_free_request+0x23b/0x26b
+    [  106.109102]   scsi_end_request+0x345/0x5d7
+    [  106.109587]   scsi_io_completion+0x4b5/0x8f0
+    [  106.110099]   scsi_finish_command+0x412/0x456
+    [  106.110615]   scsi_softirq_done+0x23f/0x29b
+    [  106.111115]   blk_done_softirq+0x2a7/0x2e6
+    [  106.111608]   __do_softirq+0x360/0x6ad
+    [  106.112062]   run_ksoftirqd+0x2f/0x5b
+    [  106.112499]   smpboot_thread_fn+0x3a5/0x3db
+    [  106.113000]   kthread+0x1d4/0x1e4
+    [  106.113457]   ret_from_fork+0x3a/0x50
+
+
+We see that sbq->ws[i].wait was taken from a softirq context.
+
+
+
+    [  106.131226] Chain exists of:
+    [  106.131226]   &sbq->ws[i].wait -->
+    &(&hctx->dispatch_wait_lock)->rlock -->
+    &(&sb->map[i].swap_lock)->rlock
+
+This is telling us that we now have a chain of:
+
+ sbq->ws[i].wait -> dispatch_wait_lock -> swap_lock
+
+    [  106.131226]
+    [  106.132865]  Possible interrupt unsafe locking scenario:
+    [  106.132865]
+    [  106.133659]        CPU0                    CPU1
+    [  106.134194]        ----                    ----
+    [  106.134733]   lock(&(&sb->map[i].swap_lock)->rlock);
+    [  106.135318]                                local_irq_disable();
+    [  106.136014]                                lock(&sbq->ws[i].wait);
+    [  106.136747]
+    lock(&(&hctx->dispatch_wait_lock)->rlock);
+    [  106.137742]   <Interrupt>
+    [  106.138110]     lock(&sbq->ws[i].wait);
+    [  106.138625]
+    [  106.138625]  *** DEADLOCK ***
+    [  106.138625]
+
+I need to make this more than just two levels deep. Here's the issue:
+
+
+	CPU0			CPU1			CPU2
+	----			----			----
+  lock(swap_lock)
+			local_irq_disable()
+			lock(dispatch_lock);
+							local_irq_disable()
+							lock(sbq->ws[i].wait)
+							lock(dispatch_lock)
+			lock(swap_lock)
+  <interrupt>
+  lock(sbq->ws[i].wait)
+
+
+DEADLOCK!
+
+In other words, it is not bogus, and can be a real potential for a
+deadlock. Please talk with the lockdep maintainers before saying
+there's a bogus deadlock, because lockdep is seldom wrong.
+
+-- Steve
