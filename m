@@ -2,397 +2,91 @@ Return-Path: <SRS0=tq6k=PW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 835EEC43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 12:22:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 10B68C43612
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 12:22:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 47AC120657
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 12:22:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D5B1420657
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 12:22:25 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="vWToak2U"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726643AbfANMWP (ORCPT
+        id S1726659AbfANMWX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 14 Jan 2019 07:22:15 -0500
-Received: from mga09.intel.com ([134.134.136.24]:45250 "EHLO mga09.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726470AbfANMWP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 Jan 2019 07:22:15 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 14 Jan 2019 04:22:12 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,477,1539673200"; 
-   d="scan'208";a="138077194"
-Received: from jnikula-mobl3.fi.intel.com (HELO localhost) ([10.237.72.79])
-  by fmsmga001.fm.intel.com with ESMTP; 14 Jan 2019 04:22:08 -0800
-From:   Jani Nikula <jani.nikula@linux.intel.com>
-To:     Liviu Dudau <Liviu.Dudau@arm.com>,
-        Ezequiel Garcia <ezequiel@collabora.com>
-Cc:     nd <nd@arm.com>,
-        "linux-doc\@vger.kernel.org" <linux-doc@vger.kernel.org>,
-        "arnd\@arndb.de" <arnd@arndb.de>,
-        "corbet\@lwn.net" <corbet@lwn.net>,
-        "airlied\@linux.ie" <airlied@linux.ie>,
-        "gregkh\@linuxfoundation.org" <gregkh@linuxfoundation.org>,
-        "nicolas.ferre\@microchip.com" <nicolas.ferre@microchip.com>,
-        "linux-kernel\@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "dri-devel\@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-        "davem\@davemloft.net" <davem@davemloft.net>,
-        "maxime.ripard\@bootlin.com" <maxime.ripard@bootlin.com>,
-        "malidp\@foss.arm.com" <malidp@foss.arm.com>,
-        "mchehab+samsung\@kernel.org" <mchehab+samsung@kernel.org>,
-        "akpm\@linux-foundation.org" <akpm@linux-foundation.org>,
-        Ayan Halder <Ayan.Halder@arm.com>,
-        "sean\@poorly.run" <sean@poorly.run>
-Subject: Re: [RFC AFBC 03/12] drm/afbc: Add AFBC modifier usage documentation
-In-Reply-To: <20190111180758.GK20661@e110455-lin.cambridge.arm.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-References: <1543836703-8491-1-git-send-email-ayan.halder@arm.com> <1543836703-8491-4-git-send-email-ayan.halder@arm.com> <2158b458c240874e5c974a2cae374c3fbf682e48.camel@collabora.com> <20190111180758.GK20661@e110455-lin.cambridge.arm.com>
-Date:   Mon, 14 Jan 2019 14:23:46 +0200
-Message-ID: <871s5f5sx9.fsf@intel.com>
+        Mon, 14 Jan 2019 07:22:23 -0500
+Received: from lelv0142.ext.ti.com ([198.47.23.249]:58026 "EHLO
+        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726470AbfANMWW (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 14 Jan 2019 07:22:22 -0500
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id x0ECM5hu022736;
+        Mon, 14 Jan 2019 06:22:05 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1547468525;
+        bh=pomoWjXu4RCf3I1O8QUVAUkXL2nJYqEeNElihQ5YGko=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=vWToak2UyxfbpQ0zZ3dgwsL5ey5gy9OiN0eko5gxKjfdfiHSAd9N0jp9EcYvXY4ol
+         AJg6MF/7n7tw0XT04sawyiTbAwohMR7inNzkVf9+xoG9pUIkLsQRdbZ1ZdvoJg4cSE
+         DfUW+buB/uaWRkkFumYydUZBKn7IFFINLrS2BQ6w=
+Received: from DLEE105.ent.ti.com (dlee105.ent.ti.com [157.170.170.35])
+        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x0ECM5So030284
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Mon, 14 Jan 2019 06:22:05 -0600
+Received: from DLEE108.ent.ti.com (157.170.170.38) by DLEE105.ent.ti.com
+ (157.170.170.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Mon, 14
+ Jan 2019 06:22:04 -0600
+Received: from dlep33.itg.ti.com (157.170.170.75) by DLEE108.ent.ti.com
+ (157.170.170.38) with Microsoft SMTP Server (version=TLS1_0,
+ cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1591.10 via Frontend Transport;
+ Mon, 14 Jan 2019 06:22:04 -0600
+Received: from [172.24.190.172] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by dlep33.itg.ti.com (8.14.3/8.13.8) with ESMTP id x0ECM1kO010732;
+        Mon, 14 Jan 2019 06:22:02 -0600
+Subject: Re: [PATCH 04/17] ARM: davinci: da850: WARN() if clk_get() fails
+To:     Bartosz Golaszewski <brgl@bgdev.pl>,
+        Kevin Hilman <khilman@kernel.org>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Thomas Gleixner <tglx@linutronix.de>
+CC:     <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+References: <20190111172134.30147-1-brgl@bgdev.pl>
+ <20190111172134.30147-5-brgl@bgdev.pl>
+From:   Sekhar Nori <nsekhar@ti.com>
+Message-ID: <fcee383c-f2cb-1faf-d2a3-a35a17d57b8b@ti.com>
+Date:   Mon, 14 Jan 2019 17:52:00 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: text/plain
+In-Reply-To: <20190111172134.30147-5-brgl@bgdev.pl>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 11 Jan 2019, Liviu Dudau <Liviu.Dudau@arm.com> wrote:
-> On Thu, Jan 03, 2019 at 05:44:26PM -0300, Ezequiel Garcia wrote:
->> Hi Liviu,
->> 
->> On Mon, 2018-12-03 at 11:31 +0000, Ayan Halder wrote:
->> > From: Brian Starkey <brian.starkey@arm.com>
->> > 
->> > AFBC is a flexible, proprietary, lossless compression protocol and
->> > format, with a number of defined DRM format modifiers. To facilitate
->> > consistency and compatibility between different AFBC producers and
->> > consumers, document the expectations for usage of the AFBC DRM format
->> > modifiers in a new .rst chapter.
->> > 
->> > Signed-off-by: Brian Starkey <brian.starkey@arm.com>
->> > Reviewed-by: Liviu Dudau <liviu.dudau@arm.com>
->> > ---
->> 
->> I can't find this commit anywhere. Did you decide to reject
->> this or perhaps it just fell thru the cracks?
->
-> Cracks have opened wide enough to let this through, sorry about that!
->
-> I've now sent a pull request to get it merged.
+On 11/01/19 10:51 PM, Bartosz Golaszewski wrote:
+> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+> 
+> Currently the timer code checks if the clock pointer passed to it is
+> good (!IS_ERR(clk)). The new clocksource driver expects the clock to
+> be functional and doesn't perform any checks so emit a warning if
+> clk_get() fails.
+> 
+> Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
-Okay, so this is a very late comment, so feel free to ignore or,
-perhaps, add a change on top.
+I think 4-9 can be a single patch. They are doing something very similar
+and its unlikely we will have to patch/revert just one of them.
 
-Documentation/gpu mostly contains files that document high level stuff,
-mostly one file per driver (with names matching the directories under
-drivers/gpu/drm) or one file per drm core functional area.
-
-Perhaps start an arm.rst, or at least name it more descriptively, say
-arm-fbc.rst? Contrast msm-crash-dump.rst.
-
-BR,
-Jani.
-
-
->
-> Best regards,
-> Liviu
->
->> 
->> Thanks!
->> Ezequiel
->> 
->> 
->> >  Documentation/gpu/afbc.rst    | 233 ++++++++++++++++++++++++++++++++++++++++++
->> >  Documentation/gpu/drivers.rst |   1 +
->> >  MAINTAINERS                   |   1 +
->> >  include/uapi/drm/drm_fourcc.h |   3 +
->> >  4 files changed, 238 insertions(+)
->> >  create mode 100644 Documentation/gpu/afbc.rst
->> > 
->> > diff --git a/Documentation/gpu/afbc.rst b/Documentation/gpu/afbc.rst
->> > new file mode 100644
->> > index 0000000..922d955
->> > --- /dev/null
->> > +++ b/Documentation/gpu/afbc.rst
->> > @@ -0,0 +1,233 @@
->> > +===================================
->> > + Arm Framebuffer Compression (AFBC)
->> > +===================================
->> > +
->> > +AFBC is a proprietary lossless image compression protocol and format.
->> > +It provides fine-grained random access and minimizes the amount of
->> > +data transferred between IP blocks.
->> > +
->> > +AFBC can be enabled on drivers which support it via use of the AFBC
->> > +format modifiers defined in drm_fourcc.h. See DRM_FORMAT_MOD_ARM_AFBC(*).
->> > +
->> > +All users of the AFBC modifiers must follow the usage guidelines laid
->> > +out in this document, to ensure compatibility across different AFBC
->> > +producers and consumers.
->> > +
->> > +Components and Ordering
->> > +=======================
->> > +
->> > +AFBC streams can contain several components - where a component
->> > +corresponds to a color channel (i.e. R, G, B, X, A, Y, Cb, Cr).
->> > +The assignment of input/output color channels must be consistent
->> > +between the encoder and the decoder for correct operation, otherwise
->> > +the consumer will interpret the decoded data incorrectly.
->> > +
->> > +Furthermore, when the lossless colorspace transform is used
->> > +(AFBC_FORMAT_MOD_YTR, which should be enabled for RGB buffers for
->> > +maximum compression efficiency), the component order must be:
->> > +
->> > + * Component 0: R
->> > + * Component 1: G
->> > + * Component 2: B
->> > +
->> > +The component ordering is communicated via the fourcc code in the
->> > +fourcc:modifier pair. In general, component '0' is considered to
->> > +reside in the least-significant bits of the corresponding linear
->> > +format. For example, COMP(bits):
->> > +
->> > + * DRM_FORMAT_ABGR8888
->> > +
->> > +   * Component 0: R(8)
->> > +   * Component 1: G(8)
->> > +   * Component 2: B(8)
->> > +   * Component 3: A(8)
->> > +
->> > + * DRM_FORMAT_BGR888
->> > +
->> > +   * Component 0: R(8)
->> > +   * Component 1: G(8)
->> > +   * Component 2: B(8)
->> > +
->> > + * DRM_FORMAT_YUYV
->> > +
->> > +   * Component 0: Y(8)
->> > +   * Component 1: Cb(8, 2x1 subsampled)
->> > +   * Component 2: Cr(8, 2x1 subsampled)
->> > +
->> > +In AFBC, 'X' components are not treated any differently from any other
->> > +component. Therefore, an AFBC buffer with fourcc DRM_FORMAT_XBGR8888
->> > +encodes with 4 components, like so:
->> > +
->> > + * DRM_FORMAT_XBGR8888
->> > +
->> > +   * Component 0: R(8)
->> > +   * Component 1: G(8)
->> > +   * Component 2: B(8)
->> > +   * Component 3: X(8)
->> > +
->> > +Please note, however, that the inclusion of a "wasted" 'X' channel is
->> > +bad for compression efficiency, and so it's recommended to avoid
->> > +formats containing 'X' bits. If a fourth component is
->> > +required/expected by the encoder/decoder, then it is recommended to
->> > +instead use an equivalent format with alpha, setting all alpha bits to
->> > +'1'. If there is no requirement for a fourth component, then a format
->> > +which doesn't include alpha can be used, e.g. DRM_FORMAT_BGR888.
->> > +
->> > +Number of Planes
->> > +================
->> > +
->> > +Formats which are typically multi-planar in linear layouts (e.g. YUV
->> > +420), can be encoded into one, or multiple, AFBC planes. As with
->> > +component order, the encoder and decoder must agree about the number
->> > +of planes in order to correctly decode the buffer. The fourcc code is
->> > +used to determine the number of encoded planes in an AFBC buffer,
->> > +matching the number of planes for the linear (unmodified) format.
->> > +Within each plane, the component ordering also follows the fourcc
->> > +code:
->> > +
->> > +For example:
->> > +
->> > + * DRM_FORMAT_YUYV: nplanes = 1
->> > +
->> > +   * Plane 0:
->> > +
->> > +     * Component 0: Y(8)
->> > +     * Component 1: Cb(8, 2x1 subsampled)
->> > +     * Component 2: Cr(8, 2x1 subsampled)
->> > +
->> > + * DRM_FORMAT_NV12: nplanes = 2
->> > +
->> > +   * Plane 0:
->> > +
->> > +     * Component 0: Y(8)
->> > +
->> > +   * Plane 1:
->> > +
->> > +     * Component 0: Cb(8, 2x1 subsampled)
->> > +     * Component 1: Cr(8, 2x1 subsampled)
->> > +
->> > +Cross-device interoperability
->> > +=============================
->> > +
->> > +For maximum compatibility across devices, the table below defines
->> > +canonical formats for use between AFBC-enabled devices. Formats which
->> > +are listed here must be used exactly as specified when using the AFBC
->> > +modifiers. Formats which are not listed should be avoided.
->> > +
->> > +.. flat-table:: AFBC formats
->> > +
->> > +   * - Fourcc code
->> > +     - Description
->> > +     - Planes/Components
->> > +
->> > +   * - DRM_FORMAT_ABGR2101010
->> > +     - 10-bit per component RGB, with 2-bit alpha
->> > +     - Plane 0: 4 components
->> > +              * Component 0: R(10)
->> > +              * Component 1: G(10)
->> > +              * Component 2: B(10)
->> > +              * Component 3: A(2)
->> > +
->> > +   * - DRM_FORMAT_ABGR8888
->> > +     - 8-bit per component RGB, with 8-bit alpha
->> > +     - Plane 0: 4 components
->> > +              * Component 0: R(8)
->> > +              * Component 1: G(8)
->> > +              * Component 2: B(8)
->> > +              * Component 3: A(8)
->> > +
->> > +   * - DRM_FORMAT_BGR888
->> > +     - 8-bit per component RGB
->> > +     - Plane 0: 3 components
->> > +              * Component 0: R(8)
->> > +              * Component 1: G(8)
->> > +              * Component 2: B(8)
->> > +
->> > +   * - DRM_FORMAT_BGR565
->> > +     - 5/6-bit per component RGB
->> > +     - Plane 0: 3 components
->> > +              * Component 0: R(5)
->> > +              * Component 1: G(6)
->> > +              * Component 2: B(5)
->> > +
->> > +   * - DRM_FORMAT_ABGR1555
->> > +     - 5-bit per component RGB, with 1-bit alpha
->> > +     - Plane 0: 4 components
->> > +              * Component 0: R(5)
->> > +              * Component 1: G(5)
->> > +              * Component 2: B(5)
->> > +              * Component 3: A(1)
->> > +
->> > +   * - DRM_FORMAT_VUY888
->> > +     - 8-bit per component YCbCr 444, single plane
->> > +     - Plane 0: 3 components
->> > +              * Component 0: Y(8)
->> > +              * Component 1: Cb(8)
->> > +              * Component 2: Cr(8)
->> > +
->> > +   * - DRM_FORMAT_VUY101010
->> > +     - 10-bit per component YCbCr 444, single plane
->> > +     - Plane 0: 3 components
->> > +              * Component 0: Y(10)
->> > +              * Component 1: Cb(10)
->> > +              * Component 2: Cr(10)
->> > +
->> > +   * - DRM_FORMAT_YUYV
->> > +     - 8-bit per component YCbCr 422, single plane
->> > +     - Plane 0: 3 components
->> > +              * Component 0: Y(8)
->> > +              * Component 1: Cb(8, 2x1 subsampled)
->> > +              * Component 2: Cr(8, 2x1 subsampled)
->> > +
->> > +   * - DRM_FORMAT_NV16
->> > +     - 8-bit per component YCbCr 422, two plane
->> > +     - Plane 0: 1 component
->> > +              * Component 0: Y(8)
->> > +       Plane 1: 2 components
->> > +              * Component 0: Cb(8, 2x1 subsampled)
->> > +              * Component 1: Cr(8, 2x1 subsampled)
->> > +
->> > +   * - DRM_FORMAT_Y210
->> > +     - 10-bit per component YCbCr 422, single plane
->> > +     - Plane 0: 3 components
->> > +              * Component 0: Y(10)
->> > +              * Component 1: Cb(10, 2x1 subsampled)
->> > +              * Component 2: Cr(10, 2x1 subsampled)
->> > +
->> > +   * - DRM_FORMAT_P210
->> > +     - 10-bit per component YCbCr 422, two plane
->> > +     - Plane 0: 1 component
->> > +              * Component 0: Y(10)
->> > +       Plane 1: 2 components
->> > +              * Component 0: Cb(10, 2x1 subsampled)
->> > +              * Component 1: Cr(10, 2x1 subsampled)
->> > +
->> > +   * - DRM_FORMAT_YUV420_8BIT
->> > +     - 8-bit per component YCbCr 420, single plane
->> > +     - Plane 0: 3 components
->> > +              * Component 0: Y(8)
->> > +              * Component 1: Cb(8, 2x2 subsampled)
->> > +              * Component 2: Cr(8, 2x2 subsampled)
->> > +
->> > +   * - DRM_FORMAT_YUV420_10BIT
->> > +     - 10-bit per component YCbCr 420, single plane
->> > +     - Plane 0: 3 components
->> > +              * Component 0: Y(10)
->> > +              * Component 1: Cb(10, 2x2 subsampled)
->> > +              * Component 2: Cr(10, 2x2 subsampled)
->> > +
->> > +   * - DRM_FORMAT_NV12
->> > +     - 8-bit per component YCbCr 420, two plane
->> > +     - Plane 0: 1 component
->> > +              * Component 0: Y(8)
->> > +       Plane 1: 2 components
->> > +              * Component 0: Cb(8, 2x2 subsampled)
->> > +              * Component 1: Cr(8, 2x2 subsampled)
->> > +
->> > +   * - DRM_FORMAT_P010
->> > +     - 10-bit per component YCbCr 420, two plane
->> > +     - Plane 0: 1 component
->> > +              * Component 0: Y(10)
->> > +       Plane 1: 2 components
->> > +              * Component 0: Cb(10, 2x2 subsampled)
->> > +              * Component 1: Cr(10, 2x2 subsampled)
->> > diff --git a/Documentation/gpu/drivers.rst b/Documentation/gpu/drivers.rst
->> > index 7c16721..c176b34 100644
->> > --- a/Documentation/gpu/drivers.rst
->> > +++ b/Documentation/gpu/drivers.rst
->> > @@ -17,6 +17,7 @@ GPU Driver Documentation
->> >     vkms
->> >     bridge/dw-hdmi
->> >     xen-front
->> > +   afbc
->> >  
->> >  .. only::  subproject and html
->> >  
->> > diff --git a/MAINTAINERS b/MAINTAINERS
->> > index 254b7b2..aef18e3 100644
->> > --- a/MAINTAINERS
->> > +++ b/MAINTAINERS
->> > @@ -1131,6 +1131,7 @@ M:	Mali DP Maintainers <malidp@foss.arm.com>
->> >  S:	Supported
->> >  F:	drivers/gpu/drm/arm/
->> >  F:	Documentation/devicetree/bindings/display/arm,malidp.txt
->> > +F:	Documentation/gpu/afbc.rst
->> >  
->> >  ARM MFM AND FLOPPY DRIVERS
->> >  M:	Ian Molton <spyro@f2s.com>
->> > diff --git a/include/uapi/drm/drm_fourcc.h b/include/uapi/drm/drm_fourcc.h
->> > index 75c4b5a..0adde4d 100644
->> > --- a/include/uapi/drm/drm_fourcc.h
->> > +++ b/include/uapi/drm/drm_fourcc.h
->> > @@ -597,6 +597,9 @@ extern "C" {
->> >   * AFBC has several features which may be supported and/or used, which are
->> >   * represented using bits in the modifier. Not all combinations are valid,
->> >   * and different devices or use-cases may support different combinations.
->> > + *
->> > + * Further information on the use of AFBC modifiers can be found in
->> > + * Documentation/gpu/afbc.rst
->> >   */
->> >  #define DRM_FORMAT_MOD_ARM_AFBC(__afbc_mode)	fourcc_mod_code(ARM, __afbc_mode)
->> >  
->> 
->> 
-
--- 
-Jani Nikula, Intel Open Source Graphics Center
+Thanks,
+Sekhar
