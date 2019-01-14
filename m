@@ -2,109 +2,147 @@ Return-Path: <SRS0=tq6k=PW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E5DE5C43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 21:15:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 63E24C43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 21:16:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B16F72064C
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 21:15:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 31F1A2064C
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 21:16:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726875AbfANVPg (ORCPT
+        id S1726963AbfANVQo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 14 Jan 2019 16:15:36 -0500
-Received: from gateway23.websitewelcome.com ([192.185.50.250]:25465 "EHLO
-        gateway23.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726777AbfANVPf (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 Jan 2019 16:15:35 -0500
-Received: from cm14.websitewelcome.com (cm14.websitewelcome.com [100.42.49.7])
-        by gateway23.websitewelcome.com (Postfix) with ESMTP id A27CA3BD50
-        for <linux-kernel@vger.kernel.org>; Mon, 14 Jan 2019 15:15:34 -0600 (CST)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id j9a2gKtGj2qH7j9a2gyec3; Mon, 14 Jan 2019 15:15:34 -0600
-X-Authority-Reason: nr=8
-Received: from [189.250.130.205] (port=50914 helo=[192.168.43.131])
-        by gator4166.hostgator.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
-        (Exim 4.91)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1gj9a2-000gNf-8a; Mon, 14 Jan 2019 15:15:34 -0600
-Subject: Re: [PATCH] capabilities:: annotate implicit fall through
-To:     Mathieu Malaterre <malat@debian.org>,
-        Serge Hallyn <serge@hallyn.com>
-Cc:     linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20190114202835.15878-1-malat@debian.org>
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Message-ID: <7cba59f5-d59a-f8fe-9717-0ecbab47eeaf@embeddedor.com>
-Date:   Mon, 14 Jan 2019 15:15:30 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Mon, 14 Jan 2019 16:16:44 -0500
+Received: from mail.bootlin.com ([62.4.15.54]:34317 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726777AbfANVQo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 14 Jan 2019 16:16:44 -0500
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id 5454820955; Mon, 14 Jan 2019 22:16:41 +0100 (CET)
+Received: from localhost (lfbn-1-17122-186.w86-248.abo.wanadoo.fr [86.248.186.186])
+        by mail.bootlin.com (Postfix) with ESMTPSA id 21E9620784;
+        Mon, 14 Jan 2019 22:16:31 +0100 (CET)
+From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
+To:     Vladimir Zapolskiy <vz@mleia.com>,
+        Sylvain Lemieux <slemieux.tyco@gmail.com>
+Cc:     Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>
+Subject: [PATCH] ARM: lpc32xx: debug: add low-level debug support on hsuart
+Date:   Mon, 14 Jan 2019 22:16:23 +0100
+Message-Id: <20190114211623.6069-1-alexandre.belloni@bootlin.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-In-Reply-To: <20190114202835.15878-1-malat@debian.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 189.250.130.205
-X-Source-L: No
-X-Exim-ID: 1gj9a2-000gNf-8a
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: ([192.168.43.131]) [189.250.130.205]:50914
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 21
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+The lpc32xx has UARTs that are not 8250 compatible. Add support for low
+level debugging on those high speed UARTs.
 
+Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
+---
+ arch/arm/Kconfig.debug                  | 18 +++++++++++++++---
+ arch/arm/include/debug/lpc32xx_hsuart.S | 22 ++++++++++++++++++++++
+ 2 files changed, 37 insertions(+), 3 deletions(-)
+ create mode 100644 arch/arm/include/debug/lpc32xx_hsuart.S
 
-On 1/14/19 2:28 PM, Mathieu Malaterre wrote:
-> There is a plan to build the kernel with -Wimplicit-fallthrough and
-> this place in the code produced a warning (W=1).
-> 
-> In this particular case change put the fall through comment on a single
-> line so as to match the regular expression expected by GCC.
-> 
-> This commit remove the following warning:
-> 
->    kernel/capability.c:95:3: warning: this statement may fall through [-Wimplicit-fallthrough=]
-> 
-> Signed-off-by: Mathieu Malaterre <malat@debian.org>
+diff --git a/arch/arm/Kconfig.debug b/arch/arm/Kconfig.debug
+index 6d6e0330930b..0d4d64f5d3b7 100644
+--- a/arch/arm/Kconfig.debug
++++ b/arch/arm/Kconfig.debug
+@@ -530,7 +530,16 @@ choice
+ 		select DEBUG_UART_8250
+ 		help
+ 		  Say Y here if you want kernel low-level debugging support
+-		  on NXP LPC32xx based platforms.
++		  on NXP LPC32xx based platforms using an INS16Cx50 compatible
++		  UART.
++
++	config DEBUG_LPC32XX_HSUART
++		bool "Kernel low-level debugging messages via NXP LPC32xx High Speed  UART"
++		depends on ARCH_LPC32XX
++		help
++		  Say Y here if you want kernel low-level debugging support
++		  on NXP LPC32xx based platforms using an high speed (14-clock)
++		  UART.
+ 
+ 	config DEBUG_MESON_UARTAO
+ 		bool "Kernel low-level debugging via Meson6 UARTAO"
+@@ -1541,6 +1550,7 @@ config DEBUG_LL_INCLUDE
+ 				 DEBUG_IMX6UL_UART || \
+ 				 DEBUG_IMX7D_UART
+ 	default "debug/ks8695.S" if DEBUG_KS8695_UART
++	default "debug/lpc32xx_hsuart.S" if DEBUG_LPC32XX_HSUART
+ 	default "debug/msm.S" if DEBUG_QCOM_UARTDM
+ 	default "debug/netx.S" if DEBUG_NETX_UART
+ 	default "debug/omap2plus.S" if DEBUG_OMAP2PLUS_UART
+@@ -1622,6 +1632,7 @@ config DEBUG_UART_PHYS
+ 	default 0x3e000000 if DEBUG_BCM_KONA_UART
+ 	default 0x3f201000 if DEBUG_BCM2836
+ 	default 0x4000e400 if DEBUG_LL_UART_EFM32
++	default 0x40014000 if DEBUG_LPC32XX_HSUART
+ 	default 0x40028000 if DEBUG_AT91_SAMV7_USART1
+ 	default 0x40081000 if DEBUG_LPC18XX_UART0
+ 	default 0x40090000 if DEBUG_LPC32XX
+@@ -1716,7 +1727,7 @@ config DEBUG_UART_PHYS
+ 		DEBUG_S3C64XX_UART || \
+ 		DEBUG_BCM63XX_UART || DEBUG_ASM9260_UART || \
+ 		DEBUG_SIRFSOC_UART || DEBUG_DIGICOLOR_UA0 || \
+-		DEBUG_AT91_UART
++		DEBUG_AT91_UART || DEBUG_LPC32XX_HSUART
+ 
+ config DEBUG_UART_VIRT
+ 	hex "Virtual base address of debug UART"
+@@ -1741,6 +1752,7 @@ config DEBUG_UART_VIRT
+ 	default 0xf1c28400 if DEBUG_SUNXI_UART1
+ 	default 0xf1f02800 if DEBUG_SUNXI_R_UART
+ 	default 0xf31004c0 if DEBUG_MESON_UARTAO
++	default 0xf4014000 if DEBUG_LPC32XX_HSUART
+ 	default 0xf4090000 if DEBUG_LPC32XX
+ 	default 0xf4200000 if DEBUG_GEMINI
+ 	default 0xf6200000 if DEBUG_PXA_UART1
+@@ -1832,7 +1844,7 @@ config DEBUG_UART_VIRT
+ 		DEBUG_S3C64XX_UART || \
+ 		DEBUG_BCM63XX_UART || DEBUG_ASM9260_UART || \
+ 		DEBUG_SIRFSOC_UART || DEBUG_DIGICOLOR_UA0 || \
+-		DEBUG_AT91_UART
++		DEBUG_AT91_UART || DEBUG_LPC32XX_HSUART
+ 
+ config DEBUG_UART_8250_SHIFT
+ 	int "Register offset shift for the 8250 debug UART"
+diff --git a/arch/arm/include/debug/lpc32xx_hsuart.S b/arch/arm/include/debug/lpc32xx_hsuart.S
+new file mode 100644
+index 000000000000..e0205368c6ff
+--- /dev/null
++++ b/arch/arm/include/debug/lpc32xx_hsuart.S
+@@ -0,0 +1,22 @@
++#define LPC_HSU_TX		(0x0)
++#define LPC_HSU_LEVEL		(0x4)
++#define LPC_HSU_LEVEL_TX	0xFF00
++
++	.macro	addruart, rp, rv, tmp
++	ldr	\rp, =CONFIG_DEBUG_UART_PHYS		@ System peripherals (phys address)
++	ldr	\rv, =CONFIG_DEBUG_UART_VIRT		@ System peripherals (virt address)
++	.endm
++
++	.macro	senduart,rd,rx
++	str	\rd, [\rx, #(LPC_HSU_TX)]
++	.endm
++
++	.macro	waituart,rd,rx
++	.endm
++
++	.macro	busyuart,rd,rx
++1001:	ldr	\rd, [\rx, #(LPC_HSU_LEVEL)]
++	ands	\rd, \rd, LPC_HSU_LEVEL_TX
++	bne	1001b
++	.endm
++
+-- 
+2.20.1
 
-Acked-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
-
-Thanks
-
-> ---
->   kernel/capability.c | 4 +---
->   1 file changed, 1 insertion(+), 3 deletions(-)
-> 
-> diff --git a/kernel/capability.c b/kernel/capability.c
-> index 1e1c0236f55b..e60be18b98e2 100644
-> --- a/kernel/capability.c
-> +++ b/kernel/capability.c
-> @@ -93,9 +93,7 @@ static int cap_validate_magic(cap_user_header_t header, unsigned *tocopy)
->   		break;
->   	case _LINUX_CAPABILITY_VERSION_2:
->   		warn_deprecated_v2();
-> -		/*
-> -		 * fall through - v3 is otherwise equivalent to v2.
-> -		 */
-> +		/* fall through - v3 is otherwise equivalent to v2. */
->   	case _LINUX_CAPABILITY_VERSION_3:
->   		*tocopy = _LINUX_CAPABILITY_U32S_3;
->   		break;
-> 
