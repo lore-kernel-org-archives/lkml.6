@@ -7,55 +7,54 @@ X-Spam-Status: No, score=-13.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 73451C43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 23:04:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B9573C43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 23:04:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3F90620659
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 23:04:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 87E0620659
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 23:04:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547507053;
-	bh=ZO6w3W9NmG5XwD/WJabL68E6WU+QKTToaB+nECyl9f4=;
+	s=default; t=1547507056;
+	bh=tmPIFuUl0epmY2+VEwk+iKj8tcXxixVcFheeMp5Vk6g=;
 	h=From:To:Cc:Subject:In-Reply-To:Date:List-ID:From;
-	b=NzT/eFXA+B6JyapNTyUWlDs+hCvZjADB/f6rcU63dF8huMp9QE17OOFQOKlvg7/xQ
-	 hStVNnGvmefqse9KhYmc9AJASet3U0lq/8aXV6wALYNyNU0glDkkqcD43Evg2SKdjx
-	 TTfCMjXNwNA1+s/lkYQOwlzlzthlIRvw2w9viSZE=
+	b=nysEhcozTRGuJKl8vCCRAhRiVpp/S83ZepM4dzH6A16V5+DO9/4FZfWecKGpj+JLX
+	 3gzmLRjtOo3U+vU3JCoz/JrJ3UPgaQ8F8PW6nkxgN6eDyVPLkXHvUT3IphYw8XVVZv
+	 qbHsSmbIk7YvSK3KywaJU5Fl71THDDM34kGuHD0Q=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727205AbfANXEL (ORCPT
+        id S1727226AbfANXEP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 14 Jan 2019 18:04:11 -0500
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:40106 "EHLO
+        Mon, 14 Jan 2019 18:04:15 -0500
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:40200 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726745AbfANXEL (ORCPT
+        with ESMTP id S1726745AbfANXEN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 Jan 2019 18:04:11 -0500
+        Mon, 14 Jan 2019 18:04:13 -0500
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
         Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
         List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=m57ey/4/KsIpOP32HNniSI2fnC8S3Tcf0lb8nB42+08=; b=Koi3UOBn8bw/
-        CniZrNZXbT2b8/NR+lN6xRSj/qhD5/ZT6EZbenZOgfarIDitAwVDPHG/CEPPRyZMRv8ekmO4tFx8a
-        G7zn6ryIHH7HmSzIjyJe8ucj4NFCITIU391bLtfOgydD3ZchxsmtNXsQ63bKvcFJNLWcOkXLjwTSs
-        Fjzmc=;
+        List-Archive; bh=mmO0gfAZlukenUH8oUgOBwwngVNRIRbotvB94HozIDA=; b=ZYp8vsYqxvxE
+        4NxxipVg3tYXG/t2UnPXkkx76/NFx78827mJslwE8tJVGBSELj/P7qpDkfdNSJgZ9LTfAXOZ9Qne4
+        /fBgpDoFvpazxabRZkvg4bt/bF/0dHnAstzoqgACyxXrtTYGstM4fRSwDMUkNjmzH361S7/lOHaTc
+        ph0So=;
 Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
         by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
         (envelope-from <broonie@sirena.org.uk>)
-        id 1gjBGy-0000T0-SR; Mon, 14 Jan 2019 23:04:00 +0000
+        id 1gjBH7-0000TH-Fb; Mon, 14 Jan 2019 23:04:09 +0000
 Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
-        id 64BF01127AD1; Mon, 14 Jan 2019 23:04:00 +0000 (GMT)
+        id 2193B1127AD1; Mon, 14 Jan 2019 23:04:09 +0000 (GMT)
 From:   Mark Brown <broonie@kernel.org>
-To:     Anders Roxell <anders.roxell@linaro.org>
-Cc:     Mark Brown <broonie@kernel.org>, perex@perex.cz, tiwai@suse.com,
-        brian.austin@cirrus.com, Paul.Handrigan@cirrus.com,
-        lgirdwood@gmail.com, broonie@kernel.org,
-        alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
-        alsa-devel@alsa-project.org
-Subject: Applied "ASoC: cs4341: fix waring unused-function" to the asoc tree
-In-Reply-To:  <20190114095540.22956-1-anders.roxell@linaro.org>
+To:     Mark Zhang <markz@nvidia.com>
+Cc:     Laxman Dewangan <ldewangan@nvidia.com>,
+        Jinyoung Park <jinyoungp@nvidia.com>,
+        Venkat Reddy Talla <vreddytalla@nvidia.com>,
+        Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org
+Subject: Applied "regmap-irq: do not write mask register if mask_base is zero" to the regmap tree
+In-Reply-To: 
 X-Patchwork-Hint: ignore
-Message-Id: <20190114230400.64BF01127AD1@debutante.sirena.org.uk>
-Date:   Mon, 14 Jan 2019 23:04:00 +0000 (GMT)
+Message-Id: <20190114230409.2193B1127AD1@debutante.sirena.org.uk>
+Date:   Mon, 14 Jan 2019 23:04:09 +0000 (GMT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -63,11 +62,11 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   ASoC: cs4341: fix waring unused-function
+   regmap-irq: do not write mask register if mask_base is zero
 
-has been applied to the asoc tree at
+has been applied to the regmap tree at
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regmap.git 
 
 All being well this means that it will be integrated into the linux-next
 tree (usually sometime in the next 24 hours) and sent to Linus during
@@ -88,78 +87,47 @@ to this mail.
 Thanks,
 Mark
 
-From 3e8c45f57a90585cfc0b07ae81de8960a8366c1c Mon Sep 17 00:00:00 2001
-From: Anders Roxell <anders.roxell@linaro.org>
-Date: Mon, 14 Jan 2019 10:55:40 +0100
-Subject: [PATCH] ASoC: cs4341: fix waring unused-function
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+From 7151449fe7fa5962c6153355f9779d6be99e8e97 Mon Sep 17 00:00:00 2001
+From: Mark Zhang <markz@nvidia.com>
+Date: Mon, 14 Jan 2019 17:32:58 +0800
+Subject: [PATCH] regmap-irq: do not write mask register if mask_base is zero
 
-The driver cs4341 can be built with SPI and/or I2C, but it has to be one
-of them at least. When I2C is set as a module we see the warning below:
+If client have not provided the mask base register then do not
+write into the mask register.
 
-sound/soc/codecs/cs4341.c:213:12: warning: ‘cs4341_probe’
-defined but not used [-Wunused-function]
- static int cs4341_probe(struct device *dev)
-            ^~~~~~~~~~~~
-
-Rework so that we use IS_ENABLED instead of defined. Also change so
-SND_SOC_CS4341 depends on SND_SOC_I2C_AND_SPI to we dont' get a link
-error when SND_SOC_CS4341=y, I2C=m and REGMAP_I2C=m is set.
-
-Suggested-by: Arnd Bergmann <arnd@arndb.de>
-Signed-off-by: Anders Roxell <anders.roxell@linaro.org>
+Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
+Signed-off-by: Jinyoung Park <jinyoungp@nvidia.com>
+Signed-off-by: Venkat Reddy Talla <vreddytalla@nvidia.com>
+Signed-off-by: Mark Zhang <markz@nvidia.com>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- sound/soc/codecs/Kconfig  | 2 +-
- sound/soc/codecs/cs4341.c | 6 +++---
- 2 files changed, 4 insertions(+), 4 deletions(-)
+ drivers/base/regmap/regmap-irq.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-diff --git a/sound/soc/codecs/Kconfig b/sound/soc/codecs/Kconfig
-index 87cb9c51e6f5..87ecb38e57f4 100644
---- a/sound/soc/codecs/Kconfig
-+++ b/sound/soc/codecs/Kconfig
-@@ -546,7 +546,7 @@ config SND_SOC_CS43130
- 
- config SND_SOC_CS4341
- 	tristate "Cirrus Logic CS4341 CODEC"
--	depends on I2C || SPI_MASTER
-+	depends on SND_SOC_I2C_AND_SPI
- 	select REGMAP_I2C if I2C
- 	select REGMAP_SPI if SPI_MASTER
- 
-diff --git a/sound/soc/codecs/cs4341.c b/sound/soc/codecs/cs4341.c
-index d2e616a89fd4..ade7477d04f1 100644
---- a/sound/soc/codecs/cs4341.c
-+++ b/sound/soc/codecs/cs4341.c
-@@ -223,7 +223,7 @@ static int cs4341_probe(struct device *dev)
- 					       &cs4341_dai, 1);
- }
- 
--#if defined(CONFIG_I2C)
-+#if IS_ENABLED(CONFIG_I2C)
- static int cs4341_i2c_probe(struct i2c_client *i2c,
- 			    const struct i2c_device_id *id)
- {
-@@ -317,7 +317,7 @@ static int __init cs4341_init(void)
- {
- 	int ret = 0;
- 
--#if defined(CONFIG_I2C)
-+#if IS_ENABLED(CONFIG_I2C)
- 	ret = i2c_add_driver(&cs4341_i2c_driver);
- 	if (ret)
- 		return ret;
-@@ -332,7 +332,7 @@ module_init(cs4341_init);
- 
- static void __exit cs4341_exit(void)
- {
--#if defined(CONFIG_I2C)
-+#if IS_ENABLED(CONFIG_I2C)
- 	i2c_del_driver(&cs4341_i2c_driver);
- #endif
- #if defined(CONFIG_SPI_MASTER)
+diff --git a/drivers/base/regmap/regmap-irq.c b/drivers/base/regmap/regmap-irq.c
+index d2d0014b0d23..330c1f7e9665 100644
+--- a/drivers/base/regmap/regmap-irq.c
++++ b/drivers/base/regmap/regmap-irq.c
+@@ -108,6 +108,9 @@ static void regmap_irq_sync_unlock(struct irq_data *data)
+ 	 * suppress pointless writes.
+ 	 */
+ 	for (i = 0; i < d->chip->num_regs; i++) {
++		if (!d->chip->mask_base)
++			continue;
++
+ 		reg = d->chip->mask_base +
+ 			(i * map->reg_stride * d->irq_reg_stride);
+ 		if (d->chip->mask_invert) {
+@@ -588,6 +591,9 @@ int regmap_add_irq_chip(struct regmap *map, int irq, int irq_flags,
+ 	/* Mask all the interrupts by default */
+ 	for (i = 0; i < chip->num_regs; i++) {
+ 		d->mask_buf[i] = d->mask_buf_def[i];
++		if (!chip->mask_base)
++			continue;
++
+ 		reg = chip->mask_base +
+ 			(i * map->reg_stride * d->irq_reg_stride);
+ 		if (chip->mask_invert)
 -- 
 2.20.1
 
