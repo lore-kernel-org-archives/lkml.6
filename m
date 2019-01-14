@@ -2,99 +2,105 @@ Return-Path: <SRS0=tq6k=PW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A8033C43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 21:53:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B694DC43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 21:55:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6F3C320657
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 21:53:29 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=android.com header.i=@android.com header.b="IqUekfLQ"
+	by mail.kernel.org (Postfix) with ESMTP id 7D9B420657
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 21:55:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1547502914;
+	bh=8xGbSw414rVINc77HwxSQPE88V4EOEo6pGoxgRcjJTQ=;
+	h=Subject:In-Reply-To:References:Cc:To:From:Date:List-ID:From;
+	b=Gm2/Uy2Chp565uOHOcjjugdzKU8iuIQT6NhbHGgSsgj220h+/7PQQ0quFvGzkBayn
+	 wbMEwWOTVLWFqxmGLuY1SWHx/NMQsgak67C6DnrPNP9cGs4x4z/5fUKqsbt19Z5dOD
+	 8obYE+4xrVei0VgEPoZjIAPzESZQFzcqcnQFMK74=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726808AbfANVx2 (ORCPT
+        id S1726830AbfANVzM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 14 Jan 2019 16:53:28 -0500
-Received: from mail-ot1-f66.google.com ([209.85.210.66]:42843 "EHLO
-        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726618AbfANVx1 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 Jan 2019 16:53:27 -0500
-Received: by mail-ot1-f66.google.com with SMTP id v23so575064otk.9
-        for <linux-kernel@vger.kernel.org>; Mon, 14 Jan 2019 13:53:27 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=android.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=Q3kce2bWKDtxbTxAqm3XjUoAdIiL+VPsVQKmew7W5hY=;
-        b=IqUekfLQGzLM3++skZUsB8ff7gjAy7Q6vGoOngGw5aPFDTp2ParzJG4Z6Wc61FLiYB
-         Ppfq28sXEBeaFXj8qf442M3nh8CZu7erIGiuFKwvQYDgQZcXASFqeUJ4JEVKTkyQSekW
-         IEg9WxBGnB0vHuxT61uA7OnepXZ2JPfUBBdC3QI0md/DpEo7QNK5hDlURJWVfsTHecq3
-         BXSvbULD2SYzMEzB9h4WXtHtRgbQO3LZgYd2khYWCYNqIFiIiztc+m4v7KJnd8LCcCbL
-         viYrVei9/fJTJ8SBz+CkWzw42Vq1dZ+1xczoobfnsJihRDylNL9lX+rwmKXMNpU6E6Bx
-         vF+w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Q3kce2bWKDtxbTxAqm3XjUoAdIiL+VPsVQKmew7W5hY=;
-        b=hguIQDko27Ma7q4BaD8U68xRpnBDBRPVvK0EOw06LLTqPw90gyfuVrCqzPdqkW4FGw
-         KBYvx5DLzG3P8cnSevjC+gEzXi5RtcA/FLUzEcykNnqJ9WHIjGqHqGZQZFDaerlPUiIu
-         d199JIEQmPYhUB3mZ6nxtx+WYBVfKxUDeDubTAjkRgRdlSgUK0YkQqw9ADxHKZPja/BT
-         Z2I47/KwCV9hQhbsMiku+JylXrO4A+njf/0Jv8ZIcLbHL3YzL/3QaxtwzjpUkZxc3t5P
-         LoCj69DtJ2q5lsB/0QohCWGh1n0F/xSln+MzSO8gdDVdMKHamGr/us7yBrrI55sD+fJ8
-         gIxA==
-X-Gm-Message-State: AJcUukfSGYkd3FQAiV0hTixQ+PhqWdny/dBGeUE+qTKPf9CrHaafkvso
-        XEuEPySb+m29RmhO9WUhRqGtJws9CaXLO/EkFBpOsQ==
-X-Google-Smtp-Source: ALg8bN7MJsHEjNoqj900QZ+WmNE+zJDnzZpVLMg487Lrm6+iUgi189CT7MPcIgz3yqqt3rXsYax7ZNSshApnndm/zTQ=
-X-Received: by 2002:a9d:17c6:: with SMTP id j64mr357521otj.357.1547502806818;
- Mon, 14 Jan 2019 13:53:26 -0800 (PST)
+        Mon, 14 Jan 2019 16:55:12 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60924 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726591AbfANVzM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 14 Jan 2019 16:55:12 -0500
+Received: from localhost (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 266F520657;
+        Mon, 14 Jan 2019 21:55:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1547502911;
+        bh=8xGbSw414rVINc77HwxSQPE88V4EOEo6pGoxgRcjJTQ=;
+        h=Subject:In-Reply-To:References:Cc:To:From:Date:From;
+        b=EXIGT37SMG06yPPTlbsFMkfS0YiL6Fr1c2r5sztdU7rJMADYnYW2ofTbM97vZKRVM
+         QLJcoJ5sBos87VqIlS8Hk6uB/UB13aW4QN9CQP8+2ynhjCoeUvODCpp+RWJ95lU8vm
+         Lg6LAFIWFBtxW3VS4lXGXTjsGpHAfUSQv+rbVhhc=
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-References: <20190114210426.177543-1-trong@android.com> <CAKwvOdkoN1myuDM1OFga+v30LQ9pV5VD9J_KCJN1Z7AY+kaXxQ@mail.gmail.com>
-In-Reply-To: <CAKwvOdkoN1myuDM1OFga+v30LQ9pV5VD9J_KCJN1Z7AY+kaXxQ@mail.gmail.com>
-From:   Tri Vo <trong@android.com>
-Date:   Mon, 14 Jan 2019 13:53:16 -0800
-Message-ID: <CANA+-vDLJAHFLZADBM_2JhRy5-OR1tsLCJRqk-7mUfFxNO8dEw@mail.gmail.com>
-Subject: Re: [PATCH 0/4] gcov: add Clang support
-To:     Nick Desaulniers <ndesaulniers@google.com>
-Cc:     oberpar@linux.ibm.com, Greg Hackmann <ghackmann@android.com>,
-        LKML <linux-kernel@vger.kernel.org>, kernel-team@android.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH 0/6] Add clock support for Actions Semi S500 SoC
+User-Agent: alot/0.8
+In-Reply-To: <20190114091850.GB13162@Mani-XPS-13-9360>
+References: <20181231185517.18517-1-manivannan.sadhasivam@linaro.org> <154724706468.169631.2903523518830581075@swboyd.mtv.corp.google.com> <20190114091850.GB13162@Mani-XPS-13-9360>
+Cc:     afaerber@suse.de, mturquette@baylibre.com, robh+dt@kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-actions@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+To:     Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Message-ID: <154750291027.169631.13825540584530234373@swboyd.mtv.corp.google.com>
+From:   Stephen Boyd <sboyd@kernel.org>
+Date:   Mon, 14 Jan 2019 13:55:10 -0800
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jan 14, 2019 at 1:33 PM Nick Desaulniers
-<ndesaulniers@google.com> wrote:
->
-> On Mon, Jan 14, 2019 at 1:04 PM Tri Vo <trong@android.com> wrote:
-> >
-> > This patch series adds Clang supoprt for gcov.
-> >
-> > Patch 1 refactors existing code in preparation for Clang support. Patches
-> > 2-3 implement necessary LLVM runtime hooks and gcov kernel interfaces.
-> > Patch 4 simplifies config selection.
-> >
-> > Greg Hackmann (2):
-> >   gcov: clang: move common gcc code into gcc_base.c
-> >   gcov: clang support
-> >
-> > Nick Desaulniers (1):
-> >   gcov: clang: link/unlink profiling data set.
-> >
-> > Tri Vo (1):
-> >   gcov: clang: pick GCC vs Clang format depending on compiler
->
-> Thanks for sending Tri!  Doesn't the output format require llvm-cov, or no?
+Quoting Manivannan Sadhasivam (2019-01-14 01:18:50)
+> Hi Stephen,
+>=20
+> On Fri, Jan 11, 2019 at 02:51:04PM -0800, Stephen Boyd wrote:
+> > Quoting Manivannan Sadhasivam (2018-12-31 10:55:11)
+> > > Hello,
+> > >=20
+> > > This patchset adds common clock support for Actions Semi S500 SoC of
+> > > the Owl family SoCs. This series is based on the initial work done
+> > > by Edgar Bernardi Righi. https://patchwork.kernel.org/cover/10587527/
+> > >=20
+> > > Since there isn't any update from him for long time, I took the liber=
+ty
+> > > to modify his patches, address review comments and send to list for r=
+eview.
+> > >=20
+> > > This series has been tested on Allo Sparky SBC.
+> > >=20
+> > > Thanks,
+> > > Mani
+> > >=20
+> > > Edgar Bernardi Righi (1):
+> > >   dt-bindings: clock: Add DT bindings for Actions Semi S500 CMU
+> > >=20
+> > > Manivannan Sadhasivam (5):
+> > >   clk: actions: Add configurable PLL delay
+> > >   ARM: dts: Add CMU support for Actions Semi Owl S500 SoC
+> > >   ARM: dts: Remove fake UART clock for S500 based SBCs
+> > >   clk: actions: Add clock driver for S500 SoC
+> > >   MAINTAINERS: Add linux-actions mailing list for Actions Semi
+> >=20
+> > What's the merge strategy for these patches? Some are for clk, others
+> > are for arm-soc, etc. I see a sandwich of patches too so it sounds like
+> > I can't even take just the clk ones for fear of breaking something that
+> > the dts bits in the middle clear out of the way.
+> >=20
+>=20
+> As we did with previous patchsets, clk patches will go through your tree
+> and I'll take the ARM/MAINTAINERS patches through Actions sub-tree. Let's
+> target these for 5.1. Even if your patches reach first, there won't be
+> any regression with existing DTS.
+>=20
 
-Yes, .gcda files generated by a Clang-built kernel could only be
-parsed by llvm-cov, but not gcc gcov (at least in my local tests).
+Ok. I have just minor nits. Please resend and I will merge the clk
+patches to clk tree.
 
-llvm-cov documentation also indicates that GCC and LLVM gcov tools are
-not necessarily compatible. "[llvm-cov] is compatible with the gcov
-tool from version 4.2 of GCC and may also be compatible with some
-later versions of gcov."
-https://llvm.org/docs/CommandGuide/llvm-cov.html
