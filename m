@@ -2,133 +2,110 @@ Return-Path: <SRS0=tq6k=PW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 530CCC43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 21:37:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 26031C43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 21:40:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 067E320659
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 21:37:03 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="tgR+6ooY"
+	by mail.kernel.org (Postfix) with ESMTP id F413C20659
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 21:40:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727149AbfANVhC (ORCPT
+        id S1727022AbfANVkm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 14 Jan 2019 16:37:02 -0500
-Received: from mail.efficios.com ([167.114.142.138]:51634 "EHLO
-        mail.efficios.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726963AbfANVhC (ORCPT
+        Mon, 14 Jan 2019 16:40:42 -0500
+Received: from gateway22.websitewelcome.com ([192.185.47.179]:11439 "EHLO
+        gateway22.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726796AbfANVkm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 Jan 2019 16:37:02 -0500
-Received: from localhost (ip6-localhost [IPv6:::1])
-        by mail.efficios.com (Postfix) with ESMTP id 7B2D7B206C;
-        Mon, 14 Jan 2019 16:37:00 -0500 (EST)
-Received: from mail.efficios.com ([IPv6:::1])
-        by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10032)
-        with ESMTP id LC7Fl2mfkz5e; Mon, 14 Jan 2019 16:37:00 -0500 (EST)
-Received: from localhost (ip6-localhost [IPv6:::1])
-        by mail.efficios.com (Postfix) with ESMTP id 0BDC2B2060;
-        Mon, 14 Jan 2019 16:37:00 -0500 (EST)
-DKIM-Filter: OpenDKIM Filter v2.10.3 mail.efficios.com 0BDC2B2060
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=efficios.com;
-        s=default; t=1547501820;
-        bh=3ipZZWZs4PupDWApqOEhL18977OXkYtR9t6x4s107eE=;
-        h=Date:From:To:Message-ID:MIME-Version;
-        b=tgR+6ooYxVCZel/1d+J39FgeNcUELS6lG+hsB/RG/uz5/dGJHVANOEyY9Byliu71z
-         P2hXJO8bT4gelYXcs1CiYg1QnWhyxhqG/7kabQNB+KLTkyslUmq4pG29UmN+R64I84
-         Xdglcu0x+amxh3Y6Q8dMEabWuOv7EN/XQwQgZuRA54mf50I4g89ErgtdCQvK/AgHnj
-         Fw/GcyW4UhVcWs0M/HMg0LCPj2DctR3OmOU23jd17NOlSnEt53thAiujyq//OW8ic9
-         +gvxOXk4/MvL1YYn2bpfiEQJzGQsBYIn+X66srN9qgY3FyETrthvzaKNn6KK/wo6S5
-         qFdJIKaPiYtAg==
-X-Virus-Scanned: amavisd-new at efficios.com
-Received: from mail.efficios.com ([IPv6:::1])
-        by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10026)
-        with ESMTP id d85GMKgPlPyk; Mon, 14 Jan 2019 16:36:59 -0500 (EST)
-Received: from mail02.efficios.com (mail02.efficios.com [167.114.142.138])
-        by mail.efficios.com (Postfix) with ESMTP id EA5C0B205A;
-        Mon, 14 Jan 2019 16:36:59 -0500 (EST)
-Date:   Mon, 14 Jan 2019 16:36:59 -0500 (EST)
-From:   Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     rostedt <rostedt@goodmis.org>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Message-ID: <615183542.671.1547501819850.JavaMail.zimbra@efficios.com>
-In-Reply-To: <20190114130957.GA10486@hirez.programming.kicks-ass.net>
-References: <2103471967.794.1547084331086.JavaMail.zimbra@efficios.com> <20190110110839.7daeef3d@gandalf.local.home> <1884815641.993.1547138653377.JavaMail.zimbra@efficios.com> <600900741.1177.1547140315581.JavaMail.zimbra@efficios.com> <1083900143.1198.1547141113001.JavaMail.zimbra@efficios.com> <1706586119.1203.1547142327142.JavaMail.zimbra@efficios.com> <20190114130957.GA10486@hirez.programming.kicks-ass.net>
-Subject: Re: Perf: event wakeup discards sched_waking events
+        Mon, 14 Jan 2019 16:40:42 -0500
+Received: from cm13.websitewelcome.com (cm13.websitewelcome.com [100.42.49.6])
+        by gateway22.websitewelcome.com (Postfix) with ESMTP id EC8599C02
+        for <linux-kernel@vger.kernel.org>; Mon, 14 Jan 2019 15:40:41 -0600 (CST)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id j9yLgEnGRYTGMj9yLgyzho; Mon, 14 Jan 2019 15:40:41 -0600
+X-Authority-Reason: nr=8
+Received: from [189.250.130.205] (port=51442 helo=[192.168.43.131])
+        by gator4166.hostgator.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
+        (Exim 4.91)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1gj9yL-000tss-1i; Mon, 14 Jan 2019 15:40:41 -0600
+Subject: Re: [PATCH] nvram: annotate implicit fall through
+To:     Mathieu Malaterre <malat@debian.org>, Arnd Bergmann <arnd@arndb.de>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org
+References: <20190114204415.22296-1-malat@debian.org>
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Message-ID: <59962ef4-d349-e5ac-3dab-e1c70409f8ff@embeddedor.com>
+Date:   Mon, 14 Jan 2019 15:40:36 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <20190114204415.22296-1-malat@debian.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-Originating-IP: [167.114.142.138]
-X-Mailer: Zimbra 8.8.10_GA_3716 (ZimbraWebClient - FF52 (Linux)/8.8.10_GA_3745)
-Thread-Topic: Perf: event wakeup discards sched_waking events
-Thread-Index: PWIh8pUvQb0AP4H6utnbPhWO532PMg==
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 189.250.130.205
+X-Source-L: No
+X-Exim-ID: 1gj9yL-000tss-1i
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: ([192.168.43.131]) [189.250.130.205]:51442
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 29
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
------ On Jan 14, 2019, at 8:09 AM, Peter Zijlstra peterz@infradead.org wrote:
 
-> On Thu, Jan 10, 2019 at 12:45:27PM -0500, Mathieu Desnoyers wrote:
+
+On 1/14/19 2:44 PM, Mathieu Malaterre wrote:
+> There is a plan to build the kernel with -Wimplicit-fallthrough and
+> this place in the code produced a warning (W=1).
 > 
->> static void perf_pending_event(struct irq_work *entry)
->> {
->>         struct perf_event *event = container_of(entry,
->>                         struct perf_event, pending);
->>         int rctx;
->> 
->>         rctx = perf_swevent_get_recursion_context();
->>         /*
->>          * If we 'fail' here, that's OK, it means recursion is already disabled
->>          * and we won't recurse 'further'.
->>          */
->> 
->>         if (event->pending_disable) {
->>                 event->pending_disable = 0;
->>                 perf_event_disable_local(event);
->>         }
->> 
->>         if (event->pending_wakeup) {
->>                 event->pending_wakeup = 0;
->>                 perf_event_wakeup(event);
->>         }
->> 
->>         if (rctx >= 0)
->>                 perf_swevent_put_recursion_context(rctx);
->> }
->> 
->> One side-effect of perf_event_wakeup() is to generate a sched_waking
->> event. But I suspect it won't be traced by perf because it is invoked before
->> putting the recursion context.
->> 
->> Is there a reason why the wakeup is done before putting the recursion
->> context ?
+> This commit remove the following warning:
 > 
-> d525211f9d1b ("perf: Fix irq_work 'tail' recursion")
+>    drivers/char/generic_nvram.c:83:3: warning: this statement may fall through [-Wimplicit-fallthrough=]
 > 
-> If we were to allow perf_event_wakeup() to generate its tracepoint, we'd
-> be back to square #1, no?
+> Signed-off-by: Mathieu Malaterre <malat@debian.org>
+> ---
+>   drivers/char/generic_nvram.c | 1 +
+>   1 file changed, 1 insertion(+)
+> 
+> diff --git a/drivers/char/generic_nvram.c b/drivers/char/generic_nvram.c
+> index ff5394f47587..53123c110f7b 100644
+> --- a/drivers/char/generic_nvram.c
+> +++ b/drivers/char/generic_nvram.c
+> @@ -81,6 +81,7 @@ static int nvram_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
+>   #ifdef CONFIG_PPC_PMAC
+>   	case OBSOLETE_PMAC_NVRAM_GET_OFFSET:
+>   		printk(KERN_WARNING "nvram: Using obsolete PMAC_NVRAM_GET_OFFSET ioctl\n");
 
-Considering that perf tracing code has side-effects that generate additional
-events, it's indeed best not to trace them, otherwise you indeed end up with
-tail recursion.
+Here you could use the pr_warn() macro instead of the obsolete printk KERN_WARNING, but that'd
+be another patch.
 
-Can ftrace end up in the same situation through rb_wake_up_waiters() ? I suspect
-the tail recursion would be hard to trigger if the wakeup only happens once per
-page though, unless the events generated end up filling up a page.
+Anyway:
 
-FWIW, LTTng avoids this entire issue by using a timer-based polling mechanism
-to ensure the tracing code does not call into the scheduler wakeup.
+Acked-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
 
-Thanks,
+Thanks
+--
+Gustavo
 
-Mathieu
-
--- 
-Mathieu Desnoyers
-EfficiOS Inc.
-http://www.efficios.com
+> +		/* fall through */
+>   	case IOC_NVRAM_GET_OFFSET: {
+>   		int part, offset;
+>   
+> 
