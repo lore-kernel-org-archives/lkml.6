@@ -2,115 +2,132 @@ Return-Path: <SRS0=tq6k=PW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3127FC43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 10:44:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 17AD0C43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 10:44:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F3FF42086D
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 10:44:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D49EA20656
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 10:44:49 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=alien8.de header.i=@alien8.de header.b="Ots/qzZs"
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="aalC7QQe";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="M3Y4rTze"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726579AbfANKn7 (ORCPT
+        id S1726619AbfANKos (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 14 Jan 2019 05:43:59 -0500
-Received: from mail.skyhub.de ([5.9.137.197]:55522 "EHLO mail.skyhub.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726478AbfANKn6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 Jan 2019 05:43:58 -0500
-Received: from zn.tnic (p200300EC2BC4CA00C95BD7F0398E53C6.dip0.t-ipconnect.de [IPv6:2003:ec:2bc4:ca00:c95b:d7f0:398e:53c6])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        Mon, 14 Jan 2019 05:44:48 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:46928 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726460AbfANKor (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 14 Jan 2019 05:44:47 -0500
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 9A0DB60A43; Mon, 14 Jan 2019 10:44:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1547462686;
+        bh=W492xWzE0+1ScAI5z+Gk+5nsNEfAvFYzR6GMJuCsV/0=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=aalC7QQeoFg+uHUSUSUpxcnMYBKgxDjA8ZXwsNk0RUop/rZiQ+ONrpHnxMDKD3VnR
+         A3k/nuLMN0U6jVIST5KO+avHpNRkIzW1B2k1NGTpHTQq9CZfHDQV7PBYYKqS/vl6NK
+         42cbH3NiuwdVxTUZv/6RzBh1C6dCaDlNxIqvYcLg=
+Received: from [10.204.110.203] (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 8DD151EC0543;
-        Mon, 14 Jan 2019 11:43:56 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
-        t=1547462636;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
-        bh=cX8LKyJvsNrHgHS78ZuZm4eq19UbNYdF9joR49yc6ig=;
-        b=Ots/qzZsYY7YrIcIWjz30fhUJzq3QVYICD2+7VSSXd6+yg4AdReO5D30b/faFk+Al1LDvV
-        W3WBasU0Y1kKEeActecwPFDluN4r8MsMy9h7kycddvLayVQY8Q7sRgiSwuW7VlTMvdjJTp
-        UI0gOYuacNswNKAnGJ9KyVSbq8uT24I=
-Date:   Mon, 14 Jan 2019 11:43:50 +0100
-From:   Borislav Petkov <bp@alien8.de>
-To:     "Ghannam, Yazen" <Yazen.Ghannam@amd.com>
-Cc:     "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "rjw@rjwysocki.net" <rjw@rjwysocki.net>,
-        "lenb@kernel.org" <lenb@kernel.org>,
-        "tony.luck@intel.com" <tony.luck@intel.com>,
-        "keescook@chromium.org" <keescook@chromium.org>
-Subject: Re: [PATCH] ACPI / APEI: Fix parsing HEST that includes Deferred
- Machine Check subtable
-Message-ID: <20190114104350.GH2773@zn.tnic>
-References: <20181112190029.41760-1-Yazen.Ghannam@amd.com>
+        (Authenticated sender: rohitkr@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id E32A660A43;
+        Mon, 14 Jan 2019 10:44:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1547462682;
+        bh=W492xWzE0+1ScAI5z+Gk+5nsNEfAvFYzR6GMJuCsV/0=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=M3Y4rTze8lr06Ya9aZI7ms820xyH41pKaBJ1NzZp0ntma9BccewkabVE2Kmj/LD8x
+         kTlSGXwwDCIbs0y79yT4dFhtM5MQaOKLsJw6ZLePfgyhAaA0FaZY50PU6gfTGts8NV
+         qzEwi4Bo2Y30s0E2dVHtmukGFQaBBHNigo7dQrnk=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org E32A660A43
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=rohitkr@codeaurora.org
+Subject: Re: [PATCH 2/2] remoteproc: q6v5_adsp: Remove voting for lpass_aon
+ clock
+To:     Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc:     ohad@wizery.com, robh+dt@kernel.org, mark.rutland@arm.com,
+        linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, plai@codeaurora.org,
+        bgoswami@codeaurora.org
+References: <1543562950-23997-1-git-send-email-rohitkr@codeaurora.org>
+ <1543562950-23997-3-git-send-email-rohitkr@codeaurora.org>
+ <f6f9b4a2-6205-0ba5-9a3a-b34bd814d303@codeaurora.org>
+ <20190107071359.GK31596@builder>
+From:   Rohit Kumar <rohitkr@codeaurora.org>
+Message-ID: <214831ef-2139-7b48-1654-537634f898f4@codeaurora.org>
+Date:   Mon, 14 Jan 2019 16:14:37 +0530
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20181112190029.41760-1-Yazen.Ghannam@amd.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20190107071359.GK31596@builder>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Nov 12, 2018 at 07:00:55PM +0000, Ghannam, Yazen wrote:
-> From: Yazen Ghannam <yazen.ghannam@amd.com>
-> 
-> ACPI 6.2 includes a new definition for a Deferred Machine Check "DMC"
-> subtable.
-> 
-> The definition of this subtable was included in following commit:
-> 
-> c042933df2b1 ("ACPICA: Add support for new HEST subtable")
-> 
-> However, the HEST parsing function was not updated to include this new
-> subtable. Therefore, Linux will fail to parse the HEST on systems that
-> include a DMC entry.
-> 
-> Add the length check for the new DMC subtable so that HEST parsing
-> doesn't fail on systems that include it.
-> 
-> Signed-off-by: Yazen Ghannam <yazen.ghannam@amd.com>
-> ---
->  drivers/acpi/apei/hest.c | 6 ++++++
->  1 file changed, 6 insertions(+)
-> 
-> diff --git a/drivers/acpi/apei/hest.c b/drivers/acpi/apei/hest.c
-> index b1e9f81ebeea..0935a0ef37e5 100644
-> --- a/drivers/acpi/apei/hest.c
-> +++ b/drivers/acpi/apei/hest.c
-> @@ -53,6 +53,7 @@ static const int hest_esrc_len_tab[ACPI_HEST_TYPE_RESERVED] = {
->  	[ACPI_HEST_TYPE_AER_BRIDGE] = sizeof(struct acpi_hest_aer_bridge),
->  	[ACPI_HEST_TYPE_GENERIC_ERROR] = sizeof(struct acpi_hest_generic),
->  	[ACPI_HEST_TYPE_GENERIC_ERROR_V2] = sizeof(struct acpi_hest_generic_v2),
-> +	[ACPI_HEST_TYPE_IA32_DEFERRED_CHECK] = -1,
->  };
->  
->  static int hest_esrc_len(struct acpi_hest_header *hest_hdr)
-> @@ -75,6 +76,11 @@ static int hest_esrc_len(struct acpi_hest_header *hest_hdr)
->  		mc = (struct acpi_hest_ia_machine_check *)hest_hdr;
->  		len = sizeof(*mc) + mc->num_hardware_banks *
->  			sizeof(struct acpi_hest_ia_error_bank);
-> +	} else if (hest_type == ACPI_HEST_TYPE_IA32_DEFERRED_CHECK) {
-> +		struct acpi_hest_ia_deferred_check *mc;
-> +		mc = (struct acpi_hest_ia_deferred_check *)hest_hdr;
-> +		len = sizeof(*mc) + mc->num_hardware_banks *
-> +			sizeof(struct acpi_hest_ia_error_bank);
->  	}
->  	BUG_ON(len == -1);
->  
-> -- 
 
-Reviewed-by: Borislav Petkov <bp@suse.de>
+On 1/7/2019 12:43 PM, Bjorn Andersson wrote:
+> On Thu 03 Jan 20:36 PST 2019, Rohit Kumar wrote:
+>
+>> Hello Bjorn,
+>>
+>> Can you please review this patch series too.
+>>
+>> LPASS_AON clock support is already removed from lpass clock driver.
+>>
+> Applied the two patches.
 
+Hello Bjorn,
+
+
+Can you please point me to the tree where this is applied.
+
+
+Thanks,
+
+Rohit
+
+> Thanks,
+> Bjorn
+>
+>> Thanks,
+>>
+>> Rohit
+>>
+>> On 11/30/2018 12:59 PM, Rohit kumar wrote:
+>>> Lpass_aon clock is on by default. Remove it from lpass
+>>> clock list to avoid voting for it.
+>>>
+>>> Signed-off-by: Rohit kumar <rohitkr@codeaurora.org>
+>>> ---
+>>>    drivers/remoteproc/qcom_q6v5_adsp.c | 2 +-
+>>>    1 file changed, 1 insertion(+), 1 deletion(-)
+>>>
+>>> diff --git a/drivers/remoteproc/qcom_q6v5_adsp.c b/drivers/remoteproc/qcom_q6v5_adsp.c
+>>> index 79374d1..4829173 100644
+>>> --- a/drivers/remoteproc/qcom_q6v5_adsp.c
+>>> +++ b/drivers/remoteproc/qcom_q6v5_adsp.c
+>>> @@ -48,7 +48,7 @@
+>>>    /* list of clocks required by ADSP PIL */
+>>>    static const char * const adsp_clk_id[] = {
+>>> -	"sway_cbcr", "lpass_aon", "lpass_ahbs_aon_cbcr", "lpass_ahbm_aon_cbcr",
+>>> +	"sway_cbcr", "lpass_ahbs_aon_cbcr", "lpass_ahbm_aon_cbcr",
+>>>    	"qdsp6ss_xo", "qdsp6ss_sleep", "qdsp6ss_core",
+>>>    };
+>> -- 
+>> Qualcomm INDIA, on behalf of Qualcomm Innovation Center, Inc.is a member
+>> of the Code Aurora Forum, hosted by the Linux Foundation.
+>>
 -- 
-Regards/Gruss,
-    Boris.
+Qualcomm INDIA, on behalf of Qualcomm Innovation Center, Inc.is a member
+of the Code Aurora Forum, hosted by the Linux Foundation.
 
-Good mailing practices for 400: avoid top-posting and trim the reply.
