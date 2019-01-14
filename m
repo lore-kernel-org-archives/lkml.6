@@ -7,64 +7,63 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 73922C43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 21:05:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 64EE3C43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 21:05:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 41AEB20896
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 21:05:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3328C20896
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 21:05:32 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=android.com header.i=@android.com header.b="ihFJBjL1"
+	dkim=pass (2048-bit key) header.d=android.com header.i=@android.com header.b="dKl6W2km"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727094AbfANVF0 (ORCPT
+        id S1727119AbfANVFa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 14 Jan 2019 16:05:26 -0500
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:45804 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727006AbfANVFY (ORCPT
+        Mon, 14 Jan 2019 16:05:30 -0500
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:53040 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727006AbfANVF3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 Jan 2019 16:05:24 -0500
-Received: by mail-wr1-f67.google.com with SMTP id t6so480989wrr.12
-        for <linux-kernel@vger.kernel.org>; Mon, 14 Jan 2019 13:05:22 -0800 (PST)
+        Mon, 14 Jan 2019 16:05:29 -0500
+Received: by mail-wm1-f67.google.com with SMTP id m1so1123198wml.2
+        for <linux-kernel@vger.kernel.org>; Mon, 14 Jan 2019 13:05:27 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=android.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=8yaTwDdPBhHbjdTxlPcCg5RXwpmur+DCR6kh9TUQ4zA=;
-        b=ihFJBjL1NvFAieS4tTcIGIge+zojv5aTvNinL7MBVIN/95xZ7Q4VnVKhEn0xSPeH7n
-         KPs27hc4XfdiUT+b8JK+oljt8StgpAxB4LAF5KmRWbfnlUxfGSKwMGqFDcXlNYm6uDaV
-         leMCdxHqYAGlcXJBOyeQUbtj1bPZy/DUgliqIiPqmTmmeZf313utQX2sY5ViuC9pdDW9
-         VLZPdb2tX7Z5RyTCPhn8xaDnbDZV2ANXRZrGz+SSq5xW6miZ/UByYAE6gPIGFRQZm397
-         gaRhtTVTIZgFD1Zq6bvfow1WaLTE2OkVyaBiOIqJ1//tMQBwn45blhsX2L9wduivdNbW
-         50Zg==
+        bh=GD+EBvrWZeLBiLbVYUmorj631pUkIjHc9+6iZNpQcXU=;
+        b=dKl6W2kmX3JEWaXye7fKLgBiYCdvVxyGhuaVpfv341sIiYHAHNdkV+CP4AAgFz4yZL
+         Xr/L1ONJeNWUS2wHbC3onHHM64N+yG6BLgjNaiBhPBJ2lpaufhHp53wb41aebETT51EE
+         eHDFwp3r+6Ykht2fKufHU+UzpC2ApJLJWUKNgG8kosLuYmcBDj6iCR/rX5FDAMllF0GG
+         gnOdU9MFlqnl3O7Rl+WHVwRiW5b0F3LHl5LXrEAfp5TgYk3BGFrFlE9ZdjsQwadVeck/
+         wu/RcP4SJ2K2B+pNhH5tWaizL3Vy5RWY3Kw94oeO0h4CNB4VLr02iZjbEF90ivNpb80U
+         9FEA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=8yaTwDdPBhHbjdTxlPcCg5RXwpmur+DCR6kh9TUQ4zA=;
-        b=J0pWXO8K+fodse4ytkRFlb2n89k37XqzXlCM3RkVXG8pPeyTLTwVJYQDSLbRZ9fXYc
-         DxeYny1iEuUjhnAeyM6f04FmNaO72qa6oiIkOFy2hPJo2wxarzYrFdcFR+FGsrN5xeZr
-         Umdl/Gyx+ace56ribgRz3K0nmiSxjeyFP9/3PzHSCJiPk8cws5vNDyNotsIdbDNq3gQt
-         sEjsiiUykx6iS0VT4H6OyPTJNYaIkTcjd1Tb3reonFdoLS/GizyS0m+5MdLhOf97CHRW
-         8GXmG5Kly3CSBO6XpU5TCt8hGpfM6y8Wku+iJa6JOmb3I+AlxURiT9G0rNpWP0aU6QPa
-         glgg==
-X-Gm-Message-State: AJcUukf89iPS0B+ChsLqiz5QbwvHRR0QYhk14RZyhx/2tUXfyuruPQ+A
-        bbY+KDlNTcnqziEjcZ6qrPXk2w==
-X-Google-Smtp-Source: ALg8bN6oMM9w02WpUM5gaIXOwg9Ftc0tjLiUbaiabL+l60ZG6zlODYduQmn+o9D3x51UVSiiDZEryg==
-X-Received: by 2002:adf:e407:: with SMTP id g7mr252144wrm.277.1547499921784;
-        Mon, 14 Jan 2019 13:05:21 -0800 (PST)
+        bh=GD+EBvrWZeLBiLbVYUmorj631pUkIjHc9+6iZNpQcXU=;
+        b=HyjWRICfVIECgMC+NsVznvFBeMUaebiWVVVCleSKbWbP1nX/AYM7z4ffhqJdunbtF6
+         e4n8p2LDAkN4A8MQM1XFaUug+HplIqE6zc/fVJfu4CO/j21DSWI6pdK/B7JxVZWGBp3B
+         eK1N0roOWu7kDSRYcNZhUeHLwtJ72wJEdZlfvTol+S0mG9lIvfH+qAkmsmg9nuQRy+9h
+         ccJVadRYtGIhQytqPSn5heElBBG3yH+kyXG4XZzsf5/nYJDmZqpnDE8W8kSOZUBCfwRg
+         2Sx7+hXDBMzdtO/GQFgPhFev0FYcAFiM3dXl0Rb2MbDnfHgjc4TC/xs+yqcOhjbyMhYU
+         fwhg==
+X-Gm-Message-State: AJcUukelm3b9qHuYOn/Yto10bgyNkJW07U/2198kUwAH3rmLVgOhFfbw
+        /bvjaIMz20XrKhFNfvR4qAKLQw==
+X-Google-Smtp-Source: ALg8bN4LwDvpdFX3lgkbQDGJAIsL+mbTgLeJLDHBtbwn4SRmnLC2BXnQBdC1GcapVn0QLhExjn+2Wg==
+X-Received: by 2002:a7b:c5cc:: with SMTP id n12mr709714wmk.149.1547499927083;
+        Mon, 14 Jan 2019 13:05:27 -0800 (PST)
 Received: from trong0.mtv.corp.google.com ([2620:0:1000:1601:c43f:8c1b:f6ef:3dce])
-        by smtp.gmail.com with ESMTPSA id s1sm106981548wro.9.2019.01.14.13.05.19
+        by smtp.gmail.com with ESMTPSA id s1sm106981548wro.9.2019.01.14.13.05.25
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 14 Jan 2019 13:05:21 -0800 (PST)
+        Mon, 14 Jan 2019 13:05:26 -0800 (PST)
 From:   Tri Vo <trong@android.com>
 To:     oberpar@linux.ibm.com
 Cc:     ghackmann@android.com, ndesaulniers@google.com,
         linux-kernel@vger.kernel.org, kernel-team@android.com,
-        Tri Vo <trong@android.com>, Trilok Soni <tsoni@quicinc.com>,
-        Prasad Sodagudi <psodagud@quicinc.com>
-Subject: [PATCH 3/4] gcov: clang: link/unlink profiling data set.
-Date:   Mon, 14 Jan 2019 13:04:25 -0800
-Message-Id: <20190114210426.177543-4-trong@android.com>
+        Tri Vo <trong@android.com>
+Subject: [PATCH 4/4] gcov: clang: pick GCC vs Clang format depending on compiler
+Date:   Mon, 14 Jan 2019 13:04:26 -0800
+Message-Id: <20190114210426.177543-5-trong@android.com>
 X-Mailer: git-send-email 2.20.1.97.g81188d93c3-goog
 In-Reply-To: <20190114210426.177543-1-trong@android.com>
 References: <20190114210426.177543-1-trong@android.com>
@@ -75,107 +74,47 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Nick Desaulniers <ndesaulniers@google.com>
+Clang gcov format is only supported by Clang compiler, and Clang
+compiler only supports Clang format.
 
-gcov.h defines an interface to access gcov_info data.
+We set gcov format to depend on which compiler (GCC or Clang) is used.
 
-Add Clang implementation of gcov_info_link/gcov_info_unlink interfaces.
+Automatic format detection behavior is preserved because:
+If GCC is used, one of the GCC gcov formats is selected.
+If Clang is used, Clang gcov format is selected.
 
-Signed-off-by: Nick Desaulniers <ndesaulniers@google.com>
 Signed-off-by: Tri Vo <trong@android.com>
-Tested-by: Trilok Soni <tsoni@quicinc.com>
-Tested-by: Prasad Sodagudi <psodagud@quicinc.com>
-Tested-by: Tri Vo <trong@android.com>
 ---
- kernel/gcov/clang.c | 33 ++++++++++++++++++++++++++++-----
- 1 file changed, 28 insertions(+), 5 deletions(-)
+ kernel/gcov/Kconfig | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/kernel/gcov/clang.c b/kernel/gcov/clang.c
-index b00795d28137..ea42deb852f7 100644
---- a/kernel/gcov/clang.c
-+++ b/kernel/gcov/clang.c
-@@ -77,6 +77,7 @@ struct gcov_fn_info {
+diff --git a/kernel/gcov/Kconfig b/kernel/gcov/Kconfig
+index eb428e570923..37ec551d4039 100644
+--- a/kernel/gcov/Kconfig
++++ b/kernel/gcov/Kconfig
+@@ -60,6 +60,8 @@ choice
+ 	In such a case, change this option to adjust the format used in the
+ 	kernel accordingly.
  
- 	u32 num_counters;
- 	u64 *counters;
-+	const char *function_name;
- };
- 
- static struct gcov_info *current_info;
-@@ -124,7 +125,7 @@ void llvm_gcda_emit_function(u32 ident, const char *function_name,
- 
- 	if (!info) {
- 		pr_warn_ratelimited("failed to allocate gcov function info for %s\n",
--				function_name);
-+				function_name ?: "UNKNOWN");
- 		return;
- 	}
- 
-@@ -133,6 +134,8 @@ void llvm_gcda_emit_function(u32 ident, const char *function_name,
- 	info->checksum = func_checksum;
- 	info->use_extra_checksum = use_extra_checksum;
- 	info->cfg_checksum = cfg_checksum;
-+	if (function_name)
-+		info->function_name = kstrdup(function_name, GFP_KERNEL);
- 
- 	list_add_tail(&info->head, &current_info->functions);
- }
-@@ -193,6 +196,26 @@ struct gcov_info *gcov_info_next(struct gcov_info *info)
- 	return list_next_entry(info, head);
- }
- 
-+/**
-+ * gcov_info_link - link/add profiling data set to the list
-+ * @info: profiling data set
-+ */
-+void gcov_info_link(struct gcov_info *info)
-+{
-+	list_add_tail(&info->head, &clang_gcov_list);
-+}
++	Select Clang gcov format if building with Clang compiler.
 +
-+/**
-+ * gcov_info_unlink - unlink/remove profiling data set from the list
-+ * @prev: previous profiling data set
-+ * @info: profiling data set
-+ */
-+void gcov_info_unlink(struct gcov_info *prev, struct gcov_info *info)
-+{
-+	if (prev)
-+		list_del(&prev->head);
-+}
-+
- /* Symbolic links to be created for each profiling data file. */
- const struct gcov_link gcov_link[] = {
- 	{ OBJ_TREE, "gcno" },	/* Link to .gcno file in $(objtree). */
-@@ -256,8 +279,8 @@ static struct gcov_fn_info *gcov_fn_info_dup(struct gcov_fn_info *fn)
- 		return NULL;
- 	INIT_LIST_HEAD(&fn_dup->head);
+ config GCOV_FORMAT_3_4
+ 	bool "GCC 3.4 format"
+ 	depends on CC_IS_GCC && GCC_VERSION < 40700
+@@ -68,11 +70,13 @@ config GCOV_FORMAT_3_4
  
--	fn_dup->name = kstrdup(fn->name, GFP_KERNEL);
--	if (!fn_dup->name)
-+	fn_dup->function_name = kstrdup(fn->function_name, GFP_KERNEL);
-+	if (!fn_dup->function_name)
- 		goto err_name;
+ config GCOV_FORMAT_4_7
+ 	bool "GCC 4.7 format"
++	depends on CC_IS_GCC
+ 	---help---
+ 	Select this option to use the format defined by GCC 4.7.
  
- 	fn_dup->counters = kmemdup(fn->counters,
-@@ -269,7 +292,7 @@ static struct gcov_fn_info *gcov_fn_info_dup(struct gcov_fn_info *fn)
- 	return fn_dup;
+ config GCOV_FORMAT_CLANG
+ 	bool "Clang format"
++	depends on CC_IS_CLANG
+ 	---help---
+ 	Select this option to use the format defined by Clang.
  
- err_counters:
--	kfree(fn_dup->name);
-+	kfree(fn_dup->function_name);
- err_name:
- 	kfree(fn_dup);
- 	return NULL;
-@@ -317,7 +340,7 @@ void gcov_info_free(struct gcov_info *info)
- 	struct gcov_fn_info *fn, *tmp;
- 
- 	list_for_each_entry_safe(fn, tmp, &info->functions, head) {
--		kfree(fn->name);
-+		kfree(fn->function_name);
- 		kfree(fn->counters);
- 		list_del(&fn->head);
- 		kfree(fn);
 -- 
 2.20.1.97.g81188d93c3-goog
 
