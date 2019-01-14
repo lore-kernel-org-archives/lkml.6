@@ -2,110 +2,121 @@ Return-Path: <SRS0=tq6k=PW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 91CBBC43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 22:01:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 67E2AC43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 22:01:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5DCCC205C9
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 22:01:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 23622205C9
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 22:01:33 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="MB0fVuOL"
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="evzm6hh6"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726911AbfANWBE (ORCPT
+        id S1727091AbfANWBb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 14 Jan 2019 17:01:04 -0500
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:40458 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726591AbfANWBE (ORCPT
+        Mon, 14 Jan 2019 17:01:31 -0500
+Received: from perceval.ideasonboard.com ([213.167.242.64]:58626 "EHLO
+        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726646AbfANWBb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 Jan 2019 17:01:04 -0500
-Received: by mail-pg1-f194.google.com with SMTP id z10so244328pgp.7
-        for <linux-kernel@vger.kernel.org>; Mon, 14 Jan 2019 14:01:03 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=COA4+y8BR+vzlMXulf2QmLFF6N6buS8a74k/Xy/7vFw=;
-        b=MB0fVuOLyz1WkhggvnB37sMqe1T8gyl51XE+R59wRNERF/txILXSvReUgja7ePaUur
-         xplNBSXnnEiJHfxocvFW9hxHYajnh9gQy7R7b6BVpn6516x2pWtvg08w7y7P5nq6ZtHC
-         i2whOf0/WxfO/ur/F/IrZhR4c6W1K7fPeXnK5IlW68E3qAY7/GZULTOEQbpY/bWy9LPV
-         a4/5TX8Pz+/v4nOLXnQOVa0nw0CzKB3U9/9hpt/7tQlGD3NgmuMvf1UtHe8nfzyXeGQF
-         KRkOYZV4/xTUxwsWlJwA/UgzfsDrTYjMIVsFaygUDPuVT7U8oz0fo5FwH7k6s9+Ua+Ub
-         kjIw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=COA4+y8BR+vzlMXulf2QmLFF6N6buS8a74k/Xy/7vFw=;
-        b=i0pb5F/oIwZUIDA8p9GrX6LNsPDO46uGG50POmAxsDkS4wMVAkSO9IUUBYGAP4ni/p
-         N82IE/v8d0ykFvFgn6Q+suDGtxxZ7uZIPEh0QB09cAgj+Mcm5yaSJTJNbUYMxwpBE8U8
-         vlHeaDr3VsyqYACZCkwn6A1y1M6dOPt17Jw7CdRWPf6ZTUAumR52rFVUkYkT7ikghVn2
-         WK0Hindew6wJGERQ3CJwYmueWR6HN/9jEgqvfbtE11JtTZmNsYabhpQT6+XB8GTGgyte
-         wRPI342rbbcV2Adt2fxV4AQXcaGKxuFTstOXV+T8j9QeIWpR4By/F2SHhE20ymCN3HOI
-         uw2A==
-X-Gm-Message-State: AJcUukct20JwRe6EqGJP4ztM32M2E9kN4Sz5exEYSEEfRfcRX4yBY0rz
-        vRTXINmk015TTr/UkSQ/TlUm3BccG2bzHmpA+19WLg==
-X-Google-Smtp-Source: ALg8bN7rKvGWzQ7lP2eNg0CvEBFgMbngKttkMT446J8hbFttrQQ//Y2jmz4UYaBK/qcKZxImZYsaf+RzlTPtvoheLIc=
-X-Received: by 2002:a62:13c3:: with SMTP id 64mr608260pft.93.1547503263001;
- Mon, 14 Jan 2019 14:01:03 -0800 (PST)
+        Mon, 14 Jan 2019 17:01:31 -0500
+Received: from [192.168.0.21] (cpc89242-aztw30-2-0-cust488.18-1.cable.virginm.net [86.31.129.233])
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 3B87A530;
+        Mon, 14 Jan 2019 23:01:28 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+        s=mail; t=1547503288;
+        bh=9TMMwkd3VuWBrwETYkOZnVdU8DkQmY7nw0beCVasr3k=;
+        h=Reply-To:Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=evzm6hh6eikfecFbR63EOmuo9EjsAI63SgJdDdUv1CAAk7jEQdMnzFjtLRb/WrNhg
+         H9OJSdBSAXJBuLA1mzx+RA390rZ1fuVfsC+JU9iB84qYmtySefdeIBLKNnAKGQWcL3
+         upovEHBCI0I7/NcXUUwHru3MwZelFoWnIdqh28GI=
+Reply-To: kieran.bingham+renesas@ideasonboard.com
+Subject: Re: [PATCH 1/3 v2] drm: rcar-du: add missing of_node_put
+To:     Julia Lawall <julia.lawall@lip6.fr>
+Cc:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        kernel-janitors@vger.kernel.org, David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <alpine.DEB.2.20.1901141743510.3522@hadrien>
+From:   Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Organization: Ideas on Board
+Message-ID: <d492e274-fc01-98eb-4f99-a6af611d4c30@ideasonboard.com>
+Date:   Mon, 14 Jan 2019 22:01:24 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-References: <20190114210426.177543-1-trong@android.com> <CAKwvOdkoN1myuDM1OFga+v30LQ9pV5VD9J_KCJN1Z7AY+kaXxQ@mail.gmail.com>
- <CANA+-vDLJAHFLZADBM_2JhRy5-OR1tsLCJRqk-7mUfFxNO8dEw@mail.gmail.com>
-In-Reply-To: <CANA+-vDLJAHFLZADBM_2JhRy5-OR1tsLCJRqk-7mUfFxNO8dEw@mail.gmail.com>
-From:   Nick Desaulniers <ndesaulniers@google.com>
-Date:   Mon, 14 Jan 2019 14:00:51 -0800
-Message-ID: <CAKwvOdnfMFmDm-DdbFEZxQdXzP47mnZ27hWw5vqe8Lqh21hBhg@mail.gmail.com>
-Subject: Re: [PATCH 0/4] gcov: add Clang support
-To:     Tri Vo <trong@android.com>
-Cc:     oberpar@linux.ibm.com, Greg Hackmann <ghackmann@android.com>,
-        LKML <linux-kernel@vger.kernel.org>, kernel-team@android.com
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <alpine.DEB.2.20.1901141743510.3522@hadrien>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jan 14, 2019 at 1:53 PM Tri Vo <trong@android.com> wrote:
->
-> On Mon, Jan 14, 2019 at 1:33 PM Nick Desaulniers
-> <ndesaulniers@google.com> wrote:
-> >
-> > On Mon, Jan 14, 2019 at 1:04 PM Tri Vo <trong@android.com> wrote:
-> > >
-> > > This patch series adds Clang supoprt for gcov.
-> > >
-> > > Patch 1 refactors existing code in preparation for Clang support. Patches
-> > > 2-3 implement necessary LLVM runtime hooks and gcov kernel interfaces.
-> > > Patch 4 simplifies config selection.
-> > >
-> > > Greg Hackmann (2):
-> > >   gcov: clang: move common gcc code into gcc_base.c
-> > >   gcov: clang support
-> > >
-> > > Nick Desaulniers (1):
-> > >   gcov: clang: link/unlink profiling data set.
-> > >
-> > > Tri Vo (1):
-> > >   gcov: clang: pick GCC vs Clang format depending on compiler
-> >
-> > Thanks for sending Tri!  Doesn't the output format require llvm-cov, or no?
->
-> Yes, .gcda files generated by a Clang-built kernel could only be
-> parsed by llvm-cov, but not gcc gcov (at least in my local tests).
->
-> llvm-cov documentation also indicates that GCC and LLVM gcov tools are
-> not necessarily compatible. "[llvm-cov] is compatible with the gcov
-> tool from version 4.2 of GCC and may also be compatible with some
-> later versions of gcov."
-> https://llvm.org/docs/CommandGuide/llvm-cov.html
+Hi Julia,
 
-Thanks, that's good to know for folks looking to help test.  Note to
-reviewers that we're actively using this patch set on arm64 devices.
+On 14/01/2019 16:44, Julia Lawall wrote:
+> Add an of_node_put when the result of of_graph_get_remote_port_parent is
+> not available.
+> 
+> Add a second of_node_put if no encoder is selected (encoder remains NULL).
+> 
+> The semantic match that finds the first problem is as follows
+> (http://coccinelle.lip6.fr):
+> 
+> // <smpl>
+> @r exists@
+> local idexpression e;
+> expression x;
+> @@
+> e = of_graph_get_remote_port_parent(...);
+> ... when != x = e
+>     when != true e == NULL
+>     when != of_node_put(e)
+>     when != of_fwnode_handle(e)
+> (
+> return e;
+> |
+> *return ...;
+> )
+> // </smpl>
+> 
+> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
--- 
-Thanks,
-~Nick Desaulniers
+Thankyou for the update.
+
+Reviewed-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+
+
+> 
+> ---
+> v2: Add the second of_node_put(entity);, as suggested by Kieran Bingham.
+> 
+>  drivers/gpu/drm/rcar-du/rcar_du_kms.c |    2 ++
+>  1 file changed, 2 insertions(+)
+> 
+> diff --git a/drivers/gpu/drm/rcar-du/rcar_du_kms.c b/drivers/gpu/drm/rcar-du/rcar_du_kms.c
+> index 9c7007d..f9a90ff 100644
+> --- a/drivers/gpu/drm/rcar-du/rcar_du_kms.c
+> +++ b/drivers/gpu/drm/rcar-du/rcar_du_kms.c
+> @@ -331,6 +331,7 @@ static int rcar_du_encoders_init_one(struct rcar_du_device *rcdu,
+>  		dev_dbg(rcdu->dev,
+>  			"connected entity %pOF is disabled, skipping\n",
+>  			entity);
+> +		of_node_put(entity);
+>  		return -ENODEV;
+>  	}
+> 
+> @@ -366,6 +367,7 @@ static int rcar_du_encoders_init_one(struct rcar_du_device *rcdu,
+>  		dev_warn(rcdu->dev,
+>  			 "no encoder found for endpoint %pOF, skipping\n",
+>  			 ep->local_node);
+> +		of_node_put(entity);
+>  		return -ENODEV;
+>  	}
+> 
+
