@@ -2,160 +2,133 @@ Return-Path: <SRS0=tq6k=PW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-14.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B04DC43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 19:44:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 08FC7C43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 19:46:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 59AFF20659
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 19:44:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C5C55206B7
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 19:46:38 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=pados.hu header.i=@pados.hu header.b="xMRgoE8c"
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="dK7IFjVn"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726984AbfANToF (ORCPT
+        id S1726833AbfANTqh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 14 Jan 2019 14:44:05 -0500
-Received: from erza.pados.hu ([176.9.136.194]:51642 "EHLO erza.pados.hu"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726899AbfANToC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 Jan 2019 14:44:02 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=pados.hu;
-         s=february2016; h=Content-Transfer-Encoding:MIME-Version:Message-Id:Date:
-        Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
-        List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=E3DykDoRItJGWP95SMpn3zjpN0T2PfwKB6AlfVZGFgY=; b=xMRgoE8cL4+9GcLz34G6RTmkBa
-        0OCNFjlDll3ig746qlf/wjxJSXxS+6SULxCMbPi7iaKKCam8mHl3sbvkDNDV50k2OdEnBAhmWw4cP
-        ka2KECJnEFcw2qHg5K2doVdBbM8qdcQaIkxpAcfTRV58PVgTeQBcChCInuLRtrzryjd4xUc1uLN4O
-        4G/O6Lq0vq22BiULvjb6zRuaXauZeUeXo5IC1GDmWHf1SrQ8AJJKTdvV+SLYcYQqyNUOUFtjgvBl9
-        f9bIymD+kRLfOdEXWgg+ImQB6D9E/MJcDlLkvLbQU1nnQrvCoIVLKinqH+zZSBvF83Z3OnRNaSO1e
-        jDyciz+Q==;
-Received: from 188-143-5-0.pool.digikabel.hu ([188.143.5.0] helo=localhost)
-        by erza with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <pados@pados.hu>)
-        id 1gj89P-0000t9-Mp; Mon, 14 Jan 2019 20:44:00 +0100
-From:   Karoly Pados <pados@pados.hu>
-To:     "Johan Hovold" <johan@kernel.org>,
-        "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
-        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Karoly Pados <pados@pados.hu>
-Subject: [PATCH] USB: serial: cp210x: Fix GPIO in autosuspend
-Date:   Mon, 14 Jan 2019 20:43:52 +0100
-Message-Id: <20190114194352.4579-1-pados@pados.hu>
-X-Mailer: git-send-email 2.20.1
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Spam_score: -2.9
-X-Spam_report: Spam detection software, running on the system "erza",
- has NOT identified this incoming email as spam.  The original
- message has been attached to this so you can view it or label
- similar future email.  If you have any questions, see
- the administrator of that system for details.
- Content preview:  Current GPIO code in cp210x fails to take USB autosuspend
-   into account, making it practically impossible to use GPIOs with autosuspend
-    enabled without user configuration. Fix this like for ftdi_sio in [...] 
- Content analysis details:   (-2.9 points, 5.0 required)
-  pts rule name              description
- ---- ---------------------- --------------------------------------------------
-  0.0 URIBL_BLOCKED          ADMINISTRATOR NOTICE: The query to URIBL was
-                             blocked.  See
-                             http://wiki.apache.org/spamassassin/DnsBlocklists#dnsbl-block
-                              for more information.
-                             [URIs: pados.hu]
- -1.0 ALL_TRUSTED            Passed through trusted hosts only via SMTP
- -1.9 BAYES_00               BODY: Bayes spam probability is 0 to 1%
-                             [score: 0.0000]
-  0.0 TVD_RCVD_IP            Message was received from an IP address
+        Mon, 14 Jan 2019 14:46:37 -0500
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:35122 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726761AbfANTqg (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 14 Jan 2019 14:46:36 -0500
+Received: by mail-wm1-f67.google.com with SMTP id t200so868522wmt.0
+        for <linux-kernel@vger.kernel.org>; Mon, 14 Jan 2019 11:46:35 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=iV2BJUAh/Zyb+wEm6tQ/gGD02vRQpuBa3p/N2HQnIFE=;
+        b=dK7IFjVnrOmKfnc7HeXr0BFTbh9AHYrG1iKkfxpJ+e4zjYPqTzW1Ot1gbdJortT5+f
+         2oa6CnqbVEjDdKq9JYk2yC5DM+gWwjNND8bh2j+SZ8xnz3azqvkf5anBByrDJDTHwEk7
+         ZtaGLyItOIOwac8F2asTEIIo8+0MAFmMHbj2Y=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=iV2BJUAh/Zyb+wEm6tQ/gGD02vRQpuBa3p/N2HQnIFE=;
+        b=rq05z8wv9ez/Z7HSQhvzfMTVIhNEyG0gNQ6rfRgDJm4bfXCASUK1NTf6Rn+vMNERLz
+         aTN5wsuAFZJzNumnLWKU+OTio1nxrojmzs5O7Zu1nP6F379E1/HiuWCZicOH6X2VS8MH
+         cbvSq4AIawY3QQoyV9oUYYHqzc1JdKL2FUlFzHRVWUqteCLCz08XqcwG0NAEtWzDt81X
+         MRZdoRva/5a+b6H9nSQb9lu4dS2diHRKy2Uy+8m/5G1IyqeB9GzDHD9rABerjOnE1MEX
+         5cv7LYDmqS/i/KQL6Jfv9lQi2jLydaJnNpPKiQeYOtsYY/uoj7fT7LNsCWun3Tjw5qN9
+         a+/g==
+X-Gm-Message-State: AJcUukfBDnCKEE0oS3u227q+yC+fkomSECgcnEZ5SwF89BSg6MZc+zIi
+        IRQR2aIXzZabOQqcS3Ku6jckiZLDUgWvNg==
+X-Google-Smtp-Source: ALg8bN7okrTKxklHVrhFQG9sq4vrk9K+T8zT169BtLDr7JwcUeHxv3aWHwgGsqZMqYRfx2baWifnPQ==
+X-Received: by 2002:a1c:570d:: with SMTP id l13mr536407wmb.139.1547495194088;
+        Mon, 14 Jan 2019 11:46:34 -0800 (PST)
+Received: from localhost ([49.248.190.171])
+        by smtp.gmail.com with ESMTPSA id a6sm26475975wmh.10.2019.01.14.11.46.32
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 14 Jan 2019 11:46:33 -0800 (PST)
+From:   Amit Kucheria <amit.kucheria@linaro.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     linux-arm-msm@vger.kernel.org, andy.gross@linaro.org,
+        marc.w.gonzalez@free.fr, bjorn.andersson@linaro.org,
+        kvalo@adurom.com, joe@perches.com
+Subject: [PATCH v3 1/1] MAINTAINERS: update list of qcom drivers
+Date:   Tue, 15 Jan 2019 01:15:49 +0530
+Message-Id: <3f8a0c7a8701446abe02f1e35d412d72d9c1f0f3.1547494994.git.amit.kucheria@linaro.org>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <cover.1547494994.git.amit.kucheria@linaro.org>
+References: <cover.1547494994.git.amit.kucheria@linaro.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Current GPIO code in cp210x fails to take USB autosuspend into account,
-making it practically impossible to use GPIOs with autosuspend enabled
-without user configuration. Fix this like for ftdi_sio in a previous patch.
-Tested on a CP2102N.
+Several drivers didn't have a specific maintainer (other than the
+subsystem maintainer). Add some generic regex patterns to capture most
+qcom drivers in the list of supported drivers. For the rest, add
+explicit filenames.
 
-Signed-off-by: Karoly Pados <pados@pados.hu>
+Sort the entries, while we're at it.
+
+Signed-off-by: Amit Kucheria <amit.kucheria@linaro.org>
 ---
- drivers/usb/serial/cp210x.c | 20 ++++++++++++++++++--
- 1 file changed, 18 insertions(+), 2 deletions(-)
+ MAINTAINERS | 32 +++++++++++++++++++++++++-------
+ 1 file changed, 25 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/usb/serial/cp210x.c b/drivers/usb/serial/cp210x.c
-index c0777a374a88..8f974eabce63 100644
---- a/drivers/usb/serial/cp210x.c
-+++ b/drivers/usb/serial/cp210x.c
-@@ -598,9 +598,15 @@ static int cp210x_read_vendor_block(struct usb_serial *serial, u8 type, u16 val,
- 	void *dmabuf;
- 	int result;
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 32d444476a90..a2b21a622ae1 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -1948,19 +1948,37 @@ M:	David Brown <david.brown@linaro.org>
+ L:	linux-arm-msm@vger.kernel.org
+ S:	Maintained
+ F:	Documentation/devicetree/bindings/soc/qcom/
++F:	Documentation/devicetree/bindings/*/qcom*
+ F:	arch/arm/boot/dts/qcom-*.dts
+ F:	arch/arm/boot/dts/qcom-*.dtsi
+ F:	arch/arm/mach-qcom/
+-F:	arch/arm64/boot/dts/qcom/*
++F:	arch/arm64/boot/dts/qcom/
++F:	drivers/*/qcom/
++F:	drivers/*/qcom*
++F:	drivers/*/*/qcom/
++F:	drivers/*/*/qcom*
++F:	drivers/*/pm8???-*
++F:	drivers/bluetooth/btqcomsmd.c
++F:	drivers/clocksource/timer-qcom.c
++F:	drivers/extcon/extcon-qcom*
++F:	drivers/iommu/msm*
+ F:	drivers/i2c/busses/i2c-qup.c
+-F:	drivers/clk/qcom/
+-F:	drivers/dma/qcom/
+-F:	drivers/soc/qcom/
++F:	drivers/i2c/busses/i2c-qcom-geni.c
++F:	drivers/mfd/ssbi.c
++F:	drivers/mmc/host/mmci_qcom*
++F:	drivers/mmc/host/sdhci_msm.c
++F:	drivers/pci/controller/dwc/pcie-qcom.c
++F:	drivers/phy/qualcomm/
++F:	drivers/power/*/msm*
++F:	drivers/reset/reset-qcom-*
++F:	drivers/scsi/ufs/ufs-qcom.*
+ F:	drivers/spi/spi-qup.c
++F:	drivers/spi/spi-geni-qcom.c
++F:	drivers/spi/spi-qcom-qspi.c
+ F:	drivers/tty/serial/msm_serial.c
+-F:	drivers/*/pm8???-*
+-F:	drivers/mfd/ssbi.c
+-F:	drivers/firmware/qcom_scm*
++F:	drivers/usb/dwc3/dwc3-qcom.c
++F:	include/dt-bindings/*/qcom*
++F:	include/linux/*/qcom*
+ T:	git git://git.kernel.org/pub/scm/linux/kernel/git/agross/linux.git
  
-+	result = usb_autopm_get_interface(serial->interface);
-+	if (result)
-+		return result;
-+
- 	dmabuf = kmalloc(bufsize, GFP_KERNEL);
--	if (!dmabuf)
-+	if (!dmabuf) {
-+		usb_autopm_put_interface(serial->interface);
- 		return -ENOMEM;
-+	}
- 
- 	result = usb_control_msg(serial->dev, usb_rcvctrlpipe(serial->dev, 0),
- 				 CP210X_VENDOR_SPECIFIC, type, val,
-@@ -618,6 +624,7 @@ static int cp210x_read_vendor_block(struct usb_serial *serial, u8 type, u16 val,
- 	}
- 
- 	kfree(dmabuf);
-+	usb_autopm_put_interface(serial->interface);
- 
- 	return result;
- }
-@@ -702,9 +709,15 @@ static int cp210x_write_vendor_block(struct usb_serial *serial, u8 type,
- 	void *dmabuf;
- 	int result;
- 
-+	result = usb_autopm_get_interface(serial->interface);
-+	if (result)
-+		return result;
-+
- 	dmabuf = kmemdup(buf, bufsize, GFP_KERNEL);
--	if (!dmabuf)
-+	if (!dmabuf) {
-+		usb_autopm_put_interface(serial->interface);
- 		return -ENOMEM;
-+	}
- 
- 	result = usb_control_msg(serial->dev, usb_sndctrlpipe(serial->dev, 0),
- 				 CP210X_VENDOR_SPECIFIC, type, val,
-@@ -712,6 +725,7 @@ static int cp210x_write_vendor_block(struct usb_serial *serial, u8 type,
- 				 USB_CTRL_SET_TIMEOUT);
- 
- 	kfree(dmabuf);
-+	usb_autopm_put_interface(serial->interface);
- 
- 	if (result == bufsize) {
- 		result = 0;
-@@ -1383,6 +1397,7 @@ static void cp210x_gpio_set(struct gpio_chip *gc, unsigned int gpio, int value)
- 	} else {
- 		u16 wIndex = buf.state << 8 | buf.mask;
- 
-+		usb_autopm_get_interface(serial->interface);
- 		result = usb_control_msg(serial->dev,
- 					 usb_sndctrlpipe(serial->dev, 0),
- 					 CP210X_VENDOR_SPECIFIC,
-@@ -1390,6 +1405,7 @@ static void cp210x_gpio_set(struct gpio_chip *gc, unsigned int gpio, int value)
- 					 CP210X_WRITE_LATCH,
- 					 wIndex,
- 					 NULL, 0, USB_CTRL_SET_TIMEOUT);
-+		usb_autopm_put_interface(serial->interface);
- 	}
- 
- 	if (result < 0) {
+ ARM/RADISYS ENP2611 MACHINE SUPPORT
 -- 
-2.20.1
+2.17.1
 
