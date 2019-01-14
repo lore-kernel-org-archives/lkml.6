@@ -2,257 +2,145 @@ Return-Path: <SRS0=tq6k=PW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+X-Spam-Status: No, score=-5.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DD146C43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 22:38:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AF063C43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 22:40:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A8A9220656
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 22:38:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7225D20659
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 22:40:58 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="h8TH0YP7"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726993AbfANWiT (ORCPT
+        id S1726911AbfANWk4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 14 Jan 2019 17:38:19 -0500
-Received: from mga05.intel.com ([192.55.52.43]:43343 "EHLO mga05.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725681AbfANWiS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 Jan 2019 17:38:18 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 14 Jan 2019 14:38:10 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,479,1539673200"; 
-   d="scan'208";a="291537241"
-Received: from yoojae-mobl1.amr.corp.intel.com (HELO [10.7.153.143]) ([10.7.153.143])
-  by orsmga005.jf.intel.com with ESMTP; 14 Jan 2019 14:38:10 -0800
-Subject: Re: [PATCH v10 03/12] peci: Add support for PECI bus driver core
-To:     Joel Stanley <joel@jms.id.au>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        OpenBMC Maillist <openbmc@lists.ozlabs.org>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Andy Shevchenko <andriy.shevchenko@intel.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Fengguang Wu <fengguang.wu@intel.com>,
-        Jason M Biils <jason.m.bills@linux.intel.com>,
-        Julia Cartwright <juliac@eso.teric.us>,
-        Haiyue Wang <haiyue.wang@linux.intel.com>,
-        James Feist <james.feist@linux.intel.com>,
-        Vernon Mauery <vernon.mauery@linux.intel.com>
-References: <20190107214136.5256-1-jae.hyun.yoo@linux.intel.com>
- <20190107214136.5256-4-jae.hyun.yoo@linux.intel.com>
- <CACPK8XfxU6r_0HLbD2MuSgON5-G43cpENhK+SR=9KhBG4GeWDA@mail.gmail.com>
-From:   Jae Hyun Yoo <jae.hyun.yoo@linux.intel.com>
-Message-ID: <68876b15-f0fb-e9dd-a4aa-e9b5c50f4a54@linux.intel.com>
-Date:   Mon, 14 Jan 2019 14:38:10 -0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.3
+        Mon, 14 Jan 2019 17:40:56 -0500
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:43815 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726696AbfANWk4 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 14 Jan 2019 17:40:56 -0500
+Received: by mail-pf1-f196.google.com with SMTP id w73so287853pfk.10
+        for <linux-kernel@vger.kernel.org>; Mon, 14 Jan 2019 14:40:55 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:content-transfer-encoding:subject:user-agent
+         :in-reply-to:references:cc:to:message-id:from:date;
+        bh=WLM5dNyoTozbSd88yUgecKq6QyU7aVPi4GfRYy8UReI=;
+        b=h8TH0YP7JGX2HERs2Xbopr3IY+BaCgskhvbbnmskeHAayxvDvHycazUMlkBSvpLUUi
+         Gccje91dblSoB+9bqGaSTgSGPF0G8ADg46rSdjznDntLdy/c6xAl97+oOZpA1b4B2LPC
+         sTnOI8QeKZeMtfE0BhXygtDJ62lsmomLd2mhA=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:content-transfer-encoding:subject
+         :user-agent:in-reply-to:references:cc:to:message-id:from:date;
+        bh=WLM5dNyoTozbSd88yUgecKq6QyU7aVPi4GfRYy8UReI=;
+        b=SiDj7K0sohAP2g3C3IAiUkX+RY/3QqAdT+wE7f/tYKJbKD1HBWHk1BemCvWaKPF+17
+         NMvLLge3zj3ussyjnWdR4b2Mu6f1qh520aomzpxS7HCl9R6oLsMw2fFZy93guYn0QOmh
+         k9PS6THOeOaAAxOQ/MrbYtXCPCubakMZojFjGMVDfLkuQz1lQlZWpP2y1CzejEvtPd8D
+         taMC6ynlQoaYinBFlc+2/evEFRJhFW7c0E9XfPQi5SK6648jtvShjnMrsTmZdQVMAbPI
+         I46GmmltmnnWemSGk5IxuOkhzRpPZjKovh/J69AzHk20tURWF+RGH6WiNniI2R9U7H9i
+         +apQ==
+X-Gm-Message-State: AJcUuke253lGqeMa9ZehXKm0qvED5sCzUI1SzpWnOnX7bvsdpzB1z02U
+        4lr7F9evFUW4cI4lU+usNlCz/Shry66HNA==
+X-Google-Smtp-Source: ALg8bN4JtA78uSzTBd+UQ+u6Hg8nkOyULo8MaGvvgNBBbaVhNeGE7jStT909BOVz02+KhNvO0WuWIA==
+X-Received: by 2002:a62:6408:: with SMTP id y8mr767786pfb.202.1547505655487;
+        Mon, 14 Jan 2019 14:40:55 -0800 (PST)
+Received: from localhost ([2620:15c:202:1:fa53:7765:582b:82b9])
+        by smtp.gmail.com with ESMTPSA id e123sm1468751pgc.58.2019.01.14.14.40.54
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 14 Jan 2019 14:40:54 -0800 (PST)
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-In-Reply-To: <CACPK8XfxU6r_0HLbD2MuSgON5-G43cpENhK+SR=9KhBG4GeWDA@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v2 3/7] soc: qcom: Add AOSS QMP genpd provider
+User-Agent: alot/0.8
+In-Reply-To: <20190106080915.4493-4-bjorn.andersson@linaro.org>
+References: <20190106080915.4493-1-bjorn.andersson@linaro.org> <20190106080915.4493-4-bjorn.andersson@linaro.org>
+Cc:     Russell King <linux@armlinux.org.uk>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Arun Kumar Neelakantam <aneela@codeaurora.org>,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+To:     Andy Gross <andy.gross@linaro.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        David Brown <david.brown@linaro.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Rob Herring <robh+dt@kernel.org>
+Message-ID: <154750565372.169631.9416138415370937156@swboyd.mtv.corp.google.com>
+From:   Stephen Boyd <swboyd@chromium.org>
+Date:   Mon, 14 Jan 2019 14:40:53 -0800
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello Joel,
+Quoting Bjorn Andersson (2019-01-06 00:09:11)
+> diff --git a/drivers/soc/qcom/Kconfig b/drivers/soc/qcom/Kconfig
+> index dda19471057f..d81256ef5055 100644
+> --- a/drivers/soc/qcom/Kconfig
+> +++ b/drivers/soc/qcom/Kconfig
+> @@ -12,6 +12,15 @@ config QCOM_AOSS_QMP
+>           micro-controller in the AOSS, using QMP, to control certain res=
+ource
+>           that are not exposed through RPMh.
+> =20
+> +config QCOM_AOSS_QMP_PD
+> +       tristate "Qualcomm AOSS Messaging Power Domain driver"
+> +       depends on QCOM_AOSS_QMP
+> +       select PM_GENERIC_DOMAINS
+> +       help
+> +         This driver provides the means of controlling the AOSSs handlin=
+g of
 
-On 1/14/2019 3:13 AM, Joel Stanley wrote:
-> Hello Jae,
-> 
-> On Tue, 8 Jan 2019 at 08:11, Jae Hyun Yoo <jae.hyun.yoo@linux.intel.com> wrote:
->>
->> This commit adds driver implementation for PECI bus core into linux
->> driver framework.
-> 
-> I would like to help you get this merged next release cycle, as we are
-> now carrying it in OpenBMC. I suggest we ask Greg to queue it up if
-> there are no objections after you've addressed my questions.
-> 
+Is that possesive? AOSS's?
 
-Thanks a lot for your help on reviewing this patch series. I'll submit
-v11 to address your comments. We could ask Greg to queue it then.
+> +         low-power state for resources related to the remoteproc subsyst=
+ems as
+> +         well as controlling the debug clocks.
+> +
+>  config QCOM_COMMAND_DB
+>         bool "Qualcomm Command DB"
+>         depends on ARCH_QCOM || COMPILE_TEST
+> diff --git a/drivers/soc/qcom/aoss-qmp-pd.c b/drivers/soc/qcom/aoss-qmp-p=
+d.c
+> new file mode 100644
+> index 000000000000..62b8fcb9d09e
+> --- /dev/null
+> +++ b/drivers/soc/qcom/aoss-qmp-pd.c
+> @@ -0,0 +1,135 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Copyright (c) 2018, Linaro Ltd
+> + */
+> +#include <linux/module.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/pm_domain.h>
+> +#include <linux/soc/qcom/aoss-qmp.h>
+> +#include <dt-bindings/power/qcom-aoss-qmp.h>
+> +
+> +struct qmp_pd {
+> +       struct qmp *qmp;
+> +
+> +       struct generic_pm_domain pd;
+> +
+> +       const char *name;
+> +};
+> +
+> +#define to_qmp_pd_resource(res) container_of(res, struct qmp_pd, pd)
+> +
+> +struct qmp_pd_resource {
+> +       const char *name;
+> +       int (*on)(struct generic_pm_domain *domain);
+> +       int (*off)(struct generic_pm_domain *domain);
+> +};
+> +
+> +static int qmp_pd_clock_toggle(struct qmp_pd *res, bool enable)
+> +{
+> +       char buf[96];
 
->> +static u8 peci_aw_fcs(u8 *data, int len)
-> 
-> I was wondering what aw_fcs meant. I notice that later on you describe
-> it as an Assure Write Frame Check Sequence byte. You could add a
-> comment next to this function :)
-> 
+Is 96 calculated from somewhere? Can it be a define because it's quite
+magical.
 
-Agreed. I'll add a comment like you suggested.
-
-> Instead of casing to u8 every time you call this, you could have this
-> take a struct peci_xfer_msg * and cast when calling crc8.
-> 
-
-Yes, that would be neater. Will fix it.
-
->> +{
->> +       return crc8(peci_crc8_table, data, (size_t)len, 0);
->> +}
->> +
->> +static int __peci_xfer(struct peci_adapter *adapter, struct peci_xfer_msg *msg,
->> +                      bool do_retry, bool has_aw_fcs)
->> +{
->> +       ktime_t start, end;
->> +       s64 elapsed_ms;
->> +       int rc = 0;
->> +
->> +       /**
-> 
-> These are for kerneldoc, and the comments aren't kerneldoc. Replace
-> them with /* instead.
-> 
-
-Okay, I'll check all comments again in this series.
-
->> +        * For some commands, the PECI originator may need to retry a command if
->> +        * the processor PECI client responds with a 0x8x completion code. In
->> +        * each instance, the processor PECI client may have started the
->> +        * operation but not completed it yet. When the 'retry' bit is set, the
->> +        * PECI client will ignore a new request if it exactly matches a
->> +        * previous valid request.
->> +        */
->> +
->> +       if (do_retry)
->> +               start = ktime_get();
->> +
->> +       do {
->> +               rc = adapter->xfer(adapter, msg);
->> +
->> +               if (!do_retry || rc)
->> +                       break;
->> +
->> +               if (msg->rx_buf[0] == DEV_PECI_CC_SUCCESS)
->> +                       break;
->> +
->> +               /* Retry is needed when completion code is 0x8x */
->> +               if ((msg->rx_buf[0] & DEV_PECI_CC_RETRY_CHECK_MASK) !=
->> +                   DEV_PECI_CC_NEED_RETRY) {
->> +                       rc = -EIO;
->> +                       break;
->> +               }
->> +
->> +               /* Set the retry bit to indicate a retry attempt */
->> +               msg->tx_buf[1] |= DEV_PECI_RETRY_BIT;
->> +
->> +               /* Recalculate the AW FCS if it has one */
->> +               if (has_aw_fcs)
->> +                       msg->tx_buf[msg->tx_len - 1] = 0x80 ^
-> 
-> Can we guarantee that msg->tx_len will be set to non-zero whenever has_aw_fcs?
-> 
-> I suggest checking before doing the assignment in case a new caller is
-> added and they make a mistake.
-> 
-
-The msg->tx_len is already checked by callers - peci_ioctl_wr_pkg_cfg()
-and peci_ioctl_wr_pci_cfg_local() - so it's not needed to be checked
-again at here.
-
->> +static int peci_ioctl_get_dib(struct peci_adapter *adapter, void *vmsg)
->> +{
->> +       struct peci_get_dib_msg *umsg = vmsg;
->> +       struct peci_xfer_msg msg;
->> +       int rc;
->> +
->> +       msg.addr      = umsg->addr;
->> +       msg.tx_len    = GET_DIB_WR_LEN;
->> +       msg.rx_len    = GET_DIB_RD_LEN;
->> +       msg.tx_buf[0] = GET_DIB_PECI_CMD;
->> +
->> +       rc = peci_xfer(adapter, &msg);
-> 
-> Most of tx_buf is going to be uninitialised. I assume a well behaving
-> adapter->xfer will check this and only send the correct number of
-> bytes, but it might pay to zero out struct peci_xfer_msg in all of
-> these functions?
-> 
-
-The tx_buf will be initialized only amounts it needs to be in each
-command. The adapter->xfer is handling exactly up to msg->tx_len so
-it would be better keep the current code without using zeroing out the
-struct.
-
->> +       if (rc)
->> +               return rc;
->> +
->> +       umsg->dib = le64_to_cpup((__le64 *)msg.rx_buf);
->> +
->> +       return 0;
->> +}
-> 
->> +
->> +#if IS_ENABLED(CONFIG_OF)
->> +static struct peci_client *peci_of_register_device(struct peci_adapter *adapter,
->> +                                                  struct device_node *node)
->> +{
->> +       struct peci_board_info info = {};
->> +       struct peci_client *result;
->> +       const __be32 *addr_be;
->> +       int len;
->> +
->> +       dev_dbg(&adapter->dev, "register %pOF\n", node);
->> +
->> +       if (of_modalias_node(node, info.type, sizeof(info.type)) < 0) {
-> 
-> I don't understand why you're doing this. Won't this always be peci,
-> as your binding requires?
-> 
-
-Since it supports only 'intel,peci-client' for now, it's not needed
-actually. I'll drop it at this time. It would be added later if needed.
-
->> +               dev_err(&adapter->dev, "modalias failure on %pOF\n", node);
->> +               return ERR_PTR(-EINVAL);
->> +       }
->> +
->> +       addr_be = of_get_property(node, "reg", &len);
->> +       if (!addr_be || len < sizeof(*addr_be)) {
-> 
-> The second check looks suspicious.
-> 
-> You could fix it to check the expected length (4), or use of_property_read_u32.
-> 
-
-Right, I'll fix it using of_property_read_u32.
-
->> +               dev_err(&adapter->dev, "invalid reg on %pOF\n", node);
->> +               return ERR_PTR(-EINVAL);
->> +       }
->> +
->> +       info.addr = be32_to_cpup(addr_be);
->> +       info.of_node = of_node_get(node);
->> +
->> +       result = peci_new_device(adapter, &info);
->> +       if (!result)
-> 
-> Should you do an of_node_put here?
-> 
-
-Oh, this code is definitely incorrect. I should to put the of_node
-reference at here if peci_new_device() fails and should keep the
-reference until peci_unregister_device() is called. Will fix it.
-Thank you for your pointing it out!
-
->> +               result = ERR_PTR(-EINVAL);
->> +
->> +       of_node_put(node);
-> 
-> Why do you release the reference here?
-> 
-
-This is incorrect too. Will move the of_node_get/put code into
-peci_new_device() and peci_unregister_device() to avoid confusion.
-Thanks again for your pointing it out. :)
-
->> +       return result;
->> +}
->> +
-> 
