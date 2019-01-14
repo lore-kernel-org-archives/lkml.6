@@ -4,68 +4,68 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EA965C43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 20:18:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2EA47C43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 20:18:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BB928206B7
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 20:18:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F2ABF2064C
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 20:18:14 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="U7KauB6T"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fxG2dNMa"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727006AbfANUSK (ORCPT
+        id S1727022AbfANUSN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 14 Jan 2019 15:18:10 -0500
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:40782 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726774AbfANUSI (ORCPT
+        Mon, 14 Jan 2019 15:18:13 -0500
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:33308 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726875AbfANUSK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 Jan 2019 15:18:08 -0500
-Received: by mail-wr1-f65.google.com with SMTP id p4so372052wrt.7;
-        Mon, 14 Jan 2019 12:18:07 -0800 (PST)
+        Mon, 14 Jan 2019 15:18:10 -0500
+Received: by mail-wr1-f68.google.com with SMTP id c14so425757wrr.0;
+        Mon, 14 Jan 2019 12:18:08 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=sender:from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=kcEOqmGANd3qw9mtfjaEDrtSnlCvqw/F1drfq3baqQ8=;
-        b=U7KauB6TKPp9oyLa4fFmF71VRK9DaFXB8/AjE97Wb6BHL69zADOSrkUDY+UUEiyPPr
-         e2tpFoJ2DimoWUKIpYP6NbNj/vbxcnUFFE/Js9LWp0Lh2w5gAmNOgOck43ADlTTI3JQf
-         P6Ro9a8j8UqhRPTY0G/dkMoLnJzfsrsIdEmpe0oQaWFlK/lmXVi1ZVdn6jjq2ldcgNgU
-         ErXuIt0s3r1IVgJcF0fnoHL1myAoO7A3XKMiRSYq5EdfNWnSAhbLK8KfXkyrncRtmuaJ
-         tTxDRNA3yYozBHfS9CpwM0G1+5ABV1CMdLEvDybtOnFS7xWS3q4VAw5dcIjjj4xWc32X
-         SnJA==
+        bh=p49bt+1SmEsGxWoH/rsPYLV7MdXyFzHn36341naqvhE=;
+        b=fxG2dNMaBcuL+wiI9sLYrL9YwVKKPZDmaMky6NEAWB+u+jvp0s3MTZW6hUkkbcKOHZ
+         8h8TJaab3a937THp1sQN+PCGHrVk4ZTdvth6KAstkkxPHtJ/Xn7qUPRiA6qcbE9nnPp2
+         CKEgzyXWKPL2nYYEvT1mVjf66TgPdiL7ftUwlaG311QmqfW1liq4xXLDI9pLXf1gyZz2
+         Lp62Vqnpxjfq31VP2xXU1cS6/v01w25a3tWV3LCnBLyXbEew0Z8dagQHf5nPGdMpaEnN
+         uExaDB4lc2kko42i1wjC+ehF6QntNYNEeJhT2oeo1/BEGVAJM6fivWQ1mb1ArktCZjQR
+         /nTA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:sender:from:to:cc:subject:date:message-id
          :in-reply-to:references:mime-version:content-transfer-encoding;
-        bh=kcEOqmGANd3qw9mtfjaEDrtSnlCvqw/F1drfq3baqQ8=;
-        b=YJgEgwoMYht+YefXbShhxRBW3ZDA/m/mVeTSK51BuAbYvMr9zfZ8QvZo1SquQBDztG
-         UyQhnhZlWHuvqZKBqcbV3YYwoBx9A6OoTvLOVMLO47MUZu3KzOudHltYdobQz8Vl+ATU
-         sGAB2P1UHBkR9JG1AHEOCyia8i9N9dcDTkc+QQnZxepsNpDdThK7e4Tdp7+ftgz/y7Ua
-         Fb5tEFEpFXx/5JXQ3wxJ1XA1S4kefWNsAcmenNVtXrN9xuf7F784QUPim++4OvJuzjn3
-         2tfLwQIDJ8h9ZM4MHVrJRVGEha9ol/Qm/sh/ye1YX6gsJo8aRSOqNFwJCIeTkzCYSoSD
-         dvnw==
-X-Gm-Message-State: AJcUukdT6fappRRsaQw/v3io5Z9NJgMiLV9qnmkcv798bZXOHJiuQ9Fz
-        nRUsj5hBsfpmgF3cYN4uGO5adTIJ
-X-Google-Smtp-Source: ALg8bN7KcivWoKJjbLJwxMgpuV9q6JryzAzdXpx0JueUbEGhOnwUQgKVZsUmWzLnnqiKSfYyFVtKtQ==
-X-Received: by 2002:adf:f390:: with SMTP id m16mr152176wro.71.1547497086220;
-        Mon, 14 Jan 2019 12:18:06 -0800 (PST)
+        bh=p49bt+1SmEsGxWoH/rsPYLV7MdXyFzHn36341naqvhE=;
+        b=tobCZ9mPHJM/waGN+rdijMD2bHnbl/AhuXhOwgu8oTqB2hhatCAmiyFW8Owibl1Gr8
+         L51x+EjZqwaZ3r4QWdhYNQIpj1T6oKj0MqNORi6FwK1La3uuX2AUShItSCOherNKm2pG
+         nfAwumdz5bqeM2ZdjjnonaRSV6jUoKmcTHKqmnMhHMBG2Rh67ZqOAUJjA4h+Z1KrDC2A
+         iom5bhlrN8o8kHDAPbyOHOy7NLQR39N5pFCS6RYl2RSjrIzFBuXOUTRYdlrb2pCdjLbS
+         1IYQ9wFXkhq8ry5jw4EzekZDn1npWrPLXyFA6cuWi7n4R5mH0Ct0Rp/JAEy3zL4qyQ0r
+         eDqg==
+X-Gm-Message-State: AJcUukd4EGyOVXMtAyIfVyAA0Jj5D0SXK0pgMFiTjohrGRGjZ8d+3l1C
+        1DwX0l26SlDnskev9HWnyh4=
+X-Google-Smtp-Source: ALg8bN4W1GOaN2mtvE5eUSkbVrLb/uehIz5qqi2v6zoBqs3xpbxrJFkGbvgGyMLYjVM/8ASyDO427w==
+X-Received: by 2002:adf:ee46:: with SMTP id w6mr146671wro.261.1547497087853;
+        Mon, 14 Jan 2019 12:18:07 -0800 (PST)
 Received: from macbookpro.malat.net (bru31-1-78-225-224-134.fbx.proxad.net. [78.225.224.134])
-        by smtp.gmail.com with ESMTPSA id h17sm71063695wrt.59.2019.01.14.12.18.05
+        by smtp.gmail.com with ESMTPSA id u204sm50535787wmu.30.2019.01.14.12.18.07
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 14 Jan 2019 12:18:05 -0800 (PST)
+        Mon, 14 Jan 2019 12:18:07 -0800 (PST)
 Received: by macbookpro.malat.net (Postfix, from userid 1000)
-        id 87BA211422D0; Mon, 14 Jan 2019 21:18:04 +0100 (CET)
+        id 2767C11422AD; Mon, 14 Jan 2019 21:18:06 +0100 (CET)
 From:   Mathieu Malaterre <malat@debian.org>
 To:     David Howells <dhowells@redhat.com>
 Cc:     Mathieu Malaterre <malat@debian.org>,
         James Morris <jmorris@namei.org>,
         "Serge E. Hallyn" <serge@hallyn.com>, keyrings@vger.kernel.org,
         linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 2/3] security: keys: annotate implicit fall throughs
-Date:   Mon, 14 Jan 2019 21:17:24 +0100
-Message-Id: <20190114201725.13289-2-malat@debian.org>
+Subject: [PATCH 3/3] security: keys: annotate implicit fall throughs
+Date:   Mon, 14 Jan 2019 21:17:25 +0100
+Message-Id: <20190114201725.13289-3-malat@debian.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20190114201725.13289-1-malat@debian.org>
 References: <20190114201725.13289-1-malat@debian.org>
@@ -79,45 +79,49 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 There is a plan to build the kernel with -Wimplicit-fallthrough and
 these places in the code produced warnings (W=1). Fix them up.
 
-This commit remove the following warning:
+This commit remove the following warnings:
 
-  security/keys/process_keys.c:380:7: warning: this statement may fall through [-Wimplicit-fallthrough=]
-  security/keys/process_keys.c:404:7: warning: this statement may fall through [-Wimplicit-fallthrough=]
-  security/keys/process_keys.c:424:7: warning: this statement may fall through [-Wimplicit-fallthrough=]
+  security/keys/request_key.c:293:7: warning: this statement may fall through [-Wimplicit-fallthrough=]
+  security/keys/request_key.c:298:7: warning: this statement may fall through [-Wimplicit-fallthrough=]
+  security/keys/request_key.c:307:7: warning: this statement may fall through [-Wimplicit-fallthrough=]
 
 Signed-off-by: Mathieu Malaterre <malat@debian.org>
 ---
- security/keys/process_keys.c | 3 +++
- 1 file changed, 3 insertions(+)
+ security/keys/request_key.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/security/keys/process_keys.c b/security/keys/process_keys.c
-index 02c77e928f68..3308d738734c 100644
---- a/security/keys/process_keys.c
-+++ b/security/keys/process_keys.c
-@@ -379,6 +379,7 @@ key_ref_t search_my_process_keyrings(struct keyring_search_context *ctx)
- 		case -EAGAIN: /* no key */
- 			if (ret)
- 				break;
+diff --git a/security/keys/request_key.c b/security/keys/request_key.c
+index 301f0e300dbd..af8816ffb6ce 100644
+--- a/security/keys/request_key.c
++++ b/security/keys/request_key.c
+@@ -287,16 +287,19 @@ static int construct_get_dest_keyring(struct key **_dest_keyring)
+ 				}
+ 			}
+ 
 +			/* fall through */
- 		case -ENOKEY: /* negative key */
- 			ret = key_ref;
- 			break;
-@@ -403,6 +404,7 @@ key_ref_t search_my_process_keyrings(struct keyring_search_context *ctx)
- 		case -EAGAIN: /* no key */
- 			if (ret)
+ 		case KEY_REQKEY_DEFL_THREAD_KEYRING:
+ 			dest_keyring = key_get(cred->thread_keyring);
+ 			if (dest_keyring)
  				break;
+ 
 +			/* fall through */
- 		case -ENOKEY: /* negative key */
- 			ret = key_ref;
- 			break;
-@@ -423,6 +425,7 @@ key_ref_t search_my_process_keyrings(struct keyring_search_context *ctx)
- 		case -EAGAIN: /* no key */
- 			if (ret)
+ 		case KEY_REQKEY_DEFL_PROCESS_KEYRING:
+ 			dest_keyring = key_get(cred->process_keyring);
+ 			if (dest_keyring)
  				break;
+ 
 +			/* fall through */
- 		case -ENOKEY: /* negative key */
- 			ret = key_ref;
- 			break;
+ 		case KEY_REQKEY_DEFL_SESSION_KEYRING:
+ 			rcu_read_lock();
+ 			dest_keyring = key_get(
+@@ -306,6 +309,7 @@ static int construct_get_dest_keyring(struct key **_dest_keyring)
+ 			if (dest_keyring)
+ 				break;
+ 
++			/* fall through */
+ 		case KEY_REQKEY_DEFL_USER_SESSION_KEYRING:
+ 			dest_keyring =
+ 				key_get(cred->user->session_keyring);
 -- 
 2.19.2
 
