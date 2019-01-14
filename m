@@ -2,214 +2,120 @@ Return-Path: <SRS0=tq6k=PW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 84811C43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 10:15:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6537FC43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 10:17:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4FBF920659
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 10:15:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3B5B320873
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 10:17:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726558AbfANKPg (ORCPT
+        id S1726639AbfANKQ6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 14 Jan 2019 05:15:36 -0500
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:57986 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726339AbfANKPg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 Jan 2019 05:15:36 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 91409A78;
-        Mon, 14 Jan 2019 02:15:35 -0800 (PST)
-Received: from [10.1.196.62] (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 62EEB3F5BD;
-        Mon, 14 Jan 2019 02:15:33 -0800 (PST)
-Subject: Re: [PATCH v3 6/7] arm64: add sysfs vulnerability show for
- speculative store bypass
-To:     Jeremy Linton <jeremy.linton@arm.com>,
-        linux-arm-kernel@lists.infradead.org
-Cc:     catalin.marinas@arm.com, will.deacon@arm.com,
-        suzuki.poulose@arm.com, dave.martin@arm.com,
-        shankerd@codeaurora.org, linux-kernel@vger.kernel.org,
-        ykaukab@suse.de, julien.thierry@arm.com, mlangsdo@redhat.com,
-        steven.price@arm.com, stefan.wahren@i2se.com
-References: <20190109235544.2992426-1-jeremy.linton@arm.com>
- <20190109235544.2992426-7-jeremy.linton@arm.com>
-From:   Marc Zyngier <marc.zyngier@arm.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=marc.zyngier@arm.com; prefer-encrypt=mutual; keydata=
- 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
-Organization: ARM Ltd
-Message-ID: <ac625845-fd40-ad87-4efd-ea0ed53274ec@arm.com>
-Date:   Mon, 14 Jan 2019 10:15:31 +0000
-User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.1
+        Mon, 14 Jan 2019 05:16:58 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:33476 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726187AbfANKQ6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 14 Jan 2019 05:16:58 -0500
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 0B79C7F6C5;
+        Mon, 14 Jan 2019 10:16:57 +0000 (UTC)
+Received: from colo-mx.corp.redhat.com (colo-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.21])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id BA1525C25D;
+        Mon, 14 Jan 2019 10:16:56 +0000 (UTC)
+Received: from zmail21.collab.prod.int.phx2.redhat.com (zmail21.collab.prod.int.phx2.redhat.com [10.5.83.24])
+        by colo-mx.corp.redhat.com (Postfix) with ESMTP id 39C333F600;
+        Mon, 14 Jan 2019 10:16:56 +0000 (UTC)
+Date:   Mon, 14 Jan 2019 05:16:55 -0500 (EST)
+From:   Pankaj Gupta <pagupta@redhat.com>
+To:     Jan Kara <jack@suse.cz>
+Cc:     Dan Williams <dan.j.williams@intel.com>,
+        KVM list <kvm@vger.kernel.org>,
+        David Hildenbrand <david@redhat.com>,
+        linux-nvdimm <linux-nvdimm@ml01.01.org>,
+        Jason Wang <jasowang@redhat.com>,
+        Dave Chinner <david@fromorbit.com>,
+        Qemu Developers <qemu-devel@nongnu.org>,
+        virtualization@lists.linux-foundation.org,
+        adilger kernel <adilger.kernel@dilger.ca>,
+        Ross Zwisler <zwisler@kernel.org>,
+        dave jiang <dave.jiang@intel.com>,
+        darrick wong <darrick.wong@oracle.com>,
+        vishal l verma <vishal.l.verma@intel.com>,
+        "Michael S. Tsirkin" <mst@redhat.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Christoph Hellwig <hch@infradead.org>,
+        Linux ACPI <linux-acpi@vger.kernel.org>,
+        jmoyer <jmoyer@redhat.com>,
+        linux-ext4 <linux-ext4@vger.kernel.org>,
+        Rik van Riel <riel@surriel.com>,
+        Stefan Hajnoczi <stefanha@redhat.com>,
+        Igor Mammedov <imammedo@redhat.com>, lcapitulino@redhat.com,
+        Kevin Wolf <kwolf@redhat.com>,
+        Nitesh Narayan Lal <nilal@redhat.com>,
+        Theodore Ts'o <tytso@mit.edu>,
+        xiaoguangrong eric <xiaoguangrong.eric@gmail.com>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-xfs <linux-xfs@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Paolo Bonzini <pbonzini@redhat.com>
+Message-ID: <2011860338.64100587.1547461015822.JavaMail.zimbra@redhat.com>
+In-Reply-To: <20190114095520.GC13316@quack2.suse.cz>
+References: <20190109144736.17452-1-pagupta@redhat.com> <20190110012617.GA4205@dastard> <20190110101757.GC15790@quack2.suse.cz> <1354249849.63357171.1547343519970.JavaMail.zimbra@redhat.com> <CAPcyv4hwcgTUpgNCefCGu4DvgkYBp5b=f+hJ+FC=s5APYKoycg@mail.gmail.com> <540171952.63371441.1547345866585.JavaMail.zimbra@redhat.com> <20190114095520.GC13316@quack2.suse.cz>
+Subject: Re: [Qemu-devel] [PATCH v3 0/5] kvm "virtio pmem" device
 MIME-Version: 1.0
-In-Reply-To: <20190109235544.2992426-7-jeremy.linton@arm.com>
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
 Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.67.116.53, 10.4.195.7]
+Thread-Topic: kvm "virtio pmem" device
+Thread-Index: k+ecF0+cWZghQYre2RFLCXGyicEhfg==
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.25]); Mon, 14 Jan 2019 10:16:57 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 09/01/2019 23:55, Jeremy Linton wrote:
-> Return status based on ssbd_state and the arm64 SSBS feature. If
-> the mitigation is disabled, or the firmware isn't responding then
-> return the expected machine state based on a new blacklist of known
-> vulnerable cores.
-> 
-> Signed-off-by: Jeremy Linton <jeremy.linton@arm.com>
-> ---
->  arch/arm64/kernel/cpu_errata.c | 48 ++++++++++++++++++++++++++++++++++
->  1 file changed, 48 insertions(+)
-> 
-> diff --git a/arch/arm64/kernel/cpu_errata.c b/arch/arm64/kernel/cpu_errata.c
-> index ee286d606d9b..c8ff96158b94 100644
-> --- a/arch/arm64/kernel/cpu_errata.c
-> +++ b/arch/arm64/kernel/cpu_errata.c
-> @@ -288,6 +288,7 @@ enable_smccc_arch_workaround_1(const struct arm64_cpu_capabilities *entry)
->  DEFINE_PER_CPU_READ_MOSTLY(u64, arm64_ssbd_callback_required);
->  
->  int ssbd_state __read_mostly = ARM64_SSBD_KERNEL;
-> +static bool __ssb_safe = true;
->  
->  static const struct ssbd_options {
->  	const char	*str;
-> @@ -385,10 +386,18 @@ static bool has_ssbd_mitigation(const struct arm64_cpu_capabilities *entry,
->  {
->  	struct arm_smccc_res res;
->  	bool required = true;
-> +	bool is_vul;
->  	s32 val;
->  
->  	WARN_ON(scope != SCOPE_LOCAL_CPU || preemptible());
->  
-> +	is_vul = is_midr_in_range_list(read_cpuid_id(), entry->midr_range_list);
-> +
-> +	if (is_vul)
-> +		__ssb_safe = false;
-> +
-> +	arm64_requested_vuln_attrs |= VULN_SSB;
-> +
->  	if (this_cpu_has_cap(ARM64_SSBS)) {
->  		required = false;
->  		goto out_printmsg;
-> @@ -422,6 +431,7 @@ static bool has_ssbd_mitigation(const struct arm64_cpu_capabilities *entry,
->  		ssbd_state = ARM64_SSBD_UNKNOWN;
->  		return false;
->  
-> +	/* machines with mixed mitigation requirements must not return this */
->  	case SMCCC_RET_NOT_REQUIRED:
->  		pr_info_once("%s mitigation not required\n", entry->desc);
->  		ssbd_state = ARM64_SSBD_MITIGATED;
-> @@ -476,6 +486,17 @@ static bool has_ssbd_mitigation(const struct arm64_cpu_capabilities *entry,
->  
->  	return required;
->  }
-> +
-> +/* known vulnerable cores */
-> +static const struct midr_range arm64_ssb_cpus[] = {
-> +	MIDR_ALL_VERSIONS(MIDR_CORTEX_A57),
-> +	MIDR_ALL_VERSIONS(MIDR_CORTEX_A72),
-> +	MIDR_ALL_VERSIONS(MIDR_CORTEX_A73),
-> +	MIDR_ALL_VERSIONS(MIDR_CORTEX_A75),
-> +	MIDR_ALL_VERSIONS(MIDR_CORTEX_A76),
-> +	{},
-> +};
-> +
->  #endif	/* CONFIG_ARM64_SSBD */
->  
->  static void __maybe_unused
-> @@ -762,6 +783,7 @@ const struct arm64_cpu_capabilities arm64_errata[] = {
->  		.capability = ARM64_SSBD,
->  		.type = ARM64_CPUCAP_LOCAL_CPU_ERRATUM,
->  		.matches = has_ssbd_mitigation,
-> +		.midr_range_list = arm64_ssb_cpus,
->  	},
->  #endif
->  #ifdef CONFIG_ARM64_ERRATUM_1188873
-> @@ -809,4 +831,30 @@ ssize_t cpu_show_spectre_v2(struct device *dev, struct device_attribute *attr,
->  	return sprintf(buf, "Vulnerable\n");
->  }
->  
-> +ssize_t cpu_show_spec_store_bypass(struct device *dev,
-> +		struct device_attribute *attr, char *buf)
-> +{
-> +	/*
-> +	 *  Two assumptions: First, get_ssbd_state() reflects the worse case
-> +	 *  for hetrogenous machines, and that if SSBS is supported its
-> +	 *  supported by all cores.
-> +	 */
-> +	switch (arm64_get_ssbd_state()) {
-> +	case ARM64_SSBD_MITIGATED:
-> +		return sprintf(buf, "Not affected\n");
-> +
-> +	case ARM64_SSBD_KERNEL:
-> +	case ARM64_SSBD_FORCE_ENABLE:
-> +		if (cpus_have_cap(ARM64_SSBS))
-> +			return sprintf(buf, "Not affected\n");
-> +		return sprintf(buf,
-> +			"Mitigation: Speculative Store Bypass disabled\n");
-> +	}
-> +
-> +	if (__ssb_safe)
-> +		return sprintf(buf, "Not affected\n");
 
-The kbuild robot reports that this fails if CONFIG_ARM64_SSBD is not
-selected. What should we print in this case? "Vulnerable"? Or "Unknown"?
-
-> +
-> +	return sprintf(buf, "Vulnerable\n");
-> +}
-> +
->  #endif
+> > > > > Right. Thinking about this I would be more concerned about the fact
+> > > > > that
+> > > > > guest can effectively pin amount of host's page cache upto size of
+> > > > > the
+> > > > > device/file passed to guest as PMEM, can't it Pankaj? Or is there
+> > > > > some
+> > > > > QEMU
+> > > > > magic that avoids this?
+> > > >
+> > > > Yes, guest will pin these host page cache pages using 'get_user_pages'
+> > > > by
+> > > > elevating the page reference count. But these pages can be reclaimed by
+> > > > host
+> > > > at any time when there is memory pressure.
+> > > 
+> > > Wait, how can the guest pin the host pages? I would expect this to
+> > > happen only when using vfio and device assignment. Otherwise, no the
+> > > host can't reclaim a pinned page, that's the whole point of a pin to
+> > > prevent the mm from reclaiming ownership.
+> > 
+> > yes. You are right I just used the pin word but it does not actually pin
+> > pages
+> > permanently. I had gone through the discussion on existing problems with
+> > get_user_pages and DMA e.g [1] to understand Jan's POV. It does mention GUP
+> > pin pages so I also used the word 'pin'. But guest does not permanently pin
+> > these pages and these pages can be reclaimed by host.
 > 
+> OK, then I was just confused how virtio-pmem is going to work. Thanks for
+> explanation! So can I imagine this as guest mmaping the host file and
+> providing the mapped range as "NVDIMM pages" to the kernel inside the
+> guest? Or is it more complex?
+
+yes, that's correct. Host's Qemu process virtual address range is used as guest physical 
+address and a direct mapping(EPT/NPT) is established. At guest side, this physical memory
+range is plugged into guest system memory map and DAX mapping is setup using nvdimm calls.
 
 Thanks,
-
-	M.
--- 
-Jazz is not dead. It just smells funny...
+Pankaj
