@@ -5,63 +5,63 @@ X-Spam-Level:
 X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DC4D3C43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 19:56:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 37389C43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 19:59:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A89C120659
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 19:56:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F1ADD20656
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 19:59:13 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="oKB4A5+a"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="l45stBf4"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726920AbfANT4l (ORCPT
+        id S1726808AbfANT7M (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 14 Jan 2019 14:56:41 -0500
-Received: from mail-wr1-f53.google.com ([209.85.221.53]:34344 "EHLO
-        mail-wr1-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726770AbfANT4k (ORCPT
+        Mon, 14 Jan 2019 14:59:12 -0500
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:33296 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726728AbfANT7M (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 Jan 2019 14:56:40 -0500
-Received: by mail-wr1-f53.google.com with SMTP id j2so343766wrw.1
-        for <linux-kernel@vger.kernel.org>; Mon, 14 Jan 2019 11:56:39 -0800 (PST)
+        Mon, 14 Jan 2019 14:59:12 -0500
+Received: by mail-wr1-f68.google.com with SMTP id c14so362032wrr.0
+        for <linux-kernel@vger.kernel.org>; Mon, 14 Jan 2019 11:59:10 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=date:from:to:cc:subject:message-id:mime-version:content-disposition
          :user-agent;
-        bh=bgwcwI8G8EMuEsEIrTuFeHQ9mh3c2ML9imd/s+BrKE4=;
-        b=oKB4A5+a65fQAh66gXbKwHRQCM7SV4CzcM6zfj6qqKeHvsB0Ow5AcBsvVoXXtRGLev
-         S8+HsApP6FCwYY0Rgif7omY7hLbxmYUiGYVhlFv+UkJQsiOupHnjpJxWZ+hoESKqbpeR
-         21blAmdaLoVq5F8AejbYmQY8B8ezvPWTZXMTPdqBTHJGqhWSxBaQOWVGvz944a8MbQov
-         LT2+9GLmCmhbiVqE35cuxYkhtiFSxOi1tlLNDw5pcyBVWC/0vagW3RHg0M9HsFyvOrya
-         5ODXEkAx8DtoCbvSI60bjEeL6aV/sc9ECp79qDbyXwI5dUvdKtaBfAkf6n0lgNSoYwSE
-         2XnA==
+        bh=XvJXcAMyikUUgw6Dc702RSeCaVIx+EYt85czs0yeFWg=;
+        b=l45stBf4ftpDewV/h5ENvGLYl/h/aNkq9zsLZPCbokKMhtCSjRF0HzbjbGlMKbUg1T
+         MuS4gvCVLAz12rX9n0i2/ceU3FBc0DhxOaoPWuxlVSx6ulv4bR8QLQrfPZ4SX9IL6t+p
+         oWNisLzpqCNLgW0TEQu7sQyHT9aGT5LjY/Ao2Xd828jC+EVT88dwdoguOa2xAXPMEpqP
+         W9l6fWpgPiTkN2t0aqF6Y+gyk4q7p+bVtuTI9aaVt25LO7BuNm+VWxuA/PNT7iqUuG8u
+         /LM/tELdg7cxUlVJE5vWALxGOEQLwgR34a0IFXO2d7crlOcC8r8mkg6jCkleuWdc/+LC
+         riOw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
          :content-disposition:user-agent;
-        bh=bgwcwI8G8EMuEsEIrTuFeHQ9mh3c2ML9imd/s+BrKE4=;
-        b=W7tpQZowQQJpgL8ByeH4zGa2JT9B5e/A1IiluLXt4cpcK4a3vMJaXEFv0aKteUmchg
-         hiz9SxrdBLpUmu6NpUO/9UUH6/w9SjXi75xakUgSG5tTeZrydwtuWGIfXFmX4ETqtZyS
-         ocgP0nIe5Kl5nx4stVJxHkdoB0GZquecj7jKjyhbnIwygaXbgQFfakgoY5F4U54XsHmh
-         PEtggxnV3REyYhRBnxrud+o5kAl/hwMpZovF3Greh6XMiMzsAAwJbpcIihkBro6kjbmB
-         MsbjVcNGUB+1/hNcp4rYH5hSCeTi63TO8l2TBV6z1nAtgXGj6KlgW03BAsMxlcL365l4
-         Cdog==
-X-Gm-Message-State: AJcUukez07x98iklcoB5iwTfpQun0723w0Wlmkey950kH5a14O6Zq0aj
-        Wz+D1wQzzBul2bCwAhy1kA==
-X-Google-Smtp-Source: ALg8bN7I+ni+mgEHZrFPcl73A5u4Zx/J02hWMHShEwAeoj+gHqEsM5dvly6Rblqald/ZAc5a089mLg==
-X-Received: by 2002:adf:db01:: with SMTP id s1mr108539wri.214.1547495798857;
-        Mon, 14 Jan 2019 11:56:38 -0800 (PST)
+        bh=XvJXcAMyikUUgw6Dc702RSeCaVIx+EYt85czs0yeFWg=;
+        b=WLcUBabhf5L4DpASXtSlHbc+9ShqjfWNpJkpUvrJzUKowpb0cjsdwiJB1MPwGaLAc0
+         T8UbDbkQE/gJrRUshaxgheRg14PzW3cmr34W9CSpekqUrOjsSsVNQRtCW9Y0vzHmfwjM
+         0VRNgZN3aeMx3KDmDn33iZOfxrlT9aX72kX1zM9lYLT4tXjnblTpMxRXX2zco+A4tYR1
+         TMqnbvM/esv+V5zG3ibn8nhs6zLEXn7LcHBhdE6nP3qn3HaEuuYGaAPkiYn7BYZey35f
+         egSZ+rTeTT0Fit15f3FfMufFPbLlB6pEfvJrXaVrl41+IOOIuCrVtTXWs65QOqXCBMd2
+         Nf3w==
+X-Gm-Message-State: AJcUukeQRHbkr24s8mcYgaYlpF2Li/noGECk0Jp3BCw/sCRpLHV7Y05g
+        7dAMlTchVm+WsRU7G9ByFCPDKwo=
+X-Google-Smtp-Source: ALg8bN4wICQmaTLoOe2+2VnabGZwJu19Rkupj6eLRdc/YnTOj6XxnozhXsIvrkEnM4igNatzY2Kx5g==
+X-Received: by 2002:a5d:5182:: with SMTP id k2mr100495wrv.121.1547495949794;
+        Mon, 14 Jan 2019 11:59:09 -0800 (PST)
 Received: from avx2 (nat-minsk-pool-46-53-201-92.telecom.by. [46.53.201.92])
-        by smtp.gmail.com with ESMTPSA id g67sm54594139wmd.38.2019.01.14.11.56.37
+        by smtp.gmail.com with ESMTPSA id c1sm27437067wmb.14.2019.01.14.11.59.08
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 14 Jan 2019 11:56:37 -0800 (PST)
-Date:   Mon, 14 Jan 2019 22:56:35 +0300
+        Mon, 14 Jan 2019 11:59:09 -0800 (PST)
+Date:   Mon, 14 Jan 2019 22:59:07 +0300
 From:   Alexey Dobriyan <adobriyan@gmail.com>
 To:     akpm@linux-foundation.org
-Cc:     linux-kernel@vger.kernel.org, zhangzhikang1@huawei.com
-Subject: [PATCH] proc: remove unused argument in proc_pid_lookup()
-Message-ID: <20190114195635.GA9372@avx2>
+Cc:     linux-kernel@vger.kernel.org
+Subject: [PATCH] proc: read kernel cpu stat pointer once
+Message-ID: <20190114195907.GA9680@avx2>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
@@ -71,49 +71,142 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Zhikang Zhang <zhangzhikang1@huawei.com>
+Help gcc generate better code:
 
-[delete "extern" from prototype --adobriyan]
+	$ ./scripts/bloat-o-meter ../vmlinux-000 ../vmlinux-001
+	add/remove: 2/2 grow/shrink: 0/1 up/down: 92/-142 (-50)
+	Function                                     old     new   delta
+	get_iowait_time.isra                           -      46     +46
+	get_idle_time.isra                             -      46     +46
+	show_stat                                   1489    1477     -12
+	get_iowait_time                               65       -     -65
+	get_idle_time                                 65       -     -65
 
-Signed-off-by: Zhikang Zhang <zhangzhikang1@huawei.com>
 Signed-off-by: Alexey Dobriyan <adobriyan@gmail.com>
 ---
 
- fs/proc/base.c     |    2 +-
- fs/proc/internal.h |    2 +-
- fs/proc/root.c     |    2 +-
- 3 files changed, 3 insertions(+), 3 deletions(-)
+ fs/proc/stat.c |   60 ++++++++++++++++++++++++++++++---------------------------
+ 1 file changed, 32 insertions(+), 28 deletions(-)
 
---- a/fs/proc/base.c
-+++ b/fs/proc/base.c
-@@ -3165,7 +3165,7 @@ static struct dentry *proc_pid_instantiate(struct dentry * dentry,
- 	return d_splice_alias(inode, dentry);
+--- a/fs/proc/stat.c
++++ b/fs/proc/stat.c
+@@ -23,21 +23,21 @@
+ 
+ #ifdef arch_idle_time
+ 
+-static u64 get_idle_time(int cpu)
++static u64 get_idle_time(struct kernel_cpustat *kcs, int cpu)
+ {
+ 	u64 idle;
+ 
+-	idle = kcpustat_cpu(cpu).cpustat[CPUTIME_IDLE];
++	idle = kcs->cpustat[CPUTIME_IDLE];
+ 	if (cpu_online(cpu) && !nr_iowait_cpu(cpu))
+ 		idle += arch_idle_time(cpu);
+ 	return idle;
  }
  
--struct dentry *proc_pid_lookup(struct inode *dir, struct dentry * dentry, unsigned int flags)
-+struct dentry *proc_pid_lookup(struct dentry *dentry, unsigned int flags)
+-static u64 get_iowait_time(int cpu)
++static u64 get_iowait_time(struct kernel_cpustat *kcs, int cpu)
  {
- 	struct task_struct *task;
- 	unsigned tgid;
---- a/fs/proc/internal.h
-+++ b/fs/proc/internal.h
-@@ -161,7 +161,7 @@ extern struct inode *proc_pid_make_inode(struct super_block *, struct task_struc
- extern void pid_update_inode(struct task_struct *, struct inode *);
- extern int pid_delete_dentry(const struct dentry *);
- extern int proc_pid_readdir(struct file *, struct dir_context *);
--extern struct dentry *proc_pid_lookup(struct inode *, struct dentry *, unsigned int);
-+struct dentry *proc_pid_lookup(struct dentry *, unsigned int);
- extern loff_t mem_lseek(struct file *, loff_t, int);
+ 	u64 iowait;
  
- /* Lookups */
---- a/fs/proc/root.c
-+++ b/fs/proc/root.c
-@@ -154,7 +154,7 @@ static int proc_root_getattr(const struct path *path, struct kstat *stat,
+-	iowait = kcpustat_cpu(cpu).cpustat[CPUTIME_IOWAIT];
++	iowait = kcs->cpustat[CPUTIME_IOWAIT];
+ 	if (cpu_online(cpu) && nr_iowait_cpu(cpu))
+ 		iowait += arch_idle_time(cpu);
+ 	return iowait;
+@@ -45,7 +45,7 @@ static u64 get_iowait_time(int cpu)
  
- static struct dentry *proc_root_lookup(struct inode * dir, struct dentry * dentry, unsigned int flags)
+ #else
+ 
+-static u64 get_idle_time(int cpu)
++static u64 get_idle_time(struct kernel_cpustat *kcs, int cpu)
  {
--	if (!proc_pid_lookup(dir, dentry, flags))
-+	if (!proc_pid_lookup(dentry, flags))
- 		return NULL;
- 	
- 	return proc_lookup(dir, dentry, flags);
+ 	u64 idle, idle_usecs = -1ULL;
+ 
+@@ -54,14 +54,14 @@ static u64 get_idle_time(int cpu)
+ 
+ 	if (idle_usecs == -1ULL)
+ 		/* !NO_HZ or cpu offline so we can rely on cpustat.idle */
+-		idle = kcpustat_cpu(cpu).cpustat[CPUTIME_IDLE];
++		idle = kcs->cpustat[CPUTIME_IDLE];
+ 	else
+ 		idle = idle_usecs * NSEC_PER_USEC;
+ 
+ 	return idle;
+ }
+ 
+-static u64 get_iowait_time(int cpu)
++static u64 get_iowait_time(struct kernel_cpustat *kcs, int cpu)
+ {
+ 	u64 iowait, iowait_usecs = -1ULL;
+ 
+@@ -70,7 +70,7 @@ static u64 get_iowait_time(int cpu)
+ 
+ 	if (iowait_usecs == -1ULL)
+ 		/* !NO_HZ or cpu offline so we can rely on cpustat.iowait */
+-		iowait = kcpustat_cpu(cpu).cpustat[CPUTIME_IOWAIT];
++		iowait = kcs->cpustat[CPUTIME_IOWAIT];
+ 	else
+ 		iowait = iowait_usecs * NSEC_PER_USEC;
+ 
+@@ -95,16 +95,18 @@ static int show_stat(struct seq_file *p, void *v)
+ 	getboottime64(&boottime);
+ 
+ 	for_each_possible_cpu(i) {
+-		user += kcpustat_cpu(i).cpustat[CPUTIME_USER];
+-		nice += kcpustat_cpu(i).cpustat[CPUTIME_NICE];
+-		system += kcpustat_cpu(i).cpustat[CPUTIME_SYSTEM];
+-		idle += get_idle_time(i);
+-		iowait += get_iowait_time(i);
+-		irq += kcpustat_cpu(i).cpustat[CPUTIME_IRQ];
+-		softirq += kcpustat_cpu(i).cpustat[CPUTIME_SOFTIRQ];
+-		steal += kcpustat_cpu(i).cpustat[CPUTIME_STEAL];
+-		guest += kcpustat_cpu(i).cpustat[CPUTIME_GUEST];
+-		guest_nice += kcpustat_cpu(i).cpustat[CPUTIME_GUEST_NICE];
++		struct kernel_cpustat *kcs = &kcpustat_cpu(i);
++
++		user += kcs->cpustat[CPUTIME_USER];
++		nice += kcs->cpustat[CPUTIME_NICE];
++		system += kcs->cpustat[CPUTIME_SYSTEM];
++		idle += get_idle_time(kcs, i);
++		iowait += get_iowait_time(kcs, i);
++		irq += kcs->cpustat[CPUTIME_IRQ];
++		softirq += kcs->cpustat[CPUTIME_SOFTIRQ];
++		steal += kcs->cpustat[CPUTIME_STEAL];
++		guest += kcs->cpustat[CPUTIME_GUEST];
++		guest_nice += kcs->cpustat[CPUTIME_GUEST_NICE];
+ 		sum += kstat_cpu_irqs_sum(i);
+ 		sum += arch_irq_stat_cpu(i);
+ 
+@@ -130,17 +132,19 @@ static int show_stat(struct seq_file *p, void *v)
+ 	seq_putc(p, '\n');
+ 
+ 	for_each_online_cpu(i) {
++		struct kernel_cpustat *kcs = &kcpustat_cpu(i);
++
+ 		/* Copy values here to work around gcc-2.95.3, gcc-2.96 */
+-		user = kcpustat_cpu(i).cpustat[CPUTIME_USER];
+-		nice = kcpustat_cpu(i).cpustat[CPUTIME_NICE];
+-		system = kcpustat_cpu(i).cpustat[CPUTIME_SYSTEM];
+-		idle = get_idle_time(i);
+-		iowait = get_iowait_time(i);
+-		irq = kcpustat_cpu(i).cpustat[CPUTIME_IRQ];
+-		softirq = kcpustat_cpu(i).cpustat[CPUTIME_SOFTIRQ];
+-		steal = kcpustat_cpu(i).cpustat[CPUTIME_STEAL];
+-		guest = kcpustat_cpu(i).cpustat[CPUTIME_GUEST];
+-		guest_nice = kcpustat_cpu(i).cpustat[CPUTIME_GUEST_NICE];
++		user = kcs->cpustat[CPUTIME_USER];
++		nice = kcs->cpustat[CPUTIME_NICE];
++		system = kcs->cpustat[CPUTIME_SYSTEM];
++		idle = get_idle_time(kcs, i);
++		iowait = get_iowait_time(kcs, i);
++		irq = kcs->cpustat[CPUTIME_IRQ];
++		softirq = kcs->cpustat[CPUTIME_SOFTIRQ];
++		steal = kcs->cpustat[CPUTIME_STEAL];
++		guest = kcs->cpustat[CPUTIME_GUEST];
++		guest_nice = kcs->cpustat[CPUTIME_GUEST_NICE];
+ 		seq_printf(p, "cpu%d", i);
+ 		seq_put_decimal_ull(p, " ", nsec_to_clock_t(user));
+ 		seq_put_decimal_ull(p, " ", nsec_to_clock_t(nice));
