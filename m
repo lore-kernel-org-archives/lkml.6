@@ -2,133 +2,235 @@ Return-Path: <SRS0=tq6k=PW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 08FC7C43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 19:46:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D536C43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 19:50:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C5C55206B7
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 19:46:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3D11B206B7
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 19:50:21 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="dK7IFjVn"
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="DYZz/MMD";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="bs6tIYO2"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726833AbfANTqh (ORCPT
+        id S1726830AbfANTuT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 14 Jan 2019 14:46:37 -0500
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:35122 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726761AbfANTqg (ORCPT
+        Mon, 14 Jan 2019 14:50:19 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:51956 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726745AbfANTuS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 Jan 2019 14:46:36 -0500
-Received: by mail-wm1-f67.google.com with SMTP id t200so868522wmt.0
-        for <linux-kernel@vger.kernel.org>; Mon, 14 Jan 2019 11:46:35 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=iV2BJUAh/Zyb+wEm6tQ/gGD02vRQpuBa3p/N2HQnIFE=;
-        b=dK7IFjVnrOmKfnc7HeXr0BFTbh9AHYrG1iKkfxpJ+e4zjYPqTzW1Ot1gbdJortT5+f
-         2oa6CnqbVEjDdKq9JYk2yC5DM+gWwjNND8bh2j+SZ8xnz3azqvkf5anBByrDJDTHwEk7
-         ZtaGLyItOIOwac8F2asTEIIo8+0MAFmMHbj2Y=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=iV2BJUAh/Zyb+wEm6tQ/gGD02vRQpuBa3p/N2HQnIFE=;
-        b=rq05z8wv9ez/Z7HSQhvzfMTVIhNEyG0gNQ6rfRgDJm4bfXCASUK1NTf6Rn+vMNERLz
-         aTN5wsuAFZJzNumnLWKU+OTio1nxrojmzs5O7Zu1nP6F379E1/HiuWCZicOH6X2VS8MH
-         cbvSq4AIawY3QQoyV9oUYYHqzc1JdKL2FUlFzHRVWUqteCLCz08XqcwG0NAEtWzDt81X
-         MRZdoRva/5a+b6H9nSQb9lu4dS2diHRKy2Uy+8m/5G1IyqeB9GzDHD9rABerjOnE1MEX
-         5cv7LYDmqS/i/KQL6Jfv9lQi2jLydaJnNpPKiQeYOtsYY/uoj7fT7LNsCWun3Tjw5qN9
-         a+/g==
-X-Gm-Message-State: AJcUukfBDnCKEE0oS3u227q+yC+fkomSECgcnEZ5SwF89BSg6MZc+zIi
-        IRQR2aIXzZabOQqcS3Ku6jckiZLDUgWvNg==
-X-Google-Smtp-Source: ALg8bN7okrTKxklHVrhFQG9sq4vrk9K+T8zT169BtLDr7JwcUeHxv3aWHwgGsqZMqYRfx2baWifnPQ==
-X-Received: by 2002:a1c:570d:: with SMTP id l13mr536407wmb.139.1547495194088;
-        Mon, 14 Jan 2019 11:46:34 -0800 (PST)
-Received: from localhost ([49.248.190.171])
-        by smtp.gmail.com with ESMTPSA id a6sm26475975wmh.10.2019.01.14.11.46.32
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 14 Jan 2019 11:46:33 -0800 (PST)
-From:   Amit Kucheria <amit.kucheria@linaro.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     linux-arm-msm@vger.kernel.org, andy.gross@linaro.org,
-        marc.w.gonzalez@free.fr, bjorn.andersson@linaro.org,
-        kvalo@adurom.com, joe@perches.com
-Subject: [PATCH v3 1/1] MAINTAINERS: update list of qcom drivers
-Date:   Tue, 15 Jan 2019 01:15:49 +0530
-Message-Id: <3f8a0c7a8701446abe02f1e35d412d72d9c1f0f3.1547494994.git.amit.kucheria@linaro.org>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <cover.1547494994.git.amit.kucheria@linaro.org>
-References: <cover.1547494994.git.amit.kucheria@linaro.org>
+        Mon, 14 Jan 2019 14:50:18 -0500
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 5A11460591; Mon, 14 Jan 2019 19:50:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1547495417;
+        bh=um/UlgWzAqzVRoeLSDlUGM5/iJ1nOd4NnMwHuslHi/Y=;
+        h=From:To:Cc:Subject:Date:From;
+        b=DYZz/MMDHLLP+De/j5d0Oj9p5Zs4THQnUoGlmVlXcnKcGi8KE+MT/if/HoME9W5pG
+         bnnatB9djZp2h+2NlUbc0TqmUJVzDGerKpCFDkiKVJw9ylffmOrh7DVOPMUSi25vX6
+         jvucotlz2k1UaOP/57y8OP2J1f7r/1xUsqFcDJWc=
+Received: from blr-ubuntu-87.qualcomm.com (blr-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.18.19])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: sibis@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 065E760591;
+        Mon, 14 Jan 2019 19:50:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1547495416;
+        bh=um/UlgWzAqzVRoeLSDlUGM5/iJ1nOd4NnMwHuslHi/Y=;
+        h=From:To:Cc:Subject:Date:From;
+        b=bs6tIYO2ss5EXEEr+tfOcw+dGUFCs0+iXuAxwpYsEVg72XKtfDwpkVNJK6owVkBcQ
+         qitV104rm3ljbVAIxeLNo+r7nnuBpnKiLjqMxSxRxgo9VkUu0oJ5A/tdrBXxyEvqGA
+         2uxRWYFFRwE/8uYvsdjHVFWuh6sENSJEWuHonZGE=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 065E760591
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=sibis@codeaurora.org
+From:   Sibi Sankar <sibis@codeaurora.org>
+To:     bjorn.andersson@linaro.org, briannorris@chromium.org,
+        david.brown@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com,
+        andy.gross@linaro.org
+Cc:     akdwived@codeaurora.org, clew@codeaurora.org,
+        linux-kernel@vger.kernel.org, linux-arm-msm-owner@vger.kernel.org,
+        ohad@wizery.com, linux-remoteproc@vger.kernel.org,
+        devicetree@vger.kernel.org, dianders@chromium.org,
+        Sibi Sankar <sibis@codeaurora.org>
+Subject: [PATCH v3] remoteproc: qcom: Add support for parsing fw dt bindings
+Date:   Tue, 15 Jan 2019 01:20:01 +0530
+Message-Id: <20190114195001.7016-1-sibis@codeaurora.org>
+X-Mailer: git-send-email 2.19.1
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Several drivers didn't have a specific maintainer (other than the
-subsystem maintainer). Add some generic regex patterns to capture most
-qcom drivers in the list of supported drivers. For the rest, add
-explicit filenames.
+Add support for parsing "firmware-name" dt bindings which specifies
+the relative paths of mba/modem/pas image as strings. Fallback to
+the default paths for mba/modem/pas image on -EINVAL.
 
-Sort the entries, while we're at it.
-
-Signed-off-by: Amit Kucheria <amit.kucheria@linaro.org>
+Signed-off-by: Sibi Sankar <sibis@codeaurora.org>
 ---
- MAINTAINERS | 32 +++++++++++++++++++++++++-------
- 1 file changed, 25 insertions(+), 7 deletions(-)
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 32d444476a90..a2b21a622ae1 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -1948,19 +1948,37 @@ M:	David Brown <david.brown@linaro.org>
- L:	linux-arm-msm@vger.kernel.org
- S:	Maintained
- F:	Documentation/devicetree/bindings/soc/qcom/
-+F:	Documentation/devicetree/bindings/*/qcom*
- F:	arch/arm/boot/dts/qcom-*.dts
- F:	arch/arm/boot/dts/qcom-*.dtsi
- F:	arch/arm/mach-qcom/
--F:	arch/arm64/boot/dts/qcom/*
-+F:	arch/arm64/boot/dts/qcom/
-+F:	drivers/*/qcom/
-+F:	drivers/*/qcom*
-+F:	drivers/*/*/qcom/
-+F:	drivers/*/*/qcom*
-+F:	drivers/*/pm8???-*
-+F:	drivers/bluetooth/btqcomsmd.c
-+F:	drivers/clocksource/timer-qcom.c
-+F:	drivers/extcon/extcon-qcom*
-+F:	drivers/iommu/msm*
- F:	drivers/i2c/busses/i2c-qup.c
--F:	drivers/clk/qcom/
--F:	drivers/dma/qcom/
--F:	drivers/soc/qcom/
-+F:	drivers/i2c/busses/i2c-qcom-geni.c
-+F:	drivers/mfd/ssbi.c
-+F:	drivers/mmc/host/mmci_qcom*
-+F:	drivers/mmc/host/sdhci_msm.c
-+F:	drivers/pci/controller/dwc/pcie-qcom.c
-+F:	drivers/phy/qualcomm/
-+F:	drivers/power/*/msm*
-+F:	drivers/reset/reset-qcom-*
-+F:	drivers/scsi/ufs/ufs-qcom.*
- F:	drivers/spi/spi-qup.c
-+F:	drivers/spi/spi-geni-qcom.c
-+F:	drivers/spi/spi-qcom-qspi.c
- F:	drivers/tty/serial/msm_serial.c
--F:	drivers/*/pm8???-*
--F:	drivers/mfd/ssbi.c
--F:	drivers/firmware/qcom_scm*
-+F:	drivers/usb/dwc3/dwc3-qcom.c
-+F:	include/dt-bindings/*/qcom*
-+F:	include/linux/*/qcom*
- T:	git git://git.kernel.org/pub/scm/linux/kernel/git/agross/linux.git
+v3:
+ * Fixed minor code style issues
+ * Add comments for firmware blob name generation
+   and use sprintf instead
+
+ drivers/remoteproc/qcom_q6v5_mss.c | 47 +++++++++++++++++++++++-------
+ drivers/remoteproc/qcom_q6v5_pas.c |  9 +++++-
+ 2 files changed, 45 insertions(+), 11 deletions(-)
+
+diff --git a/drivers/remoteproc/qcom_q6v5_mss.c b/drivers/remoteproc/qcom_q6v5_mss.c
+index c86dc40cfb8c..41e92a025d21 100644
+--- a/drivers/remoteproc/qcom_q6v5_mss.c
++++ b/drivers/remoteproc/qcom_q6v5_mss.c
+@@ -188,6 +188,7 @@ struct q6v5 {
+ 	bool has_alt_reset;
+ 	int mpss_perm;
+ 	int mba_perm;
++	const char *hexagon_mdt_image;
+ 	int version;
+ };
  
- ARM/RADISYS ENP2611 MACHINE SUPPORT
+@@ -860,17 +861,26 @@ static int q6v5_mpss_load(struct q6v5 *qproc)
+ 	phys_addr_t min_addr = PHYS_ADDR_MAX;
+ 	phys_addr_t max_addr = 0;
+ 	bool relocate = false;
+-	char seg_name[10];
++	char *fw_name;
++	size_t fw_name_len;
+ 	ssize_t offset;
+ 	size_t size = 0;
+ 	void *ptr;
+ 	int ret;
+ 	int i;
+ 
+-	ret = request_firmware(&fw, "modem.mdt", qproc->dev);
++	fw_name_len = strlen(qproc->hexagon_mdt_image);
++	if (fw_name_len <= 4)
++		return -EINVAL;
++
++	fw_name = kstrdup(qproc->hexagon_mdt_image, GFP_KERNEL);
++	if (!fw_name)
++		return -ENOMEM;
++
++	ret = request_firmware(&fw, fw_name, qproc->dev);
+ 	if (ret < 0) {
+-		dev_err(qproc->dev, "unable to load modem.mdt\n");
+-		return ret;
++		dev_err(qproc->dev, "unable to load %s\n", fw_name);
++		goto out;
+ 	}
+ 
+ 	/* Initialize the RMB validator */
+@@ -918,10 +928,11 @@ static int q6v5_mpss_load(struct q6v5 *qproc)
+ 		ptr = qproc->mpss_region + offset;
+ 
+ 		if (phdr->p_filesz) {
+-			snprintf(seg_name, sizeof(seg_name), "modem.b%02d", i);
+-			ret = request_firmware(&seg_fw, seg_name, qproc->dev);
++			/* Replace "xxx.xxx" with "xxx.bxx" */
++			sprintf(fw_name + fw_name_len - 3, "b%02d", i);
++			ret = request_firmware(&seg_fw, fw_name, qproc->dev);
+ 			if (ret) {
+-				dev_err(qproc->dev, "failed to load %s\n", seg_name);
++				dev_err(qproc->dev, "failed to load %s\n", fw_name);
+ 				goto release_firmware;
+ 			}
+ 
+@@ -960,6 +971,8 @@ static int q6v5_mpss_load(struct q6v5 *qproc)
+ 
+ release_firmware:
+ 	release_firmware(fw);
++out:
++	kfree(fw_name);
+ 
+ 	return ret < 0 ? ret : 0;
+ }
+@@ -1075,9 +1088,10 @@ static int qcom_q6v5_register_dump_segments(struct rproc *rproc,
+ 	unsigned long i;
+ 	int ret;
+ 
+-	ret = request_firmware(&fw, "modem.mdt", qproc->dev);
++	ret = request_firmware(&fw, qproc->hexagon_mdt_image, qproc->dev);
+ 	if (ret < 0) {
+-		dev_err(qproc->dev, "unable to load modem.mdt\n");
++		dev_err(qproc->dev, "unable to load %s\n",
++			qproc->hexagon_mdt_image);
+ 		return ret;
+ 	}
+ 
+@@ -1253,6 +1267,7 @@ static int q6v5_probe(struct platform_device *pdev)
+ 	const struct rproc_hexagon_res *desc;
+ 	struct q6v5 *qproc;
+ 	struct rproc *rproc;
++	const char *mba_image;
+ 	int ret;
+ 
+ 	desc = of_device_get_match_data(&pdev->dev);
+@@ -1262,8 +1277,14 @@ static int q6v5_probe(struct platform_device *pdev)
+ 	if (desc->need_mem_protection && !qcom_scm_is_available())
+ 		return -EPROBE_DEFER;
+ 
++	mba_image = desc->hexagon_mba_image;
++	ret = of_property_read_string_index(pdev->dev.of_node, "firmware-name",
++					    0, &mba_image);
++	if (ret < 0 && ret != -EINVAL)
++		return ret;
++
+ 	rproc = rproc_alloc(&pdev->dev, pdev->name, &q6v5_ops,
+-			    desc->hexagon_mba_image, sizeof(*qproc));
++			    mba_image, sizeof(*qproc));
+ 	if (!rproc) {
+ 		dev_err(&pdev->dev, "failed to allocate rproc\n");
+ 		return -ENOMEM;
+@@ -1272,6 +1293,12 @@ static int q6v5_probe(struct platform_device *pdev)
+ 	qproc = (struct q6v5 *)rproc->priv;
+ 	qproc->dev = &pdev->dev;
+ 	qproc->rproc = rproc;
++	qproc->hexagon_mdt_image = "modem.mdt";
++	ret = of_property_read_string_index(pdev->dev.of_node, "firmware-name",
++					    1, &qproc->hexagon_mdt_image);
++	if (ret < 0 && ret != -EINVAL)
++		return ret;
++
+ 	platform_set_drvdata(pdev, qproc);
+ 
+ 	ret = q6v5_init_mem(qproc, pdev);
+diff --git a/drivers/remoteproc/qcom_q6v5_pas.c b/drivers/remoteproc/qcom_q6v5_pas.c
+index b1e63fcd5fdf..cfdafd68e2cd 100644
+--- a/drivers/remoteproc/qcom_q6v5_pas.c
++++ b/drivers/remoteproc/qcom_q6v5_pas.c
+@@ -258,6 +258,7 @@ static int adsp_probe(struct platform_device *pdev)
+ 	const struct adsp_data *desc;
+ 	struct qcom_adsp *adsp;
+ 	struct rproc *rproc;
++	const char *fw_name;
+ 	int ret;
+ 
+ 	desc = of_device_get_match_data(&pdev->dev);
+@@ -267,8 +268,14 @@ static int adsp_probe(struct platform_device *pdev)
+ 	if (!qcom_scm_is_available())
+ 		return -EPROBE_DEFER;
+ 
++	fw_name = desc->firmware_name;
++	ret = of_property_read_string(pdev->dev.of_node, "firmware-name",
++				      &fw_name);
++	if (ret < 0 && ret != -EINVAL)
++		return ret;
++
+ 	rproc = rproc_alloc(&pdev->dev, pdev->name, &adsp_ops,
+-			    desc->firmware_name, sizeof(*adsp));
++			    fw_name, sizeof(*adsp));
+ 	if (!rproc) {
+ 		dev_err(&pdev->dev, "unable to allocate remoteproc\n");
+ 		return -ENOMEM;
 -- 
-2.17.1
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
 
