@@ -6,66 +6,68 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AC7EEC43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 20:40:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3FF98C43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 20:40:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7A1C420659
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 20:40:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0F39920659
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 20:40:26 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="uWedDyfo"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SKrDWTjU"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727159AbfANUkV (ORCPT
+        id S1727177AbfANUkY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 14 Jan 2019 15:40:21 -0500
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:39058 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726794AbfANUkV (ORCPT
+        Mon, 14 Jan 2019 15:40:24 -0500
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:39915 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726995AbfANUkV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 14 Jan 2019 15:40:21 -0500
-Received: by mail-wr1-f66.google.com with SMTP id t27so450270wra.6;
-        Mon, 14 Jan 2019 12:40:19 -0800 (PST)
+Received: by mail-wm1-f68.google.com with SMTP id y8so997112wmi.4;
+        Mon, 14 Jan 2019 12:40:20 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=sender:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=Njcy+xFgK9q4qTggHvR0jHWYKD4glHvqhdsJrZvho/U=;
-        b=uWedDyfovUNSuAqGQS72aZBMrdfGHhw2Ucb46WLR59spS94Asfmu37HRUX0H5Cb+C6
-         7Q1aiVnxtbQiiNUWDFIO64FjReiKgbQDpsPaI3XVqp6uwXo0wM1iup36kfbqstbcl0uH
-         9GNxG3jiMsX1M7R5QwcX6FLqGe7WHioQ27tXej8CWqj2iX4zBYsvVhkjprcAXCTw9yv1
-         32074OacQf7rPw9MnWvMxNVm/kFQVuYsr8TNzbanD/hbIa3Nt8h9BbUOuhHn0hX+LmI6
-         +T0yYxcu0hdFZ1OaRFNse1gOt4vAgnKvVoeQbN/Xi3wrKSi+3TDEYQklKjDpBVB9H9fr
-         3o4g==
+        h=sender:from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=Im+S4MYp2sak4c0j7sO7o1zps+bu02T7X9NGufahYS8=;
+        b=SKrDWTjUa0uPlj2I6xJs/sTHqd8+wlpzX//qRmAJFHGtl43d1xb/xr7sPicxQ4+/2Q
+         Vl9YAQn8M9Yaa7Hh/pphy10yChcyoco1fNBLll2zRX1/5AsdR3jYgH3t0PgdmEvEPjpc
+         H3eoaZ+7b+nlSxhl5yUWPHRrGB7bsx36Lro5eayGTgCQirGimrhH1Qmhvnrd67j7NTYC
+         YMQszqFj/TxLj8kNp9hSl+57CxF5J9qLaHGLJ8/OtC3dY03JnX1qbgtU1fp/6kp4hu0i
+         2+ISu2hZMWKv3xrSm16j4QC3P58QEBEZ5wZEipKUjwhOMsYWPB7zDBakwHGCVImQ8SI1
+         JiVw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:sender:from:to:cc:subject:date:message-id
-         :mime-version:content-transfer-encoding;
-        bh=Njcy+xFgK9q4qTggHvR0jHWYKD4glHvqhdsJrZvho/U=;
-        b=D6XSO+eLrNqO1ugyvz0TYYt4g3oofpjclTBOiW9yfkGsSBvBoE+doWkiD/ZI19KiQP
-         p8W5uhZa73Yjc5WHXIj9mbXFFc1iJRKT2bJ4GILQpW86Q492ns/MRQ6bpo6wyqqvGFdr
-         H5roXulsoYhvPfylJm+U7OAAzaqOl78puAgEHhQ2artyM6SnPp3K5JChy0Zl96P1OX5G
-         Lqh9QI7bh4fYDAjy0FkVSJFb5dpaOFwYdRfKOnbJhQxGbbDnwRWTvOPczoP22J3Lr2iy
-         +xFRfj6hmVpa+VUQ44TmmTUTVQjkUugx1TVW8+nBjeIlSYrRGA3C9jMiNAgkBbm8fRXb
-         +zIw==
-X-Gm-Message-State: AJcUukeO3s1oq1otYl38XMGlHp5OmXz7suVRlZKD74tTIy9F9t6PIEbF
-        C92rVlUwFGkOdRjaB8llUsMZv3Iw
-X-Google-Smtp-Source: ALg8bN4d2lk6ctBeo187wcGN0JyuRCFQC1/d9HS25XrqivJEjq3RxBXzhuzLEQ1+HumFoJnCc57JgA==
-X-Received: by 2002:adf:fc09:: with SMTP id i9mr188341wrr.299.1547498419143;
+         :in-reply-to:references:mime-version:content-transfer-encoding;
+        bh=Im+S4MYp2sak4c0j7sO7o1zps+bu02T7X9NGufahYS8=;
+        b=ES3VrY204xvNm+R0uvxmx8p92Pkm7IjSxrJINb0fQCYK5e07fe724+Tnim08BfnxBJ
+         JL+Ej8FWNDMFU5RxiI/fHvZONtU2bjDPWzOsYASXxfO57L3rx/1sPY2Nk1pcODWGnXh4
+         L1/uf8bUBQDzvdXn0Xpp/hWu6NRXNkhRaLwnbIoyk3ne720ePeum7SLnIAPCXH9wxIOb
+         TGifaRVkMAlkU/Gk8iXaYgY6U9Ct4ruBCmdEGY07icpA12Zzn0h/oxEQp+3lTiDEo/UN
+         me//rY0dHfUhazmLFQdoRz2ILpiOiYRZ7wCzkP/TB3OVLubPoVDKoR2aMeVsCNZn0+tO
+         XpcQ==
+X-Gm-Message-State: AJcUukcn2FSOP90H25AFVlDZQU3AD6wxwAsjsPDOJ9lrLAN4ZnYmCPNh
+        0JR0JPHB3bbjHJ5yaqc1Az8HH+61
+X-Google-Smtp-Source: ALg8bN7zXTjwVkUMxnuCMyNekLrZjuJlU0/Oy+cvdnB/AbNN2LIa53d6EaRFJrJX2LK/WuZ1jgXRBg==
+X-Received: by 2002:a1c:4c0c:: with SMTP id z12mr636225wmf.17.1547498419660;
         Mon, 14 Jan 2019 12:40:19 -0800 (PST)
-Received: from macbookpro.malat.net (bru31-1-78-225-224-134.fbx.proxad.net. [78.225.224.134])
-        by smtp.gmail.com with ESMTPSA id r77sm37020463wmd.22.2019.01.14.12.40.16
+Received: from macbookpro.malat.net ([2a01:e34:ee1e:860:6f23:82e6:aa2d:bbd1])
+        by smtp.gmail.com with ESMTPSA id d4sm19023824wmb.25.2019.01.14.12.40.18
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 14 Jan 2019 12:40:17 -0800 (PST)
+        Mon, 14 Jan 2019 12:40:19 -0800 (PST)
 Received: by macbookpro.malat.net (Postfix, from userid 1000)
-        id 2AF3411422AD; Mon, 14 Jan 2019 21:40:16 +0100 (CET)
+        id CE59E11422D0; Mon, 14 Jan 2019 21:40:17 +0100 (CET)
 From:   Mathieu Malaterre <malat@debian.org>
 To:     "Theodore Ts'o" <tytso@mit.edu>
 Cc:     Mathieu Malaterre <malat@debian.org>,
         Andreas Dilger <adilger.kernel@dilger.ca>,
         linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 1/2] ext4: annotate implicit fall throughs
-Date:   Mon, 14 Jan 2019 21:39:43 +0100
-Message-Id: <20190114203945.20233-1-malat@debian.org>
+Subject: [PATCH 2/2] ext4: annotate implicit fall throughs
+Date:   Mon, 14 Jan 2019 21:39:44 +0100
+Message-Id: <20190114203945.20233-2-malat@debian.org>
 X-Mailer: git-send-email 2.19.2
+In-Reply-To: <20190114203945.20233-1-malat@debian.org>
+References: <20190114203945.20233-1-malat@debian.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -78,34 +80,66 @@ these places in the code produced warnings (W=1). Fix them up.
 
 This commit remove the following warnings:
 
-  fs/ext4/hash.c:233:15: warning: this statement may fall through [-Wimplicit-fallthrough=]
-  fs/ext4/hash.c:246:15: warning: this statement may fall through [-Wimplicit-fallthrough=]
+  fs/ext4/indirect.c:1182:6: warning: this statement may fall through [-Wimplicit-fallthrough=]
+  fs/ext4/indirect.c:1188:6: warning: this statement may fall through [-Wimplicit-fallthrough=]
+  fs/ext4/indirect.c:1432:6: warning: this statement may fall through [-Wimplicit-fallthrough=]
+  fs/ext4/indirect.c:1440:6: warning: this statement may fall through [-Wimplicit-fallthrough=]
 
 Signed-off-by: Mathieu Malaterre <malat@debian.org>
 ---
- fs/ext4/hash.c | 2 ++
- 1 file changed, 2 insertions(+)
+ fs/ext4/indirect.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-diff --git a/fs/ext4/hash.c b/fs/ext4/hash.c
-index e22dcfab308b..46b24da33a28 100644
---- a/fs/ext4/hash.c
-+++ b/fs/ext4/hash.c
-@@ -231,6 +231,7 @@ int ext4fs_dirhash(const char *name, int len, struct dx_hash_info *hinfo)
- 		break;
- 	case DX_HASH_HALF_MD4_UNSIGNED:
- 		str2hashbuf = str2hashbuf_unsigned;
+diff --git a/fs/ext4/indirect.c b/fs/ext4/indirect.c
+index bf7fa1507e81..c2225f0d31b5 100644
+--- a/fs/ext4/indirect.c
++++ b/fs/ext4/indirect.c
+@@ -1183,18 +1183,21 @@ void ext4_ind_truncate(handle_t *handle, struct inode *inode)
+ 			ext4_free_branches(handle, inode, NULL, &nr, &nr+1, 1);
+ 			i_data[EXT4_IND_BLOCK] = 0;
+ 		}
 +		/* fall through */
- 	case DX_HASH_HALF_MD4:
- 		p = name;
- 		while (len > 0) {
-@@ -244,6 +245,7 @@ int ext4fs_dirhash(const char *name, int len, struct dx_hash_info *hinfo)
- 		break;
- 	case DX_HASH_TEA_UNSIGNED:
- 		str2hashbuf = str2hashbuf_unsigned;
+ 	case EXT4_IND_BLOCK:
+ 		nr = i_data[EXT4_DIND_BLOCK];
+ 		if (nr) {
+ 			ext4_free_branches(handle, inode, NULL, &nr, &nr+1, 2);
+ 			i_data[EXT4_DIND_BLOCK] = 0;
+ 		}
 +		/* fall through */
- 	case DX_HASH_TEA:
- 		p = name;
- 		while (len > 0) {
+ 	case EXT4_DIND_BLOCK:
+ 		nr = i_data[EXT4_TIND_BLOCK];
+ 		if (nr) {
+ 			ext4_free_branches(handle, inode, NULL, &nr, &nr+1, 3);
+ 			i_data[EXT4_TIND_BLOCK] = 0;
+ 		}
++		/* fall through */
+ 	case EXT4_TIND_BLOCK:
+ 		;
+ 	}
+@@ -1433,6 +1436,7 @@ int ext4_ind_remove_space(handle_t *handle, struct inode *inode,
+ 			ext4_free_branches(handle, inode, NULL, &nr, &nr+1, 1);
+ 			i_data[EXT4_IND_BLOCK] = 0;
+ 		}
++		/* fall through */
+ 	case EXT4_IND_BLOCK:
+ 		if (++n >= n2)
+ 			return 0;
+@@ -1441,6 +1445,7 @@ int ext4_ind_remove_space(handle_t *handle, struct inode *inode,
+ 			ext4_free_branches(handle, inode, NULL, &nr, &nr+1, 2);
+ 			i_data[EXT4_DIND_BLOCK] = 0;
+ 		}
++		/* fall through */
+ 	case EXT4_DIND_BLOCK:
+ 		if (++n >= n2)
+ 			return 0;
+@@ -1449,6 +1454,7 @@ int ext4_ind_remove_space(handle_t *handle, struct inode *inode,
+ 			ext4_free_branches(handle, inode, NULL, &nr, &nr+1, 3);
+ 			i_data[EXT4_TIND_BLOCK] = 0;
+ 		}
++		/* fall through */
+ 	case EXT4_TIND_BLOCK:
+ 		;
+ 	}
 -- 
 2.19.2
 
