@@ -2,934 +2,981 @@ Return-Path: <SRS0=tq6k=PW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+X-Spam-Status: No, score=-14.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 22920C43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 21:17:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 22EB6C43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 21:19:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C18072064C
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 21:17:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C5BF820656
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 21:19:14 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="ksZufzk5"
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="axgXACx7"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727031AbfANVRu (ORCPT
+        id S1726990AbfANVTM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 14 Jan 2019 16:17:50 -0500
-Received: from lelv0142.ext.ti.com ([198.47.23.249]:52264 "EHLO
-        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726796AbfANVRr (ORCPT
+        Mon, 14 Jan 2019 16:19:12 -0500
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:43316 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726864AbfANVTM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 Jan 2019 16:17:47 -0500
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id x0ELHfBR064129;
-        Mon, 14 Jan 2019 15:17:41 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1547500661;
-        bh=7tnLgo+vFMDPkuNtKEN7EnfBbzNtzSNsUfPbGtF6cK8=;
-        h=From:To:CC:Subject:Date:In-Reply-To:References;
-        b=ksZufzk5JdCWbCeW56Iz6ycUlYiF+H+rXgo04K2+ams98sg3Qy1plh6i2F558+Hos
-         COs8Qeulbdhd0u0/ZhetueW586z3U88VzwRr7ti4ZaRApMyweSDdLi1eIXgerdFsh8
-         OeCnr+Osuxfdbi7gAQ7UgwqL8vxOizX1ESKpYIDc=
-Received: from DFLE113.ent.ti.com (dfle113.ent.ti.com [10.64.6.34])
-        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x0ELHfrR057466
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 14 Jan 2019 15:17:41 -0600
-Received: from DFLE115.ent.ti.com (10.64.6.36) by DFLE113.ent.ti.com
- (10.64.6.34) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Mon, 14
- Jan 2019 15:17:40 -0600
-Received: from dflp32.itg.ti.com (10.64.6.15) by DFLE115.ent.ti.com
- (10.64.6.36) with Microsoft SMTP Server (version=TLS1_0,
- cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1591.10 via Frontend Transport;
- Mon, 14 Jan 2019 15:17:40 -0600
-Received: from legion.dal.desgin.ti.com (legion.dal.design.ti.com [128.247.22.53])
-        by dflp32.itg.ti.com (8.14.3/8.13.8) with ESMTP id x0ELHekw016552;
-        Mon, 14 Jan 2019 15:17:40 -0600
-Received: from localhost (a0272616local-lt.dhcp.ti.com [172.22.100.22])
-        by legion.dal.desgin.ti.com (8.11.7p1+Sun/8.11.7) with ESMTP id x0ELHeU00274;
-        Mon, 14 Jan 2019 15:17:40 -0600 (CST)
-From:   Dan Murphy <dmurphy@ti.com>
-To:     <linux-leds@vger.kernel.org>
-CC:     <linux-kernel@vger.kernel.org>, <jacek.anaszewski@gmail.com>,
-        <pavel@ucw.cz>, <devicetree@vger.kernel.org>, <dachaac@gmail.com>,
-        <robh+dt@kernel.org>, Dan Murphy <dmurphy@ti.com>
-Subject: [PATCH v2 2/2] leds: lp50xx: Add the LP50XX family of the RGB LED driver
-Date:   Mon, 14 Jan 2019 15:17:23 -0600
-Message-ID: <20190114211723.11186-2-dmurphy@ti.com>
-X-Mailer: git-send-email 2.12.2
-In-Reply-To: <20190114211723.11186-1-dmurphy@ti.com>
-References: <20190114211723.11186-1-dmurphy@ti.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+        Mon, 14 Jan 2019 16:19:12 -0500
+Received: by mail-pg1-f195.google.com with SMTP id v28so190702pgk.10
+        for <linux-kernel@vger.kernel.org>; Mon, 14 Jan 2019 13:19:10 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=6o7BAvE3aeGLkKJv4pE4WZ6qRnXk7UoDS9kvLhYm9zY=;
+        b=axgXACx7Yy4VP34gyn2VmZrH9/hdoV6Bre4YwLV+EFsd2kLzTIx4yXyQifwHy2Jj5I
+         8YS5BJKJm95qRbI7VHBA4BEba/nETXqeVi5i+/EiXQx9FaQoJ2/6nrwHBqcrKJsPm8eI
+         CUWOitlA4clOhl1ORnfSo2l/uUrC+Fw/MPiWM=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=6o7BAvE3aeGLkKJv4pE4WZ6qRnXk7UoDS9kvLhYm9zY=;
+        b=qYUhNBsn+Pa6CMWpcD+w4g1MHzV/L8c/XTCntOr8yfxwLBi5yNRkvk15P9TaGeq1/P
+         ob2StyGlJ18oUg6ZGNDathpFIVLtbFrnXF6buAUiRdB3YrBaSZtviUNhmX87IIfls1m6
+         tcEdc5FGYgPQ5GQNFNbeKAKigT49lcfVS1JOV0BPnW7eZe6HgCSQD7laTeoYXsrcuDJt
+         hylAHV5Vmn1O9PLMMio64dqDMFD94Wmr9ZBVmjyAYjhhcMbZBCbKI8p+reizoMyP26VH
+         uFdLk8Eb63+QqaJsE8lFT3yp60QucWADO5/O6pp4C3PigViCZwLxISxQ87JUVkQzg0X6
+         izWg==
+X-Gm-Message-State: AJcUukdnjojXdL6hlEKIenvYJaM4pdLULk88ENgU0bfKnL83dBDir7KG
+        4ZhjCU0ZSd3vidMzbJpz4LlPPw==
+X-Google-Smtp-Source: ALg8bN5sKR4d1dIadb48AgpDN+qsg7R9WsgJJzt+jaiY60WXhX9Hczz0Xm1dQmcRSSmua1sJ6+t3RA==
+X-Received: by 2002:a65:590b:: with SMTP id f11mr522827pgu.60.1547500749953;
+        Mon, 14 Jan 2019 13:19:09 -0800 (PST)
+Received: from localhost.localdomain (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
+        by smtp.gmail.com with ESMTPSA id n78sm2059899pfk.19.2019.01.14.13.19.08
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 14 Jan 2019 13:19:08 -0800 (PST)
+From:   Bjorn Andersson <bjorn.andersson@linaro.org>
+To:     Andy Gross <andy.gross@linaro.org>,
+        David Brown <david.brown@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Cc:     linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Doug Anderson <dianders@chromium.org>
+Subject: [PATCH] arm64: dts: qcom: sdm845: Expand soc bus address range
+Date:   Mon, 14 Jan 2019 13:18:24 -0800
+Message-Id: <20190114211824.2320-1-bjorn.andersson@linaro.org>
+X-Mailer: git-send-email 2.18.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Introduce the LP5036/30/24/18 RGB LED driver.
-The difference in these parts are the number of
-LED outputs where the:
+DMA memory allocations for devices on the soc bus must be constrained to
+the 36 address bits that the bus provides, which without IOMMU is taken
+care of by the addresses being direct physical allocations.
 
-LP5036 can control 36 LEDs
-LP5030 can control 30 LEDs
-LP5024 can control 24 LEDs
-LP5018 can control 18 LEDs
+Unless the bus_dma_mask is defined DMA allocations for devices will use
+all 40 bits available by the SMMU. Causing addresses to be truncated on
+the bus.
 
-The device has the ability to group LED output into control banks
-so that multiple LED banks can be controlled with the same mixing and
-brightness.  Inversely the LEDs can also be controlled independently.
+By the current choice of specifying #address-cells and #size-cells to 1,
+it's possible to define the region of DMA allocations to the lower 32
+bits. But the SMMU implementation requires that it can 1:1 map the page
+table, which might be allocated above 32 bits (as we have RAM there).
 
-Signed-off-by: Dan Murphy <dmurphy@ti.com>
+So this patch increases the #size-cells to 2, in order to be able to add
+a dma-ranges that defines the 36 bit DMA capability of the bus, and
+bumps #address-cells to 2 for symmetry. Then defines the dma-ranges to
+36 bits.
+
+While touching all reg properties, addresses are padded to 8 digits.
+
+Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 ---
 
-v2 - Changed the mix and module files to a single "color" file, added the LP5030
-and LP5036 register mapping, added ABI documentation, updated the parsing of
-DT and led sources to match DT, renamed driver to leds-lp50xx.c - https://lore.kernel.org/patchwork/patch/1026515/
+This applies to and is tested on 0f60e6fb54fb ("arm64: dts: qcom: pm8916: Add
+PON watchdog node") of:
+https://git.kernel.org/pub/scm/linux/kernel/git/agross/linux.git/log/?h=for-next
 
- Documentation/leds/leds-lp50xx.txt |  36 ++
- drivers/leds/Kconfig               |   7 +
- drivers/leds/Makefile              |   1 +
- drivers/leds/leds-lp50xx.c         | 754 +++++++++++++++++++++++++++++
- 4 files changed, 798 insertions(+)
- create mode 100644 Documentation/leds/leds-lp50xx.txt
- create mode 100644 drivers/leds/leds-lp50xx.c
+ arch/arm64/boot/dts/qcom/sdm845.dtsi | 265 ++++++++++++++-------------
+ 1 file changed, 133 insertions(+), 132 deletions(-)
 
-diff --git a/Documentation/leds/leds-lp50xx.txt b/Documentation/leds/leds-lp50xx.txt
-new file mode 100644
-index 000000000000..8b1b01dfdd22
---- /dev/null
-+++ b/Documentation/leds/leds-lp50xx.txt
-@@ -0,0 +1,36 @@
-+LP5018/LP5024/LP5030/LP5036 Common Driver
-+=================================================
-+
-+Authors: Dan Murphy <dmurphy@ti.com>
-+
-+Description
-+-----------
-+The LP50XX RGB LED drivers have the ability to group multiple RGB cluster
-+LEDs into a single group for simultaneous control or expose single RGB cluster
-+for control.  This device exposes different register interfaces to control
-+the cluster brightness as well as the individual RGB LEDs color intensity.
-+
-+RGB Cluster Color Control
-+-------------------------
-+The LP50xx driver will expose a file called "color" for each LED class instance
-+defined.  This file will accept a 24-bit RGB value in which the the color of the
-+RGB LEDs will be set.
-+
-+The 24-bit RGB value passed in follows the pattern 0xXXRRGGBB
-+XX - Do not care ignored by the driver
-+RR - is the 8 bit Red LED value
-+GG - is the 8 bit Green LED value
-+BB - is the 8 bit Blue LED value
-+
-+Example:
-+LED module output 4 of the LP5024 will be a yellow color:
-+echo 0xe6de00 > /sys/class/leds/lp5024\:led4_mod/color
-+
-+LED module output 4 of the LP5024 will be dimmed 50%:
-+echo 0x80 > /sys/class/leds/lp5024\:led4_mod/brightness
-+
-+LED banked RGBs of the LP5036 will be a white color:
-+echo 0xffffff > /sys/class/leds/lp5036\:led_banked/color
-+
-+LED banked RGBs of the LP50364 will be dimmed 50%:
-+echo 0x80 > /sys/class/leds/lp5036\:led_banked/brightness
-diff --git a/drivers/leds/Kconfig b/drivers/leds/Kconfig
-index a72f97fca57b..5f413445a667 100644
---- a/drivers/leds/Kconfig
-+++ b/drivers/leds/Kconfig
-@@ -326,6 +326,13 @@ config LEDS_LP3952
- 	  To compile this driver as a module, choose M here: the
- 	  module will be called leds-lp3952.
+diff --git a/arch/arm64/boot/dts/qcom/sdm845.dtsi b/arch/arm64/boot/dts/qcom/sdm845.dtsi
+index d9be5bba62c4..ffa9ca93d2ae 100644
+--- a/arch/arm64/boot/dts/qcom/sdm845.dtsi
++++ b/arch/arm64/boot/dts/qcom/sdm845.dtsi
+@@ -336,14 +336,15 @@
+ 	};
  
-+config LEDS_LP50XX
-+	tristate "LED Support for TI LP5036/30/24/18 LED driver chip"
-+	depends on LEDS_CLASS && REGMAP_I2C
-+	help
-+	  If you say yes here you get support for the Texas Instruments
-+	  LP5036, LP5030, LP5024 and LP5018 LED driver.
-+
- config LEDS_LP55XX_COMMON
- 	tristate "Common Driver for TI/National LP5521/5523/55231/5562/8501"
- 	depends on LEDS_LP5521 || LEDS_LP5523 || LEDS_LP5562 || LEDS_LP8501
-diff --git a/drivers/leds/Makefile b/drivers/leds/Makefile
-index 4c1b0054f379..852eff0b773f 100644
---- a/drivers/leds/Makefile
-+++ b/drivers/leds/Makefile
-@@ -32,6 +32,7 @@ obj-$(CONFIG_LEDS_GPIO_REGISTER)	+= leds-gpio-register.o
- obj-$(CONFIG_LEDS_GPIO)			+= leds-gpio.o
- obj-$(CONFIG_LEDS_LP3944)		+= leds-lp3944.o
- obj-$(CONFIG_LEDS_LP3952)		+= leds-lp3952.o
-+obj-$(CONFIG_LEDS_LP50XX)		+= leds-lp50xx.o
- obj-$(CONFIG_LEDS_LP55XX_COMMON)	+= leds-lp55xx-common.o
- obj-$(CONFIG_LEDS_LP5521)		+= leds-lp5521.o
- obj-$(CONFIG_LEDS_LP5523)		+= leds-lp5523.o
-diff --git a/drivers/leds/leds-lp50xx.c b/drivers/leds/leds-lp50xx.c
-new file mode 100644
-index 000000000000..41bb2e0129c8
---- /dev/null
-+++ b/drivers/leds/leds-lp50xx.c
-@@ -0,0 +1,754 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/* TI LP50XX LED chip family driver
-+ * Copyright (C) 2018 Texas Instruments Incorporated - http://www.ti.com/
-+ */
-+
-+#include <linux/gpio/consumer.h>
-+#include <linux/i2c.h>
-+#include <linux/init.h>
-+#include <linux/leds.h>
-+#include <linux/module.h>
-+#include <linux/mutex.h>
-+#include <linux/of.h>
-+#include <linux/of_gpio.h>
-+#include <linux/regmap.h>
-+#include <linux/regulator/consumer.h>
-+#include <linux/slab.h>
-+#include <uapi/linux/uleds.h>
-+
-+#define LP50XX_DEV_CFG0		0x00
-+#define LP50XX_DEV_CFG1		0x01
-+#define LP50XX_LED_CFG0		0x02
-+
-+/* LP5018 and LP5024 registers */
-+#define LP5024_BNK_BRT		0x03
-+#define LP5024_BNKA_CLR		0x04
-+#define LP5024_BNKB_CLR		0x05
-+#define LP5024_BNKC_CLR		0x06
-+#define LP5024_LED0_BRT		0x07
-+#define LP5024_LED1_BRT		0x08
-+#define LP5024_LED2_BRT		0x09
-+#define LP5024_LED3_BRT		0x0a
-+#define LP5024_LED4_BRT		0x0b
-+#define LP5024_LED5_BRT		0x0c
-+#define LP5024_LED6_BRT		0x0d
-+#define LP5024_LED7_BRT		0x0e
-+
-+#define LP5024_OUT0_CLR		0x0f
-+#define LP5024_OUT1_CLR		0x10
-+#define LP5024_OUT2_CLR		0x11
-+#define LP5024_OUT3_CLR		0x12
-+#define LP5024_OUT4_CLR		0x13
-+#define LP5024_OUT5_CLR		0x14
-+#define LP5024_OUT6_CLR		0x15
-+#define LP5024_OUT7_CLR		0x16
-+#define LP5024_OUT8_CLR		0x17
-+#define LP5024_OUT9_CLR		0x18
-+#define LP5024_OUT10_CLR	0x19
-+#define LP5024_OUT11_CLR	0x1a
-+#define LP5024_OUT12_CLR	0x1b
-+#define LP5024_OUT13_CLR	0x1c
-+#define LP5024_OUT14_CLR	0x1d
-+#define LP5024_OUT15_CLR	0x1e
-+#define LP5024_OUT16_CLR	0x1f
-+#define LP5024_OUT17_CLR	0x20
-+#define LP5024_OUT18_CLR	0x21
-+#define LP5024_OUT19_CLR	0x22
-+#define LP5024_OUT20_CLR	0x23
-+#define LP5024_OUT21_CLR	0x24
-+#define LP5024_OUT22_CLR	0x25
-+#define LP5024_OUT23_CLR	0x26
-+#define LP5024_RESET		0x27
-+
-+/* LP5030 and LP5036 registers */
-+#define LP5036_LED_CFG1		0x03
-+#define LP5036_BNK_BRT		0x04
-+#define LP5036_BNKA_CLR		0x05
-+#define LP5036_BNKB_CLR		0x06
-+#define LP5036_BNKC_CLR		0x07
-+#define LP5036_LED0_BRT		0x08
-+#define LP5036_LED1_BRT		0x09
-+#define LP5036_LED2_BRT		0x0a
-+#define LP5036_LED3_BRT		0x0b
-+#define LP5036_LED4_BRT		0x0c
-+#define LP5036_LED5_BRT		0x0d
-+#define LP5036_LED6_BRT		0x0e
-+#define LP5036_LED7_BRT		0x0f
-+#define LP5036_LED8_BRT		0x10
-+#define LP5036_LED9_BRT		0x11
-+#define LP5036_LED10_BRT	0x12
-+#define LP5036_LED11_BRT	0x13
-+
-+#define LP5036_OUT0_CLR		0x14
-+#define LP5036_OUT1_CLR		0x15
-+#define LP5036_OUT2_CLR		0x16
-+#define LP5036_OUT3_CLR		0x17
-+#define LP5036_OUT4_CLR		0x18
-+#define LP5036_OUT5_CLR		0x19
-+#define LP5036_OUT6_CLR		0x1a
-+#define LP5036_OUT7_CLR		0x1b
-+#define LP5036_OUT8_CLR		0x1c
-+#define LP5036_OUT9_CLR		0x1d
-+#define LP5036_OUT10_CLR	0x1e
-+#define LP5036_OUT11_CLR	0x1f
-+#define LP5036_OUT12_CLR	0x20
-+#define LP5036_OUT13_CLR	0x21
-+#define LP5036_OUT14_CLR	0x22
-+#define LP5036_OUT15_CLR	0x23
-+#define LP5036_OUT16_CLR	0x24
-+#define LP5036_OUT17_CLR	0x25
-+#define LP5036_OUT18_CLR	0x26
-+#define LP5036_OUT19_CLR	0x27
-+#define LP5036_OUT20_CLR	0x28
-+#define LP5036_OUT21_CLR	0x29
-+#define LP5036_OUT22_CLR	0x2a
-+#define LP5036_OUT23_CLR	0x2b
-+#define LP5036_OUT24_CLR	0x2c
-+#define LP5036_OUT25_CLR	0x2d
-+#define LP5036_OUT26_CLR	0x2e
-+#define LP5036_OUT27_CLR	0x2f
-+#define LP5036_OUT28_CLR	0x30
-+#define LP5036_OUT29_CLR	0x31
-+#define LP5036_OUT30_CLR	0x32
-+#define LP5036_OUT31_CLR	0x33
-+#define LP5036_OUT32_CLR	0x34
-+#define LP5036_OUT33_CLR	0x35
-+#define LP5036_OUT34_CLR	0x36
-+#define LP5036_OUT35_CLR	0x37
-+#define LP5036_RESET		0x38
-+
-+#define LP50XX_SW_RESET		0xff
-+
-+#define LP50XX_CHIP_EN		BIT(6)
-+
-+#define LP5018_MAX_LED_STRINGS	6
-+#define LP5024_MAX_LED_STRINGS	8
-+#define LP5030_MAX_LED_STRINGS	10
-+#define LP5036_MAX_LED_STRINGS	12
-+
-+enum lp50xx_model {
-+	LP5018,
-+	LP5024,
-+	LP5030,
-+	LP5036,
-+};
-+
-+struct lp50xx_led {
-+	u32 led_strings[LP5036_MAX_LED_STRINGS];
-+	char label[LED_MAX_NAME_SIZE];
-+	struct led_classdev led_dev;
-+	struct lp50xx *priv;
-+	int led_number;
-+	u8 ctrl_bank_enabled;
-+};
-+
-+/**
-+ * struct lp50xx -
-+ * @enable_gpio: Hardware enable gpio
-+ * @regulator: LED supply regulator pointer
-+ * @client: Pointer to the I2C client
-+ * @regmap: Devices register map
-+ * @dev: Pointer to the devices device struct
-+ * @lock: Lock for reading/writing the device
-+ * @model_id: ID of the device
-+ * @leds: Array of LED strings
-+ */
-+struct lp50xx {
-+	struct gpio_desc *enable_gpio;
-+	struct regulator *regulator;
-+	struct i2c_client *client;
-+	struct regmap *regmap;
-+	struct device *dev;
-+	struct mutex lock;
-+	enum lp50xx_model model_id;
-+	int max_leds;
-+	int num_of_leds;
-+
-+	u8 led_brightness0_reg;
-+	u8 mix_out0_reg;
-+	u8 bank_brt_reg;
-+	u8 bank_mix_reg;
-+	u8 reset_reg;
-+
-+	/* This needs to be at the end of the struct */
-+	struct lp50xx_led leds[];
-+};
-+
-+static const struct reg_default lp5024_reg_defs[] = {
-+	{LP50XX_DEV_CFG0, 0x0},
-+	{LP50XX_DEV_CFG1, 0x3c},
-+	{LP50XX_LED_CFG0, 0x0},
-+	{LP5024_BNK_BRT, 0xff},
-+	{LP5024_BNKA_CLR, 0x0f},
-+	{LP5024_BNKB_CLR, 0x0f},
-+	{LP5024_BNKC_CLR, 0x0f},
-+	{LP5024_LED0_BRT, 0x0f},
-+	{LP5024_LED1_BRT, 0xff},
-+	{LP5024_LED2_BRT, 0xff},
-+	{LP5024_LED3_BRT, 0xff},
-+	{LP5024_LED4_BRT, 0xff},
-+	{LP5024_LED5_BRT, 0xff},
-+	{LP5024_LED6_BRT, 0xff},
-+	{LP5024_LED7_BRT, 0xff},
-+	{LP5024_OUT0_CLR, 0x0f},
-+	{LP5024_OUT1_CLR, 0x00},
-+	{LP5024_OUT2_CLR, 0x00},
-+	{LP5024_OUT3_CLR, 0x00},
-+	{LP5024_OUT4_CLR, 0x00},
-+	{LP5024_OUT5_CLR, 0x00},
-+	{LP5024_OUT6_CLR, 0x00},
-+	{LP5024_OUT7_CLR, 0x00},
-+	{LP5024_OUT8_CLR, 0x00},
-+	{LP5024_OUT9_CLR, 0x00},
-+	{LP5024_OUT10_CLR, 0x00},
-+	{LP5024_OUT11_CLR, 0x00},
-+	{LP5024_OUT12_CLR, 0x00},
-+	{LP5024_OUT13_CLR, 0x00},
-+	{LP5024_OUT14_CLR, 0x00},
-+	{LP5024_OUT15_CLR, 0x00},
-+	{LP5024_OUT16_CLR, 0x00},
-+	{LP5024_OUT17_CLR, 0x00},
-+	{LP5024_OUT18_CLR, 0x00},
-+	{LP5024_OUT19_CLR, 0x00},
-+	{LP5024_OUT20_CLR, 0x00},
-+	{LP5024_OUT21_CLR, 0x00},
-+	{LP5024_OUT22_CLR, 0x00},
-+	{LP5024_OUT23_CLR, 0x00},
-+	{LP5024_RESET, 0x00}
-+};
-+
-+static const struct reg_default lp5036_reg_defs[] = {
-+	{LP50XX_DEV_CFG0, 0x0},
-+	{LP50XX_DEV_CFG1, 0x3c},
-+	{LP50XX_LED_CFG0, 0x0},
-+	{LP5036_LED_CFG1, 0x0},
-+	{LP5036_BNK_BRT, 0xff},
-+	{LP5036_BNKA_CLR, 0x0f},
-+	{LP5036_BNKB_CLR, 0x0f},
-+	{LP5036_BNKC_CLR, 0x0f},
-+	{LP5036_LED0_BRT, 0x0f},
-+	{LP5036_LED1_BRT, 0xff},
-+	{LP5036_LED2_BRT, 0xff},
-+	{LP5036_LED3_BRT, 0xff},
-+	{LP5036_LED4_BRT, 0xff},
-+	{LP5036_LED5_BRT, 0xff},
-+	{LP5036_LED6_BRT, 0xff},
-+	{LP5036_LED7_BRT, 0xff},
-+	{LP5036_OUT0_CLR, 0x0f},
-+	{LP5036_OUT1_CLR, 0x00},
-+	{LP5036_OUT2_CLR, 0x00},
-+	{LP5036_OUT3_CLR, 0x00},
-+	{LP5036_OUT4_CLR, 0x00},
-+	{LP5036_OUT5_CLR, 0x00},
-+	{LP5036_OUT6_CLR, 0x00},
-+	{LP5036_OUT7_CLR, 0x00},
-+	{LP5036_OUT8_CLR, 0x00},
-+	{LP5036_OUT9_CLR, 0x00},
-+	{LP5036_OUT10_CLR, 0x00},
-+	{LP5036_OUT11_CLR, 0x00},
-+	{LP5036_OUT12_CLR, 0x00},
-+	{LP5036_OUT13_CLR, 0x00},
-+	{LP5036_OUT14_CLR, 0x00},
-+	{LP5036_OUT15_CLR, 0x00},
-+	{LP5036_OUT16_CLR, 0x00},
-+	{LP5036_OUT17_CLR, 0x00},
-+	{LP5036_OUT18_CLR, 0x00},
-+	{LP5036_OUT19_CLR, 0x00},
-+	{LP5036_OUT20_CLR, 0x00},
-+	{LP5036_OUT21_CLR, 0x00},
-+	{LP5036_OUT22_CLR, 0x00},
-+	{LP5036_OUT23_CLR, 0x00},
-+	{LP5036_OUT24_CLR, 0x00},
-+	{LP5036_OUT25_CLR, 0x00},
-+	{LP5036_OUT26_CLR, 0x00},
-+	{LP5036_OUT27_CLR, 0x00},
-+	{LP5036_OUT28_CLR, 0x00},
-+	{LP5036_OUT29_CLR, 0x00},
-+	{LP5036_OUT30_CLR, 0x00},
-+	{LP5036_OUT31_CLR, 0x00},
-+	{LP5036_OUT32_CLR, 0x00},
-+	{LP5036_OUT33_CLR, 0x00},
-+	{LP5036_OUT34_CLR, 0x00},
-+	{LP5036_OUT35_CLR, 0x00},
-+	{LP5036_RESET, 0x00}
-+};
-+
-+static const struct regmap_config lp5024_regmap_config = {
-+	.reg_bits = 8,
-+	.val_bits = 8,
-+
-+	.max_register = LP5024_RESET,
-+	.reg_defaults = lp5024_reg_defs,
-+	.num_reg_defaults = ARRAY_SIZE(lp5024_reg_defs),
-+	.cache_type = REGCACHE_RBTREE,
-+};
-+
-+static const struct regmap_config lp5036_regmap_config = {
-+	.reg_bits = 8,
-+	.val_bits = 8,
-+
-+	.max_register = LP5036_RESET,
-+	.reg_defaults = lp5036_reg_defs,
-+	.num_reg_defaults = ARRAY_SIZE(lp5036_reg_defs),
-+	.cache_type = REGCACHE_RBTREE,
-+};
-+
-+static ssize_t color_show(struct device *dev,
-+			struct device_attribute *attr,
-+			char *buf)
-+{
-+	struct led_classdev *led_cdev = dev_get_drvdata(dev);
-+	struct lp50xx_led *led = container_of(led_cdev, struct lp50xx_led,
-+					      led_dev);
-+	struct lp50xx *priv = led->priv;
-+	unsigned int red_val, green_val, blue_val;
-+	u8 red_reg, green_reg, blue_reg;
-+	u32 mix_value = 0;
-+	u8 led_offset;
-+	int ret;
-+
-+	if (led->ctrl_bank_enabled) {
-+		red_reg = priv->bank_mix_reg;
-+		green_reg = priv->bank_mix_reg + 1;
-+		blue_reg = priv->bank_mix_reg + 2;
-+	} else {
-+		led_offset = (led->led_number * 3);
-+		red_reg = priv->mix_out0_reg + led_offset;
-+		green_reg = priv->mix_out0_reg + led_offset + 1;
-+		blue_reg = priv->mix_out0_reg + led_offset + 2;
-+	}
-+
-+	ret = regmap_read(priv->regmap, red_reg, &red_val);
-+	if (ret) {
-+		dev_err(&priv->client->dev, "Cannot read LED value\n");
-+		goto out;
-+	}
-+
-+	ret = regmap_read(priv->regmap, green_reg, &green_val);
-+	if (ret) {
-+		dev_err(&priv->client->dev, "Cannot read LED value\n");
-+		goto out;
-+	}
-+
-+	ret = regmap_read(priv->regmap, blue_reg, &blue_val);
-+	if (ret) {
-+		dev_err(&priv->client->dev, "Cannot read LED value\n");
-+		goto out;
-+	}
-+
-+	mix_value = (red_val << 16 | green_val << 8 | blue_val);
-+
-+out:
-+	return scnprintf(buf, PAGE_SIZE, "0x%X\n", mix_value);
-+}
-+
-+static ssize_t color_store(struct device *dev,
-+				struct device_attribute *attr,
-+				const char *buf, size_t size)
-+{
-+	struct led_classdev *led_cdev = dev_get_drvdata(dev);
-+	struct lp50xx_led *led = container_of(led_cdev, struct lp50xx_led,
-+					      led_dev);
-+	struct lp50xx *priv = led->priv;
-+	u8 led_offset;
-+	unsigned long mix_value;
-+	u8 red_reg, green_reg, blue_reg;
-+	u8 red_val, green_val, blue_val;
-+	int ret;
-+
-+	ret = kstrtoul(buf, 0, &mix_value);
-+	if (ret)
-+		return ret;
-+
-+	if (led->ctrl_bank_enabled) {
-+		red_reg = priv->bank_mix_reg;
-+		green_reg = priv->bank_mix_reg + 1;
-+		blue_reg = priv->bank_mix_reg + 2;
-+	} else {
-+		led_offset = (led->led_number * 3);
-+		red_reg = priv->mix_out0_reg + led_offset;
-+		green_reg = priv->mix_out0_reg + led_offset + 1;
-+		blue_reg = priv->mix_out0_reg + led_offset + 2;
-+	}
-+
-+	red_val = (mix_value & 0xff0000) >> 16;
-+	green_val = (mix_value & 0xff00) >> 8;
-+	blue_val = (mix_value & 0xff);
-+
-+	ret = regmap_write(priv->regmap, red_reg, red_val);
-+	if (ret) {
-+		dev_err(&priv->client->dev, "Cannot write LED value\n");
-+		goto out;
-+	}
-+
-+	ret = regmap_write(priv->regmap, green_reg, green_val);
-+	if (ret) {
-+		dev_err(&priv->client->dev, "Cannot write LED value\n");
-+		goto out;
-+	}
-+
-+	ret = regmap_write(priv->regmap, blue_reg, blue_val);
-+	if (ret) {
-+		dev_err(&priv->client->dev, "Cannot write LED value\n");
-+		goto out;
-+	}
-+out:
-+	return size;
-+}
-+
-+static DEVICE_ATTR_RW(color);
-+
-+static struct attribute *lp50xx_led_color_attrs[] = {
-+	&dev_attr_color.attr,
-+	NULL
-+};
-+ATTRIBUTE_GROUPS(lp50xx_led_color);
-+
-+static int lp50xx_brightness_set(struct led_classdev *led_cdev,
-+				enum led_brightness brt_val)
-+{
-+	struct lp50xx_led *led = container_of(led_cdev, struct lp50xx_led,
-+					      led_dev);
-+	int ret = 0;
-+	u8 reg_val;
-+
-+	mutex_lock(&led->priv->lock);
-+
-+	if (led->ctrl_bank_enabled)
-+		reg_val = led->priv->bank_brt_reg;
-+	else
-+		reg_val = led->priv->led_brightness0_reg + led->led_number;
-+
-+	ret = regmap_write(led->priv->regmap, reg_val, brt_val);
-+
-+	mutex_unlock(&led->priv->lock);
-+
-+	return ret;
-+}
-+
-+static enum led_brightness lp50xx_brightness_get(struct led_classdev *led_cdev)
-+{
-+	struct lp50xx_led *led = container_of(led_cdev, struct lp50xx_led,
-+					      led_dev);
-+	unsigned int brt_val;
-+	u8 reg_val;
-+	int ret;
-+
-+	mutex_lock(&led->priv->lock);
-+
-+	if (led->ctrl_bank_enabled)
-+		reg_val = led->priv->bank_brt_reg;
-+	else
-+		reg_val = led->priv->led_brightness0_reg + led->led_number;
-+
-+	ret = regmap_read(led->priv->regmap, reg_val, &brt_val);
-+
-+	mutex_unlock(&led->priv->lock);
-+
-+	return brt_val;
-+}
-+
-+static void lp50xx_set_led_values(struct lp50xx *priv)
-+{
-+	if (priv->model_id == LP5018 || priv->model_id == LP5024) {
-+		priv->led_brightness0_reg = LP5024_LED0_BRT;
-+		priv->mix_out0_reg = LP5024_OUT0_CLR;
-+		priv->bank_brt_reg = LP5024_BNK_BRT;
-+		priv->bank_mix_reg = LP5024_BNKA_CLR;
-+		priv->reset_reg = LP5024_RESET;
-+	} else {
-+		priv->led_brightness0_reg = LP5036_LED0_BRT;
-+		priv->mix_out0_reg = LP5036_OUT0_CLR;
-+		priv->bank_brt_reg = LP5036_BNK_BRT;
-+		priv->bank_mix_reg = LP5036_BNKA_CLR;
-+		priv->reset_reg = LP5036_RESET;
-+	}
-+}
-+
-+static int lp50xx_set_banks(struct lp50xx *priv)
-+{
-+	struct lp50xx_led *led;
-+	u8 led_ctrl_enable = 0;
-+	u8 led1_ctrl_enable = 0;
-+	u8 ctrl_ext = 0;
-+	int i, j;
-+	int ret;
-+
-+	for (i = 0; i <= priv->num_of_leds; i++) {
-+		led = &priv->leds[i];
-+		if (!led->ctrl_bank_enabled)
-+			continue;
-+
-+		for (j = 0; j <= priv->max_leds - 1; j++) {
-+			if (led->led_strings[j]	> (LP5024_MAX_LED_STRINGS - 1)) {
-+				ctrl_ext = led->led_strings[j] - LP5024_MAX_LED_STRINGS;
-+				led1_ctrl_enable |= (1 << ctrl_ext);
-+			} else {
-+				led_ctrl_enable |= (1 << led->led_strings[j]);
-+			}
-+		}
-+	}
-+
-+	ret = regmap_write(priv->regmap, LP50XX_LED_CFG0, led_ctrl_enable);
-+
-+	if (led1_ctrl_enable)
-+		ret = regmap_write(priv->regmap, LP5036_LED_CFG1,
-+				   led1_ctrl_enable);
-+
-+	return ret;
-+}
-+
-+static int lp50xx_init(struct lp50xx *priv)
-+{
-+	int ret;
-+
-+	lp50xx_set_led_values(priv);
-+
-+	if (priv->enable_gpio) {
-+		gpiod_direction_output(priv->enable_gpio, 1);
-+	} else {
-+		ret = regmap_write(priv->regmap, priv->reset_reg,
-+				   LP50XX_SW_RESET);
-+		if (ret) {
-+			dev_err(&priv->client->dev,
-+				"Cannot reset the device\n");
-+			goto out;
-+		}
-+	}
-+
-+	ret = lp50xx_set_banks(priv);
-+	if (ret) {
-+		dev_err(&priv->client->dev, "Cannot set the banks\n");
-+		goto out;
-+	}
-+
-+	ret = regmap_write(priv->regmap, LP50XX_DEV_CFG0, LP50XX_CHIP_EN);
-+	if (ret)
-+		dev_err(&priv->client->dev, "Cannot write ctrl enable\n");
-+
-+out:
-+	return ret;
-+}
-+
-+static int lp50xx_probe_dt(struct lp50xx *priv)
-+{
-+	struct fwnode_handle *child = NULL;
-+	struct lp50xx_led *led;
-+	int control_bank_defined = 0;
-+	const char *name;
-+	int led_number;
-+	size_t i = 0;
-+	int ret;
-+
-+	priv->enable_gpio = devm_gpiod_get_optional(&priv->client->dev,
-+						   "enable", GPIOD_OUT_LOW);
-+	if (IS_ERR(priv->enable_gpio)) {
-+		ret = PTR_ERR(priv->enable_gpio);
-+		dev_err(&priv->client->dev, "Failed to get enable gpio: %d\n",
-+			ret);
-+		return ret;
-+	}
-+
-+	priv->regulator = devm_regulator_get(&priv->client->dev, "vled");
-+	if (IS_ERR(priv->regulator))
-+		priv->regulator = NULL;
-+
-+	if (priv->model_id == LP5018)
-+		priv->max_leds = LP5018_MAX_LED_STRINGS;
-+	else if (priv->model_id == LP5024)
-+		priv->max_leds = LP5024_MAX_LED_STRINGS;
-+	else if (priv->model_id == LP5030)
-+		priv->max_leds = LP5030_MAX_LED_STRINGS;
-+	else
-+		priv->max_leds = LP5036_MAX_LED_STRINGS;
-+
-+	device_for_each_child_node(&priv->client->dev, child) {
-+		led = &priv->leds[i];
-+
-+		if (fwnode_property_present(child, "ti,led-bank")) {
-+			led->ctrl_bank_enabled = 1;
-+			if (!control_bank_defined)
-+				control_bank_defined = 1;
-+			else {
-+				dev_err(&priv->client->dev,
-+					"ti,led-bank defined twice\n");
-+				fwnode_handle_put(child);
-+				goto child_out;
-+			}
-+		} else {
-+			led->ctrl_bank_enabled = 0;
-+		}
-+
-+		if (led->ctrl_bank_enabled) {
-+			ret = fwnode_property_read_u32_array(child,
-+							     "ti,led-bank",
-+							     NULL, 0);
-+			ret = fwnode_property_read_u32_array(child,
-+							     "ti,led-bank",
-+							     led->led_strings,
-+							     ret);
-+
-+			led->led_number = led->led_strings[0];
-+
-+		} else {
-+			ret = fwnode_property_read_u32(child, "ti,led-module",
-+					       &led_number);
-+
-+			led->led_number = led_number;
-+		}
-+		if (ret) {
-+			dev_err(&priv->client->dev,
-+				"led sourcing property missing\n");
-+			fwnode_handle_put(child);
-+			goto child_out;
-+		}
-+
-+		if (led_number > priv->max_leds) {
-+			dev_err(&priv->client->dev,
-+				"led-sources property is invalid\n");
-+			ret = -EINVAL;
-+			fwnode_handle_put(child);
-+			goto child_out;
-+		}
-+
-+		ret = fwnode_property_read_string(child, "label", &name);
-+		if (ret)
-+			snprintf(led->label, sizeof(led->label),
-+				"%s::", priv->client->name);
-+		else
-+			snprintf(led->label, sizeof(led->label),
-+				 "%s:%s", priv->client->name, name);
-+
-+		fwnode_property_read_string(child, "linux,default-trigger",
-+				    &led->led_dev.default_trigger);
-+
-+		led->priv = priv;
-+		led->led_dev.name = led->label;
-+		led->led_dev.brightness_set_blocking = lp50xx_brightness_set;
-+		led->led_dev.brightness_get = lp50xx_brightness_get;
-+		led->led_dev.groups = lp50xx_led_color_groups;
-+
-+		ret = devm_led_classdev_register(&priv->client->dev,
-+						 &led->led_dev);
-+		if (ret) {
-+			dev_err(&priv->client->dev, "led register err: %d\n",
-+				ret);
-+			fwnode_handle_put(child);
-+			goto child_out;
-+		}
-+		i++;
-+	}
-+	priv->num_of_leds = i;
-+
-+child_out:
-+	return ret;
-+}
-+
-+static int lp50xx_probe(struct i2c_client *client,
-+			const struct i2c_device_id *id)
-+{
-+	struct lp50xx *led;
-+	int count;
-+	int ret;
-+
-+	count = device_get_child_node_count(&client->dev);
-+	if (!count) {
-+		dev_err(&client->dev, "LEDs are not defined in device tree!");
-+		return -ENODEV;
-+	}
-+
-+	led = devm_kzalloc(&client->dev, struct_size(led, leds, count),
-+			   GFP_KERNEL);
-+	if (!led)
-+		return -ENOMEM;
-+
-+	mutex_init(&led->lock);
-+	led->client = client;
-+	led->dev = &client->dev;
-+	led->model_id = id->driver_data;
-+	i2c_set_clientdata(client, led);
-+
-+	if (led->model_id == LP5018 || led->model_id == LP5024)
-+		led->regmap = devm_regmap_init_i2c(client,
-+						   &lp5024_regmap_config);
-+	else
-+		led->regmap = devm_regmap_init_i2c(client,
-+						   &lp5036_regmap_config);
-+
-+	if (IS_ERR(led->regmap)) {
-+		ret = PTR_ERR(led->regmap);
-+		dev_err(&client->dev, "Failed to allocate register map: %d\n",
-+			ret);
-+		return ret;
-+	}
-+
-+	ret = lp50xx_probe_dt(led);
-+	if (ret)
-+		return ret;
-+
-+	ret = lp50xx_init(led);
-+	if (ret)
-+		return ret;
-+
-+	return 0;
-+}
-+
-+static int lp50xx_remove(struct i2c_client *client)
-+{
-+	struct lp50xx *led = i2c_get_clientdata(client);
-+	int ret;
-+
-+	ret = regmap_update_bits(led->regmap, LP50XX_DEV_CFG0,
-+				 LP50XX_CHIP_EN, 0);
-+	if (ret) {
-+		dev_err(&led->client->dev, "Failed to disable regulator\n");
-+		return ret;
-+	}
-+
-+	if (led->enable_gpio)
-+		gpiod_direction_output(led->enable_gpio, 0);
-+
-+	if (led->regulator) {
-+		ret = regulator_disable(led->regulator);
-+		if (ret)
-+			dev_err(&led->client->dev,
-+				"Failed to disable regulator\n");
-+	}
-+
-+	mutex_destroy(&led->lock);
-+
-+	return 0;
-+}
-+
-+static const struct i2c_device_id lp50xx_id[] = {
-+	{ "lp5018", LP5018 },
-+	{ "lp5024", LP5024 },
-+	{ "lp5030", LP5030 },
-+	{ "lp5036", LP5036 },
-+	{ }
-+};
-+MODULE_DEVICE_TABLE(i2c, lp50xx_id);
-+
-+static const struct of_device_id of_lp50xx_leds_match[] = {
-+	{ .compatible = "ti,lp5018", },
-+	{ .compatible = "ti,lp5024", },
-+	{ .compatible = "ti,lp5030", },
-+	{ .compatible = "ti,lp5036", },
-+	{},
-+};
-+MODULE_DEVICE_TABLE(of, of_lp50xx_leds_match);
-+
-+static struct i2c_driver lp50xx_driver = {
-+	.driver = {
-+		.name	= "lp50xx",
-+		.of_match_table = of_lp50xx_leds_match,
-+	},
-+	.probe		= lp50xx_probe,
-+	.remove		= lp50xx_remove,
-+	.id_table	= lp50xx_id,
-+};
-+module_i2c_driver(lp50xx_driver);
-+
-+MODULE_DESCRIPTION("Texas Instruments LP5024 LED driver");
-+MODULE_AUTHOR("Dan Murphy <dmurphy@ti.com>");
-+MODULE_LICENSE("GPL v2");
+ 	soc: soc {
+-		#address-cells = <1>;
+-		#size-cells = <1>;
+-		ranges = <0 0 0 0xffffffff>;
++		#address-cells = <2>;
++		#size-cells = <2>;
++		ranges = <0 0 0 0 0 0xffffffff>;
++		dma-ranges = <0 0 0 0 0x10 0>;
+ 		compatible = "simple-bus";
+ 
+ 		gcc: clock-controller@100000 {
+ 			compatible = "qcom,gcc-sdm845";
+-			reg = <0x100000 0x1f0000>;
++			reg = <0 0x00100000 0 0x1f0000>;
+ 			#clock-cells = <1>;
+ 			#reset-cells = <1>;
+ 			#power-domain-cells = <1>;
+@@ -351,7 +352,7 @@
+ 
+ 		qfprom@784000 {
+ 			compatible = "qcom,qfprom";
+-			reg = <0x784000 0x8ff>;
++			reg = <0 0x00784000 0 0x8ff>;
+ 			#address-cells = <1>;
+ 			#size-cells = <1>;
+ 
+@@ -368,25 +369,25 @@
+ 
+ 		rng: rng@793000 {
+ 			compatible = "qcom,prng-ee";
+-			reg = <0x00793000 0x1000>;
++			reg = <0 0x00793000 0 0x1000>;
+ 			clocks = <&gcc GCC_PRNG_AHB_CLK>;
+ 			clock-names = "core";
+ 		};
+ 
+ 		qupv3_id_0: geniqup@8c0000 {
+ 			compatible = "qcom,geni-se-qup";
+-			reg = <0x8c0000 0x6000>;
++			reg = <0 0x008c0000 0 0x6000>;
+ 			clock-names = "m-ahb", "s-ahb";
+ 			clocks = <&gcc GCC_QUPV3_WRAP_0_M_AHB_CLK>,
+ 				 <&gcc GCC_QUPV3_WRAP_0_S_AHB_CLK>;
+-			#address-cells = <1>;
+-			#size-cells = <1>;
++			#address-cells = <2>;
++			#size-cells = <2>;
+ 			ranges;
+ 			status = "disabled";
+ 
+ 			i2c0: i2c@880000 {
+ 				compatible = "qcom,geni-i2c";
+-				reg = <0x880000 0x4000>;
++				reg = <0 0x00880000 0 0x4000>;
+ 				clock-names = "se";
+ 				clocks = <&gcc GCC_QUPV3_WRAP0_S0_CLK>;
+ 				pinctrl-names = "default";
+@@ -399,7 +400,7 @@
+ 
+ 			spi0: spi@880000 {
+ 				compatible = "qcom,geni-spi";
+-				reg = <0x880000 0x4000>;
++				reg = <0 0x00880000 0 0x4000>;
+ 				clock-names = "se";
+ 				clocks = <&gcc GCC_QUPV3_WRAP0_S0_CLK>;
+ 				pinctrl-names = "default";
+@@ -412,7 +413,7 @@
+ 
+ 			uart0: serial@880000 {
+ 				compatible = "qcom,geni-uart";
+-				reg = <0x880000 0x4000>;
++				reg = <0 0x00880000 0 0x4000>;
+ 				clock-names = "se";
+ 				clocks = <&gcc GCC_QUPV3_WRAP0_S0_CLK>;
+ 				pinctrl-names = "default";
+@@ -423,7 +424,7 @@
+ 
+ 			i2c1: i2c@884000 {
+ 				compatible = "qcom,geni-i2c";
+-				reg = <0x884000 0x4000>;
++				reg = <0 0x00884000 0 0x4000>;
+ 				clock-names = "se";
+ 				clocks = <&gcc GCC_QUPV3_WRAP0_S1_CLK>;
+ 				pinctrl-names = "default";
+@@ -436,7 +437,7 @@
+ 
+ 			spi1: spi@884000 {
+ 				compatible = "qcom,geni-spi";
+-				reg = <0x884000 0x4000>;
++				reg = <0 0x00884000 0 0x4000>;
+ 				clock-names = "se";
+ 				clocks = <&gcc GCC_QUPV3_WRAP0_S1_CLK>;
+ 				pinctrl-names = "default";
+@@ -449,7 +450,7 @@
+ 
+ 			uart1: serial@884000 {
+ 				compatible = "qcom,geni-uart";
+-				reg = <0x884000 0x4000>;
++				reg = <0 0x00884000 0 0x4000>;
+ 				clock-names = "se";
+ 				clocks = <&gcc GCC_QUPV3_WRAP0_S1_CLK>;
+ 				pinctrl-names = "default";
+@@ -460,7 +461,7 @@
+ 
+ 			i2c2: i2c@888000 {
+ 				compatible = "qcom,geni-i2c";
+-				reg = <0x888000 0x4000>;
++				reg = <0 0x00888000 0 0x4000>;
+ 				clock-names = "se";
+ 				clocks = <&gcc GCC_QUPV3_WRAP0_S2_CLK>;
+ 				pinctrl-names = "default";
+@@ -473,7 +474,7 @@
+ 
+ 			spi2: spi@888000 {
+ 				compatible = "qcom,geni-spi";
+-				reg = <0x888000 0x4000>;
++				reg = <0 0x00888000 0 0x4000>;
+ 				clock-names = "se";
+ 				clocks = <&gcc GCC_QUPV3_WRAP0_S2_CLK>;
+ 				pinctrl-names = "default";
+@@ -486,7 +487,7 @@
+ 
+ 			uart2: serial@888000 {
+ 				compatible = "qcom,geni-uart";
+-				reg = <0x888000 0x4000>;
++				reg = <0 0x00888000 0 0x4000>;
+ 				clock-names = "se";
+ 				clocks = <&gcc GCC_QUPV3_WRAP0_S2_CLK>;
+ 				pinctrl-names = "default";
+@@ -497,7 +498,7 @@
+ 
+ 			i2c3: i2c@88c000 {
+ 				compatible = "qcom,geni-i2c";
+-				reg = <0x88c000 0x4000>;
++				reg = <0 0x0088c000 0 0x4000>;
+ 				clock-names = "se";
+ 				clocks = <&gcc GCC_QUPV3_WRAP0_S3_CLK>;
+ 				pinctrl-names = "default";
+@@ -510,7 +511,7 @@
+ 
+ 			spi3: spi@88c000 {
+ 				compatible = "qcom,geni-spi";
+-				reg = <0x88c000 0x4000>;
++				reg = <0 0x0088c000 0 0x4000>;
+ 				clock-names = "se";
+ 				clocks = <&gcc GCC_QUPV3_WRAP0_S3_CLK>;
+ 				pinctrl-names = "default";
+@@ -523,7 +524,7 @@
+ 
+ 			uart3: serial@88c000 {
+ 				compatible = "qcom,geni-uart";
+-				reg = <0x88c000 0x4000>;
++				reg = <0 0x0088c000 0 0x4000>;
+ 				clock-names = "se";
+ 				clocks = <&gcc GCC_QUPV3_WRAP0_S3_CLK>;
+ 				pinctrl-names = "default";
+@@ -534,7 +535,7 @@
+ 
+ 			i2c4: i2c@890000 {
+ 				compatible = "qcom,geni-i2c";
+-				reg = <0x890000 0x4000>;
++				reg = <0 0x00890000 0 0x4000>;
+ 				clock-names = "se";
+ 				clocks = <&gcc GCC_QUPV3_WRAP0_S4_CLK>;
+ 				pinctrl-names = "default";
+@@ -547,7 +548,7 @@
+ 
+ 			spi4: spi@890000 {
+ 				compatible = "qcom,geni-spi";
+-				reg = <0x890000 0x4000>;
++				reg = <0 0x00890000 0 0x4000>;
+ 				clock-names = "se";
+ 				clocks = <&gcc GCC_QUPV3_WRAP0_S4_CLK>;
+ 				pinctrl-names = "default";
+@@ -560,7 +561,7 @@
+ 
+ 			uart4: serial@890000 {
+ 				compatible = "qcom,geni-uart";
+-				reg = <0x890000 0x4000>;
++				reg = <0 0x00890000 0 0x4000>;
+ 				clock-names = "se";
+ 				clocks = <&gcc GCC_QUPV3_WRAP0_S4_CLK>;
+ 				pinctrl-names = "default";
+@@ -571,7 +572,7 @@
+ 
+ 			i2c5: i2c@894000 {
+ 				compatible = "qcom,geni-i2c";
+-				reg = <0x894000 0x4000>;
++				reg = <0 0x00894000 0 0x4000>;
+ 				clock-names = "se";
+ 				clocks = <&gcc GCC_QUPV3_WRAP0_S5_CLK>;
+ 				pinctrl-names = "default";
+@@ -584,7 +585,7 @@
+ 
+ 			spi5: spi@894000 {
+ 				compatible = "qcom,geni-spi";
+-				reg = <0x894000 0x4000>;
++				reg = <0 0x00894000 0 0x4000>;
+ 				clock-names = "se";
+ 				clocks = <&gcc GCC_QUPV3_WRAP0_S5_CLK>;
+ 				pinctrl-names = "default";
+@@ -597,7 +598,7 @@
+ 
+ 			uart5: serial@894000 {
+ 				compatible = "qcom,geni-uart";
+-				reg = <0x894000 0x4000>;
++				reg = <0 0x00894000 0 0x4000>;
+ 				clock-names = "se";
+ 				clocks = <&gcc GCC_QUPV3_WRAP0_S5_CLK>;
+ 				pinctrl-names = "default";
+@@ -608,7 +609,7 @@
+ 
+ 			i2c6: i2c@898000 {
+ 				compatible = "qcom,geni-i2c";
+-				reg = <0x898000 0x4000>;
++				reg = <0 0x00898000 0 0x4000>;
+ 				clock-names = "se";
+ 				clocks = <&gcc GCC_QUPV3_WRAP0_S6_CLK>;
+ 				pinctrl-names = "default";
+@@ -621,7 +622,7 @@
+ 
+ 			spi6: spi@898000 {
+ 				compatible = "qcom,geni-spi";
+-				reg = <0x898000 0x4000>;
++				reg = <0 0x00898000 0 0x4000>;
+ 				clock-names = "se";
+ 				clocks = <&gcc GCC_QUPV3_WRAP0_S6_CLK>;
+ 				pinctrl-names = "default";
+@@ -634,7 +635,7 @@
+ 
+ 			uart6: serial@898000 {
+ 				compatible = "qcom,geni-uart";
+-				reg = <0x898000 0x4000>;
++				reg = <0 0x00898000 0 0x4000>;
+ 				clock-names = "se";
+ 				clocks = <&gcc GCC_QUPV3_WRAP0_S6_CLK>;
+ 				pinctrl-names = "default";
+@@ -645,7 +646,7 @@
+ 
+ 			i2c7: i2c@89c000 {
+ 				compatible = "qcom,geni-i2c";
+-				reg = <0x89c000 0x4000>;
++				reg = <0 0x0089c000 0 0x4000>;
+ 				clock-names = "se";
+ 				clocks = <&gcc GCC_QUPV3_WRAP0_S7_CLK>;
+ 				pinctrl-names = "default";
+@@ -658,7 +659,7 @@
+ 
+ 			spi7: spi@89c000 {
+ 				compatible = "qcom,geni-spi";
+-				reg = <0x89c000 0x4000>;
++				reg = <0 0x0089c000 0 0x4000>;
+ 				clock-names = "se";
+ 				clocks = <&gcc GCC_QUPV3_WRAP0_S7_CLK>;
+ 				pinctrl-names = "default";
+@@ -671,7 +672,7 @@
+ 
+ 			uart7: serial@89c000 {
+ 				compatible = "qcom,geni-uart";
+-				reg = <0x89c000 0x4000>;
++				reg = <0 0x0089c000 0 0x4000>;
+ 				clock-names = "se";
+ 				clocks = <&gcc GCC_QUPV3_WRAP0_S7_CLK>;
+ 				pinctrl-names = "default";
+@@ -683,18 +684,18 @@
+ 
+ 		qupv3_id_1: geniqup@ac0000 {
+ 			compatible = "qcom,geni-se-qup";
+-			reg = <0xac0000 0x6000>;
++			reg = <0 0x00ac0000 0 0x6000>;
+ 			clock-names = "m-ahb", "s-ahb";
+ 			clocks = <&gcc GCC_QUPV3_WRAP_1_M_AHB_CLK>,
+ 				 <&gcc GCC_QUPV3_WRAP_1_S_AHB_CLK>;
+-			#address-cells = <1>;
+-			#size-cells = <1>;
++			#address-cells = <2>;
++			#size-cells = <2>;
+ 			ranges;
+ 			status = "disabled";
+ 
+ 			i2c8: i2c@a80000 {
+ 				compatible = "qcom,geni-i2c";
+-				reg = <0xa80000 0x4000>;
++				reg = <0 0x00a80000 0 0x4000>;
+ 				clock-names = "se";
+ 				clocks = <&gcc GCC_QUPV3_WRAP1_S0_CLK>;
+ 				pinctrl-names = "default";
+@@ -707,7 +708,7 @@
+ 
+ 			spi8: spi@a80000 {
+ 				compatible = "qcom,geni-spi";
+-				reg = <0xa80000 0x4000>;
++				reg = <0 0x00a80000 0 0x4000>;
+ 				clock-names = "se";
+ 				clocks = <&gcc GCC_QUPV3_WRAP1_S0_CLK>;
+ 				pinctrl-names = "default";
+@@ -720,7 +721,7 @@
+ 
+ 			uart8: serial@a80000 {
+ 				compatible = "qcom,geni-uart";
+-				reg = <0xa80000 0x4000>;
++				reg = <0 0x00a80000 0 0x4000>;
+ 				clock-names = "se";
+ 				clocks = <&gcc GCC_QUPV3_WRAP1_S0_CLK>;
+ 				pinctrl-names = "default";
+@@ -731,7 +732,7 @@
+ 
+ 			i2c9: i2c@a84000 {
+ 				compatible = "qcom,geni-i2c";
+-				reg = <0xa84000 0x4000>;
++				reg = <0 0x00a84000 0 0x4000>;
+ 				clock-names = "se";
+ 				clocks = <&gcc GCC_QUPV3_WRAP1_S1_CLK>;
+ 				pinctrl-names = "default";
+@@ -744,7 +745,7 @@
+ 
+ 			spi9: spi@a84000 {
+ 				compatible = "qcom,geni-spi";
+-				reg = <0xa84000 0x4000>;
++				reg = <0 0x00a84000 0 0x4000>;
+ 				clock-names = "se";
+ 				clocks = <&gcc GCC_QUPV3_WRAP1_S1_CLK>;
+ 				pinctrl-names = "default";
+@@ -757,7 +758,7 @@
+ 
+ 			uart9: serial@a84000 {
+ 				compatible = "qcom,geni-debug-uart";
+-				reg = <0xa84000 0x4000>;
++				reg = <0 0x00a84000 0 0x4000>;
+ 				clock-names = "se";
+ 				clocks = <&gcc GCC_QUPV3_WRAP1_S1_CLK>;
+ 				pinctrl-names = "default";
+@@ -768,7 +769,7 @@
+ 
+ 			i2c10: i2c@a88000 {
+ 				compatible = "qcom,geni-i2c";
+-				reg = <0xa88000 0x4000>;
++				reg = <0 0x00a88000 0 0x4000>;
+ 				clock-names = "se";
+ 				clocks = <&gcc GCC_QUPV3_WRAP1_S2_CLK>;
+ 				pinctrl-names = "default";
+@@ -781,7 +782,7 @@
+ 
+ 			spi10: spi@a88000 {
+ 				compatible = "qcom,geni-spi";
+-				reg = <0xa88000 0x4000>;
++				reg = <0 0x00a88000 0 0x4000>;
+ 				clock-names = "se";
+ 				clocks = <&gcc GCC_QUPV3_WRAP1_S2_CLK>;
+ 				pinctrl-names = "default";
+@@ -794,7 +795,7 @@
+ 
+ 			uart10: serial@a88000 {
+ 				compatible = "qcom,geni-uart";
+-				reg = <0xa88000 0x4000>;
++				reg = <0 0x00a88000 0 0x4000>;
+ 				clock-names = "se";
+ 				clocks = <&gcc GCC_QUPV3_WRAP1_S2_CLK>;
+ 				pinctrl-names = "default";
+@@ -805,7 +806,7 @@
+ 
+ 			i2c11: i2c@a8c000 {
+ 				compatible = "qcom,geni-i2c";
+-				reg = <0xa8c000 0x4000>;
++				reg = <0 0x00a8c000 0 0x4000>;
+ 				clock-names = "se";
+ 				clocks = <&gcc GCC_QUPV3_WRAP1_S3_CLK>;
+ 				pinctrl-names = "default";
+@@ -818,7 +819,7 @@
+ 
+ 			spi11: spi@a8c000 {
+ 				compatible = "qcom,geni-spi";
+-				reg = <0xa8c000 0x4000>;
++				reg = <0 0x00a8c000 0 0x4000>;
+ 				clock-names = "se";
+ 				clocks = <&gcc GCC_QUPV3_WRAP1_S3_CLK>;
+ 				pinctrl-names = "default";
+@@ -831,7 +832,7 @@
+ 
+ 			uart11: serial@a8c000 {
+ 				compatible = "qcom,geni-uart";
+-				reg = <0xa8c000 0x4000>;
++				reg = <0 0x00a8c000 0 0x4000>;
+ 				clock-names = "se";
+ 				clocks = <&gcc GCC_QUPV3_WRAP1_S3_CLK>;
+ 				pinctrl-names = "default";
+@@ -842,7 +843,7 @@
+ 
+ 			i2c12: i2c@a90000 {
+ 				compatible = "qcom,geni-i2c";
+-				reg = <0xa90000 0x4000>;
++				reg = <0 0x00a90000 0 0x4000>;
+ 				clock-names = "se";
+ 				clocks = <&gcc GCC_QUPV3_WRAP1_S4_CLK>;
+ 				pinctrl-names = "default";
+@@ -855,7 +856,7 @@
+ 
+ 			spi12: spi@a90000 {
+ 				compatible = "qcom,geni-spi";
+-				reg = <0xa90000 0x4000>;
++				reg = <0 0x00a90000 0 0x4000>;
+ 				clock-names = "se";
+ 				clocks = <&gcc GCC_QUPV3_WRAP1_S4_CLK>;
+ 				pinctrl-names = "default";
+@@ -868,7 +869,7 @@
+ 
+ 			uart12: serial@a90000 {
+ 				compatible = "qcom,geni-uart";
+-				reg = <0xa90000 0x4000>;
++				reg = <0 0x00a90000 0 0x4000>;
+ 				clock-names = "se";
+ 				clocks = <&gcc GCC_QUPV3_WRAP1_S4_CLK>;
+ 				pinctrl-names = "default";
+@@ -879,7 +880,7 @@
+ 
+ 			i2c13: i2c@a94000 {
+ 				compatible = "qcom,geni-i2c";
+-				reg = <0xa94000 0x4000>;
++				reg = <0 0x00a94000 0 0x4000>;
+ 				clock-names = "se";
+ 				clocks = <&gcc GCC_QUPV3_WRAP1_S5_CLK>;
+ 				pinctrl-names = "default";
+@@ -892,7 +893,7 @@
+ 
+ 			spi13: spi@a94000 {
+ 				compatible = "qcom,geni-spi";
+-				reg = <0xa94000 0x4000>;
++				reg = <0 0x00a94000 0 0x4000>;
+ 				clock-names = "se";
+ 				clocks = <&gcc GCC_QUPV3_WRAP1_S5_CLK>;
+ 				pinctrl-names = "default";
+@@ -905,7 +906,7 @@
+ 
+ 			uart13: serial@a94000 {
+ 				compatible = "qcom,geni-uart";
+-				reg = <0xa94000 0x4000>;
++				reg = <0 0x00a94000 0 0x4000>;
+ 				clock-names = "se";
+ 				clocks = <&gcc GCC_QUPV3_WRAP1_S5_CLK>;
+ 				pinctrl-names = "default";
+@@ -916,7 +917,7 @@
+ 
+ 			i2c14: i2c@a98000 {
+ 				compatible = "qcom,geni-i2c";
+-				reg = <0xa98000 0x4000>;
++				reg = <0 0x00a98000 0 0x4000>;
+ 				clock-names = "se";
+ 				clocks = <&gcc GCC_QUPV3_WRAP1_S6_CLK>;
+ 				pinctrl-names = "default";
+@@ -929,7 +930,7 @@
+ 
+ 			spi14: spi@a98000 {
+ 				compatible = "qcom,geni-spi";
+-				reg = <0xa98000 0x4000>;
++				reg = <0 0x00a98000 0 0x4000>;
+ 				clock-names = "se";
+ 				clocks = <&gcc GCC_QUPV3_WRAP1_S6_CLK>;
+ 				pinctrl-names = "default";
+@@ -942,7 +943,7 @@
+ 
+ 			uart14: serial@a98000 {
+ 				compatible = "qcom,geni-uart";
+-				reg = <0xa98000 0x4000>;
++				reg = <0 0x00a98000 0 0x4000>;
+ 				clock-names = "se";
+ 				clocks = <&gcc GCC_QUPV3_WRAP1_S6_CLK>;
+ 				pinctrl-names = "default";
+@@ -953,7 +954,7 @@
+ 
+ 			i2c15: i2c@a9c000 {
+ 				compatible = "qcom,geni-i2c";
+-				reg = <0xa9c000 0x4000>;
++				reg = <0 0x00a9c000 0 0x4000>;
+ 				clock-names = "se";
+ 				clocks = <&gcc GCC_QUPV3_WRAP1_S7_CLK>;
+ 				pinctrl-names = "default";
+@@ -966,7 +967,7 @@
+ 
+ 			spi15: spi@a9c000 {
+ 				compatible = "qcom,geni-spi";
+-				reg = <0xa9c000 0x4000>;
++				reg = <0 0x00a9c000 0 0x4000>;
+ 				clock-names = "se";
+ 				clocks = <&gcc GCC_QUPV3_WRAP1_S7_CLK>;
+ 				pinctrl-names = "default";
+@@ -979,7 +980,7 @@
+ 
+ 			uart15: serial@a9c000 {
+ 				compatible = "qcom,geni-uart";
+-				reg = <0xa9c000 0x4000>;
++				reg = <0 0x00a9c000 0 0x4000>;
+ 				clock-names = "se";
+ 				clocks = <&gcc GCC_QUPV3_WRAP1_S7_CLK>;
+ 				pinctrl-names = "default";
+@@ -992,7 +993,7 @@
+ 		ufs_mem_hc: ufshc@1d84000 {
+ 			compatible = "qcom,sdm845-ufshc", "qcom,ufshc",
+ 				     "jedec,ufs-2.0";
+-			reg = <0x1d84000 0x2500>;
++			reg = <0 0x01d84000 0 0x2500>;
+ 			interrupts = <GIC_SPI 265 IRQ_TYPE_LEVEL_HIGH>;
+ 			phys = <&ufs_mem_phy_lanes>;
+ 			phy-names = "ufsphy";
+@@ -1034,9 +1035,9 @@
+ 
+ 		ufs_mem_phy: phy@1d87000 {
+ 			compatible = "qcom,sdm845-qmp-ufs-phy";
+-			reg = <0x1d87000 0x18c>;
+-			#address-cells = <1>;
+-			#size-cells = <1>;
++			reg = <0 0x01d87000 0 0x18c>;
++			#address-cells = <2>;
++			#size-cells = <2>;
+ 			ranges;
+ 			clock-names = "ref",
+ 				      "ref_aux";
+@@ -1046,23 +1047,23 @@
+ 			status = "disabled";
+ 
+ 			ufs_mem_phy_lanes: lanes@1d87400 {
+-				reg = <0x1d87400 0x108>,
+-				      <0x1d87600 0x1e0>,
+-				      <0x1d87c00 0x1dc>,
+-				      <0x1d87800 0x108>,
+-				      <0x1d87a00 0x1e0>;
++				reg = <0 0x01d87400 0 0x108>,
++				      <0 0x01d87600 0 0x1e0>,
++				      <0 0x01d87c00 0 0x1dc>,
++				      <0 0x01d87800 0 0x108>,
++				      <0 0x01d87a00 0 0x1e0>;
+ 				#phy-cells = <0>;
+ 			};
+ 		};
+ 
+ 		tcsr_mutex_regs: syscon@1f40000 {
+ 			compatible = "syscon";
+-			reg = <0x1f40000 0x40000>;
++			reg = <0 0x01f40000 0 0x40000>;
+ 		};
+ 
+ 		tlmm: pinctrl@3400000 {
+ 			compatible = "qcom,sdm845-pinctrl";
+-			reg = <0x03400000 0xc00000>;
++			reg = <0 0x03400000 0 0xc00000>;
+ 			interrupts = <GIC_SPI 208 IRQ_TYPE_LEVEL_HIGH>;
+ 			gpio-controller;
+ 			#gpio-cells = <2>;
+@@ -1424,7 +1425,7 @@
+ 
+ 		sdhc_2: sdhci@8804000 {
+ 			compatible = "qcom,sdm845-sdhci", "qcom,sdhci-msm-v5";
+-			reg = <0x8804000 0x1000>;
++			reg = <0 0x08804000 0 0x1000>;
+ 
+ 			interrupts = <GIC_SPI 204 IRQ_TYPE_LEVEL_HIGH>,
+ 				     <GIC_SPI 222 IRQ_TYPE_LEVEL_HIGH>;
+@@ -1439,7 +1440,7 @@
+ 
+ 		usb_1_hsphy: phy@88e2000 {
+ 			compatible = "qcom,sdm845-qusb2-phy";
+-			reg = <0x88e2000 0x400>;
++			reg = <0 0x088e2000 0 0x400>;
+ 			status = "disabled";
+ 			#phy-cells = <0>;
+ 
+@@ -1454,7 +1455,7 @@
+ 
+ 		usb_2_hsphy: phy@88e3000 {
+ 			compatible = "qcom,sdm845-qusb2-phy";
+-			reg = <0x88e3000 0x400>;
++			reg = <0 0x088e3000 0 0x400>;
+ 			status = "disabled";
+ 			#phy-cells = <0>;
+ 
+@@ -1469,13 +1470,13 @@
+ 
+ 		usb_1_qmpphy: phy@88e9000 {
+ 			compatible = "qcom,sdm845-qmp-usb3-phy";
+-			reg = <0x88e9000 0x18c>,
+-			      <0x88e8000 0x10>;
++			reg = <0 0x088e9000 0 0x18c>,
++			      <0 0x088e8000 0 0x10>;
+ 			reg-names = "reg-base", "dp_com";
+ 			status = "disabled";
+ 			#clock-cells = <1>;
+-			#address-cells = <1>;
+-			#size-cells = <1>;
++			#address-cells = <2>;
++			#size-cells = <2>;
+ 			ranges;
+ 
+ 			clocks = <&gcc GCC_USB3_PRIM_PHY_AUX_CLK>,
+@@ -1489,12 +1490,12 @@
+ 			reset-names = "phy", "common";
+ 
+ 			usb_1_ssphy: lanes@88e9200 {
+-				reg = <0x88e9200 0x128>,
+-				      <0x88e9400 0x200>,
+-				      <0x88e9c00 0x218>,
+-				      <0x88e9600 0x128>,
+-				      <0x88e9800 0x200>,
+-				      <0x88e9a00 0x100>;
++				reg = <0 0x088e9200 0 0x128>,
++				      <0 0x088e9400 0 0x200>,
++				      <0 0x088e9c00 0 0x218>,
++				      <0 0x088e9600 0 0x128>,
++				      <0 0x088e9800 0 0x200>,
++				      <0 0x088e9a00 0 0x100>;
+ 				#phy-cells = <0>;
+ 				clocks = <&gcc GCC_USB3_PRIM_PHY_PIPE_CLK>;
+ 				clock-names = "pipe0";
+@@ -1504,11 +1505,11 @@
+ 
+ 		usb_2_qmpphy: phy@88eb000 {
+ 			compatible = "qcom,sdm845-qmp-usb3-uni-phy";
+-			reg = <0x88eb000 0x18c>;
++			reg = <0 0x088eb000 0 0x18c>;
+ 			status = "disabled";
+ 			#clock-cells = <1>;
+-			#address-cells = <1>;
+-			#size-cells = <1>;
++			#address-cells = <2>;
++			#size-cells = <2>;
+ 			ranges;
+ 
+ 			clocks = <&gcc GCC_USB3_SEC_PHY_AUX_CLK>,
+@@ -1522,10 +1523,10 @@
+ 			reset-names = "phy", "common";
+ 
+ 			usb_2_ssphy: lane@88eb200 {
+-				reg = <0x88eb200 0x128>,
+-				      <0x88eb400 0x1fc>,
+-				      <0x88eb800 0x218>,
+-				      <0x88e9600 0x70>;
++				reg = <0 0x088eb200 0 0x128>,
++				      <0 0x088eb400 0 0x1fc>,
++				      <0 0x088eb800 0 0x218>,
++				      <0 0x088e9600 0 0x70>;
+ 				#phy-cells = <0>;
+ 				clocks = <&gcc GCC_USB3_SEC_PHY_PIPE_CLK>;
+ 				clock-names = "pipe0";
+@@ -1535,10 +1536,10 @@
+ 
+ 		usb_1: usb@a6f8800 {
+ 			compatible = "qcom,sdm845-dwc3", "qcom,dwc3";
+-			reg = <0xa6f8800 0x400>;
++			reg = <0 0x0a6f8800 0 0x400>;
+ 			status = "disabled";
+-			#address-cells = <1>;
+-			#size-cells = <1>;
++			#address-cells = <2>;
++			#size-cells = <2>;
+ 			ranges;
+ 
+ 			clocks = <&gcc GCC_CFG_NOC_USB3_PRIM_AXI_CLK>,
+@@ -1566,7 +1567,7 @@
+ 
+ 			usb_1_dwc3: dwc3@a600000 {
+ 				compatible = "snps,dwc3";
+-				reg = <0xa600000 0xcd00>;
++				reg = <0 0x0a600000 0 0xcd00>;
+ 				interrupts = <GIC_SPI 133 IRQ_TYPE_LEVEL_HIGH>;
+ 				snps,dis_u2_susphy_quirk;
+ 				snps,dis_enblslpm_quirk;
+@@ -1577,10 +1578,10 @@
+ 
+ 		usb_2: usb@a8f8800 {
+ 			compatible = "qcom,sdm845-dwc3", "qcom,dwc3";
+-			reg = <0xa8f8800 0x400>;
++			reg = <0 0x0a8f8800 0 0x400>;
+ 			status = "disabled";
+-			#address-cells = <1>;
+-			#size-cells = <1>;
++			#address-cells = <2>;
++			#size-cells = <2>;
+ 			ranges;
+ 
+ 			clocks = <&gcc GCC_CFG_NOC_USB3_SEC_AXI_CLK>,
+@@ -1608,7 +1609,7 @@
+ 
+ 			usb_2_dwc3: dwc3@a800000 {
+ 				compatible = "snps,dwc3";
+-				reg = <0xa800000 0xcd00>;
++				reg = <0 0x0a800000 0 0xcd00>;
+ 				interrupts = <GIC_SPI 138 IRQ_TYPE_LEVEL_HIGH>;
+ 				snps,dis_u2_susphy_quirk;
+ 				snps,dis_enblslpm_quirk;
+@@ -1619,7 +1620,7 @@
+ 
+ 		dispcc: clock-controller@af00000 {
+ 			compatible = "qcom,sdm845-dispcc";
+-			reg = <0xaf00000 0x10000>;
++			reg = <0 0x0af00000 0 0x10000>;
+ 			#clock-cells = <1>;
+ 			#reset-cells = <1>;
+ 			#power-domain-cells = <1>;
+@@ -1627,33 +1628,33 @@
+ 
+ 		tsens0: thermal-sensor@c263000 {
+ 			compatible = "qcom,sdm845-tsens", "qcom,tsens-v2";
+-			reg = <0xc263000 0x1ff>, /* TM */
+-			      <0xc222000 0x1ff>; /* SROT */
++			reg = <0 0x0c263000 0 0x1ff>, /* TM */
++			      <0 0x0c222000 0 0x1ff>; /* SROT */
+ 			#qcom,sensors = <13>;
+ 			#thermal-sensor-cells = <1>;
+ 		};
+ 
+ 		tsens1: thermal-sensor@c265000 {
+ 			compatible = "qcom,sdm845-tsens", "qcom,tsens-v2";
+-			reg = <0xc265000 0x1ff>, /* TM */
+-			      <0xc223000 0x1ff>; /* SROT */
++			reg = <0 0x0c265000 0 0x1ff>, /* TM */
++			      <0 0x0c223000 0 0x1ff>; /* SROT */
+ 			#qcom,sensors = <8>;
+ 			#thermal-sensor-cells = <1>;
+ 		};
+ 
+ 		aoss_reset: reset-controller@c2a0000 {
+ 			compatible = "qcom,sdm845-aoss-cc";
+-			reg = <0xc2a0000 0x31000>;
++			reg = <0 0x0c2a0000 0 0x31000>;
+ 			#reset-cells = <1>;
+ 		};
+ 
+ 		spmi_bus: spmi@c440000 {
+ 			compatible = "qcom,spmi-pmic-arb";
+-			reg = <0xc440000 0x1100>,
+-			      <0xc600000 0x2000000>,
+-			      <0xe600000 0x100000>,
+-			      <0xe700000 0xa0000>,
+-			      <0xc40a000 0x26000>;
++			reg = <0 0x0c440000 0 0x1100>,
++			      <0 0x0c600000 0 0x2000000>,
++			      <0 0x0e600000 0 0x100000>,
++			      <0 0x0e700000 0 0xa0000>,
++			      <0 0x0c40a000 0 0x26000>;
+ 			reg-names = "core", "chnls", "obsrvr", "intr", "cnfg";
+ 			interrupt-names = "periph_irq";
+ 			interrupts = <GIC_SPI 481 IRQ_TYPE_LEVEL_HIGH>;
+@@ -1668,7 +1669,7 @@
+ 
+ 		apps_smmu: iommu@15000000 {
+ 			compatible = "qcom,sdm845-smmu-500", "arm,mmu-500";
+-			reg = <0x15000000 0x80000>;
++			reg = <0 0x15000000 0 0x80000>;
+ 			#iommu-cells = <2>;
+ 			#global-interrupts = <1>;
+ 			interrupts = <GIC_SPI 65 IRQ_TYPE_LEVEL_HIGH>,
+@@ -1740,16 +1741,16 @@
+ 
+ 		apss_shared: mailbox@17990000 {
+ 			compatible = "qcom,sdm845-apss-shared";
+-			reg = <0x17990000 0x1000>;
++			reg = <0 0x17990000 0 0x1000>;
+ 			#mbox-cells = <1>;
+ 		};
+ 
+ 		apps_rsc: rsc@179c0000 {
+ 			label = "apps_rsc";
+ 			compatible = "qcom,rpmh-rsc";
+-			reg = <0x179c0000 0x10000>,
+-			      <0x179d0000 0x10000>,
+-			      <0x179e0000 0x10000>;
++			reg = <0 0x179c0000 0 0x10000>,
++			      <0 0x179d0000 0 0x10000>,
++			      <0 0x179e0000 0 0x10000>;
+ 			reg-names = "drv-0", "drv-1", "drv-2";
+ 			interrupts = <GIC_SPI 3 IRQ_TYPE_LEVEL_HIGH>,
+ 				     <GIC_SPI 4 IRQ_TYPE_LEVEL_HIGH>,
+@@ -1769,85 +1770,85 @@
+ 
+ 		intc: interrupt-controller@17a00000 {
+ 			compatible = "arm,gic-v3";
+-			#address-cells = <1>;
+-			#size-cells = <1>;
++			#address-cells = <2>;
++			#size-cells = <2>;
+ 			ranges;
+ 			#interrupt-cells = <3>;
+ 			interrupt-controller;
+-			reg = <0x17a00000 0x10000>,     /* GICD */
+-			      <0x17a60000 0x100000>;    /* GICR * 8 */
++			reg = <0 0x17a00000 0 0x10000>,     /* GICD */
++			      <0 0x17a60000 0 0x100000>;    /* GICR * 8 */
+ 			interrupts = <GIC_PPI 9 IRQ_TYPE_LEVEL_HIGH>;
+ 
+ 			gic-its@17a40000 {
+ 				compatible = "arm,gic-v3-its";
+ 				msi-controller;
+ 				#msi-cells = <1>;
+-				reg = <0x17a40000 0x20000>;
++				reg = <0 0x17a40000 0 0x20000>;
+ 				status = "disabled";
+ 			};
+ 		};
+ 
+ 		timer@17c90000 {
+-			#address-cells = <1>;
+-			#size-cells = <1>;
++			#address-cells = <2>;
++			#size-cells = <2>;
+ 			ranges;
+ 			compatible = "arm,armv7-timer-mem";
+-			reg = <0x17c90000 0x1000>;
++			reg = <0 0x17c90000 0 0x1000>;
+ 
+ 			frame@17ca0000 {
+ 				frame-number = <0>;
+ 				interrupts = <GIC_SPI 7 IRQ_TYPE_LEVEL_HIGH>,
+ 					     <GIC_SPI 6 IRQ_TYPE_LEVEL_HIGH>;
+-				reg = <0x17ca0000 0x1000>,
+-				      <0x17cb0000 0x1000>;
++				reg = <0 0x17ca0000 0 0x1000>,
++				      <0 0x17cb0000 0 0x1000>;
+ 			};
+ 
+ 			frame@17cc0000 {
+ 				frame-number = <1>;
+ 				interrupts = <GIC_SPI 8 IRQ_TYPE_LEVEL_HIGH>;
+-				reg = <0x17cc0000 0x1000>;
++				reg = <0 0x17cc0000 0 0x1000>;
+ 				status = "disabled";
+ 			};
+ 
+ 			frame@17cd0000 {
+ 				frame-number = <2>;
+ 				interrupts = <GIC_SPI 9 IRQ_TYPE_LEVEL_HIGH>;
+-				reg = <0x17cd0000 0x1000>;
++				reg = <0 0x17cd0000 0 0x1000>;
+ 				status = "disabled";
+ 			};
+ 
+ 			frame@17ce0000 {
+ 				frame-number = <3>;
+ 				interrupts = <GIC_SPI 10 IRQ_TYPE_LEVEL_HIGH>;
+-				reg = <0x17ce0000 0x1000>;
++				reg = <0 0x17ce0000 0 0x1000>;
+ 				status = "disabled";
+ 			};
+ 
+ 			frame@17cf0000 {
+ 				frame-number = <4>;
+ 				interrupts = <GIC_SPI 11 IRQ_TYPE_LEVEL_HIGH>;
+-				reg = <0x17cf0000 0x1000>;
++				reg = <0 0x17cf0000 0 0x1000>;
+ 				status = "disabled";
+ 			};
+ 
+ 			frame@17d00000 {
+ 				frame-number = <5>;
+ 				interrupts = <GIC_SPI 12 IRQ_TYPE_LEVEL_HIGH>;
+-				reg = <0x17d00000 0x1000>;
++				reg = <0 0x17d00000 0 0x1000>;
+ 				status = "disabled";
+ 			};
+ 
+ 			frame@17d10000 {
+ 				frame-number = <6>;
+ 				interrupts = <GIC_SPI 13 IRQ_TYPE_LEVEL_HIGH>;
+-				reg = <0x17d10000 0x1000>;
++				reg = <0 0x17d10000 0 0x1000>;
+ 				status = "disabled";
+ 			};
+ 		};
+ 
+ 		cpufreq_hw: cpufreq@17d43000 {
+ 			compatible = "qcom,cpufreq-hw";
+-			reg = <0x17d43000 0x1400>, <0x17d45800 0x1400>;
++			reg = <0 0x17d43000 0 0x1400>, <0 0x17d45800 0 0x1400>;
+ 			reg-names = "freq-domain0", "freq-domain1";
+ 
+ 			clocks = <&rpmhcc RPMH_CXO_CLK>, <&gcc GPLL0>;
 -- 
-2.20.1.98.gecbdaf0899
+2.18.0
 
