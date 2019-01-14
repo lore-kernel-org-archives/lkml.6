@@ -2,147 +2,154 @@ Return-Path: <SRS0=tq6k=PW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0BA44C43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 07:42:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1DA06C43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 07:51:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D37E920660
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 07:42:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E3C8120660
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 07:51:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726587AbfANHmp (ORCPT
+        id S1726565AbfANHvY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 14 Jan 2019 02:42:45 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:55142 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726067AbfANHmo (ORCPT
+        Mon, 14 Jan 2019 02:51:24 -0500
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:37765 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726470AbfANHvY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 Jan 2019 02:42:44 -0500
-Received: from pps.filterd (m0098404.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id x0E7cWCw005515
-        for <linux-kernel@vger.kernel.org>; Mon, 14 Jan 2019 02:42:43 -0500
-Received: from e06smtp05.uk.ibm.com (e06smtp05.uk.ibm.com [195.75.94.101])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2q0k66pr27-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Mon, 14 Jan 2019 02:42:42 -0500
-Received: from localhost
-        by e06smtp05.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <rppt@linux.ibm.com>;
-        Mon, 14 Jan 2019 07:42:40 -0000
-Received: from b06cxnps3075.portsmouth.uk.ibm.com (9.149.109.195)
-        by e06smtp05.uk.ibm.com (192.168.101.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Mon, 14 Jan 2019 07:42:38 -0000
-Received: from d06av24.portsmouth.uk.ibm.com (d06av24.portsmouth.uk.ibm.com [9.149.105.60])
-        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x0E7gbf961079604
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 14 Jan 2019 07:42:37 GMT
-Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 4E1854204B;
-        Mon, 14 Jan 2019 07:42:37 +0000 (GMT)
-Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id ABC0942041;
-        Mon, 14 Jan 2019 07:42:36 +0000 (GMT)
-Received: from rapoport-lnx (unknown [9.148.207.170])
-        by d06av24.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
-        Mon, 14 Jan 2019 07:42:36 +0000 (GMT)
-Date:   Mon, 14 Jan 2019 09:42:34 +0200
-From:   Mike Rapoport <rppt@linux.ibm.com>
-To:     Joel Nider <joeln@il.ibm.com>
-Cc:     Jonathan Corbet <corbet@lwn.net>,
-        Matthew Wilcox <willy@infradead.org>,
-        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] docs-rst: doc-guide: Minor grammar fixes
-References: <1547450099-3534-1-git-send-email-joeln@il.ibm.com>
+        Mon, 14 Jan 2019 02:51:24 -0500
+Received: by mail-wm1-f67.google.com with SMTP id g67so7760202wmd.2;
+        Sun, 13 Jan 2019 23:51:22 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:subject:to:references:openpgp:autocrypt
+         :message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=Y7e9Jp0mRwiGojGKidwcFPTW6D3baG/0gQtCQr9CjwI=;
+        b=KzFJpvvU4x6eJY6q0FjXNCX+zXI7QiZcAt/YIkINfRjAs6j2s+b0Z5zELofvEeu0SU
+         +p1nf6GUOAHdY8OYkFNoMCeYy5408dKMJBstIz9ij+XUDx3eMCrpRXNp33XxptseH8bl
+         YaGSUqyLH6MA9BrlM9LB+QtNDze9Nj5Xxvsv+HtaJzpTNtMCN340k0LFwQdX7Cjcj9mT
+         sAq42BntWfREWxf6eQ2ZSveIbcow2N3CuWv0IENQKtcMA+KMonPdEMV9aiDvxtfqPqTv
+         /crEM29KOX+tn804sl+POXCdM8oZjAQogs1/7OWkllAgKDAv88mOmclwMgvPt2tEVPxQ
+         iMQQ==
+X-Gm-Message-State: AJcUukd2y4WZNPAPdpficlXfXR0XKDEzTFbk+FIsWhpIJKmszhj7Mud9
+        MEuyATgb61/aVohY4qFG0cX/6GzX
+X-Google-Smtp-Source: ALg8bN59iF2HfJtgSffMgwGvz6C7KOHMBPrMSMsr1fjHUvr7VfaupT9t2u+up0RPeQQwvzbAzex/Iw==
+X-Received: by 2002:a1c:7f0c:: with SMTP id a12mr10306171wmd.89.1547452281890;
+        Sun, 13 Jan 2019 23:51:21 -0800 (PST)
+Received: from [192.168.1.49] (185-219-167-240-static.vivo.cz. [185.219.167.240])
+        by smtp.gmail.com with ESMTPSA id m15sm63209511wrr.95.2019.01.13.23.51.19
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sun, 13 Jan 2019 23:51:20 -0800 (PST)
+From:   Jiri Slaby <jslaby@suse.cz>
+Subject: Re: [PATCH] tty: not call tty close in fallback
+To:     lirongqing@baidu.com, robh@kernel.org, gregkh@linuxfoundation.org,
+        linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org
+References: <1547448961-9588-1-git-send-email-yes>
+Openpgp: preference=signencrypt
+Autocrypt: addr=jslaby@suse.cz; prefer-encrypt=mutual; keydata=
+ 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
+Message-ID: <4b6e790b-ea6a-f715-6290-4d026921b632@suse.cz>
+Date:   Mon, 14 Jan 2019 08:51:19 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.3
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1547450099-3534-1-git-send-email-joeln@il.ibm.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-TM-AS-GCONF: 00
-x-cbid: 19011407-0020-0000-0000-0000030620DF
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19011407-0021-0000-0000-0000215730A2
-Message-Id: <20190114074233.GA1973@rapoport-lnx>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-01-14_04:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=857 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1901140066
+In-Reply-To: <1547448961-9588-1-git-send-email-yes>
+Content-Type: text/plain; charset=iso-8859-2
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jan 14, 2019 at 09:14:59AM +0200, Joel Nider wrote:
-> While using this guide to learn the new documentation method, I saw
-> a few phrases that I felt could be improved. These small changes
-> improve the grammar and choice of words to further enhance the
-> installation instructions.
+yes@hpe.com:
+
+550 5.1.1 User Unknown
+
+You are sending e-mails/patches from a non-existant address?
+
+On 14. 01. 19, 7:56, yes@hpe.com wrote:
+> From: Li RongQing <lirongqing@baidu.com>
 > 
-> Signed-off-by: Joel Nider <joeln@il.ibm.com>
-> Acked-by: Matthew Wilcox <willy@infradead.org>
+> when fail to open tty, tty is not in open status and not need
+> to call close
 
-Acked-by: Mike Rapoport <rppt@linux.ibm.com>
+But tty drivers are special and expect close even on failed open, right?
+See tty_open.
 
+> Signed-off-by: Li RongQing <lirongqing@baidu.com>
 > ---
-> v2: address Matthew's comment
+>  drivers/tty/serdev/serdev-ttyport.c | 4 +---
+>  1 file changed, 1 insertion(+), 3 deletions(-)
 > 
->  Documentation/doc-guide/sphinx.rst | 12 ++++++------
->  1 file changed, 6 insertions(+), 6 deletions(-)
-> 
-> diff --git a/Documentation/doc-guide/sphinx.rst b/Documentation/doc-guide/sphinx.rst
-> index 02605ee..c039224 100644
-> --- a/Documentation/doc-guide/sphinx.rst
-> +++ b/Documentation/doc-guide/sphinx.rst
-> @@ -27,8 +27,8 @@ Sphinx Install
->  ==============
+> diff --git a/drivers/tty/serdev/serdev-ttyport.c b/drivers/tty/serdev/serdev-ttyport.c
+> index fa1672993b4c..bcc1e27d00de 100644
+> --- a/drivers/tty/serdev/serdev-ttyport.c
+> +++ b/drivers/tty/serdev/serdev-ttyport.c
+> @@ -121,7 +121,7 @@ static int ttyport_open(struct serdev_controller *ctrl)
 >  
->  The ReST markups currently used by the Documentation/ files are meant to be
-> -built with ``Sphinx`` version 1.3 or upper. If you're desiring to build
-> -PDF outputs, it is recommended to use version 1.4.6 or upper.
-> +built with ``Sphinx`` version 1.3 or higher. If you desire to build
-> +PDF output, it is recommended to use version 1.4.6 or higher.
+>  	ret = tty->ops->open(serport->tty, NULL);
+>  	if (ret)
+> -		goto err_close;
+> +		goto err_unlock;
 >  
->  There's a script that checks for the Sphinx requirements. Please see
->  :ref:`sphinx-pre-install` for further details.
-> @@ -37,15 +37,15 @@ Most distributions are shipped with Sphinx, but its toolchain is fragile,
->  and it is not uncommon that upgrading it or some other Python packages
->  on your machine would cause the documentation build to break.
+>  	tty_unlock(serport->tty);
 >  
-> -A way to get rid of that is to use a different version than the one shipped
-> -on your distributions. In order to do that, it is recommended to install
-> +A way to avoid that is to use a different version than the one shipped
-> +with your distributions. In order to do so, it is recommended to install
->  Sphinx inside a virtual environment, using ``virtualenv-3``
->  or ``virtualenv``, depending on how your distribution packaged Python 3.
+> @@ -142,8 +142,6 @@ static int ttyport_open(struct serdev_controller *ctrl)
 >  
->  .. note::
+>  	return 0;
 >  
->     #) Sphinx versions below 1.5 don't work properly with Python's
-> -      docutils version 0.13.1 or upper. So, if you're willing to use
-> +      docutils version 0.13.1 or higher. So, if you're willing to use
->        those versions, you should run ``pip install 'docutils==0.12'``.
->  
->     #) It is recommended to use the RTD theme for html output. Depending
-> @@ -82,7 +82,7 @@ output.
->  PDF and LaTeX builds
->  --------------------
->  
-> -Such builds are currently supported only with Sphinx versions 1.4 and upper.
-> +Such builds are currently supported only with Sphinx versions 1.4 and higher.
->  
->  For PDF and LaTeX output, you'll also need ``XeLaTeX`` version 3.14159265.
->  
-> -- 
-> 2.7.4
+> -err_close:
+> -	tty->ops->close(tty, NULL);
+>  err_unlock:
+>  	tty_unlock(tty);
+>  	tty_release_struct(tty, serport->tty_idx);
 > 
 
+thanks,
 -- 
-Sincerely yours,
-Mike.
-
+js
+suse labs
