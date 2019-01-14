@@ -2,101 +2,75 @@ Return-Path: <SRS0=tq6k=PW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D609FC43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 18:56:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DC731C43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 18:57:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9DD6B2064C
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 18:56:18 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="bjNM4n5J"
+	by mail.kernel.org (Postfix) with ESMTP id B65E7206B7
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 18:57:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726895AbfANS4R (ORCPT
+        id S1726821AbfANS5M (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 14 Jan 2019 13:56:17 -0500
-Received: from mail-pf1-f182.google.com ([209.85.210.182]:45935 "EHLO
-        mail-pf1-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726770AbfANS4Q (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 Jan 2019 13:56:16 -0500
-Received: by mail-pf1-f182.google.com with SMTP id g62so13340pfd.12
-        for <linux-kernel@vger.kernel.org>; Mon, 14 Jan 2019 10:56:16 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=IX+dhyoUTqOpDLszzjf/ieQT97h5YR/fB1FZJT8KF+g=;
-        b=bjNM4n5JQJjcBkQEP9H0ifXHNY9R+GwXkEQxPVrXB5Mun3iUrvB0NFllXtxcA1Uvn0
-         MrdsTTXjQpEuct5EvMhN/lRgg+YahDgqEklRyoRTlQkPg9TmChVZRiretxzYTBGHZsDG
-         8Hpt/I20ZY/QFL0kMN+2O+bLsXVTzKCx1kCDbP61lUDlL1O+25/40EyK78xtZYOPUGrH
-         M1ZfMHKqVVrM3BynPJDjm8DlDbuQ2/pPA1hI7naYLlMtxDjLYILJpFR6CgJAil17WARx
-         HpCvl8gXG/ic6/06+Vrk/3QVTJ0Cy1nFwpB8RRLqqsnrJtrY7/AawcGpAEggWshUucd7
-         Yoxg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=IX+dhyoUTqOpDLszzjf/ieQT97h5YR/fB1FZJT8KF+g=;
-        b=E7vujU1yWkoN4suJS1r3xXPXoKtMp+RtLPht5fXARSxATphESDeBop0qnP+XIZozJR
-         AGk21bf2iI/aP7Ec0Eh73mrP1IL4jX/n8qnfXXrbibMx6oagOJfVwnvi2VrXcWi0LV0m
-         k1k+Ct4sqP/jpN9q/ToImlTVIebm4F3O0GBf3ekguFW095OM7MSmBa4NbcPY82wJpdMP
-         Gi9tq1sRE+7aBQgfp6ND6DJtzYdvNZUOaUc6tDsydG9+heqrTJEd/Hwz0Hzbcdhdt7ec
-         XvQ6NnIF6WpWB4VWFcE5KNIV5SZkK2Bq9H7pnLjNf5jAghdAoBvctpwKes2YvggkfPAj
-         IuLA==
-X-Gm-Message-State: AJcUukcV1t+xtIHHTCuhrsygUQLfd0uLqO8BFlzLBSrtYNctL4RE6ylx
-        +FTxdrxeDBkve+sDOYGcB8z2tMHMVqY=
-X-Google-Smtp-Source: ALg8bN5Kpi2F/1XfU4wfPnYfrnu5GsC6PTXaB+IQkqeJ+6bvj6sUNa741hTnW9/6qIPBzPJmZjp2Qw==
-X-Received: by 2002:a63:3204:: with SMTP id y4mr24104960pgy.41.1547492175765;
-        Mon, 14 Jan 2019 10:56:15 -0800 (PST)
-Received: from ziepe.ca (S010614cc2056d97f.ed.shawcable.net. [174.3.196.123])
-        by smtp.gmail.com with ESMTPSA id m3sm1432736pgl.69.2019.01.14.10.56.14
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 14 Jan 2019 10:56:14 -0800 (PST)
-Received: from jgg by mlx.ziepe.ca with local (Exim 4.90_1)
-        (envelope-from <jgg@ziepe.ca>)
-        id 1gj7PB-0007vR-Vj; Mon, 14 Jan 2019 11:56:13 -0700
-Date:   Mon, 14 Jan 2019 11:56:13 -0700
-From:   Jason Gunthorpe <jgg@ziepe.ca>
-To:     Joel Nider <JOELN@il.ibm.com>
-Cc:     Jonathan Corbet <corbet@lwn.net>,
-        Doug Ledford <dledford@redhat.com>,
-        Leon Romanovsky <leon@kernel.org>, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Mike Rapoport <rppt@linux.ibm.com>
-Subject: Re: [PATCH 1/3] docs-rst: infiniband: Convert user verbs doc to rst
-Message-ID: <20190114185613.GF22910@ziepe.ca>
-References: <1547456451-7102-1-git-send-email-joeln@il.ibm.com>
- <1547456451-7102-2-git-send-email-joeln@il.ibm.com>
- <20190114165621.GD22910@ziepe.ca>
- <20190114103421.7fef97c0@lwn.net>
- <OFE572E930.5960E029-ONC2258382.00673730-C2258382.0067A91D@notes.na.collabserv.com>
+        Mon, 14 Jan 2019 13:57:12 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:43780 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726753AbfANS5M (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 14 Jan 2019 13:57:12 -0500
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id A786F653C2;
+        Mon, 14 Jan 2019 18:57:11 +0000 (UTC)
+Received: from oldenburg2.str.redhat.com (ovpn-116-20.ams2.redhat.com [10.36.116.20])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 6D0C15D9CA;
+        Mon, 14 Jan 2019 18:57:05 +0000 (UTC)
+From:   Florian Weimer <fweimer@redhat.com>
+To:     Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Cc:     carlos <carlos@redhat.com>, Joseph Myers <joseph@codesourcery.com>,
+        Szabolcs Nagy <szabolcs.nagy@arm.com>,
+        libc-alpha <libc-alpha@sourceware.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ben Maurer <bmaurer@fb.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
+        Boqun Feng <boqun.feng@gmail.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Dave Watson <davejwatson@fb.com>, Paul Turner <pjt@google.com>,
+        Rich Felker <dalias@libc.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-api <linux-api@vger.kernel.org>
+Subject: Re: [RFC PATCH glibc 1/4] glibc: Perform rseq(2) registration at nptl init and thread creation (v4)
+References: <20181204192141.4684-1-mathieu.desnoyers@efficios.com>
+        <87h8fkz6qx.fsf@oldenburg2.str.redhat.com>
+        <1681283664.1380.1547152315426.JavaMail.zimbra@efficios.com>
+        <1488546469.1564.1547169116539.JavaMail.zimbra@efficios.com>
+Date:   Mon, 14 Jan 2019 19:57:03 +0100
+In-Reply-To: <1488546469.1564.1547169116539.JavaMail.zimbra@efficios.com>
+        (Mathieu Desnoyers's message of "Thu, 10 Jan 2019 20:11:56 -0500
+        (EST)")
+Message-ID: <87bm4j9if4.fsf@oldenburg2.str.redhat.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <OFE572E930.5960E029-ONC2258382.00673730-C2258382.0067A91D@notes.na.collabserv.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Type: text/plain
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.28]); Mon, 14 Jan 2019 18:57:11 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jan 14, 2019 at 08:52:14PM +0200, Joel Nider wrote:
-> > > Jonathan/linux-doc: Can you Ack at least the build system parts of
-> > > this please? I can take it through the rdma tree, unless you prefer
-> > > otherwise?
-> > 
-> > Can I make a request?  This appears to be user-oriented documentation;  can
-> > we please place it into the userspace-api manual, rather than keeping it
-> > in its own silo?
-> 
-> I knew someone was going to ask me to do that :-)
-> I agree that userspace stuff should all be together, but I guess for 
-> historical reasons this one stayed in the infiniband section. So if Jason 
-> is ok with moving the doc, I'll take a look in the morning to see how best 
-> to work that into the patchset.
+* Mathieu Desnoyers:
 
-I don't mind
+> Now that I think about it, it's important to move the rseq registration
+> done at nptl init (in my current code) to some lower-level csu initialiation,
+> so applications that happen _not_ to link against libpthread also get
+> registered rseq for the main thread.
 
-Jason
+Yes.  In general, we want to avoid to force libraries which do not
+create threads to link against libpthread, and try to provide interfaces
+which are required for synchronization within libc.
+
+Thanks,
+Florian
