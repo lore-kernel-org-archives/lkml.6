@@ -2,145 +2,150 @@ Return-Path: <SRS0=tq6k=PW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AF063C43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 22:40:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 18D40C43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 22:47:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7225D20659
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 22:40:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D90C2205F4
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 22:47:12 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="h8TH0YP7"
+	dkim=pass (2048-bit key) header.d=who-t.net header.i=@who-t.net header.b="uhoDVn/t";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="XGggvW4D"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726911AbfANWk4 (ORCPT
+        id S1726788AbfANWrC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 14 Jan 2019 17:40:56 -0500
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:43815 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726696AbfANWk4 (ORCPT
+        Mon, 14 Jan 2019 17:47:02 -0500
+Received: from out3-smtp.messagingengine.com ([66.111.4.27]:44221 "EHLO
+        out3-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726618AbfANWrC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 Jan 2019 17:40:56 -0500
-Received: by mail-pf1-f196.google.com with SMTP id w73so287853pfk.10
-        for <linux-kernel@vger.kernel.org>; Mon, 14 Jan 2019 14:40:55 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:content-transfer-encoding:subject:user-agent
-         :in-reply-to:references:cc:to:message-id:from:date;
-        bh=WLM5dNyoTozbSd88yUgecKq6QyU7aVPi4GfRYy8UReI=;
-        b=h8TH0YP7JGX2HERs2Xbopr3IY+BaCgskhvbbnmskeHAayxvDvHycazUMlkBSvpLUUi
-         Gccje91dblSoB+9bqGaSTgSGPF0G8ADg46rSdjznDntLdy/c6xAl97+oOZpA1b4B2LPC
-         sTnOI8QeKZeMtfE0BhXygtDJ62lsmomLd2mhA=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:content-transfer-encoding:subject
-         :user-agent:in-reply-to:references:cc:to:message-id:from:date;
-        bh=WLM5dNyoTozbSd88yUgecKq6QyU7aVPi4GfRYy8UReI=;
-        b=SiDj7K0sohAP2g3C3IAiUkX+RY/3QqAdT+wE7f/tYKJbKD1HBWHk1BemCvWaKPF+17
-         NMvLLge3zj3ussyjnWdR4b2Mu6f1qh520aomzpxS7HCl9R6oLsMw2fFZy93guYn0QOmh
-         k9PS6THOeOaAAxOQ/MrbYtXCPCubakMZojFjGMVDfLkuQz1lQlZWpP2y1CzejEvtPd8D
-         taMC6ynlQoaYinBFlc+2/evEFRJhFW7c0E9XfPQi5SK6648jtvShjnMrsTmZdQVMAbPI
-         I46GmmltmnnWemSGk5IxuOkhzRpPZjKovh/J69AzHk20tURWF+RGH6WiNniI2R9U7H9i
-         +apQ==
-X-Gm-Message-State: AJcUuke253lGqeMa9ZehXKm0qvED5sCzUI1SzpWnOnX7bvsdpzB1z02U
-        4lr7F9evFUW4cI4lU+usNlCz/Shry66HNA==
-X-Google-Smtp-Source: ALg8bN4JtA78uSzTBd+UQ+u6Hg8nkOyULo8MaGvvgNBBbaVhNeGE7jStT909BOVz02+KhNvO0WuWIA==
-X-Received: by 2002:a62:6408:: with SMTP id y8mr767786pfb.202.1547505655487;
-        Mon, 14 Jan 2019 14:40:55 -0800 (PST)
-Received: from localhost ([2620:15c:202:1:fa53:7765:582b:82b9])
-        by smtp.gmail.com with ESMTPSA id e123sm1468751pgc.58.2019.01.14.14.40.54
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 14 Jan 2019 14:40:54 -0800 (PST)
-Content-Type: text/plain; charset="utf-8"
+        Mon, 14 Jan 2019 17:47:02 -0500
+X-Greylist: delayed 341 seconds by postgrey-1.27 at vger.kernel.org; Mon, 14 Jan 2019 17:47:01 EST
+Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
+        by mailout.nyi.internal (Postfix) with ESMTP id 96472286D8;
+        Mon, 14 Jan 2019 17:41:19 -0500 (EST)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute3.internal (MEProxy); Mon, 14 Jan 2019 17:41:19 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=who-t.net; h=
+        date:from:to:cc:subject:message-id:references:mime-version
+        :content-type:in-reply-to; s=fm2; bh=NHgrd3T5V4ufClGBUWgbNL6MNfQ
+        lMqZicW1/D9DPrSs=; b=uhoDVn/tYuaCz5+JIJu1PtmSVDFSPOVkHg7CtGfLgwH
+        DgfPxfy+hd4kLyTuC9rHnuiJ4FmZ1nChaDdk8JWOXGlsqQTUaFWhRioLtjR9u8zM
+        6+OgrttBSHU5tA9BZ4gTHxK+MxPNx1DJ99aVZe+zcWA2bHcVHy4jNyyvP0ZZKmZj
+        Gzx/ih0dygF1EgiW63U9wmTtM7XAzT/AyizN+IJubYWHUJozI/zvhqoLXtIowndX
+        E4M+pAF6+7CzrmyWllqIaG7iKq1Q7Ls5uW1cJM+14BqH+uDLrBHSpK2u4yW5jiH6
+        dyc/tGP4O1QGxJoDMH6uI0oIASy+0yz2Dy57qg0rhUw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-type:date:from:in-reply-to
+        :message-id:mime-version:references:subject:to:x-me-proxy
+        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; bh=NHgrd3
+        T5V4ufClGBUWgbNL6MNfQlMqZicW1/D9DPrSs=; b=XGggvW4DY7tyzuclzDgQ8K
+        W3DtqS8xWPmbd7pw4FinnwOLd6+EV6MX9g/3gxdcOHOJ7nV0zA7pE3L3J65IlzB6
+        sspohyesln34T3YguhRSOhxiyeYpWBfWVyWDqOFOWqmQZyXaQsncdmL4DyUWIKIM
+        IzIcyydRRzmzHFBDYVWNqCHOYUT1OTA+e4HmJe7fEv8D/jnaeBbnSwoT/7/+OMOC
+        epNh4y5TM98kGlK5WNlG7PTSrB0UsBbibxgHAS5N4uADQ4zkCOathVVS43gARRsT
+        0zOHUpWXn1gsxTjGyzAkd+dvrTQe6YmUuajkm/vr0t34cfyq0o4miTSf/ovFYH4Q
+        ==
+X-ME-Sender: <xms:DhA9XCNo57FqGivUdNSWPq3uUK_qZlFbvOnmmbVjjRr94_ZuUD_e0g>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedtledrgedugdduieduucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfquhhtnecuuegrihhlohhuthemucef
+    tddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpeffhffvuffkfh
+    ggtggujggfsehttdertddtredvnecuhfhrohhmpefrvghtvghrucfjuhhtthgvrhgvrhcu
+    oehpvghtvghrrdhhuhhtthgvrhgvrhesfihhohdqthdrnhgvtheqnecukfhppeduieejrd
+    dujeelrdduieeirddvleenucfrrghrrghmpehmrghilhhfrhhomhepphgvthgvrhdrhhhu
+    thhtvghrvghrseifhhhoqdhtrdhnvghtnecuvehluhhsthgvrhfuihiivgeptd
+X-ME-Proxy: <xmx:DxA9XH5n81Cf8x8DYQzFfVG5W7qoqqoMj29u13K_ORVqu9Sh6vJSbA>
+    <xmx:DxA9XE2qLgjYL1GfVI2UDpsQP143y-iVvti_gnM6dS4V9CdceMdCMQ>
+    <xmx:DxA9XEz4NesGUXPEYNFcUeVKs5z1f1sjz4uX8ZpdN3hDf2LpTOi4Dw>
+    <xmx:DxA9XPn1Xoa-AiGahoTQPscmgt1xRk3JXip5ssLDyQLAqhb5DWDEjQ>
+Received: from jelly (167-179-166-29.a7b3a6.bne.nbn.aussiebb.net [167.179.166.29])
+        by mail.messagingengine.com (Postfix) with ESMTPA id 8A613E40E1;
+        Mon, 14 Jan 2019 17:41:16 -0500 (EST)
+Date:   Tue, 15 Jan 2019 08:41:14 +1000
+From:   Peter Hutterer <peter.hutterer@who-t.net>
+To:     Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc:     linux-input@vger.kernel.org,
+        Byoungyoung Lee <lifeasageek@gmail.com>, rydberg@bitmath.org,
+        DaeRyong Jeong <threeearcat@gmail.com>,
+        syzkaller@googlegroups.com, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] Input: uinput - fix undefined behavior in
+ uinput_validate_absinfo()
+Message-ID: <20190114224114.GA18464@jelly>
+References: <20190114220448.GA241112@dtor-ws>
+ <20190114220756.GF117329@dtor-ws>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v2 3/7] soc: qcom: Add AOSS QMP genpd provider
-User-Agent: alot/0.8
-In-Reply-To: <20190106080915.4493-4-bjorn.andersson@linaro.org>
-References: <20190106080915.4493-1-bjorn.andersson@linaro.org> <20190106080915.4493-4-bjorn.andersson@linaro.org>
-Cc:     Russell King <linux@armlinux.org.uk>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Arun Kumar Neelakantam <aneela@codeaurora.org>,
-        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-To:     Andy Gross <andy.gross@linaro.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        David Brown <david.brown@linaro.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Rob Herring <robh+dt@kernel.org>
-Message-ID: <154750565372.169631.9416138415370937156@swboyd.mtv.corp.google.com>
-From:   Stephen Boyd <swboyd@chromium.org>
-Date:   Mon, 14 Jan 2019 14:40:53 -0800
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190114220756.GF117329@dtor-ws>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Bjorn Andersson (2019-01-06 00:09:11)
-> diff --git a/drivers/soc/qcom/Kconfig b/drivers/soc/qcom/Kconfig
-> index dda19471057f..d81256ef5055 100644
-> --- a/drivers/soc/qcom/Kconfig
-> +++ b/drivers/soc/qcom/Kconfig
-> @@ -12,6 +12,15 @@ config QCOM_AOSS_QMP
->           micro-controller in the AOSS, using QMP, to control certain res=
-ource
->           that are not exposed through RPMh.
-> =20
-> +config QCOM_AOSS_QMP_PD
-> +       tristate "Qualcomm AOSS Messaging Power Domain driver"
-> +       depends on QCOM_AOSS_QMP
-> +       select PM_GENERIC_DOMAINS
-> +       help
-> +         This driver provides the means of controlling the AOSSs handlin=
-g of
+On Mon, Jan 14, 2019 at 02:07:56PM -0800, Dmitry Torokhov wrote:
+> On Mon, Jan 14, 2019 at 02:04:48PM -0800, Dmitry Torokhov wrote:
+> > An integer overflow may arise in uinput_validate_absinfo() if "max - min"
+> > can't be represented by an "int". We should check for overflow before
+> > trying to use the result.
+> > 
+> > Reported-by: Kyungtae Kim <kt0755@gmail.com>
+> > Cc: stable@vger.kernel.org
+> > Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+> > ---
+> >  drivers/input/misc/uinput.c | 5 +++--
+> >  1 file changed, 3 insertions(+), 2 deletions(-)
+> > 
+> > diff --git a/drivers/input/misc/uinput.c b/drivers/input/misc/uinput.c
+> > index 8ec483e8688b..26ec603fe220 100644
+> > --- a/drivers/input/misc/uinput.c
+> > +++ b/drivers/input/misc/uinput.c
+> > @@ -39,6 +39,7 @@
+> >  #include <linux/init.h>
+> >  #include <linux/fs.h>
+> >  #include <linux/miscdevice.h>
+> > +#include <linux/overflow.h>
+> >  #include <linux/input/mt.h>
+> >  #include "../input-compat.h"
+> >  
+> > @@ -405,7 +406,7 @@ static int uinput_open(struct inode *inode, struct file *file)
+> >  static int uinput_validate_absinfo(struct input_dev *dev, unsigned int code,
+> >  				   const struct input_absinfo *abs)
+> >  {
+> > -	int min, max;
+> > +	int min, max, range;
+> >  
+> >  	min = abs->minimum;
+> >  	max = abs->maximum;
+> > @@ -417,7 +418,7 @@ static int uinput_validate_absinfo(struct input_dev *dev, unsigned int code,
+> >  		return -EINVAL;
+> >  	}
+> >  
+> > -	if (abs->flat > max - min) {
+> > +	if (check_sub_overflow(max, min, &range) && abs->flat > range) {
+> 
+> This should be !check_sub_overflow(...) of course.
 
-Is that possesive? AOSS's?
+Reviewed-by: Peter Hutterer <peter.hutterer@who-t.net> with that in place,
+thanks.
 
-> +         low-power state for resources related to the remoteproc subsyst=
-ems as
-> +         well as controlling the debug clocks.
-> +
->  config QCOM_COMMAND_DB
->         bool "Qualcomm Command DB"
->         depends on ARCH_QCOM || COMPILE_TEST
-> diff --git a/drivers/soc/qcom/aoss-qmp-pd.c b/drivers/soc/qcom/aoss-qmp-p=
-d.c
-> new file mode 100644
-> index 000000000000..62b8fcb9d09e
-> --- /dev/null
-> +++ b/drivers/soc/qcom/aoss-qmp-pd.c
-> @@ -0,0 +1,135 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Copyright (c) 2018, Linaro Ltd
-> + */
-> +#include <linux/module.h>
-> +#include <linux/platform_device.h>
-> +#include <linux/pm_domain.h>
-> +#include <linux/soc/qcom/aoss-qmp.h>
-> +#include <dt-bindings/power/qcom-aoss-qmp.h>
-> +
-> +struct qmp_pd {
-> +       struct qmp *qmp;
-> +
-> +       struct generic_pm_domain pd;
-> +
-> +       const char *name;
-> +};
-> +
-> +#define to_qmp_pd_resource(res) container_of(res, struct qmp_pd, pd)
-> +
-> +struct qmp_pd_resource {
-> +       const char *name;
-> +       int (*on)(struct generic_pm_domain *domain);
-> +       int (*off)(struct generic_pm_domain *domain);
-> +};
-> +
-> +static int qmp_pd_clock_toggle(struct qmp_pd *res, bool enable)
-> +{
-> +       char buf[96];
+Cheers,
+   Peter
+ 
 
-Is 96 calculated from somewhere? Can it be a define because it's quite
-magical.
-
+> >  		printk(KERN_DEBUG
+> >  		       "%s: abs_flat #%02x out of range: %d (min:%d/max:%d)\n",
+> >  		       UINPUT_NAME, code, abs->flat, min, max);
+> > -- 
+> > 2.20.1.97.g81188d93c3-goog
+> > 
+> > 
+> > -- 
+> > Dmitry
+> 
+> -- 
+> Dmitry
