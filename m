@@ -2,98 +2,95 @@ Return-Path: <SRS0=tq6k=PW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D9885C43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 00:39:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0365CC43444
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 00:48:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9B929206DD
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 00:39:34 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=postn.eu header.i=@postn.eu header.b="vV0yYqsC"
+	by mail.kernel.org (Postfix) with ESMTP id D31D820656
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 00:48:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726651AbfANAiu (ORCPT
+        id S1726655AbfANAqq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 13 Jan 2019 19:38:50 -0500
-Received: from postn.eu ([84.200.50.9]:55452 "EHLO postn.eu"
+        Sun, 13 Jan 2019 19:46:46 -0500
+Received: from ozlabs.org ([203.11.71.1]:58545 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726617AbfANAit (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 13 Jan 2019 19:38:49 -0500
-X-Greylist: delayed 317 seconds by postgrey-1.27 at vger.kernel.org; Sun, 13 Jan 2019 19:38:48 EST
-Received: from [127.0.0.123] (cloakedhost.private [127.0.0.123])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (Client did not present a certificate)
-        by postn.eu (Postfix) with ESMTPSA id 683695FD60;
-        Mon, 14 Jan 2019 01:33:30 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=postn.eu; s=mail;
-        t=1547426010; bh=SnEYPrWgZxECJmdZn1G/xduJdCguGJTtiy5Ucx1R+R8=;
-        h=Subject:From:To:References:Cc:Date:In-Reply-To:From;
-        b=vV0yYqsCrYoBwht7BVdJ6zkfAk8DuSbajxslgdgtbEiW1mIcmyq6lNepyaQ8UcaAW
-         jNgFwaelZX6aUgKsDwbuM8LuNFiihLKjFDuJx3FrrwR/XZ9iYdnqBRC9R/sBJ2FYTO
-         H+k75wYhvhzfSOTo65LfgCeBh7L1TPpMYNGcS780=
-Subject: Re: udf: Prevent write-unsupported filesystem to be remounted
- read-write
-From:   Kevin Weidemann <kwe-lnx@postn.eu>
-To:     Jan Kara <jack@suse.cz>
-References: <124cc6ea-ca79-20f2-651e-c2f909729ac0@gmx.de>
-Openpgp: preference=signencrypt
-Cc:     linux-kernel@vger.kernel.org
-Message-ID: <8cf39b7c-505b-91e6-849d-e66ba980042f@postn.eu>
-Date:   Mon, 14 Jan 2019 01:33:30 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        id S1726617AbfANAqp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 13 Jan 2019 19:46:45 -0500
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by ozlabs.org (Postfix) with ESMTPSA id 43dFCj0lVQz9s1l;
+        Mon, 14 Jan 2019 11:46:40 +1100 (AEDT)
+From:   Michael Ellerman <mpe@ellerman.id.au>
+To:     Samuel Holland <samuel@sholland.org>,
+        Christophe Leroy <christophe.leroy@c-s.fr>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        "Jason A. Donenfeld" <Jason@zx2c4.com>,
+        Alexey Kardashevskiy <aik@ozlabs.ru>
+Subject: Re: [PATCH v5 1/2] powerpc/32: add stack protector support
+In-Reply-To: <f5600a1d-71ca-f1d7-3973-026462990059@sholland.org>
+References: <8e81b0647fea15e533a73ad4e9063c059fdfc6df.1537987712.git.christophe.leroy@c-s.fr> <f5600a1d-71ca-f1d7-3973-026462990059@sholland.org>
+Date:   Mon, 14 Jan 2019 11:46:40 +1100
+Message-ID: <87k1j8dq1b.fsf@concordia.ellerman.id.au>
 MIME-Version: 1.0
-In-Reply-To: <124cc6ea-ca79-20f2-651e-c2f909729ac0@gmx.de>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+Samuel Holland <samuel@sholland.org> writes:
+> Hello all,
+>
+> On 09/27/18 02:05, Christophe Leroy wrote:
+> [..snip..]
+>> diff --git a/arch/powerpc/Makefile b/arch/powerpc/Makefile
+>> index 07d9dce7eda6..45b8eb4d8fe7 100644
+>> --- a/arch/powerpc/Makefile
+>> +++ b/arch/powerpc/Makefile
+>> @@ -112,6 +112,9 @@ KBUILD_LDFLAGS	+= -m elf$(BITS)$(LDEMULATION)
+>>  KBUILD_ARFLAGS	+= --target=elf$(BITS)-$(GNUTARGET)
+>>  endif
+>>  
+>> +cflags-$(CONFIG_STACKPROTECTOR)	+= -mstack-protector-guard=tls
+>> +cflags-$(CONFIG_STACKPROTECTOR)	+= -mstack-protector-guard-reg=r2
+>> +
+>>  LDFLAGS_vmlinux-y := -Bstatic
+>>  LDFLAGS_vmlinux-$(CONFIG_RELOCATABLE) := -pie
+>>  LDFLAGS_vmlinux	:= $(LDFLAGS_vmlinux-y)
+>> @@ -404,6 +407,13 @@ archclean:
+>>  
+>>  archprepare: checkbin
+>>  
+>> +ifdef CONFIG_STACKPROTECTOR
+>> +prepare: stack_protector_prepare
+>> +
+>> +stack_protector_prepare: prepare0
+>> +	$(eval KBUILD_CFLAGS += -mstack-protector-guard-offset=$(shell awk '{if ($$2 == "TASK_CANARY") print $$3;}' include/generated/asm-offsets.h))
+>> +endif
+>> +
+>
+> This breaks when building out-of-tree kernel modules. GCC is not getting passed
+> the -mstack-protector-guard-offset argument, so the default offset is used. The
+> kernel then panics the first time a function with stack protector is called.
+>
+> I'm seeing this on powerpc64. It looks like it was reported for powerpc on
+> kernel bugzilla: https://bugzilla.kernel.org/show_bug.cgi?id=201891
 
-this is RE the patch 8515b9edf7a0c9dcf1ad218ccc783700db217336 (Upstream commit a9ad01bc759df79b0012f43ee52164391e31cd96) in 4.18.20.
+Thanks for the bug report.
 
-I have an issue with UDF. I used to be able to create a UDF fs in a way that is very similar to this:
+Alexey also hit this and sent an RFC fix.
 
-`# mkudffs --label=.... -m dvd -b 512 /dev/mapper/cryptdev1`
+  https://patchwork.ozlabs.org/patch/1022751/
 
-I used to proceed mounting it, noticing it got mounted as readonly (because the accesstype of the udf fs is readonly (as decided per -m dvd)), so I remounted it as rw and then was able to fill it with data.[1]
+But Masahiro thought we could do something less hacky, and hopefully he
+can help us come up with something better.
 
-Now, this doesn't work anymore since the last time I did that. I figured out it must have to do with the commit mentioned above.
-All I get now, during a remount-as-rw attempt, is:
-`cannot remount /dev/mapper/cryptdev1 read-write, is write-protected`.
-
-I am not sure if this counts as a regression, because I see the point in not only auto-mounting such filesystems as readonly, but also preventing remounting as rw, however it breaks my use case.
-
-However, I noticed the following, too:
-case A) when having a "readonly udf" on a readwrite device, the filesystem mounts as readonly (old behavior) and also prevents remounting as rw (new behavior)
-case B) when having a "readwrite udf" on a readonly device, the filesystem mounts as readwrite (!), but the writes end up being invisibly discarded
-
-To me, B) sounds just like the kind of issue that the commit, that I mentioned above, promised to fix.
-
-In fact, I believe case B to be more severe, because it automatically mounts as rw on a ro device, while the old (pre-patch) behavior of case A correctly mounted as ro and required manual remounting intervention to mount as rw on (potentially) rw - and even then, it's still less of an issue, when the underlying device is writeable.
-
-I feel like the correct solution would be to:
-- disallow mounting as rw if the UDF is ro
-- disallow mounting as rw if the device is ro
-- disallow remounting as rw if the device is ro
-
-As for the case of remounting as rw if the UDF is ro but the device is rw, I am not sure what the best idea is to deal with this.
-If this new behavior doesn't count as a regression, is there any way to end up with a UDF filesystem as specced by the command above (-m dvd -b 512, so with it being read-only), but still allow for mounting it as rw if the device supports it? Does udftools offer a way to manipulate the UDF partition descriptor flag in a pre-existing filesystem after it had already been created that I am missing?
-
-
-[1] sanity check: people actually do this:
-- https://unix.stackexchange.com/a/17613
-- https://www.g-loaded.eu/2005/11/10/packet-writing-on-cdrw-and-dvdrw-media/
-- https://www.altlinux.org/WritingLargeFilesOnDVD
-- https://computador.docow.com/como-usair-dvd-rw-udf-tanto-no-windows-quanto-no-linux.html (case 4)
-
---
-Kind regards,
-Kevin Weidemann
-
+cheers
