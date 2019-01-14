@@ -2,110 +2,130 @@ Return-Path: <SRS0=tq6k=PW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 39E51C43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 08:18:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 639FDC43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 08:20:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0EB1020663
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 08:18:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 36FF02086D
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 08:20:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726482AbfANISy (ORCPT
+        id S1726534AbfANIUA convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 14 Jan 2019 03:18:54 -0500
-Received: from skedge04.snt-world.com ([91.208.41.69]:45058 "EHLO
-        skedge04.snt-world.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725837AbfANISx (ORCPT
+        Mon, 14 Jan 2019 03:20:00 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:45776 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726092AbfANIT7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 Jan 2019 03:18:53 -0500
-Received: from sntmail14r.snt-is.com (unknown [10.203.32.184])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        Mon, 14 Jan 2019 03:19:59 -0500
+Received: from pps.filterd (m0098414.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id x0E8EUmD118803
+        for <linux-kernel@vger.kernel.org>; Mon, 14 Jan 2019 03:19:58 -0500
+Received: from e06smtp05.uk.ibm.com (e06smtp05.uk.ibm.com [195.75.94.101])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2q0kw2pg92-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Mon, 14 Jan 2019 03:19:58 -0500
+Received: from localhost
+        by e06smtp05.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <andrew.donnellan@au1.ibm.com>;
+        Mon, 14 Jan 2019 08:19:56 -0000
+Received: from b06cxnps4074.portsmouth.uk.ibm.com (9.149.109.196)
+        by e06smtp05.uk.ibm.com (192.168.101.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Mon, 14 Jan 2019 08:19:53 -0000
+Received: from d06av26.portsmouth.uk.ibm.com (d06av26.portsmouth.uk.ibm.com [9.149.105.62])
+        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x0E8JqW257737256
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Mon, 14 Jan 2019 08:19:52 GMT
+Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 3754DAE055;
+        Mon, 14 Jan 2019 08:19:52 +0000 (GMT)
+Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id D910DAE056;
+        Mon, 14 Jan 2019 08:19:51 +0000 (GMT)
+Received: from ozlabs.au.ibm.com (unknown [9.192.253.14])
+        by d06av26.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Mon, 14 Jan 2019 08:19:51 +0000 (GMT)
+Received: from [10.61.2.125] (haven.au.ibm.com [9.192.254.114])
+        (using TLSv1.2 with cipher AES128-SHA (128/128 bits))
         (No client certificate requested)
-        by skedge04.snt-world.com (Postfix) with ESMTPS id 9CCC167A7DD;
-        Mon, 14 Jan 2019 09:18:49 +0100 (CET)
-Received: from sntmail12r.snt-is.com (10.203.32.182) by sntmail14r.snt-is.com
- (10.203.32.184) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1466.3; Mon, 14 Jan
- 2019 09:18:49 +0100
-Received: from sntmail12r.snt-is.com ([fe80::e551:8750:7bba:3305]) by
- sntmail12r.snt-is.com ([fe80::e551:8750:7bba:3305%5]) with mapi id
- 15.01.1466.003; Mon, 14 Jan 2019 09:18:49 +0100
-From:   Schrempf Frieder <frieder.schrempf@kontron.de>
-To:     Shawn Guo <shawnguo@kernel.org>
-CC:     "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>,
-        "boris.brezillon@bootlin.com" <boris.brezillon@bootlin.com>,
-        "linux-spi@vger.kernel.org" <linux-spi@vger.kernel.org>,
-        "broonie@kernel.org" <broonie@kernel.org>,
-        Li Yang <leoyang.li@nxp.com>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        "dwmw2@infradead.org" <dwmw2@infradead.org>,
-        "computersforpeace@gmail.com" <computersforpeace@gmail.com>,
-        "marek.vasut@gmail.com" <marek.vasut@gmail.com>,
-        "richard@nod.at" <richard@nod.at>,
-        "miquel.raynal@bootlin.com" <miquel.raynal@bootlin.com>,
-        "david.wolfe@nxp.com" <david.wolfe@nxp.com>,
-        "fabio.estevam@nxp.com" <fabio.estevam@nxp.com>,
-        "prabhakar.kushwaha@nxp.com" <prabhakar.kushwaha@nxp.com>,
-        "yogeshnarayan.gaur@nxp.com" <yogeshnarayan.gaur@nxp.com>,
-        "han.xu@nxp.com" <han.xu@nxp.com>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v8 5/7] ARM: dts: ls1021a: Remove fsl,qspi-has-second-chip
- as it is not used
-Thread-Topic: [PATCH v8 5/7] ARM: dts: ls1021a: Remove
- fsl,qspi-has-second-chip as it is not used
-Thread-Index: AQHUpmuMXeMdtslsvU+hS8nO3SBmbKWsg0qAgAHipwA=
-Date:   Mon, 14 Jan 2019 08:18:49 +0000
-Message-ID: <ee3eb5d5-4b04-002e-5e49-d4b766138ec5@kontron.de>
-References: <20190107092823.11188-1-frieder.schrempf@kontron.de>
- <20190107092823.11188-6-frieder.schrempf@kontron.de>
- <20190113033117.GG11426@dragon>
-In-Reply-To: <20190113033117.GG11426@dragon>
-Accept-Language: de-DE, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [172.25.9.43]
-x-c2processedorg: 51b406b7-48a2-4d03-b652-521f56ac89f3
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <310689CA697D9A40888BAC72345605E9@snt-world.com>
-Content-Transfer-Encoding: base64
+        by ozlabs.au.ibm.com (Postfix) with ESMTPSA id A578FA0104;
+        Mon, 14 Jan 2019 19:19:50 +1100 (AEDT)
+Subject: Re: [PATCH] docs: Bump version to 5.x
+To:     Joel Stanley <joel@jms.id.au>, Jonathan Corbet <corbet@lwn.net>
+Cc:     linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Linus Torvalds <torvalds@linux-foundation.org>
+References: <20190114061221.30494-1-joel@jms.id.au>
+From:   Andrew Donnellan <andrew.donnellan@au1.ibm.com>
+Date:   Mon, 14 Jan 2019 19:19:50 +1100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
+In-Reply-To: <20190114061221.30494-1-joel@jms.id.au>
+Content-Language: en-AU
+X-TM-AS-GCONF: 00
+x-cbid: 19011408-0020-0000-0000-0000030624A1
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19011408-0021-0000-0000-000021573494
+Message-Id: <01ca39f9-6114-deed-6e59-d9d6d8d53f76@au1.ibm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8BIT
 MIME-Version: 1.0
-X-SnT-MailScanner-Information: Please contact the ISP for more information
-X-SnT-MailScanner-ID: 9CCC167A7DD.A2B79
-X-SnT-MailScanner: Found to be clean
-X-SnT-MailScanner-SpamCheck: 
-X-SnT-MailScanner-From: frieder.schrempf@kontron.de
-X-SnT-MailScanner-To: boris.brezillon@bootlin.com, broonie@kernel.org,
-        computersforpeace@gmail.com, david.wolfe@nxp.com,
-        devicetree@vger.kernel.org, dwmw2@infradead.org,
-        fabio.estevam@nxp.com, han.xu@nxp.com, leoyang.li@nxp.com,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-mtd@lists.infradead.org, linux-spi@vger.kernel.org,
-        marek.vasut@gmail.com, mark.rutland@arm.com,
-        miquel.raynal@bootlin.com, prabhakar.kushwaha@nxp.com,
-        richard@nod.at, robh+dt@kernel.org, shawnguo@kernel.org,
-        yogeshnarayan.gaur@nxp.com
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-01-14_04:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1901140071
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-SGkgU2hhd24sDQoNCk9uIDEzLjAxLjE5IDA0OjMxLCBTaGF3biBHdW8gd3JvdGU6DQo+IE9uIE1v
-biwgSmFuIDA3LCAyMDE5IGF0IDA5OjI5OjU0QU0gKzAwMDAsIFNjaHJlbXBmIEZyaWVkZXIgd3Jv
-dGU6DQo+PiBGcm9tOiBGcmllZGVyIFNjaHJlbXBmIDxmcmllZGVyLnNjaHJlbXBmQGtvbnRyb24u
-ZGU+DQo+Pg0KPj4gQWZ0ZXIgc3dpdGNoaW5nIHRvIHRoZSBuZXcgRlNMIFFTUEkgZHJpdmVyIHRo
-ZSBwcm9wZXJ0eQ0KPj4gJ2ZzbCxxc3BpLWhhcy1zZWNvbmQtY2hpcCcgaXMgbm90IG5lZWRlZCBh
-bnltb3JlLg0KPj4NCj4+IFRoZSBkcml2ZXIgbm93IHVzZXMgdGhlICdyZWcnIHByb3BlcnR5IHRv
-IGRldGVybWluZSB0aGUgYnVzIGFuZA0KPj4gdGhlIGNoaXBzZWxlY3QuDQo+Pg0KPj4gU2lnbmVk
-LW9mZi1ieTogRnJpZWRlciBTY2hyZW1wZiA8ZnJpZWRlci5zY2hyZW1wZkBrb250cm9uLmRlPg0K
-PiANCj4gQXBwbGllZCwgdGhhbmtzLg0KDQpJIGp1c3Qgbm90aWNlZCwgdGhhdCB0aGlzIGFuZCB0
-aGUgYXJtNjQgcGF0Y2ggZGVwZW5kIG9uIHRoZSBkcml2ZXIgDQpjaGFuZ2VzIGZvciA1LjEgdGhh
-dCBnbyB0aHJvdWdoIHRoZSBTUEkgdHJlZS4gU28gSSBndWVzcyB3ZSBjYW4ndCBiZSANCnN1cmUg
-dGhhdCB0aGlzIHdpbGwgYmUgbWVyZ2VkIGluIHRoZSByaWdodCBvcmRlciBhbmQgd2UgbmVlZCB0
-byBkZWxheSANCnRoaXMgY2xlYW51cCB0byA1LjIsIG9yIGFtIEkgd3Jvbmc/DQoNClRoYW5rcywN
-CkZyaWVkZXI=
+On 14/1/19 5:12 pm, Joel Stanley wrote:
+> This shows up in the index of https://www.kernel.org/doc/html/latest/ so
+> I figured it should be updated.
+> 
+> Fixes: bfeffd15528 ("Linux 5.0-rc1")
+> Signed-off-by: Joel Stanley <joel@jms.id.au>
+> --
+> We could also remove the version number instead of applying this patch.
+
+You missed all the 4.x references in "Installing the kernel source" :)
+
+I also don't think the README matches the contemporary understanding of 
+"release notes" so perhaps that phrase should be dropped too.
+
+> ---
+>   Documentation/admin-guide/README.rst | 5 +++--
+>   1 file changed, 3 insertions(+), 2 deletions(-)
+> 
+> diff --git a/Documentation/admin-guide/README.rst b/Documentation/admin-guide/README.rst
+> index 0797eec76be1..a09baa324951 100644
+> --- a/Documentation/admin-guide/README.rst
+> +++ b/Documentation/admin-guide/README.rst
+> @@ -1,9 +1,9 @@
+>   .. _readme:
+> 
+> -Linux kernel release 4.x <http://kernel.org/>
+> +Linux kernel release 5.x <http://kernel.org/>
+>   =============================================
+> 
+> -These are the release notes for Linux version 4.  Read them carefully,
+> +These are the release notes for Linux version 5.  Read them carefully,
+>   as they tell you what this is all about, explain how to install the
+>   kernel, and what to do if something goes wrong.
+> 
+> @@ -406,3 +406,4 @@ If something goes wrong
+> 
+>      gdb'ing a non-running kernel currently fails because ``gdb`` (wrongly)
+>      disregards the starting offset for which the kernel is compiled.
+> +
+> 
+
+-- 
+Andrew Donnellan              OzLabs, ADL Canberra
+andrew.donnellan@au1.ibm.com  IBM Australia Limited
+
