@@ -2,96 +2,171 @@ Return-Path: <SRS0=tq6k=PW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E16B6C43612
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C6E14C43387
 	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 04:54:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BB3EF2086D
+	by mail.kernel.org (Postfix) with ESMTP id 983A420660
 	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 04:54:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726542AbfANEyi (ORCPT
+        id S1726514AbfANEwT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 13 Jan 2019 23:54:38 -0500
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:45946 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725837AbfANEyi (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 13 Jan 2019 23:54:38 -0500
-Received: by mail-pf1-f195.google.com with SMTP id g62so9740807pfd.12;
-        Sun, 13 Jan 2019 20:54:38 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=bmcxAxzuAHpblo8399IJcpn1FuL4nYi4F3M/k+AHpn4=;
-        b=oVE5WhphFIZlPoJVmhsNJ7QEEgvCPfkmvwheTD7mRP31qk7NvhzFzkMu2orTmwZ1YI
-         wIwVaVKmxTeAeYNutImrJO1Z2DJ0TDnFqEMHZHSU2yoxxhdvh6DBssjbkSWhftytIRWg
-         GrlslIuW4oFxrgp5gbslhHSgIIiOi7rSaKYVZknk/F+kqe3VXen53sKMINedMODETKrE
-         Ua+6HgU0w7Qy3pmPg1SDWWbf0lKVVDLmvoIez7WQ2RJkHoBB4BPe2oC1EKHeUnuYtrug
-         cdS7uA1XScFmfTLdh5gMZtbUECvLs3tWqyKZR7NIhmRtnTAWT6XK7e5S2yfHP9tLYOPl
-         CKcw==
-X-Gm-Message-State: AJcUukdU6OVcw7jRA7wF75BfOovq243gOo3bRFX1wbh/JISTEf/DLReF
-        JT/P5aXK8hkY3tFTRjO5+Cw=
-X-Google-Smtp-Source: ALg8bN48y1VWyuwvj9aJRtFHsoBVrYEf+tP2OohmfGRUhyGVcrv62DkiCCbqsPbPE0jk4K5VBnPyvw==
-X-Received: by 2002:a62:22d4:: with SMTP id p81mr11723996pfj.16.1547441677526;
-        Sun, 13 Jan 2019 20:54:37 -0800 (PST)
-Received: from asus.site ([2601:647:4000:5dd1:a41e:80b4:deb3:fb66])
-        by smtp.gmail.com with ESMTPSA id v89sm127336305pfk.12.2019.01.13.20.54.36
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 13 Jan 2019 20:54:36 -0800 (PST)
-Subject: Re: [PATCH v3] scsi/ata: Use unsigned int for cmd's type in ioctls in
- scsi_host_template
-To:     Nathan Chancellor <natechancellor@gmail.com>,
-        Jens Axboe <axboe@kernel.dk>,
-        "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>
-Cc:     Adaptec OEM Raid Solutions <aacraid@microsemi.com>,
-        "Manoj N. Kumar" <manoj@linux.ibm.com>,
-        "Matthew R. Ochs" <mrochs@linux.ibm.com>,
-        Uma Krishnan <ukrishn@linux.ibm.com>,
-        Bradley Grove <linuxdrivers@attotech.com>,
-        Don Brace <don.brace@microsemi.com>,
-        Brian King <brking@us.ibm.com>, linux-ide@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-scsi@vger.kernel.org,
-        esc.storagedev@microsemi.com,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Joel Stanley <joel@jms.id.au>
-References: <20181020050143.589-1-natechancellor@gmail.com>
- <20190114044206.6351-1-natechancellor@gmail.com>
-From:   Bart Van Assche <bvanassche@acm.org>
-Message-ID: <c1f7f039-04b2-a660-2408-8d4ac0ea63c4@acm.org>
-Date:   Sun, 13 Jan 2019 20:54:35 -0800
+        Sun, 13 Jan 2019 23:52:19 -0500
+Received: from smtp.infotech.no ([82.134.31.41]:54911 "EHLO smtp.infotech.no"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725837AbfANEwT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 13 Jan 2019 23:52:19 -0500
+Received: from localhost (localhost [127.0.0.1])
+        by smtp.infotech.no (Postfix) with ESMTP id 3E257204237;
+        Mon, 14 Jan 2019 05:52:17 +0100 (CET)
+X-Virus-Scanned: by amavisd-new-2.6.6 (20110518) (Debian) at infotech.no
+Received: from smtp.infotech.no ([127.0.0.1])
+        by localhost (smtp.infotech.no [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id JPXssZja47dL; Mon, 14 Jan 2019 05:52:09 +0100 (CET)
+Received: from [192.168.48.23] (host-184-164-16-103.dyn.295.ca [184.164.16.103])
+        by smtp.infotech.no (Postfix) with ESMTPA id 41E97204187;
+        Mon, 14 Jan 2019 05:52:07 +0100 (CET)
+Reply-To: dgilbert@interlog.com
+Subject: Re: [PATCH v2] rbtree: fix the red root
+To:     Esme <esploit@protonmail.ch>
+Cc:     Qian Cai <cai@lca.pw>, David Lechner <david@lechnology.com>,
+        Michel Lespinasse <walken@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        "jejb@linux.ibm.com" <jejb@linux.ibm.com>,
+        "martin.petersen@oracle.com" <martin.petersen@oracle.com>,
+        "joeypabalinas@gmail.com" <joeypabalinas@gmail.com>,
+        linux-mm <linux-mm@kvack.org>,
+        LKML <linux-kernel@vger.kernel.org>
+References: <20190111181600.GJ6310@bombadil.infradead.org>
+ <20190111205843.25761-1-cai@lca.pw>
+ <a783f23d-77ab-a7d3-39d1-4008d90094c3@lechnology.com>
+ <CANN689G0zbk7sMbQ+p9NQGQ=NWq-Q0mQOOjeFkLp19YrTfgcLg@mail.gmail.com>
+ <864d6b85-3336-4040-7c95-7d9615873777@lechnology.com>
+ <b1033d96-ebdd-e791-650a-c6564f030ce1@lca.pw>
+ <8v11ZOLyufY7NLAHDFApGwXOO_wGjVHtsbw1eiZ__YvI9EZCDe_4FNmlp0E-39lnzGQHhHAczQ6Q6lQPzVU2V6krtkblM8IFwIXPHZCuqGE=@protonmail.ch>
+ <c6265fc0-4089-9d1a-ba7c-b267b847747e@interlog.com>
+ <UKsodHRZU8smIdO2MHHL4Yzde_YB4iWX43TaHI1uY2tMo4nii4ucbaw4XC31XIY-Pe4oEovjF62qbkeMsIMTrvT1TdCCP4Fs_fxciAzXYVc=@protonmail.ch>
+From:   Douglas Gilbert <dgilbert@interlog.com>
+Message-ID: <ad591828-76e8-324b-6ab8-dc87e4390f64@interlog.com>
+Date:   Sun, 13 Jan 2019 23:52:06 -0500
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.3
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-In-Reply-To: <20190114044206.6351-1-natechancellor@gmail.com>
+In-Reply-To: <UKsodHRZU8smIdO2MHHL4Yzde_YB4iWX43TaHI1uY2tMo4nii4ucbaw4XC31XIY-Pe4oEovjF62qbkeMsIMTrvT1TdCCP4Fs_fxciAzXYVc=@protonmail.ch>
 Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Language: en-CA
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 1/13/19 8:42 PM, Nathan Chancellor wrote:
-> @@ -1292,7 +1292,7 @@ int esas2r_ioctl_handler(void *hostdata, int cmd, void __user *arg)
->   	ioctl = memdup_user(arg, sizeof(struct atto_express_ioctl));
->   	if (IS_ERR(ioctl)) {
->   		esas2r_log(ESAS2R_LOG_WARN,
-> -			   "ioctl_handler access_ok failed for cmd %d, "
-> +			   "ioctl_handler access_ok failed for cmd %u, "
->   			   "address %p", cmd,
->   			   arg);
->   		return PTR_ERR(ioctl);
+On 2019-01-13 10:59 p.m., Esme wrote:
+> ‐‐‐‐‐‐‐ Original Message ‐‐‐‐‐‐‐
+> On Sunday, January 13, 2019 10:52 PM, Douglas Gilbert <dgilbert@interlog.com> wrote:
+> 
+>> On 2019-01-13 10:07 p.m., Esme wrote:
+>>
+>>> ‐‐‐‐‐‐‐ Original Message ‐‐‐‐‐‐‐
+>>> On Sunday, January 13, 2019 9:33 PM, Qian Cai cai@lca.pw wrote:
+>>>
+>>>> On 1/13/19 9:20 PM, David Lechner wrote:
+>>>>
+>>>>> On 1/11/19 8:58 PM, Michel Lespinasse wrote:
+>>>>>
+>>>>>> On Fri, Jan 11, 2019 at 3:47 PM David Lechner david@lechnology.com wrote:
+>>>>>>
+>>>>>>> On 1/11/19 2:58 PM, Qian Cai wrote:
+>>>>>>>
+>>>>>>>> A GPF was reported,
+>>>>>>>> kasan: CONFIG_KASAN_INLINE enabled
+>>>>>>>> kasan: GPF could be caused by NULL-ptr deref or user memory access
+>>>>>>>> general protection fault: 0000 [#1] SMP KASAN
+>>>>>>>>            kasan_die_handler.cold.22+0x11/0x31
+>>>>>>>>            notifier_call_chain+0x17b/0x390
+>>>>>>>>            atomic_notifier_call_chain+0xa7/0x1b0
+>>>>>>>>            notify_die+0x1be/0x2e0
+>>>>>>>>            do_general_protection+0x13e/0x330
+>>>>>>>>            general_protection+0x1e/0x30
+>>>>>>>>            rb_insert_color+0x189/0x1480
+>>>>>>>>            create_object+0x785/0xca0
+>>>>>>>>            kmemleak_alloc+0x2f/0x50
+>>>>>>>>            kmem_cache_alloc+0x1b9/0x3c0
+>>>>>>>>            getname_flags+0xdb/0x5d0
+>>>>>>>>            getname+0x1e/0x20
+>>>>>>>>            do_sys_open+0x3a1/0x7d0
+>>>>>>>>            __x64_sys_open+0x7e/0xc0
+>>>>>>>>            do_syscall_64+0x1b3/0x820
+>>>>>>>>            entry_SYSCALL_64_after_hwframe+0x49/0xbe
+>>>>>>>> It turned out,
+>>>>>>>> gparent = rb_red_parent(parent);
+>>>>>>>> tmp = gparent->rb_right; <-- GPF was triggered here.
+>>>>>>>> Apparently, "gparent" is NULL which indicates "parent" is rbtree's root
+>>>>>>>> which is red. Otherwise, it will be treated properly a few lines above.
+>>>>>>>> /*
+>>>>>>>>     * If there is a black parent, we are done.
+>>>>>>>>     * Otherwise, take some corrective action as,
+>>>>>>>>     * per 4), we don't want a red root or two
+>>>>>>>>     * consecutive red nodes.
+>>>>>>>>     */
+>>>>>>>> if(rb_is_black(parent))
+>>>>>>>>         break;
+>>>>>>>> Hence, it violates the rule #1 (the root can't be red) and need a fix
+>>>>>>>> up, and also add a regression test for it. This looks like was
+>>>>>>>> introduced by 6d58452dc06 where it no longer always paint the root as
+>>>>>>>> black.
+>>>>>>>> Fixes: 6d58452dc06 (rbtree: adjust root color in rb_insert_color() only
+>>>>>>>> when necessary)
+>>>>>>>> Reported-by: Esme esploit@protonmail.ch
+>>>>>>>> Tested-by: Joey Pabalinas joeypabalinas@gmail.com
+>>>>>>>> Signed-off-by: Qian Cai cai@lca.pw
+>>>>>>>
+>>>>>>> Tested-by: David Lechner david@lechnology.com
+>>>>>>> FWIW, this fixed the following crash for me:
+>>>>>>> Unable to handle kernel NULL pointer dereference at virtual address 00000004
+>>>>>>
+>>>>>> Just to clarify, do you have a way to reproduce this crash without the fix ?
+>>>>>
+>>>>> I am starting to suspect that my crash was caused by some new code
+>>>>> in the drm-misc-next tree that might be causing a memory corruption.
+>>>>> It threw me off that the stack trace didn't contain anything related
+>>>>> to drm.
+>>>>> See: https://patchwork.freedesktop.org/patch/276719/
+>>>>
+>>>> It may be useful for those who could reproduce this issue to turn on those
+>>>> memory corruption debug options to narrow down a bit.
+>>>> CONFIG_DEBUG_PAGEALLOC=y
+>>>> CONFIG_DEBUG_PAGEALLOC_ENABLE_DEFAULT=y
+>>>> CONFIG_KASAN=y
+>>>> CONFIG_KASAN_GENERIC=y
+>>>> CONFIG_SLUB_DEBUG_ON=y
+>>>
+>>> I have been on SLAB, I configured SLAB DEBUG with a fresh pull from github. Linux syzkaller 5.0.0-rc2 #9 SMP Sun Jan 13 21:57:40 EST 2019 x86_64
+>>> ...
+>>> In an effort to get a different stack into the kernel, I felt that nothing works better than fork bomb? :)
+>>> Let me know if that helps.
+>>> root@syzkaller:~# gcc -o test3 test3.c
+>>> root@syzkaller:~# while : ; do ./test3 & done
+>>
+>> And is test3 the same multi-threaded program that enters the kernel via
+>> /dev/sg0 and then calls SCSI_IOCTL_SEND_COMMAND which goes to the SCSI
+>> mid-level and thence to the block layer?
+>>
+>> And please remind me, does it also fail on lk 4.20.2 ?
+>>
+>> Doug Gilbert
+> 
+> Yes, the same C repro from the earlier thread.  It was a 4.20.0 kernel where it was first detected.  I can move to 4.20.2 and see if that changes anything.
 
-If you have to repost this patch, please use that opportunity to join 
-the above split strings. Additionally, since this patch touches much 
-more SCSI code than ATA code I think it should have been sent to Martin 
-instead of to Jens. Anyway:
+Hi,
+I don't think there is any need to check lk 4.20.2 (as it would
+be very surprising if it didn't also have this "feature").
 
-Reviewed-by: Bart Van Assche <bvanassche@acm.org>
+More interesting might be: has "test3" been run on lk 4.19 or
+any earlier kernel?
+
+Doug Gilbert
 
