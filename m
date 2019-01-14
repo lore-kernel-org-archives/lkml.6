@@ -2,108 +2,111 @@ Return-Path: <SRS0=tq6k=PW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5763DC43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 19:12:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 35A77C43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 19:14:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 33B6020651
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 19:12:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0BCA120651
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 19:14:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726865AbfANTMN (ORCPT
+        id S1726796AbfANTN6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 14 Jan 2019 14:12:13 -0500
-Received: from foss.arm.com ([217.140.101.70]:39164 "EHLO foss.arm.com"
+        Mon, 14 Jan 2019 14:13:58 -0500
+Received: from foss.arm.com ([217.140.101.70]:39188 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726758AbfANTMM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 Jan 2019 14:12:12 -0500
+        id S1726706AbfANTN6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 14 Jan 2019 14:13:58 -0500
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 3893F80D;
-        Mon, 14 Jan 2019 11:12:12 -0800 (PST)
-Received: from [10.1.196.75] (e110467-lin.cambridge.arm.com [10.1.196.75])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 3FDAF3F5BD;
-        Mon, 14 Jan 2019 11:12:10 -0800 (PST)
-Subject: Re: [PATCH 0/3] Fix virtio-blk issue with SWIOTLB
-To:     "Michael S. Tsirkin" <mst@redhat.com>,
-        Jason Wang <jasowang@redhat.com>
-Cc:     Jens Axboe <axboe@kernel.dk>, brijesh.singh@amd.com,
-        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
-        jon.grimm@amd.com, jfehlig@suse.com, linux-kernel@vger.kernel.org,
-        virtualization@lists.linux-foundation.org,
-        linux-block@vger.kernel.org, iommu@lists.linux-foundation.org,
-        Christoph Hellwig <hch@lst.de>
-References: <20190110134433.15672-1-joro@8bytes.org>
- <5ae1341e-62ec-0478-552b-259eabf9fb17@redhat.com>
- <20190111091502.GC5825@8bytes.org>
- <38bcbd46-674c-348a-cbd6-66bd431e986a@redhat.com>
- <20190114095002.GA29874@lst.de>
- <ac6d83d8-02de-dbdf-e309-3a1115642d50@redhat.com>
- <20190114131114-mutt-send-email-mst@kernel.org>
-From:   Robin Murphy <robin.murphy@arm.com>
-Message-ID: <cb290df3-4e17-a403-6d69-cf5a8a41c987@arm.com>
-Date:   Mon, 14 Jan 2019 19:12:08 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 6E13E80D;
+        Mon, 14 Jan 2019 11:13:57 -0800 (PST)
+Received: from fuggles.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 7A4283F5BD;
+        Mon, 14 Jan 2019 11:13:55 -0800 (PST)
+Date:   Mon, 14 Jan 2019 19:13:50 +0000
+From:   Will Deacon <will.deacon@arm.com>
+To:     "Koenig, Christian" <Christian.Koenig@amd.com>
+Cc:     Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Michel =?iso-8859-1?Q?D=E4nzer?= <michel@daenzer.net>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Carsten Haitzler <Carsten.Haitzler@arm.com>,
+        David Airlie <airlied@linux.ie>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        "Huang, Ray" <Ray.Huang@amd.com>,
+        "Zhang, Jerry" <Jerry.Zhang@amd.com>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        Bernhard =?iso-8859-1?Q?Rosenkr=E4nzer?= 
+        <Bernhard.Rosenkranzer@linaro.org>
+Subject: Re: [RFC PATCH] drm/ttm: force cached mappings for system RAM on ARM
+Message-ID: <20190114191350.GA29600@fuggles.cambridge.arm.com>
+References: <20190110072841.3283-1-ard.biesheuvel@linaro.org>
+ <5d8135de-80fe-9c0e-2206-ecb809f64cdb@daenzer.net>
+ <CAKv+Gu_X-DH6GZ0k8RYuL18rxTwBpb5=Qp9VCZfn_kh+9b3Zkg@mail.gmail.com>
+ <55facfb9-92af-86b8-40e9-d63b887b5592@amd.com>
+ <CAKv+Gu_JyO2KNtdN1-_TcoL_kqs0yswdwBrpAXA6-jyWuDrj+g@mail.gmail.com>
+ <9f956898-7973-98ee-6bf1-e1d445e9d365@amd.com>
 MIME-Version: 1.0
-In-Reply-To: <20190114131114-mutt-send-email-mst@kernel.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-GB
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <9f956898-7973-98ee-6bf1-e1d445e9d365@amd.com>
+User-Agent: Mutt/1.11.1+86 (6f28e57d73f2) ()
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 14/01/2019 18:20, Michael S. Tsirkin wrote:
-> On Mon, Jan 14, 2019 at 08:41:37PM +0800, Jason Wang wrote:
->>
->> On 2019/1/14 下午5:50, Christoph Hellwig wrote:
->>> On Mon, Jan 14, 2019 at 05:41:56PM +0800, Jason Wang wrote:
->>>> On 2019/1/11 下午5:15, Joerg Roedel wrote:
->>>>> On Fri, Jan 11, 2019 at 11:29:31AM +0800, Jason Wang wrote:
->>>>>> Just wonder if my understanding is correct IOMMU_PLATFORM must be set for
->>>>>> all virtio devices under AMD-SEV guests?
->>>>> Yes, that is correct. Emulated DMA can only happen on the SWIOTLB
->>>>> aperture, because that memory is not encrypted. The guest bounces the
->>>>> data then to its encrypted memory.
->>>>>
->>>>> Regards,
->>>>>
->>>>> 	Joerg
->>>>
->>>> Thanks, have you tested vhost-net in this case. I suspect it may not work
->>> Which brings me back to my pet pevee that we need to take actions
->>> that virtio uses the proper dma mapping API by default with quirks
->>> for legacy cases.  The magic bypass it uses is just causing problems
->>> over problems.
->>
->>
->> Yes, I fully agree with you. This is probably an exact example of such
->> problem.
->>
->> Thanks
+On Mon, Jan 14, 2019 at 07:07:54PM +0000, Koenig, Christian wrote:
+> Am 14.01.19 um 18:32 schrieb Ard Biesheuvel:
+>             - The reason remapping the CPU side as cacheable does work (which I
+>             did test) is because the GPU's uncacheable accesses (which I assume
+>             are made using the NoSnoop PCIe transaction attribute) are actually
+>             emitted as cacheable in some cases.
+>                . On my AMD Seattle, with or without SMMU (which is stage 2 only), I
+>             must use cacheable accesses from the CPU side or things are broken.
+>             This might be a h/w flaw, though.
+>                . On systems with stage 1+2 SMMUs, the driver uses stage 1
+>             translations which always override the memory attributes to cacheable
+>             for DMA coherent devices. This is what is affecting the Cavium
+>             ThunderX2 (although it appears the attributes emitted by the RC may be
+>             incorrect as well.)
 > 
-> I don't think so - the issue is really that DMA API does not yet handle
-> the SEV case 100% correctly. I suspect passthrough devices would have
-> the same issue.
+>             The latter issue is a shortcoming in the SMMU driver that we have to
+>             fix, i.e., it should take care not to modify the incoming attributes
+>             of DMA coherent PCIe devices for NoSnoop to be able to work.
+> 
+>             So in summary, the mismatch appears to be between the CPU accessing
+>             the vmap region with non-cacheable attributes and the GPU accessing
+>             the same memory with cacheable attributes, resulting in a loss of
+>             coherency and lots of visible corruption.
+> 
+>         Actually it is the other way around. The CPU thinks some data is in the
+>         cache and the GPU only updates the system memory version because the
+>         snoop flag is not set.
+> 
+> 
+>     That doesn't seem to be what is happening. As far as we can tell from
+>     our experiments, all inbound transactions are always cacheable, and so
+>     the only way to make things work is to ensure that the CPU uses the
+>     same attributes.
+> 
+> 
+> Ok that doesn't make any sense. If inbound transactions are cacheable or not is
+> irrelevant when the CPU always uses uncached accesses.
+> 
+> See on the PCIe side you have the snoop bit in the read/write transactions
+> which tells the root hub if the device wants to snoop caches or not.
+> 
+> When the CPU accesses some memory as cached then devices need to snoop the
+> cache for coherent accesses.
+> 
+> When the CPU accesses some memory as uncached then devices can disable snooping
+> to improve performance, but when they don't do this it is mandated by the spec
+> that this still works.
 
-Huh? Regardless of which virtio devices use it or not, the DMA API is 
-handling the SEV case as correctly as it possibly can, by forcing 
-everything through the unencrypted bounce buffer. If the segments being 
-mapped are too big for that bounce buffer in the first place, there's 
-nothing it can possibly do except fail, gracefully or otherwise.
+Which spec? The Arm architecture (and others including Power afaiu) doesn't
+guarantee coherency when memory is accessed using mismatched cacheability
+attributes.
 
-Now, in theory, yes, the real issue at hand is not unique to virtio-blk 
-nor SEV - any driver whose device has a sufficiently large DMA segment 
-size and who manages to get sufficient physically-contiguous memory 
-could technically generate a scatterlist segment longer than SWIOTLB can 
-handle. However, in practice that basically never happens, not least 
-because very few drivers ever override the default 64K DMA segment 
-limit. AFAICS nothing in drivers/virtio is calling 
-dma_set_max_seg_size() or otherwise assigning any dma_parms to replace 
-the defaults either, so the really interesting question here is how are 
-these apparently-out-of-spec 256K segments getting generated at all?
-
-Robin.
+Will
