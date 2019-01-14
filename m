@@ -7,108 +7,103 @@ X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E6AC1C43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 11:45:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 419A5C43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 11:45:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AEE7620659
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 11:45:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 04D3E20659
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 11:45:41 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="QpucYbgQ"
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="SYpWQW+l"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726782AbfANLpd (ORCPT
+        id S1726800AbfANLpj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 14 Jan 2019 06:45:33 -0500
-Received: from mail-vs1-f65.google.com ([209.85.217.65]:34878 "EHLO
-        mail-vs1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726759AbfANLpa (ORCPT
+        Mon, 14 Jan 2019 06:45:39 -0500
+Received: from mail-vk1-f193.google.com ([209.85.221.193]:33220 "EHLO
+        mail-vk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726723AbfANLp1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 Jan 2019 06:45:30 -0500
-Received: by mail-vs1-f65.google.com with SMTP id e7so13408818vsc.2
-        for <linux-kernel@vger.kernel.org>; Mon, 14 Jan 2019 03:45:29 -0800 (PST)
+        Mon, 14 Jan 2019 06:45:27 -0500
+Received: by mail-vk1-f193.google.com with SMTP id d201so4790106vka.0
+        for <linux-kernel@vger.kernel.org>; Mon, 14 Jan 2019 03:45:26 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=vdREFb/h1cgiJuv6msebW3MKi9PJWb+jT0u3Yjseat0=;
-        b=QpucYbgQ4v8Ly5hS3gBEhxxIrX3ye+AE2QIWf18BTxFjA8vv8CNj2PfDM1dhCvVA2D
-         NbwhSVPTbNK6/ynLCiaPmbepj2nK6jGqaBh1h7GdccmE3wOBeLYwTsQJb2cP/r0dy0sz
-         rFmuhBnMb56AsANVIAaRJv+4XMtJGj2sGEQw0=
+        bh=YOv9Qrq6hri4qiRM2sCo62WGAz+kbMcRK+rOBxv/WjM=;
+        b=SYpWQW+lbgoIZyB962f2Q9e/fJW9TMloKZChuJdxQBFCsdF0CeyUyYErRY9LLnNJRe
+         awAeMm6a8KbWUyXVckugLQRwIxViEWqgIYXN6JBKYcM2T9G7N7Sgl1Ur9dB9+qj39uGs
+         his75ew4PuQqeRZYSX+pOVnCBz6uWLAaTQ1zw=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=vdREFb/h1cgiJuv6msebW3MKi9PJWb+jT0u3Yjseat0=;
-        b=so4fvN6cabw/6f5pXB2QlCMJGj+Iw9teJ7zEdi65ttCmLSxM7/iEcWD9gcCA0fZ50r
-         aeecCqiDIXM1+LRgTPJ7IJD+P5Osj2uTA7W9wZJLn6Dmv1VQDKyeCqalGPp/zUCyg+qa
-         bwGfEVdbQ+ZSZylDGu3hCS7g38ZN33yWzTlL1HI+CyJ9VkLAXunSS2/b42uVeyldM2qS
-         vmwHxKp3m63o6xhwUVMWEtbg7u9y00rl8e6Nv5hfnT2RYWWYyoi7AFsue+G1qtLvssLl
-         3M4pergu2/wXsdFMZQ50kRWxlQHdkLEjfL4hWzHD0yrJ5zywSSgFVIzGBSTHg3QkzCIk
-         4ZpA==
-X-Gm-Message-State: AJcUukdvq4zjCN6/DzW3YnYb04xKhqZD4EQPiV3tUClem4CWXT9Q9eWo
-        MFLbty2xOvhxuqXAuwUpCAeCxZ9XL8ER9CsSNfVrcVy8qD0=
-X-Google-Smtp-Source: ALg8bN4fnF2vm40ubEFDoDv53xBTaSWS7lnoLKZPwfaXVXvf0MwWjZq1uNr9gF2x9fxV4sQPIrS49cCNcmNA5VeYGKQ=
-X-Received: by 2002:a67:74c2:: with SMTP id p185mr3842574vsc.34.1547466329532;
- Mon, 14 Jan 2019 03:45:29 -0800 (PST)
+        bh=YOv9Qrq6hri4qiRM2sCo62WGAz+kbMcRK+rOBxv/WjM=;
+        b=RmsmjiqgyBVD0oxMf8yC0z6r4raaDmjLUk3g7NAYZvY+MdI8NiT62ElCAMT/fayz14
+         BTYXeO2GjSCV7iZWUxNgbL8SYh+w5RAQB/rc+NC87oh/KoSnYn8TcvChSN1NwKeMvXO/
+         S2NAaVAG+JMnIU+wtJfeMqa0SPir9q46cTXB5pAxkBCAsuGt4EcV/sw8NumcwWFbe5oA
+         IEURZTquIGfLhDddw8YgftUScQw5uwuUfm/sXltu+WT+18XFAw5czvAgJwkYCzYMEE50
+         TfpwWPe8eitEnEI3vLuqpfR/y536yjx6+kM4fnozFkerA39/F26PPoNeX58F3Q464wVe
+         /j9A==
+X-Gm-Message-State: AJcUukdAbJrhxjevvsW0Di2A4dNoXJoPDii90o9o8q0WlNeRBBfXZ5U7
+        CeTGuGK031juNMWJDGArxxlISMzMjHgRE+GYlpPM3Q==
+X-Google-Smtp-Source: ALg8bN66qF3i+E4MfhNhpQVy6pgaACLMlC1v/v9pXKlpdaFw4jTRyWAaNfT9MfNtqV9Ngkg2MDJTrmJWXFYrlI/oE+0=
+X-Received: by 2002:a1f:4982:: with SMTP id w124mr9160121vka.4.1547466325905;
+ Mon, 14 Jan 2019 03:45:25 -0800 (PST)
 MIME-Version: 1.0
-References: <20190109124312.10154-1-faiz_abbas@ti.com>
-In-Reply-To: <20190109124312.10154-1-faiz_abbas@ti.com>
+References: <1547035833-3924-1-git-send-email-wdjjwb@163.com>
+In-Reply-To: <1547035833-3924-1-git-send-email-wdjjwb@163.com>
 From:   Ulf Hansson <ulf.hansson@linaro.org>
-Date:   Mon, 14 Jan 2019 12:44:53 +0100
-Message-ID: <CAPDyKFr9e2MvhU2HTAEaKydfQ5=0hB-Qmcw5FUw=T7z0XDYKFA@mail.gmail.com>
-Subject: Re: [PATCH] mmc: Fix Kconfig warnings on keystone_defconfig
-To:     Faiz Abbas <faiz_abbas@ti.com>
+Date:   Mon, 14 Jan 2019 12:44:50 +0100
+Message-ID: <CAPDyKFq=AY=9hDDAPMjLpNPhN06+ZFpX5DvpFshW7+de1_b=NA@mail.gmail.com>
+Subject: Re: [PATCH] mmc:sdio: Remove unneeded variable ret
+To:     wangbo <wdjjwb@163.com>
 Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Keerthy <j-keerthy@ti.com>,
-        Eduardo Valentin <edubezval@gmail.com>,
-        Olof Johansson <olof@lixom.net>
+        wang.bo116@zte.com.cn
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 9 Jan 2019 at 13:40, Faiz Abbas <faiz_abbas@ti.com> wrote:
+On Wed, 9 Jan 2019 at 13:11, wangbo <wdjjwb@163.com> wrote:
 >
-> Commit 961de0a856e3 ("mmc: sdhci-omap: Workaround errata regarding
-> SDR104/HS200 tuning failures (i929)") added a select on TI_SOC_THERMAL
-> for the driver to get temperature for tuning.
+> In sdio_bus_remove the variable is unneeded,remove it now.
 >
-> However, this causes the following warning on keystone_defconfig because
-> keystone does not support TI_SOC_THERMAL:
->
-> "WARNING: unmet direct dependencies detected for TI_SOC_THERMAL"
->
-> Fix this by changing the select to imply.
->
-> Fixes: 961de0a856e3 ("mmc: sdhci-omap: Workaround errata regarding
-> SDR104/HS200 tuning failures (i929)")
-> Signed-off-by: Faiz Abbas <faiz_abbas@ti.com>
+> Signed-off-by: wangbo <wang.bo116@zte.com.cn>
 
-Applied for fixes, thanks!
+Thanks, applied for next!
 
 Kind regards
 Uffe
 
 
 > ---
->  drivers/mmc/host/Kconfig | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+>  drivers/mmc/core/sdio_bus.c | 3 +--
+>  1 file changed, 1 insertion(+), 2 deletions(-)
 >
-> diff --git a/drivers/mmc/host/Kconfig b/drivers/mmc/host/Kconfig
-> index e26b8145efb3..bc61eefcb695 100644
-> --- a/drivers/mmc/host/Kconfig
-> +++ b/drivers/mmc/host/Kconfig
-> @@ -978,7 +978,7 @@ config MMC_SDHCI_OMAP
->         tristate "TI SDHCI Controller Support"
->         depends on MMC_SDHCI_PLTFM && OF
->         select THERMAL
-> -       select TI_SOC_THERMAL
-> +       imply TI_SOC_THERMAL
->         help
->           This selects the Secure Digital Host Controller Interface (SDHCI)
->           support present in TI's DRA7 SOCs. The controller supports
+> diff --git a/drivers/mmc/core/sdio_bus.c b/drivers/mmc/core/sdio_bus.c
+> index b6d8203..62b0f5e 100644
+> --- a/drivers/mmc/core/sdio_bus.c
+> +++ b/drivers/mmc/core/sdio_bus.c
+> @@ -179,7 +179,6 @@ static int sdio_bus_remove(struct device *dev)
+>  {
+>         struct sdio_driver *drv = to_sdio_driver(dev->driver);
+>         struct sdio_func *func = dev_to_sdio_func(dev);
+> -       int ret = 0;
+>
+>         /* Make sure card is powered before invoking ->remove() */
+>         if (func->card->host->caps & MMC_CAP_POWER_OFF_CARD)
+> @@ -205,7 +204,7 @@ static int sdio_bus_remove(struct device *dev)
+>
+>         dev_pm_domain_detach(dev, false);
+>
+> -       return ret;
+> +       return 0;
+>  }
+>
+>  static const struct dev_pm_ops sdio_bus_pm_ops = {
 > --
-> 2.19.2
+> 2.7.4
+>
 >
