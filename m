@@ -2,86 +2,307 @@ Return-Path: <SRS0=tq6k=PW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 34B5DC43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 09:26:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2EF65C43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 09:30:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 02DEC20660
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 09:26:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E4B8920659
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 09:30:29 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=chronox.de header.i=@chronox.de header.b="nv5kM9iD"
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=verge.net.au header.i=@verge.net.au header.b="EMoOaMb8"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726613AbfANJ0e (ORCPT
+        id S1726525AbfANJa2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 14 Jan 2019 04:26:34 -0500
-Received: from mo4-p02-ob.smtp.rzone.de ([85.215.255.81]:15251 "EHLO
-        mo4-p02-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726306AbfANJ0e (ORCPT
+        Mon, 14 Jan 2019 04:30:28 -0500
+Received: from kirsty.vergenet.net ([202.4.237.240]:57508 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726306AbfANJa2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 Jan 2019 04:26:34 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1547457990;
-        s=strato-dkim-0002; d=chronox.de;
-        h=References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:
-        X-RZG-CLASS-ID:X-RZG-AUTH:From:Subject:Sender;
-        bh=xgRauBTiXdF+dBRc1NyD0+JM4m4TCB/mcjHmedwpxD8=;
-        b=nv5kM9iDP4fwlc+fsZL0FAkFeJ6NEVXusDy5C6z2lBUZCbKfuApmfDi7ZeeTn4RqzO
-        rIAcVd1Wb8o/INAwupzGUaSuJ0cnHg2+vmUMUlkcCLsM2Tob6q4aMIRMV50jnao36qHA
-        solhWBp9ade8QMLfNXgMbAx8oZHhOwAdW94CyY+TbVF3N8Ewdbir3CuQ7pUjq5EoY5DZ
-        lFaYUmu1pL1BqHl7tt1YDEvdvoafv9Lrxa04D+wJPqn0o1BodVUK/MYfYCp08sFB/9D5
-        UHf1K98YUbi/091Zmi0Y8OZTRRwZ1CElLqn3YiQQZw+Tvw4uVs1inrKVGRNVxARI/WVh
-        hLKA==
-X-RZG-AUTH: ":P2ERcEykfu11Y98lp/T7+hdri+uKZK8TKWEqNyiHySGSa9k9yWgdNs16dfA/c7fW145n"
-X-RZG-CLASS-ID: mo00
-Received: from positron.chronox.de
-        by smtp.strato.de (RZmta 44.9 AUTH)
-        with ESMTPSA id 309bcfv0E9QCq15
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (curve secp521r1 with 521 ECDH bits, eq. 15360 bits RSA))
-        (Client did not present a certificate);
-        Mon, 14 Jan 2019 10:26:12 +0100 (CET)
-From:   Stephan =?ISO-8859-1?Q?M=FCller?= <smueller@chronox.de>
-To:     Eric Biggers <ebiggers@kernel.org>
-Cc:     Herbert Xu <herbert@gondor.apana.org.au>,
-        James Bottomley <James.Bottomley@hansenpartnership.com>,
-        Andy Lutomirski <luto@amacapital.net>,
-        "Lee, Chun-Yi" <joeyli.kernel@gmail.com>,
-        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
-        Pavel Machek <pavel@ucw.cz>, linux-kernel@vger.kernel.org,
-        linux-pm@vger.kernel.org, keyrings@vger.kernel.org,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-        Chen Yu <yu.c.chen@intel.com>,
-        Oliver Neukum <oneukum@suse.com>,
-        Ryan Chen <yu.chen.surf@gmail.com>,
-        David Howells <dhowells@redhat.com>,
-        Giovanni Gherdovich <ggherdovich@suse.cz>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Jann Horn <jannh@google.com>,
-        Andy Lutomirski <luto@kernel.org>, linux-crypto@vger.kernel.org
-Subject: Re: [PATCH 3/6] crypto: kdf - add known answer tests
-Date:   Mon, 14 Jan 2019 10:26:11 +0100
-Message-ID: <2231906.kSnl8ZBHjW@positron.chronox.de>
-In-Reply-To: <20190112052645.GC639@sol.localdomain>
-References: <20190103143227.9138-1-jlee@suse.com> <8456866.1rT4qWozqf@positron.chronox.de> <20190112052645.GC639@sol.localdomain>
+        Mon, 14 Jan 2019 04:30:28 -0500
+Received: from reginn.horms.nl (watermunt.horms.nl [80.127.179.77])
+        by kirsty.vergenet.net (Postfix) with ESMTPA id BA21025B7CF;
+        Mon, 14 Jan 2019 20:30:24 +1100 (AEDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=verge.net.au; s=mail;
+        t=1547458225; bh=n8c5/Ikf7ypQGNKA3H7GOrQ3gzaLlyMQhMcbRF+YF7Y=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=EMoOaMb8x1qL0G7m0W1G1KArQv3iWWRHhBJGfyAeczSW/nAt//swPIVrnSvCggjs4
+         wpy3duUvCeEmjP74eIyRTkR+gOawCapVZz+FZjqX9hQCDkICgz/uq8hVzIwyW1Ghh6
+         ro6LtvKlIm1emFlPJGkJ9maixdSHfvXmaW1BthQs=
+Received: by reginn.horms.nl (Postfix, from userid 7100)
+        id DDBF69404C7; Mon, 14 Jan 2019 10:30:22 +0100 (CET)
+Date:   Mon, 14 Jan 2019 10:30:22 +0100
+From:   Simon Horman <horms@verge.net.au>
+To:     Rob Herring <robh@kernel.org>
+Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-serial@vger.kernel.org
+Subject: Re: [PATCH 1/2] dt-bindings: serial: Convert snps,dw-apb-uart to
+ json-schema
+Message-ID: <20190114093022.hjouckoss2zemefg@verge.net.au>
+References: <20190110222017.6390-1-robh@kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190110222017.6390-1-robh@kernel.org>
+Organisation: Horms Solutions BV
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Am Samstag, 12. Januar 2019, 06:26:46 CET schrieb Eric Biggers:
+On Thu, Jan 10, 2019 at 04:20:16PM -0600, Rob Herring wrote:
+> Convert the snps,dw-apb-uart binding to DT schema using json-schema.
+> 
+> The Rockchip and Broadcom compatible strings were not documented,
+> so add them here.
 
-Hi Eric,
+I believe the documentation of the Renesas compatible strings is also new
+in this file. Perhaps it would be worth mentioning that too.
 
+In any case
 
-[...]
+Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
 
-Thanks. I integrated updates for all comments.
-
-Ciao
-Stephan
-
-
+> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> Cc: linux-serial@vger.kernel.org
+> Signed-off-by: Rob Herring <robh@kernel.org>
+> ---
+>  .../bindings/serial/snps-dw-apb-uart.txt      |  76 ----------
+>  .../bindings/serial/snps-dw-apb-uart.yaml     | 140 ++++++++++++++++++
+>  2 files changed, 140 insertions(+), 76 deletions(-)
+>  delete mode 100644 Documentation/devicetree/bindings/serial/snps-dw-apb-uart.txt
+>  create mode 100644 Documentation/devicetree/bindings/serial/snps-dw-apb-uart.yaml
+> 
+> diff --git a/Documentation/devicetree/bindings/serial/snps-dw-apb-uart.txt b/Documentation/devicetree/bindings/serial/snps-dw-apb-uart.txt
+> deleted file mode 100644
+> index 12bbe9f22560..000000000000
+> --- a/Documentation/devicetree/bindings/serial/snps-dw-apb-uart.txt
+> +++ /dev/null
+> @@ -1,76 +0,0 @@
+> -* Synopsys DesignWare ABP UART
+> -
+> -Required properties:
+> -- compatible : "snps,dw-apb-uart"
+> -- reg : offset and length of the register set for the device.
+> -- interrupts : should contain uart interrupt.
+> -
+> -Clock handling:
+> -The clock rate of the input clock needs to be supplied by one of
+> -- clock-frequency : the input clock frequency for the UART.
+> -- clocks : phandle to the input clock
+> -
+> -The supplying peripheral clock can also be handled, needing a second property
+> -- clock-names: tuple listing input clock names.
+> -	Required elements: "baudclk", "apb_pclk"
+> -
+> -Optional properties:
+> -- snps,uart-16550-compatible : reflects the value of UART_16550_COMPATIBLE
+> -  configuration parameter. Define this if your UART does not implement the busy
+> -  functionality.
+> -- resets : phandle to the parent reset controller.
+> -- reg-shift : quantity to shift the register offsets by.  If this property is
+> -  not present then the register offsets are not shifted.
+> -- reg-io-width : the size (in bytes) of the IO accesses that should be
+> -  performed on the device.  If this property is not present then single byte
+> -  accesses are used.
+> -- dcd-override : Override the DCD modem status signal. This signal will always
+> -  be reported as active instead of being obtained from the modem status
+> -  register. Define this if your serial port does not use this pin.
+> -- dsr-override : Override the DTS modem status signal. This signal will always
+> -  be reported as active instead of being obtained from the modem status
+> -  register. Define this if your serial port does not use this pin.
+> -- cts-override : Override the CTS modem status signal. This signal will always
+> -  be reported as active instead of being obtained from the modem status
+> -  register. Define this if your serial port does not use this pin.
+> -- ri-override : Override the RI modem status signal. This signal will always be
+> -  reported as inactive instead of being obtained from the modem status register.
+> -  Define this if your serial port does not use this pin.
+> -
+> -Example:
+> -
+> -	uart@80230000 {
+> -		compatible = "snps,dw-apb-uart";
+> -		reg = <0x80230000 0x100>;
+> -		clock-frequency = <3686400>;
+> -		interrupts = <10>;
+> -		reg-shift = <2>;
+> -		reg-io-width = <4>;
+> -		dcd-override;
+> -		dsr-override;
+> -		cts-override;
+> -		ri-override;
+> -	};
+> -
+> -Example with one clock:
+> -
+> -	uart@80230000 {
+> -		compatible = "snps,dw-apb-uart";
+> -		reg = <0x80230000 0x100>;
+> -		clocks = <&baudclk>;
+> -		interrupts = <10>;
+> -		reg-shift = <2>;
+> -		reg-io-width = <4>;
+> -	};
+> -
+> -Example with two clocks:
+> -
+> -	uart@80230000 {
+> -		compatible = "snps,dw-apb-uart";
+> -		reg = <0x80230000 0x100>;
+> -		clocks = <&baudclk>, <&apb_pclk>;
+> -		clock-names = "baudclk", "apb_pclk";
+> -		interrupts = <10>;
+> -		reg-shift = <2>;
+> -		reg-io-width = <4>;
+> -	};
+> diff --git a/Documentation/devicetree/bindings/serial/snps-dw-apb-uart.yaml b/Documentation/devicetree/bindings/serial/snps-dw-apb-uart.yaml
+> new file mode 100644
+> index 000000000000..b42002542690
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/serial/snps-dw-apb-uart.yaml
+> @@ -0,0 +1,140 @@
+> +# SPDX-License-Identifier: GPL-2.0
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/serial/snps-dw-apb-uart.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Synopsys DesignWare ABP UART
+> +
+> +maintainers:
+> +  - Rob Herring <robh@kernel.org>
+> +
+> +allOf:
+> +  - $ref: /schemas/serial.yaml#
+> +
+> +properties:
+> +  compatible:
+> +    oneOf:
+> +      - items:
+> +          - enum:
+> +              - renesas,r9a06g032-uart
+> +              - renesas,r9a06g033-uart
+> +          - const: renesas,rzn1-uart
+> +      - items:
+> +          - enum:
+> +              - rockchip,px30-uart
+> +              - rockchip,rk3036-uart
+> +              - rockchip,rk3066-uart
+> +              - rockchip,rk3188-uart
+> +              - rockchip,rk3288-uart
+> +              - rockchip,rk3328-uart
+> +              - rockchip,rk3368-uart
+> +              - rockchip,rk3399-uart
+> +              - rockchip,rv1108-uart
+> +          - const: snps,dw-apb-uart
+> +      - items:
+> +          - enum:
+> +              - brcm,bcm11351-dw-apb-uart
+> +              - brcm,bcm21664-dw-apb-uart
+> +          - const: snps,dw-apb-uart
+> +      - const: snps,dw-apb-uart
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  interrupts:
+> +    maxItems: 1
+> +
+> +  clock-frequency: true
+> +
+> +  clocks:
+> +    minItems: 1
+> +    maxItems: 2
+> +
+> +  clock-names:
+> +    items:
+> +      - const: baudclk
+> +      - const: apb_pclk
+> +
+> +  snps,uart-16550-compatible:
+> +    description: reflects the value of UART_16550_COMPATIBLE configuration
+> +      parameter. Define this if your UART does not implement the busy functionality.
+> +    type: boolean
+> +
+> +  resets:
+> +    maxItems: 1
+> +
+> +  reg-shift: true
+> +
+> +  reg-io-width: true
+> +
+> +  dcd-override:
+> +    description: Override the DCD modem status signal. This signal will
+> +      always be reported as active instead of being obtained from the modem
+> +      status register. Define this if your serial port does not use this
+> +      pin.
+> +    type: boolean
+> +
+> +  dsr-override:
+> +    description: Override the DTS modem status signal. This signal will
+> +      always be reported as active instead of being obtained from the modem
+> +      status register. Define this if your serial port does not use this
+> +      pin.
+> +    type: boolean
+> +
+> +  cts-override:
+> +    description: Override the CTS modem status signal. This signal will
+> +      always be reported as active instead of being obtained from the modem
+> +      status register. Define this if your serial port does not use this
+> +      pin.
+> +    type: boolean
+> +
+> +  ri-override:
+> +    description: Override the RI modem status signal. This signal will always
+> +      be reported as inactive instead of being obtained from the modem status
+> +      register. Define this if your serial port does not use this pin.
+> +    type: boolean
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - interrupts
+> +
+> +examples:
+> +  - |
+> +    serial@80230000 {
+> +      compatible = "snps,dw-apb-uart";
+> +      reg = <0x80230000 0x100>;
+> +      clock-frequency = <3686400>;
+> +      interrupts = <10>;
+> +      reg-shift = <2>;
+> +      reg-io-width = <4>;
+> +      dcd-override;
+> +      dsr-override;
+> +      cts-override;
+> +      ri-override;
+> +    };
+> +
+> +  - |
+> +    // Example with one clock:
+> +    serial@80230000 {
+> +      compatible = "snps,dw-apb-uart";
+> +      reg = <0x80230000 0x100>;
+> +      clocks = <&baudclk>;
+> +      interrupts = <10>;
+> +      reg-shift = <2>;
+> +      reg-io-width = <4>;
+> +    };
+> +
+> +  - |
+> +    // Example with two clocks:
+> +    serial@80230000 {
+> +      compatible = "snps,dw-apb-uart";
+> +      reg = <0x80230000 0x100>;
+> +      clocks = <&baudclk>, <&apb_pclk>;
+> +      clock-names = "baudclk", "apb_pclk";
+> +      interrupts = <10>;
+> +      reg-shift = <2>;
+> +      reg-io-width = <4>;
+> +    };
+> +...
