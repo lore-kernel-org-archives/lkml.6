@@ -2,149 +2,142 @@ Return-Path: <SRS0=tq6k=PW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 55913C43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 09:10:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 72A2AC43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 09:14:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2137B20663
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 09:10:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 42E152086D
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 09:14:04 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MwN3PaR8"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726572AbfANJKy (ORCPT
+        id S1726516AbfANJOC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 14 Jan 2019 04:10:54 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:34256 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726320AbfANJKy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 Jan 2019 04:10:54 -0500
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 13625C070E1E;
-        Mon, 14 Jan 2019 09:10:54 +0000 (UTC)
-Received: from [10.36.112.43] (ovpn-112-43.ams2.redhat.com [10.36.112.43])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 03543608E0;
-        Mon, 14 Jan 2019 09:10:51 +0000 (UTC)
-Subject: Re: [PATCH] KVM: validate userspace input in
- kvm_clear_dirty_log_protect()
-To:     =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        Tomas Bortoli <tomasbortoli@gmail.com>
-Cc:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        syzkaller@googlegroups.com
-References: <20190102172937.28741-1-tomasbortoli@gmail.com>
- <99de332c-d4e3-0628-8ad1-982032e67690@redhat.com>
- <8418f6c8-0fc8-e22c-c39a-bfcaee7471e2@gmail.com>
- <20190111134955.GE14852@flask>
-From:   Paolo Bonzini <pbonzini@redhat.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=pbonzini@redhat.com; prefer-encrypt=mutual; keydata=
- mQHhBFRCcBIBDqDGsz4K0zZun3jh+U6Z9wNGLKQ0kSFyjN38gMqU1SfP+TUNQepFHb/Gc0E2
- CxXPkIBTvYY+ZPkoTh5xF9oS1jqI8iRLzouzF8yXs3QjQIZ2SfuCxSVwlV65jotcjD2FTN04
- hVopm9llFijNZpVIOGUTqzM4U55sdsCcZUluWM6x4HSOdw5F5Utxfp1wOjD/v92Lrax0hjiX
- DResHSt48q+8FrZzY+AUbkUS+Jm34qjswdrgsC5uxeVcLkBgWLmov2kMaMROT0YmFY6A3m1S
- P/kXmHDXxhe23gKb3dgwxUTpENDBGcfEzrzilWueOeUWiOcWuFOed/C3SyijBx3Av/lbCsHU
- Vx6pMycNTdzU1BuAroB+Y3mNEuW56Yd44jlInzG2UOwt9XjjdKkJZ1g0P9dwptwLEgTEd3Fo
- UdhAQyRXGYO8oROiuh+RZ1lXp6AQ4ZjoyH8WLfTLf5g1EKCTc4C1sy1vQSdzIRu3rBIjAvnC
- tGZADei1IExLqB3uzXKzZ1BZ+Z8hnt2og9hb7H0y8diYfEk2w3R7wEr+Ehk5NQsT2MPI2QBd
- wEv1/Aj1DgUHZAHzG1QN9S8wNWQ6K9DqHZTBnI1hUlkp22zCSHK/6FwUCuYp1zcAEQEAAbQj
- UGFvbG8gQm9uemluaSA8cGJvbnppbmlAcmVkaGF0LmNvbT6JAg0EEwECACMFAlRCcBICGwMH
- CwkIBwMCAQYVCAIJCgsEFgIDAQIeAQIXgAAKCRB+FRAMzTZpsbceDp9IIN6BIA0Ol7MoB15E
- 11kRz/ewzryFY54tQlMnd4xxfH8MTQ/mm9I482YoSwPMdcWFAKnUX6Yo30tbLiNB8hzaHeRj
- jx12K+ptqYbg+cevgOtbLAlL9kNgLLcsGqC2829jBCUTVeMSZDrzS97ole/YEez2qFpPnTV0
- VrRWClWVfYh+JfzpXmgyhbkuwUxNFk421s4Ajp3d8nPPFUGgBG5HOxzkAm7xb1cjAuJ+oi/K
- CHfkuN+fLZl/u3E/fw7vvOESApLU5o0icVXeakfSz0LsygEnekDbxPnE5af/9FEkXJD5EoYG
- SEahaEtgNrR4qsyxyAGYgZlS70vkSSYJ+iT2rrwEiDlo31MzRo6Ba2FfHBSJ7lcYdPT7bbk9
- AO3hlNMhNdUhoQv7M5HsnqZ6unvSHOKmReNaS9egAGdRN0/GPDWr9wroyJ65ZNQsHl9nXBqE
- AukZNr5oJO5vxrYiAuuTSd6UI/xFkjtkzltG3mw5ao2bBpk/V/YuePrJsnPFHG7NhizrxttB
- nTuOSCMo45pfHQ+XYd5K1+Cv/NzZFNWscm5htJ0HznY+oOsZvHTyGz3v91pn51dkRYN0otqr
- bQ4tlFFuVjArBZcapSIe6NV8C4cEiSS5AQ0EVEJxcwEIAK+nUrsUz3aP2aBjIrX3a1+C+39R
- nctpNIPcJjFJ/8WafRiwcEuLjbvJ/4kyM6K7pWUIQftl1P8Woxwb5nqL7zEFHh5I+hKS3haO
- 5pgco//V0tWBGMKinjqntpd4U4Dl299dMBZ4rRbPvmI8rr63sCENxTnHhTECyHdGFpqSzWzy
- 97rH68uqMpxbUeggVwYkYihZNd8xt1+lf7GWYNEO/QV8ar/qbRPG6PEfiPPHQd/sldGYavmd
- //o6TQLSJsvJyJDt7KxulnNT8Q2X/OdEuVQsRT5glLaSAeVAABcLAEnNgmCIGkX7TnQF8a6w
- gHGrZIR9ZCoKvDxAr7RP6mPeS9sAEQEAAYkDEgQYAQIACQUCVEJxcwIbAgEpCRB+FRAMzTZp
- scBdIAQZAQIABgUCVEJxcwAKCRC/+9JfeMeug/SlCACl7QjRnwHo/VzENWD9G2VpUOd9eRnS
- DZGQmPo6Mp3Wy8vL7snGFBfRseT9BevXBSkxvtOnUUV2YbyLmolAODqUGzUI8ViF339poOYN
- i6Ffek0E19IMQ5+CilqJJ2d5ZvRfaq70LA/Ly9jmIwwX4auvXrWl99/2wCkqnWZI+PAepkcX
- JRD4KY2fsvRi64/aoQmcxTiyyR7q3/52Sqd4EdMfj0niYJV0Xb9nt8G57Dp9v3Ox5JeWZKXS
- krFqy1qyEIypIrqcMbtXM7LSmiQ8aJRM4ZHYbvgjChJKR4PsKNQZQlMWGUJO4nVFSkrixc9R
- Z49uIqQK3b3ENB1QkcdMg9cxsB0Onih8zR+Wp1uDZXnz1ekto+EivLQLqvTjCCwLxxJafwKI
- bqhQ+hGR9jF34EFur5eWt9jJGloEPVv0GgQflQaE+rRGe+3f5ZDgRe5Y/EJVNhBhKcafcbP8
- MzmLRh3UDnYDwaeguYmxuSlMdjFL96YfhRBXs8tUw6SO9jtCgBvoOIBDCxxAJjShY4KIvEpK
- b2hSNr8KxzelKKlSXMtB1bbHbQxiQcerAipYiChUHq1raFc3V0eOyCXK205rLtknJHhM5pfG
- 6taABGAMvJgm/MrVILIxvBuERj1FRgcgoXtiBmLEJSb7akcrRlqe3MoPTntSTNvNzAJmfWhd
- SvP0G1WDLolqvX0OtKMppI91AWVu72f1kolJg43wbaKpRJg1GMkKEI3H+jrrlTBrNl/8e20m
- TElPRDKzPiowmXeZqFSS1A6Azv0TJoo9as+lWF+P4zCXt40+Zhh5hdHO38EV7vFAVG3iuay6
- 7ToF8Uy7tgc3mdH98WQSmHcn/H5PFYk3xTP3KHB7b0FZPdFPQXBZb9+tJeZBi9gMqcjMch+Y
- R8dmTcQRQX14bm5nXlBF7VpSOPZMR392LY7wzAvRdhz7aeIUkdO7VelaspFk2nT7wOj1Y6uL
- nRxQlLkBDQRUQnHuAQgAx4dxXO6/Zun0eVYOnr5GRl76+2UrAAemVv9Yfn2PbDIbxXqLff7o
- yVJIkw4WdhQIIvvtu5zH24iYjmdfbg8iWpP7NqxUQRUZJEWbx2CRwkMHtOmzQiQ2tSLjKh/c
- HeyFH68xjeLcinR7jXMrHQK+UCEw6jqi1oeZzGvfmxarUmS0uRuffAb589AJW50kkQK9VD/9
- QC2FJISSUDnRC0PawGSZDXhmvITJMdD4TjYrePYhSY4uuIV02v028TVAaYbIhxvDY0hUQE4r
- 8ZbGRLn52bEzaIPgl1p/adKfeOUeMReg/CkyzQpmyB1TSk8lDMxQzCYHXAzwnGi8WU9iuE1P
- 0wARAQABiQHzBBgBAgAJBQJUQnHuAhsMAAoJEH4VEAzNNmmxp1EOoJy0uZggJm7gZKeJ7iUp
- eX4eqUtqelUw6gU2daz2hE/jsxsTbC/w5piHmk1H1VWDKEM4bQBTuiJ0bfo55SWsUNN+c9hh
- IX+Y8LEe22izK3w7mRpvGcg+/ZRG4DEMHLP6JVsv5GMpoYwYOmHnplOzCXHvmdlW0i6SrMsB
- Dl9rw4AtIa6bRwWLim1lQ6EM3PWifPrWSUPrPcw4OLSwFk0CPqC4HYv/7ZnASVkR5EERFF3+
- 6iaaVi5OgBd81F1TCvCX2BEyIDRZLJNvX3TOd5FEN+lIrl26xecz876SvcOb5SL5SKg9/rCB
- ufdPSjojkGFWGziHiFaYhbuI2E+NfWLJtd+ZvWAAV+O0d8vFFSvriy9enJ8kxJwhC0ECbSKF
- Y+W1eTIhMD3aeAKY90drozWEyHhENf4l/V+Ja5vOnW+gCDQkGt2Y1lJAPPSIqZKvHzGShdh8
- DduC0U3xYkfbGAUvbxeepjgzp0uEnBXfPTy09JGpgWbg0w91GyfT/ujKaGd4vxG2Ei+MMNDm
- S1SMx7wu0evvQ5kT9NPzyq8R2GIhVSiAd2jioGuTjX6AZCFv3ToO53DliFMkVTecLptsXaes
- uUHgL9dKIfvpm+rNXRn9wAwGjk0X/A==
-Message-ID: <b32262e6-f20f-d7b4-da59-e5fdecbee150@redhat.com>
-Date:   Mon, 14 Jan 2019 10:10:45 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.1
+        Mon, 14 Jan 2019 04:14:02 -0500
+Received: from mail-io1-f65.google.com ([209.85.166.65]:43687 "EHLO
+        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726414AbfANJOB (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 14 Jan 2019 04:14:01 -0500
+Received: by mail-io1-f65.google.com with SMTP id b23so17029430ios.10;
+        Mon, 14 Jan 2019 01:14:00 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=pIxlYDDgPHqQ9CK9up+5xb8otdBsHFZQrcLiqj227qI=;
+        b=MwN3PaR8w30I5kdZvUms5ZTH3nwICZq9dTAN4QjnKrcqsCkNJLnDKbNjS8MsmPGBlr
+         fgEOK+TxlotTOZ9inRI1NPpRxl1l3crjyFrCy2my731zsyJDvGGbmh4hFPRpHDnRC/bD
+         dJpwonPJCy0Q10vAMOwfU+H5JdqqqjyR399pkR9ou5+kD0l9CDnmsDbb17ldt0WmteV3
+         FzCCM9kxKBavP7qHHBQQ///e/gIXcKLw8t9eVRv6BU8jrhdXprIMz+x4GjkVMYH+GOL8
+         gQuYR1NmR3hSoCN9HX20xuXu3ROaPLlHn3sYcVd4+4d4qTDeZF3gCFDcrQCIlGIsV8u/
+         aebA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=pIxlYDDgPHqQ9CK9up+5xb8otdBsHFZQrcLiqj227qI=;
+        b=tU7oqz9iYzU5NsMLSzv7bYfQDgo5B/28rFKJkxkYk8OEndAI0+9FWVvPBrnLKuJclM
+         7XURwt6wFvzq9H3liSkjAZZns3ochbIdKednlPzO8EpL8qekhnwo4ssvFi1ypacwmF9h
+         m4H8dHLIXummheIqVIyrZBINRrvvwM+yCa8lBEv6+fn9FrKKy6eA3p0NYFA65ce1y7a1
+         vqlh4ii8bf7T9koujOE8jyOjbF8QzNIgy/27ivgzEDOqw2uCRzkzlSFSvv2Gz4L2qF/R
+         Vzv4BemdVSZjB/eIu7Jq3KbcRvwHrAnFapXZrBX07yxsEzATKU+7rzT2/z0g/wN+Uz7p
+         H/wA==
+X-Gm-Message-State: AJcUukcbyMWjaHSJSJfCDN1P+cMWC+/0Ztl1CySMZmEhyHTxTBejwbPm
+        sEqGVCKjLgCbDUBrrCdigsuwLDTo+RyrVm6BKg==
+X-Google-Smtp-Source: ALg8bN4Y4wLB7NmE9fU3NzatGqFg3PqsV2WiWgzvw22LG+vbKmq8sNOClWoHbRl8jCvp8sUF7FehuWDdsVfejKw45Dg=
+X-Received: by 2002:a5e:de01:: with SMTP id e1mr15764932iok.137.1547457239825;
+ Mon, 14 Jan 2019 01:13:59 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20190111134955.GE14852@flask>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.31]); Mon, 14 Jan 2019 09:10:54 +0000 (UTC)
+References: <1547183577-20309-1-git-send-email-kernelfans@gmail.com>
+ <1547183577-20309-4-git-send-email-kernelfans@gmail.com> <20190114075113.GB1973@rapoport-lnx>
+ <CAFgQCTtN4CGFz5xf+uci1ow032oQMB5pExHG01EtgrOpqXrJKA@mail.gmail.com> <20190114085037.GC1973@rapoport-lnx>
+In-Reply-To: <20190114085037.GC1973@rapoport-lnx>
+From:   Pingfan Liu <kernelfans@gmail.com>
+Date:   Mon, 14 Jan 2019 17:13:48 +0800
+Message-ID: <CAFgQCTtKO445m9rq+cxuX2PqBW4uTNh=62ETFt7zVQGCZ4RaXA@mail.gmail.com>
+Subject: Re: [PATCHv2 3/7] mm/memblock: introduce allocation boundary for
+ tracing purpose
+To:     Mike Rapoport <rppt@linux.ibm.com>
+Cc:     linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Len Brown <lenb@kernel.org>, Yinghai Lu <yinghai@kernel.org>,
+        Tejun Heo <tj@kernel.org>, Chao Fan <fanc.fnst@cn.fujitsu.com>,
+        Baoquan He <bhe@redhat.com>, Juergen Gross <jgross@suse.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Michal Hocko <mhocko@suse.com>, x86@kernel.org,
+        linux-acpi@vger.kernel.org, linux-mm@kvack.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/01/19 14:49, Radim Krčmář wrote:
-> 2019-01-08 17:28+0100, Tomas Bortoli:
->> Hi Paolo,
->>
->> On 1/7/19 11:42 PM, Paolo Bonzini wrote:
->>> On 02/01/19 18:29, Tomas Bortoli wrote:
->>>>  	n = kvm_dirty_bitmap_bytes(memslot);
->>>> +
->>>> +	if (n << 3 < log->num_pages || log->first_page > log->num_pages)
->>>> +		return -EINVAL;
->>>> +
->>>
->>> This should be
->>>
->>> 	if (log->first_page > memslot->npages ||
-> 
-> (Wouldn't this be clearer with a >= instead?)
+On Mon, Jan 14, 2019 at 4:50 PM Mike Rapoport <rppt@linux.ibm.com> wrote:
+>
+> On Mon, Jan 14, 2019 at 04:33:50PM +0800, Pingfan Liu wrote:
+> > On Mon, Jan 14, 2019 at 3:51 PM Mike Rapoport <rppt@linux.ibm.com> wrote:
+> > >
+> > > Hi Pingfan,
+> > >
+> > > On Fri, Jan 11, 2019 at 01:12:53PM +0800, Pingfan Liu wrote:
+> > > > During boot time, there is requirement to tell whether a series of func
+> > > > call will consume memory or not. For some reason, a temporary memory
+> > > > resource can be loan to those func through memblock allocator, but at a
+> > > > check point, all of the loan memory should be turned back.
+> > > > A typical using style:
+> > > >  -1. find a usable range by memblock_find_in_range(), said, [A,B]
+> > > >  -2. before calling a series of func, memblock_set_current_limit(A,B,true)
+> > > >  -3. call funcs
+> > > >  -4. memblock_find_in_range(A,B,B-A,1), if failed, then some memory is not
+> > > >      turned back.
+> > > >  -5. reset the original limit
+> > > >
+> > > > E.g. in the case of hotmovable memory, some acpi routines should be called,
+> > > > and they are not allowed to own some movable memory. Although at present
+> > > > these functions do not consume memory, but later, if changed without
+> > > > awareness, they may do. With the above method, the allocation can be
+> > > > detected, and pr_warn() to ask people to resolve it.
+> > >
+> > > To ensure there were that a sequence of function calls didn't create new
+> > > memblock allocations you can simply check the number of the reserved
+> > > regions before and after that sequence.
+> > >
+> > Yes, thank you point out it.
+> >
+> > > Still, I'm not sure it would be practical to try tracking what code that's called
+> > > from x86::setup_arch() did memory allocation.
+> > > Probably a better approach is to verify no memory ended up in the movable
+> > > areas after their extents are known.
+> > >
+> > It is a probability problem whether allocated memory sit on hotmovable
+> > memory or not. And if warning based on the verification, then it is
+> > also a probability problem and maybe we will miss it.
+>
+> I'm not sure I'm following you here.
+>
+> After the hotmovable memory configuration is detected it is possible to
+> traverse reserved memblock areas and warn if some of them reside in the
+> hotmovable memory.
+>
+Oh, sorry that I did not explain it accurately. Let use say a machine
+with nodeA/B/C from low to high memory address. With top-down
+allocation by default, at this point, memory will always be allocated
+from nodeC. But it depends on machine whether nodeC is hotmovable or
+not. The verification can pass on a machine with unmovable nodeC , but
+fails on a machine with movable nodeC. It will be a probability issue.
 
-log->first_page == memslot->npages is technically okay if log->num_pages
-is zero.
+Thanks
 
-Paolo
-
->>> 	    log->num_pages > memslot->npages - log->first_page)
->>> 		return -EINVAL;
->>>
->>> i.e. the comparison should check the last page in the range, not the
->>> number of pages.  In addition, using "n" is unnecessary since we do have
->>> the memslot.  I'll do the changes myself if you prefer, but an ack would
->>> be nice.
->>>
->>>
->>
->>
->> Yeah, I agree. Thanks for the reply and sure you can do the changes, np :)
-> 
-> Done that and applied, thanks.
-> 
-
+[...]
