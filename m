@@ -4,71 +4,68 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 59AF5C43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 20:41:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9FED5C43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 20:42:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 29ED120659
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 20:41:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6FD9520656
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 20:42:19 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KA/bj1Ge"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CNszd5RX"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727185AbfANUls (ORCPT
+        id S1727139AbfANUmR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 14 Jan 2019 15:41:48 -0500
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:33272 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726788AbfANUlp (ORCPT
+        Mon, 14 Jan 2019 15:42:17 -0500
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:51190 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726777AbfANUmR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 Jan 2019 15:41:45 -0500
-Received: by mail-wm1-f67.google.com with SMTP id r24so8273684wmh.0;
-        Mon, 14 Jan 2019 12:41:44 -0800 (PST)
+        Mon, 14 Jan 2019 15:42:17 -0500
+Received: by mail-wm1-f65.google.com with SMTP id n190so1074214wmd.0;
+        Mon, 14 Jan 2019 12:42:16 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=sender:from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=qMRlpE6a7Lpu7MMoDwefpxRhUpsgQYcb6piwu5JN2vE=;
-        b=KA/bj1GeEWMvAgaUqfdtcJO8EKBdH2fcA6EXZRwQ3X5YJhBDVka7VHPnxBnLHhAVkg
-         py+yGQhi0CxvJ3n8EeeV1Mbi5Cye5gXYXG/Kzucke7S2OHO2pCYqUaDz7JPJ2YXPxZZs
-         5cRurdkFYeWMQEUr++eRBfIABF3oVWyMm9NKfM3T5t3UYFpN9fY5Qbuuns/Ki7purfn4
-         MA/MDhuknR+Irg/IiZPwS0kZtw1j+oxR6EnO7PXQuzJa6lyGrQQyYzm2HBofJWuwJMWl
-         TbukFivgFHTCz6o9VkrQK5TTUoPSGGXuRZwxBPS31p+LxcjAxoECpuUJFKTvUIa9OGQL
-         3fZA==
+        h=sender:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=MLWXQwLvr9hb7Fk+ZmcM5gEYv8XZb3b6HMKxsoSdYW8=;
+        b=CNszd5RXY93a697cxSO0ftos0HSjDQxl3iKIfM9c1hDiHXB0iUBh+pYugzJfL85dwq
+         fvk5iNH7LSqulFxCfvlpJoke2W31lQY0jJlSh9ZCE6MYdd3XQPDQexrXFaW7iwahCd+j
+         4kgqeGJ2nrgB881jlJAuH7jQa+uvH4row4t4FDpj1b7lLzbtrYp0LD1vkNvhSiOV10ex
+         /upGzibAYAvsgBbc1AAvojBQ/C8RFhVTYyl/Dhi3qaHuKwJ+GH/oByQbYZ/UB5oD+B+Q
+         3nFDXwb7eAbFiBpD7px8JwlS3blNxoCDhnUByX15FnVKYZGMaoKDHyktcoNs5r8h5bVo
+         GXRg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:sender:from:to:cc:subject:date:message-id
-         :in-reply-to:references:mime-version:content-transfer-encoding;
-        bh=qMRlpE6a7Lpu7MMoDwefpxRhUpsgQYcb6piwu5JN2vE=;
-        b=jFarJgy4Gkg0JqK+6GkTJ7M28Nw9Bq5bKRrwU/RzddxoJEbJpARhBrwpGwJ771I0wN
-         FQFp0W57jmwE9JKenuv/eaHvQ+wA/X6eUCTothDlKquPPzjD/lphQg5uOTRFuG0TA+qn
-         g6qK1uLMdnDlWAB2dQPRfK0S7TPikRQrn5BYm5+p/FkxpGBePBryFNabss2vs8X9KuEo
-         ruoalkF7zV0eHXEZ/NjgsPFBUxSr8eQvuZvYCsMT4K3J5ulvq5MiqE36PDUul9OKaL11
-         xdzQsEE3+2WF51fvcgdiEyg8xgiMJEmXf6AagzrdRBzcKE8Dxg7sdx/UQXZylrOtyhZ1
-         7a/g==
-X-Gm-Message-State: AJcUukfh8Ipo7brTL59Mpc7pCdA7dQmOvC3IJaNek/YbvoV8yfVdS9x3
-        T5JodyAcTzS3Hl6IbkUQanZt4yd2
-X-Google-Smtp-Source: ALg8bN60XjwZuaLtbNikxBWM7ZWxf6Zp1hcJ/EnMpfpq/HheQoyQoStqOTMH/0oKekQJQe4U23HD5A==
-X-Received: by 2002:a1c:400b:: with SMTP id n11mr682576wma.85.1547498503697;
-        Mon, 14 Jan 2019 12:41:43 -0800 (PST)
+         :mime-version:content-transfer-encoding;
+        bh=MLWXQwLvr9hb7Fk+ZmcM5gEYv8XZb3b6HMKxsoSdYW8=;
+        b=tyfYFtjs+mI864JJg2LyoNQrdT+ClsSG+hq5WMuY3AKIvINvTVscNk6r8nBikyZzvb
+         NMm2/ZxvyPzprWRddQTxodGf/4y0TxMjIcoZCEy4SJHcp5mcSyHdTOTSycclb7qZycDB
+         HKVWPhXx8DzRgB1+EQBtXYbjx0saz+7F9YarVh7MGGzjgfRBF7uzENY7UGCEG1Urb94C
+         RgKegMRJHKvnsYuPHHJOomDItojtFRQyCXUhwKceE0ngIcIpwwp+RuBiLdzcW5sgyij7
+         JblkgtxkTneT0BAFpnyxUlo9jUbjdNPpP60WiuiDdQ/uFuPPSOBMBYJ6eELIcjUUOPbN
+         GnVQ==
+X-Gm-Message-State: AJcUukcl/T5Ilk1OuPosrj+NoEt989xbnrpPDb5LAZ8vtSb6nsIZqHtQ
+        iGl2Xsw5NjMEsO1hohxXZCg36iCb
+X-Google-Smtp-Source: ALg8bN6GhccFhSkq+CcfANcK8jsE78/au+r51pDOhZhZnwXhyCRQ+q2BaXN/bJN/jCTAbaRszvaYTg==
+X-Received: by 2002:a7b:ce8e:: with SMTP id q14mr756704wmj.10.1547498535257;
+        Mon, 14 Jan 2019 12:42:15 -0800 (PST)
 Received: from macbookpro.malat.net (bru31-1-78-225-224-134.fbx.proxad.net. [78.225.224.134])
-        by smtp.gmail.com with ESMTPSA id 124sm32291283wmh.22.2019.01.14.12.41.42
+        by smtp.gmail.com with ESMTPSA id e17sm123327308wri.36.2019.01.14.12.42.14
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 14 Jan 2019 12:41:42 -0800 (PST)
+        Mon, 14 Jan 2019 12:42:14 -0800 (PST)
 Received: by macbookpro.malat.net (Postfix, from userid 1000)
-        id 6C83711422D0; Mon, 14 Jan 2019 21:41:41 +0100 (CET)
+        id 6488511422AD; Mon, 14 Jan 2019 21:42:13 +0100 (CET)
 From:   Mathieu Malaterre <malat@debian.org>
-To:     Bjorn Helgaas <bhelgaas@google.com>
-Cc:     Mathieu Malaterre <malat@debian.org>, linux-pci@vger.kernel.org,
+To:     Ulf Hansson <ulf.hansson@linaro.org>
+Cc:     Mathieu Malaterre <malat@debian.org>, linux-mmc@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH 2/2] PCI: annotate implicit fall through
-Date:   Mon, 14 Jan 2019 21:41:37 +0100
-Message-Id: <20190114204137.21094-2-malat@debian.org>
+Subject: [PATCH] mmc: core: annotate implicit fall through
+Date:   Mon, 14 Jan 2019 21:42:11 +0100
+Message-Id: <20190114204211.21386-1-malat@debian.org>
 X-Mailer: git-send-email 2.19.2
-In-Reply-To: <20190114204137.21094-1-malat@debian.org>
-References: <20190114204137.21094-1-malat@debian.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -78,31 +75,32 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 There is a plan to build the kernel with -Wimplicit-fallthrough and
 this place in the code produced a warning (W=1).
 
-In this particular case change a ‘:’ with a ‘,’ so as to match the
-regular expression expected by GCC.
+In this particular case rewrote the comment to start with the string "fall
+through", so as to match the regular expression expected by GCC. Truncate
+the comment slightly to fit the max line length of 80 characters.
 
 This commit remove the following warning:
 
-  drivers/pci/quirks.c:2138:6: warning: this statement may fall through [-Wimplicit-fallthrough=]
+  drivers/mmc/core/host.c:196:14: warning: this statement may fall through [-Wimplicit-fallthrough=]
 
 Signed-off-by: Mathieu Malaterre <malat@debian.org>
 ---
- drivers/pci/quirks.c | 2 +-
+ drivers/mmc/core/host.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/pci/quirks.c b/drivers/pci/quirks.c
-index b0a413f3f7ca..9fabcef345ed 100644
---- a/drivers/pci/quirks.c
-+++ b/drivers/pci/quirks.c
-@@ -2138,7 +2138,7 @@ static void quirk_netmos(struct pci_dev *dev)
- 		if (dev->subsystem_vendor == PCI_VENDOR_ID_IBM &&
- 				dev->subsystem_device == 0x0299)
- 			return;
--		/* else: fall through */
-+		/* else, fall through */
- 	case PCI_DEVICE_ID_NETMOS_9735:
- 	case PCI_DEVICE_ID_NETMOS_9745:
- 	case PCI_DEVICE_ID_NETMOS_9845:
+diff --git a/drivers/mmc/core/host.c b/drivers/mmc/core/host.c
+index f57f5de54206..0052d6fed7c8 100644
+--- a/drivers/mmc/core/host.c
++++ b/drivers/mmc/core/host.c
+@@ -194,7 +194,7 @@ int mmc_of_parse(struct mmc_host *host)
+ 	switch (bus_width) {
+ 	case 8:
+ 		host->caps |= MMC_CAP_8_BIT_DATA;
+-		/* Hosts capable of 8-bit transfers can also do 4 bits */
++		/* fall through - Hosts capable of 8-bit can also do 4 bits */
+ 	case 4:
+ 		host->caps |= MMC_CAP_4_BIT_DATA;
+ 		break;
 -- 
 2.19.2
 
