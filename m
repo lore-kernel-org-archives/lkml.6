@@ -2,101 +2,248 @@ Return-Path: <SRS0=tq6k=PW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D1ECC43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 09:30:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 755E3C43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 09:31:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5706E20870
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 09:30:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6DBC620659
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 09:31:10 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=verge.net.au header.i=@verge.net.au header.b="iUFm6s2+"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=chronox.de header.i=@chronox.de header.b="hd0Q9VJX"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726555AbfANJac (ORCPT
+        id S1726592AbfANJbI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 14 Jan 2019 04:30:32 -0500
-Received: from kirsty.vergenet.net ([202.4.237.240]:57515 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726306AbfANJaa (ORCPT
+        Mon, 14 Jan 2019 04:31:08 -0500
+Received: from mo4-p02-ob.smtp.rzone.de ([81.169.146.170]:12767 "EHLO
+        mo4-p02-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726306AbfANJbI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 Jan 2019 04:30:30 -0500
-Received: from reginn.horms.nl (watermunt.horms.nl [80.127.179.77])
-        by kirsty.vergenet.net (Postfix) with ESMTPA id 96A1525BE67;
-        Mon, 14 Jan 2019 20:30:27 +1100 (AEDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=verge.net.au; s=mail;
-        t=1547458227; bh=j4JFhV3pxWURz99ocXqXiMYP+8fJvIXct1+I4EAFh4Y=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=iUFm6s2+EqPALEPDNlBU2t1GyxlNiS7Bkg6YuZk8pZ9wSVlV/1AwNTSsEqog+X1fe
-         R07AAIkVVZ/RnyB7+vGyXiVC8T4YfqWbuS2pqYL6qL06KM1mmD9NQd5jnpMfeiEJQ/
-         JYNNLEL/Q+gZlrf3/oensr+dJTiwoEaXngRey+zE=
-Received: by reginn.horms.nl (Postfix, from userid 7100)
-        id C21A79404C7; Mon, 14 Jan 2019 10:30:25 +0100 (CET)
-Date:   Mon, 14 Jan 2019 10:30:25 +0100
-From:   Simon Horman <horms@verge.net.au>
-To:     Rob Herring <robh@kernel.org>
-Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Phil Edworthy <phil.edworthy@renesas.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-serial@vger.kernel.org
-Subject: Re: [PATCH 2/2] dt-bindings: serial: Move renesas,rzn1-uart into the
- snps-dw-apb-uart binding
-Message-ID: <20190114093025.ntshd3oioqacvkm2@verge.net.au>
-References: <20190110222017.6390-1-robh@kernel.org>
- <20190110222017.6390-2-robh@kernel.org>
+        Mon, 14 Jan 2019 04:31:08 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1547458262;
+        s=strato-dkim-0002; d=chronox.de;
+        h=References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:
+        X-RZG-CLASS-ID:X-RZG-AUTH:From:Subject:Sender;
+        bh=QGFlKjhWwoc5QT7BQLxDoDmN4CQAIGE2szFJb/xRH6M=;
+        b=hd0Q9VJXTgHWnDLh2VYAhBzNN4GMXI1dSBZZ9JIHrLu8KWtNwcW/lvq5zUN+QOWc2w
+        kAgRvfmTTPujjOzuCztMrcqEZizWMwtKKVqtPENECpTKhEqpUsH5yVzsz1UvWYkLb+kL
+        +vjyM94jWTp6gqBP1lY2pj/VpSBBp9qmePeC3C+Qsw9MIhYsjZgV//UvumCjczdBXbQ4
+        Wu92RL780OXj/pKYlI6er55tAE7ZH0/yajgKU16dwYDbJmI2nkxBY1/07SzPnrVeqCjQ
+        hJSBDTDGyLf5R/wlrgEwOi/gQutQvr7qqUlz5eiM6NORxkmpqGYI/jIk9P8IBkklhwmc
+        1X9A==
+X-RZG-AUTH: ":P2ERcEykfu11Y98lp/T7+hdri+uKZK8TKWEqNyiHySGSa9k9yWgdNs16dfA/c7fW145n"
+X-RZG-CLASS-ID: mo00
+Received: from positron.chronox.de
+        by smtp.strato.de (RZmta 44.9 AUTH)
+        with ESMTPSA id 309bcfv0E9Ufq3W
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (curve secp521r1 with 521 ECDH bits, eq. 15360 bits RSA))
+        (Client did not present a certificate);
+        Mon, 14 Jan 2019 10:30:41 +0100 (CET)
+From:   Stephan =?ISO-8859-1?Q?M=FCller?= <smueller@chronox.de>
+To:     Eric Biggers <ebiggers@kernel.org>
+Cc:     Herbert Xu <herbert@gondor.apana.org.au>,
+        James Bottomley <James.Bottomley@hansenpartnership.com>,
+        Andy Lutomirski <luto@amacapital.net>,
+        "Lee, Chun-Yi" <joeyli.kernel@gmail.com>,
+        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
+        Pavel Machek <pavel@ucw.cz>, linux-kernel@vger.kernel.org,
+        linux-pm@vger.kernel.org, keyrings@vger.kernel.org,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        Chen Yu <yu.c.chen@intel.com>,
+        Oliver Neukum <oneukum@suse.com>,
+        Ryan Chen <yu.chen.surf@gmail.com>,
+        David Howells <dhowells@redhat.com>,
+        Giovanni Gherdovich <ggherdovich@suse.cz>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Jann Horn <jannh@google.com>,
+        Andy Lutomirski <luto@kernel.org>, linux-crypto@vger.kernel.org
+Subject: Re: [PATCH 4/6] crypto: hkdf - RFC5869 Key Derivation Function
+Date:   Mon, 14 Jan 2019 10:30:39 +0100
+Message-ID: <4734428.Gj5BGI4uxL@positron.chronox.de>
+In-Reply-To: <20190112051252.GA639@sol.localdomain>
+References: <20190103143227.9138-1-jlee@suse.com> <2423373.Zd5ThvQH5g@positron.chronox.de> <20190112051252.GA639@sol.localdomain>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190110222017.6390-2-robh@kernel.org>
-Organisation: Horms Solutions BV
-User-Agent: NeoMutt/20170113 (1.7.2)
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jan 10, 2019 at 04:20:17PM -0600, Rob Herring wrote:
-> The renesas,rzn1-uart binding only differs in compatible string from the
-> snps-dw-apb-uart binding. Move it there, converting it to json-schema in
-> the process.
+Am Samstag, 12. Januar 2019, 06:12:54 CET schrieb Eric Biggers:
 
-This confused me slightly as this patch removes renesas,rzn1-uart.txt
-but doesn't add the renesas bindings elsewhere. I now see that is done
-in patch 1/2, which is fine. But it might be worth rewording the changelog.
+Hi Eric,
 
-That notwithstanding:
+[...]
 
-Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
-
-
-> Cc: Phil Edworthy <phil.edworthy@renesas.com>
-> Cc: Simon Horman <horms+renesas@verge.net.au>
-> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> Cc: linux-serial@vger.kernel.org
-> Signed-off-by: Rob Herring <robh@kernel.org>
-> ---
->  .../devicetree/bindings/serial/renesas,rzn1-uart.txt   | 10 ----------
->  1 file changed, 10 deletions(-)
->  delete mode 100644 Documentation/devicetree/bindings/serial/renesas,rzn1-uart.txt
+> > The extract and expand phases use different instances of the underlying
+> > keyed message digest cipher to ensure that while the extraction phase
+> > generates a new key for the expansion phase, the cipher for the
+> > expansion phase can still be used. This approach is intended to aid
+> > multi-threaded uses cases.
 > 
-> diff --git a/Documentation/devicetree/bindings/serial/renesas,rzn1-uart.txt b/Documentation/devicetree/bindings/serial/renesas,rzn1-uart.txt
-> deleted file mode 100644
-> index 8b9e0d4dc2e4..000000000000
-> --- a/Documentation/devicetree/bindings/serial/renesas,rzn1-uart.txt
-> +++ /dev/null
-> @@ -1,10 +0,0 @@
-> -Renesas RZ/N1 UART
-> -
-> -This controller is based on the Synopsys DesignWare ABP UART and inherits all
-> -properties defined in snps-dw-apb-uart.txt except for the compatible property.
-> -
-> -Required properties:
-> -- compatible : The device specific string followed by the generic RZ/N1 string.
-> -   Therefore it must be one of:
-> -   "renesas,r9a06g032-uart", "renesas,rzn1-uart"
-> -   "renesas,r9a06g033-uart", "renesas,rzn1-uart"
-> -- 
-> 2.19.1
+> I think you partially misunderstood what I was asking for.  One HMAC tfm is
+> sufficient as long as HKDF-Expand is separated from HKDF-Extract, which
+> you've done.  So just use one HMAC tfm, and in crypto_hkdf_seed() key it
+> with the 'salt', and then afterwards with the 'prk'.
+
+Ok, thanks for the clarification. I will remove the 2nd HMAC TFM then.
 > 
+> Also everywhere in this patchset, please avoid using the word "cipher" to
+> refer to algorithms that are not encryption/decryption.  I know a lot of
+> the crypto API docs do this, but I think it is a mistake and confusing. 
+> Hash algorithms and KDFs are not "ciphers".
+
+As you wish, I will refer to specific name of the cryptographic operation.
+
+[...]
+
+> > + * NOTE: In-place cipher operations are not supported.
+> > + */
+> 
+> What does an "in-place cipher operation" mean in this context?  That the
+> 'info' buffer must not overlap the 'dst' buffer? 
+
+Correct, no overlapping.
+
+> Maybe
+> crypto_rng_generate() should check that for all crypto_rngs?  Or is it
+> different for different crypto_rngs?
+
+This is the case in general for all KDFs (and even RNGs). It is no technical 
+or cryptographic error to have overlapping buffers. The only issue is that the 
+result will not match the expected value.
+
+The issue is that the input buffer to the generate function is an input to 
+every round of the KDF. If the input and output buffer overlap, starting with 
+the 2nd iteration of the KDF, the input is the output of the 1st round. Again, 
+I do not think it is a cryptographic error though.
+
+(To support my conclusion: A colleague of mine has proposed an update to the 
+HKDF specification where the input data changes for each KDF round. This 
+proposal was considered appropriate by one of the authors of HKDF.)
+
+If the requested output is smaller or equal to the output block size of the 
+KDF, overlapping buffers are even harmless since the implementation will 
+calculate the correct output.
+
+Due to that, I removed the statement. But I am not sure we should add a 
+technical block to deny overlapping input/output buffers.
+
+[...]
+> > 
+> > +	desc->flags = crypto_shash_get_flags(expand_kmd) &
+> > +		      CRYPTO_TFM_REQ_MAY_SLEEP;
+> 
+> This line setting desc->flags doesn't make sense.  How is the user meant to
+> control whether crypto_rng_generate() can sleep or not?  Or can it always
+> sleep? Either way this part is wrong since the user can't get access to the
+> HMAC tfm to set this flag being checked for.
+
+Could you please help me why a user should set this flag? Isn't the 
+implementation specifying that flag to allow identifying whether the 
+implementation could or could not sleep? Thus, we simply copy the sleeping 
+flag from the lower level keyed message digest implementation.
+
+At least that is also the implementation found in crypto/hmac.c.
+
+[...]
+
+> > +		if (dlen < h) {
+> > +			u8 tmpbuffer[CRYPTO_HKDF_MAX_DIGESTSIZE];
+> > +
+> > +			err = crypto_shash_finup(desc, &ctr, 1, tmpbuffer);
+> > +			if (err)
+> > +				goto out;
+> > +			memcpy(dst, tmpbuffer, dlen);
+> > +			memzero_explicit(tmpbuffer, h);
+> > +			goto out;
+> > +		} else {
+> 
+> No need for the 'else'.
+
+Could you please help me why that else branch is not needed? If the buffer to 
+be generated is equal or larger than the output block length of the keyed 
+message digest, I would like to directly operate on the output buffer to avoid 
+a memcpy.
+> 
+> > +			err = crypto_shash_finup(desc, &ctr, 1, dst);
+> > +			if (err)
+> > +				goto out;
+> > +
+> > +			prev = dst;
+> > +			dst += h;
+> > +			dlen -= h;
+> > +			ctr++;
+> > +		}
+> > +	}
+
+[...]
+> 
+> > +	struct crypto_shash *extract_kmd = ctx->extract_kmd;
+> > +	struct crypto_shash *expand_kmd = ctx->expand_kmd;
+> > +	struct rtattr *rta = (struct rtattr *)seed;
+> > +	SHASH_DESC_ON_STACK(desc, extract_kmd);
+> > +	u32 saltlen;
+> > +	unsigned int h = crypto_shash_digestsize(extract_kmd);
+> > +	int err;
+> > +	const uint8_t null_salt[CRYPTO_HKDF_MAX_DIGESTSIZE] = { 0 };
+> 
+> static const
+> 
+
+Why would I want to turn that buffer into a static variable? All we need it 
+for is in case there is no salt provided.
+
+[...]
+
+> > +
+> > +	if (!RTA_OK(rta, slen))
+> > +		return -EINVAL;
+> > +	if (rta->rta_type != 1)
+> > +		return -EINVAL;
+> > +	if (RTA_PAYLOAD(rta) < sizeof(saltlen))
+> > +		return -EINVAL;
+> > +	saltlen = *((u32 *)RTA_DATA(rta));
+> 
+> I'm guessing you copied the weird "length as a rtattr payload" approach from
+> the authenc template.  I think it's not necessary.  And it's overly
+> error-prone, as shown by the authenc template getting the parsing wrong for
+> years and you making the exact same mistake again here...
+> (See https://patchwork.kernel.org/patch/10732803/)  How about just using a
+> u32 at the beginning without the 'rtattr' preceding it?
+
+I was not sure whether this approach would be acceptable. I very much would 
+love to have a u32 pre-pended only without the RTA business.
+
+I updated the implementation accordingly.
+> 
+[...]
+
+> 
+> > +	alg = &salg->base;
+> 
+> Check here that the underlying algorithm really is "hmac(" something?
+
+I added a check for the presence of salg->setkey.
+> 
+> Alternatively it may be a good idea to simplify usage by making the template
+> just take the unkeyed hash directly, like "hkdf(sha512)".  And if any users
+> really need to specify a specific HMAC implementation then another template
+> usable as "hkdf_base(hmac(sha512))" could be added later.
+> 
+
+I would not suggest this, because that rounds contrary to the concept of the 
+kernel crypto API IMHO. The caller has to provide the wrapping cipher. It is 
+perfectly viable to allow a caller to invoke a specific keyed message digest.
+
+[...]
+
+Thank you very much for your code review.
+
+Ciao
+Stephan
+
+
