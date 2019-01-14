@@ -2,309 +2,180 @@ Return-Path: <SRS0=tq6k=PW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A04FBC43612
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 20:01:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1FD0AC43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 20:01:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 66607206B7
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 20:01:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547496086;
-	bh=UQEG3AkTNg/eXcqBGuu0XV28hBYeMsJX+w/ioWRBFvA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=ls4KQxbTcOCMa40qyHUsjzeS1NzJXsLu/mq/5dvZznZqLIWx590cR6ZThaCTeHqzL
-	 iWSzFhvBghn5A9xB8Pk86k8ZTRAhNMS1b8fMC5Ohn9mKBq3/EpqWZP3kec8vPuDA4m
-	 908GR7A4KSp7XI26k5zJB1iNG7MujRzuv1CTgHnc=
+	by mail.kernel.org (Postfix) with ESMTP id E201B206B7
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 20:01:33 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AilkFF74"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726875AbfANUBY (ORCPT
+        id S1726942AbfANUBc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 14 Jan 2019 15:01:24 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36996 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726728AbfANUBY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 Jan 2019 15:01:24 -0500
-Received: from localhost (unknown [69.71.4.100])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 200C020656;
-        Mon, 14 Jan 2019 20:01:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547496082;
-        bh=UQEG3AkTNg/eXcqBGuu0XV28hBYeMsJX+w/ioWRBFvA=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=NnhpSX0f8zpIeyfuOnXVoeV/cv0HumEcS3LDiRv8Su2xH2Zd0V8KCp1wxpC5dH7aG
-         Fkcd8fSrJ72KUxVgIzwsVVgMiUh1+yyXjSy4aD/8GPE48vxhxRoJev/7fPkYmM839D
-         VOU5oBCYjfGPol3tttWjzUo2CUKlrP6hxqrhqEKM=
-Date:   Mon, 14 Jan 2019 14:01:20 -0600
-From:   Bjorn Helgaas <helgaas@kernel.org>
-To:     Alexandru Gagniuc <mr.nuke.me@gmail.com>
-Cc:     austin_bolen@dell.com, alex_gagniuc@dellteam.com,
-        keith.busch@intel.com, Shyam_Iyer@Dell.com, lukas@wunner.de,
-        okaya@kernel.org, "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Len Brown <lenb@kernel.org>, linux-acpi@vger.kernel.org,
-        linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [RFC] PCI / ACPI: Implementing Type 3 _HPX records
-Message-ID: <20190114200120.GA33971@google.com>
-References: <20190110231136.31163-1-mr.nuke.me@gmail.com>
+        Mon, 14 Jan 2019 15:01:32 -0500
+Received: from mail-it1-f196.google.com ([209.85.166.196]:51363 "EHLO
+        mail-it1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726728AbfANUBa (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 14 Jan 2019 15:01:30 -0500
+Received: by mail-it1-f196.google.com with SMTP id w18so1463214ite.1;
+        Mon, 14 Jan 2019 12:01:29 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-transfer-encoding:content-language;
+        bh=gXVANtXOLUDqPrgfHVs++49MbsP87dwStc1KS983FQ0=;
+        b=AilkFF746oWeF63YYXnBm4DjH6p9x6QtREBs3eXXG+NvSE4eTTqAEypPzPobaoQbDl
+         1M24pgTma8dYXPPLCNgsX5VRywY4SjfROzOub4wpGPSFyzw7V6PJdNJcMsUncT0hdAel
+         dqT89PewzmRmKGO/HoGJj2zWSn9obwj5+sxR6A1x3Aac3lOs9lkGflH3Xa3u2CBiEao2
+         JFXrlhhV2ASDjyx2wZWBdp+8yo+A09xkhmEqcH/rLHp9uwIhYfhWVNR60ALWuzIYRjk4
+         n6nMw/ABbJ/9E9x2WTh6qVil0Y1wtxaxx71edNfrdtfSgfMOI73QNv0yZIZOG1esJMeT
+         qDOA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-transfer-encoding
+         :content-language;
+        bh=gXVANtXOLUDqPrgfHVs++49MbsP87dwStc1KS983FQ0=;
+        b=dijFAQHK3qj/faw/5rAW18O57uQ39jR55990v2ociMQnuik73wGNtu9gmMhbGmaTFr
+         ymbi54WEcAL0vsHB87kOdEySwQtVf7/efVg2SzsBXzLtN22ljAjQuCMDeZ3rPsyZ+8HV
+         4AXsLjMaQBUP8nGlITSOlpIhm88CT8C/jTFPC3TJXAWAq9u3TQHEXbIi8f/HsQvRsuk9
+         GBvWAoRPbUrPsj0XmJnKcrd/v3jEndgi6BKW6LIEPQSOsPhIx4BIH0B8f0j9+X4d9ovw
+         HvDnWYRcZcaJgqj0aCbRXYfSfyxb9IZ/D9RCbpYKYMI2GeglPDZURLo4PeVtVokJoPFS
+         Pv7g==
+X-Gm-Message-State: AJcUukcM9pL/F+RLJXBYosEZWKNdEnO5WKAbooAZNFjMuoqcEWIvZwyD
+        K34uOUS/ukG2QMyHkDUoIyw=
+X-Google-Smtp-Source: ALg8bN7GoY6YiLXrsDbiyE4qihvcBYAsGde+BLp0WekNtnQEv3a80DLbskSw+mePgEVawZ4nXR0pJQ==
+X-Received: by 2002:a24:c584:: with SMTP id f126mr581663itg.162.1547496088988;
+        Mon, 14 Jan 2019 12:01:28 -0800 (PST)
+Received: from [192.168.1.133] ([67.218.223.154])
+        by smtp.gmail.com with ESMTPSA id v202sm713405ita.13.2019.01.14.12.01.26
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 14 Jan 2019 12:01:27 -0800 (PST)
+Subject: Re: [PATCH v2 1/2] iio: chemical: bme680: Add device-tree support
+To:     Himanshu Jha <himanshujha199640@gmail.com>
+Cc:     linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-iio@vger.kernel.org, mark.rutland@arm.com,
+        robh+dt@kernel.org, pmeerw@pmeerw.net, lars@metafoo.de,
+        knaack.h@gmx.de, jic23@kernel.org
+References: <20190111205359.14158-1-sebastien.bourdelin@gmail.com>
+ <20190112094226.GA910@himanshu-Vostro-3559>
+From:   sebastien bourdelin <sebastien.bourdelin@gmail.com>
+Message-ID: <2522efda-2762-01a6-7597-38c086779b74@gmail.com>
+Date:   Mon, 14 Jan 2019 15:00:41 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.3
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190110231136.31163-1-mr.nuke.me@gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20190112094226.GA910@himanshu-Vostro-3559>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jan 10, 2019 at 05:11:27PM -0600, Alexandru Gagniuc wrote:
-> _HPX Type 3 is intended to be more generic and allow configuration of
-> settings not possible with Type 2 tables. For example, FW could ensure
-> that the completion timeout value is set accordingly throughout the PCI
-> tree; some switches require very special handling.
-> 
-> Type 3 can come in an arbitrary number of ACPI packages. With the older
-> types we only ever had one descriptor. We could get lazy and store it
-> on the stack. The current flow is to parse the HPX table
-> --pci_get_hp_params()-- and then program the PCIe device registers.
-> 
-> In the current flow, we'll need to malloc(). Here's what I tried:
->  1) devm_kmalloc() on the pci_dev
->   This ended up giving me NULL dereference at boot time.
+Hi,
 
-Yeah, I don't think devm_*() is going to work because that's part of the
-driver binding model; this is in the PCI core and this use is not related
-to the lifetime of a driver's binding to a device.
+On 1/12/19 4:42 AM, Himanshu Jha wrote:
+> On Fri, Jan 11, 2019 at 03:53:58PM -0500, Sebastien Bourdelin wrote:
+>> This commit allow the driver to work with device-tree.
+>>
+>> Signed-off-by: Sebastien Bourdelin <sebastien.bourdelin@gmail.com>
+>> ---
+> I get the following compilation failure:
+>
+> Below I have `allyesconfig` except 'BME680' configure as [M]
+> in case you wish to reproduce.
+>
+> himanshu@himanshu-Vostro-3559:~/linux-next$ grep -i -w 'CONFIG_BME680\|CONFIG_ACPI\|CONFIG_OF' .config
+> CONFIG_ACPI=y
+> CONFIG_OF=y
+> CONFIG_BME680=m
+> himanshu@himanshu-Vostro-3559:~/linux-next$ sudo make drivers/iio/chemical/bme680_spi.o
+> make[1]: Nothing to be done for 'all'.
+>    CALL    scripts/checksyscalls.sh
+>    DESCEND  objtool
+>    CC [M]  drivers/iio/chemical/bme680_spi.o
+> In file included from ./include/linux/acpi.h:41:0,
+>                   from drivers/iio/chemical/bme680_spi.c:7:
+> ./include/linux/module.h:213:1: error: expected ‘,’ or ‘;’ before ‘extern’
+>   extern typeof(name) __mod_##type##__##name##_device_table  \
+>   ^
+> drivers/iio/chemical/bme680_spi.c:119:1: note: in expansion of macro ‘MODULE_DEVICE_TABLE’
+>   MODULE_DEVICE_TABLE(of, bme680_of_spi_match);
+>   ^~~~~~~~~~~~~~~~~~~
+> scripts/Makefile.build:291: recipe for target 'drivers/iio/chemical/bme680_spi.o' failed
+> make[1]: *** [drivers/iio/chemical/bme680_spi.o] Error 1
+> Makefile:1741: recipe for target 'drivers/iio/chemical/bme680_spi.o' failed
+> make: *** [drivers/iio/chemical/bme680_spi.o] Error 2
+Thanks for the test, this is bad, i will fix that!
+> BUT if:
+>
+> himanshu@himanshu-Vostro-3559:~/linux-next$ make allyesconfig
+> scripts/kconfig/conf  --allyesconfig Kconfig
+> #
+> # configuration written to .config
+> #
+>
+> himanshu@himanshu-Vostro-3559:~/linux-next$ sudo make drivers/iio/chemical/bme680_spi.o
+> scripts/kconfig/conf  --syncconfig Kconfig
+> make[1]: Nothing to be done for 'all'.
+>    HOSTCC  scripts/dtc/dtc.o
+>    HOSTCC  scripts/dtc/flattree.o
+>    HOSTCC  scripts/dtc/fstree.o
+>    HOSTCC  scripts/dtc/data.o
+>    HOSTCC  scripts/dtc/livetree.o
+>    HOSTCC  scripts/dtc/treesource.o
+>    HOSTCC  scripts/dtc/srcpos.o
+>    HOSTCC  scripts/dtc/checks.o
+>    HOSTCC  scripts/dtc/util.o
+>    LEX     scripts/dtc/dtc-lexer.lex.c
+>    YACC    scripts/dtc/dtc-parser.tab.h
+>    HOSTCC  scripts/dtc/dtc-lexer.lex.o
+>    YACC    scripts/dtc/dtc-parser.tab.c
+>    HOSTCC  scripts/dtc/dtc-parser.tab.o
+>    HOSTLD  scripts/dtc/dtc
+>    CC      scripts/mod/empty.o
+>    MKELF   scripts/mod/elfconfig.h
+>    HOSTCC  scripts/mod/modpost.o
+>    CC      scripts/mod/devicetable-offsets.s
+>    HOSTCC  scripts/mod/file2alias.o
+>    HOSTCC  scripts/mod/sumversion.o
+>    HOSTLD  scripts/mod/modpost
+>    CC      kernel/bounds.s
+>    CC      arch/x86/kernel/asm-offsets.s
+>    CALL    scripts/checksyscalls.sh
+>    DESCEND  objtool
+>    CC      drivers/iio/chemical/bme680_spi.o
+>
+> Compiles without any issues.
+Hum, weird it compiles actually :s
+> Also, wondering when is 0x77 i2c address used, since I tested
+> this on 3 different boards with 0x76(when SDO is connected to GND)
+>
+> And why do I connect SDO to ground everytime ?
+> It is because if SDO pin is left floating then I2C address will be
+> undefined as said in datasheet + I have observed this while testing.
 
->  2) Add a cleanup function to be called after writing the PCIe registers
-> 
-> This RFC implements method 2. The HPX3 stuff is still NDA'd, but the
-> housekeeping parts are in here. Is this a good way to do things? I'm not
-> too sure about the need to call cleanup() on a stack variable. But if
-> not that, then what else?
+Ah, thanks for the reminder, actually i have only tested with a floating
 
-pci_get_hp_params() is currently exported, but only used inside
-drivers/pci, so I think it could be unexported.
+SDO, but i will probably use the GND instead even if i didn't had any
 
-I don't remember if there's a reason why things are split between
-pci_get_hp_params(), which runs _HPX or _HPP, and the program_hpp_type*()
-functions.  If we could get rid of that split, we could get rid of struct
-hotplug_params and do the configuration directly in the pci_get_hp_params()
-path.  I think that would simplify the memory management.
+problem right now.
 
-Bjorn
-
-> ---
->  drivers/pci/pci-acpi.c      | 88 +++++++++++++++++++++++++++++++++++++
->  drivers/pci/probe.c         | 29 ++++++++++++
->  include/linux/pci_hotplug.h | 17 +++++++
->  3 files changed, 134 insertions(+)
-> 
-> diff --git a/drivers/pci/pci-acpi.c b/drivers/pci/pci-acpi.c
-> index e1949f7efd9c..2ce1b68ce688 100644
-> --- a/drivers/pci/pci-acpi.c
-> +++ b/drivers/pci/pci-acpi.c
-> @@ -219,6 +219,65 @@ static acpi_status decode_type2_hpx_record(union acpi_object *record,
->  	return AE_OK;
->  }
->  
-> +static acpi_status parse_hpx3_register(struct hpp_type3 *hpx3,
-> +				       union acpi_object *reg_fields)
-> +{
-> +	struct hpp_type3_register *hpx3_reg;
-> +
-> +	hpx3_reg = kzalloc(sizeof(*hpx3_reg), GFP_KERNEL);
-> +	if (!hpx3_reg)
-> +		return AE_NO_MEMORY;
-> +
-> +	/* Parse fields blurb */
-> +
-> +	list_add_tail(&hpx3_reg->list, &hpx3->regs);
-> +	return AE_OK;
-> +}
-> +
-> +static acpi_status decode_type3_hpx_record(union acpi_object *record,
-> +					   struct hotplug_params *hpx)
-> +{
-> +	union acpi_object *fields = record->package.elements;
-> +	u32 desc_count, expected_length, revision;
-> +	union acpi_object *reg_fields;
-> +	acpi_status ret;
-> +	int i;
-> +
-> +	revision = fields[1].integer.value;
-> +	switch (revision) {
-> +	case 1:
-> +		desc_count = fields[2].integer.value;
-> +		expected_length = 3 + desc_count * 14;
-> +
-> +		if (record->package.count != expected_length)
-> +			return AE_ERROR;
-> +
-> +		for (i = 2; i < expected_length; i++)
-> +			if (fields[i].type != ACPI_TYPE_INTEGER)
-> +				return AE_ERROR;
-> +
-> +		if (!hpx->t3) {
-> +			INIT_LIST_HEAD(&hpx->type3_data.regs);
-> +			hpx->t3 = &hpx->type3_data;
-> +		}
-> +
-> +		for (i = 0; i < desc_count; i++) {
-> +			reg_fields = fields + 3 + i * 14;
-> +			ret = parse_hpx3_register(hpx->t3, reg_fields);
-> +			if (ret != AE_OK)
-> +				return ret;
-> +		}
-> +
-> +		break;
-> +	default:
-> +		printk(KERN_WARNING
-> +			"%s: Type 3 Revision %d record not supported\n",
-> +			__func__, revision);
-> +		return AE_ERROR;
-> +	}
-> +	return AE_OK;
-> +}
-> +
->  static acpi_status acpi_run_hpx(acpi_handle handle, struct hotplug_params *hpx)
->  {
->  	acpi_status status;
-> @@ -271,6 +330,11 @@ static acpi_status acpi_run_hpx(acpi_handle handle, struct hotplug_params *hpx)
->  			if (ACPI_FAILURE(status))
->  				goto exit;
->  			break;
-> +		case 3:
-> +			status = decode_type3_hpx_record(record, hpx);
-> +			if (ACPI_FAILURE(status))
-> +				goto exit;
-> +			break;
->  		default:
->  			printk(KERN_ERR "%s: Type %d record not supported\n",
->  			       __func__, type);
-> @@ -368,6 +432,30 @@ int pci_get_hp_params(struct pci_dev *dev, struct hotplug_params *hpp)
->  }
->  EXPORT_SYMBOL_GPL(pci_get_hp_params);
->  
-> +static int cleantup_type3_hpx_record(struct hpp_type3 *hpx3)
-> +{
-> +	struct hpp_type3_register *reg;
-> +	struct list_head *entry, *temp;
-> +
-> +	list_for_each_safe(entry, temp, &hpp->t3->regs){
-> +		reg = list_entry(entry, typeof(*reg), list);
-> +		list_del(entry);
-> +		kfree(reg);
-> +	}
-> +}
-> +
-> +/* pci_cleanup_hp_params
-> + *
-> + * @hpp - allocated by the caller
-> + */
-> +void pci_cleanup_hp_params(struct hotplug_params *hpp)
-> +{
-> +
-> +	if (hpp->t3)
-> +		cleanup_type3_hpx_record(hpp->t3);
-> +}
-> +EXPORT_SYMBOL_GPL(pci_cleanup_hp_params);
-> +
->  /**
->   * pciehp_is_native - Check whether a hotplug port is handled by the OS
->   * @bridge: Hotplug port to check
-> diff --git a/drivers/pci/probe.c b/drivers/pci/probe.c
-> index 257b9f6f2ebb..35ef7d1f4f3b 100644
-> --- a/drivers/pci/probe.c
-> +++ b/drivers/pci/probe.c
-> @@ -1979,6 +1979,32 @@ static void program_hpp_type2(struct pci_dev *dev, struct hpp_type2 *hpp)
->  	 */
->  }
->  
-> +static void program_hpp_type3_register(struct pci_dev *dev,
-> +				       const struct hpp_type3_register *reg)
-> +{
-> +	/* Complicated ACPI-mandated blurb */
-> +}
-> +
-> +static void program_hpp_type3(struct pci_dev *dev, struct hpp_type3 *hpp)
-> +{
-> +	struct hpp_type3_register *reg;
-> +
-> +	if (!hpp)
-> +		return;
-> +
-> +	if (!pci_is_pcie(dev))
-> +		return;
-> +
-> +	if (hpp->revision > 1) {
-> +		pci_warn(dev, "PCIe settings rev %d not supported\n",
-> +			 hpp->revision);
-> +		return;
-> +	}
-> +
-> +	list_for_each_entry(reg, &hpp->regs, list)
-> +		program_hpp_type3_register(dev, reg);
-> +}
-> +
->  int pci_configure_extended_tags(struct pci_dev *dev, void *ign)
->  {
->  	struct pci_host_bridge *host;
-> @@ -2145,9 +2171,12 @@ static void pci_configure_device(struct pci_dev *dev)
->  	if (ret)
->  		return;
->  
-> +	program_hpp_type3(dev, hpp.t3);
->  	program_hpp_type2(dev, hpp.t2);
->  	program_hpp_type1(dev, hpp.t1);
->  	program_hpp_type0(dev, hpp.t0);
-> +
-> +	pci_cleanup_hp_params(&hpp);
->  }
->  
->  static void pci_release_capabilities(struct pci_dev *dev)
-> diff --git a/include/linux/pci_hotplug.h b/include/linux/pci_hotplug.h
-> index 7acc9f91e72b..479da87a3774 100644
-> --- a/include/linux/pci_hotplug.h
-> +++ b/include/linux/pci_hotplug.h
-> @@ -124,18 +124,35 @@ struct hpp_type2 {
->  	u32 sec_unc_err_mask_or;
->  };
->  
-> +/*
-> + * PCI Express Setting Record (Type 3)
-> + * The ACPI overlords can never get enough
-> + */
-> +struct hpp_type3_register {
-> +	u32 crap_describing_entry_contents;
-> +	struct list_head list;
-> +};
-> +
-> +struct hpp_type3 {
-> +	u32 revision;
-> +	struct list_head regs;
-> +};
-> +
->  struct hotplug_params {
->  	struct hpp_type0 *t0;		/* Type0: NULL if not available */
->  	struct hpp_type1 *t1;		/* Type1: NULL if not available */
->  	struct hpp_type2 *t2;		/* Type2: NULL if not available */
-> +	struct hpp_type3 *t3;		/* Type3: NULL if not available */
->  	struct hpp_type0 type0_data;
->  	struct hpp_type1 type1_data;
->  	struct hpp_type2 type2_data;
-> +	struct hpp_type3 type3_data;
->  };
->  
->  #ifdef CONFIG_ACPI
->  #include <linux/acpi.h>
->  int pci_get_hp_params(struct pci_dev *dev, struct hotplug_params *hpp);
-> +void pci_cleanup_hp_params(struct hotplug_params *hpp);
->  bool pciehp_is_native(struct pci_dev *bridge);
->  int acpi_get_hp_hw_control_from_firmware(struct pci_dev *bridge);
->  bool shpchp_is_native(struct pci_dev *bridge);
-> -- 
-> 2.19.2
-> 
+> Actallly, I don't understand what "VDIDO" is, as explained in the
+> datasheet.
+>
+>
+> Anyway, if the above compilation issue is not a problem, then
+>
+> 	Acked-by: Himanshu Jha <himanshujha199640@gmail.com>
+>
+>
+> Thanks
