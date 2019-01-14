@@ -2,96 +2,166 @@ Return-Path: <SRS0=tq6k=PW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2EA98C43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 23:00:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 118B1C43444
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 23:02:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F1B5320657
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 23:00:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D636E206B7
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 23:02:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727176AbfANXAu (ORCPT
+        id S1727130AbfANXCV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 14 Jan 2019 18:00:50 -0500
-Received: from ec2-34-208-57-251.us-west-2.compute.amazonaws.com ([34.208.57.251]:46056
-        "EHLO ip-172-31-12-36.us-west-2.compute.internal"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726769AbfANXAt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 Jan 2019 18:00:49 -0500
-X-Greylist: delayed 396 seconds by postgrey-1.27 at vger.kernel.org; Mon, 14 Jan 2019 18:00:48 EST
-Received: by ip-172-31-12-36.us-west-2.compute.internal (Postfix, from userid 1001)
-        id 69BD24043D; Mon, 14 Jan 2019 14:54:12 -0800 (PST)
-Date:   Mon, 14 Jan 2019 14:54:12 -0800
-From:   Daniel Walker <dwalker@fifo99.com>
-To:     Stephen Rothwell <sfr@canb.auug.org.au>
-Cc:     Al Viro <viro@ZenIV.linux.org.uk>,
-        Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        David Howells <dhowells@redhat.com>
-Subject: Re: linux-next: manual merge of the cisco tree with the vfs tree
-Message-ID: <20190114225412.GD18707@fifo99.com>
-References: <20181002162923.13f3f8b1@canb.auug.org.au>
- <20190115093330.1cbb0625@canb.auug.org.au>
+        Mon, 14 Jan 2019 18:02:21 -0500
+Received: from mga03.intel.com ([134.134.136.65]:5191 "EHLO mga03.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726747AbfANXCV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 14 Jan 2019 18:02:21 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga006.jf.intel.com ([10.7.209.51])
+  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 14 Jan 2019 15:02:20 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,479,1539673200"; 
+   d="scan'208";a="108237042"
+Received: from ray.jf.intel.com (HELO [10.7.201.19]) ([10.7.201.19])
+  by orsmga006.jf.intel.com with ESMTP; 14 Jan 2019 15:02:20 -0800
+Subject: Re: [PATCHv2 0/7] x86_64/mm: remove bottom-up allocation style by
+ pushing forward the parsing of mem hotplug info
+To:     Pingfan Liu <kernelfans@gmail.com>, linux-kernel@vger.kernel.org
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Len Brown <lenb@kernel.org>, Yinghai Lu <yinghai@kernel.org>,
+        Tejun Heo <tj@kernel.org>, Chao Fan <fanc.fnst@cn.fujitsu.com>,
+        Baoquan He <bhe@redhat.com>, Juergen Gross <jgross@suse.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Michal Hocko <mhocko@suse.com>, x86@kernel.org,
+        linux-acpi@vger.kernel.org, linux-mm@kvack.org
+References: <1547183577-20309-1-git-send-email-kernelfans@gmail.com>
+From:   Dave Hansen <dave.hansen@intel.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ mQINBE6HMP0BEADIMA3XYkQfF3dwHlj58Yjsc4E5y5G67cfbt8dvaUq2fx1lR0K9h1bOI6fC
+ oAiUXvGAOxPDsB/P6UEOISPpLl5IuYsSwAeZGkdQ5g6m1xq7AlDJQZddhr/1DC/nMVa/2BoY
+ 2UnKuZuSBu7lgOE193+7Uks3416N2hTkyKUSNkduyoZ9F5twiBhxPJwPtn/wnch6n5RsoXsb
+ ygOEDxLEsSk/7eyFycjE+btUtAWZtx+HseyaGfqkZK0Z9bT1lsaHecmB203xShwCPT49Blxz
+ VOab8668QpaEOdLGhtvrVYVK7x4skyT3nGWcgDCl5/Vp3TWA4K+IofwvXzX2ON/Mj7aQwf5W
+ iC+3nWC7q0uxKwwsddJ0Nu+dpA/UORQWa1NiAftEoSpk5+nUUi0WE+5DRm0H+TXKBWMGNCFn
+ c6+EKg5zQaa8KqymHcOrSXNPmzJuXvDQ8uj2J8XuzCZfK4uy1+YdIr0yyEMI7mdh4KX50LO1
+ pmowEqDh7dLShTOif/7UtQYrzYq9cPnjU2ZW4qd5Qz2joSGTG9eCXLz5PRe5SqHxv6ljk8mb
+ ApNuY7bOXO/A7T2j5RwXIlcmssqIjBcxsRRoIbpCwWWGjkYjzYCjgsNFL6rt4OL11OUF37wL
+ QcTl7fbCGv53KfKPdYD5hcbguLKi/aCccJK18ZwNjFhqr4MliQARAQABtEVEYXZpZCBDaHJp
+ c3RvcGhlciBIYW5zZW4gKEludGVsIFdvcmsgQWRkcmVzcykgPGRhdmUuaGFuc2VuQGludGVs
+ LmNvbT6JAjgEEwECACIFAlQ+9J0CGwMGCwkIBwMCBhUIAgkKCwQWAgMBAh4BAheAAAoJEGg1
+ lTBwyZKwLZUP/0dnbhDc229u2u6WtK1s1cSd9WsflGXGagkR6liJ4um3XCfYWDHvIdkHYC1t
+ MNcVHFBwmQkawxsYvgO8kXT3SaFZe4ISfB4K4CL2qp4JO+nJdlFUbZI7cz/Td9z8nHjMcWYF
+ IQuTsWOLs/LBMTs+ANumibtw6UkiGVD3dfHJAOPNApjVr+M0P/lVmTeP8w0uVcd2syiaU5jB
+ aht9CYATn+ytFGWZnBEEQFnqcibIaOrmoBLu2b3fKJEd8Jp7NHDSIdrvrMjYynmc6sZKUqH2
+ I1qOevaa8jUg7wlLJAWGfIqnu85kkqrVOkbNbk4TPub7VOqA6qG5GCNEIv6ZY7HLYd/vAkVY
+ E8Plzq/NwLAuOWxvGrOl7OPuwVeR4hBDfcrNb990MFPpjGgACzAZyjdmYoMu8j3/MAEW4P0z
+ F5+EYJAOZ+z212y1pchNNauehORXgjrNKsZwxwKpPY9qb84E3O9KYpwfATsqOoQ6tTgr+1BR
+ CCwP712H+E9U5HJ0iibN/CDZFVPL1bRerHziuwuQuvE0qWg0+0SChFe9oq0KAwEkVs6ZDMB2
+ P16MieEEQ6StQRlvy2YBv80L1TMl3T90Bo1UUn6ARXEpcbFE0/aORH/jEXcRteb+vuik5UGY
+ 5TsyLYdPur3TXm7XDBdmmyQVJjnJKYK9AQxj95KlXLVO38lcuQINBFRjzmoBEACyAxbvUEhd
+ GDGNg0JhDdezyTdN8C9BFsdxyTLnSH31NRiyp1QtuxvcqGZjb2trDVuCbIzRrgMZLVgo3upr
+ MIOx1CXEgmn23Zhh0EpdVHM8IKx9Z7V0r+rrpRWFE8/wQZngKYVi49PGoZj50ZEifEJ5qn/H
+ Nsp2+Y+bTUjDdgWMATg9DiFMyv8fvoqgNsNyrrZTnSgoLzdxr89FGHZCoSoAK8gfgFHuO54B
+ lI8QOfPDG9WDPJ66HCodjTlBEr/Cwq6GruxS5i2Y33YVqxvFvDa1tUtl+iJ2SWKS9kCai2DR
+ 3BwVONJEYSDQaven/EHMlY1q8Vln3lGPsS11vSUK3QcNJjmrgYxH5KsVsf6PNRj9mp8Z1kIG
+ qjRx08+nnyStWC0gZH6NrYyS9rpqH3j+hA2WcI7De51L4Rv9pFwzp161mvtc6eC/GxaiUGuH
+ BNAVP0PY0fqvIC68p3rLIAW3f97uv4ce2RSQ7LbsPsimOeCo/5vgS6YQsj83E+AipPr09Caj
+ 0hloj+hFoqiticNpmsxdWKoOsV0PftcQvBCCYuhKbZV9s5hjt9qn8CE86A5g5KqDf83Fxqm/
+ vXKgHNFHE5zgXGZnrmaf6resQzbvJHO0Fb0CcIohzrpPaL3YepcLDoCCgElGMGQjdCcSQ+Ci
+ FCRl0Bvyj1YZUql+ZkptgGjikQARAQABiQIfBBgBAgAJBQJUY85qAhsMAAoJEGg1lTBwyZKw
+ l4IQAIKHs/9po4spZDFyfDjunimEhVHqlUt7ggR1Hsl/tkvTSze8pI1P6dGp2XW6AnH1iayn
+ yRcoyT0ZJ+Zmm4xAH1zqKjWplzqdb/dO28qk0bPso8+1oPO8oDhLm1+tY+cOvufXkBTm+whm
+ +AyNTjaCRt6aSMnA/QHVGSJ8grrTJCoACVNhnXg/R0g90g8iV8Q+IBZyDkG0tBThaDdw1B2l
+ asInUTeb9EiVfL/Zjdg5VWiF9LL7iS+9hTeVdR09vThQ/DhVbCNxVk+DtyBHsjOKifrVsYep
+ WpRGBIAu3bK8eXtyvrw1igWTNs2wazJ71+0z2jMzbclKAyRHKU9JdN6Hkkgr2nPb561yjcB8
+ sIq1pFXKyO+nKy6SZYxOvHxCcjk2fkw6UmPU6/j/nQlj2lfOAgNVKuDLothIxzi8pndB8Jju
+ KktE5HJqUUMXePkAYIxEQ0mMc8Po7tuXdejgPMwgP7x65xtfEqI0RuzbUioFltsp1jUaRwQZ
+ MTsCeQDdjpgHsj+P2ZDeEKCbma4m6Ez/YWs4+zDm1X8uZDkZcfQlD9NldbKDJEXLIjYWo1PH
+ hYepSffIWPyvBMBTW2W5FRjJ4vLRrJSUoEfJuPQ3vW9Y73foyo/qFoURHO48AinGPZ7PC7TF
+ vUaNOTjKedrqHkaOcqB185ahG2had0xnFsDPlx5y
+Message-ID: <fe88d6ff-00e1-b65d-f411-64b03227bd17@intel.com>
+Date:   Mon, 14 Jan 2019 15:02:20 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190115093330.1cbb0625@canb.auug.org.au>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <1547183577-20309-1-git-send-email-kernelfans@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 15, 2019 at 09:33:30AM +1100, Stephen Rothwell wrote:
-> Hi Daniel,
-> 
-> On Tue, 2 Oct 2018 16:29:23 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> >
-> > Today's linux-next merge of the cisco tree got a conflict in:
-> > 
-> >   arch/x86/kernel/setup.c
-> > 
-> > between commit:
-> > 
-> >   dcf8001d292b ("vfs: Suppress MS_* flag defs within the kernel unless explicitly enabled")
-> > 
-> > from the vfs tree and commit:
-> > 
-> >   2c070709ea75 ("This updates the x86 code to use the CONFIG_GENERIC_CMDLINE")
-> > 
-> > from the cisco tree.
-> > 
-> > I fixed it up (see below) and can carry the fix as necessary. This
-> > is now fixed as far as linux-next is concerned, but any non trivial
-> > conflicts should be mentioned to your upstream maintainer when your tree
-> > is submitted for merging.  You may also want to consider cooperating
-> > with the maintainer of the conflicting tree to minimise any particularly
-> > complex conflicts.
-> > 
-> > -- 
-> > Cheers,
-> > Stephen Rothwell
-> > 
-> > diff --cc arch/x86/kernel/setup.c
-> > index e493202bf265,ee109f490b22..000000000000
-> > --- a/arch/x86/kernel/setup.c
-> > +++ b/arch/x86/kernel/setup.c
-> > @@@ -51,7 -51,7 +51,8 @@@
-> >   #include <linux/kvm_para.h>
-> >   #include <linux/dma-contiguous.h>
-> >   #include <xen/xen.h>
-> >  +#include <uapi/linux/mount.h>
-> > + #include <linux/cmdline.h>
-> >   
-> >   #include <linux/errno.h>
-> >   #include <linux/kernel.h>
-> 
-> This is now a conflict between the cicso tree and Linus' tree.
+On 1/10/19 9:12 PM, Pingfan Liu wrote:
+> Background
+> When kaslr kernel can be guaranteed to sit inside unmovable node
+> after [1].
 
-I did a rebase after your original made this. I'm not sure it's needed any
-longer. However, I was planning to rebase my tree again on top of the latest
-Linus tree. How would you like to proceed ?
+What does this "[1]" refer to?
 
-Daniel
+Also, can you clarify your terminology here a bit.  By "kaslr kernel",
+do you mean the base address?
+
+> But if kaslr kernel is located near the end of the movable node,
+> then bottom-up allocator may create pagetable which crosses the boundary
+> between unmovable node and movable node.
+
+Again, I'm confused.  Do you literally mean a single page table page?  I
+think you mean the page tables, but it would be nice to clarify this,
+and also explicitly state which page tables these are.
+
+>  It is a probability issue,
+> two factors include -1. how big the gap between kernel end and
+> unmovable node's end.  -2. how many memory does the system own.
+> Alternative way to fix this issue is by increasing the gap by
+> boot/compressed/kaslr*.
+
+Oh, you mean the KASLR code in arch/x86/boot/compressed/kaslr*.[ch]?
+
+It took me a minute to figure out you were talking about filenames.
+
+> But taking the scenario of PB level memory, the pagetable will take
+> server MB even if using 1GB page, different page attr and fragment
+> will make things worse. So it is hard to decide how much should the
+> gap increase.
+I'm not following this.  If we move the image around, we leave holes.
+Why do we need page table pages allocated to cover these holes?
+
+> The following figure show the defection of current bottom-up style:
+>   [startA, endA][startB, "kaslr kernel verly close to" endB][startC, endC]
+
+"defection"?
+
+> If nodeA,B is unmovable, while nodeC is movable, then init_mem_mapping()
+> can generate pgtable on nodeC, which stain movable node.
+
+Let me see if I can summarize this:
+1. The kernel ASLR decompression code picks a spot to place the kernel
+   image in physical memory.
+2. Some page tables are dynamically allocated near (after) this spot.
+3. Sometimes, based on the random ASLR location, these page tables fall
+   over into the "movable node" area.  Being unmovable allocations, this
+   is not cool.
+4. To fix this (on 64-bit at least), we stop allocating page tables
+   based on the location of the kernel image.  Instead, we allocate
+   using the memblock allocator itself, which knows how to avoid the
+   movable node.
+
+> This patch makes it certainty instead of a probablity problem. It achieves
+> this by pushing forward the parsing of mem hotplug info ahead of init_mem_mapping().
+
+What does memory hotplug have to do with this?  I thought this was all
+about early boot.
