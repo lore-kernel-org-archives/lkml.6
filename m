@@ -2,93 +2,87 @@ Return-Path: <SRS0=tq6k=PW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-10.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AC2B8C43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 01:27:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0117AC43612
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 01:44:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 71CC520656
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 01:27:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B5DEF20854
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 01:44:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1547430241;
+	bh=3MY6nD2lzpdfMJWNt9dyhR+BSqPNRHJBm6OrFpApjIE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=ddkPp7NdQPigaLxSYkt/nK0DBrKH/TLuWBIroErl1Iv+Ah8NbEWW1pkkPK2E4BaPK
+	 mWtgyBuT15XFRFoAYEPKVjLB+b9+owSDKSGmI6nQRVYThP9oxLhf6bSCC9fmqJP8pV
+	 ZrKiymc26Jac4dzRnfsQIvooCRZYfbtgLLrmg4dk=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726752AbfANB1n (ORCPT
+        id S1726684AbfANBoA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 13 Jan 2019 20:27:43 -0500
-Received: from mail.cn.fujitsu.com ([183.91.158.132]:33186 "EHLO
-        heian.cn.fujitsu.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726657AbfANB1n (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 13 Jan 2019 20:27:43 -0500
-X-IronPort-AV: E=Sophos;i="5.56,475,1539619200"; 
-   d="scan'208";a="51945019"
-Received: from unknown (HELO cn.fujitsu.com) ([10.167.33.5])
-  by heian.cn.fujitsu.com with ESMTP; 14 Jan 2019 09:27:42 +0800
-Received: from G08CNEXCHPEKD01.g08.fujitsu.local (unknown [10.167.33.80])
-        by cn.fujitsu.com (Postfix) with ESMTP id 556A44BAD7B1;
-        Mon, 14 Jan 2019 09:27:36 +0800 (CST)
-Received: from localhost.localdomain (10.167.225.56) by
- G08CNEXCHPEKD01.g08.fujitsu.local (10.167.33.89) with Microsoft SMTP Server
- (TLS) id 14.3.408.0; Mon, 14 Jan 2019 09:27:41 +0800
-Date:   Mon, 14 Jan 2019 09:26:42 +0800
-From:   Chao Fan <fanc.fnst@cn.fujitsu.com>
-To:     Borislav Petkov <bp@alien8.de>
-CC:     <linux-kernel@vger.kernel.org>, <x86@kernel.org>,
-        <tglx@linutronix.de>, <mingo@redhat.com>, <hpa@zytor.com>,
-        <keescook@chromium.org>, <bhe@redhat.com>, <msys.mizuma@gmail.com>,
-        <indou.takao@jp.fujitsu.com>, <caoj.fnst@cn.fujitsu.com>
-Subject: Re: [PATCH v15 3/6] x86/boot: Introduce efi_get_rsdp_addr() to find
- RSDP from EFI table
-Message-ID: <20190114012641.GA30900@localhost.localdomain>
-References: <20190107032243.25324-1-fanc.fnst@cn.fujitsu.com>
- <20190107032243.25324-4-fanc.fnst@cn.fujitsu.com>
- <20190110211523.GG17621@zn.tnic>
- <20190111012353.GD2216@localhost.localdomain>
- <20190111103225.GA4729@zn.tnic>
- <20190113094704.GC13263@localhost.localdomain>
- <20190113110544.GA7398@zn.tnic>
+        Sun, 13 Jan 2019 20:44:00 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38066 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726631AbfANBn7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 13 Jan 2019 20:43:59 -0500
+Received: from dragon (61-216-91-114.HINET-IP.hinet.net [61.216.91.114])
+        (using TLSv1.2 with cipher DHE-RSA-AES128-SHA (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8A59B20675;
+        Mon, 14 Jan 2019 01:43:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1547430239;
+        bh=3MY6nD2lzpdfMJWNt9dyhR+BSqPNRHJBm6OrFpApjIE=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=SO2mZaMYBcGc/9z+FVk/qHYpQccSKFD6ByqBNXlDxamhY/lPN0+tnFA3ymnOV4sKs
+         zwIqM1S9/8rk660nsYION37/iHZMyqW0bSM/TUQM/emKX+HFpqMBipu6pS7sSgLKXh
+         jP+94yeO8AOrFuLmW4QAVl2J5T2yTvTGcz4SrMGk=
+Date:   Mon, 14 Jan 2019 09:43:33 +0800
+From:   Shawn Guo <shawnguo@kernel.org>
+To:     Anson Huang <anson.huang@nxp.com>
+Cc:     "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
+        "will.deacon@arm.com" <will.deacon@arm.com>,
+        "a.zummo@towertech.it" <a.zummo@towertech.it>,
+        "alexandre.belloni@bootlin.com" <alexandre.belloni@bootlin.com>,
+        Aisheng Dong <aisheng.dong@nxp.com>,
+        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
+        Andy Gross <andy.gross@linaro.org>,
+        "horms+renesas@verge.net.au" <horms+renesas@verge.net.au>,
+        "heiko@sntech.de" <heiko@sntech.de>,
+        "arnd@arndb.de" <arnd@arndb.de>,
+        "bjorn.andersson@linaro.org" <bjorn.andersson@linaro.org>,
+        "enric.balletbo@collabora.com" <enric.balletbo@collabora.com>,
+        "amit.kucheria@linaro.org" <amit.kucheria@linaro.org>,
+        "ezequiel@collabora.com" <ezequiel@collabora.com>,
+        "olof@lixom.net" <olof@lixom.net>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-rtc@vger.kernel.org" <linux-rtc@vger.kernel.org>,
+        dl-linux-imx <linux-imx@nxp.com>
+Subject: Re: [PATCH V5 3/4] defconfig: arm64: add i.MX system controller RTC
+ support
+Message-ID: <20190114014332.GG15371@dragon>
+References: <1545295872-20169-1-git-send-email-Anson.Huang@nxp.com>
+ <1545295872-20169-4-git-send-email-Anson.Huang@nxp.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190113110544.GA7398@zn.tnic>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Originating-IP: [10.167.225.56]
-X-yoursite-MailScanner-ID: 556A44BAD7B1.ABD09
-X-yoursite-MailScanner: Found to be clean
-X-yoursite-MailScanner-From: fanc.fnst@cn.fujitsu.com
+In-Reply-To: <1545295872-20169-4-git-send-email-Anson.Huang@nxp.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Jan 13, 2019 at 12:05:45PM +0100, Borislav Petkov wrote:
->On Sun, Jan 13, 2019 at 05:47:04PM +0800, Chao Fan wrote:
->> 'acpi_physical_address' could be define as u64 or u32.
->
->And when can acpi_physical_address be a u32?
->
+On Thu, Dec 20, 2018 at 08:56:25AM +0000, Anson Huang wrote:
+> This patch enables CONFIG_RTC_DRV_IMX_SC as module by default.
+> 
+> Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
 
-According to the code, I saw:
-#ifdef ACPI_ASL_COMPILER
-#define ACPI_32BIT_PHYSICAL_ADDRESS
-#endif
-
-and then
-#ifdef ACPI_32BIT_PHYSICAL_ADDRESS
-typedef u32 acpi_physical_address;
-
-As for ACPI_ASL_COMPILER, I saw iASL in documention, but can't find more
-information in the code. If I miss something, please let me know.
-
-Thanks,
-Chao Fan
-
->-- 
->Regards/Gruss,
->    Boris.
->
->Good mailing practices for 400: avoid top-posting and trim the reply.
->
->
-
-
+Applied, thanks.
