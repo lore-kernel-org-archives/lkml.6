@@ -6,47 +6,47 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_ADSP_CUSTOM_MED,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 93209C43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 22:04:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D8DECC43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 22:04:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5EE66205C9
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 22:04:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A50B1205C9
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 22:04:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727163AbfANWE2 (ORCPT
+        id S1727180AbfANWEd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 14 Jan 2019 17:04:28 -0500
-Received: from mail-vs1-f69.google.com ([209.85.217.69]:47424 "EHLO
-        mail-vs1-f69.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726684AbfANWE2 (ORCPT
+        Mon, 14 Jan 2019 17:04:33 -0500
+Received: from mail-qt1-f197.google.com ([209.85.160.197]:35818 "EHLO
+        mail-qt1-f197.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726684AbfANWEc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 Jan 2019 17:04:28 -0500
-Received: by mail-vs1-f69.google.com with SMTP id y139so230603vsc.14
-        for <linux-kernel@vger.kernel.org>; Mon, 14 Jan 2019 14:04:26 -0800 (PST)
+        Mon, 14 Jan 2019 17:04:32 -0500
+Received: by mail-qt1-f197.google.com with SMTP id p24so610796qtl.2
+        for <linux-kernel@vger.kernel.org>; Mon, 14 Jan 2019 14:04:31 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:in-reply-to:message-id:mime-version
          :references:subject:from:to:cc;
-        bh=MXwESgpW0h5exF+bsp70XCY7V6x0NoAqfEcRctyuUuI=;
-        b=mXEcuk3XEsxtid+y/in1Fphq3jleHwGlT5+VL823P1fsrm2YUxnjoomYuxUL64uTZv
-         k9dFaKn28pjL/PmDwJgHdXX8Tip1Wqqqeb2a6xzoi8Ry0n6cEa6URBj5jXr+gD5fwszX
-         67FewBEaX8fEsW9SLXX3lZ0BqGprNdBgl1093wm4Qu5WhNUBmO6l+3Hh2rrrIlOWg3PF
-         JQMk5mFmlN80Gdm0G+zPZ1x2votGXYJxtnsBZuYkFUTiJTJfvzY8kgM4LrTrZMLZyfD4
-         oRjARf460B5RAR8CZkAVRMYGKp/aTl0N/WM+fDswUISHNYCA+py/jlErmmOGeRF9PnnE
-         aP4g==
-X-Gm-Message-State: AJcUukf4YjlqdHFJQT2KdSbDH4rQHSb/jVUvhh87omkKpMcUN8nDaMSL
-        rHfGsULUfNxZgHaZ9+r7nFzOdOg5ERdjyJzS2lTTeKWoQZuq38mV/y+L84h/99tbD1McHPTje84
-        m84/sGYsi2ch2QFYz1UpzVWyxx9GJGHf4aI/sCO37ud2drdNdKR4m6Zs/0Oozg8rZcfmJtnTyH1
-        I=
-X-Google-Smtp-Source: ALg8bN4kKMae7UYYE1wuInsF2ELm/G7F5O26QVR5O5401HH+tBdMRp3HBB9YvNX/aioeNpBloeXTW0f+dO885uEM
-X-Received: by 2002:a67:3d06:: with SMTP id k6mr474929vsa.32.1547503465526;
- Mon, 14 Jan 2019 14:04:25 -0800 (PST)
-Date:   Mon, 14 Jan 2019 15:03:50 -0700
+        bh=lUV2j/I+da7UyJkODFTHM3UBusg4tJTVdYckzT83YNA=;
+        b=nlNqurXfpocgM/2t+W8J9SG3NtxJrivtzgyluV4UYpOvaszE42zEJlI+JHmt/caeMG
+         JkM+40ErYQCID8NnSHIQZ6amlcPCtn/ZIl3PxcfUZ1AByPSGIXtN78amXMfmFFxmLy7+
+         mQbhBKM/cps5J9ccs4C4x6NysihDUTjRCmQ+dPpOIK3a5ZdqgNZ7XUxfjr75wEYtooZG
+         bbJYo1GgfmelQBfvz3DnEN7OPqrGcyyR39gV3nnfNwf+kuq0yt4YuREma9bW86QQ95yQ
+         Sl1FmKcVgUXx2IHY61vgGO3uz4nx+Amd+xyLbNjUr5jfBTNq+hpZbSKwLxKc5Wts4cX8
+         rxVg==
+X-Gm-Message-State: AJcUukeJfKfoPGlDuKGISxgPt8OF+XjGTvhrgcFKuAmg7mPUPF10xwCV
+        UQZtOIKxyrCD0NY+s5hcSpB9YkA4QIuVll+UXraF8JovosCIPSvQbgDsYE7VhHip2nIGIxhiRGD
+        6/Hho0CE5Aq2Y75WsbBogMl9Bvrh9q2eI2AADW3fgJ61fwREoNfW/qkD+KBXEc8HX8nSebh89+D
+        U=
+X-Google-Smtp-Source: ALg8bN4Fx4WfRCVVlk6BUtZJgOGkswh1OrJpPDT3VjjuQQyHrtJ712NKGdBm+0CvpDKtJy/HcSdZtwFOSTxMTnqo
+X-Received: by 2002:a0c:ae41:: with SMTP id z1mr402833qvc.11.1547503471381;
+ Mon, 14 Jan 2019 14:04:31 -0800 (PST)
+Date:   Mon, 14 Jan 2019 15:03:51 -0700
 In-Reply-To: <20190114220356.108916-1-ncrews@google.com>
-Message-Id: <20190114220356.108916-4-ncrews@google.com>
+Message-Id: <20190114220356.108916-5-ncrews@google.com>
 Mime-Version: 1.0
 References: <20190114220356.108916-1-ncrews@google.com>
 X-Mailer: git-send-email 2.20.1.97.g81188d93c3-goog
-Subject: [PATCH v2 3/9] platform/chrome: Add sysfs attributes
+Subject: [PATCH v2 4/9] platform/chrome: Add support for raw commands in sysfs
 From:   Nick Crews <ncrews@google.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     groeck@chromium.org, sjg@chromium.org, dlaurie@chromium.org,
@@ -62,361 +62,266 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Duncan Laurie <dlaurie@google.com>
 
-Add some sample sysfs attributes for the Wilco EC that show how
-the mailbox interface works. "Legacy" attributes are those that
-existed in the EC before it was adapted to ChromeOS.
+Add a sysfs attribute that allows sending raw commands to the EC.
+This is useful for development and debug but should not be enabled
+in a production environment.
 
-> cat /sys/bus/platform/devices/GOOG000C\:00/version
-Label        : 99.99.99
-SVN Revision : 738ed.99
-Model Number : 08;8
-Build Date   : 08/30/18
+> echo 00 f0 38 00 03 00 > /sys/bus/platform/devices/GOOG000C\:00/raw
+> cat /sys/bus/platform/devices/GOOG000C\:00/raw
+00 37 33 38 65 64 00...
 
 Signed-off-by: Duncan Laurie <dlaurie@google.com>
 Signed-off-by: Nick Crews <ncrews@google.com>
 ---
 
 Changes in v2:
-- Remove license boiler plate
-- Remove "wilco_ec_sysfs -" docstring prefix
-- Fix accidental Makefile deletion
-- Add documentation for sysfs entries
-- Change "enable ? 0 : 1" to "!enable"
-- No longer override error code from sysfs_init()
-- Put attributes in the legacy file to begin with, don't move later
-- Remove duplicate error messages in sysfs_init() and its caller
+- Add sysfs documentation
+- rm duplicate EC_MAILBOX_DATA_SIZE defs
+- Make docstrings follow kernel style
+- Fix tags in commit msg
+- Reading raw now includes ASCII translation
 
- .../ABI/testing/sysfs-platform-wilcoec        | 26 ++++++
- drivers/platform/chrome/wilco_ec/Makefile     |  2 +-
- drivers/platform/chrome/wilco_ec/core.c       | 15 +++
- drivers/platform/chrome/wilco_ec/legacy.c     | 91 +++++++++++++++++++
- drivers/platform/chrome/wilco_ec/legacy.h     | 47 ++++++++++
- drivers/platform/chrome/wilco_ec/sysfs.c      | 66 ++++++++++++++
- include/linux/platform_data/wilco-ec.h        | 14 +++
- 7 files changed, 260 insertions(+), 1 deletion(-)
- create mode 100644 Documentation/ABI/testing/sysfs-platform-wilcoec
- create mode 100644 drivers/platform/chrome/wilco_ec/legacy.c
- create mode 100644 drivers/platform/chrome/wilco_ec/legacy.h
- create mode 100644 drivers/platform/chrome/wilco_ec/sysfs.c
+ .../ABI/testing/sysfs-platform-wilcoec        | 21 ++++
+ drivers/platform/chrome/wilco_ec/Kconfig      |  9 ++
+ drivers/platform/chrome/wilco_ec/legacy.c     | 99 +++++++++++++++++++
+ drivers/platform/chrome/wilco_ec/legacy.h     | 46 +++++++++
+ drivers/platform/chrome/wilco_ec/sysfs.c      |  6 ++
+ 5 files changed, 181 insertions(+)
 
 diff --git a/Documentation/ABI/testing/sysfs-platform-wilcoec b/Documentation/ABI/testing/sysfs-platform-wilcoec
-new file mode 100644
-index 000000000000..09552338c160
---- /dev/null
+index 09552338c160..cac2cf11835f 100644
+--- a/Documentation/ABI/testing/sysfs-platform-wilcoec
 +++ b/Documentation/ABI/testing/sysfs-platform-wilcoec
-@@ -0,0 +1,26 @@
-+What:		/sys/bus/platform/devices/GOOG000C\:00/version
+@@ -24,3 +24,24 @@ Description:
+ 		off and remain off even if activated from the off state.
+ 		External monitors connected to the system are not affected.
+ 		In addition Wireless devices are turned off.
++
++What:		/sys/bus/platform/devices/GOOG000C\:00/raw
 +Date:		January 2019
 +KernelVersion:	4.19
 +Description:
-+		Display Wilco Embedded Controller version info
++		Write and read raw mailbox commands to the EC.
 +
-+		Output will be similar to the example below:
-+		Label        : 95.00.06
-+		SVN Revision : 5960a.06
-+		Model Number : 08;8
-+		Build Date   : 11/29/18
++		For writing:
++		Bytes 0-1 indicate the message type:
++			00 F0 = Execute Legacy Command
++			00 F2 = Read/Write NVRAM Property
++		Byte 2 provides the command code
++		Bytes 3+ consist of the data passed in the request
 +
-+		Although this contains multiple pieces of data in a single sysfs
-+		attribute (inconsistent with normal sysfs conventions),
-+		this format was chosen to be consistent with the version
-+		attribute in /sys/class/chomeos/<device>/version
-+
-+What:		/sys/bus/platform/devices/GOOG000C\:00/stealth_mode
-+Date:		January 2019
-+KernelVersion:	4.19
-+Description:
-+		Turn stealth_mode on or off on EC. Stealth mode means that the
-+		various LEDs, the LCD backlight, and onboard speakers are turned
-+		off and remain off even if activated from the off state.
-+		External monitors connected to the system are not affected.
-+		In addition Wireless devices are turned off.
-diff --git a/drivers/platform/chrome/wilco_ec/Makefile b/drivers/platform/chrome/wilco_ec/Makefile
-index 03b32301dc61..7965a39e2e7a 100644
---- a/drivers/platform/chrome/wilco_ec/Makefile
-+++ b/drivers/platform/chrome/wilco_ec/Makefile
-@@ -1,4 +1,4 @@
- # SPDX-License-Identifier: GPL-2.0
++		Example:
++		// Request EC info type 3 (EC firmware build date)
++		$ echo 00 f0 38 00 03 00 > raw
++		// View the result. The decoded ASCII result "12/21/18" is
++		// included after the raw hex.
++		$ cat raw
++		00 31 32 2f 32 31 2f 31 38 00 38 00 01 00 2f 00  .12/21/18.8...
+diff --git a/drivers/platform/chrome/wilco_ec/Kconfig b/drivers/platform/chrome/wilco_ec/Kconfig
+index f8e6c9e8c5cd..0bd84c98b79b 100644
+--- a/drivers/platform/chrome/wilco_ec/Kconfig
++++ b/drivers/platform/chrome/wilco_ec/Kconfig
+@@ -21,4 +21,13 @@ config WILCO_EC
+ 	  To compile this driver as a module, choose M here: the
+ 	  module will be called wilco_ec.
  
--wilco_ec-objs				:= core.o mailbox.o
-+wilco_ec-objs				:= core.o mailbox.o sysfs.o legacy.o
- obj-$(CONFIG_WILCO_EC)			+= wilco_ec.o
-diff --git a/drivers/platform/chrome/wilco_ec/core.c b/drivers/platform/chrome/wilco_ec/core.c
-index 2d1d8d3f9a94..3193e8b2ec91 100644
---- a/drivers/platform/chrome/wilco_ec/core.c
-+++ b/drivers/platform/chrome/wilco_ec/core.c
-@@ -64,11 +64,26 @@ static int wilco_ec_probe(struct platform_device *pdev)
- 	cros_ec_lpc_mec_init(ec->io_packet->start,
- 			     ec->io_packet->start + EC_MAILBOX_DATA_SIZE);
- 
-+	/* Create sysfs attributes for userspace interaction */
-+	ret = wilco_ec_sysfs_init(ec);
-+	if (ret < 0) {
-+		dev_err(dev, "Failed to create sysfs attributes\n");
-+		goto destroy_lpc_mec;
-+	}
- 	return 0;
++config WILCO_EC_SYSFS_RAW
++	bool "Enable raw access to EC via sysfs"
++	depends on WILCO_EC
++	help
++	  If you say Y here, you get support for sending raw commands to
++	  the Wilco EC via sysfs.  These commands do not do any byte
++	  manipulation and allow for testing arbitrary commands.  This
++	  interface is intended for debug only and is disabled by default.
 +
-+destroy_lpc_mec:
-+	cros_ec_lpc_mec_destroy();
-+	return ret;
- }
- 
- static int wilco_ec_remove(struct platform_device *pdev)
- {
-+	struct wilco_ec_device *ec = platform_get_drvdata(pdev);
-+
-+	/* Remove sysfs attributes */
-+	wilco_ec_sysfs_remove(ec);
-+
- 	/* Teardown cros_ec interface */
- 	cros_ec_lpc_mec_destroy();
- 
+ endif # WILCO_EC_PLATFORM
 diff --git a/drivers/platform/chrome/wilco_ec/legacy.c b/drivers/platform/chrome/wilco_ec/legacy.c
-new file mode 100644
-index 000000000000..1fdf94d22f57
---- /dev/null
+index 1fdf94d22f57..79bac5dccb39 100644
+--- a/drivers/platform/chrome/wilco_ec/legacy.c
 +++ b/drivers/platform/chrome/wilco_ec/legacy.c
-@@ -0,0 +1,91 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Legacy (non-Chrome-specific) sysfs attributes for Wilco EC
-+ *
-+ * Copyright 2018 Google LLC
-+ */
+@@ -11,6 +11,105 @@
+ 
+ #include "legacy.h"
+ 
++#ifdef CONFIG_WILCO_EC_SYSFS_RAW
 +
-+#include <linux/ctype.h>
-+#include <linux/device.h>
-+#include <linux/platform_data/wilco-ec.h>
++/* Raw data buffer, large enough to hold extended responses */
++static size_t raw_response_size;
++static u8 raw_response_data[EC_MAILBOX_DATA_SIZE_EXTENDED];
 +
-+#include "legacy.h"
-+
-+struct ec_info {
-+	u8 index;
-+	const char *label;
-+};
-+
-+static ssize_t wilco_ec_show_info(struct wilco_ec_device *ec, char *buf,
-+				  ssize_t count, struct ec_info *info)
-+{
-+	char result[EC_INFO_SIZE];
-+	struct wilco_ec_message msg = {
-+		.type = WILCO_EC_MSG_LEGACY,
-+		.command = EC_COMMAND_EC_INFO,
-+		.request_data = &info->index,
-+		.request_size = sizeof(info->index),
-+		.response_data = result,
-+		.response_size = EC_INFO_SIZE,
-+	};
-+	int ret;
-+
-+	ret = wilco_ec_mailbox(ec, &msg);
-+	if (ret != EC_INFO_SIZE)
-+		return scnprintf(buf + count, PAGE_SIZE - count,
-+				 "%-12s : ERROR %d\n", info->label, ret);
-+
-+	return scnprintf(buf + count, PAGE_SIZE - count,
-+			 "%-12s : %s\n", info->label, result);
-+}
-+
-+ssize_t wilco_ec_version_show(struct device *dev, struct device_attribute *attr,
-+			      char *buf)
++ssize_t wilco_ec_raw_store(struct device *dev, struct device_attribute *attr,
++			   const char *buf, size_t count)
 +{
 +	struct wilco_ec_device *ec = dev_get_drvdata(dev);
-+	struct ec_info wilco_ec_info[] = {
-+		{ 0, "Label" },
-+		{ 1, "SVN Revision" },
-+		{ 2, "Model Number" },
-+		{ 3, "Build Date" },
-+		{ 0xff, NULL },
-+	};
-+	struct ec_info *info = wilco_ec_info;
-+	ssize_t c = 0;
-+
-+	for (info = wilco_ec_info; info->label; info++)
-+		c += wilco_ec_show_info(ec, buf, c, info);
-+
-+	return c;
-+}
-+
-+ssize_t wilco_ec_stealth_mode_store(struct device *dev,
-+				    struct device_attribute *attr,
-+				    const char *buf, size_t count)
-+{
-+	struct wilco_ec_device *ec = dev_get_drvdata(dev);
-+	u8 param;
-+	struct wilco_ec_message msg = {
-+		.type = WILCO_EC_MSG_LEGACY,
-+		.command = EC_COMMAND_STEALTH_MODE,
-+		.request_data = &param,
-+		.request_size = sizeof(param),
-+	};
++	struct wilco_ec_message msg;
++	u8 raw_request_data[EC_MAILBOX_DATA_SIZE];
++	int in_offset = 0;
++	int out_offset = 0;
 +	int ret;
-+	bool enable;
 +
-+	ret = kstrtobool(buf, &enable);
-+	if (ret) {
-+		dev_err(dev, "Unable to parse '%s' to bool", buf);
-+		return ret;
++	while (in_offset < count) {
++		char word_buf[EC_MAILBOX_DATA_SIZE];
++		u8 byte;
++		int start_offset = in_offset;
++		int end_offset;
++
++		/* Find the start of the byte */
++		while (buf[start_offset] && isspace(buf[start_offset]))
++			start_offset++;
++		if (!buf[start_offset])
++			break;
++
++		/* Find the start of the next byte, if any */
++		end_offset = start_offset;
++		while (buf[end_offset] && !isspace(buf[end_offset]))
++			end_offset++;
++		if (start_offset > count || end_offset > count)
++			break;
++		if (start_offset > EC_MAILBOX_DATA_SIZE ||
++		    end_offset > EC_MAILBOX_DATA_SIZE)
++			break;
++
++		/* Copy to a new NULL terminated string */
++		memcpy(word_buf, buf + start_offset, end_offset - start_offset);
++		word_buf[end_offset - start_offset] = '\0';
++
++		/* Convert from hex string */
++		ret = kstrtou8(word_buf, 16, &byte);
++		if (ret)
++			break;
++
++		/* Fill this byte into the request buffer */
++		raw_request_data[out_offset++] = byte;
++		if (out_offset >= EC_MAILBOX_DATA_SIZE)
++			break;
++
++		in_offset = end_offset;
 +	}
++	if (out_offset == 0)
++		return -EINVAL;
 +
-+	/* Invert input parameter, EC expects 0=on and 1=off */
-+	param = !enable;
++	/* Clear response data buffer */
++	memset(raw_response_data, '\0', EC_MAILBOX_DATA_SIZE_EXTENDED);
++
++	msg.type = raw_request_data[0] << 8 | raw_request_data[1];
++	msg.flags = WILCO_EC_FLAG_RAW;
++	msg.command = raw_request_data[2];
++	msg.request_data = raw_request_data + 3;
++	msg.request_size = out_offset - 3;
++	msg.response_data = raw_response_data;
++	msg.response_size = EC_MAILBOX_DATA_SIZE;
++
++	/* Telemetry commands use extended response data */
++	if (msg.type == WILCO_EC_MSG_TELEMETRY) {
++		msg.flags |= WILCO_EC_FLAG_EXTENDED_DATA;
++		msg.response_size = EC_MAILBOX_DATA_SIZE_EXTENDED;
++	}
 +
 +	ret = wilco_ec_mailbox(ec, &msg);
 +	if (ret < 0)
 +		return ret;
++	raw_response_size = ret;
++	return count;
++}
++
++ssize_t wilco_ec_raw_show(struct device *dev, struct device_attribute *attr,
++			  char *buf)
++{
++	ssize_t count = 0;
++
++	if (raw_response_size) {
++		count = hex_dump_to_buffer(raw_response_data, raw_response_size,
++					   16, 1, buf, PAGE_SIZE, true);
++
++		/* Only return response the first time it is read */
++		raw_response_size = 0;
++	}
 +
 +	return count;
 +}
++
++#endif /* CONFIG_WILCO_EC_SYSFS_RAW */
++
+ struct ec_info {
+ 	u8 index;
+ 	const char *label;
 diff --git a/drivers/platform/chrome/wilco_ec/legacy.h b/drivers/platform/chrome/wilco_ec/legacy.h
-new file mode 100644
-index 000000000000..5c857cb57fa9
---- /dev/null
+index 5c857cb57fa9..340787d25d44 100644
+--- a/drivers/platform/chrome/wilco_ec/legacy.h
 +++ b/drivers/platform/chrome/wilco_ec/legacy.h
-@@ -0,0 +1,47 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+/*
-+ * Legacy (non-Chrome-specific) sysfs attributes for Wilco EC
-+ *
-+ * Copyright 2018 Google LLC
-+ */
-+
-+#ifndef WILCO_EC_LEGACY_H
-+#define WILCO_EC_LEGACY_H
-+
-+#include <linux/device.h>
-+
-+#define EC_COMMAND_EC_INFO		0x38
-+#define EC_INFO_SIZE			9
-+#define EC_COMMAND_STEALTH_MODE		0xfc
+@@ -14,6 +14,52 @@
+ #define EC_INFO_SIZE			9
+ #define EC_COMMAND_STEALTH_MODE		0xfc
+ 
++#ifdef CONFIG_WILCO_EC_SYSFS_RAW
 +
 +/**
-+ * wilco_ec_version_show() - Display Wilco Embedded Controller version info
-+ *
-+ * Output will be similar to the example below:
-+ * Label        : 95.00.06
-+ * SVN Revision : 5960a.06
-+ * Model Number : 08;8
-+ * Build Date   : 11/29/18
-+ *
-+ * Although this contains multiple pieces of data in a single sysfs attribute
-+ * (inconsistent with normal sysfs conventions), this format was chosen to be
-+ * consistent with the version attribute in ../cros_ec_sysfs.c
-+ */
-+ssize_t wilco_ec_version_show(struct device *dev, struct device_attribute *attr,
-+			      char *buf);
-+
-+/**
-+ * wilco_ec_stealth_mode_store() - Turn stealth_mode on or off on EC
++ * wilco_ec_raw_store() - Write a raw command to EC, store result to view later
 + * @dev: Device representing the EC
 + * @attr: The attribute in question
-+ * @buf: Input buffer, should be parseable by kstrtobool(). Anything parsed to
-+ *	 True means enable stealth mode (turn off screen, etc)
++ * @buf: Input buffer, format explained below
 + * @count: Number of bytes in input buffer
++ *
++ * Bytes 0-1 indicate the message type:
++ *  00 F0 = Execute Legacy Command
++ *  00 F2 = Read/Write NVRAM Property
++ * Byte 2 provides the command code
++ * Bytes 3+ consist of the data passed in the request
++ *
++ * example: read the EC info type 3 (EC firmware build date):
++ *  # echo 00 f0 38 00 03 00 > raw
++ *
++ * After calling this function, read the result by using raw_show()
 + *
 + * Return: Number of bytes consumed from input, negative error code on failure
 + */
-+ssize_t wilco_ec_stealth_mode_store(struct device *dev,
-+				    struct device_attribute *attr,
-+				    const char *buf, size_t count);
++ssize_t wilco_ec_raw_store(struct device *dev, struct device_attribute *attr,
++			   const char *buf, size_t count);
 +
-+#endif /* WILCO_EC_LEGACY_H */
++/**
++ * wilco_ec_raw_show() - Show result from previous call to raw_store()
++ * @dev: Device representing the EC
++ * @attr: The attribute in question
++ * @buf: Output buffer to be filled
++ *
++ * Example usage:
++ *	// Call raw_store(), read EC info type 3 (EC firmware build date)
++ *	# echo 00 f0 38 00 03 00 > raw
++ *	// Call this function, view the result. The decoded ASCII result
++ *	// "12/21/18" is included after the raw hex.
++ *	# cat raw
++ *	00 31 32 2f 32 31 2f 31 38 00 38 00 01 00 2f 00  .12/21/18.8.../.
++ *
++ * Return: Number of bytes written to output, negative error code on failure
++ */
++ssize_t wilco_ec_raw_show(struct device *dev, struct device_attribute *attr,
++			  char *buf);
++
++#endif /* CONFIG_WILCO_EC_SYSFS_RAW */
++
+ /**
+  * wilco_ec_version_show() - Display Wilco Embedded Controller version info
+  *
 diff --git a/drivers/platform/chrome/wilco_ec/sysfs.c b/drivers/platform/chrome/wilco_ec/sysfs.c
-new file mode 100644
-index 000000000000..e78a3ec3506b
---- /dev/null
+index e78a3ec3506b..0611a73fcdce 100644
+--- a/drivers/platform/chrome/wilco_ec/sysfs.c
 +++ b/drivers/platform/chrome/wilco_ec/sysfs.c
-@@ -0,0 +1,66 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Sysfs attributes for Wilco Embedded Controller
-+ *
-+ * Copyright 2018 Google LLC
-+ *
-+ * The sysfs attributes appear under /sys/bus/platform/devices/GOOG000C\:00/
-+ * To actually learn what each attribute does, read the corresponding _show() or
-+ * _store() function source.
-+ */
-+
-+#include <linux/ctype.h>
-+#include <linux/platform_data/wilco-ec.h>
-+#include <linux/platform_device.h>
-+#include <linux/sysfs.h>
-+
-+#include "legacy.h"
-+
-+#define WILCO_EC_ATTR_RO(_name)						\
-+__ATTR(_name, 0444, wilco_ec_##_name##_show, NULL)
-+
-+#define WILCO_EC_ATTR_WO(_name)						\
-+__ATTR(_name, 0200, NULL, wilco_ec_##_name##_store)
-+
-+#define WILCO_EC_ATTR_RW(_name)						\
-+__ATTR(_name, 0644, wilco_ec_##_name##_show, wilco_ec_##_name##_store)
-+
-+/* Make top-level attributes, which will live inside GOOG000C:00/ */
-+static struct device_attribute version_attr = WILCO_EC_ATTR_RO(version);
-+static struct device_attribute stealth_attr = WILCO_EC_ATTR_WO(stealth_mode);
-+static struct attribute *wilco_ec_toplevel_attrs[] = {
-+	&version_attr.attr,
-+	&stealth_attr.attr,
-+	NULL
-+};
-+ATTRIBUTE_GROUPS(wilco_ec_toplevel);
-+
-+/**
-+ * wilco_ec_sysfs_init() - Initialize the sysfs directories and attributes
-+ * @dev: The device representing the EC
-+ *
-+ * Creates the sysfs directory structure and populates it with all attributes.
-+ * If there is a problem it will clean up the entire filesystem.
-+ *
-+ * Return 0 on success, -ENOMEM on failure creating directories or attibutes.
-+ */
-+int wilco_ec_sysfs_init(struct wilco_ec_device *ec)
-+{
-+	struct device *dev = ec->dev;
-+	int ret;
-+
-+	/* add the top-level attributes */
-+	ret = sysfs_create_groups(&dev->kobj, wilco_ec_toplevel_groups);
-+	if (ret)
-+		return -ENOMEM;
-+
-+	return 0;
-+}
-+
-+void wilco_ec_sysfs_remove(struct wilco_ec_device *ec)
-+{
-+	struct device *dev = ec->dev;
-+
-+	/* go upwards through the directory structure */
-+	sysfs_remove_groups(&dev->kobj, wilco_ec_toplevel_groups);
-+}
-diff --git a/include/linux/platform_data/wilco-ec.h b/include/linux/platform_data/wilco-ec.h
-index 5477b8802f81..7c6ab6de7239 100644
---- a/include/linux/platform_data/wilco-ec.h
-+++ b/include/linux/platform_data/wilco-ec.h
-@@ -135,4 +135,18 @@ struct wilco_ec_response {
-  */
- int wilco_ec_mailbox(struct wilco_ec_device *ec, struct wilco_ec_message *msg);
- 
-+/**
-+ * wilco_ec_sysfs_init() - Create sysfs attributes.
-+ * @ec: EC device.
-+ *
-+ * Return: 0 for success or negative error code on failure.
-+ */
-+int wilco_ec_sysfs_init(struct wilco_ec_device *ec);
-+
-+/**
-+ * wilco_ec_sysfs_remove() - Remove sysfs attributes.
-+ * @ec: EC device.
-+ */
-+void wilco_ec_sysfs_remove(struct wilco_ec_device *ec);
-+
- #endif /* WILCO_EC_H */
+@@ -28,9 +28,15 @@ __ATTR(_name, 0644, wilco_ec_##_name##_show, wilco_ec_##_name##_store)
+ /* Make top-level attributes, which will live inside GOOG000C:00/ */
+ static struct device_attribute version_attr = WILCO_EC_ATTR_RO(version);
+ static struct device_attribute stealth_attr = WILCO_EC_ATTR_WO(stealth_mode);
++#ifdef CONFIG_WILCO_EC_SYSFS_RAW
++static struct device_attribute raw_attr = WILCO_EC_ATTR_RW(raw);
++#endif
+ static struct attribute *wilco_ec_toplevel_attrs[] = {
+ 	&version_attr.attr,
+ 	&stealth_attr.attr,
++#ifdef CONFIG_WILCO_EC_SYSFS_RAW
++	&raw_attr.attr,
++#endif
+ 	NULL
+ };
+ ATTRIBUTE_GROUPS(wilco_ec_toplevel);
 -- 
 2.20.1.97.g81188d93c3-goog
 
