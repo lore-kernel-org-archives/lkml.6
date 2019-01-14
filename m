@@ -2,115 +2,99 @@ Return-Path: <SRS0=tq6k=PW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 342EAC43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 21:50:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A8033C43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 21:53:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0580620657
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 21:50:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6F3C320657
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 21:53:29 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=android.com header.i=@android.com header.b="IqUekfLQ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726832AbfANVup (ORCPT
+        id S1726808AbfANVx2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 14 Jan 2019 16:50:45 -0500
-Received: from gateway33.websitewelcome.com ([192.185.146.85]:13279 "EHLO
-        gateway33.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726782AbfANVun (ORCPT
+        Mon, 14 Jan 2019 16:53:28 -0500
+Received: from mail-ot1-f66.google.com ([209.85.210.66]:42843 "EHLO
+        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726618AbfANVx1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 Jan 2019 16:50:43 -0500
-Received: from cm11.websitewelcome.com (cm11.websitewelcome.com [100.42.49.5])
-        by gateway33.websitewelcome.com (Postfix) with ESMTP id 27CBD16D257
-        for <linux-kernel@vger.kernel.org>; Mon, 14 Jan 2019 15:50:42 -0600 (CST)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id jA82gccpIdnCejA82ghQgw; Mon, 14 Jan 2019 15:50:42 -0600
-X-Authority-Reason: nr=8
-Received: from [189.250.130.205] (port=52134 helo=[192.168.43.131])
-        by gator4166.hostgator.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
-        (Exim 4.91)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1gjA81-000ykJ-Nh; Mon, 14 Jan 2019 15:50:41 -0600
-Subject: Re: [PATCH] video: offb: annotate implicit fall throughs
-To:     Mathieu Malaterre <malat@debian.org>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Cc:     dri-devel@lists.freedesktop.org, linux-fbdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20190114204044.20528-1-malat@debian.org>
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Message-ID: <15854ad8-7bd5-ede7-6ce4-00122d6ba279@embeddedor.com>
-Date:   Mon, 14 Jan 2019 15:50:34 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Mon, 14 Jan 2019 16:53:27 -0500
+Received: by mail-ot1-f66.google.com with SMTP id v23so575064otk.9
+        for <linux-kernel@vger.kernel.org>; Mon, 14 Jan 2019 13:53:27 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=android.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=Q3kce2bWKDtxbTxAqm3XjUoAdIiL+VPsVQKmew7W5hY=;
+        b=IqUekfLQGzLM3++skZUsB8ff7gjAy7Q6vGoOngGw5aPFDTp2ParzJG4Z6Wc61FLiYB
+         Ppfq28sXEBeaFXj8qf442M3nh8CZu7erIGiuFKwvQYDgQZcXASFqeUJ4JEVKTkyQSekW
+         IEg9WxBGnB0vHuxT61uA7OnepXZ2JPfUBBdC3QI0md/DpEo7QNK5hDlURJWVfsTHecq3
+         BXSvbULD2SYzMEzB9h4WXtHtRgbQO3LZgYd2khYWCYNqIFiIiztc+m4v7KJnd8LCcCbL
+         viYrVei9/fJTJ8SBz+CkWzw42Vq1dZ+1xczoobfnsJihRDylNL9lX+rwmKXMNpU6E6Bx
+         vF+w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Q3kce2bWKDtxbTxAqm3XjUoAdIiL+VPsVQKmew7W5hY=;
+        b=hguIQDko27Ma7q4BaD8U68xRpnBDBRPVvK0EOw06LLTqPw90gyfuVrCqzPdqkW4FGw
+         KBYvx5DLzG3P8cnSevjC+gEzXi5RtcA/FLUzEcykNnqJ9WHIjGqHqGZQZFDaerlPUiIu
+         d199JIEQmPYhUB3mZ6nxtx+WYBVfKxUDeDubTAjkRgRdlSgUK0YkQqw9ADxHKZPja/BT
+         Z2I47/KwCV9hQhbsMiku+JylXrO4A+njf/0Jv8ZIcLbHL3YzL/3QaxtwzjpUkZxc3t5P
+         LoCj69DtJ2q5lsB/0QohCWGh1n0F/xSln+MzSO8gdDVdMKHamGr/us7yBrrI55sD+fJ8
+         gIxA==
+X-Gm-Message-State: AJcUukfSGYkd3FQAiV0hTixQ+PhqWdny/dBGeUE+qTKPf9CrHaafkvso
+        XEuEPySb+m29RmhO9WUhRqGtJws9CaXLO/EkFBpOsQ==
+X-Google-Smtp-Source: ALg8bN7MJsHEjNoqj900QZ+WmNE+zJDnzZpVLMg487Lrm6+iUgi189CT7MPcIgz3yqqt3rXsYax7ZNSshApnndm/zTQ=
+X-Received: by 2002:a9d:17c6:: with SMTP id j64mr357521otj.357.1547502806818;
+ Mon, 14 Jan 2019 13:53:26 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20190114204044.20528-1-malat@debian.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 189.250.130.205
-X-Source-L: No
-X-Exim-ID: 1gjA81-000ykJ-Nh
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: ([192.168.43.131]) [189.250.130.205]:52134
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 34
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+References: <20190114210426.177543-1-trong@android.com> <CAKwvOdkoN1myuDM1OFga+v30LQ9pV5VD9J_KCJN1Z7AY+kaXxQ@mail.gmail.com>
+In-Reply-To: <CAKwvOdkoN1myuDM1OFga+v30LQ9pV5VD9J_KCJN1Z7AY+kaXxQ@mail.gmail.com>
+From:   Tri Vo <trong@android.com>
+Date:   Mon, 14 Jan 2019 13:53:16 -0800
+Message-ID: <CANA+-vDLJAHFLZADBM_2JhRy5-OR1tsLCJRqk-7mUfFxNO8dEw@mail.gmail.com>
+Subject: Re: [PATCH 0/4] gcov: add Clang support
+To:     Nick Desaulniers <ndesaulniers@google.com>
+Cc:     oberpar@linux.ibm.com, Greg Hackmann <ghackmann@android.com>,
+        LKML <linux-kernel@vger.kernel.org>, kernel-team@android.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Mon, Jan 14, 2019 at 1:33 PM Nick Desaulniers
+<ndesaulniers@google.com> wrote:
+>
+> On Mon, Jan 14, 2019 at 1:04 PM Tri Vo <trong@android.com> wrote:
+> >
+> > This patch series adds Clang supoprt for gcov.
+> >
+> > Patch 1 refactors existing code in preparation for Clang support. Patches
+> > 2-3 implement necessary LLVM runtime hooks and gcov kernel interfaces.
+> > Patch 4 simplifies config selection.
+> >
+> > Greg Hackmann (2):
+> >   gcov: clang: move common gcc code into gcc_base.c
+> >   gcov: clang support
+> >
+> > Nick Desaulniers (1):
+> >   gcov: clang: link/unlink profiling data set.
+> >
+> > Tri Vo (1):
+> >   gcov: clang: pick GCC vs Clang format depending on compiler
+>
+> Thanks for sending Tri!  Doesn't the output format require llvm-cov, or no?
 
+Yes, .gcda files generated by a Clang-built kernel could only be
+parsed by llvm-cov, but not gcc gcov (at least in my local tests).
 
-On 1/14/19 2:40 PM, Mathieu Malaterre wrote:
-> There is a plan to build the kernel with -Wimplicit-fallthrough and
-> these places in the code produced warnings (W=1). Fix them up.
-> 
-> This commit remove the following warnings:
-> 
->    drivers/video/fbdev/offb.c:211:5: warning: this statement may fall through [-Wimplicit-fallthrough=]
->    drivers/video/fbdev/offb.c:142:3: warning: this statement may fall through [-Wimplicit-fallthrough=]
-> 
-> Signed-off-by: Mathieu Malaterre <malat@debian.org>
-
-Acked-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
-
-Thanks
---
-Gustavo
-
-> ---
->   drivers/video/fbdev/offb.c | 2 ++
->   1 file changed, 2 insertions(+)
-> 
-> diff --git a/drivers/video/fbdev/offb.c b/drivers/video/fbdev/offb.c
-> index 31f769d67195..e0f0c5351306 100644
-> --- a/drivers/video/fbdev/offb.c
-> +++ b/drivers/video/fbdev/offb.c
-> @@ -141,6 +141,7 @@ static int offb_setcolreg(u_int regno, u_int red, u_int green, u_int blue,
->   		/* Clear PALETTE_ACCESS_CNTL in DAC_CNTL */
->   		out_le32(par->cmap_adr + 0x58,
->   			 in_le32(par->cmap_adr + 0x58) & ~0x20);
-> +		/* fall through */
->   	case cmap_r128:
->   		/* Set palette index & data */
->   		out_8(par->cmap_adr + 0xb0, regno);
-> @@ -210,6 +211,7 @@ static int offb_blank(int blank, struct fb_info *info)
->   				/* Clear PALETTE_ACCESS_CNTL in DAC_CNTL */
->   				out_le32(par->cmap_adr + 0x58,
->   					 in_le32(par->cmap_adr + 0x58) & ~0x20);
-> +				/* fall through */
->   			case cmap_r128:
->   				/* Set palette index & data */
->   				out_8(par->cmap_adr + 0xb0, i);
-> 
+llvm-cov documentation also indicates that GCC and LLVM gcov tools are
+not necessarily compatible. "[llvm-cov] is compatible with the gcov
+tool from version 4.2 of GCC and may also be compatible with some
+later versions of gcov."
+https://llvm.org/docs/CommandGuide/llvm-cov.html
