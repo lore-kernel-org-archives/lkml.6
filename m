@@ -2,78 +2,78 @@ Return-Path: <SRS0=tq6k=PW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1FD0AC43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 20:01:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 44974C43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 20:02:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E201B206B7
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 20:01:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0E58A2086D
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 20:02:32 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AilkFF74"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mkqANXQf"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726942AbfANUBc (ORCPT
+        id S1726954AbfANUCa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 14 Jan 2019 15:01:32 -0500
-Received: from mail-it1-f196.google.com ([209.85.166.196]:51363 "EHLO
-        mail-it1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726728AbfANUBa (ORCPT
+        Mon, 14 Jan 2019 15:02:30 -0500
+Received: from mail-io1-f67.google.com ([209.85.166.67]:38175 "EHLO
+        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726757AbfANUC3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 Jan 2019 15:01:30 -0500
-Received: by mail-it1-f196.google.com with SMTP id w18so1463214ite.1;
-        Mon, 14 Jan 2019 12:01:29 -0800 (PST)
+        Mon, 14 Jan 2019 15:02:29 -0500
+Received: by mail-io1-f67.google.com with SMTP id l14so231127ioj.5;
+        Mon, 14 Jan 2019 12:02:28 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=subject:to:cc:references:from:message-id:date:user-agent
          :mime-version:in-reply-to:content-transfer-encoding:content-language;
-        bh=gXVANtXOLUDqPrgfHVs++49MbsP87dwStc1KS983FQ0=;
-        b=AilkFF746oWeF63YYXnBm4DjH6p9x6QtREBs3eXXG+NvSE4eTTqAEypPzPobaoQbDl
-         1M24pgTma8dYXPPLCNgsX5VRywY4SjfROzOub4wpGPSFyzw7V6PJdNJcMsUncT0hdAel
-         dqT89PewzmRmKGO/HoGJj2zWSn9obwj5+sxR6A1x3Aac3lOs9lkGflH3Xa3u2CBiEao2
-         JFXrlhhV2ASDjyx2wZWBdp+8yo+A09xkhmEqcH/rLHp9uwIhYfhWVNR60ALWuzIYRjk4
-         n6nMw/ABbJ/9E9x2WTh6qVil0Y1wtxaxx71edNfrdtfSgfMOI73QNv0yZIZOG1esJMeT
-         qDOA==
+        bh=2tW3xQg3wEt6J9y6OQD5MFGQ2I+uBPmHE80PtVYWtXY=;
+        b=mkqANXQfcvP+3TaydkmNkP/TfeeVyAy5ZYQqsd/e08cItH1Xtli2ChokW0lQYCqBbf
+         F2ljiAjjwqQyQ8HAyopNbWLBZBTLmSaVolyJYM83eoCCq63i1ODKT31qYWE2w0JXTAMC
+         ZC2ALB7N6u4du8FgL7OE2Rvm3A2o+EMQVQjlzd6RPT/DkrMsN96v2R4yVIE8W2Tryb05
+         kTQEOAYxPBd5PP5RJH3p6dG798V+XFToK6ch1U8H1QNZ3L4Qq23BsGIGiG0LWVzQfgEE
+         EshwpAxS+bVmzrCGFEpry5PHm3LiBAjwskSbYbrj3R6dux4avRx7P1BO3vRF380ZrtQv
+         dITw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:cc:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-transfer-encoding
          :content-language;
-        bh=gXVANtXOLUDqPrgfHVs++49MbsP87dwStc1KS983FQ0=;
-        b=dijFAQHK3qj/faw/5rAW18O57uQ39jR55990v2ociMQnuik73wGNtu9gmMhbGmaTFr
-         ymbi54WEcAL0vsHB87kOdEySwQtVf7/efVg2SzsBXzLtN22ljAjQuCMDeZ3rPsyZ+8HV
-         4AXsLjMaQBUP8nGlITSOlpIhm88CT8C/jTFPC3TJXAWAq9u3TQHEXbIi8f/HsQvRsuk9
-         GBvWAoRPbUrPsj0XmJnKcrd/v3jEndgi6BKW6LIEPQSOsPhIx4BIH0B8f0j9+X4d9ovw
-         HvDnWYRcZcaJgqj0aCbRXYfSfyxb9IZ/D9RCbpYKYMI2GeglPDZURLo4PeVtVokJoPFS
-         Pv7g==
-X-Gm-Message-State: AJcUukcM9pL/F+RLJXBYosEZWKNdEnO5WKAbooAZNFjMuoqcEWIvZwyD
-        K34uOUS/ukG2QMyHkDUoIyw=
-X-Google-Smtp-Source: ALg8bN7GoY6YiLXrsDbiyE4qihvcBYAsGde+BLp0WekNtnQEv3a80DLbskSw+mePgEVawZ4nXR0pJQ==
-X-Received: by 2002:a24:c584:: with SMTP id f126mr581663itg.162.1547496088988;
-        Mon, 14 Jan 2019 12:01:28 -0800 (PST)
+        bh=2tW3xQg3wEt6J9y6OQD5MFGQ2I+uBPmHE80PtVYWtXY=;
+        b=iBFWFRemLzFmeqO4y0J+pJbTloEMXhIO7aWhDrQusKB2IhQFaaUbu/SIPdB8qma+KI
+         EHJu23Kuh6QhWcZzlQCqEn45q8FX0SNYl2Kb0WzGZYDp6e/O9zHZC2hUn1C2/i0ccISn
+         oltFo13PUE/P/QQoS9bbeN4leFdVc6OrjJLqxD5L9cv/Y48OoiEjrQOCbN+EMEtrZh73
+         BI7ub7/x6DRTSOIuzHT9zBVYGTYAL+N12sDWj0yrLHbYuxbrk0Q/+yeAnR14zG+ThlB6
+         fWgv8+I3AVKh5fuc7h/H3D1QAdYBBb9CiaoT1ivzvLniAzMOjsSxazI4K8iG2agLvLN6
+         tooA==
+X-Gm-Message-State: AJcUukeNJ5EJlPP98U8Bv3L1jk2CP7iKaMYz1px0Z2c30dpyNRUBaXVY
+        7oGy3ZRBaWcoIijJoHNuwgjXXtpkdhw=
+X-Google-Smtp-Source: ALg8bN47qoSib7Uh56ActNPNVZD9oFZX1vHIuNPtoNtXwoHikYVIDlb/QDBLYKleA7GGbpsm/M8YPw==
+X-Received: by 2002:a6b:ca04:: with SMTP id a4mr110303iog.254.1547496148295;
+        Mon, 14 Jan 2019 12:02:28 -0800 (PST)
 Received: from [192.168.1.133] ([67.218.223.154])
-        by smtp.gmail.com with ESMTPSA id v202sm713405ita.13.2019.01.14.12.01.26
+        by smtp.gmail.com with ESMTPSA id x6sm562276iol.19.2019.01.14.12.02.26
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 14 Jan 2019 12:01:27 -0800 (PST)
+        Mon, 14 Jan 2019 12:02:27 -0800 (PST)
 Subject: Re: [PATCH v2 1/2] iio: chemical: bme680: Add device-tree support
-To:     Himanshu Jha <himanshujha199640@gmail.com>
+To:     Jonathan Cameron <jic23@kernel.org>
 Cc:     linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-iio@vger.kernel.org, mark.rutland@arm.com,
-        robh+dt@kernel.org, pmeerw@pmeerw.net, lars@metafoo.de,
-        knaack.h@gmx.de, jic23@kernel.org
+        linux-iio@vger.kernel.org, himanshujha199640@gmail.com,
+        mark.rutland@arm.com, robh+dt@kernel.org, pmeerw@pmeerw.net,
+        lars@metafoo.de, knaack.h@gmx.de
 References: <20190111205359.14158-1-sebastien.bourdelin@gmail.com>
- <20190112094226.GA910@himanshu-Vostro-3559>
+ <20190112182221.4765d287@archlinux>
 From:   sebastien bourdelin <sebastien.bourdelin@gmail.com>
-Message-ID: <2522efda-2762-01a6-7597-38c086779b74@gmail.com>
-Date:   Mon, 14 Jan 2019 15:00:41 -0500
+Message-ID: <44dd6866-07fa-83cb-19d8-e35a5aa989a0@gmail.com>
+Date:   Mon, 14 Jan 2019 15:01:41 -0500
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.3.3
 MIME-Version: 1.0
-In-Reply-To: <20190112094226.GA910@himanshu-Vostro-3559>
+In-Reply-To: <20190112182221.4765d287@archlinux>
 Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -82,100 +82,87 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 Hi,
 
-On 1/12/19 4:42 AM, Himanshu Jha wrote:
-> On Fri, Jan 11, 2019 at 03:53:58PM -0500, Sebastien Bourdelin wrote:
+On 1/12/19 1:22 PM, Jonathan Cameron wrote:
+> On Fri, 11 Jan 2019 15:53:58 -0500
+> Sebastien Bourdelin <sebastien.bourdelin@gmail.com> wrote:
+>
 >> This commit allow the driver to work with device-tree.
 >>
 >> Signed-off-by: Sebastien Bourdelin <sebastien.bourdelin@gmail.com>
+> Minor stuff inline.
+>
+> J
 >> ---
-> I get the following compilation failure:
+>> v1 -> v2:
+>>    - add missing of.h header in bme680_spi.c
+>> ---
+>>   drivers/iio/chemical/bme680_i2c.c | 7 +++++++
+>>   drivers/iio/chemical/bme680_spi.c | 9 +++++++++
+>>   2 files changed, 16 insertions(+)
+>>
+>> diff --git a/drivers/iio/chemical/bme680_i2c.c b/drivers/iio/chemical/bme680_i2c.c
+>> index 06d4be539d2e..94a36ebdf0b2 100644
+>> --- a/drivers/iio/chemical/bme680_i2c.c
+>> +++ b/drivers/iio/chemical/bme680_i2c.c
+>> @@ -70,10 +70,17 @@ static const struct acpi_device_id bme680_acpi_match[] = {
+>>   };
+>>   MODULE_DEVICE_TABLE(acpi, bme680_acpi_match);
+>>   
+>> +static const struct of_device_id bme680_of_i2c_match[] = {
+>> +	{ .compatible = "bosch,bme680", },
+>> +	{},
+>> +}
+>> +MODULE_DEVICE_TABLE(of, bme680_of_i2c_match);
+>> +
+>>   static struct i2c_driver bme680_i2c_driver = {
+>>   	.driver = {
+>>   		.name			= "bme680_i2c",
+>>   		.acpi_match_table       = ACPI_PTR(bme680_acpi_match),
+>> +		.of_match_table		= of_match_ptr(bme680_of_i2c_match),
+> As below. just = bme680...
+Got it, thanks!
 >
-> Below I have `allyesconfig` except 'BME680' configure as [M]
-> in case you wish to reproduce.
+>>   	},
+>>   	.probe = bme680_i2c_probe,
+>>   	.id_table = bme680_i2c_id,
+>> diff --git a/drivers/iio/chemical/bme680_spi.c b/drivers/iio/chemical/bme680_spi.c
+>> index c9fb05e8d0b9..caa57287a911 100644
+>> --- a/drivers/iio/chemical/bme680_spi.c
+>> +++ b/drivers/iio/chemical/bme680_spi.c
+>> @@ -6,9 +6,11 @@
+>>    */
+>>   #include <linux/acpi.h>
+>>   #include <linux/module.h>
+>> +#include <linux/of.h>
+>>   #include <linux/regmap.h>
+>>   #include <linux/spi/spi.h>
+>>   
+>> +
+> This white space change should not be here.
+My bad.
+>>   #include "bme680.h"
+>>   
+>>   static int bme680_regmap_spi_write(void *context, const void *data,
+>> @@ -110,10 +112,17 @@ static const struct acpi_device_id bme680_acpi_match[] = {
+>>   };
+>>   MODULE_DEVICE_TABLE(acpi, bme680_acpi_match);
+>>   
+>> +static const struct of_device_id bme680_of_spi_match[] = {
+>> +	{ .compatible = "bosch,bme680", },
+>> +	{},
+>> +}
+>> +MODULE_DEVICE_TABLE(of, bme680_of_spi_match);
+>> +
+>>   static struct spi_driver bme680_spi_driver = {
+>>   	.driver = {
+>>   		.name			= "bme680_spi",
+>>   		.acpi_match_table	= ACPI_PTR(bme680_acpi_match),
+>> +		.of_match_table		= of_match_ptr(bme680_of_spi_match),
+> Please don't use of_match_ptr.  We actually want this entry to be there even
+> if devicetree is not in use.  This is because there is a magic ACPI hid
+> that can use this table even from ACPI.
 >
-> himanshu@himanshu-Vostro-3559:~/linux-next$ grep -i -w 'CONFIG_BME680\|CONFIG_ACPI\|CONFIG_OF' .config
-> CONFIG_ACPI=y
-> CONFIG_OF=y
-> CONFIG_BME680=m
-> himanshu@himanshu-Vostro-3559:~/linux-next$ sudo make drivers/iio/chemical/bme680_spi.o
-> make[1]: Nothing to be done for 'all'.
->    CALL    scripts/checksyscalls.sh
->    DESCEND  objtool
->    CC [M]  drivers/iio/chemical/bme680_spi.o
-> In file included from ./include/linux/acpi.h:41:0,
->                   from drivers/iio/chemical/bme680_spi.c:7:
-> ./include/linux/module.h:213:1: error: expected ‘,’ or ‘;’ before ‘extern’
->   extern typeof(name) __mod_##type##__##name##_device_table  \
->   ^
-> drivers/iio/chemical/bme680_spi.c:119:1: note: in expansion of macro ‘MODULE_DEVICE_TABLE’
->   MODULE_DEVICE_TABLE(of, bme680_of_spi_match);
->   ^~~~~~~~~~~~~~~~~~~
-> scripts/Makefile.build:291: recipe for target 'drivers/iio/chemical/bme680_spi.o' failed
-> make[1]: *** [drivers/iio/chemical/bme680_spi.o] Error 1
-> Makefile:1741: recipe for target 'drivers/iio/chemical/bme680_spi.o' failed
-> make: *** [drivers/iio/chemical/bme680_spi.o] Error 2
-Thanks for the test, this is bad, i will fix that!
-> BUT if:
->
-> himanshu@himanshu-Vostro-3559:~/linux-next$ make allyesconfig
-> scripts/kconfig/conf  --allyesconfig Kconfig
-> #
-> # configuration written to .config
-> #
->
-> himanshu@himanshu-Vostro-3559:~/linux-next$ sudo make drivers/iio/chemical/bme680_spi.o
-> scripts/kconfig/conf  --syncconfig Kconfig
-> make[1]: Nothing to be done for 'all'.
->    HOSTCC  scripts/dtc/dtc.o
->    HOSTCC  scripts/dtc/flattree.o
->    HOSTCC  scripts/dtc/fstree.o
->    HOSTCC  scripts/dtc/data.o
->    HOSTCC  scripts/dtc/livetree.o
->    HOSTCC  scripts/dtc/treesource.o
->    HOSTCC  scripts/dtc/srcpos.o
->    HOSTCC  scripts/dtc/checks.o
->    HOSTCC  scripts/dtc/util.o
->    LEX     scripts/dtc/dtc-lexer.lex.c
->    YACC    scripts/dtc/dtc-parser.tab.h
->    HOSTCC  scripts/dtc/dtc-lexer.lex.o
->    YACC    scripts/dtc/dtc-parser.tab.c
->    HOSTCC  scripts/dtc/dtc-parser.tab.o
->    HOSTLD  scripts/dtc/dtc
->    CC      scripts/mod/empty.o
->    MKELF   scripts/mod/elfconfig.h
->    HOSTCC  scripts/mod/modpost.o
->    CC      scripts/mod/devicetable-offsets.s
->    HOSTCC  scripts/mod/file2alias.o
->    HOSTCC  scripts/mod/sumversion.o
->    HOSTLD  scripts/mod/modpost
->    CC      kernel/bounds.s
->    CC      arch/x86/kernel/asm-offsets.s
->    CALL    scripts/checksyscalls.sh
->    DESCEND  objtool
->    CC      drivers/iio/chemical/bme680_spi.o
->
-> Compiles without any issues.
-Hum, weird it compiles actually :s
-> Also, wondering when is 0x77 i2c address used, since I tested
-> this on 3 different boards with 0x76(when SDO is connected to GND)
->
-> And why do I connect SDO to ground everytime ?
-> It is because if SDO pin is left floating then I2C address will be
-> undefined as said in datasheet + I have observed this while testing.
-
-Ah, thanks for the reminder, actually i have only tested with a floating
-
-SDO, but i will probably use the GND instead even if i didn't had any
-
-problem right now.
-
-> Actallly, I don't understand what "VDIDO" is, as explained in the
-> datasheet.
->
->
-> Anyway, if the above compilation issue is not a problem, then
->
-> 	Acked-by: Himanshu Jha <himanshujha199640@gmail.com>
->
->
-> Thanks
+Sure.
+>>   	},
+>>   	.probe = bme680_spi_probe,
+>>   	.id_table = bme680_spi_id,
