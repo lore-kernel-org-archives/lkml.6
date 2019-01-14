@@ -6,63 +6,63 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 32888C43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 20:35:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C2F4C43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 20:36:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F221A20659
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 20:35:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DBABB20659
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 20:36:15 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="H2BoAnZt"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kyhnRqds"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727036AbfANUfS (ORCPT
+        id S1727049AbfANUgO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 14 Jan 2019 15:35:18 -0500
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:44569 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726755AbfANUfQ (ORCPT
+        Mon, 14 Jan 2019 15:36:14 -0500
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:39530 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726755AbfANUgN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 Jan 2019 15:35:16 -0500
-Received: by mail-wr1-f65.google.com with SMTP id z5so395844wrt.11
-        for <linux-kernel@vger.kernel.org>; Mon, 14 Jan 2019 12:35:15 -0800 (PST)
+        Mon, 14 Jan 2019 15:36:13 -0500
+Received: by mail-wm1-f65.google.com with SMTP id y8so986747wmi.4
+        for <linux-kernel@vger.kernel.org>; Mon, 14 Jan 2019 12:36:12 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=sender:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=6aH85HXvGaBst6AsfmYEtc1Lgu3C/G7wpGvW82yl+3Y=;
-        b=H2BoAnZt2R0LlPoCUmzpLYx3NE+Kh7mZC1qZTWmPXxzk42xeuNLJ4QfFQw4MD863o7
-         fRGpEVoTTY5acp5C/JdYamFheEzHw7YH5zCxU1VrBDbJmilq3apx5gOywqXabXluo+aE
-         5A9kTZn0fhYti2QgCKYdbXTGJ4NcFq1q/eIdHUggaXAexQfSV/WPAxrpPI5PKXquzVzG
-         gVlPrEaJEZHElA8TWjqG69YEFIW3xUvbq9Jy5o+NuU7glBRYFL+2CjweMNwMaZZ65xyg
-         2EORvdX1ATp+r+DXSvLXhTCEDeJCfFwZoYAdsZj1A8zn7N+81+0qs7j7E22UFKmASF6h
-         YezA==
+        bh=lM5Pix3S8G5P2q0Akf04Mk8gPJNdqS9j0ZGAX4eS2jA=;
+        b=kyhnRqdsoP7n7kNDrSsHrLGFP68L9hUA09Kp4FTWpHsTcG8HSWk2QxDceXIiKooauB
+         BQgHmUKVdRT9ELsxIrEaMoXo1uc8QRTTpjo0pR1f+PE4jpJhFz+b/Jf8TuYsRCq/9eHC
+         32qkuOVIEnX1Dl1uh826p4O7IVIYnJrjUd3wgPSDS8CE4KrR/mfrMFewqkk0TAemI5/U
+         o2FjowRS1GA7tuy5U7IFztXwZm1CyOBpeaMJVIleEy0mRbcVaqFXrs3TPE9Ow3Jilyid
+         +BCNT+O+8kZg6pGWrFmhP8PxqwXYdUAvJDDHGqf7oRPCXSZsGlNvYUw1AkTVdNaVVqh1
+         eLiA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:sender:from:to:cc:subject:date:message-id
          :mime-version:content-transfer-encoding;
-        bh=6aH85HXvGaBst6AsfmYEtc1Lgu3C/G7wpGvW82yl+3Y=;
-        b=cKto8PaFJrl/ETxi//m9Qz1wmq/Z4ivOmgqiMAA07/h5RwIH35iwYQH7bibN86/rL0
-         ZSv0ijBXQvNO8J4BM1TmYXDoN+gtMYt10eo4nWKBYcLHc9QlTpd4MSqwhx26vc8AQAY2
-         kiIFYCpJ530tFOPNLidGu9sr4WjvW0npIz//65JNxoQgcTnUIr1HET4RMiCXer2snQNR
-         ixea/gkWevXLKhE8JECcsS1+5KKyo1FBD5sTpxb5sUkH3/tX5N1R6EUS6SpKOB4SX/Ty
-         ZHbiJTfom5Hhe7iAYksmpdyKyDP1w9h7hTwpA/N48LhkIeGXm4QKGR32oAbFbrn4h6fH
-         zysQ==
-X-Gm-Message-State: AJcUukcsDl5tEXJshgyGJnkXx7o0ETBdJ0a73LKPFyGlw37SPAkzOqTT
-        dX82hQTOZGkUhhEpmJfAb3w=
-X-Google-Smtp-Source: ALg8bN5+su0WA6sjhe0bxHHDZDtljUE8nZTMN7tcm9hxGuqbKQSIavGZGBDKsLZfctsZiQrXeoF21Q==
-X-Received: by 2002:adf:fc89:: with SMTP id g9mr219882wrr.96.1547498114804;
-        Mon, 14 Jan 2019 12:35:14 -0800 (PST)
+        bh=lM5Pix3S8G5P2q0Akf04Mk8gPJNdqS9j0ZGAX4eS2jA=;
+        b=S5dz4KLOdH8EXiUVh6MRiVhNkNyU6AOz9Az1KjFM0nWLIRbKvEKPxf5i7hM35lb0u7
+         GgoCRcXC3tQzGL99+2zFipFaBzCcApFOqeI87OPsbId53uwgRkPA36KnPKFC9/yeww48
+         fW9xvItUZa4bZpjVtdKGDaNZof7mUMQQbTGchHTeI9B00awcNAXiacGzV3YvPoQQAgHb
+         tGdwAflV7tWaCuEbR0Gg8kP7X5z5MGV1hNPW3XGVx+FAQxiglWqm5Auio9j/yij13RVL
+         sZEE7PQxSN5MtGofaQ4Re4z/P/piElApZKFZ9J/q37jJ+cT7bFbwgHFojoSKE8mKFJ3F
+         WHWw==
+X-Gm-Message-State: AJcUukf3vNw5F5F20FMBQCAX6F+ZLp2Bj/0nZpqxmE9Koz189fi4z1ZJ
+        UIPoO58zY9PlBtz/yafv0s4=
+X-Google-Smtp-Source: ALg8bN4NJA9vc5+lZHDr8HlVxAy72Ejypyr4KBbIimThc2mKOLjRSTb5/q5X1qJNBjIL47Pi/fVZSQ==
+X-Received: by 2002:a1c:d14d:: with SMTP id i74mr648570wmg.100.1547498172039;
+        Mon, 14 Jan 2019 12:36:12 -0800 (PST)
 Received: from macbookpro.malat.net (bru31-1-78-225-224-134.fbx.proxad.net. [78.225.224.134])
-        by smtp.gmail.com with ESMTPSA id c10sm66016268wrw.49.2019.01.14.12.35.13
+        by smtp.gmail.com with ESMTPSA id 3sm32993075wmw.46.2019.01.14.12.36.11
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 14 Jan 2019 12:35:14 -0800 (PST)
+        Mon, 14 Jan 2019 12:36:11 -0800 (PST)
 Received: by macbookpro.malat.net (Postfix, from userid 1000)
-        id 185B111422AD; Mon, 14 Jan 2019 21:35:13 +0100 (CET)
+        id 7BD3711422AD; Mon, 14 Jan 2019 21:36:10 +0100 (CET)
 From:   Mathieu Malaterre <malat@debian.org>
-To:     "Eric W. Biederman" <ebiederm@xmission.com>
+To:     Andrew Morton <akpm@linux-foundation.org>
 Cc:     Mathieu Malaterre <malat@debian.org>, linux-kernel@vger.kernel.org
-Subject: [PATCH] signal: annotate implicit fall through
-Date:   Mon, 14 Jan 2019 21:35:04 +0100
-Message-Id: <20190114203505.17875-1-malat@debian.org>
+Subject: [PATCH] ipc: annotate implicit fall through
+Date:   Mon, 14 Jan 2019 21:36:08 +0100
+Message-Id: <20190114203608.18218-1-malat@debian.org>
 X-Mailer: git-send-email 2.19.2
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -76,25 +76,25 @@ this place in the code produced a warning (W=1).
 
 This commit remove the following warning:
 
-  kernel/signal.c:795:13: warning: this statement may fall through [-Wimplicit-fallthrough=]
+  ipc/sem.c:1683:6: warning: this statement may fall through [-Wimplicit-fallthrough=]
 
 Signed-off-by: Mathieu Malaterre <malat@debian.org>
 ---
- kernel/signal.c | 1 +
+ ipc/sem.c | 1 +
  1 file changed, 1 insertion(+)
 
-diff --git a/kernel/signal.c b/kernel/signal.c
-index e1d7ad8e6ab1..aa7a507757d7 100644
---- a/kernel/signal.c
-+++ b/kernel/signal.c
-@@ -794,6 +794,7 @@ static int check_kill_permission(int sig, struct kernel_siginfo *info,
- 			 */
- 			if (!sid || sid == task_session(current))
- 				break;
-+			/* fall through */
- 		default:
- 			return -EPERM;
- 		}
+diff --git a/ipc/sem.c b/ipc/sem.c
+index 745dc6187e84..0307012ab343 100644
+--- a/ipc/sem.c
++++ b/ipc/sem.c
+@@ -1682,6 +1682,7 @@ long ksys_semctl(int semid, int semnum, int cmd, unsigned long arg)
+ 	case IPC_SET:
+ 		if (copy_semid_from_user(&semid64, p, version))
+ 			return -EFAULT;
++		/* fall through */
+ 	case IPC_RMID:
+ 		return semctl_down(ns, semid, cmd, &semid64);
+ 	default:
 -- 
 2.19.2
 
