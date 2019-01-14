@@ -2,152 +2,282 @@ Return-Path: <SRS0=tq6k=PW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+X-Spam-Status: No, score=-8.0 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,UPPERCASE_50_75,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 44F37C43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 16:37:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 82A8AC43444
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 16:37:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0DE2C206B7
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 16:37:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3E567206B7
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 16:37:17 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="YGUVocul"
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="ZoHI6luI";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="iAkowg/A"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726949AbfANQhL (ORCPT
+        id S1726967AbfANQhQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 14 Jan 2019 11:37:11 -0500
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:38748 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726732AbfANQhJ (ORCPT
+        Mon, 14 Jan 2019 11:37:16 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:45934 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726732AbfANQhP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 Jan 2019 11:37:09 -0500
-Received: by mail-wm1-f68.google.com with SMTP id m22so207256wml.3
-        for <linux-kernel@vger.kernel.org>; Mon, 14 Jan 2019 08:37:07 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :in-reply-to:references;
-        bh=l9DFr+fvRp4XNuqC48f1qHOGOAXrzlsaBjEr2TKjUhQ=;
-        b=YGUVoculVhQysuFRCsbNQIiuVYcvjY66Xe4LX7+xPF4IZ0rwm+fSRC1vVJOXzj2Uvb
-         f+U8eciraYxPS23uQq3cV+ESE8UN/YkgMGzPPe2JLu+IVaU3VADFmzv8VnRv2LsO3G52
-         JdjSynt3qW7rv7JphYeUlgzo3OwuufWD8DXdc=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:in-reply-to:references;
-        bh=l9DFr+fvRp4XNuqC48f1qHOGOAXrzlsaBjEr2TKjUhQ=;
-        b=k6lTC/RHTqkVbnS67KFTrOV7Dlt64528dmsUV7/fsERX8BuONVJN/VtfsGqtSOm1jU
-         8UI1G6OjShwr+A5iCwqYGEFJsegP/+4iYdnhjJHSuRHtPU5BRlj7ypsEiTFgb0MCBj7v
-         WZY65H0EcB3JbVB5Pu5jWCgQy4bLtVr2EBc+/Lz+9jMRPRZvgMsegAAqJ+aMUkoRUAKI
-         EVmEMcojb3huJI8r0s+HFMR8t/tZAb1YUgggAX8+MO37Fw5FoAPnDtxGtDMZofJnXWvm
-         rAvQdR1oJYy/DTY8Nxwqwsi/TuiiWJ5YL06bnswrQ/Qzw0Sq6Rgmwg6PuJfnfflnPRt9
-         S++Q==
-X-Gm-Message-State: AJcUukekC5Tw8CwqrBOxUeo+yZbpjR63CI0ajHUKxWdAsgLUHVo1qrWH
-        wkgJ0Tydzhq6W3X1nJXWWWGtt9as1AI4iA==
-X-Google-Smtp-Source: ALg8bN4Y9ioFVy8dEaarjhl4GkipP/ZCwRKGycgXeMtMxW5pnAtZ+oaYeaJD+QHvp59iNKq8X3kuGw==
-X-Received: by 2002:a1c:400b:: with SMTP id n11mr12940185wma.85.1547483826284;
-        Mon, 14 Jan 2019 08:37:06 -0800 (PST)
-Received: from localhost ([49.248.190.171])
-        by smtp.gmail.com with ESMTPSA id h16sm152392640wrb.62.2019.01.14.08.37.04
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 14 Jan 2019 08:37:05 -0800 (PST)
-From:   Amit Kucheria <amit.kucheria@linaro.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     linux-arm-msm@vger.kernel.org, viresh.kumar@linaro.org,
-        edubezval@gmail.com, swboyd@chromium.org, dianders@chromium.org,
-        mka@chromium.org, "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        linux-pm@vger.kernel.org
-Subject: [PATCH v1 03/10] cpufreq: Replace open-coded << with BIT()
-Date:   Mon, 14 Jan 2019 22:04:55 +0530
-Message-Id: <e1984eedda04ca44a44b4972708855702f5d91e4.1547481320.git.amit.kucheria@linaro.org>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <cover.1547481320.git.amit.kucheria@linaro.org>
-References: <cover.1547481320.git.amit.kucheria@linaro.org>
-In-Reply-To: <cover.1547481320.git.amit.kucheria@linaro.org>
-References: <cover.1547481320.git.amit.kucheria@linaro.org>
+        Mon, 14 Jan 2019 11:37:15 -0500
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 9430C609E2; Mon, 14 Jan 2019 16:37:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1547483833;
+        bh=T22JrNSaCbhJ2yWwEdhRWWnOlPYOqgVpIH8tbnHhV2k=;
+        h=From:To:Cc:Subject:Date:From;
+        b=ZoHI6luIrpsqS8xia8PSRBYHBh62TJJkuzYBbmuSGWR0befek4tXqMXtiIu3VcUun
+         nOd65KTSucFLM44IL8BgjSF+6cEIXUNcyU32sQv0fcRszHUobvjofdx4anHndVVPc9
+         4+HUmdJoT5jUEdqrHz2m55clzDPuh2fbNQHjl1qc=
+Received: from jhugo-perf-lnx.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: jhugo@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 896F06086B;
+        Mon, 14 Jan 2019 16:37:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1547483830;
+        bh=T22JrNSaCbhJ2yWwEdhRWWnOlPYOqgVpIH8tbnHhV2k=;
+        h=From:To:Cc:Subject:Date:From;
+        b=iAkowg/A9hTJnVgAUzPDEvGwylDetxv5PIGxiBnTzrmQseC4bxKjUwh397QcWpNiM
+         hhauiBHmZinXaFaWqYZf4FrwL+jJE9S/TYoOConw0Ci82840dUtTd69jvlZuyEQ917
+         Ia6ilsVDnd9tqFQSYJXv5Gr0xBTKItLdjrlHqP4s=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 896F06086B
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=jhugo@codeaurora.org
+From:   Jeffrey Hugo <jhugo@codeaurora.org>
+To:     kishon@ti.com
+Cc:     bjorn.andersson@linaro.org, andy.gross@linaro.org,
+        david.brown@linaro.org, linux-arm-msm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, robh+dt@kernel.org,
+        mark.rutland@arm.com, devicetree@vger.kernel.org,
+        gregkh@linuxfoundation.org, balbi@kernel.org,
+        linux-usb@vger.kernel.org, Jeffrey Hugo <jhugo@codeaurora.org>
+Subject: [PATCH v2 4/6] phy: qcom-qmp: Add QMP V3 USB3 PHY support for msm8998
+Date:   Mon, 14 Jan 2019 09:36:59 -0700
+Message-Id: <1547483819-5445-1-git-send-email-jhugo@codeaurora.org>
+X-Mailer: git-send-email 1.9.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Minor clean-up to use BIT() and keep checkpatch happy. Clean up the
-comment formatting while we're at it to make it easier to read.
+MSM8998 contains a single QMP v3 USB3 phy similar to the existing sdm845
+support.
 
-Signed-off-by: Amit Kucheria <amit.kucheria@linaro.org>
+Signed-off-by: Jeffrey Hugo <jhugo@codeaurora.org>
 ---
- include/linux/cpufreq.h | 27 ++++++++++++++-------------
- 1 file changed, 14 insertions(+), 13 deletions(-)
+ drivers/phy/qualcomm/phy-qcom-qmp.c | 140 ++++++++++++++++++++++++++++++++++++
+ drivers/phy/qualcomm/phy-qcom-qmp.h |   4 ++
+ 2 files changed, 144 insertions(+)
 
-diff --git a/include/linux/cpufreq.h b/include/linux/cpufreq.h
-index 70ad02088825..ea303dfd5f05 100644
---- a/include/linux/cpufreq.h
-+++ b/include/linux/cpufreq.h
-@@ -351,14 +351,15 @@ struct cpufreq_driver {
+diff --git a/drivers/phy/qualcomm/phy-qcom-qmp.c b/drivers/phy/qualcomm/phy-qcom-qmp.c
+index b400681..daf7515 100644
+--- a/drivers/phy/qualcomm/phy-qcom-qmp.c
++++ b/drivers/phy/qualcomm/phy-qcom-qmp.c
+@@ -687,6 +687,116 @@ enum qphy_reg_layout {
+ 	QMP_PHY_INIT_CFG(QPHY_V3_PCS_MULTI_LANE_CTRL1, 0x02),
  };
  
- /* flags */
--#define CPUFREQ_STICKY		(1 << 0)	/* driver isn't removed even if
--						   all ->init() calls failed */
--#define CPUFREQ_CONST_LOOPS	(1 << 1)	/* loops_per_jiffy or other
--						   kernel "constants" aren't
--						   affected by frequency
--						   transitions */
--#define CPUFREQ_PM_NO_WARN	(1 << 2)	/* don't warn on suspend/resume
--						   speed mismatches */
++static const struct qmp_phy_init_tbl msm8998_usb3_serdes_tbl[] = {
++	QMP_PHY_INIT_CFG(QSERDES_V3_COM_CLK_SELECT, 0x30),
++	QMP_PHY_INIT_CFG(QSERDES_V3_COM_BIAS_EN_CLKBUFLR_EN, 0x04),
++	QMP_PHY_INIT_CFG(QSERDES_V3_COM_SYSCLK_EN_SEL, 0x14),
++	QMP_PHY_INIT_CFG(QSERDES_V3_COM_SYS_CLK_CTRL, 0x06),
++	QMP_PHY_INIT_CFG(QSERDES_V3_COM_RESETSM_CNTRL2, 0x08),
++	QMP_PHY_INIT_CFG(QSERDES_V3_COM_CMN_CONFIG, 0x06),
++	QMP_PHY_INIT_CFG(QSERDES_V3_COM_SVS_MODE_CLK_SEL, 0x01),
++	QMP_PHY_INIT_CFG(QSERDES_V3_COM_HSCLK_SEL, 0x80),
++	QMP_PHY_INIT_CFG(QSERDES_V3_COM_DEC_START_MODE0, 0x82),
++	QMP_PHY_INIT_CFG(QSERDES_V3_COM_DIV_FRAC_START1_MODE0, 0xab),
++	QMP_PHY_INIT_CFG(QSERDES_V3_COM_DIV_FRAC_START2_MODE0, 0xea),
++	QMP_PHY_INIT_CFG(QSERDES_V3_COM_DIV_FRAC_START3_MODE0, 0x02),
++	QMP_PHY_INIT_CFG(QSERDES_V3_COM_CP_CTRL_MODE0, 0x06),
++	QMP_PHY_INIT_CFG(QSERDES_V3_COM_PLL_RCTRL_MODE0, 0x16),
++	QMP_PHY_INIT_CFG(QSERDES_V3_COM_PLL_CCTRL_MODE0, 0x36),
++	QMP_PHY_INIT_CFG(QSERDES_V3_COM_INTEGLOOP_GAIN1_MODE0, 0x00),
++	QMP_PHY_INIT_CFG(QSERDES_V3_COM_INTEGLOOP_GAIN0_MODE0, 0x3f),
++	QMP_PHY_INIT_CFG(QSERDES_V3_COM_VCO_TUNE2_MODE0, 0x01),
++	QMP_PHY_INIT_CFG(QSERDES_V3_COM_VCO_TUNE1_MODE0, 0xc9),
++	QMP_PHY_INIT_CFG(QSERDES_V3_COM_CORECLK_DIV_MODE0, 0x0a),
++	QMP_PHY_INIT_CFG(QSERDES_V3_COM_LOCK_CMP3_MODE0, 0x00),
++	QMP_PHY_INIT_CFG(QSERDES_V3_COM_LOCK_CMP2_MODE0, 0x34),
++	QMP_PHY_INIT_CFG(QSERDES_V3_COM_LOCK_CMP1_MODE0, 0x15),
++	QMP_PHY_INIT_CFG(QSERDES_V3_COM_LOCK_CMP_EN, 0x04),
++	QMP_PHY_INIT_CFG(QSERDES_V3_COM_CORE_CLK_EN, 0x00),
++	QMP_PHY_INIT_CFG(QSERDES_V3_COM_LOCK_CMP_CFG, 0x00),
++	QMP_PHY_INIT_CFG(QSERDES_V3_COM_VCO_TUNE_MAP, 0x00),
++	QMP_PHY_INIT_CFG(QSERDES_V3_COM_BG_TIMER, 0x0a),
++	QMP_PHY_INIT_CFG(QSERDES_V3_COM_PLL_IVCO, 0x07),
++	QMP_PHY_INIT_CFG(QSERDES_V3_COM_INTEGLOOP_INITVAL, 0x80),
++	QMP_PHY_INIT_CFG(QSERDES_V3_COM_CMN_MODE, 0x01),
++	QMP_PHY_INIT_CFG(QSERDES_V3_COM_SSC_EN_CENTER, 0x01),
++	QMP_PHY_INIT_CFG(QSERDES_V3_COM_SSC_PER1, 0x31),
++	QMP_PHY_INIT_CFG(QSERDES_V3_COM_SSC_PER2, 0x01),
++	QMP_PHY_INIT_CFG(QSERDES_V3_COM_SSC_ADJ_PER1, 0x00),
++	QMP_PHY_INIT_CFG(QSERDES_V3_COM_SSC_ADJ_PER2, 0x00),
++	QMP_PHY_INIT_CFG(QSERDES_V3_COM_SSC_STEP_SIZE1, 0x85),
++	QMP_PHY_INIT_CFG(QSERDES_V3_COM_SSC_STEP_SIZE2, 0x07),
++};
 +
-+/* driver isn't removed even if all ->init() calls failed */
-+#define CPUFREQ_STICKY				BIT(0)
++static const struct qmp_phy_init_tbl msm8998_usb3_tx_tbl[] = {
++	QMP_PHY_INIT_CFG(QSERDES_V3_TX_HIGHZ_DRVR_EN, 0x10),
++	QMP_PHY_INIT_CFG(QSERDES_V3_TX_RCV_DETECT_LVL_2, 0x12),
++	QMP_PHY_INIT_CFG(QSERDES_V3_TX_LANE_MODE_1, 0x16),
++	QMP_PHY_INIT_CFG(QSERDES_V3_TX_RES_CODE_LANE_OFFSET_TX, 0x00),
++};
 +
-+/* loops_per_jiffy or other kernel "constants" aren't affected by frequency transitions */
-+#define CPUFREQ_CONST_LOOPS			BIT(1)
++static const struct qmp_phy_init_tbl msm8998_usb3_rx_tbl[] = {
++	QMP_PHY_INIT_CFG(QSERDES_V3_RX_UCDR_FASTLOCK_FO_GAIN, 0x0b),
++	QMP_PHY_INIT_CFG(QSERDES_V3_RX_RX_EQU_ADAPTOR_CNTRL2, 0x0f),
++	QMP_PHY_INIT_CFG(QSERDES_V3_RX_RX_EQU_ADAPTOR_CNTRL3, 0x4e),
++	QMP_PHY_INIT_CFG(QSERDES_V3_RX_RX_EQU_ADAPTOR_CNTRL4, 0x18),
++	QMP_PHY_INIT_CFG(QSERDES_V3_RX_RX_EQ_OFFSET_ADAPTOR_CNTRL1, 0x07),
++	QMP_PHY_INIT_CFG(QSERDES_V3_RX_RX_OFFSET_ADAPTOR_CNTRL2, 0x80),
++	QMP_PHY_INIT_CFG(QSERDES_V3_RX_SIGDET_CNTRL, 0x43),
++	QMP_PHY_INIT_CFG(QSERDES_V3_RX_SIGDET_DEGLITCH_CNTRL, 0x1c),
++	QMP_PHY_INIT_CFG(QSERDES_V3_RX_UCDR_SO_SATURATION_AND_ENABLE, 0x75),
++	QMP_PHY_INIT_CFG(QSERDES_V3_RX_UCDR_FASTLOCK_COUNT_LOW, 0x00),
++	QMP_PHY_INIT_CFG(QSERDES_V3_RX_UCDR_FASTLOCK_COUNT_HIGH, 0x00),
++	QMP_PHY_INIT_CFG(QSERDES_V3_RX_UCDR_PI_CONTROLS, 0x80),
++	QMP_PHY_INIT_CFG(QSERDES_V3_RX_UCDR_FO_GAIN, 0x0a),
++	QMP_PHY_INIT_CFG(QSERDES_V3_RX_UCDR_SO_GAIN, 0x06),
++	QMP_PHY_INIT_CFG(QSERDES_V3_RX_SIGDET_ENABLES, 0x00),
++	QMP_PHY_INIT_CFG(QSERDES_V3_RX_VGA_CAL_CNTRL2, 0x03),
++	QMP_PHY_INIT_CFG(QSERDES_V3_RX_RX_MODE_00, 0x05),
++};
 +
-+/* don't warn on suspend/resume speed mismatches */
-+#define CPUFREQ_PM_NO_WARN			BIT(2)
++static const struct qmp_phy_init_tbl msm8998_usb3_pcs_tbl[] = {
++	QMP_PHY_INIT_CFG(QPHY_V3_PCS_FLL_CNTRL2, 0x83),
++	QMP_PHY_INIT_CFG(QPHY_V3_PCS_FLL_CNT_VAL_L, 0x09),
++	QMP_PHY_INIT_CFG(QPHY_V3_PCS_FLL_CNT_VAL_H_TOL, 0xa2),
++	QMP_PHY_INIT_CFG(QPHY_V3_PCS_FLL_MAN_CODE, 0x40),
++	QMP_PHY_INIT_CFG(QPHY_V3_PCS_FLL_CNTRL1, 0x02),
++	QMP_PHY_INIT_CFG(QPHY_V3_PCS_LOCK_DETECT_CONFIG1, 0xd1),
++	QMP_PHY_INIT_CFG(QPHY_V3_PCS_LOCK_DETECT_CONFIG2, 0x1f),
++	QMP_PHY_INIT_CFG(QPHY_V3_PCS_LOCK_DETECT_CONFIG3, 0x47),
++	QMP_PHY_INIT_CFG(QPHY_V3_PCS_POWER_STATE_CONFIG2, 0x1b),
++	QMP_PHY_INIT_CFG(QPHY_V3_PCS_TXMGN_V0, 0x9f),
++	QMP_PHY_INIT_CFG(QPHY_V3_PCS_TXMGN_V1, 0x9f),
++	QMP_PHY_INIT_CFG(QPHY_V3_PCS_TXMGN_V2, 0xb7),
++	QMP_PHY_INIT_CFG(QPHY_V3_PCS_TXMGN_V3, 0x4e),
++	QMP_PHY_INIT_CFG(QPHY_V3_PCS_TXMGN_V4, 0x65),
++	QMP_PHY_INIT_CFG(QPHY_V3_PCS_TXMGN_LS, 0x6b),
++	QMP_PHY_INIT_CFG(QPHY_V3_PCS_TXDEEMPH_M6DB_V0, 0x15),
++	QMP_PHY_INIT_CFG(QPHY_V3_PCS_TXDEEMPH_M3P5DB_V0, 0x0d),
++	QMP_PHY_INIT_CFG(QPHY_V3_PCS_TX_LARGE_AMP_DRV_LVL, 0x15),
++	QMP_PHY_INIT_CFG(QPHY_V3_PCS_TXDEEMPH_M3P5DB_V1, 0x0d),
++	QMP_PHY_INIT_CFG(QPHY_V3_PCS_TXDEEMPH_M6DB_V2, 0x15),
++	QMP_PHY_INIT_CFG(QPHY_V3_PCS_TXDEEMPH_M3P5DB_V2, 0x0d),
++	QMP_PHY_INIT_CFG(QPHY_V3_PCS_TXDEEMPH_M6DB_V3, 0x15),
++	QMP_PHY_INIT_CFG(QPHY_V3_PCS_TXDEEMPH_M3P5DB_V3, 0x0d),
++	QMP_PHY_INIT_CFG(QPHY_V3_PCS_TXDEEMPH_M6DB_V4, 0x15),
++	QMP_PHY_INIT_CFG(QPHY_V3_PCS_TXDEEMPH_M3P5DB_V4, 0x0d),
++	QMP_PHY_INIT_CFG(QPHY_V3_PCS_TXDEEMPH_M6DB_LS, 0x15),
++	QMP_PHY_INIT_CFG(QPHY_V3_PCS_TXDEEMPH_M3P5DB_LS, 0x0d),
++	QMP_PHY_INIT_CFG(QPHY_V3_PCS_RATE_SLEW_CNTRL, 0x02),
++	QMP_PHY_INIT_CFG(QPHY_V3_PCS_PWRUP_RESET_DLY_TIME_AUXCLK, 0x04),
++	QMP_PHY_INIT_CFG(QPHY_V3_PCS_TSYNC_RSYNC_TIME, 0x44),
++	QMP_PHY_INIT_CFG(QPHY_V3_PCS_RCVR_DTCT_DLY_P1U2_L, 0xe7),
++	QMP_PHY_INIT_CFG(QPHY_V3_PCS_RCVR_DTCT_DLY_P1U2_H, 0x03),
++	QMP_PHY_INIT_CFG(QPHY_V3_PCS_RCVR_DTCT_DLY_U3_L, 0x40),
++	QMP_PHY_INIT_CFG(QPHY_V3_PCS_RCVR_DTCT_DLY_U3_H, 0x00),
++	QMP_PHY_INIT_CFG(QPHY_V3_PCS_RX_SIGDET_LVL, 0x8a),
++	QMP_PHY_INIT_CFG(QPHY_V3_PCS_RXEQTRAINING_WAIT_TIME, 0x75),
++	QMP_PHY_INIT_CFG(QPHY_V3_PCS_LFPS_TX_ECSTART_EQTLOCK, 0x86),
++	QMP_PHY_INIT_CFG(QPHY_V3_PCS_RXEQTRAINING_RUN_TIME, 0x13),
++};
++
++
+ /* struct qmp_phy_cfg - per-PHY initialization config */
+ struct qmp_phy_cfg {
+ 	/* phy-type - PCIE/UFS/USB */
+@@ -1036,6 +1146,33 @@ static inline void qphy_clrbits(void __iomem *base, u32 offset, u32 val)
+ 	.no_pcs_sw_reset	= true,
+ };
  
- /*
-  * This should be set by platforms having multiple clock-domains, i.e.
-@@ -366,14 +367,14 @@ struct cpufreq_driver {
-  * be created in cpu/cpu<num>/cpufreq/ directory and so they can use the same
-  * governor with different tunables for different clusters.
-  */
--#define CPUFREQ_HAVE_GOVERNOR_PER_POLICY (1 << 3)
-+#define CPUFREQ_HAVE_GOVERNOR_PER_POLICY	BIT(3)
++static const struct qmp_phy_cfg msm8998_usb3phy_cfg = {
++	.type                   = PHY_TYPE_USB3,
++	.nlanes                 = 1,
++
++	.serdes_tbl             = msm8998_usb3_serdes_tbl,
++	.serdes_tbl_num         = ARRAY_SIZE(msm8998_usb3_serdes_tbl),
++	.tx_tbl                 = msm8998_usb3_tx_tbl,
++	.tx_tbl_num             = ARRAY_SIZE(msm8998_usb3_tx_tbl),
++	.rx_tbl                 = msm8998_usb3_rx_tbl,
++	.rx_tbl_num             = ARRAY_SIZE(msm8998_usb3_rx_tbl),
++	.pcs_tbl                = msm8998_usb3_pcs_tbl,
++	.pcs_tbl_num            = ARRAY_SIZE(msm8998_usb3_pcs_tbl),
++	.clk_list               = msm8996_phy_clk_l,
++	.num_clks               = ARRAY_SIZE(msm8996_phy_clk_l),
++	.reset_list             = msm8996_usb3phy_reset_l,
++	.num_resets             = ARRAY_SIZE(msm8996_usb3phy_reset_l),
++	.vreg_list              = qmp_phy_vreg_l,
++	.num_vregs              = ARRAY_SIZE(qmp_phy_vreg_l),
++	.regs                   = qmp_v3_usb3phy_regs_layout,
++
++	.start_ctrl             = SERDES_START | PCS_START,
++	.pwrdn_ctrl             = SW_PWRDN,
++	.mask_pcs_ready         = PHYSTATUS,
++
++	.is_dual_lane_phy       = true,
++};
++
+ static void qcom_qmp_phy_configure(void __iomem *base,
+ 				   const unsigned int *regs,
+ 				   const struct qmp_phy_init_tbl tbl[],
+@@ -1747,6 +1884,9 @@ int qcom_qmp_phy_create(struct device *dev, struct device_node *np, int id)
+ 	}, {
+ 		.compatible = "qcom,sdm845-qmp-ufs-phy",
+ 		.data = &sdm845_ufsphy_cfg,
++	}, {
++		.compatible = "qcom,msm8998-qmp-usb3-phy",
++		.data = &msm8998_usb3phy_cfg,
+ 	},
+ 	{ },
+ };
+diff --git a/drivers/phy/qualcomm/phy-qcom-qmp.h b/drivers/phy/qualcomm/phy-qcom-qmp.h
+index d201cc3..a1b6cde 100644
+--- a/drivers/phy/qualcomm/phy-qcom-qmp.h
++++ b/drivers/phy/qualcomm/phy-qcom-qmp.h
+@@ -174,6 +174,7 @@
+ #define QSERDES_V3_COM_DIV_FRAC_START1_MODE1		0x0c4
+ #define QSERDES_V3_COM_DIV_FRAC_START2_MODE1		0x0c8
+ #define QSERDES_V3_COM_DIV_FRAC_START3_MODE1		0x0cc
++#define QSERDES_V3_COM_INTEGLOOP_INITVAL		0x0d0
+ #define QSERDES_V3_COM_INTEGLOOP_GAIN0_MODE0		0x0d8
+ #define QSERDES_V3_COM_INTEGLOOP_GAIN1_MODE0		0x0dc
+ #define QSERDES_V3_COM_INTEGLOOP_GAIN0_MODE1		0x0e0
+@@ -201,6 +202,7 @@
+ #define QSERDES_V3_COM_DEBUG_BUS2			0x170
+ #define QSERDES_V3_COM_DEBUG_BUS3			0x174
+ #define QSERDES_V3_COM_DEBUG_BUS_SEL			0x178
++#define QSERDES_V3_COM_CMN_MODE				0x184
  
- /*
-  * Driver will do POSTCHANGE notifications from outside of their ->target()
-  * routine and so must set cpufreq_driver->flags with this flag, so that core
-  * can handle them specially.
-  */
--#define CPUFREQ_ASYNC_NOTIFICATION  (1 << 4)
-+#define CPUFREQ_ASYNC_NOTIFICATION		BIT(4)
+ /* Only for QMP V3 PHY - TX registers */
+ #define QSERDES_V3_TX_RES_CODE_LANE_OFFSET_TX		0x044
+@@ -211,6 +213,7 @@
+ #define QSERDES_V3_TX_RCV_DETECT_LVL_2			0x0a4
  
- /*
-  * Set by drivers which want cpufreq core to check if CPU is running at a
-@@ -382,19 +383,19 @@ struct cpufreq_driver {
-  * from the table. And if that fails, we will stop further boot process by
-  * issuing a BUG_ON().
-  */
--#define CPUFREQ_NEED_INITIAL_FREQ_CHECK	(1 << 5)
-+#define CPUFREQ_NEED_INITIAL_FREQ_CHECK	BIT(5)
- 
- /*
-  * Set by drivers to disallow use of governors with "dynamic_switching" flag
-  * set.
-  */
--#define CPUFREQ_NO_AUTO_DYNAMIC_SWITCHING (1 << 6)
-+#define CPUFREQ_NO_AUTO_DYNAMIC_SWITCHING	BIT(6)
- 
- /*
-  * Set by drivers that want the core to automatically register the cpufreq
-  * driver as a thermal cooling device
-  */
--#define CPUFREQ_AUTO_REGISTER_COOLING_DEV (1 << 7)
-+#define CPUFREQ_AUTO_REGISTER_COOLING_DEV	BIT(7)
- 
- int cpufreq_register_driver(struct cpufreq_driver *driver_data);
- int cpufreq_unregister_driver(struct cpufreq_driver *driver_data);
+ /* Only for QMP V3 PHY - RX registers */
++#define QSERDES_V3_RX_UCDR_FO_GAIN			0x008
+ #define QSERDES_V3_RX_UCDR_SO_GAIN_HALF			0x00c
+ #define QSERDES_V3_RX_UCDR_SO_GAIN			0x014
+ #define QSERDES_V3_RX_UCDR_SVS_SO_GAIN_HALF		0x024
+@@ -219,6 +222,7 @@
+ #define QSERDES_V3_RX_UCDR_FASTLOCK_FO_GAIN		0x030
+ #define QSERDES_V3_RX_UCDR_SO_SATURATION_AND_ENABLE	0x034
+ #define QSERDES_V3_RX_UCDR_FASTLOCK_COUNT_LOW		0x03c
++#define QSERDES_V3_RX_UCDR_FASTLOCK_COUNT_HIGH		0x040
+ #define QSERDES_V3_RX_UCDR_PI_CONTROLS			0x044
+ #define QSERDES_V3_RX_RX_TERM_BW			0x07c
+ #define QSERDES_V3_RX_VGA_CAL_CNTRL1			0x0bc
 -- 
-2.17.1
+Qualcomm Datacenter Technologies as an affiliate of Qualcomm Technologies, Inc.
+Qualcomm Technologies, Inc. is a member of the
+Code Aurora Forum, a Linux Foundation Collaborative Project.
 
