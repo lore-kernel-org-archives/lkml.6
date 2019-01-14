@@ -2,296 +2,334 @@ Return-Path: <SRS0=tq6k=PW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C392C43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 23:04:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 26ADAC43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 23:04:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B40D420657
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 23:04:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547507062;
-	bh=q/uZTnvK1XcGpCpLn0LFSW/JefttaNOmCp8n0mFhf9s=;
-	h=From:To:Cc:Subject:In-Reply-To:Date:List-ID:From;
-	b=Smzlllpa9s45Ulv67GccbL0UK96hh5xyQrtNGBX/SQ0y1l6Z7WaAD6AxrkdDdrjKZ
-	 zGCjfok0h4cjG4D7JAEEJDbNTDoQUHj+0qPsXFp/bTL35yab/jVudaq5NDg4Dud0Gs
-	 6w12eb1VIzv7cUS8AXeBss8GMQpLleGUPeykA5e4=
+	by mail.kernel.org (Postfix) with ESMTP id E00EB20657
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 23:04:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727150AbfANXEL (ORCPT
+        id S1727252AbfANXEZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 14 Jan 2019 18:04:11 -0500
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:40136 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726747AbfANXEL (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 Jan 2019 18:04:11 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
-        Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
-        List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=3DVs2c49389/wtLag423gUNgCd2dQSyEhrJdyzBJn+Y=; b=M+A7G2+Vx5JY
-        qCxCJJF5etNna9cmabdYeucpVsNTmD3zXJC9fUwtsbdY+ksuzrdB4U99Y+JY/Mrbjwv8HCkpEz7T0
-        wopTI+rlkG+15Uw8HCzNLcv+VU/DokNeWug5b7/iUfPpa47DfBaBy/ox18eZaMUTxdDVHo/BAVOMR
-        wSxYo=;
-Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
-        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1gjBGt-0000Sa-4q; Mon, 14 Jan 2019 23:03:55 +0000
-Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
-        id C91F61127AD2; Mon, 14 Jan 2019 23:03:54 +0000 (GMT)
-From:   Mark Brown <broonie@kernel.org>
-To:     Maruthi Srinivas Bayyavarapu 
-        <maruthi.srinivas.bayyavarapu@xilinx.com>
-Cc:     Mark Brown <broonie@kernel.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>,
-        Michal Simek <michal.simek@xilinx.com>,
-        "Gustavo A . R . Silva" <gustavo@embeddedor.com>,
-        linux-kernel@vger.kernel.org, alsa-devel@alsa-project.org,
-        linux-arm-kernel@lists.infradead.org, alsa-devel@alsa-project.org
-Subject: Applied "ASoC: xlnx: parse AES audio parameters" to the asoc tree
-In-Reply-To:  <1547126083-44466-1-git-send-email-maruthi.srinivas.bayyavarapu@xilinx.com>
-X-Patchwork-Hint: ignore
-Message-Id: <20190114230354.C91F61127AD2@debutante.sirena.org.uk>
-Date:   Mon, 14 Jan 2019 23:03:54 +0000 (GMT)
+        Mon, 14 Jan 2019 18:04:25 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:37152 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727068AbfANXEY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 14 Jan 2019 18:04:24 -0500
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 2AD5D88E4F;
+        Mon, 14 Jan 2019 23:04:24 +0000 (UTC)
+Received: from x1.home (ovpn-116-25.phx2.redhat.com [10.3.116.25])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id C66A460157;
+        Mon, 14 Jan 2019 23:04:22 +0000 (UTC)
+Date:   Mon, 14 Jan 2019 16:04:22 -0700
+From:   Alex Williamson <alex.williamson@redhat.com>
+To:     Auger Eric <eric.auger@redhat.com>
+Cc:     eric.auger.pro@gmail.com, iommu@lists.linux-foundation.org,
+        linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
+        kvmarm@lists.cs.columbia.edu, joro@8bytes.org,
+        jacob.jun.pan@linux.intel.com, yi.l.liu@linux.intel.com,
+        jean-philippe.brucker@arm.com, will.deacon@arm.com,
+        robin.murphy@arm.com, kevin.tian@intel.com, ashok.raj@intel.com,
+        marc.zyngier@arm.com, christoffer.dall@arm.com,
+        peter.maydell@linaro.org
+Subject: Re: [RFC v3 18/21] vfio-pci: Add a new VFIO_REGION_TYPE_NESTED
+ region type
+Message-ID: <20190114160422.6e320df9@x1.home>
+In-Reply-To: <497dad10-8832-3f2c-3ff8-fbcdd4c41ae4@redhat.com>
+References: <20190108102633.17482-1-eric.auger@redhat.com>
+        <20190108102633.17482-19-eric.auger@redhat.com>
+        <20190111165838.06a22ab8@x1.home>
+        <497dad10-8832-3f2c-3ff8-fbcdd4c41ae4@redhat.com>
+Organization: Red Hat
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.25]); Mon, 14 Jan 2019 23:04:24 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The patch
+On Mon, 14 Jan 2019 21:48:06 +0100
+Auger Eric <eric.auger@redhat.com> wrote:
 
-   ASoC: xlnx: parse AES audio parameters
+> Hi Alex,
+> 
+> On 1/12/19 12:58 AM, Alex Williamson wrote:
+> > On Tue,  8 Jan 2019 11:26:30 +0100
+> > Eric Auger <eric.auger@redhat.com> wrote:
+> >   
+> >> This patch adds a new 64kB region aiming to report nested mode
+> >> translation faults.
+> >>
+> >> The region contains a header with the size of the queue,
+> >> the producer and consumer indices and then the actual
+> >> fault queue data. The producer is updated by the kernel while
+> >> the consumer is updated by the userspace.
+> >>
+> >> Signed-off-by: Eric Auger <eric.auger@redhat.com>
+> >>
+> >> ---
+> >> ---
+> >>  drivers/vfio/pci/vfio_pci.c         | 102 +++++++++++++++++++++++++++-
+> >>  drivers/vfio/pci/vfio_pci_private.h |   2 +
+> >>  include/uapi/linux/vfio.h           |  15 ++++
+> >>  3 files changed, 118 insertions(+), 1 deletion(-)
+> >>
+> >> diff --git a/drivers/vfio/pci/vfio_pci.c b/drivers/vfio/pci/vfio_pci.c
+> >> index ff60bd1ea587..2ba181ab2edd 100644
+> >> --- a/drivers/vfio/pci/vfio_pci.c
+> >> +++ b/drivers/vfio/pci/vfio_pci.c
+> >> @@ -56,6 +56,11 @@ module_param(disable_idle_d3, bool, S_IRUGO | S_IWUSR);
+> >>  MODULE_PARM_DESC(disable_idle_d3,
+> >>  		 "Disable using the PCI D3 low power state for idle, unused devices");
+> >>  
+> >> +#define VFIO_FAULT_REGION_SIZE 0x10000  
+> > 
+> > Why 64K?  
+> For the region to be mmappable with 64kB page size.
 
-has been applied to the asoc tree at
-
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
-From c284d4e31a0b66e6fe3734b36080afd237ff9fb0 Mon Sep 17 00:00:00 2001
-From: Maruthi Srinivas Bayyavarapu <maruthi.srinivas.bayyavarapu@xilinx.com>
-Date: Thu, 10 Jan 2019 18:44:43 +0530
-Subject: [PATCH] ASoC: xlnx: parse AES audio parameters
-
-AES channel status carries various audio parameters. If channel status is
-detected, current patch extracts sample rate and bit depth parameters of
-the incoming stream during capture.
-
-Signed-off-by: Maruthi Srinivas Bayyavarapu <maruthi.srinivas.bayyavarapu@xilinx.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- sound/soc/xilinx/xlnx_formatter_pcm.c | 143 ++++++++++++++++++++++++++
- 1 file changed, 143 insertions(+)
-
-diff --git a/sound/soc/xilinx/xlnx_formatter_pcm.c b/sound/soc/xilinx/xlnx_formatter_pcm.c
-index d2194da928e7..97177d35652e 100644
---- a/sound/soc/xilinx/xlnx_formatter_pcm.c
-+++ b/sound/soc/xilinx/xlnx_formatter_pcm.c
-@@ -13,6 +13,7 @@
- #include <linux/of_irq.h>
- #include <linux/sizes.h>
+Isn't hard coding 64K just as bad as hard coding 4K?  The kernel knows
+what PAGE_SIZE is after all.  Is there some target number of queue
+entries here that we could round up to a multiple of PAGE_SIZE?
  
-+#include <sound/asoundef.h>
- #include <sound/soc.h>
- #include <sound/pcm_params.h>
- 
-@@ -63,6 +64,7 @@
- #define PERIODS_MAX		6
- #define PERIOD_BYTES_MIN	192
- #define PERIOD_BYTES_MAX	(50 * 1024)
-+#define XLNX_PARAM_UNKNOWN	0
- 
- enum bit_depth {
- 	BIT_DEPTH_8,
-@@ -117,6 +119,129 @@ static const struct snd_pcm_hardware xlnx_pcm_hardware = {
- 	.periods_max = PERIODS_MAX,
- };
- 
-+enum {
-+	AES_TO_AES,
-+	AES_TO_PCM,
-+	PCM_TO_PCM,
-+	PCM_TO_AES
-+};
-+
-+static void xlnx_parse_aes_params(u32 chsts_reg1_val, u32 chsts_reg2_val,
-+				  struct device *dev)
-+{
-+	u32 padded, srate, bit_depth, status[2];
-+
-+	if (chsts_reg1_val & IEC958_AES0_PROFESSIONAL) {
-+		status[0] = chsts_reg1_val & 0xff;
-+		status[1] = (chsts_reg1_val >> 16) & 0xff;
-+
-+		switch (status[0] & IEC958_AES0_PRO_FS) {
-+		case IEC958_AES0_PRO_FS_44100:
-+			srate = 44100;
-+			break;
-+		case IEC958_AES0_PRO_FS_48000:
-+			srate = 48000;
-+			break;
-+		case IEC958_AES0_PRO_FS_32000:
-+			srate = 32000;
-+			break;
-+		case IEC958_AES0_PRO_FS_NOTID:
-+		default:
-+			srate = XLNX_PARAM_UNKNOWN;
-+			break;
-+		}
-+
-+		switch (status[1] & IEC958_AES2_PRO_SBITS) {
-+		case IEC958_AES2_PRO_WORDLEN_NOTID:
-+		case IEC958_AES2_PRO_SBITS_20:
-+			padded = 0;
-+			break;
-+		case IEC958_AES2_PRO_SBITS_24:
-+			padded = 4;
-+			break;
-+		default:
-+			bit_depth = XLNX_PARAM_UNKNOWN;
-+			goto log_params;
-+		}
-+
-+		switch (status[1] & IEC958_AES2_PRO_WORDLEN) {
-+		case IEC958_AES2_PRO_WORDLEN_20_16:
-+			bit_depth = 16 + padded;
-+			break;
-+		case IEC958_AES2_PRO_WORDLEN_22_18:
-+			bit_depth = 18 + padded;
-+			break;
-+		case IEC958_AES2_PRO_WORDLEN_23_19:
-+			bit_depth = 19 + padded;
-+			break;
-+		case IEC958_AES2_PRO_WORDLEN_24_20:
-+			bit_depth = 20 + padded;
-+			break;
-+		case IEC958_AES2_PRO_WORDLEN_NOTID:
-+		default:
-+			bit_depth = XLNX_PARAM_UNKNOWN;
-+			break;
-+		}
-+
-+	} else {
-+		status[0] = (chsts_reg1_val >> 24) & 0xff;
-+		status[1] = chsts_reg2_val & 0xff;
-+
-+		switch (status[0] & IEC958_AES3_CON_FS) {
-+		case IEC958_AES3_CON_FS_44100:
-+			srate = 44100;
-+			break;
-+		case IEC958_AES3_CON_FS_48000:
-+			srate = 48000;
-+			break;
-+		case IEC958_AES3_CON_FS_32000:
-+			srate = 32000;
-+			break;
-+		default:
-+			srate = XLNX_PARAM_UNKNOWN;
-+			break;
-+		}
-+
-+		if (status[1] & IEC958_AES4_CON_MAX_WORDLEN_24)
-+			padded = 4;
-+		else
-+			padded = 0;
-+
-+		switch (status[1] & IEC958_AES4_CON_WORDLEN) {
-+		case IEC958_AES4_CON_WORDLEN_20_16:
-+			bit_depth = 16 + padded;
-+			break;
-+		case IEC958_AES4_CON_WORDLEN_22_18:
-+			bit_depth = 18 + padded;
-+			break;
-+		case IEC958_AES4_CON_WORDLEN_23_19:
-+			bit_depth = 19 + padded;
-+			break;
-+		case IEC958_AES4_CON_WORDLEN_24_20:
-+			bit_depth = 20 + padded;
-+			break;
-+		case IEC958_AES4_CON_WORDLEN_21_17:
-+			bit_depth = 17 + padded;
-+			break;
-+		case IEC958_AES4_CON_WORDLEN_NOTID:
-+		default:
-+			bit_depth = XLNX_PARAM_UNKNOWN;
-+			break;
-+		}
-+	}
-+
-+log_params:
-+	if (srate != XLNX_PARAM_UNKNOWN)
-+		dev_info(dev, "sample rate = %d\n", srate);
-+	else
-+		dev_info(dev, "sample rate = unknown\n");
-+
-+	if (bit_depth != XLNX_PARAM_UNKNOWN)
-+		dev_info(dev, "bit_depth = %d\n", bit_depth);
-+	else
-+		dev_info(dev, "bit_depth = unknown\n");
-+}
-+
- static int xlnx_formatter_pcm_reset(void __iomem *mmio_base)
- {
- 	u32 val, retries = 0;
-@@ -302,8 +427,12 @@ static int xlnx_formatter_pcm_hw_params(struct snd_pcm_substream *substream,
- 					struct snd_pcm_hw_params *params)
- {
- 	u32 low, high, active_ch, val, bytes_per_ch, bits_per_sample;
-+	u32 aes_reg1_val, aes_reg2_val;
- 	int status;
- 	u64 size;
-+	struct snd_soc_pcm_runtime *prtd = substream->private_data;
-+	struct snd_soc_component *component = snd_soc_rtdcom_lookup(prtd,
-+								    DRV_NAME);
- 	struct snd_pcm_runtime *runtime = substream->runtime;
- 	struct xlnx_pcm_stream_param *stream_data = runtime->private_data;
- 
-@@ -311,6 +440,20 @@ static int xlnx_formatter_pcm_hw_params(struct snd_pcm_substream *substream,
- 	if (active_ch > stream_data->ch_limit)
- 		return -EINVAL;
- 
-+	if (substream->stream == SNDRV_PCM_STREAM_CAPTURE &&
-+	    stream_data->xfer_mode == AES_TO_PCM) {
-+		val = readl(stream_data->mmio + XLNX_AUD_STS);
-+		if (val & AUD_STS_CH_STS_MASK) {
-+			aes_reg1_val = readl(stream_data->mmio +
-+					     XLNX_AUD_CH_STS_START);
-+			aes_reg2_val = readl(stream_data->mmio +
-+					     XLNX_AUD_CH_STS_START + 0x4);
-+
-+			xlnx_parse_aes_params(aes_reg1_val, aes_reg2_val,
-+					      component->dev);
-+		}
-+	}
-+
- 	size = params_buffer_bytes(params);
- 	status = snd_pcm_lib_malloc_pages(substream, size);
- 	if (status < 0)
--- 
-2.20.1
+> >> +#define VFIO_FAULT_QUEUE_SIZE	\
+> >> +	((VFIO_FAULT_REGION_SIZE - sizeof(struct vfio_fault_region_header)) / \
+> >> +	sizeof(struct iommu_fault))
+> >> +
+> >>  static inline bool vfio_vga_disabled(void)
+> >>  {
+> >>  #ifdef CONFIG_VFIO_PCI_VGA
+> >> @@ -1226,6 +1231,100 @@ static const struct vfio_device_ops vfio_pci_ops = {
+> >>  static int vfio_pci_reflck_attach(struct vfio_pci_device *vdev);
+> >>  static void vfio_pci_reflck_put(struct vfio_pci_reflck *reflck);
+> >>  
+> >> +static size_t
+> >> +vfio_pci_dma_fault_rw(struct vfio_pci_device *vdev, char __user *buf,
+> >> +		      size_t count, loff_t *ppos, bool iswrite)
+> >> +{
+> >> +	unsigned int i = VFIO_PCI_OFFSET_TO_INDEX(*ppos) - VFIO_PCI_NUM_REGIONS;
+> >> +	void *base = vdev->region[i].data;
+> >> +	loff_t pos = *ppos & VFIO_PCI_OFFSET_MASK;
+> >> +
+> >> +	if (pos >= vdev->region[i].size)
+> >> +		return -EINVAL;
+> >> +
+> >> +	count = min(count, (size_t)(vdev->region[i].size - pos));
+> >> +
+> >> +	if (copy_to_user(buf, base + pos, count))
+> >> +		return -EFAULT;
+> >> +
+> >> +	*ppos += count;
+> >> +
+> >> +	return count;
+> >> +}
+> >> +
+> >> +static int vfio_pci_dma_fault_mmap(struct vfio_pci_device *vdev,
+> >> +				   struct vfio_pci_region *region,
+> >> +				   struct vm_area_struct *vma)
+> >> +{
+> >> +	u64 phys_len, req_len, pgoff, req_start;
+> >> +	unsigned long long addr;
+> >> +	unsigned int index;
+> >> +
+> >> +	index = vma->vm_pgoff >> (VFIO_PCI_OFFSET_SHIFT - PAGE_SHIFT);
+> >> +
+> >> +	if (vma->vm_end < vma->vm_start)
+> >> +		return -EINVAL;
+> >> +	if ((vma->vm_flags & VM_SHARED) == 0)
+> >> +		return -EINVAL;
+> >> +
+> >> +	phys_len = VFIO_FAULT_REGION_SIZE;
+> >> +
+> >> +	req_len = vma->vm_end - vma->vm_start;
+> >> +	pgoff = vma->vm_pgoff &
+> >> +		((1U << (VFIO_PCI_OFFSET_SHIFT - PAGE_SHIFT)) - 1);
+> >> +	req_start = pgoff << PAGE_SHIFT;
+> >> +
+> >> +	if (req_start + req_len > phys_len)
+> >> +		return -EINVAL;
+> >> +
+> >> +	addr = virt_to_phys(vdev->fault_region);
+> >> +	vma->vm_private_data = vdev;
+> >> +	vma->vm_pgoff = (addr >> PAGE_SHIFT) + pgoff;
+> >> +
+> >> +	return remap_pfn_range(vma, vma->vm_start, vma->vm_pgoff,
+> >> +			       req_len, vma->vm_page_prot);
+> >> +}
+> >> +
+> >> +void vfio_pci_dma_fault_release(struct vfio_pci_device *vdev,
+> >> +				struct vfio_pci_region *region)
+> >> +{
+> >> +}
+> >> +
+> >> +static const struct vfio_pci_regops vfio_pci_dma_fault_regops = {
+> >> +	.rw		= vfio_pci_dma_fault_rw,
+> >> +	.mmap		= vfio_pci_dma_fault_mmap,
+> >> +	.release	= vfio_pci_dma_fault_release,
+> >> +};
+> >> +
+> >> +static int vfio_pci_init_dma_fault_region(struct vfio_pci_device *vdev)
+> >> +{
+> >> +	u32 flags = VFIO_REGION_INFO_FLAG_READ | VFIO_REGION_INFO_FLAG_WRITE |
+> >> +		    VFIO_REGION_INFO_FLAG_MMAP;
+> >> +	int ret;
+> >> +
+> >> +	spin_lock_init(&vdev->fault_queue_lock);
+> >> +
+> >> +	vdev->fault_region = kmalloc(VFIO_FAULT_REGION_SIZE, GFP_KERNEL);
+> >> +	if (!vdev->fault_region)
+> >> +		return -ENOMEM;
+> >> +
+> >> +	ret = vfio_pci_register_dev_region(vdev,
+> >> +		VFIO_REGION_TYPE_NESTED,
+> >> +		VFIO_REGION_SUBTYPE_NESTED_FAULT_REGION,
+> >> +		&vfio_pci_dma_fault_regops, VFIO_FAULT_REGION_SIZE,
+> >> +		flags, vdev->fault_region);
+> >> +	if (ret) {
+> >> +		kfree(vdev->fault_region);
+> >> +		return ret;
+> >> +	}
+> >> +
+> >> +	vdev->fault_region->header.prod = 0;
+> >> +	vdev->fault_region->header.cons = 0;
+> >> +	vdev->fault_region->header.reserved = 0;  
+> > 
+> > Use kzalloc above or else we're leaking kernel memory to userspace
+> > anyway.  
+> sure
+> >   
+> >> +	vdev->fault_region->header.size = VFIO_FAULT_QUEUE_SIZE;
+> >> +	return 0;
+> >> +}
+> >> +
+> >>  static int vfio_pci_probe(struct pci_dev *pdev, const struct pci_device_id *id)
+> >>  {
+> >>  	struct vfio_pci_device *vdev;
+> >> @@ -1300,7 +1399,7 @@ static int vfio_pci_probe(struct pci_dev *pdev, const struct pci_device_id *id)
+> >>  		pci_set_power_state(pdev, PCI_D3hot);
+> >>  	}
+> >>  
+> >> -	return ret;
+> >> +	return vfio_pci_init_dma_fault_region(vdev);  
+> > 
+> > Missing lots of cleanup should this fail.  Why is this done on probe
+> > anyway?  This looks like something we'd do from vfio_pci_enable() and
+> > therefore our release callback would free fault_region rather than what
+> > we have below.  
+> OK. That's fine to put in the vfio_pci_enable().
+> >   
+> >>  }
+> >>  
+> >>  static void vfio_pci_remove(struct pci_dev *pdev)
+> >> @@ -1315,6 +1414,7 @@ static void vfio_pci_remove(struct pci_dev *pdev)
+> >>  
+> >>  	vfio_iommu_group_put(pdev->dev.iommu_group, &pdev->dev);
+> >>  	kfree(vdev->region);
+> >> +	kfree(vdev->fault_region);
+> >>  	mutex_destroy(&vdev->ioeventfds_lock);
+> >>  	kfree(vdev);
+> >>  
+> >> diff --git a/drivers/vfio/pci/vfio_pci_private.h b/drivers/vfio/pci/vfio_pci_private.h
+> >> index 8c0009f00818..38b5d1764a26 100644
+> >> --- a/drivers/vfio/pci/vfio_pci_private.h
+> >> +++ b/drivers/vfio/pci/vfio_pci_private.h
+> >> @@ -120,6 +120,8 @@ struct vfio_pci_device {
+> >>  	int			ioeventfds_nr;
+> >>  	struct eventfd_ctx	*err_trigger;
+> >>  	struct eventfd_ctx	*req_trigger;
+> >> +	spinlock_t              fault_queue_lock;
+> >> +	struct vfio_fault_region *fault_region;
+> >>  	struct list_head	dummy_resources_list;
+> >>  	struct mutex		ioeventfds_lock;
+> >>  	struct list_head	ioeventfds_list;
+> >> diff --git a/include/uapi/linux/vfio.h b/include/uapi/linux/vfio.h
+> >> index 352e795a93c8..b78c2c62af6d 100644
+> >> --- a/include/uapi/linux/vfio.h
+> >> +++ b/include/uapi/linux/vfio.h
+> >> @@ -307,6 +307,9 @@ struct vfio_region_info_cap_type {
+> >>  #define VFIO_REGION_TYPE_GFX                    (1)
+> >>  #define VFIO_REGION_SUBTYPE_GFX_EDID            (1)
+> >>  
+> >> +#define VFIO_REGION_TYPE_NESTED			(2)
+> >> +#define VFIO_REGION_SUBTYPE_NESTED_FAULT_REGION	(1)
+> >> +
+> >>  /**
+> >>   * struct vfio_region_gfx_edid - EDID region layout.
+> >>   *
+> >> @@ -697,6 +700,18 @@ struct vfio_device_ioeventfd {
+> >>  
+> >>  #define VFIO_DEVICE_IOEVENTFD		_IO(VFIO_TYPE, VFIO_BASE + 16)
+> >>  
+> >> +struct vfio_fault_region_header {
+> >> +	__u32	size;		/* Read-Only */
+> >> +	__u32	prod;		/* Read-Only */  
+> > 
+> > We can't really enforce read-only if it's mmap'd.  
+> Do we really need to? Assuming the kernel always uses
+> VFIO_FAULT_QUEUE_SIZE to check prod and cons indice - which is not the
+> case at the moment by the way :-( -s, the queue cannot
+> be overflown .
+> 
+> The header also can be checked each time the kernel fills any event in
+> the queue
+> (vfio_pci_iommu_dev_fault_handler). If inconsistent the kernel may stop
+> using the queue. If the user-space mangles with those RO fields, this
+> will break error reporting on the guest but the problem should be
+> confined here?
 
+I guess this is a matter of whether the performance benefit is worth
+the hardening and I can imagine that it could be, but we do need that
+hardening and well defined behavior to the user.  If we put it into a
+single page then we need to define if a user write to the producer index
+resets the index or if it's just a shadow of internal state and will be
+restored on the next update.  Does a user write to the size register
+change the size of the queue or is it ignored?  Is there an event that
+will restore it?  Maybe the size should be exposed as a part of a
+region info capability like we've done for some of the new nvlink
+regions.
+
+> > I worry about synchronization here too, perhaps there should be a ring offset such
+> > that the ring can be in a separate page from the header and then sparse
+> > mmap support can ensure that the user access is restricted.  
+> 
+> I was assuming a single writer and single reader lock-free circular
+> buffer here. My understanding was it was safe to consider concurrent
+> read and write. What I am missing anyway is atomic counter operations to
+> guarantee the indices are updated after the push/pop action as explained in
+> https://www.kernel.org/doc/Documentation/circular-buffers.txt. I am not
+> comfortable about how to enforce this on user side though.
+
+It doesn't seem enforceable to the user without slowing down the
+interface, either via ioctl or non-mmap.  I think it's fine to have
+acquire and release semantics, we just need to define them and have
+safe, predictable behavior when the user does something wrong (and
+expect them to do something wrong, intentionally or not).
+
+> In case I split the header and the actual buffer into 2 different
+> possible 64kB pages, the first one will be very scarcely used.
+
+Yes, it's wasteful, a shared page would be preferred, but it's also
+only a page.
+
+> > wonder if there are other transports that make sense here, this almost
+> > feels like a vhost sort of thing.  Thanks,  
+> Using something more sophisticated may be useful for PRI where answers
+> need to be provided. For the case of unrecoverable faults, I wonder
+> whether it is worth the pain exposing a fault region compared to the
+> original IOCTL approach introduced in
+> [RFC v2 18/20] vfio: VFIO_IOMMU_GET_FAULT_EVENTS
+> https://lkml.org/lkml/2018/9/18/1094
+
+Not sure I understand the pain aspect, if we don't support mmap on a
+region then we can fill a user read from a region just as easily as we
+can fill a buffer passed via ioctl.  Thanks,
+
+Alex
