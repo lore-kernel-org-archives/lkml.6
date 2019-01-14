@@ -2,115 +2,110 @@ Return-Path: <SRS0=tq6k=PW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B5D7CC43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 23:03:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F397C43444
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 23:03:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 864F020659
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 23:03:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547506997;
-	bh=79rJVvsdJaQH9A+XEpnjKMywDGi6n3NYiAlafk8jdhw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=rUPmnBlqOFq53Q04yW6EN6CI9+Pg9WwlVW2E3WdjQ+WCruO31ukwBGVjrk8iZAueW
-	 d+NzEnyQX8jFg69xWVt1bQSRvmaT8cQerWa4eo/P2AadKjum9yDbidBSkwrCliSrlj
-	 S1RctVYoE0jtH26ohkhwI8NDINqNM/8mxnoZZddA=
+	by mail.kernel.org (Postfix) with ESMTP id 493C5206BA
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 23:03:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727163AbfANXDP (ORCPT
+        id S1727200AbfANXDT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 14 Jan 2019 18:03:15 -0500
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:38396 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726747AbfANXDP (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 Jan 2019 18:03:15 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=W2d/sJksifvu3BVio+1/SWMT7I5lc8/k42xZEYFmUo0=; b=bZ/yT2Cs5S2IX38XzyjoAiCh8
-        UzHjdL1UYUii9UxxASIFaNTBxgCmKnD1/DDzmMuB/jD76Z/P9xbTGNAt8wgKX6fl27f3sh93r2gGA
-        f3/68Xl8KuVz+KMuToPhmb87yLbyV2k55mkTRXuJdjls9vxmT4uPIDJUW3Hj2uXuVWMDo=;
-Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
-        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1gjBG0-0000SF-JB; Mon, 14 Jan 2019 23:03:00 +0000
-Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
-        id 1FC911127AD1; Mon, 14 Jan 2019 23:02:55 +0000 (GMT)
-Date:   Mon, 14 Jan 2019 23:02:55 +0000
-From:   Mark Brown <broonie@kernel.org>
-To:     Jon Hunter <jonathanh@nvidia.com>
-Cc:     Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        linux-tegra@vger.kernel.org, Matthias Reichl <hias@horus.com>,
-        alsa-devel@alsa-project.org,
-        Marcel Ziswiler <marcel.ziswiler@toradex.com>,
-        Takashi Iwai <tiwai@suse.com>, linux-kernel@vger.kernel.org,
-        Marcel Ziswiler <marcel@ziswiler.com>
-Subject: Re: [alsa-devel] [PATCH v1 3/3] ASoC: soc-core: fix platform name
- vs. of_node assignement
-Message-ID: <20190114230255.GK11073@sirena.org.uk>
-References: <0660a471-3698-2059-4494-ad146518a4ed@nvidia.com>
- <20190109125340.GD10405@sirena.org.uk>
- <52f5f2cf-9260-f9c5-f73d-3c3d5debc86b@nvidia.com>
- <20190109141439.GE10405@sirena.org.uk>
- <875zuxb9uy.wl-kuninori.morimoto.gx@renesas.com>
- <a2068291-e554-cc4f-9af9-0022f3c4de34@nvidia.com>
- <871s5kqb43.wl-kuninori.morimoto.gx@renesas.com>
- <dfdc497f-9e52-99d7-208c-d8eef31fe61d@nvidia.com>
- <87h8efpoxh.wl-kuninori.morimoto.gx@renesas.com>
- <ea6b6a3a-b4eb-1d29-51fd-330b2b170005@nvidia.com>
+        Mon, 14 Jan 2019 18:03:19 -0500
+Received: from mga18.intel.com ([134.134.136.126]:27788 "EHLO mga18.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726747AbfANXDR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 14 Jan 2019 18:03:17 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 14 Jan 2019 15:03:16 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,479,1539673200"; 
+   d="scan'208";a="291543069"
+Received: from yoojae-mobl1.amr.corp.intel.com (HELO [10.7.153.143]) ([10.7.153.143])
+  by orsmga005.jf.intel.com with ESMTP; 14 Jan 2019 15:03:15 -0800
+Subject: Re: [PATCH v10 08/12] mfd: intel-peci-client: Add PECI client driver
+To:     Joel Stanley <joel@jms.id.au>
+Cc:     Lee Jones <lee.jones@linaro.org>, Rob Herring <robh+dt@kernel.org>,
+        Jean Delvare <jdelvare@suse.com>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Andrew Jeffery <andrew@aj.id.au>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        "Darrick J . Wong" <darrick.wong@oracle.com>,
+        Eric Sandeen <sandeen@redhat.com>,
+        Arnd Bergmann <arnd@arndb.de>, Wu Hao <hao.wu@intel.com>,
+        Tomohiro Kusumi <kusumi.tomohiro@gmail.com>,
+        "Bryant G . Ly" <bryantly@linux.vnet.ibm.com>,
+        Frederic Barrat <fbarrat@linux.vnet.ibm.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        Vinod Koul <vkoul@kernel.org>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        David Kershner <david.kershner@unisys.com>,
+        Uwe Kleine-Konig <u.kleine-koenig@pengutronix.de>,
+        Sagar Dharia <sdharia@codeaurora.org>,
+        Johan Hovold <johan@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Juergen Gross <jgross@suse.com>,
+        Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>,
+        linux-hwmon@vger.kernel.org,
+        devicetree <devicetree@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-doc@vger.kernel.org,
+        OpenBMC Maillist <openbmc@lists.ozlabs.org>,
+        James Feist <james.feist@linux.intel.com>,
+        Jason M Biils <jason.m.bills@linux.intel.com>,
+        Vernon Mauery <vernon.mauery@linux.intel.com>
+References: <20190107214136.5256-1-jae.hyun.yoo@linux.intel.com>
+ <20190107214136.5256-9-jae.hyun.yoo@linux.intel.com>
+ <CACPK8Xet1HUbC4MN-XO31oZj56+af1Lpc_mtee-COSYizedWTg@mail.gmail.com>
+From:   Jae Hyun Yoo <jae.hyun.yoo@linux.intel.com>
+Message-ID: <7f63d8f1-2af6-e386-d5b2-c78e3881d789@linux.intel.com>
+Date:   Mon, 14 Jan 2019 15:03:15 -0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.3
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="SCOJXUq1iwCn05li"
-Content-Disposition: inline
-In-Reply-To: <ea6b6a3a-b4eb-1d29-51fd-330b2b170005@nvidia.com>
-X-Cookie: From concentrate.
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <CACPK8Xet1HUbC4MN-XO31oZj56+af1Lpc_mtee-COSYizedWTg@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 1/14/2019 3:42 AM, Joel Stanley wrote:
+> On Tue, 8 Jan 2019 at 08:11, Jae Hyun Yoo <jae.hyun.yoo@linux.intel.com> wrote:
+>>
+>> This commit adds PECI client driver.
+> 
+> It looks like it's a PECI driver for the three CPU families, and it
+> implements cpu and dimm temp, with sideband functions deferred to the
+> future. If you add that information with a few more words it would
+> make for a nicer commit message.
+> 
 
---SCOJXUq1iwCn05li
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Yes, that would be nicer. I'll add the description into the commit
+message.
 
-On Fri, Jan 11, 2019 at 09:15:42AM +0000, Jon Hunter wrote:
-> On 11/01/2019 08:51, Kuninori Morimoto wrote:
+Thanks for your review!
 
-> > So, can you agree about these ?
-> > 1) Add enough information/documentation about legacy/modern style and its plan.
-> > 2) Add dirty pointer fixup patch as workaround
-> > 3) switch to modern style as much as possible
+Regards,
+Jae
 
-> I think that Mark needs to decided on whether use your 'dirty pointer'
-> fix or not.
-
-I've gone ahead with Curtis' version of Morimoto-san's patch just now -
-hopefully that's fine for v5.0.  Like we've been saying neither approach
-is ideal, thanks Jon and Morimoto-san for your efforts analyzing this
-and your proposals.
-
---SCOJXUq1iwCn05li
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlw9FR4ACgkQJNaLcl1U
-h9Dbawf/agRz5TjSTBnTWu+KSjrCB+C+lMhRKOffsiss0cyfbgpS+mKvdujG+ZPb
-4ebTzIDaG+LZWS83jkfh9wcIWy7miQrcZ7DY5XwoFaiLp4fbkVA5lW5jId2juf4u
-RTy1Q2RR3WR3LxQ0RTP86a+4L9Gf3jaQm3n2NIw0k9TqKgMB89q1inAMkTNn8F0U
-AozHjzvy1o1P57iHFj+BTeAmfAlpqzfJ2wsadm8dyxauitp5Pa9JWepq+BZJX0g9
-rw3OrFs2VKrpj6FfcVTaeyHgMSITOqcd19B+CoJoYBKP20+ogs58j71e0ndqALxw
-DH40p4DyPx1zi98Q5cyo6gMiJI2xAg==
-=JWgH
------END PGP SIGNATURE-----
-
---SCOJXUq1iwCn05li--
+>> Signed-off-by: Jae Hyun Yoo <jae.hyun.yoo@linux.intel.com>
+> 
+> Reviewed-by: Joel Stanley <joel@jms.id.au>
+> 
