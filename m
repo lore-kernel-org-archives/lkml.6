@@ -2,205 +2,323 @@ Return-Path: <SRS0=tq6k=PW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 60083C43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 20:48:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C1C9EC43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 20:48:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1C38A20656
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 20:48:06 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="A2pDQgPM"
+	by mail.kernel.org (Postfix) with ESMTP id 87F9E20656
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 20:48:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726927AbfANUsE (ORCPT
+        id S1726996AbfANUsR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 14 Jan 2019 15:48:04 -0500
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:37409 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726794AbfANUsD (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 Jan 2019 15:48:03 -0500
-Received: by mail-wm1-f67.google.com with SMTP id g67so1029331wmd.2
-        for <linux-kernel@vger.kernel.org>; Mon, 14 Jan 2019 12:48:01 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=jwW1KirWJa3Otm0mdb+FxZ3AFbnGbcDi8Iugc6Rltwo=;
-        b=A2pDQgPMfi8xEcPmWoQZ2vTIY4giMrEqTxyGbkzbS3KIpKn4Rzshn3bvn+6sjPR4v/
-         z3eeTNO9KIL13+ffxR2gzEQ6VTGx2Qoefby8azX1xOvMmP1uqyVMPFpL5OBzd/aHEHiG
-         gx/yvd/XHBODmMQ73oi3WtAGNEhSTdeQSF0uJWHEHIaqeThB2Vc1CMPdWBarjpe/2Op1
-         FnIgnpfClFuK1z7GZIKdpc+2vIwVQrXeSYp4uL6yiI4/MRtFXHeyNuhQHreQFcK57G0f
-         z1+JznRXHIrhESLyl/fpth4COZ/LcDv2W0XMR+hBn5T5ug+ZzV329WtQ4EHSmGk27xid
-         r6sA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=jwW1KirWJa3Otm0mdb+FxZ3AFbnGbcDi8Iugc6Rltwo=;
-        b=biISRygNjLsKUwmneZnJwv5TqpOj7LnB8lhI2/7x1HXaBOtluZ7TeQnbI2CtTge1Ky
-         bpvPYJIEDl8v5X/PczhBEdc2sZ/dsXtt/S7UZwC037Af8zdn9hxp5graY3MIpRg973ii
-         J0PImX6KFIS4FbfsM1jWtt7/wWpyzIlPPsSQtgVf8yIeyjcYCkGBg2nWL8hHc2w1k4F1
-         Mu/jJ4BXSYESFRAPs4LzpqweOwgPbbd0/trhIFVq5h6AOAv5Tx06X1a8bPDdUZJ/Qf9o
-         uzlmu+jFmhR4HqebCt/68bSSrIn1lYl+hqBjkki1QttXrXnAqyCRNC+Ui+JFufnV6sV1
-         zpJw==
-X-Gm-Message-State: AJcUukdfi2Jr3VUzSE/0wuiGR6vq4xo+IfCNbQvs8JD3V4gcdY7kff1e
-        F6v8vNG1ETrK+RmA7XfdHo+hNGJfYBjkvY+PYeNxBQ==
-X-Google-Smtp-Source: ALg8bN7iurn1V/oAb9TPOfzDB1cZrLk7Mb7Ob0iavv3WLprDDiWHghw3bxnNBUClL+Yo6cWdjUkw7edud95FQv0DClc=
-X-Received: by 2002:a1c:e910:: with SMTP id q16mr717314wmc.68.1547498879880;
- Mon, 14 Jan 2019 12:47:59 -0800 (PST)
+        Mon, 14 Jan 2019 15:48:17 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:40818 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726776AbfANUsR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 14 Jan 2019 15:48:17 -0500
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 9CA1588307;
+        Mon, 14 Jan 2019 20:48:15 +0000 (UTC)
+Received: from [10.36.116.96] (ovpn-116-96.ams2.redhat.com [10.36.116.96])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id B6A765C25D;
+        Mon, 14 Jan 2019 20:48:08 +0000 (UTC)
+From:   Auger Eric <eric.auger@redhat.com>
+Subject: Re: [RFC v3 18/21] vfio-pci: Add a new VFIO_REGION_TYPE_NESTED region
+ type
+To:     Alex Williamson <alex.williamson@redhat.com>
+Cc:     eric.auger.pro@gmail.com, iommu@lists.linux-foundation.org,
+        linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
+        kvmarm@lists.cs.columbia.edu, joro@8bytes.org,
+        jacob.jun.pan@linux.intel.com, yi.l.liu@linux.intel.com,
+        jean-philippe.brucker@arm.com, will.deacon@arm.com,
+        robin.murphy@arm.com, kevin.tian@intel.com, ashok.raj@intel.com,
+        marc.zyngier@arm.com, christoffer.dall@arm.com,
+        peter.maydell@linaro.org
+References: <20190108102633.17482-1-eric.auger@redhat.com>
+ <20190108102633.17482-19-eric.auger@redhat.com>
+ <20190111165838.06a22ab8@x1.home>
+Message-ID: <497dad10-8832-3f2c-3ff8-fbcdd4c41ae4@redhat.com>
+Date:   Mon, 14 Jan 2019 21:48:06 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-References: <20190110220718.261134-1-surenb@google.com> <20190110220718.261134-6-surenb@google.com>
- <20190114102137.GB14054@worktop.programming.kicks-ass.net>
- <CAJuCfpGUWs0E9oPUjPTNm=WhPJcE_DBjZCtCiaVu5WXabKRW6A@mail.gmail.com> <20190114194222.GA10571@cmpxchg.org>
-In-Reply-To: <20190114194222.GA10571@cmpxchg.org>
-From:   Suren Baghdasaryan <surenb@google.com>
-Date:   Mon, 14 Jan 2019 12:47:48 -0800
-Message-ID: <CAJuCfpF+eZFxCuB4QtQDOeDFYRg1LBiAKkF6QZxRk-FenkNu7w@mail.gmail.com>
-Subject: Re: [PATCH v2 5/5] psi: introduce psi monitor
-To:     Johannes Weiner <hannes@cmpxchg.org>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Tejun Heo <tj@kernel.org>, lizefan@huawei.com, axboe@kernel.dk,
-        dennis@kernel.org, Dennis Zhou <dennisszhou@gmail.com>,
-        Ingo Molnar <mingo@redhat.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Jonathan Corbet <corbet@lwn.net>, cgroups@vger.kernel.org,
-        linux-mm <linux-mm@kvack.org>, linux-doc@vger.kernel.org,
-        LKML <linux-kernel@vger.kernel.org>, kernel-team@android.com
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20190111165838.06a22ab8@x1.home>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.28]); Mon, 14 Jan 2019 20:48:16 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jan 14, 2019 at 11:42 AM Johannes Weiner <hannes@cmpxchg.org> wrote:
->
-> On Mon, Jan 14, 2019 at 11:30:12AM -0800, Suren Baghdasaryan wrote:
-> > On Mon, Jan 14, 2019 at 2:22 AM Peter Zijlstra <peterz@infradead.org> wrote:
-> > >
-> > > On Thu, Jan 10, 2019 at 02:07:18PM -0800, Suren Baghdasaryan wrote:
-> > > > +/*
-> > > > + * psi_update_work represents slowpath accounting part while
-> > > > + * psi_group_change represents hotpath part.
-> > > > + * There are two potential races between these path:
-> > > > + * 1. Changes to group->polling when slowpath checks for new stall, then
-> > > > + *    hotpath records new stall and then slowpath resets group->polling
-> > > > + *    flag. This leads to the exit from the polling mode while monitored
-> > > > + *    states are still changing.
-> > > > + * 2. Slowpath overwriting an immediate update scheduled from the hotpath
-> > > > + *    with a regular update further in the future and missing the
-> > > > + *    immediate update.
-> > > > + * Both races are handled with a retry cycle in the slowpath:
-> > > > + *
-> > > > + *    HOTPATH:                         |    SLOWPATH:
-> > > > + *                                     |
-> > > > + * A) times[cpu] += delta              | E) delta = times[*]
-> > > > + * B) start_poll = (delta[poll_mask] &&|    if delta[poll_mask]:
-> > > > + *      cmpxchg(g->polling, 0, 1) == 0)| F)   polling_until = now +
-> > > > + *                                     |              grace_period
-> > > > + *                                     |    if now > polling_until:
-> > > > + *    if start_poll:                   |      if g->polling:
-> > > > + * C)   mod_delayed_work(1)            | G)     g->polling = polling = 0
-> > > > + *    else if !delayed_work_pending(): | H)     goto SLOWPATH
-> > > > + * D)   schedule_delayed_work(PSI_FREQ)|    else:
-> > > > + *                                     |      if !g->polling:
-> > > > + *                                     | I)     g->polling = polling = 1
-> > > > + *                                     | J) if delta && first_pass:
-> > > > + *                                     |      next_avg = calculate_averages()
-> > > > + *                                     |      if polling:
-> > > > + *                                     |        next_poll = poll_triggers()
-> > > > + *                                     |    if (delta && first_pass) || polling:
-> > > > + *                                     | K)   mod_delayed_work(
-> > > > + *                                     |          min(next_avg, next_poll))
-> > > > + *                                     |      if !polling:
-> > > > + *                                     |        first_pass = false
-> > > > + *                                     | L)     goto SLOWPATH
-> > > > + *
-> > > > + * Race #1 is represented by (EABGD) sequence in which case slowpath
-> > > > + * deactivates polling mode because it misses new monitored stall and hotpath
-> > > > + * doesn't activate it because at (B) g->polling is not yet reset by slowpath
-> > > > + * in (G). This race is handled by the (H) retry, which in the race described
-> > > > + * above results in the new sequence of (EABGDHEIK) that reactivates polling
-> > > > + * mode.
-> > > > + *
-> > > > + * Race #2 is represented by polling==false && (JABCK) sequence which
-> > > > + * overwrites immediate update scheduled at (C) with a later (next_avg) update
-> > > > + * scheduled at (K). This race is handled by the (L) retry which results in the
-> > > > + * new sequence of polling==false && (JABCKLEIK) that reactivates polling mode
-> > > > + * and reschedules next polling update (next_poll).
-> > > > + *
-> > > > + * Note that retries can't result in an infinite loop because retry #1 happens
-> > > > + * only during polling reactivation and retry #2 happens only on the first
-> > > > + * pass. Constant reactivations are impossible because polling will stay active
-> > > > + * for at least grace_period. Worst case scenario involves two retries (HEJKLE)
-> > > > + */
-> > >
-> > > I'm having a fairly hard time with this. There's a distinct lack of
-> > > memory ordering, and a suspicious mixing of atomic ops (cmpxchg) and
-> > > regular loads and stores (without READ_ONCE/WRITE_ONCE even).
-> > >
-> > > Please clarify.
-> >
-> > Thanks for the feedback.
-> > I do mix atomic and regular loads with g->polling only because the
-> > slowpath is the only one that resets it back to 0, so
-> > cmpxchg(g->polling, 1, 0) == 1 at (G) would always return 1.
-> > Setting g->polling back to 1 at (I) indeed needs an atomic operation
-> > but at that point it does not matter whether hotpath or slowpath sets
-> > it. In either case we will schedule a polling update.
-> > Am I missing anything?
-> >
-> > For memory ordering (which Johannes also pointed out) the critical point is:
-> >
-> > times[cpu] += delta           | if g->polling:
-> > smp_wmb()                     |   g->polling = polling = 0
-> > cmpxchg(g->polling, 0, 1)     |   smp_rmb()
-> >                               |   delta = times[*] (through goto SLOWPATH)
-> >
-> > So that hotpath writes to times[] then g->polling and slowpath reads
-> > g->polling then times[]. cmpxchg() implies a full barrier, so we can
-> > drop smp_wmb(). Something like this:
-> >
-> > times[cpu] += delta           | if g->polling:
-> > cmpxchg(g->polling, 0, 1)     |   g->polling = polling = 0
-> >                               |   smp_rmb()
-> >                               |   delta = times[*] (through goto SLOWPATH)
->
-> delta = times[*] is get_recent_times(), which uses a seqcount and so
-> implies the smp_rmb() already as well. So we shouldn't need another
-> explicit one. But the comment should point out all the barriers.
+Hi Alex,
 
-Got it, thanks!
-How about changing the comment this way:
+On 1/12/19 12:58 AM, Alex Williamson wrote:
+> On Tue,  8 Jan 2019 11:26:30 +0100
+> Eric Auger <eric.auger@redhat.com> wrote:
+> 
+>> This patch adds a new 64kB region aiming to report nested mode
+>> translation faults.
+>>
+>> The region contains a header with the size of the queue,
+>> the producer and consumer indices and then the actual
+>> fault queue data. The producer is updated by the kernel while
+>> the consumer is updated by the userspace.
+>>
+>> Signed-off-by: Eric Auger <eric.auger@redhat.com>
+>>
+>> ---
+>> ---
+>>  drivers/vfio/pci/vfio_pci.c         | 102 +++++++++++++++++++++++++++-
+>>  drivers/vfio/pci/vfio_pci_private.h |   2 +
+>>  include/uapi/linux/vfio.h           |  15 ++++
+>>  3 files changed, 118 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/vfio/pci/vfio_pci.c b/drivers/vfio/pci/vfio_pci.c
+>> index ff60bd1ea587..2ba181ab2edd 100644
+>> --- a/drivers/vfio/pci/vfio_pci.c
+>> +++ b/drivers/vfio/pci/vfio_pci.c
+>> @@ -56,6 +56,11 @@ module_param(disable_idle_d3, bool, S_IRUGO | S_IWUSR);
+>>  MODULE_PARM_DESC(disable_idle_d3,
+>>  		 "Disable using the PCI D3 low power state for idle, unused devices");
+>>  
+>> +#define VFIO_FAULT_REGION_SIZE 0x10000
+> 
+> Why 64K?
+For the region to be mmappable with 64kB page size.
+> 
+>> +#define VFIO_FAULT_QUEUE_SIZE	\
+>> +	((VFIO_FAULT_REGION_SIZE - sizeof(struct vfio_fault_region_header)) / \
+>> +	sizeof(struct iommu_fault))
+>> +
+>>  static inline bool vfio_vga_disabled(void)
+>>  {
+>>  #ifdef CONFIG_VFIO_PCI_VGA
+>> @@ -1226,6 +1231,100 @@ static const struct vfio_device_ops vfio_pci_ops = {
+>>  static int vfio_pci_reflck_attach(struct vfio_pci_device *vdev);
+>>  static void vfio_pci_reflck_put(struct vfio_pci_reflck *reflck);
+>>  
+>> +static size_t
+>> +vfio_pci_dma_fault_rw(struct vfio_pci_device *vdev, char __user *buf,
+>> +		      size_t count, loff_t *ppos, bool iswrite)
+>> +{
+>> +	unsigned int i = VFIO_PCI_OFFSET_TO_INDEX(*ppos) - VFIO_PCI_NUM_REGIONS;
+>> +	void *base = vdev->region[i].data;
+>> +	loff_t pos = *ppos & VFIO_PCI_OFFSET_MASK;
+>> +
+>> +	if (pos >= vdev->region[i].size)
+>> +		return -EINVAL;
+>> +
+>> +	count = min(count, (size_t)(vdev->region[i].size - pos));
+>> +
+>> +	if (copy_to_user(buf, base + pos, count))
+>> +		return -EFAULT;
+>> +
+>> +	*ppos += count;
+>> +
+>> +	return count;
+>> +}
+>> +
+>> +static int vfio_pci_dma_fault_mmap(struct vfio_pci_device *vdev,
+>> +				   struct vfio_pci_region *region,
+>> +				   struct vm_area_struct *vma)
+>> +{
+>> +	u64 phys_len, req_len, pgoff, req_start;
+>> +	unsigned long long addr;
+>> +	unsigned int index;
+>> +
+>> +	index = vma->vm_pgoff >> (VFIO_PCI_OFFSET_SHIFT - PAGE_SHIFT);
+>> +
+>> +	if (vma->vm_end < vma->vm_start)
+>> +		return -EINVAL;
+>> +	if ((vma->vm_flags & VM_SHARED) == 0)
+>> +		return -EINVAL;
+>> +
+>> +	phys_len = VFIO_FAULT_REGION_SIZE;
+>> +
+>> +	req_len = vma->vm_end - vma->vm_start;
+>> +	pgoff = vma->vm_pgoff &
+>> +		((1U << (VFIO_PCI_OFFSET_SHIFT - PAGE_SHIFT)) - 1);
+>> +	req_start = pgoff << PAGE_SHIFT;
+>> +
+>> +	if (req_start + req_len > phys_len)
+>> +		return -EINVAL;
+>> +
+>> +	addr = virt_to_phys(vdev->fault_region);
+>> +	vma->vm_private_data = vdev;
+>> +	vma->vm_pgoff = (addr >> PAGE_SHIFT) + pgoff;
+>> +
+>> +	return remap_pfn_range(vma, vma->vm_start, vma->vm_pgoff,
+>> +			       req_len, vma->vm_page_prot);
+>> +}
+>> +
+>> +void vfio_pci_dma_fault_release(struct vfio_pci_device *vdev,
+>> +				struct vfio_pci_region *region)
+>> +{
+>> +}
+>> +
+>> +static const struct vfio_pci_regops vfio_pci_dma_fault_regops = {
+>> +	.rw		= vfio_pci_dma_fault_rw,
+>> +	.mmap		= vfio_pci_dma_fault_mmap,
+>> +	.release	= vfio_pci_dma_fault_release,
+>> +};
+>> +
+>> +static int vfio_pci_init_dma_fault_region(struct vfio_pci_device *vdev)
+>> +{
+>> +	u32 flags = VFIO_REGION_INFO_FLAG_READ | VFIO_REGION_INFO_FLAG_WRITE |
+>> +		    VFIO_REGION_INFO_FLAG_MMAP;
+>> +	int ret;
+>> +
+>> +	spin_lock_init(&vdev->fault_queue_lock);
+>> +
+>> +	vdev->fault_region = kmalloc(VFIO_FAULT_REGION_SIZE, GFP_KERNEL);
+>> +	if (!vdev->fault_region)
+>> +		return -ENOMEM;
+>> +
+>> +	ret = vfio_pci_register_dev_region(vdev,
+>> +		VFIO_REGION_TYPE_NESTED,
+>> +		VFIO_REGION_SUBTYPE_NESTED_FAULT_REGION,
+>> +		&vfio_pci_dma_fault_regops, VFIO_FAULT_REGION_SIZE,
+>> +		flags, vdev->fault_region);
+>> +	if (ret) {
+>> +		kfree(vdev->fault_region);
+>> +		return ret;
+>> +	}
+>> +
+>> +	vdev->fault_region->header.prod = 0;
+>> +	vdev->fault_region->header.cons = 0;
+>> +	vdev->fault_region->header.reserved = 0;
+> 
+> Use kzalloc above or else we're leaking kernel memory to userspace
+> anyway.
+sure
+> 
+>> +	vdev->fault_region->header.size = VFIO_FAULT_QUEUE_SIZE;
+>> +	return 0;
+>> +}
+>> +
+>>  static int vfio_pci_probe(struct pci_dev *pdev, const struct pci_device_id *id)
+>>  {
+>>  	struct vfio_pci_device *vdev;
+>> @@ -1300,7 +1399,7 @@ static int vfio_pci_probe(struct pci_dev *pdev, const struct pci_device_id *id)
+>>  		pci_set_power_state(pdev, PCI_D3hot);
+>>  	}
+>>  
+>> -	return ret;
+>> +	return vfio_pci_init_dma_fault_region(vdev);
+> 
+> Missing lots of cleanup should this fail.  Why is this done on probe
+> anyway?  This looks like something we'd do from vfio_pci_enable() and
+> therefore our release callback would free fault_region rather than what
+> we have below.
+OK. That's fine to put in the vfio_pci_enable().
+> 
+>>  }
+>>  
+>>  static void vfio_pci_remove(struct pci_dev *pdev)
+>> @@ -1315,6 +1414,7 @@ static void vfio_pci_remove(struct pci_dev *pdev)
+>>  
+>>  	vfio_iommu_group_put(pdev->dev.iommu_group, &pdev->dev);
+>>  	kfree(vdev->region);
+>> +	kfree(vdev->fault_region);
+>>  	mutex_destroy(&vdev->ioeventfds_lock);
+>>  	kfree(vdev);
+>>  
+>> diff --git a/drivers/vfio/pci/vfio_pci_private.h b/drivers/vfio/pci/vfio_pci_private.h
+>> index 8c0009f00818..38b5d1764a26 100644
+>> --- a/drivers/vfio/pci/vfio_pci_private.h
+>> +++ b/drivers/vfio/pci/vfio_pci_private.h
+>> @@ -120,6 +120,8 @@ struct vfio_pci_device {
+>>  	int			ioeventfds_nr;
+>>  	struct eventfd_ctx	*err_trigger;
+>>  	struct eventfd_ctx	*req_trigger;
+>> +	spinlock_t              fault_queue_lock;
+>> +	struct vfio_fault_region *fault_region;
+>>  	struct list_head	dummy_resources_list;
+>>  	struct mutex		ioeventfds_lock;
+>>  	struct list_head	ioeventfds_list;
+>> diff --git a/include/uapi/linux/vfio.h b/include/uapi/linux/vfio.h
+>> index 352e795a93c8..b78c2c62af6d 100644
+>> --- a/include/uapi/linux/vfio.h
+>> +++ b/include/uapi/linux/vfio.h
+>> @@ -307,6 +307,9 @@ struct vfio_region_info_cap_type {
+>>  #define VFIO_REGION_TYPE_GFX                    (1)
+>>  #define VFIO_REGION_SUBTYPE_GFX_EDID            (1)
+>>  
+>> +#define VFIO_REGION_TYPE_NESTED			(2)
+>> +#define VFIO_REGION_SUBTYPE_NESTED_FAULT_REGION	(1)
+>> +
+>>  /**
+>>   * struct vfio_region_gfx_edid - EDID region layout.
+>>   *
+>> @@ -697,6 +700,18 @@ struct vfio_device_ioeventfd {
+>>  
+>>  #define VFIO_DEVICE_IOEVENTFD		_IO(VFIO_TYPE, VFIO_BASE + 16)
+>>  
+>> +struct vfio_fault_region_header {
+>> +	__u32	size;		/* Read-Only */
+>> +	__u32	prod;		/* Read-Only */
+> 
+> We can't really enforce read-only if it's mmap'd.
+Do we really need to? Assuming the kernel always uses
+VFIO_FAULT_QUEUE_SIZE to check prod and cons indice - which is not the
+case at the moment by the way :-( -s, the queue cannot
+be overflown .
 
-   HOTPATH:                         |    SLOWPATH:
-                                    |
-A) times[cpu] += delta              | E) delta = times[*]
-   smp_wmb()                        |    if delta[poll_mask]:
-B) start_poll = (delta[poll_mask] &&| F)   polling_until = now + grace_period
-     cmpxchg(g->polling, 0, 1) == 0)|    if now > polling_until:
-   if start_poll:                   |      if g->polling:
-C)   mod_delayed_work(1)            | G)     g->polling = polling = 0
-   else if !delayed_work_pending(): |        smp_rmb()
-D)   schedule_delayed_work(PSI_FREQ)| H)     goto SLOWPATH
-                                    |    else:
-                                    |      if !g->polling:
-                                    | I)     g->polling = polling = 1
-                                    | J) if delta && first_pass:
-                                    |      next_avg = calculate_averages()
-                                    |      if polling:
-                                    |        next_poll = poll_triggers()
-                                    |    if (delta && first_pass) || polling:
-                                    | K)   mod_delayed_work(
-                                    |          min(next_avg, next_poll))
-                                    |      if !polling:
-                                    |        first_pass = false
-                                    | L)     goto SLOWPATH
+The header also can be checked each time the kernel fills any event in
+the queue
+(vfio_pci_iommu_dev_fault_handler). If inconsistent the kernel may stop
+using the queue. If the user-space mangles with those RO fields, this
+will break error reporting on the guest but the problem should be
+confined here?
 
-And maybe adding a comment about implied memory barriers in cmpxchg()
-and in seqlock.
-Would that be enough?
+
+> I worry about synchronization here too, perhaps there should be a ring offset such
+> that the ring can be in a separate page from the header and then sparse
+> mmap support can ensure that the user access is restricted.
+
+I was assuming a single writer and single reader lock-free circular
+buffer here. My understanding was it was safe to consider concurrent
+read and write. What I am missing anyway is atomic counter operations to
+guarantee the indices are updated after the push/pop action as explained in
+https://www.kernel.org/doc/Documentation/circular-buffers.txt. I am not
+comfortable about how to enforce this on user side though.
+
+In case I split the header and the actual buffer into 2 different
+possible 64kB pages, the first one will be very scarcely used.
+
+> wonder if there are other transports that make sense here, this almost
+> feels like a vhost sort of thing.  Thanks,
+Using something more sophisticated may be useful for PRI where answers
+need to be provided. For the case of unrecoverable faults, I wonder
+whether it is worth the pain exposing a fault region compared to the
+original IOCTL approach introduced in
+[RFC v2 18/20] vfio: VFIO_IOMMU_GET_FAULT_EVENTS
+https://lkml.org/lkml/2018/9/18/1094
+
+Thanks
+
+Eric
+> 
+> Alex
+> 
+>> +	__u32	cons;
+>> +	__u32	reserved;	/* must be 0 */
+>> +};
+>> +
+>> +struct vfio_fault_region {
+>> +	struct vfio_fault_region_header header;
+>> +	struct iommu_fault queue[0];
+>> +};
+>> +
+>>  /* -------- API for Type1 VFIO IOMMU -------- */
+>>  
+>>  /**
+> 
