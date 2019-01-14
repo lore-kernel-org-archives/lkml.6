@@ -2,146 +2,207 @@ Return-Path: <SRS0=tq6k=PW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9FA3EC43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 19:51:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8955FC43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 19:55:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 773E020659
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 19:51:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4E2AE20659
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 19:55:23 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=joelfernandes.org header.i=@joelfernandes.org header.b="EYToVw+i"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726796AbfANTvy (ORCPT
+        id S1726819AbfANTzV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 14 Jan 2019 14:51:54 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:60508 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726788AbfANTvy (ORCPT
+        Mon, 14 Jan 2019 14:55:21 -0500
+Received: from mail-qk1-f194.google.com ([209.85.222.194]:39455 "EHLO
+        mail-qk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726745AbfANTzU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 Jan 2019 14:51:54 -0500
-Received: from pps.filterd (m0098419.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id x0EJmq1e075275
-        for <linux-kernel@vger.kernel.org>; Mon, 14 Jan 2019 14:51:52 -0500
-Received: from e11.ny.us.ibm.com (e11.ny.us.ibm.com [129.33.205.201])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2q0x5d73xu-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Mon, 14 Jan 2019 14:51:52 -0500
-Received: from localhost
-        by e11.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <stefanb@linux.ibm.com>;
-        Mon, 14 Jan 2019 19:51:51 -0000
-Received: from b01cxnp23033.gho.pok.ibm.com (9.57.198.28)
-        by e11.ny.us.ibm.com (146.89.104.198) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Mon, 14 Jan 2019 19:51:49 -0000
-Received: from b01ledav005.gho.pok.ibm.com (b01ledav005.gho.pok.ibm.com [9.57.199.110])
-        by b01cxnp23033.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x0EJpmaF22610058
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 14 Jan 2019 19:51:48 GMT
-Received: from b01ledav005.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 7F930AE063;
-        Mon, 14 Jan 2019 19:51:48 +0000 (GMT)
-Received: from b01ledav005.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 45E18AE068;
-        Mon, 14 Jan 2019 19:51:48 +0000 (GMT)
-Received: from sbct-3.pok.ibm.com (unknown [9.47.158.153])
-        by b01ledav005.gho.pok.ibm.com (Postfix) with ESMTP;
-        Mon, 14 Jan 2019 19:51:48 +0000 (GMT)
-Subject: Re: [PATCH 0/5] Extend TPM PPI interface to support revision 1.3
-To:     "Safford, David (GE Global Research)" <david.safford@ge.com>,
-        Stefan Berger <stefanb@linux.vnet.ibm.com>,
-        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
-        "jarkko.sakkinen@linux.intel.com" <jarkko.sakkinen@linux.intel.com>
-Cc:     "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-References: <20190109221103.1897677-1-stefanb@linux.vnet.ibm.com>
- <BCA04D5D9A3B764C9B7405BBA4D4A3C0151A3125@ALPMBAPA12.e2k.ad.ge.com>
-From:   Stefan Berger <stefanb@linux.ibm.com>
-Date:   Mon, 14 Jan 2019 14:51:48 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.1
+        Mon, 14 Jan 2019 14:55:20 -0500
+Received: by mail-qk1-f194.google.com with SMTP id c21so176129qkl.6
+        for <linux-kernel@vger.kernel.org>; Mon, 14 Jan 2019 11:55:19 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=joelfernandes.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=o1vavm9o2DV9O64MLQtDGzlGNk+4Yzp+Ye5GIraM8u4=;
+        b=EYToVw+iUrvwv53qbXyja40nKY/nlR7NUXUF4MsrYkdgtgpIViIg2yd9F6K5odUqo3
+         p6xdEbe2tW3LLyxahVtZ7QJ8Coot3XeLBsTO2QC0OGnS7utMopDm0O284ktvM7KGU/YQ
+         cN4yUHQr/ch2qnd1Tmv7KNtsNVzqZ2kOrreg4=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=o1vavm9o2DV9O64MLQtDGzlGNk+4Yzp+Ye5GIraM8u4=;
+        b=L6s336OagYGBqyqTiBWhw2+v83BKhZXrzyTvOhjgyeLF60MQ4XbXXMqCJ1YYAoUpZA
+         4WM3/w4FUPYIMho1XUry83xaelNMdtQ14cQz35vE/WtlQ7zKkBvgr8XRrvhYqAOlTRr2
+         yVSyeNwDGUtRJkV+dhqaZLNzYs9CBNud/VfKbEIhK0Jkqq7CsdKBH5MbIc73CYiQ2ZX1
+         14HZNAowx8Xvcz3VO5b8RPYgWaJYhm0mCACXbW8qo8Ni1zZQFkiZtV4EaDP5EOfM6pBb
+         t7WXGRsfwHIGH6IK07Qz0witQ8JcXGEo22wHfvhLOGUaU5eEQ7Gd+3mMl9s9aDSItX0Y
+         gsmA==
+X-Gm-Message-State: AJcUukeE6lmUFoU7rAewwd63QGcPzbIEgBvF0Vl2hycv4G+m9GdsrPIq
+        ZLvMszm94QidBwTC40baXHSUPw==
+X-Google-Smtp-Source: ALg8bN50ECzxcR6eqOE2ePBtlNMZkiWBrflifr5CEzZWbz62WSIy16rUOg9MJCWtdibNqd3iIMtWJQ==
+X-Received: by 2002:a37:5e42:: with SMTP id s63mr117608qkb.220.1547495719044;
+        Mon, 14 Jan 2019 11:55:19 -0800 (PST)
+Received: from localhost ([2620:0:1004:1100:cfd0:d2ee:d54d:ab6d])
+        by smtp.gmail.com with ESMTPSA id s46sm49980008qtc.63.2019.01.14.11.55.17
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 14 Jan 2019 11:55:17 -0800 (PST)
+Date:   Mon, 14 Jan 2019 14:55:16 -0500
+From:   Joel Fernandes <joel@joelfernandes.org>
+To:     Todd Kjos <tkjos@google.com>
+Cc:     Todd Kjos <tkjos@android.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Arve =?iso-8859-1?B?SGr4bm5lduVn?= <arve@android.com>,
+        "open list:ANDROID DRIVERS" <devel@driverdev.osuosl.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Martijn Coenen <maco@google.com>,
+        Android Kernel Team <kernel-team@android.com>
+Subject: Re: [PATCH v3] binder: create node flag to request sender's security
+ context
+Message-ID: <20190114195516.GA227294@google.com>
+References: <20190114171021.86171-1-tkjos@google.com>
+ <20190114183316.GA199154@google.com>
+ <CAHRSSEx7BMMZ1CFoQiOxUzPfO1+MFuSEF4Xo=oN5h+gUZb=4JQ@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <BCA04D5D9A3B764C9B7405BBA4D4A3C0151A3125@ALPMBAPA12.e2k.ad.ge.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-MW
-X-TM-AS-GCONF: 00
-x-cbid: 19011419-2213-0000-0000-0000033D4DCA
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00010405; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000274; SDB=6.01146483; UDB=6.00597126; IPR=6.00926769;
- MB=3.00025124; MTD=3.00000008; XFM=3.00000015; UTC=2019-01-14 19:51:51
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19011419-2214-0000-0000-00005CF88ED7
-Message-Id: <268c3238-b4fe-ef9f-d656-4d34479ec481@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-01-14_10:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1901140152
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAHRSSEx7BMMZ1CFoQiOxUzPfO1+MFuSEF4Xo=oN5h+gUZb=4JQ@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 1/11/19 3:28 PM, Safford, David (GE Global Research) wrote:
->> -----Original Message-----
->> From: linux-integrity-owner@vger.kernel.org <linux-integrity-
->> owner@vger.kernel.org> On Behalf Of Stefan Berger
->> Sent: Wednesday, January 09, 2019 5:11 PM
->> To: linux-integrity@vger.kernel.org; jarkko.sakkinen@linux.intel.com
->> Cc: linux-security-module@vger.kernel.org; linux-kernel@vger.kernel.org;
->> Stefan Berger <stefanb@linux.vnet.ibm.com>
->> Subject: EXT: [PATCH 0/5] Extend TPM PPI interface to support revision 1.3
->>
->> This series of patches extends the TPM subsystem's PPI support to support
->> TPM PPI revision 1.3 where more commands are supported (up to 101) and
->> the TPM 2 command code '23' takes an additional parameter.
->>
->> For the command code '23' see this document here on document page 39:
->> https://trustedcomputinggroup.org/wp-content/uploads/Physical-
->> Presence-Interface_1-30_0-52.pdf
->>
->>     Stefan
-> You might mention that this is an important feature, as on at least some
-> systems, ppi function 23 is the only way to enable/disable PCR banks.
+On Mon, Jan 14, 2019 at 10:50:24AM -0800, Todd Kjos wrote:
+> On Mon, Jan 14, 2019 at 10:33 AM Joel Fernandes <joelaf@google.com> wrote:
+> >
+> > On Mon, Jan 14, 2019 at 09:10:21AM -0800, Todd Kjos wrote:
+> > > To allow servers to verify client identity, allow a node
+> > > flag to be set that causes the sender's security context
+> > > to be delivered with the transaction. The BR_TRANSACTION
+> > > command is extended in BR_TRANSACTION_SEC_CTX to
+> > > contain a pointer to the security context string.
+> > >
+> > > Signed-off-by: Todd Kjos <tkjos@google.com>
+> > > ---
+> > > v2: fix 32-bit build warning
+> > > v3: fix smatch warning on unitialized struct element
+> > >
+> > >  drivers/android/binder.c            | 106 ++++++++++++++++++++++------
+> > >  include/uapi/linux/android/binder.h |  19 +++++
+> > >  2 files changed, 102 insertions(+), 23 deletions(-)
+> > >
+> > > diff --git a/drivers/android/binder.c b/drivers/android/binder.c
+> > > index cdfc87629efb8..5f6ef5e63b91e 100644
+> > > --- a/drivers/android/binder.c
+> > > +++ b/drivers/android/binder.c
+> > > @@ -329,6 +329,8 @@ struct binder_error {
+> > >   *                        (invariant after initialized)
+> > >   * @min_priority:         minimum scheduling priority
+> > >   *                        (invariant after initialized)
+> > > + * @txn_security_ctx:     require sender's security context
+> > > + *                        (invariant after initialized)
+> > >   * @async_todo:           list of async work items
+> > >   *                        (protected by @proc->inner_lock)
+> > >   *
+> > > @@ -365,6 +367,7 @@ struct binder_node {
+> > >                * invariant after initialization
+> > >                */
+> > >               u8 accept_fds:1;
+> > > +             u8 txn_security_ctx:1;
+> > >               u8 min_priority;
+> > >       };
+> > >       bool has_async_transaction;
+> > > @@ -615,6 +618,7 @@ struct binder_transaction {
+> > >       long    saved_priority;
+> > >       kuid_t  sender_euid;
+> > >       struct list_head fd_fixups;
+> > > +     binder_uintptr_t security_ctx;
+> > >       /**
+> > >        * @lock:  protects @from, @to_proc, and @to_thread
+> > >        *
+> > > @@ -1152,6 +1156,7 @@ static struct binder_node *binder_init_node_ilocked(
+> > >       node->work.type = BINDER_WORK_NODE;
+> > >       node->min_priority = flags & FLAT_BINDER_FLAG_PRIORITY_MASK;
+> > >       node->accept_fds = !!(flags & FLAT_BINDER_FLAG_ACCEPTS_FDS);
+> > > +     node->txn_security_ctx = !!(flags & FLAT_BINDER_FLAG_TXN_SECURITY_CTX);
+> > >       spin_lock_init(&node->lock);
+> > >       INIT_LIST_HEAD(&node->work.entry);
+> > >       INIT_LIST_HEAD(&node->async_todo);
+> > > @@ -2778,6 +2783,8 @@ static void binder_transaction(struct binder_proc *proc,
+> > >       binder_size_t last_fixup_min_off = 0;
+> > >       struct binder_context *context = proc->context;
+> > >       int t_debug_id = atomic_inc_return(&binder_last_id);
+> > > +     char *secctx = NULL;
+> > > +     u32 secctx_sz = 0;
+> > >
+> > >       e = binder_transaction_log_add(&binder_transaction_log);
+> > >       e->debug_id = t_debug_id;
+> > > @@ -3020,6 +3027,20 @@ static void binder_transaction(struct binder_proc *proc,
+> > >       t->flags = tr->flags;
+> > >       t->priority = task_nice(current);
+> > >
+> > > +     if (target_node && target_node->txn_security_ctx) {
+> > > +             u32 secid;
+> > > +
+> > > +             security_task_getsecid(proc->tsk, &secid);
+> > > +             ret = security_secid_to_secctx(secid, &secctx, &secctx_sz);
+> > > +             if (ret) {
+> > > +                     return_error = BR_FAILED_REPLY;
+> > > +                     return_error_param = ret;
+> > > +                     return_error_line = __LINE__;
+> > > +                     goto err_get_secctx_failed;
+> > > +             }
+> > > +             extra_buffers_size += ALIGN(secctx_sz, sizeof(u64));
+> > > +     }
+> > > +
+> > >       trace_binder_transaction(reply, t, target_node);
+> > >
+> > >       t->buffer = binder_alloc_new_buf(&target_proc->alloc, tr->data_size,
+> > > @@ -3036,6 +3057,19 @@ static void binder_transaction(struct binder_proc *proc,
+> > >               t->buffer = NULL;
+> > >               goto err_binder_alloc_buf_failed;
+> > >       }
+> > > +     if (secctx) {
+> > > +             size_t buf_offset = ALIGN(tr->data_size, sizeof(void *)) +
+> > > +                                 ALIGN(tr->offsets_size, sizeof(void *)) +
+> > > +                                 ALIGN(extra_buffers_size, sizeof(void *)) -
+> > > +                                 ALIGN(secctx_sz, sizeof(u64));
+> > > +             char *kptr = t->buffer->data + buf_offset;
+> > > +
+> > > +             t->security_ctx = (uintptr_t)kptr +
+> > > +                 binder_alloc_get_user_buffer_offset(&target_proc->alloc);
+> > > +             memcpy(kptr, secctx, secctx_sz);
+> >
+> > Just for my clarification, instead of storing the string in the transaction
+> > buffer, would it not be better to store the security context id in
+> > t->security_ctx, and then do the conversion to string later, during
+> > binder_thread_read? Then some space will also be saved in the transaction
+> > buffer?
+> 
+> The string has to be somewhere in the address space of the target. We
+> allocate the space in the binder buffer and copy it here. This is a
+> convenient place to allocate the space since we know the size at the
+> time of allocation. Presumably, in your proposal, we would copy it
+> later into the output buffer...which is allocated by the userspace so
+> we don't have complete control of it in the kernel. Doing that would
+> make binder_thread_read() more complex since we'd need to make sure
+> there is sizeof(tr) + secctx_sz always available in the output buffer
+> (which is allocated by userspace). Saving a few bytes in the this
+> buffer is of little value, but keeping the output buffer management
+> simple is valuable.
 
-'The only way' depends on how good or bad the firmware support for this 
-is. SeaBIOS will have a menu item that lets one toggle the activation of 
-the PCR banks in the firmware menu -- assuming my patch makes it 
-upstream :-)
+Makes sense now, thanks. I agree its simpler this way.
 
+Reviewed-by: Joel Fernandes (Google) <joel@joelfernandes.org>
 
->
-> I have tested this patch set on my HP Spectre laptop, and I am finally
-> able to turn the sha-1 bank on and off. Much appreciated!
->
-> Tested-by: David Safford <david.safford@ge.com>
+thanks,
 
-
-Thanks.
-
-
-     Stefan
-
-
->
->> Stefan Berger (5):
->>    tpm: ppi: pass function revision ID to tpm_eval_dsm()
->>    tpm: ppi: rename TPM_PPI_REVISION_ID to TPM_PPI_REVISION_1
->>    tpm: ppi: Display up to 101 operations as define for version 1.3
->>    tpm: ppi: Possibly show command parameter if TPM PPI 1.3 is used
->>    tpm: ppi: Enable submission of optional command parameter for PPI 1.3
->>
->>   drivers/char/tpm/tpm_ppi.c | 78 ++++++++++++++++++++++++++++--------
->> --
->>   1 file changed, 58 insertions(+), 20 deletions(-)
->>
->> --
->> 2.17.1
-
+ - Joel
 
