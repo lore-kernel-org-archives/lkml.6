@@ -2,200 +2,90 @@ Return-Path: <SRS0=tq6k=PW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,LOTS_OF_MONEY,MAILING_LIST_MULTI,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D343C43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 08:59:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D2CDC43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 09:01:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 91BD420663
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 08:59:21 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=redchan.it header.i=@redchan.it header.b="TOO5Yd/D"
+	by mail.kernel.org (Postfix) with ESMTP id 10C2F20663
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 09:01:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726559AbfANI7U (ORCPT
+        id S1726514AbfANJBN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 14 Jan 2019 03:59:20 -0500
-Received: from cock.li ([185.100.85.212]:42452 "EHLO cock.li"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726092AbfANI7T (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 Jan 2019 03:59:19 -0500
+        Mon, 14 Jan 2019 04:01:13 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:44990 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726064AbfANJBN (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 14 Jan 2019 04:01:13 -0500
+Received: from pps.filterd (m0098414.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id x0E8w1Q3123069
+        for <linux-kernel@vger.kernel.org>; Mon, 14 Jan 2019 04:01:12 -0500
+Received: from e06smtp05.uk.ibm.com (e06smtp05.uk.ibm.com [195.75.94.101])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2q0kw2qx18-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Mon, 14 Jan 2019 04:01:11 -0500
+Received: from localhost
+        by e06smtp05.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <joeln@il.ibm.com>;
+        Mon, 14 Jan 2019 09:01:08 -0000
+Received: from b06cxnps3074.portsmouth.uk.ibm.com (9.149.109.194)
+        by e06smtp05.uk.ibm.com (192.168.101.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Mon, 14 Jan 2019 09:01:05 -0000
+Received: from d06av21.portsmouth.uk.ibm.com (d06av21.portsmouth.uk.ibm.com [9.149.105.232])
+        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x0E914Iq49152158
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Mon, 14 Jan 2019 09:01:04 GMT
+Received: from d06av21.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 17ECF52065;
+        Mon, 14 Jan 2019 09:01:04 +0000 (GMT)
+Received: from tal (unknown [9.148.32.96])
+        by d06av21.portsmouth.uk.ibm.com (Postfix) with ESMTPS id 862065204F;
+        Mon, 14 Jan 2019 09:01:02 +0000 (GMT)
+Received: by tal (sSMTP sendmail emulation); Mon, 14 Jan 2019 11:01:01 +0200
+From:   Joel Nider <joeln@il.ibm.com>
+To:     Jonathan Corbet <corbet@lwn.net>
+Cc:     Jason Gunthorpe <jgg@ziepe.ca>, Leon Romanovsky <leon@kernel.org>,
+        Doug Ledford <dledford@redhat.com>,
+        Mike Rapoport <rppt@linux.ibm.com>, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: updating user verbs documentation
+Date:   Mon, 14 Jan 2019 11:00:48 +0200
+X-Mailer: git-send-email 2.7.4
+X-TM-AS-GCONF: 00
+x-cbid: 19011409-0020-0000-0000-0000030628D4
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19011409-0021-0000-0000-0000215738F6
+Message-Id: <1547456451-7102-1-git-send-email-joeln@il.ibm.com>
+Content-Type:   text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7BIT
 MIME-Version: 1.0
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=redchan.it; s=mail;
-        t=1547456356; bh=iShYulUfkOwd7pUtCAteRdXWDI12sKh1+zEWpA+NSao=;
-        h=Date:From:To:Subject:From;
-        b=TOO5Yd/DrQ6w6sururhzqXMCPzFxkWJkrSmjlkB89GOgt9fzFYofyo2onwa4P+Oek
-         uZul9VqfpV19TGYn/LrL4s1uWs8CoNf887ZVZV7CCiqeqbZy9kVaZ4llCGo7QzFxPy
-         a0ID/dv/JzK+E7ayWrNrT2GSnjumeHaIbvPKR7phuUTEFd6Rrb47RO0GJC+PNag+fW
-         36JdIAPwpIb1nzwzuBGsNehfQACAiaTZpnovZzB7nAkoAeylK/GCTbrDdxqyS1bJ8W
-         Wyvogv2B3lsXbxCqZdrG7etrrEFYkeqpQiHzP/vybnyqFpa1hXe53Gx0re4nSUMGzm
-         gfed7yB9mqbpg==
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date:   Mon, 14 Jan 2019 08:59:15 +0000
-From:   sicevar@redchan.it
-To:     linux-kernel@vger.kernel.org
-Subject: Author Rescinds GPL licensed code
-Message-ID: <da79aad6bcb485664a65cb3c93bb8ce1@redchan.it>
-X-Sender: sicevar@redchan.it
-User-Agent: Roundcube Webmail/1.3.6
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-01-14_05:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=795 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1901140076
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-https://slashdot.org/submission/9087542/author-recinds-gpl
-The author of the GPL licensed text-mode casino game "GPC-Slots 2" has 
-rescinded the license from the "Geek feminist" collective.
+A small patchset to update the verbs API documentation with some
+information regarding the ioctl syscall. First patch converts the
+file format to ReST, since this is the new preferred format. 2nd
+patch links this file to the main index so we can actually find
+it by browsing (search will work in any case). 3rd patch adds the
+new content, documenting a bit of the internal workings of the
+kernel side of the API functions. The goal is to make it easier
+for developers unfamiliar with the structure to understand what
+is going on when adding a new function.
 
-[Notice: the revocation of the "Geek Feminists"'s license /just/ 
-occurred. 2019. January.]
-
-The original author, after years of silence, notes that the "Geek 
-Feminist" changed[1] a bunch of if-then statements which were preceded 
-by a loop waiting for string input to a switch statement. The author 
-reportedly noted that to use a switch statement in such an instance is 
-no more preformant than the if-thens. Switch statements should be used 
-where the input to the switch statement is numerical, and of a 
-successive nature, for most efficient use of the jump table that is 
-generated from said code.
-
-The author reportedly was offended, after quiet observation of the 
-group, that the "Geek Feminists" mocked his code, mocked his existence 
-as a male, and never did any work on the code afterwards and never 
-updated to include new slot machines added to the original code by 
-author subsequently.
-
-The author notes that he neither sought nor received any compensation 
-for the granted license, that is was a gratuitous license, and that 
-there never was any refutation of his default right to rescind given. (A 
-right founded in the property law of licenses.)
-
-The copyright owner has reportedly watched quietly as each year the 
-"Geek Feminists" published a recount of their heroic efforts regarding 
-his code.[2][3] Presumably he has now had enough of it all...
-
-The author notes that the SF Conservancy attempts to construe a 
-particular clause in the GPL version 2 license text as a "no revocation 
-by grantor clause", however that clause states that if a licensee 
-suffers and automatic-revocation by operation of the license, that 
-licensees down stream from him do not suffer the same fate. The author 
-of "GPC-Slots 2" reportedly notes that said clause does only what it 
-claims to do: clarifies that a downstream licensee, through no fault of 
-his own, is not penalized by the automatic revocation suffered by a 
-licensee he gained a "sub-license" from (for lack of a better term.)
-
-The author reportedly notes that version 3 of the GPL did not exist when 
-he published the code, additionally the author notes that even if there 
-was a clause not to revoke, he was paid no consideration for such a 
-forbearance of a legal right of his and thus said clause is not 
-operative against him, the grantor, should it exist at all.
-
-(Editor's note: GPL version 3 contains an explicit 
-"no-revocation-by-grantor" clause, in addition to a term-of-years that 
-the license is granted for. Both absent in version 2 of the GPL)
-
-The author reportedly has mulled an option to register his copyright and 
-then to seek damages from the "Geek Feminists" if they choose to violate 
-his copyright post-hence.
-
-(Editors note: Statutory damages for willful copyright infringement can 
-amount to $150,000 plus attorney's fees for post registration violations 
-of a differing nature to pre-registration violations.)
-
-[1]https://geekfeminism.org/2009/10/19/
-[2]https://geekfeminism.org
-[3]http://geekfeminism.wikia.com
-
-GPC-Slots 2 is a text console mode casino game available for linux with 
-various slot machines, table games, and stock market tokens for the 
-player to test his luck. For the unlucky there is a Russian Roulette 
-function.
-
-[Notice: the revocation of the "Geek Feminists"'s license /just/ 
-occurred. 2019. January.]
-
-
-
-
-
-
-Addendum: Statements from the program author:
-
-"It's my right to rescind the permission I extended.
-I have done so.
-
-You speak as if me controlling my property is a criminal act.
-And to you people, perhaps it is.
-
-If the "geek feminists" wanted a secured interest, they would have to 
-pay for one."
-
-
-
-
-"I did rescind the license, yesterday"
-
-
-
-
-> Reportedly
-"I did rescind the license, yesterday
-
-
-Not "reportedly" anymore."
-
-
-
-
-------------------------------------------------------------
-
-p46 "As long as the project continues to honor the terms of the licenses 
-under which it recieved contributions, the licenses continue in effect. 
-There is one important caveat: Even a perpetual license can be revoked. 
-See the discussion of bare licenses and contracts in Chapter 4"
---Lawrence Rosen
-
-p56 "A third problem with bare licenses is that they may be revocable by 
-the licensor. Specifically, /a license not coupled with an interest may 
-be revoked./ The term /interest/ in this context usually means the 
-payment of some royalty or license fee, but there are other more 
-complicated ways to satisfy the interest requirement. For example, a 
-licensee can demonstrate that he or she has paid some consideration-a 
-contract law term not found in copyright or patent law-in order to avoid 
-revocation. Or a licensee may claim that he or she relied on the 
-software licensed under an open source license and now is dependent upon 
-that software, but this contract law concept, called promissory 
-estoppel, is both difficult to prove and unreliable in court tests. (The 
-concepts of /consideration/ and /promissory estoppel/ are explained more 
-fully in the next section.) Unless the courts allow us to apply these 
-contract law principles to a license, we are faced with a bare license 
-that is revocable.
---Lawrence Rosen
-
-p278 "Notice that in a copyright dispute over a bare license, the 
-plaintiff will almost certainly be the copyright owner. If a licensee 
-were foolish enough to sue to enforce the terms and conditions of the 
-license, the licensor can simply revoke the bare license, thus ending 
-the dispute. Remeber that a bare license in the absence of an interest 
-is revocable."
---Lawrence Rosen
-
-Lawrence Rosen - Open Source Licensing - Sofware Freedom and 
-Intellectual property Law
-
-
-
-p65 "Of all the licenses descibed in this book, only the GPL makes the 
-explicity point that it wants nothing of /acceptance/ of 
-/consideration/:
-...
-The GPL authors intend that it not be treated as a contract. I will say 
-much more about this license and these two provisions in Chapter 6. For 
-now, I simply point out that the GPL licensors are in essentially the 
-same situation as other open source licensors who cannot prove offer, 
-acceptance, or consideration. There is no contract."
---Lawrence Rosen
+[PATCH 1/3] docs-rst: infiniband: Convert user verbs doc to rst
+[PATCH 2/3] docs-rst: update index file with infiniband docs
+[PATCH 3/3] docs-rst: infiniband: update verbs API details
 
