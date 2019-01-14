@@ -2,90 +2,65 @@ Return-Path: <SRS0=tq6k=PW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9DBB0C43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 14:45:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F843C43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 14:46:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 75C8420657
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 14:45:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 26A9F20657
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 14:46:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726745AbfANOpa (ORCPT
+        id S1726757AbfANOqV convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 14 Jan 2019 09:45:30 -0500
-Received: from mx2.suse.de ([195.135.220.15]:59734 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726552AbfANOpa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 Jan 2019 09:45:30 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 5E035AE72;
-        Mon, 14 Jan 2019 14:45:29 +0000 (UTC)
-Date:   Mon, 14 Jan 2019 15:45:28 +0100
-From:   Petr Mladek <pmladek@suse.com>
-To:     Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jslaby@suse.com>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/3] sysrq: Remove duplicated sysrq message
-Message-ID: <20190114144528.2afzfyl4ayridsd6@pathway.suse.cz>
-References: <20190111162038.19771-1-pmladek@suse.com>
- <20190111162038.19771-3-pmladek@suse.com>
- <20190114055127.GB7417@jagdpanzerIV>
+        Mon, 14 Jan 2019 09:46:21 -0500
+Received: from Galois.linutronix.de ([146.0.238.70]:39597 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726542AbfANOqU (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 14 Jan 2019 09:46:20 -0500
+Received: from bigeasy by Galois.linutronix.de with local (Exim 4.80)
+        (envelope-from <bigeasy@linutronix.de>)
+        id 1gj3Up-0006kj-TK; Mon, 14 Jan 2019 15:45:48 +0100
+Date:   Mon, 14 Jan 2019 15:45:47 +0100
+From:   "bigeasy@linutronix.de" <bigeasy@linutronix.de>
+To:     John Kacur <jkacur@redhat.com>,
+        Clark Williams <williams@redhat.com>
+Cc:     Steven Rostedt <rostedt@goodmis.org>,
+        "julia@ni.com" <julia@ni.com>,
+        "tglx@linutronix.de" <tglx@linutronix.de>,
+        "oleg@redhat.com" <oleg@redhat.com>,
+        "linux-rt-users@vger.kernel.org" <linux-rt-users@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Joe Korty <Joe.Korty@concurrent-rt.com>
+Subject: Re: [ptrace, rt] erratic behaviour in PTRACE_SINGLESET on 4.13-rt
+ and later.
+Message-ID: <20190114144547.bgvkgv24g2odrek4@linutronix.de>
+References: <20181119194619.GA32121@zipoli.concurrent-rt.com>
+ <20181120122900.625b1d98@gandalf.local.home>
+ <20181127085819.7e0865ee@tagon>
+ <20181127151004.GB15742@zipoli.concurrent-rt.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20190114055127.GB7417@jagdpanzerIV>
-User-Agent: NeoMutt/20170421 (1.8.2)
+Content-Transfer-Encoding: 8BIT
+In-Reply-To: <20181127151004.GB15742@zipoli.concurrent-rt.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon 2019-01-14 14:51:27, Sergey Senozhatsky wrote:
-> On (01/11/19 17:20), Petr Mladek wrote:
-> > The commit 97f5f0cd8cd0a0544 ("Input: implement SysRq as a separate input
-> > handler") added pr_fmt() definition. It caused a duplicated message
-> > prefix in the sysrq header messages, for example:
-> > 
-> > [  177.053931] sysrq: SysRq : Show backtrace of all active CPUs
-> > [  742.864776] sysrq: SysRq : HELP : loglevel(0-9) reboot(b) crash(c)
-> > 
-> > Fixes: 97f5f0cd8cd0a05 ("Input: implement SysRq as a separate input handler")
-> > Signed-off-by: Petr Mladek <pmladek@suse.com>
-> 
-> Reviewed-by: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
+On 2018-11-27 15:10:07 [+0000], Joe Korty wrote:
+> Hi Clark,
+Hi Clark,
 
-Thanks.
+> No I don't, sorry.  I am attaching the LAG version, it is a few
+> dozen lines shorter than the version I first sent out to the
+> mailing list.
 
+Did this make its way to rt-tests? I have some changes on top of it
+while I was looking for the bug…
 
-> A side note:
-> 
-> > -			pr_cont("This sysrq operation is disabled.\n");
-> > +			pr_info("This sysrq operation is disabled.\n");
-> 
-> I wouldn't mind this messages to become more informative.
-> 
-> +	pr_info("sysrq 0x%x operation is disabled.\n", key);
-> ?
-
-It might be better to use the op_p->action_msg or op_p->help_msg
-strings instead of the key number.
-
-
-> A bunch of "This sysrq operation is disabled" in serial0 log file
-> (post mortem) is not very helpful.
-
-The line is printed with the increased loglevel. It is primary
-an immediate feedback on the console for the user pressing
-the sysrq key.
-
-Well, a more descriptive message would not hurt. Anyway, it
-should be a separate patch.
-
-Best Regards,
-Petr
+Sebastian
