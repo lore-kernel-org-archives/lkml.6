@@ -7,52 +7,51 @@ X-Spam-Status: No, score=-13.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 97925C43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 12:07:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C183AC43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 12:07:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5EFFA20656
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 12:07:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8E20820659
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 12:07:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547467668;
-	bh=sv9BiZDsuKL1GkHpQWDw2KQy+CgeGOY2kFQytzVUfbo=;
+	s=default; t=1547467673;
+	bh=oyVeZhgtPBDRJLQhFvTNfAX3C2ei6o4VwNzKTQ4U6aM=;
 	h=From:To:Cc:Subject:In-Reply-To:Date:List-ID:From;
-	b=tBRkeoeTd51oYKXWp674YeC66WRchSuLuoZEeR4SLh+piiMtJd6a4XMN0NnGq8nyM
-	 7kVdxRpI8z1o7iGuf7k0bVeQ47jkVe6oGXBHAt6JZbMcNMierZIozuEZV/8KhzfSQ9
-	 /yaYAhl+/zVR04XFwPpbUiQoaPuJlLVTQUAdrpL0=
+	b=ZnN8GjPfIYgMkybzFos6/v+4CajVwszjdM6TnJZAEquEwkWURcPPdla5ljwsPsShV
+	 uVN1XeAR4bg6uUeNgFV2tBDnW3CRq1K81Gv5q5ukbFuPHlyInhQpaUJaiGQ8L10Ig5
+	 mfB6H0osc9RiZOkMlvvgbyyRlbKWtbxJH2/NBpTE=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726614AbfANMHr (ORCPT
+        id S1726629AbfANMHw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 14 Jan 2019 07:07:47 -0500
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:39316 "EHLO
+        Mon, 14 Jan 2019 07:07:52 -0500
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:39350 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726414AbfANMHo (ORCPT
+        with ESMTP id S1726470AbfANMHp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 Jan 2019 07:07:44 -0500
+        Mon, 14 Jan 2019 07:07:45 -0500
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
         Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
         List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=8gx6Rmt7/gdGbgjXCUC457fMV060UhGIkbD4hiXe3Rc=; b=SbVw+u5D+VPc
-        CHcrA0UHrZcjpt9qAPovOsV+v2zSUcfwywWfw0PkmzKemBVbddczMXej6S4KqKPWSRdcG3+6VX54I
-        4vfVwKQYo8RbkJ9yryP7/r75ORZc+MX2+KYsTHE0hEvwDtwLfxhVz5rBzHxqz67jd1Fbi191Ud2qz
-        zazRI=;
+        List-Archive; bh=s0HBF+CL3KiNtTHTo/Chu3WFRvm3PJBcAp/d4O9Znts=; b=ZDIa0dvpeFVj
+        9Zxjl5OgC5/gl/UITa+T8cPYTREqMarh32LA71Wx5TG8EtBdONdSCe1RG9WfTjoV4kZM9dVx6Tedv
+        MrN+m/ODPtYZ1eBcqv+DQQqUMl+XqaBPsH3bHJ2Tbityu6+44HUU9EGE0cnV5dAspWgKW/sLNul9Z
+        MTOWY=;
 Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
         by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
         (envelope-from <broonie@sirena.org.uk>)
-        id 1gj11p-0004uj-M6; Mon, 14 Jan 2019 12:07:41 +0000
+        id 1gj11q-0004uc-Uz; Mon, 14 Jan 2019 12:07:43 +0000
 Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
-        id 4437C1127AD2; Mon, 14 Jan 2019 12:07:41 +0000 (GMT)
+        id 6F7351127AD1; Mon, 14 Jan 2019 12:07:37 +0000 (GMT)
 From:   Mark Brown <broonie@kernel.org>
 To:     Linus Walleij <linus.walleij@linaro.org>
-Cc:     devicetree@vger.kernel.org, Mark Brown <broonie@kernel.org>,
-        linux-kernel@vger.kernel.org
-Subject: Applied "regulator: fixed/gpio: Update device tree bindings" to the regulator tree
+Cc:     Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org
+Subject: Applied "regulator: core: Only support passing enable GPIO descriptors" to the regulator tree
 In-Reply-To: 
 X-Patchwork-Hint: ignore
-Message-Id: <20190114120741.4437C1127AD2@debutante.sirena.org.uk>
-Date:   Mon, 14 Jan 2019 12:07:41 +0000 (GMT)
+Message-Id: <20190114120737.6F7351127AD1@debutante.sirena.org.uk>
+Date:   Mon, 14 Jan 2019 12:07:37 +0000 (GMT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -60,7 +59,7 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   regulator: fixed/gpio: Update device tree bindings
+   regulator: core: Only support passing enable GPIO descriptors
 
 has been applied to the regulator tree at
 
@@ -85,80 +84,133 @@ to this mail.
 Thanks,
 Mark
 
-From 0d362f88573d67e661a45932e4eb1a2ab42ffae2 Mon Sep 17 00:00:00 2001
+From 5174d053ca62112d88e76398d4620589cf92fdfb Mon Sep 17 00:00:00 2001
 From: Linus Walleij <linus.walleij@linaro.org>
-Date: Mon, 7 Jan 2019 17:27:44 +0100
-Subject: [PATCH] regulator: fixed/gpio: Update device tree bindings
+Date: Mon, 7 Jan 2019 17:27:46 +0100
+Subject: [PATCH] regulator: core: Only support passing enable GPIO descriptors
 
-Deprecate the open drain binding for fixed regulator and indicate
-that we prefer this to be passed in the GPIO phandle flags.
+Now that we changed all providers to pass descriptors into the core
+for enable GPIOs instead of a global GPIO number, delete the support
+for passing GPIO numbers in, and we get a cleanup and size reduction
+in the core, and from a GPIO point of view we use the modern, cleaner
+interface.
 
-Clarify that the line inversion semantics for fixed and GPIO
-regulators completely overrides the active low flags in the
-phandle flags.
-
-Unfortunately this can not be changed to prefer that we pass
-the flags in the phandle: the bindings have been specified and
-deployed such that the presence/absence of this flag and only
-that controls the line inversion semantics. The crucial semantic
-is that the absence of the flag means the core will assume
-the line is active low, which in GPIO terms is an exception,
-as GPIO lines are normally assumed to be active high.
-
-This special device tree semantic cannot be changed without
-introducing a whole new compatible string for the fixed and
-GPIO regulators, so we just contain the situation.
-
-Cc: devicetree@vger.kernel.org
-Reviewed-by: Rob Herring <robh@kernel.org>
 Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- .../bindings/regulator/fixed-regulator.txt          | 13 +++++++++++--
- .../bindings/regulator/gpio-regulator.txt           |  4 ++++
- 2 files changed, 15 insertions(+), 2 deletions(-)
+ drivers/regulator/core.c         | 32 ++++++--------------------------
+ include/linux/regulator/driver.h | 12 +-----------
+ 2 files changed, 7 insertions(+), 37 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/regulator/fixed-regulator.txt b/Documentation/devicetree/bindings/regulator/fixed-regulator.txt
-index 0c2a6c8a1536..a7a1cd0dfa6e 100644
---- a/Documentation/devicetree/bindings/regulator/fixed-regulator.txt
-+++ b/Documentation/devicetree/bindings/regulator/fixed-regulator.txt
-@@ -8,10 +8,19 @@ Optional properties:
- - gpio: gpio to use for enable control
- - startup-delay-us: startup time in microseconds
- - enable-active-high: Polarity of GPIO is Active high
--If this property is missing, the default assumed is Active low.
-+  If this property is missing, the default assumed is Active low.
-+  If the phandle flags to the GPIO handle also flag the line as active
-+  low or high, that will be ignored for fixed regulators and the
-+  presence or absence of this flag solely controls the inversion
-+  semantics.
-+-vin-supply: Input supply name.
-+
-+Deprecated properties:
- - gpio-open-drain: GPIO is open drain type.
-   If this property is missing then default assumption is false.
---vin-supply: Input supply name.
-+  Do not use this property in new device trees: instead use the
-+  phandle flag to indicate to the GPIO provider that the line
-+  should be handled as open drain.
+diff --git a/drivers/regulator/core.c b/drivers/regulator/core.c
+index 1778c5d1b2d0..4fb475a2e4f2 100644
+--- a/drivers/regulator/core.c
++++ b/drivers/regulator/core.c
+@@ -23,7 +23,6 @@
+ #include <linux/mutex.h>
+ #include <linux/suspend.h>
+ #include <linux/delay.h>
+-#include <linux/gpio.h>
+ #include <linux/gpio/consumer.h>
+ #include <linux/of.h>
+ #include <linux/regmap.h>
+@@ -2236,35 +2235,19 @@ static int regulator_ena_gpio_request(struct regulator_dev *rdev,
+ {
+ 	struct regulator_enable_gpio *pin;
+ 	struct gpio_desc *gpiod;
+-	int ret;
  
- Any property defined as part of the core regulator
- binding, defined in regulator.txt, can also be used.
-diff --git a/Documentation/devicetree/bindings/regulator/gpio-regulator.txt b/Documentation/devicetree/bindings/regulator/gpio-regulator.txt
-index 1f496159e2bb..8fef3e5358a2 100644
---- a/Documentation/devicetree/bindings/regulator/gpio-regulator.txt
-+++ b/Documentation/devicetree/bindings/regulator/gpio-regulator.txt
-@@ -14,6 +14,10 @@ Optional properties:
- 			  defualt is LOW if nothing is specified.
- - startup-delay-us	: Startup time in microseconds.
- - enable-active-high	: Polarity of GPIO is active high (default is low).
-+			  If the phandle flags to the GPIO handle also flag the line as
-+			  active low or high, that will be ignored for fixed regulators
-+			  and the presence or absence of this flag solely controls the
-+			  inversion semantics.
- - regulator-type	: Specifies what is being regulated, must be either
- 			  "voltage" or "current", defaults to voltage.
+-	if (config->ena_gpiod)
+-		gpiod = config->ena_gpiod;
+-	else
+-		gpiod = gpio_to_desc(config->ena_gpio);
++	gpiod = config->ena_gpiod;
  
+ 	list_for_each_entry(pin, &regulator_ena_gpio_list, list) {
+ 		if (pin->gpiod == gpiod) {
+-			rdev_dbg(rdev, "GPIO %d is already used\n",
+-				config->ena_gpio);
++			rdev_dbg(rdev, "GPIO is already used\n");
+ 			goto update_ena_gpio_to_rdev;
+ 		}
+ 	}
+ 
+-	if (!config->ena_gpiod) {
+-		ret = gpio_request_one(config->ena_gpio,
+-				       GPIOF_DIR_OUT | config->ena_gpio_flags,
+-				       rdev_get_name(rdev));
+-		if (ret)
+-			return ret;
+-	}
+-
+ 	pin = kzalloc(sizeof(struct regulator_enable_gpio), GFP_KERNEL);
+-	if (pin == NULL) {
+-		if (!config->ena_gpiod)
+-			gpio_free(config->ena_gpio);
++	if (pin == NULL)
+ 		return -ENOMEM;
+-	}
+ 
+ 	pin->gpiod = gpiod;
+ 	list_add(&pin->list, &regulator_ena_gpio_list);
+@@ -2287,7 +2270,6 @@ static void regulator_ena_gpio_free(struct regulator_dev *rdev)
+ 		if (pin->gpiod == rdev->ena_pin->gpiod) {
+ 			if (pin->request_count <= 1) {
+ 				pin->request_count = 0;
+-				gpiod_put(pin->gpiod);
+ 				list_del(&pin->list);
+ 				kfree(pin);
+ 				rdev->ena_pin = NULL;
+@@ -4971,15 +4953,13 @@ regulator_register(const struct regulator_desc *regulator_desc,
+ 			goto clean;
+ 	}
+ 
+-	if (config->ena_gpiod ||
+-	    ((config->ena_gpio || config->ena_gpio_initialized) &&
+-	     gpio_is_valid(config->ena_gpio))) {
++	if (config->ena_gpiod) {
+ 		mutex_lock(&regulator_list_mutex);
+ 		ret = regulator_ena_gpio_request(rdev, config);
+ 		mutex_unlock(&regulator_list_mutex);
+ 		if (ret != 0) {
+-			rdev_err(rdev, "Failed to request enable GPIO%d: %d\n",
+-				 config->ena_gpio, ret);
++			rdev_err(rdev, "Failed to request enable GPIO: %d\n",
++				 ret);
+ 			goto clean;
+ 		}
+ 		/* The regulator core took over the GPIO descriptor */
+diff --git a/include/linux/regulator/driver.h b/include/linux/regulator/driver.h
+index 795b38a06b6c..7f8345bff4e1 100644
+--- a/include/linux/regulator/driver.h
++++ b/include/linux/regulator/driver.h
+@@ -401,13 +401,7 @@ struct regulator_desc {
+  *           NULL).
+  * @regmap: regmap to use for core regmap helpers if dev_get_regmap() is
+  *          insufficient.
+- * @ena_gpio_initialized: GPIO controlling regulator enable was properly
+- *                        initialized, meaning that >= 0 is a valid gpio
+- *                        identifier and < 0 is a non existent gpio.
+- * @ena_gpio: GPIO controlling regulator enable.
+- * @ena_gpiod: GPIO descriptor controlling regulator enable.
+- * @ena_gpio_invert: Sense for GPIO enable control.
+- * @ena_gpio_flags: Flags to use when calling gpio_request_one()
++ * @ena_gpiod: GPIO controlling regulator enable.
+  */
+ struct regulator_config {
+ 	struct device *dev;
+@@ -416,11 +410,7 @@ struct regulator_config {
+ 	struct device_node *of_node;
+ 	struct regmap *regmap;
+ 
+-	bool ena_gpio_initialized;
+-	int ena_gpio;
+ 	struct gpio_desc *ena_gpiod;
+-	unsigned int ena_gpio_invert:1;
+-	unsigned int ena_gpio_flags;
+ };
+ 
+ /*
 -- 
 2.20.1
 
