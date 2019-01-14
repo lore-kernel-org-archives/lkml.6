@@ -2,134 +2,117 @@ Return-Path: <SRS0=tq6k=PW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D255C43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 05:11:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D11F6C43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 05:12:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CABF420659
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 05:11:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 83AE5206B7
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 05:12:14 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="u9Dz3Tie"
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="O2C92bNB"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726522AbfANFLX (ORCPT
+        id S1726566AbfANFMN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 14 Jan 2019 00:11:23 -0500
-Received: from perceval.ideasonboard.com ([213.167.242.64]:35994 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725910AbfANFLX (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 Jan 2019 00:11:23 -0500
-Received: from localhost.localdomain (unknown [96.44.9.117])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 74FA7505;
-        Mon, 14 Jan 2019 06:11:19 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1547442680;
-        bh=esYPm4b0uDdBX5f/Z8E07u3/w+FPQbC3SDb9m+cNhaw=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=u9Dz3TieCLdVPwgi1YF+nMtdIJB/H+aPWNsxMgeRi4bBGMUGPvtWSd8odlNSBhwyh
-         bVUg/3KH9sEyaUXFgH96bF1y9EXHJ3DAiIEhW1CGG8xqD5xHLpYi4hut6aVzTE+5SD
-         obuB35ZGRPK5XnNRNp6gRRr0vMg+NN0vM2aif+9A=
-Date:   Mon, 14 Jan 2019 00:11:13 -0500
-From:   Paul Elder <paul.elder@ideasonboard.com>
-To:     Alan Stern <stern@rowland.harvard.edu>
-Cc:     laurent.pinchart@ideasonboard.com, kieran.bingham@ideasonboard.com,
-        b-liu@ti.com, rogerq@ti.com, balbi@kernel.org,
-        gregkh@linuxfoundation.org, linux-usb@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v5 4/6] usb: gadget: add mechanism to specify an explicit
- status stage
-Message-ID: <20190114051113.GD32268@localhost.localdomain>
-References: <20190111082340.GB32268@localhost.localdomain>
- <Pine.LNX.4.44L0.1901111044290.1501-100000@iolanthe.rowland.org>
+        Mon, 14 Jan 2019 00:12:13 -0500
+Received: from mail-eopbgr20063.outbound.protection.outlook.com ([40.107.2.63]:15360
+        "EHLO EUR02-VE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725910AbfANFMM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 14 Jan 2019 00:12:12 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Kfp5DM7bQiq35wf+mlByfZd52IzYVeJWWPblxgYPipY=;
+ b=O2C92bNBpJqVps4exj3fPrp4ctDfhLJNESOGNdy+qsn38ZGtqIc3mb1OYqRFHUZNIYPz3KbSHx/X9IeBgOV/hPhLEmB+27eLBCJL69msK9scAIGFBTpfOna5L0Uo1YZP5CYVFlFSLKrIgzGfGIx+jokYMgBNRyrlj7cXxkH/4Ts=
+Received: from VI1PR04MB4845.eurprd04.prod.outlook.com (20.177.49.14) by
+ VI1PR04MB5038.eurprd04.prod.outlook.com (20.177.50.95) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1516.14; Mon, 14 Jan 2019 05:12:08 +0000
+Received: from VI1PR04MB4845.eurprd04.prod.outlook.com
+ ([fe80::a13c:ebf5:6fb5:8c7]) by VI1PR04MB4845.eurprd04.prod.outlook.com
+ ([fe80::a13c:ebf5:6fb5:8c7%2]) with mapi id 15.20.1516.019; Mon, 14 Jan 2019
+ 05:12:08 +0000
+From:   Bharat Bhushan <bharat.bhushan@nxp.com>
+To:     Roy Pledge <roy.pledge@nxp.com>, Leo Li <leoyang.li@nxp.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>
+CC:     "bharatb.yadav@gmail.com" <bharatb.yadav@gmail.com>,
+        Bharat Bhushan <bharat.bhushan@nxp.com>
+Subject: [PATCH] soc: fsl: dpio: fix cpu range check
+Thread-Topic: [PATCH] soc: fsl: dpio: fix cpu range check
+Thread-Index: AQHUq8eyjXksS82nRkmGUg0ZzKV3Dg==
+Date:   Mon, 14 Jan 2019 05:12:08 +0000
+Message-ID: <20190114050237.32140-1-Bharat.Bhushan@nxp.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-mailer: git-send-email 2.20.1
+x-clientproxiedby: BM1PR01CA0113.INDPRD01.PROD.OUTLOOK.COM (2603:1096:b00::29)
+ To VI1PR04MB4845.eurprd04.prod.outlook.com (2603:10a6:803:54::14)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=bharat.bhushan@nxp.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-originating-ip: [14.143.254.130]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;VI1PR04MB5038;6:P5k3tMpxjjKRh2dMyMWtcXYTbE4kwPt6dyx20s7V6VKOapOx3nIuF+uMUAme6D6rU05UDIBQFj5GTPNUKsf3O7c1QRPmPjca70nU4HEmuFzUv2iDs1H6Tw2/K4aipKaHtY9ksgSFZoQntN4C+Nn5FnD3/V8AR1lEKneiix6JjFkrW61WOl8qrtK5iacDXI7p8td0zfZPWjrKkCkVPRdh5WC7I7Z5/eo+KFeNl9n7OBg7tahYP+QgeH8cZQNb4hOUeXveAyrk9bTIfXdVjGfqoBfmQKDDtpsjebnjxvaR5LC808uAiNXy/j7ohPRErAVuJkaJ54i55szu4/Dl4OSMtq163I7xnZ9dxhWa+EOStFCi2LNmYE/6Wx2WFWx54eilgDWAq+WfP8ZMaQgsXKF4BzYJNdDXi+6OM0EtDRGwZLjIjjo+Pb/1WMZOmQbmHXRNRo5noTBCYWPsF4ONGUkLqA==;5:XccgK3V1u04zieokYIPCDKi6dkeYV8QIVU9KOOmgKG65wA7D9W4lrlwS7XOGLGe654nv7KavHOQnljIJEsB2vxC47CPbLHmcf419paXE0t2zN7qmwqI8C3W6i1bBrv+M/NrhAMTTuQT5E9Z0g6/zB8jRne8O+aQHW57uP9EPKDJEwgKqHOzPhPxJMcjrSIjANycwz/BYScJgezmZLVxiaQ==;7:vMQf+XMF8Ge5RQXUwkHl054qMCOIU7zfSr6vyntatNq7HIQwS3FwLzflOA0yp2IvTIc2qy72eLCrBqmG+pOvIfsHvsjB/bgoxfpUtROatjhXr/rQH2SNyxcIU1C8D1EumUCALeJ2OMR5PqF55AFUiA==
+x-ms-office365-filtering-correlation-id: 61a4e7e0-58fa-420e-b5f2-08d679ded4b0
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(7168020)(4627221)(201703031133081)(201702281549075)(8990200)(5600109)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:VI1PR04MB5038;
+x-ms-traffictypediagnostic: VI1PR04MB5038:
+x-microsoft-antispam-prvs: <VI1PR04MB50386E95ED5CE89607AA35DB9A800@VI1PR04MB5038.eurprd04.prod.outlook.com>
+x-forefront-prvs: 0917DFAC67
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(366004)(346002)(39860400002)(136003)(376002)(396003)(189003)(199004)(71200400001)(53936002)(14444005)(305945005)(6486002)(6436002)(4326008)(71190400001)(256004)(99286004)(4744005)(97736004)(7736002)(476003)(2616005)(486006)(50226002)(1076003)(78486014)(478600001)(8936002)(6512007)(81156014)(81166006)(8676002)(110136005)(6506007)(386003)(316002)(52116002)(2201001)(575784001)(86362001)(54906003)(3846002)(6116002)(2501003)(105586002)(2906002)(36756003)(14454004)(66066001)(39060400002)(26005)(55236004)(5660300001)(68736007)(102836004)(106356001)(186003)(25786009);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR04MB5038;H:VI1PR04MB4845.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: t1R0p6LJwFAXtLr2boopCsYeEfvifzRlIviTfmCxpv2a4U8ciObV9kPJHbXKJ0aAbBM/YaJD1N7BF6oC1JCKqqXrNlTtwsYhuu+AbXehoTJSTBf+ZYuQnMN6+87CluCLIM/SL43k50WsCqwfSADNcbeprhdNCXf6X2g1yLykoGOcvOZdK6hmeMDB5MjNPwjCVXeE4/9mJ/fi0Be9wXrC8M/MvNzJDEMZaCBhKmjC0ZeJDK6LE4eBNQjm8V4PTGLiYZUAfl/HmfvM4tPFuwqvxbx4sKCUMx7SZYtBbZ0etM+MHj9gN1GGESiNp7jlpE6uTRf94UjzY2NwD8EwiUEzjW8O769uZjPuh9B2v2kHopNrQs9Ybw7F+uE97rydJv0fYSL2KFHdFrld1Bwcr7u6fyW5TmsHEC9hXKZvkHSugao=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Pine.LNX.4.44L0.1901111044290.1501-100000@iolanthe.rowland.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 61a4e7e0-58fa-420e-b5f2-08d679ded4b0
+X-MS-Exchange-CrossTenant-originalarrivaltime: 14 Jan 2019 05:12:06.3023
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR04MB5038
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jan 11, 2019 at 10:50:11AM -0500, Alan Stern wrote:
-> On Fri, 11 Jan 2019, Paul Elder wrote:
-> 
-> > On Wed, Jan 09, 2019 at 02:06:31PM -0500, Alan Stern wrote:
-> > > On Wed, 9 Jan 2019, Paul Elder wrote:
-> > > 
-> > > > A usb gadget function driver may or may not want to delay the status
-> > > > stage of a control OUT request. An instance where it might want to is to
-> > > > asynchronously validate the data of a class-specific request.
-> > > > 
-> > > > A function driver that wants an explicit status stage should set the
-> > > > newly added explicit_status flag of the usb_request corresponding to the
-> > > > data stage. Later on, the function driver can explicitly complete the
-> > > > status stage by enqueueing a usb_request for ACK, or calling
-> > > > usb_ep_set_halt() for STALL.
-> > > > 
-> > > > To support both explicit and implicit status stages, a UDC driver must
-> > > > call the newly added usb_gadget_control_complete function right before
-> > > > calling usb_gadget_giveback_request. To support the explicit status
-> > > > stage, it might then check what stage the usb_request was queued in, and
-> > > > for control IN ACK the host's zero-length data packet, or for control
-> > > > OUT send a zero-length DATA1 ACK packet.
-> > > > 
-> > > > Signed-off-by: Paul Elder <paul.elder@ideasonboard.com>
-> > > > v4 Acked-by: Alan Stern <stern@rowland.harvard.edu>
-> > > > v1 Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-> > > 
-> > > This looks good and has passed my tests so far.
-> > 
-> > Good! Thank you :)
-> > 
-> > > Can you check your uvc
-> > > changes using dummy_hcd with the patch below?
-> > 
-> > I'm not sure what to make of the test results. I get the same results
-> > with or without the patch. Which I guess makes sense... in dummy_queue,
-> > this is getting hit when the uvc function driver tries to complete the
-> > delayed status:
-> > 
-> > 	req = usb_request_to_dummy_request(_req);
-> > 	if (!_req || !list_empty(&req->queue) || !_req->complete)
-> > 		return -EINVAL;
-> > 
-> > So the delayed/explicit status stage is never completed, afaict.
-> 
-> I presume you are hitting the !list_empty(&req->queue) test, yes?  The 
-> other two tests are trivial.
+cpu_possible(cpu) will always return true when cpu parameter
+is from cpumask_next().
+Check for nr_cpu_ids rather than !cpu_possible(cpu).
 
-Yes, that is what's happening.
+Signed-off-by: Bharat Bhushan <Bharat.Bhushan@nxp.com>
+---
+ drivers/soc/fsl/dpio/dpio-driver.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> Triggering the !list_empty() test means the request has already been
-> submitted and not yet completed.  This probably indicates there is a
-> bug in the uvc function driver code.
+diff --git a/drivers/soc/fsl/dpio/dpio-driver.c b/drivers/soc/fsl/dpio/dpio=
+-driver.c
+index e58fcc9096e8..eb369dd9e0a7 100644
+--- a/drivers/soc/fsl/dpio/dpio-driver.c
++++ b/drivers/soc/fsl/dpio/dpio-driver.c
+@@ -133,7 +133,7 @@ static int dpaa2_dpio_probe(struct fsl_mc_device *dpio_=
+dev)
+ 	else
+ 		next_cpu =3D cpumask_next(next_cpu, cpu_online_mask);
+=20
+-	if (!cpu_possible(next_cpu)) {
++	if (next_cpu >=3D nr_cpu_ids) {
+ 		dev_err(dev, "probe failed. Number of DPIOs exceeds NR_CPUS.\n");
+ 		err =3D -ERANGE;
+ 		goto err_allocate_irqs;
+--=20
+2.20.1
 
-The uvc function driver works with musb, though :/
-
-I compared the sequence of calls to the uvc setup, completion handler,
-and status stage sending, and for some reason dummy_hcd, after an OUT
-setup-completion-status sequence, calls a completion-status-completion
-sequence, and then goes on the the next request. musb simply goes on to
-the next request after the setup-completion-status sequence.
-
-I commented out the paranoia block in dummy_timer, and dummy_hcd still
-does the extra completion, but it doesn't error out anymore. I doubt
-that's the/a solution though, especially since I get:
-
-[   22.616577] uvcvideo: Failed to query (129) UVC probe control : -75 (exp. 26).
-[   22.624481] uvcvideo: Failed to initialize the device (-5).
-
-Not sure if that's a result of dummy_hcd not supporting isochronous
-transfers or not.
-
-I'm not sure where to continue investigating :/
-
-
-Thanks,
-
-Paul
