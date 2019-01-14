@@ -2,119 +2,115 @@ Return-Path: <SRS0=tq6k=PW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BD53EC43387
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 03:21:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3DE87C43387
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 03:21:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9152D20657
-	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 03:21:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DF82F20657
+	for <linux-kernel@archiver.kernel.org>; Mon, 14 Jan 2019 03:21:55 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="EcpMw11E"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726721AbfANDVC (ORCPT
+        id S1726748AbfANDVy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 13 Jan 2019 22:21:02 -0500
-Received: from mxhk.zte.com.cn ([63.217.80.70]:15772 "EHLO mxhk.zte.com.cn"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726677AbfANDVC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 13 Jan 2019 22:21:02 -0500
-Received: from mse01.zte.com.cn (unknown [10.30.3.20])
-        by Forcepoint Email with ESMTPS id 66006CDF3DCD4E2774BF;
-        Mon, 14 Jan 2019 11:20:59 +0800 (CST)
-Received: from notes_smtp.zte.com.cn ([10.30.1.239])
-        by mse01.zte.com.cn with ESMTP id x0E3KqSx093033;
-        Mon, 14 Jan 2019 11:20:52 +0800 (GMT-8)
-        (envelope-from wen.yang99@zte.com.cn)
-Received: from fox-host8.localdomain ([10.74.120.8])
-          by szsmtp06.zte.com.cn (Lotus Domino Release 8.5.3FP6)
-          with ESMTP id 2019011411205679-22095830 ;
-          Mon, 14 Jan 2019 11:20:56 +0800 
-From:   Wen Yang <wen.yang99@zte.com.cn>
-To:     boris.ostrovsky@oracle.com
-Cc:     jgross@suse.com, sstabellini@kernel.org,
-        xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org,
-        xue.zhihong@zte.com.cn, wang.yi59@zte.com.cn,
-        Wen Yang <wen.yang99@zte.com.cn>,
-        Dan Carpenter <dan.carpenter@oracle.com>
-Subject: [PATCH] pvcalls-front: fix potential null dereference
-Date:   Mon, 14 Jan 2019 11:20:23 +0800
-Message-Id: <1547436023-5797-1-git-send-email-wen.yang99@zte.com.cn>
-X-Mailer: git-send-email 1.8.3.1
-X-MIMETrack: Itemize by SMTP Server on SZSMTP06/server/zte_ltd(Release 8.5.3FP6|November
- 21, 2013) at 2019-01-14 11:20:56,
-        Serialize by Router on notes_smtp/zte_ltd(Release 9.0.1FP7|August  17, 2016) at
- 2019-01-14 11:20:53,
-        Serialize complete at 2019-01-14 11:20:53
-X-MAIL: mse01.zte.com.cn x0E3KqSx093033
+        Sun, 13 Jan 2019 22:21:54 -0500
+Received: from merlin.infradead.org ([205.233.59.134]:43410 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726622AbfANDVx (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 13 Jan 2019 22:21:53 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=Content-Transfer-Encoding:Content-Type:
+        MIME-Version:Date:Message-ID:Subject:From:Cc:To:Sender:Reply-To:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+        List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=7E5SGxR4bEFCBD6qxts7SUz99Ls5pIxf2mzpClj3tFc=; b=EcpMw11EDbVoqGWIK9JI29htv5
+        wExni+kmKRyP5puw0uwogg/FBnHJ7tN4Osrp/H1Ds9MrotVC6+ywW2NPHqDNV4AnaZ9eSuD5pjhsm
+        jGP9BgtYvzujoSMZ8fgQL4FbPO6efnAcdvwlzPRf598wYgBOTvvZ1iegaruPogQliow5qSfEXlC8H
+        sW7A4HR+6MBgDKHhkT8SP4aUekPwItxR3pGfs5wAclfgCsn/CI+JjmpCGyKHEdMIMXP30MvOGAcME
+        ssZ/vQDp9677Fz8IC/QM1OSomneOta8IOwJoz7WjZd8DLvmY3PJ2TqZHPWOE/lVB1c9NqOqOt8Dy8
+        k74jqB1A==;
+Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=midway.dunlab)
+        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gisow-0000Vj-Nx; Mon, 14 Jan 2019 03:21:50 +0000
+To:     "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+        Jonathan Corbet <corbet@lwn.net>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Steven Royer <seroyer@linux.ibm.com>
+From:   Randy Dunlap <rdunlap@infradead.org>
+Subject: [PATCH] Documentation: add ibmvmc to toctree(index) and fix warnings
+Message-ID: <bd222e7e-33cd-37ce-f702-238a8e93dfc8@infradead.org>
+Date:   Sun, 13 Jan 2019 19:21:46 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.0
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
- static checker warning:
-    drivers/xen/pvcalls-front.c:373 alloc_active_ring()
-    error: we previously assumed 'map->active.ring' could be null
-           (see line 357)
+From: Randy Dunlap <rdunlap@infradead.org>
 
-drivers/xen/pvcalls-front.c
-    351 static int alloc_active_ring(struct sock_mapping *map)
-    352 {
-    353     void *bytes;
-    354
-    355     map->active.ring = (struct pvcalls_data_intf *)
-    356         get_zeroed_page(GFP_KERNEL);
-    357     if (!map->active.ring)
-                    ^^^^^^^^^^^^^^^^^
-Check
+Fix Sphinx warnings in ibmvmc.rst, add an index.rst file in
+Documentation/misc-devices/, and insert that index file into the
+top-level index file.
 
-    358         goto out;
-    359
-    360     map->active.ring->ring_order = PVCALLS_RING_ORDER;
-    361     bytes = (void *)__get_free_pages(GFP_KERNEL | __GFP_ZERO,
-    362                     PVCALLS_RING_ORDER);
-    363     if (!bytes)
-    364         goto out;
-    365
-    366     map->active.data.in = bytes;
-    367     map->active.data.out = bytes +
-    368         XEN_FLEX_RING_SIZE(PVCALLS_RING_ORDER);
-    369
-    370     return 0;
-    371
-    372 out:
---> 373     free_active_ring(map);
-                                 ^^^
-Replace map->active.ring->ring_order with PVCALLS_RING_ORDER
-to avoid potential null dereference.
+Documentation/misc-devices/ibmvmc.rst:2: WARNING: Explicit markup ends without a blank line; unexpected unindent.
+Documentation/misc-devices/ibmvmc.rst:: WARNING: document isn't included in any toctree
 
-Fixes: 9f51c05dc41a ("pvcalls-front: Avoid get_free_pages(GFP_KERNEL)
-under spinlock")
-Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
-Signed-off-by: Wen Yang <wen.yang99@zte.com.cn>
-CC: Boris Ostrovsky <boris.ostrovsky@oracle.com>
-CC: Juergen Gross <jgross@suse.com>
-CC: Stefano Stabellini <sstabellini@kernel.org>
-CC: Dan Carpenter <dan.carpenter@oracle.com>
-CC: xen-devel@lists.xenproject.org
-CC: linux-kernel@vger.kernel.org
+Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+Cc: Steven Royer <seroyer@linux.ibm.com>
+Cc: Jonathan Corbet <corbet@lwn.net>
 ---
- drivers/xen/pvcalls-front.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ Documentation/index.rst               |    1 +
+ Documentation/misc-devices/ibmvmc.rst |    1 +
+ Documentation/misc-devices/index.rst  |   17 +++++++++++++++++
+ 3 files changed, 19 insertions(+)
 
-diff --git a/drivers/xen/pvcalls-front.c b/drivers/xen/pvcalls-front.c
-index 307861f..e56f9a3 100644
---- a/drivers/xen/pvcalls-front.c
-+++ b/drivers/xen/pvcalls-front.c
-@@ -344,7 +344,7 @@ int pvcalls_front_socket(struct socket *sock)
- static void free_active_ring(struct sock_mapping *map)
- {
- 	free_pages((unsigned long)map->active.data.in,
--			map->active.ring->ring_order);
-+			PVCALLS_RING_ORDER);
- 	free_page((unsigned long)map->active.ring);
- }
+--- lnx-50-rc2.orig/Documentation/misc-devices/ibmvmc.rst
++++ lnx-50-rc2/Documentation/misc-devices/ibmvmc.rst
+@@ -1,4 +1,5 @@
+ .. SPDX-License-Identifier: GPL-2.0+
++
+ ======================================================
+ IBM Virtual Management Channel Kernel Driver (IBMVMC)
+ ======================================================
+--- lnx-50-rc2.orig/Documentation/index.rst
++++ lnx-50-rc2/Documentation/index.rst
+@@ -90,6 +90,7 @@ needed).
+    filesystems/index
+    vm/index
+    bpf/index
++   misc-devices/index
  
--- 
-2.9.5
+ Architecture-specific documentation
+ -----------------------------------
+--- /dev/null
++++ lnx-50-rc2/Documentation/misc-devices/index.rst
+@@ -0,0 +1,17 @@
++.. SPDX-License-Identifier: GPL-2.0
++
++============================================
++Assorted Miscellaneous Devices Documentation
++============================================
++
++This documentation contains information for assorted devices that do not
++fit into other categories.
++
++.. class:: toc-title
++
++	   Table of contents
++
++.. toctree::
++   :maxdepth: 2
++
++   ibmvmc
+
 
