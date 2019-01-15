@@ -2,114 +2,132 @@ Return-Path: <SRS0=RZO6=PX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 705B4C43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 17:32:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C532EC43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 17:33:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4C78320859
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 17:32:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 957C020656
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 17:33:05 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="wEBLWGzT"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388351AbfAORcI (ORCPT
+        id S2388366AbfAORdD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 15 Jan 2019 12:32:08 -0500
-Received: from ale.deltatee.com ([207.54.116.67]:53146 "EHLO ale.deltatee.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726022AbfAORcH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Jan 2019 12:32:07 -0500
-Received: from cgy1-donard.priv.deltatee.com ([172.16.1.31])
-        by ale.deltatee.com with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <gunthorp@deltatee.com>)
-        id 1gjSZK-0000Ss-Fh; Tue, 15 Jan 2019 10:32:07 -0700
-Received: from gunthorp by cgy1-donard.priv.deltatee.com with local (Exim 4.89)
-        (envelope-from <gunthorp@deltatee.com>)
-        id 1gjSZJ-0003sE-TW; Tue, 15 Jan 2019 10:32:05 -0700
-From:   Logan Gunthorpe <logang@deltatee.com>
-To:     linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Bjorn Helgaas <bhelgaas@google.com>
-Cc:     Stephen Bates <sbates@raithlin.com>,
-        Logan Gunthorpe <logang@deltatee.com>,
-        Jarkko Nikula <jarkko.nikula@linux.intel.com>
-Date:   Tue, 15 Jan 2019 10:32:03 -0700
-Message-Id: <20190115173203.14850-1-logang@deltatee.com>
-X-Mailer: git-send-email 2.19.0
+        Tue, 15 Jan 2019 12:33:03 -0500
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:35607 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726022AbfAORdD (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 Jan 2019 12:33:03 -0500
+Received: by mail-pf1-f195.google.com with SMTP id z9so1644368pfi.2
+        for <linux-kernel@vger.kernel.org>; Tue, 15 Jan 2019 09:33:02 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:in-reply-to:references:date:message-id
+         :mime-version;
+        bh=4U0OvVrkxFBjSA8W5Lm7VS40KUbUjrzMUZQnvA9o4pU=;
+        b=wEBLWGzTNbnLT0SQ7XjOWnMPDC05vGd2UjO5hbTWczX2JqnycaJr3E3fby9boGD03w
+         XZVOafE9R6nzFek66oe3FzBqsJbexwLYn54wZXtBViHA1LRKQUvkaAWP588kFIlj0VB8
+         yp2r9asYVbCYlLa/MMpjJjcVudk+HVk4YFs/U+7ASP3pUnLU+VqWAZRgxKwQgnO4aUy8
+         DPye/+VuPF4PgXiOuvLVxsGYcUt+DtGaRniJHChff8oSt/odNozH9TxF2rTKSiOMTpTJ
+         Veqv7S0wYlFZ/gMvR8tLvbqnNoEoE8pM+To0zH5soTftlKn6O6/AJE9DbBS6gu/JaEG7
+         ivYQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:in-reply-to:references:date
+         :message-id:mime-version;
+        bh=4U0OvVrkxFBjSA8W5Lm7VS40KUbUjrzMUZQnvA9o4pU=;
+        b=ACuH5T/APJrnfVF+y6kRddQTdlJoLGP8KQ1+pbtaidJARP7TJw/IR+sSOBff1AkoIp
+         SmEIkbZtTe8Kqnq+CM0R/GJ08AO+SXokvvSqGAPWaOLf8coDo6v97JXoYmSidXdruNXw
+         KXMln6fyAROQrR+Gl8DiqvTnnNL1ez3IHdxQkXSzKtf24+1ZY0Sof+yMQ51CeR9zZA2w
+         nXYHL1803j9Nizq49Hsmo07XOyj3P7W4+Wt31AN62xc/mjaNEmjE84PUSEQA0PRHY78i
+         cT3ite76mO+4BD4BuycuV03U3yWCclZpWHf1QovqbQF5xiEHi0dNMsRdpfKXM2s8zyKP
+         yv7A==
+X-Gm-Message-State: AJcUukfJ2xL9AbQi3Pv/tpEdmypOiZw/1bydzczqy3Y+fg3Z7OS+9K1+
+        WsKt/ZDYevDxEsoMhf75ruSzWfheVao=
+X-Google-Smtp-Source: ALg8bN6/M5WBB7GNfbjGqgI0MPWGrQajvmlUJTF9TSvVrP8AubuQo8DgeGH/g/OOzA6lHafWFLD9Kg==
+X-Received: by 2002:a63:c42:: with SMTP id 2mr4795113pgm.372.1547573581531;
+        Tue, 15 Jan 2019 09:33:01 -0800 (PST)
+Received: from localhost ([2601:602:9200:a1a5:5cbd:8bed:2b0a:a142])
+        by smtp.googlemail.com with ESMTPSA id w3sm4462914pge.8.2019.01.15.09.33.00
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 15 Jan 2019 09:33:00 -0800 (PST)
+From:   Kevin Hilman <khilman@baylibre.com>
+To:     Linus Walleij <linus.walleij@linaro.org>,
+        "kernelci.org bot" <bot@kernelci.org>,
+        Neil Armstrong <narmstrong@baylibre.com>
+Cc:     Mark Brown <broonie@kernel.org>,
+        Tomeu Vizoso <tomeu.vizoso@collabora.com>,
+        guillaume.tucker@collabora.com,
+        Haojian Zhuang <haojian.zhuang@gmail.com>,
+        "linux-kernel\@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Philipp Zabel <philipp.zabel@gmail.com>,
+        Paul Parsons <lost.distance@yahoo.com>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>
+Subject: Re: broonie-regulator/for-next boot bisection: v5.0-rc2-20-g61b67608c6b9 on meson-gxl-s905x-libretech-cc
+In-Reply-To: <CACRpkdY5ipcZqujGXJN9hcNYA+3WvknaQH0syYDb3YrrrgkgCg@mail.gmail.com>
+References: <5c3d0781.1c69fb81.8f009.0d7e@mx.google.com> <CACRpkdY5ipcZqujGXJN9hcNYA+3WvknaQH0syYDb3YrrrgkgCg@mail.gmail.com>
+Date:   Tue, 15 Jan 2019 09:33:00 -0800
+Message-ID: <7ha7k1ker7.fsf@baylibre.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 172.16.1.31
-X-SA-Exim-Rcpt-To: linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, bhelgaas@google.com, sbates@raithlin.com, logang@deltatee.com, jarkko.nikula@linux.intel.com
-X-SA-Exim-Mail-From: gunthorp@deltatee.com
-Subject: [PATCH] PCI: fix using __initdata memory after free in disable_acs_redir parameter
-X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
-X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The disable_acs_redir parameter stores a pointer to the string passed to
-pci_setup(). However, the string passed to PCI setup is actually a
-temporary copy allocated in static __initdata memory. After init, once
-the memory is freed, it is no longer valid to reference this pointer.
+Linus Walleij <linus.walleij@linaro.org> writes:
 
-This bug was noticed in v5.0-rc1 after a change in commit c5eb1190074c
-("PCI / PM: Allow runtime PM without callback functions") caused
-pci_disable_acs_redir() to be called during shutdown which manifested
-as an unable to handle kernel paging request at:
+> Thanks for this pretty impressive automated report!
+>
+> Maybe it will be hard to ask a robot to test changes! :D
+>
+> On Mon, Jan 14, 2019 at 11:04 PM kernelci.org bot <bot@kernelci.org> wrote:
+>
+>>   Target:     meson-gxl-s905x-libretech-cc
+>
+> I hope there is someone else with this board on CC since I don't
+> know how to ask the robot to test patches.
+>
+> The log from the robot isn't super helpful as it does not have
+> earlyprintk enabled and boot hangs before it gets to that (!)
+> so no console messages.
+>
+> So I suppose this is:
+> arch/arm64/boot/dts/amlogic/meson-gxl-s905x-libretech-cc.dts
+> a pure device tree plattform which was added by Neil, so I hope
+> he can test patches.
+>
+> And that has only one GPIO regulator, this one:
+>
+>         vcc_card: regulator-vcc-card {
+>                 compatible = "regulator-gpio";
+>
+>                 regulator-name = "VCC_CARD";
+>                 regulator-min-microvolt = <1800000>;
+>                 regulator-max-microvolt = <3300000>;
+>
+>                 gpios = <&gpio_ao GPIOAO_3 GPIO_ACTIVE_HIGH>;
+>                 gpios-states = <0>;
+>
+>                 states = <3300000 0>,
+>                          <1800000 1>;
+>
+>                 regulator-settling-time-up-us = <200>;
+>                 regulator-settling-time-down-us = <50000>;
+>         };
+>
+> Meaning this is 3.3 V when that GPIO line is low, and 1.8V when that
+> line is high, correct?
+>
+> That controls the VCC. This surely wouldn't block the boot process.
+> So my code must be crashing completely. OK I will look closer at it
+> and try to create a mock system of some sort.
 
-RIP: 0010:pci_enable_acs+0x3f/0x1e0
-Call Trace:
-   pci_restore_state.part.44+0x159/0x3c0
-   pci_restore_standard_config+0x33/0x40
-   pci_pm_runtime_resume+0x2b/0xd0
-   ? pci_restore_standard_config+0x40/0x40
-   __rpm_callback+0xbc/0x1b0
-   rpm_callback+0x1f/0x70
-   ? pci_restore_standard_config+0x40/0x40
-    rpm_resume+0x4f9/0x710
-   ? pci_conf1_read+0xb6/0xf0
-   ? pci_conf1_write+0xb2/0xe0
-   __pm_runtime_resume+0x47/0x70
-   pci_device_shutdown+0x1e/0x60
-   device_shutdown+0x14a/0x1f0
-   kernel_restart+0xe/0x50
-   __do_sys_reboot+0x1ee/0x210
-   ? __fput+0x144/0x1d0
-   do_writev+0x5e/0xf0
-   ? do_writev+0x5e/0xf0
-   do_syscall_64+0x48/0xf0
-   entry_SYSCALL_64_after_hwframe+0x44/0xa9
+Both Neil and I have access to this board, so we can test any fixes for
+you.
 
-It was also likely possible to trigger this bug when hotplugging PCI
-devices.
-
-To fix this, instead of storing a pointer, we use kstrdup to copy the
-disable_acs_redir_param to its own buffer which will never be freed.
-
-Fixes: aaca43fda742 ("PCI: Add "pci=disable_acs_redir=" parameter for peer-to-peer support")
-Signed-off-by: Logan Gunthorpe <logang@deltatee.com>
-Cc: Jarkko Nikula <jarkko.nikula@linux.intel.com>
-Cc: Bjorn Helgaas <bhelgaas@google.com>
----
- drivers/pci/pci.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
-index c9d8e3c837de..c25acace7d91 100644
---- a/drivers/pci/pci.c
-+++ b/drivers/pci/pci.c
-@@ -6195,7 +6195,8 @@ static int __init pci_setup(char *str)
- 			} else if (!strncmp(str, "pcie_scan_all", 13)) {
- 				pci_add_flags(PCI_SCAN_ALL_PCIE_DEVS);
- 			} else if (!strncmp(str, "disable_acs_redir=", 18)) {
--				disable_acs_redir_param = str + 18;
-+				disable_acs_redir_param =
-+					kstrdup(str + 18, GFP_KERNEL);
- 			} else {
- 				printk(KERN_ERR "PCI: Unknown option `%s'\n",
- 						str);
--- 
-2.19.0
-
+Kevin
