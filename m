@@ -2,92 +2,68 @@ Return-Path: <SRS0=RZO6=PX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A2047C43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 17:27:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CB4F7C43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 17:30:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 70D9F20651
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 17:27:10 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=alien8.de header.i=@alien8.de header.b="RXg2/eCZ"
+	by mail.kernel.org (Postfix) with ESMTP id 98BFA20675
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 17:30:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1547573405;
+	bh=kZo0tqjNlc0tQq1IS7d9IAsa+sMkcrICOJ8v/o/D7UU=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:List-ID:From;
+	b=SaZDoQgGDT5B/jgSa1jXwVDLvwbIsY8/4J2zNZSh5D5Kb5zreHoUcpBmyLgZyZeLA
+	 98hDPaJKWiFLRydLAD7EXg6e7wvZ3soVV3yLpu5S/IgrpzCwuawXEBMAvs8yi5l40u
+	 dz1/NHCz9na579PX9tY8HBzis5Iml6trqanAJ+oM=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730483AbfAOR1I (ORCPT
+        id S1730575AbfAORaD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 15 Jan 2019 12:27:08 -0500
-Received: from mail.skyhub.de ([5.9.137.197]:50004 "EHLO mail.skyhub.de"
+        Tue, 15 Jan 2019 12:30:03 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52066 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727883AbfAOR1I (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Jan 2019 12:27:08 -0500
-Received: from zn.tnic (p200300EC2BCBB40040287EAE02E8DE81.dip0.t-ipconnect.de [IPv6:2003:ec:2bcb:b400:4028:7eae:2e8:de81])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 8BF0D1EC0B83;
-        Tue, 15 Jan 2019 18:27:06 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
-        t=1547573226;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
-        bh=EFd20pgx9mtTvZzUi2nk5ogUWU08gx2D3kOqurxsfKU=;
-        b=RXg2/eCZg6c/v/AGo6/VkQDl8k3b9dVBmhdcfS9K3ccXmiP2dqDcFE00oMM4leanEbAQBl
-        qVcC3s8rXpN6SCoUAzgmqubQXdeCZ/U+XoOUmV296zsiHczq8MCddhudEVhsrfeoqz77yc
-        lSoaNUL8bQlsMRGNbGmZG/Zqs3j7A98=
-Date:   Tue, 15 Jan 2019 18:26:59 +0100
-From:   Borislav Petkov <bp@alien8.de>
-To:     "S, Shirish" <Shirish.S@amd.com>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H . Peter Anvin" <hpa@zytor.com>,
-        "maintainer : X86 ARCHITECTURE" <x86@kernel.org>,
-        Tony Luck <tony.luck@intel.com>,
-        Vishal Verma <vishal.l.verma@intel.com>,
-        "open list : X86 ARCHITECTURE" <linux-kernel@vger.kernel.org>,
-        "Lendacky, Thomas" <Thomas.Lendacky@amd.com>,
-        "Singh, Brijesh" <brijesh.singh@amd.com>
-Subject: Re: [PATCH 2/2] x86/mce/amd: Ensure quirks are applied in resume
- path as well
-Message-ID: <20190115172659.GE6596@zn.tnic>
-References: <1546857399-2926-1-git-send-email-shirish.s@amd.com>
- <1546857399-2926-3-git-send-email-shirish.s@amd.com>
- <20190109220843.GK15665@zn.tnic>
- <7a9227c0-1bc3-67c5-14a8-a40d186a5ef8@amd.com>
- <20190114103312.GG2773@zn.tnic>
- <2ad4bb63-2b70-3652-3261-009cdbfc15a9@amd.com>
- <20190114153256.GM2773@zn.tnic>
- <4f8b532b-8613-feb5-7474-4bb0462cf1c7@amd.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <4f8b532b-8613-feb5-7474-4bb0462cf1c7@amd.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        id S1728118AbfAORaD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 Jan 2019 12:30:03 -0500
+Subject: Re: [GIT] Networking
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1547573402;
+        bh=kZo0tqjNlc0tQq1IS7d9IAsa+sMkcrICOJ8v/o/D7UU=;
+        h=From:In-Reply-To:References:Date:To:Cc:From;
+        b=wMWEdwUyY5kIzOgebSq/yXzsXrmIW2yVrl4uZ4GQp9rD8Dc+zTfOVYs//IwyF6fi5
+         5AHcWYOcydOwiu5F7MbjJ8wd1vAB2PpvB3UHTndhxbwqjV5nB5qxO7ATgGElj9IdQu
+         PaIiBXd5gxY65APy1TRgxE8m0vg/05eE8HsR2I0I=
+From:   pr-tracker-bot@kernel.org
+In-Reply-To: <20190113.133346.873105268319400703.davem@davemloft.net>
+References: <20190113.133346.873105268319400703.davem@davemloft.net>
+X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <20190113.133346.873105268319400703.davem@davemloft.net>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/davem/net
+ master
+X-PR-Tracked-Commit-Id: 2f960bd0564081ff85d2eea54890b0d2356934f8
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: e8746440bf68212f19688f1454dad593c74abee1
+Message-Id: <154757340241.2458.14594436318355477581.pr-tracker-bot@kernel.org>
+Date:   Tue, 15 Jan 2019 17:30:02 +0000
+To:     David Miller <davem@davemloft.net>
+Cc:     torvalds@linux-foundation.org, akpm@linux-foundation.org,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 15, 2019 at 03:30:42AM +0000, S wrote:
-> Please talk to your colleagues how to fix that. Adding some of them to
-> CC.
+The pull request you sent on Sun, 13 Jan 2019 13:33:46 -0800 (PST):
 
-Your mailer is still broken. How do you manage to have an empty From:?
-Is your exchange client misconfigured?
+> git://git.kernel.org/pub/scm/linux/kernel/git/davem/net master
 
-> Let me know if you want me to fix this and re-send the 3 patches.
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/e8746440bf68212f19688f1454dad593c74abee1
 
-Well, please redo them by moving the quirk function to
-
-  arch/x86/kernel/cpu/mce/amd.c
-
-and call it from mce_amd_feature_init(). This will concentrate the code
-more and won't need the globally visible function.
-
-Thx.
+Thank you!
 
 -- 
-Regards/Gruss,
-    Boris.
-
-Good mailing practices for 400: avoid top-posting and trim the reply.
+Deet-doot-dot, I am a bot.
+https://korg.wiki.kernel.org/userdoc/prtracker
