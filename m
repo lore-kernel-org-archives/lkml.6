@@ -2,154 +2,103 @@ Return-Path: <SRS0=RZO6=PX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.0 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 30AADC43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 15:40:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 294BDC43612
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 15:40:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0B1E220657
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 15:40:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EEA9920657
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 15:40:28 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=lca.pw header.i=@lca.pw header.b="kCFeIv21"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731031AbfAOPkE (ORCPT
+        id S1731054AbfAOPk1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 15 Jan 2019 10:40:04 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:40379 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728391AbfAOPkE (ORCPT
+        Tue, 15 Jan 2019 10:40:27 -0500
+Received: from mail-qk1-f193.google.com ([209.85.222.193]:41697 "EHLO
+        mail-qk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731040AbfAOPk0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Jan 2019 10:40:04 -0500
-Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x0FFds3A2577318
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Tue, 15 Jan 2019 07:39:54 -0800
-Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x0FFdsTH2577315;
-        Tue, 15 Jan 2019 07:39:54 -0800
-Date:   Tue, 15 Jan 2019 07:39:54 -0800
-X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Thomas Gleixner <tipbot@zytor.com>
-Message-ID: <tip-16118794ede91aac1a73abe15de22d3de9d2b775@git.kernel.org>
-Cc:     mingo@kernel.org, tglx@linutronix.de, linux-kernel@vger.kernel.org,
-        john.stultz@linaro.org, hjl.tools@gmail.com, hpa@zytor.com,
-        peterz@infradead.org
-Reply-To: john.stultz@linaro.org, linux-kernel@vger.kernel.org,
-          mingo@kernel.org, tglx@linutronix.de, hjl.tools@gmail.com,
-          hpa@zytor.com, peterz@infradead.org
-In-Reply-To: <20190111133500.945255655@linutronix.de>
-References: <20190111133500.945255655@linutronix.de>
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:timers/core] posix-cpu-timers: Remove private interval storage
-Git-Commit-ID: 16118794ede91aac1a73abe15de22d3de9d2b775
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
+        Tue, 15 Jan 2019 10:40:26 -0500
+Received: by mail-qk1-f193.google.com with SMTP id 189so1772168qkj.8
+        for <linux-kernel@vger.kernel.org>; Tue, 15 Jan 2019 07:40:26 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=lca.pw; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=DkVyaPdAoK8qat/EoHKJAvan2LOc4hleJ5xRMTtVdi0=;
+        b=kCFeIv21omS/bheDyIqiDE72vIYGdJxaWEhNliAoLSAhrm6fDh+JxSRtBF0aQXvVd0
+         8U3ts6YSJHVw9SsB2UNfyQhYLDwhP5R1ipZPTwypaN4RgRHd7OKnOAZaDO43oLY+EVQz
+         vYfa0WnpIbPHhC5jbYkGPfwrTVuVXlEMK/5fmO6S+hzke0MK9WRQUgEb9Q8QLnlDKIcX
+         KDE/ViynBSX9eMEpRSUrYeExKmRockOqoTwbsWELhdrKsvWLnuRU83AqnypPkVrXqZEu
+         aXTXXzo8FKvrnE9aAaeN/lNhIxXZgKamfDfzod0NNpEa3zGcW1bBKRX4Az3t2I6wGPRo
+         H95w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=DkVyaPdAoK8qat/EoHKJAvan2LOc4hleJ5xRMTtVdi0=;
+        b=S3fmCq5LWmkbfec4QLXJzMpBU4499TWCw2QLTruduGsDZulIFPUoGETLNsdYaagbEq
+         bL+LCZhwJ6j/eZFJwIOJ+TKvkQ+OT66jGXUw8VGTIeRcbRFZ5f9ZlD54LVAbTffUxw30
+         EKoi5ppiI1kVcgoXy3sERBgR7cxzS4qrR1yxklq3oU0CuLJAQJIWpm7xnsbntZofvS4G
+         mfg7rPTwmz1eEjRhDlVdZpHEJZt0I5trPQZ8xjOQOl8RADK1H2OA/C/xfB5xNilfQnhY
+         Nmwfqv4ji+eG7tEmI2ZjMOXPDuodAzvjTntOTDmDTPTo2G7jQSflUmOpHU3h/wrrSllC
+         xjNg==
+X-Gm-Message-State: AJcUukd3hhe7HznzJb2eyQLM/ohldstYwu1BiPn0BH1Qh+szABMMVFve
+        5iQ7Rs3+X9Il5piENhrAeyQVzg==
+X-Google-Smtp-Source: ALg8bN7zBreLgrv44wiGAkz/+3SxlBx1LHYUYC1CDkR5y+AtmAG56M8u5XgGG+2Ac5DPyZun3bTw+w==
+X-Received: by 2002:a37:660f:: with SMTP id a15mr3124870qkc.328.1547566825925;
+        Tue, 15 Jan 2019 07:40:25 -0800 (PST)
+Received: from ovpn-120-55.rdu2.redhat.com (pool-71-184-117-43.bstnma.fios.verizon.net. [71.184.117.43])
+        by smtp.gmail.com with ESMTPSA id l12sm37748883qkk.40.2019.01.15.07.40.25
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 15 Jan 2019 07:40:25 -0800 (PST)
+From:   Qian Cai <cai@lca.pw>
+To:     pbonzini@redhat.com, rkrcmar@redhat.com
+Cc:     sean.j.christopherson@intel.com, tglx@linutronix.de,
+        mingo@redhat.com, bp@alien8.de, hpa@zytor.com, x86@kernel.org,
+        kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Qian Cai <cai@lca.pw>
+Subject: [PATCH] kvm: always inline vmx_vcpu_run()
+Date:   Tue, 15 Jan 2019 10:40:14 -0500
+Message-Id: <20190115154014.73919-1-cai@lca.pw>
+X-Mailer: git-send-email 2.17.2 (Apple Git-113)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  16118794ede91aac1a73abe15de22d3de9d2b775
-Gitweb:     https://git.kernel.org/tip/16118794ede91aac1a73abe15de22d3de9d2b775
-Author:     Thomas Gleixner <tglx@linutronix.de>
-AuthorDate: Fri, 11 Jan 2019 14:33:17 +0100
-Committer:  Thomas Gleixner <tglx@linutronix.de>
-CommitDate: Tue, 15 Jan 2019 16:36:13 +0100
+__noclone was removed from vmx_vcpu_run() in 453eafbe65f which causes a
+compilation warning using GCC 8,
 
-posix-cpu-timers: Remove private interval storage
+arch/x86/kvm/vmx/vmx.o: warning: objtool: vmx_vcpu_run.part.17()+0x3171:
+call without frame pointer save/setup
 
-Posix CPU timers store the interval in private storage for historical
-reasons (it_interval used to be a non scalar representation on 32bit
-systems). This is gone and there is no reason for duplicated storage
-anymore.
+GCC decides to splits the function into small parts for optimization
+which confuses STACK_FRAME_NON_STANDARD(vmx_vcpu_run). Hence, just
+inline the whole function to avoid this.
 
-Use it_interval everywhere.
-
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: John Stultz <john.stultz@linaro.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: "H.J. Lu" <hjl.tools@gmail.com>
-Link: https://lkml.kernel.org/r/20190111133500.945255655@linutronix.de
-
+Fixes: 453eafbe65f (KVM: VMX: Move VM-Enter + VM-Exit handling to
+non-inline sub-routines)
+Signed-off-by: Qian Cai <cai@lca.pw>
 ---
- include/linux/posix-timers.h   |  2 +-
- kernel/time/posix-cpu-timers.c | 13 ++++++-------
- 2 files changed, 7 insertions(+), 8 deletions(-)
+ arch/x86/kvm/vmx/vmx.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/include/linux/posix-timers.h b/include/linux/posix-timers.h
-index e96581ca7c9d..b20798fc5191 100644
---- a/include/linux/posix-timers.h
-+++ b/include/linux/posix-timers.h
-@@ -12,7 +12,7 @@ struct siginfo;
+diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
+index f6915f10e584..d38b275bdcc3 100644
+--- a/arch/x86/kvm/vmx/vmx.c
++++ b/arch/x86/kvm/vmx/vmx.c
+@@ -6362,7 +6362,7 @@ static void vmx_update_hv_timer(struct kvm_vcpu *vcpu)
+ 	vmx->loaded_vmcs->hv_timer_armed = false;
+ }
  
- struct cpu_timer_list {
- 	struct list_head entry;
--	u64 expires, incr;
-+	u64 expires;
- 	struct task_struct *task;
- 	int firing;
- };
-diff --git a/kernel/time/posix-cpu-timers.c b/kernel/time/posix-cpu-timers.c
-index 80f955210861..0a426f4e3125 100644
---- a/kernel/time/posix-cpu-timers.c
-+++ b/kernel/time/posix-cpu-timers.c
-@@ -67,13 +67,13 @@ static void bump_cpu_timer(struct k_itimer *timer, u64 now)
- 	int i;
- 	u64 delta, incr;
- 
--	if (timer->it.cpu.incr == 0)
-+	if (!timer->it_interval)
- 		return;
- 
- 	if (now < timer->it.cpu.expires)
- 		return;
- 
--	incr = timer->it.cpu.incr;
-+	incr = timer->it_interval;
- 	delta = now + incr - timer->it.cpu.expires;
- 
- 	/* Don't use (incr*2 < delta), incr*2 might overflow. */
-@@ -520,7 +520,7 @@ static void cpu_timer_fire(struct k_itimer *timer)
- 		 */
- 		wake_up_process(timer->it_process);
- 		timer->it.cpu.expires = 0;
--	} else if (timer->it.cpu.incr == 0) {
-+	} else if (!timer->it_interval) {
- 		/*
- 		 * One-shot timer.  Clear it as soon as it's fired.
- 		 */
-@@ -606,7 +606,7 @@ static int posix_cpu_timer_set(struct k_itimer *timer, int timer_flags,
- 	 */
- 
- 	ret = 0;
--	old_incr = timer->it.cpu.incr;
-+	old_incr = timer->it_interval;
- 	old_expires = timer->it.cpu.expires;
- 	if (unlikely(timer->it.cpu.firing)) {
- 		timer->it.cpu.firing = -1;
-@@ -684,8 +684,7 @@ static int posix_cpu_timer_set(struct k_itimer *timer, int timer_flags,
- 	 * Install the new reload setting, and
- 	 * set up the signal and overrun bookkeeping.
- 	 */
--	timer->it.cpu.incr = timespec64_to_ns(&new->it_interval);
--	timer->it_interval = ns_to_ktime(timer->it.cpu.incr);
-+	timer->it_interval = timespec64_to_ktime(new->it_interval);
- 
- 	/*
- 	 * This acts as a modification timestamp for the timer,
-@@ -724,7 +723,7 @@ static void posix_cpu_timer_get(struct k_itimer *timer, struct itimerspec64 *itp
- 	/*
- 	 * Easy part: convert the reload time.
- 	 */
--	itp->it_interval = ns_to_timespec64(timer->it.cpu.incr);
-+	itp->it_interval = ktime_to_timespec64(timer->it_interval);
- 
- 	if (!timer->it.cpu.expires)
- 		return;
+-static void vmx_vcpu_run(struct kvm_vcpu *vcpu)
++static __always_inline void vmx_vcpu_run(struct kvm_vcpu *vcpu)
+ {
+ 	struct vcpu_vmx *vmx = to_vmx(vcpu);
+ 	unsigned long cr3, cr4, evmcs_rsp;
+-- 
+2.17.2 (Apple Git-113)
+
