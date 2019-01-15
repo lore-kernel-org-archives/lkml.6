@@ -2,112 +2,199 @@ Return-Path: <SRS0=RZO6=PX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+X-Spam-Status: No, score=-7.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DCB11C43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 15:30:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 571B4C43612
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 15:31:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ABB3820675
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 15:30:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547566205;
-	bh=+k0FJo+JNXZbwBB3lyj9KThyjwvBKhwxPyJOTr89ibI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=wAXs8zQviIFUSbFhYrm9H6GHjlQZWy1Yv0yQvPFHyJ5vI5jfpDUJ7lBYv792iyId9
-	 NfMKPFCjxMx/Xt2mL6xmcmelvFPe32UxgjJXWe1cAAnu5S9biSase2s4EOhzpDplyi
-	 qux3Vm/GpJ77YBwTyfYIyV582VvD67yvouREkNeE=
+	by mail.kernel.org (Postfix) with ESMTP id 1C25020675
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 15:31:09 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="UofYB04t"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730880AbfAOPaE (ORCPT
+        id S1730890AbfAOPbH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 15 Jan 2019 10:30:04 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51406 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728679AbfAOPaD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Jan 2019 10:30:03 -0500
-Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C3EA920675;
-        Tue, 15 Jan 2019 15:30:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547566203;
-        bh=+k0FJo+JNXZbwBB3lyj9KThyjwvBKhwxPyJOTr89ibI=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=ff+mV/wyZyhIlr9QuLQD/Wki0EwRUJIP7kZP/CofgF+xOhQpp+DmpcrE/heQGyUZu
-         3b9P9if4bpAATfR4NEfusCAXDH3jpll1bO0I4Y2dD7Se3Pm/eCp+V3wyucqTzfCzGR
-         008sFkjkzp3wA++02Wbiv0wdoZ5ETq47FjjsrF64=
-Date:   Tue, 15 Jan 2019 16:30:00 +0100
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     thirtythreeforty@gmail.com
-Cc:     devel@driverdev.osuosl.org, NeilBrown <neil@brown.name>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 2/2] staging: Mediatek: Use individual config flags in
- Makefile
-Message-ID: <20190115153000.GA15206@kroah.com>
-References: <CACmrr9gHucWaWtz07kQms6AsquLKAHbK+_Q0kF=92RGo6HmAFA@mail.gmail.com>
- <20190111004337.7223-1-thirtythreeforty@gmail.com>
- <20190111004337.7223-2-thirtythreeforty@gmail.com>
+        Tue, 15 Jan 2019 10:31:07 -0500
+Received: from userp2120.oracle.com ([156.151.31.85]:55352 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728679AbfAOPbG (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 Jan 2019 10:31:06 -0500
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id x0FFSge7118645;
+        Tue, 15 Jan 2019 15:29:33 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2018-07-02;
+ bh=nndJJC/ikVUV1UapEgYRmYZzsSo85A25S1VDY8yVVlI=;
+ b=UofYB04tiluNq7qOENAfCZx9RggbICJrfRN8D4/WSXASzjhxyuS3mi8VitDBfQ9eCe9b
+ 6VGq4cECe3LiRz/iTCeJM2x2L7JwG8ANeWkN9G9dxqE57VfhDOGgieSEW3JrWIvLPTiv
+ QHZkGqdTRM6pM6+TzawzvJwENcriE+fOip/t9XKWduoIAwpv4X49AI8J0XlSyILByVVb
+ OYwbBHzAbR9SmnHB5qegkXv2Vc4RDe4Xz4aKpsRA/FHWcmIPz0Lia27WP6dIMQ8cLjQ1
+ EQ/5aMiXl44JjlCYy0feyC1n5dUmlz3V1SWCD7uMGC1ZLcE87h35W2rO0Orbqe7B1CLK ng== 
+Received: from userv0021.oracle.com (userv0021.oracle.com [156.151.31.71])
+        by userp2120.oracle.com with ESMTP id 2pybjs4g5f-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 15 Jan 2019 15:29:32 +0000
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by userv0021.oracle.com (8.14.4/8.14.4) with ESMTP id x0FFTRop030032
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 15 Jan 2019 15:29:27 GMT
+Received: from abhmp0001.oracle.com (abhmp0001.oracle.com [141.146.116.7])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x0FFTP7P032651;
+        Tue, 15 Jan 2019 15:29:26 GMT
+Received: from dhcp-burlington7-2nd-B-east-10-152-55-162.usdhcp.oraclecorp.com (/10.152.32.65)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Tue, 15 Jan 2019 07:29:25 -0800
+Subject: Re: [PATCH 8/9] xen/gntdev.c: Convert to use vm_insert_range
+To:     Souptick Joarder <jrdr.linux@gmail.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        Michal Hocko <mhocko@suse.com>,
+        Juergen Gross <jgross@suse.com>,
+        Russell King - ARM Linux <linux@armlinux.org.uk>,
+        robin.murphy@arm.com, xen-devel@lists.xenproject.org,
+        linux-kernel@vger.kernel.org, Linux-MM <linux-mm@kvack.org>
+References: <20190111151235.GA2836@jordon-HP-15-Notebook-PC>
+ <f6eef305-daf3-dad8-96e3-d2f93d169fd4@oracle.com>
+ <CAFqt6zYFR5FHXTLsSQ2DKgZDQtuNB2jZWK6ZLUAscG9vMnSk3Q@mail.gmail.com>
+From:   Boris Ostrovsky <boris.ostrovsky@oracle.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=boris.ostrovsky@oracle.com; prefer-encrypt=mutual; keydata=
+ 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
+ Jg6OxFYd01z+a+oL
+Message-ID: <2dfe8988-16a7-4997-78a6-7e0dfb9cc741@oracle.com>
+Date:   Tue, 15 Jan 2019 10:29:17 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190111004337.7223-2-thirtythreeforty@gmail.com>
-User-Agent: Mutt/1.11.2 (2019-01-07)
+In-Reply-To: <CAFqt6zYFR5FHXTLsSQ2DKgZDQtuNB2jZWK6ZLUAscG9vMnSk3Q@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9136 signatures=668680
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1810050000 definitions=main-1901150129
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jan 10, 2019 at 05:43:37PM -0700, thirtythreeforty@gmail.com wrote:
-> From: George Hilliard <thirtythreeforty@gmail.com>
-> 
-> These drivers are useful on other MT76xx SoCs, which have compatible
-> peripherals.  The drivers are selectable in Kconfig, but they were
-> quietly excluded from the build because the SOC_MT7621 chip was not
-> selected.  So, make the main staging Makefile use the same flags as
-> everything else for these drivers.
-> 
-> mt7621-dma and mt7621-dts are left alone because they truly do require
-> that SoC.
-> 
-> I have personally confirmed that the mt7621-spi driver works on the
-> MT7688, which was what prompted this change.
-> 
-> Cc: linux-kernel@vger.kernel.org
-> Cc: devel@driverdev.osuosl.org
-> Cc: NeilBrown <neil@brown.name>
-> Signed-off-by: George Hilliard <thirtythreeforty@gmail.com>
-> ---
->  drivers/staging/Makefile | 10 +++++-----
->  1 file changed, 5 insertions(+), 5 deletions(-)
-> 
-> diff --git a/drivers/staging/Makefile b/drivers/staging/Makefile
-> index e095f427177c..4b78ea2c7848 100644
-> --- a/drivers/staging/Makefile
-> +++ b/drivers/staging/Makefile
-> @@ -42,12 +42,12 @@ obj-$(CONFIG_BCM2835_VCHIQ)	+= vc04_services/
->  obj-$(CONFIG_DRM_VBOXVIDEO)	+= vboxvideo/
->  obj-$(CONFIG_PI433)		+= pi433/
->  obj-$(CONFIG_SOC_MT7621)	+= mt7621-pci/
-> -obj-$(CONFIG_SOC_MT7621)	+= mt7621-pinctrl/
-> -obj-$(CONFIG_SOC_MT7621)	+= mt7621-spi/
-> +obj-$(CONFIG_PINCTRL_RT2880)	+= mt7621-pinctrl/
-> +obj-$(CONFIG_SPI_MT7621)	+= mt7621-spi/
->  obj-$(CONFIG_SOC_MT7621)	+= mt7621-dma/
-> -obj-$(CONFIG_SOC_MT7621)	+= ralink-gdma/
-> -obj-$(CONFIG_SOC_MT7621)	+= mt7621-mmc/
-> -obj-$(CONFIG_SOC_MT7621)	+= mt7621-eth/
-> +obj-$(CONFIG_DMA_RALINK)	+= ralink-gdma/
-> +obj-$(CONFIG_MTK_MMC)		+= mt7621-mmc/
-> +obj-$(CONFIG_NET_MEDIATEK_SOC_STAGING)	+= mt7621-eth/
->  obj-$(CONFIG_SOC_MT7621)	+= mt7621-dts/
->  obj-$(CONFIG_STAGING_GASKET_FRAMEWORK)	+= gasket/
->  obj-$(CONFIG_XIL_AXIS_FIFO)	+= axis-fifo/
+On 1/14/19 11:49 PM, Souptick Joarder wrote:
+> On Tue, Jan 15, 2019 at 4:58 AM Boris Ostrovsky
+> <boris.ostrovsky@oracle.com> wrote:
+>> On 1/11/19 10:12 AM, Souptick Joarder wrote:
+>>> Convert to use vm_insert_range() to map range of kernel
+>>> memory to user vma.
+>>>
+>>> Signed-off-by: Souptick Joarder <jrdr.linux@gmail.com>
+>> Reviewed-by: Boris Ostrovsky <boris.ostrovsky@oracle.com>
+>>
+>> (although it would be good to mention in the commit that you are also
+>> replacing count with vma_pages(vma), and why)
+> The original code was using count ( *count = vma_pages(vma)* )
+> which is same as this patch. Do I need capture it change log ?
 
-This patch doesn't apply to my tree at all, can you rebase and resend?
 
-thanks,
+I'd just say that because theoretically count might not be equal to
+map->count we should use the latter as input to vm_insert_range().
 
-greg k-h
+Thanks.
+-boris
+
+
+
+>
+>>
+>>> ---
+>>>  drivers/xen/gntdev.c | 16 ++++++----------
+>>>  1 file changed, 6 insertions(+), 10 deletions(-)
+>>>
+>>> diff --git a/drivers/xen/gntdev.c b/drivers/xen/gntdev.c
+>>> index b0b02a5..ca4acee 100644
+>>> --- a/drivers/xen/gntdev.c
+>>> +++ b/drivers/xen/gntdev.c
+>>> @@ -1082,18 +1082,17 @@ static int gntdev_mmap(struct file *flip, struct vm_area_struct *vma)
+>>>  {
+>>>       struct gntdev_priv *priv = flip->private_data;
+>>>       int index = vma->vm_pgoff;
+>>> -     int count = vma_pages(vma);
+>>>       struct gntdev_grant_map *map;
+>>> -     int i, err = -EINVAL;
+>>> +     int err = -EINVAL;
+>>>
+>>>       if ((vma->vm_flags & VM_WRITE) && !(vma->vm_flags & VM_SHARED))
+>>>               return -EINVAL;
+>>>
+>>>       pr_debug("map %d+%d at %lx (pgoff %lx)\n",
+>>> -                     index, count, vma->vm_start, vma->vm_pgoff);
+>>> +                     index, vma_pages(vma), vma->vm_start, vma->vm_pgoff);
+>>>
+>>>       mutex_lock(&priv->lock);
+>>> -     map = gntdev_find_map_index(priv, index, count);
+>>> +     map = gntdev_find_map_index(priv, index, vma_pages(vma));
+>>>       if (!map)
+>>>               goto unlock_out;
+>>>       if (use_ptemod && map->vma)
+>>> @@ -1145,12 +1144,9 @@ static int gntdev_mmap(struct file *flip, struct vm_area_struct *vma)
+>>>               goto out_put_map;
+>>>
+>>>       if (!use_ptemod) {
+>>> -             for (i = 0; i < count; i++) {
+>>> -                     err = vm_insert_page(vma, vma->vm_start + i*PAGE_SIZE,
+>>> -                             map->pages[i]);
+>>> -                     if (err)
+>>> -                             goto out_put_map;
+>>> -             }
+>>> +             err = vm_insert_range(vma, map->pages, map->count);
+>>> +             if (err)
+>>> +                     goto out_put_map;
+>>>       } else {
+>>>  #ifdef CONFIG_X86
+>>>               /*
+
