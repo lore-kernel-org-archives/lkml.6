@@ -2,234 +2,142 @@ Return-Path: <SRS0=RZO6=PX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A20DC43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 17:02:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4CBB4C43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 17:02:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5AB6220645
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 17:02:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547571754;
-	bh=UR9+SQfF0n32BHrd0tDEo2iyX+WTVd+rZWfmUZobMts=;
-	h=From:To:Cc:Subject:Date:List-ID:From;
-	b=JX5RbzOnKcN2FxRTl+xa66oOhKazNuogY+l3O9KCfSyjR5g8sHmzawWOMdNQQ0WPa
-	 gKPMfsFREhCdUio8YsvqWt21AzKcvB8Kd/1DiSCyZzMId8+PZiM2HXS2baq82vN5Ha
-	 +DiPfYsymNVeTOXQN9N6nDLlt4dfVRLfoAmR+cM4=
+	by mail.kernel.org (Postfix) with ESMTP id 1B1AC20645
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 17:02:53 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JyqRWgt/"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388270AbfAORCc (ORCPT
+        id S1732576AbfAORCw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 15 Jan 2019 12:02:32 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52050 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731655AbfAOQgt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Jan 2019 11:36:49 -0500
-Received: from localhost.localdomain (unknown [60.186.143.79])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 75ED720657;
-        Tue, 15 Jan 2019 16:36:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547570208;
-        bh=UR9+SQfF0n32BHrd0tDEo2iyX+WTVd+rZWfmUZobMts=;
-        h=From:To:Cc:Subject:Date:From;
-        b=VLoeFVi45FXqJkYymjWEWhFII7M58ojP764ZE8YxNE/C338xa4vP3MF++5cUBj/HC
-         bs1Q3z8ekYyfCEeet5Kbm0HpVpxZqvx6KCkhkaal4NqdhtjJQeQma4OwfZ0imwGB09
-         aC8LSBw1mlpZx+xre7OvaPT26wtLHq52ZcnaV7KQ=
-From:   guoren@kernel.org
-To:     tglx@linutronix.de, jason@lakedaemon.net, marc.zyngier@arm.com,
-        robh+dt@kernel.org, mark.rutland@arm.com
-Cc:     linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        guoren@kernel.org, Guo Ren <ren_guo@c-sky.com>
-Subject: [PATCH] irqchip/irq-csky-mpintc: Add triger type and priority setting
-Date:   Wed, 16 Jan 2019 00:36:39 +0800
-Message-Id: <1547570199-25944-1-git-send-email-guoren@kernel.org>
-X-Mailer: git-send-email 2.7.4
+        Tue, 15 Jan 2019 12:02:52 -0500
+Received: from mail-it1-f193.google.com ([209.85.166.193]:39761 "EHLO
+        mail-it1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731648AbfAORCv (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 Jan 2019 12:02:51 -0500
+Received: by mail-it1-f193.google.com with SMTP id a6so5329719itl.4
+        for <linux-kernel@vger.kernel.org>; Tue, 15 Jan 2019 09:02:50 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=bjB65PZIebC31N1Ziq25rVbpbu1WqErfH1EBrSorP7k=;
+        b=JyqRWgt/FK8hoswtS3ThjZ+0IAJxLIzcCNIU+JrqPPhpAfXgBMHcuCFJsRBWXi3feX
+         d0DItC18dQFpozLBkQ8oVCgFC5KqDUkhrmEFL284qYn2e6IUMEmacEPRCL8J8DOnvsQR
+         ha7uz6NuboaKs+VfmkFTz78bprKBWpvVvj8c9ANkJIS5CN2LV67I/+RxXEDDOM/8cjJ7
+         3nM9qCInAvBDo39bGopnD20YhygEi3XBkSkwoPlBZBqblyBAk4vrcJwnfnWXRrK3K0Pk
+         4y8yGkJuq51ucEXTPXnlFZyQV7RBc3SWROEqzBKTMVfWqrKkBdGfaxBGln6p+2AcpF1Z
+         AcHQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=bjB65PZIebC31N1Ziq25rVbpbu1WqErfH1EBrSorP7k=;
+        b=VQSA7xXq6/HOZQ/p7Gtde37WEnb16AsRkHIj6BRHtWkjscY8iB12UevYo3IhjibbUA
+         MWjhtfZMeJ4oUL0ui8xmtzoDX8kLvhxz+wJdBSE0ZM9Nz/Edc/q0GtR3pP75Zs3yZEMz
+         uu3rp8tFwnGvv23hBC+t1WuklLV1wuxgRkpbtb69ac98XKJTHFU6/8TV09vmfNM6lmVt
+         hgbUtSsGs2xOe3aLJus4I2o/4NWm0oG9TmqnanHgqhXcHB/dbH9qP+zQ120x9fLf5SwY
+         g/3RjNK5HphNBtBC8Sjc6/XyTBe2HhxQVXz1ecGifCHUSjCaAOMCGYFJupq3HJUmOaZv
+         OK0Q==
+X-Gm-Message-State: AJcUukcuC1y+ACJSmbjO20vPzqvQu3P3I9ewApQxXMz8xcn06On4M+zH
+        oOkdZGIpb64sUI7xx0SLgRouykiAYsM=
+X-Google-Smtp-Source: ALg8bN5Y9Q3mVAe+2FPKNf7A+Gaq4PdTBjkt0AHqQ+kaLiK0XcjaJMly4yNC7puyK+gJkIhSnz3wHg==
+X-Received: by 2002:a02:3f0b:: with SMTP id d11mr2915198jaa.26.1547571770027;
+        Tue, 15 Jan 2019 09:02:50 -0800 (PST)
+Received: from localhost.localdomain (c-73-242-244-99.hsd1.nm.comcast.net. [73.242.244.99])
+        by smtp.gmail.com with ESMTPSA id y5sm1902486itb.42.2019.01.15.09.02.47
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 15 Jan 2019 09:02:48 -0800 (PST)
+From:   George Hilliard <thirtythreeforty@gmail.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     George Hilliard <thirtythreeforty@gmail.com>,
+        linux-kernel@vger.kernel.org, devel@driverdev.osuosl.org,
+        NeilBrown <neil@brown.name>, sergio.paracuellos@gmail.com
+Subject: [PATCH v3] staging: Mediatek: Use individual config flags in Makefile
+Date:   Tue, 15 Jan 2019 10:02:21 -0700
+Message-Id: <20190115170221.26693-1-thirtythreeforty@gmail.com>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20190115153000.GA15206@kroah.com>
+References: <20190115153000.GA15206@kroah.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Guo Ren <ren_guo@c-sky.com>
+These drivers can be useful on other MT76xx SoCs, which have compatible
+peripherals.  The drivers were selectable in Kconfig, but they were
+quietly excluded from the build because the SOC_MT7621 chip was not
+selected.  So, make the Makefiles use the same flags as Kconfig for
+these drivers.
 
-Support 4 triger types:
- - IRQ_TYPE_LEVEL_HIGH
- - IRQ_TYPE_LEVEL_LOW
- - IRQ_TYPE_EDGE_RISING
- - IRQ_TYPE_EDGE_FALLING
+mt7621-dma and mt7621-dts are left alone because they truly do require
+that SoC.
 
-Support 0-255 priority setting for each irq.
+I have personally confirmed that the mt7621-spi driver works on the
+MT7688, which was what prompted this change.
 
-Signed-off-by: Guo Ren <ren_guo@c-sky.com>
+Cc: linux-kernel@vger.kernel.org
+Cc: devel@driverdev.osuosl.org
+Cc: NeilBrown <neil@brown.name>
+Cc: sergio.paracuellos@gmail.com
+Signed-off-by: George Hilliard <thirtythreeforty@gmail.com>
 ---
- .../bindings/interrupt-controller/csky,mpintc.txt  | 24 ++++++-
- drivers/irqchip/irq-csky-mpintc.c                  | 78 +++++++++++++++++++++-
- 2 files changed, 99 insertions(+), 3 deletions(-)
+ drivers/staging/Makefile                | 14 +++++++-------
+ drivers/staging/mt7621-pci-phy/Makefile |  2 +-
+ drivers/staging/mt7621-pci/Makefile     |  2 +-
+ 3 files changed, 9 insertions(+), 9 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/interrupt-controller/csky,mpintc.txt b/Documentation/devicetree/bindings/interrupt-controller/csky,mpintc.txt
-index ab921f1..364b789 100644
---- a/Documentation/devicetree/bindings/interrupt-controller/csky,mpintc.txt
-+++ b/Documentation/devicetree/bindings/interrupt-controller/csky,mpintc.txt
-@@ -11,6 +11,14 @@ Interrupt number definition:
-  16-31  : private  irq, and we use 16 as the co-processor timer.
-  31-1024: common irq for soc ip.
- 
-+Interrupt triger mode:
-+  IRQ_TYPE_LEVEL_HIGH (default)
-+  IRQ_TYPE_LEVEL_LOW
-+  IRQ_TYPE_EDGE_RISING
-+  IRQ_TYPE_EDGE_FALLING
-+
-+Interrupt priority range: 0-255
-+
- =============================
- intc node bindings definition
- =============================
-@@ -26,7 +34,7 @@ intc node bindings definition
- 	- #interrupt-cells
- 		Usage: required
- 		Value type: <u32>
--		Definition: must be <1>
-+		Definition: could be <1> or <2>
- 	- interrupt-controller:
- 		Usage: required
- 
-@@ -35,6 +43,18 @@ Examples:
- 
- 	intc: interrupt-controller {
- 		compatible = "csky,mpintc";
--		#interrupt-cells = <1>;
-+		#interrupt-cells = <2>;
- 		interrupt-controller;
- 	};
-+
-+	0: device-example {
-+		...
-+		interrupts = <33 IRQ_TYPE_EDGE_RISING>;
-+		interrupt-parent = <&intc>;
-+	};
-+
-+	1: device-example {
-+		...
-+		interrupts = <34 ((priority << 4) | IRQ_TYPE_EDGE_RISING)>;
-+		interrupt-parent = <&intc>;
-+	};
-diff --git a/drivers/irqchip/irq-csky-mpintc.c b/drivers/irqchip/irq-csky-mpintc.c
-index c67c961..9edc6d3 100644
---- a/drivers/irqchip/irq-csky-mpintc.c
-+++ b/drivers/irqchip/irq-csky-mpintc.c
-@@ -29,9 +29,12 @@ static void __iomem *INTCL_base;
- 
- #define INTCG_ICTLR	0x0
- #define INTCG_CICFGR	0x100
-+#define INTCG_CIPRTR	0x200
- #define INTCG_CIDSTR	0x1000
- 
- #define INTCL_PICTLR	0x0
-+#define INTCL_CFGR	0x14
-+#define INTCL_PRTR	0x20
- #define INTCL_SIGR	0x60
- #define INTCL_HPPIR	0x68
- #define INTCL_RDYIR	0x6c
-@@ -73,6 +76,78 @@ static void csky_mpintc_eoi(struct irq_data *d)
- 	writel_relaxed(d->hwirq, reg_base + INTCL_CACR);
- }
- 
-+static int csky_mpintc_set_type(struct irq_data *d, unsigned int type)
-+{
-+	unsigned int priority, triger;
-+	unsigned int offset, bit_offset;
-+	void __iomem *reg_base;
-+
-+	/*
-+	 * type Bit field: | 32 - 12  |  11 - 4  |   3 - 0    |
-+	 *                   reserved   priority   triger type
-+	 */
-+	triger	 = type & IRQ_TYPE_SENSE_MASK;
-+	priority = (type >> 4) & 0xff;
-+
-+	switch (triger) {
-+	case IRQ_TYPE_LEVEL_HIGH:
-+		triger = 0;
-+		break;
-+	case IRQ_TYPE_LEVEL_LOW:
-+		triger = 1;
-+		break;
-+	case IRQ_TYPE_EDGE_RISING:
-+		triger = 2;
-+		break;
-+	case IRQ_TYPE_EDGE_FALLING:
-+		triger = 3;
-+		break;
-+	default:
-+		triger = 0;
-+		break;
-+	}
-+
-+	if (d->hwirq < COMM_IRQ_BASE) {
-+		reg_base = this_cpu_read(intcl_reg);
-+
-+		if (triger) {
-+			offset = ((d->hwirq * 2) / 32) * 4;
-+			bit_offset = (d->hwirq * 2) % 32;
-+
-+			writel_relaxed(triger << bit_offset,
-+				reg_base + INTCL_CFGR + offset);
-+		}
-+
-+		if (priority) {
-+			offset = ((d->hwirq * 8) / 32) * 4;
-+			bit_offset = (d->hwirq * 8) % 32;
-+
-+			writel_relaxed(priority << bit_offset,
-+				reg_base + INTCL_PRTR + offset);
-+		}
-+	} else {
-+		reg_base = INTCG_base;
-+
-+		if (triger) {
-+			offset = (((d->hwirq - COMM_IRQ_BASE) * 2) / 32) * 4;
-+			bit_offset = ((d->hwirq - COMM_IRQ_BASE) * 2) % 32;
-+
-+			writel_relaxed(triger << bit_offset,
-+				reg_base + INTCG_CICFGR + offset);
-+		}
-+
-+		if (priority) {
-+			offset = (((d->hwirq - COMM_IRQ_BASE) * 8) / 32) * 4;
-+			bit_offset = ((d->hwirq - COMM_IRQ_BASE) * 8) % 32;
-+
-+			writel_relaxed(priority << bit_offset,
-+				reg_base + INTCG_CIPRTR + offset);
-+		}
-+	}
-+
-+	return 0;
-+}
-+
- #ifdef CONFIG_SMP
- static int csky_irq_set_affinity(struct irq_data *d,
- 				 const struct cpumask *mask_val,
-@@ -105,6 +180,7 @@ static struct irq_chip csky_irq_chip = {
- 	.irq_eoi	= csky_mpintc_eoi,
- 	.irq_enable	= csky_mpintc_enable,
- 	.irq_disable	= csky_mpintc_disable,
-+	.irq_set_type	= csky_mpintc_set_type,
- #ifdef CONFIG_SMP
- 	.irq_set_affinity = csky_irq_set_affinity,
- #endif
-@@ -127,7 +203,7 @@ static int csky_irqdomain_map(struct irq_domain *d, unsigned int irq,
- 
- static const struct irq_domain_ops csky_irqdomain_ops = {
- 	.map	= csky_irqdomain_map,
--	.xlate	= irq_domain_xlate_onecell,
-+	.xlate	= irq_domain_xlate_onetwocell,
- };
- 
- #ifdef CONFIG_SMP
+diff --git a/drivers/staging/Makefile b/drivers/staging/Makefile
+index 4d563ed0bc79..cc5530cc996b 100644
+--- a/drivers/staging/Makefile
++++ b/drivers/staging/Makefile
+@@ -41,14 +41,14 @@ obj-$(CONFIG_GREYBUS)		+= greybus/
+ obj-$(CONFIG_BCM2835_VCHIQ)	+= vc04_services/
+ obj-$(CONFIG_DRM_VBOXVIDEO)	+= vboxvideo/
+ obj-$(CONFIG_PI433)		+= pi433/
+-obj-$(CONFIG_SOC_MT7621)	+= mt7621-pci/
+-obj-$(CONFIG_SOC_MT7621)	+= mt7621-pci-phy/
+-obj-$(CONFIG_SOC_MT7621)	+= mt7621-pinctrl/
+-obj-$(CONFIG_SOC_MT7621)	+= mt7621-spi/
++obj-$(CONFIG_PCI_MT7621)	+= mt7621-pci/
++obj-$(CONFIG_PCI_MT7621_PHY)	+= mt7621-pci-phy/
++obj-$(CONFIG_PINCTRL_RT2880)	+= mt7621-pinctrl/
++obj-$(CONFIG_SPI_MT7621)	+= mt7621-spi/
+ obj-$(CONFIG_SOC_MT7621)	+= mt7621-dma/
+-obj-$(CONFIG_SOC_MT7621)	+= ralink-gdma/
+-obj-$(CONFIG_SOC_MT7621)	+= mt7621-mmc/
+-obj-$(CONFIG_SOC_MT7621)	+= mt7621-eth/
++obj-$(CONFIG_DMA_RALINK)	+= ralink-gdma/
++obj-$(CONFIG_MTK_MMC)		+= mt7621-mmc/
++obj-$(CONFIG_NET_MEDIATEK_SOC_STAGING)	+= mt7621-eth/
+ obj-$(CONFIG_SOC_MT7621)	+= mt7621-dts/
+ obj-$(CONFIG_STAGING_GASKET_FRAMEWORK)	+= gasket/
+ obj-$(CONFIG_XIL_AXIS_FIFO)	+= axis-fifo/
+diff --git a/drivers/staging/mt7621-pci-phy/Makefile b/drivers/staging/mt7621-pci-phy/Makefile
+index 2b82ccfc28c6..a970056f05c1 100644
+--- a/drivers/staging/mt7621-pci-phy/Makefile
++++ b/drivers/staging/mt7621-pci-phy/Makefile
+@@ -1 +1 @@
+-obj-$(CONFIG_SOC_MT7621)       += pci-mt7621-phy.o
++obj-$(CONFIG_PCI_MT7621_PHY)       += pci-mt7621-phy.o
+diff --git a/drivers/staging/mt7621-pci/Makefile b/drivers/staging/mt7621-pci/Makefile
+index 607b84bedcc3..d4655a726b61 100644
+--- a/drivers/staging/mt7621-pci/Makefile
++++ b/drivers/staging/mt7621-pci/Makefile
+@@ -1 +1 @@
+-obj-$(CONFIG_SOC_MT7621)       += pci-mt7621.o
++obj-$(CONFIG_PCI_MT7621)       += pci-mt7621.o
 -- 
-2.7.4
+2.20.1
 
