@@ -2,220 +2,284 @@ Return-Path: <SRS0=RZO6=PX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A07CAC43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 22:12:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 277F7C43444
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 22:12:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 580FB20866
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 22:12:01 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Yoj98ryD"
+	by mail.kernel.org (Postfix) with ESMTP id DCF5220866
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 22:12:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730777AbfAOWL7 (ORCPT
+        id S1731129AbfAOWMN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 15 Jan 2019 17:11:59 -0500
-Received: from mail-vs1-f66.google.com ([209.85.217.66]:43778 "EHLO
-        mail-vs1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729244AbfAOWL7 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Jan 2019 17:11:59 -0500
-Received: by mail-vs1-f66.google.com with SMTP id x1so2650492vsc.10
-        for <linux-kernel@vger.kernel.org>; Tue, 15 Jan 2019 14:11:58 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=TKyaFDmQAKD+EnxBfOreshxoe5ExtPGbqNZUQXeAWUg=;
-        b=Yoj98ryD5rdl0NH2FiGV0H0X0JJvSWF5uuc3oJ2sJ2gl9SwiHgXnHqIqTcrm/iXmRt
-         I3eGC2aZnyamto3emSPzKI8mW3jfzcDEOjr7zGX8w8Q+7V04HUgEveNiszE8vdaYrAoZ
-         qzQLeT9Gj4+MVEDGhX42hkqLlud63bAUK7k3M=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=TKyaFDmQAKD+EnxBfOreshxoe5ExtPGbqNZUQXeAWUg=;
-        b=I7JqNUa0GhRzYgA0sqZuQir+dOnHf79TzhMCP2hYAe8+J46MjcwUuCRCo/CJzHhJqG
-         RWBRm/eLHA4KqVEOYk7Nz1/rZErrDshUbrl6BmJxljQ3mx2V1maygt4MBIyw5VLixAzq
-         vhNTos8a0sQ3/KCuwKr4FIjFforR4ObOxwdXDNt5vHVXxsTkEt4cX+gEGNuqDJlpi63t
-         ss70BSQVMj4Z+ebjEHodoafx+z3Jv55wmgzmOc3VqCfyrHLAHzv53dh8/GYh4fdcgSBH
-         34nRCFhIme1zCVI3A1xqYjzagafQtxQWNcLT5N/u4+AnPgZB54t9ts1AlA+oC79Ts/9L
-         bwYw==
-X-Gm-Message-State: AJcUukd1nU+b6BVsxmXOmz+gDj1DMuaZ4VeC+XY7Uc0KuJG+XNvLkBGl
-        UvdunDQ6gIe06ym4IPknTi80AQhzCQY=
-X-Google-Smtp-Source: ALg8bN5T2+c8QoIvmwaHySQgAx4oWA7rgNStzqNI1cM6Gt/0vrLyeSjsbvN6RqXj94Vg/KoekcLh7Q==
-X-Received: by 2002:a67:47cf:: with SMTP id b76mr2575027vsg.184.1547590317679;
-        Tue, 15 Jan 2019 14:11:57 -0800 (PST)
-Received: from mail-vs1-f53.google.com (mail-vs1-f53.google.com. [209.85.217.53])
-        by smtp.gmail.com with ESMTPSA id l13sm76729288vka.16.2019.01.15.14.11.56
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 15 Jan 2019 14:11:56 -0800 (PST)
-Received: by mail-vs1-f53.google.com with SMTP id u11so2640530vsp.11
-        for <linux-kernel@vger.kernel.org>; Tue, 15 Jan 2019 14:11:56 -0800 (PST)
-X-Received: by 2002:a67:f598:: with SMTP id i24mr2362846vso.87.1547590315700;
- Tue, 15 Jan 2019 14:11:55 -0800 (PST)
+        Tue, 15 Jan 2019 17:12:13 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:33174 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728876AbfAOWMM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 Jan 2019 17:12:12 -0500
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 72195A85F;
+        Tue, 15 Jan 2019 22:12:11 +0000 (UTC)
+Received: from redhat.com (ovpn-120-58.rdu2.redhat.com [10.10.120.58])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 7B421601A4;
+        Tue, 15 Jan 2019 22:12:08 +0000 (UTC)
+Date:   Tue, 15 Jan 2019 17:12:06 -0500
+From:   Jerome Glisse <jglisse@redhat.com>
+To:     John Hubbard <jhubbard@nvidia.com>
+Cc:     Jan Kara <jack@suse.cz>, Matthew Wilcox <willy@infradead.org>,
+        Dave Chinner <david@fromorbit.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        John Hubbard <john.hubbard@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linux MM <linux-mm@kvack.org>, tom@talpey.com,
+        Al Viro <viro@zeniv.linux.org.uk>, benve@cisco.com,
+        Christoph Hellwig <hch@infradead.org>,
+        Christopher Lameter <cl@linux.com>,
+        "Dalessandro, Dennis" <dennis.dalessandro@intel.com>,
+        Doug Ledford <dledford@redhat.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Michal Hocko <mhocko@kernel.org>, mike.marciniszyn@intel.com,
+        rcampbell@nvidia.com,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Subject: Re: [PATCH 1/2] mm: introduce put_user_page*(), placeholder versions
+Message-ID: <20190115221205.GD3696@redhat.com>
+References: <1b37061c-5598-1b02-2983-80003f1c71f2@nvidia.com>
+ <20190112020228.GA5059@redhat.com>
+ <294bdcfa-5bf9-9c09-9d43-875e8375e264@nvidia.com>
+ <20190112024625.GB5059@redhat.com>
+ <b6f4ed36-fc8d-1f9b-8c74-b12f61d496ae@nvidia.com>
+ <20190114145447.GJ13316@quack2.suse.cz>
+ <20190114172124.GA3702@redhat.com>
+ <20190115080759.GC29524@quack2.suse.cz>
+ <20190115171557.GB3696@redhat.com>
+ <752839e6-6cb3-a6aa-94cb-63d3d4265934@nvidia.com>
 MIME-Version: 1.0
-References: <20190114211824.2320-1-bjorn.andersson@linaro.org>
-In-Reply-To: <20190114211824.2320-1-bjorn.andersson@linaro.org>
-From:   Doug Anderson <dianders@chromium.org>
-Date:   Tue, 15 Jan 2019 14:11:43 -0800
-X-Gmail-Original-Message-ID: <CAD=FV=Um0TBXc_DFrs6YATDOwiqmTXnCFjXXO_mqwEc5QHXk9w@mail.gmail.com>
-Message-ID: <CAD=FV=Um0TBXc_DFrs6YATDOwiqmTXnCFjXXO_mqwEc5QHXk9w@mail.gmail.com>
-Subject: Re: [PATCH] arm64: dts: qcom: sdm845: Expand soc bus address range
-To:     Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc:     Andy Gross <andy.gross@linaro.org>,
-        David Brown <david.brown@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        devicetree@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <752839e6-6cb3-a6aa-94cb-63d3d4265934@nvidia.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.29]); Tue, 15 Jan 2019 22:12:12 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+On Tue, Jan 15, 2019 at 01:56:51PM -0800, John Hubbard wrote:
+> On 1/15/19 9:15 AM, Jerome Glisse wrote:
+> > On Tue, Jan 15, 2019 at 09:07:59AM +0100, Jan Kara wrote:
+> >> On Mon 14-01-19 12:21:25, Jerome Glisse wrote:
+> >>> On Mon, Jan 14, 2019 at 03:54:47PM +0100, Jan Kara wrote:
+> >>>> On Fri 11-01-19 19:06:08, John Hubbard wrote:
+> >>>>> On 1/11/19 6:46 PM, Jerome Glisse wrote:
+> >>>>>> On Fri, Jan 11, 2019 at 06:38:44PM -0800, John Hubbard wrote:
+> >>>>>> [...]
+> >>>>>>
+> >>>>>>>>> The other idea that you and Dan (and maybe others) pointed out was a debug
+> >>>>>>>>> option, which we'll certainly need in order to safely convert all the call
+> >>>>>>>>> sites. (Mirror the mappings at a different kernel offset, so that put_page()
+> >>>>>>>>> and put_user_page() can verify that the right call was made.)  That will be
+> >>>>>>>>> a separate patchset, as you recommended.
+> >>>>>>>>>
+> >>>>>>>>> I'll even go as far as recommending the page lock itself. I realize that this 
+> >>>>>>>>> adds overhead to gup(), but we *must* hold off page_mkclean(), and I believe
+> >>>>>>>>> that this (below) has similar overhead to the notes above--but is *much* easier
+> >>>>>>>>> to verify correct. (If the page lock is unacceptable due to being so widely used,
+> >>>>>>>>> then I'd recommend using another page bit to do the same thing.)
+> >>>>>>>>
+> >>>>>>>> Please page lock is pointless and it will not work for GUP fast. The above
+> >>>>>>>> scheme do work and is fine. I spend the day again thinking about all memory
+> >>>>>>>> ordering and i do not see any issues.
+> >>>>>>>>
+> >>>>>>>
+> >>>>>>> Why is it that page lock cannot be used for gup fast, btw?
+> >>>>>>
+> >>>>>> Well it can not happen within the preempt disable section. But after
+> >>>>>> as a post pass before GUP_fast return and after reenabling preempt then
+> >>>>>> it is fine like it would be for regular GUP. But locking page for GUP
+> >>>>>> is also likely to slow down some workload (with direct-IO).
+> >>>>>>
+> >>>>>
+> >>>>> Right, and so to crux of the matter: taking an uncontended page lock
+> >>>>> involves pretty much the same set of operations that your approach does.
+> >>>>> (If gup ends up contended with the page lock for other reasons than these
+> >>>>> paths, that seems surprising.) I'd expect very similar performance.
+> >>>>>
+> >>>>> But the page lock approach leads to really dramatically simpler code (and
+> >>>>> code reviews, let's not forget). Any objection to my going that
+> >>>>> direction, and keeping this idea as a Plan B? I think the next step will
+> >>>>> be, once again, to gather some performance metrics, so maybe that will
+> >>>>> help us decide.
+> >>>>
+> >>>> FWIW I agree that using page lock for protecting page pinning (and thus
+> >>>> avoid races with page_mkclean()) looks simpler to me as well and I'm not
+> >>>> convinced there will be measurable difference to the more complex scheme
+> >>>> with barriers Jerome suggests unless that page lock contended. Jerome is
+> >>>> right that you cannot just do lock_page() in gup_fast() path. There you
+> >>>> have to do trylock_page() and if that fails just bail out to the slow gup
+> >>>> path.
+> >>>>
+> >>>> Regarding places other than page_mkclean() that need to check pinned state:
+> >>>> Definitely page migration will want to check whether the page is pinned or
+> >>>> not so that it can deal differently with short-term page references vs
+> >>>> longer-term pins.
+> >>>>
+> >>>> Also there is one more idea I had how to record number of pins in the page:
+> >>>>
+> >>>> #define PAGE_PIN_BIAS	1024
+> >>>>
+> >>>> get_page_pin()
+> >>>> 	atomic_add(&page->_refcount, PAGE_PIN_BIAS);
+> >>>>
+> >>>> put_page_pin();
+> >>>> 	atomic_add(&page->_refcount, -PAGE_PIN_BIAS);
+> >>>>
+> >>>> page_pinned(page)
+> >>>> 	(atomic_read(&page->_refcount) - page_mapcount(page)) > PAGE_PIN_BIAS
+> >>>>
+> >>>> This is pretty trivial scheme. It still gives us 22-bits for page pins
+> >>>> which should be plenty (but we should check for that and bail with error if
+> >>>> it would overflow). Also there will be no false negatives and false
+> >>>> positives only if there are more than 1024 non-page-table references to the
+> >>>> page which I expect to be rare (we might want to also subtract
+> >>>> hpage_nr_pages() for radix tree references to avoid excessive false
+> >>>> positives for huge pages although at this point I don't think they would
+> >>>> matter). Thoughts?
+> >>>
+> >>> Racing PUP are as likely to cause issues:
+> >>>
+> >>> CPU0                        | CPU1       | CPU2
+> >>>                             |            |
+> >>>                             | PUP()      |
+> >>>     page_pinned(page)       |            |
+> >>>       (page_count(page) -   |            |
+> >>>        page_mapcount(page)) |            |
+> >>>                             |            | GUP()
+> >>>
+> >>> So here the refcount snap-shot does not include the second GUP and
+> >>> we can have a false negative ie the page_pinned() will return false
+> >>> because of the PUP happening just before on CPU1 despite the racing
+> >>> GUP on CPU2 just after.
+> >>>
+> >>> I believe only either lock or memory ordering with barrier can
+> >>> guarantee that we do not miss GUP ie no false negative. Still the
+> >>> bias idea might be usefull as with it we should not need a flag.
+> >>
+> >> Right. We need similar synchronization (i.e., page lock or careful checks
+> >> with memory barriers) if we want to get a reliable page pin information.
+> >>
+> >>> So to make the above safe it would still need the page write back
+> >>> double check that i described so that GUP back-off if it raced with
+> >>> page_mkclean,clear_page_dirty_for_io and the fs write page call back
+> >>> which call test_set_page_writeback() (yes it is very unlikely but
+> >>> might still happen).
+> >>
+> >> Agreed. So with page lock it would actually look like:
+> >>
+> >> get_page_pin()
+> >> 	lock_page(page);
+> >> 	wait_for_stable_page();
+> >> 	atomic_add(&page->_refcount, PAGE_PIN_BIAS);
+> >> 	unlock_page(page);
+> >>
+> >> And if we perform page_pinned() check under page lock, then if
+> >> page_pinned() returned false, we are sure page is not and will not be
+> >> pinned until we drop the page lock (and also until page writeback is
+> >> completed if needed).
+> >>
+> 
+> OK. Avoiding a new page flag, *and* avoiding the _mapcount auditing and
+> compensation steps, is a pretty major selling point. And if we do the above
+> locking, that does look correct to me. I wasn't able to visualize the
+> locking you had in mind, until just now (above), but now it is clear, 
+> thanks for spelling it out.
+> 
+> > 
+> > So i still can't see anything wrong with that idea, i had similar
+> > one in the past and diss-missed and i can't remember why :( But
+> > thinking over and over i do not see any issue beside refcount wrap
+> > around. Which is something that can happens today thought i don't
+> > think it can be use in an evil way and we can catch it and be
+> > loud about it.
+> > 
+> > So i think the following would be bullet proof:
+> > 
+> > 
+> > get_page_pin()
+> >     atomic_add(&page->_refcount, PAGE_PIN_BIAS);
+> >     smp_wmb();
+> >     if (PageWriteback(page)) {
+> >         // back off
+> >         atomic_add(&page->_refcount, -PAGE_PIN_BIAS);
+> >         // re-enable preempt if in fast
+> >         wait_on_page_writeback(page);
+> >         goto retry;
+> >     }
+> > 
+> > put_page_pin();
+> > 	atomic_add(&page->_refcount, -PAGE_PIN_BIAS);
+> > 
+> > page_pinned(page)
+> > 	(atomic_read(&page->_refcount) - page_mapcount(page)) > PAGE_PIN_BIAS
+> > 
+> > test_set_page_writeback()
+> >     ...
+> >     wb = TestSetPageWriteback(page)
+> 
+> Minor point, but using PageWriteback for synchronization may rule out using
+> wait_for_stable_page(), because wait_for_stable_page() might not actually 
+> wait_on_page_writeback. Jan pointed out in the other thread, that we should
+> prefer wait_for_stable_page(). 
 
-On Mon, Jan 14, 2019 at 1:19 PM Bjorn Andersson
-<bjorn.andersson@linaro.org> wrote:
->
-> DMA memory allocations for devices on the soc bus must be constrained to
-> the 36 address bits that the bus provides, which without IOMMU is taken
-> care of by the addresses being direct physical allocations.
+Yes, but wait_for_stable_page() has no page flag so nothing we can
+synchronize against. So my advice would be:
+    if (PageWriteback(page)) {
+        wait_for_stable_page(page);
+        if (PageWriteback(page))
+            wait_for_write_back(page);
+    }
 
-The above confuses me each time I read it because the thing that
-you're talking about limiting isn't where memory allocations come from
-but really what virtual address range is allocated.  Maybe instead:
+wait_for_stable_page() can optimize out the wait_for_write_back()
+if it is safe to do so. So we can improve the above slightly too.
 
-DMA addresses for devices on the soc bus must be constrained to the 36
-address bits that the bus provides.  When no IOMMU is present then
-this is easy--DMA addresses are just physical addresses and physical
-addresses are (by definition) within the address bits of the bus.
-When an IOMMU is present, however, DMA addresses are virtual
-addresses.  Despite these addresses being virtual, however, they still
-must be within the 36 bits due to SoC's implementation.
+> 
+> >     smp_mb();
+> >     if (page_pinned(page)) {
+> >         // report page as pinned to caller of test_set_page_writeback()
+> >     }
+> >     ...
+> > 
+> > This is text book memory barrier. Either get_page_pin() see racing
+> > test_set_page_writeback() or test_set_page_writeback() see racing GUP
+> > 
+> > 
+> 
+> This approach is probably workable, but again, it's more complex and comes
+> without any lockdep support. Maybe it's faster, maybe not. Therefore, I want 
+> to use it as either "do this after everything is up and running and stable", 
+> or else as Plan B, if there is some performance implication from the page lock.
+> 
+> Simple and correct first, then performance optimization, *if* necessary.
 
+I do not like taking page lock while they are no good reasons to do so.
+The above is textbook memory barrier as explain in Documentations/
+Forcing page lock for GUP will inevitably slow down some workload and
+report for such can takes time to trickle down to mailing list and it
+can takes time for people to actualy figure out that this are the GUP
+changes that introduce such regression.
 
-> Unless the bus_dma_mask is defined DMA allocations for devices will use
-> all 40 bits available by the SMMU. Causing addresses to be truncated on
-> the bus.
+So if we could minimize performance regression with something like
+memory barrier we should definitly do that.
 
-It would be interesting to document in the commit message where this
-40 comes from.  As far as I can tell "smmu->va_size" in the ARM iommu
-code is 48.  I thought maybe it was being truncated in
-arm_smmu_init_domain_context(), but even there I see "ias=3D48" and
-"oas=3D48" on each boot.
+Also i do not think that page lock has lock dep (as it is not using
+any of the usual locking function) but that's just my memory of that
+code.
 
-
-> By the current choice of specifying #address-cells and #size-cells to 1,
-> it's possible to define the region of DMA allocations to the lower 32
-> bits. But the SMMU implementation requires that it can 1:1 map the page
-> table, which might be allocated above 32 bits (as we have RAM there).
-
-I didn't dig into the above paragraph because I'm nearly certain we
-wouldn't want it anyway.  Eating the one-time cost of converting
-everyone is better than arbitrarily limiting addresses.
-
-
-> So this patch increases the #size-cells to 2, in order to be able to add
-> a dma-ranges that defines the 36 bit DMA capability of the bus, and
-> bumps #address-cells to 2 for symmetry. Then defines the dma-ranges to
-> 36 bits.
->
-> While touching all reg properties, addresses are padded to 8 digits.
->
-> Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-> ---
->
-> This applies to and is tested on 0f60e6fb54fb ("arm64: dts: qcom: pm8916:=
- Add
-> PON watchdog node") of:
-> https://git.kernel.org/pub/scm/linux/kernel/git/agross/linux.git/log/?h=
-=3Dfor-next
->
->  arch/arm64/boot/dts/qcom/sdm845.dtsi | 265 ++++++++++++++-------------
->  1 file changed, 133 insertions(+), 132 deletions(-)
->
->         soc: soc {
-> -               #address-cells =3D <1>;
-> -               #size-cells =3D <1>;
-> -               ranges =3D <0 0 0 0xffffffff>;
-> +               #address-cells =3D <2>;
-> +               #size-cells =3D <2>;
-> +               ranges =3D <0 0 0 0 0 0xffffffff>;
-> +               dma-ranges =3D <0 0 0 0 0x10 0>;
-
-Shouldn't you also be increasing "ranges"?  While I agree that it
-seems to work OK as you have coded it, it seems logically wrong.
-Reading 0.2 of the Device Tree Spec I see that the length "specifies
-the size of the range in the child=E2=80=99s address space".  Making this
-larger than the size of ranges seems wrong.
-
-I think the "ranges" is supposed to be the full size of the overall
-accessible bus from the SoC which should contain all memory (even if
-memory isn't actually listed as a sub-node of the SoC).  Right?  As I
-understand it memory actually starts at 0x80000000 which means that
-our current SoC "range" contains some but not all of memory...
-
-Speaking of which, it seems like ranges shouldn't be a mask but should
-be a size.  To sum that all up you probably want:
-
-ranges =3D <0 0 0 0 0x10 0>;
-
-
->                         usb_2_ssphy: lane@88eb200 {
-> -                               reg =3D <0x88eb200 0x128>,
-> -                                     <0x88eb400 0x1fc>,
-> -                                     <0x88eb800 0x218>,
-> -                                     <0x88e9600 0x70>;
-> +                               reg =3D <0 0x088eb200 0 0x128>,
-> +                                     <0 0x088eb400 0 0x1fc>,
-> +                                     <0 0x088eb800 0 0x218>,
-> +                                     <0 0x088e9600 0 0x70>;
-
-To avoid a known conflict, maybe worth fixing above before landing
-your patch?  Specifically see:
-
-https://lkml.kernel.org/r/20181025172318.31353-1-mgautam@codeaurora.org
-
-...so you'd want that last number to be:
-
-0 0x088eb600 0 0x70
-
-...in general it seems worthwhile to track down a few of the
-outstanding patches first before doing your big translation because
-otherwise you're going to either need to do manual fixups when landing
-those patches or you'll have to ask everyone to re-post.
-
-
-
-Overall, I have confirmed that:
-
-* getting rid of dma-ranges (but leaving the iommu for UFS) breaks
-UFS, as you have observed.
-
-* changing the dma-ranges size to something higher (0x100 0 or even
-0x20 0) breaks UFS, giving evidence that the 36-bit value you came up
-with is the right one.
-
-
-I've also checked the contents of your commit for typos and as far as
-I can tell all your translations are correct.  I've tested your commit
-on the (out of tree) sdm845-cheza after fixing up the additional
-device tree bits that you haven't landed yet.
-
-
-I've also spent a bit of time poking through the code paths here.
-While I won't claim any huge expertise here, it seems like your patch
-is the right thing to do.
-
-
-Thanks!
-
--Doug
+Cheers,
+Jérôme
