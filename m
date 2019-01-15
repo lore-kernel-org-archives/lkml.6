@@ -7,46 +7,46 @@ X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 59C73C43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 16:47:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 458BCC43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 16:47:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E85D22054F
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 16:47:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 159002054F
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 16:47:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547570863;
-	bh=U2NrJ0jeZ2u+8EQcpNnqHWcMZCguWursJETynHLVkC4=;
+	s=default; t=1547570868;
+	bh=Y+JnD15Ddw4Ag10QCxHlrSikPeErEfspmeczg28CvEQ=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=ToONExQzq8tMNQ67zvgumvI6+j/65dhoTbz/5+SkkDsr4XjRv9GNsqU2roQdRXgNm
-	 Tg4ntUq0pmltoO/wubCIV5fZHRkO8Bo9IUtbridzv39/TemfFC84Kx4BayM9lHhxCc
-	 o/O0+QtTlkn6hR5/tZvyTWeSTc4pKKKD67SuHbmo=
+	b=Zw2qQQYR8FrhiWAL+c442EcCa90orwAQClUOtBV8ycxle2LJzkjV0fqYMHd/FsP3c
+	 ANJBnN3zcDIQTyCyaW+AW8cpTbWGY04jU2betd6IxZPxczHPEz8qz3AdIqe9K7jFG0
+	 VmQ6LYTzD8DWgw+thhQi+oJCVnKwIoimoyQj2PvE=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731286AbfAOQrk (ORCPT
+        id S1731988AbfAOQrq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 15 Jan 2019 11:47:40 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35052 "EHLO mail.kernel.org"
+        Tue, 15 Jan 2019 11:47:46 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35002 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387768AbfAOQpV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Jan 2019 11:45:21 -0500
+        id S2387758AbfAOQpS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 Jan 2019 11:45:18 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3095120645;
-        Tue, 15 Jan 2019 16:45:20 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 354142054F;
+        Tue, 15 Jan 2019 16:45:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547570720;
-        bh=U2NrJ0jeZ2u+8EQcpNnqHWcMZCguWursJETynHLVkC4=;
+        s=default; t=1547570717;
+        bh=Y+JnD15Ddw4Ag10QCxHlrSikPeErEfspmeczg28CvEQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=XFBx7E6agkak2meVye4xLAARbtoew8ac3a+kcPdHpAxyvO1I00uGxhR31NxrYnMPu
-         LQKYCs2aIwf/m5QGuHM0JPUeGfbvXIG5AW+x4eXT8cuZW+wRFxUEz8Sfd9kYttymq6
-         Zgb7N8TWN0BtR7qfR5V0F4telx4cm2yg0cKDpHJs=
+        b=Jmr5JqOLhahQKNi6GcRCnFP+jvz0R24RcraKvrYQcg20ixQ50S0Eje47NIqiTCaT/
+         NGlj16SCNZDIVz1XteDqlvVS0QODbNjqBI0qWqOlMU6n+Avb2zPsmPDljxKgKnJ3PT
+         0rQt9WMwX0DjmIBpCX+bbjgOpe7tiiMdSP648dzk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Theodore Tso <tytso@mit.edu>,
-        stable@kernel.org
-Subject: [PATCH 4.20 47/57] ext4: make sure enough credits are reserved for dioread_nolock writes
-Date:   Tue, 15 Jan 2019 17:36:28 +0100
-Message-Id: <20190115154913.615006838@linuxfoundation.org>
+        stable@vger.kernel.org, Ilya Dryomov <idryomov@gmail.com>,
+        Dongsheng Yang <dongsheng.yang@easystack.cn>
+Subject: [PATCH 4.20 46/57] rbd: dont return 0 on unmap if RBD_DEV_FLAG_REMOVING is set
+Date:   Tue, 15 Jan 2019 17:36:27 +0100
+Message-Id: <20190115154913.547084607@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190115154910.734892368@linuxfoundation.org>
 References: <20190115154910.734892368@linuxfoundation.org>
@@ -65,44 +65,60 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Theodore Ts'o <tytso@mit.edu>
+From: Ilya Dryomov <idryomov@gmail.com>
 
-commit 812c0cab2c0dfad977605dbadf9148490ca5d93f upstream.
+commit 85f5a4d666fd9be73856ed16bb36c5af5b406b29 upstream.
 
-There are enough credits reserved for most dioread_nolock writes;
-however, if the extent tree is sufficiently deep, and/or quota is
-enabled, the code was not allowing for all eventualities when
-reserving journal credits for the unwritten extent conversion.
+There is a window between when RBD_DEV_FLAG_REMOVING is set and when
+the device is removed from rbd_dev_list.  During this window, we set
+"already" and return 0.
 
-This problem can be seen using xfstests ext4/034:
+Returning 0 from write(2) can confuse userspace tools because
+0 indicates that nothing was written.  In particular, "rbd unmap"
+will retry the write multiple times a second:
 
-   WARNING: CPU: 1 PID: 257 at fs/ext4/ext4_jbd2.c:271 __ext4_handle_dirty_metadata+0x10c/0x180
-   Workqueue: ext4-rsv-conversion ext4_end_io_rsv_work
-   RIP: 0010:__ext4_handle_dirty_metadata+0x10c/0x180
-   	...
-   EXT4-fs: ext4_free_blocks:4938: aborting transaction: error 28 in __ext4_handle_dirty_metadata
-   EXT4: jbd2_journal_dirty_metadata failed: handle type 11 started at line 4921, credits 4/0, errcode -28
-   EXT4-fs error (device dm-1) in ext4_free_blocks:4950: error 28
+  10:28:05.463299 write(4, "0", 1)        = 0
+  10:28:05.463509 write(4, "0", 1)        = 0
+  10:28:05.463720 write(4, "0", 1)        = 0
+  10:28:05.463942 write(4, "0", 1)        = 0
+  10:28:05.464155 write(4, "0", 1)        = 0
 
-Signed-off-by: Theodore Ts'o <tytso@mit.edu>
-Cc: stable@kernel.org
+Cc: stable@vger.kernel.org
+Signed-off-by: Ilya Dryomov <idryomov@gmail.com>
+Tested-by: Dongsheng Yang <dongsheng.yang@easystack.cn>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/ext4/inode.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/block/rbd.c |    9 ++++-----
+ 1 file changed, 4 insertions(+), 5 deletions(-)
 
---- a/fs/ext4/inode.c
-+++ b/fs/ext4/inode.c
-@@ -2778,7 +2778,8 @@ static int ext4_writepages(struct addres
- 		 * We may need to convert up to one extent per block in
- 		 * the page and we may dirty the inode.
- 		 */
--		rsv_blocks = 1 + (PAGE_SIZE >> inode->i_blkbits);
-+		rsv_blocks = 1 + ext4_chunk_trans_blocks(inode,
-+						PAGE_SIZE >> inode->i_blkbits);
- 	}
+--- a/drivers/block/rbd.c
++++ b/drivers/block/rbd.c
+@@ -5986,7 +5986,6 @@ static ssize_t do_rbd_remove(struct bus_
+ 	struct list_head *tmp;
+ 	int dev_id;
+ 	char opt_buf[6];
+-	bool already = false;
+ 	bool force = false;
+ 	int ret;
  
- 	/*
+@@ -6019,13 +6018,13 @@ static ssize_t do_rbd_remove(struct bus_
+ 		spin_lock_irq(&rbd_dev->lock);
+ 		if (rbd_dev->open_count && !force)
+ 			ret = -EBUSY;
+-		else
+-			already = test_and_set_bit(RBD_DEV_FLAG_REMOVING,
+-							&rbd_dev->flags);
++		else if (test_and_set_bit(RBD_DEV_FLAG_REMOVING,
++					  &rbd_dev->flags))
++			ret = -EINPROGRESS;
+ 		spin_unlock_irq(&rbd_dev->lock);
+ 	}
+ 	spin_unlock(&rbd_dev_list_lock);
+-	if (ret < 0 || already)
++	if (ret)
+ 		return ret;
+ 
+ 	if (force) {
 
 
