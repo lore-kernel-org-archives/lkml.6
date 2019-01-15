@@ -7,72 +7,70 @@ X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F368C43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 01:13:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C132CC43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 01:14:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 45F67206B7
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 01:13:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 91BDB206B7
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 01:14:26 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="O0BeH79q"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="LI54vBPY"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727704AbfAOBNo (ORCPT
+        id S1727714AbfAOBOY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 14 Jan 2019 20:13:44 -0500
-Received: from mail-vk1-f193.google.com ([209.85.221.193]:35057 "EHLO
-        mail-vk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727122AbfAOBNo (ORCPT
+        Mon, 14 Jan 2019 20:14:24 -0500
+Received: from mail-vs1-f66.google.com ([209.85.217.66]:43581 "EHLO
+        mail-vs1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727122AbfAOBOY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 Jan 2019 20:13:44 -0500
-Received: by mail-vk1-f193.google.com with SMTP id b18so252094vke.2
-        for <linux-kernel@vger.kernel.org>; Mon, 14 Jan 2019 17:13:43 -0800 (PST)
+        Mon, 14 Jan 2019 20:14:24 -0500
+Received: by mail-vs1-f66.google.com with SMTP id x1so650230vsc.10
+        for <linux-kernel@vger.kernel.org>; Mon, 14 Jan 2019 17:14:23 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=Xalgf0gPnoByW49DMFh9qJbLDgTPKrWP+HijoiEdQb0=;
-        b=O0BeH79qINijcJmjv2t6L4u5vAIqxhqIKoy233zwEcks/8jDYZyn9rvmw+ik2ExZxn
-         /QqhbHnsY00fAytQt6UesFULETek7+QT/W/zcqdFvAcMRi6qxlOH9sv5Bkh6U1CRx+Cc
-         g4MZKSO8uc9ZEq9Ah3+zbwT8Jtxw9jhktabt0=
+        bh=/glRo+PwNhXl+8KxWNMyUyAGwpyFFP18lUKdE16Mes0=;
+        b=LI54vBPY8z+4b+2M6Yv5ZrzizDyxQT3xAnbrr/06OCn6g+EBFRBEaiNvM7s5MJf3cB
+         oZFwrkTY3NOrVaojuZG28VNOVaaHG6C/ki1gvJqf0ZZb1j7AjBC/40k+KVlNcNhSCjav
+         YakX+V9AVY7uWESKgOA1HUjtshTbEjwFfrhVs=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=Xalgf0gPnoByW49DMFh9qJbLDgTPKrWP+HijoiEdQb0=;
-        b=E0I3yskG4b926TjfvZUc54vA59wZjNVvXn4TF9RS0f8Ku5llgzr+0mm5kjO/HqpnvO
-         FHB0pvPToRkwJR82aIDlK5px7bYLtagjoGWxAvu4e0ALPc0i3Y9vzS/2E4jIRzLaXd66
-         7Uy6UTFSV6ioyrSPJhyXbM/dt+qJtceUdbwU4gWcw3M6fyAJV9mpvl7twS+Ucem5+ro6
-         odXlk5jOA5NSl/iQhcuz5F61J5xVDLT5/nXLlmyfX1UpMagu5fdxWQG+q8xMGvEKfTj8
-         1oH6TQ8QBmL4F6Ly4nI68TwPib/e+K/jLlkbG6WCgyNwHc0Vx7jJV/Ljg5IprzkcP0Tt
-         SCfw==
-X-Gm-Message-State: AJcUukd9lY7Mc4ATH0MoEQ+xiAcHed1LYtVSdR2CLlXLwvUoRaV963yP
-        JO3HZQaFx0C9FTN344Z2z+neacIkGbg=
-X-Google-Smtp-Source: ALg8bN5Pvm/b/Xni+1QpzNl7or7/Xp6ifLeF6VuQ3SQv24YQ7QvXdNJkLceDFSOVS+yPvxv0gZXarA==
-X-Received: by 2002:a1f:d647:: with SMTP id n68mr509409vkg.33.1547514817555;
-        Mon, 14 Jan 2019 17:13:37 -0800 (PST)
-Received: from mail-vs1-f47.google.com (mail-vs1-f47.google.com. [209.85.217.47])
-        by smtp.gmail.com with ESMTPSA id o1sm1185545uaj.4.2019.01.14.17.13.35
+        bh=/glRo+PwNhXl+8KxWNMyUyAGwpyFFP18lUKdE16Mes0=;
+        b=S5mtdsNKsk/RNG/ZOeZMElThdEZCpxkSIu0GHi+MC8qkLUzVPyDkmb86J3fjVyf3Zi
+         S32puBewcb+74SW8Kgy/HGBOTjTB4XD380QDA7gYax26u4dSgVI41mQE3hP+OmSQv2VG
+         OUXmlYAWKrrpWjc6QG2D1zMtHbv+I3sBUMelb9KkAKcKUuh/p/kSTvSIQfctv1MU6Kbd
+         +I8Oao6PjLr/uPNaUIq1iuUWlpKtOigvkhrLXhz/C3ga3SSimiJQBo+TOOyaJSzgMGZu
+         GTw45+nzBzVFqFEonzDlRgid95POCpMClUblTHXC9vA7eSMk+apDTE2A4F+Se1gG3U5w
+         nONA==
+X-Gm-Message-State: AJcUukfeL0Ze9cnCgR4n/WRymBVMmoyfsGBkUqDbs9rXTUvpMlYkkbP/
+        VRAkT+9kmm5rD6+rBX8NtCq/FOxWsVE=
+X-Google-Smtp-Source: ALg8bN6rMQJcR2Wkz04lE71lKyHoJaye5QPjEnFot8wvJSeBAs6gkmDxYruUimkxiZVdsaZ8FDv6lA==
+X-Received: by 2002:a67:c104:: with SMTP id d4mr546384vsj.171.1547514862692;
+        Mon, 14 Jan 2019 17:14:22 -0800 (PST)
+Received: from mail-ua1-f45.google.com (mail-ua1-f45.google.com. [209.85.222.45])
+        by smtp.gmail.com with ESMTPSA id o1sm1187545uaj.4.2019.01.14.17.14.21
         for <linux-kernel@vger.kernel.org>
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 14 Jan 2019 17:13:35 -0800 (PST)
-Received: by mail-vs1-f47.google.com with SMTP id z3so662476vsf.7
-        for <linux-kernel@vger.kernel.org>; Mon, 14 Jan 2019 17:13:35 -0800 (PST)
-X-Received: by 2002:a67:7d01:: with SMTP id y1mr610977vsc.48.1547514814595;
- Mon, 14 Jan 2019 17:13:34 -0800 (PST)
+        Mon, 14 Jan 2019 17:14:21 -0800 (PST)
+Received: by mail-ua1-f45.google.com with SMTP id d19so359536uaq.11
+        for <linux-kernel@vger.kernel.org>; Mon, 14 Jan 2019 17:14:21 -0800 (PST)
+X-Received: by 2002:ab0:470d:: with SMTP id h13mr577693uac.122.1547514860832;
+ Mon, 14 Jan 2019 17:14:20 -0800 (PST)
 MIME-Version: 1.0
-References: <20190112152844.26550-1-w@1wt.eu> <20190112152844.26550-4-w@1wt.eu>
-In-Reply-To: <20190112152844.26550-4-w@1wt.eu>
+References: <20190112152844.26550-1-w@1wt.eu> <20190112152844.26550-3-w@1wt.eu>
+In-Reply-To: <20190112152844.26550-3-w@1wt.eu>
 From:   Kees Cook <keescook@chromium.org>
-Date:   Mon, 14 Jan 2019 17:13:21 -0800
-X-Gmail-Original-Message-ID: <CAGXu5j+BZtej03_xK1Nrk2AjRCbSUJMbOPNQ=QLs8TnMEWGXkg@mail.gmail.com>
-Message-ID: <CAGXu5j+BZtej03_xK1Nrk2AjRCbSUJMbOPNQ=QLs8TnMEWGXkg@mail.gmail.com>
-Subject: Re: [PATCH 4/8] ASoC: change snprintf to scnprintf for possible overflow
+Date:   Mon, 14 Jan 2019 17:14:09 -0800
+X-Gmail-Original-Message-ID: <CAGXu5jK4VQe75MQuwAx6dxqv3F2nMUxCHGjQpPeuOE3Vq6iVBw@mail.gmail.com>
+Message-ID: <CAGXu5jK4VQe75MQuwAx6dxqv3F2nMUxCHGjQpPeuOE3Vq6iVBw@mail.gmail.com>
+Subject: Re: [PATCH 3/8] ocfs2: change snprintf to scnprintf for possible overflow
 To:     Willy Tarreau <w@1wt.eu>
 Cc:     Silvio Cesare <silvio.cesare@gmail.com>,
         LKML <linux-kernel@vger.kernel.org>,
-        Timur Tabi <timur@kernel.org>,
-        Nicolin Chen <nicoleotsuka@gmail.com>,
-        Xiubo Li <Xiubo.Lee@gmail.com>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
+        Mark Fasheh <mark@fasheh.com>,
+        Joel Becker <jlbec@evilplan.org>,
         Dan Carpenter <dan.carpenter@oracle.com>,
         Will Deacon <will.deacon@arm.com>, Greg KH <greg@kroah.com>
 Content-Type: text/plain; charset="UTF-8"
@@ -108,10 +106,8 @@ On Sat, Jan 12, 2019 at 7:28 AM Willy Tarreau <w@1wt.eu> wrote:
 > exceed SIZE.
 >
 > Signed-off-by: Silvio Cesare <silvio.cesare@gmail.com>
-> Cc: Timur Tabi <timur@kernel.org>
-> Cc: Nicolin Chen <nicoleotsuka@gmail.com>
-> Cc: Xiubo Li <Xiubo.Lee@gmail.com>
-> Cc: Fabio Estevam <fabio.estevam@nxp.com>
+> Cc: Mark Fasheh <mark@fasheh.com>
+> Cc: Joel Becker <jlbec@evilplan.org>
 > Cc: Dan Carpenter <dan.carpenter@oracle.com>
 > Cc: Kees Cook <keescook@chromium.org>
 > Cc: Will Deacon <will.deacon@arm.com>
@@ -124,75 +120,48 @@ Reviewed-by: Kees Cook <keescook@chromium.org>
 
 >
 > ---
->  sound/soc/fsl/imx-audmux.c | 24 ++++++++++++------------
->  1 file changed, 12 insertions(+), 12 deletions(-)
+>  fs/ocfs2/cluster/heartbeat.c | 10 +++++-----
+>  1 file changed, 5 insertions(+), 5 deletions(-)
 >
-> diff --git a/sound/soc/fsl/imx-audmux.c b/sound/soc/fsl/imx-audmux.c
-> index 392d5eef356d..99e07b01a2ce 100644
-> --- a/sound/soc/fsl/imx-audmux.c
-> +++ b/sound/soc/fsl/imx-audmux.c
-> @@ -86,49 +86,49 @@ static ssize_t audmux_read_file(struct file *file, char __user *user_buf,
->         if (!buf)
->                 return -ENOMEM;
+> diff --git a/fs/ocfs2/cluster/heartbeat.c b/fs/ocfs2/cluster/heartbeat.c
+> index 9b2ed62dd638..2a0af0887ba0 100644
+> --- a/fs/ocfs2/cluster/heartbeat.c
+> +++ b/fs/ocfs2/cluster/heartbeat.c
+> @@ -1324,7 +1324,7 @@ static int o2hb_debug_open(struct inode *inode, struct file *file)
 >
-> -       ret = snprintf(buf, PAGE_SIZE, "PDCR: %08x\nPTCR: %08x\n",
-> +       ret = scnprintf(buf, PAGE_SIZE, "PDCR: %08x\nPTCR: %08x\n",
->                        pdcr, ptcr);
+>         case O2HB_DB_TYPE_REGION_NUMBER:
+>                 reg = (struct o2hb_region *)db->db_data;
+> -               out += snprintf(buf + out, PAGE_SIZE - out, "%d\n",
+> +               out += scnprintf(buf + out, PAGE_SIZE - out, "%d\n",
+>                                 reg->hr_region_num);
+>                 goto done;
 >
->         if (ptcr & IMX_AUDMUX_V2_PTCR_TFSDIR)
-> -               ret += snprintf(buf + ret, PAGE_SIZE - ret,
-> +               ret += scnprintf(buf + ret, PAGE_SIZE - ret,
->                                 "TxFS output from %s, ",
->                                 audmux_port_string((ptcr >> 27) & 0x7));
->         else
-> -               ret += snprintf(buf + ret, PAGE_SIZE - ret,
-> +               ret += scnprintf(buf + ret, PAGE_SIZE - ret,
->                                 "TxFS input, ");
+> @@ -1334,12 +1334,12 @@ static int o2hb_debug_open(struct inode *inode, struct file *file)
+>                 /* If 0, it has never been set before */
+>                 if (lts)
+>                         lts = jiffies_to_msecs(jiffies - lts);
+> -               out += snprintf(buf + out, PAGE_SIZE - out, "%lu\n", lts);
+> +               out += scnprintf(buf + out, PAGE_SIZE - out, "%lu\n", lts);
+>                 goto done;
 >
->         if (ptcr & IMX_AUDMUX_V2_PTCR_TCLKDIR)
-> -               ret += snprintf(buf + ret, PAGE_SIZE - ret,
-> +               ret += scnprintf(buf + ret, PAGE_SIZE - ret,
->                                 "TxClk output from %s",
->                                 audmux_port_string((ptcr >> 22) & 0x7));
->         else
-> -               ret += snprintf(buf + ret, PAGE_SIZE - ret,
-> +               ret += scnprintf(buf + ret, PAGE_SIZE - ret,
->                                 "TxClk input");
+>         case O2HB_DB_TYPE_REGION_PINNED:
+>                 reg = (struct o2hb_region *)db->db_data;
+> -               out += snprintf(buf + out, PAGE_SIZE - out, "%u\n",
+> +               out += scnprintf(buf + out, PAGE_SIZE - out, "%u\n",
+>                                 !!reg->hr_item_pinned);
+>                 goto done;
 >
-> -       ret += snprintf(buf + ret, PAGE_SIZE - ret, "\n");
-> +       ret += scnprintf(buf + ret, PAGE_SIZE - ret, "\n");
->
->         if (ptcr & IMX_AUDMUX_V2_PTCR_SYN) {
-> -               ret += snprintf(buf + ret, PAGE_SIZE - ret,
-> +               ret += scnprintf(buf + ret, PAGE_SIZE - ret,
->                                 "Port is symmetric");
->         } else {
->                 if (ptcr & IMX_AUDMUX_V2_PTCR_RFSDIR)
-> -                       ret += snprintf(buf + ret, PAGE_SIZE - ret,
-> +                       ret += scnprintf(buf + ret, PAGE_SIZE - ret,
->                                         "RxFS output from %s, ",
->                                         audmux_port_string((ptcr >> 17) & 0x7));
->                 else
-> -                       ret += snprintf(buf + ret, PAGE_SIZE - ret,
-> +                       ret += scnprintf(buf + ret, PAGE_SIZE - ret,
->                                         "RxFS input, ");
->
->                 if (ptcr & IMX_AUDMUX_V2_PTCR_RCLKDIR)
-> -                       ret += snprintf(buf + ret, PAGE_SIZE - ret,
-> +                       ret += scnprintf(buf + ret, PAGE_SIZE - ret,
->                                         "RxClk output from %s",
->                                         audmux_port_string((ptcr >> 12) & 0x7));
->                 else
-> -                       ret += snprintf(buf + ret, PAGE_SIZE - ret,
-> +                       ret += scnprintf(buf + ret, PAGE_SIZE - ret,
->                                         "RxClk input");
+> @@ -1348,8 +1348,8 @@ static int o2hb_debug_open(struct inode *inode, struct file *file)
 >         }
 >
-> -       ret += snprintf(buf + ret, PAGE_SIZE - ret,
-> +       ret += scnprintf(buf + ret, PAGE_SIZE - ret,
->                         "\nData received from %s\n",
->                         audmux_port_string((pdcr >> 13) & 0x7));
+>         while ((i = find_next_bit(map, db->db_len, i + 1)) < db->db_len)
+> -               out += snprintf(buf + out, PAGE_SIZE - out, "%d ", i);
+> -       out += snprintf(buf + out, PAGE_SIZE - out, "\n");
+> +               out += scnprintf(buf + out, PAGE_SIZE - out, "%d ", i);
+> +       out += scnprintf(buf + out, PAGE_SIZE - out, "\n");
 >
+>  done:
+>         i_size_write(inode, out);
 > --
 > 2.19.2
 >
