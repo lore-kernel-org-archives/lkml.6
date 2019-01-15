@@ -2,137 +2,242 @@ Return-Path: <SRS0=RZO6=PX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D8888C43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 08:07:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 26D0FC43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 08:07:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9C82C20656
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 08:07:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DCACB2085A
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 08:07:35 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FsIgvhIM"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=xenosoft.de header.i=@xenosoft.de header.b="hMsSkIO2"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727858AbfAOIH0 (ORCPT
+        id S1728392AbfAOIHf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 15 Jan 2019 03:07:26 -0500
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:34293 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726008AbfAOIH0 (ORCPT
+        Tue, 15 Jan 2019 03:07:35 -0500
+Received: from mo4-p02-ob.smtp.rzone.de ([81.169.146.169]:22011 "EHLO
+        mo4-p02-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727867AbfAOIHe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Jan 2019 03:07:26 -0500
-Received: by mail-pg1-f196.google.com with SMTP id j10so915390pga.1
-        for <linux-kernel@vger.kernel.org>; Tue, 15 Jan 2019 00:07:25 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=KORwXFzpEltZpxmTPyMtmgz43m066XMlEdPBJpiM3/0=;
-        b=FsIgvhIMImg15PtrbP8s4JebSMkj9LPglBtaib1EdTcWEvzL8cnD40evdiIiFUe2kM
-         q2pQf4YH0sUKXWGHGpQQ9IsqAxfApzKQlMn4PRssXlnmz8Y/7YdkB1O9sa7ytRb1Kw9J
-         n1HTfZre3NC8mU9eQkVQlbedyR1rVTS8SxQIGHUvIqUwE60BP+LWrp3DJ2weVpUfBYtF
-         3sLvh8LGeChn9NSKwiRJi7ayLP652ZDuyf+r7JCGWaSbk3xOGEu3i519blZyYRb28Ic+
-         WawfxPOM0eWHSc52OOpGczoZxPMbvGLgr+shyx/LrdiAc4pVHJVbSxqEch/ZjhyYAZsC
-         j4Mw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=KORwXFzpEltZpxmTPyMtmgz43m066XMlEdPBJpiM3/0=;
-        b=WFLpG+C4tCKMjwOqRvVVlEl88a5HBhZPjycIHLJIZK86jaTZ2nRpkUZBQhYjXZ8hVS
-         HaH/MXRRJ6JIzVXrU4eZFbL+eu3xy9yZP8KbSkdE6xP57re7TEodvgN2y7BYlSAnnIr6
-         YpY2S9EYoAkw200JcnZawvnjmSfJKRDy+maiUF+LnFxZMvarIcuTiN8buSeVlLozOq9c
-         aJi5RMe5Dipm79TWIQp6S6oFKGcc1HcdfAQxd8U0hX/gygMBGePGeg01XOvXaLrFJAmu
-         UntCyxU37SBsIDMITa6sCsCr1G3dkMxtDXot7Lsq37+jzTC9PwGtRU3Hi0Y5Jtwd7Rqd
-         9o2g==
-X-Gm-Message-State: AJcUukdyqUTYs/MECnjbUn7D94gOD0Uk2cJM/x5ycUXK0BX0EbEFr2Xq
-        2T4Xjw2z2FzRtZ7A1+b4Jw==
-X-Google-Smtp-Source: ALg8bN4LXZ3ndA2nTrxdjC7RVe4kHmgk/REXCtD+obhggQ891/R9TdOmT1H3vbh1DLUD3tt1ipntiw==
-X-Received: by 2002:a62:5dd1:: with SMTP id n78mr2707653pfj.58.1547539645593;
-        Tue, 15 Jan 2019 00:07:25 -0800 (PST)
-Received: from mylaptop.redhat.com ([209.132.188.80])
-        by smtp.gmail.com with ESMTPSA id n186sm2971538pfn.137.2019.01.15.00.07.21
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 15 Jan 2019 00:07:24 -0800 (PST)
-From:   Pingfan Liu <kernelfans@gmail.com>
-To:     kexec@lists.infradead.org
-Cc:     linux-kernel@vger.kernel.org, Pingfan Liu <kernelfans@gmail.com>,
-        Dave Young <dyoung@redhat.com>, Baoquan He <bhe@redhat.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>, yinghai@kernel.org,
-        vgoyal@redhat.com, Randy Dunlap <rdunlap@infradead.org>
-Subject: [PATCHv7] x86/kdump: bugfix, make the behavior of crashkernel=X consistent with kaslr
-Date:   Tue, 15 Jan 2019 16:07:03 +0800
-Message-Id: <1547539623-18201-1-git-send-email-kernelfans@gmail.com>
-X-Mailer: git-send-email 2.7.4
+        Tue, 15 Jan 2019 03:07:34 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1547539650;
+        s=strato-dkim-0002; d=xenosoft.de;
+        h=In-Reply-To:Date:Message-ID:References:Cc:To:From:Subject:
+        X-RZG-CLASS-ID:X-RZG-AUTH:From:Subject:Sender;
+        bh=bD8u7HS7TcBlf3ViPwkhWGM3/NVkSdW4dHH4FMwtCiI=;
+        b=hMsSkIO2kXhHZZVg/JVobwpb2Xnd88na45bbbnWkOPVHYClbOQ58/ORFv8PFYILjC/
+        gVQjWrJHVRSCd3IJ3+bFxfW86/7WoJKkSkIzRdoI8In9qKZ3Kd+DjCkvO5+SCLhUhSEq
+        Ty7Ht6qmkWATUgPBQR9aj97Jlk9Gl4o6s6D2lzlvVcf7AJhPV9brKOo3FSg7oj/uoV5K
+        YzzuAzWCDnQN4qFrf0OJwxixuEtBDi9xt+hpQWv2Z4zICiyaqkp+kC4Y6pfzjB28M35f
+        RnSk11txOzOxfMc8rmPr9cLHUNHt7ffzpEtfPHpwNn9/tE3ZKY9JT18CL3ttXGBsT0uo
+        TaWA==
+X-RZG-AUTH: ":L2QefEenb+UdBJSdRCXu93KJ1bmSGnhMdmOod1DhGM4l4Hio94KKxRySfLxnHfJ+Dkjp5G5MdirQj0WG7CkNi0C2kzEbDQg0vrQvOCYvo/qC"
+X-RZG-CLASS-ID: mo00
+Received: from [IPv6:2a02:8109:a400:162c:25bb:7249:5b2a:1f0]
+        by smtp.strato.de (RZmta 44.9 AUTH)
+        with ESMTPSA id t0203dv0F87SqDG
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (curve secp521r1 with 521 ECDH bits, eq. 15360 bits RSA))
+        (Client did not present a certificate);
+        Tue, 15 Jan 2019 09:07:28 +0100 (CET)
+Subject: Re: use generic DMA mapping code in powerpc V4
+From:   Christian Zigotzky <chzigotzky@xenosoft.de>
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     linux-arch@vger.kernel.org,
+        Darren Stevens <darren@stevens-zone.net>,
+        linux-kernel@vger.kernel.org, Julian Margetson <runaway@candw.ms>,
+        linux-mm@kvack.org, iommu@lists.linux-foundation.org,
+        Paul Mackerras <paulus@samba.org>,
+        Olof Johansson <olof@lixom.net>, linuxppc-dev@lists.ozlabs.org
+References: <2242B4B2-6311-492E-BFF9-6740E36EC6D4@xenosoft.de>
+ <84558d7f-5a7f-5219-0c3a-045e6b4c494f@xenosoft.de>
+ <20181213091021.GA2106@lst.de>
+ <835bd119-081e-a5ea-1899-189d439c83d6@xenosoft.de>
+ <76bc684a-b4d2-1d26-f18d-f5c9ba65978c@xenosoft.de>
+ <20181213112511.GA4574@lst.de>
+ <e109de27-f4af-147d-dc0e-067c8bafb29b@xenosoft.de>
+ <ad5a5a8a-d232-d523-a6f7-e9377fc3857b@xenosoft.de>
+ <e60d6ca3-860c-f01d-8860-c5e022ec7179@xenosoft.de>
+ <008c981e-bdd2-21a7-f5f7-c57e4850ae9a@xenosoft.de>
+ <20190103073622.GA24323@lst.de>
+ <71A251A5-FA06-4019-B324-7AED32F7B714@xenosoft.de>
+ <1b0c5c21-2761-d3a3-651b-3687bb6ae694@xenosoft.de>
+ <3504ee70-02de-049e-6402-2d530bf55a84@xenosoft.de>
+ <23284859-bf0a-9cd5-a480-2a7fd7802056@xenosoft.de>
+ <075f70e3-7a4a-732f-b501-05a1a8e3c853@xenosoft.de>
+Message-ID: <b04d08ea-61f9-3212-b9a3-ad79e3b8bd05@xenosoft.de>
+Date:   Tue, 15 Jan 2019 09:07:28 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
+MIME-Version: 1.0
+In-Reply-To: <075f70e3-7a4a-732f-b501-05a1a8e3c853@xenosoft.de>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: de-DE
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-People reported a bug on a high end server with many pcie devices, where
-kernel bootup with crashkernel=384M, and kaslr is enabled. Even
-though we still see much memory under 896 MB, the finding still failed
-intermittently. Because currently we can only find region under 896 MB,
-if without ',high' specified. Then KASLR breaks 896 MB into several parts
-randomly, and crashkernel reservation need be aligned to 128 MB, that's
-why failure is found. It raises confusion to the end user that sometimes
-crashkernel=X works while sometimes fails.
-If want to make it succeed, customer can change kernel option to
-"crashkernel=384M,high". Just this give "crashkernel=xx@yy" a very
-limited space to behave even though its grammar looks more generic.
-And we can't answer questions raised from customer that confidently:
-1) why it doesn't succeed to reserve 896 MB;
-2) what's wrong with memory region under 4G;
-3) why I have to add ',high', I only require 384 MB, not 3840 MB.
-This patch tries to get memory region from 896 MB firstly, then [896MB,4G],
-finally above 4G.
-Dave Young sent the original post, and I just re-post it with commit log
-improvement as his requirement.
-http://lists.infradead.org/pipermail/kexec/2017-October/019571.html
-There was an old discussion below (previously posted by Chao Wang):
-https://lkml.org/lkml/2013/10/15/601
+Next step: 240d7ecd7f6fa62e074e8a835e620047954f0b28 (powerpc/dma: use 
+the dma-direct allocator for coherent platforms)
 
-Signed-off-by: Pingfan Liu <kernelfans@gmail.com>
-Cc: Dave Young <dyoung@redhat.com>
-Cc: Baoquan He <bhe@redhat.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: Mike Rapoport <rppt@linux.vnet.ibm.com>
-Cc: yinghai@kernel.org,
-Cc: vgoyal@redhat.com
-Cc: Randy Dunlap <rdunlap@infradead.org>
----
-v6 -> v7: fix spelling mistake pointed out by Randy
- arch/x86/kernel/setup.c | 16 ++++++++++++++++
- 1 file changed, 16 insertions(+)
+git clone git://git.infradead.org/users/hch/misc.git -b powerpc-dma.6 a
 
-diff --git a/arch/x86/kernel/setup.c b/arch/x86/kernel/setup.c
-index 3d872a5..fa62c81 100644
---- a/arch/x86/kernel/setup.c
-+++ b/arch/x86/kernel/setup.c
-@@ -551,6 +551,22 @@ static void __init reserve_crashkernel(void)
- 						    high ? CRASH_ADDR_HIGH_MAX
- 							 : CRASH_ADDR_LOW_MAX,
- 						    crash_size, CRASH_ALIGN);
-+#ifdef CONFIG_X86_64
-+		/*
-+		 * crashkernel=X reserve below 896M fails? Try below 4G
-+		 */
-+		if (!high && !crash_base)
-+			crash_base = memblock_find_in_range(CRASH_ALIGN,
-+						(1ULL << 32),
-+						crash_size, CRASH_ALIGN);
-+		/*
-+		 * crashkernel=X reserve below 4G fails? Try MAXMEM
-+		 */
-+		if (!high && !crash_base)
-+			crash_base = memblock_find_in_range(CRASH_ALIGN,
-+						CRASH_ADDR_HIGH_MAX,
-+						crash_size, CRASH_ALIGN);
-+#endif
- 		if (!crash_base) {
- 			pr_info("crashkernel reservation failed - No suitable area found.\n");
- 			return;
--- 
-2.7.4
+git checkout 240d7ecd7f6fa62e074e8a835e620047954f0b28
+
+Link to the Git: 
+http://git.infradead.org/users/hch/misc.git/shortlog/refs/heads/powerpc-dma.6
+
+env LANG=C make CROSS_COMPILE=powerpc-linux-gnu- ARCH=powerpc zImage
+
+Error message:
+
+arch/powerpc/kernel/dma.o:(.data.rel.ro+0x0): undefined reference to 
+`__dma_nommu_alloc_coherent'
+arch/powerpc/kernel/dma.o:(.data.rel.ro+0x8): undefined reference to 
+`__dma_nommu_free_coherent'
+Makefile:1027: recipe for target 'vmlinux' failed
+make: *** [vmlinux] Error 1
+
+-- Christian
+
+
+On 12 January 2019 at 7:14PM, Christian Zigotzky wrote:
+> Next step: 4558b6e1ddf3dcf5a86d6a5d16c2ac1600c7df39 (swiotlb: remove 
+> swiotlb_dma_supported)
+>
+> git clone git://git.infradead.org/users/hch/misc.git -b powerpc-dma.6 a
+>
+> git checkout 4558b6e1ddf3dcf5a86d6a5d16c2ac1600c7df39
+>
+> Output:
+>
+> You are in 'detached HEAD' state. You can look around, make experimental
+> changes and commit them, and you can discard any commits you make in this
+> state without impacting any branches by performing another checkout.
+>
+> If you want to create a new branch to retain commits you create, you may
+> do so (now or later) by using -b with the checkout command again. 
+> Example:
+>
+>   git checkout -b <new-branch-name>
+>
+> HEAD is now at 4558b6e... swiotlb: remove swiotlb_dma_supported
+>
+> ----
+>
+> Link to the Git: 
+> http://git.infradead.org/users/hch/misc.git/shortlog/refs/heads/powerpc-dma.6
+>
+> Results: PASEMI onboard ethernet (X1000) works and the X5000 (P5020 
+> board) boots. I also successfully tested sound, hardware 3D 
+> acceleration, Bluetooth, network, booting with a label etc. The 
+> uImages work also in a virtual e5500 quad-core QEMU machine.
+>
+> -- Christian
+>
+>
+> On 11 January 2019 at 03:10AM, Christian Zigotzky wrote:
+>> Next step: 891dcc1072f1fa27a83da920d88daff6ca08fc02 (powerpc/dma: 
+>> remove dma_nommu_dma_supported)
+>>
+>> git clone git://git.infradead.org/users/hch/misc.git -b powerpc-dma.6 a
+>>
+>> git checkout 891dcc1072f1fa27a83da920d88daff6ca08fc02
+>>
+>> Output:
+>>
+>> Note: checking out '891dcc1072f1fa27a83da920d88daff6ca08fc02'.
+>>
+>> You are in 'detached HEAD' state. You can look around, make experimental
+>> changes and commit them, and you can discard any commits you make in 
+>> this
+>> state without impacting any branches by performing another checkout.
+>>
+>> If you want to create a new branch to retain commits you create, you may
+>> do so (now or later) by using -b with the checkout command again. 
+>> Example:
+>>
+>> git checkout -b <new-branch-name>
+>>
+>> HEAD is now at 891dcc1... powerpc/dma: remove dma_nommu_dma_supported
+>>
+>> ---
+>>
+>> Link to the Git: 
+>> http://git.infradead.org/users/hch/misc.git/shortlog/refs/heads/powerpc-dma.6
+>>
+>> Results: PASEMI onboard ethernet works and the X5000 (P5020 board) 
+>> boots. I also successfully tested sound, hardware 3D acceleration, 
+>> Bluetooth, network, booting with a label etc. The uImages work also 
+>> in a virtual e5500 quad-core QEMU machine.
+>>
+>> -- Christian
+>>
+>>
+>> On 09 January 2019 at 10:31AM, Christian Zigotzky wrote:
+>>> Next step: a64e18ba191ba9102fb174f27d707485ffd9389c (powerpc/dma: 
+>>> remove dma_nommu_get_required_mask)
+>>>
+>>> git clone git://git.infradead.org/users/hch/misc.git -b powerpc-dma.6 a
+>>>
+>>> git checkout a64e18ba191ba9102fb174f27d707485ffd9389c
+>>>
+>>> Link to the Git: 
+>>> http://git.infradead.org/users/hch/misc.git/shortlog/refs/heads/powerpc-dma.6
+>>>
+>>> Results: PASEMI onboard ethernet works and the X5000 (P5020 board) 
+>>> boots. I also successfully tested sound, hardware 3D acceleration, 
+>>> Bluetooth, network, booting with a label etc. The uImages work also 
+>>> in a virtual e5500 quad-core QEMU machine.
+>>>
+>>> -- Christian
+>>>
+>>>
+>>> On 05 January 2019 at 5:03PM, Christian Zigotzky wrote:
+>>>> Next step: c446404b041130fbd9d1772d184f24715cf2362f (powerpc/dma: 
+>>>> remove dma_nommu_mmap_coherent)
+>>>>
+>>>> git clone git://git.infradead.org/users/hch/misc.git -b 
+>>>> powerpc-dma.6 a
+>>>>
+>>>> git checkout c446404b041130fbd9d1772d184f24715cf2362f
+>>>>
+>>>> Output:
+>>>>
+>>>> Note: checking out 'c446404b041130fbd9d1772d184f24715cf2362f'.
+>>>>
+>>>> You are in 'detached HEAD' state. You can look around, make 
+>>>> experimental
+>>>> changes and commit them, and you can discard any commits you make 
+>>>> in this
+>>>> state without impacting any branches by performing another checkout.
+>>>>
+>>>> If you want to create a new branch to retain commits you create, 
+>>>> you may
+>>>> do so (now or later) by using -b with the checkout command again. 
+>>>> Example:
+>>>>
+>>>>   git checkout -b <new-branch-name>
+>>>>
+>>>> HEAD is now at c446404... powerpc/dma: remove dma_nommu_mmap_coherent
+>>>>
+>>>> -----
+>>>>
+>>>> Link to the Git: 
+>>>> http://git.infradead.org/users/hch/misc.git/shortlog/refs/heads/powerpc-dma.6
+>>>>
+>>>> Result: PASEMI onboard ethernet works and the X5000 (P5020 board) 
+>>>> boots.
+>>>>
+>>>> -- Christian
+>>>>
+>>>
+>>>
+>>
+>>
+>
+>
 
