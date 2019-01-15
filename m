@@ -2,164 +2,119 @@ Return-Path: <SRS0=RZO6=PX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.0 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C2AC4C43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 10:19:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2358EC43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 10:21:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 99CD020656
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 10:19:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EF95220656
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 10:21:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728184AbfAOKT3 (ORCPT
+        id S1728287AbfAOKVs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 15 Jan 2019 05:19:29 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:58347 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726077AbfAOKT2 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Jan 2019 05:19:28 -0500
-Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x0FAItGc2471815
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Tue, 15 Jan 2019 02:18:55 -0800
-Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x0FAItPr2471812;
-        Tue, 15 Jan 2019 02:18:55 -0800
-Date:   Tue, 15 Jan 2019 02:18:55 -0800
-X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   "tip-bot for Paul E. McKenney" <tipbot@zytor.com>
-Message-ID: <tip-a4cffdad731447217701d3bc6da4587bbb4d2cbd@git.kernel.org>
-Cc:     paulmck@linux.ibm.com, mingo@kernel.org, tglx@linutronix.de,
-        fweisbec@gmail.com, linux-kernel@vger.kernel.org, hpa@zytor.com
-Reply-To: paulmck@linux.ibm.com, mingo@kernel.org, tglx@linutronix.de,
-          hpa@zytor.com, fweisbec@gmail.com, linux-kernel@vger.kernel.org
-In-Reply-To: <20181220170525.GA12579@linux.ibm.com>
-References: <20181220170525.GA12579@linux.ibm.com>
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:timers/core] time: Move CONTEXT_TRACKING to
- kernel/time/Kconfig
-Git-Commit-ID: a4cffdad731447217701d3bc6da4587bbb4d2cbd
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        Tue, 15 Jan 2019 05:21:48 -0500
+Received: from mx2.suse.de ([195.135.220.15]:39372 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727703AbfAOKVr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 Jan 2019 05:21:47 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id D75F6ACD2;
+        Tue, 15 Jan 2019 10:21:45 +0000 (UTC)
+Subject: Re: [PATCH] x86/mm/mem_encrypt_identity : fix error useage to sizeof
+To:     Thomas Gleixner <tglx@linutronix.de>, peng.hao2@zte.com.cn
+Cc:     bp@alien8.de, dave.hansen@linux.intel.com, peterz@infradead.org,
+        luto@kernel.org, x86@kernel.org, linux-kernel@vger.kernel.org
+References: <201901071946365174691@zte.com.cn>
+ <alpine.DEB.2.21.1901151109070.1865@nanos.tec.linutronix.de>
+From:   Juergen Gross <jgross@suse.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=jgross@suse.com; prefer-encrypt=mutual; keydata=
+ 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
+Message-ID: <cc31816f-a4b1-b694-dcac-ac13f4442508@suse.com>
+Date:   Tue, 15 Jan 2019 11:21:44 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
+In-Reply-To: <alpine.DEB.2.21.1901151109070.1865@nanos.tec.linutronix.de>
+Content-Type: text/plain; charset=utf-8
+Content-Language: de-DE
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  a4cffdad731447217701d3bc6da4587bbb4d2cbd
-Gitweb:     https://git.kernel.org/tip/a4cffdad731447217701d3bc6da4587bbb4d2cbd
-Author:     Paul E. McKenney <paulmck@linux.ibm.com>
-AuthorDate: Thu, 20 Dec 2018 09:05:25 -0800
-Committer:  Thomas Gleixner <tglx@linutronix.de>
-CommitDate: Tue, 15 Jan 2019 11:16:41 +0100
+On 15/01/2019 11:13, Thomas Gleixner wrote:
+> On Mon, 7 Jan 2019, peng.hao2@zte.com.cn wrote:
+> 
+>>>> Fix error usage to sizeof. It should not use sizeof to pointer.
+>>>
+>>> .... because?
+>>>
+>>> The commit message needs to explain what the potential issue could be
+>>> and why it doesn't matter in this case.
+>> I see the definition of pte_t may be more than sizeof(unsigned long).
+>> So I think sizeof(pte_t) is safer.
+> 
+> What exactly is the difference between:
+> 
+> 	pte_t	*p;
+> 
+> 	sizeof(*p)
+> 
+> and
+> 
+> 	sizeof(pte_t)
+> 
+> and what is safer about the latter?
 
-time: Move CONTEXT_TRACKING to kernel/time/Kconfig
+Please note that the current code is using sizeof(p) instead of sizeof(*p).
 
-Both CONTEXT_TRACKING and CONTEXT_TRACKING_FORCE are currently defined
-in kernel/rcu/kconfig, which might have made sense at some point, but
-no longer does given that RCU refers to neither of these Kconfig options.
-
-Therefore move them to kernel/time/Kconfig, where the rest of the
-NO_HZ_FULL Kconfig options live.
-
-Signed-off-by: Paul E. McKenney <paulmck@linux.ibm.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: Frederic Weisbecker <fweisbec@gmail.com>
-Link: https://lkml.kernel.org/r/20181220170525.GA12579@linux.ibm.com
+And this is really different for X86_32 PAE.
 
 
----
- kernel/rcu/Kconfig  | 30 ------------------------------
- kernel/time/Kconfig | 29 +++++++++++++++++++++++++++++
- 2 files changed, 29 insertions(+), 30 deletions(-)
+Juergen
 
-diff --git a/kernel/rcu/Kconfig b/kernel/rcu/Kconfig
-index 939a2056c87a..37301430970e 100644
---- a/kernel/rcu/Kconfig
-+++ b/kernel/rcu/Kconfig
-@@ -87,36 +87,6 @@ config RCU_STALL_COMMON
- config RCU_NEED_SEGCBLIST
- 	def_bool ( TREE_RCU || PREEMPT_RCU || TREE_SRCU )
- 
--config CONTEXT_TRACKING
--       bool
--
--config CONTEXT_TRACKING_FORCE
--	bool "Force context tracking"
--	depends on CONTEXT_TRACKING
--	default y if !NO_HZ_FULL
--	help
--	  The major pre-requirement for full dynticks to work is to
--	  support the context tracking subsystem. But there are also
--	  other dependencies to provide in order to make the full
--	  dynticks working.
--
--	  This option stands for testing when an arch implements the
--	  context tracking backend but doesn't yet fullfill all the
--	  requirements to make the full dynticks feature working.
--	  Without the full dynticks, there is no way to test the support
--	  for context tracking and the subsystems that rely on it: RCU
--	  userspace extended quiescent state and tickless cputime
--	  accounting. This option copes with the absence of the full
--	  dynticks subsystem by forcing the context tracking on all
--	  CPUs in the system.
--
--	  Say Y only if you're working on the development of an
--	  architecture backend for the context tracking.
--
--	  Say N otherwise, this option brings an overhead that you
--	  don't want in production.
--
--
- config RCU_FANOUT
- 	int "Tree-based hierarchical RCU fanout value"
- 	range 2 64 if 64BIT
-diff --git a/kernel/time/Kconfig b/kernel/time/Kconfig
-index 58b981f4bb5d..e2c038d6c13c 100644
---- a/kernel/time/Kconfig
-+++ b/kernel/time/Kconfig
-@@ -117,6 +117,35 @@ config NO_HZ_FULL
- 
- endchoice
- 
-+config CONTEXT_TRACKING
-+       bool
-+
-+config CONTEXT_TRACKING_FORCE
-+	bool "Force context tracking"
-+	depends on CONTEXT_TRACKING
-+	default y if !NO_HZ_FULL
-+	help
-+	  The major pre-requirement for full dynticks to work is to
-+	  support the context tracking subsystem. But there are also
-+	  other dependencies to provide in order to make the full
-+	  dynticks working.
-+
-+	  This option stands for testing when an arch implements the
-+	  context tracking backend but doesn't yet fullfill all the
-+	  requirements to make the full dynticks feature working.
-+	  Without the full dynticks, there is no way to test the support
-+	  for context tracking and the subsystems that rely on it: RCU
-+	  userspace extended quiescent state and tickless cputime
-+	  accounting. This option copes with the absence of the full
-+	  dynticks subsystem by forcing the context tracking on all
-+	  CPUs in the system.
-+
-+	  Say Y only if you're working on the development of an
-+	  architecture backend for the context tracking.
-+
-+	  Say N otherwise, this option brings an overhead that you
-+	  don't want in production.
-+
- config NO_HZ
- 	bool "Old Idle dynticks config"
- 	depends on !ARCH_USES_GETTIMEOFFSET && GENERIC_CLOCKEVENTS
+> 
+> Answer: No difference and nothing is safer because it's exactly the same.
+> 
+> In general we use sizeof(*p) simply because when the data type of p changes
+> you don't have to update the code, it just works and stays correct.
+> 
+> Thanks,
+> 
+> 	tglx
+> 
+
