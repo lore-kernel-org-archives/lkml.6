@@ -2,147 +2,71 @@ Return-Path: <SRS0=RZO6=PX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0828EC43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 11:50:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AA678C43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 11:52:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CE82620861
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 11:50:23 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="BAm485aP"
+	by mail.kernel.org (Postfix) with ESMTP id 845A420656
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 11:52:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728034AbfAOLuV (ORCPT
+        id S1728490AbfAOLwJ convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 15 Jan 2019 06:50:21 -0500
-Received: from mail-ed1-f65.google.com ([209.85.208.65]:42751 "EHLO
-        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726077AbfAOLuV (ORCPT
+        Tue, 15 Jan 2019 06:52:09 -0500
+Received: from mondschein.lichtvoll.de ([194.150.191.11]:35131 "EHLO
+        mail.lichtvoll.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728227AbfAOLwJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Jan 2019 06:50:21 -0500
-Received: by mail-ed1-f65.google.com with SMTP id y20so2284468edw.9
-        for <linux-kernel@vger.kernel.org>; Tue, 15 Jan 2019 03:50:20 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ffwll.ch; s=google;
-        h=sender:date:from:to:cc:subject:message-id:mail-followup-to
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=fVuxywLN+hWEFqBjPujx3b2tZlMigafVMeZjipOROPY=;
-        b=BAm485aPBpi6LOUpU2/JyszSSBj6GbV5gZz2fWeV7xJId5HlUAqL5tstmZYEIMtCdy
-         wMfnj5Isrp/UHPVqXkYfkzE7PA746FvOkgEGqqtrmft5+XHGgxrP7shLMRlAPZSPk/xb
-         kgsevCthfCO1+TxvW8OnRGCHYKLyQ9AvNnujE=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :mail-followup-to:references:mime-version:content-disposition
-         :in-reply-to:user-agent;
-        bh=fVuxywLN+hWEFqBjPujx3b2tZlMigafVMeZjipOROPY=;
-        b=pS/0L6IcDYQT2jXA5HN2I+O97hd+yQJjoDgaMXDZIr2kEEVxWhttDKJrQK0Zg9sgNr
-         TqPP3ZcA/mxsVqS/GkGPBGfyX+TzZ0JNgSmgh+euWhjzKn6chtvdZ0Um+mmzJilbZzDb
-         DbB6OjUw65kDd0jXpqoRgWB4V1GzcsqMqORuCEtJXRQR3srQZ1JtmVOHuSvT4IGhRYiK
-         4JwChDtxyku2Zu4c2+OessLTRnpHswSorKpk5JpG/1mVKrknYw7qQv34Xd0ipWYFq8xL
-         IxgkSTfQxmjv5/CINhcIUz0uzAAyR0mYpEChv2svS+eLp8gJ8VU0RMlDIG3yoBPwLPLe
-         Jo7w==
-X-Gm-Message-State: AJcUukdPfU8w844S2DRkjNOHR+6UKtdDX8jBnAOr5FRtMW+D0GAivCJe
-        anaumpACSF4XuF2ci76y4uorYg==
-X-Google-Smtp-Source: ALg8bN6EXwXCz5ljb27foesQQh1wF8UVvsKCPp9B72ou2Wwpo8QTJPHu4RsO9pl5Nrp5f77YoWrvdA==
-X-Received: by 2002:a50:8ad9:: with SMTP id k25mr3118584edk.189.1547553019301;
-        Tue, 15 Jan 2019 03:50:19 -0800 (PST)
-Received: from phenom.ffwll.local ([2a02:168:569e:0:3106:d637:d723:e855])
-        by smtp.gmail.com with ESMTPSA id k20sm4834955eda.71.2019.01.15.03.50.17
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 15 Jan 2019 03:50:18 -0800 (PST)
-Date:   Tue, 15 Jan 2019 12:50:16 +0100
-From:   Daniel Vetter <daniel@ffwll.ch>
-To:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Cc:     Mathieu Malaterre <malat@debian.org>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Sean Paul <sean@poorly.run>, David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] drm/dp: annotate implicit fall throughs
-Message-ID: <20190115115016.GK10517@phenom.ffwll.local>
-Mail-Followup-To: "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        Mathieu Malaterre <malat@debian.org>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Sean Paul <sean@poorly.run>, David Airlie <airlied@linux.ie>,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-References: <20190114202748.15584-1-malat@debian.org>
- <1d2a0c58-2419-9c43-b0d6-a8c1b387c240@embeddedor.com>
+        Tue, 15 Jan 2019 06:52:09 -0500
+Authentication-Results: auth=pass smtp.auth=martin smtp.mailfrom=martin@lichtvoll.de
+Received: from 127.0.0.1 (localhost [127.0.0.1])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.lichtvoll.de (Postfix) with ESMTPSA id B6E43437F7B;
+        Tue, 15 Jan 2019 12:52:06 +0100 (CET)
+From:   Martin Steigerwald <martin@lichtvoll.de>
+To:     Florian Westphal <fw@strlen.de>
+Cc:     Michal Kubecek <mkubecek@suse.cz>, netfilter-devel@vger.kernel.org,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [REGRESSION] 5.0-rc2: iptables -nvL consumes 100% of CPU and hogs memory with kernel 5.0-rc2
+Date:   Tue, 15 Jan 2019 12:52:06 +0100
+Message-ID: <1716489.K3OScS4TjR@merkaba>
+In-Reply-To: <20190115101519.pf7ogpvdz22wku7g@breakpoint.cc>
+References: <1608957.xtEoauR4Ya@merkaba> <20190115101006.GE26670@unicorn.suse.cz> <20190115101519.pf7ogpvdz22wku7g@breakpoint.cc>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1d2a0c58-2419-9c43-b0d6-a8c1b387c240@embeddedor.com>
-X-Operating-System: Linux phenom 4.19.0-1-amd64 
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jan 14, 2019 at 03:13:29PM -0600, Gustavo A. R. Silva wrote:
+Florian Westphal - 15.01.19, 11:15:
+> Michal Kubecek <mkubecek@suse.cz> wrote:
+> > > I upgraded to self-compiled 5.0-rc2 today and found the machine to
+> > > be slow after startup. I saw iptables consuming 100% CPU, it only
+> > > responded to SIGKILL. It got restarted several times, probably by
+> > > some systemd service.
+> > > 
+> > > Then I started 'iptables -nvL' manually. And I got this:
+> > > 
+> > > % strace -p 5748
+> > > [… tons more, in what appeared an endless loop …]
 > 
+> This is fixed by:
 > 
-> On 1/14/19 2:27 PM, Mathieu Malaterre wrote:
-> > There is a plan to build the kernel with -Wimplicit-fallthrough and
-> > these places in the code produced warnings (W=1). Fix them up.
-> > 
-> > This commit remove the following warnings:
-> > 
-> >    include/linux/compiler.h:77:22: warning: this statement may fall through [-Wimplicit-fallthrough=]
-> >    include/asm-generic/bug.h:134:2: note: in expansion of macro 'unlikely'
-> >    drivers/gpu/drm/drm_dp_helper.c:155:3: note: in expansion of macro 'WARN'
-> >    include/linux/compiler.h:77:22: warning: this statement may fall through [-Wimplicit-fallthrough=]
-> >    include/asm-generic/bug.h:134:2: note: in expansion of macro 'unlikely'
-> >    drivers/gpu/drm/drm_dp_helper.c:173:3: note: in expansion of macro 'WARN'
-> >    drivers/gpu/drm/drm_dp_helper.c:547:3: warning: this statement may fall through [-Wimplicit-fallthrough=]
-> > 
-> > Signed-off-by: Mathieu Malaterre <malat@debian.org>
-> Acked-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+> http://patchwork.ozlabs.org/patch/1024772/
+> ("netfilter: nf_tables: Fix for endless loop when dumping ruleset").
 
-Thanks for your patch, applied.
--Daniel
+Thanks, Florian.
 
-> 
-> > ---
-> >   drivers/gpu/drm/drm_dp_helper.c | 3 +++
-> >   1 file changed, 3 insertions(+)
-> > 
-> > diff --git a/drivers/gpu/drm/drm_dp_helper.c b/drivers/gpu/drm/drm_dp_helper.c
-> > index 516e82d0ed50..26835d174939 100644
-> > --- a/drivers/gpu/drm/drm_dp_helper.c
-> > +++ b/drivers/gpu/drm/drm_dp_helper.c
-> > @@ -154,6 +154,7 @@ u8 drm_dp_link_rate_to_bw_code(int link_rate)
-> >   	default:
-> >   		WARN(1, "unknown DP link rate %d, using %x\n", link_rate,
-> >   		     DP_LINK_BW_1_62);
-> > +		/* fall through */
-> >   	case 162000:
-> >   		return DP_LINK_BW_1_62;
-> >   	case 270000:
-> > @@ -171,6 +172,7 @@ int drm_dp_bw_code_to_link_rate(u8 link_bw)
-> >   	switch (link_bw) {
-> >   	default:
-> >   		WARN(1, "unknown DP link BW code %x, using 162000\n", link_bw);
-> > +		/* fall through */
-> >   	case DP_LINK_BW_1_62:
-> >   		return 162000;
-> >   	case DP_LINK_BW_2_7:
-> > @@ -552,6 +554,7 @@ int drm_dp_downstream_max_bpc(const u8 dpcd[DP_RECEIVER_CAP_SIZE],
-> >   		case DP_DS_16BPC:
-> >   			return 16;
-> >   		}
-> > +		/* fall through */
-> >   	default:
-> >   		return 0;
-> >   	}
-> > 
+Will wait for first 5.0-rcx with x=>2 that contains the fix. Bug closed on 
+Debian side already, was premature to report it there.
 
+Ciao,
 -- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
+Martin
+
+
