@@ -2,147 +2,124 @@ Return-Path: <SRS0=RZO6=PX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-14.0 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 98080C43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 16:20:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 27D08C43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 16:21:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6EF3420868
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 16:20:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F24CD20868
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 16:21:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731434AbfAOQUS (ORCPT
+        id S1731447AbfAOQVS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 15 Jan 2019 11:20:18 -0500
-Received: from relay.sw.ru ([185.231.240.75]:51534 "EHLO relay.sw.ru"
+        Tue, 15 Jan 2019 11:21:18 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:48971 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730451AbfAOQUS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Jan 2019 11:20:18 -0500
-Received: from [172.16.25.169]
-        by relay.sw.ru with esmtp (Exim 4.91)
-        (envelope-from <ktkhai@virtuozzo.com>)
-        id 1gjRRn-0004Bj-21; Tue, 15 Jan 2019 19:20:15 +0300
-Subject: Re: [PATCH RFC] fuse: Prevent background write requests increase
- inode size
-To:     miklos@szeredi.hu, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <154151286725.17550.12307253489084032792.stgit@localhost.localdomain>
-From:   Kirill Tkhai <ktkhai@virtuozzo.com>
-Message-ID: <5a653d5f-268b-b2ff-2312-00effb30108f@virtuozzo.com>
-Date:   Tue, 15 Jan 2019 19:20:14 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        id S1730280AbfAOQVR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 Jan 2019 11:21:17 -0500
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 317B2C057F93;
+        Tue, 15 Jan 2019 16:21:17 +0000 (UTC)
+Received: from madcap2.tricolour.ca (ovpn-112-10.phx2.redhat.com [10.3.112.10])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id B62435D776;
+        Tue, 15 Jan 2019 16:21:15 +0000 (UTC)
+Date:   Tue, 15 Jan 2019 11:21:12 -0500
+From:   Richard Guy Briggs <rgb@redhat.com>
+To:     Paul Moore <paul@paul-moore.com>
+Cc:     Linux-Audit Mailing List <linux-audit@redhat.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>
+Subject: Re: [PATCH ghak59 V3 2/4] audit: add syscall information to
+ CONFIG_CHANGE records
+Message-ID: <20190115162112.jq6m2j4wmyk4rq25@madcap2.tricolour.ca>
+References: <cover.1544477629.git.rgb@redhat.com>
+ <43548fafdfa98ee64ecfd0d7a69a2f5cb2c31c50.1544477629.git.rgb@redhat.com>
+ <CAHC9VhSaTvVgSWVWo42Ur2k6hVNJ1XBkLwrd-J4-SUuidwXUYg@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <154151286725.17550.12307253489084032792.stgit@localhost.localdomain>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAHC9VhSaTvVgSWVWo42Ur2k6hVNJ1XBkLwrd-J4-SUuidwXUYg@mail.gmail.com>
+User-Agent: NeoMutt/20180716
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.32]); Tue, 15 Jan 2019 16:21:17 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi, Miklos,
+On 2019-01-14 17:58, Paul Moore wrote:
+> On Mon, Dec 10, 2018 at 5:18 PM Richard Guy Briggs <rgb@redhat.com> wrote:
+> > Tie syscall information to all CONFIG_CHANGE calls since they are all a
+> > result of user actions.
+> >
+> > Exclude user records from syscall context:
+> > Since the function audit_log_common_recv_msg() is shared by a number of
+> > AUDIT_CONFIG_CHANGE and the entire range of AUDIT_USER_* record types,
+> > and since the AUDIT_CONFIG_CHANGE message type has been converted to a
+> > syscall accompanied record type, special-case the AUDIT_USER_* range of
+> > messages so they remain standalone records.
+> >
+> > See: https://github.com/linux-audit/audit-kernel/issues/59
+> > See: https://github.com/linux-audit/audit-kernel/issues/50
+> > Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
+> > ---
+> >  kernel/audit.c          | 27 +++++++++++++++++++--------
+> >  kernel/audit_fsnotify.c |  2 +-
+> >  kernel/audit_tree.c     |  2 +-
+> >  kernel/audit_watch.c    |  2 +-
+> >  kernel/auditfilter.c    |  2 +-
+> >  5 files changed, 23 insertions(+), 12 deletions(-)
+> >
+> > diff --git a/kernel/audit.c b/kernel/audit.c
+> > index 0e8026423fbd..a321fea94cc6 100644
+> > --- a/kernel/audit.c
+> > +++ b/kernel/audit.c
+> > @@ -1072,6 +1073,16 @@ static void audit_log_common_recv_msg(struct audit_buffer **ab, u16 msg_type)
+> >         audit_log_task_context(*ab);
+> >  }
+> >
+> > +static inline void audit_log_user_recv_msg(struct audit_buffer **ab, u16 msg_type)
+> > +{
+> > +       audit_log_common_recv_msg(NULL, ab, msg_type);
+> > +}
+> 
+> This makes sense because this is used by "user" records ...
+> 
+> > +static inline void audit_log_config_change_alt(struct audit_buffer **ab)
+> > +{
+> > +       audit_log_common_recv_msg(audit_context(), ab, AUDIT_CONFIG_CHANGE);
+> > +}
+> 
+> ... and I don't believe this makes sense because there is no real
+> logical grouping with the callers like there is for
+> audit_log_user_recv_msg().
 
-please take a look into two problems this patch points:
+I don't follow "logical grouping".  They are all CONFIG_CHANGE record
+prefixes with the current context.
 
-1)we have to set "io->async = false" in fuse_direct_IO(),
-  when inode size is changed (we mustn't increase inode
-  size in background);
-2)we have to increment fi->writectr on all background requests.
+Can you suggest an alternate name or another way of sharing
+audit_log_common_recv_msg() since the only differences between the two
+are a NULL context vs current task's context and the message type.  I
+wasn't particularly happy with this name either.  I'd really like to
+refactor this with all the rest of the CONFIG_CHANGE records, but there
+is too much of a format difference to make it work without reordering or
+deleting useless fields.
 
-Thanks,
-Kirill
+I know you had suggested making two different functions, but I think
+they are more similar than different and merit the common factored code.
 
-On 06.11.2018 17:02, Kirill Tkhai wrote:
-> Hi, Miklos,
-> 
-> this is not a well-tested patch, this is a concept,
-> showing the places, where it looks we have a problem.
-> 
-> Commit 7879c4e58b7c made io->async careless about inode size,
-> and this is wrong. Asyncronuos background requests may be sent
-> to userspace after inode becomes unlocked, when background
-> queue is throttled. In this case we execute a write request
-> extending inode size without any protection, and this ruines
-> everything. Fix that.
-> 
-> Also, some write background requests do not increment fi->writectr,
-> e.g.:
-> 	fuse_direct_IO()
-> 	  fuse_direct_io()
-> 	    fuse_send_write()
-> 	      fuse_async_req_send()
-> 	        fuse_request_send_background()
-> 
-> This is a reason fuse_sync_writes() does not work as expected.
-> Fix that too.
-> 
-> Signed-off-by: Kirill Tkhai <ktkhai@virtuozzo.com>
-> ---
->  fs/fuse/file.c |   20 ++++++++++++++++++--
->  1 file changed, 18 insertions(+), 2 deletions(-)
-> 
-> diff --git a/fs/fuse/file.c b/fs/fuse/file.c
-> index cc2121b37bf5..0b71a3c96168 100644
-> --- a/fs/fuse/file.c
-> +++ b/fs/fuse/file.c
-> @@ -610,6 +610,9 @@ static void fuse_aio_complete(struct fuse_io_priv *io, int err, ssize_t pos)
->  static void fuse_aio_complete_req(struct fuse_conn *fc, struct fuse_req *req)
->  {
->  	struct fuse_io_priv *io = req->io;
-> +	struct kiocb *iocb = io->iocb;
-> +	struct file *file = iocb->ki_filp;
-> +	struct fuse_inode *fi = get_fuse_inode(file_inode(file));
->  	ssize_t pos = -1;
->  
->  	fuse_release_user_pages(req, io->should_dirty);
-> @@ -625,6 +628,12 @@ static void fuse_aio_complete_req(struct fuse_conn *fc, struct fuse_req *req)
->  	}
->  
->  	fuse_aio_complete(io, req->out.h.error, pos);
-> +
-> +	if (io->write) {
-> +		spin_lock(&fc->lock);
-> +		fi->writectr--;
-> +		spin_unlock(&fc->lock);
-> +	}
->  }
->  
->  static size_t fuse_async_req_send(struct fuse_conn *fc, struct fuse_req *req,
-> @@ -966,6 +975,7 @@ static size_t fuse_send_write(struct fuse_req *req, struct fuse_io_priv *io,
->  {
->  	struct kiocb *iocb = io->iocb;
->  	struct file *file = iocb->ki_filp;
-> +	struct fuse_inode *fi = get_fuse_inode(file_inode(file));
->  	struct fuse_file *ff = file->private_data;
->  	struct fuse_conn *fc = ff->fc;
->  	struct fuse_write_in *inarg = &req->misc.write.in;
-> @@ -981,8 +991,12 @@ static size_t fuse_send_write(struct fuse_req *req, struct fuse_io_priv *io,
->  		inarg->lock_owner = fuse_lock_owner_id(fc, owner);
->  	}
->  
-> -	if (io->async)
-> +	if (io->async) {
-> +		spin_lock(&fc->lock);
-> +		fi->writectr++;
-> +		spin_unlock(&fc->lock);
->  		return fuse_async_req_send(fc, req, count, io);
-> +	}
->  
->  	fuse_request_send(fc, req);
->  	return req->misc.write.out.size;
-> @@ -2904,8 +2918,10 @@ fuse_direct_IO(struct kiocb *iocb, struct iov_iter *iter)
->  	 * We cannot asynchronously extend the size of a file.
->  	 * In such case the aio will behave exactly like sync io.
->  	 */
-> -	if ((offset + count > i_size) && iov_iter_rw(iter) == WRITE)
-> +	if ((offset + count > i_size) && iov_iter_rw(iter) == WRITE) {
->  		io->blocking = true;
-> +		io->async = false;
-> +	}
->  
->  	if (io->async && io->blocking) {
->  		/*
-> 
+> paul moore
+
+- RGB
+
+--
+Richard Guy Briggs <rgb@redhat.com>
+Sr. S/W Engineer, Kernel Security, Base Operating Systems
+Remote, Ottawa, Red Hat Canada
+IRC: rgb, SunRaycer
+Voice: +1.647.777.2635, Internal: (81) 32635
