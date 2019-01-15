@@ -4,51 +4,50 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C9F8C43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 16:42:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BE184C43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 16:42:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DE61020645
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 16:42:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8D48920675
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 16:42:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547570538;
-	bh=w/Kd78erW5avJym6HODm2LsUvd7Jp3JEzXazriImH2M=;
+	s=default; t=1547570543;
+	bh=n39piaDXU/7nqsCbSFW1w//zTsli6kPChGyIXh0065Q=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=PCa+aA7QPqj6BsWmC0zPAJT/srTOtSI7evTrPGQdzbxhUSYG+RJYBrUuyjj2BEdwF
-	 R9r1Q1lwuUV5OHyRqamuzDCx2b1QA0q1Fy+5qpFaxh5Oh0wed82Gu8+bBNImoA0uJ5
-	 sNFLqIdqko7pUm0VUitrvR/9o4sufwt9hEj4uYyw=
+	b=uNTjeuytnrzeLpmhNFvNJ9EDvrndC2cgfYPkv0PuHmXGBRuQORySUiTIFxIkgcUl4
+	 kvBu4nX0f+8ASlHCubxCGXVJ/gRbyxH+YniPRuHhOrG5HcxxhyrM+SshSsyH5htvP1
+	 qBtWqt+T5E7I9RCudY8mnbDCvVzSlCyrp9Qabzvo=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732956AbfAOQmS (ORCPT
+        id S1732968AbfAOQmV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 15 Jan 2019 11:42:18 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59088 "EHLO mail.kernel.org"
+        Tue, 15 Jan 2019 11:42:21 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59146 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732943AbfAOQmP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Jan 2019 11:42:15 -0500
+        id S1732947AbfAOQmR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 Jan 2019 11:42:17 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 07A0F2054F;
-        Tue, 15 Jan 2019 16:42:13 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8FA1F20645;
+        Tue, 15 Jan 2019 16:42:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547570534;
-        bh=w/Kd78erW5avJym6HODm2LsUvd7Jp3JEzXazriImH2M=;
+        s=default; t=1547570537;
+        bh=n39piaDXU/7nqsCbSFW1w//zTsli6kPChGyIXh0065Q=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=cvCPcSgjJcrtpVQyroqdT5PeovDDnQC0iDfgWQZMLiPHKQ2mHVF3HF7+/CYTddPGh
-         3ETHmeyEZnWhQRt7vIgbuGhkBAgxz5gW8+MjNgt0RyYr/LwobnAx6YYnFjNHjBoSh3
-         ARgNjclYrSJlxucePq5pAp9lEGfyXGwpItLHq6m4=
+        b=H49lbl9HLAvEQwlTqq6rUA2weCHDM7QMAbraDcly9YIe1J5qcm00cW2IlcqQMFZNx
+         Mq4xS0gro8eoizSfI2uofNPDH/0px/7KfnHgNAQUzo2bvbEQ+GlbSgjgd9vSHEpALx
+         Js6HshiMbOctP8FNnRBcNfIf/tH15GS680ztI0jI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Niklas Cassel <niklas.cassel@linaro.org>,
-        Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
-        Stanimir Varbanov <svarbanov@mm-sol.com>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-Subject: [PATCH 4.19 29/50] PCI: dwc: Take lock when ACKing an interrupt
-Date:   Tue, 15 Jan 2019 17:36:05 +0100
-Message-Id: <20190115154911.616405882@linuxfoundation.org>
+        stable@vger.kernel.org, Michael Straube <straube.linux@gmail.com>,
+        Ivan Safonov <insafonov@gmail.com>,
+        Larry Finger <Larry.Finger@lwfinger.net>
+Subject: [PATCH 4.19 03/50] staging: rtl8188eu: Fix module loading from tasklet for WEP encryption
+Date:   Tue, 15 Jan 2019 17:35:39 +0100
+Message-Id: <20190115154910.180329243@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190115154909.933241945@linuxfoundation.org>
 References: <20190115154909.933241945@linuxfoundation.org>
@@ -67,52 +66,48 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Marc Zyngier <marc.zyngier@arm.com>
+From: Larry Finger <Larry.Finger@lwfinger.net>
 
-commit fce5423e4f431c71933d6c1f850b540a314aa6ee upstream.
+commit 7775665aadc48a562051834a73519129bf717d73 upstream.
 
-Bizarrely, there is no lock taken in the irq_ack() helper. This
-puts the ACK callback provided by a specific platform in a awkward
-situation where there is no synchronization that would be expected
-on other callback.
+Commit 2b2ea09e74a5 ("staging:r8188eu: Use lib80211 to decrypt WEP-frames")
+causes scheduling while atomic bugs followed by a hard freeze whenever
+the driver tries to connect to a WEP-encrypted network. Experimentation
+showed that the freezes were eliminated when module lib80211 was
+preloaded, which can be forced by calling lib80211_get_crypto_ops()
+directly rather than indirectly through try_then_request_module().
+With this change, no BUG messages are logged.
 
-Introduce the required lock, giving some level of uniformity among
-callbacks.
-
-Fixes: 7c5925afbc58 ("PCI: dwc: Move MSI IRQs allocation to IRQ domains
-hierarchical API")
-Link: https://lore.kernel.org/linux-pci/20181113225734.8026-1-marc.zyngier@arm.com/
-Tested-by: Niklas Cassel <niklas.cassel@linaro.org>
-Tested-by: Gustavo Pimentel <gustavo.pimentel@synopsys.com>
-Tested-by: Stanimir Varbanov <svarbanov@mm-sol.com>
-Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
-[lorenzo.pieralisi@arm.com: updated commit log]
-Signed-off-by: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-Cc: stable@vger.kernel.org
+Fixes: 2b2ea09e74a5 ("staging:r8188eu: Use lib80211 to decrypt WEP-frames")
+Cc: Stable <stable@vger.kernel.org> # v4.17+
+Cc: Michael Straube <straube.linux@gmail.com>
+Cc: Ivan Safonov <insafonov@gmail.com>
+Signed-off-by: Larry Finger <Larry.Finger@lwfinger.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/pci/controller/dwc/pcie-designware-host.c |    5 +++++
- 1 file changed, 5 insertions(+)
+ drivers/staging/rtl8188eu/core/rtw_security.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/drivers/pci/controller/dwc/pcie-designware-host.c
-+++ b/drivers/pci/controller/dwc/pcie-designware-host.c
-@@ -202,11 +202,16 @@ static void dw_pci_bottom_ack(struct irq
- {
- 	struct msi_desc *msi = irq_data_get_msi_desc(d);
- 	struct pcie_port *pp;
-+	unsigned long flags;
+--- a/drivers/staging/rtl8188eu/core/rtw_security.c
++++ b/drivers/staging/rtl8188eu/core/rtw_security.c
+@@ -154,7 +154,7 @@ void rtw_wep_encrypt(struct adapter *pad
  
- 	pp = msi_desc_to_pci_sysdata(msi);
+ 	pframe = ((struct xmit_frame *)pxmitframe)->buf_addr + hw_hdr_offset;
  
-+	raw_spin_lock_irqsave(&pp->lock, flags);
-+
- 	if (pp->ops->msi_irq_ack)
- 		pp->ops->msi_irq_ack(d->hwirq, pp);
-+
-+	raw_spin_unlock_irqrestore(&pp->lock, flags);
- }
+-	crypto_ops = try_then_request_module(lib80211_get_crypto_ops("WEP"), "lib80211_crypt_wep");
++	crypto_ops = lib80211_get_crypto_ops("WEP");
  
- static struct irq_chip dw_pci_msi_bottom_irq_chip = {
+ 	if (!crypto_ops)
+ 		return;
+@@ -210,7 +210,7 @@ int rtw_wep_decrypt(struct adapter  *pad
+ 		void *crypto_private = NULL;
+ 		int status = _SUCCESS;
+ 		const int keyindex = prxattrib->key_index;
+-		struct lib80211_crypto_ops *crypto_ops = try_then_request_module(lib80211_get_crypto_ops("WEP"), "lib80211_crypt_wep");
++		struct lib80211_crypto_ops *crypto_ops = lib80211_get_crypto_ops("WEP");
+ 		char iv[4], icv[4];
+ 
+ 		if (!crypto_ops) {
 
 
