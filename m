@@ -2,145 +2,114 @@ Return-Path: <SRS0=RZO6=PX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A890EC43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 17:31:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 705B4C43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 17:32:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 791AF20859
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 17:31:45 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Zyevd2Gm"
+	by mail.kernel.org (Postfix) with ESMTP id 4C78320859
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 17:32:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388349AbfAORbn (ORCPT
+        id S2388351AbfAORcI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 15 Jan 2019 12:31:43 -0500
-Received: from mail-it1-f194.google.com ([209.85.166.194]:39813 "EHLO
-        mail-it1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388023AbfAORbl (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Jan 2019 12:31:41 -0500
-Received: by mail-it1-f194.google.com with SMTP id a6so5479529itl.4
-        for <linux-kernel@vger.kernel.org>; Tue, 15 Jan 2019 09:31:40 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=cE6SBKobVtbIIAKZUR3KFTJue1PHcl6hPHX1OcIbqBM=;
-        b=Zyevd2GmLvfx6hNjCzqPZ2f+E3gt9KUh5krupbUeREFCq0Uy4Zg/otLPfLjBDYTnA+
-         t46kmkwsVUfcULdjOsBDsuS2PgRw2lNfKrlMY8vc6NTkwt99HMuo32FPzS7eK8TtUfRG
-         3uLgPm6SYn+GqaTqfDMsmllSxG20MWl63zj8BIB5qOVLiq0QmWkOrpkl5dCfE+jruNHv
-         hTNrl3i/9MgxMKQDh30Y8YvemwRPmsYrFiIay3UxNNVz3xklWBKiQkEZ70l1kq7ATWy+
-         Dg4yVqQaFBK1FqFaqS/GIJt61Gf23LgVFXM6rRzvQLQylvbSUOTuAzeCfpMhtRH3MvEo
-         /P/Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=cE6SBKobVtbIIAKZUR3KFTJue1PHcl6hPHX1OcIbqBM=;
-        b=Y1kYaQWTCTB8B7FcDoJbzD9TV6Au05y6jbc/V14lDdQrqhU/aSN8B8pSdeXy5C9OoY
-         /rOYF6nsAayCABRY1oc9jKStbyG0SWcEww4WEWltb5f6gHQkLXUHANJ/5hCUwWGXJ0bl
-         CouEUfNVsCVJpEMMoJg9/vFZNgXQRhmz9WFWox/BQYDF1YovuEb4f4SySUPldUbYg+UZ
-         EdwEAIPR8vaWJDEH3BP126tDGQLh92WrXuTtwm3GZzKks3PBz2ec1uS92Bp0QhI/j3wc
-         /sOtf5ZbAnf2bUaTVM0sFJfm6cWslJFXrjmoiuOcsVT2NjsZDM5aB//32PSUCmBw7LBf
-         ebcA==
-X-Gm-Message-State: AJcUukcYM52WcA+BXYmVMBzMqNRwL/5L+lodKZXMMfmMNDbvm97bdF8T
-        njvQ4uvkCauWV1b4g7dTeok=
-X-Google-Smtp-Source: ALg8bN57Rc3V0kCLaS8MOzn9EyIrBlJApGOkm+FOnvlAw8g7MwOAl/F8cGok3OTqeE5E42hA2Zu4EA==
-X-Received: by 2002:a24:5a8f:: with SMTP id v137mr3105070ita.65.1547573499747;
-        Tue, 15 Jan 2019 09:31:39 -0800 (PST)
-Received: from localhost.localdomain (c-73-242-244-99.hsd1.nm.comcast.net. [73.242.244.99])
-        by smtp.gmail.com with ESMTPSA id h14sm1431501ior.41.2019.01.15.09.31.38
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 15 Jan 2019 09:31:39 -0800 (PST)
-From:   George Hilliard <thirtythreeforty@gmail.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     George Hilliard <thirtythreeforty@gmail.com>,
-        linux-kernel@vger.kernel.org, devel@driverdev.osuosl.org,
-        NeilBrown <neil@brown.name>, sergio.paracuellos@gmail.com
-Subject: [PATCH v4] staging: Mediatek: Use individual config flags in Makefile
-Date:   Tue, 15 Jan 2019 10:29:18 -0700
-Message-Id: <20190115172916.26937-1-thirtythreeforty@gmail.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190115172009.GB30853@kroah.com>
-References: <20190115172009.GB30853@kroah.com>
+        Tue, 15 Jan 2019 12:32:08 -0500
+Received: from ale.deltatee.com ([207.54.116.67]:53146 "EHLO ale.deltatee.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726022AbfAORcH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 Jan 2019 12:32:07 -0500
+Received: from cgy1-donard.priv.deltatee.com ([172.16.1.31])
+        by ale.deltatee.com with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <gunthorp@deltatee.com>)
+        id 1gjSZK-0000Ss-Fh; Tue, 15 Jan 2019 10:32:07 -0700
+Received: from gunthorp by cgy1-donard.priv.deltatee.com with local (Exim 4.89)
+        (envelope-from <gunthorp@deltatee.com>)
+        id 1gjSZJ-0003sE-TW; Tue, 15 Jan 2019 10:32:05 -0700
+From:   Logan Gunthorpe <logang@deltatee.com>
+To:     linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Bjorn Helgaas <bhelgaas@google.com>
+Cc:     Stephen Bates <sbates@raithlin.com>,
+        Logan Gunthorpe <logang@deltatee.com>,
+        Jarkko Nikula <jarkko.nikula@linux.intel.com>
+Date:   Tue, 15 Jan 2019 10:32:03 -0700
+Message-Id: <20190115173203.14850-1-logang@deltatee.com>
+X-Mailer: git-send-email 2.19.0
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 172.16.1.31
+X-SA-Exim-Rcpt-To: linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, bhelgaas@google.com, sbates@raithlin.com, logang@deltatee.com, jarkko.nikula@linux.intel.com
+X-SA-Exim-Mail-From: gunthorp@deltatee.com
+Subject: [PATCH] PCI: fix using __initdata memory after free in disable_acs_redir parameter
+X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
+X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-These drivers can be useful on other MT76xx SoCs, which have compatible
-peripherals.  The drivers were selectable in Kconfig, but they were
-quietly excluded from the build because the SOC_MT7621 chip was not
-selected.  So, make the Makefiles use the same flags as Kconfig for
-these drivers.
+The disable_acs_redir parameter stores a pointer to the string passed to
+pci_setup(). However, the string passed to PCI setup is actually a
+temporary copy allocated in static __initdata memory. After init, once
+the memory is freed, it is no longer valid to reference this pointer.
 
-mt7621-dma and mt7621-dts are left alone because they truly do require
-that SoC.
+This bug was noticed in v5.0-rc1 after a change in commit c5eb1190074c
+("PCI / PM: Allow runtime PM without callback functions") caused
+pci_disable_acs_redir() to be called during shutdown which manifested
+as an unable to handle kernel paging request at:
 
-I have personally confirmed that the mt7621-spi driver works on the
-MT7688, which was what prompted this change.
+RIP: 0010:pci_enable_acs+0x3f/0x1e0
+Call Trace:
+   pci_restore_state.part.44+0x159/0x3c0
+   pci_restore_standard_config+0x33/0x40
+   pci_pm_runtime_resume+0x2b/0xd0
+   ? pci_restore_standard_config+0x40/0x40
+   __rpm_callback+0xbc/0x1b0
+   rpm_callback+0x1f/0x70
+   ? pci_restore_standard_config+0x40/0x40
+    rpm_resume+0x4f9/0x710
+   ? pci_conf1_read+0xb6/0xf0
+   ? pci_conf1_write+0xb2/0xe0
+   __pm_runtime_resume+0x47/0x70
+   pci_device_shutdown+0x1e/0x60
+   device_shutdown+0x14a/0x1f0
+   kernel_restart+0xe/0x50
+   __do_sys_reboot+0x1ee/0x210
+   ? __fput+0x144/0x1d0
+   do_writev+0x5e/0xf0
+   ? do_writev+0x5e/0xf0
+   do_syscall_64+0x48/0xf0
+   entry_SYSCALL_64_after_hwframe+0x44/0xa9
 
-Cc: linux-kernel@vger.kernel.org
-Cc: devel@driverdev.osuosl.org
-Cc: NeilBrown <neil@brown.name>
-Cc: sergio.paracuellos@gmail.com
-Signed-off-by: George Hilliard <thirtythreeforty@gmail.com>
+It was also likely possible to trigger this bug when hotplugging PCI
+devices.
+
+To fix this, instead of storing a pointer, we use kstrdup to copy the
+disable_acs_redir_param to its own buffer which will never be freed.
+
+Fixes: aaca43fda742 ("PCI: Add "pci=disable_acs_redir=" parameter for peer-to-peer support")
+Signed-off-by: Logan Gunthorpe <logang@deltatee.com>
+Cc: Jarkko Nikula <jarkko.nikula@linux.intel.com>
+Cc: Bjorn Helgaas <bhelgaas@google.com>
 ---
-Changes in v2..v4:
-  - Also use individual flags for mt7621-pci and the new mt7621-pci-phy
-  - Slightly revise commit message
+ drivers/pci/pci.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
- drivers/staging/Makefile                | 14 +++++++-------
- drivers/staging/mt7621-pci-phy/Makefile |  2 +-
- drivers/staging/mt7621-pci/Makefile     |  2 +-
- 3 files changed, 9 insertions(+), 9 deletions(-)
-
-diff --git a/drivers/staging/Makefile b/drivers/staging/Makefile
-index 4d563ed0bc79..cc5530cc996b 100644
---- a/drivers/staging/Makefile
-+++ b/drivers/staging/Makefile
-@@ -41,14 +41,14 @@ obj-$(CONFIG_GREYBUS)		+= greybus/
- obj-$(CONFIG_BCM2835_VCHIQ)	+= vc04_services/
- obj-$(CONFIG_DRM_VBOXVIDEO)	+= vboxvideo/
- obj-$(CONFIG_PI433)		+= pi433/
--obj-$(CONFIG_SOC_MT7621)	+= mt7621-pci/
--obj-$(CONFIG_SOC_MT7621)	+= mt7621-pci-phy/
--obj-$(CONFIG_SOC_MT7621)	+= mt7621-pinctrl/
--obj-$(CONFIG_SOC_MT7621)	+= mt7621-spi/
-+obj-$(CONFIG_PCI_MT7621)	+= mt7621-pci/
-+obj-$(CONFIG_PCI_MT7621_PHY)	+= mt7621-pci-phy/
-+obj-$(CONFIG_PINCTRL_RT2880)	+= mt7621-pinctrl/
-+obj-$(CONFIG_SPI_MT7621)	+= mt7621-spi/
- obj-$(CONFIG_SOC_MT7621)	+= mt7621-dma/
--obj-$(CONFIG_SOC_MT7621)	+= ralink-gdma/
--obj-$(CONFIG_SOC_MT7621)	+= mt7621-mmc/
--obj-$(CONFIG_SOC_MT7621)	+= mt7621-eth/
-+obj-$(CONFIG_DMA_RALINK)	+= ralink-gdma/
-+obj-$(CONFIG_MTK_MMC)		+= mt7621-mmc/
-+obj-$(CONFIG_NET_MEDIATEK_SOC_STAGING)	+= mt7621-eth/
- obj-$(CONFIG_SOC_MT7621)	+= mt7621-dts/
- obj-$(CONFIG_STAGING_GASKET_FRAMEWORK)	+= gasket/
- obj-$(CONFIG_XIL_AXIS_FIFO)	+= axis-fifo/
-diff --git a/drivers/staging/mt7621-pci-phy/Makefile b/drivers/staging/mt7621-pci-phy/Makefile
-index 2b82ccfc28c6..a970056f05c1 100644
---- a/drivers/staging/mt7621-pci-phy/Makefile
-+++ b/drivers/staging/mt7621-pci-phy/Makefile
-@@ -1 +1 @@
--obj-$(CONFIG_SOC_MT7621)       += pci-mt7621-phy.o
-+obj-$(CONFIG_PCI_MT7621_PHY)       += pci-mt7621-phy.o
-diff --git a/drivers/staging/mt7621-pci/Makefile b/drivers/staging/mt7621-pci/Makefile
-index 607b84bedcc3..d4655a726b61 100644
---- a/drivers/staging/mt7621-pci/Makefile
-+++ b/drivers/staging/mt7621-pci/Makefile
-@@ -1 +1 @@
--obj-$(CONFIG_SOC_MT7621)       += pci-mt7621.o
-+obj-$(CONFIG_PCI_MT7621)       += pci-mt7621.o
+diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
+index c9d8e3c837de..c25acace7d91 100644
+--- a/drivers/pci/pci.c
++++ b/drivers/pci/pci.c
+@@ -6195,7 +6195,8 @@ static int __init pci_setup(char *str)
+ 			} else if (!strncmp(str, "pcie_scan_all", 13)) {
+ 				pci_add_flags(PCI_SCAN_ALL_PCIE_DEVS);
+ 			} else if (!strncmp(str, "disable_acs_redir=", 18)) {
+-				disable_acs_redir_param = str + 18;
++				disable_acs_redir_param =
++					kstrdup(str + 18, GFP_KERNEL);
+ 			} else {
+ 				printk(KERN_ERR "PCI: Unknown option `%s'\n",
+ 						str);
 -- 
-2.20.1
+2.19.0
 
