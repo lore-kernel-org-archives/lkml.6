@@ -7,46 +7,49 @@ X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F0C73C43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 16:46:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EE81DC43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 16:46:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B62C02054F
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 16:46:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B3B4920645
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 16:46:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547570761;
-	bh=36zHSWZ2LZKV7MnaoNIxTbFmx72I29rNkFJv3owyPgY=;
+	s=default; t=1547570768;
+	bh=mq03ULgkvFS67zK5ltqYOhAzfaHfXFIXq+gr+Nf3pEw=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=h50VuiOIIkVbY7RnBnH/RAHILO4V4sgb2MwZfwbZMDDsTK4Vx7VJWdNDeJu4rpMOR
-	 udanJ6qKC1FHZqSAZhFi80Ul3Y+64je4Ozjz39W+75HxU9DyxE/X47zY2YOBTW0eCU
-	 GP7TfAvIUJMjEC2pYMK3NVRLF2bhOTamSFPrS0oM=
+	b=lWIk25Ur1cT240fg5AT6ofhVezquIqs7LwgptrV1CToaUJQ4ktUsrgqHhc6+kaOZ7
+	 JBh3NgQ/yWqVTFvCIizgzmWSgqv1k+C0+2iFH+vxyfhab+FAwUYcFAPlnGnTcPdvnp
+	 QdmzImisYo/BkVqpRshIGxWt7rZFH7bHQSh0udb8=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731094AbfAOQp7 (ORCPT
+        id S2387916AbfAOQqG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 15 Jan 2019 11:45:59 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35644 "EHLO mail.kernel.org"
+        Tue, 15 Jan 2019 11:46:06 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35742 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387859AbfAOQp4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Jan 2019 11:45:56 -0500
+        id S2387899AbfAOQqC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 Jan 2019 11:46:02 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A753020645;
-        Tue, 15 Jan 2019 16:45:55 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C08E520675;
+        Tue, 15 Jan 2019 16:46:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547570756;
-        bh=36zHSWZ2LZKV7MnaoNIxTbFmx72I29rNkFJv3owyPgY=;
+        s=default; t=1547570762;
+        bh=mq03ULgkvFS67zK5ltqYOhAzfaHfXFIXq+gr+Nf3pEw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=a7ajgVkd5jBXCdN0ai0+Xath/ec/W9YbWjA9a/ph35sJE1PUsdNw4xFz5Ii4SqqEV
-         AQDeFLSssIFFCEOxi84TxRzD+WSEVPCAmZe6RHF2MRO1fLOugj5uRlwpG0bKs89jfH
-         AhQj8y+Z/u4oo6SIEUCcWKdlDXsl3TaXN8+P6Wkw=
+        b=WDjIQaJ8kZLFtUJsGPrG9OjfB9Q4NJCA9dLwnJq0ErdSZPHFLk3VHlQTC1WivEVwS
+         rzpb1ryrkbjGmhzTw+LMmCF+Xl6rJK9SShbz54udSvsDAuWO0cxQhYsQmYb1ahSjJm
+         TELBh2hlzjxZ+AKWw/n3IpYlnNIPyi1Jy4jowWjo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Yi Zeng <yizeng@asrmicro.com>,
-        Wolfram Sang <wsa@the-dreams.de>, stable@kernel.org
-Subject: [PATCH 4.20 34/57] i2c: dev: prevent adapter retries and timeout being set as minus value
-Date:   Tue, 15 Jan 2019 17:36:15 +0100
-Message-Id: <20190115154912.649215053@linuxfoundation.org>
+        stable@vger.kernel.org, Pei Zhang <pezhang@redhat.com>,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        Peter Xu <peterx@redhat.com>,
+        Cornelia Huck <cohuck@redhat.com>,
+        Alex Williamson <alex.williamson@redhat.com>
+Subject: [PATCH 4.20 36/57] vfio/type1: Fix unmap overflow off-by-one
+Date:   Tue, 15 Jan 2019 17:36:17 +0100
+Message-Id: <20190115154912.798297882@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190115154910.734892368@linuxfoundation.org>
 References: <20190115154910.734892368@linuxfoundation.org>
@@ -65,50 +68,41 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Yi Zeng <yizeng@asrmicro.com>
+From: Alex Williamson <alex.williamson@redhat.com>
 
-commit 6ebec961d59bccf65d08b13fc1ad4e6272a89338 upstream.
+commit 58fec830fc19208354895d9832785505046d6c01 upstream.
 
-If adapter->retries is set to a minus value from user space via ioctl,
-it will make __i2c_transfer and __i2c_smbus_xfer skip the calling to
-adapter->algo->master_xfer and adapter->algo->smbus_xfer that is
-registered by the underlying bus drivers, and return value 0 to all the
-callers. The bus driver will never be accessed anymore by all users,
-besides, the users may still get successful return value without any
-error or information log print out.
+The below referenced commit adds a test for integer overflow, but in
+doing so prevents the unmap ioctl from ever including the last page of
+the address space.  Subtract one to compare to the last address of the
+unmap to avoid the overflow and wrap-around.
 
-If adapter->timeout is set to minus value from user space via ioctl,
-it will make the retrying loop in __i2c_transfer and __i2c_smbus_xfer
-always break after the the first try, due to the time_after always
-returns true.
-
-Signed-off-by: Yi Zeng <yizeng@asrmicro.com>
-[wsa: minor grammar updates to commit message]
-Signed-off-by: Wolfram Sang <wsa@the-dreams.de>
-Cc: stable@kernel.org
+Fixes: 71a7d3d78e3c ("vfio/type1: silence integer overflow warning")
+Link: https://bugzilla.redhat.com/show_bug.cgi?id=1662291
+Cc: stable@vger.kernel.org # v4.15+
+Reported-by: Pei Zhang <pezhang@redhat.com>
+Debugged-by: Peter Xu <peterx@redhat.com>
+Reviewed-by: Dan Carpenter <dan.carpenter@oracle.com>
+Reviewed-by: Peter Xu <peterx@redhat.com>
+Tested-by: Peter Xu <peterx@redhat.com>
+Reviewed-by: Cornelia Huck <cohuck@redhat.com>
+Signed-off-by: Alex Williamson <alex.williamson@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/i2c/i2c-dev.c |    6 ++++++
- 1 file changed, 6 insertions(+)
+ drivers/vfio/vfio_iommu_type1.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/i2c/i2c-dev.c
-+++ b/drivers/i2c/i2c-dev.c
-@@ -470,9 +470,15 @@ static long i2cdev_ioctl(struct file *fi
- 					  data_arg.data);
- 	}
- 	case I2C_RETRIES:
-+		if (arg > INT_MAX)
-+			return -EINVAL;
-+
- 		client->adapter->retries = arg;
- 		break;
- 	case I2C_TIMEOUT:
-+		if (arg > INT_MAX)
-+			return -EINVAL;
-+
- 		/* For historical reasons, user-space sets the timeout
- 		 * value in units of 10 ms.
- 		 */
+--- a/drivers/vfio/vfio_iommu_type1.c
++++ b/drivers/vfio/vfio_iommu_type1.c
+@@ -878,7 +878,7 @@ static int vfio_dma_do_unmap(struct vfio
+ 		return -EINVAL;
+ 	if (!unmap->size || unmap->size & mask)
+ 		return -EINVAL;
+-	if (unmap->iova + unmap->size < unmap->iova ||
++	if (unmap->iova + unmap->size - 1 < unmap->iova ||
+ 	    unmap->size > SIZE_MAX)
+ 		return -EINVAL;
+ 
 
 
