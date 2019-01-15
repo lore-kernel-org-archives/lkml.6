@@ -2,121 +2,157 @@ Return-Path: <SRS0=RZO6=PX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7819AC43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 07:06:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D6D15C43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 07:13:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3A4F820578
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 07:06:25 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jeOEIrMp"
+	by mail.kernel.org (Postfix) with ESMTP id A58D120656
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 07:13:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727639AbfAOHGX (ORCPT
+        id S1727824AbfAOHN3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 15 Jan 2019 02:06:23 -0500
-Received: from mail-it1-f195.google.com ([209.85.166.195]:51518 "EHLO
-        mail-it1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725840AbfAOHGX (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Jan 2019 02:06:23 -0500
-Received: by mail-it1-f195.google.com with SMTP id w18so3572928ite.1;
-        Mon, 14 Jan 2019 23:06:22 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=vBxTO+ik6S90VjvwhhQyOAyNkKinjn9P/JvduBA/t5Y=;
-        b=jeOEIrMpgXi3/B7EW3lgvfCoRqTBFVzmSrBIFt2tpkk7CsLQC3esSVpvE24X0hK4uB
-         osXXGM7O5q6Yu2NWuL6D/ZZ77ErZREpHtlOsSYWeisH5EGVdQ4CXm96ZKK54ibyXBy5N
-         MPwG4FR9UT821u6+5z+QP70w3L7rtVYdT5LrwkWNMYeSKkH/lRplKQA2yfk2m9lhU/qk
-         zGoOpERnzuOf9XOAkLe9KQGPCuOd98lgGz0Jb6mQQRW9Ot54eyTc5J2t01YluhmiVns5
-         gUIE+OUsCABCvScUTdpBOaV2mqvTn1b5w4P7TMu9mrbacZReD2PS2NHVofzR58dR/MlV
-         Dp8A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=vBxTO+ik6S90VjvwhhQyOAyNkKinjn9P/JvduBA/t5Y=;
-        b=CvSG1i/1BxqsQvibIjJY2Zz6Y7u2ogCq9l2fooqtylJa9GlUT9VPxb5yCNJERjJEjI
-         5UxE2YehzMHXT1NqUUWslw9ztR7vL1qjKfQIppbfvg0D58V/jWmUcn6nBTvnTPHI8BmB
-         mkiLK5jeBSMELwCfgn9a61P6kGtAgMFioNVM983BTxUct/lESp64Xi8dByMqb4ID8RfB
-         NRFaSMQZ/DSd22G/k4XdYPfW2CudRavQ57odwLeV+/zXhRasfJpLTOw6ORWh0V2hIK5Q
-         dZSIoRzhvPkfDbafkdpJoMt1LiX/cEsiFiGUbPaD8fbCg/RzTRixqDlwmYk+8AQyF+1c
-         lTZA==
-X-Gm-Message-State: AJcUukfxuWpQFlI4IqWNfo2KOPek15VjqgbzlN0umUhHDahD5lv2p7fd
-        yIEXPTlHYapPgZKTqogBUX6RXJM5pCn+WKtsUg==
-X-Google-Smtp-Source: ALg8bN6nciu4jZVlb6o0NjOSQGyRSzWVuL2vBfcarEjVevsygaYd+FFSzu/F/XJJlih/Jj0QBVK449+HgxJ5/dlokAQ=
-X-Received: by 2002:a24:3282:: with SMTP id j124mr1700100ita.173.1547535982120;
- Mon, 14 Jan 2019 23:06:22 -0800 (PST)
+        Tue, 15 Jan 2019 02:13:29 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:42958 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725840AbfAOHN2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 Jan 2019 02:13:28 -0500
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id E607D83F3F;
+        Tue, 15 Jan 2019 07:13:27 +0000 (UTC)
+Received: from [10.36.112.15] (unknown [10.36.112.15])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 17C715C1B4;
+        Tue, 15 Jan 2019 07:13:24 +0000 (UTC)
+Subject: Re: [PATCH] kvm: add proper frame pointer logic for vmx
+To:     Qian Cai <cai@lca.pw>, rkrcmar@redhat.com
+Cc:     sean.j.christopherson@intel.com, tglx@linutronix.de,
+        mingo@redhat.com, bp@alien8.de, hpa@zytor.com, x86@kernel.org,
+        kvm@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20190115064459.70513-1-cai@lca.pw>
+ <a6477022-bbc0-fc00-2c8e-75007b468d3f@lca.pw>
+From:   Paolo Bonzini <pbonzini@redhat.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=pbonzini@redhat.com; prefer-encrypt=mutual; keydata=
+ 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
+ uUHgL9dKIfvpm+rNXRn9wAwGjk0X/A==
+Message-ID: <5109b3c2-cac0-aa19-9cc7-801340afe198@redhat.com>
+Date:   Tue, 15 Jan 2019 08:13:22 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.1
 MIME-Version: 1.0
-References: <1547183577-20309-1-git-send-email-kernelfans@gmail.com>
- <1547183577-20309-2-git-send-email-kernelfans@gmail.com> <96233c0c-940d-8d7c-b3be-d8863c026996@intel.com>
-In-Reply-To: <96233c0c-940d-8d7c-b3be-d8863c026996@intel.com>
-From:   Pingfan Liu <kernelfans@gmail.com>
-Date:   Tue, 15 Jan 2019 15:06:10 +0800
-Message-ID: <CAFgQCTsV13JSH_S2kSQGeUa3K0s_n4LeGqhrHwBEW9DWeCWgcA@mail.gmail.com>
-Subject: Re: [PATCHv2 1/7] x86/mm: concentrate the code to memblock allocator enabled
-To:     Dave Hansen <dave.hansen@intel.com>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Len Brown <lenb@kernel.org>, Yinghai Lu <yinghai@kernel.org>,
-        Tejun Heo <tj@kernel.org>, Chao Fan <fanc.fnst@cn.fujitsu.com>,
-        Baoquan He <bhe@redhat.com>, Juergen Gross <jgross@suse.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Michal Hocko <mhocko@suse.com>, x86@kernel.org,
-        linux-acpi@vger.kernel.org, linux-mm@kvack.org
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <a6477022-bbc0-fc00-2c8e-75007b468d3f@lca.pw>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.27]); Tue, 15 Jan 2019 07:13:28 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 15, 2019 at 7:07 AM Dave Hansen <dave.hansen@intel.com> wrote:
->
-> On 1/10/19 9:12 PM, Pingfan Liu wrote:
-> > This patch identifies the point where memblock alloc start. It has no
-> > functional.
->
-> It has no functional ... what?  Effects?
->
-During re-organize the code, it takes me a long time to figure out why
-memblock_set_bottom_up(true) is added here, and how far can it be
-deferred. And finally, I realize that it only takes effect after
-e820__memblock_setup(), the point where memblock allocator can work.
-So I concentrate the related code, and hope this patch can classify
-this truth.
+On 15/01/19 08:04, Qian Cai wrote:
+> 
+> 
+> On 1/15/19 1:44 AM, Qian Cai wrote:
+>> compilation warning since v5.0-rc1,
+>>
+>> arch/x86/kvm/vmx/vmx.o: warning: objtool: vmx_vcpu_run.part.17()+0x3171:
+>> call without frame pointer save/setup
+>>
+>> Fixes: 453eafbe65f (KVM: VMX: Move VM-Enter + VM-Exit handling to
+>> non-inline sub-routines)
+> 
+> Oops, wrong fix. Back to square one.
+> 
 
-> > -     memblock_set_current_limit(ISA_END_ADDRESS);
-> > -     e820__memblock_setup();
-> > -
-> >       reserve_bios_regions();
-> >
-> >       if (efi_enabled(EFI_MEMMAP)) {
-> > @@ -1113,6 +1087,8 @@ void __init setup_arch(char **cmdline_p)
-> >               efi_reserve_boot_services();
-> >       }
-> >
-> > +     memblock_set_current_limit(0, ISA_END_ADDRESS, false);
-> > +     e820__memblock_setup();
->
-> It looks like you changed the arguments passed to
-> memblock_set_current_limit().  How can this even compile?  Did you mean
-> that this patch is not functional?
->
-Sorry that during rebasing, merge trivial fix by mistake. I will build
-against each patch.
+Hmm, maybe like this:
 
-Best regards,
-Pingfan
+diff --git a/arch/x86/kvm/vmx/vmenter.S b/arch/x86/kvm/vmx/vmenter.S
+index bcef2c7e9bc4..33122fa9d4bd 100644
+--- a/arch/x86/kvm/vmx/vmenter.S
++++ b/arch/x86/kvm/vmx/vmenter.S
+@@ -26,19 +26,17 @@ ENTRY(vmx_vmenter)
+ 	ret
+
+ 2:	vmlaunch
++3:
+ 	ret
+
+-3:	cmpb $0, kvm_rebooting
+-	jne 4f
+-	call kvm_spurious_fault
+-4:	ret
+-
+ 	.pushsection .fixup, "ax"
+-5:	jmp 3b
++4:	cmpb $0, kvm_rebooting
++	jne 3b
++	jmp kvm_spurious_fault
+ 	.popsection
+
+-	_ASM_EXTABLE(1b, 5b)
+-	_ASM_EXTABLE(2b, 5b)
++	_ASM_EXTABLE(1b, 4b)
++	_ASM_EXTABLE(2b, 4b)
+
+ ENDPROC(vmx_vmenter)
+
+
+Paolo
