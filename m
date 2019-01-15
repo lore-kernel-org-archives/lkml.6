@@ -2,94 +2,113 @@ Return-Path: <SRS0=RZO6=PX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C021C43612
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 19:51:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 82C17C43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 19:58:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1C78420859
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 19:51:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5859D20675
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 19:58:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389514AbfAOTvH (ORCPT
+        id S2389532AbfAOT6T (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 15 Jan 2019 14:51:07 -0500
-Received: from mout.kundenserver.de ([217.72.192.74]:57589 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728745AbfAOTvG (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Jan 2019 14:51:06 -0500
-Received: from oxbsltgw35.schlund.de ([212.227.220.134]) by
- mrelayeu.kundenserver.de (mreue107 [213.165.67.113]) with ESMTPSA (Nemesis)
- id 1MF45G-1gU2Gf1HnU-00FUB6; Tue, 15 Jan 2019 20:50:49 +0100
-Date:   Tue, 15 Jan 2019 20:50:48 +0100 (CET)
-From:   Stefan Wahren <stefan.wahren@i2se.com>
-To:     Jeremy Linton <jeremy.linton@arm.com>,
-        linux-arm-kernel@lists.infradead.org
-Cc:     mlangsdo@redhat.com, suzuki.poulose@arm.com, marc.zyngier@arm.com,
-        catalin.marinas@arm.com, julien.thierry@arm.com,
-        will.deacon@arm.com, linux-kernel@vger.kernel.org,
-        steven.price@arm.com, ykaukab@suse.de, dave.martin@arm.com,
-        shankerd@codeaurora.org
-Message-ID: <884332236.499392.1547581848222@email.ionos.de>
-In-Reply-To: <20190109235544.2992426-1-jeremy.linton@arm.com>
-References: <20190109235544.2992426-1-jeremy.linton@arm.com>
-Subject: Re: [PATCH v3 0/7] arm64: add system vulnerability sysfs entries
+        Tue, 15 Jan 2019 14:58:19 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59750 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1732125AbfAOT6S (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 Jan 2019 14:58:18 -0500
+Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id D662320656;
+        Tue, 15 Jan 2019 19:58:16 +0000 (UTC)
+Date:   Tue, 15 Jan 2019 14:58:15 -0500
+From:   Steven Rostedt <rostedt@goodmis.org>
+To:     Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-rt-users <linux-rt-users@vger.kernel.org>,
+        Petr Mladek <pmladek@suse.com>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
+Subject: Re: [PATCH RT] printk: Shortcut out of waiter spinning on
+ PREEMPT_RT
+Message-ID: <20190115145815.13713791@gandalf.local.home>
+In-Reply-To: <20190115185433.e7hmlpmjvpyqdyhc@linutronix.de>
+References: <20190115123910.2b18df54@gandalf.local.home>
+        <20190115185433.e7hmlpmjvpyqdyhc@linutronix.de>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-X-Priority: 3
-Importance: Medium
-X-Mailer: Open-Xchange Mailer v7.8.4-Rev47
-X-Originating-Client: open-xchange-appsuite
-X-Provags-ID: V03:K1:+elgm5XkOyevwG1T38e8l8G5/xrYrE/AXpRfEqSejzcD3j/tTTm
- garzisnzmfWhuxI9fmnIaajQLlzVYnxMcO0AY2FF/dKlnZWh9hutuKR7EBAd5hDw9DTCpLn
- fegPCon/vjdIEUSvcermSZENwTiBYEUuxAB5t5NyMAcfz/i33PfK1qt4Y4EkI78xYypQ+H3
- GtqHjWakuhlgJsx6ww4hg==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:b3DnGGu1+C4=:2UWRM59ehu+mczGkpaQ3gd
- YHNZRq6Ct/0hKTjTli1v+A8LPw0c30Kh95XHcwWYROUOAmnfsZ2BnZBAxLQvZExdNGs/ie1Me
- njQEdv0/0FKimYnpl038AWAUEmxJzfOp63L2myVPKKCrND208EEkpIYJ0/MRXC7bFpXP74TAb
- UljjRH/QShwgZT9/cUd3uS7T5njU50hWUDbEPGk4eMojWfsgvHDagyI1Vh/JlKO/kOpAgnZKh
- +FT3GtB7Zr1eOxso6VjbakG1jcYEEkl0ojW5qFExKFXmzYm7FfzbgA15xL57BoIdJVUMMdVaZ
- B75tK9ZrLjB5TsqTyEHPOsKGehDDTX0wDXgSbw4PQ4GAv27Mg2F5tLbMrDu9nWbyJqwjjn6Gt
- nwXs+Q3kC1kaqRk+tZkd3DY0jgjH4rEcd9E+FbdE0HyHDjsKz5Ygv8Wz35xlEZlzDrhXPkc2l
- gkHAkxukLR8/SeyFKPv09KCnScMhxLabVS8SdN7fQ2DyD/KgOOMNxnGZn11kaTVfNc6gnK596
- MIBxMPzid1S/+97Da9LyMKeZaaxFuduxvuHzG40m0RmSVEVhyTR/rQbMGr7Uilx9V+E3RuxG3
- fMiUUZ+xgaXEvBP1Lf86N7PFNJNhJ6HN2Z+oPQHD0xfIUS1BMQ6Zthx+CT/p+/XFn7/tLDew1
- l/S+yY8vn8pq37+eliX2oKIdKiAWBjZnr7nFWJtKC/om9m6YetHgNjXIQw2EaX+UbTVF/cCTM
- tI2leT43NDgQMr6FGvf4WP1XNNuV/YVgKadlfOeq/rLQyoJpLhjCXWZDA08=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Jeremy,
+On Tue, 15 Jan 2019 19:54:33 +0100
+Sebastian Andrzej Siewior <bigeasy@linutronix.de> wrote:
 
-> Jeremy Linton <jeremy.linton@arm.com> hat am 10. Januar 2019 um 00:55 geschrieben:
+> On 2019-01-15 12:39:10 [-0500], Steven Rostedt wrote:
+> > --- a/kernel/printk/printk.c
+> > +++ b/kernel/printk/printk.c
+> > @@ -1742,6 +1742,13 @@ static int console_trylock_spinning(void)
+> >  	if (console_trylock())
+> >  		return 1;
+> >  
+> > +	/*
+> > +	 * The consoles are preemptable in PREEMPT_RT, which can cause
+> > +	 * spinning to deadlock.
+> > +	 */
+> > +	if (IS_ENABLED(CONFIG_PREEMPT_RT_FULL))
+> > +		return 0;
+> > +
+> >  	printk_safe_enter_irqsave(flags);
+> >  
+> >  	raw_spin_lock(&console_owner_lock);  
+> 
+> So my ("printk: Make rt aware") patch does:
+> 
+> diff --git a/kernel/printk/printk.c b/kernel/printk/printk.c
+> index 6553508ff3889..d983c509f74a2 100644
+> --- a/kernel/printk/printk.c
+> +++ b/kernel/printk/printk.c
+> @@ -1617,6 +1617,7 @@ SYSCALL_DEFINE3(syslog, int, type, char __user *, buf, int, len)
+>         return do_syslog(type, buf, len, SYSLOG_FROM_READER);
+>  }
+>  
+> +#ifndef CONFIG_PREEMPT_RT_FULL
+>  /*
+>   * Special console_lock variants that help to reduce the risk of soft-lockups.
+>   * They allow to pass console_lock to another printk() call using a busy wait.
+> @@ -1757,6 +1758,15 @@ static int console_trylock_spinning(void)
+>         return 1;
+>  }
+>  
+> +#else
+> +
+> +static int console_trylock_spinning(void)
+> +{
+> +       return console_trylock();
+> +}
+> +
+> +#endif
+> +
+>  /*
+>   * Call the console drivers, asking them to write out
+>   * log_buf[start] to log_buf[end - 1].
 > 
 > 
-> Arm64 machines should be displaying a human readable
-> vulnerability status to speculative execution attacks in
-> /sys/devices/system/cpu/vulnerabilities 
-> 
-> This series enables that behavior by providing the expected
-> functions. Those functions expose the cpu errata and feature
-> states, as well as whether firmware is responding appropriately
-> to display the overall machine status. This means that in a
-> heterogeneous machine we will only claim the machine is mitigated
-> or safe if we are confident all booted cores are safe or
-> mitigated.
-> 
+> So it never gets into the codepath where you try to avoid spinning.
+> Right?
+>
 
-i applied this v3 series and Marc's v2 series.
+You right! Which appears to be missing from my 4.14, and I thought I
+looked for that in 4.19-rt too, but I guess I was still looking at
+4.14 :-/. OK, ignore. Sorry for the noise.
 
-Now i'm getting the following on a Raspberry Pi 3 B+ :
+Well, it wasn't a total waste. I now know what to backport to 4.14-rt
+;-)
 
-meltdown:Not affected
-spec_store_bypass:Not affected
-spectre_v1:Mitigation: __user pointer sanitization
-
-So the entries l1tf and spectre_v2 disappeared.
-
-Stefan
+-- Steve
