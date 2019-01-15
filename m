@@ -6,281 +6,131 @@ X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 28870C43444
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 04:24:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BB228C43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 04:24:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EEA4620656
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 04:24:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9371720656
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 04:24:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728171AbfAOEW0 (ORCPT
+        id S1728434AbfAOEYL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 14 Jan 2019 23:22:26 -0500
-Received: from kvm5.telegraphics.com.au ([98.124.60.144]:37330 "EHLO
+        Mon, 14 Jan 2019 23:24:11 -0500
+Received: from kvm5.telegraphics.com.au ([98.124.60.144]:37300 "EHLO
         kvm5.telegraphics.com.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727551AbfAOEWZ (ORCPT
+        with ESMTP id S1726769AbfAOEWZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 14 Jan 2019 23:22:25 -0500
 Received: by kvm5.telegraphics.com.au (Postfix, from userid 502)
-        id C4B9929E64; Mon, 14 Jan 2019 23:22:23 -0500 (EST)
+        id A011E29E61; Mon, 14 Jan 2019 23:22:23 -0500 (EST)
 To:     Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "James E.J. Bottomley" <jejb@linux.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Michael Schmitz <schmitzmic@gmail.com>
 Cc:     linux-kernel@vger.kernel.org, linux-m68k@lists.linux-m68k.org,
-        linuxppc-dev@lists.ozlabs.org
-Message-Id: <40e675256e1e3270360440c933085c48b4da38cd.1547525936.git.fthain@telegraphics.com.au>
+        linuxppc-dev@lists.ozlabs.org, linux-scsi@vger.kernel.org
+Message-Id: <c7e8b28ed106455ee3d5cfc8c2e6a2dffef01cfb.1547525936.git.fthain@telegraphics.com.au>
 In-Reply-To: <cover.1547525936.git.fthain@telegraphics.com.au>
 References: <cover.1547525936.git.fthain@telegraphics.com.au>
 From:   Finn Thain <fthain@telegraphics.com.au>
-Subject: [PATCH v9 03/22] char/nvram: Re-order functions to remove forward
- declarations and #ifdefs
+Subject: [PATCH v9 01/22] scsi/atari_scsi: Don't select CONFIG_NVRAM
 Date:   Tue, 15 Jan 2019 15:18:56 +1100
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Also give functions more sensible names: nvram_misc_* for misc device ops,
-nvram_proc_* for proc file ops and nvram_module_* for init and exit
-functions. This prevents name collisions with nvram.h helper functions
-and improves readability.
+On powerpc, setting CONFIG_NVRAM=n builds a kernel with no NVRAM support.
+Setting CONFIG_NVRAM=m enables the /dev/nvram misc device module without
+enabling NVRAM support in drivers. Setting CONFIG_NVRAM=y enables the
+misc device (built-in) and also enables NVRAM support in drivers.
 
+m68k shares the valkyriefb driver with powerpc, and since that driver uses
+NVRAM, it is affected by CONFIG_ATARI_SCSI, because of the use of
+"select NVRAM". We can avoid the "select" here, but drivers still have
+to interpret the CONFIG_NVRAM symbol consistently regardless of platform.
+
+In this patch and the subsequent fbdev driver patch, the convention is
+adopted across all relevant platforms whereby NVRAM functionality gets
+enabled in a given device driver when the nvram misc device is built-in
+or when both drivers are modules.
+
+Acked-by: Michael Schmitz <schmitzmic@gmail.com>
 Signed-off-by: Finn Thain <fthain@telegraphics.com.au>
 ---
- drivers/char/nvram.c | 167 +++++++++++++++++++------------------------
- 1 file changed, 72 insertions(+), 95 deletions(-)
+This patch temporarily disables CONFIG_NVRAM on Atari, to prevent build
+failures when bisecting the rest of this patch series. It gets enabled
+again with the introduction of CONFIG_HAVE_ARCH_NVRAM_OPS, once the
+nvram_* global functions have been moved to an ops struct.
 
-diff --git a/drivers/char/nvram.c b/drivers/char/nvram.c
-index a9d4652f9e90..c660cff9faf4 100644
---- a/drivers/char/nvram.c
-+++ b/drivers/char/nvram.c
-@@ -55,11 +55,6 @@ static int nvram_open_mode;	/* special open modes */
- #define NVRAM_WRITE		1 /* opened for writing (exclusive) */
- #define NVRAM_EXCL		2 /* opened with O_EXCL */
+Changed since v8:
+ - Replaced defined(CONFIG_NVRAM) with IS_REACHABLE(CONFIG_NVRAM) as
+suggested by James Bottomley.
+ - Changed #ifdef to if as suggested by Christophe Leroy.
+---
+ drivers/char/Kconfig      | 5 +----
+ drivers/scsi/Kconfig      | 6 +++---
+ drivers/scsi/atari_scsi.c | 2 +-
+ 3 files changed, 5 insertions(+), 8 deletions(-)
+
+diff --git a/drivers/char/Kconfig b/drivers/char/Kconfig
+index 2e2ffe7010aa..a8cac68de177 100644
+--- a/drivers/char/Kconfig
++++ b/drivers/char/Kconfig
+@@ -244,7 +244,7 @@ source "drivers/char/hw_random/Kconfig"
  
--#ifdef CONFIG_PROC_FS
--static void pc_nvram_proc_read(unsigned char *contents, struct seq_file *seq,
--			       void *offset);
--#endif
--
- /*
-  * These functions are provided to be called internally or by other parts of
-  * the kernel. It's up to the caller to ensure correct checksum before reading
-@@ -171,14 +166,14 @@ void nvram_set_checksum(void)
-  * The are the file operation function for user access to /dev/nvram
-  */
+ config NVRAM
+ 	tristate "/dev/nvram support"
+-	depends on ATARI || X86 || GENERIC_NVRAM
++	depends on X86 || GENERIC_NVRAM
+ 	---help---
+ 	  If you say Y here and create a character special file /dev/nvram
+ 	  with major number 10 and minor number 144 using mknod ("man mknod"),
+@@ -262,9 +262,6 @@ config NVRAM
+ 	  should NEVER idly tamper with it. See Ralf Brown's interrupt list
+ 	  for a guide to the use of CMOS bytes by your BIOS.
  
--static loff_t nvram_llseek(struct file *file, loff_t offset, int origin)
-+static loff_t nvram_misc_llseek(struct file *file, loff_t offset, int origin)
- {
- 	return generic_file_llseek_size(file, offset, origin, MAX_LFS_FILESIZE,
- 					NVRAM_BYTES);
- }
+-	  On Atari machines, /dev/nvram is always configured and does not need
+-	  to be selected.
+-
+ 	  To compile this driver as a module, choose M here: the
+ 	  module will be called nvram.
  
--static ssize_t nvram_read(struct file *file, char __user *buf,
--						size_t count, loff_t *ppos)
-+static ssize_t nvram_misc_read(struct file *file, char __user *buf,
-+			       size_t count, loff_t *ppos)
- {
- 	unsigned char contents[NVRAM_BYTES];
- 	unsigned i = *ppos;
-@@ -206,8 +201,8 @@ static ssize_t nvram_read(struct file *file, char __user *buf,
- 	return -EIO;
- }
+diff --git a/drivers/scsi/Kconfig b/drivers/scsi/Kconfig
+index f38882f6f37d..8f9d9e9fa695 100644
+--- a/drivers/scsi/Kconfig
++++ b/drivers/scsi/Kconfig
+@@ -1369,14 +1369,14 @@ config ATARI_SCSI
+ 	tristate "Atari native SCSI support"
+ 	depends on ATARI && SCSI
+ 	select SCSI_SPI_ATTRS
+-	select NVRAM
+ 	---help---
+ 	  If you have an Atari with built-in NCR5380 SCSI controller (TT,
+ 	  Falcon, ...) say Y to get it supported. Of course also, if you have
+ 	  a compatible SCSI controller (e.g. for Medusa).
  
--static ssize_t nvram_write(struct file *file, const char __user *buf,
--						size_t count, loff_t *ppos)
-+static ssize_t nvram_misc_write(struct file *file, const char __user *buf,
-+				size_t count, loff_t *ppos)
- {
- 	unsigned char contents[NVRAM_BYTES];
- 	unsigned i = *ppos;
-@@ -245,8 +240,8 @@ static ssize_t nvram_write(struct file *file, const char __user *buf,
- 	return -EIO;
- }
+-	  To compile this driver as a module, choose M here: the
+-	  module will be called atari_scsi.
++	  To compile this driver as a module, choose M here: the module will
++	  be called atari_scsi. If you also enable NVRAM support, the SCSI
++	  host's ID is taken from the setting in TT RTC NVRAM.
  
--static long nvram_ioctl(struct file *file, unsigned int cmd,
--			unsigned long arg)
-+static long nvram_misc_ioctl(struct file *file, unsigned int cmd,
-+			     unsigned long arg)
- {
- 	int i;
+ 	  This driver supports both styles of NCR integration into the
+ 	  system: the TT style (separate DMA), and the Falcon style (via
+diff --git a/drivers/scsi/atari_scsi.c b/drivers/scsi/atari_scsi.c
+index a503dc50c4f8..78b43200c99e 100644
+--- a/drivers/scsi/atari_scsi.c
++++ b/drivers/scsi/atari_scsi.c
+@@ -757,7 +757,7 @@ static int __init atari_scsi_probe(struct platform_device *pdev)
  
-@@ -286,7 +281,7 @@ static long nvram_ioctl(struct file *file, unsigned int cmd,
- 	}
- }
- 
--static int nvram_open(struct inode *inode, struct file *file)
-+static int nvram_misc_open(struct inode *inode, struct file *file)
- {
- 	spin_lock(&nvram_state_lock);
- 
-@@ -308,7 +303,7 @@ static int nvram_open(struct inode *inode, struct file *file)
- 	return 0;
- }
- 
--static int nvram_release(struct inode *inode, struct file *file)
-+static int nvram_misc_release(struct inode *inode, struct file *file)
- {
- 	spin_lock(&nvram_state_lock);
- 
-@@ -325,87 +320,6 @@ static int nvram_release(struct inode *inode, struct file *file)
- 	return 0;
- }
- 
--#ifndef CONFIG_PROC_FS
--static int nvram_add_proc_fs(void)
--{
--	return 0;
--}
--
--#else
--
--static int nvram_proc_read(struct seq_file *seq, void *offset)
--{
--	unsigned char contents[NVRAM_BYTES];
--	int i = 0;
--
--	spin_lock_irq(&rtc_lock);
--	for (i = 0; i < NVRAM_BYTES; ++i)
--		contents[i] = __nvram_read_byte(i);
--	spin_unlock_irq(&rtc_lock);
--
--	pc_nvram_proc_read(contents, seq, offset);
--
--	return 0;
--}
--
--static int nvram_add_proc_fs(void)
--{
--	if (!proc_create_single("driver/nvram", 0, NULL, nvram_proc_read))
--		return -ENOMEM;
--	return 0;
--}
--
--#endif /* CONFIG_PROC_FS */
--
--static const struct file_operations nvram_fops = {
--	.owner		= THIS_MODULE,
--	.llseek		= nvram_llseek,
--	.read		= nvram_read,
--	.write		= nvram_write,
--	.unlocked_ioctl	= nvram_ioctl,
--	.open		= nvram_open,
--	.release	= nvram_release,
--};
--
--static struct miscdevice nvram_dev = {
--	NVRAM_MINOR,
--	"nvram",
--	&nvram_fops
--};
--
--static int __init nvram_init(void)
--{
--	int ret;
--
--	ret = misc_register(&nvram_dev);
--	if (ret) {
--		printk(KERN_ERR "nvram: can't misc_register on minor=%d\n",
--		    NVRAM_MINOR);
--		goto out;
--	}
--	ret = nvram_add_proc_fs();
--	if (ret) {
--		printk(KERN_ERR "nvram: can't create /proc/driver/nvram\n");
--		goto outmisc;
--	}
--	ret = 0;
--	printk(KERN_INFO "Non-volatile memory driver v" NVRAM_VERSION "\n");
--out:
--	return ret;
--outmisc:
--	misc_deregister(&nvram_dev);
--	goto out;
--}
--
--static void __exit nvram_cleanup_module(void)
--{
--	remove_proc_entry("driver/nvram", NULL);
--	misc_deregister(&nvram_dev);
--}
--
--module_init(nvram_init);
--module_exit(nvram_cleanup_module);
--
- #ifdef CONFIG_PROC_FS
- 
- static const char * const floppy_types[] = {
-@@ -483,7 +397,70 @@ static void pc_nvram_proc_read(unsigned char *nvram, struct seq_file *seq,
- 	return;
- }
- 
-+static int nvram_proc_read(struct seq_file *seq, void *offset)
-+{
-+	unsigned char contents[NVRAM_BYTES];
-+	int i = 0;
-+
-+	spin_lock_irq(&rtc_lock);
-+	for (i = 0; i < NVRAM_BYTES; ++i)
-+		contents[i] = __nvram_read_byte(i);
-+	spin_unlock_irq(&rtc_lock);
-+
-+	pc_nvram_proc_read(contents, seq, offset);
-+
-+	return 0;
-+}
- #endif /* CONFIG_PROC_FS */
- 
-+static const struct file_operations nvram_misc_fops = {
-+	.owner		= THIS_MODULE,
-+	.llseek		= nvram_misc_llseek,
-+	.read		= nvram_misc_read,
-+	.write		= nvram_misc_write,
-+	.unlocked_ioctl	= nvram_misc_ioctl,
-+	.open		= nvram_misc_open,
-+	.release	= nvram_misc_release,
-+};
-+
-+static struct miscdevice nvram_misc = {
-+	NVRAM_MINOR,
-+	"nvram",
-+	&nvram_misc_fops,
-+};
-+
-+static int __init nvram_module_init(void)
-+{
-+	int ret;
-+
-+	ret = misc_register(&nvram_misc);
-+	if (ret) {
-+		pr_err("nvram: can't misc_register on minor=%d\n", NVRAM_MINOR);
-+		return ret;
-+	}
-+
-+#ifdef CONFIG_PROC_FS
-+	if (!proc_create_single("driver/nvram", 0, NULL, nvram_proc_read)) {
-+		pr_err("nvram: can't create /proc/driver/nvram\n");
-+		misc_deregister(&nvram_misc);
-+		return -ENOMEM;
-+	}
-+#endif
-+
-+	pr_info("Non-volatile memory driver v" NVRAM_VERSION "\n");
-+	return 0;
-+}
-+
-+static void __exit nvram_module_exit(void)
-+{
-+#ifdef CONFIG_PROC_FS
-+	remove_proc_entry("driver/nvram", NULL);
-+#endif
-+	misc_deregister(&nvram_misc);
-+}
-+
-+module_init(nvram_module_init);
-+module_exit(nvram_module_exit);
-+
- MODULE_LICENSE("GPL");
- MODULE_ALIAS_MISCDEV(NVRAM_MINOR);
+ 	if (setup_hostid >= 0) {
+ 		atari_scsi_template.this_id = setup_hostid & 7;
+-	} else {
++	} else if (IS_REACHABLE(CONFIG_NVRAM)) {
+ 		/* Test if a host id is set in the NVRam */
+ 		if (ATARIHW_PRESENT(TT_CLK) && nvram_check_checksum()) {
+ 			unsigned char b = nvram_read_byte(16);
 -- 
 2.19.2
 
