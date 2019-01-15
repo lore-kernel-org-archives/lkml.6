@@ -2,153 +2,76 @@ Return-Path: <SRS0=RZO6=PX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C128FC43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 13:32:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AA390C43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 13:32:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 89A4720656
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 13:32:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 639CB20656
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 13:32:51 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="nKYva7pi"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729735AbfAONcE (ORCPT
+        id S1729746AbfAONct (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 15 Jan 2019 08:32:04 -0500
-Received: from szxga05-in.huawei.com ([45.249.212.191]:17143 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726886AbfAONcD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Jan 2019 08:32:03 -0500
-Received: from DGGEMS410-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id 7AC7F12AFB32290756AA;
-        Tue, 15 Jan 2019 21:32:00 +0800 (CST)
-Received: from localhost (10.202.226.61) by DGGEMS410-HUB.china.huawei.com
- (10.3.19.210) with Microsoft SMTP Server id 14.3.408.0; Tue, 15 Jan 2019
- 21:31:57 +0800
-Date:   Tue, 15 Jan 2019 13:31:42 +0000
-From:   Jonathan Cameron <jonathan.cameron@huawei.com>
-To:     Lu Baolu <baolu.lu@linux.intel.com>
-CC:     Joerg Roedel <joro@8bytes.org>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        Kirti Wankhede <kwankhede@nvidia.com>, <kevin.tian@intel.com>,
-        <ashok.raj@intel.com>, <tiwei.bie@intel.com>,
-        Jean-Philippe Brucker <jean-philippe.brucker@arm.com>,
-        <sanjay.k.kumar@intel.com>, <iommu@lists.linux-foundation.org>,
-        <linux-kernel@vger.kernel.org>, <Zeng@mail.linuxfoundation.org>,
-        <yi.y.sun@intel.com>, <jacob.jun.pan@intel.com>,
-        <kvm@vger.kernel.org>
-Subject: Re: [PATCH v5 4/8] iommu/vt-d: Aux-domain specific domain
- attach/detach
-Message-ID: <20190115133142.0000744c@huawei.com>
-In-Reply-To: <cf37ed74-81ea-9708-8d99-5bc3b64b1f23@linux.intel.com>
-References: <20190110030027.31447-1-baolu.lu@linux.intel.com>
-        <20190110030027.31447-5-baolu.lu@linux.intel.com>
-        <20190114122603.00001450@huawei.com>
-        <cf37ed74-81ea-9708-8d99-5bc3b64b1f23@linux.intel.com>
-Organization: Huawei
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; i686-w64-mingw32)
+        Tue, 15 Jan 2019 08:32:49 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:57764 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726886AbfAONct (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 Jan 2019 08:32:49 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=rNYZJdstk0VJsnEDcjmMM67KZsaGttnUKpGq+U6tqNc=; b=nKYva7pi8/U4bC413mckuhm15
+        BKNAoFG4B2md10wmP+xj81K5kkGGBE9dk7R5lU3iQ8kuGWlbgr9KWFc7Q3RsxU1y6CSNjjAUp4H9s
+        UOPgTmFJEsx2FADHkxMgD6ev9FWIbL6vhVC32nvjnZ6EyRWkX2z/W8lH8DrN56rHLkd/TllFJMFIg
+        joFjHbcYfucQBenQOVnHHDJFY/scoYVHZBBdirXkqCjoqATs+aDfEnIRUbKNNPpbTg5r9juPbNHBJ
+        3db1yZfyKGW6KZtAIGzIutLY05vH+bDfG3bur9vZhrpuJJtlP4flqfoHY8P5wqSydahiGoIyIqj1j
+        moymhvZLQ==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gjOpf-0001Pw-Lb; Tue, 15 Jan 2019 13:32:43 +0000
+Date:   Tue, 15 Jan 2019 05:32:43 -0800
+From:   Christoph Hellwig <hch@infradead.org>
+To:     Rene Schickbauer <cavac@cavac.at>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        "Hutter, Tony" <hutter2@llnl.gov>,
+        Marc Dionne <marc.c.dionne@gmail.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "x86@kernel.org" <x86@kernel.org>
+Subject: Re: x86/fpu: Don't export __kernel_fpu_{begin,end}()
+Message-ID: <20190115133243.GB31202@infradead.org>
+References: <git-mailbomb-linux-master-12209993e98c5fa1855c467f22a24e3d5b8be205@kernel.org>
+ <CAB9dFdsZb-sZixeOzrt8F50h1pnUK2W2Cxx8+xjhgd0=6xs7iw@mail.gmail.com>
+ <20190109111951.5zvnj7ls6jv56p2u@linutronix.de>
+ <20190109165235.GA8151@kroah.com>
+ <20190109170935.e6b6rwzpk6dlruu4@linutronix.de>
+ <20190110131132.GC20217@kroah.com>
+ <ba74ed88-06d0-5063-799f-c9c6ddbc7da0@llnl.gov>
+ <20190110180752.f4cnunadzzkev24m@linutronix.de>
+ <20190110182413.GA6932@kroah.com>
+ <46a97264-9586-ef67-73a0-9af1c4d34f25@cavac.at>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.202.226.61]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <46a97264-9586-ef67-73a0-9af1c4d34f25@cavac.at>
+User-Agent: Mutt/1.9.2 (2017-12-15)
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 15 Jan 2019 10:10:21 +0800
-Lu Baolu <baolu.lu@linux.intel.com> wrote:
+Hi Rene,
 
-> Hi,
-> 
-> On 1/14/19 8:26 PM, Jonathan Cameron wrote:
-> > On Thu, 10 Jan 2019 11:00:23 +0800
-> > Lu Baolu <baolu.lu@linux.intel.com> wrote:
-> >   
-> >> When multiple domains per device has been enabled by the
-> >> device driver, the device will tag the default PASID for
-> >> the domain to all DMA traffics out of the subset of this
-> >> device; and the IOMMU should translate the DMA requests
-> >> in PASID granularity.
-> >>
-> >> This adds the intel_iommu_aux_attach/detach_device() ops
-> >> to support managing PASID granular translation structures
-> >> when the device driver has enabled multiple domains per
-> >> device.
-> >>
-> >> Cc: Ashok Raj <ashok.raj@intel.com>
-> >> Cc: Jacob Pan <jacob.jun.pan@linux.intel.com>
-> >> Cc: Kevin Tian <kevin.tian@intel.com>
-> >> Signed-off-by: Sanjay Kumar <sanjay.k.kumar@intel.com>
-> >> Signed-off-by: Liu Yi L <yi.l.liu@intel.com>
-> >> Signed-off-by: Lu Baolu <baolu.lu@linux.intel.com>  
-> > 
-> > The following is probably a rather naive review given I don't know
-> > the driver or hardware well at all.  Still, it seems like things
-> > are a lot less balanced than I'd expect and isn't totally obvious
-> > to me why that is.  
-> 
-> Thank you!
+please switch to FreeBSD instead of advocating to violate the copyright
+and licensing rule on my and others work.
 
-You are welcome.
-
-...
-
-> >> +/*
-> >> + * Check whether a @domain could be attached to the @dev through the
-> >> + * aux-domain attach/detach APIs.
-> >> + */
-> >> +static inline bool
-> >> +is_aux_domain(struct device *dev, struct iommu_domain *domain)  
-> > 
-> > I'm finding the distinction between an aux domain capability on
-> > a given device and whether one is actually in use to be obscured
-> > slightly in the function naming.
-> > 
-> > This one for example is actually checking if we have a domain
-> > that is capable of being enabled for aux domain use, but not
-> > yet actually in that mode?
-> > 
-> > Mind you I'm not sure I have a better answer for the naming.
-> > can_aux_domain_be_enabled?  is_unattached_aux_domain?
-> > 
-> >   
-> 
-> device aux mode vs. normal mode
-> ===============================
-> 
-> When we talk about the auxiliary mode (simply aux-mode), it means "the
-> device works in aux-mode or normal mode". "normal mode" means that the
-> device (and it's corresponding IOMMU) supports only RID (PCI Request ID)
-> based DMA translation; while, aux-mode means the the device (and it's
-> IOMMU) supports fine-grained DMA translation, like PASID based DMA
-> translation with Intel VT-d scalable mode.
-> 
-> We are adding below APIs to switch a device between these two modes:
-> 
-> int iommu_dev_enable/disable_feature(dev, IOMMU_DEV_FEAT_AUX)
-> 
-> And this API (still under discussion) to check which mode the device is
-> working in:
-> 
-> bool iommu_dev_has_feature(dev, IOMMU_DEV_FEAT_AUX)
-> 
-> aux-domain
-> ==========
-> 
-> If a device is working in aux-mode and we are going to attach a domain
-> to this device, we say "this domain will be attached to the device in
-> aux mode", and simply "aux domain". So a domain is "normal" when it is
-> going to attach to a device in normal mode; and is "aux-domain" when it
-> is going to attach to a device in aux mode.
-
-Hmm.. OK I guess.  It still feels like there is more need to refer to
-the docs than there should be.  Still, your code and I may well never
-read it again so I don't mind :)
-
-> 
-> >   
-> >> +{
-
+Thanks you!
