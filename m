@@ -6,37 +6,37 @@ X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 824F1C43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 13:51:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9ECD2C43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 13:52:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 54C0820651
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 13:51:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 66BB120651
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 13:52:36 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="V9Ty2nEl"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="SE6sE3Jm"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728891AbfAONvg (ORCPT
+        id S1729203AbfAONwf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 15 Jan 2019 08:51:36 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:33118 "EHLO
+        Tue, 15 Jan 2019 08:52:35 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:33316 "EHLO
         bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728157AbfAONvg (ORCPT
+        with ESMTP id S1728157AbfAONwe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Jan 2019 08:51:36 -0500
+        Tue, 15 Jan 2019 08:52:34 -0500
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
         :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
         List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=pTszzpsysWlogqpVbwRZ0MRw3aAaKw13X2T4YolhPDg=; b=V9Ty2nEleew/4tK7bK7fr10at
-        Nf5t1bbwsY0iL4AOl0qeHGPZYH6UooBo0BsEKwYB5Yb8HYZVRxal+GD/tdnkpV2VKI48u4vyOyN48
-        olGiS1ob/4JP+vCA9+AxPn5Gk1AzFYIXhOsg7gRua75yqYrnT935Uuj8XZYFZpQ+Fkmk6M6nrARYL
-        0TQuk8t2lNYXqKnhbc7m8mLqMErurCXqmGAyobsKFYk/RDCNeIvcvsRb/YJV7KKG+H3rvzt/+uCGM
-        c7FG+g94p3whueVNm1msf4JXUb7D91CnnTBX7ZMOTxIK+jNcOoV5581vdOH1FKzpfvk6c6Cgq4Ajd
-        tx+lwrpfg==;
+         bh=zcMRAuiMYv+98ytEt1DsxejZ9FTrmzgcBdjl2i2EjyQ=; b=SE6sE3JmQJmxcJy47MAEwbalG
+        6f4ZR3K7RDxhpBpV+TzFYRceTyqPNpc80GD8Cg98feth/KhQwHr6usbT6k6DNhUiFmm91mUstB5EV
+        Tp3oF86pFPg71EBhYMWJAU4OGXMH1VRMlNmZR6N/J5KlsVLddMAQ8OdEyEZbL7IZBIqM57O/vVDhs
+        jJLk3bxPU31LaoFkEYK5dVguxX97cUemJamNPNj2kNuaCTC+9l7ypykEYI9hLOLIfx2aOxLz0eeb9
+        x0h9jzmgQ8+n6/JLRPEW6ZmprOaIs1Iag8rEyxxm2LbvM1uLQdGU3xvBeghFVpg3MsS8Sf5JHbDms
+        rXaoT6DzQ==;
 Received: from hch by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gjP7l-0000mc-Gl; Tue, 15 Jan 2019 13:51:25 +0000
-Date:   Tue, 15 Jan 2019 05:51:25 -0800
+        id 1gjP8n-00011l-5e; Tue, 15 Jan 2019 13:52:29 +0000
+Date:   Tue, 15 Jan 2019 05:52:29 -0800
 From:   Christoph Hellwig <hch@infradead.org>
 To:     Atish Patra <atish.patra@wdc.com>
 Cc:     linux-riscv@lists.infradead.org,
@@ -54,14 +54,14 @@ Cc:     linux-riscv@lists.infradead.org,
         Marc Zyngier <marc.zyngier@arm.com>,
         Thomas Gleixner <tglx@linutronix.de>,
         Zong Li <zongbox@gmail.com>
-Subject: Re: [PATCH v2 1/8] RISC-V: Do not wait indefinitely in __cpu_up
-Message-ID: <20190115135125.GA28946@infradead.org>
+Subject: Re: [PATCH v2 2/8] RISC-V: Move cpuid to hartid mapping to SMP.
+Message-ID: <20190115135229.GB28946@infradead.org>
 References: <1546940318-9752-1-git-send-email-atish.patra@wdc.com>
- <1546940318-9752-2-git-send-email-atish.patra@wdc.com>
+ <1546940318-9752-3-git-send-email-atish.patra@wdc.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1546940318-9752-2-git-send-email-atish.patra@wdc.com>
+In-Reply-To: <1546940318-9752-3-git-send-email-atish.patra@wdc.com>
 User-Agent: Mutt/1.9.2 (2017-12-15)
 X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-kernel-owner@vger.kernel.org
@@ -69,33 +69,17 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
->  
->  void *__cpu_up_stack_pointer[NR_CPUS];
->  void *__cpu_up_task_pointer[NR_CPUS];
-> +static DECLARE_COMPLETION(cpu_running);
->  
->  void __init smp_prepare_boot_cpu(void)
->  {
-> @@ -81,6 +82,7 @@ void __init setup_smp(void)
->  
->  int __cpu_up(unsigned int cpu, struct task_struct *tidle)
->  {
-> +	int ret = 0;
->  	int hartid = cpuid_to_hartid_map(cpu);
->  	tidle->thread_info.cpu = cpu;
->  
-> @@ -96,10 +98,15 @@ int __cpu_up(unsigned int cpu, struct task_struct *tidle)
->  		  task_stack_page(tidle) + THREAD_SIZE);
->  	WRITE_ONCE(__cpu_up_task_pointer[hartid], tidle);
->  
-> -	while (!cpu_online(cpu))
-> -		cpu_relax();
-> +	wait_for_completion_timeout(&cpu_running,
-> +					    msecs_to_jiffies(1000));
+> +	if (hartid == boot_cpu_hartid)
+> +		return 0;
+> +	else
+> +		return -1;
 
-Having a global completion here worries me.  I bet we have some higher
-level serialization, but can we comment or even better lockdep assert on
-that?
+No need for an else after a return statement.
 
-Also please use up your available lines (72 in commit logs, 80 in source
-files) instead of adding spurious line wraps.
+> +}
+> +static inline unsigned long cpuid_to_hartid_map(int cpu)
+> +{
+> +
+> +	return boot_cpu_hartid;
+
+spurious empty line above.
