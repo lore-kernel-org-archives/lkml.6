@@ -7,50 +7,50 @@ X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3ACF3C43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 16:53:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 09298C43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 16:53:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0B11920645
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 16:53:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CCE6120651
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 16:53:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547571210;
-	bh=SSaqSRbhIu0GJo1FlYZ3TwNMahQ05dCv8d223HPREAM=;
+	s=default; t=1547571213;
+	bh=bDgQ7zpokYDR9C5vsRqjds4fxCqtYM3+AAY7i2MTjws=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=ljbVk7tXRKCEbJK5jBydpLVpMXAC/RakxrKCF5L0jQ8EmK+ZvifDUtvHAOEpFBeGj
-	 RM2eEqds1ctQ8bcaeML1tFaRZHDxFij1gCt+uOQKkXFuiVbD2kXRTtj+17omuf3Tb1
-	 aAXL4ocuRWBgvyg5orcA/yfLA7lKM5ByJPr/kNb0=
+	b=X8J/qkEeP49VpLEFwhvpHpZyB2f5kbZ5f6uN58d0YkFSsfuW98sO8mvU8Zi8CkJOU
+	 v+lJ000TBef1VehlJ2c96AabBZZ25+h9K4g2hvD1QyLW3UxOlUuY55Zt60D5IBC0Hs
+	 sRzuRzU6UCKuH/K5/P1st3pX0S83F96b2fUOGQjg=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387495AbfAOQx2 (ORCPT
+        id S1733276AbfAOQng (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 15 Jan 2019 11:53:28 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33132 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1733272AbfAOQng (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 15 Jan 2019 11:43:36 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33070 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1733247AbfAOQnd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 Jan 2019 11:43:33 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C1EDC20675;
-        Tue, 15 Jan 2019 16:43:34 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 223982054F;
+        Tue, 15 Jan 2019 16:43:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547570615;
-        bh=SSaqSRbhIu0GJo1FlYZ3TwNMahQ05dCv8d223HPREAM=;
+        s=default; t=1547570612;
+        bh=bDgQ7zpokYDR9C5vsRqjds4fxCqtYM3+AAY7i2MTjws=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=x+0GEGMMWYZGexqF2V3gOuSytJznFAN75FuE1/dPP9TLWlsgdgiAgK5ji5lNEPb/8
-         0xmvqc9A3Hizt2KGRcmlqkrNdAyQjLaMed5hIxAHmRdO+H3tZG8Pjb0gjrFkdXZsLB
-         n340ljl2WOsceTdbbuje79Dcfsv1xxq8wpeT9lS4=
+        b=NYTJHJFwy/NFdzZk7u02QnrvajX4TBWKKtdWvAfz6S6ibb4YifIpDQmJns61+ce8Z
+         ujS7eWq1GAfYC1RqsIjzS/zjZVpKNrsqf2ybFru3SbBx749aXWOzCnzXC9bl4dR69t
+         nZloJlQ3EdPU/B95RUr0HnV4FwVLulx0cQHbzvRM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Breno Leitao <leitao@debian.org>,
-        =?UTF-8?q?Michal=20Such=C3=A1nek?= <msuchanek@suse.de>,
-        Michael Ellerman <mpe@ellerman.id.au>
-Subject: [PATCH 4.20 01/57] powerpc/tm: Unset MSR[TS] if not recheckpointing
-Date:   Tue, 15 Jan 2019 17:35:42 +0100
-Message-Id: <20190115154910.811528107@linuxfoundation.org>
+        stable@vger.kernel.org, Lyude Paul <lyude@redhat.com>,
+        Harry Wentland <harry.wentland@amd.com>,
+        Jerry Zuo <Jerry.Zuo@amd.com>
+Subject: [PATCH 4.19 35/50] drm/amdgpu: Dont ignore rc from drm_dp_mst_topology_mgr_resume()
+Date:   Tue, 15 Jan 2019 17:36:11 +0100
+Message-Id: <20190115154911.950977842@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190115154910.734892368@linuxfoundation.org>
-References: <20190115154910.734892368@linuxfoundation.org>
+In-Reply-To: <20190115154909.933241945@linuxfoundation.org>
+References: <20190115154909.933241945@linuxfoundation.org>
 User-Agent: quilt/0.65
 X-stable: review
 X-Patchwork-Hint: ignore
@@ -62,126 +62,88 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.20-stable review patch.  If anyone has any objections, please let me know.
+4.19-stable review patch.  If anyone has any objections, please let me know.
 
 ------------------
 
-From: Breno Leitao <leitao@debian.org>
+From: Lyude Paul <lyude@redhat.com>
 
-commit 6f5b9f018f4c7686fd944d920209d1382d320e4e upstream.
+commit fe7553bef8d676d1d8b40666868b33ec39b9df5d upstream.
 
-There is a TM Bad Thing bug that can be caused when you return from a
-signal context in a suspended transaction but with ucontext MSR[TS] unset.
+drm_dp_mst_topology_mgr_resume() returns whether or not it managed to
+find the topology in question after a suspend resume cycle, and the
+driver is supposed to check this value and disable MST accordingly if
+it's gone-in addition to sending a hotplug in order to notify userspace
+that something changed during suspend.
 
-This forces regs->msr[TS] to be set at syscall entrance (since the CPU
-state is transactional). It also calls treclaim() to flush the transaction
-state, which is done based on the live (mfmsr) MSR state.
+Currently, amdgpu just makes the mistake of ignoring the return code
+from drm_dp_mst_topology_mgr_resume() which means that if a topology was
+removed in suspend, amdgpu never notices and assumes it's still
+connected which leads to all sorts of problems.
 
-Since user context MSR[TS] is not set, then restore_tm_sigcontexts() is not
-called, thus, not executing recheckpoint, keeping the CPU state as not
-transactional. When calling rfid, SRR1 will have MSR[TS] set, but the CPU
-state is non transactional, causing the TM Bad Thing with the following
-stack:
+So, fix this by actually checking the rc from
+drm_dp_mst_topology_mgr_resume(). Also, reformat the rest of the
+function while we're at it to fix the over-indenting.
 
-	[   33.862316] Bad kernel stack pointer 3fffd9dce3e0 at c00000000000c47c
-	cpu 0x8: Vector: 700 (Program Check) at [c00000003ff7fd40]
-	    pc: c00000000000c47c: fast_exception_return+0xac/0xb4
-	    lr: 00003fff865f442c
-	    sp: 3fffd9dce3e0
-	   msr: 8000000102a03031
-	  current = 0xc00000041f68b700
-	  paca    = 0xc00000000fb84800   softe: 0        irq_happened: 0x01
-	    pid   = 1721, comm = tm-signal-sigre
-	Linux version 4.9.0-3-powerpc64le (debian-kernel@lists.debian.org) (gcc version 6.3.0 20170516 (Debian 6.3.0-18) ) #1 SMP Debian 4.9.30-2+deb9u2 (2017-06-26)
-	WARNING: exception is not recoverable, can't continue
-
-The same problem happens on 32-bits signal handler, and the fix is very
-similar, if tm_recheckpoint() is not executed, then regs->msr[TS] should be
-zeroed.
-
-This patch also fixes a sparse warning related to lack of indentation when
-CONFIG_PPC_TRANSACTIONAL_MEM is set.
-
-Fixes: 2b0a576d15e0e ("powerpc: Add new transactional memory state to the signal context")
-CC: Stable <stable@vger.kernel.org>	# 3.10+
-Signed-off-by: Breno Leitao <leitao@debian.org>
-Tested-by: Michal Suchánek <msuchanek@suse.de>
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+Signed-off-by: Lyude Paul <lyude@redhat.com>
+Reviewed-by: Harry Wentland <harry.wentland@amd.com>
+Cc: Jerry Zuo <Jerry.Zuo@amd.com>
+Cc: <stable@vger.kernel.org> # v4.15+
+Link: https://patchwork.freedesktop.org/patch/msgid/20190108211133.32564-2-lyude@redhat.com
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/powerpc/kernel/signal_32.c |   18 +++++++++++++-----
- arch/powerpc/kernel/signal_64.c |   20 ++++++++++++++++----
- 2 files changed, 29 insertions(+), 9 deletions(-)
+ drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c |   34 +++++++++++++++-------
+ 1 file changed, 24 insertions(+), 10 deletions(-)
 
---- a/arch/powerpc/kernel/signal_32.c
-+++ b/arch/powerpc/kernel/signal_32.c
-@@ -1158,11 +1158,11 @@ SYSCALL_DEFINE0(rt_sigreturn)
+--- a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
++++ b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
+@@ -565,22 +565,36 @@ static void s3_handle_mst(struct drm_dev
  {
- 	struct rt_sigframe __user *rt_sf;
- 	struct pt_regs *regs = current_pt_regs();
-+	int tm_restore = 0;
- #ifdef CONFIG_PPC_TRANSACTIONAL_MEM
- 	struct ucontext __user *uc_transact;
- 	unsigned long msr_hi;
- 	unsigned long tmp;
--	int tm_restore = 0;
- #endif
- 	/* Always make any pending restarted system calls return -EINTR */
- 	current->restart_block.fn = do_no_restart_syscall;
-@@ -1210,11 +1210,19 @@ SYSCALL_DEFINE0(rt_sigreturn)
- 				goto bad;
- 		}
- 	}
--	if (!tm_restore)
--		/* Fall through, for non-TM restore */
-+	if (!tm_restore) {
-+		/*
-+		 * Unset regs->msr because ucontext MSR TS is not
-+		 * set, and recheckpoint was not called. This avoid
-+		 * hitting a TM Bad thing at RFID
-+		 */
-+		regs->msr &= ~MSR_TS_MASK;
-+	}
-+	/* Fall through, for non-TM restore */
- #endif
--	if (do_setcontext(&rt_sf->uc, regs, 1))
--		goto bad;
-+	if (!tm_restore)
-+		if (do_setcontext(&rt_sf->uc, regs, 1))
-+			goto bad;
+ 	struct amdgpu_dm_connector *aconnector;
+ 	struct drm_connector *connector;
++	struct drm_dp_mst_topology_mgr *mgr;
++	int ret;
++	bool need_hotplug = false;
  
- 	/*
- 	 * It's not clear whether or why it is desirable to save the
---- a/arch/powerpc/kernel/signal_64.c
-+++ b/arch/powerpc/kernel/signal_64.c
-@@ -756,11 +756,23 @@ SYSCALL_DEFINE0(rt_sigreturn)
- 					   &uc_transact->uc_mcontext))
- 			goto badframe;
- 	}
--	else
--	/* Fall through, for non-TM restore */
- #endif
--	if (restore_sigcontext(current, NULL, 1, &uc->uc_mcontext))
--		goto badframe;
-+	/* Fall through, for non-TM restore */
-+	if (!MSR_TM_ACTIVE(msr)) {
-+		/*
-+		 * Unset MSR[TS] on the thread regs since MSR from user
-+		 * context does not have MSR active, and recheckpoint was
-+		 * not called since restore_tm_sigcontexts() was not called
-+		 * also.
-+		 *
-+		 * If not unsetting it, the code can RFID to userspace with
-+		 * MSR[TS] set, but without CPU in the proper state,
-+		 * causing a TM bad thing.
-+		 */
-+		current->thread.regs->msr &= ~MSR_TS_MASK;
-+		if (restore_sigcontext(current, NULL, 1, &uc->uc_mcontext))
-+			goto badframe;
-+	}
+ 	drm_modeset_lock(&dev->mode_config.connection_mutex, NULL);
  
- 	if (restore_altstack(&uc->uc_stack))
- 		goto badframe;
+-	list_for_each_entry(connector, &dev->mode_config.connector_list, head) {
+-		   aconnector = to_amdgpu_dm_connector(connector);
+-		   if (aconnector->dc_link->type == dc_connection_mst_branch &&
+-				   !aconnector->mst_port) {
+-
+-			   if (suspend)
+-				   drm_dp_mst_topology_mgr_suspend(&aconnector->mst_mgr);
+-			   else
+-				   drm_dp_mst_topology_mgr_resume(&aconnector->mst_mgr);
+-		   }
++	list_for_each_entry(connector, &dev->mode_config.connector_list,
++			    head) {
++		aconnector = to_amdgpu_dm_connector(connector);
++		if (aconnector->dc_link->type != dc_connection_mst_branch ||
++		    aconnector->mst_port)
++			continue;
++
++		mgr = &aconnector->mst_mgr;
++
++		if (suspend) {
++			drm_dp_mst_topology_mgr_suspend(mgr);
++		} else {
++			ret = drm_dp_mst_topology_mgr_resume(mgr);
++			if (ret < 0) {
++				drm_dp_mst_topology_mgr_set_mst(mgr, false);
++				need_hotplug = true;
++			}
++		}
+ 	}
+ 
+ 	drm_modeset_unlock(&dev->mode_config.connection_mutex);
++
++	if (need_hotplug)
++		drm_kms_helper_hotplug_event(dev);
+ }
+ 
+ static int dm_hw_init(void *handle)
 
 
