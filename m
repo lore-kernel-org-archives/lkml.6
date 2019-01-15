@@ -4,89 +4,87 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 06288C43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 20:06:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D20B7C43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 20:07:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C3AD620657
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 20:06:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9E67320657
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 20:07:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547582812;
-	bh=F/x3LgJKbGiqxFAZRNvd52MbCvvmyWCnwil0/9dX/wA=;
+	s=default; t=1547582832;
+	bh=gz2DF96jaPlL3gzgP05wPFZMo/Ker8SFCAP326BzLWQ=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=XwhrexGvdciGzk+VQLv0Czd3Hv+Sw9HLLyTzil2wHsoF+0Qa33/+y8iddlSXSsbiM
-	 6rtSfLGpU+OY3E6pef8oHU47vExc0IDZ8JhenxzqQS48YVYH2OYw3sZdRwUOeAE3k+
-	 aNHoqBWhus8TbjIkmwLWWYOlG/PD4B1SQW3T55iM=
+	b=RvKd2xzBVCWb05zTNS10ys8t6x4nXq5Hmdo00E6Gp021iQCfe47AUv5G8Wn0fE4GJ
+	 GA69GpSVNd8kHN1w61qaLuthjU/KK06fHeTrQmc+6L09UXcZKPKFM0h+1KDhhWzQYg
+	 fpSRQL6anZk7UWOR3/09eYZjFGQnPFWWG4NIDgcM=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389720AbfAOUGu (ORCPT
+        id S2389735AbfAOUHL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 15 Jan 2019 15:06:50 -0500
-Received: from mail-oi1-f193.google.com ([209.85.167.193]:45812 "EHLO
-        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389705AbfAOUGq (ORCPT
+        Tue, 15 Jan 2019 15:07:11 -0500
+Received: from mail-ot1-f67.google.com ([209.85.210.67]:45230 "EHLO
+        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389663AbfAOUHK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Jan 2019 15:06:46 -0500
-Received: by mail-oi1-f193.google.com with SMTP id y1so3121921oie.12;
-        Tue, 15 Jan 2019 12:06:46 -0800 (PST)
+        Tue, 15 Jan 2019 15:07:10 -0500
+Received: by mail-ot1-f67.google.com with SMTP id 32so3675577ota.12;
+        Tue, 15 Jan 2019 12:07:10 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=IfApsPbT5mrQM1m35yD2qsrsKzQOZSOC5ozeIJ1xNWM=;
-        b=UEC3Jp8+s2x5TkcKCZGfyEMY5Nq7YFFxYgVa6lSjmIh1mwx9rH6jvmqz9xKOBqpFIS
-         SJk2BeybOfw0lxWC1/Qitx0BpWHYdTdPV+zEPz2+pRgWB/V17EpCnjhI7sS5lAwxL/ON
-         bPcq9qqJ+DDtlbPH/MVW4L6vYhbX0y6oqqNBZtpagKMspSqEPD+uVp4SLwPzSa2LUw1B
-         Sn38RfJW9MjtUEi+LF2xzbAJq3MIoW1h006z3coh7INZckQcYRqP8ZPfyZgnK56NQDxi
-         4TC8rAF8VuyBZ9gfxuJiecRXe04EEmQsE6Fgt6O21IYkVadUgG9RXtitGW+c0xlEEAfE
-         7s6w==
-X-Gm-Message-State: AJcUukc9wuJdvkLz01a7hBeqq2xpeAuRHOn7+fNLoBvFMHJPKuIMLkzd
-        Ta7KYmHVgDufI2TpqEneh0IP3fA=
-X-Google-Smtp-Source: ALg8bN5UqvlW2PHV5V9znrImPN2NpcPtYP8AGAzjc/qlLZ9gazgyU1J0C5dbkN1oSzgBALmBN8MhWw==
-X-Received: by 2002:a05:6808:296:: with SMTP id z22mr215574oic.67.1547582806039;
-        Tue, 15 Jan 2019 12:06:46 -0800 (PST)
+        bh=7IChYKDZ9R5hbwmXxYWL7g6/bGDY7PsOzrKN1Ww9zew=;
+        b=kxTNP6yW/nPuh3kXi5QtgpBqmW/tuDRXtRIon1rxSkr9FjcUHg8lRlkKtySVDL6pEJ
+         He46bn9uaRf14BJfE9V+MNGelcjZXN0EsNpHE5T07MhoFSy55zmoJ3pC80ux/XPdLWd5
+         /0i1YNnUxujnQhCBmxv2toxwp0pp+La9CPbTOAstBkDMRvp+Rdovu1B9A2U9S8akNwhP
+         eR1rTMwehw5iMQrGJZKg1UHrK1m0ze6GPGiuKSb0ZZztpTBEYngIIc9fXobmdrmi7uWi
+         vCL3xNvhgTZljozedobB+C219JWVFExhLXp3qeD+CieKysjg3CkgJeKxFCH2+vX1G9GY
+         bY5Q==
+X-Gm-Message-State: AJcUuke1SCbfuQCfLsaKrC5UVw/vHnxIbMceJcluwYwAYSFGQBOlkh4X
+        neKnmGLe8e4Jf/5P1hPa5A==
+X-Google-Smtp-Source: ALg8bN5kemHddsXMJ7cJhGIcQXpFXKX63kJfOKaXTgMS0jG9NxmD+6bDi1k41+Y83UYDDz3PUpIN1g==
+X-Received: by 2002:a9d:5cc2:: with SMTP id r2mr3322604oti.367.1547582830022;
+        Tue, 15 Jan 2019 12:07:10 -0800 (PST)
 Received: from localhost ([70.231.7.113])
-        by smtp.gmail.com with ESMTPSA id l6sm1741242otk.51.2019.01.15.12.06.45
+        by smtp.gmail.com with ESMTPSA id j5sm2624151otc.54.2019.01.15.12.07.09
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 15 Jan 2019 12:06:45 -0800 (PST)
-Date:   Tue, 15 Jan 2019 14:06:44 -0600
+        Tue, 15 Jan 2019 12:07:09 -0800 (PST)
+Date:   Tue, 15 Jan 2019 14:07:08 -0600
 From:   Rob Herring <robh@kernel.org>
-To:     Peter Rosin <peda@axentia.se>
-Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Peter Rosin <peda@axentia.se>, David Airlie <airlied@linux.ie>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Archit Taneja <architt@codeaurora.org>,
-        Andrzej Hajda <a.hajda@samsung.com>,
-        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
-Subject: Re: [PATCH v4 1/5] dt-bindings: display: bridge: fork out
- ti,ds90c185  from lvds-transmitter
-Message-ID: <20190115200644.GA19608@bogus>
-References: <20190111151843.11114-1-peda@axentia.se>
- <20190111151843.11114-2-peda@axentia.se>
+To:     Brian Masney <masneyb@onstation.org>
+Cc:     linus.walleij@linaro.org, sboyd@kernel.org,
+        bjorn.andersson@linaro.org, andy.gross@linaro.org,
+        marc.zyngier@arm.com, shawnguo@kernel.org, dianders@chromium.org,
+        linux-gpio@vger.kernel.org, nicolas.dechesne@linaro.org,
+        niklas.cassel@linaro.org, david.brown@linaro.org,
+        robh+dt@kernel.org, mark.rutland@arm.com, thierry.reding@gmail.com,
+        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org
+Subject: Re: [PATCH v4 01/14] dt-bindings: pinctrl: qcom-pmic-gpio: add
+ qcom,pmi8998-gpio binding
+Message-ID: <20190115200708.GA20288@bogus>
+References: <20190113154716.5145-1-masneyb@onstation.org>
+ <20190113154716.5145-2-masneyb@onstation.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190111151843.11114-2-peda@axentia.se>
+In-Reply-To: <20190113154716.5145-2-masneyb@onstation.org>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 11 Jan 2019 15:18:55 +0000, Peter Rosin wrote:
-> DS90C185 has a shutdown pin which does not fit in the lvds-transmitter
-> binding, which is meant to be generic.
+On Sun, 13 Jan 2019 10:47:03 -0500, Brian Masney wrote:
+> Add support for the PMI8998 GPIO variant to the Qualcomm PMIC GPIO
+> binding document.
 > 
-> The sister chip DS90C187 is similar to DS90C185, describe it here as well.
-> 
-> Signed-off-by: Peter Rosin <peda@axentia.se>
+> Signed-off-by: Brian Masney <masneyb@onstation.org>
 > ---
->  .../bindings/display/bridge/lvds-transmitter.txt   | 10 ++--
->  .../bindings/display/bridge/ti,ds90c185.txt        | 55 ++++++++++++++++++++++
->  2 files changed, 59 insertions(+), 6 deletions(-)
->  create mode 100644 Documentation/devicetree/bindings/display/bridge/ti,ds90c185.txt
+> This is a new patch introduced in V4.
+> 
+>  Documentation/devicetree/bindings/pinctrl/qcom,pmic-gpio.txt | 1 +
+>  1 file changed, 1 insertion(+)
 > 
 
 Reviewed-by: Rob Herring <robh@kernel.org>
