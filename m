@@ -3,226 +3,705 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0018BC43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 04:53:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EE77AC43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 04:55:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C410320651
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 04:53:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B269B20651
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 04:55:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727937AbfAOExp (ORCPT
+        id S1727968AbfAOEzY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 14 Jan 2019 23:53:45 -0500
-Received: from gateway30.websitewelcome.com ([192.185.148.2]:26191 "EHLO
-        gateway30.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727203AbfAOExp (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 Jan 2019 23:53:45 -0500
-Received: from cm16.websitewelcome.com (cm16.websitewelcome.com [100.42.49.19])
-        by gateway30.websitewelcome.com (Postfix) with ESMTP id D77C47F21
-        for <linux-kernel@vger.kernel.org>; Mon, 14 Jan 2019 22:53:43 -0600 (CST)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id jGjPg6RSH4FKpjGjPgWiBa; Mon, 14 Jan 2019 22:53:43 -0600
-X-Authority-Reason: nr=8
-Received: from [189.250.130.205] (port=58620 helo=[192.168.43.131])
-        by gator4166.hostgator.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
-        (Exim 4.91)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1gjGjO-004ML4-Kl; Mon, 14 Jan 2019 22:53:43 -0600
-Subject: Re: [PATCH v2 4/8] ASoC: imx-audmux: change snprintf to scnprintf for
- possible overflow
-To:     Willy Tarreau <w@1wt.eu>, Silvio Cesare <silvio.cesare@gmail.com>
-Cc:     linux-kernel@vger.kernel.org, Timur Tabi <timur@kernel.org>,
-        Mark Brown <broonie@kernel.org>,
-        Nicolin Chen <nicoleotsuka@gmail.com>,
-        alsa-devel@alsa-project.org, Xiubo Li <Xiubo.Lee@gmail.com>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        Kees Cook <keescook@chromium.org>,
-        Will Deacon <will.deacon@arm.com>, Greg KH <greg@kroah.com>
-References: <20190115032727.GA6440@1wt.eu>
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Message-ID: <a3168303-05d9-0ef7-f33b-2b1e3db6da47@embeddedor.com>
-Date:   Mon, 14 Jan 2019 22:53:28 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
-MIME-Version: 1.0
-In-Reply-To: <20190115032727.GA6440@1wt.eu>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
+        Mon, 14 Jan 2019 23:55:24 -0500
+Received: from smtp.polymtl.ca ([132.207.4.11]:60787 "EHLO smtp.polymtl.ca"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727203AbfAOEzY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 14 Jan 2019 23:55:24 -0500
+Received: from abder-pad (c-67-170-74-158.hsd1.wa.comcast.net [67.170.74.158])
+        by smtp.polymtl.ca (8.14.7/8.14.7) with ESMTP id x0F4sR1C029838;
+        Mon, 14 Jan 2019 23:54:32 -0500
+Message-ID: <0e7cd9f60b6360456db30131d3c020352bc718ac.camel@polymtl.ca>
+Subject: [PATCH v6] ftrace: support early boot function tracing
+From:   Abderrahmane Benbachir <abderrahmane.benbachir@polymtl.ca>
+To:     rostedt@goodmis.org
+Cc:     mingo@redhat.com, peterz@infradead.org,
+        mathieu.desnoyers@efficios.com, linux-kernel@vger.kernel.org,
+        abderb@microsoft.com
+Date:   Mon, 14 Jan 2019 20:54:26 -0800
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.5-0ubuntu0.18.04.1 
+Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 189.250.130.205
-X-Source-L: No
-X-Exim-ID: 1gjGjO-004ML4-Kl
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: ([192.168.43.131]) [189.250.130.205]:58620
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 10
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+X-Poly-FromMTA: (c-67-170-74-158.hsd1.wa.comcast.net [67.170.74.158]) at Tue, 15 Jan 2019 04:54:27 +0000
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Willy,
+Rebasing and fixing conflicts.
+Thanks.
 
-On 1/14/19 9:27 PM, Willy Tarreau wrote:
-> From: Silvio Cesare <silvio.cesare@gmail.com>
-> 
-> Change snprintf to scnprintf. There are generally two cases where using
-> snprintf causes problems.
-> 
-> 1) Uses of size += snprintf(buf, SIZE - size, fmt, ...)
-> In this case, if snprintf would have written more characters than what the
-> buffer size (SIZE) is, then size will end up larger than SIZE. In later
-> uses of snprintf, SIZE - size will result in a negative number, leading
-> to problems. Note that size might already be too large by using
-> size = snprintf before the code reaches a case of size += snprintf.
-> 
-> 2) If size is ultimately used as a length parameter for a copy back to user
-> space, then it will potentially allow for a buffer overflow and information
-> disclosure when size is greater than SIZE. When the size is used to index
-> the buffer directly, we can have memory corruption. This also means when
-> size = snprintf... is used, it may also cause problems since size may become
-> large.  Copying to userspace is mitigated by the HARDENED_USERCOPY kernel
-> configuration.
-> 
-> The solution to these issues is to use scnprintf which returns the number of
-> characters actually written to the buffer, so the size variable will never
-> exceed SIZE.
-> 
-> Signed-off-by: Silvio Cesare <silvio.cesare@gmail.com>
-> Cc: Timur Tabi <timur@kernel.org>
-> Cc: Nicolin Chen <nicoleotsuka@gmail.com>
-> Cc: Mark Brown <broonie@kernel.org>
-> Cc: Xiubo Li <Xiubo.Lee@gmail.com>
-> Cc: Fabio Estevam <fabio.estevam@nxp.com>
-> Cc: Dan Carpenter <dan.carpenter@oracle.com>
-> Cc: Kees Cook <keescook@chromium.org>
-> Cc: Will Deacon <will.deacon@arm.com>
-> Cc: Greg KH <greg@kroah.com>
-> Signed-off-by: Willy Tarreau <w@1wt.eu>
-> Acked-by: Nicolin Chen <nicoleotsuka@gmail.com>
-> Reviewed-by: Kees Cook <keescook@chromium.org>
-> 
+Previous changes:
+PATCH v1: Initial patch
+PATCH v2:
+   Removed arch specific code and use the default clock.
+   Add more code re-usability
+   Add HAVE_EARLY_BOOT_FTRACE config option, which will be disabled by default
+PATCH v3:
+   Write early boot temporary buffer to a sub-buffer instead of the global one.
+   Improve Kconfig help text.
+PATCH v4 : Some code refactoring.
+PATCH v5 : fixing the build failers on arch i386.
+
+Patch starts here:
+----------------------------------------------------------------------
+
+The early boot tracing will start from the beginning of start_kernel()
+and will stop at ftrace_init()
+
+start_kernel()
+{
+  ftrace_early_init() <--- start early boot function tracing
+  ...
+  (calls)
+  ...
+  ftrace_init()       <--- stop early boot function tracing
+  early_trace_init();
+  ...
+}
+
+The events are placed in a temporary buffer, which will be copied to
+the trace buffer after memory setup.
+
+Dynamic tracing is not implemented with live patching, we use
+ftrace_filter and ftrace_notrace to find which functions to be
+filtered (traced / not traced), then during the callback from
+mcount hook, we do binary search lookup to decide which function
+to save and which one to discard.
+
+Signed-off-by: Abderrahmane Benbachir <abderrahmane.benbachir@polymtl.ca>
+Cc: Steven Rostedt <rostedt@goodmis.org>
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Cc: Linux Kernel <linux-kernel@vger.kernel.org>
+---
+---
+ arch/x86/Kconfig            |   1 +
+ arch/x86/kernel/ftrace_32.S |  45 ++++--
+ arch/x86/kernel/ftrace_64.S |  14 ++
+ include/linux/ftrace.h      |  18 ++-
+ init/main.c                 |   1 +
+ kernel/trace/Kconfig        |  51 +++++++
+ kernel/trace/ftrace.c       | 293 +++++++++++++++++++++++++++++++++++-
+ kernel/trace/trace.c        |  41 +++++
+ 8 files changed, 452 insertions(+), 12 deletions(-)
+
+diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
+index 15af091611e2..1073ff11b8b5 100644
+--- a/arch/x86/Kconfig
++++ b/arch/x86/Kconfig
+@@ -151,6 +151,7 @@ config X86
+ 	select HAVE_FTRACE_MCOUNT_RECORD
+ 	select HAVE_FUNCTION_GRAPH_TRACER
+ 	select HAVE_FUNCTION_TRACER
++	select HAVE_EARLY_BOOT_FTRACE
+ 	select HAVE_GCC_PLUGINS
+ 	select HAVE_HW_BREAKPOINT
+ 	select HAVE_IDE
+diff --git a/arch/x86/kernel/ftrace_32.S b/arch/x86/kernel/ftrace_32.S
+index 4c8440de3355..a247cbf4c529 100644
+--- a/arch/x86/kernel/ftrace_32.S
++++ b/arch/x86/kernel/ftrace_32.S
+@@ -31,12 +31,8 @@ EXPORT_SYMBOL(mcount)
+ # define MCOUNT_FRAME			0	/* using frame = false */
+ #endif
+ 
+-ENTRY(function_hook)
+-	ret
+-END(function_hook)
+-
+-ENTRY(ftrace_caller)
+ 
++.macro save_mcount_regs
+ #ifdef USING_FRAME_POINTER
+ # ifdef CC_USING_FENTRY
+ 	/*
+@@ -73,11 +69,9 @@ ENTRY(ftrace_caller)
+ 
+ 	movl	function_trace_op, %ecx
+ 	subl	$MCOUNT_INSN_SIZE, %eax
++	.endm
+ 
+-.globl ftrace_call
+-ftrace_call:
+-	call	ftrace_stub
+-
++.macro restore_mcount_regs
+ 	addl	$4, %esp			/* skip NULL pointer */
+ 	popl	%edx
+ 	popl	%ecx
+@@ -90,6 +84,39 @@ ftrace_call:
+ 	addl	$4, %esp			/* skip parent ip */
+ # endif
+ #endif
++	.endm
++
++ENTRY(function_hook)
++#ifdef CONFIG_EARLY_BOOT_FUNCTION_TRACER
++	cmpl	$__PAGE_OFFSET, %esp
++	jb	early_boot_stub			/* Paging not enabled yet? */
++
++	cmpl	$ftrace_stub, ftrace_early_boot_trace_function
++	jnz early_boot_trace
++
++early_boot_stub:
++	ret
++
++early_boot_trace:
++	save_mcount_regs
++	call	*ftrace_early_boot_trace_function
++	restore_mcount_regs
++
++	jmp early_boot_stub
++#else
++	ret
++#endif
++END(function_hook)
++
++ENTRY(ftrace_caller)
++	save_mcount_regs
++
++.globl ftrace_call
++ftrace_call:
++	call	ftrace_stub
++
++	restore_mcount_regs
++
+ .Lftrace_ret:
+ #ifdef CONFIG_FUNCTION_GRAPH_TRACER
+ .globl ftrace_graph_call
+diff --git a/arch/x86/kernel/ftrace_64.S b/arch/x86/kernel/ftrace_64.S
+index 75f2b36b41a6..e292ba26bf1d 100644
+--- a/arch/x86/kernel/ftrace_64.S
++++ b/arch/x86/kernel/ftrace_64.S
+@@ -151,7 +151,21 @@ EXPORT_SYMBOL(mcount)
+ #ifdef CONFIG_DYNAMIC_FTRACE
+ 
+ ENTRY(function_hook)
++# ifdef CONFIG_EARLY_BOOT_FUNCTION_TRACER
++	cmpq $ftrace_stub, ftrace_early_boot_trace_function
++	jnz early_boot_trace
++
++early_boot_stub:
+ 	retq
++
++early_boot_trace:
++	save_mcount_regs
++	call *ftrace_early_boot_trace_function
++	restore_mcount_regs
++	jmp early_boot_stub
++# else
++	retq
++# endif
+ ENDPROC(function_hook)
+ 
+ ENTRY(ftrace_caller)
+diff --git a/include/linux/ftrace.h b/include/linux/ftrace.h
+index 730876187344..09977a28341f 100644
+--- a/include/linux/ftrace.h
++++ b/include/linux/ftrace.h
+@@ -239,6 +239,18 @@ static inline void ftrace_free_init_mem(void) { }
+ static inline void ftrace_free_mem(struct module *mod, void *start, void *end) { }
+ #endif /* CONFIG_FUNCTION_TRACER */
+ 
++#ifdef CONFIG_EARLY_BOOT_FUNCTION_TRACER
++extern void __init ftrace_early_boot_init(char *command_line);
++extern void __init ftrace_early_boot_shutdown(void);
++extern void __init ftrace_early_boot_fill_ringbuffer(void *data);
++extern inline bool __init is_ftrace_early_boot_activated(void);
++#else
++static inline void __init ftrace_early_boot_init(char *command_line) { }
++static inline void __init ftrace_early_boot_shutdown(void) { }
++static inline void __init ftrace_early_boot_fill_ringbuffer(void *data) { }
++static inline bool __init is_ftrace_early_boot_activated(void) { return false; }
++#endif
++
+ #ifdef CONFIG_STACK_TRACER
+ 
+ #define STACK_TRACE_ENTRIES 500
+@@ -447,6 +459,10 @@ unsigned long ftrace_get_addr_curr(struct dyn_ftrace *rec);
+ 
+ extern ftrace_func_t ftrace_trace_function;
+ 
++#if defined(CONFIG_EARLY_BOOT_FUNCTION_TRACER) && defined(CONFIG_DYNAMIC_FTRACE)
++extern ftrace_func_t ftrace_early_boot_trace_function;
++#endif
++
+ int ftrace_regex_open(struct ftrace_ops *ops, int flag,
+ 		  struct inode *inode, struct file *file);
+ ssize_t ftrace_filter_write(struct file *file, const char __user *ubuf,
+@@ -720,7 +736,7 @@ static inline unsigned long get_lock_parent_ip(void)
+ #ifdef CONFIG_FTRACE_MCOUNT_RECORD
+ extern void ftrace_init(void);
+ #else
+-static inline void ftrace_init(void) { }
++static inline void ftrace_init(void) { ftrace_early_boot_shutdown(); }
+ #endif
+ 
+ /*
+diff --git a/init/main.c b/init/main.c
+index e2e80ca3165a..2d79a9e82a43 100644
+--- a/init/main.c
++++ b/init/main.c
+@@ -539,6 +539,7 @@ asmlinkage __visible void __init start_kernel(void)
+ 	char *command_line;
+ 	char *after_dashes;
+ 
++	ftrace_early_boot_init(boot_command_line);
+ 	set_task_stack_end_magic(&init_task);
+ 	smp_setup_processor_id();
+ 	debug_objects_early_init();
+diff --git a/kernel/trace/Kconfig b/kernel/trace/Kconfig
+index fa8b1fe824f3..08a403640518 100644
+--- a/kernel/trace/Kconfig
++++ b/kernel/trace/Kconfig
+@@ -19,6 +19,11 @@ config HAVE_FUNCTION_TRACER
+ 	help
+ 	  See Documentation/trace/ftrace-design.rst
+ 
++config HAVE_EARLY_BOOT_FTRACE
++        bool
++        help
++          See Documentation/trace/ftrace-design.txt
++
+ config HAVE_FUNCTION_GRAPH_TRACER
+ 	bool
+ 	help
+@@ -155,6 +160,52 @@ config FUNCTION_TRACER
+ 	  (the bootup default), then the overhead of the instructions is very
+ 	  small and not measurable even in micro-benchmarks.
+ 
++config EARLY_BOOT_FUNCTION_TRACER
++	bool "Early Boot Kernel Function Tracer"
++	depends on FUNCTION_TRACER
++	depends on HAVE_EARLY_BOOT_FTRACE
++	help
++	  Normally, function tracing can only start after memory has been
++	  initialized early in boot. If "ftrace=function" is added to the
++	  command line, then function tracing will start after memory setup.
++	  In order to trace functions before that, this option will
++	  have function tracing start before memory setup is complete, by
++	  placing the trace in a temporary buffer, which will be copied to
++	  the trace buffer after memory setup. The size of this temporary
++	  buffer is defined by EARLY_BOOT_FTRACE_BUF_SHIFT.
++
++config EARLY_BOOT_FTRACE_BUF_SHIFT
++	int "Temporary buffer size (17 => 128 KB, 24 => 16 MB)"
++	depends on EARLY_BOOT_FUNCTION_TRACER
++	range 8 24
++	default 19
++	help
++	  Select the size of the buffer to be used for storing function calls at
++	  early boot stage.
++	  The value defines the size as a power of 2, must be in a range of 8 to 24.
++	  Examples:
++	    20 =>   1 MB
++	    19 => 512 KB
++	    17 => 128 KB
++
++config EARLY_BOOT_FTRACE_FILTER_SHIFT
++	int "Temporary filter size (filter/notrace) (17 => 128 KB, 19 => 512 KB)"
++	depends on EARLY_BOOT_FUNCTION_TRACER
++	depends on FTRACE_MCOUNT_RECORD
++	range 0 19
++	default 17
++	help
++	  Select the size of the filter buffer to be used for filtering (trace/
++	  no trace) functions at early boot stage.
++	  Two buffers (trace and no_trace) will be created using this option.
++	  These following kernel parameters control filtering during bootup :
++	  "ftrace_filter", "ftrace_notrace".
++	  The value defines the size as a power of 2, must be in a range of 0 to 19.
++	  Examples:
++	    19 => 512 KB for each buffer
++	    18 => 256 KB for each buffer
++	    17 => 128 KB for each buffer
++
+ config FUNCTION_GRAPH_TRACER
+ 	bool "Kernel Function Graph Tracer"
+ 	depends on HAVE_FUNCTION_GRAPH_TRACER
+diff --git a/kernel/trace/ftrace.c b/kernel/trace/ftrace.c
+index aac7847c0214..5dac5655be80 100644
+--- a/kernel/trace/ftrace.c
++++ b/kernel/trace/ftrace.c
+@@ -65,6 +65,11 @@
+ #define FTRACE_HASH_DEFAULT_BITS 10
+ #define FTRACE_HASH_MAX_BITS 12
+ 
++#ifdef CONFIG_FTRACE_MCOUNT_RECORD
++extern unsigned long __start_mcount_loc[];
++extern unsigned long __stop_mcount_loc[];
++#endif
++
+ #ifdef CONFIG_DYNAMIC_FTRACE
+ #define INIT_OPS_HASH(opsname)	\
+ 	.func_hash		= &opsname.local_hash,			\
+@@ -6114,11 +6119,11 @@ void __init ftrace_free_init_mem(void)
+ 
+ void __init ftrace_init(void)
+ {
+-	extern unsigned long __start_mcount_loc[];
+-	extern unsigned long __stop_mcount_loc[];
+ 	unsigned long count, flags;
+ 	int ret;
+ 
++    ftrace_early_boot_shutdown();
++
+ 	local_irq_save(flags);
+ 	ret = ftrace_dyn_arch_init();
+ 	local_irq_restore(flags);
+@@ -6712,3 +6717,287 @@ ftrace_enable_sysctl(struct ctl_table *table, int write,
+ 	mutex_unlock(&ftrace_lock);
+ 	return ret;
+ }
++
++#ifdef CONFIG_EARLY_BOOT_FUNCTION_TRACER
++
++#define EARLY_BOOT_BUFF_LEN ((1 << CONFIG_EARLY_BOOT_FTRACE_BUF_SHIFT) / \
++					sizeof(struct ftrace_early_boot_entry))
++
++struct ftrace_early_boot_entry {
++	unsigned long ip;
++	unsigned long parent_ip;
++	unsigned long long timestamp;
++};
++/*
++ * Only CPU0 is running in early stage, no need to have per-cpu buffer
++ */
++static struct ftrace_early_boot_entry ftrace_early_boot_entries[EARLY_BOOT_BUFF_LEN] __initdata;
++static const unsigned long EARLY_BOOT_BUFF_MAX __initconst = EARLY_BOOT_BUFF_LEN;
++static unsigned long early_boot_entries_count __initdata;
++static char tmp_cmdline[COMMAND_LINE_SIZE] __initdata;
++static bool ftrace_early_boot_activated __initdata;
++
++#ifdef CONFIG_DYNAMIC_FTRACE
++ftrace_func_t ftrace_early_boot_trace_function __read_mostly = ftrace_stub;
++#else
++# define ftrace_early_boot_trace_function ftrace_trace_function
++#endif
++
++inline bool __init is_ftrace_early_boot_activated(void)
++{
++	return ftrace_early_boot_activated;
++}
++
++static inline __init void ftrace_early_boot_disable(void)
++{
++	ftrace_early_boot_trace_function = ftrace_stub;
++}
++
++#ifdef CONFIG_FTRACE_MCOUNT_RECORD
++#define EARLY_BOOT_FILTER_LEN ((1 << CONFIG_EARLY_BOOT_FTRACE_FILTER_SHIFT) / \
++					sizeof(unsigned long))
++
++struct ftrace_early_boot_filtering {
++	unsigned long list[EARLY_BOOT_FILTER_LEN];
++	char buf[COMMAND_LINE_SIZE];
++	int size;
++};
++
++static const unsigned long EARLY_BOOT_FILTER_MAX __initconst = EARLY_BOOT_FILTER_LEN;
++static struct ftrace_early_boot_filtering ftrace_data_notrace __initdata;
++static struct ftrace_early_boot_filtering ftrace_data_filter __initdata;
++
++static __init int ftrace_early_boot_filter_has_addr(unsigned long addr,
++	unsigned long *filter, int *size)
++{
++	int i;
++
++	for (i = 0; i < *size; i++) {
++		if (filter[i] == addr)
++			return 1;
++	}
++	return 0;
++}
++
++static __init int
++ftrace_early_boot_match_record(unsigned long ip, struct ftrace_glob *func_g)
++{
++	char str[KSYM_SYMBOL_LEN];
++	char *modname;
++
++	kallsyms_lookup(ip, NULL, NULL, &modname, str);
++	return ftrace_match(str, func_g);
++}
++
++static __init void
++ftrace_early_boot_regex(char *func, unsigned long *filter, int *size)
++{
++	struct ftrace_glob func_g = { .type = MATCH_FULL };
++	unsigned long *start = __start_mcount_loc;
++	unsigned long *end = __stop_mcount_loc;
++	unsigned long count;
++	unsigned long addr;
++	unsigned long *p;
++	int clear_filter = 0;
++
++	count = end - start;
++
++	if (!count)
++		return;
++
++	if (func) {
++		func_g.type = filter_parse_regex(func, strlen(func), &func_g.search,
++						 &clear_filter);
++		func_g.len = strlen(func_g.search);
++	}
++
++	p = start;
++	while (p < end) {
++		addr = ftrace_call_adjust(*p++);
++		if (!addr)
++			continue;
++
++		if ((*size) > EARLY_BOOT_FILTER_MAX)
++			return;
++
++		if (ftrace_early_boot_match_record(addr, &func_g)) {
++			if (!ftrace_early_boot_filter_has_addr(addr, filter, size))
++				filter[(*size)++] = addr;
++		}
++	}
++}
++
++static __init int ftrace_addr_compare(const void *a, const void *b)
++{
++	if (*(unsigned long *)a > *(unsigned long *)b)
++		return 1;
++	if (*(unsigned long *)a < *(unsigned long *)b)
++		return -1;
++
++	return 0;
++}
++
++static __init void ftrace_addr_swap(void *a, void *b, int size)
++{
++	unsigned long t = *(unsigned long *)a;
++	*(unsigned long *)a = *(unsigned long *)b;
++	*(unsigned long *)b = t;
++}
++
++static __init int set_ftrace_early_boot_filtering(void *data, char *str)
++{
++	struct ftrace_early_boot_filtering *ftrace_data = data;
++	char *func;
++	char *buf;
++
++	if (!ftrace_data)
++		return 0;
++	buf = ftrace_data->buf;
++	strlcpy(buf, str, COMMAND_LINE_SIZE);
++
++	while (buf) {
++		func = strsep(&buf, ",");
++		ftrace_early_boot_regex(func, ftrace_data->list, &ftrace_data->size);
++	}
++	/* sort filter to use binary search on it */
++	sort(ftrace_data->list, ftrace_data->size,
++		sizeof(unsigned long), ftrace_addr_compare, ftrace_addr_swap);
++
++	return 1;
++}
++
++#define ftrace_early_boot_bsearch_addr(addr, data) bsearch(&addr, data.list,\
++	data.size, sizeof(unsigned long), ftrace_addr_compare)
++
++#endif /* CONFIG_FTRACE_MCOUNT_RECORD */
++
++
++static __init void
++ftrace_function_early_boot_trace_call(unsigned long ip, unsigned long parent_ip,
++			struct ftrace_ops *op, struct pt_regs *regs)
++{
++	struct ftrace_early_boot_entry *entry;
++
++#ifdef CONFIG_FTRACE_MCOUNT_RECORD
++	if (ftrace_data_notrace.size &&
++			ftrace_early_boot_bsearch_addr(ip, ftrace_data_notrace))
++		return;
++
++	if (ftrace_data_filter.size &&
++			!ftrace_early_boot_bsearch_addr(ip, ftrace_data_filter))
++		return;
++#endif
++
++	if (early_boot_entries_count >= EARLY_BOOT_BUFF_MAX) {
++		/* stop tracing when buffer is full */
++		ftrace_early_boot_disable();
++		return;
++	}
++
++	entry = &ftrace_early_boot_entries[early_boot_entries_count++];
++	entry->ip = ip;
++	entry->parent_ip = parent_ip;
++	entry->timestamp = trace_clock_local();
++}
++
++/*
++ * this will be used as __setup_param
++ */
++struct ftrace_early_boot_obs_param {
++	int (*setup_func)(void *data, char *str);
++	const char *str;
++	void *data;
++};
++static struct ftrace_early_boot_obs_param ftrace_early_boot_params[] __initdata = {
++#ifdef CONFIG_FTRACE_MCOUNT_RECORD
++	{
++		.str = "ftrace_notrace",
++		.data = &ftrace_data_notrace,
++		.setup_func = set_ftrace_early_boot_filtering,
++	},
++	{
++		.str = "ftrace_filter",
++		.data = &ftrace_data_filter,
++		.setup_func = set_ftrace_early_boot_filtering,
++	},
++#endif
++};
++
++static __init int ftrace_do_early_boot_param(char *param, char *val,
++				 const char *unused, void *arg)
++{
++	int size = ARRAY_SIZE(ftrace_early_boot_params);
++	struct ftrace_early_boot_obs_param *p;
++	int i;
++
++	for (i = 0; i < size; i++) {
++		p = &ftrace_early_boot_params[i];
++		if (strcmp(param, p->str) == 0) {
++			p->setup_func(p->data, val);
++			return 0;
++		}
++	}
++	return 0;
++}
++
++void __init ftrace_early_boot_init(char *command_line)
++{
++	/* proceed only if function tracing was enabled */
++	if (!strstr(command_line, "ftrace=function "))
++		return;
++
++	strlcpy(tmp_cmdline, command_line, COMMAND_LINE_SIZE);
++	parse_args("ftrace early boot options", tmp_cmdline, NULL, 0, 0, 0, NULL,
++		ftrace_do_early_boot_param);
++
++	ftrace_early_boot_activated = true;
++	// After this point, we enable early function tracing
++	ftrace_early_boot_trace_function = ftrace_function_early_boot_trace_call;
++}
++
++void __init ftrace_early_boot_shutdown(void)
++{
++	// Disable early tracing
++	ftrace_early_boot_disable();
++
++#ifdef CONFIG_FTRACE_MCOUNT_RECORD
++	pr_info("ftrace: early boot %lu entries, notrace=%d, filter=%d",
++		early_boot_entries_count,
++		ftrace_data_notrace.size,
++		ftrace_data_filter.size);
++#else
++	pr_info("ftrace: early boot %lu recorded entries", early_boot_entries_count);
++#endif
++}
++
++/*
++ * Will be passed to ringbuffer by early_boot_trace_clock
++ */
++static u64 early_timestamp __initdata;
++
++static __init u64 early_boot_trace_clock(void)
++{
++	return early_timestamp;
++}
++
++void __init ftrace_early_boot_fill_ringbuffer(void *data)
++{
++	struct ftrace_early_boot_entry *entry;
++	struct trace_array *tr = data;
++	int i;
++
++	if (ftrace_early_boot_entries <= 0)
++		return;
++
++	ring_buffer_set_clock(tr->trace_buffer.buffer, early_boot_trace_clock);
++
++	for (i = 0; i < early_boot_entries_count; i++) {
++		entry = &ftrace_early_boot_entries[i];
++		early_timestamp = entry->timestamp;
++		trace_function(tr, entry->ip, entry->parent_ip, 0, 0);
++	}
++
++	ring_buffer_set_clock(tr->trace_buffer.buffer, trace_clock_local);
++}
++
++#endif /* CONFIG_EARLY_BOOT_FUNCTION_TRACER */
+\ No newline at end of file
+diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
+index c521b7347482..cbf13d59dc34 100644
+--- a/kernel/trace/trace.c
++++ b/kernel/trace/trace.c
+@@ -8715,3 +8715,44 @@ __init static int tracing_set_default_clock(void)
+ }
+ late_initcall_sync(tracing_set_default_clock);
+ #endif
++
++#ifdef CONFIG_EARLY_BOOT_FUNCTION_TRACER
++/*
++ * The early boot tracer should be the second trace array added,
++ */
++static __init struct trace_array *early_boot_trace_array(void)
++{
++	struct trace_array *tr;
++
++	if (list_empty(&ftrace_trace_arrays))
++		return NULL;
++
++	tr = list_entry(ftrace_trace_arrays.next,
++			typeof(*tr), list);
++	WARN_ON(!(tr->flags & TRACE_ARRAY_FL_GLOBAL));
++	return tr;
++}
++
++static __init int early_boot_tracer_init_tracefs(void)
++{
++	struct trace_array *tr;
++
++	if (!is_ftrace_early_boot_activated())
++		return 0;
++
++	if (instance_mkdir("early_boot"))
++		return 0;
++
++	tr = early_boot_trace_array();
++	if (!tr) {
++		pr_info("ftrace: early_boot array tracer not found\n");
++		return 0;
++	}
++	/* fill the ring buffer with early boot events */
++	ftrace_early_boot_fill_ringbuffer(tr);
++
++	return 0;
++}
++
++fs_initcall(early_boot_tracer_init_tracefs);
++#endif /* CONFIG_EARLY_BOOT_FUNCTION_TRACER */
+-- 
+2.17.1
 
 
-You are still missing some people and mailing lists:
-
-$ scripts/get_maintainer.pl --nokeywords --nogit --nogit-fallback sound/soc/fsl/imx-audmux.c
-Timur Tabi <timur@kernel.org> (maintainer:FREESCALE SOC SOUND DRIVERS)
-Nicolin Chen <nicoleotsuka@gmail.com> (maintainer:FREESCALE SOC SOUND DRIVERS)
-Xiubo Li <Xiubo.Lee@gmail.com> (maintainer:FREESCALE SOC SOUND DRIVERS)
-Fabio Estevam <fabio.estevam@nxp.com> (reviewer:FREESCALE SOC SOUND DRIVERS)
-Liam Girdwood <lgirdwood@gmail.com> (supporter:SOUND - SOC LAYER / DYNAMIC AUDIO POWER MANAGEM...)
-Mark Brown <broonie@kernel.org> (supporter:SOUND - SOC LAYER / DYNAMIC AUDIO POWER MANAGEM...)
-Jaroslav Kysela <perex@perex.cz> (maintainer:SOUND)
-Takashi Iwai <tiwai@suse.com> (maintainer:SOUND)
-Shawn Guo <shawnguo@kernel.org> (maintainer:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE)
-Sascha Hauer <s.hauer@pengutronix.de> (maintainer:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE)
-Pengutronix Kernel Team <kernel@pengutronix.de> (reviewer:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE)
-NXP Linux Team <linux-imx@nxp.com> (reviewer:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE)
-alsa-devel@alsa-project.org (moderated list:FREESCALE SOC SOUND DRIVERS)
-linuxppc-dev@lists.ozlabs.org (open list:FREESCALE SOC SOUND DRIVERS)
-linux-arm-kernel@lists.infradead.org (moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE)
-linux-kernel@vger.kernel.org (open list)
-
---
-Gustavo
-
-> --
-> 
-> v2:
->    - adjust subject line
->    - added alsa-devel & Mark
->    - added acked-by
->    - added reviewed-by
-> 
-> The patches in this series were sent by Silvio to the security list
-> to fix a minor memory disclosure issue after this article was published:
->                                                            
->    http://blog.infosectcbr.com.au/2018/11/memory-bugs-in-multiple-linux-kernel.html
-> 
-> 
->   sound/soc/fsl/imx-audmux.c | 24 ++++++++++++------------
->   1 file changed, 12 insertions(+), 12 deletions(-)
-> 
-> diff --git a/sound/soc/fsl/imx-audmux.c b/sound/soc/fsl/imx-audmux.c
-> index 392d5eef356d..99e07b01a2ce 100644
-> --- a/sound/soc/fsl/imx-audmux.c
-> +++ b/sound/soc/fsl/imx-audmux.c
-> @@ -86,49 +86,49 @@ static ssize_t audmux_read_file(struct file *file, char __user *user_buf,
->   	if (!buf)
->   		return -ENOMEM;
->   
-> -	ret = snprintf(buf, PAGE_SIZE, "PDCR: %08x\nPTCR: %08x\n",
-> +	ret = scnprintf(buf, PAGE_SIZE, "PDCR: %08x\nPTCR: %08x\n",
->   		       pdcr, ptcr);
->   
->   	if (ptcr & IMX_AUDMUX_V2_PTCR_TFSDIR)
-> -		ret += snprintf(buf + ret, PAGE_SIZE - ret,
-> +		ret += scnprintf(buf + ret, PAGE_SIZE - ret,
->   				"TxFS output from %s, ",
->   				audmux_port_string((ptcr >> 27) & 0x7));
->   	else
-> -		ret += snprintf(buf + ret, PAGE_SIZE - ret,
-> +		ret += scnprintf(buf + ret, PAGE_SIZE - ret,
->   				"TxFS input, ");
->   
->   	if (ptcr & IMX_AUDMUX_V2_PTCR_TCLKDIR)
-> -		ret += snprintf(buf + ret, PAGE_SIZE - ret,
-> +		ret += scnprintf(buf + ret, PAGE_SIZE - ret,
->   				"TxClk output from %s",
->   				audmux_port_string((ptcr >> 22) & 0x7));
->   	else
-> -		ret += snprintf(buf + ret, PAGE_SIZE - ret,
-> +		ret += scnprintf(buf + ret, PAGE_SIZE - ret,
->   				"TxClk input");
->   
-> -	ret += snprintf(buf + ret, PAGE_SIZE - ret, "\n");
-> +	ret += scnprintf(buf + ret, PAGE_SIZE - ret, "\n");
->   
->   	if (ptcr & IMX_AUDMUX_V2_PTCR_SYN) {
-> -		ret += snprintf(buf + ret, PAGE_SIZE - ret,
-> +		ret += scnprintf(buf + ret, PAGE_SIZE - ret,
->   				"Port is symmetric");
->   	} else {
->   		if (ptcr & IMX_AUDMUX_V2_PTCR_RFSDIR)
-> -			ret += snprintf(buf + ret, PAGE_SIZE - ret,
-> +			ret += scnprintf(buf + ret, PAGE_SIZE - ret,
->   					"RxFS output from %s, ",
->   					audmux_port_string((ptcr >> 17) & 0x7));
->   		else
-> -			ret += snprintf(buf + ret, PAGE_SIZE - ret,
-> +			ret += scnprintf(buf + ret, PAGE_SIZE - ret,
->   					"RxFS input, ");
->   
->   		if (ptcr & IMX_AUDMUX_V2_PTCR_RCLKDIR)
-> -			ret += snprintf(buf + ret, PAGE_SIZE - ret,
-> +			ret += scnprintf(buf + ret, PAGE_SIZE - ret,
->   					"RxClk output from %s",
->   					audmux_port_string((ptcr >> 12) & 0x7));
->   		else
-> -			ret += snprintf(buf + ret, PAGE_SIZE - ret,
-> +			ret += scnprintf(buf + ret, PAGE_SIZE - ret,
->   					"RxClk input");
->   	}
->   
-> -	ret += snprintf(buf + ret, PAGE_SIZE - ret,
-> +	ret += scnprintf(buf + ret, PAGE_SIZE - ret,
->   			"\nData received from %s\n",
->   			audmux_port_string((pdcr >> 13) & 0x7));
->   
-> 
