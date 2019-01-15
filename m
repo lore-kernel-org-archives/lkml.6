@@ -2,262 +2,217 @@ Return-Path: <SRS0=RZO6=PX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
+	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1548AC43444
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 00:30:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 927C3C43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 00:34:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C61AB20657
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 00:30:46 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="f9X0XsFw"
+	by mail.kernel.org (Postfix) with ESMTP id 556D020657
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 00:34:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727501AbfAOAap (ORCPT
+        id S1727439AbfAOAeJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 14 Jan 2019 19:30:45 -0500
-Received: from mail-oi1-f193.google.com ([209.85.167.193]:37717 "EHLO
-        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727204AbfAOAao (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 Jan 2019 19:30:44 -0500
-Received: by mail-oi1-f193.google.com with SMTP id y23so814707oia.4
-        for <linux-kernel@vger.kernel.org>; Mon, 14 Jan 2019 16:30:44 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=cY5qkSo+FBWbzpSPmFbyKit6x9aaEJ7qpcF+mXhM/8A=;
-        b=f9X0XsFwSnFvpgEBDPwvmGank2hyt9XvnaB00V1yEQGO8TsQcuEStaseEIc7eyTzU5
-         SM7yHQ3ZkBZz02nU/o3IKgQqvGTagOxvReTBqFJ8EBNW7bz9cHwJDO8uB7Gb6djPcDMr
-         DAhoIe8meUeURz6Ib5S0aGdcPaIToaYnF35cK1vnMuBffg4RkPsUvP2fPdjSeQhYzc5J
-         d9yn3/3o4ovEHCh8sXwNeffGbbgFx0ge+11pKbVA9pCqRp/gxT+Z9SkM77U/VJ5ItDTe
-         YATPvm270n4ks1ZBMAoyzos59/7YAu8PN1m5x/WIHjKoujqqO0eQdxtYNLGWhv6ACZG6
-         5Lgw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=cY5qkSo+FBWbzpSPmFbyKit6x9aaEJ7qpcF+mXhM/8A=;
-        b=VRwNySsNphy+4VO1q2JOgEkMI/DAKAKG0kLT9zt40hQVgRVSSgxwcfQmqzsU4gTZqw
-         bE9n9EPdSqVNKfKZmgDYFNK/GExqx3SwzffFyiaSRPwTdPWnv6M1BIK9uAl1501kHq3m
-         kRepS8wroFbD4/PX7hDOZ0wbg9IRwyNQHLoLrbjOWtNDkylRd4oN3DnX8zGH13KMNvzQ
-         d4AYk+ylsLR20LZAvPqrTTMJlk6dUvg+NN88bpLYfwWcfJ1e5Iw8BDBxyIdWg98aTU2w
-         g5o060sma+9bGzQjLLtFq9xqsrlSP1ULpIeR5Y/pYR08zVetyjE7qYc34irHiRYYpzQC
-         8adQ==
-X-Gm-Message-State: AJcUukfja7zGCA2QMu2krmvJCU2p/UFhqrPkSXmZg0lWtWqEZTkoHTYK
-        H+WLBpaqx/VyteXx5kd1uEMy0SNswNUWckOD2lht2vajn1E=
-X-Google-Smtp-Source: ALg8bN4uwotXthGqpKAz9IHRNVOYJpCXQ51GIDV9eKSF7sdNQQfpzhOgnrPvDDZR+VEsiGLqyybubU2wT2xYnzqvFMc=
-X-Received: by 2002:aca:844:: with SMTP id 65mr539324oii.333.1547512243195;
- Mon, 14 Jan 2019 16:30:43 -0800 (PST)
+        Mon, 14 Jan 2019 19:34:09 -0500
+Received: from mout.gmx.net ([212.227.17.22]:47607 "EHLO mout.gmx.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726911AbfAOAeI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 14 Jan 2019 19:34:08 -0500
+Received: from longitude ([109.90.232.48]) by mail.gmx.com (mrgmx102
+ [212.227.17.168]) with ESMTPSA (Nemesis) id 0MBq8p-1gZY1a2Nr5-00AotK; Tue, 15
+ Jan 2019 01:33:57 +0100
+Date:   Tue, 15 Jan 2019 01:33:53 +0100
+From:   Jonathan =?utf-8?Q?Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>
+To:     Christophe Leroy <christophe.leroy@c-s.fr>
+Cc:     Jonathan =?utf-8?Q?Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
+Subject: Re: [PATCH v2 00/15] powerpc/32s: Use BATs/LTLBs for
+ STRICT_KERNEL_RWX
+Message-ID: <20190115003353.GD22334@latitude>
+References: <cover.1547132681.git.christophe.leroy@c-s.fr>
+ <20190113181621.GA22334@latitude>
+ <714e78ba-1e92-a856-3dd6-a1fb96ad3785@c-s.fr>
+ <20190113210227.GB22334@latitude>
+ <334b1b02-b652-499c-904e-09e6f7164b8c@c-s.fr>
 MIME-Version: 1.0
-References: <20190114220356.108916-1-ncrews@google.com> <20190114220356.108916-6-ncrews@google.com>
- <20190114222551.GC2589@piout.net>
-In-Reply-To: <20190114222551.GC2589@piout.net>
-From:   Nick Crews <ncrews@google.com>
-Date:   Mon, 14 Jan 2019 17:30:31 -0700
-Message-ID: <CAHX4x864vZgToXsr=uLv2_oqr09AK7qpYrooYszuX6r3zHOyhg@mail.gmail.com>
-Subject: Re: [PATCH v2 5/9] platform/chrome: rtc: Add RTC driver for Wilco EC
-To:     Alexandre Belloni <alexandre.belloni@bootlin.com>
-Cc:     linux-kernel@vger.kernel.org, groeck@chromium.org,
-        sjg@chromium.org, dlaurie@chromium.org,
-        Duncan Laurie <dlaurie@google.com>, linux-rtc@vger.kernel.org,
-        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
-        Alessandro Zummo <a.zummo@towertech.it>,
-        Benson Leung <bleung@chromium.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="bajzpZikUji1w+G9"
+Content-Disposition: inline
+In-Reply-To: <334b1b02-b652-499c-904e-09e6f7164b8c@c-s.fr>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Provags-ID: V03:K1:Tfh0fcp34orf31kcItygfZLkfrZbBJ+FOFepaLkVb1SRYkAJCYD
+ M2eEo5Cow34rmP4j5IEiSzCuXaVooXksBmMF2YPCrl730991juZBa0Ia050Dwz7eNkD0OGB
+ LteqvK/pRcyt/g7+/2JI9dKPKB8L8RnLB0E+I4D7c+wMO4fv/XuOkig7Gl2SfV0D6eguIGi
+ dsA8LhLyhSSBpZHN9WMIw==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:oatbJL0eozI=:SX4sEgMVISdz9JW9RDfPfr
+ m3ye04VpyQUQqo1ufJKCL4Pe/iuq/vZS7WPwzq0+fcapYPCov8PNROmIqWMXZlhjgpqfMmz/M
+ 3lCMONlG7onctMza3psDvpp2UnSIj+hD+JrLEdF3VAjJlKLhJuZ6blVa/0oC8+caZelvomyKn
+ 86CsyMm36/HtCe3wws6jjHUeuQqJDrUlhUZWg7TOlqKL8xpIftmCGac31pKZlU36/Drm+vjsm
+ NQ6gPELHMENh8gd1ZRO1c3esVm5V3VioOvkr2FyEl4iRBDAgkVGWsN49WrDxZ6T5hqEz+WMYJ
+ xKF5BssKjdDypAodcLT8khaQLSSZlATjJhTRLReGMqMrUV3g7TxYSGH2SRgJpap+knDKz0EI1
+ KtIRrjmP7LC1hE8kHozPlxgqlDtHHeBdqtF/owVPpXB/rCeMdkGdu+QndzGScb0WhxG4aVbty
+ 0qGRaFklG6Fa/J79e8Tkqqkd3aYU1EFKAt/SgVledIlwsYJggXLEiDDTHgIaClkqSUfvy3UwZ
+ Fk7M16XIqI13pcYnqhd9kSbmf9NstD84WFAcNA7ZrMYxs08/QSqisfjk0HGA1GTuP5GZMiWYg
+ GIjehRe7y1PHW96EhaLmQcjQE2e+YLx76/8ukj3T+qRFiOAYFE3PzhXNP/RoImM91Vqr37XiZ
+ Egk3IXo1o0QEBf1f5mq7uRb3Hv2doI/JQi8bGgSlAEgo/wISi9uBLgxNPDh/swqA/RWn9Rfhq
+ xIudADjVPyOj5EHYlmIflJCHmeVav76HJcZLOp/B46z/S0SBuJKpMYRWMfRPL47wP6wKL4O6y
+ 33OPPIon8tAQLa/WXdy03+AjPxlafnbxDEMFuk+NcVWFgqz7rGGIdvvf5wI0CoKwWehBfKH5n
+ 4G9AhhF12C9nvvtHpVfFhCwEqWtri+7007uoICskbEkl0F/B8bZkdh8/eXvcV4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Thanks for the comments Alexandre, I've responded to your comments
-inline. I'll send out a new version of the patch in a bit
 
-On Mon, Jan 14, 2019 at 3:26 PM -700 Alexandre Belloni wrote:
->
-> Hello,
->
-> On 14/01/2019 15:03:52-0700, Nick Crews wrote:
-> > diff --git a/drivers/rtc/rtc-wilco-ec.c b/drivers/rtc/rtc-wilco-ec.c
-> > new file mode 100644
-> > index 000000000000..d8ed791da82d
-> > --- /dev/null
-> > +++ b/drivers/rtc/rtc-wilco-ec.c
-> > @@ -0,0 +1,178 @@
-> > +// SPDX-License-Identifier: GPL-2.0
-> > +/*
-> > + * RTC interface for Wilco Embedded Controller with R/W abilities
-> > + *
-> > + * Copyright 2018 Google LLC
-> > + *
-> > + * The corresponding platform device is typically registered in
-> > + * drivers/platform/chrome/wilco_ec/core.c
-> > + */
-> > +
-> > +#include <linux/bcd.h>
-> > +#include <linux/err.h>
-> > +#include <linux/kernel.h>
-> > +#include <linux/module.h>
-> > +#include <linux/platform_device.h>
-> > +#include <linux/platform_data/wilco-ec.h>
-> > +#include <linux/rtc.h>
-> > +#include <linux/timekeeping.h>
-> > +
-> > +#define DRV_NAME "rtc-wilco-ec"
->
-> Please get rid of that define.
+--bajzpZikUji1w+G9
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Done in the new patch.
+On Mon, Jan 14, 2019 at 07:23:07PM +0100, Christophe Leroy wrote:
+>=20
+>=20
+> Le 13/01/2019 =C3=A0 22:02, Jonathan Neusch=C3=A4fer a =C3=A9crit=C2=A0:
+> > On Sun, Jan 13, 2019 at 08:43:07PM +0100, Christophe Leroy wrote:
+> > > Le 13/01/2019 =C3=A0 19:16, Jonathan Neusch=C3=A4fer a =C3=A9crit=C2=
+=A0:
+> > > > I just tested the whole series on my Wii (I didn't test any interme=
+diate
+> > > > steps). Without CONFIG_STRICT_KERNEL_RWX, it seems to work fine, but
+> > > > with it, I get the following error while booting:
+[...]
+> I can't see anything special in your setup, and this failure looks rather
+> unexpected because I can't see anything done that early when
+> CONFIG_STRICT_KERNEL_RWX is selected.
+>=20
+> Does CONFIG_STRICT_KERNEL_RWX works properly without my serie ?
 
->
-> > +int wilco_ec_rtc_read(struct device *dev, struct rtc_time *tm)
-> > +{
-> > +     struct wilco_ec_device *ec = dev_get_drvdata(dev->parent);
-> > +     u8 param = EC_CMOS_TOD_READ;
-> > +     struct ec_rtc_read rtc;
-> > +     struct wilco_ec_message msg = {
-> > +             .type = WILCO_EC_MSG_LEGACY,
-> > +             .flags = WILCO_EC_FLAG_RAW_RESPONSE,
-> > +             .command = EC_COMMAND_CMOS,
-> > +             .request_data = &param,
-> > +             .request_size = sizeof(param),
-> > +             .response_data = &rtc,
-> > +             .response_size = sizeof(rtc),
-> > +     };
-> > +     struct rtc_time calc_tm;
-> > +     unsigned long time;
-> > +     int ret;
-> > +
-> > +     ret = wilco_ec_mailbox(ec, &msg);
-> > +     if (ret < 0)
-> > +             return ret;
-> > +
-> > +     tm->tm_sec      = rtc.second;
-> > +     tm->tm_min      = rtc.minute;
-> > +     tm->tm_hour     = rtc.hour;
-> > +     tm->tm_mday     = rtc.day;
-> > +     /*
-> > +      * The RTC stores the month value as 1-12 but the kernel expects 0-11,
-> > +      * so ensure invalid/zero month value from RTC is not converted to -1.
->
-> I'm pretty sure this is not necessary and will certainly make the core
-> think the date is valid when it has obviously been corrupted.
+I hadn't tried this before, but yes, without this series (on v5.0-rc2),
+a kernel with CONFIG_STRICT_KERNEL_RWX boots.
 
-OK, I'll get rid of the safety check and just do rtc.month -1.
+I've checked it patch-by-patch now (with STRICT_KERNEL_RWX):
 
->
-> > +      */
-> > +     tm->tm_mon      = rtc.month ? rtc.month - 1 : 0;
-> > +     tm->tm_year     = rtc.year + (rtc.century * 100) - 1900;
-> > +     tm->tm_yday     = rtc_year_days(tm->tm_mday, tm->tm_mon, tm->tm_year);
-> > +
-> > +     /* Compute day of week */
-> > +     rtc_tm_to_time(tm, &time);
-> > +     rtc_time_to_tm(time, &calc_tm);
-> > +     tm->tm_wday = calc_tm.tm_wday;
->
-> Do you really need an accurate wday? There are no userspace applications
-> that I know of that care and converting back and forth is quite
-> expensive.
->
+- patches 1 and 2 build and boot fine
+- patches 3 to 6 build, but fail to boot with this error:
 
-We probably don't, this RTC should only get used for very specific purposes,
-and any userspace programs should be using a different RTC.
+	top of MEM2 @ 13F00000
 
-> > +
-> > +     return 0;
-> > +}
-> > +
-> > +int wilco_ec_rtc_write(struct device *dev, struct rtc_time *tm)
-> > +{
-> > +     struct wilco_ec_device *ec = dev_get_drvdata(dev->parent);
-> > +     struct ec_rtc_write rtc;
-> > +     struct wilco_ec_message msg = {
-> > +             .type = WILCO_EC_MSG_LEGACY,
-> > +             .flags = WILCO_EC_FLAG_RAW_RESPONSE,
-> > +             .command = EC_COMMAND_CMOS,
-> > +             .request_data = &rtc,
-> > +             .request_size = sizeof(rtc),
-> > +     };
-> > +     int year = tm->tm_year + 1900;
-> > +     /* Convert from 0=Sunday to 0=Saturday for the EC */
-> > +     int wday = tm->tm_wday == 6 ? 0 : tm->tm_wday + 1;
->
-> I'm not sure how useful it is to set an accurate wday when the RTC is
-> not able to give it back.
->
+	zImage starting: loaded at 0x00e00000 (sp: 0x01588fa0)
+	Allocating 0x14e92c8 bytes for kernel...
+	Decompressing (0x00000000 <- 0x00e11000:0x01586ba7)...
+	Done! Decompressed 0xdc01f4 bytes
 
-This is actually needed. The RTC on the EC controls battery charging
-schedules and thus needs to know the day of the week, and this is the
-way to do this.
+	Linux/PowerPC load: root=3D/dev/mmcblk0p2 rootwait console=3Dusbgecko1
+	Finalizing device tree... flat tree at 0x15897a0
+	[    0.000000] printk: bootconsole [udbg0] enabled
+	[    0.000000] Total memory =3D 319MB; using 1024kB for hash table (at (pt=
+rval))
+	[    0.000000] RAM mapped without BATs
+	[    0.000000] RAM mapped without BATs
+	[    0.000000] ------------[ cut here ]------------
+	[    0.000000] kernel BUG at arch/powerpc/mm/pgtable_32.c:223!
+	[    0.000000] Oops: Exception in kernel mode, sig: 5 [#1]
+	[    0.000000] BE PREEMPT
+	[    0.000000] Modules linked in:
+	[    0.000000] CPU: 0 PID: 0 Comm: swapper Not tainted 5.0.0-rc1-wii-00024=
+-g596f9fe23c13 #1337
+	[    0.000000] NIP:  c0017c4c LR: c0a836a0 CTR: c001edc4
+	[    0.000000] REGS: c0d9deb0 TRAP: 0700   Not tainted  (5.0.0-rc1-wii-000=
+24-g596f9fe23c13)
+	[    0.000000] MSR:  00020030 <IR,DR>  CR: 42000888  XER: 20000000
+	[    0.000000]
+	[    0.000000] GPR00: c0a836a0 c0d9df60 c0d2a4a0 c0d29c00 00000000 c16ff00=
+0 c0d9de28 c0dc0000
+	[    0.000000] GPR08: c0d9c000 00000001 00000001 00000000 28000824 0000000=
+0 00000000 00000000
+	[    0.000000] GPR16: 00000000 00000000 00000020 00000000 c0860000 c0da000=
+0 c0000000 c0a7d000
+	[    0.000000] GPR24: c0acd55c c0d487c8 13f00000 c0d29000 00000c00 0000031=
+1 c0000000 c0d487c8
+	[    0.000000] NIP [c0017c4c] map_kernel_page+0x78/0xf0
+	[    0.000000] LR [c0a836a0] mapin_ram+0xe0/0x14c
+	[    0.000000] Call Trace:
+	[    0.000000] [c0d9df60] [c0a83f54] mmu_mapin_ram+0x54/0x1a4 (unreliable)
+	[    0.000000] [c0d9df90] [c0a836a0] mapin_ram+0xe0/0x14c
+	[    0.000000] [c0d9dfd0] [c0a83578] MMU_init+0x158/0x1a0
+	[    0.000000] [c0d9dff0] [c0003418] start_here+0x40/0x78
+	[    0.000000] Instruction dump:
+	[    0.000000] 55290026 57c5b53a 7ca54a14 3d204000 7f854800 3ca5c000 419e0=
+088 81250000
+	[    0.000000] 552afffe 552907fe 7d4a4b79 4082004c <0f0a0000> 54840026 7c8=
+4eb78 9081000c
+	[    0.000000] random: get_random_bytes called from print_oops_end_marker+=
+0x34/0x6c with crng_init=3D0
+	[    0.000000] ---[ end trace 0000000000000000 ]---
+	[    0.000000]
+	[    0.000000] Kernel panic - not syncing: Attempted to kill the idle task!
+	[    0.000000] Rebooting in 180 seconds..
 
-> > +     int ret;
-> > +
-> > +     rtc.param       = EC_CMOS_TOD_WRITE;
-> > +     rtc.century     = bin2bcd(year / 100);
-> > +     rtc.year        = bin2bcd(year % 100);
-> > +     rtc.month       = bin2bcd(tm->tm_mon + 1);
-> > +     rtc.day         = bin2bcd(tm->tm_mday);
-> > +     rtc.hour        = bin2bcd(tm->tm_hour);
-> > +     rtc.minute      = bin2bcd(tm->tm_min);
-> > +     rtc.second      = bin2bcd(tm->tm_sec);
-> > +     rtc.weekday     = bin2bcd(wday);
-> > +
-> > +     ret = wilco_ec_mailbox(ec, &msg);
-> > +     if (ret < 0)
-> > +             return ret;
-> > +
-> > +     return 0;
-> > +}
-> > +
-> > +static const struct rtc_class_ops wilco_ec_rtc_ops = {
-> > +     .read_time = wilco_ec_rtc_read,
-> > +     .set_time = wilco_ec_rtc_write,
-> > +};
-> > +
-> > +static int wilco_ec_rtc_probe(struct platform_device *pdev)
-> > +{
-> > +     struct rtc_device *rtc = devm_rtc_device_register(&pdev->dev,
-> > +                                                       DRV_NAME,
-> > +                                                       &wilco_ec_rtc_ops,
-> > +                                                       THIS_MODULE);
->
-> Please use devm_rtc_allocate_device() and set rtc->range_min and
-> rtc->range_max before registering with rtc_register_device().
->
+- patches 7 to 11 fail to build with this error (really a warning, but
+  arch/powerpc doesn't allow warnings by default):
 
-Thanks, will do this.
+	  CC      arch/powerpc/mm/ppc_mmu_32.o
+	../arch/powerpc/mm/ppc_mmu_32.c:133:13: error: =E2=80=98clearibat=E2=80=99=
+ defined but not used [-Werror=3Dunused-function]
+	 static void clearibat(int index)
+		     ^~~~~~~~~
+	../arch/powerpc/mm/ppc_mmu_32.c:115:13: error: =E2=80=98setibat=E2=80=99 d=
+efined but not used [-Werror=3Dunused-function]
+	 static void setibat(int index, unsigned long virt, phys_addr_t phys,
+		     ^~~~~~~
+	cc1: all warnings being treated as errors
 
-> > +     if (IS_ERR(rtc))
-> > +             return PTR_ERR(rtc);
-> > +
-> > +     return 0;
-> > +}
-> > +
-> > +static struct platform_driver wilco_ec_rtc_driver = {
-> > +     .driver = {
-> > +             .name = DRV_NAME,
-> > +     },
-> > +     .probe = wilco_ec_rtc_probe,
-> > +};
-> > +
-> > +module_platform_driver(wilco_ec_rtc_driver);
-> > +
-> > +MODULE_ALIAS("platform:" DRV_NAME);
-> > +MODULE_AUTHOR("Nick Crews <ncrews@google.com>");
-> > +MODULE_LICENSE("GPL v2");
-> > +MODULE_DESCRIPTION("Wilco EC RTC driver");
-> > --
-> > 2.20.1.97.g81188d93c3-goog
-> >
->
-> --
-> Alexandre Belloni, Bootlin
-> Embedded Linux and Kernel engineering
-> https://bootlin.com
+- patches 12 to 15 build but fail to boot with this error:
 
-Nick Crews
-ncrews@google.com
+	top of MEM2 @ 13F00000
+
+	zImage starting: loaded at 0x01000000 (sp: 0x0178afa0)
+	Allocating 0x166b2c8 bytes for kernel...
+	Decompressing (0x00000000 <- 0x01011000:0x017880ce)...
+	Done! Decompressed 0xf421f4 bytes
+
+	Linux/PowerPC load: root=3D/dev/mmcblk0p2 rootwait console=3Dusbgecko1
+	Finalizing device tree... flat tree at 0x178b7a0
+	[    0.000000] printk: bootconsole [udbg0] enabled
+	[    0.000000] Kernel panic - not syncing: ERROR: Failed to allocate 0x001=
+00000 bytes below 0x00000000.
+	[    0.000000] CPU: 0 PID: 0 Comm: swapper Not tainted 5.0.0-rc1-wii-00033=
+-gc263f8162122 #1337
+	[    0.000000] Call Trace:
+	[    0.000000] [c0f1ff30] [c00280f0] panic+0x144/0x324 (unreliable)
+	[    0.000000] [c0f1ff90] [c0c18a34] memblock_alloc_base+0x34/0x44
+	[    0.000000] [c0f1ffa0] [c0c071e0] MMU_init_hw+0xcc/0x300
+	[    0.000000] [c0f1ffd0] [c0c06554] MMU_init+0x12c/0x198
+	[    0.000000] [c0f1fff0] [c0003418] start_here+0x40/0x78
+	[    0.000000] Rebooting in 180 seconds..
+
+
+I'll investigate some more tomorrow.
+
+Jonathan
+
+--bajzpZikUji1w+G9
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEvHAHGBBjQPVy+qvDCDBEmo7zX9sFAlw9KmgACgkQCDBEmo7z
+X9sofQ//W5ASkLAU3PgbijtwwedphsCQH89lxAdJU6zL5nOG2kZ8SffLiKKVrBkx
+O6SCWEdFX7j5TwOQNEBTa0hoWWfRQOytPLP3gbX4rxNgCe16y/fapMklEUq4QmLG
+GKVw8EBXcGm4CkgQvjDPJ+F8np1chHdsAGWo6k6XGtpd6useD/qOOr7NLu5DWfrZ
+GyFvO/vNS/V+QZqmkTo6n2f2UBZXDcD6YyPZqllYPcZdjZmj7qPUzKTlZwbwAaha
+66Or2RfJ38sLuL0CBaonfquErNCReppXecNz+jA0HIa4AQWKXFt4Pk59O1sGF5a7
+autgwzDZECYW8CqF5WvZzdu65NT0eFM9PkHVd6HytAYaB+x8/5IBPLOKnRWht25P
+qrcr4335xB5CLWWYccH1wwKOeKQnV1LrR7NZz6Q4iBvhq+kXpvPM6a7EbytjZ0Yk
+P8aTUGZQbRM3gj8oqqyPa6tVXRXmoKlWwM7++Fi2od23+q1AV1ID6TL2Ml4h0HwY
+Old86XpcdaJoGghkoXNPEhCBmpviRJ2lYMhuybMhIiwitUrZQsWT7+43pguPiuVv
+uMmZChwQJ5Yjj7C8k+Q0egTqd1M8kIeUkeNHcdAUeAmZn6KfOpNsKmuijNsaM4u8
+5IofLxLKQsMW5tbYMGqi/2sRmwwwtzO16ganRpaO3txlpEa7OR4=
+=pTfv
+-----END PGP SIGNATURE-----
+
+--bajzpZikUji1w+G9--
