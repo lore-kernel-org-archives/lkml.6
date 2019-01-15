@@ -2,417 +2,136 @@ Return-Path: <SRS0=RZO6=PX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 57836C43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 19:12:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 305B0C43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 19:13:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 17E2E20866
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 19:12:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547579551;
-	bh=1qx2S3mya5YGw5E94bMypqfJ0oESqR5VziWZ+znkhW8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=F3YdBHSG+9DWxPoo1dMP17GCN31EC+BZCDpiq5G+FmXdlj78hUS8h20FhOjoogZNt
-	 arR/q1IOdIlJqKuT6fkpZtEBdVigsj8Tx2Lr+XD8SgNkb2ohHKknZSSo1oHctjTCWb
-	 ue5RTAFtmPBSOpdWnPTA9F2bSW10ADaGp1lEC50E=
+	by mail.kernel.org (Postfix) with ESMTP id E236C20859
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 19:13:20 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=amdcloud.onmicrosoft.com header.i=@amdcloud.onmicrosoft.com header.b="X4v+p8Jz"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389258AbfAOTM3 (ORCPT
+        id S2389273AbfAOTNS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 15 Jan 2019 14:12:29 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43368 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729921AbfAOTM2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Jan 2019 14:12:28 -0500
-Received: from quaco.ghostprotocols.net (unknown [190.15.121.82])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 05FDE20859;
-        Tue, 15 Jan 2019 19:11:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547579547;
-        bh=1qx2S3mya5YGw5E94bMypqfJ0oESqR5VziWZ+znkhW8=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=Y70LD+dmYRye7OoLFEJGPT6irrHRGUCMUFKN2c9CMbasKqLzYopfKqozWAIhvjKPb
-         xTOJzsJ9V/E3ByvpGOBv4PWKd9ku763IUXV9OF8b3EgSIkdqaanM55f0B/4EBVIVDN
-         6zzaXMRiga8Sw1p4qA1P9uhfNfXYZi7G2S8dpwo4=
-Received: by quaco.ghostprotocols.net (Postfix, from userid 1000)
-        id 386BC41AB5; Tue, 15 Jan 2019 14:56:52 -0300 (-03)
-Date:   Tue, 15 Jan 2019 14:56:52 -0300
-From:   Arnaldo Carvalho de Melo <acme@kernel.org>
-To:     Song Liu <songliubraving@fb.com>
-Cc:     linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-        peterz@infradead.org, ast@kernel.org, daniel@iogearbox.net,
-        kernel-team@fb.com, dsahern@gmail.com
-Subject: Re: [PATCH v7 perf, bpf-next 6/8] perf util: handle
- PERF_RECORD_KSYMBOL
-Message-ID: <20190115175652.GD20159@kernel.org>
-References: <20190111001933.4153792-1-songliubraving@fb.com>
- <20190111001933.4153792-7-songliubraving@fb.com>
+        Tue, 15 Jan 2019 14:13:18 -0500
+Received: from mail-eopbgr800075.outbound.protection.outlook.com ([40.107.80.75]:19328
+        "EHLO NAM03-DM3-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1729921AbfAOTNS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 Jan 2019 14:13:18 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=amdcloud.onmicrosoft.com; s=selector1-amd-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=CYIHVzOR0Sqrw5I44vPkS27UuFfQgE9rdE2ylOeNKIs=;
+ b=X4v+p8JzgvJBSMFNLwxfo5yXtXo85RgtUBHnhxUkd51jCErAZT7gt684xoaR83hW4lbhTlXHJOSaqUXRLDqs3biAnukaA+Sf6rf5eHJmLrOe+I0RpdDNPsGP3mOoKipVXxnrjJcZCvXw4PVOejmp/+/WiyAF308FD2ri1zkWCwQ=
+Received: from BN6PR12MB1714.namprd12.prod.outlook.com (10.175.101.11) by
+ BN6PR12MB1731.namprd12.prod.outlook.com (10.175.101.16) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1516.18; Tue, 15 Jan 2019 19:13:11 +0000
+Received: from BN6PR12MB1714.namprd12.prod.outlook.com
+ ([fe80::1c01:3bbc:5ef1:4090]) by BN6PR12MB1714.namprd12.prod.outlook.com
+ ([fe80::1c01:3bbc:5ef1:4090%11]) with mapi id 15.20.1516.019; Tue, 15 Jan
+ 2019 19:13:11 +0000
+From:   "Koenig, Christian" <Christian.Koenig@amd.com>
+To:     "hch@lst.de" <hch@lst.de>, Thomas Hellstrom <thellstrom@vmware.com>
+CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "yong.zhi@intel.com" <yong.zhi@intel.com>,
+        "daniel.vetter@ffwll.ch" <daniel.vetter@ffwll.ch>,
+        "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>,
+        "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>,
+        "bingbu.cao@intel.com" <bingbu.cao@intel.com>,
+        "jian.xu.zheng@intel.com" <jian.xu.zheng@intel.com>,
+        "tian.shu.qiu@intel.com" <tian.shu.qiu@intel.com>,
+        "shiraz.saleem@intel.com" <shiraz.saleem@intel.com>,
+        "sakari.ailus@linux.intel.com" <sakari.ailus@linux.intel.com>,
+        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+        "jgg@ziepe.ca" <jgg@ziepe.ca>
+Subject: Re: [PATCH] lib/scatterlist: Provide a DMA page iterator
+Thread-Topic: [PATCH] lib/scatterlist: Provide a DMA page iterator
+Thread-Index: AQHUrOXdj04wr1dVGkWvqY6Mg4pf06Wwn32AgAAHy4CAAAuYgA==
+Date:   Tue, 15 Jan 2019 19:13:11 +0000
+Message-ID: <c82076aa-a6ee-5ba2-a8d8-935fdbb7d5ca@amd.com>
+References: <20190104223531.GA1705@ziepe.ca> <20190110234218.GM6890@ziepe.ca>
+ <20190114094856.GB29604@lst.de>
+ <1fb20ab4b171b281e9994b6c55734c120958530b.camel@vmware.com>
+ <2b440a3b-ed2f-8fd6-a21e-97ca0b2f5db9@gmail.com>
+ <20190115152029.GB2325@lst.de>
+ <41d0616e95fb48942404fb54d82249f5700affb1.camel@vmware.com>
+ <20190115183133.GA12350@lst.de>
+In-Reply-To: <20190115183133.GA12350@lst.de>
+Accept-Language: de-DE, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+user-agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
+x-originating-ip: [2a02:908:1252:fb60:be8a:bd56:1f94:86e7]
+x-clientproxiedby: AM5PR0202CA0003.eurprd02.prod.outlook.com
+ (2603:10a6:203:69::13) To BN6PR12MB1714.namprd12.prod.outlook.com
+ (2603:10b6:404:106::11)
+x-ms-exchange-messagesentrepresentingtype: 1
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;BN6PR12MB1731;20:8JoEZaK5rOjTjGvWn0/jNsdeUr3o4QK8F7wUCGuvFLXrjOEomIxmuPK8GI3wIAYYAE64KxYndHCmoUKGnqbZwp+Jx+5Ewm7kFugkhC5QmHROjy0pqG6Lw9u6dG5dDazMpMD0cMpE1ZpDxq4VnkqvLh27+3j5D4horuvWePvq0ZTx5p9Xq5rWD9BqQmGApAMsFtWgAhAWZM9AduSYSEiUTiGn7nKm3SfiX3FvzX8mcf2xuIqg0rP2PBAGj/xaZ0Lp
+x-ms-office365-filtering-correlation-id: ffc98a4a-9b0e-4df9-ec7c-08d67b1d7d7b
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600109)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:BN6PR12MB1731;
+x-ms-traffictypediagnostic: BN6PR12MB1731:
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=Christian.Koenig@amd.com; 
+x-microsoft-antispam-prvs: <BN6PR12MB1731E1CF8B9AE5752EEF300583810@BN6PR12MB1731.namprd12.prod.outlook.com>
+x-forefront-prvs: 0918748D70
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(346002)(39860400002)(136003)(376002)(366004)(396003)(189003)(199004)(43544003)(6486002)(6116002)(386003)(6506007)(36756003)(72206003)(64126003)(14454004)(478600001)(52116002)(76176011)(68736007)(2906002)(229853002)(31686004)(106356001)(105586002)(102836004)(25786009)(31696002)(4326008)(86362001)(486006)(65826007)(99286004)(6436002)(7416002)(5660300001)(53936002)(186003)(6512007)(476003)(2616005)(11346002)(446003)(81166006)(81156014)(7736002)(46003)(97736004)(305945005)(8676002)(65956001)(65806001)(8936002)(54906003)(110136005)(256004)(71200400001)(6246003)(58126008)(71190400001)(2501003)(93886005)(316002);DIR:OUT;SFP:1101;SCL:1;SRVR:BN6PR12MB1731;H:BN6PR12MB1714.namprd12.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: amd.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: pzm4Y//mPX3OWRrzHs404z2Ff37ZSja+DPbLCU3Ukbd5XcGA/ZRf7iLYgVi3d27m39SwtmvSRP9m+bCMakvps4s0D7+uttaZKv1hhhoBrpmbgk8h2ycB88iVsa2m8+OGt14pDlKIyplRhERHEsZUElTZwOB0vuqRQzvWr3Ktl/OeCn4h2ojEWiEc6aWNZYTppm9qvdiEoYkZCqwzzwdknuJSixzND1emGoyJyQZWpwUTqg2sRNslwdRVXCbBtJD7PwRC1sHevEWPTkq5RaPPLtPEW4yaHoNTin0vvwKTqMwoY3/rpxpkAb/bxY3TZvml5wf/hX4fV+h+ywL0IsZClX32GCqLyHja1S7JiCESDC+2UJEbfYjR52QQ4tOK2Xn1nbq6zIT0uGU6hJaXYYDo5PongBkdj2kXXO7P+Nuqufc=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <01DFD43BFF2D1B4DB471E42D38BF959C@namprd12.prod.outlook.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190111001933.4153792-7-songliubraving@fb.com>
-X-Url:  http://acmel.wordpress.com
-User-Agent: Mutt/1.10.1 (2018-07-13)
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: ffc98a4a-9b0e-4df9-ec7c-08d67b1d7d7b
+X-MS-Exchange-CrossTenant-originalarrivaltime: 15 Jan 2019 19:13:08.6746
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN6PR12MB1731
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Thu, Jan 10, 2019 at 04:19:31PM -0800, Song Liu escreveu:
-> This patch handles PERF_RECORD_KSYMBOL in perf record/report.
-> Specifically, map and symbol are created for ksymbol register, and
-> removed for ksymbol unregister.
-> 
-> This patch also set perf_event_attr.ksymbol properly. The flag is
-> ON by default.
-> 
-> Signed-off-by: Song Liu <songliubraving@fb.com>
-> ---
->  tools/perf/util/event.c   | 21 +++++++++++++++
->  tools/perf/util/event.h   | 20 ++++++++++++++
->  tools/perf/util/evsel.c   |  9 +++++++
->  tools/perf/util/evsel.h   |  1 +
->  tools/perf/util/machine.c | 57 +++++++++++++++++++++++++++++++++++++++
->  tools/perf/util/machine.h |  3 +++
->  tools/perf/util/session.c |  4 +++
->  tools/perf/util/tool.h    |  4 ++-
->  8 files changed, 118 insertions(+), 1 deletion(-)
-> 
-> diff --git a/tools/perf/util/event.c b/tools/perf/util/event.c
-> index 937a5a4f71cc..3c8a6a8dd260 100644
-> --- a/tools/perf/util/event.c
-> +++ b/tools/perf/util/event.c
-> @@ -24,6 +24,7 @@
->  #include "symbol/kallsyms.h"
->  #include "asm/bug.h"
->  #include "stat.h"
-> +#include "session.h"
->  
->  #define DEFAULT_PROC_MAP_PARSE_TIMEOUT 500
->  
-> @@ -45,6 +46,7 @@ static const char *perf_event__names[] = {
->  	[PERF_RECORD_SWITCH]			= "SWITCH",
->  	[PERF_RECORD_SWITCH_CPU_WIDE]		= "SWITCH_CPU_WIDE",
->  	[PERF_RECORD_NAMESPACES]		= "NAMESPACES",
-> +	[PERF_RECORD_KSYMBOL]			= "KSYMBOL",
->  	[PERF_RECORD_HEADER_ATTR]		= "ATTR",
->  	[PERF_RECORD_HEADER_EVENT_TYPE]		= "EVENT_TYPE",
->  	[PERF_RECORD_HEADER_TRACING_DATA]	= "TRACING_DATA",
-> @@ -1329,6 +1331,14 @@ int perf_event__process_switch(struct perf_tool *tool __maybe_unused,
->  	return machine__process_switch_event(machine, event);
->  }
->  
-> +int perf_event__process_ksymbol(struct perf_tool *tool __maybe_unused,
-> +				union perf_event *event,
-> +				struct perf_sample *sample __maybe_unused,
-> +				struct machine *machine)
-> +{
-> +	return machine__process_ksymbol(machine, event, sample);
-> +}
-> +
->  size_t perf_event__fprintf_mmap(union perf_event *event, FILE *fp)
->  {
->  	return fprintf(fp, " %d/%d: [%#" PRIx64 "(%#" PRIx64 ") @ %#" PRIx64 "]: %c %s\n",
-> @@ -1461,6 +1471,14 @@ static size_t perf_event__fprintf_lost(union perf_event *event, FILE *fp)
->  	return fprintf(fp, " lost %" PRIu64 "\n", event->lost.lost);
->  }
->  
-> +size_t perf_event__fprintf_ksymbol(union perf_event *event, FILE *fp)
-> +{
-> +	return fprintf(fp, " ksymbol event with addr %lx len %u type %u flags 0x%x name %s\n",
-> +		       event->ksymbol_event.addr, event->ksymbol_event.len,
-> +		       event->ksymbol_event.ksym_type,
-> +		       event->ksymbol_event.flags, event->ksymbol_event.name);
-> +}
-> +
->  size_t perf_event__fprintf(union perf_event *event, FILE *fp)
->  {
->  	size_t ret = fprintf(fp, "PERF_RECORD_%s",
-> @@ -1496,6 +1514,9 @@ size_t perf_event__fprintf(union perf_event *event, FILE *fp)
->  	case PERF_RECORD_LOST:
->  		ret += perf_event__fprintf_lost(event, fp);
->  		break;
-> +	case PERF_RECORD_KSYMBOL:
-> +		ret += perf_event__fprintf_ksymbol(event, fp);
-> +		break;
->  	default:
->  		ret += fprintf(fp, "\n");
->  	}
-> diff --git a/tools/perf/util/event.h b/tools/perf/util/event.h
-> index eb95f3384958..018322f2a13e 100644
-> --- a/tools/perf/util/event.h
-> +++ b/tools/perf/util/event.h
-> @@ -5,6 +5,7 @@
->  #include <limits.h>
->  #include <stdio.h>
->  #include <linux/kernel.h>
-> +#include <linux/bpf.h>
->  
->  #include "../perf.h"
->  #include "build-id.h"
-> @@ -84,6 +85,19 @@ struct throttle_event {
->  	u64 stream_id;
->  };
->  
-> +#ifndef KSYM_NAME_LEN
-> +#define KSYM_NAME_LEN 256
-> +#endif
-> +
-> +struct ksymbol_event {
-> +	struct perf_event_header header;
-> +	u64 addr;
-> +	u32 len;
-> +	u16 ksym_type;
-> +	u16 flags;
-> +	char name[KSYM_NAME_LEN];
-> +};
-> +
->  #define PERF_SAMPLE_MASK				\
->  	(PERF_SAMPLE_IP | PERF_SAMPLE_TID |		\
->  	 PERF_SAMPLE_TIME | PERF_SAMPLE_ADDR |		\
-> @@ -651,6 +665,7 @@ union perf_event {
->  	struct stat_round_event		stat_round;
->  	struct time_conv_event		time_conv;
->  	struct feature_event		feat;
-> +	struct ksymbol_event		ksymbol_event;
->  };
->  
->  void perf_event__print_totals(void);
-> @@ -748,6 +763,10 @@ int perf_event__process_exit(struct perf_tool *tool,
->  			     union perf_event *event,
->  			     struct perf_sample *sample,
->  			     struct machine *machine);
-> +int perf_event__process_ksymbol(struct perf_tool *tool,
-> +				union perf_event *event,
-> +				struct perf_sample *sample,
-> +				struct machine *machine);
->  int perf_tool__process_synth_event(struct perf_tool *tool,
->  				   union perf_event *event,
->  				   struct machine *machine,
-> @@ -811,6 +830,7 @@ size_t perf_event__fprintf_switch(union perf_event *event, FILE *fp);
->  size_t perf_event__fprintf_thread_map(union perf_event *event, FILE *fp);
->  size_t perf_event__fprintf_cpu_map(union perf_event *event, FILE *fp);
->  size_t perf_event__fprintf_namespaces(union perf_event *event, FILE *fp);
-> +size_t perf_event__fprintf_ksymbol(union perf_event *event, FILE *fp);
->  size_t perf_event__fprintf(union perf_event *event, FILE *fp);
->  
->  int kallsyms__get_function_start(const char *kallsyms_filename,
-> diff --git a/tools/perf/util/evsel.c b/tools/perf/util/evsel.c
-> index dbc0466db368..de34ce875648 100644
-> --- a/tools/perf/util/evsel.c
-> +++ b/tools/perf/util/evsel.c
-> @@ -1035,6 +1035,7 @@ void perf_evsel__config(struct perf_evsel *evsel, struct record_opts *opts,
->  	attr->mmap  = track;
->  	attr->mmap2 = track && !perf_missing_features.mmap2;
->  	attr->comm  = track;
-> +	attr->ksymbol = track && !perf_missing_features.ksymbol;
->  
->  	if (opts->record_namespaces)
->  		attr->namespaces  = track;
-> @@ -1652,6 +1653,7 @@ int perf_event_attr__fprintf(FILE *fp, struct perf_event_attr *attr,
->  	PRINT_ATTRf(context_switch, p_unsigned);
->  	PRINT_ATTRf(write_backward, p_unsigned);
->  	PRINT_ATTRf(namespaces, p_unsigned);
-> +	PRINT_ATTRf(ksymbol, p_unsigned);
->  
->  	PRINT_ATTRn("{ wakeup_events, wakeup_watermark }", wakeup_events, p_unsigned);
->  	PRINT_ATTRf(bp_type, p_unsigned);
-> @@ -1811,6 +1813,8 @@ int perf_evsel__open(struct perf_evsel *evsel, struct cpu_map *cpus,
->  				     PERF_SAMPLE_BRANCH_NO_CYCLES);
->  	if (perf_missing_features.group_read && evsel->attr.inherit)
->  		evsel->attr.read_format &= ~(PERF_FORMAT_GROUP|PERF_FORMAT_ID);
-> +	if (perf_missing_features.ksymbol)
-> +		evsel->attr.ksymbol = 0;
->  retry_sample_id:
->  	if (perf_missing_features.sample_id_all)
->  		evsel->attr.sample_id_all = 0;
-> @@ -1955,6 +1959,11 @@ int perf_evsel__open(struct perf_evsel *evsel, struct cpu_map *cpus,
->  		perf_missing_features.exclude_guest = true;
->  		pr_debug2("switching off exclude_guest, exclude_host\n");
->  		goto fallback_missing_features;
-> +	} else if (!perf_missing_features.ksymbol &&
-> +		   evsel->attr.ksymbol) {
-> +		perf_missing_features.ksymbol = true;
-> +		pr_debug2("switching off ksymbol\n");
-> +		goto fallback_missing_features;
-
-
-Please move this to the top, see the comment there:
-
-	if (err != -EINVAL || cpu > 0 || thread > 0)
-		goto out_close;
-
-	/*
-	 * Must probe features in the order they were added to the
-	 * perf_event_attr interface.
-	 */
-	if (!perf_missing_features.write_backward && evsel->attr.write_backward) {
-		perf_missing_features.write_backward = true;
-		pr_debug2("switching off write_backward\n");
-		goto out_close;
-	} else if (!perf_missing_features.clockid_wrong && evsel->attr.use_clockid) {
-		perf_missing_features.clockid_wrong = true;
-		pr_debug2("switching off clockid\n");
-		goto fallback_missing_features;
-
-
-So that when one asks for, say, attr.write_backward _and_ attr.ksymbol,
-we first disable attr.ksymbol, to try the fallback, as it was added
-after attr.write_backward.
-
-Think about an older kernel where attr.write_backward is present but not
-attr.ksymbol.
-
-Ditto for the attr.bpf_event.
-
->  	} else if (!perf_missing_features.sample_id_all) {
->  		perf_missing_features.sample_id_all = true;
->  		pr_debug2("switching off sample_id_all\n");
-> diff --git a/tools/perf/util/evsel.h b/tools/perf/util/evsel.h
-> index 82a289ce8b0c..4a8c3e7f4808 100644
-> --- a/tools/perf/util/evsel.h
-> +++ b/tools/perf/util/evsel.h
-> @@ -168,6 +168,7 @@ struct perf_missing_features {
->  	bool lbr_flags;
->  	bool write_backward;
->  	bool group_read;
-> +	bool ksymbol;
->  };
->  
->  extern struct perf_missing_features perf_missing_features;
-> diff --git a/tools/perf/util/machine.c b/tools/perf/util/machine.c
-> index 6fcb3bce0442..1734ca027661 100644
-> --- a/tools/perf/util/machine.c
-> +++ b/tools/perf/util/machine.c
-> @@ -681,6 +681,61 @@ int machine__process_switch_event(struct machine *machine __maybe_unused,
->  	return 0;
->  }
->  
-> +static int machine__process_ksymbol_register(
-> +	struct machine *machine,
-> +	union perf_event *event,
-> +	struct perf_sample *sample __maybe_unused)
-> +{
-> +	struct symbol *sym;
-> +	struct map *map;
-> +
-> +	map = map_groups__find(&machine->kmaps, event->ksymbol_event.addr);
-> +	if (!map) {
-> +		map = dso__new_map("bpf_prog");
-> +		if (!map)
-> +			return -ENOMEM;
-> +
-> +		map->start = event->ksymbol_event.addr;
-> +		map->pgoff = map->start;
-> +		map->end = map->start + event->ksymbol_event.len;
-> +		map_groups__insert(&machine->kmaps, map);
-> +	}
-> +
-> +	sym = symbol__new(event->ksymbol_event.addr, event->ksymbol_event.len,
-> +			  0, 0, event->ksymbol_event.name);
-> +	if (!sym)
-> +		return -ENOMEM;
-> +	dso__insert_symbol(map->dso, sym);
-> +	return 0;
-> +}
-> +
-> +static int machine__process_ksymbol_unregister(
-> +	struct machine *machine,
-> +	union perf_event *event,
-> +	struct perf_sample *sample __maybe_unused)
-> +{
-> +	struct map *map;
-> +
-> +	map = map_groups__find(&machine->kmaps, event->ksymbol_event.addr);
-> +	if (map)
-> +		map_groups__remove(&machine->kmaps, map);
-> +
-> +	return 0;
-> +}
-> +
-> +int machine__process_ksymbol(struct machine *machine __maybe_unused,
-> +			     union perf_event *event,
-> +			     struct perf_sample *sample)
-> +{
-> +	if (dump_trace)
-> +		perf_event__fprintf_ksymbol(event, stderr);
-> +
-> +	if (event->ksymbol_event.flags & PERF_RECORD_KSYMBOL_FLAGS_UNREGISTER)
-> +		return machine__process_ksymbol_unregister(machine, event,
-> +							   sample);
-> +	return machine__process_ksymbol_register(machine, event, sample);
-> +}
-> +
->  static void dso__adjust_kmod_long_name(struct dso *dso, const char *filename)
->  {
->  	const char *dup_filename;
-> @@ -1812,6 +1867,8 @@ int machine__process_event(struct machine *machine, union perf_event *event,
->  	case PERF_RECORD_SWITCH:
->  	case PERF_RECORD_SWITCH_CPU_WIDE:
->  		ret = machine__process_switch_event(machine, event); break;
-> +	case PERF_RECORD_KSYMBOL:
-> +		ret = machine__process_ksymbol(machine, event, sample); break;
->  	default:
->  		ret = -1;
->  		break;
-> diff --git a/tools/perf/util/machine.h b/tools/perf/util/machine.h
-> index a5d1da60f751..4ecd380ce1b4 100644
-> --- a/tools/perf/util/machine.h
-> +++ b/tools/perf/util/machine.h
-> @@ -130,6 +130,9 @@ int machine__process_mmap_event(struct machine *machine, union perf_event *event
->  				struct perf_sample *sample);
->  int machine__process_mmap2_event(struct machine *machine, union perf_event *event,
->  				 struct perf_sample *sample);
-> +int machine__process_ksymbol(struct machine *machine,
-> +			     union perf_event *event,
-> +			     struct perf_sample *sample);
->  int machine__process_event(struct machine *machine, union perf_event *event,
->  				struct perf_sample *sample);
->  
-> diff --git a/tools/perf/util/session.c b/tools/perf/util/session.c
-> index 78a067777144..a9c98c3914ed 100644
-> --- a/tools/perf/util/session.c
-> +++ b/tools/perf/util/session.c
-> @@ -376,6 +376,8 @@ void perf_tool__fill_defaults(struct perf_tool *tool)
->  		tool->itrace_start = perf_event__process_itrace_start;
->  	if (tool->context_switch == NULL)
->  		tool->context_switch = perf_event__process_switch;
-> +	if (tool->ksymbol == NULL)
-> +		tool->ksymbol = perf_event__process_ksymbol;
->  	if (tool->read == NULL)
->  		tool->read = process_event_sample_stub;
->  	if (tool->throttle == NULL)
-> @@ -1305,6 +1307,8 @@ static int machines__deliver_event(struct machines *machines,
->  	case PERF_RECORD_SWITCH:
->  	case PERF_RECORD_SWITCH_CPU_WIDE:
->  		return tool->context_switch(tool, event, sample, machine);
-> +	case PERF_RECORD_KSYMBOL:
-> +		return tool->ksymbol(tool, event, sample, machine);
->  	default:
->  		++evlist->stats.nr_unknown_events;
->  		return -1;
-> diff --git a/tools/perf/util/tool.h b/tools/perf/util/tool.h
-> index 56e4ca54020a..9c81ca2f3cf7 100644
-> --- a/tools/perf/util/tool.h
-> +++ b/tools/perf/util/tool.h
-> @@ -53,7 +53,9 @@ struct perf_tool {
->  			itrace_start,
->  			context_switch,
->  			throttle,
-> -			unthrottle;
-> +			unthrottle,
-> +			ksymbol;
-> +
->  	event_attr_op	attr;
->  	event_attr_op	event_update;
->  	event_op2	tracing_data;
-> -- 
-> 2.17.1
-
--- 
-
-- Arnaldo
+QW0gMTUuMDEuMTkgdW0gMTk6MzEgc2NocmllYiBoY2hAbHN0LmRlOg0KPiBPbiBUdWUsIEphbiAx
+NSwgMjAxOSBhdCAwNjowMzozOVBNICswMDAwLCBUaG9tYXMgSGVsbHN0cm9tIHdyb3RlOg0KPj4g
+SW4gdGhlIGdyYXBoaWNzIGNhc2UsIGl0J3MgcHJvYmFibHkgYmVjYXVzZSBpdCBkb2Vzbid0IGZp
+dCB0aGUgZ3JhcGhpY3MNCj4+IHVzZS1jYXNlczoNCj4+DQo+PiAxKSBNZW1vcnkgdHlwaWNhbGx5
+IG5lZWRzIHRvIGJlIG1hcHBhYmxlIGJ5IGFub3RoZXIgZGV2aWNlLiAodGhlICJkbWEtDQo+PiBi
+dWYiIGludGVyZmFjZSkNCj4gQW5kIHRoZXJlIGlzIG5vdGhpbmcgcHJldmVudGluZyBkbWEtYnVm
+IHNoYXJpbmcgb2YgdGhlc2UgYnVmZmVycy4NCj4gVW5saWtlIHRoZSBnZXRfc2d0YWJsZSBtZXNz
+IGl0IGNhbiBhY3R1YWxseSB3b3JrIHJlbGlhYmx5IG9uDQo+IGFyY2hpdGVjdHVyZXMgdGhhdCBo
+YXZlIHZpcnR1YWxseSB0YWdnZWQgY2FjaGVzIGFuZC9vciBkb24ndA0KPiBndWFyYW50ZWUgY2Fj
+aGUgY29oZXJlbmN5IHdpdGggbWl4ZWQgYXR0cmlidXRlIG1hcHBpbmdzLg0KPg0KPj4gMikgRE1B
+IGJ1ZmZlcnMgYXJlIGV4cG9ydGVkIHRvIHVzZXItc3BhY2UgYW5kIGlzIHN1Yi1hbGxvY2F0ZWQg
+YnkgaXQuDQo+PiBNb3N0bHkgdGhlcmUgYXJlIG5vIEdQVSB1c2VyLXNwYWNlIGtlcm5lbCBpbnRl
+cmZhY2VzIHRvIHN5bmMgLyBmbHVzaA0KPj4gc3VicmVnaW9ucyBhbmQgdGhlc2Ugc3luY3MgbWF5
+IGhhcHBlbiBvbiBhIHNtYWxsZXItdGhhbi1jYWNoZS1saW5lDQo+PiBncmFudWxhcml0eS4NCj4g
+SSBrbm93IG9mIG5vIGFyY2hpdGVjdHVyZXMgdGhhdCBjYW4gZG8gY2FjaGUgbWFpbnRhaW5hbmNl
+IG9uIGEgbGVzcw0KPiB0aGFuIGNhY2hlIGxpbmUgYmFzaXMuICBFaXRoZXIgdGhlIGluc3RydWN0
+aW9ucyByZXF1aXJlIHlvdSB0bw0KPiBzcGVjaWZjeSBjYWNoZSBsaW5lcywgb3IgdGhleSBkbyBz
+b21ldGltZXMgbW9yZSwgc29tZXRpbWVzIGxlc3MNCj4gaW50ZWxsaWdlbnQgcm91bmRpbmcgdXAu
+DQo+DQo+IE5vdGUgdGhhdCBhcyBsb25nIGRtYSBub24tY29oZXJlbnQgYnVmZmVycyBhcmUgZGV2
+aWNlcyBvd25lZCBpdA0KPiBpcyB1cCB0byB0aGUgZGV2aWNlIGFuZCB0aGUgdXNlciBzcGFjZSBk
+cml2ZXIgdG8gdGFrZSBjYXJlIG9mDQo+IGNvaGVyZW5jeSwgdGhlIGtlcm5lbCB2ZXJ5IG11Y2gg
+aXMgb3V0IG9mIHRoZSBwaWN0dXJlLg0KDQpUaG9tYXMgaXMgY29ycmVjdCB0aGF0IHRoZSBpbnRl
+cmZhY2UgeW91IHByb3Bvc2UgaGVyZSBkb2Vzbid0IHdvcmsgYXQgDQphbGwgZm9yIEdQVXMuDQoN
+ClRoZSBrZXJuZWwgZHJpdmVyIGlzIG5vdCBpbmZvcm1lZCBvZiBmbHVzaC9zeW5jLCBidXQgcmF0
+aGVyIGp1c3Qgc2V0dXBzIA0KY29oZXJlbnQgbWFwcGluZ3MgYmV0d2VlbiBzeXN0ZW0gbWVtb3J5
+IGFuZCBkZXZpY2VzLg0KDQpJbiBvdGhlciB3b3JkcyB5b3UgaGF2ZSBhbiBhcnJheSBvZiBzdHJ1
+Y3QgcGFnZXMgYW5kIG5lZWQgdG8gbWFwIHRoYXQgdG8gDQphIHNwZWNpZmljIGRldmljZSBhbmQg
+c28gY3JlYXRlIGRtYV9hZGRyZXNzZXMgZm9yIHRoZSBtYXBwaW5ncy4NCg0KUmVnYXJkcywNCkNo
+cmlzdGlhbi4NCg==
