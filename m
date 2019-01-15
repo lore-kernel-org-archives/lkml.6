@@ -2,372 +2,99 @@ Return-Path: <SRS0=RZO6=PX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E8960C43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 05:49:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E6FAC43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 05:49:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AA96520656
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 05:49:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E48C820656
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 05:49:29 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="O0EzqVoI"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728202AbfAOFtQ convert rfc822-to-8bit (ORCPT
+        id S1728223AbfAOFt2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 15 Jan 2019 00:49:16 -0500
-Received: from prv1-mh.provo.novell.com ([137.65.248.33]:53180 "EHLO
-        prv1-mh.provo.novell.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725929AbfAOFtQ (ORCPT
-        <rfc822;groupwise-linux-kernel@vger.kernel.org:7:1>);
-        Tue, 15 Jan 2019 00:49:16 -0500
-Received: from INET-PRV1-MTA by prv1-mh.provo.novell.com
-        with Novell_GroupWise; Mon, 14 Jan 2019 22:49:14 -0700
-Message-Id: <5C3D7453020000F90004D7BD@prv1-mh.provo.novell.com>
-X-Mailer: Novell GroupWise Internet Agent 18.1.0 
-Date:   Mon, 14 Jan 2019 22:49:07 -0700
-From:   "Gang He" <ghe@suse.com>
-To:     <jlbec@evilplan.org>, <mark@fasheh.com>, <jiangqi903@gmail.com>,
-        <ge.changwei@h3c.com>
-Cc:     <akpm@linux-foundation.org>, <ocfs2-devel@oss.oracle.com>,
-        <linux-kernel@vger.kernel.org>
-Subject: Re: [Ocfs2-devel] [PATCH] ocfs2: fix the application IO
- timeout when fstrim is running
-References: <20190111090014.31645-1-ghe@suse.com>
- <63ADC13FD55D6546B7DECE290D39E3730127825EFD@H3CMLB12-EX.srv.huawei-3com.com>
-In-Reply-To: <63ADC13FD55D6546B7DECE290D39E3730127825EFD@H3CMLB12-EX.srv.huawei-3com.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 8BIT
-Content-Disposition: inline
+        Tue, 15 Jan 2019 00:49:28 -0500
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:36320 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725929AbfAOFt1 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 Jan 2019 00:49:27 -0500
+Received: by mail-lj1-f193.google.com with SMTP id g11-v6so1267075ljk.3
+        for <linux-kernel@vger.kernel.org>; Mon, 14 Jan 2019 21:49:26 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=BpDueNevsRnBidYxEIG5wN4kZWrXUeP6KI/DD4jLB6I=;
+        b=O0EzqVoIxzmVIZM12+KvajTa7YNnrgNEiUxITL1g8xIbDam5W1NEhq/s9d7YHwN+PP
+         XATmOV2jPxEP+bRp+ZLga2wrGJRgQsbdL2WcwB9FKyO8KcBHWVV4W5sATL3tpaMgJPVd
+         6QMrdzSu1WwY6Bhb5oaa7T3xKHW9y8+TiDmbBuVVLfvH5E14IlZocYhmQrUPX2WsW5Co
+         XJulCJl6eJMVwVyrc958EKp/I6gr7exN0hfcThFCWpEA9n+yLVK7Gwm6N1fZ0ILLuySO
+         HKQJBD+tA9sQ9Iqao96pBaWYUP0TO1qWclWalwAlRmao9m6YO0p6HHdSSsK1VdK1dCWO
+         SWlg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=BpDueNevsRnBidYxEIG5wN4kZWrXUeP6KI/DD4jLB6I=;
+        b=dpURzhsZ61FntECHz9DsBRMHHJ6C9NG37YNINKTv6OonxHY6CUMh1+s5mexhEBQzBx
+         9xZ6FNjZtpsLTjSLDMBtOaoKUgfrkp3ug6L9c/PwH9l1MFVlkUUV8FT4Auz/M9C9JXdx
+         R4kBpa9HM8WxjNwd3nKa7gwsx2BPS9mlhPLkSlott9Vqjkhbnq0aHLqPkjRQmKfVpCO6
+         BJCfARMHLBYbqYL+wZknEN3Fr1NSbhuVXVx2VvYYb0INCVS3T7LmpRHqAzZJKKWNCFlf
+         UJbH0la2glXa1cf7llQmFxXMDAskaNiLE26wj7Kfi5DTdb8ZEATCRjR8WWPTv4YbVWQ9
+         tfXg==
+X-Gm-Message-State: AJcUukctVbfI6gmM0NsU9Mv0XQcOfvlNIZopTTJILBPnSFdiI22g4Pgd
+        1sfePHDA/ieyRk8Lu87Td+mCEw+Wcigd1IPGyic=
+X-Google-Smtp-Source: ALg8bN5OmwOZTAglchoZ0zIX+KX6ppLL5TIM4Zj1pbvhiVmNkbV1j5lJsGW4kQ3VZ0qMAHaPw3wqjzbWAvrAULMS8zg=
+X-Received: by 2002:a2e:9181:: with SMTP id f1-v6mr1444054ljg.64.1547531365628;
+ Mon, 14 Jan 2019 21:49:25 -0800 (PST)
+MIME-Version: 1.0
+References: <20190109152558.GA24243@hp-pavilion-15-notebook-pc-brajeswar>
+In-Reply-To: <20190109152558.GA24243@hp-pavilion-15-notebook-pc-brajeswar>
+From:   Souptick Joarder <jrdr.linux@gmail.com>
+Date:   Tue, 15 Jan 2019 11:19:13 +0530
+Message-ID: <CAFqt6za3f19KPizNe=BqC5OX5rEp5sqwnAARLdz18ZPuoB2xUg@mail.gmail.com>
+Subject: Re: [PATCH] staging/android/vsoc: Remove duplicate header
+To:     Brajeswar Ghosh <brajeswar.linux@gmail.com>
+Cc:     Greg KH <gregkh@linuxfoundation.org>, arve@android.com,
+        tkjos@android.com, maco@android.com, joel@joelfernandes.org,
+        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
+        Sabyasachi Gupta <sabyasachi.linux@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello Changewei,
+On Wed, Jan 9, 2019 at 8:56 PM Brajeswar Ghosh
+<brajeswar.linux@gmail.com> wrote:
+>
+> Remove linux/mutex.h.h which is included more than once
+>
+> Signed-off-by: Brajeswar Ghosh <brajeswar.linux@gmail.com>
 
->>> On 2019/1/15 at 11:50, in message
-<63ADC13FD55D6546B7DECE290D39E3730127825EFD@H3CMLB12-EX.srv.huawei-3com.com>,
-Changwei Ge <ge.changwei@h3c.com> wrote:
-> Hi Gang,
-> 
-> Most parts of this patch look sane to me, just a tiny question...
-> 
-> On 2019/1/11 17:01, Gang He wrote:
->> The user reported this problem, the upper application IO was
->> timeout when fstrim was running on this ocfs2 partition. the
->> application monitoring resource agent considered that this
->> application did not work, then this node was fenced by the cluster
->> brain (e.g. pacemaker).
->> The root cause is that fstrim thread always holds main_bm meta-file
->> related locks until all the cluster groups are trimmed.
->> This patch will make fstrim thread release main_bm meta-file
->> related locks when each cluster group is trimmed, this will let
->> the current application IO has a chance to claim the clusters from
->> main_bm meta-file.
->> 
->> Signed-off-by: Gang He <ghe@suse.com>
->> ---
->>   fs/ocfs2/alloc.c       | 159 +++++++++++++++++++++++++----------------
->>   fs/ocfs2/dlmglue.c     |   5 ++
->>   fs/ocfs2/ocfs2.h       |   1 +
->>   fs/ocfs2/ocfs2_trace.h |   2 +
->>   fs/ocfs2/super.c       |   2 +
->>   5 files changed, 106 insertions(+), 63 deletions(-)
->> 
->> diff --git a/fs/ocfs2/alloc.c b/fs/ocfs2/alloc.c
->> index d1cbb27808e2..6f0999015a44 100644
->> --- a/fs/ocfs2/alloc.c
->> +++ b/fs/ocfs2/alloc.c
->> @@ -7532,10 +7532,11 @@ static int ocfs2_trim_group(struct super_block *sb,
->>   	return count;
->>   }
->>   
->> -int ocfs2_trim_fs(struct super_block *sb, struct fstrim_range *range)
->> +static
->> +int ocfs2_trim_mainbm(struct super_block *sb, struct fstrim_range *range)
->>   {
->>   	struct ocfs2_super *osb = OCFS2_SB(sb);
->> -	u64 start, len, trimmed, first_group, last_group, group;
->> +	u64 start, len, trimmed = 0, first_group, last_group = 0, group = 0;
->>   	int ret, cnt;
->>   	u32 first_bit, last_bit, minlen;
->>   	struct buffer_head *main_bm_bh = NULL;
->> @@ -7543,7 +7544,6 @@ int ocfs2_trim_fs(struct super_block *sb, struct 
-> fstrim_range *range)
->>   	struct buffer_head *gd_bh = NULL;
->>   	struct ocfs2_dinode *main_bm;
->>   	struct ocfs2_group_desc *gd = NULL;
->> -	struct ocfs2_trim_fs_info info, *pinfo = NULL;
->>   
->>   	start = range->start >> osb->s_clustersize_bits;
->>   	len = range->len >> osb->s_clustersize_bits;
->> @@ -7552,6 +7552,9 @@ int ocfs2_trim_fs(struct super_block *sb, struct 
-> fstrim_range *range)
->>   	if (minlen >= osb->bitmap_cpg || range->len < sb->s_blocksize)
->>   		return -EINVAL;
->>   
->> +	trace_ocfs2_trim_mainbm(start, len, minlen);
->> +
->> +next_group:
->>   	main_bm_inode = ocfs2_get_system_file_inode(osb,
->>   						    GLOBAL_BITMAP_SYSTEM_INODE,
->>   						    OCFS2_INVALID_SLOT);
->> @@ -7570,64 +7573,34 @@ int ocfs2_trim_fs(struct super_block *sb, struct 
-> fstrim_range *range)
->>   	}
->>   	main_bm = (struct ocfs2_dinode *)main_bm_bh->b_data;
->>   
->> -	if (start >= le32_to_cpu(main_bm->i_clusters)) {
->> -		ret = -EINVAL;
->> -		goto out_unlock;
->> -	}
->> -
->> -	len = range->len >> osb->s_clustersize_bits;
->> -	if (start + len > le32_to_cpu(main_bm->i_clusters))
->> -		len = le32_to_cpu(main_bm->i_clusters) - start;
->> -
->> -	trace_ocfs2_trim_fs(start, len, minlen);
->> -
->> -	ocfs2_trim_fs_lock_res_init(osb);
->> -	ret = ocfs2_trim_fs_lock(osb, NULL, 1);
->> -	if (ret < 0) {
->> -		if (ret != -EAGAIN) {
->> -			mlog_errno(ret);
->> -			ocfs2_trim_fs_lock_res_uninit(osb);
->> +	/*
->> +	 * Do some check before trim the first group.
->> +	 */
->> +	if (!group) {
->> +		if (start >= le32_to_cpu(main_bm->i_clusters)) {
->> +			ret = -EINVAL;
->>   			goto out_unlock;
->>   		}
->>   
->> -		mlog(ML_NOTICE, "Wait for trim on device (%s) to "
->> -		     "finish, which is running from another node.\n",
->> -		     osb->dev_str);
->> -		ret = ocfs2_trim_fs_lock(osb, &info, 0);
->> -		if (ret < 0) {
->> -			mlog_errno(ret);
->> -			ocfs2_trim_fs_lock_res_uninit(osb);
->> -			goto out_unlock;
->> -		}
->> +		if (start + len > le32_to_cpu(main_bm->i_clusters))
->> +			len = le32_to_cpu(main_bm->i_clusters) - start;
->>   
->> -		if (info.tf_valid && info.tf_success &&
->> -		    info.tf_start == start && info.tf_len == len &&
->> -		    info.tf_minlen == minlen) {
->> -			/* Avoid sending duplicated trim to a shared device */
->> -			mlog(ML_NOTICE, "The same trim on device (%s) was "
->> -			     "just done from node (%u), return.\n",
->> -			     osb->dev_str, info.tf_nodenum);
->> -			range->len = info.tf_trimlen;
->> -			goto out_trimunlock;
->> -		}
->> +		/*
->> +		 * Determine first and last group to examine based on
->> +		 * start and len
->> +		 */
->> +		first_group = ocfs2_which_cluster_group(main_bm_inode, start);
->> +		if (first_group == osb->first_cluster_group_blkno)
->> +			first_bit = start;
->> +		else
->> +			first_bit = start - ocfs2_blocks_to_clusters(sb,
->> +								first_group);
->> +		last_group = ocfs2_which_cluster_group(main_bm_inode,
->> +						       start + len - 1);
->> +		group = first_group;
->>   	}
->>   
->> -	info.tf_nodenum = osb->node_num;
->> -	info.tf_start = start;
->> -	info.tf_len = len;
->> -	info.tf_minlen = minlen;
->> -
->> -	/* Determine first and last group to examine based on start and len */
->> -	first_group = ocfs2_which_cluster_group(main_bm_inode, start);
->> -	if (first_group == osb->first_cluster_group_blkno)
->> -		first_bit = start;
->> -	else
->> -		first_bit = start - ocfs2_blocks_to_clusters(sb, first_group);
->> -	last_group = ocfs2_which_cluster_group(main_bm_inode, start + len - 1);
->> -	last_bit = osb->bitmap_cpg;
->> -
->> -	trimmed = 0;
->> -	for (group = first_group; group <= last_group;) {
->> +	do {
->>   		if (first_bit + len >= osb->bitmap_cpg)
->>   			last_bit = osb->bitmap_cpg;
->>   		else
->> @@ -7659,21 +7632,81 @@ int ocfs2_trim_fs(struct super_block *sb, struct 
-> fstrim_range *range)
->>   			group = ocfs2_clusters_to_blocks(sb, osb->bitmap_cpg);
->>   		else
->>   			group += ocfs2_clusters_to_blocks(sb, osb->bitmap_cpg);
->> -	}
->> -	range->len = trimmed * sb->s_blocksize;
->> +	} while (0);
->>   
->> -	info.tf_trimlen = range->len;
->> -	info.tf_success = (ret ? 0 : 1);
->> -	pinfo = &info;
->> -out_trimunlock:
->> -	ocfs2_trim_fs_unlock(osb, pinfo);
->> -	ocfs2_trim_fs_lock_res_uninit(osb);
->>   out_unlock:
->>   	ocfs2_inode_unlock(main_bm_inode, 0);
->>   	brelse(main_bm_bh);
->> +	main_bm_bh = NULL;
->>   out_mutex:
->>   	inode_unlock(main_bm_inode);
->>   	iput(main_bm_inode);
->> +
->> +	/*
->> +	 * If all the groups trim are not done or failed, but we should release
->> +	 * main_bm related locks for avoiding the current IO starve, then go to
->> +	 * trim the next group
->> +	 */
->> +	if (ret >= 0 && group <= last_group)
->> +		goto next_group;
->>   out:
->> +	range->len = trimmed * sb->s_blocksize;
->> +	return ret;
->> +}
->> +
->> +int ocfs2_trim_fs(struct super_block *sb, struct fstrim_range *range)
->> +{
->> +	int ret;
->> +	struct ocfs2_super *osb = OCFS2_SB(sb);
->> +	struct ocfs2_trim_fs_info info, *pinfo = NULL;
->> +
->> +	ocfs2_trim_fs_lock_res_init(osb);
->> +
->> +	trace_ocfs2_trim_fs(range->start, range->len, range->minlen);
->> +
->> +	ret = ocfs2_trim_fs_lock(osb, NULL, 1);
->> +	if (ret < 0) {
->> +		if (ret != -EAGAIN) {
->> +			mlog_errno(ret);
->> +			ocfs2_trim_fs_lock_res_uninit(osb);
->> +			return ret;
->> +		}
->> +
->> +		mlog(ML_NOTICE, "Wait for trim on device (%s) to "
->> +		     "finish, which is running from another node.\n",
->> +		     osb->dev_str);
->> +		ret = ocfs2_trim_fs_lock(osb, &info, 0);
->> +		if (ret < 0) {
->> +			mlog_errno(ret);
->> +			ocfs2_trim_fs_lock_res_uninit(osb);
->> +			return ret;
->> +		}
->> +
->> +		if (info.tf_valid && info.tf_success &&
->> +		    info.tf_start == range->start &&
->> +		    info.tf_len == range->len &&
->> +		    info.tf_minlen == range->minlen) {
->> +			/* Avoid sending duplicated trim to a shared device */
->> +			mlog(ML_NOTICE, "The same trim on device (%s) was "
->> +			     "just done from node (%u), return.\n",
->> +			     osb->dev_str, info.tf_nodenum);
->> +			range->len = info.tf_trimlen;
->> +			goto out;
->> +		}
->> +	}
->> +
->> +	info.tf_nodenum = osb->node_num;
->> +	info.tf_start = range->start;
->> +	info.tf_len = range->len;
->> +	info.tf_minlen = range->minlen;
->> +
->> +	ret = ocfs2_trim_mainbm(sb, range);
->> +
->> +	info.tf_trimlen = range->len;
->> +	info.tf_success = (ret < 0 ? 0 : 1);
->> +	pinfo = &info;
->> +out:
->> +	ocfs2_trim_fs_unlock(osb, pinfo);
->> +	ocfs2_trim_fs_lock_res_uninit(osb);
->>   	return ret;
->>   }
->> diff --git a/fs/ocfs2/dlmglue.c b/fs/ocfs2/dlmglue.c
->> index 7c835824247e..af405586c5b1 100644
->> --- a/fs/ocfs2/dlmglue.c
->> +++ b/fs/ocfs2/dlmglue.c
->> @@ -686,6 +686,9 @@ void ocfs2_trim_fs_lock_res_init(struct ocfs2_super *osb)
->>   {
->>   	struct ocfs2_lock_res *lockres = &osb->osb_trim_fs_lockres;
->>   
->> +	/* Only one trimfs thread are allowed to work at the same time. */
->> +	mutex_lock(&osb->obs_trim_fs_mutex);
->> +
-> 
-> Cluster lock of fstrim have a trylock behavior, will it be better if we 
-> trylock here?
-Here, I prefer to just serialize fstrim threads on the local node to simplify the code logic,
-maybe the user want to do like that, although this behavior is not recommended.
-You know, on one node, ideally, the user should call  fstrim command once regularly.
-If he calls fstrim command more times in a very short time, 
-the code will not make each fstrim command return to failure, just do the fstrim task one by one.
+Acked-by: Souptick Joarder <jrdr.linux@gmail.com>
 
-Thanks
-Gang
-
-> 
-> Thanks,
-> Changwei
-> 
->>   	ocfs2_lock_res_init_once(lockres);
->>   	ocfs2_build_lock_name(OCFS2_LOCK_TYPE_TRIM_FS, 0, 0, lockres->l_name);
->>   	ocfs2_lock_res_init_common(osb, lockres, OCFS2_LOCK_TYPE_TRIM_FS,
->> @@ -698,6 +701,8 @@ void ocfs2_trim_fs_lock_res_uninit(struct ocfs2_super 
-> *osb)
->>   
->>   	ocfs2_simple_drop_lockres(osb, lockres);
->>   	ocfs2_lock_res_free(lockres);
->> +
->> +	mutex_unlock(&osb->obs_trim_fs_mutex);
->>   }
->>   
->>   static void ocfs2_orphan_scan_lock_res_init(struct ocfs2_lock_res *res,
->> diff --git a/fs/ocfs2/ocfs2.h b/fs/ocfs2/ocfs2.h
->> index 4f86ac0027b5..1f029fbe8b8d 100644
->> --- a/fs/ocfs2/ocfs2.h
->> +++ b/fs/ocfs2/ocfs2.h
->> @@ -407,6 +407,7 @@ struct ocfs2_super
->>   	struct ocfs2_lock_res osb_rename_lockres;
->>   	struct ocfs2_lock_res osb_nfs_sync_lockres;
->>   	struct ocfs2_lock_res osb_trim_fs_lockres;
->> +	struct mutex obs_trim_fs_mutex;
->>   	struct ocfs2_dlm_debug *osb_dlm_debug;
->>   
->>   	struct dentry *osb_debug_root;
->> diff --git a/fs/ocfs2/ocfs2_trace.h b/fs/ocfs2/ocfs2_trace.h
->> index 2ee76a90ba8f..dc4bce1649c1 100644
->> --- a/fs/ocfs2/ocfs2_trace.h
->> +++ b/fs/ocfs2/ocfs2_trace.h
->> @@ -712,6 +712,8 @@ TRACE_EVENT(ocfs2_trim_extent,
->>   
->>   DEFINE_OCFS2_ULL_UINT_UINT_UINT_EVENT(ocfs2_trim_group);
->>   
->> +DEFINE_OCFS2_ULL_ULL_ULL_EVENT(ocfs2_trim_mainbm);
->> +
->>   DEFINE_OCFS2_ULL_ULL_ULL_EVENT(ocfs2_trim_fs);
->>   
->>   /* End of trace events for fs/ocfs2/alloc.c. */
->> diff --git a/fs/ocfs2/super.c b/fs/ocfs2/super.c
->> index 3415e0b09398..96ae7cedd487 100644
->> --- a/fs/ocfs2/super.c
->> +++ b/fs/ocfs2/super.c
->> @@ -1847,6 +1847,8 @@ static int ocfs2_mount_volume(struct super_block *sb)
->>   	if (ocfs2_is_hard_readonly(osb))
->>   		goto leave;
->>   
->> +	mutex_init(&osb->obs_trim_fs_mutex);
->> +
->>   	status = ocfs2_dlm_init(osb);
->>   	if (status < 0) {
->>   		mlog_errno(status);
->> 
+> ---
+>  drivers/staging/android/vsoc.c | 1 -
+>  1 file changed, 1 deletion(-)
+>
+> diff --git a/drivers/staging/android/vsoc.c b/drivers/staging/android/vsoc.c
+> index 22571abcaa4e..8a75bd27c413 100644
+> --- a/drivers/staging/android/vsoc.c
+> +++ b/drivers/staging/android/vsoc.c
+> @@ -29,7 +29,6 @@
+>  #include <linux/syscalls.h>
+>  #include <linux/uaccess.h>
+>  #include <linux/interrupt.h>
+> -#include <linux/mutex.h>
+>  #include <linux/cdev.h>
+>  #include <linux/file.h>
+>  #include "uapi/vsoc_shm.h"
+> --
+> 2.17.1
+>
