@@ -2,95 +2,86 @@ Return-Path: <SRS0=RZO6=PX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 920A1C43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 21:55:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C25CAC43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 21:56:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6C22E20866
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 21:55:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9998920866
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 21:56:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390739AbfAOVzw (ORCPT
+        id S2390790AbfAOV4I (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 15 Jan 2019 16:55:52 -0500
-Received: from sauhun.de ([88.99.104.3]:53666 "EHLO pokefinder.org"
+        Tue, 15 Jan 2019 16:56:08 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:43448 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728421AbfAOVzw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Jan 2019 16:55:52 -0500
-Received: from localhost (p54B332B9.dip0.t-ipconnect.de [84.179.50.185])
-        by pokefinder.org (Postfix) with ESMTPSA id 8262E2C9D2D;
-        Tue, 15 Jan 2019 22:55:50 +0100 (CET)
-Date:   Tue, 15 Jan 2019 22:55:50 +0100
-From:   Wolfram Sang <wsa@the-dreams.de>
-To:     Laurentiu Tudor <laurentiu.tudor@nxp.com>
-Cc:     linux-i2c@vger.kernel.org, linux-imx@nxp.com, shawnguo@kernel.org,
-        s.hauer@pengutronix.de, kernel@pengutronix.de,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        fabio.estevam@nxp.com, leoyang.li@nxp.com
-Subject: Re: [PATCH] i2c: imx: defer probing on dma channel request
-Message-ID: <20190115215549.sepj7rmpqmtlxwbw@ninjato>
-References: <20190115140332.30417-1-laurentiu.tudor@nxp.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="4k6sn2i42q7o326p"
-Content-Disposition: inline
-In-Reply-To: <20190115140332.30417-1-laurentiu.tudor@nxp.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+        id S1733202AbfAOV4E (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 Jan 2019 16:56:04 -0500
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 9FAE4811D9;
+        Tue, 15 Jan 2019 21:56:03 +0000 (UTC)
+Received: from llong.com (dhcp-17-223.bos.redhat.com [10.18.17.223])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 583255C225;
+        Tue, 15 Jan 2019 21:55:59 +0000 (UTC)
+From:   Waiman Long <longman@redhat.com>
+To:     Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Will Deacon <will.deacon@arm.com>
+Cc:     linux-kernel@vger.kernel.org,
+        Zhenzhong Duan <zhenzhong.duan@oracle.com>,
+        James Morse <james.morse@arm.com>,
+        Borislav Petkov <bp@alien8.de>,
+        SRINIVAS <srinivas.eeda@oracle.com>,
+        Waiman Long <longman@redhat.com>
+Subject: [PATCH] locking/qspinlock: Add bug check for exceeding MAX_NODES
+Date:   Tue, 15 Jan 2019 16:55:44 -0500
+Message-Id: <1547589344-11504-1-git-send-email-longman@redhat.com>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.27]); Tue, 15 Jan 2019 21:56:03 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On some architectures, it is possible to have nested NMIs taking
+spinlocks nestedly. Even though the chance of having more than 4 nested
+spinlocks with contention is extremely small, there could still be a
+possibility that it may happen some days leading to system panic.
 
---4k6sn2i42q7o326p
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+What we don't want is a silent corruption with system panic somewhere
+else. So add a BUG_ON() check to make sure that a system panic caused
+by this will show the correct root cause.
 
-Hi,
+Signed-off-by: Waiman Long <longman@redhat.com>
+---
+ kernel/locking/qspinlock.c | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
-On Tue, Jan 15, 2019 at 04:03:32PM +0200, Laurentiu Tudor wrote:
-> If the dma controller is not yet probed, defer i2c probe.
-> The error path in probe was slightly modified (no functional change)
-> to avoid triggering this WARN_ON():
-> "cg-pll0-div1 already disabled
-> WARNING: CPU: 1 PID: 1 at drivers/clk/clk.c:828 clk_core_disable+0xa8/0xb=
-0"
->=20
-> Signed-off-by: Laurentiu Tudor <laurentiu.tudor@nxp.com>
+diff --git a/kernel/locking/qspinlock.c b/kernel/locking/qspinlock.c
+index 8a8c3c2..f823221 100644
+--- a/kernel/locking/qspinlock.c
++++ b/kernel/locking/qspinlock.c
+@@ -412,6 +412,16 @@ void queued_spin_lock_slowpath(struct qspinlock *lock, u32 val)
+ 	idx = node->count++;
+ 	tail = encode_tail(smp_processor_id(), idx);
+ 
++	/*
++	 * 4 nodes are allocated based on the assumption that there will
++	 * not be nested NMIs taking spinlocks. That may not be true in
++	 * some architectures even though the chance of needing more than
++	 * 4 nodes will still be extremely unlikely. Adding a bug check
++	 * here to make sure there won't be a silent corruption in case
++	 * this condition happens.
++	 */
++	BUG_ON(idx >= MAX_NODES);
++
+ 	node = grab_mcs_node(node, idx);
+ 
+ 	/*
+-- 
+1.8.3.1
 
-I just applied this series to i2c/for-next:
-
-http://patchwork.ozlabs.org/project/linux-i2c/list/?series=3D85099&state=3D*
-
-I haven't checked carefully but maybe it fixes/changes your issue? If
-not, your patch most likely will need a rebase on top of the above.
-
-Thanks,
-
-   Wolfram
-
-
---4k6sn2i42q7o326p
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlw+VuUACgkQFA3kzBSg
-KbY/xA//dY9GghhTgU9Ej+l+O1rAOHeUxYTJCWoZ4iUqpPdikDeUeTfMtNAxkpq1
-G5XDZqktjN2SuWGbkGZmc2RJ5V5nNq7sMkwr0JxJwF82ViieNiorQB9ZMfor49x2
-HZoiCsDVSUU91AbjGdbabffzYgFjylqTS3u1xUPae+MCWfcfOoNLpqfcxNo+qwqg
-OQ7SaHwdWSDnkJv+aHXPZzg7O7IdWlDP9+TWRCOVfIWxfv96iZVFXEg7utuztuwj
-nSuWRv0lNliAiA8OfcO59791J9aqSrHbD5it15KftdFZBMef/+JD9nLFlTPQnRXo
-9KsZ1SNHo2otE6rWwoRID3fmTu7baccvmoCpllR3gn5ARSKeqqp2uf4zdSC5nkwD
-d4b3AOppV9ZrPgiG9gzTH/zHFFcKGvkQZuW31Jg24/Dy0gcVyCEEhgR6b4Fc6vYR
-qM7Vf+UdewNvdPOyYAAeK0h/xPdzLqyP9TJpQiumypH2eK8JGWmiMwjkfGp3bLUj
-7vOfXcvRxLbp4LWXvvcEgwPddBfMTmLeNHGNCmppUUTFH9KsBG6okkskjFGw89kT
-1HlwB3XsubRf/onryTWZ0CtZByn7Y+LWje/Pnh4RigSXc4Le/4tW5e/3xHrv3R6C
-cHnUg216K+XEtPl9JfCwxjGoPvUPcWox7SJ6NvK4Pb1Nn46CEeU=
-=xrXd
------END PGP SIGNATURE-----
-
---4k6sn2i42q7o326p--
