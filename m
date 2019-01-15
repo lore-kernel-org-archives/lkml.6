@@ -2,313 +2,90 @@ Return-Path: <SRS0=RZO6=PX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9149DC43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 18:54:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 392B1C43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 18:55:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5112B20656
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 18:54:53 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=fb.com header.i=@fb.com header.b="UjP45i1A"
+	by mail.kernel.org (Postfix) with ESMTP id 1193920656
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 18:55:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389115AbfAOSyw (ORCPT
+        id S2389119AbfAOSzO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 15 Jan 2019 13:54:52 -0500
-Received: from mx0b-00082601.pphosted.com ([67.231.153.30]:54480 "EHLO
-        mx0b-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1731883AbfAOSx5 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Jan 2019 13:53:57 -0500
-Received: from pps.filterd (m0109331.ppops.net [127.0.0.1])
-        by mx0a-00082601.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x0FIqZgc029685
-        for <linux-kernel@vger.kernel.org>; Tue, 15 Jan 2019 10:53:55 -0800
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
- : date : message-id : in-reply-to : references : mime-version :
- content-type; s=facebook; bh=aW4kvY8+ZtewuFKRUKorywxe2CtjbLcMtZ99vH5zDuo=;
- b=UjP45i1As/fMzs2MyXiluguRCTnN0EpX4SrySe9xh/+fBdP+bwybgg9aaSCcX0EfWuKk
- IWa2gVtFp9kUYBucW4MCpswbJqcSV9ct4te0X9PtvBaMz82LwWHUhEB/cMbnQPy7moyC
- 0T/409yNfEgIth6YpugC3Kd0B2EQj/Wwnck= 
-Received: from maileast.thefacebook.com ([199.201.65.23])
-        by mx0a-00082601.pphosted.com with ESMTP id 2q1jfb8sny-12
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Tue, 15 Jan 2019 10:53:55 -0800
-Received: from mx-out.facebook.com (2620:10d:c0a1:3::13) by
- mail.thefacebook.com (2620:10d:c021:18::176) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA) id 15.1.1531.3;
- Tue, 15 Jan 2019 10:53:54 -0800
-Received: by devbig006.ftw2.facebook.com (Postfix, from userid 4523)
-        id 6D38862E1068; Tue, 15 Jan 2019 10:53:51 -0800 (PST)
-Smtp-Origin-Hostprefix: devbig
-From:   Song Liu <songliubraving@fb.com>
-Smtp-Origin-Hostname: devbig006.ftw2.facebook.com
-To:     <linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>
-CC:     Song Liu <songliubraving@fb.com>, <peterz@infradead.org>,
-        <acme@kernel.org>, <ast@kernel.org>, <daniel@iogearbox.net>,
-        <kernel-team@fb.com>, <dsahern@gmail.com>
-Smtp-Origin-Cluster: ftw2c04
-Subject: [PATCH v8 perf, bpf-next 1/9] perf, bpf: Introduce PERF_RECORD_KSYMBOL
-Date:   Tue, 15 Jan 2019 10:53:41 -0800
-Message-ID: <20190115185349.1191609-2-songliubraving@fb.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190115185349.1191609-1-songliubraving@fb.com>
-References: <20190115185349.1191609-1-songliubraving@fb.com>
-X-FB-Internal: Safe
+        Tue, 15 Jan 2019 13:55:14 -0500
+Received: from muru.com ([72.249.23.125]:33742 "EHLO muru.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1731883AbfAOSzO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 Jan 2019 13:55:14 -0500
+Received: from atomide.com (localhost [127.0.0.1])
+        by muru.com (Postfix) with ESMTPS id 248878022;
+        Tue, 15 Jan 2019 18:55:19 +0000 (UTC)
+Date:   Tue, 15 Jan 2019 10:55:09 -0800
+From:   Tony Lindgren <tony@atomide.com>
+To:     Ulf Hansson <ulf.hansson@linaro.org>
+Cc:     Kalle Valo <kvalo@codeaurora.org>, Eyal Reizer <eyalr@ti.com>,
+        linux-wireless@vger.kernel.org,
+        Ricardo Salveti <rsalveti@rsalveti.net>,
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        Anders Roxell <anders.roxell@linaro.org>,
+        John Stultz <john.stultz@linaro.org>,
+        Jan Kiszka <jan.kiszka@web.de>, linux-kernel@vger.kernel.org,
+        linux-omap@vger.kernel.org
+Subject: Re: [PATCH] wlcore: sdio: Fixup power on/off sequence
+Message-ID: <20190115185509.GJ5544@atomide.com>
+References: <20190115150433.12558-1-ulf.hansson@linaro.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-01-15_06:,,
- signatures=0
-X-Proofpoint-Spam-Reason: safe
-X-FB-Internal: Safe
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190115150433.12558-1-ulf.hansson@linaro.org>
+User-Agent: Mutt/1.11.1 (2018-12-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-For better performance analysis of dynamically JITed and loaded kernel
-functions, such as BPF programs, this patch introduces
-PERF_RECORD_KSYMBOL, a new perf_event_type that exposes kernel symbol
-register/unregister information to user space.
+Hi,
 
-The following data structure is used for PERF_RECORD_KSYMBOL.
+* Ulf Hansson <ulf.hansson@linaro.org> [190115 15:04]:
+> During "wlan-up", we are programming the FW into the WiFi-chip. However,
+> re-programming the FW doesn't work, unless a power cycle of the WiFi-chip
+> is made in-between the programmings.
+> 
+> To conform to this requirement and to fix the regression in a simple way,
+> let's start by allowing that the SDIO card (WiFi-chip) may stay powered on
+> (runtime resumed) when wl12xx_sdio_power_off() returns. The intent with the
+> current code is to treat this scenario as an error, but unfortunate this
+> doesn't work as expected, so let's fix this.
+> 
+> The other part is to guarantee that a power cycle of the SDIO card has been
+> completed when wl12xx_sdio_power_on() returns, as to allow the FW
+> programming to succeed. However, relying solely on runtime PM to deal with
+> this isn't sufficient. For example, userspace may prevent runtime suspend
+> via sysfs for the device that represents the SDIO card, leading to that the
+> mmc core also keeps it powered on. For this reason, let's instead do a
+> brute force power cycle in wl12xx_sdio_power_on().
 
-    /*
-     * struct {
-     *      struct perf_event_header        header;
-     *      u64                             addr;
-     *      u32                             len;
-     *      u16                             ksym_type;
-     *      u16                             flags;
-     *      char                            name[];
-     *      struct sample_id                sample_id;
-     * };
-     */
+Thanks this looks good.. But looks like udelay 20000
+is needed with:
 
-Signed-off-by: Song Liu <songliubraving@fb.com>
----
- include/linux/perf_event.h      | 13 +++++
- include/uapi/linux/perf_event.h | 26 ++++++++-
- kernel/events/core.c            | 98 ++++++++++++++++++++++++++++++++-
- 3 files changed, 135 insertions(+), 2 deletions(-)
+# while [ 1 ]; do ifconfig wlan0 down; usleep 20000; \
+  ifconfig wlan0 up; done
 
-diff --git a/include/linux/perf_event.h b/include/linux/perf_event.h
-index 1d5c551a5add..77b2560f2dc7 100644
---- a/include/linux/perf_event.h
-+++ b/include/linux/perf_event.h
-@@ -1113,6 +1113,13 @@ static inline void perf_event_task_sched_out(struct task_struct *prev,
- }
- 
- extern void perf_event_mmap(struct vm_area_struct *vma);
-+
-+/* callback function to generate ksymbol name */
-+typedef int (perf_ksymbol_get_name_f)(char *name, int name_len, void *data);
-+extern void perf_event_ksymbol(u16 ksym_type, u64 addr, u32 len,
-+			       bool unregister,
-+			       perf_ksymbol_get_name_f get_name, void *data);
-+
- extern struct perf_guest_info_callbacks *perf_guest_cbs;
- extern int perf_register_guest_info_callbacks(struct perf_guest_info_callbacks *callbacks);
- extern int perf_unregister_guest_info_callbacks(struct perf_guest_info_callbacks *callbacks);
-@@ -1333,6 +1340,12 @@ static inline int perf_unregister_guest_info_callbacks
- (struct perf_guest_info_callbacks *callbacks)				{ return 0; }
- 
- static inline void perf_event_mmap(struct vm_area_struct *vma)		{ }
-+
-+typedef int (perf_ksymbol_get_name_f)(char *name, int name_len, void *data);
-+static inline void perf_event_ksymbol(u16 ksym_type, u64 addr, u32 len,
-+				      bool unregister,
-+				      perf_ksymbol_get_name_f get_name,
-+				      void *data)			{ }
- static inline void perf_event_exec(void)				{ }
- static inline void perf_event_comm(struct task_struct *tsk, bool exec)	{ }
- static inline void perf_event_namespaces(struct task_struct *tsk)	{ }
-diff --git a/include/uapi/linux/perf_event.h b/include/uapi/linux/perf_event.h
-index 9de8780ac8d9..68c4da0227c5 100644
---- a/include/uapi/linux/perf_event.h
-+++ b/include/uapi/linux/perf_event.h
-@@ -372,7 +372,8 @@ struct perf_event_attr {
- 				context_switch :  1, /* context switch data */
- 				write_backward :  1, /* Write ring buffer from end to beginning */
- 				namespaces     :  1, /* include namespaces data */
--				__reserved_1   : 35;
-+				ksymbol        :  1, /* include ksymbol events */
-+				__reserved_1   : 34;
- 
- 	union {
- 		__u32		wakeup_events;	  /* wakeup every n events */
-@@ -965,9 +966,32 @@ enum perf_event_type {
- 	 */
- 	PERF_RECORD_NAMESPACES			= 16,
- 
-+	/*
-+	 * Record ksymbol register/unregister events:
-+	 *
-+	 * struct {
-+	 *	struct perf_event_header	header;
-+	 *	u64				addr;
-+	 *	u32				len;
-+	 *	u16				ksym_type;
-+	 *	u16				flags;
-+	 *	char				name[];
-+	 *	struct sample_id		sample_id;
-+	 * };
-+	 */
-+	PERF_RECORD_KSYMBOL			= 17,
-+
- 	PERF_RECORD_MAX,			/* non-ABI */
- };
- 
-+enum perf_record_ksymbol_type {
-+	PERF_RECORD_KSYMBOL_TYPE_UNKNOWN	= 0,
-+	PERF_RECORD_KSYMBOL_TYPE_BPF		= 1,
-+	PERF_RECORD_KSYMBOL_TYPE_MAX		/* non-ABI */
-+};
-+
-+#define PERF_RECORD_KSYMBOL_FLAGS_UNREGISTER	(1 << 0)
-+
- #define PERF_MAX_STACK_DEPTH		127
- #define PERF_MAX_CONTEXTS_PER_STACK	  8
- 
-diff --git a/kernel/events/core.c b/kernel/events/core.c
-index 67ecac337374..dbcc90c79893 100644
---- a/kernel/events/core.c
-+++ b/kernel/events/core.c
-@@ -385,6 +385,7 @@ static atomic_t nr_namespaces_events __read_mostly;
- static atomic_t nr_task_events __read_mostly;
- static atomic_t nr_freq_events __read_mostly;
- static atomic_t nr_switch_events __read_mostly;
-+static atomic_t nr_ksymbol_events __read_mostly;
- 
- static LIST_HEAD(pmus);
- static DEFINE_MUTEX(pmus_lock);
-@@ -4235,7 +4236,7 @@ static bool is_sb_event(struct perf_event *event)
- 
- 	if (attr->mmap || attr->mmap_data || attr->mmap2 ||
- 	    attr->comm || attr->comm_exec ||
--	    attr->task ||
-+	    attr->task || attr->ksymbol ||
- 	    attr->context_switch)
- 		return true;
- 	return false;
-@@ -4305,6 +4306,8 @@ static void unaccount_event(struct perf_event *event)
- 		dec = true;
- 	if (has_branch_stack(event))
- 		dec = true;
-+	if (event->attr.ksymbol)
-+		atomic_dec(&nr_ksymbol_events);
- 
- 	if (dec) {
- 		if (!atomic_add_unless(&perf_sched_count, -1, 1))
-@@ -7650,6 +7653,97 @@ static void perf_log_throttle(struct perf_event *event, int enable)
- 	perf_output_end(&handle);
- }
- 
-+/*
-+ * ksymbol register/unregister tracking
-+ */
-+
-+struct perf_ksymbol_event {
-+	const char	*name;
-+	int		name_len;
-+	struct {
-+		struct perf_event_header        header;
-+		u64				addr;
-+		u32				len;
-+		u16				ksym_type;
-+		u16				flags;
-+	} event_id;
-+};
-+
-+static int perf_event_ksymbol_match(struct perf_event *event)
-+{
-+	return event->attr.ksymbol;
-+}
-+
-+static void perf_event_ksymbol_output(struct perf_event *event, void *data)
-+{
-+	struct perf_ksymbol_event *ksymbol_event = data;
-+	struct perf_output_handle handle;
-+	struct perf_sample_data sample;
-+	int ret;
-+
-+	if (!perf_event_ksymbol_match(event))
-+		return;
-+
-+	perf_event_header__init_id(&ksymbol_event->event_id.header,
-+				   &sample, event);
-+	ret = perf_output_begin(&handle, event,
-+				ksymbol_event->event_id.header.size);
-+	if (ret)
-+		return;
-+
-+	perf_output_put(&handle, ksymbol_event->event_id);
-+	__output_copy(&handle, ksymbol_event->name, ksymbol_event->name_len);
-+	perf_event__output_id_sample(event, &handle, &sample);
-+
-+	perf_output_end(&handle);
-+}
-+
-+void perf_event_ksymbol(u16 ksym_type, u64 addr, u32 len, bool unregister,
-+			perf_ksymbol_get_name_f get_name, void *data)
-+{
-+	struct perf_ksymbol_event ksymbol_event;
-+	char name[KSYM_NAME_LEN];
-+	u16 flags = 0;
-+	int name_len;
-+
-+	if (!atomic_read(&nr_ksymbol_events))
-+		return;
-+
-+	if (ksym_type >= PERF_RECORD_KSYMBOL_TYPE_MAX ||
-+	    ksym_type == PERF_RECORD_KSYMBOL_TYPE_UNKNOWN)
-+		goto err;
-+
-+	get_name(name, KSYM_NAME_LEN, data);
-+	name_len = strlen(name) + 1;
-+	while (!IS_ALIGNED(name_len, sizeof(u64)))
-+		name[name_len++] = '\0';
-+	BUILD_BUG_ON(KSYM_NAME_LEN % sizeof(u64));
-+
-+	if (unregister)
-+		flags |= PERF_RECORD_KSYMBOL_FLAGS_UNREGISTER;
-+
-+	ksymbol_event = (struct perf_ksymbol_event){
-+		.name = name,
-+		.name_len = name_len,
-+		.event_id = {
-+			.header = {
-+				.type = PERF_RECORD_KSYMBOL,
-+				.size = sizeof(ksymbol_event.event_id) +
-+					name_len,
-+			},
-+			.addr = addr,
-+			.len = len,
-+			.ksym_type = ksym_type,
-+			.flags = flags,
-+		},
-+	};
-+
-+	perf_iterate_sb(perf_event_ksymbol_output, &ksymbol_event, NULL);
-+	return;
-+err:
-+	WARN_ONCE(1, "%s: Invalid KSYMBOL type 0x%x\n", __func__, ksym_type);
-+}
-+
- void perf_event_itrace_started(struct perf_event *event)
- {
- 	event->attach_state |= PERF_ATTACH_ITRACE;
-@@ -9900,6 +9994,8 @@ static void account_event(struct perf_event *event)
- 		inc = true;
- 	if (is_cgroup_event(event))
- 		inc = true;
-+	if (event->attr.ksymbol)
-+		atomic_inc(&nr_ksymbol_events);
- 
- 	if (inc) {
- 		/*
--- 
-2.17.1
+Otherwise I get the following on warning pandaboard-es:
 
+WARNING: CPU: 0 PID: 1770 at drivers/bus/omap_l3_noc.c:147
+l3_interrupt_handler+0x2f8/0x388
+44000000.ocp:L3 Custom Error: MASTER MPU TARGET L4PER2 (Read):
+Data Access in User mode during Functional access
+
+Meaning that we access registers while not clocked
+somewhere. I think that warning is different from the
+earlier errors though :) And we could add a msleep(50)
+to the end to mostly avoid it until we have a better
+fix available?
+
+Regards,
+
+Tony
