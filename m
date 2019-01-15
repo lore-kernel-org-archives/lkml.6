@@ -2,165 +2,113 @@ Return-Path: <SRS0=RZO6=PX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A4D36C43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 02:19:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D1977C43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 02:20:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 69D2820659
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 02:19:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AADB220659
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 02:20:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727841AbfAOCTZ (ORCPT
+        id S1727872AbfAOCUR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 14 Jan 2019 21:19:25 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:54038 "EHLO mx1.redhat.com"
+        Mon, 14 Jan 2019 21:20:17 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:53244 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726886AbfAOCTZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 Jan 2019 21:19:25 -0500
+        id S1727273AbfAOCUR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 14 Jan 2019 21:20:17 -0500
 Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id C63043DE03;
-        Tue, 15 Jan 2019 02:19:23 +0000 (UTC)
+        by mx1.redhat.com (Postfix) with ESMTPS id 328C23D95D;
+        Tue, 15 Jan 2019 02:20:17 +0000 (UTC)
 Received: from redhat.com (ovpn-124-229.rdu2.redhat.com [10.10.124.229])
-        by smtp.corp.redhat.com (Postfix) with SMTP id 958A110027CE;
-        Tue, 15 Jan 2019 02:19:10 +0000 (UTC)
-Date:   Mon, 14 Jan 2019 21:19:09 -0500
+        by smtp.corp.redhat.com (Postfix) with SMTP id 54EB3100194B;
+        Tue, 15 Jan 2019 02:20:16 +0000 (UTC)
+Date:   Mon, 14 Jan 2019 21:20:15 -0500
 From:   "Michael S. Tsirkin" <mst@redhat.com>
-To:     Dave Chinner <david@fromorbit.com>
-Cc:     Dan Williams <dan.j.williams@intel.com>,
-        Pankaj Gupta <pagupta@redhat.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        KVM list <kvm@vger.kernel.org>,
-        Qemu Developers <qemu-devel@nongnu.org>,
-        linux-nvdimm <linux-nvdimm@ml01.01.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+To:     Wei Wang <wei.w.wang@intel.com>
+Cc:     Cornelia Huck <cohuck@redhat.com>,
+        Jason Wang <jasowang@redhat.com>,
         virtualization@lists.linux-foundation.org,
-        Linux ACPI <linux-acpi@vger.kernel.org>,
-        linux-ext4 <linux-ext4@vger.kernel.org>,
-        linux-xfs <linux-xfs@vger.kernel.org>, Jan Kara <jack@suse.cz>,
-        Stefan Hajnoczi <stefanha@redhat.com>,
-        Rik van Riel <riel@surriel.com>,
-        Nitesh Narayan Lal <nilal@redhat.com>,
-        Kevin Wolf <kwolf@redhat.com>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Ross Zwisler <zwisler@kernel.org>,
-        vishal l verma <vishal.l.verma@intel.com>,
-        dave jiang <dave.jiang@intel.com>,
-        David Hildenbrand <david@redhat.com>,
-        jmoyer <jmoyer@redhat.com>,
-        xiaoguangrong eric <xiaoguangrong.eric@gmail.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Jason Wang <jasowang@redhat.com>, lcapitulino@redhat.com,
-        Igor Mammedov <imammedo@redhat.com>,
-        Eric Blake <eblake@redhat.com>, Theodore Ts'o <tytso@mit.edu>,
-        adilger kernel <adilger.kernel@dilger.ca>,
-        darrick wong <darrick.wong@oracle.com>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Subject: Re: [PATCH v3 0/5] kvm "virtio pmem" device
-Message-ID: <20190114205031-mutt-send-email-mst@kernel.org>
-References: <20190109144736.17452-1-pagupta@redhat.com>
- <20190110012617.GA4205@dastard>
- <1326478078.61913951.1547192704870.JavaMail.zimbra@redhat.com>
- <20190113232902.GD4205@dastard>
- <20190113233820.GX6310@bombadil.infradead.org>
- <942065073.64011540.1547450140670.JavaMail.zimbra@redhat.com>
- <20190114212501.GG4205@dastard>
- <CAPcyv4jtPcLV-s0sKNHwwk0ug7GLBV6699dpm1h3r2xSo879dg@mail.gmail.com>
- <20190114222132.GH4205@dastard>
+        linux-kernel@vger.kernel.org, virtio-dev@lists.oasis-open.org,
+        Halil Pasic <pasic@linux.ibm.com>
+Subject: Re: [PATCH 1/2] virtio: fix virtio_config_ops description
+Message-ID: <20190114211953-mutt-send-email-mst@kernel.org>
+References: <20190103160804.21438-1-cohuck@redhat.com>
+ <20190103160804.21438-2-cohuck@redhat.com>
+ <20190114150958.39a4a56a.cohuck@redhat.com>
+ <5C3D424B.70400@intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190114222132.GH4205@dastard>
+In-Reply-To: <5C3D424B.70400@intel.com>
 X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.29]); Tue, 15 Jan 2019 02:19:24 +0000 (UTC)
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.30]); Tue, 15 Jan 2019 02:20:17 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 15, 2019 at 09:21:32AM +1100, Dave Chinner wrote:
-> On Mon, Jan 14, 2019 at 01:35:57PM -0800, Dan Williams wrote:
-> > On Mon, Jan 14, 2019 at 1:25 PM Dave Chinner <david@fromorbit.com> wrote:
-> > >
-> > > On Mon, Jan 14, 2019 at 02:15:40AM -0500, Pankaj Gupta wrote:
-> > > >
-> > > > > > Until you have images (and hence host page cache) shared between
-> > > > > > multiple guests. People will want to do this, because it means they
-> > > > > > only need a single set of pages in host memory for executable
-> > > > > > binaries rather than a set of pages per guest. Then you have
-> > > > > > multiple guests being able to detect residency of the same set of
-> > > > > > pages. If the guests can then, in any way, control eviction of the
-> > > > > > pages from the host cache, then we have a guest-to-guest information
-> > > > > > leak channel.
-> > > > >
-> > > > > I don't think we should ever be considering something that would allow a
-> > > > > guest to evict page's from the host's pagecache [1].  The guest should
-> > > > > be able to kick its own references to the host's pagecache out of its
-> > > > > own pagecache, but not be able to influence whether the host or another
-> > > > > guest has a read-only mapping cached.
-> > > > >
-> > > > > [1] Unless the guest is allowed to modify the host's file; obviously
-> > > > > truncation, holepunching, etc are going to evict pages from the host's
-> > > > > page cache.
-> > > >
-> > > > This is so correct. Guest does not not evict host page cache pages directly.
-> > >
-> > > They don't right now.
-> > >
-> > > But someone is going to end up asking for discard to work so that
-> > > the guest can free unused space in the underlying spares image (i.e.
-> > > make use of fstrim or mount -o discard) because they have workloads
-> > > that have bursts of space usage and they need to trim the image
-> > > files afterwards to keep their overall space usage under control.
-> > >
-> > > And then....
+On Tue, Jan 15, 2019 at 10:15:39AM +0800, Wei Wang wrote:
+> On 01/14/2019 10:09 PM, Cornelia Huck wrote:
+> > On Thu,  3 Jan 2019 17:08:03 +0100
+> > Cornelia Huck <cohuck@redhat.com> wrote:
 > > 
-> > ...we reject / push back on that patch citing the above concern.
+> > > - get_features has returned 64 bits since commit d025477368792
+> > >    ("virtio: add support for 64 bit features.")
+> > > - properly mark all optional callbacks
+> > > 
+> > > Signed-off-by: Cornelia Huck <cohuck@redhat.com>
+> > > ---
+> > >   include/linux/virtio_config.h | 8 ++++----
+> > >   1 file changed, 4 insertions(+), 4 deletions(-)
+> > > 
+> > > diff --git a/include/linux/virtio_config.h b/include/linux/virtio_config.h
+> > > index 32baf8e26735..7087ef946ba7 100644
+> > > --- a/include/linux/virtio_config.h
+> > > +++ b/include/linux/virtio_config.h
+> > > @@ -22,7 +22,7 @@ struct irq_affinity;
+> > >    *	offset: the offset of the configuration field
+> > >    *	buf: the buffer to read the field value from.
+> > >    *	len: the length of the buffer
+> > > - * @generation: config generation counter
+> > > + * @generation: config generation counter (optional)
+> > >    *	vdev: the virtio_device
+> > >    *	Returns the config generation counter
+> > >    * @get_status: read the status byte
+> > > @@ -48,17 +48,17 @@ struct irq_affinity;
+> > >    * @del_vqs: free virtqueues found by find_vqs().
+> > >    * @get_features: get the array of feature bits for this device.
+> > >    *	vdev: the virtio_device
+> > > - *	Returns the first 32 feature bits (all we currently need).
+> > > + *	Returns the first 64 feature bits (all we currently need).
+> > >    * @finalize_features: confirm what device features we'll be using.
+> > >    *	vdev: the virtio_device
+> > >    *	This gives the final feature bits for the device: it can change
+> > >    *	the dev->feature bits if it wants.
+> > >    *	Returns 0 on success or error status
+> > > - * @bus_name: return the bus name associated with the device
+> > > + * @bus_name: return the bus name associated with the device (optional)
+> > >    *	vdev: the virtio_device
+> > >    *      This returns a pointer to the bus name a la pci_name from which
+> > >    *      the caller can then copy.
+> > > - * @set_vq_affinity: set the affinity for a virtqueue.
+> > > + * @set_vq_affinity: set the affinity for a virtqueue (optional).
+> > >    * @get_vq_affinity: get the affinity for a virtqueue (optional).
+> > >    */
+> > >   typedef void vq_callback_t(struct virtqueue *);
+> > Ping. Any feedback on that patch?
 > 
-> So at what point do we draw the line?
+> Reviewed-by: Wei Wang <wei.w.wang@intel.com>
 > 
-> We're allowing writable DAX mappings, but as I've pointed out that
-> means we are going to be allowing  a potential information leak via
-> files with shared extents to be directly mapped and written to.
-> 
-> But we won't allow useful admin operations that allow better
-> management of host side storage space similar to how normal image
-> files are used by guests because it's an information leak vector?
-> 
-> That's splitting some really fine hairs there...
+> Best,
+> Wei
 
-May I summarize that th security implications need to
-be documented?
+Pushed already, can't add tags.
+Sorry about that.
 
-In fact that would make a fine security implications section
-in the device specification.
-
-
-
-
-
-> > > > In case of virtio-pmem & DAX, guest clears guest page cache exceptional entries.
-> > > > Its solely decision of host to take action on the host page cache pages.
-> > > >
-> > > > In case of virtio-pmem, guest does not modify host file directly i.e don't
-> > > > perform hole punch & truncation operation directly on host file.
-> > >
-> > > ... this will no longer be true, and the nuclear landmine in this
-> > > driver interface will have been armed....
-> > 
-> > I agree with the need to be careful when / if explicit cache control
-> > is added, but that's not the case today.
-> 
-> "if"?
-> 
-> I expect it to be "when", not if. Expect the worst, plan for it now.
-> 
-> Cheers,
-> 
-> Dave.
-> -- 
-> Dave Chinner
-> david@fromorbit.com
+-- 
+MST
