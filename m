@@ -2,104 +2,113 @@ Return-Path: <SRS0=RZO6=PX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C443EC43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 11:03:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A4517C43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 11:03:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8A44B20861
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 11:03:14 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="ZRajoN/j"
+	by mail.kernel.org (Postfix) with ESMTP id 7B5AC2085A
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 11:03:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729144AbfAOLDM (ORCPT
+        id S1729162AbfAOLDw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 15 Jan 2019 06:03:12 -0500
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:35249 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729132AbfAOLDM (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Jan 2019 06:03:12 -0500
-Received: by mail-pg1-f196.google.com with SMTP id s198so1117767pgs.2
-        for <linux-kernel@vger.kernel.org>; Tue, 15 Jan 2019 03:03:11 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=hUzHvMduusbviHq9ihlVyR2HDLafhXOUk/aePcd5tMo=;
-        b=ZRajoN/jqguT7NsgVIo5E0J8ykkbn6KrjUAxsJ/ZLbbFkQeeLZg/jbrYedBglOTe/o
-         nlCTVvNlif3rAIOO3WTGpYe8Bp13La29mEolo0Ag/sGXytm4QlNBFx9NE/q1mbq1Whjr
-         a9KEt+PnUL0RJKpb84qxauStOVk94waBlEcY4=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=hUzHvMduusbviHq9ihlVyR2HDLafhXOUk/aePcd5tMo=;
-        b=jujYTJ7zoM4eGnJMuGwNkJE5c6n/ykcPR64221+NloodCQdjkhgMML5rUGcj57TkhP
-         dJrStYpvclriASNMstgQPWsJJLF6zHVVY6nebrhnOr72bNsdJKVHQ2y8R4KiuAWLPK/D
-         tWILlQXfMLPG41ya5aouMRiB4xHiDwaCfzmt24q3Tebqf4P2gAmC5HJAC2inR7I+RZyW
-         jy9yv1sh8k/zzPeEYaGBNA1sir7cHRXFlcKbV5MTdZCKdjRhCT6DV+UBAVRlZI50mhE0
-         JN9iUK6/Wb62d1UnRD8fyMGSlUVi5nVnNUuzBJtkDWHU7Etqvd7VjN1w9ZSDd8Qwf6UM
-         fvEg==
-X-Gm-Message-State: AJcUukeArWH4BQ1JQ7cSCdh1u4dlLy1LrCm4zFFVfVLpz1HHRs6StJlb
-        V7wRWYFSrOPLPYoC+8QYOAV2GTF9Czo=
-X-Google-Smtp-Source: ALg8bN75pY61x7586eG+tqV/+gj6hc1faRP4XsfIibCC8rmpyLtQExI1sdhXeMmIAwWlyW8sz2iI/w==
-X-Received: by 2002:a62:3adc:: with SMTP id v89mr3348578pfj.109.1547550190885;
-        Tue, 15 Jan 2019 03:03:10 -0800 (PST)
-Received: from cychiang-z840.tpe.corp.google.com ([2401:fa00:1:b:d3e3:8b64:9238:2823])
-        by smtp.gmail.com with ESMTPSA id 196sm9877368pfc.77.2019.01.15.03.03.08
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 15 Jan 2019 03:03:09 -0800 (PST)
-From:   Cheng-Yi Chiang <cychiang@chromium.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Mark Brown <broonie@kernel.org>, alsa-devel@alsa-project.org,
-        dgreid@chromium.org, tzungbi@chromium.org,
-        Rohit kumar <rohitkr@codeaurora.org>,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-        Cheng-Yi Chiang <cychiang@chromium.org>
-Subject: [PATCH] ASoC: qcom: Kconfig: select max98927 for sdm845
-Date:   Tue, 15 Jan 2019 19:02:53 +0800
-Message-Id: <20190115110253.261596-1-cychiang@chromium.org>
-X-Mailer: git-send-email 2.20.1.97.g81188d93c3-goog
+        Tue, 15 Jan 2019 06:03:52 -0500
+Received: from mx2.suse.de ([195.135.220.15]:46214 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1729132AbfAOLDw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 Jan 2019 06:03:52 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 16082AC7A;
+        Tue, 15 Jan 2019 11:03:50 +0000 (UTC)
+Subject: Re: [PATCH v3] xen: Fix x86 sched_clock() interface for xen
+To:     Thomas Gleixner <tglx@linutronix.de>
+Cc:     linux-kernel@vger.kernel.org, xen-devel@lists.xenproject.org,
+        x86@kernel.org, boris.ostrovsky@oracle.com, sstabellini@kernel.org,
+        hpa@zytor.com, mingo@redhat.com, bp@alien8.de, hans@knorrie.org,
+        stable@vger.kernel.org
+References: <20190114124413.3742-1-jgross@suse.com>
+ <alpine.DEB.2.21.1901151142590.1865@nanos.tec.linutronix.de>
+From:   Juergen Gross <jgross@suse.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=jgross@suse.com; prefer-encrypt=mutual; keydata=
+ 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
+Message-ID: <a50d1213-2390-14f1-fe78-e8058266978c@suse.com>
+Date:   Tue, 15 Jan 2019 12:03:48 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <alpine.DEB.2.21.1901151142590.1865@nanos.tec.linutronix.de>
+Content-Type: text/plain; charset=utf-8
+Content-Language: de-DE
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Select SND_SOC_MAX98927 for SND_SOC_SDM845.
+On 15/01/2019 11:43, Thomas Gleixner wrote:
+> On Mon, 14 Jan 2019, Juergen Gross wrote:
+> 
+>> Commit f94c8d11699759 ("sched/clock, x86/tsc: Rework the x86 'unstable'
+>> sched_clock() interface") broke Xen guest time handling across
+>> migration:
+>>
+>> [  187.249951] Freezing user space processes ... (elapsed 0.001 seconds) done.
+>> [  187.251137] OOM killer disabled.
+>> [  187.251137] Freezing remaining freezable tasks ... (elapsed 0.001 seconds) done.
+>> [  187.252299] suspending xenstore...
+>> [  187.266987] xen:grant_table: Grant tables using version 1 layout
+>> [18446743811.706476] OOM killer enabled.
+>> [18446743811.706478] Restarting tasks ... done.
+>> [18446743811.720505] Setting capacity to 16777216
+> 
+> I see that it's broken, but the changelog could do with an explanation WHY
+> it broke.
 
-Acked-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Signed-off-by: Rohit kumar <rohitkr@codeaurora.org>
-Signed-off-by: Cheng-Yi Chiang <cychiang@chromium.org>
----
- This is part of the patch https://patchwork.kernel.org/patch/10696507/
- RT5663 part was added in the patch
+This seems to be rather complex.
 
- e9dc919043c5 ("ASoC: sdm845: add rt5663 codec select")
+I believe the mentioned commit just ignored Xen guests resulting in a
+"stable" clock where it shouldn't, but maybe I have missed another
+aspect of this commit which is to blame. I tried to fix that by
+replacing using_native_sched_clock() with a hypervisor specific pvops
+function.
 
- This patch adds max98927.
- Thanks!
+Unfortunately this didn't work, maybe due to other uses of
+using_native_sched_clock() added by later patches. In the end it was
+quite clear that updating the Xen clock offset was the right thing to
+do, so I ended up with this patch.
 
- sound/soc/qcom/Kconfig | 1 +
- 1 file changed, 1 insertion(+)
 
-diff --git a/sound/soc/qcom/Kconfig b/sound/soc/qcom/Kconfig
-index 804ae0d93058..7948e993adba 100644
---- a/sound/soc/qcom/Kconfig
-+++ b/sound/soc/qcom/Kconfig
-@@ -102,6 +102,7 @@ config SND_SOC_SDM845
- 	select SND_SOC_QDSP6
- 	select SND_SOC_QCOM_COMMON
- 	select SND_SOC_RT5663
-+	select SND_SOC_MAX98927
- 	help
- 	  To add support for audio on Qualcomm Technologies Inc.
- 	  SDM845 SoC-based systems.
--- 
-2.20.1.97.g81188d93c3-goog
-
+Juergen
