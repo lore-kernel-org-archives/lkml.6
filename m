@@ -2,89 +2,100 @@ Return-Path: <SRS0=RZO6=PX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E8AA3C43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 18:15:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C9E5C43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 18:18:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B81A120656
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 18:15:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F14A42086D
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 18:18:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388727AbfAOSPX (ORCPT
+        id S2388737AbfAOSSl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 15 Jan 2019 13:15:23 -0500
-Received: from lithops.sigma-star.at ([195.201.40.130]:47516 "EHLO
-        lithops.sigma-star.at" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731103AbfAOSPW (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Jan 2019 13:15:22 -0500
-Received: from localhost (localhost [127.0.0.1])
-        by lithops.sigma-star.at (Postfix) with ESMTP id BC29E609184F;
-        Tue, 15 Jan 2019 19:15:20 +0100 (CET)
-Received: from lithops.sigma-star.at ([127.0.0.1])
-        by localhost (lithops.sigma-star.at [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id Mnvm_0SL_pbg; Tue, 15 Jan 2019 19:15:20 +0100 (CET)
-Received: from localhost (localhost [127.0.0.1])
-        by lithops.sigma-star.at (Postfix) with ESMTP id 416356091846;
-        Tue, 15 Jan 2019 19:15:20 +0100 (CET)
-Received: from lithops.sigma-star.at ([127.0.0.1])
-        by localhost (lithops.sigma-star.at [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id GlPebqkx72QV; Tue, 15 Jan 2019 19:15:20 +0100 (CET)
-Received: from blindfold.localnet (213-47-184-186.cable.dynamic.surfer.at [213.47.184.186])
-        by lithops.sigma-star.at (Postfix) with ESMTPSA id BA6F7608A396;
-        Tue, 15 Jan 2019 19:15:19 +0100 (CET)
-From:   Richard Weinberger <richard@nod.at>
-To:     Tudor.Ambarus@microchip.com
-Cc:     marek.vasut@gmail.com, boris.brezillon@bootlin.co,
-        dwmw2@infradead.org, computersforpeace@gmail.com,
-        miquel.raynal@bootlin.com, linux-mtd@lists.infradead.org,
+        Tue, 15 Jan 2019 13:18:41 -0500
+Received: from mx2.suse.de ([195.135.220.15]:34514 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728812AbfAOSSl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 Jan 2019 13:18:41 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id A9892AFAA;
+        Tue, 15 Jan 2019 18:18:39 +0000 (UTC)
+Date:   Tue, 15 Jan 2019 10:18:31 -0800
+From:   Davidlohr Bueso <dave@stgolabs.net>
+To:     akpm@linux-foundation.org
+Cc:     dledford@redhat.com, jgg@mellanox.com, linux-rdma@vger.kernel.org,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH -next 0/6] mm: make pinned_vm atomic and simplify users
+Message-ID: <20190115181831.4zgrvyfjy2re7t43@linux-r8p5>
+Mail-Followup-To: akpm@linux-foundation.org, dledford@redhat.com,
+        jgg@mellanox.com, linux-rdma@vger.kernel.org, linux-mm@kvack.org,
         linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] MAINTAINERS: add myself as SPI NOR co-maintainer
-Date:   Tue, 15 Jan 2019 19:15:19 +0100
-Message-ID: <8417216.IRI4OqamiK@blindfold>
-In-Reply-To: <20190115165740.32450-1-tudor.ambarus@microchip.com>
-References: <20190115165740.32450-1-tudor.ambarus@microchip.com>
+References: <20190115181300.27547-1-dave@stgolabs.net>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <20190115181300.27547-1-dave@stgolabs.net>
+User-Agent: NeoMutt/20180323
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Am Dienstag, 15. Januar 2019, 17:57:52 CET schrieb Tudor.Ambarus@microchip.com:
-> From: Tudor Ambarus <tudor.ambarus@microchip.com>
-> 
-> I have been reviewing and contributing to the SPI NOR subsystem
-> for the last few months and I'm willing to continue doing so.
-> Volunteer as a maintainer for the SPI NOR part of the MTD subsystem.
-> 
-> Signed-off-by: Tudor Ambarus <tudor.ambarus@microchip.com>
-> ---
->  MAINTAINERS | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 6682420421c1..7deb0e91e3ed 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -14081,6 +14081,7 @@ F:	arch/arm/mach-spear/
->  
->  SPI NOR SUBSYSTEM
->  M:	Marek Vasut <marek.vasut@gmail.com>
-> +M:	Tudor Ambarus <tudor.ambarus@microchip.com>
->  L:	linux-mtd@lists.infradead.org
->  W:	http://www.linux-mtd.infradead.org/
->  Q:	http://patchwork.ozlabs.org/project/linux-mtd/list/
+Also Ccing lkml, sorry.
 
-Nice to have you on board! :-)
+On Tue, 15 Jan 2019, Davidlohr Bueso wrote:
 
-Acked-by: Richard Weinberger <richard@nod.at>
-
-Thanks,
-//richard
-
-
-
+>Hi,
+>
+>The following patches aim to provide cleanups to users that pin pages
+>(mostly infiniband) by converting the counter to atomic -- note that
+>Daniel Jordan also has patches[1] for the locked_vm counterpart and vfio.
+>
+>Apart from removing a source of mmap_sem writer, we benefit in that
+>we can get rid of a lot of code that defers work when the lock cannot
+>be acquired, as well as drivers avoiding mmap_sem altogether by also
+>converting gup to gup_fast() and letting the mm handle it. Users
+>that do the gup_longterm() remain of course under at least reader mmap_sem.
+>
+>Everything has been compile-tested _only_ so I hope I didn't do anything
+>too stupid. Please consider for v5.1.
+>
+>On a similar topic and potential follow up, it would be nice to resurrect
+>Peter's VM_PINNED idea in that the broken semantics that occurred after
+>bc3e53f682 ("mm: distinguish between mlocked and pinned pages") are still
+>present. Also encapsulating internal mm logic via mm[un]pin() instead of
+>drivers having to know about internals and playing nice with compaction are
+>all wins.
+>
+>Thanks!
+>
+>[1] https://lkml.org/lkml/2018/11/5/854
+>
+>Davidlohr Bueso (6):
+>  mm: make mm->pinned_vm an atomic counter
+>  mic/scif: do not use mmap_sem
+>  drivers/IB,qib: do not use mmap_sem
+>  drivers/IB,hfi1: do not se mmap_sem
+>  drivers/IB,usnic: reduce scope of mmap_sem
+>  drivers/IB,core: reduce scope of mmap_sem
+>
+> drivers/infiniband/core/umem.c              | 47 +++-----------------
+> drivers/infiniband/hw/hfi1/user_pages.c     | 12 ++---
+> drivers/infiniband/hw/qib/qib_user_pages.c  | 69 ++++++++++-------------------
+> drivers/infiniband/hw/usnic/usnic_ib_main.c |  2 -
+> drivers/infiniband/hw/usnic/usnic_uiom.c    | 56 +++--------------------
+> drivers/infiniband/hw/usnic/usnic_uiom.h    |  1 -
+> drivers/misc/mic/scif/scif_rma.c            | 38 +++++-----------
+> fs/proc/task_mmu.c                          |  2 +-
+> include/linux/mm_types.h                    |  2 +-
+> kernel/events/core.c                        |  8 ++--
+> kernel/fork.c                               |  2 +-
+> mm/debug.c                                  |  3 +-
+> 12 files changed, 57 insertions(+), 185 deletions(-)
+>
+>-- 
+>2.16.4
+>
