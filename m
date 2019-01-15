@@ -7,53 +7,53 @@ X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D10E7C43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 00:43:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 15632C43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 00:43:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9DCAA20659
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 00:43:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D801920659
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 00:43:32 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="NNc2gt4b"
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="SxkQKpHf"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727612AbfAOAnM (ORCPT
+        id S1727628AbfAOAnb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 14 Jan 2019 19:43:12 -0500
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:44655 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727599AbfAOAnL (ORCPT
+        Mon, 14 Jan 2019 19:43:31 -0500
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:38167 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727614AbfAOAna (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 Jan 2019 19:43:11 -0500
-Received: by mail-pf1-f193.google.com with SMTP id u6so416503pfh.11
-        for <linux-kernel@vger.kernel.org>; Mon, 14 Jan 2019 16:43:11 -0800 (PST)
+        Mon, 14 Jan 2019 19:43:30 -0500
+Received: by mail-pf1-f194.google.com with SMTP id q1so432015pfi.5
+        for <linux-kernel@vger.kernel.org>; Mon, 14 Jan 2019 16:43:30 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=V9A8hHk0RKKoLRn7c+4Uk5RlsWngdSrAKnzXmZlEUHc=;
-        b=NNc2gt4btC3oYpe0xgQIH2nMCgXOaDgTEGTTESr/Vmyv41GRIDNmjoKSu/NsMSG7l9
-         oRYqo61LpZjJgJuCbuzlEMF1QcUgPzxoCmmVRt0OUcCNcvWsjewrBkkqLYXoFeAhblYo
-         F+1gKQe8qukUbw9jaCeahzrsUC0jCVD+loMyU=
+        bh=jpx+GbueRScflYls7iXH7fQMaDRGjOqbP8sGhnDaB5E=;
+        b=SxkQKpHfYA1CTiSAHPBv/q33/P5WhIE1Y307QruDZUxGt340tVqy8aQBjIG8EH63vF
+         mUHU7sdq4R2F3fMF2w142bv71yBNnUoeukjBmGvifnqE0vIkDlfK+5nhRXOm+OpxbS0a
+         TuyhtblIozG15XRqFAz3xwOHBDt7PCeE4L3Ig=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=V9A8hHk0RKKoLRn7c+4Uk5RlsWngdSrAKnzXmZlEUHc=;
-        b=OYZl1i0iilvjHcHMbaa056WusQwV7qSpsntC943+URyJAGKBX2UWj7z+ToARw5In6/
-         RekFut9SIYfwZTpXCeTcCHbTB2Gh0SYjFrQfOBIPjwcGoj+P2t29dHHKGbjelrUHFFX0
-         JqiN+8fA9kfWNoL4DO8ncl/M19MnYlo9HNWhimMRK7YDBgHj+gnbjU6bYdprzHwAxJ3z
-         FSGgCnVFf0eM4QyFubWolAqI4WH9PJpK0YwKt8Q1gRT7tkJl337n5w7VXTtvSnZrdJxm
-         nfmC6PRqcZ8tuQothFgIkGznuyQI5ZyXZ8FiH6UcVQIK0YToSHUEvR5r7y4xcWZ+soYc
-         utFw==
-X-Gm-Message-State: AJcUukfA1X6MDMxbz5luNNN1/RqfHJ/JiiWIwR2u+H997vK1N8cIXY2V
-        aUQ+VjPnqCQ9MPbdz8Oi1Q/9Fw==
-X-Google-Smtp-Source: ALg8bN5tdyB6xhjCiibAc8FkOCHFc8RwZYmdJQD8Pf9BlhmTfKgRM01JdaE/YNaSaPtitHnPNavtlg==
-X-Received: by 2002:a63:fc05:: with SMTP id j5mr1217432pgi.434.1547512990851;
-        Mon, 14 Jan 2019 16:43:10 -0800 (PST)
+        bh=jpx+GbueRScflYls7iXH7fQMaDRGjOqbP8sGhnDaB5E=;
+        b=g+7ehjkqA2Ho4Tvc79folMpIT+FnhvlsI51jpf4QHJE7VwL+knog3wMuh+XxgQ9Q/2
+         CHRXK3NHRv3KG7Gu9VCVPuDN/DPX32oHE41IFWZid45R2giMWB38vgH/OpTQuTlBmDgO
+         f6v2uZbBUWk2VYIKrY8EsevdjRnordQrRl8WFiMMmvPiAyBQPG2SkGT96xfElgVGjdFo
+         JN4ds6+skrMpIOZzlgVcpcD7/ktvLIMw4lCmBcWZuD6tscRM3UPq4S5Wo3tj/3rN5Us4
+         8CLLbwBmmDHmvxBe46yfBaqFVLxUy+EUjESp2vKa7HWIxk34jF4LPGcjdj9zHSx+Jcea
+         E1VQ==
+X-Gm-Message-State: AJcUukdEOco27q1xF2XTsRZinpSuQmeY3PBX4zbCjiRfCVaQNvhYL1wU
+        iGcNw6HTOGEL8j6ZBerdQ7dfPA==
+X-Google-Smtp-Source: ALg8bN5ClkuiS3hhESDt2h0RMe5Gwnw8Pti1vUR6tiWYN9bOs+yUXcbGPDwn8qKUmXlFUvKx7v9TJA==
+X-Received: by 2002:a62:be0c:: with SMTP id l12mr1162272pff.51.1547513009601;
+        Mon, 14 Jan 2019 16:43:29 -0800 (PST)
 Received: from minitux (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
-        by smtp.gmail.com with ESMTPSA id t5sm2583324pfb.60.2019.01.14.16.43.08
+        by smtp.gmail.com with ESMTPSA id m9sm1760282pgd.32.2019.01.14.16.43.27
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 14 Jan 2019 16:43:10 -0800 (PST)
-Date:   Mon, 14 Jan 2019 16:43:06 -0800
+        Mon, 14 Jan 2019 16:43:28 -0800 (PST)
+Date:   Mon, 14 Jan 2019 16:43:25 -0800
 From:   Bjorn Andersson <bjorn.andersson@linaro.org>
 To:     Brian Masney <masneyb@onstation.org>
 Cc:     linus.walleij@linaro.org, sboyd@kernel.org, andy.gross@linaro.org,
@@ -63,15 +63,15 @@ Cc:     linus.walleij@linaro.org, sboyd@kernel.org, andy.gross@linaro.org,
         robh+dt@kernel.org, mark.rutland@arm.com, thierry.reding@gmail.com,
         linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
         devicetree@vger.kernel.org
-Subject: Re: [PATCH v4 10/14] arm64: dts: qcom: pm8005: add interrupt
+Subject: Re: [PATCH v4 11/14] arm64: dts: qcom: pm8998: add interrupt
  controller properties
-Message-ID: <20190115004306.GN9278@minitux>
+Message-ID: <20190115004325.GO9278@minitux>
 References: <20190113154716.5145-1-masneyb@onstation.org>
- <20190113154716.5145-11-masneyb@onstation.org>
+ <20190113154716.5145-12-masneyb@onstation.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190113154716.5145-11-masneyb@onstation.org>
+In-Reply-To: <20190113154716.5145-12-masneyb@onstation.org>
 User-Agent: Mutt/1.11.2 (2019-01-07)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -95,21 +95,43 @@ Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 > ---
 > This is a new patch introduced in V4.
 > 
->  arch/arm64/boot/dts/qcom/pm8005.dtsi | 6 ++----
->  1 file changed, 2 insertions(+), 4 deletions(-)
+>  arch/arm64/boot/dts/qcom/pm8998.dtsi | 28 ++--------------------------
+>  1 file changed, 2 insertions(+), 26 deletions(-)
 > 
-> diff --git a/arch/arm64/boot/dts/qcom/pm8005.dtsi b/arch/arm64/boot/dts/qcom/pm8005.dtsi
-> index 4d5aca3eeb69..c0ddf128136c 100644
-> --- a/arch/arm64/boot/dts/qcom/pm8005.dtsi
-> +++ b/arch/arm64/boot/dts/qcom/pm8005.dtsi
-> @@ -16,10 +16,8 @@
+> diff --git a/arch/arm64/boot/dts/qcom/pm8998.dtsi b/arch/arm64/boot/dts/qcom/pm8998.dtsi
+> index f1025a50c227..43cb5ea14089 100644
+> --- a/arch/arm64/boot/dts/qcom/pm8998.dtsi
+> +++ b/arch/arm64/boot/dts/qcom/pm8998.dtsi
+> @@ -94,32 +94,8 @@
 >  			reg = <0xc000>;
 >  			gpio-controller;
 >  			#gpio-cells = <2>;
 > -			interrupts = <0 0xc0 0 IRQ_TYPE_NONE>,
 > -				     <0 0xc1 0 IRQ_TYPE_NONE>,
 > -				     <0 0xc2 0 IRQ_TYPE_NONE>,
-> -				     <0 0xc3 0 IRQ_TYPE_NONE>;
+> -				     <0 0xc3 0 IRQ_TYPE_NONE>,
+> -				     <0 0xc4 0 IRQ_TYPE_NONE>,
+> -				     <0 0xc5 0 IRQ_TYPE_NONE>,
+> -				     <0 0xc6 0 IRQ_TYPE_NONE>,
+> -				     <0 0xc7 0 IRQ_TYPE_NONE>,
+> -				     <0 0xc8 0 IRQ_TYPE_NONE>,
+> -				     <0 0xc9 0 IRQ_TYPE_NONE>,
+> -				     <0 0xca 0 IRQ_TYPE_NONE>,
+> -				     <0 0xcb 0 IRQ_TYPE_NONE>,
+> -				     <0 0xcc 0 IRQ_TYPE_NONE>,
+> -				     <0 0xcd 0 IRQ_TYPE_NONE>,
+> -				     <0 0xce 0 IRQ_TYPE_NONE>,
+> -				     <0 0xcf 0 IRQ_TYPE_NONE>,
+> -				     <0 0xd0 0 IRQ_TYPE_NONE>,
+> -				     <0 0xd1 0 IRQ_TYPE_NONE>,
+> -				     <0 0xd2 0 IRQ_TYPE_NONE>,
+> -				     <0 0xd3 0 IRQ_TYPE_NONE>,
+> -				     <0 0xd4 0 IRQ_TYPE_NONE>,
+> -				     <0 0xd5 0 IRQ_TYPE_NONE>,
+> -				     <0 0xd6 0 IRQ_TYPE_NONE>,
+> -				     <0 0xd7 0 IRQ_TYPE_NONE>,
+> -				     <0 0xd8 0 IRQ_TYPE_NONE>,
+> -				     <0 0xd9 0 IRQ_TYPE_NONE>;
 > +			interrupt-controller;
 > +			#interrupt-cells = <2>;
 >  		};
