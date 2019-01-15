@@ -7,47 +7,45 @@ X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 727FAC43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 16:41:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C4109C43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 16:41:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3818F20675
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 16:41:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8D4942054F
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 16:41:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547570463;
-	bh=TCJnyhBYHYh3cKZMicZtlF7APoQ2qdMtLoni5huQ8Dg=;
+	s=default; t=1547570466;
+	bh=X/dBjIBd1S6iOQoIVPt2Vj3Ql/OO9EiKQvlmb6ryrnQ=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=TnNc50J6/gL2ubA0MEQ6DQ0XTjI495HtY/5wf5nV6sSDiWLUlYBBgihFFUlMxAXzB
-	 bEx/TMpoeWTgnNGWw5s+jCrLO1AKq0PgACw9c6VFZPN3rEfsk8PRG9gfBnmuS9im6O
-	 pKvn5PAYq8Uz2uwv6RbX0ZM5QCnEzFPXItOYntgE=
+	b=ySIAZw2VIzKvele4fw6H3/nLTviiMAQoKl++Omnj7r7h1RLCj2stpPMd76JPA/xKB
+	 vJ9S672ew35+0NuRTpLy3Toaq5sKmXBlS2VH2qKdG3msq9GIW0D+TLVaHWx47W34Xs
+	 FwhYal9hxR652MQSzm65YkRfSaixOe1OoIMpb1LE=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732463AbfAOQlC (ORCPT
+        id S1732484AbfAOQlE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 15 Jan 2019 11:41:02 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57442 "EHLO mail.kernel.org"
+        Tue, 15 Jan 2019 11:41:04 -0500
+Received: from mail.kernel.org ([198.145.29.99]:57572 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729964AbfAOQky (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Jan 2019 11:40:54 -0500
+        id S1732707AbfAOQk7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 Jan 2019 11:40:59 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1B79120675;
-        Tue, 15 Jan 2019 16:40:52 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id ABA912054F;
+        Tue, 15 Jan 2019 16:40:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547570453;
-        bh=TCJnyhBYHYh3cKZMicZtlF7APoQ2qdMtLoni5huQ8Dg=;
+        s=default; t=1547570459;
+        bh=X/dBjIBd1S6iOQoIVPt2Vj3Ql/OO9EiKQvlmb6ryrnQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=YCmzBqCJeETjf+0mS0af6IZvykdP9/oUvq2j1Ie+cDxF4XfW1vFLb3hIIVcX2B2fe
-         pnx22KLyRaVNdrFg2SsCEmkDziQgrWhaXM/rbwmIrEoM//WbLfculN6HFiRXJMUfn+
-         xo7sT1QozFCapBOdDolmc9zYe45owusVWf6Ahy1k=
+        b=c48uPVTF/gyv+qVITdu+zpObaZU0ixF5YFQtIuUYtNNFNAIu3XXgfLbhYgyyY4LCT
+         Icqq81UFvnGBNtXaNxsDMCjCiDNrw/nd4yoPGGMmwGolwwIF6vDo2xX05dVf7bX5XO
+         R0KeVJ1BaeBOsjFRZBp5rwI+jllc58eXG6jza09s=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Pavel Shilovsky <pshilov@microsoft.com>,
-        Jeff Layton <jlayton@kernel.org>,
-        Steve French <stfrench@microsoft.com>
-Subject: [PATCH 4.14 07/27] CIFS: Do not hide EINTR after sending network packets
-Date:   Tue, 15 Jan 2019 17:35:56 +0100
-Message-Id: <20190115154901.642351697@linuxfoundation.org>
+        stable@vger.kernel.org, Daniele Palmas <dnlplm@gmail.com>
+Subject: [PATCH 4.14 09/27] usb: cdc-acm: send ZLP for Telit 3G Intel based modems
+Date:   Tue, 15 Jan 2019 17:35:58 +0100
+Message-Id: <20190115154901.743659049@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190115154901.189747728@linuxfoundation.org>
 References: <20190115154901.189747728@linuxfoundation.org>
@@ -66,35 +64,36 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Pavel Shilovsky <pshilov@microsoft.com>
+From: Daniele Palmas <dnlplm@gmail.com>
 
-commit ee13919c2e8d1f904e035ad4b4239029a8994131 upstream.
+commit 34aabf918717dd14e05051896aaecd3b16b53d95 upstream.
 
-Currently we hide EINTR code returned from sock_sendmsg()
-and return 0 instead. This makes a caller think that we
-successfully completed the network operation which is not
-true. Fix this by properly returning EINTR to callers.
+Telit 3G Intel based modems require zero packet to be sent if
+out data size is equal to the endpoint max packet size.
 
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Pavel Shilovsky <pshilov@microsoft.com>
-Reviewed-by: Jeff Layton <jlayton@kernel.org>
-Signed-off-by: Steve French <stfrench@microsoft.com>
+Signed-off-by: Daniele Palmas <dnlplm@gmail.com>
+Cc: stable <stable@vger.kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/cifs/transport.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/usb/class/cdc-acm.c |    7 +++++++
+ 1 file changed, 7 insertions(+)
 
---- a/fs/cifs/transport.c
-+++ b/fs/cifs/transport.c
-@@ -318,7 +318,7 @@ uncork:
- 	if (rc < 0 && rc != -EINTR)
- 		cifs_dbg(VFS, "Error %d sending data on socket to server\n",
- 			 rc);
--	else
-+	else if (rc > 0)
- 		rc = 0;
+--- a/drivers/usb/class/cdc-acm.c
++++ b/drivers/usb/class/cdc-acm.c
+@@ -1893,6 +1893,13 @@ static const struct usb_device_id acm_id
+ 	.driver_info = IGNORE_DEVICE,
+ 	},
  
- 	return rc;
++	{ USB_DEVICE(0x1bc7, 0x0021), /* Telit 3G ACM only composition */
++	.driver_info = SEND_ZERO_PACKET,
++	},
++	{ USB_DEVICE(0x1bc7, 0x0023), /* Telit 3G ACM + ECM composition */
++	.driver_info = SEND_ZERO_PACKET,
++	},
++
+ 	/* control interfaces without any protocol set */
+ 	{ USB_INTERFACE_INFO(USB_CLASS_COMM, USB_CDC_SUBCLASS_ACM,
+ 		USB_CDC_PROTO_NONE) },
 
 
