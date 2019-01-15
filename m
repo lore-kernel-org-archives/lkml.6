@@ -2,595 +2,163 @@ Return-Path: <SRS0=RZO6=PX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.0 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.5 required=3.0 tests=FROM_WORDY,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C8E23C43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 10:10:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D9233C43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 10:12:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 742B120651
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 10:10:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A38E920656
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 10:12:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728477AbfAOKK2 (ORCPT
+        id S1728547AbfAOKMW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 15 Jan 2019 05:10:28 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:38811 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726011AbfAOKK1 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Jan 2019 05:10:27 -0500
-Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x0FA9xYx2469296
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Tue, 15 Jan 2019 02:09:59 -0800
-Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x0FA9xX12469293;
-        Tue, 15 Jan 2019 02:09:59 -0800
-Date:   Tue, 15 Jan 2019 02:09:59 -0800
-X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Lianbo Jiang <tipbot@zytor.com>
-Message-ID: <tip-f263245a0ce2c4e23b89a58fa5f7dfc048e11929@git.kernel.org>
-Cc:     bp@suse.de, dyoung@redhat.com, vgoyal@redhat.com, hpa@zytor.com,
-        mingo@kernel.org, bhe@redhat.com, x86@kernel.org, corbet@lwn.net,
-        linux-kernel@vger.kernel.org, akpm@linux-foundation.org,
-        tglx@linutronix.de, lijiang@redhat.com
-Reply-To: vgoyal@redhat.com, bp@suse.de, dyoung@redhat.com,
-          akpm@linux-foundation.org, tglx@linutronix.de,
-          lijiang@redhat.com, corbet@lwn.net, linux-kernel@vger.kernel.org,
-          x86@kernel.org, hpa@zytor.com, bhe@redhat.com, mingo@kernel.org
-In-Reply-To: <20190110121944.6050-2-lijiang@redhat.com>
-References: <20190110121944.6050-2-lijiang@redhat.com>
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/kdump] kdump: Document kernel data exported in the
- vmcoreinfo note
-Git-Commit-ID: f263245a0ce2c4e23b89a58fa5f7dfc048e11929
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        Tue, 15 Jan 2019 05:12:22 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:46692 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727133AbfAOKMW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 Jan 2019 05:12:22 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id DA9C21596;
+        Tue, 15 Jan 2019 02:12:21 -0800 (PST)
+Received: from e110455-lin.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 8474E3F70D;
+        Tue, 15 Jan 2019 02:12:21 -0800 (PST)
+Received: by e110455-lin.cambridge.arm.com (Postfix, from userid 1000)
+        id D833468012C; Tue, 15 Jan 2019 10:12:19 +0000 (GMT)
+Date:   Tue, 15 Jan 2019 10:12:19 +0000
+From:   Liviu Dudau <Liviu.Dudau@arm.com>
+To:     Stephen Rothwell <sfr@canb.auug.org.au>
+Cc:     Dave Airlie <airlied@linux.ie>,
+        DRI <dri-devel@lists.freedesktop.org>,
+        Boris Brezillon <boris.brezillon@bootlin.com>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>,
+        "James Qian Wang (Arm Technology China)" <james.qian.wang@arm.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: linux-next: build failure after merge of the mali-dp tree
+Message-ID: <20190115101219.GP20661@e110455-lin.cambridge.arm.com>
+References: <20190115104619.516be4b9@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190115104619.516be4b9@canb.auug.org.au>
+User-Agent: Mutt/1.11.2 (2019-01-07)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  f263245a0ce2c4e23b89a58fa5f7dfc048e11929
-Gitweb:     https://git.kernel.org/tip/f263245a0ce2c4e23b89a58fa5f7dfc048e11929
-Author:     Lianbo Jiang <lijiang@redhat.com>
-AuthorDate: Thu, 10 Jan 2019 20:19:43 +0800
-Committer:  Borislav Petkov <bp@suse.de>
-CommitDate: Tue, 15 Jan 2019 11:05:28 +0100
+On Tue, Jan 15, 2019 at 10:46:19AM +1100, Stephen Rothwell wrote:
+> Hi Liviu,
 
-kdump: Document kernel data exported in the vmcoreinfo note
+Hi Stephen,
 
-Document data exported in vmcoreinfo and briefly describe its use by
-userspace tools.
+> 
+> After merging the mali-dp tree, today's linux-next build (x86_64
+> allmodconfig) failed like this:
+> 
+> drivers/gpu/drm/arm/display/komeda/komeda_private_obj.c: In function 'komeda_pipeline_obj_add':
+> drivers/gpu/drm/arm/display/komeda/komeda_private_obj.c:48:30: error: passing argument 1 of 'drm_atomic_private_obj_init' from incompatible pointer type [-Werror=incompatible-pointer-types]
+>   drm_atomic_private_obj_init(&pipe->obj, &st->obj,
+>                               ^~~~~~~~~~
+> In file included from drivers/gpu/drm/arm/display/komeda/komeda_pipeline.h:11,
+>                  from drivers/gpu/drm/arm/display/komeda/komeda_dev.h:12,
+>                  from drivers/gpu/drm/arm/display/komeda/komeda_private_obj.c:7:
+> include/drm/drm_atomic.h:437:53: note: expected 'struct drm_device *' but argument is of type 'struct drm_private_obj *'
+>  void drm_atomic_private_obj_init(struct drm_device *dev,
+>                                   ~~~~~~~~~~~~~~~~~~~^~~
+> drivers/gpu/drm/arm/display/komeda/komeda_private_obj.c:48:42: error: passing argument 2 of 'drm_atomic_private_obj_init' from incompatible pointer type [-Werror=incompatible-pointer-types]
+>   drm_atomic_private_obj_init(&pipe->obj, &st->obj,
+>                                           ^~~~~~~~
+> In file included from drivers/gpu/drm/arm/display/komeda/komeda_pipeline.h:11,
+>                  from drivers/gpu/drm/arm/display/komeda/komeda_dev.h:12,
+>                  from drivers/gpu/drm/arm/display/komeda/komeda_private_obj.c:7:
+> include/drm/drm_atomic.h:438:30: note: expected 'struct drm_private_obj *' but argument is of type 'struct drm_private_state *'
+>       struct drm_private_obj *obj,
+>       ~~~~~~~~~~~~~~~~~~~~~~~~^~~
+> drivers/gpu/drm/arm/display/komeda/komeda_private_obj.c:49:9: error: passing argument 3 of 'drm_atomic_private_obj_init' from incompatible pointer type [-Werror=incompatible-pointer-types]
+>          &komeda_pipeline_obj_funcs);
+>          ^~~~~~~~~~~~~~~~~~~~~~~~~~
+> In file included from drivers/gpu/drm/arm/display/komeda/komeda_pipeline.h:11,
+>                  from drivers/gpu/drm/arm/display/komeda/komeda_dev.h:12,
+>                  from drivers/gpu/drm/arm/display/komeda/komeda_private_obj.c:7:
+> include/drm/drm_atomic.h:439:32: note: expected 'struct drm_private_state *' but argument is of type 'const struct drm_private_state_funcs *'
+>       struct drm_private_state *state,
+>       ~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~
+> drivers/gpu/drm/arm/display/komeda/komeda_private_obj.c:48:2: error: too few arguments to function 'drm_atomic_private_obj_init'
+>   drm_atomic_private_obj_init(&pipe->obj, &st->obj,
+>   ^~~~~~~~~~~~~~~~~~~~~~~~~~~
+> In file included from drivers/gpu/drm/arm/display/komeda/komeda_pipeline.h:11,
+>                  from drivers/gpu/drm/arm/display/komeda/komeda_dev.h:12,
+>                  from drivers/gpu/drm/arm/display/komeda/komeda_private_obj.c:7:
+> include/drm/drm_atomic.h:437:6: note: declared here
+>  void drm_atomic_private_obj_init(struct drm_device *dev,
+>       ^~~~~~~~~~~~~~~~~~~~~~~~~~~
+> 
+> Caused by commit
+> 
+>   61f1c4a8ab75 ("drm/komeda: Attach komeda_dev to DRM-KMS")
+> 
+> interacting with commit
+> 
+>   b962a12050a3 ("drm/atomic: integrate modeset lock with private objects")
+> 
+> from the drm tree.
+> 
+> I have applied the following merge fix patch:
+> 
+> From: Stephen Rothwell <sfr@canb.auug.org.au>
+> Date: Tue, 15 Jan 2019 10:42:04 +1100
+> Subject: [PATCH] drm/komeda: merge fix for drm_atomic_private_obj_init() API change
+> 
+> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+> ---
+>  drivers/gpu/drm/arm/display/komeda/komeda_private_obj.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/gpu/drm/arm/display/komeda/komeda_private_obj.c b/drivers/gpu/drm/arm/display/komeda/komeda_private_obj.c
+> index 9edfd6ab0c12..f1c9e3fefa86 100644
+> --- a/drivers/gpu/drm/arm/display/komeda/komeda_private_obj.c
+> +++ b/drivers/gpu/drm/arm/display/komeda/komeda_private_obj.c
+> @@ -45,7 +45,7 @@ static int komeda_pipeline_obj_add(struct komeda_kms_dev *kms,
+>  		return -ENOMEM;
+>  
+>  	st->pipe = pipe;
+> -	drm_atomic_private_obj_init(&pipe->obj, &st->obj,
+> +	drm_atomic_private_obj_init(&kms->base, &pipe->obj, &st->obj,
+>  				    &komeda_pipeline_obj_funcs);
 
- [ bp: heavily massage and redact the text. ]
+That looks like the right fix, thank you for that! I will roll your
+patch into my tree.
 
-Suggested-by: Borislav Petkov <bp@suse.de>
-Signed-off-by: Lianbo Jiang <lijiang@redhat.com>
-Signed-off-by: Borislav Petkov <bp@suse.de>
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: Baoquan He <bhe@redhat.com>
-Cc: Dave Young <dyoung@redhat.com>
-Cc: Jonathan Corbet <corbet@lwn.net>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Vivek Goyal <vgoyal@redhat.com>
-Cc: anderson@redhat.com
-Cc: k-hagio@ab.jp.nec.com
-Cc: kexec@lists.infradead.org
-Cc: linux-doc@vger.kernel.org
-Cc: mingo@redhat.com
-Cc: x86-ml <x86@kernel.org>
-Link: https://lkml.kernel.org/r/20190110121944.6050-2-lijiang@redhat.com
----
- Documentation/kdump/vmcoreinfo.txt | 495 +++++++++++++++++++++++++++++++++++++
- 1 file changed, 495 insertions(+)
+Best regards,
+Liviu
 
-diff --git a/Documentation/kdump/vmcoreinfo.txt b/Documentation/kdump/vmcoreinfo.txt
-new file mode 100644
-index 000000000000..bb94a4bd597a
---- /dev/null
-+++ b/Documentation/kdump/vmcoreinfo.txt
-@@ -0,0 +1,495 @@
-+================================================================
-+			VMCOREINFO
-+================================================================
-+
-+===========
-+What is it?
-+===========
-+
-+VMCOREINFO is a special ELF note section. It contains various
-+information from the kernel like structure size, page size, symbol
-+values, field offsets, etc. These data are packed into an ELF note
-+section and used by user-space tools like crash and makedumpfile to
-+analyze a kernel's memory layout.
-+
-+================
-+Common variables
-+================
-+
-+init_uts_ns.name.release
-+------------------------
-+
-+The version of the Linux kernel. Used to find the corresponding source
-+code from which the kernel has been built. For example, crash uses it to
-+find the corresponding vmlinux in order to process vmcore.
-+
-+PAGE_SIZE
-+---------
-+
-+The size of a page. It is the smallest unit of data used by the memory
-+management facilities. It is usually 4096 bytes of size and a page is
-+aligned on 4096 bytes. Used for computing page addresses.
-+
-+init_uts_ns
-+-----------
-+
-+The UTS namespace which is used to isolate two specific elements of the
-+system that relate to the uname(2) system call. It is named after the
-+data structure used to store information returned by the uname(2) system
-+call.
-+
-+User-space tools can get the kernel name, host name, kernel release
-+number, kernel version, architecture name and OS type from it.
-+
-+node_online_map
-+---------------
-+
-+An array node_states[N_ONLINE] which represents the set of online nodes
-+in a system, one bit position per node number. Used to keep track of
-+which nodes are in the system and online.
-+
-+swapper_pg_dir
-+-------------
-+
-+The global page directory pointer of the kernel. Used to translate
-+virtual to physical addresses.
-+
-+_stext
-+------
-+
-+Defines the beginning of the text section. In general, _stext indicates
-+the kernel start address. Used to convert a virtual address from the
-+direct kernel map to a physical address.
-+
-+vmap_area_list
-+--------------
-+
-+Stores the virtual area list. makedumpfile gets the vmalloc start value
-+from this variable and its value is necessary for vmalloc translation.
-+
-+mem_map
-+-------
-+
-+Physical addresses are translated to struct pages by treating them as
-+an index into the mem_map array. Right-shifting a physical address
-+PAGE_SHIFT bits converts it into a page frame number which is an index
-+into that mem_map array.
-+
-+Used to map an address to the corresponding struct page.
-+
-+contig_page_data
-+----------------
-+
-+Makedumpfile gets the pglist_data structure from this symbol, which is
-+used to describe the memory layout.
-+
-+User-space tools use this to exclude free pages when dumping memory.
-+
-+mem_section|(mem_section, NR_SECTION_ROOTS)|(mem_section, section_mem_map)
-+--------------------------------------------------------------------------
-+
-+The address of the mem_section array, its length, structure size, and
-+the section_mem_map offset.
-+
-+It exists in the sparse memory mapping model, and it is also somewhat
-+similar to the mem_map variable, both of them are used to translate an
-+address.
-+
-+page
-+----
-+
-+The size of a page structure. struct page is an important data structure
-+and it is widely used to compute contiguous memory.
-+
-+pglist_data
-+-----------
-+
-+The size of a pglist_data structure. This value is used to check if the
-+pglist_data structure is valid. It is also used for checking the memory
-+type.
-+
-+zone
-+----
-+
-+The size of a zone structure. This value is used to check if the zone
-+structure has been found. It is also used for excluding free pages.
-+
-+free_area
-+---------
-+
-+The size of a free_area structure. It indicates whether the free_area
-+structure is valid or not. Useful when excluding free pages.
-+
-+list_head
-+---------
-+
-+The size of a list_head structure. Used when iterating lists in a
-+post-mortem analysis session.
-+
-+nodemask_t
-+----------
-+
-+The size of a nodemask_t type. Used to compute the number of online
-+nodes.
-+
-+(page, flags|_refcount|mapping|lru|_mapcount|private|compound_dtor|
-+       compound_order|compound_head)
-+-------------------------------------------------------------------
-+
-+User-space tools compute their values based on the offset of these
-+variables. The variables are used when excluding unnecessary pages.
-+
-+(pglist_data, node_zones|nr_zones|node_mem_map|node_start_pfn|node_
-+              spanned_pages|node_id)
-+-------------------------------------------------------------------
-+
-+On NUMA machines, each NUMA node has a pg_data_t to describe its memory
-+layout. On UMA machines there is a single pglist_data which describes the
-+whole memory.
-+
-+These values are used to check the memory type and to compute the
-+virtual address for memory map.
-+
-+(zone, free_area|vm_stat|spanned_pages)
-+---------------------------------------
-+
-+Each node is divided into a number of blocks called zones which
-+represent ranges within memory. A zone is described by a structure zone.
-+
-+User-space tools compute required values based on the offset of these
-+variables.
-+
-+(free_area, free_list)
-+----------------------
-+
-+Offset of the free_list's member. This value is used to compute the number
-+of free pages.
-+
-+Each zone has a free_area structure array called free_area[MAX_ORDER].
-+The free_list represents a linked list of free page blocks.
-+
-+(list_head, next|prev)
-+----------------------
-+
-+Offsets of the list_head's members. list_head is used to define a
-+circular linked list. User-space tools need these in order to traverse
-+lists.
-+
-+(vmap_area, va_start|list)
-+--------------------------
-+
-+Offsets of the vmap_area's members. They carry vmalloc-specific
-+information. Makedumpfile gets the start address of the vmalloc region
-+from this.
-+
-+(zone.free_area, MAX_ORDER)
-+---------------------------
-+
-+Free areas descriptor. User-space tools use this value to iterate the
-+free_area ranges. MAX_ORDER is used by the zone buddy allocator.
-+
-+log_first_idx
-+-------------
-+
-+Index of the first record stored in the buffer log_buf. Used by
-+user-space tools to read the strings in the log_buf.
-+
-+log_buf
-+-------
-+
-+Console output is written to the ring buffer log_buf at index
-+log_first_idx. Used to get the kernel log.
-+
-+log_buf_len
-+-----------
-+
-+log_buf's length.
-+
-+clear_idx
-+---------
-+
-+The index that the next printk() record to read after the last clear
-+command. It indicates the first record after the last SYSLOG_ACTION
-+_CLEAR, like issued by 'dmesg -c'. Used by user-space tools to dump
-+the dmesg log.
-+
-+log_next_idx
-+------------
-+
-+The index of the next record to store in the buffer log_buf. Used to
-+compute the index of the current buffer position.
-+
-+printk_log
-+----------
-+
-+The size of a structure printk_log. Used to compute the size of
-+messages, and extract dmesg log. It encapsulates header information for
-+log_buf, such as timestamp, syslog level, etc.
-+
-+(printk_log, ts_nsec|len|text_len|dict_len)
-+-------------------------------------------
-+
-+It represents field offsets in struct printk_log. User space tools
-+parse it and check whether the values of printk_log's members have been
-+changed.
-+
-+(free_area.free_list, MIGRATE_TYPES)
-+------------------------------------
-+
-+The number of migrate types for pages. The free_list is described by the
-+array. Used by tools to compute the number of free pages.
-+
-+NR_FREE_PAGES
-+-------------
-+
-+On linux-2.6.21 or later, the number of free pages is in
-+vm_stat[NR_FREE_PAGES]. Used to get the number of free pages.
-+
-+PG_lru|PG_private|PG_swapcache|PG_swapbacked|PG_slab|PG_hwpoision
-+|PG_head_mask|PAGE_BUDDY_MAPCOUNT_VALUE(~PG_buddy)
-+|PAGE_OFFLINE_MAPCOUNT_VALUE(~PG_offline)
-+-----------------------------------------------------------------
-+
-+Page attributes. These flags are used to filter various unnecessary for
-+dumping pages.
-+
-+HUGETLB_PAGE_DTOR
-+-----------------
-+
-+The HUGETLB_PAGE_DTOR flag denotes hugetlbfs pages. Makedumpfile
-+excludes these pages.
-+
-+======
-+x86_64
-+======
-+
-+phys_base
-+---------
-+
-+Used to convert the virtual address of an exported kernel symbol to its
-+corresponding physical address.
-+
-+init_top_pgt
-+------------
-+
-+Used to walk through the whole page table and convert virtual addresses
-+to physical addresses. The init_top_pgt is somewhat similar to
-+swapper_pg_dir, but it is only used in x86_64.
-+
-+pgtable_l5_enabled
-+------------------
-+
-+User-space tools need to know whether the crash kernel was in 5-level
-+paging mode.
-+
-+node_data
-+---------
-+
-+This is a struct pglist_data array and stores all NUMA nodes
-+information. Makedumpfile gets the pglist_data structure from it.
-+
-+(node_data, MAX_NUMNODES)
-+-------------------------
-+
-+The maximum number of nodes in system.
-+
-+KERNELOFFSET
-+------------
-+
-+The kernel randomization offset. Used to compute the page offset. If
-+KASLR is disabled, this value is zero.
-+
-+KERNEL_IMAGE_SIZE
-+-----------------
-+
-+Currently unused by Makedumpfile. Used to compute the module virtual
-+address by Crash.
-+
-+sme_mask
-+--------
-+
-+AMD-specific with SME support: it indicates the secure memory encryption
-+mask. Makedumpfile tools need to know whether the crash kernel was
-+encrypted. If SME is enabled in the first kernel, the crash kernel's
-+page table entries (pgd/pud/pmd/pte) contain the memory encryption
-+mask. This is used to remove the SME mask and obtain the true physical
-+address.
-+
-+Currently, sme_mask stores the value of the C-bit position. If needed,
-+additional SME-relevant info can be placed in that variable.
-+
-+For example:
-+[ misc	        ][ enc bit  ][ other misc SME info       ]
-+0000_0000_0000_0000_1000_0000_0000_0000_0000_0000_..._0000
-+63   59   55   51   47   43   39   35   31   27   ... 3
-+
-+======
-+x86_32
-+======
-+
-+X86_PAE
-+-------
-+
-+Denotes whether physical address extensions are enabled. It has the cost
-+of a higher page table lookup overhead, and also consumes more page
-+table space per process. Used to check whether PAE was enabled in the
-+crash kernel when converting virtual addresses to physical addresses.
-+
-+====
-+ia64
-+====
-+
-+pgdat_list|(pgdat_list, MAX_NUMNODES)
-+-------------------------------------
-+
-+pg_data_t array storing all NUMA nodes information. MAX_NUMNODES
-+indicates the number of the nodes.
-+
-+node_memblk|(node_memblk, NR_NODE_MEMBLKS)
-+------------------------------------------
-+
-+List of node memory chunks. Filled when parsing the SRAT table to obtain
-+information about memory nodes. NR_NODE_MEMBLKS indicates the number of
-+node memory chunks.
-+
-+These values are used to compute the number of nodes the crashed kernel used.
-+
-+node_memblk_s|(node_memblk_s, start_paddr)|(node_memblk_s, size)
-+----------------------------------------------------------------
-+
-+The size of a struct node_memblk_s and the offsets of the
-+node_memblk_s's members. Used to compute the number of nodes.
-+
-+PGTABLE_3|PGTABLE_4
-+-------------------
-+
-+User-space tools need to know whether the crash kernel was in 3-level or
-+4-level paging mode. Used to distinguish the page table.
-+
-+=====
-+ARM64
-+=====
-+
-+VA_BITS
-+-------
-+
-+The maximum number of bits for virtual addresses. Used to compute the
-+virtual memory ranges.
-+
-+kimage_voffset
-+--------------
-+
-+The offset between the kernel virtual and physical mappings. Used to
-+translate virtual to physical addresses.
-+
-+PHYS_OFFSET
-+-----------
-+
-+Indicates the physical address of the start of memory. Similar to
-+kimage_voffset, which is used to translate virtual to physical
-+addresses.
-+
-+KERNELOFFSET
-+------------
-+
-+The kernel randomization offset. Used to compute the page offset. If
-+KASLR is disabled, this value is zero.
-+
-+====
-+arm
-+====
-+
-+ARM_LPAE
-+--------
-+
-+It indicates whether the crash kernel supports large physical address
-+extensions. Used to translate virtual to physical addresses.
-+
-+====
-+s390
-+====
-+
-+lowcore_ptr
-+----------
-+
-+An array with a pointer to the lowcore of every CPU. Used to print the
-+psw and all registers information.
-+
-+high_memory
-+-----------
-+
-+Used to get the vmalloc_start address from the high_memory symbol.
-+
-+(lowcore_ptr, NR_CPUS)
-+----------------------
-+
-+The maximum number of CPUs.
-+
-+=======
-+powerpc
-+=======
-+
-+
-+node_data|(node_data, MAX_NUMNODES)
-+-----------------------------------
-+
-+See above.
-+
-+contig_page_data
-+----------------
-+
-+See above.
-+
-+vmemmap_list
-+------------
-+
-+The vmemmap_list maintains the entire vmemmap physical mapping. Used
-+to get vmemmap list count and populated vmemmap regions info. If the
-+vmemmap address translation information is stored in the crash kernel,
-+it is used to translate vmemmap kernel virtual addresses.
-+
-+mmu_vmemmap_psize
-+-----------------
-+
-+The size of a page. Used to translate virtual to physical addresses.
-+
-+mmu_psize_defs
-+--------------
-+
-+Page size definitions, i.e. 4k, 64k, or 16M.
-+
-+Used to make vtop translations.
-+
-+vmemmap_backing|(vmemmap_backing, list)|(vmemmap_backing, phys)|
-+(vmemmap_backing, virt_addr)
-+----------------------------------------------------------------
-+
-+The vmemmap virtual address space management does not have a traditional
-+page table to track which virtual struct pages are backed by a physical
-+mapping. The virtual to physical mappings are tracked in a simple linked
-+list format.
-+
-+User-space tools need to know the offset of list, phys and virt_addr
-+when computing the count of vmemmap regions.
-+
-+mmu_psize_def|(mmu_psize_def, shift)
-+------------------------------------
-+
-+The size of a struct mmu_psize_def and the offset of mmu_psize_def's
-+member.
-+
-+Used in vtop translations.
-+
-+==
-+sh
-+==
-+
-+node_data|(node_data, MAX_NUMNODES)
-+-----------------------------------
-+
-+See above.
-+
-+X2TLB
-+-----
-+
-+Indicates whether the crashed kernel enabled SH extended mode.
+>  
+>  	return 0;
+> -- 
+> 2.20.1
+> 
+> -- 
+> Cheers,
+> Stephen Rothwell
+
+
+
+> _______________________________________________
+> dri-devel mailing list
+> dri-devel@lists.freedesktop.org
+> https://lists.freedesktop.org/mailman/listinfo/dri-devel
+
+
+-- 
+====================
+| I would like to |
+| fix the world,  |
+| but they're not |
+| giving me the   |
+ \ source code!  /
+  ---------------
+    ¯\_(ツ)_/¯
