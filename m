@@ -2,90 +2,97 @@ Return-Path: <SRS0=RZO6=PX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 71651C43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 18:04:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 17339C43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 18:07:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 45CB820859
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 18:04:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D51C420859
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 18:07:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1547575636;
+	bh=eUXfawc0N+EHlqTH/VDVDJ88au1LXeCaTxBVIG1XEHA=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=kdchfJmY8qB/ZNWw2onEMCl6yG4p2ncjQ7eRTAAwByUtxNBIpl70z2bgw73HtmkdH
+	 hFzLZuQO7VBfKJ41T5zAhw5+fgLB8glCSC0wWm3ylod9dtHPRMj5p971skWpfvj8VO
+	 7Gx7NCO3z74vVYjhgmvK85SAxfQz8ZtJam/Vcmj4=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388648AbfAOSEs (ORCPT
+        id S1733276AbfAOSHO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 15 Jan 2019 13:04:48 -0500
-Received: from gateway22.websitewelcome.com ([192.185.47.100]:38070 "EHLO
-        gateway22.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728510AbfAOSEr (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Jan 2019 13:04:47 -0500
-Received: from cm14.websitewelcome.com (cm14.websitewelcome.com [100.42.49.7])
-        by gateway22.websitewelcome.com (Postfix) with ESMTP id 214F9DE98
-        for <linux-kernel@vger.kernel.org>; Tue, 15 Jan 2019 12:04:47 -0600 (CST)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id jT4xgfxuy2qH7jT4xgJYxd; Tue, 15 Jan 2019 12:04:47 -0600
-X-Authority-Reason: nr=8
-Received: from [189.250.130.205] (port=38812 helo=[192.168.43.131])
-        by gator4166.hostgator.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
-        (Exim 4.91)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1gjT4w-003y0s-EQ; Tue, 15 Jan 2019 12:04:46 -0600
-Subject: Re: [PATCH] mtd: rawnand: marvell: use struct_size() in
- devm_kzalloc()
-To:     Miquel Raynal <miquel.raynal@bootlin.com>
-Cc:     Boris Brezillon <bbrezillon@kernel.org>,
-        Richard Weinberger <richard@nod.at>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Brian Norris <computersforpeace@gmail.com>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20190104182051.GA3603@embeddedor> <20190115185804.75e482c3@xps13>
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Message-ID: <fade8039-cfd8-18f2-8f1e-8e84661beb4e@embeddedor.com>
-Date:   Tue, 15 Jan 2019 12:04:40 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Tue, 15 Jan 2019 13:07:14 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41758 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727337AbfAOSHO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 Jan 2019 13:07:14 -0500
+Received: from mail-yb1-f180.google.com (mail-yb1-f180.google.com [209.85.219.180])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7636E20866;
+        Tue, 15 Jan 2019 18:07:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1547575633;
+        bh=eUXfawc0N+EHlqTH/VDVDJ88au1LXeCaTxBVIG1XEHA=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=L+9/t53bh1eUPK65cDL6HYn1QuEcXnmDKMUkhL957RwZ6CNCloWNJjkVU+pUvspRP
+         W/tr0i8JQAZ6axYqazCt0I+YkBbeWZ043p+h4AliEf1PN51KHMNxOG+3tIbydjVJsp
+         yKRtuL2ZzngYTxaORqv23YaObfM/rhQyxYxQx1Gs=
+Received: by mail-yb1-f180.google.com with SMTP id h81so1104238ybg.2;
+        Tue, 15 Jan 2019 10:07:13 -0800 (PST)
+X-Gm-Message-State: AJcUukcbPJyhs4aTX+pfJaXW2a5T4++xZn7QWH9EXchtSKF8CwsZlmOA
+        faAcrg8o/1J64TXorymUNJOP9NCgqDMa9Y/h94Q=
+X-Google-Smtp-Source: ALg8bN78x1G+uZsK/N/Y25Z0wSmKko9r3Y8KCqcmM9fHfKjtx9T9cWgSSOPYdleMCEqXDFc/ZI2miMHdXA+rvKXXIJA=
+X-Received: by 2002:a25:2b0a:: with SMTP id r10mr4070394ybr.315.1547575632509;
+ Tue, 15 Jan 2019 10:07:12 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20190115185804.75e482c3@xps13>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 189.250.130.205
-X-Source-L: No
-X-Exim-ID: 1gjT4w-003y0s-EQ
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: ([192.168.43.131]) [189.250.130.205]:38812
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 8
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+References: <20190114223312.3254-1-atull@kernel.org> <0574de1a-a238-7ad3-1bc2-24d27ff50cba@kernel.org>
+In-Reply-To: <0574de1a-a238-7ad3-1bc2-24d27ff50cba@kernel.org>
+From:   Alan Tull <atull@kernel.org>
+Date:   Tue, 15 Jan 2019 12:06:36 -0600
+X-Gmail-Original-Message-ID: <CANk1AXQQUVUBfSHCEQbiVEe4ud=K6s75CTmAoBfamkj1oiQ=NQ@mail.gmail.com>
+Message-ID: <CANk1AXQQUVUBfSHCEQbiVEe4ud=K6s75CTmAoBfamkj1oiQ=NQ@mail.gmail.com>
+Subject: Re: [PATCH v2] fpga: altera_freeze_bridge: remove restriction to socfpga
+To:     Dinh Nguyen <dinguyen@kernel.org>
+Cc:     Moritz Fischer <mdf@kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-fpga@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Tue, Jan 15, 2019 at 11:47 AM Dinh Nguyen <dinguyen@kernel.org> wrote:
+>
+> minor nit
+>
+> On 1/14/19 4:33 PM, Alan Tull wrote:
+> > The Altera Freeze Bridge should not be restricted to ARCH_SOCFPGA
+> > since it can be used on other platforms such as Stratix10.
+> >
+> > Signed-off-by: Alan Tull <atull@kernel.org>
+> > ---
+> >  drivers/fpga/Kconfig | 3 ++-
+> >  1 file changed, 2 insertions(+), 1 deletion(-)
+> >
+> > diff --git a/drivers/fpga/Kconfig b/drivers/fpga/Kconfig
+> > index 0bb7b5c..da5786a 100644
+> > --- a/drivers/fpga/Kconfig
+> > +++ b/drivers/fpga/Kconfig
+> > @@ -104,7 +104,8 @@ config SOCFPGA_FPGA_BRIDGE
+> >
+> >  config ALTERA_FREEZE_BRIDGE
+> >       tristate "Altera FPGA Freeze Bridge"
+> > -     depends on ARCH_SOCFPGA && FPGA_BRIDGE
+> > +     depends on FPGA_BRIDGE
+> > +     depends on HAS_IOMEM
+>
+> can just be:
+>
+> depends on FPGA_BRIDGE && HAS_IOMEM
 
+I agree.
 
-On 1/15/19 11:58 AM, Miquel Raynal wrote:
-
->>
->> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
->> ---
-> 
-> Applied to nand/next.
-> 
-
-Thanks, Miquèl.
-
---
-Gustavo
+>
+> Dinh
