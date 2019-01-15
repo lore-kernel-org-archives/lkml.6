@@ -2,199 +2,232 @@ Return-Path: <SRS0=RZO6=PX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BF9D7C43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 11:48:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A7B3DC43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 11:50:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8A61A20656
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 11:48:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6C94020656
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 11:50:15 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernelci-org.20150623.gappssmtp.com header.i=@kernelci-org.20150623.gappssmtp.com header.b="z8h7qLMu"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727427AbfAOLsp (ORCPT
+        id S1727778AbfAOLuN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 15 Jan 2019 06:48:45 -0500
-Received: from foss.arm.com ([217.140.101.70]:48590 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726886AbfAOLso (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Jan 2019 06:48:44 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 2D40180D;
-        Tue, 15 Jan 2019 03:48:44 -0800 (PST)
-Received: from [10.1.197.45] (e112298-lin.cambridge.arm.com [10.1.197.45])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id A40943F70D;
-        Tue, 15 Jan 2019 03:48:42 -0800 (PST)
-Subject: Re: [RFC PATCH v2 1/2] uaccess: Check no rescheduling function is
- called in unsafe region
-To:     Valentin Schneider <valentin.schneider@arm.com>,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc:     mingo@redhat.com, peterz@infradead.org, catalin.marinas@arm.com,
-        will.deacon@arm.com, james.morse@arm.com, hpa@zytor.com
-References: <1543845318-24543-1-git-send-email-julien.thierry@arm.com>
- <1543845318-24543-2-git-send-email-julien.thierry@arm.com>
- <907e51b7-10da-c5cb-058f-2c34ba2c8abd@arm.com>
-From:   Julien Thierry <julien.thierry@arm.com>
-Message-ID: <f7bbc9dd-46f4-7df6-d20f-61e0ec6873d6@arm.com>
-Date:   Tue, 15 Jan 2019 11:48:41 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Tue, 15 Jan 2019 06:50:13 -0500
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:55072 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726077AbfAOLuN (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 Jan 2019 06:50:13 -0500
+Received: by mail-wm1-f65.google.com with SMTP id a62so2958765wmh.4
+        for <linux-kernel@vger.kernel.org>; Tue, 15 Jan 2019 03:50:11 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernelci-org.20150623.gappssmtp.com; s=20150623;
+        h=message-id:date:mime-version:content-transfer-encoding:subject:to
+         :from:cc;
+        bh=eQ1RvQDsyqcbI2kYYuKA5kJov6P1VDFMZn9MOVfCwF0=;
+        b=z8h7qLMuG4H65WC76Ah3Rk6Cdg9IEtMMSFq8BWh3oaL47ZbVlRRoL7VTRGuw5VzMuB
+         pmV8KpBg8uP2kXmQZE7CYBfbqvkpO49SJnSy6j4C9hJYUuRC+KtzbtsEYvHJT4zeiksf
+         Ss3SQQu77XW8qx60LeHDBWY3cXjidSQQXcUsChuhdppN9jYIK+eQ2Q50IHiFcxCs8zTX
+         17guppGSei7PWrBEUn4/mnOZgLEHNV/2WwB3DNj4Ms4qcYKF+KjGV0hjYSSLwnlgAMaK
+         50139gNeF4/QlIBrvL/6gBbyAUGLhN2XfoPzeuSbo1/UsX3TwU7iJ0QWc21XlMSBOAG3
+         lHJw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:message-id:date:mime-version
+         :content-transfer-encoding:subject:to:from:cc;
+        bh=eQ1RvQDsyqcbI2kYYuKA5kJov6P1VDFMZn9MOVfCwF0=;
+        b=Ver4IaO69zjxGD3MbjzqVXl8pGbx3CK5lzSNWzNFTEJFbWeqo54cvTDo36iz42FYYc
+         2Mvi1+k4G29+KUgVn99QfGsMyvaAi7h6s8kv0/AuS7DgWzdtW2OnAhT9aVPP9vgujZU3
+         1AxX72gCCxhzMs6ZYFUc9Zldl2slGMxahJV/7lhHpm0iVsq2NjFVQnVTIJ3f/BqIU1pZ
+         txAYvrPTL4HJEbY24SQz+UiNXQSq7KClmJywVxBNJbILXXzaG29wNNbhXydnxGSDmZiP
+         J5WKj9j4fuzC8dutcEG2iZrDfslTyOWu5h8XUFQCbYA36Vf2AbFLDDrJdIViJ3Vr/BZV
+         QTjA==
+X-Gm-Message-State: AJcUukcntPChrgKFkfgKZu+48qRirK9EW/C3DmUjUyER0/29a0GoK3AQ
+        z2jUpdwJqqsQtTwOBfGyP+mPUw==
+X-Google-Smtp-Source: ALg8bN4VWwuvWYflURFUuyWiEj54VsRTqgec/Wvw9CvSIt+x4kGQrjGz5fbE9+zf6z6ncwY/qsKHaQ==
+X-Received: by 2002:a7b:c8d7:: with SMTP id f23mr1229292wml.121.1547553010375;
+        Tue, 15 Jan 2019 03:50:10 -0800 (PST)
+Received: from [148.251.42.114] ([2a01:4f8:201:9271::2])
+        by smtp.gmail.com with ESMTPSA id a132sm40191382wmh.5.2019.01.15.03.50.09
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 15 Jan 2019 03:50:09 -0800 (PST)
+Message-ID: <5c3dc8f1.1c69fb81.7f7ca.c87c@mx.google.com>
+Date:   Tue, 15 Jan 2019 03:50:09 -0800 (PST)
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-In-Reply-To: <907e51b7-10da-c5cb-058f-2c34ba2c8abd@arm.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
+X-Kernelci-Report-Type: bisect
+X-Kernelci-Lab-Name: lab-baylibre
+X-Kernelci-Tree: next
+X-Kernelci-Branch: pending-fixes
+X-Kernelci-Kernel: v5.0-rc2-361-g08b435ee366b
+Subject: next/pending-fixes boot bisection: v5.0-rc2-361-g08b435ee366b on
+ bcm2837-rpi-3-b-32
+To:     Ajit Pandey <ajitp@codeaurora.org>, tomeu.vizoso@collabora.com,
+        Rohit kumar <rohitkr@codeaurora.org>,
+        guillaume.tucker@collabora.com, Mark Brown <broonie@kernel.org>,
+        broonie@kernel.org, matthew.hart@linaro.org, khilman@baylibre.com,
+        enric.balletbo@collabora.com
+From:   "kernelci.org bot" <bot@kernelci.org>
+Cc:     Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+        alsa-devel@alsa-project.org, Liam Girdwood <lgirdwood@gmail.com>,
+        linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+* This automated bisection report was sent to you on the basis  *
+* that you may be involved with the breaking commit it has      *
+* found.  No manual investigation has been done to verify it,   *
+* and the root cause of the problem may be somewhere else.      *
+* Hope this helps!                                              *
+* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
-On 14/01/2019 12:03, Valentin Schneider wrote:
-> Hi,
-> 
-> On 03/12/2018 13:55, Julien Thierry wrote:
->> While running a user_access regions, it is not supported to reschedule.
->> Add an overridable primitive to indicate whether a user_access region is
->> active and check that this is not the case when calling rescheduling
->> functions.
->>
->> Also, add a comment clarifying the behaviour of user_access regions.
->>
->> Signed-off-by: Julien Thierry <julien.thierry@arm.com>
->> ---
->>  include/linux/kernel.h  |  6 ++++--
->>  include/linux/uaccess.h | 11 +++++++++++
->>  kernel/sched/core.c     | 19 +++++++++++++++++++
->>  3 files changed, 34 insertions(+), 2 deletions(-)
->>
->> I'm not sure these are the best locations to check this but I was hoping
->> this patch could start the discussion.
->>
->> Should I move the check? Should I add a config option to conditionally
->> build those checks?
->>
-> 
-> I was going to say it's already under DEBUG_ATOMIC_SLEEP, but that's only
-> true for the __might_sleep() bit actually.
-> 
-> I think it'd make sense to blanket that under a config, but using
-> DEBUG_ATOMIC_SLEEP for that is a bit too much. What about a
-> DEBUG_UACCESS_SLEEP?
-> 
+next/pending-fixes boot bisection: v5.0-rc2-361-g08b435ee366b on bcm2837-rp=
+i-3-b-32
 
-Yes, I was wondering whether to add something like that, I'll add a
-DEBUG_UACCESS_SLEEP to my next version.
+Summary:
+  Start:      08b435ee366b Merge remote-tracking branch 'drm-misc-fixes/for=
+-linux-next-fixes'
+  Details:    https://kernelci.org/boot/id/5c3d7a2759b51458916edd4d
+  Plain log:  https://storage.kernelci.org//next/pending-fixes/v5.0-rc2-361=
+-g08b435ee366b/arm/bcm2835_defconfig/lab-baylibre/boot-bcm2837-rpi-3-b.txt
+  HTML log:   https://storage.kernelci.org//next/pending-fixes/v5.0-rc2-361=
+-g08b435ee366b/arm/bcm2835_defconfig/lab-baylibre/boot-bcm2837-rpi-3-b.html
+  Result:     8780cf1142a5 ASoC: soc-core: defer card probe until all compo=
+nent is added to list
 
->> diff --git a/include/linux/kernel.h b/include/linux/kernel.h
->> index d6aac75..fe0e984 100644
->> --- a/include/linux/kernel.h
->> +++ b/include/linux/kernel.h
->> @@ -237,11 +237,13 @@
->>  struct pt_regs;
->>  struct user;
->>
->> +extern void __might_resched(const char *file, int line);
->>  #ifdef CONFIG_PREEMPT_VOLUNTARY
->>  extern int _cond_resched(void);
->> -# define might_resched() _cond_resched()
->> +# define might_resched() \
->> +	do { __might_resched(__FILE__, __LINE__); _cond_resched(); } while (0)
->>  #else
->> -# define might_resched() do { } while (0)
->> +# define might_resched() __might_resched(__FILE__, __LINE__)>  #endif
->>
->>  #ifdef CONFIG_DEBUG_ATOMIC_SLEEP
->> diff --git a/include/linux/uaccess.h b/include/linux/uaccess.h
->> index efe79c1..50adb84 100644
->> --- a/include/linux/uaccess.h
->> +++ b/include/linux/uaccess.h
->> @@ -266,6 +266,13 @@ static inline unsigned long __copy_from_user_inatomic_nocache(void *to,
->>  #define probe_kernel_address(addr, retval)		\
->>  	probe_kernel_read(&retval, addr, sizeof(retval))
->>
->> +/*
->> + * user_access_begin() and user_access_end() define a region where
->> + * unsafe user accessors can be used.
->> + * During execution of this region, no sleeping functions should be called.
->> + * Exceptions and interrupt shall exit the user_access region and re-enter it
->> + * when returning to the interrupted context.
->> + */
-> 
-> I would first have the bit about exceptions, then mention sleeping and add
-> something along the lines of
-> 
-> "[...] no sleeping functions should be called - we rely on exception
-> handling to take care of the user_access status for us, but that doesn't
-> happen when directly calling schedule()."
-> 
-> My wording's not the best but I just want something to point out *why*
-> sleeping ain't okay.
-> 
+Checks:
+  revert:     PASS
+  verify:     PASS
 
-I think the wording is alright, I'll include your suggestion for the
-next version.
+Parameters:
+  Tree:       next
+  URL:        http://git.kernel.org/pub/scm/linux/kernel/git/next/linux-nex=
+t.git
+  Branch:     pending-fixes
+  Target:     bcm2837-rpi-3-b-32
+  CPU arch:   arm
+  Lab:        lab-baylibre
+  Config:     bcm2835_defconfig
+  Test suite: boot
 
->>  #ifndef user_access_begin
->>  #define user_access_begin() do { } while (0)
->>  #define user_access_end() do { } while (0)
->> @@ -273,6 +280,10 @@ static inline unsigned long __copy_from_user_inatomic_nocache(void *to,
->>  #define unsafe_put_user(x, ptr, err) do { if (unlikely(__put_user(x, ptr))) goto err; } while (0)
->>  #endif
->>
->> +#ifndef unsafe_user_region_active
->> +#define unsafe_user_region_active()	false
->> +#endif
->> +
->>  #ifdef CONFIG_HARDENED_USERCOPY
->>  void usercopy_warn(const char *name, const char *detail, bool to_user,
->>  		   unsigned long offset, unsigned long len);
->> diff --git a/kernel/sched/core.c b/kernel/sched/core.c
->> index 6fedf3a..03f53c8 100644
->> --- a/kernel/sched/core.c
->> +++ b/kernel/sched/core.c
->> @@ -3289,6 +3289,13 @@ static inline void schedule_debug(struct task_struct *prev)
->>  		__schedule_bug(prev);
->>  		preempt_count_set(PREEMPT_DISABLED);
->>  	}
->> +
->> +	if (unlikely(unsafe_user_region_active())) {
->> +		printk(KERN_ERR "BUG: scheduling while user_access enabled: %s/%d/0x%08x\n",
->> +		       prev->comm, prev->pid, preempt_count());
->> +		dump_stack();
->> +	}
->> +
->>  	rcu_sleep_check();
->>
->>  	profile_hit(SCHED_PROFILING, __builtin_return_address(0));
->> @@ -6151,6 +6158,18 @@ void ___might_sleep(const char *file, int line, int preempt_offset)
->>  EXPORT_SYMBOL(___might_sleep);
->>  #endif
->>
->> +void __might_resched(const char *file, int line)
->> +{
->> +	if (!unsafe_user_region_active())
->> +		return;
->> +
->> +	printk(KERN_ERR
->> +		"BUG: rescheduling function called from user access context at %s:%d\n",
->> +			file, line);
->> +	dump_stack();
->> +}
-> 
-> So this check is "careful, things might go bad" and the schedule_debug()
-> one is "things went bad". IIUC we'll always get this warning when we hit
-> the schedule_debug() one. I was going to suggest only keeping one of them,
-> but I think both hold value.
-> 
+Breaking commit found:
 
-Yes, I can't really convince myself to remove either, unless there is a
-magic place that covers both cases.
+---------------------------------------------------------------------------=
+----
+commit 8780cf1142a59568a3aa77959cbd76b2edb6fd81
+Author: Ajit Pandey <ajitp@codeaurora.org>
+Date:   Wed Jan 9 14:17:07 2019 +0530
 
-Thanks for the suggestions.
+    ASoC: soc-core: defer card probe until all component is added to list
+    =
 
-Cheers,
+    DAI component probe is not called if it is not present
+    in component list during sound card registration.
+    Check if component is available in component list for
+    platform and cpu dai before soundcard registration.
+    =
 
--- 
-Julien Thierry
+    Signed-off-by: Ajit Pandey <ajitp@codeaurora.org>
+    Signed-off-by: Rohit kumar <rohitkr@codeaurora.org>
+    Signed-off-by: Mark Brown <broonie@kernel.org>
+
+diff --git a/sound/soc/soc-core.c b/sound/soc/soc-core.c
+index 0462b3ec977a..eec92f17dd15 100644
+--- a/sound/soc/soc-core.c
++++ b/sound/soc/soc-core.c
+@@ -1027,7 +1027,6 @@ static int snd_soc_init_platform(struct snd_soc_card =
+*card,
+ 				 struct snd_soc_dai_link *dai_link)
+ {
+ 	struct snd_soc_dai_link_component *platform =3D dai_link->platform;
+-
+ 	/*
+ 	 * FIXME
+ 	 *
+@@ -1129,6 +1128,14 @@ static int soc_init_dai_link(struct snd_soc_card *ca=
+rd,
+ 			link->name);
+ 		return -EINVAL;
+ 	}
++
++	/*
++	 * Defer card registartion if platform dai component is not added to
++	 * component list.
++	 */
++	if (!soc_find_component(link->platform->of_node, link->platform->name))
++		return -EPROBE_DEFER;
++
+ 	/*
+ 	 * CPU device may be specified by either name or OF node, but
+ 	 * can be left unspecified, and will be matched based on DAI
+@@ -1140,6 +1147,14 @@ static int soc_init_dai_link(struct snd_soc_card *ca=
+rd,
+ 			link->name);
+ 		return -EINVAL;
+ 	}
++
++	/*
++	 * Defer card registartion if cpu dai component is not added to
++	 * component list.
++	 */
++	if (!soc_find_component(link->cpu_of_node, link->cpu_name))
++		return -EPROBE_DEFER;
++
+ 	/*
+ 	 * At least one of CPU DAI name or CPU device name/node must be
+ 	 * specified
+---------------------------------------------------------------------------=
+----
+
+
+Git bisection log:
+
+---------------------------------------------------------------------------=
+----
+git bisect start
+# good: [3719876809e745b9db5293d418600c194bbf5c23] sbitmap: Protect swap_lo=
+ck from softirqs
+git bisect good 3719876809e745b9db5293d418600c194bbf5c23
+# bad: [08b435ee366bab63250c375ffea3c94cb02fcd93] Merge remote-tracking bra=
+nch 'drm-misc-fixes/for-linux-next-fixes'
+git bisect bad 08b435ee366bab63250c375ffea3c94cb02fcd93
+# good: [f80eb2d45c4e34750337d1210a78bfe2ebf43b73] Merge remote-tracking br=
+anch 'ipsec/master'
+git bisect good f80eb2d45c4e34750337d1210a78bfe2ebf43b73
+# bad: [e242412b491b4e34643f82c6f422e964beb81704] Merge remote-tracking bra=
+nch 'input-current/for-linus'
+git bisect bad e242412b491b4e34643f82c6f422e964beb81704
+# bad: [eb1c2383c8b929fcc5a56f5698ff3fe3d0ec54e6] Merge remote-tracking bra=
+nch 'sound-asoc-fixes/for-linus'
+git bisect bad eb1c2383c8b929fcc5a56f5698ff3fe3d0ec54e6
+# bad: [04eb1efcd614d6f067b76a355b3a3599667959dc] ASoC: soc-core: Hold clie=
+nt_mutex around soc_init_dai_link()
+git bisect bad 04eb1efcd614d6f067b76a355b3a3599667959dc
+# good: [a41d9dbf5dac5b6a1283ee8001f22807d18352ea] ASoC: qdsp6: q6asm-dai: =
+Fix a small memory leak
+git bisect good a41d9dbf5dac5b6a1283ee8001f22807d18352ea
+# good: [6175471755075d256c1c654151fc1cad183c1e33] ASoC: ti: davinci-mcasp:=
+ Move context save/restore to runtime_pm callbacks
+git bisect good 6175471755075d256c1c654151fc1cad183c1e33
+# good: [44fabd8cdaaa3acb80ad2bb3b5c61ae2136af661] ASoC: atom: fix a missin=
+g check of snd_pcm_lib_malloc_pages
+git bisect good 44fabd8cdaaa3acb80ad2bb3b5c61ae2136af661
+# bad: [239b8b34a856777e562373ae0de605536a7ccade] ASoC: Intel: Boards: move=
+ the codec PLL configuration to _init
+git bisect bad 239b8b34a856777e562373ae0de605536a7ccade
+# bad: [8780cf1142a59568a3aa77959cbd76b2edb6fd81] ASoC: soc-core: defer car=
+d probe until all component is added to list
+git bisect bad 8780cf1142a59568a3aa77959cbd76b2edb6fd81
+# first bad commit: [8780cf1142a59568a3aa77959cbd76b2edb6fd81] ASoC: soc-co=
+re: defer card probe until all component is added to list
+---------------------------------------------------------------------------=
+----
