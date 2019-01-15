@@ -4,48 +4,48 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EF1F6C43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 16:41:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7313CC43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 16:41:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C003C2054F
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 16:41:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3541C2054F
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 16:41:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547570495;
-	bh=kzGylFrcEZVYht18mhXNED4vPBlEhmmT5LHy0RkNvcc=;
+	s=default; t=1547570498;
+	bh=R675Mz3OreDhoMfXWI3UFwRKTKPjKT2z4dzeqqD/a1Y=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=BYi756UOrcdPilzVUZ30vapDmFti6Mjyvh2oMapQE5lEXxaXGefd46/SmQVWFB4mk
-	 p8la8PFaY80Wv7b6Pd2V7NRJ98nVHBNH8jUboANx6jTUtpVddlXCXIAVI8rX62xwFn
-	 OZwEPObeFU0rnOwcFLnPnwQtVWuxIOOUtAcWYAvA=
+	b=hA8O8eSxXDN/AzVJGdmH4lqw2fYPNgXTGgLslPe2tXBs5VKuAf0pExNDAPpjHmLP/
+	 VgR+dOEya+eSYrOzscHU/yxQo9PiAIZqwcXOftS9TSbgyLqMRomNQGLFM5hiHHz219
+	 HPSP/8Wx2CgLVG++JaeYNR2+3+OE7eGSJHzOIsFQ=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732820AbfAOQle (ORCPT
+        id S1732832AbfAOQlg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 15 Jan 2019 11:41:34 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58278 "EHLO mail.kernel.org"
+        Tue, 15 Jan 2019 11:41:36 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58322 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732807AbfAOQlb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Jan 2019 11:41:31 -0500
+        id S1732818AbfAOQle (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 Jan 2019 11:41:34 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5FAFB20675;
-        Tue, 15 Jan 2019 16:41:30 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id EE4662054F;
+        Tue, 15 Jan 2019 16:41:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547570490;
-        bh=kzGylFrcEZVYht18mhXNED4vPBlEhmmT5LHy0RkNvcc=;
+        s=default; t=1547570493;
+        bh=R675Mz3OreDhoMfXWI3UFwRKTKPjKT2z4dzeqqD/a1Y=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=S/hepAQUMgjIvzF79NuR0AXxew/f9yJDiJ7gub15vVDGV9QpUQmIv6Bej+YSd0f+0
-         K47X43S1nnVSfEr3zapuJIyLAgEXut2L8P3kAhYwWbsVu+t+4EKKPqpJ8zBHT0g6c6
-         qSepnoFbN5dELnGQHYRDQ6coXAHzH5Ko7/z0NZUA=
+        b=QqLDCamw+mjnCKSUtzh/m0Vp4UeNZ6LSlY8mJYWeaHUxbYdU+tX24fIty2BZqlNLi
+         JesIDFQEZu1okYKevQYTYYrhk+JSuqepKpEOCronpv+d6Sny4mien/O6Ps+64mhafL
+         b08acs9xe+GLXxeSCEcyKTit5wYZxznoaBh9NrOE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Daniele Palmas <dnlplm@gmail.com>
-Subject: [PATCH 4.19 14/50] usb: cdc-acm: send ZLP for Telit 3G Intel based modems
-Date:   Tue, 15 Jan 2019 17:35:50 +0100
-Message-Id: <20190115154910.778031607@linuxfoundation.org>
+        stable@vger.kernel.org, Icenowy Zheng <icenowy@aosc.io>,
+        Alan Stern <stern@rowland.harvard.edu>
+Subject: [PATCH 4.19 15/50] USB: storage: dont insert sane sense for SPC3+ when bad sense specified
+Date:   Tue, 15 Jan 2019 17:35:51 +0100
+Message-Id: <20190115154910.838527278@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190115154909.933241945@linuxfoundation.org>
 References: <20190115154909.933241945@linuxfoundation.org>
@@ -64,36 +64,44 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Daniele Palmas <dnlplm@gmail.com>
+From: Icenowy Zheng <icenowy@aosc.io>
 
-commit 34aabf918717dd14e05051896aaecd3b16b53d95 upstream.
+commit c5603d2fdb424849360fe7e3f8c1befc97571b8c upstream.
 
-Telit 3G Intel based modems require zero packet to be sent if
-out data size is equal to the endpoint max packet size.
+Currently the code will set US_FL_SANE_SENSE flag unconditionally if
+device claims SPC3+, however we should allow US_FL_BAD_SENSE flag to
+prevent this behavior, because SMI SM3350 UFS-USB bridge controller,
+which claims SPC4, will show strange behavior with 96-byte sense
+(put the chip into a wrong state that cannot read/write anything).
 
-Signed-off-by: Daniele Palmas <dnlplm@gmail.com>
+Check the presence of US_FL_BAD_SENSE when assuming US_FL_SANE_SENSE on
+SPC4+ devices.
+
+Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
 Cc: stable <stable@vger.kernel.org>
+Acked-by: Alan Stern <stern@rowland.harvard.edu>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/usb/class/cdc-acm.c |    7 +++++++
- 1 file changed, 7 insertions(+)
+ drivers/usb/storage/scsiglue.c |    8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
---- a/drivers/usb/class/cdc-acm.c
-+++ b/drivers/usb/class/cdc-acm.c
-@@ -1880,6 +1880,13 @@ static const struct usb_device_id acm_id
- 	.driver_info = IGNORE_DEVICE,
- 	},
+--- a/drivers/usb/storage/scsiglue.c
++++ b/drivers/usb/storage/scsiglue.c
+@@ -235,8 +235,12 @@ static int slave_configure(struct scsi_d
+ 		if (!(us->fflags & US_FL_NEEDS_CAP16))
+ 			sdev->try_rc_10_first = 1;
  
-+	{ USB_DEVICE(0x1bc7, 0x0021), /* Telit 3G ACM only composition */
-+	.driver_info = SEND_ZERO_PACKET,
-+	},
-+	{ USB_DEVICE(0x1bc7, 0x0023), /* Telit 3G ACM + ECM composition */
-+	.driver_info = SEND_ZERO_PACKET,
-+	},
-+
- 	/* control interfaces without any protocol set */
- 	{ USB_INTERFACE_INFO(USB_CLASS_COMM, USB_CDC_SUBCLASS_ACM,
- 		USB_CDC_PROTO_NONE) },
+-		/* assume SPC3 or latter devices support sense size > 18 */
+-		if (sdev->scsi_level > SCSI_SPC_2)
++		/*
++		 * assume SPC3 or latter devices support sense size > 18
++		 * unless US_FL_BAD_SENSE quirk is specified.
++		 */
++		if (sdev->scsi_level > SCSI_SPC_2 &&
++		    !(us->fflags & US_FL_BAD_SENSE))
+ 			us->fflags |= US_FL_SANE_SENSE;
+ 
+ 		/*
 
 
