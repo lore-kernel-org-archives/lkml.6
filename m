@@ -2,77 +2,83 @@ Return-Path: <SRS0=RZO6=PX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D0C91C43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 17:22:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 42582C43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 17:23:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 925FF20859
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 17:22:37 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="ZA5/7RN2"
+	by mail.kernel.org (Postfix) with ESMTP id 0FB4F20657
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 17:23:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388045AbfAORWg (ORCPT
+        id S2388065AbfAORXQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 15 Jan 2019 12:22:36 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:56002 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387405AbfAORWf (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Jan 2019 12:22:35 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=Zf02zyUAZy9qYRpn7J2k3vi7Owzge1mjj387QTnPyng=; b=ZA5/7RN2tiFLeYOpc149IM2rj
-        vldvlIsanPpNV3rmnYnqMkzRNespkw1wMM+zyin2kHRib8BM27PffrIGI/PIHjOQ69CukTkc6NXRN
-        BVmJ/ZwevmBfB0zhISkhpxGQbaoMjQ6dehezOaJWvgXHQHlKDdtxSMmsH6Yi5Jw9a/xQYJAZ1Qs0j
-        dGghQYvUwyost6N1/GWvsiOWyy2cyYrkM0eSabiji8r7+XumH9XTIjyAe5bCFWN+fATboAQz/Rvnj
-        uc0W8Niba/7HGKqS9wO8nfi8YtbQ5dAW6DjLddJZXwSNtDSMAoOBUZH/jPu1+9oIAYQ2K/8odjFwg
-        WCsZ4SoAg==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gjSQ6-0000Jw-7z; Tue, 15 Jan 2019 17:22:34 +0000
-Date:   Tue, 15 Jan 2019 09:22:34 -0800
-From:   Christoph Hellwig <hch@infradead.org>
-To:     Olof Johansson <olof@lixom.net>
-Cc:     Christoph Hellwig <hch@infradead.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        linux-mm <linux-mm@kvack.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Jan Kara <jack@suse.cz>
-Subject: Re: [PATCH] mm: Make CONFIG_FRAME_VECTOR a visible option
-Message-ID: <20190115172234.GA991@infradead.org>
-References: <20190115164435.8423-1-olof@lixom.net>
- <20190115170510.GA4274@infradead.org>
- <CAOesGMg4hd8z=2FVDTYMiuKzHnobNLnncV37j77BA+gQGg=heg@mail.gmail.com>
+        Tue, 15 Jan 2019 12:23:16 -0500
+Received: from relay.sw.ru ([185.231.240.75]:53986 "EHLO relay.sw.ru"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728736AbfAORXP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 Jan 2019 12:23:15 -0500
+Received: from [172.16.25.12]
+        by relay.sw.ru with esmtp (Exim 4.91)
+        (envelope-from <aryabinin@virtuozzo.com>)
+        id 1gjSQi-0004bo-Mo; Tue, 15 Jan 2019 20:23:12 +0300
+Subject: Re: [PATCH v3 3/3] powerpc/32: Add KASAN support
+To:     Christophe Leroy <christophe.leroy@c-s.fr>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>,
+        Alexander Potapenko <glider@google.com>,
+        Dmitry Vyukov <dvyukov@google.com>
+Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        kasan-dev@googlegroups.com, linux-mm@kvack.org
+References: <cover.1547289808.git.christophe.leroy@c-s.fr>
+ <935f9f83393affb5d55323b126468ecb90373b88.1547289808.git.christophe.leroy@c-s.fr>
+From:   Andrey Ryabinin <aryabinin@virtuozzo.com>
+Message-ID: <e4b343fa-702b-294f-7741-bb85ed877cdf@virtuozzo.com>
+Date:   Tue, 15 Jan 2019 20:23:35 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAOesGMg4hd8z=2FVDTYMiuKzHnobNLnncV37j77BA+gQGg=heg@mail.gmail.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+In-Reply-To: <935f9f83393affb5d55323b126468ecb90373b88.1547289808.git.christophe.leroy@c-s.fr>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 15, 2019 at 09:17:30AM -0800, Olof Johansson wrote:
-> I'd argue it's *more* confusing to expect users to know about and
-> enable some random V4L driver to get this exported kernel API included
-> or not. Happy to add "If in doubt, say 'n' here" help text, like we do
-> for many many other kernel config options.
 
-It is just like any other library function - you get it with a user.
 
-> In this particular case, a module (under early development and not yet
-> ready to upstream, but will be) worked with a random distro kernel
-> that enables the kitchen sink of drivers, but not with a more slimmed
-> down kernel config. Having to enable a driver you'll never use, just
-> to enable some generic exported helpers, is just backwards.
+On 1/12/19 2:16 PM, Christophe Leroy wrote:
 
-Just develop the damn driver in a kernel tree and let people pull
-the whole branch like everyone else: problem solved.
+> +KASAN_SANITIZE_early_32.o := n
+> +KASAN_SANITIZE_cputable.o := n
+> +KASAN_SANITIZE_prom_init.o := n
+> +
+
+Usually it's also good idea to disable branch profiling - define DISABLE_BRANCH_PROFILING
+either in top of these files or via Makefile. Branch profiling redefines if() statement and calls
+instrumented ftrace_likely_update in every if().
+
+
+
+> diff --git a/arch/powerpc/mm/kasan_init.c b/arch/powerpc/mm/kasan_init.c
+> new file mode 100644
+> index 000000000000..3edc9c2d2f3e
+
+> +void __init kasan_init(void)
+> +{
+> +	struct memblock_region *reg;
+> +
+> +	for_each_memblock(memory, reg)
+> +		kasan_init_region(reg);
+> +
+> +	pr_info("KASAN init done\n");
+
+Without "init_task.kasan_depth = 0;" kasan will not repot bugs.
+
+There is test_kasan module. Make sure that it produce reports.
