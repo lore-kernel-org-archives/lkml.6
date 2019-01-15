@@ -6,47 +6,47 @@ X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 44EE6C43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 16:37:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BB377C43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 16:37:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 07B8820868
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 16:37:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 889C120859
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 16:37:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547570228;
-	bh=QnHGQ1cYLMI2OQvpZ11/UVb4jBxfmRTa0Ov2vyEI4dw=;
+	s=default; t=1547570230;
+	bh=qTudNXb/T7dxqFrFTur+ikwV6ooNIsPHEzKdInnSJzI=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=DXhtW32MPgAt/cdZCppOyqk2bzajS+tC8ob9hvVa8FKeeGDwM7bmnDIuWrEFWhGeW
-	 5f1jdWvkkEBa0Rt5bwFNyMzGE5H210zaXjTB0BAQsoMeYhlYsUkg4wBzuEwLVatKh5
-	 WyJxcuOQLrpaee0hLpskrfjTRJpvs0x9wd+4OQU0=
+	b=F8UXvx2N/iWZk6BtRgqajjerAWPiLoX/3dZd+mgl7AEsFOcnKAGlTlpUNcg/c0mwL
+	 WGHgPaw3rcG/lQ/PGd/j0ZvWUWX5zjgfvNRw53pjyR6fP3T0f88HGUJ7Pwfj+0r2Uv
+	 JKYDSY7FIAguNILB6U8xygXlRVkvPtykec2y4g0g=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731753AbfAOQhG (ORCPT
+        id S1731769AbfAOQhJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 15 Jan 2019 11:37:06 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52358 "EHLO mail.kernel.org"
+        Tue, 15 Jan 2019 11:37:09 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52462 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731728AbfAOQhC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Jan 2019 11:37:02 -0500
+        id S1731728AbfAOQhH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 Jan 2019 11:37:07 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D7455208E4;
-        Tue, 15 Jan 2019 16:37:00 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0FBA820873;
+        Tue, 15 Jan 2019 16:37:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547570221;
-        bh=QnHGQ1cYLMI2OQvpZ11/UVb4jBxfmRTa0Ov2vyEI4dw=;
+        s=default; t=1547570226;
+        bh=qTudNXb/T7dxqFrFTur+ikwV6ooNIsPHEzKdInnSJzI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=11OHYhvA7dqUY6hp3WuowuSNBX4WUrs5SjDl6TwFDYpghLoCudeMOTBN0L4UoxZ9o
-         b4EdidhGfpvATkEz9BRipEZdq6c7Hhu7CrwxrQtJbB99sTFoE62SScIu11zB6VPSkK
-         zVmZIkIhZMxHaNpLWgNGj48S9BXAwZQ2JDcdUB9k=
+        b=Prws2DxVb7CLbB5CoJhn5gnoYwM8FSGf3zCHwmRLNx3TN89R7h/H3rg8qZuV2ug3w
+         rTTCFGf+QWjuSqJ71RcFAgJW9EOb4JKZUJ03Aj9UE/LSRd1Vb7pTceVRvcx9PKpUDs
+         2L097NWdNTeaTxZbaq4IdpoL5ngEe33DTJxxyaBo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Filipe Manana <fdmanana@suse.com>,
-        Liu Bo <bo.li.liu@oracle.com>,
+        stable@vger.kernel.org, Vegard Nossum <vegard.nossum@oracle.com>,
+        Qu Wenruo <quwenruo@cn.fujitsu.com>, Chris Mason <clm@fb.com>,
         Ben Hutchings <ben.hutchings@codethink.co.uk>
-Subject: [PATCH 4.4 14/51] Btrfs: fix emptiness check for dirtied extent buffers at check_leaf()
-Date:   Tue, 15 Jan 2019 17:35:10 +0100
-Message-Id: <20190115154848.916696548@linuxfoundation.org>
+Subject: [PATCH 4.4 03/51] btrfs: Enhance chunk validation check
+Date:   Tue, 15 Jan 2019 17:34:59 +0100
+Message-Id: <20190115154847.411592180@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190115154846.928796000@linuxfoundation.org>
 References: <20190115154846.928796000@linuxfoundation.org>
@@ -65,117 +65,98 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Filipe Manana <fdmanana@suse.com>
+From: Qu Wenruo <quwenruo@cn.fujitsu.com>
 
-commit f177d73949bf758542ca15a1c1945bd2e802cc65 upstream.
+commit f04b772bfc17f502703794f4d100d12155c1a1a9 upstream.
 
-We can not simply use the owner field from an extent buffer's header to
-get the id of the respective tree when the extent buffer is from a
-relocation tree. When we create the root for a relocation tree we leave
-(on purpose) the owner field with the same value as the subvolume's tree
-root (we do this at ctree.c:btrfs_copy_root()). So we must ignore extent
-buffers from relocation trees, which have the BTRFS_HEADER_FLAG_RELOC
-flag set, because otherwise we will always consider the extent buffer
-as not being the root of the tree (the root of original subvolume tree
-is always different from the root of the respective relocation tree).
+Enhance chunk validation:
+1) Num_stripes
+   We already have such check but it's only in super block sys chunk
+   array.
+   Now check all on-disk chunks.
 
-This lead to assertion failures when running with the integrity checker
-enabled (CONFIG_BTRFS_FS_CHECK_INTEGRITY=y) such as the following:
+2) Chunk logical
+   It should be aligned to sector size.
+   This behavior should be *DOUBLE CHECKED* for 64K sector size like
+   PPC64 or AArch64.
+   Maybe we can found some hidden bugs.
 
-[  643.393409] BTRFS critical (device sdg): corrupt leaf, non-root leaf's nritems is 0: block=38506496, root=260, slot=0
-[  643.397609] BTRFS info (device sdg): leaf 38506496 total ptrs 0 free space 3995
-[  643.407075] assertion failed: 0, file: fs/btrfs/disk-io.c, line: 4078
-[  643.408425] ------------[ cut here ]------------
-[  643.409112] kernel BUG at fs/btrfs/ctree.h:3419!
-[  643.409773] invalid opcode: 0000 [#1] PREEMPT SMP
-[  643.410447] Modules linked in: dm_flakey dm_mod crc32c_generic btrfs xor raid6_pq ppdev psmouse acpi_cpufreq parport_pc evdev parport tpm_tis tpm_tis_core pcspkr serio_raw i2c_piix4 sg tpm i2c_core button processor loop autofs4 ext4 crc16 jbd2 mbcache sr_mod cdrom sd_mod ata_generic virtio_scsi ata_piix libata virtio_pci virtio_ring scsi_mod virtio e1000 floppy
-[  643.414356] CPU: 11 PID: 32726 Comm: btrfs Not tainted 4.8.0-rc8-btrfs-next-35+ #1
-[  643.414356] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS rel-1.9.1-0-gb3ef39f-prebuilt.qemu-project.org 04/01/2014
-[  643.414356] task: ffff880145e95b00 task.stack: ffff88014826c000
-[  643.414356] RIP: 0010:[<ffffffffa0352759>]  [<ffffffffa0352759>] assfail.constprop.41+0x1c/0x1e [btrfs]
-[  643.414356] RSP: 0018:ffff88014826fa28  EFLAGS: 00010292
-[  643.414356] RAX: 0000000000000039 RBX: ffff88014e2d7c38 RCX: 0000000000000001
-[  643.414356] RDX: ffff88023f4d2f58 RSI: ffffffff81806c63 RDI: 00000000ffffffff
-[  643.414356] RBP: ffff88014826fa28 R08: 0000000000000001 R09: 0000000000000000
-[  643.414356] R10: ffff88014826f918 R11: ffffffff82f3c5ed R12: ffff880172910000
-[  643.414356] R13: ffff880233992230 R14: ffff8801a68a3310 R15: fffffffffffffff8
-[  643.414356] FS:  00007f9ca305e8c0(0000) GS:ffff88023f4c0000(0000) knlGS:0000000000000000
-[  643.414356] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[  643.414356] CR2: 00007f9ca3071000 CR3: 000000015d01b000 CR4: 00000000000006e0
-[  643.414356] Stack:
-[  643.414356]  ffff88014826fa50 ffffffffa02d655a 000000000000000a ffff88014e2d7c38
-[  643.414356]  0000000000000000 ffff88014826faa8 ffffffffa02b72f3 ffff88014826fab8
-[  643.414356]  00ffffffa03228e4 0000000000000000 0000000000000000 ffff8801bbd4e000
-[  643.414356] Call Trace:
-[  643.414356]  [<ffffffffa02d655a>] btrfs_mark_buffer_dirty+0xdf/0xe5 [btrfs]
-[  643.414356]  [<ffffffffa02b72f3>] btrfs_copy_root+0x18a/0x1d1 [btrfs]
-[  643.414356]  [<ffffffffa0322921>] create_reloc_root+0x72/0x1ba [btrfs]
-[  643.414356]  [<ffffffffa03267c2>] btrfs_init_reloc_root+0x7b/0xa7 [btrfs]
-[  643.414356]  [<ffffffffa02d9e44>] record_root_in_trans+0xdf/0xed [btrfs]
-[  643.414356]  [<ffffffffa02db04e>] btrfs_record_root_in_trans+0x50/0x6a [btrfs]
-[  643.414356]  [<ffffffffa030ad2b>] create_subvol+0x472/0x773 [btrfs]
-[  643.414356]  [<ffffffffa030b406>] btrfs_mksubvol+0x3da/0x463 [btrfs]
-[  643.414356]  [<ffffffffa030b406>] ? btrfs_mksubvol+0x3da/0x463 [btrfs]
-[  643.414356]  [<ffffffff810781ac>] ? preempt_count_add+0x65/0x68
-[  643.414356]  [<ffffffff811a6e97>] ? __mnt_want_write+0x62/0x77
-[  643.414356]  [<ffffffffa030b55d>] btrfs_ioctl_snap_create_transid+0xce/0x187 [btrfs]
-[  643.414356]  [<ffffffffa030b67d>] btrfs_ioctl_snap_create+0x67/0x81 [btrfs]
-[  643.414356]  [<ffffffffa030ecfd>] btrfs_ioctl+0x508/0x20dd [btrfs]
-[  643.414356]  [<ffffffff81293e39>] ? __this_cpu_preempt_check+0x13/0x15
-[  643.414356]  [<ffffffff81155eca>] ? handle_mm_fault+0x976/0x9ab
-[  643.414356]  [<ffffffff81091300>] ? arch_local_irq_save+0x9/0xc
-[  643.414356]  [<ffffffff8119a2b0>] vfs_ioctl+0x18/0x34
-[  643.414356]  [<ffffffff8119a8e8>] do_vfs_ioctl+0x581/0x600
-[  643.414356]  [<ffffffff814b9552>] ? entry_SYSCALL_64_fastpath+0x5/0xa8
-[  643.414356]  [<ffffffff81093fe9>] ? trace_hardirqs_on_caller+0x17b/0x197
-[  643.414356]  [<ffffffff8119a9be>] SyS_ioctl+0x57/0x79
-[  643.414356]  [<ffffffff814b9565>] entry_SYSCALL_64_fastpath+0x18/0xa8
-[  643.414356]  [<ffffffff81091b08>] ? trace_hardirqs_off_caller+0x3f/0xaa
-[  643.414356] Code: 89 83 88 00 00 00 31 c0 5b 41 5c 41 5d 5d c3 55 89 f1 48 c7 c2 98 bc 35 a0 48 89 fe 48 c7 c7 05 be 35 a0 48 89 e5 e8 13 46 dd e0 <0f> 0b 55 89 f1 48 c7 c2 9f d3 35 a0 48 89 fe 48 c7 c7 7a d5 35
-[  643.414356] RIP  [<ffffffffa0352759>] assfail.constprop.41+0x1c/0x1e [btrfs]
-[  643.414356]  RSP <ffff88014826fa28>
-[  643.468267] ---[ end trace 6a1b3fb1a9d7d6e3 ]---
+3) Chunk length
+   Same as chunk logical, should be aligned to sector size.
 
-This can be easily reproduced by running xfstests with the integrity
-checker enabled.
+4) Stripe length
+   It should be power of 2.
 
-Fixes: 1ba98d086fe3 (Btrfs: detect corruption when non-root leaf has zero item)
-Signed-off-by: Filipe Manana <fdmanana@suse.com>
-Reviewed-by: Liu Bo <bo.li.liu@oracle.com>
+5) Chunk type
+   Any bit out of TYPE_MAS | PROFILE_MASK is invalid.
+
+With all these much restrict rules, several fuzzed image reported in
+mail list should no longer cause kernel panic.
+
+Reported-by: Vegard Nossum <vegard.nossum@oracle.com>
+Signed-off-by: Qu Wenruo <quwenruo@cn.fujitsu.com>
+Signed-off-by: Chris Mason <clm@fb.com>
 Signed-off-by: Ben Hutchings <ben.hutchings@codethink.co.uk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- fs/btrfs/disk-io.c |   13 ++++++++++++-
- 1 file changed, 12 insertions(+), 1 deletion(-)
+ fs/btrfs/volumes.c |   33 ++++++++++++++++++++++++++++++++-
+ 1 file changed, 32 insertions(+), 1 deletion(-)
 
---- a/fs/btrfs/disk-io.c
-+++ b/fs/btrfs/disk-io.c
-@@ -536,7 +536,15 @@ static noinline int check_leaf(struct bt
- 	u32 nritems = btrfs_header_nritems(leaf);
- 	int slot;
+--- a/fs/btrfs/volumes.c
++++ b/fs/btrfs/volumes.c
+@@ -6217,6 +6217,7 @@ static int read_one_chunk(struct btrfs_r
+ 	struct extent_map *em;
+ 	u64 logical;
+ 	u64 length;
++	u64 stripe_len;
+ 	u64 devid;
+ 	u8 uuid[BTRFS_UUID_SIZE];
+ 	int num_stripes;
+@@ -6225,6 +6226,37 @@ static int read_one_chunk(struct btrfs_r
  
--	if (nritems == 0) {
-+	/*
-+	 * Extent buffers from a relocation tree have a owner field that
-+	 * corresponds to the subvolume tree they are based on. So just from an
-+	 * extent buffer alone we can not find out what is the id of the
-+	 * corresponding subvolume tree, so we can not figure out if the extent
-+	 * buffer corresponds to the root of the relocation tree or not. So skip
-+	 * this check for relocation trees.
-+	 */
-+	if (nritems == 0 && !btrfs_header_flag(leaf, BTRFS_HEADER_FLAG_RELOC)) {
- 		struct btrfs_root *check_root;
+ 	logical = key->offset;
+ 	length = btrfs_chunk_length(leaf, chunk);
++	stripe_len = btrfs_chunk_stripe_len(leaf, chunk);
++	num_stripes = btrfs_chunk_num_stripes(leaf, chunk);
++	/* Validation check */
++	if (!num_stripes) {
++		btrfs_err(root->fs_info, "invalid chunk num_stripes: %u",
++			  num_stripes);
++		return -EIO;
++	}
++	if (!IS_ALIGNED(logical, root->sectorsize)) {
++		btrfs_err(root->fs_info,
++			  "invalid chunk logical %llu", logical);
++		return -EIO;
++	}
++	if (!length || !IS_ALIGNED(length, root->sectorsize)) {
++		btrfs_err(root->fs_info,
++			"invalid chunk length %llu", length);
++		return -EIO;
++	}
++	if (!is_power_of_2(stripe_len)) {
++		btrfs_err(root->fs_info, "invalid chunk stripe length: %llu",
++			  stripe_len);
++		return -EIO;
++	}
++	if (~(BTRFS_BLOCK_GROUP_TYPE_MASK | BTRFS_BLOCK_GROUP_PROFILE_MASK) &
++	    btrfs_chunk_type(leaf, chunk)) {
++		btrfs_err(root->fs_info, "unrecognized chunk type: %llu",
++			  ~(BTRFS_BLOCK_GROUP_TYPE_MASK |
++			    BTRFS_BLOCK_GROUP_PROFILE_MASK) &
++			  btrfs_chunk_type(leaf, chunk));
++		return -EIO;
++	}
  
- 		key.objectid = btrfs_header_owner(leaf);
-@@ -564,6 +572,9 @@ static noinline int check_leaf(struct bt
- 		return 0;
- 	}
- 
-+	if (nritems == 0)
-+		return 0;
-+
- 	/* Check the 0 item */
- 	if (btrfs_item_offset_nr(leaf, 0) + btrfs_item_size_nr(leaf, 0) !=
- 	    BTRFS_LEAF_DATA_SIZE(root)) {
+ 	read_lock(&map_tree->map_tree.lock);
+ 	em = lookup_extent_mapping(&map_tree->map_tree, logical, 1);
+@@ -6241,7 +6273,6 @@ static int read_one_chunk(struct btrfs_r
+ 	em = alloc_extent_map();
+ 	if (!em)
+ 		return -ENOMEM;
+-	num_stripes = btrfs_chunk_num_stripes(leaf, chunk);
+ 	map = kmalloc(map_lookup_size(num_stripes), GFP_NOFS);
+ 	if (!map) {
+ 		free_extent_map(em);
 
 
