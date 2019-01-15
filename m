@@ -2,135 +2,158 @@ Return-Path: <SRS0=RZO6=PX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 08CDAC43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 16:13:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EC79AC43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 16:14:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D2D1D20657
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 16:13:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 869A920657
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 16:14:28 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=livid.pp.ru header.i=@livid.pp.ru header.b="jBqouk0M"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731408AbfAOQNV (ORCPT
+        id S1731413AbfAOQO1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 15 Jan 2019 11:13:21 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:51180 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731396AbfAOQNU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Jan 2019 11:13:20 -0500
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id C61E0C0669AD;
-        Tue, 15 Jan 2019 16:13:19 +0000 (UTC)
-Received: from [10.36.117.133] (ovpn-117-133.ams2.redhat.com [10.36.117.133])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 5EC875D778;
-        Tue, 15 Jan 2019 16:13:17 +0000 (UTC)
-To:     Jiri Olsa <jolsa@kernel.org>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc:     lkml <linux-kernel@vger.kernel.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>,
-        Michael Petlan <mpetlan@redhat.com>,
-        Masami Hiramatsu <mhiramat@kernel.org>
-References: <20190115135354.11572-1-jolsa@kernel.org>
-From:   Nick Clifton <nickc@redhat.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=nickc@redhat.com; prefer-encrypt=mutual; keydata=
- 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
- 6susi2ReUyNJEJaSnjO5z13TQ1U=
-Organization: Red Hat
-Subject: Re: [RFC] perf tools: Filter out hidden symbols from labels
-Message-ID: <960f0b83-a623-67a6-ab55-d56139d10ba2@redhat.com>
-Date:   Tue, 15 Jan 2019 16:13:16 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        Tue, 15 Jan 2019 11:14:27 -0500
+Received: from mail-ed1-f66.google.com ([209.85.208.66]:33949 "EHLO
+        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729543AbfAOQO0 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 Jan 2019 11:14:26 -0500
+Received: by mail-ed1-f66.google.com with SMTP id b3so3020763ede.1
+        for <linux-kernel@vger.kernel.org>; Tue, 15 Jan 2019 08:14:25 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=livid.pp.ru; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=3TB4Cm8e2Fl64TYPTWBUE8YQgabZLtz0Yy0eRN0D9Nc=;
+        b=jBqouk0MMQ0gHtVJrZtiRjDJ4+EEMV0st2D2YWwkMurTAQwC/Onm8LZf43WQLvhWuq
+         KW4K1t05HKETjp3XdxHV+d93AhOIjVFOwDeob375sSnZ2AjLpchUN84xPMOPPSnw/EsN
+         YcOVTJN/jgTvW/51VLt+NxdWU26Ec6EB0AhVI=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=3TB4Cm8e2Fl64TYPTWBUE8YQgabZLtz0Yy0eRN0D9Nc=;
+        b=jiCRS/ZTMaT/YesYHwnhLhAHTO4DPZRnOewTtsD7gKwKWHhP72Gf0Y8VIrnrb8F4MI
+         waXAJLSv0qMQU8vfN7DY5qoRm1UGgnxvFp/efptD9jKy9aSczxmK1dniS5z5yhteF1j7
+         t1DXjo4DPHzIcpJMApPYdwue/kIRjKV/OdOOeT+BRCdlLu//QwNRGNIvhLPqyYiUexI6
+         gLMN1RBjVd0VcvfXGLsOPJkyL4IPwcd7qGPu/3j/L0OWjB18YIlFh1YhOzzU7jnXGble
+         Zs6+WKs16donBqV/mr5qPinWaRFhFBzfk+wiwSanCsYssoR4+hJZKmmyPKOAkz1XNKfb
+         rTEg==
+X-Gm-Message-State: AJcUukecO8V8IMFT0TFXGLesoXLaXibirCaneFyzxIqWQZgEOlGquGF5
+        iQurtLxEE477P1tIH7hIAbIoSQ==
+X-Google-Smtp-Source: ALg8bN5EK4thpIeGAb/I3NyNVH6+f4AVjazb8zkxd11XTAPe7pfOudtFEuWoEmUQVNN1IPgGXwi11g==
+X-Received: by 2002:a17:906:351a:: with SMTP id r26-v6mr3546188eja.193.1547568864264;
+        Tue, 15 Jan 2019 08:14:24 -0800 (PST)
+Received: from livid.lan ([2001:470:71:c0c::d0e5:a55])
+        by smtp.gmail.com with ESMTPSA id r51sm5029101eda.64.2019.01.15.08.14.22
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 15 Jan 2019 08:14:23 -0800 (PST)
+From:   Nikolay Yakimov <root@livid.pp.ru>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Nikolay Yakimov <root@livid.pp.ru>,
+        Saranya Gopal <saranya.gopal@intel.com>,
+        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] USB: Fix configuration selection issues introduced in v4.20.0
+Date:   Tue, 15 Jan 2019 19:13:54 +0300
+Message-Id: <20190115161354.6806-1-root@livid.pp.ru>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-In-Reply-To: <20190115135354.11572-1-jolsa@kernel.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
 Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.32]); Tue, 15 Jan 2019 16:13:20 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Jiri,
+Commit f13912d3f014a introduced changes to the usb_choose_configuration function
+to better support USB Audio UAC3-compatible devices. However, there are a few
+problems with this patch. First of all, it adds new "if" clauses in the middle
+of an existing "if"/"else if" tree, which obviously breaks pre-existing logic.
+Secondly, since it continues iterating over configurations in one of the branches,
+other code in the loop can choose an unintended configuration. Finally,
+if an audio device's first configuration is UAC3-compatible, and there
+are multiple UAC3 configurations, the second one would be chosen, due to
+the first configuration never being checked for UAC3-compatibility.
 
-> When perf is built with annobin plugin (RHEL8 build) extra symbols
-> are added to its binary:
+Commit ff2a8c532c14 tries to fix the second issue, but it goes about it in a
+somewhat unnecessarily convoluted way, in my opinion, and does nothing
+to fix the first or the last one.
 
-  A bit of background for those wondering why annobin is creating
-  these symbols:  Annobin is a plugin for gcc that records data 
-  about how object file were built.  It is specifically designed 
-  to be able to cope with files that are built using multiple
-  different sets of optimization options.  (Eg because of #pragma
-  directives or function specific optimization attributes).  It
-  generates notes to cover each compiled region of code, and it
-  needs the symbols in order to be able to determine exactly which
-  areas in a linked binary were compiled with which options.
+This patch tries to rectify problems described by essentially rewriting
+code introduced in f13912d3f014a. Notice the code was moved to *before*
+the "if"/"else if" tree.
 
-  In the course of developing this plugin I encountered various
-  problems with tools not expecting to find extra symbols in a
-  binary.  Hence I made the symbols local, hidden and with no type.
-  It was the best I could do to say "ignore these symbols - they
-  are not meant to be seen by anyone but annobin".
+Signed-off-by: Nikolay Yakimov <root@livid.pp.ru>
+---
+ drivers/usb/core/generic.c | 44 ++++++++++++++++++++++----------------
+ 1 file changed, 25 insertions(+), 19 deletions(-)
 
-
-> +		elf_sym__visibility(sym) != STV_HIDDEN;
-
-  Just to be awkward, if you are going to ignore STV_HIDDEN 
-  symbols then you should probably also ignore STV_INTERNAL ones
-  as well...  Annobin does not generate them, but you never know,
-  one day some other tool might create some.
-
-Cheers
-  Nick
-
-
-
+diff --git a/drivers/usb/core/generic.c b/drivers/usb/core/generic.c
+index f713cecc1f41..1ac9c1e5f773 100644
+--- a/drivers/usb/core/generic.c
++++ b/drivers/usb/core/generic.c
+@@ -118,6 +118,31 @@ int usb_choose_configuration(struct usb_device *udev)
+ 			continue;
+ 		}
+ 
++		/*
++		 * Select first configuration as default for audio so that
++		 * devices that don't comply with UAC3 protocol are supported.
++		 * But, still iterate through other configurations and
++		 * select UAC3 compliant config if present.
++		 */
++		if (desc && is_audio(desc)) {
++			/* Always prefer the first found UAC3 config */
++			if (is_uac3_config(desc)) {
++				best = c;
++				break;
++			}
++
++			/* If there is no UAC3 config, prefer the first config */
++			else if (i == 0)
++				best = c;
++
++			/* Unconditional continue, because the rest of the code
++			 * in the loop is irrelevant for audio devices, and
++			 * because it can reassign best, which for audio devices
++			 * we don't want.
++			 */
++			continue;
++		}
++
+ 		/* When the first config's first interface is one of Microsoft's
+ 		 * pet nonstandard Ethernet-over-USB protocols, ignore it unless
+ 		 * this kernel has enabled the necessary host side driver.
+@@ -132,25 +157,6 @@ int usb_choose_configuration(struct usb_device *udev)
+ #endif
+ 		}
+ 
+-		/*
+-		 * Select first configuration as default for audio so that
+-		 * devices that don't comply with UAC3 protocol are supported.
+-		 * But, still iterate through other configurations and
+-		 * select UAC3 compliant config if present.
+-		 */
+-		if (i == 0 && num_configs > 1 && desc && is_audio(desc)) {
+-			best = c;
+-			continue;
+-		}
+-
+-		if (i > 0 && desc && is_audio(desc)) {
+-			if (is_uac3_config(desc)) {
+-				best = c;
+-				break;
+-			}
+-			continue;
+-		}
+-
+ 		/* From the remaining configs, choose the first one whose
+ 		 * first interface is for a non-vendor-specific class.
+ 		 * Reason: Linux is more likely to have a class driver
+-- 
+2.20.1
 
