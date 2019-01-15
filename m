@@ -2,141 +2,202 @@ Return-Path: <SRS0=RZO6=PX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 215D7C43444
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 16:37:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 81BDAC43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 16:37:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D8EB220675
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 16:37:33 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=cern.onmicrosoft.com header.i=@cern.onmicrosoft.com header.b="hBOkPgVu"
+	by mail.kernel.org (Postfix) with ESMTP id 486E620859
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 16:37:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1547570256;
+	bh=4C7giLg8vHDspoV6Y70EnN+2y92xDr9Qo5bNO8tZvrY=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=UkiQYu7HRW9xVstbQRB/hVQHeOY5AyqipcATEzKPkJikqaLA/i9cmeNaS9iH1DguE
+	 FsazrGt8vjhensWDke5FJU5CP7NYBpBUVUK6Av45VP72HMxTqaPyg27Mn0F27e0QWB
+	 scyqMkCrUODIb2AtsMRYp3QRi6RoLZBtymWoPles=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731868AbfAOQhc (ORCPT
+        id S1731880AbfAOQhf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 15 Jan 2019 11:37:32 -0500
-Received: from mail-eopbgr130058.outbound.protection.outlook.com ([40.107.13.58]:19900
-        "EHLO EUR01-HE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1731791AbfAOQh3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Jan 2019 11:37:29 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cern.onmicrosoft.com;
- s=selector1-cern-ch;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ixdzpBbmQkYOEsplTMjFYDhOVhuRQPZpOHeM7AtQ8X0=;
- b=hBOkPgVuYxSEqvjnHmKutACZ9NklVj7YCImV8w8xfY0MSdDCH+RCsOfIpi1gqLgXtSJFLoXmKAOpoRZ0YaRIOF2UrsiGeBzkAlHzS8r52fqbebM6Yow8QAmMU+o8gg+1YO5xJuFA4uMMR/0eXAt8Kw7F8vR/hYVgEkFxovIdJqg=
-Received: from VI1PR0602CA0022.eurprd06.prod.outlook.com
- (2603:10a6:800:bc::32) by DB6PR06MB4008.eurprd06.prod.outlook.com
- (2603:10a6:6:54::31) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.1537.24; Tue, 15 Jan
- 2019 16:37:25 +0000
-Received: from HE1EUR02FT019.eop-EUR02.prod.protection.outlook.com
- (2a01:111:f400:7e05::206) by VI1PR0602CA0022.outlook.office365.com
- (2603:10a6:800:bc::32) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.20.1537.24 via Frontend
- Transport; Tue, 15 Jan 2019 16:37:25 +0000
-Received-SPF: Pass (protection.outlook.com: domain of cern.ch designates
- 188.184.36.50 as permitted sender) receiver=protection.outlook.com;
- client-ip=188.184.36.50; helo=cernmxgwlb4.cern.ch;
-Received: from cernmxgwlb4.cern.ch (188.184.36.50) by
- HE1EUR02FT019.mail.protection.outlook.com (10.152.10.70) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- 15.20.1471.13 via Frontend Transport; Tue, 15 Jan 2019 16:37:25 +0000
-Received: from cernfe03.cern.ch (188.184.36.39) by cernmxgwlb4.cern.ch
- (188.184.36.50) with Microsoft SMTP Server (TLS) id 14.3.408.0; Tue, 15 Jan
- 2019 17:37:08 +0100
-Received: from pcbe13614.localnet (2001:1458:202:121::100:40) by smtp.cern.ch
- (2001:1458:201:66::100:14) with Microsoft SMTP Server (TLS) id 14.3.408.0;
- Tue, 15 Jan 2019 17:37:07 +0100
-From:   Federico Vaga <federico.vaga@cern.ch>
-To:     Wolfram Sang <wsa@the-dreams.de>
-Reply-To: <federico.vaga@cern.ch>
-CC:     Peter Korsgaard <peter@korsgaard.com>, <linux-i2c@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH V2 0/5] i2c:ocores: improvements
-Date:   Tue, 15 Jan 2019 17:37:07 +0100
-Message-ID: <14601911.GrvbWtgO0l@pcbe13614>
-In-Reply-To: <20181127113821.GB1107@kunai>
-References: <20181029145051.31984-1-federico.vaga@cern.ch> <20181127113821.GB1107@kunai>
+        Tue, 15 Jan 2019 11:37:35 -0500
+Received: from mail.kernel.org ([198.145.29.99]:53038 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1731852AbfAOQha (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 Jan 2019 11:37:30 -0500
+Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8B05D2087E;
+        Tue, 15 Jan 2019 16:37:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1547570249;
+        bh=4C7giLg8vHDspoV6Y70EnN+2y92xDr9Qo5bNO8tZvrY=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=gXjne4DeF8Eyhhz+/qRPNA0CkuPT+PrJSjZv4yhYAKY4esjfbeLx3UP3c7umrXiOq
+         rCxt9YDW/cbYS+w1a99LtFFZwkmLQ136oWAbAlX6FJyBSai8k+ROCcd0Fpflcb9aL3
+         O5EaweSKGLWVDpNFUrkV/omoEGkc2tExjPug0O80=
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Qu Wenruo <quwenruo.btrfs@gmx.com>,
+        Nikolay Borisov <nborisov@suse.com>,
+        David Sterba <dsterba@suse.com>,
+        Ben Hutchings <ben.hutchings@codethink.co.uk>
+Subject: [PATCH 4.4 16/51] btrfs: Refactor check_leaf function for later expansion
+Date:   Tue, 15 Jan 2019 17:35:12 +0100
+Message-Id: <20190115154849.133649483@linuxfoundation.org>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20190115154846.928796000@linuxfoundation.org>
+References: <20190115154846.928796000@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
+X-Patchwork-Hint: ignore
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
-X-Originating-IP: [2001:1458:202:121::100:40]
-X-EOPAttributedMessage: 0
-X-Forefront-Antispam-Report: CIP:188.184.36.50;IPV:NLI;CTRY:CH;EFV:NLI;SFV:NSPM;SFS:(10009020)(396003)(39860400002)(136003)(346002)(376002)(2980300002)(199004)(189003)(97756001)(8936002)(230700001)(6346003)(186003)(86362001)(4744005)(11346002)(446003)(336012)(229853002)(246002)(106466001)(106002)(7636002)(7736002)(54906003)(786003)(316002)(305945005)(426003)(16526019)(26005)(43066004)(8676002)(9576002)(33896004)(53546011)(23726003)(6116002)(9686003)(76176011)(4326008)(33716001)(3450700001)(486006)(14444005)(6916009)(46406003)(50466002)(476003)(126002)(6246003)(44832011)(5660300001)(47776003)(74482002)(478600001)(2906002)(356004)(39026011);DIR:OUT;SFP:1101;SCL:1;SRVR:DB6PR06MB4008;H:cernmxgwlb4.cern.ch;FPR:;SPF:Pass;LANG:en;PTR:cernmx11.cern.ch;A:1;MX:1;
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: e4cfec20-029c-4061-e28a-08d67b07bb12
-X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600109)(711020)(4608076)(4709027)(2017052603328)(7153060)(7193020);SRVR:DB6PR06MB4008;
-X-MS-TrafficTypeDiagnostic: DB6PR06MB4008:
-X-Microsoft-Exchange-Diagnostics: 1;DB6PR06MB4008;20:Wh+YL8dMyFrslxmVWEFHUor0owENKcz+LkHNYvI00O7CYvzOLF6gh7VAINtn/xmR45WyUhGbhDxLNBJU7wfX5Rsj0tL5KIlHuoKJF4naOD226IAawFCD/+ES0tfLwqlrKV0pS4uWzEjE2QrcePqyDdUqfIwaP8ksYJhphfQGWG+Mgge19iiKC2dSwN5UMhfg22vg0lIzQR8DGYrsAWEKDmkT5mULG6zakWOyEV8CE2k9rL930raRjyGr/FDWzk9qs+onKuXtIohU2/zZA9Oblgfa9Ih1S+r+NJa6skkyigMI0tBhhK8/Xi/W2ccBJp3Ch319Mpn8Yu+pl1e6aJacfxRrVWnZ+9Z4rd54fInevUtBtuhiYMr7hnoB3veuxkBk8yEdoAIXDm2SwMbZ5gDz/bYR3LFAA3K9D7mEOvwo4Of4XMxkEfp8yw1LyE2MlQV2bKc7xmZBUYJ5zBTdPn4Q/Zzp6Neuk3Yq+QCsQz5cdfIOK18//MeZKTbX5GgkPwZr;4:KXd8lYXKWsRvKr3mm5XcWik4aJQMOBEOExV5hJonNz32yBiE8MhnEtliMKHTHvQDAM3FjWhhm9CuVCgKd9BC1WMumfoFeJT5Mn5jjMV32kyrOfNm+N4Q+bTUL+kimv4pUXQ05bSqWdh+iUdUbodyfERx0NDxzUulRbJA1elgO/26Q/5tx7Assal+Du8zvOAWAWVofCQk56UmqXKo6JUNrFE0E6su6+wa/BNVVs6iwgv69OoRpGCzvz+XqdWvh8+iGMhJiVEI6mUza8owzWTbo1zz4nru3eT5tW1+GPXIY0HC0op9TTAOKIOuVzgL+Ouv
-X-Microsoft-Antispam-PRVS: <DB6PR06MB4008F6DAC58180A8CFBC5051EF810@DB6PR06MB4008.eurprd06.prod.outlook.com>
-X-Forefront-PRVS: 0918748D70
-X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;DB6PR06MB4008;23:kI2VPEa8kcWLEagZRxQVlPQykYKNl8sActAGDvt8/?=
- =?us-ascii?Q?SBI8kvWmDap9GQFVAtf5W+fKXI9NuJ5torO1DpkPnDt2OMtTxCPkLfq1G2k3?=
- =?us-ascii?Q?AJqdGgbLQSRFnTpVvEJO/Q4QjIkU+4uPM1eKRP2OZ6cV/kuLd11qUX1Xk2D1?=
- =?us-ascii?Q?wQne5F52oiHTQifyl/Fpsnk1Ii6QgdMLOa+Q11gJXGienS4odgQ50rtpbjcz?=
- =?us-ascii?Q?oKZUbafD/WbUwaR5oNP6e0EvlRKe13+g7RaSuA1JR0ui3qeB8iTtVIqc2pVv?=
- =?us-ascii?Q?aML892577ztN7US3WVvV4mplMKrPjByQcCXuQEHRSGKgCn/5cbNBWW+qUA6w?=
- =?us-ascii?Q?/rwtKVA7dDpSQ9AljCjEnzsVQufNNX7mJw4N/Kc5BLnVmZP2nBNs83CP1Y8g?=
- =?us-ascii?Q?o22WkKXSPbS4cX3umROhpTQd5LbAKYbp2NHifdetwMGFGHU5NFJFgR4EweSu?=
- =?us-ascii?Q?Ob1W/2h9u8sqaubrv9i0TegKglBxQU6DrIq9AEsAtnSJcUXYVisZ4v22MXaR?=
- =?us-ascii?Q?IYiUkKEPWQSeYF7LHQF3g0Vqb4QpnsF7PnLioduL2jMj3pmp7mmQktH27XBx?=
- =?us-ascii?Q?jptiN2OUKzeoSL+AC96ctRNikfHlIfgeVRJFNxaXuIW2nUrzstmSo4JTj19a?=
- =?us-ascii?Q?tnlfnKML3GpgWNlTzLZ9mC33P0cdpno1CZ6MDcWOz0euXK1d/eD8aNDI6bn6?=
- =?us-ascii?Q?mTrWjOxN6r2BJliOf7exj0pStquQkkR5IdC9APNd4YglT7TGRNiGq6L9l61p?=
- =?us-ascii?Q?+uWdRuhS5hmpaQCjSbsWKqUKYnK5lDKecTpOK9wH9/P7du8L79vO8crIYdFz?=
- =?us-ascii?Q?GOjPr3BJaPoLLyfqTU2C8eIbl+FkR4+NHAa1l3A1TjEb5pvoN9KXI87Mi1Lq?=
- =?us-ascii?Q?wJGsm9WeqwrplmtSvzciTbjYFsGv6niu17yW/1VYOA0PckTPEeIxIrrvGcpT?=
- =?us-ascii?Q?/z2+4852n2iGp5fS5XsmgYW9AdCeexoI0wt0WGB7JFX/nnUiaWUoFSK40/hA?=
- =?us-ascii?Q?YUv7BtctYXr8rmc2AYy5DqM+VSkNnlXrkAuQNMXy5loAsbRocTfcX1jyITU4?=
- =?us-ascii?Q?lhm4xllTJj657ERxhJbauJO3D0rS9+/F3p6dJzjiCyMHPOaXDaCDb7GqMpEC?=
- =?us-ascii?Q?zCT7ZIeLE+8uY07DYb3HlZyM9F3IpEl6gi/C9DT7axF65J7xws+cVWoQCMAu?=
- =?us-ascii?Q?hW63yAasesr/xAWS6iYTV0PAtA7O2Xe2Cc5+ZAaP5cYJwslfMbqt5AQhyLmG?=
- =?us-ascii?Q?N6Uv+Ui0cWTQmfebGkXgWnAZ7sWwtTvJT469nBHLFq7i7YTFU+maiJ7NBqf3?=
- =?us-ascii?B?UT09?=
-X-MS-Exchange-SenderADCheck: 1
-X-Microsoft-Antispam-Message-Info: p23dRFfHi2wGs/KSDUg4ri6JjDwGFZWGnwLPGp+CDOh1usi7Kv9LFrqRgyl6nz4zPTbVhsqwmT2DsLqQruwA6gXRRunwpePi2mDn+WA5/z8cTTyLeEA/JuvhonINBvgN+FXq1nYmvCcxVlsG1Y/Y0VgZAmsYN3qNyB4z2B3GWAwdxsi92Gtn5QNjL/P7eF54gngE/T+65jo33LlPbCCEAFOnHqx+74eBe92jjXq59iFBKkPUYaVwgFBIruNQR8N2I38JC9X8jN02SwK+d3fth4/7yUy5wftZWfetYSIIlFFyBbL4d95FfBXbst6cYSf8MdGNyldR4x8SF35OhApBc/0x+bbbKpNfH2udvghbo/pveBNVNqRlxzQ0ZY4ZZ7BF1+RipA4IvjFL7ORdYiqRM9PDT9CrFH819QDDXgkAJzs=
-X-Microsoft-Exchange-Diagnostics: 1;DB6PR06MB4008;6:O3CTzHkrTb07iv5u7m7G6WMhL7ZFK1gJta02gfUWQv6QrF0J4jrUMIb+QiMWiLbJfaXe5wvvhYyn0j5kk6TDwEKjp1a9jfO/yuZAqAnknk54TUTwDapFbLHAky+AABzxcDJPhEGjIlQOlXtMSf5gCW82i2Ud1uhVlF2qq/nrDq5JTiCWoEVUj+T3AP9sAiSrExz9gaZ9FDZrRKg3fjOnZUz9gAwLUfTG4Mw3kXK95HUuImPV5kM5+Ic8yTBNZbiDTck76ViwvCUl/vpGLi37vJ7nlLpfwAABx3d+rBE6t1Ks/8kk6VgK2qed432yyhMIrix/IrEcq3Zpa7dPEw9IdzbqrQ4IfyjuXFfMx7FLeyzuZK/5THv+gNIIWzD1jwkKt8KOA5CH2oSVpxqaYmc0kgdoVdIL2hHFr0SorylAaVEI7cPAmMDEgInTmDpcCa9kFKNocavTfJuB1Xp7eP0YzQ==;5:XAMJW7VLfrjVY+5Gvyvc6wnBGILKgbTfixTyDFfIx4SGDTb/yOs3aFSksUXus+0xT5+vHhmLfq11e7SgPBEZ9UhSLQyGE55tIE0YhUHEKb/Lc3IfqBqMoKR8/6tDT4HGRMFCDAFjy31OkkpMqi5owlseLJdu9cbKp9CyaskxvP7pQhrsSnnS5xT5QUFNdLvRD65VdDlFqYl7XilIF6UHtw==;7:D2iQwiUJ2TLztE2xyiZVz3cmL7Twju6X5kv254lELjH4vxzbJfZCA+Xcq+toJViyhrDX1ROJk/5Qev73PAdVONZq3ZcDSxMtVkQpFUg5yDL7o/Azv6uNenrhGQpUYK8sA6U+iRr/p5B4NMWqr1Z7tA==
-SpamDiagnosticOutput: 1:99
-SpamDiagnosticMetadata: NSPM
-X-OriginatorOrg: cern.ch
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Jan 2019 16:37:25.0099
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: e4cfec20-029c-4061-e28a-08d67b07bb12
-X-MS-Exchange-CrossTenant-Id: c80d3499-4a40-4a8c-986e-abce017d6b19
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=c80d3499-4a40-4a8c-986e-abce017d6b19;Ip=[188.184.36.50];Helo=[cernmxgwlb4.cern.ch]
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB6PR06MB4008
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi there,
+4.4-stable review patch.  If anyone has any objections, please let me know.
 
-I just want to ask if there has been any update about this patchset that I'm 
-not aware off. Thanks
+------------------
 
-On Tuesday, November 27, 2018 12:38:22 PM CET Wolfram Sang wrote:
-> > This patch set provides improvements to the i2c-ocore driver.
-> > 
-> > [V1 -> V2]
-> > - replaced usleep_range() with udelay() so that the polling version can be
-> > 
-> >   used in atomic context.
-> > 
-> > - added dedicated patch for minor style issues
-> > - fixed delay computation
-> > - use spin_lock_irqsave(), instead of spin_trylock_irqsave(). IACK is
-> > always> 
-> >   necessary and a trylock would generate an extra interrupt for nothing
-> > 
-> > - make the driver ready for an eventual master_xfer_irqless()
-> 
-> Peter, do you have a time slot to review this?
+From: Qu Wenruo <quwenruo.btrfs@gmx.com>
 
+commit c3267bbaa9cae09b62960eafe33ad19196803285 upstream.
 
+Current check_leaf() function does a good job checking key order and
+item offset/size.
+
+However it only checks from slot 0 to the last but one slot, this is
+good but makes later expansion hard.
+
+So this refactoring iterates from slot 0 to the last slot.
+For key comparison, it uses a key with all 0 as initial key, so all
+valid keys should be larger than that.
+
+And for item size/offset checks, it compares current item end with
+previous item offset.
+For slot 0, use leaf end as a special case.
+
+This makes later item/key offset checks and item size checks easier to
+be implemented.
+
+Also, makes check_leaf() to return -EUCLEAN other than -EIO to indicate
+error.
+
+Signed-off-by: Qu Wenruo <quwenruo.btrfs@gmx.com>
+Reviewed-by: Nikolay Borisov <nborisov@suse.com>
+Reviewed-by: David Sterba <dsterba@suse.com>
+Signed-off-by: David Sterba <dsterba@suse.com>
+[bwh: Backported to 4.4:
+ - BTRFS_LEAF_DATA_SIZE() takes a root rather than an fs_info
+ - Adjust context]
+Signed-off-by: Ben Hutchings <ben.hutchings@codethink.co.uk>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+---
+ fs/btrfs/disk-io.c |   50 +++++++++++++++++++++++++++-----------------------
+ 1 file changed, 27 insertions(+), 23 deletions(-)
+
+--- a/fs/btrfs/disk-io.c
++++ b/fs/btrfs/disk-io.c
+@@ -531,8 +531,9 @@ static int check_tree_block_fsid(struct
+ static noinline int check_leaf(struct btrfs_root *root,
+ 			       struct extent_buffer *leaf)
+ {
++	/* No valid key type is 0, so all key should be larger than this key */
++	struct btrfs_key prev_key = {0, 0, 0};
+ 	struct btrfs_key key;
+-	struct btrfs_key leaf_key;
+ 	u32 nritems = btrfs_header_nritems(leaf);
+ 	int slot;
+ 
+@@ -565,7 +566,7 @@ static noinline int check_leaf(struct bt
+ 				CORRUPT("non-root leaf's nritems is 0",
+ 					leaf, check_root, 0);
+ 				free_extent_buffer(eb);
+-				return -EIO;
++				return -EUCLEAN;
+ 			}
+ 			free_extent_buffer(eb);
+ 		}
+@@ -575,28 +576,23 @@ static noinline int check_leaf(struct bt
+ 	if (nritems == 0)
+ 		return 0;
+ 
+-	/* Check the 0 item */
+-	if (btrfs_item_offset_nr(leaf, 0) + btrfs_item_size_nr(leaf, 0) !=
+-	    BTRFS_LEAF_DATA_SIZE(root)) {
+-		CORRUPT("invalid item offset size pair", leaf, root, 0);
+-		return -EIO;
+-	}
+-
+ 	/*
+-	 * Check to make sure each items keys are in the correct order and their
+-	 * offsets make sense.  We only have to loop through nritems-1 because
+-	 * we check the current slot against the next slot, which verifies the
+-	 * next slot's offset+size makes sense and that the current's slot
+-	 * offset is correct.
++	 * Check the following things to make sure this is a good leaf, and
++	 * leaf users won't need to bother with similar sanity checks:
++	 *
++	 * 1) key order
++	 * 2) item offset and size
++	 *    No overlap, no hole, all inside the leaf.
+ 	 */
+-	for (slot = 0; slot < nritems - 1; slot++) {
+-		btrfs_item_key_to_cpu(leaf, &leaf_key, slot);
+-		btrfs_item_key_to_cpu(leaf, &key, slot + 1);
++	for (slot = 0; slot < nritems; slot++) {
++		u32 item_end_expected;
++
++		btrfs_item_key_to_cpu(leaf, &key, slot);
+ 
+ 		/* Make sure the keys are in the right order */
+-		if (btrfs_comp_cpu_keys(&leaf_key, &key) >= 0) {
++		if (btrfs_comp_cpu_keys(&prev_key, &key) >= 0) {
+ 			CORRUPT("bad key order", leaf, root, slot);
+-			return -EIO;
++			return -EUCLEAN;
+ 		}
+ 
+ 		/*
+@@ -604,10 +600,14 @@ static noinline int check_leaf(struct bt
+ 		 * item data starts at the end of the leaf and grows towards the
+ 		 * front.
+ 		 */
+-		if (btrfs_item_offset_nr(leaf, slot) !=
+-			btrfs_item_end_nr(leaf, slot + 1)) {
++		if (slot == 0)
++			item_end_expected = BTRFS_LEAF_DATA_SIZE(root);
++		else
++			item_end_expected = btrfs_item_offset_nr(leaf,
++								 slot - 1);
++		if (btrfs_item_end_nr(leaf, slot) != item_end_expected) {
+ 			CORRUPT("slot offset bad", leaf, root, slot);
+-			return -EIO;
++			return -EUCLEAN;
+ 		}
+ 
+ 		/*
+@@ -618,8 +618,12 @@ static noinline int check_leaf(struct bt
+ 		if (btrfs_item_end_nr(leaf, slot) >
+ 		    BTRFS_LEAF_DATA_SIZE(root)) {
+ 			CORRUPT("slot end outside of leaf", leaf, root, slot);
+-			return -EIO;
++			return -EUCLEAN;
+ 		}
++
++		prev_key.objectid = key.objectid;
++		prev_key.type = key.type;
++		prev_key.offset = key.offset;
+ 	}
+ 
+ 	return 0;
 
 
