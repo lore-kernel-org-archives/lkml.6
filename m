@@ -2,83 +2,86 @@ Return-Path: <SRS0=RZO6=PX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C1ADDC43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 19:35:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 73BF6C43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 19:37:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8EC1320656
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 19:35:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2CCDA20656
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 19:37:05 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=ocallahan-org.20150623.gappssmtp.com header.i=@ocallahan-org.20150623.gappssmtp.com header.b="c/WGDa2V"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389365AbfAOTfk (ORCPT
+        id S2389373AbfAOThD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 15 Jan 2019 14:35:40 -0500
-Received: from g9t1613g.houston.hpe.com ([15.241.32.99]:58160 "EHLO
-        g9t1613g.houston.hpe.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731673AbfAOTfk (ORCPT
+        Tue, 15 Jan 2019 14:37:03 -0500
+Received: from mail-lj1-f180.google.com ([209.85.208.180]:34709 "EHLO
+        mail-lj1-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731673AbfAOThD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Jan 2019 14:35:40 -0500
-Received: from g9t5010.houston.hpe.com (g9t5010.houston.hpe.com [15.241.48.74])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by g9t1613g.houston.hpe.com (Postfix) with ESMTPS id E280162424;
-        Tue, 15 Jan 2019 19:35:46 +0000 (UTC)
-Received: from sarge.linuxathome.me (unknown [16.214.81.200])
-        by g9t5010.houston.hpe.com (Postfix) with SMTP id D4F934A;
-        Tue, 15 Jan 2019 19:35:35 +0000 (UTC)
-Date:   Tue, 15 Jan 2019 19:35:34 +0000
-From:   Hedi Berriche <hedi.berriche@hpe.com>
-To:     Thomas Gleixner <tglx@linutronix.de>
-Cc:     Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
-        linux-efi@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Russ Anderson <rja@hpe.com>, Mike Travis <mike.travis@hpe.com>,
-        Dimitri Sivanich <sivanich@hpe.com>,
-        Steve Wahl <steve.wahl@hpe.com>
-Subject: Re: [PATCH 1/3] efi/x86: turn EFI runtime semaphore into a global
- lock
-Message-ID: <20190115193534.GK12284@sarge.linuxathome.me>
-Mail-Followup-To: Thomas Gleixner <tglx@linutronix.de>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
-        linux-efi@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Russ Anderson <rja@hpe.com>, Mike Travis <mike.travis@hpe.com>,
-        Dimitri Sivanich <sivanich@hpe.com>,
-        Steve Wahl <steve.wahl@hpe.com>
-References: <20190109104541.25733-1-hedi.berriche@hpe.com>
- <20190109104541.25733-2-hedi.berriche@hpe.com>
- <alpine.DEB.2.21.1901151953370.1655@nanos.tec.linutronix.de>
+        Tue, 15 Jan 2019 14:37:03 -0500
+Received: by mail-lj1-f180.google.com with SMTP id u89-v6so3401991lje.1
+        for <linux-kernel@vger.kernel.org>; Tue, 15 Jan 2019 11:37:01 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ocallahan-org.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:reply-to:from:date:message-id
+         :subject:to:cc;
+        bh=Ii7YU/jXaruO/Mt/Yy7vVi3JkjrzxrH2AytJsE7c0ZY=;
+        b=c/WGDa2VD8B4Fo33hDJTXnG3E+NSwq5uHtYhcNHdz37dW6Pgu79jk9vgZNAu+GATJT
+         +gBrLP2f2j/4euHCBdLnsgz0RtLuoFkwWkuZgP3XuKOEIscq0/u/lX9oiSf3hQQ/Wv8E
+         5ekoNp+fXdMcJAOaBCqTJv5uT7y8hJ0UttheCYc/YfSswrcH1PchgaXSKsR06l9nKZEw
+         Bx88Syyghh1O6b6X0isuM0Cbwdbs+oxor5a05nBMCX9xCsWepdiTGlq4KowBnaDR0CG/
+         iLUH4/GmkcGzxWbBcmpqay+igG6SPmrXbsYtPEg/fXpT65yytE/FZBj9n5MAgjfYQqLn
+         wVRA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:reply-to
+         :from:date:message-id:subject:to:cc;
+        bh=Ii7YU/jXaruO/Mt/Yy7vVi3JkjrzxrH2AytJsE7c0ZY=;
+        b=GpmyMjR9l7NCt4QjThJEbQNhbJh+H6b6955AVtPsSnas+XnjEUB+X8D7I2grkTQegc
+         Wb/Tg1ndVm2o2onBDf9l/KMtIaMDvQc4zyrJ6ZX+qOx+3mKpIREuFJLFnbtPwRQvO42g
+         ENfg1sEZofoVWxN5ERTnifMSC5qUUioTIFNbSZU1J3CmzfJ1ZbLvdYdgogw1XgOAXqvf
+         Y1UureREil7Sb4paIE4bz0IiX8IJORirkePk6YpiS0Y+aH7ckSSFEMo1wSAPxpLBrYls
+         CgIZxyEKJghFAwuM5l67l8NFIqNfkOwNeVuRqX89bKEsn6ELma/UlK8Ljh0XNuMzGQWV
+         OZ4w==
+X-Gm-Message-State: AJcUukdQTKQpddXBxihdJqVb8vTlomcDt9v/xFMipiZTHw2TsPC5B0a5
+        G77HRSDvHb3atlyP+1rCOMf3QpyljTJXhrJI8HQ=
+X-Google-Smtp-Source: ALg8bN4NtTR8kbl1VCHmVMSEqnEhwWJzC8q5W3dfxAusab3IhLgqMca3ea10GWwiLSiIOPGD6/NDMjkFOgstlWrZAEA=
+X-Received: by 2002:a2e:9a16:: with SMTP id o22-v6mr3896579lji.112.1547581020955;
+ Tue, 15 Jan 2019 11:37:00 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Disposition: inline
-In-Reply-To: <alpine.DEB.2.21.1901151953370.1655@nanos.tec.linutronix.de>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <CAOp6jLa8rRw2ZQN9yWYZv_USrZw98D+U2rnk9V7M2EVY7O=VpQ@mail.gmail.com>
+ <87won67580.fsf@xmission.com>
+In-Reply-To: <87won67580.fsf@xmission.com>
+Reply-To: robert@ocallahan.org
+From:   "Robert O'Callahan" <robert@ocallahan.org>
+Date:   Wed, 16 Jan 2019 08:36:49 +1300
+Message-ID: <CAOp6jLaGei=ALRuRaQxtD2VK_vY_ViAupgcmdouuzgwUCjC0BQ@mail.gmail.com>
+Subject: Re: Regression in 32-bit-compat TIOCGPTPEER ioctl due to 311fc65c9fb9c966bca8e6f3ff8132ce57344ab9
+To:     "Eric W. Biederman" <ebiederm@xmission.com>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 15, 2019 at 18:55 Thomas Gleixner wrote:
->On Wed, 9 Jan 2019, Hedi Berriche wrote:
->
->> Make efi_runtime_lock semaphore global so that it can be used by EFI
->> runtime callers that may be defined outside efi/runtime-wrappers.c.
->
->The changelog should mention why the lock is renamed.
+On Tue, Jan 15, 2019 at 8:25 PM Eric W. Biederman <ebiederm@xmission.com> wrote:
+> Can you confirm this fixes it for you?
 
-OK; will add to V2 that it was renamed so that it doesn't clash with the
-efi_runtime_lock spinlock defined by CONFIG_EFI_MIXED.
+Sorry --- I made a mistake. It looks like this is already fixed on
+master, by commit e21120383f2dce32312f63ffca145ff8a87d41f5 (though I
+don't think Al Viro knew he was fixing this bug). So, nothing to do
+here.
 
->I have no strong opinion, but to apply that I need an Ack from Ard.
-
-OK; thanks for the feedback.
-
-Cheers,
-Hedi.
+Thanks,
+Rob
 -- 
-Be careful of reading health books, you might die of a misprint.
-	-- Mark Twain
+Su ot deraeppa sah dna Rehtaf eht htiw saw hcihw, efil lanrete eht uoy
+ot mialcorp ew dna, ti ot yfitset dna ti nees evah ew; deraeppa efil
+eht. Efil fo Drow eht gninrecnoc mialcorp ew siht - dehcuot evah sdnah
+ruo dna ta dekool evah ew hcihw, seye ruo htiw nees evah ew hcihw,
+draeh evah ew hcihw, gninnigeb eht morf saw hcihw taht.
