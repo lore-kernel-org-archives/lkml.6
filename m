@@ -2,158 +2,78 @@ Return-Path: <SRS0=RZO6=PX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EC79AC43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 16:14:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 59BACC43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 16:14:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 869A920657
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 16:14:28 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=livid.pp.ru header.i=@livid.pp.ru header.b="jBqouk0M"
+	by mail.kernel.org (Postfix) with ESMTP id 3369220657
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 16:14:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731413AbfAOQO1 (ORCPT
+        id S1731424AbfAOQOn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 15 Jan 2019 11:14:27 -0500
-Received: from mail-ed1-f66.google.com ([209.85.208.66]:33949 "EHLO
-        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729543AbfAOQO0 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Jan 2019 11:14:26 -0500
-Received: by mail-ed1-f66.google.com with SMTP id b3so3020763ede.1
-        for <linux-kernel@vger.kernel.org>; Tue, 15 Jan 2019 08:14:25 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=livid.pp.ru; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=3TB4Cm8e2Fl64TYPTWBUE8YQgabZLtz0Yy0eRN0D9Nc=;
-        b=jBqouk0MMQ0gHtVJrZtiRjDJ4+EEMV0st2D2YWwkMurTAQwC/Onm8LZf43WQLvhWuq
-         KW4K1t05HKETjp3XdxHV+d93AhOIjVFOwDeob375sSnZ2AjLpchUN84xPMOPPSnw/EsN
-         YcOVTJN/jgTvW/51VLt+NxdWU26Ec6EB0AhVI=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=3TB4Cm8e2Fl64TYPTWBUE8YQgabZLtz0Yy0eRN0D9Nc=;
-        b=jiCRS/ZTMaT/YesYHwnhLhAHTO4DPZRnOewTtsD7gKwKWHhP72Gf0Y8VIrnrb8F4MI
-         waXAJLSv0qMQU8vfN7DY5qoRm1UGgnxvFp/efptD9jKy9aSczxmK1dniS5z5yhteF1j7
-         t1DXjo4DPHzIcpJMApPYdwue/kIRjKV/OdOOeT+BRCdlLu//QwNRGNIvhLPqyYiUexI6
-         gLMN1RBjVd0VcvfXGLsOPJkyL4IPwcd7qGPu/3j/L0OWjB18YIlFh1YhOzzU7jnXGble
-         Zs6+WKs16donBqV/mr5qPinWaRFhFBzfk+wiwSanCsYssoR4+hJZKmmyPKOAkz1XNKfb
-         rTEg==
-X-Gm-Message-State: AJcUukecO8V8IMFT0TFXGLesoXLaXibirCaneFyzxIqWQZgEOlGquGF5
-        iQurtLxEE477P1tIH7hIAbIoSQ==
-X-Google-Smtp-Source: ALg8bN5EK4thpIeGAb/I3NyNVH6+f4AVjazb8zkxd11XTAPe7pfOudtFEuWoEmUQVNN1IPgGXwi11g==
-X-Received: by 2002:a17:906:351a:: with SMTP id r26-v6mr3546188eja.193.1547568864264;
-        Tue, 15 Jan 2019 08:14:24 -0800 (PST)
-Received: from livid.lan ([2001:470:71:c0c::d0e5:a55])
-        by smtp.gmail.com with ESMTPSA id r51sm5029101eda.64.2019.01.15.08.14.22
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 15 Jan 2019 08:14:23 -0800 (PST)
-From:   Nikolay Yakimov <root@livid.pp.ru>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     Nikolay Yakimov <root@livid.pp.ru>,
-        Saranya Gopal <saranya.gopal@intel.com>,
-        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] USB: Fix configuration selection issues introduced in v4.20.0
-Date:   Tue, 15 Jan 2019 19:13:54 +0300
-Message-Id: <20190115161354.6806-1-root@livid.pp.ru>
-X-Mailer: git-send-email 2.20.1
+        Tue, 15 Jan 2019 11:14:43 -0500
+Received: from relay.sw.ru ([185.231.240.75]:51454 "EHLO relay.sw.ru"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727163AbfAOQOn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 Jan 2019 11:14:43 -0500
+Received: from [172.16.25.169]
+        by relay.sw.ru with esmtp (Exim 4.91)
+        (envelope-from <ktkhai@virtuozzo.com>)
+        id 1gjRMO-0004Af-Sc; Tue, 15 Jan 2019 19:14:41 +0300
+Subject: Re: [PATCH 2/2] fuse: Replace page without copying in
+ fuse_writepage_in_flight()
+To:     Miklos Szeredi <miklos@szeredi.hu>
+Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <154322517208.18737.3297786654135648324.stgit@localhost.localdomain>
+ <154322557765.18737.14337090699283695815.stgit@localhost.localdomain>
+ <CAJfpegvKxJ06hfXR5yxWkdz0GzTw7vR2x8E5bjdO1df1J1C54w@mail.gmail.com>
+From:   Kirill Tkhai <ktkhai@virtuozzo.com>
+Message-ID: <30c6d750-01b1-fb7e-eb80-0f60f242974a@virtuozzo.com>
+Date:   Tue, 15 Jan 2019 19:14:39 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAJfpegvKxJ06hfXR5yxWkdz0GzTw7vR2x8E5bjdO1df1J1C54w@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit f13912d3f014a introduced changes to the usb_choose_configuration function
-to better support USB Audio UAC3-compatible devices. However, there are a few
-problems with this patch. First of all, it adds new "if" clauses in the middle
-of an existing "if"/"else if" tree, which obviously breaks pre-existing logic.
-Secondly, since it continues iterating over configurations in one of the branches,
-other code in the loop can choose an unintended configuration. Finally,
-if an audio device's first configuration is UAC3-compatible, and there
-are multiple UAC3 configurations, the second one would be chosen, due to
-the first configuration never being checked for UAC3-compatibility.
+On 15.01.2019 18:39, Miklos Szeredi wrote:
+> On Mon, Nov 26, 2018 at 10:46 AM Kirill Tkhai <ktkhai@virtuozzo.com> wrote:
+>>
+>> It looks like we can optimize old_req page replacement
+>> and avoid copying by simple updating the request's page.
+>>
+>> Signed-off-by: Kirill Tkhai <ktkhai@virtuozzo.com>
+>> ---
+>>  fs/fuse/file.c |    2 +-
+>>  1 file changed, 1 insertion(+), 1 deletion(-)
+>>
+>> diff --git a/fs/fuse/file.c b/fs/fuse/file.c
+>> index c6650c68b31a..83b54b082c86 100644
+>> --- a/fs/fuse/file.c
+>> +++ b/fs/fuse/file.c
+>> @@ -1778,7 +1778,7 @@ static bool fuse_writepage_in_flight(struct fuse_req *new_req,
+>>         if (old_req->num_pages == 1 && old_req != first_req) {
+>>                 struct backing_dev_info *bdi = inode_to_bdi(page->mapping->host);
+>>
+>> -               copy_highpage(old_req->pages[0], page);
+>> +               swap(old_req->pages[0], page);
+> 
+> This would mess up refcounting for all pages involved.   need to swap
+> with the temp page in new_req.    Fixed version in #for-next.
 
-Commit ff2a8c532c14 tries to fix the second issue, but it goes about it in a
-somewhat unnecessarily convoluted way, in my opinion, and does nothing
-to fix the first or the last one.
+You are sure, page is just a simple pointer, not struct **page.
+Then we would have had to change fuse_writepage_in_flight() to use ** pointer.
 
-This patch tries to rectify problems described by essentially rewriting
-code introduced in f13912d3f014a. Notice the code was moved to *before*
-the "if"/"else if" tree.
+Updated version looks good for me.
 
-Signed-off-by: Nikolay Yakimov <root@livid.pp.ru>
----
- drivers/usb/core/generic.c | 44 ++++++++++++++++++++++----------------
- 1 file changed, 25 insertions(+), 19 deletions(-)
-
-diff --git a/drivers/usb/core/generic.c b/drivers/usb/core/generic.c
-index f713cecc1f41..1ac9c1e5f773 100644
---- a/drivers/usb/core/generic.c
-+++ b/drivers/usb/core/generic.c
-@@ -118,6 +118,31 @@ int usb_choose_configuration(struct usb_device *udev)
- 			continue;
- 		}
- 
-+		/*
-+		 * Select first configuration as default for audio so that
-+		 * devices that don't comply with UAC3 protocol are supported.
-+		 * But, still iterate through other configurations and
-+		 * select UAC3 compliant config if present.
-+		 */
-+		if (desc && is_audio(desc)) {
-+			/* Always prefer the first found UAC3 config */
-+			if (is_uac3_config(desc)) {
-+				best = c;
-+				break;
-+			}
-+
-+			/* If there is no UAC3 config, prefer the first config */
-+			else if (i == 0)
-+				best = c;
-+
-+			/* Unconditional continue, because the rest of the code
-+			 * in the loop is irrelevant for audio devices, and
-+			 * because it can reassign best, which for audio devices
-+			 * we don't want.
-+			 */
-+			continue;
-+		}
-+
- 		/* When the first config's first interface is one of Microsoft's
- 		 * pet nonstandard Ethernet-over-USB protocols, ignore it unless
- 		 * this kernel has enabled the necessary host side driver.
-@@ -132,25 +157,6 @@ int usb_choose_configuration(struct usb_device *udev)
- #endif
- 		}
- 
--		/*
--		 * Select first configuration as default for audio so that
--		 * devices that don't comply with UAC3 protocol are supported.
--		 * But, still iterate through other configurations and
--		 * select UAC3 compliant config if present.
--		 */
--		if (i == 0 && num_configs > 1 && desc && is_audio(desc)) {
--			best = c;
--			continue;
--		}
--
--		if (i > 0 && desc && is_audio(desc)) {
--			if (is_uac3_config(desc)) {
--				best = c;
--				break;
--			}
--			continue;
--		}
--
- 		/* From the remaining configs, choose the first one whose
- 		 * first interface is for a non-vendor-specific class.
- 		 * Reason: Linux is more likely to have a class driver
--- 
-2.20.1
-
+Thanks,
+Kirill
