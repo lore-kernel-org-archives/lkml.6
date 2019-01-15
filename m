@@ -7,50 +7,49 @@ X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D119DC43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 16:39:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BC100C43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 16:39:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A0D8120675
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 16:39:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8CCFB20675
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 16:39:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547570352;
-	bh=GFRLipEkRrX6uppitMy2XAUe4goycFeKaWURbInAUfo=;
+	s=default; t=1547570357;
+	bh=GBk1maspsX6Dbd0+/E+nRcjS+1IDkZDPn30gv7hP6Cw=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=sr5prJGI6csj6O1zjAgS/D14REpYMtQPGlLdQxzj5CRM54juLrJLrUIAfsD+ZbPOb
-	 0MJ7wbqtwyjsFkChBGXQmYqpgzDWF2kIM24fdtwJVtGEf5vgQeNDwjVGjD1i+CHjGq
-	 xGlIqrZpGhfd6nfNURcfqhMp5txbrl54MtaVRlsM=
+	b=lco0wLx1kksmELNBNSdo70lHh6oxBCQLIrSY2LtXczIRRhxJTVdGmrnA9leRe2HG9
+	 DUn7x2cbFUOgYBsSsbEgIkokhap6qF7m9+UygkZ5AHXk5MJmt7CtoJtuYj3xkTu8bO
+	 zb1F2QzqsVQmrc3QIGN83FxoPJiFpPrC5c2zZL2o=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732288AbfAOQjL (ORCPT
+        id S1732315AbfAOQjQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 15 Jan 2019 11:39:11 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55198 "EHLO mail.kernel.org"
+        Tue, 15 Jan 2019 11:39:16 -0500
+Received: from mail.kernel.org ([198.145.29.99]:55318 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732225AbfAOQjH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Jan 2019 11:39:07 -0500
+        id S1732295AbfAOQjN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 Jan 2019 11:39:13 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 981B320859;
-        Tue, 15 Jan 2019 16:39:06 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1F7632054F;
+        Tue, 15 Jan 2019 16:39:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547570347;
-        bh=GFRLipEkRrX6uppitMy2XAUe4goycFeKaWURbInAUfo=;
+        s=default; t=1547570352;
+        bh=GBk1maspsX6Dbd0+/E+nRcjS+1IDkZDPn30gv7hP6Cw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=pXHCOk6o7mZppOtK5shw3b+tNeXPw2Y8DuKhL4Nt+SVL4LZspMf/pxD3eePpkg5of
-         u06SlBDxGqx7AN30T449engIFYtgtJAYhEobE85eA6VLVyAnvPx5mQ31ZSJT3y2xIc
-         FrtpRdueMvDJL8LSacAhQDBArlJS7ptIQ0/CKMig=
+        b=SHVNNXdr6ArLH6X26WP6+lNemo13tFT5YiQFPHcNL5TxuPTv+3pEwQxXvfN4FVhU2
+         EoaaxKn7UbRLcPwui8rGWjPOjaaLNMWudCsNLL29tUhukSXUwSCnevHk86CsPDHfXB
+         3kyoxpMnWIN5ChbUXeI2wHomH7x0Pxx/urXEOAwo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
-        David Sterba <dsterba@suse.com>,
-        Ben Hutchings <ben.hutchings@codethink.co.uk>
-Subject: [PATCH 4.4 24/51] btrfs: tree-checker: use %zu format string for size_t
-Date:   Tue, 15 Jan 2019 17:35:20 +0100
-Message-Id: <20190115154850.065567596@linuxfoundation.org>
+        stable@vger.kernel.org, Kailang Yang <kailang@realtek.com>,
+        Takashi Iwai <tiwai@suse.de>
+Subject: [PATCH 4.9 01/16] ALSA: hda/realtek - Disable headset Mic VREF for headset mode of ALC225
+Date:   Tue, 15 Jan 2019 17:35:44 +0100
+Message-Id: <20190115154848.306718016@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190115154846.928796000@linuxfoundation.org>
-References: <20190115154846.928796000@linuxfoundation.org>
+In-Reply-To: <20190115154848.164648613@linuxfoundation.org>
+References: <20190115154848.164648613@linuxfoundation.org>
 User-Agent: quilt/0.65
 X-stable: review
 X-Patchwork-Hint: ignore
@@ -62,41 +61,73 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.4-stable review patch.  If anyone has any objections, please let me know.
+4.9-stable review patch.  If anyone has any objections, please let me know.
 
 ------------------
 
-From: Arnd Bergmann <arnd@arndb.de>
+From: Kailang Yang <kailang@realtek.com>
 
-commit 7cfad65297bfe0aa2996cd72d21c898aa84436d9 upstream.
+commit d1dd42110d2727e81b9265841a62bc84c454c3a2 upstream.
 
-The return value of sizeof() is of type size_t, so we must print it
-using the %z format modifier rather than %l to avoid this warning
-on some architectures:
+Disable Headset Mic VREF for headset mode of ALC225.
+This will be controlled by coef bits of headset mode functions.
 
-fs/btrfs/tree-checker.c: In function 'check_dir_item':
-fs/btrfs/tree-checker.c:273:50: error: format '%lu' expects argument of type 'long unsigned int', but argument 5 has type 'u32' {aka 'unsigned int'} [-Werror=format=]
+[ Fixed a compile warning and code simplification -- tiwai ]
 
-Fixes: 005887f2e3e0 ("btrfs: tree-checker: Add checker for dir item")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-Reviewed-by: David Sterba <dsterba@suse.com>
-Signed-off-by: David Sterba <dsterba@suse.com>
-Signed-off-by: Ben Hutchings <ben.hutchings@codethink.co.uk>
+Signed-off-by: Kailang Yang <kailang@realtek.com>
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- fs/btrfs/tree-checker.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/fs/btrfs/tree-checker.c
-+++ b/fs/btrfs/tree-checker.c
-@@ -223,7 +223,7 @@ static int check_dir_item(struct btrfs_r
- 		/* header itself should not cross item boundary */
- 		if (cur + sizeof(*di) > item_size) {
- 			dir_item_err(root, leaf, slot,
--		"dir item header crosses item boundary, have %lu boundary %u",
-+		"dir item header crosses item boundary, have %zu boundary %u",
- 				cur + sizeof(*di), item_size);
- 			return -EUCLEAN;
- 		}
+---
+ sound/pci/hda/patch_realtek.c |   16 +++++++++++++++-
+ 1 file changed, 15 insertions(+), 1 deletion(-)
+
+--- a/sound/pci/hda/patch_realtek.c
++++ b/sound/pci/hda/patch_realtek.c
+@@ -4841,6 +4841,13 @@ static void alc280_fixup_hp_9480m(struct
+ 	}
+ }
+ 
++static void alc_fixup_disable_mic_vref(struct hda_codec *codec,
++				  const struct hda_fixup *fix, int action)
++{
++	if (action == HDA_FIXUP_ACT_PRE_PROBE)
++		snd_hda_codec_set_pin_target(codec, 0x19, PIN_VREFHIZ);
++}
++
+ /* for hda_fixup_thinkpad_acpi() */
+ #include "thinkpad_helper.c"
+ 
+@@ -4947,6 +4954,7 @@ enum {
+ 	ALC293_FIXUP_LENOVO_SPK_NOISE,
+ 	ALC233_FIXUP_LENOVO_LINE2_MIC_HOTKEY,
+ 	ALC255_FIXUP_DELL_SPK_NOISE,
++	ALC225_FIXUP_DISABLE_MIC_VREF,
+ 	ALC225_FIXUP_DELL1_MIC_NO_PRESENCE,
+ 	ALC295_FIXUP_DISABLE_DAC3,
+ 	ALC280_FIXUP_HP_HEADSET_MIC,
+@@ -5605,6 +5613,12 @@ static const struct hda_fixup alc269_fix
+ 		.chained = true,
+ 		.chain_id = ALC255_FIXUP_DELL1_MIC_NO_PRESENCE
+ 	},
++	[ALC225_FIXUP_DISABLE_MIC_VREF] = {
++		.type = HDA_FIXUP_FUNC,
++		.v.func = alc_fixup_disable_mic_vref,
++		.chained = true,
++		.chain_id = ALC269_FIXUP_DELL1_MIC_NO_PRESENCE
++	},
+ 	[ALC225_FIXUP_DELL1_MIC_NO_PRESENCE] = {
+ 		.type = HDA_FIXUP_VERBS,
+ 		.v.verbs = (const struct hda_verb[]) {
+@@ -5614,7 +5628,7 @@ static const struct hda_fixup alc269_fix
+ 			{}
+ 		},
+ 		.chained = true,
+-		.chain_id = ALC269_FIXUP_DELL1_MIC_NO_PRESENCE
++		.chain_id = ALC225_FIXUP_DISABLE_MIC_VREF
+ 	},
+ 	[ALC280_FIXUP_HP_HEADSET_MIC] = {
+ 		.type = HDA_FIXUP_FUNC,
 
 
