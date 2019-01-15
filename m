@@ -2,190 +2,118 @@ Return-Path: <SRS0=RZO6=PX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7AC62C43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 17:45:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 14828C43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 17:45:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 389EB20645
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 17:45:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D5B9620859
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 17:45:44 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="AwVXDG+e";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="iXOr3znJ"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=wdc.com header.i=@wdc.com header.b="rOuS4mw5";
+	dkim=pass (1024-bit key) header.d=sharedspace.onmicrosoft.com header.i=@sharedspace.onmicrosoft.com header.b="ZDPCseSZ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388382AbfAORpV (ORCPT
+        id S2388484AbfAORpm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 15 Jan 2019 12:45:21 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:51896 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728025AbfAORpV (ORCPT
+        Tue, 15 Jan 2019 12:45:42 -0500
+Received: from esa3.hgst.iphmx.com ([216.71.153.141]:16827 "EHLO
+        esa3.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728025AbfAORpm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Jan 2019 12:45:21 -0500
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id CA309607DD; Tue, 15 Jan 2019 17:45:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1547574319;
-        bh=6LzK1x8PswcmWcdv1mu0II9Jq7KgJdXCBagLiBl6yok=;
-        h=Date:From:To:cc:Subject:In-Reply-To:References:From;
-        b=AwVXDG+ebIj5wglg62UBmTANXNfEYpZaTb2B0yi7FwgCnWKklPqej1YBbxmM0fqJR
-         01sesgWzhY/bKgPo1aRhRFpQGNidk/VF8gU//jsIquwz5ZVE6ksW8Wbcb3R54uYaVw
-         mqCdiQrhzbtXyUP/5Z4+pnqXM9Kx0Xke710fvYIY=
-Received: from lmark-linux.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        (Authenticated sender: lmark@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 05B9A6024C;
-        Tue, 15 Jan 2019 17:45:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1547574318;
-        bh=6LzK1x8PswcmWcdv1mu0II9Jq7KgJdXCBagLiBl6yok=;
-        h=Date:From:To:cc:Subject:In-Reply-To:References:From;
-        b=iXOr3znJwCExkWmjaB/69y8I6T3G3gfF2+iaZ4lfLeSp5TFdy+g4tfH8q6HzjDCBZ
-         pdaHGvKaUyUKGfR2AiI7HhTgLQ/FzJm3/x5MDG/+ZiRCB+YihfMSNa4SeLrESYNGFq
-         Z5Rm7Tp8l93MvtazXRpNVCKTn76ajyzOdc4ZDMeU=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 05B9A6024C
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=lmark@codeaurora.org
-Date:   Tue, 15 Jan 2019 09:45:17 -0800 (PST)
-From:   Liam Mark <lmark@codeaurora.org>
-X-X-Sender: lmark@lmark-linux.qualcomm.com
-To:     "Andrew F. Davis" <afd@ti.com>
-cc:     Laura Abbott <labbott@redhat.com>,
-        Sumit Semwal <sumit.semwal@linaro.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        =?ISO-8859-15?Q?Arve_Hj=F8nnev=E5g?= <arve@android.com>,
-        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
-        dri-devel <dri-devel@lists.freedesktop.org>
-Subject: Re: [PATCH 13/14] staging: android: ion: Do not sync CPU cache on
- map/unmap
-In-Reply-To: <79eb70f6-00b0-2939-5ec9-65e196ab4987@ti.com>
-Message-ID: <alpine.DEB.2.10.1901150937280.4046@lmark-linux.qualcomm.com>
-References: <20190111180523.27862-1-afd@ti.com> <20190111180523.27862-14-afd@ti.com> <alpine.DEB.2.10.1901140910130.23879@lmark-linux.qualcomm.com> <79eb70f6-00b0-2939-5ec9-65e196ab4987@ti.com>
-User-Agent: Alpine 2.10 (DEB 1266 2009-07-14)
+        Tue, 15 Jan 2019 12:45:42 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
+  t=1547574342; x=1579110342;
+  h=from:to:cc:subject:date:message-id:references:
+   in-reply-to:content-id:content-transfer-encoding:
+   mime-version;
+  bh=ZLYMC9VQGQqdKAc5KuQwXAbo2Ws2R0VMMZ+Zknbjaxs=;
+  b=rOuS4mw5OetqFHQUBL08vnEGRx8SJtPYSdxaKfyzkNgYJXZ4p6AW9Ngf
+   34B7gQMinabVnyRrE4oSyug6xO3HAG1iGuBzPdtrtoJW3ogpXmiMZ+t05
+   bBcDvuy/jzb4vLbznjwdxoYm0rB0vaYwzeiW8PeqUZb5fNn3Fbuod68G3
+   BN4naN/uIxso7LVYO9fP1cyt2ydBJ8COWNEt5DaatAT6oRIPA8FCf+zu0
+   Ya2XBJb7e3BVkdrnBUiTzvP6Dg7vCTnoL+3cGHFfqeRjzU5HMCifq7LOh
+   fNFKLYS4bYHaH1XXNd8iQ9YKJ5KrpbcN8pPqjknB0TJ2ojS6uX8Zq3vta
+   w==;
+X-IronPort-AV: E=Sophos;i="5.56,481,1539619200"; 
+   d="scan'208";a="103782929"
+Received: from mail-co1nam03lp2052.outbound.protection.outlook.com (HELO NAM03-CO1-obe.outbound.protection.outlook.com) ([104.47.40.52])
+  by ob1.hgst.iphmx.com with ESMTP; 16 Jan 2019 01:45:42 +0800
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=sharedspace.onmicrosoft.com; s=selector1-wdc-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=ZLYMC9VQGQqdKAc5KuQwXAbo2Ws2R0VMMZ+Zknbjaxs=;
+ b=ZDPCseSZz1/y371BfEkk7rv5fMduLL++7YvLsuQXJaK+GSFw7S5gEGN6JaSlIf1TKcIu/4rblWppsSN+R7yf3caGYcnOVI2dm8cjXZZXjDRPyXDVb/zoXcYeIQzvobcXkxX0fGv8DyV2Ddi7WU9D6FMe0TscfKikV0cTdG7WaFY=
+Received: from MWHPR04MB0401.namprd04.prod.outlook.com (10.173.48.18) by
+ MWHPR04MB0384.namprd04.prod.outlook.com (10.173.48.13) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1516.15; Tue, 15 Jan 2019 17:45:35 +0000
+Received: from MWHPR04MB0401.namprd04.prod.outlook.com
+ ([fe80::10e5:e75d:3272:2d33]) by MWHPR04MB0401.namprd04.prod.outlook.com
+ ([fe80::10e5:e75d:3272:2d33%7]) with mapi id 15.20.1516.019; Tue, 15 Jan 2019
+ 17:45:34 +0000
+From:   Alistair Francis <Alistair.Francis@wdc.com>
+To:     "hch@infradead.org" <hch@infradead.org>
+CC:     "palmer@sifive.com" <palmer@sifive.com>,
+        "linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v4] RISC-V: defconfig: Enable Generic PCIE by default
+Thread-Topic: [PATCH v4] RISC-V: defconfig: Enable Generic PCIE by default
+Thread-Index: AQHUqg+MM4/QLJnNHUmA1qDrkrtO7aWweSWAgAAm9wA=
+Date:   Tue, 15 Jan 2019 17:45:34 +0000
+Message-ID: <03cbc37636be7fce21cd2af39ad8e322ca8e64e8.camel@wdc.com>
+References: <20190112004117.28265-1-alistair.francis@wdc.com>
+         <20190115152607.GA26443@infradead.org>
+In-Reply-To: <20190115152607.GA26443@infradead.org>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=Alistair.Francis@wdc.com; 
+x-originating-ip: [199.255.44.170]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;MWHPR04MB0384;6:xUVLenfEnuIfzFEWtoWbytcJGYqB5KQUPbxjKjxL8+6nHE2dxaEexCtY/MiuCQu8td+3hpRCuEus7nwowBEFN/FdsXXLUslr1Xc+ak8PICEPkZpbVMGy43fEVFX4yuy07446N5b55pLrs6gjNkqjOSjCW0ofOteISIOPdtr+JjE8dCLBvwVAKovYYYxsgJ6DKDZedVXw2UcyRT1AXr40OALAzio2PJeUkRk7RhBpBcaZSCOdBFGGK6xiouA1fj2WgbvkDI5dTeOnoBpW6Bhq0QnFRY8EsavYiFAJFZvWsH0kkQXykkL/4Q9EIBNiAtaJuZccc7rlqajuXmkX3KxyczZ1IaWAYGTtjCN/r0iX01DhtX17eHp2BF2xya8AMnFH4AY7F0fkhpb7E/dc2NitQDvmxFNDjEjVDHoxmlYFvJJ1FkNunkmwJq+52YoU2nabQFdtUdDnidiPW0d1x/rUGw==;5:VJaVMSweXv+kgpCWvz1H/gE/BQ2V81y3nWa0B4nPeLPXPEbC+BqRv02yBbvoDT4JQyGd4bHW97igNsy9kC4/IDOfoh8PhcitLw65QKl8uWTK6vMxAaSgbqU8lbt8TM13NmkMOM20wfZi33c2041NZIHxFxoDvS1YGvckgW0hOgaEUO36MyDzPKo3RUAIzApuaKuIoSEUXZl+BKanccVG+A==;7:+FSY8GxsFI72x/sPO0tjdKN2gXRo9PTunpt8/nwxBkK2IbvGJ6XvGfWiE9SvlCoEa4klAUzyfRSyvNRh+6dZ1p3M+zDNP5+cPNoWu0CQRqQqpJn1syrqXsAwXHLIbEH3Cn4R7n8Qip+L4Ffa+ZSfgA==
+x-ms-exchange-antispam-srfa-diagnostics: SOS;
+x-ms-office365-filtering-correlation-id: e9e271c3-e15d-466e-500d-08d67b1140b8
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600109)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:MWHPR04MB0384;
+x-ms-traffictypediagnostic: MWHPR04MB0384:
+wdcipoutbound: EOP-TRUE
+x-microsoft-antispam-prvs: <MWHPR04MB03848A8C8DA192995C2C380590810@MWHPR04MB0384.namprd04.prod.outlook.com>
+x-forefront-prvs: 0918748D70
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(376002)(346002)(39860400002)(396003)(366004)(136003)(199004)(189003)(66066001)(68736007)(97736004)(5660300001)(486006)(478600001)(6916009)(54906003)(7736002)(6512007)(305945005)(316002)(6506007)(6246003)(53936002)(99286004)(106356001)(4326008)(25786009)(11346002)(102836004)(72206003)(86362001)(5640700003)(8676002)(2616005)(476003)(6486002)(446003)(6436002)(186003)(4744005)(26005)(256004)(76176011)(3846002)(118296001)(71200400001)(71190400001)(14454004)(2501003)(229853002)(8936002)(81166006)(1730700003)(81156014)(2351001)(105586002)(2906002)(6116002)(36756003)(41533002);DIR:OUT;SFP:1102;SCL:1;SRVR:MWHPR04MB0384;H:MWHPR04MB0401.namprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: O6hh6+NrgbRoYXprkQwUwzbmtlePQI5Yaim0XMRZ2QPOmizwhnFVL9KT4G4mfN/BYR/35HGHSXHA/1IFegN4a3I8gym9J+9kWqU5h5LOSD/vqkDsGbbiqj6ahj3sdvDIZrPPyRdce1wD+br+B6oOY0WCNiNUnWhebXQEhkhWDHyQX3nhKV/95zudZTCq9ZAeVOMuTtSmEbui6ppl1UUGA+bUJzDv8rtogLPi7RCgVBnEnqoFRVclhWCIbrFtGja7p66B/iyHLR6dewVd3W363lr9NW+YXcqvrF+rVnw8FNydD0mOU0fMaGNeZfPfaJsvQL3a9SXmIs6LNgddT0aRFePUN1hdmD+10rNnznxQvXcq2txZQAK3r809g0f/o020bbaqyJHbdjTNHrAkyhE6PkPwfjt3m/cHNZf8+dRMr/c=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <90DC464B148407488B48C64AA50D4084@namprd04.prod.outlook.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+X-OriginatorOrg: wdc.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: e9e271c3-e15d-466e-500d-08d67b1140b8
+X-MS-Exchange-CrossTenant-originalarrivaltime: 15 Jan 2019 17:45:34.8684
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: b61c8803-16f3-4c35-9b17-6f65f441df86
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR04MB0384
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 15 Jan 2019, Andrew F. Davis wrote:
-
-> On 1/14/19 11:13 AM, Liam Mark wrote:
-> > On Fri, 11 Jan 2019, Andrew F. Davis wrote:
-> > 
-> >> Buffers may not be mapped from the CPU so skip cache maintenance here.
-> >> Accesses from the CPU to a cached heap should be bracketed with
-> >> {begin,end}_cpu_access calls so maintenance should not be needed anyway.
-> >>
-> >> Signed-off-by: Andrew F. Davis <afd@ti.com>
-> >> ---
-> >>  drivers/staging/android/ion/ion.c | 7 ++++---
-> >>  1 file changed, 4 insertions(+), 3 deletions(-)
-> >>
-> >> diff --git a/drivers/staging/android/ion/ion.c b/drivers/staging/android/ion/ion.c
-> >> index 14e48f6eb734..09cb5a8e2b09 100644
-> >> --- a/drivers/staging/android/ion/ion.c
-> >> +++ b/drivers/staging/android/ion/ion.c
-> >> @@ -261,8 +261,8 @@ static struct sg_table *ion_map_dma_buf(struct dma_buf_attachment *attachment,
-> >>  
-> >>  	table = a->table;
-> >>  
-> >> -	if (!dma_map_sg(attachment->dev, table->sgl, table->nents,
-> >> -			direction))
-> >> +	if (!dma_map_sg_attrs(attachment->dev, table->sgl, table->nents,
-> >> +			      direction, DMA_ATTR_SKIP_CPU_SYNC))
-> > 
-> > Unfortunately I don't think you can do this for a couple reasons.
-> > You can't rely on {begin,end}_cpu_access calls to do cache maintenance.
-> > If the calls to {begin,end}_cpu_access were made before the call to 
-> > dma_buf_attach then there won't have been a device attached so the calls 
-> > to {begin,end}_cpu_access won't have done any cache maintenance.
-> > 
-> 
-> That should be okay though, if you have no attachments (or all
-> attachments are IO-coherent) then there is no need for cache
-> maintenance. Unless you mean a sequence where a non-io-coherent device
-> is attached later after data has already been written. Does that
-> sequence need supporting? 
-
-Yes, but also I think there are cases where CPU access can happen before 
-in Android, but I will focus on later for now.
-
-> DMA-BUF doesn't have to allocate the backing
-> memory until map_dma_buf() time, and that should only happen after all
-> the devices have attached so it can know where to put the buffer. So we
-> shouldn't expect any CPU access to buffers before all the devices are
-> attached and mapped, right?
-> 
-
-Here is an example where CPU access can happen later in Android.
-
-Camera device records video -> software post processing -> video device 
-(who does compression of raw data) and writes to a file
-
-In this example assume the buffer is cached and the devices are not 
-IO-coherent (quite common).
-
-ION buffer is allocated.
-
-//Camera device records video
-dma_buf_attach
-dma_map_attachment (buffer needs to be cleaned)
-[camera device writes to buffer]
-dma_buf_unmap_attachment (buffer needs to be invalidated)
-dma_buf_detach  (device cannot stay attached because it is being sent down 
-the pipeline and Camera doesn't know the end of the use case)
-
-//buffer is send down the pipeline
-
-// Usersapce software post processing occurs
-mmap buffer
-DMA_BUF_IOCTL_SYNC IOCT with flags DMA_BUF_SYNC_START // No CMO since no 
-devices attached to buffer
-[CPU reads/writes to the buffer]
-DMA_BUF_IOCTL_SYNC IOCTL with flags DMA_BUF_SYNC_END // No CMO since no 
-devices attached to buffer
-munmap buffer
-
-//buffer is send down the pipeline
-// Buffer is send to video device (who does compression of raw data) and 
-writes to a file
-dma_buf_attach
-dma_map_attachment (buffer needs to be cleaned)
-[video device writes to buffer]
-dma_buf_unmap_attachment 
-dma_buf_detach  (device cannot stay attached because it is being sent down 
-the pipeline and Video doesn't know the end of the use case)
-
-
-
-> > Also ION no longer provides DMA ready memory, so if you are not doing CPU 
-> > access then there is no requirement (that I am aware of) for you to call 
-> > {begin,end}_cpu_access before passing the buffer to the device and if this 
-> > buffer is cached and your device is not IO-coherent then the cache maintenance
-> > in ion_map_dma_buf and ion_unmap_dma_buf is required.
-> > 
-> 
-> If I am not doing any CPU access then why do I need CPU cache
-> maintenance on the buffer?
-> 
-
-Because ION no longer provides DMA ready memory.
-Take the above example.
-
-ION allocates memory from buddy allocator and requests zeroing.
-Zeros are written to the cache.
-
-You pass the buffer to the camera device which is not IO-coherent.
-The camera devices writes directly to the buffer in DDR.
-Since you didn't clean the buffer a dirty cache line (one of the zeros) is 
-evicted from the cache, this zero overwrites data the camera device has 
-written which corrupts your data.
-
-Liam
-
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+T24gVHVlLCAyMDE5LTAxLTE1IGF0IDA3OjI2IC0wODAwLCBDaHJpc3RvcGggSGVsbHdpZyB3cm90
+ZToNCj4gT24gU2F0LCBKYW4gMTIsIDIwMTkgYXQgMTI6NDE6MjZBTSArMDAwMCwgQWxpc3RhaXIg
+RnJhbmNpcyB3cm90ZToNCj4gPiBFbmFibGUgZ2VuZXJpYyBQQ0llIGJ5IGRlZmF1bHQgaW4gdGhl
+IFJJU0MtViBkZWZjb25maWcsIHRoaXMgYWxsb3dzDQo+ID4gdXMNCj4gPiB0byB1c2UgUUVNVSdz
+IFBDSWUgc3VwcG9ydCBvdXQgb2YgdGhlIGJveC4NCj4gPiANCj4gPiBTaWduZWQtb2ZmLWJ5OiBB
+bGlzdGFpciBGcmFuY2lzIDxhbGlzdGFpci5mcmFuY2lzQHdkYy5jb20+DQo+IA0KPiBMb29rcyBn
+b29kOg0KPiANCj4gUmV2aWV3ZWQtYnk6IENocmlzdG9waCBIZWxsd2lnIDxoY2hAbHN0LmRlPg0K
+DQpUaGFua3MhDQoNCj4gDQo+IEFsaXN0YWlyLCBpcyB0aGVyZSBhIHJlYWR5LW1hZGUgcWVtdSBt
+YWNoaW5lIHdpdGggcmlzY3YgKyBwY2llPw0KPiBUaGF0IHdvdWxkIGJlIHJlYWxseSB1c2VmdWwg
+Zm9yIHRlc3RpbmcuLg0KDQpZZXAsIGlmIHlvdSB1c2UgbWFzdGVyIFFFTVUgKGl0IGlzbid0IGlu
+IGEgcmVsZWFzZSB5ZXQpIHRoZSB2aXJ0DQptYWNoaW5lIGhhcyBQQ0llIHN1cHBvcnQuDQoNCkFs
+aXN0YWlyDQoNCg==
