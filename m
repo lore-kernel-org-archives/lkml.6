@@ -2,134 +2,134 @@ Return-Path: <SRS0=RZO6=PX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C0343C43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 08:57:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3AE95C43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 08:58:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7AEB12085A
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 08:57:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547542670;
-	bh=f+0iYVnA8B/HO6pt8XH/uLKe3g4bXF1ZPQHeuwxI41U=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=l7VufXZ05ZiU6vcQCFquUdKfqkmiYWPz8dtzdBlUWPFMQslVXbhhSyimMcM9sMX9g
-	 j4G7jp4C5XiohvCTHlWi5Tyv9Qjxe2MKcWyWJEVHf1ptwpiAh+/N9ssH4wY2+fwKsl
-	 TyUfEWU2yeqxSOCIWWPosJsYi67PoG0K299v5Y7M=
+	by mail.kernel.org (Postfix) with ESMTP id 1069920657
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 08:58:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727956AbfAOI5s (ORCPT
+        id S1728011AbfAOI6I (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 15 Jan 2019 03:57:48 -0500
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:36846 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726115AbfAOI5r (ORCPT
+        Tue, 15 Jan 2019 03:58:08 -0500
+Received: from mail-qt1-f196.google.com ([209.85.160.196]:42067 "EHLO
+        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725907AbfAOI6H (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Jan 2019 03:57:47 -0500
-Received: by mail-lj1-f194.google.com with SMTP id g11-v6so1639641ljk.3;
-        Tue, 15 Jan 2019 00:57:46 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=b5//Zwbsi7+bQn+/6vARBKNpo+W5NCBDx3oJkJD2Nz0=;
-        b=Bf5/r+OoUMu0Apyw87P1s3jXctwEw0dnBcimixZuOekGNr843KwXYnoh3mfwt1efdY
-         6F8S+z/vNz+c4UCYveRTHPT/m3R+xBTFXO4eMkGg3w/u3RCqHBzLgE5+hulUyflehrZr
-         r94xxnDtrZVNG45vMw2IlYaUN3hxRl1LQ340BQBVCZmUfKkxC8v3hhYcFLdfECoyEICB
-         SFAIwOTr8tu8Dj7mYzerAzHIZvceq2vip3u+JckgZHPsgl7qBIpMuCcX6tOY4kIXvwru
-         oPCvcGKPi9aGXmowyPRSm0cYCY1bwq5WSFazyzoXb98vs4bcAi1wTKk0K7d6tIOHz+Y2
-         Y93Q==
+        Tue, 15 Jan 2019 03:58:07 -0500
+Received: by mail-qt1-f196.google.com with SMTP id d19so2105036qtq.9
+        for <linux-kernel@vger.kernel.org>; Tue, 15 Jan 2019 00:58:06 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=b5//Zwbsi7+bQn+/6vARBKNpo+W5NCBDx3oJkJD2Nz0=;
-        b=GEvsnI6TYrGdQKqs/2PLEt7abyQbrcxX6mr4cAV4CIZFiRdrwQC9pkRIJ96gEg7MhV
-         DUgJX1tBwpkIyel6xSLYym69F9QsNrBum08eaCAe7S0UXe49LGdeF/9I9enOne6aAAzX
-         RDLMA6liHQ0jzkD5Z6I7CptuJJ3DrGCTuZqEuPxEjVfkqsFMzEv0ts9+Iulw8f7sC1Hv
-         gYO3p9X1JJ45RI/4553X1oCljn07+2+MMzAjVcWFmDvas+ozB82xHpBOb7hPktRmIkGc
-         MvFgiY2HT5OTdkbwkW2KrdQKoK7wxxxGLks1XW8C+d5pDfIyOHQY4m29XhUpzR9FTE5K
-         EZSQ==
-X-Gm-Message-State: AJcUukf2Mzz81+8D5aIkXoRAbZdl4yVB4hRRd7CoeV/7yzew6KfjwEXy
-        e3zt8IwjqLQSO7ABG6gI8dr+ljiq
-X-Google-Smtp-Source: ALg8bN5x7YibIr+laspsxQVGEd8n+1nicCnbkObR5qIcGGDDE7e3tY7nytLjbsAVrxvADsSDN82d0Q==
-X-Received: by 2002:a2e:3308:: with SMTP id d8-v6mr1797452ljc.38.1547542665353;
-        Tue, 15 Jan 2019 00:57:45 -0800 (PST)
-Received: from xi.terra (c-74bee655.07-184-6d6c6d4.bbcust.telenor.se. [85.230.190.116])
-        by smtp.gmail.com with ESMTPSA id k3-v6sm472467lja.8.2019.01.15.00.57.44
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 15 Jan 2019 00:57:44 -0800 (PST)
-Received: from johan by xi.terra with local (Exim 4.91)
-        (envelope-from <johan@kernel.org>)
-        id 1gjKXX-0008P0-Dv; Tue, 15 Jan 2019 09:57:44 +0100
-Date:   Tue, 15 Jan 2019 09:57:43 +0100
-From:   Johan Hovold <johan@kernel.org>
-To:     Karoly Pados <pados@pados.hu>
-Cc:     Johan Hovold <johan@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] USB: serial: cp210x: Fix GPIO in autosuspend
-Message-ID: <20190115085743.GL3691@localhost>
-References: <20190114194352.4579-1-pados@pados.hu>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=zOsdLjtqZA7KDnwPHYqaXG+fgQYsg/I5XovzL9Yj2u0=;
+        b=CLN0VFZduuD9e0OfDWluHAGGlxNuvzfw7JrJezjSSO+ZfyHNo9/IhnmPAxbS60alZh
+         SdiAbW9QuXfZopISlcK+QHTthoVtDrl/q9rzNABMmhkGc2R2DZO6+YcSdRCXBGt69iUK
+         nDcF6yCdeYyUjn14ovq2uCRU8iMIhf2TPtz8f/hni4vGDMYn/pxlIKI9UyQVLgF3D80n
+         HfpVTnxhhzyo8yDQc9S0kMOJj0huNK2fBXhOA54GXPN6gDh7gdwJZpo5O7v6n7fma4iA
+         vKqb3neqzMJuakzhrjzr2hiq26rfbe8/pFNUsVBMoX9TCeOSNCBZi2hwUz5xg18a6KO2
+         WUpQ==
+X-Gm-Message-State: AJcUukcJqrlXCIXeYLKwdDIvAnJ7fja2ym4nDcbaudhhY/AaJ3vsXX3u
+        GEO9MReRIEmsxI92OOnpxunxTYK5k59xVDQN34ULSOKE
+X-Google-Smtp-Source: ALg8bN7+x+xqwKf8uqwmuwG6VKA09EFK4RapXaOTRKv3/HaaUTGljVT1Gn5LTMELk3V/W3oBLyK3/jFjbaiesetLPco=
+X-Received: by 2002:ac8:101a:: with SMTP id z26mr2118069qti.184.1547542686505;
+ Tue, 15 Jan 2019 00:58:06 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190114194352.4579-1-pados@pados.hu>
-User-Agent: Mutt/1.11.2 (2019-01-07)
+References: <20190111205430.15371-1-kim@kimphillips.com> <20190112014004.GA122403@dtor-ws>
+ <22e2d619-0622-1816-2057-c9005288b46b@kimphillips.com> <20190114184012.GC117329@dtor-ws>
+In-Reply-To: <20190114184012.GC117329@dtor-ws>
+From:   Benjamin Tissoires <benjamin.tissoires@redhat.com>
+Date:   Tue, 15 Jan 2019 09:57:54 +0100
+Message-ID: <CAO-hwJKCeV5ZEw7aX58=mnfhWex5QtEVYbRdDX7OosfS5+suUw@mail.gmail.com>
+Subject: Re: [PATCH] Input: synaptics - add PNP IDs for Dell XPS models to forcepad
+To:     Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc:     Kim Phillips <kim@kimphillips.com>,
+        lkml <linux-kernel@vger.kernel.org>,
+        Paul Menzel <pmenzel@molgen.mpg.de>,
+        "open list:HID CORE LAYER" <linux-input@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jan 14, 2019 at 08:43:52PM +0100, Karoly Pados wrote:
-> Current GPIO code in cp210x fails to take USB autosuspend into account,
-> making it practically impossible to use GPIOs with autosuspend enabled
-> without user configuration. Fix this like for ftdi_sio in a previous patch.
-> Tested on a CP2102N.
-> 
-> Signed-off-by: Karoly Pados <pados@pados.hu>
-> ---
->  drivers/usb/serial/cp210x.c | 20 ++++++++++++++++++--
->  1 file changed, 18 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/usb/serial/cp210x.c b/drivers/usb/serial/cp210x.c
-> index c0777a374a88..8f974eabce63 100644
-> --- a/drivers/usb/serial/cp210x.c
-> +++ b/drivers/usb/serial/cp210x.c
-> @@ -598,9 +598,15 @@ static int cp210x_read_vendor_block(struct usb_serial *serial, u8 type, u16 val,
->  	void *dmabuf;
->  	int result;
->  
-> +	result = usb_autopm_get_interface(serial->interface);
-> +	if (result)
-> +		return result;
-> +
+On Mon, Jan 14, 2019 at 7:40 PM Dmitry Torokhov
+<dmitry.torokhov@gmail.com> wrote:
+>
+> On Sat, Jan 12, 2019 at 04:04:36PM -0600, Kim Phillips wrote:
+> > On 1/11/19 7:40 PM, Dmitry Torokhov wrote:
+> > > Hi Kim,
+> >
+> > Hi Dmitry,
+> >
+> > > On Fri, Jan 11, 2019 at 02:54:30PM -0600, Kim Phillips wrote:
+> > >> This patch is the result of seeing this message:
+> > >>
+> > >> psmouse serio1: synaptics: Your touchpad (PNP: DLL087c PNP0f13) says it can support a different bus. If i2c-hid and hid-rmi are not used, you might want to try setting psmouse.synaptics_intertouch to 1 and report this to linux-input@vger.kernel.org.
+> > >>
+> > >> If I set psmouse.synaptics_intertouch=1, or add the PNP ID to
+> > >> smbus_pnp_ids, the touchpad continues to work, and the above message
+> > >> goes away, but we now get:
+> > >>
+> > >> psmouse serio1: synaptics: Trying to set up SMBus access
+> > >> psmouse serio1: synaptics: SMbus companion is not ready yet
+> > >>
+> > >> With this patch applied, i.e., the PNP IDs are added to the forcepad
+> > >> array, the touchpad continues to work and all of the above messages
+> > >> disappear.
+> > >
+> > > Are you sure the touchpad in XPSes is a forcepad (i.e. it does not have
+> > > physical button underneath it)? As far as I know there were only couple
+> > > of HP laptops with forcepads and when switching to RMI mode forcepads
+> > > need F21 handler that we do not currently have in the kernel.
+> >
+> > I see, no, I'm not sure, but assuming you're right, the IDs
+> > should be added to the smbus array instead, after fixing
+> > the SMbus "companion not ready" problem?  Pointers for that and
+> > the below interrupts when touchpad idle after resume, welcome.
+> >
+> > Also, the link to get the RMI4 spec in
+> > Documentation/devicetree/bindings/input/rmi4/rmi_2d_sensor.txt
+> > is broken.  Any pointers for that also appreciated.
+>
+> OK, sorting it all out some more:
+>
+> - because we do not have support for F21 necessary for forcepads adding
+>   APIC ID to forcepad list actuallty disables SMbus companion mode, that
+>   is why you no longer see "companion not ready" messages vs. setting
+>   psmouse.synaptics_intertouch=1 module parameter.
 
-> @@ -702,9 +709,15 @@ static int cp210x_write_vendor_block(struct usb_serial *serial, u8 type,
->  	void *dmabuf;
->  	int result;
->  
-> +	result = usb_autopm_get_interface(serial->interface);
-> +	if (result)
-> +		return result;
-> +
+Yep
 
-I think it's better to add the autopm call to gpio210x_gpio_get/set
-only. This will allow for a simpler patch, and keeps the autopm handling
-confined to the gpio paths.
+>
+> - this does not really matter as your touchpad ends up being driven by
+>   i2c-hid and hid-multitouch drivers, and that is how we wait it to
+>   work, as we do not want to deviate from behavior on Windows since OEM
+>   tested it (the device and firmware) in tha configuration.
 
-> @@ -1383,6 +1397,7 @@ static void cp210x_gpio_set(struct gpio_chip *gc, unsigned int gpio, int value)
->  	} else {
->  		u16 wIndex = buf.state << 8 | buf.mask;
->  
-> +		usb_autopm_get_interface(serial->interface);
+Yep too. The I2C-hid touchpads from Synaptics do not have the SMBus
+wired at all, so we can't enable SMBus for them. Also, the fact that
+the device gets loaded over i2c-hid means that we can't know that it
+is the case from the psmouse/synaptics point of view.
 
-Also make sure to always check for errors from autopm_get().
+>
+> - we need to figure out issue with interrupts on resume, maybe Benjamin
+>   have seen it?
 
->  		result = usb_control_msg(serial->dev,
->  					 usb_sndctrlpipe(serial->dev, 0),
->  					 CP210X_VENDOR_SPECIFIC,
+First time I see it.
 
-Thanks,
-Johan
+I just tried on a XPS 9360 and kernel v4.18 (fedora) and nothing was a problem.
+I then tried on a XPS 9575 with v4.19, and here, the wacom I2C node is
+also keeping firing the interrupts, but not the touchpad. However,
+here, the interrupts are not stopping when I touch the touchscreen or
+if I approach a pen.
+
+Kim, rmmod-ing i2c-hid and modprobing back it with the parameter
+debug=1 doesn't show any events processed when the interrupts are
+firing. Do you see the same?
+
+Cheers,
+Benjamin
