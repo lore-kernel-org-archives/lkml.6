@@ -2,105 +2,141 @@ Return-Path: <SRS0=RZO6=PX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C52A2C43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 00:07:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 02288C43612
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 00:14:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8E6BC206B7
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 00:07:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547510878;
-	bh=vG7AnFwP9ec7CKKsbfhvU/Aq8JTWeaxTFK4EjyYuOoE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=CyILdWv2IJvgzDuEQWAcs65nP4L850PBmoxVcs5SD8HMvbhLTaO3HyU9CMM8peqbA
-	 jC66gR+fEhX0VDAdcXhc4FBs4Bc4kyWGRWiRC0pb8iyprqDwsZuYQAdcvJLdagtYtz
-	 6PDPMjceGgqs/15FMzC7uNnJ4Y0/rkDGANwe1Mp4=
+	by mail.kernel.org (Postfix) with ESMTP id C7962206BA
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 00:14:41 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=codyps.com header.i=@codyps.com header.b="buicu8ZM"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727312AbfAOAH4 (ORCPT
+        id S1727184AbfAOAOi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 14 Jan 2019 19:07:56 -0500
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:34284 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726769AbfAOAH4 (ORCPT
+        Mon, 14 Jan 2019 19:14:38 -0500
+Received: from mail-qk1-f195.google.com ([209.85.222.195]:40602 "EHLO
+        mail-qk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726871AbfAOAOi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 Jan 2019 19:07:56 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=ZT7U8c7FkipL5LXE/wg6guu1bLSKqplUm2bwb0xgkVY=; b=ila+VZ8IVErRbGK4n3t3gwF76
-        f+2wPWrXeHnVB4JFHXuz8pABB9FbREsQzf8Ow22xe0IVpZQaUa5p9S4+VPH9oWRULCtIKQXQ9xBux
-        BQb4ftWJNvg5E0fUj/pnjV0Yux/WQy3mCfuSTDl6KfHRlljQcFPk7T/NJmmO4IQoJkVAw=;
-Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
-        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1gjCGl-0000rH-EK; Tue, 15 Jan 2019 00:07:51 +0000
-Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
-        id 182B3112349B; Tue, 15 Jan 2019 00:07:51 +0000 (GMT)
-Date:   Tue, 15 Jan 2019 00:07:51 +0000
-From:   Mark Brown <broonie@kernel.org>
-To:     David Lechner <david@lechnology.com>
-Cc:     Vignesh R <vigneshr@ti.com>,
-        "linux-spi@vger.kernel.org" <linux-spi@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-omap@vger.kernel.org" <linux-omap@vger.kernel.org>
-Subject: Re: [PATCH] Revert "spi: omap2-mcspi: Set FIFO DMA trigger level to
- word length"
-Message-ID: <20190115000751.GN11073@sirena.org.uk>
-References: <20190113204905.29795-1-david@lechnology.com>
- <829bdc72-cf96-6aee-28d8-a47d0430710d@ti.com>
- <bb7e13ee-f6ed-a619-c56e-53aad91a1432@lechnology.com>
+        Mon, 14 Jan 2019 19:14:38 -0500
+Received: by mail-qk1-f195.google.com with SMTP id y16so590155qki.7
+        for <linux-kernel@vger.kernel.org>; Mon, 14 Jan 2019 16:14:36 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=codyps.com; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=U3/XlavFaV+83MK62S0qixF0uFWWpLHgt5a5yu35Agc=;
+        b=buicu8ZMu5wkDF6oZmeci2+cyaWDaWjxu06XOAv2AVC9GSdgFvHoHQbKIMqOHuLQxR
+         G1wXyqqBkSadPFjr04BL3Z0kE5QiuWUnZev9swbfASvDsj6WUMM7QvjntNXCr46Cohoq
+         l/l2MEiDmoShBWss73LQgN0CVHoMCxCpCWJ3E=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=U3/XlavFaV+83MK62S0qixF0uFWWpLHgt5a5yu35Agc=;
+        b=RCdIPfreUerJbfhCSTnppnv4t1yD0Ph6XS0T38xXba/Lpu1wNNn5/bJksqBPhc+yAi
+         42daoeHi70ZRRY/BegrvrNDBjav9ZdSOoFLf1EUEtej369+uKHA8Qu+9/Zbvo9QZmGWo
+         YnzVql3X7HjKLuWA9Zr3cwtsMB2etM9p0HNE+/C1x0juXTGyRPUVDtOpSsachOdmkZfa
+         N0wT5kLYyENPi+ZF7BNDh3RC+P452VwZOLjk7d18kkspBaFi4iCJawBnl9jlcyf4XFrT
+         u/NbLgfnaC/lHQ/dqXLw7uRWTswd4PkNAIdkltQWJT6XupUG/PWELSmAzzp4gqCwNfSV
+         FF9Q==
+X-Gm-Message-State: AJcUukcFYzpiJOgJ7FIuIrFTrLqtbWpxJzYXXMu2fRE0IM2phxb1xCG/
+        bjWc0Cjd2eDXwzoxJRmcTgt7
+X-Google-Smtp-Source: ALg8bN5j9ApHaKZhTUZy5ALgwxurn5N80Cvs7BjfNAXNy0vz/+ln1ADzSmLeTgoSyTphGGtqQbkexA==
+X-Received: by 2002:a37:aa0c:: with SMTP id t12mr795204qke.358.1547511276388;
+        Mon, 14 Jan 2019 16:14:36 -0800 (PST)
+Received: from localhost ([2601:18f:880:9aee::8bb])
+        by smtp.gmail.com with ESMTPSA id a17sm52358384qtk.82.2019.01.14.16.14.34
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 14 Jan 2019 16:14:35 -0800 (PST)
+From:   Cody P Schafer <dev@codyps.com>
+To:     "Maciej S. Szmigiero" <mail@maciej.szmigiero.name>,
+        Brad Love <brad@nextdimension.cc>,
+        Cody P Schafer <dev@codyps.com>,
+        Hans Verkuil <hans.verkuil@cisco.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc:     stable@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-media@vger.kernel.org
+Subject: [PATCH] media: cx25840: mark pad sig_types to fix cx231xx init
+Date:   Mon, 14 Jan 2019 19:14:24 -0500
+Message-Id: <20190115001431.10276-1-dev@codyps.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="muT+E17Lr9urPYYJ"
-Content-Disposition: inline
-In-Reply-To: <bb7e13ee-f6ed-a619-c56e-53aad91a1432@lechnology.com>
-X-Cookie: From concentrate.
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Without this, we get failures like this when the kernel attempts to
+initialize a cx231xx device:
 
---muT+E17Lr9urPYYJ
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+	[16046.153653] cx231xx 3-1.2:1.1: New device Hauppauge Hauppauge Device @ 480 Mbps (2040:c200) with 6 interfaces
+	[16046.153900] cx231xx 3-1.2:1.1: can't change interface 3 alt no. to 3: Max. Pkt size = 0
+	[16046.153907] cx231xx 3-1.2:1.1: Identified as Hauppauge USB Live 2 (card=9)
+	[16046.154350] i2c i2c-11: Added multiplexed i2c bus 13
+	[16046.154379] i2c i2c-11: Added multiplexed i2c bus 14
+	[16046.267194] cx25840 10-0044: cx23102 A/V decoder found @ 0x88 (cx231xx #0-0)
+	[16048.424551] cx25840 10-0044: loaded v4l-cx231xx-avcore-01.fw firmware (16382 bytes)
+	[16048.463224] cx231xx 3-1.2:1.1: v4l2 driver version 0.0.3
+	[16048.567878] cx231xx 3-1.2:1.1: Registered video device video2 [v4l2]
+	[16048.568001] cx231xx 3-1.2:1.1: Registered VBI device vbi0
+	[16048.568419] cx231xx 3-1.2:1.1: audio EndPoint Addr 0x83, Alternate settings: 3
+	[16048.568425] cx231xx 3-1.2:1.1: video EndPoint Addr 0x84, Alternate settings: 5
+	[16048.568431] cx231xx 3-1.2:1.1: VBI EndPoint Addr 0x85, Alternate settings: 2
+	[16048.568436] cx231xx 3-1.2:1.1: sliced CC EndPoint Addr 0x86, Alternate settings: 2
+	[16048.568448] usb 3-1.2: couldn't get decoder output pad for V4L I/O
+	[16048.568453] cx231xx 3-1.2:1.1: V4L2 device vbi0 deregistered
+	[16048.568579] cx231xx 3-1.2:1.1: V4L2 device video2 deregistered
+	[16048.569001] cx231xx: probe of 3-1.2:1.1 failed with error -22
 
-On Mon, Jan 14, 2019 at 05:50:34PM -0600, David Lechner wrote:
-> On 1/14/19 6:30 AM, Vignesh R wrote:
+Likely a regession since Commit 9d6d20e652c0
+("media: v4l2-mc: switch it to use the new approach to setup pipelines")
+(v4.19-rc1-100-g9d6d20e652c0), which introduced the use of
+PAD_SIGNAL_DV within v4l2_mc_create_media_graph().
 
-> > Oops, that's unfortunate. I see ili9225 is using bits_per_word = 16.
-> > I believe commit b682cffa3ac6d9d broke spi_transfers where
-> > bits_per_word anything other than 8 bits.
-> > I don't have ili9225 HW but was able emulate this condition using a SPI
-> > flash as slave on AM335x and successfully reproduced the issue. Could
-> > you test if this diff[1] helps in fixing the regression without needing
-> > to revert commit b682cffa3ac6d9d?
+This also modifies cx25840 to remove the VBI pad, matching the action
+taken in Commit 092a37875a22 ("media: v4l2: remove VBI output pad").
 
-> Yes, this changes fixes the problem. Thanks!
+Fixes: 9d6d20e652c0 ("media: v4l2-mc: switch it to use the new approach to setup pipelines")
+Cc: stable@vger.kernel.org
+Signed-off-by: Cody P Schafer <dev@codyps.com>
+---
+ drivers/media/i2c/cx25840/cx25840-core.c | 3 ++-
+ drivers/media/i2c/cx25840/cx25840-core.h | 1 -
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-Excellent!  Vignesh, can you post a formal patch please and I'll get it
-merged?
+diff --git a/drivers/media/i2c/cx25840/cx25840-core.c b/drivers/media/i2c/cx25840/cx25840-core.c
+index b168bf3635b6..8b0b8b5aa531 100644
+--- a/drivers/media/i2c/cx25840/cx25840-core.c
++++ b/drivers/media/i2c/cx25840/cx25840-core.c
+@@ -5216,8 +5216,9 @@ static int cx25840_probe(struct i2c_client *client,
+ 	 * those extra inputs. So, let's add it only when needed.
+ 	 */
+ 	state->pads[CX25840_PAD_INPUT].flags = MEDIA_PAD_FL_SINK;
++	state->pads[CX25840_PAD_INPUT].sig_type = PAD_SIGNAL_ANALOG;
+ 	state->pads[CX25840_PAD_VID_OUT].flags = MEDIA_PAD_FL_SOURCE;
+-	state->pads[CX25840_PAD_VBI_OUT].flags = MEDIA_PAD_FL_SOURCE;
++	state->pads[CX25840_PAD_VID_OUT].sig_type = PAD_SIGNAL_DV;
+ 	sd->entity.function = MEDIA_ENT_F_ATV_DECODER;
+ 
+ 	ret = media_entity_pads_init(&sd->entity, ARRAY_SIZE(state->pads),
+diff --git a/drivers/media/i2c/cx25840/cx25840-core.h b/drivers/media/i2c/cx25840/cx25840-core.h
+index c323b1af1f83..9efefa15d090 100644
+--- a/drivers/media/i2c/cx25840/cx25840-core.h
++++ b/drivers/media/i2c/cx25840/cx25840-core.h
+@@ -40,7 +40,6 @@ enum cx25840_model {
+ enum cx25840_media_pads {
+ 	CX25840_PAD_INPUT,
+ 	CX25840_PAD_VID_OUT,
+-	CX25840_PAD_VBI_OUT,
+ 
+ 	CX25840_NUM_PADS
+ };
+-- 
+2.20.1
 
---muT+E17Lr9urPYYJ
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlw9JFYACgkQJNaLcl1U
-h9ApQQf+JngYgg+9axbvrDu2ynOzMBfQv4geh11lfBgwzY7SXADxRHuDtFh4VdQl
-snxbKo8w1T3egW+Bde5rB+2+8N/vreWuVyiMldtwskxEfeDl15xNNM2gyBgVv3us
-kf/h4Hg5r6YBdwawzrKu6VRt5QohWHlx89MxzzxWXe3YGLCLoLaO4GKgVNfr3KHU
-jhlrJhj0fQ6cIxRx3Avln7I5xCOHnBSDyfWMzKaD2YFlkhLX4zbu85Veo6goWtCy
-PST5E82nv6iAEydkLDYITBfenjKfOUHKysLUhWLbqaCYgcWMGej381hEFA+PXtGt
-L0gQTFCRIsav8h64y4NSmBbR/gZUqg==
-=9Wx9
------END PGP SIGNATURE-----
-
---muT+E17Lr9urPYYJ--
