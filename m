@@ -7,49 +7,48 @@ X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B6E1C43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 16:42:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 96729C43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 16:42:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E023A20645
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 16:42:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5C66D2054F
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 16:42:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547570555;
-	bh=AYoKv2imIETP4hiBKlUJtNeWvnN4ESogpUnU6X+1Fjs=;
+	s=default; t=1547570558;
+	bh=OV8bmUQ8z5C0TKNSZANTAwhhAjU+Efq1F2jAYmaXA1A=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=ekzmFaVyYYzKkKQZ6JtH9+194b2pDYLtqtRiS3/LdjIER0VNZePaXoLOkNVUGzE0x
-	 pMu40vEZFa0XHWRRuszQX8MlHVGyIOhcL1JDoDBZuZRrupGz49+kimgHztzZv4AoL2
-	 EzT+vuCA6TQcpLq5ivrHZfL7gEE9hT3PNxBouhMI=
+	b=zhpfIbRoASZxuzMWRi7rALm8W3y9G6ULcj0NqOaDbQy1pyg98b6PvvmhXP1fy4hNN
+	 OcIhLJpapXqsDHZ2VHgF5q7Mq44On+Aaba52Y6ce9Hall7ZYLCN6DMOxxT9lDjhvO6
+	 s9098c4Wf1oHHRTLvt0nEw5OgnXZwvwOnRQpOEr4=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733012AbfAOQmd (ORCPT
+        id S1733025AbfAOQmg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 15 Jan 2019 11:42:33 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59616 "EHLO mail.kernel.org"
+        Tue, 15 Jan 2019 11:42:36 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59750 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730657AbfAOQmb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Jan 2019 11:42:31 -0500
+        id S1730657AbfAOQmf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 Jan 2019 11:42:35 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BE4FE20859;
-        Tue, 15 Jan 2019 16:42:30 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C955E2054F;
+        Tue, 15 Jan 2019 16:42:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547570551;
-        bh=AYoKv2imIETP4hiBKlUJtNeWvnN4ESogpUnU6X+1Fjs=;
+        s=default; t=1547570554;
+        bh=OV8bmUQ8z5C0TKNSZANTAwhhAjU+Efq1F2jAYmaXA1A=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=j/pANAmkuiXNjcaKaySrff2JLBh82LLUOAjJ7niXnSvWbZ/SteUvVuU1Ie/QDy+Iw
-         fSpOenY2ufQtwKk3dFDlwnfmbay137Ai+oLD4nIo3pS+b7fNnrbJ4hDNqdZbJEeutW
-         RUAr+kCxB98VyHhHiw4YG7AeDJZVO7bYGAcx5OK0=
+        b=gUR0AOqGzH1cnCKPzXUYutp9GZp5u+IgDOJHmcQ0KvMZ6OknFBia5rY+3CZ5bd08g
+         xKGgsTeUggNzSaOpVFEmfxCY/FTBpxpJo2DfvHPza1lUF576Bn2lfnbAPYuXEQXVzH
+         fvKkm06S+xlOZHnz8u9uQi/KSbmidFuOIwje3YaQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Chris Wilson <chris@chris-wilson.co.uk>,
-        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-        Mika Kuoppala <mika.kuoppala@linux.intel.com>,
-        Matthew Auld <matthew.william.auld@gmail.com>,
-        Jani Nikula <jani.nikula@intel.com>
-Subject: [PATCH 4.19 34/50] drm/i915: Unwind failure on pinning the gen7 ppgtt
-Date:   Tue, 15 Jan 2019 17:36:10 +0100
-Message-Id: <20190115154911.875422123@linuxfoundation.org>
+        stable@vger.kernel.org, Quentin Perret <quentin.perret@arm.com>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Sudeep Holla <sudeep.holla@arm.com>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
+Subject: [PATCH 4.19 04/50] cpufreq: scmi: Fix frequency invariance in slow path
+Date:   Tue, 15 Jan 2019 17:35:40 +0100
+Message-Id: <20190115154910.236217166@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190115154909.933241945@linuxfoundation.org>
 References: <20190115154909.933241945@linuxfoundation.org>
@@ -68,62 +67,44 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Chris Wilson <chris@chris-wilson.co.uk>
+From: Quentin Perret <quentin.perret@arm.com>
 
-commit 280d479b310298dfeb1d6f9a1617eca37beb6ce4 upstream.
+commit 0e141d1c65c1dd31c914eb2e11651adcc1a15912 upstream.
 
-If we fail to pin the ggtt vma slot for the ppgtt page tables, we need
-to unwind the locals before reporting the error. Or else on subsequent
-attempts to bind the page tables into the ggtt, we will already believe
-that the vma has been pinned and continue on blithely. If something else
-should happen to be at that location, choas ensues.
+The scmi-cpufreq driver calls the arch_set_freq_scale() callback on
+frequency changes to provide scale-invariant load-tracking signals to
+the scheduler. However, in the slow path, it does so while specifying
+the current and max frequencies in different units, hence resulting in a
+broken freq_scale factor.
 
-Fixes: a2bbf7148342 ("drm/i915/gtt: Only keep gen6 page directories pinned while active")
-Signed-off-by: Chris Wilson <chris@chris-wilson.co.uk>
-Cc: Joonas Lahtinen <joonas.lahtinen@linux.intel.com>
-Cc: Mika Kuoppala <mika.kuoppala@linux.intel.com>
-Cc: Matthew Auld <matthew.william.auld@gmail.com>
-Cc: <stable@vger.kernel.org> # v4.19+
-Reviewed-by: Matthew Auld <matthew.william.auld@gmail.com>
-Link: https://patchwork.freedesktop.org/patch/msgid/20181222030623.21710-1-chris@chris-wilson.co.uk
-(cherry picked from commit d4de753526f4d99f541f1b6ed1d963005c09700c)
-Signed-off-by: Jani Nikula <jani.nikula@intel.com>
+Fix this by passing all frequencies in KHz, as stored in the CPUFreq
+frequency table.
+
+Fixes: 99d6bdf33877 (cpufreq: add support for CPU DVFS based on SCMI message protocol)
+Signed-off-by: Quentin Perret <quentin.perret@arm.com>
+Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
+Acked-by: Sudeep Holla <sudeep.holla@arm.com>
+Cc: 4.17+ <stable@vger.kernel.org> # v4.17+
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/gpu/drm/i915/i915_gem_gtt.c |   15 ++++++++++++---
- 1 file changed, 12 insertions(+), 3 deletions(-)
+ drivers/cpufreq/scmi-cpufreq.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/drivers/gpu/drm/i915/i915_gem_gtt.c
-+++ b/drivers/gpu/drm/i915/i915_gem_gtt.c
-@@ -2128,6 +2128,7 @@ static struct i915_vma *pd_vma_create(st
- int gen6_ppgtt_pin(struct i915_hw_ppgtt *base)
- {
- 	struct gen6_hw_ppgtt *ppgtt = to_gen6_ppgtt(base);
-+	int err;
+--- a/drivers/cpufreq/scmi-cpufreq.c
++++ b/drivers/cpufreq/scmi-cpufreq.c
+@@ -52,9 +52,9 @@ scmi_cpufreq_set_target(struct cpufreq_p
+ 	int ret;
+ 	struct scmi_data *priv = policy->driver_data;
+ 	struct scmi_perf_ops *perf_ops = handle->perf_ops;
+-	u64 freq = policy->freq_table[index].frequency * 1000;
++	u64 freq = policy->freq_table[index].frequency;
  
- 	/*
- 	 * Workaround the limited maximum vma->pin_count and the aliasing_ppgtt
-@@ -2143,9 +2144,17 @@ int gen6_ppgtt_pin(struct i915_hw_ppgtt
- 	 * allocator works in address space sizes, so it's multiplied by page
- 	 * size. We allocate at the top of the GTT to avoid fragmentation.
- 	 */
--	return i915_vma_pin(ppgtt->vma,
--			    0, GEN6_PD_ALIGN,
--			    PIN_GLOBAL | PIN_HIGH);
-+	err = i915_vma_pin(ppgtt->vma,
-+			   0, GEN6_PD_ALIGN,
-+			   PIN_GLOBAL | PIN_HIGH);
-+	if (err)
-+		goto unpin;
-+
-+	return 0;
-+
-+unpin:
-+	ppgtt->pin_count = 0;
-+	return err;
- }
- 
- void gen6_ppgtt_unpin(struct i915_hw_ppgtt *base)
+-	ret = perf_ops->freq_set(handle, priv->domain_id, freq, false);
++	ret = perf_ops->freq_set(handle, priv->domain_id, freq * 1000, false);
+ 	if (!ret)
+ 		arch_set_freq_scale(policy->related_cpus, freq,
+ 				    policy->cpuinfo.max_freq);
 
 
