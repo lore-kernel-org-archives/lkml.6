@@ -4,49 +4,48 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BABF5C43444
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 16:43:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A8314C43444
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 16:43:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8A68F20645
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 16:43:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 75EA820645
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 16:43:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547570625;
-	bh=7D/W5gU3PwDy7ONzcFUfj39WhL44yYAhB4kOb4G+gG4=;
+	s=default; t=1547570629;
+	bh=jok/EpH1o3jvskm95QHvUcwmPw+Q/2aJKstzyhjJ5KI=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=Rk3lp8PzbCiNRC7HeC7Nk2ufrGJRzRDcGVAKkDsg+zCjVeDzE+JZUrl2fIMin9h+T
-	 uJmw83hP6FaaTlxwpeOxsk5cE5V/wBXmaQf8G50UAQHpdvmHTgRvqzuJRUmiuHvm5u
-	 nhcKnjXjCWXFVY5g1D9t4ukGWBMjoRGKC5MJrxkk=
+	b=fClL9Uz1fO+r2vtzXkkAdBLqLSZUgGx/Pjed+XDdHyLkgsKrZZAWCuN03cyVrlGdd
+	 QJY0XpEohrZgEL6KiAIxRlTNNoh+Zj3PngOEjyzgv5f/7YWWqdd5v0n/WkSOWOGYKT
+	 5HvEpnl8GdHVTa66+sNhKyyg7Kum/1EsaLP/MPdo=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733308AbfAOQno (ORCPT
+        id S2387399AbfAOQnr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 15 Jan 2019 11:43:44 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33206 "EHLO mail.kernel.org"
+        Tue, 15 Jan 2019 11:43:47 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33256 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1733302AbfAOQnk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Jan 2019 11:43:40 -0500
+        id S1731633AbfAOQnn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 Jan 2019 11:43:43 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DA82120645;
-        Tue, 15 Jan 2019 16:43:39 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id CA33F2054F;
+        Tue, 15 Jan 2019 16:43:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547570620;
-        bh=7D/W5gU3PwDy7ONzcFUfj39WhL44yYAhB4kOb4G+gG4=;
+        s=default; t=1547570623;
+        bh=jok/EpH1o3jvskm95QHvUcwmPw+Q/2aJKstzyhjJ5KI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=FQdoGnCwF/OJKme9EjwJUjFdQZ78fvx8T3SI2e+ebZPxK9q6+J2QfGvZeR22Ekljp
-         GaAYD9lUATi979yCoeD2s2qF9S2BSki+ox46OdlVfB0+JCIYIPnVR9FSsHyzY3S+3f
-         lkShC7d6auFA1mVFGhHDNGcv/98ofvoxVRdObEpY=
+        b=1TWeXeaKWZ7qiFR0AHxBxKd1ow9KmBgs8hr+7Yis/YNqXUMIxcvzYyD8z2ZQHL+Pd
+         96dzISBHuuODSMsS13S8zouaSL/qaY1hRilbKBK5qJHx4QeO3jv8GnuHMgCdJnD2m4
+         5bciYbDKaUUDJv1KgWmNrGpqN+1HfT9D1DAWn0RY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Kailang Yang <kailang@realtek.com>,
-        Takashi Iwai <tiwai@suse.de>
-Subject: [PATCH 4.20 11/57] ALSA: hda/realtek - Disable headset Mic VREF for headset mode of ALC225
-Date:   Tue, 15 Jan 2019 17:35:52 +0100
-Message-Id: <20190115154911.350511313@linuxfoundation.org>
+        stable@vger.kernel.org, Pavel Shilovsky <pshilov@microsoft.com>,
+        Steve French <stfrench@microsoft.com>
+Subject: [PATCH 4.20 12/57] CIFS: Fix adjustment of credits for MTU requests
+Date:   Tue, 15 Jan 2019 17:35:53 +0100
+Message-Id: <20190115154911.413721821@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190115154910.734892368@linuxfoundation.org>
 References: <20190115154910.734892368@linuxfoundation.org>
@@ -65,69 +64,62 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Kailang Yang <kailang@realtek.com>
+From: Pavel Shilovsky <pshilov@microsoft.com>
 
-commit d1dd42110d2727e81b9265841a62bc84c454c3a2 upstream.
+commit b983f7e92348d7e7d091db1b78b7915e9dd3d63a upstream.
 
-Disable Headset Mic VREF for headset mode of ALC225.
-This will be controlled by coef bits of headset mode functions.
+Currently for MTU requests we allocate maximum possible credits
+in advance and then adjust them according to the request size.
+While we were adjusting the number of credits belonging to the
+server, we were skipping adjustment of credits belonging to the
+request. This patch fixes it by setting request credits to
+CreditCharge field value of SMB2 packet header.
 
-[ Fixed a compile warning and code simplification -- tiwai ]
+Also ask 1 credit more for async read and write operations to
+increase parallelism and match the behavior of other operations.
 
-Signed-off-by: Kailang Yang <kailang@realtek.com>
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
+Signed-off-by: Pavel Shilovsky <pshilov@microsoft.com>
+Signed-off-by: Steve French <stfrench@microsoft.com>
+CC: Stable <stable@vger.kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- sound/pci/hda/patch_realtek.c |   16 +++++++++++++++-
- 1 file changed, 15 insertions(+), 1 deletion(-)
+ fs/cifs/smb2pdu.c |    8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
---- a/sound/pci/hda/patch_realtek.c
-+++ b/sound/pci/hda/patch_realtek.c
-@@ -5381,6 +5381,13 @@ static void alc285_fixup_invalidate_dacs
- 	snd_hda_override_wcaps(codec, 0x03, 0);
- }
+--- a/fs/cifs/smb2pdu.c
++++ b/fs/cifs/smb2pdu.c
+@@ -3197,12 +3197,14 @@ smb2_async_readv(struct cifs_readdata *r
+ 	if (rdata->credits) {
+ 		shdr->CreditCharge = cpu_to_le16(DIV_ROUND_UP(rdata->bytes,
+ 						SMB2_MAX_BUFFER_SIZE));
+-		shdr->CreditRequest = shdr->CreditCharge;
++		shdr->CreditRequest =
++			cpu_to_le16(le16_to_cpu(shdr->CreditCharge) + 1);
+ 		spin_lock(&server->req_lock);
+ 		server->credits += rdata->credits -
+ 						le16_to_cpu(shdr->CreditCharge);
+ 		spin_unlock(&server->req_lock);
+ 		wake_up(&server->request_q);
++		rdata->credits = le16_to_cpu(shdr->CreditCharge);
+ 		flags |= CIFS_HAS_CREDITS;
+ 	}
  
-+static void alc_fixup_disable_mic_vref(struct hda_codec *codec,
-+				  const struct hda_fixup *fix, int action)
-+{
-+	if (action == HDA_FIXUP_ACT_PRE_PROBE)
-+		snd_hda_codec_set_pin_target(codec, 0x19, PIN_VREFHIZ);
-+}
-+
- /* for hda_fixup_thinkpad_acpi() */
- #include "thinkpad_helper.c"
+@@ -3474,12 +3476,14 @@ smb2_async_writev(struct cifs_writedata
+ 	if (wdata->credits) {
+ 		shdr->CreditCharge = cpu_to_le16(DIV_ROUND_UP(wdata->bytes,
+ 						    SMB2_MAX_BUFFER_SIZE));
+-		shdr->CreditRequest = shdr->CreditCharge;
++		shdr->CreditRequest =
++			cpu_to_le16(le16_to_cpu(shdr->CreditCharge) + 1);
+ 		spin_lock(&server->req_lock);
+ 		server->credits += wdata->credits -
+ 						le16_to_cpu(shdr->CreditCharge);
+ 		spin_unlock(&server->req_lock);
+ 		wake_up(&server->request_q);
++		wdata->credits = le16_to_cpu(shdr->CreditCharge);
+ 		flags |= CIFS_HAS_CREDITS;
+ 	}
  
-@@ -5493,6 +5500,7 @@ enum {
- 	ALC293_FIXUP_LENOVO_SPK_NOISE,
- 	ALC233_FIXUP_LENOVO_LINE2_MIC_HOTKEY,
- 	ALC255_FIXUP_DELL_SPK_NOISE,
-+	ALC225_FIXUP_DISABLE_MIC_VREF,
- 	ALC225_FIXUP_DELL1_MIC_NO_PRESENCE,
- 	ALC295_FIXUP_DISABLE_DAC3,
- 	ALC280_FIXUP_HP_HEADSET_MIC,
-@@ -6192,6 +6200,12 @@ static const struct hda_fixup alc269_fix
- 		.chained = true,
- 		.chain_id = ALC255_FIXUP_DELL1_MIC_NO_PRESENCE
- 	},
-+	[ALC225_FIXUP_DISABLE_MIC_VREF] = {
-+		.type = HDA_FIXUP_FUNC,
-+		.v.func = alc_fixup_disable_mic_vref,
-+		.chained = true,
-+		.chain_id = ALC269_FIXUP_DELL1_MIC_NO_PRESENCE
-+	},
- 	[ALC225_FIXUP_DELL1_MIC_NO_PRESENCE] = {
- 		.type = HDA_FIXUP_VERBS,
- 		.v.verbs = (const struct hda_verb[]) {
-@@ -6201,7 +6215,7 @@ static const struct hda_fixup alc269_fix
- 			{}
- 		},
- 		.chained = true,
--		.chain_id = ALC269_FIXUP_DELL1_MIC_NO_PRESENCE
-+		.chain_id = ALC225_FIXUP_DISABLE_MIC_VREF
- 	},
- 	[ALC280_FIXUP_HP_HEADSET_MIC] = {
- 		.type = HDA_FIXUP_FUNC,
 
 
