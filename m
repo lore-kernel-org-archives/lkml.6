@@ -2,275 +2,158 @@ Return-Path: <SRS0=RZO6=PX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A797C43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 20:51:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 92700C43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 20:53:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3E11520657
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 20:51:00 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="Rr19byDP"
+	by mail.kernel.org (Postfix) with ESMTP id 5E8B620657
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 20:53:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1547585585;
+	bh=QeytTp6CDp1zOVCV7OqblW9J9sO0HdqhYvZdzQAj2+Q=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=k+wNhaSLzP2Re4N3Ax869IJJVfNrWzqdycm4I0BeFDa72TByAsOGvi6XF7OmFl7mC
+	 wiTH7lvebzgJQzfj82V9/rRcXAmWJBZ6OQC2oK1SdqATWxA2g2wwE7hef1NM65no12
+	 maApYlXPcpFwklgLK7hJ13Slz7Z9otbwR+QjRxhM=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389990AbfAOUu6 (ORCPT
+        id S2389995AbfAOUxD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 15 Jan 2019 15:50:58 -0500
-Received: from hqemgate16.nvidia.com ([216.228.121.65]:7636 "EHLO
-        hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728576AbfAOUu6 (ORCPT
+        Tue, 15 Jan 2019 15:53:03 -0500
+Received: from mail-ot1-f68.google.com ([209.85.210.68]:34642 "EHLO
+        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732656AbfAOUxD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Jan 2019 15:50:58 -0500
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate16.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5c3e47920001>; Tue, 15 Jan 2019 12:50:26 -0800
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Tue, 15 Jan 2019 12:50:55 -0800
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Tue, 15 Jan 2019 12:50:55 -0800
-Received: from HQMAIL112.nvidia.com (172.18.146.18) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Tue, 15 Jan
- 2019 20:50:55 +0000
-Received: from HQMAIL101.nvidia.com (172.20.187.10) by HQMAIL112.nvidia.com
- (172.18.146.18) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Tue, 15 Jan
- 2019 20:50:55 +0000
-Received: from hqnvemgw01.nvidia.com (172.20.150.20) by HQMAIL101.nvidia.com
- (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1395.4 via Frontend
- Transport; Tue, 15 Jan 2019 20:50:55 +0000
-Received: from skomatineni-linux.nvidia.com (Not Verified[10.110.103.52]) by hqnvemgw01.nvidia.com with Trustwave SEG (v7,5,8,10121)
-        id <B5c3e47af0000>; Tue, 15 Jan 2019 12:50:55 -0800
-From:   Sowjanya Komatineni <skomatineni@nvidia.com>
-To:     <thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
-        <mkarthik@nvidia.com>, <smohammed@nvidia.com>, <talho@nvidia.com>
-CC:     <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-i2c@vger.kernel.org>,
-        Sowjanya Komatineni <skomatineni@nvidia.com>
-Subject: [PATCH V1] i2c: tegra: Add I2C interface timing support
-Date:   Tue, 15 Jan 2019 12:50:53 -0800
-Message-ID: <1547585453-22019-1-git-send-email-skomatineni@nvidia.com>
-X-Mailer: git-send-email 2.7.4
-X-NVConfidentiality: public
+        Tue, 15 Jan 2019 15:53:03 -0500
+Received: by mail-ot1-f68.google.com with SMTP id t5so3892098otk.1;
+        Tue, 15 Jan 2019 12:53:02 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=ROrkXXo5qsdJ0iuuGeMbJDifHoAHsOI//Na7Wm597Kg=;
+        b=DyX06A07YHQyxQfAWO9S1PLr/4XB3eEr45WYmWrkSM6I5H08qKybEuM61kf6EkrSAR
+         B5ZzsrHnQYjAZhFg806iJvNmKr2ViBrvmZtnYdb/8PjmPj3b89fnMwkIFT4oRwYfVkLJ
+         Qv9T5+VFBjBaFhAX1pfnmFYK6wt7805Q1wmrDH5aexjzeb+ZIYcnrgyLsx/Z4iir/2mg
+         R+CBTyhbcCkAjKYxKl+T8VPXjw0upxPWL1rmEjFZTSi8pjCAsljL0vyyfKSDoTyHQITo
+         bpXL8dNuChGguYZdlqgVMuga0oW9sT6W4mGfFOxVbrv7XTrjPlS/F+CgeE1BJ49JOBhC
+         krDw==
+X-Gm-Message-State: AJcUukdpKjcz6bGZCGNIkgQL77IYl6k79KtQBK+755mwCe8n9FKrgiCS
+        pHGDZIgz8TJUInj8B54EmQ==
+X-Google-Smtp-Source: ALg8bN6sXM5TnhamZ3fwO9i1DDsJp5DZfhYDlek6hz8ceVd1VqnmjtBuAr8ruFZyT7YT3w8Odv018w==
+X-Received: by 2002:a9d:3426:: with SMTP id v35mr3762667otb.71.1547585581834;
+        Tue, 15 Jan 2019 12:53:01 -0800 (PST)
+Received: from localhost ([70.231.7.113])
+        by smtp.gmail.com with ESMTPSA id c78sm2803656oig.30.2019.01.15.12.53.00
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 15 Jan 2019 12:53:01 -0800 (PST)
+Date:   Tue, 15 Jan 2019 14:53:00 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     =?utf-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
+Cc:     Kishon Vijay Abraham I <kishon@ti.com>,
+        linux-kernel@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>,
+        devicetree@vger.kernel.org, Hauke Mehrtens <hauke@hauke-m.de>,
+        bcm-kernel-feedback-list@broadcom.com,
+        =?utf-8?B?UmFmYcWCIE1pxYJlY2tp?= <rafal@milecki.pl>
+Subject: Re: [PATCH V2 1/2] dt-bindings: bcm-ns-usb2-phy: rework binding to
+ use CRU syscon
+Message-ID: <20190115205300.GA6754@bogus>
+References: <20190107082545.5529-1-zajec5@gmail.com>
+ <20190108123907.19816-1-zajec5@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1547585426; bh=9HxmplJXlS6YFrfgoReKghdTcF4p6ztTiIegczJ0Hak=;
-        h=X-PGP-Universal:From:To:CC:Subject:Date:Message-ID:X-Mailer:
-         X-NVConfidentiality:MIME-Version:Content-Type;
-        b=Rr19byDPsoT3Z5Pic2YICj0jlpS6K6FJasWG6xKHCgHSM3jcJUqYEvFZ2632oPCUs
-         iJ8bsdkF/Zw6Ey/Qj7sFBcuQRGTHF6TKCjaTHdcDT9DGpHBj34FJ8aoXQvdPFT/ZCS
-         R4/ER/V6vVeUH/T3aDjR5ZYaSnUfYCTe3P9m+RbVIZMn0EEjTi1K459PNy+s7kLVw0
-         NXnv6pqlqfA/rqH5qxG3bLWMFxQ3tsKCG7CrsbBouBhSz5WEUAWG+E+BWVp/VvYVhq
-         mccDP4zprWkpL7B0oYT3LjruI78haX1bKLIVimzz06xmfH4Bbmj6UR3cxkJRcsyI+w
-         4wmTMK6qNUTbQ==
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190108123907.19816-1-zajec5@gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch adds I2C interface timing register support and uses
-it for clock divisor computation instead of using fixed value.
+On Tue, Jan 08, 2019 at 01:39:06PM +0100, Rafał Miłecki wrote:
+> From: Rafał Miłecki <rafal@milecki.pl>
+> 
+> USB 2.0 PHY is a hardware block that happens to use two registers from
+> the CRU block to setup a single PLL. It's not part of the CRU or DMU
+> and so its binding shouldn't cover the whole DMU.
+> 
+> The correct way of handling this is to reference CRU block node using a
+> syscon. Document that & deprecate the old way.
+> 
+> Signed-off-by: Rafał Miłecki <rafal@milecki.pl>
+> ---
+> V2: use syscon@ in example (thanks Ray)
+> ---
+>  .../devicetree/bindings/phy/bcm-ns-usb2-phy.txt    | 27 ++++++++++++++++++----
+>  1 file changed, 23 insertions(+), 4 deletions(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/phy/bcm-ns-usb2-phy.txt b/Documentation/devicetree/bindings/phy/bcm-ns-usb2-phy.txt
+> index a7aee9ea8926..2cafee6b4a8b 100644
+> --- a/Documentation/devicetree/bindings/phy/bcm-ns-usb2-phy.txt
+> +++ b/Documentation/devicetree/bindings/phy/bcm-ns-usb2-phy.txt
+> @@ -2,19 +2,38 @@ Driver for Broadcom Northstar USB 2.0 PHY
+>  
+>  Required properties:
+>  - compatible: brcm,ns-usb2-phy
+> -- reg: iomem address range of DMU (Device Management Unit)
+> -- reg-names: "dmu", the only needed & supported reg right now
+> +- syscon-cru: phandle to the CRU (Central Resource Unit) syscon
+>  - clocks: USB PHY reference clock
+>  - clock-names: "phy-ref-clk", the only needed & supported clock right now
+>  
+> +Deprecated:
+> +
+> +PHY block should not claim the whole DMU so such a binding has been deprecated.
+> +It only requires to access few CRU (a DMU subblock) registers and that should be
+> +handled with a syscon since CRU is a MFD (Multi-Function Device).
+> +
+> +- reg: iomem address range of DMU (Device Management Unit)
+> +- reg-names: "dmu", the only needed & supported reg right now
+> +
+>  To initialize USB 2.0 PHY driver needs to setup PLL correctly. To do this it
+>  requires passing phandle to the USB PHY reference clock.
+>  
+>  Example:
+> +	dmu@1800c000 {
+> +		compatible = "simple-bus";
 
-I2C_INTERFACE_TIMING_0 register contains TLOW and THIGH field
-and Tegra I2C controller design uses them as a part of internal
-clock divisor. TLOW and THIGH can be tuned for specific platform
-to achive accurate bus rates.
+DMU sounds like some sort of block, not just a bus.
 
-Default values of TLOW and THIGH are good for existing tegra
-platforms Jetson-TX1, Quill and Xavier AGX.
+> +		ranges = <0 0x1800c000 0x1000>;
+> +		#address-cells = <1>;
+> +		#size-cells = <1>;
+> +
+> +		cru: syscon@100 {
+> +			compatible = "syscon", "simple-mfd";
 
-Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
----
- drivers/i2c/busses/i2c-tegra.c | 70 ++++++++++++++++++++++++++++++++++--------
- 1 file changed, 57 insertions(+), 13 deletions(-)
+Those 2 compatibles alone are not valid. And 'simple-mfd' implies child 
+nodes.
 
-diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-tegra.c
-index e417ebf7628c..2e050af6b225 100644
---- a/drivers/i2c/busses/i2c-tegra.c
-+++ b/drivers/i2c/busses/i2c-tegra.c
-@@ -118,6 +118,13 @@
- #define I2C_MST_FIFO_STATUS_TX_MASK		0xff0000
- #define I2C_MST_FIFO_STATUS_TX_SHIFT		16
- 
-+#define I2C_INTERFACE_TIMING_0                  0x94
-+#define I2C_TLOW_MASK                           0x3F
-+#define I2C_THIGH_SHIFT                         8
-+#define I2C_THIGH_MASK                          (0x3F << I2C_THIGH_SHIFT)
-+#define I2C_TLOW_NEW_MASK			0xFF
-+#define I2C_THIGH_NEW_MASK			(0xFF << I2C_THIGH_SHIFT)
-+
- /*
-  * msg_end_type: The bus control which need to be send at end of transfer.
-  * @MSG_END_STOP: Send stop pulse at end of transfer.
-@@ -155,6 +162,10 @@ enum msg_end_type {
-  * @has_mst_fifo: The I2C controller contains the new MST FIFO interface that
-  *		provides additional features and allows for longer messages to
-  *		be transferred in one go.
-+ * @interface_timing_enhancement: Interface Timing bit fields increased in
-+ *		Tegra194 compared to Prior Tegra chips for more tuning to meet
-+ *		I2C Timing requirements for various data rates.
-+
-  */
- struct tegra_i2c_hw_feature {
- 	bool has_continue_xfer_support;
-@@ -167,6 +178,7 @@ struct tegra_i2c_hw_feature {
- 	bool has_multi_master_mode;
- 	bool has_slcg_override_reg;
- 	bool has_mst_fifo;
-+	bool interface_timing_enhancement;
- };
- 
- /**
-@@ -515,7 +527,36 @@ static int tegra_i2c_wait_for_config_load(struct tegra_i2c_dev *i2c_dev)
- 	return 0;
- }
- 
--static int tegra_i2c_init(struct tegra_i2c_dev *i2c_dev)
-+static int tegra_i2c_set_clk_rate(struct tegra_i2c_dev *i2c_dev)
-+{
-+	u32 clk_multiplier = I2C_CLK_MULTIPLIER_STD_FAST_MODE;
-+	u32 val;
-+	u8 low_clk_period, high_clk_period;
-+	int ret = 0;
-+
-+	val = i2c_readl(i2c_dev, I2C_INTERFACE_TIMING_0);
-+
-+	if (i2c_dev->hw->interface_timing_enhancement) {
-+		low_clk_period = val & I2C_TLOW_NEW_MASK;
-+		high_clk_period = (val & I2C_THIGH_NEW_MASK) >>
-+							I2C_THIGH_SHIFT;
-+	} else {
-+		low_clk_period = val & I2C_TLOW_MASK;
-+		high_clk_period = (val & I2C_THIGH_MASK) >> I2C_THIGH_SHIFT;
-+	}
-+
-+	clk_multiplier = (low_clk_period + high_clk_period + 2);
-+	clk_multiplier *= (i2c_dev->clk_divisor_non_hs_mode + 1);
-+
-+	ret = clk_set_rate(i2c_dev->div_clk,
-+			   i2c_dev->bus_clk_rate * clk_multiplier);
-+	if (ret)
-+		dev_err(i2c_dev->dev, "Clock rate change failed %d\n", ret);
-+
-+	return ret;
-+}
-+
-+static int tegra_i2c_init(struct tegra_i2c_dev *i2c_dev, bool is_reinit)
- {
- 	u32 val;
- 	int err;
-@@ -549,6 +590,12 @@ static int tegra_i2c_init(struct tegra_i2c_dev *i2c_dev)
- 					I2C_CLK_DIVISOR_STD_FAST_MODE_SHIFT;
- 	i2c_writel(i2c_dev, clk_divisor, I2C_CLK_DIVISOR);
- 
-+	if (!is_reinit) {
-+		err = tegra_i2c_set_clk_rate(i2c_dev);
-+		if (err < 0)
-+			goto err;
-+	}
-+
- 	if (!i2c_dev->is_dvc) {
- 		u32 sl_cfg = i2c_readl(i2c_dev, I2C_SL_CNFG);
- 
-@@ -747,7 +794,7 @@ static int tegra_i2c_xfer_msg(struct tegra_i2c_dev *i2c_dev,
- 	if (time_left == 0) {
- 		dev_err(i2c_dev->dev, "i2c transfer timed out\n");
- 
--		tegra_i2c_init(i2c_dev);
-+		tegra_i2c_init(i2c_dev, true);
- 		return -ETIMEDOUT;
- 	}
- 
-@@ -758,7 +805,7 @@ static int tegra_i2c_xfer_msg(struct tegra_i2c_dev *i2c_dev,
- 	if (likely(i2c_dev->msg_err == I2C_ERR_NONE))
- 		return 0;
- 
--	tegra_i2c_init(i2c_dev);
-+	tegra_i2c_init(i2c_dev, true);
- 	if (i2c_dev->msg_err == I2C_ERR_NO_ACK) {
- 		if (msg->flags & I2C_M_IGNORE_NAK)
- 			return 0;
-@@ -848,6 +895,7 @@ static const struct tegra_i2c_hw_feature tegra20_i2c_hw = {
- 	.has_multi_master_mode = false,
- 	.has_slcg_override_reg = false,
- 	.has_mst_fifo = false,
-+	.interface_timing_enhancement = false,
- };
- 
- static const struct tegra_i2c_hw_feature tegra30_i2c_hw = {
-@@ -861,6 +909,7 @@ static const struct tegra_i2c_hw_feature tegra30_i2c_hw = {
- 	.has_multi_master_mode = false,
- 	.has_slcg_override_reg = false,
- 	.has_mst_fifo = false,
-+	.interface_timing_enhancement = false,
- };
- 
- static const struct tegra_i2c_hw_feature tegra114_i2c_hw = {
-@@ -874,6 +923,7 @@ static const struct tegra_i2c_hw_feature tegra114_i2c_hw = {
- 	.has_multi_master_mode = false,
- 	.has_slcg_override_reg = false,
- 	.has_mst_fifo = false,
-+	.interface_timing_enhancement = false,
- };
- 
- static const struct tegra_i2c_hw_feature tegra124_i2c_hw = {
-@@ -887,6 +937,7 @@ static const struct tegra_i2c_hw_feature tegra124_i2c_hw = {
- 	.has_multi_master_mode = false,
- 	.has_slcg_override_reg = true,
- 	.has_mst_fifo = false,
-+	.interface_timing_enhancement = false,
- };
- 
- static const struct tegra_i2c_hw_feature tegra210_i2c_hw = {
-@@ -900,6 +951,7 @@ static const struct tegra_i2c_hw_feature tegra210_i2c_hw = {
- 	.has_multi_master_mode = true,
- 	.has_slcg_override_reg = true,
- 	.has_mst_fifo = false,
-+	.interface_timing_enhancement = false,
- };
- 
- static const struct tegra_i2c_hw_feature tegra194_i2c_hw = {
-@@ -913,6 +965,7 @@ static const struct tegra_i2c_hw_feature tegra194_i2c_hw = {
- 	.has_multi_master_mode = true,
- 	.has_slcg_override_reg = true,
- 	.has_mst_fifo = true,
-+	.interface_timing_enhancement = true,
- };
- 
- /* Match table for of_platform binding */
-@@ -937,7 +990,6 @@ static int tegra_i2c_probe(struct platform_device *pdev)
- 	void __iomem *base;
- 	int irq;
- 	int ret = 0;
--	int clk_multiplier = I2C_CLK_MULTIPLIER_STD_FAST_MODE;
- 
- 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
- 	base = devm_ioremap_resource(&pdev->dev, res);
-@@ -1009,14 +1061,6 @@ static int tegra_i2c_probe(struct platform_device *pdev)
- 		i2c_dev->clk_divisor_non_hs_mode =
- 			i2c_dev->hw->clk_divisor_fast_plus_mode;
- 
--	clk_multiplier *= (i2c_dev->clk_divisor_non_hs_mode + 1);
--	ret = clk_set_rate(i2c_dev->div_clk,
--			   i2c_dev->bus_clk_rate * clk_multiplier);
--	if (ret) {
--		dev_err(i2c_dev->dev, "Clock rate change failed %d\n", ret);
--		goto unprepare_fast_clk;
--	}
--
- 	ret = clk_prepare(i2c_dev->div_clk);
- 	if (ret < 0) {
- 		dev_err(i2c_dev->dev, "Clock prepare failed %d\n", ret);
-@@ -1041,7 +1085,7 @@ static int tegra_i2c_probe(struct platform_device *pdev)
- 		}
- 	}
- 
--	ret = tegra_i2c_init(i2c_dev);
-+	ret = tegra_i2c_init(i2c_dev, false);
- 	if (ret) {
- 		dev_err(&pdev->dev, "Failed to initialize i2c controller\n");
- 		goto disable_div_clk;
--- 
-2.7.4
+Without any knowledge of what else is in the DMU, I can't give any 
+advice as to what this should look like instead.
 
+> +			reg = <0x100 0x1a4>;
+> +		};
+> +	};
+> +
+>  	usb2-phy {
+>  		compatible = "brcm,ns-usb2-phy";
+> -		reg = <0x1800c000 0x1000>;
+> -		reg-names = "dmu";
+> +		syscon-cru = <&cru>;
+
+No need for this. Make it a child of cru node.
+
+There's not a contiguous range of phy registers? If there are, keep 
+'reg' even if Linux doesn't (currently) use it.
+
+>  		#phy-cells = <0>;
+>  		clocks = <&genpll BCM_NSP_GENPLL_USB_PHY_REF_CLK>;
+>  		clock-names = "phy-ref-clk";
+> -- 
+> 2.13.7
+> 
