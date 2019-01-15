@@ -2,441 +2,147 @@ Return-Path: <SRS0=RZO6=PX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_NEOMUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 962D1C43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 22:00:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B2300C43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 22:03:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5957620866
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 22:00:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6B04E20866
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 22:03:04 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="MvKMISO4"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387494AbfAOWAz (ORCPT
+        id S2387627AbfAOWDC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 15 Jan 2019 17:00:55 -0500
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:60411 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729639AbfAOWAz (ORCPT
+        Tue, 15 Jan 2019 17:03:02 -0500
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:37508 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729068AbfAOWDC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Jan 2019 17:00:55 -0500
-Received: from ptx.hi.pengutronix.de ([2001:67c:670:100:1d::c0])
-        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1gjWlL-0008I7-FB; Tue, 15 Jan 2019 23:00:47 +0100
-Received: from ukl by ptx.hi.pengutronix.de with local (Exim 4.89)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1gjWlK-0000mg-4Z; Tue, 15 Jan 2019 23:00:46 +0100
-Date:   Tue, 15 Jan 2019 23:00:46 +0100
-From:   Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
-        <u.kleine-koenig@pengutronix.de>
-To:     Yash Shah <yash.shah@sifive.com>
-Cc:     palmer@sifive.com, linux-pwm@vger.kernel.org,
-        linux-riscv@lists.infradead.org, thierry.reding@gmail.com,
-        robh+dt@kernel.org, mark.rutland@arm.com,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        sachin.ghadi@sifive.com, paul.walmsley@sifive.com
-Subject: Re: [PATCH 2/2] pwm: sifive: Add a driver for SiFive SoC PWM
-Message-ID: <20190115220046.etgbno6ymsux75dk@pengutronix.de>
-References: <1547194964-16718-1-git-send-email-yash.shah@sifive.com>
- <1547194964-16718-3-git-send-email-yash.shah@sifive.com>
+        Tue, 15 Jan 2019 17:03:02 -0500
+Received: by mail-pf1-f193.google.com with SMTP id y126so1962308pfb.4
+        for <linux-kernel@vger.kernel.org>; Tue, 15 Jan 2019 14:03:01 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ziepe.ca; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=bJmXJeT0SSTONHjw5vGPCW8WRjLsHrstLIrZeQ0NIjo=;
+        b=MvKMISO4HPuoS1gY8m0rOVaa8bvuzrWS/P3S2cNu4CM5PN6TtouORZdv/J0r5jfPgU
+         XJ4PrX47yHXSrJR9/CHNiEj1/YHUAkrhyeyw3W9eKzJiuPiOoRIFFaoI2tpH27fEFRvj
+         s+dkTaOvsCk7aGcYzrUJQTpUFgjvHeNP6a48Ne/FNAkSCnufXZp1BlHTomXJLrrGLuIY
+         MUzoJOOr1t+vYjDAgXXMjLHaJaBxmOvmXikPYsoRBZGMARKs7UEN+rs2c7usG4tm5z/u
+         QVv1jSdA1HSwJDAL/tcWlhHmxazbQ96oqvPq/YRa5IAlaGQysQ7nuQzGB37R921Ms6Uj
+         5Nzg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=bJmXJeT0SSTONHjw5vGPCW8WRjLsHrstLIrZeQ0NIjo=;
+        b=qKVvUEtq+tJM5WhQh+2EsjlKRPSUG8D/oLOLVUy3V9AOL1hqEoCexmXrPPy/yqRcpH
+         dUhUWAOWNUAz8bfBuJySnc6VozUPFboj6qQ4RIbfwu8DekLdUTKO29ddeQrE7YQx5djt
+         C42gaV8iEk1dsLOerW7mG4LCmkcBUDjHwZLkx1Pz2mlfIFKBxnvOUz3pi3YjHwnl40g2
+         ZHEEEzqJK7o6hEHFLva0RZdh/o+HswOQ6FRXrY9tMLE2MsD0q7aGc2+HAT2T+7b5FnUz
+         yYnyTODO/SjA14405KZmnWWqOExiLxS+Wt77IW3UvQIU8EnCOVdmCp8R5h4yUr/XGev3
+         X+iQ==
+X-Gm-Message-State: AJcUukdIlxTCik9LW6FIz9AUyO9bCT/rzDCVbV7lBXVl23oWD6MQgn2S
+        Nxa8rDdcG+x3y1GK1nXX1DoPqg==
+X-Google-Smtp-Source: ALg8bN6qxoYBdmTRvCrhBGIJvZCq9ISDSq756TGxPIH6POelGyFVmYOXXWK0fjhI7opcQdsKxQH7JQ==
+X-Received: by 2002:a63:5252:: with SMTP id s18mr5751206pgl.326.1547589780960;
+        Tue, 15 Jan 2019 14:03:00 -0800 (PST)
+Received: from ziepe.ca (S010614cc2056d97f.ed.shawcable.net. [174.3.196.123])
+        by smtp.gmail.com with ESMTPSA id e86sm6070305pfb.6.2019.01.15.14.03.00
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 15 Jan 2019 14:03:00 -0800 (PST)
+Received: from jgg by mlx.ziepe.ca with local (Exim 4.90_1)
+        (envelope-from <jgg@ziepe.ca>)
+        id 1gjWnT-0001KT-FS; Tue, 15 Jan 2019 15:02:59 -0700
+Date:   Tue, 15 Jan 2019 15:02:59 -0700
+From:   Jason Gunthorpe <jgg@ziepe.ca>
+To:     "Wei Hu (Xavier)" <xavier.huwei@huawei.com>
+Cc:     dledford@redhat.com, linux-rdma@vger.kernel.org,
+        lijun_nudt@163.com, oulijun@huawei.com, liudongdong3@huawei.com,
+        liuyixian@huawei.com, zhangxiping3@huawei.com, linuxarm@huawei.com,
+        linux-kernel@vger.kernel.org, xavier_huwei@163.com
+Subject: Re: [PATCH rdma-rc 1/3] RDMA/hns: Fix the Oops during rmmod or
+ insmod ko when reset occurs
+Message-ID: <20190115220259.GH22045@ziepe.ca>
+References: <1547128663-69220-1-git-send-email-xavier.huwei@huawei.com>
+ <1547128663-69220-2-git-send-email-xavier.huwei@huawei.com>
+ <20190111213411.GA22310@ziepe.ca>
+ <5C399D73.5000902@huawei.com>
+ <20190114220655.GD1208@ziepe.ca>
+ <5C3D3BD1.4000508@huawei.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <1547194964-16718-3-git-send-email-yash.shah@sifive.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
-X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c0
-X-SA-Exim-Mail-From: ukl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+In-Reply-To: <5C3D3BD1.4000508@huawei.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
-
-On Fri, Jan 11, 2019 at 01:52:44PM +0530, Yash Shah wrote:
-> Adds a PWM driver for PWM chip present in SiFive's HiFive Unleashed SoC.
+On Tue, Jan 15, 2019 at 09:48:01AM +0800, Wei Hu (Xavier) wrote:
 > 
-> Signed-off-by: Wesley W. Terpstra <wesley@sifive.com>
-> [Atish: Various fixes and code cleanup]
-> Signed-off-by: Atish Patra <atish.patra@wdc.com>
-> Signed-off-by: Yash Shah <yash.shah@sifive.com>
-> ---
->  drivers/pwm/Kconfig      |  10 ++
->  drivers/pwm/Makefile     |   1 +
->  drivers/pwm/pwm-sifive.c | 246 +++++++++++++++++++++++++++++++++++++++++++++++
->  3 files changed, 257 insertions(+)
->  create mode 100644 drivers/pwm/pwm-sifive.c
 > 
-> diff --git a/drivers/pwm/Kconfig b/drivers/pwm/Kconfig
-> index a8f47df..3bcaf6a 100644
-> --- a/drivers/pwm/Kconfig
-> +++ b/drivers/pwm/Kconfig
-> @@ -380,6 +380,16 @@ config PWM_SAMSUNG
->  	  To compile this driver as a module, choose M here: the module
->  	  will be called pwm-samsung.
->  
-> +config PWM_SIFIVE
-> +	tristate "SiFive PWM support"
-> +	depends on OF
-> +	depends on COMMON_CLK
+> On 2019/1/15 6:06, Jason Gunthorpe wrote:
+> > On Sat, Jan 12, 2019 at 03:55:31PM +0800, Wei Hu (Xavier) wrote:
+> >>
+> >> On 2019/1/12 5:34, Jason Gunthorpe wrote:
+> >>> On Thu, Jan 10, 2019 at 09:57:41PM +0800, Wei Hu (Xavier) wrote:
+> >>>> +	/* Check the status of the current software reset process, if in
+> >>>> +	 * software reset process, wait until software reset process finished,
+> >>>> +	 * in order to ensure that reset process and this function will not call
+> >>>> +	 * __hns_roce_hw_v2_uninit_instance at the same time.
+> >>>> +	 * If a timeout occurs, it indicates that the network subsystem has
+> >>>> +	 * encountered a serious error and cannot be recovered from the reset
+> >>>> +	 * processing.
+> >>>> +	 */
+> >>>> +	if (ops->ae_dev_resetting(handle)) {
+> >>>> +		dev_warn(dev, "Device is busy in resetting state. waiting.\n");
+> >>>> +		end = msecs_to_jiffies(HNS_ROCE_V2_RST_PRC_MAX_TIME) + jiffies;
+> >>>> +		while (ops->ae_dev_resetting(handle) &&
+> >>>> +		       time_before(jiffies, end))
+> >>>> +			msleep(20);
+> >>> Really? Does this have to be so ugly? Why isn't there just a simple
+> >>> lock someplace that is held during reset?
+> >>>
+> >>> I'm skeptical that all this strange looking stuff is properly locked
+> >>> and concurrency safe.
+> >> Hi, Jason
+> >>
+> >> The hns3 NIC driver notifies the hns RoCE driver to perform
+> >> reset related processing by calling the .reset_notify() interface
+> >> registered by the RoCE driver.
+> >>
+> >> There is a constraint on the hip08 chip, the NIC driver needs to
+> >> stop the flow before hardware startup reset, otherwise the chip
+> >> may hang up.
+> >>
+> >> We've also thought about using locks, but found using locks can
+> >> lead to more serious problems because of that restriction of the
+> >> chip.
+> >> If using locks here, reset processing may wait for uninstallation
+> >> to complete, this may lead that NIC driver fails to stop the flow
+> >> in time in the reset process, thus causing the chip to hang up.
+> > If you are sleeping then I'm sure a lock can be used instead, how
+> > would it be any different?
+> Hi, Jason
+>     If using locks here, reset process may wait until uninstallation to
+> complete,
+>         it may trigger the chip constraint, causing chip to hang up.
+>     But if using sleeping here, there will notthe case that reset
+> process wait until
+>        uninstallation to complete, then will not trigger the chip
+> constraint.
 
-I'd say add:
+But how is this even right? If ops->ae_dev_resetting can change at any
+time, and you need to wait for it here, without locks can't it just
+change instantly after the if statement?
 
-	depends on MACH_SIFIVE || COMPILE_TEST
+I think it shows the concurrancy & locking is not done right when I
+see loops reading shared data and spinning on them with msleep.
 
-(I guess "MACH_SIFIVE" is wrong, but I assume you get what I mean.)
-
-> +	help
-> +	  Generic PWM framework driver for SiFive SoCs.
-> +
-> +	  To compile this driver as a module, choose M here: the module
-> +	  will be called pwm-sifive.
-> +
->  config PWM_SPEAR
->  	tristate "STMicroelectronics SPEAr PWM support"
->  	depends on PLAT_SPEAR
-> diff --git a/drivers/pwm/Makefile b/drivers/pwm/Makefile
-> index 9c676a0..30089ca 100644
-> --- a/drivers/pwm/Makefile
-> +++ b/drivers/pwm/Makefile
-> @@ -37,6 +37,7 @@ obj-$(CONFIG_PWM_RCAR)		+= pwm-rcar.o
->  obj-$(CONFIG_PWM_RENESAS_TPU)	+= pwm-renesas-tpu.o
->  obj-$(CONFIG_PWM_ROCKCHIP)	+= pwm-rockchip.o
->  obj-$(CONFIG_PWM_SAMSUNG)	+= pwm-samsung.o
-> +obj-$(CONFIG_PWM_SIFIVE)	+= pwm-sifive.o
->  obj-$(CONFIG_PWM_SPEAR)		+= pwm-spear.o
->  obj-$(CONFIG_PWM_STI)		+= pwm-sti.o
->  obj-$(CONFIG_PWM_STM32)		+= pwm-stm32.o
-> diff --git a/drivers/pwm/pwm-sifive.c b/drivers/pwm/pwm-sifive.c
-> new file mode 100644
-> index 0000000..7fee809
-> --- /dev/null
-> +++ b/drivers/pwm/pwm-sifive.c
-> @@ -0,0 +1,246 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Copyright (C) 2017-2018 SiFive
-> + * For SiFive's PWM IP block documentation please refer Chapter 14 of
-> + * Reference Manual : https://static.dev.sifive.com/FU540-C000-v1.0.pdf
-
-I wonder if such an instance should be only a single PWM instead of
-four. Then you were more flexible with the period lengths (using
-pwmcfg.pwmzerocmp) and could do stuff like inverted and uninverted mode.
-
-I didn't understand how the deglitch logic works yet. Currently it is
-not used which might result in four edges in a single period (which is
-bad).
-
-> + */
-> +#include <linux/clk.h>
-> +#include <linux/io.h>
-> +#include <linux/module.h>
-> +#include <linux/platform_device.h>
-> +#include <linux/pwm.h>
-> +#include <linux/slab.h>
-> +
-> +/* Register offsets */
-> +#define REG_PWMCFG		0x0
-> +#define REG_PWMCOUNT		0x8
-> +#define REG_PWMS		0x10
-> +#define REG_PWMCMP0		0x20
-
-I suggest a common prefix for these defines. Something like
-PWM_SIFIVE_
-
-> +
-> +/* PWMCFG fields */
-> +#define BIT_PWM_SCALE		0
-> +#define BIT_PWM_STICKY		8
-> +#define BIT_PWM_ZERO_ZMP	9
-
-the manual calls this "pwmzerocmp".
-
-> +#define BIT_PWM_DEGLITCH	10
-> +#define BIT_PWM_EN_ALWAYS	12
-> +#define BIT_PWM_EN_ONCE		13
-> +#define BIT_PWM0_CENTER		16
-> +#define BIT_PWM0_GANG		24
-> +#define BIT_PWM0_IP		28
-
-Also a common prefix please. Something like PWM_SIFIVE_PWMCFG_ seems
-sensible.
-
-> +#define SIZE_PWMCMP		4
-
-Please describe what this constant means. I think this is "ncmp" in the
-reference manual. If so, using PWM_SIFIVE_NCMP as name instead seems
-adequate.
-
-> +#define MASK_PWM_SCALE		0xf
-
-MASK_PWM_SCALE is unused, please drop it.
-
-> +struct sifive_pwm_device {
-> +	struct pwm_chip	chip;
-> +	struct notifier_block notifier;
-> +	struct clk *clk;
-> +	void __iomem *regs;
-> +	unsigned int approx_period;
-> +	unsigned int real_period;
-> +};
-
-I'd call this pwm_sifive_ddata. The prefix because the driver is called
-pwm-sifive and ddata because this is driver data and not a device.
-
-> +static inline struct sifive_pwm_device *to_sifive_pwm_chip(struct pwm_chip *c)
-> +{
-> +	return container_of(c, struct sifive_pwm_device, chip);
-> +}
-> +
-> +static void sifive_pwm_get_state(struct pwm_chip *chip, struct pwm_device *dev,
-> +				 struct pwm_state *state)
-
-given that the driver is called pwm-sifive, please use pwm_sifive as
-function prefix.
-
-> +{
-> +	struct sifive_pwm_device *pwm = to_sifive_pwm_chip(chip);
-> +	u32 duty;
-> +
-> +	duty = readl(pwm->regs + REG_PWMCMP0 + dev->hwpwm * SIZE_PWMCMP);
-> +
-> +	state->period = pwm->real_period;
-> +	state->duty_cycle = ((u64)duty * pwm->real_period) >> 16;
-
-In the reference manual this 16 is called "cmpwidth" I think. If I
-understand correctly this might in theory be different from 16, so it
-would be great if this would be at least a cpp symbol for now.
-
-> +	state->polarity = PWM_POLARITY_INVERSED;
-> +	state->enabled = duty > 0;
-> +}
-> +
-> +static int sifive_pwm_apply(struct pwm_chip *chip, struct pwm_device *dev,
-> +			    struct pwm_state *state)
-> +{
-> +	struct sifive_pwm_device *pwm = to_sifive_pwm_chip(chip);
-> +	unsigned int duty_cycle;
-> +	u32 frac;
-> +
-> +	if (state->polarity != PWM_POLARITY_INVERSED)
-> +		return -EINVAL;
-> +
-> +	duty_cycle = state->duty_cycle;
-> +	if (!state->enabled)
-> +		duty_cycle = 0;
-> +
-> +	frac = div_u64((u64)duty_cycle << 16, state->period);
-> +	frac = min(frac, 0xFFFFU);
-
-In the previous review round I asked here:
-
-| Also if real_period is for example 10 ms and the consumer requests
-| duty=12 ms + period=100 ms, the hardware is configured for duty=1.2 ms +
-| period=10 ms, right?
-
-which you confirmed. IMHO this is not acceptable. If the period is
-fixed, you should return -EINVAL (I think) if a different period is
-requested.
-
-> +	writel(frac, pwm->regs + REG_PWMCMP0 + dev->hwpwm * SIZE_PWMCMP);
-
-If you get a constant inactive output with frac=0 and a constant active
-output with frac=0xffff the calculation above seems wrong to me.
-(A value i written to the pwmcmpX register means a duty cycle of
-(i * period / 0xffff). Your calculation assumes a divisor of 0x10000
-however.)
-
-> +
-> +	if (state->enabled)
-> +		sifive_pwm_get_state(chip, dev, state);
-
-@Thierry: Should we bless this correction of state?
-
-> +
-> +	return 0;
-> +}
-> +
-> +static const struct pwm_ops sifive_pwm_ops = {
-> +	.get_state = sifive_pwm_get_state,
-> +	.apply = sifive_pwm_apply,
-> +	.owner = THIS_MODULE,
-> +};
-> +
-> +static struct pwm_device *sifive_pwm_xlate(struct pwm_chip *chip,
-> +					   const struct of_phandle_args *args)
-> +{
-> +	struct sifive_pwm_device *pwm = to_sifive_pwm_chip(chip);
-> +	struct pwm_device *dev;
-> +
-> +	if (args->args[0] >= chip->npwm)
-> +		return ERR_PTR(-EINVAL);
-> +
-> +	dev = pwm_request_from_chip(chip, args->args[0], NULL);
-> +	if (IS_ERR(dev))
-> +		return dev;
-> +
-> +	/* The period cannot be changed on a per-PWM basis */
-> +	dev->args.period = pwm->real_period;
-> +	dev->args.polarity = PWM_POLARITY_NORMAL;
-> +	if (args->args[1] & PWM_POLARITY_INVERSED)
-> +		dev->args.polarity = PWM_POLARITY_INVERSED;
-> +
-> +	return dev;
-> +}
-> +
-> +static void sifive_pwm_update_clock(struct sifive_pwm_device *pwm,
-> +				    unsigned long rate)
-> +{
-> +	/* (1 << (16+scale)) * 10^9/rate = real_period */
-> +	unsigned long scale_pow = (pwm->approx_period * (u64)rate) / 1000000000;
-
-NSEC_PER_SEC instead of 1000000000
-
-> +	int scale = clamp(ilog2(scale_pow) - 16, 0, 0xf);
-> +
-> +	writel((1 << BIT_PWM_EN_ALWAYS) | (scale << BIT_PWM_SCALE),
-> +	       pwm->regs + REG_PWMCFG);
-> +
-> +	/* As scale <= 15 the shift operation cannot overflow. */
-> +	pwm->real_period = div64_ul(1000000000ULL << (16 + scale), rate);
-> +	dev_dbg(pwm->chip.dev, "New real_period = %u ns\n", pwm->real_period);
-> +}
-> +
-> +static int sifive_pwm_clock_notifier(struct notifier_block *nb,
-> +				     unsigned long event, void *data)
-> +{
-> +	struct clk_notifier_data *ndata = data;
-> +	struct sifive_pwm_device *pwm =
-> +		container_of(nb, struct sifive_pwm_device, notifier);
-> +
-> +	if (event == POST_RATE_CHANGE)
-> +		sifive_pwm_update_clock(pwm, ndata->new_rate);
-
-Does this need locking? (Maybe not with the current state.)
-
-> +
-> +	return NOTIFY_OK;
-> +}
-> +
-> +static int sifive_pwm_probe(struct platform_device *pdev)
-> +{
-> +	struct device *dev = &pdev->dev;
-> +	struct device_node *node = pdev->dev.of_node;
-> +	struct sifive_pwm_device *pwm;
-> +	struct pwm_chip *chip;
-> +	struct resource *res;
-> +	int ret;
-> +
-> +	pwm = devm_kzalloc(dev, sizeof(*pwm), GFP_KERNEL);
-> +	if (!pwm)
-> +		return -ENOMEM;
-> +
-> +	chip = &pwm->chip;
-> +	chip->dev = dev;
-> +	chip->ops = &sifive_pwm_ops;
-> +	chip->of_xlate = sifive_pwm_xlate;
-> +	chip->of_pwm_n_cells = 2;
-> +	chip->base = -1;
-> +	chip->npwm = 4;
-> +
-> +	ret = of_property_read_u32(node, "sifive,approx-period-ns",
-> +				   &pwm->approx_period);
-> +	if (ret < 0) {
-> +		dev_err(dev, "Unable to read sifive,approx-period from DTS\n");
-> +		return ret;
-> +	}
-> +
-> +	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-> +	pwm->regs = devm_ioremap_resource(dev, res);
-> +	if (IS_ERR(pwm->regs)) {
-> +		dev_err(dev, "Unable to map IO resources\n");
-> +		return PTR_ERR(pwm->regs);
-> +	}
-> +
-> +	pwm->clk = devm_clk_get(dev, NULL);
-> +	if (IS_ERR(pwm->clk)) {
-> +		if (PTR_ERR(pwm->clk) != -EPROBE_DEFER)
-> +			dev_err(dev, "Unable to find controller clock\n");
-> +		return PTR_ERR(pwm->clk);
-> +	}
-> +
-> +	ret = clk_prepare_enable(pwm->clk);
-> +	if (ret) {
-> +		dev_err(dev, "failed to enable clock for pwm: %d\n", ret);
-> +		return ret;
-> +	}
-> +
-> +	/* Watch for changes to underlying clock frequency */
-> +	pwm->notifier.notifier_call = sifive_pwm_clock_notifier;
-> +	ret = clk_notifier_register(pwm->clk, &pwm->notifier);
-> +	if (ret) {
-> +		dev_err(dev, "failed to register clock notifier: %d\n", ret);
-> +		clk_disable_unprepare(pwm->clk);
-> +		return ret;
-> +	}
-> +
-> +	/* Initialize PWM config */
-> +	sifive_pwm_update_clock(pwm, clk_get_rate(pwm->clk));
-> +
-> +	ret = pwmchip_add(chip);
-> +	if (ret < 0) {
-> +		dev_err(dev, "cannot register PWM: %d\n", ret);
-> +		clk_notifier_unregister(pwm->clk, &pwm->notifier);
-> +		clk_disable_unprepare(pwm->clk);
-> +		return ret;
-> +	}
-
-Can you please use a common error path using goto?
-
-> +	platform_set_drvdata(pdev, pwm);
-> +	dev_dbg(dev, "SiFive PWM chip registered %d PWMs\n", chip->npwm);
-> +
-> +	return 0;
-> +}
-> +
-> +static int sifive_pwm_remove(struct platform_device *dev)
-> +{
-> +	struct sifive_pwm_device *pwm = platform_get_drvdata(dev);
-> +	int ret;
-> +
-> +	ret = pwmchip_remove(&pwm->chip);
-> +	clk_notifier_unregister(pwm->clk, &pwm->notifier);
-> +	clk_disable_unprepare(pwm->clk);
-> +	return ret;
-> +}
-> +
-> +static const struct of_device_id sifive_pwm_of_match[] = {
-> +	{ .compatible = "sifive,pwm0" },
-> +	{ .compatible = "sifive,fu540-c000-pwm" },
-
-Do you really need both compatible strings here?
-
-> +	{},
-> +};
-> +MODULE_DEVICE_TABLE(of, sifive_pwm_of_match);
-> +
-> +static struct platform_driver sifive_pwm_driver = {
-> +	.probe = sifive_pwm_probe,
-> +	.remove = sifive_pwm_remove,
-> +	.driver = {
-> +		.name = "pwm-sifive",
-> +		.of_match_table = sifive_pwm_of_match,
-> +	},
-> +};
-> +module_platform_driver(sifive_pwm_driver);
-> +
-> +MODULE_DESCRIPTION("SiFive PWM driver");
-> +MODULE_LICENSE("GPL v2");
-
-Best regards
-Uwe
-
--- 
-Pengutronix e.K.                           | Uwe Kleine-König            |
-Industrial Linux Solutions                 | http://www.pengutronix.de/  |
+Jason
