@@ -2,139 +2,123 @@ Return-Path: <SRS0=RZO6=PX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 59059C43612
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 21:49:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C9EEDC43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 21:51:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2A4832086D
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 21:49:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 93F9C20859
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 21:51:56 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="fhuRoVoN"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MTVV/WXX"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390707AbfAOVtu (ORCPT
+        id S2390720AbfAOVvz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 15 Jan 2019 16:49:50 -0500
-Received: from userp2130.oracle.com ([156.151.31.86]:60110 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728421AbfAOVtu (ORCPT
+        Tue, 15 Jan 2019 16:51:55 -0500
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:38269 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728421AbfAOVvy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Jan 2019 16:49:50 -0500
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id x0FLhbpp085677;
-        Tue, 15 Jan 2019 21:49:28 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=content-type :
- mime-version : subject : from : in-reply-to : date : cc :
- content-transfer-encoding : message-id : references : to;
- s=corp-2018-07-02; bh=So4aQpKxn5AcekOBF97kodu8T+sAUHZ32duZfNiBY5o=;
- b=fhuRoVoNXgU1/atTfMZJM9IdmPCIhnwoW23MofQodCqzITJAXZZFy8t2/p9aSqcDeXKK
- eseD+F9BiFgjLUzp7onBegbQsLZoxgdJpmP5ECK15uKQw/ebDK25Tk9Glc/EG0sgFZcU
- LTxYpaarmnnkGwxf6tXBw25u/LU/sIfhwx/+7n5iyThHkS04lxXz0hgrQMSwaYbKIU4b
- E7ss2T4gHxHbaTk7eJWxR0DCfbqIiNDEFkDFX03MS1cIH80nlUQAFEqnfzXMwLPyI1Nz
- 5MNiA5v4D82qzPWJVrxpZIXQnUC95GqxGv9DEMm5zVZjF/+lbbDcNnA7wB+LX8sKCCRJ 7w== 
-Received: from aserv0021.oracle.com (aserv0021.oracle.com [141.146.126.233])
-        by userp2130.oracle.com with ESMTP id 2pybkcefvj-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 15 Jan 2019 21:49:28 +0000
-Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
-        by aserv0021.oracle.com (8.14.4/8.14.4) with ESMTP id x0FLnMou024365
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 15 Jan 2019 21:49:22 GMT
-Received: from abhmp0004.oracle.com (abhmp0004.oracle.com [141.146.116.10])
-        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x0FLnJxl027679;
-        Tue, 15 Jan 2019 21:49:19 GMT
-Received: from anon-dhcp-171.1015granger.net (/68.61.232.219)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Tue, 15 Jan 2019 13:49:19 -0800
-Content-Type: text/plain;
-        charset=us-ascii
-Mime-Version: 1.0 (Mac OS X Mail 11.5 \(3445.9.1\))
-Subject: Re: [PATCH net-next] svcrdma: Use struct_size() in kmalloc()
-From:   Chuck Lever <chuck.lever@oracle.com>
-In-Reply-To: <20190115211140.GA16131@embeddedor>
-Date:   Tue, 15 Jan 2019 16:49:16 -0500
-Cc:     Trond Myklebust <trond.myklebust@hammerspace.com>,
-        Anna Schumaker <anna.schumaker@netapp.com>,
-        Bruce Fields <bfields@fieldses.org>,
-        Jeff Layton <jlayton@kernel.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Linux NFS Mailing List <linux-nfs@vger.kernel.org>,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <F652FEF1-0FD7-4FFD-80D4-44DBC2FF47B5@oracle.com>
-References: <20190115211140.GA16131@embeddedor>
-To:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-X-Mailer: Apple Mail (2.3445.9.1)
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9137 signatures=668682
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1810050000 definitions=main-1901150173
+        Tue, 15 Jan 2019 16:51:54 -0500
+Received: by mail-pl1-f196.google.com with SMTP id e5so1917912plb.5
+        for <linux-kernel@vger.kernel.org>; Tue, 15 Jan 2019 13:51:54 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=NdJedp0UD2W8veIkEmLgejKEG+swxrNiJK8NG8I/bAA=;
+        b=MTVV/WXX4jYAEPk6avZ3vtWixED55Wi3ZTppB2SY5RywAbB+q6rgyQlVJZAkznuoex
+         PdMAA62lRCPeE7teV/zSuK12fB7SbnklotQSFQaqkZZv26rs4lLeb+QC8++m1Bgq4r2T
+         1NfVbgmaoKfK3CrBmev5d799ifaHBWa1UQqZ8GfiaoC2wLALbvl14SeNIeLD3R7lGtlT
+         C3RWiv5otCc6oK+ZDnLgIXTmhSSoKeSu53MfYLQLxqSVOtaQ2IOKIPVrf6Lz0+4hnmnI
+         z1k1/izUqIzXWAHFhkENV+E3zokUZ8fwEJDXSTdq8jOq0bw3fQTqFWqlwMQ0is0XrlxH
+         RdJw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=NdJedp0UD2W8veIkEmLgejKEG+swxrNiJK8NG8I/bAA=;
+        b=cKuvWUn3dSxdlLsdcC2pNV29ymuGkQJH3xWCDAg+tHMEzG9mDMX3jX7qOKgy6zpkyK
+         Gd7Veo+wWBQY9F01ydhWrybgxi4i8lfJUJvfCi+fQ8OlM8siyc1q1UL8Rtvlvx/jBG7b
+         PuspvPvd5jdOG2L1+q5QPMIw3xdsZssK5btVyKYTVjE71sBTNCWUI9KFQ7zeegt+60jz
+         u5CIGzOyAaac6dtGqse7Nu1bF6RDOR0x14lPrb7wo4gVC2wefe9xyZA0LtJcTnGLJRu1
+         ifJJ6gRihnPQK5XrJXzDR2PrwS+5+WtdO+odyDi4Xn7itndIbZWz5K/Md1dqmO468tAL
+         9rhA==
+X-Gm-Message-State: AJcUukffxKygtpfwHIPYBdD0zwTXtplfbqvBFgGQEKjq0w2OragZ8opo
+        goQJdLLn2Vq5l4XTMCj1Ioc=
+X-Google-Smtp-Source: ALg8bN58TtikPOEi1lNh8yIje+tWz3ztFoVfm/nxsJwqJRtVs7xrbwyO0z6P1Mf6TqIdha4SDnJwhQ==
+X-Received: by 2002:a17:902:3064:: with SMTP id u91mr6192681plb.325.1547589113395;
+        Tue, 15 Jan 2019 13:51:53 -0800 (PST)
+Received: from Asurada-Nvidia.nvidia.com (thunderhill.nvidia.com. [216.228.112.22])
+        by smtp.gmail.com with ESMTPSA id c13sm4722116pfo.121.2019.01.15.13.51.52
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 15 Jan 2019 13:51:52 -0800 (PST)
+From:   Nicolin Chen <nicoleotsuka@gmail.com>
+To:     hch@lst.de, m.szyprowski@samsung.com, robin.murphy@arm.com
+Cc:     vdumpa@nvidia.com, iommu@lists.linux-foundation.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v2] dma-direct: do not allocate a single page from CMA area
+Date:   Tue, 15 Jan 2019 13:51:40 -0800
+Message-Id: <20190115215140.1545-1-nicoleotsuka@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+The addresses within a single page are always contiguous, so it's
+not so necessary to allocate one single page from CMA area. Since
+the CMA area has a limited predefined size of space, it might run
+out of space in some heavy use case, where there might be quite a
+lot CMA pages being allocated for single pages.
 
+This patch tries to skip CMA allocations of single pages and lets
+them go through normal page allocations unless the allocation has
+a DMA_ATTR_FORCE_CONTIGUOUS attribute. This'd save some resources
+in the CMA area for further more CMA allocations, and it can also
+reduce CMA fragmentations resulted from trivial allocations.
 
-On Jan 15, 2019, at 4:11 PM, Gustavo A. R. Silva =
-<gustavo@embeddedor.com> wrote:
+Signed-off-by: Nicolin Chen <nicoleotsuka@gmail.com>
+---
+Robin/Christoph,
 
-> One of the more common cases of allocation size calculations is =
-finding
-> the size of a structure that has a zero-sized array at the end, along
-> with memory for some number of elements for that array. For example:
->=20
-> struct foo {
->    int stuff;
->    struct boo entry[];
-> };
->=20
-> instance =3D kmalloc(sizeof(struct foo) + count * sizeof(struct boo), =
-GFP_KERNEL);
->=20
-> Instead of leaving these open-coded and prone to type mistakes, we can
-> now use the new struct_size() helper:
->=20
-> instance =3D kmalloc(struct_size(instance, entry, count), GFP_KERNEL);
->=20
-> This code was detected with the help of Coccinelle.
->=20
-> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+I have some personal priority to submit this patch. I understand
+you might have other plan to clean up the code first. Just would
+it be possible for you to review and apply this one if it doesn't
+conflict too much? Thanks!
 
-Reviewed-by: Chuck Lever <chuck.lever@oracle.com>
+Changelog
+v1->v2:
+ * Added DMA_ATTR_FORCE_CONTIGUOUS flag check so as to enforce
+   CMA allocations if callers specified.
+ * Added to the commit message the reduction of fragmentations
+   suggested by Robin.
 
+ kernel/dma/direct.c | 10 ++++++++--
+ 1 file changed, 8 insertions(+), 2 deletions(-)
 
-> ---
-> net/sunrpc/xprtrdma/svc_rdma_rw.c | 3 +--
-> 1 file changed, 1 insertion(+), 2 deletions(-)
->=20
-> diff --git a/net/sunrpc/xprtrdma/svc_rdma_rw.c =
-b/net/sunrpc/xprtrdma/svc_rdma_rw.c
-> index dc1951759a8e..cad37c2122ab 100644
-> --- a/net/sunrpc/xprtrdma/svc_rdma_rw.c
-> +++ b/net/sunrpc/xprtrdma/svc_rdma_rw.c
-> @@ -64,8 +64,7 @@ svc_rdma_get_rw_ctxt(struct svcxprt_rdma *rdma, =
-unsigned int sges)
-> 		spin_unlock(&rdma->sc_rw_ctxt_lock);
-> 	} else {
-> 		spin_unlock(&rdma->sc_rw_ctxt_lock);
-> -		ctxt =3D kmalloc(sizeof(*ctxt) +
-> -			       SG_CHUNK_SIZE * sizeof(struct =
-scatterlist),
-> +		ctxt =3D kmalloc(struct_size(ctxt, rw_first_sgl, =
-SG_CHUNK_SIZE),
-> 			       GFP_KERNEL);
-> 		if (!ctxt)
-> 			goto out;
-> --=20
-> 2.20.1
-
---
-Chuck Lever
-
-
+diff --git a/kernel/dma/direct.c b/kernel/dma/direct.c
+index 355d16acee6d..5d57f99b2edf 100644
+--- a/kernel/dma/direct.c
++++ b/kernel/dma/direct.c
+@@ -109,8 +109,14 @@ struct page *__dma_direct_alloc_pages(struct device *dev, size_t size,
+ 	gfp |= __dma_direct_optimal_gfp_mask(dev, dev->coherent_dma_mask,
+ 			&phys_mask);
+ again:
+-	/* CMA can be used only in the context which permits sleeping */
+-	if (gfpflags_allow_blocking(gfp)) {
++	/*
++	 * CMA can be used only in the context which permits sleeping.
++	 * Since addresses within one PAGE are always contiguous, skip
++	 * CMA allocation for a single page to save CMA reserved space
++	 * unless DMA_ATTR_FORCE_CONTIGUOUS is flagged.
++	 */
++	if (gfpflags_allow_blocking(gfp) &&
++	    (count > 1 || attrs & DMA_ATTR_FORCE_CONTIGUOUS)) {
+ 		page = dma_alloc_from_contiguous(dev, count, page_order,
+ 						 gfp & __GFP_NOWARN);
+ 		if (page && !dma_coherent_ok(dev, page_to_phys(page), size)) {
+-- 
+2.17.1
 
