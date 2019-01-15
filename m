@@ -2,122 +2,160 @@ Return-Path: <SRS0=RZO6=PX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 82864C43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 07:25:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D2EAC43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 07:26:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 50CE220873
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 07:25:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547537157;
-	bh=d2SNeEmwummT8hH3SF8+VtwoLO6nLeQjw/O4Ivaxx5E=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=JrX/6AjkM5MAfOnaUhgEQCpMRdBrTrYBEGqHYhfYR08Ln8tYMoM6hx31sgOuhciHp
-	 SdjRItwc9SH8NR60x4PeIn6NzaWJOl0P4XaSFZPNnZPUhZT8YTTwnMsEESXVFUoFwc
-	 3xAyALtM204IFqcQOc+AuXla3eGuxczvXta6Mz6s=
+	by mail.kernel.org (Postfix) with ESMTP id E7D5420656
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 07:26:05 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ravfEcEV"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728131AbfAOHZz (ORCPT
+        id S1728145AbfAOH0E (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 15 Jan 2019 02:25:55 -0500
-Received: from mx2.suse.de ([195.135.220.15]:39634 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727273AbfAOHZz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Jan 2019 02:25:55 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 25FDCAC8A;
-        Tue, 15 Jan 2019 07:25:53 +0000 (UTC)
-Date:   Tue, 15 Jan 2019 08:25:51 +0100
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Shakeel Butt <shakeelb@google.com>
-Cc:     Johannes Weiner <hannes@cmpxchg.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Vladimir Davydov <vdavydov.dev@gmail.com>,
-        Cgroups <cgroups@vger.kernel.org>, Linux MM <linux-mm@kvack.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v3] memcg: schedule high reclaim for remote memcgs on
- high_work
-Message-ID: <20190115072551.GO21345@dhcp22.suse.cz>
-References: <20190110174432.82064-1-shakeelb@google.com>
- <20190111205948.GA4591@cmpxchg.org>
- <CALvZod7O2CJuhbuLUy9R-E4dTgL4WBg8CayW_AFnCCG6KCDjUA@mail.gmail.com>
- <20190113183402.GD1578@dhcp22.suse.cz>
- <CALvZod6paX4_vtgP8AJm5PmW_zA_ecLLP2qTvQz8rRyKticgDg@mail.gmail.com>
+        Tue, 15 Jan 2019 02:26:04 -0500
+Received: from mail-it1-f193.google.com ([209.85.166.193]:40901 "EHLO
+        mail-it1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727231AbfAOH0D (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 Jan 2019 02:26:03 -0500
+Received: by mail-it1-f193.google.com with SMTP id h193so3089647ita.5
+        for <linux-kernel@vger.kernel.org>; Mon, 14 Jan 2019 23:26:03 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=XJlg7UDv823W51FZR5L9hQOxxuEOpYTa3DBA12ck1aU=;
+        b=ravfEcEVjc1PWtNHe5JFNQpvrDPHkP7/913XlgPu4Lo65Qpi7M4y+0Hx3zbCAuRd5c
+         gljum53+MwHk9zKIYmQK0HswGkN2GpeEbz6rtYRyXOW49f7BvDuoKRsDFYhoqCCmtwH/
+         YYuAwOpTXEt1nJhXZJEQu7XFyvXtBLPXhEiRDtXbIEFlQaNDt5glkBT1a6GqwWyV7SFf
+         4f8/u4z1IHe9LslaLQZtxWuToviE2IWbrktRxtDs47zq8oEqrcYq5jxsm0uKuFA5dL7z
+         zrA8b2uoDFGiTEIXhQHFNSGSXgYtyscjVtrFuhLiehdFZTbyrpSbIyi+Y3SFhvdDWOTD
+         qs2g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=XJlg7UDv823W51FZR5L9hQOxxuEOpYTa3DBA12ck1aU=;
+        b=qdqwi/0L2iHCGs534/oskluWxn9KtVTG0GlMBSN5B1J1uQsTuxRCR4mM9TDxhf0DSz
+         KmEAu+avzpCUIJjufGQKJ3I6ZACxiYDx+G2Vf9ntiCQ7+k89hv48O330PHFO6hupvUO+
+         NJNgajSs13RWl/F/rlKk2AlOj2XSLXX3LfPcKryLEP+v5wgP18TkXLjoxVdiUwloe4fn
+         BP9606RINPYi67R0MhTPEqtvz5YF+VjE5G7Kr0rUk8i7Kptfx8E1xj0JQYtUpZy9a3wx
+         OeJIpB24dBwPRU09G2oYgNRstjXDNHsg6FFYKa2Pj8UDzjrE282FtBgMnuP7HTo2ndqX
+         HpKg==
+X-Gm-Message-State: AJcUukeOYNTseV1qB0VKEpkzAY+01I/47cNWWxcNlEYKeE7kAuK3KbKa
+        Au6ZMKu7aXJc9PyBxC3Zba+0Kbvgff7oZ7ao25D0gg==
+X-Google-Smtp-Source: ALg8bN6YwqPFj4vZ8gQa/IMFGLXOomw5FoQoxDAjYLZwlX4XMCYOudW9/yWBmkcSKEQtLmarYinnVvK17onysjZsjuk=
+X-Received: by 2002:a02:ac8c:: with SMTP id x12mr1237735jan.72.1547537162534;
+ Mon, 14 Jan 2019 23:26:02 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CALvZod6paX4_vtgP8AJm5PmW_zA_ecLLP2qTvQz8rRyKticgDg@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <000000000000f49537057f77cb00@google.com>
+In-Reply-To: <000000000000f49537057f77cb00@google.com>
+From:   Dmitry Vyukov <dvyukov@google.com>
+Date:   Tue, 15 Jan 2019 08:25:51 +0100
+Message-ID: <CACT4Y+Zj0h69KdTKD8N7bcpJF4AMyDK0WGEQ8uueL5Nf3DC1YQ@mail.gmail.com>
+Subject: Re: KASAN: use-after-scope Read in corrupted
+To:     syzbot <syzbot+bd36b7dd9330f67037ab@syzkaller.appspotmail.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>, Qian Cai <cai@lca.pw>,
+        Chris von Recklinghausen <crecklin@redhat.com>,
+        Kees Cook <keescook@chromium.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linux-MM <linux-mm@kvack.org>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon 14-01-19 12:18:07, Shakeel Butt wrote:
-> On Sun, Jan 13, 2019 at 10:34 AM Michal Hocko <mhocko@kernel.org> wrote:
-> >
-> > On Fri 11-01-19 14:54:32, Shakeel Butt wrote:
-> > > Hi Johannes,
-> > >
-> > > On Fri, Jan 11, 2019 at 12:59 PM Johannes Weiner <hannes@cmpxchg.org> wrote:
-> > > >
-> > > > Hi Shakeel,
-> > > >
-> > > > On Thu, Jan 10, 2019 at 09:44:32AM -0800, Shakeel Butt wrote:
-> > > > > If a memcg is over high limit, memory reclaim is scheduled to run on
-> > > > > return-to-userland.  However it is assumed that the memcg is the current
-> > > > > process's memcg.  With remote memcg charging for kmem or swapping in a
-> > > > > page charged to remote memcg, current process can trigger reclaim on
-> > > > > remote memcg.  So, schduling reclaim on return-to-userland for remote
-> > > > > memcgs will ignore the high reclaim altogether. So, record the memcg
-> > > > > needing high reclaim and trigger high reclaim for that memcg on
-> > > > > return-to-userland.  However if the memcg is already recorded for high
-> > > > > reclaim and the recorded memcg is not the descendant of the the memcg
-> > > > > needing high reclaim, punt the high reclaim to the work queue.
-> > > >
-> > > > The idea behind remote charging is that the thread allocating the
-> > > > memory is not responsible for that memory, but a different cgroup
-> > > > is. Why would the same thread then have to work off any high excess
-> > > > this could produce in that unrelated group?
-> > > >
-> > > > Say you have a inotify/dnotify listener that is restricted in its
-> > > > memory use - now everybody sending notification events from outside
-> > > > that listener's group would get throttled on a cgroup over which it
-> > > > has no control. That sounds like a recipe for priority inversions.
-> > > >
-> > > > It seems to me we should only do reclaim-on-return when current is in
-> > > > the ill-behaved cgroup, and punt everything else - interrupts and
-> > > > remote charges - to the workqueue.
-> > >
-> > > This is what v1 of this patch was doing but Michal suggested to do
-> > > what this version is doing. Michal's argument was that the current is
-> > > already charging and maybe reclaiming a remote memcg then why not do
-> > > the high excess reclaim as well.
-> >
-> > Johannes has a good point about the priority inversion problems which I
-> > haven't thought about.
-> >
-> > > Personally I don't have any strong opinion either way. What I actually
-> > > wanted was to punt this high reclaim to some process in that remote
-> > > memcg. However I didn't explore much on that direction thinking if
-> > > that complexity is worth it. Maybe I should at least explore it, so,
-> > > we can compare the solutions. What do you think?
-> >
-> > My question would be whether we really care all that much. Do we know of
-> > workloads which would generate a large high limit excess?
-> >
-> 
-> The current semantics of memory.high is that it can be breached under
-> extreme conditions. However any workload where memory.high is used and
-> a lot of remote memcg charging happens (inotify/dnotify example given
-> by Johannes or swapping in tmpfs file or shared memory region) the
-> memory.high breach will become common.
+On Tue, Jan 15, 2019 at 5:43 AM syzbot
+<syzbot+bd36b7dd9330f67037ab@syzkaller.appspotmail.com> wrote:
+>
+> Hello,
+>
+> syzbot found the following crash on:
+>
+> HEAD commit:    1bdbe2274920 Merge tag 'vfio-v5.0-rc2' of git://github.co=
+m..
+> git tree:       upstream
+> console output: https://syzkaller.appspot.com/x/log.txt?x=3D1519d39f40000=
+0
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=3Dedf1c3031097c=
+304
+> dashboard link: https://syzkaller.appspot.com/bug?extid=3Dbd36b7dd9330f67=
+037ab
+> compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=3D10fce14f400=
+000
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=3D110b201740000=
+0
 
-This is exactly what I am asking about. Is this something that can
-happen easily? Remote charges on themselves should be rare, no?
--- 
-Michal Hocko
-SUSE Labs
+Based on the reproducer this is:
+
+#syz dup: kernel panic: stack is corrupted in udp4_lib_lookup2
+
+
+> IMPORTANT: if you fix the bug, please add the following tag to the commit=
+:
+> Reported-by: syzbot+bd36b7dd9330f67037ab@syzkaller.appspotmail.com
+>
+> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> BUG: KASAN: use-after-scope in debug_lockdep_rcu_enabled.part.0+0x50/0x60
+> kernel/rcu/update.c:249
+> Read of size 4 at addr ffff8880a945eabc by task
+> `9=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD#=EF=BF=BD(  =EF=
+=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD<=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=
+=BF=BD=EF=BF=BD  k=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=
+=BF=BDE=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD>9h=EF=BF=BD=EF=BF=BD=
+=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BDA/-2122188634
+>
+> CPU: 0 PID: -2122188634 Comm: =EF=BF=BD=EF=BF=BDE=EF=BF=BD=EF=BF=BD=EF=BF=
+=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=
+=EF=BF=BD=EF=BF=BDO2=EF=BF=BD Not tainted 5.0.0-rc1+
+> #19
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
+> Google 01/01/2011
+> ------------[ cut here ]------------
+> Bad or missing usercopy whitelist? Kernel memory overwrite attempt detect=
+ed
+> to SLAB object 'task_struct' (offset 1344, size 8)!
+> WARNING: CPU: 0 PID: -1455036288 at mm/usercopy.c:78
+> usercopy_warn+0xeb/0x110 mm/usercopy.c:78
+> Kernel panic - not syncing: panic_on_warn set ...
+> CPU: 0 PID: -1455036288 Comm: =EF=BF=BD=EF=BF=BDE=EF=BF=BD=EF=BF=BD=EF=BF=
+=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=
+=EF=BF=BD=EF=BF=BDO2=EF=BF=BD Not tainted 5.0.0-rc1+
+> #19
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
+> Google 01/01/2011
+> Call Trace:
+> Kernel Offset: disabled
+> Rebooting in 86400 seconds..
+>
+>
+> ---
+> This bug is generated by a bot. It may contain errors.
+> See https://goo.gl/tpsmEJ for more information about syzbot.
+> syzbot engineers can be reached at syzkaller@googlegroups.com.
+>
+> syzbot will keep track of this bug report. See:
+> https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with
+> syzbot.
+> syzbot can test patches for this bug, for details see:
+> https://goo.gl/tpsmEJ#testing-patches
+>
+> --
+> You received this message because you are subscribed to the Google Groups=
+ "syzkaller-bugs" group.
+> To unsubscribe from this group and stop receiving emails from it, send an=
+ email to syzkaller-bugs+unsubscribe@googlegroups.com.
+> To view this discussion on the web visit https://groups.google.com/d/msgi=
+d/syzkaller-bugs/000000000000f49537057f77cb00%40google.com.
+> For more options, visit https://groups.google.com/d/optout.
