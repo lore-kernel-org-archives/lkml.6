@@ -7,46 +7,46 @@ X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B9CCC43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 16:53:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 99C63C43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 16:53:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4B31C20645
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 16:53:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6068120645
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 16:53:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547571187;
-	bh=5ncq41RYGvHr9PvVIHoGKoKImc2WcR6TlPwNKqVhmVA=;
+	s=default; t=1547571198;
+	bh=RrA0arMF/Nz22sS6k0+LWbGPU/NOg5lL39yaPkHh5NM=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=lIJm4LjQhkjqPZENgstCh0skgkG9Q58xMmK0OpPIaFAryz6cnJr29W4W2mBu2r/8N
-	 rjy8zodwiVo7snfUyAQ5ilu7rCrehfM5I1Bec076B8vVwU00DcjrIjhYUQq+0FUzh5
-	 Hnq0NaoCc9oykMberpCDPZvcb1miL17UjB7Q81lg=
+	b=q62ApB0NvHWtlRS1HXg5QDXWITSXUiZnA9XNEnRzTSb5onfkuUr99Qj1iot/PEFiz
+	 6hAZgBLyBWAUoaIK99yFnlVkDaopyPViXD62aapF/OaGEw9Jq7ai1WprT4bo6u2h3a
+	 fVqRvWs/eH9EOSZsark1vqDWnhdp5QX/UY3co0lo=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732143AbfAOQxG (ORCPT
+        id S1732987AbfAOQxQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 15 Jan 2019 11:53:06 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33448 "EHLO mail.kernel.org"
+        Tue, 15 Jan 2019 11:53:16 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33312 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387417AbfAOQnz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Jan 2019 11:43:55 -0500
+        id S1730681AbfAOQnq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 Jan 2019 11:43:46 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4A6F72054F;
-        Tue, 15 Jan 2019 16:43:54 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 70E642054F;
+        Tue, 15 Jan 2019 16:43:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547570634;
-        bh=5ncq41RYGvHr9PvVIHoGKoKImc2WcR6TlPwNKqVhmVA=;
+        s=default; t=1547570625;
+        bh=RrA0arMF/Nz22sS6k0+LWbGPU/NOg5lL39yaPkHh5NM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=1AylTMYHPfZAqWUOO0z/aM7tbiNqo+L4z1FE9eWyjSqWUJq1sOxpH2gSU4oRJhdng
-         VEXQ9HkyTwBjljU3c1L8mYiFxLEoi+N5MqIhRg2vtt1nF/4r4NZUDgwcCVm4uMCqnc
-         81GDC5SmnHcZVSIVEsut1XE5RlQfmMJUZxGfYYhQ=
+        b=P+1pGGUoaxTzk/2WPwo7cTxpQY7p+bmnk9MVooePWZlQsnrNHUsoBVi/eia0023Ya
+         luxSbVOsyTRZw2muYSOhfnT0lmFTG3XKgJGBH+olnu7kFwMBPlIBia9ZFxD/b/g0OE
+         n8H9ag0o2kudug3cBA86tPrMaRp8xcn3ZzSzuFP0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Ross Lagerwall <ross.lagerwall@citrix.com>,
+        stable@vger.kernel.org, Pavel Shilovsky <pshilov@microsoft.com>,
         Steve French <stfrench@microsoft.com>
-Subject: [PATCH 4.20 16/57] cifs: Fix potential OOB access of lock element array
-Date:   Tue, 15 Jan 2019 17:35:57 +0100
-Message-Id: <20190115154911.634403832@linuxfoundation.org>
+Subject: [PATCH 4.20 13/57] CIFS: Do not set credits to 1 if the server didnt grant anything
+Date:   Tue, 15 Jan 2019 17:35:54 +0100
+Message-Id: <20190115154911.473305262@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190115154910.734892368@linuxfoundation.org>
 References: <20190115154910.734892368@linuxfoundation.org>
@@ -65,65 +65,35 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Ross Lagerwall <ross.lagerwall@citrix.com>
+From: Pavel Shilovsky <pshilov@microsoft.com>
 
-commit b9a74cde94957d82003fb9f7ab4777938ca851cd upstream.
+commit 33fa5c8b8a7dbe6353a56eaa654b790348890d42 upstream.
 
-If maxBuf is small but non-zero, it could result in a zero sized lock
-element array which we would then try and access OOB.
+Currently we reset the number of total credits granted by the server
+to 1 if the server didn't grant us anything int the response. This
+violates the SMB3 protocol - we need to trust the server and use
+the credit values from the response. Fix this by removing the
+corresponding code.
 
-Signed-off-by: Ross Lagerwall <ross.lagerwall@citrix.com>
+Signed-off-by: Pavel Shilovsky <pshilov@microsoft.com>
 Signed-off-by: Steve French <stfrench@microsoft.com>
 CC: Stable <stable@vger.kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/cifs/file.c     |    8 ++++----
- fs/cifs/smb2file.c |    4 ++--
- 2 files changed, 6 insertions(+), 6 deletions(-)
+ fs/cifs/transport.c |    2 --
+ 1 file changed, 2 deletions(-)
 
---- a/fs/cifs/file.c
-+++ b/fs/cifs/file.c
-@@ -1131,10 +1131,10 @@ cifs_push_mandatory_locks(struct cifsFil
+--- a/fs/cifs/transport.c
++++ b/fs/cifs/transport.c
+@@ -892,8 +892,6 @@ compound_send_recv(const unsigned int xi
+ 	for (i = 0; i < num_rqst; i++)
+ 		if (midQ[i]->resp_buf)
+ 			credits += ses->server->ops->get_credits(midQ[i]);
+-	if (!credits)
+-		credits = 1;
  
- 	/*
- 	 * Accessing maxBuf is racy with cifs_reconnect - need to store value
--	 * and check it for zero before using.
-+	 * and check it before using.
- 	 */
- 	max_buf = tcon->ses->server->maxBuf;
--	if (!max_buf) {
-+	if (max_buf < (sizeof(struct smb_hdr) + sizeof(LOCKING_ANDX_RANGE))) {
- 		free_xid(xid);
- 		return -EINVAL;
- 	}
-@@ -1471,10 +1471,10 @@ cifs_unlock_range(struct cifsFileInfo *c
- 
- 	/*
- 	 * Accessing maxBuf is racy with cifs_reconnect - need to store value
--	 * and check it for zero before using.
-+	 * and check it before using.
- 	 */
- 	max_buf = tcon->ses->server->maxBuf;
--	if (!max_buf)
-+	if (max_buf < (sizeof(struct smb_hdr) + sizeof(LOCKING_ANDX_RANGE)))
- 		return -EINVAL;
- 
- 	max_num = (max_buf - sizeof(struct smb_hdr)) /
---- a/fs/cifs/smb2file.c
-+++ b/fs/cifs/smb2file.c
-@@ -122,10 +122,10 @@ smb2_unlock_range(struct cifsFileInfo *c
- 
- 	/*
- 	 * Accessing maxBuf is racy with cifs_reconnect - need to store value
--	 * and check it for zero before using.
-+	 * and check it before using.
- 	 */
- 	max_buf = tcon->ses->server->maxBuf;
--	if (!max_buf)
-+	if (max_buf < sizeof(struct smb2_lock_element))
- 		return -EINVAL;
- 
- 	max_num = max_buf / sizeof(struct smb2_lock_element);
+ 	for (i = 0; i < num_rqst; i++) {
+ 		if (rc < 0)
 
 
