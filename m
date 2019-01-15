@@ -4,49 +4,49 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5057BC43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 16:38:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D3984C43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 16:38:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1953D2087E
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 16:38:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A3F3820873
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 16:38:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547570329;
-	bh=Zwi+oRvU88y+FQGDFnwaTRKc+z1ifsN7OGj8AkAl4QM=;
+	s=default; t=1547570330;
+	bh=k7h4v3y7zgj1UsYcZIAYvf0mq060MyYe/uemN1dc18w=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=YtmgjjGZsnTCtbSBVUHUXwx6sNhXD+Z6p3NstFDKfZpsB6X0siAvom37GGuzbzGG1
-	 yjxOTXWO9anDfhZA/XudmJ20Ai+uFttjUE0ya/dwcgjs8sXOEXt1QtJxYqUP06T953
-	 q34kXGQomjGgzBx/YDGKxMgC9OQOXTokmOqQDIJQ=
+	b=E2CuSX6xjvso/1ZTPLtGf69hkhSn268wJOv1WdazK0oCYnpecKH4VhDpmTVwqmAgi
+	 l2sdOzL4YQiIesAk8lf7WCG6RrD3PTOJqc4CEXhoGMcWmZU1Q7qj7TLTWhdrheISZl
+	 Z94Qj1u93yq8FqilyRQBf0hm908WfUEZye96C75E=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732185AbfAOQir (ORCPT
+        id S1732197AbfAOQit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 15 Jan 2019 11:38:47 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54730 "EHLO mail.kernel.org"
+        Tue, 15 Jan 2019 11:38:49 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54788 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732167AbfAOQio (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Jan 2019 11:38:44 -0500
+        id S1732183AbfAOQir (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 Jan 2019 11:38:47 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7D23A20873;
-        Tue, 15 Jan 2019 16:38:43 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1686320859;
+        Tue, 15 Jan 2019 16:38:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547570324;
-        bh=Zwi+oRvU88y+FQGDFnwaTRKc+z1ifsN7OGj8AkAl4QM=;
+        s=default; t=1547570326;
+        bh=k7h4v3y7zgj1UsYcZIAYvf0mq060MyYe/uemN1dc18w=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=P1cf+M9yNwcpcuDrMTKe5tFQpXmN5fGdEY/s4Sie3OsdpkinJrZLG1epA7jcPkVSn
-         iR/1RriOoByEg5iYdtyIqgl2EGpM7XjLZxAEjTyADQLbC3E2BUpOE6E4dw+Q9j79nq
-         tmq3gu7Q1apDP3Z1RMDXXwUVJtc5BO2r1k2AtEQQ=
+        b=eCTOIt/rRVvQtx3dX4gZ/Ff/geBWLQcBszpJ9g2/TXeKECKpZczYIGIssAlNVt2z/
+         Kjp8YbD9pTiwfAxWLzYyU/yFm5CRhApJosdr1W+jwL1rCHic6UN3IOV/mQaeShM3v2
+         P2Vewklip1rfUaOXtYjcctWDDKGhvkMTIEclKbds=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, linux-crypto@vger.kernel.org,
-        Eric Biggers <ebiggers@google.com>
-Subject: [PATCH 4.4 49/51] crypto: cts - fix crash on short inputs
-Date:   Tue, 15 Jan 2019 17:35:45 +0100
-Message-Id: <20190115154854.089548717@linuxfoundation.org>
+        stable@vger.kernel.org, Theodore Tso <tytso@mit.edu>,
+        stable@kernel.org
+Subject: [PATCH 4.4 50/51] ext4: fix a potential fiemap/page fault deadlock w/ inline_data
+Date:   Tue, 15 Jan 2019 17:35:46 +0100
+Message-Id: <20190115154854.223069122@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190115154846.928796000@linuxfoundation.org>
 References: <20190115154846.928796000@linuxfoundation.org>
@@ -65,55 +65,46 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
+From: Theodore Ts'o <tytso@mit.edu>
 
-From: Eric Biggers <ebiggers@google.com>
+commit 2b08b1f12cd664dc7d5c84ead9ff25ae97ad5491 upstream.
 
-[It's a minimal fix for a bug that was fixed incidentally by a large
-refactoring in v4.8.]
+The ext4_inline_data_fiemap() function calls fiemap_fill_next_extent()
+while still holding the xattr semaphore.  This is not necessary and it
+triggers a circular lockdep warning.  This is because
+fiemap_fill_next_extent() could trigger a page fault when it writes
+into page which triggers a page fault.  If that page is mmaped from
+the inline file in question, this could very well result in a
+deadlock.
 
-In the CTS template, when the input length is <= one block cipher block
-(e.g. <= 16 bytes for AES) pass the correct length to the underlying CBC
-transform rather than one block.  This matches the upstream behavior and
-makes the encryption/decryption operation correctly return -EINVAL when
-1 <= nbytes < bsize or succeed when nbytes == 0, rather than crashing.
+This problem can be reproduced using generic/519 with a file system
+configuration which has the inline_data feature enabled.
 
-This was fixed upstream incidentally by a large refactoring,
-commit 0605c41cc53c ("crypto: cts - Convert to skcipher").  But
-syzkaller easily trips over this when running on older kernels, as it's
-easily reachable via AF_ALG.  Therefore, this patch makes the minimal
-fix for older kernels.
-
-Cc: linux-crypto@vger.kernel.org
-Fixes: 76cb9521795a ("[CRYPTO] cts: Add CTS mode required for Kerberos AES support")
-Signed-off-by: Eric Biggers <ebiggers@google.com>
+Signed-off-by: Theodore Ts'o <tytso@mit.edu>
+Cc: stable@kernel.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- crypto/cts.c |    8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
 
---- a/crypto/cts.c
-+++ b/crypto/cts.c
-@@ -137,8 +137,8 @@ static int crypto_cts_encrypt(struct blk
- 	lcldesc.info = desc->info;
- 	lcldesc.flags = desc->flags;
+---
+ fs/ext4/inline.c |    6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+--- a/fs/ext4/inline.c
++++ b/fs/ext4/inline.c
+@@ -1861,12 +1861,12 @@ int ext4_inline_data_fiemap(struct inode
+ 	physical += (char *)ext4_raw_inode(&iloc) - iloc.bh->b_data;
+ 	physical += offsetof(struct ext4_inode, i_block);
  
--	if (tot_blocks == 1) {
--		err = crypto_blkcipher_encrypt_iv(&lcldesc, dst, src, bsize);
-+	if (tot_blocks <= 1) {
-+		err = crypto_blkcipher_encrypt_iv(&lcldesc, dst, src, nbytes);
- 	} else if (nbytes <= bsize * 2) {
- 		err = cts_cbc_encrypt(ctx, desc, dst, src, 0, nbytes);
- 	} else {
-@@ -232,8 +232,8 @@ static int crypto_cts_decrypt(struct blk
- 	lcldesc.info = desc->info;
- 	lcldesc.flags = desc->flags;
+-	if (physical)
+-		error = fiemap_fill_next_extent(fieinfo, start, physical,
+-						inline_len, flags);
+ 	brelse(iloc.bh);
+ out:
+ 	up_read(&EXT4_I(inode)->xattr_sem);
++	if (physical)
++		error = fiemap_fill_next_extent(fieinfo, start, physical,
++						inline_len, flags);
+ 	return (error < 0 ? error : 0);
+ }
  
--	if (tot_blocks == 1) {
--		err = crypto_blkcipher_decrypt_iv(&lcldesc, dst, src, bsize);
-+	if (tot_blocks <= 1) {
-+		err = crypto_blkcipher_decrypt_iv(&lcldesc, dst, src, nbytes);
- 	} else if (nbytes <= bsize * 2) {
- 		err = cts_cbc_decrypt(ctx, desc, dst, src, 0, nbytes);
- 	} else {
 
 
