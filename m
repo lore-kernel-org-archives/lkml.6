@@ -2,120 +2,215 @@ Return-Path: <SRS0=RZO6=PX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,FROM_EXCESS_BASE64,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A69D5C43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 08:31:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 18619C43444
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 08:34:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 719E62063F
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 08:31:18 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="guHdfGYP"
+	by mail.kernel.org (Postfix) with ESMTP id DC06A2063F
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 08:34:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728034AbfAOIbQ (ORCPT
+        id S1728295AbfAOIeQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 15 Jan 2019 03:31:16 -0500
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:39475 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726022AbfAOIbQ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Jan 2019 03:31:16 -0500
-Received: by mail-wr1-f68.google.com with SMTP id t27so1885329wra.6;
-        Tue, 15 Jan 2019 00:31:14 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=wTyboMc45g10/opeatWRRyFil2kUfSxdKqIQP2wlS2o=;
-        b=guHdfGYPHAKCS0NPFJxIbrtcHW91VXjpY4DwljanmuqGneOES2GbDP6GZ/1rup9olP
-         zp1sarbGyV3bK1LYsGI1GbvuRSURdEwdS/nJqcQn9hHEOQTgIheMnoJq2JcW7C2KjoNY
-         xN5SwTHmNYJSXGDuclcYn6DTBTaxvz4VvD+VOTkwVasB50r7rr83rhGM9U8aOy/NU1zn
-         8Gc25th9DGvvbc/L6vEVxMeO5Q9IiKbOQcZXAOedrAsFk8E8w2mmY1aU22OhnUlaNmqB
-         bQyU7cL9LQ5vNgAAMsFip45sg0iN/s/v/xh11bYy5FgjRnRIa9BPOHTkmPV6wengUaSa
-         KhTw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=wTyboMc45g10/opeatWRRyFil2kUfSxdKqIQP2wlS2o=;
-        b=UJvnnv5N14xMVLzE2V9hHdTDpB/cb6z13PPV2kcMjQ3q6qNwR0YyI6m8XfrvkcY735
-         6ZpjO/gJeYwCllnL2CPMM/CjqRATPkcCFNFzBYK2L5nY3PP06UoYRBqgboWI2jkU2qD7
-         olvUwGfQzplNhtw4bQQiMFaSUNR4H2oD7yc/IItw/0C8647R+1bXsPJBV2t9TEQqRuUd
-         8xNFLj+TYySu+g1lHFPXCbHtQE/6B1EygWyYCd4aJqP3ta3NYn5o67C97Kznwa11pBqb
-         aMmFVLoq5ZzuD02lNeGXpFQglFDZ+BghrO2SsyVMLnJwT/PtLZGXbZHZCLIE1FMjhwD6
-         tD9w==
-X-Gm-Message-State: AJcUukdp0uFcS8wDGo6XT6HR7WEX1wt/Q4XfF+9MyPAzQh9+YAHSkIdy
-        C0MdxmgMSHm5pF9c8jclXTuxffWP
-X-Google-Smtp-Source: ALg8bN7cJ5u6ExsZ2JgdE+5Kmlg+Em6CYrNT46vLM4KC83QmZwk9c+pOZ6afgLbMEVX+jXFv9g+lsQ==
-X-Received: by 2002:adf:efd1:: with SMTP id i17mr1936632wrp.200.1547541074125;
-        Tue, 15 Jan 2019 00:31:14 -0800 (PST)
-Received: from pali ([2a02:2b88:2:1::5cc6:2f])
-        by smtp.gmail.com with ESMTPSA id c202sm38831382wmd.40.2019.01.15.00.31.12
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 15 Jan 2019 00:31:12 -0800 (PST)
-Date:   Tue, 15 Jan 2019 09:31:11 +0100
-From:   Pali =?utf-8?B?Um9ow6Fy?= <pali.rohar@gmail.com>
-To:     Michael Sabolish <sabolish@me.com>
-Cc:     Jan Kara <jack@suse.cz>, Kevin Weidemann <kwe-lnx@postn.eu>,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: udf: Prevent write-unsupported filesystem to be remounted
- read-write
-Message-ID: <20190115083111.qq2mt2p2kn4opwx7@pali>
-References: <124cc6ea-ca79-20f2-651e-c2f909729ac0@gmx.de>
- <8cf39b7c-505b-91e6-849d-e66ba980042f@postn.eu>
- <20190114103011.GD13316@quack2.suse.cz>
- <20190114120023.wkftfz6pwatehpfe@pali>
- <20190114123042.GH13316@quack2.suse.cz>
- <E11914DA-D254-4198-A152-F9D6E61514BE@me.com>
+        Tue, 15 Jan 2019 03:34:16 -0500
+Received: from mx2.suse.de ([195.135.220.15]:51060 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726022AbfAOIeP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 Jan 2019 03:34:15 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 60AABAC5A;
+        Tue, 15 Jan 2019 08:34:13 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id 416851E0DBA; Tue, 15 Jan 2019 09:34:12 +0100 (CET)
+Date:   Tue, 15 Jan 2019 09:34:12 +0100
+From:   Jan Kara <jack@suse.cz>
+To:     John Hubbard <jhubbard@nvidia.com>
+Cc:     Jerome Glisse <jglisse@redhat.com>, Jan Kara <jack@suse.cz>,
+        Matthew Wilcox <willy@infradead.org>,
+        Dave Chinner <david@fromorbit.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        John Hubbard <john.hubbard@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linux MM <linux-mm@kvack.org>, tom@talpey.com,
+        Al Viro <viro@zeniv.linux.org.uk>, benve@cisco.com,
+        Christoph Hellwig <hch@infradead.org>,
+        Christopher Lameter <cl@linux.com>,
+        "Dalessandro, Dennis" <dennis.dalessandro@intel.com>,
+        Doug Ledford <dledford@redhat.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Michal Hocko <mhocko@kernel.org>, mike.marciniszyn@intel.com,
+        rcampbell@nvidia.com,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Subject: Re: [PATCH 1/2] mm: introduce put_user_page*(), placeholder versions
+Message-ID: <20190115083412.GD29524@quack2.suse.cz>
+References: <a79b259b-3982-b271-025a-0656f70506f4@nvidia.com>
+ <20190111165141.GB3190@redhat.com>
+ <1b37061c-5598-1b02-2983-80003f1c71f2@nvidia.com>
+ <20190112020228.GA5059@redhat.com>
+ <294bdcfa-5bf9-9c09-9d43-875e8375e264@nvidia.com>
+ <20190112024625.GB5059@redhat.com>
+ <b6f4ed36-fc8d-1f9b-8c74-b12f61d496ae@nvidia.com>
+ <20190114145447.GJ13316@quack2.suse.cz>
+ <20190114172124.GA3702@redhat.com>
+ <fdece7f8-7e4f-f679-821f-1d05ed748c15@nvidia.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <E11914DA-D254-4198-A152-F9D6E61514BE@me.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <fdece7f8-7e4f-f679-821f-1d05ed748c15@nvidia.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Monday 14 January 2019 19:07:35 Michael Sabolish wrote:
-> I can try and make a pull-request for udftune, and I can just copy the API for tune2fs.  It would work something like:
+On Mon 14-01-19 11:09:20, John Hubbard wrote:
+> On 1/14/19 9:21 AM, Jerome Glisse wrote:
+> >>
+> >> Also there is one more idea I had how to record number of pins in the page:
+> >>
+> >> #define PAGE_PIN_BIAS	1024
+> >>
+> >> get_page_pin()
+> >> 	atomic_add(&page->_refcount, PAGE_PIN_BIAS);
+> >>
+> >> put_page_pin();
+> >> 	atomic_add(&page->_refcount, -PAGE_PIN_BIAS);
+> >>
+> >> page_pinned(page)
+> >> 	(atomic_read(&page->_refcount) - page_mapcount(page)) > PAGE_PIN_BIAS
+> >>
+> >> This is pretty trivial scheme. It still gives us 22-bits for page pins
+> >> which should be plenty (but we should check for that and bail with error if
+> >> it would overflow). Also there will be no false negatives and false
+> >> positives only if there are more than 1024 non-page-table references to the
+> >> page which I expect to be rare (we might want to also subtract
+> >> hpage_nr_pages() for radix tree references to avoid excessive false
+> >> positives for huge pages although at this point I don't think they would
+> >> matter). Thoughts?
+> > 
+> > Racing PUP are as likely to cause issues:
+> > 
+> > CPU0                        | CPU1       | CPU2
+> >                             |            |
+> >                             | PUP()      |
+> >     page_pinned(page)       |            |
+> >       (page_count(page) -   |            |
+> >        page_mapcount(page)) |            |
+> >                             |            | GUP()
+> > 
+> > So here the refcount snap-shot does not include the second GUP and
+> > we can have a false negative ie the page_pinned() will return false
+> > because of the PUP happening just before on CPU1 despite the racing
+> > GUP on CPU2 just after.
+> > 
+> > I believe only either lock or memory ordering with barrier can
+> > guarantee that we do not miss GUP ie no false negative. Still the
+> > bias idea might be usefull as with it we should not need a flag.
+> > 
+> > So to make the above safe it would still need the page write back
+> > double check that i described so that GUP back-off if it raced with
+> > page_mkclean,clear_page_dirty_for_io and the fs write page call back
+> > which call test_set_page_writeback() (yes it is very unlikely but
+> > might still happen).
+> > 
+> > 
+> > I still need to ponder some more on all the races.
+> > 
 > 
-> udftune -O read-only device            (to set read-only access type)
-> 
-> or:
-> 
-> udftune -O ^read-only device          (to clear read-only access type (aka set rw))
+> Tentatively, so far I prefer the _mapcount scheme, because it seems more
+> accurate to add mapcounts than to overload the _refcount field. And the 
+> implementation is going to be cleaner. And we've already figured out the
+> races.
 
-This API is ambiguous. What does it mean for ^read-only? In UDF you have
-following access types: overwritable, rewritable, writeonce, readonly,
-pseudo-overwritable, unknown.
+I think there's no difference WRT the races when using _mapcount or _count
+bias to identify page pins. In fact the difference between what I suggested
+and what you did are just that you update _count instead of _mapcount and
+you can drop the rmap walk code and the page flag.
 
-So you would need to know to which R/W access type to switch
-(overwritable, rewritable, writeonce or pseudo-overwritable).
+There are two reasons why I like using _count bias more:
 
-With information of media type, you could be able to guess correct
-access type. But for UDF images stored in VFS there is no media
-information. Also you can have uncommon setup, e.g. usage of CD-R
-writeonce setup on CD-R/W disc. So "autodetection" of media type would
-not work always correctly.
+1) I'm still not 100% convinced that some page_mapped() or page_mapcount()
+check that starts to be true due to page being unmapped but pinned does not
+confuse some code with bad consequences. The fact that the kernel boots
+indicates that there's no common check that would get confused but full
+audit of page_mapped() and page_mapcount() checks is needed to confirm
+there isn't some cornercase missed and that is tedious. There are
+definitely places that e.g. assert that page_mapcount() == 0 after all page
+tables are unmapped and that is not necessarily true after your changes.
 
-So I think that it would be better to have following API:
+2) If the page gets pinned, we will report it as pinned until the next
+page_mkclean() call. That can be quite a long time after page has been
+really unpinned. In particular if the page was never dirtied (e.g. because
+it was gup'ed only for read but there can be other reasons), it may never
+happen that page_mkclean() is called and we won't be able to ever reclaim
+such page. So we would have to also add some mechanism to eventually get
+such pages cleaned up and that involves rmap walk for each such page which
+is not quite cheap.
 
-  udftune --access-type=<new_access_type>
+> For example, the following already survives a basic boot to graphics mode.
+> It requires a bunch of callsite conversions, and a page flag (neither of which
+> is shown here), and may also have "a few" gross conceptual errors, but take a 
+> peek:
 
-or
+Thanks for writing this down! Some comments inline.
 
-  udftune --change-access-type=<new_access_type>
+> +/*
+> + * Manages the PG_gup_pinned flag.
+> + *
+> + * Note that page->_mapcount counting part of managing that flag, because the
+> + * _mapcount is used to determine if PG_gup_pinned can be cleared, in
+> + * page_mkclean().
+> + */
+> +static void track_gup_page(struct page *page)
+> +{
+> +	page = compound_head(page);
+> +
+> +	lock_page(page);
+> +
+> +	wait_on_page_writeback(page);
 
-I understand that you would like to have similar API as tune2fs, but UDF
-settings are too different from ext*.
+^^ I'd use wait_for_stable_page() here. That is the standard waiting
+mechanism to use before you allow page modification.
 
+> +
+> +	atomic_inc(&page->_mapcount);
+> +	SetPageGupPinned(page);
+> +
+> +	unlock_page(page);
+> +}
+> +
+> +/*
+> + * A variant of track_gup_page() that returns -EBUSY, instead of waiting.
+> + */
+> +static int track_gup_page_atomic(struct page *page)
+> +{
+> +	page = compound_head(page);
+> +
+> +	if (PageWriteback(page) || !trylock_page(page))
+> +		return -EBUSY;
+> +
+> +	if (PageWriteback(page)) {
+> +		unlock_page(page);
+> +		return -EBUSY;
+> +	}
+
+Here you'd need some helper that would return whether
+wait_for_stable_page() is going to wait. Like would_wait_for_stable_page()
+but maybe you can come up with a better name.
+
+> +	atomic_inc(&page->_mapcount);
+> +	SetPageGupPinned(page);
+> +
+> +	unlock_page(page);
+> +	return 0;
+> +}
+> +
+
+								Honza
 -- 
-Pali Rohár
-pali.rohar@gmail.com
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
