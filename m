@@ -2,78 +2,60 @@ Return-Path: <SRS0=RZO6=PX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CF194C43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 10:13:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 43C07C43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 10:15:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A0C7A20656
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 10:13:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1C89720656
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 10:15:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728637AbfAOKNm (ORCPT
+        id S1728654AbfAOKPW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 15 Jan 2019 05:13:42 -0500
-Received: from Galois.linutronix.de ([146.0.238.70]:41896 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728405AbfAOKNk (ORCPT
+        Tue, 15 Jan 2019 05:15:22 -0500
+Received: from Chamillionaire.breakpoint.cc ([146.0.238.67]:43432 "EHLO
+        Chamillionaire.breakpoint.cc" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727238AbfAOKPV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Jan 2019 05:13:40 -0500
-Received: from p4fea4364.dip0.t-ipconnect.de ([79.234.67.100] helo=nanos)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1gjLio-0002AZ-Ty; Tue, 15 Jan 2019 11:13:27 +0100
-Date:   Tue, 15 Jan 2019 11:13:26 +0100 (CET)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     peng.hao2@zte.com.cn
-cc:     bp@alien8.de, dave.hansen@linux.intel.com, peterz@infradead.org,
-        luto@kernel.org, x86@kernel.org, linux-kernel@vger.kernel.org
-Subject: Re:[PATCH]  x86/mm/mem_encrypt_identity : fix error useage to
- sizeof
-In-Reply-To: <201901071946365174691@zte.com.cn>
-Message-ID: <alpine.DEB.2.21.1901151109070.1865@nanos.tec.linutronix.de>
-References: 1546065252-97996-1-git-send-email-peng.hao2@zte.com.cn,20181229080013.GB15816@nazgul.tnic <201901071946365174691@zte.com.cn>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Tue, 15 Jan 2019 05:15:21 -0500
+Received: from fw by Chamillionaire.breakpoint.cc with local (Exim 4.89)
+        (envelope-from <fw@strlen.de>)
+        id 1gjLkd-0003XZ-1h; Tue, 15 Jan 2019 11:15:19 +0100
+Date:   Tue, 15 Jan 2019 11:15:19 +0100
+From:   Florian Westphal <fw@strlen.de>
+To:     Michal Kubecek <mkubecek@suse.cz>
+Cc:     netfilter-devel@vger.kernel.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Martin Steigerwald <martin@lichtvoll.de>
+Subject: Re: [REGRESSION] 5.0-rc2: iptables -nvL consumes 100% of CPU and
+ hogs memory with kernel 5.0-rc2
+Message-ID: <20190115101519.pf7ogpvdz22wku7g@breakpoint.cc>
+References: <1608957.xtEoauR4Ya@merkaba>
+ <20190115101006.GE26670@unicorn.suse.cz>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190115101006.GE26670@unicorn.suse.cz>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 7 Jan 2019, peng.hao2@zte.com.cn wrote:
+Michal Kubecek <mkubecek@suse.cz> wrote:
+> > I upgraded to self-compiled 5.0-rc2 today and found the machine to be slow
+> > after startup. I saw iptables consuming 100% CPU, it only responded to
+> > SIGKILL. It got restarted several times, probably by some systemd service.
+> > 
+> > Then I started 'iptables -nvL' manually. And I got this:
+> > 
+> > % strace -p 5748
+> > [… tons more, in what appeared an endless loop …]
 
-> >> Fix error usage to sizeof. It should not use sizeof to pointer.
-> >
-> >.... because?
-> >
-> >The commit message needs to explain what the potential issue could be
-> >and why it doesn't matter in this case.
-> I see the definition of pte_t may be more than sizeof(unsigned long).
-> So I think sizeof(pte_t) is safer.
+This is fixed by:
 
-What exactly is the difference between:
-
-	pte_t	*p;
-
-	sizeof(*p)
-
-and
-
-	sizeof(pte_t)
-
-and what is safer about the latter?
-
-Answer: No difference and nothing is safer because it's exactly the same.
-
-In general we use sizeof(*p) simply because when the data type of p changes
-you don't have to update the code, it just works and stays correct.
-
-Thanks,
-
-	tglx
+http://patchwork.ozlabs.org/patch/1024772/
+("netfilter: nf_tables: Fix for endless loop when dumping ruleset"). 
