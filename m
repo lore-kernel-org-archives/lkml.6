@@ -2,97 +2,96 @@ Return-Path: <SRS0=RZO6=PX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 478AAC43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 15:02:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D70A7C43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 15:03:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 18C1D20866
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 15:02:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547564557;
-	bh=wHmf28uW9OQOmNVh/i0FjaHWdDEu5/NUpQ+B0sdBq/4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=E3tE8IDj/+ymf0+hFKBh1iMYU87WeKjbZUlBIps6rT7fXuqKtA3PoXjuOlyoQUTrF
-	 8rnYhbvM7NWEULq67Q0A+I2IiB5wK6SMdLdG1Vr8hqacOQHMNgnKsYxhqxUVFoMvtL
-	 2BCrtgS9QZKh5eRqwLZU39gLBnM4QB3gQODAl3W0=
+	by mail.kernel.org (Postfix) with ESMTP id A12F520656
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 15:03:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730606AbfAOPCf (ORCPT
+        id S1730595AbfAOPD2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 15 Jan 2019 10:02:35 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35772 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728642AbfAOPCf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Jan 2019 10:02:35 -0500
-Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 87A6220656;
-        Tue, 15 Jan 2019 15:02:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547564554;
-        bh=wHmf28uW9OQOmNVh/i0FjaHWdDEu5/NUpQ+B0sdBq/4=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=IGPfbT9Xxdy/ZmIWFzBUm+hRgreJ+VRw3TUyLw8fHvH/BiPCVByA6VDzufPuU+XmR
-         HSN313Ebd2WjxaYUsRNoJXxnLpH6WpBkD6D7WgxGCSDDEBIedkAiVdBk3puBLAWUu6
-         IpwEEcqPqyckBcO+KXZJUD8bRDhAvTc0dzjNEOPQ=
-Date:   Tue, 15 Jan 2019 16:02:31 +0100
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Nishad Kamdar <nishadkamdar@gmail.com>
-Cc:     devel@driverdev.osuosl.org,
-        Leonardo =?iso-8859-1?Q?Br=E1s?= <leobras.c@gmail.com>,
-        linux-fbdev@vger.kernel.org, YueHaibing <yuehaibing@huawei.com>,
-        Jani Nikula <jani.nikula@intel.com>,
-        Daniel Vetter <daniel.vetter@ffwll.ch>,
-        Felix Siegel <felix.siegel@stud.uni-hannover.de>,
-        Matthias Wolf <der_wolf_@web.de>, linux-kernel@vger.kernel.org,
-        Mamta Shukla <mamtashukla555@gmail.com>,
-        Radek =?iso-8859-1?Q?Dost=E1l?= 
-        <radek.dostal@streamunlimited.com>,
-        Renato Soma <renatoys08@gmail.com>,
-        dri-devel@lists.freedesktop.org,
-        Tim Cofala <cofala@stud.uni-hannover.de>,
-        Lee Jones <lee.jones@linaro.org>
-Subject: Re: [PATCH v2] Staging: fbtft: Switch to the gpio descriptor
- interface
-Message-ID: <20190115150231.GA3418@kroah.com>
-References: <20190115044704.GA20989@nishad>
+        Tue, 15 Jan 2019 10:03:28 -0500
+Received: from iolanthe.rowland.org ([192.131.102.54]:43730 "HELO
+        iolanthe.rowland.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with SMTP id S1726077AbfAOPD1 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 Jan 2019 10:03:27 -0500
+Received: (qmail 2365 invoked by uid 2102); 15 Jan 2019 10:03:26 -0500
+Received: from localhost (sendmail-bs@127.0.0.1)
+  by localhost with SMTP; 15 Jan 2019 10:03:26 -0500
+Date:   Tue, 15 Jan 2019 10:03:26 -0500 (EST)
+From:   Alan Stern <stern@rowland.harvard.edu>
+X-X-Sender: stern@iolanthe.rowland.org
+To:     Dmitry Vyukov <dvyukov@google.com>
+cc:     "Paul E. McKenney" <paulmck@linux.ibm.com>,
+        LKMM Maintainers -- Akira Yokosawa <akiyks@gmail.com>,
+        Andrea Parri <andrea.parri@amarulasolutions.com>,
+        Boqun Feng <boqun.feng@gmail.com>,
+        Daniel Lustig <dlustig@nvidia.com>,
+        David Howells <dhowells@redhat.com>,
+        Jade Alglave <j.alglave@ucl.ac.uk>,
+        Luc Maranget <luc.maranget@inria.fr>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Will Deacon <will.deacon@arm.com>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: Plain accesses and data races in the Linux Kernel Memory Model
+In-Reply-To: <CACT4Y+bYKPeyURX9K8i_ySEhqJ5OnFP1_=+u9=Y_Y+fYOo_jGQ@mail.gmail.com>
+Message-ID: <Pine.LNX.4.44L0.1901151002040.1408-100000@iolanthe.rowland.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190115044704.GA20989@nishad>
-User-Agent: Mutt/1.11.2 (2019-01-07)
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 15, 2019 at 10:17:09AM +0530, Nishad Kamdar wrote:
-> This switches the fbtft driver to use GPIO descriptors
-> rather than numerical gpios:
+On Tue, 15 Jan 2019, Dmitry Vyukov wrote:
+
+> On Tue, Jan 15, 2019 at 12:54 AM Paul E. McKenney <paulmck@linux.ibm.com> wrote:
+> >
+> > On Mon, Jan 14, 2019 at 02:41:49PM -0500, Alan Stern wrote:
+> > > The patch below is my first attempt at adapting the Linux Kernel
+> > > Memory Model to handle plain accesses (i.e., those which aren't
+> > > specially marked as READ_ONCE, WRITE_ONCE, acquire, release,
+> > > read-modify-write, or lock accesses).  This work is based on an
+> > > initial proposal created by Andrea Parri back in December 2017,
+> > > although it has grown a lot since then.
+> >
+> > Hello, Alan,
+> >
+> > Good stuff!!!
+> >
+> > I tried applying this in order to test it against the various litmus
+> > tests, but no joy.  Could you please tell me what commit is this patch
+> > based on?
+> >
+> >                                                         Thanx, Paul
+> >
+> > > The adaptation involves two main aspects: recognizing the ordering
+> > > induced by plain accesses and detecting data races.  They are handled
+> > > separately.  In fact, the code for figuring out the ordering assumes
+> > > there are no data races (the idea being that if a data race is
+> > > present then pretty much anything could happen, so there's no point
+> > > worrying about it -- obviously this will have to be changed if we want
+> > > to cover seqlocks).
 > 
-> Utilize the GPIO library's intrinsic handling of OF GPIOs
-> and polarity. If the line is flagged active low, gpiolib
-> will deal with this.
+> Hi Alan,
 > 
-> Remove gpios from platform device structure. Neither assign
-> statically numbers to gpios in platform device nor allow
-> gpios to be parsed as module parameters.
-> 
-> Signed-off-by: Nishad Kamdar <nishadkamdar@gmail.com>
-> Changes in v2:
->  - Merge all patches in a single patch. This is because the
->    first patch changes par->gpio from an int to a pointer
->    so all the checks have to be updated in the same patch.
->    Otherwie it breaks 'git bisect'.
+> Is there a mailing list dedicated to this effort? Private messages
+> tend to lost over time, no archive, not possible to send a link or
+> show full history to anybody, etc.
 
-The "v2" information goes below the --- line please.
+No specific mailing list.  We've been relying on LKML.
 
-Also, I got 2 copies of this, both different, so I have no idea which to
-apply.  Please fix up and resend a v3.
+> Re seqlocks, strictly saying defining races for seqlocks is not
+> necessary. Seqlocks can be expressed without races in C by using
+> relaxed atomic loads within the read critical section. We may consider
+> this option as well.
 
-thanks,
+That seems like a reasonable approach.
 
-greg k-h
+Alan
+
