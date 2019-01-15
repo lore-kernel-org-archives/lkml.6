@@ -2,123 +2,132 @@ Return-Path: <SRS0=RZO6=PX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DC6C0C43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 16:57:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 399F1C43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 16:58:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 94D3E20645
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 16:57:58 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=microchiptechnology.onmicrosoft.com header.i=@microchiptechnology.onmicrosoft.com header.b="ZBxQY0pd"
+	by mail.kernel.org (Postfix) with ESMTP id 07EAF20645
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 16:58:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1547571492;
+	bh=lhFk4Fw1Rl32wtgS4zsBFFgS4N9VU9SFIT1Wn6Mal+c=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=uSyw94Ll5ZRMRMYqMgdymNIESv1+pF/RcpBqCoynUd3B5IvNlQMI2J+v+OcQOgm6z
+	 plWxGi/cxJoD/XztsycRQRBnOCewvyiav531sUc1BQaCcR8HKtWBZAfpku5Ypj/GzE
+	 3nax4mhoaosA8YtJ2TsBj2tjIlzrxvO6q0ZkAj9Y=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387662AbfAOQ55 (ORCPT
+        id S2387765AbfAOQ6K (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 15 Jan 2019 11:57:57 -0500
-Received: from esa2.microchip.iphmx.com ([68.232.149.84]:55292 "EHLO
-        esa2.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728465AbfAOQ54 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Jan 2019 11:57:56 -0500
-X-IronPort-AV: E=Sophos;i="5.56,481,1539673200"; 
-   d="scan'208";a="25348814"
-Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
-  by esa2.microchip.iphmx.com with ESMTP/TLS/DHE-RSA-AES256-SHA; 15 Jan 2019 09:57:54 -0700
-Received: from NAM05-DM3-obe.outbound.protection.outlook.com (10.10.215.89) by
- email.microchip.com (10.10.76.38) with Microsoft SMTP Server (TLS) id
- 14.3.352.0; Tue, 15 Jan 2019 09:57:54 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=microchiptechnology.onmicrosoft.com;
- s=selector1-microchiptechnology-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=lV8qXlNDdFQqGsFTs1d7O1aMuODGbct5KXxFCRLJUUE=;
- b=ZBxQY0pdUKuUoJKcG9eBiaSa4Gz9dX3TTUoFsfb9LR6Id40mShSnbeEze9L2xMGbANZp8S35G37UmC8WcVu5DX7b4CAgCiRY3PcqwcWHFdu/J+fZhsUZMdcoFE08hRf8IaKj+t8r8FSFMZOrk2UnqpnpgHmlKID/NRQpiMZWK2E=
-Received: from BN6PR11MB1842.namprd11.prod.outlook.com (10.175.99.146) by
- BN6PR11MB1778.namprd11.prod.outlook.com (10.175.99.17) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1516.19; Tue, 15 Jan 2019 16:57:52 +0000
-Received: from BN6PR11MB1842.namprd11.prod.outlook.com
- ([fe80::79d8:b977:b90a:76fa]) by BN6PR11MB1842.namprd11.prod.outlook.com
- ([fe80::79d8:b977:b90a:76fa%4]) with mapi id 15.20.1516.019; Tue, 15 Jan 2019
- 16:57:52 +0000
-From:   <Tudor.Ambarus@microchip.com>
-To:     <marek.vasut@gmail.com>, <boris.brezillon@bootlin.co>,
-        <richard@nod.at>, <dwmw2@infradead.org>,
-        <computersforpeace@gmail.com>, <miquel.raynal@bootlin.com>,
-        <linux-mtd@lists.infradead.org>, <linux-kernel@vger.kernel.org>
-CC:     <Tudor.Ambarus@microchip.com>
-Subject: [PATCH] MAINTAINERS: add myself as SPI NOR co-maintainer
-Thread-Topic: [PATCH] MAINTAINERS: add myself as SPI NOR co-maintainer
-Thread-Index: AQHUrPNzzpAHOabtAU2JQkYTK78mZw==
-Date:   Tue, 15 Jan 2019 16:57:52 +0000
-Message-ID: <20190115165740.32450-1-tudor.ambarus@microchip.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: VI1PR0102CA0084.eurprd01.prod.exchangelabs.com
- (2603:10a6:803:15::25) To BN6PR11MB1842.namprd11.prod.outlook.com
- (2603:10b6:404:103::18)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Tudor.Ambarus@microchip.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-mailer: git-send-email 2.9.4
-x-originating-ip: [94.177.32.154]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;BN6PR11MB1778;6:9M/nt4JF+kGy2xVVQuFL38CsmOrqDhTnH6mYEak7ccvpTB07+lqSJ40F+vy5rjf58Z7/NfR2Y0BDlcrN5or1hQ2K0DfvZ0RicbtgU14E7Kt3XUFUmXee4i66UqgOsA/kE/jlSesCG4X8f3pCjXvhE4QZZX0y8MhBxP9Y87mYFwC8qXmZZaNowgw1ZTWo/T8o0/fShKo7OA3M9IiSfCR/tmw9ws3E5VjO2qdkhYg0pXHQcpwqlOkw8G3HpOquMeztlS5Ex0awDf9aEL1oDWU+89k3r9DvuPJx14aDg87JNTT+0kSiRQ7MkzUGnP0ah8ys30H5ZOG0aMt02Mzt2NidJXsrxDMOFDFPhpIvMMTvIw388aiMnfVnXI+pANCKoisMyNQ21eGH4f+CpLYRvkZVDfyRDPLxGE1mkSnR0NPjtjMEwyty/e/yl+W0ZBR0slvQjZo0BOJrTG/lpXNkRFQBVQ==;5:2Se9zjv9v1D85Yh+vJWJv8qAoTwGPws9rHa6pyz0M5F51HJxcnFdjYErJ6CM2WIs0VpSM/pEocc5uN/JlFPXOTIFuVnnWYGwQG7l1WEK8Oxg/9a0Si4JbjT7c5/DgqOMa2VW3SuWAJikPMNvvPcAZmJgtJzCN1kq9COiYWLWmna0CyU9vevFIUr0DoO3SrWu6PwKLcfbvZzj1rFIdV9vzw==;7:r93AMrdjD3P7ZS51k77QTR+txUVDUF7fcj/bG24UvkFseJn66syB3W5gnrYzXdvz//P4WQoagJBd1HW5IxfxXhBgcWMh8Nm9PhQdx5+bFDOuqQpB4p4T4ZxjKIk81kmbQd4P9Irm8602lCMdjUTRuw==
-x-ms-office365-filtering-correlation-id: 670a42bd-2f57-4f04-1ed1-08d67b0a9624
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600109)(711020)(2017052603328)(7153060)(7193020);SRVR:BN6PR11MB1778;
-x-ms-traffictypediagnostic: BN6PR11MB1778:
-x-microsoft-antispam-prvs: <BN6PR11MB1778AA05C7ECCB5748849335F0810@BN6PR11MB1778.namprd11.prod.outlook.com>
-x-forefront-prvs: 0918748D70
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(346002)(376002)(39860400002)(396003)(136003)(366004)(199004)(189003)(72206003)(478600001)(256004)(68736007)(6116002)(3846002)(1076003)(4744005)(106356001)(105586002)(6306002)(6436002)(14454004)(39060400002)(217873002)(107886003)(6512007)(476003)(2616005)(53936002)(5660300001)(486006)(4326008)(186003)(25786009)(6486002)(6506007)(52116002)(97736004)(71190400001)(66066001)(2906002)(8936002)(81166006)(81156014)(316002)(102836004)(386003)(71200400001)(2201001)(50226002)(305945005)(99286004)(86362001)(7736002)(36756003)(110136005)(26005)(2501003)(8676002);DIR:OUT;SFP:1101;SCL:1;SRVR:BN6PR11MB1778;H:BN6PR11MB1842.namprd11.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: microchip.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: s+CsdgsvXIAlKRaJLf5kKFfoqlTUNG4y90SN1uEwTyww07QD5hQCQSsl+NQXGDxEWf1Oq2D44ISMvkYofzMrVuAu1O9w2GD8szvXtUDia4BVPG/PIrYHeHTzW8yEjOedgosSFdp1tYu3JH9vgUGPyluKdt+bMeIE7oONwPjyjjz2N1RzBAUpK9mCdDsqBPyz3d1rGrTbw3N+7iTc4l0siMhxuzjl6c5WmX36bSvg4ZfJ+WYccShhR1o/tYTy43NwsYSmeOB3ACSkNj/5Xlp0hX4P61nUgKB0ozBxO2fNuRGoaR82O1VRbkKWA8Q1Nf/TD6+4E9Xi46kuF9ExI++PzPtQX0zRXge8GAMPE1ocBMFSA+edaOi6lCYte9lXa6o6Upo3J5N0eruAnsd0dMTplpdy+Dnq3JvGQcqiO4tNA1s=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+        Tue, 15 Jan 2019 11:58:10 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56516 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1732541AbfAOQkL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 Jan 2019 11:40:11 -0500
+Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4B0AF20989;
+        Tue, 15 Jan 2019 16:40:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1547570410;
+        bh=lhFk4Fw1Rl32wtgS4zsBFFgS4N9VU9SFIT1Wn6Mal+c=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=Ji7rIL5T2LD04Sck3CGWdHG096yK3YFBJO3foXib8DX6tsOtL/6GPMct0ehngQcX2
+         U/ZsfdswhI/0mWZ92e8sLfeM6CS64UMlmAGrb/QE5Qi9lJX6q0jbRzkCzFvM8jikHi
+         ujBVVhPCr0VFxheCytrW4MJSAn4d54Ut8twGT71o=
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Kailang Yang <kailang@realtek.com>,
+        Takashi Iwai <tiwai@suse.de>
+Subject: [PATCH 4.14 05/27] ALSA: hda/realtek - Disable headset Mic VREF for headset mode of ALC225
+Date:   Tue, 15 Jan 2019 17:35:54 +0100
+Message-Id: <20190115154901.516708275@linuxfoundation.org>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20190115154901.189747728@linuxfoundation.org>
+References: <20190115154901.189747728@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
+X-Patchwork-Hint: ignore
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-Network-Message-Id: 670a42bd-2f57-4f04-1ed1-08d67b0a9624
-X-MS-Exchange-CrossTenant-originalarrivaltime: 15 Jan 2019 16:57:50.4431
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 3f4057f3-b418-4d4e-ba84-d55b4e897d88
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN6PR11MB1778
-X-OriginatorOrg: microchip.com
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Tudor Ambarus <tudor.ambarus@microchip.com>
+4.14-stable review patch.  If anyone has any objections, please let me know.
 
-I have been reviewing and contributing to the SPI NOR subsystem
-for the last few months and I'm willing to continue doing so.
-Volunteer as a maintainer for the SPI NOR part of the MTD subsystem.
+------------------
 
-Signed-off-by: Tudor Ambarus <tudor.ambarus@microchip.com>
+From: Kailang Yang <kailang@realtek.com>
+
+commit d1dd42110d2727e81b9265841a62bc84c454c3a2 upstream.
+
+Disable Headset Mic VREF for headset mode of ALC225.
+This will be controlled by coef bits of headset mode functions.
+
+[ Fixed a compile warning and code simplification -- tiwai ]
+
+Signed-off-by: Kailang Yang <kailang@realtek.com>
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- MAINTAINERS | 1 +
- 1 file changed, 1 insertion(+)
+ sound/pci/hda/patch_realtek.c |   16 +++++++++++++++-
+ 1 file changed, 15 insertions(+), 1 deletion(-)
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 6682420421c1..7deb0e91e3ed 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -14081,6 +14081,7 @@ F:	arch/arm/mach-spear/
-=20
- SPI NOR SUBSYSTEM
- M:	Marek Vasut <marek.vasut@gmail.com>
-+M:	Tudor Ambarus <tudor.ambarus@microchip.com>
- L:	linux-mtd@lists.infradead.org
- W:	http://www.linux-mtd.infradead.org/
- Q:	http://patchwork.ozlabs.org/project/linux-mtd/list/
---=20
-2.9.4
+--- a/sound/pci/hda/patch_realtek.c
++++ b/sound/pci/hda/patch_realtek.c
+@@ -5253,6 +5253,13 @@ static void alc274_fixup_bind_dacs(struc
+ 	spec->gen.preferred_dacs = preferred_pairs;
+ }
+ 
++static void alc_fixup_disable_mic_vref(struct hda_codec *codec,
++				  const struct hda_fixup *fix, int action)
++{
++	if (action == HDA_FIXUP_ACT_PRE_PROBE)
++		snd_hda_codec_set_pin_target(codec, 0x19, PIN_VREFHIZ);
++}
++
+ /* for hda_fixup_thinkpad_acpi() */
+ #include "thinkpad_helper.c"
+ 
+@@ -5362,6 +5369,7 @@ enum {
+ 	ALC293_FIXUP_LENOVO_SPK_NOISE,
+ 	ALC233_FIXUP_LENOVO_LINE2_MIC_HOTKEY,
+ 	ALC255_FIXUP_DELL_SPK_NOISE,
++	ALC225_FIXUP_DISABLE_MIC_VREF,
+ 	ALC225_FIXUP_DELL1_MIC_NO_PRESENCE,
+ 	ALC295_FIXUP_DISABLE_DAC3,
+ 	ALC280_FIXUP_HP_HEADSET_MIC,
+@@ -6063,6 +6071,12 @@ static const struct hda_fixup alc269_fix
+ 		.chained = true,
+ 		.chain_id = ALC255_FIXUP_DELL1_MIC_NO_PRESENCE
+ 	},
++	[ALC225_FIXUP_DISABLE_MIC_VREF] = {
++		.type = HDA_FIXUP_FUNC,
++		.v.func = alc_fixup_disable_mic_vref,
++		.chained = true,
++		.chain_id = ALC269_FIXUP_DELL1_MIC_NO_PRESENCE
++	},
+ 	[ALC225_FIXUP_DELL1_MIC_NO_PRESENCE] = {
+ 		.type = HDA_FIXUP_VERBS,
+ 		.v.verbs = (const struct hda_verb[]) {
+@@ -6072,7 +6086,7 @@ static const struct hda_fixup alc269_fix
+ 			{}
+ 		},
+ 		.chained = true,
+-		.chain_id = ALC269_FIXUP_DELL1_MIC_NO_PRESENCE
++		.chain_id = ALC225_FIXUP_DISABLE_MIC_VREF
+ 	},
+ 	[ALC280_FIXUP_HP_HEADSET_MIC] = {
+ 		.type = HDA_FIXUP_FUNC,
+
 
