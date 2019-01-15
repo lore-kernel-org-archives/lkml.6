@@ -2,118 +2,138 @@ Return-Path: <SRS0=RZO6=PX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 66F80C43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 16:29:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A0819C43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 16:30:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 21A7D20657
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 16:29:30 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="JrqOhD/u";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="Mqov6+qj"
+	by mail.kernel.org (Postfix) with ESMTP id 78B6820657
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 16:30:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729495AbfAOQ32 (ORCPT
+        id S1729635AbfAOQaN convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 15 Jan 2019 11:29:28 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:51300 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731571AbfAOQ3Z (ORCPT
+        Tue, 15 Jan 2019 11:30:13 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:35940 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727667AbfAOQaN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Jan 2019 11:29:25 -0500
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 4A6E56098C; Tue, 15 Jan 2019 16:29:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1547569764;
-        bh=UvXAVr5rAfYcmmPYgTtQFy9MuZWOaQi5am+NVzDZMm4=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=JrqOhD/u5hEdUU3X3SfMTPXX2MDMRfNUBFmWN3jTEt7pQiN0ezUBEqtrWXUwKKScb
-         YDPYsW4Qqfa1Noi/K0C0AQzNCr4qVZ5CBh31dWn+j9vrPjXsMX1OT9YLPAGv5QQGuM
-         OHV2Lb5xEkHsyy68oHLBVG2pafP378scSoHXhuTU=
-Received: from [192.168.43.47] (unknown [223.237.252.96])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: saiprakash.ranjan@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id AFE6A605A0;
-        Tue, 15 Jan 2019 16:29:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1547569763;
-        bh=UvXAVr5rAfYcmmPYgTtQFy9MuZWOaQi5am+NVzDZMm4=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=Mqov6+qjpmZKrAZcajDHX1ZW1s6UIdGD+XFxYXOQ7iPk3f6PGCMBGiVyewCv5WIzk
-         10HJsWb56XciJCE+OyXx41wGZwm5yHC0ZiVSp5Kj3jAwe67gRPJjbFoLkXs7C8m2p1
-         tr3qN2UekdJ0gtEo77WTDRgBy3RgzkJw5/SMyIwI=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org AFE6A605A0
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=saiprakash.ranjan@codeaurora.org
-Subject: Re: [PATCH 1/3] arm64: dts: qcom: sdm845: Add Coresight support
-To:     Mathieu Poirier <mathieu.poirier@linaro.org>
-Cc:     Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        Suzuki K Poulose <suzuki.poulose@arm.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        David Brown <david.brown@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Sibi Sankar <sibis@codeaurora.org>,
-        Vivek Gautam <vivek.gautam@codeaurora.org>,
-        Leo Yan <leo.yan@linaro.org>,
-        Andy Gross <andy.gross@linaro.org>,
-        linux-arm-msm-owner@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-References: <cover.1547054308.git.saiprakash.ranjan@codeaurora.org>
- <a13ad49d3ae8d9a5a972027283b7212ab19f97d0.1547054308.git.saiprakash.ranjan@codeaurora.org>
- <20190111184643.GA22691@xps15>
- <81172d85ed7782e0db561fcf96a82d46@codeaurora.org>
- <20190114153509.GA29374@xps15>
-From:   Sai Prakash Ranjan <saiprakash.ranjan@codeaurora.org>
-Message-ID: <f792b36a-4357-49f2-f242-8a7c8ed464a8@codeaurora.org>
-Date:   Tue, 15 Jan 2019 21:59:11 +0530
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        Tue, 15 Jan 2019 11:30:13 -0500
+Received: from pps.filterd (m0098417.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id x0FGTjBV142268
+        for <linux-kernel@vger.kernel.org>; Tue, 15 Jan 2019 11:30:11 -0500
+Received: from smtp.notes.na.collabserv.com (smtp.notes.na.collabserv.com [192.155.248.75])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2q1h5bynf5-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Tue, 15 Jan 2019 11:30:11 -0500
+Received: from localhost
+        by smtp.notes.na.collabserv.com with smtp.notes.na.collabserv.com ESMTP
+        for <linux-kernel@vger.kernel.org> from <JOELN@il.ibm.com>;
+        Tue, 15 Jan 2019 16:30:08 -0000
+Received: from us1a3-smtp08.a3.dal06.isc4sb.com (10.146.103.57)
+        by smtp.notes.na.collabserv.com (10.106.227.123) with smtp.notes.na.collabserv.com ESMTP;
+        Tue, 15 Jan 2019 16:30:00 -0000
+Received: from us1a3-mail108.a3.dal06.isc4sb.com ([10.146.45.126])
+          by us1a3-smtp08.a3.dal06.isc4sb.com
+          with ESMTP id 2019011516295938-700098 ;
+          Tue, 15 Jan 2019 16:29:59 +0000 
+In-Reply-To: <20190115153128.GA6310@bombadil.infradead.org>
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     Jonathan Corbet <corbet@lwn.net>,
+        Doug Ledford <dledford@redhat.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Leon Romanovsky <leon@kernel.org>, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Mike Rapoport <rppt@linux.ibm.com>
+Subject: Re: [PATCH v2 2/2] docs-rst: userspace: update verbs API details
+From:   "Joel Nider" <JOELN@il.ibm.com>
+Date:   Tue, 15 Jan 2019 18:29:59 +0200
+References: <1547547991-5314-1-git-send-email-joeln@il.ibm.com>
+ <1547547991-5314-3-git-send-email-joeln@il.ibm.com>
+ <20190115153128.GA6310@bombadil.infradead.org>
 MIME-Version: 1.0
-In-Reply-To: <20190114153509.GA29374@xps15>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+X-KeepSent: 64BB6EB2:8999493B-C2258383:0058B5B7;
+ type=4; name=$KeepSent
+X-Mailer: IBM Notes Release 9.0.1FP7 August 18, 2016
+X-LLNOutbound: False
+X-Disclaimed: 25507
+X-TNEFEvaluated: 1
+x-cbid: 19011516-3815-0000-0000-000009DAC9F2
+X-IBM-SpamModules-Scores: BY=0; FL=0; FP=0; FZ=0; HX=0; KW=0; PH=0;
+ SC=0.40962; ST=0; TS=0; UL=0; ISC=; MB=0.008534
+X-IBM-SpamModules-Versions: BY=3.00010412; HX=3.00000242; KW=3.00000007;
+ PH=3.00000004; SC=3.00000274; SDB=6.01146889; UDB=6.00597374; IPR=6.00927181;
+ BA=6.00006201; NDR=6.00000001; ZLA=6.00000005; ZF=6.00000009; ZB=6.00000000;
+ ZP=6.00000000; ZH=6.00000000; ZU=6.00000002; MB=3.00025141; XFM=3.00000015;
+ UTC=2019-01-15 16:30:05
+X-IBM-AV-DETECTION: SAVI=unsuspicious REMOTE=unsuspicious XFE=unused
+X-IBM-AV-VERSION: SAVI=2019-01-15 16:12:44 - 6.00009468
+x-cbparentid: 19011516-3816-0000-0000-00000DB2E2F3
+Message-Id: <OF64BB6EB2.8999493B-ONC2258383.0058B5B7-C2258383.005AA2FD@notes.na.collabserv.com>
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 8BIT
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-01-15_05:,,
+ signatures=0
+X-Proofpoint-Spam-Reason: safe
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Mathieu,
+Matthew Wilcox <willy@infradead.org> wrote on 01/15/2019 05:31:28 PM:
 
-On 1/14/2019 9:05 PM, Mathieu Poirier wrote:
-> On Sat, Jan 12, 2019 at 06:21:00PM +0530, saiprakash.ranjan@codeaurora.org wrote:
->> Hi Mathieu,
->>
->>>> +
->>>> +	etm@7040000 {
->>>> +		compatible = "arm,coresight-etm4x", "arm,primecell";
->>>> +		arm,primecell-periphid = <0x000bb95d>;
->>>
->>> I'm a little curious as to why you need to bypass the normal AMBA bus
->>> discovery
->>> method by forcing the peripheral ID.  Tracers don't show up the way
->>> other
->>> coresight devices do at boot time?
->>>
->>
->> Yes on some Qcom SoC's like SDM845 and also on some previous ones, for
->> ETM(only) amba bus discovery method fails because of wrong pid read from the
->> registers. So we have to force this primecell peripheral ids to probe etm.
+> From: Matthew Wilcox <willy@infradead.org>
+> To: Joel Nider <joeln@il.ibm.com>
+> Cc: Jonathan Corbet <corbet@lwn.net>, Jason Gunthorpe <jgg@ziepe.ca>, 
+Leon 
+> Romanovsky <leon@kernel.org>, Doug Ledford <dledford@redhat.com>, Mike 
+> Rapoport <rppt@linux.ibm.com>, linux-doc@vger.kernel.org, 
+linux-kernel@vger.kernel.org
+> Date: 01/15/2019 05:31 PM
+> Subject: Re: [PATCH v2 2/2] docs-rst: userspace: update verbs API 
+details
 > 
-> Ok, if that is the case please add a comment to explain the situation.
-> Otherwise someone will assuredly ask again in the future.
+> On Tue, Jan 15, 2019 at 12:26:31PM +0200, Joel Nider wrote:
+> > It is important to understand the existing framework when implementing
+> > a new verb. The majority of existing API functions are implemented 
+using
+> > the write syscall, but this has been superceded by the ioctl syscall
+> > for new commands. This patch updates the documentation regarding how
+> > to go about implementing a new verb, focusing on the new ioctl
+> > interface.
+> > 
+> > The documentation is far from complete, but this is a good step in the
+> > right direction. Future patches can add more detail according to need.
+> > Also, the interface is still undergoing substantial changes so an
+> > effort was made to document only the stable parts so as to avoid
+> > incorrect information since documentation changes tend to lag behind
+> > code changes.
 > 
+> I think this is a horrible direction to take.  The current document is
+> clearly for _users_.  All this documentation you've added is for kernel
+> hackers.  It needs to go in a different file, or not be added at all.
+> 
+Hmm, that's a bit heavy-handed in my opinion. If you look at what is 
+currently under "Userspace API", there are a total of 4 files - not 
+exactly what I would call comprehensive documentation of the Linux kernel 
+interface. So the option of not adding more documentation simply because 
+it is in the wrong section seems a bit defeatist (I think we can all agree 
+more kernel docs is a good thing). So let's assume for the moment that it 
+_should_ be added, and that we are discussing _where_. Yes, the document I 
+am modifying has a bit of a mash of pure userspace API - functions and 
+details that application developers must know - and the lower level 
+details that are more useful for someone who wishes to extend this 
+interface. The existing documentation (specifically unshare) also suffers 
+from the same problem. There is a section (7) called "Low Level Design" 
+which documents very much the same level of detail as the Infiniband doc, 
+so this seems to be at least consistent.
+I think there is a deeper issue - as an application developer, I would 
+only look at this kernel documentation as a last resort. #1 is the 'man' 
+pages, #2 is web search for an example (I know for many it's the other way 
+around). So who really looks at this documentation? I say the vast 
+majority is kernel hackers. So yes, this is about the user-facing API, but 
+not from the application writer's perspective - it should be about how to 
+create a consistent API for users, from the kernel hacker's perspective.
 
-Sure, will add it in the next version.
+Joel
 
-Thanks,
-Sai
-
--- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
-of Code Aurora Forum, hosted by The Linux Foundation
