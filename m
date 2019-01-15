@@ -2,75 +2,97 @@ Return-Path: <SRS0=RZO6=PX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DDCE9C43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 20:58:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 46FBFC43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 20:59:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B5B9D20657
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 20:58:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1B7F620657
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 20:59:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390081AbfAOU6E (ORCPT
+        id S2390092AbfAOU67 convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 15 Jan 2019 15:58:04 -0500
-Received: from verein.lst.de ([213.95.11.211]:55467 "EHLO newverein.lst.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730050AbfAOU6E (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Jan 2019 15:58:04 -0500
-Received: by newverein.lst.de (Postfix, from userid 2407)
-        id A098467358; Tue, 15 Jan 2019 21:58:01 +0100 (CET)
-Date:   Tue, 15 Jan 2019 21:58:01 +0100
-From:   "hch@lst.de" <hch@lst.de>
-To:     "Koenig, Christian" <Christian.Koenig@amd.com>
-Cc:     "hch@lst.de" <hch@lst.de>,
-        Thomas Hellstrom <thellstrom@vmware.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "yong.zhi@intel.com" <yong.zhi@intel.com>,
-        "daniel.vetter@ffwll.ch" <daniel.vetter@ffwll.ch>,
-        "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>,
-        "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>,
-        "bingbu.cao@intel.com" <bingbu.cao@intel.com>,
-        "jian.xu.zheng@intel.com" <jian.xu.zheng@intel.com>,
-        "tian.shu.qiu@intel.com" <tian.shu.qiu@intel.com>,
-        "shiraz.saleem@intel.com" <shiraz.saleem@intel.com>,
-        "sakari.ailus@linux.intel.com" <sakari.ailus@linux.intel.com>,
-        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-        "jgg@ziepe.ca" <jgg@ziepe.ca>
-Subject: Re: [PATCH] lib/scatterlist: Provide a DMA page iterator
-Message-ID: <20190115205801.GA15432@lst.de>
-References: <20190104223531.GA1705@ziepe.ca> <20190110234218.GM6890@ziepe.ca> <20190114094856.GB29604@lst.de> <1fb20ab4b171b281e9994b6c55734c120958530b.camel@vmware.com> <2b440a3b-ed2f-8fd6-a21e-97ca0b2f5db9@gmail.com> <20190115152029.GB2325@lst.de> <41d0616e95fb48942404fb54d82249f5700affb1.camel@vmware.com> <20190115183133.GA12350@lst.de> <c82076aa-a6ee-5ba2-a8d8-935fdbb7d5ca@amd.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <c82076aa-a6ee-5ba2-a8d8-935fdbb7d5ca@amd.com>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+        Tue, 15 Jan 2019 15:58:59 -0500
+Received: from 212-186-180-163.static.upcbusiness.at ([212.186.180.163]:39050
+        "EHLO cgate.sperl.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730050AbfAOU67 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 Jan 2019 15:58:59 -0500
+Received: from [10.10.10.192] (account martin@sperl.org [10.10.10.192] verified)
+  by sperl.org (CommuniGate Pro SMTP 6.2.1 _community_)
+  with ESMTPSA id 7754801; Tue, 15 Jan 2019 20:58:55 +0000
+Content-Type: text/plain;
+        charset=utf-8
+Mime-Version: 1.0 (1.0)
+Subject: Re: Regression: spi: core: avoid waking pump thread from spi_sync instead run teardown delayed
+From:   Martin Sperl <kernel@martin.sperl.org>
+X-Mailer: iPad Mail (16C50)
+In-Reply-To: <20190115192619.GG5522@sirena.org.uk>
+Date:   Tue, 15 Jan 2019 21:58:55 +0100
+Cc:     Jon Hunter <jonathanh@nvidia.com>,
+        linux-tegra <linux-tegra@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-spi@vger.kernel.org
+Content-Transfer-Encoding: 8BIT
+Message-Id: <5D3256B1-5DAE-4E3F-9099-5425F4BCA304@martin.sperl.org>
+References: <f86eaebb-0359-13be-f4a2-4f2b8832252e@nvidia.com> <7C4A5EFC-8235-40C8-96E1-E6020529DF72@martin.sperl.org> <aabd916e-005e-6cda-25d7-8ab875afa7a0@nvidia.com> <AAA7943B-B1F1-4389-AAC3-8621EC6E38B8@martin.sperl.org> <20190115192619.GG5522@sirena.org.uk>
+To:     Mark Brown <broonie@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 15, 2019 at 07:13:11PM +0000, Koenig, Christian wrote:
-> Thomas is correct that the interface you propose here doesn't work at 
-> all for GPUs.
-> 
-> The kernel driver is not informed of flush/sync, but rather just setups 
-> coherent mappings between system memory and devices.
-> 
-> In other words you have an array of struct pages and need to map that to 
-> a specific device and so create dma_addresses for the mappings.
 
-If you want a coherent mapping you need to use dma_alloc_coherent
-and dma_mmap_coherent and you are done, that is not the problem.
-That actually is one of the vmgfx modes, so I don't understand what
-problem we are trying to solve if you don't actually want a non-coherent
-mapping.  Although last time I had that discussion with Daniel Vetter
-I was under the impressions that GPUs really wanted non-coherent
-mappings.
+> On 15.01.2019, at 20:26, Mark Brown <broonie@kernel.org> wrote:
+> 
+>> On Tue, Jan 15, 2019 at 06:39:27PM +0100, kernel@martin.sperl.org wrote:
+>> 
+>> Is it possible that the specific flash is not using the “normal” 
+>> spi_pump_message, but spi_controller_mem_ops operations? 
+> 
+> Right, that's my best guess at the minute as well.
+> 
+>> Maybe we are missing the teardown in that driver or something is
+>> changing flags there.
+> 
+>> grepping a bit:
+> 
+>> I see spi_mem_access_start calling spi_flush_queue, which is calling
+>> pump_message, which - if there is no transfer - will trigger a delayed
+>> tear-down, while it maybe should not be doing that.
+> 
+> If nothing else it's inefficient.
+> 
+>> Maybe spi_mem_access_end needs a call to spi_flush_queue as well?
+> 
+> Hrm, or needs to schedule the queue at any rate (though this will only
+> have an impact in the fairly unusual case where there's something
+> sharing the bus with a flash).
+> 
+>> Unfortunately this is theoretical work and quite a lot of guesswork
+>> without an actual device available for testing...
+> 
+> Indeed.
 
-But if you want a coherent mapping you can't go to a struct page,
-because on many systems you can't just map arbitrary memory as
-uncachable.  It might either come from very special limited pools,
-or might need other magic applied to it so that it is not visible
-in the normal direct mapping, or at least not access through it.
+Maybe a bigger change to the reduce the complexity of
+the state machine would solve that problem and also
+reduce code complexity... 
+
+I may find some time over the weekend if no solution
+has been found until then.
+
+The way I would envision it it would have a “state”
+as a level (0=shutdown, 1=hw enabled, 2=in pump, 
+3=in transfer, 4=in hw-mode,...) and a complete
+to allow waking the shutdown thread (and by this
+avoiding the busy wait loop we have now).
+This would replace those idling, busy, and running flags.
+
+Drawback: it is invasive, but let us see what it
+really looks like...
+
+Martin
+
+
