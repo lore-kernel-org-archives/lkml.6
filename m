@@ -2,52 +2,60 @@ Return-Path: <SRS0=RZO6=PX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F96EC43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 16:55:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A594FC43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 16:55:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C806120645
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 16:55:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6C8E620645
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 16:55:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547571315;
-	bh=7uPTXI8gtOeQwLcsuUXBatPjjwb5vhguvwVG42X2DUI=;
+	s=default; t=1547571324;
+	bh=kdYlxra1zt9emappoVfZFX/Db+FXcOV2e6nkt77cN3U=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=SxOVXtm/0Tc6kA3tk70463Txg7cqGi9cCgxIcfJQCqkh3j3zopvS4EwOA04gdUTCN
-	 ZulA5okEC4PpCyNaIP3qckGh/AXFre2PRT4IUbuREG9QFeCussTkP/xS+1d5wbb2UT
-	 p/BCrEZUXDs3lV3rciyN4o4zetsABj+k/+zxuvx8=
+	b=aRRaK2z5e6oXGJ6niQcnLFynFVW2thMRzIajZiveWMJBnv/YNPyqssa/+K8GHT/ev
+	 HUgBScM7rz08bRPB+kgV9GuTLH29DSs3/O6pN5vPs0+e2G6WnpB99LU3TZmtfTQN7q
+	 fPj7EoaTBGzqu8F/sSx1i1sgay8EONhdiIYkqMhk=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388057AbfAOQzN (ORCPT
+        id S2388066AbfAOQzW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 15 Jan 2019 11:55:13 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59484 "EHLO mail.kernel.org"
+        Tue, 15 Jan 2019 11:55:22 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59388 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730615AbfAOQm3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Jan 2019 11:42:29 -0500
+        id S1732977AbfAOQm0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 Jan 2019 11:42:26 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 19F1B20645;
-        Tue, 15 Jan 2019 16:42:27 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D40CA2054F;
+        Tue, 15 Jan 2019 16:42:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547570548;
-        bh=7uPTXI8gtOeQwLcsuUXBatPjjwb5vhguvwVG42X2DUI=;
+        s=default; t=1547570545;
+        bh=kdYlxra1zt9emappoVfZFX/Db+FXcOV2e6nkt77cN3U=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=KxkbHqmhX2m4ThR3aI/VBY9LZgkXTwT/m3egvsneBY5DB+w0Uv9sQ8/bxItH1npXw
-         p3At08rCUP2P2V3Nz9hAJDmMee+BUp3ce/a5JnjoUDUkjmheNPDPsqUnJk4FzwG/0i
-         DNq1ne0pIokOk5QhJXyy+K1/qdqAaoYwwGGQvQ1I=
+        b=vfHlooVMfblT2jY1IUw2FDAjnfrcbvfscPJ92afyso/A4gIFZ/XVxwxkAFMvd+nUC
+         tk/BxOwtHebnaYR7xNurEtCBGPSjL5b25m+7Kp7R8s52QzYCmbawqG7xayoCXJaNm0
+         moUcN6OyOWD+5/CHctE264YhU7olvAv8ycKJDhz4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, saahriktu <mail@saahriktu.org>,
-        Ivan Mironov <mironov.ivan@gmail.com>,
-        Daniel Vetter <daniel.vetter@ffwll.ch>
-Subject: [PATCH 4.19 33/50] drm/fb-helper: Partially bring back workaround for bugs of SDL 1.2
-Date:   Tue, 15 Jan 2019 17:36:09 +0100
-Message-Id: <20190115154911.820759712@linuxfoundation.org>
+        stable@vger.kernel.org, Dave Airlie <airlied@gmail.com>,
+        Daniel Vetter <daniel.vetter@ffwll.ch>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        =?UTF-8?q?Noralf=20Tr=C3=B8nnes?= <noralf@tronnes.org>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Eric Anholt <eric@anholt.net>,
+        Lucas Stach <l.stach@pengutronix.de>,
+        Rob Clark <robdclark@gmail.com>,
+        Ben Skeggs <skeggsb@gmail.com>,
+        =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
+        Neil Armstrong <narmstrong@baylibre.com>
+Subject: [PATCH 4.19 32/50] drm/fb_helper: Allow leaking fbdev smem_start
+Date:   Tue, 15 Jan 2019 17:36:08 +0100
+Message-Id: <20190115154911.762987756@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190115154909.933241945@linuxfoundation.org>
 References: <20190115154909.933241945@linuxfoundation.org>
@@ -66,218 +74,133 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Ivan Mironov <mironov.ivan@gmail.com>
+From: Neil Armstrong <narmstrong@baylibre.com>
 
-commit 62d85b3bf9d978ed4b6b2aeef5cf0ccf1423906e upstream.
+commit 4be9bd10e22dfc7fc101c5cf5969ef2d3a042d8a upstream.
 
-SDL 1.2 sets all fields related to the pixel format to zero in some
-cases[1]. Prior to commit db05c48197759 ("drm: fb-helper: Reject all
-pixel format changing requests"), there was an unintentional workaround
-for this that existed for more than a decade. First in device-specific DRM
-drivers, then here in drm_fb_helper.c.
+Since "drm/fb: Stop leaking physical address", the default behaviour of
+the DRM fbdev emulation is to set the smem_base to 0 and pass the new
+FBINFO_HIDE_SMEM_START flag.
 
-Previous code containing this workaround just ignores pixel format fields
-from userspace code. Not a good thing either, as this way, driver may
-silently use pixel format different from what client actually requested,
-and this in turn will lead to displaying garbage on the screen. I think
-that returning EINVAL to userspace in this particular case is the right
-option, so I decided to left code from problematic commit untouched
-instead of just reverting it entirely.
+The main reason is to avoid leaking physical addresse to user-space, and
+it follows a general move over the kernel code to avoid user-space to
+manipulate physical addresses and then use some other mechanisms like
+dma-buf to transfer physical buffer handles over multiple subsystems.
 
-Here is the steps required to reproduce this problem exactly:
-	1) Compile fceux[2] with SDL 1.2.15 and without GTK or OpenGL
-	   support. SDL should be compiled with fbdev support (which is
-	   on by default).
-	2) Create /etc/fb.modes with following contents (values seems
-	   not used, and just required to trigger problematic code in
-	   SDL):
+But, a lot of devices depends on closed sources binaries to enable
+OpenGL hardware acceleration that uses this smem_start value to
+pass physical addresses to out-of-tree modules in order to render
+into these physical adresses. These should use dma-buf buffers allocated
+from the DRM display device instead and stop relying on fbdev overallocation
+to gather DMA memory (some HW vendors delivers GBM and Wayland capable
+binaries, but older unsupported devices won't have these new binaries
+and are doomed until an Open Source solution like Lima finalizes).
 
-		mode "test"
-		    geometry 1 1 1 1 1
-		    timings 1 1 1 1 1 1 1
-		endmode
+Since these devices heavily depends on this kind of software and because
+the smem_start population was available for years, it's a breakage to
+stop leaking smem_start without any alternative solutions.
 
-	3) Create ~/.fceux/fceux.cfg with following contents:
+This patch adds a Kconfig depending on the EXPERT config and an unsafe
+kernel module parameter tainting the kernel when enabled.
 
-		SDL.Hotkeys.Quit = 27
-		SDL.DoubleBuffering = 1
+A clear comment and Kconfig help text was added to clarify why and when
+this patch should be reverted, but in the meantime it's a necessary
+feature to keep.
 
-	4) Ensure that screen resolution is at least 1280x960 (e.g.
-	   append "video=Virtual-1:1280x960-32" to the kernel cmdline
-	   for qemu/QXL).
-
-	5) Try to run fceux on VT with some ROM file[3]:
-
-		# ./fceux color_test.nes
-
-[1] SDL 1.2.15 source code, src/video/fbcon/SDL_fbvideo.c,
-    FB_SetVideoMode()
-[2] http://www.fceux.com
-[3] Example ROM: https://github.com/bokuweb/rustynes/blob/master/roms/color_test.nes
-
-Reported-by: saahriktu <mail@saahriktu.org>
-Suggested-by: saahriktu <mail@saahriktu.org>
-Cc: stable@vger.kernel.org
-Fixes: db05c48197759 ("drm: fb-helper: Reject all pixel format changing requests")
-Signed-off-by: Ivan Mironov <mironov.ivan@gmail.com>
-[danvet: Delete misleading comment.]
-Signed-off-by: Daniel Vetter <daniel.vetter@ffwll.ch>
-Link: https://patchwork.freedesktop.org/patch/msgid/20190108072353.28078-2-mironov.ivan@gmail.com
-Link: https://patchwork.freedesktop.org/patch/msgid/20190108072353.28078-2-mironov.ivan@gmail.com
+Cc: Dave Airlie <airlied@gmail.com>
+Cc: Daniel Vetter <daniel.vetter@ffwll.ch>
+Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Cc: Noralf Trønnes <noralf@tronnes.org>
+Cc: Maxime Ripard <maxime.ripard@bootlin.com>
+Cc: Eric Anholt <eric@anholt.net>
+Cc: Lucas Stach <l.stach@pengutronix.de>
+Cc: Rob Clark <robdclark@gmail.com>
+Cc: Ben Skeggs <skeggsb@gmail.com>
+Cc: Christian König <christian.koenig@amd.com>
+Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+Reviewed-by: Maxime Ripard <maxime.ripard@bootlin.com>
+Tested-by: Maxime Ripard <maxime.ripard@bootlin.com>
+Acked-by: Daniel Vetter <daniel.vetter@ffwll.ch>
+Acked-by: Dave Airlie <airlied@gmail.com>
+Link: https://patchwork.freedesktop.org/patch/msgid/1538136355-15383-1-git-send-email-narmstrong@baylibre.com
+Signed-off-by: Maxime Ripard <maxime.ripard@bootlin.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
----
- drivers/gpu/drm/drm_fb_helper.c |  126 +++++++++++++++++++++++-----------------
- 1 file changed, 73 insertions(+), 53 deletions(-)
 
+---
+ drivers/gpu/drm/Kconfig         |   20 ++++++++++++++++++++
+ drivers/gpu/drm/drm_fb_helper.c |   25 +++++++++++++++++++++++++
+ 2 files changed, 45 insertions(+)
+
+--- a/drivers/gpu/drm/Kconfig
++++ b/drivers/gpu/drm/Kconfig
+@@ -110,6 +110,26 @@ config DRM_FBDEV_OVERALLOC
+ 	  is 100. Typical values for double buffering will be 200,
+ 	  triple buffering 300.
+ 
++config DRM_FBDEV_LEAK_PHYS_SMEM
++	bool "Shamelessly allow leaking of fbdev physical address (DANGEROUS)"
++	depends on DRM_FBDEV_EMULATION && EXPERT
++	default n
++	help
++	  In order to keep user-space compatibility, we want in certain
++	  use-cases to keep leaking the fbdev physical address to the
++	  user-space program handling the fbdev buffer.
++	  This affects, not only, Amlogic, Allwinner or Rockchip devices
++	  with ARM Mali GPUs using an userspace Blob.
++	  This option is not supported by upstream developers and should be
++	  removed as soon as possible and be considered as a broken and
++	  legacy behaviour from a modern fbdev device driver.
++
++	  Please send any bug reports when using this to your proprietary
++	  software vendor that requires this.
++
++	  If in doubt, say "N" or spread the word to your closed source
++	  library vendor.
++
+ config DRM_LOAD_EDID_FIRMWARE
+ 	bool "Allow to specify an EDID data set instead of probing for it"
+ 	depends on DRM
 --- a/drivers/gpu/drm/drm_fb_helper.c
 +++ b/drivers/gpu/drm/drm_fb_helper.c
-@@ -1621,6 +1621,64 @@ static bool drm_fb_pixel_format_equal(co
- 	       var_1->transp.msb_right == var_2->transp.msb_right;
- }
+@@ -56,6 +56,25 @@ MODULE_PARM_DESC(drm_fbdev_overalloc,
+ 		 "Overallocation of the fbdev buffer (%) [default="
+ 		 __MODULE_STRING(CONFIG_DRM_FBDEV_OVERALLOC) "]");
  
-+static void drm_fb_helper_fill_pixel_fmt(struct fb_var_screeninfo *var,
-+					 u8 depth)
-+{
-+	switch (depth) {
-+	case 8:
-+		var->red.offset = 0;
-+		var->green.offset = 0;
-+		var->blue.offset = 0;
-+		var->red.length = 8; /* 8bit DAC */
-+		var->green.length = 8;
-+		var->blue.length = 8;
-+		var->transp.offset = 0;
-+		var->transp.length = 0;
-+		break;
-+	case 15:
-+		var->red.offset = 10;
-+		var->green.offset = 5;
-+		var->blue.offset = 0;
-+		var->red.length = 5;
-+		var->green.length = 5;
-+		var->blue.length = 5;
-+		var->transp.offset = 15;
-+		var->transp.length = 1;
-+		break;
-+	case 16:
-+		var->red.offset = 11;
-+		var->green.offset = 5;
-+		var->blue.offset = 0;
-+		var->red.length = 5;
-+		var->green.length = 6;
-+		var->blue.length = 5;
-+		var->transp.offset = 0;
-+		break;
-+	case 24:
-+		var->red.offset = 16;
-+		var->green.offset = 8;
-+		var->blue.offset = 0;
-+		var->red.length = 8;
-+		var->green.length = 8;
-+		var->blue.length = 8;
-+		var->transp.offset = 0;
-+		var->transp.length = 0;
-+		break;
-+	case 32:
-+		var->red.offset = 16;
-+		var->green.offset = 8;
-+		var->blue.offset = 0;
-+		var->red.length = 8;
-+		var->green.length = 8;
-+		var->blue.length = 8;
-+		var->transp.offset = 24;
-+		var->transp.length = 8;
-+		break;
-+	default:
-+		break;
-+	}
-+}
++/*
++ * In order to keep user-space compatibility, we want in certain use-cases
++ * to keep leaking the fbdev physical address to the user-space program
++ * handling the fbdev buffer.
++ * This is a bad habit essentially kept into closed source opengl driver
++ * that should really be moved into open-source upstream projects instead
++ * of using legacy physical addresses in user space to communicate with
++ * other out-of-tree kernel modules.
++ *
++ * This module_param *should* be removed as soon as possible and be
++ * considered as a broken and legacy behaviour from a modern fbdev device.
++ */
++#if IS_ENABLED(CONFIG_DRM_FBDEV_LEAK_PHYS_SMEM)
++static bool drm_leak_fbdev_smem = false;
++module_param_unsafe(drm_leak_fbdev_smem, bool, 0600);
++MODULE_PARM_DESC(fbdev_emulation,
++		 "Allow unsafe leaking fbdev physical smem address [default=false]");
++#endif
 +
- /**
-  * drm_fb_helper_check_var - implementation for &fb_ops.fb_check_var
-  * @var: screeninfo to check
-@@ -1651,6 +1709,20 @@ int drm_fb_helper_check_var(struct fb_va
- 	}
+ static LIST_HEAD(kernel_fb_helper_list);
+ static DEFINE_MUTEX(kernel_fb_helper_lock);
  
- 	/*
-+	 * Workaround for SDL 1.2, which is known to be setting all pixel format
-+	 * fields values to zero in some cases. We treat this situation as a
-+	 * kind of "use some reasonable autodetected values".
-+	 */
-+	if (!var->red.offset     && !var->green.offset    &&
-+	    !var->blue.offset    && !var->transp.offset   &&
-+	    !var->red.length     && !var->green.length    &&
-+	    !var->blue.length    && !var->transp.length   &&
-+	    !var->red.msb_right  && !var->green.msb_right &&
-+	    !var->blue.msb_right && !var->transp.msb_right) {
-+		drm_fb_helper_fill_pixel_fmt(var, fb->format->depth);
-+	}
-+
-+	/*
- 	 * drm fbdev emulation doesn't support changing the pixel format at all,
- 	 * so reject all pixel format changing requests.
- 	 */
-@@ -1961,59 +2033,7 @@ void drm_fb_helper_fill_var(struct fb_in
- 	info->var.yoffset = 0;
- 	info->var.activate = FB_ACTIVATE_NOW;
+@@ -3041,6 +3060,12 @@ int drm_fb_helper_generic_probe(struct d
+ 	fbi->screen_size = fb->height * fb->pitches[0];
+ 	fbi->fix.smem_len = fbi->screen_size;
+ 	fbi->screen_buffer = buffer->vaddr;
++	/* Shamelessly leak the physical address to user-space */
++#if IS_ENABLED(CONFIG_DRM_FBDEV_LEAK_PHYS_SMEM)
++	if (drm_leak_fbdev_smem && fbi->fix.smem_start == 0)
++		fbi->fix.smem_start =
++			page_to_phys(virt_to_page(fbi->screen_buffer));
++#endif
+ 	strcpy(fbi->fix.id, "DRM emulated");
  
--	switch (fb->format->depth) {
--	case 8:
--		info->var.red.offset = 0;
--		info->var.green.offset = 0;
--		info->var.blue.offset = 0;
--		info->var.red.length = 8; /* 8bit DAC */
--		info->var.green.length = 8;
--		info->var.blue.length = 8;
--		info->var.transp.offset = 0;
--		info->var.transp.length = 0;
--		break;
--	case 15:
--		info->var.red.offset = 10;
--		info->var.green.offset = 5;
--		info->var.blue.offset = 0;
--		info->var.red.length = 5;
--		info->var.green.length = 5;
--		info->var.blue.length = 5;
--		info->var.transp.offset = 15;
--		info->var.transp.length = 1;
--		break;
--	case 16:
--		info->var.red.offset = 11;
--		info->var.green.offset = 5;
--		info->var.blue.offset = 0;
--		info->var.red.length = 5;
--		info->var.green.length = 6;
--		info->var.blue.length = 5;
--		info->var.transp.offset = 0;
--		break;
--	case 24:
--		info->var.red.offset = 16;
--		info->var.green.offset = 8;
--		info->var.blue.offset = 0;
--		info->var.red.length = 8;
--		info->var.green.length = 8;
--		info->var.blue.length = 8;
--		info->var.transp.offset = 0;
--		info->var.transp.length = 0;
--		break;
--	case 32:
--		info->var.red.offset = 16;
--		info->var.green.offset = 8;
--		info->var.blue.offset = 0;
--		info->var.red.length = 8;
--		info->var.green.length = 8;
--		info->var.blue.length = 8;
--		info->var.transp.offset = 24;
--		info->var.transp.length = 8;
--		break;
--	default:
--		break;
--	}
-+	drm_fb_helper_fill_pixel_fmt(&info->var, fb->format->depth);
- 
- 	info->var.xres = fb_width;
- 	info->var.yres = fb_height;
+ 	drm_fb_helper_fill_fix(fbi, fb->pitches[0], fb->format->depth);
 
 
