@@ -3,137 +3,392 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D89EEC43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 07:58:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E39EC43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 08:01:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A7E5C2085A
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 07:58:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 431C620656
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 08:01:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727406AbfAOH6I (ORCPT
+        id S1728174AbfAOIBw convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 15 Jan 2019 02:58:08 -0500
-Received: from Mailgw01.mediatek.com ([1.203.163.78]:43861 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1725869AbfAOH6I (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Jan 2019 02:58:08 -0500
-X-UUID: 58e05d900cf64d8db2d5414960be55f7-20190115
-X-UUID: 58e05d900cf64d8db2d5414960be55f7-20190115
-Received: from mtkcas35.mediatek.inc [(172.27.4.250)] by mailgw01.mediatek.com
-        (envelope-from <ryder.lee@mediatek.com>)
-        (mailgw01.mediatek.com ESMTP with TLS)
-        with ESMTP id 1134881265; Tue, 15 Jan 2019 15:57:56 +0800
-Received: from mtkcas09.mediatek.inc (172.21.101.178) by
- MTKMBS31N1.mediatek.inc (172.27.4.69) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Tue, 15 Jan 2019 15:57:54 +0800
-Received: from [172.21.77.33] (172.21.77.33) by mtkcas09.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Tue, 15 Jan 2019 15:57:54 +0800
-Message-ID: <1547539075.18705.3.camel@mtkswgap22>
-Subject: Re: [PATCH v1 3/3] mtd: spi-nor: mtk-quadspi: rename config to a
- common one
-From:   Ryder Lee <ryder.lee@mediatek.com>
-To:     <Tudor.Ambarus@microchip.com>
-CC:     <marek.vasut@gmail.com>, <computersforpeace@gmail.com>,
-        <boris.brezillon@bootlin.com>, <robh+dt@kernel.org>,
-        <weijie.gao@mediatek.com>, <linux-mtd@lists.infradead.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-mediatek@lists.infradead.org>
-Date:   Tue, 15 Jan 2019 15:57:55 +0800
-In-Reply-To: <fc95a69a-6a2e-fc98-d047-b0c93843fc56@microchip.com>
-References: <67e650ca4fcaaddbbc98bf4e1cbe04647c990dc3.1547442452.git.ryder.lee@mediatek.com>
-         <45dc2817e7f4baf5113de247b1a2cb30bf252d93.1547442452.git.ryder.lee@mediatek.com>
-         <fc95a69a-6a2e-fc98-d047-b0c93843fc56@microchip.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.2.3-0ubuntu6 
-Content-Transfer-Encoding: 7bit
+        Tue, 15 Jan 2019 03:01:52 -0500
+Received: from smtp.h3c.com ([60.191.123.56]:54381 "EHLO h3cmg01-ex.h3c.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725869AbfAOIBw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 Jan 2019 03:01:52 -0500
+Received: from BJHUB02-EX.srv.huawei-3com.com (unknown [10.63.20.170]) by h3cmg01-ex.h3c.com with smtp
+         id 163c_061d_595cd1a0_940f_413c_96d9_e53aa29a26cd;
+        Tue, 15 Jan 2019 16:01:05 +0800
+Received: from H3CMLB12-EX.srv.huawei-3com.com ([fe80::10fe:abde:731b:fdde])
+ by BJHUB02-EX.srv.huawei-3com.com ([::1]) with mapi id 14.03.0415.000; Tue,
+ 15 Jan 2019 16:00:37 +0800
+From:   Changwei Ge <ge.changwei@h3c.com>
+To:     Gang He <ghe@suse.com>, "jlbec@evilplan.org" <jlbec@evilplan.org>,
+        "mark@fasheh.com" <mark@fasheh.com>,
+        "jiangqi903@gmail.com" <jiangqi903@gmail.com>
+CC:     "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+        "ocfs2-devel@oss.oracle.com" <ocfs2-devel@oss.oracle.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [Ocfs2-devel] [PATCH] ocfs2: fix the application IO timeout
+ when fstrim is running
+Thread-Topic: [Ocfs2-devel] [PATCH] ocfs2: fix the application IO timeout
+ when fstrim is running
+Thread-Index: AQHUrIVlCNHZCv+dVU6iUuVWjEr8Xw==
+Date:   Tue, 15 Jan 2019 08:00:36 +0000
+Message-ID: <63ADC13FD55D6546B7DECE290D39E37301278265F3@H3CMLB12-EX.srv.huawei-3com.com>
+References: <20190111090014.31645-1-ghe@suse.com>
+ <63ADC13FD55D6546B7DECE290D39E3730127825EFD@H3CMLB12-EX.srv.huawei-3com.com>
+ <5C3D7453020000F90004D7BD@prv1-mh.provo.novell.com>
+Accept-Language: en-US, zh-CN
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.125.20.206]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
 MIME-Version: 1.0
-X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 2019-01-15 at 07:34 +0000, Tudor.Ambarus@microchip.com wrote:
-> Hi, Ryder,
+On 2019/1/15 13:49, Gang He wrote:
+> Hello Changewei,
 > 
-> On 01/14/2019 07:12 AM, Ryder Lee wrote:
-> > The quadspi is a generic communication interface which could be shared
-> > with other MediaTek SoCs. Hence rename it to a common one.
-> > 
-> > Signed-off-by: Ryder Lee <ryder.lee@mediatek.com>
-> > ---
-> > Changes since v1: rebase to v5.0-rc1. 
-> 
-> The patch doesn't apply on v5.0-rc1 or rc2.
-> > ---
-> >  drivers/mtd/spi-nor/Kconfig  | 16 ++++++++--------
-> >  drivers/mtd/spi-nor/Makefile |  2 +-
-> >  2 files changed, 9 insertions(+), 9 deletions(-)
-> > 
-> > diff --git a/drivers/mtd/spi-nor/Kconfig b/drivers/mtd/spi-nor/Kconfig
-> > index b433e5f..99d9d53 100644
-> > --- a/drivers/mtd/spi-nor/Kconfig
-> > +++ b/drivers/mtd/spi-nor/Kconfig
-> > @@ -7,14 +7,6 @@ menuconfig MTD_SPI_NOR
-> >  
-> >  if MTD_SPI_NOR
-> >  
-> > -config MTD_MT81xx_NOR
-> > -	tristate "Mediatek MT81xx SPI NOR flash controller"
-> > -	depends on HAS_IOMEM
-> > -	help
-> > -	  This enables access to SPI NOR flash, using MT81xx SPI NOR flash
-> > -	  controller. This controller does not support generic SPI BUS, it only
-> > -	  supports SPI NOR Flash.
-> > -
-> >  config MTD_SPI_NOR_USE_4K_SECTORS
-> >  	bool "Use small 4096 B erase sectors"
-> >  	default y
-> > @@ -68,6 +60,14 @@ config SPI_NXP_SPIFI
-> >  	  Flash. Enable this option if you have a device with a SPIFI
-> >  	  controller and want to access the Flash as a mtd device.
-> >  
-> > +config SPI_MTK_QUADSPI
-> 
-> Since you are moving the config into the file, would you mind to put your config
-> in an alphabetical order?
-> 
-> Thanks,
-> ta
+>>>> On 2019/1/15 at 11:50, in message
+> <63ADC13FD55D6546B7DECE290D39E3730127825EFD@H3CMLB12-EX.srv.huawei-3com.com>,
+> Changwei Ge <ge.changwei@h3c.com> wrote:
+>> Hi Gang,
+>>
+>> Most parts of this patch look sane to me, just a tiny question...
+>>
+>> On 2019/1/11 17:01, Gang He wrote:
+>>> The user reported this problem, the upper application IO was
+>>> timeout when fstrim was running on this ocfs2 partition. the
+>>> application monitoring resource agent considered that this
+>>> application did not work, then this node was fenced by the cluster
+>>> brain (e.g. pacemaker).
+>>> The root cause is that fstrim thread always holds main_bm meta-file
+>>> related locks until all the cluster groups are trimmed.
+>>> This patch will make fstrim thread release main_bm meta-file
+>>> related locks when each cluster group is trimmed, this will let
+>>> the current application IO has a chance to claim the clusters from
+>>> main_bm meta-file.
+>>>
+>>> Signed-off-by: Gang He <ghe@suse.com>
+>>> ---
+>>>    fs/ocfs2/alloc.c       | 159 +++++++++++++++++++++++++----------------
+>>>    fs/ocfs2/dlmglue.c     |   5 ++
+>>>    fs/ocfs2/ocfs2.h       |   1 +
+>>>    fs/ocfs2/ocfs2_trace.h |   2 +
+>>>    fs/ocfs2/super.c       |   2 +
+>>>    5 files changed, 106 insertions(+), 63 deletions(-)
+>>>
+>>> diff --git a/fs/ocfs2/alloc.c b/fs/ocfs2/alloc.c
+>>> index d1cbb27808e2..6f0999015a44 100644
+>>> --- a/fs/ocfs2/alloc.c
+>>> +++ b/fs/ocfs2/alloc.c
+>>> @@ -7532,10 +7532,11 @@ static int ocfs2_trim_group(struct super_block *sb,
+>>>    	return count;
+>>>    }
+>>>    
+>>> -int ocfs2_trim_fs(struct super_block *sb, struct fstrim_range *range)
+>>> +static
+>>> +int ocfs2_trim_mainbm(struct super_block *sb, struct fstrim_range *range)
+>>>    {
+>>>    	struct ocfs2_super *osb = OCFS2_SB(sb);
+>>> -	u64 start, len, trimmed, first_group, last_group, group;
+>>> +	u64 start, len, trimmed = 0, first_group, last_group = 0, group = 0;
+>>>    	int ret, cnt;
+>>>    	u32 first_bit, last_bit, minlen;
+>>>    	struct buffer_head *main_bm_bh = NULL;
+>>> @@ -7543,7 +7544,6 @@ int ocfs2_trim_fs(struct super_block *sb, struct
+>> fstrim_range *range)
+>>>    	struct buffer_head *gd_bh = NULL;
+>>>    	struct ocfs2_dinode *main_bm;
+>>>    	struct ocfs2_group_desc *gd = NULL;
+>>> -	struct ocfs2_trim_fs_info info, *pinfo = NULL;
+>>>    
+>>>    	start = range->start >> osb->s_clustersize_bits;
+>>>    	len = range->len >> osb->s_clustersize_bits;
+>>> @@ -7552,6 +7552,9 @@ int ocfs2_trim_fs(struct super_block *sb, struct
+>> fstrim_range *range)
+>>>    	if (minlen >= osb->bitmap_cpg || range->len < sb->s_blocksize)
+>>>    		return -EINVAL;
+>>>    
+>>> +	trace_ocfs2_trim_mainbm(start, len, minlen);
+>>> +
+>>> +next_group:
+>>>    	main_bm_inode = ocfs2_get_system_file_inode(osb,
+>>>    						    GLOBAL_BITMAP_SYSTEM_INODE,
+>>>    						    OCFS2_INVALID_SLOT);
+>>> @@ -7570,64 +7573,34 @@ int ocfs2_trim_fs(struct super_block *sb, struct
+>> fstrim_range *range)
+>>>    	}
+>>>    	main_bm = (struct ocfs2_dinode *)main_bm_bh->b_data;
+>>>    
+>>> -	if (start >= le32_to_cpu(main_bm->i_clusters)) {
+>>> -		ret = -EINVAL;
+>>> -		goto out_unlock;
+>>> -	}
+>>> -
+>>> -	len = range->len >> osb->s_clustersize_bits;
+>>> -	if (start + len > le32_to_cpu(main_bm->i_clusters))
+>>> -		len = le32_to_cpu(main_bm->i_clusters) - start;
+>>> -
+>>> -	trace_ocfs2_trim_fs(start, len, minlen);
+>>> -
+>>> -	ocfs2_trim_fs_lock_res_init(osb);
+>>> -	ret = ocfs2_trim_fs_lock(osb, NULL, 1);
+>>> -	if (ret < 0) {
+>>> -		if (ret != -EAGAIN) {
+>>> -			mlog_errno(ret);
+>>> -			ocfs2_trim_fs_lock_res_uninit(osb);
+>>> +	/*
+>>> +	 * Do some check before trim the first group.
+>>> +	 */
+>>> +	if (!group) {
+>>> +		if (start >= le32_to_cpu(main_bm->i_clusters)) {
+>>> +			ret = -EINVAL;
+>>>    			goto out_unlock;
+>>>    		}
+>>>    
+>>> -		mlog(ML_NOTICE, "Wait for trim on device (%s) to "
+>>> -		     "finish, which is running from another node.\n",
+>>> -		     osb->dev_str);
+>>> -		ret = ocfs2_trim_fs_lock(osb, &info, 0);
+>>> -		if (ret < 0) {
+>>> -			mlog_errno(ret);
+>>> -			ocfs2_trim_fs_lock_res_uninit(osb);
+>>> -			goto out_unlock;
+>>> -		}
+>>> +		if (start + len > le32_to_cpu(main_bm->i_clusters))
+>>> +			len = le32_to_cpu(main_bm->i_clusters) - start;
+>>>    
+>>> -		if (info.tf_valid && info.tf_success &&
+>>> -		    info.tf_start == start && info.tf_len == len &&
+>>> -		    info.tf_minlen == minlen) {
+>>> -			/* Avoid sending duplicated trim to a shared device */
+>>> -			mlog(ML_NOTICE, "The same trim on device (%s) was "
+>>> -			     "just done from node (%u), return.\n",
+>>> -			     osb->dev_str, info.tf_nodenum);
+>>> -			range->len = info.tf_trimlen;
+>>> -			goto out_trimunlock;
+>>> -		}
+>>> +		/*
+>>> +		 * Determine first and last group to examine based on
+>>> +		 * start and len
+>>> +		 */
+>>> +		first_group = ocfs2_which_cluster_group(main_bm_inode, start);
+>>> +		if (first_group == osb->first_cluster_group_blkno)
+>>> +			first_bit = start;
+>>> +		else
+>>> +			first_bit = start - ocfs2_blocks_to_clusters(sb,
+>>> +								first_group);
+>>> +		last_group = ocfs2_which_cluster_group(main_bm_inode,
+>>> +						       start + len - 1);
+>>> +		group = first_group;
+>>>    	}
+>>>    
+>>> -	info.tf_nodenum = osb->node_num;
+>>> -	info.tf_start = start;
+>>> -	info.tf_len = len;
+>>> -	info.tf_minlen = minlen;
+>>> -
+>>> -	/* Determine first and last group to examine based on start and len */
+>>> -	first_group = ocfs2_which_cluster_group(main_bm_inode, start);
+>>> -	if (first_group == osb->first_cluster_group_blkno)
+>>> -		first_bit = start;
+>>> -	else
+>>> -		first_bit = start - ocfs2_blocks_to_clusters(sb, first_group);
+>>> -	last_group = ocfs2_which_cluster_group(main_bm_inode, start + len - 1);
+>>> -	last_bit = osb->bitmap_cpg;
+>>> -
+>>> -	trimmed = 0;
+>>> -	for (group = first_group; group <= last_group;) {
+>>> +	do {
+>>>    		if (first_bit + len >= osb->bitmap_cpg)
+>>>    			last_bit = osb->bitmap_cpg;
+>>>    		else
+>>> @@ -7659,21 +7632,81 @@ int ocfs2_trim_fs(struct super_block *sb, struct
+>> fstrim_range *range)
+>>>    			group = ocfs2_clusters_to_blocks(sb, osb->bitmap_cpg);
+>>>    		else
+>>>    			group += ocfs2_clusters_to_blocks(sb, osb->bitmap_cpg);
+>>> -	}
+>>> -	range->len = trimmed * sb->s_blocksize;
+>>> +	} while (0);
+>>>    
+>>> -	info.tf_trimlen = range->len;
+>>> -	info.tf_success = (ret ? 0 : 1);
+>>> -	pinfo = &info;
+>>> -out_trimunlock:
+>>> -	ocfs2_trim_fs_unlock(osb, pinfo);
+>>> -	ocfs2_trim_fs_lock_res_uninit(osb);
+>>>    out_unlock:
+>>>    	ocfs2_inode_unlock(main_bm_inode, 0);
+>>>    	brelse(main_bm_bh);
+>>> +	main_bm_bh = NULL;
+>>>    out_mutex:
+>>>    	inode_unlock(main_bm_inode);
+>>>    	iput(main_bm_inode);
+>>> +
+>>> +	/*
+>>> +	 * If all the groups trim are not done or failed, but we should release
+>>> +	 * main_bm related locks for avoiding the current IO starve, then go to
+>>> +	 * trim the next group
+>>> +	 */
+>>> +	if (ret >= 0 && group <= last_group)
+>>> +		goto next_group;
+>>>    out:
+>>> +	range->len = trimmed * sb->s_blocksize;
+>>> +	return ret;
+>>> +}
+>>> +
+>>> +int ocfs2_trim_fs(struct super_block *sb, struct fstrim_range *range)
+>>> +{
+>>> +	int ret;
+>>> +	struct ocfs2_super *osb = OCFS2_SB(sb);
+>>> +	struct ocfs2_trim_fs_info info, *pinfo = NULL;
+>>> +
+>>> +	ocfs2_trim_fs_lock_res_init(osb);
+>>> +
+>>> +	trace_ocfs2_trim_fs(range->start, range->len, range->minlen);
+>>> +
+>>> +	ret = ocfs2_trim_fs_lock(osb, NULL, 1);
+>>> +	if (ret < 0) {
+>>> +		if (ret != -EAGAIN) {
+>>> +			mlog_errno(ret);
+>>> +			ocfs2_trim_fs_lock_res_uninit(osb);
+>>> +			return ret;
+>>> +		}
+>>> +
+>>> +		mlog(ML_NOTICE, "Wait for trim on device (%s) to "
+>>> +		     "finish, which is running from another node.\n",
+>>> +		     osb->dev_str);
+>>> +		ret = ocfs2_trim_fs_lock(osb, &info, 0);
+>>> +		if (ret < 0) {
+>>> +			mlog_errno(ret);
+>>> +			ocfs2_trim_fs_lock_res_uninit(osb);
+>>> +			return ret;
+>>> +		}
+>>> +
+>>> +		if (info.tf_valid && info.tf_success &&
+>>> +		    info.tf_start == range->start &&
+>>> +		    info.tf_len == range->len &&
+>>> +		    info.tf_minlen == range->minlen) {
+>>> +			/* Avoid sending duplicated trim to a shared device */
+>>> +			mlog(ML_NOTICE, "The same trim on device (%s) was "
+>>> +			     "just done from node (%u), return.\n",
+>>> +			     osb->dev_str, info.tf_nodenum);
+>>> +			range->len = info.tf_trimlen;
+>>> +			goto out;
+>>> +		}
+>>> +	}
+>>> +
+>>> +	info.tf_nodenum = osb->node_num;
+>>> +	info.tf_start = range->start;
+>>> +	info.tf_len = range->len;
+>>> +	info.tf_minlen = range->minlen;
+>>> +
+>>> +	ret = ocfs2_trim_mainbm(sb, range);
+>>> +
+>>> +	info.tf_trimlen = range->len;
+>>> +	info.tf_success = (ret < 0 ? 0 : 1);
+>>> +	pinfo = &info;
+>>> +out:
+>>> +	ocfs2_trim_fs_unlock(osb, pinfo);
+>>> +	ocfs2_trim_fs_lock_res_uninit(osb);
+>>>    	return ret;
+>>>    }
+>>> diff --git a/fs/ocfs2/dlmglue.c b/fs/ocfs2/dlmglue.c
+>>> index 7c835824247e..af405586c5b1 100644
+>>> --- a/fs/ocfs2/dlmglue.c
+>>> +++ b/fs/ocfs2/dlmglue.c
+>>> @@ -686,6 +686,9 @@ void ocfs2_trim_fs_lock_res_init(struct ocfs2_super *osb)
+>>>    {
+>>>    	struct ocfs2_lock_res *lockres = &osb->osb_trim_fs_lockres;
+>>>    
+>>> +	/* Only one trimfs thread are allowed to work at the same time. */
+>>> +	mutex_lock(&osb->obs_trim_fs_mutex);
+>>> +
+>>
+>> Cluster lock of fstrim have a trylock behavior, will it be better if we
+>> trylock here?
+> Here, I prefer to just serialize fstrim threads on the local node to simplify the code logic,
+> maybe the user want to do like that, although this behavior is not recommended.
+> You know, on one node, ideally, the user should call  fstrim command once regularly.
+> If he calls fstrim command more times in a very short time,
+> the code will not make each fstrim command return to failure, just do the fstrim task one by one.
 
-Okay, I will send a new one to fix them.
+I have a thought having nothing to do with your patch.
+Do you think it's possible for us to implement *discard on unlink file* like ext4 does.
+So the application doesn't have to invoke fstrim periodically.
 
 Thanks,
-Ryder
+Changwei
 
-> > +	tristate "MediaTek Quad SPI controller"
-> > +	depends on HAS_IOMEM
-> > +	help
-> > +	  This enables support for the Quad SPI controller in master mode.
-> > +	  This controller does not support generic SPI. It only supports
-> > +	  SPI NOR.
-> > +
-> >  config SPI_INTEL_SPI
-> >  	tristate
-> >  
-> > diff --git a/drivers/mtd/spi-nor/Makefile b/drivers/mtd/spi-nor/Makefile
-> > index 2adedbe..189a15c 100644
-> > --- a/drivers/mtd/spi-nor/Makefile
-> > +++ b/drivers/mtd/spi-nor/Makefile
-> > @@ -3,7 +3,7 @@ obj-$(CONFIG_MTD_SPI_NOR)	+= spi-nor.o
-> >  obj-$(CONFIG_SPI_ASPEED_SMC)	+= aspeed-smc.o
-> >  obj-$(CONFIG_SPI_CADENCE_QUADSPI)	+= cadence-quadspi.o
-> >  obj-$(CONFIG_SPI_HISI_SFC)	+= hisi-sfc.o
-> > -obj-$(CONFIG_MTD_MT81xx_NOR)    += mtk-quadspi.o
-> > +obj-$(CONFIG_SPI_MTK_QUADSPI)    += mtk-quadspi.o
-> >  obj-$(CONFIG_SPI_NXP_SPIFI)	+= nxp-spifi.o
-> >  obj-$(CONFIG_SPI_INTEL_SPI)	+= intel-spi.o
-> >  obj-$(CONFIG_SPI_INTEL_SPI_PCI)	+= intel-spi-pci.o
-> > 
-
-
+> 
+> Thanks
+> Gang
+> 
+>>
+>> Thanks,
+>> Changwei
+>>
+>>>    	ocfs2_lock_res_init_once(lockres);
+>>>    	ocfs2_build_lock_name(OCFS2_LOCK_TYPE_TRIM_FS, 0, 0, lockres->l_name);
+>>>    	ocfs2_lock_res_init_common(osb, lockres, OCFS2_LOCK_TYPE_TRIM_FS,
+>>> @@ -698,6 +701,8 @@ void ocfs2_trim_fs_lock_res_uninit(struct ocfs2_super
+>> *osb)
+>>>    
+>>>    	ocfs2_simple_drop_lockres(osb, lockres);
+>>>    	ocfs2_lock_res_free(lockres);
+>>> +
+>>> +	mutex_unlock(&osb->obs_trim_fs_mutex);
+>>>    }
+>>>    
+>>>    static void ocfs2_orphan_scan_lock_res_init(struct ocfs2_lock_res *res,
+>>> diff --git a/fs/ocfs2/ocfs2.h b/fs/ocfs2/ocfs2.h
+>>> index 4f86ac0027b5..1f029fbe8b8d 100644
+>>> --- a/fs/ocfs2/ocfs2.h
+>>> +++ b/fs/ocfs2/ocfs2.h
+>>> @@ -407,6 +407,7 @@ struct ocfs2_super
+>>>    	struct ocfs2_lock_res osb_rename_lockres;
+>>>    	struct ocfs2_lock_res osb_nfs_sync_lockres;
+>>>    	struct ocfs2_lock_res osb_trim_fs_lockres;
+>>> +	struct mutex obs_trim_fs_mutex;
+>>>    	struct ocfs2_dlm_debug *osb_dlm_debug;
+>>>    
+>>>    	struct dentry *osb_debug_root;
+>>> diff --git a/fs/ocfs2/ocfs2_trace.h b/fs/ocfs2/ocfs2_trace.h
+>>> index 2ee76a90ba8f..dc4bce1649c1 100644
+>>> --- a/fs/ocfs2/ocfs2_trace.h
+>>> +++ b/fs/ocfs2/ocfs2_trace.h
+>>> @@ -712,6 +712,8 @@ TRACE_EVENT(ocfs2_trim_extent,
+>>>    
+>>>    DEFINE_OCFS2_ULL_UINT_UINT_UINT_EVENT(ocfs2_trim_group);
+>>>    
+>>> +DEFINE_OCFS2_ULL_ULL_ULL_EVENT(ocfs2_trim_mainbm);
+>>> +
+>>>    DEFINE_OCFS2_ULL_ULL_ULL_EVENT(ocfs2_trim_fs);
+>>>    
+>>>    /* End of trace events for fs/ocfs2/alloc.c. */
+>>> diff --git a/fs/ocfs2/super.c b/fs/ocfs2/super.c
+>>> index 3415e0b09398..96ae7cedd487 100644
+>>> --- a/fs/ocfs2/super.c
+>>> +++ b/fs/ocfs2/super.c
+>>> @@ -1847,6 +1847,8 @@ static int ocfs2_mount_volume(struct super_block *sb)
+>>>    	if (ocfs2_is_hard_readonly(osb))
+>>>    		goto leave;
+>>>    
+>>> +	mutex_init(&osb->obs_trim_fs_mutex);
+>>> +
+>>>    	status = ocfs2_dlm_init(osb);
+>>>    	if (status < 0) {
+>>>    		mlog_errno(status);
+>>>
+> 
