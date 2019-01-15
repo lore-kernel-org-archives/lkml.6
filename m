@@ -2,95 +2,276 @@ Return-Path: <SRS0=RZO6=PX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 98A30C43444
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 18:36:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 55CACC43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 18:36:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 66B0720657
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 18:36:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547577378;
-	bh=6whWxQj1PvY5/IZ0ONf2GRXd2Bc5qbpQtwcWDSqd98E=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=Y1MlfwDkRUNE4Zr0IVZr1rajB5G5LEYU+pSrcRHWLcQ4rPfZ9LGjvKJM0e4EJW8E3
-	 qDKzoPUBUFw1IV+ZZM5knr6dGenWMP/B+oQBQ+c0Ve5hM6FvMrk9hta39f2R7vI+Ml
-	 sRGdIfeO/Vqapru1dyNJKCCUtCQC8VzTkmvO7Qao=
+	by mail.kernel.org (Postfix) with ESMTP id 1AE3720657
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 18:36:38 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="oM4g8JPR";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="XOXWpIBt"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388754AbfAOSgQ (ORCPT
+        id S2388768AbfAOSgg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 15 Jan 2019 13:36:16 -0500
-Received: from mail-ot1-f43.google.com ([209.85.210.43]:45655 "EHLO
-        mail-ot1-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727452AbfAOSgP (ORCPT
+        Tue, 15 Jan 2019 13:36:36 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:49438 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727452AbfAOSgf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Jan 2019 13:36:15 -0500
-Received: by mail-ot1-f43.google.com with SMTP id 32so3395448ota.12;
-        Tue, 15 Jan 2019 10:36:15 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=6whWxQj1PvY5/IZ0ONf2GRXd2Bc5qbpQtwcWDSqd98E=;
-        b=EIXwDf5UTGX7jyY2Wr2zdwt7a9lpojl9zIrDHxnezGDigdL+drfftIrVogLlYzek1L
-         d0hs+Pq2fzZKjupQUoDdGwsZbB8oseja2k7F/Xl6fIN6EWDvJIIc+CdYSzkx1GX+rfpi
-         u5P/X9WtG75oDRf077Hv0GuoXdRaX9YHTH55FEWVF6ZPAwKv2zClYPIoBiPXm+ey50PG
-         FhFTRCqb3xzWCruB2gjUIHZMMJOQowTsnGphX0uRVJ1mYjFxpaMLu8HxLtSbWXUdg4R2
-         fYUCJZE+2mKHSI0aColmJmmfoOS/07d1XFLlXwweK2tixBO7LDSYDFM6OsTOXUYraJK2
-         poEg==
-X-Gm-Message-State: AJcUukeyiyZwBubdfHEiKh7OPP2rj63yhLTEBoveXFVEyRuYkCYKR7p2
-        Tyx6iaaePsf0XcMJkJjhoWvqHxhwXX7Hd7GYPGk=
-X-Google-Smtp-Source: ALg8bN7DseTTxUHUENdb528u6E1TBRIwSxqG5pbAKxMPUMw2+g6sVORGUH2S/S3Y5FxtVxtpmEw/tPK3vzccvQVv4Bg=
-X-Received: by 2002:a9d:7f0d:: with SMTP id j13mr2996913otq.119.1547577374860;
- Tue, 15 Jan 2019 10:36:14 -0800 (PST)
-MIME-Version: 1.0
-References: <20190109174341.19818-1-keith.busch@intel.com> <20190109174341.19818-4-keith.busch@intel.com>
- <CAJZ5v0jk7ML21zxGwf9GaGNK8tP1LAs6Rd9NTK5O9HbzYeyPLA@mail.gmail.com> <20190115170741.GB27730@localhost.localdomain>
-In-Reply-To: <20190115170741.GB27730@localhost.localdomain>
-From:   "Rafael J. Wysocki" <rafael@kernel.org>
-Date:   Tue, 15 Jan 2019 19:36:03 +0100
-Message-ID: <CAJZ5v0iZ_i9vOPJgn69T=f8KE=fFm1vQt2AuEaNDGpn3E_cL3g@mail.gmail.com>
-Subject: Re: [PATCHv3 03/13] acpi/hmat: Parse and report heterogeneous memory
-To:     Keith Busch <keith.busch@intel.com>
-Cc:     "Rafael J. Wysocki" <rafael@kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
-        Linux Memory Management List <linux-mm@kvack.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Hansen, Dave" <dave.hansen@intel.com>,
-        "Williams, Dan J" <dan.j.williams@intel.com>
-Content-Type: text/plain; charset="UTF-8"
+        Tue, 15 Jan 2019 13:36:35 -0500
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 677A160300; Tue, 15 Jan 2019 18:36:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1547577394;
+        bh=HI2xz1kE/ceGl2qzqYQ17M48igVvikGs1+/WIXjnc80=;
+        h=From:To:Cc:Subject:Date:From;
+        b=oM4g8JPRITTee9cQILcaZVIXYnAUAmN64aXmIP9nAkVTthruRnpL4vB1RWzJnQJ6c
+         uUWHeTN4W2eq3em11othmsaXSslFiZ8VK3fhR6ORghnH0kpAwXTXIn+Ji0E9CaB6K2
+         7fvDsseS3vpyGfV2vbC6ymQenokLkA48rDegtcyA=
+Received: from jhugo-perf-lnx.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: jhugo@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 462FB60300;
+        Tue, 15 Jan 2019 18:36:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1547577393;
+        bh=HI2xz1kE/ceGl2qzqYQ17M48igVvikGs1+/WIXjnc80=;
+        h=From:To:Cc:Subject:Date:From;
+        b=XOXWpIBt5+Ekk+zxyFx+GoXPfAOPyYQ3Yy8e0KMYsd9vXY0JnF6XN9AcAtGFWpqh7
+         cdoqLhvympiZkBrCSxuGR6qCzRJahF0O0sePY1mHgdmEShiK8mWtcYO1anOTw8QTyq
+         SDsyGHYxpFB7GFmRo/p4btonjtJE5/QOKwLnJLd0=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 462FB60300
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=jhugo@codeaurora.org
+From:   Jeffrey Hugo <jhugo@codeaurora.org>
+To:     andy.gross@linaro.org, david.brown@linaro.org,
+        bjorn.andersson@linaro.org
+Cc:     robh+dt@kernel.org, mark.rutland@arm.com,
+        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Jeffrey Hugo <jhugo@codeaurora.org>
+Subject: [PATCH v2] arm64: dts: qcom: msm8998: Enumerate i2c controllers
+Date:   Tue, 15 Jan 2019 11:36:23 -0700
+Message-Id: <1547577383-13478-1-git-send-email-jhugo@codeaurora.org>
+X-Mailer: git-send-email 1.9.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 15, 2019 at 6:09 PM Keith Busch <keith.busch@intel.com> wrote:
->
-> On Thu, Jan 10, 2019 at 07:42:46AM -0800, Rafael J. Wysocki wrote:
-> > On Wed, Jan 9, 2019 at 6:47 PM Keith Busch <keith.busch@intel.com> wrote:
-> > >
-> > > Systems may provide different memory types and export this information
-> > > in the ACPI Heterogeneous Memory Attribute Table (HMAT). Parse these
-> > > tables provided by the platform and report the memory access and caching
-> > > attributes.
-> > >
-> > > Signed-off-by: Keith Busch <keith.busch@intel.com>
-> >
-> > While this is generally fine by me, it's another piece of code going
-> > under drivers/acpi/ just because it happens to use ACPI to extract
-> > some information from the platform firmware.
-> >
-> > Isn't there any better place for it?
->
-> I've tried to abstract the user visible parts outside any particular
-> firmware implementation, but HMAT parsing is an ACPI specific feature,
-> so I thought ACPI was a good home for this part. I'm open to suggestions
-> if there's a better place. Either under in another existing subsystem,
-> or create a new one under drivers/hmat/?
+msm8998 has a dozen i2c controllers which can be used to connect to board
+specific peripherals.  Enumerate the controllers so that boards can wire
+up as needed.
 
-Well, there is drivers/acpi/nfit for the NVDIMM-related things, so
-maybe there could be drivers/acpi/mm/ containing nfit/ and hmat.c (and
-maybe some other mm-related things)?
+Signed-off-by: Jeffrey Hugo <jhugo@codeaurora.org>
+---
+
+v2:
+-relabeled to include a link to the relevant blsp
+-corrected the abh clocks for blsp2 instances
+-padded the reg addresses to a full 4 bytes
+
+ arch/arm64/boot/dts/qcom/msm8998.dtsi | 180 ++++++++++++++++++++++++++++++++++
+ 1 file changed, 180 insertions(+)
+
+diff --git a/arch/arm64/boot/dts/qcom/msm8998.dtsi b/arch/arm64/boot/dts/qcom/msm8998.dtsi
+index 8d41b69..ab71e32 100644
+--- a/arch/arm64/boot/dts/qcom/msm8998.dtsi
++++ b/arch/arm64/boot/dts/qcom/msm8998.dtsi
+@@ -624,6 +624,186 @@
+ 			status = "disabled";
+ 		};
+ 
++		blsp1_i2c1: i2c@c175000 {
++			compatible = "qcom,i2c-qup-v2.2.1";
++			reg = <0x0c175000 0x600>;
++			interrupts = <GIC_SPI 95 IRQ_TYPE_LEVEL_HIGH>;
++
++			clocks = <&gcc GCC_BLSP1_QUP1_I2C_APPS_CLK>,
++				 <&gcc GCC_BLSP1_AHB_CLK>;
++			clock-names = "core", "iface";
++			clock-frequency = <400000>;
++
++			status = "disabled";
++			#address-cells = <1>;
++			#size-cells = <0>;
++		};
++
++		blsp1_i2c2: i2c@c176000 {
++			compatible = "qcom,i2c-qup-v2.2.1";
++			reg = <0x0c176000 0x600>;
++			interrupts = <GIC_SPI 96 IRQ_TYPE_LEVEL_HIGH>;
++
++			clocks = <&gcc GCC_BLSP1_QUP2_I2C_APPS_CLK>,
++				 <&gcc GCC_BLSP1_AHB_CLK>;
++			clock-names = "core", "iface";
++			clock-frequency = <400000>;
++
++			status = "disabled";
++			#address-cells = <1>;
++			#size-cells = <0>;
++		};
++
++		blsp1_i2c3: i2c@c177000 {
++			compatible = "qcom,i2c-qup-v2.2.1";
++			reg = <0x0c177000 0x600>;
++			interrupts = <GIC_SPI 97 IRQ_TYPE_LEVEL_HIGH>;
++
++			clocks = <&gcc GCC_BLSP1_QUP3_I2C_APPS_CLK>,
++				 <&gcc GCC_BLSP1_AHB_CLK>;
++			clock-names = "core", "iface";
++			clock-frequency = <400000>;
++
++			status = "disabled";
++			#address-cells = <1>;
++			#size-cells = <0>;
++		};
++
++		blsp1_i2c4: i2c@c178000 {
++			compatible = "qcom,i2c-qup-v2.2.1";
++			reg = <0x0c178000 0x600>;
++			interrupts = <GIC_SPI 98 IRQ_TYPE_LEVEL_HIGH>;
++
++			clocks = <&gcc GCC_BLSP1_QUP4_I2C_APPS_CLK>,
++				 <&gcc GCC_BLSP1_AHB_CLK>;
++			clock-names = "core", "iface";
++			clock-frequency = <400000>;
++
++			status = "disabled";
++			#address-cells = <1>;
++			#size-cells = <0>;
++		};
++
++		blsp1_i2c5: i2c@c179000 {
++			compatible = "qcom,i2c-qup-v2.2.1";
++			reg = <0x0c179000 0x600>;
++			interrupts = <GIC_SPI 99 IRQ_TYPE_LEVEL_HIGH>;
++
++			clocks = <&gcc GCC_BLSP1_QUP5_I2C_APPS_CLK>,
++				 <&gcc GCC_BLSP1_AHB_CLK>;
++			clock-names = "core", "iface";
++			clock-frequency = <400000>;
++
++			status = "disabled";
++			#address-cells = <1>;
++			#size-cells = <0>;
++		};
++
++		blsp1_i2c6: i2c@c17a000 {
++			compatible = "qcom,i2c-qup-v2.2.1";
++			reg = <0x0c17a000 0x600>;
++			interrupts = <GIC_SPI 100 IRQ_TYPE_LEVEL_HIGH>;
++
++			clocks = <&gcc GCC_BLSP1_QUP6_I2C_APPS_CLK>,
++				 <&gcc GCC_BLSP1_AHB_CLK>;
++			clock-names = "core", "iface";
++			clock-frequency = <400000>;
++
++			status = "disabled";
++			#address-cells = <1>;
++			#size-cells = <0>;
++		};
++
++		blsp2_i2c7: i2c@c1b5000 {
++			compatible = "qcom,i2c-qup-v2.2.1";
++			reg = <0x0c1b5000 0x600>;
++			interrupts = <GIC_SPI 101 IRQ_TYPE_LEVEL_HIGH>;
++
++			clocks = <&gcc GCC_BLSP2_QUP1_I2C_APPS_CLK>,
++				 <&gcc GCC_BLSP2_AHB_CLK>;
++			clock-names = "core", "iface";
++			clock-frequency = <400000>;
++
++			status = "disabled";
++			#address-cells = <1>;
++			#size-cells = <0>;
++		};
++
++		blsp2_i2c8: i2c@c1b6000 {
++			compatible = "qcom,i2c-qup-v2.2.1";
++			reg = <0x0c1b6000 0x600>;
++			interrupts = <GIC_SPI 102 IRQ_TYPE_LEVEL_HIGH>;
++
++			clocks = <&gcc GCC_BLSP2_QUP2_I2C_APPS_CLK>,
++				 <&gcc GCC_BLSP2_AHB_CLK>;
++			clock-names = "core", "iface";
++			clock-frequency = <400000>;
++
++			status = "disabled";
++			#address-cells = <1>;
++			#size-cells = <0>;
++		};
++
++		blsp2_i2c9: i2c@c1b7000 {
++			compatible = "qcom,i2c-qup-v2.2.1";
++			reg = <0x0c1b7000 0x600>;
++			interrupts = <GIC_SPI 103 IRQ_TYPE_LEVEL_HIGH>;
++
++			clocks = <&gcc GCC_BLSP2_QUP3_I2C_APPS_CLK>,
++				 <&gcc GCC_BLSP2_AHB_CLK>;
++			clock-names = "core", "iface";
++			clock-frequency = <400000>;
++
++			status = "disabled";
++			#address-cells = <1>;
++			#size-cells = <0>;
++		};
++
++		blsp2_i2c10: i2c@c1b8000 {
++			compatible = "qcom,i2c-qup-v2.2.1";
++			reg = <0x0c1b8000 0x600>;
++			interrupts = <GIC_SPI 104 IRQ_TYPE_LEVEL_HIGH>;
++
++			clocks = <&gcc GCC_BLSP2_QUP4_I2C_APPS_CLK>,
++				 <&gcc GCC_BLSP2_AHB_CLK>;
++			clock-names = "core", "iface";
++			clock-frequency = <400000>;
++
++			status = "disabled";
++			#address-cells = <1>;
++			#size-cells = <0>;
++		};
++
++		blsp2_i2c11: i2c@c1b9000 {
++			compatible = "qcom,i2c-qup-v2.2.1";
++			reg = <0x0c1b9000 0x600>;
++			interrupts = <GIC_SPI 105 IRQ_TYPE_LEVEL_HIGH>;
++
++			clocks = <&gcc GCC_BLSP2_QUP5_I2C_APPS_CLK>,
++				 <&gcc GCC_BLSP2_AHB_CLK>;
++			clock-names = "core", "iface";
++			clock-frequency = <400000>;
++
++			status = "disabled";
++			#address-cells = <1>;
++			#size-cells = <0>;
++		};
++
++		blsp2_i2c12: i2c@c1ba000 {
++			compatible = "qcom,i2c-qup-v2.2.1";
++			reg = <0x0c175000 0x600>;
++			interrupts = <GIC_SPI 106 IRQ_TYPE_LEVEL_HIGH>;
++
++			clocks = <&gcc GCC_BLSP2_QUP6_I2C_APPS_CLK>,
++				 <&gcc GCC_BLSP2_AHB_CLK>;
++			clock-names = "core", "iface";
++			clock-frequency = <400000>;
++
++			status = "disabled";
++			#address-cells = <1>;
++			#size-cells = <0>;
++		};
++
+ 		blsp2_uart1: serial@c1b0000 {
+ 			compatible = "qcom,msm-uartdm-v1.4", "qcom,msm-uartdm";
+ 			reg = <0xc1b0000 0x1000>;
+-- 
+Qualcomm Datacenter Technologies as an affiliate of Qualcomm Technologies, Inc.
+Qualcomm Technologies, Inc. is a member of the
+Code Aurora Forum, a Linux Foundation Collaborative Project.
+
