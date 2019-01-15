@@ -2,389 +2,234 @@ Return-Path: <SRS0=RZO6=PX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 39924C43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 10:55:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BD4C0C43444
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 10:55:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DAEC720651
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 10:55:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7E50620651
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 10:55:47 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=xenosoft.de header.i=@xenosoft.de header.b="kvgKs9BH"
+	dkim=pass (2048-bit key) header.d=kernelci-org.20150623.gappssmtp.com header.i=@kernelci-org.20150623.gappssmtp.com header.b="C0ZHK2ea"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729083AbfAOKzg (ORCPT
+        id S1729096AbfAOKzp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 15 Jan 2019 05:55:36 -0500
-Received: from mo4-p02-ob.smtp.rzone.de ([85.215.255.84]:25928 "EHLO
-        mo4-p02-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728508AbfAOKzf (ORCPT
+        Tue, 15 Jan 2019 05:55:45 -0500
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:33410 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728508AbfAOKzp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Jan 2019 05:55:35 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1547549727;
-        s=strato-dkim-0002; d=xenosoft.de;
-        h=In-Reply-To:Date:Message-ID:References:Cc:To:From:Subject:
-        X-RZG-CLASS-ID:X-RZG-AUTH:From:Subject:Sender;
-        bh=XQ9z9CcuukRP54GVEh/xaUN23t/Hq+aGQc1iDTAgTM0=;
-        b=kvgKs9BHOmBw0TNeXQwA8eVhKXAfyxxtYDXzSdnldPNcw+dJmldHgfEGECFCjJ3HQi
-        JeS8C1p/1aEDkvcmFzmF0tGLQUA2FGcuAWtcoTkH1CkWljphMIYQo3kxiT9KOrELjUsz
-        EB1yEjOqrnhvnM0ueAKCMvbsWiBXOK4kD+/HVjA8BMCB7y9QLM5U8T0CfOVaYfXe24Dx
-        Rfrh3T/TyI5cw7wwGn6A5+43Vw99MqI1K3P7eq4csxc+mu0zQmenRvxKWKRoi7Nn42RO
-        9XEx5JHuGqQTBwwoT2ejXl/PvBA4Bw8E7md3qYk9/8to/ck/fymvyzhMd+KspwWXJNe9
-        bc5g==
-X-RZG-AUTH: ":L2QefEenb+UdBJSdRCXu93KJ1bmSGnhMdmOod1DhGM4l4Hio94KKxRySfLxnHfJ+Dkjp5G5MdirQj0WG7CkNi0C2kzEbDQg0vrQvOCYvo/qC"
-X-RZG-CLASS-ID: mo00
-Received: from [IPv6:2a02:8109:a400:162c:25bb:7249:5b2a:1f0]
-        by smtp.strato.de (RZmta 44.9 AUTH)
-        with ESMTPSA id t0203dv0FAtPrFi
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (curve secp521r1 with 521 ECDH bits, eq. 15360 bits RSA))
-        (Client did not present a certificate);
-        Tue, 15 Jan 2019 11:55:25 +0100 (CET)
-Subject: Re: use generic DMA mapping code in powerpc V4
-From:   Christian Zigotzky <chzigotzky@xenosoft.de>
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     linux-arch@vger.kernel.org,
-        Darren Stevens <darren@stevens-zone.net>,
-        linux-kernel@vger.kernel.org, Julian Margetson <runaway@candw.ms>,
-        linux-mm@kvack.org, iommu@lists.linux-foundation.org,
-        Paul Mackerras <paulus@samba.org>,
-        Olof Johansson <olof@lixom.net>, linuxppc-dev@lists.ozlabs.org
-References: <2242B4B2-6311-492E-BFF9-6740E36EC6D4@xenosoft.de>
- <84558d7f-5a7f-5219-0c3a-045e6b4c494f@xenosoft.de>
- <20181213091021.GA2106@lst.de>
- <835bd119-081e-a5ea-1899-189d439c83d6@xenosoft.de>
- <76bc684a-b4d2-1d26-f18d-f5c9ba65978c@xenosoft.de>
- <20181213112511.GA4574@lst.de>
- <e109de27-f4af-147d-dc0e-067c8bafb29b@xenosoft.de>
- <ad5a5a8a-d232-d523-a6f7-e9377fc3857b@xenosoft.de>
- <e60d6ca3-860c-f01d-8860-c5e022ec7179@xenosoft.de>
- <008c981e-bdd2-21a7-f5f7-c57e4850ae9a@xenosoft.de>
- <20190103073622.GA24323@lst.de>
- <71A251A5-FA06-4019-B324-7AED32F7B714@xenosoft.de>
- <1b0c5c21-2761-d3a3-651b-3687bb6ae694@xenosoft.de>
- <3504ee70-02de-049e-6402-2d530bf55a84@xenosoft.de>
- <23284859-bf0a-9cd5-a480-2a7fd7802056@xenosoft.de>
- <075f70e3-7a4a-732f-b501-05a1a8e3c853@xenosoft.de>
- <b04d08ea-61f9-3212-b9a3-ad79e3b8bd05@xenosoft.de>
- <21f72a6a-9095-7034-f169-95e876228b2a@xenosoft.de>
-Message-ID: <27148ac2-2a92-5536-d886-2c0971ab43d9@xenosoft.de>
-Date:   Tue, 15 Jan 2019 11:55:25 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        Tue, 15 Jan 2019 05:55:45 -0500
+Received: by mail-wr1-f67.google.com with SMTP id c14so2464102wrr.0
+        for <linux-kernel@vger.kernel.org>; Tue, 15 Jan 2019 02:55:43 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernelci-org.20150623.gappssmtp.com; s=20150623;
+        h=message-id:date:mime-version:content-transfer-encoding:subject:to
+         :from:cc;
+        bh=m/fvwo49SWzUmfuv3wciZDu+jUmxlsc8EUM6/4BfDPI=;
+        b=C0ZHK2ea8qzVANDFZWHg4rnyQpAaknHJMi5ZdLJvNAdH14EKFH46j9ROSbV56jI8FU
+         OsxGABR8Cb/9yHbfm+rhIzau1RC4dVHluMZ61gnRYMi1pI9QzSLdOvj4CpKjscS6sSWl
+         j+ruesYpmI8ulaZhHG2BFzDTkigmkiw/NP31kSCMY554YyHpH16RaaERMnSmZbqzOzql
+         FGay4qcCNZChLzS0L6PykuvwvG76XYRhsPonEfOaEzYqoej2C5npkDa4YILkJiX9w/cv
+         VuDgEsbCsCPwXDleMbdQoSQ0M+EGW1Yc1dGWVRvCwo+mcgHgHqDEYs+Ekuj3aUbXgmP6
+         ujsA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:message-id:date:mime-version
+         :content-transfer-encoding:subject:to:from:cc;
+        bh=m/fvwo49SWzUmfuv3wciZDu+jUmxlsc8EUM6/4BfDPI=;
+        b=JETPtImpxvqzymL7L4AJ1ZaXAavpDVRZcNxY+5mtxpPDBWChbK0mq5ryDeUa6ic0sN
+         nQrX4z8qfBKVFrDz/s9CauF2/gPUfQQ4rxqW+4ZEO7ZmcfVRVYDiGKK5z4zTBgh8T9Q0
+         A70n1EO0xHwOZGqPzWcuj4MNy9AOMWelR1258npUDtImW4gJ6/piVXMptuesxcKaHcDY
+         sDpu/nWWNajYW0OHzPKumceHFEyHNWtwbzB+0nQbdd5VRXv7IsXxfHRLLVfdQdpQp0g1
+         nbWd99ZTYCLKch8ALVM+0Ms9PVxRCqiZStw0cWxyqdd4GriIfaG7dRQ31HB0B6HdXyY4
+         3OAg==
+X-Gm-Message-State: AJcUukc8Yd2MO8hd0HDK1Va/5H2cTsSREo0fI0KaQBLHImqRSsrlarvt
+        LA7brFjpnlj+nRTPeLss1lTmBQ==
+X-Google-Smtp-Source: ALg8bN6YXjvTGHmAdfto/kz4C35xlmp6qt7dFx/RH/9w836nUzAaU4a/7ZB7R3MsxhgOZsu60h/S8A==
+X-Received: by 2002:adf:c846:: with SMTP id e6mr2467053wrh.243.1547549742788;
+        Tue, 15 Jan 2019 02:55:42 -0800 (PST)
+Received: from [148.251.42.114] ([2a01:4f8:201:9271::2])
+        by smtp.gmail.com with ESMTPSA id k3sm112181567wrm.7.2019.01.15.02.55.41
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 15 Jan 2019 02:55:42 -0800 (PST)
+Message-ID: <5c3dbc2e.1c69fb81.f9b4d.6c24@mx.google.com>
+Date:   Tue, 15 Jan 2019 02:55:42 -0800 (PST)
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-In-Reply-To: <21f72a6a-9095-7034-f169-95e876228b2a@xenosoft.de>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: de-DE
+Content-Transfer-Encoding: quoted-printable
+X-Kernelci-Report-Type: bisect
+X-Kernelci-Lab-Name: lab-baylibre
+X-Kernelci-Tree: next
+X-Kernelci-Branch: pending-fixes
+X-Kernelci-Kernel: v5.0-rc2-361-g08b435ee366b
+Subject: next/pending-fixes boot bisection: v5.0-rc2-361-g08b435ee366b on
+ sun8i-h2-plus-libretech-all-h3-cc
+To:     Ajit Pandey <ajitp@codeaurora.org>, tomeu.vizoso@collabora.com,
+        Rohit kumar <rohitkr@codeaurora.org>,
+        guillaume.tucker@collabora.com, Mark Brown <broonie@kernel.org>,
+        broonie@kernel.org, matthew.hart@linaro.org, khilman@baylibre.com,
+        enric.balletbo@collabora.com
+From:   "kernelci.org bot" <bot@kernelci.org>
+Cc:     Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+        alsa-devel@alsa-project.org, Liam Girdwood <lgirdwood@gmail.com>,
+        linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Next step: 21074ef03c0816ae158721a78cabe9035938dddd (powerpc/dma: use 
-the generic direct mapping bypass)
+* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+* This automated bisection report was sent to you on the basis  *
+* that you may be involved with the breaking commit it has      *
+* found.  No manual investigation has been done to verify it,   *
+* and the root cause of the problem may be somewhere else.      *
+* Hope this helps!                                              *
+* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
-git clone git://git.infradead.org/users/hch/misc.git -b powerpc-dma.6 a
+next/pending-fixes boot bisection: v5.0-rc2-361-g08b435ee366b on sun8i-h2-p=
+lus-libretech-all-h3-cc
 
-git checkout 21074ef03c0816ae158721a78cabe9035938dddd
+Summary:
+  Start:      08b435ee366b Merge remote-tracking branch 'drm-misc-fixes/for=
+-linux-next-fixes'
+  Details:    https://kernelci.org/boot/id/5c3d795459b514563e6edd38
+  Plain log:  https://storage.kernelci.org//next/pending-fixes/v5.0-rc2-361=
+-g08b435ee366b/arm/sunxi_defconfig/lab-baylibre/boot-sun8i-h2-plus-libretec=
+h-all-h3-cc.txt
+  HTML log:   https://storage.kernelci.org//next/pending-fixes/v5.0-rc2-361=
+-g08b435ee366b/arm/sunxi_defconfig/lab-baylibre/boot-sun8i-h2-plus-libretec=
+h-all-h3-cc.html
+  Result:     8780cf1142a5 ASoC: soc-core: defer card probe until all compo=
+nent is added to list
 
-I was able to compile the kernel for the AmigaOne X1000 (Nemo board with 
-PA Semi PA6T-1682M SoC). It boots but the PA Semi onboard ethernet 
-doesn't work.
+Checks:
+  revert:     PASS
+  verify:     PASS
 
-dmesg:
+Parameters:
+  Tree:       next
+  URL:        http://git.kernel.org/pub/scm/linux/kernel/git/next/linux-nex=
+t.git
+  Branch:     pending-fixes
+  Target:     sun8i-h2-plus-libretech-all-h3-cc
+  CPU arch:   arm
+  Lab:        lab-baylibre
+  Config:     sunxi_defconfig
+  Test suite: boot
 
-[   12.698063] pasemi_mac 0000:00:14.3 enp0s20f3: renamed from eth0
-[   16.516966] IPv6: ADDRCONF(NETDEV_UP): enp0s20f3: link is not ready
-[   16.521025] pci 0000:00:1a.0: overflow 0x000000026a587802+1646 of DMA 
-mask ffffffff bus mask 0
-[   16.521047] WARNING: CPU: 0 PID: 2318 at kernel/dma/direct.c:43 
-.dma_direct_map_page+0x11c/0x200
-[   16.521049] Modules linked in:
-[   16.521056] CPU: 0 PID: 2318 Comm: NetworkManager Not tainted 
-5.0.0-rc2-2_A-EON_AmigaOne_X1000_Nemo-54576-g21074ef-dirty #1
-[   16.521059] NIP:  c00000000010395c LR: c000000000103a30 CTR: 
-0000000000000000
-[   16.521062] REGS: c00000026a1a29a0 TRAP: 0700   Not tainted 
-(5.0.0-rc2-2_A-EON_AmigaOne_X1000_Nemo-54576-g21074ef-dirty)
-[   16.521064] MSR:  900000000202b032 <SF,HV,VEC,EE,FP,ME,IR,DR,RI>  CR: 
-22002442  XER: 20000000
-[   16.521074] IRQMASK: 0
-                GPR00: c000000000103a30 c00000026a1a2c30 
-c000000001923f00 0000000000000052
-                GPR04: c00000026f206778 c00000026f20d458 
-c000000001ab1178 7063693a30303030
-                GPR08: 0000000000000007 0000000000000000 
-0000000000000000 0000000000000010
-                GPR12: 3a30303a31612e30 c000000001b10000 
-0000000000a79020 0000000000ace140
-                GPR16: 00000000fffdd958 0000000000000000 
-0000000000000000 c00000026be92220
-                GPR20: 0000000000000000 c00000026a470000 
-0000000000000000 0000000000000000
-                GPR24: 0000000000000800 c00000026a1c0000 
-c00000026bc69280 c00000026a1c0000
-                GPR28: c000000277b1f588 000000000000066e 
-c00000026d3c68b0 0000000000000802
-[   16.521111] NIP [c00000000010395c] .dma_direct_map_page+0x11c/0x200
-[   16.521114] LR [c000000000103a30] .dma_direct_map_page+0x1f0/0x200
-[   16.521116] Call Trace:
-[   16.521120] [c00000026a1a2c30] [c000000000103a30] 
-.dma_direct_map_page+0x1f0/0x200 (unreliable)
-[   16.521126] [c00000026a1a2cd0] [c00000000099b84c] 
-.pasemi_mac_replenish_rx_ring+0x12c/0x2a0
-[   16.521131] [c00000026a1a2da0] [c00000000099dcc4] 
-.pasemi_mac_open+0x384/0x7c0
-[   16.521137] [c00000026a1a2e40] [c000000000c6f4e4] .__dev_open+0x134/0x1e0
-[   16.521142] [c00000026a1a2ee0] [c000000000c6fa4c] 
-.__dev_change_flags+0x1bc/0x210
-[   16.521147] [c00000026a1a2f90] [c000000000c6fae8] 
-.dev_change_flags+0x48/0xa0
-[   16.521153] [c00000026a1a3030] [c000000000c8c8ec] .do_setlink+0x3dc/0xf60
-[   16.521158] [c00000026a1a31b0] [c000000000c8dde4] 
-.__rtnl_newlink+0x5e4/0x900
-[   16.521163] [c00000026a1a35f0] [c000000000c8e16c] .rtnl_newlink+0x6c/0xb0
-[   16.521167] [c00000026a1a3680] [c000000000c89898] 
-.rtnetlink_rcv_msg+0x2e8/0x3d0
-[   16.521172] [c00000026a1a3760] [c000000000cc0ff0] 
-.netlink_rcv_skb+0x120/0x170
-[   16.521177] [c00000026a1a3820] [c000000000c87378] 
-.rtnetlink_rcv+0x28/0x40
-[   16.521181] [c00000026a1a38a0] [c000000000cc0458] 
-.netlink_unicast+0x208/0x2f0
-[   16.521186] [c00000026a1a3950] [c000000000cc0a08] 
-.netlink_sendmsg+0x348/0x460
-[   16.521190] [c00000026a1a3a30] [c000000000c387d4] .sock_sendmsg+0x44/0x70
-[   16.521195] [c00000026a1a3ab0] [c000000000c3a7fc] 
-.___sys_sendmsg+0x30c/0x320
-[   16.521199] [c00000026a1a3ca0] [c000000000c3c414] 
-.__sys_sendmsg+0x74/0xf0
-[   16.521204] [c00000026a1a3d90] [c000000000cb4e00] 
-.__se_compat_sys_sendmsg+0x40/0x60
-[   16.521210] [c00000026a1a3e20] [c00000000000a21c] system_call+0x5c/0x70
-[   16.521212] Instruction dump:
-[   16.521215] 60000000 f8610070 3d20ffff 6129fffe 79290020 e8e70000 
-7fa74840 409d00b8
-[   16.521222] 3d420001 892acb59 2f890000 419e00b8 <0fe00000> 382100a0 
-3860ffff e8010010
-[   16.521231] ---[ end trace 2129e4121bbdd0e9 ]---
+Breaking commit found:
 
-I wasn't able to compile it for the AmigaOne X5000 (Cyrus+ board with 
-Qoriq P5020 SoC). Error message:
+---------------------------------------------------------------------------=
+----
+commit 8780cf1142a59568a3aa77959cbd76b2edb6fd81
+Author: Ajit Pandey <ajitp@codeaurora.org>
+Date:   Wed Jan 9 14:17:07 2019 +0530
 
-CALL    scripts/checksyscalls.sh
-   CHK     include/generated/compile.h
-   CC      arch/powerpc/sysdev/fsl_pci.o
-arch/powerpc/sysdev/fsl_pci.c: In function 'fsl_pci_dma_set_mask':
-arch/powerpc/sysdev/fsl_pci.c:142:21: error: 'dma_nommu_ops' undeclared 
-(first use in this function)
-    set_dma_ops(dev, &dma_nommu_ops);
-                      ^
-arch/powerpc/sysdev/fsl_pci.c:142:21: note: each undeclared identifier 
-is reported only once for each function it appears in
-scripts/Makefile.build:276: recipe for target 
-'arch/powerpc/sysdev/fsl_pci.o' failed
-make[2]: *** [arch/powerpc/sysdev/fsl_pci.o] Error 1
-scripts/Makefile.build:492: recipe for target 'arch/powerpc/sysdev' failed
-make[1]: *** [arch/powerpc/sysdev] Error 2
-Makefile:1049: recipe for target 'arch/powerpc' failed
-make: *** [arch/powerpc] Error 2
+    ASoC: soc-core: defer card probe until all component is added to list
+    =
 
--- Christian
+    DAI component probe is not called if it is not present
+    in component list during sound card registration.
+    Check if component is available in component list for
+    platform and cpu dai before soundcard registration.
+    =
+
+    Signed-off-by: Ajit Pandey <ajitp@codeaurora.org>
+    Signed-off-by: Rohit kumar <rohitkr@codeaurora.org>
+    Signed-off-by: Mark Brown <broonie@kernel.org>
+
+diff --git a/sound/soc/soc-core.c b/sound/soc/soc-core.c
+index 0462b3ec977a..eec92f17dd15 100644
+--- a/sound/soc/soc-core.c
++++ b/sound/soc/soc-core.c
+@@ -1027,7 +1027,6 @@ static int snd_soc_init_platform(struct snd_soc_card =
+*card,
+ 				 struct snd_soc_dai_link *dai_link)
+ {
+ 	struct snd_soc_dai_link_component *platform =3D dai_link->platform;
+-
+ 	/*
+ 	 * FIXME
+ 	 *
+@@ -1129,6 +1128,14 @@ static int soc_init_dai_link(struct snd_soc_card *ca=
+rd,
+ 			link->name);
+ 		return -EINVAL;
+ 	}
++
++	/*
++	 * Defer card registartion if platform dai component is not added to
++	 * component list.
++	 */
++	if (!soc_find_component(link->platform->of_node, link->platform->name))
++		return -EPROBE_DEFER;
++
+ 	/*
+ 	 * CPU device may be specified by either name or OF node, but
+ 	 * can be left unspecified, and will be matched based on DAI
+@@ -1140,6 +1147,14 @@ static int soc_init_dai_link(struct snd_soc_card *ca=
+rd,
+ 			link->name);
+ 		return -EINVAL;
+ 	}
++
++	/*
++	 * Defer card registartion if cpu dai component is not added to
++	 * component list.
++	 */
++	if (!soc_find_component(link->cpu_of_node, link->cpu_name))
++		return -EPROBE_DEFER;
++
+ 	/*
+ 	 * At least one of CPU DAI name or CPU device name/node must be
+ 	 * specified
+---------------------------------------------------------------------------=
+----
 
 
-On 15 January 2019 at 09:49AM, Christian Zigotzky wrote:
-> Next step: 63a6e350e037a21e9a88c8b710129bea7049a80f (powerpc/dma: use 
-> the dma_direct mapping routines)
->
-> git clone git://git.infradead.org/users/hch/misc.git -b powerpc-dma.6 a
->
-> git checkout 63a6e350e037a21e9a88c8b710129bea7049a80f
->
-> Error message:
->
-> arch/powerpc/kernel/dma.o:(.data.rel.ro+0x0): undefined reference to 
-> `__dma_nommu_alloc_coherent'
-> arch/powerpc/kernel/dma.o:(.data.rel.ro+0x8): undefined reference to 
-> `__dma_nommu_free_coherent'
-> Makefile:1027: recipe for target 'vmlinux' failed
-> make: *** [vmlinux] Error 1
->
-> -- Christian
->
->
-> On 15 January 2019 at 09:07AM, Christian Zigotzky wrote:
->> Next step: 240d7ecd7f6fa62e074e8a835e620047954f0b28 (powerpc/dma: use 
->> the dma-direct allocator for coherent platforms)
->>
->> git clone git://git.infradead.org/users/hch/misc.git -b powerpc-dma.6 a
->>
->> git checkout 240d7ecd7f6fa62e074e8a835e620047954f0b28
->>
->> Link to the Git: 
->> http://git.infradead.org/users/hch/misc.git/shortlog/refs/heads/powerpc-dma.6
->>
->> env LANG=C make CROSS_COMPILE=powerpc-linux-gnu- ARCH=powerpc zImage
->>
->> Error message:
->>
->> arch/powerpc/kernel/dma.o:(.data.rel.ro+0x0): undefined reference to 
->> `__dma_nommu_alloc_coherent'
->> arch/powerpc/kernel/dma.o:(.data.rel.ro+0x8): undefined reference to 
->> `__dma_nommu_free_coherent'
->> Makefile:1027: recipe for target 'vmlinux' failed
->> make: *** [vmlinux] Error 1
->>
->> -- Christian
->>
->>
->> On 12 January 2019 at 7:14PM, Christian Zigotzky wrote:
->>> Next step: 4558b6e1ddf3dcf5a86d6a5d16c2ac1600c7df39 (swiotlb: remove 
->>> swiotlb_dma_supported)
->>>
->>> git clone git://git.infradead.org/users/hch/misc.git -b powerpc-dma.6 a
->>>
->>> git checkout 4558b6e1ddf3dcf5a86d6a5d16c2ac1600c7df39
->>>
->>> Output:
->>>
->>> You are in 'detached HEAD' state. You can look around, make 
->>> experimental
->>> changes and commit them, and you can discard any commits you make in 
->>> this
->>> state without impacting any branches by performing another checkout.
->>>
->>> If you want to create a new branch to retain commits you create, you 
->>> may
->>> do so (now or later) by using -b with the checkout command again. 
->>> Example:
->>>
->>>   git checkout -b <new-branch-name>
->>>
->>> HEAD is now at 4558b6e... swiotlb: remove swiotlb_dma_supported
->>>
->>> ----
->>>
->>> Link to the Git: 
->>> http://git.infradead.org/users/hch/misc.git/shortlog/refs/heads/powerpc-dma.6
->>>
->>> Results: PASEMI onboard ethernet (X1000) works and the X5000 (P5020 
->>> board) boots. I also successfully tested sound, hardware 3D 
->>> acceleration, Bluetooth, network, booting with a label etc. The 
->>> uImages work also in a virtual e5500 quad-core QEMU machine.
->>>
->>> -- Christian
->>>
->>>
->>> On 11 January 2019 at 03:10AM, Christian Zigotzky wrote:
->>>> Next step: 891dcc1072f1fa27a83da920d88daff6ca08fc02 (powerpc/dma: 
->>>> remove dma_nommu_dma_supported)
->>>>
->>>> git clone git://git.infradead.org/users/hch/misc.git -b 
->>>> powerpc-dma.6 a
->>>>
->>>> git checkout 891dcc1072f1fa27a83da920d88daff6ca08fc02
->>>>
->>>> Output:
->>>>
->>>> Note: checking out '891dcc1072f1fa27a83da920d88daff6ca08fc02'.
->>>>
->>>> You are in 'detached HEAD' state. You can look around, make 
->>>> experimental
->>>> changes and commit them, and you can discard any commits you make 
->>>> in this
->>>> state without impacting any branches by performing another checkout.
->>>>
->>>> If you want to create a new branch to retain commits you create, 
->>>> you may
->>>> do so (now or later) by using -b with the checkout command again. 
->>>> Example:
->>>>
->>>> git checkout -b <new-branch-name>
->>>>
->>>> HEAD is now at 891dcc1... powerpc/dma: remove dma_nommu_dma_supported
->>>>
->>>> ---
->>>>
->>>> Link to the Git: 
->>>> http://git.infradead.org/users/hch/misc.git/shortlog/refs/heads/powerpc-dma.6
->>>>
->>>> Results: PASEMI onboard ethernet works and the X5000 (P5020 board) 
->>>> boots. I also successfully tested sound, hardware 3D acceleration, 
->>>> Bluetooth, network, booting with a label etc. The uImages work also 
->>>> in a virtual e5500 quad-core QEMU machine.
->>>>
->>>> -- Christian
->>>>
->>>>
->>>> On 09 January 2019 at 10:31AM, Christian Zigotzky wrote:
->>>>> Next step: a64e18ba191ba9102fb174f27d707485ffd9389c (powerpc/dma: 
->>>>> remove dma_nommu_get_required_mask)
->>>>>
->>>>> git clone git://git.infradead.org/users/hch/misc.git -b 
->>>>> powerpc-dma.6 a
->>>>>
->>>>> git checkout a64e18ba191ba9102fb174f27d707485ffd9389c
->>>>>
->>>>> Link to the Git: 
->>>>> http://git.infradead.org/users/hch/misc.git/shortlog/refs/heads/powerpc-dma.6
->>>>>
->>>>> Results: PASEMI onboard ethernet works and the X5000 (P5020 board) 
->>>>> boots. I also successfully tested sound, hardware 3D acceleration, 
->>>>> Bluetooth, network, booting with a label etc. The uImages work 
->>>>> also in a virtual e5500 quad-core QEMU machine.
->>>>>
->>>>> -- Christian
->>>>>
->>>>>
->>>>> On 05 January 2019 at 5:03PM, Christian Zigotzky wrote:
->>>>>> Next step: c446404b041130fbd9d1772d184f24715cf2362f (powerpc/dma: 
->>>>>> remove dma_nommu_mmap_coherent)
->>>>>>
->>>>>> git clone git://git.infradead.org/users/hch/misc.git -b 
->>>>>> powerpc-dma.6 a
->>>>>>
->>>>>> git checkout c446404b041130fbd9d1772d184f24715cf2362f
->>>>>>
->>>>>> Output:
->>>>>>
->>>>>> Note: checking out 'c446404b041130fbd9d1772d184f24715cf2362f'.
->>>>>>
->>>>>> You are in 'detached HEAD' state. You can look around, make 
->>>>>> experimental
->>>>>> changes and commit them, and you can discard any commits you make 
->>>>>> in this
->>>>>> state without impacting any branches by performing another checkout.
->>>>>>
->>>>>> If you want to create a new branch to retain commits you create, 
->>>>>> you may
->>>>>> do so (now or later) by using -b with the checkout command again. 
->>>>>> Example:
->>>>>>
->>>>>>   git checkout -b <new-branch-name>
->>>>>>
->>>>>> HEAD is now at c446404... powerpc/dma: remove 
->>>>>> dma_nommu_mmap_coherent
->>>>>>
->>>>>> -----
->>>>>>
->>>>>> Link to the Git: 
->>>>>> http://git.infradead.org/users/hch/misc.git/shortlog/refs/heads/powerpc-dma.6
->>>>>>
->>>>>> Result: PASEMI onboard ethernet works and the X5000 (P5020 board) 
->>>>>> boots.
->>>>>>
->>>>>> -- Christian
->>>>>>
->>>>>
->>>>>
->>>>
->>>>
->>>
->>>
->>
->>
->
->
+Git bisection log:
 
+---------------------------------------------------------------------------=
+----
+git bisect start
+# good: [3719876809e745b9db5293d418600c194bbf5c23] sbitmap: Protect swap_lo=
+ck from softirqs
+git bisect good 3719876809e745b9db5293d418600c194bbf5c23
+# bad: [08b435ee366bab63250c375ffea3c94cb02fcd93] Merge remote-tracking bra=
+nch 'drm-misc-fixes/for-linux-next-fixes'
+git bisect bad 08b435ee366bab63250c375ffea3c94cb02fcd93
+# good: [f80eb2d45c4e34750337d1210a78bfe2ebf43b73] Merge remote-tracking br=
+anch 'ipsec/master'
+git bisect good f80eb2d45c4e34750337d1210a78bfe2ebf43b73
+# bad: [e242412b491b4e34643f82c6f422e964beb81704] Merge remote-tracking bra=
+nch 'input-current/for-linus'
+git bisect bad e242412b491b4e34643f82c6f422e964beb81704
+# bad: [eb1c2383c8b929fcc5a56f5698ff3fe3d0ec54e6] Merge remote-tracking bra=
+nch 'sound-asoc-fixes/for-linus'
+git bisect bad eb1c2383c8b929fcc5a56f5698ff3fe3d0ec54e6
+# bad: [04eb1efcd614d6f067b76a355b3a3599667959dc] ASoC: soc-core: Hold clie=
+nt_mutex around soc_init_dai_link()
+git bisect bad 04eb1efcd614d6f067b76a355b3a3599667959dc
+# good: [a41d9dbf5dac5b6a1283ee8001f22807d18352ea] ASoC: qdsp6: q6asm-dai: =
+Fix a small memory leak
+git bisect good a41d9dbf5dac5b6a1283ee8001f22807d18352ea
+# good: [6175471755075d256c1c654151fc1cad183c1e33] ASoC: ti: davinci-mcasp:=
+ Move context save/restore to runtime_pm callbacks
+git bisect good 6175471755075d256c1c654151fc1cad183c1e33
+# good: [44fabd8cdaaa3acb80ad2bb3b5c61ae2136af661] ASoC: atom: fix a missin=
+g check of snd_pcm_lib_malloc_pages
+git bisect good 44fabd8cdaaa3acb80ad2bb3b5c61ae2136af661
+# bad: [239b8b34a856777e562373ae0de605536a7ccade] ASoC: Intel: Boards: move=
+ the codec PLL configuration to _init
+git bisect bad 239b8b34a856777e562373ae0de605536a7ccade
+# bad: [8780cf1142a59568a3aa77959cbd76b2edb6fd81] ASoC: soc-core: defer car=
+d probe until all component is added to list
+git bisect bad 8780cf1142a59568a3aa77959cbd76b2edb6fd81
+# first bad commit: [8780cf1142a59568a3aa77959cbd76b2edb6fd81] ASoC: soc-co=
+re: defer card probe until all component is added to list
+---------------------------------------------------------------------------=
+----
