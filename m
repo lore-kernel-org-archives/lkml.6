@@ -2,127 +2,144 @@ Return-Path: <SRS0=RZO6=PX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 36DDBC43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 18:09:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CE158C43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 18:09:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 063B120866
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 18:09:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A00C120866
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 18:09:29 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="OwUiKMHa"
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="aHNcS/Fv"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388671AbfAOSJW (ORCPT
+        id S2388688AbfAOSJ2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 15 Jan 2019 13:09:22 -0500
-Received: from userp2120.oracle.com ([156.151.31.85]:58450 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729737AbfAOSJT (ORCPT
+        Tue, 15 Jan 2019 13:09:28 -0500
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:44429 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729737AbfAOSJY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Jan 2019 13:09:19 -0500
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id x0FI91lX067570;
-        Tue, 15 Jan 2019 18:09:02 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
- references : from : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=corp-2018-07-02;
- bh=FLW84yJm9KbM1OoFE3utsganR8OPBeXYHN05HbnyItw=;
- b=OwUiKMHazbSFQHTZBm/a1dMvx2S5w4ozAqzqyTN0ST+B6lpI1QgXicZFB/KO2Gajw6jY
- lOCQcRl7/66fBIogK9TzkVUA5BvG+2Amv/hpDaYEtUDGcMm58jGaB0u2td/vonpLA8G2
- fMnI0IfXe75hFjiVBBSnEaiYwiasTUv37YW5ga42xP40uzr65+S0Jh2k+kBEVXFpCWI+
- AF0s1AqTtPpDtCj+/VGlALdEhrrou+IFLc9b+LYhPItijUUfjuM+gHZmQqZ41HngjFdf
- 90nlHBzrfkZ+2ZDyMme/BHjcAZtMliImqBlspzrtuSDj5iTW/CSeYNZgWdIqPfk+yaC4 bw== 
-Received: from userv0021.oracle.com (userv0021.oracle.com [156.151.31.71])
-        by userp2120.oracle.com with ESMTP id 2pybjs5fb2-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 15 Jan 2019 18:09:02 +0000
-Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
-        by userv0021.oracle.com (8.14.4/8.14.4) with ESMTP id x0FI91hf020815
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 15 Jan 2019 18:09:02 GMT
-Received: from abhmp0010.oracle.com (abhmp0010.oracle.com [141.146.116.16])
-        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x0FI90f7022642;
-        Tue, 15 Jan 2019 18:09:00 GMT
-Received: from [192.168.1.164] (/50.38.38.67)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Tue, 15 Jan 2019 10:09:00 -0800
-Subject: Re: [RFC PATCH] mm: align anon mmap for THP
-To:     "Kirill A. Shutemov" <kirill@shutemov.name>
-Cc:     Steven Sistare <steven.sistare@oracle.com>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        linux_lkml_grp@oracle.com, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, Hugh Dickins <hughd@google.com>,
-        Michal Hocko <mhocko@kernel.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Toshi Kani <toshi.kani@hpe.com>,
-        Boaz Harrosh <boazh@netapp.com>,
-        Andrew Morton <akpm@linux-foundation.org>
-References: <20190111201003.19755-1-mike.kravetz@oracle.com>
- <20190111215506.jmp2s5end2vlzhvb@black.fi.intel.com>
- <ebd57b51-117b-4a3d-21d9-fc0287f437d6@oracle.com>
- <ad3a53ba-82e2-2dc7-1cd2-feef7def0bc3@oracle.com>
- <50c6abdc-b906-d16a-2f8f-8647b3d129aa@oracle.com>
- <20190115082450.stl6vlrgbvikbwzq@kshutemo-mobl1>
-From:   Mike Kravetz <mike.kravetz@oracle.com>
-Message-ID: <9a1c07f8-68d0-835c-6461-bb64fef977bf@oracle.com>
-Date:   Tue, 15 Jan 2019 10:08:58 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        Tue, 15 Jan 2019 13:09:24 -0500
+Received: by mail-pf1-f194.google.com with SMTP id u6so1667675pfh.11
+        for <linux-kernel@vger.kernel.org>; Tue, 15 Jan 2019 10:09:24 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=Y6TTB+eemP3Hcp3LaqkLpOf1lv5h6166hexbAp+ECE8=;
+        b=aHNcS/FvBF2LrCqjiWo/PRfEg7GV17JJZlC+Mg+xA86EhSxF2ZJpr0/gVpBOqAeifB
+         nK9l7O2MeV7H0vc/mJfHUJ+sOgHb3l7g45byhlNYWBhEAt684w2bN74HJsFVLz/gl0fs
+         8fFIrL1L3k1/jhYyzyoj8P53j+xSw+iSnre0g=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=Y6TTB+eemP3Hcp3LaqkLpOf1lv5h6166hexbAp+ECE8=;
+        b=sVay0UKADGApHKVFnymAdWXO+CwY8lYZeZGTe5XLIzVVoOGsgrp3f4iHcN+f4t82bn
+         8cTbIPS6698zaRZJMvNYkIL+ssUty0QsfvoHGwpioNIRZAU7ucoN5pap8p4f6k8tK+CQ
+         8ah+0zKNowpBc1fnYCo/2643tEIh0IFy+zItodKS9h8VmeiW/mt0c4hyvWj1r3xBklHH
+         3cmFYrApxuwTGhfJ5vB2PWQ5M0nZYtv/nNlLBFD7tSDhNlUxgemTfCRqaHvPHnpt849j
+         ewZs/rNtwPFnbw7uvZ0Fuq4cxoJrX6nfYzprrQAgaz7Nz9eClZDqwpbLsjHPiVOjYRQS
+         c1Mg==
+X-Gm-Message-State: AJcUukdniupRtiJ4EBYCOrzoz8gloCWLJDNSFOZGVc2TqBHZ0sm1Rhce
+        kpjLRXDwG/gOY2QzI6m8ZVJC1w==
+X-Google-Smtp-Source: ALg8bN5MpOg+sPL+2BhEZEcoaguE29O+MUxOJikzSIHVRvJgrr7eBampLHGORRICe6dhy75xBEWubw==
+X-Received: by 2002:a62:f907:: with SMTP id o7mr5228103pfh.244.1547575763679;
+        Tue, 15 Jan 2019 10:09:23 -0800 (PST)
+Received: from builder (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
+        by smtp.gmail.com with ESMTPSA id z191sm4372963pgd.74.2019.01.15.10.09.22
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 15 Jan 2019 10:09:22 -0800 (PST)
+Date:   Tue, 15 Jan 2019 10:08:39 -0800
+From:   Bjorn Andersson <bjorn.andersson@linaro.org>
+To:     Jeffrey Hugo <jhugo@codeaurora.org>
+Cc:     robh+dt@kernel.org, mark.rutland@arm.com, andy.gross@linaro.org,
+        david.brown@linaro.org, linux-arm-msm@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kishon@ti.com, devicetree@vger.kernel.org,
+        gregkh@linuxfoundation.org, balbi@kernel.org,
+        linux-usb@vger.kernel.org
+Subject: Re: [PATCH v2 1/6] dt-bindings: phy-qcom: Add support for msm8998 usb
+Message-ID: <20190115180839.GC28907@builder>
+References: <1547483771-5334-1-git-send-email-jhugo@codeaurora.org>
 MIME-Version: 1.0
-In-Reply-To: <20190115082450.stl6vlrgbvikbwzq@kshutemo-mobl1>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9137 signatures=668682
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1810050000 definitions=main-1901150148
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1547483771-5334-1-git-send-email-jhugo@codeaurora.org>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 1/15/19 12:24 AM, Kirill A. Shutemov wrote:
-> On Mon, Jan 14, 2019 at 10:54:45AM -0800, Mike Kravetz wrote:
->> On 1/14/19 7:35 AM, Steven Sistare wrote:
->>> On 1/11/2019 6:28 PM, Mike Kravetz wrote:
->>>> On 1/11/19 1:55 PM, Kirill A. Shutemov wrote:
->>>>> On Fri, Jan 11, 2019 at 08:10:03PM +0000, Mike Kravetz wrote:
->>>>>> At LPC last year, Boaz Harrosh asked why he had to 'jump through hoops'
->>>>>> to get an address returned by mmap() suitably aligned for THP.  It seems
->>>>>> that if mmap is asking for a mapping length greater than huge page
->>>>>> size, it should align the returned address to huge page size.
->>>
->>> A better heuristic would be to return an aligned address if the length
->>> is a multiple of the huge page size.  The gap (if any) between the end of
->>> the previous VMA and the start of this VMA would be filled by subsequent
->>> smaller mmap requests.  The new behavior would need to become part of the
->>> mmap interface definition so apps can rely on it and omit their hoop-jumping
->>> code.
->>
->> Yes, the heuristic really should be 'length is a multiple of the huge page
->> size'.  As you mention, this would still leave gaps.  I need to look closer
->> but this may not be any worse than the trick of mapping an area with rounded
->> up length and then unmapping pages at the beginning.
+On Mon 14 Jan 08:36 PST 2019, Jeffrey Hugo wrote:
+
+> USB on msm8998 utilizes the QUSB2 and QMP phys, similar to sdm845.
 > 
-> The question why is it any better. Virtual address space is generally
-> cheap, additional VMA maybe more signficiant due to find_vma() overhead.
+> Signed-off-by: Jeffrey Hugo <jhugo@codeaurora.org>
+> ---
+>  Documentation/devicetree/bindings/phy/qcom-qmp-phy.txt   | 5 +++++
+>  Documentation/devicetree/bindings/phy/qcom-qusb2-phy.txt | 1 +
+>  2 files changed, 6 insertions(+)
 > 
-> And you don't *need* to unmap anything. Just use alinged pointer.
+> diff --git a/Documentation/devicetree/bindings/phy/qcom-qmp-phy.txt b/Documentation/devicetree/bindings/phy/qcom-qmp-phy.txt
+> index 41a1074..6061b6f 100644
+> --- a/Documentation/devicetree/bindings/phy/qcom-qmp-phy.txt
+> +++ b/Documentation/devicetree/bindings/phy/qcom-qmp-phy.txt
+> @@ -9,6 +9,7 @@ Required properties:
+>  	       "qcom,ipq8074-qmp-pcie-phy" for PCIe phy on IPQ8074
+>  	       "qcom,msm8996-qmp-pcie-phy" for 14nm PCIe phy on msm8996,
+>  	       "qcom,msm8996-qmp-usb3-phy" for 14nm USB3 phy on msm8996,
+> +	       "qcom,msm8998-qmp-usb3-phy" for USB3 QMP V3 phy on msm8998,
+>  	       "qcom,sdm845-qmp-usb3-phy" for USB3 QMP V3 phy on sdm845,
+>  	       "qcom,sdm845-qmp-usb3-uni-phy" for USB3 QMP V3 UNI phy on sdm845,
+>  	       "qcom,sdm845-qmp-ufs-phy" for UFS QMP phy on sdm845.
+> @@ -42,6 +43,8 @@ Required properties:
+>  			"aux", "cfg_ahb", "ref".
+>  		For "qcom,msm8996-qmp-usb3-phy" must contain:
+>  			"aux", "cfg_ahb", "ref".
+> +		For "qcom,msm8998-qmp-usb3-phy" must contain:
+> +			"aux", "cfg_ahb", "ref".
+>  		For "qcom,sdm845-qmp-usb3-phy" must contain:
+>  			"aux", "cfg_ahb", "ref", "com_aux".
+>  		For "qcom,sdm845-qmp-usb3-uni-phy" must contain:
+> @@ -60,6 +63,8 @@ Required properties:
+>  		For "qcom,msm8996-qmp-pcie-phy" must contain:
+>  			"phy", "common", "cfg".
+>  		For "qcom,msm8996-qmp-usb3-phy" must contain
+> +		 "phy", "common".
 
-You are correct, it is not any better.
+Odd indentation.
 
-I know you do not need to unmap anything.  However, I believe people are
-writing code which does this today.  For example, qemu's qemu_ram_mmap()
-utility routine does this, but it may have other reasons for creating
-the gap.
 
-Thanks for all of the feedback.  I do not think there is anything we can
-or should do in this area.  As Steve said, 'power users' who want to get
-optimal THP usage will write the code to make that happen.
--- 
-Mike Kravetz
+Apart from this, you have my
+
+Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+
+Regards,
+Bjorn
+
+> +		For "qcom,msm8998-qmp-usb3-phy" must contain
+>  			"phy", "common".
+>  		For "qcom,sdm845-qmp-usb3-phy" must contain:
+>  			"phy", "common".
+> diff --git a/Documentation/devicetree/bindings/phy/qcom-qusb2-phy.txt b/Documentation/devicetree/bindings/phy/qcom-qusb2-phy.txt
+> index 03025d9..fe29f9e 100644
+> --- a/Documentation/devicetree/bindings/phy/qcom-qusb2-phy.txt
+> +++ b/Documentation/devicetree/bindings/phy/qcom-qusb2-phy.txt
+> @@ -6,6 +6,7 @@ QUSB2 controller supports LS/FS/HS usb connectivity on Qualcomm chipsets.
+>  Required properties:
+>   - compatible: compatible list, contains
+>  	       "qcom,msm8996-qusb2-phy" for 14nm PHY on msm8996,
+> +	       "qcom,msm8998-qusb2-phy" for 10nm PHY on msm8998,
+>  	       "qcom,sdm845-qusb2-phy" for 10nm PHY on sdm845.
+>  
+>   - reg: offset and length of the PHY register set.
+> -- 
+> Qualcomm Datacenter Technologies as an affiliate of Qualcomm Technologies, Inc.
+> Qualcomm Technologies, Inc. is a member of the
+> Code Aurora Forum, a Linux Foundation Collaborative Project.
+> 
