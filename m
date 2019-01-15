@@ -2,88 +2,92 @@ Return-Path: <SRS0=RZO6=PX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F610C43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 00:54:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B224C43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 01:00:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E45D420659
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 00:54:41 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="AWbsrqSC"
+	by mail.kernel.org (Postfix) with ESMTP id D49BB20578
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 01:00:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727704AbfAOAyk (ORCPT
+        id S1727590AbfAOBAa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 14 Jan 2019 19:54:40 -0500
-Received: from frisell.zx2c4.com ([192.95.5.64]:46383 "EHLO frisell.zx2c4.com"
+        Mon, 14 Jan 2019 20:00:30 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:56364 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727455AbfAOAyj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 Jan 2019 19:54:39 -0500
-X-Greylist: delayed 399 seconds by postgrey-1.27 at vger.kernel.org; Mon, 14 Jan 2019 19:54:38 EST
-Received: by frisell.zx2c4.com (ZX2C4 Mail Server) with ESMTP id 09d0ecfe;
-        Tue, 15 Jan 2019 00:34:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha1; c=relaxed; d=zx2c4.com; h=from:to:cc
-        :subject:date:message-id:mime-version:content-transfer-encoding;
-         s=mail; bh=672UyKEKNu6gN3BZ012tnuPoaAQ=; b=AWbsrqSCvzOY7MG+3xOi
-        md7pIUY6hB1/IqC42IAqe3ZNlc8sd4Cmc4/B2Lef9bbxCxcYd+1O1YkZ47HWY12A
-        JckiVlccXUGofm35pt77WA6GJOYiohKGyrebfioVF8IOcaUSyKm0F5Ntjfn0Fj+T
-        EbRxLjjzpBallNOsMcTGKSyC6+fhe/FBgGpO/aZZHDFzunWRvjExLcf2/wcI5bc/
-        AF31t9tknfqXXJfA983ptNX5uFHagE+fNi+0FJerYhnfs1MJJTfBw0dgw9ECdEeO
-        XGZyGRNemGP7XTI0+q9PaZBWOeymNfZ4XaCjTYwTO6FB1iQF5KJKHAPKzD66UIdw
-        9Q==
-Received: by frisell.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id e163c3bc (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256:NO);
-        Tue, 15 Jan 2019 00:34:44 +0000 (UTC)
-From:   "Jason A. Donenfeld" <Jason@zx2c4.com>
-To:     benh@kernel.crashing.org, paulus@samba.org, mpe@ellerman.id.au,
-        aik@ozlabs.ru, linuxppc-dev@lists.ozlabs.org,
-        linux-kernel@vger.kernel.org
-Cc:     "Jason A. Donenfeld" <Jason@zx2c4.com>
-Subject: [PATCH] powerpc: PCI does not require PowerNV
-Date:   Mon, 14 Jan 2019 16:47:45 -0800
-Message-Id: <20190115004745.9996-1-Jason@zx2c4.com>
+        id S1727389AbfAOBA3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 14 Jan 2019 20:00:29 -0500
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 7E880811D3;
+        Tue, 15 Jan 2019 01:00:29 +0000 (UTC)
+Received: from redhat.com (ovpn-124-229.rdu2.redhat.com [10.10.124.229])
+        by smtp.corp.redhat.com (Postfix) with SMTP id 3609E5D962;
+        Tue, 15 Jan 2019 01:00:28 +0000 (UTC)
+Date:   Mon, 14 Jan 2019 20:00:27 -0500
+From:   "Michael S. Tsirkin" <mst@redhat.com>
+To:     Wei Wang <wei.w.wang@intel.com>
+Cc:     virtio-dev@lists.oasis-open.org, linux-kernel@vger.kernel.org,
+        virtualization@lists.linux-foundation.org, kvm@vger.kernel.org,
+        cohuck@redhat.com, borntraeger@de.ibm.com, pbonzini@redhat.com,
+        dgilbert@redhat.com, pasic@linux.ibm.com
+Subject: Re: [PATCH v3 2/3] virtio-balloon: improve update_balloon_size_func
+Message-ID: <20190114195450-mutt-send-email-mst@kernel.org>
+References: <1546844466-38079-1-git-send-email-wei.w.wang@intel.com>
+ <1546844466-38079-3-git-send-email-wei.w.wang@intel.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1546844466-38079-3-git-send-email-wei.w.wang@intel.com>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.27]); Tue, 15 Jan 2019 01:00:29 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit 0e759bd75285 moved around the declaration of pnv_npu2_init, but
-did not conditionalize it inside of the PCI pSeries driver. This meant
-that CONFIG_PCI && CONFIG_PPC_PSERIES && !CONFIG_PPC_POWERNV resulted
-in:
+On Mon, Jan 07, 2019 at 03:01:05PM +0800, Wei Wang wrote:
+> There is no need to update the balloon actual register when there is no
+> ballooning request. This patch avoids update_balloon_size when diff is 0.
+> 
+> Signed-off-by: Wei Wang <wei.w.wang@intel.com>
+> Reviewed-by: Cornelia Huck <cohuck@redhat.com>
+> Reviewed-by: Halil Pasic <pasic@linux.ibm.com>
 
-powerpc64le-pc-linux-gnu-ld: arch/powerpc/platforms/pseries/pci.o: in function `pSeries_final_fixup':
-pci.c:(.init.text+0x1b0): undefined reference to `pnv_npu2_init'
+It sounds reasonable but it does have a side effect of
+not writing into actual anymore.
 
-This commit therefore wraps that line in an ifdef, so that PCI works
-without PowerNV.
+I am not sure actual never can get out of sync as a result.
 
-Signed-off-by: Jason A. Donenfeld <Jason@zx2c4.com>
-Fixes: 0e759bd75285 ("powerpc/powernv/npu: Move OPAL calls away from context manipulation")
-Cc: Alexey Kardashevskiy <aik@ozlabs.ru>
-Cc: Michael Ellerman <mpe@ellerman.id.au>
----
- arch/powerpc/platforms/pseries/pci.c | 2 ++
- 1 file changed, 2 insertions(+)
+So better deferred, pls send this in the next merge window.
 
-diff --git a/arch/powerpc/platforms/pseries/pci.c b/arch/powerpc/platforms/pseries/pci.c
-index 7725825d887d..37a77e57893e 100644
---- a/arch/powerpc/platforms/pseries/pci.c
-+++ b/arch/powerpc/platforms/pseries/pci.c
-@@ -264,7 +264,9 @@ void __init pSeries_final_fixup(void)
- 			if (!of_device_is_compatible(nvdn->parent,
- 						"ibm,power9-npu"))
- 				continue;
-+#ifdef CONFIG_PPC_POWERNV
- 			WARN_ON_ONCE(pnv_npu2_init(hose));
-+#endif
- 			break;
- 		}
- 	}
--- 
-2.20.1
 
+
+
+> ---
+>  drivers/virtio/virtio_balloon.c | 5 ++++-
+>  1 file changed, 4 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/virtio/virtio_balloon.c b/drivers/virtio/virtio_balloon.c
+> index fb12fe2..e33dc8e 100644
+> --- a/drivers/virtio/virtio_balloon.c
+> +++ b/drivers/virtio/virtio_balloon.c
+> @@ -457,9 +457,12 @@ static void update_balloon_size_func(struct work_struct *work)
+>  			  update_balloon_size_work);
+>  	diff = towards_target(vb);
+>  
+> +	if (!diff)
+> +		return;
+> +
+>  	if (diff > 0)
+>  		diff -= fill_balloon(vb, diff);
+> -	else if (diff < 0)
+> +	else
+>  		diff += leak_balloon(vb, -diff);
+>  	update_balloon_size(vb);
+>  
+> -- 
+> 2.7.4
