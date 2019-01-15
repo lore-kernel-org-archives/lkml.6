@@ -3,119 +3,96 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CBF9DC43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 19:16:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 06113C43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 19:18:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 98C8D20675
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 19:16:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C167120675
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 19:18:46 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TQv3HtzT"
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="Jd2M/fur"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389296AbfAOTQQ (ORCPT
+        id S1731555AbfAOTSp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 15 Jan 2019 14:16:16 -0500
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:36777 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389161AbfAOTQQ (ORCPT
+        Tue, 15 Jan 2019 14:18:45 -0500
+Received: from mail-lf1-f67.google.com ([209.85.167.67]:44916 "EHLO
+        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729633AbfAOTSo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Jan 2019 14:16:16 -0500
-Received: by mail-pf1-f194.google.com with SMTP id b85so1767163pfc.3;
-        Tue, 15 Jan 2019 11:16:15 -0800 (PST)
+        Tue, 15 Jan 2019 14:18:44 -0500
+Received: by mail-lf1-f67.google.com with SMTP id z13so2909406lfe.11
+        for <linux-kernel@vger.kernel.org>; Tue, 15 Jan 2019 11:18:43 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
+        d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id;
-        bh=1KXh25PbVVHlosPzaxZn1WKzoKW7HIsYY+dIZZ+V+9U=;
-        b=TQv3HtzTrpRD1Z1VANRQYy7AfcvwcPfLLUEgenP4u71a66DQlWRACZNuBHDDh9tTXb
-         bjsRhDtuc4kU56KfRouW73RsIsIpbjlcO8i4EIh+3ZevBfNSRwpY+TglpH6YsVrwzdNW
-         BbP7w7pplO8TWchkMseqUM/QwTvcIGC1YwiknlUlk7PPWmWbRi0YlCAJiSl+TyA7K3Ao
-         neMNxCpfgPqcxg/OolUSbdvuBX+QP+6mPUwVQQYzpPJHe2LkJa4DBD1rFxEYphtOVIxX
-         CLSjhwiMLuShcxrF/6TIiRamG64PQy7I8wM6Sbrsklijthjk3ubVyCC2oTJ8OWQLLpJn
-         kjjA==
+        bh=1xkvY33qLaFRb0R1VDCtBPYVc9gDjRgw4GnLsSZDD3o=;
+        b=Jd2M/fur6g+ebFQr0b0ZOYZUdty2Nud8TwgANhYRwFcHQlPvipshLVps5bNN90RBJE
+         Gt0Ipdea+1zpGK5KM9RJz9/XNIBy5/aBY2/QfsTtdlctjzx2eBXZ+UWsNFkJ2xvL/Xiz
+         7fyeil7BHseF3A0K9axxfifbFIV4xTqfkbImI=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=1KXh25PbVVHlosPzaxZn1WKzoKW7HIsYY+dIZZ+V+9U=;
-        b=AU4U79kYGrGo1kaMRK858KJ4cDh82GmWxchxUf8CUYQY0YJtsZDrA7NPP4tNwe89Fh
-         jRHZxsyfSsTQ0rlSkkAzY24iOPVyHQ03ipsP5F3RujId1NdGHgoksQNso2BEDNItNSfq
-         h3wjSUtMEKpC3vUxjawaQDRQGoR4IG2GWQo4ULegnxBtR0FKbxYttxwV+sD1uJviTdmD
-         IBCtQulWreQoVUB6xBn7s3zRQQoN6oLLgoWFrs8Le3uIifLRsJPfkj3moj0u2NAElWV/
-         lqaQ7ooMJV+fj9M8elIKLsLreHrT8jmv3Evl4W1+e3Mvw9la1B2e4phLNp2tKS9Z0q8P
-         wH+g==
-X-Gm-Message-State: AJcUukf8s/LYx8Uiobd5xOdJqFAnrJg27BdgRquy+ZaatFqVxsV8fFZU
-        NWnUHC+UVVmw7lySLnwyZigEjiEPtgc=
-X-Google-Smtp-Source: ALg8bN4i+IwVSDLt7rLGx2HaIHrRky4Qmp3KkAdjtc1wjHeLzZZYlQ2sGS8w7rCPRbs9G8YVOAr8KA==
-X-Received: by 2002:a63:6704:: with SMTP id b4mr5194963pgc.100.1547579774953;
-        Tue, 15 Jan 2019 11:16:14 -0800 (PST)
-Received: from majic.sklembedded.com (c-73-202-231-77.hsd1.ca.comcast.net. [73.202.231.77])
-        by smtp.googlemail.com with ESMTPSA id v89sm8023131pfj.164.2019.01.15.11.16.13
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 15 Jan 2019 11:16:14 -0800 (PST)
-From:   Steve Longerbeam <slongerbeam@gmail.com>
-To:     linux-media@vger.kernel.org
-Cc:     Steve Longerbeam <slongerbeam@gmail.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        devel@driverdev.osuosl.org (open list:STAGING SUBSYSTEM),
-        linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH] media: imx: capture: Allow event subscribe/unsubscribe
-Date:   Tue, 15 Jan 2019 11:16:08 -0800
-Message-Id: <20190115191608.13029-1-slongerbeam@gmail.com>
-X-Mailer: git-send-email 2.17.1
+        bh=1xkvY33qLaFRb0R1VDCtBPYVc9gDjRgw4GnLsSZDD3o=;
+        b=MuSF6xC3gqh5hZOd0XQnsegYOar25b7USDIKkloP1QHaSn6zbN9QxvVa2ihBI9mtqe
+         IUK0L+5R0F0usA34I/Q8AkRYE/o3MX/KTRFzzXMMrIXO/aOpaolwG6KW2CwE4hE7UkVW
+         qwul7EkgIiVFvW+EZrgdtF7Hb/N6FtG68wzhTyB6DFp1XukZXoLPNhY4+1k5K67uBpJV
+         NsJbI529ET7tHhboyOVlSbPcBxWXIyX93BNYq0fGO5TjkcCtbPsVdeP8vb2MTspyBcny
+         /WX7nJ2Fx9gPEI++XEVUKvZpSBRoi1hdir7el7EsaPmh+1m9DYJNjJvN9bCFkKO809Ri
+         KYZg==
+X-Gm-Message-State: AJcUukdRlOlICSXPew5eN1uneO2bhz2xHJNp+VTGBlf2YWiU5JkqDAOK
+        0NyeGQ77d6lqXSddCQXQkFr0HMWa55H30Q==
+X-Google-Smtp-Source: ALg8bN7BhJwQ1IdNP6iPvtp0u35H9sqhx7BMXB26EAEvWnmf66qwOPgvgSOn9bviI1IogMdDEAr8mg==
+X-Received: by 2002:ac2:554b:: with SMTP id l11mr3956878lfk.92.1547579922409;
+        Tue, 15 Jan 2019 11:18:42 -0800 (PST)
+Received: from localhost (c-573670d5.07-21-73746f28.bbcust.telenor.se. [213.112.54.87])
+        by smtp.gmail.com with ESMTPSA id c2-v6sm695005ljj.41.2019.01.15.11.18.41
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 15 Jan 2019 11:18:41 -0800 (PST)
+From:   Anders Roxell <anders.roxell@linaro.org>
+To:     catalin.marinas@arm.com, will.deacon@arm.com
+Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Anders Roxell <anders.roxell@linaro.org>
+Subject: [PATCH] arm64: Kconfig.platforms: fix warning unmet direct dependencies
+Date:   Tue, 15 Jan 2019 20:18:39 +0100
+Message-Id: <20190115191839.13823-1-anders.roxell@linaro.org>
+X-Mailer: git-send-email 2.11.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Implement the vidioc_(un)subscribe_event operations. Imx will allow
-subscribing to the imx-specific frame interval error events, events
-from subdevices (V4L2_EVENT_SOURCE_CHANGE), and control events.
+When ARCH_MXC get enabled, ARM64_ERRATUM_845719 will be selected and
+this warning will happen when COMPAT isn't set.
 
-Signed-off-by: Steve Longerbeam <slongerbeam@gmail.com>
+WARNING: unmet direct dependencies detected for ARM64_ERRATUM_845719
+  Depends on [n]: COMPAT [=n]
+  Selected by [y]:
+  - ARCH_MXC [=y]
+
+Rework to add 'if COMPAT' before ARM64_ERRATUM_845719 gets selected,
+since ARM64_ERRATUM_845719 depends on COMPAT.
+
+Signed-off-by: Anders Roxell <anders.roxell@linaro.org>
 ---
- drivers/staging/media/imx/imx-media-capture.c | 18 ++++++++++++++++++
- 1 file changed, 18 insertions(+)
+ arch/arm64/Kconfig.platforms | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/staging/media/imx/imx-media-capture.c b/drivers/staging/media/imx/imx-media-capture.c
-index b37e1186eb2f..4dfbe05d203e 100644
---- a/drivers/staging/media/imx/imx-media-capture.c
-+++ b/drivers/staging/media/imx/imx-media-capture.c
-@@ -335,6 +335,21 @@ static int capture_s_parm(struct file *file, void *fh,
- 	return 0;
- }
- 
-+static int capture_subscribe_event(struct v4l2_fh *fh,
-+				   const struct v4l2_event_subscription *sub)
-+{
-+	switch (sub->type) {
-+	case V4L2_EVENT_IMX_FRAME_INTERVAL_ERROR:
-+		return v4l2_event_subscribe(fh, sub, 0, NULL);
-+	case V4L2_EVENT_SOURCE_CHANGE:
-+		return v4l2_src_change_event_subscribe(fh, sub);
-+	case V4L2_EVENT_CTRL:
-+		return v4l2_ctrl_subscribe_event(fh, sub);
-+	default:
-+		return -EINVAL;
-+	}
-+}
-+
- static const struct v4l2_ioctl_ops capture_ioctl_ops = {
- 	.vidioc_querycap	= vidioc_querycap,
- 
-@@ -362,6 +377,9 @@ static const struct v4l2_ioctl_ops capture_ioctl_ops = {
- 	.vidioc_expbuf		= vb2_ioctl_expbuf,
- 	.vidioc_streamon	= vb2_ioctl_streamon,
- 	.vidioc_streamoff	= vb2_ioctl_streamoff,
-+
-+	.vidioc_subscribe_event = capture_subscribe_event,
-+	.vidioc_unsubscribe_event = v4l2_event_unsubscribe,
- };
- 
- /*
+diff --git a/arch/arm64/Kconfig.platforms b/arch/arm64/Kconfig.platforms
+index 251ecf34cb02..d4faca775d9c 100644
+--- a/arch/arm64/Kconfig.platforms
++++ b/arch/arm64/Kconfig.platforms
+@@ -145,7 +145,7 @@ config ARCH_MVEBU
+ config ARCH_MXC
+ 	bool "ARMv8 based NXP i.MX SoC family"
+ 	select ARM64_ERRATUM_843419
+-	select ARM64_ERRATUM_845719
++	select ARM64_ERRATUM_845719 if COMPAT
+ 	help
+ 	  This enables support for the ARMv8 based SoCs in the
+ 	  NXP i.MX family.
 -- 
-2.17.1
+2.19.2
 
