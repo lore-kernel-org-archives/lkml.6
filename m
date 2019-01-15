@@ -2,119 +2,309 @@ Return-Path: <SRS0=RZO6=PX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C37AC43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 21:41:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 923AEC43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 21:42:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D419720657
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 21:41:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547588509;
-	bh=8i0Xe+biG0HE+zFm5Zqi7dMiFkH/96I50bOT0ks4Ts0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=NheT0kCL2W6x/LLcRmS06wu7n/ijoQEWBUj1bZ+1BdmOxMIZ/smtp2wzk5MEDGMNZ
-	 YlHKz4N6/w6AsetT31kQMmNJupPcKinbxEDTMIkyIsTTbBoxquYXhyICXMONNZMYtx
-	 awkkKsLqMnc6MfSMGBVvDks/wa4kM8RKyaV8YvRc=
+	by mail.kernel.org (Postfix) with ESMTP id 513B82086D
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 21:42:32 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ldwDC9O2"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390621AbfAOVls (ORCPT
+        id S2390629AbfAOVma (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 15 Jan 2019 16:41:48 -0500
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:60060 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730500AbfAOVlr (ORCPT
+        Tue, 15 Jan 2019 16:42:30 -0500
+Received: from mail-lf1-f66.google.com ([209.85.167.66]:36354 "EHLO
+        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729432AbfAOVm3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Jan 2019 16:41:47 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=tzG7x5dUDPPpFgNczCyMEm9pQeYaBaF6Sv7l5pfgrJs=; b=ktldLd9YCO3BCQ8PSLHMj2FqY
-        IKM2XeIFxRQ31gbtOtCb5z3TwqxZj+I9QKBINOcID6lhh0O4B8TOJTTg6UjLSS5T8GGuOKf6dwyn1
-        xa7oVtsqbPIp/OUabsyDzuk2vt7VYxcH5oEyPLoiy6Zng8OQjGe9kQyPoI0ZTXbgDZJbQ=;
-Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
-        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1gjWSo-0003CK-LI; Tue, 15 Jan 2019 21:41:38 +0000
-Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
-        id 1D3DE1127532; Tue, 15 Jan 2019 21:41:38 +0000 (GMT)
-Date:   Tue, 15 Jan 2019 21:41:38 +0000
-From:   Mark Brown <broonie@kernel.org>
-To:     Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-Cc:     Matthias Reichl <hias@horus.com>, rohkumar@qti.qualcomm.com,
-        alsa-devel@alsa-project.org, bgoswami@codeaurora.org,
-        vinod.koul@linaro.org, lgirdwood@gmail.com, plai@codeaurora.org,
-        linux-kernel@vger.kernel.org, tiwai@suse.com,
-        Liam Girdwood <liam.r.girdwood@linux.intel.com>,
-        srinivas.kandagatla@linaro.org,
-        Rohit kumar <rohitkr@codeaurora.org>, asishb@codeaurora.org,
-        Ajit Pandey <ajitp@codeaurora.org>
-Subject: Re: [alsa-devel] [PATCH] ASoC: soc-core: Fix null pointer
- dereference in soc_find_component
-Message-ID: <20190115214138.GL5522@sirena.org.uk>
-References: <1547194442-1487-1-git-send-email-rohitkr@codeaurora.org>
- <d8726e9a-3477-a573-8c1a-dd8245068802@linux.intel.com>
- <4886ed21-65d2-159d-afcd-bb26dcde636e@linux.intel.com>
- <20190115000610.GM11073@sirena.org.uk>
- <796a856c-a9a6-022d-da63-947279090198@linux.intel.com>
- <20190115211137.rhdyjadu7fppp3p4@lenny.lan>
- <af2e9555-444f-7c40-865b-347f3db8fa76@linux.intel.com>
+        Tue, 15 Jan 2019 16:42:29 -0500
+Received: by mail-lf1-f66.google.com with SMTP id a16so3255035lfg.3;
+        Tue, 15 Jan 2019 13:42:27 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=eL3dXVTJlz6fkztFhnQOZ1Rn0mDqd1yqxwCOSlr4gBc=;
+        b=ldwDC9O26OpXYayEy/ynP7sVpKvLhkQGW4SIiQThGQXq2lLvciSZtpyqRd+qkeIc+1
+         M/Zz+XgQbFRWJ/npdcRyMmbqCV5ew1RLNs6gjbirVeZ31oplQyb8li86Pz/oHplV7fe3
+         ib0Sth2ocPk36UKDo2mbUesKezwZV2n78Oi7DlT/6lzZCIt16DwMlDKJa2ZeYFjMnJvt
+         1TkQ8gpTS6aEsn6g0LMkA0xrSn7Ct5K6Sbj+fpQkkIdJVdKtD4cR6AlSFLVzlEMzNwAc
+         BIgaRI4Km6JyilCT9Pqrn6K5/XBQVdzyI2CrwgXdMSsmbFdivP453eZnHX/3Z/VO45iE
+         Jn0g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=eL3dXVTJlz6fkztFhnQOZ1Rn0mDqd1yqxwCOSlr4gBc=;
+        b=X1mwzYbutN0/bf53sRC49hhMEtbHGITrEdcd8Bh71kVqBbk2mZsKZd0l960KtrEJCa
+         OmA66mANw3oE0Y//d8tkw1wSSG40NJd4f0AYd/ataytiQ/+/FX10Aj5Bx1TRBAb6wkC2
+         JzvEw+asMmej0n1M6T8OOlV170hdF9fyq2VOL2ko/S2N4bF/B8L0nwd4cOQZNxCi0t+q
+         f6gHEHltzfUxrkvsTAaPDqZ5RfgcBNSVV3bF0EsawK7s9MQn700K1yw6rZr0vSHUo2ux
+         iFT/8+ldE7iXsuTO6k6XX+bmkKQBwi73Ya+gKyAGL7Zohd3a8ys70n8j0DN/hkKYpLAO
+         UObQ==
+X-Gm-Message-State: AJcUukdRMgUHhqJB0wQCdiJzxgZmu9NTVxG62nyWrC6NxON7FQD8YuA1
+        Q5MdEynf9FwoSosMRCz5qWw=
+X-Google-Smtp-Source: ALg8bN5vrSjFUwY/Y+JVT6NMLdBxW2sZ5i+3ifVb6Vdx8RHdR1pVXVg7S4FTGQUQehfPb+ZsQ11XMQ==
+X-Received: by 2002:a19:5349:: with SMTP id h70mr4310642lfb.50.1547588546809;
+        Tue, 15 Jan 2019 13:42:26 -0800 (PST)
+Received: from [192.168.1.18] (bko76.neoplus.adsl.tpnet.pl. [83.28.182.76])
+        by smtp.gmail.com with ESMTPSA id s3-v6sm758504lje.73.2019.01.15.13.42.24
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 15 Jan 2019 13:42:25 -0800 (PST)
+Subject: Re: [PATCH v2 1/2] dt: bindings: lp50xx: Introduce the lp50xx family
+ of RGB drivers
+To:     Dan Murphy <dmurphy@ti.com>, linux-leds@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org, pavel@ucw.cz,
+        devicetree@vger.kernel.org, dachaac@gmail.com, robh+dt@kernel.org
+References: <20190114211723.11186-1-dmurphy@ti.com>
+From:   Jacek Anaszewski <jacek.anaszewski@gmail.com>
+Message-ID: <45f28e71-54c5-dfa8-78b8-c68b2d39c019@gmail.com>
+Date:   Tue, 15 Jan 2019 22:42:23 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="KIbT1ud6duwZIwNL"
-Content-Disposition: inline
-In-Reply-To: <af2e9555-444f-7c40-865b-347f3db8fa76@linux.intel.com>
-X-Cookie: Violence is molding.
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20190114211723.11186-1-dmurphy@ti.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Dan,
 
---KIbT1ud6duwZIwNL
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Thank you for the patch.
 
-On Tue, Jan 15, 2019 at 03:16:57PM -0600, Pierre-Louis Bossart wrote:
+Seeing the mess with regs and led-modules I think
+it will be better to abide by the regs alone.
 
-> > Maybe the defer card probe logic needs to be extended to also check if
-> > dai_link_name had already been registered (either cpu or cpu_dai_name
-> > needs to be set), not 100% sure which problem the defer card probe patch
-> > was trying to solve.
+Please see below how I would structure that.
 
-We were getting cards probing without the platforms being registered
-(which in turn meant we were just skipping their init) and had patches
-proposed to implement the deferral in the cards.  The deferral stuff is
-supposed to making sure that everything is registered when we
-instantiate.
+On 1/14/19 10:17 PM, Dan Murphy wrote:
+> Introduce the bindings for the Texas Instruments LP5036, LP5030, LP5024 and the LP5018
+> RGB LED device driver.  The LP5036/3024/18 can control RGB LEDs individually
+> or as part of a control bank group.  These devices have the ability
+> to adjust the mixing control for the RGB LEDs to obtain different colors
+> independent of the overall brightness of the LED grouping.
+> 
+> Datasheet:
+> http://www.ti.com/lit/ds/symlink/lp5024.pdf
+> http://www.ti.com/lit/ds/symlink/lp5036.pdf
+> 
+> Signed-off-by: Dan Murphy <dmurphy@ti.com>
+> ---
+> 
+> v2 - Added the LP5030/36 devices, defined the modules vs banked properties
+> renamed the file from lp5024 to lp50xx. - https://lore.kernel.org/patchwork/patch/1026514/
+> 
+>   .../devicetree/bindings/leds/leds-lp50xx.txt  | 143 ++++++++++++++++++
+>   1 file changed, 143 insertions(+)
+>   create mode 100644 Documentation/devicetree/bindings/leds/leds-lp50xx.txt
+> 
+> diff --git a/Documentation/devicetree/bindings/leds/leds-lp50xx.txt b/Documentation/devicetree/bindings/leds/leds-lp50xx.txt
+> new file mode 100644
+> index 000000000000..7bc6843ddba4
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/leds/leds-lp50xx.txt
+> @@ -0,0 +1,143 @@
+> +* Texas Instruments - LP5018/24/30/36 RGB LED driver
+> +
+> +The LP50XX is multi-channel, I2C RGB LED Drivers that can group RGB LEDs into
+> +a LED group or control them individually.
+> +
+> +The difference in these RGB LED drivers is the number of supported RGB strings.
 
-> same here, I don't get why the deferred probe stuff only deals with one of
-> the two options.
+Maybe it would be better to replace "strings" with "modules"?
+Strings usually mean LEDs connected in a row, which is specific
+to backlights.
 
-I think it's just an oversight - I think the change you were proposing
-to check the cpu_dai_name is a good idea anyway as it makes things more
-consistent and work more obviously by intention.  And more generally if
-we can simplify the code by removing legacy options that'd be good but
-that's a bigger bit of work...
+> +Required properties:
+> +	- compatible:
+> +		"ti,lp5018"
+> +		"ti,lp5024"
+> +		"ti,lp5030"
+> +		"ti,lp5036"
+> +	- reg :  I2C slave address
+> +		lp5018/24 - 0x28
+> +		lp5030/36 - 0x30
+> +	- #address-cells : 1
+> +	- #size-cells : 0
+> +
+> +Optional properties:
+> +	- enable-gpios : gpio pin to enable/disable the device.
+> +	- vled-supply : LED supply
+> +
+> +Required child properties:
+> +	- reg : Is the child node iteration.
 
---KIbT1ud6duwZIwNL
-Content-Type: application/pgp-signature; name="signature.asc"
+Let's change it to:
 
------BEGIN PGP SIGNATURE-----
+- reg : RGB LED module number. For the node describing RGB cluster bank
+         it should match first element of ti,led-bank array.
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlw+U5EACgkQJNaLcl1U
-h9B4Twf+IDkkxRFHywZyz/i5Uiq5yHfvR6SLLsoeMHo9aLX1z5Pm5mPIcw7nMe4M
-xasbMImcQ172jVp+k9YySyZqHBKGqI4y72nU66WjCUEmAD3/080+eJu3SUFBBVVM
-jbXeumfwTC0MfQ2QipJsIe4+7a2FvdTSzh8RGvBAErtF7GLC5I7i5vidE9iR/aKU
-TJWNU0mB+rrnhDVZDAAtotZj4314oxG7HpL/9eMj+Vdv41j45sh0ALd2CU1ijymM
-xTi7dXLT2R96+FVkl91u+HgoIcxrbaLxx5HFCMUjipLiXDjHdh50Qpi26C3rvzYq
-tXa/Py+LY/FMSUAWgkR4TjbbpkP32w==
-=IKZV
------END PGP SIGNATURE-----
+> +
+> +Required Child properties but only one should be defined per child:
+> +Either one of these two properties are required for each node.  The
+> +property ti,led-bank takes precedence over the ti,led-module within the same
+> +node.
+> +
+> +	- ti,led-module : This property denotes the single LED module number
+> +			  that will be controlled in the LED class instance.
 
---KIbT1ud6duwZIwNL--
+It will be not needed then.
+
+> +	- ti,led-bank : This property denotes the LED module numbers that will
+> +			be controlled as a single RGB cluster.  Each LED module
+> +			number will be controlled by a single LED class instance.
+> +			There can only be one instance of the ti,led-bank
+> +			property for each device node.
+> +
+> +The LED outpus associated with the LED modules are defined in Table 1 of the
+> +corresponding data sheets.
+> +
+> +LP5018 - 6 Total RGB cluster LED outputs 0-5
+> +LP5024 - 8 Total RGB cluster LED outputs 0-7
+> +LP5030 - 10 Total RGB cluster LED outputs 0-9
+> +LP5036 - 12 Total RGB cluster LED outputs 0-11
+> +
+> +Optional child properties:
+> +	- label : see Documentation/devicetree/bindings/leds/common.txt
+> +	- linux,default-trigger :
+> +	   see Documentation/devicetree/bindings/leds/common.txt
+> +
+> +Examples:
+> +LP5018 and LP5024 example:
+> +led-controller@29 {
+> +	#address-cells = <1>;
+> +	#size-cells = <0>;
+> +	compatible = "ti,lp5024";
+> +	reg = <0x29>;
+> +	enable-gpios = <&gpio1 28 GPIO_ACTIVE_HIGH>;
+> +	vled-supply = <&vmmcsd_fixed>;
+> +
+> +	led@0 {
+> +	        reg = <0>;
+> +	        label = "led1_mod";
+> +		ti,led-module = <1>;
+> +	};
+> +
+> +	led@1 {
+> +	        reg = <1>;
+> +	        label = "banked_leds";
+> +		ti,led-bank = <0 2 5 3 >;
+> +	};
+> +
+> +	led@2 {
+> +	        reg = <2>;
+> +	        label = "led4_mod";
+> +		ti,led-module = <4>;
+> +	};
+> +
+> +	led@3 {
+> +	        reg = <3>;
+> +	        label = "led7_mod";
+> +		ti,led-module = <7>;
+> +	};
+> +
+> +	led@4 {
+> +	        reg = <4>;
+> +	        label = "led6_mod";
+> +		ti,led-module = <6>;
+> +	};
+
+Without ti,led-module it will look like below:
+
+
+led@0 {
+         reg = <0>;
+         label = "banked_leds";
+         ti,led-bank = <0 2 5 3 >;
+};
+
+led@1 {
+         reg = <1>;
+         label = "led1_mod";
+};
+
+
+led@4 {
+         reg = <4>;
+         label = "led4_mod";
+};
+
+led@6 {
+         reg = <6>;
+         label = "led6_mod";
+};
+
+led@7 {
+         reg = <7>;
+         label = "led7_mod";
+};
+
+
+
+> +};
+> +
+> +LP5030 and LP5036 example:
+> +led-controller@30 {
+> +	#address-cells = <1>;
+> +	#size-cells = <0>;
+> +	compatible = "ti,lp5036";
+> +	reg = <0x30>;
+> +	enable-gpios = <&gpio1 28 GPIO_ACTIVE_HIGH>;
+> +	vled-supply = <&vmmcsd_fixed>;
+> +
+> +	led@0 {
+> +	        reg = <0>;
+> +	        label = "led1_mod";
+> +		ti,led-module = <1>;
+> +	};
+> +
+> +	led@1 {
+> +	        reg = <1>;
+> +	        label = "led_banked";
+> +		ti,led-bank = <0 2 5 3 9 10 >;
+> +	};
+> +
+> +	led@2 {
+> +	        reg = <2>;
+> +	        label = "led4_mod";
+> +		ti,led-module = <4>;
+> +	};
+> +
+> +	led@3 {
+> +	        reg = <3>;
+> +	        label = "led7_mod";
+> +		ti,led-module = <7>;
+> +	};
+> +
+> +	led@4 {
+> +	        reg = <4>;
+> +	        label = "led6_mod";
+> +		ti,led-module = <6>;
+> +	};
+> +
+> +	led@5 {
+> +	        reg = <5>;
+> +	        label = "led8_mod";
+> +		ti,led-module = <8>;
+> +	};
+> +};
+> +
+> +
+> +For more product information please see the link below:
+> +http://www.ti.com/lit/ds/symlink/lp5024.pdf
+> +http://www.ti.com/lit/ds/symlink/lp5036.pdf
+> 
+
+-- 
+Best regards,
+Jacek Anaszewski
