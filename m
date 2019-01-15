@@ -2,242 +2,191 @@ Return-Path: <SRS0=RZO6=PX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 26D0FC43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 08:07:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D35FEC43444
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 08:08:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DCACB2085A
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 08:07:35 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=xenosoft.de header.i=@xenosoft.de header.b="hMsSkIO2"
+	by mail.kernel.org (Postfix) with ESMTP id 9BEA220656
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 08:08:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728392AbfAOIHf (ORCPT
+        id S1728408AbfAOIID (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 15 Jan 2019 03:07:35 -0500
-Received: from mo4-p02-ob.smtp.rzone.de ([81.169.146.169]:22011 "EHLO
-        mo4-p02-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727867AbfAOIHe (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Jan 2019 03:07:34 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1547539650;
-        s=strato-dkim-0002; d=xenosoft.de;
-        h=In-Reply-To:Date:Message-ID:References:Cc:To:From:Subject:
-        X-RZG-CLASS-ID:X-RZG-AUTH:From:Subject:Sender;
-        bh=bD8u7HS7TcBlf3ViPwkhWGM3/NVkSdW4dHH4FMwtCiI=;
-        b=hMsSkIO2kXhHZZVg/JVobwpb2Xnd88na45bbbnWkOPVHYClbOQ58/ORFv8PFYILjC/
-        gVQjWrJHVRSCd3IJ3+bFxfW86/7WoJKkSkIzRdoI8In9qKZ3Kd+DjCkvO5+SCLhUhSEq
-        Ty7Ht6qmkWATUgPBQR9aj97Jlk9Gl4o6s6D2lzlvVcf7AJhPV9brKOo3FSg7oj/uoV5K
-        YzzuAzWCDnQN4qFrf0OJwxixuEtBDi9xt+hpQWv2Z4zICiyaqkp+kC4Y6pfzjB28M35f
-        RnSk11txOzOxfMc8rmPr9cLHUNHt7ffzpEtfPHpwNn9/tE3ZKY9JT18CL3ttXGBsT0uo
-        TaWA==
-X-RZG-AUTH: ":L2QefEenb+UdBJSdRCXu93KJ1bmSGnhMdmOod1DhGM4l4Hio94KKxRySfLxnHfJ+Dkjp5G5MdirQj0WG7CkNi0C2kzEbDQg0vrQvOCYvo/qC"
-X-RZG-CLASS-ID: mo00
-Received: from [IPv6:2a02:8109:a400:162c:25bb:7249:5b2a:1f0]
-        by smtp.strato.de (RZmta 44.9 AUTH)
-        with ESMTPSA id t0203dv0F87SqDG
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (curve secp521r1 with 521 ECDH bits, eq. 15360 bits RSA))
-        (Client did not present a certificate);
-        Tue, 15 Jan 2019 09:07:28 +0100 (CET)
-Subject: Re: use generic DMA mapping code in powerpc V4
-From:   Christian Zigotzky <chzigotzky@xenosoft.de>
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     linux-arch@vger.kernel.org,
-        Darren Stevens <darren@stevens-zone.net>,
-        linux-kernel@vger.kernel.org, Julian Margetson <runaway@candw.ms>,
-        linux-mm@kvack.org, iommu@lists.linux-foundation.org,
-        Paul Mackerras <paulus@samba.org>,
-        Olof Johansson <olof@lixom.net>, linuxppc-dev@lists.ozlabs.org
-References: <2242B4B2-6311-492E-BFF9-6740E36EC6D4@xenosoft.de>
- <84558d7f-5a7f-5219-0c3a-045e6b4c494f@xenosoft.de>
- <20181213091021.GA2106@lst.de>
- <835bd119-081e-a5ea-1899-189d439c83d6@xenosoft.de>
- <76bc684a-b4d2-1d26-f18d-f5c9ba65978c@xenosoft.de>
- <20181213112511.GA4574@lst.de>
- <e109de27-f4af-147d-dc0e-067c8bafb29b@xenosoft.de>
- <ad5a5a8a-d232-d523-a6f7-e9377fc3857b@xenosoft.de>
- <e60d6ca3-860c-f01d-8860-c5e022ec7179@xenosoft.de>
- <008c981e-bdd2-21a7-f5f7-c57e4850ae9a@xenosoft.de>
- <20190103073622.GA24323@lst.de>
- <71A251A5-FA06-4019-B324-7AED32F7B714@xenosoft.de>
- <1b0c5c21-2761-d3a3-651b-3687bb6ae694@xenosoft.de>
- <3504ee70-02de-049e-6402-2d530bf55a84@xenosoft.de>
- <23284859-bf0a-9cd5-a480-2a7fd7802056@xenosoft.de>
- <075f70e3-7a4a-732f-b501-05a1a8e3c853@xenosoft.de>
-Message-ID: <b04d08ea-61f9-3212-b9a3-ad79e3b8bd05@xenosoft.de>
-Date:   Tue, 15 Jan 2019 09:07:28 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        Tue, 15 Jan 2019 03:08:03 -0500
+Received: from mx2.suse.de ([195.135.220.15]:44604 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727430AbfAOIID (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 Jan 2019 03:08:03 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 23281AE77;
+        Tue, 15 Jan 2019 08:08:01 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id 61B0C1E0DBA; Tue, 15 Jan 2019 09:07:59 +0100 (CET)
+Date:   Tue, 15 Jan 2019 09:07:59 +0100
+From:   Jan Kara <jack@suse.cz>
+To:     Jerome Glisse <jglisse@redhat.com>
+Cc:     Jan Kara <jack@suse.cz>, John Hubbard <jhubbard@nvidia.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Dave Chinner <david@fromorbit.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        John Hubbard <john.hubbard@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linux MM <linux-mm@kvack.org>, tom@talpey.com,
+        Al Viro <viro@zeniv.linux.org.uk>, benve@cisco.com,
+        Christoph Hellwig <hch@infradead.org>,
+        Christopher Lameter <cl@linux.com>,
+        "Dalessandro, Dennis" <dennis.dalessandro@intel.com>,
+        Doug Ledford <dledford@redhat.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Michal Hocko <mhocko@kernel.org>, mike.marciniszyn@intel.com,
+        rcampbell@nvidia.com,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Subject: Re: [PATCH 1/2] mm: introduce put_user_page*(), placeholder versions
+Message-ID: <20190115080759.GC29524@quack2.suse.cz>
+References: <20190103144405.GC3395@redhat.com>
+ <a79b259b-3982-b271-025a-0656f70506f4@nvidia.com>
+ <20190111165141.GB3190@redhat.com>
+ <1b37061c-5598-1b02-2983-80003f1c71f2@nvidia.com>
+ <20190112020228.GA5059@redhat.com>
+ <294bdcfa-5bf9-9c09-9d43-875e8375e264@nvidia.com>
+ <20190112024625.GB5059@redhat.com>
+ <b6f4ed36-fc8d-1f9b-8c74-b12f61d496ae@nvidia.com>
+ <20190114145447.GJ13316@quack2.suse.cz>
+ <20190114172124.GA3702@redhat.com>
 MIME-Version: 1.0
-In-Reply-To: <075f70e3-7a4a-732f-b501-05a1a8e3c853@xenosoft.de>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: de-DE
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190114172124.GA3702@redhat.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Next step: 240d7ecd7f6fa62e074e8a835e620047954f0b28 (powerpc/dma: use 
-the dma-direct allocator for coherent platforms)
+On Mon 14-01-19 12:21:25, Jerome Glisse wrote:
+> On Mon, Jan 14, 2019 at 03:54:47PM +0100, Jan Kara wrote:
+> > On Fri 11-01-19 19:06:08, John Hubbard wrote:
+> > > On 1/11/19 6:46 PM, Jerome Glisse wrote:
+> > > > On Fri, Jan 11, 2019 at 06:38:44PM -0800, John Hubbard wrote:
+> > > > [...]
+> > > > 
+> > > >>>> The other idea that you and Dan (and maybe others) pointed out was a debug
+> > > >>>> option, which we'll certainly need in order to safely convert all the call
+> > > >>>> sites. (Mirror the mappings at a different kernel offset, so that put_page()
+> > > >>>> and put_user_page() can verify that the right call was made.)  That will be
+> > > >>>> a separate patchset, as you recommended.
+> > > >>>>
+> > > >>>> I'll even go as far as recommending the page lock itself. I realize that this 
+> > > >>>> adds overhead to gup(), but we *must* hold off page_mkclean(), and I believe
+> > > >>>> that this (below) has similar overhead to the notes above--but is *much* easier
+> > > >>>> to verify correct. (If the page lock is unacceptable due to being so widely used,
+> > > >>>> then I'd recommend using another page bit to do the same thing.)
+> > > >>>
+> > > >>> Please page lock is pointless and it will not work for GUP fast. The above
+> > > >>> scheme do work and is fine. I spend the day again thinking about all memory
+> > > >>> ordering and i do not see any issues.
+> > > >>>
+> > > >>
+> > > >> Why is it that page lock cannot be used for gup fast, btw?
+> > > > 
+> > > > Well it can not happen within the preempt disable section. But after
+> > > > as a post pass before GUP_fast return and after reenabling preempt then
+> > > > it is fine like it would be for regular GUP. But locking page for GUP
+> > > > is also likely to slow down some workload (with direct-IO).
+> > > > 
+> > > 
+> > > Right, and so to crux of the matter: taking an uncontended page lock
+> > > involves pretty much the same set of operations that your approach does.
+> > > (If gup ends up contended with the page lock for other reasons than these
+> > > paths, that seems surprising.) I'd expect very similar performance.
+> > > 
+> > > But the page lock approach leads to really dramatically simpler code (and
+> > > code reviews, let's not forget). Any objection to my going that
+> > > direction, and keeping this idea as a Plan B? I think the next step will
+> > > be, once again, to gather some performance metrics, so maybe that will
+> > > help us decide.
+> > 
+> > FWIW I agree that using page lock for protecting page pinning (and thus
+> > avoid races with page_mkclean()) looks simpler to me as well and I'm not
+> > convinced there will be measurable difference to the more complex scheme
+> > with barriers Jerome suggests unless that page lock contended. Jerome is
+> > right that you cannot just do lock_page() in gup_fast() path. There you
+> > have to do trylock_page() and if that fails just bail out to the slow gup
+> > path.
+> > 
+> > Regarding places other than page_mkclean() that need to check pinned state:
+> > Definitely page migration will want to check whether the page is pinned or
+> > not so that it can deal differently with short-term page references vs
+> > longer-term pins.
+> > 
+> > Also there is one more idea I had how to record number of pins in the page:
+> > 
+> > #define PAGE_PIN_BIAS	1024
+> > 
+> > get_page_pin()
+> > 	atomic_add(&page->_refcount, PAGE_PIN_BIAS);
+> > 
+> > put_page_pin();
+> > 	atomic_add(&page->_refcount, -PAGE_PIN_BIAS);
+> > 
+> > page_pinned(page)
+> > 	(atomic_read(&page->_refcount) - page_mapcount(page)) > PAGE_PIN_BIAS
+> > 
+> > This is pretty trivial scheme. It still gives us 22-bits for page pins
+> > which should be plenty (but we should check for that and bail with error if
+> > it would overflow). Also there will be no false negatives and false
+> > positives only if there are more than 1024 non-page-table references to the
+> > page which I expect to be rare (we might want to also subtract
+> > hpage_nr_pages() for radix tree references to avoid excessive false
+> > positives for huge pages although at this point I don't think they would
+> > matter). Thoughts?
+> 
+> Racing PUP are as likely to cause issues:
+> 
+> CPU0                        | CPU1       | CPU2
+>                             |            |
+>                             | PUP()      |
+>     page_pinned(page)       |            |
+>       (page_count(page) -   |            |
+>        page_mapcount(page)) |            |
+>                             |            | GUP()
+> 
+> So here the refcount snap-shot does not include the second GUP and
+> we can have a false negative ie the page_pinned() will return false
+> because of the PUP happening just before on CPU1 despite the racing
+> GUP on CPU2 just after.
+> 
+> I believe only either lock or memory ordering with barrier can
+> guarantee that we do not miss GUP ie no false negative. Still the
+> bias idea might be usefull as with it we should not need a flag.
 
-git clone git://git.infradead.org/users/hch/misc.git -b powerpc-dma.6 a
+Right. We need similar synchronization (i.e., page lock or careful checks
+with memory barriers) if we want to get a reliable page pin information.
 
-git checkout 240d7ecd7f6fa62e074e8a835e620047954f0b28
+> So to make the above safe it would still need the page write back
+> double check that i described so that GUP back-off if it raced with
+> page_mkclean,clear_page_dirty_for_io and the fs write page call back
+> which call test_set_page_writeback() (yes it is very unlikely but
+> might still happen).
 
-Link to the Git: 
-http://git.infradead.org/users/hch/misc.git/shortlog/refs/heads/powerpc-dma.6
+Agreed. So with page lock it would actually look like:
 
-env LANG=C make CROSS_COMPILE=powerpc-linux-gnu- ARCH=powerpc zImage
+get_page_pin()
+	lock_page(page);
+	wait_for_stable_page();
+	atomic_add(&page->_refcount, PAGE_PIN_BIAS);
+	unlock_page(page);
 
-Error message:
+And if we perform page_pinned() check under page lock, then if
+page_pinned() returned false, we are sure page is not and will not be
+pinned until we drop the page lock (and also until page writeback is
+completed if needed).
 
-arch/powerpc/kernel/dma.o:(.data.rel.ro+0x0): undefined reference to 
-`__dma_nommu_alloc_coherent'
-arch/powerpc/kernel/dma.o:(.data.rel.ro+0x8): undefined reference to 
-`__dma_nommu_free_coherent'
-Makefile:1027: recipe for target 'vmlinux' failed
-make: *** [vmlinux] Error 1
-
--- Christian
-
-
-On 12 January 2019 at 7:14PM, Christian Zigotzky wrote:
-> Next step: 4558b6e1ddf3dcf5a86d6a5d16c2ac1600c7df39 (swiotlb: remove 
-> swiotlb_dma_supported)
->
-> git clone git://git.infradead.org/users/hch/misc.git -b powerpc-dma.6 a
->
-> git checkout 4558b6e1ddf3dcf5a86d6a5d16c2ac1600c7df39
->
-> Output:
->
-> You are in 'detached HEAD' state. You can look around, make experimental
-> changes and commit them, and you can discard any commits you make in this
-> state without impacting any branches by performing another checkout.
->
-> If you want to create a new branch to retain commits you create, you may
-> do so (now or later) by using -b with the checkout command again. 
-> Example:
->
->   git checkout -b <new-branch-name>
->
-> HEAD is now at 4558b6e... swiotlb: remove swiotlb_dma_supported
->
-> ----
->
-> Link to the Git: 
-> http://git.infradead.org/users/hch/misc.git/shortlog/refs/heads/powerpc-dma.6
->
-> Results: PASEMI onboard ethernet (X1000) works and the X5000 (P5020 
-> board) boots. I also successfully tested sound, hardware 3D 
-> acceleration, Bluetooth, network, booting with a label etc. The 
-> uImages work also in a virtual e5500 quad-core QEMU machine.
->
-> -- Christian
->
->
-> On 11 January 2019 at 03:10AM, Christian Zigotzky wrote:
->> Next step: 891dcc1072f1fa27a83da920d88daff6ca08fc02 (powerpc/dma: 
->> remove dma_nommu_dma_supported)
->>
->> git clone git://git.infradead.org/users/hch/misc.git -b powerpc-dma.6 a
->>
->> git checkout 891dcc1072f1fa27a83da920d88daff6ca08fc02
->>
->> Output:
->>
->> Note: checking out '891dcc1072f1fa27a83da920d88daff6ca08fc02'.
->>
->> You are in 'detached HEAD' state. You can look around, make experimental
->> changes and commit them, and you can discard any commits you make in 
->> this
->> state without impacting any branches by performing another checkout.
->>
->> If you want to create a new branch to retain commits you create, you may
->> do so (now or later) by using -b with the checkout command again. 
->> Example:
->>
->> git checkout -b <new-branch-name>
->>
->> HEAD is now at 891dcc1... powerpc/dma: remove dma_nommu_dma_supported
->>
->> ---
->>
->> Link to the Git: 
->> http://git.infradead.org/users/hch/misc.git/shortlog/refs/heads/powerpc-dma.6
->>
->> Results: PASEMI onboard ethernet works and the X5000 (P5020 board) 
->> boots. I also successfully tested sound, hardware 3D acceleration, 
->> Bluetooth, network, booting with a label etc. The uImages work also 
->> in a virtual e5500 quad-core QEMU machine.
->>
->> -- Christian
->>
->>
->> On 09 January 2019 at 10:31AM, Christian Zigotzky wrote:
->>> Next step: a64e18ba191ba9102fb174f27d707485ffd9389c (powerpc/dma: 
->>> remove dma_nommu_get_required_mask)
->>>
->>> git clone git://git.infradead.org/users/hch/misc.git -b powerpc-dma.6 a
->>>
->>> git checkout a64e18ba191ba9102fb174f27d707485ffd9389c
->>>
->>> Link to the Git: 
->>> http://git.infradead.org/users/hch/misc.git/shortlog/refs/heads/powerpc-dma.6
->>>
->>> Results: PASEMI onboard ethernet works and the X5000 (P5020 board) 
->>> boots. I also successfully tested sound, hardware 3D acceleration, 
->>> Bluetooth, network, booting with a label etc. The uImages work also 
->>> in a virtual e5500 quad-core QEMU machine.
->>>
->>> -- Christian
->>>
->>>
->>> On 05 January 2019 at 5:03PM, Christian Zigotzky wrote:
->>>> Next step: c446404b041130fbd9d1772d184f24715cf2362f (powerpc/dma: 
->>>> remove dma_nommu_mmap_coherent)
->>>>
->>>> git clone git://git.infradead.org/users/hch/misc.git -b 
->>>> powerpc-dma.6 a
->>>>
->>>> git checkout c446404b041130fbd9d1772d184f24715cf2362f
->>>>
->>>> Output:
->>>>
->>>> Note: checking out 'c446404b041130fbd9d1772d184f24715cf2362f'.
->>>>
->>>> You are in 'detached HEAD' state. You can look around, make 
->>>> experimental
->>>> changes and commit them, and you can discard any commits you make 
->>>> in this
->>>> state without impacting any branches by performing another checkout.
->>>>
->>>> If you want to create a new branch to retain commits you create, 
->>>> you may
->>>> do so (now or later) by using -b with the checkout command again. 
->>>> Example:
->>>>
->>>>   git checkout -b <new-branch-name>
->>>>
->>>> HEAD is now at c446404... powerpc/dma: remove dma_nommu_mmap_coherent
->>>>
->>>> -----
->>>>
->>>> Link to the Git: 
->>>> http://git.infradead.org/users/hch/misc.git/shortlog/refs/heads/powerpc-dma.6
->>>>
->>>> Result: PASEMI onboard ethernet works and the X5000 (P5020 board) 
->>>> boots.
->>>>
->>>> -- Christian
->>>>
->>>
->>>
->>
->>
->
->
-
+								Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
