@@ -2,114 +2,199 @@ Return-Path: <SRS0=RZO6=PX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 15260C43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 11:44:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BF9D7C43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 11:48:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DAA112085A
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 11:44:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8A61A20656
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 11:48:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729288AbfAOLor (ORCPT
+        id S1727427AbfAOLsp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 15 Jan 2019 06:44:47 -0500
-Received: from mail.cn.fujitsu.com ([183.91.158.132]:25872 "EHLO
-        heian.cn.fujitsu.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1727976AbfAOLor (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Jan 2019 06:44:47 -0500
-X-IronPort-AV: E=Sophos;i="5.56,481,1539619200"; 
-   d="scan'208";a="52060888"
-Received: from unknown (HELO cn.fujitsu.com) ([10.167.33.5])
-  by heian.cn.fujitsu.com with ESMTP; 15 Jan 2019 19:44:44 +0800
-Received: from G08CNEXCHPEKD02.g08.fujitsu.local (unknown [10.167.33.83])
-        by cn.fujitsu.com (Postfix) with ESMTP id DF3BB4BAD9B7;
-        Tue, 15 Jan 2019 19:44:41 +0800 (CST)
-Received: from [10.167.226.60] (10.167.226.60) by
- G08CNEXCHPEKD02.g08.fujitsu.local (10.167.33.89) with Microsoft SMTP Server
- (TLS) id 14.3.408.0; Tue, 15 Jan 2019 19:44:40 +0800
-From:   Cao jin <caoj.fnst@cn.fujitsu.com>
-Subject: question about head_64.S
-To:     Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>
-CC:     <kirill.shutemov@linux.intel.com>,
-        LKML <linux-kernel@vger.kernel.org>
-Message-ID: <6aebbf86-2ba1-c517-dc47-054279daec49@cn.fujitsu.com>
-Date:   Tue, 15 Jan 2019 19:45:10 +0800
+        Tue, 15 Jan 2019 06:48:45 -0500
+Received: from foss.arm.com ([217.140.101.70]:48590 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726886AbfAOLso (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 Jan 2019 06:48:44 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 2D40180D;
+        Tue, 15 Jan 2019 03:48:44 -0800 (PST)
+Received: from [10.1.197.45] (e112298-lin.cambridge.arm.com [10.1.197.45])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id A40943F70D;
+        Tue, 15 Jan 2019 03:48:42 -0800 (PST)
+Subject: Re: [RFC PATCH v2 1/2] uaccess: Check no rescheduling function is
+ called in unsafe region
+To:     Valentin Schneider <valentin.schneider@arm.com>,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc:     mingo@redhat.com, peterz@infradead.org, catalin.marinas@arm.com,
+        will.deacon@arm.com, james.morse@arm.com, hpa@zytor.com
+References: <1543845318-24543-1-git-send-email-julien.thierry@arm.com>
+ <1543845318-24543-2-git-send-email-julien.thierry@arm.com>
+ <907e51b7-10da-c5cb-058f-2c34ba2c8abd@arm.com>
+From:   Julien Thierry <julien.thierry@arm.com>
+Message-ID: <f7bbc9dd-46f4-7df6-d20f-61e0ec6873d6@arm.com>
+Date:   Tue, 15 Jan 2019 11:48:41 +0000
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+In-Reply-To: <907e51b7-10da-c5cb-058f-2c34ba2c8abd@arm.com>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.167.226.60]
-X-yoursite-MailScanner-ID: DF3BB4BAD9B7.ABC03
-X-yoursite-MailScanner: Found to be clean
-X-yoursite-MailScanner-From: caoj.fnst@cn.fujitsu.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 Hi,
-  I have been digging into this file for a while, and I still have 2
-questions unclear, hope to get your help.
 
-1.
-At the entry of startup_64, we set all the data segment registers to 0,
-according to commit 08da5a2ca("x86_64: Early segment setup for VT"), it
-is said to accelerate the decompression under VT. I don't know Intel VT,
-but I did test under physical machine and virtual machine(with KVM, and
-intel VT enabled in BIOS) with following patch:
+On 14/01/2019 12:03, Valentin Schneider wrote:
+> Hi,
+> 
+> On 03/12/2018 13:55, Julien Thierry wrote:
+>> While running a user_access regions, it is not supported to reschedule.
+>> Add an overridable primitive to indicate whether a user_access region is
+>> active and check that this is not the case when calling rescheduling
+>> functions.
+>>
+>> Also, add a comment clarifying the behaviour of user_access regions.
+>>
+>> Signed-off-by: Julien Thierry <julien.thierry@arm.com>
+>> ---
+>>  include/linux/kernel.h  |  6 ++++--
+>>  include/linux/uaccess.h | 11 +++++++++++
+>>  kernel/sched/core.c     | 19 +++++++++++++++++++
+>>  3 files changed, 34 insertions(+), 2 deletions(-)
+>>
+>> I'm not sure these are the best locations to check this but I was hoping
+>> this patch could start the discussion.
+>>
+>> Should I move the check? Should I add a config option to conditionally
+>> build those checks?
+>>
+> 
+> I was going to say it's already under DEBUG_ATOMIC_SLEEP, but that's only
+> true for the __might_sleep() bit actually.
+> 
+> I think it'd make sense to blanket that under a config, but using
+> DEBUG_ATOMIC_SLEEP for that is a bit too much. What about a
+> DEBUG_UACCESS_SLEEP?
+> 
 
-diff --git a/arch/x86/boot/compressed/head_64.S
-b/arch/x86/boot/compressed/head_64.S
-index 58f6a467f1fa..595f3c300173 100644
---- a/arch/x86/boot/compressed/head_64.S
-+++ b/arch/x86/boot/compressed/head_64.S
-@@ -260,12 +260,12 @@ ENTRY(startup_64)
-         */
+Yes, I was wondering whether to add something like that, I'll add a
+DEBUG_UACCESS_SLEEP to my next version.
 
-        /* Setup data segments. */
--       xorl    %eax, %eax
--       movl    %eax, %ds
--       movl    %eax, %es
--       movl    %eax, %ss
--       movl    %eax, %fs
--       movl    %eax, %gs
-+//     xorl    %eax, %eax
-+//     movl    %eax, %ds
-+//     movl    %eax, %es
-+//     movl    %eax, %ss
-+//     movl    %eax, %fs
-+//     movl    %eax, %gs
+>> diff --git a/include/linux/kernel.h b/include/linux/kernel.h
+>> index d6aac75..fe0e984 100644
+>> --- a/include/linux/kernel.h
+>> +++ b/include/linux/kernel.h
+>> @@ -237,11 +237,13 @@
+>>  struct pt_regs;
+>>  struct user;
+>>
+>> +extern void __might_resched(const char *file, int line);
+>>  #ifdef CONFIG_PREEMPT_VOLUNTARY
+>>  extern int _cond_resched(void);
+>> -# define might_resched() _cond_resched()
+>> +# define might_resched() \
+>> +	do { __might_resched(__FILE__, __LINE__); _cond_resched(); } while (0)
+>>  #else
+>> -# define might_resched() do { } while (0)
+>> +# define might_resched() __might_resched(__FILE__, __LINE__)>  #endif
+>>
+>>  #ifdef CONFIG_DEBUG_ATOMIC_SLEEP
+>> diff --git a/include/linux/uaccess.h b/include/linux/uaccess.h
+>> index efe79c1..50adb84 100644
+>> --- a/include/linux/uaccess.h
+>> +++ b/include/linux/uaccess.h
+>> @@ -266,6 +266,13 @@ static inline unsigned long __copy_from_user_inatomic_nocache(void *to,
+>>  #define probe_kernel_address(addr, retval)		\
+>>  	probe_kernel_read(&retval, addr, sizeof(retval))
+>>
+>> +/*
+>> + * user_access_begin() and user_access_end() define a region where
+>> + * unsafe user accessors can be used.
+>> + * During execution of this region, no sleeping functions should be called.
+>> + * Exceptions and interrupt shall exit the user_access region and re-enter it
+>> + * when returning to the interrupted context.
+>> + */
+> 
+> I would first have the bit about exceptions, then mention sleeping and add
+> something along the lines of
+> 
+> "[...] no sleeping functions should be called - we rely on exception
+> handling to take care of the user_access status for us, but that doesn't
+> happen when directly calling schedule()."
+> 
+> My wording's not the best but I just want something to point out *why*
+> sleeping ain't okay.
+> 
 
-I don't see any obvious booting time difference, is there anything I missed?
-Also, I don't find explicit document saying we should zero these
-registers under VT.
+I think the wording is alright, I'll include your suggestion for the
+next version.
 
-2.
-Why gdt64 has following definition?:
+>>  #ifndef user_access_begin
+>>  #define user_access_begin() do { } while (0)
+>>  #define user_access_end() do { } while (0)
+>> @@ -273,6 +280,10 @@ static inline unsigned long __copy_from_user_inatomic_nocache(void *to,
+>>  #define unsafe_put_user(x, ptr, err) do { if (unlikely(__put_user(x, ptr))) goto err; } while (0)
+>>  #endif
+>>
+>> +#ifndef unsafe_user_region_active
+>> +#define unsafe_user_region_active()	false
+>> +#endif
+>> +
+>>  #ifdef CONFIG_HARDENED_USERCOPY
+>>  void usercopy_warn(const char *name, const char *detail, bool to_user,
+>>  		   unsigned long offset, unsigned long len);
+>> diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+>> index 6fedf3a..03f53c8 100644
+>> --- a/kernel/sched/core.c
+>> +++ b/kernel/sched/core.c
+>> @@ -3289,6 +3289,13 @@ static inline void schedule_debug(struct task_struct *prev)
+>>  		__schedule_bug(prev);
+>>  		preempt_count_set(PREEMPT_DISABLED);
+>>  	}
+>> +
+>> +	if (unlikely(unsafe_user_region_active())) {
+>> +		printk(KERN_ERR "BUG: scheduling while user_access enabled: %s/%d/0x%08x\n",
+>> +		       prev->comm, prev->pid, preempt_count());
+>> +		dump_stack();
+>> +	}
+>> +
+>>  	rcu_sleep_check();
+>>
+>>  	profile_hit(SCHED_PROFILING, __builtin_return_address(0));
+>> @@ -6151,6 +6158,18 @@ void ___might_sleep(const char *file, int line, int preempt_offset)
+>>  EXPORT_SYMBOL(___might_sleep);
+>>  #endif
+>>
+>> +void __might_resched(const char *file, int line)
+>> +{
+>> +	if (!unsafe_user_region_active())
+>> +		return;
+>> +
+>> +	printk(KERN_ERR
+>> +		"BUG: rescheduling function called from user access context at %s:%d\n",
+>> +			file, line);
+>> +	dump_stack();
+>> +}
+> 
+> So this check is "careful, things might go bad" and the schedule_debug()
+> one is "things went bad". IIUC we'll always get this warning when we hit
+> the schedule_debug() one. I was going to suggest only keeping one of them,
+> but I think both hold value.
+> 
 
-gdt64:
-	.word	gdt_end - gdt
-	.long	0
-	.word	0
-	.quad   0
+Yes, I can't really convince myself to remove either, unless there is a
+magic place that covers both cases.
 
-obviously, gdt64 stores the GDTR content under x86_64, which is 10 bytes
-long, so why not just:
+Thanks for the suggestions.
 
-gdt64:
-	.word	gdt_end - gdt
-	.quad   0
+Cheers,
 
-With above modification, it can boot.
 -- 
-Sincerely,
-Cao jin
-
-
+Julien Thierry
