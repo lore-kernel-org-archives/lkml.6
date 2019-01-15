@@ -3,69 +3,113 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A7777C43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 11:43:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 15260C43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 11:44:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7E9E020656
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 11:43:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DAA112085A
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 11:44:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729251AbfAOLng (ORCPT
+        id S1729288AbfAOLor (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 15 Jan 2019 06:43:36 -0500
-Received: from mx2.suse.de ([195.135.220.15]:52284 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727985AbfAOLnf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Jan 2019 06:43:35 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 9F239ACD0;
-        Tue, 15 Jan 2019 11:43:34 +0000 (UTC)
-Subject: Re: [PATCH 04/25] mm, compaction: Remove unnecessary zone parameter
- in some instances
-To:     Mel Gorman <mgorman@techsingularity.net>,
-        Linux-MM <linux-mm@kvack.org>
-Cc:     David Rientjes <rientjes@google.com>,
-        Andrea Arcangeli <aarcange@redhat.com>, ying.huang@intel.com,
-        kirill@shutemov.name, Andrew Morton <akpm@linux-foundation.org>,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>
-References: <20190104125011.16071-1-mgorman@techsingularity.net>
- <20190104125011.16071-5-mgorman@techsingularity.net>
-From:   Vlastimil Babka <vbabka@suse.cz>
-Openpgp: preference=signencrypt
-Message-ID: <d42cc468-e3ac-35c0-74d8-17ccb98407da@suse.cz>
-Date:   Tue, 15 Jan 2019 12:43:33 +0100
+        Tue, 15 Jan 2019 06:44:47 -0500
+Received: from mail.cn.fujitsu.com ([183.91.158.132]:25872 "EHLO
+        heian.cn.fujitsu.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1727976AbfAOLor (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 Jan 2019 06:44:47 -0500
+X-IronPort-AV: E=Sophos;i="5.56,481,1539619200"; 
+   d="scan'208";a="52060888"
+Received: from unknown (HELO cn.fujitsu.com) ([10.167.33.5])
+  by heian.cn.fujitsu.com with ESMTP; 15 Jan 2019 19:44:44 +0800
+Received: from G08CNEXCHPEKD02.g08.fujitsu.local (unknown [10.167.33.83])
+        by cn.fujitsu.com (Postfix) with ESMTP id DF3BB4BAD9B7;
+        Tue, 15 Jan 2019 19:44:41 +0800 (CST)
+Received: from [10.167.226.60] (10.167.226.60) by
+ G08CNEXCHPEKD02.g08.fujitsu.local (10.167.33.89) with Microsoft SMTP Server
+ (TLS) id 14.3.408.0; Tue, 15 Jan 2019 19:44:40 +0800
+From:   Cao jin <caoj.fnst@cn.fujitsu.com>
+Subject: question about head_64.S
+To:     Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>
+CC:     <kirill.shutemov@linux.intel.com>,
+        LKML <linux-kernel@vger.kernel.org>
+Message-ID: <6aebbf86-2ba1-c517-dc47-054279daec49@cn.fujitsu.com>
+Date:   Tue, 15 Jan 2019 19:45:10 +0800
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.3
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-In-Reply-To: <20190104125011.16071-5-mgorman@techsingularity.net>
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset="utf-8"
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.167.226.60]
+X-yoursite-MailScanner-ID: DF3BB4BAD9B7.ABC03
+X-yoursite-MailScanner: Found to be clean
+X-yoursite-MailScanner-From: caoj.fnst@cn.fujitsu.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 1/4/19 1:49 PM, Mel Gorman wrote:
-> A zone parameter is passed into a number of top-level compaction functions
-> despite the fact that it's already in cache_control. This is harmless but
+Hi,
+  I have been digging into this file for a while, and I still have 2
+questions unclear, hope to get your help.
 
-                                        ^ compact_control
+1.
+At the entry of startup_64, we set all the data segment registers to 0,
+according to commit 08da5a2ca("x86_64: Early segment setup for VT"), it
+is said to accelerate the decompression under VT. I don't know Intel VT,
+but I did test under physical machine and virtual machine(with KVM, and
+intel VT enabled in BIOS) with following patch:
 
-> it did need an audit to check if zone actually ever changes meaningfully.
+diff --git a/arch/x86/boot/compressed/head_64.S
+b/arch/x86/boot/compressed/head_64.S
+index 58f6a467f1fa..595f3c300173 100644
+--- a/arch/x86/boot/compressed/head_64.S
++++ b/arch/x86/boot/compressed/head_64.S
+@@ -260,12 +260,12 @@ ENTRY(startup_64)
+         */
 
-Tried changing the field to "struct zone * const zone;" and it only
-flagged compact_node() and kcompactd_do_work() which look ok.
+        /* Setup data segments. */
+-       xorl    %eax, %eax
+-       movl    %eax, %ds
+-       movl    %eax, %es
+-       movl    %eax, %ss
+-       movl    %eax, %fs
+-       movl    %eax, %gs
++//     xorl    %eax, %eax
++//     movl    %eax, %ds
++//     movl    %eax, %es
++//     movl    %eax, %ss
++//     movl    %eax, %fs
++//     movl    %eax, %gs
 
-> This patches removes the parameter in a number of top-level functions. The
-> change could be much deeper but this was enough to briefly clarify the
-> flow.
-> 
-> No functional change.
-> 
-> Signed-off-by: Mel Gorman <mgorman@techsingularity.net>
+I don't see any obvious booting time difference, is there anything I missed?
+Also, I don't find explicit document saying we should zero these
+registers under VT.
 
-Acked-by: Vlastimil Babka <vbabka@suse.cz>
+2.
+Why gdt64 has following definition?:
+
+gdt64:
+	.word	gdt_end - gdt
+	.long	0
+	.word	0
+	.quad   0
+
+obviously, gdt64 stores the GDTR content under x86_64, which is 10 bytes
+long, so why not just:
+
+gdt64:
+	.word	gdt_end - gdt
+	.quad   0
+
+With above modification, it can boot.
+-- 
+Sincerely,
+Cao jin
+
+
