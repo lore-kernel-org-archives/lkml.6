@@ -3,112 +3,97 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1071AC43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 15:47:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C510C43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 15:47:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DBE772086D
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 15:47:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1621F20645
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 15:47:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731150AbfAOPrV (ORCPT
+        id S1731171AbfAOPrw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 15 Jan 2019 10:47:21 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:59200 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1728841AbfAOPrV (ORCPT
+        Tue, 15 Jan 2019 10:47:52 -0500
+Received: from mail-io1-f68.google.com ([209.85.166.68]:39715 "EHLO
+        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731155AbfAOPrv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Jan 2019 10:47:21 -0500
-Received: from pps.filterd (m0098413.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id x0FFifZb119770
-        for <linux-kernel@vger.kernel.org>; Tue, 15 Jan 2019 10:47:19 -0500
-Received: from e06smtp05.uk.ibm.com (e06smtp05.uk.ibm.com [195.75.94.101])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2q1huvacmx-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Tue, 15 Jan 2019 10:47:19 -0500
-Received: from localhost
-        by e06smtp05.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <zohar@linux.ibm.com>;
-        Tue, 15 Jan 2019 15:47:17 -0000
-Received: from b06cxnps4074.portsmouth.uk.ibm.com (9.149.109.196)
-        by e06smtp05.uk.ibm.com (192.168.101.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Tue, 15 Jan 2019 15:47:13 -0000
-Received: from d06av21.portsmouth.uk.ibm.com (d06av21.portsmouth.uk.ibm.com [9.149.105.232])
-        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x0FFlBeu2949616
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 15 Jan 2019 15:47:11 GMT
-Received: from d06av21.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 64B495205A;
-        Tue, 15 Jan 2019 15:47:11 +0000 (GMT)
-Received: from localhost.localdomain (unknown [9.80.106.167])
-        by d06av21.portsmouth.uk.ibm.com (Postfix) with ESMTP id EFE085204E;
-        Tue, 15 Jan 2019 15:47:08 +0000 (GMT)
-Subject: Re: [RFC PATCH v2 2/2] kexec, KEYS: Make use of platform keyring
- for signature verify
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Kairui Song <kasong@redhat.com>, linux-kernel@vger.kernel.org
-Cc:     dhowells@redhat.com, dwmw2@infradead.org,
+        Tue, 15 Jan 2019 10:47:51 -0500
+Received: by mail-io1-f68.google.com with SMTP id k7so2403778iob.6
+        for <linux-kernel@vger.kernel.org>; Tue, 15 Jan 2019 07:47:51 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=63qAqn9+8knOzrpJzAgh/hypu9BmGLnvogVKxHDPq6A=;
+        b=b9mk5DPM1MbX6wknbcTAgYLIFC5Gi2JLo4mU+DB1Gj0oyKQesrqFi4yeeepvmoVb2a
+         lPQwNyBAju3twy6hksFA0VWHVzY33cPlBphf4uuj09A3RxkKml9p/sNLJQIZuwkuLxFP
+         y7WFgp3pKNDxdopX5N6FJyuW/Aw30/241PPbSHxrS3XawuUjucNiiETto5jUNMgVmp0r
+         qrNMXn+T+zhkmV1apJ2FhQIh8BJWMiV9THullPkfcKUkV5PwxAFy43TWHKcxTy+992Cx
+         60uVT5TIBkUQdrHrE6c0KKiobRS5+aKFLx54wC7lmwsA7dy324ahZ/hy54jG8WWnZSU1
+         OmfQ==
+X-Gm-Message-State: AJcUukd1qeTUE1QNUJnqUUy8BcFd4FqCwrLEmUhCyCI7exn+Yljw/iBk
+        yZtHNgaPchL/8tH1EGLo80StSiLB8yCRB/FtcN9Pyw==
+X-Google-Smtp-Source: ALg8bN4WJuGrxOHRSezcEWLtO1Y1typgGd1LD5dX6Xw96Rsk7r61Fr4MImLRM8qfYRsr/bC8+8Gytd8fgrS5deJnNMg=
+X-Received: by 2002:a5e:de01:: with SMTP id e1mr2352082iok.137.1547567270976;
+ Tue, 15 Jan 2019 07:47:50 -0800 (PST)
+MIME-Version: 1.0
+References: <20190115094542.17129-1-kasong@redhat.com> <20190115094542.17129-2-kasong@redhat.com>
+ <1547566455.4156.283.camel@linux.ibm.com>
+In-Reply-To: <1547566455.4156.283.camel@linux.ibm.com>
+From:   Kairui Song <kasong@redhat.com>
+Date:   Tue, 15 Jan 2019 23:47:39 +0800
+Message-ID: <CACPcB9fQUNiD8UEVDa+bU67PZSOkckwhwD00Qvu4m3G0JmqqHQ@mail.gmail.com>
+Subject: Re: [RFC PATCH v2 1/2] integrity, KEYS: add a reference to platform keyring
+To:     Mimi Zohar <zohar@linux.ibm.com>
+Cc:     linux-kernel@vger.kernel.org, David Howells <dhowells@redhat.com>,
+        David Woodhouse <dwmw2@infradead.org>,
         jwboyer@fedoraproject.org, keyrings@vger.kernel.org,
         jmorris@namei.org, serge@hallyn.com, bauerman@linux.ibm.com,
-        ebiggers@google.com, nayna@linux.ibm.com, dyoung@redhat.com,
-        linux-integrity@vger.kernel.org, kexec@lists.infradead.org
-Date:   Tue, 15 Jan 2019 10:46:58 -0500
-In-Reply-To: <20190115094542.17129-3-kasong@redhat.com>
-References: <20190115094542.17129-1-kasong@redhat.com>
-         <20190115094542.17129-3-kasong@redhat.com>
+        Eric Biggers <ebiggers@google.com>, nayna@linux.ibm.com,
+        Dave Young <dyoung@redhat.com>,
+        linux-integrity <linux-integrity@vger.kernel.org>,
+        kexec@lists.infradead.org
 Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-x-cbid: 19011515-0020-0000-0000-00000306D858
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19011515-0021-0000-0000-00002157F07D
-Message-Id: <1547567218.4156.289.camel@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-01-15_04:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1901150131
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 2019-01-15 at 17:45 +0800, Kairui Song wrote:
+On Tue, Jan 15, 2019 at 11:34 PM Mimi Zohar <zohar@linux.ibm.com> wrote:
+>
+> On Tue, 2019-01-15 at 17:45 +0800, Kairui Song wrote:
+> [snip]
+>
+> > diff --git a/security/integrity/digsig.c b/security/integrity/digsig.c
+> > index f45d6edecf99..bfabc2a8111d 100644
+> > --- a/security/integrity/digsig.c
+> > +++ b/security/integrity/digsig.c
+> > @@ -89,6 +89,12 @@ static int __integrity_init_keyring(const unsigned int id, key_perm_t perm,
+> >               keyring[id] = NULL;
+> >       }
+> >
+> > +#ifdef CONFIG_INTEGRITY_PLATFORM_KEYRING
+> > +     if (id == INTEGRITY_KEYRING_PLATFORM) {
+> > +             set_platform_trusted_keys(keyring[id]);
+> > +     }
+> > +#endif
+> > +
+> >       return err;
+> >  }
+> >
+>
+> Any reason for setting it here as opposed to in the caller
+> platform_keyring_init()?
+>
+> Mimi
+>
 
-> diff --git a/arch/x86/kernel/kexec-bzimage64.c b/arch/x86/kernel/kexec-bzimage64.c
-> index 7d97e432cbbc..a06b04065bb1 100644
-> --- a/arch/x86/kernel/kexec-bzimage64.c
-> +++ b/arch/x86/kernel/kexec-bzimage64.c
-> @@ -534,9 +534,18 @@ static int bzImage64_cleanup(void *loader_data)
->  #ifdef CONFIG_KEXEC_BZIMAGE_VERIFY_SIG
->  static int bzImage64_verify_sig(const char *kernel, unsigned long kernel_len)
->  {
-> -	return verify_pefile_signature(kernel, kernel_len,
-> -				       VERIFY_USE_SECONDARY_KEYRING,
-> -				       VERIFYING_KEXEC_PE_SIGNATURE);
-> +	int ret;
-> +	ret = verify_pefile_signature(kernel, kernel_len,
-> +			VERIFY_USE_SECONDARY_KEYRING,
-> +			VERIFYING_KEXEC_PE_SIGNATURE);
-> +#ifdef CONFIG_INTEGRITY_PLATFORM_KEYRING
+Yes, "keyring" is static so unless I expose it to other files, it is
+only accessible here. And I think there should be no problem to put
+the set_platform_trusted_keys here.
 
-Consider using IS_ENABLED() or IS_BUILTIN().
-
-Mimi
-
-> +	if (ret == -ENOKEY) {
-> +		ret = verify_pefile_signature(kernel, kernel_len,
-> +				VERIFY_USE_PLATFORM_KEYRING,
-> +				VERIFYING_KEXEC_PE_SIGNATURE);
-> +	}
-> +#endif
-> +	return ret;
->  }
->  #endif
-
+-- 
+Best Regards,
+Kairui Song
