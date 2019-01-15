@@ -2,361 +2,131 @@ Return-Path: <SRS0=RZO6=PX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CAA69C43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 03:50:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3704CC43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 03:52:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8EC4320859
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 03:50:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0475620859
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 03:52:27 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VFiLC/wi"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728073AbfAODuv convert rfc822-to-8bit (ORCPT
+        id S1728090AbfAODwZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 14 Jan 2019 22:50:51 -0500
-Received: from smtp.h3c.com ([60.191.123.56]:48826 "EHLO h3cmg01-ex.h3c.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726769AbfAODuu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 Jan 2019 22:50:50 -0500
-Received: from BJHUB02-EX.srv.huawei-3com.com (unknown [10.63.20.170]) by h3cmg01-ex.h3c.com with smtp
-         id 67b4_01d1_327efaa5_73bc_4ee2_85b1_08d5d231dd68;
-        Tue, 15 Jan 2019 11:50:19 +0800
-Received: from H3CMLB12-EX.srv.huawei-3com.com ([fe80::10fe:abde:731b:fdde])
- by BJHUB02-EX.srv.huawei-3com.com ([::1]) with mapi id 14.03.0415.000; Tue,
- 15 Jan 2019 11:50:04 +0800
-From:   Changwei Ge <ge.changwei@h3c.com>
-To:     Gang He <ghe@suse.com>, "mark@fasheh.com" <mark@fasheh.com>,
-        "jlbec@evilplan.org" <jlbec@evilplan.org>,
-        "jiangqi903@gmail.com" <jiangqi903@gmail.com>
-CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "ocfs2-devel@oss.oracle.com" <ocfs2-devel@oss.oracle.com>,
-        Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: [Ocfs2-devel] [PATCH] ocfs2: fix the application IO timeout
- when fstrim is running
-Thread-Topic: [Ocfs2-devel] [PATCH] ocfs2: fix the application IO timeout
- when fstrim is running
-Thread-Index: AQHUrIVlCNHZCv+dVU6iUuVWjEr8Xw==
-Date:   Tue, 15 Jan 2019 03:50:04 +0000
-Message-ID: <63ADC13FD55D6546B7DECE290D39E3730127825EFD@H3CMLB12-EX.srv.huawei-3com.com>
-References: <20190111090014.31645-1-ghe@suse.com>
-Accept-Language: en-US, zh-CN
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.125.20.206]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+        Mon, 14 Jan 2019 22:52:25 -0500
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:46747 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726769AbfAODwZ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 14 Jan 2019 22:52:25 -0500
+Received: by mail-pg1-f194.google.com with SMTP id w7so601656pgp.13;
+        Mon, 14 Jan 2019 19:52:24 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=hW3X2EuUQUHZMQO0rz72DWuUJd2W/dUQuPisu3YBPls=;
+        b=VFiLC/wifBUQdfz6zeqxdDg85BqNR9XI0agkWzc52LoCqRykzqR6ABZTOid3a3QxXh
+         8KpYQvy2I4Yb3cvilEp2HNWMfYw1s2Hegmr6FUdXLnrvs6MJln9ZVmHjRYlMWnybg0+z
+         B4N9uRULVmy+1ADOLjl/ITsznAK9Q2s91mp/KP8ejk5GU5I7shO3CeT/BYksqI3Y7m6R
+         dAmoElcXaqgPdJKYK1lmNui/3Z/rnBbZEZ/kdEj1ac3JzXdRuXdZ+CmaBKve6yWdOFOS
+         UmAQfEoZy6jk0NoKh3M2VUhnIoWxYPyhGHXWBYK/QRTTO768PPkpRj6EogqqstVmsmEf
+         /qiQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=hW3X2EuUQUHZMQO0rz72DWuUJd2W/dUQuPisu3YBPls=;
+        b=JiDhJdFHhFg+hmEa/QHVB+4F8jLYBENZd9byKWvj2apB3/bc129ERKIHOMYtP2vyKM
+         lJVdKzS6pO6kfBQYMlzy3jGQozQeT+acuyCRwk8olqANbonT99Q6ytAgvyz4C4oKwL8X
+         yTMO1Gwd72Crs2GqgYuwDZjj3kYbK8l1dHHH2INrG+1cU7UdMCBVXXzWJfi+67uiQEoU
+         XcioNB6M5kjAhC5ecY9k/6CFpNT1bEne5z/stPb0PQcRuUIG1Ugrl5KMCSRioGFrw8I6
+         x2KeyEC/rCbt5oP33Kf048v8RwITil5cvdELUkYFLSUbc+/B7Z5co45RF99LEZBiCsuu
+         MIPg==
+X-Gm-Message-State: AJcUukd5FGZLmWQ4uQKjtkeDyt//6ieaIZxGAm9wk8R/Oem+cYRF7eMk
+        0twepGSKEvDO4mMqBo/HtvOzwlHp
+X-Google-Smtp-Source: ALg8bN4DFycsf6lIHleg8L8TKqJp3Bpc4Vwqr7+0V/l9YqwpN+hYmMCaqCsSKSk5QquIocRnyzhz1A==
+X-Received: by 2002:a62:1542:: with SMTP id 63mr1912761pfv.230.1547524344135;
+        Mon, 14 Jan 2019 19:52:24 -0800 (PST)
+Received: from dtor-ws ([2620:15c:202:201:3adc:b08c:7acc:b325])
+        by smtp.gmail.com with ESMTPSA id g11sm2136595pfo.139.2019.01.14.19.52.22
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 14 Jan 2019 19:52:23 -0800 (PST)
+Date:   Mon, 14 Jan 2019 19:52:21 -0800
+From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To:     Donghoon Han <nazgul33@gmail.com>
+Cc:     linux-input@vger.kernel.org, Daniel Mack <daniel@caiaq.de>,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH V2 2/2] Input: rotaty-encoder - Add DT binding document
+Message-ID: <20190115035221.GA151157@dtor-ws>
+References: <20190107164249.2342-1-nazgul33@gmail.com>
+ <20190107164249.2342-3-nazgul33@gmail.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190107164249.2342-3-nazgul33@gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Gang,
-
-Most parts of this patch look sane to me, just a tiny question...
-
-On 2019/1/11 17:01, Gang He wrote:
-> The user reported this problem, the upper application IO was
-> timeout when fstrim was running on this ocfs2 partition. the
-> application monitoring resource agent considered that this
-> application did not work, then this node was fenced by the cluster
-> brain (e.g. pacemaker).
-> The root cause is that fstrim thread always holds main_bm meta-file
-> related locks until all the cluster groups are trimmed.
-> This patch will make fstrim thread release main_bm meta-file
-> related locks when each cluster group is trimmed, this will let
-> the current application IO has a chance to claim the clusters from
-> main_bm meta-file.
+On Tue, Jan 08, 2019 at 01:42:49AM +0900, Donghoon Han wrote:
+> Add DT binding document for rotary-encoder, keycode options.
 > 
-> Signed-off-by: Gang He <ghe@suse.com>
+> Signed-off-by: Donghoon Han <nazgul33@gmail.com>
+> Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+> Cc: Daniel Mack <daniel@caiaq.de>
+> Cc: devicetree@vger.kernel.org
+> To: linux-input@vger.kernel.org
 > ---
->   fs/ocfs2/alloc.c       | 159 +++++++++++++++++++++++++----------------
->   fs/ocfs2/dlmglue.c     |   5 ++
->   fs/ocfs2/ocfs2.h       |   1 +
->   fs/ocfs2/ocfs2_trace.h |   2 +
->   fs/ocfs2/super.c       |   2 +
->   5 files changed, 106 insertions(+), 63 deletions(-)
+>  .../devicetree/bindings/input/rotary-encoder.txt     | 12 ++++++++++++
+>  1 file changed, 12 insertions(+)
 > 
-> diff --git a/fs/ocfs2/alloc.c b/fs/ocfs2/alloc.c
-> index d1cbb27808e2..6f0999015a44 100644
-> --- a/fs/ocfs2/alloc.c
-> +++ b/fs/ocfs2/alloc.c
-> @@ -7532,10 +7532,11 @@ static int ocfs2_trim_group(struct super_block *sb,
->   	return count;
->   }
->   
-> -int ocfs2_trim_fs(struct super_block *sb, struct fstrim_range *range)
-> +static
-> +int ocfs2_trim_mainbm(struct super_block *sb, struct fstrim_range *range)
->   {
->   	struct ocfs2_super *osb = OCFS2_SB(sb);
-> -	u64 start, len, trimmed, first_group, last_group, group;
-> +	u64 start, len, trimmed = 0, first_group, last_group = 0, group = 0;
->   	int ret, cnt;
->   	u32 first_bit, last_bit, minlen;
->   	struct buffer_head *main_bm_bh = NULL;
-> @@ -7543,7 +7544,6 @@ int ocfs2_trim_fs(struct super_block *sb, struct fstrim_range *range)
->   	struct buffer_head *gd_bh = NULL;
->   	struct ocfs2_dinode *main_bm;
->   	struct ocfs2_group_desc *gd = NULL;
-> -	struct ocfs2_trim_fs_info info, *pinfo = NULL;
->   
->   	start = range->start >> osb->s_clustersize_bits;
->   	len = range->len >> osb->s_clustersize_bits;
-> @@ -7552,6 +7552,9 @@ int ocfs2_trim_fs(struct super_block *sb, struct fstrim_range *range)
->   	if (minlen >= osb->bitmap_cpg || range->len < sb->s_blocksize)
->   		return -EINVAL;
->   
-> +	trace_ocfs2_trim_mainbm(start, len, minlen);
-> +
-> +next_group:
->   	main_bm_inode = ocfs2_get_system_file_inode(osb,
->   						    GLOBAL_BITMAP_SYSTEM_INODE,
->   						    OCFS2_INVALID_SLOT);
-> @@ -7570,64 +7573,34 @@ int ocfs2_trim_fs(struct super_block *sb, struct fstrim_range *range)
->   	}
->   	main_bm = (struct ocfs2_dinode *)main_bm_bh->b_data;
->   
-> -	if (start >= le32_to_cpu(main_bm->i_clusters)) {
-> -		ret = -EINVAL;
-> -		goto out_unlock;
-> -	}
-> -
-> -	len = range->len >> osb->s_clustersize_bits;
-> -	if (start + len > le32_to_cpu(main_bm->i_clusters))
-> -		len = le32_to_cpu(main_bm->i_clusters) - start;
-> -
-> -	trace_ocfs2_trim_fs(start, len, minlen);
-> -
-> -	ocfs2_trim_fs_lock_res_init(osb);
-> -	ret = ocfs2_trim_fs_lock(osb, NULL, 1);
-> -	if (ret < 0) {
-> -		if (ret != -EAGAIN) {
-> -			mlog_errno(ret);
-> -			ocfs2_trim_fs_lock_res_uninit(osb);
-> +	/*
-> +	 * Do some check before trim the first group.
-> +	 */
-> +	if (!group) {
-> +		if (start >= le32_to_cpu(main_bm->i_clusters)) {
-> +			ret = -EINVAL;
->   			goto out_unlock;
->   		}
->   
-> -		mlog(ML_NOTICE, "Wait for trim on device (%s) to "
-> -		     "finish, which is running from another node.\n",
-> -		     osb->dev_str);
-> -		ret = ocfs2_trim_fs_lock(osb, &info, 0);
-> -		if (ret < 0) {
-> -			mlog_errno(ret);
-> -			ocfs2_trim_fs_lock_res_uninit(osb);
-> -			goto out_unlock;
-> -		}
-> +		if (start + len > le32_to_cpu(main_bm->i_clusters))
-> +			len = le32_to_cpu(main_bm->i_clusters) - start;
->   
-> -		if (info.tf_valid && info.tf_success &&
-> -		    info.tf_start == start && info.tf_len == len &&
-> -		    info.tf_minlen == minlen) {
-> -			/* Avoid sending duplicated trim to a shared device */
-> -			mlog(ML_NOTICE, "The same trim on device (%s) was "
-> -			     "just done from node (%u), return.\n",
-> -			     osb->dev_str, info.tf_nodenum);
-> -			range->len = info.tf_trimlen;
-> -			goto out_trimunlock;
-> -		}
-> +		/*
-> +		 * Determine first and last group to examine based on
-> +		 * start and len
-> +		 */
-> +		first_group = ocfs2_which_cluster_group(main_bm_inode, start);
-> +		if (first_group == osb->first_cluster_group_blkno)
-> +			first_bit = start;
-> +		else
-> +			first_bit = start - ocfs2_blocks_to_clusters(sb,
-> +								first_group);
-> +		last_group = ocfs2_which_cluster_group(main_bm_inode,
-> +						       start + len - 1);
-> +		group = first_group;
->   	}
->   
-> -	info.tf_nodenum = osb->node_num;
-> -	info.tf_start = start;
-> -	info.tf_len = len;
-> -	info.tf_minlen = minlen;
-> -
-> -	/* Determine first and last group to examine based on start and len */
-> -	first_group = ocfs2_which_cluster_group(main_bm_inode, start);
-> -	if (first_group == osb->first_cluster_group_blkno)
-> -		first_bit = start;
-> -	else
-> -		first_bit = start - ocfs2_blocks_to_clusters(sb, first_group);
-> -	last_group = ocfs2_which_cluster_group(main_bm_inode, start + len - 1);
-> -	last_bit = osb->bitmap_cpg;
-> -
-> -	trimmed = 0;
-> -	for (group = first_group; group <= last_group;) {
-> +	do {
->   		if (first_bit + len >= osb->bitmap_cpg)
->   			last_bit = osb->bitmap_cpg;
->   		else
-> @@ -7659,21 +7632,81 @@ int ocfs2_trim_fs(struct super_block *sb, struct fstrim_range *range)
->   			group = ocfs2_clusters_to_blocks(sb, osb->bitmap_cpg);
->   		else
->   			group += ocfs2_clusters_to_blocks(sb, osb->bitmap_cpg);
-> -	}
-> -	range->len = trimmed * sb->s_blocksize;
-> +	} while (0);
->   
-> -	info.tf_trimlen = range->len;
-> -	info.tf_success = (ret ? 0 : 1);
-> -	pinfo = &info;
-> -out_trimunlock:
-> -	ocfs2_trim_fs_unlock(osb, pinfo);
-> -	ocfs2_trim_fs_lock_res_uninit(osb);
->   out_unlock:
->   	ocfs2_inode_unlock(main_bm_inode, 0);
->   	brelse(main_bm_bh);
-> +	main_bm_bh = NULL;
->   out_mutex:
->   	inode_unlock(main_bm_inode);
->   	iput(main_bm_inode);
-> +
-> +	/*
-> +	 * If all the groups trim are not done or failed, but we should release
-> +	 * main_bm related locks for avoiding the current IO starve, then go to
-> +	 * trim the next group
-> +	 */
-> +	if (ret >= 0 && group <= last_group)
-> +		goto next_group;
->   out:
-> +	range->len = trimmed * sb->s_blocksize;
-> +	return ret;
-> +}
-> +
-> +int ocfs2_trim_fs(struct super_block *sb, struct fstrim_range *range)
-> +{
-> +	int ret;
-> +	struct ocfs2_super *osb = OCFS2_SB(sb);
-> +	struct ocfs2_trim_fs_info info, *pinfo = NULL;
-> +
-> +	ocfs2_trim_fs_lock_res_init(osb);
-> +
-> +	trace_ocfs2_trim_fs(range->start, range->len, range->minlen);
-> +
-> +	ret = ocfs2_trim_fs_lock(osb, NULL, 1);
-> +	if (ret < 0) {
-> +		if (ret != -EAGAIN) {
-> +			mlog_errno(ret);
-> +			ocfs2_trim_fs_lock_res_uninit(osb);
-> +			return ret;
-> +		}
-> +
-> +		mlog(ML_NOTICE, "Wait for trim on device (%s) to "
-> +		     "finish, which is running from another node.\n",
-> +		     osb->dev_str);
-> +		ret = ocfs2_trim_fs_lock(osb, &info, 0);
-> +		if (ret < 0) {
-> +			mlog_errno(ret);
-> +			ocfs2_trim_fs_lock_res_uninit(osb);
-> +			return ret;
-> +		}
-> +
-> +		if (info.tf_valid && info.tf_success &&
-> +		    info.tf_start == range->start &&
-> +		    info.tf_len == range->len &&
-> +		    info.tf_minlen == range->minlen) {
-> +			/* Avoid sending duplicated trim to a shared device */
-> +			mlog(ML_NOTICE, "The same trim on device (%s) was "
-> +			     "just done from node (%u), return.\n",
-> +			     osb->dev_str, info.tf_nodenum);
-> +			range->len = info.tf_trimlen;
-> +			goto out;
-> +		}
-> +	}
-> +
-> +	info.tf_nodenum = osb->node_num;
-> +	info.tf_start = range->start;
-> +	info.tf_len = range->len;
-> +	info.tf_minlen = range->minlen;
-> +
-> +	ret = ocfs2_trim_mainbm(sb, range);
-> +
-> +	info.tf_trimlen = range->len;
-> +	info.tf_success = (ret < 0 ? 0 : 1);
-> +	pinfo = &info;
-> +out:
-> +	ocfs2_trim_fs_unlock(osb, pinfo);
-> +	ocfs2_trim_fs_lock_res_uninit(osb);
->   	return ret;
->   }
-> diff --git a/fs/ocfs2/dlmglue.c b/fs/ocfs2/dlmglue.c
-> index 7c835824247e..af405586c5b1 100644
-> --- a/fs/ocfs2/dlmglue.c
-> +++ b/fs/ocfs2/dlmglue.c
-> @@ -686,6 +686,9 @@ void ocfs2_trim_fs_lock_res_init(struct ocfs2_super *osb)
->   {
->   	struct ocfs2_lock_res *lockres = &osb->osb_trim_fs_lockres;
->   
-> +	/* Only one trimfs thread are allowed to work at the same time. */
-> +	mutex_lock(&osb->obs_trim_fs_mutex);
-> +
+> diff --git a/Documentation/devicetree/bindings/input/rotary-encoder.txt b/Documentation/devicetree/bindings/input/rotary-encoder.txt
+> index f99fe5cdeaec..9986ec2af2d4 100644
+> --- a/Documentation/devicetree/bindings/input/rotary-encoder.txt
+> +++ b/Documentation/devicetree/bindings/input/rotary-encoder.txt
+> @@ -12,6 +12,10 @@ Optional properties:
+>  - rotary-encoder,relative-axis: register a relative axis rather than an
+>    absolute one. Relative axis will only generate +1/-1 events on the input
+>    device, hence no steps need to be passed.
+> +- rotary-encoder,relative-keys : generate pair of key events. This setting
+> +  behaves just like relative-axis, generating key events instead.
+> +  (Keycodes[2] corresponds to -1/1 events.)
+> +- rotary-encoder,relative-keycodes : keycodes for relative-keys
 
-Cluster lock of fstrim have a trylock behavior, will it be better if we trylock here?
+Given that keycodes are linux-specific, I think the property should be
+linux,keycodes. Also, I am not sure we need separate
+rotary-encoder,relative-keys property as we can infer that we want to
+generate keys from presence of linux,keycodes property.
 
-Thanks,
-Changwei
+Rob, any comments?
 
->   	ocfs2_lock_res_init_once(lockres);
->   	ocfs2_build_lock_name(OCFS2_LOCK_TYPE_TRIM_FS, 0, 0, lockres->l_name);
->   	ocfs2_lock_res_init_common(osb, lockres, OCFS2_LOCK_TYPE_TRIM_FS,
-> @@ -698,6 +701,8 @@ void ocfs2_trim_fs_lock_res_uninit(struct ocfs2_super *osb)
->   
->   	ocfs2_simple_drop_lockres(osb, lockres);
->   	ocfs2_lock_res_free(lockres);
+>  - rotary-encoder,rollover: Automatic rollover when the rotary value becomes
+>    greater than the specified steps or smaller than 0. For absolute axis only.
+>  - rotary-encoder,steps-per-period: Number of steps (stable states) per period.
+> @@ -48,3 +52,11 @@ Example:
+>  			rotary-encoder,encoding = "binary";
+>  			rotary-encoder,rollover;
+>  		};
 > +
-> +	mutex_unlock(&osb->obs_trim_fs_mutex);
->   }
->   
->   static void ocfs2_orphan_scan_lock_res_init(struct ocfs2_lock_res *res,
-> diff --git a/fs/ocfs2/ocfs2.h b/fs/ocfs2/ocfs2.h
-> index 4f86ac0027b5..1f029fbe8b8d 100644
-> --- a/fs/ocfs2/ocfs2.h
-> +++ b/fs/ocfs2/ocfs2.h
-> @@ -407,6 +407,7 @@ struct ocfs2_super
->   	struct ocfs2_lock_res osb_rename_lockres;
->   	struct ocfs2_lock_res osb_nfs_sync_lockres;
->   	struct ocfs2_lock_res osb_trim_fs_lockres;
-> +	struct mutex obs_trim_fs_mutex;
->   	struct ocfs2_dlm_debug *osb_dlm_debug;
->   
->   	struct dentry *osb_debug_root;
-> diff --git a/fs/ocfs2/ocfs2_trace.h b/fs/ocfs2/ocfs2_trace.h
-> index 2ee76a90ba8f..dc4bce1649c1 100644
-> --- a/fs/ocfs2/ocfs2_trace.h
-> +++ b/fs/ocfs2/ocfs2_trace.h
-> @@ -712,6 +712,8 @@ TRACE_EVENT(ocfs2_trim_extent,
->   
->   DEFINE_OCFS2_ULL_UINT_UINT_UINT_EVENT(ocfs2_trim_group);
->   
-> +DEFINE_OCFS2_ULL_ULL_ULL_EVENT(ocfs2_trim_mainbm);
-> +
->   DEFINE_OCFS2_ULL_ULL_ULL_EVENT(ocfs2_trim_fs);
->   
->   /* End of trace events for fs/ocfs2/alloc.c. */
-> diff --git a/fs/ocfs2/super.c b/fs/ocfs2/super.c
-> index 3415e0b09398..96ae7cedd487 100644
-> --- a/fs/ocfs2/super.c
-> +++ b/fs/ocfs2/super.c
-> @@ -1847,6 +1847,8 @@ static int ocfs2_mount_volume(struct super_block *sb)
->   	if (ocfs2_is_hard_readonly(osb))
->   		goto leave;
->   
-> +	mutex_init(&osb->obs_trim_fs_mutex);
-> +
->   	status = ocfs2_dlm_init(osb);
->   	if (status < 0) {
->   		mlog_errno(status);
+> +		rotary@2 {
+> +			compatible = "rotary-encoder";
+> +			gpios = <&gpio 21 0>, <&gpio 22 0>;
+> +			rotary-encoder,relative-keys;
+> +			rotary-encoder,relative-keycode = <103>, <108>;
+> +			rotary-encoder,steps-per-period = <2>;
+> +		};
+> -- 
+> 2.17.1
 > 
+
+Thanks.
+
+-- 
+Dmitry
