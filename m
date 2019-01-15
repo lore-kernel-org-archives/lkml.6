@@ -6,108 +6,111 @@ X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 76E2CC43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 17:48:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 989CBC43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 17:49:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 466DD20675
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 17:48:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6568720675
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 17:49:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388506AbfAORsq (ORCPT
+        id S2388521AbfAORtz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 15 Jan 2019 12:48:46 -0500
-Received: from mga12.intel.com ([192.55.52.136]:3064 "EHLO mga12.intel.com"
+        Tue, 15 Jan 2019 12:49:55 -0500
+Received: from mga18.intel.com ([134.134.136.126]:61806 "EHLO mga18.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728025AbfAORsq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Jan 2019 12:48:46 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
+        id S1728025AbfAORty (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 Jan 2019 12:49:54 -0500
+X-Amp-Result: UNSCANNABLE
 X-Amp-File-Uploaded: False
-Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 15 Jan 2019 09:48:45 -0800
+Received: from fmsmga005.fm.intel.com ([10.253.24.32])
+  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 15 Jan 2019 09:49:54 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.56,481,1539673200"; 
-   d="scan'208";a="118717007"
+   d="scan'208";a="312042011"
 Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.154])
-  by orsmga003.jf.intel.com with ESMTP; 15 Jan 2019 09:48:45 -0800
-Date:   Tue, 15 Jan 2019 09:48:45 -0800
+  by fmsmga005.fm.intel.com with ESMTP; 15 Jan 2019 09:49:53 -0800
+Date:   Tue, 15 Jan 2019 09:49:53 -0800
 From:   Sean Christopherson <sean.j.christopherson@intel.com>
 To:     Qian Cai <cai@lca.pw>
 Cc:     Paolo Bonzini <pbonzini@redhat.com>, rkrcmar@redhat.com,
         tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, hpa@zytor.com,
         x86@kernel.org, kvm@vger.kernel.org, linux-kernel@vger.kernel.org
 Subject: Re: [PATCH] kvm: add proper frame pointer logic for vmx
-Message-ID: <20190115174845.GB21622@linux.intel.com>
+Message-ID: <20190115174953.GC21622@linux.intel.com>
 References: <20190115064459.70513-1-cai@lca.pw>
  <a6477022-bbc0-fc00-2c8e-75007b468d3f@lca.pw>
  <5109b3c2-cac0-aa19-9cc7-801340afe198@redhat.com>
  <7d6ae0bc-b7c7-63ea-ae94-4437a29a31b1@lca.pw>
+ <20190115174845.GB21622@linux.intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <7d6ae0bc-b7c7-63ea-ae94-4437a29a31b1@lca.pw>
+In-Reply-To: <20190115174845.GB21622@linux.intel.com>
 User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 15, 2019 at 11:43:20AM -0500, Qian Cai wrote:
-> 
-> 
-> On 1/15/19 2:13 AM, Paolo Bonzini wrote:
-> > Hmm, maybe like this:
+On Tue, Jan 15, 2019 at 09:48:45AM -0800, Sean Christopherson wrote:
+> On Tue, Jan 15, 2019 at 11:43:20AM -0500, Qian Cai wrote:
 > > 
-> > diff --git a/arch/x86/kvm/vmx/vmenter.S b/arch/x86/kvm/vmx/vmenter.S
-> > index bcef2c7e9bc4..33122fa9d4bd 100644
-> > --- a/arch/x86/kvm/vmx/vmenter.S
-> > +++ b/arch/x86/kvm/vmx/vmenter.S
-> > @@ -26,19 +26,17 @@ ENTRY(vmx_vmenter)
-> >  	ret
 > > 
-> >  2:	vmlaunch
-> > +3:
-> >  	ret
+> > On 1/15/19 2:13 AM, Paolo Bonzini wrote:
+> > > Hmm, maybe like this:
+> > > 
+> > > diff --git a/arch/x86/kvm/vmx/vmenter.S b/arch/x86/kvm/vmx/vmenter.S
+> > > index bcef2c7e9bc4..33122fa9d4bd 100644
+> > > --- a/arch/x86/kvm/vmx/vmenter.S
+> > > +++ b/arch/x86/kvm/vmx/vmenter.S
+> > > @@ -26,19 +26,17 @@ ENTRY(vmx_vmenter)
+> > >  	ret
+> > > 
+> > >  2:	vmlaunch
+> > > +3:
+> > >  	ret
+> > > 
+> > > -3:	cmpb $0, kvm_rebooting
+> > > -	jne 4f
+> > > -	call kvm_spurious_fault
+> > > -4:	ret
+> > > -
+> > >  	.pushsection .fixup, "ax"
+> > > -5:	jmp 3b
+> > > +4:	cmpb $0, kvm_rebooting
+> > > +	jne 3b
+> > > +	jmp kvm_spurious_fault
+> > >  	.popsection
+> > > 
+> > > -	_ASM_EXTABLE(1b, 5b)
+> > > -	_ASM_EXTABLE(2b, 5b)
+> > > +	_ASM_EXTABLE(1b, 4b)
+> > > +	_ASM_EXTABLE(2b, 4b)
+> > > 
+> > >  ENDPROC(vmx_vmenter)
 > > 
-> > -3:	cmpb $0, kvm_rebooting
-> > -	jne 4f
-> > -	call kvm_spurious_fault
-> > -4:	ret
-> > -
-> >  	.pushsection .fixup, "ax"
-> > -5:	jmp 3b
-> > +4:	cmpb $0, kvm_rebooting
-> > +	jne 3b
-> > +	jmp kvm_spurious_fault
-> >  	.popsection
+> > No, that will not work. The problem is in vmx.o where I just sent another patch
+> > for it.
 > > 
-> > -	_ASM_EXTABLE(1b, 5b)
-> > -	_ASM_EXTABLE(2b, 5b)
-> > +	_ASM_EXTABLE(1b, 4b)
-> > +	_ASM_EXTABLE(2b, 4b)
+> > I can see there are five options to solve it.
 > > 
-> >  ENDPROC(vmx_vmenter)
+> > 1) always inline vmx_vcpu_run()
+> > 2) always noinline vmx_vcpu_run()
+> > 3) add -fdiable-ipa-fnsplit option to Makefile for vmx.o
+> > 4) let STACK_FRAME_NON_STANDARD support part.* syntax.
 > 
-> No, that will not work. The problem is in vmx.o where I just sent another patch
-> for it.
-> 
-> I can see there are five options to solve it.
-> 
-> 1) always inline vmx_vcpu_run()
-> 2) always noinline vmx_vcpu_run()
-> 3) add -fdiable-ipa-fnsplit option to Makefile for vmx.o
-> 4) let STACK_FRAME_NON_STANDARD support part.* syntax.
+> What is ".part." and where does it come from?  Searching for information
+> is futile, the term is too generic.
 
-What is ".part." and where does it come from?  Searching for information
-is futile, the term is too generic.
+And never mind, my eyes glazed over -fdiable-ipa-fnsplit.
 
-> 5) trim-down vmx_vcpu_run() even more to not causing splitting by GCC.
-> 
-> Option 1) and 2) seems give away the decision for user with
-> CONFIG_CC_OPTIMIZE_FOR_(PERFORMANCE/SIZE).
-> 
-> Option 3) prevents other functions there for splitting for optimization.
-> 
-> Option 4) and 5) seems tricky to implement.
-> 
-> I am not more leaning to 3) as only other fuction will miss splitting is
-> vmx_segment_access_rights().
+> > 5) trim-down vmx_vcpu_run() even more to not causing splitting by GCC.
+> > 
+> > Option 1) and 2) seems give away the decision for user with
+> > CONFIG_CC_OPTIMIZE_FOR_(PERFORMANCE/SIZE).
+> > 
+> > Option 3) prevents other functions there for splitting for optimization.
+> > 
+> > Option 4) and 5) seems tricky to implement.
+> > 
+> > I am not more leaning to 3) as only other fuction will miss splitting is
+> > vmx_segment_access_rights().
