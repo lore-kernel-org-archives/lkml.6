@@ -2,121 +2,98 @@ Return-Path: <SRS0=RZO6=PX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B163CC43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 10:47:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D1C8C43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 10:47:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7D95F20651
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 10:47:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 22A8820651
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 10:47:41 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="w4PgFaTJ"
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="hyB0DHT1"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728916AbfAOKre (ORCPT
+        id S1729015AbfAOKrj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 15 Jan 2019 05:47:34 -0500
-Received: from mail-oi1-f193.google.com ([209.85.167.193]:46544 "EHLO
-        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728508AbfAOKre (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Jan 2019 05:47:34 -0500
-Received: by mail-oi1-f193.google.com with SMTP id x202so1711509oif.13
-        for <linux-kernel@vger.kernel.org>; Tue, 15 Jan 2019 02:47:33 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=VmKR26I0RhPcilqP8dcitp/GQkeN8w0FsdZU3BWnzS0=;
-        b=w4PgFaTJZOyBWyv9OqAt47MhMxJfJOcNavuxCuOYP1Lhfbj6/SEfWQ85sxYepeL/sr
-         h/GMnuvSNsMv7i+vgrXpGYWX6uJbNWzPYqXnG8hyJp11g2D3fNBGYTg/q5bWX2UYzVeg
-         usgyUeX9ACAN6vHErz9CyP2UK8hZmGZ2t6ZUsN/xmf6hGEn0NnTQcm+GLriJ+h6lEWLi
-         QxAnkeUbM2SvlvxwbQet/soMZG8Fj9UY4ZGYzbhUdviwqcHSd+Tfyg1AjNNDJCYzTwp/
-         iFttawjbVLzm4R8r/HPLtdWY5vk30FB1u1uLhteZ7Qo1dxjBxb7zQRtVPsHEdA/GIeMi
-         z6MQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=VmKR26I0RhPcilqP8dcitp/GQkeN8w0FsdZU3BWnzS0=;
-        b=Bk4s3dnCiiZLMW5GNb8aRQ3KyfJlnrLZ/h96VvZgETWQQdl1C2KjBchdy/n5SFWSKO
-         r+ZHx3VnThMpjnpsltQUhMg/lh2laAhnOVao6DfVINWSV+BS3LYq2439+oLY/OvY5eU7
-         w5gWGVvByfWNDqqJx4wNsRQNBs0CGsmYjqjNEVgCAp52P7BkRhzC+JRqXx8C9TV7zaR+
-         T4S1Mij4qaQc5jeV4DvcTZw0TCi/scswSPIwWg/Db9xuOGGu9y9X1Av28arLWPgmeyN4
-         9yqGnoygUZnjHwUJu+jNHxNzg72cFr0E0TTm7+D6AU/MQxacP5uRvxvnBzwDSGSOtGvj
-         /qVA==
-X-Gm-Message-State: AJcUukci1Hi+7L7Wuou1Rxl1kDgce0bLkLhyXsWAOa9Cn1W8BxT+h1Dp
-        bQPUUwqbJQvMuqi5fFCLFU9aAacYpQARK8Djg0eAbgiI
-X-Google-Smtp-Source: ALg8bN6Rqqnb8MBDuxZRNcqhfexklDhiuyB0oylRKDrBYE5qPAj1cBm0R9mzG0mDDo6r5HCpksSB4lDMyIP9V1JqqUo=
-X-Received: by 2002:aca:1e17:: with SMTP id m23mr1720987oic.332.1547549252952;
- Tue, 15 Jan 2019 02:47:32 -0800 (PST)
+        Tue, 15 Jan 2019 05:47:39 -0500
+Received: from ozlabs.org ([203.11.71.1]:58681 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728508AbfAOKri (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 Jan 2019 05:47:38 -0500
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by ozlabs.org (Postfix) with ESMTPSA id 43f6VY4Yqmz9sCr;
+        Tue, 15 Jan 2019 21:47:33 +1100 (AEDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1547549255;
+        bh=p+StA/uw56YJOXL/PPCF7Ux+AVwB+rUf1PbtVu0DdpU=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=hyB0DHT1YH2CkVgQm0XAdmYO967hcGBSTW6PFUAExorXEiYF5VLWanYp/aWqUt/XO
+         3lx5N1a2VnzqjH/Bn+D9bzoledScXCShEMO0ItT+GXNlNbxe0L5t6o6bD4sEaAWoEv
+         11U1NA4X7svulpDl5pobhzi2/E7clctiJSjvyepE5IFhe/E51HzPBe7Wkc+1+9/bJt
+         1HtFazHpqk2a5S+hw8w9kwPZvZN/fmhglvSwL9dR4TEz8pJOqEWTnnYkWfbmUlBWt4
+         kPtVQ5TvpVruNMclGjOeMECCjhSRB2gYLY20vUIsBXQsCbXBKMa03esNbv7WJDHaZy
+         wB/nsQHNQhxFw==
+Date:   Tue, 15 Jan 2019 21:47:25 +1100
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Liviu Dudau <Liviu.Dudau@arm.com>
+Cc:     Dave Airlie <airlied@linux.ie>,
+        DRI <dri-devel@lists.freedesktop.org>,
+        Boris Brezillon <boris.brezillon@bootlin.com>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>,
+        "James Qian Wang (Arm Technology China)" <james.qian.wang@arm.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: linux-next: build failure after merge of the mali-dp tree
+Message-ID: <20190115214725.360798cf@canb.auug.org.au>
+In-Reply-To: <20190115101219.GP20661@e110455-lin.cambridge.arm.com>
+References: <20190115104619.516be4b9@canb.auug.org.au>
+        <20190115101219.GP20661@e110455-lin.cambridge.arm.com>
 MIME-Version: 1.0
-References: <732ea4f8ff1bf3ad28bda543ae8e1727c78f8b3b.1547538574.git.baolin.wang@linaro.org>
-In-Reply-To: <732ea4f8ff1bf3ad28bda543ae8e1727c78f8b3b.1547538574.git.baolin.wang@linaro.org>
-From:   Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Date:   Tue, 15 Jan 2019 11:47:22 +0100
-Message-ID: <CAMpxmJVyMd=rebK2h=uC_Cu_KXivRpCDCxzrneig0eZnK=wXpQ@mail.gmail.com>
-Subject: Re: [PATCH 1/2] gpio: sprd: Fix the incorrect data register
-To:     Baolin Wang <baolin.wang@linaro.org>
-Cc:     Linus Walleij <linus.walleij@linaro.org>, orsonzhai@gmail.com,
-        zhang.lyra@gmail.com, neo.hou@unisoc.com,
-        Mark Brown <broonie@kernel.org>,
-        linux-gpio <linux-gpio@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/T7_6cW1XqiCljKlGz2FxoNA"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-wt., 15 sty 2019 o 08:53 Baolin Wang <baolin.wang@linaro.org> napisa=C5=82(=
-a):
->
-> From: Neo Hou <neo.hou@unisoc.com>
->
-> Since differnt type EICs have its own data register to read, thus fix the
-> incorrect data register.
->
-> Signed-off-by: Neo Hou <neo.hou@unisoc.com>
-> Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
-> ---
->  drivers/gpio/gpio-eic-sprd.c |   13 ++++++++++++-
->  1 file changed, 12 insertions(+), 1 deletion(-)
->
-> diff --git a/drivers/gpio/gpio-eic-sprd.c b/drivers/gpio/gpio-eic-sprd.c
-> index e0d6a0a..257df59 100644
-> --- a/drivers/gpio/gpio-eic-sprd.c
-> +++ b/drivers/gpio/gpio-eic-sprd.c
-> @@ -180,7 +180,18 @@ static void sprd_eic_free(struct gpio_chip *chip, un=
-signed int offset)
->
->  static int sprd_eic_get(struct gpio_chip *chip, unsigned int offset)
->  {
-> -       return sprd_eic_read(chip, offset, SPRD_EIC_DBNC_DATA);
-> +       struct sprd_eic *sprd_eic =3D gpiochip_get_data(chip);
-> +
-> +       switch (sprd_eic->type) {
-> +       case SPRD_EIC_DEBOUNCE:
-> +               return sprd_eic_read(chip, offset, SPRD_EIC_DBNC_DATA);
-> +       case SPRD_EIC_ASYNC:
-> +               return sprd_eic_read(chip, offset, SPRD_EIC_ASYNC_DATA);
-> +       case SPRD_EIC_SYNC:
-> +               return sprd_eic_read(chip, offset, SPRD_EIC_SYNC_DATA);
-> +       default:
-> +               return -ENOTSUPP;
-> +       }
->  }
->
->  static int sprd_eic_direction_input(struct gpio_chip *chip, unsigned int=
- offset)
-> --
-> 1.7.9.5
->
+--Sig_/T7_6cW1XqiCljKlGz2FxoNA
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-I guess both this and the second patch should go into stable and have
-a Fixes: tag?
+Hi Liviu,
 
-Bart
+On Tue, 15 Jan 2019 10:12:19 +0000 Liviu Dudau <Liviu.Dudau@arm.com> wrote:
+>
+> That looks like the right fix, thank you for that!
+
+Thanks for your verification.
+
+> I will roll your patch into my tree.
+
+You can only do that when your tree is merged with the drm tree (and
+it should be part of the merge resolution).
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/T7_6cW1XqiCljKlGz2FxoNA
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlw9uj0ACgkQAVBC80lX
+0GyXXQgApL2KNh9KEe1FdPnWvHaZyEaW4r/Q6zvws49vD7KpY/I0I6tq8iOvZPnZ
+O21GbwYda0Tf6EN/XqZs1AbdtClDCfMkKajd0YbF7OJj2HIhR0yigHlkYDlLZlaB
+fO60kKP9E+1dVp9ZLfz6IOv0OiTKjYeTqYY5XRdZbtNbj/qqSbQyvnVfhzgoBRKR
+V4xT2hGoQsAJciQKxDZ9O1dU0ZoRYIPl5l7O6829DC7Fn8QqXKJnI6deoMe853iz
+T7XLBvCMkSS6JrKwIpRV3G6rliUvSssSd3Q0E6cabSVxO7AQIDNq8/s2V1rTGjCJ
+/7os4Ldp0+gzptonHR19FO0tnel2QQ==
+=wIrb
+-----END PGP SIGNATURE-----
+
+--Sig_/T7_6cW1XqiCljKlGz2FxoNA--
