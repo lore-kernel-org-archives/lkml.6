@@ -2,73 +2,153 @@ Return-Path: <SRS0=RZO6=PX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AD3E6C43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 13:31:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C128FC43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 13:32:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6F6AC20656
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 13:31:23 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="LDmnOvpE"
+	by mail.kernel.org (Postfix) with ESMTP id 89A4720656
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 13:32:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729701AbfAONbV (ORCPT
+        id S1729735AbfAONcE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 15 Jan 2019 08:31:21 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:57734 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726886AbfAONbV (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Jan 2019 08:31:21 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=WgbgoAZdXNB2yNgsOaH7IMbytM8LKpkXIm+QG1ONC+8=; b=LDmnOvpEAya2ZQrvh+ROv5036
-        qQ+khj9df4ruNh69/ahdnhr09BVIWTdeAGMjQwFrMtQAo4kDOda7NMf4Y5fTAYW0r8D1izy+k6o9w
-        s+6EFGNP9QYxkKIbJp9GnTiUSHnB3pquXubKuadwNiZLLkr9FDOBCwTtIoUYeRFcQWdunR/5ilfqh
-        eFklEYHT5EbjSgIKRYcPPWWXWGpN9eVkxZg7Py3YmaE25OR3jE8yjZZ2Ijygv0Ue/ewS+tOUq6efB
-        /TjT5RLBieKq/iIKjI7Cgxf+nlw5EQ4R0e3z5Kz5OgR+UzZGcPVJi+u2jvI/OjL1rKT15NjXgTkrZ
-        XOdJlzLuw==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gjOoJ-0001BM-2W; Tue, 15 Jan 2019 13:31:19 +0000
-Date:   Tue, 15 Jan 2019 05:31:18 -0800
-From:   Christoph Hellwig <hch@infradead.org>
-To:     Guan Yung Tseng <guan.yung.tseng@ni.com>
-Cc:     gregkh@linuxfoundation.org, linux-serial@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] 8250_pci.c: Update NI specific devices class to multi
- serial
-Message-ID: <20190115133118.GA31202@infradead.org>
-References: <1547547005-2149-1-git-send-email-guan.yung.tseng@ni.com>
+        Tue, 15 Jan 2019 08:32:04 -0500
+Received: from szxga05-in.huawei.com ([45.249.212.191]:17143 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726886AbfAONcD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 Jan 2019 08:32:03 -0500
+Received: from DGGEMS410-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id 7AC7F12AFB32290756AA;
+        Tue, 15 Jan 2019 21:32:00 +0800 (CST)
+Received: from localhost (10.202.226.61) by DGGEMS410-HUB.china.huawei.com
+ (10.3.19.210) with Microsoft SMTP Server id 14.3.408.0; Tue, 15 Jan 2019
+ 21:31:57 +0800
+Date:   Tue, 15 Jan 2019 13:31:42 +0000
+From:   Jonathan Cameron <jonathan.cameron@huawei.com>
+To:     Lu Baolu <baolu.lu@linux.intel.com>
+CC:     Joerg Roedel <joro@8bytes.org>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        Kirti Wankhede <kwankhede@nvidia.com>, <kevin.tian@intel.com>,
+        <ashok.raj@intel.com>, <tiwei.bie@intel.com>,
+        Jean-Philippe Brucker <jean-philippe.brucker@arm.com>,
+        <sanjay.k.kumar@intel.com>, <iommu@lists.linux-foundation.org>,
+        <linux-kernel@vger.kernel.org>, <Zeng@mail.linuxfoundation.org>,
+        <yi.y.sun@intel.com>, <jacob.jun.pan@intel.com>,
+        <kvm@vger.kernel.org>
+Subject: Re: [PATCH v5 4/8] iommu/vt-d: Aux-domain specific domain
+ attach/detach
+Message-ID: <20190115133142.0000744c@huawei.com>
+In-Reply-To: <cf37ed74-81ea-9708-8d99-5bc3b64b1f23@linux.intel.com>
+References: <20190110030027.31447-1-baolu.lu@linux.intel.com>
+        <20190110030027.31447-5-baolu.lu@linux.intel.com>
+        <20190114122603.00001450@huawei.com>
+        <cf37ed74-81ea-9708-8d99-5bc3b64b1f23@linux.intel.com>
+Organization: Huawei
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; i686-w64-mingw32)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1547547005-2149-1-git-send-email-guan.yung.tseng@ni.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.202.226.61]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 15, 2019 at 06:10:05PM +0800, Guan Yung Tseng wrote:
-> +/*
-> + * NI Serial devices incorrectly identify themselves
-> + * PCI_CLASS_COMMUNICATION_OTHER, instead of what
-> + * they really are: PCI_CLASS_COMMUNICATION_MULTISERIAL
-> + */
-> +static int pci_ni_probe(struct pci_dev *dev)
-> +{
-> +	dev->class = PCI_CLASS_COMMUNICATION_MULTISERIAL << 8 |
-> +			(dev->class & 0xff);
-> +	return 0;
-> +}
+On Tue, 15 Jan 2019 10:10:21 +0800
+Lu Baolu <baolu.lu@linux.intel.com> wrote:
 
-This looks odd.  dev->class should just contain the class code read from
-config space.  I think you need to work around this in the places that
-check the classcode instead and add a quirk for these devices.
+> Hi,
+> 
+> On 1/14/19 8:26 PM, Jonathan Cameron wrote:
+> > On Thu, 10 Jan 2019 11:00:23 +0800
+> > Lu Baolu <baolu.lu@linux.intel.com> wrote:
+> >   
+> >> When multiple domains per device has been enabled by the
+> >> device driver, the device will tag the default PASID for
+> >> the domain to all DMA traffics out of the subset of this
+> >> device; and the IOMMU should translate the DMA requests
+> >> in PASID granularity.
+> >>
+> >> This adds the intel_iommu_aux_attach/detach_device() ops
+> >> to support managing PASID granular translation structures
+> >> when the device driver has enabled multiple domains per
+> >> device.
+> >>
+> >> Cc: Ashok Raj <ashok.raj@intel.com>
+> >> Cc: Jacob Pan <jacob.jun.pan@linux.intel.com>
+> >> Cc: Kevin Tian <kevin.tian@intel.com>
+> >> Signed-off-by: Sanjay Kumar <sanjay.k.kumar@intel.com>
+> >> Signed-off-by: Liu Yi L <yi.l.liu@intel.com>
+> >> Signed-off-by: Lu Baolu <baolu.lu@linux.intel.com>  
+> > 
+> > The following is probably a rather naive review given I don't know
+> > the driver or hardware well at all.  Still, it seems like things
+> > are a lot less balanced than I'd expect and isn't totally obvious
+> > to me why that is.  
+> 
+> Thank you!
+
+You are welcome.
+
+...
+
+> >> +/*
+> >> + * Check whether a @domain could be attached to the @dev through the
+> >> + * aux-domain attach/detach APIs.
+> >> + */
+> >> +static inline bool
+> >> +is_aux_domain(struct device *dev, struct iommu_domain *domain)  
+> > 
+> > I'm finding the distinction between an aux domain capability on
+> > a given device and whether one is actually in use to be obscured
+> > slightly in the function naming.
+> > 
+> > This one for example is actually checking if we have a domain
+> > that is capable of being enabled for aux domain use, but not
+> > yet actually in that mode?
+> > 
+> > Mind you I'm not sure I have a better answer for the naming.
+> > can_aux_domain_be_enabled?  is_unattached_aux_domain?
+> > 
+> >   
+> 
+> device aux mode vs. normal mode
+> ===============================
+> 
+> When we talk about the auxiliary mode (simply aux-mode), it means "the
+> device works in aux-mode or normal mode". "normal mode" means that the
+> device (and it's corresponding IOMMU) supports only RID (PCI Request ID)
+> based DMA translation; while, aux-mode means the the device (and it's
+> IOMMU) supports fine-grained DMA translation, like PASID based DMA
+> translation with Intel VT-d scalable mode.
+> 
+> We are adding below APIs to switch a device between these two modes:
+> 
+> int iommu_dev_enable/disable_feature(dev, IOMMU_DEV_FEAT_AUX)
+> 
+> And this API (still under discussion) to check which mode the device is
+> working in:
+> 
+> bool iommu_dev_has_feature(dev, IOMMU_DEV_FEAT_AUX)
+> 
+> aux-domain
+> ==========
+> 
+> If a device is working in aux-mode and we are going to attach a domain
+> to this device, we say "this domain will be attached to the device in
+> aux mode", and simply "aux domain". So a domain is "normal" when it is
+> going to attach to a device in normal mode; and is "aux-domain" when it
+> is going to attach to a device in aux mode.
+
+Hmm.. OK I guess.  It still feels like there is more need to refer to
+the docs than there should be.  Still, your code and I may well never
+read it again so I don't mind :)
+
+> 
+> >   
+> >> +{
+
