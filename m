@@ -2,107 +2,95 @@ Return-Path: <SRS0=RZO6=PX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+X-Spam-Status: No, score=-6.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A86AC43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 15:14:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A9B6C43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 15:15:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DEDC3204FD
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 15:14:06 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="G4Z1KGcm"
+	by mail.kernel.org (Postfix) with ESMTP id 3EEDC204FD
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 15:15:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1547565309;
+	bh=XZuzAqTfW9czMTRIYg514Kc+a2bEVy14Hu3rwwmRLAI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=mzODemnVGSP+z4QCHGwst1pQFRnZNIJZ5bjuroLJ9ggoToyhsLAsvxVI9p0luLcqD
+	 aIF/MovZFlvwdv6etLij7Fn1L4VIJbNdSeswvFdDlyxKIqyzelTH8Z3prYuhpVAs7m
+	 nCsLWaVkRLQAJey7IlXfvh5ZPUTPkqD7Nc+53CIk=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730683AbfAOPOF (ORCPT
+        id S1730694AbfAOPPH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 15 Jan 2019 10:14:05 -0500
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:46739 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726077AbfAOPOF (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Jan 2019 10:14:05 -0500
-Received: by mail-pg1-f193.google.com with SMTP id w7so1342375pgp.13
-        for <linux-kernel@vger.kernel.org>; Tue, 15 Jan 2019 07:14:04 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=gvcrVGBeH/udJyWosupO807MtSU2G9zk8J/wtcc9hNQ=;
-        b=G4Z1KGcmqM2IFk4lXQfYRs8zq4UhXeKEg9JARVEHm/y+BwrSMaDmbZmZL6YvP5Q4Jt
-         ZsVxtq2KMwHzUbf461SKdO1Zqi5+V7OUaGciPheNzMI29/N2oCGrqx94whTdnwIQUuaD
-         PZsIFr+yHA1VHranAdQ4u+2hBQFhIYqdBkMHabMdW8Slu77fcce6Zq7acgYB6fyYYCW5
-         LqGClrJqLO37/5Wam6qFUta9tNAgB06aUQEwk4ILfKZaD025O1ygOgeOrUmMk1jWTgmx
-         vdh2PGiMZ+cVuU5ewXiqmW6pC8xr0cryx/9FN1w856rRDarMvwlghuAWxl0A6JBMQ5vk
-         sqJA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=gvcrVGBeH/udJyWosupO807MtSU2G9zk8J/wtcc9hNQ=;
-        b=l5GI31AlKSPUcX7+jKQ7sYjOQ2Y2L2q1i609bz1a5Sy/3b4CeMR4la+/Z8X/taiPsC
-         a9W24G/6tJZZVFQdJivo3ddSOCSqSHXKpm33dCNzX9xFdcU2mgCc0xMkmHccyrS+syl9
-         b7pNYQ7KEr4yK44Z25au2Cy+TxtEpEIqs1PACfjrxiSUTSL6yLwwtQKxDKD+RSpGz73O
-         dDPYtzGTQ/dHS5UZJXiebQ3O64989/1VA1kDQvL6U5Qz7EzRR5xdSONozRet3ETLZjIj
-         rrZNS+KfqrGMCn7PK93hV7umGgzyEamNSvEwGDc34IuyC/sn3lpwqi7Rr74HS0ldXiec
-         Nygw==
-X-Gm-Message-State: AJcUukcQCTkcfzJhLXgOaYw+tyIYFvzbqmEXgEy3a5U90lgk6U3jYUgO
-        tQLqHDW0fBbzpYmPhxLRh0oUpXEUuQg=
-X-Google-Smtp-Source: ALg8bN7jTTWWN/jexkjN5sA/X9p/yvWobH7kp3RCv9odiyQ5mO83HWT+XvwAp+1Ow6srNcIN46DQkg==
-X-Received: by 2002:a63:dd15:: with SMTP id t21mr4064496pgg.347.1547565243921;
-        Tue, 15 Jan 2019 07:14:03 -0800 (PST)
-Received: from ziepe.ca (S010614cc2056d97f.ed.shawcable.net. [174.3.196.123])
-        by smtp.gmail.com with ESMTPSA id b7sm5394855pfa.52.2019.01.15.07.14.02
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 15 Jan 2019 07:14:03 -0800 (PST)
-Received: from jgg by mlx.ziepe.ca with local (Exim 4.90_1)
-        (envelope-from <jgg@ziepe.ca>)
-        id 1gjQPi-0005ut-9t; Tue, 15 Jan 2019 08:14:02 -0700
-Date:   Tue, 15 Jan 2019 08:14:02 -0700
-From:   Jason Gunthorpe <jgg@ziepe.ca>
-To:     Joel Nider <joeln@il.ibm.com>
-Cc:     Jonathan Corbet <corbet@lwn.net>,
-        Leon Romanovsky <leon@kernel.org>,
-        Doug Ledford <dledford@redhat.com>,
-        Mike Rapoport <rppt@linux.ibm.com>, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/2] docs-rst: Convert user verbs doc to rst
-Message-ID: <20190115151402.GA22045@ziepe.ca>
-References: <1547547991-5314-1-git-send-email-joeln@il.ibm.com>
- <1547547991-5314-2-git-send-email-joeln@il.ibm.com>
+        Tue, 15 Jan 2019 10:15:07 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43122 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726077AbfAOPPH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 Jan 2019 10:15:07 -0500
+Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2081B204FD;
+        Tue, 15 Jan 2019 15:15:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1547565306;
+        bh=XZuzAqTfW9czMTRIYg514Kc+a2bEVy14Hu3rwwmRLAI=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=pmwjo5Aglx6a5U+vIHXmeZPn9rVsVPdxLG4csslCLirjqMnJBnN67EU8PwZbqi9jd
+         r10OazPdft+fSXQ3/zMeMFrgB2iSI7BHuVq5nZXELUYwk5JGqkgLVTPCeMd4ZZ9pM/
+         Fhq6AeKTTKvbcGv92wusgHdhTBHnBi7hX/ig9n7M=
+Date:   Tue, 15 Jan 2019 16:15:04 +0100
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Nishad Kamdar <nishadkamdar@gmail.com>
+Cc:     Johan Hovold <johan@kernel.org>, devel@driverdev.osuosl.org,
+        Alex Elder <elder@kernel.org>, linux-kernel@vger.kernel.org,
+        greybus-dev@lists.linaro.org
+Subject: Re: [PATCH v7 1/3] staging: greybus: gpio: switch GPIO portions to
+ use GPIOLIB_IRQCHIP
+Message-ID: <20190115151504.GA27454@kroah.com>
+References: <cover.1547476997.git.nishadkamdar@gmail.com>
+ <b547970693963d6e62845c7925a75ef68122f1ba.1547476997.git.nishadkamdar@gmail.com>
+ <20190115151317.GA17860@kroah.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <1547547991-5314-2-git-send-email-joeln@il.ibm.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190115151317.GA17860@kroah.com>
+User-Agent: Mutt/1.11.2 (2019-01-07)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 15, 2019 at 12:26:30PM +0200, Joel Nider wrote:
-> Move user_verbs from infiniband to userspace while changing the
-> format. Replace the existing Documentation/infiniband/user_verbs.txt
-> with Documentation/userspace-api/user_verbs.rst. No substantial changes
-> to the content - just some minor reformatting to have the rendering
-> come out nicely.
+On Tue, Jan 15, 2019 at 04:13:17PM +0100, Greg Kroah-Hartman wrote:
+> On Mon, Jan 14, 2019 at 08:26:16PM +0530, Nishad Kamdar wrote:
+> > Convert the GPIO driver to use the GPIO irqchip library
+> > GPIOLIB_IRQCHIP instead of reimplementing the same.
+> > 
+> > Reviewed-by: Johan Hovold <johan@kernel.org>
+> > Signed-off-by: Nishad Kamdar <nishadkamdar@gmail.com>
 > 
-> Since this documents a userspace API, its home should be with the
-> other userspace API docs.
+> Did you test build this patch?
 > 
-> This is in preparation for updating the content in a subsequent
-> patch.
+> It fails horribly for me:
 > 
-> Signed-off-by: Joel Nider <joeln@il.ibm.com>
-> ---
->  Documentation/infiniband/user_verbs.txt    | 69 -----------------------------
->  Documentation/userspace-api/index.rst      |  1 +
->  Documentation/userspace-api/user_verbs.rst | 70 ++++++++++++++++++++++++++++++
->  3 files changed, 71 insertions(+), 69 deletions(-)
->  delete mode 100644 Documentation/infiniband/user_verbs.txt
->  create mode 100644 Documentation/userspace-api/user_verbs.rst
+> drivers/staging/greybus/gpio.c: In function ‘gb_gpio_request_handler’:
+> drivers/staging/greybus/gpio.c:389:34: error: ‘struct gpio_chip’ has no member named ‘irq’
+>   irq = irq_find_mapping(ggc->chip.irq.domain, event->which);
+>                                   ^
+>   CC [M]  drivers/staging/rtl8712/usb_intf.o
+> drivers/staging/greybus/gpio.c: In function ‘gb_gpio_probe’:
+> drivers/staging/greybus/gpio.c:577:8: error: implicit declaration of function ‘gpiochip_irqchip_add’; did you mean ‘gpiochip_add’? [-Werror=implicit-function-declaration]
+>   ret = gpiochip_irqchip_add(gpio, irqc, 0, handle_level_irq,
+>         ^~~~~~~~~~~~~~~~~~~~
+>         gpiochip_add
+> 
+> 
+> Please be more careful...
 
-Need to update MAINTAINERS for the new file.. Maybe call this
-rdma_user_verbs.rst as we could also have rdma_umad, rdma_cm, etc
- 
-Jason
+Hm, this seems to be a problem on my side.  You selected the new config
+symbol, but my quick build system didn't catch that and it didnt
+regenerate the kernel configuration, which causes this problem.
+
+So this is fine, sorry for the noise, my fault.
+
+greg k-h
