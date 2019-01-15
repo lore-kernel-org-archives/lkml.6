@@ -2,83 +2,120 @@ Return-Path: <SRS0=RZO6=PX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7CFF4C43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 18:13:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D628C43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 18:14:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2109B20656
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 18:13:04 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=livid.pp.ru header.i=@livid.pp.ru header.b="K2hrTzuW"
+	by mail.kernel.org (Postfix) with ESMTP id 2BC0420656
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 18:14:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1547576077;
+	bh=jFpQJY/SxyQB2i7VzKNntewDBzXweKzUilUFV7t+oBk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=TStAEIpOLB1UdzGAMoovkTcO04n1gkQRX0X4cjs2YuIAEabrfuSOyY3W6b6dS20Zc
+	 SZsJdvkWnZO6uJFnOcouJkpyNWLsjS2m2cxkEVGJvjNrLguM+xQfHABDnV18nk3m1G
+	 OIIFbd7gPE+P3cG6zgG3Vr0l/WXCTeZVM21Kpi8k=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388717AbfAOSNC (ORCPT
+        id S2388669AbfAOSOf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 15 Jan 2019 13:13:02 -0500
-Received: from mail-qt1-f196.google.com ([209.85.160.196]:32998 "EHLO
-        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729915AbfAOSNB (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Jan 2019 13:13:01 -0500
-Received: by mail-qt1-f196.google.com with SMTP id l11so4093316qtp.0
-        for <linux-kernel@vger.kernel.org>; Tue, 15 Jan 2019 10:13:01 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=livid.pp.ru; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=7fh3j9YTLp5zq/6RCMt05XuE8kd5C9ljjnTVv39l0UY=;
-        b=K2hrTzuWiiw9/GsKZPDctC/Ily+c6cHowNXs5HUTK3scENBL5yE+E7WbJHuRFuCJvD
-         iuaMduOc7TITwFPCnG70ZDrnaIkSVcG9lhMFiyBUHxoer13wK0IuRjnkk4zd/2Xpz7u1
-         2g9L7dkMEUrBek1dydbihB0Q5rqyOhpITD2fk=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=7fh3j9YTLp5zq/6RCMt05XuE8kd5C9ljjnTVv39l0UY=;
-        b=HdYfrJGALoVCgKuWXLwYteC9CV2oyhhnVHlY5DRHtvRweydPu7NxsuF4nzZKegXF/x
-         66sOyTbP+w53SXC5Pj7q7Re5IhTzMeNYZwJfHv0HRF/r6ecgdc4vuedDjS7uB6oWu2XZ
-         AXD0FQikUXHg6IhBcj+iVDGHoOjRB3vYoVTgZ7u4kUDQhibewqnEOSGzBJGT0yXReaR9
-         hhxML36yXwpYltGRqMtUJEtT3yffuHqv2SdGjGJCibvizmtdjDokgJFPsUJX74wgA2I1
-         EP3ToL6nF2mD2N0nLF1rR8Kaj9H1F5etkI+BceObyugPTz9R1Nxl9WPgJZlzWkQxpkk3
-         HDhQ==
-X-Gm-Message-State: AJcUukeI5VlsUlfwZYZLC/fbNH9xlirVyM+gACanDHrNX3KDebiKf86K
-        4diPpIjylZimjvm3UerphU0XEuzfnHV9uxN9vIQzRQ==
-X-Google-Smtp-Source: ALg8bN7wT3YGy/oW9RyyRwlmpA9kVHM9pSG3n6XMfE3Ieymp7Vb7kQiCzYDKGjWWMhL/HAKQ72g1JarltOIFrQ97yR0=
-X-Received: by 2002:ac8:29b7:: with SMTP id 52mr3886420qts.266.1547575980547;
- Tue, 15 Jan 2019 10:13:00 -0800 (PST)
+        Tue, 15 Jan 2019 13:14:35 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48730 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728812AbfAOSOf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 Jan 2019 13:14:35 -0500
+Received: from localhost (unknown [77.138.135.184])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9A61D20656;
+        Tue, 15 Jan 2019 18:14:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1547576074;
+        bh=jFpQJY/SxyQB2i7VzKNntewDBzXweKzUilUFV7t+oBk=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=r0ZHkhxYtKH/HNrCkfxQdoZYuGCxr+LFC0Avpsah1+AWGwZhzWZ/nZPtgM1kQ4tx1
+         Q3cvMhrs3sVsNHILoQkKiIljXv7OyvjmE8USDhDZD3Z45Fejk1HTEwEaywos045z+5
+         stV4sDq8A3AWNFQ7j9CmcXV841AP5LQSc048oOvw=
+Date:   Tue, 15 Jan 2019 20:14:29 +0200
+From:   Leon Romanovsky <leon@kernel.org>
+To:     Aditya Pakki <pakki001@umn.edu>
+Cc:     kjlu@umn.edu, Doug Ledford <dledford@redhat.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Parav Pandit <parav@mellanox.com>,
+        Daniel Jurgens <danielj@mellanox.com>,
+        linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] [V2] infiniband: fix a missing check of nla_put
+Message-ID: <20190115181429.GP15600@mtr-leonro.mtl.com>
+References: <20190105161808.3496-1-pakki001@umn.edu>
 MIME-Version: 1.0
-References: <20190115161354.6806-1-root@livid.pp.ru> <20190115164016.GA25341@kroah.com>
-In-Reply-To: <20190115164016.GA25341@kroah.com>
-From:   Nikolay Yakimov <root@livid.pp.ru>
-Date:   Tue, 15 Jan 2019 21:12:49 +0300
-Message-ID: <CA+A=rXGasgnuHC_Gr_gsiQ6j7NAVxBSKGWAebOFVt3JhFP6vKw@mail.gmail.com>
-Subject: Re: [PATCH] USB: Fix configuration selection issues introduced in v4.20.0
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     Saranya Gopal <saranya.gopal@intel.com>, linux-usb@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="poJSiGMzRSvrLGLs"
+Content-Disposition: inline
+In-Reply-To: <20190105161808.3496-1-pakki001@umn.edu>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-tue, 15 jan. 2019 at 19:53, Greg Kroah-Hartman <gregkh@linuxfoundation.org>:
-> Were you able to test this on one of the devices that ff2a8c532c14
-> ("usbcore: Select only first configuration for non-UAC3 compliant
-> devices") was created to fix?
 
-Yes, owning such a device (non-UAC3 with multiple configurations) was
-the motivation for investigating in the first place (since it was
-broken on v4.20.0 and v4.20.1). So the proposed patch is tested
-against it.
+--poJSiGMzRSvrLGLs
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-In fact, I only discovered ff2a8c532c14 ("usbcore: Select only first
-configuration for non-UAC3 compliant devices") when preparing to send
-in the patch (it's not in any released kernel yet)
-
+On Sat, Jan 05, 2019 at 10:18:07AM -0600, Aditya Pakki wrote:
+> nla_put() may fail. The fix adds a check for its return value, and
+> returns -EMSGSIZE if it fails, post canceling netlink msg.
 >
-> thanks,
+> Signed-off-by: Aditya Pakki <pakki001@umn.edu>
+> ---
+>  drivers/infiniband/core/addr.c | 5 ++++-
+>  1 file changed, 4 insertions(+), 1 deletion(-)
 >
-> greg k-h
+> diff --git a/drivers/infiniband/core/addr.c b/drivers/infiniband/core/addr.c
+> index 0dce94e3c495..e847b34bacd1 100644
+> --- a/drivers/infiniband/core/addr.c
+> +++ b/drivers/infiniband/core/addr.c
+> @@ -178,7 +178,10 @@ static int ib_nl_ip_send_msg(struct rdma_dev_addr *dev_addr,
+>  	/* Construct the family header first */
+>  	header = skb_put(skb, NLMSG_ALIGN(sizeof(*header)));
+>  	header->ifindex = dev_addr->bound_dev_if;
+> -	nla_put(skb, attrtype, size, daddr);
+> +	if (nla_put(skb, attrtype, size, daddr)) {
+> +		nlmsg_cancel(skb, nlh);
+
+It should be nlmsg_free() and not nlmsg_cancel()
+
+> +		return -EMSGSIZE;
+> +	}
+>
+>  	/* Repair the nlmsg header length */
+>  	nlmsg_end(skb, nlh);
+> --
+> 2.17.1
+>
+
+--poJSiGMzRSvrLGLs
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIcBAEBAgAGBQJcPiMFAAoJEORje4g2clinqWYP/Ra8NEt0GVIJEra8OE+ynSCx
+P2fXTH947KwgDcFbc+eu2aEiLm3v3yFjWjkE5Ut1uBqaeqiUCphSRVdpQ1OPQWC3
+cUdqOB21Qr77T47bgoRDvgZGz/+ch5z4nWMQ1I+yZwLj4wmSLP63ZvNaSD2STFxE
+SONQ/5N9Dr4sJo7+9WS4SJlud9cgE17ovEfTfeniYUbwDWrkgNnNjXvqtv4a+5Nl
+WSrJkxbJxwPQBw8E+Y1oOcWxw42EaSSGVm9DNqcSp60X/gOvuedPx4WvIVp+u8yY
+jHbQNUsa6sK8vnmhNW4N0KCO5ROQsXBEvpGtUX9xATyONi8c887xbKYNE+Bm3D6v
+jlcaa3XIgDB2l8EEqnaYb+35TEU66YjfUthYR93PQDK+F+T/qfIbQ4+sAHWbdIy3
+GUuh7dEGsVJPkqazVcVWF+zZks3P8lhKOa/SUdDPqzLKFpiysutNB/foAyoFTt9/
+PBNGgyNnWRah52EjLMRSGoYujs2xoJvaRF9BC1rPlmqL+dP9mhKbavRsyBim9d2h
+3AU8DI6ZHRiw4ozm3ykXBPCvkmEvwo9kntuMdcm+jtrdncQsgplZ8b78GSG69/WD
+n980swMGW9BpT5pUSy7nU9VfFNU+1jGRdiyQe5kcaUy08A7KpBUpIkzOISNr6nnM
+ArXmvtveScB5pHR8/H/w
+=L/zf
+-----END PGP SIGNATURE-----
+
+--poJSiGMzRSvrLGLs--
