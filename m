@@ -2,225 +2,174 @@ Return-Path: <SRS0=RZO6=PX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
-	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 78A91C43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 14:02:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F40EAC43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 14:03:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 460F920868
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 14:02:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CCD4320657
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 14:03:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729811AbfAOOCN convert rfc822-to-8bit (ORCPT
+        id S1729864AbfAOODh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 15 Jan 2019 09:02:13 -0500
-Received: from mail-oln040092069071.outbound.protection.outlook.com ([40.92.69.71]:6311
-        "EHLO EUR02-VE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728812AbfAOOCN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Jan 2019 09:02:13 -0500
-Received: from VE1EUR02FT036.eop-EUR02.prod.protection.outlook.com
- (10.152.12.51) by VE1EUR02HT122.eop-EUR02.prod.protection.outlook.com
- (10.152.13.163) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.20.1537.18; Tue, 15 Jan
- 2019 14:01:29 +0000
-Received: from AM0PR07MB3874.eurprd07.prod.outlook.com (10.152.12.52) by
- VE1EUR02FT036.mail.protection.outlook.com (10.152.13.197) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- 15.20.1471.13 via Frontend Transport; Tue, 15 Jan 2019 14:01:29 +0000
-Received: from AM0PR07MB3874.eurprd07.prod.outlook.com
- ([fe80::890e:c9ab:41b6:5f70]) by AM0PR07MB3874.eurprd07.prod.outlook.com
- ([fe80::890e:c9ab:41b6:5f70%2]) with mapi id 15.20.1537.018; Tue, 15 Jan 2019
- 14:01:29 +0000
-From:   Bernd Edlinger <bernd.edlinger@hotmail.de>
-To:     Stanislaw Gruszka <sgruszka@redhat.com>,
-        Helmut Schaa <helmut.schaa@googlemail.com>,
-        Kalle Valo <kvalo@codeaurora.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: [PATCH] rt61pci: Work around a firmware bug with shared keys
-Thread-Topic: [PATCH] rt61pci: Work around a firmware bug with shared keys
-Thread-Index: AQHUrNrQpXGNfGU1T0qAvtjOCh7FvQ==
-Date:   Tue, 15 Jan 2019 14:01:29 +0000
-Message-ID: <AM0PR07MB3874E8F6ADD41C4E1BCBE43EE4810@AM0PR07MB3874.eurprd07.prod.outlook.com>
-Accept-Language: en-US, en-GB, de-DE
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: AM5PR0701CA0006.eurprd07.prod.outlook.com
- (2603:10a6:203:51::16) To AM0PR07MB3874.eurprd07.prod.outlook.com
- (2603:10a6:208:45::26)
-x-incomingtopheadermarker: OriginalChecksum:36F56E63DAB9D81A219F58AE846C90EF6AB5715B9B16CDE0D422DBC8698EECE9;UpperCasedChecksum:E9352D3B9AAB1A3BE3D9476744027AE383D029078F6ACDE748020C4BFC967EF5;SizeAsReceived:8774;Count:62
-x-ms-exchange-messagesentrepresentingtype: 1
-x-tmn:  [fcJlskq3geKxWOml27fZ4gKDVwXaSf1x]
-x-microsoft-original-message-id: <9bebc5fb-57fb-964f-4780-f4d43a6e114b@hotmail.de>
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;VE1EUR02HT122;6:upbIDOM/Xi9Yeu+Fjv+I1ix5IF6Y6jquasZTFP1uJDSd5nFH59S2ryz51cO8shL1RZByMrOUA6+vKROVlSr3Gs61Zj8c0EH69oyuxqsf2s3504YVlVFQlF3cBlh8dNwPJtpDOOAvp/kIa0E5eG/lLhVZ4c0hQmu9CiA7NGJBhAzGGkBAWuweWqSo+doZXpPAEILAFFzsKvc9u5Ty14QWFcZyPKtCxr5XAsqwWW7vk6U0Ib2vwQjgow5DW+X9d96PhetP0WiMbU3RpTsE5q0i8a8Krjm13RZZlGPzR6DXIyI7L8tyPvIVx04H35TBN74rQyq/LIlkdSFUHp5xSMkDE/+5WH0iWbcOXD3S3UuWyMOp7crkhwryBdxS+r/1mF1ahInx81Y+3xRrIrBpnqtcS/XkCXc3ZM3toHz4WjS/IMfTwPrj6RwE65Oi/XmBweC4MwBRx2aCoQtfZLWr66o81w==;5:f3qDMP5lzmEZHVBHG8/7LITLzThkKY7gVVmf7kIEqoPMalCl+PNasO3Azhk99+PR1vTZEZN4KBcS/t4W/FOkjcmhElioiMrpbmDctezMhi6/XN1W9twAoBJ0WBsX5h+VeftaN9EkthN7ivM/alzIgYBl8CPkuBO38yDczL8OdO7QILzwKpMKT9NzxGU4+l05ZAkxjiUA+YEg6S9GniIkoQ==;7:umIn5ScH/zOOSkgfmdkuS8fW9TWYQk+2elLSsQf5Hfvrl0Nh7U0/+zXoYiMShWG0OOmqSqpH50ZkaH0WX3XYaPNMCf3Ej5PNiLjxOjlurR6Kx9je1fvLa7To0oqJbuxpMba1GnvaYNUbIjsyjcNOHQ==
-x-incomingheadercount: 62
-x-eopattributedmessage: 0
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(201702061078)(5061506573)(5061507331)(1603103135)(2017031320274)(2017031323274)(2017031324274)(2017031322404)(1601125500)(1603101475)(1701031045);SRVR:VE1EUR02HT122;
-x-ms-traffictypediagnostic: VE1EUR02HT122:
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(4566010)(82015058);SRVR:VE1EUR02HT122;BCL:0;PCL:0;RULEID:;SRVR:VE1EUR02HT122;
-x-microsoft-antispam-message-info: x3kP0B39GvU1iMxulV+IyYP1HPlcmLNuFM6f4aj2gNjExaUFgCi/ND2NNq6a7uO/
-Content-Type: text/plain; charset="Windows-1252"
-Content-ID: <05F44D69B5EAF440AD117FD2C90D2487@eurprd07.prod.outlook.com>
-Content-Transfer-Encoding: 8BIT
-MIME-Version: 1.0
-X-OriginatorOrg: outlook.com
-X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: d4d70346-2c10-4f39-8c00-e767963926d9
-X-MS-Exchange-CrossTenant-Network-Message-Id: 197b0f74-6c87-48e1-2e9b-08d67af1f27a
-X-MS-Exchange-CrossTenant-rms-persistedconsumerorg: d4d70346-2c10-4f39-8c00-e767963926d9
-X-MS-Exchange-CrossTenant-originalarrivaltime: 15 Jan 2019 14:01:28.9710
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Internet
-X-MS-Exchange-CrossTenant-id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VE1EUR02HT122
+        Tue, 15 Jan 2019 09:03:37 -0500
+Received: from inva021.nxp.com ([92.121.34.21]:38316 "EHLO inva021.nxp.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728812AbfAOODh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 Jan 2019 09:03:37 -0500
+Received: from inva021.nxp.com (localhost [127.0.0.1])
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id BC9C12000B1;
+        Tue, 15 Jan 2019 15:03:34 +0100 (CET)
+Received: from inva024.eu-rdc02.nxp.com (inva024.eu-rdc02.nxp.com [134.27.226.22])
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id A46AD2000A9;
+        Tue, 15 Jan 2019 15:03:34 +0100 (CET)
+Received: from fsr-ub1864-101.ea.freescale.net (fsr-ub1864-101.ea.freescale.net [10.171.82.46])
+        by inva024.eu-rdc02.nxp.com (Postfix) with ESMTP id 1BE9C205DC;
+        Tue, 15 Jan 2019 15:03:34 +0100 (CET)
+From:   Laurentiu Tudor <laurentiu.tudor@nxp.com>
+To:     linux-i2c@vger.kernel.org, linux-imx@nxp.com, shawnguo@kernel.org,
+        s.hauer@pengutronix.de, kernel@pengutronix.de
+Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        fabio.estevam@nxp.com, leoyang.li@nxp.com,
+        Laurentiu Tudor <laurentiu.tudor@nxp.com>
+Subject: [PATCH] i2c: imx: defer probing on dma channel request
+Date:   Tue, 15 Jan 2019 16:03:32 +0200
+Message-Id: <20190115140332.30417-1-laurentiu.tudor@nxp.com>
+X-Mailer: git-send-email 2.17.1
+X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Apparently the rt2x61 firmware fails temporarily to decode
-broadcast packets if the shared keys are not assigned
-in the "correct" sequence. At the same time unicast
-packets work fine, since they are encrypted with the
-pairwise key.
+If the dma controller is not yet probed, defer i2c probe.
+The error path in probe was slightly modified (no functional change)
+to avoid triggering this WARN_ON():
+"cg-pll0-div1 already disabled
+WARNING: CPU: 1 PID: 1 at drivers/clk/clk.c:828 clk_core_disable+0xa8/0xb0"
 
-At least with WPA2 CCMP mode the shared keys are
-set in the following sequence: keyidx=1, 2, 1, 2.
-After a while only keyidx 2 gets decrypted, and
-keyidx 1 is ignored, probably because there is never
-a keyidx 3.
-
-Symptoms are arping -b works for 10 minutes, since
-keyidx=2 is used for broadcast, and then it stops
-working for 10 minutes, because keyidx=1 is used.
-That failure mode repeats forever.
-
-Note, the firmware does not even know which keyidx
-corresponds to which hw_key_idx so the firmware is
-trying to be smarter than the driver, which is bound
-to fail.
-
-As workaround the function rt61pci_config_shared_key
-requests software decryption of the shared keys,
-by returning EOPNOTSUPP. However, pairwise keys are
-still handled by hardware which works just fine.
-
-Signed-off-by: Bernd Edlinger <bernd.edlinger@hotmail.de>
+Signed-off-by: Laurentiu Tudor <laurentiu.tudor@nxp.com>
 ---
- drivers/net/wireless/ralink/rt2x00/rt61pci.c | 93 ++--------------------------
- 1 file changed, 4 insertions(+), 89 deletions(-)
+ drivers/i2c/busses/i2c-imx.c | 45 +++++++++++++++++++++---------------
+ 1 file changed, 27 insertions(+), 18 deletions(-)
 
-diff --git a/drivers/net/wireless/ralink/rt2x00/rt61pci.c b/drivers/net/wireless/ralink/rt2x00/rt61pci.c
-index 4c5de8f..52b9fc4 100644
---- a/drivers/net/wireless/ralink/rt2x00/rt61pci.c
-+++ b/drivers/net/wireless/ralink/rt2x00/rt61pci.c
-@@ -321,97 +321,12 @@ static int rt61pci_config_shared_key(struct rt2x00_dev *rt2x00dev,
- 				     struct rt2x00lib_crypto *crypto,
- 				     struct ieee80211_key_conf *key)
- {
--	struct hw_key_entry key_entry;
--	struct rt2x00_field32 field;
--	u32 mask;
--	u32 reg;
--
--	if (crypto->cmd == SET_KEY) {
--		/*
--		 * rt2x00lib can't determine the correct free
--		 * key_idx for shared keys. We have 1 register
--		 * with key valid bits. The goal is simple, read
--		 * the register, if that is full we have no slots
--		 * left.
--		 * Note that each BSS is allowed to have up to 4
--		 * shared keys, so put a mask over the allowed
--		 * entries.
--		 */
--		mask = (0xf << crypto->bssidx);
--
--		reg = rt2x00mmio_register_read(rt2x00dev, SEC_CSR0);
--		reg &= mask;
--
--		if (reg && reg == mask)
--			return -ENOSPC;
--
--		key->hw_key_idx += reg ? ffz(reg) : 0;
--
--		/*
--		 * Upload key to hardware
--		 */
--		memcpy(key_entry.key, crypto->key,
--		       sizeof(key_entry.key));
--		memcpy(key_entry.tx_mic, crypto->tx_mic,
--		       sizeof(key_entry.tx_mic));
--		memcpy(key_entry.rx_mic, crypto->rx_mic,
--		       sizeof(key_entry.rx_mic));
--
--		reg = SHARED_KEY_ENTRY(key->hw_key_idx);
--		rt2x00mmio_register_multiwrite(rt2x00dev, reg,
--					       &key_entry, sizeof(key_entry));
--
--		/*
--		 * The cipher types are stored over 2 registers.
--		 * bssidx 0 and 1 keys are stored in SEC_CSR1 and
--		 * bssidx 1 and 2 keys are stored in SEC_CSR5.
--		 * Using the correct defines correctly will cause overhead,
--		 * so just calculate the correct offset.
--		 */
--		if (key->hw_key_idx < 8) {
--			field.bit_offset = (3 * key->hw_key_idx);
--			field.bit_mask = 0x7 << field.bit_offset;
--
--			reg = rt2x00mmio_register_read(rt2x00dev, SEC_CSR1);
--			rt2x00_set_field32(&reg, field, crypto->cipher);
--			rt2x00mmio_register_write(rt2x00dev, SEC_CSR1, reg);
--		} else {
--			field.bit_offset = (3 * (key->hw_key_idx - 8));
--			field.bit_mask = 0x7 << field.bit_offset;
--
--			reg = rt2x00mmio_register_read(rt2x00dev, SEC_CSR5);
--			rt2x00_set_field32(&reg, field, crypto->cipher);
--			rt2x00mmio_register_write(rt2x00dev, SEC_CSR5, reg);
--		}
--
--		/*
--		 * The driver does not support the IV/EIV generation
--		 * in hardware. However it doesn't support the IV/EIV
--		 * inside the ieee80211 frame either, but requires it
--		 * to be provided separately for the descriptor.
--		 * rt2x00lib will cut the IV/EIV data out of all frames
--		 * given to us by mac80211, but we must tell mac80211
--		 * to generate the IV/EIV data.
--		 */
--		key->flags |= IEEE80211_KEY_FLAG_GENERATE_IV;
--	}
--
- 	/*
--	 * SEC_CSR0 contains only single-bit fields to indicate
--	 * a particular key is valid. Because using the FIELD32()
--	 * defines directly will cause a lot of overhead, we use
--	 * a calculation to determine the correct bit directly.
-+	 * Let the software handle the shared keys,
-+	 * since the hardware decryption does not work reliably,
-+	 * because the firmware does not know the key's keyidx.
- 	 */
--	mask = 1 << key->hw_key_idx;
--
--	reg = rt2x00mmio_register_read(rt2x00dev, SEC_CSR0);
--	if (crypto->cmd == SET_KEY)
--		reg |= mask;
--	else if (crypto->cmd == DISABLE_KEY)
--		reg &= ~mask;
--	rt2x00mmio_register_write(rt2x00dev, SEC_CSR0, reg);
--
--	return 0;
-+	return -EOPNOTSUPP;
+diff --git a/drivers/i2c/busses/i2c-imx.c b/drivers/i2c/busses/i2c-imx.c
+index fa9ad53845d9..5a28d25ff9b6 100644
+--- a/drivers/i2c/busses/i2c-imx.c
++++ b/drivers/i2c/busses/i2c-imx.c
+@@ -273,8 +273,8 @@ static inline unsigned char imx_i2c_read_reg(struct imx_i2c_struct *i2c_imx,
  }
  
- static int rt61pci_config_pairwise_key(struct rt2x00_dev *rt2x00dev,
+ /* Functions for DMA support */
+-static void i2c_imx_dma_request(struct imx_i2c_struct *i2c_imx,
+-						dma_addr_t phy_addr)
++static int i2c_imx_dma_request(struct imx_i2c_struct *i2c_imx,
++			       dma_addr_t phy_addr)
+ {
+ 	struct imx_i2c_dma *dma;
+ 	struct dma_slave_config dma_sconfig;
+@@ -283,11 +283,12 @@ static void i2c_imx_dma_request(struct imx_i2c_struct *i2c_imx,
+ 
+ 	dma = devm_kzalloc(dev, sizeof(*dma), GFP_KERNEL);
+ 	if (!dma)
+-		return;
++		return -ENOMEM;
+ 
+-	dma->chan_tx = dma_request_slave_channel(dev, "tx");
+-	if (!dma->chan_tx) {
+-		dev_dbg(dev, "can't request DMA tx channel\n");
++	dma->chan_tx = dma_request_slave_channel_reason(dev, "tx");
++	if (IS_ERR(dma->chan_tx)) {
++		ret = PTR_ERR(dma->chan_tx);
++		dma->chan_tx = NULL;
+ 		goto fail_al;
+ 	}
+ 
+@@ -301,10 +302,10 @@ static void i2c_imx_dma_request(struct imx_i2c_struct *i2c_imx,
+ 		dev_dbg(dev, "can't configure tx channel\n");
+ 		goto fail_tx;
+ 	}
+-
+-	dma->chan_rx = dma_request_slave_channel(dev, "rx");
+-	if (!dma->chan_rx) {
+-		dev_dbg(dev, "can't request DMA rx channel\n");
++	dma->chan_rx = dma_request_slave_channel_reason(dev, "rx");
++	if (IS_ERR(dma->chan_rx)) {
++		ret = PTR_ERR(dma->chan_rx);
++		dma->chan_rx = NULL;
+ 		goto fail_tx;
+ 	}
+ 
+@@ -324,7 +325,7 @@ static void i2c_imx_dma_request(struct imx_i2c_struct *i2c_imx,
+ 	dev_info(dev, "using %s (tx) and %s (rx) for DMA transfers\n",
+ 		dma_chan_name(dma->chan_tx), dma_chan_name(dma->chan_rx));
+ 
+-	return;
++	return 0;
+ 
+ fail_rx:
+ 	dma_release_channel(dma->chan_rx);
+@@ -332,7 +333,8 @@ static void i2c_imx_dma_request(struct imx_i2c_struct *i2c_imx,
+ 	dma_release_channel(dma->chan_tx);
+ fail_al:
+ 	devm_kfree(dev, dma);
+-	dev_info(dev, "can't use DMA, using PIO instead.\n");
++
++	return ret;
+ }
+ 
+ static void i2c_imx_dma_callback(void *arg)
+@@ -1106,7 +1108,8 @@ static int i2c_imx_probe(struct platform_device *pdev)
+ 				pdev->name, i2c_imx);
+ 	if (ret) {
+ 		dev_err(&pdev->dev, "can't claim irq %d\n", irq);
+-		goto clk_disable;
++		clk_disable_unprepare(i2c_imx->clk);
++		return ret;
+ 	}
+ 
+ 	/* Init queue */
+@@ -1156,17 +1159,25 @@ static int i2c_imx_probe(struct platform_device *pdev)
+ 	pm_runtime_mark_last_busy(&pdev->dev);
+ 	pm_runtime_put_autosuspend(&pdev->dev);
+ 
++	/* Init DMA config if supported */
++	ret = i2c_imx_dma_request(i2c_imx, phy_addr);
++	if (ret) {
++		if (ret != -EPROBE_DEFER)
++			dev_info(&pdev->dev, "can't use DMA, using PIO instead.\n");
++		else
++			goto del_adapter;
++	}
++
+ 	dev_dbg(&i2c_imx->adapter.dev, "claimed irq %d\n", irq);
+ 	dev_dbg(&i2c_imx->adapter.dev, "device resources: %pR\n", res);
+ 	dev_dbg(&i2c_imx->adapter.dev, "adapter name: \"%s\"\n",
+ 		i2c_imx->adapter.name);
+ 	dev_info(&i2c_imx->adapter.dev, "IMX I2C adapter registered\n");
+ 
+-	/* Init DMA config if supported */
+-	i2c_imx_dma_request(i2c_imx, phy_addr);
+-
+ 	return 0;   /* Return OK */
+ 
++del_adapter:
++	i2c_del_adapter(&i2c_imx->adapter);
+ clk_notifier_unregister:
+ 	clk_notifier_unregister(i2c_imx->clk, &i2c_imx->clk_change_nb);
+ rpm_disable:
+@@ -1175,8 +1186,6 @@ static int i2c_imx_probe(struct platform_device *pdev)
+ 	pm_runtime_set_suspended(&pdev->dev);
+ 	pm_runtime_dont_use_autosuspend(&pdev->dev);
+ 
+-clk_disable:
+-	clk_disable_unprepare(i2c_imx->clk);
+ 	return ret;
+ }
+ 
 -- 
-1.9.1
+2.17.1
+
