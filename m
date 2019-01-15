@@ -2,358 +2,417 @@ Return-Path: <SRS0=RZO6=PX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DE0FEC43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 19:11:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 57836C43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 19:12:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A119620866
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 19:11:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 17E2E20866
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 19:12:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1547579551;
+	bh=1qx2S3mya5YGw5E94bMypqfJ0oESqR5VziWZ+znkhW8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=F3YdBHSG+9DWxPoo1dMP17GCN31EC+BZCDpiq5G+FmXdlj78hUS8h20FhOjoogZNt
+	 arR/q1IOdIlJqKuT6fkpZtEBdVigsj8Tx2Lr+XD8SgNkb2ohHKknZSSo1oHctjTCWb
+	 ue5RTAFtmPBSOpdWnPTA9F2bSW10ADaGp1lEC50E=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389235AbfAOTL5 (ORCPT
+        id S2389258AbfAOTM3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 15 Jan 2019 14:11:57 -0500
-Received: from mail-qt1-f195.google.com ([209.85.160.195]:39036 "EHLO
-        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729921AbfAOTL5 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Jan 2019 14:11:57 -0500
-Received: by mail-qt1-f195.google.com with SMTP id u47so4266138qtj.6
-        for <linux-kernel@vger.kernel.org>; Tue, 15 Jan 2019 11:11:56 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:from:to:cc:references:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=k31KMB4hEdsJcQ/zEseqvir23EsTqybC8SJ5TQQ0oR0=;
-        b=kBKUTSgHV7h6LHjQruT8gsQYpK+T0itHk7DunULLwQybU7err+lLqGBScts3l3pgl4
-         pzS/jEJxp93IaicwENsChUpGBWEHdv0dimG+TZY9B6Zm7tEw85C09S+UZ2yiIFuyXw39
-         B1txNcLJBvC2ziRE8fWCTatzw+5km/oaf98b4WdLI48DgarXZ9e9F0bQ/UETw8SMalsu
-         RlRmXcwW9HY+oxHE4ASd8JTHRXhr0eRkV47fqTpUL3dUKYp4Isoua0QkOi/F4OFVuEhc
-         cykGdcdI2aU5jd/tqozhNAjgXgnwklJdN1qhK/WM+quTVyjEJLxaBFgjYHJWfqx8a01f
-         fymw==
-X-Gm-Message-State: AJcUukdDLfWw7jPq+96sYHzej4Ug1rDxE1tupxw1QoGBBt6QYOpwBVBK
-        VG/zo6tZAThXjAVl660LOn1RmqJfOqg=
-X-Google-Smtp-Source: ALg8bN6PG8WviWvu1YBwx0Jb7P9XuJfqLQMzhS9LTlI3gklRUi7h3tPDXWti85AwpNYKHorETIiQ8w==
-X-Received: by 2002:a0c:ec92:: with SMTP id u18mr4196447qvo.168.1547579515250;
-        Tue, 15 Jan 2019 11:11:55 -0800 (PST)
-Received: from ?IPv6:2601:602:9800:dae6::fb21? ([2601:602:9800:dae6::fb21])
-        by smtp.gmail.com with ESMTPSA id y4sm55998128qtc.47.2019.01.15.11.11.53
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 15 Jan 2019 11:11:54 -0800 (PST)
-Subject: Re: [PATCH 14/14] staging: android: ion: Add UNMAPPED heap type and
- helper
-From:   Laura Abbott <labbott@redhat.com>
-To:     "Andrew F. Davis" <afd@ti.com>,
-        Sumit Semwal <sumit.semwal@linaro.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        =?UTF-8?Q?Arve_Hj=c3=b8nnev=c3=a5g?= <arve@android.com>
-Cc:     devel@driverdev.osuosl.org, dri-devel@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org
-References: <20190111180523.27862-1-afd@ti.com>
- <20190111180523.27862-15-afd@ti.com>
- <bd3c15f2-2635-588e-80b4-18e8e44d27b3@redhat.com>
- <ee3bb691-8c9b-457c-5da3-522a4baff140@ti.com>
- <5718cc6c-1082-fec8-5c97-3f52bcfd98d9@redhat.com>
-Message-ID: <59d7f837-acb7-8ee0-ef47-f38f0c798d26@redhat.com>
-Date:   Tue, 15 Jan 2019 11:11:52 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        Tue, 15 Jan 2019 14:12:29 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43368 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729921AbfAOTM2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 Jan 2019 14:12:28 -0500
+Received: from quaco.ghostprotocols.net (unknown [190.15.121.82])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 05FDE20859;
+        Tue, 15 Jan 2019 19:11:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1547579547;
+        bh=1qx2S3mya5YGw5E94bMypqfJ0oESqR5VziWZ+znkhW8=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=Y70LD+dmYRye7OoLFEJGPT6irrHRGUCMUFKN2c9CMbasKqLzYopfKqozWAIhvjKPb
+         xTOJzsJ9V/E3ByvpGOBv4PWKd9ku763IUXV9OF8b3EgSIkdqaanM55f0B/4EBVIVDN
+         6zzaXMRiga8Sw1p4qA1P9uhfNfXYZi7G2S8dpwo4=
+Received: by quaco.ghostprotocols.net (Postfix, from userid 1000)
+        id 386BC41AB5; Tue, 15 Jan 2019 14:56:52 -0300 (-03)
+Date:   Tue, 15 Jan 2019 14:56:52 -0300
+From:   Arnaldo Carvalho de Melo <acme@kernel.org>
+To:     Song Liu <songliubraving@fb.com>
+Cc:     linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+        peterz@infradead.org, ast@kernel.org, daniel@iogearbox.net,
+        kernel-team@fb.com, dsahern@gmail.com
+Subject: Re: [PATCH v7 perf, bpf-next 6/8] perf util: handle
+ PERF_RECORD_KSYMBOL
+Message-ID: <20190115175652.GD20159@kernel.org>
+References: <20190111001933.4153792-1-songliubraving@fb.com>
+ <20190111001933.4153792-7-songliubraving@fb.com>
 MIME-Version: 1.0
-In-Reply-To: <5718cc6c-1082-fec8-5c97-3f52bcfd98d9@redhat.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190111001933.4153792-7-songliubraving@fb.com>
+X-Url:  http://acmel.wordpress.com
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 1/15/19 10:43 AM, Laura Abbott wrote:
-> On 1/15/19 7:58 AM, Andrew F. Davis wrote:
->> On 1/14/19 8:32 PM, Laura Abbott wrote:
->>> On 1/11/19 10:05 AM, Andrew F. Davis wrote:
->>>> The "unmapped" heap is very similar to the carveout heap except
->>>> the backing memory is presumed to be unmappable by the host, in
->>>> my specific case due to firewalls. This memory can still be
->>>> allocated from and used by devices that do have access to the
->>>> backing memory.
->>>>
->>>> Based originally on the secure/unmapped heap from Linaro for
->>>> the OP-TEE SDP implementation, this was re-written to match
->>>> the carveout heap helper code.
->>>>
->>>> Suggested-by: Etienne Carriere <etienne.carriere@linaro.org>
->>>> Signed-off-by: Andrew F. Davis <afd@ti.com>
->>>> ---
->>>>    drivers/staging/android/ion/Kconfig           |  10 ++
->>>>    drivers/staging/android/ion/Makefile          |   1 +
->>>>    drivers/staging/android/ion/ion.h             |  16 +++
->>>>    .../staging/android/ion/ion_unmapped_heap.c   | 123 ++++++++++++++++++
->>>>    drivers/staging/android/uapi/ion.h            |   3 +
->>>>    5 files changed, 153 insertions(+)
->>>>    create mode 100644 drivers/staging/android/ion/ion_unmapped_heap.c
->>>>
->>>> diff --git a/drivers/staging/android/ion/Kconfig
->>>> b/drivers/staging/android/ion/Kconfig
->>>> index 0fdda6f62953..a117b8b91b14 100644
->>>> --- a/drivers/staging/android/ion/Kconfig
->>>> +++ b/drivers/staging/android/ion/Kconfig
->>>> @@ -42,3 +42,13 @@ config ION_CMA_HEAP
->>>>          Choose this option to enable CMA heaps with Ion. This heap is
->>>> backed
->>>>          by the Contiguous Memory Allocator (CMA). If your system has
->>>> these
->>>>          regions, you should say Y here.
->>>> +
->>>> +config ION_UNMAPPED_HEAP
->>>> +    bool "ION unmapped heap support"
->>>> +    depends on ION
->>>> +    help
->>>> +      Choose this option to enable UNMAPPED heaps with Ion. This heap is
->>>> +      backed in specific memory pools, carveout from the Linux memory.
->>>> +      Unlike carveout heaps these are assumed to be not mappable by
->>>> +      kernel or user-space.
->>>> +      Unless you know your system has these regions, you should say N
->>>> here.
->>>> diff --git a/drivers/staging/android/ion/Makefile
->>>> b/drivers/staging/android/ion/Makefile
->>>> index 17f3a7569e3d..c71a1f3de581 100644
->>>> --- a/drivers/staging/android/ion/Makefile
->>>> +++ b/drivers/staging/android/ion/Makefile
->>>> @@ -4,3 +4,4 @@ obj-$(CONFIG_ION_SYSTEM_HEAP) += ion_system_heap.o
->>>> ion_page_pool.o
->>>>    obj-$(CONFIG_ION_CARVEOUT_HEAP) += ion_carveout_heap.o
->>>>    obj-$(CONFIG_ION_CHUNK_HEAP) += ion_chunk_heap.o
->>>>    obj-$(CONFIG_ION_CMA_HEAP) += ion_cma_heap.o
->>>> +obj-$(CONFIG_ION_UNMAPPED_HEAP) += ion_unmapped_heap.o
->>>> diff --git a/drivers/staging/android/ion/ion.h
->>>> b/drivers/staging/android/ion/ion.h
->>>> index 97b2876b165a..ce74332018ba 100644
->>>> --- a/drivers/staging/android/ion/ion.h
->>>> +++ b/drivers/staging/android/ion/ion.h
->>>> @@ -341,4 +341,20 @@ static inline struct ion_heap
->>>> *ion_chunk_heap_create(phys_addr_t base, size_t si
->>>>    }
->>>>    #endif
->>>>    +#ifdef CONFIG_ION_UNMAPPED_HEAP
->>>> +/**
->>>> + * ion_unmapped_heap_create
->>>> + * @base:        base address of carveout memory
->>>> + * @size:        size of carveout memory region
->>>> + *
->>>> + * Creates an unmapped ion_heap using the passed in data
->>>> + */
->>>> +struct ion_heap *ion_unmapped_heap_create(phys_addr_t base, size_t
->>>> size);
->>>> +#else
->>>> +struct ion_heap *ion_unmapped_heap_create(phys_addr_t base, size_t size)
->>>> +{
->>>> +    return ERR_PTR(-ENODEV);
->>>> +}
->>>> +#endif
->>>> +
->>>>    #endif /* _ION_H */
->>>> diff --git a/drivers/staging/android/ion/ion_unmapped_heap.c
->>>> b/drivers/staging/android/ion/ion_unmapped_heap.c
->>>> new file mode 100644
->>>> index 000000000000..7602b659c2ec
->>>> --- /dev/null
->>>> +++ b/drivers/staging/android/ion/ion_unmapped_heap.c
->>>> @@ -0,0 +1,123 @@
->>>> +// SPDX-License-Identifier: GPL-2.0
->>>> +/*
->>>> + * ION Memory Allocator unmapped heap helper
->>>> + *
->>>> + * Copyright (C) 2015-2016 Texas Instruments Incorporated -
->>>> http://www.ti.com/
->>>> + *    Andrew F. Davis <afd@ti.com>
->>>> + *
->>>> + * ION "unmapped" heaps are physical memory heaps not by default
->>>> mapped into
->>>> + * a virtual address space. The buffer owner can explicitly request
->>>> kernel
->>>> + * space mappings but the underlying memory may still not be
->>>> accessible for
->>>> + * various reasons, such as firewalls.
->>>> + */
->>>> +
->>>> +#include <linux/err.h>
->>>> +#include <linux/genalloc.h>
->>>> +#include <linux/scatterlist.h>
->>>> +#include <linux/slab.h>
->>>> +
->>>> +#include "ion.h"
->>>> +
->>>> +#define ION_UNMAPPED_ALLOCATE_FAIL -1
->>>> +
->>>> +struct ion_unmapped_heap {
->>>> +    struct ion_heap heap;
->>>> +    struct gen_pool *pool;
->>>> +};
->>>> +
->>>> +static phys_addr_t ion_unmapped_allocate(struct ion_heap *heap,
->>>> +                     unsigned long size)
->>>> +{
->>>> +    struct ion_unmapped_heap *unmapped_heap =
->>>> +        container_of(heap, struct ion_unmapped_heap, heap);
->>>> +    unsigned long offset;
->>>> +
->>>> +    offset = gen_pool_alloc(unmapped_heap->pool, size);
->>>> +    if (!offset)
->>>> +        return ION_UNMAPPED_ALLOCATE_FAIL;
->>>> +
->>>> +    return offset;
->>>> +}
->>>> +
->>>> +static void ion_unmapped_free(struct ion_heap *heap, phys_addr_t addr,
->>>> +                  unsigned long size)
->>>> +{
->>>> +    struct ion_unmapped_heap *unmapped_heap =
->>>> +        container_of(heap, struct ion_unmapped_heap, heap);
->>>> +
->>>> +    gen_pool_free(unmapped_heap->pool, addr, size);
->>>> +}
->>>> +
->>>> +static int ion_unmapped_heap_allocate(struct ion_heap *heap,
->>>> +                      struct ion_buffer *buffer,
->>>> +                      unsigned long size,
->>>> +                      unsigned long flags)
->>>> +{
->>>> +    struct sg_table *table;
->>>> +    phys_addr_t paddr;
->>>> +    int ret;
->>>> +
->>>> +    table = kmalloc(sizeof(*table), GFP_KERNEL);
->>>> +    if (!table)
->>>> +        return -ENOMEM;
->>>> +    ret = sg_alloc_table(table, 1, GFP_KERNEL);
->>>> +    if (ret)
->>>> +        goto err_free;
->>>> +
->>>> +    paddr = ion_unmapped_allocate(heap, size);
->>>> +    if (paddr == ION_UNMAPPED_ALLOCATE_FAIL) {
->>>> +        ret = -ENOMEM;
->>>> +        goto err_free_table;
->>>> +    }
->>>> +
->>>> +    sg_set_page(table->sgl, pfn_to_page(PFN_DOWN(paddr)), size, 0);
->>>> +    buffer->sg_table = table;
->>>> +
->>>
->>>
->>> If this memory is actually unmapped this is not going to work because
->>> the struct page will not be valid.
->>>
->>
->> If it will never get mapped then it doesn't need a valid struct page as
->> far as I can tell. We only use it as a marker to where the start of
->> backing memory is, and that is calculated based on the struct page
->> pointer address, not its contents.
->>
+Em Thu, Jan 10, 2019 at 04:19:31PM -0800, Song Liu escreveu:
+> This patch handles PERF_RECORD_KSYMBOL in perf record/report.
+> Specifically, map and symbol are created for ksymbol register, and
+> removed for ksymbol unregister.
 > 
-> You can't rely on pfn_to_page returning a valid page pointer if the
-> pfn doesn't point to reserved memory. Even if you aren't relying
-> on the contents, that's no guarantee you can use that to to get
-> the valid pfn back. You can get away with that sometimes but it's
-> not correct to rely on it all the time.
+> This patch also set perf_event_attr.ksymbol properly. The flag is
+> ON by default.
 > 
-
-I found https://lore.kernel.org/lkml/20190111181731.11782-1-hch@lst.de/T/#u
-which I think is closer to what we might want to be looking at.
-
->>>> +    return 0;
->>>> +
->>>> +err_free_table:
->>>> +    sg_free_table(table);
->>>> +err_free:
->>>> +    kfree(table);
->>>> +    return ret;
->>>> +}
->>>> +
->>>> +static void ion_unmapped_heap_free(struct ion_buffer *buffer)
->>>> +{
->>>> +    struct ion_heap *heap = buffer->heap;
->>>> +    struct sg_table *table = buffer->sg_table;
->>>> +    struct page *page = sg_page(table->sgl);
->>>> +    phys_addr_t paddr = PFN_PHYS(page_to_pfn(page));
->>>> +
->>>> +    ion_unmapped_free(heap, paddr, buffer->size);
->>>> +    sg_free_table(buffer->sg_table);
->>>> +    kfree(buffer->sg_table);
->>>> +}
->>>> +
->>>> +static struct ion_heap_ops unmapped_heap_ops = {
->>>> +    .allocate = ion_unmapped_heap_allocate,
->>>> +    .free = ion_unmapped_heap_free,
->>>> +    /* no .map_user, user mapping of unmapped heaps not allowed */
->>>> +    .map_kernel = ion_heap_map_kernel,
->>>> +    .unmap_kernel = ion_heap_unmap_kernel,
->>>> +};
->>>> +
->>>> +struct ion_heap *ion_unmapped_heap_create(phys_addr_t base, size_t size)
->>>> +{
->>>> +    struct ion_unmapped_heap *unmapped_heap;
->>>> +
->>>> +    unmapped_heap = kzalloc(sizeof(*unmapped_heap), GFP_KERNEL);
->>>> +    if (!unmapped_heap)
->>>> +        return ERR_PTR(-ENOMEM);
->>>> +
->>>> +    unmapped_heap->pool = gen_pool_create(PAGE_SHIFT, -1);
->>>> +    if (!unmapped_heap->pool) {
->>>> +        kfree(unmapped_heap);
->>>> +        return ERR_PTR(-ENOMEM);
->>>> +    }
->>>> +    gen_pool_add(unmapped_heap->pool, base, size, -1);
->>>> +    unmapped_heap->heap.ops = &unmapped_heap_ops;
->>>> +    unmapped_heap->heap.type = ION_HEAP_TYPE_UNMAPPED;
->>>> +
->>>> +    return &unmapped_heap->heap;
->>>> +}
->>>> diff --git a/drivers/staging/android/uapi/ion.h
->>>> b/drivers/staging/android/uapi/ion.h
->>>> index 5d7009884c13..d5f98bc5f340 100644
->>>> --- a/drivers/staging/android/uapi/ion.h
->>>> +++ b/drivers/staging/android/uapi/ion.h
->>>> @@ -19,6 +19,8 @@
->>>>     *                 carveout heap, allocations are physically
->>>>     *                 contiguous
->>>>     * @ION_HEAP_TYPE_DMA:         memory allocated via DMA API
->>>> + * @ION_HEAP_TYPE_UNMAPPED:     memory not intended to be mapped into
->>>> the
->>>> + *                 linux address space unless for debug cases
->>>>     * @ION_NUM_HEAPS:         helper for iterating over heaps, a bit mask
->>>>     *                 is used to identify the heaps, so only 32
->>>>     *                 total heap types are supported
->>>> @@ -29,6 +31,7 @@ enum ion_heap_type {
->>>>        ION_HEAP_TYPE_CARVEOUT,
->>>>        ION_HEAP_TYPE_CHUNK,
->>>>        ION_HEAP_TYPE_DMA,
->>>> +    ION_HEAP_TYPE_UNMAPPED,
->>>>        ION_HEAP_TYPE_CUSTOM, /*
->>>>                       * must be last so device specific heaps always
->>>>                       * are at the end of this enum
->>>>
->>>
->>> Overall this seems way too similar to the carveout heap
->>> to justify adding another heap type. It also still missing
->>> the part of where exactly you call ion_unmapped_heap_create.
->>> Figuring that out is one of the blocking items for moving
->>> Ion out of staging.
->>>
->>
->> I agree with this being almost a 1:1 copy of the carveout heap, I'm just
->> not sure of a good way to do this without a new heap type. Adding flags
->> to the existing carveout type seem a bit messy. Plus then those flags
->> should be valid for other heap types, gets complicated quickly..
->>
->> I'll reply to the second part in your other top level response.
->>
->> Andrew
->>
->>> Thanks,
->>> Laura
+> Signed-off-by: Song Liu <songliubraving@fb.com>
+> ---
+>  tools/perf/util/event.c   | 21 +++++++++++++++
+>  tools/perf/util/event.h   | 20 ++++++++++++++
+>  tools/perf/util/evsel.c   |  9 +++++++
+>  tools/perf/util/evsel.h   |  1 +
+>  tools/perf/util/machine.c | 57 +++++++++++++++++++++++++++++++++++++++
+>  tools/perf/util/machine.h |  3 +++
+>  tools/perf/util/session.c |  4 +++
+>  tools/perf/util/tool.h    |  4 ++-
+>  8 files changed, 118 insertions(+), 1 deletion(-)
 > 
+> diff --git a/tools/perf/util/event.c b/tools/perf/util/event.c
+> index 937a5a4f71cc..3c8a6a8dd260 100644
+> --- a/tools/perf/util/event.c
+> +++ b/tools/perf/util/event.c
+> @@ -24,6 +24,7 @@
+>  #include "symbol/kallsyms.h"
+>  #include "asm/bug.h"
+>  #include "stat.h"
+> +#include "session.h"
+>  
+>  #define DEFAULT_PROC_MAP_PARSE_TIMEOUT 500
+>  
+> @@ -45,6 +46,7 @@ static const char *perf_event__names[] = {
+>  	[PERF_RECORD_SWITCH]			= "SWITCH",
+>  	[PERF_RECORD_SWITCH_CPU_WIDE]		= "SWITCH_CPU_WIDE",
+>  	[PERF_RECORD_NAMESPACES]		= "NAMESPACES",
+> +	[PERF_RECORD_KSYMBOL]			= "KSYMBOL",
+>  	[PERF_RECORD_HEADER_ATTR]		= "ATTR",
+>  	[PERF_RECORD_HEADER_EVENT_TYPE]		= "EVENT_TYPE",
+>  	[PERF_RECORD_HEADER_TRACING_DATA]	= "TRACING_DATA",
+> @@ -1329,6 +1331,14 @@ int perf_event__process_switch(struct perf_tool *tool __maybe_unused,
+>  	return machine__process_switch_event(machine, event);
+>  }
+>  
+> +int perf_event__process_ksymbol(struct perf_tool *tool __maybe_unused,
+> +				union perf_event *event,
+> +				struct perf_sample *sample __maybe_unused,
+> +				struct machine *machine)
+> +{
+> +	return machine__process_ksymbol(machine, event, sample);
+> +}
+> +
+>  size_t perf_event__fprintf_mmap(union perf_event *event, FILE *fp)
+>  {
+>  	return fprintf(fp, " %d/%d: [%#" PRIx64 "(%#" PRIx64 ") @ %#" PRIx64 "]: %c %s\n",
+> @@ -1461,6 +1471,14 @@ static size_t perf_event__fprintf_lost(union perf_event *event, FILE *fp)
+>  	return fprintf(fp, " lost %" PRIu64 "\n", event->lost.lost);
+>  }
+>  
+> +size_t perf_event__fprintf_ksymbol(union perf_event *event, FILE *fp)
+> +{
+> +	return fprintf(fp, " ksymbol event with addr %lx len %u type %u flags 0x%x name %s\n",
+> +		       event->ksymbol_event.addr, event->ksymbol_event.len,
+> +		       event->ksymbol_event.ksym_type,
+> +		       event->ksymbol_event.flags, event->ksymbol_event.name);
+> +}
+> +
+>  size_t perf_event__fprintf(union perf_event *event, FILE *fp)
+>  {
+>  	size_t ret = fprintf(fp, "PERF_RECORD_%s",
+> @@ -1496,6 +1514,9 @@ size_t perf_event__fprintf(union perf_event *event, FILE *fp)
+>  	case PERF_RECORD_LOST:
+>  		ret += perf_event__fprintf_lost(event, fp);
+>  		break;
+> +	case PERF_RECORD_KSYMBOL:
+> +		ret += perf_event__fprintf_ksymbol(event, fp);
+> +		break;
+>  	default:
+>  		ret += fprintf(fp, "\n");
+>  	}
+> diff --git a/tools/perf/util/event.h b/tools/perf/util/event.h
+> index eb95f3384958..018322f2a13e 100644
+> --- a/tools/perf/util/event.h
+> +++ b/tools/perf/util/event.h
+> @@ -5,6 +5,7 @@
+>  #include <limits.h>
+>  #include <stdio.h>
+>  #include <linux/kernel.h>
+> +#include <linux/bpf.h>
+>  
+>  #include "../perf.h"
+>  #include "build-id.h"
+> @@ -84,6 +85,19 @@ struct throttle_event {
+>  	u64 stream_id;
+>  };
+>  
+> +#ifndef KSYM_NAME_LEN
+> +#define KSYM_NAME_LEN 256
+> +#endif
+> +
+> +struct ksymbol_event {
+> +	struct perf_event_header header;
+> +	u64 addr;
+> +	u32 len;
+> +	u16 ksym_type;
+> +	u16 flags;
+> +	char name[KSYM_NAME_LEN];
+> +};
+> +
+>  #define PERF_SAMPLE_MASK				\
+>  	(PERF_SAMPLE_IP | PERF_SAMPLE_TID |		\
+>  	 PERF_SAMPLE_TIME | PERF_SAMPLE_ADDR |		\
+> @@ -651,6 +665,7 @@ union perf_event {
+>  	struct stat_round_event		stat_round;
+>  	struct time_conv_event		time_conv;
+>  	struct feature_event		feat;
+> +	struct ksymbol_event		ksymbol_event;
+>  };
+>  
+>  void perf_event__print_totals(void);
+> @@ -748,6 +763,10 @@ int perf_event__process_exit(struct perf_tool *tool,
+>  			     union perf_event *event,
+>  			     struct perf_sample *sample,
+>  			     struct machine *machine);
+> +int perf_event__process_ksymbol(struct perf_tool *tool,
+> +				union perf_event *event,
+> +				struct perf_sample *sample,
+> +				struct machine *machine);
+>  int perf_tool__process_synth_event(struct perf_tool *tool,
+>  				   union perf_event *event,
+>  				   struct machine *machine,
+> @@ -811,6 +830,7 @@ size_t perf_event__fprintf_switch(union perf_event *event, FILE *fp);
+>  size_t perf_event__fprintf_thread_map(union perf_event *event, FILE *fp);
+>  size_t perf_event__fprintf_cpu_map(union perf_event *event, FILE *fp);
+>  size_t perf_event__fprintf_namespaces(union perf_event *event, FILE *fp);
+> +size_t perf_event__fprintf_ksymbol(union perf_event *event, FILE *fp);
+>  size_t perf_event__fprintf(union perf_event *event, FILE *fp);
+>  
+>  int kallsyms__get_function_start(const char *kallsyms_filename,
+> diff --git a/tools/perf/util/evsel.c b/tools/perf/util/evsel.c
+> index dbc0466db368..de34ce875648 100644
+> --- a/tools/perf/util/evsel.c
+> +++ b/tools/perf/util/evsel.c
+> @@ -1035,6 +1035,7 @@ void perf_evsel__config(struct perf_evsel *evsel, struct record_opts *opts,
+>  	attr->mmap  = track;
+>  	attr->mmap2 = track && !perf_missing_features.mmap2;
+>  	attr->comm  = track;
+> +	attr->ksymbol = track && !perf_missing_features.ksymbol;
+>  
+>  	if (opts->record_namespaces)
+>  		attr->namespaces  = track;
+> @@ -1652,6 +1653,7 @@ int perf_event_attr__fprintf(FILE *fp, struct perf_event_attr *attr,
+>  	PRINT_ATTRf(context_switch, p_unsigned);
+>  	PRINT_ATTRf(write_backward, p_unsigned);
+>  	PRINT_ATTRf(namespaces, p_unsigned);
+> +	PRINT_ATTRf(ksymbol, p_unsigned);
+>  
+>  	PRINT_ATTRn("{ wakeup_events, wakeup_watermark }", wakeup_events, p_unsigned);
+>  	PRINT_ATTRf(bp_type, p_unsigned);
+> @@ -1811,6 +1813,8 @@ int perf_evsel__open(struct perf_evsel *evsel, struct cpu_map *cpus,
+>  				     PERF_SAMPLE_BRANCH_NO_CYCLES);
+>  	if (perf_missing_features.group_read && evsel->attr.inherit)
+>  		evsel->attr.read_format &= ~(PERF_FORMAT_GROUP|PERF_FORMAT_ID);
+> +	if (perf_missing_features.ksymbol)
+> +		evsel->attr.ksymbol = 0;
+>  retry_sample_id:
+>  	if (perf_missing_features.sample_id_all)
+>  		evsel->attr.sample_id_all = 0;
+> @@ -1955,6 +1959,11 @@ int perf_evsel__open(struct perf_evsel *evsel, struct cpu_map *cpus,
+>  		perf_missing_features.exclude_guest = true;
+>  		pr_debug2("switching off exclude_guest, exclude_host\n");
+>  		goto fallback_missing_features;
+> +	} else if (!perf_missing_features.ksymbol &&
+> +		   evsel->attr.ksymbol) {
+> +		perf_missing_features.ksymbol = true;
+> +		pr_debug2("switching off ksymbol\n");
+> +		goto fallback_missing_features;
 
+
+Please move this to the top, see the comment there:
+
+	if (err != -EINVAL || cpu > 0 || thread > 0)
+		goto out_close;
+
+	/*
+	 * Must probe features in the order they were added to the
+	 * perf_event_attr interface.
+	 */
+	if (!perf_missing_features.write_backward && evsel->attr.write_backward) {
+		perf_missing_features.write_backward = true;
+		pr_debug2("switching off write_backward\n");
+		goto out_close;
+	} else if (!perf_missing_features.clockid_wrong && evsel->attr.use_clockid) {
+		perf_missing_features.clockid_wrong = true;
+		pr_debug2("switching off clockid\n");
+		goto fallback_missing_features;
+
+
+So that when one asks for, say, attr.write_backward _and_ attr.ksymbol,
+we first disable attr.ksymbol, to try the fallback, as it was added
+after attr.write_backward.
+
+Think about an older kernel where attr.write_backward is present but not
+attr.ksymbol.
+
+Ditto for the attr.bpf_event.
+
+>  	} else if (!perf_missing_features.sample_id_all) {
+>  		perf_missing_features.sample_id_all = true;
+>  		pr_debug2("switching off sample_id_all\n");
+> diff --git a/tools/perf/util/evsel.h b/tools/perf/util/evsel.h
+> index 82a289ce8b0c..4a8c3e7f4808 100644
+> --- a/tools/perf/util/evsel.h
+> +++ b/tools/perf/util/evsel.h
+> @@ -168,6 +168,7 @@ struct perf_missing_features {
+>  	bool lbr_flags;
+>  	bool write_backward;
+>  	bool group_read;
+> +	bool ksymbol;
+>  };
+>  
+>  extern struct perf_missing_features perf_missing_features;
+> diff --git a/tools/perf/util/machine.c b/tools/perf/util/machine.c
+> index 6fcb3bce0442..1734ca027661 100644
+> --- a/tools/perf/util/machine.c
+> +++ b/tools/perf/util/machine.c
+> @@ -681,6 +681,61 @@ int machine__process_switch_event(struct machine *machine __maybe_unused,
+>  	return 0;
+>  }
+>  
+> +static int machine__process_ksymbol_register(
+> +	struct machine *machine,
+> +	union perf_event *event,
+> +	struct perf_sample *sample __maybe_unused)
+> +{
+> +	struct symbol *sym;
+> +	struct map *map;
+> +
+> +	map = map_groups__find(&machine->kmaps, event->ksymbol_event.addr);
+> +	if (!map) {
+> +		map = dso__new_map("bpf_prog");
+> +		if (!map)
+> +			return -ENOMEM;
+> +
+> +		map->start = event->ksymbol_event.addr;
+> +		map->pgoff = map->start;
+> +		map->end = map->start + event->ksymbol_event.len;
+> +		map_groups__insert(&machine->kmaps, map);
+> +	}
+> +
+> +	sym = symbol__new(event->ksymbol_event.addr, event->ksymbol_event.len,
+> +			  0, 0, event->ksymbol_event.name);
+> +	if (!sym)
+> +		return -ENOMEM;
+> +	dso__insert_symbol(map->dso, sym);
+> +	return 0;
+> +}
+> +
+> +static int machine__process_ksymbol_unregister(
+> +	struct machine *machine,
+> +	union perf_event *event,
+> +	struct perf_sample *sample __maybe_unused)
+> +{
+> +	struct map *map;
+> +
+> +	map = map_groups__find(&machine->kmaps, event->ksymbol_event.addr);
+> +	if (map)
+> +		map_groups__remove(&machine->kmaps, map);
+> +
+> +	return 0;
+> +}
+> +
+> +int machine__process_ksymbol(struct machine *machine __maybe_unused,
+> +			     union perf_event *event,
+> +			     struct perf_sample *sample)
+> +{
+> +	if (dump_trace)
+> +		perf_event__fprintf_ksymbol(event, stderr);
+> +
+> +	if (event->ksymbol_event.flags & PERF_RECORD_KSYMBOL_FLAGS_UNREGISTER)
+> +		return machine__process_ksymbol_unregister(machine, event,
+> +							   sample);
+> +	return machine__process_ksymbol_register(machine, event, sample);
+> +}
+> +
+>  static void dso__adjust_kmod_long_name(struct dso *dso, const char *filename)
+>  {
+>  	const char *dup_filename;
+> @@ -1812,6 +1867,8 @@ int machine__process_event(struct machine *machine, union perf_event *event,
+>  	case PERF_RECORD_SWITCH:
+>  	case PERF_RECORD_SWITCH_CPU_WIDE:
+>  		ret = machine__process_switch_event(machine, event); break;
+> +	case PERF_RECORD_KSYMBOL:
+> +		ret = machine__process_ksymbol(machine, event, sample); break;
+>  	default:
+>  		ret = -1;
+>  		break;
+> diff --git a/tools/perf/util/machine.h b/tools/perf/util/machine.h
+> index a5d1da60f751..4ecd380ce1b4 100644
+> --- a/tools/perf/util/machine.h
+> +++ b/tools/perf/util/machine.h
+> @@ -130,6 +130,9 @@ int machine__process_mmap_event(struct machine *machine, union perf_event *event
+>  				struct perf_sample *sample);
+>  int machine__process_mmap2_event(struct machine *machine, union perf_event *event,
+>  				 struct perf_sample *sample);
+> +int machine__process_ksymbol(struct machine *machine,
+> +			     union perf_event *event,
+> +			     struct perf_sample *sample);
+>  int machine__process_event(struct machine *machine, union perf_event *event,
+>  				struct perf_sample *sample);
+>  
+> diff --git a/tools/perf/util/session.c b/tools/perf/util/session.c
+> index 78a067777144..a9c98c3914ed 100644
+> --- a/tools/perf/util/session.c
+> +++ b/tools/perf/util/session.c
+> @@ -376,6 +376,8 @@ void perf_tool__fill_defaults(struct perf_tool *tool)
+>  		tool->itrace_start = perf_event__process_itrace_start;
+>  	if (tool->context_switch == NULL)
+>  		tool->context_switch = perf_event__process_switch;
+> +	if (tool->ksymbol == NULL)
+> +		tool->ksymbol = perf_event__process_ksymbol;
+>  	if (tool->read == NULL)
+>  		tool->read = process_event_sample_stub;
+>  	if (tool->throttle == NULL)
+> @@ -1305,6 +1307,8 @@ static int machines__deliver_event(struct machines *machines,
+>  	case PERF_RECORD_SWITCH:
+>  	case PERF_RECORD_SWITCH_CPU_WIDE:
+>  		return tool->context_switch(tool, event, sample, machine);
+> +	case PERF_RECORD_KSYMBOL:
+> +		return tool->ksymbol(tool, event, sample, machine);
+>  	default:
+>  		++evlist->stats.nr_unknown_events;
+>  		return -1;
+> diff --git a/tools/perf/util/tool.h b/tools/perf/util/tool.h
+> index 56e4ca54020a..9c81ca2f3cf7 100644
+> --- a/tools/perf/util/tool.h
+> +++ b/tools/perf/util/tool.h
+> @@ -53,7 +53,9 @@ struct perf_tool {
+>  			itrace_start,
+>  			context_switch,
+>  			throttle,
+> -			unthrottle;
+> +			unthrottle,
+> +			ksymbol;
+> +
+>  	event_attr_op	attr;
+>  	event_attr_op	event_update;
+>  	event_op2	tracing_data;
+> -- 
+> 2.17.1
+
+-- 
+
+- Arnaldo
