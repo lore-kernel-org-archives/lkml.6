@@ -6,188 +6,168 @@ X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6992DC43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 04:23:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 925B0C43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 04:23:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4061220656
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 04:23:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6B1D120656
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 04:23:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728409AbfAOEXv (ORCPT
+        id S1728423AbfAOEXy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 14 Jan 2019 23:23:51 -0500
-Received: from kvm5.telegraphics.com.au ([98.124.60.144]:37474 "EHLO
+        Mon, 14 Jan 2019 23:23:54 -0500
+Received: from kvm5.telegraphics.com.au ([98.124.60.144]:37464 "EHLO
         kvm5.telegraphics.com.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728144AbfAOEW0 (ORCPT
+        with ESMTP id S1727937AbfAOEW0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 14 Jan 2019 23:22:26 -0500
 Received: by kvm5.telegraphics.com.au (Postfix, from userid 502)
-        id 3DAC829E6A; Mon, 14 Jan 2019 23:22:24 -0500 (EST)
+        id 1CDF629E68; Mon, 14 Jan 2019 23:22:24 -0500 (EST)
 To:     Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 Cc:     linux-kernel@vger.kernel.org, linux-m68k@lists.linux-m68k.org,
-        linuxppc-dev@lists.ozlabs.org
-Message-Id: <b5e7a64341df5d8c5f90675941fae1d6b13bf135.1547525936.git.fthain@telegraphics.com.au>
+        linuxppc-dev@lists.ozlabs.org, linux-fbdev@vger.kernel.org,
+        dri-devel@lists.freedesktop.org
+Message-Id: <0792e10d71abdf3152b74bddbb9da68c1f17e48c.1547525936.git.fthain@telegraphics.com.au>
 In-Reply-To: <cover.1547525936.git.fthain@telegraphics.com.au>
 References: <cover.1547525936.git.fthain@telegraphics.com.au>
 From:   Finn Thain <fthain@telegraphics.com.au>
-Subject: [PATCH v9 08/22] char/nvram: Allow the set_checksum and initialize
- ioctls to be omitted
+Subject: [PATCH v9 06/22] powerpc: Replace nvram_* extern declarations with
+ standard header
 Date:   Tue, 15 Jan 2019 15:18:56 +1100
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The drivers/char/nvram.c module has previously supported only RTC "CMOS"
-NVRAM, for which it provides appropriate checksum ioctls. Make these
-ioctls optional so the module can be re-used with other kinds of NVRAM.
+Remove the nvram_read_byte() and nvram_write_byte() declarations in
+powerpc/include/asm/nvram.h and use the cross-platform static functions
+in linux/nvram.h instead.
 
-The ops struct methods that implement the ioctls now return error
-codes so that a multi-platform kernel binary can do the right thing when
-running on hardware without a suitable NVRAM.
-
+Tested-by: Stan Johnson <userm57@yahoo.com>
 Signed-off-by: Finn Thain <fthain@telegraphics.com.au>
 ---
 Changed since v8:
- - Renamed nvram_* functions to avoid name collisions.
+ - Added nvram_read_byte() and nvram_write_byte() functions to avoid a
+potential build failure during 'git bisect'.
+ - Brought forward some powerpc cleanup to avoid naming collisions with
+nvram.h functions.
+ - Replaced the ppc_md.nvram_* method wrappers with the ones in nvram.h.
 ---
- drivers/char/nvram.c  | 70 ++++++++++++++++++++++++-------------------
- include/linux/nvram.h |  2 ++
- 2 files changed, 42 insertions(+), 30 deletions(-)
+ arch/powerpc/include/asm/nvram.h           |  6 ------
+ arch/powerpc/kernel/setup_32.c             | 25 +---------------------
+ drivers/char/generic_nvram.c               |  1 +
+ drivers/video/fbdev/matrox/matroxfb_base.c |  2 +-
+ include/linux/nvram.h                      |  3 +++
+ 5 files changed, 6 insertions(+), 31 deletions(-)
 
-diff --git a/drivers/char/nvram.c b/drivers/char/nvram.c
-index 2df391f78986..f88ef41d0598 100644
---- a/drivers/char/nvram.c
-+++ b/drivers/char/nvram.c
-@@ -136,16 +136,25 @@ static void __nvram_set_checksum(void)
- 	__nvram_write_byte(sum & 0xff, PC_CKS_LOC + 1);
- }
+diff --git a/arch/powerpc/include/asm/nvram.h b/arch/powerpc/include/asm/nvram.h
+index 09a518bb7c03..56a388da9c4f 100644
+--- a/arch/powerpc/include/asm/nvram.h
++++ b/arch/powerpc/include/asm/nvram.h
+@@ -98,10 +98,4 @@ extern int nvram_write_os_partition(struct nvram_os_partition *part,
+ 				    unsigned int err_type,
+ 				    unsigned int error_log_cnt);
  
--#if 0
--void nvram_set_checksum(void)
-+static long pc_nvram_set_checksum(void)
+-/* Determine NVRAM size */
+-extern ssize_t nvram_get_size(void);
+-
+-/* Normal access to NVRAM */
+-extern unsigned char nvram_read_byte(int i);
+-extern void nvram_write_byte(unsigned char c, int i);
+ #endif /* _ASM_POWERPC_NVRAM_H */
+diff --git a/arch/powerpc/kernel/setup_32.c b/arch/powerpc/kernel/setup_32.c
+index 947f904688b0..f5107796e2d7 100644
+--- a/arch/powerpc/kernel/setup_32.c
++++ b/arch/powerpc/kernel/setup_32.c
+@@ -17,6 +17,7 @@
+ #include <linux/console.h>
+ #include <linux/memblock.h>
+ #include <linux/export.h>
++#include <linux/nvram.h>
+ 
+ #include <asm/io.h>
+ #include <asm/prom.h>
+@@ -149,30 +150,6 @@ __setup("l3cr=", ppc_setup_l3cr);
+ 
+ #ifdef CONFIG_GENERIC_NVRAM
+ 
+-/* Generic nvram hooks used by drivers/char/gen_nvram.c */
+-unsigned char nvram_read_byte(int addr)
+-{
+-	if (ppc_md.nvram_read_val)
+-		return ppc_md.nvram_read_val(addr);
+-	return 0xff;
+-}
+-EXPORT_SYMBOL(nvram_read_byte);
+-
+-void nvram_write_byte(unsigned char val, int addr)
+-{
+-	if (ppc_md.nvram_write_val)
+-		ppc_md.nvram_write_val(addr, val);
+-}
+-EXPORT_SYMBOL(nvram_write_byte);
+-
+-ssize_t nvram_get_size(void)
+-{
+-	if (ppc_md.nvram_size)
+-		return ppc_md.nvram_size();
+-	return -1;
+-}
+-EXPORT_SYMBOL(nvram_get_size);
+-
+ void nvram_sync(void)
  {
--	unsigned long flags;
-+	spin_lock_irq(&rtc_lock);
-+	__nvram_set_checksum();
-+	spin_unlock_irq(&rtc_lock);
-+	return 0;
-+}
+ 	if (ppc_md.nvram_sync)
+diff --git a/drivers/char/generic_nvram.c b/drivers/char/generic_nvram.c
+index ff5394f47587..0c22b9503e84 100644
+--- a/drivers/char/generic_nvram.c
++++ b/drivers/char/generic_nvram.c
+@@ -20,6 +20,7 @@
+ #include <linux/fcntl.h>
+ #include <linux/init.h>
+ #include <linux/mutex.h>
++#include <linux/nvram.h>
+ #include <linux/pagemap.h>
+ #include <linux/uaccess.h>
+ #include <asm/nvram.h>
+diff --git a/drivers/video/fbdev/matrox/matroxfb_base.c b/drivers/video/fbdev/matrox/matroxfb_base.c
+index 838869c6490c..0a4e5bad33f4 100644
+--- a/drivers/video/fbdev/matrox/matroxfb_base.c
++++ b/drivers/video/fbdev/matrox/matroxfb_base.c
+@@ -111,12 +111,12 @@
+ #include "matroxfb_g450.h"
+ #include <linux/matroxfb.h>
+ #include <linux/interrupt.h>
++#include <linux/nvram.h>
+ #include <linux/slab.h>
+ #include <linux/uaccess.h>
  
--	spin_lock_irqsave(&rtc_lock, flags);
-+static long pc_nvram_initialize(void)
-+{
-+	ssize_t i;
-+
-+	spin_lock_irq(&rtc_lock);
-+	for (i = 0; i < NVRAM_BYTES; ++i)
-+		__nvram_write_byte(0, i);
- 	__nvram_set_checksum();
--	spin_unlock_irqrestore(&rtc_lock, flags);
-+	spin_unlock_irq(&rtc_lock);
-+	return 0;
- }
--#endif  /*  0  */
- 
- static ssize_t pc_nvram_get_size(void)
- {
-@@ -156,6 +165,8 @@ const struct nvram_ops arch_nvram_ops = {
- 	.read_byte      = pc_nvram_read_byte,
- 	.write_byte     = pc_nvram_write_byte,
- 	.get_size       = pc_nvram_get_size,
-+	.set_checksum   = pc_nvram_set_checksum,
-+	.initialize     = pc_nvram_initialize,
- };
- EXPORT_SYMBOL(arch_nvram_ops);
- #endif /* CONFIG_X86 */
-@@ -241,51 +252,50 @@ static ssize_t nvram_misc_write(struct file *file, const char __user *buf,
- static long nvram_misc_ioctl(struct file *file, unsigned int cmd,
- 			     unsigned long arg)
- {
--	int i;
-+	long ret = -ENOTTY;
- 
- 	switch (cmd) {
--
- 	case NVRAM_INIT:
- 		/* initialize NVRAM contents and checksum */
- 		if (!capable(CAP_SYS_ADMIN))
- 			return -EACCES;
- 
--		mutex_lock(&nvram_mutex);
--		spin_lock_irq(&rtc_lock);
--
--		for (i = 0; i < NVRAM_BYTES; ++i)
--			__nvram_write_byte(0, i);
--		__nvram_set_checksum();
--
--		spin_unlock_irq(&rtc_lock);
--		mutex_unlock(&nvram_mutex);
--		return 0;
--
-+		if (arch_nvram_ops.initialize != NULL) {
-+			mutex_lock(&nvram_mutex);
-+			ret = arch_nvram_ops.initialize();
-+			mutex_unlock(&nvram_mutex);
-+		}
-+		break;
- 	case NVRAM_SETCKS:
- 		/* just set checksum, contents unchanged (maybe useful after
- 		 * checksum garbaged somehow...) */
- 		if (!capable(CAP_SYS_ADMIN))
- 			return -EACCES;
- 
--		mutex_lock(&nvram_mutex);
--		spin_lock_irq(&rtc_lock);
--		__nvram_set_checksum();
--		spin_unlock_irq(&rtc_lock);
--		mutex_unlock(&nvram_mutex);
--		return 0;
--
--	default:
--		return -ENOTTY;
-+		if (arch_nvram_ops.set_checksum != NULL) {
-+			mutex_lock(&nvram_mutex);
-+			ret = arch_nvram_ops.set_checksum();
-+			mutex_unlock(&nvram_mutex);
-+		}
-+		break;
- 	}
-+	return ret;
- }
- 
- static int nvram_misc_open(struct inode *inode, struct file *file)
- {
- 	spin_lock(&nvram_state_lock);
- 
-+	/* Prevent multiple readers/writers if desired. */
- 	if ((nvram_open_cnt && (file->f_flags & O_EXCL)) ||
--	    (nvram_open_mode & NVRAM_EXCL) ||
--	    ((file->f_mode & FMODE_WRITE) && (nvram_open_mode & NVRAM_WRITE))) {
-+	    (nvram_open_mode & NVRAM_EXCL)) {
-+		spin_unlock(&nvram_state_lock);
-+		return -EBUSY;
-+	}
-+
-+	/* Prevent multiple writers if the set_checksum ioctl is implemented. */
-+	if ((arch_nvram_ops.set_checksum != NULL) &&
-+	    (file->f_mode & FMODE_WRITE) && (nvram_open_mode & NVRAM_WRITE)) {
- 		spin_unlock(&nvram_state_lock);
- 		return -EBUSY;
- 	}
+ #ifdef CONFIG_PPC_PMAC
+ #include <asm/machdep.h>
+-unsigned char nvram_read_byte(int);
+ static int default_vmode = VMODE_NVRAM;
+ static int default_cmode = CMODE_NVRAM;
+ #endif
 diff --git a/include/linux/nvram.h b/include/linux/nvram.h
-index bb4ea8cc6ea6..31c763087746 100644
+index a1e01dc89759..79431dab87a1 100644
 --- a/include/linux/nvram.h
 +++ b/include/linux/nvram.h
-@@ -31,6 +31,8 @@ struct nvram_ops {
- 	void            (*write_byte)(unsigned char, int);
- 	ssize_t         (*read)(char *, size_t, loff_t *);
- 	ssize_t         (*write)(char *, size_t, loff_t *);
-+	long            (*initialize)(void);
-+	long            (*set_checksum)(void);
- };
+@@ -15,8 +15,11 @@ extern const struct nvram_ops arch_nvram_ops;
  
- extern const struct nvram_ops arch_nvram_ops;
+ static inline ssize_t nvram_get_size(void)
+ {
++#ifdef CONFIG_PPC
++#else
+ 	if (arch_nvram_ops.get_size)
+ 		return arch_nvram_ops.get_size();
++#endif
+ 	return -ENODEV;
+ }
+ 
 -- 
 2.19.2
 
