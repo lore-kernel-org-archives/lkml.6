@@ -2,195 +2,155 @@ Return-Path: <SRS0=RZO6=PX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1EE1BC43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 15:00:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 668F1C43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 15:01:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EC7E720656
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 15:00:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3971920675
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 15:01:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730558AbfAOPAV (ORCPT
+        id S1730576AbfAOPBo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 15 Jan 2019 10:00:21 -0500
-Received: from mx2.suse.de ([195.135.220.15]:55830 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728494AbfAOPAU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Jan 2019 10:00:20 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id CAB89AE46;
-        Tue, 15 Jan 2019 15:00:18 +0000 (UTC)
-Date:   Tue, 15 Jan 2019 15:57:47 +0100
-From:   Cyril Hrubis <chrubis@suse.cz>
-To:     ltp@lists.linux.it, linux-kernel@vger.kernel.org,
-        libc-alpha@sourceware.org
-Cc:     lwn@lwn.net, akpm@linux-foundation.org,
-        torvalds@linux-foundation.org
-Subject: [LTP] [ANNOUNCE] The Linux Test Project has been released for
- JANUARY 2019
-Message-ID: <20190115145747.GB7842@rei.lan>
+        Tue, 15 Jan 2019 10:01:44 -0500
+Received: from mail-qk1-f194.google.com ([209.85.222.194]:33389 "EHLO
+        mail-qk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729474AbfAOPBm (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 Jan 2019 10:01:42 -0500
+Received: by mail-qk1-f194.google.com with SMTP id d15so1727212qkj.0;
+        Tue, 15 Jan 2019 07:01:41 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=/j2xo8vyz06xg1gQlvQEYwJpD6WHXsDfeyUW+0147bI=;
+        b=XChiI9LVpdP21E9M1BNsF/4opcOvd3RVRf4P0jzJvaaYD3PfScOPTwoLSpaZVZjapk
+         H7drWl6gyidFgDVdRtsKtSLlRHNkr6y0gED/HPE/XVBUHg9cfuXp3d2+QV+L0cdyCdZ/
+         eP2TUAINwFOV517OKUXtJIksrCi82W2alWItH8OYHyzVU9pdIkX9bEDJQ0CgOiE0ztb+
+         m0l28O43hGTk2FekD9zKBlzDghMdN07HqbMH1yNvgI5PkEEbfk3gJAg8q41wRBS/I+S0
+         rWdyGqSYnOvdah3rJB+JqTnU/kIJIzVufHfDWoIbCXI4ltTOslUfOcA16SWLezsnMiQf
+         Puow==
+X-Gm-Message-State: AJcUukddl6JAB0EAsXSDy6xi7cH5ub8Rvmshvn7te49258faIIaRjZaH
+        5hCoi7ly0oLN60ugy8s2xVXNDze/xTs+MwTwJd0=
+X-Google-Smtp-Source: ALg8bN66ERQQcRHL6kpituOugRhaYl47wq+bMeU6L9UD0bbjiIXTK390uY37r+V2oE8uztNtYSgBmDdqY7/ckMkByIg=
+X-Received: by 2002:ae9:d8c2:: with SMTP id u185mr2882793qkf.107.1547564501193;
+ Tue, 15 Jan 2019 07:01:41 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20190110162435.309262-1-arnd@arndb.de> <20190110162435.309262-15-arnd@arndb.de>
+ <87pnsz28k2.fsf@concordia.ellerman.id.au>
+In-Reply-To: <87pnsz28k2.fsf@concordia.ellerman.id.au>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Tue, 15 Jan 2019 16:01:24 +0100
+Message-ID: <CAK8P3a0uas76i2W1yjFvxHT-2=A8_egUZeAUM-Vya6386+87Xg@mail.gmail.com>
+Subject: Re: [PATCH 14/15] arch: add split IPC system calls where needed
+To:     Michael Ellerman <mpe@ellerman.id.au>
+Cc:     y2038 Mailman List <y2038@lists.linaro.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Ivan Kokshaysky <ink@jurassic.park.msu.ru>,
+        Matt Turner <mattst88@gmail.com>,
+        Russell King - ARM Linux <linux@armlinux.org.uk>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Tony Luck <tony.luck@intel.com>,
+        Fenghua Yu <fenghua.yu@intel.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Michal Simek <monstr@monstr.eu>,
+        Paul Burton <paul.burton@mips.com>,
+        Helge Deller <deller@gmx.de>,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        Rich Felker <dalias@libc.org>,
+        David Miller <davem@davemloft.net>,
+        Andy Lutomirski <luto@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        "the arch/x86 maintainers" <x86@kernel.org>,
+        Max Filippov <jcmvbkbc@gmail.com>,
+        Firoz Khan <firoz.khan@linaro.org>,
+        "Eric W . Biederman" <ebiederm@xmission.com>,
+        Deepa Dinamani <deepa.kernel@gmail.com>,
+        Dominik Brodowski <linux@dominikbrodowski.net>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Davidlohr Bueso <dave@stgolabs.net>,
+        alpha <linux-alpha@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        linux-ia64@vger.kernel.org,
+        linux-m68k <linux-m68k@lists.linux-m68k.org>,
+        linux-mips@vger.kernel.org,
+        Parisc List <linux-parisc@vger.kernel.org>,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
+        linux-s390 <linux-s390@vger.kernel.org>,
+        Linux-sh list <linux-sh@vger.kernel.org>,
+        sparclinux <sparclinux@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Good news everyone,
+On Mon, Jan 14, 2019 at 4:59 AM Michael Ellerman <mpe@ellerman.id.au> wrote:
+> Arnd Bergmann <arnd@arndb.de> writes:
+> >  arch/m68k/kernel/syscalls/syscall.tbl     | 11 +++++++++++
+> >  arch/mips/kernel/syscalls/syscall_o32.tbl | 11 +++++++++++
+> >  arch/powerpc/kernel/syscalls/syscall.tbl  | 12 ++++++++++++
+>
+> I have some changes I'd like to make to our syscall table that will
+> clash with this.
+>
+> I'll try and send them today.
 
-the Linux Test Project test suite stable release for *January 2019* has been
-released.
+Ok. Are those for 5.0 or 5.1? If they are intended for 5.0, it would be
+nice for me to have a branch based on 5.0-rc1 that I can put
+the other patches on top of.
 
-Since the last release 246 patches by 40 authors were merged.
+> > diff --git a/arch/powerpc/kernel/syscalls/syscall.tbl b/arch/powerpc/kernel/syscalls/syscall.tbl
+> > index db3bbb8744af..1bffab54ff35 100644
+> > --- a/arch/powerpc/kernel/syscalls/syscall.tbl
+> > +++ b/arch/powerpc/kernel/syscalls/syscall.tbl
+> > @@ -425,3 +425,15 @@
+> >  386  nospu   pkey_mprotect                   sys_pkey_mprotect
+> >  387  nospu   rseq                            sys_rseq
+> >  388  nospu   io_pgetevents                   sys_io_pgetevents               compat_sys_io_pgetevents
+> > +# room for arch specific syscalls
+> > +392  64      semtimedop                      sys_semtimedop
+> > +393  common  semget                          sys_semget
+> > +394  common  semctl                          sys_semctl                      compat_sys_semctl
+> > +395  common  shmget                          sys_shmget
+> > +396  common  shmctl                          sys_shmctl                      compat_sys_shmctl
+> > +397  common  shmat                           sys_shmat                       compat_sys_shmat
+> > +398  common  shmdt                           sys_shmdt
+> > +399  common  msgget                          sys_msgget
+> > +400  common  msgsnd                          sys_msgsnd                      compat_sys_msgsnd
+> > +401  common  msgrcv                          sys_msgrcv                      compat_sys_msgrcv
+> > +402  common  msgctl                          sys_msgctl                      compat_sys_msgctl
+>
+> We already have a gap at 366-377 from when we tried to add the split IPC
+> calls a few years back.
+>
+> I guess I don't mind leaving that gap and using the common numbers as
+> you've done here.
+>
+> But it would be good to add a comment pointing out that we have room
+> at 366 for more arch specific syscalls as well.
 
-NOTABLE CHANGES
-===============
+Ah, I missed that. I've added this to my patch now:
 
-* New tests
-  - fanotify11 - test for FAN_REPORT_TID
-  - fanotify01, fanotify03, fanotify10
-    - added coverage for FAN_MARK_FILESYSTEM
-  - fanotify03
-    - added coverage for mountpoint mark
-  - getrlimit03 - test if getrlimit syscalls return consistent data
-  - increased coverage for readahead and posix_fadvise on overlayfs
-  - execveat01 - functional tests
-  - execveat02 - invalid inputs tests
-  - statx06 - checks for correct statx timestamps
-  - lremovexattr01 - functional tests
-  - fremovexattr01 - functional tests
-  - fremovexattr02 - invalid inputs tests
-  - pt_test - Intel PT full trace test
-  - membarier01 - functional tests
-  - preadv201 - functional tests
-  - preadv202 - invalid inputs tests
-  - new open posix conformance tests for strchr, strcpy, strncpy
+index 5c0936d862fc..2ddfba536d5f 100644
+--- a/arch/powerpc/kernel/syscalls/syscall.tbl
++++ b/arch/powerpc/kernel/syscalls/syscall.tbl
+@@ -460,6 +460,7 @@
+ 363    spu     switch_endian                   sys_ni_syscall
+ 364    common  userfaultfd                     sys_userfaultfd
+ 365    common  membarrier                      sys_membarrier
++# 366-377 originally left for IPC, now unused
+ 378    nospu   mlock2                          sys_mlock2
+ 379    nospu   copy_file_range                 sys_copy_file_range
+ 380    common  preadv2                         sys_preadv2
+         compat_sys_preadv2
 
-* New regression tests
-  - crypto_user01 aka CVE-2018-19854 (previously known as CVE-2013-2547)
-  - fanout01 aka CVE-2017-15649
-  - fanotify09
-    - added coverage for merging events on child subdir
-      fixed in b469e7e47c8a "fanotify: fix handling of events on child sub-directory"
-  - fanotify10 - test for mount ignore mask
-     fixed in 9bdda4e9cf2d fsnotify: fix ignore mask logic in fsnotify()
-  - getxattr05
-     fixed in 82c9a927bc5d ("getxattr: use correct xattr length")
-
-* Additional 37 tests were converted to the new test library; with that about
-  30% of the LTP syscall testcases have been converted so far
-
-* The travis build-testing is now done using docker ensuring that latest LTP
-  git HEAD builds smoothly on major distributions and architectures
-
-* The fzsync library intended to trigger kernel races has been rewritten again,
-  the code is simpler now and at the same time the probability to hit races
-  has increased.
-
-NOTABLE CHANGES IN NETWORK TESTS
-================================
-brought to you by Peter Vorel
-
-New features/tests:
-
- - tests for SIT tunnel
- - tests for MPLS labels
- - netstress: add support for SO_BINDTODEVICE
- - added tst_net_run() shell API function
- - nfs tests were rewritten to new API
- - various fixes in dhcp, ipsec, rpc and virt tests
- - removed ftp and ssh tests
-
-DOWNLOAD AND LINKS
-==================
-
-The latest version of the test-suite contains 3000+ tests for the Linux
-and can be downloaded at:
-
-https://github.com/linux-test-project/ltp/releases/tag/20190115
-
-The project pages as well as GIT repository are hosted on GitHub:
-
-https://github.com/linux-test-project/ltp
-http://linux-test-project.github.io/
-
-If you ever wondered how to write a LTP testcase, don't miss our developer
-documentation at:
-
-https://github.com/linux-test-project/ltp/wiki/C-Test-Case-Tutorial
-https://github.com/linux-test-project/ltp/wiki/Test-Writing-Guidelines
-https://github.com/linux-test-project/ltp/wiki/BuildSystem
-
-Patches, new tests, bugs, comments or questions should go to to our mailing
-list at ltp@lists.linux.it.
-
-CREDITS
-=======
-
-Many thanks to the people contributing to this release:
-
-git shortlog -s -e -n 20180926..
-    41  Petr Vorel <pvorel@suse.cz>
-    28  Amir Goldstein <amir73il@gmail.com>
-    25  Alexey Kodanev <alexey.kodanev@oracle.com>
-    25  Xiao Yang <yangx.jy@cn.fujitsu.com>
-    16  Jan Stancek <jstancek@redhat.com>
-    13  Cyril Hrubis <chrubis@suse.cz>
-     8  Enji Cooper <yaneurabeya@gmail.com>
-     8  Stanislav Kholmanskikh <stanislav.kholmanskikh@oracle.com>
-     7  Clemens Famulla-Conrad <cfamullaconrad@suse.de>
-     6  Cristian Marussi <cristian.marussi@arm.com>
-     6  Greg Hackmann <ghackmann@google.com>
-     6  Rafael David Tinoco <rafael.tinoco@linaro.org>
-     6  Richard Palethorpe <rpalethorpe@suse.com>
-     6  Steve Muckle <smuckle@google.com>
-     4  Jinhui huang <huangjh.jy@cn.fujitsu.com>
-     4  Mandri, Padmashree <padmashree.mandri@intel.com>
-     4  Sandeep Patil <sspatil@google.com>
-     3  Eric Biggers <ebiggers@google.com>
-     3  Yixin Zhang <yixin.zhang@intel.com>
-     2  Jason Xing <kerneljasonxing@linux.alibaba.com>
-     2  Li Wang <liwang@redhat.com>
-     2  Subash Ganesan <subash@zilogic.com>
-     1  Allen, John <John.Allen@amd.com>
-     1  Ammy Yi <ammy.yi@intel.com>
-     1  Hongzhi.Song <hongzhi.song@windriver.com>
-     1  Kai Kang <kai.kang@windriver.com>
-     1  Keita Suzuki <keitasuzuki.park@sslab.ics.keio.ac.jp>
-     1  Kenneth Magic <kmagic@google.com>
-     1  Khem Raj <raj.khem@gmail.com>
-     1  Lei Yang <Lei.Yang@windriver.com>
-     1  Masayoshi Mizuma <m.mizuma@jp.fujitsu.com>
-     1  Michael Moese <mmoese@suse.de>
-     1  Myungho Jung <mhjungk@gmail.com>
-     1  Po-Hsu Lin <po-hsu.lin@canonical.com>
-     1  Shaoting Lei <leist.fnst@cn.fujitsu.com>
-     1  Sun Lianwen <sun_lianwen@163.com>
-     1  Thadeu Lima de Souza Cascardo <cascardo@canonical.com>
-     1  Tommi Rantala <tommi.t.rantala@nokia.com>
-     1  nixiaoming <nixiaoming@huawei.com>
-     1  yangj <yangj.fnst@cn.fujitsu.com>
-
-And also thanks to patch reviewers:
-
-git log 20180926.. | grep -Ei '(reviewed|acked)-by:' | sed 's/.*by: //' | sort | uniq -c | sort -n -r
-     86 Cyril Hrubis <chrubis@suse.cz>
-     20 Petr Vorel <pvorel@suse.cz>
-     13 Li Wang <liwang@redhat.com>
-     10 Jan Stancek <jstancek@redhat.com>
-      7 Alexey Kodanev <alexey.kodanev@oracle.com>
-      4 Xiao Yang <yangx.jy@cn.fujitsu.com>
-      3 Richard Palethorpe <rpalethorpe@suse.de>
-      1 Steve Muckle <smuckle@google.com>
-      1 Richard Palethorpe <rpalethorpe@suse.com>
-      1 Jan Kara <jack@suse.cz>
-      1 Amir Goldstein <amir73il@gmail.com>
-
--- 
-Cyril Hrubis
-chrubis@suse.cz
+       Arnd
