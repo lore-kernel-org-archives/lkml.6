@@ -2,199 +2,78 @@ Return-Path: <SRS0=RZO6=PX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 571B4C43612
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 15:31:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 55F6EC43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 15:31:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1C25020675
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 15:31:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2250320868
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 15:31:33 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="UofYB04t"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="KxQ9SHRw"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730890AbfAOPbH (ORCPT
+        id S1730905AbfAOPbb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 15 Jan 2019 10:31:07 -0500
-Received: from userp2120.oracle.com ([156.151.31.85]:55352 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728679AbfAOPbG (ORCPT
+        Tue, 15 Jan 2019 10:31:31 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:40728 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728679AbfAOPbb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Jan 2019 10:31:06 -0500
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id x0FFSge7118645;
-        Tue, 15 Jan 2019 15:29:33 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
- references : from : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=corp-2018-07-02;
- bh=nndJJC/ikVUV1UapEgYRmYZzsSo85A25S1VDY8yVVlI=;
- b=UofYB04tiluNq7qOENAfCZx9RggbICJrfRN8D4/WSXASzjhxyuS3mi8VitDBfQ9eCe9b
- 6VGq4cECe3LiRz/iTCeJM2x2L7JwG8ANeWkN9G9dxqE57VfhDOGgieSEW3JrWIvLPTiv
- QHZkGqdTRM6pM6+TzawzvJwENcriE+fOip/t9XKWduoIAwpv4X49AI8J0XlSyILByVVb
- OYwbBHzAbR9SmnHB5qegkXv2Vc4RDe4Xz4aKpsRA/FHWcmIPz0Lia27WP6dIMQ8cLjQ1
- EQ/5aMiXl44JjlCYy0feyC1n5dUmlz3V1SWCD7uMGC1ZLcE87h35W2rO0Orbqe7B1CLK ng== 
-Received: from userv0021.oracle.com (userv0021.oracle.com [156.151.31.71])
-        by userp2120.oracle.com with ESMTP id 2pybjs4g5f-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 15 Jan 2019 15:29:32 +0000
-Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
-        by userv0021.oracle.com (8.14.4/8.14.4) with ESMTP id x0FFTRop030032
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 15 Jan 2019 15:29:27 GMT
-Received: from abhmp0001.oracle.com (abhmp0001.oracle.com [141.146.116.7])
-        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x0FFTP7P032651;
-        Tue, 15 Jan 2019 15:29:26 GMT
-Received: from dhcp-burlington7-2nd-B-east-10-152-55-162.usdhcp.oraclecorp.com (/10.152.32.65)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Tue, 15 Jan 2019 07:29:25 -0800
-Subject: Re: [PATCH 8/9] xen/gntdev.c: Convert to use vm_insert_range
-To:     Souptick Joarder <jrdr.linux@gmail.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        Michal Hocko <mhocko@suse.com>,
-        Juergen Gross <jgross@suse.com>,
-        Russell King - ARM Linux <linux@armlinux.org.uk>,
-        robin.murphy@arm.com, xen-devel@lists.xenproject.org,
-        linux-kernel@vger.kernel.org, Linux-MM <linux-mm@kvack.org>
-References: <20190111151235.GA2836@jordon-HP-15-Notebook-PC>
- <f6eef305-daf3-dad8-96e3-d2f93d169fd4@oracle.com>
- <CAFqt6zYFR5FHXTLsSQ2DKgZDQtuNB2jZWK6ZLUAscG9vMnSk3Q@mail.gmail.com>
-From:   Boris Ostrovsky <boris.ostrovsky@oracle.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=boris.ostrovsky@oracle.com; prefer-encrypt=mutual; keydata=
- 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
- Jg6OxFYd01z+a+oL
-Message-ID: <2dfe8988-16a7-4997-78a6-7e0dfb9cc741@oracle.com>
-Date:   Tue, 15 Jan 2019 10:29:17 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.1
+        Tue, 15 Jan 2019 10:31:31 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=QciLo+wsg0uZeXWr5zAF7r512Gi3FOpmFxN/2k9BQPQ=; b=KxQ9SHRw5S/vqoyv3cI+bd0WE
+        S6N5IlbHR9347Wh2JGe9k7BjJmZ0VluGXDlueZzJqPNSvBBQAeMm4mCGDDGbmV4+sqSBrkOCaxfUt
+        42dL8Mk1qjvWsnyaaJGVh2KGUeD0lggQW7nm+FtPrs/Q5phVi9GgJAyTiTh7yV72H0aLAtq8POvic
+        CaGPgs6gBngjMmKK6/ckxoY8gYcK2Ck8sPcZaL7R7RIJAMqmd1Fmi0In7UQJKwkT/JVdQebNGrMEL
+        Px3ee/tEG7l2duBqjrb9LjmUizOTNVzBFxtvCwmnxMhUlmaeAbt9NTG89uSkNOJwyrf9fsLU7Q2Ow
+        xrc7N3Wug==;
+Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gjQga-00022e-Lk; Tue, 15 Jan 2019 15:31:28 +0000
+Date:   Tue, 15 Jan 2019 07:31:28 -0800
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Joel Nider <joeln@il.ibm.com>
+Cc:     Jonathan Corbet <corbet@lwn.net>, Jason Gunthorpe <jgg@ziepe.ca>,
+        Leon Romanovsky <leon@kernel.org>,
+        Doug Ledford <dledford@redhat.com>,
+        Mike Rapoport <rppt@linux.ibm.com>, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 2/2] docs-rst: userspace: update verbs API details
+Message-ID: <20190115153128.GA6310@bombadil.infradead.org>
+References: <1547547991-5314-1-git-send-email-joeln@il.ibm.com>
+ <1547547991-5314-3-git-send-email-joeln@il.ibm.com>
 MIME-Version: 1.0
-In-Reply-To: <CAFqt6zYFR5FHXTLsSQ2DKgZDQtuNB2jZWK6ZLUAscG9vMnSk3Q@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9136 signatures=668680
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1810050000 definitions=main-1901150129
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1547547991-5314-3-git-send-email-joeln@il.ibm.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 1/14/19 11:49 PM, Souptick Joarder wrote:
-> On Tue, Jan 15, 2019 at 4:58 AM Boris Ostrovsky
-> <boris.ostrovsky@oracle.com> wrote:
->> On 1/11/19 10:12 AM, Souptick Joarder wrote:
->>> Convert to use vm_insert_range() to map range of kernel
->>> memory to user vma.
->>>
->>> Signed-off-by: Souptick Joarder <jrdr.linux@gmail.com>
->> Reviewed-by: Boris Ostrovsky <boris.ostrovsky@oracle.com>
->>
->> (although it would be good to mention in the commit that you are also
->> replacing count with vma_pages(vma), and why)
-> The original code was using count ( *count = vma_pages(vma)* )
-> which is same as this patch. Do I need capture it change log ?
+On Tue, Jan 15, 2019 at 12:26:31PM +0200, Joel Nider wrote:
+> It is important to understand the existing framework when implementing
+> a new verb. The majority of existing API functions are implemented using
+> the write syscall, but this has been superceded by the ioctl syscall
+> for new commands. This patch updates the documentation regarding how
+> to go about implementing a new verb, focusing on the new ioctl
+> interface.
+> 
+> The documentation is far from complete, but this is a good step in the
+> right direction. Future patches can add more detail according to need.
+> Also, the interface is still undergoing substantial changes so an
+> effort was made to document only the stable parts so as to avoid
+> incorrect information since documentation changes tend to lag behind
+> code changes.
 
-
-I'd just say that because theoretically count might not be equal to
-map->count we should use the latter as input to vm_insert_range().
-
-Thanks.
--boris
-
-
-
->
->>
->>> ---
->>>  drivers/xen/gntdev.c | 16 ++++++----------
->>>  1 file changed, 6 insertions(+), 10 deletions(-)
->>>
->>> diff --git a/drivers/xen/gntdev.c b/drivers/xen/gntdev.c
->>> index b0b02a5..ca4acee 100644
->>> --- a/drivers/xen/gntdev.c
->>> +++ b/drivers/xen/gntdev.c
->>> @@ -1082,18 +1082,17 @@ static int gntdev_mmap(struct file *flip, struct vm_area_struct *vma)
->>>  {
->>>       struct gntdev_priv *priv = flip->private_data;
->>>       int index = vma->vm_pgoff;
->>> -     int count = vma_pages(vma);
->>>       struct gntdev_grant_map *map;
->>> -     int i, err = -EINVAL;
->>> +     int err = -EINVAL;
->>>
->>>       if ((vma->vm_flags & VM_WRITE) && !(vma->vm_flags & VM_SHARED))
->>>               return -EINVAL;
->>>
->>>       pr_debug("map %d+%d at %lx (pgoff %lx)\n",
->>> -                     index, count, vma->vm_start, vma->vm_pgoff);
->>> +                     index, vma_pages(vma), vma->vm_start, vma->vm_pgoff);
->>>
->>>       mutex_lock(&priv->lock);
->>> -     map = gntdev_find_map_index(priv, index, count);
->>> +     map = gntdev_find_map_index(priv, index, vma_pages(vma));
->>>       if (!map)
->>>               goto unlock_out;
->>>       if (use_ptemod && map->vma)
->>> @@ -1145,12 +1144,9 @@ static int gntdev_mmap(struct file *flip, struct vm_area_struct *vma)
->>>               goto out_put_map;
->>>
->>>       if (!use_ptemod) {
->>> -             for (i = 0; i < count; i++) {
->>> -                     err = vm_insert_page(vma, vma->vm_start + i*PAGE_SIZE,
->>> -                             map->pages[i]);
->>> -                     if (err)
->>> -                             goto out_put_map;
->>> -             }
->>> +             err = vm_insert_range(vma, map->pages, map->count);
->>> +             if (err)
->>> +                     goto out_put_map;
->>>       } else {
->>>  #ifdef CONFIG_X86
->>>               /*
+I think this is a horrible direction to take.  The current document is
+clearly for _users_.  All this documentation you've added is for kernel
+hackers.  It needs to go in a different file, or not be added at all.
 
