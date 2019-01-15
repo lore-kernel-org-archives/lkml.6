@@ -4,91 +4,86 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D4526C43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 19:59:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 055D7C43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 19:59:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9F31720656
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 19:59:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C537A20656
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 19:59:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547582347;
-	bh=y9qwtymLhtt5KIO2H3mStADQ6XNTauLyiD3AuXxUD8g=;
+	s=default; t=1547582394;
+	bh=7nRwx6i+9kTdS/0+zpcHVPETENeL6PFJRYSThlK0TEI=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=NxmM8jec35uaGGhKGme0l45qQhuiYnXm8oDFsCgvsDziKcHVmb0+kXAT8aZP4z/Ea
-	 IuHlCTRG74AhaW2DuIoMnONUZUzuxv5+eZSUFDnIogaYL2lvcdMsHMNcvbNShdDAvX
-	 vG0QMgqA4O/u3bkJ9KX9B+WtraoaAYKSno1I55iw=
+	b=akcjmoCDwryeHsJT8Rr+6sl+D+Io9TxZNmkiF+Ytz2Tvma/WykSEBNkMrotH9+vAi
+	 VtQvete6JDPZE4RDbVT+vAl/udGWvvF/m8hVvoy26D7N5sjh9l5D2vRycBKasw77x8
+	 xZ9AWgdNFKkoa+J2/eKxCX1xXX1FMNGYM0yHCoyI=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389561AbfAOT7F (ORCPT
+        id S2389570AbfAOT7x (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 15 Jan 2019 14:59:05 -0500
-Received: from mail-oi1-f195.google.com ([209.85.167.195]:35949 "EHLO
-        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732180AbfAOT7E (ORCPT
+        Tue, 15 Jan 2019 14:59:53 -0500
+Received: from mail-ot1-f68.google.com ([209.85.210.68]:44436 "EHLO
+        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729816AbfAOT7w (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Jan 2019 14:59:04 -0500
-Received: by mail-oi1-f195.google.com with SMTP id x23so3147134oix.3;
-        Tue, 15 Jan 2019 11:59:04 -0800 (PST)
+        Tue, 15 Jan 2019 14:59:52 -0500
+Received: by mail-ot1-f68.google.com with SMTP id f18so3660420otl.11;
+        Tue, 15 Jan 2019 11:59:52 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=6cvaXhF+m5MMZK9Hp/wipHqIYddrdvi4/onQTSvPygE=;
-        b=OQV+SQdxt5g7XnvPp1ogAP7hx0CuN7g/UEBN0JvzflJWICy42hpO0KumE4Uwockq+1
-         opkWMqWW3ZzNWHrb3gxWkXXQo/IepspyZnTFBsaf0sAM2BEcFqc7cneQIoz7gmjW++9W
-         O0J8ECOIkmVRRxqolJEFoLAA/oNCgs5W0oSpY4mIOkkA6qBEeqOMGTixAxC3b/xsAHFl
-         PU9jZrU7UiNGVW2kkxDgLTvYX8oHkpCFVTPKAUnUDQ2Tk9Cuk4IWcLTiLy8wxMsmj9pl
-         860+HA1xw8l6/1TFAUqrY02YvCZIgBaG7lJnkMbKpzbM3efX/OLb2MSLhIdo23jOZ32O
-         g8mg==
-X-Gm-Message-State: AJcUukdS4mrqfkfFrbU0jvrIqPVB7gBM6mkX8/372nOHEe3dE5NXKSSO
-        N5aaDAxt/sBDJNS6VEvnrA==
-X-Google-Smtp-Source: ALg8bN6ikZuRMOoZdLrriMdvgGvRdGXc3i+dmRYtZkGmw8g3DNJFcJcCkOqXpnEpXPc7HAc5XMpRnw==
-X-Received: by 2002:aca:100b:: with SMTP id 11mr2758776oiq.303.1547582343364;
-        Tue, 15 Jan 2019 11:59:03 -0800 (PST)
+        bh=DmSKzXrxjL7Qo6w/em0jPsHUoPR4e9N57t/OqS7sV7E=;
+        b=cxs2b2OXVmQz9hTuhobYjSYa0wBSDbNBU7hr0sVsU/KLgKwasz7zk2q/RsOILXu2RY
+         X/F8/LYtPSgeeloi8ZCWujy3Q4LefT03qvxVGi4qYFD2niJU70TRxauRv8sBlI7vqNU0
+         VNkUoG1SxKLSR3Cfr1LqI81fhLF2k6dBFcmcT2VnZS8y4Ygl1S7be96ghTw2k1wenB8o
+         ORga+ZVsy7spNoKkK/wW1C026mgNYBdzpTmOcyYC8sMWJ3F0w1Pv68HZ6Mb5x84cJKGk
+         Hry9LnD6qjswbXyVfwf0AK+06+ohU+Cln1r1zY6VFAMGH9PF2vHDEOfoHzvLDGeKyfgM
+         v5pQ==
+X-Gm-Message-State: AJcUukcXNjW86kc+61idVIX70kHgyPvnZROLXtYW2uq9nf4K+Y4mzZuv
+        6YR3nPBXtk0Pcc9jj6eA6w==
+X-Google-Smtp-Source: ALg8bN57Axo2OMwnsaLjmKek1jimcRhva0o/3bNYRS2KFqvty04E3VcNPVcpXuBIu7BqoZx5ErFKOQ==
+X-Received: by 2002:a9d:721e:: with SMTP id u30mr3421490otj.203.1547582391831;
+        Tue, 15 Jan 2019 11:59:51 -0800 (PST)
 Received: from localhost ([70.231.7.113])
-        by smtp.gmail.com with ESMTPSA id v20sm2065277otp.10.2019.01.15.11.59.02
+        by smtp.gmail.com with ESMTPSA id v3sm3152879oib.57.2019.01.15.11.59.50
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 15 Jan 2019 11:59:02 -0800 (PST)
-Date:   Tue, 15 Jan 2019 13:59:02 -0600
+        Tue, 15 Jan 2019 11:59:51 -0800 (PST)
+Date:   Tue, 15 Jan 2019 13:59:49 -0600
 From:   Rob Herring <robh@kernel.org>
-To:     Lars Poeschel <poeschel@lemonage.de>
-Cc:     devicetree@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>,
-        "GitAuthor: Lars Poeschel" <poeschel@lemonage.de>,
-        open list <linux-kernel@vger.kernel.org>,
-        Johan Hovold <johan@kernel.org>
-Subject: Re: [PATCH v5 2/7] nfc: pn532_uart: Add NXP PN532 to devicetree docs
-Message-ID: <20190115195902.GA3106@bogus>
-References: <20190111161812.26325-1-poeschel@lemonage.de>
- <20190111161812.26325-2-poeschel@lemonage.de>
+To:     Rajendra Nayak <rnayak@codeaurora.org>
+Cc:     andy.gross@linaro.org, robh@kernel.org, viresh.kumar@linaro.org,
+        sboyd@kernel.org, ulf.hansson@linaro.org, collinsd@codeaurora.org,
+        mka@chromium.org, devicetree@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        henryc.chen@mediatek.com, Rajendra Nayak <rnayak@codeaurora.org>
+Subject: Re: [PATCH v11 1/9] dt-bindings: opp: Introduce opp-level bindings
+Message-ID: <20190115195949.GA8255@bogus>
+References: <20190110040209.6028-1-rnayak@codeaurora.org>
+ <20190110040209.6028-2-rnayak@codeaurora.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190111161812.26325-2-poeschel@lemonage.de>
+In-Reply-To: <20190110040209.6028-2-rnayak@codeaurora.org>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 11 Jan 2019 17:18:05 +0100, Lars Poeschel wrote:
-> Add a simple binding doc for the pn532.
+On Thu, 10 Jan 2019 09:32:01 +0530, Rajendra Nayak wrote:
+> Add opp-level as an additional property in the OPP node to describe
+> the performance level of the device.
 > 
-> Cc: Johan Hovold <johan@kernel.org>
-> Signed-off-by: Lars Poeschel <poeschel@lemonage.de>
+> On some SoCs (especially from Qualcomm and MediaTek) this value
+> is communicated to a remote microprocessor by the CPU, which
+> then takes some actions (like adjusting voltage values across various
+> rails) based on the value passed.
+> 
+> Signed-off-by: Rajendra Nayak <rnayak@codeaurora.org>
 > ---
-> Changes in v4:
-> - Add documentation about reg property in case of i2c
-> 
-> Changes in v3:
-> - seperate binding doc instead of entry in trivial-devices.txt
-> 
->  .../devicetree/bindings/nfc/pn532.txt         | 33 +++++++++++++++++++
->  1 file changed, 33 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/nfc/pn532.txt
+>  Documentation/devicetree/bindings/opp/opp.txt | 3 +++
+>  1 file changed, 3 insertions(+)
 > 
 
-Please add Acked-by/Reviewed-by tags when posting new versions. However,
-there's no need to repost patches *only* to add the tags. The upstream
-maintainer will do that for acks received on the version they apply.
-
-If a tag was not added on purpose, please state why and what changed.
+Reviewed-by: Rob Herring <robh@kernel.org>
