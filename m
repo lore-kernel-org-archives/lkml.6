@@ -4,51 +4,49 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C860C43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 16:48:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 75C8BC43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 16:48:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1B1C720645
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 16:48:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 45D7120645
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 16:48:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547570899;
-	bh=Rj/cmFtFaLg7xtn58edwVQzAUrYLZVJzoJIYWleiIaY=;
+	s=default; t=1547570911;
+	bh=9VcXK7Kf90SQ2pSiL2o8GAnDgW+CGDI79CM0DW/z2Rk=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=soU3Lpcx0K/q/mTWWlbvn2ovzgK/BWGiJiRpmU0q9mSyaXvulLgwbCtds672U8OUg
-	 TwIzhnTQWbjkljSfm3hRLvQaDialktLE8rhPhFaAb4t0HHilYdutN0QsCk49TxW+/u
-	 z5ALxn2bzwlIsB1UyRxv238vnRyuv72mHHhZ/P/A=
+	b=JcE5gUbQG+Iivh1ixDSJecvUGqTHW40BzjUHsZ5C4Ff4sbZRWvJiytm5nQU59bVeW
+	 ed6gtT0fSx+s3GVz5pQRMLQOBNnWUymUI+9RK0GdzMGJKQdX5DfXCcIKprOLVwNAlB
+	 MlPp+Tt+vfD8Vis+Gstvdg8s255sLJ3002bTQtZ4=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732533AbfAOQsR (ORCPT
+        id S1731494AbfAOQs3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 15 Jan 2019 11:48:17 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34854 "EHLO mail.kernel.org"
+        Tue, 15 Jan 2019 11:48:29 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34604 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387708AbfAOQpK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Jan 2019 11:45:10 -0500
+        id S1728952AbfAOQpA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 Jan 2019 11:45:00 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 097552054F;
-        Tue, 15 Jan 2019 16:45:08 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9463E20675;
+        Tue, 15 Jan 2019 16:44:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547570709;
-        bh=Rj/cmFtFaLg7xtn58edwVQzAUrYLZVJzoJIYWleiIaY=;
+        s=default; t=1547570699;
+        bh=9VcXK7Kf90SQ2pSiL2o8GAnDgW+CGDI79CM0DW/z2Rk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=o+ATUUBzXCd+40yVF55ouPeDrNBwU8J6pTIGKn8t9i55yyoFPlBKlZFi4xj4B3QF6
-         TmPJp9yvTRJGSiBdsycseoTueVwieT0dzyIzy7A3C1x2DSL9rsLypGstlJPcLWscIs
-         e9a7inf0hG8T5i1N+1Urw21lkzFybh7wrd/RnZY0=
+        b=acOOao4OiY5fkOjubmkslmXU+1Aqvi5iTA/ATnPvKNf6VGLEatuA1nGcyvikwQQ+4
+         K25MbnFainA2BCzqGNufVYsa1WOvzI9iuRXwoiQ1SOMQWMQ6o6JIfFw1JPnbnoF97y
+         fl1aYErezDvDuJ4fwdFEiPzPO51rd+Xdt1MMWo3k=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Chris Wilson <chris@chris-wilson.co.uk>,
-        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-        Mika Kuoppala <mika.kuoppala@linux.intel.com>,
-        Matthew Auld <matthew.william.auld@gmail.com>,
-        Jani Nikula <jani.nikula@intel.com>
-Subject: [PATCH 4.20 43/57] drm/i915: Unwind failure on pinning the gen7 ppgtt
-Date:   Tue, 15 Jan 2019 17:36:24 +0100
-Message-Id: <20190115154913.350212370@linuxfoundation.org>
+        stable@vger.kernel.org, Hans de Goede <hdegoede@redhat.com>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
+Subject: [PATCH 4.20 31/57] ACPI: power: Skip duplicate power resource references in _PRx
+Date:   Tue, 15 Jan 2019 17:36:12 +0100
+Message-Id: <20190115154912.454424323@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190115154910.734892368@linuxfoundation.org>
 References: <20190115154910.734892368@linuxfoundation.org>
@@ -67,62 +65,87 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Chris Wilson <chris@chris-wilson.co.uk>
+From: Hans de Goede <hdegoede@redhat.com>
 
-commit 280d479b310298dfeb1d6f9a1617eca37beb6ce4 upstream.
+commit 7d7b467cb95bf29597b417d4990160d4ea6d69b9 upstream.
 
-If we fail to pin the ggtt vma slot for the ppgtt page tables, we need
-to unwind the locals before reporting the error. Or else on subsequent
-attempts to bind the page tables into the ggtt, we will already believe
-that the vma has been pinned and continue on blithely. If something else
-should happen to be at that location, choas ensues.
+Some ACPI tables contain duplicate power resource references like this:
 
-Fixes: a2bbf7148342 ("drm/i915/gtt: Only keep gen6 page directories pinned while active")
-Signed-off-by: Chris Wilson <chris@chris-wilson.co.uk>
-Cc: Joonas Lahtinen <joonas.lahtinen@linux.intel.com>
-Cc: Mika Kuoppala <mika.kuoppala@linux.intel.com>
-Cc: Matthew Auld <matthew.william.auld@gmail.com>
-Cc: <stable@vger.kernel.org> # v4.19+
-Reviewed-by: Matthew Auld <matthew.william.auld@gmail.com>
-Link: https://patchwork.freedesktop.org/patch/msgid/20181222030623.21710-1-chris@chris-wilson.co.uk
-(cherry picked from commit d4de753526f4d99f541f1b6ed1d963005c09700c)
-Signed-off-by: Jani Nikula <jani.nikula@intel.com>
+        Name (_PR0, Package (0x04)  // _PR0: Power Resources for D0
+        {
+            P28P,
+            P18P,
+            P18P,
+            CLK4
+        })
+
+This causes a WARN_ON in sysfs_add_link_to_group() because we end up
+adding a link to the same acpi_device twice:
+
+sysfs: cannot create duplicate filename '/devices/LNXSYSTM:00/LNXSYBUS:00/PNP0A08:00/808622C1:00/OVTI2680:00/power_resources_D0/LNXPOWER:0a'
+CPU: 0 PID: 1 Comm: swapper/0 Not tainted 4.19.12-301.fc29.x86_64 #1
+Hardware name: Insyde CherryTrail/Type2 - Board Product Name, BIOS jumperx.T87.KFBNEEA02 04/13/2016
+Call Trace:
+ dump_stack+0x5c/0x80
+ sysfs_warn_dup.cold.3+0x17/0x2a
+ sysfs_do_create_link_sd.isra.2+0xa9/0xb0
+ sysfs_add_link_to_group+0x30/0x50
+ acpi_power_expose_list+0x74/0xa0
+ acpi_power_add_remove_device+0x50/0xa0
+ acpi_add_single_object+0x26b/0x5f0
+ acpi_bus_check_add+0xc4/0x250
+ ...
+
+To address this issue, make acpi_extract_power_resources() check for
+duplicates and simply skip them when found.
+
+Cc: All applicable <stable@vger.kernel.org>
+Signed-off-by: Hans de Goede <hdegoede@redhat.com>
+[ rjw: Subject & changelog, comments ]
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/gpu/drm/i915/i915_gem_gtt.c |   15 ++++++++++++---
- 1 file changed, 12 insertions(+), 3 deletions(-)
+ drivers/acpi/power.c |   22 ++++++++++++++++++++++
+ 1 file changed, 22 insertions(+)
 
---- a/drivers/gpu/drm/i915/i915_gem_gtt.c
-+++ b/drivers/gpu/drm/i915/i915_gem_gtt.c
-@@ -2117,6 +2117,7 @@ static struct i915_vma *pd_vma_create(st
- int gen6_ppgtt_pin(struct i915_hw_ppgtt *base)
- {
- 	struct gen6_hw_ppgtt *ppgtt = to_gen6_ppgtt(base);
-+	int err;
- 
- 	/*
- 	 * Workaround the limited maximum vma->pin_count and the aliasing_ppgtt
-@@ -2132,9 +2133,17 @@ int gen6_ppgtt_pin(struct i915_hw_ppgtt
- 	 * allocator works in address space sizes, so it's multiplied by page
- 	 * size. We allocate at the top of the GTT to avoid fragmentation.
- 	 */
--	return i915_vma_pin(ppgtt->vma,
--			    0, GEN6_PD_ALIGN,
--			    PIN_GLOBAL | PIN_HIGH);
-+	err = i915_vma_pin(ppgtt->vma,
-+			   0, GEN6_PD_ALIGN,
-+			   PIN_GLOBAL | PIN_HIGH);
-+	if (err)
-+		goto unpin;
-+
-+	return 0;
-+
-+unpin:
-+	ppgtt->pin_count = 0;
-+	return err;
+--- a/drivers/acpi/power.c
++++ b/drivers/acpi/power.c
+@@ -131,6 +131,23 @@ void acpi_power_resources_list_free(stru
+ 	}
  }
  
- void gen6_ppgtt_unpin(struct i915_hw_ppgtt *base)
++static bool acpi_power_resource_is_dup(union acpi_object *package,
++				       unsigned int start, unsigned int i)
++{
++	acpi_handle rhandle, dup;
++	unsigned int j;
++
++	/* The caller is expected to check the package element types */
++	rhandle = package->package.elements[i].reference.handle;
++	for (j = start; j < i; j++) {
++		dup = package->package.elements[j].reference.handle;
++		if (dup == rhandle)
++			return true;
++	}
++
++	return false;
++}
++
+ int acpi_extract_power_resources(union acpi_object *package, unsigned int start,
+ 				 struct list_head *list)
+ {
+@@ -150,6 +167,11 @@ int acpi_extract_power_resources(union a
+ 			err = -ENODEV;
+ 			break;
+ 		}
++
++		/* Some ACPI tables contain duplicate power resource references */
++		if (acpi_power_resource_is_dup(package, start, i))
++			continue;
++
+ 		err = acpi_add_power_resource(rhandle);
+ 		if (err)
+ 			break;
 
 
