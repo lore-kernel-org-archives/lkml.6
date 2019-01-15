@@ -2,136 +2,141 @@ Return-Path: <SRS0=RZO6=PX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E2D10C43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 21:25:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 76337C43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 21:25:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B1BD420866
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 21:25:06 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="L9ePam4m"
+	by mail.kernel.org (Postfix) with ESMTP id 4F19820866
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 21:25:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390385AbfAOVZE (ORCPT
+        id S2390406AbfAOVZP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 15 Jan 2019 16:25:04 -0500
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:43550 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732860AbfAOVZD (ORCPT
+        Tue, 15 Jan 2019 16:25:15 -0500
+Received: from mail-qt1-f196.google.com ([209.85.160.196]:33934 "EHLO
+        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2390387AbfAOVZM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Jan 2019 16:25:03 -0500
-Received: by mail-pl1-f195.google.com with SMTP id gn14so1873812plb.10
-        for <linux-kernel@vger.kernel.org>; Tue, 15 Jan 2019 13:25:03 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=3Apz0Fm4k3jNkvwhfslGVbEdm48qHu74yHM2ejhg0UU=;
-        b=L9ePam4mEmvvQdk3e8UDCNPG1H5jfY5B7qHd8H+CeXpyuA8Din/vpLRt4+KggbG+sJ
-         RQCN1HvVJEPE5STMCtuX1bbMdgvV5fB36UEB5fm6FTJEBo6sSHOrV78cGLnU5OpOo9cu
-         /6nRD+CqxzNEx4tCjUCFjCObkYPAIrJhSJeLh/a2AWOUE5rI9WVqHwWjcy+BqH2ZsVWD
-         KwJfex6pRmHVj/hLQ9L7k1oq7UaDkFhrerAjPP39fr9i+mYV/lrMaihsYM/1NxeZAT68
-         A3fWJWbpU7rXjzOq332azBFpK6/gL16m6exgdbhxJ/B7vqIziPYXdVrkz6akcQAqwUjq
-         F5GA==
+        Tue, 15 Jan 2019 16:25:12 -0500
+Received: by mail-qt1-f196.google.com with SMTP id r14so4793649qtp.1;
+        Tue, 15 Jan 2019 13:25:11 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=3Apz0Fm4k3jNkvwhfslGVbEdm48qHu74yHM2ejhg0UU=;
-        b=ZB+X0HpSCq/bQQkgQ7TLeMQz4CjUQg+DA+uctKPVZ96OWZsNuaPo7khen5hBGo+pA4
-         kq95RfC0yP3MnxFLwwu4MActYjitDvuMQx9rewbPFtz8EAkQ9AYEX91AOs03BYXLzWfk
-         zrL2137E6j9IgF3FeCs6wrVMf6kGqugdUvCdSZCf/OZxKdFLYv16Hq7g4MEyXbOmBAnm
-         dHRAAuyk5dIpVA2+M5ckPhMRC35sLH89XleZoFG8HrZXBb1q9ucueuCxmeVh8Q6URgzm
-         caue6x0WHHoMqWDKgpTE+Auop+EqSrPEPFhC9Ef/6YjW1t7v2a8KEs5Vn3uqaBBd7SQ8
-         /QDA==
-X-Gm-Message-State: AJcUukdNR3UbwQGtmZsf7hi51Ssu6o7WElUW7Z2KQ3U+DQMeCyQACD2P
-        QSBRh7gTQRD6doJ9e0vP14xuEw==
-X-Google-Smtp-Source: ALg8bN7TU76438vgxz0irhnnKqoUjtyPpSuqVoQxQOeuWsoTz1seUV0AKQG66Lsjpt55SiCfNpTgCw==
-X-Received: by 2002:a17:902:4225:: with SMTP id g34mr6349957pld.152.1547587502782;
-        Tue, 15 Jan 2019 13:25:02 -0800 (PST)
-Received: from ziepe.ca (S010614cc2056d97f.ed.shawcable.net. [174.3.196.123])
-        by smtp.gmail.com with ESMTPSA id r76sm6893358pfb.69.2019.01.15.13.25.01
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 15 Jan 2019 13:25:01 -0800 (PST)
-Received: from jgg by mlx.ziepe.ca with local (Exim 4.90_1)
-        (envelope-from <jgg@ziepe.ca>)
-        id 1gjWCj-00015B-4g; Tue, 15 Jan 2019 14:25:01 -0700
-Date:   Tue, 15 Jan 2019 14:25:01 -0700
-From:   Jason Gunthorpe <jgg@ziepe.ca>
-To:     Thomas Hellstrom <thellstrom@vmware.com>
-Cc:     "hch@lst.de" <hch@lst.de>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "yong.zhi@intel.com" <yong.zhi@intel.com>,
-        "daniel.vetter@ffwll.ch" <daniel.vetter@ffwll.ch>,
-        "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>,
-        "syeh@vmware.com" <syeh@vmware.com>,
-        "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>,
-        "bingbu.cao@intel.com" <bingbu.cao@intel.com>,
-        "imre.deak@intel.com" <imre.deak@intel.com>,
-        "tian.shu.qiu@intel.com" <tian.shu.qiu@intel.com>,
-        "jian.xu.zheng@intel.com" <jian.xu.zheng@intel.com>,
-        "shiraz.saleem@intel.com" <shiraz.saleem@intel.com>,
-        "sakari.ailus@linux.intel.com" <sakari.ailus@linux.intel.com>,
-        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>
-Subject: Re: [PATCH] lib/scatterlist: Provide a DMA page iterator
-Message-ID: <20190115212501.GE22045@ziepe.ca>
-References: <20190104223531.GA1705@ziepe.ca>
- <20190110234218.GM6890@ziepe.ca>
- <20190114094856.GB29604@lst.de>
- <1fb20ab4b171b281e9994b6c55734c120958530b.camel@vmware.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=cwu79+tfKKxucE10UGrYialP7p/A9uZCoC3+9sRpJQU=;
+        b=WXzwpgdoUSI2zsiniBo8RCyxW+qXwITwjvxYCedhUOnTpXWgXLaUGVBLEkau4eeM3Z
+         zs0+TwbGMhYQBI2MP0xY8V85Ea0dY5heh8GdafL6O0i4u3n1HlLXQe7CV2c8aRgwD1mA
+         ue2AJa2MOXjs50TQ80w/zrNrgY1rshWoS3sqMoA+0Tp9kDFEpt2YjyiwOr/0beN86tX9
+         oEpyuF2jIDmiw1ZdkXTOD0OCLsTnzaY8MYqNdSUJbWSFddiSfeYUKIwkuOvFINl+QKY3
+         NknNUjq9JvBf/5sg3KECFCMAF52Tln/b7rbYBRdN3ZXi6P33De9zrOI2OkFUXcM3JlY8
+         ROmw==
+X-Gm-Message-State: AJcUukci3PgZUa+LBe+y/T0QTgOE7RdA6jA9vdnMk3dfMgzpDp99mVgj
+        b6ukBB5wmTWERVpbBSsiZ7cFDwtfVoqRiCSQQow=
+X-Google-Smtp-Source: ALg8bN7+BefPEIu+AO6YlC+TgIbBCbLAnXf3ffsM10PKrmgDgKU/DC/NPFEymZ0CWR7axa9SwHqauAHOlcWzwMsGG5Q=
+X-Received: by 2002:ac8:7451:: with SMTP id h17mr4458420qtr.319.1547587511092;
+ Tue, 15 Jan 2019 13:25:11 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1fb20ab4b171b281e9994b6c55734c120958530b.camel@vmware.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+References: <20190110162435.309262-1-arnd@arndb.de> <20190110162435.309262-15-arnd@arndb.de>
+ <87pnsz28k2.fsf@concordia.ellerman.id.au> <CAK8P3a0uas76i2W1yjFvxHT-2=A8_egUZeAUM-Vya6386+87Xg@mail.gmail.com>
+ <CAK8P3a3eUzGDrJtV2ySpgHwjKHwZYr+1xHp6tChCt1gWi=mJ+g@mail.gmail.com> <CAMuHMdVw1mBLGdn4hkiNVyoJ_oxMwi3d=_e7WL5ru+ALA4MKbw@mail.gmail.com>
+In-Reply-To: <CAMuHMdVw1mBLGdn4hkiNVyoJ_oxMwi3d=_e7WL5ru+ALA4MKbw@mail.gmail.com>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Tue, 15 Jan 2019 22:24:54 +0100
+Message-ID: <CAK8P3a3KE7bhK34T-G9Lj3v0ERhEj3LB5emEEwy8h6w8pVeQZg@mail.gmail.com>
+Subject: Re: [PATCH 14/15] arch: add split IPC system calls where needed
+To:     Geert Uytterhoeven <geert@linux-m68k.org>
+Cc:     Michael Ellerman <mpe@ellerman.id.au>,
+        y2038 Mailman List <y2038@lists.linaro.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Ivan Kokshaysky <ink@jurassic.park.msu.ru>,
+        Matt Turner <mattst88@gmail.com>,
+        Russell King - ARM Linux <linux@armlinux.org.uk>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Tony Luck <tony.luck@intel.com>,
+        Fenghua Yu <fenghua.yu@intel.com>,
+        Michal Simek <monstr@monstr.eu>,
+        Paul Burton <paul.burton@mips.com>,
+        Helge Deller <deller@gmx.de>,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        Rich Felker <dalias@libc.org>,
+        David Miller <davem@davemloft.net>,
+        Andy Lutomirski <luto@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        "the arch/x86 maintainers" <x86@kernel.org>,
+        Max Filippov <jcmvbkbc@gmail.com>,
+        Firoz Khan <firoz.khan@linaro.org>,
+        "Eric W . Biederman" <ebiederm@xmission.com>,
+        Deepa Dinamani <deepa.kernel@gmail.com>,
+        Dominik Brodowski <linux@dominikbrodowski.net>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Davidlohr Bueso <dave@stgolabs.net>,
+        alpha <linux-alpha@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        "linux-ia64@vger.kernel.org" <linux-ia64@vger.kernel.org>,
+        linux-m68k <linux-m68k@lists.linux-m68k.org>,
+        linux-mips@vger.kernel.org,
+        Parisc List <linux-parisc@vger.kernel.org>,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
+        linux-s390 <linux-s390@vger.kernel.org>,
+        Linux-sh list <linux-sh@vger.kernel.org>,
+        sparclinux <sparclinux@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 15, 2019 at 02:17:26PM +0000, Thomas Hellstrom wrote:
-> Hi, Christoph,
-> 
-> On Mon, 2019-01-14 at 10:48 +0100, Christoph Hellwig wrote:
-> > On Thu, Jan 10, 2019 at 04:42:18PM -0700, Jason Gunthorpe wrote:
-> > > > Changes since the RFC:
-> > > > - Rework vmwgfx too [CH]
-> > > > - Use a distinct type for the DMA page iterator [CH]
-> > > > - Do not have a #ifdef [CH]
-> > > 
-> > > ChristophH: Will you ack?
-> > 
-> > This looks generally fine.
-> > 
-> > > Are you still OK with the vmwgfx reworking, or should we go back to
-> > > the original version that didn't have the type safety so this
-> > > driver
-> > > can be left broken?
-> > 
-> > I think the map method in vmgfx that just does virt_to_phys is
-> > pretty broken.  Thomas, can you check if you see any performance
-> > difference with just doing the proper dma mapping, as that gets the
-> > driver out of interface abuse land?
-> 
-> The performance difference is not really the main problem here. The
-> problem is that even though we utilize the streaming DMA interface, we
-> use it only since we have to for DMA-Remapping and assume that the
-> memory is coherent. To be able to be as compliant as possible and ditch
-> the virt-to-phys mode, we *need* a DMA interface flag that tells us
-> when the dma_sync_for_xxx are no-ops. If they aren't we'll refuse to
-> load for now. I'm not sure, but I think also nouveau and radeon suffer
-> from the same issue.
+On Tue, Jan 15, 2019 at 5:36 PM Geert Uytterhoeven <geert@linux-m68k.org> wrote:
+> On Tue, Jan 15, 2019 at 4:19 PM Arnd Bergmann <arnd@arndb.de> wrote:
+> > On Tue, Jan 15, 2019 at 4:01 PM Arnd Bergmann <arnd@arndb.de> wrote:
+> > > On Mon, Jan 14, 2019 at 4:59 AM Michael Ellerman <mpe@ellerman.id.au> wrote:
+> > > > Arnd Bergmann <arnd@arndb.de> writes:
+> > > > >  arch/m68k/kernel/syscalls/syscall.tbl     | 11 +++++++++++
+> > > > >  arch/mips/kernel/syscalls/syscall_o32.tbl | 11 +++++++++++
+> > > > >  arch/powerpc/kernel/syscalls/syscall.tbl  | 12 ++++++++++++
+> > > >
+> > > > I have some changes I'd like to make to our syscall table that will
+> > > > clash with this.
+> > > >
+> > > > I'll try and send them today.
+> > >
+> > > Ok. Are those for 5.0 or 5.1? If they are intended for 5.0, it would be
+> > > nice for me to have a branch based on 5.0-rc1 that I can put
+> > > the other patches on top of.
+> >
+> > There is also another change that I considered:
+> >
+> > At the end of my series, we have a lot of entries like
+> >
+> > 245     32      clock_settime                   sys_clock_settime32
+> > 245     64      clock_settime                   sys_clock_settime
+> > 245     spu     clock_settime                   sys_clock_settime
+> >
+> > which could be folded into
+> >
+> > 245     32      clock_settime                   sys_clock_settime32
+> > 245     spu64 clock_settime                   sys_clock_settime
+> >
+> > if we just add another option to the ABI field. Any thoughts on
+> > that?
+>
+> So "spu64" would mean "spu + 64"?
+> That makes it more difficult to read, and to grep.
+> What about allowing multiple ABIs, separated by commas?
+> So that line would become:
+>
+>     245     spu,64 clock_settime                   sys_clock_settime
 
-RDMA needs something similar as well, in this case drivers take a
-struct page * from get_user_pages() and need to have the DMA map fail
-if the platform can't DMA map in a way that does not require any
-additional DMA API calls to ensure coherence. (think Userspace RDMA
-MR's)
+I agree that would be a nice representation, but doing this would
+again require changing the script, which then in turn clashes with
+Firoz' patches to unify it under the scripts/ directory.
 
-Today we just do the normal DMA map and when it randomly doesn't work
-and corrupts data tell those people their platforms don't support RDMA
-- it would be nice to have a safer API base solution..
-
-Jason
+       Arnd
