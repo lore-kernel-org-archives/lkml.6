@@ -2,143 +2,116 @@ Return-Path: <SRS0=RZO6=PX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D744C43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 07:38:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D931C43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 07:45:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DB08120859
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 07:38:57 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mU/O8YQC"
+	by mail.kernel.org (Postfix) with ESMTP id 7614E2085A
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 07:45:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728234AbfAOHiq (ORCPT
+        id S1728232AbfAOHpN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 15 Jan 2019 02:38:46 -0500
-Received: from mail-io1-f65.google.com ([209.85.166.65]:39455 "EHLO
-        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726886AbfAOHip (ORCPT
+        Tue, 15 Jan 2019 02:45:13 -0500
+Received: from mailgw02.mediatek.com ([1.203.163.81]:46673 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726594AbfAOHpN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Jan 2019 02:38:45 -0500
-Received: by mail-io1-f65.google.com with SMTP id k7so1329392iob.6;
-        Mon, 14 Jan 2019 23:38:44 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=lVehsSeMWUU3jkTxsZPIrdSDz5kPYi5V6dHdpqfENcA=;
-        b=mU/O8YQCDCXkh1/jmyk2APkT52zILHjHehkY+lUIOM3mBlCmm1A+gbSQuSGnhijgBL
-         zzuu4SH4zZ3rU90KKhQrAYkcRNogpzp2LzgbpxSFIv6xFfRokvtR4DR7VOtnVS1+VRcB
-         fzncpIZggKL9GqtXA0EO2l+nzIYKSFfxYJ0kISupD60wtWXAsvLg1SlXjuTjdpEKvL0y
-         oZwYdoViinuxpaX5LCcXsl5DM5QGR4ocvwuV0tikJqr9ntyt4Mk9/Js5DWkvFTMij1ss
-         3pQ9h8amEBzEIJK98cIatCBi3guVvFmcbcM0KYPHGhj2SZARhQnpqWho4AhBIqIxCV2n
-         PePQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=lVehsSeMWUU3jkTxsZPIrdSDz5kPYi5V6dHdpqfENcA=;
-        b=rO1fCBXw6g3DMFCwXt4nRu9W/EeWZ37qQFCDABXYXo/qdjNJM1iEC5PLzEXcYvK5E2
-         FF1Kndhj/vyP2WQQZiQzM2lhUKIHcDD5brKxNfXWl3V5L9btreOe+XPLA4j2OjqYllbi
-         aKwFgC1JW9HExDy8dM8QrljrPc6lfQBoE91OYkTt6AuxKCxdlASwUszs1YEfuM2+N2Hb
-         pmtBRzcQizN4mVRoGe6pDc1XpIiyXiFm4GoNoOaDdEEsxw4AdQicOSeAG9eY4EbdPg24
-         5Rhg9Rfbu5/ERu1rPukgAaVmwVpi1GLqYoJ6CZ/4bAuuU8wwLiCi0k/9z48NITqCwqJo
-         kXyw==
-X-Gm-Message-State: AJcUukfsbc9oIgcd3VvgWNwsVRTtXJY5WCB1bh6WjIKmTJ8q/bQLcYDi
-        JlUY5fY93nWPmLtKHTnbxvAPJBB27I6X4J0U2A==
-X-Google-Smtp-Source: ALg8bN7OGtN1JqEKvyXJgs4JoqOsGxp9q81rPmOCUPwNb81kL7oXPQzVsG/lBRT6XC0tu9hkN3Vn4MG31Wb2VWuOo8Y=
-X-Received: by 2002:a6b:39c6:: with SMTP id g189mr1168813ioa.255.1547537924450;
- Mon, 14 Jan 2019 23:38:44 -0800 (PST)
-MIME-Version: 1.0
-References: <1547183577-20309-1-git-send-email-kernelfans@gmail.com>
- <1547183577-20309-7-git-send-email-kernelfans@gmail.com> <fff8c6b6-7344-7ecb-b1a8-3c49af34c892@intel.com>
-In-Reply-To: <fff8c6b6-7344-7ecb-b1a8-3c49af34c892@intel.com>
-From:   Pingfan Liu <kernelfans@gmail.com>
-Date:   Tue, 15 Jan 2019 15:38:33 +0800
-Message-ID: <CAFgQCTsZOeBb8dUaq5LLfwzTObK5tT47h5U_BkfgtPDYLW9CqA@mail.gmail.com>
-Subject: Re: [PATCHv2 6/7] x86/mm: remove bottom-up allocation style for x86_64
-To:     Dave Hansen <dave.hansen@intel.com>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Len Brown <lenb@kernel.org>, Yinghai Lu <yinghai@kernel.org>,
-        Tejun Heo <tj@kernel.org>, Chao Fan <fanc.fnst@cn.fujitsu.com>,
-        Baoquan He <bhe@redhat.com>, Juergen Gross <jgross@suse.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Michal Hocko <mhocko@suse.com>, x86@kernel.org,
-        linux-acpi@vger.kernel.org, linux-mm@kvack.org
+        Tue, 15 Jan 2019 02:45:13 -0500
+X-UUID: b73da8501bab474b848fbd595f955e47-20190115
+X-UUID: b73da8501bab474b848fbd595f955e47-20190115
+Received: from mtkcas34.mediatek.inc [(172.27.4.250)] by mailgw02.mediatek.com
+        (envelope-from <guochun.mao@mediatek.com>)
+        (mailgw01.mediatek.com ESMTP with TLS)
+        with ESMTP id 1216061093; Tue, 15 Jan 2019 15:44:58 +0800
+Received: from MTKCAS36.mediatek.inc (172.27.4.186) by MTKMBS31DR.mediatek.inc
+ (172.27.6.102) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Tue, 15 Jan
+ 2019 15:44:58 +0800
+Received: from [10.17.3.153] (10.17.3.153) by MTKCAS36.mediatek.inc
+ (172.27.4.170) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Tue, 15 Jan 2019 15:44:57 +0800
+Message-ID: <1547538297.10234.4.camel@mhfsdcap03>
+Subject: Re: [PATCH v1 2/3] mtd: spi-nor: mtk-quadspi: add SNOR_HWCAPS_READ
+ for capcity setting
+From:   Guochun Mao <guochun.mao@mediatek.com>
+To:     <Tudor.Ambarus@microchip.com>
+CC:     <ryder.lee@mediatek.com>, <marek.vasut@gmail.com>,
+        <computersforpeace@gmail.com>, <boris.brezillon@bootlin.com>,
+        <robh+dt@kernel.org>, <weijie.gao@mediatek.com>,
+        <linux-mtd@lists.infradead.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>
+Date:   Tue, 15 Jan 2019 15:44:57 +0800
+In-Reply-To: <8afdb25c-894b-0a89-b7a8-b754fb4ba905@microchip.com>
+References: <67e650ca4fcaaddbbc98bf4e1cbe04647c990dc3.1547442452.git.ryder.lee@mediatek.com>
+         <54bb8a9d517e2ee35018d78457c6aa6a4970e644.1547442452.git.ryder.lee@mediatek.com>
+         <8afdb25c-894b-0a89-b7a8-b754fb4ba905@microchip.com>
 Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.2.3-0ubuntu6 
+Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 15, 2019 at 7:27 AM Dave Hansen <dave.hansen@intel.com> wrote:
->
-> On 1/10/19 9:12 PM, Pingfan Liu wrote:
-> > Although kaslr-kernel can avoid to stain the movable node. [1]
->
-> Can you explain what staining is, or perhaps try to use some more
-> standard nomenclature?  There are exactly 0 instances of the word
-> "stain" in arch/x86/ or mm/.
->
-I mean that KASLR may randomly choose some positions for base address,
-which are located in movable node.
+On Tue, 2019-01-15 at 06:59 +0000, Tudor.Ambarus@microchip.com wrote:
+> Hi, Ryder,
+> 
+> On 01/14/2019 07:12 AM, Ryder Lee wrote:
+> > From: Guochun Mao <guochun.mao@mediatek.com>
+> > 
+> > SNOR_HWCAPS_READ is a basic read mode for both flash and controller,
+> > it should be supported, so add the capcity for mtk-quadspi.
+> 
+> Since I couldn't find a datasheet for mt8173, I tend to share your assumption -
+> SNOR_HWCAPS_READ should be supported by this controller. However, it's always
+> better to test it and not rely on assumptions. You can test it by forcing the
+> mask to have just SNOR_HWCAPS_READ | SNOR_HWCAPS_PP set. Or you already tested it?
 
-> > But the
-> > pgtable can still stain the movable node. That is a probability problem,
-> > although low, but exist. This patch tries to make it certainty by
-> > allocating pgtable on unmovable node, instead of following kernel end.
->
-> Anyway, can you read my suggested summary in the earlier patch and see
-> if it fits or if I missed anything?  This description is really hard to
-> read.
->
-Your summary in the reply to [PATCH 0/7] express the things clearly. I
-will use them to update the commit log
+Our IPs all support SNOR_HWCAPS_READ, Ryedr and I have test it.
 
-> ...> +#ifdef CONFIG_X86_32
-> > +
-> > +static unsigned long min_pfn_mapped;
-> > +
-> >  static unsigned long __init get_new_step_size(unsigned long step_size)
+> 
+> You have a typo in capcity. Maybe substitute it with capability or "add this
+> flag to spi_nor_hwcaps mask"
+
+Ok, we'll correct it next version.
+
+Thanks.
+Guochun
+> 
+> > 
+> > Signed-off-by: Guochun Mao <guochun.mao@mediatek.com>
+> 
+> You should add your SoB tag, because you are sending a patch that is not yours.
+> 
+> Cheers,
+> ta
+> 
+> > ---
+> > Changes since v1: none. 
+> > ---
+> >  drivers/mtd/spi-nor/mtk-quadspi.c | 3 ++-
+> >  1 file changed, 2 insertions(+), 1 deletion(-)
+> > 
+> > diff --git a/drivers/mtd/spi-nor/mtk-quadspi.c b/drivers/mtd/spi-nor/mtk-quadspi.c
+> > index 5442993..d9eed68 100644
+> > --- a/drivers/mtd/spi-nor/mtk-quadspi.c
+> > +++ b/drivers/mtd/spi-nor/mtk-quadspi.c
+> > @@ -431,7 +431,8 @@ static int mtk_nor_init(struct mtk_nor *mtk_nor,
+> >  			struct device_node *flash_node)
 > >  {
-> >       /*
-> > @@ -653,6 +655,32 @@ static void __init memory_map_bottom_up(unsigned long map_start,
-> >       }
-> >  }
-> >
-> > +static unsigned long __init init_range_memory_mapping32(
-> > +     unsigned long r_start, unsigned long r_end)
-> > +{
->
-> Why is this returning a value which is not used?
->
-> Did you compile this?  Didn't you get a warning that you're not
-> returning a value from a function returning non-void?
->
-It should be void. I will fix it in next version
+> >  	const struct spi_nor_hwcaps hwcaps = {
+> > -		.mask = SNOR_HWCAPS_READ_FAST |
+> > +		.mask = SNOR_HWCAPS_READ |
+> > +			SNOR_HWCAPS_READ_FAST |
+> >  			SNOR_HWCAPS_READ_1_1_2 |
+> >  			SNOR_HWCAPS_PP,
+> >  	};
+> > 
 
-> Also, I'd much rather see something like this written:
->
-> static __init
-> unsigned long init_range_memory_mapping32(unsigned long r_start,
->                                           unsigned long r_end)
->
-> than what you have above.  But, if you get rid of the 'unsigned long',
-> it will look much more sane in the first place.
 
-Yes. Thank for your kindly review.
-
-Best Regards,
-Pingfan
