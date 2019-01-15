@@ -3,113 +3,93 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 96DFCC43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 10:57:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A65FC43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 11:00:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6D5F920656
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 10:57:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5D35120861
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 11:00:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729110AbfAOK5n (ORCPT
+        id S1729120AbfAOLAZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 15 Jan 2019 05:57:43 -0500
-Received: from pegase1.c-s.fr ([93.17.236.30]:65394 "EHLO pegase1.c-s.fr"
+        Tue, 15 Jan 2019 06:00:25 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:55544 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729061AbfAOK5n (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Jan 2019 05:57:43 -0500
-Received: from localhost (mailhub1-int [192.168.12.234])
-        by localhost (Postfix) with ESMTP id 43f6kD2XSZz9v31x;
-        Tue, 15 Jan 2019 11:57:40 +0100 (CET)
-X-Virus-Scanned: Debian amavisd-new at c-s.fr
-Received: from pegase1.c-s.fr ([192.168.12.234])
-        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
-        with ESMTP id QSBv8Zxmfh2T; Tue, 15 Jan 2019 11:57:40 +0100 (CET)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-        by pegase1.c-s.fr (Postfix) with ESMTP id 43f6kD1wlVz9v31v;
-        Tue, 15 Jan 2019 11:57:40 +0100 (CET)
-Received: from localhost (localhost [127.0.0.1])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id E8B528B7E3;
-        Tue, 15 Jan 2019 11:57:41 +0100 (CET)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-        with ESMTP id rc5Z_3xMtu40; Tue, 15 Jan 2019 11:57:41 +0100 (CET)
-Received: from PO15451 (unknown [192.168.4.90])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 6C8238B7E1;
-        Tue, 15 Jan 2019 11:57:41 +0100 (CET)
-Subject: Re: [PATCH v2 00/15] powerpc/32s: Use BATs/LTLBs for
- STRICT_KERNEL_RWX
-To:     Michael Ellerman <mpe@ellerman.id.au>,
-        =?UTF-8?Q?Jonathan_Neusch=c3=a4fer?= <j.neuschaefer@gmx.net>
-Cc:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
-References: <cover.1547132681.git.christophe.leroy@c-s.fr>
- <20190113181621.GA22334@latitude>
- <714e78ba-1e92-a856-3dd6-a1fb96ad3785@c-s.fr>
- <20190113210227.GB22334@latitude>
- <334b1b02-b652-499c-904e-09e6f7164b8c@c-s.fr>
- <20190115003353.GD22334@latitude>
- <b37e3635-9c69-0cfc-1283-25459b394033@c-s.fr>
- <87fttuz0d3.fsf@concordia.ellerman.id.au>
-From:   Christophe Leroy <christophe.leroy@c-s.fr>
-Message-ID: <8b072209-c845-20f5-8ff1-27ecd67b5c72@c-s.fr>
-Date:   Tue, 15 Jan 2019 11:57:41 +0100
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        id S1728508AbfAOLAZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 Jan 2019 06:00:25 -0500
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 9B4ED80461;
+        Tue, 15 Jan 2019 11:00:24 +0000 (UTC)
+Received: from localhost.localdomain (ovpn-12-83.pek2.redhat.com [10.72.12.83])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 038D018E4B;
+        Tue, 15 Jan 2019 11:00:15 +0000 (UTC)
+Subject: Re: [PATCH 1/2 v6] kdump: add the vmcoreinfo documentation
+To:     Dave Anderson <anderson@redhat.com>,
+        Borislav Petkov <bp@alien8.de>,
+        Kazuhito Hagio <k-hagio@ab.jp.nec.com>
+Cc:     linux-kernel@vger.kernel.org, kexec@lists.infradead.org,
+        tglx@linutronix.de, mingo@redhat.com, x86@kernel.org,
+        akpm@linux-foundation.org, bhe@redhat.com, dyoung@redhat.com,
+        linux-doc@vger.kernel.org
+References: <20190110121944.6050-1-lijiang@redhat.com>
+ <20190114192144.GQ2773@zn.tnic>
+ <134663991.69764038.1547494607008.JavaMail.zimbra@redhat.com>
+ <20190114195940.GS2773@zn.tnic>
+ <244986363.69770015.1547496453312.JavaMail.zimbra@redhat.com>
+ <20190114201812.GT2773@zn.tnic>
+ <221183717.69773903.1547497592624.JavaMail.zimbra@redhat.com>
+ <20190114203500.GU2773@zn.tnic>
+ <1862896935.69778880.1547498954956.JavaMail.zimbra@redhat.com>
+From:   lijiang <lijiang@redhat.com>
+Message-ID: <a1613510-658e-410c-7554-4b378ae2e756@redhat.com>
+Date:   Tue, 15 Jan 2019 19:00:12 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <87fttuz0d3.fsf@concordia.ellerman.id.au>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: fr
+In-Reply-To: <1862896935.69778880.1547498954956.JavaMail.zimbra@redhat.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.28]); Tue, 15 Jan 2019 11:00:24 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-Le 15/01/2019 à 11:22, Michael Ellerman a écrit :
-> Christophe Leroy <christophe.leroy@c-s.fr> writes:
->> Le 15/01/2019 à 01:33, Jonathan Neuschäfer a écrit :
-> ...
+在 2019年01月15日 04:49, Dave Anderson 写道:
+> 
+> 
+> ----- Original Message -----
+>> On Mon, Jan 14, 2019 at 03:26:32PM -0500, Dave Anderson wrote:
+>>> No.  It needs *both* the vmlinux file and the vmcore file in order to read
+>>> kernel
+>>> virtual memory, so just having a kernel virtual address is insufficient.
 >>>
->>> - patches 7 to 11 fail to build with this error (really a warning, but
->>>     arch/powerpc doesn't allow warnings by default):
->>>
->>> 	  CC      arch/powerpc/mm/ppc_mmu_32.o
->>> 	../arch/powerpc/mm/ppc_mmu_32.c:133:13: error: ‘clearibat’ defined but not used [-Werror=unused-function]
->>> 	 static void clearibat(int index)
->>> 		     ^~~~~~~~~
->>> 	../arch/powerpc/mm/ppc_mmu_32.c:115:13: error: ‘setibat’ defined but not used [-Werror=unused-function]
->>> 	 static void setibat(int index, unsigned long virt, phys_addr_t phys,
->>> 		     ^~~~~~~
->>> 	cc1: all warnings being treated as errors
+>>> So it's a chicken-and-egg situation.  This particular --osrelease option is used
+>>> to determine *what* vmlinux file would be required for an actual crash analysis
+>>> session.
 >>
->> Argh ! I have to squash the patch bringing the new functions with the
->> one using them (patch 12). The result is a big messy patch which is more
->> difficult to review but that's life.
+>> Ok, that makes sense. I could've used that explanation when reviewing
+>> the documentation. Do you mind skimming through this:
+>>
+>> https://lkml.kernel.org/r/20190111145650.GG4729@zn.tnic
+>>
+>> in case we've missed explaining relevant usage - like that above - of
+>> some of the vmcoreinfo members?
 > 
-> You don't *have* to squash them.
-> 
-> We like to preserve bisectability, but it's not a 100% hard requirement.
-> 
-> Someone trying to bisect through those patches can always turn off
-> -Werror with PPC_DISABLE_WERROR. But they probably can just skip them
-> because they just add new code that's not called yet.
+> Yeah, I've been watching the thread, and the document looks fine to me.
+> It's just that when I saw the discussion of this one being removed that
+> I felt the need to respond...  ;-)
 
-Ok thanks for the note.
+Thank you for explaining this issue. 
 
-> 
-> So I won't object if you send them as-is.
-
-Good to know. Anyway I think I will at least re-order so that the patch 
-using the new functions immediatly follows the one adding the functions.
-
-Christophe
+Regards,
+Lianbo
 
 > 
-> cheers
+> Dave
 > 
