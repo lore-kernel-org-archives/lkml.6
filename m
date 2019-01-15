@@ -4,49 +4,49 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BC100C43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 16:39:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BDB03C43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 16:39:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8CCFB20675
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 16:39:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8D72B20859
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 16:39:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547570357;
-	bh=GBk1maspsX6Dbd0+/E+nRcjS+1IDkZDPn30gv7hP6Cw=;
+	s=default; t=1547570362;
+	bh=AyfeK76lJ2MDbxIFu3vmhV7atEkhZNGNmZvK/Etv4GQ=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=lco0wLx1kksmELNBNSdo70lHh6oxBCQLIrSY2LtXczIRRhxJTVdGmrnA9leRe2HG9
-	 DUn7x2cbFUOgYBsSsbEgIkokhap6qF7m9+UygkZ5AHXk5MJmt7CtoJtuYj3xkTu8bO
-	 zb1F2QzqsVQmrc3QIGN83FxoPJiFpPrC5c2zZL2o=
+	b=jaMKW5z3V+lN53fsmaI5Ceu40rY2LTGFeAA2Vqw+exZRQzc0XiK4DbHzsAlfiHWxV
+	 bzrnccjpYNGAymV6OIFcTVhKgn4euYDqH4agIMdv5ISeQkbOq7xuq6U2AsvhE+Aa8E
+	 t8LdynqTg6wfLLLvtUWKPJAcDs/oAiKnhGWZWOO8=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732315AbfAOQjQ (ORCPT
+        id S1732330AbfAOQjU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 15 Jan 2019 11:39:16 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55318 "EHLO mail.kernel.org"
+        Tue, 15 Jan 2019 11:39:20 -0500
+Received: from mail.kernel.org ([198.145.29.99]:55370 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732295AbfAOQjN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Jan 2019 11:39:13 -0500
+        id S1732303AbfAOQjQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 Jan 2019 11:39:16 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1F7632054F;
-        Tue, 15 Jan 2019 16:39:11 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9A6A520675;
+        Tue, 15 Jan 2019 16:39:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547570352;
-        bh=GBk1maspsX6Dbd0+/E+nRcjS+1IDkZDPn30gv7hP6Cw=;
+        s=default; t=1547570355;
+        bh=AyfeK76lJ2MDbxIFu3vmhV7atEkhZNGNmZvK/Etv4GQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=SHVNNXdr6ArLH6X26WP6+lNemo13tFT5YiQFPHcNL5TxuPTv+3pEwQxXvfN4FVhU2
-         EoaaxKn7UbRLcPwui8rGWjPOjaaLNMWudCsNLL29tUhukSXUwSCnevHk86CsPDHfXB
-         3kyoxpMnWIN5ChbUXeI2wHomH7x0Pxx/urXEOAwo=
+        b=u3WNyr2deNAUzv6DTYsgy+iiTyOpneez9mZBKmHgJc19OaWzXJRcg6bGFVD4/UWfg
+         9CGfQrDRFV85cxuUccBnLeA3e0esKO+K/AyTPdSHwR5sZVtr1BwbhARd/Wvw7ciVqA
+         +btAe3j9c/qaELvFVcmvfyXgCaxnZ/w1JK7Qu0+I=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Kailang Yang <kailang@realtek.com>,
-        Takashi Iwai <tiwai@suse.de>
-Subject: [PATCH 4.9 01/16] ALSA: hda/realtek - Disable headset Mic VREF for headset mode of ALC225
-Date:   Tue, 15 Jan 2019 17:35:44 +0100
-Message-Id: <20190115154848.306718016@linuxfoundation.org>
+        stable@vger.kernel.org, Hans de Goede <hdegoede@redhat.com>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
+Subject: [PATCH 4.9 10/16] ACPI: power: Skip duplicate power resource references in _PRx
+Date:   Tue, 15 Jan 2019 17:35:53 +0100
+Message-Id: <20190115154849.300969424@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190115154848.164648613@linuxfoundation.org>
 References: <20190115154848.164648613@linuxfoundation.org>
@@ -65,69 +65,87 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Kailang Yang <kailang@realtek.com>
+From: Hans de Goede <hdegoede@redhat.com>
 
-commit d1dd42110d2727e81b9265841a62bc84c454c3a2 upstream.
+commit 7d7b467cb95bf29597b417d4990160d4ea6d69b9 upstream.
 
-Disable Headset Mic VREF for headset mode of ALC225.
-This will be controlled by coef bits of headset mode functions.
+Some ACPI tables contain duplicate power resource references like this:
 
-[ Fixed a compile warning and code simplification -- tiwai ]
+        Name (_PR0, Package (0x04)  // _PR0: Power Resources for D0
+        {
+            P28P,
+            P18P,
+            P18P,
+            CLK4
+        })
 
-Signed-off-by: Kailang Yang <kailang@realtek.com>
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
+This causes a WARN_ON in sysfs_add_link_to_group() because we end up
+adding a link to the same acpi_device twice:
+
+sysfs: cannot create duplicate filename '/devices/LNXSYSTM:00/LNXSYBUS:00/PNP0A08:00/808622C1:00/OVTI2680:00/power_resources_D0/LNXPOWER:0a'
+CPU: 0 PID: 1 Comm: swapper/0 Not tainted 4.19.12-301.fc29.x86_64 #1
+Hardware name: Insyde CherryTrail/Type2 - Board Product Name, BIOS jumperx.T87.KFBNEEA02 04/13/2016
+Call Trace:
+ dump_stack+0x5c/0x80
+ sysfs_warn_dup.cold.3+0x17/0x2a
+ sysfs_do_create_link_sd.isra.2+0xa9/0xb0
+ sysfs_add_link_to_group+0x30/0x50
+ acpi_power_expose_list+0x74/0xa0
+ acpi_power_add_remove_device+0x50/0xa0
+ acpi_add_single_object+0x26b/0x5f0
+ acpi_bus_check_add+0xc4/0x250
+ ...
+
+To address this issue, make acpi_extract_power_resources() check for
+duplicates and simply skip them when found.
+
+Cc: All applicable <stable@vger.kernel.org>
+Signed-off-by: Hans de Goede <hdegoede@redhat.com>
+[ rjw: Subject & changelog, comments ]
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- sound/pci/hda/patch_realtek.c |   16 +++++++++++++++-
- 1 file changed, 15 insertions(+), 1 deletion(-)
+ drivers/acpi/power.c |   22 ++++++++++++++++++++++
+ 1 file changed, 22 insertions(+)
 
---- a/sound/pci/hda/patch_realtek.c
-+++ b/sound/pci/hda/patch_realtek.c
-@@ -4841,6 +4841,13 @@ static void alc280_fixup_hp_9480m(struct
+--- a/drivers/acpi/power.c
++++ b/drivers/acpi/power.c
+@@ -131,6 +131,23 @@ void acpi_power_resources_list_free(stru
  	}
  }
  
-+static void alc_fixup_disable_mic_vref(struct hda_codec *codec,
-+				  const struct hda_fixup *fix, int action)
++static bool acpi_power_resource_is_dup(union acpi_object *package,
++				       unsigned int start, unsigned int i)
 +{
-+	if (action == HDA_FIXUP_ACT_PRE_PROBE)
-+		snd_hda_codec_set_pin_target(codec, 0x19, PIN_VREFHIZ);
++	acpi_handle rhandle, dup;
++	unsigned int j;
++
++	/* The caller is expected to check the package element types */
++	rhandle = package->package.elements[i].reference.handle;
++	for (j = start; j < i; j++) {
++		dup = package->package.elements[j].reference.handle;
++		if (dup == rhandle)
++			return true;
++	}
++
++	return false;
 +}
 +
- /* for hda_fixup_thinkpad_acpi() */
- #include "thinkpad_helper.c"
- 
-@@ -4947,6 +4954,7 @@ enum {
- 	ALC293_FIXUP_LENOVO_SPK_NOISE,
- 	ALC233_FIXUP_LENOVO_LINE2_MIC_HOTKEY,
- 	ALC255_FIXUP_DELL_SPK_NOISE,
-+	ALC225_FIXUP_DISABLE_MIC_VREF,
- 	ALC225_FIXUP_DELL1_MIC_NO_PRESENCE,
- 	ALC295_FIXUP_DISABLE_DAC3,
- 	ALC280_FIXUP_HP_HEADSET_MIC,
-@@ -5605,6 +5613,12 @@ static const struct hda_fixup alc269_fix
- 		.chained = true,
- 		.chain_id = ALC255_FIXUP_DELL1_MIC_NO_PRESENCE
- 	},
-+	[ALC225_FIXUP_DISABLE_MIC_VREF] = {
-+		.type = HDA_FIXUP_FUNC,
-+		.v.func = alc_fixup_disable_mic_vref,
-+		.chained = true,
-+		.chain_id = ALC269_FIXUP_DELL1_MIC_NO_PRESENCE
-+	},
- 	[ALC225_FIXUP_DELL1_MIC_NO_PRESENCE] = {
- 		.type = HDA_FIXUP_VERBS,
- 		.v.verbs = (const struct hda_verb[]) {
-@@ -5614,7 +5628,7 @@ static const struct hda_fixup alc269_fix
- 			{}
- 		},
- 		.chained = true,
--		.chain_id = ALC269_FIXUP_DELL1_MIC_NO_PRESENCE
-+		.chain_id = ALC225_FIXUP_DISABLE_MIC_VREF
- 	},
- 	[ALC280_FIXUP_HP_HEADSET_MIC] = {
- 		.type = HDA_FIXUP_FUNC,
+ int acpi_extract_power_resources(union acpi_object *package, unsigned int start,
+ 				 struct list_head *list)
+ {
+@@ -150,6 +167,11 @@ int acpi_extract_power_resources(union a
+ 			err = -ENODEV;
+ 			break;
+ 		}
++
++		/* Some ACPI tables contain duplicate power resource references */
++		if (acpi_power_resource_is_dup(package, start, i))
++			continue;
++
+ 		err = acpi_add_power_resource(rhandle);
+ 		if (err)
+ 			break;
 
 
