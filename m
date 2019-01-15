@@ -2,52 +2,58 @@ Return-Path: <SRS0=RZO6=PX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A4D2C43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 16:45:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 545F4C43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 16:45:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ECDB02054F
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 16:45:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2353B20645
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 16:45:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547570750;
-	bh=8Fh0Wx+i8Nz4reJe6ajQOvap1EHqTI457fQpUvFnflM=;
+	s=default; t=1547570753;
+	bh=k8bXhqWpO5kaQ3I9FWr8R5h834By14tmBALeMGehoVg=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=fnI3WMEHDh4Tm5PZJlm96l9pw8aOvJvC7bZcf2cKg8k+tCNZi8ofEBZu8RIfdMjmW
-	 Q+HptNsztuGMZk5KuzdXnr3fS78ncYfZlVocDacYtnO8kKxxUAHb7VN4JbhntcpNOe
-	 oR8eDT0nnhzZlAzSbJh6AR3hyPqAxP6RPTfBbJPw=
+	b=V7m+Bxx9JhCe2CkkGImpHjTqSxdy4PKeMDzMOMt2UMYB748phyFJT0fo5cs4dcLVE
+	 by/qHP5QYVomJ5DJdeQtZ4FGedSpsvDuXmVHF2s/TPQFcmMgN76a4jPfgsQmych2Z7
+	 gNHPFzdNBkycOYKvCZlOF6g2lUT7hfjp5tQPDdOo=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387861AbfAOQps (ORCPT
+        id S2387852AbfAOQpq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 15 Jan 2019 11:45:48 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35496 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387851AbfAOQpq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 15 Jan 2019 11:45:46 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35384 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1731090AbfAOQpl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 Jan 2019 11:45:41 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7399320657;
-        Tue, 15 Jan 2019 16:45:45 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1B4A92054F;
+        Tue, 15 Jan 2019 16:45:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547570746;
-        bh=8Fh0Wx+i8Nz4reJe6ajQOvap1EHqTI457fQpUvFnflM=;
+        s=default; t=1547570740;
+        bh=k8bXhqWpO5kaQ3I9FWr8R5h834By14tmBALeMGehoVg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=m6PQf8Jwq6EOAgPsTk9hYx8TQ1aQdYltot37m7NvPwDfawPbIkFMsRHBGK+EIn0EH
-         FZFpchVnBfM6dZNXe9ukjHRjesdzPpyH4talz/dtmeNVDwC8HvUdHObJ/lqs8SV389
-         +Zuf8IukpZzFQPGSOMvITOL2wAIK/n+Hf0DRAGgs=
+        b=WVstXuddeUA6CnQJY92Drnnj7ArlDJzSkIw1ED1Qw6OcqRlQ8Tl+1YRPEfOXLLjZu
+         ACJQiomh/bf2GRneA4SRaG+pEmTer3l9HQHM2x/jK5l9GRRnurHmsI6QqfH58QRUct
+         Sl2hyKOZeSdSDpE3jlrB5pI88C9ttWIkw5IA3nmw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Nikolay Borisov <nborisov@suse.com>,
-        Filipe Manana <fdmanana@suse.com>,
-        David Sterba <dsterba@suse.com>
-Subject: [PATCH 4.20 55/57] Btrfs: fix access to available allocation bits when starting balance
-Date:   Tue, 15 Jan 2019 17:36:36 +0100
-Message-Id: <20190115154914.106100746@linuxfoundation.org>
+        stable@vger.kernel.org, Jan Stancek <jstancek@redhat.com>,
+        "Kirill A. Shutemov" <kirill@shutemov.name>,
+        Michal Hocko <mhocko@suse.com>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        David Hildenbrand <david@redhat.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Laszlo Ersek <lersek@redhat.com>
+Subject: [PATCH 4.20 53/57] mm: page_mapped: dont assume compound page is huge or THP
+Date:   Tue, 15 Jan 2019 17:36:34 +0100
+Message-Id: <20190115154913.994745402@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190115154910.734892368@linuxfoundation.org>
 References: <20190115154910.734892368@linuxfoundation.org>
@@ -66,100 +72,76 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Filipe Manana <fdmanana@suse.com>
+From: Jan Stancek <jstancek@redhat.com>
 
-commit 5a8067c0d17feb7579db0476191417b441a8996e upstream.
+commit 8ab88c7169b7fba98812ead6524b9d05bc76cf00 upstream.
 
-The available allocation bits members from struct btrfs_fs_info are
-protected by a sequence lock, and when starting balance we access them
-incorrectly in two different ways:
+LTP proc01 testcase has been observed to rarely trigger crashes
+on arm64:
+    page_mapped+0x78/0xb4
+    stable_page_flags+0x27c/0x338
+    kpageflags_read+0xfc/0x164
+    proc_reg_read+0x7c/0xb8
+    __vfs_read+0x58/0x178
+    vfs_read+0x90/0x14c
+    SyS_read+0x60/0xc0
 
-1) In the read sequence lock loop at btrfs_balance() we use the values we
-   read from fs_info->avail_*_alloc_bits and we can immediately do actions
-   that have side effects and can not be undone (printing a message and
-   jumping to a label). This is wrong because a retry might be needed, so
-   our actions must not have side effects and must be repeatable as long
-   as read_seqretry() returns a non-zero value. In other words, we were
-   essentially ignoring the sequence lock;
+The issue is that page_mapped() assumes that if compound page is not
+huge, then it must be THP.  But if this is 'normal' compound page
+(COMPOUND_PAGE_DTOR), then following loop can keep running (for
+HPAGE_PMD_NR iterations) until it tries to read from memory that isn't
+mapped and triggers a panic:
 
-2) Right below the read sequence lock loop, we were reading the values
-   from avail_metadata_alloc_bits and avail_data_alloc_bits without any
-   protection from concurrent writers, that is, reading them outside of
-   the read sequence lock critical section.
+        for (i = 0; i < hpage_nr_pages(page); i++) {
+                if (atomic_read(&page[i]._mapcount) >= 0)
+                        return true;
+	}
 
-So fix this by making sure we only read the available allocation bits
-while in a read sequence lock critical section and that what we do in the
-critical section is repeatable (has nothing that can not be undone) so
-that any eventual retry that is needed is handled properly.
+I could replicate this on x86 (v4.20-rc4-98-g60b548237fed) only
+with a custom kernel module [1] which:
+ - allocates compound page (PAGEC) of order 1
+ - allocates 2 normal pages (COPY), which are initialized to 0xff (to
+   satisfy _mapcount >= 0)
+ - 2 PAGEC page structs are copied to address of first COPY page
+ - second page of COPY is marked as not present
+ - call to page_mapped(COPY) now triggers fault on access to 2nd COPY
+   page at offset 0x30 (_mapcount)
 
-Fixes: de98ced9e743 ("Btrfs: use seqlock to protect fs_info->avail_{data, metadata, system}_alloc_bits")
-Fixes: 14506127979a ("btrfs: fix a bogus warning when converting only data or metadata")
-Reviewed-by: Nikolay Borisov <nborisov@suse.com>
-Signed-off-by: Filipe Manana <fdmanana@suse.com>
-Reviewed-by: David Sterba <dsterba@suse.com>
-Signed-off-by: David Sterba <dsterba@suse.com>
+[1] https://github.com/jstancek/reproducers/blob/master/kernel/page_mapped_crash/repro.c
+
+Fix the loop to iterate for "1 << compound_order" pages.
+
+Kirrill said "IIRC, sound subsystem can producuce custom mapped compound
+pages".
+
+Link: http://lkml.kernel.org/r/c440d69879e34209feba21e12d236d06bc0a25db.1543577156.git.jstancek@redhat.com
+Fixes: e1534ae95004 ("mm: differentiate page_mapped() from page_mapcount() for compound pages")
+Signed-off-by: Jan Stancek <jstancek@redhat.com>
+Debugged-by: Laszlo Ersek <lersek@redhat.com>
+Suggested-by: "Kirill A. Shutemov" <kirill@shutemov.name>
+Acked-by: Michal Hocko <mhocko@suse.com>
+Acked-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+Reviewed-by: David Hildenbrand <david@redhat.com>
+Reviewed-by: Andrea Arcangeli <aarcange@redhat.com>
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/btrfs/volumes.c |   39 +++++++++++++++++++++++----------------
- 1 file changed, 23 insertions(+), 16 deletions(-)
+ mm/util.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/fs/btrfs/volumes.c
-+++ b/fs/btrfs/volumes.c
-@@ -3724,6 +3724,7 @@ int btrfs_balance(struct btrfs_fs_info *
- 	int ret;
- 	u64 num_devices;
- 	unsigned seq;
-+	bool reducing_integrity;
- 
- 	if (btrfs_fs_closing(fs_info) ||
- 	    atomic_read(&fs_info->balance_pause_req) ||
-@@ -3803,24 +3804,30 @@ int btrfs_balance(struct btrfs_fs_info *
- 		     !(bctl->sys.target & allowed)) ||
- 		    ((bctl->meta.flags & BTRFS_BALANCE_ARGS_CONVERT) &&
- 		     (fs_info->avail_metadata_alloc_bits & allowed) &&
--		     !(bctl->meta.target & allowed))) {
--			if (bctl->flags & BTRFS_BALANCE_FORCE) {
--				btrfs_info(fs_info,
--				"balance: force reducing metadata integrity");
--			} else {
--				btrfs_err(fs_info,
--	"balance: reduces metadata integrity, use --force if you want this");
--				ret = -EINVAL;
--				goto out;
--			}
--		}
-+		     !(bctl->meta.target & allowed)))
-+			reducing_integrity = true;
-+		else
-+			reducing_integrity = false;
-+
-+		/* if we're not converting, the target field is uninitialized */
-+		meta_target = (bctl->meta.flags & BTRFS_BALANCE_ARGS_CONVERT) ?
-+			bctl->meta.target : fs_info->avail_metadata_alloc_bits;
-+		data_target = (bctl->data.flags & BTRFS_BALANCE_ARGS_CONVERT) ?
-+			bctl->data.target : fs_info->avail_data_alloc_bits;
- 	} while (read_seqretry(&fs_info->profiles_lock, seq));
- 
--	/* if we're not converting, the target field is uninitialized */
--	meta_target = (bctl->meta.flags & BTRFS_BALANCE_ARGS_CONVERT) ?
--		bctl->meta.target : fs_info->avail_metadata_alloc_bits;
--	data_target = (bctl->data.flags & BTRFS_BALANCE_ARGS_CONVERT) ?
--		bctl->data.target : fs_info->avail_data_alloc_bits;
-+	if (reducing_integrity) {
-+		if (bctl->flags & BTRFS_BALANCE_FORCE) {
-+			btrfs_info(fs_info,
-+				   "balance: force reducing metadata integrity");
-+		} else {
-+			btrfs_err(fs_info,
-+	  "balance: reduces metadata integrity, use --force if you want this");
-+			ret = -EINVAL;
-+			goto out;
-+		}
-+	}
-+
- 	if (btrfs_get_num_tolerated_disk_barrier_failures(meta_target) <
- 		btrfs_get_num_tolerated_disk_barrier_failures(data_target)) {
- 		int meta_index = btrfs_bg_flags_to_raid_index(meta_target);
+--- a/mm/util.c
++++ b/mm/util.c
+@@ -478,7 +478,7 @@ bool page_mapped(struct page *page)
+ 		return true;
+ 	if (PageHuge(page))
+ 		return false;
+-	for (i = 0; i < hpage_nr_pages(page); i++) {
++	for (i = 0; i < (1 << compound_order(page)); i++) {
+ 		if (atomic_read(&page[i]._mapcount) >= 0)
+ 			return true;
+ 	}
 
 
