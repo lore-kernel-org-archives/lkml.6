@@ -2,111 +2,91 @@ Return-Path: <SRS0=RZO6=PX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9BC58C43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 20:06:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 06288C43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 20:06:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 60CDF20657
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 20:06:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C3AD620657
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 20:06:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1547582812;
+	bh=F/x3LgJKbGiqxFAZRNvd52MbCvvmyWCnwil0/9dX/wA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=XwhrexGvdciGzk+VQLv0Czd3Hv+Sw9HLLyTzil2wHsoF+0Qa33/+y8iddlSXSsbiM
+	 6rtSfLGpU+OY3E6pef8oHU47vExc0IDZ8JhenxzqQS48YVYH2OYw3sZdRwUOeAE3k+
+	 aNHoqBWhus8TbjIkmwLWWYOlG/PD4B1SQW3T55iM=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389707AbfAOUGq (ORCPT
+        id S2389720AbfAOUGu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 15 Jan 2019 15:06:46 -0500
-Received: from gateway30.websitewelcome.com ([192.185.184.48]:46476 "EHLO
-        gateway30.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2389693AbfAOUGp (ORCPT
+        Tue, 15 Jan 2019 15:06:50 -0500
+Received: from mail-oi1-f193.google.com ([209.85.167.193]:45812 "EHLO
+        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389705AbfAOUGq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Jan 2019 15:06:45 -0500
-X-Greylist: delayed 1488 seconds by postgrey-1.27 at vger.kernel.org; Tue, 15 Jan 2019 15:06:45 EST
-Received: from cm10.websitewelcome.com (cm10.websitewelcome.com [100.42.49.4])
-        by gateway30.websitewelcome.com (Postfix) with ESMTP id 195365465
-        for <linux-kernel@vger.kernel.org>; Tue, 15 Jan 2019 13:41:57 -0600 (CST)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id jUazg57522PzOjUazghn6m; Tue, 15 Jan 2019 13:41:57 -0600
-X-Authority-Reason: nr=8
-Received: from [189.250.130.205] (port=50320 helo=embeddedor)
-        by gator4166.hostgator.com with esmtpa (Exim 4.91)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1gjUax-000YFc-PO; Tue, 15 Jan 2019 13:41:56 -0600
-Date:   Tue, 15 Jan 2019 13:41:53 -0600
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To:     Ilya Dryomov <idryomov@gmail.com>, "Yan, Zheng" <zyan@redhat.com>,
-        Sage Weil <sage@redhat.com>,
-        "David S. Miller" <davem@davemloft.net>
-Cc:     ceph-devel@vger.kernel.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Subject: [PATCH net-next] libceph, ceph: use struct_size() in kmalloc()
-Message-ID: <20190115194153.GA9565@embeddedor>
+        Tue, 15 Jan 2019 15:06:46 -0500
+Received: by mail-oi1-f193.google.com with SMTP id y1so3121921oie.12;
+        Tue, 15 Jan 2019 12:06:46 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=IfApsPbT5mrQM1m35yD2qsrsKzQOZSOC5ozeIJ1xNWM=;
+        b=UEC3Jp8+s2x5TkcKCZGfyEMY5Nq7YFFxYgVa6lSjmIh1mwx9rH6jvmqz9xKOBqpFIS
+         SJk2BeybOfw0lxWC1/Qitx0BpWHYdTdPV+zEPz2+pRgWB/V17EpCnjhI7sS5lAwxL/ON
+         bPcq9qqJ+DDtlbPH/MVW4L6vYhbX0y6oqqNBZtpagKMspSqEPD+uVp4SLwPzSa2LUw1B
+         Sn38RfJW9MjtUEi+LF2xzbAJq3MIoW1h006z3coh7INZckQcYRqP8ZPfyZgnK56NQDxi
+         4TC8rAF8VuyBZ9gfxuJiecRXe04EEmQsE6Fgt6O21IYkVadUgG9RXtitGW+c0xlEEAfE
+         7s6w==
+X-Gm-Message-State: AJcUukc9wuJdvkLz01a7hBeqq2xpeAuRHOn7+fNLoBvFMHJPKuIMLkzd
+        Ta7KYmHVgDufI2TpqEneh0IP3fA=
+X-Google-Smtp-Source: ALg8bN5UqvlW2PHV5V9znrImPN2NpcPtYP8AGAzjc/qlLZ9gazgyU1J0C5dbkN1oSzgBALmBN8MhWw==
+X-Received: by 2002:a05:6808:296:: with SMTP id z22mr215574oic.67.1547582806039;
+        Tue, 15 Jan 2019 12:06:46 -0800 (PST)
+Received: from localhost ([70.231.7.113])
+        by smtp.gmail.com with ESMTPSA id l6sm1741242otk.51.2019.01.15.12.06.45
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 15 Jan 2019 12:06:45 -0800 (PST)
+Date:   Tue, 15 Jan 2019 14:06:44 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Peter Rosin <peda@axentia.se>
+Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Peter Rosin <peda@axentia.se>, David Airlie <airlied@linux.ie>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Archit Taneja <architt@codeaurora.org>,
+        Andrzej Hajda <a.hajda@samsung.com>,
+        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+Subject: Re: [PATCH v4 1/5] dt-bindings: display: bridge: fork out
+ ti,ds90c185  from lvds-transmitter
+Message-ID: <20190115200644.GA19608@bogus>
+References: <20190111151843.11114-1-peda@axentia.se>
+ <20190111151843.11114-2-peda@axentia.se>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 189.250.130.205
-X-Source-L: No
-X-Exim-ID: 1gjUax-000YFc-PO
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: (embeddedor) [189.250.130.205]:50320
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 7
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+In-Reply-To: <20190111151843.11114-2-peda@axentia.se>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-One of the more common cases of allocation size calculations is finding
-the size of a structure that has a zero-sized array at the end, along
-with memory for some number of elements for that array. For example:
+On Fri, 11 Jan 2019 15:18:55 +0000, Peter Rosin wrote:
+> DS90C185 has a shutdown pin which does not fit in the lvds-transmitter
+> binding, which is meant to be generic.
+> 
+> The sister chip DS90C187 is similar to DS90C185, describe it here as well.
+> 
+> Signed-off-by: Peter Rosin <peda@axentia.se>
+> ---
+>  .../bindings/display/bridge/lvds-transmitter.txt   | 10 ++--
+>  .../bindings/display/bridge/ti,ds90c185.txt        | 55 ++++++++++++++++++++++
+>  2 files changed, 59 insertions(+), 6 deletions(-)
+>  create mode 100644 Documentation/devicetree/bindings/display/bridge/ti,ds90c185.txt
+> 
 
-struct foo {
-    int stuff;
-    struct boo entry[];
-};
-
-instance = kmalloc(sizeof(struct foo) + count * sizeof(struct boo), GFP_KERNEL);
-
-Instead of leaving these open-coded and prone to type mistakes, we can
-now use the new struct_size() helper:
-
-instance = kmalloc(struct_size(instance, entry, count), GFP_KERNEL);
-
-This code was detected with the help of Coccinelle.
-
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
----
- net/ceph/osdmap.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
-
-diff --git a/net/ceph/osdmap.c b/net/ceph/osdmap.c
-index 98c0ff3d6441..48a31dc9161c 100644
---- a/net/ceph/osdmap.c
-+++ b/net/ceph/osdmap.c
-@@ -495,9 +495,8 @@ static struct crush_map *crush_decode(void *pbyval, void *end)
- 			  / sizeof(struct crush_rule_step))
- 			goto bad;
- #endif
--		r = c->rules[i] = kmalloc(sizeof(*r) +
--					  yes*sizeof(struct crush_rule_step),
--					  GFP_NOFS);
-+		r = kmalloc(struct_size(r, steps, yes), GFP_NOFS);
-+		c->rules[i] = r;
- 		if (r == NULL)
- 			goto badmem;
- 		dout(" rule %d is at %p\n", i, r);
--- 
-2.20.1
-
+Reviewed-by: Rob Herring <robh@kernel.org>
