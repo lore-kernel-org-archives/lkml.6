@@ -6,86 +6,347 @@ X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C0503C43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 18:41:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 508D5C43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 18:43:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 960F620657
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 18:41:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 103B820675
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 18:43:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388887AbfAOSlk (ORCPT
+        id S2388897AbfAOSn4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 15 Jan 2019 13:41:40 -0500
-Received: from cloudserver094114.home.pl ([79.96.170.134]:50548 "EHLO
-        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728911AbfAOSlk (ORCPT
+        Tue, 15 Jan 2019 13:43:56 -0500
+Received: from mail-qt1-f193.google.com ([209.85.160.193]:45263 "EHLO
+        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731666AbfAOSn4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Jan 2019 13:41:40 -0500
-Received: from 79.184.255.239.ipv4.supernova.orange.pl (79.184.255.239) (HELO aspire.rjw.lan)
- by serwer1319399.home.pl (79.96.170.134) with SMTP (IdeaSmtpServer 0.83.183)
- id 96e725beedf4c253; Tue, 15 Jan 2019 19:41:37 +0100
-From:   "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To:     Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc:     Sinan Kaya <okaya@kernel.org>,
-        Andy Shevchenko <andy@infradead.org>,
-        linux-next <linux-next@vger.kernel.org>,
-        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
-        Darren Hart <dvhart@infradead.org>,
-        "open list:X86 PLATFORM DRIVERS" 
-        <platform-driver-x86@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v6 05/11] platform/x86: intel_pmc: Make PCI dependency explicit
-Date:   Tue, 15 Jan 2019 19:40:45 +0100
-Message-ID: <3717479.LUAfB5gYd9@aspire.rjw.lan>
-In-Reply-To: <CAHp75VeKB_4Fc-G_QG0YnSqhAu9w8csASrgrg0cVAo_gYjeJ_g@mail.gmail.com>
-References: <20190105100606.6673-1-okaya@kernel.org> <3184241.VH7flF4h5P@aspire.rjw.lan> <CAHp75VeKB_4Fc-G_QG0YnSqhAu9w8csASrgrg0cVAo_gYjeJ_g@mail.gmail.com>
+        Tue, 15 Jan 2019 13:43:56 -0500
+Received: by mail-qt1-f193.google.com with SMTP id e5so4116229qtr.12
+        for <linux-kernel@vger.kernel.org>; Tue, 15 Jan 2019 10:43:55 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=Iir7mk8CU5T1L1gVSj6DXWRvz28WPlofrk4+55+D6fE=;
+        b=imc3npd6+zXbBQvAG85bXHW3IS0W8jZqQiWjA61etn6fW+pLZO9K9+EtaXklxRM8nx
+         oAr6CXREh3mPv1v9lyVaTDK/MZ0P7LaISBn0dEdjn9soA+Ys+7cTwueOMI4CE4e7wUFx
+         8Zp2OBUmyb5/FZ9tRNbAPKTS0+qkggT6TgQJdj8Ya9+bLP7ajg9E51tdiSrZpFVMQgxs
+         ctN6WQS56r82ssSRS+h2EIcH2a3/ia0HtQB9moUjtAy8e5XDLKXfS1Rz5rOlm4e7Ps1/
+         FOxIcSh+CnGcLnhFpFsTaeCmHMmskUATebaN/wItW46MNJDNaGlnLUpktIJ7yFnV6G/d
+         lW4A==
+X-Gm-Message-State: AJcUukeU9Cl5yXi2a4TNg2TqhEbM8zNwuA4rSxJw051r9Bb5u6wN931n
+        2404xYbOjAj8sqXInuZBgcOOgmZolxU=
+X-Google-Smtp-Source: ALg8bN6yQo2Udu/hd3+PrYe4QhvYa1rKZkgRAQFqH8Jb4LPsAn1XzUtFdFohFSipP+Arkp3SbLeuDg==
+X-Received: by 2002:aed:2249:: with SMTP id o9mr4099621qtc.13.1547577834345;
+        Tue, 15 Jan 2019 10:43:54 -0800 (PST)
+Received: from ?IPv6:2601:602:9800:dae6::fb21? ([2601:602:9800:dae6::fb21])
+        by smtp.gmail.com with ESMTPSA id h31sm51478475qtk.5.2019.01.15.10.43.52
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 15 Jan 2019 10:43:53 -0800 (PST)
+Subject: Re: [PATCH 14/14] staging: android: ion: Add UNMAPPED heap type and
+ helper
+To:     "Andrew F. Davis" <afd@ti.com>,
+        Sumit Semwal <sumit.semwal@linaro.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        =?UTF-8?Q?Arve_Hj=c3=b8nnev=c3=a5g?= <arve@android.com>
+Cc:     devel@driverdev.osuosl.org, dri-devel@lists.freedesktop.org,
+        linux-kernel@vger.kernel.org
+References: <20190111180523.27862-1-afd@ti.com>
+ <20190111180523.27862-15-afd@ti.com>
+ <bd3c15f2-2635-588e-80b4-18e8e44d27b3@redhat.com>
+ <ee3bb691-8c9b-457c-5da3-522a4baff140@ti.com>
+From:   Laura Abbott <labbott@redhat.com>
+Message-ID: <5718cc6c-1082-fec8-5c97-3f52bcfd98d9@redhat.com>
+Date:   Tue, 15 Jan 2019 10:43:51 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+In-Reply-To: <ee3bb691-8c9b-457c-5da3-522a4baff140@ti.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wednesday, January 9, 2019 12:10:45 PM CET Andy Shevchenko wrote:
-> On Wed, Jan 9, 2019 at 12:48 PM Rafael J. Wysocki <rjw@rjwysocki.net> wrote:
-> >
-> > On Saturday, January 5, 2019 11:06:00 AM CET Sinan Kaya wrote:
-> > > After 'commit 5d32a66541c4 ("PCI/ACPI: Allow ACPI to be built without
-> > > CONFIG_PCI set")' dependencies on CONFIG_PCI that previously were
-> > > satisfied implicitly through dependencies on CONFIG_ACPI have to be
-> > > specified directly. Code relies on PCI for execution. Specify this
-> > > in the Kconfig.
-> > >
-> > > Fixes: 5d32a66541c46 ("PCI/ACPI: Allow ACPI to be built without CONFIG_PCI set")
-> > > Signed-off-by: Sinan Kaya <okaya@kernel.org>
-> > > ---
-> > >  drivers/platform/x86/Kconfig | 2 +-
-> > >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > >
-> > > diff --git a/drivers/platform/x86/Kconfig b/drivers/platform/x86/Kconfig
-> > > index b36ea14b41ad..7afb96cb1cd6 100644
-> > > --- a/drivers/platform/x86/Kconfig
-> > > +++ b/drivers/platform/x86/Kconfig
-> > > @@ -1174,7 +1174,7 @@ config INTEL_SMARTCONNECT
-> > >
-> > >  config INTEL_PMC_IPC
-> > >       tristate "Intel PMC IPC Driver"
-> > > -     depends on ACPI
-> > > +     depends on ACPI && PCI
-> > >       ---help---
-> > >       This driver provides support for PMC control on some Intel platforms.
-> > >       The PMC is an ARC processor which defines IPC commands for communication
-> >
-> > Andy, you had some reservations regarding this patch IIRC.
-> >
-> > Should I apply it?
+On 1/15/19 7:58 AM, Andrew F. Davis wrote:
+> On 1/14/19 8:32 PM, Laura Abbott wrote:
+>> On 1/11/19 10:05 AM, Andrew F. Davis wrote:
+>>> The "unmapped" heap is very similar to the carveout heap except
+>>> the backing memory is presumed to be unmappable by the host, in
+>>> my specific case due to firewalls. This memory can still be
+>>> allocated from and used by devices that do have access to the
+>>> backing memory.
+>>>
+>>> Based originally on the secure/unmapped heap from Linaro for
+>>> the OP-TEE SDP implementation, this was re-written to match
+>>> the carveout heap helper code.
+>>>
+>>> Suggested-by: Etienne Carriere <etienne.carriere@linaro.org>
+>>> Signed-off-by: Andrew F. Davis <afd@ti.com>
+>>> ---
+>>>    drivers/staging/android/ion/Kconfig           |  10 ++
+>>>    drivers/staging/android/ion/Makefile          |   1 +
+>>>    drivers/staging/android/ion/ion.h             |  16 +++
+>>>    .../staging/android/ion/ion_unmapped_heap.c   | 123 ++++++++++++++++++
+>>>    drivers/staging/android/uapi/ion.h            |   3 +
+>>>    5 files changed, 153 insertions(+)
+>>>    create mode 100644 drivers/staging/android/ion/ion_unmapped_heap.c
+>>>
+>>> diff --git a/drivers/staging/android/ion/Kconfig
+>>> b/drivers/staging/android/ion/Kconfig
+>>> index 0fdda6f62953..a117b8b91b14 100644
+>>> --- a/drivers/staging/android/ion/Kconfig
+>>> +++ b/drivers/staging/android/ion/Kconfig
+>>> @@ -42,3 +42,13 @@ config ION_CMA_HEAP
+>>>          Choose this option to enable CMA heaps with Ion. This heap is
+>>> backed
+>>>          by the Contiguous Memory Allocator (CMA). If your system has
+>>> these
+>>>          regions, you should say Y here.
+>>> +
+>>> +config ION_UNMAPPED_HEAP
+>>> +    bool "ION unmapped heap support"
+>>> +    depends on ION
+>>> +    help
+>>> +      Choose this option to enable UNMAPPED heaps with Ion. This heap is
+>>> +      backed in specific memory pools, carveout from the Linux memory.
+>>> +      Unlike carveout heaps these are assumed to be not mappable by
+>>> +      kernel or user-space.
+>>> +      Unless you know your system has these regions, you should say N
+>>> here.
+>>> diff --git a/drivers/staging/android/ion/Makefile
+>>> b/drivers/staging/android/ion/Makefile
+>>> index 17f3a7569e3d..c71a1f3de581 100644
+>>> --- a/drivers/staging/android/ion/Makefile
+>>> +++ b/drivers/staging/android/ion/Makefile
+>>> @@ -4,3 +4,4 @@ obj-$(CONFIG_ION_SYSTEM_HEAP) += ion_system_heap.o
+>>> ion_page_pool.o
+>>>    obj-$(CONFIG_ION_CARVEOUT_HEAP) += ion_carveout_heap.o
+>>>    obj-$(CONFIG_ION_CHUNK_HEAP) += ion_chunk_heap.o
+>>>    obj-$(CONFIG_ION_CMA_HEAP) += ion_cma_heap.o
+>>> +obj-$(CONFIG_ION_UNMAPPED_HEAP) += ion_unmapped_heap.o
+>>> diff --git a/drivers/staging/android/ion/ion.h
+>>> b/drivers/staging/android/ion/ion.h
+>>> index 97b2876b165a..ce74332018ba 100644
+>>> --- a/drivers/staging/android/ion/ion.h
+>>> +++ b/drivers/staging/android/ion/ion.h
+>>> @@ -341,4 +341,20 @@ static inline struct ion_heap
+>>> *ion_chunk_heap_create(phys_addr_t base, size_t si
+>>>    }
+>>>    #endif
+>>>    +#ifdef CONFIG_ION_UNMAPPED_HEAP
+>>> +/**
+>>> + * ion_unmapped_heap_create
+>>> + * @base:        base address of carveout memory
+>>> + * @size:        size of carveout memory region
+>>> + *
+>>> + * Creates an unmapped ion_heap using the passed in data
+>>> + */
+>>> +struct ion_heap *ion_unmapped_heap_create(phys_addr_t base, size_t
+>>> size);
+>>> +#else
+>>> +struct ion_heap *ion_unmapped_heap_create(phys_addr_t base, size_t size)
+>>> +{
+>>> +    return ERR_PTR(-ENODEV);
+>>> +}
+>>> +#endif
+>>> +
+>>>    #endif /* _ION_H */
+>>> diff --git a/drivers/staging/android/ion/ion_unmapped_heap.c
+>>> b/drivers/staging/android/ion/ion_unmapped_heap.c
+>>> new file mode 100644
+>>> index 000000000000..7602b659c2ec
+>>> --- /dev/null
+>>> +++ b/drivers/staging/android/ion/ion_unmapped_heap.c
+>>> @@ -0,0 +1,123 @@
+>>> +// SPDX-License-Identifier: GPL-2.0
+>>> +/*
+>>> + * ION Memory Allocator unmapped heap helper
+>>> + *
+>>> + * Copyright (C) 2015-2016 Texas Instruments Incorporated -
+>>> http://www.ti.com/
+>>> + *    Andrew F. Davis <afd@ti.com>
+>>> + *
+>>> + * ION "unmapped" heaps are physical memory heaps not by default
+>>> mapped into
+>>> + * a virtual address space. The buffer owner can explicitly request
+>>> kernel
+>>> + * space mappings but the underlying memory may still not be
+>>> accessible for
+>>> + * various reasons, such as firewalls.
+>>> + */
+>>> +
+>>> +#include <linux/err.h>
+>>> +#include <linux/genalloc.h>
+>>> +#include <linux/scatterlist.h>
+>>> +#include <linux/slab.h>
+>>> +
+>>> +#include "ion.h"
+>>> +
+>>> +#define ION_UNMAPPED_ALLOCATE_FAIL -1
+>>> +
+>>> +struct ion_unmapped_heap {
+>>> +    struct ion_heap heap;
+>>> +    struct gen_pool *pool;
+>>> +};
+>>> +
+>>> +static phys_addr_t ion_unmapped_allocate(struct ion_heap *heap,
+>>> +                     unsigned long size)
+>>> +{
+>>> +    struct ion_unmapped_heap *unmapped_heap =
+>>> +        container_of(heap, struct ion_unmapped_heap, heap);
+>>> +    unsigned long offset;
+>>> +
+>>> +    offset = gen_pool_alloc(unmapped_heap->pool, size);
+>>> +    if (!offset)
+>>> +        return ION_UNMAPPED_ALLOCATE_FAIL;
+>>> +
+>>> +    return offset;
+>>> +}
+>>> +
+>>> +static void ion_unmapped_free(struct ion_heap *heap, phys_addr_t addr,
+>>> +                  unsigned long size)
+>>> +{
+>>> +    struct ion_unmapped_heap *unmapped_heap =
+>>> +        container_of(heap, struct ion_unmapped_heap, heap);
+>>> +
+>>> +    gen_pool_free(unmapped_heap->pool, addr, size);
+>>> +}
+>>> +
+>>> +static int ion_unmapped_heap_allocate(struct ion_heap *heap,
+>>> +                      struct ion_buffer *buffer,
+>>> +                      unsigned long size,
+>>> +                      unsigned long flags)
+>>> +{
+>>> +    struct sg_table *table;
+>>> +    phys_addr_t paddr;
+>>> +    int ret;
+>>> +
+>>> +    table = kmalloc(sizeof(*table), GFP_KERNEL);
+>>> +    if (!table)
+>>> +        return -ENOMEM;
+>>> +    ret = sg_alloc_table(table, 1, GFP_KERNEL);
+>>> +    if (ret)
+>>> +        goto err_free;
+>>> +
+>>> +    paddr = ion_unmapped_allocate(heap, size);
+>>> +    if (paddr == ION_UNMAPPED_ALLOCATE_FAIL) {
+>>> +        ret = -ENOMEM;
+>>> +        goto err_free_table;
+>>> +    }
+>>> +
+>>> +    sg_set_page(table->sgl, pfn_to_page(PFN_DOWN(paddr)), size, 0);
+>>> +    buffer->sg_table = table;
+>>> +
+>>
+>>
+>> If this memory is actually unmapped this is not going to work because
+>> the struct page will not be valid.
+>>
 > 
-> Let's do it as a quick fix with something like below being added to
-> the commit message:
+> If it will never get mapped then it doesn't need a valid struct page as
+> far as I can tell. We only use it as a marker to where the start of
+> backing memory is, and that is calculated based on the struct page
+> pointer address, not its contents.
 > 
-> "For sake of a quick fix this introduces a new mandatory dependency to
-> the driver which may survive without it. Otherwise we need to revisit
-> the driver architecture to address this properly."
 
-Done, thanks!
+You can't rely on pfn_to_page returning a valid page pointer if the
+pfn doesn't point to reserved memory. Even if you aren't relying
+on the contents, that's no guarantee you can use that to to get
+the valid pfn back. You can get away with that sometimes but it's
+not correct to rely on it all the time.
+
+>>> +    return 0;
+>>> +
+>>> +err_free_table:
+>>> +    sg_free_table(table);
+>>> +err_free:
+>>> +    kfree(table);
+>>> +    return ret;
+>>> +}
+>>> +
+>>> +static void ion_unmapped_heap_free(struct ion_buffer *buffer)
+>>> +{
+>>> +    struct ion_heap *heap = buffer->heap;
+>>> +    struct sg_table *table = buffer->sg_table;
+>>> +    struct page *page = sg_page(table->sgl);
+>>> +    phys_addr_t paddr = PFN_PHYS(page_to_pfn(page));
+>>> +
+>>> +    ion_unmapped_free(heap, paddr, buffer->size);
+>>> +    sg_free_table(buffer->sg_table);
+>>> +    kfree(buffer->sg_table);
+>>> +}
+>>> +
+>>> +static struct ion_heap_ops unmapped_heap_ops = {
+>>> +    .allocate = ion_unmapped_heap_allocate,
+>>> +    .free = ion_unmapped_heap_free,
+>>> +    /* no .map_user, user mapping of unmapped heaps not allowed */
+>>> +    .map_kernel = ion_heap_map_kernel,
+>>> +    .unmap_kernel = ion_heap_unmap_kernel,
+>>> +};
+>>> +
+>>> +struct ion_heap *ion_unmapped_heap_create(phys_addr_t base, size_t size)
+>>> +{
+>>> +    struct ion_unmapped_heap *unmapped_heap;
+>>> +
+>>> +    unmapped_heap = kzalloc(sizeof(*unmapped_heap), GFP_KERNEL);
+>>> +    if (!unmapped_heap)
+>>> +        return ERR_PTR(-ENOMEM);
+>>> +
+>>> +    unmapped_heap->pool = gen_pool_create(PAGE_SHIFT, -1);
+>>> +    if (!unmapped_heap->pool) {
+>>> +        kfree(unmapped_heap);
+>>> +        return ERR_PTR(-ENOMEM);
+>>> +    }
+>>> +    gen_pool_add(unmapped_heap->pool, base, size, -1);
+>>> +    unmapped_heap->heap.ops = &unmapped_heap_ops;
+>>> +    unmapped_heap->heap.type = ION_HEAP_TYPE_UNMAPPED;
+>>> +
+>>> +    return &unmapped_heap->heap;
+>>> +}
+>>> diff --git a/drivers/staging/android/uapi/ion.h
+>>> b/drivers/staging/android/uapi/ion.h
+>>> index 5d7009884c13..d5f98bc5f340 100644
+>>> --- a/drivers/staging/android/uapi/ion.h
+>>> +++ b/drivers/staging/android/uapi/ion.h
+>>> @@ -19,6 +19,8 @@
+>>>     *                 carveout heap, allocations are physically
+>>>     *                 contiguous
+>>>     * @ION_HEAP_TYPE_DMA:         memory allocated via DMA API
+>>> + * @ION_HEAP_TYPE_UNMAPPED:     memory not intended to be mapped into
+>>> the
+>>> + *                 linux address space unless for debug cases
+>>>     * @ION_NUM_HEAPS:         helper for iterating over heaps, a bit mask
+>>>     *                 is used to identify the heaps, so only 32
+>>>     *                 total heap types are supported
+>>> @@ -29,6 +31,7 @@ enum ion_heap_type {
+>>>        ION_HEAP_TYPE_CARVEOUT,
+>>>        ION_HEAP_TYPE_CHUNK,
+>>>        ION_HEAP_TYPE_DMA,
+>>> +    ION_HEAP_TYPE_UNMAPPED,
+>>>        ION_HEAP_TYPE_CUSTOM, /*
+>>>                       * must be last so device specific heaps always
+>>>                       * are at the end of this enum
+>>>
+>>
+>> Overall this seems way too similar to the carveout heap
+>> to justify adding another heap type. It also still missing
+>> the part of where exactly you call ion_unmapped_heap_create.
+>> Figuring that out is one of the blocking items for moving
+>> Ion out of staging.
+>>
+> 
+> I agree with this being almost a 1:1 copy of the carveout heap, I'm just
+> not sure of a good way to do this without a new heap type. Adding flags
+> to the existing carveout type seem a bit messy. Plus then those flags
+> should be valid for other heap types, gets complicated quickly..
+> 
+> I'll reply to the second part in your other top level response.
+> 
+> Andrew
+> 
+>> Thanks,
+>> Laura
 
