@@ -2,176 +2,92 @@ Return-Path: <SRS0=RZO6=PX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8196DC43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 17:25:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A2047C43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 17:27:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 457C120675
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 17:25:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 70D9F20651
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 17:27:10 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="unknown key hash" (0-bit key) header.d=c-s.fr header.i=@c-s.fr header.b="gByyt/X9"
+	dkim=pass (1024-bit key) header.d=alien8.de header.i=@alien8.de header.b="RXg2/eCZ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388153AbfAORZj (ORCPT
+        id S1730483AbfAOR1I (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 15 Jan 2019 12:25:39 -0500
-Received: from pegase1.c-s.fr ([93.17.236.30]:10353 "EHLO pegase1.c-s.fr"
+        Tue, 15 Jan 2019 12:27:08 -0500
+Received: from mail.skyhub.de ([5.9.137.197]:50004 "EHLO mail.skyhub.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728736AbfAORZj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Jan 2019 12:25:39 -0500
-Received: from localhost (mailhub1-int [192.168.12.234])
-        by localhost (Postfix) with ESMTP id 43fHKp6Q7fz9vBJc;
-        Tue, 15 Jan 2019 18:25:34 +0100 (CET)
-Authentication-Results: localhost; dkim=permerror reason="key not found"
-        header.d=c-s.fr header.i=@c-s.fr header.b=gByyt/X9;
-        dkim-adsp=none (insecure policy); dkim-atps=neutral
-X-Virus-Scanned: Debian amavisd-new at c-s.fr
-Received: from pegase1.c-s.fr ([192.168.12.234])
-        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
-        with ESMTP id Lf7f_X3vnQ4Y; Tue, 15 Jan 2019 18:25:34 +0100 (CET)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-        by pegase1.c-s.fr (Postfix) with ESMTP id 43fHKp58mcz9vBJY;
-        Tue, 15 Jan 2019 18:25:34 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=c-s.fr; s=mail;
-        t=1547573134; bh=nfiqene5M3o5kAGA4cFhUacIFPIGZMQYcHqzH6hGjNc=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=gByyt/X9hT/1zq0OG6PlK51/hNVU37xWuECwM4TeCx9xzapEuwjeNIQQt+44LpPVI
-         GPQCzr25yGAZrAYdGATnFGkMH+De6KKTgXyxHHtPY/IM3+wZfsrJ1KyPmYPtItJIXT
-         f2eh28nIAavAM0oJBLzprzk537I97GPpAynb7djXxsCE5sCYXS5NGivFQ8B8J8s1a4
-         Uz7xlYyFXZxJGIBdlsetKewbArORfGGN6uWVHShkMsbo25geYGrhH1Ai0Uo7oZxYCy
-         yJOF23I25T/AYNkvyzwOfV6pKpK04Sc2YeGRy9aak14ip49YqhvW9n531hafkubKwQ
-         haLmeX+VW4K7P3Y0kPPihVVsCoqq5nOt9apMPYdMrPYiIZIXUUztsNWvp215CQHQJL
-         BHNU06BH9enFTGmo1OfkQas1xZlQZBh+QHMTkOzzTHdGtXM0SJ9ZkkNS5k4ed0A3kQ
-         C9DIKGGtPTtpdBjCz9BqhFZUB021FCYxCGhoCLMycy14x4N9V0JRa2xYNDNRusoLPc
-         6J/QZi+XnYDnwcCGNW+iqTURwzn+UkQfcd9K/9nBNbPRQrt+PBxoKbONieBwlpa+fA
-         wL+5wfG3g7vIE4rq9ewA1gcfQzuOBzMy/Rya4DVV5yqGoLlge2ozTiQBbZeuRPgNb8
-         44MeCtd1qJ/r9+Tk7/Q0L7q0=
-Received: from localhost (localhost [127.0.0.1])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id E11108B7FF;
-        Tue, 15 Jan 2019 18:25:36 +0100 (CET)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-        with ESMTP id djneeju_xvcU; Tue, 15 Jan 2019 18:25:36 +0100 (CET)
-Received: from PO15451 (unknown [192.168.4.90])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id E2C888B7EE;
-        Tue, 15 Jan 2019 18:25:35 +0100 (CET)
-Subject: Re: [PATCH v3 1/3] powerpc/mm: prepare kernel for KAsan on PPC32
-To:     Dmitry Vyukov <dvyukov@google.com>,
-        Andrey Ryabinin <aryabinin@virtuozzo.com>
-Cc:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>,
-        Alexander Potapenko <glider@google.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linuxppc-dev@lists.ozlabs.org,
-        kasan-dev <kasan-dev@googlegroups.com>,
-        Linux-MM <linux-mm@kvack.org>
-References: <cover.1547289808.git.christophe.leroy@c-s.fr>
- <0c854dd6b110ac2b81ef1681f6e097f59f84af8b.1547289808.git.christophe.leroy@c-s.fr>
- <CACT4Y+aEsLWqhJmXETNsGtKdbfHDFL1NF8ofv3KwvQPraXdFyw@mail.gmail.com>
- <801c7d58-417d-1e65-68a0-b8cf02f9f956@c-s.fr>
- <CACT4Y+ZdA-w5OeebZg3PYPB+BX5wDxw_DxNe2==VJfbpy2eJ7A@mail.gmail.com>
- <330696c0-90c6-27de-5eb3-4da2159fdfbc@virtuozzo.com>
- <CACT4Y+ajgTdDyFFWCp0oRSPKZh9ercDpq3pAq2-ZSx7ouAvZYQ@mail.gmail.com>
-From:   Christophe Leroy <christophe.leroy@c-s.fr>
-Message-ID: <301f5826-64ab-1cf4-7e7e-cd026de77bca@c-s.fr>
-Date:   Tue, 15 Jan 2019 18:25:35 +0100
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        id S1727883AbfAOR1I (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 Jan 2019 12:27:08 -0500
+Received: from zn.tnic (p200300EC2BCBB40040287EAE02E8DE81.dip0.t-ipconnect.de [IPv6:2003:ec:2bcb:b400:4028:7eae:2e8:de81])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 8BF0D1EC0B83;
+        Tue, 15 Jan 2019 18:27:06 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
+        t=1547573226;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
+        bh=EFd20pgx9mtTvZzUi2nk5ogUWU08gx2D3kOqurxsfKU=;
+        b=RXg2/eCZg6c/v/AGo6/VkQDl8k3b9dVBmhdcfS9K3ccXmiP2dqDcFE00oMM4leanEbAQBl
+        qVcC3s8rXpN6SCoUAzgmqubQXdeCZ/U+XoOUmV296zsiHczq8MCddhudEVhsrfeoqz77yc
+        lSoaNUL8bQlsMRGNbGmZG/Zqs3j7A98=
+Date:   Tue, 15 Jan 2019 18:26:59 +0100
+From:   Borislav Petkov <bp@alien8.de>
+To:     "S, Shirish" <Shirish.S@amd.com>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H . Peter Anvin" <hpa@zytor.com>,
+        "maintainer : X86 ARCHITECTURE" <x86@kernel.org>,
+        Tony Luck <tony.luck@intel.com>,
+        Vishal Verma <vishal.l.verma@intel.com>,
+        "open list : X86 ARCHITECTURE" <linux-kernel@vger.kernel.org>,
+        "Lendacky, Thomas" <Thomas.Lendacky@amd.com>,
+        "Singh, Brijesh" <brijesh.singh@amd.com>
+Subject: Re: [PATCH 2/2] x86/mce/amd: Ensure quirks are applied in resume
+ path as well
+Message-ID: <20190115172659.GE6596@zn.tnic>
+References: <1546857399-2926-1-git-send-email-shirish.s@amd.com>
+ <1546857399-2926-3-git-send-email-shirish.s@amd.com>
+ <20190109220843.GK15665@zn.tnic>
+ <7a9227c0-1bc3-67c5-14a8-a40d186a5ef8@amd.com>
+ <20190114103312.GG2773@zn.tnic>
+ <2ad4bb63-2b70-3652-3261-009cdbfc15a9@amd.com>
+ <20190114153256.GM2773@zn.tnic>
+ <4f8b532b-8613-feb5-7474-4bb0462cf1c7@amd.com>
 MIME-Version: 1.0
-In-Reply-To: <CACT4Y+ajgTdDyFFWCp0oRSPKZh9ercDpq3pAq2-ZSx7ouAvZYQ@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: fr
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <4f8b532b-8613-feb5-7474-4bb0462cf1c7@amd.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Tue, Jan 15, 2019 at 03:30:42AM +0000, S wrote:
+> Please talk to your colleagues how to fix that. Adding some of them to
+> CC.
 
+Your mailer is still broken. How do you manage to have an empty From:?
+Is your exchange client misconfigured?
 
-Le 15/01/2019 à 18:10, Dmitry Vyukov a écrit :
-> On Tue, Jan 15, 2019 at 6:06 PM Andrey Ryabinin <aryabinin@virtuozzo.com> wrote:
->>
->>
->>
->> On 1/15/19 2:14 PM, Dmitry Vyukov wrote:
->>> On Tue, Jan 15, 2019 at 8:27 AM Christophe Leroy
->>> <christophe.leroy@c-s.fr> wrote:
->>>> On 01/14/2019 09:34 AM, Dmitry Vyukov wrote:
->>>>> On Sat, Jan 12, 2019 at 12:16 PM Christophe Leroy
->>>>> <christophe.leroy@c-s.fr> wrote:
->>>>> &gt;
->>>>> &gt; In kernel/cputable.c, explicitly use memcpy() in order
->>>>> &gt; to allow GCC to replace it with __memcpy() when KASAN is
->>>>> &gt; selected.
->>>>> &gt;
->>>>> &gt; Since commit 400c47d81ca38 ("powerpc32: memset: only use dcbz once cache is
->>>>> &gt; enabled"), memset() can be used before activation of the cache,
->>>>> &gt; so no need to use memset_io() for zeroing the BSS.
->>>>> &gt;
->>>>> &gt; Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
->>>>> &gt; ---
->>>>> &gt;  arch/powerpc/kernel/cputable.c | 4 ++--
->>>>> &gt;  arch/powerpc/kernel/setup_32.c | 6 ++----
->>>>> &gt;  2 files changed, 4 insertions(+), 6 deletions(-)
->>>>> &gt;
->>>>> &gt; diff --git a/arch/powerpc/kernel/cputable.c
->>>>> b/arch/powerpc/kernel/cputable.c
->>>>> &gt; index 1eab54bc6ee9..84814c8d1bcb 100644
->>>>> &gt; --- a/arch/powerpc/kernel/cputable.c
->>>>> &gt; +++ b/arch/powerpc/kernel/cputable.c
->>>>> &gt; @@ -2147,7 +2147,7 @@ void __init set_cur_cpu_spec(struct cpu_spec *s)
->>>>> &gt;         struct cpu_spec *t = &amp;the_cpu_spec;
->>>>> &gt;
->>>>> &gt;         t = PTRRELOC(t);
->>>>> &gt; -       *t = *s;
->>>>> &gt; +       memcpy(t, s, sizeof(*t));
->>>>>
->>>>> Hi Christophe,
->>>>>
->>>>> I understand why you are doing this, but this looks a bit fragile and
->>>>> non-scalable. This may not work with the next version of compiler,
->>>>> just different than yours version of compiler, clang, etc.
->>>>
->>>> My felling would be that this change makes it more solid.
->>>>
->>>> My understanding is that when you do *t = *s, the compiler can use
->>>> whatever way it wants to do the copy.
->>>> When you do memcpy(), you ensure it will do it that way and not another
->>>> way, don't you ?
->>>
->>> It makes this single line more deterministic wrt code-gen (though,
->>> strictly saying compiler can turn memcpy back into inlines
->>> instructions, it knows memcpy semantics anyway).
->>> But the problem I meant is that the set of places that are subject to
->>> this problem is not deterministic. So if we go with this solution,
->>> after this change it's in the status "works on your machine" and we
->>> either need to commit to not using struct copies and zeroing
->>> throughout kernel code or potentially have a long tail of other
->>> similar cases, and since they can be triggered by another compiler
->>> version, we may need to backport these changes to previous releases
->>> too. Whereas if we would go with compiler flags, it would prevent the
->>> problem in all current and future places and with other past/future
->>> versions of compilers.
->>>
->>
->> The patch will work for any compiler. The point of this patch is to make
->> memcpy() visible to the preprocessor which will replace it with __memcpy().
-> 
-> For this single line, yes. But it does not mean that KASAN will work.
-> 
->> After preprocessor's work, compiler will see just __memcpy() call here.
+> Let me know if you want me to fix this and re-send the 3 patches.
 
-This problem can affect any arch I believe. Maybe the 'solution' would 
-be to run a generic script similar to 
-arch/powerpc/kernel/prom_init_check.sh on all objects compiled with 
-KASAN_SANITIZE_object.o := n don't include any reference to memcpy() 
-memset() or memmove() ?
+Well, please redo them by moving the quirk function to
 
-Christophe
+  arch/x86/kernel/cpu/mce/amd.c
+
+and call it from mce_amd_feature_init(). This will concentrate the code
+more and won't need the globally visible function.
+
+Thx.
+
+-- 
+Regards/Gruss,
+    Boris.
+
+Good mailing practices for 400: avoid top-posting and trim the reply.
