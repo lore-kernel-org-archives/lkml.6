@@ -2,128 +2,127 @@ Return-Path: <SRS0=RZO6=PX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F509C43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 08:13:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3AE56C43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 08:13:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3436120859
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 08:13:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 04C6020859
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 08:13:43 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="yKNEibH8"
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="UlDnvDHO"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728424AbfAOING (ORCPT
+        id S1728445AbfAOINm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 15 Jan 2019 03:13:06 -0500
-Received: from conuserg-07.nifty.com ([210.131.2.74]:43605 "EHLO
-        conuserg-07.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728043AbfAOING (ORCPT
+        Tue, 15 Jan 2019 03:13:42 -0500
+Received: from mail-vk1-f194.google.com ([209.85.221.194]:42216 "EHLO
+        mail-vk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728043AbfAOINl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Jan 2019 03:13:06 -0500
-Received: from pug.e01.socionext.com (p14092-ipngnfx01kyoto.kyoto.ocn.ne.jp [153.142.97.92]) (authenticated)
-        by conuserg-07.nifty.com with ESMTP id x0F8BngX023329;
-        Tue, 15 Jan 2019 17:11:50 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-07.nifty.com x0F8BngX023329
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1547539910;
-        bh=OUfJ3OLYNT1gN1lsc/KpmyBq7v1Da05HpG6V735Lw48=;
-        h=From:To:Cc:Subject:Date:From;
-        b=yKNEibH8fL7l/0/Aa4bU17wH3pgw9gXrLlp732DFHbz+Y6MdellPcLb7uwFSWo5/Y
-         XySbgwg9U9ywsgXCA6KXkqasl1mYVfTGt82AjibLGym3jn8/uS8h0JdrM+iNkyqCyx
-         YozNywHjxz+cdurKqtHISblzhgoprj4Lcf6Ph608mPMwaSdKOty4oLYKW5z43KU3vA
-         uEdjjCTDezM40AgnBWdOQz7+BEXcrte74tqneUiLl8jc01Mig/JEbarupYhvKhzZG6
-         bsqgGiv+Kw0A1mxrnlUy7CkvEjZEGWh3VjtT8LhxFfP/+kfhCVxshA5gkxrQ4Mg55Z
-         CAFsMv3YGw4JA==
-X-Nifty-SrcIP: [153.142.97.92]
-From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-To:     linux-mtd@lists.infradead.org,
-        Boris Brezillon <boris.brezillon@bootlin.com>,
-        Miquel Raynal <miquel.raynal@bootlin.com>
-Cc:     Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Brian Norris <computersforpeace@gmail.com>,
-        linux-kernel@vger.kernel.org, Marek Vasut <marek.vasut@gmail.com>,
-        Richard Weinberger <richard@nod.at>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Boris Brezillon <bbrezillon@kernel.org>
-Subject: [PATCH] mtd: rawnand: denali_dt: remove single anonymous clock support
-Date:   Tue, 15 Jan 2019 17:11:34 +0900
-Message-Id: <1547539894-12898-1-git-send-email-yamada.masahiro@socionext.com>
-X-Mailer: git-send-email 2.7.4
+        Tue, 15 Jan 2019 03:13:41 -0500
+Received: by mail-vk1-f194.google.com with SMTP id y14so399287vky.9
+        for <linux-kernel@vger.kernel.org>; Tue, 15 Jan 2019 00:13:41 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=mOwjrPx16pxEEqmyAWoh2wbog93QbCSIHUTMPwWkDog=;
+        b=UlDnvDHOYd5hJgglipj/ld7jFnRO/DXzNHcUwrkTFqHouwQSmr//EgtCZtVZSffRA1
+         hHC0YCEY/8XjJspdNh5RSUfpZgq626egdXOd1rS9+I9Ej3LXz/PoZYm31ppNFc1ccF9L
+         zSHm+aRl2T4WBhWMJGqoNPEt9KkeKbglQEymY=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=mOwjrPx16pxEEqmyAWoh2wbog93QbCSIHUTMPwWkDog=;
+        b=aEhIVi0XKO1mvuffcG1FSu/fbchkvz80a1+0VvVCjFugsQk3SuF1oRyE7LLvs+itPR
+         kGGppZbGCJ3d4Lu/+n9pVzaLFz/7iMZAfG1OlTQ41mLKbqKmsbAZuaW/kSXjgCEbs6mK
+         /9dciCblDeOY7Lalgim4PV6ituYmXevR1xCO6cthPAATRhKR7Ia+FHKUN2Mp2jszsVUn
+         9cgroJ+5REl67o9oZG88W1mSAUXQ9ZqNievlyOa81d8pGeJdP+/srOzKQxvkQvVu6Xhx
+         cK+QoyGXn2rgBuZ8NVzZ/+Avo027jr525WQ+aSWa2TCCqito2W4FxmMDpHa0AHEDMmPu
+         mC5Q==
+X-Gm-Message-State: AJcUukdwNlh98weXfLOjS7AHbdmk66n1vnVMIL90VCll0VQdSt06ATTF
+        hnNsLe2uN1NtO2ekhEuIi5ZN2Ub7U3M5dEpQlwq0QA==
+X-Google-Smtp-Source: ALg8bN6gCHBi+6s8lgFGvvg1TGiaWGpigxX44RPrtFeCZOeFlTD8yBRb2V1j9rO5duDIPLB72+3Hfr9nNkPrl6LD58o=
+X-Received: by 2002:a1f:9042:: with SMTP id s63mr991999vkd.17.1547540020554;
+ Tue, 15 Jan 2019 00:13:40 -0800 (PST)
+MIME-Version: 1.0
+References: <6ccac7db-3ab7-e396-90be-8681a8ee336b@web.de> <CALAqxLXz_s6B=NzSp17Lj6xMTYybEsMh4jDR8COXnWQCnFTrsw@mail.gmail.com>
+ <CAPDyKFrY58-x3SsUwhfrLvf=hayhdjQZJWqUpmegArmnEsWATg@mail.gmail.com>
+ <e4977d44-567a-5266-4617-ba62d194a666@web.de> <0a6e6ca5-3ea0-4f6a-63f1-96187700a4bc@web.de>
+In-Reply-To: <0a6e6ca5-3ea0-4f6a-63f1-96187700a4bc@web.de>
+From:   Ulf Hansson <ulf.hansson@linaro.org>
+Date:   Tue, 15 Jan 2019 09:13:03 +0100
+Message-ID: <CAPDyKFpmFGu6R4PkBe_8z7NcwewZrJ_Cv0ywj0+jwO7_WLZgrQ@mail.gmail.com>
+Subject: Re: [PATCH] arm64: dts: hikey: Give wifi some time after power-on
+To:     Jan Kiszka <jan.kiszka@web.de>
+Cc:     John Stultz <john.stultz@linaro.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        Wei Xu <xuwei5@hisilicon.com>, Ryan Grachek <ryan@edited.us>,
+        linux-wireless@vger.kernel.org, "Reizer, Eyal" <eyalr@ti.com>,
+        Valentin Schneider <valentin.schneider@arm.com>,
+        Tony Lindgren <tony@atomide.com>,
+        Kalle Valo <kvalo@codeaurora.org>,
+        KISHON VIJAY ABRAHAM <kishon@ti.com>,
+        "Mishol, Guy" <guym@ti.com>,
+        Anders Roxell <anders.roxell@linaro.org>,
+        Ricardo Salveti <rsalveti@rsalveti.net>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit 6f1fe97bec34 ("mtd: rawnand: denali_dt: add more clocks based
-on IP datasheet") introduced a more correct binding that requires
-three named clocks.
+On Tue, 15 Jan 2019 at 09:10, Jan Kiszka <jan.kiszka@web.de> wrote:
+>
+> On 06.01.19 10:53, Jan Kiszka wrote:
+> > On 03.01.19 22:32, Ulf Hansson wrote:
+> >> On Wed, 2 Jan 2019 at 23:21, John Stultz <john.stultz@linaro.org> wrote:
+> >>>
+> >>> Adding a few folks to cc from the thread here:
+> >>> https://patchwork.kernel.org/patch/10734021/
+> >>>
+> >>> As this sounds like a very similar issue.
+> >>> thanks
+> >>> -john
+> >>
+> >> John, thanks for looping me in.
+> >>
+> >>>
+> >>> On Sun, Dec 30, 2018 at 3:38 AM Jan Kiszka <jan.kiszka@web.de> wrote:
+> >>>>
+> >>>> From: Jan Kiszka <jan.kiszka@siemens.com>
+> >>>>
+> >>>> Somewhere along recent changes to power control of the wl1835, power-on
+> >>>> became very unreliable on the hikey, failing like this:
+> >>>>
+> >>>> wl1271_sdio: probe of mmc2:0001:1 failed with error -16
+> >>>> wl1271_sdio: probe of mmc2:0001:2 failed with error -16
+> >>>>
+> >>>> After playing with some dt parameters and comparing to other users of
+> >>>> this chip, it turned out we need some power-on delay to make things
+> >>>> stable again. In contrast to those other users which define 200 ms, the
+> >>>> hikey is already very happy with 1 ms.
+> >>
+> >> According to the discussions we had so far, this doesn't sound like
+> >> the correct solution.
+> >>
+> >> I am intending to post patch soon, however, I am not sure exactly what
+> >> solution to pick yet. I will keep you on cc - and of course I
+> >> appreciate if you could help to test.
+> >>
+> >
+> > FWIW, the Ultra96 is also affected. Here I worked around it by using a 10 ms
+> > power-on delay. The original workaround from the other thread did not help.
+> > Looking forward to the proper fix now!
+> >
+>
+> Any news on this regression?
 
-Now that all upstream DT files migrated over to it, remove the single
-anonymous clock support.
+I will post a (or two) patch during the day.
 
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
----
-
- drivers/mtd/nand/raw/denali_dt.c | 27 ++++-----------------------
- 1 file changed, 4 insertions(+), 23 deletions(-)
-
-diff --git a/drivers/mtd/nand/raw/denali_dt.c b/drivers/mtd/nand/raw/denali_dt.c
-index 7c6a8a4..0b5ae24 100644
---- a/drivers/mtd/nand/raw/denali_dt.c
-+++ b/drivers/mtd/nand/raw/denali_dt.c
-@@ -109,25 +109,17 @@ static int denali_dt_probe(struct platform_device *pdev)
- 	if (IS_ERR(denali->host))
- 		return PTR_ERR(denali->host);
- 
--	/*
--	 * A single anonymous clock is supported for the backward compatibility.
--	 * New platforms should support all the named clocks.
--	 */
- 	dt->clk = devm_clk_get(dev, "nand");
- 	if (IS_ERR(dt->clk))
--		dt->clk = devm_clk_get(dev, NULL);
--	if (IS_ERR(dt->clk)) {
--		dev_err(dev, "no clk available\n");
- 		return PTR_ERR(dt->clk);
--	}
- 
- 	dt->clk_x = devm_clk_get(dev, "nand_x");
- 	if (IS_ERR(dt->clk_x))
--		dt->clk_x = NULL;
-+		return PTR_ERR(dt->clk_x);
- 
- 	dt->clk_ecc = devm_clk_get(dev, "ecc");
- 	if (IS_ERR(dt->clk_ecc))
--		dt->clk_ecc = NULL;
-+		return PTR_ERR(dt->clk_ecc);
- 
- 	ret = clk_prepare_enable(dt->clk);
- 	if (ret)
-@@ -141,19 +133,8 @@ static int denali_dt_probe(struct platform_device *pdev)
- 	if (ret)
- 		goto out_disable_clk_x;
- 
--	if (dt->clk_x) {
--		denali->clk_rate = clk_get_rate(dt->clk);
--		denali->clk_x_rate = clk_get_rate(dt->clk_x);
--	} else {
--		/*
--		 * Hardcode the clock rates for the backward compatibility.
--		 * This works for both SOCFPGA and UniPhier.
--		 */
--		dev_notice(dev,
--			   "necessary clock is missing. default clock rates are used.\n");
--		denali->clk_rate = 50000000;
--		denali->clk_x_rate = 200000000;
--	}
-+	denali->clk_rate = clk_get_rate(dt->clk);
-+	denali->clk_x_rate = clk_get_rate(dt->clk_x);
- 
- 	ret = denali_init(denali);
- 	if (ret)
--- 
-2.7.4
-
+Kind regards
+Uffe
