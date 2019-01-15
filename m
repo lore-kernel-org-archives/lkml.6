@@ -2,103 +2,102 @@ Return-Path: <SRS0=RZO6=PX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 49A76C43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 20:01:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D32CC43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 20:02:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0F96F20656
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 20:01:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4A32020656
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 20:02:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1547582535;
+	bh=To9SCcGmql52ej6S9yuk9qVA7+Y0qvTRe+fDt0nOJww=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=SitdFqnr++8b7YyYPAfIggi3IQbTXJI3nyQv9Ylb0zxtzEPLm/eLwoj82zDy/2B78
+	 1lKErznHRkvm8M08Y0NLb3XgNWtX3HVvCeUjLPe/rm3WUGr4edPlCmPEL1/Up5fftB
+	 1u+JXw/HoPEXGFPLroec+knDj6m7gEG9xhh56Nuk=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389619AbfAOUBN (ORCPT
+        id S2389640AbfAOUCN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 15 Jan 2019 15:01:13 -0500
-Received: from www62.your-server.de ([213.133.104.62]:50996 "EHLO
-        www62.your-server.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732293AbfAOUBN (ORCPT
+        Tue, 15 Jan 2019 15:02:13 -0500
+Received: from mail-ot1-f66.google.com ([209.85.210.66]:34823 "EHLO
+        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732293AbfAOUCM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Jan 2019 15:01:13 -0500
-Received: from [78.46.172.3] (helo=sslproxy06.your-server.de)
-        by www62.your-server.de with esmtpsa (TLSv1.2:DHE-RSA-AES256-GCM-SHA384:256)
-        (Exim 4.89_1)
-        (envelope-from <daniel@iogearbox.net>)
-        id 1gjUtY-0006Nt-AP; Tue, 15 Jan 2019 21:01:08 +0100
-Received: from [178.197.248.17] (helo=linux.home)
-        by sslproxy06.your-server.de with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
-        (Exim 4.89)
-        (envelope-from <daniel@iogearbox.net>)
-        id 1gjUtY-0007Kw-3m; Tue, 15 Jan 2019 21:01:08 +0100
-Subject: Re: [PATCH 2/2] bpf: annotate implicit fall through
-To:     Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        Mathieu Malaterre <malat@debian.org>,
-        Alexei Starovoitov <ast@kernel.org>
-Cc:     "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20190114202941.16183-1-malat@debian.org>
- <20190114202941.16183-2-malat@debian.org>
- <476963d1-fc1a-b185-6b33-c780fbb009c5@cogentembedded.com>
-From:   Daniel Borkmann <daniel@iogearbox.net>
-Message-ID: <79030d7e-4db4-c03a-b2e0-53f1b30e0924@iogearbox.net>
-Date:   Tue, 15 Jan 2019 21:01:07 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.3.0
+        Tue, 15 Jan 2019 15:02:12 -0500
+Received: by mail-ot1-f66.google.com with SMTP id 81so3726530otj.2;
+        Tue, 15 Jan 2019 12:02:11 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=KHkxmrwQy1JEawfovmtFP1Ph+FNV8d7g5+agjyXgEDI=;
+        b=htdxGy6L3IfckZNqF//SrPEUej5ao1r71WqWEPxR6g2bv5mYsGhSrqt9+Wb5MwunCJ
+         Km1aqYCWn1c8ahZo3/vn3+omgGYzw/vA0U3Y7hTY/gaEY4eDLTzubUizHA00KKHqqu48
+         +nlyZVRFPolpnIL8bbDFJI8Yat84aTkcC6Xzwz9OjHm4PocLsQGa3hfpw9dbZqAgZ8h/
+         2rDqI1vNKKOGiTKI0GI9gYr1krtyTj6McyvTvwoW7AVZyVy8eTCBhdT/jhp1L4KssM9K
+         REvZKD3kf9wLQyBdvI+LBBBFW1mo374ODnznYsEEY5AQavegxuH1+OmlCO5lcqv2pixT
+         NyiA==
+X-Gm-Message-State: AJcUukfgyOQIK+xD0cXCaEcbO8e8mrWqumtVtoQSiHpfiJ3Adt7O9RZv
+        hTe0busnn5BLZgVf68zTJA==
+X-Google-Smtp-Source: ALg8bN48uuKwVh6RpLajIpwgoHOVbGMN0N+muvXekhC1tHRmvBQU93RVZsQZSQnwzanL43rcxuQ4BA==
+X-Received: by 2002:a9d:7097:: with SMTP id l23mr3277757otj.49.1547582530904;
+        Tue, 15 Jan 2019 12:02:10 -0800 (PST)
+Received: from localhost ([70.231.7.113])
+        by smtp.gmail.com with ESMTPSA id 127sm1860751oid.36.2019.01.15.12.02.10
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 15 Jan 2019 12:02:10 -0800 (PST)
+Date:   Tue, 15 Jan 2019 14:02:09 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Sowjanya Komatineni <skomatineni@nvidia.com>
+Cc:     mark.rutland@arm.com, mperttunen@nvidia.com,
+        chunyan.zhang@unisoc.com, thierry.reding@gmail.com,
+        jonathanh@nvidia.com, adrian.hunter@intel.com,
+        ulf.hansson@linaro.org, anrao@nvidia.com,
+        devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mmc@vger.kernel.org
+Subject: Re: [PATCH V8 1/3] dt-bindings: mmc: tegra: Add supports-cqe property
+Message-ID: <20190115200209.GA8473@bogus>
+References: <1547176135-2470-1-git-send-email-skomatineni@nvidia.com>
 MIME-Version: 1.0
-In-Reply-To: <476963d1-fc1a-b185-6b33-c780fbb009c5@cogentembedded.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-Authenticated-Sender: daniel@iogearbox.net
-X-Virus-Scanned: Clear (ClamAV 0.100.2/25300/Tue Jan 15 11:33:07 2019)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1547176135-2470-1-git-send-email-skomatineni@nvidia.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 01/15/2019 10:03 AM, Sergei Shtylyov wrote:
-> On 14.01.2019 23:29, Mathieu Malaterre wrote:
+On Thu, Jan 10, 2019 at 07:08:53PM -0800, Sowjanya Komatineni wrote:
+> Add supports-cqe optional property for Tegra SDMMC.
 > 
->> There is a plan to build the kernel with -Wimplicit-fallthrough and
->> thise place in the code produced a warnings (W=1).
+> Tegra186 and Tegra194 supports HW Command queue only
+> on SDMMC4 controller. This property is used to identify
+> command queue support controller in the tegra sdhci driver.
 > 
->    This?
+> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
+> ---
+>  Documentation/devicetree/bindings/mmc/nvidia,tegra20-sdhci.txt | 4 ++++
+>  1 file changed, 4 insertions(+)
 > 
->> In this particular case change a ‘:’ with a ‘,’ so as to match the
->> regular expression expected by GCC.
->>
->> This commit remove the following warning:
->>
->>    net/core/filter.c:5310:6: warning: this statement may fall through [-Wimplicit-fallthrough=]
->>
->> Signed-off-by: Mathieu Malaterre <malat@debian.org>
+> diff --git a/Documentation/devicetree/bindings/mmc/nvidia,tegra20-sdhci.txt b/Documentation/devicetree/bindings/mmc/nvidia,tegra20-sdhci.txt
+> index 32b4b4e41923..fb14c2c8d7ee 100644
+> --- a/Documentation/devicetree/bindings/mmc/nvidia,tegra20-sdhci.txt
+> +++ b/Documentation/devicetree/bindings/mmc/nvidia,tegra20-sdhci.txt
+> @@ -72,6 +72,10 @@ Optional properties for Tegra210 and Tegra186:
+>  - nvidia,default-trim : Specify the default outbound clock trimmer
+>    value.
+>  - nvidia,dqs-trim : Specify DQS trim value for HS400 timing
+> +- supports-cqe : The presence of this property indicates that the
+> +  corresponding controller supports HW command queue feature.
+> +  Tegra186 and Tegra194 has 4 SDMMC Controllers and only SDMMC4
+> +  controller supports HW Command Queue with eMMC device.
 
-Please respin and also make the two subject lines not exactly the same.
+Don't SDHCI capability bits do this? If not, this should probably be 
+common.
 
-Thanks,
-Daniel
-
->> ---
->>   net/core/filter.c | 2 +-
->>   1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/net/core/filter.c b/net/core/filter.c
->> index 447dd1bad31f..c8069a142994 100644
->> --- a/net/core/filter.c
->> +++ b/net/core/filter.c
->> @@ -5309,7 +5309,7 @@ bpf_base_func_proto(enum bpf_func_id func_id)
->>       case BPF_FUNC_trace_printk:
->>           if (capable(CAP_SYS_ADMIN))
->>               return bpf_get_trace_printk_proto();
->> -        /* else: fall through */
->> +        /* else, fall through */
-> 
->    The other patches seem to just drop "else:"...
-> 
->>       default:
->>           return NULL;
->>       }
->>
-> 
-> MBR, Sergei
-
+Rob
