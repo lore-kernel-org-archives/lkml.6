@@ -2,103 +2,128 @@ Return-Path: <SRS0=RZO6=PX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 906F2C43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 22:38:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E695C43444
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 22:41:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 67C0620883
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 22:38:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 25CC02133D
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 22:41:24 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="LLMXk1Ry"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2403770AbfAOWiy (ORCPT
+        id S2387876AbfAOWlW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 15 Jan 2019 17:38:54 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:51312 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387763AbfAOWiy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Jan 2019 17:38:54 -0500
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 702B086663;
-        Tue, 15 Jan 2019 22:38:53 +0000 (UTC)
-Received: from treble (ovpn-120-232.rdu2.redhat.com [10.10.120.232])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id EBFFD5D777;
-        Tue, 15 Jan 2019 22:38:51 +0000 (UTC)
-Date:   Tue, 15 Jan 2019 16:38:49 -0600
-From:   Josh Poimboeuf <jpoimboe@redhat.com>
-To:     Sean Christopherson <sean.j.christopherson@intel.com>
-Cc:     Qian Cai <cai@lca.pw>, Paolo Bonzini <pbonzini@redhat.com>,
-        rkrcmar@redhat.com, tglx@linutronix.de, mingo@redhat.com,
-        bp@alien8.de, hpa@zytor.com, x86@kernel.org, kvm@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] kvm: add proper frame pointer logic for vmx
-Message-ID: <20190115223849.apk6tcbl7f7kd5d4@treble>
-References: <20190115064459.70513-1-cai@lca.pw>
- <a6477022-bbc0-fc00-2c8e-75007b468d3f@lca.pw>
- <5109b3c2-cac0-aa19-9cc7-801340afe198@redhat.com>
- <7d6ae0bc-b7c7-63ea-ae94-4437a29a31b1@lca.pw>
- <20190115190617.GD21622@linux.intel.com>
+        Tue, 15 Jan 2019 17:41:22 -0500
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:33049 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729846AbfAOWlW (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 Jan 2019 17:41:22 -0500
+Received: by mail-pf1-f194.google.com with SMTP id c123so2019898pfb.0
+        for <linux-kernel@vger.kernel.org>; Tue, 15 Jan 2019 14:41:21 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=broadcom.com; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-transfer-encoding:content-language;
+        bh=geXaSVEWs6LE1rIkZivOjUut+JxyUtZy42EGp1ow4K8=;
+        b=LLMXk1RykLJNt7AnWx6zld47izrbXPivBbDFHBCTJRbQrw83+WUHAIbRf27pd5r+tO
+         TaJ9R3KmrFGahEd86sxW408ViN5RnyarllknC7YFLSqa7kpicwhSX3osj/jtd+p//KJJ
+         KCaZs8fvPqNrn2gTfbm17enZlrmS3IV+DIM5I=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-transfer-encoding
+         :content-language;
+        bh=geXaSVEWs6LE1rIkZivOjUut+JxyUtZy42EGp1ow4K8=;
+        b=rg9s1YdZZyLqDou/idIFNJQefSmzjO8AqCXvpEfx+3R45bXQ0nNgYx2dytY+aCVKsk
+         DEP1L/GICqlUM0eytnm8g7d7N6xXmJ6nfdA5O1Z6ScXwpp+RHXYFVI9VyomklO0IfuOv
+         ah3QqCC3iUO7KmrJrXI7zsNwOca292MIm4SVH0uDiMHXfaG2v3AKgM1aoZfZdMy3irHn
+         z+XyajL9/X/EEVu9cmnpJuAPdmOFU4VYxO1yAOWW2jTgSxQ9Lls5zCeHg3J5te+C2lo2
+         ryqtVM2vsf1+8LJ/8hzC5uh2fzMdabFW+4P0b3p96VHFnp2zgvnxq8gUlN5VFTsYdP9S
+         yBpg==
+X-Gm-Message-State: AJcUuke0tUzreE6cdimf/gU6zOb1jgEKUee76H54cTT/IMmhjlJ6DktG
+        wc8R0kNKYkbdO8Qnr2jjwrHXvg==
+X-Google-Smtp-Source: ALg8bN4Wi9mPBkrFPh1dGubAdx83iKaBWg4MuSApuxvGfuTcOSusL3jqISVdKAdWsvHAyQUcKRnaPg==
+X-Received: by 2002:a63:165e:: with SMTP id 30mr5887565pgw.103.1547592081070;
+        Tue, 15 Jan 2019 14:41:21 -0800 (PST)
+Received: from [10.69.52.190] ([192.19.223.250])
+        by smtp.gmail.com with ESMTPSA id r8sm4791269pgr.48.2019.01.15.14.41.19
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 15 Jan 2019 14:41:19 -0800 (PST)
+Subject: Re: [PATCH 5/8] scsi: lpfc: change snprintf to scnprintf for possible
+ overflow
+To:     Kees Cook <keescook@chromium.org>, Willy Tarreau <w@1wt.eu>
+Cc:     Silvio Cesare <silvio.cesare@gmail.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Dick Kennedy <dick.kennedy@broadcom.com>,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        Will Deacon <will.deacon@arm.com>, Greg KH <greg@kroah.com>
+References: <20190112152844.26550-1-w@1wt.eu>
+ <20190112152844.26550-5-w@1wt.eu>
+ <CAGXu5jKu5br-pB3U+3PDtgcgq_nmt0C7gHLYQXV4tz3pN=S11Q@mail.gmail.com>
+From:   James Smart <james.smart@broadcom.com>
+Message-ID: <de134f7c-7516-cfb4-7cd2-6d96b45bdb48@broadcom.com>
+Date:   Tue, 15 Jan 2019 14:41:17 -0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20190115190617.GD21622@linux.intel.com>
-User-Agent: NeoMutt/20180716
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.26]); Tue, 15 Jan 2019 22:38:53 +0000 (UTC)
+In-Reply-To: <CAGXu5jKu5br-pB3U+3PDtgcgq_nmt0C7gHLYQXV4tz3pN=S11Q@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 15, 2019 at 11:06:17AM -0800, Sean Christopherson wrote:
-> > I can see there are five options to solve it.
-> > 
-> > 1) always inline vmx_vcpu_run()
-> > 2) always noinline vmx_vcpu_run()
-> > 3) add -fdiable-ipa-fnsplit option to Makefile for vmx.o
-> > 4) let STACK_FRAME_NON_STANDARD support part.* syntax.
-> > 5) trim-down vmx_vcpu_run() even more to not causing splitting by GCC.
-> > 
-> > Option 1) and 2) seems give away the decision for user with
-> > CONFIG_CC_OPTIMIZE_FOR_(PERFORMANCE/SIZE).
-> > 
-> > Option 3) prevents other functions there for splitting for optimization.
-> > 
-> > Option 4) and 5) seems tricky to implement.
-> > 
-> > I am not more leaning to 3) as only other fuction will miss splitting is
-> > vmx_segment_access_rights().
-> 
-> Option 4) is the most correct, but "tricky" is an understatement.  Unless
-> Josh is willing to pick up the task it'll likely have to wait.
-> 
-> There's actually a few more options:
-> 
->  6) Replace "pop %rbp" in the vmx_vmenter() asm blob with an open-coded
->     equivalent, e.g. "mov [%rsp], %rbp; add $8, %rsp".  This runs an end-
->     around on objtool since objtool explicitly keys off "pop %rbp" and NOT
->     "mov ..., %rbp" (which is probably an objtool checking flaw?").
-> 
->  7) Move the vmx_vmenter() asm blob and a few other lines of code into a
->     separate helper, e.g. __vmx_vcpu_run(), and mark that as having a
->     non-standard stack frame.
 
-Do you mean moving the asm blob to a .S file instead of inline asm?  If
-so, I think that's definitely a good idea.  It would be a nice cleanup,
-regardless of the objtool false positive.
+On 1/14/2019 5:15 PM, Kees Cook wrote:
+> On Sat, Jan 12, 2019 at 7:29 AM Willy Tarreau<w@1wt.eu>  wrote:
+>> From: Silvio Cesare<silvio.cesare@gmail.com>
+>>
+>> Change snprintf to scnprintf. There are generally two cases where using
+>> snprintf causes problems.
+>>
+>> 1) Uses of size += snprintf(buf, SIZE - size, fmt, ...)
+>> In this case, if snprintf would have written more characters than what the
+>> buffer size (SIZE) is, then size will end up larger than SIZE. In later
+>> uses of snprintf, SIZE - size will result in a negative number, leading
+>> to problems. Note that size might already be too large by using
+>> size = snprintf before the code reaches a case of size += snprintf.
+>>
+>> 2) If size is ultimately used as a length parameter for a copy back to user
+>> space, then it will potentially allow for a buffer overflow and information
+>> disclosure when size is greater than SIZE. When the size is used to index
+>> the buffer directly, we can have memory corruption. This also means when
+>> size = snprintf... is used, it may also cause problems since size may become
+>> large.  Copying to userspace is mitigated by the HARDENED_USERCOPY kernel
+>> configuration.
+>>
+>> The solution to these issues is to use scnprintf which returns the number of
+>> characters actually written to the buffer, so the size variable will never
+>> exceed SIZE.
+>>
+>> Signed-off-by: Silvio Cesare<silvio.cesare@gmail.com>
+>> Cc: James Smart<james.smart@broadcom.com>
+>> Cc: Dick Kennedy<dick.kennedy@broadcom.com>
+>> Cc: Dan Carpenter<dan.carpenter@oracle.com>
+>> Cc: Kees Cook<keescook@chromium.org>
+>> Cc: Will Deacon<will.deacon@arm.com>
+>> Cc: Greg KH<greg@kroah.com>
+>> Signed-off-by: Willy Tarreau<w@1wt.eu>
+> I think this needs Cc: stable.
+>
+> Reviewed-by: Kees Cook<keescook@chromium.org>
+>
+> -Kees
+>
 
-That would allow vmx_vcpu_run() to be a "normal" C function which
-objtool can validate (and also create ORC data for).  It would also
-prevent future nasty GCC optimizations (which was why the __noclone was
-needed in the first place).
 
-And also, I *think* objtool would no longer warn in that case, because
-there would no longer be any calls in the function after popping %rbp.
-Though if I'm wrong about that, I'd be glad to help fix the warning one
-way or another.
+Reviewed-by:  James Smart <james.smart@broadcom.com>
 
--- 
-Josh
+-- james
+
