@@ -2,129 +2,239 @@ Return-Path: <SRS0=RZO6=PX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 383ADC43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 03:21:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BA8FEC43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 03:24:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 00BD120645
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 03:21:03 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="UrT1FD+E"
+	by mail.kernel.org (Postfix) with ESMTP id 884B020645
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 03:24:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727899AbfAODVB (ORCPT
+        id S1727956AbfAODYM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 14 Jan 2019 22:21:01 -0500
-Received: from mail-eopbgr10064.outbound.protection.outlook.com ([40.107.1.64]:4076
-        "EHLO EUR02-HE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727169AbfAODVA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 Jan 2019 22:21:00 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=orcUbwCy7jIjhrYydPW+aabw2XI6AP6PQf7mbli6b5o=;
- b=UrT1FD+Ey0vLzpW+tKYT3qF6nsMpjPeX66tM2N0Q6kXwoE1J4zJmgQKXJnFsDhv8lRkC6j2mgbjsdVi+GDYdLvYeS3MizGA5ONRpKue41yH1mmflmWjL+Pqn1eYmNVhQg3j/5ce7mONiwF/6ZjT1oInr7nFqDqG4ayZsmyoLsNE=
-Received: from VI1PR04MB4845.eurprd04.prod.outlook.com (20.177.49.14) by
- VI1PR04MB5677.eurprd04.prod.outlook.com (20.178.126.82) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1516.14; Tue, 15 Jan 2019 03:20:13 +0000
-Received: from VI1PR04MB4845.eurprd04.prod.outlook.com
- ([fe80::a13c:ebf5:6fb5:8c7]) by VI1PR04MB4845.eurprd04.prod.outlook.com
- ([fe80::a13c:ebf5:6fb5:8c7%2]) with mapi id 15.20.1516.019; Tue, 15 Jan 2019
- 03:20:13 +0000
-From:   Bharat Bhushan <bharat.bhushan@nxp.com>
-To:     Leo Li <leoyang.li@nxp.com>
-CC:     Roy Pledge <roy.pledge@nxp.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "bharatb.yadav@gmail.com" <bharatb.yadav@gmail.com>
-Subject: RE: [PATCH] soc: fsl: dpio: fix cpu range check
-Thread-Topic: [PATCH] soc: fsl: dpio: fix cpu range check
-Thread-Index: AQHUq8eyjXksS82nRkmGUg0ZzKV3DqWvI94AgACF3YA=
-Date:   Tue, 15 Jan 2019 03:20:13 +0000
-Message-ID: <VI1PR04MB4845D340471C4E447A0427479A810@VI1PR04MB4845.eurprd04.prod.outlook.com>
-References: <20190114050237.32140-1-Bharat.Bhushan@nxp.com>
- <CADRPPNRXgR_c+7tT9nv5QVBsHxm662T0sYwAhHS1PO=O9SC5Tw@mail.gmail.com>
-In-Reply-To: <CADRPPNRXgR_c+7tT9nv5QVBsHxm662T0sYwAhHS1PO=O9SC5Tw@mail.gmail.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=bharat.bhushan@nxp.com; 
-x-originating-ip: [14.143.254.130]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;VI1PR04MB5677;6:c93kYnH8gz0UNBerx4TER8dyg8no9F0POH3WK3UTeayPVAUKtkYNd+2T4urS1FH+nDbiWKhZKAS7S01ZeajENW99c+usNuCzG4Jj5Ki5Y7KgBmfyUm0y40oc1E+9Tu/LhyV30D/KYWK53RU+IfpuBwpD1SlvbuV51bRfHKduMJNdYWZIMZNt/P4/M8mYHwDJB24QeqwK79yokhMaLjyaOamv1Z5/xIIxreJ80X987/Cya4lYA3mkTFb8UuWI1HiHndklxCC5ZZuwpflAWmuGH6oyidGIXgCNrP9u5rkx+s/7+DCP2mCvvjQ5T48yrpyJjF0COXN+S+ILizt9IxHr6sKa2OATp4uL/RaP0wKD7YSQYprTHM6007RFfoGbqRZGocZldgAfz5N2naAtRlbNWdJbqBweg+pbGlGPkHXMmlRrfoMaCKpOjYC7mZOetwjXI8gdns48i4K6rbqvh9PwhA==;5:HbLfGb1+XD5wIoGFWn/r6GapeI/C2L8uNTez15f3wNwWDhINZVkfSe2q556Zc/iIZHd8E+0W0ZCWz+y9YogA9Zxy+72uDCkQZ8PiSOFxDTattBGJsYKw2Ou08/7V+blvue2291qbBzaPVoWk8N4NL1AtI4dnG5x+zol6lSc7bY9vCB1GszmZw0xHPrdSlbsT7+91MxqjaO/dxcdB4BSHJQ==;7:JFFb7f/WJPQycuLSyalFB4H0ZnuEjKTmBYkAkeyanoq6tYUMjqsGBpeAaHdnsV97LzMTlOzry1VzWRtXUvLWnDaaX6MkcyldHIgkKulQ8HqeU7IVDiBFEfRWlpKs5KCrA3vetBMpdKYwQsTRNt6TUw==
-x-ms-exchange-antispam-srfa-diagnostics: SOS;
-x-ms-office365-filtering-correlation-id: 5e8d073e-d7cd-408d-4e98-08d67a985d48
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(5600109)(711020)(4618075)(4534185)(7168020)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060)(7193020);SRVR:VI1PR04MB5677;
-x-ms-traffictypediagnostic: VI1PR04MB5677:
-x-microsoft-antispam-prvs: <VI1PR04MB5677EE908D4250AA669F6D859A810@VI1PR04MB5677.eurprd04.prod.outlook.com>
-x-forefront-prvs: 0918748D70
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(39860400002)(136003)(366004)(396003)(376002)(346002)(189003)(13464003)(199004)(7736002)(81166006)(39060400002)(97736004)(305945005)(8676002)(478600001)(66066001)(14454004)(26005)(186003)(6246003)(14444005)(81156014)(4326008)(6862004)(2906002)(44832011)(256004)(99286004)(86362001)(53936002)(6306002)(54906003)(9686003)(486006)(316002)(8936002)(7696005)(55016002)(229853002)(6636002)(446003)(105586002)(45080400002)(68736007)(106356001)(78486014)(11346002)(476003)(33656002)(76176011)(71190400001)(5660300001)(71200400001)(966005)(55236004)(6506007)(102836004)(53546011)(3846002)(25786009)(74316002)(6116002)(6436002);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR04MB5677;H:VI1PR04MB4845.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: 1wik/Lj1VnF84PW/5Siu3dpyu1FnjAsaaDnhDUsopQ53PeoPMvwevyKuC4eYLO/9OINuOzpf8H3dWgvq4A6X+8VT59sGhjZgzFEyEw/IL2JgRt3xjURv/9OrF/HTDbzNNAjq+Tm1XpylLTpgxIiq0RxMlgH3wIM74m1kcAByNIMX9ZKjuyCk0mzQL8EuhA0yXRAREZXc6xXLLodqTctncMa+8Sb5mwhehpCFgrF+oezrR1LsqoVVbaJQRpvdnrFuZaq3vIwCnY729CQ74TXf+2QAFdeV1dyFdNO3HfI6z9xGR599lIoeqi27Ywpbis0Ei+VbXeJd7X7j55PXaIUv8LJ25SZpznu2Bok/m1t/kcdJCSXU7aLazn1RR71VW2Jsz+Ad6NsYICNMHVA6dGbjaTw60gTSjpJrtnSOuj/hevQ=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        Mon, 14 Jan 2019 22:24:12 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:36818 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727169AbfAODYM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 14 Jan 2019 22:24:12 -0500
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 6FEA580472;
+        Tue, 15 Jan 2019 03:24:11 +0000 (UTC)
+Received: from ming.t460p (ovpn-8-20.pek2.redhat.com [10.72.8.20])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 728031001F52;
+        Tue, 15 Jan 2019 03:24:00 +0000 (UTC)
+Date:   Tue, 15 Jan 2019 11:23:56 +0800
+From:   Ming Lei <ming.lei@redhat.com>
+To:     Steven Rostedt <rostedt@goodmis.org>
+Cc:     Jens Axboe <axboe@kernel.dk>, LKML <linux-kernel@vger.kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@kernel.org>,
+        Clark Williams <williams@redhat.com>,
+        Bart Van Assche <bvanassche@acm.org>
+Subject: Re: Real deadlock being suppressed in sbitmap
+Message-ID: <20190115032355.GE10121@ming.t460p>
+References: <20190114121414.450ab4ea@gandalf.local.home>
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 5e8d073e-d7cd-408d-4e98-08d67a985d48
-X-MS-Exchange-CrossTenant-originalarrivaltime: 15 Jan 2019 03:20:13.7203
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR04MB5677
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190114121414.450ab4ea@gandalf.local.home>
+User-Agent: Mutt/1.9.1 (2017-09-22)
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.28]); Tue, 15 Jan 2019 03:24:11 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-DQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogTGkgWWFuZyA8bGVveWFu
-Zy5saUBueHAuY29tPg0KPiBTZW50OiBUdWVzZGF5LCBKYW51YXJ5IDE1LCAyMDE5IDEyOjQ3IEFN
-DQo+IFRvOiBCaGFyYXQgQmh1c2hhbiA8YmhhcmF0LmJodXNoYW5AbnhwLmNvbT4NCj4gQ2M6IFJv
-eSBQbGVkZ2UgPHJveS5wbGVkZ2VAbnhwLmNvbT47IGxpbnV4LWtlcm5lbEB2Z2VyLmtlcm5lbC5v
-cmc7DQo+IGxpbnV4cHBjLWRldkBsaXN0cy5vemxhYnMub3JnOyBsaW51eC1hcm0ta2VybmVsQGxp
-c3RzLmluZnJhZGVhZC5vcmc7DQo+IGJoYXJhdGIueWFkYXZAZ21haWwuY29tDQo+IFN1YmplY3Q6
-IFJlOiBbUEFUQ0hdIHNvYzogZnNsOiBkcGlvOiBmaXggY3B1IHJhbmdlIGNoZWNrDQo+IA0KPiBP
-biBTdW4sIEphbiAxMywgMjAxOSBhdCAxMToxMyBQTSBCaGFyYXQgQmh1c2hhbg0KPiA8YmhhcmF0
-LmJodXNoYW5AbnhwLmNvbT4gd3JvdGU6DQo+ID4NCj4gPiBjcHVfcG9zc2libGUoY3B1KSB3aWxs
-IGFsd2F5cyByZXR1cm4gdHJ1ZSB3aGVuIGNwdSBwYXJhbWV0ZXIgaXMgZnJvbQ0KPiA+IGNwdW1h
-c2tfbmV4dCgpLg0KPiA+IENoZWNrIGZvciBucl9jcHVfaWRzIHJhdGhlciB0aGFuICFjcHVfcG9z
-c2libGUoY3B1KS4NCj4gDQo+IFRoZXJlIGlzIGFub3RoZXIgcGF0Y2ggcGVuZGluZyBtZXJnZSBz
-ZWVtcyB0byBjb3ZlciB0aGlzIGlzc3VlIHRvby4NCj4gUGxlYXNlIGxldCBtZSBrbm93IGlmIGl0
-IGRvZXNuJ3QuDQo+IA0KPiBodHRwczovL2VtZWEwMS5zYWZlbGlua3MucHJvdGVjdGlvbi5vdXRs
-b29rLmNvbS8/dXJsPWh0dHBzJTNBJTJGJTJGbG9yDQo+IGUua2VybmVsLm9yZyUyRnBhdGNod29y
-ayUyRnBhdGNoJTJGMTAyMDkwNSUyRiZhbXA7ZGF0YT0wMiU3QzAxJQ0KPiA3Q2JoYXJhdC5iaHVz
-aGFuJTQwbnhwLmNvbSU3QzQ3YWY2ODYxYzNmODQwOTQ0MzRjMDhkNjdhNTRlMWM0JTdDNg0KPiA4
-NmVhMWQzYmMyYjRjNmZhOTJjZDk5YzVjMzAxNjM1JTdDMCU3QzAlN0M2MzY4MzA5MDIzMTQ0NDY2
-NzcmYW1wDQo+IDtzZGF0YT13TFB1TUdvc1hPVDQ4R205SyUyRkJqbTFJUmJHUUVXUjREJTJGU3FS
-dDBJMFh5RSUzRCZhDQo+IG1wO3Jlc2VydmVkPTANCg0KRGVzY3JpcHRpb24gYW5kIGludGVudGlv
-biBvZiB0aGUgcGF0Y2ggd2FzIHRvIGZpeCBzb21lIG90aGVyIGlzc3VlIGJ1dCB0aGlzIGFsc28g
-Zml4ZXMgdGhlIGNwdSByYW5nZSBjaGVjayBpc3N1ZSBpbiBteSBwYXRjaC4NCk15IHBhdGNoIGNh
-biBiZSBpZ25vcmVkLg0KDQpUaGFua3MNCi1CaGFyYXQNCg0KPiANCj4gTGVvDQo+ID4NCj4gPiBT
-aWduZWQtb2ZmLWJ5OiBCaGFyYXQgQmh1c2hhbiA8QmhhcmF0LkJodXNoYW5AbnhwLmNvbT4NCj4g
-PiAtLS0NCj4gPiAgZHJpdmVycy9zb2MvZnNsL2RwaW8vZHBpby1kcml2ZXIuYyB8IDIgKy0NCj4g
-PiAgMSBmaWxlIGNoYW5nZWQsIDEgaW5zZXJ0aW9uKCspLCAxIGRlbGV0aW9uKC0pDQo+ID4NCj4g
-PiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9zb2MvZnNsL2RwaW8vZHBpby1kcml2ZXIuYw0KPiA+IGIv
-ZHJpdmVycy9zb2MvZnNsL2RwaW8vZHBpby1kcml2ZXIuYw0KPiA+IGluZGV4IGU1OGZjYzkwOTZl
-OC4uZWIzNjlkZDllMGE3IDEwMDY0NA0KPiA+IC0tLSBhL2RyaXZlcnMvc29jL2ZzbC9kcGlvL2Rw
-aW8tZHJpdmVyLmMNCj4gPiArKysgYi9kcml2ZXJzL3NvYy9mc2wvZHBpby9kcGlvLWRyaXZlci5j
-DQo+ID4gQEAgLTEzMyw3ICsxMzMsNyBAQCBzdGF0aWMgaW50IGRwYWEyX2RwaW9fcHJvYmUoc3Ry
-dWN0IGZzbF9tY19kZXZpY2UNCj4gKmRwaW9fZGV2KQ0KPiA+ICAgICAgICAgZWxzZQ0KPiA+ICAg
-ICAgICAgICAgICAgICBuZXh0X2NwdSA9IGNwdW1hc2tfbmV4dChuZXh0X2NwdSwgY3B1X29ubGlu
-ZV9tYXNrKTsNCj4gPg0KPiA+IC0gICAgICAgaWYgKCFjcHVfcG9zc2libGUobmV4dF9jcHUpKSB7
-DQo+ID4gKyAgICAgICBpZiAobmV4dF9jcHUgPj0gbnJfY3B1X2lkcykgew0KPiA+ICAgICAgICAg
-ICAgICAgICBkZXZfZXJyKGRldiwgInByb2JlIGZhaWxlZC4gTnVtYmVyIG9mIERQSU9zIGV4Y2Vl
-ZHMNCj4gTlJfQ1BVUy5cbiIpOw0KPiA+ICAgICAgICAgICAgICAgICBlcnIgPSAtRVJBTkdFOw0K
-PiA+ICAgICAgICAgICAgICAgICBnb3RvIGVycl9hbGxvY2F0ZV9pcnFzOw0KPiA+IC0tDQo+ID4g
-Mi4yMC4xDQo+ID4NCg==
+Hi Steven,
+
+On Mon, Jan 14, 2019 at 12:14:14PM -0500, Steven Rostedt wrote:
+> It was brought to my attention (by this creating a splat in the RT tree
+> too) this code:
+> 
+> static inline bool sbitmap_deferred_clear(struct sbitmap *sb, int index)
+> {
+> 	unsigned long mask, val;
+> 	unsigned long __maybe_unused flags;
+> 	bool ret = false;
+> 
+> 	/* Silence bogus lockdep warning */
+> #if defined(CONFIG_LOCKDEP)
+> 	local_irq_save(flags);
+> #endif
+> 	spin_lock(&sb->map[index].swap_lock);
+> 
+> Commit 58ab5e32e6f ("sbitmap: silence bogus lockdep IRQ warning")
+> states the following:
+> 
+>     For this case, it's a false positive. The swap_lock is used from process
+>     context only, when we swap the bits in the word and cleared mask. We
+>     also end up doing that when we are getting a driver tag, from the
+>     blk_mq_mark_tag_wait(), and from there we hold the waitqueue lock with
+>     IRQs disabled. However, this isn't from an actual IRQ, it's still
+>     process context.
+> 
+> The thing is, lockdep doesn't define a lock as "irq-safe" based on it
+> being taken under interrupts disabled or not. It detects when locks are
+> used in actual interrupts. Further in that commit we have this:
+> 
+>    [  106.097386] fio/1043 [HC0[0]:SC0[0]:HE0:SE1] is trying to acquire:
+>     [  106.098231] 000000004c43fa71
+>     (&(&sb->map[i].swap_lock)->rlock){+.+.}, at: sbitmap_get+0xd5/0x22c
+>     [  106.099431]
+>     [  106.099431] and this task is already holding:
+>     [  106.100229] 000000007eec8b2f
+>     (&(&hctx->dispatch_wait_lock)->rlock){....}, at:
+>     blk_mq_dispatch_rq_list+0x4c1/0xd7c
+>     [  106.101630] which would create a new lock dependency:
+>     [  106.102326]  (&(&hctx->dispatch_wait_lock)->rlock){....} ->
+>     (&(&sb->map[i].swap_lock)->rlock){+.+.}
+> 
+> Saying that you are trying to take the swap_lock while holding the
+> dispatch_wait_lock.
+> 
+> 
+>     [  106.103553] but this new dependency connects a SOFTIRQ-irq-safe lock:
+>     [  106.104580]  (&sbq->ws[i].wait){..-.}
+> 
+> Which means that there's already a chain of:
+> 
+>  sbq->ws[i].wait -> dispatch_wait_lock
+> 
+>     [  106.104582]
+>     [  106.104582] ... which became SOFTIRQ-irq-safe at:
+>     [  106.105751]   _raw_spin_lock_irqsave+0x4b/0x82
+>     [  106.106284]   __wake_up_common_lock+0x119/0x1b9
+>     [  106.106825]   sbitmap_queue_wake_up+0x33f/0x383
+>     [  106.107456]   sbitmap_queue_clear+0x4c/0x9a
+>     [  106.108046]   __blk_mq_free_request+0x188/0x1d3
+>     [  106.108581]   blk_mq_free_request+0x23b/0x26b
+>     [  106.109102]   scsi_end_request+0x345/0x5d7
+>     [  106.109587]   scsi_io_completion+0x4b5/0x8f0
+>     [  106.110099]   scsi_finish_command+0x412/0x456
+>     [  106.110615]   scsi_softirq_done+0x23f/0x29b
+>     [  106.111115]   blk_done_softirq+0x2a7/0x2e6
+>     [  106.111608]   __do_softirq+0x360/0x6ad
+>     [  106.112062]   run_ksoftirqd+0x2f/0x5b
+>     [  106.112499]   smpboot_thread_fn+0x3a5/0x3db
+>     [  106.113000]   kthread+0x1d4/0x1e4
+>     [  106.113457]   ret_from_fork+0x3a/0x50
+> 
+> 
+> We see that sbq->ws[i].wait was taken from a softirq context.
+
+Actually sbq->ws[i].wait is taken from a softirq context only in case
+of single-queue, see __blk_mq_complete_request(). For multiple queue,
+sbq->ws[i].wait is taken from hardirq context.
+
+> 
+> 
+> 
+>     [  106.131226] Chain exists of:
+>     [  106.131226]   &sbq->ws[i].wait -->
+>     &(&hctx->dispatch_wait_lock)->rlock -->
+>     &(&sb->map[i].swap_lock)->rlock
+> 
+> This is telling us that we now have a chain of:
+> 
+>  sbq->ws[i].wait -> dispatch_wait_lock -> swap_lock
+> 
+>     [  106.131226]
+>     [  106.132865]  Possible interrupt unsafe locking scenario:
+>     [  106.132865]
+>     [  106.133659]        CPU0                    CPU1
+>     [  106.134194]        ----                    ----
+>     [  106.134733]   lock(&(&sb->map[i].swap_lock)->rlock);
+>     [  106.135318]                                local_irq_disable();
+>     [  106.136014]                                lock(&sbq->ws[i].wait);
+>     [  106.136747]
+>     lock(&(&hctx->dispatch_wait_lock)->rlock);
+>     [  106.137742]   <Interrupt>
+>     [  106.138110]     lock(&sbq->ws[i].wait);
+>     [  106.138625]
+>     [  106.138625]  *** DEADLOCK ***
+>     [  106.138625]
+> 
+> I need to make this more than just two levels deep. Here's the issue:
+> 
+> 
+> 	CPU0			CPU1			CPU2
+> 	----			----			----
+>   lock(swap_lock)
+> 			local_irq_disable()
+> 			lock(dispatch_lock);
+> 							local_irq_disable()
+> 							lock(sbq->ws[i].wait)
+> 							lock(dispatch_lock)
+> 			lock(swap_lock)
+>   <interrupt>
+>   lock(sbq->ws[i].wait)
+
+I guess the above 'dispatch_lock' is actually 'dispatch_wait_lock', which
+is always acquired after sbq->ws[i].wait is held, so I think the above
+description about CPU1/CPU2 may not be possible or correct.
+
+Thinking about the original lockdep log further, looks it is one real deadlock:
+
+    [  106.132865]  Possible interrupt unsafe locking scenario:
+    [  106.132865]
+    [  106.133659]        CPU0                    CPU1
+    [  106.134194]        ----                    ----
+    [  106.134733]   lock(&(&sb->map[i].swap_lock)->rlock);
+    [  106.135318]                                local_irq_disable();
+    [  106.136014]                                lock(&sbq->ws[i].wait);
+    [  106.136747]                                lock(&(&hctx->dispatch_wait_lock)->rlock);
+    [  106.137742]   <Interrupt>
+    [  106.138110]     lock(&sbq->ws[i].wait);
+
+Given 'swap_lock' can be acquired from blk_mq_dispatch_rq_list() via
+blk_mq_get_driver_tag() directly, the above deadlock may be possible.
+
+Sounds the correct fix may be the following one, and the irqsave cost
+should be fine given sbitmap_deferred_clear is only triggered when one
+word is run out of.
+--
+
+diff --git a/lib/sbitmap.c b/lib/sbitmap.c
+index 65c2d06250a6..24d62d7894cb 100644
+--- a/lib/sbitmap.c
++++ b/lib/sbitmap.c
+@@ -26,14 +26,11 @@
+ static inline bool sbitmap_deferred_clear(struct sbitmap *sb, int index)
+ {
+ 	unsigned long mask, val;
+-	unsigned long __maybe_unused flags;
++	unsigned long flags;
+ 	bool ret = false;
+ 
+ 	/* Silence bogus lockdep warning */
+-#if defined(CONFIG_LOCKDEP)
+-	local_irq_save(flags);
+-#endif
+-	spin_lock(&sb->map[index].swap_lock);
++	spin_lock_irqsave(&sb->map[index].swap_lock, flags);
+ 
+ 	if (!sb->map[index].cleared)
+ 		goto out_unlock;
+@@ -54,10 +51,7 @@ static inline bool sbitmap_deferred_clear(struct sbitmap *sb, int index)
+ 
+ 	ret = true;
+ out_unlock:
+-	spin_unlock(&sb->map[index].swap_lock);
+-#if defined(CONFIG_LOCKDEP)
+-	local_irq_restore(flags);
+-#endif
++	spin_unlock_irqrestore(&sb->map[index].swap_lock, flags);
+ 	return ret;
+ }
+ 
+
+Thanks,
+Ming
