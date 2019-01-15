@@ -3,203 +3,148 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C746CC43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 23:08:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ECBD9C43612
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 23:09:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8EA3A20866
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 23:08:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BDDBD20866
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 23:09:43 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="b84Jmktb"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GcxMlgXv"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391385AbfAOXIa (ORCPT
+        id S2390221AbfAOXJm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 15 Jan 2019 18:08:30 -0500
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:44025 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387748AbfAOXHu (ORCPT
+        Tue, 15 Jan 2019 18:09:42 -0500
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:45550 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729436AbfAOXJl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Jan 2019 18:07:50 -0500
-Received: by mail-pl1-f196.google.com with SMTP id gn14so1989144plb.10
-        for <linux-kernel@vger.kernel.org>; Tue, 15 Jan 2019 15:07:50 -0800 (PST)
+        Tue, 15 Jan 2019 18:09:41 -0500
+Received: by mail-pf1-f195.google.com with SMTP id g62so2019470pfd.12;
+        Tue, 15 Jan 2019 15:09:41 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=XDWNDjej1vaQghEKuWRObLfufBBUVnZJNWEVf/9UfwU=;
-        b=b84JmktbH4LgEz2UKivbHhzC09x3UMXzJaMj8si6l+upZCirCs1QoNgBzprVBbDy9w
-         FBzU4OKP2qSRSptbvbFV2QWDV8g/43fxihmkXRshEECSB0uW5kShD9zVMOAupagb+fO0
-         6GZki9k1wHHPDcr8WnLZ05pU620ghVn4IrqLY=
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=2713uGBszd3dEaGPmjaNVa1+AJ8H/PlaoGwKqkrQuSg=;
+        b=GcxMlgXvGiHGUhr3bGfeTWWPo2BNigxeR+nKbnwJPF8rRBGhHFGW6vKPyNBVfHJABj
+         OPU1DfnF5p/wlQOrMSpQv2v0OApYSFs/1XRRHJ/rlvdgLQZCGJmwRJesClj9Pii7PJSS
+         DX+6zr7XZMS/XIletiCGnimfZRY+wDwHT/6Gq4Llu6v3tgGl8/Ir2OV7EUBecvFVyk5b
+         X/BOb9RPO6oiWiBAhKHrGGuEgAgtEUl3gu2gM+f4PwemoBKirVSUcO1Ekj30hK/nqznp
+         Bfzh1cNJv++1f3xhYaLGFCzo5S3vdTgUQ7w4JjBKjPN6EdZovzORMllQGg8Bhtlf/zBC
+         pF3Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=XDWNDjej1vaQghEKuWRObLfufBBUVnZJNWEVf/9UfwU=;
-        b=cnjTvaq7D/0yj5zFe5HM+udZSIRrMr0yGeZerfQgL1eixlxOdNwEdwxq9ug7mLTd9y
-         wUY7kWuDrg8JFTp2ArvxKmD2hE2XAN4aQIOwiwihXUop64cPhwqtjM3J2Vdtg8SxFiko
-         nXKiKoz/HFq7DivSCTuHHiBxqAIzqLenmjjbhJPVac5rrls/WdHh4Md4VzEFQncmBrAb
-         cUysK6NAc5+0PW7yfsQUqEX90LGLqldQ7z6zhInaJDgj3MbTwf22COngfVMBtgHgUnDK
-         D3iSaCMQS9jWsJHP569C0H0cnMcuHiOqyyWf7zj5aFPPQof/zJHWCo8uxu7AAGINreTD
-         7Ogg==
-X-Gm-Message-State: AJcUukeGT3LWODMEwLjs8IHhL0Ng60tO07k8h8sjyV23jziTjhuKV4er
-        k3cA7oXw5KNqX/d487yHt268FA==
-X-Google-Smtp-Source: ALg8bN5+djzWfwdKN+1jr2ma77gjFXRvNidqYQRQLiVLUdyF0vHH/cEgLfKuCL/zbwxyDXXNiZ+QbA==
-X-Received: by 2002:a17:902:6b87:: with SMTP id p7mr6690582plk.282.1547593669668;
-        Tue, 15 Jan 2019 15:07:49 -0800 (PST)
-Received: from xps15.cg.shawcable.net (S0106002369de4dac.cg.shawcable.net. [68.147.8.254])
-        by smtp.gmail.com with ESMTPSA id h19sm4985928pfn.114.2019.01.15.15.07.47
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=2713uGBszd3dEaGPmjaNVa1+AJ8H/PlaoGwKqkrQuSg=;
+        b=VHr+lktPLXJPrsW3/6t+bKNwqA49qV1atXsF23cVIQNu0+iAeP7PSIT10NaP0aVoU1
+         TXD/kUL1KrYQDXKD97zgkd0Oy7FYAOLYNtnG+zi/bpowMdA7LR0NbdveJJ6mrZH8vvxB
+         jOwGFlNlAhO1p/IkH5pmHKdash/s+8MaV8RZSQQlzGNbNxbcF9wMlfi11jWg2cBBhWE9
+         ByJ15WHbyIzH9husp3oUkMBLViVrCVXGo1hMrkvPCQtqRf7wGMLRPwAkjn2dLcP7hDfw
+         OQcd+qke8jJ2XzfQlBJlR3GBh01DHH2rYceuibmhlAwaiEapdRv5w0Aq7QznrGeZ2FTe
+         nRsw==
+X-Gm-Message-State: AJcUukdpSQLkaaY5f7DQ8SJfQFu0xSoKoYBsslGb5IEIWHPnI/9Nkedu
+        q2lgDeO4uAWuqUWq5tctHudYUsFJ
+X-Google-Smtp-Source: ALg8bN6bmZ0JYRCrv46r7CA6dFCR2MRwf+Ovpq1CTKipnPogcbeA9whkPrIbzrPFzI8X+Up+shwt/Q==
+X-Received: by 2002:a62:9fcf:: with SMTP id v76mr1067769pfk.144.1547593779984;
+        Tue, 15 Jan 2019 15:09:39 -0800 (PST)
+Received: from fainelli-desktop.igp.broadcom.net ([192.19.223.250])
+        by smtp.gmail.com with ESMTPSA id s130sm5682434pgc.60.2019.01.15.15.09.38
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 15 Jan 2019 15:07:48 -0800 (PST)
-From:   Mathieu Poirier <mathieu.poirier@linaro.org>
-To:     acme@kernel.org, peterz@infradead.org, gregkh@linuxfoundation.org
-Cc:     mingo@redhat.com, tglx@linutronix.de,
-        alexander.shishkin@linux.intel.com, schwidefsky@de.ibm.com,
-        heiko.carstens@de.ibm.com, will.deacon@arm.com,
-        mark.rutland@arm.com, jolsa@redhat.com, namhyung@kernel.org,
-        adrian.hunter@intel.com, ast@kernel.org, hpa@zytor.com,
-        suzuki.poulose@arm.com, linux-s390@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: [PATCH 2/7] coresight: perf: Add "sinks" group to PMU directory
-Date:   Tue, 15 Jan 2019 16:07:37 -0700
-Message-Id: <20190115230742.13730-3-mathieu.poirier@linaro.org>
+        Tue, 15 Jan 2019 15:09:39 -0800 (PST)
+From:   Florian Fainelli <f.fainelli@gmail.com>
+To:     netdev@vger.kernel.org
+Cc:     Florian Fainelli <f.fainelli@gmail.com>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Heiner Kallweit <hkallweit1@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH net-next] net: phy: Add helpers to determine if PHY driver is generic
+Date:   Tue, 15 Jan 2019 15:09:35 -0800
+Message-Id: <20190115230936.28890-1-f.fainelli@gmail.com>
 X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190115230742.13730-1-mathieu.poirier@linaro.org>
-References: <20190115230742.13730-1-mathieu.poirier@linaro.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add a "sinks" directory entry so that users can see all the sinks
-available in the system in a single place.  Individual sink are added
-as they are registered with the coresight bus.
+We are already checking in phy_detach() that the PHY driver is of
+generic kind (1G or 10G) and we are going to make use of that in the SFP
+layer as well for 1000BaseT SFP modules, so expose helper functions to
+return that information.
 
-Signed-off-by: Mathieu Poirier <mathieu.poirier@linaro.org>
+Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
 ---
- .../hwtracing/coresight/coresight-etm-perf.c  | 43 +++++++++++++++++++
- .../hwtracing/coresight/coresight-etm-perf.h  |  1 +
- drivers/hwtracing/coresight/coresight.c       | 17 ++++++++
- 3 files changed, 61 insertions(+)
+ drivers/net/phy/phy_device.c | 34 ++++++++++++++++++++++++++++++++--
+ include/linux/phy.h          |  3 +++
+ 2 files changed, 35 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/hwtracing/coresight/coresight-etm-perf.c b/drivers/hwtracing/coresight/coresight-etm-perf.c
-index f21eb28b6782..292bd409a68c 100644
---- a/drivers/hwtracing/coresight/coresight-etm-perf.c
-+++ b/drivers/hwtracing/coresight/coresight-etm-perf.c
-@@ -14,6 +14,7 @@
- #include <linux/perf_event.h>
- #include <linux/percpu-defs.h>
- #include <linux/slab.h>
-+#include <linux/stringhash.h>
- #include <linux/types.h>
- #include <linux/workqueue.h>
- 
-@@ -43,8 +44,18 @@ static const struct attribute_group etm_pmu_format_group = {
- 	.attrs  = etm_config_formats_attr,
- };
- 
-+static struct attribute *etm_config_sinks_attr[] = {
-+	NULL,
-+};
-+
-+static const struct attribute_group etm_pmu_sinks_group = {
-+	.name   = "sinks",
-+	.attrs  = etm_config_sinks_attr,
-+};
-+
- static const struct attribute_group *etm_pmu_attr_groups[] = {
- 	&etm_pmu_format_group,
-+	&etm_pmu_sinks_group,
- 	NULL,
- };
- 
-@@ -479,6 +490,38 @@ int etm_perf_symlink(struct coresight_device *csdev, bool link)
- 	return 0;
+diff --git a/drivers/net/phy/phy_device.c b/drivers/net/phy/phy_device.c
+index 51990002d495..14f148c2b9ea 100644
+--- a/drivers/net/phy/phy_device.c
++++ b/drivers/net/phy/phy_device.c
+@@ -1279,6 +1279,36 @@ struct phy_device *phy_attach(struct net_device *dev, const char *bus_id,
  }
+ EXPORT_SYMBOL(phy_attach);
  
-+static ssize_t etm_perf_sink_name_show(struct device *dev,
-+				       struct device_attribute *dattr,
-+				       char *buf)
++static bool phy_driver_is_genphy_kind(struct phy_device *phydev,
++				      struct device_driver *driver)
 +{
-+	/* See function coresight_sink_by_id() to know where this is used */
-+	u32 hash = hashlen_hash(hashlen_string(NULL, dattr->attr.name));
++	struct device *d = &phydev->mdio.dev;
++	bool ret = false;
 +
-+	return scnprintf(buf, PAGE_SIZE, "%x\n", hash);
++	if (!phydev->drv)
++		return ret;
++
++	get_device(d);
++	ret = d->driver == driver;
++	put_device(d);
++
++	return ret;
 +}
 +
-+int etm_perf_symlink_sink(struct coresight_device *csdev)
++bool phy_driver_is_genphy(struct phy_device *phydev)
 +{
-+	struct device *pmu_dev = etm_pmu.dev;
-+	struct device *pdev = csdev->dev.parent;
-+	struct device_attribute *dev_attr;
-+
-+	if (csdev->type != CORESIGHT_DEV_TYPE_SINK &&
-+	    csdev->type != CORESIGHT_DEV_TYPE_LINKSINK)
-+		return -EINVAL;
-+
-+	if (!etm_perf_up)
-+		return -EPROBE_DEFER;
-+
-+	dev_attr = kzalloc(sizeof(*dev_attr), GFP_KERNEL);
-+	dev_attr->attr.name = kstrdup(dev_name(pdev), GFP_KERNEL);
-+	dev_attr->attr.mode = 0444;
-+	dev_attr->show = etm_perf_sink_name_show;
-+
-+	return sysfs_add_file_to_group(&pmu_dev->kobj,
-+				       &dev_attr->attr, "sinks");
++	return phy_driver_is_genphy_kind(phydev,
++					 &genphy_driver.mdiodrv.driver);
 +}
++EXPORT_SYMBOL_GPL(phy_driver_is_genphy);
 +
- static int __init etm_perf_init(void)
- {
- 	int ret;
-diff --git a/drivers/hwtracing/coresight/coresight-etm-perf.h b/drivers/hwtracing/coresight/coresight-etm-perf.h
-index da7d9336a15c..529a47285c0f 100644
---- a/drivers/hwtracing/coresight/coresight-etm-perf.h
-+++ b/drivers/hwtracing/coresight/coresight-etm-perf.h
-@@ -59,6 +59,7 @@ struct etm_event_data {
- 
- #ifdef CONFIG_CORESIGHT
- int etm_perf_symlink(struct coresight_device *csdev, bool link);
-+int etm_perf_symlink_sink(struct coresight_device *csdev);
- static inline void *etm_perf_sink_config(struct perf_output_handle *handle)
- {
- 	struct etm_event_data *data = perf_get_aux(handle);
-diff --git a/drivers/hwtracing/coresight/coresight.c b/drivers/hwtracing/coresight/coresight.c
-index 2b0df1a0a8df..526f122a38ee 100644
---- a/drivers/hwtracing/coresight/coresight.c
-+++ b/drivers/hwtracing/coresight/coresight.c
-@@ -18,6 +18,7 @@
- #include <linux/delay.h>
- #include <linux/pm_runtime.h>
- 
-+#include "coresight-etm-perf.h"
- #include "coresight-priv.h"
- 
- static DEFINE_MUTEX(coresight_mutex);
-@@ -1167,6 +1168,22 @@ struct coresight_device *coresight_register(struct coresight_desc *desc)
- 		goto err_out;
- 	}
- 
-+	if (csdev->type == CORESIGHT_DEV_TYPE_SINK ||
-+	    csdev->type == CORESIGHT_DEV_TYPE_LINKSINK) {
-+		ret = etm_perf_symlink_sink(csdev);
++bool phy_driver_is_genphy_10g(struct phy_device *phydev)
++{
++	return phy_driver_is_genphy_kind(phydev,
++					 &genphy_10g_driver.mdiodrv.driver);
++}
++EXPORT_SYMBOL_GPL(phy_driver_is_genphy_10g);
 +
-+		if (ret) {
-+			device_unregister(&csdev->dev);
-+			/*
-+			 * As with the above, all resources are free'd
-+			 * explicitly via coresight_device_release() triggered
-+			 * from put_device(), which is in turn called from
-+			 * function device_unregister().
-+			 */
-+			goto err_out;
-+		}
-+	}
-+
- 	mutex_lock(&coresight_mutex);
+ /**
+  * phy_detach - detach a PHY device from its network device
+  * @phydev: target phy_device struct
+@@ -1310,8 +1340,8 @@ void phy_detach(struct phy_device *phydev)
+ 	 * from the generic driver so that there's a chance a
+ 	 * real driver could be loaded
+ 	 */
+-	if (phydev->mdio.dev.driver == &genphy_10g_driver.mdiodrv.driver ||
+-	    phydev->mdio.dev.driver == &genphy_driver.mdiodrv.driver)
++	if (phy_driver_is_genphy(phydev) ||
++	    phy_driver_is_genphy_10g(phydev))
+ 		device_release_driver(&phydev->mdio.dev);
  
- 	coresight_fixup_device_conns(csdev);
+ 	/*
+diff --git a/include/linux/phy.h b/include/linux/phy.h
+index 3b051f761450..f1c19bf8c658 100644
+--- a/include/linux/phy.h
++++ b/include/linux/phy.h
+@@ -1183,4 +1183,7 @@ module_exit(phy_module_exit)
+ #define module_phy_driver(__phy_drivers)				\
+ 	phy_module_driver(__phy_drivers, ARRAY_SIZE(__phy_drivers))
+ 
++bool phy_driver_is_genphy(struct phy_device *phydev);
++bool phy_driver_is_genphy_10g(struct phy_device *phydev);
++
+ #endif /* __PHY_H */
 -- 
 2.17.1
 
