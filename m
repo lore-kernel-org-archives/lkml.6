@@ -2,66 +2,71 @@ Return-Path: <SRS0=RZO6=PX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,USER_AGENT_NEOMUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A676C43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 10:41:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1258EC43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 10:44:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0668420651
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 10:41:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D0B362085A
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 10:44:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729032AbfAOKlz (ORCPT
+        id S1728977AbfAOKoP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 15 Jan 2019 05:41:55 -0500
-Received: from nblzone-211-213.nblnetworks.fi ([83.145.211.213]:41670 "EHLO
-        hillosipuli.retiisi.org.uk" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1728949AbfAOKly (ORCPT
+        Tue, 15 Jan 2019 05:44:15 -0500
+Received: from Galois.linutronix.de ([146.0.238.70]:42022 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727865AbfAOKoP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Jan 2019 05:41:54 -0500
-Received: from valkosipuli.localdomain (valkosipuli.retiisi.org.uk [IPv6:2001:1bc8:1a6:d3d5::80:2])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by hillosipuli.retiisi.org.uk (Postfix) with ESMTPS id 25EE8634C88;
-        Tue, 15 Jan 2019 12:40:12 +0200 (EET)
-Received: from sailus by valkosipuli.localdomain with local (Exim 4.89)
-        (envelope-from <sakari.ailus@retiisi.org.uk>)
-        id 1gjM8h-0004LR-Go; Tue, 15 Jan 2019 12:40:11 +0200
-Date:   Tue, 15 Jan 2019 12:40:11 +0200
-From:   Sakari Ailus <sakari.ailus@iki.fi>
-To:     Lubomir Rintel <lkundrak@v3.sk>
-Cc:     linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 0/5] ov7670 fixes
-Message-ID: <20190115104011.irtgbp6iaw6cocgq@valkosipuli.retiisi.org.uk>
-References: <20190115085448.1400135-1-lkundrak@v3.sk>
+        Tue, 15 Jan 2019 05:44:15 -0500
+Received: from p4fea4364.dip0.t-ipconnect.de ([79.234.67.100] helo=nanos)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1gjMCM-0003gx-PC; Tue, 15 Jan 2019 11:43:59 +0100
+Date:   Tue, 15 Jan 2019 11:43:58 +0100 (CET)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     Juergen Gross <jgross@suse.com>
+cc:     linux-kernel@vger.kernel.org, xen-devel@lists.xenproject.org,
+        x86@kernel.org, boris.ostrovsky@oracle.com, sstabellini@kernel.org,
+        hpa@zytor.com, mingo@redhat.com, bp@alien8.de, hans@knorrie.org,
+        stable@vger.kernel.org
+Subject: Re: [PATCH v3] xen: Fix x86 sched_clock() interface for xen
+In-Reply-To: <20190114124413.3742-1-jgross@suse.com>
+Message-ID: <alpine.DEB.2.21.1901151142590.1865@nanos.tec.linutronix.de>
+References: <20190114124413.3742-1-jgross@suse.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190115085448.1400135-1-lkundrak@v3.sk>
-User-Agent: NeoMutt/20170113 (1.7.2)
+Content-Type: text/plain; charset=US-ASCII
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 15, 2019 at 09:54:43AM +0100, Lubomir Rintel wrote:
-> Hi,
+On Mon, 14 Jan 2019, Juergen Gross wrote:
+
+> Commit f94c8d11699759 ("sched/clock, x86/tsc: Rework the x86 'unstable'
+> sched_clock() interface") broke Xen guest time handling across
+> migration:
 > 
-> here are the ov7670 patches originally from the "media: make Marvell camera
-> work on DT-based OLPC XO-1.75" updated to apply cleanly on top of
-> <git://linuxtv.org/sailus/media_tree.git> master as requested.
-> 
-> I've also added "ov7670: Remove useless use of a ret variable" with my Ack
-> slapped on it.
+> [  187.249951] Freezing user space processes ... (elapsed 0.001 seconds) done.
+> [  187.251137] OOM killer disabled.
+> [  187.251137] Freezing remaining freezable tasks ... (elapsed 0.001 seconds) done.
+> [  187.252299] suspending xenstore...
+> [  187.266987] xen:grant_table: Grant tables using version 1 layout
+> [18446743811.706476] OOM killer enabled.
+> [18446743811.706478] Restarting tasks ... done.
+> [18446743811.720505] Setting capacity to 16777216
 
-Hi Lubomir,
+I see that it's broken, but the changelog could do with an explanation WHY
+it broke.
 
-It seems the end result compiles but the intermedia patches do not. Could
-you resend, please? I'll replace the patches in my tree with a new version
-then...
+Other than that this looks about right.
 
-Thanks.
+Thanks,
 
--- 
-Sakari Ailus
+	tglx
