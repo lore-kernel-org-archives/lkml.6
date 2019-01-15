@@ -2,148 +2,132 @@ Return-Path: <SRS0=RZO6=PX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+X-Spam-Status: No, score=-3.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DB655C43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 14:25:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D181C43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 14:25:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A9E6320656
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 14:25:02 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="b7QHJ5M8"
+	by mail.kernel.org (Postfix) with ESMTP id D08FD20866
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 14:25:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1547562305;
+	bh=AS8fPZx09u9Memo4DjJSKMzTNFOWHoATd2o8KbLVHl8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=ntdslysuSEg9sbkBfH8whEenb7Ct0JesFWLntSu9MKLaYI/UXaD+ujUdtnt6HtCDC
+	 21fPO5gYxhUQTTmTKIUV76XzDxWaSna3mqFveGklhvfJC/KUogkn9M2nxwpxt9iWEL
+	 gki3skjHsLStXQvxqOAfvfTkGjGxOyIv8uXUlcvQ=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730328AbfAOOZB (ORCPT
+        id S1730342AbfAOOZF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 15 Jan 2019 09:25:01 -0500
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:56145 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727574AbfAOOZA (ORCPT
+        Tue, 15 Jan 2019 09:25:05 -0500
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:32846 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727574AbfAOOZD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Jan 2019 09:25:00 -0500
-Received: by mail-wm1-f65.google.com with SMTP id y139so3438292wmc.5;
-        Tue, 15 Jan 2019 06:24:58 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=reply-to:subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-transfer-encoding:content-language;
-        bh=9nRDzFSapnRlPx9vKPqKnJm9H9JN9M+LXx5Bq0Oi5mw=;
-        b=b7QHJ5M8joEwFDoYEweN4y2EA0WwzBVMf77tVHvPPOW48hnB10iO8zebDiGxysNmev
-         e60GtnLt7sRMs7siFQiXkk9HProEIpHvRFWd7kIRKQF3MiJIHXPsq7mJFBSeHuXL1Zf2
-         YvlTlRVw5CDJ6A5dM94kkxR9l9kUOIW9b7phvIjOdfZ/gCKSuV0zq3q8NIoLWqnUKMZP
-         U3PU+4rehpQJmv5s+wgtne2DD4u92UE4VE9beXWly1ux0JCc97uyf8ZPS0zQX/QaGXVR
-         QZZNmqBU/MIO/o03IDACm7fc5GpSxjY0kj1hz34UGJtYZoeuBOlGg5LOOw04kPZvegxo
-         Kxcw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:reply-to:subject:to:cc:references:from
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-transfer-encoding:content-language;
-        bh=9nRDzFSapnRlPx9vKPqKnJm9H9JN9M+LXx5Bq0Oi5mw=;
-        b=Ga9C6YB/vY4PIYXjjd6w6zupyHhLYhRrYaCvsSeq0LMfFb8HOrC2Rzv1WQNk/PQhLe
-         BDdDfbF66xNM4+TpDoOVmoRz+VNWBumbU9LmDsqq7XGM2VfugwXajfpuBJmVYos57RuK
-         WlxMBRuPF5woGLdM7ozybE1hcp85PF34R09VJmztHPoF+MioXhmElxthU6Xn290V1v/l
-         UXJZwrIzRJsZsZ9+HRzGXeugz9kxFBBcBfoCEBKORJNFJUJWdEnqKL0vN19Tr3m9tUNW
-         DtOXW62T3XOsXbT2w5ZsN5pMQcCYRtwPObvZXbEfuioiF57iyjU3T86gogNBErFjSUvV
-         nq3g==
-X-Gm-Message-State: AJcUukdBLrZaFe+CG0y48A5/TFe0CJyzADXO4CGx3LIo5YJCAZHxFwvJ
-        kE+/WhRWlSsbmplmg4zsMx/HNqrC
-X-Google-Smtp-Source: ALg8bN70JELqFEDHY6HO+QxUUzA1eWTIBUdWWTjWle0acAUKCoU5zRlzUH+/FJxUTseId58ceLJd7Q==
-X-Received: by 2002:a1c:2408:: with SMTP id k8mr3468340wmk.110.1547562297666;
-        Tue, 15 Jan 2019 06:24:57 -0800 (PST)
-Received: from ?IPv6:2a02:908:1252:fb60:be8a:bd56:1f94:86e7? ([2a02:908:1252:fb60:be8a:bd56:1f94:86e7])
-        by smtp.gmail.com with ESMTPSA id j124sm22300980wmb.48.2019.01.15.06.24.56
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 15 Jan 2019 06:24:57 -0800 (PST)
-Reply-To: christian.koenig@amd.com
-Subject: Re: [PATCH] lib/scatterlist: Provide a DMA page iterator
-To:     Thomas Hellstrom <thellstrom@vmware.com>,
-        "hch@lst.de" <hch@lst.de>, "jgg@ziepe.ca" <jgg@ziepe.ca>
-Cc:     "syeh@vmware.com" <syeh@vmware.com>,
-        "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>,
-        "daniel.vetter@ffwll.ch" <daniel.vetter@ffwll.ch>,
-        "jian.xu.zheng@intel.com" <jian.xu.zheng@intel.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-        "sakari.ailus@linux.intel.com" <sakari.ailus@linux.intel.com>,
-        "bingbu.cao@intel.com" <bingbu.cao@intel.com>,
-        "yong.zhi@intel.com" <yong.zhi@intel.com>,
-        "shiraz.saleem@intel.com" <shiraz.saleem@intel.com>,
-        "tian.shu.qiu@intel.com" <tian.shu.qiu@intel.com>,
-        "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>
-References: <20190104223531.GA1705@ziepe.ca> <20190110234218.GM6890@ziepe.ca>
- <20190114094856.GB29604@lst.de>
- <1fb20ab4b171b281e9994b6c55734c120958530b.camel@vmware.com>
-From:   =?UTF-8?Q?Christian_K=c3=b6nig?= <ckoenig.leichtzumerken@gmail.com>
-Message-ID: <2b440a3b-ed2f-8fd6-a21e-97ca0b2f5db9@gmail.com>
-Date:   Tue, 15 Jan 2019 15:24:55 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Tue, 15 Jan 2019 09:25:03 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=DrWM2TYp01Hb/9SMq6G1LGGAVaQ0o4kL5/Rut7tJG4o=; b=eD5CqffcHSv5SK1z6qOtRE8cn
+        ttmd8oNu8FcVjCw3fieaBapIp0n4eUC8rhh7ydUGFJrdqVSa3eN8DxNDpvmliPkGqMobn1XLZ+9yi
+        8T4VHpSRxQDSoLGzcZMOr0A5QiZtdxhHzzi1rwXv+OzjFOpf4Kf2oDY0vZrK0suzYPWvs=;
+Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
+        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1gjPe8-000843-Se; Tue, 15 Jan 2019 14:24:52 +0000
+Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
+        id 44B9A1127848; Tue, 15 Jan 2019 14:24:52 +0000 (GMT)
+Date:   Tue, 15 Jan 2019 14:24:52 +0000
+From:   Mark Brown <broonie@kernel.org>
+To:     Baolin Wang <baolin.wang@linaro.org>
+Cc:     robh+dt@kernel.org, mark.rutland@arm.com, orsonzhai@gmail.com,
+        zhang.lyra@gmail.com, lanqing.liu@unisoc.com,
+        linux-spi@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/4] spi: sprd: Add the SPI irq function for the SPI DMA
+ mode
+Message-ID: <20190115142452.GA5522@sirena.org.uk>
+References: <ab49bb74e921474aa9390f81cdf65f32c3d9d898.1547559542.git.baolin.wang@linaro.org>
+ <ec1741f29c44c436c1086877ff5b208e6b8af45d.1547559542.git.baolin.wang@linaro.org>
 MIME-Version: 1.0
-In-Reply-To: <1fb20ab4b171b281e9994b6c55734c120958530b.camel@vmware.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="oyUTqETQ0mS9luUI"
+Content-Disposition: inline
+In-Reply-To: <ec1741f29c44c436c1086877ff5b208e6b8af45d.1547559542.git.baolin.wang@linaro.org>
+X-Cookie: Violence is molding.
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Am 15.01.19 um 15:17 schrieb Thomas Hellstrom:
-> Hi, Christoph,
->
-> On Mon, 2019-01-14 at 10:48 +0100, Christoph Hellwig wrote:
->> On Thu, Jan 10, 2019 at 04:42:18PM -0700, Jason Gunthorpe wrote:
->>>> Changes since the RFC:
->>>> - Rework vmwgfx too [CH]
->>>> - Use a distinct type for the DMA page iterator [CH]
->>>> - Do not have a #ifdef [CH]
->>> ChristophH: Will you ack?
->> This looks generally fine.
->>
->>> Are you still OK with the vmwgfx reworking, or should we go back to
->>> the original version that didn't have the type safety so this
->>> driver
->>> can be left broken?
->> I think the map method in vmgfx that just does virt_to_phys is
->> pretty broken.  Thomas, can you check if you see any performance
->> difference with just doing the proper dma mapping, as that gets the
->> driver out of interface abuse land?
-> The performance difference is not really the main problem here. The
-> problem is that even though we utilize the streaming DMA interface, we
-> use it only since we have to for DMA-Remapping and assume that the
-> memory is coherent. To be able to be as compliant as possible and ditch
-> the virt-to-phys mode, we *need* a DMA interface flag that tells us
-> when the dma_sync_for_xxx are no-ops. If they aren't we'll refuse to
-> load for now. I'm not sure, but I think also nouveau and radeon suffer
-> from the same issue.
 
-Yeah, indeed. Bounce buffers are an absolute no-go for GPUs.
+--oyUTqETQ0mS9luUI
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-If the DMA API finds that a piece of memory is not directly accessible 
-by the GPU we need to return an error and not try to use bounce buffers 
-behind the surface.
+On Tue, Jan 15, 2019 at 09:46:51PM +0800, Baolin Wang wrote:
 
-That is something which always annoyed me with the DMA API, which is 
-otherwise rather cleanly defined.
+This looks good, just one small issue and a thing to check:
 
-Christian.
+> +static irqreturn_t sprd_spi_handle_irq(int irq, void *data)
+> +{
+> +	struct sprd_spi *ss = (struct sprd_spi *)data;
+> +	u32 val = readl_relaxed(ss->base + SPRD_SPI_INT_MASK_STS);
+> +
+> +	if (val & SPRD_SPI_MASK_TX_END) {
+> +		writel_relaxed(SPRD_SPI_TX_END_CLR, ss->base + SPRD_SPI_INT_CLR);
+> +		if (!(ss->trans_mode & SPRD_SPI_RX_MODE))
+> +			complete(&ss->xfer_completion);
+> +		return IRQ_HANDLED;
+> +	}
+> +
+> +	if (val & SPRD_SPI_MASK_RX_END) {
+> +		writel_relaxed(SPRD_SPI_RX_END_CLR, ss->base + SPRD_SPI_INT_CLR);
+> +		complete(&ss->xfer_completion);
+> +	}
+> +
+> +	return IRQ_HANDLED;
+> +}
 
->
->> While we're at it I think we need to merge my series in this area
->> for 5.0, because without that the driver is already broken.  Where
->> should we merge it?
-> I can merge it through vmwgfx/drm-fixes. There is an outstanding issue
-> with patch 3. Do you want me to fix that up?
->
-> Thanks,
-> Thomas
->
->
-> _______________________________________________
-> dri-devel mailing list
-> dri-devel@lists.freedesktop.org
-> https://lists.freedesktop.org/mailman/listinfo/dri-devel
+This will return IRQ_HANDLED no matter if there was an interrupt
+actually handled.  That means that if something goes wrong due to some
+bug or a hardware change (eg, a new version of the IP) and there's
+another interrupt fired we won't clear it and the interrupt core won't
+be able to detect that it's a spurious interrupt and use its own error
+handling.  It's better to return IRQ_NONE in that case.
 
+> +	ret = devm_request_irq(&pdev->dev, ss->irq, sprd_spi_handle_irq,
+> +				0, pdev->name, ss);
+> +	if (ret)
+> +		dev_err(&pdev->dev, "failed to request spi irq %d, ret = %d\n",
+> +			ss->irq, ret);
+
+Are you sure it's safe to use devm_request_irq(), especially when
+unloading the driver?  Using it means that we will only disable the
+interrupt after the driver's remove function has finished so there's a
+danger of an interrupt firing when some of the resources the hander has
+used are still in use.  I didn't spot any issues, just something to
+check especially with the later patches building on top of this.
+
+--oyUTqETQ0mS9luUI
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlw97TMACgkQJNaLcl1U
+h9BFNwf9HP3Z+bpkgsUNL5XdG5PvKTnwIdDpVQSXq4JNtppq2ITkJ7VxbDbJ3+1l
+8dK4dnT6wX3+/dib9ky626PIovD+WkchDpQYKud/tb4ZsKwmhJ5OhfxLd/2rQOOF
+eeYdFPiKHai0NzIdZpOga6orkDvjgM860VSh7Ylfl2iJ13cZGoR8Jnxo+Sa+huPg
+lxphZAUJWUjFVeU0fetbyVb8iY89ovgBUMtzJ5xcWzdLXiLi3yT2s8NGrTtDxS2u
+QVhJulPTxjxJ694mGH2mPz8hda+7uw/IT8sjk8bd3MmK/efl6CEZ5B1frzIm85Jg
+pDm8Fno1/aJOZ339cLVOo5pjwxtJ2g==
+=cuso
+-----END PGP SIGNATURE-----
+
+--oyUTqETQ0mS9luUI--
