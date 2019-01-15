@@ -2,94 +2,274 @@ Return-Path: <SRS0=RZO6=PX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E5BFC43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 01:40:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CEB02C43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 01:42:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 567A6206B7
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 01:40:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547516416;
-	bh=Jg0GHLkim+3GwLV0POY2siTHfZdujuJmuotMca9hQAs=;
-	h=Subject:To:Cc:References:From:Date:In-Reply-To:List-ID:From;
-	b=H0uEjut2EZrtr5HDSxJrxRoKFmiHEwhbP2oV83wM3wvZyn+61hc32w5uje/TxI25E
-	 7hsEIBzdgWuxRUkU3Wp4AjkXuP0d8JSBOPyTBM2eo+2gwS9BjtxBCXS1peATYXlOTq
-	 O0W+EmLm6axJLV7qoTH4rnGQiOgmnzi8iuEqb7Rc=
+	by mail.kernel.org (Postfix) with ESMTP id 925EB205C9
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 01:42:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727710AbfAOBkO (ORCPT
+        id S1727575AbfAOBm4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 14 Jan 2019 20:40:14 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43570 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726769AbfAOBkO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 Jan 2019 20:40:14 -0500
-Received: from [192.168.1.112] (c-24-9-64-241.hsd1.co.comcast.net [24.9.64.241])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C36C320659;
-        Tue, 15 Jan 2019 01:40:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547516413;
-        bh=Jg0GHLkim+3GwLV0POY2siTHfZdujuJmuotMca9hQAs=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=07x4MyEwXGVs8b3kScbZ8V424XnyDrQYcw2QCnmsKc8vdLwhXuTqH8CjiCQv0VIdA
-         6kxU5XbQjBXNcm+86WucAzhSqXvmojQRnru8KFzxbtkOaZwTQY/9KThkKAQM5g1C4n
-         6GvzprpABeiIzsVWy672aTF0WaU6LpG4pmJbbYkA=
-Subject: Re: [PATCH v4 2/2] selftests/memfd: Add tests for F_SEAL_FUTURE_WRITE
- seal
-To:     Joel Fernandes <joel@joelfernandes.org>,
-        linux-kernel@vger.kernel.org
-Cc:     dancol@google.com, minchan@kernel.org,
-        Jann Horn <jannh@google.com>,
-        John Stultz <john.stultz@linaro.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Hugh Dickins <hughd@google.com>,
-        "J. Bruce Fields" <bfields@fieldses.org>,
-        Jeff Layton <jlayton@kernel.org>, linux-api@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kselftest@vger.kernel.org,
-        linux-mm@kvack.org,
-        =?UTF-8?Q?Marc-Andr=c3=a9_Lureau?= <marcandre.lureau@redhat.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        shuah <shuah@kernel.org>
-References: <20190112203816.85534-1-joel@joelfernandes.org>
- <20190112203816.85534-3-joel@joelfernandes.org>
-From:   shuah <shuah@kernel.org>
-Message-ID: <f9ffb7f8-1ff8-3bec-ce79-f9322d8715dc@kernel.org>
-Date:   Mon, 14 Jan 2019 18:39:59 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Mon, 14 Jan 2019 20:42:56 -0500
+Received: from szxga04-in.huawei.com ([45.249.212.190]:17548 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726769AbfAOBm4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 14 Jan 2019 20:42:56 -0500
+Received: from DGGEMS412-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id DDBC77F6833104CB1C5D;
+        Tue, 15 Jan 2019 09:42:53 +0800 (CST)
+Received: from szvp000201624.huawei.com (10.120.216.130) by
+ DGGEMS412-HUB.china.huawei.com (10.3.19.212) with Microsoft SMTP Server id
+ 14.3.408.0; Tue, 15 Jan 2019 09:42:44 +0800
+From:   Chao Yu <yuchao0@huawei.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Chao Yu <yuchao0@huawei.com>, <devel@driverdev.osuosl.org>
+CC:     LKML <linux-kernel@vger.kernel.org>,
+        <linux-erofs@lists.ozlabs.org>, "Chao Yu" <chao@kernel.org>,
+        Miao Xie <miaoxie@huawei.com>, <weidu.du@huawei.com>,
+        Fang Wei <fangwei1@huawei.com>,
+        Gao Xiang <gaoxiang25@huawei.com>
+Subject: [PATCH v2 5/5] staging: erofs: clean up erofs_map_blocks_iter
+Date:   Tue, 15 Jan 2019 09:42:21 +0800
+Message-ID: <20190115014221.37071-1-yuchao0@huawei.com>
+X-Mailer: git-send-email 2.18.0.rc1
+In-Reply-To: <20190114114026.11728-6-gaoxiang25@huawei.com>
+References: <20190114114026.11728-6-gaoxiang25@huawei.com>
 MIME-Version: 1.0
-In-Reply-To: <20190112203816.85534-3-joel@joelfernandes.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
+X-Originating-IP: [10.120.216.130]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 1/12/19 1:38 PM, Joel Fernandes wrote:
-> From: "Joel Fernandes (Google)" <joel@joelfernandes.org>
-> 
-> Add tests to verify sealing memfds with the F_SEAL_FUTURE_WRITE works as
-> expected.
-> 
-> Cc: dancol@google.com
-> Cc: minchan@kernel.org
-> Cc: Jann Horn <jannh@google.com>
-> Cc: John Stultz <john.stultz@linaro.org>
-> Signed-off-by: Joel Fernandes (Google) <joel@joelfernandes.org>
-> ---
+This patch cleans up erofs_map_blocks* function and structure family,
+just simply the code, no logic change.
 
-Looks good to me. For selftest part of the series:
+Reviewed-by: Gao Xiang <gaoxiang25@huawei.com>
+Signed-off-by: Chao Yu <yuchao0@huawei.com>
+Signed-off-by: Gao Xiang <gaoxiang25@huawei.com>
+---
+v2:
+- remove unneed semicolon in definition of z_erofs_map_blocks_iter
+ drivers/staging/erofs/data.c      | 31 +++++--------------------------
+ drivers/staging/erofs/internal.h  | 28 +++++++++++++++-------------
+ drivers/staging/erofs/unzip_vle.c | 30 +++++++++++++++---------------
+ 3 files changed, 35 insertions(+), 54 deletions(-)
 
-Reviewed-by: Shuah Khan <shuah@kernel.org>
+diff --git a/drivers/staging/erofs/data.c b/drivers/staging/erofs/data.c
+index 329fa4fa3e9c..9c471f08ffd4 100644
+--- a/drivers/staging/erofs/data.c
++++ b/drivers/staging/erofs/data.c
+@@ -165,37 +165,16 @@ static int erofs_map_blocks_flatmode(struct inode *inode,
+ 	return err;
+ }
+ 
+-int erofs_map_blocks_iter(struct inode *inode,
+-			  struct erofs_map_blocks *map,
+-			  struct page **mpage_ret, int flags)
+-{
+-	/* by default, reading raw data never use erofs_map_blocks_iter */
+-	if (unlikely(!is_inode_layout_compression(inode))) {
+-		if (*mpage_ret)
+-			put_page(*mpage_ret);
+-		*mpage_ret = NULL;
+-
+-		return erofs_map_blocks(inode, map, flags);
+-	}
+-
+-#ifdef CONFIG_EROFS_FS_ZIP
+-	return z_erofs_map_blocks_iter(inode, map, mpage_ret, flags);
+-#else
+-	/* data compression is not available */
+-	return -ENOTSUPP;
+-#endif
+-}
+-
+ int erofs_map_blocks(struct inode *inode,
+ 		     struct erofs_map_blocks *map, int flags)
+ {
+ 	if (unlikely(is_inode_layout_compression(inode))) {
+-		struct page *mpage = NULL;
+-		int err;
++		int err = z_erofs_map_blocks_iter(inode, map, flags);
+ 
+-		err = erofs_map_blocks_iter(inode, map, &mpage, flags);
+-		if (mpage)
+-			put_page(mpage);
++		if (map->mpage) {
++			put_page(map->mpage);
++			map->mpage = NULL;
++		}
+ 		return err;
+ 	}
+ 	return erofs_map_blocks_flatmode(inode, map, flags);
+diff --git a/drivers/staging/erofs/internal.h b/drivers/staging/erofs/internal.h
+index 99b50b981335..c3de24e7fb67 100644
+--- a/drivers/staging/erofs/internal.h
++++ b/drivers/staging/erofs/internal.h
+@@ -461,11 +461,26 @@ struct erofs_map_blocks {
+ 	u64 m_plen, m_llen;
+ 
+ 	unsigned int m_flags;
++
++	struct page *mpage;
+ };
+ 
+ /* Flags used by erofs_map_blocks() */
+ #define EROFS_GET_BLOCKS_RAW    0x0001
+ 
++#ifdef CONFIG_EROFS_FS_ZIP
++int z_erofs_map_blocks_iter(struct inode *inode,
++			    struct erofs_map_blocks *map,
++			    int flags);
++#else
++static inline int z_erofs_map_blocks_iter(struct inode *inode,
++					  struct erofs_map_blocks *map,
++					  int flags)
++{
++	return -ENOTSUPP;
++}
++#endif
++
+ /* data.c */
+ static inline struct bio *
+ erofs_grab_bio(struct super_block *sb,
+@@ -522,19 +537,6 @@ static inline struct page *erofs_get_meta_page_nofail(struct super_block *sb,
+ }
+ 
+ extern int erofs_map_blocks(struct inode *, struct erofs_map_blocks *, int);
+-extern int erofs_map_blocks_iter(struct inode *, struct erofs_map_blocks *,
+-	struct page **, int);
+-
+-struct erofs_map_blocks_iter {
+-	struct erofs_map_blocks map;
+-	struct page *mpage;
+-};
+-
+-#ifdef CONFIG_EROFS_FS_ZIP
+-extern int z_erofs_map_blocks_iter(struct inode *,
+-				   struct erofs_map_blocks *,
+-				   struct page **, int);
+-#endif
+ 
+ static inline struct page *
+ erofs_get_inline_page(struct inode *inode,
+diff --git a/drivers/staging/erofs/unzip_vle.c b/drivers/staging/erofs/unzip_vle.c
+index 584612b47369..29b3b1dc67f1 100644
+--- a/drivers/staging/erofs/unzip_vle.c
++++ b/drivers/staging/erofs/unzip_vle.c
+@@ -636,7 +636,7 @@ struct z_erofs_vle_frontend {
+ 	struct inode *const inode;
+ 
+ 	struct z_erofs_vle_work_builder builder;
+-	struct erofs_map_blocks_iter m_iter;
++	struct erofs_map_blocks map;
+ 
+ 	z_erofs_vle_owned_workgrp_t owned_head;
+ 
+@@ -647,8 +647,9 @@ struct z_erofs_vle_frontend {
+ 
+ #define VLE_FRONTEND_INIT(__i) { \
+ 	.inode = __i, \
+-	.m_iter = { \
+-		{ .m_llen = 0, .m_plen = 0 }, \
++	.map = { \
++		.m_llen = 0, \
++		.m_plen = 0, \
+ 		.mpage = NULL \
+ 	}, \
+ 	.builder = VLE_WORK_BUILDER_INIT(), \
+@@ -681,8 +682,7 @@ static int z_erofs_do_read_page(struct z_erofs_vle_frontend *fe,
+ {
+ 	struct super_block *const sb = fe->inode->i_sb;
+ 	struct erofs_sb_info *const sbi __maybe_unused = EROFS_SB(sb);
+-	struct erofs_map_blocks_iter *const m = &fe->m_iter;
+-	struct erofs_map_blocks *const map = &m->map;
++	struct erofs_map_blocks *const map = &fe->map;
+ 	struct z_erofs_vle_work_builder *const builder = &fe->builder;
+ 	const loff_t offset = page_offset(page);
+ 
+@@ -715,7 +715,7 @@ static int z_erofs_do_read_page(struct z_erofs_vle_frontend *fe,
+ 
+ 	map->m_la = offset + cur;
+ 	map->m_llen = 0;
+-	err = erofs_map_blocks_iter(fe->inode, map, &m->mpage, 0);
++	err = z_erofs_map_blocks_iter(fe->inode, map, 0);
+ 	if (unlikely(err))
+ 		goto err_out;
+ 
+@@ -1484,8 +1484,8 @@ static int z_erofs_vle_normalaccess_readpage(struct file *file,
+ 
+ 	z_erofs_submit_and_unzip(&f, &pagepool, true);
+ out:
+-	if (f.m_iter.mpage)
+-		put_page(f.m_iter.mpage);
++	if (f.map.mpage)
++		put_page(f.map.mpage);
+ 
+ 	/* clean up the remaining free pages */
+ 	put_pages_list(&pagepool);
+@@ -1555,8 +1555,8 @@ static int z_erofs_vle_normalaccess_readpages(struct file *filp,
+ 
+ 	z_erofs_submit_and_unzip(&f, &pagepool, sync);
+ 
+-	if (f.m_iter.mpage)
+-		put_page(f.m_iter.mpage);
++	if (f.map.mpage)
++		put_page(f.map.mpage);
+ 
+ 	/* clean up the remaining free pages */
+ 	put_pages_list(&pagepool);
+@@ -1701,14 +1701,14 @@ vle_get_logical_extent_head(const struct vle_map_blocks_iter_ctx *ctx,
+ 
+ int z_erofs_map_blocks_iter(struct inode *inode,
+ 	struct erofs_map_blocks *map,
+-	struct page **mpage_ret, int flags)
++	int flags)
+ {
+ 	void *kaddr;
+ 	const struct vle_map_blocks_iter_ctx ctx = {
+ 		.inode = inode,
+ 		.sb = inode->i_sb,
+ 		.clusterbits = EROFS_I_SB(inode)->clusterbits,
+-		.mpage_ret = mpage_ret,
++		.mpage_ret = &map->mpage,
+ 		.kaddr_ret = &kaddr
+ 	};
+ 	const unsigned int clustersize = 1 << ctx.clusterbits;
+@@ -1722,7 +1722,7 @@ int z_erofs_map_blocks_iter(struct inode *inode,
+ 
+ 	/* initialize `pblk' to keep gcc from printing foolish warnings */
+ 	erofs_blk_t mblk, pblk = 0;
+-	struct page *mpage = *mpage_ret;
++	struct page *mpage = map->mpage;
+ 	struct z_erofs_vle_decompressed_index *di;
+ 	unsigned int cluster_type, logical_cluster_ofs;
+ 	int err = 0;
+@@ -1758,7 +1758,7 @@ int z_erofs_map_blocks_iter(struct inode *inode,
+ 			err = PTR_ERR(mpage);
+ 			goto out;
+ 		}
+-		*mpage_ret = mpage;
++		map->mpage = mpage;
+ 	} else {
+ 		lock_page(mpage);
+ 		DBG_BUGON(!PageUptodate(mpage));
+@@ -1818,7 +1818,7 @@ int z_erofs_map_blocks_iter(struct inode *inode,
+ 		/* get the correspoinding first chunk */
+ 		err = vle_get_logical_extent_head(&ctx, lcn, &ofs,
+ 						  &pblk, &map->m_flags);
+-		mpage = *mpage_ret;
++		mpage = map->mpage;
+ 
+ 		if (unlikely(err)) {
+ 			if (mpage)
+-- 
+2.18.0.rc1
 
-thanks,
--- Shuah
