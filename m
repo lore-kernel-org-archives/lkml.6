@@ -2,122 +2,198 @@ Return-Path: <SRS0=RZO6=PX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 870E3C43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 05:33:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E9AFC43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 05:35:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6160E20651
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 05:33:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4C15520651
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 05:35:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728016AbfAOFdC (ORCPT
+        id S1728056AbfAOFfL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 15 Jan 2019 00:33:02 -0500
-Received: from mga01.intel.com ([192.55.52.88]:14301 "EHLO mga01.intel.com"
+        Tue, 15 Jan 2019 00:35:11 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:45264 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725929AbfAOFdC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Jan 2019 00:33:02 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga003.fm.intel.com ([10.253.24.29])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 14 Jan 2019 21:33:01 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,480,1539673200"; 
-   d="scan'208";a="125954931"
-Received: from smile.fi.intel.com (HELO smile) ([10.237.72.86])
-  by FMSMGA003.fm.intel.com with ESMTP; 14 Jan 2019 21:32:59 -0800
-Received: from andy by smile with local (Exim 4.92-RC4)
-        (envelope-from <andriy.shevchenko@linux.intel.com>)
-        id 1gjHLO-0000Si-Gz; Tue, 15 Jan 2019 07:32:58 +0200
-Date:   Tue, 15 Jan 2019 07:32:58 +0200
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc:     Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Guenter Roeck <linux@roeck-us.net>, linux-gpio@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] pinctrl: cherryview: fix Strago DMI workaround
-Message-ID: <20190115053258.GA9170@smile.fi.intel.com>
-References: <20190115033836.GA150475@dtor-ws>
+        id S1725929AbfAOFfL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 Jan 2019 00:35:11 -0500
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id A3A4F7F6A7;
+        Tue, 15 Jan 2019 05:35:09 +0000 (UTC)
+Received: from colo-mx.corp.redhat.com (colo-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.20])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 192221048100;
+        Tue, 15 Jan 2019 05:35:08 +0000 (UTC)
+Received: from zmail21.collab.prod.int.phx2.redhat.com (zmail21.collab.prod.int.phx2.redhat.com [10.5.83.24])
+        by colo-mx.corp.redhat.com (Postfix) with ESMTP id 3DCC0181A968;
+        Tue, 15 Jan 2019 05:35:07 +0000 (UTC)
+Date:   Tue, 15 Jan 2019 00:35:06 -0500 (EST)
+From:   Pankaj Gupta <pagupta@redhat.com>
+To:     Dave Chinner <david@fromorbit.com>
+Cc:     Dan Williams <dan.j.williams@intel.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        KVM list <kvm@vger.kernel.org>,
+        Qemu Developers <qemu-devel@nongnu.org>,
+        linux-nvdimm <linux-nvdimm@ml01.01.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        virtualization@lists.linux-foundation.org,
+        Linux ACPI <linux-acpi@vger.kernel.org>,
+        linux-ext4 <linux-ext4@vger.kernel.org>,
+        linux-xfs <linux-xfs@vger.kernel.org>, Jan Kara <jack@suse.cz>,
+        Stefan Hajnoczi <stefanha@redhat.com>,
+        Rik van Riel <riel@surriel.com>,
+        Nitesh Narayan Lal <nilal@redhat.com>,
+        Kevin Wolf <kwolf@redhat.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Ross Zwisler <zwisler@kernel.org>,
+        vishal l verma <vishal.l.verma@intel.com>,
+        dave jiang <dave.jiang@intel.com>,
+        David Hildenbrand <david@redhat.com>,
+        jmoyer <jmoyer@redhat.com>,
+        xiaoguangrong eric <xiaoguangrong.eric@gmail.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        "Michael S. Tsirkin" <mst@redhat.com>,
+        Jason Wang <jasowang@redhat.com>, lcapitulino@redhat.com,
+        Igor Mammedov <imammedo@redhat.com>,
+        Eric Blake <eblake@redhat.com>, Theodore Ts'o <tytso@mit.edu>,
+        adilger kernel <adilger.kernel@dilger.ca>,
+        darrick wong <darrick.wong@oracle.com>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Message-ID: <1684638419.64320214.1547530506805.JavaMail.zimbra@redhat.com>
+In-Reply-To: <20190114222132.GH4205@dastard>
+References: <20190109144736.17452-1-pagupta@redhat.com> <1326478078.61913951.1547192704870.JavaMail.zimbra@redhat.com> <20190113232902.GD4205@dastard> <20190113233820.GX6310@bombadil.infradead.org> <942065073.64011540.1547450140670.JavaMail.zimbra@redhat.com> <20190114212501.GG4205@dastard> <CAPcyv4jtPcLV-s0sKNHwwk0ug7GLBV6699dpm1h3r2xSo879dg@mail.gmail.com> <20190114222132.GH4205@dastard>
+Subject: Re: [PATCH v3 0/5] kvm "virtio pmem" device
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190115033836.GA150475@dtor-ws>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.67.116.141, 10.4.195.25]
+Thread-Topic: kvm "virtio pmem" device
+Thread-Index: aJJi+yj9ZhvXNXMyyluM05prm2mSkQ==
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.25]); Tue, 15 Jan 2019 05:35:10 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jan 14, 2019 at 07:38:36PM -0800, Dmitry Torokhov wrote:
-> Well, hopefully 3rd time is a charm. We tried making that check
-> DMI_BIOS_VERSION and DMI_BOARD_VERSION, but the real one is
-> DMI_PRODUCT_VERSION.
 
-Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-
-> Fixes: 86c5dd6860a6 ("pinctrl: cherryview: limit Strago DMI workarounds to version 1.0")
-> Bugzilla: https://bugzilla.kernel.org/show_bug.cgi?id=197953
-> Bugzilla: https://bugzilla.redhat.com/show_bug.cgi?id=1631930
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-> ---
->  drivers/pinctrl/intel/pinctrl-cherryview.c | 8 ++++----
->  1 file changed, 4 insertions(+), 4 deletions(-)
+> > > On Mon, Jan 14, 2019 at 02:15:40AM -0500, Pankaj Gupta wrote:
+> > > >
+> > > > > > Until you have images (and hence host page cache) shared between
+> > > > > > multiple guests. People will want to do this, because it means they
+> > > > > > only need a single set of pages in host memory for executable
+> > > > > > binaries rather than a set of pages per guest. Then you have
+> > > > > > multiple guests being able to detect residency of the same set of
+> > > > > > pages. If the guests can then, in any way, control eviction of the
+> > > > > > pages from the host cache, then we have a guest-to-guest
+> > > > > > information
+> > > > > > leak channel.
+> > > > >
+> > > > > I don't think we should ever be considering something that would
+> > > > > allow a
+> > > > > guest to evict page's from the host's pagecache [1].  The guest
+> > > > > should
+> > > > > be able to kick its own references to the host's pagecache out of its
+> > > > > own pagecache, but not be able to influence whether the host or
+> > > > > another
+> > > > > guest has a read-only mapping cached.
+> > > > >
+> > > > > [1] Unless the guest is allowed to modify the host's file; obviously
+> > > > > truncation, holepunching, etc are going to evict pages from the
+> > > > > host's
+> > > > > page cache.
+> > > >
+> > > > This is so correct. Guest does not not evict host page cache pages
+> > > > directly.
+> > >
+> > > They don't right now.
+> > >
+> > > But someone is going to end up asking for discard to work so that
+> > > the guest can free unused space in the underlying spares image (i.e.
+> > > make use of fstrim or mount -o discard) because they have workloads
+> > > that have bursts of space usage and they need to trim the image
+> > > files afterwards to keep their overall space usage under control.
+> > >
+> > > And then....
+> > 
+> > ...we reject / push back on that patch citing the above concern.
 > 
-> diff --git a/drivers/pinctrl/intel/pinctrl-cherryview.c b/drivers/pinctrl/intel/pinctrl-cherryview.c
-> index 9b0f4b9ef482..8efe8ea45602 100644
-> --- a/drivers/pinctrl/intel/pinctrl-cherryview.c
-> +++ b/drivers/pinctrl/intel/pinctrl-cherryview.c
-> @@ -1507,7 +1507,7 @@ static const struct dmi_system_id chv_no_valid_mask[] = {
->  		.matches = {
->  			DMI_MATCH(DMI_SYS_VENDOR, "GOOGLE"),
->  			DMI_MATCH(DMI_PRODUCT_FAMILY, "Intel_Strago"),
-> -			DMI_MATCH(DMI_BOARD_VERSION, "1.0"),
-> +			DMI_MATCH(DMI_PRODUCT_VERSION, "1.0"),
->  		},
->  	},
->  	{
-> @@ -1515,7 +1515,7 @@ static const struct dmi_system_id chv_no_valid_mask[] = {
->  		.matches = {
->  			DMI_MATCH(DMI_SYS_VENDOR, "HP"),
->  			DMI_MATCH(DMI_PRODUCT_NAME, "Setzer"),
-> -			DMI_MATCH(DMI_BOARD_VERSION, "1.0"),
-> +			DMI_MATCH(DMI_PRODUCT_VERSION, "1.0"),
->  		},
->  	},
->  	{
-> @@ -1523,7 +1523,7 @@ static const struct dmi_system_id chv_no_valid_mask[] = {
->  		.matches = {
->  			DMI_MATCH(DMI_SYS_VENDOR, "GOOGLE"),
->  			DMI_MATCH(DMI_PRODUCT_NAME, "Cyan"),
-> -			DMI_MATCH(DMI_BOARD_VERSION, "1.0"),
-> +			DMI_MATCH(DMI_PRODUCT_VERSION, "1.0"),
->  		},
->  	},
->  	{
-> @@ -1531,7 +1531,7 @@ static const struct dmi_system_id chv_no_valid_mask[] = {
->  		.matches = {
->  			DMI_MATCH(DMI_SYS_VENDOR, "GOOGLE"),
->  			DMI_MATCH(DMI_PRODUCT_NAME, "Celes"),
-> -			DMI_MATCH(DMI_BOARD_VERSION, "1.0"),
-> +			DMI_MATCH(DMI_PRODUCT_VERSION, "1.0"),
->  		},
->  	},
->  	{}
-> -- 
-> 2.20.1.97.g81188d93c3-goog
+> So at what point do we draw the line?
 > 
+> We're allowing writable DAX mappings, but as I've pointed out that
+> means we are going to be allowing  a potential information leak via
+> files with shared extents to be directly mapped and written to.
 > 
-> -- 
-> Dmitry
+> But we won't allow useful admin operations that allow better
+> management of host side storage space similar to how normal image
+> files are used by guests because it's an information leak vector?
 
--- 
-With Best Regards,
-Andy Shevchenko
+First of all Thank you for all the useful discussions. 
+I am summarizing here:
+
+- We have to live with the limitation to not support fstrim and 
+  mount -o discard options with virtio-pmem as they will evict 
+  host page cache pages. We cannot allow this for virtio-pmem
+  for security reasons. These filesystem commands will just zero out 
+  unused pages currently.
+
+- If alot of space is unused and not freed guest can request host 
+  Administrator for truncating the host backing image. 
+  We are also planning to support qcow2 sparse image format at 
+  host side with virtio-pmem.
+
+- There is no existing solution for Qemu persistent memory 
+  emulation with write support currently. This solution provides 
+  us the paravartualized way of emulating persistent memory. It 
+  does not emulate of ACPI structures instead it just uses VIRTIO 
+  for communication between guest & host. It is fast because of its
+  asynchronous nature and it works well. This makes use of at guest 
+  side libnvdimm API's 
+  
+- If disk size freeing problem with guest files trim truncate is 
+  very important for users, they can still use real hardware which 
+  will provide them both (advance disk features & page cache by pass).
+
+Considering all the above reasons I think this feature is useful
+from virtualization point of view. As Dave rightly said we should
+be careful and I think now we are careful with the security implications
+of this device. 
+
+Thanks again for all the inputs.
+
+Best regards,
+Pankaj  
 
 
+> 
+> That's splitting some really fine hairs there...
+> 
+> > > > In case of virtio-pmem & DAX, guest clears guest page cache exceptional
+> > > > entries.
+> > > > Its solely decision of host to take action on the host page cache
+> > > > pages.
+> > > >
+> > > > In case of virtio-pmem, guest does not modify host file directly i.e
+> > > > don't
+> > > > perform hole punch & truncation operation directly on host file.
+> > >
+> > > ... this will no longer be true, and the nuclear landmine in this
+> > > driver interface will have been armed....
+> > 
+> > I agree with the need to be careful when / if explicit cache control
+> > is added, but that's not the case today.
+> 
+> "if"?
+> 
+> I expect it to be "when", not if. Expect the worst, plan for it now.
+> 
+> Cheers,
+> 
+> Dave.
+> --
+> Dave Chinner
+> david@fromorbit.com
+> 
