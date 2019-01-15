@@ -2,120 +2,75 @@ Return-Path: <SRS0=RZO6=PX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B1786C43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 20:58:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DDCE9C43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 20:58:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7651820657
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 20:58:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547585880;
-	bh=31XMqDyo8MmERVsvSeKwUxcYLkv0sPqeS3nCa6s7cAU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=2vKMGLmNiaYIJoQBO8xI1+Mrn3n7jmo68khfY2bJaUWoqncnEaRX5YPxjCo0w3+N8
-	 RCDsgP+FJ9RgQYbJlXepW60OLRrpWdhW57mQm8B3n2gfrkH7wcwnwpztFcHtJ66smk
-	 gkNQWM1u77Bt0b3qyRlUcquXTSxN9CmVCxYt1zfw=
+	by mail.kernel.org (Postfix) with ESMTP id B5B9D20657
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 20:58:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390066AbfAOU56 (ORCPT
+        id S2390081AbfAOU6E (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 15 Jan 2019 15:57:58 -0500
-Received: from mail-ot1-f68.google.com ([209.85.210.68]:40861 "EHLO
-        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730050AbfAOU56 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Jan 2019 15:57:58 -0500
-Received: by mail-ot1-f68.google.com with SMTP id s5so3848388oth.7;
-        Tue, 15 Jan 2019 12:57:57 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=u6pLGx/0+vlD0wl7xUqGgJTpR0eVUVsQyd1A8iOPGJ0=;
-        b=UnaxucC5ygWhWmLEsoEYaej4vFuPaxdXzVi8IqQorefin+eTodJkFg771vLLBnM2L1
-         ObAxc3nB1jRXTcRy5q0EK4Ht5/lm8DcNph2ciGvAybrhMgqrE3+P9kcY1PoBnK9fbURB
-         zzz0/m8ktZ0gXEWcyKB4vzHqCAiTtjpRFt3hYoa14qAZ3KWyYo69wn0B6TXncC8gdjZe
-         hEF9tqOGsh8PNDQFjeh21Ler3zfqzvIylX5y6AR7SSD++o9JZXYZjZKMgCvAom9gMaV9
-         nvI9jQrXt5c8GDd70g1DKr9FTKyz62B7alZ9lmwaE7Qv//DYWV4LMmsM+M+ZSf+2Z1yY
-         dpqQ==
-X-Gm-Message-State: AJcUukex9Pkoi2LCLvraW1ztGym7Bq7Lmec+12zCgDkhI+hjpanlo7Tx
-        mfL9mdf1F8qIcOOfUWDDyA==
-X-Google-Smtp-Source: ALg8bN4DnB1ZctWsoIpCgu7SPhAARg68Cr1r0PsowhlSBI5gqsjqHrsrJM5VAEbY7eR/hsxtYH0c9A==
-X-Received: by 2002:a9d:641:: with SMTP id 59mr3203321otn.215.1547585877058;
-        Tue, 15 Jan 2019 12:57:57 -0800 (PST)
-Received: from localhost ([70.231.7.113])
-        by smtp.gmail.com with ESMTPSA id 62sm1906363otu.42.2019.01.15.12.57.56
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 15 Jan 2019 12:57:56 -0800 (PST)
-Date:   Tue, 15 Jan 2019 14:57:55 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Viorel Suman <viorel.suman@nxp.com>
-Cc:     Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>, Timur Tabi <timur@kernel.org>,
-        Nicolin Chen <nicoleotsuka@gmail.com>,
-        Xiubo Li <Xiubo.Lee@gmail.com>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        "S.j. Wang" <shengjiu.wang@nxp.com>,
-        Daniel Baluta <daniel.baluta@nxp.com>,
-        Cosmin Samoila <cosmin.samoila@nxp.com>,
-        "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        Tue, 15 Jan 2019 15:58:04 -0500
+Received: from verein.lst.de ([213.95.11.211]:55467 "EHLO newverein.lst.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730050AbfAOU6E (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 Jan 2019 15:58:04 -0500
+Received: by newverein.lst.de (Postfix, from userid 2407)
+        id A098467358; Tue, 15 Jan 2019 21:58:01 +0100 (CET)
+Date:   Tue, 15 Jan 2019 21:58:01 +0100
+From:   "hch@lst.de" <hch@lst.de>
+To:     "Koenig, Christian" <Christian.Koenig@amd.com>
+Cc:     "hch@lst.de" <hch@lst.de>,
+        Thomas Hellstrom <thellstrom@vmware.com>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
-        dl-linux-imx <linux-imx@nxp.com>,
-        Viorel Suman <viorel.suman@gmail.com>
-Subject: Re: [PATCH v2 4/4] ASoC: add imx-audmix DT binding documentation
-Message-ID: <20190115205755.GA4022@bogus>
-References: <1546952716-2743-1-git-send-email-viorel.suman@nxp.com>
- <1546952716-2743-5-git-send-email-viorel.suman@nxp.com>
+        "yong.zhi@intel.com" <yong.zhi@intel.com>,
+        "daniel.vetter@ffwll.ch" <daniel.vetter@ffwll.ch>,
+        "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>,
+        "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>,
+        "bingbu.cao@intel.com" <bingbu.cao@intel.com>,
+        "jian.xu.zheng@intel.com" <jian.xu.zheng@intel.com>,
+        "tian.shu.qiu@intel.com" <tian.shu.qiu@intel.com>,
+        "shiraz.saleem@intel.com" <shiraz.saleem@intel.com>,
+        "sakari.ailus@linux.intel.com" <sakari.ailus@linux.intel.com>,
+        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+        "jgg@ziepe.ca" <jgg@ziepe.ca>
+Subject: Re: [PATCH] lib/scatterlist: Provide a DMA page iterator
+Message-ID: <20190115205801.GA15432@lst.de>
+References: <20190104223531.GA1705@ziepe.ca> <20190110234218.GM6890@ziepe.ca> <20190114094856.GB29604@lst.de> <1fb20ab4b171b281e9994b6c55734c120958530b.camel@vmware.com> <2b440a3b-ed2f-8fd6-a21e-97ca0b2f5db9@gmail.com> <20190115152029.GB2325@lst.de> <41d0616e95fb48942404fb54d82249f5700affb1.camel@vmware.com> <20190115183133.GA12350@lst.de> <c82076aa-a6ee-5ba2-a8d8-935fdbb7d5ca@amd.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1546952716-2743-5-git-send-email-viorel.suman@nxp.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <c82076aa-a6ee-5ba2-a8d8-935fdbb7d5ca@amd.com>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 08, 2019 at 01:05:51PM +0000, Viorel Suman wrote:
-> Add the DT binding documentation for Audio Mixer
-> machine driver.
+On Tue, Jan 15, 2019 at 07:13:11PM +0000, Koenig, Christian wrote:
+> Thomas is correct that the interface you propose here doesn't work at 
+> all for GPUs.
 > 
-> Signed-off-by: Viorel Suman <viorel.suman@nxp.com>
-> ---
->  .../devicetree/bindings/sound/imx-audmix.txt       | 24 ++++++++++++++++++++++
->  1 file changed, 24 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/sound/imx-audmix.txt
+> The kernel driver is not informed of flush/sync, but rather just setups 
+> coherent mappings between system memory and devices.
 > 
-> diff --git a/Documentation/devicetree/bindings/sound/imx-audmix.txt b/Documentation/devicetree/bindings/sound/imx-audmix.txt
-> new file mode 100644
-> index 0000000..6ac1230
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/sound/imx-audmix.txt
-> @@ -0,0 +1,24 @@
-> +NXP Audio Mixer (AUDMIX) machine driver.
-> +
-> +Required properties:
-> +===================================
-> +  - compatible		: Compatible list, contains "fsl,imx-audmix"
-> +
-> +  - model		: Short audio card description.
-> +
-> +  - dais		: Must contain a list of phandles to AUDMIX connected
-> +			  DAIs. The current implementation requires two phandles
-> +			  to SAI interfaces to be provided, the first SAI in the
-> +			  list being used to route the AUDMIX output.
-> +
-> +  - audmix-controller	: Must contain the phandle to the AUDMIX device node.
+> In other words you have an array of struct pages and need to map that to 
+> a specific device and so create dma_addresses for the mappings.
 
-I don't think you need 2 nodes for this as this one is just a virtual 
-device. Just add the dais property to the audmix node.
+If you want a coherent mapping you need to use dma_alloc_coherent
+and dma_mmap_coherent and you are done, that is not the problem.
+That actually is one of the vmgfx modes, so I don't understand what
+problem we are trying to solve if you don't actually want a non-coherent
+mapping.  Although last time I had that discussion with Daniel Vetter
+I was under the impressions that GPUs really wanted non-coherent
+mappings.
 
-Rob
+But if you want a coherent mapping you can't go to a struct page,
+because on many systems you can't just map arbitrary memory as
+uncachable.  It might either come from very special limited pools,
+or might need other magic applied to it so that it is not visible
+in the normal direct mapping, or at least not access through it.
