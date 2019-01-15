@@ -2,82 +2,53 @@ Return-Path: <SRS0=RZO6=PX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6FE27C43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 17:18:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C24EC43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 17:19:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3E37020657
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 17:18:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 35DF620657
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 17:19:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733100AbfAORSa (ORCPT
+        id S1732562AbfAORTh convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 15 Jan 2019 12:18:30 -0500
-Received: from mail.bootlin.com ([62.4.15.54]:60753 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730217AbfAORSa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Jan 2019 12:18:30 -0500
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id D104F20750; Tue, 15 Jan 2019 18:18:27 +0100 (CET)
-Received: from localhost (alyon-652-1-22-18.w109-213.abo.wanadoo.fr [109.213.145.18])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 951AA206A6;
-        Tue, 15 Jan 2019 18:18:17 +0100 (CET)
-From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Vladimir Zapolskiy <vz@mleia.com>
-Cc:     Sylvain Lemieux <slemieux.tyco@gmail.com>,
-        Roland Stigge <stigge@antcom.de>, Jiri Slaby <jslaby@suse.com>,
-        linux-serial@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>
-Subject: [PATCH] tty: serial: lpc32xx_hs: fix missing console boot messages
-Date:   Tue, 15 Jan 2019 18:18:14 +0100
-Message-Id: <20190115171814.21789-1-alexandre.belloni@bootlin.com>
-X-Mailer: git-send-email 2.20.1
+        Tue, 15 Jan 2019 12:19:37 -0500
+Received: from mail-gw1.esolutions.de ([178.239.73.50]:23603 "EHLO
+        mail-gw1.esolutions.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727133AbfAORTh (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 Jan 2019 12:19:37 -0500
+X-Greylist: delayed 359 seconds by postgrey-1.27 at vger.kernel.org; Tue, 15 Jan 2019 12:19:37 EST
+Received: from DEGAMES01.eso.local (degames01.eso.local [10.2.0.245])
+        by mail-gw1.esolutions.de (Postfix) with ESMTPS
+        for <linux-kernel@vger.kernel.org>; Tue, 15 Jan 2019 18:13:37 +0100 (CET)
+Received: from DEGAMES02.eso.local ([::1]) by DEGAMES01.eso.local ([::1]) with
+ mapi id 14.03.0408.000; Tue, 15 Jan 2019 18:13:37 +0100
+From:   Tschigirinski Jewgeni <Jewgeni.Tschigirinski@esolutions.de>
+To:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: kexec: relocate_kernel fails
+Thread-Topic: kexec: relocate_kernel fails
+Thread-Index: AdSs9Uw1CCu/l200R5qa9FU+q25jpQ==
+Date:   Tue, 15 Jan 2019 17:13:36 +0000
+Message-ID: <A019E0A5E55E844784593A3634C1DB07465D604B@DEGAMES02.eso.local>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.2.14.182]
+x-esetresult: clean, is OK
+x-esetid: 37303A29B2331A6B65706B
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When probing the HSUART, it is put in loopback mode in order to prevent a
-potential issue that may happen on RX (Errata HSUART.1).
+I am not able to get kexec to work.
 
-serial_lpc32xx_startup() moves it out of loopback mode but this is too late
-to get the kernel boot messages before userspace opens the device.
+For x86_64 relocate_kernel fails to store information for jumping back.
 
-Also get out of loopback mode in lpc32xx_hsuart_console_setup().
-
-Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
----
- drivers/tty/serial/lpc32xx_hs.c | 4 ++++
- 1 file changed, 4 insertions(+)
-
-diff --git a/drivers/tty/serial/lpc32xx_hs.c b/drivers/tty/serial/lpc32xx_hs.c
-index d1d73261575b..f4e27d0ad947 100644
---- a/drivers/tty/serial/lpc32xx_hs.c
-+++ b/drivers/tty/serial/lpc32xx_hs.c
-@@ -151,6 +151,8 @@ static void lpc32xx_hsuart_console_write(struct console *co, const char *s,
- 	local_irq_restore(flags);
- }
- 
-+static void lpc32xx_loopback_set(resource_size_t mapbase, int state);
-+
- static int __init lpc32xx_hsuart_console_setup(struct console *co,
- 					       char *options)
- {
-@@ -170,6 +172,8 @@ static int __init lpc32xx_hsuart_console_setup(struct console *co,
- 	if (options)
- 		uart_parse_options(options, &baud, &parity, &bits, &flow);
- 
-+	lpc32xx_loopback_set(port->mapbase, 0); /* get out of loopback mode */
-+
- 	return uart_set_options(port, co, baud, parity, bits, flow);
- }
- 
--- 
-2.20.1
-
+Kexec stops in movq %r9, CP_PA_TABLE_PAGE(%r11).
