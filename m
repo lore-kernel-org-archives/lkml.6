@@ -4,49 +4,49 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D059AC43612
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 16:40:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B195FC43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 16:40:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9608A2054F
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 16:40:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 82A5120675
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 16:40:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547570447;
-	bh=oU/Kkc3dJtAxPwnwuvAEiCggfiJK/+EHIXU8fz7DulI=;
+	s=default; t=1547570450;
+	bh=/rhcauA8CMyoUinUgVnPJWcbmQozRc9ZHXJrnaX8+HA=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=vJcK692ckTCr9twGm0fRD8dLEM4If4CoKbYdwFAH+SpuBiBor4jqd90CN6H48DqbZ
-	 uiMttiLal6h/4L7hYHJjLSOx9EuERhs4RQ1moNttORtGDlGsD01p9tY0++rUaiPOox
-	 Wb4ljJ0k2cmWqMp4nH37QvBGfwW70DHoL23PuHUw=
+	b=lplfdNbcPFn34Eud2uz3KpwplarwUB0kIa3/VNnn45vkfsQDz5UE9UHEbv6y6mMRV
+	 o2ctYPCszjei+/L9z5Lx2PWpTvQ1HHlaDhd9/tFC5CWnUVBWahZXh2qscF6n1lRNCq
+	 tsAVuXSXB6ZbgUkyzsd4vyeT1NTNLW7RkurMwgHw=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732662AbfAOQkp (ORCPT
+        id S1732671AbfAOQkt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 15 Jan 2019 11:40:45 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57184 "EHLO mail.kernel.org"
+        Tue, 15 Jan 2019 11:40:49 -0500
+Received: from mail.kernel.org ([198.145.29.99]:57240 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730407AbfAOQkn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Jan 2019 11:40:43 -0500
+        id S1730407AbfAOQkq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 Jan 2019 11:40:46 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8D5062054F;
-        Tue, 15 Jan 2019 16:40:42 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 35F3C2054F;
+        Tue, 15 Jan 2019 16:40:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547570443;
-        bh=oU/Kkc3dJtAxPwnwuvAEiCggfiJK/+EHIXU8fz7DulI=;
+        s=default; t=1547570445;
+        bh=/rhcauA8CMyoUinUgVnPJWcbmQozRc9ZHXJrnaX8+HA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=j9NR7azpZLdNuXoeCfliW7ar+pl7tQ+UtDqTNfRhl5JCQkPcuY5yqHEM0gePghxge
-         xKn6kYaMex6GATDYJANx9VZe9eD1u1jlp66K7A5ziN2PRsbjgHZX4/iGLTku167Hcf
-         kekLKaqHwX3uCFDV3CJrt6EhfOAYAFfJrNS59668=
+        b=rQhbeepwOccRsWLILT34XDMZekj7XX0xAQbYr1H4IMKW+zG+v9wXm0buILrbtN26k
+         6r2ia7yRLZx7/d9Vw8u3VsgjEbEN40IZTqqtfZdPjpX2357ZwwfYWLvRu0r6CEBzqB
+         BsAouQlo6r97nrfA7xd/1xTGztRHRH8RbCMb/Z/Y=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Theodore Tso <tytso@mit.edu>,
         stable@kernel.org
-Subject: [PATCH 4.14 24/27] ext4: use ext4_write_inode() when fsyncing w/o a journal
-Date:   Tue, 15 Jan 2019 17:36:13 +0100
-Message-Id: <20190115154902.985906218@linuxfoundation.org>
+Subject: [PATCH 4.14 25/27] ext4: track writeback errors using the generic tracking infrastructure
+Date:   Tue, 15 Jan 2019 17:36:14 +0100
+Message-Id: <20190115154903.116456934@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190115154901.189747728@linuxfoundation.org>
 References: <20190115154901.189747728@linuxfoundation.org>
@@ -67,51 +67,31 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Theodore Ts'o <tytso@mit.edu>
 
-commit ad211f3e94b314a910d4af03178a0b52a7d1ee0a upstream.
+commit 95cb67138746451cc84cf8e516e14989746e93b0 upstream.
 
-In no-journal mode, we previously used __generic_file_fsync() in
-no-journal mode.  This triggers a lockdep warning, and in addition,
-it's not safe to depend on the inode writeback mechanism in the case
-ext4.  We can solve both problems by calling ext4_write_inode()
-directly.
+We already using mapping_set_error() in fs/ext4/page_io.c, so all we
+need to do is to use file_check_and_advance_wb_err() when handling
+fsync() requests in ext4_sync_file().
 
 Signed-off-by: Theodore Ts'o <tytso@mit.edu>
 Cc: stable@kernel.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/ext4/fsync.c |   13 +++++++++----
- 1 file changed, 9 insertions(+), 4 deletions(-)
+ fs/ext4/fsync.c |    3 +++
+ 1 file changed, 3 insertions(+)
 
 --- a/fs/ext4/fsync.c
 +++ b/fs/ext4/fsync.c
-@@ -116,8 +116,16 @@ int ext4_sync_file(struct file *file, lo
- 		goto out;
+@@ -164,6 +164,9 @@ int ext4_sync_file(struct file *file, lo
+ 			ret = err;
  	}
- 
-+	ret = file_write_and_wait_range(file, start, end);
-+	if (ret)
-+		return ret;
-+
- 	if (!journal) {
--		ret = __generic_file_fsync(file, start, end, datasync);
-+		struct writeback_control wbc = {
-+			.sync_mode = WB_SYNC_ALL
-+		};
-+
-+		ret = ext4_write_inode(inode, &wbc);
- 		if (!ret)
- 			ret = ext4_sync_parent(inode);
- 		if (test_opt(inode->i_sb, BARRIER))
-@@ -125,9 +133,6 @@ int ext4_sync_file(struct file *file, lo
- 		goto out;
- 	}
- 
--	ret = file_write_and_wait_range(file, start, end);
--	if (ret)
--		return ret;
- 	/*
- 	 * data=writeback,ordered:
- 	 *  The caller's filemap_fdatawrite()/wait will sync the data.
+ out:
++	err = file_check_and_advance_wb_err(file);
++	if (ret == 0)
++		ret = err;
+ 	trace_ext4_sync_file_exit(inode, ret);
+ 	return ret;
+ }
 
 
