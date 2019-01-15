@@ -4,145 +4,95 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D099EC43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 20:12:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AAB8AC43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 20:13:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9F67520657
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 20:12:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 774D920657
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 20:13:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547583140;
-	bh=QByceuS3N7ruaiEC6SocC7co6eJljX8rR5YzRl2JAtE=;
+	s=default; t=1547583211;
+	bh=bhKayzoGjHTJ9hqSbj9+qhLbvY2UwG5eCI4XQ0yXlN4=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=WltCARODb9b5HMV/+UopY5M0HuVDwA3ds2mOfqaKlyyJI7pckKscPxfWcE8/p38DS
-	 h6Rv5MfTSiZtNgHbQZ2U94BJGZp0+rEqzzUiN73zNpQnu6RMuKO+qCP4h1CGcJCjiy
-	 h+Il1vSBSl2JpOHnPWXzmsSp20icik12iHtcRy3s=
+	b=n/fS4HiWhFWE20jwaggEohUk6V4lZvG4+q8D4LTbB2F7lsszR8lNnKhcwvlt2k+zM
+	 5cjQSAAOPgMvvH3GicaFHeVYsEPd+WtaHkHFPTuvOH1uXE7rSOpJ5AOca+zU2V6leg
+	 ECKnIbnevSfgAcb4nReJZH2pSounLGE0ysU7DoXQ=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389764AbfAOUMS (ORCPT
+        id S2389777AbfAOUN3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 15 Jan 2019 15:12:18 -0500
-Received: from mail-oi1-f196.google.com ([209.85.167.196]:41961 "EHLO
-        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732752AbfAOUMR (ORCPT
+        Tue, 15 Jan 2019 15:13:29 -0500
+Received: from mail-ot1-f67.google.com ([209.85.210.67]:41154 "EHLO
+        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728612AbfAOUN3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Jan 2019 15:12:17 -0500
-Received: by mail-oi1-f196.google.com with SMTP id j21so3142700oii.8;
-        Tue, 15 Jan 2019 12:12:17 -0800 (PST)
+        Tue, 15 Jan 2019 15:13:29 -0500
+Received: by mail-ot1-f67.google.com with SMTP id u16so3728346otk.8;
+        Tue, 15 Jan 2019 12:13:28 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=Oo0yDiKlwDpBMxgdXBAyphrmV6UFJofSxQQoWi6bsMo=;
-        b=chieqy4GDFZcDQeX556Z3FvOiA+UxVBheYW6hvFtgRHAHmrgSx5NI3bB5rnLBEP7Bw
-         Hefwpw8IoexJKzDC/IfEtNh+/epikN8wxQtCx91cNrrzqXHQmX49+GqefGcvMCH9Fln3
-         beQSB/6rWNAWbOCvvJt9QmXZZeYoPP46CohRewxRM309yur/AhkAKUHJ07mFL3KhZ4mX
-         1QIJI48YaXtprX5+J1RIwEZLDmEK4ea3OjE8qWG12zEfJkaDebiGwuFjnNpt1ojYjb4g
-         6l/aZKWe1wwFPnchItT420xO39YW163EpBOiSEYC8393Jg8l3eUEenS7XLM/koULiLoz
-         AFAg==
-X-Gm-Message-State: AJcUukdC1GmJskRw5PDMbOYLhqWx05OcYqnV5CFt/QFWu52P62GhmMnO
-        Uz6+BXD733a06ct49jB1Ig==
-X-Google-Smtp-Source: ALg8bN4Fd70PWZsf7kOAXtOqt/WAeoM01C2gZjvvv0bphBoEttFMAKWCwxUFFuS2Z7VErYbwYQTDYw==
-X-Received: by 2002:aca:b184:: with SMTP id a126mr2940293oif.187.1547583136717;
-        Tue, 15 Jan 2019 12:12:16 -0800 (PST)
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=ntKjFpByjGj36qZvDhl/OOUnSo1d4VZ4QJeEdynsDEY=;
+        b=TXgvp/d4Lz7NtxughA3VVP+2w6hbuvSO7w+qNI35NX1o88Z0hBwvZanCVF1JsD98Wq
+         iFO5uNb/YR4N8dkXMjQXFd7Y9LqI3DZdQCvGwYZXBPc6Oc0zPsqlOK6fIrnDoobRiVyL
+         B1D0XZx01hUy8mVJwWtQGJ7PjrXb5WcpqLnnMCT79yATnl/3i37ASJWp1NGrfsFaslEu
+         xRpK+zRAgNvSwR2CnQ8kxkvVETvmuZN3uD1mrS8c+StszTe6GYOtTBL+0nk9A8WPl32C
+         Ox5K8ut98kKk0TIPL0L+/96SLqa1E4PgDSpemBbJdb1aLP+NbqXbgkHg4oWjpdDlGhr7
+         vSVA==
+X-Gm-Message-State: AJcUukd6V9BbT0BOiDo5jsvwiXE0a4AaH3qEcR5UnUWA4X48994DUTSe
+        maUxKHEN5ZtHs+chjZwdTA==
+X-Google-Smtp-Source: ALg8bN7t3Lz/eQkN7CMD4yoZQfY2i1duDgD5LmYSYmSakPfABj157uRkN4uPI64Eg9VbMp8XK2PFSA==
+X-Received: by 2002:a05:6830:140e:: with SMTP id v14mr3502286otp.10.1547583208512;
+        Tue, 15 Jan 2019 12:13:28 -0800 (PST)
 Received: from localhost ([70.231.7.113])
-        by smtp.gmail.com with ESMTPSA id c9sm1730816otp.24.2019.01.15.12.12.15
+        by smtp.gmail.com with ESMTPSA id y2sm1715646oto.49.2019.01.15.12.13.27
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 15 Jan 2019 12:12:15 -0800 (PST)
-Date:   Tue, 15 Jan 2019 14:12:15 -0600
+        Tue, 15 Jan 2019 12:13:27 -0800 (PST)
+Date:   Tue, 15 Jan 2019 14:13:26 -0600
 From:   Rob Herring <robh@kernel.org>
-To:     =?utf-8?B?Vm9rw6HEjQ==?= Michal <Michal.Vokac@ysoft.com>
-Cc:     Shawn Guo <shawnguo@kernel.org>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+To:     Miquel Raynal <miquel.raynal@bootlin.com>
+Cc:     Gregory Clement <gregory.clement@bootlin.com>,
+        Jason Cooper <jason@lakedaemon.net>,
         Andrew Lunn <andrew@lunn.ch>,
-        =?utf-8?B?Vm9rw6HEjQ==?= Michal <Michal.Vokac@ysoft.com>
-Subject: Re: [PATCH shawn/for-next v4 2/2] ARM: dts: imx: Add Y Soft IOTA
- Draco,  Hydra and Ursa boards
-Message-ID: <20190115201215.GA32682@bogus>
-References: <1547562139-64730-1-git-send-email-michal.vokac@ysoft.com>
- <1547562139-64730-2-git-send-email-michal.vokac@ysoft.com>
+        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        devicetree@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        Antoine Tenart <antoine.tenart@bootlin.com>,
+        Maxime Chevallier <maxime.chevallier@bootlin.com>,
+        Nadav Haklai <nadavh@marvell.com>,
+        Miquel Raynal <miquel.raynal@bootlin.com>
+Subject: Re: [PATCH v3 10/15] dt-bindings: PCI: aardvark: Describe the PCIe
+ endpoint card reset pins
+Message-ID: <20190115201326.GA2362@bogus>
+References: <20190108162441.5278-1-miquel.raynal@bootlin.com>
+ <20190108162441.5278-11-miquel.raynal@bootlin.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <1547562139-64730-2-git-send-email-michal.vokac@ysoft.com>
+In-Reply-To: <20190108162441.5278-11-miquel.raynal@bootlin.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 15 Jan 2019 14:22:45 +0000, =?utf-8?B?Vm9rw6HEjSBNaWNoYWw=?= wrote:
-> These are i.MX6S/DL based SBCs embedded in various Y Soft products.
-> All share the same board design but have slightly different HW
-> configuration.
+On Tue,  8 Jan 2019 17:24:35 +0100, Miquel Raynal wrote:
+> A line might be used by the PCIe IP to reset the endpoint card upon:
+>   - platform reset,
+>   - hot reset,
+>   - link failure.
 > 
-> Ursa
-> - i.MX6S SoC, 512MB RAM DDR3, 4GB eMMC, microSD
-> - parallel WVGA 7" LCD with touch panel
-> - 1x Eth (QCA8334 switch)
-> - USB OTG
-> - USB host (micro-B)
+> Describe the properties needed in this case (optional).
 > 
-> Draco
-> - i.MX6S SoC, 512MB RAM DDR3, 4GB eMMC, microSD
-> - parallel WVGA 7" LCD with touch panel
-> - 2x Eth (QCA8334 switch)
-> - USB OTG
-> - USB host (micro-B)
-> - RGB LED (I2C LP5562)
-> - 3.5mm audio jack + codec (LM49350)
-> 
-> Hydra
-> - i.MX6DL SoC, 2GB RAM DDR3, 4GB eMMC, microSD
-> - I2C OLED display, capacitive matrix keys
-> - 2x Eth (QCA8334 switch)
-> - USB OTG
-> - RGB LED (I2C LP5562)
-> - 3.5mm audio jack + codec (LM49350)
-> - HDMI
-> - miniPCIe slot
-> 
-> Cc: Andrew Lunn <andrew@lunn.ch>
-> Signed-off-by: Michal Vokáč <michal.vokac@ysoft.com>
+> Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com>
 > ---
-> Changes since v3:
->  - Do not abbreviate regulator word in node names. (Shawn)
->  - Sort fixed regulator nodes alphabetically.
->  - Sort pmic regulator childe nodes alphabetically.
->  - Use newline between properties and child node in switch node. (Shawn)
->  - Sort i2c bus child nodes in order of unit-address. (Shawn)
->  - Rename PWM pinctl label to be consistent with node name. (Shawn)
-> 
-> Changes since v2:
->  - Remove cpus {/delete-node/ cpu@1;}; node from i.MX6Solo based board. (Fabio)
->  - Use "device_type = "memory";" in memory nodes. (Fabio)
->  - Use GPIO_ACTIVE_LOW for fec phy-reset-gpios. (Fabio)
->  - Use "-" in node names. (Rob)
->  - Remove label from led-controller node. (Rob)
->  
-> Changes since v1:
->  - Enable HDMI on Hydra board.
->  - Move regulators to the root node and remove simple-bus property. (Rob)
->  - Remove reg and unit-address property from regulators. (Rob)
->  - Use correct names for led-controller and pmic node. (Rob)
->  - Use wakeup-source instead of deprecated enable-sdio-wakeup. (Shawn)
-> 
->  arch/arm/boot/dts/Makefile                 |   3 +
->  arch/arm/boot/dts/imx6dl-yapp4-common.dtsi | 595 +++++++++++++++++++++++++++++
->  arch/arm/boot/dts/imx6dl-yapp4-draco.dts   |  58 +++
->  arch/arm/boot/dts/imx6dl-yapp4-hydra.dts   |  50 +++
->  arch/arm/boot/dts/imx6dl-yapp4-ursa.dts    |  54 +++
->  5 files changed, 760 insertions(+)
->  create mode 100644 arch/arm/boot/dts/imx6dl-yapp4-common.dtsi
->  create mode 100644 arch/arm/boot/dts/imx6dl-yapp4-draco.dts
->  create mode 100644 arch/arm/boot/dts/imx6dl-yapp4-hydra.dts
->  create mode 100644 arch/arm/boot/dts/imx6dl-yapp4-ursa.dts
+>  Documentation/devicetree/bindings/pci/aardvark-pci.txt | 5 +++++
+>  1 file changed, 5 insertions(+)
 > 
 
 Reviewed-by: Rob Herring <robh@kernel.org>
