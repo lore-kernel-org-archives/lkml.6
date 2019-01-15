@@ -2,90 +2,110 @@ Return-Path: <SRS0=RZO6=PX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BA4E4C43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 21:40:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A5944C43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 21:41:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 833232086D
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 21:40:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547588431;
-	bh=ovtO+jZKePh7Xgx6e4+3bw8hXDJ/I83a2/nw6RwEXR0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=mgls7xu1idG7D4wObRSJD2JX2I8M0jhMN1n76m/JTyLZOB1SHF1So0Y/Fgwjqhm65
-	 Rm0D6sKFfe3gcwPnuf2h0H3VQGNxmLixmsH5hL+14bQVGqj7BsYHi5rSyM0MW0wJPb
-	 IxxBvzNXmmLntdt0d+PxAoQZGHR6KBm/jlsEXKJk=
+	by mail.kernel.org (Postfix) with ESMTP id 6FDBD20657
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 21:41:32 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="V4FTcBL3"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390595AbfAOVk3 (ORCPT
+        id S2390609AbfAOVla (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 15 Jan 2019 16:40:29 -0500
-Received: from mail-oi1-f194.google.com ([209.85.167.194]:33484 "EHLO
-        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730500AbfAOVk3 (ORCPT
+        Tue, 15 Jan 2019 16:41:30 -0500
+Received: from aserp2130.oracle.com ([141.146.126.79]:37160 "EHLO
+        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730500AbfAOVla (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Jan 2019 16:40:29 -0500
-Received: by mail-oi1-f194.google.com with SMTP id c206so3405886oib.0;
-        Tue, 15 Jan 2019 13:40:28 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=S5gV17x4oTl0njUrPIb4oKxcW9iZO+WeMmVfD3Ki7HQ=;
-        b=UIwHKPNvLl3eKtAbLFSU6VRmZuUJIrs6JfXEmOjJT3MUklMBYfs75sLBjtcDCCUy14
-         xgNGDVewPd7SqyzN4WOM0MWVqfDmVrxcQj6RQl35h0IsQ+JzCrAoFCmTe4XTKuudUIzY
-         31x3TvnRLnJVDTn3hHMwe6CnTluZ8+X8Bb1KNud8U8NG14y1k0L/GzzV3HrioiuZDcRN
-         UgEMD5mLPmIFixq/95vlmkVZNBq16MAjDHkBWSPZLXr7dhIM0YKHFjjSOjteyuvLptbH
-         FoaSGOB/vSZL40BpPqII1TjLCIe+i9bjEmG74AGZk2KnKP+QIH565rSELKocXmJcrX29
-         gGEQ==
-X-Gm-Message-State: AJcUukfvY9VmLQsJzR8mOhoNWqphXTBOphnbjwavVy0d826eXeHjN/5v
-        jiBKT4CciTs4se2lVnJOxw==
-X-Google-Smtp-Source: ALg8bN4KLYAh6iGyez5g9YaK1vYopoNMAw0dLx/d+ynT8L0y4ymNxTrBmZU4+oq/88DklmpumD2Zag==
-X-Received: by 2002:aca:3a55:: with SMTP id h82mr707168oia.86.1547588428308;
-        Tue, 15 Jan 2019 13:40:28 -0800 (PST)
-Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id r17sm2033412otn.0.2019.01.15.13.40.27
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 15 Jan 2019 13:40:27 -0800 (PST)
-Date:   Tue, 15 Jan 2019 15:40:27 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Anson Huang <anson.huang@nxp.com>
-Cc:     "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "shawnguo@kernel.org" <shawnguo@kernel.org>,
-        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
-        "kernel@pengutronix.de" <kernel@pengutronix.de>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        "linux@armlinux.org.uk" <linux@armlinux.org.uk>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        dl-linux-imx <linux-imx@nxp.com>
-Subject: Re: [PATCH V2 1/3] dt-bindings: fsl: add imx7ulp system integration
-  module binding
-Message-ID: <20190115214027.GA21610@bogus>
-References: <1547187469-14046-1-git-send-email-Anson.Huang@nxp.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1547187469-14046-1-git-send-email-Anson.Huang@nxp.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Tue, 15 Jan 2019 16:41:30 -0500
+Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
+        by aserp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id x0FLd0Yl032173;
+        Tue, 15 Jan 2019 21:41:24 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=content-type :
+ mime-version : subject : from : in-reply-to : date : cc :
+ content-transfer-encoding : message-id : references : to;
+ s=corp-2018-07-02; bh=jK2W8S9WU7TF5iiex6ICIWOuc+skfj+Ue3nQaZ2i57U=;
+ b=V4FTcBL3wlLy/PKBI53gbxFA8IoMzNLXO3fQ5vvJQh2Pn3vywczSxXjSVAxDgKYz9jjU
+ 93En/0XbxBygjE6xZPzTcrdOBqA8CxP6HqUiwiQkr3XXLyRuDjULoDvsY3nXuCpZftcM
+ scuU7SPa08F0lBFvQXb9DKaVwDhK7n1OoG2JNUwPSUN1SIbm8Uy2hb50xhRKd7Y1ecoz
+ mEww3zszMlbnbsd/8HIJ6K+MZRGnDm50ysVfzIT5Avu3CsYU0PiQOkGFL6FnsWTc1EiN
+ nxcWI2oMpXFlx2+0n1fQTrt9LcRxQxVRnKwphrcIfpIzEaibrxWEQUL6q7jE31a/OewX 7g== 
+Received: from userv0022.oracle.com (userv0022.oracle.com [156.151.31.74])
+        by aserp2130.oracle.com with ESMTP id 2pybjnpehb-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 15 Jan 2019 21:41:24 +0000
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by userv0022.oracle.com (8.14.4/8.14.4) with ESMTP id x0FLfNOI021451
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 15 Jan 2019 21:41:23 GMT
+Received: from abhmp0014.oracle.com (abhmp0014.oracle.com [141.146.116.20])
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x0FLfN0w023395;
+        Tue, 15 Jan 2019 21:41:23 GMT
+Received: from anon-dhcp-171.1015granger.net (/68.61.232.219)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Tue, 15 Jan 2019 13:41:23 -0800
+Content-Type: text/plain;
+        charset=us-ascii
+Mime-Version: 1.0 (Mac OS X Mail 11.5 \(3445.9.1\))
+Subject: Re: linux-next: Fixes tag needs some work in the nfs-anna tree
+From:   Chuck Lever <chuck.lever@oracle.com>
+In-Reply-To: <20190116083831.256824cf@canb.auug.org.au>
+Date:   Tue, 15 Jan 2019 16:41:21 -0500
+Cc:     Anna Schumaker <Anna.Schumaker@Netapp.com>,
+        Trond Myklebust <trondmy@gmail.com>,
+        Linux NFS Mailing List <linux-nfs@vger.kernel.org>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Paul Gortmaker <paul.gortmaker@windriver.com>
+Content-Transfer-Encoding: 7bit
+Message-Id: <A4B834E5-2DFD-428E-8E24-9F6F6A822B09@oracle.com>
+References: <20190116083831.256824cf@canb.auug.org.au>
+To:     Stephen Rothwell <sfr@canb.auug.org.au>
+X-Mailer: Apple Mail (2.3445.9.1)
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9137 signatures=668682
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=939
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1810050000 definitions=main-1901150172
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 11 Jan 2019 06:22:40 +0000, Anson Huang wrote:
-> Add i.MX7ULP system integration module (SIM) binding.
-> 
-> Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
-> ---
->  .../bindings/arm/freescale/fsl,imx7ulp-sim.txt           | 16 ++++++++++++++++
->  1 file changed, 16 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/arm/freescale/fsl,imx7ulp-sim.txt
-> 
+Hi Stephen-
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+On Jan 15, 2019, at 4:38 PM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+
+> [I am experimenting with checking the Fixes tags in commits in linux-next.
+> Please let me know if you think I am being too strict.]
+> 
+> Hi all,
+> 
+> Commit
+> 
+>  deaa5c96c2f7 ("SUNRPC: Address Kerberos performance/behavior regression")
+> 
+> has problem with this Fixes tag:
+> 
+>  Fixes: 918f3c1fe83c ("SUNRPC: Improve latency for interactive ... ")
+> 
+> The subject should match the subject of the fixed commit.
+> 
+> -- 
+> Cheers,
+> Stephen Rothwell
+
+I shortened the commit title so that the Fixes: line is shorter than 68
+characters. I can leave these titles alone if that's preferred.
+
+
+--
+Chuck Lever
+
+
+
