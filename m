@@ -6,49 +6,49 @@ X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 463CDC43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 16:48:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C860C43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 16:48:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 11D2820645
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 16:48:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1B1C720645
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 16:48:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547570895;
-	bh=4uJRWyjirpe/ZIkzSYDs6Ij2zqo2ZS2rRs5RgM8Frfc=;
+	s=default; t=1547570899;
+	bh=Rj/cmFtFaLg7xtn58edwVQzAUrYLZVJzoJIYWleiIaY=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=L3pG12EPc09k3Ocppne9Jk4w6NlnOdVuLPJWFnzTBHtp4om9TeFulx/rIhNje3bze
-	 +e1kBQ3/2hLnAkgfrpZHE1DcD+ipbdP4oFvpEUgp2AF47uYQXe1Q/20EqCV9FEhnq3
-	 fbrlyX0JtRAE5klzEjpGxXJXC5zHduivkof2ESY4=
+	b=soU3Lpcx0K/q/mTWWlbvn2ovzgK/BWGiJiRpmU0q9mSyaXvulLgwbCtds672U8OUg
+	 TwIzhnTQWbjkljSfm3hRLvQaDialktLE8rhPhFaAb4t0HHilYdutN0QsCk49TxW+/u
+	 z5ALxn2bzwlIsB1UyRxv238vnRyuv72mHHhZ/P/A=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387717AbfAOQpK (ORCPT
+        id S1732533AbfAOQsR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 15 Jan 2019 11:45:10 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34768 "EHLO mail.kernel.org"
+        Tue, 15 Jan 2019 11:48:17 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34854 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387697AbfAOQpF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Jan 2019 11:45:05 -0500
+        id S2387708AbfAOQpK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 Jan 2019 11:45:10 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C19912086D;
-        Tue, 15 Jan 2019 16:45:03 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 097552054F;
+        Tue, 15 Jan 2019 16:45:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547570704;
-        bh=4uJRWyjirpe/ZIkzSYDs6Ij2zqo2ZS2rRs5RgM8Frfc=;
+        s=default; t=1547570709;
+        bh=Rj/cmFtFaLg7xtn58edwVQzAUrYLZVJzoJIYWleiIaY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=EbfxAZfdanLzgT54NfeQ4I2VRgfy9OqWHD1cW1CKMQk54b4DuBrHzsidtcoiH70HX
-         GxAu2qbcTY1uzeAr28dYRMcGQVP86aVjGp2r6XUYoeuC6LPax+v2w+Sn3+xFajkHfr
-         LnDynY6sWibOKiQ4ElfQ3BBt82dqp53zPj69hRSc=
+        b=o+ATUUBzXCd+40yVF55ouPeDrNBwU8J6pTIGKn8t9i55yyoFPlBKlZFi4xj4B3QF6
+         TmPJp9yvTRJGSiBdsycseoTueVwieT0dzyIzy7A3C1x2DSL9rsLypGstlJPcLWscIs
+         e9a7inf0hG8T5i1N+1Urw21lkzFybh7wrd/RnZY0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, "Jerry (Fangzhi) Zuo" <Jerry.Zuo@amd.com>,
-        Hersen Wu <hersenxs.wu@amd.com>,
-        Harry Wentland <harry.wentland@amd.com>,
-        Alex Deucher <alexander.deucher@amd.com>,
-        Lyude Paul <lyude@redhat.com>
-Subject: [PATCH 4.20 41/57] drm/amd/display: Fix MST dp_blank REG_WAIT timeout
-Date:   Tue, 15 Jan 2019 17:36:22 +0100
-Message-Id: <20190115154913.187392300@linuxfoundation.org>
+        stable@vger.kernel.org, Chris Wilson <chris@chris-wilson.co.uk>,
+        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+        Mika Kuoppala <mika.kuoppala@linux.intel.com>,
+        Matthew Auld <matthew.william.auld@gmail.com>,
+        Jani Nikula <jani.nikula@intel.com>
+Subject: [PATCH 4.20 43/57] drm/i915: Unwind failure on pinning the gen7 ppgtt
+Date:   Tue, 15 Jan 2019 17:36:24 +0100
+Message-Id: <20190115154913.350212370@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190115154910.734892368@linuxfoundation.org>
 References: <20190115154910.734892368@linuxfoundation.org>
@@ -67,72 +67,62 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jerry (Fangzhi) Zuo <Jerry.Zuo@amd.com>
+From: Chris Wilson <chris@chris-wilson.co.uk>
 
-commit 8c9d90eebd23b6d40ddf4ce5df5ca2b932336a06 upstream.
+commit 280d479b310298dfeb1d6f9a1617eca37beb6ce4 upstream.
 
-Need to blank stream before deallocate MST payload.
+If we fail to pin the ggtt vma slot for the ppgtt page tables, we need
+to unwind the locals before reporting the error. Or else on subsequent
+attempts to bind the page tables into the ggtt, we will already believe
+that the vma has been pinned and continue on blithely. If something else
+should happen to be at that location, choas ensues.
 
-[drm:generic_reg_wait [amdgpu]] *ERROR* REG_WAIT timeout 10us * 3000 tries - dce110_stream_encoder_dp_blank line:944
-------------[ cut here ]------------
-WARNING: CPU: 0 PID: 2201 at /var/lib/dkms/amdgpu/18.50-690240/build/amd/amdgpu/../display/dc/dc_helper.c:249 generic_reg_wait+0xe7/0x160 [amdgpu]
-Call Trace:
- dce110_stream_encoder_dp_blank+0x11c/0x180 [amdgpu]
- core_link_disable_stream+0x40/0x230 [amdgpu]
- ? generic_reg_update_ex+0xdb/0x130 [amdgpu]
- dce110_reset_hw_ctx_wrap+0xb7/0x1f0 [amdgpu]
- dce110_apply_ctx_to_hw+0x30/0x430 [amdgpu]
- ? dce110_apply_ctx_for_surface+0x206/0x260 [amdgpu]
- dc_commit_state+0x2ba/0x4d0 [amdgpu]
- amdgpu_dm_atomic_commit_tail+0x297/0xd70 [amdgpu]
- ? amdgpu_bo_pin_restricted+0x58/0x260 [amdgpu]
- ? wait_for_completion_timeout+0x1f/0x120
- ? wait_for_completion_interruptible+0x1c/0x160
- commit_tail+0x3d/0x60 [drm_kms_helper]
- drm_atomic_helper_commit+0xf6/0x100 [drm_kms_helper]
- drm_atomic_connector_commit_dpms+0xe5/0xf0 [drm]
- drm_mode_obj_set_property_ioctl+0x14f/0x250 [drm]
- drm_mode_connector_property_set_ioctl+0x2e/0x40 [drm]
- drm_ioctl+0x1e0/0x430 [drm]
- ? drm_mode_connector_set_obj_prop+0x70/0x70 [drm]
- ? ep_read_events_proc+0xb0/0xb0
- ? ep_scan_ready_list.constprop.18+0x1e6/0x1f0
- ? timerqueue_add+0x52/0x80
- amdgpu_drm_ioctl+0x49/0x80 [amdgpu]
- do_vfs_ioctl+0x90/0x5f0
- SyS_ioctl+0x74/0x80
- do_syscall_64+0x74/0x140
- entry_SYSCALL_64_after_hwframe+0x3d/0xa2
----[ end trace 3ed7b77a97d60f72 ]---
-
-Signed-off-by: Jerry (Fangzhi) Zuo <Jerry.Zuo@amd.com>
-Reviewed-by: Hersen Wu <hersenxs.wu@amd.com>
-Acked-by: Harry Wentland <harry.wentland@amd.com>
-Acked-by: Alex Deucher <alexander.deucher@amd.com>
-Tested-by: Lyude Paul <lyude@redhat.com>
-Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
-Cc: stable@vger.kernel.org
+Fixes: a2bbf7148342 ("drm/i915/gtt: Only keep gen6 page directories pinned while active")
+Signed-off-by: Chris Wilson <chris@chris-wilson.co.uk>
+Cc: Joonas Lahtinen <joonas.lahtinen@linux.intel.com>
+Cc: Mika Kuoppala <mika.kuoppala@linux.intel.com>
+Cc: Matthew Auld <matthew.william.auld@gmail.com>
+Cc: <stable@vger.kernel.org> # v4.19+
+Reviewed-by: Matthew Auld <matthew.william.auld@gmail.com>
+Link: https://patchwork.freedesktop.org/patch/msgid/20181222030623.21710-1-chris@chris-wilson.co.uk
+(cherry picked from commit d4de753526f4d99f541f1b6ed1d963005c09700c)
+Signed-off-by: Jani Nikula <jani.nikula@intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/gpu/drm/amd/display/dc/core/dc_link.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/gpu/drm/i915/i915_gem_gtt.c |   15 ++++++++++++---
+ 1 file changed, 12 insertions(+), 3 deletions(-)
 
---- a/drivers/gpu/drm/amd/display/dc/core/dc_link.c
-+++ b/drivers/gpu/drm/amd/display/dc/core/dc_link.c
-@@ -2617,11 +2617,11 @@ void core_link_disable_stream(struct pip
+--- a/drivers/gpu/drm/i915/i915_gem_gtt.c
++++ b/drivers/gpu/drm/i915/i915_gem_gtt.c
+@@ -2117,6 +2117,7 @@ static struct i915_vma *pd_vma_create(st
+ int gen6_ppgtt_pin(struct i915_hw_ppgtt *base)
  {
- 	struct dc  *core_dc = pipe_ctx->stream->ctx->dc;
+ 	struct gen6_hw_ppgtt *ppgtt = to_gen6_ppgtt(base);
++	int err;
  
-+	core_dc->hwss.blank_stream(pipe_ctx);
+ 	/*
+ 	 * Workaround the limited maximum vma->pin_count and the aliasing_ppgtt
+@@ -2132,9 +2133,17 @@ int gen6_ppgtt_pin(struct i915_hw_ppgtt
+ 	 * allocator works in address space sizes, so it's multiplied by page
+ 	 * size. We allocate at the top of the GTT to avoid fragmentation.
+ 	 */
+-	return i915_vma_pin(ppgtt->vma,
+-			    0, GEN6_PD_ALIGN,
+-			    PIN_GLOBAL | PIN_HIGH);
++	err = i915_vma_pin(ppgtt->vma,
++			   0, GEN6_PD_ALIGN,
++			   PIN_GLOBAL | PIN_HIGH);
++	if (err)
++		goto unpin;
 +
- 	if (pipe_ctx->stream->signal == SIGNAL_TYPE_DISPLAY_PORT_MST)
- 		deallocate_mst_payload(pipe_ctx);
++	return 0;
++
++unpin:
++	ppgtt->pin_count = 0;
++	return err;
+ }
  
--	core_dc->hwss.blank_stream(pipe_ctx);
--
- 	core_dc->hwss.disable_stream(pipe_ctx, option);
- 
- 	disable_link(pipe_ctx->stream->sink->link, pipe_ctx->stream->signal);
+ void gen6_ppgtt_unpin(struct i915_hw_ppgtt *base)
 
 
