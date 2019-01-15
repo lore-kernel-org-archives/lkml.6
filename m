@@ -2,73 +2,120 @@ Return-Path: <SRS0=RZO6=PX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B1EE0C43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 17:35:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 89219C43444
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 17:37:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 82D5620675
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 17:35:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547573704;
-	bh=Sez8PVEc/MvpXWvdep8TI8i4ByHahb0Vg8wU4RL5AuQ=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc:List-ID:From;
-	b=C9qQgS09F5+LMwM2J+oj2322mTCO/CgvhlMCO/vFq92FSCYA10XA5rG4QSh8XVXBJ
-	 RXliURmodLSkyKL2e+a/2xYszACoXAjesEAAXlWXmJty2QoWNpo93A4G90QJyJKZJ6
-	 du2prmYpr42y5qYm9d/uDmZxdK9CzxuCbKJSN21k=
+	by mail.kernel.org (Postfix) with ESMTP id 5AC3720656
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 17:37:08 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="i7H3gHUc"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388393AbfAORfC (ORCPT
+        id S2388400AbfAORhG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 15 Jan 2019 12:35:02 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54582 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726022AbfAORfC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Jan 2019 12:35:02 -0500
-Subject: Re: [GIT PULL] tracing/kprobes: Fix NULL pointer dereference in
- trace_kprobe_create()
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547573701;
-        bh=Sez8PVEc/MvpXWvdep8TI8i4ByHahb0Vg8wU4RL5AuQ=;
-        h=From:In-Reply-To:References:Date:To:Cc:From;
-        b=YZ7YQhsjksWqUzMlhAYY/9WyB+YAqdMYs5zpclpTrQOFpRuktTf9FqosceMlzsFL4
-         JQaNn6qSbCeuxwf+g/mI2rPRyDF8/+KxOLk1XdE4EsBFy4GpzqTVN/elkcCDrsl7Fh
-         zJxSlCTTyWykD4c2e5nRHC9WVWg+Iyi+W1z8Ok8s=
-From:   pr-tracker-bot@kernel.org
-In-Reply-To: <20190115114138.25c74488@gandalf.local.home>
-References: <20190115114138.25c74488@gandalf.local.home>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20190115114138.25c74488@gandalf.local.home>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/rostedt/linux-trace.git
- trace-v5.0-rc1
-X-PR-Tracked-Commit-Id: 8b05a3a7503c2a982c9c462eae96cfbd59506783
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 7939f8beecf1cfb10d255be65bfbd3793fae82a1
-Message-Id: <154757370188.4472.5048180263813066289.pr-tracker-bot@kernel.org>
-Date:   Tue, 15 Jan 2019 17:35:01 +0000
-To:     Steven Rostedt <rostedt@goodmis.org>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        LKML <linux-kernel@vger.kernel.org>,
+        Tue, 15 Jan 2019 12:37:06 -0500
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:33769 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730540AbfAORhG (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 Jan 2019 12:37:06 -0500
+Received: by mail-wm1-f65.google.com with SMTP id r24so1577355wmh.0
+        for <linux-kernel@vger.kernel.org>; Tue, 15 Jan 2019 09:37:05 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=4z/2bbTbzxPpRc/4UtRoAqudsKLmh1F634okQES3cXg=;
+        b=i7H3gHUcX5vO+PFS1Ydfkg911iGffGB5u+Z/OzplF4DjXJzGjxJh/lLxVa/TkgwIaL
+         N6nuCe0BwaCmFVI2Z87GiBk24BVLv/FVF2V4BLuWC7XW/6K+N1ai2BMvylbGneD+V0Oz
+         SS7/aUcN/ca0+ENf6jzRCRZxoGrzOi82qnca4=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=4z/2bbTbzxPpRc/4UtRoAqudsKLmh1F634okQES3cXg=;
+        b=iOkrGNyg1FyyV4JY02Alxxj3exBOnChY497ynkRZ0rXaSbLXBE7Vzm+Xo9b0QI+tjt
+         RzecCe1kyttn0cZ00hoST3/2GwmUbi8Q7Mh37EraSB7q10EVuT2Yo4N914h/mYbh2V6p
+         0VI8pMN0sMIEreY8CMo/FpiQyE7hkSy9rMfRmuTaubRDHjwOKWX35vbmnM8qwdJmmAhY
+         /FuYLXNMRfzamc8BQGfSsdRy1dB0x3jwcAJr9qGP2gjTsmKVw+1c4n75UTDhnMxTsJCy
+         jUwHdEqTS6w45zR8WAcEH1xiJgLwTJ09k1NYKuN+pIQl6NSYgX2vm+fnaxuWn2RByPjy
+         P3NA==
+X-Gm-Message-State: AJcUukce2vbnAjjRvGFBeyS8zgoKRtsyUTcF4+UyhsuKk0xUhaA+G0O0
+        0iaA4/JSlrqUPszVXHJBqrnTbmZOF72k4fpotbuDZf4nB00=
+X-Google-Smtp-Source: ALg8bN5xtIrr+nvt3YPWFXRxeWib5ciEgEGNl0WlnZfupuyH9RgxS9RvKYGFDk3Fz7QYrHUH1WQ0Ex/npTrjDK5u8Zg=
+X-Received: by 2002:a1c:6657:: with SMTP id a84mr3985082wmc.23.1547573824109;
+ Tue, 15 Jan 2019 09:37:04 -0800 (PST)
+MIME-Version: 1.0
+References: <20190112203816.85534-1-joel@joelfernandes.org> <20190112203816.85534-2-joel@joelfernandes.org>
+In-Reply-To: <20190112203816.85534-2-joel@joelfernandes.org>
+From:   John Stultz <john.stultz@linaro.org>
+Date:   Tue, 15 Jan 2019 09:36:52 -0800
+Message-ID: <CALAqxLXFvktP+k8AWPEoT=-MM_vdu=1hzgzPYEzhSp8hXd-ADg@mail.gmail.com>
+Subject: Re: [PATCH v4 1/2] mm/memfd: Add an F_SEAL_FUTURE_WRITE seal to memfd
+To:     Joel Fernandes <joel@joelfernandes.org>
+Cc:     lkml <linux-kernel@vger.kernel.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
         Andrew Morton <akpm@linux-foundation.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Andrea Righi <righi.andrea@gmail.com>
+        Daniel Colascione <dancol@google.com>,
+        Hugh Dickins <hughd@google.com>, Jann Horn <jannh@google.com>,
+        "J. Bruce Fields" <bfields@fieldses.org>,
+        Jeff Layton <jlayton@kernel.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        linux-fsdevel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+        linux-mm <linux-mm@kvack.org>,
+        =?UTF-8?B?TWFyYy1BbmRyw6kgTHVyZWF1?= <marcandre.lureau@redhat.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Minchan Kim <minchan@kernel.org>, Shuah Khan <shuah@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The pull request you sent on Tue, 15 Jan 2019 11:41:38 -0500:
+On Sat, Jan 12, 2019 at 12:38 PM Joel Fernandes <joel@joelfernandes.org> wrote:
+>
+> From: "Joel Fernandes (Google)" <joel@joelfernandes.org>
+>
+> Android uses ashmem for sharing memory regions.  We are looking forward to
+> migrating all usecases of ashmem to memfd so that we can possibly remove
+> the ashmem driver in the future from staging while also benefiting from
+> using memfd and contributing to it.  Note staging drivers are also not ABI
+> and generally can be removed at anytime.
+>
+> One of the main usecases Android has is the ability to create a region and
+> mmap it as writeable, then add protection against making any "future"
+> writes while keeping the existing already mmap'ed writeable-region active.
+> This allows us to implement a usecase where receivers of the shared
+> memory buffer can get a read-only view, while the sender continues to
+> write to the buffer.  See CursorWindow documentation in Android for more
+> details:
+> https://developer.android.com/reference/android/database/CursorWindow
+>
+> This usecase cannot be implemented with the existing F_SEAL_WRITE seal.
+> To support the usecase, this patch adds a new F_SEAL_FUTURE_WRITE seal
+> which prevents any future mmap and write syscalls from succeeding while
+> keeping the existing mmap active.
+>
+> A better way to do F_SEAL_FUTURE_WRITE seal was discussed [1] last week
+> where we don't need to modify core VFS structures to get the same
+> behavior of the seal. This solves several side-effects pointed by Andy.
+> self-tests are provided in later patch to verify the expected semantics.
+>
+> [1] https://lore.kernel.org/lkml/20181111173650.GA256781@google.com/
+>
+> [Thanks a lot to Andy for suggestions to improve code]
+> Cc: Andy Lutomirski <luto@kernel.org>
+> Signed-off-by: Joel Fernandes (Google) <joel@joelfernandes.org>
+> ---
+>  fs/hugetlbfs/inode.c       |  2 +-
+>  include/uapi/linux/fcntl.h |  1 +
+>  mm/memfd.c                 |  3 ++-
+>  mm/shmem.c                 | 25 ++++++++++++++++++++++---
+>  4 files changed, 26 insertions(+), 5 deletions(-)
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/rostedt/linux-trace.git trace-v5.0-rc1
-
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/7939f8beecf1cfb10d255be65bfbd3793fae82a1
-
-Thank you!
-
--- 
-Deet-doot-dot, I am a bot.
-https://korg.wiki.kernel.org/userdoc/prtracker
+Acked-by: John Stultz <john.stultz@linaro.org>
