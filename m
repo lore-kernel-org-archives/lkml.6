@@ -7,45 +7,46 @@ X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2892DC43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 16:59:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CDE95C43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 16:59:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E6B2420675
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 16:59:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9F7D420859
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 16:59:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547571554;
-	bh=cEDnNehdEbI+1Eo1L3mFAnnF843SqOjg6Txo2fEMBwM=;
+	s=default; t=1547571563;
+	bh=1QXgxM3yQ8eoDC5ZYVcGgZpKw1puvISOdMSIjaHxWwQ=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=1nUH+R2q9RkPW5+/D/59FoZ9jOcu/XIvhbiuOb3VVB9ONDDLgljcSq48ZmyjUGM2m
-	 2LedbfDIXJTGYDkLPgKVgmPkTUGatqkSL1LCXURCE0z6Y8lkQVc0X/BdmImZ3SHnbI
-	 k56KsHJG6aVNgFP9nYct9edMbVhdrl68yoskzujw=
+	b=1+41CqbzS3zfW/zeSRHyLBtYNaKyQsXkvCTcdtv1EqOEnaS4w/VJR7tC4WTexNN5k
+	 WKal33lqQCoMLDtOU4AAOUYcOOPxN4lpV+Mz+hA5C1HqE8/OgJBJduElmnJnUCf1Ks
+	 2usX1Nc/D7lW/dS0ovoRyiPZXQo+f4ZCIld/54cU=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388173AbfAOQ7M (ORCPT
+        id S2388174AbfAOQ7V (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 15 Jan 2019 11:59:12 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55636 "EHLO mail.kernel.org"
+        Tue, 15 Jan 2019 11:59:21 -0500
+Received: from mail.kernel.org ([198.145.29.99]:55410 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729401AbfAOQja (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Jan 2019 11:39:30 -0500
+        id S1732295AbfAOQjS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 Jan 2019 11:39:18 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9BD372054F;
-        Tue, 15 Jan 2019 16:39:28 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 25BA22054F;
+        Tue, 15 Jan 2019 16:39:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547570369;
-        bh=cEDnNehdEbI+1Eo1L3mFAnnF843SqOjg6Txo2fEMBwM=;
+        s=default; t=1547570357;
+        bh=1QXgxM3yQ8eoDC5ZYVcGgZpKw1puvISOdMSIjaHxWwQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ii6YyPSc1Dy2x62tM8ls/JVQfbZ92WKPfHcT6bsIn1A+Lt2tVFRQM3V5XkmS7RSfR
-         ubgQS7mlHd+6UWQJi+ecO+vjak4PKBbMjJ7lljThhUjA0DfPdKp5zYlWKp2vw4bdTk
-         TtP+Bhv2xR2b1ClBygIs4skPwreR+O6B3r68Mzmk=
+        b=mMqNi2hhJ1ISx0WiWMagShhDyFTHTqst45aLmpRFtLMcj96aYobo3GVmxIepZLRhY
+         YQiZEjaSTW+LxYpo0Ly1bueYPGDUb3KH1gfCFGtrRWevVT6ZP43ciSqWgyBYtgkxpi
+         u+PaBxnsAXe/+9ySSu2UjdoXFS+iYigcmNo7ovt0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Theodore Tso <tytso@mit.edu>
-Subject: [PATCH 4.9 15/16] ext4: avoid kernel warning when writing the superblock to a dead device
-Date:   Tue, 15 Jan 2019 17:35:58 +0100
-Message-Id: <20190115154850.004102144@linuxfoundation.org>
+        stable@vger.kernel.org, Yi Zeng <yizeng@asrmicro.com>,
+        Wolfram Sang <wsa@the-dreams.de>, stable@kernel.org
+Subject: [PATCH 4.9 11/16] i2c: dev: prevent adapter retries and timeout being set as minus value
+Date:   Tue, 15 Jan 2019 17:35:54 +0100
+Message-Id: <20190115154849.440005626@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190115154848.164648613@linuxfoundation.org>
 References: <20190115154848.164648613@linuxfoundation.org>
@@ -64,42 +65,50 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Theodore Ts'o <tytso@mit.edu>
+From: Yi Zeng <yizeng@asrmicro.com>
 
-commit e86807862e6880809f191c4cea7f88a489f0ed34 upstream.
+commit 6ebec961d59bccf65d08b13fc1ad4e6272a89338 upstream.
 
-The xfstests generic/475 test switches the underlying device with
-dm-error while running a stress test.  This results in a large number
-of file system errors, and since we can't lock the buffer head when
-marking the superblock dirty in the ext4_grp_locked_error() case, it's
-possible the superblock to be !buffer_uptodate() without
-buffer_write_io_error() being true.
+If adapter->retries is set to a minus value from user space via ioctl,
+it will make __i2c_transfer and __i2c_smbus_xfer skip the calling to
+adapter->algo->master_xfer and adapter->algo->smbus_xfer that is
+registered by the underlying bus drivers, and return value 0 to all the
+callers. The bus driver will never be accessed anymore by all users,
+besides, the users may still get successful return value without any
+error or information log print out.
 
-We need to set buffer_uptodate() before we call mark_buffer_dirty() or
-this will trigger a WARN_ON.  It's safe to do this since the
-superblock must have been properly read into memory or the mount would
-have been successful.  So if buffer_uptodate() is not set, we can
-safely assume that this happened due to a failed attempt to write the
-superblock.
+If adapter->timeout is set to minus value from user space via ioctl,
+it will make the retrying loop in __i2c_transfer and __i2c_smbus_xfer
+always break after the the first try, due to the time_after always
+returns true.
 
-Signed-off-by: Theodore Ts'o <tytso@mit.edu>
-Cc: stable@vger.kernel.org
+Signed-off-by: Yi Zeng <yizeng@asrmicro.com>
+[wsa: minor grammar updates to commit message]
+Signed-off-by: Wolfram Sang <wsa@the-dreams.de>
+Cc: stable@kernel.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/ext4/super.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/i2c/i2c-dev.c |    6 ++++++
+ 1 file changed, 6 insertions(+)
 
---- a/fs/ext4/super.c
-+++ b/fs/ext4/super.c
-@@ -4679,7 +4679,7 @@ static int ext4_commit_super(struct supe
- 	ext4_superblock_csum_set(sb);
- 	if (sync)
- 		lock_buffer(sbh);
--	if (buffer_write_io_error(sbh)) {
-+	if (buffer_write_io_error(sbh) || !buffer_uptodate(sbh)) {
- 		/*
- 		 * Oh, dear.  A previous attempt to write the
- 		 * superblock failed.  This could happen because the
+--- a/drivers/i2c/i2c-dev.c
++++ b/drivers/i2c/i2c-dev.c
+@@ -461,9 +461,15 @@ static long i2cdev_ioctl(struct file *fi
+ 		return i2cdev_ioctl_smbus(client, arg);
+ 
+ 	case I2C_RETRIES:
++		if (arg > INT_MAX)
++			return -EINVAL;
++
+ 		client->adapter->retries = arg;
+ 		break;
+ 	case I2C_TIMEOUT:
++		if (arg > INT_MAX)
++			return -EINVAL;
++
+ 		/* For historical reasons, user-space sets the timeout
+ 		 * value in units of 10 ms.
+ 		 */
 
 
