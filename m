@@ -2,140 +2,227 @@ Return-Path: <SRS0=RZO6=PX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 14B14C43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 04:50:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0018BC43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 04:53:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DC2FE20651
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 04:50:12 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mVtcuV0E"
+	by mail.kernel.org (Postfix) with ESMTP id C410320651
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 04:53:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727915AbfAOEuL (ORCPT
+        id S1727937AbfAOExp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 14 Jan 2019 23:50:11 -0500
-Received: from mail-lf1-f66.google.com ([209.85.167.66]:44906 "EHLO
-        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727223AbfAOEuK (ORCPT
+        Mon, 14 Jan 2019 23:53:45 -0500
+Received: from gateway30.websitewelcome.com ([192.185.148.2]:26191 "EHLO
+        gateway30.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727203AbfAOExp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 Jan 2019 23:50:10 -0500
-Received: by mail-lf1-f66.google.com with SMTP id z13so979606lfe.11
-        for <linux-kernel@vger.kernel.org>; Mon, 14 Jan 2019 20:50:09 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=3TXiWK8V2OmVXxJRMbWQxDG/DyuoOV26hjhztUIr7v0=;
-        b=mVtcuV0EWzi7waFPQ8kYoJPyXBr+5pYoBCie6M0hgYyXy7vhQ5az3gqJxtEbxr3nn2
-         j9ilWv71hMMplMbZtgb43pPMZXzFr7wx5xRxPS8DNzutWYmyB9EbCwsRsuXMufbg0xyR
-         /YEVGqozNiko6lxpg06VLAT4fpTuQZmDYLb+sIUstV44HcikXtqaXUTSG9GTURBiUSNA
-         8BYjInM+97RsYzeR70yuKV67ybVWP0xN7Rx/tFxF+bbrHmJYj33wSR5ZPzMHcXDr0m+1
-         2a6FY+nVTaxr2WZQJEJ4B4b10N7sCID+uDbgcnuZjxWcfRn319/fRSQvaJDYttnRfiRL
-         kkxQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=3TXiWK8V2OmVXxJRMbWQxDG/DyuoOV26hjhztUIr7v0=;
-        b=EtCIyp7eiEibH3e2x5G2CI+5CL9uNEFr2Bo51mzvh1ovHLvskQ/aSQtdobYCp2g73d
-         b858lDTdj+h3uSg/C0P176dPXBJZU+55v95vAzO+LNUY6ebGOuKSA7S7241wcaT2IUxq
-         bJOqTkgNcQ7CCWJncQlZ0566ILdxBoriJ4Pq2ysOYelofI+GyXXMyLfqsyy8gmX0yuvz
-         lJqn31i72i/MMZPppQN5S8fnijC1VKbmvrvlUteEHqGdKuljJtQ2bKYrIzX6BujFBwmO
-         uSvMHadeYVHShohtAuz/SGAc/dNzSSHTNEdsRY6Z/KEFmHmQk7CFM+AzlQNUbUO8qVpE
-         3JdA==
-X-Gm-Message-State: AJcUukd67DRpV6NA1DseBPuPzcV6riDNBxuZRY53qaW42Ndo9919oBF6
-        qm3BzlvwLxbPlSohdwKolcpF2c38VdJvqLHo/f8=
-X-Google-Smtp-Source: ALg8bN6CfyMOSVhkOI4qCOcQDPjp0RDL1herZsjnUL9YRVIr0xZF45WD6Af2cKMyoaJD7PVQHHuyEJcBRGlu746vPaQ=
-X-Received: by 2002:a19:ee08:: with SMTP id g8mr1378271lfb.72.1547527808437;
- Mon, 14 Jan 2019 20:50:08 -0800 (PST)
+        Mon, 14 Jan 2019 23:53:45 -0500
+Received: from cm16.websitewelcome.com (cm16.websitewelcome.com [100.42.49.19])
+        by gateway30.websitewelcome.com (Postfix) with ESMTP id D77C47F21
+        for <linux-kernel@vger.kernel.org>; Mon, 14 Jan 2019 22:53:43 -0600 (CST)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id jGjPg6RSH4FKpjGjPgWiBa; Mon, 14 Jan 2019 22:53:43 -0600
+X-Authority-Reason: nr=8
+Received: from [189.250.130.205] (port=58620 helo=[192.168.43.131])
+        by gator4166.hostgator.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
+        (Exim 4.91)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1gjGjO-004ML4-Kl; Mon, 14 Jan 2019 22:53:43 -0600
+Subject: Re: [PATCH v2 4/8] ASoC: imx-audmux: change snprintf to scnprintf for
+ possible overflow
+To:     Willy Tarreau <w@1wt.eu>, Silvio Cesare <silvio.cesare@gmail.com>
+Cc:     linux-kernel@vger.kernel.org, Timur Tabi <timur@kernel.org>,
+        Mark Brown <broonie@kernel.org>,
+        Nicolin Chen <nicoleotsuka@gmail.com>,
+        alsa-devel@alsa-project.org, Xiubo Li <Xiubo.Lee@gmail.com>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        Kees Cook <keescook@chromium.org>,
+        Will Deacon <will.deacon@arm.com>, Greg KH <greg@kroah.com>
+References: <20190115032727.GA6440@1wt.eu>
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Message-ID: <a3168303-05d9-0ef7-f33b-2b1e3db6da47@embeddedor.com>
+Date:   Mon, 14 Jan 2019 22:53:28 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-References: <20190111151235.GA2836@jordon-HP-15-Notebook-PC> <f6eef305-daf3-dad8-96e3-d2f93d169fd4@oracle.com>
-In-Reply-To: <f6eef305-daf3-dad8-96e3-d2f93d169fd4@oracle.com>
-From:   Souptick Joarder <jrdr.linux@gmail.com>
-Date:   Tue, 15 Jan 2019 10:19:55 +0530
-Message-ID: <CAFqt6zYFR5FHXTLsSQ2DKgZDQtuNB2jZWK6ZLUAscG9vMnSk3Q@mail.gmail.com>
-Subject: Re: [PATCH 8/9] xen/gntdev.c: Convert to use vm_insert_range
-To:     Boris Ostrovsky <boris.ostrovsky@oracle.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        Michal Hocko <mhocko@suse.com>,
-        Juergen Gross <jgross@suse.com>,
-        Russell King - ARM Linux <linux@armlinux.org.uk>,
-        robin.murphy@arm.com, xen-devel@lists.xenproject.org,
-        linux-kernel@vger.kernel.org, Linux-MM <linux-mm@kvack.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20190115032727.GA6440@1wt.eu>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 189.250.130.205
+X-Source-L: No
+X-Exim-ID: 1gjGjO-004ML4-Kl
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: ([192.168.43.131]) [189.250.130.205]:58620
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 10
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 15, 2019 at 4:58 AM Boris Ostrovsky
-<boris.ostrovsky@oracle.com> wrote:
->
-> On 1/11/19 10:12 AM, Souptick Joarder wrote:
-> > Convert to use vm_insert_range() to map range of kernel
-> > memory to user vma.
-> >
-> > Signed-off-by: Souptick Joarder <jrdr.linux@gmail.com>
->
-> Reviewed-by: Boris Ostrovsky <boris.ostrovsky@oracle.com>
->
-> (although it would be good to mention in the commit that you are also
-> replacing count with vma_pages(vma), and why)
+Hi Willy,
 
-The original code was using count ( *count = vma_pages(vma)* )
-which is same as this patch. Do I need capture it change log ?
+On 1/14/19 9:27 PM, Willy Tarreau wrote:
+> From: Silvio Cesare <silvio.cesare@gmail.com>
+> 
+> Change snprintf to scnprintf. There are generally two cases where using
+> snprintf causes problems.
+> 
+> 1) Uses of size += snprintf(buf, SIZE - size, fmt, ...)
+> In this case, if snprintf would have written more characters than what the
+> buffer size (SIZE) is, then size will end up larger than SIZE. In later
+> uses of snprintf, SIZE - size will result in a negative number, leading
+> to problems. Note that size might already be too large by using
+> size = snprintf before the code reaches a case of size += snprintf.
+> 
+> 2) If size is ultimately used as a length parameter for a copy back to user
+> space, then it will potentially allow for a buffer overflow and information
+> disclosure when size is greater than SIZE. When the size is used to index
+> the buffer directly, we can have memory corruption. This also means when
+> size = snprintf... is used, it may also cause problems since size may become
+> large.  Copying to userspace is mitigated by the HARDENED_USERCOPY kernel
+> configuration.
+> 
+> The solution to these issues is to use scnprintf which returns the number of
+> characters actually written to the buffer, so the size variable will never
+> exceed SIZE.
+> 
+> Signed-off-by: Silvio Cesare <silvio.cesare@gmail.com>
+> Cc: Timur Tabi <timur@kernel.org>
+> Cc: Nicolin Chen <nicoleotsuka@gmail.com>
+> Cc: Mark Brown <broonie@kernel.org>
+> Cc: Xiubo Li <Xiubo.Lee@gmail.com>
+> Cc: Fabio Estevam <fabio.estevam@nxp.com>
+> Cc: Dan Carpenter <dan.carpenter@oracle.com>
+> Cc: Kees Cook <keescook@chromium.org>
+> Cc: Will Deacon <will.deacon@arm.com>
+> Cc: Greg KH <greg@kroah.com>
+> Signed-off-by: Willy Tarreau <w@1wt.eu>
+> Acked-by: Nicolin Chen <nicoleotsuka@gmail.com>
+> Reviewed-by: Kees Cook <keescook@chromium.org>
+> 
 
->
->
-> > ---
-> >  drivers/xen/gntdev.c | 16 ++++++----------
-> >  1 file changed, 6 insertions(+), 10 deletions(-)
-> >
-> > diff --git a/drivers/xen/gntdev.c b/drivers/xen/gntdev.c
-> > index b0b02a5..ca4acee 100644
-> > --- a/drivers/xen/gntdev.c
-> > +++ b/drivers/xen/gntdev.c
-> > @@ -1082,18 +1082,17 @@ static int gntdev_mmap(struct file *flip, struct vm_area_struct *vma)
-> >  {
-> >       struct gntdev_priv *priv = flip->private_data;
-> >       int index = vma->vm_pgoff;
-> > -     int count = vma_pages(vma);
-> >       struct gntdev_grant_map *map;
-> > -     int i, err = -EINVAL;
-> > +     int err = -EINVAL;
-> >
-> >       if ((vma->vm_flags & VM_WRITE) && !(vma->vm_flags & VM_SHARED))
-> >               return -EINVAL;
-> >
-> >       pr_debug("map %d+%d at %lx (pgoff %lx)\n",
-> > -                     index, count, vma->vm_start, vma->vm_pgoff);
-> > +                     index, vma_pages(vma), vma->vm_start, vma->vm_pgoff);
-> >
-> >       mutex_lock(&priv->lock);
-> > -     map = gntdev_find_map_index(priv, index, count);
-> > +     map = gntdev_find_map_index(priv, index, vma_pages(vma));
-> >       if (!map)
-> >               goto unlock_out;
-> >       if (use_ptemod && map->vma)
-> > @@ -1145,12 +1144,9 @@ static int gntdev_mmap(struct file *flip, struct vm_area_struct *vma)
-> >               goto out_put_map;
-> >
-> >       if (!use_ptemod) {
-> > -             for (i = 0; i < count; i++) {
-> > -                     err = vm_insert_page(vma, vma->vm_start + i*PAGE_SIZE,
-> > -                             map->pages[i]);
-> > -                     if (err)
-> > -                             goto out_put_map;
-> > -             }
-> > +             err = vm_insert_range(vma, map->pages, map->count);
-> > +             if (err)
-> > +                     goto out_put_map;
-> >       } else {
-> >  #ifdef CONFIG_X86
-> >               /*
->
+
+You are still missing some people and mailing lists:
+
+$ scripts/get_maintainer.pl --nokeywords --nogit --nogit-fallback sound/soc/fsl/imx-audmux.c
+Timur Tabi <timur@kernel.org> (maintainer:FREESCALE SOC SOUND DRIVERS)
+Nicolin Chen <nicoleotsuka@gmail.com> (maintainer:FREESCALE SOC SOUND DRIVERS)
+Xiubo Li <Xiubo.Lee@gmail.com> (maintainer:FREESCALE SOC SOUND DRIVERS)
+Fabio Estevam <fabio.estevam@nxp.com> (reviewer:FREESCALE SOC SOUND DRIVERS)
+Liam Girdwood <lgirdwood@gmail.com> (supporter:SOUND - SOC LAYER / DYNAMIC AUDIO POWER MANAGEM...)
+Mark Brown <broonie@kernel.org> (supporter:SOUND - SOC LAYER / DYNAMIC AUDIO POWER MANAGEM...)
+Jaroslav Kysela <perex@perex.cz> (maintainer:SOUND)
+Takashi Iwai <tiwai@suse.com> (maintainer:SOUND)
+Shawn Guo <shawnguo@kernel.org> (maintainer:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE)
+Sascha Hauer <s.hauer@pengutronix.de> (maintainer:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE)
+Pengutronix Kernel Team <kernel@pengutronix.de> (reviewer:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE)
+NXP Linux Team <linux-imx@nxp.com> (reviewer:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE)
+alsa-devel@alsa-project.org (moderated list:FREESCALE SOC SOUND DRIVERS)
+linuxppc-dev@lists.ozlabs.org (open list:FREESCALE SOC SOUND DRIVERS)
+linux-arm-kernel@lists.infradead.org (moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE)
+linux-kernel@vger.kernel.org (open list)
+
+--
+Gustavo
+
+> --
+> 
+> v2:
+>    - adjust subject line
+>    - added alsa-devel & Mark
+>    - added acked-by
+>    - added reviewed-by
+> 
+> The patches in this series were sent by Silvio to the security list
+> to fix a minor memory disclosure issue after this article was published:
+>                                                            
+>    http://blog.infosectcbr.com.au/2018/11/memory-bugs-in-multiple-linux-kernel.html
+> 
+> 
+>   sound/soc/fsl/imx-audmux.c | 24 ++++++++++++------------
+>   1 file changed, 12 insertions(+), 12 deletions(-)
+> 
+> diff --git a/sound/soc/fsl/imx-audmux.c b/sound/soc/fsl/imx-audmux.c
+> index 392d5eef356d..99e07b01a2ce 100644
+> --- a/sound/soc/fsl/imx-audmux.c
+> +++ b/sound/soc/fsl/imx-audmux.c
+> @@ -86,49 +86,49 @@ static ssize_t audmux_read_file(struct file *file, char __user *user_buf,
+>   	if (!buf)
+>   		return -ENOMEM;
+>   
+> -	ret = snprintf(buf, PAGE_SIZE, "PDCR: %08x\nPTCR: %08x\n",
+> +	ret = scnprintf(buf, PAGE_SIZE, "PDCR: %08x\nPTCR: %08x\n",
+>   		       pdcr, ptcr);
+>   
+>   	if (ptcr & IMX_AUDMUX_V2_PTCR_TFSDIR)
+> -		ret += snprintf(buf + ret, PAGE_SIZE - ret,
+> +		ret += scnprintf(buf + ret, PAGE_SIZE - ret,
+>   				"TxFS output from %s, ",
+>   				audmux_port_string((ptcr >> 27) & 0x7));
+>   	else
+> -		ret += snprintf(buf + ret, PAGE_SIZE - ret,
+> +		ret += scnprintf(buf + ret, PAGE_SIZE - ret,
+>   				"TxFS input, ");
+>   
+>   	if (ptcr & IMX_AUDMUX_V2_PTCR_TCLKDIR)
+> -		ret += snprintf(buf + ret, PAGE_SIZE - ret,
+> +		ret += scnprintf(buf + ret, PAGE_SIZE - ret,
+>   				"TxClk output from %s",
+>   				audmux_port_string((ptcr >> 22) & 0x7));
+>   	else
+> -		ret += snprintf(buf + ret, PAGE_SIZE - ret,
+> +		ret += scnprintf(buf + ret, PAGE_SIZE - ret,
+>   				"TxClk input");
+>   
+> -	ret += snprintf(buf + ret, PAGE_SIZE - ret, "\n");
+> +	ret += scnprintf(buf + ret, PAGE_SIZE - ret, "\n");
+>   
+>   	if (ptcr & IMX_AUDMUX_V2_PTCR_SYN) {
+> -		ret += snprintf(buf + ret, PAGE_SIZE - ret,
+> +		ret += scnprintf(buf + ret, PAGE_SIZE - ret,
+>   				"Port is symmetric");
+>   	} else {
+>   		if (ptcr & IMX_AUDMUX_V2_PTCR_RFSDIR)
+> -			ret += snprintf(buf + ret, PAGE_SIZE - ret,
+> +			ret += scnprintf(buf + ret, PAGE_SIZE - ret,
+>   					"RxFS output from %s, ",
+>   					audmux_port_string((ptcr >> 17) & 0x7));
+>   		else
+> -			ret += snprintf(buf + ret, PAGE_SIZE - ret,
+> +			ret += scnprintf(buf + ret, PAGE_SIZE - ret,
+>   					"RxFS input, ");
+>   
+>   		if (ptcr & IMX_AUDMUX_V2_PTCR_RCLKDIR)
+> -			ret += snprintf(buf + ret, PAGE_SIZE - ret,
+> +			ret += scnprintf(buf + ret, PAGE_SIZE - ret,
+>   					"RxClk output from %s",
+>   					audmux_port_string((ptcr >> 12) & 0x7));
+>   		else
+> -			ret += snprintf(buf + ret, PAGE_SIZE - ret,
+> +			ret += scnprintf(buf + ret, PAGE_SIZE - ret,
+>   					"RxClk input");
+>   	}
+>   
+> -	ret += snprintf(buf + ret, PAGE_SIZE - ret,
+> +	ret += scnprintf(buf + ret, PAGE_SIZE - ret,
+>   			"\nData received from %s\n",
+>   			audmux_port_string((pdcr >> 13) & 0x7));
+>   
+> 
