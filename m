@@ -2,87 +2,126 @@ Return-Path: <SRS0=RZO6=PX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F1815C43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 01:45:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C131EC43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 01:48:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C0AEC205C9
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 01:45:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547516722;
-	bh=KZIylzJc+1m4ZiO8Qkt+e86Nmc9v9twr7M1XCPhzs4o=;
-	h=Subject:To:Cc:References:From:Date:In-Reply-To:List-ID:From;
-	b=Hd9yLvXkVp1SbJiwv9BXlj46y7yOE6g/AHpvNhvDAE6HWPCNnuKNYl9MPemYtrbmp
-	 NY8FyzG+We++hApqXzHc4EwnUsa3l7vZb2Am7E0uUii2eJfLKyAJPPjAMzyK41zr8H
-	 oMuh4hwaoGA0/m0XfyZwyzzu4tJ65bOEl2eACMFg=
+	by mail.kernel.org (Postfix) with ESMTP id 925DF2063F
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 01:48:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727824AbfAOBpV (ORCPT
+        id S1727742AbfAOBsM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 14 Jan 2019 20:45:21 -0500
-Received: from mail.kernel.org ([198.145.29.99]:46584 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727169AbfAOBpU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 Jan 2019 20:45:20 -0500
-Received: from [192.168.1.112] (c-24-9-64-241.hsd1.co.comcast.net [24.9.64.241])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BEE9F205C9;
-        Tue, 15 Jan 2019 01:45:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547516720;
-        bh=KZIylzJc+1m4ZiO8Qkt+e86Nmc9v9twr7M1XCPhzs4o=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=xXcpRO6LEH5kyD1m5+sO7cy41gS5yg7eUT0VWinyaWJKcaEk6wDvNuSQ/Dr3qcQRQ
-         1tpsRr2joVH/0SwMU7TxOl2vYbITIzcY2KpYfoJiS/h3utdD7AbrAutt8TrUd7SScZ
-         vtyfSoUkYjGfly6yD5SfkqK63sRRbMEeNeDkpoAA=
-Subject: Re: [PATCH] tools/testing/selftests/x86/unwind_vdso.c: Remove
- duplicate header
-To:     Sabyasachi Gupta <sabyasachi.linux@gmail.com>
-Cc:     jrdr.linux@gmail.com, linux-kselftest@vger.kernel.org,
-        linux-kernel@vger.kernel.org, brajeswar.linux@gmail.com,
-        shuah <shuah@kernel.org>
-References: <5c3c7dfe.1c69fb81.7c853.0be7@mx.google.com>
-From:   shuah <shuah@kernel.org>
-Message-ID: <3242d93b-bd3d-bce3-b912-bd28144a2e9d@kernel.org>
-Date:   Mon, 14 Jan 2019 18:45:19 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Mon, 14 Jan 2019 20:48:12 -0500
+Received: from szxga05-in.huawei.com ([45.249.212.191]:17141 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726769AbfAOBsM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 14 Jan 2019 20:48:12 -0500
+Received: from DGGEMS409-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id F1A36ACA076B08F62F36;
+        Tue, 15 Jan 2019 09:48:09 +0800 (CST)
+Received: from [127.0.0.1] (10.57.115.182) by DGGEMS409-HUB.china.huawei.com
+ (10.3.19.209) with Microsoft SMTP Server id 14.3.408.0; Tue, 15 Jan 2019
+ 09:48:02 +0800
+Subject: Re: [PATCH rdma-rc 1/3] RDMA/hns: Fix the Oops during rmmod or insmod
+ ko when reset occurs
+To:     Jason Gunthorpe <jgg@ziepe.ca>
+References: <1547128663-69220-1-git-send-email-xavier.huwei@huawei.com>
+ <1547128663-69220-2-git-send-email-xavier.huwei@huawei.com>
+ <20190111213411.GA22310@ziepe.ca> <5C399D73.5000902@huawei.com>
+ <20190114220655.GD1208@ziepe.ca>
+CC:     <dledford@redhat.com>, <linux-rdma@vger.kernel.org>,
+        <lijun_nudt@163.com>, <oulijun@huawei.com>,
+        <liudongdong3@huawei.com>, <liuyixian@huawei.com>,
+        <zhangxiping3@huawei.com>, <linuxarm@huawei.com>,
+        <linux-kernel@vger.kernel.org>, <xavier_huwei@163.com>
+From:   "Wei Hu (Xavier)" <xavier.huwei@huawei.com>
+Message-ID: <5C3D3BD1.4000508@huawei.com>
+Date:   Tue, 15 Jan 2019 09:48:01 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:38.0) Gecko/20100101
+ Thunderbird/38.5.1
 MIME-Version: 1.0
-In-Reply-To: <5c3c7dfe.1c69fb81.7c853.0be7@mx.google.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
+In-Reply-To: <20190114220655.GD1208@ziepe.ca>
+Content-Type: text/plain; charset="windows-1252"
 Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.57.115.182]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 1/14/19 5:18 AM, Sabyasachi Gupta wrote:
-> Remove sys/ucontext.h which is included more than once.
-> 
-> Signed-off-by: Sabyasachi Gupta <sabyasachi.linux@gmail.com>
-> ---
->   tools/testing/selftests/x86/unwind_vdso.c | 1 -
->   1 file changed, 1 deletion(-)
-> 
-> diff --git a/tools/testing/selftests/x86/unwind_vdso.c b/tools/testing/selftests/x86/unwind_vdso.c
-> index 00a26a8..9731133 100644
-> --- a/tools/testing/selftests/x86/unwind_vdso.c
-> +++ b/tools/testing/selftests/x86/unwind_vdso.c
-> @@ -44,7 +44,6 @@ int main()
->   #include <stdbool.h>
->   #include <sys/ptrace.h>
->   #include <sys/user.h>
-> -#include <sys/ucontext.h>
->   #include <link.h>
->   #include <sys/auxv.h>
->   #include <dlfcn.h>
-> 
 
-Thanks for the patch. I will pull this in for 5.1-rc1
 
-thanks,
--- Shuah
+On 2019/1/15 6:06, Jason Gunthorpe wrote:
+> On Sat, Jan 12, 2019 at 03:55:31PM +0800, Wei Hu (Xavier) wrote:
+>>
+>> On 2019/1/12 5:34, Jason Gunthorpe wrote:
+>>> On Thu, Jan 10, 2019 at 09:57:41PM +0800, Wei Hu (Xavier) wrote:
+>>>> +	/* Check the status of the current software reset process, if in
+>>>> +	 * software reset process, wait until software reset process finished,
+>>>> +	 * in order to ensure that reset process and this function will not call
+>>>> +	 * __hns_roce_hw_v2_uninit_instance at the same time.
+>>>> +	 * If a timeout occurs, it indicates that the network subsystem has
+>>>> +	 * encountered a serious error and cannot be recovered from the reset
+>>>> +	 * processing.
+>>>> +	 */
+>>>> +	if (ops->ae_dev_resetting(handle)) {
+>>>> +		dev_warn(dev, "Device is busy in resetting state. waiting.\n");
+>>>> +		end = msecs_to_jiffies(HNS_ROCE_V2_RST_PRC_MAX_TIME) + jiffies;
+>>>> +		while (ops->ae_dev_resetting(handle) &&
+>>>> +		       time_before(jiffies, end))
+>>>> +			msleep(20);
+>>> Really? Does this have to be so ugly? Why isn't there just a simple
+>>> lock someplace that is held during reset?
+>>>
+>>> I'm skeptical that all this strange looking stuff is properly locked
+>>> and concurrency safe.
+>> Hi, Jason
+>>
+>> The hns3 NIC driver notifies the hns RoCE driver to perform
+>> reset related processing by calling the .reset_notify() interface
+>> registered by the RoCE driver.
+>>
+>> There is a constraint on the hip08 chip, the NIC driver needs to
+>> stop the flow before hardware startup reset, otherwise the chip
+>> may hang up.
+>>
+>> We've also thought about using locks, but found using locks can
+>> lead to more serious problems because of that restriction of the
+>> chip.
+>> If using locks here, reset processing may wait for uninstallation
+>> to complete, this may lead that NIC driver fails to stop the flow
+>> in time in the reset process, thus causing the chip to hang up.
+> If you are sleeping then I'm sure a lock can be used instead, how
+> would it be any different?
+Hi, Jason
+    If using locks here, reset process may wait until uninstallation to
+complete,
+        it may trigger the chip constraint, causing chip to hang up.
+    But if using sleeping here, there will notthe case that reset
+process wait until
+       uninstallation to complete, then will not trigger the chip
+constraint.     
+    Thanks
+
+    reset process
+            lock
+            ....
+            unlock
+
+    uninitallation
+           lock
+            ...
+           unlock
+
+
+    Regards
+Xavier
+> Jason
+>
+> .
+>
+
+
