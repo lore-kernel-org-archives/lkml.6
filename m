@@ -2,331 +2,137 @@ Return-Path: <SRS0=RZO6=PX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 206D8C43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 15:10:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6160CC43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 15:11:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C961820645
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 15:10:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547565021;
-	bh=hC4AzYGa1Q7GEBk1kKL1GaidCpGeGQI5fqTQraiLswE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=B1I+5uAlUbNcp/KWHFazYhby7aphiBleLE8V45dO23ZZsSrjLxYKUvZO9VQfbKaGo
-	 iSDcNVAqr8GLSOcpvvjXw+0tByZmS91ndXbjE6J/AgQiUtWwzUwIRCdgCkgOVJdWaM
-	 VrR0HLT/pWBLPWef+WVbXn1xa9NZxtAN6WOPEP7U=
+	by mail.kernel.org (Postfix) with ESMTP id 36B5620645
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 15:11:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730629AbfAOPKT (ORCPT
+        id S1730652AbfAOPLt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 15 Jan 2019 10:10:19 -0500
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:52254 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726077AbfAOPKS (ORCPT
+        Tue, 15 Jan 2019 10:11:49 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:56090 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1730639AbfAOPLs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Jan 2019 10:10:18 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=Db29ic5zFVV5gaR1M4QE6LdV4+bbkMU2Qqtf/rmz6kQ=; b=ib1oVg8yRarXe4oiOpD7NSLaV
-        X9eqyg2ET03K1K13FFN6cV4zqm0fX1dbNXuDazYUWaH6bAtH1lBtAOOeF/GLsGlNNbJ0UtY/Yo5Rp
-        xHAPmagpqv+4GZpfHgS3/uAQYhCnA6qQYVThjid+4b+uw/L8ObM1AQASHKvZyDA0NLZ9I=;
-Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
-        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1gjQLx-0008MC-W7; Tue, 15 Jan 2019 15:10:10 +0000
-Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
-        id 5ABC41127848; Tue, 15 Jan 2019 15:10:09 +0000 (GMT)
-Date:   Tue, 15 Jan 2019 15:10:09 +0000
-From:   Mark Brown <broonie@kernel.org>
-To:     Jon Hunter <jonathanh@nvidia.com>
-Cc:     Martin Sperl <kernel@martin.sperl.org>,
-        linux-tegra <linux-tegra@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-spi@vger.kernel.org
-Subject: Re: Regression: spi: core: avoid waking pump thread from spi_sync
- instead run teardown delayed
-Message-ID: <20190115151009.GC5522@sirena.org.uk>
-References: <f86eaebb-0359-13be-f4a2-4f2b8832252e@nvidia.com>
- <7C4A5EFC-8235-40C8-96E1-E6020529DF72@martin.sperl.org>
- <aabd916e-005e-6cda-25d7-8ab875afa7a0@nvidia.com>
+        Tue, 15 Jan 2019 10:11:48 -0500
+Received: from pps.filterd (m0098416.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id x0FF4AC3008090
+        for <linux-kernel@vger.kernel.org>; Tue, 15 Jan 2019 10:11:47 -0500
+Received: from e35.co.us.ibm.com (e35.co.us.ibm.com [32.97.110.153])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2q1ewfhh2c-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Tue, 15 Jan 2019 10:11:46 -0500
+Received: from localhost
+        by e35.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <nayna@linux.vnet.ibm.com>;
+        Tue, 15 Jan 2019 15:11:45 -0000
+Received: from b03cxnp08026.gho.boulder.ibm.com (9.17.130.18)
+        by e35.co.us.ibm.com (192.168.1.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Tue, 15 Jan 2019 15:11:41 -0000
+Received: from b03ledav004.gho.boulder.ibm.com (b03ledav004.gho.boulder.ibm.com [9.17.130.235])
+        by b03cxnp08026.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x0FFBd9e25886816
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Tue, 15 Jan 2019 15:11:39 GMT
+Received: from b03ledav004.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id D4B7A78066;
+        Tue, 15 Jan 2019 15:11:39 +0000 (GMT)
+Received: from b03ledav004.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 5BE687805F;
+        Tue, 15 Jan 2019 15:11:39 +0000 (GMT)
+Received: from ltc.linux.ibm.com (unknown [9.16.170.189])
+        by b03ledav004.gho.boulder.ibm.com (Postfix) with ESMTP;
+        Tue, 15 Jan 2019 15:11:39 +0000 (GMT)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="1SQmhf2mF2YjsYvc"
-Content-Disposition: inline
-In-Reply-To: <aabd916e-005e-6cda-25d7-8ab875afa7a0@nvidia.com>
-X-Cookie: Violence is molding.
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=UTF-8;
+ format=flowed
+Content-Transfer-Encoding: 8bit
+Date:   Tue, 15 Jan 2019 10:17:13 -0500
+From:   nayna <nayna@linux.vnet.ibm.com>
+To:     Dave Young <dyoung@redhat.com>
+Cc:     Mimi Zohar <zohar@linux.ibm.com>, Kairui Song <kasong@redhat.com>,
+        linux-kernel@vger.kernel.org, dhowells@redhat.com,
+        dwmw2@infradead.org, jwboyer@fedoraproject.org,
+        keyrings@vger.kernel.org, jmorris@namei.org, serge@hallyn.com,
+        bauerman@linux.ibm.com, ebiggers@google.com, nayna@linux.ibm.com,
+        linux-integrity@vger.kernel.org, kexec@lists.infradead.org
+Subject: Re: [RFC PATCH 2/2] kexec, KEYS: Make use of platform keyring for
+ signature verify
+In-Reply-To: <20190115024243.GA9199@dhcp-128-65.nay.redhat.com>
+References: <20190109164824.19708-1-kasong@redhat.com>
+ <20190109164824.19708-3-kasong@redhat.com>
+ <20190111134303.GA12760@dhcp-128-65.nay.redhat.com>
+ <1547223220.19931.471.camel@linux.ibm.com>
+ <20190113013958.GA14019@dhcp-128-65.nay.redhat.com>
+ <1547482251.4156.127.camel@linux.ibm.com>
+ <20190115024243.GA9199@dhcp-128-65.nay.redhat.com>
+X-Sender: nayna@linux.vnet.ibm.com
+User-Agent: Roundcube Webmail/1.0.1
+X-TM-AS-GCONF: 00
+x-cbid: 19011515-0012-0000-0000-000016FA6096
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00010411; HX=3.00000242; KW=3.00000007;
+ PH=3.00000004; SC=3.00000274; SDB=6.01146863; UDB=6.00597358; IPR=6.00927155;
+ MB=3.00025137; MTD=3.00000008; XFM=3.00000015; UTC=2019-01-15 15:11:44
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19011515-0013-0000-0000-000055D416D9
+Message-Id: <3c80c88c90ead96cea9a4f13af41fc5b@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-01-15_04:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1011 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1901150126
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 2019-01-14 21:42, Dave Young wrote:
+> On 01/14/19 at 11:10am, Mimi Zohar wrote:
+>> On Sun, 2019-01-13 at 09:39 +0800, Dave Young wrote:
+>> > Hi,
+>> >
+>> > On 01/11/19 at 11:13am, Mimi Zohar wrote:
+>> > > On Fri, 2019-01-11 at 21:43 +0800, Dave Young wrote:
+>> > > [snip]
+>> > >
+>> > > > Personally I would like to see platform key separated from integrity.
+>> > > > But for the kexec_file part I think it is good at least it works with
+>> > > > this fix.
+>> > > >
+>> > > > Acked-by: Dave Young <dyoung@redhat.com>
+>> > >
+>> > > The original "platform" keyring patches that Nayna posted multiple
+>> > > times were in the certs directory, but nobody commented/responded.  So
+>> > > she reworked the patches, moving them to the integrity directory and
+>> > > posted them (cc'ing the kexec mailing list).  It's a bit late to be
+>> > > asking to move it, isn't it?
+>> >
+>> > Hmm, apologize for being late,  I did not get chance to have a look the
+>> > old series.  Since we have the needs now, it should be still fine
+>> >
+>> > Maybe Kairui can check Nayna's old series, see if he can do something
+>> > again?
+>> 
+>> Whether the platform keyring is defined in certs/ or in integrity/ the
+>> keyring id needs to be accessible to the other, without making the
+>> keyring id global.  Moving where the platform keyring is defined is
+>> not the problem.
+> 
+> Agreed, but just feel kexec depends on IMA sounds not good.
 
---1SQmhf2mF2YjsYvc
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+The platform keyring is not dependent on IMA, it is dependent on 
+"integrity" - CONFIG_INTEGRITY_ASYMMETRIC_KEYS.
+Other CONFIGS which it needs are CONFIG_SYSTEM_BLACKLIST_KEYRING, 
+CONFIG_EFI.
 
-On Tue, Jan 15, 2019 at 02:26:02PM +0000, Jon Hunter wrote:
+Thanks & Regards,
+    - Nayna
 
-> It seems that __spi_pump_messages() is getting called several times
-> during boot when registering the spi-flash, then after the spi-flash has
-> been registered, about a 1 sec later spi_pump_idle_teardown() is called
-> (as expected), but exits because 'ctlr->running' is true. However,
-> spi_pump_idle_teardown() is never called again and when we suspend we
-> are stuck in the busy/running state. In this case should something be
-> scheduling spi_pump_idle_teardown() again? Although even if it does I
-> don't see where the busy flag would be cleared in this path?
-
-Right, I think with the current code we just shouldn't be checking for
-busy in teardown, since there's now a fairly big delay between idle and
-actually turning the hardware off the name is just super misleading and
-the logic confused.  I don't have time to test right now but does
-something like the below which changes it to a flag for the hardware
-being powered up work:
-
-diff --git a/drivers/spi/spi-stm32-qspi.c b/drivers/spi/spi-stm32-qspi.c
-index 3b2a9a6b990d..0170b0ef5d37 100644
---- a/drivers/spi/spi-stm32-qspi.c
-+++ b/drivers/spi/spi-stm32-qspi.c
-@@ -358,9 +358,6 @@ static int stm32_qspi_setup(struct spi_device *spi)
- 	struct stm32_qspi_flash *flash;
- 	u32 cr, presc;
-=20
--	if (ctrl->busy)
--		return -EBUSY;
--
- 	if (!spi->max_speed_hz)
- 		return -EINVAL;
-=20
-diff --git a/drivers/spi/spi-ti-qspi.c b/drivers/spi/spi-ti-qspi.c
-index 5f19016bbf10..3d746a0782eb 100644
---- a/drivers/spi/spi-ti-qspi.c
-+++ b/drivers/spi/spi-ti-qspi.c
-@@ -152,11 +152,6 @@ static int ti_qspi_setup(struct spi_device *spi)
- 	int clk_div =3D 0, ret;
- 	u32 clk_ctrl_reg, clk_rate, clk_mask;
-=20
--	if (spi->master->busy) {
--		dev_dbg(qspi->dev, "master busy doing other transfers\n");
--		return -EBUSY;
--	}
--
- 	if (!qspi->spi_max_frequency) {
- 		dev_err(qspi->dev, "spi max frequency not defined\n");
- 		return -EINVAL;
-diff --git a/drivers/spi/spi-zynqmp-gqspi.c b/drivers/spi/spi-zynqmp-gqspi.c
-index 9f83e1b17aa1..a173a3114813 100644
---- a/drivers/spi/spi-zynqmp-gqspi.c
-+++ b/drivers/spi/spi-zynqmp-gqspi.c
-@@ -487,22 +487,6 @@ static int zynqmp_qspi_setup_transfer(struct spi_devic=
-e *qspi,
- 	return 0;
- }
-=20
--/**
-- * zynqmp_qspi_setup:	Configure the QSPI controller
-- * @qspi:	Pointer to the spi_device structure
-- *
-- * Sets the operational mode of QSPI controller for the next QSPI transfer,
-- * baud rate and divisor value to setup the requested qspi clock.
-- *
-- * Return:	0 on success; error value otherwise.
-- */
--static int zynqmp_qspi_setup(struct spi_device *qspi)
--{
--	if (qspi->master->busy)
--		return -EBUSY;
--	return 0;
--}
--
- /**
-  * zynqmp_qspi_filltxfifo:	Fills the TX FIFO as long as there is room in
-  *				the FIFO or the bytes required to be
-@@ -1088,7 +1072,6 @@ static int zynqmp_qspi_probe(struct platform_device *=
-pdev)
-=20
- 	master->num_chipselect =3D GQSPI_DEFAULT_NUM_CS;
-=20
--	master->setup =3D zynqmp_qspi_setup;
- 	master->set_cs =3D zynqmp_qspi_chipselect;
- 	master->transfer_one =3D zynqmp_qspi_start_transfer;
- 	master->prepare_transfer_hardware =3D zynqmp_prepare_transfer_hardware;
-diff --git a/drivers/spi/spi.c b/drivers/spi/spi.c
-index 06b9139664a3..6d10ad9d768f 100644
---- a/drivers/spi/spi.c
-+++ b/drivers/spi/spi.c
-@@ -1234,7 +1234,7 @@ static void __spi_pump_messages(struct spi_controller=
- *ctlr, bool in_kthread)
-=20
- 	/* Check if the queue is idle */
- 	if (list_empty(&ctlr->queue) || !ctlr->running) {
--		if (!ctlr->busy) {
-+		if (!ctlr->hw_active) {
- 			spin_unlock_irqrestore(&ctlr->queue_lock, flags);
- 			return;
- 		}
-@@ -1252,10 +1252,10 @@ static void __spi_pump_messages(struct spi_controll=
-er *ctlr, bool in_kthread)
- 		list_first_entry(&ctlr->queue, struct spi_message, queue);
-=20
- 	list_del_init(&ctlr->cur_msg->queue);
--	if (ctlr->busy)
-+	if (ctlr->hw_active)
- 		was_busy =3D true;
- 	else
--		ctlr->busy =3D true;
-+		ctlr->hw_active =3D true;
- 	spin_unlock_irqrestore(&ctlr->queue_lock, flags);
-=20
- 	mutex_lock(&ctlr->io_mutex);
-@@ -1362,10 +1362,6 @@ static void spi_pump_idle_teardown(struct kthread_wo=
-rk *work)
- 	if (ctlr->running)
- 		goto out;
-=20
--	/* if the controller is busy then exit */
--	if (ctlr->busy)
--		goto out;
--
- 	/* if the controller is idling then exit
- 	 * this is actually a bit strange and would indicate that
- 	 * this function is scheduled twice, which should not happen
-@@ -1374,7 +1370,6 @@ static void spi_pump_idle_teardown(struct kthread_wor=
-k *work)
- 		goto out;
-=20
- 	/* set up the initial states */
--	ctlr->busy =3D false;
- 	ctlr->idling =3D true;
- 	spin_unlock_irqrestore(&ctlr->queue_lock, flags);
-=20
-@@ -1384,15 +1379,17 @@ static void spi_pump_idle_teardown(struct kthread_w=
-ork *work)
- 	kfree(ctlr->dummy_tx);
- 	ctlr->dummy_tx =3D NULL;
-=20
--	/* unprepare hardware */
--	if (ctlr->unprepare_transfer_hardware &&
--	    ctlr->unprepare_transfer_hardware(ctlr))
--		dev_err(&ctlr->dev,
--			"failed to unprepare transfer hardware\n");
--	/* handle pm */
--	if (ctlr->auto_runtime_pm) {
--		pm_runtime_mark_last_busy(ctlr->dev.parent);
--		pm_runtime_put_autosuspend(ctlr->dev.parent);
-+	if (ctlr->hw_active) {
-+		/* unprepare hardware */
-+		if (ctlr->unprepare_transfer_hardware &&
-+		    ctlr->unprepare_transfer_hardware(ctlr))
-+			dev_err(&ctlr->dev,
-+				"failed to unprepare transfer hardware\n");
-+		/* handle pm */
-+		if (ctlr->auto_runtime_pm) {
-+			pm_runtime_mark_last_busy(ctlr->dev.parent);
-+			pm_runtime_put_autosuspend(ctlr->dev.parent);
-+		}
- 	}
-=20
- 	/* mark controller as idle */
-@@ -1401,6 +1398,7 @@ static void spi_pump_idle_teardown(struct kthread_wor=
-k *work)
- 	/* finally put us from idling into stopped */
- 	spin_lock_irqsave(&ctlr->queue_lock, flags);
- 	ctlr->idling =3D false;
-+	ctlr->hw_active =3D false;
-=20
- out:
- 	spin_unlock_irqrestore(&ctlr->queue_lock, flags);
-@@ -1411,7 +1409,7 @@ static int spi_init_queue(struct spi_controller *ctlr)
- 	struct sched_param param =3D { .sched_priority =3D MAX_RT_PRIO - 1 };
-=20
- 	ctlr->running =3D false;
--	ctlr->busy =3D false;
-+	ctlr->hw_active =3D false;
-=20
- 	kthread_init_worker(&ctlr->kworker);
- 	ctlr->kworker_task =3D kthread_run(kthread_worker_fn, &ctlr->kworker,
-@@ -1520,7 +1518,7 @@ static int spi_start_queue(struct spi_controller *ctl=
-r)
-=20
- 	spin_lock_irqsave(&ctlr->queue_lock, flags);
-=20
--	if (ctlr->running || ctlr->busy) {
-+	if (ctlr->running || ctlr->hw_active) {
- 		spin_unlock_irqrestore(&ctlr->queue_lock, flags);
- 		return -EBUSY;
- 	}
-@@ -1543,18 +1541,19 @@ static int spi_stop_queue(struct spi_controller *ct=
-lr)
- 	spin_lock_irqsave(&ctlr->queue_lock, flags);
-=20
- 	/*
--	 * This is a bit lame, but is optimized for the common execution path.
--	 * A wait_queue on the ctlr->busy could be used, but then the common
--	 * execution path (pump_messages) would be required to call wake_up or
--	 * friends on every SPI message. Do this instead.
-+	 * This is a bit sad, but is optimized for the common execution path.
-+	 * A wait_queue on the ctlr->hw_active could be used, but then
-+	 * the common execution path (pump_messages) would be required
-+	 * to call wake_up or friends on every SPI message. Do this
-+	 * instead.
- 	 */
--	while ((!list_empty(&ctlr->queue) || ctlr->busy) && limit--) {
-+	while ((!list_empty(&ctlr->queue) || ctlr->hw_active) && limit--) {
- 		spin_unlock_irqrestore(&ctlr->queue_lock, flags);
- 		usleep_range(10000, 11000);
- 		spin_lock_irqsave(&ctlr->queue_lock, flags);
- 	}
-=20
--	if (!list_empty(&ctlr->queue) || ctlr->busy)
-+	if (!list_empty(&ctlr->queue) || ctlr->hw_active)
- 		ret =3D -EBUSY;
- 	else
- 		ctlr->running =3D false;
-diff --git a/include/linux/spi/spi.h b/include/linux/spi/spi.h
-index 79ad62e2487c..d9b7be89e50b 100644
---- a/include/linux/spi/spi.h
-+++ b/include/linux/spi/spi.h
-@@ -343,7 +343,7 @@ static inline void spi_unregister_driver(struct spi_dri=
-ver *sdrv)
-  *                    in-flight message
-  * @cur_msg_mapped: message has been mapped for DMA
-  * @xfer_completion: used by core transfer_one_message()
-- * @busy: message pump is busy
-+ * @hw_active: message pump has hardware powered up
-  * @running: message pump is running
-  * @rt: whether this queue is set to run as a realtime task
-  * @auto_runtime_pm: the core should ensure a runtime PM reference is held
-@@ -538,7 +538,7 @@ struct spi_controller {
- 	struct list_head		queue;
- 	struct spi_message		*cur_msg;
- 	bool				idling;
--	bool				busy;
-+	bool				hw_active;
- 	bool				running;
- 	bool				rt;
- 	bool				auto_runtime_pm;
-
---1SQmhf2mF2YjsYvc
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlw999AACgkQJNaLcl1U
-h9CFZgf/ZgHzpfNolv8wgO1rMfTckSe3KxszLPqo57EQEvboaSJ+fuCDdUe8X4x5
-z10gYX3HCEVaaUSCaO4QZS/JJwDrZfgOJ9gAJYATcsQ39xLo/j2QZCXAG4jrM8xg
-oXakulm6iXMAHnmo1pJUW1mAAwHCfIOBciCAMlWpnLLeD/TeK5vC2nGdeGxpQewg
-QxtBKKZexuokLtxpfx/GTtIsUQfgy83Q7dOZYwiNo/HviernlSEtK0o60eV95nFq
-YSfrf9X6dEcfP5r/l4T32ZQAT1rJ06t1M3smeETve3JnkZduYrSwr0h//EYWbaAu
-up2QjeCXy4UrVzxerhwwzZ/nEQ/Y6w==
-=q6jL
------END PGP SIGNATURE-----
-
---1SQmhf2mF2YjsYvc--
