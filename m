@@ -3,89 +3,120 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BCA45C43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 07:04:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7819AC43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 07:06:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 85E0020578
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 07:04:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3A4F820578
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 07:06:25 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=lca.pw header.i=@lca.pw header.b="sQ10sG35"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jeOEIrMp"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727699AbfAOHEe (ORCPT
+        id S1727639AbfAOHGX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 15 Jan 2019 02:04:34 -0500
-Received: from mail-qk1-f193.google.com ([209.85.222.193]:47060 "EHLO
-        mail-qk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725840AbfAOHEe (ORCPT
+        Tue, 15 Jan 2019 02:06:23 -0500
+Received: from mail-it1-f195.google.com ([209.85.166.195]:51518 "EHLO
+        mail-it1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725840AbfAOHGX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Jan 2019 02:04:34 -0500
-Received: by mail-qk1-f193.google.com with SMTP id q1so956937qkf.13
-        for <linux-kernel@vger.kernel.org>; Mon, 14 Jan 2019 23:04:34 -0800 (PST)
+        Tue, 15 Jan 2019 02:06:23 -0500
+Received: by mail-it1-f195.google.com with SMTP id w18so3572928ite.1;
+        Mon, 14 Jan 2019 23:06:22 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=lca.pw; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=t1UgGwc1d3HxCynXzh3txA+ATyFfqJWjhLLSOxZwXXI=;
-        b=sQ10sG35TlSJruk4nTfqnMN/c2dS2e+pDdjz77SUQZKereX8og+tVrzgjxozqx1KJf
-         kjJO4BJez2GO8uG3M3PCwO5VO0hLSBVriA4XQ0PC8+TGqaRto/UdfIsiqOc8CYO5ePe6
-         vJaMqJcuY4n6J2N193zSqpusIqPz1NvmKNn1MHtv6QRRfObIImGj7lkzL4R1DCguwPw2
-         jXSW+61UwgEZMoptpQz0CItGFoOi3e7sR8IpBHN73ZTFiPXQlwS1whF/KvVC82mNusHr
-         Gpp2z+IxfGuIx4Eyf4vxS0Mbbk8LoIjirtFIBDYp5BXWFaYYewgOKW8awwip0ZzvQSPA
-         O6gQ==
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=vBxTO+ik6S90VjvwhhQyOAyNkKinjn9P/JvduBA/t5Y=;
+        b=jeOEIrMpgXi3/B7EW3lgvfCoRqTBFVzmSrBIFt2tpkk7CsLQC3esSVpvE24X0hK4uB
+         osXXGM7O5q6Yu2NWuL6D/ZZ77ErZREpHtlOsSYWeisH5EGVdQ4CXm96ZKK54ibyXBy5N
+         MPwG4FR9UT821u6+5z+QP70w3L7rtVYdT5LrwkWNMYeSKkH/lRplKQA2yfk2m9lhU/qk
+         zGoOpERnzuOf9XOAkLe9KQGPCuOd98lgGz0Jb6mQQRW9Ot54eyTc5J2t01YluhmiVns5
+         gUIE+OUsCABCvScUTdpBOaV2mqvTn1b5w4P7TMu9mrbacZReD2PS2NHVofzR58dR/MlV
+         Dp8A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=t1UgGwc1d3HxCynXzh3txA+ATyFfqJWjhLLSOxZwXXI=;
-        b=e0fcx2wZKd/QsTeAjQQyaiMQTZGpQ/z94+XLybl1qMLkI1QHdDOd3Ev/bRUnpt+eSB
-         NmSMg0XfpMuTw2iNlGR2xh1HGEJLhMlgvVcvrz2djwT8rmhu4QerLm3iwy/8qTyAPpn9
-         DdHDZItVmvrVZbFjaydE8EOsJNNtAnKU7Jlwjgg1nkNrlUOQ+qHImDxNE9RT7TUlrDJR
-         NnhoYam6oji1NhmMTex9kh9ah9Uq0ZcCpul44fSvKD8u5Q00haVg9jOwg6quHh1l9rF0
-         xW3QmP3ymy/6sr9R1tRrb9Ii3SflPIGREDrU9hhKdp0CbXkVtCBolm6oQV12DROVI2ue
-         Y3sQ==
-X-Gm-Message-State: AJcUukf0b15wO6z1mRtzYUnrNefLnDi1yV67GX78mOxN0NGkuqF3HTc0
-        7oFB3kt20HYEBNvL8PYpLjSRhV2uhSnmeQ==
-X-Google-Smtp-Source: ALg8bN4KuS5aOPy9cDIEkumnMBEt0Urgq4le74uocBK/C5uIR9waaAwBOMHhGYKqUITPvaaREB1vNQ==
-X-Received: by 2002:a37:5686:: with SMTP id k128mr1609257qkb.29.1547535873682;
-        Mon, 14 Jan 2019 23:04:33 -0800 (PST)
-Received: from ovpn-120-55.rdu2.redhat.com (pool-71-184-117-43.bstnma.fios.verizon.net. [71.184.117.43])
-        by smtp.gmail.com with ESMTPSA id 128sm25169918qkn.77.2019.01.14.23.04.32
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 14 Jan 2019 23:04:33 -0800 (PST)
-Subject: Re: [PATCH] kvm: add proper frame pointer logic for vmx
-To:     pbonzini@redhat.com, rkrcmar@redhat.com
-Cc:     sean.j.christopherson@intel.com, tglx@linutronix.de,
-        mingo@redhat.com, bp@alien8.de, hpa@zytor.com, x86@kernel.org,
-        kvm@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20190115064459.70513-1-cai@lca.pw>
-From:   Qian Cai <cai@lca.pw>
-Message-ID: <a6477022-bbc0-fc00-2c8e-75007b468d3f@lca.pw>
-Date:   Tue, 15 Jan 2019 02:04:31 -0500
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.14; rv:60.0)
- Gecko/20100101 Thunderbird/60.3.3
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=vBxTO+ik6S90VjvwhhQyOAyNkKinjn9P/JvduBA/t5Y=;
+        b=CvSG1i/1BxqsQvibIjJY2Zz6Y7u2ogCq9l2fooqtylJa9GlUT9VPxb5yCNJERjJEjI
+         5UxE2YehzMHXT1NqUUWslw9ztR7vL1qjKfQIppbfvg0D58V/jWmUcn6nBTvnTPHI8BmB
+         mkiLK5jeBSMELwCfgn9a61P6kGtAgMFioNVM983BTxUct/lESp64Xi8dByMqb4ID8RfB
+         NRFaSMQZ/DSd22G/k4XdYPfW2CudRavQ57odwLeV+/zXhRasfJpLTOw6ORWh0V2hIK5Q
+         dZSIoRzhvPkfDbafkdpJoMt1LiX/cEsiFiGUbPaD8fbCg/RzTRixqDlwmYk+8AQyF+1c
+         lTZA==
+X-Gm-Message-State: AJcUukfxuWpQFlI4IqWNfo2KOPek15VjqgbzlN0umUhHDahD5lv2p7fd
+        yIEXPTlHYapPgZKTqogBUX6RXJM5pCn+WKtsUg==
+X-Google-Smtp-Source: ALg8bN6nciu4jZVlb6o0NjOSQGyRSzWVuL2vBfcarEjVevsygaYd+FFSzu/F/XJJlih/Jj0QBVK449+HgxJ5/dlokAQ=
+X-Received: by 2002:a24:3282:: with SMTP id j124mr1700100ita.173.1547535982120;
+ Mon, 14 Jan 2019 23:06:22 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20190115064459.70513-1-cai@lca.pw>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <1547183577-20309-1-git-send-email-kernelfans@gmail.com>
+ <1547183577-20309-2-git-send-email-kernelfans@gmail.com> <96233c0c-940d-8d7c-b3be-d8863c026996@intel.com>
+In-Reply-To: <96233c0c-940d-8d7c-b3be-d8863c026996@intel.com>
+From:   Pingfan Liu <kernelfans@gmail.com>
+Date:   Tue, 15 Jan 2019 15:06:10 +0800
+Message-ID: <CAFgQCTsV13JSH_S2kSQGeUa3K0s_n4LeGqhrHwBEW9DWeCWgcA@mail.gmail.com>
+Subject: Re: [PATCHv2 1/7] x86/mm: concentrate the code to memblock allocator enabled
+To:     Dave Hansen <dave.hansen@intel.com>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Len Brown <lenb@kernel.org>, Yinghai Lu <yinghai@kernel.org>,
+        Tejun Heo <tj@kernel.org>, Chao Fan <fanc.fnst@cn.fujitsu.com>,
+        Baoquan He <bhe@redhat.com>, Juergen Gross <jgross@suse.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Michal Hocko <mhocko@suse.com>, x86@kernel.org,
+        linux-acpi@vger.kernel.org, linux-mm@kvack.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Tue, Jan 15, 2019 at 7:07 AM Dave Hansen <dave.hansen@intel.com> wrote:
+>
+> On 1/10/19 9:12 PM, Pingfan Liu wrote:
+> > This patch identifies the point where memblock alloc start. It has no
+> > functional.
+>
+> It has no functional ... what?  Effects?
+>
+During re-organize the code, it takes me a long time to figure out why
+memblock_set_bottom_up(true) is added here, and how far can it be
+deferred. And finally, I realize that it only takes effect after
+e820__memblock_setup(), the point where memblock allocator can work.
+So I concentrate the related code, and hope this patch can classify
+this truth.
 
+> > -     memblock_set_current_limit(ISA_END_ADDRESS);
+> > -     e820__memblock_setup();
+> > -
+> >       reserve_bios_regions();
+> >
+> >       if (efi_enabled(EFI_MEMMAP)) {
+> > @@ -1113,6 +1087,8 @@ void __init setup_arch(char **cmdline_p)
+> >               efi_reserve_boot_services();
+> >       }
+> >
+> > +     memblock_set_current_limit(0, ISA_END_ADDRESS, false);
+> > +     e820__memblock_setup();
+>
+> It looks like you changed the arguments passed to
+> memblock_set_current_limit().  How can this even compile?  Did you mean
+> that this patch is not functional?
+>
+Sorry that during rebasing, merge trivial fix by mistake. I will build
+against each patch.
 
-On 1/15/19 1:44 AM, Qian Cai wrote:
-> compilation warning since v5.0-rc1,
-> 
-> arch/x86/kvm/vmx/vmx.o: warning: objtool: vmx_vcpu_run.part.17()+0x3171:
-> call without frame pointer save/setup
-> 
-> Fixes: 453eafbe65f (KVM: VMX: Move VM-Enter + VM-Exit handling to
-> non-inline sub-routines)
-
-Oops, wrong fix. Back to square one.
+Best regards,
+Pingfan
