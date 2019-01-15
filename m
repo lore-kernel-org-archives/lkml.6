@@ -2,297 +2,258 @@ Return-Path: <SRS0=RZO6=PX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+X-Spam-Status: No, score=-7.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F906C43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 12:38:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D211C43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 12:39:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EF1C22085A
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 12:38:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0A32720861
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 12:39:32 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="TNSblKHA"
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="KygymblS"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729067AbfAOMid (ORCPT
+        id S1728181AbfAOMj3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 15 Jan 2019 07:38:33 -0500
-Received: from mail-io1-f67.google.com ([209.85.166.67]:40995 "EHLO
-        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726123AbfAOMic (ORCPT
+        Tue, 15 Jan 2019 07:39:29 -0500
+Received: from lelv0142.ext.ti.com ([198.47.23.249]:49162 "EHLO
+        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726123AbfAOMj3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Jan 2019 07:38:32 -0500
-Received: by mail-io1-f67.google.com with SMTP id s22so1891463ioc.8
-        for <linux-kernel@vger.kernel.org>; Tue, 15 Jan 2019 04:38:31 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ffwll.ch; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=DxqrcBm1pwzvgSQmgRO9nkuYdxGnJGRsgTxwvckVwh8=;
-        b=TNSblKHA9bqZDIOGXti/oi4ZyrXAbYMW9va9eNpO2xCW2okQWboUVZE34VSw/tVjHB
-         HfIjj5fIcBEDn9J5GlL+SgYECxUJz25RcbqOQAIu/EgZVkNqf1l9ZwzcT/48FmNBl7+y
-         JcaL3XpO4lLxKCA4BGA8h7+ajZEWAmCx7lQAI=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=DxqrcBm1pwzvgSQmgRO9nkuYdxGnJGRsgTxwvckVwh8=;
-        b=un8nG3EF1FyF7vJn1GKx6BrX2T77NVOIOWkyG9Q87HgB08Ra6hXHcY1DGzotVcZpSy
-         cBz84KKW3oM6Vn/brGuxRG6X13muOS/aA5gI+PvhAY5NEp0GkcwpEFkjyN3iEmjJa34o
-         1I/9GzqUTmeCQ9dquAYQZM5eQok+hycd7DCVXt1uQK3uYetnS7f0ye1LuClDZERmw4+w
-         xA9oZ9ziGFEgmgexnVyUaRtmjizYXSiuROhCQkpmsghNqpqyD7cyUhSAtjLS8VpL9d+1
-         kuJ1vTYDFfvWEnD5sZG3Pe4+D/a0J1aREjZHzy4AkWxWiNzy+CDa1CZiqtZoBgzg1aL0
-         NfsQ==
-X-Gm-Message-State: AJcUukcZcB9QjFaUAmbePi3/fYgXkwSRW6cZP7x1ihO9RsmnHQbj66IQ
-        Gd5rOkYV7NxkuCJVvCI58KEGol1TI4ocV7smh8ZB5w==
-X-Google-Smtp-Source: ALg8bN5m/nkJSCIDvLJdmGlfCNlWx/R5ZNlPpXzJ29iYnwE0ARlPxUoTEyqB86aP5jLPcgeS7txvJ2ifjkh0w/Bhu8k=
-X-Received: by 2002:a5d:959a:: with SMTP id a26mr1843825ioo.278.1547555911171;
- Tue, 15 Jan 2019 04:38:31 -0800 (PST)
+        Tue, 15 Jan 2019 07:39:29 -0500
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id x0FCd1h0075003;
+        Tue, 15 Jan 2019 06:39:01 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1547555941;
+        bh=1b9IZZpxao3oVhk0afVgraIGTclD7OB4ku97dLLA7JQ=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=KygymblSCGzAtffdNGxuKA3k/xMD77oIlvzyJ4dqwOmyyqNOmNF6az9KaZfwgE2IC
+         eo5ed+Q5buv1Je7ixlMzGnbt4d2LOJ3cUeMtldrkbFxKXUlxmPXPOa12Si+H6zuM7D
+         Zm3uAZaNlkhHkB4gHvqzO+22U88IkCZM4IksTX7A=
+Received: from DFLE103.ent.ti.com (dfle103.ent.ti.com [10.64.6.24])
+        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x0FCd1F7000690
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Tue, 15 Jan 2019 06:39:01 -0600
+Received: from DFLE109.ent.ti.com (10.64.6.30) by DFLE103.ent.ti.com
+ (10.64.6.24) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Tue, 15
+ Jan 2019 06:39:00 -0600
+Received: from dlep32.itg.ti.com (157.170.170.100) by DFLE109.ent.ti.com
+ (10.64.6.30) with Microsoft SMTP Server (version=TLS1_0,
+ cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1591.10 via Frontend Transport;
+ Tue, 15 Jan 2019 06:39:00 -0600
+Received: from [127.0.0.1] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by dlep32.itg.ti.com (8.14.3/8.13.8) with ESMTP id x0FCcslB029165;
+        Tue, 15 Jan 2019 06:38:54 -0600
+Subject: Re: [RFC PATCH v4 12/13] irqchip: ti-sci-inta: Add support for
+ Interrupt Aggregator driver
+To:     Lokesh Vutla <lokeshvutla@ti.com>,
+        Peter Ujfalusi <peter.ujfalusi@ti.com>, <marc.zyngier@arm.com>,
+        Nishanth Menon <nm@ti.com>,
+        Santosh Shilimkar <ssantosh@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>, <tglx@linutronix.de>,
+        <jason@lakedaemon.net>
+CC:     Linux ARM Mailing List <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, Sekhar Nori <nsekhar@ti.com>,
+        Device Tree Mailing List <devicetree@vger.kernel.org>
+References: <20181227060829.5080-1-lokeshvutla@ti.com>
+ <20181227061313.5451-1-lokeshvutla@ti.com>
+ <20181227061313.5451-12-lokeshvutla@ti.com>
+ <9efbb01b-2ef9-13e7-f871-8db2c92844ee@ti.com>
+ <50da7038-9b1c-6910-2cf1-78fa98ddc3bd@ti.com>
+From:   Tero Kristo <t-kristo@ti.com>
+Message-ID: <ad43911d-78b2-6ed0-31c2-8361b5f4911f@ti.com>
+Date:   Tue, 15 Jan 2019 14:38:50 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-References: <1547479696-14376-1-git-send-email-ayan.halder@arm.com>
- <20190115120547.GL10517@phenom.ffwll.local> <20190115122418.GS20661@e110455-lin.cambridge.arm.com>
-In-Reply-To: <20190115122418.GS20661@e110455-lin.cambridge.arm.com>
-From:   Daniel Vetter <daniel@ffwll.ch>
-Date:   Tue, 15 Jan 2019 13:38:19 +0100
-Message-ID: <CAKMK7uHW=PafGQdcT7HykwSRMtVJ_zufdgBk2O6pVxSxk9CCyg@mail.gmail.com>
-Subject: Re: [PATCH] [RFC] drm_hwcomposer: Add support for Arm Framebuffer
- Compression (AFBC) modifiers.
-To:     Liviu Dudau <Liviu.Dudau@arm.com>
-Cc:     Ayan Halder <Ayan.Halder@arm.com>,
-        Brian Starkey <Brian.Starkey@arm.com>,
-        "john.stultz@linaro.org" <john.stultz@linaro.org>,
-        "seanpaul@google.com" <seanpaul@google.com>,
-        "malidp@foss.arm.com" <malidp@foss.arm.com>,
-        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        nd <nd@arm.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <50da7038-9b1c-6910-2cf1-78fa98ddc3bd@ti.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 15, 2019 at 1:24 PM Liviu Dudau <Liviu.Dudau@arm.com> wrote:
->
-> On Tue, Jan 15, 2019 at 01:05:47PM +0100, Daniel Vetter wrote:
-> > On Mon, Jan 14, 2019 at 03:28:27PM +0000, Ayan Halder wrote:
-> > > One needs to translate the Gralloc buffer flags for AFBC (eg
-> > > MALI_GRALLOC_INTFMT_AFBC_BASIC) to the corresponding linux kernel drm=
- modifiers.
-> > > This gets passed to libdrm via drmModeAddFB2WithModifiers.
-> > >
-> > > Signed-off-by: Ayan Kumar Halder <ayan.halder@arm.com>
-> > >
-> > > /-- Note for reviewer
-> > > I was able to get this working for Android P on Juno with Mali DP650 =
-and Mali
-> > > T860 gpu(with some additional hacks). I have not yet validated this h=
-ikey960.
-> > >
-> > > I have used the following components:-
-> > > 1. Gralloc (from https://android.googlesource.com/device/linaro/hikey=
-/+/master/gralloc960)
-> > >   - Built with MALI_MMSS=3D1
-> > > 2. Libdrm (from git://anongit.freedesktop.org/mesa/drm)
-> > >   - You would need drm_fourcc.h and gralloc_handle.h
-> > > --/
-> >
-> > I thought drm_hwcomposer has switched over to gitlab merge requests?
-> > README at least says so:
-> >
-> > https://gitlab.freedesktop.org/drm-hwcomposer/drm-hwcomposer
->
-> So are we to send pull requests for RFCs as well?
+On 02/01/2019 14:26, Lokesh Vutla wrote:
+> Hi Peter,
+> 
+> On 02/01/19 5:19 PM, Peter Ujfalusi wrote:
+>>
+>>
+>>
+>> On 27/12/2018 8.13, Lokesh Vutla wrote:
+>>> Texas Instruments' K3 generation SoCs has an IP Interrupt Aggregator
+>>> which is an interrupt controller that does the following:
+>>> - Converts events to interrupts that can be understood by
+>>>    an interrupt router.
+>>> - Allows for multiplexing of events to interrupts.
+>>>
+>>> Configuration of the interrupt aggregator registers can only be done by
+>>> a system co-processor and the driver needs to send a message to this
+>>> co processor over TISCI protocol.
+>>>
+>>> Add support for Interrupt Aggregator driver over TISCI protocol.
+>>>
+>>> Signed-off-by: Lokesh Vutla <lokeshvutla@ti.com>
+>>> Signed-off-by: Peter Ujfalusi <peter.ujfalusi@ti.com>
+>>> ---
+>>>   MAINTAINERS                       |   1 +
+>>>   drivers/irqchip/Kconfig           |  12 +
+>>>   drivers/irqchip/Makefile          |   1 +
+>>>   drivers/irqchip/irq-ti-sci-inta.c | 561 ++++++++++++++++++++++++++++++
+>>>   4 files changed, 575 insertions(+)
+>>>   create mode 100644 drivers/irqchip/irq-ti-sci-inta.c
+>>>
+>>> diff --git a/MAINTAINERS b/MAINTAINERS
+>>> index aebce615151e..7d12788c844a 100644
+>>> --- a/MAINTAINERS
+>>> +++ b/MAINTAINERS
+>>> @@ -15026,6 +15026,7 @@ F:    drivers/reset/reset-ti-sci.c
+>>>   F:    
+>>> Documentation/devicetree/bindings/interrupt-controller/ti,sci-intr.txt
+>>>   F:    
+>>> Documentation/devicetree/bindings/interrupt-controller/ti,sci-inta.txt
+>>>   F:    drivers/irqchip/irq-ti-sci-intr.c
+>>> +F:    drivers/irqchip/irq-ti-sci-inta.c
+>>>   Texas Instruments ASoC drivers
+>>>   M:    Peter Ujfalusi <peter.ujfalusi@ti.com>
+>>> diff --git a/drivers/irqchip/Kconfig b/drivers/irqchip/Kconfig
+>>> index a8d9bed0254b..d16fd39408ad 100644
+>>> --- a/drivers/irqchip/Kconfig
+>>> +++ b/drivers/irqchip/Kconfig
+>>> @@ -417,6 +417,18 @@ config TI_SCI_INTR_IRQCHIP
+>>>         If you wish to use interrupt router irq resources managed by the
+>>>         TI System Controller, say Y here. Otherwise, say N.
+>>> +config TI_SCI_INTA_IRQCHIP
+>>> +    bool
+>>> +    depends on TI_SCI_PROTOCOL && ARCH_K3
+>>> +    select IRQ_DOMAIN
+>>> +    select IRQ_DOMAIN_HIERARCHY
+>>> +    select K3_INTA_MSI_DOMAIN
+>>> +    help
+>>> +      This enables the irqchip driver support for K3 Interrupt 
+>>> aggregator
+>>> +      over TI System Control Interface available on some new TI's SoCs.
+>>> +      If you wish to use interrupt aggregator irq resources managed 
+>>> by the
+>>> +      TI System Controller, say Y here. Otherwise, say N.
+>>> +
+>>>   endmenu
+>>>   config SIFIVE_PLIC
+>>> diff --git a/drivers/irqchip/Makefile b/drivers/irqchip/Makefile
+>>> index b4ff376a08ef..a679490a7059 100644
+>>> --- a/drivers/irqchip/Makefile
+>>> +++ b/drivers/irqchip/Makefile
+>>> @@ -95,3 +95,4 @@ obj-$(CONFIG_SIFIVE_PLIC)        += irq-sifive-plic.o
+>>>   obj-$(CONFIG_IMX_IRQSTEER)        += irq-imx-irqsteer.o
+>>>   obj-$(CONFIG_MADERA_IRQ)        += irq-madera.o
+>>>   obj-$(CONFIG_TI_SCI_INTR_IRQCHIP)    += irq-ti-sci-intr.o
+>>> +obj-$(CONFIG_TI_SCI_INTA_IRQCHIP)    += irq-ti-sci-inta.o
+>>> diff --git a/drivers/irqchip/irq-ti-sci-inta.c 
+>>> b/drivers/irqchip/irq-ti-sci-inta.c
+>>> new file mode 100644
+>>> index 000000000000..78bfc83a079a
+>>> --- /dev/null
+>>> +++ b/drivers/irqchip/irq-ti-sci-inta.c
+>>> @@ -0,0 +1,561 @@
+>>> +// SPDX-License-Identifier: GPL-2.0
+>>> +/*
+>>> + * Texas Instruments' K3 Interrupt Aggregator irqchip driver
+>>> + *
+>>> + * Copyright (C) 2018 Texas Instruments Incorporated - 
+>>> http://www.ti.com/
+>>> + *    Lokesh Vutla <lokeshvutla@ti.com>
+>>> + */
+>>> +
+>>> +#include <linux/err.h>
+>>> +#include <linux/io.h>
+>>> +#include <linux/msi.h>
+>>> +#include <linux/irqchip.h>
+>>> +#include <linux/of_platform.h>
+>>> +#include <linux/of_address.h>
+>>> +#include <linux/of_irq.h>
+>>> +#include <linux/module.h>
+>>> +#include <linux/moduleparam.h>
+>>> +#include <linux/irqdomain.h>
+>>
+>> To fix this:
+>>
+>> drivers/irqchip/irq-ti-sci-inta.c: In function ‘inta_msi_irq_handler’:
+>> drivers/irqchip/irq-ti-sci-inta.c:308:8: error: ‘IRQF_TRIGGER_HIGH’ 
+>> undeclared (first use in this function); did you mean 
+>> ‘IRQD_TRIGGER_MASK’?
+>>          IRQF_TRIGGER_HIGH)
+>>          ^~~~~~~~~~~~~~~~~
+>>          IRQD_TRIGGER_MASK
+>> drivers/irqchip/irq-ti-sci-inta.c:308:8: note: each undeclared 
+>> identifier is reported only once for each function it appears in
+>> drivers/irqchip/irq-ti-sci-inta.c: In function 
+>> ‘ti_sci_inta_alloc_parent_irq’:
+>> drivers/irqchip/irq-ti-sci-inta.c:360:27: error: ‘IRQF_TRIGGER_HIGH’ 
+>> undeclared (first use in this function); did you mean 
+>> ‘IRQD_TRIGGER_MASK’?
+>>    parent_fwspec.param[2] = IRQF_TRIGGER_HIGH;
+>>                             ^~~~~~~~~~~~~~~~~
+>>                             IRQD_TRIGGER_MASK
+>> make[3]: *** [scripts/Makefile.build:276: 
+>> drivers/irqchip/irq-ti-sci-inta.o] Error 1
+>>
+>> Add this:
+>> #include <linux/interrupt.h>
+> 
+> I did not see any such build error during my testing as shown below. But 
+> agree about the report. Will fix it in next version
+> 
+> ➜  linux git:(nex-master) v8make defconfig
+>    HOSTCC  scripts/basic/fixdep
+>    HOSTCC  scripts/kconfig/conf.o
+>    HOSTCC  scripts/kconfig/confdata.o
+>    HOSTCC  scripts/kconfig/expr.o
+>    HOSTCC  scripts/kconfig/symbol.o
+>    HOSTCC  scripts/kconfig/preprocess.o
+>    LEX     scripts/kconfig/zconf.lex.c
+>    YACC    scripts/kconfig/zconf.tab.h
+>    HOSTCC  scripts/kconfig/zconf.lex.o
+>    YACC    scripts/kconfig/zconf.tab.c
+>    HOSTCC  scripts/kconfig/zconf.tab.o
+> v8  HOSTLD  scripts/kconfig/conf
+> *** Default configuration is based on 'defconfig'
+> make #
+> # configuration written to .config
+> #
+> I%
+>                               ➜  linux git:(nex-master) v8make Image 
+> dtbs -j4 -s
+> arch/arm64/boot/dts/rockchip/rk3399-gru-bob.dts:25.9-29.5: Warning 
+> (graph_port): /edp-panel/ports: graph port node name should be 'port'
+> arch/arm64/boot/dts/rockchip/rk3399-gru-kevin.dts:46.9-50.5: Warning 
+> (graph_port): /edp-panel/ports: graph port node name should be 'port'
+> arch/arm64/boot/dts/rockchip/rk3399-sapphire-excavator.dts:94.9-98.5: 
+> Warning (graph_port): /edp-panel/ports: graph port node name should be 
+> 'port'
+> <stdin>:1339:2: warning: #warning syscall open_tree not implemented [-Wcpp]
+> <stdin>:1342:2: warning: #warning syscall move_mount not implemented 
+> [-Wcpp]
+> <stdin>:1345:2: warning: #warning syscall fsopen not implemented [-Wcpp]
+> <stdin>:1348:2: warning: #warning syscall fsconfig not implemented [-Wcpp]
+> <stdin>:1351:2: warning: #warning syscall fsmount not implemented [-Wcpp]
+> <stdin>:1354:2: warning: #warning syscall fspick not implemented [-Wcpp]
+> ➜  linux git:(nex-master)
+> 
+> Thanks and regards,
+> Lokesh
 
-Hm, not sure you should stuff RFC material into your linux-next
-branches. I thought that's only for patches which by all intents are
-ready for the next merge window, i.e. reviewed&tested and all that.
-Not for in-flight stuff still under discussion.
--Daniel
+The mentioned failure only happens with a specific .config. Not sure 
+what is the actual Kconfig that masks the failure though, but anyway it 
+looks like interrupt.h gets included via some indirect path with arm64 
+defconfig making it pass.
 
-
-> Best regards,
-> Liviu
->
-> >
-> > Cheers, Daniel
-> >
-> > > ---
-> > >  platformdrmgeneric.cpp | 42 ++++++++++++++++++++++++++++++++++++++++=
-++
-> > >  platformdrmgeneric.h   |  2 ++
-> > >  platformhisi.cpp       | 14 ++++++++++++--
-> > >  3 files changed, 56 insertions(+), 2 deletions(-)
-> > >
-> > > diff --git a/platformdrmgeneric.cpp b/platformdrmgeneric.cpp
-> > > index 503c04a..a520224 100644
-> > > --- a/platformdrmgeneric.cpp
-> > > +++ b/platformdrmgeneric.cpp
-> > > @@ -18,6 +18,7 @@
-> > >
-> > >  #include "platformdrmgeneric.h"
-> > >  #include "drmdevice.h"
-> > > +#include "mali_gralloc_formats.h"
-> > >  #include "platform.h"
-> > >
-> > >  #include <drm/drm_fourcc.h>
-> > > @@ -83,6 +84,31 @@ uint32_t DrmGenericImporter::ConvertHalFormatToDrm=
-(uint32_t hal_format) {
-> > >    }
-> > >  }
-> > >
-> > > +uint64_t DrmGenericImporter::ConvertGrallocFormatToDrmModifiers(uint=
-64_t flags,
-> > > +                                                                bool=
- is_rgb) {
-> > > +  uint64_t features =3D 0;
-> > > +
-> > > +  if (flags & MALI_GRALLOC_INTFMT_AFBC_BASIC)
-> > > +    features |=3D AFBC_FORMAT_MOD_BLOCK_SIZE_16x16;
-> > > +
-> > > +  if (is_rgb)
-> > > +    features |=3D AFBC_FORMAT_MOD_YTR;
-> > > +
-> > > +  if (flags & MALI_GRALLOC_INTFMT_AFBC_SPLITBLK)
-> > > +    features |=3D (AFBC_FORMAT_MOD_SPLIT | AFBC_FORMAT_MOD_SPARSE);
-> > > +
-> > > +  if (flags & MALI_GRALLOC_INTFMT_AFBC_WIDEBLK)
-> > > +    features |=3D AFBC_FORMAT_MOD_BLOCK_SIZE_32x8;
-> > > +
-> > > +  if (flags & MALI_GRALLOC_INTFMT_AFBC_TILED_HEADERS)
-> > > +    features |=3D AFBC_FORMAT_MOD_TILED;
-> > > +
-> > > +  if (features)
-> > > +    return DRM_FORMAT_MOD_ARM_AFBC(features);
-> > > +  else
-> > > +    return 0;
-> > > +}
-> > > +
-> > >  uint32_t DrmGenericImporter::DrmFormatToBitsPerPixel(uint32_t drm_fo=
-rmat) {
-> > >    switch (drm_format) {
-> > >      case DRM_FORMAT_ARGB8888:
-> > > @@ -101,6 +127,22 @@ uint32_t DrmGenericImporter::DrmFormatToBitsPerP=
-ixel(uint32_t drm_format) {
-> > >    }
-> > >  }
-> > >
-> > > +bool DrmGenericImporter::IsDrmFormatRgb(uint32_t drm_format) {
-> > > +  switch (drm_format) {
-> > > +    case DRM_FORMAT_ARGB8888:
-> > > +    case DRM_FORMAT_XBGR8888:
-> > > +    case DRM_FORMAT_ABGR8888:
-> > > +    case DRM_FORMAT_BGR888:
-> > > +    case DRM_FORMAT_BGR565:
-> > > +      return true;
-> > > +    case DRM_FORMAT_YVU420:
-> > > +      return false;
-> > > +    default:
-> > > +      ALOGE("Unsupported format %u assuming rgb?", drm_format);
-> > > +      return true;
-> > > +  }
-> > > +}
-> > > +
-> > >  int DrmGenericImporter::ImportBuffer(buffer_handle_t handle, hwc_drm=
-_bo_t *bo) {
-> > >    gralloc_handle_t *gr_handle =3D gralloc_handle(handle);
-> > >    if (!gr_handle)
-> > > diff --git a/platformdrmgeneric.h b/platformdrmgeneric.h
-> > > index 233ba55..43cb618 100644
-> > > --- a/platformdrmgeneric.h
-> > > +++ b/platformdrmgeneric.h
-> > > @@ -36,6 +36,8 @@ class DrmGenericImporter : public Importer {
-> > >    bool CanImportBuffer(buffer_handle_t handle) override;
-> > >
-> > >    uint32_t ConvertHalFormatToDrm(uint32_t hal_format);
-> > > +  uint64_t ConvertGrallocFormatToDrmModifiers(uint64_t flags, bool i=
-s_rgb);
-> > > +  bool IsDrmFormatRgb(uint32_t drm_format);
-> > >    uint32_t DrmFormatToBitsPerPixel(uint32_t drm_format);
-> > >
-> > >   private:
-> > > diff --git a/platformhisi.cpp b/platformhisi.cpp
-> > > index 76fe1e7..1cb7e2c 100644
-> > > --- a/platformhisi.cpp
-> > > +++ b/platformhisi.cpp
-> > > @@ -71,6 +71,9 @@ int HisiImporter::Init() {
-> > >  }
-> > >
-> > >  int HisiImporter::ImportBuffer(buffer_handle_t handle, hwc_drm_bo_t =
-*bo) {
-> > > +  bool is_rgb;
-> > > +  uint64_t modifiers[4] =3D {0};
-> > > +
-> > >    memset(bo, 0, sizeof(hwc_drm_bo_t));
-> > >
-> > >    private_handle_t const *hnd =3D reinterpret_cast<private_handle_t =
-const *>(
-> > > @@ -94,6 +97,10 @@ int HisiImporter::ImportBuffer(buffer_handle_t han=
-dle, hwc_drm_bo_t *bo) {
-> > >    if (fmt < 0)
-> > >      return fmt;
-> > >
-> > > +  is_rgb =3D IsDrmFormatRgb(fmt);
-> > > +  modifiers[0] =3D ConvertGrallocFormatToDrmModifiers(hnd->internal_=
-format,
-> > > +                                                    is_rgb);
-> > > +
-> > >    bo->width =3D hnd->width;
-> > >    bo->height =3D hnd->height;
-> > >    bo->hal_format =3D hnd->req_format;
-> > > @@ -129,8 +136,11 @@ int HisiImporter::ImportBuffer(buffer_handle_t h=
-andle, hwc_drm_bo_t *bo) {
-> > >        break;
-> > >    }
-> > >
-> > > -  ret =3D drmModeAddFB2(drm_->fd(), bo->width, bo->height, bo->forma=
-t,
-> > > -                      bo->gem_handles, bo->pitches, bo->offsets, &bo=
-->fb_id, 0);
-> > > +  ret =3D drmModeAddFB2WithModifiers(drm_->fd(), bo->width, bo->heig=
-ht,
-> > > +                                   bo->format, bo->gem_handles, bo->=
-pitches,
-> > > +                                   bo->offsets, modifiers, &bo->fb_i=
-d,
-> > > +                                   modifiers[0] ? DRM_MODE_FB_MODIFI=
-ERS : 0);
-> > > +
-> > >    if (ret) {
-> > >      ALOGE("could not create drm fb %d", ret);
-> > >      return ret;
-> > > --
-> > > 2.7.4
-> > >
-> > > _______________________________________________
-> > > dri-devel mailing list
-> > > dri-devel@lists.freedesktop.org
-> > > https://lists.freedesktop.org/mailman/listinfo/dri-devel
-> >
-> > --
-> > Daniel Vetter
-> > Software Engineer, Intel Corporation
-> > http://blog.ffwll.ch
->
-> --
-> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> | I would like to |
-> | fix the world,  |
-> | but they're not |
-> | giving me the   |
->  \ source code!  /
->   ---------------
->     =C2=AF\_(=E3=83=84)_/=C2=AF
-> _______________________________________________
-> dri-devel mailing list
-> dri-devel@lists.freedesktop.org
-> https://lists.freedesktop.org/mailman/listinfo/dri-devel
-
-
-
---=20
-Daniel Vetter
-Software Engineer, Intel Corporation
-+41 (0) 79 365 57 48 - http://blog.ffwll.ch
+-Tero
+--
+Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki. Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
