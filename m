@@ -2,93 +2,81 @@ Return-Path: <SRS0=RZO6=PX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B7E52C43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 11:20:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DEB75C43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 11:25:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 908E120657
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 11:20:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AA84B20657
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 11:25:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729225AbfAOLUV (ORCPT
+        id S1729230AbfAOLZ5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 15 Jan 2019 06:20:21 -0500
-Received: from foss.arm.com ([217.140.101.70]:48258 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728307AbfAOLUV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Jan 2019 06:20:21 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 1B02A1596;
-        Tue, 15 Jan 2019 03:20:21 -0800 (PST)
-Received: from lakrids.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 9487D3F70D;
-        Tue, 15 Jan 2019 03:20:19 -0800 (PST)
-Date:   Tue, 15 Jan 2019 11:20:17 +0000
-From:   Mark Rutland <mark.rutland@arm.com>
-To:     Masami Hiramatsu <mhiramat@kernel.org>
-Cc:     Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Pratyush Anand <panand@redhat.com>,
-        "David A . Long" <dave.long@linaro.org>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        James Morse <james.morse@arm.com>
-Subject: Re: [PATCH v2 2/4] arm64: kprobes: Remove unneeded RODATA check
-Message-ID: <20190115112016.GD43491@lakrids.cambridge.arm.com>
-References: <154753341900.31541.8135985235882849464.stgit@devbox>
- <154753347659.31541.11277302003578292109.stgit@devbox>
+        Tue, 15 Jan 2019 06:25:57 -0500
+Received: from nblzone-211-213.nblnetworks.fi ([83.145.211.213]:41940 "EHLO
+        hillosipuli.retiisi.org.uk" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727626AbfAOLZ5 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 Jan 2019 06:25:57 -0500
+Received: from valkosipuli.localdomain (valkosipuli.retiisi.org.uk [IPv6:2001:1bc8:1a6:d3d5::80:2])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by hillosipuli.retiisi.org.uk (Postfix) with ESMTPS id 3CD4B634C88;
+        Tue, 15 Jan 2019 13:24:14 +0200 (EET)
+Received: from sailus by valkosipuli.localdomain with local (Exim 4.89)
+        (envelope-from <sakari.ailus@retiisi.org.uk>)
+        id 1gjMpJ-0004Lb-Di; Tue, 15 Jan 2019 13:24:13 +0200
+Date:   Tue, 15 Jan 2019 13:24:13 +0200
+From:   Sakari Ailus <sakari.ailus@iki.fi>
+To:     Lubomir Rintel <lkundrak@v3.sk>
+Cc:     linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 0/5] ov7670 fixes
+Message-ID: <20190115112413.yvwikkeoiynmsuh7@valkosipuli.retiisi.org.uk>
+References: <20190115085448.1400135-1-lkundrak@v3.sk>
+ <20190115104011.irtgbp6iaw6cocgq@valkosipuli.retiisi.org.uk>
+ <23ea680af226991402a30dd02bacb1dce0c998f8.camel@v3.sk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <154753347659.31541.11277302003578292109.stgit@devbox>
-User-Agent: Mutt/1.11.1+11 (2f07cb52) (2018-12-01)
+In-Reply-To: <23ea680af226991402a30dd02bacb1dce0c998f8.camel@v3.sk>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 15, 2019 at 03:24:36PM +0900, Masami Hiramatsu wrote:
-> Remove unneeded RODATA check from arch_prepare_kprobe().
+On Tue, Jan 15, 2019 at 12:12:56PM +0100, Lubomir Rintel wrote:
+> On Tue, 2019-01-15 at 12:40 +0200, Sakari Ailus wrote:
+> > On Tue, Jan 15, 2019 at 09:54:43AM +0100, Lubomir Rintel wrote:
+> > > Hi,
+> > > 
+> > > here are the ov7670 patches originally from the "media: make Marvell camera
+> > > work on DT-based OLPC XO-1.75" updated to apply cleanly on top of
+> > > <git://linuxtv.org/sailus/media_tree.git> master as requested.
+> > > 
+> > > I've also added "ov7670: Remove useless use of a ret variable" with my Ack
+> > > slapped on it.
+> > 
+> > Hi Lubomir,
+> > 
+> > It seems the end result compiles but the intermedia patches do not. Could
+> > you resend, please? I'll replace the patches in my tree with a new version
+> > then...
 > 
-> Since check_kprobe_address_safe() already ensured that
-> the probe address is in kernel text, we don't need to
-> check whether the address in RODATA or not. That must
-> be always false.
+> Seems like the order got messed up. It should be sufficient to reorder
+> the patches like this:
 > 
-> Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
+> pick f42ae764598a ov7670: Remove useless use of a ret variable
+> pick 5be2efe0e5bb media: ov7670: split register setting from set_fmt() logic
+> pick 38eed963866e media: ov7670: split register setting from set_framerate() logic
+> pick 97be3c31de46 media: ov7670: hook s_power onto v4l2 core
+> pick 56c292d92642 media: ov7670: control clock along with power
+> 
+> (With "git rebase -i 87680151c22eee5b3bb6361fb8d18d765a9d8aff")
 
-Reviewed-by: Mark Rutland <mark.rutland@arm.com>
+Oh well. Done; let's see if that works better...
 
-Mark.
-
-> ---
->  arch/arm64/kernel/probes/kprobes.c |    6 ------
->  1 file changed, 6 deletions(-)
-> 
-> diff --git a/arch/arm64/kernel/probes/kprobes.c b/arch/arm64/kernel/probes/kprobes.c
-> index b2d4b7428ebc..1dae500d0a81 100644
-> --- a/arch/arm64/kernel/probes/kprobes.c
-> +++ b/arch/arm64/kernel/probes/kprobes.c
-> @@ -91,8 +91,6 @@ static void __kprobes arch_simulate_insn(struct kprobe *p, struct pt_regs *regs)
->  int __kprobes arch_prepare_kprobe(struct kprobe *p)
->  {
->  	unsigned long probe_addr = (unsigned long)p->addr;
-> -	extern char __start_rodata[];
-> -	extern char __end_rodata[];
->  
->  	if (probe_addr & 0x3)
->  		return -EINVAL;
-> @@ -106,10 +104,6 @@ int __kprobes arch_prepare_kprobe(struct kprobe *p)
->  	if (search_exception_tables(probe_addr))
->  		return -EINVAL;
->  
-> -	if (probe_addr >= (unsigned long) __start_rodata &&
-> -	    probe_addr <= (unsigned long) __end_rodata)
-> -		return -EINVAL;
-> -
->  	/* decode instruction */
->  	switch (arm_kprobe_decode_insn(p->addr, &p->ainsn)) {
->  	case INSN_REJECTED:	/* insn not supported */
-> 
+-- 
+Sakari Ailus
