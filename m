@@ -2,141 +2,103 @@ Return-Path: <SRS0=RZO6=PX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7BAFDC43444
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 17:02:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E48BC43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 17:02:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3EC1C20675
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 17:02:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547571736;
-	bh=buEUAmcHUIoOV2OSwgvBsZd1RiMfZ2u9EjxWPQOjxnc=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=sw/9gZqYhO2z/BQNiXxmnHNoNxxhb1eVLr/JROCvba8bmKXdhakc9EU8LiE4LGpYq
-	 SEug7m5P5393D28GoIp4sUQ2nGKucd4vrSAOulQ+uxnEHKmQmGuzTHwh+awQ2+NO8U
-	 NUiMZ2daMWItPXT+R09pUALXoUA2dW3zkncI05Mg=
+	by mail.kernel.org (Postfix) with ESMTP id 26CB620645
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 17:02:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731724AbfAOQhA (ORCPT
+        id S2388261AbfAORCQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 15 Jan 2019 11:37:00 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52182 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731687AbfAOQgy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Jan 2019 11:36:54 -0500
-Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 476DE20868;
-        Tue, 15 Jan 2019 16:36:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547570213;
-        bh=buEUAmcHUIoOV2OSwgvBsZd1RiMfZ2u9EjxWPQOjxnc=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=uLhs9SKuBxlVVEu7JSA8o3ofq81THUrkBFjjX67Kt7iA9eIvFJQLBf1kc0zxhDhZu
-         6g1SZGBvGCyB2sjtD7Hzxfjd/pUaq5kFRBd2/+pRjn+Gp1CZybQCiy+P0YN1z2LzTw
-         mijvVXXQOzXzfdQXU+iE8v8In5P8QOn+XQ5aGC/Q=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Liu Bo <bo.li.liu@oracle.com>,
-        David Sterba <dsterba@suse.com>,
-        Ben Hutchings <ben.hutchings@codethink.co.uk>
-Subject: [PATCH 4.4 11/51] Btrfs: improve check_node to avoid reading corrupted nodes
-Date:   Tue, 15 Jan 2019 17:35:07 +0100
-Message-Id: <20190115154848.513112933@linuxfoundation.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190115154846.928796000@linuxfoundation.org>
-References: <20190115154846.928796000@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
-X-Patchwork-Hint: ignore
+        Tue, 15 Jan 2019 12:02:16 -0500
+Received: from mx2.suse.de ([195.135.220.15]:51030 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1731711AbfAORCO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 Jan 2019 12:02:14 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id C2A3EAF50;
+        Tue, 15 Jan 2019 17:02:13 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id 10C3D1E0DB1; Tue, 15 Jan 2019 18:02:13 +0100 (CET)
+Date:   Tue, 15 Jan 2019 18:02:13 +0100
+From:   Jan Kara <jack@suse.cz>
+To:     Michal Hocko <mhocko@kernel.org>
+Cc:     Andrew Morton <akpm@linux-foundation.org>, Jan Kara <jack@suse.cz>,
+        Oscar Salvador <OSalvador@suse.com>,
+        Anshuman Khandual <anshuman.khandual@arm.com>,
+        linux-mm@kvack.org, LKML <linux-kernel@vger.kernel.org>,
+        Michal Hocko <mhocko@suse.com>
+Subject: Re: [PATCH] mm, memory_hotplug: __offline_pages fix wrong locking
+Message-ID: <20190115170213.GA26069@quack2.suse.cz>
+References: <20190115120307.22768-1-mhocko@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190115120307.22768-1-mhocko@kernel.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.4-stable review patch.  If anyone has any objections, please let me know.
+On Tue 15-01-19 13:03:07, Michal Hocko wrote:
+> From: Michal Hocko <mhocko@suse.com>
+> 
+> Jan has noticed that we do double unlock on some failure paths when
+> offlining a page range. This is indeed the case when test_pages_in_a_zone
+> respp. start_isolate_page_range fail. This was an omission when forward
+> porting the debugging patch from an older kernel.
+> 
+> Fix the issue by dropping mem_hotplug_done from the failure condition
+> and keeping the single unlock in the catch all failure path.
+> 
+> Reported-by: Jan Kara <jack@suse.cz>
+> Fixes: 7960509329c2 ("mm, memory_hotplug: print reason for the offlining failure")
+> Signed-off-by: Michal Hocko <mhocko@suse.com>
 
-------------------
+The patch looks good to me so feel free to add:
 
-From: Liu Bo <bo.li.liu@oracle.com>
+Reviewed-by: Jan Kara <jack@suse.cz>
 
-commit 6b722c1747d533ac6d4df110dc8233db46918b65 upstream.
+Also it fixes the test that previously crashed for me so you can add:
 
-We need to check items in a node to make sure that we're reading
-a valid one, otherwise we could get various crashes while processing
-delayed_refs.
+Tested-by: Jan Kara <jack@suse.cz>
 
-Signed-off-by: Liu Bo <bo.li.liu@oracle.com>
-Reviewed-by: David Sterba <dsterba@suse.com>
-Signed-off-by: David Sterba <dsterba@suse.com>
-Signed-off-by: Ben Hutchings <ben.hutchings@codethink.co.uk>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- fs/btrfs/disk-io.c |   32 ++++++++++++++++++++++++++++----
- 1 file changed, 28 insertions(+), 4 deletions(-)
-
---- a/fs/btrfs/disk-io.c
-+++ b/fs/btrfs/disk-io.c
-@@ -523,9 +523,10 @@ static int check_tree_block_fsid(struct
- }
- 
- #define CORRUPT(reason, eb, root, slot)				\
--	btrfs_crit(root->fs_info, "corrupt leaf, %s: block=%llu,"	\
--		   "root=%llu, slot=%d", reason,			\
--	       btrfs_header_bytenr(eb),	root->objectid, slot)
-+	btrfs_crit(root->fs_info, "corrupt %s, %s: block=%llu,"	\
-+		   " root=%llu, slot=%d",			\
-+		   btrfs_header_level(eb) == 0 ? "leaf" : "node",\
-+		   reason, btrfs_header_bytenr(eb), root->objectid, slot)
- 
- static noinline int check_leaf(struct btrfs_root *root,
- 			       struct extent_buffer *leaf)
-@@ -616,6 +617,10 @@ static noinline int check_leaf(struct bt
- static int check_node(struct btrfs_root *root, struct extent_buffer *node)
- {
- 	unsigned long nr = btrfs_header_nritems(node);
-+	struct btrfs_key key, next_key;
-+	int slot;
-+	u64 bytenr;
-+	int ret = 0;
- 
- 	if (nr == 0 || nr > BTRFS_NODEPTRS_PER_BLOCK(root)) {
- 		btrfs_crit(root->fs_info,
-@@ -623,7 +628,26 @@ static int check_node(struct btrfs_root
- 			   node->start, root->objectid, nr);
- 		return -EIO;
- 	}
--	return 0;
-+
-+	for (slot = 0; slot < nr - 1; slot++) {
-+		bytenr = btrfs_node_blockptr(node, slot);
-+		btrfs_node_key_to_cpu(node, &key, slot);
-+		btrfs_node_key_to_cpu(node, &next_key, slot + 1);
-+
-+		if (!bytenr) {
-+			CORRUPT("invalid item slot", node, root, slot);
-+			ret = -EIO;
-+			goto out;
-+		}
-+
-+		if (btrfs_comp_cpu_keys(&key, &next_key) >= 0) {
-+			CORRUPT("bad key order", node, root, slot);
-+			ret = -EIO;
-+			goto out;
-+		}
-+	}
-+out:
-+	return ret;
- }
- 
- static int btree_readpage_end_io_hook(struct btrfs_io_bio *io_bio,
+								Honza
 
 
+> ---
+>  mm/memory_hotplug.c | 2 --
+>  1 file changed, 2 deletions(-)
+> 
+> diff --git a/mm/memory_hotplug.c b/mm/memory_hotplug.c
+> index b9a667d36c55..faeeaccc5fae 100644
+> --- a/mm/memory_hotplug.c
+> +++ b/mm/memory_hotplug.c
+> @@ -1576,7 +1576,6 @@ static int __ref __offline_pages(unsigned long start_pfn,
+>  	   we assume this for now. .*/
+>  	if (!test_pages_in_a_zone(start_pfn, end_pfn, &valid_start,
+>  				  &valid_end)) {
+> -		mem_hotplug_done();
+>  		ret = -EINVAL;
+>  		reason = "multizone range";
+>  		goto failed_removal;
+> @@ -1591,7 +1590,6 @@ static int __ref __offline_pages(unsigned long start_pfn,
+>  				       MIGRATE_MOVABLE,
+>  				       SKIP_HWPOISON | REPORT_FAILURE);
+>  	if (ret) {
+> -		mem_hotplug_done();
+>  		reason = "failure to isolate range";
+>  		goto failed_removal;
+>  	}
+> -- 
+> 2.20.1
+> 
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
