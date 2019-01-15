@@ -2,389 +2,95 @@ Return-Path: <SRS0=RZO6=PX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_MUTT autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-4.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D47BEC43444
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 18:32:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 98A30C43444
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 18:36:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 94AC520859
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 18:32:05 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="O57pWJE7"
+	by mail.kernel.org (Postfix) with ESMTP id 66B0720657
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 18:36:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1547577378;
+	bh=6whWxQj1PvY5/IZ0ONf2GRXd2Bc5qbpQtwcWDSqd98E=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=Y1MlfwDkRUNE4Zr0IVZr1rajB5G5LEYU+pSrcRHWLcQ4rPfZ9LGjvKJM0e4EJW8E3
+	 qDKzoPUBUFw1IV+ZZM5knr6dGenWMP/B+oQBQ+c0Ve5hM6FvMrk9hta39f2R7vI+Ml
+	 sRGdIfeO/Vqapru1dyNJKCCUtCQC8VzTkmvO7Qao=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388750AbfAOScE (ORCPT
+        id S2388754AbfAOSgQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 15 Jan 2019 13:32:04 -0500
-Received: from mail-lf1-f65.google.com ([209.85.167.65]:35018 "EHLO
-        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727088AbfAOScD (ORCPT
+        Tue, 15 Jan 2019 13:36:16 -0500
+Received: from mail-ot1-f43.google.com ([209.85.210.43]:45655 "EHLO
+        mail-ot1-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727452AbfAOSgP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Jan 2019 13:32:03 -0500
-Received: by mail-lf1-f65.google.com with SMTP id e26so2838245lfc.2;
-        Tue, 15 Jan 2019 10:32:01 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=25yZ+tmli1MPXVX4ha840NozHxbCjWITEmRfreBlfCE=;
-        b=O57pWJE72Mpsc6RbiPWF1C5In/wbipu3ODXqdvyWkxNkq5CplEh1/jYjPp5P4xe/gJ
-         5CSdE7JXvsKpDimur+lvSCZT/UYL9mjQzMy2fnM6G87gfFELvy9ThD2WBzlfYuCqebWN
-         KzDxaKM6tiK/RqjQR0AEpkku1oCFBPgkzrlxaly/M6nilLG3x/pVTnKQUk97Xosn0JPI
-         Ckfq5JRS0j7Y6xFFLJo6dxo8Pt68pow3utCIEraZxoWkMwhbZxCW1dbhHnyGv63b91lm
-         CMCl2/uX/xMIPcEghxVWESnC8COP4b4alodJCyOlhVwAdA8xM7AI8OX2CAX10tx1ptlg
-         n5Og==
+        Tue, 15 Jan 2019 13:36:15 -0500
+Received: by mail-ot1-f43.google.com with SMTP id 32so3395448ota.12;
+        Tue, 15 Jan 2019 10:36:15 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=25yZ+tmli1MPXVX4ha840NozHxbCjWITEmRfreBlfCE=;
-        b=mS4RfvBF3P9haSSB3uJOd5Ea/695iE/Qm3iiqWiuHgbywIOF8Yyfhu54ecz2qVMl9z
-         vuYT2ZYM2QSfNQIBP5B9skEFv5VKdRu3ikUAZs4B/8t4Vv6dm5RxHTf6v3resiaDRPoU
-         JAlzJvTSaSkLSKqGK4tRuu7qXB8K2wk6UUdRaagiH2c2rhpZmHqXBIVNm22/V9eqMntK
-         c4V9NuYBMBykcl5fJu87MSEmKbxKnguq2RfdD9mRhn4CiCw+UczJJMUknIBBKJGqkPGP
-         atUTF9Xcw2qalTnVqTxiv3mJ/cFE80v5S/5MwQVbYw3LJP38C0lDjgp+mvMv8naZ7NYn
-         hxew==
-X-Gm-Message-State: AJcUukfFFRIQOwpLviDmee30FscG+zAtUMykhJO2zo+SkSTaGlTJjCiM
-        2I/VIgWvo6KhqwU1KfhyofE=
-X-Google-Smtp-Source: ALg8bN5Rkku1eVE/faPA5nMkpQ2a5BwuVOanb9aLr3ACNos09Gn38yTCeAd4O8eMoYJD6ZuyhuVviA==
-X-Received: by 2002:a19:ef15:: with SMTP id n21mr3985037lfh.21.1547577119998;
-        Tue, 15 Jan 2019 10:31:59 -0800 (PST)
-Received: from localhost (89-70-37-207.dynamic.chello.pl. [89.70.37.207])
-        by smtp.gmail.com with ESMTPSA id x11sm842039lfd.81.2019.01.15.10.31.58
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 15 Jan 2019 10:31:59 -0800 (PST)
-Date:   Tue, 15 Jan 2019 19:31:34 +0100
-From:   Tomasz Duszynski <tduszyns@gmail.com>
-To:     Jeremy Fertic <jeremyfertic@gmail.com>
-Cc:     Tomasz Duszynski <tduszyns@gmail.com>, linux-iio@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3] iio: chemical: sps30: allow changing self cleaning
- period
-Message-ID: <20190115183133.GA9202@arch>
-References: <20190113100912.29665-1-tduszyns@gmail.com>
- <20190115001539.GA20418@r2700x.localdomain>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=6whWxQj1PvY5/IZ0ONf2GRXd2Bc5qbpQtwcWDSqd98E=;
+        b=EIXwDf5UTGX7jyY2Wr2zdwt7a9lpojl9zIrDHxnezGDigdL+drfftIrVogLlYzek1L
+         d0hs+Pq2fzZKjupQUoDdGwsZbB8oseja2k7F/Xl6fIN6EWDvJIIc+CdYSzkx1GX+rfpi
+         u5P/X9WtG75oDRf077Hv0GuoXdRaX9YHTH55FEWVF6ZPAwKv2zClYPIoBiPXm+ey50PG
+         FhFTRCqb3xzWCruB2gjUIHZMMJOQowTsnGphX0uRVJ1mYjFxpaMLu8HxLtSbWXUdg4R2
+         fYUCJZE+2mKHSI0aColmJmmfoOS/07d1XFLlXwweK2tixBO7LDSYDFM6OsTOXUYraJK2
+         poEg==
+X-Gm-Message-State: AJcUukeyiyZwBubdfHEiKh7OPP2rj63yhLTEBoveXFVEyRuYkCYKR7p2
+        Tyx6iaaePsf0XcMJkJjhoWvqHxhwXX7Hd7GYPGk=
+X-Google-Smtp-Source: ALg8bN7DseTTxUHUENdb528u6E1TBRIwSxqG5pbAKxMPUMw2+g6sVORGUH2S/S3Y5FxtVxtpmEw/tPK3vzccvQVv4Bg=
+X-Received: by 2002:a9d:7f0d:: with SMTP id j13mr2996913otq.119.1547577374860;
+ Tue, 15 Jan 2019 10:36:14 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20190115001539.GA20418@r2700x.localdomain>
-User-Agent: Mutt/1.11.2 (2019-01-07)
+References: <20190109174341.19818-1-keith.busch@intel.com> <20190109174341.19818-4-keith.busch@intel.com>
+ <CAJZ5v0jk7ML21zxGwf9GaGNK8tP1LAs6Rd9NTK5O9HbzYeyPLA@mail.gmail.com> <20190115170741.GB27730@localhost.localdomain>
+In-Reply-To: <20190115170741.GB27730@localhost.localdomain>
+From:   "Rafael J. Wysocki" <rafael@kernel.org>
+Date:   Tue, 15 Jan 2019 19:36:03 +0100
+Message-ID: <CAJZ5v0iZ_i9vOPJgn69T=f8KE=fFm1vQt2AuEaNDGpn3E_cL3g@mail.gmail.com>
+Subject: Re: [PATCHv3 03/13] acpi/hmat: Parse and report heterogeneous memory
+To:     Keith Busch <keith.busch@intel.com>
+Cc:     "Rafael J. Wysocki" <rafael@kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
+        Linux Memory Management List <linux-mm@kvack.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Hansen, Dave" <dave.hansen@intel.com>,
+        "Williams, Dan J" <dan.j.williams@intel.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jan 14, 2019 at 05:15:39PM -0700, Jeremy Fertic wrote:
-> On Sun, Jan 13, 2019 at 11:09:12AM +0100, Tomasz Duszynski wrote:
-> > Sensor can periodically trigger self cleaning. Period can be changed by
-> > writing a new value to a dedicated attribute. Upon attribute read
-> > current period gets returned.
-> >
-> > Signed-off-by: Tomasz Duszynski <tduszyns@gmail.com>
-> > ---
-> > v3:
-> >  * add info about used units to attribute docs
-> >
-> > v2:
-> >  * return available values formated as a range
-> >  * tweak naming a little (interval -> period)
-> >
-> >  Documentation/ABI/testing/sysfs-bus-iio-sps30 |  20 +++
-> >  drivers/iio/chemical/sps30.c                  | 143 +++++++++++++++---
-> >  2 files changed, 145 insertions(+), 18 deletions(-)
-> >
-> > diff --git a/Documentation/ABI/testing/sysfs-bus-iio-sps30 b/Documentation/ABI/testing/sysfs-bus-iio-sps30
-> > index e7ce2c57635e..143df8e89d08 100644
-> > --- a/Documentation/ABI/testing/sysfs-bus-iio-sps30
-> > +++ b/Documentation/ABI/testing/sysfs-bus-iio-sps30
-> > @@ -6,3 +6,23 @@ Description:
-> >  		Writing 1 starts sensor self cleaning. Internal fan accelerates
-> >  		to its maximum speed and keeps spinning for about 10 seconds in
-> >  		order to blow out accumulated dust.
-> > +
-> > +What:		/sys/bus/iio/devices/iio:deviceX/cleaning_period
-> > +Date:		January 2019
-> > +KernelVersion:	5.1
-> > +Contact:	linux-iio@vger.kernel.org
-> > +Description:
-> > +		Sensor is capable of triggering self cleaning periodically.
-> > +		Period can be changed by writing a new value here. Upon reading
-> > +		the current one is returned. Units are seconds.
-> > +
-> > +		Writing 0 disables periodical self cleaning entirely.
-> > +
-> > +What:		/sys/bus/iio/devices/iio:deviceX/cleaning_period_available
-> > +Date:		January 2019
-> > +KernelVersion:	5.1
-> > +Contact:	linux-iio@vger.kernel.org
-> > +Description:
-> > +		The range of available values in seconds represented as the
-> > +		minimum value, the step and the maximum value, all enclosed in
-> > +		square brackets.
-> > diff --git a/drivers/iio/chemical/sps30.c b/drivers/iio/chemical/sps30.c
-> > index f3b4390c8f5c..fe5f6309191b 100644
-> > --- a/drivers/iio/chemical/sps30.c
-> > +++ b/drivers/iio/chemical/sps30.c
-> > @@ -5,9 +5,6 @@
-> >   * Copyright (c) Tomasz Duszynski <tduszyns@gmail.com>
-> >   *
-> >   * I2C slave address: 0x69
-> > - *
-> > - * TODO:
-> > - *  - support for reading/setting auto cleaning interval
-> >   */
-> >
-> >  #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
-> > @@ -21,6 +18,7 @@
-> >  #include <linux/iio/sysfs.h>
-> >  #include <linux/iio/trigger_consumer.h>
-> >  #include <linux/iio/triggered_buffer.h>
-> > +#include <linux/kernel.h>
-> >  #include <linux/module.h>
-> >
-> >  #define SPS30_CRC8_POLYNOMIAL 0x31
-> > @@ -28,6 +26,9 @@
-> >  #define SPS30_MAX_READ_SIZE 48
-> >  /* sensor measures reliably up to 3000 ug / m3 */
-> >  #define SPS30_MAX_PM 3000
-> > +/* minimum and maximum self cleaning periods in seconds */
-> > +#define SPS30_AUTO_CLEANING_PERIOD_MIN 0
-> > +#define SPS30_AUTO_CLEANING_PERIOD_MAX 604800
-> >
-> >  /* SPS30 commands */
-> >  #define SPS30_START_MEAS 0x0010
-> > @@ -37,6 +38,9 @@
-> >  #define SPS30_READ_DATA 0x0300
-> >  #define SPS30_READ_SERIAL 0xd033
-> >  #define SPS30_START_FAN_CLEANING 0x5607
-> > +#define SPS30_AUTO_CLEANING_PERIOD 0x8004
-> > +/* not a sensor command per se, used only to distinguish write from read */
-> > +#define SPS30_READ_AUTO_CLEANING_PERIOD 0x8005
-> >
-> >  enum {
-> >  	PM1,
-> > @@ -45,6 +49,11 @@ enum {
-> >  	PM10,
-> >  };
-> >
-> > +enum {
-> > +	RESET,
-> > +	MEASURING,
-> > +};
-> > +
-> >  struct sps30_state {
-> >  	struct i2c_client *client;
-> >  	/*
-> > @@ -52,6 +61,7 @@ struct sps30_state {
-> >  	 * Must be held whenever sequence of commands is to be executed.
-> >  	 */
-> >  	struct mutex lock;
-> > +	int state;
-> >  };
-> >
-> >  DECLARE_CRC8_TABLE(sps30_crc8_table);
-> > @@ -107,6 +117,9 @@ static int sps30_do_cmd(struct sps30_state *state, u16 cmd, u8 *data, int size)
-> >  	case SPS30_START_FAN_CLEANING:
-> >  		ret = sps30_write_then_read(state, buf, 2, NULL, 0);
-> >  		break;
-> > +	case SPS30_READ_AUTO_CLEANING_PERIOD:
-> > +		buf[0] = SPS30_AUTO_CLEANING_PERIOD >> 8;
-> > +		buf[1] = (u8)SPS30_AUTO_CLEANING_PERIOD;
-> >  	case SPS30_READ_DATA_READY_FLAG:
-> >  	case SPS30_READ_DATA:
-> >  	case SPS30_READ_SERIAL:
-> > @@ -114,6 +127,15 @@ static int sps30_do_cmd(struct sps30_state *state, u16 cmd, u8 *data, int size)
-> >  		size += size / 2;
-> >  		ret = sps30_write_then_read(state, buf, 2, buf, size);
-> >  		break;
-> > +	case SPS30_AUTO_CLEANING_PERIOD:
-> > +		buf[2] = data[0];
-> > +		buf[3] = data[1];
-> > +		buf[4] = crc8(sps30_crc8_table, &buf[2], 2, CRC8_INIT_VALUE);
-> > +		buf[5] = data[2];
-> > +		buf[6] = data[3];
-> > +		buf[7] = crc8(sps30_crc8_table, &buf[5], 2, CRC8_INIT_VALUE);
-> > +		ret = sps30_write_then_read(state, buf, 8, NULL, 0);
-> > +		break;
-> >  	}
-> >
-> >  	if (ret)
-> > @@ -170,6 +192,14 @@ static int sps30_do_meas(struct sps30_state *state, s32 *data, int size)
-> >  	int i, ret, tries = 5;
-> >  	u8 tmp[16];
-> >
-> > +	if (state->state == RESET) {
-> > +		ret = sps30_do_cmd(state, SPS30_START_MEAS, NULL, 0);
-> > +		if (ret)
-> > +			return ret;
-> > +
-> > +		state->state = MEASURING;
-> > +	}
-> > +
-> >  	while (tries--) {
-> >  		ret = sps30_do_cmd(state, SPS30_READ_DATA_READY_FLAG, tmp, 2);
-> >  		if (ret)
-> > @@ -276,6 +306,24 @@ static int sps30_read_raw(struct iio_dev *indio_dev,
-> >  	return -EINVAL;
-> >  }
-> >
-> > +static int sps30_do_cmd_reset(struct sps30_state *state)
-> > +{
-> > +	int ret;
-> > +
-> > +	ret = sps30_do_cmd(state, SPS30_RESET, NULL, 0);
-> > +	msleep(300);
-> > +	/*
-> > +	 * Power-on-reset causes sensor to produce some glitch on i2c bus and
-> > +	 * some controllers end up in error state. Recover simply by placing
-> > +	 * some data on the bus, for example STOP_MEAS command, which
-> > +	 * is NOP in this case.
-> > +	 */
-> > +	sps30_do_cmd(state, SPS30_STOP_MEAS, NULL, 0);
-> > +	state->state = RESET;
-> > +
-> > +	return ret;
-> > +}
-> > +
-> >  static ssize_t start_cleaning_store(struct device *dev,
-> >  				    struct device_attribute *attr,
-> >  				    const char *buf, size_t len)
-> > @@ -296,10 +344,82 @@ static ssize_t start_cleaning_store(struct device *dev,
-> >  	return len;
-> >  }
-> >
-> > +static ssize_t cleaning_period_show(struct device *dev,
-> > +				      struct device_attribute *attr,
-> > +				      char *buf)
-> > +{
-> > +	struct iio_dev *indio_dev = dev_to_iio_dev(dev);
-> > +	struct sps30_state *state = iio_priv(indio_dev);
-> > +	u8 tmp[4];
-> > +	int ret;
-> > +
-> > +	mutex_lock(&state->lock);
-> > +	ret = sps30_do_cmd(state, SPS30_READ_AUTO_CLEANING_PERIOD, tmp, 4);
-> > +	mutex_unlock(&state->lock);
-> > +	if (ret)
-> > +		return ret;
-> > +
-> > +	return sprintf(buf, "%d\n", get_unaligned_be32(tmp));
-> > +}
-> > +
-> > +static ssize_t cleaning_period_store(struct device *dev,
-> > +				       struct device_attribute *attr,
-> > +				       const char *buf, size_t len)
-> > +{
-> > +	struct iio_dev *indio_dev = dev_to_iio_dev(dev);
-> > +	struct sps30_state *state = iio_priv(indio_dev);
-> > +	int val, ret;
-> > +	u8 tmp[4];
-> > +
-> > +	if (kstrtoint(buf, 0, &val))
-> > +		return -EINVAL;
-> > +
-> > +	if ((val < SPS30_AUTO_CLEANING_PERIOD_MIN) &&
-> > +	    (val > SPS30_AUTO_CLEANING_PERIOD_MAX))
-> > +		return -EINVAL;
+On Tue, Jan 15, 2019 at 6:09 PM Keith Busch <keith.busch@intel.com> wrote:
 >
-> Should this be || instead of &&?
+> On Thu, Jan 10, 2019 at 07:42:46AM -0800, Rafael J. Wysocki wrote:
+> > On Wed, Jan 9, 2019 at 6:47 PM Keith Busch <keith.busch@intel.com> wrote:
+> > >
+> > > Systems may provide different memory types and export this information
+> > > in the ACPI Heterogeneous Memory Attribute Table (HMAT). Parse these
+> > > tables provided by the platform and report the memory access and caching
+> > > attributes.
+> > >
+> > > Signed-off-by: Keith Busch <keith.busch@intel.com>
+> >
+> > While this is generally fine by me, it's another piece of code going
+> > under drivers/acpi/ just because it happens to use ACPI to extract
+> > some information from the platform firmware.
+> >
+> > Isn't there any better place for it?
 >
+> I've tried to abstract the user visible parts outside any particular
+> firmware implementation, but HMAT parsing is an ACPI specific feature,
+> so I thought ACPI was a good home for this part. I'm open to suggestions
+> if there's a better place. Either under in another existing subsystem,
+> or create a new one under drivers/hmat/?
 
-Definitely. Thanks for catching this.
-
-> Jeremy
->
-> > +
-> > +	put_unaligned_be32(val, tmp);
-> > +
-> > +	mutex_lock(&state->lock);
-> > +	ret = sps30_do_cmd(state, SPS30_AUTO_CLEANING_PERIOD, tmp, 0);
-> > +	if (ret) {
-> > +		mutex_unlock(&state->lock);
-> > +		return ret;
-> > +	}
-> > +
-> > +	msleep(20);
-> > +
-> > +	/*
-> > +	 * sensor requires reset in order to return up to date self cleaning
-> > +	 * period
-> > +	 */
-> > +	ret = sps30_do_cmd_reset(state);
-> > +	if (ret)
-> > +		dev_warn(dev,
-> > +			 "period changed but reads will return the old value\n");
-> > +
-> > +	mutex_unlock(&state->lock);
-> > +
-> > +	return len;
-> > +}
-> > +
-> > +static ssize_t cleaning_period_available_show(struct device *dev,
-> > +					      struct device_attribute *attr,
-> > +					      char *buf)
-> > +{
-> > +	return snprintf(buf, PAGE_SIZE, "[%d %d %d]\n",
-> > +			SPS30_AUTO_CLEANING_PERIOD_MIN, 1,
-> > +			SPS30_AUTO_CLEANING_PERIOD_MAX);
-> > +}
-> > +
-> >  static IIO_DEVICE_ATTR_WO(start_cleaning, 0);
-> > +static IIO_DEVICE_ATTR_RW(cleaning_period, 0);
-> > +static IIO_DEVICE_ATTR_RO(cleaning_period_available, 0);
-> >
-> >  static struct attribute *sps30_attrs[] = {
-> >  	&iio_dev_attr_start_cleaning.dev_attr.attr,
-> > +	&iio_dev_attr_cleaning_period.dev_attr.attr,
-> > +	&iio_dev_attr_cleaning_period_available.dev_attr.attr,
-> >  	NULL
-> >  };
-> >
-> > @@ -362,6 +482,7 @@ static int sps30_probe(struct i2c_client *client)
-> >  	state = iio_priv(indio_dev);
-> >  	i2c_set_clientdata(client, indio_dev);
-> >  	state->client = client;
-> > +	state->state = RESET;
-> >  	indio_dev->dev.parent = &client->dev;
-> >  	indio_dev->info = &sps30_info;
-> >  	indio_dev->name = client->name;
-> > @@ -373,19 +494,11 @@ static int sps30_probe(struct i2c_client *client)
-> >  	mutex_init(&state->lock);
-> >  	crc8_populate_msb(sps30_crc8_table, SPS30_CRC8_POLYNOMIAL);
-> >
-> > -	ret = sps30_do_cmd(state, SPS30_RESET, NULL, 0);
-> > +	ret = sps30_do_cmd_reset(state);
-> >  	if (ret) {
-> >  		dev_err(&client->dev, "failed to reset device\n");
-> >  		return ret;
-> >  	}
-> > -	msleep(300);
-> > -	/*
-> > -	 * Power-on-reset causes sensor to produce some glitch on i2c bus and
-> > -	 * some controllers end up in error state. Recover simply by placing
-> > -	 * some data on the bus, for example STOP_MEAS command, which
-> > -	 * is NOP in this case.
-> > -	 */
-> > -	sps30_do_cmd(state, SPS30_STOP_MEAS, NULL, 0);
-> >
-> >  	ret = sps30_do_cmd(state, SPS30_READ_SERIAL, buf, sizeof(buf));
-> >  	if (ret) {
-> > @@ -395,12 +508,6 @@ static int sps30_probe(struct i2c_client *client)
-> >  	/* returned serial number is already NUL terminated */
-> >  	dev_info(&client->dev, "serial number: %s\n", buf);
-> >
-> > -	ret = sps30_do_cmd(state, SPS30_START_MEAS, NULL, 0);
-> > -	if (ret) {
-> > -		dev_err(&client->dev, "failed to start measurement\n");
-> > -		return ret;
-> > -	}
-> > -
-> >  	ret = devm_add_action_or_reset(&client->dev, sps30_stop_meas, state);
-> >  	if (ret)
-> >  		return ret;
-> > --
-> > 2.20.1
-> >
+Well, there is drivers/acpi/nfit for the NVDIMM-related things, so
+maybe there could be drivers/acpi/mm/ containing nfit/ and hmat.c (and
+maybe some other mm-related things)?
