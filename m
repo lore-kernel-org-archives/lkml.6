@@ -7,46 +7,45 @@ X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A5B9C43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 16:41:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EF1F6C43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 16:41:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4801D2054F
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 16:41:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C003C2054F
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 16:41:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547570492;
-	bh=9CUAlmL9MEfsIciKW8q2k/sa2uuV4L+Vwipn+7FtcTs=;
+	s=default; t=1547570495;
+	bh=kzGylFrcEZVYht18mhXNED4vPBlEhmmT5LHy0RkNvcc=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=wlJ4qTInQPJOq4Xjuxib5KIxrMj7euKdYX86qYfsw581LdIDN2SjIMjq+f78kHxVd
-	 DQxnT0pYtL1pN6h5+Wb2Ib5B2Ix0W+JG44r33lXEQd/CS5Tzp27mUf/Ticany1t0QE
-	 y1UPOHAaBZT3QApcrU77jZKTHPOAEerq3zCnLEpY=
+	b=BYi756UOrcdPilzVUZ30vapDmFti6Mjyvh2oMapQE5lEXxaXGefd46/SmQVWFB4mk
+	 p8la8PFaY80Wv7b6Pd2V7NRJ98nVHBNH8jUboANx6jTUtpVddlXCXIAVI8rX62xwFn
+	 OZwEPObeFU0rnOwcFLnPnwQtVWuxIOOUtAcWYAvA=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730057AbfAOQla (ORCPT
+        id S1732820AbfAOQle (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 15 Jan 2019 11:41:30 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58214 "EHLO mail.kernel.org"
+        Tue, 15 Jan 2019 11:41:34 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58278 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732789AbfAOQl2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Jan 2019 11:41:28 -0500
+        id S1732807AbfAOQlb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 Jan 2019 11:41:31 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5A1AD2054F;
-        Tue, 15 Jan 2019 16:41:27 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5FAFB20675;
+        Tue, 15 Jan 2019 16:41:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547570487;
-        bh=9CUAlmL9MEfsIciKW8q2k/sa2uuV4L+Vwipn+7FtcTs=;
+        s=default; t=1547570490;
+        bh=kzGylFrcEZVYht18mhXNED4vPBlEhmmT5LHy0RkNvcc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=WuDQpwQT+obTjtzKR4hDcrQL4QS0CBl3qIgXgqPQ1lG+w4+UXkrwJsUTDenyM3nk4
-         yRC3kUaqgoTOedx7niWCKtUFgw2k39OHQ9GObXM2eW4dFgV+/leN2sShspd4e//oPF
-         BekQLUjS2pihhd00nX0SzHdLI68kKi6GyrxYN7do=
+        b=S/hepAQUMgjIvzF79NuR0AXxew/f9yJDiJ7gub15vVDGV9QpUQmIv6Bej+YSd0f+0
+         K47X43S1nnVSfEr3zapuJIyLAgEXut2L8P3kAhYwWbsVu+t+4EKKPqpJ8zBHT0g6c6
+         qSepnoFbN5dELnGQHYRDQ6coXAHzH5Ko7/z0NZUA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Ross Lagerwall <ross.lagerwall@citrix.com>,
-        Steve French <stfrench@microsoft.com>
-Subject: [PATCH 4.19 13/50] cifs: Fix potential OOB access of lock element array
-Date:   Tue, 15 Jan 2019 17:35:49 +0100
-Message-Id: <20190115154910.725257680@linuxfoundation.org>
+        stable@vger.kernel.org, Daniele Palmas <dnlplm@gmail.com>
+Subject: [PATCH 4.19 14/50] usb: cdc-acm: send ZLP for Telit 3G Intel based modems
+Date:   Tue, 15 Jan 2019 17:35:50 +0100
+Message-Id: <20190115154910.778031607@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190115154909.933241945@linuxfoundation.org>
 References: <20190115154909.933241945@linuxfoundation.org>
@@ -65,65 +64,36 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Ross Lagerwall <ross.lagerwall@citrix.com>
+From: Daniele Palmas <dnlplm@gmail.com>
 
-commit b9a74cde94957d82003fb9f7ab4777938ca851cd upstream.
+commit 34aabf918717dd14e05051896aaecd3b16b53d95 upstream.
 
-If maxBuf is small but non-zero, it could result in a zero sized lock
-element array which we would then try and access OOB.
+Telit 3G Intel based modems require zero packet to be sent if
+out data size is equal to the endpoint max packet size.
 
-Signed-off-by: Ross Lagerwall <ross.lagerwall@citrix.com>
-Signed-off-by: Steve French <stfrench@microsoft.com>
-CC: Stable <stable@vger.kernel.org>
+Signed-off-by: Daniele Palmas <dnlplm@gmail.com>
+Cc: stable <stable@vger.kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/cifs/file.c     |    8 ++++----
- fs/cifs/smb2file.c |    4 ++--
- 2 files changed, 6 insertions(+), 6 deletions(-)
+ drivers/usb/class/cdc-acm.c |    7 +++++++
+ 1 file changed, 7 insertions(+)
 
---- a/fs/cifs/file.c
-+++ b/fs/cifs/file.c
-@@ -1120,10 +1120,10 @@ cifs_push_mandatory_locks(struct cifsFil
+--- a/drivers/usb/class/cdc-acm.c
++++ b/drivers/usb/class/cdc-acm.c
+@@ -1880,6 +1880,13 @@ static const struct usb_device_id acm_id
+ 	.driver_info = IGNORE_DEVICE,
+ 	},
  
- 	/*
- 	 * Accessing maxBuf is racy with cifs_reconnect - need to store value
--	 * and check it for zero before using.
-+	 * and check it before using.
- 	 */
- 	max_buf = tcon->ses->server->maxBuf;
--	if (!max_buf) {
-+	if (max_buf < (sizeof(struct smb_hdr) + sizeof(LOCKING_ANDX_RANGE))) {
- 		free_xid(xid);
- 		return -EINVAL;
- 	}
-@@ -1460,10 +1460,10 @@ cifs_unlock_range(struct cifsFileInfo *c
- 
- 	/*
- 	 * Accessing maxBuf is racy with cifs_reconnect - need to store value
--	 * and check it for zero before using.
-+	 * and check it before using.
- 	 */
- 	max_buf = tcon->ses->server->maxBuf;
--	if (!max_buf)
-+	if (max_buf < (sizeof(struct smb_hdr) + sizeof(LOCKING_ANDX_RANGE)))
- 		return -EINVAL;
- 
- 	max_num = (max_buf - sizeof(struct smb_hdr)) /
---- a/fs/cifs/smb2file.c
-+++ b/fs/cifs/smb2file.c
-@@ -122,10 +122,10 @@ smb2_unlock_range(struct cifsFileInfo *c
- 
- 	/*
- 	 * Accessing maxBuf is racy with cifs_reconnect - need to store value
--	 * and check it for zero before using.
-+	 * and check it before using.
- 	 */
- 	max_buf = tcon->ses->server->maxBuf;
--	if (!max_buf)
-+	if (max_buf < sizeof(struct smb2_lock_element))
- 		return -EINVAL;
- 
- 	max_num = max_buf / sizeof(struct smb2_lock_element);
++	{ USB_DEVICE(0x1bc7, 0x0021), /* Telit 3G ACM only composition */
++	.driver_info = SEND_ZERO_PACKET,
++	},
++	{ USB_DEVICE(0x1bc7, 0x0023), /* Telit 3G ACM + ECM composition */
++	.driver_info = SEND_ZERO_PACKET,
++	},
++
+ 	/* control interfaces without any protocol set */
+ 	{ USB_INTERFACE_INFO(USB_CLASS_COMM, USB_CDC_SUBCLASS_ACM,
+ 		USB_CDC_PROTO_NONE) },
 
 
