@@ -7,47 +7,46 @@ X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D181C43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 16:38:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 851B2C43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 16:38:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1EB8320868
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 16:38:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5340F20868
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 16:38:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547570306;
-	bh=Y+KvPHh/UdWwPp0ybdebSVSkTlVgWNIACLVKr6x2lvA=;
+	s=default; t=1547570308;
+	bh=986fwwQFIti0dS7mkWuxz+ljNWAdN7OG1jsZpfP65Ck=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=QrWTRyflo6UoezVZ0Tz6kHfjF+UcFsULpdpZpSkcKUFU7ze0kOlC38mBWRqXW2+HS
-	 IwGyTR9ZYtibAa2X5R0TUO9IBoeFBlo60ZUCMmUeHRNyR/F0HhluTTBiy89zlaUDEG
-	 3Deq56rVNH8lz2H3KiSTlv0cQwBkK3KFzDajQ5go=
+	b=xoVFiRnjOTa1WrwRTjWaRU8ZBDupZiwawfaEdL2NUwqhYyEdU0GcJrwkDaT2m1lgm
+	 SnOdKY4+4B80eIxONAFRERbx1yhJbnhox4h4fnhvYwc7I/epEEI2zduh8Gb9T9Hfqs
+	 Yond02zyXuCa9UfhWewb09uWi6FeN+w8qnKQB4as=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732086AbfAOQiY (ORCPT
+        id S1732101AbfAOQi1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 15 Jan 2019 11:38:24 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54184 "EHLO mail.kernel.org"
+        Tue, 15 Jan 2019 11:38:27 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54120 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732051AbfAOQiW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Jan 2019 11:38:22 -0500
+        id S1732066AbfAOQiU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 Jan 2019 11:38:20 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8D21620868;
-        Tue, 15 Jan 2019 16:38:21 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 11E9820675;
+        Tue, 15 Jan 2019 16:38:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547570302;
-        bh=Y+KvPHh/UdWwPp0ybdebSVSkTlVgWNIACLVKr6x2lvA=;
+        s=default; t=1547570299;
+        bh=986fwwQFIti0dS7mkWuxz+ljNWAdN7OG1jsZpfP65Ck=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=TAfQwDCKNbLD4EEPha3exGp6RiUxtQYskp4zqm6ucSNSGKjDEksYKb4bDuduWfC+K
-         5jXCnad8A4mESukt0BkiFZnb+DNY2OdhCJep8+XxdV7Tb/EZCzGyy7ztn7lpq5lk80
-         gTo2SSCJmQsiFUHrmeqxokcEMl84pRx7Z7kWEsQs=
+        b=kZ14TCsB/PxZ6lVEedM8teY3Jhu/vhnXSxYYo+tQVPRKytHJVeSDx12UmTCrgujpa
+         iKNYhOAGPPWr1ojRVKyOmD0gWtK5GptHC25QjzFlN/fH87zIWYi+3heLWsLqOLZj9O
+         d7TLz3Cufsjijj+d0Kwn5gQj4luhfRXIaml+jra4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Ley Foon Tan <lftan@altera.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
+        stable@vger.kernel.org, Bjorn Helgaas <bhelgaas@google.com>,
         Claudius Heine <claudius.heine.ext@siemens.com>
-Subject: [PATCH 4.4 42/51] PCI: altera: Check link status before retrain link
-Date:   Tue, 15 Jan 2019 17:35:38 +0100
-Message-Id: <20190115154853.319380189@linuxfoundation.org>
+Subject: [PATCH 4.4 41/51] PCI: altera: Reorder read/write functions
+Date:   Tue, 15 Jan 2019 17:35:37 +0100
+Message-Id: <20190115154853.167769469@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190115154846.928796000@linuxfoundation.org>
 References: <20190115154846.928796000@linuxfoundation.org>
@@ -66,35 +65,76 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Ley Foon Tan <lftan@altera.com>
+From: Bjorn Helgaas <bhelgaas@google.com>
 
-commit c622032ebc538cb3869c312ae3ad235a99da84b6 upstream.
+commit f8be11ae3d2c9a1338da37ff91ff4c65922d21be upstream.
 
-Check the link status before retraining.  If the link is not up, don't
-bother trying to retrain it.
+Move cra_writel(), cra_readl(), and altera_pcie_link_is_up() so a future
+patch can use them in altera_pcie_retrain().  No functional change
+intended.
 
-[bhelgaas: split code move to separate patch, changelog]
-Signed-off-by: Ley Foon Tan <lftan@altera.com>
 Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
 Cc: Claudius Heine <claudius.heine.ext@siemens.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/pci/host/pcie-altera.c |    4 ++++
- 1 file changed, 4 insertions(+)
+ drivers/pci/host/pcie-altera.c |   32 ++++++++++++++++----------------
+ 1 file changed, 16 insertions(+), 16 deletions(-)
 
 --- a/drivers/pci/host/pcie-altera.c
 +++ b/drivers/pci/host/pcie-altera.c
-@@ -100,6 +100,10 @@ static bool altera_pcie_link_is_up(struc
+@@ -81,6 +81,22 @@ struct tlp_rp_regpair_t {
+ 	u32 reg1;
+ };
+ 
++static inline void cra_writel(struct altera_pcie *pcie, const u32 value,
++			      const u32 reg)
++{
++	writel_relaxed(value, pcie->cra_base + reg);
++}
++
++static inline u32 cra_readl(struct altera_pcie *pcie, const u32 reg)
++{
++	return readl_relaxed(pcie->cra_base + reg);
++}
++
++static bool altera_pcie_link_is_up(struct altera_pcie *pcie)
++{
++	return !!((cra_readl(pcie, RP_LTSSM) & RP_LTSSM_MASK) == LTSSM_L0);
++}
++
  static void altera_pcie_retrain(struct pci_dev *dev)
  {
  	u16 linkcap, linkstat;
-+	struct altera_pcie *pcie = dev->bus->sysdata;
-+
-+	if (!altera_pcie_link_is_up(pcie))
-+		return;
+@@ -120,17 +136,6 @@ static bool altera_pcie_hide_rc_bar(stru
+ 	return false;
+ }
  
- 	/*
- 	 * Set the retrain bit if the PCIe rootport support > 2.5GB/s, but
+-static inline void cra_writel(struct altera_pcie *pcie, const u32 value,
+-			      const u32 reg)
+-{
+-	writel_relaxed(value, pcie->cra_base + reg);
+-}
+-
+-static inline u32 cra_readl(struct altera_pcie *pcie, const u32 reg)
+-{
+-	return readl_relaxed(pcie->cra_base + reg);
+-}
+-
+ static void tlp_write_tx(struct altera_pcie *pcie,
+ 			 struct tlp_rp_regpair_t *tlp_rp_regdata)
+ {
+@@ -139,11 +144,6 @@ static void tlp_write_tx(struct altera_p
+ 	cra_writel(pcie, tlp_rp_regdata->ctrl, RP_TX_CNTRL);
+ }
+ 
+-static bool altera_pcie_link_is_up(struct altera_pcie *pcie)
+-{
+-	return !!((cra_readl(pcie, RP_LTSSM) & RP_LTSSM_MASK) == LTSSM_L0);
+-}
+-
+ static bool altera_pcie_valid_config(struct altera_pcie *pcie,
+ 				     struct pci_bus *bus, int dev)
+ {
 
 
