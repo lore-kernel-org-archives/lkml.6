@@ -2,300 +2,144 @@ Return-Path: <SRS0=RZO6=PX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 38DC3C43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 22:54:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C81EC43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 23:03:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E9810208E4
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 22:54:53 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="DisHs6iC"
+	by mail.kernel.org (Postfix) with ESMTP id EFDFC2086D
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 23:03:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391286AbfAOWyw (ORCPT
+        id S2391254AbfAOXD5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 15 Jan 2019 17:54:52 -0500
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:38351 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2391269AbfAOWyv (ORCPT
+        Tue, 15 Jan 2019 18:03:57 -0500
+Received: from gateway22.websitewelcome.com ([192.185.46.234]:31221 "EHLO
+        gateway22.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S2387707AbfAOXD4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Jan 2019 17:54:51 -0500
-Received: by mail-pg1-f193.google.com with SMTP id g189so1876836pgc.5
-        for <linux-kernel@vger.kernel.org>; Tue, 15 Jan 2019 14:54:50 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=ulklU9I6wCPQIDgWA7fI0PRn/xTa9ghmXaq1+/wSs5E=;
-        b=DisHs6iCYOD4FFg7r3xyfD2f95GY5bmZQgTeGu9cFUOZfMXNitif23JMOJ7A3u8l1v
-         waFQ2S7CAd6zDRShQPD3Xjm4+1pmy+zCQSm+joqZwrY8J5TgIY0bLP5XONcjuvjiTN1E
-         lnB7VYFHqSTQ7EhdE4EorYLVYLb1LAyicZPe8=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=ulklU9I6wCPQIDgWA7fI0PRn/xTa9ghmXaq1+/wSs5E=;
-        b=hH/oNPcTNVQCUP15hXuGHq1MmT1tKrBSM1DBThPu6QDZwOxL8lZgy39vAwsbpcuro2
-         qAFmDJq5gyjAjhlM7jp0GPqiuNl5/BuPLEkBUY4LNZRnN/N4VcELHt80mXcyVLo6Y2qJ
-         mKL4Iu3NpMS12acOo2HSH/JptoZ/vFaBbzLSBt8lrN3y8LNq7qBGGISb3zZn0TgtjH+T
-         gsiwqWOl8+gSzLT/bQ44TXZDgl/oe3PUiFwr5b/p67stgdv2EKpWKGzR1pu7+oaecsda
-         m0SNPiTOVpAdnJ0rO+LD6vYgAuQvFHwfCC/2mLPAk6yzR/IHEwRNwocaf9eiSMTrggWe
-         g6iQ==
-X-Gm-Message-State: AJcUukdUqiVTXQYA7GWA7x8+kKsDDKAuqptY4xBpDpGGVX7D5V3ML09k
-        fOLZu96LlVXAqqOJ8EEO3t6oDQ==
-X-Google-Smtp-Source: ALg8bN5ZOYvWP6QYyV7PsFnWY9MHQsClolrSG1hCM4/I924qF7jBcbE3KI2n+K/5ecUhwnVFiKsGig==
-X-Received: by 2002:a63:3d49:: with SMTP id k70mr5933257pga.191.1547592889533;
-        Tue, 15 Jan 2019 14:54:49 -0800 (PST)
-Received: from smtp.gmail.com ([2620:15c:202:1:fa53:7765:582b:82b9])
-        by smtp.gmail.com with ESMTPSA id y84sm11060863pfb.81.2019.01.15.14.54.48
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 15 Jan 2019 14:54:48 -0800 (PST)
-From:   Stephen Boyd <swboyd@chromium.org>
-To:     Andy Gross <andy.gross@linaro.org>
-Cc:     linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Lina Iyer <ilina@codeaurora.org>,
-        "Raju P.L.S.S.S.N" <rplsssn@codeaurora.org>,
-        Matthias Kaehlcke <mka@chromium.org>,
-        Evan Green <evgreen@chromium.org>
-Subject: [PATCH v2] soc: qcom: rpmh: Avoid accessing freed memory from batch API
-Date:   Tue, 15 Jan 2019 14:54:47 -0800
-Message-Id: <20190115225447.75212-1-swboyd@chromium.org>
-X-Mailer: git-send-email 2.20.1.97.g81188d93c3-goog
+        Tue, 15 Jan 2019 18:03:56 -0500
+Received: from cm13.websitewelcome.com (cm13.websitewelcome.com [100.42.49.6])
+        by gateway22.websitewelcome.com (Postfix) with ESMTP id 24B5F6B6C
+        for <linux-kernel@vger.kernel.org>; Tue, 15 Jan 2019 17:03:55 -0600 (CST)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id jXkRgfhXaYTGMjXkRgPhLZ; Tue, 15 Jan 2019 17:03:55 -0600
+X-Authority-Reason: nr=8
+Received: from [189.250.130.205] (port=46856 helo=[192.168.1.77])
+        by gator4166.hostgator.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
+        (Exim 4.91)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1gjXkQ-002e7m-OO; Tue, 15 Jan 2019 17:03:54 -0600
+Subject: Re: [PATCH] RDMA/mlx5: Replace kzalloc with kcalloc
+To:     Jason Gunthorpe <jgg@ziepe.ca>
+Cc:     Leon Romanovsky <leon@kernel.org>,
+        Doug Ledford <dledford@redhat.com>, linux-rdma@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20190115060048.GA9911@embeddedor>
+ <20190115225403.GA18581@ziepe.ca>
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=gustavo@embeddedor.com; keydata=
+ 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
+ VtSixD1uOgytAP7RWS474w==
+Message-ID: <699ab063-64d3-0c9d-f3eb-8e38aa9c5f5d@embeddedor.com>
+Date:   Tue, 15 Jan 2019 17:03:48 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190115225403.GA18581@ziepe.ca>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 189.250.130.205
+X-Source-L: No
+X-Exim-ID: 1gjXkQ-002e7m-OO
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: ([192.168.1.77]) [189.250.130.205]:46856
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 5
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Using the batch API from the interconnect driver sometimes leads to a
-KASAN error due to an access to freed memory. This is easier to trigger
-with threadirqs on the kernel commandline.
 
- BUG: KASAN: use-after-free in rpmh_tx_done+0x114/0x12c
- Read of size 1 at addr fffffff51414ad84 by task irq/110-apps_rs/57
 
- CPU: 0 PID: 57 Comm: irq/110-apps_rs Tainted: G        W         4.19.10 #72
- Call trace:
-  dump_backtrace+0x0/0x2f8
-  show_stack+0x20/0x2c
-  __dump_stack+0x20/0x28
-  dump_stack+0xcc/0x10c
-  print_address_description+0x74/0x240
-  kasan_report+0x250/0x26c
-  __asan_report_load1_noabort+0x20/0x2c
-  rpmh_tx_done+0x114/0x12c
-  tcs_tx_done+0x450/0x768
-  irq_forced_thread_fn+0x58/0x9c
-  irq_thread+0x120/0x1dc
-  kthread+0x248/0x260
-  ret_from_fork+0x10/0x18
+On 1/15/19 4:54 PM, Jason Gunthorpe wrote:
+> On Tue, Jan 15, 2019 at 12:00:48AM -0600, Gustavo A. R. Silva wrote:
+>> Replace kzalloc() function with its 2-factor argument form, kcalloc().
+>>
+>> This patch replaces cases of:
+>>
+>> 	kzalloc(a * b, gfp)
+>>
+>> with:
+>> 	kcalloc(a, b, gfp)
+>>
+>> This code was detected with the help of Coccinelle.
+>>
+>> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+>> Acked-by: Leon Romanovsky <leonro@mellanox.com>
+>> ---
+>>  drivers/infiniband/hw/mlx5/main.c | 2 +-
+>>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> Applied to for-next
+> 
 
- Allocated by task 385:
-  kasan_kmalloc+0xac/0x148
-  __kmalloc+0x170/0x1e4
-  rpmh_write_batch+0x174/0x540
-  qcom_icc_set+0x8dc/0x9ac
-  icc_set+0x288/0x2e8
-  a6xx_gmu_stop+0x320/0x3c0
-  a6xx_pm_suspend+0x108/0x124
-  adreno_suspend+0x50/0x60
-  pm_generic_runtime_suspend+0x60/0x78
-  __rpm_callback+0x214/0x32c
-  rpm_callback+0x54/0x184
-  rpm_suspend+0x3f8/0xa90
-  pm_runtime_work+0xb4/0x178
-  process_one_work+0x544/0xbc0
-  worker_thread+0x514/0x7d0
-  kthread+0x248/0x260
-  ret_from_fork+0x10/0x18
+Thank you both, Leon and Jason.
 
- Freed by task 385:
-  __kasan_slab_free+0x12c/0x1e0
-  kasan_slab_free+0x10/0x1c
-  kfree+0x134/0x588
-  rpmh_write_batch+0x49c/0x540
-  qcom_icc_set+0x8dc/0x9ac
-  icc_set+0x288/0x2e8
-  a6xx_gmu_stop+0x320/0x3c0
-  a6xx_pm_suspend+0x108/0x124
-  adreno_suspend+0x50/0x60
- cr50_spi spi5.0: SPI transfer timed out
-  pm_generic_runtime_suspend+0x60/0x78
-  __rpm_callback+0x214/0x32c
-  rpm_callback+0x54/0x184
-  rpm_suspend+0x3f8/0xa90
-  pm_runtime_work+0xb4/0x178
-  process_one_work+0x544/0xbc0
-  worker_thread+0x514/0x7d0
-  kthread+0x248/0x260
-  ret_from_fork+0x10/0x18
-
- The buggy address belongs to the object at fffffff51414ac80
-  which belongs to the cache kmalloc-512 of size 512
- The buggy address is located 260 bytes inside of
-  512-byte region [fffffff51414ac80, fffffff51414ae80)
- The buggy address belongs to the page:
- page:ffffffbfd4505200 count:1 mapcount:0 mapping:fffffff51e00c680 index:0x0 compound_mapcount: 0
- flags: 0x4000000000008100(slab|head)
- raw: 4000000000008100 ffffffbfd4529008 ffffffbfd44f9208 fffffff51e00c680
- raw: 0000000000000000 0000000000200020 00000001ffffffff 0000000000000000
- page dumped because: kasan: bad access detected
-
- Memory state around the buggy address:
-  fffffff51414ac80: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-  fffffff51414ad00: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
- >fffffff51414ad80: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-                    ^
-  fffffff51414ae00: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-  fffffff51414ae80: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
-
-The batch API sets the same completion for each rpmh message that's sent
-and then loops through all the messages and waits for that single
-completion declared on the stack to be completed before returning from
-the function and freeing the message structures. Unfortunately, some
-messages may still be in process and 'stuck' in the TCS. At some later
-point, the tcs_tx_done() interrupt will run and try to process messages
-that have already been freed at the end of rpmh_write_batch(). This will
-in turn access the 'needs_free' member of the rpmh_request structure and
-cause KASAN to complain. Furthermore, if there's a message that's
-completed in rpmh_tx_done() and freed immediately after the complete()
-call is made we'll be racing with potentially freed memory when
-accessing the 'needs_free' member:
-
-	CPU0                         CPU1
-	----                         ----
-	rpmh_tx_done()
-	 complete(&compl)
-	                             wait_for_completion(&compl)
-	                             kfree(rpm_msg)
-	 if (rpm_msg->needs_free)
-	 <KASAN warning splat>
-
-Let's fix this by allocating a chunk of completions for each message and
-waiting for all of them to be completed before returning from the batch
-API. Alternatively, we could wait for the last message in the batch, but
-that may be a more complicated change because it looks like
-tcs_tx_done() just iterates through the indices of the queue and
-completes each message instead of tracking the last inserted message and
-completing that first.
-
-Cc: Lina Iyer <ilina@codeaurora.org>
-Cc: "Raju P.L.S.S.S.N" <rplsssn@codeaurora.org>
-Cc: Matthias Kaehlcke <mka@chromium.org>
-Cc: Evan Green <evgreen@chromium.org>
-Fixes: c8790cb6da58 ("drivers: qcom: rpmh: add support for batch RPMH request")
-Signed-off-by: Stephen Boyd <swboyd@chromium.org>
----
-
-Changes from v1:
- * Incorporated needs_free check earlier
- * Simplified logic to no longer flush everything out on failure
-
- drivers/soc/qcom/rpmh.c | 34 +++++++++++++++++++++-------------
- 1 file changed, 21 insertions(+), 13 deletions(-)
-
-diff --git a/drivers/soc/qcom/rpmh.c b/drivers/soc/qcom/rpmh.c
-index c7beb6841289..ab8f731a3426 100644
---- a/drivers/soc/qcom/rpmh.c
-+++ b/drivers/soc/qcom/rpmh.c
-@@ -80,6 +80,7 @@ void rpmh_tx_done(const struct tcs_request *msg, int r)
- 	struct rpmh_request *rpm_msg = container_of(msg, struct rpmh_request,
- 						    msg);
- 	struct completion *compl = rpm_msg->completion;
-+	bool free = rpm_msg->needs_free;
- 
- 	rpm_msg->err = r;
- 
-@@ -94,7 +95,7 @@ void rpmh_tx_done(const struct tcs_request *msg, int r)
- 	complete(compl);
- 
- exit:
--	if (rpm_msg->needs_free)
-+	if (free)
- 		kfree(rpm_msg);
- }
- 
-@@ -348,11 +349,12 @@ int rpmh_write_batch(const struct device *dev, enum rpmh_state state,
- {
- 	struct batch_cache_req *req;
- 	struct rpmh_request *rpm_msgs;
--	DECLARE_COMPLETION_ONSTACK(compl);
-+	struct completion *compls;
- 	struct rpmh_ctrlr *ctrlr = get_rpmh_ctrlr(dev);
- 	unsigned long time_left;
- 	int count = 0;
--	int ret, i, j;
-+	int ret, i;
-+	void *ptr;
- 
- 	if (!cmd || !n)
- 		return -EINVAL;
-@@ -362,10 +364,15 @@ int rpmh_write_batch(const struct device *dev, enum rpmh_state state,
- 	if (!count)
- 		return -EINVAL;
- 
--	req = kzalloc(sizeof(*req) + count * sizeof(req->rpm_msgs[0]),
-+	ptr = kzalloc(sizeof(*req) +
-+		      count * (sizeof(req->rpm_msgs[0]) + sizeof(*compls)),
- 		      GFP_ATOMIC);
--	if (!req)
-+	if (!ptr)
- 		return -ENOMEM;
-+
-+	req = ptr;
-+	compls = ptr + sizeof(*req) + count * sizeof(*rpm_msgs);
-+
- 	req->count = count;
- 	rpm_msgs = req->rpm_msgs;
- 
-@@ -380,25 +387,26 @@ int rpmh_write_batch(const struct device *dev, enum rpmh_state state,
- 	}
- 
- 	for (i = 0; i < count; i++) {
--		rpm_msgs[i].completion = &compl;
-+		struct completion *compl = &compls[i];
-+
-+		init_completion(compl);
-+		rpm_msgs[i].completion = compl;
- 		ret = rpmh_rsc_send_data(ctrlr_to_drv(ctrlr), &rpm_msgs[i].msg);
- 		if (ret) {
- 			pr_err("Error(%d) sending RPMH message addr=%#x\n",
- 			       ret, rpm_msgs[i].msg.cmds[0].addr);
--			for (j = i; j < count; j++)
--				rpmh_tx_done(&rpm_msgs[j].msg, ret);
- 			break;
- 		}
- 	}
- 
- 	time_left = RPMH_TIMEOUT_MS;
--	for (i = 0; i < count; i++) {
--		time_left = wait_for_completion_timeout(&compl, time_left);
-+	while (i--) {
-+		time_left = wait_for_completion_timeout(&compls[i], time_left);
- 		if (!time_left) {
- 			/*
- 			 * Better hope they never finish because they'll signal
--			 * the completion on our stack and that's bad once
--			 * we've returned from the function.
-+			 * the completion that we're going to free once
-+			 * we've returned from this function.
- 			 */
- 			WARN_ON(1);
- 			ret = -ETIMEDOUT;
-@@ -407,7 +415,7 @@ int rpmh_write_batch(const struct device *dev, enum rpmh_state state,
- 	}
- 
- exit:
--	kfree(req);
-+	kfree(ptr);
- 
- 	return ret;
- }
--- 
-Sent by a computer through tubes
-
+--
+Gustavo
