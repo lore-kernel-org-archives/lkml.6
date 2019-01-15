@@ -2,68 +2,65 @@ Return-Path: <SRS0=RZO6=PX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D0378C43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 17:52:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 278EEC43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 17:53:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9A8C320675
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 17:52:31 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="cCnvMjzL"
+	by mail.kernel.org (Postfix) with ESMTP id 018B220675
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 17:53:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388564AbfAORwa (ORCPT
+        id S1731000AbfAORxz convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 15 Jan 2019 12:52:30 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:35278 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729410AbfAORw3 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Jan 2019 12:52:29 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=ITJoVz+hDVQxBL7bPP0lb4AXLrlKIC+jOg6UU8bME/w=; b=cCnvMjzLSicV8PhPswJ4N9ofq
-        6ySM6/WGmOpl8O20jCDv/lPn//iBZx1hUUQYEaPKOezhgw7M95Mu5CL7KyVbXionA5unv3fNBhBKF
-        7pOFKOIzJmrnoZGsq91jgk2QZylgJv+01DKTEVmfuEf4rQqdcYLSvzEbUnKEyv6QHNxpP6nSj+aJr
-        bQ+KlHyyO9k/qXJcN9WmdBnvSRyYMqxrQC1ukDOAcP+Gwa7KCVR/ovrLrxbrwmg7Y7qXRWbbcHJXK
-        u2umN7PDL7ORWSNgmRGk+6sgUsZWqm0LW94zoldBNNL3g1hGWEW9hfMCOOFL0OTUOZyENPISke0UF
-        Bghur0oLw==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gjSt2-0002Rb-RM; Tue, 15 Jan 2019 17:52:28 +0000
-Date:   Tue, 15 Jan 2019 09:52:28 -0800
-From:   "hch@infradead.org" <hch@infradead.org>
-To:     Alistair Francis <Alistair.Francis@wdc.com>
-Cc:     "hch@infradead.org" <hch@infradead.org>,
-        "palmer@sifive.com" <palmer@sifive.com>,
-        "linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v4] RISC-V: defconfig: Enable Generic PCIE by default
-Message-ID: <20190115175228.GA9295@infradead.org>
-References: <20190112004117.28265-1-alistair.francis@wdc.com>
- <20190115152607.GA26443@infradead.org>
- <03cbc37636be7fce21cd2af39ad8e322ca8e64e8.camel@wdc.com>
+        Tue, 15 Jan 2019 12:53:55 -0500
+Received: from mail.bootlin.com ([62.4.15.54]:33100 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728073AbfAORxz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 Jan 2019 12:53:55 -0500
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id 18EB220797; Tue, 15 Jan 2019 18:53:53 +0100 (CET)
+Received: from xps13 (unknown [77.136.198.66])
+        by mail.bootlin.com (Postfix) with ESMTPSA id 310BD20712;
+        Tue, 15 Jan 2019 18:53:43 +0100 (CET)
+Date:   Tue, 15 Jan 2019 18:53:41 +0100
+From:   Miquel Raynal <miquel.raynal@bootlin.com>
+To:     <Tudor.Ambarus@microchip.com>
+Cc:     <marek.vasut@gmail.com>, <boris.brezillon@bootlin.co>,
+        <richard@nod.at>, <dwmw2@infradead.org>,
+        <computersforpeace@gmail.com>, <linux-mtd@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] MAINTAINERS: add myself as SPI NOR co-maintainer
+Message-ID: <20190115185341.3abadd3c@xps13>
+In-Reply-To: <20190115165740.32450-1-tudor.ambarus@microchip.com>
+References: <20190115165740.32450-1-tudor.ambarus@microchip.com>
+Organization: Bootlin
+X-Mailer: Claws Mail 3.17.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <03cbc37636be7fce21cd2af39ad8e322ca8e64e8.camel@wdc.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 15, 2019 at 05:45:34PM +0000, Alistair Francis wrote:
-> > Alistair, is there a ready-made qemu machine with riscv + pcie?
-> > That would be really useful for testing..
-> 
-> Yep, if you use master QEMU (it isn't in a release yet) the virt
-> machine has PCIe support.
+Hi Tudor,
 
-Cool.  Time to play around with the latest qemu tree..
+<Tudor.Ambarus@microchip.com> wrote on Tue, 15 Jan 2019 16:57:52 +0000:
+
+> From: Tudor Ambarus <tudor.ambarus@microchip.com>
+> 
+> I have been reviewing and contributing to the SPI NOR subsystem
+> for the last few months and I'm willing to continue doing so.
+> Volunteer as a maintainer for the SPI NOR part of the MTD subsystem.
+> 
+> Signed-off-by: Tudor Ambarus <tudor.ambarus@microchip.com>
+
+Welcome :)
+
+Acked-by: Miquel Raynal <miquel.raynal@bootlin.com>
+
+
+Thanks,
+Miquèl
