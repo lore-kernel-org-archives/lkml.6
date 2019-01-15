@@ -4,64 +4,64 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 741A7C43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 10:33:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C4573C43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 10:33:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4148B20651
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 10:33:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 924EB20657
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 10:33:36 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="Idvhwjz2"
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="Njalyeho"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728917AbfAOKd2 (ORCPT
+        id S1728971AbfAOKde (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 15 Jan 2019 05:33:28 -0500
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:34346 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728437AbfAOKd1 (ORCPT
+        Tue, 15 Jan 2019 05:33:34 -0500
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:46299 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728926AbfAOKdc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Jan 2019 05:33:27 -0500
-Received: by mail-pg1-f193.google.com with SMTP id j10so1088724pga.1
-        for <linux-kernel@vger.kernel.org>; Tue, 15 Jan 2019 02:33:27 -0800 (PST)
+        Tue, 15 Jan 2019 05:33:32 -0500
+Received: by mail-pl1-f195.google.com with SMTP id t13so1080275ply.13
+        for <linux-kernel@vger.kernel.org>; Tue, 15 Jan 2019 02:33:32 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :in-reply-to:references;
-        bh=dIyDlEhPk6JnUTXfldKLOjRO3WNV6b65BdAvK6H2ezc=;
-        b=Idvhwjz2PCwfeCZlSfS8wWCImer2VupTl79ttniFdOy/ZB+YEuNAmrmVyyOmLkGq5D
-         Dbv4rSDwlCtVk8Wt4wFSUwU1syU1szrBgfKGEKjXxsamyu1A3shEmeS0zJmYZ5W+RXBO
-         OPZ7nV14PuHpDqoOPmRq9qwe8Gk6ATLWBL6CY=
+        bh=gfsjcoK5+n5u8rdyVSCIiowp3BqnWBKCmYbY+r0pFqo=;
+        b=NjalyehonmSD9f1XkR4NT52PJKvEiK+haOiYekDryzxm6wrHaHgYPGssUgy5RnbI+c
+         7E2jxPO/HlDbaNi8KYCw6/fEqL8aI7xmSFTo2CuSv0zZEg/RnPuiTfhPB05xN2TzxVwI
+         2+8U/2UEm/wbrBLy/cAYfcY9EC/97mPdi/ibU=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:in-reply-to:references;
-        bh=dIyDlEhPk6JnUTXfldKLOjRO3WNV6b65BdAvK6H2ezc=;
-        b=hn+K390sx1yoRm8A+547hiW2iuU0zNgQDxdgQeLUj/vpiEMEas8S5kLn45cvq3k1Lx
-         yPp6oytgnIctHeRjHZyF1snorB44KusJj6Ui9fyXuPPGO1O1zvP0/pI0N4R2RA0nb9M5
-         2tVuyomFXrBMMl41nqN91qrr0OQpFl9aOaEWa4Ms50rj8IHvzvP2SfNXFElFMoPPdtFa
-         Rn6TCV7ZVBfyUCTME9t6U50iLOCugT1zc9btm0HSnpiT0HqA5BSvSnOZoWfRnyvwfdVV
-         qeiMfkyTxdeu76ZT/wS1qDCzYQSYHA//z16jNfOle1HIK23JplYWNyqPkGewiA2BHH6W
-         LPrQ==
-X-Gm-Message-State: AJcUukflA185w+qHi+uoAR0/zT6PeRECAOiSrWm66Exf7obMqix1npw7
-        JN1OncNrTU/o/4b3gRpMl00o8w==
-X-Google-Smtp-Source: ALg8bN5tPJ802wXKib0Xc/vXXsEVgz30eEx1kURE+RGxE654JSqnBiMyHcJwhhMu4sFSNmONVL88SQ==
-X-Received: by 2002:a62:cf02:: with SMTP id b2mr3364348pfg.183.1547548406698;
-        Tue, 15 Jan 2019 02:33:26 -0800 (PST)
+        bh=gfsjcoK5+n5u8rdyVSCIiowp3BqnWBKCmYbY+r0pFqo=;
+        b=Y2FqEW3hCZcvxJX9tXUCLu1Svya5dgR0o/4PGseOTbNB5r45LXRUHa/SYpYPQ5Fd0G
+         UkNfkGp9Ti1wV7Wn5AL3zATqgIqR3IAyFVtB6uSRTAyGRdHTtG2OtuoA+jlD3Mu+BUWB
+         P8vNWA0sFduln/Wm4NRPpVfYMXxjPISz0V1/azYJI2Nt7UGAlL3h0rMpwUeRn3b4+/KJ
+         pjI2uOZzatD0jyNeItXHffGQOq8NtS+0clpzO2pM/jEzPUKa6yD3b2xon8FpOwhSynlU
+         H5qzXk/5iTqIwzB03vRx68Rwah16fpNtQgyYwrVRUw+BdqhPxtrnzWSI6ztKuIwj3jv8
+         lqzg==
+X-Gm-Message-State: AJcUukfrDvxVKSiAUxv4wlKWqgDba2Fp9gkXlZxpohz5q7I0hJeOspAb
+        1OpUX+/BRhrEuCsydz8Vh3z0gQ==
+X-Google-Smtp-Source: ALg8bN4OopI8AkedXthOvA9gAZJmqUIZOMaddwqcZBZBl4IMX905n3P7WxheBQ6/XrO/3TCt+bi5Qw==
+X-Received: by 2002:a17:902:bd46:: with SMTP id b6mr3323046plx.231.1547548411565;
+        Tue, 15 Jan 2019 02:33:31 -0800 (PST)
 Received: from baolinwangubtpc.spreadtrum.com ([117.18.48.102])
-        by smtp.gmail.com with ESMTPSA id d13sm5073957pfd.58.2019.01.15.02.33.22
+        by smtp.gmail.com with ESMTPSA id d13sm5073957pfd.58.2019.01.15.02.33.26
         (version=TLS1 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Tue, 15 Jan 2019 02:33:25 -0800 (PST)
+        Tue, 15 Jan 2019 02:33:30 -0800 (PST)
 From:   Baolin Wang <baolin.wang@linaro.org>
 To:     sre@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com
 Cc:     linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org, yuanjiang.yu@unisoc.com,
         baolin.wang@linaro.org, broonie@kernel.org, zhang.lyra@gmail.com,
         orsonzhai@gmail.com
-Subject: [PATCH 3/4] power: supply: sc27xx: Fix the incorrect formula when converting capacity to coulomb counter
-Date:   Tue, 15 Jan 2019 18:32:36 +0800
-Message-Id: <7d23781552d6ff1fe6bbabfc56cbbb04d807fffa.1547544142.git.baolin.wang@linaro.org>
+Subject: [PATCH 4/4] power: supply: sc27xx: Fix capacity saving function
+Date:   Tue, 15 Jan 2019 18:32:37 +0800
+Message-Id: <30327406bfd6aa0559e48b766c87c6845fe059af.1547544142.git.baolin.wang@linaro.org>
 X-Mailer: git-send-email 1.7.9.5
 In-Reply-To: <76a12fe5d0cc670266100b0587b047714c9a8a83.1547544142.git.baolin.wang@linaro.org>
 References: <76a12fe5d0cc670266100b0587b047714c9a8a83.1547544142.git.baolin.wang@linaro.org>
@@ -72,28 +72,107 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-We should multiply the calibrated current data (cur_1000ma_adc) when
-converting current capacity (mAh) to coulomb counter, which can get
-an accurate coulomb counter from the fuel gauge controller.
+From: Yuanjiang Yu <yuanjiang.yu@unisoc.com>
 
+We found sometimes we can not get the saving capacity to initialize the
+battery capacity, the reason is the user area registers are put on power
+always-on region, so we need delay some time to wait until values are
+updated successfully.
+
+Moreover we also should clear the USER_AREA_CLEAR register after setting
+the USER_AREA_SET register, otherwise we can not save the values in the
+USER_AREA_SET register.
+
+Signed-off-by: Yuanjiang Yu <yuanjiang.yu@unisoc.com>
 Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
 ---
- drivers/power/supply/sc27xx_fuel_gauge.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/power/supply/sc27xx_fuel_gauge.c |   64 +++++++++++++++++++++++++++---
+ 1 file changed, 59 insertions(+), 5 deletions(-)
 
 diff --git a/drivers/power/supply/sc27xx_fuel_gauge.c b/drivers/power/supply/sc27xx_fuel_gauge.c
-index 4926b8a..ea1349f 100644
+index ea1349f..24895cc 100644
 --- a/drivers/power/supply/sc27xx_fuel_gauge.c
 +++ b/drivers/power/supply/sc27xx_fuel_gauge.c
-@@ -731,7 +731,7 @@ static int sc27xx_fgu_cap_to_clbcnt(struct sc27xx_fgu_data *data, int capacity)
- 	 * Convert current capacity (mAh) to coulomb counter according to the
- 	 * formula: 1 mAh =3.6 coulomb.
- 	 */
--	return DIV_ROUND_CLOSEST(cur_cap * 36, 10);
-+	return DIV_ROUND_CLOSEST(cur_cap * 36 * data->cur_1000ma_adc, 10);
+@@ -171,10 +171,37 @@ static int sc27xx_fgu_save_boot_mode(struct sc27xx_fgu_data *data,
+ 	if (ret)
+ 		return ret;
+ 
++	/*
++	 * Since the user area registers are put on power always-on region,
++	 * then these registers changing time will be a little long. Thus
++	 * here we should delay 200us to wait until values are updated
++	 * successfully according to the datasheet.
++	 */
++	udelay(200);
++
++	ret = regmap_update_bits(data->regmap,
++				 data->base + SC27XX_FGU_USER_AREA_SET,
++				 SC27XX_FGU_MODE_AREA_MASK,
++				 boot_mode << SC27XX_FGU_MODE_AREA_SHIFT);
++	if (ret)
++		return ret;
++
++	/*
++	 * Since the user area registers are put on power always-on region,
++	 * then these registers changing time will be a little long. Thus
++	 * here we should delay 200us to wait until values are updated
++	 * successfully according to the datasheet.
++	 */
++	udelay(200);
++
++	/*
++	 * According to the datasheet, we should set the USER_AREA_CLEAR to 0 to
++	 * make the user area data available, otherwise we can not save the user
++	 * area data.
++	 */
+ 	return regmap_update_bits(data->regmap,
+-				  data->base + SC27XX_FGU_USER_AREA_SET,
+-				  SC27XX_FGU_MODE_AREA_MASK,
+-				  boot_mode << SC27XX_FGU_MODE_AREA_SHIFT);
++				  data->base + SC27XX_FGU_USER_AREA_CLEAR,
++				  SC27XX_FGU_MODE_AREA_MASK, 0);
  }
  
- static int sc27xx_fgu_calibration(struct sc27xx_fgu_data *data)
+ static int sc27xx_fgu_save_last_cap(struct sc27xx_fgu_data *data, int cap)
+@@ -188,9 +215,36 @@ static int sc27xx_fgu_save_last_cap(struct sc27xx_fgu_data *data, int cap)
+ 	if (ret)
+ 		return ret;
+ 
++	/*
++	 * Since the user area registers are put on power always-on region,
++	 * then these registers changing time will be a little long. Thus
++	 * here we should delay 200us to wait until values are updated
++	 * successfully according to the datasheet.
++	 */
++	udelay(200);
++
++	ret = regmap_update_bits(data->regmap,
++				 data->base + SC27XX_FGU_USER_AREA_SET,
++				 SC27XX_FGU_CAP_AREA_MASK, cap);
++	if (ret)
++		return ret;
++
++	/*
++	 * Since the user area registers are put on power always-on region,
++	 * then these registers changing time will be a little long. Thus
++	 * here we should delay 200us to wait until values are updated
++	 * successfully according to the datasheet.
++	 */
++	udelay(200);
++
++	/*
++	 * According to the datasheet, we should set the USER_AREA_CLEAR to 0 to
++	 * make the user area data available, otherwise we can not save the user
++	 * area data.
++	 */
+ 	return regmap_update_bits(data->regmap,
+-				  data->base + SC27XX_FGU_USER_AREA_SET,
+-				  SC27XX_FGU_CAP_AREA_MASK, cap);
++				  data->base + SC27XX_FGU_USER_AREA_CLEAR,
++				  SC27XX_FGU_CAP_AREA_MASK, 0);
+ }
+ 
+ static int sc27xx_fgu_read_last_cap(struct sc27xx_fgu_data *data, int *cap)
 -- 
 1.7.9.5
 
