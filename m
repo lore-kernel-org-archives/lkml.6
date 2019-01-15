@@ -2,168 +2,83 @@ Return-Path: <SRS0=RZO6=PX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 71153C43444
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 10:06:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F847C43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 10:07:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3E4CA20651
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 10:06:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C561820651
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 10:07:09 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=alien8.de header.i=@alien8.de header.b="pVu2t3Ji"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728257AbfAOKGt (ORCPT
+        id S1728412AbfAOKHI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 15 Jan 2019 05:06:49 -0500
-Received: from mx2.suse.de ([195.135.220.15]:36680 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727200AbfAOKGt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Jan 2019 05:06:49 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 05C79ADF5;
-        Tue, 15 Jan 2019 10:06:46 +0000 (UTC)
-Subject: Re: KMSAN: uninit-value in mpol_rebind_mm
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     Dmitry Vyukov <dvyukov@google.com>,
-        syzbot <syzbot+b19c2dc2c990ea657a71@syzkaller.appspotmail.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Alexander Potapenko <glider@google.com>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linux-MM <linux-mm@kvack.org>, linux@dominikbrodowski.net,
-        Michal Hocko <mhocko@suse.com>,
-        David Rientjes <rientjes@google.com>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
-        xieyisheng1@huawei.com, zhong jiang <zhongjiang@huawei.com>
-References: <000000000000c06550057e4cac7c@google.com>
- <a71997c3-e8ae-a787-d5ce-3db05768b27c@suse.cz>
- <CACT4Y+bRvwxkdnyRosOujpf5-hkBwd2g0knyCQHob7p=0hC=Dw@mail.gmail.com>
- <52835ef5-6351-3852-d4ba-b6de285f96f5@suse.cz>
- <20190104172802.ce9c4b77577a9c2810f04171@linux-foundation.org>
-From:   Vlastimil Babka <vbabka@suse.cz>
-Openpgp: preference=signencrypt
-Message-ID: <73da3e9c-cc84-509e-17d9-0c434bb9967d@suse.cz>
-Date:   Tue, 15 Jan 2019 11:06:44 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.3
+        Tue, 15 Jan 2019 05:07:08 -0500
+Received: from mail.skyhub.de ([5.9.137.197]:37934 "EHLO mail.skyhub.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726055AbfAOKHH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 Jan 2019 05:07:07 -0500
+Received: from zn.tnic (p200300EC2BCBB4000C4BA7EB962C71EB.dip0.t-ipconnect.de [IPv6:2003:ec:2bcb:b400:c4b:a7eb:962c:71eb])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id E6C491EC0B69;
+        Tue, 15 Jan 2019 11:07:05 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
+        t=1547546826;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
+        bh=AThfrLqsUq2xn4tIaET9wGhm1B/0VM5AetYRBejovyA=;
+        b=pVu2t3Ji6sZauXJsLQj4y8reYFyxlrbzy5TEDCDlCyM/NQenGVy/zadPM9v5onqXg4EjsZ
+        ix3q8W5hhkOuZS0MUkALle2Nl+/JlbkWXvVRSe9RFr1TSYstuQWVdCvxbG17HSnpqlRuvF
+        EjsQRl/ZJ5xYQnSqa4GM1+Z9xi925oo=
+Date:   Tue, 15 Jan 2019 11:06:59 +0100
+From:   Borislav Petkov <bp@alien8.de>
+To:     Dave Anderson <anderson@redhat.com>
+Cc:     Kazuhito Hagio <k-hagio@ab.jp.nec.com>,
+        Lianbo Jiang <lijiang@redhat.com>,
+        linux-kernel@vger.kernel.org, kexec@lists.infradead.org,
+        tglx@linutronix.de, mingo@redhat.com, x86@kernel.org,
+        akpm@linux-foundation.org, bhe@redhat.com, dyoung@redhat.com,
+        linux-doc@vger.kernel.org
+Subject: Re: [PATCH 1/2 v6] kdump: add the vmcoreinfo documentation
+Message-ID: <20190115100659.GB6596@zn.tnic>
+References: <20190110121944.6050-1-lijiang@redhat.com>
+ <20190114192144.GQ2773@zn.tnic>
+ <134663991.69764038.1547494607008.JavaMail.zimbra@redhat.com>
+ <20190114195940.GS2773@zn.tnic>
+ <244986363.69770015.1547496453312.JavaMail.zimbra@redhat.com>
+ <20190114201812.GT2773@zn.tnic>
+ <221183717.69773903.1547497592624.JavaMail.zimbra@redhat.com>
+ <20190114203500.GU2773@zn.tnic>
+ <1862896935.69778880.1547498954956.JavaMail.zimbra@redhat.com>
 MIME-Version: 1.0
-In-Reply-To: <20190104172802.ce9c4b77577a9c2810f04171@linux-foundation.org>
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+In-Reply-To: <1862896935.69778880.1547498954956.JavaMail.zimbra@redhat.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 1/5/19 2:28 AM, Andrew Morton wrote:
-> On Fri, 4 Jan 2019 09:50:31 +0100 Vlastimil Babka <vbabka@suse.cz> wrote:
-> 
->>> Yes, it doesn't and it's not trivial to do. The tool reports uses of
->>> unint _values_. Values don't necessary reside in memory. It can be a
->>> register, that come from another register that was calculated as a sum
->>> of two other values, which may come from a function argument, etc.
->>
->> I see. BTW, the patch I sent will be picked up for testing, or does it
->> have to be in mmotm/linux-next first?
-> 
-> I grabbed it.  To go further we'd need a changelog, a signoff,
-> description of testing status, reviews, a Fixes: and perhaps a
-> cc:stable ;)
+On Mon, Jan 14, 2019 at 03:49:14PM -0500, Dave Anderson wrote:
+> Yeah, I've been watching the thread, and the document looks fine to me.
+> It's just that when I saw the discussion of this one being removed that
+> I felt the need to respond...  ;-)
 
-Here's the full patch. Since there was no reproducer, there probably
-won't be any conclusive testing, but we might interpret lack of further
-KSMSAN reports as a success :)
+Good. :-)
 
-----8<----
+Ok, I've amended the init_uts_ns.name.release description with the
+additional important info.
 
-From 81ad0c822cb022cacea9b69565e12aac96dfb3fc Mon Sep 17 00:00:00 2001
-From: Vlastimil Babka <vbabka@suse.cz>
-Date: Thu, 3 Jan 2019 09:31:59 +0100
-Subject: [PATCH] mm, mempolicy: fix uninit memory access
+Thx.
 
-Syzbot with KMSAN reports (excerpt):
-
-==================================================================
-BUG: KMSAN: uninit-value in mpol_rebind_policy mm/mempolicy.c:353 [inline]
-BUG: KMSAN: uninit-value in mpol_rebind_mm+0x249/0x370 mm/mempolicy.c:384
-CPU: 1 PID: 17420 Comm: syz-executor4 Not tainted 4.20.0-rc7+ #15
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
-Google 01/01/2011
-Call Trace:
-  __dump_stack lib/dump_stack.c:77 [inline]
-  dump_stack+0x173/0x1d0 lib/dump_stack.c:113
-  kmsan_report+0x12e/0x2a0 mm/kmsan/kmsan.c:613
-  __msan_warning+0x82/0xf0 mm/kmsan/kmsan_instr.c:295
-  mpol_rebind_policy mm/mempolicy.c:353 [inline]
-  mpol_rebind_mm+0x249/0x370 mm/mempolicy.c:384
-  update_tasks_nodemask+0x608/0xca0 kernel/cgroup/cpuset.c:1120
-  update_nodemasks_hier kernel/cgroup/cpuset.c:1185 [inline]
-  update_nodemask kernel/cgroup/cpuset.c:1253 [inline]
-  cpuset_write_resmask+0x2a98/0x34b0 kernel/cgroup/cpuset.c:1728
-
-...
-
-Uninit was created at:
-  kmsan_save_stack_with_flags mm/kmsan/kmsan.c:204 [inline]
-  kmsan_internal_poison_shadow+0x92/0x150 mm/kmsan/kmsan.c:158
-  kmsan_kmalloc+0xa6/0x130 mm/kmsan/kmsan_hooks.c:176
-  kmem_cache_alloc+0x572/0xb90 mm/slub.c:2777
-  mpol_new mm/mempolicy.c:276 [inline]
-  do_mbind mm/mempolicy.c:1180 [inline]
-  kernel_mbind+0x8a7/0x31a0 mm/mempolicy.c:1347
-  __do_sys_mbind mm/mempolicy.c:1354 [inline]
-
-As it's difficult to report where exactly the uninit value resides in the
-mempolicy object, we have to guess a bit. mm/mempolicy.c:353 contains this
-part of mpol_rebind_policy():
-
-        if (!mpol_store_user_nodemask(pol) &&
-            nodes_equal(pol->w.cpuset_mems_allowed, *newmask))
-
-"mpol_store_user_nodemask(pol)" is testing pol->flags, which I couldn't ever
-see being uninitialized after leaving mpol_new(). So I'll guess it's actually
-about accessing pol->w.cpuset_mems_allowed on line 354, but still part of
-statement starting on line 353.
-
-For w.cpuset_mems_allowed to be not initialized, and the nodes_equal()
-reachable for a mempolicy where mpol_set_nodemask() is called in do_mbind(), it
-seems the only possibility is a MPOL_PREFERRED policy with empty set of nodes,
-i.e. MPOL_LOCAL equivalent, with MPOL_F_LOCAL flag. Let's exclude such policies
-from the nodes_equal() check. Note the uninit access should be benign anyway,
-as rebinding this kind of policy is always a no-op. Therefore no actual need for
-stable inclusion.
-
-Link: http://lkml.kernel.org/r/a71997c3-e8ae-a787-d5ce-3db05768b27c@suse.cz
-Reported-by: syzbot+b19c2dc2c990ea657a71@syzkaller.appspotmail.com
-Signed-off-by: Vlastimil Babka <vbabka@suse.cz>
-Cc: Alexander Potapenko <glider@google.com>
-Cc: Dmitry Vyukov <dvyukov@google.com>
-Cc: Andrea Arcangeli <aarcange@redhat.com>
-Cc: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-Cc: Michal Hocko <mhocko@suse.com>
-Cc: David Rientjes <rientjes@google.com>
-Cc: Yisheng Xie <xieyisheng1@huawei.com>
-Cc: zhong jiang <zhongjiang@huawei.com>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
----
- mm/mempolicy.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/mm/mempolicy.c b/mm/mempolicy.c
-index d4496d9d34f5..a0b7487b9112 100644
---- a/mm/mempolicy.c
-+++ b/mm/mempolicy.c
-@@ -350,7 +350,7 @@ static void mpol_rebind_policy(struct mempolicy *pol, const nodemask_t *newmask)
- {
- 	if (!pol)
- 		return;
--	if (!mpol_store_user_nodemask(pol) &&
-+	if (!mpol_store_user_nodemask(pol) && !(pol->flags & MPOL_F_LOCAL) &&
- 	    nodes_equal(pol->w.cpuset_mems_allowed, *newmask))
- 		return;
- 
 -- 
-2.20.1
+Regards/Gruss,
+    Boris.
 
+Good mailing practices for 400: avoid top-posting and trim the reply.
