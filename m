@@ -2,706 +2,217 @@ Return-Path: <SRS0=RZO6=PX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EE77AC43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 04:55:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 78E2DC43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 05:06:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B269B20651
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 04:55:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 568EF2085A
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 05:06:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727968AbfAOEzY (ORCPT
+        id S1726594AbfAOFCy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 14 Jan 2019 23:55:24 -0500
-Received: from smtp.polymtl.ca ([132.207.4.11]:60787 "EHLO smtp.polymtl.ca"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727203AbfAOEzY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 Jan 2019 23:55:24 -0500
-Received: from abder-pad (c-67-170-74-158.hsd1.wa.comcast.net [67.170.74.158])
-        by smtp.polymtl.ca (8.14.7/8.14.7) with ESMTP id x0F4sR1C029838;
-        Mon, 14 Jan 2019 23:54:32 -0500
-Message-ID: <0e7cd9f60b6360456db30131d3c020352bc718ac.camel@polymtl.ca>
-Subject: [PATCH v6] ftrace: support early boot function tracing
-From:   Abderrahmane Benbachir <abderrahmane.benbachir@polymtl.ca>
-To:     rostedt@goodmis.org
-Cc:     mingo@redhat.com, peterz@infradead.org,
-        mathieu.desnoyers@efficios.com, linux-kernel@vger.kernel.org,
-        abderb@microsoft.com
-Date:   Mon, 14 Jan 2019 20:54:26 -0800
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.5-0ubuntu0.18.04.1 
-Mime-Version: 1.0
+        Tue, 15 Jan 2019 00:02:54 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:36567 "EHLO
+        mail.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725840AbfAOFCx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 Jan 2019 00:02:53 -0500
+Received: from hanvin-mobl2.amr.corp.intel.com ([134.134.139.82])
+        (authenticated bits=0)
+        by mail.zytor.com (8.15.2/8.15.2) with ESMTPSA id x0F51dHn2370717
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NO);
+        Mon, 14 Jan 2019 21:01:40 -0800
+Subject: Re: [PATCH v3 0/6] Static calls
+To:     Andy Lutomirski <luto@kernel.org>
+Cc:     Jiri Kosina <jikos@kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Nadav Amit <namit@vmware.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        the arch/x86 maintainers <x86@kernel.org>,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Jason Baron <jbaron@akamai.com>,
+        David Laight <David.Laight@aculab.com>,
+        Borislav Petkov <bp@alien8.de>,
+        Julia Cartwright <julia@ni.com>, Jessica Yu <jeyu@kernel.org>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        Edward Cree <ecree@solarflare.com>,
+        Daniel Bristot de Oliveira <bristot@redhat.com>
+References: <cover.1547073843.git.jpoimboe@redhat.com>
+ <20190110203023.GL2861@worktop.programming.kicks-ass.net>
+ <20190110205226.iburt6mrddsxnjpk@treble>
+ <CAHk-=whR7LzKcuB9Z2km1T25DUkJcbE9rNhCzApAPADbDqMhmQ@mail.gmail.com>
+ <CALCETrWBwTVHWXahVXMMBL4QA1f+YdKgv1XANXPsk86FjFFH2Q@mail.gmail.com>
+ <B374297A-8298-4CED-8EC0-6A39BDBA5F05@vmware.com>
+ <20190111151525.tf7lhuycyyvjjxez@treble>
+ <CAHk-=wjJm8DpCsw=Wno01q4VFqUeiLKE8QmbAtUJurYhn3jRqA@mail.gmail.com>
+ <12578A17-E695-4DD5-AEC7-E29FAB2C8322@zytor.com>
+ <nycvar.YFH.7.76.1901112035570.6626@cbobk.fhfr.pm>
+ <5cbd249a-3b2b-6b3b-fb52-67571617403f@zytor.com>
+ <207c865e-a92a-1647-b1b0-363010383cc3@zytor.com>
+ <9f60be8c-47fb-195b-fdb4-4098f1df3dc2@zytor.com>
+ <8ca16cca-101d-1d1b-b3da-c9727665fec8@zytor.com>
+ <CALCETrVGoVbToA7Dw_mo_gojvFnS=vB=UJxQgDi_R00skSX8pg@mail.gmail.com>
+From:   "H. Peter Anvin" <hpa@zytor.com>
+Message-ID: <dd57daf3-4762-07c3-e0be-2cbb605802e4@zytor.com>
+Date:   Mon, 14 Jan 2019 21:01:38 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
+MIME-Version: 1.0
+In-Reply-To: <CALCETrVGoVbToA7Dw_mo_gojvFnS=vB=UJxQgDi_R00skSX8pg@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-Poly-FromMTA: (c-67-170-74-158.hsd1.wa.comcast.net [67.170.74.158]) at Tue, 15 Jan 2019 04:54:27 +0000
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Rebasing and fixing conflicts.
-Thanks.
+On 1/14/19 7:05 PM, Andy Lutomirski wrote:
+> On Mon, Jan 14, 2019 at 2:55 PM H. Peter Anvin <hpa@zytor.com> wrote:
+>>
+>> I think this sequence ought to work (keep in mind we are already under a
+>> mutex, so the global data is safe even if we are preempted):
+> 
+> I'm trying to wrap my head around this.  The states are:
+> 
+> 0: normal operation
+> 1: writing 0xcc, can be canceled
+> 2: writing final instruction.  The 0xcc was definitely synced to all CPUs.
+> 3: patch is definitely installed but maybe not sync_cored.
+> 
 
-Previous changes:
-PATCH v1: Initial patch
-PATCH v2:
-   Removed arch specific code and use the default clock.
-   Add more code re-usability
-   Add HAVE_EARLY_BOOT_FTRACE config option, which will be disabled by default
-PATCH v3:
-   Write early boot temporary buffer to a sub-buffer instead of the global one.
-   Improve Kconfig help text.
-PATCH v4 : Some code refactoring.
-PATCH v5 : fixing the build failers on arch i386.
+4: breakpoint has been canceled; need to redo patching.
 
-Patch starts here:
-----------------------------------------------------------------------
+>>
+>>         set up page table entries
+>>         invlpg
+>>         set up bp patching global data
+>>
+>>         cpu = get_cpu()
+>>
+> So we're assuming that the state is
+> 
+>>         bp_old_value = atomic_read(bp_write_addr)
+>>
+>>         do {
+> 
+> So we're assuming that the state is 0 here.  A WARN_ON_ONCE to check
+> that would be nice.
 
-The early boot tracing will start from the beginning of start_kernel()
-and will stop at ftrace_init()
+The state here can be 0 or 4.
 
-start_kernel()
-{
-  ftrace_early_init() <--- start early boot function tracing
-  ...
-  (calls)
-  ...
-  ftrace_init()       <--- stop early boot function tracing
-  early_trace_init();
-  ...
-}
+>>                 atomic_write(&bp_poke_state, 1)
+>>
+>>                 atomic_write(bp_write_addr, 0xcc)
+>>
+>>                 mask <- online_cpu_mask - self
+>>                 send IPIs
+>>                 wait for mask = 0
+>>
+>>         } while (cmpxchg(&bp_poke_state, 1, 2) != 1);
+>>
+>>         patch sites, remove breakpoints after patching each one
+> 
+> Not sure what you mean by patch *sites*.  As written, this only
+> supports one patch site at a time, since there's only one
+> bp_write_addr, and fixing that may be complicated.  Not fixing it
+> might also be a scalability problem.
 
-The events are placed in a temporary buffer, which will be copied to
-the trace buffer after memory setup.
+Fixing it isn't all that complicated; we just need to have a list of
+patch locations (which we need anyway!) and walk (or search) it instead
+of checking just one; I omitted that detail for simplicity.
 
-Dynamic tracing is not implemented with live patching, we use
-ftrace_filter and ftrace_notrace to find which functions to be
-filtered (traced / not traced), then during the callback from
-mcount hook, we do binary search lookup to decide which function
-to save and which one to discard.
+>>         atomic_write(&bp_poke_state, 3);
+>>
+>>         mask <- online_cpu_mask - self
+>>         send IPIs
+>>         wait for mask = 0
+>>
+>>         atomic_write(&bp_poke_state, 0);
+>>
+>>         tear down patching global data
+>>         tear down page table entries
+>>
+>>
+>>
+>> The #BP handler would then look like:
+>>
+>>         state = cmpxchg(&bp_poke_state, 1, 4);
+>>         switch (state) {
+>>                 case 1:
+>>                 case 4:
+> 
+> What is state 4?
+> 
+>>                         invlpg
+>>                         cmpxchg(bp_write_addr, 0xcc, bp_old_value)
 
-Signed-off-by: Abderrahmane Benbachir <abderrahmane.benbachir@polymtl.ca>
-Cc: Steven Rostedt <rostedt@goodmis.org>
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Cc: Linux Kernel <linux-kernel@vger.kernel.org>
----
----
- arch/x86/Kconfig            |   1 +
- arch/x86/kernel/ftrace_32.S |  45 ++++--
- arch/x86/kernel/ftrace_64.S |  14 ++
- include/linux/ftrace.h      |  18 ++-
- init/main.c                 |   1 +
- kernel/trace/Kconfig        |  51 +++++++
- kernel/trace/ftrace.c       | 293 +++++++++++++++++++++++++++++++++++-
- kernel/trace/trace.c        |  41 +++++
- 8 files changed, 452 insertions(+), 12 deletions(-)
+I'm 85% sure that the cmpxchg here is actually unnecessary, an
+atomic_write() is sufficient.
 
-diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
-index 15af091611e2..1073ff11b8b5 100644
---- a/arch/x86/Kconfig
-+++ b/arch/x86/Kconfig
-@@ -151,6 +151,7 @@ config X86
- 	select HAVE_FTRACE_MCOUNT_RECORD
- 	select HAVE_FUNCTION_GRAPH_TRACER
- 	select HAVE_FUNCTION_TRACER
-+	select HAVE_EARLY_BOOT_FTRACE
- 	select HAVE_GCC_PLUGINS
- 	select HAVE_HW_BREAKPOINT
- 	select HAVE_IDE
-diff --git a/arch/x86/kernel/ftrace_32.S b/arch/x86/kernel/ftrace_32.S
-index 4c8440de3355..a247cbf4c529 100644
---- a/arch/x86/kernel/ftrace_32.S
-+++ b/arch/x86/kernel/ftrace_32.S
-@@ -31,12 +31,8 @@ EXPORT_SYMBOL(mcount)
- # define MCOUNT_FRAME			0	/* using frame = false */
- #endif
- 
--ENTRY(function_hook)
--	ret
--END(function_hook)
--
--ENTRY(ftrace_caller)
- 
-+.macro save_mcount_regs
- #ifdef USING_FRAME_POINTER
- # ifdef CC_USING_FENTRY
- 	/*
-@@ -73,11 +69,9 @@ ENTRY(ftrace_caller)
- 
- 	movl	function_trace_op, %ecx
- 	subl	$MCOUNT_INSN_SIZE, %eax
-+	.endm
- 
--.globl ftrace_call
--ftrace_call:
--	call	ftrace_stub
--
-+.macro restore_mcount_regs
- 	addl	$4, %esp			/* skip NULL pointer */
- 	popl	%edx
- 	popl	%ecx
-@@ -90,6 +84,39 @@ ftrace_call:
- 	addl	$4, %esp			/* skip parent ip */
- # endif
- #endif
-+	.endm
-+
-+ENTRY(function_hook)
-+#ifdef CONFIG_EARLY_BOOT_FUNCTION_TRACER
-+	cmpl	$__PAGE_OFFSET, %esp
-+	jb	early_boot_stub			/* Paging not enabled yet? */
-+
-+	cmpl	$ftrace_stub, ftrace_early_boot_trace_function
-+	jnz early_boot_trace
-+
-+early_boot_stub:
-+	ret
-+
-+early_boot_trace:
-+	save_mcount_regs
-+	call	*ftrace_early_boot_trace_function
-+	restore_mcount_regs
-+
-+	jmp early_boot_stub
-+#else
-+	ret
-+#endif
-+END(function_hook)
-+
-+ENTRY(ftrace_caller)
-+	save_mcount_regs
-+
-+.globl ftrace_call
-+ftrace_call:
-+	call	ftrace_stub
-+
-+	restore_mcount_regs
-+
- .Lftrace_ret:
- #ifdef CONFIG_FUNCTION_GRAPH_TRACER
- .globl ftrace_graph_call
-diff --git a/arch/x86/kernel/ftrace_64.S b/arch/x86/kernel/ftrace_64.S
-index 75f2b36b41a6..e292ba26bf1d 100644
---- a/arch/x86/kernel/ftrace_64.S
-+++ b/arch/x86/kernel/ftrace_64.S
-@@ -151,7 +151,21 @@ EXPORT_SYMBOL(mcount)
- #ifdef CONFIG_DYNAMIC_FTRACE
- 
- ENTRY(function_hook)
-+# ifdef CONFIG_EARLY_BOOT_FUNCTION_TRACER
-+	cmpq $ftrace_stub, ftrace_early_boot_trace_function
-+	jnz early_boot_trace
-+
-+early_boot_stub:
- 	retq
-+
-+early_boot_trace:
-+	save_mcount_regs
-+	call *ftrace_early_boot_trace_function
-+	restore_mcount_regs
-+	jmp early_boot_stub
-+# else
-+	retq
-+# endif
- ENDPROC(function_hook)
- 
- ENTRY(ftrace_caller)
-diff --git a/include/linux/ftrace.h b/include/linux/ftrace.h
-index 730876187344..09977a28341f 100644
---- a/include/linux/ftrace.h
-+++ b/include/linux/ftrace.h
-@@ -239,6 +239,18 @@ static inline void ftrace_free_init_mem(void) { }
- static inline void ftrace_free_mem(struct module *mod, void *start, void *end) { }
- #endif /* CONFIG_FUNCTION_TRACER */
- 
-+#ifdef CONFIG_EARLY_BOOT_FUNCTION_TRACER
-+extern void __init ftrace_early_boot_init(char *command_line);
-+extern void __init ftrace_early_boot_shutdown(void);
-+extern void __init ftrace_early_boot_fill_ringbuffer(void *data);
-+extern inline bool __init is_ftrace_early_boot_activated(void);
-+#else
-+static inline void __init ftrace_early_boot_init(char *command_line) { }
-+static inline void __init ftrace_early_boot_shutdown(void) { }
-+static inline void __init ftrace_early_boot_fill_ringbuffer(void *data) { }
-+static inline bool __init is_ftrace_early_boot_activated(void) { return false; }
-+#endif
-+
- #ifdef CONFIG_STACK_TRACER
- 
- #define STACK_TRACE_ENTRIES 500
-@@ -447,6 +459,10 @@ unsigned long ftrace_get_addr_curr(struct dyn_ftrace *rec);
- 
- extern ftrace_func_t ftrace_trace_function;
- 
-+#if defined(CONFIG_EARLY_BOOT_FUNCTION_TRACER) && defined(CONFIG_DYNAMIC_FTRACE)
-+extern ftrace_func_t ftrace_early_boot_trace_function;
-+#endif
-+
- int ftrace_regex_open(struct ftrace_ops *ops, int flag,
- 		  struct inode *inode, struct file *file);
- ssize_t ftrace_filter_write(struct file *file, const char __user *ubuf,
-@@ -720,7 +736,7 @@ static inline unsigned long get_lock_parent_ip(void)
- #ifdef CONFIG_FTRACE_MCOUNT_RECORD
- extern void ftrace_init(void);
- #else
--static inline void ftrace_init(void) { }
-+static inline void ftrace_init(void) { ftrace_early_boot_shutdown(); }
- #endif
- 
- /*
-diff --git a/init/main.c b/init/main.c
-index e2e80ca3165a..2d79a9e82a43 100644
---- a/init/main.c
-+++ b/init/main.c
-@@ -539,6 +539,7 @@ asmlinkage __visible void __init start_kernel(void)
- 	char *command_line;
- 	char *after_dashes;
- 
-+	ftrace_early_boot_init(boot_command_line);
- 	set_task_stack_end_magic(&init_task);
- 	smp_setup_processor_id();
- 	debug_objects_early_init();
-diff --git a/kernel/trace/Kconfig b/kernel/trace/Kconfig
-index fa8b1fe824f3..08a403640518 100644
---- a/kernel/trace/Kconfig
-+++ b/kernel/trace/Kconfig
-@@ -19,6 +19,11 @@ config HAVE_FUNCTION_TRACER
- 	help
- 	  See Documentation/trace/ftrace-design.rst
- 
-+config HAVE_EARLY_BOOT_FTRACE
-+        bool
-+        help
-+          See Documentation/trace/ftrace-design.txt
-+
- config HAVE_FUNCTION_GRAPH_TRACER
- 	bool
- 	help
-@@ -155,6 +160,52 @@ config FUNCTION_TRACER
- 	  (the bootup default), then the overhead of the instructions is very
- 	  small and not measurable even in micro-benchmarks.
- 
-+config EARLY_BOOT_FUNCTION_TRACER
-+	bool "Early Boot Kernel Function Tracer"
-+	depends on FUNCTION_TRACER
-+	depends on HAVE_EARLY_BOOT_FTRACE
-+	help
-+	  Normally, function tracing can only start after memory has been
-+	  initialized early in boot. If "ftrace=function" is added to the
-+	  command line, then function tracing will start after memory setup.
-+	  In order to trace functions before that, this option will
-+	  have function tracing start before memory setup is complete, by
-+	  placing the trace in a temporary buffer, which will be copied to
-+	  the trace buffer after memory setup. The size of this temporary
-+	  buffer is defined by EARLY_BOOT_FTRACE_BUF_SHIFT.
-+
-+config EARLY_BOOT_FTRACE_BUF_SHIFT
-+	int "Temporary buffer size (17 => 128 KB, 24 => 16 MB)"
-+	depends on EARLY_BOOT_FUNCTION_TRACER
-+	range 8 24
-+	default 19
-+	help
-+	  Select the size of the buffer to be used for storing function calls at
-+	  early boot stage.
-+	  The value defines the size as a power of 2, must be in a range of 8 to 24.
-+	  Examples:
-+	    20 =>   1 MB
-+	    19 => 512 KB
-+	    17 => 128 KB
-+
-+config EARLY_BOOT_FTRACE_FILTER_SHIFT
-+	int "Temporary filter size (filter/notrace) (17 => 128 KB, 19 => 512 KB)"
-+	depends on EARLY_BOOT_FUNCTION_TRACER
-+	depends on FTRACE_MCOUNT_RECORD
-+	range 0 19
-+	default 17
-+	help
-+	  Select the size of the filter buffer to be used for filtering (trace/
-+	  no trace) functions at early boot stage.
-+	  Two buffers (trace and no_trace) will be created using this option.
-+	  These following kernel parameters control filtering during bootup :
-+	  "ftrace_filter", "ftrace_notrace".
-+	  The value defines the size as a power of 2, must be in a range of 0 to 19.
-+	  Examples:
-+	    19 => 512 KB for each buffer
-+	    18 => 256 KB for each buffer
-+	    17 => 128 KB for each buffer
-+
- config FUNCTION_GRAPH_TRACER
- 	bool "Kernel Function Graph Tracer"
- 	depends on HAVE_FUNCTION_GRAPH_TRACER
-diff --git a/kernel/trace/ftrace.c b/kernel/trace/ftrace.c
-index aac7847c0214..5dac5655be80 100644
---- a/kernel/trace/ftrace.c
-+++ b/kernel/trace/ftrace.c
-@@ -65,6 +65,11 @@
- #define FTRACE_HASH_DEFAULT_BITS 10
- #define FTRACE_HASH_MAX_BITS 12
- 
-+#ifdef CONFIG_FTRACE_MCOUNT_RECORD
-+extern unsigned long __start_mcount_loc[];
-+extern unsigned long __stop_mcount_loc[];
-+#endif
-+
- #ifdef CONFIG_DYNAMIC_FTRACE
- #define INIT_OPS_HASH(opsname)	\
- 	.func_hash		= &opsname.local_hash,			\
-@@ -6114,11 +6119,11 @@ void __init ftrace_free_init_mem(void)
- 
- void __init ftrace_init(void)
- {
--	extern unsigned long __start_mcount_loc[];
--	extern unsigned long __stop_mcount_loc[];
- 	unsigned long count, flags;
- 	int ret;
- 
-+    ftrace_early_boot_shutdown();
-+
- 	local_irq_save(flags);
- 	ret = ftrace_dyn_arch_init();
- 	local_irq_restore(flags);
-@@ -6712,3 +6717,287 @@ ftrace_enable_sysctl(struct ctl_table *table, int write,
- 	mutex_unlock(&ftrace_lock);
- 	return ret;
- }
-+
-+#ifdef CONFIG_EARLY_BOOT_FUNCTION_TRACER
-+
-+#define EARLY_BOOT_BUFF_LEN ((1 << CONFIG_EARLY_BOOT_FTRACE_BUF_SHIFT) / \
-+					sizeof(struct ftrace_early_boot_entry))
-+
-+struct ftrace_early_boot_entry {
-+	unsigned long ip;
-+	unsigned long parent_ip;
-+	unsigned long long timestamp;
-+};
-+/*
-+ * Only CPU0 is running in early stage, no need to have per-cpu buffer
-+ */
-+static struct ftrace_early_boot_entry ftrace_early_boot_entries[EARLY_BOOT_BUFF_LEN] __initdata;
-+static const unsigned long EARLY_BOOT_BUFF_MAX __initconst = EARLY_BOOT_BUFF_LEN;
-+static unsigned long early_boot_entries_count __initdata;
-+static char tmp_cmdline[COMMAND_LINE_SIZE] __initdata;
-+static bool ftrace_early_boot_activated __initdata;
-+
-+#ifdef CONFIG_DYNAMIC_FTRACE
-+ftrace_func_t ftrace_early_boot_trace_function __read_mostly = ftrace_stub;
-+#else
-+# define ftrace_early_boot_trace_function ftrace_trace_function
-+#endif
-+
-+inline bool __init is_ftrace_early_boot_activated(void)
-+{
-+	return ftrace_early_boot_activated;
-+}
-+
-+static inline __init void ftrace_early_boot_disable(void)
-+{
-+	ftrace_early_boot_trace_function = ftrace_stub;
-+}
-+
-+#ifdef CONFIG_FTRACE_MCOUNT_RECORD
-+#define EARLY_BOOT_FILTER_LEN ((1 << CONFIG_EARLY_BOOT_FTRACE_FILTER_SHIFT) / \
-+					sizeof(unsigned long))
-+
-+struct ftrace_early_boot_filtering {
-+	unsigned long list[EARLY_BOOT_FILTER_LEN];
-+	char buf[COMMAND_LINE_SIZE];
-+	int size;
-+};
-+
-+static const unsigned long EARLY_BOOT_FILTER_MAX __initconst = EARLY_BOOT_FILTER_LEN;
-+static struct ftrace_early_boot_filtering ftrace_data_notrace __initdata;
-+static struct ftrace_early_boot_filtering ftrace_data_filter __initdata;
-+
-+static __init int ftrace_early_boot_filter_has_addr(unsigned long addr,
-+	unsigned long *filter, int *size)
-+{
-+	int i;
-+
-+	for (i = 0; i < *size; i++) {
-+		if (filter[i] == addr)
-+			return 1;
-+	}
-+	return 0;
-+}
-+
-+static __init int
-+ftrace_early_boot_match_record(unsigned long ip, struct ftrace_glob *func_g)
-+{
-+	char str[KSYM_SYMBOL_LEN];
-+	char *modname;
-+
-+	kallsyms_lookup(ip, NULL, NULL, &modname, str);
-+	return ftrace_match(str, func_g);
-+}
-+
-+static __init void
-+ftrace_early_boot_regex(char *func, unsigned long *filter, int *size)
-+{
-+	struct ftrace_glob func_g = { .type = MATCH_FULL };
-+	unsigned long *start = __start_mcount_loc;
-+	unsigned long *end = __stop_mcount_loc;
-+	unsigned long count;
-+	unsigned long addr;
-+	unsigned long *p;
-+	int clear_filter = 0;
-+
-+	count = end - start;
-+
-+	if (!count)
-+		return;
-+
-+	if (func) {
-+		func_g.type = filter_parse_regex(func, strlen(func), &func_g.search,
-+						 &clear_filter);
-+		func_g.len = strlen(func_g.search);
-+	}
-+
-+	p = start;
-+	while (p < end) {
-+		addr = ftrace_call_adjust(*p++);
-+		if (!addr)
-+			continue;
-+
-+		if ((*size) > EARLY_BOOT_FILTER_MAX)
-+			return;
-+
-+		if (ftrace_early_boot_match_record(addr, &func_g)) {
-+			if (!ftrace_early_boot_filter_has_addr(addr, filter, size))
-+				filter[(*size)++] = addr;
-+		}
-+	}
-+}
-+
-+static __init int ftrace_addr_compare(const void *a, const void *b)
-+{
-+	if (*(unsigned long *)a > *(unsigned long *)b)
-+		return 1;
-+	if (*(unsigned long *)a < *(unsigned long *)b)
-+		return -1;
-+
-+	return 0;
-+}
-+
-+static __init void ftrace_addr_swap(void *a, void *b, int size)
-+{
-+	unsigned long t = *(unsigned long *)a;
-+	*(unsigned long *)a = *(unsigned long *)b;
-+	*(unsigned long *)b = t;
-+}
-+
-+static __init int set_ftrace_early_boot_filtering(void *data, char *str)
-+{
-+	struct ftrace_early_boot_filtering *ftrace_data = data;
-+	char *func;
-+	char *buf;
-+
-+	if (!ftrace_data)
-+		return 0;
-+	buf = ftrace_data->buf;
-+	strlcpy(buf, str, COMMAND_LINE_SIZE);
-+
-+	while (buf) {
-+		func = strsep(&buf, ",");
-+		ftrace_early_boot_regex(func, ftrace_data->list, &ftrace_data->size);
-+	}
-+	/* sort filter to use binary search on it */
-+	sort(ftrace_data->list, ftrace_data->size,
-+		sizeof(unsigned long), ftrace_addr_compare, ftrace_addr_swap);
-+
-+	return 1;
-+}
-+
-+#define ftrace_early_boot_bsearch_addr(addr, data) bsearch(&addr, data.list,\
-+	data.size, sizeof(unsigned long), ftrace_addr_compare)
-+
-+#endif /* CONFIG_FTRACE_MCOUNT_RECORD */
-+
-+
-+static __init void
-+ftrace_function_early_boot_trace_call(unsigned long ip, unsigned long parent_ip,
-+			struct ftrace_ops *op, struct pt_regs *regs)
-+{
-+	struct ftrace_early_boot_entry *entry;
-+
-+#ifdef CONFIG_FTRACE_MCOUNT_RECORD
-+	if (ftrace_data_notrace.size &&
-+			ftrace_early_boot_bsearch_addr(ip, ftrace_data_notrace))
-+		return;
-+
-+	if (ftrace_data_filter.size &&
-+			!ftrace_early_boot_bsearch_addr(ip, ftrace_data_filter))
-+		return;
-+#endif
-+
-+	if (early_boot_entries_count >= EARLY_BOOT_BUFF_MAX) {
-+		/* stop tracing when buffer is full */
-+		ftrace_early_boot_disable();
-+		return;
-+	}
-+
-+	entry = &ftrace_early_boot_entries[early_boot_entries_count++];
-+	entry->ip = ip;
-+	entry->parent_ip = parent_ip;
-+	entry->timestamp = trace_clock_local();
-+}
-+
-+/*
-+ * this will be used as __setup_param
-+ */
-+struct ftrace_early_boot_obs_param {
-+	int (*setup_func)(void *data, char *str);
-+	const char *str;
-+	void *data;
-+};
-+static struct ftrace_early_boot_obs_param ftrace_early_boot_params[] __initdata = {
-+#ifdef CONFIG_FTRACE_MCOUNT_RECORD
-+	{
-+		.str = "ftrace_notrace",
-+		.data = &ftrace_data_notrace,
-+		.setup_func = set_ftrace_early_boot_filtering,
-+	},
-+	{
-+		.str = "ftrace_filter",
-+		.data = &ftrace_data_filter,
-+		.setup_func = set_ftrace_early_boot_filtering,
-+	},
-+#endif
-+};
-+
-+static __init int ftrace_do_early_boot_param(char *param, char *val,
-+				 const char *unused, void *arg)
-+{
-+	int size = ARRAY_SIZE(ftrace_early_boot_params);
-+	struct ftrace_early_boot_obs_param *p;
-+	int i;
-+
-+	for (i = 0; i < size; i++) {
-+		p = &ftrace_early_boot_params[i];
-+		if (strcmp(param, p->str) == 0) {
-+			p->setup_func(p->data, val);
-+			return 0;
-+		}
-+	}
-+	return 0;
-+}
-+
-+void __init ftrace_early_boot_init(char *command_line)
-+{
-+	/* proceed only if function tracing was enabled */
-+	if (!strstr(command_line, "ftrace=function "))
-+		return;
-+
-+	strlcpy(tmp_cmdline, command_line, COMMAND_LINE_SIZE);
-+	parse_args("ftrace early boot options", tmp_cmdline, NULL, 0, 0, 0, NULL,
-+		ftrace_do_early_boot_param);
-+
-+	ftrace_early_boot_activated = true;
-+	// After this point, we enable early function tracing
-+	ftrace_early_boot_trace_function = ftrace_function_early_boot_trace_call;
-+}
-+
-+void __init ftrace_early_boot_shutdown(void)
-+{
-+	// Disable early tracing
-+	ftrace_early_boot_disable();
-+
-+#ifdef CONFIG_FTRACE_MCOUNT_RECORD
-+	pr_info("ftrace: early boot %lu entries, notrace=%d, filter=%d",
-+		early_boot_entries_count,
-+		ftrace_data_notrace.size,
-+		ftrace_data_filter.size);
-+#else
-+	pr_info("ftrace: early boot %lu recorded entries", early_boot_entries_count);
-+#endif
-+}
-+
-+/*
-+ * Will be passed to ringbuffer by early_boot_trace_clock
-+ */
-+static u64 early_timestamp __initdata;
-+
-+static __init u64 early_boot_trace_clock(void)
-+{
-+	return early_timestamp;
-+}
-+
-+void __init ftrace_early_boot_fill_ringbuffer(void *data)
-+{
-+	struct ftrace_early_boot_entry *entry;
-+	struct trace_array *tr = data;
-+	int i;
-+
-+	if (ftrace_early_boot_entries <= 0)
-+		return;
-+
-+	ring_buffer_set_clock(tr->trace_buffer.buffer, early_boot_trace_clock);
-+
-+	for (i = 0; i < early_boot_entries_count; i++) {
-+		entry = &ftrace_early_boot_entries[i];
-+		early_timestamp = entry->timestamp;
-+		trace_function(tr, entry->ip, entry->parent_ip, 0, 0);
-+	}
-+
-+	ring_buffer_set_clock(tr->trace_buffer.buffer, trace_clock_local);
-+}
-+
-+#endif /* CONFIG_EARLY_BOOT_FUNCTION_TRACER */
-\ No newline at end of file
-diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
-index c521b7347482..cbf13d59dc34 100644
---- a/kernel/trace/trace.c
-+++ b/kernel/trace/trace.c
-@@ -8715,3 +8715,44 @@ __init static int tracing_set_default_clock(void)
- }
- late_initcall_sync(tracing_set_default_clock);
- #endif
-+
-+#ifdef CONFIG_EARLY_BOOT_FUNCTION_TRACER
-+/*
-+ * The early boot tracer should be the second trace array added,
-+ */
-+static __init struct trace_array *early_boot_trace_array(void)
-+{
-+	struct trace_array *tr;
-+
-+	if (list_empty(&ftrace_trace_arrays))
-+		return NULL;
-+
-+	tr = list_entry(ftrace_trace_arrays.next,
-+			typeof(*tr), list);
-+	WARN_ON(!(tr->flags & TRACE_ARRAY_FL_GLOBAL));
-+	return tr;
-+}
-+
-+static __init int early_boot_tracer_init_tracefs(void)
-+{
-+	struct trace_array *tr;
-+
-+	if (!is_ftrace_early_boot_activated())
-+		return 0;
-+
-+	if (instance_mkdir("early_boot"))
-+		return 0;
-+
-+	tr = early_boot_trace_array();
-+	if (!tr) {
-+		pr_info("ftrace: early_boot array tracer not found\n");
-+		return 0;
-+	}
-+	/* fill the ring buffer with early boot events */
-+	ftrace_early_boot_fill_ringbuffer(tr);
-+
-+	return 0;
-+}
-+
-+fs_initcall(early_boot_tracer_init_tracefs);
-+#endif /* CONFIG_EARLY_BOOT_FUNCTION_TRACER */
--- 
-2.17.1
+>>                         break;
+>>                 case 2:
+>>                         invlpg
+>>                         complete patch sequence
+>>                         remove breakpoint
+>>                         break;
+> 
+> ISTM you might as well change state to 3 here, but it's arguably unnecessary.
+
+If and only if you have only one patch location you could, but again,
+unnecessary.
+
+>>                 case 3:
+>>                         /* If we are here, the #BP will go away on its own */
+>>                         break;
+>>                 case 0:
+>>                         /* No patching in progress!!! */
+>>                         return 0;
+>>         }
+>>
+>>         clear bit in mask
+>>         return 1;
+>>
+>> The IPI handler:
+>>
+>>         clear bit in mask
+>>         sync_core       /* Needed if multiple IPI events are chained */
+> 
+> I really like that this doesn't require fixups -- text_poke_bp() just
+> works.  But I'm nervous about livelocks or maybe just extreme slowness
+> under nasty loads.  Suppose some perf NMI code does a static call or
+> uses a static call.  Now there's a situation where, under high
+> frequency perf sampling, the patch process might almost always hit the
+> breakpoint while in state 1.  It'll get reversed and done again, and
+> we get stuck.  It would be neat if we could get the same "no
+> deadlocks" property while significantly reducing the chance of a
+> rollback.
+
+This could be as simple as spinning for a limited time waiting for
+states 0 or 3 if we are not the patching CPU. It is also not necessary
+to wait for the mask to become zero for the first sync if we find
+ourselves suddenly in state 4.
+
+This wouldn't reduce the livelock probability to zero, but it ought to
+reduce it enough that if we really are under such heavy event load we
+may end up getting stuck in any number of ways...
+
+> This is why I proposed something where we try to guarantee forward
+> progress by making sure that any NMI code that might spin and wait for
+> other CPUs is guaranteed to eventually sync_core(), clear its bit, and
+> possibly finish a patch.  But this is a bit gross.
+
+Yes, this gets really grotty and who knows how many code paths it would
+touch.
+
+	-hpa
 
 
