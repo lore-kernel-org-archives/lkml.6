@@ -4,49 +4,49 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B517C43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 16:53:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B9CCC43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 16:53:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 540A320645
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 16:53:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4B31C20645
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 16:53:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547571180;
-	bh=HfYJFEVVlvTpKImXtygTSn3bH2ziY7RHeXZOmtBnIXU=;
+	s=default; t=1547571187;
+	bh=5ncq41RYGvHr9PvVIHoGKoKImc2WcR6TlPwNKqVhmVA=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=rfEh9yPbr5+qVG1Vxe45EH+1FSC7Eoc/xLgD//lPmVvz8lR6Fl7gX4qWQVvqG31do
-	 mmgJGzqwW1Flvcq/4dlfZaRptcIsaqbMLk7vClRZa3ifj9n6Tgazcb0pTY3viDWif9
-	 rh4Jvw0TNjGPQemGeUzqRIOohAgyoYZfYWgM2sus=
+	b=lIJm4LjQhkjqPZENgstCh0skgkG9Q58xMmK0OpPIaFAryz6cnJr29W4W2mBu2r/8N
+	 rjy8zodwiVo7snfUyAQ5ilu7rCrehfM5I1Bec076B8vVwU00DcjrIjhYUQq+0FUzh5
+	 Hnq0NaoCc9oykMberpCDPZvcb1miL17UjB7Q81lg=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387443AbfAOQoB (ORCPT
+        id S1732143AbfAOQxG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 15 Jan 2019 11:44:01 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33518 "EHLO mail.kernel.org"
+        Tue, 15 Jan 2019 11:53:06 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33448 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727935AbfAOQn6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Jan 2019 11:43:58 -0500
+        id S2387417AbfAOQnz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 Jan 2019 11:43:55 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E0DFF20645;
-        Tue, 15 Jan 2019 16:43:56 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4A6F72054F;
+        Tue, 15 Jan 2019 16:43:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547570637;
-        bh=HfYJFEVVlvTpKImXtygTSn3bH2ziY7RHeXZOmtBnIXU=;
+        s=default; t=1547570634;
+        bh=5ncq41RYGvHr9PvVIHoGKoKImc2WcR6TlPwNKqVhmVA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=fodX3Y3c2RmUd2odUUp6gCqigpotG5II5/pvPNVem8tKXBjib0lWg8h3FoHuQv9wM
-         f7s3EkCdk2P8+B/DZzFFokGi3CXgWNMgZqdajKpiaPWu6vBZj/Th5J41DRZEBigfC4
-         pGJgwp6yqhvZRNsHV+ALKbpOEhsBTR2x5/vhnKqw=
+        b=1AylTMYHPfZAqWUOO0z/aM7tbiNqo+L4z1FE9eWyjSqWUJq1sOxpH2gSU4oRJhdng
+         VEXQ9HkyTwBjljU3c1L8mYiFxLEoi+N5MqIhRg2vtt1nF/4r4NZUDgwcCVm4uMCqnc
+         81GDC5SmnHcZVSIVEsut1XE5RlQfmMJUZxGfYYhQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Joe Perches <joe@perches.com>,
+        stable@vger.kernel.org, Ross Lagerwall <ross.lagerwall@citrix.com>,
         Steve French <stfrench@microsoft.com>
-Subject: [PATCH 4.20 17/57] cifs: check kzalloc return
-Date:   Tue, 15 Jan 2019 17:35:58 +0100
-Message-Id: <20190115154911.673475852@linuxfoundation.org>
+Subject: [PATCH 4.20 16/57] cifs: Fix potential OOB access of lock element array
+Date:   Tue, 15 Jan 2019 17:35:57 +0100
+Message-Id: <20190115154911.634403832@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190115154910.734892368@linuxfoundation.org>
 References: <20190115154910.734892368@linuxfoundation.org>
@@ -65,72 +65,65 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Joe Perches <joe@perches.com>
+From: Ross Lagerwall <ross.lagerwall@citrix.com>
 
-commit 0544b324e62c177c3a9e9c3bdce22e6db9f34588 upstream.
+commit b9a74cde94957d82003fb9f7ab4777938ca851cd upstream.
 
-kzalloc can return NULL so an additional check is needed. While there
-is a check for ret_buf there is no check for the allocation of
-ret_buf->crfid.fid - this check is thus added. Both call-sites
-of tconInfoAlloc() check for NULL return of tconInfoAlloc()
-so returning NULL on failure of kzalloc() here seems appropriate.
-As the kzalloc() is the only thing here that can fail it is
-moved to the beginning so as not to initialize other resources
-on failure of kzalloc.
+If maxBuf is small but non-zero, it could result in a zero sized lock
+element array which we would then try and access OOB.
 
-Fixes: 3d4ef9a15343 ("smb3: fix redundant opens on root")
-
-Signed-off-by: Joe Perches <joe@perches.com>
+Signed-off-by: Ross Lagerwall <ross.lagerwall@citrix.com>
 Signed-off-by: Steve French <stfrench@microsoft.com>
+CC: Stable <stable@vger.kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/cifs/misc.c |   34 ++++++++++++++++++++--------------
- 1 file changed, 20 insertions(+), 14 deletions(-)
+ fs/cifs/file.c     |    8 ++++----
+ fs/cifs/smb2file.c |    4 ++--
+ 2 files changed, 6 insertions(+), 6 deletions(-)
 
---- a/fs/cifs/misc.c
-+++ b/fs/cifs/misc.c
-@@ -111,21 +111,27 @@ struct cifs_tcon *
- tconInfoAlloc(void)
- {
- 	struct cifs_tcon *ret_buf;
--	ret_buf = kzalloc(sizeof(struct cifs_tcon), GFP_KERNEL);
--	if (ret_buf) {
--		atomic_inc(&tconInfoAllocCount);
--		ret_buf->tidStatus = CifsNew;
--		++ret_buf->tc_count;
--		INIT_LIST_HEAD(&ret_buf->openFileList);
--		INIT_LIST_HEAD(&ret_buf->tcon_list);
--		spin_lock_init(&ret_buf->open_file_lock);
--		mutex_init(&ret_buf->crfid.fid_mutex);
--		ret_buf->crfid.fid = kzalloc(sizeof(struct cifs_fid),
--					     GFP_KERNEL);
--		spin_lock_init(&ret_buf->stat_lock);
--		atomic_set(&ret_buf->num_local_opens, 0);
--		atomic_set(&ret_buf->num_remote_opens, 0);
-+
-+	ret_buf = kzalloc(sizeof(*ret_buf), GFP_KERNEL);
-+	if (!ret_buf)
-+		return NULL;
-+	ret_buf->crfid.fid = kzalloc(sizeof(*ret_buf->crfid.fid), GFP_KERNEL);
-+	if (!ret_buf->crfid.fid) {
-+		kfree(ret_buf);
-+		return NULL;
- 	}
-+
-+	atomic_inc(&tconInfoAllocCount);
-+	ret_buf->tidStatus = CifsNew;
-+	++ret_buf->tc_count;
-+	INIT_LIST_HEAD(&ret_buf->openFileList);
-+	INIT_LIST_HEAD(&ret_buf->tcon_list);
-+	spin_lock_init(&ret_buf->open_file_lock);
-+	mutex_init(&ret_buf->crfid.fid_mutex);
-+	spin_lock_init(&ret_buf->stat_lock);
-+	atomic_set(&ret_buf->num_local_opens, 0);
-+	atomic_set(&ret_buf->num_remote_opens, 0);
-+
- 	return ret_buf;
- }
+--- a/fs/cifs/file.c
++++ b/fs/cifs/file.c
+@@ -1131,10 +1131,10 @@ cifs_push_mandatory_locks(struct cifsFil
  
+ 	/*
+ 	 * Accessing maxBuf is racy with cifs_reconnect - need to store value
+-	 * and check it for zero before using.
++	 * and check it before using.
+ 	 */
+ 	max_buf = tcon->ses->server->maxBuf;
+-	if (!max_buf) {
++	if (max_buf < (sizeof(struct smb_hdr) + sizeof(LOCKING_ANDX_RANGE))) {
+ 		free_xid(xid);
+ 		return -EINVAL;
+ 	}
+@@ -1471,10 +1471,10 @@ cifs_unlock_range(struct cifsFileInfo *c
+ 
+ 	/*
+ 	 * Accessing maxBuf is racy with cifs_reconnect - need to store value
+-	 * and check it for zero before using.
++	 * and check it before using.
+ 	 */
+ 	max_buf = tcon->ses->server->maxBuf;
+-	if (!max_buf)
++	if (max_buf < (sizeof(struct smb_hdr) + sizeof(LOCKING_ANDX_RANGE)))
+ 		return -EINVAL;
+ 
+ 	max_num = (max_buf - sizeof(struct smb_hdr)) /
+--- a/fs/cifs/smb2file.c
++++ b/fs/cifs/smb2file.c
+@@ -122,10 +122,10 @@ smb2_unlock_range(struct cifsFileInfo *c
+ 
+ 	/*
+ 	 * Accessing maxBuf is racy with cifs_reconnect - need to store value
+-	 * and check it for zero before using.
++	 * and check it before using.
+ 	 */
+ 	max_buf = tcon->ses->server->maxBuf;
+-	if (!max_buf)
++	if (max_buf < sizeof(struct smb2_lock_element))
+ 		return -EINVAL;
+ 
+ 	max_num = max_buf / sizeof(struct smb2_lock_element);
 
 
