@@ -2,155 +2,140 @@ Return-Path: <SRS0=RZO6=PX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 668F1C43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 15:01:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CE83AC43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 15:01:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3971920675
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 15:01:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9D4B120675
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 15:01:55 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="CkoXq0Al"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730576AbfAOPBo (ORCPT
+        id S1730593AbfAOPBx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 15 Jan 2019 10:01:44 -0500
-Received: from mail-qk1-f194.google.com ([209.85.222.194]:33389 "EHLO
-        mail-qk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729474AbfAOPBm (ORCPT
+        Tue, 15 Jan 2019 10:01:53 -0500
+Received: from conssluserg-03.nifty.com ([210.131.2.82]:23066 "EHLO
+        conssluserg-03.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729474AbfAOPBw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Jan 2019 10:01:42 -0500
-Received: by mail-qk1-f194.google.com with SMTP id d15so1727212qkj.0;
-        Tue, 15 Jan 2019 07:01:41 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=/j2xo8vyz06xg1gQlvQEYwJpD6WHXsDfeyUW+0147bI=;
-        b=XChiI9LVpdP21E9M1BNsF/4opcOvd3RVRf4P0jzJvaaYD3PfScOPTwoLSpaZVZjapk
-         H7drWl6gyidFgDVdRtsKtSLlRHNkr6y0gED/HPE/XVBUHg9cfuXp3d2+QV+L0cdyCdZ/
-         eP2TUAINwFOV517OKUXtJIksrCi82W2alWItH8OYHyzVU9pdIkX9bEDJQ0CgOiE0ztb+
-         m0l28O43hGTk2FekD9zKBlzDghMdN07HqbMH1yNvgI5PkEEbfk3gJAg8q41wRBS/I+S0
-         rWdyGqSYnOvdah3rJB+JqTnU/kIJIzVufHfDWoIbCXI4ltTOslUfOcA16SWLezsnMiQf
-         Puow==
-X-Gm-Message-State: AJcUukddl6JAB0EAsXSDy6xi7cH5ub8Rvmshvn7te49258faIIaRjZaH
-        5hCoi7ly0oLN60ugy8s2xVXNDze/xTs+MwTwJd0=
-X-Google-Smtp-Source: ALg8bN66ERQQcRHL6kpituOugRhaYl47wq+bMeU6L9UD0bbjiIXTK390uY37r+V2oE8uztNtYSgBmDdqY7/ckMkByIg=
-X-Received: by 2002:ae9:d8c2:: with SMTP id u185mr2882793qkf.107.1547564501193;
- Tue, 15 Jan 2019 07:01:41 -0800 (PST)
+        Tue, 15 Jan 2019 10:01:52 -0500
+Received: from mail-vk1-f176.google.com (mail-vk1-f176.google.com [209.85.221.176]) (authenticated)
+        by conssluserg-03.nifty.com with ESMTP id x0FF1iT9020398;
+        Wed, 16 Jan 2019 00:01:45 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-03.nifty.com x0FF1iT9020398
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1547564505;
+        bh=ORvUJeYfdFDrcDEJahOg9VUCtLZ2xiu2Oy8mXwaaIds=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=CkoXq0AlQFcK1L0PN0tH0nyfP75iEVVxlzJvrfq2DzwFQd+amiOZ5uoqkKsYVubRq
+         T0D9c66F6WzDaymeq7pRw64GMJY0GiU0nmPBsZgB1w3av8FeihesqQ0LIBfyrLOWKb
+         0eq8z90Nud32hBdZuxEN9LrPyptjh0o1d10XE8LJ0mCXOM+ywzAB21xw1UcbzZcJLe
+         hdQciUUPrmAScpxNrBSZxk/cEtZ9NPbpWQpFr3KJlyKlERzZkxKpcW6O2Q7YoQSVKN
+         Dkt8sciIQ+8iCYqOEmUc+GkKGubIQsSpCzumPuAGYdCFgHKlXr7oII91VELxEjp+St
+         9ZkaimboShrVA==
+X-Nifty-SrcIP: [209.85.221.176]
+Received: by mail-vk1-f176.google.com with SMTP id d201so669939vka.0;
+        Tue, 15 Jan 2019 07:01:45 -0800 (PST)
+X-Gm-Message-State: AJcUukdogegZU6Sh5p3V6TqA6p/V1vyNTouyCT20RMTZKTb1pkIe1jvd
+        qyoj2eZMmlU/RV92MYBCxHPde1sWphXk4rIEdeU=
+X-Google-Smtp-Source: ALg8bN4YfC6UsLXiw39L4cdipSwrzdTR3i5ZeLonmxft1fWewN9xTwsZCNcM6LLWFXGv7Z5sLmjNdW33vmmneD91rKI=
+X-Received: by 2002:a1f:91cb:: with SMTP id t194mr1614598vkd.74.1547564504148;
+ Tue, 15 Jan 2019 07:01:44 -0800 (PST)
 MIME-Version: 1.0
-References: <20190110162435.309262-1-arnd@arndb.de> <20190110162435.309262-15-arnd@arndb.de>
- <87pnsz28k2.fsf@concordia.ellerman.id.au>
-In-Reply-To: <87pnsz28k2.fsf@concordia.ellerman.id.au>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Tue, 15 Jan 2019 16:01:24 +0100
-Message-ID: <CAK8P3a0uas76i2W1yjFvxHT-2=A8_egUZeAUM-Vya6386+87Xg@mail.gmail.com>
-Subject: Re: [PATCH 14/15] arch: add split IPC system calls where needed
-To:     Michael Ellerman <mpe@ellerman.id.au>
-Cc:     y2038 Mailman List <y2038@lists.linaro.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Ivan Kokshaysky <ink@jurassic.park.msu.ru>,
-        Matt Turner <mattst88@gmail.com>,
-        Russell King - ARM Linux <linux@armlinux.org.uk>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Tony Luck <tony.luck@intel.com>,
-        Fenghua Yu <fenghua.yu@intel.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Michal Simek <monstr@monstr.eu>,
-        Paul Burton <paul.burton@mips.com>,
-        Helge Deller <deller@gmx.de>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        Rich Felker <dalias@libc.org>,
-        David Miller <davem@davemloft.net>,
-        Andy Lutomirski <luto@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        "the arch/x86 maintainers" <x86@kernel.org>,
-        Max Filippov <jcmvbkbc@gmail.com>,
-        Firoz Khan <firoz.khan@linaro.org>,
-        "Eric W . Biederman" <ebiederm@xmission.com>,
-        Deepa Dinamani <deepa.kernel@gmail.com>,
-        Dominik Brodowski <linux@dominikbrodowski.net>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Davidlohr Bueso <dave@stgolabs.net>,
-        alpha <linux-alpha@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        linux-ia64@vger.kernel.org,
-        linux-m68k <linux-m68k@lists.linux-m68k.org>,
-        linux-mips@vger.kernel.org,
-        Parisc List <linux-parisc@vger.kernel.org>,
+References: <1547536740-1572-1-git-send-email-yamada.masahiro@socionext.com> <54f84ad6-279f-aa64-8c2c-59becd64a6ad@ozlabs.ru>
+In-Reply-To: <54f84ad6-279f-aa64-8c2c-59becd64a6ad@ozlabs.ru>
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+Date:   Wed, 16 Jan 2019 00:01:08 +0900
+X-Gmail-Original-Message-ID: <CAK7LNAS8xkZCK5keS9SEdNTUsVRb+_hac4yvBG=1HebrkheAqw@mail.gmail.com>
+Message-ID: <CAK7LNAS8xkZCK5keS9SEdNTUsVRb+_hac4yvBG=1HebrkheAqw@mail.gmail.com>
+Subject: Re: [PATCH] kbuild: mark prepare0 as PHONY to fix external module build
+To:     Alexey Kardashevskiy <aik@ozlabs.ru>
+Cc:     Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Samuel Holland <samuel@sholland.org>,
         linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
-        linux-s390 <linux-s390@vger.kernel.org>,
-        Linux-sh list <linux-sh@vger.kernel.org>,
-        sparclinux <sparclinux@vger.kernel.org>
+        Michael Ellerman <mpe@ellerman.id.au>,
+        "linux-stable # v4 . 20" <stable@vger.kernel.org>,
+        Michal Marek <michal.lkml@markovi.net>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jan 14, 2019 at 4:59 AM Michael Ellerman <mpe@ellerman.id.au> wrote:
-> Arnd Bergmann <arnd@arndb.de> writes:
-> >  arch/m68k/kernel/syscalls/syscall.tbl     | 11 +++++++++++
-> >  arch/mips/kernel/syscalls/syscall_o32.tbl | 11 +++++++++++
-> >  arch/powerpc/kernel/syscalls/syscall.tbl  | 12 ++++++++++++
+On Tue, Jan 15, 2019 at 7:45 PM Alexey Kardashevskiy <aik@ozlabs.ru> wrote:
 >
-> I have some changes I'd like to make to our syscall table that will
-> clash with this.
 >
-> I'll try and send them today.
-
-Ok. Are those for 5.0 or 5.1? If they are intended for 5.0, it would be
-nice for me to have a branch based on 5.0-rc1 that I can put
-the other patches on top of.
-
-> > diff --git a/arch/powerpc/kernel/syscalls/syscall.tbl b/arch/powerpc/kernel/syscalls/syscall.tbl
-> > index db3bbb8744af..1bffab54ff35 100644
-> > --- a/arch/powerpc/kernel/syscalls/syscall.tbl
-> > +++ b/arch/powerpc/kernel/syscalls/syscall.tbl
-> > @@ -425,3 +425,15 @@
-> >  386  nospu   pkey_mprotect                   sys_pkey_mprotect
-> >  387  nospu   rseq                            sys_rseq
-> >  388  nospu   io_pgetevents                   sys_io_pgetevents               compat_sys_io_pgetevents
-> > +# room for arch specific syscalls
-> > +392  64      semtimedop                      sys_semtimedop
-> > +393  common  semget                          sys_semget
-> > +394  common  semctl                          sys_semctl                      compat_sys_semctl
-> > +395  common  shmget                          sys_shmget
-> > +396  common  shmctl                          sys_shmctl                      compat_sys_shmctl
-> > +397  common  shmat                           sys_shmat                       compat_sys_shmat
-> > +398  common  shmdt                           sys_shmdt
-> > +399  common  msgget                          sys_msgget
-> > +400  common  msgsnd                          sys_msgsnd                      compat_sys_msgsnd
-> > +401  common  msgrcv                          sys_msgrcv                      compat_sys_msgrcv
-> > +402  common  msgctl                          sys_msgctl                      compat_sys_msgctl
 >
-> We already have a gap at 366-377 from when we tried to add the split IPC
-> calls a few years back.
+> On 15/01/2019 18:19, Masahiro Yamada wrote:
+> > Commit c3ff2a5193fa ("powerpc/32: add stack protector support")
+> > caused kernel panic on PowerPC if an external module is used with
+> > CONFIG_STACKPROTECTOR because the 'prepare' target was not executed
+> > for the external module build.
+> >
+> > Commit e07db28eea38 ("kbuild: fix single target build for external
+> > module") turned it into a build error because the 'prepare' target is
+> > now executed but the 'prepare0' target is missing for the external
+> > module build.
+> >
+> > External module on arm/arm64 with CONFIG_STACKPROTECTOR_PER_TASK is
+> > also broken in the same way.
+> >
+> > Move 'PHONY += prepare0' to the common place. Make is fine with missing
+> > rule for phony targets.
+> >
+> > I minimize the change so it can be easily backported to 4.20.x
+> >
+> > To fix v4.20 for external modules of PowerPC, please backport
+> > e07db28eea38 ("kbuild: fix single target build for external module"),
+> > and then this commit.
+> >
+> > Link: https://bugzilla.kernel.org/show_bug.cgi?id=201891
+> > Fixes: e07db28eea38 ("kbuild: fix single target build for external module")
+> > Fixes: c3ff2a5193fa ("powerpc/32: add stack protector support")
+> > Fixes: 189af4657186 ("ARM: smp: add support for per-task stack canaries")
+> > Fixes: 0a1213fa7432 ("arm64: enable per-task stack canaries")
+> > Cc: linux-stable <stable@vger.kernel.org> # v4.20
+> > Reported-by: Samuel Holland <samuel@sholland.org>
+> > Reported-by: Alexey Kardashevskiy <aik@ozlabs.ru>
+> > Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
 >
-> I guess I don't mind leaving that gap and using the common numbers as
-> you've done here.
 >
-> But it would be good to add a comment pointing out that we have room
-> at 366 for more arch specific syscalls as well.
+> Tested-by: Alexey Kardashevskiy <aik@ozlabs.ru>
+>
+> Thanks for fixing this! Out of curiosity - how does this work?
+> arch/powerpc/Makefile's stack_protector_prepare still depends on
+> prepare0 which is still defined only if KBUILD_EXTMOD=="" but somehow it
+> does not bother ./Makefile? Thanks,
 
-Ah, I missed that. I've added this to my patch now:
 
-index 5c0936d862fc..2ddfba536d5f 100644
---- a/arch/powerpc/kernel/syscalls/syscall.tbl
-+++ b/arch/powerpc/kernel/syscalls/syscall.tbl
-@@ -460,6 +460,7 @@
- 363    spu     switch_endian                   sys_ni_syscall
- 364    common  userfaultfd                     sys_userfaultfd
- 365    common  membarrier                      sys_membarrier
-+# 366-377 originally left for IPC, now unused
- 378    nospu   mlock2                          sys_mlock2
- 379    nospu   copy_file_range                 sys_copy_file_range
- 380    common  preadv2                         sys_preadv2
-         compat_sys_preadv2
+Missing phony targets are ignored.
 
-       Arnd
+
+I do not know if it is officially documented,
+but GNU Make works like that.
+
+Is the following test code helpful?
+
+
+[Test Makefile]
+
+prepare: prepare0
+        @echo hello world
+
+.PHONY: prepare prepare0
+
+
+[Result]
+$ make
+hello world
+
+
+
+-- 
+Best Regards
+Masahiro Yamada
