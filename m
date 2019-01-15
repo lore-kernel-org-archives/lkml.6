@@ -7,70 +7,57 @@ X-Spam-Status: No, score=-12.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D950C43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 19:08:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8EB25C43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 19:08:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DEA9A20859
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 19:08:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5BFAB20866
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 19:08:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547579319;
-	bh=yRepVlu5ufnOVJwux1/w081gushNcbrCPM+AJKbIbgk=;
+	s=default; t=1547579329;
+	bh=33wV/ZCjVeE/rHBbVxudVsPuw+awL3YkZu+Ox7wuR0M=;
 	h=From:To:Cc:Subject:In-Reply-To:Date:List-ID:From;
-	b=G3iDzLmxgXegAA/fzEH0rHOtKnFwZ3nu7FM2hxte82gDP8mAGMGtRS/XjC2FK0se3
-	 bFUFkHMAIslK8//rvXBiZox5ejtm1Y46S9cnjPY5EJ8kn4ok/NdziSirvjfBQye9DL
-	 r69s4aME2JPL5gHwN1vZ4cGAjBnkdDNN6U6VPt1k=
+	b=n9xt8pSoe1TT5BLyYm6Baef2egB7+7Zk3L8hkDJijalb4OhuI9FWPSLrMRGtqzNlR
+	 DpCft1Tsts7y3ZKvmV4PM6sKST+HepwyI/VGQfYsYDpu3rvhzqMJJf627REnhxj/h/
+	 Yjx0KXdN4+AJ6nHNXFT4wcJPaQ3oKK2bizJdeZdQ=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389188AbfAOTIh (ORCPT
+        id S2389202AbfAOTIr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 15 Jan 2019 14:08:37 -0500
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:56932 "EHLO
+        Tue, 15 Jan 2019 14:08:47 -0500
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:57208 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388688AbfAOTIg (ORCPT
+        with ESMTP id S1732387AbfAOTIp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Jan 2019 14:08:36 -0500
+        Tue, 15 Jan 2019 14:08:45 -0500
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
         Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
         List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=/Tcu44I811zl8wnCLEm8xay2SZF2Uu7FCVCTB+PYsoY=; b=ZPWOfO/+Hjos
-        xKTyURlpVw+Dr/p12Y/bWJfpNZaZ4mvLTbyYGL8/nTDuSsg/SWMnwg4AvjJcRXnJhqd8cYfhu27ui
-        MngAhGeWN1oAdTRRHsRgsvtYnU92dxd1WrMAnFN5srQOGRMoBYUY1fkDuhC4xXmEqm2K1r+eWliWA
-        gj27A=;
+        List-Archive; bh=vTwjV8Z9149BVSSK7fdSWFacNeADPC0eQaIXkteG95s=; b=ty8b1OINnPHC
+        Q1Jsgh1rYNi+HEWtqVrj9Qrg1Ogcp7szXS7jMua27/WSwqf4jknz6XRRDTWpFNYbFaaybl9A8p8f6
+        xQYxFLIUtdNqXV9J1sJWKmcmcwM+wCFnfkJqbyywzJ3axl1C2TlsQjZDfA/O4ivf3iu6ZJL0cYVYK
+        C8r9M=;
 Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
         by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
         (envelope-from <broonie@sirena.org.uk>)
-        id 1gjU4R-000278-K5; Tue, 15 Jan 2019 19:08:19 +0000
+        id 1gjU4j-00028B-NJ; Tue, 15 Jan 2019 19:08:37 +0000
 Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
-        id 3C14B1127848; Tue, 15 Jan 2019 19:08:19 +0000 (GMT)
+        id 4BBE11127848; Tue, 15 Jan 2019 19:08:37 +0000 (GMT)
 From:   Mark Brown <broonie@kernel.org>
-To:     Silvio Cesare <silvio.cesare@gmail.com>
-Cc:     Timur Tabi <timur@kernel.org>,
-        Nicolin Chen <nicoleotsuka@gmail.com>,
+To:     Vignesh R <vigneshr@ti.com>
+Cc:     stable@vger.kernel.org, David Lechner <david@lechnology.com>,
+        David Lechner <david@lechnology.com>,
         Mark Brown <broonie@kernel.org>,
-        Xiubo Li <Xiubo.Lee@gmail.com>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        Kees Cook <keescook@chromium.org>,
-        Will Deacon <will.deacon@arm.com>, Greg KH <greg@kroah.com>,
-        Willy Tarreau <w@1wt.eu>,
-        Nicolin Chen <nicoleotsuka@gmail.com>,
-        Mark Brown <broonie@kernel.org>, alsa-devel@alsa-project.org,
-        Kees Cook <keescook@chromium.org>,
-        Timur Tabi <timur@kernel.org>, Xiubo Li <Xiubo.Lee@gmail.com>,
-        Greg KH <greg@kroah.com>, Will Deacon <will.deacon@arm.com>,
-        linux-kernel@vger.kernel.org,
-        Nicolin Chen <nicoleotsuka@gmail.com>,
         Mark Brown <broonie@kernel.org>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        alsa-devel@alsa-project.org
-Subject: Applied "ASoC: imx-audmux: change snprintf to scnprintf for possible overflow" to the asoc tree
-In-Reply-To:  <20190115032727.GA6440@1wt.eu>
+        David Lechner <david@lechnology.com>,
+        linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-omap@vger.kernel.org, linux-spi@vger.kernel.org
+Subject: Applied "spi: omap2-mcspi: Fix DMA and FIFO event trigger size mismatch" to the spi tree
+In-Reply-To:  <20190115065832.23705-1-vigneshr@ti.com>
 X-Patchwork-Hint: ignore
-Message-Id: <20190115190819.3C14B1127848@debutante.sirena.org.uk>
-Date:   Tue, 15 Jan 2019 19:08:19 +0000 (GMT)
+Message-Id: <20190115190837.4BBE11127848@debutante.sirena.org.uk>
+Date:   Tue, 15 Jan 2019 19:08:37 +0000 (GMT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -78,11 +65,11 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   ASoC: imx-audmux: change snprintf to scnprintf for possible overflow
+   spi: omap2-mcspi: Fix DMA and FIFO event trigger size mismatch
 
-has been applied to the asoc tree at
+has been applied to the spi tree at
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git 
 
 All being well this means that it will be integrated into the linux-next
 tree (usually sometime in the next 24 hours) and sent to Linus during
@@ -103,118 +90,48 @@ to this mail.
 Thanks,
 Mark
 
-From c407cd008fd039320d147088b52d0fa34ed3ddcb Mon Sep 17 00:00:00 2001
-From: Silvio Cesare <silvio.cesare@gmail.com>
-Date: Tue, 15 Jan 2019 04:27:27 +0100
-Subject: [PATCH] ASoC: imx-audmux: change snprintf to scnprintf for possible
- overflow
+From baf8b9f8d260c55a86405f70a384c29cda888476 Mon Sep 17 00:00:00 2001
+From: Vignesh R <vigneshr@ti.com>
+Date: Tue, 15 Jan 2019 12:28:32 +0530
+Subject: [PATCH] spi: omap2-mcspi: Fix DMA and FIFO event trigger size
+ mismatch
 
-Change snprintf to scnprintf. There are generally two cases where using
-snprintf causes problems.
+Commit b682cffa3ac6 ("spi: omap2-mcspi: Set FIFO DMA trigger level to word length")
+broke SPI transfers where bits_per_word != 8. This is because of
+mimsatch between McSPI FIFO level event trigger size (SPI word length) and
+DMA request size(word length * maxburst). This leads to data
+corruption, lockup and errors like:
 
-1) Uses of size += snprintf(buf, SIZE - size, fmt, ...)
-In this case, if snprintf would have written more characters than what the
-buffer size (SIZE) is, then size will end up larger than SIZE. In later
-uses of snprintf, SIZE - size will result in a negative number, leading
-to problems. Note that size might already be too large by using
-size = snprintf before the code reaches a case of size += snprintf.
+	spi1.0: EOW timed out
 
-2) If size is ultimately used as a length parameter for a copy back to user
-space, then it will potentially allow for a buffer overflow and information
-disclosure when size is greater than SIZE. When the size is used to index
-the buffer directly, we can have memory corruption. This also means when
-size = snprintf... is used, it may also cause problems since size may become
-large.  Copying to userspace is mitigated by the HARDENED_USERCOPY kernel
-configuration.
+Fix this by setting DMA maxburst size to 1 so that
+McSPI FIFO level event trigger size matches DMA request size.
 
-The solution to these issues is to use scnprintf which returns the number of
-characters actually written to the buffer, so the size variable will never
-exceed SIZE.
-
-Signed-off-by: Silvio Cesare <silvio.cesare@gmail.com>
-Cc: Timur Tabi <timur@kernel.org>
-Cc: Nicolin Chen <nicoleotsuka@gmail.com>
-Cc: Mark Brown <broonie@kernel.org>
-Cc: Xiubo Li <Xiubo.Lee@gmail.com>
-Cc: Fabio Estevam <fabio.estevam@nxp.com>
-Cc: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Kees Cook <keescook@chromium.org>
-Cc: Will Deacon <will.deacon@arm.com>
-Cc: Greg KH <greg@kroah.com>
-Signed-off-by: Willy Tarreau <w@1wt.eu>
-Acked-by: Nicolin Chen <nicoleotsuka@gmail.com>
-Reviewed-by: Kees Cook <keescook@chromium.org>
+Fixes: b682cffa3ac6 ("spi: omap2-mcspi: Set FIFO DMA trigger level to word length")
+Cc: stable@vger.kernel.org
+Reported-by: David Lechner <david@lechnology.com>
+Tested-by: David Lechner <david@lechnology.com>
+Signed-off-by: Vignesh R <vigneshr@ti.com>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- sound/soc/fsl/imx-audmux.c | 24 ++++++++++++------------
- 1 file changed, 12 insertions(+), 12 deletions(-)
+ drivers/spi/spi-omap2-mcspi.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/sound/soc/fsl/imx-audmux.c b/sound/soc/fsl/imx-audmux.c
-index 392d5eef356d..99e07b01a2ce 100644
---- a/sound/soc/fsl/imx-audmux.c
-+++ b/sound/soc/fsl/imx-audmux.c
-@@ -86,49 +86,49 @@ static ssize_t audmux_read_file(struct file *file, char __user *user_buf,
- 	if (!buf)
- 		return -ENOMEM;
+diff --git a/drivers/spi/spi-omap2-mcspi.c b/drivers/spi/spi-omap2-mcspi.c
+index 2fd8881fcd65..8be304379628 100644
+--- a/drivers/spi/spi-omap2-mcspi.c
++++ b/drivers/spi/spi-omap2-mcspi.c
+@@ -623,8 +623,8 @@ omap2_mcspi_txrx_dma(struct spi_device *spi, struct spi_transfer *xfer)
+ 	cfg.dst_addr = cs->phys + OMAP2_MCSPI_TX0;
+ 	cfg.src_addr_width = width;
+ 	cfg.dst_addr_width = width;
+-	cfg.src_maxburst = es;
+-	cfg.dst_maxburst = es;
++	cfg.src_maxburst = 1;
++	cfg.dst_maxburst = 1;
  
--	ret = snprintf(buf, PAGE_SIZE, "PDCR: %08x\nPTCR: %08x\n",
-+	ret = scnprintf(buf, PAGE_SIZE, "PDCR: %08x\nPTCR: %08x\n",
- 		       pdcr, ptcr);
- 
- 	if (ptcr & IMX_AUDMUX_V2_PTCR_TFSDIR)
--		ret += snprintf(buf + ret, PAGE_SIZE - ret,
-+		ret += scnprintf(buf + ret, PAGE_SIZE - ret,
- 				"TxFS output from %s, ",
- 				audmux_port_string((ptcr >> 27) & 0x7));
- 	else
--		ret += snprintf(buf + ret, PAGE_SIZE - ret,
-+		ret += scnprintf(buf + ret, PAGE_SIZE - ret,
- 				"TxFS input, ");
- 
- 	if (ptcr & IMX_AUDMUX_V2_PTCR_TCLKDIR)
--		ret += snprintf(buf + ret, PAGE_SIZE - ret,
-+		ret += scnprintf(buf + ret, PAGE_SIZE - ret,
- 				"TxClk output from %s",
- 				audmux_port_string((ptcr >> 22) & 0x7));
- 	else
--		ret += snprintf(buf + ret, PAGE_SIZE - ret,
-+		ret += scnprintf(buf + ret, PAGE_SIZE - ret,
- 				"TxClk input");
- 
--	ret += snprintf(buf + ret, PAGE_SIZE - ret, "\n");
-+	ret += scnprintf(buf + ret, PAGE_SIZE - ret, "\n");
- 
- 	if (ptcr & IMX_AUDMUX_V2_PTCR_SYN) {
--		ret += snprintf(buf + ret, PAGE_SIZE - ret,
-+		ret += scnprintf(buf + ret, PAGE_SIZE - ret,
- 				"Port is symmetric");
- 	} else {
- 		if (ptcr & IMX_AUDMUX_V2_PTCR_RFSDIR)
--			ret += snprintf(buf + ret, PAGE_SIZE - ret,
-+			ret += scnprintf(buf + ret, PAGE_SIZE - ret,
- 					"RxFS output from %s, ",
- 					audmux_port_string((ptcr >> 17) & 0x7));
- 		else
--			ret += snprintf(buf + ret, PAGE_SIZE - ret,
-+			ret += scnprintf(buf + ret, PAGE_SIZE - ret,
- 					"RxFS input, ");
- 
- 		if (ptcr & IMX_AUDMUX_V2_PTCR_RCLKDIR)
--			ret += snprintf(buf + ret, PAGE_SIZE - ret,
-+			ret += scnprintf(buf + ret, PAGE_SIZE - ret,
- 					"RxClk output from %s",
- 					audmux_port_string((ptcr >> 12) & 0x7));
- 		else
--			ret += snprintf(buf + ret, PAGE_SIZE - ret,
-+			ret += scnprintf(buf + ret, PAGE_SIZE - ret,
- 					"RxClk input");
- 	}
- 
--	ret += snprintf(buf + ret, PAGE_SIZE - ret,
-+	ret += scnprintf(buf + ret, PAGE_SIZE - ret,
- 			"\nData received from %s\n",
- 			audmux_port_string((pdcr >> 13) & 0x7));
- 
+ 	rx = xfer->rx_buf;
+ 	tx = xfer->tx_buf;
 -- 
 2.20.1
 
