@@ -3,362 +3,257 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=unavailable
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D154C43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 00:29:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 455F8C43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 00:29:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D92B4206B7
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 00:29:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547512144;
-	bh=yypfHHv39pjqymrLz6VKVevFi6wpl/m+LFImi5MVFH4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=TdkKMeXYgAJ/HPl/Bwz5oATKRlTO8hcCMa5nmLWuk3goZNEDyYfL1VN1H979UZcyl
-	 B/SmMWoY0lO59nGrQrfCuiQVFI6YVvKxhLy2wucdJTzlCzImAGbMACxsEo7GyjqgIU
-	 vIP7WabfP2It1OdMT7NFIMcPmNQg6Wq/vxtm/JhI=
+	by mail.kernel.org (Postfix) with ESMTP id 099FC20657
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 00:29:33 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="auuk8dSV"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727477AbfAOA3C (ORCPT
+        id S1727494AbfAOA3b (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 14 Jan 2019 19:29:02 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59046 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727439AbfAOA3B (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 Jan 2019 19:29:01 -0500
-Received: from localhost (unknown [69.71.4.100])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7A24820657;
-        Tue, 15 Jan 2019 00:28:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547512140;
-        bh=yypfHHv39pjqymrLz6VKVevFi6wpl/m+LFImi5MVFH4=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=UeGm/TwQOIi+Cl9e3uz6kwsgm+EfQaZP1EZofUEY9RrZOOQWnHYYe6taoFgkEZnIQ
-         wg4HiTtTBgsEmMhyQorFWgKIXSYFQrW4VCHDGnbh8mA0qmqEcvXr+qfeiBsbkD0hcA
-         2XwrucHzJhXAJqqPAN64w/36NYqB6tWE57YLW1tY=
-Date:   Mon, 14 Jan 2019 18:28:57 -0600
-From:   Bjorn Helgaas <helgaas@kernel.org>
-To:     Michael Bringmann <mwb@linux.vnet.ibm.com>
-Cc:     linuxppc-dev@lists.ozlabs.org, linux-pci@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Tyrel Datwyler <tyreld@linux.vnet.ibm.com>,
-        Thomas Falcon <tlfalcon@linux.vnet.ibm.com>,
-        Juliet Kim <minkim@us.ibm.com>
-Subject: Re: [RFC 5/6] powerpc/pci/hotplug: Use common drcinfo parsing
-Message-ID: <20190115002857.GG33971@google.com>
-References: <20181214204914.16435.59083.stgit@powerkvm6.aus.stglabs.ibm.com>
- <20181214205120.16435.46952.stgit@powerkvm6.aus.stglabs.ibm.com>
+        Mon, 14 Jan 2019 19:29:31 -0500
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:40953 "EHLO
+        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727439AbfAOA3a (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 14 Jan 2019 19:29:30 -0500
+Received: by mail-pl1-f194.google.com with SMTP id u18so408407plq.7
+        for <linux-kernel@vger.kernel.org>; Mon, 14 Jan 2019 16:29:30 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=fDaHKh5KYWZh1WGO9lqDTCqn12CWxYXa8HG0kHa/imo=;
+        b=auuk8dSVJK6fVK8KV3ejiLWKw90lrr4VrjQSxOUZYmBalSet1AYl+o1BYPf8SsSzAM
+         16jQpE6gyIb9pOr+zwfJPMDogNcUMOKgEh9T5uV/ZQOk9jaa8YFF0ukqWpYjA1Ck6HVO
+         zW7t4nAjkPVvHOcSp8WRoFdQxfLSgZCsOELfQ=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=fDaHKh5KYWZh1WGO9lqDTCqn12CWxYXa8HG0kHa/imo=;
+        b=To2aKeEjaXMC21tyLwoH/Uumde1pihjzUHvb48zwFckLtXY6MFSftlmEyswT/KJx4s
+         RsdB+T5C2H2Ajb/v5P0n8vTDxaoVDdFUicLhYLCIRHUuBxaTrBMovM3xL1OD1zmBykfV
+         k8eBHehcZeMCbCkbvyRfksPZDOImTjEhYVU2FEH4KoudQisGJ18qSt7XHSKW9Epiu9rg
+         lHsr35Dr7sjIhQ5DWrB4XT2jEPlI/wLQLYyFM2GWYQwmiiKaJgT9SnL/bdHOoq0vdiIy
+         zC+K9Zg3gnOTpbI8Zi/Z9eVJ4i+3Yf3zp11LgZDAKL/nGAMbElM7l8vRzGxGQPmaW7Hp
+         bSnA==
+X-Gm-Message-State: AJcUukc3CO1wWikm4FBi7vRfQ+NFwY3o7Ku5EeDqlelCtnVIKo2RI0ow
+        NSAH5KuMWKqrA9mp+HOsCf2kbg==
+X-Google-Smtp-Source: ALg8bN5OICt/qGkuBe6j4csytiIyYiKX2rvfbdjsAyyl+LNgsxt1c2Xdjk2q9GM1Y8s+qro6tJ60fg==
+X-Received: by 2002:a17:902:2c83:: with SMTP id n3mr1248166plb.104.1547512170032;
+        Mon, 14 Jan 2019 16:29:30 -0800 (PST)
+Received: from localhost ([2620:15c:202:1:75a:3f6e:21d:9374])
+        by smtp.gmail.com with ESMTPSA id g11sm1777712pfo.139.2019.01.14.16.29.29
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 14 Jan 2019 16:29:29 -0800 (PST)
+Date:   Mon, 14 Jan 2019 16:29:28 -0800
+From:   Matthias Kaehlcke <mka@chromium.org>
+To:     Taniya Das <tdas@codeaurora.org>
+Cc:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        devicetree@vger.kernel.org, robh@kernel.org,
+        skannan@codeaurora.org, linux-arm-msm@vger.kernel.org,
+        amit.kucheria@linaro.org, evgreen@google.com
+Subject: Re: [PATCH v2] cpufreq: qcom: Read voltage LUT and populate OPP
+Message-ID: <20190115002928.GO261387@google.com>
+References: <1547021248-27258-1-git-send-email-tdas@codeaurora.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20181214205120.16435.46952.stgit@powerkvm6.aus.stglabs.ibm.com>
+In-Reply-To: <1547021248-27258-1-git-send-email-tdas@codeaurora.org>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Dec 14, 2018 at 02:51:31PM -0600, Michael Bringmann wrote:
-> The implementation of the pseries-specific drc info properties
-> is currently implemented in pseries-specific and non-pseries-specific
-> files.  This patch set uses a new implementation of the device-tree
-> parsing code for the properties.
+Hi Taniya,
+
+On Wed, Jan 09, 2019 at 01:37:28PM +0530, Taniya Das wrote:
+> Add support to read the voltage look up table and populate OPP for all
+> corresponding CPUS for consumers like the energy model could use the
+> frequency and voltage from the OPP tables.
 > 
-> This patch refactors parsing of the pseries-specific drc-info properties
-> out of rpaphp_core.c to use the common parser.  In the case where an
-> architecture does not use these properties, an __weak copy of the
-> function is provided with dummy return values.  Changes include creating
-> appropriate callback functions and passing callback-specific data
-> blocks into arch_find_drc_match.  All functions that were used just
-> to support the previous parsing implementation have been moved.
-> 
-> Signed-off-by: Michael Bringmann <mwb@linux.vnet.ibm.com>
-
-This is fine with me.  Any rpaphp_core.c maintainers want to comment?
-Tyrel?
-
-$ ./scripts/get_maintainer.pl -f drivers/pci/hotplug/rpaphp_core.c
-Tyrel Datwyler <tyreld@linux.vnet.ibm.com> (supporter:IBM Power PCI Hotplug Driver for RPA-compliant...)
-Benjamin Herrenschmidt <benh@kernel.crashing.org> (supporter:LINUX FOR POWERPC (32-BIT AND 64-BIT))
-Paul Mackerras <paulus@samba.org> (supporter:LINUX FOR POWERPC (32-BIT AND 64-BIT))
-Michael Ellerman <mpe@ellerman.id.au> (supporter:LINUX FOR POWERPC (32-BIT AND 64-BIT))
-
+> Tested-by: Matthias Kaehlcke <mka@chromium.org>
+> Signed-off-by: Taniya Das <tdas@codeaurora.org>
 > ---
->  drivers/pci/hotplug/rpaphp_core.c |  232 ++++---------------------------------
->  1 file changed, 28 insertions(+), 204 deletions(-)
+>  drivers/cpufreq/qcom-cpufreq-hw.c | 33 +++++++++++++++++++++++++++++++--
+>  1 file changed, 31 insertions(+), 2 deletions(-)
 > 
-> diff --git a/drivers/pci/hotplug/rpaphp_core.c b/drivers/pci/hotplug/rpaphp_core.c
-> index bcd5d35..9ad7384 100644
-> --- a/drivers/pci/hotplug/rpaphp_core.c
-> +++ b/drivers/pci/hotplug/rpaphp_core.c
-> @@ -154,182 +154,18 @@ static enum pci_bus_speed get_max_bus_speed(struct slot *slot)
->  	return speed;
->  }
->  
-> -static int get_children_props(struct device_node *dn, const int **drc_indexes,
-> -		const int **drc_names, const int **drc_types,
-> -		const int **drc_power_domains)
-> -{
-> -	const int *indexes, *names, *types, *domains;
-> -
-> -	indexes = of_get_property(dn, "ibm,drc-indexes", NULL);
-> -	names = of_get_property(dn, "ibm,drc-names", NULL);
-> -	types = of_get_property(dn, "ibm,drc-types", NULL);
-> -	domains = of_get_property(dn, "ibm,drc-power-domains", NULL);
-> -
-> -	if (!indexes || !names || !types || !domains) {
-> -		/* Slot does not have dynamically-removable children */
-> -		return -EINVAL;
-> -	}
-> -	if (drc_indexes)
-> -		*drc_indexes = indexes;
-> -	if (drc_names)
-> -		/* &drc_names[1] contains NULL terminated slot names */
-> -		*drc_names = names;
-> -	if (drc_types)
-> -		/* &drc_types[1] contains NULL terminated slot types */
-> -		*drc_types = types;
-> -	if (drc_power_domains)
-> -		*drc_power_domains = domains;
-> -
-> -	return 0;
-> -}
-> -
-> -
->  /* Verify the existence of 'drc_name' and/or 'drc_type' within the
-> - * current node.  First obtain it's my-drc-index property.  Next,
-> - * obtain the DRC info from it's parent.  Use the my-drc-index for
-> - * correlation, and obtain/validate the requested properties.
-> + * current node.
->   */
->  
-> -static int rpaphp_check_drc_props_v1(struct device_node *dn, char *drc_name,
-> -				char *drc_type, unsigned int my_index)
-> -{
-> -	char *name_tmp, *type_tmp;
-> -	const int *indexes, *names;
-> -	const int *types, *domains;
-> -	int i, rc;
-> -
-> -	rc = get_children_props(dn->parent, &indexes, &names, &types, &domains);
-> -	if (rc < 0) {
-> -		return -EINVAL;
-> -	}
-> -
-> -	name_tmp = (char *) &names[1];
-> -	type_tmp = (char *) &types[1];
-> -
-> -	/* Iterate through parent properties, looking for my-drc-index */
-> -	for (i = 0; i < be32_to_cpu(indexes[0]); i++) {
-> -		if ((unsigned int) indexes[i + 1] == my_index)
-> -			break;
-> -
-> -		name_tmp += (strlen(name_tmp) + 1);
-> -		type_tmp += (strlen(type_tmp) + 1);
-> -	}
-> -
-> -	if (((drc_name == NULL) || (drc_name && !strcmp(drc_name, name_tmp))) &&
-> -	    ((drc_type == NULL) || (drc_type && !strcmp(drc_type, type_tmp))))
-> -		return 0;
-> -
-> -	return -EINVAL;
-> -}
-> -
-> -static int rpaphp_check_drc_props_v2(struct device_node *dn, char *drc_name,
-> -				char *drc_type, unsigned int my_index)
-> -{
-> -	struct property *info;
-> -	unsigned int entries;
-> -	struct of_drc_info drc;
-> -	const __be32 *value;
-> -	char cell_drc_name[MAX_DRC_NAME_LEN];
-> -	int j, fndit;
-> -
-> -	info = of_find_property(dn->parent, "ibm,drc-info", NULL);
-> -	if (info == NULL)
-> -		return -EINVAL;
-> -
-> -	value = of_prop_next_u32(info, NULL, &entries);
-> -	if (!value)
-> -		return -EINVAL;
-> -
-> -	for (j = 0; j < entries; j++) {
-> -		of_read_drc_info_cell(&info, &value, &drc);
-> -
-> -		/* Should now know end of current entry */
-> -
-> -		if (my_index > drc.last_drc_index)
-> -			continue;
-> -
-> -		fndit = 1;
-> -		break;
-> -	}
-> -	/* Found it */
-> -
-> -	if (fndit)
-> -		sprintf(cell_drc_name, "%s%d", drc.drc_name_prefix, 
-> -			my_index);
-> -
-> -	if (((drc_name == NULL) ||
-> -	     (drc_name && !strcmp(drc_name, cell_drc_name))) &&
-> -	    ((drc_type == NULL) ||
-> -	     (drc_type && !strcmp(drc_type, drc.drc_type))))
-> -		return 0;
-> -
-> -	return -EINVAL;
-> -}
-> -
->  int rpaphp_check_drc_props(struct device_node *dn, char *drc_name,
->  			char *drc_type)
+> diff --git a/drivers/cpufreq/qcom-cpufreq-hw.c b/drivers/cpufreq/qcom-cpufreq-hw.c
+> index d83939a..18f90bb 100644
+> --- a/drivers/cpufreq/qcom-cpufreq-hw.c
+> +++ b/drivers/cpufreq/qcom-cpufreq-hw.c
+> @@ -10,18 +10,21 @@
+>  #include <linux/module.h>
+>  #include <linux/of_address.h>
+>  #include <linux/of_platform.h>
+> +#include <linux/pm_opp.h>
+>  #include <linux/slab.h>
+> 
+>  #define LUT_MAX_ENTRIES			40U
+>  #define LUT_SRC				GENMASK(31, 30)
+>  #define LUT_L_VAL			GENMASK(7, 0)
+>  #define LUT_CORE_COUNT			GENMASK(18, 16)
+> +#define LUT_VOLT			GENMASK(11, 0)
+>  #define LUT_ROW_SIZE			32
+>  #define CLK_HW_DIV			2
+> 
+>  /* Register offsets */
+>  #define REG_ENABLE			0x0
+> -#define REG_LUT_TABLE			0x110
+> +#define REG_FREQ_LUT			0x110
+> +#define REG_VOLT_LUT			0x114
+>  #define REG_PERF_STATE			0x920
+> 
+>  static unsigned long cpu_hw_rate, xo_rate;
+> @@ -75,6 +78,7 @@ static int qcom_cpufreq_hw_read_lut(struct device *dev,
+>  				    void __iomem *base)
 >  {
-> -	const unsigned int *my_index;
-> -
-> -	my_index = of_get_property(dn, "ibm,my-drc-index", NULL);
-> -	if (!my_index) {
-> -		/* Node isn't DLPAR/hotplug capable */
-> -		return -EINVAL;
-> -	}
-> -
-> -	if (firmware_has_feature(FW_FEATURE_DRC_INFO))
-> -		return rpaphp_check_drc_props_v2(dn, drc_name, drc_type,
-> -						*my_index);
-> -	else
-> -		return rpaphp_check_drc_props_v1(dn, drc_name, drc_type,
-> -						*my_index);
-> +	return arch_find_drc_match(dn, NULL, drc_type, drc_name,
-> +				true, false, NULL);
->  }
->  EXPORT_SYMBOL_GPL(rpaphp_check_drc_props);
->  
-> -
-> -static int is_php_type(char *drc_type)
-> -{
-> -	unsigned long value;
-> -	char *endptr;
-> -
-> -	/* PCI Hotplug nodes have an integer for drc_type */
-> -	value = simple_strtoul(drc_type, &endptr, 10);
-> -	if (endptr == drc_type)
-> -		return 0;
-> -
-> -	return 1;
-> -}
-> -
-> -/**
-> - * is_php_dn() - return 1 if this is a hotpluggable pci slot, else 0
-> - * @dn: target &device_node
-> - * @indexes: passed to get_children_props()
-> - * @names: passed to get_children_props()
-> - * @types: returned from get_children_props()
-> - * @power_domains:
-> - *
-> - * This routine will return true only if the device node is
-> - * a hotpluggable slot. This routine will return false
-> - * for built-in pci slots (even when the built-in slots are
-> - * dlparable.)
-> - */
-> -static int is_php_dn(struct device_node *dn, const int **indexes,
-> -		const int **names, const int **types, const int **power_domains)
-> -{
-> -	const int *drc_types;
-> -	int rc;
-> -
-> -	rc = get_children_props(dn, indexes, names, &drc_types, power_domains);
-> -	if (rc < 0)
-> -		return 0;
-> -
-> -	if (!is_php_type((char *) &drc_types[1]))
-> -		return 0;
-> -
-> -	*types = drc_types;
-> -	return 1;
-> -}
-> -
->  /**
->   * rpaphp_add_slot -- declare a hotplug slot to the hotplug subsystem.
->   * @dn: device node of slot
-> @@ -346,54 +182,42 @@ static int is_php_dn(struct device_node *dn, const int **indexes,
->   *
->   * To remove a slot, it suffices to call rpaphp_deregister_slot().
->   */
-> -int rpaphp_add_slot(struct device_node *dn)
+>  	u32 data, src, lval, i, core_count, prev_cc = 0, prev_freq = 0, freq;
+> +	u32 volt;
+>  	unsigned int max_cores = cpumask_weight(policy->cpus);
+>  	struct cpufreq_frequency_table	*table;
+> 
+> @@ -83,11 +87,16 @@ static int qcom_cpufreq_hw_read_lut(struct device *dev,
+>  		return -ENOMEM;
+> 
+>  	for (i = 0; i < LUT_MAX_ENTRIES; i++) {
+> -		data = readl_relaxed(base + REG_LUT_TABLE + i * LUT_ROW_SIZE);
+> +		data = readl_relaxed(base + REG_FREQ_LUT +
+> +				      i * LUT_ROW_SIZE);
+>  		src = FIELD_GET(LUT_SRC, data);
+>  		lval = FIELD_GET(LUT_L_VAL, data);
+>  		core_count = FIELD_GET(LUT_CORE_COUNT, data);
+> 
+> +		data = readl_relaxed(base + REG_VOLT_LUT +
+> +				      i * LUT_ROW_SIZE);
+> +		volt = FIELD_GET(LUT_VOLT, data) * 1000;
 > +
-> +static int rpaphp_add_slot_cb(struct device_node *dn,
-> +			u32 drc_index, char *drc_name, char *drc_type,
-> +			u32 drc_power_domain, void *data)
->  {
->  	struct slot *slot;
->  	int retval = 0;
-> -	int i;
-> -	const int *indexes, *names, *types, *power_domains;
-> -	char *name, *type;
-> -
-> -	if (!dn->name || strcmp(dn->name, "pci"))
-> -		return 0;
-> -
-> -	/* If this is not a hotplug slot, return without doing anything. */
-> -	if (!is_php_dn(dn, &indexes, &names, &types, &power_domains))
-> -		return 0;
-> -
-> -	dbg("Entry %s: dn=%pOF\n", __func__, dn);
->  
-> -	/* register PCI devices */
-> -	name = (char *) &names[1];
-> -	type = (char *) &types[1];
-> -	for (i = 0; i < be32_to_cpu(indexes[0]); i++) {
-> -		int index;
-> +	slot = alloc_slot_struct(dn, drc_index, drc_name, drc_power_domain);
-> +	if (!slot)
-> +		return -ENOMEM;
->  
-> -		index = be32_to_cpu(indexes[i + 1]);
-> -		slot = alloc_slot_struct(dn, index, name,
-> -					 be32_to_cpu(power_domains[i + 1]));
-> -		if (!slot)
-> -			return -ENOMEM;
-> +	slot->type = simple_strtoul(drc_type, NULL, 10);
-> +	if (retval)
-> +		return -EINVAL;
->  
-> -		slot->type = simple_strtoul(type, NULL, 10);
-> +	dbg("Found drc-index:0x%x drc-name:%s drc-type:%s\n",
-> +		drc_index, drc_name, drc_type);
->  
-> -		dbg("Found drc-index:0x%x drc-name:%s drc-type:%s\n",
-> -				index, name, type);
-> +	retval = rpaphp_enable_slot(slot);
-> +	if (!retval)
-> +		retval = rpaphp_register_slot(slot);
->  
-> -		retval = rpaphp_enable_slot(slot);
-> -		if (!retval)
-> -			retval = rpaphp_register_slot(slot);
-> +	if (retval)
-> +		dealloc_slot_struct(slot);
->  
-> -		if (retval)
-> -			dealloc_slot_struct(slot);
-> +	return retval;
-> +}
->  
-> -		name += strlen(name) + 1;
-> -		type += strlen(type) + 1;
-> -	}
-> -	dbg("%s - Exit: rc[%d]\n", __func__, retval);
-> +int rpaphp_add_slot(struct device_node *dn)
-> +{
-> +	if (!dn->name || strcmp(dn->name, "pci"))
-> +		return 0;
->  
-> -	/* XXX FIXME: reports a failure only if last entry in loop failed */
-> -	return retval;
-> +	return arch_find_drc_match(dn, rpaphp_add_slot_cb,
-> +			NULL, NULL, false, true, NULL);
->  }
->  EXPORT_SYMBOL_GPL(rpaphp_add_slot);
->  
+>  		if (src)
+>  			freq = xo_rate * lval / 1000;
+>  		else
+> @@ -98,6 +107,8 @@ static int qcom_cpufreq_hw_read_lut(struct device *dev,
+>  			table[i].frequency = CPUFREQ_ENTRY_INVALID;
+>  		} else {
+>  			table[i].frequency = freq;
+> +			dev_pm_opp_add(get_cpu_device(policy->cpu),
+> +					freq * 1000, volt);
+>  			dev_dbg(dev, "index=%d freq=%d, core_count %d\n", i,
+>  				freq, core_count);
+>  		}
+> @@ -116,6 +127,8 @@ static int qcom_cpufreq_hw_read_lut(struct device *dev,
+>  			if (prev_cc != max_cores) {
+>  				prev->frequency = prev_freq;
+>  				prev->flags = CPUFREQ_BOOST_FREQ;
+> +				dev_pm_opp_add(get_cpu_device(policy->cpu),
+> +						prev_freq * 1000, volt);
+>  			}
 > 
+>  			break;
+> @@ -127,6 +140,7 @@ static int qcom_cpufreq_hw_read_lut(struct device *dev,
+> 
+>  	table[i].frequency = CPUFREQ_TABLE_END;
+>  	policy->freq_table = table;
+> +	dev_pm_opp_set_sharing_cpus(get_cpu_device(policy->cpu), policy->cpus);
+> 
+>  	return 0;
+>  }
+> @@ -159,10 +173,18 @@ static int qcom_cpufreq_hw_cpu_init(struct cpufreq_policy *policy)
+>  	struct device *dev = &global_pdev->dev;
+>  	struct of_phandle_args args;
+>  	struct device_node *cpu_np;
+> +	struct device *cpu_dev;
+>  	struct resource *res;
+>  	void __iomem *base;
+>  	int ret, index;
+> 
+> +	cpu_dev = get_cpu_device(policy->cpu);
+> +	if (!cpu_dev) {
+> +		pr_err("%s: failed to get cpu%d device\n", __func__,
+> +		       policy->cpu);
+> +		return -ENODEV;
+> +	}
+> +
+>  	cpu_np = of_cpu_device_node_get(policy->cpu);
+>  	if (!cpu_np)
+>  		return -EINVAL;
+> @@ -205,6 +227,12 @@ static int qcom_cpufreq_hw_cpu_init(struct cpufreq_policy *policy)
+>  		goto error;
+>  	}
+> 
+> +	ret = dev_pm_opp_get_opp_count(cpu_dev);
+> +	if (ret <= 0) {
+> +		dev_err(cpu_dev, "OPP table is not ready\n");
+> +		goto error;
+> +	}
+> +
+>  	policy->fast_switch_possible = true;
+> 
+>  	return 0;
+> @@ -217,6 +245,7 @@ static int qcom_cpufreq_hw_cpu_exit(struct cpufreq_policy *policy)
+>  {
+>  	void __iomem *base = policy->driver_data - REG_PERF_STATE;
+> 
+> +	dev_pm_opp_remove_all_dynamic(&global_pdev->dev);
+>  	kfree(policy->freq_table);
+>  	devm_iounmap(&global_pdev->dev, base);
+
+With this patch I get the following message on a SDM845 platform:
+
+[    0.847515] cpu cpu0: _opp_is_duplicate: duplicate OPPs detected. Existing: freq: 1766400000, volt: 804000, enabled: 1. New: freq: 1766400000, volt: 804000, enabled: 1
+
+A LUT that doesn't end with a boost frequency isn't handled
+properly. The below patch fixes this.
+
+Cheers
+
+Matthias
+
+
+From 481d7d6b190285c95f20e9e1b5ccd5c6b9910a0d Mon Sep 17 00:00:00 2001
+From: Matthias Kaehlcke <mka@chromium.org>
+Date: Mon, 14 Jan 2019 15:54:54 -0800
+Subject: [PATCH] cpufreq: qcom-hw: Don't add duplicate OPPs
+
+Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
+---
+ drivers/cpufreq/qcom-cpufreq-hw.c | 9 ++++-----
+ 1 file changed, 4 insertions(+), 5 deletions(-)
+
+diff --git a/drivers/cpufreq/qcom-cpufreq-hw.c b/drivers/cpufreq/qcom-cpufreq-hw.c
+index 41557329777e5a..314c8d29276b5e 100644
+--- a/drivers/cpufreq/qcom-cpufreq-hw.c
++++ b/drivers/cpufreq/qcom-cpufreq-hw.c
+@@ -103,15 +103,14 @@ static int qcom_cpufreq_hw_read_lut(struct device *dev,
+ 		else
+ 			freq = cpu_hw_rate / 1000;
+ 
+-		/* Ignore boosts in the middle of the table */
+-		if (core_count != max_cores) {
+-			table[i].frequency = CPUFREQ_ENTRY_INVALID;
+-		} else {
++		if ((freq != prev_freq) && (core_count == max_cores)) {
+ 			table[i].frequency = freq;
+ 			dev_pm_opp_add(get_cpu_device(policy->cpu),
+-					freq * 1000, volt);
++				       freq * 1000, volt);
+ 			dev_dbg(dev, "index=%d freq=%d, core_count %d\n", i,
+ 				freq, core_count);
++		} else {
++			table[i].frequency = CPUFREQ_ENTRY_INVALID;
+ 		}
+ 
+ 		/*
+
+
