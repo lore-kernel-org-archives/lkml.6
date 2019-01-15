@@ -2,347 +2,152 @@ Return-Path: <SRS0=RZO6=PX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AE5E9C43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 19:37:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 787C1C43444
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 19:38:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6643420656
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 19:37:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 475ED20656
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 19:38:38 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lf+kY40c"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="FzAXW+YI"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389384AbfAOThh (ORCPT
+        id S2389396AbfAOTig (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 15 Jan 2019 14:37:37 -0500
-Received: from mail-qk1-f193.google.com ([209.85.222.193]:35835 "EHLO
-        mail-qk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731673AbfAOThh (ORCPT
+        Tue, 15 Jan 2019 14:38:36 -0500
+Received: from mail-yw1-f68.google.com ([209.85.161.68]:32833 "EHLO
+        mail-yw1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388713AbfAOTig (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Jan 2019 14:37:37 -0500
-Received: by mail-qk1-f193.google.com with SMTP id w204so2309373qka.2
-        for <linux-kernel@vger.kernel.org>; Tue, 15 Jan 2019 11:37:36 -0800 (PST)
+        Tue, 15 Jan 2019 14:38:36 -0500
+Received: by mail-yw1-f68.google.com with SMTP id p65so1534302ywe.0
+        for <linux-kernel@vger.kernel.org>; Tue, 15 Jan 2019 11:38:35 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
+        d=google.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=sG/XWRJ1MargBcDF0qmJrWqMFZrqvj5gFN2DQ1M+guM=;
-        b=lf+kY40cgt4zEK+2LdX0l+oeSSNvTQd1TWrEALv2D09aTgBUIWqq8VZC0zwRD3yxti
-         R6kDcxVzfILuFo1iUB2GYNmFz11jpzh0MjqsCLZ7qgugLGyXTCBwkOZE9+r4fe+wF1W9
-         LtxhvBjLceqDFYkwB6lr33p9QAoLTt9ZD8A+J7QWilkZB80TSF0Y1A0O14X5aN40kcEM
-         5P7qLlWrarIuEZTk+kP7QcQxVqqdcQVvF090Na0VAzFft92pA88g/NSUbC037qUi90Va
-         nClXSs1Z740Xi5vqFwuUul7kePJMxYcNildBp0gXsOMURve7SULRrAnwuVEb0IQ3NT8u
-         a/0w==
+        bh=2cLRbj6ZrwUgB3ed0j9nxtSpZlKaYfrBPTp259N8B/A=;
+        b=FzAXW+YIbjj8DpDu2MDZ0WqKcbXJ3SWF4P4UCqbL6HqTDOHlIVL0/XhJBDCgyPXCFc
+         FbspV0nhzHZO8u/Ui72yv8BpC0PyJ7HV+HDf66IyeE+1MbtLTIflaluazaHmr553ae2V
+         tjAp+4at4o5/IaXTAG1yJwNSn6mW7LZAOVJBfXG4Gacb1DLDnuZmUOn4WiDULexO6/GH
+         9igeGGjyTkTLX4hN5Jl3Ad/adMcbKzeZOIxv7YbGYHl7ARq1k0DKmo7G8q+kR0Glzlq4
+         pRcRQN+AHiqpTofCYLOpEk3zar28MiDfsBNDsd1eI9MqGjbAlTW8DGTTe+jJ9YP1XpUj
+         aHxQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=sG/XWRJ1MargBcDF0qmJrWqMFZrqvj5gFN2DQ1M+guM=;
-        b=MKMKqF0hyXxrfGHV1EMKbS5ULk4shtdqB4S20W+7iMepzqJ9gFpWnUSUgc78om+XbF
-         gaZzrhIX3HcH+FwZmi15Q6W78SCqzvgz68ebFFi6yREf2LYyaiUEvF9NDIKuWJ8UD6WN
-         sQ/SfYuEN2ZEqwFjVrjmI0FObAWHdahKtgp0MUhujiak1jgppfeovSjPqd/o65NWsVWP
-         VFOyXGq1syhQKdICbTLsPiaERKoMnC+drNBfpZXCVnsCf7WZVUEOOjc7MXZacE20FhkE
-         Yw2dNFt8mN9KBNdWTv6BFfuSLTswUMS4YAkBcsnyLhB+yzMYq6s9hDEqyMYqoFwTGG1x
-         T1rA==
-X-Gm-Message-State: AJcUukc1jW1EIvA13AAC3Z5T1CF0hvVBYdu8IDA/29fL/kPPdoT6r6k7
-        QknjHN3LDc77zg+kTbX07p5a/rv7YU6IwlpTm0c=
-X-Google-Smtp-Source: ALg8bN7Jp8EUD6FEVV7szD2B253IXg9pIwwPPIBAMirVOuVzD7eF3ovhFVe/q5KE3fbvnurJHzg/KAiAzrdiTo8cR3M=
-X-Received: by 2002:a37:848:: with SMTP id 69mr3930931qki.351.1547581055704;
- Tue, 15 Jan 2019 11:37:35 -0800 (PST)
+        bh=2cLRbj6ZrwUgB3ed0j9nxtSpZlKaYfrBPTp259N8B/A=;
+        b=F4cGuAEpvv4bnSxoJ0ZwUHODznXm2ffcaHKu8bn0EmmoJ1ue5AAsf4XAFY+tj0EOkP
+         RkJoajYgihJGPnt5+t0I6TUwvOlvEhE4O7qYzdoQxe+bH5MGMEapx8SI4DYZr62Rmp32
+         3L94p4NYHOojeRemUCYG2R3RNMw+e2Xm9vvLIW/bGP1fsklIKO9/1pmhKp+bIHk0J+GC
+         eHIonbxLiAFvlZlEBK8HFabrUDj8VGGnNyz9Ijdy4GvunL+ygLUcZCLFP+wOM9Sg6JW8
+         8rBr/wsLLaBVAfTNOkjrtgzXTiFrOTQjHXAvzSC2p5YI+s/6sJvM1VVB2cVgf5BSgUV9
+         YhMA==
+X-Gm-Message-State: AJcUukeSPf5Q25blZJnX/3dmMgAyf3yQG5PR8aKaV74sfD+/7BoXNqAF
+        jyXyEHEhQnci1AmtMAt0OoCGC22p+bnP69mN3uMaNw==
+X-Google-Smtp-Source: ALg8bN7Vxx2AeMbVykY9japellF7+ir8UaUpIcIPYA19UNwpNQo4G0nfXJhT8X3UW1MwgOkVr3qIxdIScB5X9LFw4ns=
+X-Received: by 2002:a81:ee07:: with SMTP id l7mr4491703ywm.489.1547581114321;
+ Tue, 15 Jan 2019 11:38:34 -0800 (PST)
 MIME-Version: 1.0
-References: <20190114220356.108916-1-ncrews@google.com> <20190114220356.108916-5-ncrews@google.com>
-In-Reply-To: <20190114220356.108916-5-ncrews@google.com>
-From:   Enric Balletbo Serra <eballetbo@gmail.com>
-Date:   Tue, 15 Jan 2019 20:37:24 +0100
-Message-ID: <CAFqH_50wExmQ=4UUVx-7KKeFXH3WHEpbYDoxDe0-JsJtonge0w@mail.gmail.com>
-Subject: Re: [PATCH v2 4/9] platform/chrome: Add support for raw commands in sysfs
-To:     Nick Crews <ncrews@google.com>
-Cc:     linux-kernel <linux-kernel@vger.kernel.org>,
-        Guenter Roeck <groeck@chromium.org>,
-        Simon Glass <sjg@chromium.org>, dlaurie@chromium.org,
-        Duncan Laurie <dlaurie@google.com>,
-        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
-        Benson Leung <bleung@chromium.org>
+References: <20190110174432.82064-1-shakeelb@google.com> <20190111205948.GA4591@cmpxchg.org>
+ <CALvZod7O2CJuhbuLUy9R-E4dTgL4WBg8CayW_AFnCCG6KCDjUA@mail.gmail.com>
+ <20190113183402.GD1578@dhcp22.suse.cz> <CALvZod6paX4_vtgP8AJm5PmW_zA_ecLLP2qTvQz8rRyKticgDg@mail.gmail.com>
+ <20190115072551.GO21345@dhcp22.suse.cz>
+In-Reply-To: <20190115072551.GO21345@dhcp22.suse.cz>
+From:   Shakeel Butt <shakeelb@google.com>
+Date:   Tue, 15 Jan 2019 11:38:23 -0800
+Message-ID: <CALvZod6U+OGZJ1mcSG++Q5CJtEjLbr3pwvLRBbkpbZbqf6YSsA@mail.gmail.com>
+Subject: Re: [PATCH v3] memcg: schedule high reclaim for remote memcgs on high_work
+To:     Michal Hocko <mhocko@kernel.org>
+Cc:     Johannes Weiner <hannes@cmpxchg.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Vladimir Davydov <vdavydov.dev@gmail.com>,
+        Cgroups <cgroups@vger.kernel.org>, Linux MM <linux-mm@kvack.org>,
+        LKML <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Nick,
+On Mon, Jan 14, 2019 at 11:25 PM Michal Hocko <mhocko@kernel.org> wrote:
+>
+> On Mon 14-01-19 12:18:07, Shakeel Butt wrote:
+> > On Sun, Jan 13, 2019 at 10:34 AM Michal Hocko <mhocko@kernel.org> wrote:
+> > >
+> > > On Fri 11-01-19 14:54:32, Shakeel Butt wrote:
+> > > > Hi Johannes,
+> > > >
+> > > > On Fri, Jan 11, 2019 at 12:59 PM Johannes Weiner <hannes@cmpxchg.org> wrote:
+> > > > >
+> > > > > Hi Shakeel,
+> > > > >
+> > > > > On Thu, Jan 10, 2019 at 09:44:32AM -0800, Shakeel Butt wrote:
+> > > > > > If a memcg is over high limit, memory reclaim is scheduled to run on
+> > > > > > return-to-userland.  However it is assumed that the memcg is the current
+> > > > > > process's memcg.  With remote memcg charging for kmem or swapping in a
+> > > > > > page charged to remote memcg, current process can trigger reclaim on
+> > > > > > remote memcg.  So, schduling reclaim on return-to-userland for remote
+> > > > > > memcgs will ignore the high reclaim altogether. So, record the memcg
+> > > > > > needing high reclaim and trigger high reclaim for that memcg on
+> > > > > > return-to-userland.  However if the memcg is already recorded for high
+> > > > > > reclaim and the recorded memcg is not the descendant of the the memcg
+> > > > > > needing high reclaim, punt the high reclaim to the work queue.
+> > > > >
+> > > > > The idea behind remote charging is that the thread allocating the
+> > > > > memory is not responsible for that memory, but a different cgroup
+> > > > > is. Why would the same thread then have to work off any high excess
+> > > > > this could produce in that unrelated group?
+> > > > >
+> > > > > Say you have a inotify/dnotify listener that is restricted in its
+> > > > > memory use - now everybody sending notification events from outside
+> > > > > that listener's group would get throttled on a cgroup over which it
+> > > > > has no control. That sounds like a recipe for priority inversions.
+> > > > >
+> > > > > It seems to me we should only do reclaim-on-return when current is in
+> > > > > the ill-behaved cgroup, and punt everything else - interrupts and
+> > > > > remote charges - to the workqueue.
+> > > >
+> > > > This is what v1 of this patch was doing but Michal suggested to do
+> > > > what this version is doing. Michal's argument was that the current is
+> > > > already charging and maybe reclaiming a remote memcg then why not do
+> > > > the high excess reclaim as well.
+> > >
+> > > Johannes has a good point about the priority inversion problems which I
+> > > haven't thought about.
+> > >
+> > > > Personally I don't have any strong opinion either way. What I actually
+> > > > wanted was to punt this high reclaim to some process in that remote
+> > > > memcg. However I didn't explore much on that direction thinking if
+> > > > that complexity is worth it. Maybe I should at least explore it, so,
+> > > > we can compare the solutions. What do you think?
+> > >
+> > > My question would be whether we really care all that much. Do we know of
+> > > workloads which would generate a large high limit excess?
+> > >
+> >
+> > The current semantics of memory.high is that it can be breached under
+> > extreme conditions. However any workload where memory.high is used and
+> > a lot of remote memcg charging happens (inotify/dnotify example given
+> > by Johannes or swapping in tmpfs file or shared memory region) the
+> > memory.high breach will become common.
+>
+> This is exactly what I am asking about. Is this something that can
+> happen easily? Remote charges on themselves should be rare, no?
+>
 
-Missatge de Nick Crews <ncrews@google.com> del dia dl., 14 de gen.
-2019 a les 23:07:
->
-> From: Duncan Laurie <dlaurie@google.com>
->
-> Add a sysfs attribute that allows sending raw commands to the EC.
-> This is useful for development and debug but should not be enabled
-> in a production environment.
->
+At the moment, for kmem we can do remote charging for fanotify,
+inotify and buffer_head and for anon pages we can do remote charging
+on swap in. Now based on the workload's cgroup setup the remote
+charging can be very frequent or rare.
 
-Shouldn't you use debugfs for all this stuff instead?
+At Google, remote charging is very frequent but since we are still on
+cgroup-v1 and do not use memory.high, the issue this patch is fixing
+is not observed. However for the adoption of cgroup-v2, this fix is
+needed.
 
-
-> > echo 00 f0 38 00 03 00 > /sys/bus/platform/devices/GOOG000C\:00/raw
-> > cat /sys/bus/platform/devices/GOOG000C\:00/raw
-> 00 37 33 38 65 64 00...
->
-> Signed-off-by: Duncan Laurie <dlaurie@google.com>
-> Signed-off-by: Nick Crews <ncrews@google.com>
-> ---
->
-> Changes in v2:
-> - Add sysfs documentation
-> - rm duplicate EC_MAILBOX_DATA_SIZE defs
-> - Make docstrings follow kernel style
-> - Fix tags in commit msg
-> - Reading raw now includes ASCII translation
->
->  .../ABI/testing/sysfs-platform-wilcoec        | 21 ++++
->  drivers/platform/chrome/wilco_ec/Kconfig      |  9 ++
->  drivers/platform/chrome/wilco_ec/legacy.c     | 99 +++++++++++++++++++
->  drivers/platform/chrome/wilco_ec/legacy.h     | 46 +++++++++
->  drivers/platform/chrome/wilco_ec/sysfs.c      |  6 ++
->  5 files changed, 181 insertions(+)
->
-> diff --git a/Documentation/ABI/testing/sysfs-platform-wilcoec b/Documentation/ABI/testing/sysfs-platform-wilcoec
-> index 09552338c160..cac2cf11835f 100644
-> --- a/Documentation/ABI/testing/sysfs-platform-wilcoec
-> +++ b/Documentation/ABI/testing/sysfs-platform-wilcoec
-> @@ -24,3 +24,24 @@ Description:
->                 off and remain off even if activated from the off state.
->                 External monitors connected to the system are not affected.
->                 In addition Wireless devices are turned off.
-> +
-> +What:          /sys/bus/platform/devices/GOOG000C\:00/raw
-> +Date:          January 2019
-> +KernelVersion: 4.19
-> +Description:
-> +               Write and read raw mailbox commands to the EC.
-> +
-> +               For writing:
-> +               Bytes 0-1 indicate the message type:
-> +                       00 F0 = Execute Legacy Command
-> +                       00 F2 = Read/Write NVRAM Property
-> +               Byte 2 provides the command code
-> +               Bytes 3+ consist of the data passed in the request
-> +
-> +               Example:
-> +               // Request EC info type 3 (EC firmware build date)
-> +               $ echo 00 f0 38 00 03 00 > raw
-> +               // View the result. The decoded ASCII result "12/21/18" is
-> +               // included after the raw hex.
-> +               $ cat raw
-> +               00 31 32 2f 32 31 2f 31 38 00 38 00 01 00 2f 00  .12/21/18.8...
-> diff --git a/drivers/platform/chrome/wilco_ec/Kconfig b/drivers/platform/chrome/wilco_ec/Kconfig
-> index f8e6c9e8c5cd..0bd84c98b79b 100644
-> --- a/drivers/platform/chrome/wilco_ec/Kconfig
-> +++ b/drivers/platform/chrome/wilco_ec/Kconfig
-> @@ -21,4 +21,13 @@ config WILCO_EC
->           To compile this driver as a module, choose M here: the
->           module will be called wilco_ec.
->
-> +config WILCO_EC_SYSFS_RAW
-> +       bool "Enable raw access to EC via sysfs"
-> +       depends on WILCO_EC
-> +       help
-> +         If you say Y here, you get support for sending raw commands to
-> +         the Wilco EC via sysfs.  These commands do not do any byte
-> +         manipulation and allow for testing arbitrary commands.  This
-> +         interface is intended for debug only and is disabled by default.
-> +
->  endif # WILCO_EC_PLATFORM
-> diff --git a/drivers/platform/chrome/wilco_ec/legacy.c b/drivers/platform/chrome/wilco_ec/legacy.c
-> index 1fdf94d22f57..79bac5dccb39 100644
-> --- a/drivers/platform/chrome/wilco_ec/legacy.c
-> +++ b/drivers/platform/chrome/wilco_ec/legacy.c
-> @@ -11,6 +11,105 @@
->
->  #include "legacy.h"
->
-> +#ifdef CONFIG_WILCO_EC_SYSFS_RAW
-> +
-> +/* Raw data buffer, large enough to hold extended responses */
-> +static size_t raw_response_size;
-> +static u8 raw_response_data[EC_MAILBOX_DATA_SIZE_EXTENDED];
-> +
-> +ssize_t wilco_ec_raw_store(struct device *dev, struct device_attribute *attr,
-> +                          const char *buf, size_t count)
-> +{
-> +       struct wilco_ec_device *ec = dev_get_drvdata(dev);
-> +       struct wilco_ec_message msg;
-> +       u8 raw_request_data[EC_MAILBOX_DATA_SIZE];
-> +       int in_offset = 0;
-> +       int out_offset = 0;
-> +       int ret;
-> +
-> +       while (in_offset < count) {
-> +               char word_buf[EC_MAILBOX_DATA_SIZE];
-> +               u8 byte;
-> +               int start_offset = in_offset;
-> +               int end_offset;
-> +
-> +               /* Find the start of the byte */
-> +               while (buf[start_offset] && isspace(buf[start_offset]))
-> +                       start_offset++;
-> +               if (!buf[start_offset])
-> +                       break;
-> +
-> +               /* Find the start of the next byte, if any */
-> +               end_offset = start_offset;
-> +               while (buf[end_offset] && !isspace(buf[end_offset]))
-> +                       end_offset++;
-> +               if (start_offset > count || end_offset > count)
-> +                       break;
-> +               if (start_offset > EC_MAILBOX_DATA_SIZE ||
-> +                   end_offset > EC_MAILBOX_DATA_SIZE)
-> +                       break;
-> +
-> +               /* Copy to a new NULL terminated string */
-> +               memcpy(word_buf, buf + start_offset, end_offset - start_offset);
-> +               word_buf[end_offset - start_offset] = '\0';
-> +
-> +               /* Convert from hex string */
-> +               ret = kstrtou8(word_buf, 16, &byte);
-> +               if (ret)
-> +                       break;
-> +
-> +               /* Fill this byte into the request buffer */
-> +               raw_request_data[out_offset++] = byte;
-> +               if (out_offset >= EC_MAILBOX_DATA_SIZE)
-> +                       break;
-> +
-> +               in_offset = end_offset;
-> +       }
-> +       if (out_offset == 0)
-> +               return -EINVAL;
-> +
-> +       /* Clear response data buffer */
-> +       memset(raw_response_data, '\0', EC_MAILBOX_DATA_SIZE_EXTENDED);
-> +
-> +       msg.type = raw_request_data[0] << 8 | raw_request_data[1];
-> +       msg.flags = WILCO_EC_FLAG_RAW;
-> +       msg.command = raw_request_data[2];
-> +       msg.request_data = raw_request_data + 3;
-> +       msg.request_size = out_offset - 3;
-> +       msg.response_data = raw_response_data;
-> +       msg.response_size = EC_MAILBOX_DATA_SIZE;
-> +
-> +       /* Telemetry commands use extended response data */
-> +       if (msg.type == WILCO_EC_MSG_TELEMETRY) {
-> +               msg.flags |= WILCO_EC_FLAG_EXTENDED_DATA;
-> +               msg.response_size = EC_MAILBOX_DATA_SIZE_EXTENDED;
-> +       }
-> +
-> +       ret = wilco_ec_mailbox(ec, &msg);
-> +       if (ret < 0)
-> +               return ret;
-> +       raw_response_size = ret;
-> +       return count;
-> +}
-> +
-> +ssize_t wilco_ec_raw_show(struct device *dev, struct device_attribute *attr,
-> +                         char *buf)
-> +{
-> +       ssize_t count = 0;
-> +
-> +       if (raw_response_size) {
-> +               count = hex_dump_to_buffer(raw_response_data, raw_response_size,
-> +                                          16, 1, buf, PAGE_SIZE, true);
-> +
-> +               /* Only return response the first time it is read */
-> +               raw_response_size = 0;
-> +       }
-> +
-> +       return count;
-> +}
-> +
-> +#endif /* CONFIG_WILCO_EC_SYSFS_RAW */
-> +
->  struct ec_info {
->         u8 index;
->         const char *label;
-> diff --git a/drivers/platform/chrome/wilco_ec/legacy.h b/drivers/platform/chrome/wilco_ec/legacy.h
-> index 5c857cb57fa9..340787d25d44 100644
-> --- a/drivers/platform/chrome/wilco_ec/legacy.h
-> +++ b/drivers/platform/chrome/wilco_ec/legacy.h
-> @@ -14,6 +14,52 @@
->  #define EC_INFO_SIZE                   9
->  #define EC_COMMAND_STEALTH_MODE                0xfc
->
-> +#ifdef CONFIG_WILCO_EC_SYSFS_RAW
-> +
-> +/**
-> + * wilco_ec_raw_store() - Write a raw command to EC, store result to view later
-> + * @dev: Device representing the EC
-> + * @attr: The attribute in question
-> + * @buf: Input buffer, format explained below
-> + * @count: Number of bytes in input buffer
-> + *
-> + * Bytes 0-1 indicate the message type:
-> + *  00 F0 = Execute Legacy Command
-> + *  00 F2 = Read/Write NVRAM Property
-> + * Byte 2 provides the command code
-> + * Bytes 3+ consist of the data passed in the request
-> + *
-> + * example: read the EC info type 3 (EC firmware build date):
-> + *  # echo 00 f0 38 00 03 00 > raw
-> + *
-> + * After calling this function, read the result by using raw_show()
-> + *
-> + * Return: Number of bytes consumed from input, negative error code on failure
-> + */
-> +ssize_t wilco_ec_raw_store(struct device *dev, struct device_attribute *attr,
-> +                          const char *buf, size_t count);
-> +
-> +/**
-> + * wilco_ec_raw_show() - Show result from previous call to raw_store()
-> + * @dev: Device representing the EC
-> + * @attr: The attribute in question
-> + * @buf: Output buffer to be filled
-> + *
-> + * Example usage:
-> + *     // Call raw_store(), read EC info type 3 (EC firmware build date)
-> + *     # echo 00 f0 38 00 03 00 > raw
-> + *     // Call this function, view the result. The decoded ASCII result
-> + *     // "12/21/18" is included after the raw hex.
-> + *     # cat raw
-> + *     00 31 32 2f 32 31 2f 31 38 00 38 00 01 00 2f 00  .12/21/18.8.../.
-> + *
-> + * Return: Number of bytes written to output, negative error code on failure
-> + */
-> +ssize_t wilco_ec_raw_show(struct device *dev, struct device_attribute *attr,
-> +                         char *buf);
-> +
-> +#endif /* CONFIG_WILCO_EC_SYSFS_RAW */
-> +
->  /**
->   * wilco_ec_version_show() - Display Wilco Embedded Controller version info
->   *
-> diff --git a/drivers/platform/chrome/wilco_ec/sysfs.c b/drivers/platform/chrome/wilco_ec/sysfs.c
-> index e78a3ec3506b..0611a73fcdce 100644
-> --- a/drivers/platform/chrome/wilco_ec/sysfs.c
-> +++ b/drivers/platform/chrome/wilco_ec/sysfs.c
-> @@ -28,9 +28,15 @@ __ATTR(_name, 0644, wilco_ec_##_name##_show, wilco_ec_##_name##_store)
->  /* Make top-level attributes, which will live inside GOOG000C:00/ */
->  static struct device_attribute version_attr = WILCO_EC_ATTR_RO(version);
->  static struct device_attribute stealth_attr = WILCO_EC_ATTR_WO(stealth_mode);
-> +#ifdef CONFIG_WILCO_EC_SYSFS_RAW
-> +static struct device_attribute raw_attr = WILCO_EC_ATTR_RW(raw);
-> +#endif
->  static struct attribute *wilco_ec_toplevel_attrs[] = {
->         &version_attr.attr,
->         &stealth_attr.attr,
-> +#ifdef CONFIG_WILCO_EC_SYSFS_RAW
-> +       &raw_attr.attr,
-> +#endif
->         NULL
->  };
->  ATTRIBUTE_GROUPS(wilco_ec_toplevel);
-> --
-> 2.20.1.97.g81188d93c3-goog
->
+Shakeel
