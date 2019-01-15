@@ -2,163 +2,97 @@ Return-Path: <SRS0=RZO6=PX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 134C5C43444
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 21:04:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A76A4C43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 21:06:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D442920657
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 21:04:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 64817205C9
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 21:06:27 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel-com.20150623.gappssmtp.com header.i=@intel-com.20150623.gappssmtp.com header.b="sv1ZzzcJ"
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="pMaiJjSf"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390129AbfAOVE1 (ORCPT
+        id S2390144AbfAOVG0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 15 Jan 2019 16:04:27 -0500
-Received: from mail-ot1-f68.google.com ([209.85.210.68]:45324 "EHLO
-        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390117AbfAOVE0 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Jan 2019 16:04:26 -0500
-Received: by mail-ot1-f68.google.com with SMTP id 32so3840630ota.12
-        for <linux-kernel@vger.kernel.org>; Tue, 15 Jan 2019 13:04:25 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=intel-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=xijxS8EHRhgCanpuwK5Kp8a1HlZ+kiUlEUQymt3Bgco=;
-        b=sv1ZzzcJ9gwO0AJXdD+fNqYBypNMlknjn1VyEM80rP2pPz1+DrjtlYyLEQXfn/itGb
-         qXkd7ySY+BqXpLJK0BznV5/pO5emzY/4jRacS3SMdp6x5oYiD5DaB+HduBhnGTPAf00c
-         GTebvuancJt3rjS6XJBpiMQzg6rlHqcDCcyIlWgW36wmUyXOedOI/KMyCeCyVXb4AzZY
-         8igSfc+qdeBduia5+xgUolF2SylEIMDC1C8ewN5UygJGW9BhmVXAVlwdBVcPbBPXebA4
-         FNdgnNIqfRjVIMOQLGdIzUeWqbxDbf+pCjiVRKQ4evu19RFIt+ydSEgNYjC5EhZrKAte
-         QjxA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=xijxS8EHRhgCanpuwK5Kp8a1HlZ+kiUlEUQymt3Bgco=;
-        b=aW7q683idxq0p8cOJ3/9APtFy3be/htHa8PuU81D9EM9D4KmWE5XFcGq3E6Uoe0ODR
-         s3Kd8sBUnKlDLYCj2CTKI8J+XJzzcnMYepYtnOuSHSHyD2bo6851GTawYKQuCXspeoCk
-         bFBCUCrqph9PyP3j4x1+1YppQAKhWmvZrdKeayxBu0Vis83xD3wTvAEQE5HHfVSof+Ot
-         eGFkLfznTisICHqQOt5x1/nqi1fFW4omGPIoTG8EakFpZ5qOrDr02hSJtFflvOPfwds8
-         u8MmJo6MEC41xQquzhx6jhXAV/LcZSL9s1KGXmWU/XP3E2rfLkjetKi4bEZpmESvU5gF
-         pHog==
-X-Gm-Message-State: AJcUukfJMICxft+AKb5TcX3TIA7DwrbIXkyktY+9pXbFf3lK42hNjkFR
-        bN4DYDtiNvN6Zr56Oc1C6dSqZpRb8IvvJ0SapgHWZA==
-X-Google-Smtp-Source: ALg8bN6L0sVDzCGS8xKp7L/CRrjwVajvxGGpZq0aZZmJhIv0tX+f4x7BUtTN2b3bTK/6XorHaqC81KYgkmTwnURUe1o=
-X-Received: by 2002:a9d:5cc2:: with SMTP id r2mr3462550oti.367.1547586265511;
- Tue, 15 Jan 2019 13:04:25 -0800 (PST)
+        Tue, 15 Jan 2019 16:06:26 -0500
+Received: from ozlabs.org ([203.11.71.1]:42135 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1732826AbfAOVGY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 Jan 2019 16:06:24 -0500
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by ozlabs.org (Postfix) with ESMTPSA id 43fNDY2Q3fz9s9G;
+        Wed, 16 Jan 2019 08:06:20 +1100 (AEDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1547586382;
+        bh=7X6bpVmYy0XZwk1EkDvweYXFdQZQhxulKUObaJugykg=;
+        h=Date:From:To:Cc:Subject:From;
+        b=pMaiJjSfUT6hp1LlkwC0GvGdKgusfcg1VSK0ERmrpletX/GKOc7xAg0wpwZ37aiXg
+         5EjqJU5JYLev3MO0eALp8O0eZQsrDzJi744DFEI6rTCIC3jfS2Iip5KivI25rhDaFE
+         gcgOSzctnrvSr0huet8wa2R8RBwKHObDTEZupwwdvgKdUJaANsWlD3J7N2C3dZZWBF
+         IOXQT1YQ+1o/HCjyFH+xapX+8pMBKNTYGlbGfISK2XBrC238s9i01GNnoqeaStvVbj
+         DTD0r1dHH051UKWkkDnqjp9ijrCupJK22ZPEgZT8ht9eGsoKOOEupLBlk5J1SZatpz
+         QhKunpdJ9X2pg==
+Date:   Wed, 16 Jan 2019 08:06:20 +1100
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Juergen Gross <jgross@suse.com>,
+        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+        Stefano Stabellini <sstabellini@kernel.org>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        Xen Devel <Xen-devel@lists.xensource.com>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Wen Yang <wen.yang99@zte.com.cn>,
+        Paul Gortmaker <paul.gortmaker@windriver.com>
+Subject: linux-next: Fixes tag needs work in the xen-tip tree
+Message-ID: <20190116080620.4c2c143f@canb.auug.org.au>
 MIME-Version: 1.0
-References: <154751742416.1617064.8252289468130584022.stgit@dwillia2-desk3.amr.corp.intel.com>
- <x49tvia80r0.fsf@segfault.boston.devel.redhat.com> <CAPcyv4htfew=7D_B1QDGTwSkMTx7BK2BZ+Gq+9UL1NTtqtL9FQ@mail.gmail.com>
- <x49k1j57j0u.fsf@segfault.boston.devel.redhat.com>
-In-Reply-To: <x49k1j57j0u.fsf@segfault.boston.devel.redhat.com>
-From:   Dan Williams <dan.j.williams@intel.com>
-Date:   Tue, 15 Jan 2019 13:04:13 -0800
-Message-ID: <CAPcyv4hxApv62QiLVvtwRY3cgdYhqewCux6odybKA=TR8yDZsQ@mail.gmail.com>
-Subject: Re: [PATCH v2 0/2] acpi/nfit: Fix command-supported detection
-To:     Jeff Moyer <jmoyer@redhat.com>
-Cc:     linux-nvdimm <linux-nvdimm@lists.01.org>,
-        stable <stable@vger.kernel.org>,
-        stuart hayes <stuart.w.hayes@gmail.com>,
-        Sujith Pandel <sujith_pandel@dell.com>,
-        Vishal Verma <vishal.l.verma@intel.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/4IYe9d_Dvvr_jnwqXDMiwhV"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 15, 2019 at 12:39 PM Jeff Moyer <jmoyer@redhat.com> wrote:
->
-> Dan Williams <dan.j.williams@intel.com> writes:
->
-> > On Tue, Jan 15, 2019 at 6:16 AM Jeff Moyer <jmoyer@redhat.com> wrote:
-> >>
-> >> Dan Williams <dan.j.williams@intel.com> writes:
-> >>
-> >> > Changes since v1 [1]:
-> >> > * Include another patch make sure that function-number zero can be
-> >> >   safely used as an invalid function number (Jeff)
-> >> > * Add a comment clarifying why zero is an invalid function number (Jeff)
-> >> > * Pass nfit_mem to cmd_to_func() (Jeff)
-> >> > * Collect a Tested-by from Sujith
-> >> > [1]: https://lists.01.org/pipermail/linux-nvdimm/2019-January/019435.html
-> >>
-> >> For the series:
-> >>
-> >> Reviewed-by: Jeff Moyer <jmoyer@redhat.com>
-> >>
-> >> Thanks, Dan!
-> >
-> > Thanks, although I just realized one more change. The ND_CMD_CALL case
-> > should zero out command after the function translation, otherwise
-> > userspace can call functions that the kernel is blocking in the
-> > dsm_mask.
-> >
-> > Holler if this invalidates your "Reviewed-by".
->
-> AAAAAAAHHHHHHHHHH!!!!
->
-> :)
->
-> > diff --git a/drivers/acpi/nfit/core.c b/drivers/acpi/nfit/core.c
-> > index 87e02f281e51..d7747aceb7ab 100644
-> > --- a/drivers/acpi/nfit/core.c
-> > +++ b/drivers/acpi/nfit/core.c
-> > @@ -463,6 +463,12 @@ int acpi_nfit_ctl(struct nvdimm_bus_descriptor
-> > *nd_desc, struct nvdimm *nvdimm,
-> >                 func = cmd_to_func(nfit_mem, cmd, buf);
-> >                 if (func < 0)
-> >                         return func;
-> > +               /*
-> > +                * In the ND_CMD_CALL case we're now dependent on 'func'
-> > +                * being validated by the dimm's dsm_mask
-> > +                */
-> > +               if (cmd == ND_CMD_CALL)
-> > +                       cmd = 0;
-> >                 dimm_name = nvdimm_name(nvdimm);
-> >                 cmd_name = nvdimm_cmd_name(cmd);
-> >                 cmd_mask = nvdimm_cmd_mask(nvdimm);
->                 dsm_mask = nfit_mem->dsm_mask;
->                 desc = nd_cmd_dimm_desc(cmd);
->
-> That sure doesn't look right.  Now cmd_name and desc will be wrong.
+--Sig_/4IYe9d_Dvvr_jnwqXDMiwhV
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Ah, whoops, yes good catch. Guess this shows there is not good
-ND_CMD_CALL coverage in the unit tests...
+Hi all,
 
->
-> > @@ -477,8 +483,10 @@ int acpi_nfit_ctl(struct nvdimm_bus_descriptor
-> > *nd_desc, struct nvdimm *nvdimm,
-> >                 cmd_name = nvdimm_bus_cmd_name(cmd);
-> >                 cmd_mask = nd_desc->cmd_mask;
-> >                 dsm_mask = cmd_mask;
-> > -               if (cmd == ND_CMD_CALL)
-> > +               if (cmd == ND_CMD_CALL) {
-> >                         dsm_mask = nd_desc->bus_dsm_mask;
-> > +                       cmd = 0;
-> > +               }
-> >                 desc = nd_cmd_bus_desc(cmd);
->
-> And again here.
->
-> We could reorder the zeroing, or you could modify the check for a valid
-> comand/function.  Something like this?
->
->         /*
->          * Check for a valid command.  For ND_CMD_CALL, we also
->          * have to make sure that the DSM function is supported.
->          */
->         if (cmd == ND_CMD_CALL && !test_bit(func, &dsm_mask))
->                 return -ENOTTY;
->         else if (!test_bit(cmd, &cmd_mask))
->                 return -ENOTTY;
->
-> Which way do you think is cleaner?
+Commit
 
-Modifying the check looks cleaner. Thanks for hollering!
+  786e1048e7f4 ("pvcalls-front: fix potential null dereference")
+
+has a malformed Fixes tag:
+
+  Fixes: 9f51c05dc41a ("pvcalls-front: Avoid get_free_pages(GFP_KERNEL)
+  under spinlock")
+
+It should not be split over 2 lines.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/4IYe9d_Dvvr_jnwqXDMiwhV
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlw+S0wACgkQAVBC80lX
+0GxqOwf/UnZo2vpgBTaU3aSs7Iv6kCTE67ggBAJ/mNpcWALc7y/C0aOYcbzKxgYu
+0999RqxHy6nxkVlJiAsYtR0ctAF2JH2y8pY5TJB5w9mGlmlMW2dkRN40BE6h6IbD
+gqXUYz+5t/C2hNrrx9C7pGeAk3larJztaQvoNG6wa8US90h6nFNe7Pgzr9rJn17j
+18vw44Ai6sGNdVTgccT3BNUb9PdYAeqQ/TdYPvEdXHmuLQ1AjSa7zgE4Mlvj0ue3
+IDZml9hyCyjcLbyIuXrCXVUJp5V5ZNv7byDpvT8tE2JBHf1qW9Ea1NAV+RRNgBsB
+f5x2snqafEUTcUlBKRGH18Qha1zzjg==
+=J/wc
+-----END PGP SIGNATURE-----
+
+--Sig_/4IYe9d_Dvvr_jnwqXDMiwhV--
