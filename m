@@ -2,105 +2,112 @@ Return-Path: <SRS0=RZO6=PX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 69F93C43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 16:52:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 27265C43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 16:52:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3418220645
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 16:52:08 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=lixom-net.20150623.gappssmtp.com header.i=@lixom-net.20150623.gappssmtp.com header.b="Gw8hVVii"
+	by mail.kernel.org (Postfix) with ESMTP id EB55D20645
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 16:52:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1547571134;
+	bh=vqDcyQf2MOYxU7Z6szRRGEjZMOzoweA0oiGdDv42pv8=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=g9UqbZ+5+9I5e+QMtXe5AMUrMkNhsUF2Nb/IUZMyU4mTmJuMr39N2T0sF7RlLpM2P
+	 N3jbU3h+z50pVAT0P4l7tXbbD0SEvrhWXiCqC4a6QIz8GQDNxLU9PVQ4NuZAZsDVBN
+	 ZF9DZnSS5FicEpbe/bLdlcv14eTNZ4jR/POWSffs=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730341AbfAOQwG (ORCPT
+        id S1732923AbfAOQwM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 15 Jan 2019 11:52:06 -0500
-Received: from mail-ot1-f68.google.com ([209.85.210.68]:40085 "EHLO
-        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387622AbfAOQov (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Jan 2019 11:44:51 -0500
-Received: by mail-ot1-f68.google.com with SMTP id s5so3053233oth.7
-        for <linux-kernel@vger.kernel.org>; Tue, 15 Jan 2019 08:44:51 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=lixom-net.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id;
-        bh=EpIzBv2JuwiOd+A0KNJW+FqkTH+uuE+Wcdu2A4E7Ku0=;
-        b=Gw8hVViiN68Y7xAR86tXDrISMG/bOjOnhZRG8kgYbaN2uhrhuWCprB30UZaekIcD9D
-         Ejrq6tOOREeMpW7Brq7OnMq+abi5SsjdEajhVTKtJ7n0OOU3Keiy01oPcNKKXfOqL/Ag
-         iabOKKtndFxRX0to/1FJZiclhEZwsGENzSxor14golKdlWPCkOJiZSaZYK7EWVv/t1ph
-         JceUGwRwdECmbUfYWEk7pIim6rRgRJUAps8ojYKAebZhRtMP7AFMVVyAHO3AB7ZMy4rJ
-         10mGPWtuKuFTLrJDzkr8TCH1wBjh/7Sv6IpLiqHVQtqY2hkEQi6C/qS1KGIAF0pJHQWb
-         XJwA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=EpIzBv2JuwiOd+A0KNJW+FqkTH+uuE+Wcdu2A4E7Ku0=;
-        b=ksgd9a/6RgiskQv+jiiAyeum4U+Ve4vOMxeN2+K8jTocYamf/BcryZueHfQbOPaOw2
-         1sAsh50w35yGfmkObsHgVnfkBVsAPf4KErsS/HXQNXueRQU4d0hyfJCduMbrlv+T0inQ
-         8lvJkEeIQBvET6nck/RJJ9AeJJTZzD9YgyaLewPF7M80TbyXjAYgtkAiFZ3+yhEBCeh9
-         Z0S8ntPY26ueeiha9p7XsUpZLUaLEw6LKIUR1vLEf5K8oAJHCWTWbv8Y/R2fvuOFE37/
-         dmcW6lrHNPJtUgacYd+rgPjzjWIkf0op0ymy9AuZOSK//UFKjyPN7tlYHX9LI7z0m+hP
-         41jQ==
-X-Gm-Message-State: AJcUukfOTKSdMV2S2/QvSEE0VvidkH2KAIc2g3siy1a/0Zu1jzBP2f57
-        U35uNLtTeme22vEPiNtXXC0YoA==
-X-Google-Smtp-Source: ALg8bN6ePYYtCm7gM1GaBwvyZhItb5TXdEKJWB/wiA5F0owuWr8SwmgI4ZCeQT5DCjqUD9X/b9Msow==
-X-Received: by 2002:a9d:3784:: with SMTP id x4mr2676681otb.89.1547570690600;
-        Tue, 15 Jan 2019 08:44:50 -0800 (PST)
-Received: from rip.lixom.net (99-152-116-91.lightspeed.sntcca.sbcglobal.net. [99.152.116.91])
-        by smtp.gmail.com with ESMTPSA id w4sm1462314otm.46.2019.01.15.08.44.47
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 15 Jan 2019 08:44:48 -0800 (PST)
-From:   Olof Johansson <olof@lixom.net>
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        Jan Kara <jack@suse.cz>, Olof Johansson <olof@lixom.net>
-Subject: [PATCH] mm: Make CONFIG_FRAME_VECTOR a visible option
-Date:   Tue, 15 Jan 2019 08:44:35 -0800
-Message-Id: <20190115164435.8423-1-olof@lixom.net>
-X-Mailer: git-send-email 2.11.0
+        Tue, 15 Jan 2019 11:52:12 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34266 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2387595AbfAOQom (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 Jan 2019 11:44:42 -0500
+Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 286D22054F;
+        Tue, 15 Jan 2019 16:44:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1547570681;
+        bh=vqDcyQf2MOYxU7Z6szRRGEjZMOzoweA0oiGdDv42pv8=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=QbP/dNJ/4FYtsr31hnQH69gRXwp2y432UDOB7WJ/Jlfc/97TO8oK9UTDiONxzmR/E
+         fYg33lkIsEL8tl054V4DmtnY5d7/V2OwdreWwqi2zi6yTbsVQPxTS/djHrXxi/EFAT
+         ZAfUEZHJ2GO8nibKjP9ysMr1z6xYihHvWzRFrm3g=
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Michael Straube <straube.linux@gmail.com>,
+        Ivan Safonov <insafonov@gmail.com>,
+        Larry Finger <Larry.Finger@lwfinger.net>
+Subject: [PATCH 4.20 05/57] staging: rtl8188eu: Fix module loading from tasklet for WEP encryption
+Date:   Tue, 15 Jan 2019 17:35:46 +0100
+Message-Id: <20190115154911.021805310@linuxfoundation.org>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20190115154910.734892368@linuxfoundation.org>
+References: <20190115154910.734892368@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
+X-Patchwork-Hint: ignore
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-CONFIG_FRAME_VECTOR was made an option to avoid including the bloat on
-platforms that try to keep footprint down, which makes sense.
+4.20-stable review patch.  If anyone has any objections, please let me know.
 
-The problem with this is external modules that aren't built in-tree.
-Since they don't have in-tree Kconfig, whether they can be loaded now
-depends on whether your kernel config enabled some completely unrelated
-driver that happened to select it. That's a weird and unpredictable
-situation, and makes for some awkward requirements for the standalone
-modules.
+------------------
 
-For these reasons, give someone the option to manually enable this when
-configuring the kernel.
+From: Larry Finger <Larry.Finger@lwfinger.net>
 
-Signed-off-by: Olof Johansson <olof@lixom.net>
+commit 7775665aadc48a562051834a73519129bf717d73 upstream.
+
+Commit 2b2ea09e74a5 ("staging:r8188eu: Use lib80211 to decrypt WEP-frames")
+causes scheduling while atomic bugs followed by a hard freeze whenever
+the driver tries to connect to a WEP-encrypted network. Experimentation
+showed that the freezes were eliminated when module lib80211 was
+preloaded, which can be forced by calling lib80211_get_crypto_ops()
+directly rather than indirectly through try_then_request_module().
+With this change, no BUG messages are logged.
+
+Fixes: 2b2ea09e74a5 ("staging:r8188eu: Use lib80211 to decrypt WEP-frames")
+Cc: Stable <stable@vger.kernel.org> # v4.17+
+Cc: Michael Straube <straube.linux@gmail.com>
+Cc: Ivan Safonov <insafonov@gmail.com>
+Signed-off-by: Larry Finger <Larry.Finger@lwfinger.net>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- mm/Kconfig | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ drivers/staging/rtl8188eu/core/rtw_security.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/mm/Kconfig b/mm/Kconfig
-index 25c71eb8a7dbd..0d80d06d3715b 100644
---- a/mm/Kconfig
-+++ b/mm/Kconfig
-@@ -731,7 +731,10 @@ config DEVICE_PUBLIC
- 	  the CPU
+--- a/drivers/staging/rtl8188eu/core/rtw_security.c
++++ b/drivers/staging/rtl8188eu/core/rtw_security.c
+@@ -154,7 +154,7 @@ void rtw_wep_encrypt(struct adapter *pad
  
- config FRAME_VECTOR
--	bool
-+	bool "Frame vector helper functions"
-+	help
-+	  Provide some helper functions for frame vectors, to be used
-+	  by drivers who operate on userspace memory for DMA.
+ 	pframe = ((struct xmit_frame *)pxmitframe)->buf_addr + hw_hdr_offset;
  
- config ARCH_USES_HIGH_VMA_FLAGS
- 	bool
--- 
-2.11.0
+-	crypto_ops = try_then_request_module(lib80211_get_crypto_ops("WEP"), "lib80211_crypt_wep");
++	crypto_ops = lib80211_get_crypto_ops("WEP");
+ 
+ 	if (!crypto_ops)
+ 		return;
+@@ -210,7 +210,7 @@ int rtw_wep_decrypt(struct adapter  *pad
+ 		void *crypto_private = NULL;
+ 		int status = _SUCCESS;
+ 		const int keyindex = prxattrib->key_index;
+-		struct lib80211_crypto_ops *crypto_ops = try_then_request_module(lib80211_get_crypto_ops("WEP"), "lib80211_crypt_wep");
++		struct lib80211_crypto_ops *crypto_ops = lib80211_get_crypto_ops("WEP");
+ 		char iv[4], icv[4];
+ 
+ 		if (!crypto_ops) {
+
 
