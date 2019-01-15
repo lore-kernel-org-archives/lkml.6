@@ -6,65 +6,68 @@ X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6BA31C43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 12:16:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CC12DC43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 12:16:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3201B20651
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 12:16:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9C39F2085A
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 12:16:56 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="X1TxzYH3"
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="JJ1AIGhD"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729067AbfAOMQg (ORCPT
+        id S1729348AbfAOMQy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 15 Jan 2019 07:16:36 -0500
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:40446 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727410AbfAOMQg (ORCPT
+        Tue, 15 Jan 2019 07:16:54 -0500
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:32912 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728983AbfAOMQy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Jan 2019 07:16:36 -0500
-Received: by mail-wr1-f66.google.com with SMTP id p4so2694378wrt.7
-        for <linux-kernel@vger.kernel.org>; Tue, 15 Jan 2019 04:16:34 -0800 (PST)
+        Tue, 15 Jan 2019 07:16:54 -0500
+Received: by mail-wm1-f67.google.com with SMTP id r24so904004wmh.0
+        for <linux-kernel@vger.kernel.org>; Tue, 15 Jan 2019 04:16:53 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=subject:to:cc:references:from:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=Tk6oVp2Q1xK+5YrncieBjtBbgB8FiLeg/7FLZZtRyn0=;
-        b=X1TxzYH30AjNUKURCpTHahfnoj0yRrm2m4TZhDhm12Q6Jb3h4YUFECyng7KHxHXu+M
-         OdreQt6wwDLbxwZdP8b9xvd98zQf14h4QSGkgdPKqx7Nuk7r5rD2hkT00UB+ekGE8Thc
-         027lDBoZbQr945Fskc02Jzo1wb7IHAaEJEUcY=
+        bh=F8IsAruX63J0gvKiKSyGO89h1QwaCt0EX3fhyWAjg1U=;
+        b=JJ1AIGhD5gFbjfcqRgkrHzHCsFs04Ql+RmXXZ4T4pjBVNbG1Bm9JP95EeDK2vaWkX+
+         HKH/ltSIxOFbRfJ2OmyuFE+asT7zBDRRPGURssEgG/Loo5f4IxOmhEGR/mtmiBGUlYmk
+         nqIo0AJU6OZ8AkNshrRbioryDuMwCk30xQgPw=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:cc:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=Tk6oVp2Q1xK+5YrncieBjtBbgB8FiLeg/7FLZZtRyn0=;
-        b=NBNNf2PDpeCOuelT93JkGBoCnWcwfxjaI3zLB+nYbjw8tXr/ba9Y3hIuP/Gq/+Hsoa
-         9pusZkRNKZfYCRi3to7+RgRIpvp/O8PE0YefTz89oUuCuagA6wxEDX7YeDvJ603hWEu7
-         Mz6PKEmUTBu7rJod/GBPU6DKbD9zKtyPyuK7tHXGv6QAgiAN/rBkzIFIRHBHUjpXObaH
-         MiRXC2V9jMj7D4xzXVDaNlHATJhfcQ/HJ7Yz3p1f+KU3lWtU4Xaej0bH7za94J+ppaCY
-         VJf0KPM8MOzUu9hz1DzMtJwGWh/te6pitNRsWrQkZXhgH4QgKQl+xrniIW68q5GJAcs2
-         wbzw==
-X-Gm-Message-State: AJcUukfKkvUO7VnT1t+M8WCk+3myzeHo+CaUXB9pPxDdGbXdL+ZvFwj6
-        vhqZ9bkD5EYUT82iXZUkoXicJomdm3A=
-X-Google-Smtp-Source: ALg8bN5mIPoxf1sDroAtZPM9tc25AUc05+t/ZyE1eF8uWo8CIz8LuUZuAKTL9VYMb9dL/w6hmlEang==
-X-Received: by 2002:a5d:6684:: with SMTP id l4mr3174765wru.154.1547554593825;
-        Tue, 15 Jan 2019 04:16:33 -0800 (PST)
+        bh=F8IsAruX63J0gvKiKSyGO89h1QwaCt0EX3fhyWAjg1U=;
+        b=NoZm3edRvFswwuyCnpkCIYdn/v2m9xbe/VuBukDJI+lRdsQnKb2dYmQGNx33l9RoOJ
+         beJbQIl4MaeXGIS9VsTtPh9vHfIqmVXWftgZ3HeB03XmR8Jog6roCEMAvCClpLpumib/
+         T23Rf5OcfrWJoeWVwqKLml7xP7OaZfMOZqwQgY4VEDInEI57Xv2Au0ml16XWZMLkOTy1
+         m3okMHnG6xG5TrUc3QtBSid6gKqhYhFRlb9qFD5EvNL33IXe6Pi9Ez1fOjrZ+1y1R+1j
+         zT57Gv9KTf20gA7u1WrFWYmiix8lEe/KE0rnGQtVzGLNCgEWofEpEBR8K0xHykmhpWin
+         RQ8g==
+X-Gm-Message-State: AJcUukeSHUEj2OfqII6oRrsSJw97hjJDEd/PBgralWkYgXZtFtjWk7uM
+        IPQICeMB41ZuR7lJxlIf8M3xog==
+X-Google-Smtp-Source: ALg8bN5snGWAD2kJryTOzv4QdqzserEHHrdYF9ygWHQt+d1BsVujRgjuuNaHFSfinqiagc9GfxAl9g==
+X-Received: by 2002:a1c:bc82:: with SMTP id m124mr3083525wmf.77.1547554612321;
+        Tue, 15 Jan 2019 04:16:52 -0800 (PST)
 Received: from [192.168.86.34] (cpc89974-aztw32-2-0-cust43.18-1.cable.virginm.net. [86.30.250.44])
-        by smtp.googlemail.com with ESMTPSA id h1sm22637695wmb.0.2019.01.15.04.16.32
+        by smtp.googlemail.com with ESMTPSA id l14sm156094056wrp.55.2019.01.15.04.16.51
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 15 Jan 2019 04:16:32 -0800 (PST)
-Subject: Re: [PATCH] nvmem: sc27xx: Convert nvmem offset to block index
-To:     Baolin Wang <baolin.wang@linaro.org>
-Cc:     broonie@kernel.org, freeman.liu@unisoc.com,
-        linux-kernel@vger.kernel.org
-References: <915eacd1c2f05ec84ae50474feb94902bd790ec3.1547536224.git.baolin.wang@linaro.org>
+        Tue, 15 Jan 2019 04:16:51 -0800 (PST)
+Subject: Re: [PATCH 1/2] nvmem: imx-ocotp: add i.MX7ULP support
+To:     Anson Huang <anson.huang@nxp.com>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Cc:     dl-linux-imx <linux-imx@nxp.com>
+References: <1544777136-9195-1-git-send-email-Anson.Huang@nxp.com>
 From:   Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Message-ID: <3ed33cde-5656-e0e7-d3c2-ad0e4ec4188b@linaro.org>
-Date:   Tue, 15 Jan 2019 12:16:32 +0000
+Message-ID: <4a1f2741-cb03-9f72-8039-1f82eb854b2c@linaro.org>
+Date:   Tue, 15 Jan 2019 12:16:50 +0000
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.2.1
 MIME-Version: 1.0
-In-Reply-To: <915eacd1c2f05ec84ae50474feb94902bd790ec3.1547536224.git.baolin.wang@linaro.org>
+In-Reply-To: <1544777136-9195-1-git-send-email-Anson.Huang@nxp.com>
 Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -75,19 +78,15 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 
 
-On 15/01/2019 07:12, Baolin Wang wrote:
-> From: Freeman Liu <freeman.liu@unisoc.com>
+On 14/12/2018 08:51, Anson Huang wrote:
+> i.MX7ULP is a new SoC of i.MX family which has 8 kbit eFuse OTP,
+> enable ocotp driver support for this SoC.
 > 
-> The Spreadtrum SC27XX efuse data are organized by blocks and each block
-> contains 2 bytes data. Moreover the nvmem core always pass the offset
-> in byte to the controller, so we should change the offset in byte to
-> the correct block index and block offset to read the data.
-> 
-> Signed-off-by: Freeman Liu <freeman.liu@unisoc.com>
-> Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
+> Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
 > ---
+>   drivers/nvmem/imx-ocotp.c | 6 ++++++
+>   1 file changed, 6 insertions(+)
+> 
+Thanks Applied both patches!
 
-Applied!
-
-Thanks,
-srini
+--srini
