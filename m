@@ -2,421 +2,120 @@ Return-Path: <SRS0=RZO6=PX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C2A03C43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 20:55:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B1786C43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 20:58:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8441B20657
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 20:55:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7651820657
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 20:58:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1547585880;
+	bh=31XMqDyo8MmERVsvSeKwUxcYLkv0sPqeS3nCa6s7cAU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=2vKMGLmNiaYIJoQBO8xI1+Mrn3n7jmo68khfY2bJaUWoqncnEaRX5YPxjCo0w3+N8
+	 RCDsgP+FJ9RgQYbJlXepW60OLRrpWdhW57mQm8B3n2gfrkH7wcwnwpztFcHtJ66smk
+	 gkNQWM1u77Bt0b3qyRlUcquXTSxN9CmVCxYt1zfw=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390061AbfAOUzt (ORCPT
+        id S2390066AbfAOU56 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 15 Jan 2019 15:55:49 -0500
-Received: from mail.bootlin.com ([62.4.15.54]:37389 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730050AbfAOUzs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Jan 2019 15:55:48 -0500
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 9A40B207B2; Tue, 15 Jan 2019 21:55:45 +0100 (CET)
-Received: from localhost (lfbn-lyo-1-59-119.w86-202.abo.wanadoo.fr [86.202.150.119])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 61F2420750;
-        Tue, 15 Jan 2019 21:55:45 +0100 (CET)
-Date:   Tue, 15 Jan 2019 21:55:45 +0100
-From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
-To:     Artem Panfilov <panfilovartyom@gmail.com>
-Cc:     Alessandro Zummo <a.zummo@towertech.it>,
-        linux-kernel@vger.kernel.org, linux-rtc@vger.kernel.org
-Subject: Re: [PATCH 1/1] rtc: add AB-RTCMC-32.768kHz-EOZ9-S3 RTC support
-Message-ID: <20190115205545.GB2627@piout.net>
-References: <20190115110146.21180-1-panfilov.artyom@gmail.com>
+        Tue, 15 Jan 2019 15:57:58 -0500
+Received: from mail-ot1-f68.google.com ([209.85.210.68]:40861 "EHLO
+        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730050AbfAOU56 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 Jan 2019 15:57:58 -0500
+Received: by mail-ot1-f68.google.com with SMTP id s5so3848388oth.7;
+        Tue, 15 Jan 2019 12:57:57 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=u6pLGx/0+vlD0wl7xUqGgJTpR0eVUVsQyd1A8iOPGJ0=;
+        b=UnaxucC5ygWhWmLEsoEYaej4vFuPaxdXzVi8IqQorefin+eTodJkFg771vLLBnM2L1
+         ObAxc3nB1jRXTcRy5q0EK4Ht5/lm8DcNph2ciGvAybrhMgqrE3+P9kcY1PoBnK9fbURB
+         zzz0/m8ktZ0gXEWcyKB4vzHqCAiTtjpRFt3hYoa14qAZ3KWyYo69wn0B6TXncC8gdjZe
+         hEF9tqOGsh8PNDQFjeh21Ler3zfqzvIylX5y6AR7SSD++o9JZXYZjZKMgCvAom9gMaV9
+         nvI9jQrXt5c8GDd70g1DKr9FTKyz62B7alZ9lmwaE7Qv//DYWV4LMmsM+M+ZSf+2Z1yY
+         dpqQ==
+X-Gm-Message-State: AJcUukex9Pkoi2LCLvraW1ztGym7Bq7Lmec+12zCgDkhI+hjpanlo7Tx
+        mfL9mdf1F8qIcOOfUWDDyA==
+X-Google-Smtp-Source: ALg8bN4DnB1ZctWsoIpCgu7SPhAARg68Cr1r0PsowhlSBI5gqsjqHrsrJM5VAEbY7eR/hsxtYH0c9A==
+X-Received: by 2002:a9d:641:: with SMTP id 59mr3203321otn.215.1547585877058;
+        Tue, 15 Jan 2019 12:57:57 -0800 (PST)
+Received: from localhost ([70.231.7.113])
+        by smtp.gmail.com with ESMTPSA id 62sm1906363otu.42.2019.01.15.12.57.56
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 15 Jan 2019 12:57:56 -0800 (PST)
+Date:   Tue, 15 Jan 2019 14:57:55 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Viorel Suman <viorel.suman@nxp.com>
+Cc:     Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>, Timur Tabi <timur@kernel.org>,
+        Nicolin Chen <nicoleotsuka@gmail.com>,
+        Xiubo Li <Xiubo.Lee@gmail.com>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        "S.j. Wang" <shengjiu.wang@nxp.com>,
+        Daniel Baluta <daniel.baluta@nxp.com>,
+        Cosmin Samoila <cosmin.samoila@nxp.com>,
+        "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
+        dl-linux-imx <linux-imx@nxp.com>,
+        Viorel Suman <viorel.suman@gmail.com>
+Subject: Re: [PATCH v2 4/4] ASoC: add imx-audmix DT binding documentation
+Message-ID: <20190115205755.GA4022@bogus>
+References: <1546952716-2743-1-git-send-email-viorel.suman@nxp.com>
+ <1546952716-2743-5-git-send-email-viorel.suman@nxp.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190115110146.21180-1-panfilov.artyom@gmail.com>
+In-Reply-To: <1546952716-2743-5-git-send-email-viorel.suman@nxp.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
-
-Thanks for the patch, a few comments:
-
-On 15/01/2019 14:01:45+0300, Artem Panfilov wrote:
-> This patch adds support for AB-RTCMC-32.768kHz-EOZ9-S3
-> RTC/Calendar module w/ I2C interface.
+On Tue, Jan 08, 2019 at 01:05:51PM +0000, Viorel Suman wrote:
+> Add the DT binding documentation for Audio Mixer
+> machine driver.
 > 
-> Signed-off-by: Artem Panfilov <panfilov.artyom@gmail.com>
-
-This has to match the From: header of the email (the dot is the
-difference).
-
+> Signed-off-by: Viorel Suman <viorel.suman@nxp.com>
 > ---
->  drivers/rtc/Kconfig          |  10 +
->  drivers/rtc/Makefile         |   1 +
->  drivers/rtc/rtc-ab-eoz9-s3.c | 412 +++++++++++++++++++++++++++++++++++
-
-I'd remove s3 from the various file and variable names because this is
-a package denomination (I know other RTCs have it but this has caused
-issue in the past).
-
-> +static int abeoz9s3_rtc_get_time(struct device *dev, struct rtc_time *tm)
-> +{
-> +	struct abeoz9s3_rtc_data *data = dev_get_drvdata(dev);
-> +	u8 regs[ABEOZ9S3_REG_SECONDS + ABEOZ9S3_SECONDS_LEN];
-
-Why do you add ABEOZ9S3_REG_SECONDS here?
-
-> +	int ret;
-> +
-> +	ret = regmap_bulk_read(data->regmap, ABEOZ9S3_REG_SECONDS,
-> +			       regs, sizeof(regs));
-> +
-> +	if (ret) {
-> +		dev_err(dev, "reading RTC time failed (%d)\n", ret);
-> +		goto err;
-
-You can return ret directly here instead of using a goto.
-
-> +	}
-> +
-> +	tm->tm_sec  = bcd2bin(regs[ABEOZ9S3_REG_SECONDS] & 0x7F);
-> +	tm->tm_min  = bcd2bin(regs[ABEOZ9S3_REG_MINUTES] & 0x7F);
-> +
-> +	if (regs[ABEOZ9S3_REG_CTRL1] & ABEOZ9S3_HOURS_PM) {
-> +		tm->tm_hour = bcd2bin(regs[ABEOZ9S3_REG_HOURS] & 0x1f);
-> +		if (regs[ABEOZ9S3_REG_HOURS] & ABEOZ9S3_HOURS_PM)
-> +			tm->tm_hour += 12;
-> +	} else {
-> +		tm->tm_hour = bcd2bin(regs[ABEOZ9S3_REG_HOURS]);
-> +	}
-> +
-> +	tm->tm_mday = bcd2bin(regs[ABEOZ9S3_REG_DAYS]);
-> +	tm->tm_wday = bcd2bin(regs[ABEOZ9S3_REG_WEEKDAYS]);
-> +	tm->tm_mon  = bcd2bin(regs[ABEOZ9S3_REG_MONTHS]) - 1;
-> +	tm->tm_year = bcd2bin(regs[ABEOZ9S3_REG_YEARS]) + 100;
-> +err:
-> +	return ret;
-> +}
-> +
-> +static int abeoz9s3_rtc_set_time(struct device *dev, struct rtc_time *tm)
-> +{
-> +	struct abeoz9s3_rtc_data *data = dev_get_drvdata(dev);
-> +	u8 regs[ABEOZ9S3_REG_SECONDS + ABEOZ9S3_SECONDS_LEN];
-
-ABEOZ9S3_REG_SECONDS is probably not needed here either.
-
-> +	int ret;
-> +
-> +	regs[ABEOZ9S3_REG_SECONDS]  = bin2bcd(tm->tm_sec);
-> +	regs[ABEOZ9S3_REG_MINUTES]  = bin2bcd(tm->tm_min);
-> +	regs[ABEOZ9S3_REG_HOURS]    = bin2bcd(tm->tm_hour);
-> +	regs[ABEOZ9S3_REG_DAYS]     = bin2bcd(tm->tm_mday);
-> +	regs[ABEOZ9S3_REG_WEEKDAYS] = bin2bcd(tm->tm_wday);
-> +	regs[ABEOZ9S3_REG_MONTHS]   = bin2bcd(tm->tm_mon + 1);
-> +	regs[ABEOZ9S3_REG_YEARS]    = bin2bcd(tm->tm_year - 100);
-> +
-> +	mutex_lock(&data->lock);
-
-This lock doesn't actually protect anything, it can be removed.
-
-> +	ret = regmap_bulk_write(data->regmap, ABEOZ9S3_REG_SECONDS,
-> +				regs + ABEOZ9S3_REG_SECONDS,
-> +				ABEOZ9S3_SECONDS_LEN);
-> +	mutex_unlock(&data->lock);
-> +
-> +	return ret;
-> +}
-> +
-
-
-> +static int abeoz9s3_rtc_setup(struct device *dev, struct device_node *node)
-> +{
-> +	struct abeoz9s3_rtc_data *data = dev_get_drvdata(dev);
-> +	struct regmap *regmap = data->regmap;
-> +
-> +	int ret;
-> +
-> +	/* Enable Self Recovery, Clock for Watch and EEPROM refresh functions*/
-> +	ret = regmap_update_bits(regmap, ABEOZ9S3_REG_CTRL1,
-> +				 ABEOZ9S3_REG_CTRL1_MASK,
-> +				 ABEOZ9S3_REG_CTRL1_WE |
-> +				 ABEOZ9S3_REG_CTRL1_EERE |
-> +				 ABEOZ9S3_REG_CTRL1_SRON);
-
-You can just use regmap_write here and drop ABEOZ9S3_REG_CTRL1_MASK
-
-> +	if (ret < 0) {
-> +		dev_err(dev, "unable to set control 1 register (%d)\n", ret);
-> +		return ret;
-> +	}
-> +
-> +	ret = regmap_update_bits(regmap, ABEOZ9S3_REG_CTRL2,
-> +				 ABEOZ9S3_REG_CTRL2_MASK, 0);
-
-Same here, this just write 0 in ABEOZ9S3_REG_CTRL2 as all the other bits
-will read 0.
-
-> +	if (ret < 0) {
-> +		dev_err(dev, "unable to set control 2 register (%d)\n", ret);
-> +		return ret;
-> +	}
-> +
-> +	ret = regmap_update_bits(regmap, ABEOZ9S3_REG_CTRL3,
-> +				 ABEOZ9S3_REG_CTRL3_MASK, 0);
-
-Ditto.
-
-> +	if (ret < 0) {
-> +		dev_err(dev, "unable to set control 3 register (%d)\n", ret);
-> +		return ret;
-> +	}
-> +
-> +	ret = regmap_update_bits(regmap, ABEOZ9S3_REG_CTRL4,
-> +				 ABEOZ9S3_REG_CTRL4_MASK, 0);
-
-Ditto.
-
-However, this loses valuable information. PON, V2F and V1F are very
-important as they may indicate that the time set in the RTC is now
-inaccurate. This has to be used in .read_time and reset only in
-.set_time.
-
-Also, I would rename CTRL2 to CTRL4 according to the datasheet.
-
-> +	if (ret < 0) {
-> +		dev_err(dev, "unable to set control 4 register (%d)\n", ret);
-> +		return ret;
-> +	}
-> +
-> +	ret = abeoz9s3_trickle_parse_dt(node);
-> +
-> +	/* Enable built-in termometer */
-> +	ret |= ABEOZ9S3_REG_EEPROM_THE;
-> +
-> +	ret = regmap_update_bits(regmap, ABEOZ9S3_REG_EEPROM,
-> +				 ABEOZ9S3_REG_EEPROM_MASK,
-> +				 ret);
-> +	if (ret < 0) {
-> +		dev_err(dev, "unable to set eeprom register (%d)\n", ret);
-> +		return ret;
-> +	}
-> +
-> +	return ret;
-> +}
-> +
-> +static const struct rtc_class_ops rtc_ops = {
-> +	.read_time = abeoz9s3_rtc_get_time,
-> +	.set_time  = abeoz9s3_rtc_set_time,
-> +};
-> +
-> +static const struct regmap_config abeoz9s3_rtc_regmap_config = {
-> +	.reg_bits = 8,
-> +	.val_bits = 8,
-> +};
-> +
-> +#if IS_REACHABLE(CONFIG_HWMON)
-> +
-> +static int abeoz9z3_temp_read(struct device *dev, enum hwmon_sensor_types type,
-> +			      u32 attr, int channel, long *temp)
-> +{
-> +	struct abeoz9s3_rtc_data *data = dev_get_drvdata(dev);
-> +	struct regmap *regmap = data->regmap;
-> +	int ret;
-> +	unsigned int regval = 37;
-> +
-> +	switch (attr) {
-> +	case hwmon_temp_input:
-> +		ret = regmap_read(regmap, ABEOZ9S3_REG_REG_TEMP, &regval);
-> +		if (ret < 0)
-> +			return ret;
-> +		*temp = 1000 * (regval + ABEOZ953_TEMP_MIN);
-> +		return 0;
-> +	case hwmon_temp_max:
-> +		*temp = 1000 * ABEOZ953_TEMP_MAX;
-> +		return 0;
-> +	case hwmon_temp_min:
-> +		*temp = 1000 * ABEOZ953_TEMP_MIN;
-> +		return 0;
-> +	default:
-> +		return -EOPNOTSUPP;
-> +	}
-> +}
-> +
-> +static umode_t abeoz9s3_is_visible(const void *data,
-> +				   enum hwmon_sensor_types type,
-> +				   u32 attr, int channel)
-> +{
-> +	switch (attr) {
-> +	case hwmon_temp_input:
-> +	case hwmon_temp_max:
-> +	case hwmon_temp_min:
-> +		return 0444;
-> +	default:
-> +		return 0;
-> +	}
-> +}
-> +
-> +static const u32 abeoz9s3_chip_config[] = {
-> +	HWMON_C_REGISTER_TZ,
-> +	0
-> +};
-> +
-> +static const struct hwmon_channel_info abeoz9s3_chip = {
-> +	.type = hwmon_chip,
-> +	.config = abeoz9s3_chip_config,
-> +};
-> +
-> +static const u32 abeoz9s3_temp_config[] = {
-> +	HWMON_T_INPUT | HWMON_T_MAX | HWMON_T_MIN,
-> +	0
-> +};
-> +
-> +static const struct hwmon_channel_info abeoz9s3_temp = {
-> +	.type = hwmon_temp,
-> +	.config = abeoz9s3_temp_config,
-> +};
-> +
-> +static const struct hwmon_channel_info *abeoz9s3_info[] = {
-> +	&abeoz9s3_chip,
-> +	&abeoz9s3_temp,
-> +	NULL
-> +};
-> +
-> +static const struct hwmon_ops abeoz9s3_hwmon_ops = {
-> +	.is_visible = abeoz9s3_is_visible,
-> +	.read = abeoz9z3_temp_read,
-> +};
-> +
-> +static const struct hwmon_chip_info abeoz9s3_chip_info = {
-> +	.ops = &abeoz9s3_hwmon_ops,
-> +	.info = abeoz9s3_info,
-> +};
-> +
-> +static void abeoz9s3_hwmon_register(struct device *dev,
-> +				    struct abeoz9s3_rtc_data *data)
-> +{
-> +	data->hwmon_dev =
-> +		devm_hwmon_device_register_with_info(dev,
-> +						     "abeoz9s3",
-> +						     data,
-> +						     &abeoz9s3_chip_info,
-> +						     NULL);
-> +	if (IS_ERR(data->hwmon_dev)) {
-> +		dev_warn(dev, "unable to register hwmon device %ld\n",
-> +			 PTR_ERR(data->hwmon_dev));
-> +	}
-> +}
-> +
-> +#else
-> +
-> +static void abeoz9s3_hwmon_register(struct device *dev,
-> +				    struct abeoz9s3_rtc_data *data)
-> +{
-> +}
-> +
-> +#endif /* CONFIG_RTC_DRV_ABEOZ9S3_HWMON */
-> +
-> +static int abeoz9s3_probe(struct i2c_client *client,
-> +			  const struct i2c_device_id *id)
-> +{
-> +	struct abeoz9s3_rtc_data *data = NULL;
-> +	struct device *dev = &client->dev;
-> +	struct regmap *regmap;
-> +	int ret;
-> +
-> +	if (!i2c_check_functionality(client->adapter, I2C_FUNC_I2C |
-> +				     I2C_FUNC_SMBUS_BYTE_DATA |
-> +				     I2C_FUNC_SMBUS_I2C_BLOCK)) {
-> +		ret = -ENODEV;
-> +		goto err;
-> +	}
-> +
-> +	regmap = devm_regmap_init_i2c(client, &abeoz9s3_rtc_regmap_config);
-> +	if (IS_ERR(regmap)) {
-> +		ret = PTR_ERR(regmap);
-> +		dev_err(dev, "regmap allocation failed: %d\n", ret);
-> +		goto err;
-> +	}
-> +
-> +	data = devm_kzalloc(dev, sizeof(*data), GFP_KERNEL);
-> +	if (!data) {
-> +		ret = -ENOMEM;
-> +		goto err;
-> +	}
-> +
-> +	mutex_init(&data->lock);
-> +	data->regmap = regmap;
-> +	dev_set_drvdata(dev, data);
-> +
-> +	ret = abeoz9s3_rtc_setup(dev, client->dev.of_node);
-> +	if (ret)
-> +		goto err;
-> +
-> +	data->rtc = devm_rtc_allocate_device(dev);
-> +	ret = PTR_ERR_OR_ZERO(data->rtc);
-> +	if (ret)
-> +		goto err;
-> +
-> +	data->rtc->ops = &rtc_ops;
-> +	data->rtc->range_min = RTC_TIMESTAMP_BEGIN_2000;
-> +	data->rtc->range_max = RTC_TIMESTAMP_END_2099;
-> +
-> +	ret = rtc_register_device(data->rtc);
-> +	if (ret)
-> +		goto err;
-> +
-> +	abeoz9s3_hwmon_register(dev, data);
-> +	return 0;
-> +err:
-> +	dev_err(dev, "unable to register RTC device (%d)\n", ret);
-> +	return ret;
-> +}
-> +
-> +#ifdef CONFIG_OF
-> +static const struct of_device_id abeoz9s3_dt_match[] = {
-> +	{ .compatible = "abracon,abeoz9s3" },
-
-This compatible string needs to be documented. You can simply add it in
-Documentation/devicetree/bindings/rtc/rtc.txt
-
-> +	{ },
-> +};
-> +#endif
-> +
-> +MODULE_DEVICE_TABLE(of, abeoz9s3_dt_match);
-> +
-> +static const struct i2c_device_id abeoz9s3_id[] = {
-> +	{ "abeoz9s3", 0 },
-> +	{ }
-> +};
-> +
-> +static struct i2c_driver abeoz9s3_driver = {
-> +	.driver = {
-> +		.name = "rtc-ab-eoz9-s3",
-> +		.of_match_table = of_match_ptr(abeoz9s3_dt_match),
-> +	},
-> +	.probe	  = abeoz9s3_probe,
-> +	.id_table = abeoz9s3_id,
-> +};
-> +
-> +module_i2c_driver(abeoz9s3_driver);
-> +
-> +MODULE_AUTHOR("Artem Panfilov panfilov.artyom@gmail.com");
-
-I would put "Artem Panfilov <panfilov.artyom@gmail.com>" here.
-
-> +MODULE_DESCRIPTION("Abracon AB-RTCMC-32.768kHz-EOZ9-S3 RTC driver");
-> +MODULE_LICENSE("GPL");
-> -- 
-> 2.17.1
+>  .../devicetree/bindings/sound/imx-audmix.txt       | 24 ++++++++++++++++++++++
+>  1 file changed, 24 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/sound/imx-audmix.txt
 > 
+> diff --git a/Documentation/devicetree/bindings/sound/imx-audmix.txt b/Documentation/devicetree/bindings/sound/imx-audmix.txt
+> new file mode 100644
+> index 0000000..6ac1230
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/sound/imx-audmix.txt
+> @@ -0,0 +1,24 @@
+> +NXP Audio Mixer (AUDMIX) machine driver.
+> +
+> +Required properties:
+> +===================================
+> +  - compatible		: Compatible list, contains "fsl,imx-audmix"
+> +
+> +  - model		: Short audio card description.
+> +
+> +  - dais		: Must contain a list of phandles to AUDMIX connected
+> +			  DAIs. The current implementation requires two phandles
+> +			  to SAI interfaces to be provided, the first SAI in the
+> +			  list being used to route the AUDMIX output.
+> +
+> +  - audmix-controller	: Must contain the phandle to the AUDMIX device node.
 
--- 
-Alexandre Belloni, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+I don't think you need 2 nodes for this as this one is just a virtual 
+device. Just add the dais property to the audmix node.
+
+Rob
