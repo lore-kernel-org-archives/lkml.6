@@ -5,64 +5,65 @@ X-Spam-Level:
 X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3704CC43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 03:52:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CCDF7C43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 03:53:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0475620859
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 03:52:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9A2FC20859
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 03:53:40 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VFiLC/wi"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hQLLTkHa"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728090AbfAODwZ (ORCPT
+        id S1728105AbfAODxi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 14 Jan 2019 22:52:25 -0500
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:46747 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726769AbfAODwZ (ORCPT
+        Mon, 14 Jan 2019 22:53:38 -0500
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:41593 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727449AbfAODxi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 Jan 2019 22:52:25 -0500
-Received: by mail-pg1-f194.google.com with SMTP id w7so601656pgp.13;
-        Mon, 14 Jan 2019 19:52:24 -0800 (PST)
+        Mon, 14 Jan 2019 22:53:38 -0500
+Received: by mail-pf1-f195.google.com with SMTP id b7so638611pfi.8;
+        Mon, 14 Jan 2019 19:53:37 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=hW3X2EuUQUHZMQO0rz72DWuUJd2W/dUQuPisu3YBPls=;
-        b=VFiLC/wifBUQdfz6zeqxdDg85BqNR9XI0agkWzc52LoCqRykzqR6ABZTOid3a3QxXh
-         8KpYQvy2I4Yb3cvilEp2HNWMfYw1s2Hegmr6FUdXLnrvs6MJln9ZVmHjRYlMWnybg0+z
-         B4N9uRULVmy+1ADOLjl/ITsznAK9Q2s91mp/KP8ejk5GU5I7shO3CeT/BYksqI3Y7m6R
-         dAmoElcXaqgPdJKYK1lmNui/3Z/rnBbZEZ/kdEj1ac3JzXdRuXdZ+CmaBKve6yWdOFOS
-         UmAQfEoZy6jk0NoKh3M2VUhnIoWxYPyhGHXWBYK/QRTTO768PPkpRj6EogqqstVmsmEf
-         /qiQ==
+        bh=MjCT1JTEc6z+qPMMjeY3ggVzvTZxUhkgRfCYqvqYwNk=;
+        b=hQLLTkHabYCmDZo7dj9T7UW+/cCDlNHDLPreU7T/DCN2+CM50KtTakL0N3dyNdiCmg
+         EhacgVxnsgHeDS9jaPsSJe/IBtiXNx8D0TAK7K96xW+342LU0hPvgZmNltV9v3+1xDQr
+         yvsdcDTl6wEqkh9mbZn1jWV1/yRpK1N26C63eZn1Tw2DoiDwW4CmUh7jVb0MYbCTLrYg
+         9fzFSw2OT8wYiuccrxlVTYUv5KS4V08Cx1mfqXBFIxr5xGzJY7oHCcnpuqd7/7htnJtk
+         KwP6pwWUBvvQp9O9IxwiKrNWNS9f/cL31+brEPqpJB4H/K8JVJZp41HZoF/xN9Gx21hr
+         Vqlw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=hW3X2EuUQUHZMQO0rz72DWuUJd2W/dUQuPisu3YBPls=;
-        b=JiDhJdFHhFg+hmEa/QHVB+4F8jLYBENZd9byKWvj2apB3/bc129ERKIHOMYtP2vyKM
-         lJVdKzS6pO6kfBQYMlzy3jGQozQeT+acuyCRwk8olqANbonT99Q6ytAgvyz4C4oKwL8X
-         yTMO1Gwd72Crs2GqgYuwDZjj3kYbK8l1dHHH2INrG+1cU7UdMCBVXXzWJfi+67uiQEoU
-         XcioNB6M5kjAhC5ecY9k/6CFpNT1bEne5z/stPb0PQcRuUIG1Ugrl5KMCSRioGFrw8I6
-         x2KeyEC/rCbt5oP33Kf048v8RwITil5cvdELUkYFLSUbc+/B7Z5co45RF99LEZBiCsuu
-         MIPg==
-X-Gm-Message-State: AJcUukd5FGZLmWQ4uQKjtkeDyt//6ieaIZxGAm9wk8R/Oem+cYRF7eMk
-        0twepGSKEvDO4mMqBo/HtvOzwlHp
-X-Google-Smtp-Source: ALg8bN4DFycsf6lIHleg8L8TKqJp3Bpc4Vwqr7+0V/l9YqwpN+hYmMCaqCsSKSk5QquIocRnyzhz1A==
-X-Received: by 2002:a62:1542:: with SMTP id 63mr1912761pfv.230.1547524344135;
-        Mon, 14 Jan 2019 19:52:24 -0800 (PST)
+        bh=MjCT1JTEc6z+qPMMjeY3ggVzvTZxUhkgRfCYqvqYwNk=;
+        b=MSfNr7gP+n7xIYSsHP5ar5PppOx8oJv4GqhPdT6LMz38ZIswe+Aznh7ai8wt0ra6fT
+         RZitMF42Vi9PDaiiv4qlFjNXx2ME8WRwQfhQFvHLPZmU50dqb9rrgG58rfJsbS6kcVuH
+         7VjgdBpjCUKUWb4P0dDOGxBs2hNpB/Ma7wTxnHAbHxEzjcvWLhLBcOMPoXqPCAfLnatO
+         v31i3FAE3eBMqKKAoRK2I832DPOSgOXD5Jk0WoLw5+UBCQ67meeMdbVAEh8nxWlW1Xwp
+         Q0xkc/bJfAanrdRFuY3xa4XEpWhUTm0X2MydxJCL/hXlR8VKgkxVN0T8OqSNHkz5qnIP
+         PxVA==
+X-Gm-Message-State: AJcUukfSFolfBKYMEOQS4OW+iFtk3n8ufbTvDT3TU5wYD8Y3K7iuRqhe
+        5BpZXJHbrj6KQLAGsBOUU1o=
+X-Google-Smtp-Source: ALg8bN5TWruVUWdfmWcujGbIAsbsqo0jO+jrsdI1pHGhP/iAEZ1pSc1TsWy9Cv6B4J8BFZqvznrijg==
+X-Received: by 2002:a62:ab0d:: with SMTP id p13mr1875787pff.211.1547524416918;
+        Mon, 14 Jan 2019 19:53:36 -0800 (PST)
 Received: from dtor-ws ([2620:15c:202:201:3adc:b08c:7acc:b325])
-        by smtp.gmail.com with ESMTPSA id g11sm2136595pfo.139.2019.01.14.19.52.22
+        by smtp.gmail.com with ESMTPSA id t24sm2565771pfm.127.2019.01.14.19.53.35
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 14 Jan 2019 19:52:23 -0800 (PST)
-Date:   Mon, 14 Jan 2019 19:52:21 -0800
+        Mon, 14 Jan 2019 19:53:36 -0800 (PST)
+Date:   Mon, 14 Jan 2019 19:53:34 -0800
 From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To:     Donghoon Han <nazgul33@gmail.com>
+To:     Donghoon Han <nazgul33@gmail.com>, Rob Herring <robh+dt@kernel.org>
 Cc:     linux-input@vger.kernel.org, Daniel Mack <daniel@caiaq.de>,
         linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
 Subject: Re: [PATCH V2 2/2] Input: rotaty-encoder - Add DT binding document
-Message-ID: <20190115035221.GA151157@dtor-ws>
+Message-ID: <20190115035334.GB151157@dtor-ws>
 References: <20190107164249.2342-1-nazgul33@gmail.com>
  <20190107164249.2342-3-nazgul33@gmail.com>
 MIME-Version: 1.0
@@ -75,6 +76,7 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+[ resending to Rob... ]
 On Tue, Jan 08, 2019 at 01:42:49AM +0900, Donghoon Han wrote:
 > Add DT binding document for rotary-encoder, keycode options.
 > 
