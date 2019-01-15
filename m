@@ -3,86 +3,83 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 941D8C43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 21:17:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C835BC43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 21:19:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 66C1A20859
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 21:17:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9EE3E20859
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 21:19:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390328AbfAOVQ7 (ORCPT
+        id S2390347AbfAOVTp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 15 Jan 2019 16:16:59 -0500
-Received: from mga14.intel.com ([192.55.52.115]:30617 "EHLO mga14.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730655AbfAOVQ7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Jan 2019 16:16:59 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga003.fm.intel.com ([10.253.24.29])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 15 Jan 2019 13:16:59 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,483,1539673200"; 
-   d="scan'208";a="126150815"
-Received: from linayu-mobl.amr.corp.intel.com (HELO [10.252.197.109]) ([10.252.197.109])
-  by FMSMGA003.fm.intel.com with ESMTP; 15 Jan 2019 13:16:57 -0800
-Subject: Re: [alsa-devel] [PATCH] ASoC: soc-core: Fix null pointer dereference
- in soc_find_component
-To:     Matthias Reichl <hias@horus.com>, Mark Brown <broonie@kernel.org>,
-        rohkumar@qti.qualcomm.com, alsa-devel@alsa-project.org,
-        bgoswami@codeaurora.org, vinod.koul@linaro.org,
-        lgirdwood@gmail.com, plai@codeaurora.org,
-        linux-kernel@vger.kernel.org, tiwai@suse.com,
-        Liam Girdwood <liam.r.girdwood@linux.intel.com>,
-        srinivas.kandagatla@linaro.org,
-        Rohit kumar <rohitkr@codeaurora.org>, asishb@codeaurora.org,
-        Ajit Pandey <ajitp@codeaurora.org>
-References: <1547194442-1487-1-git-send-email-rohitkr@codeaurora.org>
- <d8726e9a-3477-a573-8c1a-dd8245068802@linux.intel.com>
- <4886ed21-65d2-159d-afcd-bb26dcde636e@linux.intel.com>
- <20190115000610.GM11073@sirena.org.uk>
- <796a856c-a9a6-022d-da63-947279090198@linux.intel.com>
- <20190115211137.rhdyjadu7fppp3p4@lenny.lan>
-From:   Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-Message-ID: <af2e9555-444f-7c40-865b-347f3db8fa76@linux.intel.com>
-Date:   Tue, 15 Jan 2019 15:16:57 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Tue, 15 Jan 2019 16:19:45 -0500
+Received: from mail-qk1-f193.google.com ([209.85.222.193]:39509 "EHLO
+        mail-qk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1733166AbfAOVTp (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 Jan 2019 16:19:45 -0500
+Received: by mail-qk1-f193.google.com with SMTP id c21so2478554qkl.6;
+        Tue, 15 Jan 2019 13:19:44 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=RmQjDqHJG7rtxz6sQA1HKmY7UbAa3sA/y/aq6/3rjdg=;
+        b=MHBjpEC/h100zR6DKSoG+q4Wuas5SPJ3+tN/3q3z5gvAVJr4uTSVBuFe/EG9eC9zxJ
+         bElu3B35kkSUeSahOEWnLUFB9+H2h0pRa0EoJxGXdM/q3YstWNXoMHZ1mqebHqcvzYgp
+         DzA/4J0R19drDLkqhjg0FrR9hVLuJdzBU8iKMZ2ecPpUCJmKsz0PXHBpe86FcRIyiI0U
+         gh6QA6OX3f619wNJ1F1X5otyh12jkYd8fPzlnqRoo796thoPUkjD6hyfEs/SkN4rENcE
+         UCuXJztLQCULqvudu2fRFabjAHVDVNti9zISom8ns/cOdZUMFiT0JY6pb0y4ZYIMzUKi
+         DGZw==
+X-Gm-Message-State: AJcUukd+E9olt1Tkf9FJ4F9oerBDJdOvW3XOCUtDy0Nougf+44R7wIJ5
+        u32f0hi9Iq1FgGe5jDxwdj9REQb5Xcze/r5P8vI=
+X-Google-Smtp-Source: ALg8bN7y/TTQlSeLMf42YbV3UXvIbbMD0skMXFMfbF3L7WUdKnjaollAsUBT6lfFxtuk7TBeUaw8pXDlbrU1g+dA/TY=
+X-Received: by 2002:a37:9a89:: with SMTP id c131mr4316487qke.173.1547587184128;
+ Tue, 15 Jan 2019 13:19:44 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20190115211137.rhdyjadu7fppp3p4@lenny.lan>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+References: <20181229183514.24644-1-deepa.kernel@gmail.com>
+In-Reply-To: <20181229183514.24644-1-deepa.kernel@gmail.com>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Tue, 15 Jan 2019 22:19:27 +0100
+Message-ID: <CAK8P3a1YG0+iMBiNy-g7KCusX3myV0tsuCEg1YLWW0cXrjk7PA@mail.gmail.com>
+Subject: Re: [PATCH] input_event: Provide override for sparc64
+To:     Deepa Dinamani <deepa.kernel@gmail.com>
+Cc:     Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        "open list:HID CORE LAYER" <linux-input@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        David Miller <davem@davemloft.net>,
+        y2038 Mailman List <y2038@lists.linaro.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Sat, Dec 29, 2018 at 7:35 PM Deepa Dinamani <deepa.kernel@gmail.com> wrote:
 
->> Beyond the fact that the platform_name seems to be totally useless,
->> additional tests show that the patch ('ASoC: soc-core: defer card probe
->> until all component is added to list') adds a new restriction which
->> contradicts existing error checks.
->>
->> None of the Intel machine drivers set the dailink "cpu_name" field but use
->> the "cpu_dai_name" field instead. This was perfectly legit as documented by
->> the code at the end of soc_init_dai_link()
-> This should be fixed by the patch
-> "ASoC: core: Don't defer probe on optional, NULL components" which Mark
-> already applied to his tree. See
-> http://mailman.alsa-project.org/pipermail/alsa-devel/2019-January/144323.html
+>         struct timeval time;
+>  #define input_event_sec time.tv_sec
+>  #define input_event_usec time.tv_usec
+>  #else
+>         __kernel_ulong_t __sec;
+> +#ifdef CONFIG_SPARC64
+> +       unsigned int __usec;
+> +#else
+>         __kernel_ulong_t __usec;
+> +#endif
+>  #define input_event_sec  __sec
+>  #define input_event_usec __usec
+>  #endif
 
-Ah yes, I missed this patch while I was debugging. Indeed this fixes the 
-problem and my devices work again with Mark's for-next branch. Thanks 
-Matthias!
+Sorry for not having looked at this earlier, I just realized that this
+is a mistake
+in user space: uapi headers are not allowed to reference CONFIG_* symbols,
+since the headers are supposed to be configuration independent and the
+CONFIG_* namespace might clash with user space identifiers.
 
->
-> Maybe the defer card probe logic needs to be extended to also check if
-> dai_link_name had already been registered (either cpu or cpu_dai_name
-> needs to be set), not 100% sure which problem the defer card probe patch
-> was trying to solve.
-same here, I don't get why the deferred probe stuff only deals with one 
-of the two options.
+The correct check appears to be
 
+#if defined(__sparc__) && defined(__arch64__)
+
+      Arnd
