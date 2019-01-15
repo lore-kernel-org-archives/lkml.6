@@ -2,186 +2,99 @@ Return-Path: <SRS0=RZO6=PX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9EB20C43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 20:42:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 56A55C43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 20:45:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6C59920656
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 20:42:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1DFDF20656
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 20:45:16 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="SAgWQuqs"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389968AbfAOUma (ORCPT
+        id S2389967AbfAOUpO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 15 Jan 2019 15:42:30 -0500
-Received: from ipmail02.adl2.internode.on.net ([150.101.137.139]:44910 "EHLO
-        ipmail02.adl2.internode.on.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1730179AbfAOUma (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Jan 2019 15:42:30 -0500
-Received: from ppp59-167-129-252.static.internode.on.net (HELO dastard) ([59.167.129.252])
-  by ipmail02.adl2.internode.on.net with ESMTP; 16 Jan 2019 07:12:24 +1030
-Received: from dave by dastard with local (Exim 4.80)
-        (envelope-from <david@fromorbit.com>)
-        id 1gjVXT-0001Zn-2h; Wed, 16 Jan 2019 07:42:23 +1100
-Date:   Wed, 16 Jan 2019 07:42:23 +1100
-From:   Dave Chinner <david@fromorbit.com>
-To:     Pankaj Gupta <pagupta@redhat.com>
-Cc:     Dan Williams <dan.j.williams@intel.com>,
-        Matthew Wilcox <willy@infradead.org>,
+        Tue, 15 Jan 2019 15:45:14 -0500
+Received: from ozlabs.org ([203.11.71.1]:39661 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728576AbfAOUpO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 Jan 2019 15:45:14 -0500
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by ozlabs.org (Postfix) with ESMTPSA id 43fMm66gwTz9sCh;
+        Wed, 16 Jan 2019 07:45:10 +1100 (AEDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1547585111;
+        bh=v8OVTG8o0bybZxbhxI5hTdx0TUt/cjWq03SSDh+Df+k=;
+        h=Date:From:To:Cc:Subject:From;
+        b=SAgWQuqs6FWyrDaWN3ndUnYotLhJf0RTXV/FYvPbFxW8ymXSrGyay53+3nMCO0NDF
+         VgpbrVQcRnd/SKPryTcgI+bsUVVVMOorZjotWhDuDRMoDjaa4UKQcX74mB267iHP6O
+         9aBw00l0eW/5Y7tcA/tEh19FGflqIOY3oXgIm78WIoslbfvfaS9f1aSyDG4Rvm/fDr
+         GTS2/yBJcoZAvTlOqCIeDx2JJKww/F2ApMj/acpBSm9ZJELiTUKbkc3lpfMEqe+LMG
+         eKmKVkh8b6x4Rdw6UTDco6WdbRNm1YshqFflrSEMv48WdWCImH6otSLW+zWv0PNxqb
+         kgyFMaXuCzeCA==
+Date:   Wed, 16 Jan 2019 07:45:10 +1100
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Kevin Hilman <khilman@baylibre.com>,
+        Carlo Caione <carlo@caione.org>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        KVM list <kvm@vger.kernel.org>,
-        Qemu Developers <qemu-devel@nongnu.org>,
-        linux-nvdimm <linux-nvdimm@ml01.01.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        virtualization@lists.linux-foundation.org,
-        Linux ACPI <linux-acpi@vger.kernel.org>,
-        linux-ext4 <linux-ext4@vger.kernel.org>,
-        linux-xfs <linux-xfs@vger.kernel.org>, Jan Kara <jack@suse.cz>,
-        Stefan Hajnoczi <stefanha@redhat.com>,
-        Rik van Riel <riel@surriel.com>,
-        Nitesh Narayan Lal <nilal@redhat.com>,
-        Kevin Wolf <kwolf@redhat.com>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Ross Zwisler <zwisler@kernel.org>,
-        vishal l verma <vishal.l.verma@intel.com>,
-        dave jiang <dave.jiang@intel.com>,
-        David Hildenbrand <david@redhat.com>,
-        jmoyer <jmoyer@redhat.com>,
-        xiaoguangrong eric <xiaoguangrong.eric@gmail.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        "Michael S. Tsirkin" <mst@redhat.com>,
-        Jason Wang <jasowang@redhat.com>, lcapitulino@redhat.com,
-        Igor Mammedov <imammedo@redhat.com>,
-        Eric Blake <eblake@redhat.com>, Theodore Ts'o <tytso@mit.edu>,
-        adilger kernel <adilger.kernel@dilger.ca>,
-        darrick wong <darrick.wong@oracle.com>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Subject: Re: [PATCH v3 0/5] kvm "virtio pmem" device
-Message-ID: <20190115204222.GK4205@dastard>
-References: <20190109144736.17452-1-pagupta@redhat.com>
- <1326478078.61913951.1547192704870.JavaMail.zimbra@redhat.com>
- <20190113232902.GD4205@dastard>
- <20190113233820.GX6310@bombadil.infradead.org>
- <942065073.64011540.1547450140670.JavaMail.zimbra@redhat.com>
- <20190114212501.GG4205@dastard>
- <CAPcyv4jtPcLV-s0sKNHwwk0ug7GLBV6699dpm1h3r2xSo879dg@mail.gmail.com>
- <20190114222132.GH4205@dastard>
- <1684638419.64320214.1547530506805.JavaMail.zimbra@redhat.com>
+        Anand Moon <linux.amoon@gmail.com>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Paul Gortmaker <paul.gortmaker@windriver.com>
+Subject: linux-next: Fixes tag needs work in the amlogic tree
+Message-ID: <20190116074510.7c7e6a4a@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1684638419.64320214.1547530506805.JavaMail.zimbra@redhat.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/JwLiueIBRTMFareA/PLW/UJ"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 15, 2019 at 12:35:06AM -0500, Pankaj Gupta wrote:
-> 
-> > > > On Mon, Jan 14, 2019 at 02:15:40AM -0500, Pankaj Gupta wrote:
-> > > > >
-> > > > > > > Until you have images (and hence host page cache) shared between
-> > > > > > > multiple guests. People will want to do this, because it means they
-> > > > > > > only need a single set of pages in host memory for executable
-> > > > > > > binaries rather than a set of pages per guest. Then you have
-> > > > > > > multiple guests being able to detect residency of the same set of
-> > > > > > > pages. If the guests can then, in any way, control eviction of the
-> > > > > > > pages from the host cache, then we have a guest-to-guest
-> > > > > > > information
-> > > > > > > leak channel.
-> > > > > >
-> > > > > > I don't think we should ever be considering something that would
-> > > > > > allow a
-> > > > > > guest to evict page's from the host's pagecache [1].  The guest
-> > > > > > should
-> > > > > > be able to kick its own references to the host's pagecache out of its
-> > > > > > own pagecache, but not be able to influence whether the host or
-> > > > > > another
-> > > > > > guest has a read-only mapping cached.
-> > > > > >
-> > > > > > [1] Unless the guest is allowed to modify the host's file; obviously
-> > > > > > truncation, holepunching, etc are going to evict pages from the
-> > > > > > host's
-> > > > > > page cache.
-> > > > >
-> > > > > This is so correct. Guest does not not evict host page cache pages
-> > > > > directly.
-> > > >
-> > > > They don't right now.
-> > > >
-> > > > But someone is going to end up asking for discard to work so that
-> > > > the guest can free unused space in the underlying spares image (i.e.
-> > > > make use of fstrim or mount -o discard) because they have workloads
-> > > > that have bursts of space usage and they need to trim the image
-> > > > files afterwards to keep their overall space usage under control.
-> > > >
-> > > > And then....
-> > > 
-> > > ...we reject / push back on that patch citing the above concern.
-> > 
-> > So at what point do we draw the line?
-> > 
-> > We're allowing writable DAX mappings, but as I've pointed out that
-> > means we are going to be allowing  a potential information leak via
-> > files with shared extents to be directly mapped and written to.
-> > 
-> > But we won't allow useful admin operations that allow better
-> > management of host side storage space similar to how normal image
-> > files are used by guests because it's an information leak vector?
-> 
-> First of all Thank you for all the useful discussions. 
-> I am summarizing here:
-> 
-> - We have to live with the limitation to not support fstrim and 
->   mount -o discard options with virtio-pmem as they will evict 
->   host page cache pages. We cannot allow this for virtio-pmem
->   for security reasons. These filesystem commands will just zero out 
->   unused pages currently.
+--Sig_/JwLiueIBRTMFareA/PLW/UJ
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Not sure I follow you here - what pages are going to be zeroed and
-when will they be zeroed? If discard is not allowed, filesystems
-just don't issue such commands and the underlying device will never
-seen them.
+[I am experimenting with checking the Fixes tags in commits in linux-next.
+Please let me know if you think I am being too strict.]
 
-> - If alot of space is unused and not freed guest can request host 
->   Administrator for truncating the host backing image. 
+Hi all,
 
-You can't use truncate to free space in a disk image file. The only
-way to do it safely in a generic, filesystem agnositic way is to
-mount the disk image (e.g. on loopback) and run fstrim on it. The
-loopback device will punches holes in the file where all the free
-space is reported by the filesystem via discard requests.
+Commit
 
-Which is kinda my point - this could only be done if the guest is
-shut down, which makes it very difficult for admins to manage. 
+  90d2bf8975cc ("ARM64: dts: meson-gxbb-odroidc2: Fix usb phy regulator pow=
+er failed warning")
 
->   We are also planning to support qcow2 sparse image format at 
->   host side with virtio-pmem.
+has a malformed Fixes tag:
 
-So you're going to be remapping a huge number of disjoint regions
-into a linear pmem mapping? ISTR discussions about similar things
-for virtio+fuse+dax that came up against "large numbers of mapped
-regions don't scale" and so it wasn't a practical solution compared
-to a just using raw sparse files....
+  Fixes: 5a0803bd5ae (ARM64: dts: meson-gxbb-odroidc2: Enable USB Nodes)
 
-> - There is no existing solution for Qemu persistent memory 
->   emulation with write support currently. This solution provides 
->   us the paravartualized way of emulating persistent memory.
+There should be at least 12 digits of the commit SHA1 and double quotes
+around the commit subject.
 
-Sure, but the question is why do you need to create an emulation
-that doesn't actually perform like pmem? The whole point of pmem is
-performance, and emulating pmem by mmap() of a file on spinning
-disks is going to be horrible for performance. Even on SSDs it's
-going to be orders of magnitudes slower than real pmem.
-
-So exactly what problem are you trying to solve with this driver?
-
+--=20
 Cheers,
+Stephen Rothwell
 
-Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+--Sig_/JwLiueIBRTMFareA/PLW/UJ
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlw+RlYACgkQAVBC80lX
+0Gwo3gf9EiuOZIdh3hTk6RDXI6XcWLhYzK2e0I5Qm97mVT65nPEEp/tSgGLXHMYQ
+I520HkAjumZEKLP+xtpPS1eGL2O5isXd//qMMMGIrVzpWLQzD92SWXiwHlKQMzrN
+/bq2NSn1iAmNnz+Y3Fh1xyOwYTFa2UvdNeYm5XQrEbflE1qLDSDuRGeD0TdnqL95
+ThZLPgMf8ZumSMhHcHqRJlsLt0Y5Cxyy3eoAoY3VS4A/I0Gfq86ZQbOfELj/dgCk
+D6sLV02RF/9qj0XS6VndNYOqZCy7n2+6K/LDJwFYtkm4g0yzxgOPpa4n6Xg9doGd
+wbTwo88Wts4s4g0ZoJDwVR3CnsfUqA==
+=ciYL
+-----END PGP SIGNATURE-----
+
+--Sig_/JwLiueIBRTMFareA/PLW/UJ--
