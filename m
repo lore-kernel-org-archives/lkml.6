@@ -3,372 +3,107 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 69309C43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 19:00:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E599AC43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 19:03:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 25A9C20656
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 19:00:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AD81120656
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 19:03:59 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hvxpJgF+"
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="QT+usV8N"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732195AbfAOTAh (ORCPT
+        id S1732389AbfAOTD5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 15 Jan 2019 14:00:37 -0500
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:35226 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729554AbfAOTAh (ORCPT
+        Tue, 15 Jan 2019 14:03:57 -0500
+Received: from hqemgate14.nvidia.com ([216.228.121.143]:12274 "EHLO
+        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731000AbfAOTD4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Jan 2019 14:00:37 -0500
-Received: by mail-lj1-f194.google.com with SMTP id x85-v6so3307882ljb.2;
-        Tue, 15 Jan 2019 11:00:35 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=c+dReI6r5LQ9qvph6JLO1HA64WotlyQsucCp2V93ir8=;
-        b=hvxpJgF+YSMU9y3oV3tv+utwdO2PLpXPA6r2CuUGR9EQ/aG4+0uhTfPb42t0megr6S
-         ji8PZKl3lTdZNexPYELNUm34IS7UeBUnPpSif42xDtMD+lWbKqfhN8fg9gzJ9Ey/CmLX
-         vz1+Q66qYTR0kyh4r1ygiO1H5Q4G8dtOWE0XD3pLBpFmA1DXit2IK8fZXpELociaTN+u
-         Xl8QTNvxhzestAeMh0LV/y5vySTxsA/wKlQnDRIZ71lIzDwq55bSh6VGnDXa3dHYLTSX
-         P7iVaLIq0F9aZ/XP4uMhwYgIebQ1figB6fYrDy2Q3h4xrQtFH+Ux+vFbTcoREj6WtQ7h
-         U58w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=c+dReI6r5LQ9qvph6JLO1HA64WotlyQsucCp2V93ir8=;
-        b=Bj/uYAQYdpDlW8d3ylMZjUfUKKSe4apTzqgyuPLE4mW3Cm9etfvwMU2AFsqNgTkQ/X
-         v5rjroqZpgmPmFPMxJh7CQDzvN56qBTxBc+vvbUGOFyhROvA3qvZDLc9WUXGIyg8+ML9
-         xLDV8WTJ8JjK84iVsRsab4DJllbYEkrlqKYlD9eeyoGPU5LtbulILhcYko2UJEqMXWF+
-         qN9ItsJrey1gZjA2+MEAN9vCDCNJ+TZuU1zbcgx7JG9lCbJsIi7ayZsIZDVQIOpICfkn
-         ee4QW9bNWETGu5lk233mx4Hm+MqlQDuxfI64La2dnVGg0S3GH7EnPm4Kzb4Bto6G1l7Y
-         9EPg==
-X-Gm-Message-State: AJcUukdYsLrs69ie2Cck1RqvNRItZqPz5By9NMWaYgRnAhkqoDKwy5UA
-        iiFydvAnSmlbMduQ000cLFbrGooE
-X-Google-Smtp-Source: ALg8bN62KXbkfvixw4GJIKz8h6b4oVmOdTMJtTl2Ac7/A6zml9oC7lMXcfEEIqM/T/YaExYOJ4DjDw==
-X-Received: by 2002:a2e:9356:: with SMTP id m22-v6mr3789984ljh.135.1547578834105;
-        Tue, 15 Jan 2019 11:00:34 -0800 (PST)
-Received: from arch.domain.name (89-70-37-207.dynamic.chello.pl. [89.70.37.207])
-        by smtp.gmail.com with ESMTPSA id w12sm759588lfe.80.2019.01.15.11.00.31
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 15 Jan 2019 11:00:32 -0800 (PST)
-From:   Tomasz Duszynski <tduszyns@gmail.com>
-To:     linux-iio@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org, jeremyfertic@gmail.com,
-        Tomasz Duszynski <tduszyns@gmail.com>
-Subject: [PATCH v3] iio: chemical: sps30: allow changing self cleaning period
-Date:   Tue, 15 Jan 2019 20:00:06 +0100
-Message-Id: <20190115190006.16071-1-tduszyns@gmail.com>
-X-Mailer: git-send-email 2.20.1
+        Tue, 15 Jan 2019 14:03:56 -0500
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate14.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5c3e2e8c0000>; Tue, 15 Jan 2019 11:03:40 -0800
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Tue, 15 Jan 2019 11:03:55 -0800
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Tue, 15 Jan 2019 11:03:55 -0800
+Received: from HQMAIL105.nvidia.com (172.20.187.12) by HQMAIL104.nvidia.com
+ (172.18.146.11) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Tue, 15 Jan
+ 2019 19:03:55 +0000
+Received: from hqnvemgw02.nvidia.com (172.16.227.111) by HQMAIL105.nvidia.com
+ (172.20.187.12) with Microsoft SMTP Server (TLS) id 15.0.1395.4 via Frontend
+ Transport; Tue, 15 Jan 2019 19:03:54 +0000
+Received: from skomatineni-linux.nvidia.com (Not Verified[10.110.103.52]) by hqnvemgw02.nvidia.com with Trustwave SEG (v7,5,8,10121)
+        id <B5c3e2e9a0002>; Tue, 15 Jan 2019 11:03:55 -0800
+From:   Sowjanya Komatineni <skomatineni@nvidia.com>
+To:     <robh+dt@kernel.org>, <mark.rutland@arm.com>,
+        <mperttunen@nvidia.com>, <chunyan.zhang@unisoc.com>,
+        <thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
+        <adrian.hunter@intel.com>, <ulf.hansson@linaro.org>
+CC:     <anrao@nvidia.com>, <devicetree@vger.kernel.org>,
+        <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-mmc@vger.kernel.org>,
+        Sowjanya Komatineni <skomatineni@nvidia.com>
+Subject: [PATCH V9 2/3] arm64: dts: tegra: Add CQE Support for SDMMC4
+Date:   Tue, 15 Jan 2019 11:03:51 -0800
+Message-ID: <1547579032-18314-2-git-send-email-skomatineni@nvidia.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1547579032-18314-1-git-send-email-skomatineni@nvidia.com>
+References: <1547579032-18314-1-git-send-email-skomatineni@nvidia.com>
+X-NVConfidentiality: public
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1547579020; bh=qZlWGPm579EQ3OA/p188DFyyZ8pZYEv2hR+F4owY7Zk=;
+        h=X-PGP-Universal:From:To:CC:Subject:Date:Message-ID:X-Mailer:
+         In-Reply-To:References:X-NVConfidentiality:MIME-Version:
+         Content-Type;
+        b=QT+usV8NU6LrvhoyP1S1hFqnGe39CwftcI8Rhkuctznv3B1h8dv9SuES2RWFBifs/
+         5qBRNDSFtQQvBpE3oQGq3wuMVJjkBQ+l6SgNKwh8PIghwLAR8e0zGnWuSLzvnLnQnM
+         qUEdNMADuT+/FZz+GBWW+AXYKIjBq3hUd/qd3OwmfBlvX9q8tjqp9662Q+D3FiLrml
+         NH+F0EtJiDSaj4ht2+xUy81OEtPqOGK2Zoahg0VNuvOt3Qf+YpzK0D7780sUDr/TVb
+         y2iZmxJWx6rUXfbqygU4Sm4sIaYdWSB3562YzP3kHjeXyUdY/GW52YDTB9bvXwl4kc
+         aXHQuS4phTP0A==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Sensor can periodically trigger self cleaning. Period can be changed by
-writing a new value to a dedicated attribute. Upon attribute read
-current period gets returned.
+Add CQE Support for Tegra186 and Tegra194 SDMMC4 controller
 
-Signed-off-by: Tomasz Duszynski <tduszyns@gmail.com>
+Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
 ---
-v3:
- * fix allowed period range check
+ arch/arm64/boot/dts/nvidia/tegra186.dtsi | 1 +
+ arch/arm64/boot/dts/nvidia/tegra194.dtsi | 1 +
+ 2 files changed, 2 insertions(+)
 
-v2:
- * return available values formated as a range
- * tweak naming a little (interval -> period)
-
- Documentation/ABI/testing/sysfs-bus-iio-sps30 |  20 +++
- drivers/iio/chemical/sps30.c                  | 143 +++++++++++++++---
- 2 files changed, 145 insertions(+), 18 deletions(-)
-
-diff --git a/Documentation/ABI/testing/sysfs-bus-iio-sps30 b/Documentation/ABI/testing/sysfs-bus-iio-sps30
-index e7ce2c57635e..143df8e89d08 100644
---- a/Documentation/ABI/testing/sysfs-bus-iio-sps30
-+++ b/Documentation/ABI/testing/sysfs-bus-iio-sps30
-@@ -6,3 +6,23 @@ Description:
- 		Writing 1 starts sensor self cleaning. Internal fan accelerates
- 		to its maximum speed and keeps spinning for about 10 seconds in
- 		order to blow out accumulated dust.
-+
-+What:		/sys/bus/iio/devices/iio:deviceX/cleaning_period
-+Date:		January 2019
-+KernelVersion:	5.1
-+Contact:	linux-iio@vger.kernel.org
-+Description:
-+		Sensor is capable of triggering self cleaning periodically.
-+		Period can be changed by writing a new value here. Upon reading
-+		the current one is returned. Units are seconds.
-+
-+		Writing 0 disables periodical self cleaning entirely.
-+
-+What:		/sys/bus/iio/devices/iio:deviceX/cleaning_period_available
-+Date:		January 2019
-+KernelVersion:	5.1
-+Contact:	linux-iio@vger.kernel.org
-+Description:
-+		The range of available values in seconds represented as the
-+		minimum value, the step and the maximum value, all enclosed in
-+		square brackets.
-diff --git a/drivers/iio/chemical/sps30.c b/drivers/iio/chemical/sps30.c
-index f3b4390c8f5c..376fac41ecb5 100644
---- a/drivers/iio/chemical/sps30.c
-+++ b/drivers/iio/chemical/sps30.c
-@@ -5,9 +5,6 @@
-  * Copyright (c) Tomasz Duszynski <tduszyns@gmail.com>
-  *
-  * I2C slave address: 0x69
-- *
-- * TODO:
-- *  - support for reading/setting auto cleaning interval
-  */
-
- #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
-@@ -21,6 +18,7 @@
- #include <linux/iio/sysfs.h>
- #include <linux/iio/trigger_consumer.h>
- #include <linux/iio/triggered_buffer.h>
-+#include <linux/kernel.h>
- #include <linux/module.h>
-
- #define SPS30_CRC8_POLYNOMIAL 0x31
-@@ -28,6 +26,9 @@
- #define SPS30_MAX_READ_SIZE 48
- /* sensor measures reliably up to 3000 ug / m3 */
- #define SPS30_MAX_PM 3000
-+/* minimum and maximum self cleaning periods in seconds */
-+#define SPS30_AUTO_CLEANING_PERIOD_MIN 0
-+#define SPS30_AUTO_CLEANING_PERIOD_MAX 604800
-
- /* SPS30 commands */
- #define SPS30_START_MEAS 0x0010
-@@ -37,6 +38,9 @@
- #define SPS30_READ_DATA 0x0300
- #define SPS30_READ_SERIAL 0xd033
- #define SPS30_START_FAN_CLEANING 0x5607
-+#define SPS30_AUTO_CLEANING_PERIOD 0x8004
-+/* not a sensor command per se, used only to distinguish write from read */
-+#define SPS30_READ_AUTO_CLEANING_PERIOD 0x8005
-
- enum {
- 	PM1,
-@@ -45,6 +49,11 @@ enum {
- 	PM10,
- };
-
-+enum {
-+	RESET,
-+	MEASURING,
-+};
-+
- struct sps30_state {
- 	struct i2c_client *client;
- 	/*
-@@ -52,6 +61,7 @@ struct sps30_state {
- 	 * Must be held whenever sequence of commands is to be executed.
- 	 */
- 	struct mutex lock;
-+	int state;
- };
-
- DECLARE_CRC8_TABLE(sps30_crc8_table);
-@@ -107,6 +117,9 @@ static int sps30_do_cmd(struct sps30_state *state, u16 cmd, u8 *data, int size)
- 	case SPS30_START_FAN_CLEANING:
- 		ret = sps30_write_then_read(state, buf, 2, NULL, 0);
- 		break;
-+	case SPS30_READ_AUTO_CLEANING_PERIOD:
-+		buf[0] = SPS30_AUTO_CLEANING_PERIOD >> 8;
-+		buf[1] = (u8)SPS30_AUTO_CLEANING_PERIOD;
- 	case SPS30_READ_DATA_READY_FLAG:
- 	case SPS30_READ_DATA:
- 	case SPS30_READ_SERIAL:
-@@ -114,6 +127,15 @@ static int sps30_do_cmd(struct sps30_state *state, u16 cmd, u8 *data, int size)
- 		size += size / 2;
- 		ret = sps30_write_then_read(state, buf, 2, buf, size);
- 		break;
-+	case SPS30_AUTO_CLEANING_PERIOD:
-+		buf[2] = data[0];
-+		buf[3] = data[1];
-+		buf[4] = crc8(sps30_crc8_table, &buf[2], 2, CRC8_INIT_VALUE);
-+		buf[5] = data[2];
-+		buf[6] = data[3];
-+		buf[7] = crc8(sps30_crc8_table, &buf[5], 2, CRC8_INIT_VALUE);
-+		ret = sps30_write_then_read(state, buf, 8, NULL, 0);
-+		break;
- 	}
-
- 	if (ret)
-@@ -170,6 +192,14 @@ static int sps30_do_meas(struct sps30_state *state, s32 *data, int size)
- 	int i, ret, tries = 5;
- 	u8 tmp[16];
-
-+	if (state->state == RESET) {
-+		ret = sps30_do_cmd(state, SPS30_START_MEAS, NULL, 0);
-+		if (ret)
-+			return ret;
-+
-+		state->state = MEASURING;
-+	}
-+
- 	while (tries--) {
- 		ret = sps30_do_cmd(state, SPS30_READ_DATA_READY_FLAG, tmp, 2);
- 		if (ret)
-@@ -276,6 +306,24 @@ static int sps30_read_raw(struct iio_dev *indio_dev,
- 	return -EINVAL;
- }
-
-+static int sps30_do_cmd_reset(struct sps30_state *state)
-+{
-+	int ret;
-+
-+	ret = sps30_do_cmd(state, SPS30_RESET, NULL, 0);
-+	msleep(300);
-+	/*
-+	 * Power-on-reset causes sensor to produce some glitch on i2c bus and
-+	 * some controllers end up in error state. Recover simply by placing
-+	 * some data on the bus, for example STOP_MEAS command, which
-+	 * is NOP in this case.
-+	 */
-+	sps30_do_cmd(state, SPS30_STOP_MEAS, NULL, 0);
-+	state->state = RESET;
-+
-+	return ret;
-+}
-+
- static ssize_t start_cleaning_store(struct device *dev,
- 				    struct device_attribute *attr,
- 				    const char *buf, size_t len)
-@@ -296,10 +344,82 @@ static ssize_t start_cleaning_store(struct device *dev,
- 	return len;
- }
-
-+static ssize_t cleaning_period_show(struct device *dev,
-+				      struct device_attribute *attr,
-+				      char *buf)
-+{
-+	struct iio_dev *indio_dev = dev_to_iio_dev(dev);
-+	struct sps30_state *state = iio_priv(indio_dev);
-+	u8 tmp[4];
-+	int ret;
-+
-+	mutex_lock(&state->lock);
-+	ret = sps30_do_cmd(state, SPS30_READ_AUTO_CLEANING_PERIOD, tmp, 4);
-+	mutex_unlock(&state->lock);
-+	if (ret)
-+		return ret;
-+
-+	return sprintf(buf, "%d\n", get_unaligned_be32(tmp));
-+}
-+
-+static ssize_t cleaning_period_store(struct device *dev,
-+				       struct device_attribute *attr,
-+				       const char *buf, size_t len)
-+{
-+	struct iio_dev *indio_dev = dev_to_iio_dev(dev);
-+	struct sps30_state *state = iio_priv(indio_dev);
-+	int val, ret;
-+	u8 tmp[4];
-+
-+	if (kstrtoint(buf, 0, &val))
-+		return -EINVAL;
-+
-+	if ((val < SPS30_AUTO_CLEANING_PERIOD_MIN) ||
-+	    (val > SPS30_AUTO_CLEANING_PERIOD_MAX))
-+		return -EINVAL;
-+
-+	put_unaligned_be32(val, tmp);
-+
-+	mutex_lock(&state->lock);
-+	ret = sps30_do_cmd(state, SPS30_AUTO_CLEANING_PERIOD, tmp, 0);
-+	if (ret) {
-+		mutex_unlock(&state->lock);
-+		return ret;
-+	}
-+
-+	msleep(20);
-+
-+	/*
-+	 * sensor requires reset in order to return up to date self cleaning
-+	 * period
-+	 */
-+	ret = sps30_do_cmd_reset(state);
-+	if (ret)
-+		dev_warn(dev,
-+			 "period changed but reads will return the old value\n");
-+
-+	mutex_unlock(&state->lock);
-+
-+	return len;
-+}
-+
-+static ssize_t cleaning_period_available_show(struct device *dev,
-+					      struct device_attribute *attr,
-+					      char *buf)
-+{
-+	return snprintf(buf, PAGE_SIZE, "[%d %d %d]\n",
-+			SPS30_AUTO_CLEANING_PERIOD_MIN, 1,
-+			SPS30_AUTO_CLEANING_PERIOD_MAX);
-+}
-+
- static IIO_DEVICE_ATTR_WO(start_cleaning, 0);
-+static IIO_DEVICE_ATTR_RW(cleaning_period, 0);
-+static IIO_DEVICE_ATTR_RO(cleaning_period_available, 0);
-
- static struct attribute *sps30_attrs[] = {
- 	&iio_dev_attr_start_cleaning.dev_attr.attr,
-+	&iio_dev_attr_cleaning_period.dev_attr.attr,
-+	&iio_dev_attr_cleaning_period_available.dev_attr.attr,
- 	NULL
- };
-
-@@ -362,6 +482,7 @@ static int sps30_probe(struct i2c_client *client)
- 	state = iio_priv(indio_dev);
- 	i2c_set_clientdata(client, indio_dev);
- 	state->client = client;
-+	state->state = RESET;
- 	indio_dev->dev.parent = &client->dev;
- 	indio_dev->info = &sps30_info;
- 	indio_dev->name = client->name;
-@@ -373,19 +494,11 @@ static int sps30_probe(struct i2c_client *client)
- 	mutex_init(&state->lock);
- 	crc8_populate_msb(sps30_crc8_table, SPS30_CRC8_POLYNOMIAL);
-
--	ret = sps30_do_cmd(state, SPS30_RESET, NULL, 0);
-+	ret = sps30_do_cmd_reset(state);
- 	if (ret) {
- 		dev_err(&client->dev, "failed to reset device\n");
- 		return ret;
- 	}
--	msleep(300);
--	/*
--	 * Power-on-reset causes sensor to produce some glitch on i2c bus and
--	 * some controllers end up in error state. Recover simply by placing
--	 * some data on the bus, for example STOP_MEAS command, which
--	 * is NOP in this case.
--	 */
--	sps30_do_cmd(state, SPS30_STOP_MEAS, NULL, 0);
-
- 	ret = sps30_do_cmd(state, SPS30_READ_SERIAL, buf, sizeof(buf));
- 	if (ret) {
-@@ -395,12 +508,6 @@ static int sps30_probe(struct i2c_client *client)
- 	/* returned serial number is already NUL terminated */
- 	dev_info(&client->dev, "serial number: %s\n", buf);
-
--	ret = sps30_do_cmd(state, SPS30_START_MEAS, NULL, 0);
--	if (ret) {
--		dev_err(&client->dev, "failed to start measurement\n");
--		return ret;
--	}
--
- 	ret = devm_add_action_or_reset(&client->dev, sps30_stop_meas, state);
- 	if (ret)
- 		return ret;
---
-2.20.1
+diff --git a/arch/arm64/boot/dts/nvidia/tegra186.dtsi b/arch/arm64/boot/dts/nvidia/tegra186.dtsi
+index 22815db4a3ed..3dfdc4701934 100644
+--- a/arch/arm64/boot/dts/nvidia/tegra186.dtsi
++++ b/arch/arm64/boot/dts/nvidia/tegra186.dtsi
+@@ -319,6 +319,7 @@
+ 		nvidia,default-trim = <0x9>;
+ 		nvidia,dqs-trim = <63>;
+ 		mmc-hs400-1_8v;
++		supports-cqe;
+ 		status = "disabled";
+ 	};
+ 
+diff --git a/arch/arm64/boot/dts/nvidia/tegra194.dtsi b/arch/arm64/boot/dts/nvidia/tegra194.dtsi
+index 6dfa1ca0b851..9ce1c91d4596 100644
+--- a/arch/arm64/boot/dts/nvidia/tegra194.dtsi
++++ b/arch/arm64/boot/dts/nvidia/tegra194.dtsi
+@@ -325,6 +325,7 @@
+ 			clock-names = "sdhci";
+ 			resets = <&bpmp TEGRA194_RESET_SDMMC4>;
+ 			reset-names = "sdhci";
++			supports-cqe;
+ 			status = "disabled";
+ 		};
+ 
+-- 
+2.7.4
 
