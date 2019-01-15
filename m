@@ -2,187 +2,441 @@ Return-Path: <SRS0=RZO6=PX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_NEOMUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 46DA9C43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 21:58:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 962D1C43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 22:00:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 039BD20866
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 21:58:34 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gateworks-com.20150623.gappssmtp.com header.i=@gateworks-com.20150623.gappssmtp.com header.b="xPdDuYwJ"
+	by mail.kernel.org (Postfix) with ESMTP id 5957620866
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 22:00:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387397AbfAOV6d (ORCPT
+        id S2387494AbfAOWAz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 15 Jan 2019 16:58:33 -0500
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:38198 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1733253AbfAOV6c (ORCPT
+        Tue, 15 Jan 2019 17:00:55 -0500
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:60411 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729639AbfAOWAz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Jan 2019 16:58:32 -0500
-Received: by mail-wr1-f65.google.com with SMTP id v13so4735309wrw.5
-        for <linux-kernel@vger.kernel.org>; Tue, 15 Jan 2019 13:58:31 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gateworks-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=0zQGRhHmuQ24eZyF94rspF5Sd1MCXdctQKXRkMo0+80=;
-        b=xPdDuYwJ4Z0FE3P8gDiR8Y1Lyw9aUsJXSDXAGlT8CdbUWBNRcuJg3Ee1d3i/CvXfk9
-         byoqLaBV5HDtebbAbCT+7unmByVHJgCyDg7OjmB06LpugPuMtpUmNGSV2hHtf+abqRd1
-         ef9PJgG32lSvpaA9hfnXnVGwTA1/9jZMiEWi6MQzQtQnwagRPrPlk7CXoPiRmVisTAIm
-         7jsAiypuVPBW1bV48HU1smwLiULqcYNSbwAF8IqudJgnhD8yVdUZd6naREGYz0ApaG3p
-         wjgX6tOr1fOuH5SWqm/i1p4b/6qjToKUZ8eJbE66SujoVioZGBEBm7IKTlnW2/ZNBRRv
-         0U4Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=0zQGRhHmuQ24eZyF94rspF5Sd1MCXdctQKXRkMo0+80=;
-        b=KlTEODF+QSdH3+N/7oKxH7Fo/2zEa6HVpF6yxtHPs8ZlJtuRwWOVqPyFssiWhU6JDJ
-         8dYUE7Wfm0Pu/hGdINN8c83xFMw/9sWs+bKUvHZBup/38gjJNTX5WqRJ0ZY+xUW7JvBJ
-         cPdF0HgZ71eYQwX+wLElum1zF/LsLDMHICrEGyE2zq7DlT3yy29rarPRMawFGrFCOeem
-         3wbrADlMOq1Ed/CLLE2+JfExOCzxxhie2hWGOaiii01t16y0t269ErqhjBUB1gNne7Ae
-         1DdowYt3e2KXBNAoQQamphTq3E9wYSQwQoLXTae4lHNMTPfbu5MbVC4rheO7d+AwMXXe
-         qkBg==
-X-Gm-Message-State: AJcUukf5tt6qyR81y5rD2gfjozMBB70XmD0ZxFiWfh2Qg/7Bz+N+QA8o
-        bSsU06C4D3DVCSSiHjEEG4bTeaRCM2iU53SpNPV2gg==
-X-Google-Smtp-Source: ALg8bN7izRK1RAwjh3wHK604mMpAbyMWJWyPtNT8NZ5P7S7nZZhQxZk/tFnbv4AdnXOkMBF1HABlhHScaGHpE5EDIaE=
-X-Received: by 2002:a05:6000:108d:: with SMTP id y13mr4653891wrw.135.1547589510093;
- Tue, 15 Jan 2019 13:58:30 -0800 (PST)
+        Tue, 15 Jan 2019 17:00:55 -0500
+Received: from ptx.hi.pengutronix.de ([2001:67c:670:100:1d::c0])
+        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1gjWlL-0008I7-FB; Tue, 15 Jan 2019 23:00:47 +0100
+Received: from ukl by ptx.hi.pengutronix.de with local (Exim 4.89)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1gjWlK-0000mg-4Z; Tue, 15 Jan 2019 23:00:46 +0100
+Date:   Tue, 15 Jan 2019 23:00:46 +0100
+From:   Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
+        <u.kleine-koenig@pengutronix.de>
+To:     Yash Shah <yash.shah@sifive.com>
+Cc:     palmer@sifive.com, linux-pwm@vger.kernel.org,
+        linux-riscv@lists.infradead.org, thierry.reding@gmail.com,
+        robh+dt@kernel.org, mark.rutland@arm.com,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        sachin.ghadi@sifive.com, paul.walmsley@sifive.com
+Subject: Re: [PATCH 2/2] pwm: sifive: Add a driver for SiFive SoC PWM
+Message-ID: <20190115220046.etgbno6ymsux75dk@pengutronix.de>
+References: <1547194964-16718-1-git-send-email-yash.shah@sifive.com>
+ <1547194964-16718-3-git-send-email-yash.shah@sifive.com>
 MIME-Version: 1.0
-References: <20190109183014.20466-1-slongerbeam@gmail.com> <20190109183014.20466-12-slongerbeam@gmail.com>
-In-Reply-To: <20190109183014.20466-12-slongerbeam@gmail.com>
-From:   Tim Harvey <tharvey@gateworks.com>
-Date:   Tue, 15 Jan 2019 13:58:19 -0800
-Message-ID: <CAJ+vNU1r86n1=9gKDw-bTO0sWJL7NMjZcdKMQO23a+WOR1H9tw@mail.gmail.com>
-Subject: Re: [PATCH v8 11/11] media: imx.rst: Update doc to reflect fixes to
- interlaced capture
-To:     Steve Longerbeam <slongerbeam@gmail.com>
-Cc:     linux-media <linux-media@vger.kernel.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        open list <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <1547194964-16718-3-git-send-email-yash.shah@sifive.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
+X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c0
+X-SA-Exim-Mail-From: ukl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 9, 2019 at 10:30 AM Steve Longerbeam <slongerbeam@gmail.com> wrote:
->
-> Also add an example pipeline for unconverted capture with interweave
-> on SabreAuto.
->
-> Cleanup some language in various places in the process.
->
-> Signed-off-by: Steve Longerbeam <slongerbeam@gmail.com>
-> Reviewed-by: Philipp Zabel <p.zabel@pengutronix.de>
+Hello,
+
+On Fri, Jan 11, 2019 at 01:52:44PM +0530, Yash Shah wrote:
+> Adds a PWM driver for PWM chip present in SiFive's HiFive Unleashed SoC.
+> 
+> Signed-off-by: Wesley W. Terpstra <wesley@sifive.com>
+> [Atish: Various fixes and code cleanup]
+> Signed-off-by: Atish Patra <atish.patra@wdc.com>
+> Signed-off-by: Yash Shah <yash.shah@sifive.com>
 > ---
-> Changes since v4:
-> - Make clear that it is IDMAC channel that does pixel reordering and
->   interweave, not the CSI. Caught by Philipp Zabel.
-> Changes since v3:
-> - none.
-> Changes since v2:
-> - expand on idmac interweave behavior in CSI subdev.
-> - switch second SabreAuto pipeline example to PAL to give
->   both NTSC and PAL examples.
-> - Cleanup some language in various places.
-> ---
->  Documentation/media/v4l-drivers/imx.rst | 103 +++++++++++++++---------
->  1 file changed, 66 insertions(+), 37 deletions(-)
->
-<snip>
->  Capture Pipelines
->  -----------------
-> @@ -516,10 +522,33 @@ On the SabreAuto, an on-board ADV7180 SD decoder is connected to the
->  parallel bus input on the internal video mux to IPU1 CSI0.
->
->  The following example configures a pipeline to capture from the ADV7180
-> -video decoder, assuming NTSC 720x480 input signals, with Motion
-> -Compensated de-interlacing. Pad field types assume the adv7180 outputs
-> -"interlaced". $outputfmt can be any format supported by the ipu1_ic_prpvf
-> -entity at its output pad:
-> +video decoder, assuming NTSC 720x480 input signals, using simple
-> +interweave (unconverted and without motion compensation). The adv7180
-> +must output sequential or alternating fields (field type 'seq-bt' for
-> +NTSC, or 'alternate'):
+>  drivers/pwm/Kconfig      |  10 ++
+>  drivers/pwm/Makefile     |   1 +
+>  drivers/pwm/pwm-sifive.c | 246 +++++++++++++++++++++++++++++++++++++++++++++++
+>  3 files changed, 257 insertions(+)
+>  create mode 100644 drivers/pwm/pwm-sifive.c
+> 
+> diff --git a/drivers/pwm/Kconfig b/drivers/pwm/Kconfig
+> index a8f47df..3bcaf6a 100644
+> --- a/drivers/pwm/Kconfig
+> +++ b/drivers/pwm/Kconfig
+> @@ -380,6 +380,16 @@ config PWM_SAMSUNG
+>  	  To compile this driver as a module, choose M here: the module
+>  	  will be called pwm-samsung.
+>  
+> +config PWM_SIFIVE
+> +	tristate "SiFive PWM support"
+> +	depends on OF
+> +	depends on COMMON_CLK
+
+I'd say add:
+
+	depends on MACH_SIFIVE || COMPILE_TEST
+
+(I guess "MACH_SIFIVE" is wrong, but I assume you get what I mean.)
+
+> +	help
+> +	  Generic PWM framework driver for SiFive SoCs.
 > +
-> +.. code-block:: none
+> +	  To compile this driver as a module, choose M here: the module
+> +	  will be called pwm-sifive.
 > +
-> +   # Setup links
-> +   media-ctl -l "'adv7180 3-0021':0 -> 'ipu1_csi0_mux':1[1]"
-> +   media-ctl -l "'ipu1_csi0_mux':2 -> 'ipu1_csi0':0[1]"
-> +   media-ctl -l "'ipu1_csi0':2 -> 'ipu1_csi0 capture':0[1]"
-> +   # Configure pads
-> +   media-ctl -V "'adv7180 3-0021':0 [fmt:UYVY2X8/720x480 field:seq-bt]"
-> +   media-ctl -V "'ipu1_csi0_mux':2 [fmt:UYVY2X8/720x480]"
-> +   media-ctl -V "'ipu1_csi0':2 [fmt:AYUV32/720x480]"
-> +   # Configure "ipu1_csi0 capture" interface (assumed at /dev/video4)
-> +   v4l2-ctl -d4 --set-fmt-video=field=interlaced_bt
+>  config PWM_SPEAR
+>  	tristate "STMicroelectronics SPEAr PWM support"
+>  	depends on PLAT_SPEAR
+> diff --git a/drivers/pwm/Makefile b/drivers/pwm/Makefile
+> index 9c676a0..30089ca 100644
+> --- a/drivers/pwm/Makefile
+> +++ b/drivers/pwm/Makefile
+> @@ -37,6 +37,7 @@ obj-$(CONFIG_PWM_RCAR)		+= pwm-rcar.o
+>  obj-$(CONFIG_PWM_RENESAS_TPU)	+= pwm-renesas-tpu.o
+>  obj-$(CONFIG_PWM_ROCKCHIP)	+= pwm-rockchip.o
+>  obj-$(CONFIG_PWM_SAMSUNG)	+= pwm-samsung.o
+> +obj-$(CONFIG_PWM_SIFIVE)	+= pwm-sifive.o
+>  obj-$(CONFIG_PWM_SPEAR)		+= pwm-spear.o
+>  obj-$(CONFIG_PWM_STI)		+= pwm-sti.o
+>  obj-$(CONFIG_PWM_STM32)		+= pwm-stm32.o
+> diff --git a/drivers/pwm/pwm-sifive.c b/drivers/pwm/pwm-sifive.c
+> new file mode 100644
+> index 0000000..7fee809
+> --- /dev/null
+> +++ b/drivers/pwm/pwm-sifive.c
+> @@ -0,0 +1,246 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Copyright (C) 2017-2018 SiFive
+> + * For SiFive's PWM IP block documentation please refer Chapter 14 of
+> + * Reference Manual : https://static.dev.sifive.com/FU540-C000-v1.0.pdf
+
+I wonder if such an instance should be only a single PWM instead of
+four. Then you were more flexible with the period lengths (using
+pwmcfg.pwmzerocmp) and could do stuff like inverted and uninverted mode.
+
+I didn't understand how the deglitch logic works yet. Currently it is
+not used which might result in four edges in a single period (which is
+bad).
+
+> + */
+> +#include <linux/clk.h>
+> +#include <linux/io.h>
+> +#include <linux/module.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/pwm.h>
+> +#include <linux/slab.h>
 > +
-> +Streaming can then begin on /dev/video4. The v4l2-ctl tool can also be
-> +used to select any supported YUV pixelformat on /dev/video4.
+> +/* Register offsets */
+> +#define REG_PWMCFG		0x0
+> +#define REG_PWMCOUNT		0x8
+> +#define REG_PWMS		0x10
+> +#define REG_PWMCMP0		0x20
+
+I suggest a common prefix for these defines. Something like
+PWM_SIFIVE_
+
 > +
+> +/* PWMCFG fields */
+> +#define BIT_PWM_SCALE		0
+> +#define BIT_PWM_STICKY		8
+> +#define BIT_PWM_ZERO_ZMP	9
 
-Hi Steve,
+the manual calls this "pwmzerocmp".
 
-I'm testing 4.20 with this patchset on top.
+> +#define BIT_PWM_DEGLITCH	10
+> +#define BIT_PWM_EN_ALWAYS	12
+> +#define BIT_PWM_EN_ONCE		13
+> +#define BIT_PWM0_CENTER		16
+> +#define BIT_PWM0_GANG		24
+> +#define BIT_PWM0_IP		28
 
-I'm on a GW5104 which has an IMX6Q with the adv7180 on ipu1_csi0 like
-the SabeAuto example above I can't get the simple interveave example
-to work:
+Also a common prefix please. Something like PWM_SIFIVE_PWMCFG_ seems
+sensible.
 
-media-ctl -r # reset all links
-# Setup links (ADV7180 IPU1_CSI0)
-media-ctl -l '"adv7180 2-0020":0 -> "ipu1_csi0_mux":1[1]'
-media-ctl -l '"ipu1_csi0_mux":2 -> "ipu1_csi0":0[1]'
-media-ctl -l '"ipu1_csi0":2 -> "ipu1_csi0 capture":0[1]' # /dev/video4
-# Configure pads
-media-ctl -V "'adv7180 2-0020':0 [fmt:UYVY2X8/720x480 field:seq-bt]"
-media-ctl -V "'ipu1_csi0_mux':2 [fmt:UYVY2X8/720x480]"
-media-ctl -V "'ipu1_csi0':0 [fmt:AYUV32/720x480]"
-# Configure 'ipu1_csi0 capture' interface (/dev/video4)
-v4l2-ctl -d4 --set-fmt-video=field=interlaced_bt
-# streaming can now begin on the raw capture device node at /dev/video4
-v4l2-ctl -d4 --stream-mmap --stream-to=/x.raw --stream-count=1 # capture 1 frame
-[ 5547.354460] ipu1_csi0: pipeline start failed with -32
-VIDIOC_STREAMON: failed: Broken pipe
+> +#define SIZE_PWMCMP		4
 
-Any ideas what is causing this pipeline failure.
+Please describe what this constant means. I think this is "ncmp" in the
+reference manual. If so, using PWM_SIFIVE_NCMP as name instead seems
+adequate.
 
-> +This example configures a pipeline to capture from the ADV7180
-> +video decoder, assuming PAL 720x576 input signals, with Motion
-> +Compensated de-interlacing. The adv7180 must output sequential or
-> +alternating fields (field type 'seq-tb' for PAL, or 'alternate').
-> +$outputfmt can be any format supported by the ipu1_ic_prpvf entity
-> +at its output pad:
->
->  .. code-block:: none
->
-> @@ -531,11 +560,11 @@ entity at its output pad:
->     media-ctl -l "'ipu1_ic_prp':2 -> 'ipu1_ic_prpvf':0[1]"
->     media-ctl -l "'ipu1_ic_prpvf':1 -> 'ipu1_ic_prpvf capture':0[1]"
->     # Configure pads
-> -   media-ctl -V "'adv7180 3-0021':0 [fmt:UYVY2X8/720x480]"
-> -   media-ctl -V "'ipu1_csi0_mux':2 [fmt:UYVY2X8/720x480 field:interlaced]"
-> -   media-ctl -V "'ipu1_csi0':1 [fmt:AYUV32/720x480 field:interlaced]"
-> -   media-ctl -V "'ipu1_vdic':2 [fmt:AYUV32/720x480 field:none]"
-> -   media-ctl -V "'ipu1_ic_prp':2 [fmt:AYUV32/720x480 field:none]"
-> +   media-ctl -V "'adv7180 3-0021':0 [fmt:UYVY2X8/720x576 field:seq-tb]"
-> +   media-ctl -V "'ipu1_csi0_mux':2 [fmt:UYVY2X8/720x576]"
-> +   media-ctl -V "'ipu1_csi0':1 [fmt:AYUV32/720x576]"
-> +   media-ctl -V "'ipu1_vdic':2 [fmt:AYUV32/720x576 field:none]"
-> +   media-ctl -V "'ipu1_ic_prp':2 [fmt:AYUV32/720x576 field:none]"
->     media-ctl -V "'ipu1_ic_prpvf':1 [fmt:$outputfmt field:none]"
->
->  Streaming can then begin on the capture device node at
+> +#define MASK_PWM_SCALE		0xf
 
-The above motion-compensation example pipeline does now work with this
-patch series - thanks for addressing this!
+MASK_PWM_SCALE is unused, please drop it.
 
-Regards,
+> +struct sifive_pwm_device {
+> +	struct pwm_chip	chip;
+> +	struct notifier_block notifier;
+> +	struct clk *clk;
+> +	void __iomem *regs;
+> +	unsigned int approx_period;
+> +	unsigned int real_period;
+> +};
 
-Tim
+I'd call this pwm_sifive_ddata. The prefix because the driver is called
+pwm-sifive and ddata because this is driver data and not a device.
+
+> +static inline struct sifive_pwm_device *to_sifive_pwm_chip(struct pwm_chip *c)
+> +{
+> +	return container_of(c, struct sifive_pwm_device, chip);
+> +}
+> +
+> +static void sifive_pwm_get_state(struct pwm_chip *chip, struct pwm_device *dev,
+> +				 struct pwm_state *state)
+
+given that the driver is called pwm-sifive, please use pwm_sifive as
+function prefix.
+
+> +{
+> +	struct sifive_pwm_device *pwm = to_sifive_pwm_chip(chip);
+> +	u32 duty;
+> +
+> +	duty = readl(pwm->regs + REG_PWMCMP0 + dev->hwpwm * SIZE_PWMCMP);
+> +
+> +	state->period = pwm->real_period;
+> +	state->duty_cycle = ((u64)duty * pwm->real_period) >> 16;
+
+In the reference manual this 16 is called "cmpwidth" I think. If I
+understand correctly this might in theory be different from 16, so it
+would be great if this would be at least a cpp symbol for now.
+
+> +	state->polarity = PWM_POLARITY_INVERSED;
+> +	state->enabled = duty > 0;
+> +}
+> +
+> +static int sifive_pwm_apply(struct pwm_chip *chip, struct pwm_device *dev,
+> +			    struct pwm_state *state)
+> +{
+> +	struct sifive_pwm_device *pwm = to_sifive_pwm_chip(chip);
+> +	unsigned int duty_cycle;
+> +	u32 frac;
+> +
+> +	if (state->polarity != PWM_POLARITY_INVERSED)
+> +		return -EINVAL;
+> +
+> +	duty_cycle = state->duty_cycle;
+> +	if (!state->enabled)
+> +		duty_cycle = 0;
+> +
+> +	frac = div_u64((u64)duty_cycle << 16, state->period);
+> +	frac = min(frac, 0xFFFFU);
+
+In the previous review round I asked here:
+
+| Also if real_period is for example 10 ms and the consumer requests
+| duty=12 ms + period=100 ms, the hardware is configured for duty=1.2 ms +
+| period=10 ms, right?
+
+which you confirmed. IMHO this is not acceptable. If the period is
+fixed, you should return -EINVAL (I think) if a different period is
+requested.
+
+> +	writel(frac, pwm->regs + REG_PWMCMP0 + dev->hwpwm * SIZE_PWMCMP);
+
+If you get a constant inactive output with frac=0 and a constant active
+output with frac=0xffff the calculation above seems wrong to me.
+(A value i written to the pwmcmpX register means a duty cycle of
+(i * period / 0xffff). Your calculation assumes a divisor of 0x10000
+however.)
+
+> +
+> +	if (state->enabled)
+> +		sifive_pwm_get_state(chip, dev, state);
+
+@Thierry: Should we bless this correction of state?
+
+> +
+> +	return 0;
+> +}
+> +
+> +static const struct pwm_ops sifive_pwm_ops = {
+> +	.get_state = sifive_pwm_get_state,
+> +	.apply = sifive_pwm_apply,
+> +	.owner = THIS_MODULE,
+> +};
+> +
+> +static struct pwm_device *sifive_pwm_xlate(struct pwm_chip *chip,
+> +					   const struct of_phandle_args *args)
+> +{
+> +	struct sifive_pwm_device *pwm = to_sifive_pwm_chip(chip);
+> +	struct pwm_device *dev;
+> +
+> +	if (args->args[0] >= chip->npwm)
+> +		return ERR_PTR(-EINVAL);
+> +
+> +	dev = pwm_request_from_chip(chip, args->args[0], NULL);
+> +	if (IS_ERR(dev))
+> +		return dev;
+> +
+> +	/* The period cannot be changed on a per-PWM basis */
+> +	dev->args.period = pwm->real_period;
+> +	dev->args.polarity = PWM_POLARITY_NORMAL;
+> +	if (args->args[1] & PWM_POLARITY_INVERSED)
+> +		dev->args.polarity = PWM_POLARITY_INVERSED;
+> +
+> +	return dev;
+> +}
+> +
+> +static void sifive_pwm_update_clock(struct sifive_pwm_device *pwm,
+> +				    unsigned long rate)
+> +{
+> +	/* (1 << (16+scale)) * 10^9/rate = real_period */
+> +	unsigned long scale_pow = (pwm->approx_period * (u64)rate) / 1000000000;
+
+NSEC_PER_SEC instead of 1000000000
+
+> +	int scale = clamp(ilog2(scale_pow) - 16, 0, 0xf);
+> +
+> +	writel((1 << BIT_PWM_EN_ALWAYS) | (scale << BIT_PWM_SCALE),
+> +	       pwm->regs + REG_PWMCFG);
+> +
+> +	/* As scale <= 15 the shift operation cannot overflow. */
+> +	pwm->real_period = div64_ul(1000000000ULL << (16 + scale), rate);
+> +	dev_dbg(pwm->chip.dev, "New real_period = %u ns\n", pwm->real_period);
+> +}
+> +
+> +static int sifive_pwm_clock_notifier(struct notifier_block *nb,
+> +				     unsigned long event, void *data)
+> +{
+> +	struct clk_notifier_data *ndata = data;
+> +	struct sifive_pwm_device *pwm =
+> +		container_of(nb, struct sifive_pwm_device, notifier);
+> +
+> +	if (event == POST_RATE_CHANGE)
+> +		sifive_pwm_update_clock(pwm, ndata->new_rate);
+
+Does this need locking? (Maybe not with the current state.)
+
+> +
+> +	return NOTIFY_OK;
+> +}
+> +
+> +static int sifive_pwm_probe(struct platform_device *pdev)
+> +{
+> +	struct device *dev = &pdev->dev;
+> +	struct device_node *node = pdev->dev.of_node;
+> +	struct sifive_pwm_device *pwm;
+> +	struct pwm_chip *chip;
+> +	struct resource *res;
+> +	int ret;
+> +
+> +	pwm = devm_kzalloc(dev, sizeof(*pwm), GFP_KERNEL);
+> +	if (!pwm)
+> +		return -ENOMEM;
+> +
+> +	chip = &pwm->chip;
+> +	chip->dev = dev;
+> +	chip->ops = &sifive_pwm_ops;
+> +	chip->of_xlate = sifive_pwm_xlate;
+> +	chip->of_pwm_n_cells = 2;
+> +	chip->base = -1;
+> +	chip->npwm = 4;
+> +
+> +	ret = of_property_read_u32(node, "sifive,approx-period-ns",
+> +				   &pwm->approx_period);
+> +	if (ret < 0) {
+> +		dev_err(dev, "Unable to read sifive,approx-period from DTS\n");
+> +		return ret;
+> +	}
+> +
+> +	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+> +	pwm->regs = devm_ioremap_resource(dev, res);
+> +	if (IS_ERR(pwm->regs)) {
+> +		dev_err(dev, "Unable to map IO resources\n");
+> +		return PTR_ERR(pwm->regs);
+> +	}
+> +
+> +	pwm->clk = devm_clk_get(dev, NULL);
+> +	if (IS_ERR(pwm->clk)) {
+> +		if (PTR_ERR(pwm->clk) != -EPROBE_DEFER)
+> +			dev_err(dev, "Unable to find controller clock\n");
+> +		return PTR_ERR(pwm->clk);
+> +	}
+> +
+> +	ret = clk_prepare_enable(pwm->clk);
+> +	if (ret) {
+> +		dev_err(dev, "failed to enable clock for pwm: %d\n", ret);
+> +		return ret;
+> +	}
+> +
+> +	/* Watch for changes to underlying clock frequency */
+> +	pwm->notifier.notifier_call = sifive_pwm_clock_notifier;
+> +	ret = clk_notifier_register(pwm->clk, &pwm->notifier);
+> +	if (ret) {
+> +		dev_err(dev, "failed to register clock notifier: %d\n", ret);
+> +		clk_disable_unprepare(pwm->clk);
+> +		return ret;
+> +	}
+> +
+> +	/* Initialize PWM config */
+> +	sifive_pwm_update_clock(pwm, clk_get_rate(pwm->clk));
+> +
+> +	ret = pwmchip_add(chip);
+> +	if (ret < 0) {
+> +		dev_err(dev, "cannot register PWM: %d\n", ret);
+> +		clk_notifier_unregister(pwm->clk, &pwm->notifier);
+> +		clk_disable_unprepare(pwm->clk);
+> +		return ret;
+> +	}
+
+Can you please use a common error path using goto?
+
+> +	platform_set_drvdata(pdev, pwm);
+> +	dev_dbg(dev, "SiFive PWM chip registered %d PWMs\n", chip->npwm);
+> +
+> +	return 0;
+> +}
+> +
+> +static int sifive_pwm_remove(struct platform_device *dev)
+> +{
+> +	struct sifive_pwm_device *pwm = platform_get_drvdata(dev);
+> +	int ret;
+> +
+> +	ret = pwmchip_remove(&pwm->chip);
+> +	clk_notifier_unregister(pwm->clk, &pwm->notifier);
+> +	clk_disable_unprepare(pwm->clk);
+> +	return ret;
+> +}
+> +
+> +static const struct of_device_id sifive_pwm_of_match[] = {
+> +	{ .compatible = "sifive,pwm0" },
+> +	{ .compatible = "sifive,fu540-c000-pwm" },
+
+Do you really need both compatible strings here?
+
+> +	{},
+> +};
+> +MODULE_DEVICE_TABLE(of, sifive_pwm_of_match);
+> +
+> +static struct platform_driver sifive_pwm_driver = {
+> +	.probe = sifive_pwm_probe,
+> +	.remove = sifive_pwm_remove,
+> +	.driver = {
+> +		.name = "pwm-sifive",
+> +		.of_match_table = sifive_pwm_of_match,
+> +	},
+> +};
+> +module_platform_driver(sifive_pwm_driver);
+> +
+> +MODULE_DESCRIPTION("SiFive PWM driver");
+> +MODULE_LICENSE("GPL v2");
+
+Best regards
+Uwe
+
+-- 
+Pengutronix e.K.                           | Uwe Kleine-König            |
+Industrial Linux Solutions                 | http://www.pengutronix.de/  |
