@@ -6,47 +6,48 @@ X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BB377C43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 16:37:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C1F22C43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 16:37:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 889C120859
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 16:37:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 861C820868
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 16:37:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547570230;
-	bh=qTudNXb/T7dxqFrFTur+ikwV6ooNIsPHEzKdInnSJzI=;
+	s=default; t=1547570234;
+	bh=myDkjw52/+bzII35myzNdXLTwQ6munWQRRj2sh67E5o=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=F8UXvx2N/iWZk6BtRgqajjerAWPiLoX/3dZd+mgl7AEsFOcnKAGlTlpUNcg/c0mwL
-	 WGHgPaw3rcG/lQ/PGd/j0ZvWUWX5zjgfvNRw53pjyR6fP3T0f88HGUJ7Pwfj+0r2Uv
-	 JKYDSY7FIAguNILB6U8xygXlRVkvPtykec2y4g0g=
+	b=NWlQ3r6D9gDHwI6RzohkYCsKUUPRz0iK/eb7YwkOkDDGV+Bm4Ti41ozWNiC7Hpfk9
+	 Z4Jpb8y69qRtqhqe1/UUMJ/lJSD/+34wpDCK0te0W2h9dHdigqrbb4knSB/7pIjsAB
+	 ay0H8ulJJf4WGoYle4wTRjl7RyXua2ZdwrZKy6kE=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731769AbfAOQhJ (ORCPT
+        id S1731782AbfAOQhM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 15 Jan 2019 11:37:09 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52462 "EHLO mail.kernel.org"
+        Tue, 15 Jan 2019 11:37:12 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52530 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731728AbfAOQhH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Jan 2019 11:37:07 -0500
+        id S1731766AbfAOQhK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 Jan 2019 11:37:10 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0FBA820873;
-        Tue, 15 Jan 2019 16:37:05 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8A0052087E;
+        Tue, 15 Jan 2019 16:37:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547570226;
-        bh=qTudNXb/T7dxqFrFTur+ikwV6ooNIsPHEzKdInnSJzI=;
+        s=default; t=1547570229;
+        bh=myDkjw52/+bzII35myzNdXLTwQ6munWQRRj2sh67E5o=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Prws2DxVb7CLbB5CoJhn5gnoYwM8FSGf3zCHwmRLNx3TN89R7h/H3rg8qZuV2ug3w
-         rTTCFGf+QWjuSqJ71RcFAgJW9EOb4JKZUJ03Aj9UE/LSRd1Vb7pTceVRvcx9PKpUDs
-         2L097NWdNTeaTxZbaq4IdpoL5ngEe33DTJxxyaBo=
+        b=FXIZlNO2enMUkEzdivP34ZFeRHZhiJ5SFSNjIDv/HlMd+xXLYlszFhKKFnvhIWtxe
+         B/aMlyMj+5rsF9kpCmyOjCGQIgH8dwveSb2pV3YOu9O08jTpPKmzlWwxWq6DxcrNo9
+         GQSS5FDs5WlX407n6tjMAeFCaPyBlXySy/qNc2yA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Vegard Nossum <vegard.nossum@oracle.com>,
-        Qu Wenruo <quwenruo@cn.fujitsu.com>, Chris Mason <clm@fb.com>,
+        Quentin Casasnovas <quentin.casasnovas@oracle.com>,
+        David Sterba <dsterba@suse.com>, Liu Bo <bo.li.liu@oracle.com>,
         Ben Hutchings <ben.hutchings@codethink.co.uk>
-Subject: [PATCH 4.4 03/51] btrfs: Enhance chunk validation check
-Date:   Tue, 15 Jan 2019 17:34:59 +0100
-Message-Id: <20190115154847.411592180@linuxfoundation.org>
+Subject: [PATCH 4.4 04/51] Btrfs: add validadtion checks for chunk loading
+Date:   Tue, 15 Jan 2019 17:35:00 +0100
+Message-Id: <20190115154847.555748833@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190115154846.928796000@linuxfoundation.org>
 References: <20190115154846.928796000@linuxfoundation.org>
@@ -65,98 +66,160 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Qu Wenruo <quwenruo@cn.fujitsu.com>
+From: Liu Bo <bo.li.liu@oracle.com>
 
-commit f04b772bfc17f502703794f4d100d12155c1a1a9 upstream.
+commit e06cd3dd7cea50e87663a88acdfdb7ac1c53a5ca upstream.
 
-Enhance chunk validation:
-1) Num_stripes
-   We already have such check but it's only in super block sys chunk
-   array.
-   Now check all on-disk chunks.
+To prevent fuzzed filesystem images from panic the whole system,
+we need various validation checks to refuse to mount such an image
+if btrfs finds any invalid value during loading chunks, including
+both sys_array and regular chunks.
 
-2) Chunk logical
-   It should be aligned to sector size.
-   This behavior should be *DOUBLE CHECKED* for 64K sector size like
-   PPC64 or AArch64.
-   Maybe we can found some hidden bugs.
-
-3) Chunk length
-   Same as chunk logical, should be aligned to sector size.
-
-4) Stripe length
-   It should be power of 2.
-
-5) Chunk type
-   Any bit out of TYPE_MAS | PROFILE_MASK is invalid.
-
-With all these much restrict rules, several fuzzed image reported in
-mail list should no longer cause kernel panic.
+Note that these checks may not be sufficient to cover all corner cases,
+feel free to add more checks.
 
 Reported-by: Vegard Nossum <vegard.nossum@oracle.com>
-Signed-off-by: Qu Wenruo <quwenruo@cn.fujitsu.com>
-Signed-off-by: Chris Mason <clm@fb.com>
+Reported-by: Quentin Casasnovas <quentin.casasnovas@oracle.com>
+Reviewed-by: David Sterba <dsterba@suse.com>
+Signed-off-by: Liu Bo <bo.li.liu@oracle.com>
+Signed-off-by: David Sterba <dsterba@suse.com>
 Signed-off-by: Ben Hutchings <ben.hutchings@codethink.co.uk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- fs/btrfs/volumes.c |   33 ++++++++++++++++++++++++++++++++-
- 1 file changed, 32 insertions(+), 1 deletion(-)
+ fs/btrfs/volumes.c |   82 +++++++++++++++++++++++++++++++++++++++++++----------
+ 1 file changed, 67 insertions(+), 15 deletions(-)
 
 --- a/fs/btrfs/volumes.c
 +++ b/fs/btrfs/volumes.c
-@@ -6217,6 +6217,7 @@ static int read_one_chunk(struct btrfs_r
- 	struct extent_map *em;
- 	u64 logical;
- 	u64 length;
-+	u64 stripe_len;
- 	u64 devid;
- 	u8 uuid[BTRFS_UUID_SIZE];
- 	int num_stripes;
-@@ -6225,6 +6226,37 @@ static int read_one_chunk(struct btrfs_r
+@@ -6208,27 +6208,23 @@ struct btrfs_device *btrfs_alloc_device(
+ 	return dev;
+ }
  
- 	logical = key->offset;
+-static int read_one_chunk(struct btrfs_root *root, struct btrfs_key *key,
+-			  struct extent_buffer *leaf,
+-			  struct btrfs_chunk *chunk)
++/* Return -EIO if any error, otherwise return 0. */
++static int btrfs_check_chunk_valid(struct btrfs_root *root,
++				   struct extent_buffer *leaf,
++				   struct btrfs_chunk *chunk, u64 logical)
+ {
+-	struct btrfs_mapping_tree *map_tree = &root->fs_info->mapping_tree;
+-	struct map_lookup *map;
+-	struct extent_map *em;
+-	u64 logical;
+ 	u64 length;
+ 	u64 stripe_len;
+-	u64 devid;
+-	u8 uuid[BTRFS_UUID_SIZE];
+-	int num_stripes;
+-	int ret;
+-	int i;
++	u16 num_stripes;
++	u16 sub_stripes;
++	u64 type;
+ 
+-	logical = key->offset;
  	length = btrfs_chunk_length(leaf, chunk);
+ 	stripe_len = btrfs_chunk_stripe_len(leaf, chunk);
+ 	num_stripes = btrfs_chunk_num_stripes(leaf, chunk);
+-	/* Validation check */
++	sub_stripes = btrfs_chunk_sub_stripes(leaf, chunk);
++	type = btrfs_chunk_type(leaf, chunk);
++
+ 	if (!num_stripes) {
+ 		btrfs_err(root->fs_info, "invalid chunk num_stripes: %u",
+ 			  num_stripes);
+@@ -6239,6 +6235,11 @@ static int read_one_chunk(struct btrfs_r
+ 			  "invalid chunk logical %llu", logical);
+ 		return -EIO;
+ 	}
++	if (btrfs_chunk_sector_size(leaf, chunk) != root->sectorsize) {
++		btrfs_err(root->fs_info, "invalid chunk sectorsize %u",
++			  btrfs_chunk_sector_size(leaf, chunk));
++		return -EIO;
++	}
+ 	if (!length || !IS_ALIGNED(length, root->sectorsize)) {
+ 		btrfs_err(root->fs_info,
+ 			"invalid chunk length %llu", length);
+@@ -6250,13 +6251,54 @@ static int read_one_chunk(struct btrfs_r
+ 		return -EIO;
+ 	}
+ 	if (~(BTRFS_BLOCK_GROUP_TYPE_MASK | BTRFS_BLOCK_GROUP_PROFILE_MASK) &
+-	    btrfs_chunk_type(leaf, chunk)) {
++	    type) {
+ 		btrfs_err(root->fs_info, "unrecognized chunk type: %llu",
+ 			  ~(BTRFS_BLOCK_GROUP_TYPE_MASK |
+ 			    BTRFS_BLOCK_GROUP_PROFILE_MASK) &
+ 			  btrfs_chunk_type(leaf, chunk));
+ 		return -EIO;
+ 	}
++	if ((type & BTRFS_BLOCK_GROUP_RAID10 && sub_stripes != 2) ||
++	    (type & BTRFS_BLOCK_GROUP_RAID1 && num_stripes < 1) ||
++	    (type & BTRFS_BLOCK_GROUP_RAID5 && num_stripes < 2) ||
++	    (type & BTRFS_BLOCK_GROUP_RAID6 && num_stripes < 3) ||
++	    (type & BTRFS_BLOCK_GROUP_DUP && num_stripes > 2) ||
++	    ((type & BTRFS_BLOCK_GROUP_PROFILE_MASK) == 0 &&
++	     num_stripes != 1)) {
++		btrfs_err(root->fs_info,
++			"invalid num_stripes:sub_stripes %u:%u for profile %llu",
++			num_stripes, sub_stripes,
++			type & BTRFS_BLOCK_GROUP_PROFILE_MASK);
++		return -EIO;
++	}
++
++	return 0;
++}
++
++static int read_one_chunk(struct btrfs_root *root, struct btrfs_key *key,
++			  struct extent_buffer *leaf,
++			  struct btrfs_chunk *chunk)
++{
++	struct btrfs_mapping_tree *map_tree = &root->fs_info->mapping_tree;
++	struct map_lookup *map;
++	struct extent_map *em;
++	u64 logical;
++	u64 length;
++	u64 stripe_len;
++	u64 devid;
++	u8 uuid[BTRFS_UUID_SIZE];
++	int num_stripes;
++	int ret;
++	int i;
++
++	logical = key->offset;
++	length = btrfs_chunk_length(leaf, chunk);
 +	stripe_len = btrfs_chunk_stripe_len(leaf, chunk);
 +	num_stripes = btrfs_chunk_num_stripes(leaf, chunk);
-+	/* Validation check */
-+	if (!num_stripes) {
-+		btrfs_err(root->fs_info, "invalid chunk num_stripes: %u",
-+			  num_stripes);
-+		return -EIO;
-+	}
-+	if (!IS_ALIGNED(logical, root->sectorsize)) {
-+		btrfs_err(root->fs_info,
-+			  "invalid chunk logical %llu", logical);
-+		return -EIO;
-+	}
-+	if (!length || !IS_ALIGNED(length, root->sectorsize)) {
-+		btrfs_err(root->fs_info,
-+			"invalid chunk length %llu", length);
-+		return -EIO;
-+	}
-+	if (!is_power_of_2(stripe_len)) {
-+		btrfs_err(root->fs_info, "invalid chunk stripe length: %llu",
-+			  stripe_len);
-+		return -EIO;
-+	}
-+	if (~(BTRFS_BLOCK_GROUP_TYPE_MASK | BTRFS_BLOCK_GROUP_PROFILE_MASK) &
-+	    btrfs_chunk_type(leaf, chunk)) {
-+		btrfs_err(root->fs_info, "unrecognized chunk type: %llu",
-+			  ~(BTRFS_BLOCK_GROUP_TYPE_MASK |
-+			    BTRFS_BLOCK_GROUP_PROFILE_MASK) &
-+			  btrfs_chunk_type(leaf, chunk));
-+		return -EIO;
-+	}
++
++	ret = btrfs_check_chunk_valid(root, leaf, chunk, logical);
++	if (ret)
++		return ret;
  
  	read_lock(&map_tree->map_tree.lock);
  	em = lookup_extent_mapping(&map_tree->map_tree, logical, 1);
-@@ -6241,7 +6273,6 @@ static int read_one_chunk(struct btrfs_r
- 	em = alloc_extent_map();
- 	if (!em)
- 		return -ENOMEM;
--	num_stripes = btrfs_chunk_num_stripes(leaf, chunk);
- 	map = kmalloc(map_lookup_size(num_stripes), GFP_NOFS);
- 	if (!map) {
- 		free_extent_map(em);
+@@ -6504,6 +6546,7 @@ int btrfs_read_sys_array(struct btrfs_ro
+ 	u32 array_size;
+ 	u32 len = 0;
+ 	u32 cur_offset;
++	u64 type;
+ 	struct btrfs_key key;
+ 
+ 	ASSERT(BTRFS_SUPER_INFO_SIZE <= root->nodesize);
+@@ -6569,6 +6612,15 @@ int btrfs_read_sys_array(struct btrfs_ro
+ 				ret = -EIO;
+ 				break;
+ 			}
++
++			type = btrfs_chunk_type(sb, chunk);
++			if ((type & BTRFS_BLOCK_GROUP_SYSTEM) == 0) {
++				btrfs_err(root->fs_info,
++			    "invalid chunk type %llu in sys_array at offset %u",
++					type, cur_offset);
++				ret = -EIO;
++				break;
++			}
+ 
+ 			len = btrfs_chunk_item_size(num_stripes);
+ 			if (cur_offset + len > array_size)
 
 
