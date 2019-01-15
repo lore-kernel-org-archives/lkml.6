@@ -2,107 +2,97 @@ Return-Path: <SRS0=RZO6=PX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BF835C43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 21:36:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AE35DC43444
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 21:38:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 952842086D
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 21:36:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 78F6020657
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 21:38:36 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="WsIEge4v"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733014AbfAOVgU (ORCPT
+        id S2390542AbfAOVif (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 15 Jan 2019 16:36:20 -0500
-Received: from gateway20.websitewelcome.com ([192.185.63.14]:37964 "EHLO
-        gateway20.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1732880AbfAOVgU (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Jan 2019 16:36:20 -0500
-Received: from cm17.websitewelcome.com (cm17.websitewelcome.com [100.42.49.20])
-        by gateway20.websitewelcome.com (Postfix) with ESMTP id 868D84107D6CE
-        for <linux-kernel@vger.kernel.org>; Tue, 15 Jan 2019 15:19:19 -0600 (CST)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id jW7DgiuRY90onjW7DgBk5T; Tue, 15 Jan 2019 15:19:19 -0600
-X-Authority-Reason: nr=8
-Received: from [189.250.130.205] (port=52484 helo=embeddedor)
-        by gator4166.hostgator.com with esmtpa (Exim 4.91)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1gjW7C-001dM6-RI; Tue, 15 Jan 2019 15:19:19 -0600
-Date:   Tue, 15 Jan 2019 15:19:17 -0600
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To:     Pravin B Shelar <pshelar@ovn.org>,
-        "David S. Miller" <davem@davemloft.net>
-Cc:     netdev@vger.kernel.org, dev@openvswitch.org,
-        linux-kernel@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Subject: [PATCH net-next] openvswitch: meter: Use struct_size() in kzalloc()
-Message-ID: <20190115211917.GA17058@embeddedor>
+        Tue, 15 Jan 2019 16:38:35 -0500
+Received: from ozlabs.org ([203.11.71.1]:35857 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1733071AbfAOVie (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 Jan 2019 16:38:34 -0500
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by ozlabs.org (Postfix) with ESMTPSA id 43fNxg5cdTz9sDT;
+        Wed, 16 Jan 2019 08:38:31 +1100 (AEDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1547588312;
+        bh=FotrQ+eIvHhrVLNz8zPgyfOmWZ4vZQgFqZprdR3kfGg=;
+        h=Date:From:To:Cc:Subject:From;
+        b=WsIEge4v4mq281InoxLSzcP+aEqUls4cwyDIv1Oif2SR3V92B8gnOKXv/53l55OJY
+         9d8BKdW6sQIsQYxfGIkcQdSb/sk+pATpdmGRIZaetCh73iiIulwR92eXa5Jr+gnBZo
+         w8ubwZvK1un5TanA1zaKlJDuI3G/SNLXyqtME3eIX2RTRRQBpYNoiMgxwpG3G07wLv
+         O/adbZkge2yiyh8oxXaawQSPNqS3asIebfKJDEaWDa5CmjCQVEc09MFT+CfRbKg7bQ
+         Hd0aJ8QvXO8wehmhazX7VxBrMFtAB5hwYCjBFL7e0aSujcUlK4GgbdOWEp3oj9aJYM
+         EQ3NlBa5+epuw==
+Date:   Wed, 16 Jan 2019 08:38:31 +1100
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Anna Schumaker <Anna.Schumaker@Netapp.com>,
+        Trond Myklebust <trondmy@gmail.com>,
+        NFS Mailing List <linux-nfs@vger.kernel.org>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Chuck Lever <chuck.lever@oracle.com>,
+        Paul Gortmaker <paul.gortmaker@windriver.com>
+Subject: linux-next: Fixes tag needs some work in the nfs-anna tree
+Message-ID: <20190116083831.256824cf@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 189.250.130.205
-X-Source-L: No
-X-Exim-ID: 1gjW7C-001dM6-RI
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: (embeddedor) [189.250.130.205]:52484
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 16
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/1h5dzV+7Tjewx0X38wEgIld"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-One of the more common cases of allocation size calculations is finding the
-size of a structure that has a zero-sized array at the end, along with memory
-for some number of elements for that array. For example:
+--Sig_/1h5dzV+7Tjewx0X38wEgIld
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-struct foo {
-    int stuff;
-    struct boo entry[];
-};
+[I am experimenting with checking the Fixes tags in commits in linux-next.
+Please let me know if you think I am being too strict.]
 
-instance = kzalloc(sizeof(struct foo) + count * sizeof(struct boo), GFP_KERNEL);
+Hi all,
 
-Instead of leaving these open-coded and prone to type mistakes, we can now
-use the new struct_size() helper:
+Commit
 
-instance = kzalloc(struct_size(instance, entry, count), GFP_KERNEL);
+  deaa5c96c2f7 ("SUNRPC: Address Kerberos performance/behavior regression")
 
-This code was detected with the help of Coccinelle.
+has problem with this Fixes tag:
 
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
----
- net/openvswitch/meter.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+  Fixes: 918f3c1fe83c ("SUNRPC: Improve latency for interactive ... ")
 
-diff --git a/net/openvswitch/meter.c b/net/openvswitch/meter.c
-index c038e021a591..43849d752a1e 100644
---- a/net/openvswitch/meter.c
-+++ b/net/openvswitch/meter.c
-@@ -206,8 +206,7 @@ static struct dp_meter *dp_meter_create(struct nlattr **a)
- 			return ERR_PTR(-EINVAL);
- 
- 	/* Allocate and set up the meter before locking anything. */
--	meter = kzalloc(n_bands * sizeof(struct dp_meter_band) +
--			sizeof(*meter), GFP_KERNEL);
-+	meter = kzalloc(struct_size(meter, bands, n_bands), GFP_KERNEL);
- 	if (!meter)
- 		return ERR_PTR(-ENOMEM);
- 
--- 
-2.20.1
+The subject should match the subject of the fixed commit.
 
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/1h5dzV+7Tjewx0X38wEgIld
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlw+UtcACgkQAVBC80lX
+0GwZXggAmPnNzm6PKW98wUJiTP8uO8hDUoiKhdWOboko6FhJ2zDgs33TBvC2A1kV
+2KymX1+/ngBJL4uzMJE/hmtV3YdyQ/7AEhglL9g4Oa/RLvx7s34TGq3tk6p9w1X+
+o2QmYndmjvTAr5BuvB9M+5/bxFoKIoA4AHLUAy6Jc0zgp8UOIy1mfFDrszvkTxpl
+omyXwc0qgrE+/rCx5q2HdIkhIBFaBUibwnrlamSMZwz1jmFm+QpqyHi95xNwayct
+cELMWxJlRR5BPLtyFhYwjV/D0UFxbx6hi94aN30R0CD0pVqYrMmXoXzAGFUMyY0h
+9qdkRd/GWAUWzPXbQibO8QjEcuDtSA==
+=+UWx
+-----END PGP SIGNATURE-----
+
+--Sig_/1h5dzV+7Tjewx0X38wEgIld--
