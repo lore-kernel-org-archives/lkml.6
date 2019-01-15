@@ -2,131 +2,81 @@ Return-Path: <SRS0=RZO6=PX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7CE63C43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 11:26:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B6F1C43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 11:31:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 57AD120657
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 11:26:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6675D20651
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 11:31:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729246AbfAOL0K (ORCPT
+        id S1729252AbfAOLbe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 15 Jan 2019 06:26:10 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:51762 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727626AbfAOL0J (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Jan 2019 06:26:09 -0500
-Received: from pps.filterd (m0098417.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id x0FBO62d082535
-        for <linux-kernel@vger.kernel.org>; Tue, 15 Jan 2019 06:26:07 -0500
-Received: from e16.ny.us.ibm.com (e16.ny.us.ibm.com [129.33.205.206])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2q1dmeaxpx-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Tue, 15 Jan 2019 06:26:07 -0500
-Received: from localhost
-        by e16.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <aneesh.kumar@linux.ibm.com>;
-        Tue, 15 Jan 2019 11:26:07 -0000
-Received: from b01cxnp22036.gho.pok.ibm.com (9.57.198.26)
-        by e16.ny.us.ibm.com (146.89.104.203) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Tue, 15 Jan 2019 11:26:02 -0000
-Received: from b01ledav005.gho.pok.ibm.com (b01ledav005.gho.pok.ibm.com [9.57.199.110])
-        by b01cxnp22036.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x0FBQ10P23986220
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 15 Jan 2019 11:26:01 GMT
-Received: from b01ledav005.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id CACFFAE05C;
-        Tue, 15 Jan 2019 11:26:01 +0000 (GMT)
-Received: from b01ledav005.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id F3970AE060;
-        Tue, 15 Jan 2019 11:25:58 +0000 (GMT)
-Received: from [9.85.74.182] (unknown [9.85.74.182])
-        by b01ledav005.gho.pok.ibm.com (Postfix) with ESMTP;
-        Tue, 15 Jan 2019 11:25:58 +0000 (GMT)
-Subject: Re: [PATCH V7 5/5] testing
-To:     akpm@linux-foundation.org, Michal Hocko <mhocko@kernel.org>,
-        Alexey Kardashevskiy <aik@ozlabs.ru>,
-        David Gibson <david@gibson.dropbear.id.au>,
-        Andrea Arcangeli <aarcange@redhat.com>, mpe@ellerman.id.au
-Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org
-References: <20190114095438.32470-1-aneesh.kumar@linux.ibm.com>
- <20190114095438.32470-7-aneesh.kumar@linux.ibm.com>
-From:   "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>
-Date:   Tue, 15 Jan 2019 16:55:57 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.1
+        Tue, 15 Jan 2019 06:31:34 -0500
+Received: from ozlabs.org ([203.11.71.1]:39345 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727494AbfAOLbd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 Jan 2019 06:31:33 -0500
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by ozlabs.org (Postfix) with ESMTPSA id 43f7TG5sg3z9sCh;
+        Tue, 15 Jan 2019 22:31:30 +1100 (AEDT)
+From:   Michael Ellerman <mpe@ellerman.id.au>
+To:     Will Deacon <will.deacon@arm.com>,
+        "Koenig\, Christian" <Christian.Koenig@amd.com>
+Cc:     Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Michel =?utf-8?Q?D=C3=A4nz?= =?utf-8?Q?er?= 
+        <michel@daenzer.net>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Carsten Haitzler <Carsten.Haitzler@arm.com>,
+        David Airlie <airlied@linux.ie>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        "Huang\, Ray" <Ray.Huang@amd.com>,
+        "Zhang\, Jerry" <Jerry.Zhang@amd.com>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        Bernhard =?utf-8?Q?Rosenkr=C3=A4n?= =?utf-8?Q?zer?= 
+        <Bernhard.Rosenkranzer@linaro.org>, benh@kernel.crashing.org
+Subject: Re: [RFC PATCH] drm/ttm: force cached mappings for system RAM on ARM
+In-Reply-To: <20190114193548.GB29600@fuggles.cambridge.arm.com>
+References: <20190110072841.3283-1-ard.biesheuvel@linaro.org> <5d8135de-80fe-9c0e-2206-ecb809f64cdb@daenzer.net> <CAKv+Gu_X-DH6GZ0k8RYuL18rxTwBpb5=Qp9VCZfn_kh+9b3Zkg@mail.gmail.com> <55facfb9-92af-86b8-40e9-d63b887b5592@amd.com> <CAKv+Gu_JyO2KNtdN1-_TcoL_kqs0yswdwBrpAXA6-jyWuDrj+g@mail.gmail.com> <9f956898-7973-98ee-6bf1-e1d445e9d365@amd.com> <20190114191350.GA29600@fuggles.cambridge.arm.com> <a6d9d0ad-d1c0-9e60-17c6-a42f7bde258c@amd.com> <20190114193548.GB29600@fuggles.cambridge.arm.com>
+Date:   Tue, 15 Jan 2019 22:31:29 +1100
+Message-ID: <87a7k2yx66.fsf@concordia.ellerman.id.au>
 MIME-Version: 1.0
-In-Reply-To: <20190114095438.32470-7-aneesh.kumar@linux.ibm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-x-cbid: 19011511-0072-0000-0000-000003EA0EE1
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00010410; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000274; SDB=6.01146788; UDB=6.00597313; IPR=6.00927080;
- MB=3.00025134; MTD=3.00000008; XFM=3.00000015; UTC=2019-01-15 11:26:05
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19011511-0073-0000-0000-00004AD11BE4
-Message-Id: <bd6b4237-064d-0059-3b2c-1f14cdf466f2@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-01-15_04:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=997 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1901150097
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-You can ignore this one.
+Hi Will,
 
-On 1/14/19 3:24 PM, Aneesh Kumar K.V wrote:
-> ---
->   mm/gup.c | 6 ++++--
->   1 file changed, 4 insertions(+), 2 deletions(-)
-> 
-> diff --git a/mm/gup.c b/mm/gup.c
-> index 6e8152594e83..91849c39931a 100644
-> --- a/mm/gup.c
-> +++ b/mm/gup.c
-> @@ -1226,7 +1226,7 @@ static long check_and_migrate_cma_pages(unsigned long start, long nr_pages,
->   		 * be pinning these entries, we might as well move them out
->   		 * of the CMA zone if possible.
->   		 */
-> -		if (is_migrate_cma_page(pages[i])) {
-> +		if (true || is_migrate_cma_page(pages[i])) {
->   
->   			struct page *head = compound_head(pages[i]);
->   
-> @@ -1256,6 +1256,7 @@ static long check_and_migrate_cma_pages(unsigned long start, long nr_pages,
->   		for (i = 0; i < nr_pages; i++)
->   			put_page(pages[i]);
->   
-> +		pr_emerg("migrating nr_pages");
->   		if (migrate_pages(&cma_page_list, new_non_cma_page,
->   				  NULL, 0, MIGRATE_SYNC, MR_CONTIG_RANGE)) {
->   			/*
-> @@ -1274,10 +1275,11 @@ static long check_and_migrate_cma_pages(unsigned long start, long nr_pages,
->   		nr_pages = get_user_pages(start, nr_pages, gup_flags, pages, vmas);
->   		if ((nr_pages > 0) && migrate_allow) {
->   			drain_allow = true;
-> -			goto check_again;
-> +			//goto check_again;
->   		}
->   	}
->   
-> +	pr_emerg("Returning with %ld\n", nr_pages);
->   	return nr_pages;
->   }
->   #else
-> 
+Will Deacon <will.deacon@arm.com> writes:
+> [+ BenH and MPE]
+>
+> On Mon, Jan 14, 2019 at 07:21:08PM +0000, Koenig, Christian wrote:
+>> Am 14.01.19 um 20:13 schrieb Will Deacon:
+...
+>
+>> > The Arm architecture (and others including Power afaiu) doesn't
+>> > guarantee coherency when memory is accessed using mismatched cacheability
+>> > attributes.
+...
+>
+>> As far as I know Power doesn't really supports un-cached memory at all, 
+>> except for a very very old and odd configuration with AGP.
+>
+> Hopefully Michael/Ben can elaborate here, but I was under the (possibly
+> mistaken) impression that mismatched attributes could cause a machine-check
+> on Power.
 
+That's what I've always been told, but I can't actually find where it's
+documented, I'll keep searching.
+
+But you're right that mixing cached / uncached is not really supported,
+and probably results in a machine check or worse.
+
+cheers
