@@ -2,144 +2,87 @@ Return-Path: <SRS0=RZO6=PX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_NEOMUTT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C6AEC43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 09:08:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E7CAC43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 09:09:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C563B20657
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 09:08:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547543311;
-	bh=AgXHlCM0lbg+fMSJ0249CdxVOK5qK8/Gq+rwNdjOXMk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=UP6HKqz4hSZeWSzxBaKph0DqNE25mRmrbWUmxkkrLn3sMX2Ls4svplrE7Fbn6ozT2
-	 oFsH/KXuJ7TFVS5sutdIGI8dASUyh75A9XJz7x1AfKHGYEOfxcTexN/flVq59N39U1
-	 NEjf3dl+HFD2ORt/qxaaPOaOhpxcEN0M0+SKDlDE=
+	by mail.kernel.org (Postfix) with ESMTP id 73EDC20657
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 09:09:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728387AbfAOJI3 (ORCPT
+        id S1728447AbfAOJJg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 15 Jan 2019 04:08:29 -0500
-Received: from mail-lj1-f179.google.com ([209.85.208.179]:46986 "EHLO
-        mail-lj1-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726842AbfAOJI3 (ORCPT
+        Tue, 15 Jan 2019 04:09:36 -0500
+Received: from nblzone-211-213.nblnetworks.fi ([83.145.211.213]:40844 "EHLO
+        hillosipuli.retiisi.org.uk" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1725929AbfAOJJg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Jan 2019 04:08:29 -0500
-Received: by mail-lj1-f179.google.com with SMTP id v15-v6so1598973ljh.13;
-        Tue, 15 Jan 2019 01:08:27 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=7NGEeFeMbGv5BQe5JxR3JAQyyhR6mBlZxk0SpiIYNU8=;
-        b=gYmLKiStvftGZYLgwChWErSdpw83YISbC/7YpvPhLMz5H24Rd8WJq7vCraT9V1PuHj
-         EHrp0KVNKhsiki4gmDjRtAquDEQnvV9ofoUhyf+32pL2/picmT4Pk5GtsaNEbjP1Hy/i
-         bS8Yku+Ee+oYrlstUFON4iEqRTcUVn1bhhhvQx4dBl5sPR9Y5VVX7x8wXTJAeO/LLmJ3
-         +47apHSSLL4OiDs8jDUmQSP72vwjLi8HFW+MWjJUrEzdnlZRYDSvo9v8tL7sgXf61wh2
-         WdcM+UBx20emdlif5IlWz5Y2C4s1n5ygit9udq8bQ+zTbfbz8v2+gKWd+cI1qPjldHf4
-         K8Lg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=7NGEeFeMbGv5BQe5JxR3JAQyyhR6mBlZxk0SpiIYNU8=;
-        b=bT7tSBdYJq0aqVomAEtpHTiJYaojttAnxJvirtKwcKaTLJ52izEEGP55AuqLrumVeI
-         hHeAgonMcdXT9AFz+dWB5T77GKQ0XiCGxdtPytMz+Eq5mRmP+MDn0eIoPl7NNyJqohGd
-         BoHD/F2QZAyKmqPdzuOqU9Gcw8YnJgMhB9CMCKgu2BDybXWIEWVcd8lmPVgDcJmlhe87
-         5HbmxZTChfDLsm++ocP41zLStL8OvUyl08axG00ge8lgRkXE2+cWggL3gVFxF9MGVaR/
-         eDGSj5AJXBTHBH5VkRfu/s1Z7NEkuMHNon7mqJc/9zir/kS/Rg9omvZOE1tjq+G9+9Ob
-         UOZQ==
-X-Gm-Message-State: AJcUukco8EklF34xfZdATi8/ONG85/OzzfMbY4P657+TmF3PuM9H4RRG
-        eXiDaNV+O9RxNUT/heaO5QM=
-X-Google-Smtp-Source: ALg8bN6Q3lTk3Mgp8fX1ouRXkcj1EXwsS9fkL9oirV51mp2x2V+QMq0oqM1EnAr/TNoiUw2aQBQwTw==
-X-Received: by 2002:a2e:841:: with SMTP id g1-v6mr2124557ljd.21.1547543307010;
-        Tue, 15 Jan 2019 01:08:27 -0800 (PST)
-Received: from xi.terra (c-74bee655.07-184-6d6c6d4.bbcust.telenor.se. [85.230.190.116])
-        by smtp.gmail.com with ESMTPSA id q67sm525956lfe.19.2019.01.15.01.08.25
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 15 Jan 2019 01:08:26 -0800 (PST)
-Received: from johan by xi.terra with local (Exim 4.91)
-        (envelope-from <johan@kernel.org>)
-        id 1gjKht-0008S7-Th; Tue, 15 Jan 2019 10:08:25 +0100
-Date:   Tue, 15 Jan 2019 10:08:25 +0100
-From:   Johan Hovold <johan@kernel.org>
-To:     Andreas Kemnade <andreas@kemnade.info>
-Cc:     Johan Hovold <johan@kernel.org>, robh+dt@kernel.org,
-        mark.rutland@arm.com, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Discussions about the Letux Kernel 
-        <letux-kernel@openphoenux.org>
-Subject: Re: [PATCH v2 2/5] gnss: sirf: power on logic for devices without
- wakeup signal
-Message-ID: <20190115090825.GM3691@localhost>
-References: <20181209195150.5192-1-andreas@kemnade.info>
- <20181209195150.5192-3-andreas@kemnade.info>
- <20190110121038.GA9725@localhost>
- <20190110230223.18ecbd87@kemnade.info>
- <20190114105129.GE3691@localhost>
- <20190114225802.4dcd8cd2@aktux>
+        Tue, 15 Jan 2019 04:09:36 -0500
+Received: from valkosipuli.localdomain (valkosipuli.retiisi.org.uk [IPv6:2001:1bc8:1a6:d3d5::80:2])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by hillosipuli.retiisi.org.uk (Postfix) with ESMTPS id 6790A634C85;
+        Tue, 15 Jan 2019 11:07:54 +0200 (EET)
+Received: from sailus by valkosipuli.localdomain with local (Exim 4.89)
+        (envelope-from <sakari.ailus@retiisi.org.uk>)
+        id 1gjKhN-0004Kz-QG; Tue, 15 Jan 2019 11:07:53 +0200
+Date:   Tue, 15 Jan 2019 11:07:53 +0200
+From:   Sakari Ailus <sakari.ailus@iki.fi>
+To:     Lubomir Rintel <lkundrak@v3.sk>
+Cc:     linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 5/5] media: ov7670: split register setting from
+ set_framerate() logic
+Message-ID: <20190115090753.igsi76bmmpbahiap@valkosipuli.retiisi.org.uk>
+References: <20190115085448.1400135-1-lkundrak@v3.sk>
+ <20190115085448.1400135-6-lkundrak@v3.sk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190114225802.4dcd8cd2@aktux>
-User-Agent: Mutt/1.11.2 (2019-01-07)
+In-Reply-To: <20190115085448.1400135-6-lkundrak@v3.sk>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jan 14, 2019 at 10:58:02PM +0100, Andreas Kemnade wrote:
-> On Mon, 14 Jan 2019 11:51:29 +0100
-> Johan Hovold <johan@kernel.org> wrote:
+On Tue, Jan 15, 2019 at 09:54:48AM +0100, Lubomir Rintel wrote:
+> This will allow us to restore the last set frame rate after the device
+> returns from a power off.
 > 
-> here is a second part of a reply.
+> Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
 
-I'm not sure I received the first part if you're saying you replied to
-my mail in two parts?
+Thanks!
 
-> [...]
-> > > > In pseudo code we have:
-> > > > 
-> > > >   activate:
-> > > >    - toggle on-off
-> > > >    - wait(data-received, ACTIVATE_TIMEOUT + REPORT_CYCLE)
-> > > >      - reception: success   
-> > > 
-> > > Note: we can also get the goodbye/shutdown message from the chip here
-> > > so there are chances of a false success, but since we initially power down,
-> > > we will rule out wrong state here.  
-> > 
-> > Good point. Unless we know the current state, we'd need to sleep for
-> > HIBERNATE_TIMEOUT before waiting for data reception.
+I've applied them, and hopefully all is well now.
+
+> ---
+>  drivers/media/i2c/ov7670.c | 26 ++++++++++++++------------
+>  1 file changed, 14 insertions(+), 12 deletions(-)
 > 
-> And probably this also magically (together with my
-> runtime_get/put()-pair) in _probe()) worked around the
-> problems fixed by the.
-> gnss: sirf: fix activation retry handling
+> diff --git a/drivers/media/i2c/ov7670.c b/drivers/media/i2c/ov7670.c
+> index d0f40d5f6ca0..6f9a53d4dcfc 100644
+> --- a/drivers/media/i2c/ov7670.c
+> +++ b/drivers/media/i2c/ov7670.c
+> @@ -812,13 +812,24 @@ static void ov7675_get_framerate(struct v4l2_subdev *sd,
+>  			(4 * clkrc);
+>  }
+>  
+> +static int ov7675_apply_framerate(struct v4l2_subdev *sd)
+> +{
+> +	struct ov7670_info *info = to_state(sd);
+> +	int ret;
+> +
+> +	ret = ov7670_write(sd, REG_CLKRC, info->clkrc);
+> +	if (ret < 0)
+> +		return ret;
+> +
+> +	return ov7670_write(sd, REG_DBLV, info->pll_bypass ? DBLV_BYPASS : DBLV_X4);
 
-The retry-handling fix would only avoid a successful last retry attempt
-incorrectly being reported as a failure, so I don't think that would
-change much here.
+I wrapped this to avoid it exceeding 80... no other changes.
 
-> Well, with the last patchset and short report cycle we can detect state
-> changes to off state reliably but state changes to on state
-> only unreliably (which was, as said, not the intention). If the GPS chip
-> behaves well enough, we will not see trouble.
-> 
-> Now with long report cycles: Off state detection will always return
-> success. On state detection (in its current wonky form) will see the
-> state change messages and will also always return success. If initial
-> state is correct, this works at least in a wonky way.
-> 
-> I do not like these wonky things too much. So I would rather see
-> well-defined behavior with well-known limitations.
-> 
-> State change failures are probably not only a theoretical thing,
-> so it is a good idea to track that.
+> +}
 
-Good, sounds like we're on the same page then.
-
-Thanks,
-Johan
+-- 
+Sakari Ailus
