@@ -7,46 +7,46 @@ X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B348C43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 16:38:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5057BC43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 16:38:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3961520868
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 16:38:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1953D2087E
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 16:38:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547570326;
-	bh=WlQubIMkGHzijbascApSivVReAnlaZNu5AqVgUTfSNc=;
+	s=default; t=1547570329;
+	bh=Zwi+oRvU88y+FQGDFnwaTRKc+z1ifsN7OGj8AkAl4QM=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=ovyWCAPCt2V4aQfR0JAOgxpa6BqLO4K1s0thf0MIOoKzonRpFWRV5H4HZJ1QgzHpV
-	 RbsmnUNycLj3z5kpkGSXK+Xiy9lrlecZCo37SnmKY5Gj5pnZF8PcQ5brGPqBh97O1P
-	 aNM4cXNCm6Q/EK1mSlcgSoYMpf1CKM1QcJBHi6zA=
+	b=YtmgjjGZsnTCtbSBVUHUXwx6sNhXD+Z6p3NstFDKfZpsB6X0siAvom37GGuzbzGG1
+	 yjxOTXWO9anDfhZA/XudmJ20Ai+uFttjUE0ya/dwcgjs8sXOEXt1QtJxYqUP06T953
+	 q34kXGQomjGgzBx/YDGKxMgC9OQOXTokmOqQDIJQ=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732171AbfAOQio (ORCPT
+        id S1732185AbfAOQir (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 15 Jan 2019 11:38:44 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54658 "EHLO mail.kernel.org"
+        Tue, 15 Jan 2019 11:38:47 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54730 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732157AbfAOQil (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Jan 2019 11:38:41 -0500
+        id S1732167AbfAOQio (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 Jan 2019 11:38:44 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 61CA22087E;
-        Tue, 15 Jan 2019 16:38:40 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7D23A20873;
+        Tue, 15 Jan 2019 16:38:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547570320;
-        bh=WlQubIMkGHzijbascApSivVReAnlaZNu5AqVgUTfSNc=;
+        s=default; t=1547570324;
+        bh=Zwi+oRvU88y+FQGDFnwaTRKc+z1ifsN7OGj8AkAl4QM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=fe1NkovSuePAC7Fxe+C2NzwREilIZHtMp/NrYLZpB188T3L69A8bbXUhAO6C9dXHX
-         Fd11hZVWqo2UOY7rgKSyAhz5dCHbl3LTjxhl5B+Wb7EtOSbuyEHcJlLVT28GecQ+YK
-         /uFn6CvdiYzHVON+KZ2UW6+yg6JCInlBjaZq1izY=
+        b=P1cf+M9yNwcpcuDrMTKe5tFQpXmN5fGdEY/s4Sie3OsdpkinJrZLG1epA7jcPkVSn
+         iR/1RriOoByEg5iYdtyIqgl2EGpM7XjLZxAEjTyADQLbC3E2BUpOE6E4dw+Q9j79nq
+         tmq3gu7Q1apDP3Z1RMDXXwUVJtc5BO2r1k2AtEQQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Yi Zeng <yizeng@asrmicro.com>,
-        Wolfram Sang <wsa@the-dreams.de>, stable@kernel.org
-Subject: [PATCH 4.4 48/51] i2c: dev: prevent adapter retries and timeout being set as minus value
-Date:   Tue, 15 Jan 2019 17:35:44 +0100
-Message-Id: <20190115154853.964493126@linuxfoundation.org>
+        stable@vger.kernel.org, linux-crypto@vger.kernel.org,
+        Eric Biggers <ebiggers@google.com>
+Subject: [PATCH 4.4 49/51] crypto: cts - fix crash on short inputs
+Date:   Tue, 15 Jan 2019 17:35:45 +0100
+Message-Id: <20190115154854.089548717@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190115154846.928796000@linuxfoundation.org>
 References: <20190115154846.928796000@linuxfoundation.org>
@@ -65,50 +65,55 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Yi Zeng <yizeng@asrmicro.com>
 
-commit 6ebec961d59bccf65d08b13fc1ad4e6272a89338 upstream.
+From: Eric Biggers <ebiggers@google.com>
 
-If adapter->retries is set to a minus value from user space via ioctl,
-it will make __i2c_transfer and __i2c_smbus_xfer skip the calling to
-adapter->algo->master_xfer and adapter->algo->smbus_xfer that is
-registered by the underlying bus drivers, and return value 0 to all the
-callers. The bus driver will never be accessed anymore by all users,
-besides, the users may still get successful return value without any
-error or information log print out.
+[It's a minimal fix for a bug that was fixed incidentally by a large
+refactoring in v4.8.]
 
-If adapter->timeout is set to minus value from user space via ioctl,
-it will make the retrying loop in __i2c_transfer and __i2c_smbus_xfer
-always break after the the first try, due to the time_after always
-returns true.
+In the CTS template, when the input length is <= one block cipher block
+(e.g. <= 16 bytes for AES) pass the correct length to the underlying CBC
+transform rather than one block.  This matches the upstream behavior and
+makes the encryption/decryption operation correctly return -EINVAL when
+1 <= nbytes < bsize or succeed when nbytes == 0, rather than crashing.
 
-Signed-off-by: Yi Zeng <yizeng@asrmicro.com>
-[wsa: minor grammar updates to commit message]
-Signed-off-by: Wolfram Sang <wsa@the-dreams.de>
-Cc: stable@kernel.org
+This was fixed upstream incidentally by a large refactoring,
+commit 0605c41cc53c ("crypto: cts - Convert to skcipher").  But
+syzkaller easily trips over this when running on older kernels, as it's
+easily reachable via AF_ALG.  Therefore, this patch makes the minimal
+fix for older kernels.
+
+Cc: linux-crypto@vger.kernel.org
+Fixes: 76cb9521795a ("[CRYPTO] cts: Add CTS mode required for Kerberos AES support")
+Signed-off-by: Eric Biggers <ebiggers@google.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- drivers/i2c/i2c-dev.c |    6 ++++++
- 1 file changed, 6 insertions(+)
+ crypto/cts.c |    8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
---- a/drivers/i2c/i2c-dev.c
-+++ b/drivers/i2c/i2c-dev.c
-@@ -459,9 +459,15 @@ static long i2cdev_ioctl(struct file *fi
- 		return i2cdev_ioctl_smbus(client, arg);
+--- a/crypto/cts.c
++++ b/crypto/cts.c
+@@ -137,8 +137,8 @@ static int crypto_cts_encrypt(struct blk
+ 	lcldesc.info = desc->info;
+ 	lcldesc.flags = desc->flags;
  
- 	case I2C_RETRIES:
-+		if (arg > INT_MAX)
-+			return -EINVAL;
-+
- 		client->adapter->retries = arg;
- 		break;
- 	case I2C_TIMEOUT:
-+		if (arg > INT_MAX)
-+			return -EINVAL;
-+
- 		/* For historical reasons, user-space sets the timeout
- 		 * value in units of 10 ms.
- 		 */
+-	if (tot_blocks == 1) {
+-		err = crypto_blkcipher_encrypt_iv(&lcldesc, dst, src, bsize);
++	if (tot_blocks <= 1) {
++		err = crypto_blkcipher_encrypt_iv(&lcldesc, dst, src, nbytes);
+ 	} else if (nbytes <= bsize * 2) {
+ 		err = cts_cbc_encrypt(ctx, desc, dst, src, 0, nbytes);
+ 	} else {
+@@ -232,8 +232,8 @@ static int crypto_cts_decrypt(struct blk
+ 	lcldesc.info = desc->info;
+ 	lcldesc.flags = desc->flags;
+ 
+-	if (tot_blocks == 1) {
+-		err = crypto_blkcipher_decrypt_iv(&lcldesc, dst, src, bsize);
++	if (tot_blocks <= 1) {
++		err = crypto_blkcipher_decrypt_iv(&lcldesc, dst, src, nbytes);
+ 	} else if (nbytes <= bsize * 2) {
+ 		err = cts_cbc_decrypt(ctx, desc, dst, src, 0, nbytes);
+ 	} else {
 
 
