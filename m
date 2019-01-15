@@ -4,49 +4,54 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C120AC43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 16:52:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F125C43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 16:52:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5601520645
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 16:52:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F287620645
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 16:52:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547571138;
-	bh=Bb+8WDEzBkRhBsTzSoBYAuA1Kaq9Oc8smB+qB0NmMYQ=;
+	s=default; t=1547571143;
+	bh=K4cOjncYTKTtvOD3R1e2IyucTZmJQSqeDvj1+JzQ0Yc=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=VpbMTKMT74rY9Rn2KNDEsEc/y6aYD52nBg0T43u54d4NNC8XkWuDalYiCNwqOiHW4
-	 Y4/h9ZU2w8JtYQx5QmXYQAQIHhlvVvS8gN7Qad5NNxafhO2HbogHmGLWCarO/IPKzF
-	 bhzQW897C/jXU7aZn/6ivmmR7veSqSMC0UVWFbVE=
+	b=BqOqBWyn+zKLPqtIXOn2iDkO9WNEPhtjKTfvE7rOGuW4qajgnj3BM+SAQy4nMGcQp
+	 62+a8aoVO9lNB92jrfuhI2mihu34fPm4dbNCjsa6V55l0mVJbHW8h4Sn7Qu2H7KBdB
+	 0Dkd89faQlaQvKGjYzF8sADoIEggkZC4f8hW8mfQ=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387599AbfAOQom (ORCPT
+        id S2387575AbfAOQof (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 15 Jan 2019 11:44:42 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34190 "EHLO mail.kernel.org"
+        Tue, 15 Jan 2019 11:44:35 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34130 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728652AbfAOQoh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Jan 2019 11:44:37 -0500
+        id S2387554AbfAOQob (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 Jan 2019 11:44:31 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D02D12054F;
-        Tue, 15 Jan 2019 16:44:35 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id AF1CF2054F;
+        Tue, 15 Jan 2019 16:44:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547570676;
-        bh=Bb+8WDEzBkRhBsTzSoBYAuA1Kaq9Oc8smB+qB0NmMYQ=;
+        s=default; t=1547570671;
+        bh=K4cOjncYTKTtvOD3R1e2IyucTZmJQSqeDvj1+JzQ0Yc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Ajb3VhMjyRJD3SJXyLAjRSee15yAbWjR7z4F60Wo8OAbVP1FGJE/6TRQcvyLdgMY9
-         jYWwMqBwkH5QWWpaw/Ec5pF6w4A6kHQcPbaF2DwJq6o7QI0rlm7gDEnHCQd3PmJTEy
-         zuLIuhTSv+pb7iMBjtnGcRIda5wuqwXZnHRM3dI0=
+        b=FQeKMflkIJwMzAJ94A8t1Tt1xidSHN0NovkGYlmULRkM8HA/I2FAAzP4XKchSqxNn
+         bw/lC9RkTJzaB9zUHxHQV/7GtZAoHF2Kk2jShhpbIkg/RIR1ZAl+EVZHxkRE3rKQ6/
+         qxeu4hyYx44iXd5WzrytaoNPCMbMxmo5sKP7pmx8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Con Kolivas <kernel@kolivas.org>,
-        Saranya Gopal <saranya.gopal@intel.com>
-Subject: [PATCH 4.20 03/57] usbcore: Select only first configuration for non-UAC3 compliant devices
-Date:   Tue, 15 Jan 2019 17:35:44 +0100
-Message-Id: <20190115154910.910829923@linuxfoundation.org>
+        stable@vger.kernel.org, Christoph Lameter <cl@linux.com>,
+        syzbot+d6ed4ec679652b4fd4e4@syzkaller.appspotmail.com,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Pekka Enberg <penberg@kernel.org>,
+        David Rientjes <rientjes@google.com>,
+        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: [PATCH 4.20 28/57] slab: alien caches must not be initialized if the allocation of the alien cache failed
+Date:   Tue, 15 Jan 2019 17:36:09 +0100
+Message-Id: <20190115154912.258071083@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190115154910.734892368@linuxfoundation.org>
 References: <20190115154910.734892368@linuxfoundation.org>
@@ -65,47 +70,46 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Saranya Gopal <saranya.gopal@intel.com>
+From: Christoph Lameter <cl@linux.com>
 
-commit ff2a8c532c14fd22fb26a36574d9ff199afbbe54 upstream.
+commit 09c2e76ed734a1d36470d257a778aaba28e86531 upstream.
 
-In most of the UAC1 and UAC2 audio devices, the first
-configuration is most often the best configuration.
-However, with recent patch to support UAC3 configuration,
-second configuration was unintentionally chosen for
-some of the UAC1/2 devices that had more than one
-configuration. This was because of the existing check
-after the audio config check which selected any config
-which had a non-vendor class. This patch fixes this issue.
+Callers of __alloc_alien() check for NULL.  We must do the same check in
+__alloc_alien_cache to avoid NULL pointer dereferences on allocation
+failures.
 
-Fixes: f13912d3f014 ("usbcore: Select UAC3 configuration for audio if present")
-Reported-by: Con Kolivas <kernel@kolivas.org>
-Signed-off-by: Saranya Gopal <saranya.gopal@intel.com>
-Tested-by: Con Kolivas <kernel@kolivas.org>
-Cc: stable <stable@vger.kernel.org>
+Link: http://lkml.kernel.org/r/010001680f42f192-82b4e12e-1565-4ee0-ae1f-1e98974906aa-000000@email.amazonses.com
+Fixes: 49dfc304ba241 ("slab: use the lock on alien_cache, instead of the lock on array_cache")
+Fixes: c8522a3a5832b ("Slab: introduce alloc_alien")
+Signed-off-by: Christoph Lameter <cl@linux.com>
+Reported-by: syzbot+d6ed4ec679652b4fd4e4@syzkaller.appspotmail.com
+Reviewed-by: Andrew Morton <akpm@linux-foundation.org>
+Cc: Pekka Enberg <penberg@kernel.org>
+Cc: David Rientjes <rientjes@google.com>
+Cc: Joonsoo Kim <iamjoonsoo.kim@lge.com>
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/usb/core/generic.c |    9 ++++++---
- 1 file changed, 6 insertions(+), 3 deletions(-)
+ mm/slab.c |    6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
---- a/drivers/usb/core/generic.c
-+++ b/drivers/usb/core/generic.c
-@@ -143,9 +143,12 @@ int usb_choose_configuration(struct usb_
- 			continue;
- 		}
+--- a/mm/slab.c
++++ b/mm/slab.c
+@@ -679,8 +679,10 @@ static struct alien_cache *__alloc_alien
+ 	struct alien_cache *alc = NULL;
  
--		if (i > 0 && desc && is_audio(desc) && is_uac3_config(desc)) {
--			best = c;
--			break;
-+		if (i > 0 && desc && is_audio(desc)) {
-+			if (is_uac3_config(desc)) {
-+				best = c;
-+				break;
-+			}
-+			continue;
- 		}
+ 	alc = kmalloc_node(memsize, gfp, node);
+-	init_arraycache(&alc->ac, entries, batch);
+-	spin_lock_init(&alc->lock);
++	if (alc) {
++		init_arraycache(&alc->ac, entries, batch);
++		spin_lock_init(&alc->lock);
++	}
+ 	return alc;
+ }
  
- 		/* From the remaining configs, choose the first one whose
 
 
