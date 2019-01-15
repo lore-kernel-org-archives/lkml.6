@@ -2,137 +2,128 @@ Return-Path: <SRS0=RZO6=PX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 09C93C43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 22:16:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DFD20C43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 22:22:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D5C0E20866
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 22:16:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B9D2F20866
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 22:22:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733041AbfAOWQz (ORCPT
+        id S2387763AbfAOWW1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 15 Jan 2019 17:16:55 -0500
-Received: from gateway30.websitewelcome.com ([192.185.197.25]:45645 "EHLO
-        gateway30.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727984AbfAOWQz (ORCPT
+        Tue, 15 Jan 2019 17:22:27 -0500
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:38695 "EHLO
+        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1733219AbfAOWW1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Jan 2019 17:16:55 -0500
-Received: from cm10.websitewelcome.com (cm10.websitewelcome.com [100.42.49.4])
-        by gateway30.websitewelcome.com (Postfix) with ESMTP id 3B39561A2
-        for <linux-kernel@vger.kernel.org>; Tue, 15 Jan 2019 15:53:57 -0600 (CST)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id jWejg7r0h2PzOjWejgkVQx; Tue, 15 Jan 2019 15:53:57 -0600
-X-Authority-Reason: nr=8
-Received: from [189.250.130.205] (port=45270 helo=[192.168.43.131])
-        by gator4166.hostgator.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
-        (Exim 4.91)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1gjWeh-001yZe-Sk; Tue, 15 Jan 2019 15:53:56 -0600
-Subject: Re: [PATCH net-next] svcrdma: Use struct_size() in kmalloc()
-To:     Chuck Lever <chuck.lever@oracle.com>
-Cc:     Trond Myklebust <trond.myklebust@hammerspace.com>,
-        Anna Schumaker <anna.schumaker@netapp.com>,
-        Bruce Fields <bfields@fieldses.org>,
-        Jeff Layton <jlayton@kernel.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Linux NFS Mailing List <linux-nfs@vger.kernel.org>,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20190115211140.GA16131@embeddedor>
- <F652FEF1-0FD7-4FFD-80D4-44DBC2FF47B5@oracle.com>
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Message-ID: <9e965c53-116d-4aad-63e9-e26264bea9d1@embeddedor.com>
-Date:   Tue, 15 Jan 2019 15:53:48 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Tue, 15 Jan 2019 17:22:27 -0500
+Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
+        id 124738083D; Tue, 15 Jan 2019 23:22:18 +0100 (CET)
+Date:   Tue, 15 Jan 2019 23:22:23 +0100
+From:   Pavel Machek <pavel@ucw.cz>
+To:     Jacek Anaszewski <jacek.anaszewski@gmail.com>
+Cc:     Dan Murphy <dmurphy@ti.com>, linux-leds@vger.kernel.org,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        dachaac@gmail.com, robh+dt@kernel.org
+Subject: Re: [PATCH v2 2/2] leds: lp50xx: Add the LP50XX family of the RGB
+ LED driver
+Message-ID: <20190115222223.GA17363@amd>
+References: <20190114211723.11186-1-dmurphy@ti.com>
+ <20190114211723.11186-2-dmurphy@ti.com>
+ <ce911fdf-c7c2-63e8-5c7a-b0be965ab69b@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <F652FEF1-0FD7-4FFD-80D4-44DBC2FF47B5@oracle.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 189.250.130.205
-X-Source-L: No
-X-Exim-ID: 1gjWeh-001yZe-Sk
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: ([192.168.43.131]) [189.250.130.205]:45270
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 29
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="qMm9M+Fa2AknHoGS"
+Content-Disposition: inline
+In-Reply-To: <ce911fdf-c7c2-63e8-5c7a-b0be965ab69b@gmail.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
+--qMm9M+Fa2AknHoGS
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On 1/15/19 3:49 PM, Chuck Lever wrote:
-> 
-> 
-> On Jan 15, 2019, at 4:11 PM, Gustavo A. R. Silva <gustavo@embeddedor.com> wrote:
-> 
->> One of the more common cases of allocation size calculations is finding
->> the size of a structure that has a zero-sized array at the end, along
->> with memory for some number of elements for that array. For example:
->>
->> struct foo {
->>     int stuff;
->>     struct boo entry[];
->> };
->>
->> instance = kmalloc(sizeof(struct foo) + count * sizeof(struct boo), GFP_KERNEL);
->>
->> Instead of leaving these open-coded and prone to type mistakes, we can
->> now use the new struct_size() helper:
->>
->> instance = kmalloc(struct_size(instance, entry, count), GFP_KERNEL);
->>
->> This code was detected with the help of Coccinelle.
->>
->> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
-> 
-> Reviewed-by: Chuck Lever <chuck.lever@oracle.com>
-> 
+Hi!
 
-Thank you, Chuck.
---
-Gustavo
+> >+The 24-bit RGB value passed in follows the pattern 0xXXRRGGBB
+> >+XX - Do not care ignored by the driver
+> >+RR - is the 8 bit Red LED value
+> >+GG - is the 8 bit Green LED value
+> >+BB - is the 8 bit Blue LED value
+> >+
+> >+Example:
+> >+LED module output 4 of the LP5024 will be a yellow color:
+> >+echo 0xe6de00 > /sys/class/leds/lp5024\:led4_mod/color
+> >+
+> >+LED module output 4 of the LP5024 will be dimmed 50%:
+> >+echo 0x80 > /sys/class/leds/lp5024\:led4_mod/brightness
+> >+
+> >+LED banked RGBs of the LP5036 will be a white color:
+> >+echo 0xffffff > /sys/class/leds/lp5036\:led_banked/color
+>=20
+> This part with example cans remain in Documentation/leds if you
+> >like.
 
-> 
->> ---
->> net/sunrpc/xprtrdma/svc_rdma_rw.c | 3 +--
->> 1 file changed, 1 insertion(+), 2 deletions(-)
->>
->> diff --git a/net/sunrpc/xprtrdma/svc_rdma_rw.c b/net/sunrpc/xprtrdma/svc_rdma_rw.c
->> index dc1951759a8e..cad37c2122ab 100644
->> --- a/net/sunrpc/xprtrdma/svc_rdma_rw.c
->> +++ b/net/sunrpc/xprtrdma/svc_rdma_rw.c
->> @@ -64,8 +64,7 @@ svc_rdma_get_rw_ctxt(struct svcxprt_rdma *rdma, unsigned int sges)
->> 		spin_unlock(&rdma->sc_rw_ctxt_lock);
->> 	} else {
->> 		spin_unlock(&rdma->sc_rw_ctxt_lock);
->> -		ctxt = kmalloc(sizeof(*ctxt) +
->> -			       SG_CHUNK_SIZE * sizeof(struct scatterlist),
->> +		ctxt = kmalloc(struct_size(ctxt, rw_first_sgl, SG_CHUNK_SIZE),
->> 			       GFP_KERNEL);
->> 		if (!ctxt)
->> 			goto out;
->> -- 
->> 2.20.1
-> 
-> --
-> Chuck Lever
-> 
-> 
-> 
+Does it actually work like that on hardware?
+
+Is it supposed to support "normal" RGB colors as seen on monitors?
+
+Because 100% PWM on all channels does not result in white on hardware
+I have.
+
+> >+	} else {
+> >+		led_offset =3D (led->led_number * 3);
+> >+		red_reg =3D priv->mix_out0_reg + led_offset;
+> >+		green_reg =3D priv->mix_out0_reg + led_offset + 1;
+> >+		blue_reg =3D priv->mix_out0_reg + led_offset + 2;
+> >+	}
+> >+
+> >+	red_val =3D (mix_value & 0xff0000) >> 16;
+> >+	green_val =3D (mix_value & 0xff00) >> 8;
+> >+	blue_val =3D (mix_value & 0xff);
+>=20
+> I've been rather thinking about space separated list of decimal
+> "red green blue" values, but maybe this way it will be less
+> controversial. Let's if there will be other opinions.
+
+We support maximum brightness > 255, so space separated is certainly
+better option than this.
+
+But...
+
+I believe we should have a reasonable design before we do something
+like this. There's no guarantee someone will not use lp50xx with just
+the white LEDs for example. How will this work? Plus existing hardware
+already uses three separate LEDs for RGB LED. Why not provide same
+interface?
+
+(Oh and don't try to say "sysfs is slow", without numbers).
+
+Thanks,
+									Pavel
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
+
+--qMm9M+Fa2AknHoGS
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEARECAAYFAlw+XR8ACgkQMOfwapXb+vJpeACgl+GMGYg39Ygx3SRgpWe4Spwf
+wR0An32yc4KI6RpcAkpVt/y8qHFPfuXY
+=FRYS
+-----END PGP SIGNATURE-----
+
+--qMm9M+Fa2AknHoGS--
