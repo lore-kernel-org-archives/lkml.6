@@ -7,46 +7,46 @@ X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F29C5C43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 16:43:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 478A6C43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 16:43:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C17AF20657
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 16:43:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 17F0720645
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 16:43:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547570608;
-	bh=93WX4TOCPgBj9p/rFFtnj8oza61D3DzqNo7cKx1tX6o=;
+	s=default; t=1547570613;
+	bh=nCgdScAdDbWYzXlDo8sIpkBpb6q1MwMAzrPom4O2RWI=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=gfNcbtNqcyMBlGbTpYRoUcWxSXWzw6rbGE1WlRu02dfVqtmRoORtlrxkbEAiBm6tD
-	 vJ9isXCiGtfn4wKeTaqlKVZ+/eyU2llbK9UosHrs/IJZuZj2isqaE6+IaU9cPwyvWG
-	 LBWEVpo2AbmnSYLyTNLgmuZWzBwOzCYoi8B4sKKk=
+	b=dC/ZSx30xmwhNrvG//aJrAFJLJeCDAS1Js70kB8dkPc4w8dRxSJAG1N2zGow7/YEI
+	 ev1CIuS6h3xZOwEm296waw3f8ALjFT4iaZc7B8/T3yYRB9z9CoBnvMe4ns16hQtrCV
+	 ZgytkT8K1FwrymmVnJd8GwNbAb4LOkV9dFZVFqnU=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733248AbfAOQn1 (ORCPT
+        id S1733262AbfAOQnb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 15 Jan 2019 11:43:27 -0500
-Received: from mail.kernel.org ([198.145.29.99]:32878 "EHLO mail.kernel.org"
+        Tue, 15 Jan 2019 11:43:31 -0500
+Received: from mail.kernel.org ([198.145.29.99]:32964 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1733191AbfAOQnZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Jan 2019 11:43:25 -0500
+        id S1733247AbfAOQn1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 Jan 2019 11:43:27 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3FC662054F;
-        Tue, 15 Jan 2019 16:43:24 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D5C9E2054F;
+        Tue, 15 Jan 2019 16:43:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547570604;
-        bh=93WX4TOCPgBj9p/rFFtnj8oza61D3DzqNo7cKx1tX6o=;
+        s=default; t=1547570607;
+        bh=nCgdScAdDbWYzXlDo8sIpkBpb6q1MwMAzrPom4O2RWI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ddNcLwJj+RjhGHHI9tr+D4DVXxe6uAcKE0XvZOwmj0cXsjt78eE1JtjEYa/wz/82d
-         zuWMhXg1kI6FjN77NXI3p8D15uXM9sw5+2MNmawxrV35+nJGzL4TTC4QsJEjEzrK13
-         g7h0ZMwhwvVzDGa4m+6GlfuqDTL/Ahs7j3+YUn1c=
+        b=EEehAGjo7ablwLm8CUAFZnyjAo9bnlB2mx5xSUyi9Io50W5djEo/jiq0R8YAnGY0H
+         JPBrPF9vcTGPKt3E8aFO2sxKg8IC6UqLSr5QsqWxBhkw3/PSv4emn5kPUY2FjpvIUC
+         qMTSH4SBe+dp3uagylbwQ6Jmz/ixgfIVJJdEins0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Theodore Tso <tytso@mit.edu>,
-        stable@kernel.org
-Subject: [PATCH 4.19 42/50] ext4: track writeback errors using the generic tracking infrastructure
-Date:   Tue, 15 Jan 2019 17:36:18 +0100
-Message-Id: <20190115154912.323209023@linuxfoundation.org>
+        Dan Carpenter <dan.carpenter@oracle.com>, stable@kernel.org
+Subject: [PATCH 4.19 43/50] ext4: fix special inode number checks in __ext4_iget()
+Date:   Tue, 15 Jan 2019 17:36:19 +0100
+Message-Id: <20190115154912.377329877@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190115154909.933241945@linuxfoundation.org>
 References: <20190115154909.933241945@linuxfoundation.org>
@@ -67,31 +67,35 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Theodore Ts'o <tytso@mit.edu>
 
-commit 95cb67138746451cc84cf8e516e14989746e93b0 upstream.
+commit 191ce17876c9367819c4b0a25b503c0f6d9054d8 upstream.
 
-We already using mapping_set_error() in fs/ext4/page_io.c, so all we
-need to do is to use file_check_and_advance_wb_err() when handling
-fsync() requests in ext4_sync_file().
+The check for special (reserved) inode number checks in __ext4_iget()
+was broken by commit 8a363970d1dc: ("ext4: avoid declaring fs
+inconsistent due to invalid file handles").  This was caused by a
+botched reversal of the sense of the flag now known as
+EXT4_IGET_SPECIAL (when it was previously named EXT4_IGET_NORMAL).
+Fix the logic appropriately.
 
+Fixes: 8a363970d1dc ("ext4: avoid declaring fs inconsistent...")
 Signed-off-by: Theodore Ts'o <tytso@mit.edu>
+Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
 Cc: stable@kernel.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/ext4/fsync.c |    3 +++
- 1 file changed, 3 insertions(+)
+ fs/ext4/inode.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/fs/ext4/fsync.c
-+++ b/fs/ext4/fsync.c
-@@ -164,6 +164,9 @@ int ext4_sync_file(struct file *file, lo
- 			ret = err;
- 	}
- out:
-+	err = file_check_and_advance_wb_err(file);
-+	if (ret == 0)
-+		ret = err;
- 	trace_ext4_sync_file_exit(inode, ret);
- 	return ret;
- }
+--- a/fs/ext4/inode.c
++++ b/fs/ext4/inode.c
+@@ -4803,7 +4803,7 @@ struct inode *__ext4_iget(struct super_b
+ 	gid_t i_gid;
+ 	projid_t i_projid;
+ 
+-	if (((flags & EXT4_IGET_NORMAL) &&
++	if ((!(flags & EXT4_IGET_SPECIAL) &&
+ 	     (ino < EXT4_FIRST_INO(sb) && ino != EXT4_ROOT_INO)) ||
+ 	    (ino < EXT4_ROOT_INO) ||
+ 	    (ino > le32_to_cpu(EXT4_SB(sb)->s_es->s_inodes_count))) {
 
 
