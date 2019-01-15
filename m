@@ -2,50 +2,51 @@ Return-Path: <SRS0=RZO6=PX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BC56DC43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 16:58:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CAE90C43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 16:58:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 82CB920645
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 16:58:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9909320645
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 16:58:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547571529;
-	bh=l1WcgSNUy3IcDQQPeVvEuQm5u8gKak/cOiIj/SFoa+g=;
+	s=default; t=1547571537;
+	bh=wSNuL6bGTQezeWqrRDKAMEj31y8Wd9U/OSUbRywJJIc=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=1jlAQOK+B1okwRC0yS7vvY/11m7BWPDVfu4IHVfxRBy/tB1uUdaq4ZftZd10+dDPv
-	 YoOXoTlIVm9Rq5smf4mWY4VF+VdNUSo/cddtNi+kSbSmfFTINIZ4DVoj+SOvKRriyv
-	 0Xr5jABu8InzkWGT5OzoWUtzLd+3skUXoAxiLH68=
+	b=Rgqppq5v8hKNY/ZwZrgZRWox7ZFeWco0P/aXtVUSMYKV/uozOr54RiENDddedILkG
+	 KqjSESCDD4GBWr6ijseenW4IyvK1Pbn6G+tW31xqlYYQrTlfN9MxPARwVLoaQ+ZTnc
+	 WGv9gLiGzGBL8kL5iJ5l2KSd5Mn7IW5qaREIlGQQ=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732439AbfAOQjv (ORCPT
+        id S2388163AbfAOQ6z (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 15 Jan 2019 11:39:51 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55992 "EHLO mail.kernel.org"
+        Tue, 15 Jan 2019 11:58:55 -0500
+Received: from mail.kernel.org ([198.145.29.99]:55930 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732404AbfAOQjs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Jan 2019 11:39:48 -0500
+        id S1728643AbfAOQjp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 Jan 2019 11:39:45 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EBBC72054F;
-        Tue, 15 Jan 2019 16:39:46 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3A6FE2054F;
+        Tue, 15 Jan 2019 16:39:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547570387;
-        bh=l1WcgSNUy3IcDQQPeVvEuQm5u8gKak/cOiIj/SFoa+g=;
+        s=default; t=1547570384;
+        bh=wSNuL6bGTQezeWqrRDKAMEj31y8Wd9U/OSUbRywJJIc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=OAgQaKyHoIUT9nKSdIyuATIQ26/m55ZAYAM9jqth9XP27YQJplg+K3xGSAkgBMhRT
-         g4P9bqynPoH+owQ3CEYea1jACS7caq34D7F47ODE53UiL9h+8Q92ORUPOdIsUbnjDB
-         GArzK9pc3AeNEY1lFWOCuGtFlgH8Pzqy84MFTV4o=
+        b=TgJmYPfG/ZolKpOSHx++xgisjkRXVL5sbPWL7o0Mr1K8NwbzvVXosr6z3DWWxfzgq
+         vjvdIjJIDE+gp0Ot5PnwclhMO5xWOOi3nCOYKFdMNCu1ndOqAO9iWBiQuGvCPeSgqc
+         vO0cF8Mnac2PHNGmK55H5iTEKLWrNoa0NA9RzkUk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jack Stocker <jackstocker.93@gmail.com>
-Subject: [PATCH 4.9 07/16] USB: Add USB_QUIRK_DELAY_CTRL_MSG quirk for Corsair K70 RGB
-Date:   Tue, 15 Jan 2019 17:35:50 +0100
-Message-Id: <20190115154849.013489229@linuxfoundation.org>
+        stable@vger.kernel.org, Icenowy Zheng <icenowy@aosc.io>,
+        Alan Stern <stern@rowland.harvard.edu>
+Subject: [PATCH 4.9 06/16] USB: storage: add quirk for SMI SM3350
+Date:   Tue, 15 Jan 2019 17:35:49 +0100
+Message-Id: <20190115154848.926819086@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190115154848.164648613@linuxfoundation.org>
 References: <20190115154848.164648613@linuxfoundation.org>
@@ -64,40 +65,45 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jack Stocker <jackstocker.93@gmail.com>
+From: Icenowy Zheng <icenowy@aosc.io>
 
-commit 3483254b89438e60f719937376c5e0ce2bc46761 upstream.
+commit 0a99cc4b8ee83885ab9f097a3737d1ab28455ac0 upstream.
 
-To match the Corsair Strafe RGB, the Corsair K70 RGB also requires
-USB_QUIRK_DELAY_CTRL_MSG to completely resolve boot connection issues
-discussed here: https://github.com/ckb-next/ckb-next/issues/42.
-Otherwise roughly 1 in 10 boots the keyboard will fail to be detected.
+The SMI SM3350 USB-UFS bridge controller cannot handle long sense request
+correctly and will make the chip refuse to do read/write when requested
+long sense.
 
-Patch that applied delay control quirk for Corsair Strafe RGB:
-cb88a0588717 ("usb: quirks: add control message delay for 1b1c:1b20")
+Add a bad sense quirk for it.
 
-Previous K70 RGB patch to add delay-init quirk:
-7a1646d92257 ("Add delay-init quirk for Corsair K70 RGB keyboards")
-
-Signed-off-by: Jack Stocker <jackstocker.93@gmail.com>
+Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
 Cc: stable <stable@vger.kernel.org>
+Acked-by: Alan Stern <stern@rowland.harvard.edu>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/usb/core/quirks.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/usb/storage/unusual_devs.h |   12 ++++++++++++
+ 1 file changed, 12 insertions(+)
 
---- a/drivers/usb/core/quirks.c
-+++ b/drivers/usb/core/quirks.c
-@@ -240,7 +240,8 @@ static const struct usb_device_id usb_qu
- 			USB_QUIRK_LINEAR_UFRAME_INTR_BINTERVAL },
+--- a/drivers/usb/storage/unusual_devs.h
++++ b/drivers/usb/storage/unusual_devs.h
+@@ -1285,6 +1285,18 @@ UNUSUAL_DEV( 0x090c, 0x1132, 0x0000, 0xf
+ 		US_FL_FIX_CAPACITY ),
  
- 	/* Corsair K70 RGB */
--	{ USB_DEVICE(0x1b1c, 0x1b13), .driver_info = USB_QUIRK_DELAY_INIT },
-+	{ USB_DEVICE(0x1b1c, 0x1b13), .driver_info = USB_QUIRK_DELAY_INIT |
-+	  USB_QUIRK_DELAY_CTRL_MSG },
- 
- 	/* Corsair Strafe */
- 	{ USB_DEVICE(0x1b1c, 0x1b15), .driver_info = USB_QUIRK_DELAY_INIT |
+ /*
++ * Reported by Icenowy Zheng <icenowy@aosc.io>
++ * The SMI SM3350 USB-UFS bridge controller will enter a wrong state
++ * that do not process read/write command if a long sense is requested,
++ * so force to use 18-byte sense.
++ */
++UNUSUAL_DEV(  0x090c, 0x3350, 0x0000, 0xffff,
++		"SMI",
++		"SM3350 UFS-to-USB-Mass-Storage bridge",
++		USB_SC_DEVICE, USB_PR_DEVICE, NULL,
++		US_FL_BAD_SENSE ),
++
++/*
+  * Reported by Paul Hartman <paul.hartman+linux@gmail.com>
+  * This card reader returns "Illegal Request, Logical Block Address
+  * Out of Range" for the first READ(10) after a new card is inserted.
 
 
