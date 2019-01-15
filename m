@@ -2,204 +2,595 @@ Return-Path: <SRS0=RZO6=PX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	UNWANTED_LANGUAGE_BODY,USER_AGENT_GIT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-12.0 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CC82CC43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 10:10:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C8E23C43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 10:10:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9700F20651
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 10:10:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 742B120651
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 10:10:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728287AbfAOKKX (ORCPT
+        id S1728477AbfAOKK2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 15 Jan 2019 05:10:23 -0500
-Received: from mx0a-00010702.pphosted.com ([148.163.156.75]:42854 "EHLO
-        mx0b-00010702.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726011AbfAOKKW (ORCPT
+        Tue, 15 Jan 2019 05:10:28 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:38811 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726011AbfAOKK1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Jan 2019 05:10:22 -0500
-Received: from pps.filterd (m0098780.ppops.net [127.0.0.1])
-        by mx0a-00010702.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x0F9qWAE030342;
-        Tue, 15 Jan 2019 04:10:21 -0600
-Received: from ni.com (skprod2.natinst.com [130.164.80.23])
-        by mx0a-00010702.pphosted.com with ESMTP id 2pyemuyaeg-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 15 Jan 2019 04:10:20 -0600
-Received: from us-aus-exch1.ni.corp.natinst.com (us-aus-exch1.ni.corp.natinst.com [130.164.68.11])
-        by us-aus-skprod2.natinst.com (8.16.0.27/8.16.0.27) with ESMTPS id x0FAAK8W024493
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT);
-        Tue, 15 Jan 2019 04:10:20 -0600
-Received: from us-aus-exch5.ni.corp.natinst.com (130.164.68.15) by
- us-aus-exch1.ni.corp.natinst.com (130.164.68.11) with Microsoft SMTP Server
- (TLS) id 15.0.1395.4; Tue, 15 Jan 2019 04:10:19 -0600
-Received: from us-aus-exhub2.ni.corp.natinst.com (130.164.68.32) by
- us-aus-exch5.ni.corp.natinst.com (130.164.68.15) with Microsoft SMTP Server
- (TLS) id 15.0.1395.4; Tue, 15 Jan 2019 04:10:19 -0600
-Received: from my-pen-rd24.apac.corp.natinst.com (130.164.49.7) by
- us-aus-exhub2.ni.corp.natinst.com (130.164.68.32) with Microsoft SMTP Server
- id 15.0.1395.4 via Frontend Transport; Tue, 15 Jan 2019 04:10:18 -0600
-From:   Guan Yung Tseng <guan.yung.tseng@ni.com>
-To:     <gregkh@linuxfoundation.org>
-CC:     <linux-serial@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        "Guan Yung Tseng" <guan.yung.tseng@ni.com>
-Subject: [PATCH v2] 8250_pci.c: Update NI specific devices class to multi serial
-Date:   Tue, 15 Jan 2019 18:10:05 +0800
-Message-ID: <1547547005-2149-1-git-send-email-guan.yung.tseng@ni.com>
-X-Mailer: git-send-email 2.7.4
+        Tue, 15 Jan 2019 05:10:27 -0500
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x0FA9xYx2469296
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+        Tue, 15 Jan 2019 02:09:59 -0800
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x0FA9xX12469293;
+        Tue, 15 Jan 2019 02:09:59 -0800
+Date:   Tue, 15 Jan 2019 02:09:59 -0800
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Lianbo Jiang <tipbot@zytor.com>
+Message-ID: <tip-f263245a0ce2c4e23b89a58fa5f7dfc048e11929@git.kernel.org>
+Cc:     bp@suse.de, dyoung@redhat.com, vgoyal@redhat.com, hpa@zytor.com,
+        mingo@kernel.org, bhe@redhat.com, x86@kernel.org, corbet@lwn.net,
+        linux-kernel@vger.kernel.org, akpm@linux-foundation.org,
+        tglx@linutronix.de, lijiang@redhat.com
+Reply-To: vgoyal@redhat.com, bp@suse.de, dyoung@redhat.com,
+          akpm@linux-foundation.org, tglx@linutronix.de,
+          lijiang@redhat.com, corbet@lwn.net, linux-kernel@vger.kernel.org,
+          x86@kernel.org, hpa@zytor.com, bhe@redhat.com, mingo@kernel.org
+In-Reply-To: <20190110121944.6050-2-lijiang@redhat.com>
+References: <20190110121944.6050-2-lijiang@redhat.com>
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:x86/kdump] kdump: Document kernel data exported in the
+ vmcoreinfo note
+Git-Commit-ID: f263245a0ce2c4e23b89a58fa5f7dfc048e11929
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-01-15_03:,,
- signatures=0
-X-Proofpoint-Spam-Reason: safe
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Modified NI devices class to PCI_CLASS_COMMUNICATION_MULTISERIAL.
-The reason of doing this is because all NI multi port serial cards
-use PCI_CLASS_COMMUNICATION_OTHER class and thus fail the
-serial_pci_is_class_communication test added in the commit 7d8905d06405
-("serial: 8250_pci: Enable device after we check black list").
+Commit-ID:  f263245a0ce2c4e23b89a58fa5f7dfc048e11929
+Gitweb:     https://git.kernel.org/tip/f263245a0ce2c4e23b89a58fa5f7dfc048e11929
+Author:     Lianbo Jiang <lijiang@redhat.com>
+AuthorDate: Thu, 10 Jan 2019 20:19:43 +0800
+Committer:  Borislav Petkov <bp@suse.de>
+CommitDate: Tue, 15 Jan 2019 11:05:28 +0100
 
-Signed-off-by: Guan Yung Tseng <guan.yung.tseng@ni.com>
+kdump: Document kernel data exported in the vmcoreinfo note
+
+Document data exported in vmcoreinfo and briefly describe its use by
+userspace tools.
+
+ [ bp: heavily massage and redact the text. ]
+
+Suggested-by: Borislav Petkov <bp@suse.de>
+Signed-off-by: Lianbo Jiang <lijiang@redhat.com>
+Signed-off-by: Borislav Petkov <bp@suse.de>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Baoquan He <bhe@redhat.com>
+Cc: Dave Young <dyoung@redhat.com>
+Cc: Jonathan Corbet <corbet@lwn.net>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Vivek Goyal <vgoyal@redhat.com>
+Cc: anderson@redhat.com
+Cc: k-hagio@ab.jp.nec.com
+Cc: kexec@lists.infradead.org
+Cc: linux-doc@vger.kernel.org
+Cc: mingo@redhat.com
+Cc: x86-ml <x86@kernel.org>
+Link: https://lkml.kernel.org/r/20190110121944.6050-2-lijiang@redhat.com
 ---
-Changes in v2:
--  added comment to pci_ni_probe function
+ Documentation/kdump/vmcoreinfo.txt | 495 +++++++++++++++++++++++++++++++++++++
+ 1 file changed, 495 insertions(+)
 
- drivers/tty/serial/8250/8250_pci.c | 25 +++++++++++++++++++++++++
- 1 file changed, 25 insertions(+)
-
-diff --git a/drivers/tty/serial/8250/8250_pci.c b/drivers/tty/serial/8250/8250_pci.c
-index 4986b4a..1f91858 100644
---- a/drivers/tty/serial/8250/8250_pci.c
-+++ b/drivers/tty/serial/8250/8250_pci.c
-@@ -663,6 +663,18 @@ static int pci_xircom_init(struct pci_dev *dev)
- 	return 0;
- }
- 
-+/*
-+ * NI Serial devices incorrectly identify themselves
-+ * PCI_CLASS_COMMUNICATION_OTHER, instead of what
-+ * they really are: PCI_CLASS_COMMUNICATION_MULTISERIAL
-+ */
-+static int pci_ni_probe(struct pci_dev *dev)
-+{
-+	dev->class = PCI_CLASS_COMMUNICATION_MULTISERIAL << 8 |
-+			(dev->class & 0xff);
-+	return 0;
-+}
+diff --git a/Documentation/kdump/vmcoreinfo.txt b/Documentation/kdump/vmcoreinfo.txt
+new file mode 100644
+index 000000000000..bb94a4bd597a
+--- /dev/null
++++ b/Documentation/kdump/vmcoreinfo.txt
+@@ -0,0 +1,495 @@
++================================================================
++			VMCOREINFO
++================================================================
 +
- static int pci_ni8420_init(struct pci_dev *dev)
- {
- 	void __iomem *p;
-@@ -1850,6 +1862,7 @@ static struct pci_serial_quirk pci_serial_quirks[] __refdata = {
- 		.device		= PCI_DEVICE_ID_NI_PCI23216,
- 		.subvendor	= PCI_ANY_ID,
- 		.subdevice	= PCI_ANY_ID,
-+		.probe		= pci_ni_probe,
- 		.init		= pci_ni8420_init,
- 		.setup		= pci_default_setup,
- 		.exit		= pci_ni8420_exit,
-@@ -1859,6 +1872,7 @@ static struct pci_serial_quirk pci_serial_quirks[] __refdata = {
- 		.device		= PCI_DEVICE_ID_NI_PCI2328,
- 		.subvendor	= PCI_ANY_ID,
- 		.subdevice	= PCI_ANY_ID,
-+		.probe		= pci_ni_probe,
- 		.init		= pci_ni8420_init,
- 		.setup		= pci_default_setup,
- 		.exit		= pci_ni8420_exit,
-@@ -1868,6 +1882,7 @@ static struct pci_serial_quirk pci_serial_quirks[] __refdata = {
- 		.device		= PCI_DEVICE_ID_NI_PCI2324,
- 		.subvendor	= PCI_ANY_ID,
- 		.subdevice	= PCI_ANY_ID,
-+		.probe		= pci_ni_probe,
- 		.init		= pci_ni8420_init,
- 		.setup		= pci_default_setup,
- 		.exit		= pci_ni8420_exit,
-@@ -1877,6 +1892,7 @@ static struct pci_serial_quirk pci_serial_quirks[] __refdata = {
- 		.device		= PCI_DEVICE_ID_NI_PCI2322,
- 		.subvendor	= PCI_ANY_ID,
- 		.subdevice	= PCI_ANY_ID,
-+		.probe		= pci_ni_probe,
- 		.init		= pci_ni8420_init,
- 		.setup		= pci_default_setup,
- 		.exit		= pci_ni8420_exit,
-@@ -1886,6 +1902,7 @@ static struct pci_serial_quirk pci_serial_quirks[] __refdata = {
- 		.device		= PCI_DEVICE_ID_NI_PCI2324I,
- 		.subvendor	= PCI_ANY_ID,
- 		.subdevice	= PCI_ANY_ID,
-+		.probe		= pci_ni_probe,
- 		.init		= pci_ni8420_init,
- 		.setup		= pci_default_setup,
- 		.exit		= pci_ni8420_exit,
-@@ -1895,6 +1912,7 @@ static struct pci_serial_quirk pci_serial_quirks[] __refdata = {
- 		.device		= PCI_DEVICE_ID_NI_PCI2322I,
- 		.subvendor	= PCI_ANY_ID,
- 		.subdevice	= PCI_ANY_ID,
-+		.probe		= pci_ni_probe,
- 		.init		= pci_ni8420_init,
- 		.setup		= pci_default_setup,
- 		.exit		= pci_ni8420_exit,
-@@ -1904,6 +1922,7 @@ static struct pci_serial_quirk pci_serial_quirks[] __refdata = {
- 		.device		= PCI_DEVICE_ID_NI_PXI8420_23216,
- 		.subvendor	= PCI_ANY_ID,
- 		.subdevice	= PCI_ANY_ID,
-+		.probe		= pci_ni_probe,
- 		.init		= pci_ni8420_init,
- 		.setup		= pci_default_setup,
- 		.exit		= pci_ni8420_exit,
-@@ -1913,6 +1932,7 @@ static struct pci_serial_quirk pci_serial_quirks[] __refdata = {
- 		.device		= PCI_DEVICE_ID_NI_PXI8420_2328,
- 		.subvendor	= PCI_ANY_ID,
- 		.subdevice	= PCI_ANY_ID,
-+		.probe		= pci_ni_probe,
- 		.init		= pci_ni8420_init,
- 		.setup		= pci_default_setup,
- 		.exit		= pci_ni8420_exit,
-@@ -1922,6 +1942,7 @@ static struct pci_serial_quirk pci_serial_quirks[] __refdata = {
- 		.device		= PCI_DEVICE_ID_NI_PXI8420_2324,
- 		.subvendor	= PCI_ANY_ID,
- 		.subdevice	= PCI_ANY_ID,
-+		.probe		= pci_ni_probe,
- 		.init		= pci_ni8420_init,
- 		.setup		= pci_default_setup,
- 		.exit		= pci_ni8420_exit,
-@@ -1931,6 +1952,7 @@ static struct pci_serial_quirk pci_serial_quirks[] __refdata = {
- 		.device		= PCI_DEVICE_ID_NI_PXI8420_2322,
- 		.subvendor	= PCI_ANY_ID,
- 		.subdevice	= PCI_ANY_ID,
-+		.probe		= pci_ni_probe,
- 		.init		= pci_ni8420_init,
- 		.setup		= pci_default_setup,
- 		.exit		= pci_ni8420_exit,
-@@ -1940,6 +1962,7 @@ static struct pci_serial_quirk pci_serial_quirks[] __refdata = {
- 		.device		= PCI_DEVICE_ID_NI_PXI8422_2324,
- 		.subvendor	= PCI_ANY_ID,
- 		.subdevice	= PCI_ANY_ID,
-+		.probe		= pci_ni_probe,
- 		.init		= pci_ni8420_init,
- 		.setup		= pci_default_setup,
- 		.exit		= pci_ni8420_exit,
-@@ -1949,6 +1972,7 @@ static struct pci_serial_quirk pci_serial_quirks[] __refdata = {
- 		.device		= PCI_DEVICE_ID_NI_PXI8422_2322,
- 		.subvendor	= PCI_ANY_ID,
- 		.subdevice	= PCI_ANY_ID,
-+		.probe		= pci_ni_probe,
- 		.init		= pci_ni8420_init,
- 		.setup		= pci_default_setup,
- 		.exit		= pci_ni8420_exit,
-@@ -1958,6 +1982,7 @@ static struct pci_serial_quirk pci_serial_quirks[] __refdata = {
- 		.device		= PCI_ANY_ID,
- 		.subvendor	= PCI_ANY_ID,
- 		.subdevice	= PCI_ANY_ID,
-+		.probe		= pci_ni_probe,
- 		.init		= pci_ni8430_init,
- 		.setup		= pci_ni8430_setup,
- 		.exit		= pci_ni8430_exit,
--- 
-2.7.4
-
++===========
++What is it?
++===========
++
++VMCOREINFO is a special ELF note section. It contains various
++information from the kernel like structure size, page size, symbol
++values, field offsets, etc. These data are packed into an ELF note
++section and used by user-space tools like crash and makedumpfile to
++analyze a kernel's memory layout.
++
++================
++Common variables
++================
++
++init_uts_ns.name.release
++------------------------
++
++The version of the Linux kernel. Used to find the corresponding source
++code from which the kernel has been built. For example, crash uses it to
++find the corresponding vmlinux in order to process vmcore.
++
++PAGE_SIZE
++---------
++
++The size of a page. It is the smallest unit of data used by the memory
++management facilities. It is usually 4096 bytes of size and a page is
++aligned on 4096 bytes. Used for computing page addresses.
++
++init_uts_ns
++-----------
++
++The UTS namespace which is used to isolate two specific elements of the
++system that relate to the uname(2) system call. It is named after the
++data structure used to store information returned by the uname(2) system
++call.
++
++User-space tools can get the kernel name, host name, kernel release
++number, kernel version, architecture name and OS type from it.
++
++node_online_map
++---------------
++
++An array node_states[N_ONLINE] which represents the set of online nodes
++in a system, one bit position per node number. Used to keep track of
++which nodes are in the system and online.
++
++swapper_pg_dir
++-------------
++
++The global page directory pointer of the kernel. Used to translate
++virtual to physical addresses.
++
++_stext
++------
++
++Defines the beginning of the text section. In general, _stext indicates
++the kernel start address. Used to convert a virtual address from the
++direct kernel map to a physical address.
++
++vmap_area_list
++--------------
++
++Stores the virtual area list. makedumpfile gets the vmalloc start value
++from this variable and its value is necessary for vmalloc translation.
++
++mem_map
++-------
++
++Physical addresses are translated to struct pages by treating them as
++an index into the mem_map array. Right-shifting a physical address
++PAGE_SHIFT bits converts it into a page frame number which is an index
++into that mem_map array.
++
++Used to map an address to the corresponding struct page.
++
++contig_page_data
++----------------
++
++Makedumpfile gets the pglist_data structure from this symbol, which is
++used to describe the memory layout.
++
++User-space tools use this to exclude free pages when dumping memory.
++
++mem_section|(mem_section, NR_SECTION_ROOTS)|(mem_section, section_mem_map)
++--------------------------------------------------------------------------
++
++The address of the mem_section array, its length, structure size, and
++the section_mem_map offset.
++
++It exists in the sparse memory mapping model, and it is also somewhat
++similar to the mem_map variable, both of them are used to translate an
++address.
++
++page
++----
++
++The size of a page structure. struct page is an important data structure
++and it is widely used to compute contiguous memory.
++
++pglist_data
++-----------
++
++The size of a pglist_data structure. This value is used to check if the
++pglist_data structure is valid. It is also used for checking the memory
++type.
++
++zone
++----
++
++The size of a zone structure. This value is used to check if the zone
++structure has been found. It is also used for excluding free pages.
++
++free_area
++---------
++
++The size of a free_area structure. It indicates whether the free_area
++structure is valid or not. Useful when excluding free pages.
++
++list_head
++---------
++
++The size of a list_head structure. Used when iterating lists in a
++post-mortem analysis session.
++
++nodemask_t
++----------
++
++The size of a nodemask_t type. Used to compute the number of online
++nodes.
++
++(page, flags|_refcount|mapping|lru|_mapcount|private|compound_dtor|
++       compound_order|compound_head)
++-------------------------------------------------------------------
++
++User-space tools compute their values based on the offset of these
++variables. The variables are used when excluding unnecessary pages.
++
++(pglist_data, node_zones|nr_zones|node_mem_map|node_start_pfn|node_
++              spanned_pages|node_id)
++-------------------------------------------------------------------
++
++On NUMA machines, each NUMA node has a pg_data_t to describe its memory
++layout. On UMA machines there is a single pglist_data which describes the
++whole memory.
++
++These values are used to check the memory type and to compute the
++virtual address for memory map.
++
++(zone, free_area|vm_stat|spanned_pages)
++---------------------------------------
++
++Each node is divided into a number of blocks called zones which
++represent ranges within memory. A zone is described by a structure zone.
++
++User-space tools compute required values based on the offset of these
++variables.
++
++(free_area, free_list)
++----------------------
++
++Offset of the free_list's member. This value is used to compute the number
++of free pages.
++
++Each zone has a free_area structure array called free_area[MAX_ORDER].
++The free_list represents a linked list of free page blocks.
++
++(list_head, next|prev)
++----------------------
++
++Offsets of the list_head's members. list_head is used to define a
++circular linked list. User-space tools need these in order to traverse
++lists.
++
++(vmap_area, va_start|list)
++--------------------------
++
++Offsets of the vmap_area's members. They carry vmalloc-specific
++information. Makedumpfile gets the start address of the vmalloc region
++from this.
++
++(zone.free_area, MAX_ORDER)
++---------------------------
++
++Free areas descriptor. User-space tools use this value to iterate the
++free_area ranges. MAX_ORDER is used by the zone buddy allocator.
++
++log_first_idx
++-------------
++
++Index of the first record stored in the buffer log_buf. Used by
++user-space tools to read the strings in the log_buf.
++
++log_buf
++-------
++
++Console output is written to the ring buffer log_buf at index
++log_first_idx. Used to get the kernel log.
++
++log_buf_len
++-----------
++
++log_buf's length.
++
++clear_idx
++---------
++
++The index that the next printk() record to read after the last clear
++command. It indicates the first record after the last SYSLOG_ACTION
++_CLEAR, like issued by 'dmesg -c'. Used by user-space tools to dump
++the dmesg log.
++
++log_next_idx
++------------
++
++The index of the next record to store in the buffer log_buf. Used to
++compute the index of the current buffer position.
++
++printk_log
++----------
++
++The size of a structure printk_log. Used to compute the size of
++messages, and extract dmesg log. It encapsulates header information for
++log_buf, such as timestamp, syslog level, etc.
++
++(printk_log, ts_nsec|len|text_len|dict_len)
++-------------------------------------------
++
++It represents field offsets in struct printk_log. User space tools
++parse it and check whether the values of printk_log's members have been
++changed.
++
++(free_area.free_list, MIGRATE_TYPES)
++------------------------------------
++
++The number of migrate types for pages. The free_list is described by the
++array. Used by tools to compute the number of free pages.
++
++NR_FREE_PAGES
++-------------
++
++On linux-2.6.21 or later, the number of free pages is in
++vm_stat[NR_FREE_PAGES]. Used to get the number of free pages.
++
++PG_lru|PG_private|PG_swapcache|PG_swapbacked|PG_slab|PG_hwpoision
++|PG_head_mask|PAGE_BUDDY_MAPCOUNT_VALUE(~PG_buddy)
++|PAGE_OFFLINE_MAPCOUNT_VALUE(~PG_offline)
++-----------------------------------------------------------------
++
++Page attributes. These flags are used to filter various unnecessary for
++dumping pages.
++
++HUGETLB_PAGE_DTOR
++-----------------
++
++The HUGETLB_PAGE_DTOR flag denotes hugetlbfs pages. Makedumpfile
++excludes these pages.
++
++======
++x86_64
++======
++
++phys_base
++---------
++
++Used to convert the virtual address of an exported kernel symbol to its
++corresponding physical address.
++
++init_top_pgt
++------------
++
++Used to walk through the whole page table and convert virtual addresses
++to physical addresses. The init_top_pgt is somewhat similar to
++swapper_pg_dir, but it is only used in x86_64.
++
++pgtable_l5_enabled
++------------------
++
++User-space tools need to know whether the crash kernel was in 5-level
++paging mode.
++
++node_data
++---------
++
++This is a struct pglist_data array and stores all NUMA nodes
++information. Makedumpfile gets the pglist_data structure from it.
++
++(node_data, MAX_NUMNODES)
++-------------------------
++
++The maximum number of nodes in system.
++
++KERNELOFFSET
++------------
++
++The kernel randomization offset. Used to compute the page offset. If
++KASLR is disabled, this value is zero.
++
++KERNEL_IMAGE_SIZE
++-----------------
++
++Currently unused by Makedumpfile. Used to compute the module virtual
++address by Crash.
++
++sme_mask
++--------
++
++AMD-specific with SME support: it indicates the secure memory encryption
++mask. Makedumpfile tools need to know whether the crash kernel was
++encrypted. If SME is enabled in the first kernel, the crash kernel's
++page table entries (pgd/pud/pmd/pte) contain the memory encryption
++mask. This is used to remove the SME mask and obtain the true physical
++address.
++
++Currently, sme_mask stores the value of the C-bit position. If needed,
++additional SME-relevant info can be placed in that variable.
++
++For example:
++[ misc	        ][ enc bit  ][ other misc SME info       ]
++0000_0000_0000_0000_1000_0000_0000_0000_0000_0000_..._0000
++63   59   55   51   47   43   39   35   31   27   ... 3
++
++======
++x86_32
++======
++
++X86_PAE
++-------
++
++Denotes whether physical address extensions are enabled. It has the cost
++of a higher page table lookup overhead, and also consumes more page
++table space per process. Used to check whether PAE was enabled in the
++crash kernel when converting virtual addresses to physical addresses.
++
++====
++ia64
++====
++
++pgdat_list|(pgdat_list, MAX_NUMNODES)
++-------------------------------------
++
++pg_data_t array storing all NUMA nodes information. MAX_NUMNODES
++indicates the number of the nodes.
++
++node_memblk|(node_memblk, NR_NODE_MEMBLKS)
++------------------------------------------
++
++List of node memory chunks. Filled when parsing the SRAT table to obtain
++information about memory nodes. NR_NODE_MEMBLKS indicates the number of
++node memory chunks.
++
++These values are used to compute the number of nodes the crashed kernel used.
++
++node_memblk_s|(node_memblk_s, start_paddr)|(node_memblk_s, size)
++----------------------------------------------------------------
++
++The size of a struct node_memblk_s and the offsets of the
++node_memblk_s's members. Used to compute the number of nodes.
++
++PGTABLE_3|PGTABLE_4
++-------------------
++
++User-space tools need to know whether the crash kernel was in 3-level or
++4-level paging mode. Used to distinguish the page table.
++
++=====
++ARM64
++=====
++
++VA_BITS
++-------
++
++The maximum number of bits for virtual addresses. Used to compute the
++virtual memory ranges.
++
++kimage_voffset
++--------------
++
++The offset between the kernel virtual and physical mappings. Used to
++translate virtual to physical addresses.
++
++PHYS_OFFSET
++-----------
++
++Indicates the physical address of the start of memory. Similar to
++kimage_voffset, which is used to translate virtual to physical
++addresses.
++
++KERNELOFFSET
++------------
++
++The kernel randomization offset. Used to compute the page offset. If
++KASLR is disabled, this value is zero.
++
++====
++arm
++====
++
++ARM_LPAE
++--------
++
++It indicates whether the crash kernel supports large physical address
++extensions. Used to translate virtual to physical addresses.
++
++====
++s390
++====
++
++lowcore_ptr
++----------
++
++An array with a pointer to the lowcore of every CPU. Used to print the
++psw and all registers information.
++
++high_memory
++-----------
++
++Used to get the vmalloc_start address from the high_memory symbol.
++
++(lowcore_ptr, NR_CPUS)
++----------------------
++
++The maximum number of CPUs.
++
++=======
++powerpc
++=======
++
++
++node_data|(node_data, MAX_NUMNODES)
++-----------------------------------
++
++See above.
++
++contig_page_data
++----------------
++
++See above.
++
++vmemmap_list
++------------
++
++The vmemmap_list maintains the entire vmemmap physical mapping. Used
++to get vmemmap list count and populated vmemmap regions info. If the
++vmemmap address translation information is stored in the crash kernel,
++it is used to translate vmemmap kernel virtual addresses.
++
++mmu_vmemmap_psize
++-----------------
++
++The size of a page. Used to translate virtual to physical addresses.
++
++mmu_psize_defs
++--------------
++
++Page size definitions, i.e. 4k, 64k, or 16M.
++
++Used to make vtop translations.
++
++vmemmap_backing|(vmemmap_backing, list)|(vmemmap_backing, phys)|
++(vmemmap_backing, virt_addr)
++----------------------------------------------------------------
++
++The vmemmap virtual address space management does not have a traditional
++page table to track which virtual struct pages are backed by a physical
++mapping. The virtual to physical mappings are tracked in a simple linked
++list format.
++
++User-space tools need to know the offset of list, phys and virt_addr
++when computing the count of vmemmap regions.
++
++mmu_psize_def|(mmu_psize_def, shift)
++------------------------------------
++
++The size of a struct mmu_psize_def and the offset of mmu_psize_def's
++member.
++
++Used in vtop translations.
++
++==
++sh
++==
++
++node_data|(node_data, MAX_NUMNODES)
++-----------------------------------
++
++See above.
++
++X2TLB
++-----
++
++Indicates whether the crashed kernel enabled SH extended mode.
