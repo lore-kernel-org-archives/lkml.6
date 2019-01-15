@@ -6,46 +6,51 @@ X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ABA03C43444
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 16:41:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A6607C43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 16:41:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6F05820859
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 16:41:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 754372054F
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 16:41:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547570474;
-	bh=YN6T8IXpEQJHUoX6tEa71bP5YOiRns3UYiD+hcD6JXQ=;
+	s=default; t=1547570477;
+	bh=45WexkbCaMA+QXszrKHbrZhhF+DccvXRga10KbJ6nL0=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=qeTxlESBh/ETrltGfgYsvAQgB+sxrPARhvhiGllmjKS7CFq/Ap+aME4HxgjQc2Jir
-	 QRqtwaaK9oCIpY2fhdVY8pocgkFFrPmOuLuoXsr2Xq5JEEmwYkEYseOcYX5SmAcipM
-	 Csyx60sAaN+/THosXOWKJxl7pLIrJfs0/PNMBUYs=
+	b=mvZOqrkuyTwQiFCrvfjLKk/G58BebVRYyWZlYv9ALTqQFd1ZACM+kDNXctEY/mPkw
+	 aOzdWBq79lmo0mn/n09Os4GIZighfEfO1elnRltBHwqZ5o+ChkrBlHGYbtNtt36gvx
+	 Z8QJn+pNRUh1E0CHUUuYwD7hYMkcMKimD4Uy9XDs=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732730AbfAOQlN (ORCPT
+        id S1732742AbfAOQlP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 15 Jan 2019 11:41:13 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57700 "EHLO mail.kernel.org"
+        Tue, 15 Jan 2019 11:41:15 -0500
+Received: from mail.kernel.org ([198.145.29.99]:57822 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732493AbfAOQlF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Jan 2019 11:41:05 -0500
+        id S1732724AbfAOQlL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 Jan 2019 11:41:11 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 52C242054F;
-        Tue, 15 Jan 2019 16:41:04 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6D9DA2054F;
+        Tue, 15 Jan 2019 16:41:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547570464;
-        bh=YN6T8IXpEQJHUoX6tEa71bP5YOiRns3UYiD+hcD6JXQ=;
+        s=default; t=1547570470;
+        bh=45WexkbCaMA+QXszrKHbrZhhF+DccvXRga10KbJ6nL0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=TudbS+scQbJfbUniJGOI0Y8LXZibqtN1XaNgHwWVB/kX78cs2SDRnoFfKMSjYgiW+
-         2+Ajpfx7NpwRR6Jo+wL09+yV3SEtE9s3L5yY97KzNi1XpmroCCovxVM/jLOChh9cPw
-         XG8puiowYlp9DmHR/V0c3Jv4YzsanqXgm1muZkrg=
+        b=2KtnmvcyHoSpUc7HQszDJrr4AJyy+qLF/fMdY9BR3ufQs8ZGnL/tE8XrX472z+lPq
+         9KIUapbvthlUn6s5hu2OtNn7UzBhLHSRTn4wLtBBoyLR9dtnBxp2Aa5rqeJYXQ55CC
+         x8DC38PovzHPwdxHd+zR16vWSeI4WbJRzjh1JOGw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Icenowy Zheng <icenowy@aosc.io>,
-        Alan Stern <stern@rowland.harvard.edu>
-Subject: [PATCH 4.14 11/27] USB: storage: add quirk for SMI SM3350
-Date:   Tue, 15 Jan 2019 17:36:00 +0100
-Message-Id: <20190115154901.897293647@linuxfoundation.org>
+        stable@vger.kernel.org, Christoph Lameter <cl@linux.com>,
+        syzbot+d6ed4ec679652b4fd4e4@syzkaller.appspotmail.com,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Pekka Enberg <penberg@kernel.org>,
+        David Rientjes <rientjes@google.com>,
+        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: [PATCH 4.14 13/27] slab: alien caches must not be initialized if the allocation of the alien cache failed
+Date:   Tue, 15 Jan 2019 17:36:02 +0100
+Message-Id: <20190115154902.028510696@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190115154901.189747728@linuxfoundation.org>
 References: <20190115154901.189747728@linuxfoundation.org>
@@ -64,45 +69,46 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Icenowy Zheng <icenowy@aosc.io>
+From: Christoph Lameter <cl@linux.com>
 
-commit 0a99cc4b8ee83885ab9f097a3737d1ab28455ac0 upstream.
+commit 09c2e76ed734a1d36470d257a778aaba28e86531 upstream.
 
-The SMI SM3350 USB-UFS bridge controller cannot handle long sense request
-correctly and will make the chip refuse to do read/write when requested
-long sense.
+Callers of __alloc_alien() check for NULL.  We must do the same check in
+__alloc_alien_cache to avoid NULL pointer dereferences on allocation
+failures.
 
-Add a bad sense quirk for it.
-
-Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
-Cc: stable <stable@vger.kernel.org>
-Acked-by: Alan Stern <stern@rowland.harvard.edu>
+Link: http://lkml.kernel.org/r/010001680f42f192-82b4e12e-1565-4ee0-ae1f-1e98974906aa-000000@email.amazonses.com
+Fixes: 49dfc304ba241 ("slab: use the lock on alien_cache, instead of the lock on array_cache")
+Fixes: c8522a3a5832b ("Slab: introduce alloc_alien")
+Signed-off-by: Christoph Lameter <cl@linux.com>
+Reported-by: syzbot+d6ed4ec679652b4fd4e4@syzkaller.appspotmail.com
+Reviewed-by: Andrew Morton <akpm@linux-foundation.org>
+Cc: Pekka Enberg <penberg@kernel.org>
+Cc: David Rientjes <rientjes@google.com>
+Cc: Joonsoo Kim <iamjoonsoo.kim@lge.com>
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/usb/storage/unusual_devs.h |   12 ++++++++++++
- 1 file changed, 12 insertions(+)
+ mm/slab.c |    6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
---- a/drivers/usb/storage/unusual_devs.h
-+++ b/drivers/usb/storage/unusual_devs.h
-@@ -1285,6 +1285,18 @@ UNUSUAL_DEV( 0x090c, 0x1132, 0x0000, 0xf
- 		US_FL_FIX_CAPACITY ),
+--- a/mm/slab.c
++++ b/mm/slab.c
+@@ -679,8 +679,10 @@ static struct alien_cache *__alloc_alien
+ 	struct alien_cache *alc = NULL;
  
- /*
-+ * Reported by Icenowy Zheng <icenowy@aosc.io>
-+ * The SMI SM3350 USB-UFS bridge controller will enter a wrong state
-+ * that do not process read/write command if a long sense is requested,
-+ * so force to use 18-byte sense.
-+ */
-+UNUSUAL_DEV(  0x090c, 0x3350, 0x0000, 0xffff,
-+		"SMI",
-+		"SM3350 UFS-to-USB-Mass-Storage bridge",
-+		USB_SC_DEVICE, USB_PR_DEVICE, NULL,
-+		US_FL_BAD_SENSE ),
-+
-+/*
-  * Reported by Paul Hartman <paul.hartman+linux@gmail.com>
-  * This card reader returns "Illegal Request, Logical Block Address
-  * Out of Range" for the first READ(10) after a new card is inserted.
+ 	alc = kmalloc_node(memsize, gfp, node);
+-	init_arraycache(&alc->ac, entries, batch);
+-	spin_lock_init(&alc->lock);
++	if (alc) {
++		init_arraycache(&alc->ac, entries, batch);
++		spin_lock_init(&alc->lock);
++	}
+ 	return alc;
+ }
+ 
 
 
