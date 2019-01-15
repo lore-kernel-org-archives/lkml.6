@@ -2,73 +2,94 @@ Return-Path: <SRS0=RZO6=PX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DF90FC43444
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 13:45:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3999FC43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 13:45:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AE40120866
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 13:45:16 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="bG8rBtal"
+	by mail.kernel.org (Postfix) with ESMTP id 0C55A20866
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 13:45:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1547559959;
+	bh=LYRp5sC/i9SVfDZ5UUI+unE0W0RddiJ3ZBaxhOo+awI=;
+	h=Date:From:To:Subject:References:In-Reply-To:List-ID:From;
+	b=tgWJUuMNYrwrXJ9CZyzCX7aPBAwHj+NB+r3DUXkHimiyKfIdXF6Lkcq1Dl9/FOS6W
+	 rWXAUe/KbVO959j05vtRHXlg0Wwn2YauJt5/YFEm5FuBnkBLWe52bh0rvgLiwJdLJP
+	 cbHt/sd+B0jR6sQzHh4zVwP2JahrRo5fOIVKITXk=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730000AbfAONpP (ORCPT
+        id S1730013AbfAONp5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 15 Jan 2019 08:45:15 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:60372 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726886AbfAONpO (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Jan 2019 08:45:14 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=7zIMozIfpLIlfZhxNasaMCwzLcBBuGWx9uKWQ3qVsiQ=; b=bG8rBtalH6iOh6ASuhrjOfYhn
-        obI+Nd4ksXUK/+kdL1lDV0vKSbMluFmFUcqCUGb4jFrZdrUEEUaw1brpu3AturSipNEpJ2b+c+XyB
-        9pUP9VTiAGAMgRQdVq8IwzChjV5VYuyoeWHD6Ac/YPgYqTE1yuLKP/ZECOenKVzr5EaR0WDeyfarz
-        mCX1roKrwf9iq1Yn+NH9BCbyAB+DbZ87UJVoAuQzGRwDM3Dj2VeJtMUSYESTdrhzA3cj8gypluycI
-        lXs3fGy74zo8DcFuzt/xPQrIwXH09qzWc185uZF2MC+dJls+zXvjE4bhfHWRtWqHpPCdJlp8xWWVA
-        F/idXNR2w==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gjP1l-0007BL-A3; Tue, 15 Jan 2019 13:45:13 +0000
-Date:   Tue, 15 Jan 2019 05:45:13 -0800
-From:   Christoph Hellwig <hch@infradead.org>
-To:     Anup Patel <anup@brainfault.org>
-Cc:     Palmer Dabbelt <palmer@sifive.com>,
-        Albert Ou <aou@eecs.berkeley.edu>,
-        Anup Patel <anup.patel@wdc.com>, linux-kernel@vger.kernel.org,
-        Christoph Hellwig <hch@infradead.org>,
-        Atish Patra <atish.patra@wdc.com>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        linux-riscv@lists.infradead.org
-Subject: Re: [PATCH 4/5] RISC-V: Move setup_vm() to mm/init.c
-Message-ID: <20190115134513.GE13216@infradead.org>
-References: <20190107161047.10516-1-anup@brainfault.org>
- <20190107161047.10516-5-anup@brainfault.org>
+        Tue, 15 Jan 2019 08:45:57 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54704 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728257AbfAONp5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 Jan 2019 08:45:57 -0500
+Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 39B2D20651;
+        Tue, 15 Jan 2019 13:45:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1547559956;
+        bh=LYRp5sC/i9SVfDZ5UUI+unE0W0RddiJ3ZBaxhOo+awI=;
+        h=Date:From:To:Subject:References:In-Reply-To:From;
+        b=xXscI3YLQo8P4CSZiD6crkg3MskX6zgBurN0xlx6aa3UPYeEISdDL7jYJthoYWnN2
+         DwRoBLeKryfm7OM4HtIOpsVGH/wGJDC3bhV/Zff0nzlDe/gosh3QLhjbM2fM0JL/xB
+         S/D653t4SPnd0Y7cVk3W/sQ7R6Qljg1dsI0WGVaA=
+Date:   Tue, 15 Jan 2019 14:45:53 +0100
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     DRI Development <dri-devel@lists.freedesktop.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Daniel Vetter <daniel.vetter@intel.com>,
+        Hans de Goede <hdegoede@redhat.com>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Alexander Kapshuk <alexander.kapshuk@gmail.com>
+Subject: Re: [PATCH 1/2] staging/vboxvideo: Don't set
+ FBINFO_MISC_ALWAYS_SETPAR
+Message-ID: <20190115134553.GD30742@kroah.com>
+References: <20190115102755.16183-1-daniel.vetter@ffwll.ch>
+ <20190115103829.GC18959@kroah.com>
+ <20190115121228.GO10517@phenom.ffwll.local>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190107161047.10516-5-anup@brainfault.org>
-User-Agent: Mutt/1.9.2 (2017-12-15)
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+In-Reply-To: <20190115121228.GO10517@phenom.ffwll.local>
+User-Agent: Mutt/1.11.2 (2019-01-07)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jan 07, 2019 at 09:40:46PM +0530, Anup Patel wrote:
-> From: Anup Patel <anup.patel@wdc.com>
+On Tue, Jan 15, 2019 at 01:12:28PM +0100, Daniel Vetter wrote:
+> On Tue, Jan 15, 2019 at 11:38:29AM +0100, Greg Kroah-Hartman wrote:
+> > On Tue, Jan 15, 2019 at 11:27:54AM +0100, Daniel Vetter wrote:
+> > > It's a debug hack flag useful to work around driver bugs. That's not a
+> > > good idea for a new driver. Especially for a new drm driver.
+> > > 
+> > > Aside: the fbdev support should probably be converted over to the new
+> > > generic fbdev support.
+> > > 
+> > > Signed-off-by: Daniel Vetter <daniel.vetter@intel.com>
+> > > Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> > > Cc: Hans de Goede <hdegoede@redhat.com>
+> > > Cc: Daniel Vetter <daniel.vetter@ffwll.ch>
+> > > Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+> > > Cc: Alexander Kapshuk <alexander.kapshuk@gmail.com>
+> > > ---
+> > >  drivers/staging/vboxvideo/vbox_fb.c | 5 -----
+> > >  1 file changed, 5 deletions(-)
+> > > 
+> > 
+> > Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 > 
-> The setup_vm() is responsible for setting up initial
-> page table hence should be placed in mm/init.c.
-> 
-> Signed-off-by: Anup Patel <anup.patel@wdc.com>
+> Since Hans wants to destage vboxvideo this cycle probably best I merge
+> this through drm-misc? Just to make sure it's not lost.
 
-Looks fine,
+Feel free to do so!
 
-Reviewed-by: Christoph Hellwig <hch@lst.de>
+thanks,
+
+greg k-h
