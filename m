@@ -2,139 +2,153 @@ Return-Path: <SRS0=RZO6=PX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4FF39C43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 21:07:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 827F5C43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 21:08:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 18001205C9
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 21:07:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 508BA205C9
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 21:08:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547586449;
-	bh=FwXrjOGPHFQQI27pGA9oCfi/5DfsZjGGTvC4O1PucD4=;
+	s=default; t=1547586512;
+	bh=yevKcF954BE7mM3Xu241ckLM3kiOZ7uqMctA8K/2sqo=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=ZyYENaoKZejdj3ZePSMY66YKsRy5/3OY3kxmVdmGjauH+HvNqjcdbgJ1ClFGqNVrR
-	 FIbPV5QvIfHm19bHf/7eevVJvasB6e59/OtBdfpPHJ/VQ7z9hj9YVPE48x/IfMHM0J
-	 yPF+udQR/TKROjTPfJbeZBb/keEdSNrpDemai2F0=
+	b=UWM9mAaugleHv7lJnltDGCmB+pKZ9q8YB0xet8Lu9NRQpSVjocPvgMKPzrhldtVv5
+	 bFjkAGZqwgI9y7oy6AwT82Cq0EbILYVMevfN0XjokHkR3B59qZDkv5DSVe4Xpid+Pn
+	 na1XIKMjIZSwQctckC6tKO4ff41Dr830QHPehu3M=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390215AbfAOVH1 (ORCPT
+        id S2390222AbfAOVIa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 15 Jan 2019 16:07:27 -0500
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:58860 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729484AbfAOVH1 (ORCPT
+        Tue, 15 Jan 2019 16:08:30 -0500
+Received: from mail-ot1-f68.google.com ([209.85.210.68]:38484 "EHLO
+        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730505AbfAOVIa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Jan 2019 16:07:27 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=niDBY0nIMb7v02CoXRusjFx7uJv7DZKQdNKm0laZBKI=; b=gJYhxsZdF5TljzXI9Oua1S4t2
-        nYptV03cVFzeNYwovvwSZ5h2WnnQ7fuMR/RuMLrMhOM3S6PLLkiBOMcpYZ/WMyT3zvvat5Zgz8ewH
-        BluVo9r2AjGDM6GG3kjirqvTkPYp4oQqFvuXKlb2T6tDRgdBcHO09ZfkUECHHbMjIGyBE=;
-Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
-        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1gjVvZ-00030g-2p; Tue, 15 Jan 2019 21:07:17 +0000
-Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
-        id 62BA81127848; Tue, 15 Jan 2019 21:07:16 +0000 (GMT)
-Date:   Tue, 15 Jan 2019 21:07:16 +0000
-From:   Mark Brown <broonie@kernel.org>
-To:     Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-Cc:     rohkumar@qti.qualcomm.com, alsa-devel@alsa-project.org,
-        bgoswami@codeaurora.org, vinod.koul@linaro.org,
-        linux-kernel@vger.kernel.org, plai@codeaurora.org, tiwai@suse.com,
-        lgirdwood@gmail.com, Ajit Pandey <ajitp@codeaurora.org>,
-        Liam Girdwood <liam.r.girdwood@linux.intel.com>,
-        Rohit kumar <rohitkr@codeaurora.org>, asishb@codeaurora.org,
-        srinivas.kandagatla@linaro.org
-Subject: Re: [alsa-devel] [PATCH] ASoC: soc-core: Fix null pointer
- dereference in soc_find_component
-Message-ID: <20190115210716.GI5522@sirena.org.uk>
-References: <1547194442-1487-1-git-send-email-rohitkr@codeaurora.org>
- <d8726e9a-3477-a573-8c1a-dd8245068802@linux.intel.com>
- <4886ed21-65d2-159d-afcd-bb26dcde636e@linux.intel.com>
- <20190115000610.GM11073@sirena.org.uk>
- <796a856c-a9a6-022d-da63-947279090198@linux.intel.com>
+        Tue, 15 Jan 2019 16:08:30 -0500
+Received: by mail-ot1-f68.google.com with SMTP id e12so3902380otl.5;
+        Tue, 15 Jan 2019 13:08:29 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=ief8Sahwz9dleuFZ1PF7fq768QfDizjpb918XybQ2RY=;
+        b=i4UUp4LJpmH/fgwk6ElJ5OxnOUEWa9uj3d/34X0tbUqoDT0t4LB9hlvBitefczau1U
+         wCWW7uIbzFC677Iti5BBIKLXyqLs7SSIflTlVA/WXGqF96kO2qSIG0ZYZLlBqb3oWGZ4
+         Ornx0pDma+YYCatpWGVTIYZUBiP5LXFxkBw6ll/1xyFhz5ye298/trWTmuuie9UPzvI1
+         +A+3r2xbcacpO9A62dteFxXa3IanoBn02CA18La1HMtziR4vK7sL7e1p4qH1IvoGDZvD
+         VGSqBeA3oj4i8AbytFu022EjRCRBt1G6OfHl4IytqGV2Q4usAKnv3+vDMeGSbdlvWIO6
+         12YQ==
+X-Gm-Message-State: AJcUukf5/q1rS/ds17IoRHjtCpsAdLZR3mHSleFgnZwJt3eetkiULXyj
+        6h2eqcp3/8EwS7aG5rFvgA==
+X-Google-Smtp-Source: ALg8bN5xnPASuqM9X7l7AlaWtkvR9n7xo0E4HvL2pBfHvPB1gLhCPGnfWehNEKzkAUwq3Lzr1Hl1cA==
+X-Received: by 2002:a05:6830:1c5:: with SMTP id r5mr3564589ota.356.1547586509003;
+        Tue, 15 Jan 2019 13:08:29 -0800 (PST)
+Received: from localhost ([70.231.7.113])
+        by smtp.gmail.com with ESMTPSA id q131sm2022121oih.1.2019.01.15.13.08.28
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 15 Jan 2019 13:08:28 -0800 (PST)
+Date:   Tue, 15 Jan 2019 15:08:27 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Sam Ravnborg <sam@ravnborg.org>
+Cc:     Alessandro Zummo <a.zummo@towertech.it>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Andrew Jeffery <andrew@aj.id.au>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Joel Stanley <joel@jms.id.au>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Urs =?iso-8859-1?Q?F=E4ssler?= <urs.fassler@bbv.ch>,
+        Shawn Guo <shawnguo@kernel.org>, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-rtc@vger.kernel.org,
+        =?iso-8859-1?Q?S=F8ren?= Andersen <san@skov.dk>
+Subject: Re: [PATCH v2 3/5] dt-binding: pcf85063: add xtal load capacitance
+Message-ID: <20190115210827.GA25046@bogus>
+References: <20190108185414.26922-1-sam@ravnborg.org>
+ <20190108185414.26922-4-sam@ravnborg.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="0XMZdl/q8hSSmFeD"
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <796a856c-a9a6-022d-da63-947279090198@linux.intel.com>
-X-Cookie: Violence is molding.
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190108185414.26922-4-sam@ravnborg.org>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Tue, Jan 08, 2019 at 07:54:12PM +0100, Sam Ravnborg wrote:
+> The NXP pcf85063 supports two different xtal load capacitance
+> - 7000fF  (7pF)    HW default, Linux driver default
+> - 12500fF (12.5pF) Minimum power consumption
+> 
+> To obtain a precise RTC the pcf85063 must be configured
+> with the correct capacitance load of the xtal.
+> 
+> Add a property to specify the xtal capacitance load.
+> The default value matches that of the current Linux driver.
+> 
+> With a dedicated binding remove the entry in rtc.txt
+> 
+> Signed-off-by: Søren Andersen <san@skov.dk>
+> Signed-off-by: Sam Ravnborg <sam@ravnborg.org>
+> Cc: Alessandro Zummo <a.zummo@towertech.it>
+> Cc: Alexandre Belloni <alexandre.belloni@bootlin.com>
+> Cc: Rob Herring <robh+dt@kernel.org>
+> Cc: Mark Rutland <mark.rutland@arm.com>
+> Cc: Urs Fässler <urs.fassler@bbv.ch>
+> ---
+>  Documentation/devicetree/bindings/rtc/nxp,pcf85063.txt | 18 ++++++++++++++++++
+>  Documentation/devicetree/bindings/rtc/rtc.txt          |  1 -
+>  2 files changed, 18 insertions(+), 1 deletion(-)
+>  create mode 100644 Documentation/devicetree/bindings/rtc/nxp,pcf85063.txt
+> 
+> diff --git a/Documentation/devicetree/bindings/rtc/nxp,pcf85063.txt b/Documentation/devicetree/bindings/rtc/nxp,pcf85063.txt
+> new file mode 100644
+> index 000000000000..ad5e8eaa370e
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/rtc/nxp,pcf85063.txt
+> @@ -0,0 +1,18 @@
+> +* NXP PCF85063 Real Time Clock
+> +
+> +Required properties:
+> +- compatible: Should contain "nxp,pcf85063".
+> +- reg: I2C address for chip.
+> +
+> +Optional property:
+> +- quartz-load-femtofarads: The capacitive load of the quartz(x-tal),
 
---0XMZdl/q8hSSmFeD
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Probably should put this in rtc.txt so it can be shared.
 
-On Tue, Jan 15, 2019 at 01:35:07PM -0600, Pierre-Louis Bossart wrote:
-> On 1/14/19 6:06 PM, Mark Brown wrote:
+> +  expressed in femto Farad (fF). Valid values are 7000 and 12500.
+> +  Default value (if no value is specified) is 7000fF.
+> +
+> +Example:
+> +
+> +pcf85063: pcf85063@51 {
 
-> > just pushing the breakage around rather than fixing it.  Can someone
-> > with an x86 system take a look and confirm exactly what's going on with
-> > binding these cards please?
+rtc@51
 
-> Beyond the fact that the platform_name seems to be totally useless,
-> additional tests show that the patch ('ASoC: soc-core: defer card probe
-> until all component is added to list') adds a new restriction which
-> contradicts existing error checks.
-
-Yes...  I'd been coming to the conclusion that it was a huge red herring
-here. =20
-
-> So if we want to be consistent, the new code should be something like:
-
-> diff --git a/sound/soc/soc-core.c b/sound/soc/soc-core.c
-> index b680c673c553..2791da9417f8 100644
-> --- a/sound/soc/soc-core.c
-> +++ b/sound/soc/soc-core.c
-> @@ -1154,7 +1154,7 @@ static int soc_init_dai_link(struct snd_soc_card
-> *card,
-> =A0=A0=A0=A0=A0=A0=A0=A0 * Defer card registartion if cpu dai component i=
-s not added to
-> =A0=A0=A0=A0=A0=A0=A0=A0 * component list.
-> =A0=A0=A0=A0=A0=A0=A0=A0 */
-> -=A0=A0=A0=A0=A0=A0 if (!soc_find_component(link->cpu_of_node, link->cpu_=
-name))
-> +=A0=A0=A0=A0=A0=A0 if (!link->cpu_dai_name && !soc_find_component(link->=
-cpu_of_node,
-> link->cpu_name))
-> =A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 return -EPROBE_DEFER;
->=20
-> =A0=A0=A0=A0=A0=A0=A0 /*
-
-> or try to call soc_find_component with both cpu_name or cpu_dai_name, if
-> this makes sense?
-
-I think calling _find_component() makes more sense here as it will do
-the check it's actually there thing no matter how the link is
-identified.  Assuming that does resolve the issue do you want to make a
-patch given that you got there first?
-
---0XMZdl/q8hSSmFeD
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlw+S4MACgkQJNaLcl1U
-h9BEmgf/StSJlLNq7xDriTlZVfHoP1uS7tq7ARPUsYy5hv82x0djcFHMfKwaaSF8
-S0F7dCRPSko+Qn9l47VSnfC5d4u59YdEdfRJM+yktKgojY2EribB9Y7XldhNJRO1
-FMnnMdPZWFHFMcGgs88h5xo/N7pr1lBvPcbksbXaSIAGead6WrrD8DTecYu8V+Kb
-UEv2MEOmtSv+GJo+QT4Gi/NiKoaCn183hgulOkQSmkMLXGaBQedOSvxOt4fUvYKb
-GIvJihjl7zjOohlf85V0l4wXVy0qKZm7szCz037yfiXWMPzr2Fo1sm0ZoGXd4BsJ
-2JEQbrNH1hlj/8Jv6J1lZhVPScktHw==
-=gEjB
------END PGP SIGNATURE-----
-
---0XMZdl/q8hSSmFeD--
+> +	compatible = "nxp,pcf85063";
+> +	reg = <0x51>;
+> +	quartz-load-femtofarads = <12500>;
+> +};
+> diff --git a/Documentation/devicetree/bindings/rtc/rtc.txt b/Documentation/devicetree/bindings/rtc/rtc.txt
+> index e07b15d151ac..efac6dc5b914 100644
+> --- a/Documentation/devicetree/bindings/rtc/rtc.txt
+> +++ b/Documentation/devicetree/bindings/rtc/rtc.txt
+> @@ -52,7 +52,6 @@ microcrystal,rv3029	Real Time Clock Module with I2C-Bus
+>  nxp,pcf2127		Real-time clock
+>  nxp,pcf2129		Real-time clock
+>  nxp,pcf8563		Real-time clock/calendar
+> -nxp,pcf85063		Tiny Real-Time Clock
+>  pericom,pt7c4338	Real-time Clock Module
+>  ricoh,r2025sd		I2C bus SERIAL INTERFACE REAL-TIME CLOCK IC
+>  ricoh,r2221tl		I2C bus SERIAL INTERFACE REAL-TIME CLOCK IC
+> -- 
+> 2.12.0
+> 
