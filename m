@@ -2,146 +2,116 @@ Return-Path: <SRS0=RZO6=PX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EB991C43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 15:23:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 12850C43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 15:24:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B534D204FD
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 15:23:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DECA2204FD
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 15:24:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729389AbfAOPXs (ORCPT
+        id S1730808AbfAOPYF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 15 Jan 2019 10:23:48 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:58936 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1728798AbfAOPXr (ORCPT
+        Tue, 15 Jan 2019 10:24:05 -0500
+Received: from skedge04.snt-world.com ([91.208.41.69]:37780 "EHLO
+        skedge04.snt-world.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728798AbfAOPYF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Jan 2019 10:23:47 -0500
-Received: from pps.filterd (m0098417.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id x0FFJHSQ029213
-        for <linux-kernel@vger.kernel.org>; Tue, 15 Jan 2019 10:23:46 -0500
-Received: from e15.ny.us.ibm.com (e15.ny.us.ibm.com [129.33.205.205])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2q1h5buqtq-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Tue, 15 Jan 2019 10:23:46 -0500
-Received: from localhost
-        by e15.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
-        Tue, 15 Jan 2019 15:23:45 -0000
-Received: from b01cxnp22035.gho.pok.ibm.com (9.57.198.25)
-        by e15.ny.us.ibm.com (146.89.104.202) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Tue, 15 Jan 2019 15:23:41 -0000
-Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
-        by b01cxnp22035.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x0FFNef712058790
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 15 Jan 2019 15:23:40 GMT
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 650ABB2068;
-        Tue, 15 Jan 2019 15:23:40 +0000 (GMT)
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 45DB5B2065;
-        Tue, 15 Jan 2019 15:23:40 +0000 (GMT)
-Received: from paulmck-ThinkPad-W541 (unknown [9.70.82.88])
-        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
-        Tue, 15 Jan 2019 15:23:40 +0000 (GMT)
-Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
-        id B45CA16C6108; Tue, 15 Jan 2019 07:23:40 -0800 (PST)
-Date:   Tue, 15 Jan 2019 07:23:40 -0800
-From:   "Paul E. McKenney" <paulmck@linux.ibm.com>
-To:     Alan Stern <stern@rowland.harvard.edu>
-Cc:     Dmitry Vyukov <dvyukov@google.com>,
-        LKMM Maintainers -- Akira Yokosawa <akiyks@gmail.com>,
-        Andrea Parri <andrea.parri@amarulasolutions.com>,
-        Boqun Feng <boqun.feng@gmail.com>,
-        Daniel Lustig <dlustig@nvidia.com>,
-        David Howells <dhowells@redhat.com>,
-        Jade Alglave <j.alglave@ucl.ac.uk>,
-        Luc Maranget <luc.maranget@inria.fr>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Will Deacon <will.deacon@arm.com>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: Plain accesses and data races in the Linux Kernel Memory Model
-Reply-To: paulmck@linux.ibm.com
-References: <CACT4Y+bYKPeyURX9K8i_ySEhqJ5OnFP1_=+u9=Y_Y+fYOo_jGQ@mail.gmail.com>
- <Pine.LNX.4.44L0.1901151002040.1408-100000@iolanthe.rowland.org>
+        Tue, 15 Jan 2019 10:24:05 -0500
+Received: from sntmail11s.snt-is.com (unknown [10.203.32.181])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by skedge04.snt-world.com (Postfix) with ESMTPS id 14FA667A8C7;
+        Tue, 15 Jan 2019 16:24:02 +0100 (CET)
+Received: from sntmail12r.snt-is.com (10.203.32.182) by sntmail11s.snt-is.com
+ (10.203.32.181) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1466.3; Tue, 15 Jan
+ 2019 16:24:01 +0100
+Received: from sntmail12r.snt-is.com ([fe80::e551:8750:7bba:3305]) by
+ sntmail12r.snt-is.com ([fe80::e551:8750:7bba:3305%5]) with mapi id
+ 15.01.1466.003; Tue, 15 Jan 2019 16:24:01 +0100
+From:   Schrempf Frieder <frieder.schrempf@kontron.de>
+To:     Shawn Guo <shawnguo@kernel.org>
+CC:     "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>,
+        "boris.brezillon@bootlin.com" <boris.brezillon@bootlin.com>,
+        "linux-spi@vger.kernel.org" <linux-spi@vger.kernel.org>,
+        "broonie@kernel.org" <broonie@kernel.org>,
+        Li Yang <leoyang.li@nxp.com>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "dwmw2@infradead.org" <dwmw2@infradead.org>,
+        "computersforpeace@gmail.com" <computersforpeace@gmail.com>,
+        "marek.vasut@gmail.com" <marek.vasut@gmail.com>,
+        "richard@nod.at" <richard@nod.at>,
+        "miquel.raynal@bootlin.com" <miquel.raynal@bootlin.com>,
+        "david.wolfe@nxp.com" <david.wolfe@nxp.com>,
+        "fabio.estevam@nxp.com" <fabio.estevam@nxp.com>,
+        "prabhakar.kushwaha@nxp.com" <prabhakar.kushwaha@nxp.com>,
+        "yogeshnarayan.gaur@nxp.com" <yogeshnarayan.gaur@nxp.com>,
+        "han.xu@nxp.com" <han.xu@nxp.com>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v8 5/7] ARM: dts: ls1021a: Remove fsl,qspi-has-second-chip
+ as it is not used
+Thread-Topic: [PATCH v8 5/7] ARM: dts: ls1021a: Remove
+ fsl,qspi-has-second-chip as it is not used
+Thread-Index: AQHUpmuMXeMdtslsvU+hS8nO3SBmbKWsg0qAgAHipwCAAgeLgIAAAZcA
+Date:   Tue, 15 Jan 2019 15:24:01 +0000
+Message-ID: <7ffa6d92-3fdd-f838-ab6d-185ea5f1c103@kontron.de>
+References: <20190107092823.11188-1-frieder.schrempf@kontron.de>
+ <20190107092823.11188-6-frieder.schrempf@kontron.de>
+ <20190113033117.GG11426@dragon>
+ <ee3eb5d5-4b04-002e-5e49-d4b766138ec5@kontron.de>
+ <20190115151818.GD13895@dragon>
+In-Reply-To: <20190115151818.GD13895@dragon>
+Accept-Language: de-DE, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [172.25.9.43]
+x-c2processedorg: 51b406b7-48a2-4d03-b652-521f56ac89f3
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <A70D2C538BB6254E8E263CC9273AD2A0@snt-world.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Pine.LNX.4.44L0.1901151002040.1408-100000@iolanthe.rowland.org>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-TM-AS-GCONF: 00
-x-cbid: 19011515-0068-0000-0000-000003830479
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00010411; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000274; SDB=6.01146867; UDB=6.00597360; IPR=6.00927159;
- MB=3.00025137; MTD=3.00000008; XFM=3.00000015; UTC=2019-01-15 15:23:44
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19011515-0069-0000-0000-000047247109
-Message-Id: <20190115152340.GX1215@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-01-15_04:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1901150127
+X-SnT-MailScanner-Information: Please contact the ISP for more information
+X-SnT-MailScanner-ID: 14FA667A8C7.A44DC
+X-SnT-MailScanner: Found to be clean
+X-SnT-MailScanner-SpamCheck: 
+X-SnT-MailScanner-From: frieder.schrempf@kontron.de
+X-SnT-MailScanner-To: boris.brezillon@bootlin.com, broonie@kernel.org,
+        computersforpeace@gmail.com, david.wolfe@nxp.com,
+        devicetree@vger.kernel.org, dwmw2@infradead.org,
+        fabio.estevam@nxp.com, han.xu@nxp.com, leoyang.li@nxp.com,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-mtd@lists.infradead.org, linux-spi@vger.kernel.org,
+        marek.vasut@gmail.com, mark.rutland@arm.com,
+        miquel.raynal@bootlin.com, prabhakar.kushwaha@nxp.com,
+        richard@nod.at, robh+dt@kernel.org, shawnguo@kernel.org,
+        yogeshnarayan.gaur@nxp.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 15, 2019 at 10:03:26AM -0500, Alan Stern wrote:
-> On Tue, 15 Jan 2019, Dmitry Vyukov wrote:
-> 
-> > On Tue, Jan 15, 2019 at 12:54 AM Paul E. McKenney <paulmck@linux.ibm.com> wrote:
-> > >
-> > > On Mon, Jan 14, 2019 at 02:41:49PM -0500, Alan Stern wrote:
-> > > > The patch below is my first attempt at adapting the Linux Kernel
-> > > > Memory Model to handle plain accesses (i.e., those which aren't
-> > > > specially marked as READ_ONCE, WRITE_ONCE, acquire, release,
-> > > > read-modify-write, or lock accesses).  This work is based on an
-> > > > initial proposal created by Andrea Parri back in December 2017,
-> > > > although it has grown a lot since then.
-> > >
-> > > Hello, Alan,
-> > >
-> > > Good stuff!!!
-> > >
-> > > I tried applying this in order to test it against the various litmus
-> > > tests, but no joy.  Could you please tell me what commit is this patch
-> > > based on?
-> > >
-> > >                                                         Thanx, Paul
-> > >
-> > > > The adaptation involves two main aspects: recognizing the ordering
-> > > > induced by plain accesses and detecting data races.  They are handled
-> > > > separately.  In fact, the code for figuring out the ordering assumes
-> > > > there are no data races (the idea being that if a data race is
-> > > > present then pretty much anything could happen, so there's no point
-> > > > worrying about it -- obviously this will have to be changed if we want
-> > > > to cover seqlocks).
-> > 
-> > Hi Alan,
-> > 
-> > Is there a mailing list dedicated to this effort? Private messages
-> > tend to lost over time, no archive, not possible to send a link or
-> > show full history to anybody, etc.
-> 
-> No specific mailing list.  We've been relying on LKML.
-> 
-> > Re seqlocks, strictly saying defining races for seqlocks is not
-> > necessary. Seqlocks can be expressed without races in C by using
-> > relaxed atomic loads within the read critical section. We may consider
-> > this option as well.
-> 
-> That seems like a reasonable approach.
-
-What Alan said!  ;-)
-
-							Thanx, Paul
-
+T24gMTUuMDEuMTkgMTY6MTgsIFNoYXduIEd1byB3cm90ZToNCj4gT24gTW9uLCBKYW4gMTQsIDIw
+MTkgYXQgMDg6MTg6NDlBTSArMDAwMCwgU2NocmVtcGYgRnJpZWRlciB3cm90ZToNCj4+IEhpIFNo
+YXduLA0KPj4NCj4+IE9uIDEzLjAxLjE5IDA0OjMxLCBTaGF3biBHdW8gd3JvdGU6DQo+Pj4gT24g
+TW9uLCBKYW4gMDcsIDIwMTkgYXQgMDk6Mjk6NTRBTSArMDAwMCwgU2NocmVtcGYgRnJpZWRlciB3
+cm90ZToNCj4+Pj4gRnJvbTogRnJpZWRlciBTY2hyZW1wZiA8ZnJpZWRlci5zY2hyZW1wZkBrb250
+cm9uLmRlPg0KPj4+Pg0KPj4+PiBBZnRlciBzd2l0Y2hpbmcgdG8gdGhlIG5ldyBGU0wgUVNQSSBk
+cml2ZXIgdGhlIHByb3BlcnR5DQo+Pj4+ICdmc2wscXNwaS1oYXMtc2Vjb25kLWNoaXAnIGlzIG5v
+dCBuZWVkZWQgYW55bW9yZS4NCj4+Pj4NCj4+Pj4gVGhlIGRyaXZlciBub3cgdXNlcyB0aGUgJ3Jl
+ZycgcHJvcGVydHkgdG8gZGV0ZXJtaW5lIHRoZSBidXMgYW5kDQo+Pj4+IHRoZSBjaGlwc2VsZWN0
+Lg0KPj4+Pg0KPj4+PiBTaWduZWQtb2ZmLWJ5OiBGcmllZGVyIFNjaHJlbXBmIDxmcmllZGVyLnNj
+aHJlbXBmQGtvbnRyb24uZGU+DQo+Pj4NCj4+PiBBcHBsaWVkLCB0aGFua3MuDQo+Pg0KPj4gSSBq
+dXN0IG5vdGljZWQsIHRoYXQgdGhpcyBhbmQgdGhlIGFybTY0IHBhdGNoIGRlcGVuZCBvbiB0aGUg
+ZHJpdmVyDQo+PiBjaGFuZ2VzIGZvciA1LjEgdGhhdCBnbyB0aHJvdWdoIHRoZSBTUEkgdHJlZS4g
+U28gSSBndWVzcyB3ZSBjYW4ndCBiZQ0KPj4gc3VyZSB0aGF0IHRoaXMgd2lsbCBiZSBtZXJnZWQg
+aW4gdGhlIHJpZ2h0IG9yZGVyIGFuZCB3ZSBuZWVkIHRvIGRlbGF5DQo+PiB0aGlzIGNsZWFudXAg
+dG8gNS4yLCBvciBhbSBJIHdyb25nPw0KPiANCj4gWW91IGFyZSByaWdodC4gIEkganVzdCBkcm9w
+cGVkIHRoZSBib3RoIHBhdGNoZXMuICBQaW5nIG1lIG9yIHJlc2VuZCB3aGVuDQo+IHRoZXkgYXJl
+IHJlYWR5IHRvIGdvLg0KDQpUaGFua3MsIHdpbGwgZG8gc28uDQoNCkZyaWVkZXI=
