@@ -2,124 +2,85 @@ Return-Path: <SRS0=RZO6=PX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.0 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 27D08C43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 16:21:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A494C43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 16:23:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F24CD20868
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 16:21:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E892A20866
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 16:23:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731447AbfAOQVS (ORCPT
+        id S1731470AbfAOQXY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 15 Jan 2019 11:21:18 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:48971 "EHLO mx1.redhat.com"
+        Tue, 15 Jan 2019 11:23:24 -0500
+Received: from 8bytes.org ([81.169.241.247]:57836 "EHLO theia.8bytes.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730280AbfAOQVR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Jan 2019 11:21:17 -0500
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 317B2C057F93;
-        Tue, 15 Jan 2019 16:21:17 +0000 (UTC)
-Received: from madcap2.tricolour.ca (ovpn-112-10.phx2.redhat.com [10.3.112.10])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id B62435D776;
-        Tue, 15 Jan 2019 16:21:15 +0000 (UTC)
-Date:   Tue, 15 Jan 2019 11:21:12 -0500
-From:   Richard Guy Briggs <rgb@redhat.com>
-To:     Paul Moore <paul@paul-moore.com>
-Cc:     Linux-Audit Mailing List <linux-audit@redhat.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>
-Subject: Re: [PATCH ghak59 V3 2/4] audit: add syscall information to
- CONFIG_CHANGE records
-Message-ID: <20190115162112.jq6m2j4wmyk4rq25@madcap2.tricolour.ca>
-References: <cover.1544477629.git.rgb@redhat.com>
- <43548fafdfa98ee64ecfd0d7a69a2f5cb2c31c50.1544477629.git.rgb@redhat.com>
- <CAHC9VhSaTvVgSWVWo42Ur2k6hVNJ1XBkLwrd-J4-SUuidwXUYg@mail.gmail.com>
+        id S1728911AbfAOQXY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 Jan 2019 11:23:24 -0500
+Received: by theia.8bytes.org (Postfix, from userid 1000)
+        id 18D90477; Tue, 15 Jan 2019 17:23:23 +0100 (CET)
+Date:   Tue, 15 Jan 2019 17:23:22 +0100
+From:   Joerg Roedel <joro@8bytes.org>
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     "Michael S . Tsirkin" <mst@redhat.com>,
+        Jason Wang <jasowang@redhat.com>,
+        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+        Jens Axboe <axboe@kernel.dk>,
+        virtualization@lists.linux-foundation.org,
+        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+        iommu@lists.linux-foundation.org, jfehlig@suse.com,
+        jon.grimm@amd.com, brijesh.singh@amd.com, jroedel@suse.de
+Subject: Re: [PATCH 2/3] dma: Introduce dma_max_mapping_size()
+Message-ID: <20190115162322.GA4681@8bytes.org>
+References: <20190115132257.6426-1-joro@8bytes.org>
+ <20190115132257.6426-3-joro@8bytes.org>
+ <20190115133754.GB29225@lst.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAHC9VhSaTvVgSWVWo42Ur2k6hVNJ1XBkLwrd-J4-SUuidwXUYg@mail.gmail.com>
-User-Agent: NeoMutt/20180716
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.32]); Tue, 15 Jan 2019 16:21:17 +0000 (UTC)
+In-Reply-To: <20190115133754.GB29225@lst.de>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2019-01-14 17:58, Paul Moore wrote:
-> On Mon, Dec 10, 2018 at 5:18 PM Richard Guy Briggs <rgb@redhat.com> wrote:
-> > Tie syscall information to all CONFIG_CHANGE calls since they are all a
-> > result of user actions.
-> >
-> > Exclude user records from syscall context:
-> > Since the function audit_log_common_recv_msg() is shared by a number of
-> > AUDIT_CONFIG_CHANGE and the entire range of AUDIT_USER_* record types,
-> > and since the AUDIT_CONFIG_CHANGE message type has been converted to a
-> > syscall accompanied record type, special-case the AUDIT_USER_* range of
-> > messages so they remain standalone records.
-> >
-> > See: https://github.com/linux-audit/audit-kernel/issues/59
-> > See: https://github.com/linux-audit/audit-kernel/issues/50
-> > Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
-> > ---
-> >  kernel/audit.c          | 27 +++++++++++++++++++--------
-> >  kernel/audit_fsnotify.c |  2 +-
-> >  kernel/audit_tree.c     |  2 +-
-> >  kernel/audit_watch.c    |  2 +-
-> >  kernel/auditfilter.c    |  2 +-
-> >  5 files changed, 23 insertions(+), 12 deletions(-)
-> >
-> > diff --git a/kernel/audit.c b/kernel/audit.c
-> > index 0e8026423fbd..a321fea94cc6 100644
-> > --- a/kernel/audit.c
-> > +++ b/kernel/audit.c
-> > @@ -1072,6 +1073,16 @@ static void audit_log_common_recv_msg(struct audit_buffer **ab, u16 msg_type)
-> >         audit_log_task_context(*ab);
-> >  }
-> >
-> > +static inline void audit_log_user_recv_msg(struct audit_buffer **ab, u16 msg_type)
+On Tue, Jan 15, 2019 at 02:37:54PM +0100, Christoph Hellwig wrote:
+> > +size_t dma_direct_max_mapping_size(struct device *dev)
 > > +{
-> > +       audit_log_common_recv_msg(NULL, ab, msg_type);
-> > +}
+> > +	/*
+> > +	 * Return the minimum of the direct DMA limit and the SWIOTLB limit.
+> > +	 * Since direct DMA has no limit, it is fine to just return the SWIOTLB
+> > +	 * limit.
+> > +	 */
+> > +	return swiotlb_max_mapping_size(dev);
 > 
-> This makes sense because this is used by "user" records ...
-> 
-> > +static inline void audit_log_config_change_alt(struct audit_buffer **ab)
-> > +{
-> > +       audit_log_common_recv_msg(audit_context(), ab, AUDIT_CONFIG_CHANGE);
-> > +}
-> 
-> ... and I don't believe this makes sense because there is no real
-> logical grouping with the callers like there is for
-> audit_log_user_recv_msg().
+> Well, if we don't actually use the swiotlb buffers despite it being
+> compiled in or even allocated we don't need the limit.
 
-I don't follow "logical grouping".  They are all CONFIG_CHANGE record
-prefixes with the current context.
+Right, I thought about that too, but didn't find a generic way to check
+for all the cases. There are various checks that could be done:
 
-Can you suggest an alternate name or another way of sharing
-audit_log_common_recv_msg() since the only differences between the two
-are a NULL context vs current task's context and the message type.  I
-wasn't particularly happy with this name either.  I'd really like to
-refactor this with all the rest of the CONFIG_CHANGE records, but there
-is too much of a format difference to make it work without reordering or
-deleting useless fields.
+	1) Check if SWIOTLB is initialized at all, if not, return
+	   SIZE_MAX as the limit. This can't be checked from dma-direct
+	   code right now, but could be easily implemented.
 
-I know you had suggested making two different functions, but I think
-they are more similar than different and merit the common factored code.
+	2) Check for swiotlb=force needs to be done.
 
-> paul moore
+	3) Check whether the device can access all of available RAM. I
+	   have no idea how to check that in an architecture independent
+	   way. It also has to take memory hotplug into account as well
+	   as the DMA mask of the device.
 
-- RGB
+	   An easy approximation could be to omit the limit if the
+	   dma-mask covers all of the physical address bits available
+	   on the platform. It would require to pass the dma-mask as an
+	   additional parameter like it is done in dma_supported().
 
---
-Richard Guy Briggs <rgb@redhat.com>
-Sr. S/W Engineer, Kernel Security, Base Operating Systems
-Remote, Ottawa, Red Hat Canada
-IRC: rgb, SunRaycer
-Voice: +1.647.777.2635, Internal: (81) 32635
+Any better ideas for how to implement 3)?
+
+Regards,
+
+	Joerg
