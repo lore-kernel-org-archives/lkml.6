@@ -2,111 +2,147 @@ Return-Path: <SRS0=RZO6=PX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 57D58C43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 16:19:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 98080C43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 16:20:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2C45620859
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 16:19:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6EF3420868
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 16:20:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729384AbfAOQT0 (ORCPT
+        id S1731434AbfAOQUS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 15 Jan 2019 11:19:26 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44002 "EHLO mail.kernel.org"
+        Tue, 15 Jan 2019 11:20:18 -0500
+Received: from relay.sw.ru ([185.231.240.75]:51534 "EHLO relay.sw.ru"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727626AbfAOQT0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Jan 2019 11:19:26 -0500
-Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B936620657;
-        Tue, 15 Jan 2019 16:19:23 +0000 (UTC)
-Date:   Tue, 15 Jan 2019 11:19:22 -0500
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     Alexandre Chartre <alexandre.chartre@oracle.com>
-Cc:     Josh Poimboeuf <jpoimboe@redhat.com>,
-        Sean Christopherson <sean.j.christopherson@intel.com>,
-        Nadav Amit <namit@vmware.com>, X86 ML <x86@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Jason Baron <jbaron@akamai.com>, Jiri Kosina <jkosina@suse.cz>,
-        David Laight <David.Laight@ACULAB.COM>,
-        Borislav Petkov <bp@alien8.de>,
-        Julia Cartwright <julia@ni.com>, Jessica Yu <jeyu@kernel.org>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        Edward Cree <ecree@solarflare.com>,
-        Daniel Bristot de Oliveira <bristot@redhat.com>
-Subject: Re: [PATCH v3 5/6] x86/alternative: Use a single access in
- text_poke() where possible
-Message-ID: <20190115111922.153240f0@gandalf.local.home>
-In-Reply-To: <49f9bb3d-7b65-06e8-b0b3-42cf7f0a82b5@oracle.com>
-References: <279b8003f7f0a6831d090ab822d37bc958f974de.1547073843.git.jpoimboe@redhat.com>
-        <8138A1EE-359D-4CD2-8E96-5BF00313AB3B@vmware.com>
-        <20190110172004.wuh45xoafynfm2df@treble>
-        <20190110123243.3b9e0856@gandalf.local.home>
-        <20190110174257.GE16556@linux.intel.com>
-        <20190110125757.1c8d2870@gandalf.local.home>
-        <20190110180428.GG16556@linux.intel.com>
-        <e5ea3781-336d-7b03-a22e-5012e915affd@oracle.com>
-        <20190111152809.ejutcmqrx4ud3fli@treble>
-        <ad6fae93-4122-7854-aa4c-2facd67ca839@oracle.com>
-        <20190111165752.z6e2dfktj2caqi4n@treble>
-        <49f9bb3d-7b65-06e8-b0b3-42cf7f0a82b5@oracle.com>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        id S1730451AbfAOQUS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 Jan 2019 11:20:18 -0500
+Received: from [172.16.25.169]
+        by relay.sw.ru with esmtp (Exim 4.91)
+        (envelope-from <ktkhai@virtuozzo.com>)
+        id 1gjRRn-0004Bj-21; Tue, 15 Jan 2019 19:20:15 +0300
+Subject: Re: [PATCH RFC] fuse: Prevent background write requests increase
+ inode size
+To:     miklos@szeredi.hu, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <154151286725.17550.12307253489084032792.stgit@localhost.localdomain>
+From:   Kirill Tkhai <ktkhai@virtuozzo.com>
+Message-ID: <5a653d5f-268b-b2ff-2312-00effb30108f@virtuozzo.com>
+Date:   Tue, 15 Jan 2019 19:20:14 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+In-Reply-To: <154151286725.17550.12307253489084032792.stgit@localhost.localdomain>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 15 Jan 2019 12:10:19 +0100
-Alexandre Chartre <alexandre.chartre@oracle.com> wrote:
+Hi, Miklos,
 
-> Thinking more about it (and I've probably missed something or I am just being
-> totally stupid because this seems way too simple), can't we just replace the
-> "call" with "push+jmp" and patch the jmp instruction?
-> 
-> Instead of having:
-> 
->      call target
-> 
-> Have:
-> 
->      push $done
-> static_call:
->      jmp target
-> done:
+please take a look into two problems this patch points:
 
-But how do you implement it? Inline assembly()? Then you need to be
-able to do that for any type of function parameters (there will be
-users that have 13 parameters!)
+1)we have to set "io->async = false" in fuse_direct_IO(),
+  when inode size is changed (we mustn't increase inode
+  size in background);
+2)we have to increment fi->writectr on all background requests.
 
-I believe people have mentioned having a gcc plugin that would do it
-for us, which was one of the suggested solutions.
+Thanks,
+Kirill
 
--- Steve
-
+On 06.11.2018 17:02, Kirill Tkhai wrote:
+> Hi, Miklos,
 > 
-> Then we can safely patch the "jmp" instruction to jump to a new target
-> with text_poke_bp(), using the new target as the text_poke_bp() handler:
+> this is not a well-tested patch, this is a concept,
+> showing the places, where it looks we have a problem.
 > 
->    new_jmp_code = opcode of "jmp new_target"
+> Commit 7879c4e58b7c made io->async careless about inode size,
+> and this is wrong. Asyncronuos background requests may be sent
+> to userspace after inode becomes unlocked, when background
+> queue is throttled. In this case we execute a write request
+> extending inode size without any protection, and this ruines
+> everything. Fix that.
 > 
->    text_poke_bp(static_call, new_jmp_code, new_jmp_code_size, new_target);
+> Also, some write background requests do not increment fi->writectr,
+> e.g.:
+> 	fuse_direct_IO()
+> 	  fuse_direct_io()
+> 	    fuse_send_write()
+> 	      fuse_async_req_send()
+> 	        fuse_request_send_background()
 > 
-> Problems come with patching a call instruction, but there's no issue with patching
-> a jmp, no? (that's what jump labels do).
+> This is a reason fuse_sync_writes() does not work as expected.
+> Fix that too.
 > 
-> No change to the int3 handler, no thunk, this seems really too simple... :-)
-
+> Signed-off-by: Kirill Tkhai <ktkhai@virtuozzo.com>
+> ---
+>  fs/fuse/file.c |   20 ++++++++++++++++++--
+>  1 file changed, 18 insertions(+), 2 deletions(-)
+> 
+> diff --git a/fs/fuse/file.c b/fs/fuse/file.c
+> index cc2121b37bf5..0b71a3c96168 100644
+> --- a/fs/fuse/file.c
+> +++ b/fs/fuse/file.c
+> @@ -610,6 +610,9 @@ static void fuse_aio_complete(struct fuse_io_priv *io, int err, ssize_t pos)
+>  static void fuse_aio_complete_req(struct fuse_conn *fc, struct fuse_req *req)
+>  {
+>  	struct fuse_io_priv *io = req->io;
+> +	struct kiocb *iocb = io->iocb;
+> +	struct file *file = iocb->ki_filp;
+> +	struct fuse_inode *fi = get_fuse_inode(file_inode(file));
+>  	ssize_t pos = -1;
+>  
+>  	fuse_release_user_pages(req, io->should_dirty);
+> @@ -625,6 +628,12 @@ static void fuse_aio_complete_req(struct fuse_conn *fc, struct fuse_req *req)
+>  	}
+>  
+>  	fuse_aio_complete(io, req->out.h.error, pos);
+> +
+> +	if (io->write) {
+> +		spin_lock(&fc->lock);
+> +		fi->writectr--;
+> +		spin_unlock(&fc->lock);
+> +	}
+>  }
+>  
+>  static size_t fuse_async_req_send(struct fuse_conn *fc, struct fuse_req *req,
+> @@ -966,6 +975,7 @@ static size_t fuse_send_write(struct fuse_req *req, struct fuse_io_priv *io,
+>  {
+>  	struct kiocb *iocb = io->iocb;
+>  	struct file *file = iocb->ki_filp;
+> +	struct fuse_inode *fi = get_fuse_inode(file_inode(file));
+>  	struct fuse_file *ff = file->private_data;
+>  	struct fuse_conn *fc = ff->fc;
+>  	struct fuse_write_in *inarg = &req->misc.write.in;
+> @@ -981,8 +991,12 @@ static size_t fuse_send_write(struct fuse_req *req, struct fuse_io_priv *io,
+>  		inarg->lock_owner = fuse_lock_owner_id(fc, owner);
+>  	}
+>  
+> -	if (io->async)
+> +	if (io->async) {
+> +		spin_lock(&fc->lock);
+> +		fi->writectr++;
+> +		spin_unlock(&fc->lock);
+>  		return fuse_async_req_send(fc, req, count, io);
+> +	}
+>  
+>  	fuse_request_send(fc, req);
+>  	return req->misc.write.out.size;
+> @@ -2904,8 +2918,10 @@ fuse_direct_IO(struct kiocb *iocb, struct iov_iter *iter)
+>  	 * We cannot asynchronously extend the size of a file.
+>  	 * In such case the aio will behave exactly like sync io.
+>  	 */
+> -	if ((offset + count > i_size) && iov_iter_rw(iter) == WRITE)
+> +	if ((offset + count > i_size) && iov_iter_rw(iter) == WRITE) {
+>  		io->blocking = true;
+> +		io->async = false;
+> +	}
+>  
+>  	if (io->async && io->blocking) {
+>  		/*
+> 
