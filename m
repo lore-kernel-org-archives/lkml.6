@@ -2,113 +2,191 @@ Return-Path: <SRS0=RZO6=PX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A4517C43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 11:03:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A8A17C43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 11:13:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7B5AC2085A
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 11:03:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 656B020657
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 11:13:06 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="mW0l03HW"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729162AbfAOLDw (ORCPT
+        id S1729171AbfAOLLx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 15 Jan 2019 06:03:52 -0500
-Received: from mx2.suse.de ([195.135.220.15]:46214 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729132AbfAOLDw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Jan 2019 06:03:52 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 16082AC7A;
-        Tue, 15 Jan 2019 11:03:50 +0000 (UTC)
-Subject: Re: [PATCH v3] xen: Fix x86 sched_clock() interface for xen
-To:     Thomas Gleixner <tglx@linutronix.de>
-Cc:     linux-kernel@vger.kernel.org, xen-devel@lists.xenproject.org,
-        x86@kernel.org, boris.ostrovsky@oracle.com, sstabellini@kernel.org,
-        hpa@zytor.com, mingo@redhat.com, bp@alien8.de, hans@knorrie.org,
-        stable@vger.kernel.org
-References: <20190114124413.3742-1-jgross@suse.com>
- <alpine.DEB.2.21.1901151142590.1865@nanos.tec.linutronix.de>
-From:   Juergen Gross <jgross@suse.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=jgross@suse.com; prefer-encrypt=mutual; keydata=
- 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
-Message-ID: <a50d1213-2390-14f1-fe78-e8058266978c@suse.com>
-Date:   Tue, 15 Jan 2019 12:03:48 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.0
+        Tue, 15 Jan 2019 06:11:53 -0500
+Received: from userp2130.oracle.com ([156.151.31.86]:54012 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729109AbfAOLLw (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 Jan 2019 06:11:52 -0500
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id x0FB9PSt145206;
+        Tue, 15 Jan 2019 11:10:33 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to :
+ references : cc : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2018-07-02;
+ bh=DVfkuCXhWZJXPdaqCoGkQgjDniREU8xq+05997UEx4s=;
+ b=mW0l03HWDWSL/dJ/x7YgLI8vRc+MxNsXgQNt74buLO+vTva2dW2TTlV8eO0Ac9IsNmS4
+ V7f/WN+4o1L2aWEtJlid2RJCkWr785El1Oh7MfX9RqgNIrmJToxHIdWHxO4fnNtYaouM
+ ZA4M7bOVYvvb8MFrEcoV5AiyKYBT3K0OUPnj/kac1gVM5Qzg8JWQ0VJad1ChQ79qpNmQ
+ q2mIOVglFJf9pBWMD3Z5wX8kT9kx/DvQekKqeyD3orYVNPEVIrawORgKtd0+PFICeph+
+ FqZ1uv/zHLSZf40VhTGGLGxWfRUeYu0+RfvGtKAiFaAQjfXW04I/sgqSIOHW2OtlCyn6 Lw== 
+Received: from aserv0022.oracle.com (aserv0022.oracle.com [141.146.126.234])
+        by userp2130.oracle.com with ESMTP id 2pybkcb9p3-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 15 Jan 2019 11:10:33 +0000
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by aserv0022.oracle.com (8.14.4/8.14.4) with ESMTP id x0FBAQlT016587
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 15 Jan 2019 11:10:26 GMT
+Received: from abhmp0001.oracle.com (abhmp0001.oracle.com [141.146.116.7])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x0FBAOHV003183;
+        Tue, 15 Jan 2019 11:10:24 GMT
+Received: from [10.166.106.34] (/10.166.106.34)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Tue, 15 Jan 2019 03:10:24 -0800
+Subject: Re: [PATCH v3 5/6] x86/alternative: Use a single access in
+ text_poke() where possible
+To:     Josh Poimboeuf <jpoimboe@redhat.com>
+References: <279b8003f7f0a6831d090ab822d37bc958f974de.1547073843.git.jpoimboe@redhat.com>
+ <8138A1EE-359D-4CD2-8E96-5BF00313AB3B@vmware.com>
+ <20190110172004.wuh45xoafynfm2df@treble>
+ <20190110123243.3b9e0856@gandalf.local.home>
+ <20190110174257.GE16556@linux.intel.com>
+ <20190110125757.1c8d2870@gandalf.local.home>
+ <20190110180428.GG16556@linux.intel.com>
+ <e5ea3781-336d-7b03-a22e-5012e915affd@oracle.com>
+ <20190111152809.ejutcmqrx4ud3fli@treble>
+ <ad6fae93-4122-7854-aa4c-2facd67ca839@oracle.com>
+ <20190111165752.z6e2dfktj2caqi4n@treble>
+Cc:     Sean Christopherson <sean.j.christopherson@intel.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Nadav Amit <namit@vmware.com>, X86 ML <x86@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Jason Baron <jbaron@akamai.com>, Jiri Kosina <jkosina@suse.cz>,
+        David Laight <David.Laight@ACULAB.COM>,
+        Borislav Petkov <bp@alien8.de>,
+        Julia Cartwright <julia@ni.com>, Jessica Yu <jeyu@kernel.org>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        Edward Cree <ecree@solarflare.com>,
+        Daniel Bristot de Oliveira <bristot@redhat.com>
+From:   Alexandre Chartre <alexandre.chartre@oracle.com>
+Organization: Oracle Corporation
+Message-ID: <49f9bb3d-7b65-06e8-b0b3-42cf7f0a82b5@oracle.com>
+Date:   Tue, 15 Jan 2019 12:10:19 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101
+ Thunderbird/45.6.0
 MIME-Version: 1.0
-In-Reply-To: <alpine.DEB.2.21.1901151142590.1865@nanos.tec.linutronix.de>
-Content-Type: text/plain; charset=utf-8
-Content-Language: de-DE
+In-Reply-To: <20190111165752.z6e2dfktj2caqi4n@treble>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 7bit
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9136 signatures=668680
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=943
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1810050000 definitions=main-1901150095
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 15/01/2019 11:43, Thomas Gleixner wrote:
-> On Mon, 14 Jan 2019, Juergen Gross wrote:
-> 
->> Commit f94c8d11699759 ("sched/clock, x86/tsc: Rework the x86 'unstable'
->> sched_clock() interface") broke Xen guest time handling across
->> migration:
+
+On 01/11/2019 05:57 PM, Josh Poimboeuf wrote:
+> On Fri, Jan 11, 2019 at 05:46:36PM +0100, Alexandre Chartre wrote:
 >>
->> [  187.249951] Freezing user space processes ... (elapsed 0.001 seconds) done.
->> [  187.251137] OOM killer disabled.
->> [  187.251137] Freezing remaining freezable tasks ... (elapsed 0.001 seconds) done.
->> [  187.252299] suspending xenstore...
->> [  187.266987] xen:grant_table: Grant tables using version 1 layout
->> [18446743811.706476] OOM killer enabled.
->> [18446743811.706478] Restarting tasks ... done.
->> [18446743811.720505] Setting capacity to 16777216
-> 
-> I see that it's broken, but the changelog could do with an explanation WHY
-> it broke.
+>>
+>> On 01/11/2019 04:28 PM, Josh Poimboeuf wrote:
+>>> On Fri, Jan 11, 2019 at 01:10:52PM +0100, Alexandre Chartre wrote:
+>>>> To avoid any issue with live patching the call instruction, what about
+>>>> toggling between two call instructions: one would be the currently active
+>>>> call, while the other would currently be inactive but to be used after a
+>>>> change is made. You can safely patch the inactive call and then toggle
+>>>> the call flow (using a jump label) between the active and inactive calls.
+>>>>
+>>>> So instead of having a single call instruction:
+>>>>
+>>>> 	call function
+>>>>
+>>>> You would have:
+>>>>
+>>>> 	STATIC_JUMP_IF_TRUE label, key
+>>>> 	call function1
+>>>> 	jmp done
+>>>> label:
+>>>> 	call function2
+>>>> done:
+>>>>
+>>>> If the key is set so that function1 is currently called then you can
+>>>> safely update the call instruction for function2. Once this is done,
+>>>> just flip the key to make the function2 call active. On a next update,
+>>>> you would, of course, have to switch and update the call for function1.
+>>>
+>>> What about the following race?
+>>>
+>>> CPU1						CPU2
+>>> static key is false, doesn't jump
+>>> task gets preempted before calling function1
+>>> 						change static key to true
+>>> 						start patching "call function1"
+>>> task resumes, sees inconsistent call instruction
+>>>
+>>
+>> If the function1 call is active then it won't be changed, you will change
+>> function2. However, I presume you can still have a race but if the function
+>> is changed twice before calling function1:
+>>
+>> CPU1						CPU2
+>> static key is false, doesn't jump
+>> task gets preempted before calling function1
+>>                                                 -- first function change --
+>>                                                 patch "call function2"
+>>                                                 change static key to true
+>>                                                 -- second function change --
+>>                                                 start patching "call function1"
+>> task resumes, sees inconsistent call instruction
+>>
+>> So right, that's a problem.
+>
+> Right, that's what I meant to say :-)
+>
 
-This seems to be rather complex.
+Thinking more about it (and I've probably missed something or I am just being
+totally stupid because this seems way too simple), can't we just replace the
+"call" with "push+jmp" and patch the jmp instruction?
 
-I believe the mentioned commit just ignored Xen guests resulting in a
-"stable" clock where it shouldn't, but maybe I have missed another
-aspect of this commit which is to blame. I tried to fix that by
-replacing using_native_sched_clock() with a hypervisor specific pvops
-function.
+Instead of having:
 
-Unfortunately this didn't work, maybe due to other uses of
-using_native_sched_clock() added by later patches. In the end it was
-quite clear that updating the Xen clock offset was the right thing to
-do, so I ended up with this patch.
+     call target
+
+Have:
+
+     push $done
+static_call:
+     jmp target
+done:
+
+Then we can safely patch the "jmp" instruction to jump to a new target
+with text_poke_bp(), using the new target as the text_poke_bp() handler:
+
+   new_jmp_code = opcode of "jmp new_target"
+
+   text_poke_bp(static_call, new_jmp_code, new_jmp_code_size, new_target);
+
+Problems come with patching a call instruction, but there's no issue with patching
+a jmp, no? (that's what jump labels do).
+
+No change to the int3 handler, no thunk, this seems really too simple... :-)
 
 
-Juergen
+alex.
