@@ -2,81 +2,97 @@ Return-Path: <SRS0=RZO6=PX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F636C43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 17:37:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D22A0C43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 17:37:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6861520656
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 17:37:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id ACBE820656
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 17:37:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388418AbfAORhS (ORCPT
+        id S2388405AbfAORhi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 15 Jan 2019 12:37:18 -0500
-Received: from ale.deltatee.com ([207.54.116.67]:53178 "EHLO ale.deltatee.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730477AbfAORhS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Jan 2019 12:37:18 -0500
-Received: from cgy1-donard.priv.deltatee.com ([172.16.1.31])
-        by ale.deltatee.com with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <gunthorp@deltatee.com>)
-        id 1gjSeJ-0000VH-V0; Tue, 15 Jan 2019 10:37:17 -0700
-Received: from gunthorp by cgy1-donard.priv.deltatee.com with local (Exim 4.89)
-        (envelope-from <gunthorp@deltatee.com>)
-        id 1gjSeJ-0004QV-IT; Tue, 15 Jan 2019 10:37:15 -0700
-From:   Logan Gunthorpe <logang@deltatee.com>
-To:     linux-sh@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Yoshinori Sato <ysato@users.sourceforge.jp>,
-        Rich Felker <dalias@libc.org>
-Cc:     Logan Gunthorpe <logang@deltatee.com>
-Date:   Tue, 15 Jan 2019 10:37:11 -0700
-Message-Id: <20190115173711.16974-1-logang@deltatee.com>
-X-Mailer: git-send-email 2.19.0
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 172.16.1.31
-X-SA-Exim-Rcpt-To: linux-sh@vger.kernel.org, linux-kernel@vger.kernel.org, ysato@users.sourceforge.jp, dalias@libc.org, logang@deltatee.com
-X-SA-Exim-Mail-From: gunthorp@deltatee.com
-Subject: [PATCH] sh: mm: make use of new memblocks_present() helper
-X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
-X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
+        Tue, 15 Jan 2019 12:37:38 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:50574 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1730674AbfAORhh (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 Jan 2019 12:37:37 -0500
+Received: from pps.filterd (m0098413.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id x0FHZ1f4093912
+        for <linux-kernel@vger.kernel.org>; Tue, 15 Jan 2019 12:37:36 -0500
+Received: from e06smtp07.uk.ibm.com (e06smtp07.uk.ibm.com [195.75.94.103])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2q1huvh416-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Tue, 15 Jan 2019 12:37:36 -0500
+Received: from localhost
+        by e06smtp07.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <pmorel@linux.ibm.com>;
+        Tue, 15 Jan 2019 17:37:34 -0000
+Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
+        by e06smtp07.uk.ibm.com (192.168.101.137) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Tue, 15 Jan 2019 17:37:31 -0000
+Received: from d06av26.portsmouth.uk.ibm.com (d06av26.portsmouth.uk.ibm.com [9.149.105.62])
+        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x0FHbUcx61866184
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Tue, 15 Jan 2019 17:37:30 GMT
+Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id AC077AE051;
+        Tue, 15 Jan 2019 17:37:30 +0000 (GMT)
+Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 6020FAE045;
+        Tue, 15 Jan 2019 17:37:30 +0000 (GMT)
+Received: from morel-ThinkPad-W530.boeblingen.de.ibm.com (unknown [9.152.224.140])
+        by d06av26.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Tue, 15 Jan 2019 17:37:30 +0000 (GMT)
+From:   Pierre Morel <pmorel@linux.ibm.com>
+To:     gerald.schaefer@de.ibm.com
+Cc:     joro@8bytes.org, linux-s390@vger.kernel.org,
+        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
+        alex.williamson@redhat.com, shameerali.kolothum.thodi@huawei.com,
+        walling@linux.ibm.com
+Subject: [PATCH v1] iommu/s390: Declare s390 iommu reserved regions
+Date:   Tue, 15 Jan 2019 18:37:29 +0100
+X-Mailer: git-send-email 2.7.4
+X-TM-AS-GCONF: 00
+x-cbid: 19011517-0028-0000-0000-000003399946
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19011517-0029-0000-0000-000023F6BD26
+Message-Id: <1547573850-9459-1-git-send-email-pmorel@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-01-15_05:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=376 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1901150145
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Cleanup the open coded for_each_memblock() loop that is equivalent
-to the new memblocks_present() helper.
+The s390 iommu can only allow DMA transactions between the zPCI device
+entries start_dma and end_dma.
 
-Signed-off-by: Logan Gunthorpe <logang@deltatee.com>
-Reviewed-by: Christoph Hellwig <hch@lst.de>
-Cc: Yoshinori Sato <ysato@users.sourceforge.jp>
-Cc: Rich Felker <dalias@libc.org>
----
- arch/sh/mm/init.c | 7 +------
- 1 file changed, 1 insertion(+), 6 deletions(-)
+Let's declare the regions before start_dma and after end_dma as
+reserved regions using the appropriate callback in iommu_ops.
 
-diff --git a/arch/sh/mm/init.c b/arch/sh/mm/init.c
-index a8e5c0e00fca..dc0ff41d602d 100644
---- a/arch/sh/mm/init.c
-+++ b/arch/sh/mm/init.c
-@@ -234,12 +234,7 @@ static void __init do_init_bootmem(void)
- 
- 	plat_mem_setup();
- 
--	for_each_memblock(memory, reg) {
--		int nid = memblock_get_region_node(reg);
--
--		memory_present(nid, memblock_region_memory_base_pfn(reg),
--			memblock_region_memory_end_pfn(reg));
--	}
-+	memblocks_present();
- 	sparse_init();
- }
- 
+The reserved region may later be retrieved from sysfs or from
+the vfio iommu internal interface.
+
+This seems to me related with the work Shameer has started on
+vfio_iommu_type1 so I add Alex and Shameer to the CC list.
+
+
+Pierre Morel (1):
+  iommu/s390: Declare s390 iommu reserved regions
+
+ drivers/iommu/s390-iommu.c | 29 +++++++++++++++++++++++++++++
+ 1 file changed, 29 insertions(+)
+
 -- 
-2.19.0
+2.7.4
 
