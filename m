@@ -2,94 +2,149 @@ Return-Path: <SRS0=RZO6=PX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D484C43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 13:58:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A1D9C43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 13:58:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0DDEB20657
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 13:58:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EAF2E20657
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 13:58:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730179AbfAON6i (ORCPT
+        id S1730195AbfAON6m (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 15 Jan 2019 08:58:38 -0500
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:51624 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727133AbfAON6i (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Jan 2019 08:58:38 -0500
+        Tue, 15 Jan 2019 08:58:42 -0500
+Received: from foss.arm.com ([217.140.101.70]:51642 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727133AbfAON6k (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 Jan 2019 08:58:40 -0500
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 6F6CFA78;
-        Tue, 15 Jan 2019 05:58:37 -0800 (PST)
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 79C7FEBD;
+        Tue, 15 Jan 2019 05:58:39 -0800 (PST)
 Received: from e112298-lin.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 99E083F70D;
-        Tue, 15 Jan 2019 05:58:35 -0800 (PST)
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id ADFFB3F70D;
+        Tue, 15 Jan 2019 05:58:37 -0800 (PST)
 From:   Julien Thierry <julien.thierry@arm.com>
 To:     linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 Cc:     mingo@redhat.com, peterz@infradead.org, catalin.marinas@arm.com,
         will.deacon@arm.com, james.morse@arm.com, hpa@zytor.com,
         valentin.schneider@arm.com, Julien Thierry <julien.thierry@arm.com>
-Subject: [PATCH v3 0/4] uaccess: Add unsafe accessors for arm64
-Date:   Tue, 15 Jan 2019 13:58:25 +0000
-Message-Id: <1547560709-56207-1-git-send-email-julien.thierry@arm.com>
+Subject: [PATCH v3 1/4] arm64: uaccess: Cleanup get/put_user()
+Date:   Tue, 15 Jan 2019 13:58:26 +0000
+Message-Id: <1547560709-56207-2-git-send-email-julien.thierry@arm.com>
 X-Mailer: git-send-email 1.9.1
+In-Reply-To: <1547560709-56207-1-git-send-email-julien.thierry@arm.com>
+References: <1547560709-56207-1-git-send-email-julien.thierry@arm.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+__get/put_user_check() macro is made to return a value but this is never
+used. Get rid of them and just use directly __get/put_user_error() as
+a statement, reducing macro indirection.
 
-First version of this series[1] was briefly in linux-next but had to be
-reverted due to a bug where schedule would end up being called while
-user_access was active[2].
+Also, take this opportunity to rename __get/put_user_err() as it gets
+a bit confusing having them along __get/put_user_error().
 
-After clarifications[3], rescheduling while in a user_access region is not
-allowed.
+Signed-off-by: Julien Thierry <julien.thierry@arm.com>
+Cc: Catalin Marinas <catalin.marinas@arm.com>
+Cc: Will Deacon <will.deacon@arm.com>
 
-* Patches 1 and 2 implement the unsafe accessors for arm64
-* Patches 3 and 4 clarify this restriction in the API and attempts to
-  check against violations of the restriction.
+---
+ arch/arm64/include/asm/uaccess.h | 36 ++++++++++++------------------------
+ 1 file changed, 12 insertions(+), 24 deletions(-)
 
-Changes since v2[4]:
-- Rebase on v5.0-rc2
-- access_ok() is now done in user_access_begin(), so rework accessors
-  so access_ok() is not called in unsafe_get/put_user()
-- Split addition of unsafe accessors and the user_access_region check
-  into separate patches
-- Avoid reading SCTLR_EL1 in user_access_region check
-- Add build option for user_access_region checking
-- Reword clarifications on unsafe accessors API
+diff --git a/arch/arm64/include/asm/uaccess.h b/arch/arm64/include/asm/uaccess.h
+index 547d7a0..8e40808 100644
+--- a/arch/arm64/include/asm/uaccess.h
++++ b/arch/arm64/include/asm/uaccess.h
+@@ -268,7 +268,7 @@ static inline void __user *__uaccess_mask_ptr(const void __user *ptr)
+ 	: "+r" (err), "=&r" (x)						\
+ 	: "r" (addr), "i" (-EFAULT))
 
-Changes since v1[1]:
-- Add a way to detect code calling schedule within a user_access region
-- Make sure put_user/get_user arguments are evaluated before disabling PAN
+-#define __get_user_err(x, ptr, err)					\
++#define __raw_get_user(x, ptr, err)					\
+ do {									\
+ 	unsigned long __gu_val;						\
+ 	__chk_user_ptr(ptr);						\
+@@ -297,28 +297,22 @@ static inline void __user *__uaccess_mask_ptr(const void __user *ptr)
+ 	(x) = (__force __typeof__(*(ptr)))__gu_val;			\
+ } while (0)
 
-[1] https://www.spinics.net/lists/arm-kernel/msg674925.html
-[2] https://patchwork.kernel.org/patch/10634783/
-[3] https://lkml.org/lkml/2018/11/28/50
-[4] http://lists.infradead.org/pipermail/linux-arm-kernel/2018-December/617080.html
+-#define __get_user_check(x, ptr, err)					\
+-({									\
++#define __get_user_error(x, ptr, err)					\
++do {									\
+ 	__typeof__(*(ptr)) __user *__p = (ptr);				\
+ 	might_fault();							\
+ 	if (access_ok(__p, sizeof(*__p))) {				\
+ 		__p = uaccess_mask_ptr(__p);				\
+-		__get_user_err((x), __p, (err));			\
++		__raw_get_user((x), __p, (err));			\
+ 	} else {							\
+ 		(x) = 0; (err) = -EFAULT;				\
+ 	}								\
+-})
+-
+-#define __get_user_error(x, ptr, err)					\
+-({									\
+-	__get_user_check((x), (ptr), (err));				\
+-	(void)0;							\
+-})
++} while (0)
 
-Cheers,
+ #define __get_user(x, ptr)						\
+ ({									\
+ 	int __gu_err = 0;						\
+-	__get_user_check((x), (ptr), __gu_err);				\
++	__get_user_error((x), (ptr), __gu_err);				\
+ 	__gu_err;							\
+ })
 
-Julien
+@@ -338,7 +332,7 @@ static inline void __user *__uaccess_mask_ptr(const void __user *ptr)
+ 	: "+r" (err)							\
+ 	: "r" (x), "r" (addr), "i" (-EFAULT))
 
--->
+-#define __put_user_err(x, ptr, err)					\
++#define __raw_put_user(x, ptr, err)					\
+ do {									\
+ 	__typeof__(*(ptr)) __pu_val = (x);				\
+ 	__chk_user_ptr(ptr);						\
+@@ -366,28 +360,22 @@ static inline void __user *__uaccess_mask_ptr(const void __user *ptr)
+ 	uaccess_disable_not_uao();					\
+ } while (0)
 
-Julien Thierry (4):
-  arm64: uaccess: Cleanup get/put_user()
-  arm64: uaccess: Implement unsafe accessors
-  uaccess: Check no rescheduling function is called in unsafe region
-  arm64: uaccess: Implement user_access_region_active
+-#define __put_user_check(x, ptr, err)					\
+-({									\
++#define __put_user_error(x, ptr, err)					\
++do {									\
+ 	__typeof__(*(ptr)) __user *__p = (ptr);				\
+ 	might_fault();							\
+ 	if (access_ok(__p, sizeof(*__p))) {				\
+ 		__p = uaccess_mask_ptr(__p);				\
+-		__put_user_err((x), __p, (err));			\
++		__raw_put_user((x), __p, (err));			\
+ 	} else	{							\
+ 		(err) = -EFAULT;					\
+ 	}								\
+-})
+-
+-#define __put_user_error(x, ptr, err)					\
+-({									\
+-	__put_user_check((x), (ptr), (err));				\
+-	(void)0;							\
+-})
++} while (0)
 
- arch/arm64/include/asm/sysreg.h  |   2 +
- arch/arm64/include/asm/uaccess.h | 123 ++++++++++++++++++++++++++-------------
- include/linux/kernel.h           |  11 +++-
- include/linux/uaccess.h          |  13 +++++
- kernel/sched/core.c              |  22 +++++++
- lib/Kconfig.debug                |   8 +++
- 6 files changed, 135 insertions(+), 44 deletions(-)
+ #define __put_user(x, ptr)						\
+ ({									\
+ 	int __pu_err = 0;						\
+-	__put_user_check((x), (ptr), __pu_err);				\
++	__put_user_error((x), (ptr), __pu_err);				\
+ 	__pu_err;							\
+ })
 
 --
 1.9.1
