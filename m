@@ -7,48 +7,46 @@ X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C0744C43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 16:44:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 586BEC43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 16:45:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 869BD2087E
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 16:44:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 238192086D
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 16:45:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547570693;
-	bh=NTmBDdXPRGSej3dh3gdJQhXc2efILJUEdO3ANsK+fuM=;
+	s=default; t=1547570700;
+	bh=4C1+YdnvgYe33jQLAQ851sBcL5y7R/wTlwtQz4QvzpU=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=BNXor9BnHadkp2AsLWaeEf9yI6GeMtZhJGMXT7gBhCcTlenaVFGAiKny/2KYZd8mr
-	 qXJ2x7elx9uZ/3cNQwmsHeU5pvgm7U6FY4aBlEl53o33P6Z6/qJ2fsP5MyYvlXtOjd
-	 /D3SG2SW2hMiga4uyD87IIxNCYUl7MNN6yxJ4WME=
+	b=OTOfPH2gQmUzgIJlWboyqB0YZyBXuZX/Fvr3wlTKj9vN0JSFa5cmnDCrexvi0PC5X
+	 YoZVUdK4aqw9l7TBpoSjD3B+DWpQnZ3MrKfvVtGtDuswbCe4Ud++frHa7uDb4IRKTn
+	 Hohvgnd/HYDXf5FLmogdtBIfpqYiM8807sNM+KS4=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387636AbfAOQow (ORCPT
+        id S1732481AbfAOQo6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 15 Jan 2019 11:44:52 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34362 "EHLO mail.kernel.org"
+        Tue, 15 Jan 2019 11:44:58 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34520 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729683AbfAOQor (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Jan 2019 11:44:47 -0500
+        id S2387641AbfAOQoy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 Jan 2019 11:44:54 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3E71820859;
-        Tue, 15 Jan 2019 16:44:46 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 66C4C20859;
+        Tue, 15 Jan 2019 16:44:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547570686;
-        bh=NTmBDdXPRGSej3dh3gdJQhXc2efILJUEdO3ANsK+fuM=;
+        s=default; t=1547570693;
+        bh=4C1+YdnvgYe33jQLAQ851sBcL5y7R/wTlwtQz4QvzpU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=zAdBGpdK+BRf3If16Npdha2/5ng3wcoRsmjFsaadmCtuGVxp03De1a3v+kTtxCR8U
-         OANARquo7iLVcs/hvfNiLbzbxYDlytWP8XYoo12E/OrzSYBGBS0N3+9d3C6lAxzOZw
-         T4BQxnJY2hIhDcystwCOT23VGuWrnF234iOQriEk=
+        b=CWX7CkxJ7XiWJaB5tjg82usi/FeSBCvOJdlwhariqpIowYSzttG99MZl2+0rj6qqm
+         iktEnDsYArC3d2kE12nvwQGaSUp4AJeOwRmXA4VzII3uS4fDBRXl/d9JBcvUSbq9w9
+         wwrPA5hZm/48Ar9LinN4rUUrEGyVwMSSduv7rWW0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Quentin Perret <quentin.perret@arm.com>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Sudeep Holla <sudeep.holla@arm.com>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
-Subject: [PATCH 4.20 07/57] cpufreq: scmi: Fix frequency invariance in slow path
-Date:   Tue, 15 Jan 2019 17:35:48 +0100
-Message-Id: <20190115154911.125770571@linuxfoundation.org>
+        stable@vger.kernel.org, Kailang Yang <kailang@realtek.com>,
+        Takashi Iwai <tiwai@suse.de>
+Subject: [PATCH 4.20 09/57] ALSA: hda/realtek - Support Dell headset mode for New AIO platform
+Date:   Tue, 15 Jan 2019 17:35:50 +0100
+Message-Id: <20190115154911.245821999@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190115154910.734892368@linuxfoundation.org>
 References: <20190115154910.734892368@linuxfoundation.org>
@@ -67,44 +65,31 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Quentin Perret <quentin.perret@arm.com>
+From: Kailang Yang <kailang@realtek.com>
 
-commit 0e141d1c65c1dd31c914eb2e11651adcc1a15912 upstream.
+commit c2a7c55a04065c3b0c32d23b099db7ea1dbf6250 upstream.
 
-The scmi-cpufreq driver calls the arch_set_freq_scale() callback on
-frequency changes to provide scale-invariant load-tracking signals to
-the scheduler. However, in the slow path, it does so while specifying
-the current and max frequencies in different units, hence resulting in a
-broken freq_scale factor.
+Dell has new platform for ALC274.
+This will support to enable headset mode.
 
-Fix this by passing all frequencies in KHz, as stored in the CPUFreq
-frequency table.
-
-Fixes: 99d6bdf33877 (cpufreq: add support for CPU DVFS based on SCMI message protocol)
-Signed-off-by: Quentin Perret <quentin.perret@arm.com>
-Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
-Acked-by: Sudeep Holla <sudeep.holla@arm.com>
-Cc: 4.17+ <stable@vger.kernel.org> # v4.17+
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+Signed-off-by: Kailang Yang <kailang@realtek.com>
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/cpufreq/scmi-cpufreq.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ sound/pci/hda/patch_realtek.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/drivers/cpufreq/scmi-cpufreq.c
-+++ b/drivers/cpufreq/scmi-cpufreq.c
-@@ -52,9 +52,9 @@ scmi_cpufreq_set_target(struct cpufreq_p
- 	int ret;
- 	struct scmi_data *priv = policy->driver_data;
- 	struct scmi_perf_ops *perf_ops = handle->perf_ops;
--	u64 freq = policy->freq_table[index].frequency * 1000;
-+	u64 freq = policy->freq_table[index].frequency;
- 
--	ret = perf_ops->freq_set(handle, priv->domain_id, freq, false);
-+	ret = perf_ops->freq_set(handle, priv->domain_id, freq * 1000, false);
- 	if (!ret)
- 		arch_set_freq_scale(policy->related_cpus, freq,
- 				    policy->cpuinfo.max_freq);
+--- a/sound/pci/hda/patch_realtek.c
++++ b/sound/pci/hda/patch_realtek.c
+@@ -6503,6 +6503,7 @@ static const struct snd_pci_quirk alc269
+ 	SND_PCI_QUIRK(0x1028, 0x0871, "Dell Precision 3630", ALC255_FIXUP_DELL_HEADSET_MIC),
+ 	SND_PCI_QUIRK(0x1028, 0x0872, "Dell Precision 3630", ALC255_FIXUP_DELL_HEADSET_MIC),
+ 	SND_PCI_QUIRK(0x1028, 0x0873, "Dell Precision 3930", ALC255_FIXUP_DUMMY_LINEOUT_VERB),
++	SND_PCI_QUIRK(0x1028, 0x0935, "Dell", ALC274_FIXUP_DELL_AIO_LINEOUT_VERB),
+ 	SND_PCI_QUIRK(0x1028, 0x164a, "Dell", ALC293_FIXUP_DELL1_MIC_NO_PRESENCE),
+ 	SND_PCI_QUIRK(0x1028, 0x164b, "Dell", ALC293_FIXUP_DELL1_MIC_NO_PRESENCE),
+ 	SND_PCI_QUIRK(0x103c, 0x1586, "HP", ALC269_FIXUP_HP_MUTE_LED_MIC2),
 
 
