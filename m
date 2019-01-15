@@ -2,217 +2,171 @@ Return-Path: <SRS0=RZO6=PX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
-	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 927C3C43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 00:34:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B592C43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 00:34:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 556D020657
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 00:34:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4779D20657
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 00:34:37 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="NVwYBqw+"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727439AbfAOAeJ (ORCPT
+        id S1727499AbfAOAef (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 14 Jan 2019 19:34:09 -0500
-Received: from mout.gmx.net ([212.227.17.22]:47607 "EHLO mout.gmx.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726911AbfAOAeI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 Jan 2019 19:34:08 -0500
-Received: from longitude ([109.90.232.48]) by mail.gmx.com (mrgmx102
- [212.227.17.168]) with ESMTPSA (Nemesis) id 0MBq8p-1gZY1a2Nr5-00AotK; Tue, 15
- Jan 2019 01:33:57 +0100
-Date:   Tue, 15 Jan 2019 01:33:53 +0100
-From:   Jonathan =?utf-8?Q?Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>
-To:     Christophe Leroy <christophe.leroy@c-s.fr>
-Cc:     Jonathan =?utf-8?Q?Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
-Subject: Re: [PATCH v2 00/15] powerpc/32s: Use BATs/LTLBs for
- STRICT_KERNEL_RWX
-Message-ID: <20190115003353.GD22334@latitude>
-References: <cover.1547132681.git.christophe.leroy@c-s.fr>
- <20190113181621.GA22334@latitude>
- <714e78ba-1e92-a856-3dd6-a1fb96ad3785@c-s.fr>
- <20190113210227.GB22334@latitude>
- <334b1b02-b652-499c-904e-09e6f7164b8c@c-s.fr>
+        Mon, 14 Jan 2019 19:34:35 -0500
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:41170 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727268AbfAOAee (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 14 Jan 2019 19:34:34 -0500
+Received: by mail-pf1-f196.google.com with SMTP id b7so414648pfi.8
+        for <linux-kernel@vger.kernel.org>; Mon, 14 Jan 2019 16:34:34 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=+9KoaZlMYhiCxbCSZQDfswPbIa8LSF17AIhYYm4SB+g=;
+        b=NVwYBqw+duMtFINnJBEqjWbbfaxjPaZ3sugXuoZPDeQAiDFSCkXVIKC1XEWUv4kWy8
+         BEMuNtPBoiQoHA7o9V3sHquu5Q+Gttn2kOIQYeYiV8j2yjzVIUNH3bEjVTODTfnDSIh6
+         hAdR1DdG/+CTj+nb2xnnoCsov6BRqqeKfKEFg=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=+9KoaZlMYhiCxbCSZQDfswPbIa8LSF17AIhYYm4SB+g=;
+        b=GlCHB/rO8wIJB9uk14meWwyw1MozFR52XkgAQHuBlaGNU/K77rHNLLH4Dq0NdYCPTP
+         A/6yHGhyOFdk2MTLZ/mGfxTl/cOeoEAVgpuaLm1PATM1M99lbUKEsO2HTvHq6VZI0KdJ
+         3rbnGmjuTBup0S6nqUEhH+rTDb+uhcxm0zzKTixlX9DUON0Ca9QfeXYZ5WcOpMUrgI7T
+         mqWYo2JJf6iiCrC/X+TchnjeqR0wQPvw5CmOn8uEShHQIqfoacmwRDgz+Uick9Wn4b56
+         Lg8Nl04rNRVocdkXGJh2o6ju41gZ82s8ESPK+3m2R9qN32bYk993o3ZXopXJnTMpKXNy
+         MLKg==
+X-Gm-Message-State: AJcUukc10dQBrVQOQS26YJtYUoHG+KdsqgOHHYrrB5RnL3bfcSzS4k1U
+        gTUwnD6RWnakrxrI93a7yeam3A==
+X-Google-Smtp-Source: ALg8bN5uQbdG8IlR1/A3M9uwMoE2k+eFYoQOLTzwau5PLtYapaxV155/f1lGfmApz6+7o1hiE/6INA==
+X-Received: by 2002:a63:cd11:: with SMTP id i17mr1140425pgg.345.1547512473719;
+        Mon, 14 Jan 2019 16:34:33 -0800 (PST)
+Received: from minitux (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
+        by smtp.gmail.com with ESMTPSA id s84sm3397484pfi.15.2019.01.14.16.34.31
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 14 Jan 2019 16:34:32 -0800 (PST)
+Date:   Mon, 14 Jan 2019 16:34:28 -0800
+From:   Bjorn Andersson <bjorn.andersson@linaro.org>
+To:     Brian Masney <masneyb@onstation.org>
+Cc:     linus.walleij@linaro.org, sboyd@kernel.org, andy.gross@linaro.org,
+        marc.zyngier@arm.com, shawnguo@kernel.org, dianders@chromium.org,
+        linux-gpio@vger.kernel.org, nicolas.dechesne@linaro.org,
+        niklas.cassel@linaro.org, david.brown@linaro.org,
+        robh+dt@kernel.org, mark.rutland@arm.com, thierry.reding@gmail.com,
+        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org
+Subject: Re: [PATCH v4 03/14] pinctrl: qcom: spmi-gpio: hardcode IRQ counts
+Message-ID: <20190115003428.GJ9278@minitux>
+References: <20190113154716.5145-1-masneyb@onstation.org>
+ <20190113154716.5145-4-masneyb@onstation.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="bajzpZikUji1w+G9"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <334b1b02-b652-499c-904e-09e6f7164b8c@c-s.fr>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Provags-ID: V03:K1:Tfh0fcp34orf31kcItygfZLkfrZbBJ+FOFepaLkVb1SRYkAJCYD
- M2eEo5Cow34rmP4j5IEiSzCuXaVooXksBmMF2YPCrl730991juZBa0Ia050Dwz7eNkD0OGB
- LteqvK/pRcyt/g7+/2JI9dKPKB8L8RnLB0E+I4D7c+wMO4fv/XuOkig7Gl2SfV0D6eguIGi
- dsA8LhLyhSSBpZHN9WMIw==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:oatbJL0eozI=:SX4sEgMVISdz9JW9RDfPfr
- m3ye04VpyQUQqo1ufJKCL4Pe/iuq/vZS7WPwzq0+fcapYPCov8PNROmIqWMXZlhjgpqfMmz/M
- 3lCMONlG7onctMza3psDvpp2UnSIj+hD+JrLEdF3VAjJlKLhJuZ6blVa/0oC8+caZelvomyKn
- 86CsyMm36/HtCe3wws6jjHUeuQqJDrUlhUZWg7TOlqKL8xpIftmCGac31pKZlU36/Drm+vjsm
- NQ6gPELHMENh8gd1ZRO1c3esVm5V3VioOvkr2FyEl4iRBDAgkVGWsN49WrDxZ6T5hqEz+WMYJ
- xKF5BssKjdDypAodcLT8khaQLSSZlATjJhTRLReGMqMrUV3g7TxYSGH2SRgJpap+knDKz0EI1
- KtIRrjmP7LC1hE8kHozPlxgqlDtHHeBdqtF/owVPpXB/rCeMdkGdu+QndzGScb0WhxG4aVbty
- 0qGRaFklG6Fa/J79e8Tkqqkd3aYU1EFKAt/SgVledIlwsYJggXLEiDDTHgIaClkqSUfvy3UwZ
- Fk7M16XIqI13pcYnqhd9kSbmf9NstD84WFAcNA7ZrMYxs08/QSqisfjk0HGA1GTuP5GZMiWYg
- GIjehRe7y1PHW96EhaLmQcjQE2e+YLx76/8ukj3T+qRFiOAYFE3PzhXNP/RoImM91Vqr37XiZ
- Egk3IXo1o0QEBf1f5mq7uRb3Hv2doI/JQi8bGgSlAEgo/wISi9uBLgxNPDh/swqA/RWn9Rfhq
- xIudADjVPyOj5EHYlmIflJCHmeVav76HJcZLOp/B46z/S0SBuJKpMYRWMfRPL47wP6wKL4O6y
- 33OPPIon8tAQLa/WXdy03+AjPxlafnbxDEMFuk+NcVWFgqz7rGGIdvvf5wI0CoKwWehBfKH5n
- 4G9AhhF12C9nvvtHpVfFhCwEqWtri+7007uoICskbEkl0F/B8bZkdh8/eXvcV4
+In-Reply-To: <20190113154716.5145-4-masneyb@onstation.org>
+User-Agent: Mutt/1.11.2 (2019-01-07)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Sun 13 Jan 07:47 PST 2019, Brian Masney wrote:
 
---bajzpZikUji1w+G9
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+> The probing of this driver calls platform_irq_count, which will
+> setup all of the IRQs that are configured in device tree. In
+> preparation for converting this driver to be a hierarchical IRQ
+> chip, hardcode the IRQ count based on the hardware type so that all
+> the IRQs are not configured immediately and are configured on an
+> as-needed basis later in the boot process. This change will also
+> allow for the removal of the interrupts property later in this
+> patch series once the hierarchical IRQ chip support is in.
+> 
+> This patch also removes the generic qcom,spmi-gpio OF match since we
+> don't know the number of pins. All of the existing upstream bindings
+> already include the more-specific binding.
+> 
+> The pm8941 code was tested on a LG Nexus 5 (hammerhead) phone.
+> 
+> Signed-off-by: Brian Masney <masneyb@onstation.org>
+> ---
+> Changes since v3:
+> - More variants are now included. I missed these since I searched for
+>   qcom,spmi-gpio in the arm dts, and missed the ones in the arm64 dts.
+> 
+> Changes since v2:
+> - Don't move pmic_gpio_of_match block. Use device_get_match_data instead
+>   of of_match_device.
+> - Correct build warning on arm64: warning: cast from pointer to integer
+>   of different size
+> 
+>  drivers/pinctrl/qcom/pinctrl-spmi-gpio.c | 28 ++++++++++--------------
+>  1 file changed, 11 insertions(+), 17 deletions(-)
+> 
+> diff --git a/drivers/pinctrl/qcom/pinctrl-spmi-gpio.c b/drivers/pinctrl/qcom/pinctrl-spmi-gpio.c
+> index 5f2977982ef1..b74c44357e8a 100644
+> --- a/drivers/pinctrl/qcom/pinctrl-spmi-gpio.c
+> +++ b/drivers/pinctrl/qcom/pinctrl-spmi-gpio.c
+> @@ -951,13 +951,7 @@ static int pmic_gpio_probe(struct platform_device *pdev)
+>  		return ret;
+>  	}
+>  
+> -	npins = platform_irq_count(pdev);
+> -	if (!npins)
+> -		return -EINVAL;
+> -	if (npins < 0)
+> -		return npins;
+> -
+> -	BUG_ON(npins > ARRAY_SIZE(pmic_gpio_groups));
+> +	npins = (u16)(uintptr_t) device_get_match_data(&pdev->dev);
 
-On Mon, Jan 14, 2019 at 07:23:07PM +0100, Christophe Leroy wrote:
->=20
->=20
-> Le 13/01/2019 =C3=A0 22:02, Jonathan Neusch=C3=A4fer a =C3=A9crit=C2=A0:
-> > On Sun, Jan 13, 2019 at 08:43:07PM +0100, Christophe Leroy wrote:
-> > > Le 13/01/2019 =C3=A0 19:16, Jonathan Neusch=C3=A4fer a =C3=A9crit=C2=
-=A0:
-> > > > I just tested the whole series on my Wii (I didn't test any interme=
-diate
-> > > > steps). Without CONFIG_STRICT_KERNEL_RWX, it seems to work fine, but
-> > > > with it, I get the following error while booting:
-[...]
-> I can't see anything special in your setup, and this failure looks rather
-> unexpected because I can't see anything done that early when
-> CONFIG_STRICT_KERNEL_RWX is selected.
->=20
-> Does CONFIG_STRICT_KERNEL_RWX works properly without my serie ?
+Why u16, afaict npins is an int? I'm pretty sure you can leave the last
+cast as implicit and as it's not actually a pointer that we're acquiring
+casting it to "unsigned long" is the idiomatic way.
 
-I hadn't tried this before, but yes, without this series (on v5.0-rc2),
-a kernel with CONFIG_STRICT_KERNEL_RWX boots.
+Apart from this the change looks good.
 
-I've checked it patch-by-patch now (with STRICT_KERNEL_RWX):
+Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 
-- patches 1 and 2 build and boot fine
-- patches 3 to 6 build, but fail to boot with this error:
+Regards,
+Bjorn
 
-	top of MEM2 @ 13F00000
-
-	zImage starting: loaded at 0x00e00000 (sp: 0x01588fa0)
-	Allocating 0x14e92c8 bytes for kernel...
-	Decompressing (0x00000000 <- 0x00e11000:0x01586ba7)...
-	Done! Decompressed 0xdc01f4 bytes
-
-	Linux/PowerPC load: root=3D/dev/mmcblk0p2 rootwait console=3Dusbgecko1
-	Finalizing device tree... flat tree at 0x15897a0
-	[    0.000000] printk: bootconsole [udbg0] enabled
-	[    0.000000] Total memory =3D 319MB; using 1024kB for hash table (at (pt=
-rval))
-	[    0.000000] RAM mapped without BATs
-	[    0.000000] RAM mapped without BATs
-	[    0.000000] ------------[ cut here ]------------
-	[    0.000000] kernel BUG at arch/powerpc/mm/pgtable_32.c:223!
-	[    0.000000] Oops: Exception in kernel mode, sig: 5 [#1]
-	[    0.000000] BE PREEMPT
-	[    0.000000] Modules linked in:
-	[    0.000000] CPU: 0 PID: 0 Comm: swapper Not tainted 5.0.0-rc1-wii-00024=
--g596f9fe23c13 #1337
-	[    0.000000] NIP:  c0017c4c LR: c0a836a0 CTR: c001edc4
-	[    0.000000] REGS: c0d9deb0 TRAP: 0700   Not tainted  (5.0.0-rc1-wii-000=
-24-g596f9fe23c13)
-	[    0.000000] MSR:  00020030 <IR,DR>  CR: 42000888  XER: 20000000
-	[    0.000000]
-	[    0.000000] GPR00: c0a836a0 c0d9df60 c0d2a4a0 c0d29c00 00000000 c16ff00=
-0 c0d9de28 c0dc0000
-	[    0.000000] GPR08: c0d9c000 00000001 00000001 00000000 28000824 0000000=
-0 00000000 00000000
-	[    0.000000] GPR16: 00000000 00000000 00000020 00000000 c0860000 c0da000=
-0 c0000000 c0a7d000
-	[    0.000000] GPR24: c0acd55c c0d487c8 13f00000 c0d29000 00000c00 0000031=
-1 c0000000 c0d487c8
-	[    0.000000] NIP [c0017c4c] map_kernel_page+0x78/0xf0
-	[    0.000000] LR [c0a836a0] mapin_ram+0xe0/0x14c
-	[    0.000000] Call Trace:
-	[    0.000000] [c0d9df60] [c0a83f54] mmu_mapin_ram+0x54/0x1a4 (unreliable)
-	[    0.000000] [c0d9df90] [c0a836a0] mapin_ram+0xe0/0x14c
-	[    0.000000] [c0d9dfd0] [c0a83578] MMU_init+0x158/0x1a0
-	[    0.000000] [c0d9dff0] [c0003418] start_here+0x40/0x78
-	[    0.000000] Instruction dump:
-	[    0.000000] 55290026 57c5b53a 7ca54a14 3d204000 7f854800 3ca5c000 419e0=
-088 81250000
-	[    0.000000] 552afffe 552907fe 7d4a4b79 4082004c <0f0a0000> 54840026 7c8=
-4eb78 9081000c
-	[    0.000000] random: get_random_bytes called from print_oops_end_marker+=
-0x34/0x6c with crng_init=3D0
-	[    0.000000] ---[ end trace 0000000000000000 ]---
-	[    0.000000]
-	[    0.000000] Kernel panic - not syncing: Attempted to kill the idle task!
-	[    0.000000] Rebooting in 180 seconds..
-
-- patches 7 to 11 fail to build with this error (really a warning, but
-  arch/powerpc doesn't allow warnings by default):
-
-	  CC      arch/powerpc/mm/ppc_mmu_32.o
-	../arch/powerpc/mm/ppc_mmu_32.c:133:13: error: =E2=80=98clearibat=E2=80=99=
- defined but not used [-Werror=3Dunused-function]
-	 static void clearibat(int index)
-		     ^~~~~~~~~
-	../arch/powerpc/mm/ppc_mmu_32.c:115:13: error: =E2=80=98setibat=E2=80=99 d=
-efined but not used [-Werror=3Dunused-function]
-	 static void setibat(int index, unsigned long virt, phys_addr_t phys,
-		     ^~~~~~~
-	cc1: all warnings being treated as errors
-
-- patches 12 to 15 build but fail to boot with this error:
-
-	top of MEM2 @ 13F00000
-
-	zImage starting: loaded at 0x01000000 (sp: 0x0178afa0)
-	Allocating 0x166b2c8 bytes for kernel...
-	Decompressing (0x00000000 <- 0x01011000:0x017880ce)...
-	Done! Decompressed 0xf421f4 bytes
-
-	Linux/PowerPC load: root=3D/dev/mmcblk0p2 rootwait console=3Dusbgecko1
-	Finalizing device tree... flat tree at 0x178b7a0
-	[    0.000000] printk: bootconsole [udbg0] enabled
-	[    0.000000] Kernel panic - not syncing: ERROR: Failed to allocate 0x001=
-00000 bytes below 0x00000000.
-	[    0.000000] CPU: 0 PID: 0 Comm: swapper Not tainted 5.0.0-rc1-wii-00033=
--gc263f8162122 #1337
-	[    0.000000] Call Trace:
-	[    0.000000] [c0f1ff30] [c00280f0] panic+0x144/0x324 (unreliable)
-	[    0.000000] [c0f1ff90] [c0c18a34] memblock_alloc_base+0x34/0x44
-	[    0.000000] [c0f1ffa0] [c0c071e0] MMU_init_hw+0xcc/0x300
-	[    0.000000] [c0f1ffd0] [c0c06554] MMU_init+0x12c/0x198
-	[    0.000000] [c0f1fff0] [c0003418] start_here+0x40/0x78
-	[    0.000000] Rebooting in 180 seconds..
-
-
-I'll investigate some more tomorrow.
-
-Jonathan
-
---bajzpZikUji1w+G9
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEvHAHGBBjQPVy+qvDCDBEmo7zX9sFAlw9KmgACgkQCDBEmo7z
-X9sofQ//W5ASkLAU3PgbijtwwedphsCQH89lxAdJU6zL5nOG2kZ8SffLiKKVrBkx
-O6SCWEdFX7j5TwOQNEBTa0hoWWfRQOytPLP3gbX4rxNgCe16y/fapMklEUq4QmLG
-GKVw8EBXcGm4CkgQvjDPJ+F8np1chHdsAGWo6k6XGtpd6useD/qOOr7NLu5DWfrZ
-GyFvO/vNS/V+QZqmkTo6n2f2UBZXDcD6YyPZqllYPcZdjZmj7qPUzKTlZwbwAaha
-66Or2RfJ38sLuL0CBaonfquErNCReppXecNz+jA0HIa4AQWKXFt4Pk59O1sGF5a7
-autgwzDZECYW8CqF5WvZzdu65NT0eFM9PkHVd6HytAYaB+x8/5IBPLOKnRWht25P
-qrcr4335xB5CLWWYccH1wwKOeKQnV1LrR7NZz6Q4iBvhq+kXpvPM6a7EbytjZ0Yk
-P8aTUGZQbRM3gj8oqqyPa6tVXRXmoKlWwM7++Fi2od23+q1AV1ID6TL2Ml4h0HwY
-Old86XpcdaJoGghkoXNPEhCBmpviRJ2lYMhuybMhIiwitUrZQsWT7+43pguPiuVv
-uMmZChwQJ5Yjj7C8k+Q0egTqd1M8kIeUkeNHcdAUeAmZn6KfOpNsKmuijNsaM4u8
-5IofLxLKQsMW5tbYMGqi/2sRmwwwtzO16ganRpaO3txlpEa7OR4=
-=pTfv
------END PGP SIGNATURE-----
-
---bajzpZikUji1w+G9--
+>  
+>  	state = devm_kzalloc(dev, sizeof(*state), GFP_KERNEL);
+>  	if (!state)
+> @@ -1063,16 +1057,16 @@ static int pmic_gpio_remove(struct platform_device *pdev)
+>  }
+>  
+>  static const struct of_device_id pmic_gpio_of_match[] = {
+> -	{ .compatible = "qcom,pm8005-gpio" },	/* 4 GPIO's */
+> -	{ .compatible = "qcom,pm8916-gpio" },	/* 4 GPIO's */
+> -	{ .compatible = "qcom,pm8941-gpio" },	/* 36 GPIO's */
+> -	{ .compatible = "qcom,pm8994-gpio" },	/* 22 GPIO's */
+> -	{ .compatible = "qcom,pmi8994-gpio" },  /* 10 GPIO's */
+> -	{ .compatible = "qcom,pm8998-gpio" },	/* 26 GPIO's */
+> -	{ .compatible = "qcom,pmi8998-gpio" },	/* 14 GPIO's */
+> -	{ .compatible = "qcom,pma8084-gpio" },	/* 22 GPIO's */
+> -	{ .compatible = "qcom,pms405-gpio" },	/* 12 GPIO's, holes on 1 9 10 */
+> -	{ .compatible = "qcom,spmi-gpio" }, /* Generic */
+> +	{ .compatible = "qcom,pm8005-gpio", .data = (void *) 4 },
+> +	{ .compatible = "qcom,pm8916-gpio", .data = (void *) 4 },
+> +	{ .compatible = "qcom,pm8941-gpio", .data = (void *) 36 },
+> +	{ .compatible = "qcom,pm8994-gpio", .data = (void *) 22 },
+> +	{ .compatible = "qcom,pmi8994-gpio", .data = (void *) 10 },
+> +	{ .compatible = "qcom,pm8998-gpio", .data = (void *) 26 },
+> +	{ .compatible = "qcom,pmi8998-gpio", .data = (void *) 14 },
+> +	{ .compatible = "qcom,pma8084-gpio", .data = (void *) 22 },
+> +	/* pms405 has 12 GPIOs with holes on 1, 9, and 10 */
+> +	{ .compatible = "qcom,pms405-gpio", .data = (void *) 12 },
+>  	{ },
+>  };
+>  
+> -- 
+> 2.17.2
+> 
