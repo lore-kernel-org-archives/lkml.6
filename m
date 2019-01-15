@@ -4,50 +4,49 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 28007C43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 17:00:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EC992C43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 17:01:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DA7BE20645
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 17:00:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BD26420645
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 17:01:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547571641;
-	bh=p3+vdAdl7wApy6BDvWsZHJGWmLHsAQTzJNSJFWy/ysE=;
+	s=default; t=1547571660;
+	bh=T7Cu/bMi+eNnK1oGvzx9cRtQCIFhs0OSLKsFGMyV2fM=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=itL3PE2HQaYgHxcNDpz5PprZ7m9itaGCDTmZGUbvu1pFeYRYW3y+aWo+wESQydDOs
-	 aPmklzHOQp4lgFBcO4r5kttRhb+N++Yny2MP4BsngmNEk6Cspt06tcfd3+LYGjmJrS
-	 f4Fvh9U+lhy5c6GDmDCla+4UW3ELd7zSLlvG//W0=
+	b=RAk/5ySdR45eII1gEXoACK0ss2Zd3J5w/lfnNtdfuaO2ze+atHNkxDhHI00vHpXTd
+	 4kOmxvE23rQvWPUHjGXkgz3vjbNqlrdylPvjwjmB2RKCMef8gcVOEswSO8DIChvQPf
+	 OPJk+CLxpJENNRR9MmZcd6/7gGeNsDgt3hMENBuw=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388206AbfAORAj (ORCPT
+        id S2388215AbfAORA6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 15 Jan 2019 12:00:39 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54240 "EHLO mail.kernel.org"
+        Tue, 15 Jan 2019 12:00:58 -0500
+Received: from mail.kernel.org ([198.145.29.99]:53920 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732088AbfAOQiZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Jan 2019 11:38:25 -0500
+        id S1732019AbfAOQiJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 Jan 2019 11:38:09 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1538F20873;
-        Tue, 15 Jan 2019 16:38:23 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B8FFC20859;
+        Tue, 15 Jan 2019 16:38:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547570304;
-        bh=p3+vdAdl7wApy6BDvWsZHJGWmLHsAQTzJNSJFWy/ysE=;
+        s=default; t=1547570289;
+        bh=T7Cu/bMi+eNnK1oGvzx9cRtQCIFhs0OSLKsFGMyV2fM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=xa7xSRA0utzxLmFJEH7yVbybeqZ0kMmzi3dJnA8O0VfWwQZObjULezfrZchgvZ1u2
-         4V9KOBi6RPJObfsBMGvs3nYy1wkxJcZnsAP5mp05efgpigeGvFfWPTq8GUQObr4pxU
-         o38BCtpXU24iT+MdLgKzb+qBxD1XntVMhG3OaRIU=
+        b=Et/wkixzOlQUQZZZVfqgdRg3kfuAnKRvKYuJ6Y7HrGiv2JRLh1SrYkPScoWN6NoAP
+         d728hkOOt5ESN1xY0yZhyvQnE0JL2QtInlnZ0mgv3rc6p9uLQzuci5DCodV6dVjVVq
+         D0fYJnR2GOOwUZ6SxAZ5VFshF/ASDQ+Qe8KziaTI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Ley Foon Tan <lftan@altera.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Claudius Heine <claudius.heine.ext@siemens.com>
-Subject: [PATCH 4.4 43/51] PCI: altera: Poll for link up status after retraining the link
-Date:   Tue, 15 Jan 2019 17:35:39 +0100
-Message-Id: <20190115154853.398742826@linuxfoundation.org>
+        stable@vger.kernel.org, Icenowy Zheng <icenowy@aosc.io>,
+        Alan Stern <stern@rowland.harvard.edu>
+Subject: [PATCH 4.4 37/51] USB: storage: add quirk for SMI SM3350
+Date:   Tue, 15 Jan 2019 17:35:33 +0100
+Message-Id: <20190115154852.653917695@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190115154846.928796000@linuxfoundation.org>
 References: <20190115154846.928796000@linuxfoundation.org>
@@ -66,60 +65,45 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Ley Foon Tan <lftan@altera.com>
+From: Icenowy Zheng <icenowy@aosc.io>
 
-commit 3a928e98a833e1a470a60d2fedf3c55502185fb7 upstream.
+commit 0a99cc4b8ee83885ab9f097a3737d1ab28455ac0 upstream.
 
-Some PCIe devices take a long time to reach link up state after retrain.
-Poll for link up status after retraining the link.  This is to make sure
-the link is up before we access configuration space.
+The SMI SM3350 USB-UFS bridge controller cannot handle long sense request
+correctly and will make the chip refuse to do read/write when requested
+long sense.
 
-[bhelgaas: changelog]
-Signed-off-by: Ley Foon Tan <lftan@altera.com>
-Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
-Cc: Claudius Heine <claudius.heine.ext@siemens.com>
+Add a bad sense quirk for it.
+
+Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+Cc: stable <stable@vger.kernel.org>
+Acked-by: Alan Stern <stern@rowland.harvard.edu>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/pci/host/pcie-altera.c |   12 +++++++++++-
- 1 file changed, 11 insertions(+), 1 deletion(-)
+ drivers/usb/storage/unusual_devs.h |   12 ++++++++++++
+ 1 file changed, 12 insertions(+)
 
---- a/drivers/pci/host/pcie-altera.c
-+++ b/drivers/pci/host/pcie-altera.c
-@@ -61,6 +61,8 @@
- #define TLP_LOOP			500
- #define RP_DEVFN			0
+--- a/drivers/usb/storage/unusual_devs.h
++++ b/drivers/usb/storage/unusual_devs.h
+@@ -1393,6 +1393,18 @@ UNUSUAL_DEV(  0x0d49, 0x7310, 0x0000, 0x
+ 		US_FL_SANE_SENSE),
  
-+#define LINK_UP_TIMEOUT			5000
+ /*
++ * Reported by Icenowy Zheng <icenowy@aosc.io>
++ * The SMI SM3350 USB-UFS bridge controller will enter a wrong state
++ * that do not process read/write command if a long sense is requested,
++ * so force to use 18-byte sense.
++ */
++UNUSUAL_DEV(  0x090c, 0x3350, 0x0000, 0xffff,
++		"SMI",
++		"SM3350 UFS-to-USB-Mass-Storage bridge",
++		USB_SC_DEVICE, USB_PR_DEVICE, NULL,
++		US_FL_BAD_SENSE ),
 +
- #define INTX_NUM			4
- 
- #define DWORD_MASK			3
-@@ -101,6 +103,7 @@ static void altera_pcie_retrain(struct p
- {
- 	u16 linkcap, linkstat;
- 	struct altera_pcie *pcie = dev->bus->sysdata;
-+	int timeout =  0;
- 
- 	if (!altera_pcie_link_is_up(pcie))
- 		return;
-@@ -115,9 +118,16 @@ static void altera_pcie_retrain(struct p
- 		return;
- 
- 	pcie_capability_read_word(dev, PCI_EXP_LNKSTA, &linkstat);
--	if ((linkstat & PCI_EXP_LNKSTA_CLS) == PCI_EXP_LNKSTA_CLS_2_5GB)
-+	if ((linkstat & PCI_EXP_LNKSTA_CLS) == PCI_EXP_LNKSTA_CLS_2_5GB) {
- 		pcie_capability_set_word(dev, PCI_EXP_LNKCTL,
- 					 PCI_EXP_LNKCTL_RL);
-+		while (!altera_pcie_link_is_up(pcie)) {
-+			timeout++;
-+			if (timeout > LINK_UP_TIMEOUT)
-+				break;
-+			udelay(5);
-+		}
-+	}
- }
- DECLARE_PCI_FIXUP_EARLY(0x1172, PCI_ANY_ID, altera_pcie_retrain);
- 
++/*
+  * Pete Zaitcev <zaitcev@yahoo.com>, bz#164688.
+  * The device blatantly ignores LUN and returns 1 in GetMaxLUN.
+  */
 
 
