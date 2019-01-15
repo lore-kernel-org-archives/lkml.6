@@ -2,89 +2,74 @@ Return-Path: <SRS0=RZO6=PX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 67E9BC43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 10:51:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 23CDBC43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 10:51:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3EE5E20651
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 10:51:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E75D020651
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 10:51:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729062AbfAOKvF (ORCPT
+        id S1729073AbfAOKv5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 15 Jan 2019 05:51:05 -0500
-Received: from foss.arm.com ([217.140.101.70]:47826 "EHLO foss.arm.com"
+        Tue, 15 Jan 2019 05:51:57 -0500
+Received: from mga01.intel.com ([192.55.52.88]:41910 "EHLO mga01.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728642AbfAOKvF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Jan 2019 05:51:05 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D78E51596;
-        Tue, 15 Jan 2019 02:51:04 -0800 (PST)
-Received: from e110455-lin.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id A81443F70D;
-        Tue, 15 Jan 2019 02:51:04 -0800 (PST)
-Received: by e110455-lin.cambridge.arm.com (Postfix, from userid 1000)
-        id 03A036801F9; Tue, 15 Jan 2019 10:51:02 +0000 (GMT)
-Date:   Tue, 15 Jan 2019 10:51:02 +0000
-From:   Liviu Dudau <Liviu.Dudau@arm.com>
-To:     Stephen Rothwell <sfr@canb.auug.org.au>
-Cc:     Dave Airlie <airlied@linux.ie>,
-        DRI <dri-devel@lists.freedesktop.org>,
-        Boris Brezillon <boris.brezillon@bootlin.com>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
-        "James Qian Wang (Arm Technology China)" <james.qian.wang@arm.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: linux-next: build failure after merge of the mali-dp tree
-Message-ID: <20190115105102.GQ20661@e110455-lin.cambridge.arm.com>
-References: <20190115104619.516be4b9@canb.auug.org.au>
- <20190115101219.GP20661@e110455-lin.cambridge.arm.com>
- <20190115214725.360798cf@canb.auug.org.au>
+        id S1728642AbfAOKv5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 Jan 2019 05:51:57 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 15 Jan 2019 02:51:55 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,481,1539673200"; 
+   d="scan'208";a="138413820"
+Received: from jnikula-mobl3.fi.intel.com (HELO localhost) ([10.237.72.79])
+  by fmsmga001.fm.intel.com with ESMTP; 15 Jan 2019 02:51:54 -0800
+From:   Jani Nikula <jani.nikula@linux.intel.com>
+To:     Nathan Chancellor <natechancellor@gmail.com>,
+        Manasi Navare <manasi.d.navare@intel.com>,
+        Rodrigo Vivi <rodrigo.vivi@intel.com>
+Cc:     Lyude Paul <lyude@redhat.com>,
+        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+        intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: Clang warning in drivers/gpu/drm/i915/i915_debugfs.c
+In-Reply-To: <20190108191314.GA25250@flashbox>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+References: <20190108191314.GA25250@flashbox>
+Date:   Tue, 15 Jan 2019 12:53:44 +0200
+Message-ID: <87won65gzr.fsf@intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20190115214725.360798cf@canb.auug.org.au>
-User-Agent: Mutt/1.11.2 (2019-01-07)
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 15, 2019 at 09:47:25PM +1100, Stephen Rothwell wrote:
-> Hi Liviu,
-> 
-> On Tue, 15 Jan 2019 10:12:19 +0000 Liviu Dudau <Liviu.Dudau@arm.com> wrote:
-> >
-> > That looks like the right fix, thank you for that!
-> 
-> Thanks for your verification.
-> 
-> > I will roll your patch into my tree.
-> 
-> You can only do that when your tree is merged with the drm tree (and
-> it should be part of the merge resolution).
+On Tue, 08 Jan 2019, Nathan Chancellor <natechancellor@gmail.com> wrote:
+> Hi all,
+>
+> Commit e845f099f1c6 ("drm/i915/dsc: Add Per connector debugfs node for
+> DSC support/enable") causes a Clang warning:
+>
+> drivers/gpu/drm/i915/i915_debugfs.c:4961:17: warning: address of array 'intel_dp->dsc_dpcd' will always evaluate to 'true' [-Wpointer-bool-conversion]
+>                 if (intel_dp->dsc_dpcd)
+>                 ~~  ~~~~~~~~~~^~~~~~~~
+> 1 warning generated.
+>
+> Did you mean to dereference it or should that print statement just
+> always show? I normally would send a patch myself but since I'm not
+> familiar with this code, I'd rather not shoot in the dark :) especially
+> since it's for a trivial logging statement.
 
-I can also rebase on top of the latest drm-next tree, that should not be
-a problem.
+Fixed by fed85691b408 ("drm/i915: Fix the static code analysis warning
+in debugfs"), thanks for the report & review on that one.
 
-Best regards,
-Liviu
-
-> 
-> -- 
-> Cheers,
-> Stephen Rothwell
-
+BR,
+Jani.
 
 
 -- 
-====================
-| I would like to |
-| fix the world,  |
-| but they're not |
-| giving me the   |
- \ source code!  /
-  ---------------
-    ¯\_(ツ)_/¯
+Jani Nikula, Intel Open Source Graphics Center
