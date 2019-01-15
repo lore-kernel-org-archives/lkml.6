@@ -2,299 +2,239 @@ Return-Path: <SRS0=RZO6=PX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 02A72C43444
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 16:54:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 38F15C43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 16:54:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BCE1820645
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 16:54:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 005B020645
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 16:54:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547571271;
-	bh=lq6lYr3FjEThMEfbFnTESYExqBjbdo6+qg8i+TP/Q5w=;
-	h=From:To:Cc:Subject:Date:List-ID:From;
-	b=Q7QtlSzvjD5X4euI6y9qlp30tfjyBzohZlirhjwVfJv6N0EcczgfEuR2/+ncJ9Wf5
-	 MX5+rDvTQ/VBL0PKFst1Hh2dn0MO5XD5XBp4q4qkkIDe0FtTbYAav3WYd2Nqo4CYaY
-	 kIKWkK5edjXRnE+Bylc9VPNsMokCNHtenUwy8Oa0=
+	s=default; t=1547571276;
+	bh=2Y2RM25XEBxHKWpwfeYPbdA6n2fjNNLeC/IbGLZZqL0=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=xwSIFjjzpLxPwixOJr74Z/O4g/EmdAw2ROpMVZ7vaFA1tbqeSL92xuMRigIcTVi0W
+	 Ivv4e8AEY8MDcBeYNXaIeNDJGDaAfBYEUZeLFz5SKhjaabNKCg7eI1T7xDBuaquZgP
+	 VBzi4p47aYTXHBUPGeAYEPB8bit0GmUdcoO6tqWU=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733101AbfAOQm4 (ORCPT
+        id S1730556AbfAOQye (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 15 Jan 2019 11:42:56 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60374 "EHLO mail.kernel.org"
+        Tue, 15 Jan 2019 11:54:34 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60464 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1733076AbfAOQmv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Jan 2019 11:42:51 -0500
+        id S1730686AbfAOQm4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 Jan 2019 11:42:56 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 321B62054F;
-        Tue, 15 Jan 2019 16:42:49 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5E59020675;
+        Tue, 15 Jan 2019 16:42:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547570569;
-        bh=lq6lYr3FjEThMEfbFnTESYExqBjbdo6+qg8i+TP/Q5w=;
-        h=From:To:Cc:Subject:Date:From;
-        b=J7nrVXZdduQPNs2QxzaoSK3J6txu4p9DwiEk1zj9XdnABa5QtQikdENEZ9eIWA6yz
-         ijKUVXcTSsx76+FugYG5kMROSNVzjg0j9NcKwTR0BZICGs9WpmFTYBW0x3eF0Q4fVc
-         RegGKIPPz8LIj98EKBHNjNZOkfVsoiHFBZstr5C8=
+        s=default; t=1547570574;
+        bh=2Y2RM25XEBxHKWpwfeYPbdA6n2fjNNLeC/IbGLZZqL0=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=cJmzJjGKUxtMroMXR9pwgfaBl5S8Ttp8D0QuiyhaGJOSS0l+Y8oeXrWU7T2L/TtPl
+         ptQFWt/d4sgV1ne66yt0LYO1G7phhHgYptpujYWUX4QvnLS4JXb5WjWUa+0gJNUgjd
+         +JNt/+aCTsrEFx1e3H9e+zsbgFCWGjOaM4EJju+E=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        torvalds@linux-foundation.org, akpm@linux-foundation.org,
-        linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
-        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
-        stable@vger.kernel.org
-Subject: [PATCH 4.19 00/50] 4.19.16-stable review
-Date:   Tue, 15 Jan 2019 17:35:36 +0100
-Message-Id: <20190115154909.933241945@linuxfoundation.org>
+        stable@vger.kernel.org, Vasily Averin <vvs@virtuozzo.com>,
+        "J. Bruce Fields" <bfields@redhat.com>
+Subject: [PATCH 4.19 45/50] sunrpc: use-after-free in svc_process_common()
+Date:   Tue, 15 Jan 2019 17:36:21 +0100
+Message-Id: <20190115154912.527086979@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
-MIME-Version: 1.0
+In-Reply-To: <20190115154909.933241945@linuxfoundation.org>
+References: <20190115154909.933241945@linuxfoundation.org>
 User-Agent: quilt/0.65
 X-stable: review
 X-Patchwork-Hint: ignore
-X-KernelTest-Patch: http://kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.19.16-rc1.gz
-X-KernelTest-Tree: git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git
-X-KernelTest-Branch: linux-4.19.y
-X-KernelTest-Patches: git://git.kernel.org/pub/scm/linux/kernel/git/stable/stable-queue.git
-X-KernelTest-Version: 4.19.16-rc1
-X-KernelTest-Deadline: 2019-01-17T15:49+00:00
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This is the start of the stable review cycle for the 4.19.16 release.
-There are 50 patches in this series, all will be posted as a response
-to this one.  If anyone has any issues with these being applied, please
-let me know.
+4.19-stable review patch.  If anyone has any objections, please let me know.
 
-Responses should be made by Thu Jan 17 15:48:36 UTC 2019.
-Anything received after that time might be too late.
+------------------
 
-The whole patch series can be found in one patch at:
-	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.19.16-rc1.gz
-or in the git tree and branch at:
-	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.19.y
-and the diffstat can be found below.
+From: Vasily Averin <vvs@virtuozzo.com>
 
-thanks,
+commit d4b09acf924b84bae77cad090a9d108e70b43643 upstream.
 
-greg k-h
+if node have NFSv41+ mounts inside several net namespaces
+it can lead to use-after-free in svc_process_common()
 
--------------
-Pseudo-Shortlog of commits:
+svc_process_common()
+        /* Setup reply header */
+        rqstp->rq_xprt->xpt_ops->xpo_prep_reply_hdr(rqstp); <<< HERE
 
-Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-    Linux 4.19.16-rc1
+svc_process_common() can use incorrect rqstp->rq_xprt,
+its caller function bc_svc_process() takes it from serv->sv_bc_xprt.
+The problem is that serv is global structure but sv_bc_xprt
+is assigned per-netnamespace.
 
-Filipe Manana <fdmanana@suse.com>
-    Btrfs: use nofs context when initializing security xattrs to avoid deadlock
+According to Trond, the whole "let's set up rqstp->rq_xprt
+for the back channel" is nothing but a giant hack in order
+to work around the fact that svc_process_common() uses it
+to find the xpt_ops, and perform a couple of (meaningless
+for the back channel) tests of xpt_flags.
 
-Filipe Manana <fdmanana@suse.com>
-    Btrfs: fix deadlock when enabling quotas due to concurrent snapshot creation
+All we really need in svc_process_common() is to be able to run
+rqstp->rq_xprt->xpt_ops->xpo_prep_reply_hdr()
 
-Filipe Manana <fdmanana@suse.com>
-    Btrfs: fix access to available allocation bits when starting balance
+Bruce J Fields points that this xpo_prep_reply_hdr() call
+is an awfully roundabout way just to do "svc_putnl(resv, 0);"
+in the tcp case.
 
-Will Deacon <will.deacon@arm.com>
-    arm64: compat: Don't pull syscall number from regs in arm_compat_syscall
+This patch does not initialiuze rqstp->rq_xprt in bc_svc_process(),
+now it calls svc_process_common() with rqstp->rq_xprt = NULL.
 
-Christoffer Dall <christoffer.dall@arm.com>
-    KVM: arm/arm64: Fix VMID alloc race by reverting to lock-less
+To adjust reply header svc_process_common() just check
+rqstp->rq_prot and calls svc_tcp_prep_reply_hdr() for tcp case.
 
-Vasily Averin <vvs@virtuozzo.com>
-    sunrpc: use-after-free in svc_process_common()
+To handle rqstp->rq_xprt = NULL case in functions called from
+svc_process_common() patch intruduces net namespace pointer
+svc_rqst->rq_bc_net and adjust SVC_NET() definition.
+Some other function was also adopted to properly handle described case.
 
-Jan Stancek <jstancek@redhat.com>
-    mm: page_mapped: don't assume compound page is huge or THP
+Signed-off-by: Vasily Averin <vvs@virtuozzo.com>
+Cc: stable@vger.kernel.org
+Fixes: 23c20ecd4475 ("NFS: callback up - users counting cleanup")
+Signed-off-by: J. Bruce Fields <bfields@redhat.com>
+v2: added lost extern svc_tcp_prep_reply_hdr()
+Signed-off-by: Vasily Averin <vvs@virtuozzo.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+---
+ include/linux/sunrpc/svc.h    |    5 ++++-
+ include/trace/events/sunrpc.h |    6 ++++--
+ net/sunrpc/svc.c              |   11 +++++++----
+ net/sunrpc/svc_xprt.c         |    5 +++--
+ net/sunrpc/svcsock.c          |    2 +-
+ 5 files changed, 19 insertions(+), 10 deletions(-)
 
-Theodore Ts'o <tytso@mit.edu>
-    ext4: fix special inode number checks in __ext4_iget()
-
-Theodore Ts'o <tytso@mit.edu>
-    ext4: track writeback errors using the generic tracking infrastructure
-
-Theodore Ts'o <tytso@mit.edu>
-    ext4: use ext4_write_inode() when fsyncing w/o a journal
-
-Theodore Ts'o <tytso@mit.edu>
-    ext4: avoid kernel warning when writing the superblock to a dead device
-
-Theodore Ts'o <tytso@mit.edu>
-    ext4: fix a potential fiemap/page fault deadlock w/ inline_data
-
-Theodore Ts'o <tytso@mit.edu>
-    ext4: make sure enough credits are reserved for dioread_nolock writes
-
-Ilya Dryomov <idryomov@gmail.com>
-    rbd: don't return 0 on unmap if RBD_DEV_FLAG_REMOVING is set
-
-Lyude Paul <lyude@redhat.com>
-    drm/amdgpu: Don't fail resume process if resuming atomic state fails
-
-Lyude Paul <lyude@redhat.com>
-    drm/amdgpu: Don't ignore rc from drm_dp_mst_topology_mgr_resume()
-
-Chris Wilson <chris@chris-wilson.co.uk>
-    drm/i915: Unwind failure on pinning the gen7 ppgtt
-
-Ivan Mironov <mironov.ivan@gmail.com>
-    drm/fb-helper: Partially bring back workaround for bugs of SDL 1.2
-
-Neil Armstrong <narmstrong@baylibre.com>
-    drm/fb_helper: Allow leaking fbdev smem_start
-
-Jerry (Fangzhi) Zuo <Jerry.Zuo@amd.com>
-    drm/amd/display: Fix MST dp_blank REG_WAIT timeout
-
-Marc Zyngier <marc.zyngier@arm.com>
-    PCI: dwc: Move interrupt acking into the proper callback
-
-Marc Zyngier <marc.zyngier@arm.com>
-    PCI: dwc: Take lock when ACKing an interrupt
-
-Marc Zyngier <marc.zyngier@arm.com>
-    PCI: dwc: Use interrupt masking instead of disabling
-
-Alex Deucher <alexander.deucher@amd.com>
-    drm/amdgpu: Add new VegaM pci id
-
-Alex Williamson <alex.williamson@redhat.com>
-    vfio/type1: Fix unmap overflow off-by-one
-
-Christian Lamparter <chunkeey@gmail.com>
-    mtd: rawnand: qcom: fix memory corruption that causes panic
-
-Yi Zeng <yizeng@asrmicro.com>
-    i2c: dev: prevent adapter retries and timeout being set as minus value
-
-Jean-Philippe Brucker <jean-philippe.brucker@arm.com>
-    ACPI/IORT: Fix rc_dma_get_range()
-
-Hans de Goede <hdegoede@redhat.com>
-    ACPI / PMIC: xpower: Fix TS-pin current-source handling
-
-Hans de Goede <hdegoede@redhat.com>
-    ACPI: power: Skip duplicate power resource references in _PRx
-
-Michal Hocko <mhocko@suse.com>
-    mm, memcg: fix reclaim deadlock with writeback
-
-Qian Cai <cai@lca.pw>
-    mm/usercopy.c: no check page span for stack objects
-
-Christoph Lameter <cl@linux.com>
-    slab: alien caches must not be initialized if the allocation of the alien cache failed
-
-Jack Stocker <jackstocker.93@gmail.com>
-    USB: Add USB_QUIRK_DELAY_CTRL_MSG quirk for Corsair K70 RGB
-
-Icenowy Zheng <icenowy@aosc.io>
-    USB: storage: add quirk for SMI SM3350
-
-Icenowy Zheng <icenowy@aosc.io>
-    USB: storage: don't insert sane sense for SPC3+ when bad sense specified
-
-Daniele Palmas <dnlplm@gmail.com>
-    usb: cdc-acm: send ZLP for Telit 3G Intel based modems
-
-Ross Lagerwall <ross.lagerwall@citrix.com>
-    cifs: Fix potential OOB access of lock element array
-
-Pavel Shilovsky <pshilov@microsoft.com>
-    CIFS: Fix credit computation for compounded requests
-
-Pavel Shilovsky <pshilov@microsoft.com>
-    CIFS: Do not hide EINTR after sending network packets
-
-Pavel Shilovsky <pshilov@microsoft.com>
-    CIFS: Do not set credits to 1 if the server didn't grant anything
-
-Pavel Shilovsky <pshilov@microsoft.com>
-    CIFS: Fix adjustment of credits for MTU requests
-
-Kailang Yang <kailang@realtek.com>
-    ALSA: hda/realtek - Disable headset Mic VREF for headset mode of ALC225
-
-Kailang Yang <kailang@realtek.com>
-    ALSA: hda/realtek - Add unplug function into unplug state of Headset Mode for ALC225
-
-Kailang Yang <kailang@realtek.com>
-    ALSA: hda/realtek - Support Dell headset mode for New AIO platform
-
-WANG Chao <chao.wang@ucloud.cn>
-    x86, modpost: Replace last remnants of RETPOLINE with CONFIG_RETPOLINE
-
-Quentin Perret <quentin.perret@arm.com>
-    cpufreq: scmi: Fix frequency invariance in slow path
-
-Larry Finger <Larry.Finger@lwfinger.net>
-    staging: rtl8188eu: Fix module loading from tasklet for WEP encryption
-
-Larry Finger <Larry.Finger@lwfinger.net>
-    staging: rtl8188eu: Fix module loading from tasklet for CCMP encryption
-
-Filipe Manana <fdmanana@suse.com>
-    Btrfs: fix deadlock when using free space tree due to block group creation
-
-
--------------
-
-Diffstat:
-
- Makefile                                          |   4 +-
- arch/arm64/kernel/sys_compat.c                    |   9 +-
- arch/arm64/kernel/syscall.c                       |   9 +-
- arch/x86/kernel/cpu/bugs.c                        |   2 +-
- drivers/acpi/arm64/iort.c                         |   3 +-
- drivers/acpi/pmic/intel_pmic_xpower.c             |  41 ++++--
- drivers/acpi/power.c                              |  22 ++++
- drivers/block/rbd.c                               |   9 +-
- drivers/cpufreq/scmi-cpufreq.c                    |   4 +-
- drivers/gpu/drm/Kconfig                           |  20 +++
- drivers/gpu/drm/amd/amdgpu/amdgpu_drv.c           |   1 +
- drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c |  37 ++++--
- drivers/gpu/drm/amd/display/dc/core/dc_link.c     |   4 +-
- drivers/gpu/drm/drm_fb_helper.c                   | 151 ++++++++++++++--------
- drivers/gpu/drm/i915/i915_gem_gtt.c               |  15 ++-
- drivers/i2c/i2c-dev.c                             |   6 +
- drivers/mtd/nand/raw/qcom_nandc.c                 |  20 +--
- drivers/pci/controller/dwc/pcie-designware-host.c |  37 ++++--
- drivers/staging/rtl8188eu/core/rtw_security.c     |   6 +-
- drivers/usb/class/cdc-acm.c                       |   7 +
- drivers/usb/core/quirks.c                         |   3 +-
- drivers/usb/storage/scsiglue.c                    |   8 +-
- drivers/usb/storage/unusual_devs.h                |  12 ++
- drivers/vfio/vfio_iommu_type1.c                   |   2 +-
- fs/btrfs/ctree.c                                  |  16 ++-
- fs/btrfs/qgroup.c                                 |  14 +-
- fs/btrfs/volumes.c                                |  39 +++---
- fs/btrfs/xattr.c                                  |   8 ++
- fs/cifs/file.c                                    |   8 +-
- fs/cifs/smb2file.c                                |   4 +-
- fs/cifs/smb2pdu.c                                 |   8 +-
- fs/cifs/transport.c                               |  63 ++++++---
- fs/ext4/fsync.c                                   |  16 ++-
- fs/ext4/inline.c                                  |   6 +-
- fs/ext4/inode.c                                   |   5 +-
- fs/ext4/super.c                                   |   2 +-
- include/linux/compiler-gcc.h                      |   2 +-
- include/linux/module.h                            |   2 +-
- include/linux/sunrpc/svc.h                        |   5 +-
- include/trace/events/sunrpc.h                     |   6 +-
- mm/memory.c                                       |  23 ++++
- mm/slab.c                                         |   6 +-
- mm/usercopy.c                                     |   9 +-
- mm/util.c                                         |   2 +-
- net/sunrpc/svc.c                                  |  11 +-
- net/sunrpc/svc_xprt.c                             |   5 +-
- net/sunrpc/svcsock.c                              |   2 +-
- scripts/mod/modpost.c                             |   2 +-
- sound/pci/hda/patch_realtek.c                     |  18 ++-
- virt/kvm/arm/arm.c                                |  23 ++--
- 50 files changed, 509 insertions(+), 228 deletions(-)
+--- a/include/linux/sunrpc/svc.h
++++ b/include/linux/sunrpc/svc.h
+@@ -295,9 +295,12 @@ struct svc_rqst {
+ 	struct svc_cacherep *	rq_cacherep;	/* cache info */
+ 	struct task_struct	*rq_task;	/* service thread */
+ 	spinlock_t		rq_lock;	/* per-request lock */
++	struct net		*rq_bc_net;	/* pointer to backchannel's
++						 * net namespace
++						 */
+ };
+ 
+-#define SVC_NET(svc_rqst)	(svc_rqst->rq_xprt->xpt_net)
++#define SVC_NET(rqst) (rqst->rq_xprt ? rqst->rq_xprt->xpt_net : rqst->rq_bc_net)
+ 
+ /*
+  * Rigorous type checking on sockaddr type conversions
+--- a/include/trace/events/sunrpc.h
++++ b/include/trace/events/sunrpc.h
+@@ -582,7 +582,8 @@ TRACE_EVENT(svc_process,
+ 		__field(u32, vers)
+ 		__field(u32, proc)
+ 		__string(service, name)
+-		__string(addr, rqst->rq_xprt->xpt_remotebuf)
++		__string(addr, rqst->rq_xprt ?
++			 rqst->rq_xprt->xpt_remotebuf : "(null)")
+ 	),
+ 
+ 	TP_fast_assign(
+@@ -590,7 +591,8 @@ TRACE_EVENT(svc_process,
+ 		__entry->vers = rqst->rq_vers;
+ 		__entry->proc = rqst->rq_proc;
+ 		__assign_str(service, name);
+-		__assign_str(addr, rqst->rq_xprt->xpt_remotebuf);
++		__assign_str(addr, rqst->rq_xprt ?
++			     rqst->rq_xprt->xpt_remotebuf : "(null)");
+ 	),
+ 
+ 	TP_printk("addr=%s xid=0x%08x service=%s vers=%u proc=%u",
+--- a/net/sunrpc/svc.c
++++ b/net/sunrpc/svc.c
+@@ -1144,6 +1144,8 @@ void svc_printk(struct svc_rqst *rqstp,
+ static __printf(2,3) void svc_printk(struct svc_rqst *rqstp, const char *fmt, ...) {}
+ #endif
+ 
++extern void svc_tcp_prep_reply_hdr(struct svc_rqst *);
++
+ /*
+  * Common routine for processing the RPC request.
+  */
+@@ -1172,7 +1174,8 @@ svc_process_common(struct svc_rqst *rqst
+ 	clear_bit(RQ_DROPME, &rqstp->rq_flags);
+ 
+ 	/* Setup reply header */
+-	rqstp->rq_xprt->xpt_ops->xpo_prep_reply_hdr(rqstp);
++	if (rqstp->rq_prot == IPPROTO_TCP)
++		svc_tcp_prep_reply_hdr(rqstp);
+ 
+ 	svc_putu32(resv, rqstp->rq_xid);
+ 
+@@ -1244,7 +1247,7 @@ svc_process_common(struct svc_rqst *rqst
+ 	 * for lower versions. RPC_PROG_MISMATCH seems to be the closest
+ 	 * fit.
+ 	 */
+-	if (versp->vs_need_cong_ctrl &&
++	if (versp->vs_need_cong_ctrl && rqstp->rq_xprt &&
+ 	    !test_bit(XPT_CONG_CTRL, &rqstp->rq_xprt->xpt_flags))
+ 		goto err_bad_vers;
+ 
+@@ -1336,7 +1339,7 @@ svc_process_common(struct svc_rqst *rqst
+ 	return 0;
+ 
+  close:
+-	if (test_bit(XPT_TEMP, &rqstp->rq_xprt->xpt_flags))
++	if (rqstp->rq_xprt && test_bit(XPT_TEMP, &rqstp->rq_xprt->xpt_flags))
+ 		svc_close_xprt(rqstp->rq_xprt);
+ 	dprintk("svc: svc_process close\n");
+ 	return 0;
+@@ -1459,10 +1462,10 @@ bc_svc_process(struct svc_serv *serv, st
+ 	dprintk("svc: %s(%p)\n", __func__, req);
+ 
+ 	/* Build the svc_rqst used by the common processing routine */
+-	rqstp->rq_xprt = serv->sv_bc_xprt;
+ 	rqstp->rq_xid = req->rq_xid;
+ 	rqstp->rq_prot = req->rq_xprt->prot;
+ 	rqstp->rq_server = serv;
++	rqstp->rq_bc_net = req->rq_xprt->xprt_net;
+ 
+ 	rqstp->rq_addrlen = sizeof(req->rq_xprt->addr);
+ 	memcpy(&rqstp->rq_addr, &req->rq_xprt->addr, rqstp->rq_addrlen);
+--- a/net/sunrpc/svc_xprt.c
++++ b/net/sunrpc/svc_xprt.c
+@@ -469,10 +469,11 @@ out:
+  */
+ void svc_reserve(struct svc_rqst *rqstp, int space)
+ {
++	struct svc_xprt *xprt = rqstp->rq_xprt;
++
+ 	space += rqstp->rq_res.head[0].iov_len;
+ 
+-	if (space < rqstp->rq_reserved) {
+-		struct svc_xprt *xprt = rqstp->rq_xprt;
++	if (xprt && space < rqstp->rq_reserved) {
+ 		atomic_sub((rqstp->rq_reserved - space), &xprt->xpt_reserved);
+ 		rqstp->rq_reserved = space;
+ 
+--- a/net/sunrpc/svcsock.c
++++ b/net/sunrpc/svcsock.c
+@@ -1198,7 +1198,7 @@ static int svc_tcp_sendto(struct svc_rqs
+ /*
+  * Setup response header. TCP has a 4B record length field.
+  */
+-static void svc_tcp_prep_reply_hdr(struct svc_rqst *rqstp)
++void svc_tcp_prep_reply_hdr(struct svc_rqst *rqstp)
+ {
+ 	struct kvec *resv = &rqstp->rq_res.head[0];
+ 
 
 
