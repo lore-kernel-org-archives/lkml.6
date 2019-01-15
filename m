@@ -2,110 +2,139 @@ Return-Path: <SRS0=RZO6=PX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D755C43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 21:48:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 59059C43612
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 21:49:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2D0D420645
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 21:48:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2A4832086D
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 21:49:52 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=horus.com header.i=@horus.com header.b="uL/yHC/L"
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="fhuRoVoN"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390702AbfAOVsL (ORCPT
+        id S2390707AbfAOVtu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 15 Jan 2019 16:48:11 -0500
-Received: from mail.horus.com ([78.46.148.228]:43011 "EHLO mail.horus.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728421AbfAOVsK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Jan 2019 16:48:10 -0500
-Received: from lenny.lan (62-47-205-132.adsl.highway.telekom.at [62.47.205.132])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (Client CN "E-Mail Matthias Reichl Lenny", Issuer "HiassofT CA 2014" (verified OK))
-        by mail.horus.com (Postfix) with ESMTPSA id 974A664138;
-        Tue, 15 Jan 2019 22:48:08 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=horus.com;
-        s=20180324; t=1547588888;
-        bh=OxksLVlLTnfRNtyihoUBx070FU8FZN8M+aNl8mptglU=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=uL/yHC/L3wKgOnDXnAxwlBJvOYoz+dc7e6jEimVh+MWUyXFYan7VkpPQ3BtnHRhwV
-         YDRDXJn79a15alXGf9RzkizPjsf0Hoc60LVd4u6HtVaas6m+NZJ+KGoVeAXs2gHR1i
-         tDG/Pbe4KeZRGxJFzWr5/EA3klBxhOIVLu3SVgc0=
-Received: by lenny.lan (Postfix, from userid 1000)
-        id EED2A100063; Tue, 15 Jan 2019 22:48:07 +0100 (CET)
-Date:   Tue, 15 Jan 2019 22:48:07 +0100
-From:   Matthias Reichl <hias@horus.com>
-To:     Mark Brown <broonie@kernel.org>
-Cc:     Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
-        rohkumar@qti.qualcomm.com, alsa-devel@alsa-project.org,
-        bgoswami@codeaurora.org, vinod.koul@linaro.org,
-        lgirdwood@gmail.com, plai@codeaurora.org,
-        linux-kernel@vger.kernel.org, tiwai@suse.com,
-        Liam Girdwood <liam.r.girdwood@linux.intel.com>,
-        srinivas.kandagatla@linaro.org,
-        Rohit kumar <rohitkr@codeaurora.org>, asishb@codeaurora.org,
-        Ajit Pandey <ajitp@codeaurora.org>
-Subject: Re: [alsa-devel] [PATCH] ASoC: soc-core: Fix null pointer
- dereference in soc_find_component
-Message-ID: <20190115214807.vhzxuuf33b4nnkoo@lenny.lan>
-Mail-Followup-To: Matthias Reichl <hias@horus.com>,
-        Mark Brown <broonie@kernel.org>,
-        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
-        rohkumar@qti.qualcomm.com, alsa-devel@alsa-project.org,
-        bgoswami@codeaurora.org, vinod.koul@linaro.org, lgirdwood@gmail.com,
-        plai@codeaurora.org, linux-kernel@vger.kernel.org, tiwai@suse.com,
-        Liam Girdwood <liam.r.girdwood@linux.intel.com>,
-        srinivas.kandagatla@linaro.org,
-        Rohit kumar <rohitkr@codeaurora.org>, asishb@codeaurora.org,
-        Ajit Pandey <ajitp@codeaurora.org>
-References: <1547194442-1487-1-git-send-email-rohitkr@codeaurora.org>
- <d8726e9a-3477-a573-8c1a-dd8245068802@linux.intel.com>
- <4886ed21-65d2-159d-afcd-bb26dcde636e@linux.intel.com>
- <20190115000610.GM11073@sirena.org.uk>
- <796a856c-a9a6-022d-da63-947279090198@linux.intel.com>
- <20190115211137.rhdyjadu7fppp3p4@lenny.lan>
- <af2e9555-444f-7c40-865b-347f3db8fa76@linux.intel.com>
- <20190115214138.GL5522@sirena.org.uk>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190115214138.GL5522@sirena.org.uk>
-User-Agent: NeoMutt/20170113 (1.7.2)
+        Tue, 15 Jan 2019 16:49:50 -0500
+Received: from userp2130.oracle.com ([156.151.31.86]:60110 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728421AbfAOVtu (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 Jan 2019 16:49:50 -0500
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id x0FLhbpp085677;
+        Tue, 15 Jan 2019 21:49:28 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=content-type :
+ mime-version : subject : from : in-reply-to : date : cc :
+ content-transfer-encoding : message-id : references : to;
+ s=corp-2018-07-02; bh=So4aQpKxn5AcekOBF97kodu8T+sAUHZ32duZfNiBY5o=;
+ b=fhuRoVoNXgU1/atTfMZJM9IdmPCIhnwoW23MofQodCqzITJAXZZFy8t2/p9aSqcDeXKK
+ eseD+F9BiFgjLUzp7onBegbQsLZoxgdJpmP5ECK15uKQw/ebDK25Tk9Glc/EG0sgFZcU
+ LTxYpaarmnnkGwxf6tXBw25u/LU/sIfhwx/+7n5iyThHkS04lxXz0hgrQMSwaYbKIU4b
+ E7ss2T4gHxHbaTk7eJWxR0DCfbqIiNDEFkDFX03MS1cIH80nlUQAFEqnfzXMwLPyI1Nz
+ 5MNiA5v4D82qzPWJVrxpZIXQnUC95GqxGv9DEMm5zVZjF/+lbbDcNnA7wB+LX8sKCCRJ 7w== 
+Received: from aserv0021.oracle.com (aserv0021.oracle.com [141.146.126.233])
+        by userp2130.oracle.com with ESMTP id 2pybkcefvj-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 15 Jan 2019 21:49:28 +0000
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by aserv0021.oracle.com (8.14.4/8.14.4) with ESMTP id x0FLnMou024365
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 15 Jan 2019 21:49:22 GMT
+Received: from abhmp0004.oracle.com (abhmp0004.oracle.com [141.146.116.10])
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x0FLnJxl027679;
+        Tue, 15 Jan 2019 21:49:19 GMT
+Received: from anon-dhcp-171.1015granger.net (/68.61.232.219)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Tue, 15 Jan 2019 13:49:19 -0800
+Content-Type: text/plain;
+        charset=us-ascii
+Mime-Version: 1.0 (Mac OS X Mail 11.5 \(3445.9.1\))
+Subject: Re: [PATCH net-next] svcrdma: Use struct_size() in kmalloc()
+From:   Chuck Lever <chuck.lever@oracle.com>
+In-Reply-To: <20190115211140.GA16131@embeddedor>
+Date:   Tue, 15 Jan 2019 16:49:16 -0500
+Cc:     Trond Myklebust <trond.myklebust@hammerspace.com>,
+        Anna Schumaker <anna.schumaker@netapp.com>,
+        Bruce Fields <bfields@fieldses.org>,
+        Jeff Layton <jlayton@kernel.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Linux NFS Mailing List <linux-nfs@vger.kernel.org>,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <F652FEF1-0FD7-4FFD-80D4-44DBC2FF47B5@oracle.com>
+References: <20190115211140.GA16131@embeddedor>
+To:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+X-Mailer: Apple Mail (2.3445.9.1)
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9137 signatures=668682
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1810050000 definitions=main-1901150173
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 15, 2019 at 09:41:38PM +0000, Mark Brown wrote:
-> On Tue, Jan 15, 2019 at 03:16:57PM -0600, Pierre-Louis Bossart wrote:
-> 
-> > > Maybe the defer card probe logic needs to be extended to also check if
-> > > dai_link_name had already been registered (either cpu or cpu_dai_name
-> > > needs to be set), not 100% sure which problem the defer card probe patch
-> > > was trying to solve.
-> 
-> We were getting cards probing without the platforms being registered
-> (which in turn meant we were just skipping their init) and had patches
-> proposed to implement the deferral in the cards.  The deferral stuff is
-> supposed to making sure that everything is registered when we
-> instantiate.
 
-Ah, that makes sense. Thanks a lot for the info!
 
-so long,
+On Jan 15, 2019, at 4:11 PM, Gustavo A. R. Silva =
+<gustavo@embeddedor.com> wrote:
 
-Hias
+> One of the more common cases of allocation size calculations is =
+finding
+> the size of a structure that has a zero-sized array at the end, along
+> with memory for some number of elements for that array. For example:
+>=20
+> struct foo {
+>    int stuff;
+>    struct boo entry[];
+> };
+>=20
+> instance =3D kmalloc(sizeof(struct foo) + count * sizeof(struct boo), =
+GFP_KERNEL);
+>=20
+> Instead of leaving these open-coded and prone to type mistakes, we can
+> now use the new struct_size() helper:
+>=20
+> instance =3D kmalloc(struct_size(instance, entry, count), GFP_KERNEL);
+>=20
+> This code was detected with the help of Coccinelle.
+>=20
+> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
 
-> 
-> > same here, I don't get why the deferred probe stuff only deals with one of
-> > the two options.
-> 
-> I think it's just an oversight - I think the change you were proposing
-> to check the cpu_dai_name is a good idea anyway as it makes things more
-> consistent and work more obviously by intention.  And more generally if
-> we can simplify the code by removing legacy options that'd be good but
-> that's a bigger bit of work...
+Reviewed-by: Chuck Lever <chuck.lever@oracle.com>
+
+
+> ---
+> net/sunrpc/xprtrdma/svc_rdma_rw.c | 3 +--
+> 1 file changed, 1 insertion(+), 2 deletions(-)
+>=20
+> diff --git a/net/sunrpc/xprtrdma/svc_rdma_rw.c =
+b/net/sunrpc/xprtrdma/svc_rdma_rw.c
+> index dc1951759a8e..cad37c2122ab 100644
+> --- a/net/sunrpc/xprtrdma/svc_rdma_rw.c
+> +++ b/net/sunrpc/xprtrdma/svc_rdma_rw.c
+> @@ -64,8 +64,7 @@ svc_rdma_get_rw_ctxt(struct svcxprt_rdma *rdma, =
+unsigned int sges)
+> 		spin_unlock(&rdma->sc_rw_ctxt_lock);
+> 	} else {
+> 		spin_unlock(&rdma->sc_rw_ctxt_lock);
+> -		ctxt =3D kmalloc(sizeof(*ctxt) +
+> -			       SG_CHUNK_SIZE * sizeof(struct =
+scatterlist),
+> +		ctxt =3D kmalloc(struct_size(ctxt, rw_first_sgl, =
+SG_CHUNK_SIZE),
+> 			       GFP_KERNEL);
+> 		if (!ctxt)
+> 			goto out;
+> --=20
+> 2.20.1
+
+--
+Chuck Lever
+
 
 
