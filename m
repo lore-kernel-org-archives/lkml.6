@@ -7,46 +7,47 @@ X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 458BCC43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 16:47:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8327EC43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 16:47:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 159002054F
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 16:47:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 546EB20645
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 16:47:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547570868;
-	bh=Y+JnD15Ddw4Ag10QCxHlrSikPeErEfspmeczg28CvEQ=;
+	s=default; t=1547570876;
+	bh=/FgYSkl3NEeP6q4XyKN3SGB15FIRGfwrtDSIN7gjrWI=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=Zw2qQQYR8FrhiWAL+c442EcCa90orwAQClUOtBV8ycxle2LJzkjV0fqYMHd/FsP3c
-	 ANJBnN3zcDIQTyCyaW+AW8cpTbWGY04jU2betd6IxZPxczHPEz8qz3AdIqe9K7jFG0
-	 VmQ6LYTzD8DWgw+thhQi+oJCVnKwIoimoyQj2PvE=
+	b=lDN+2P6IykApP3Dn9OUPiuc7n2XUmRfWkU21IBKdNEm1QNB+UyjpEo0U5dYwHe2MF
+	 Z8/wj2fIKbNac8yYPiD8XEpMN0A0l0kfjQnCvwqhPIXVCcbOiXvFP13jjGuAlQ9OV8
+	 EX4hjpP9zpmReaBm/Q+J5isRFq2plgG5ZwLzyu9E=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731988AbfAOQrq (ORCPT
+        id S1731043AbfAOQry (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 15 Jan 2019 11:47:46 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35002 "EHLO mail.kernel.org"
+        Tue, 15 Jan 2019 11:47:54 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34976 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387758AbfAOQpS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Jan 2019 11:45:18 -0500
+        id S2387746AbfAOQpP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 Jan 2019 11:45:15 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 354142054F;
-        Tue, 15 Jan 2019 16:45:17 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9273920883;
+        Tue, 15 Jan 2019 16:45:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547570717;
-        bh=Y+JnD15Ddw4Ag10QCxHlrSikPeErEfspmeczg28CvEQ=;
+        s=default; t=1547570715;
+        bh=/FgYSkl3NEeP6q4XyKN3SGB15FIRGfwrtDSIN7gjrWI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Jmr5JqOLhahQKNi6GcRCnFP+jvz0R24RcraKvrYQcg20ixQ50S0Eje47NIqiTCaT/
-         NGlj16SCNZDIVz1XteDqlvVS0QODbNjqBI0qWqOlMU6n+Avb2zPsmPDljxKgKnJ3PT
-         0rQt9WMwX0DjmIBpCX+bbjgOpe7tiiMdSP648dzk=
+        b=Ai6Fn0wnXCVjFQzlqQssKC7Fyi6mmlFQ9HFWomO23XcWHP2ajn/DGAgmAmut8er1K
+         k9KDyHh3osnjCDYlliywlWP64UyJ9UKmWtZTszFUOP3IMjpbW/i/1oS3Ntwvfk9+PE
+         x+av4hx/XFHS2pDY8073bgvrISwVxROR+kaZI7ZY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Ilya Dryomov <idryomov@gmail.com>,
-        Dongsheng Yang <dongsheng.yang@easystack.cn>
-Subject: [PATCH 4.20 46/57] rbd: dont return 0 on unmap if RBD_DEV_FLAG_REMOVING is set
-Date:   Tue, 15 Jan 2019 17:36:27 +0100
-Message-Id: <20190115154913.547084607@linuxfoundation.org>
+        stable@vger.kernel.org, Lyude Paul <lyude@redhat.com>,
+        Harry Wentland <harry.wentland@amd.com>,
+        Jerry Zuo <Jerry.Zuo@amd.com>
+Subject: [PATCH 4.20 45/57] drm/amdgpu: Dont fail resume process if resuming atomic state fails
+Date:   Tue, 15 Jan 2019 17:36:26 +0100
+Message-Id: <20190115154913.479428526@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190115154910.734892368@linuxfoundation.org>
 References: <20190115154910.734892368@linuxfoundation.org>
@@ -65,60 +66,71 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Ilya Dryomov <idryomov@gmail.com>
+From: Lyude Paul <lyude@redhat.com>
 
-commit 85f5a4d666fd9be73856ed16bb36c5af5b406b29 upstream.
+commit 2d1af6a11cb9d88e0e3dd10258904c437fe1b315 upstream.
 
-There is a window between when RBD_DEV_FLAG_REMOVING is set and when
-the device is removed from rbd_dev_list.  During this window, we set
-"already" and return 0.
+This is an ugly one unfortunately. Currently, all DRM drivers supporting
+atomic modesetting will save the state that userspace had set before
+suspending, then attempt to restore that state on resume. This probably
+worked very well at one point, like many other things, until DP MST came
+into the picture. While it's easy to restore state on normal display
+connectors that were disconnected during suspend regardless of their
+state post-resume, this can't really be done with MST because of the
+fact that setting up a downstream sink requires performing sideband
+transactions between the source and the MST hub, sending out the ACT
+packets, etc.
 
-Returning 0 from write(2) can confuse userspace tools because
-0 indicates that nothing was written.  In particular, "rbd unmap"
-will retry the write multiple times a second:
+Because of this, there isn't really a guarantee that we can restore the
+atomic state we had before suspend once we've resumed. This sucks pretty
+bad, but so far I haven't run into any compositors that this actually
+causes serious issues with. Most compositors will notice the hotplug we
+send afterwards, and then reprobe state.
 
-  10:28:05.463299 write(4, "0", 1)        = 0
-  10:28:05.463509 write(4, "0", 1)        = 0
-  10:28:05.463720 write(4, "0", 1)        = 0
-  10:28:05.463942 write(4, "0", 1)        = 0
-  10:28:05.464155 write(4, "0", 1)        = 0
+Since nouveau and i915 also don't fail the suspend/resume process due to
+failing to restore the atomic state, let's make amdgpu match this
+behavior. Better to resume the GPU properly, then to stop the process
+half way because of a potentially unavoidable atomic commit failure.
 
-Cc: stable@vger.kernel.org
-Signed-off-by: Ilya Dryomov <idryomov@gmail.com>
-Tested-by: Dongsheng Yang <dongsheng.yang@easystack.cn>
+Eventually, we'll have a real fix for this problem on the DRM level. But
+we've got some more important low-hanging fruit to deal with first.
+
+Signed-off-by: Lyude Paul <lyude@redhat.com>
+Reviewed-by: Harry Wentland <harry.wentland@amd.com>
+Cc: Jerry Zuo <Jerry.Zuo@amd.com>
+Cc: <stable@vger.kernel.org> # v4.15+
+Link: https://patchwork.freedesktop.org/patch/msgid/20190108211133.32564-3-lyude@redhat.com
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/block/rbd.c |    9 ++++-----
- 1 file changed, 4 insertions(+), 5 deletions(-)
+ drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c |    5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
---- a/drivers/block/rbd.c
-+++ b/drivers/block/rbd.c
-@@ -5986,7 +5986,6 @@ static ssize_t do_rbd_remove(struct bus_
- 	struct list_head *tmp;
- 	int dev_id;
- 	char opt_buf[6];
--	bool already = false;
- 	bool force = false;
- 	int ret;
+--- a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
++++ b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
+@@ -830,7 +830,6 @@ static int dm_resume(void *handle)
+ 	struct drm_plane_state *new_plane_state;
+ 	struct dm_plane_state *dm_new_plane_state;
+ 	enum dc_connection_type new_connection_type = dc_connection_none;
+-	int ret;
+ 	int i;
  
-@@ -6019,13 +6018,13 @@ static ssize_t do_rbd_remove(struct bus_
- 		spin_lock_irq(&rbd_dev->lock);
- 		if (rbd_dev->open_count && !force)
- 			ret = -EBUSY;
--		else
--			already = test_and_set_bit(RBD_DEV_FLAG_REMOVING,
--							&rbd_dev->flags);
-+		else if (test_and_set_bit(RBD_DEV_FLAG_REMOVING,
-+					  &rbd_dev->flags))
-+			ret = -EINPROGRESS;
- 		spin_unlock_irq(&rbd_dev->lock);
+ 	/* power on hardware */
+@@ -903,13 +902,13 @@ static int dm_resume(void *handle)
+ 		}
  	}
- 	spin_unlock(&rbd_dev_list_lock);
--	if (ret < 0 || already)
-+	if (ret)
- 		return ret;
  
- 	if (force) {
+-	ret = drm_atomic_helper_resume(ddev, dm->cached_state);
++	drm_atomic_helper_resume(ddev, dm->cached_state);
+ 
+ 	dm->cached_state = NULL;
+ 
+ 	amdgpu_dm_irq_resume_late(adev);
+ 
+-	return ret;
++	return 0;
+ }
+ 
+ static const struct amd_ip_funcs amdgpu_dm_funcs = {
 
 
