@@ -2,111 +2,90 @@ Return-Path: <SRS0=RZO6=PX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F5F8C43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 14:30:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D5E15C43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 14:33:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 315B320866
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 14:30:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547562650;
-	bh=1K+Gu58jKOu/0chqLgN4jEWhkizK7RPhc8P4b51gqdo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=WS3WZlpssn9OggfAsWMeyl9F3L3YSlr/NzQi0yWJROeSUZSVvNJ6hxyuS6qDzgF/q
-	 tYfmil8o4HHCemUG6B2imhWV7shXOBPZ/uC2G1KWq5OFMD1MyAUG5Cy9pCmNqoDzjW
-	 4ebpWhqHg3WSG0/udRKPAEAj63nOA/eNom+n+Gns=
+	by mail.kernel.org (Postfix) with ESMTP id B0ABC20675
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 14:33:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730425AbfAOOas (ORCPT
+        id S1730432AbfAOOdI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 15 Jan 2019 09:30:48 -0500
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:42462 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726863AbfAOOas (ORCPT
+        Tue, 15 Jan 2019 09:33:08 -0500
+Received: from eu-smtp-delivery-151.mimecast.com ([146.101.78.151]:50917 "EHLO
+        eu-smtp-delivery-151.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726863AbfAOOdH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Jan 2019 09:30:48 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=MuPLHtZH7rlUgDXHBK3E6VgT2jKi13wCatC85bEvl7Q=; b=RnfAwpkb7TYNF3zKqsN72e9Wb
-        tNsOPghxVd1aL78c65yputD4QGbkwmj9+/tJzR/3nrugSXIAswd8WRd9ATxqdP4qgm6H2/n+aCn0t
-        x8elSJ+xTd0kFM5FLky69i/qPeEgqSSLXmw08kG0CUv7XWHGc4bRMgKXRccFxjnZMiXN0=;
-Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
-        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1gjPjm-00085q-Th; Tue, 15 Jan 2019 14:30:42 +0000
-Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
-        id 67A661127848; Tue, 15 Jan 2019 14:30:42 +0000 (GMT)
-Date:   Tue, 15 Jan 2019 14:30:42 +0000
-From:   Mark Brown <broonie@kernel.org>
-To:     Baolin Wang <baolin.wang@linaro.org>
-Cc:     robh+dt@kernel.org, mark.rutland@arm.com, orsonzhai@gmail.com,
-        zhang.lyra@gmail.com, lanqing.liu@unisoc.com,
-        linux-spi@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 4/4] spi: sprd: Add DMA mode support
-Message-ID: <20190115143042.GB5522@sirena.org.uk>
-References: <ab49bb74e921474aa9390f81cdf65f32c3d9d898.1547559542.git.baolin.wang@linaro.org>
- <324f3106dbff2f28baae098b05219f1384fda97a.1547559542.git.baolin.wang@linaro.org>
+        Tue, 15 Jan 2019 09:33:07 -0500
+Received: from AcuMS.aculab.com (156.67.243.126 [156.67.243.126]) (Using
+ TLS) by relay.mimecast.com with ESMTP id
+ uk-mta-83-xaAb4goyPsKmHdSZFYvqmw-1; Tue, 15 Jan 2019 14:33:04 +0000
+Received: from AcuMS.Aculab.com (fd9f:af1c:a25b::d117) by AcuMS.aculab.com
+ (fd9f:af1c:a25b::d117) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Tue,
+ 15 Jan 2019 14:33:32 +0000
+Received: from AcuMS.Aculab.com ([fe80::43c:695e:880f:8750]) by
+ AcuMS.aculab.com ([fe80::43c:695e:880f:8750%12]) with mapi id 15.00.1347.000;
+ Tue, 15 Jan 2019 14:33:32 +0000
+From:   David Laight <David.Laight@ACULAB.COM>
+To:     'Sebastian Andrzej Siewior' <bigeasy@linutronix.de>
+CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "x86@kernel.org" <x86@kernel.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        "Paolo Bonzini" <pbonzini@redhat.com>,
+        =?utf-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+        "Jason A. Donenfeld" <Jason@zx2c4.com>,
+        Rik van Riel <riel@surriel.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>
+Subject: RE: [PATCH v6] x86: load FPU registers on return to userland
+Thread-Topic: [PATCH v6] x86: load FPU registers on return to userland
+Thread-Index: AQHUqBFG/2WmFKVnEEqv3ikTpa8106WwTizwgAAKZwCAABOrIA==
+Date:   Tue, 15 Jan 2019 14:33:32 +0000
+Message-ID: <1311521fdd274c08b379cef7252ebd8f@AcuMS.aculab.com>
+References: <20190109114744.10936-1-bigeasy@linutronix.de>
+ <2e396dbcbb1c4cc191b4208626baed07@AcuMS.aculab.com>
+ <20190115131516.ocyi34ovkgairfiy@linutronix.de>
+In-Reply-To: <20190115131516.ocyi34ovkgairfiy@linutronix.de>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.202.205.107]
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="9zSXsLTf0vkW971A"
-Content-Disposition: inline
-In-Reply-To: <324f3106dbff2f28baae098b05219f1384fda97a.1547559542.git.baolin.wang@linaro.org>
-X-Cookie: Violence is molding.
-User-Agent: Mutt/1.10.1 (2018-07-13)
+X-MC-Unique: xaAb4goyPsKmHdSZFYvqmw-1
+X-Mimecast-Spam-Score: 0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: base64
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+RnJvbTogJ1NlYmFzdGlhbiBBbmRyemVqIFNpZXdpb3InDQo+IFNlbnQ6IDE1IEphbnVhcnkgMjAx
+OSAxMzoxNQ0KPiBPbiAyMDE5LTAxLTE1IDEyOjQ0OjUzIFsrMDAwMF0sIERhdmlkIExhaWdodCB3
+cm90ZToNCj4gPiBPbmNlIHRoaXMgaXMgZG9uZSBpdCBtaWdodCBiZSB3b3J0aCB3aGlsZSBhZGRp
+bmcgYSBwYXJhbWV0ZXIgdG8NCj4gPiBrZXJuZWxfZnB1X2JlZ2luKCkgdG8gcmVxdWVzdCB0aGUg
+cmVnaXN0ZXJzIG9ubHkgd2hlbiB0aGV5IGRvbid0DQo+ID4gbmVlZCBzYXZpbmcuDQo+ID4gVGhp
+cyB3b3VsZCBiZW5lZml0IGNvZGUgcGF0aHMgd2hlcmUgdGhlIGdhaW5zIGFyZSByZWFzb25hYmxl
+IGJ1dCBub3QgbWFzc2l2ZS4NCj4gDQo+IFNvIGlmIHNhdmluZyArIEZQVSBjb2RlIGlzIGEgc21h
+bGwgd2luIHdoeSBub3QgZG8gdGhpcyBhbHdheXM/DQoNCkkgd2FzIHRoaW5raW5nIG9mIHRoZSBj
+YXNlIHdoZW4gdGhlIGNvc3Qgb2YgdGhlIGZwdSBzYXZlIGlzIGdyZWF0ZXINCnRoYW4gdGhlIHNh
+dmluZy4NClRoaXMgbWlnaHQgYmUgdHJ1ZSBmb3IgKHNheSkgYSBjcmMgb24gYSBzaG9ydCBidWZm
+ZXIuDQoNCj4gPiBUaGUgcmV0dXJuIHZhbHVlIGZyb20ga2VybmVsX2ZwdV9iZWdpbigpIG91Z2h0
+IHRvIGluZGljYXRlIHdoaWNoDQo+ID4gcmVnaXN0ZXJzIGFyZSBhdmFpbGFibGUgLSBub25lLCBT
+U0UsIFNTRTIsIEFWWCwgQVZYNTEyIGV0Yy4NCj4gPiBTbyBjb2RlIGNhbiB1c2UgYW4gYXBwcm9w
+cmlhdGUgaW1wbGVtZW50YXRpb24uDQo+ID4gKEkndmUgbm90IGxvb2tlZCB0byBzZWUgaWYgdGhp
+cyBpcyBhbHJlYWR5IHRoZSBjYXNlISkNCj4gDQo+IEVpdGhlciBldmVyeXRoaW5nIGlzIHNhdmVk
+IG9yIG5vdGhpbmcuIFNvIGlmIFNTRSByZWdpc3RlcnMgYXJlIHNhdmVkDQo+IHRoZW4gQVZYNTEy
+IGFyZSwgdG9vLg0KDQooSSBrbm93IHRoYXQgLSBJJ3ZlIHdyaXR0ZW4gZnB1IHNhdmUgY29kZSBm
+b3IgQVZYKS4NCkkgd2FzIHRoaW5raW5nIHRoYXQgdGhlIHJldHVybiB2YWx1ZSB3b3VsZCBkZXBl
+bmQgb24gd2hhdCB0aGUgY3B1IHN1cHBvcnRzLg0KDQpJbiBmYWN0LCBnaXZlbiBzb21lIHRhbGsg
+YWJvdXQgYmlnLWxpdHRsZSBjcHVzIGl0IG1pZ2h0IGJlIHdvcnRoIGJlaW5nDQphYmxlIHRvIGFz
+ayBmb3IgYSBzcGVjaWZpYyByZWdpc3RlciBzZXQuDQpQb3RlbnRpYWxseSB0aGF0IGNvdWxkIGNh
+dXNlIGEgcHJvY2Vzc29yIHN3aXRjaC4NCg0KCURhdmlkDQoNCi0NClJlZ2lzdGVyZWQgQWRkcmVz
+cyBMYWtlc2lkZSwgQnJhbWxleSBSb2FkLCBNb3VudCBGYXJtLCBNaWx0b24gS2V5bmVzLCBNSzEg
+MVBULCBVSw0KUmVnaXN0cmF0aW9uIE5vOiAxMzk3Mzg2IChXYWxlcykNCg==
 
---9zSXsLTf0vkW971A
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Tue, Jan 15, 2019 at 09:46:53PM +0800, Baolin Wang wrote:
-> From: Lanqing Liu <lanqing.liu@spreadtrum.com>
->=20
-> Add DMA mode support for the Spreadtrum SPI controller, and we will enable
-> SPI interrupt to help to complete the SPI transfer work in DMA mode.
-
-Again this looks good, one thing to check though:
-
-> +static bool sprd_spi_can_dma(struct spi_controller *sctlr,
-> +			     struct spi_device *spi, struct spi_transfer *t)
-> +{
-> +	struct sprd_spi *ss =3D spi_controller_get_devdata(sctlr);
-> +
-> +	return ss->dma.enable;
-> +}
-
-Is it always a benefit to use DMA?  One reason this is a function rather
-than just a property is that even if the device can DMA any size of
-transfer often for short transfers the performance is better if you use
-PIO since the overhead of setting up the DMA controller, waiting and
-then taking the interrupt when it finishes ends up being more than the
-cost of just reading and writing directly to the FIFOs for PIO.
-
---9zSXsLTf0vkW971A
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlw97pEACgkQJNaLcl1U
-h9A9nAf+P9t2LyV+tEMCXlBQkjp0a/mBHna6R0+O2ldyqMIHvFWCYcTrED5sYgFq
-ijPCK+i2c5VdbhxEtOfSgyijaElF1E4GT5rqHMGpcBOsnGHvx0CbLYniyg1WE1xB
-nary/yQzFekPVbGunZnSQNcrIsgiKxBl5RuWhvzJH24X4uXNywQy0nr/ul3xgOcA
-jIOvRfmPOz3M7Rus9RdD+f7pJpIfsgskY58QTR8xid+DyIUH7f2PttbcsAKwSHfB
-Mq2EcAc9nDLP87ubjLGVc/E0JlSxeh5vunO5F/pmnJ1+2RPOvOBRXzYuexWG+uKN
-B0jSxQRAynE4YApO1KR6NUFk3DU/JQ==
-=1wSg
------END PGP SIGNATURE-----
-
---9zSXsLTf0vkW971A--
