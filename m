@@ -2,146 +2,123 @@ Return-Path: <SRS0=RZO6=PX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
+X-Spam-Status: No, score=-3.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E612C43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 10:28:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2EEC3C43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 10:29:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EF50520651
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 10:28:36 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="g9gob+D4"
+	by mail.kernel.org (Postfix) with ESMTP id EDCAB20651
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 10:29:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1547548189;
+	bh=gQt5/yKDOG4Ew3f0MLlYxvDBjVu/PV0obx+13BhsYak=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=doqSBPoYWhTQ5vrZb8kLJZgsYRIHN2imlsU4hz/9htKbbI8RxvAf09VG3GIojUJRt
+	 Yr6YlnZvyxC2RwyUXqdfwfcvMMN20VoV115onU/mQYDe+LmPKHv/ctb3CkCAiMJbiA
+	 AYEy85lQmaFSg2IodAs0+sHuFKteJX3sCuY6LdZo=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728802AbfAOK2f (ORCPT
+        id S1728824AbfAOK3r (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 15 Jan 2019 05:28:35 -0500
-Received: from mail-ed1-f65.google.com ([209.85.208.65]:33491 "EHLO
-        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727935AbfAOK2f (ORCPT
+        Tue, 15 Jan 2019 05:29:47 -0500
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:45401 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727703AbfAOK3q (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Jan 2019 05:28:35 -0500
-Received: by mail-ed1-f65.google.com with SMTP id p6so2149358eds.0;
-        Tue, 15 Jan 2019 02:28:33 -0800 (PST)
+        Tue, 15 Jan 2019 05:29:46 -0500
+Received: by mail-lj1-f194.google.com with SMTP id s5-v6so1812759ljd.12;
+        Tue, 15 Jan 2019 02:29:45 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language;
-        bh=NjZVaR/uEKWj/WwWREcgZLHV7gJW+E6szq99IZnsj5g=;
-        b=g9gob+D4fHpJt+4TUlLLM8+v7WfWFzB+7Pe9VxI54LrjH6mHA72Et5uddAef0bn0uC
-         36+tAeFrtWQOdHP9jRV1I2VbX5j/YzJsCnSrghIICvpw1GVKQ1JIUjeW6VM/q0YyFYsM
-         +4Ul1sNIMeDYBd/+ilVcdmEcVDdg7WSjAxjz3VT7euC2/NUnFn9bMByN7mejbIUn+OTs
-         ziFGQgsbkrv45mYC8FtFAkGhBLCd7oaz3L4qrjDCM3su3JrnIvYazkDu1Yqf/UoVbp7b
-         GFCJLiPhT5wXXfIZJhnDQ/1uk82Z2v/wp83OMtBjXVSGFQU2wdLqMjiIXKZ9iqRHEId3
-         DH6Q==
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=Y5szvELKeShoHewV8/WaejB4OxKNh4HyjuJbyW+ISJI=;
+        b=JsRS2fXCQfdFZUL5RdhpY5Ngz2YNeixtGUq0ZKdfeWFAk+YJ79bHwzLNMMvzbxL8lj
+         AARrPOuA5Nj4dnUtB2BZMCE2H/WGX8rup937ZfD84KOv06ny8LrGQlMcXPznpQCRQs7M
+         v4vB5fRkJNmziL5QKXkswRK2LJ7zmuHI64tmSjxP4xAm9WyxcDpc+P26UMYTYrDACNij
+         wufj+1CzlxWOegCCOT0LEdIi5Ppy+VogsNIapcy7382PTlxo35He5Yw6+7kAg1Xts8ds
+         6lovlP4kXDX16bEaYGaaa8xADUM/uGce6EkL0yEPfXWdzlLgjB/QncNNbGhk0LbBR2DF
+         QB2w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language;
-        bh=NjZVaR/uEKWj/WwWREcgZLHV7gJW+E6szq99IZnsj5g=;
-        b=bfNWkfrjfvtXNeghm2qYX1JupRML4x6QAf/R2MVENri3EdYfMfKF8GnKeXRMtZD4+4
-         tgeK+aYY98Px2Hy/Rc0DwD/ptzf/1lMWYnjSiKvjBRAdLfpVVXlaIeeKOj2QelHYsjr4
-         y+Xkrt4nU0cIsVLRRIA/7KDPFnfbe+qLyv2wxCqvMfcgYatzBnLX+fmy+euoTWqvYTn0
-         7R4cqt41ZI5L5/xAmqSAeDtUX+OMLBXqh2Z8mIzdqNpA5sUNLESnlsyMYHqFVHMMVjLJ
-         I6RKGHDh02wfI1H8rmzFDwiMXQkHLUHxbl9LqTnZWFUv/RmCTVAPSthm5Cuzmkx6uqkR
-         u/Wg==
-X-Gm-Message-State: AJcUukfJq72AELOxOVY7y8foBDhJq+yux8S1C+6NAW9xE3PW0zxwRg0b
-        /nROiT4tZwEt3Wa4/LsN3gaBbhCd
-X-Google-Smtp-Source: ALg8bN4ZfO4DzPo3jNpPytM/fASL9SxeWToV4xJ0vfYQMjvtxICxsM4FKIGICA54t4yK8TR9gxaEcA==
-X-Received: by 2002:a50:9315:: with SMTP id m21mr2817747eda.58.1547548112505;
-        Tue, 15 Jan 2019 02:28:32 -0800 (PST)
-Received: from [192.168.0.153] ([189.58.147.179])
-        by smtp.gmail.com with ESMTPSA id x38sm4976425edx.24.2019.01.15.02.28.29
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=Y5szvELKeShoHewV8/WaejB4OxKNh4HyjuJbyW+ISJI=;
+        b=j9H9hxxTlYbOZbeZwr41o6aPwmXHoIdlP0gQyZusU3LWpIMx6A1Xxw6RTcZsp5q72S
+         //L+XiB7qGyTrU3i7gpQmZP2GPuYUkUnWtN1Y/fo7bEKJVb8q0IWMlJxUugWE8BoqhXk
+         ypU3FBlYSZ1t+J9Scb1lyN9vexhAo72iMexNCd3Awcc9P1qrItsXL0Qo9+8OyESQwp2N
+         rJh67fwZ72xNMqKXOZYR+PFzlYqYmXGVEiPMtfMTePJ4pmRR2GFvOAXMgHytHFRr9x/m
+         bYmJVt6h3lDpUT9jYM5dFOyWSuvTWbEAqWtoeUUnIVgbIxJMdhzmq8l6BoxrmW4cYWff
+         AFKg==
+X-Gm-Message-State: AJcUuke0hZsJWQ+MGB9TrO6tPUQgcZ0/E3t6VuNmXTC1vO3SVoWx6NtG
+        CCNPTpvVUgeDD53N3T48wp4=
+X-Google-Smtp-Source: ALg8bN7lAZvM79HcdCMHSYETfUT8kJJpvMauZm9S4hqhjx0pho6liq3g1u89YirI6FZA0Ji/tUNzFQ==
+X-Received: by 2002:a2e:974a:: with SMTP id f10-v6mr2392786ljj.61.1547548184397;
+        Tue, 15 Jan 2019 02:29:44 -0800 (PST)
+Received: from xi.terra (c-74bee655.07-184-6d6c6d4.bbcust.telenor.se. [85.230.190.116])
+        by smtp.gmail.com with ESMTPSA id y1-v6sm498938ljh.39.2019.01.15.02.29.43
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 15 Jan 2019 02:28:31 -0800 (PST)
-Subject: Re: [PATCH] block/blk-sysfs.c: Remove last reference of
- blk_init_queue
-To:     Jens Axboe <axboe@kernel.dk>, linux-kernel@vger.kernel.org
-Cc:     "open list:BLOCK LAYER" <linux-block@vger.kernel.org>
-References: <20190115030615.1090578-1-marcos.souza.org@gmail.com>
- <d255d497-62aa-9fc3-fa21-20c9b0226a17@kernel.dk>
-From:   Marcos Paulo de Souza <marcos.souza.org@gmail.com>
-Message-ID: <69bddff5-22a1-4ccd-91c3-5dab6c07b1f9@gmail.com>
-Date:   Tue, 15 Jan 2019 08:29:11 -0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.0
+        Tue, 15 Jan 2019 02:29:43 -0800 (PST)
+Received: from johan by xi.terra with local (Exim 4.91)
+        (envelope-from <johan@kernel.org>)
+        id 1gjLyY-0000HE-HI; Tue, 15 Jan 2019 11:29:43 +0100
+Date:   Tue, 15 Jan 2019 11:29:42 +0100
+From:   Johan Hovold <johan@kernel.org>
+To:     Karoly Pados <pados@pados.hu>
+Cc:     Johan Hovold <johan@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] USB: serial: cp210x: Fix GPIO in autosuspend
+Message-ID: <20190115102942.GO3691@localhost>
+References: <20190115085743.GL3691@localhost>
+ <20190114194352.4579-1-pados@pados.hu>
+ <15f71a61af66817847d4b11b9e2e60e8@pados.hu>
+ <20190115092607.GN3691@localhost>
 MIME-Version: 1.0
-In-Reply-To: <d255d497-62aa-9fc3-fa21-20c9b0226a17@kernel.dk>
-Content-Type: multipart/mixed;
- boundary="------------CC264F47AAF4CBE506416273"
-Content-Language: en-US
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190115092607.GN3691@localhost>
+User-Agent: Mutt/1.11.2 (2019-01-07)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This is a multi-part message in MIME format.
---------------CC264F47AAF4CBE506416273
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+On Tue, Jan 15, 2019 at 10:26:07AM +0100, Johan Hovold wrote:
+> On Tue, Jan 15, 2019 at 09:17:58AM +0000, Karoly Pados wrote:
+> > > I think it's better to add the autopm call to gpio210x_gpio_get/set
+> > > only. This will allow for a simpler patch, and keeps the autopm handling
+> > > confined to the gpio paths.
+> > 
+> > I'll submit a v2.
+> > 
+> > >> @@ -1383,6 +1397,7 @@ static void cp210x_gpio_set(struct gpio_chip *gc, unsigned int gpio, int
+> > >> value)
+> > >> } else {
+> > >> u16 wIndex = buf.state << 8 | buf.mask;
+> > >> 
+> > >> + usb_autopm_get_interface(serial->interface);
+> > > 
+> > > Also make sure to always check for errors from autopm_get().
+> > 
+> > I checked everywhere else, the reason I didn't check here is on
+> > purpose based on your previous feedback. The caller function here
+> > doesn't have a return value, so the only way to return errors is to
+> > log, but in my last patch to ftdi_sio you made clear that errors from
+> > autopm_get shouldn't get logged. Trying to call usb_control_msg() even
+> > though the device could not wake does not cause issues, and the return
+> > value from usb_control_msg() clearly identifies the reason for failure
+> > (failure due to autosuspend), so error information is not lost either.
+> > So I thought not checking here has no real disadvantage and I still
+> > stay conformant to your previous guidance.
+> 
+> Ok, I understand your reasoning, but please do check for errors and bail
+> out early if autopm_get() fails. No need to log errors.
 
-HI Jeans,
+Actually, we should probably add the missing error handling to the
+callers and have gpio_set() propagate errors too. If you want to take a
+stab at that, that could be a follow-on patch.
 
-On 1/15/19 1:54 AM, Jens Axboe wrote:
-> On 1/14/19 8:06 PM, Marcos Paulo de Souza wrote:
->> blk_init_queue was removed in a1ce35fa4985.
->=20
-> Honestly, most of that comment is wrong anyway. Since this isn't
-> a visible API, I'd just kill the comment completely.
-
-I will send a v2 trying to describe better what the function does and
-where it is used (or removed it completely as you suggested).
-
->=20
->> Signed-off-by: Marcos Paulo de Souza <marcos.souza.org@gmail.com>
->> ---
->>  There are more two references in Documentation/block/biodoc.txt, but =
-maybe that
->>  file needs a rewrite in rst anyway?
->=20
-> It probably needs a rewrite - period :-)
->=20
-
-
---------------CC264F47AAF4CBE506416273
-Content-Type: application/pgp-keys;
- name="pEpkey.asc"
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: attachment;
- filename="pEpkey.asc"
-
------BEGIN PGP PUBLIC KEY BLOCK-----
-
-mQENBFwGdegBCADpmN2M/qgid640GczjjQNKUqNDYr8WXDxZAIjNPNeTeQFNbMeq
-PKCRzmEXD2bCs8Dzss9OOWWMbphb5+jiU9lfuZZMnhh6UL1DzZGU7HpCqb/rWL9K
-gdo/GhN1ZNyc965+VdltiI5dhhsEuoptkvCw9wpcQcL9DpCldD+ix7dO64jz7VgH
-97H0B8jC5nkvnafsnSC+oKN/bIlVnKDjMdvtsUEEkf910APOHswfX8nm0uOIk7In
-8ECT2c/5fkCKBq+Wozc3MCsNShV3KFgs6IrBFcI+eu4xb4PO0OEWn+C1w70jJTuk
-XJXvIJ0Vsshp+ue2ZPMpaQ9oC/eu4JY3I46HABEBAAG0Mk1hcmNvcyBQYXVsbyBk
-ZSBTb3V6YSA8bWFyY29zLnNvdXphLm9yZ0BnbWFpbC5jb20+iQFUBBMBCAA+FiEE
-c1x2fap6ddr/tht1jy9yDsZUoRMFAlwGdegCGwMFCQHhM4AFCwkIBwIGFQoJCAsC
-BBYCAwECHgECF4AACgkQjy9yDsZUoRPv8wf+MdfRcElEJLisTaIoxfqrmDvi7+CB
-76FhFev0q9JXUqzu0Ijgdv+MOnSn5KFmh6bTza7rkMCMC7mj5mYUnmOs2DvsDSYB
-KmUT5/Dc+uuna32Mqz017tzyWKbGpbkI9xVy6lIaQvkGvHox3a6WAWQbvUvf2MRA
-lkhEAHEzdyYVxIc7uqMBFuMh9X9WOlv8ySkgNyNgnMat/d5fHrSx4X2tyBMyR3Xq
-B9UkxlkbvSSjkKYsMmPYj8q5Rv3Hnqr9tgnxJYJ4fZF18nv8PeZnz1hsdEiZYxUz
-HDFrEPrxdLPu7dS6sbYdKUIIPLxfIcyxnv5l1T3rBeF9Ldwv9TxxUTJWR7kBDQRc
-BnXoAQgAyRLO7dO0DA0reOjvoydxE62/gEkMy3hX0D+eLFgBIIvaWyMwgnQR7Vjg
-4AlF62Pp0GYru1otsq6Za+cCK2j3ptLPeAgquT3J5MziPzG1lOtCHUHdDcd4wAXW
-p+0sOPaV/ilmf80ROyt8Ky2wtPZULHFRfdPObyUcdjjFbkRH//tDLVwnE8sqJVwJ
-DyeAkeVlG434Wtr9C+TDnO9sKOeTOB3yfZUEnAr460GmyrfR0tlskMqFF7AgPSGg
-jyez0tS5SVIaLZUL7hXUfthd4x0OOw9gm9jitqRx/HLRP/NrgZ59xqPcJMi5tI0y
-A7J5NZAAKdfZkpD+0BHED5I+wBpGUQARAQABiQE8BBgBCAAmFiEEc1x2fap6ddr/
-tht1jy9yDsZUoRMFAlwGdegCGwwFCQHhM4AACgkQjy9yDsZUoRPZWwf/f1C1afJ+
-FN0afFOpxxLGVjIL//O6z+w666nd+uNfFDHO1PDFUXQiU8u0KkxfjBF3FhKxjewZ
-kO+Nb4Dy6EvdvG5Hm2uU5sNE+FJ4b1h9Ue0Dg4kCe6ZGytCvy6/wP/TXlotejOq6
-US+F4VW6oyldXWjvwYHrTpDRZvza1nhqGypB9fsPGa3JbtvNNGcg+NMliE+YnxhF
-NbN6Dth7f9jLyw13/PtmHL5HZX0rU+vz7JuIW0nm2Zp7NosmfgPevMAF8S53BS9Y
-8vQjqkRcduLTTpArZeaPoXJBtYo5L1Ysn/dUV4xeZYIcxlrmKNGKEx28eXxZ579q
-LbbJ/5zeVzltzQ=3D=3D
-=3D5HUz
------END PGP PUBLIC KEY BLOCK-----
-
---------------CC264F47AAF4CBE506416273--
+Thanks,
+Johan
