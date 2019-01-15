@@ -2,284 +2,86 @@ Return-Path: <SRS0=RZO6=PX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 277F7C43444
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 22:12:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A68A0C43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 22:12:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DCF5220866
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 22:12:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8036A20866
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 22:12:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731129AbfAOWMN (ORCPT
+        id S1731337AbfAOWM3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 15 Jan 2019 17:12:13 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:33174 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728876AbfAOWMM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Jan 2019 17:12:12 -0500
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 72195A85F;
-        Tue, 15 Jan 2019 22:12:11 +0000 (UTC)
-Received: from redhat.com (ovpn-120-58.rdu2.redhat.com [10.10.120.58])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 7B421601A4;
-        Tue, 15 Jan 2019 22:12:08 +0000 (UTC)
-Date:   Tue, 15 Jan 2019 17:12:06 -0500
-From:   Jerome Glisse <jglisse@redhat.com>
-To:     John Hubbard <jhubbard@nvidia.com>
-Cc:     Jan Kara <jack@suse.cz>, Matthew Wilcox <willy@infradead.org>,
-        Dave Chinner <david@fromorbit.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        John Hubbard <john.hubbard@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linux MM <linux-mm@kvack.org>, tom@talpey.com,
-        Al Viro <viro@zeniv.linux.org.uk>, benve@cisco.com,
-        Christoph Hellwig <hch@infradead.org>,
-        Christopher Lameter <cl@linux.com>,
-        "Dalessandro, Dennis" <dennis.dalessandro@intel.com>,
-        Doug Ledford <dledford@redhat.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Michal Hocko <mhocko@kernel.org>, mike.marciniszyn@intel.com,
-        rcampbell@nvidia.com,
+        Tue, 15 Jan 2019 17:12:29 -0500
+Received: from mx2.suse.de ([195.135.220.15]:39176 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728876AbfAOWM2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 Jan 2019 17:12:28 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 15AD5AB4D;
+        Tue, 15 Jan 2019 22:12:27 +0000 (UTC)
+Date:   Tue, 15 Jan 2019 23:12:26 +0100
+Message-ID: <s5hbm4hfu45.wl-tiwai@suse.de>
+From:   Takashi Iwai <tiwai@suse.de>
+To:     Chuck Lever <chuck.lever@oracle.com>
+Cc:     Stephen Rothwell <sfr@canb.auug.org.au>,
+        Anna Schumaker <Anna.Schumaker@Netapp.com>,
+        Trond Myklebust <trondmy@gmail.com>,
+        Linux NFS Mailing List <linux-nfs@vger.kernel.org>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Subject: Re: [PATCH 1/2] mm: introduce put_user_page*(), placeholder versions
-Message-ID: <20190115221205.GD3696@redhat.com>
-References: <1b37061c-5598-1b02-2983-80003f1c71f2@nvidia.com>
- <20190112020228.GA5059@redhat.com>
- <294bdcfa-5bf9-9c09-9d43-875e8375e264@nvidia.com>
- <20190112024625.GB5059@redhat.com>
- <b6f4ed36-fc8d-1f9b-8c74-b12f61d496ae@nvidia.com>
- <20190114145447.GJ13316@quack2.suse.cz>
- <20190114172124.GA3702@redhat.com>
- <20190115080759.GC29524@quack2.suse.cz>
- <20190115171557.GB3696@redhat.com>
- <752839e6-6cb3-a6aa-94cb-63d3d4265934@nvidia.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <752839e6-6cb3-a6aa-94cb-63d3d4265934@nvidia.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.29]); Tue, 15 Jan 2019 22:12:12 +0000 (UTC)
+        Paul Gortmaker <paul.gortmaker@windriver.com>
+Subject: Re: linux-next: Fixes tag needs some work in the nfs-anna tree
+In-Reply-To: <A4B834E5-2DFD-428E-8E24-9F6F6A822B09@oracle.com>
+References: <20190116083831.256824cf@canb.auug.org.au>
+        <A4B834E5-2DFD-428E-8E24-9F6F6A822B09@oracle.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI/1.14.6 (Maruoka)
+ FLIM/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL/10.8 Emacs/26
+ (x86_64-suse-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+MIME-Version: 1.0 (generated by SEMI 1.14.6 - "Maruoka")
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 15, 2019 at 01:56:51PM -0800, John Hubbard wrote:
-> On 1/15/19 9:15 AM, Jerome Glisse wrote:
-> > On Tue, Jan 15, 2019 at 09:07:59AM +0100, Jan Kara wrote:
-> >> On Mon 14-01-19 12:21:25, Jerome Glisse wrote:
-> >>> On Mon, Jan 14, 2019 at 03:54:47PM +0100, Jan Kara wrote:
-> >>>> On Fri 11-01-19 19:06:08, John Hubbard wrote:
-> >>>>> On 1/11/19 6:46 PM, Jerome Glisse wrote:
-> >>>>>> On Fri, Jan 11, 2019 at 06:38:44PM -0800, John Hubbard wrote:
-> >>>>>> [...]
-> >>>>>>
-> >>>>>>>>> The other idea that you and Dan (and maybe others) pointed out was a debug
-> >>>>>>>>> option, which we'll certainly need in order to safely convert all the call
-> >>>>>>>>> sites. (Mirror the mappings at a different kernel offset, so that put_page()
-> >>>>>>>>> and put_user_page() can verify that the right call was made.)  That will be
-> >>>>>>>>> a separate patchset, as you recommended.
-> >>>>>>>>>
-> >>>>>>>>> I'll even go as far as recommending the page lock itself. I realize that this 
-> >>>>>>>>> adds overhead to gup(), but we *must* hold off page_mkclean(), and I believe
-> >>>>>>>>> that this (below) has similar overhead to the notes above--but is *much* easier
-> >>>>>>>>> to verify correct. (If the page lock is unacceptable due to being so widely used,
-> >>>>>>>>> then I'd recommend using another page bit to do the same thing.)
-> >>>>>>>>
-> >>>>>>>> Please page lock is pointless and it will not work for GUP fast. The above
-> >>>>>>>> scheme do work and is fine. I spend the day again thinking about all memory
-> >>>>>>>> ordering and i do not see any issues.
-> >>>>>>>>
-> >>>>>>>
-> >>>>>>> Why is it that page lock cannot be used for gup fast, btw?
-> >>>>>>
-> >>>>>> Well it can not happen within the preempt disable section. But after
-> >>>>>> as a post pass before GUP_fast return and after reenabling preempt then
-> >>>>>> it is fine like it would be for regular GUP. But locking page for GUP
-> >>>>>> is also likely to slow down some workload (with direct-IO).
-> >>>>>>
-> >>>>>
-> >>>>> Right, and so to crux of the matter: taking an uncontended page lock
-> >>>>> involves pretty much the same set of operations that your approach does.
-> >>>>> (If gup ends up contended with the page lock for other reasons than these
-> >>>>> paths, that seems surprising.) I'd expect very similar performance.
-> >>>>>
-> >>>>> But the page lock approach leads to really dramatically simpler code (and
-> >>>>> code reviews, let's not forget). Any objection to my going that
-> >>>>> direction, and keeping this idea as a Plan B? I think the next step will
-> >>>>> be, once again, to gather some performance metrics, so maybe that will
-> >>>>> help us decide.
-> >>>>
-> >>>> FWIW I agree that using page lock for protecting page pinning (and thus
-> >>>> avoid races with page_mkclean()) looks simpler to me as well and I'm not
-> >>>> convinced there will be measurable difference to the more complex scheme
-> >>>> with barriers Jerome suggests unless that page lock contended. Jerome is
-> >>>> right that you cannot just do lock_page() in gup_fast() path. There you
-> >>>> have to do trylock_page() and if that fails just bail out to the slow gup
-> >>>> path.
-> >>>>
-> >>>> Regarding places other than page_mkclean() that need to check pinned state:
-> >>>> Definitely page migration will want to check whether the page is pinned or
-> >>>> not so that it can deal differently with short-term page references vs
-> >>>> longer-term pins.
-> >>>>
-> >>>> Also there is one more idea I had how to record number of pins in the page:
-> >>>>
-> >>>> #define PAGE_PIN_BIAS	1024
-> >>>>
-> >>>> get_page_pin()
-> >>>> 	atomic_add(&page->_refcount, PAGE_PIN_BIAS);
-> >>>>
-> >>>> put_page_pin();
-> >>>> 	atomic_add(&page->_refcount, -PAGE_PIN_BIAS);
-> >>>>
-> >>>> page_pinned(page)
-> >>>> 	(atomic_read(&page->_refcount) - page_mapcount(page)) > PAGE_PIN_BIAS
-> >>>>
-> >>>> This is pretty trivial scheme. It still gives us 22-bits for page pins
-> >>>> which should be plenty (but we should check for that and bail with error if
-> >>>> it would overflow). Also there will be no false negatives and false
-> >>>> positives only if there are more than 1024 non-page-table references to the
-> >>>> page which I expect to be rare (we might want to also subtract
-> >>>> hpage_nr_pages() for radix tree references to avoid excessive false
-> >>>> positives for huge pages although at this point I don't think they would
-> >>>> matter). Thoughts?
-> >>>
-> >>> Racing PUP are as likely to cause issues:
-> >>>
-> >>> CPU0                        | CPU1       | CPU2
-> >>>                             |            |
-> >>>                             | PUP()      |
-> >>>     page_pinned(page)       |            |
-> >>>       (page_count(page) -   |            |
-> >>>        page_mapcount(page)) |            |
-> >>>                             |            | GUP()
-> >>>
-> >>> So here the refcount snap-shot does not include the second GUP and
-> >>> we can have a false negative ie the page_pinned() will return false
-> >>> because of the PUP happening just before on CPU1 despite the racing
-> >>> GUP on CPU2 just after.
-> >>>
-> >>> I believe only either lock or memory ordering with barrier can
-> >>> guarantee that we do not miss GUP ie no false negative. Still the
-> >>> bias idea might be usefull as with it we should not need a flag.
-> >>
-> >> Right. We need similar synchronization (i.e., page lock or careful checks
-> >> with memory barriers) if we want to get a reliable page pin information.
-> >>
-> >>> So to make the above safe it would still need the page write back
-> >>> double check that i described so that GUP back-off if it raced with
-> >>> page_mkclean,clear_page_dirty_for_io and the fs write page call back
-> >>> which call test_set_page_writeback() (yes it is very unlikely but
-> >>> might still happen).
-> >>
-> >> Agreed. So with page lock it would actually look like:
-> >>
-> >> get_page_pin()
-> >> 	lock_page(page);
-> >> 	wait_for_stable_page();
-> >> 	atomic_add(&page->_refcount, PAGE_PIN_BIAS);
-> >> 	unlock_page(page);
-> >>
-> >> And if we perform page_pinned() check under page lock, then if
-> >> page_pinned() returned false, we are sure page is not and will not be
-> >> pinned until we drop the page lock (and also until page writeback is
-> >> completed if needed).
-> >>
+On Tue, 15 Jan 2019 22:41:21 +0100,
+Chuck Lever wrote:
 > 
-> OK. Avoiding a new page flag, *and* avoiding the _mapcount auditing and
-> compensation steps, is a pretty major selling point. And if we do the above
-> locking, that does look correct to me. I wasn't able to visualize the
-> locking you had in mind, until just now (above), but now it is clear, 
-> thanks for spelling it out.
+> Hi Stephen-
 > 
-> > 
-> > So i still can't see anything wrong with that idea, i had similar
-> > one in the past and diss-missed and i can't remember why :( But
-> > thinking over and over i do not see any issue beside refcount wrap
-> > around. Which is something that can happens today thought i don't
-> > think it can be use in an evil way and we can catch it and be
-> > loud about it.
-> > 
-> > So i think the following would be bullet proof:
-> > 
-> > 
-> > get_page_pin()
-> >     atomic_add(&page->_refcount, PAGE_PIN_BIAS);
-> >     smp_wmb();
-> >     if (PageWriteback(page)) {
-> >         // back off
-> >         atomic_add(&page->_refcount, -PAGE_PIN_BIAS);
-> >         // re-enable preempt if in fast
-> >         wait_on_page_writeback(page);
-> >         goto retry;
-> >     }
-> > 
-> > put_page_pin();
-> > 	atomic_add(&page->_refcount, -PAGE_PIN_BIAS);
-> > 
-> > page_pinned(page)
-> > 	(atomic_read(&page->_refcount) - page_mapcount(page)) > PAGE_PIN_BIAS
-> > 
-> > test_set_page_writeback()
-> >     ...
-> >     wb = TestSetPageWriteback(page)
+> On Jan 15, 2019, at 4:38 PM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
 > 
-> Minor point, but using PageWriteback for synchronization may rule out using
-> wait_for_stable_page(), because wait_for_stable_page() might not actually 
-> wait_on_page_writeback. Jan pointed out in the other thread, that we should
-> prefer wait_for_stable_page(). 
-
-Yes, but wait_for_stable_page() has no page flag so nothing we can
-synchronize against. So my advice would be:
-    if (PageWriteback(page)) {
-        wait_for_stable_page(page);
-        if (PageWriteback(page))
-            wait_for_write_back(page);
-    }
-
-wait_for_stable_page() can optimize out the wait_for_write_back()
-if it is safe to do so. So we can improve the above slightly too.
-
-> 
-> >     smp_mb();
-> >     if (page_pinned(page)) {
-> >         // report page as pinned to caller of test_set_page_writeback()
-> >     }
-> >     ...
+> > [I am experimenting with checking the Fixes tags in commits in linux-next.
+> > Please let me know if you think I am being too strict.]
 > > 
-> > This is text book memory barrier. Either get_page_pin() see racing
-> > test_set_page_writeback() or test_set_page_writeback() see racing GUP
+> > Hi all,
 > > 
+> > Commit
 > > 
+> >  deaa5c96c2f7 ("SUNRPC: Address Kerberos performance/behavior regression")
+> > 
+> > has problem with this Fixes tag:
+> > 
+> >  Fixes: 918f3c1fe83c ("SUNRPC: Improve latency for interactive ... ")
+> > 
+> > The subject should match the subject of the fixed commit.
+> > 
+> > -- 
+> > Cheers,
+> > Stephen Rothwell
 > 
-> This approach is probably workable, but again, it's more complex and comes
-> without any lockdep support. Maybe it's faster, maybe not. Therefore, I want 
-> to use it as either "do this after everything is up and running and stable", 
-> or else as Plan B, if there is some performance implication from the page lock.
-> 
-> Simple and correct first, then performance optimization, *if* necessary.
+> I shortened the commit title so that the Fixes: line is shorter than 68
+> characters. I can leave these titles alone if that's preferred.
 
-I do not like taking page lock while they are no good reasons to do so.
-The above is textbook memory barrier as explain in Documentations/
-Forcing page lock for GUP will inevitably slow down some workload and
-report for such can takes time to trickle down to mailing list and it
-can takes time for people to actualy figure out that this are the GUP
-changes that introduce such regression.
+I've sometimes shorted the subject like the above, too, as I find a
+too long text annoying.  Maybe the partial string matching should
+suffice, especially when it ends with "..." ?
 
-So if we could minimize performance regression with something like
-memory barrier we should definitly do that.
 
-Also i do not think that page lock has lock dep (as it is not using
-any of the usual locking function) but that's just my memory of that
-code.
+thanks,
 
-Cheers,
-Jérôme
+Takashi
