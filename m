@@ -7,47 +7,47 @@ X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 91130C43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 16:43:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0EA20C43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 16:43:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 624A020657
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 16:43:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D235120657
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 16:43:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547570583;
-	bh=rb9YC6bXLP0znJk96NSa7HZz8Lb06Bdjf2YlP0k8BOQ=;
+	s=default; t=1547570588;
+	bh=YpBtg/uWIaYRLUcaN9PYInSlbBMG8RISeZKiURfmPrI=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=tG8K/QvX6w+CrI5WRLQ2PHU7gfKs88JNQQvvGLgcH0SHncODmwHLPxwhFUtHIoQIp
-	 8gCqn5P6bttE3kvrIl52X5YoS5b2QRpO+DrJyW0CyC+pzq+5vZ0/iTPEYbLIZs9oH7
-	 X2DEu6zQqRL3cWT1aoi1QhLvA8uY/0p5A53VulDU=
+	b=Gg5lDDDYSswrdddHQe//iP4Ic1CZQq7vJcjjOEcLOL7eZGjIf4hTHkUagvZB0UMDP
+	 5Gb7dEQoPBmYmry6uK2WKDY1Bw4SqFj2gpSsQ49ySMGVsIavhAyKO7VzzjqA+aCBiE
+	 +ywS9kOPV3pK3A63jyCVhf+73Ba72gbNxvB4KRG4=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733139AbfAOQnC (ORCPT
+        id S1733155AbfAOQnH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 15 Jan 2019 11:43:02 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60578 "EHLO mail.kernel.org"
+        Tue, 15 Jan 2019 11:43:07 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60658 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730655AbfAOQnA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Jan 2019 11:43:00 -0500
+        id S1730655AbfAOQnE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 Jan 2019 11:43:04 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7050C20675;
-        Tue, 15 Jan 2019 16:42:59 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8AD7A20645;
+        Tue, 15 Jan 2019 16:43:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547570579;
-        bh=rb9YC6bXLP0znJk96NSa7HZz8Lb06Bdjf2YlP0k8BOQ=;
+        s=default; t=1547570583;
+        bh=YpBtg/uWIaYRLUcaN9PYInSlbBMG8RISeZKiURfmPrI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=TT+08dYIYIrr1hX3NRriYICFU88V/2A3YpWZxbmOl6OF+S15Ev+pmQmgDmpRPUAmy
-         Gekkotl7tthdKOpm3HKMNf1qcYiH8O3ccUnfU30gczufwh19ikFJzwmMeA77HsAJmS
-         j3wGBIxRHcxu1dOr1aSvjfHZ0Pin02fcpSKqKyys=
+        b=CTx+tzpYOOVaHscyK6ZJb4RyU7kTitEOFspxd1CZyHGEQf3WirihFdjkVn4HoycPw
+         3VqzXUsnVvOs0xhxH6emxh4KcARDYypX+Bm/ow2pFMSY0jpoqZFFYM3G7tZM7/eqUF
+         53RG6gi8vsIPZbs3xQYQ0lBXmIW51kxlhrFwKz4w=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Pi-Hsun Shih <pihsun@chromium.org>,
-        Dave Martin <Dave.Martin@arm.com>,
-        Will Deacon <will.deacon@arm.com>
-Subject: [PATCH 4.19 47/50] arm64: compat: Dont pull syscall number from regs in arm_compat_syscall
-Date:   Tue, 15 Jan 2019 17:36:23 +0100
-Message-Id: <20190115154912.655131093@linuxfoundation.org>
+        stable@vger.kernel.org, Nikolay Borisov <nborisov@suse.com>,
+        Filipe Manana <fdmanana@suse.com>,
+        David Sterba <dsterba@suse.com>
+Subject: [PATCH 4.19 48/50] Btrfs: fix access to available allocation bits when starting balance
+Date:   Tue, 15 Jan 2019 17:36:24 +0100
+Message-Id: <20190115154912.725236193@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190115154909.933241945@linuxfoundation.org>
 References: <20190115154909.933241945@linuxfoundation.org>
@@ -66,90 +66,100 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Will Deacon <will.deacon@arm.com>
+From: Filipe Manana <fdmanana@suse.com>
 
-commit 53290432145a8eb143fe29e06e9c1465d43dc723 upstream.
+commit 5a8067c0d17feb7579db0476191417b441a8996e upstream.
 
-The syscall number may have been changed by a tracer, so we should pass
-the actual number in from the caller instead of pulling it from the
-saved r7 value directly.
+The available allocation bits members from struct btrfs_fs_info are
+protected by a sequence lock, and when starting balance we access them
+incorrectly in two different ways:
 
-Cc: <stable@vger.kernel.org>
-Cc: Pi-Hsun Shih <pihsun@chromium.org>
-Reviewed-by: Dave Martin <Dave.Martin@arm.com>
-Signed-off-by: Will Deacon <will.deacon@arm.com>
+1) In the read sequence lock loop at btrfs_balance() we use the values we
+   read from fs_info->avail_*_alloc_bits and we can immediately do actions
+   that have side effects and can not be undone (printing a message and
+   jumping to a label). This is wrong because a retry might be needed, so
+   our actions must not have side effects and must be repeatable as long
+   as read_seqretry() returns a non-zero value. In other words, we were
+   essentially ignoring the sequence lock;
+
+2) Right below the read sequence lock loop, we were reading the values
+   from avail_metadata_alloc_bits and avail_data_alloc_bits without any
+   protection from concurrent writers, that is, reading them outside of
+   the read sequence lock critical section.
+
+So fix this by making sure we only read the available allocation bits
+while in a read sequence lock critical section and that what we do in the
+critical section is repeatable (has nothing that can not be undone) so
+that any eventual retry that is needed is handled properly.
+
+Fixes: de98ced9e743 ("Btrfs: use seqlock to protect fs_info->avail_{data, metadata, system}_alloc_bits")
+Fixes: 14506127979a ("btrfs: fix a bogus warning when converting only data or metadata")
+Reviewed-by: Nikolay Borisov <nborisov@suse.com>
+Signed-off-by: Filipe Manana <fdmanana@suse.com>
+Reviewed-by: David Sterba <dsterba@suse.com>
+Signed-off-by: David Sterba <dsterba@suse.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-
 ---
- arch/arm64/kernel/sys_compat.c |    9 ++++-----
- arch/arm64/kernel/syscall.c    |    9 ++++-----
- 2 files changed, 8 insertions(+), 10 deletions(-)
+ fs/btrfs/volumes.c |   39 +++++++++++++++++++++++----------------
+ 1 file changed, 23 insertions(+), 16 deletions(-)
 
---- a/arch/arm64/kernel/sys_compat.c
-+++ b/arch/arm64/kernel/sys_compat.c
-@@ -66,12 +66,11 @@ do_compat_cache_op(unsigned long start,
- /*
-  * Handle all unrecognised system calls.
-  */
--long compat_arm_syscall(struct pt_regs *regs)
-+long compat_arm_syscall(struct pt_regs *regs, int scno)
- {
- 	siginfo_t info;
--	unsigned int no = regs->regs[7];
+--- a/fs/btrfs/volumes.c
++++ b/fs/btrfs/volumes.c
+@@ -3712,6 +3712,7 @@ int btrfs_balance(struct btrfs_fs_info *
+ 	int ret;
+ 	u64 num_devices;
+ 	unsigned seq;
++	bool reducing_integrity;
  
--	switch (no) {
-+	switch (scno) {
- 	/*
- 	 * Flush a region from virtual address 'r0' to virtual address 'r1'
- 	 * _exclusive_.  There is no alignment requirement on either address;
-@@ -107,7 +106,7 @@ long compat_arm_syscall(struct pt_regs *
- 		 * way the calling program can gracefully determine whether
- 		 * a feature is supported.
- 		 */
--		if (no < __ARM_NR_COMPAT_END)
-+		if (scno < __ARM_NR_COMPAT_END)
- 			return -ENOSYS;
- 		break;
- 	}
-@@ -119,6 +118,6 @@ long compat_arm_syscall(struct pt_regs *
- 	info.si_addr  = (void __user *)instruction_pointer(regs) -
- 			 (compat_thumb_mode(regs) ? 2 : 4);
+ 	if (btrfs_fs_closing(fs_info) ||
+ 	    atomic_read(&fs_info->balance_pause_req) ||
+@@ -3796,24 +3797,30 @@ int btrfs_balance(struct btrfs_fs_info *
+ 		     !(bctl->sys.target & allowed)) ||
+ 		    ((bctl->meta.flags & BTRFS_BALANCE_ARGS_CONVERT) &&
+ 		     (fs_info->avail_metadata_alloc_bits & allowed) &&
+-		     !(bctl->meta.target & allowed))) {
+-			if (bctl->flags & BTRFS_BALANCE_FORCE) {
+-				btrfs_info(fs_info,
+-				"balance: force reducing metadata integrity");
+-			} else {
+-				btrfs_err(fs_info,
+-	"balance: reduces metadata integrity, use --force if you want this");
+-				ret = -EINVAL;
+-				goto out;
+-			}
+-		}
++		     !(bctl->meta.target & allowed)))
++			reducing_integrity = true;
++		else
++			reducing_integrity = false;
++
++		/* if we're not converting, the target field is uninitialized */
++		meta_target = (bctl->meta.flags & BTRFS_BALANCE_ARGS_CONVERT) ?
++			bctl->meta.target : fs_info->avail_metadata_alloc_bits;
++		data_target = (bctl->data.flags & BTRFS_BALANCE_ARGS_CONVERT) ?
++			bctl->data.target : fs_info->avail_data_alloc_bits;
+ 	} while (read_seqretry(&fs_info->profiles_lock, seq));
  
--	arm64_notify_die("Oops - bad compat syscall(2)", regs, &info, no);
-+	arm64_notify_die("Oops - bad compat syscall(2)", regs, &info, scno);
- 	return 0;
- }
---- a/arch/arm64/kernel/syscall.c
-+++ b/arch/arm64/kernel/syscall.c
-@@ -13,16 +13,15 @@
- #include <asm/thread_info.h>
- #include <asm/unistd.h>
- 
--long compat_arm_syscall(struct pt_regs *regs);
--
-+long compat_arm_syscall(struct pt_regs *regs, int scno);
- long sys_ni_syscall(void);
- 
--asmlinkage long do_ni_syscall(struct pt_regs *regs)
-+static long do_ni_syscall(struct pt_regs *regs, int scno)
- {
- #ifdef CONFIG_COMPAT
- 	long ret;
- 	if (is_compat_task()) {
--		ret = compat_arm_syscall(regs);
-+		ret = compat_arm_syscall(regs, scno);
- 		if (ret != -ENOSYS)
- 			return ret;
- 	}
-@@ -47,7 +46,7 @@ static void invoke_syscall(struct pt_reg
- 		syscall_fn = syscall_table[array_index_nospec(scno, sc_nr)];
- 		ret = __invoke_syscall(regs, syscall_fn);
- 	} else {
--		ret = do_ni_syscall(regs);
-+		ret = do_ni_syscall(regs, scno);
- 	}
- 
- 	regs->regs[0] = ret;
+-	/* if we're not converting, the target field is uninitialized */
+-	meta_target = (bctl->meta.flags & BTRFS_BALANCE_ARGS_CONVERT) ?
+-		bctl->meta.target : fs_info->avail_metadata_alloc_bits;
+-	data_target = (bctl->data.flags & BTRFS_BALANCE_ARGS_CONVERT) ?
+-		bctl->data.target : fs_info->avail_data_alloc_bits;
++	if (reducing_integrity) {
++		if (bctl->flags & BTRFS_BALANCE_FORCE) {
++			btrfs_info(fs_info,
++				   "balance: force reducing metadata integrity");
++		} else {
++			btrfs_err(fs_info,
++	  "balance: reduces metadata integrity, use --force if you want this");
++			ret = -EINVAL;
++			goto out;
++		}
++	}
++
+ 	if (btrfs_get_num_tolerated_disk_barrier_failures(meta_target) <
+ 		btrfs_get_num_tolerated_disk_barrier_failures(data_target)) {
+ 		int meta_index = btrfs_bg_flags_to_raid_index(meta_target);
 
 
