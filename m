@@ -2,102 +2,182 @@ Return-Path: <SRS0=RZO6=PX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 32608C43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 16:58:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B4B25C43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 16:58:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F052B20645
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 16:58:27 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=synopsys.com header.i=@synopsys.com header.b="OA+YRIBU"
+	by mail.kernel.org (Postfix) with ESMTP id 82F7F20675
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 16:58:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1547571516;
+	bh=F/ALt4jZ19EZazf2nFVePouDWuTg8TPcNVOmPZJpK1g=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=EHlRetl4b64nP+vOt/PXFRO34FCeKUIrIKVtKZnV/IT5U4h8wM3syKOrmcq7gt/9F
+	 dYvH+z7BeMOWiHBiV7ew2eD62DEBPcrLsFwsg1jCkZV2BDx50gq5pntQpc8bBV0kPi
+	 BkH7vYMfSXGslEb7Ta4vHuC0sJ0Da0iCogg1mWto=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387953AbfAOQ60 (ORCPT
+        id S2388154AbfAOQ6e (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 15 Jan 2019 11:58:26 -0500
-Received: from smtprelay4.synopsys.com ([198.182.47.9]:37924 "EHLO
-        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728613AbfAOQ6T (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Jan 2019 11:58:19 -0500
-Received: from mailhost.synopsys.com (mailhost2.synopsys.com [10.13.184.66])
-        by smtprelay.synopsys.com (Postfix) with ESMTP id 8B2EC24E16F3;
-        Tue, 15 Jan 2019 08:58:18 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
-        t=1547571498; bh=POsdSu2h1MWWntYZn018yDa8VSmiuZgpPL8E7jdQPwY=;
-        h=From:To:CC:Subject:Date:References:From;
-        b=OA+YRIBU1/4IAbepfPMkpV5ou17ESTOi90wmECBH1U6YYkhqvk540zFxIBKIyO4L7
-         H7Y1COSh9j1q26p4a4jbHE/pjw7UC8ZqqGLCZ3Rd/DmZDlsMpG5e9Ishmr8zkCRN6F
-         W3+KjndQq3C1fFH+0xbbamc64RWxEXHBwOivTnnCbyKRFQ9eh4FEfkYXYqE39F0mrG
-         WfHWCPP0HgR1uaj475CRp29HEftFt6eaWXcdqAT7PNPNwUFaZU0Xb8eogUQSWnzdZS
-         kYYnkHXBAQ2k2L2gHcO8tA4F6zp8iI4Sd71lP2GuIpLL6E4j1QbYmaLOUQmMpnK2M9
-         L/1b19ZB4O8wA==
-Received: from US01WEHTC3.internal.synopsys.com (us01wehtc3.internal.synopsys.com [10.15.84.232])
-        by mailhost.synopsys.com (Postfix) with ESMTP id 4453435CB;
-        Tue, 15 Jan 2019 08:58:18 -0800 (PST)
-Received: from US01WEMBX2.internal.synopsys.com ([fe80::e4b6:5520:9c0d:250b])
- by US01WEHTC3.internal.synopsys.com ([::1]) with mapi id 14.03.0415.000; Tue,
- 15 Jan 2019 08:58:18 -0800
-From:   Vineet Gupta <vineet.gupta1@synopsys.com>
-To:     Eugeniy Paltsev <eugeniy.paltsev@synopsys.com>,
-        "linux-snps-arc@lists.infradead.org" 
-        <linux-snps-arc@lists.infradead.org>
-CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "Alexey Brodkin" <alexey.brodkin@synopsys.com>
-Subject: Re: [PATCH 1/2] ARCv2: LIB: memeset: fix doing prefetchw outside of
- buffer
-Thread-Topic: [PATCH 1/2] ARCv2: LIB: memeset: fix doing prefetchw outside
- of buffer
-Thread-Index: AQHUrBw2ZJte6r90DkSex+vHyLGaMw==
-Date:   Tue, 15 Jan 2019 16:58:17 +0000
-Message-ID: <C2D7FE5348E1B147BCA15975FBA23075014642748E@US01WEMBX2.internal.synopsys.com>
-References: <20190114151649.32726-1-Eugeniy.Paltsev@synopsys.com>
- <C2D7FE5348E1B147BCA15975FBA2307501464272C9@US01WEMBX2.internal.synopsys.com>
- <1547553603.24248.49.camel@synopsys.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.144.199.106]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        Tue, 15 Jan 2019 11:58:34 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56292 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1732520AbfAOQkC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 Jan 2019 11:40:02 -0500
+Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id EBAA420868;
+        Tue, 15 Jan 2019 16:40:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1547570401;
+        bh=F/ALt4jZ19EZazf2nFVePouDWuTg8TPcNVOmPZJpK1g=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=hyEHKExac4b8pXUU8E4dcG4rdaMSwZfgpzMpd9tCTLTDpgY3z9RIDAPK+UwIIwlwS
+         nnJfQ6zaRG4WIxuoIuKLHKPLqYU/y6calRqJjxDptOTcf7yUC1jUqFHQpMO8edh7s4
+         XZw7iUcjjd5gssJ5ejG9MRL1IMmAXkBGPoUtm8+U=
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, WANG Chao <chao.wang@ucloud.cn>,
+        Borislav Petkov <bp@suse.de>,
+        Zhenzhong Duan <zhenzhong.duan@oracle.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, Andi Kleen <ak@linux.intel.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        David Woodhouse <dwmw@amazon.co.uk>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Jessica Yu <jeyu@kernel.org>, Jiri Kosina <jkosina@suse.cz>,
+        Kees Cook <keescook@chromium.org>,
+        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+        Luc Van Oostenryck <luc.vanoostenryck@gmail.com>,
+        Michal Marek <michal.lkml@markovi.net>,
+        Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Tim Chen <tim.c.chen@linux.intel.com>,
+        Vasily Gorbik <gor@linux.ibm.com>,
+        linux-kbuild@vger.kernel.org, srinivas.eeda@oracle.com,
+        x86-ml <x86@kernel.org>
+Subject: [PATCH 4.14 02/27] x86, modpost: Replace last remnants of RETPOLINE with CONFIG_RETPOLINE
+Date:   Tue, 15 Jan 2019 17:35:51 +0100
+Message-Id: <20190115154901.327470125@linuxfoundation.org>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20190115154901.189747728@linuxfoundation.org>
+References: <20190115154901.189747728@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
+X-Patchwork-Hint: ignore
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 1/15/19 4:00 AM, Eugeniy Paltsev wrote:=0A=
->>> -#ifdef PREALLOC_NOT_AVAIL=0A=
->>> -	prefetchw [r3, 64]	;Prefetch the next write location=0A=
->>> -#else=0A=
->>> -	prealloc  [r3, 64]=0A=
->>> -#endif=0A=
->>> +	PREALLOC_INSTR([r3, 64]) ;Prefetch the next write location=0A=
->> These are not solving the issue - I'd break this up and move these bits =
-to your=0A=
->> next patch.=0A=
-> Actually these are solving another issue - current implementation may cal=
-l=0A=
-> 'prealloc' instruction for L1 cache line which doesn't fully belongs to=
-=0A=
-> memeset area in case of 128B L1 D$ line length. As the 'prealloc' fill ca=
-che line=0A=
-> with zeros this leads to data corruption.=0A=
->=0A=
-> So I would better keep these changes in this 'fix' patch.=0A=
-=0A=
-Fair enough. Although technically it is different bug which we haven't actu=
-ally=0A=
-hit, found by code review.=0A=
-=0A=
-> BTW, I've forgot again to add Cc: stable@vger.kernel.org, could you add i=
-t for me,=0A=
-> when applying patch?=0A=
-> Thanks.=0A=
-=0A=
-Yes, I did that already !=0A=
-=0A=
--Vineet=0A=
+4.14-stable review patch.  If anyone has any objections, please let me know.
+
+------------------
+
+From: WANG Chao <chao.wang@ucloud.cn>
+
+commit e4f358916d528d479c3c12bd2fd03f2d5a576380 upstream.
+
+Commit
+
+  4cd24de3a098 ("x86/retpoline: Make CONFIG_RETPOLINE depend on compiler support")
+
+replaced the RETPOLINE define with CONFIG_RETPOLINE checks. Remove the
+remaining pieces.
+
+ [ bp: Massage commit message. ]
+
+Fixes: 4cd24de3a098 ("x86/retpoline: Make CONFIG_RETPOLINE depend on compiler support")
+Signed-off-by: WANG Chao <chao.wang@ucloud.cn>
+Signed-off-by: Borislav Petkov <bp@suse.de>
+Reviewed-by: Zhenzhong Duan <zhenzhong.duan@oracle.com>
+Reviewed-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc: "H. Peter Anvin" <hpa@zytor.com>
+Cc: Andi Kleen <ak@linux.intel.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Andy Lutomirski <luto@kernel.org>
+Cc: Arnd Bergmann <arnd@arndb.de>
+Cc: Daniel Borkmann <daniel@iogearbox.net>
+Cc: David Woodhouse <dwmw@amazon.co.uk>
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Jessica Yu <jeyu@kernel.org>
+Cc: Jiri Kosina <jkosina@suse.cz>
+Cc: Kees Cook <keescook@chromium.org>
+Cc: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+Cc: Luc Van Oostenryck <luc.vanoostenryck@gmail.com>
+Cc: Michal Marek <michal.lkml@markovi.net>
+Cc: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Tim Chen <tim.c.chen@linux.intel.com>
+Cc: Vasily Gorbik <gor@linux.ibm.com>
+Cc: linux-kbuild@vger.kernel.org
+Cc: srinivas.eeda@oracle.com
+Cc: stable <stable@vger.kernel.org>
+Cc: x86-ml <x86@kernel.org>
+Link: https://lkml.kernel.org/r/20181210163725.95977-1-chao.wang@ucloud.cn
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
+---
+ arch/x86/kernel/cpu/bugs.c   |    2 +-
+ include/linux/compiler-gcc.h |    2 +-
+ include/linux/module.h       |    2 +-
+ scripts/mod/modpost.c        |    2 +-
+ 4 files changed, 4 insertions(+), 4 deletions(-)
+
+--- a/arch/x86/kernel/cpu/bugs.c
++++ b/arch/x86/kernel/cpu/bugs.c
+@@ -212,7 +212,7 @@ static enum spectre_v2_mitigation spectr
+ static enum spectre_v2_user_mitigation spectre_v2_user __ro_after_init =
+ 	SPECTRE_V2_USER_NONE;
+ 
+-#ifdef RETPOLINE
++#ifdef CONFIG_RETPOLINE
+ static bool spectre_v2_bad_module;
+ 
+ bool retpoline_module_ok(bool has_retpoline)
+--- a/include/linux/compiler-gcc.h
++++ b/include/linux/compiler-gcc.h
+@@ -108,7 +108,7 @@
+ #define __weak		__attribute__((weak))
+ #define __alias(symbol)	__attribute__((alias(#symbol)))
+ 
+-#ifdef RETPOLINE
++#ifdef CONFIG_RETPOLINE
+ #define __noretpoline __attribute__((indirect_branch("keep")))
+ #endif
+ 
+--- a/include/linux/module.h
++++ b/include/linux/module.h
+@@ -794,7 +794,7 @@ static inline void module_bug_finalize(c
+ static inline void module_bug_cleanup(struct module *mod) {}
+ #endif	/* CONFIG_GENERIC_BUG */
+ 
+-#ifdef RETPOLINE
++#ifdef CONFIG_RETPOLINE
+ extern bool retpoline_module_ok(bool has_retpoline);
+ #else
+ static inline bool retpoline_module_ok(bool has_retpoline)
+--- a/scripts/mod/modpost.c
++++ b/scripts/mod/modpost.c
+@@ -2168,7 +2168,7 @@ static void add_intree_flag(struct buffe
+ /* Cannot check for assembler */
+ static void add_retpoline(struct buffer *b)
+ {
+-	buf_printf(b, "\n#ifdef RETPOLINE\n");
++	buf_printf(b, "\n#ifdef CONFIG_RETPOLINE\n");
+ 	buf_printf(b, "MODULE_INFO(retpoline, \"Y\");\n");
+ 	buf_printf(b, "#endif\n");
+ }
+
+
