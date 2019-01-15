@@ -2,240 +2,202 @@ Return-Path: <SRS0=RZO6=PX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.7 required=3.0 tests=FROM_LOCAL_HEX,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DEB3DC43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 16:47:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D7C50C43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 16:47:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A4CF92054F
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 16:47:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547570821;
-	bh=EevRJsZbldkv/zL54weM5TfMscQG8fy70ASv+N//VHg=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=U0im8U1btWLwuxSCIHe5efAsARPzZryy5wpxUTFnl45q5Wiw2YRlfLj1JoG9FAvhb
-	 V4Npnwl80c+ymkix1+vDiWFsFpTJst+jWDRbQas828THLwGPAlMgy+/IWITHhJTZ06
-	 VG2bqeRwPb2Jy+qTcBbtke41zoKZQMjWEkwbmsOI=
+	by mail.kernel.org (Postfix) with ESMTP id A61782054F
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 16:47:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387984AbfAOQq7 (ORCPT
+        id S2387676AbfAOQrG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 15 Jan 2019 11:46:59 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35454 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387841AbfAOQpo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Jan 2019 11:45:44 -0500
-Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CB7D020645;
-        Tue, 15 Jan 2019 16:45:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547570743;
-        bh=EevRJsZbldkv/zL54weM5TfMscQG8fy70ASv+N//VHg=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=bcQdwvX0KB0GU1tIL+LjtBQrhW/cD0dgYnkKYSyA020Q+AAR1NyAAbDjRxs+jBLc4
-         T2VCGyZcWjxTRn2zJyyBsjmfSo6NfMUrsvUlZjY52MQhRr2i5dWIJAaPnJkFG/yJfe
-         0h6fKx/vBHJi/56wm3dE4fHv4tgwPSrZ3wZ2Irt0=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Vasily Averin <vvs@virtuozzo.com>,
-        "J. Bruce Fields" <bfields@redhat.com>
-Subject: [PATCH 4.20 54/57] sunrpc: use-after-free in svc_process_common()
-Date:   Tue, 15 Jan 2019 17:36:35 +0100
-Message-Id: <20190115154914.053927193@linuxfoundation.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190115154910.734892368@linuxfoundation.org>
-References: <20190115154910.734892368@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
-X-Patchwork-Hint: ignore
+        Tue, 15 Jan 2019 11:47:06 -0500
+Received: from mail-it1-f200.google.com ([209.85.166.200]:44415 "EHLO
+        mail-it1-f200.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729757AbfAOQrE (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 Jan 2019 11:47:04 -0500
+Received: by mail-it1-f200.google.com with SMTP id x82so3183225ita.9
+        for <linux-kernel@vger.kernel.org>; Tue, 15 Jan 2019 08:47:03 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=yx3qZU+tlki+++hhOwdgRn46Gw3oKTgUEGHYgwmlHh4=;
+        b=I+/B3ljXbqi3KwldqSLu25JPXA3ZezB/ysV+zhKVK/EDHdaOj4iQge6/P5cgRBCppD
+         FSf5Lw7jOZxct1nJ5KJ6VtpQ2JOF+oWE2fCJ6YU0HHi+Ut5L0gxsS/+7ouNLKmn6Suk2
+         TXFeoqAiBOui8FdJ1g441yUY1KC8VE+TO/8yG7GI+ODLv6/J61X/7lgxa/XnMYK1HNgy
+         Y2S7H73Beo76o2iq+kp+VWGiSYRvWd17Gn8TNPI864NO1vIAPQMkxHOi21zwAPUYjY1O
+         d+Uydb1v7xEa4hfrezzOV0ofymnPDPQiSC3PT36MvC5URLl3bruepnRbGixDRVuAgpLn
+         vWRQ==
+X-Gm-Message-State: AJcUukdznt56g6WQTsxKT1iC+wqonkRYfuDfkDpFgTckuXQHxMKHkqIj
+        /cm1FbpeBkjmCbKhzJp+9g1PH/7WG278sboHooCTOIWMM8iN
+X-Google-Smtp-Source: ALg8bN4DHMQd9AjTKqpfyYfyZcJJUeNa2Bm522MyAX3HBs+gKagEJneyMGlUIqO/X9mHaEzA2NxOKaCxrSxwn2DTBPP/npB9iqga
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+X-Received: by 2002:a24:4105:: with SMTP id x5mr2996381ita.33.1547570823301;
+ Tue, 15 Jan 2019 08:47:03 -0800 (PST)
+Date:   Tue, 15 Jan 2019 08:47:03 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000003036f4057f81e98e@google.com>
+Subject: KASAN: use-after-free Read in ila_nf_input
+From:   syzbot <syzbot+03a25358f4cba0bc4cb6@syzkaller.appspotmail.com>
+To:     davem@davemloft.net, keescook@chromium.org, ktkhai@virtuozzo.com,
+        kuznet@ms2.inr.ac.ru, linux-kernel@vger.kernel.org,
+        netdev@vger.kernel.org, stephen@networkplumber.org,
+        syzkaller-bugs@googlegroups.com, tom@herbertland.com,
+        yoshfuji@linux-ipv6.org
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.20-stable review patch.  If anyone has any objections, please let me know.
+Hello,
 
-------------------
+syzbot found the following crash on:
 
-From: Vasily Averin <vvs@virtuozzo.com>
+HEAD commit:    b71acb0e3721 Merge branch 'linus' of git://git.kernel.org/..
+git tree:       bpf-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=15ab8b6f400000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=b03c5892bb940c76
+dashboard link: https://syzkaller.appspot.com/bug?extid=03a25358f4cba0bc4cb6
+compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
 
-commit d4b09acf924b84bae77cad090a9d108e70b43643 upstream.
+Unfortunately, I don't have any reproducer for this crash yet.
 
-if node have NFSv41+ mounts inside several net namespaces
-it can lead to use-after-free in svc_process_common()
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+03a25358f4cba0bc4cb6@syzkaller.appspotmail.com
 
-svc_process_common()
-        /* Setup reply header */
-        rqstp->rq_xprt->xpt_ops->xpo_prep_reply_hdr(rqstp); <<< HERE
+netlink: 'syz-executor2': attribute type 15 has an invalid length.
+IPv6: RTM_NEWROUTE with no NLM_F_CREATE or NLM_F_REPLACE
+==================================================================
+BUG: KASAN: use-after-free in rht_key_hashfn include/linux/rhashtable.h:143  
+[inline]
+BUG: KASAN: use-after-free in __rhashtable_lookup  
+include/linux/rhashtable.h:492 [inline]
+BUG: KASAN: use-after-free in rhashtable_lookup  
+include/linux/rhashtable.h:534 [inline]
+BUG: KASAN: use-after-free in rhashtable_lookup_fast  
+include/linux/rhashtable.h:560 [inline]
+BUG: KASAN: use-after-free in ila_lookup_wildcards  
+net/ipv6/ila/ila_xlat.c:133 [inline]
+BUG: KASAN: use-after-free in ila_xlat_addr net/ipv6/ila/ila_xlat.c:658  
+[inline]
+BUG: KASAN: use-after-free in ila_nf_input+0xf52/0x1100  
+net/ipv6/ila/ila_xlat.c:191
+Read of size 4 at addr ffff88808ba80ccc by task ksoftirqd/0/9
 
-svc_process_common() can use incorrect rqstp->rq_xprt,
-its caller function bc_svc_process() takes it from serv->sv_bc_xprt.
-The problem is that serv is global structure but sv_bc_xprt
-is assigned per-netnamespace.
+CPU: 0 PID: 9 Comm: ksoftirqd/0 Not tainted 4.20.0+ #3
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+Call Trace:
+  __dump_stack lib/dump_stack.c:77 [inline]
+  dump_stack+0x1db/0x2d0 lib/dump_stack.c:113
+  print_address_description.cold+0x7c/0x20d mm/kasan/report.c:256
+  kasan_report_error mm/kasan/report.c:354 [inline]
+  kasan_report mm/kasan/report.c:412 [inline]
+  kasan_report.cold+0x8c/0x2ba mm/kasan/report.c:396
+  __asan_report_load4_noabort+0x14/0x20 mm/kasan/report.c:432
+  rht_key_hashfn include/linux/rhashtable.h:143 [inline]
+  __rhashtable_lookup include/linux/rhashtable.h:492 [inline]
+  rhashtable_lookup include/linux/rhashtable.h:534 [inline]
+  rhashtable_lookup_fast include/linux/rhashtable.h:560 [inline]
+  ila_lookup_wildcards net/ipv6/ila/ila_xlat.c:133 [inline]
+  ila_xlat_addr net/ipv6/ila/ila_xlat.c:658 [inline]
+  ila_nf_input+0xf52/0x1100 net/ipv6/ila/ila_xlat.c:191
+  nf_hook_entry_hookfn include/linux/netfilter.h:119 [inline]
+  nf_hook_slow+0xbf/0x1f0 net/netfilter/core.c:511
+  nf_hook include/linux/netfilter.h:244 [inline]
+  NF_HOOK include/linux/netfilter.h:287 [inline]
+  ipv6_rcv+0x3b9/0x650 net/ipv6/ip6_input.c:272
+  __netif_receive_skb_one_core+0x160/0x210 net/core/dev.c:4973
+  __netif_receive_skb+0x2c/0x1c0 net/core/dev.c:5083
+  process_backlog+0x206/0x750 net/core/dev.c:5923
+  napi_poll net/core/dev.c:6346 [inline]
+  net_rx_action+0x76d/0x1930 net/core/dev.c:6412
+  __do_softirq+0x30b/0xb11 kernel/softirq.c:292
+  run_ksoftirqd kernel/softirq.c:654 [inline]
+  run_ksoftirqd+0x8e/0x110 kernel/softirq.c:646
+  smpboot_thread_fn+0x6ab/0xa10 kernel/smpboot.c:164
+  kthread+0x357/0x430 kernel/kthread.c:246
+  ret_from_fork+0x3a/0x50 arch/x86/entry/entry_64.S:352
 
-According to Trond, the whole "let's set up rqstp->rq_xprt
-for the back channel" is nothing but a giant hack in order
-to work around the fact that svc_process_common() uses it
-to find the xpt_ops, and perform a couple of (meaningless
-for the back channel) tests of xpt_flags.
+Allocated by task 7721:
+  save_stack+0x45/0xd0 mm/kasan/kasan.c:448
+  set_track mm/kasan/kasan.c:460 [inline]
+  kasan_kmalloc mm/kasan/kasan.c:553 [inline]
+  kasan_kmalloc+0xce/0xf0 mm/kasan/kasan.c:531
+  __do_kmalloc_node mm/slab.c:3684 [inline]
+  __kmalloc_node+0x51/0x80 mm/slab.c:3691
+  kmalloc_node include/linux/slab.h:589 [inline]
+  kvmalloc_node+0xbd/0x100 mm/util.c:416
+  kvmalloc include/linux/mm.h:577 [inline]
+  kvzalloc include/linux/mm.h:585 [inline]
+  bucket_table_alloc+0x9f/0x540 lib/rhashtable.c:176
+  rhashtable_init+0x525/0xa60 lib/rhashtable.c:1065
+  ila_xlat_init_net+0x26f/0x3d0 net/ipv6/ila/ila_xlat.c:623
+  ila_init_net+0x16/0x20 net/ipv6/ila/ila_main.c:63
+  ops_init+0x109/0x5d0 net/core/net_namespace.c:129
+  setup_net+0x326/0x8c0 net/core/net_namespace.c:314
+  copy_net_ns+0x2ae/0x4b0 net/core/net_namespace.c:437
+  create_new_namespaces+0x4ce/0x930 kernel/nsproxy.c:107
+  unshare_nsproxy_namespaces+0xc2/0x200 kernel/nsproxy.c:206
+  ksys_unshare+0x6d7/0xfb0 kernel/fork.c:2544
+  __do_sys_unshare kernel/fork.c:2612 [inline]
+  __se_sys_unshare kernel/fork.c:2610 [inline]
+  __x64_sys_unshare+0x31/0x40 kernel/fork.c:2610
+  do_syscall_64+0x1a3/0x800 arch/x86/entry/common.c:290
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
 
-All we really need in svc_process_common() is to be able to run
-rqstp->rq_xprt->xpt_ops->xpo_prep_reply_hdr()
+Freed by task 14703:
+  save_stack+0x45/0xd0 mm/kasan/kasan.c:448
+  set_track mm/kasan/kasan.c:460 [inline]
+  __kasan_slab_free+0x102/0x150 mm/kasan/kasan.c:521
+  kasan_slab_free+0xe/0x10 mm/kasan/kasan.c:528
+  __cache_free mm/slab.c:3498 [inline]
+  kfree+0xcf/0x230 mm/slab.c:3817
+  kvfree+0x61/0x70 mm/util.c:445
+  bucket_table_free+0xde/0x260 lib/rhashtable.c:108
+  rhashtable_free_and_destroy+0x155/0x8f0 lib/rhashtable.c:1163
+  ila_xlat_exit_net+0x22b/0x420 net/ipv6/ila/ila_xlat.c:632
+  ila_exit_net+0x16/0x20 net/ipv6/ila/ila_main.c:75
+  ops_exit_list.isra.0+0xb0/0x160 net/core/net_namespace.c:153
+  cleanup_net+0x51d/0xb10 net/core/net_namespace.c:551
+  process_one_work+0xd0c/0x1ce0 kernel/workqueue.c:2153
+  worker_thread+0x143/0x14a0 kernel/workqueue.c:2296
+  kthread+0x357/0x430 kernel/kthread.c:246
+  ret_from_fork+0x3a/0x50 arch/x86/entry/entry_64.S:352
 
-Bruce J Fields points that this xpo_prep_reply_hdr() call
-is an awfully roundabout way just to do "svc_putnl(resv, 0);"
-in the tcp case.
+The buggy address belongs to the object at ffff88808ba80cc0
+  which belongs to the cache kmalloc-32k of size 32768
+The buggy address is located 12 bytes inside of
+  32768-byte region [ffff88808ba80cc0, ffff88808ba88cc0)
+The buggy address belongs to the page:
+page:ffffea00022ea000 count:1 mapcount:0 mapping:ffff88812c3f2380 index:0x0  
+compound_mapcount: 0
+flags: 0x1fffc0000010200(slab|head)
+raw: 01fffc0000010200 ffffea00022db008 ffffea000298d008 ffff88812c3f2380
+raw: 0000000000000000 ffff88808ba80cc0 0000000100000001 0000000000000000
+page dumped because: kasan: bad access detected
 
-This patch does not initialiuze rqstp->rq_xprt in bc_svc_process(),
-now it calls svc_process_common() with rqstp->rq_xprt = NULL.
+Memory state around the buggy address:
+  ffff88808ba80b80: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+  ffff88808ba80c00: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+> ffff88808ba80c80: fc fc fc fc fc fc fc fc fb fb fb fb fb fb fb fb
+                                               ^
+  ffff88808ba80d00: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+  ffff88808ba80d80: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+==================================================================
 
-To adjust reply header svc_process_common() just check
-rqstp->rq_prot and calls svc_tcp_prep_reply_hdr() for tcp case.
-
-To handle rqstp->rq_xprt = NULL case in functions called from
-svc_process_common() patch intruduces net namespace pointer
-svc_rqst->rq_bc_net and adjust SVC_NET() definition.
-Some other function was also adopted to properly handle described case.
-
-Signed-off-by: Vasily Averin <vvs@virtuozzo.com>
-Cc: stable@vger.kernel.org
-Fixes: 23c20ecd4475 ("NFS: callback up - users counting cleanup")
-Signed-off-by: J. Bruce Fields <bfields@redhat.com>
-v2: added lost extern svc_tcp_prep_reply_hdr()
-Signed-off-by: Vasily Averin <vvs@virtuozzo.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- include/linux/sunrpc/svc.h    |    5 ++++-
- include/trace/events/sunrpc.h |    6 ++++--
- net/sunrpc/svc.c              |   11 +++++++----
- net/sunrpc/svc_xprt.c         |    5 +++--
- net/sunrpc/svcsock.c          |    2 +-
- 5 files changed, 19 insertions(+), 10 deletions(-)
+This bug is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
---- a/include/linux/sunrpc/svc.h
-+++ b/include/linux/sunrpc/svc.h
-@@ -295,9 +295,12 @@ struct svc_rqst {
- 	struct svc_cacherep *	rq_cacherep;	/* cache info */
- 	struct task_struct	*rq_task;	/* service thread */
- 	spinlock_t		rq_lock;	/* per-request lock */
-+	struct net		*rq_bc_net;	/* pointer to backchannel's
-+						 * net namespace
-+						 */
- };
- 
--#define SVC_NET(svc_rqst)	(svc_rqst->rq_xprt->xpt_net)
-+#define SVC_NET(rqst) (rqst->rq_xprt ? rqst->rq_xprt->xpt_net : rqst->rq_bc_net)
- 
- /*
-  * Rigorous type checking on sockaddr type conversions
---- a/include/trace/events/sunrpc.h
-+++ b/include/trace/events/sunrpc.h
-@@ -569,7 +569,8 @@ TRACE_EVENT(svc_process,
- 		__field(u32, vers)
- 		__field(u32, proc)
- 		__string(service, name)
--		__string(addr, rqst->rq_xprt->xpt_remotebuf)
-+		__string(addr, rqst->rq_xprt ?
-+			 rqst->rq_xprt->xpt_remotebuf : "(null)")
- 	),
- 
- 	TP_fast_assign(
-@@ -577,7 +578,8 @@ TRACE_EVENT(svc_process,
- 		__entry->vers = rqst->rq_vers;
- 		__entry->proc = rqst->rq_proc;
- 		__assign_str(service, name);
--		__assign_str(addr, rqst->rq_xprt->xpt_remotebuf);
-+		__assign_str(addr, rqst->rq_xprt ?
-+			     rqst->rq_xprt->xpt_remotebuf : "(null)");
- 	),
- 
- 	TP_printk("addr=%s xid=0x%08x service=%s vers=%u proc=%u",
---- a/net/sunrpc/svc.c
-+++ b/net/sunrpc/svc.c
-@@ -1144,6 +1144,8 @@ void svc_printk(struct svc_rqst *rqstp,
- static __printf(2,3) void svc_printk(struct svc_rqst *rqstp, const char *fmt, ...) {}
- #endif
- 
-+extern void svc_tcp_prep_reply_hdr(struct svc_rqst *);
-+
- /*
-  * Common routine for processing the RPC request.
-  */
-@@ -1172,7 +1174,8 @@ svc_process_common(struct svc_rqst *rqst
- 	clear_bit(RQ_DROPME, &rqstp->rq_flags);
- 
- 	/* Setup reply header */
--	rqstp->rq_xprt->xpt_ops->xpo_prep_reply_hdr(rqstp);
-+	if (rqstp->rq_prot == IPPROTO_TCP)
-+		svc_tcp_prep_reply_hdr(rqstp);
- 
- 	svc_putu32(resv, rqstp->rq_xid);
- 
-@@ -1244,7 +1247,7 @@ svc_process_common(struct svc_rqst *rqst
- 	 * for lower versions. RPC_PROG_MISMATCH seems to be the closest
- 	 * fit.
- 	 */
--	if (versp->vs_need_cong_ctrl &&
-+	if (versp->vs_need_cong_ctrl && rqstp->rq_xprt &&
- 	    !test_bit(XPT_CONG_CTRL, &rqstp->rq_xprt->xpt_flags))
- 		goto err_bad_vers;
- 
-@@ -1336,7 +1339,7 @@ svc_process_common(struct svc_rqst *rqst
- 	return 0;
- 
-  close:
--	if (test_bit(XPT_TEMP, &rqstp->rq_xprt->xpt_flags))
-+	if (rqstp->rq_xprt && test_bit(XPT_TEMP, &rqstp->rq_xprt->xpt_flags))
- 		svc_close_xprt(rqstp->rq_xprt);
- 	dprintk("svc: svc_process close\n");
- 	return 0;
-@@ -1459,10 +1462,10 @@ bc_svc_process(struct svc_serv *serv, st
- 	dprintk("svc: %s(%p)\n", __func__, req);
- 
- 	/* Build the svc_rqst used by the common processing routine */
--	rqstp->rq_xprt = serv->sv_bc_xprt;
- 	rqstp->rq_xid = req->rq_xid;
- 	rqstp->rq_prot = req->rq_xprt->prot;
- 	rqstp->rq_server = serv;
-+	rqstp->rq_bc_net = req->rq_xprt->xprt_net;
- 
- 	rqstp->rq_addrlen = sizeof(req->rq_xprt->addr);
- 	memcpy(&rqstp->rq_addr, &req->rq_xprt->addr, rqstp->rq_addrlen);
---- a/net/sunrpc/svc_xprt.c
-+++ b/net/sunrpc/svc_xprt.c
-@@ -468,10 +468,11 @@ out:
-  */
- void svc_reserve(struct svc_rqst *rqstp, int space)
- {
-+	struct svc_xprt *xprt = rqstp->rq_xprt;
-+
- 	space += rqstp->rq_res.head[0].iov_len;
- 
--	if (space < rqstp->rq_reserved) {
--		struct svc_xprt *xprt = rqstp->rq_xprt;
-+	if (xprt && space < rqstp->rq_reserved) {
- 		atomic_sub((rqstp->rq_reserved - space), &xprt->xpt_reserved);
- 		rqstp->rq_reserved = space;
- 
---- a/net/sunrpc/svcsock.c
-+++ b/net/sunrpc/svcsock.c
-@@ -1173,7 +1173,7 @@ static int svc_tcp_sendto(struct svc_rqs
- /*
-  * Setup response header. TCP has a 4B record length field.
-  */
--static void svc_tcp_prep_reply_hdr(struct svc_rqst *rqstp)
-+void svc_tcp_prep_reply_hdr(struct svc_rqst *rqstp)
- {
- 	struct kvec *resv = &rqstp->rq_res.head[0];
- 
-
-
+syzbot will keep track of this bug report. See:
+https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with  
+syzbot.
