@@ -7,49 +7,49 @@ X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EE81DC43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 16:46:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E2968C43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 16:46:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B3B4920645
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 16:46:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B1FA120645
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 16:46:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547570768;
-	bh=mq03ULgkvFS67zK5ltqYOhAzfaHfXFIXq+gr+Nf3pEw=;
+	s=default; t=1547570772;
+	bh=QJU7qkOY7YOaXBfBA0TnkLgnCAwVuYMp/GjkTAE8xyM=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=lWIk25Ur1cT240fg5AT6ofhVezquIqs7LwgptrV1CToaUJQ4ktUsrgqHhc6+kaOZ7
-	 JBh3NgQ/yWqVTFvCIizgzmWSgqv1k+C0+2iFH+vxyfhab+FAwUYcFAPlnGnTcPdvnp
-	 QdmzImisYo/BkVqpRshIGxWt7rZFH7bHQSh0udb8=
+	b=0poOgEv4kOCnsOtAtP4UPui8kQ86LujFVSvdgKmBHOf24pr4QkQuNlHLstXRbUWV+
+	 zBxPCll4nwLONrhZtr/qs6ung5Tp3OvEhDKwz/DqbxWeyXU6aLKAUz8Q4wZIaqmPTR
+	 YabsKoS1qCcay/18AeILPA/kvKMkVFml+AjsknXo=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387916AbfAOQqG (ORCPT
+        id S2387929AbfAOQqL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 15 Jan 2019 11:46:06 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35742 "EHLO mail.kernel.org"
+        Tue, 15 Jan 2019 11:46:11 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35794 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387899AbfAOQqC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Jan 2019 11:46:02 -0500
+        id S1731025AbfAOQqI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 Jan 2019 11:46:08 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C08E520675;
-        Tue, 15 Jan 2019 16:46:01 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 080502054F;
+        Tue, 15 Jan 2019 16:46:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547570762;
-        bh=mq03ULgkvFS67zK5ltqYOhAzfaHfXFIXq+gr+Nf3pEw=;
+        s=default; t=1547570767;
+        bh=QJU7qkOY7YOaXBfBA0TnkLgnCAwVuYMp/GjkTAE8xyM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=WDjIQaJ8kZLFtUJsGPrG9OjfB9Q4NJCA9dLwnJq0ErdSZPHFLk3VHlQTC1WivEVwS
-         rzpb1ryrkbjGmhzTw+LMmCF+Xl6rJK9SShbz54udSvsDAuWO0cxQhYsQmYb1ahSjJm
-         TELBh2hlzjxZ+AKWw/n3IpYlnNIPyi1Jy4jowWjo=
+        b=k3IK/GxyyCGwhaCoREaR2bo+ekRG0qBV1NOOdeWPU3lXgsXvxgSnXvHPIBGFZi8Gh
+         vzWhoaGm+c7VzdwRdl2EFE2hTx08WQ0/0PUtcunmDCO+1+DSXL1AiJx3hwFy0SozGK
+         52kY6+nFXyaQGPrA6EL0oVffIrkJeZBsjXz41Q1E=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Pei Zhang <pezhang@redhat.com>,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        Peter Xu <peterx@redhat.com>,
-        Cornelia Huck <cohuck@redhat.com>,
-        Alex Williamson <alex.williamson@redhat.com>
-Subject: [PATCH 4.20 36/57] vfio/type1: Fix unmap overflow off-by-one
-Date:   Tue, 15 Jan 2019 17:36:17 +0100
-Message-Id: <20190115154912.798297882@linuxfoundation.org>
+        stable@vger.kernel.org, Niklas Cassel <niklas.cassel@linaro.org>,
+        Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
+        Stanimir Varbanov <svarbanov@mm-sol.com>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+Subject: [PATCH 4.20 38/57] PCI: dwc: Use interrupt masking instead of disabling
+Date:   Tue, 15 Jan 2019 17:36:19 +0100
+Message-Id: <20190115154912.966712767@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190115154910.734892368@linuxfoundation.org>
 References: <20190115154910.734892368@linuxfoundation.org>
@@ -68,41 +68,76 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Alex Williamson <alex.williamson@redhat.com>
+From: Marc Zyngier <marc.zyngier@arm.com>
 
-commit 58fec830fc19208354895d9832785505046d6c01 upstream.
+commit 830920e065e90db318a0da98bf13a02b641eae7f upstream.
 
-The below referenced commit adds a test for integer overflow, but in
-doing so prevents the unmap ioctl from ever including the last page of
-the address space.  Subtract one to compare to the last address of the
-unmap to avoid the overflow and wrap-around.
+The dwc driver is showing an interesting level of brokeness, as it
+insists on using the enable/disable set of registers to mask/unmask
+MSIs, meaning that an MSIs being generated while the interrupt is in
+that "disabled" state will simply be lost.
 
-Fixes: 71a7d3d78e3c ("vfio/type1: silence integer overflow warning")
-Link: https://bugzilla.redhat.com/show_bug.cgi?id=1662291
-Cc: stable@vger.kernel.org # v4.15+
-Reported-by: Pei Zhang <pezhang@redhat.com>
-Debugged-by: Peter Xu <peterx@redhat.com>
-Reviewed-by: Dan Carpenter <dan.carpenter@oracle.com>
-Reviewed-by: Peter Xu <peterx@redhat.com>
-Tested-by: Peter Xu <peterx@redhat.com>
-Reviewed-by: Cornelia Huck <cohuck@redhat.com>
-Signed-off-by: Alex Williamson <alex.williamson@redhat.com>
+Let's move to the mask/unmask set of registers, which offers the
+expected semantics.
+
+Fixes: 7c5925afbc58 ("PCI: dwc: Move MSI IRQs allocation to IRQ domains
+hierarchical API")
+Link: https://lore.kernel.org/linux-pci/20181113225734.8026-1-marc.zyngier@arm.com/
+Tested-by: Niklas Cassel <niklas.cassel@linaro.org>
+Tested-by: Gustavo Pimentel <gustavo.pimentel@synopsys.com>
+Tested-by: Stanimir Varbanov <svarbanov@mm-sol.com>
+Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
+[lorenzo.pieralisi@arm.com: updated commit log]
+Signed-off-by: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+Cc: stable@vger.kernel.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/vfio/vfio_iommu_type1.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/pci/controller/dwc/pcie-designware-host.c |   19 ++++++++++++-------
+ 1 file changed, 12 insertions(+), 7 deletions(-)
 
---- a/drivers/vfio/vfio_iommu_type1.c
-+++ b/drivers/vfio/vfio_iommu_type1.c
-@@ -878,7 +878,7 @@ static int vfio_dma_do_unmap(struct vfio
- 		return -EINVAL;
- 	if (!unmap->size || unmap->size & mask)
- 		return -EINVAL;
--	if (unmap->iova + unmap->size < unmap->iova ||
-+	if (unmap->iova + unmap->size - 1 < unmap->iova ||
- 	    unmap->size > SIZE_MAX)
- 		return -EINVAL;
+--- a/drivers/pci/controller/dwc/pcie-designware-host.c
++++ b/drivers/pci/controller/dwc/pcie-designware-host.c
+@@ -168,8 +168,8 @@ static void dw_pci_bottom_mask(struct ir
+ 		bit = data->hwirq % MAX_MSI_IRQS_PER_CTRL;
  
+ 		pp->irq_status[ctrl] &= ~(1 << bit);
+-		dw_pcie_wr_own_conf(pp, PCIE_MSI_INTR0_ENABLE + res, 4,
+-				    pp->irq_status[ctrl]);
++		dw_pcie_wr_own_conf(pp, PCIE_MSI_INTR0_MASK + res, 4,
++				    ~pp->irq_status[ctrl]);
+ 	}
+ 
+ 	raw_spin_unlock_irqrestore(&pp->lock, flags);
+@@ -191,8 +191,8 @@ static void dw_pci_bottom_unmask(struct
+ 		bit = data->hwirq % MAX_MSI_IRQS_PER_CTRL;
+ 
+ 		pp->irq_status[ctrl] |= 1 << bit;
+-		dw_pcie_wr_own_conf(pp, PCIE_MSI_INTR0_ENABLE + res, 4,
+-				    pp->irq_status[ctrl]);
++		dw_pcie_wr_own_conf(pp, PCIE_MSI_INTR0_MASK + res, 4,
++				    ~pp->irq_status[ctrl]);
+ 	}
+ 
+ 	raw_spin_unlock_irqrestore(&pp->lock, flags);
+@@ -658,10 +658,15 @@ void dw_pcie_setup_rc(struct pcie_port *
+ 	num_ctrls = pp->num_vectors / MAX_MSI_IRQS_PER_CTRL;
+ 
+ 	/* Initialize IRQ Status array */
+-	for (ctrl = 0; ctrl < num_ctrls; ctrl++)
+-		dw_pcie_rd_own_conf(pp, PCIE_MSI_INTR0_ENABLE +
++	for (ctrl = 0; ctrl < num_ctrls; ctrl++) {
++		dw_pcie_wr_own_conf(pp, PCIE_MSI_INTR0_MASK +
+ 					(ctrl * MSI_REG_CTRL_BLOCK_SIZE),
+-				    4, &pp->irq_status[ctrl]);
++				    4, ~0);
++		dw_pcie_wr_own_conf(pp, PCIE_MSI_INTR0_ENABLE +
++					(ctrl * MSI_REG_CTRL_BLOCK_SIZE),
++				    4, ~0);
++		pp->irq_status[ctrl] = 0;
++	}
+ 
+ 	/* Setup RC BARs */
+ 	dw_pcie_writel_dbi(pci, PCI_BASE_ADDRESS_0, 0x00000004);
 
 
