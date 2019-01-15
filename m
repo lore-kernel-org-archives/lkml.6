@@ -2,99 +2,105 @@ Return-Path: <SRS0=RZO6=PX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0107EC43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 23:36:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E550C43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 23:40:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CB7CA20883
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 23:36:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 00CF320645
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 23:40:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391462AbfAOXgp (ORCPT
+        id S2391473AbfAOXkR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 15 Jan 2019 18:36:45 -0500
-Received: from mga01.intel.com ([192.55.52.88]:48235 "EHLO mga01.intel.com"
+        Tue, 15 Jan 2019 18:40:17 -0500
+Received: from mail5.windriver.com ([192.103.53.11]:47924 "EHLO mail5.wrs.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728841AbfAOXgo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Jan 2019 18:36:44 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 15 Jan 2019 15:36:43 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,483,1539673200"; 
-   d="scan'208";a="267422316"
-Received: from yoojae-mobl1.amr.corp.intel.com (HELO [10.7.153.143]) ([10.7.153.143])
-  by orsmga004.jf.intel.com with ESMTP; 15 Jan 2019 15:36:43 -0800
-Subject: Re: [PATCH v10 06/12] peci: Add a PECI adapter driver for Aspeed
- AST24xx/AST25xx
-To:     Joel Stanley <joel@jms.id.au>
-Cc:     devicetree <devicetree@vger.kernel.org>,
-        Ryan Chen <ryan_chen@aspeedtech.com>,
-        Andy Shevchenko <andriy.shevchenko@intel.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Andrew Jeffery <andrew@aj.id.au>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        OpenBMC Maillist <openbmc@lists.ozlabs.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        James Feist <james.feist@linux.intel.com>,
-        Vernon Mauery <vernon.mauery@linux.intel.com>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Haiyue Wang <haiyue.wang@linux.intel.com>
-References: <20190107214136.5256-1-jae.hyun.yoo@linux.intel.com>
- <20190107214136.5256-7-jae.hyun.yoo@linux.intel.com>
- <CACPK8XfMyXfomepZEPJCr=A-cCPw-CVAZ0B2CuKn7oXCNz6LbQ@mail.gmail.com>
- <abaef001-a769-ec5d-45f0-02a994fdbee6@linux.intel.com>
- <CACPK8XdBSYHB+S8Sp8Y=J0cK9D=coa+coQj3S7TEFs9DJ8Ljxg@mail.gmail.com>
-From:   Jae Hyun Yoo <jae.hyun.yoo@linux.intel.com>
-Message-ID: <17179a43-9ac7-366a-bfe6-044e80875a06@linux.intel.com>
-Date:   Tue, 15 Jan 2019 15:36:43 -0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.3
+        id S2387904AbfAOXkQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 Jan 2019 18:40:16 -0500
+Received: from ALA-HCB.corp.ad.wrs.com (ala-hcb.corp.ad.wrs.com [147.11.189.41])
+        by mail5.wrs.com (8.15.2/8.15.2) with ESMTPS id x0FNcMia013462
+        (version=TLSv1 cipher=AES128-SHA bits=128 verify=FAIL);
+        Tue, 15 Jan 2019 15:38:32 -0800
+Received: from yow-pgortmak-d1.corp.ad.wrs.com (128.224.56.57) by
+ ALA-HCB.corp.ad.wrs.com (147.11.189.41) with Microsoft SMTP Server id
+ 14.3.408.0; Tue, 15 Jan 2019 15:38:12 -0800
+Received: by yow-pgortmak-d1.corp.ad.wrs.com (Postfix, from userid 1000)        id
+ C95A52E0922; Tue, 15 Jan 2019 18:38:11 -0500 (EST)
+Date:   Tue, 15 Jan 2019 18:38:11 -0500
+From:   Paul Gortmaker <paul.gortmaker@windriver.com>
+To:     Takashi Iwai <tiwai@suse.de>
+CC:     Chuck Lever <chuck.lever@oracle.com>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        Anna Schumaker <Anna.Schumaker@Netapp.com>,
+        Trond Myklebust <trondmy@gmail.com>,
+        Linux NFS Mailing List <linux-nfs@vger.kernel.org>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: linux-next: Fixes tag needs some work in the nfs-anna tree
+Message-ID: <20190115233811.GD26416@windriver.com>
+References: <20190116083831.256824cf@canb.auug.org.au>
+ <A4B834E5-2DFD-428E-8E24-9F6F6A822B09@oracle.com>
+ <s5hbm4hfu45.wl-tiwai@suse.de>
 MIME-Version: 1.0
-In-Reply-To: <CACPK8XdBSYHB+S8Sp8Y=J0cK9D=coa+coQj3S7TEFs9DJ8Ljxg@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <s5hbm4hfu45.wl-tiwai@suse.de>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 1/15/2019 3:14 PM, Joel Stanley wrote:
-> On Tue, 15 Jan 2019 at 09:49, Jae Hyun Yoo <jae.hyun.yoo@linux.intel.com> wrote:
->>>> +       /**
->>>> +        * We check that the regmap works on this very first access,
->>>> +        * but as this is an MMIO-backed regmap, subsequent regmap
->>>> +        * access is not going to fail and we skip error checks from
->>>> +        * this point.
->>>
->>> Why do you use a regmap for this driver? AFAICT it has exclusive
->>> ownership over the register range it uses, which is sometimes a reason
->>> to use a regmap over a mmio region.
->>>
->>> I'm not sure if you've ever disassembled drivers/base/regmap/regmap.o,
->>> but if you do you will find that a single mmio read turns into
->>> hundreds of instructions.
->>>
->>
->> No specific reason. regmap makes some overhead as you mentioned but it
->> also provides some advantages on access simplification, endianness
->> handling and register dump at run time. I would not insist using of
->> regmap if you prefer using of raw readl and writel. Do you want replace
->> regmap with readl and writel in this driver?
-> 
-> I think that would be best.
-> 
-> You raise some good points about the regmap API, and you're not alone
-> in using it for these reasons. We should look in to providing a
-> suitable API without the overhead, or making regmap more efficient for
-> the mmio case.
-> 
+[Re: linux-next: Fixes tag needs some work in the nfs-anna tree] On 15/01/2019 (Tue 23:12) Takashi Iwai wrote:
 
-Okay. I'll rewrite this driver code using readl and writel instead of 
-regmap mmio. Thanks again for your review!
+> On Tue, 15 Jan 2019 22:41:21 +0100,
+> Chuck Lever wrote:
+> > 
+> > Hi Stephen-
+> > 
+> > On Jan 15, 2019, at 4:38 PM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> > 
+> > > [I am experimenting with checking the Fixes tags in commits in linux-next.
+> > > Please let me know if you think I am being too strict.]
+> > > 
+> > > Hi all,
+> > > 
+> > > Commit
+> > > 
+> > >  deaa5c96c2f7 ("SUNRPC: Address Kerberos performance/behavior regression")
+> > > 
+> > > has problem with this Fixes tag:
+> > > 
+> > >  Fixes: 918f3c1fe83c ("SUNRPC: Improve latency for interactive ... ")
+> > > 
+> > > The subject should match the subject of the fixed commit.
+> > > 
+> > > -- 
+> > > Cheers,
+> > > Stephen Rothwell
+> > 
+> > I shortened the commit title so that the Fixes: line is shorter than 68
+> > characters. I can leave these titles alone if that's preferred.
+> 
+> I've sometimes shorted the subject like the above, too, as I find a
+> too long text annoying.  Maybe the partial string matching should
+> suffice, especially when it ends with "..." ?
 
-Regards,
-Jae
+The problem is consistency.  Perhaps you shorten at four words.  A
+person searches with five words or 70 chars -  they never see your commit.
+
+The idea of consistency across the "Fixes:" tags is to allow a level of
+automated processing so that the creators of the stable releases can do
+a lot less manual hands-on processing.  They have enough work to do.
+
+Thanks,
+Paul.
+--
+
+> 
+> 
+> thanks,
+> 
+> Takashi
