@@ -2,146 +2,103 @@ Return-Path: <SRS0=RZO6=PX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C5260C43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 05:50:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3AD81C43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 05:54:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8B59920656
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 05:50:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547531401;
-	bh=OsNbKiOw4wC2BGgc0y+q1WmevhGN5MS5HBVUsKEr3Ao=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:List-ID:From;
-	b=UWyR6a64gfIb9SRV+HpT4VGSBMxIN68akqmnYizF1GsZwwmayqyY27Dzud1jyp3vN
-	 idK5qgH8kcAhVWnlcbvI5PDhMfhiLIMg5IA2RnIJNmBoylcBX6KaCnVOY41HTWBAr8
-	 c93k81Def3vtLYTdKvcSzproMlbFlvf0vid1PD2k=
+	by mail.kernel.org (Postfix) with ESMTP id 01DD320656
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 05:54:03 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="MUo7ZOWN"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728241AbfAOFt7 (ORCPT
+        id S1728263AbfAOFyB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 15 Jan 2019 00:49:59 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58728 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725929AbfAOFt7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Jan 2019 00:49:59 -0500
-Received: from devnote (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9678B20656;
-        Tue, 15 Jan 2019 05:49:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547531398;
-        bh=OsNbKiOw4wC2BGgc0y+q1WmevhGN5MS5HBVUsKEr3Ao=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=YD/aV1bYlT9JBqyuX7FQozAs4TTkv/t4gLaNQr6DdeJLSC/50wtmS2upU9/fBZCaL
-         gPyViv5g/QDVmYvtA9NvI0QNxfAnOEvk85lRPaMEZ4ewCCA03LMADru3uT7/OjNX/m
-         26UlNHYNoeafYBNg5lDIPwEQtDg5hXKQ1u6Bc8jE=
-Date:   Tue, 15 Jan 2019 14:49:55 +0900
-From:   Masami Hiramatsu <mhiramat@kernel.org>
-To:     James Morse <james.morse@arm.com>
-Cc:     Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Pratyush Anand <panand@redhat.com>,
-        "David A . Long" <dave.long@linaro.org>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 1/3] arm64: kprobes: Move extable address check into
- arch_prepare_kprobe()
-Message-Id: <20190115144955.b3a6cfae18035ae46ffdcfc2@kernel.org>
-In-Reply-To: <92c160a8-7627-0c64-ed73-df616e9c057d@arm.com>
-References: <154502881646.30629.9938335052821665530.stgit@devbox>
-        <154502884653.30629.3172839440883293817.stgit@devbox>
-        <aec51c10-d744-df0f-1216-d3372e779cb1@arm.com>
-        <20190108113953.8bc0cc7d196ddba370377217@kernel.org>
-        <b4109104-c438-f4c2-352a-d8b0ec47db37@arm.com>
-        <20190109110500.b4b5049f4c67dfc85b9ced4e@kernel.org>
-        <92c160a8-7627-0c64-ed73-df616e9c057d@arm.com>
-X-Mailer: Sylpheed 3.5.0 (GTK+ 2.24.30; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        Tue, 15 Jan 2019 00:54:01 -0500
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:41549 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725929AbfAOFyA (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 Jan 2019 00:54:00 -0500
+Received: by mail-pf1-f195.google.com with SMTP id b7so771236pfi.8
+        for <linux-kernel@vger.kernel.org>; Mon, 14 Jan 2019 21:54:00 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=BrydfdUXj3ZnvaRHY3mVchnZedVhZ7pBlHf/TdSLhqE=;
+        b=MUo7ZOWNn/MCC3ySmxF4OzPTLp3zuM9OPecw6sRAhbE2MSneyWSEbdXWOpTC6A6bUm
+         yCJTsMV/oyT7abSJJ6jwvWXAdjahOz7W39daAFEy3C9lb5FuzTqO6sKoulfpqROqOY0O
+         C5N+wtTexuXlssAoeZjA/IwoRUj2bHreMU0t8=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=BrydfdUXj3ZnvaRHY3mVchnZedVhZ7pBlHf/TdSLhqE=;
+        b=hucs6eUrznjqcxfbyZUTJgl5SM/5ENRjU5BXSCJen5p24vqH9f4SBoUtMQlNp4Swsa
+         04vjguLb/JQSFPpjMFyK849w0YaHFt32fZXHw2T/LbUR8OiTm3P3IN+a48G9KryqvRSi
+         me4bAZNruxJjsgUnEkzYT3BeKpmfAjSRjPLCo3Kbj8us7P8YhjM9BG4oH7USvUDQ0zob
+         piE3RymOh+bJcp71xdvnK5/yCiRUufhryeghU+LVpCkjtkgtEblNP7wR6NHF8wrL/l5u
+         jYdK+RLrTT7wDaTfzPRQ0IA7xJhbtOphLY2vbW9r7N/YJTxv/5PWyBKthYze72HfJqrc
+         7kRg==
+X-Gm-Message-State: AJcUukdtdYYZFcabEgeuUUGd8lcNE3kx5YuZ4IF/A41+vwMsjeNBZn6T
+        71Zkl/NMAUz0EMXyLAMiVb4jyA==
+X-Google-Smtp-Source: ALg8bN7RvjEL+pRCxjxRLdT8lvcavt03YFv9m93EcN35fOqGbj7rDeujZIe6I49Myej2UwyjhTHIcQ==
+X-Received: by 2002:a63:ef47:: with SMTP id c7mr2288053pgk.386.1547531640119;
+        Mon, 14 Jan 2019 21:54:00 -0800 (PST)
+Received: from tuxbook-pro (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
+        by smtp.gmail.com with ESMTPSA id c72sm3520055pfb.107.2019.01.14.21.53.58
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 14 Jan 2019 21:53:59 -0800 (PST)
+Date:   Mon, 14 Jan 2019 21:53:57 -0800
+From:   Bjorn Andersson <bjorn.andersson@linaro.org>
+To:     Brajeswar Ghosh <brajeswar.linux@gmail.com>
+Cc:     ohad@wizery.com, jrdr.linux@gmail.com,
+        linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        sabyasachi.linux@gmail.com
+Subject: Re: [PATCH] remoteproc/qcom_sysmon.c: Remove duplicate header
+Message-ID: <20190115055357.GC25927@tuxbook-pro>
+References: <20190109142959.GA29659@hp-pavilion-15-notebook-pc-brajeswar>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190109142959.GA29659@hp-pavilion-15-notebook-pc-brajeswar>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 11 Jan 2019 18:22:38 +0000
-James Morse <james.morse@arm.com> wrote:
+On Wed 09 Jan 06:29 PST 2019, Brajeswar Ghosh wrote:
 
-> Hi,
+> Remove linux/notifier.h which is included more than once
 > 
-> On 09/01/2019 02:05, Masami Hiramatsu wrote:
-> > On Tue, 8 Jan 2019 17:13:36 +0000
-> > James Morse <james.morse@arm.com> wrote:
-> >> On 08/01/2019 02:39, Masami Hiramatsu wrote:
-> >>> On Thu, 3 Jan 2019 17:05:18 +0000
-> >>> James Morse <james.morse@arm.com> wrote:
-> >>>> On 17/12/2018 06:40, Masami Hiramatsu wrote:
-> >>>>> Move extable address check into arch_prepare_kprobe() from
-> >>>>> arch_within_kprobe_blacklist().
-> >>>>
-> >>>> I'm trying to work out the pattern for what should go in the blacklist, and what
-> >>>> should be rejected by the arch code.
-> >>>>
-> >>>> It seems address-ranges should be blacklisted as the contents don't matter.
-> >>>> easy-example: the idmap text.
-> >>>
-> >>> Yes, more precisely, the code smaller than a function (symbol), it must be
-> >>> rejected by arch_prepare_kprobe(), since blacklist is poplated based on
-> >>> kallsyms.
-> >>
-> >> Ah, okay, so the pattern is the blacklist should only be for whole symbols,
-> >> (which explains why its usually based on sections).
-> > 
-> > Correct. Actually, the blacklist is generated based on the symbol info
-> > from symbol address.
-> > 
-> >> I see kprobe_add_ksym_blacklist() would go wrong if you give it something like:
-> >> platform_drv_probe+0x50/0xb0, as it will log platform_drv_probe+0x50 as the
-> >> start_addr and platform_drv_probe+0x50+0xb0 as the end.
-> > 
-> > Yes, it expects given address is the entry of a symbol.
-> 
-> >> But how does anything from the arch code's blacklist get into the
-> >> kprobe_blacklist list?
-> > 
-> > It should be done via arch_populate_kprobe_blacklist().
-> 
-> >> We don't have an arch_populate_kprobe_blacklist(), so rely on
-> >> within_kprobe_blacklist() calling arch_within_kprobe_blacklist() with the
-> >> address, as well as walking kprobe_blacklist.
-> >>
-> >> Is this cleanup ahead of a series that does away with
-> >> arch_within_kprobe_blacklist() so that debugfs list is always complete?
-> > 
-> > Right, after this cleanup, I will send arch_populate_kprobe_blacklist()
-> > patch for arm64 and others. My plan is to move all arch_within_kprobe_blacklist()
-> > to arch_populate_kprobe_blacklist() so that user can get more precise blacklist
-> > via debugfs.
-> 
-> Thanks, now it all makes sense!
-> 
-> Reviewed-by: James Morse <james.morse@arm.com>
 
-Thanks!
+Applied, with Souptick's ack.
 
+Thanks,
+Bjorn
+
+> Signed-off-by: Brajeswar Ghosh <brajeswar.linux@gmail.com>
+> ---
+>  drivers/remoteproc/qcom_sysmon.c | 1 -
+>  1 file changed, 1 deletion(-)
 > 
+> diff --git a/drivers/remoteproc/qcom_sysmon.c b/drivers/remoteproc/qcom_sysmon.c
+> index e976a602b015..603b813151f2 100644
+> --- a/drivers/remoteproc/qcom_sysmon.c
+> +++ b/drivers/remoteproc/qcom_sysmon.c
+> @@ -7,7 +7,6 @@
+>  #include <linux/notifier.h>
+>  #include <linux/slab.h>
+>  #include <linux/io.h>
+> -#include <linux/notifier.h>
+>  #include <linux/of_platform.h>
+>  #include <linux/platform_device.h>
+>  #include <linux/remoteproc/qcom_rproc.h>
+> -- 
+> 2.17.1
 > 
-> Could you include a paragraph like that in the cover-letter or commit-message?
-> The 'fix' in the cover-letter subject had me looking for the bug!
-
-Ok, I'll update commit message with your reviewed-by.
-
-Thank you!
-
-> 
-> 
-> Thanks,
-> 
-> James
-
-
--- 
-Masami Hiramatsu <mhiramat@kernel.org>
