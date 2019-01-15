@@ -2,116 +2,104 @@ Return-Path: <SRS0=RZO6=PX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D931C43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 07:45:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E0C92C43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 07:53:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7614E2085A
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 07:45:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A331E2063F
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 07:53:40 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="QvxA6KP0"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728232AbfAOHpN (ORCPT
+        id S1728283AbfAOHxj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 15 Jan 2019 02:45:13 -0500
-Received: from mailgw02.mediatek.com ([1.203.163.81]:46673 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726594AbfAOHpN (ORCPT
+        Tue, 15 Jan 2019 02:53:39 -0500
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:36111 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728174AbfAOHxi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Jan 2019 02:45:13 -0500
-X-UUID: b73da8501bab474b848fbd595f955e47-20190115
-X-UUID: b73da8501bab474b848fbd595f955e47-20190115
-Received: from mtkcas34.mediatek.inc [(172.27.4.250)] by mailgw02.mediatek.com
-        (envelope-from <guochun.mao@mediatek.com>)
-        (mailgw01.mediatek.com ESMTP with TLS)
-        with ESMTP id 1216061093; Tue, 15 Jan 2019 15:44:58 +0800
-Received: from MTKCAS36.mediatek.inc (172.27.4.186) by MTKMBS31DR.mediatek.inc
- (172.27.6.102) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Tue, 15 Jan
- 2019 15:44:58 +0800
-Received: from [10.17.3.153] (10.17.3.153) by MTKCAS36.mediatek.inc
- (172.27.4.170) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Tue, 15 Jan 2019 15:44:57 +0800
-Message-ID: <1547538297.10234.4.camel@mhfsdcap03>
-Subject: Re: [PATCH v1 2/3] mtd: spi-nor: mtk-quadspi: add SNOR_HWCAPS_READ
- for capcity setting
-From:   Guochun Mao <guochun.mao@mediatek.com>
-To:     <Tudor.Ambarus@microchip.com>
-CC:     <ryder.lee@mediatek.com>, <marek.vasut@gmail.com>,
-        <computersforpeace@gmail.com>, <boris.brezillon@bootlin.com>,
-        <robh+dt@kernel.org>, <weijie.gao@mediatek.com>,
-        <linux-mtd@lists.infradead.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-mediatek@lists.infradead.org>
-Date:   Tue, 15 Jan 2019 15:44:57 +0800
-In-Reply-To: <8afdb25c-894b-0a89-b7a8-b754fb4ba905@microchip.com>
-References: <67e650ca4fcaaddbbc98bf4e1cbe04647c990dc3.1547442452.git.ryder.lee@mediatek.com>
-         <54bb8a9d517e2ee35018d78457c6aa6a4970e644.1547442452.git.ryder.lee@mediatek.com>
-         <8afdb25c-894b-0a89-b7a8-b754fb4ba905@microchip.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.2.3-0ubuntu6 
-Content-Transfer-Encoding: 7bit
-MIME-Version: 1.0
-X-MTK:  N
+        Tue, 15 Jan 2019 02:53:38 -0500
+Received: by mail-pf1-f194.google.com with SMTP id b85so930450pfc.3
+        for <linux-kernel@vger.kernel.org>; Mon, 14 Jan 2019 23:53:38 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=N3BRL5c8XBWaHt94edkG7ztQOznUJvJUETVY/zaF1Hk=;
+        b=QvxA6KP0VrWDNTFRdKBAUi/zKB8s2K2cvFYgQc396xIej/UqG3aiLPXhN/VAYPEfXa
+         xlOy69j9Y/VtbtsDYhmTt4O74WhNV6i+JtDOSf+y+hFpyESy21MVa2QVEi4XhWh52uCn
+         2bI36K5far3IFA/zcx/n/9esZ8W/K5k45U3MM=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=N3BRL5c8XBWaHt94edkG7ztQOznUJvJUETVY/zaF1Hk=;
+        b=YxAsRV6WWSfQzrT3yAsXfuXJO2PkNUsUXXj8ryAO2rI7z3BDc06X9XyU7qW2qrSCvj
+         R+so1Hb4georosB9g3FLxg6+Vn79UV/Lf6wMGThcTnQ60qFGMeqaQa0SGlIUgBxPU0NE
+         2kWYtLX7TUqQB1wLGKYiVd0r/8Sc6Lq4YI07NgCfeA9QokdvMSLSEd4ZYYu3s0hYqsfa
+         zvhb9ox+46B1ZxojICU1hzMhrLukN/Ue4GN5CDZZges5Orb7H2vsDNxPskSGWR3Hs/cG
+         6vjfhPcCtRtlgMWPG6YLBfmG/bQNDBFmGBTeiHIPSRUvfWCdzmN8bqdffPaCs9EaEiBQ
+         qnvA==
+X-Gm-Message-State: AJcUukfunfZiAun6ztJKok3DIE1DkPWT771boDvOkMbfFg2CCND8BT82
+        5uGo8J5Fxsg3RfaWSEH7LYekdw==
+X-Google-Smtp-Source: ALg8bN4MJGXqQF4OJighKk/wed9kN1zTu9VJXTB8ZTq9alVh3G3fWi90qLnRqO2emhVZc3uVKVIu3A==
+X-Received: by 2002:a63:4566:: with SMTP id u38mr2653482pgk.4.1547538818114;
+        Mon, 14 Jan 2019 23:53:38 -0800 (PST)
+Received: from baolinwangubtpc.spreadtrum.com ([117.18.48.102])
+        by smtp.gmail.com with ESMTPSA id g3sm4340093pfe.37.2019.01.14.23.53.34
+        (version=TLS1 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Mon, 14 Jan 2019 23:53:37 -0800 (PST)
+From:   Baolin Wang <baolin.wang@linaro.org>
+To:     linus.walleij@linaro.org, bgolaszewski@baylibre.com,
+        orsonzhai@gmail.com, zhang.lyra@gmail.com
+Cc:     baolin.wang@linaro.org, neo.hou@unisoc.com, broonie@kernel.org,
+        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 1/2] gpio: sprd: Fix the incorrect data register
+Date:   Tue, 15 Jan 2019 15:52:58 +0800
+Message-Id: <732ea4f8ff1bf3ad28bda543ae8e1727c78f8b3b.1547538574.git.baolin.wang@linaro.org>
+X-Mailer: git-send-email 1.7.9.5
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 2019-01-15 at 06:59 +0000, Tudor.Ambarus@microchip.com wrote:
-> Hi, Ryder,
-> 
-> On 01/14/2019 07:12 AM, Ryder Lee wrote:
-> > From: Guochun Mao <guochun.mao@mediatek.com>
-> > 
-> > SNOR_HWCAPS_READ is a basic read mode for both flash and controller,
-> > it should be supported, so add the capcity for mtk-quadspi.
-> 
-> Since I couldn't find a datasheet for mt8173, I tend to share your assumption -
-> SNOR_HWCAPS_READ should be supported by this controller. However, it's always
-> better to test it and not rely on assumptions. You can test it by forcing the
-> mask to have just SNOR_HWCAPS_READ | SNOR_HWCAPS_PP set. Or you already tested it?
+From: Neo Hou <neo.hou@unisoc.com>
 
-Our IPs all support SNOR_HWCAPS_READ, Ryedr and I have test it.
+Since differnt type EICs have its own data register to read, thus fix the
+incorrect data register.
 
-> 
-> You have a typo in capcity. Maybe substitute it with capability or "add this
-> flag to spi_nor_hwcaps mask"
+Signed-off-by: Neo Hou <neo.hou@unisoc.com>
+Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
+---
+ drivers/gpio/gpio-eic-sprd.c |   13 ++++++++++++-
+ 1 file changed, 12 insertions(+), 1 deletion(-)
 
-Ok, we'll correct it next version.
-
-Thanks.
-Guochun
-> 
-> > 
-> > Signed-off-by: Guochun Mao <guochun.mao@mediatek.com>
-> 
-> You should add your SoB tag, because you are sending a patch that is not yours.
-> 
-> Cheers,
-> ta
-> 
-> > ---
-> > Changes since v1: none. 
-> > ---
-> >  drivers/mtd/spi-nor/mtk-quadspi.c | 3 ++-
-> >  1 file changed, 2 insertions(+), 1 deletion(-)
-> > 
-> > diff --git a/drivers/mtd/spi-nor/mtk-quadspi.c b/drivers/mtd/spi-nor/mtk-quadspi.c
-> > index 5442993..d9eed68 100644
-> > --- a/drivers/mtd/spi-nor/mtk-quadspi.c
-> > +++ b/drivers/mtd/spi-nor/mtk-quadspi.c
-> > @@ -431,7 +431,8 @@ static int mtk_nor_init(struct mtk_nor *mtk_nor,
-> >  			struct device_node *flash_node)
-> >  {
-> >  	const struct spi_nor_hwcaps hwcaps = {
-> > -		.mask = SNOR_HWCAPS_READ_FAST |
-> > +		.mask = SNOR_HWCAPS_READ |
-> > +			SNOR_HWCAPS_READ_FAST |
-> >  			SNOR_HWCAPS_READ_1_1_2 |
-> >  			SNOR_HWCAPS_PP,
-> >  	};
-> > 
-
+diff --git a/drivers/gpio/gpio-eic-sprd.c b/drivers/gpio/gpio-eic-sprd.c
+index e0d6a0a..257df59 100644
+--- a/drivers/gpio/gpio-eic-sprd.c
++++ b/drivers/gpio/gpio-eic-sprd.c
+@@ -180,7 +180,18 @@ static void sprd_eic_free(struct gpio_chip *chip, unsigned int offset)
+ 
+ static int sprd_eic_get(struct gpio_chip *chip, unsigned int offset)
+ {
+-	return sprd_eic_read(chip, offset, SPRD_EIC_DBNC_DATA);
++	struct sprd_eic *sprd_eic = gpiochip_get_data(chip);
++
++	switch (sprd_eic->type) {
++	case SPRD_EIC_DEBOUNCE:
++		return sprd_eic_read(chip, offset, SPRD_EIC_DBNC_DATA);
++	case SPRD_EIC_ASYNC:
++		return sprd_eic_read(chip, offset, SPRD_EIC_ASYNC_DATA);
++	case SPRD_EIC_SYNC:
++		return sprd_eic_read(chip, offset, SPRD_EIC_SYNC_DATA);
++	default:
++		return -ENOTSUPP;
++	}
+ }
+ 
+ static int sprd_eic_direction_input(struct gpio_chip *chip, unsigned int offset)
+-- 
+1.7.9.5
 
