@@ -4,49 +4,49 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 38BEFC43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 16:40:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D5694C43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 16:40:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F16802087E
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 16:40:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A6F4320675
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 16:40:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547570426;
-	bh=ZpufyZ1VggmNIwkVwG+NDvYcKj8XMF4EXDNP9KjNWjQ=;
+	s=default; t=1547570427;
+	bh=MOuei2QNJtixya/i5q4P1Tm5kfZzulRefZ3NZ88e3lE=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=p5/tP1/DwdRPI+O143vGBo9pnzWbjs9/W5XV0G7+yEMN3Qgtac9/jqwilH/ttvgkA
-	 b3XroPaMd0qrJasqV1JxNN4dUeV5u3vscT/43KW1gHNHuHiPcCyZYVbfcDY9m4vdRM
-	 Ci9BG/qdPWp9+I/v0vfQveXARYidurdR1Gd/VzFM=
+	b=lL7Eb7ql0WC9r9eeNmua9c4rv5YcDs2h2YsvzhnDS7wg01cSxbCn09F88UYNOsYqo
+	 A9BNQqhF6zfwHBcIlM3DHn8mvkWPFghGW5IKcAnzWarzk4B64WZY3tz16fnJUzA4S8
+	 ebhDZnqZuCbVGNFiG+ZqDTO2z7MHsCaOoNr9t1xM=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732588AbfAOQkY (ORCPT
+        id S1728627AbfAOQk0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 15 Jan 2019 11:40:24 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56722 "EHLO mail.kernel.org"
+        Tue, 15 Jan 2019 11:40:26 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56660 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730179AbfAOQkW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Jan 2019 11:40:22 -0500
+        id S1732571AbfAOQkU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 Jan 2019 11:40:20 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 64CB520675;
-        Tue, 15 Jan 2019 16:40:21 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6C1C620675;
+        Tue, 15 Jan 2019 16:40:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547570421;
-        bh=ZpufyZ1VggmNIwkVwG+NDvYcKj8XMF4EXDNP9KjNWjQ=;
+        s=default; t=1547570418;
+        bh=MOuei2QNJtixya/i5q4P1Tm5kfZzulRefZ3NZ88e3lE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=scovxf7asgrFXS9OUuZPTa8zofsAYCJmiR8bCWTrQWg7MPP+SupFTCrZOiaTMtPhY
-         7Dv/nuWCwZba9MmqmSrCDE2YKJT8fZL98EpHKrirYNC6T7gAVWoe4+pehixY+3ONpr
-         Jv76bxFlmT74qWqCEIULxadkup5qKjVe5KRlU3eg=
+        b=xZJVbGjQXx1+ZM+MeqKXujhkeItwvuGe0yV5sBlYWzjDdaF0dhDlM5eJAuxhdVyRt
+         X5ljqtoTEDzVKdKdDqPlzNunrFoaLkMA9Fs2wcld1806srOw9sr/4TfE96F7h9000Z
+         b3kyi0hgcWLBriO94rL9A7d8D7IvVwxMPUrcEeTA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Hans de Goede <hdegoede@redhat.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
         "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
-Subject: [PATCH 4.14 17/27] ACPI / PMIC: xpower: Fix TS-pin current-source handling
-Date:   Tue, 15 Jan 2019 17:36:06 +0100
-Message-Id: <20190115154902.287668400@linuxfoundation.org>
+Subject: [PATCH 4.14 16/27] ACPI: power: Skip duplicate power resource references in _PRx
+Date:   Tue, 15 Jan 2019 17:36:05 +0100
+Message-Id: <20190115154902.189329248@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190115154901.189747728@linuxfoundation.org>
 References: <20190115154901.189747728@linuxfoundation.org>
@@ -67,117 +67,85 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Hans de Goede <hdegoede@redhat.com>
 
-commit 2b531d71595d2b5b12782a49b23c335869e2621e upstream.
+commit 7d7b467cb95bf29597b417d4990160d4ea6d69b9 upstream.
 
-The current-source used for the battery temp-sensor (TS) is shared with the
-GPADC. For proper fuel-gauge and charger operation the TS current-source
-needs to be permanently on. But to read the GPADC we need to temporary
-switch the TS current-source to ondemand, so that the GPADC can use it,
-otherwise we will always read an all 0 value.
+Some ACPI tables contain duplicate power resource references like this:
 
-The switching from on to on-ondemand is not necessary when the TS
-current-source is off (this happens on devices which do not have a TS).
+        Name (_PR0, Package (0x04)  // _PR0: Power Resources for D0
+        {
+            P28P,
+            P18P,
+            P18P,
+            CLK4
+        })
 
-Prior to this commit there were 2 issues with our handling of the TS
-current-source switching:
+This causes a WARN_ON in sysfs_add_link_to_group() because we end up
+adding a link to the same acpi_device twice:
 
- 1) We were writing hardcoded values to the ADC TS pin-ctrl register,
- overwriting various other unrelated bits. Specifically we were overwriting
- the current-source setting for the TS and GPIO0 pins, forcing it to 80ųA
- independent of its original setting. On a Chuwi Vi10 tablet this was
- causing us to get a too high adc value (due to a too high current-source)
- resulting in acpi_lpat_raw_to_temp() returning -ENOENT, resulting in:
+sysfs: cannot create duplicate filename '/devices/LNXSYSTM:00/LNXSYBUS:00/PNP0A08:00/808622C1:00/OVTI2680:00/power_resources_D0/LNXPOWER:0a'
+CPU: 0 PID: 1 Comm: swapper/0 Not tainted 4.19.12-301.fc29.x86_64 #1
+Hardware name: Insyde CherryTrail/Type2 - Board Product Name, BIOS jumperx.T87.KFBNEEA02 04/13/2016
+Call Trace:
+ dump_stack+0x5c/0x80
+ sysfs_warn_dup.cold.3+0x17/0x2a
+ sysfs_do_create_link_sd.isra.2+0xa9/0xb0
+ sysfs_add_link_to_group+0x30/0x50
+ acpi_power_expose_list+0x74/0xa0
+ acpi_power_add_remove_device+0x50/0xa0
+ acpi_add_single_object+0x26b/0x5f0
+ acpi_bus_check_add+0xc4/0x250
+ ...
 
-ACPI Error: AE_ERROR, Returned by Handler for [UserDefinedRegion]
-ACPI Error: Method parse/execution failed \_SB.SXP1._TMP, AE_ERROR
+To address this issue, make acpi_extract_power_resources() check for
+duplicates and simply skip them when found.
 
-This commit fixes this by using regmap_update_bits to change only the
-relevant bits.
-
- 2) At the end of intel_xpower_pmic_get_raw_temp() we were unconditionally
- enabling the TS current-source even on devices where the TS-pin is not used
- and the current-source thus was off on entry of the function.
-
-This commit fixes this by checking if the TS current-source is off when
-entering intel_xpower_pmic_get_raw_temp() and if so it is left as is.
-
-Fixes: 58eefe2f3f53 (ACPI / PMIC: xpower: Do pinswitch ... reading GPADC)
+Cc: All applicable <stable@vger.kernel.org>
 Signed-off-by: Hans de Goede <hdegoede@redhat.com>
-Acked-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: 4.14+ <stable@vger.kernel.org> # 4.14+
+[ rjw: Subject & changelog, comments ]
 Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/acpi/pmic/intel_pmic_xpower.c |   41 +++++++++++++++++++++++++++-------
- 1 file changed, 33 insertions(+), 8 deletions(-)
+ drivers/acpi/power.c |   22 ++++++++++++++++++++++
+ 1 file changed, 22 insertions(+)
 
---- a/drivers/acpi/pmic/intel_pmic_xpower.c
-+++ b/drivers/acpi/pmic/intel_pmic_xpower.c
-@@ -27,8 +27,11 @@
- #define GPI1_LDO_ON		(3 << 0)
- #define GPI1_LDO_OFF		(4 << 0)
- 
--#define AXP288_ADC_TS_PIN_GPADC	0xf2
--#define AXP288_ADC_TS_PIN_ON	0xf3
-+#define AXP288_ADC_TS_CURRENT_ON_OFF_MASK		GENMASK(1, 0)
-+#define AXP288_ADC_TS_CURRENT_OFF			(0 << 0)
-+#define AXP288_ADC_TS_CURRENT_ON_WHEN_CHARGING		(1 << 0)
-+#define AXP288_ADC_TS_CURRENT_ON_ONDEMAND		(2 << 0)
-+#define AXP288_ADC_TS_CURRENT_ON			(3 << 0)
- 
- static struct pmic_table power_table[] = {
- 	{
-@@ -211,22 +214,44 @@ static int intel_xpower_pmic_update_powe
-  */
- static int intel_xpower_pmic_get_raw_temp(struct regmap *regmap, int reg)
- {
-+	int ret, adc_ts_pin_ctrl;
- 	u8 buf[2];
--	int ret;
- 
--	ret = regmap_write(regmap, AXP288_ADC_TS_PIN_CTRL,
--			   AXP288_ADC_TS_PIN_GPADC);
-+	/*
-+	 * The current-source used for the battery temp-sensor (TS) is shared
-+	 * with the GPADC. For proper fuel-gauge and charger operation the TS
-+	 * current-source needs to be permanently on. But to read the GPADC we
-+	 * need to temporary switch the TS current-source to ondemand, so that
-+	 * the GPADC can use it, otherwise we will always read an all 0 value.
-+	 *
-+	 * Note that the switching from on to on-ondemand is not necessary
-+	 * when the TS current-source is off (this happens on devices which
-+	 * do not use the TS-pin).
-+	 */
-+	ret = regmap_read(regmap, AXP288_ADC_TS_PIN_CTRL, &adc_ts_pin_ctrl);
- 	if (ret)
- 		return ret;
- 
--	/* After switching to the GPADC pin give things some time to settle */
--	usleep_range(6000, 10000);
-+	if (adc_ts_pin_ctrl & AXP288_ADC_TS_CURRENT_ON_OFF_MASK) {
-+		ret = regmap_update_bits(regmap, AXP288_ADC_TS_PIN_CTRL,
-+					 AXP288_ADC_TS_CURRENT_ON_OFF_MASK,
-+					 AXP288_ADC_TS_CURRENT_ON_ONDEMAND);
-+		if (ret)
-+			return ret;
-+
-+		/* Wait a bit after switching the current-source */
-+		usleep_range(6000, 10000);
-+	}
- 
- 	ret = regmap_bulk_read(regmap, AXP288_GP_ADC_H, buf, 2);
- 	if (ret == 0)
- 		ret = (buf[0] << 4) + ((buf[1] >> 4) & 0x0f);
- 
--	regmap_write(regmap, AXP288_ADC_TS_PIN_CTRL, AXP288_ADC_TS_PIN_ON);
-+	if (adc_ts_pin_ctrl & AXP288_ADC_TS_CURRENT_ON_OFF_MASK) {
-+		regmap_update_bits(regmap, AXP288_ADC_TS_PIN_CTRL,
-+				   AXP288_ADC_TS_CURRENT_ON_OFF_MASK,
-+				   AXP288_ADC_TS_CURRENT_ON);
-+	}
- 
- 	return ret;
+--- a/drivers/acpi/power.c
++++ b/drivers/acpi/power.c
+@@ -131,6 +131,23 @@ void acpi_power_resources_list_free(stru
+ 	}
  }
+ 
++static bool acpi_power_resource_is_dup(union acpi_object *package,
++				       unsigned int start, unsigned int i)
++{
++	acpi_handle rhandle, dup;
++	unsigned int j;
++
++	/* The caller is expected to check the package element types */
++	rhandle = package->package.elements[i].reference.handle;
++	for (j = start; j < i; j++) {
++		dup = package->package.elements[j].reference.handle;
++		if (dup == rhandle)
++			return true;
++	}
++
++	return false;
++}
++
+ int acpi_extract_power_resources(union acpi_object *package, unsigned int start,
+ 				 struct list_head *list)
+ {
+@@ -150,6 +167,11 @@ int acpi_extract_power_resources(union a
+ 			err = -ENODEV;
+ 			break;
+ 		}
++
++		/* Some ACPI tables contain duplicate power resource references */
++		if (acpi_power_resource_is_dup(package, start, i))
++			continue;
++
+ 		err = acpi_add_power_resource(rhandle);
+ 		if (err)
+ 			break;
 
 
