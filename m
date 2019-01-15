@@ -2,95 +2,149 @@ Return-Path: <SRS0=RZO6=PX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B1B9C43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 14:51:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B29E0C43612
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 14:59:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 08FE220657
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 14:51:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 80B9A20656
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 14:59:08 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QeA46feM"
+	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="y6LjAJFc"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730520AbfAOOv3 (ORCPT
+        id S1730538AbfAOO7G (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 15 Jan 2019 09:51:29 -0500
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:42294 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727307AbfAOOv3 (ORCPT
+        Tue, 15 Jan 2019 09:59:06 -0500
+Received: from conssluserg-04.nifty.com ([210.131.2.83]:43898 "EHLO
+        conssluserg-04.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727307AbfAOO7G (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Jan 2019 09:51:29 -0500
-Received: by mail-pg1-f195.google.com with SMTP id d72so1330960pga.9
-        for <linux-kernel@vger.kernel.org>; Tue, 15 Jan 2019 06:51:28 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=FZJ/W6IU+NugTJlhoy6sFEcrGJ45mAFB8SnfVQu5JsA=;
-        b=QeA46feMbsPssFCfDlMoK2l1aSTmugMu6TMFj7d2E/kcppFRMDLd5vRlu9qA9RU0JO
-         kdv2dvlecJ3TSxIfq/6Hb6NMiIKDC3wGdg/Sx9NpRH/MYmn8yT6YzzWODcSOpL7BvBt+
-         +r9BJaDFfYcA6N/ZkBKMYWvrtM7k4E799chy1zk742GvvShh3BR0fQGY97kMFUIom3UL
-         MuirhE1bg7AL2YdoRQbnTy3A1Oo4+12LeCbWQZbLhmLOmAmGY5y7h4Z06h+Cv8ABlIeA
-         KgcocCsLlW5lIikJ5Or/63sNdlMsPBicvVBRTIs3umgBDzvZ1qLXeXO3d2HHzLros47Z
-         keZA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=FZJ/W6IU+NugTJlhoy6sFEcrGJ45mAFB8SnfVQu5JsA=;
-        b=MjBC2Vb1wXPvyAnjjeJWlQ5k4P3ukV2DabQx2lDuLE78/suR4zesJnx3tMQOV5C4N6
-         LguHrDYX6zFA8Ub0GsX2aGuAs+HB+Xvg0euTcpSFm3rX2sodEAicyexQJaReLZRGj6/Q
-         e3wAHI45ypfkJkQOtnkur7h2lAP3Yw7dAjd+qNspBRrqiQqjpQ7qqUA5H/MGWs1b+L49
-         KXkb5CqPiELUE8rXQjV3s1yawkxecKQTeNC6ggEJqQ0VS5tpFfvp5Pw0biFc1o8AGkjd
-         qn9YerQEFFQnuBMG2RKfAnji58UAsJB5xgmfRlR759BBuZ9PKVw6iPSCh25LObS5PmHy
-         B+Ig==
-X-Gm-Message-State: AJcUukc+tfPqF/F713SDqRMidj5pmrjsjkXWu8FGulbFWnUPCmRv6mLH
-        fnwFq/o3TCXy3IS8yLWN5as=
-X-Google-Smtp-Source: ALg8bN7R/Pdkd1VhOsi0JqniZVzvr1mtc8+qozjVJ4rIOD48b8iYjHPjtwGHqftmShpvvtDGwIBzkA==
-X-Received: by 2002:a62:5793:: with SMTP id i19mr4440505pfj.49.1547563888146;
-        Tue, 15 Jan 2019 06:51:28 -0800 (PST)
-Received: from localhost.localdomain.com ([203.109.101.34])
-        by smtp.googlemail.com with ESMTPSA id h69sm3822157pge.4.2019.01.15.06.51.25
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 15 Jan 2019 06:51:27 -0800 (PST)
-From:   root <jkhasdev@gmail.com>
-X-Google-Original-From: root <root@localhost.localdomain>
-To:     abbotti@mev.co.uk, hsweeten@visionengravers.com,
-        gregkh@linuxfoundation.org, devel@driverdev.osuosl.org,
-        linux-kernel@vger.kernel.org
-Cc:     Jitendra Kumar Khasdev <jkhasdev@gmail.com>
-Subject: [PATCH] staging: comedi: Removed not necessary braces for single block
-Date:   Tue, 15 Jan 2019 20:21:08 +0530
-Message-Id: <20190115145108.10249-1-root@localhost.localdomain>
-X-Mailer: git-send-email 2.13.6
+        Tue, 15 Jan 2019 09:59:06 -0500
+Received: from mail-vk1-f182.google.com (mail-vk1-f182.google.com [209.85.221.182]) (authenticated)
+        by conssluserg-04.nifty.com with ESMTP id x0FEwelM014392;
+        Tue, 15 Jan 2019 23:58:40 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-04.nifty.com x0FEwelM014392
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1547564321;
+        bh=8UDmBSl+gjzoSWclaFcvO3xDYwUdpY9ay/TXvDz5OEM=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=y6LjAJFcPAOXNvCm5WIxLGO/FoW3ZcPy2YXBYrMXY5HxNMwPZUaxpAHXTyy5Dud9j
+         j//GPp8jtJZxZoQCvWz0CeneAlXC9cljgtWhSafPY9punWcOc70oLO1mkbElO3k/Wk
+         iCzLasb5Ssxy3jZjvA8uzTtQFNtzXOt6HwYGtBAXgFKkdA2Z56HbuB1eKm9QaK89o2
+         sKy5mODeQGlhnkE69rFtpVe58MnQSmg+nRR0skpg8VTvt9D8s0db9nLRG/QMwvJuKI
+         C5ceXamv/fzCcoF9rH9QE/Ykgg/ZoqcXxhWYh/l90JbOqJ4Xe/JBcrQJDNg4lY+j/G
+         Kfe+C/rfAzArA==
+X-Nifty-SrcIP: [209.85.221.182]
+Received: by mail-vk1-f182.google.com with SMTP id 197so660379vkf.4;
+        Tue, 15 Jan 2019 06:58:40 -0800 (PST)
+X-Gm-Message-State: AJcUukc+WSOHMJG4iFxdsA3vYdtgZ6LqrV7dukSX8/So5W1FI2m1rId6
+        8RZTpSY41l7O/M6Ez2kGz8ZqCXebnSfwZ5KPjXc=
+X-Google-Smtp-Source: ALg8bN6AhjSqVLCYdHcGvvdOgCSQLWIaZZAKNEz68MSaIKAyf8HD/9Czf7kruZpGeJOiOC6pBlub1zAcmMUN1ZRbips=
+X-Received: by 2002:a1f:4d47:: with SMTP id a68mr1640605vkb.34.1547564319674;
+ Tue, 15 Jan 2019 06:58:39 -0800 (PST)
+MIME-Version: 1.0
+References: <1547536740-1572-1-git-send-email-yamada.masahiro@socionext.com> <CA+7wUsz5_6JqATZ4sAdUOWfr5sgeTjo8q7ArPL6nTmYK818E4Q@mail.gmail.com>
+In-Reply-To: <CA+7wUsz5_6JqATZ4sAdUOWfr5sgeTjo8q7ArPL6nTmYK818E4Q@mail.gmail.com>
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+Date:   Tue, 15 Jan 2019 23:58:03 +0900
+X-Gmail-Original-Message-ID: <CAK7LNAS+YAfHQkSWDEnuLv869VTy3iaXoYpmZSOBbPrVAaF0Cw@mail.gmail.com>
+Message-ID: <CAK7LNAS+YAfHQkSWDEnuLv869VTy3iaXoYpmZSOBbPrVAaF0Cw@mail.gmail.com>
+Subject: Re: [PATCH] kbuild: mark prepare0 as PHONY to fix external module build
+To:     Mathieu Malaterre <malat@debian.org>
+Cc:     linux-kbuild <linux-kbuild@vger.kernel.org>,
+        Michal Marek <michal.lkml@markovi.net>,
+        Samuel Holland <samuel@sholland.org>,
+        Alexey Kardashevskiy <aik@ozlabs.ru>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        "linux-stable # v4 . 20" <stable@vger.kernel.org>,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch is used to remove not necessary braces for single if block.
+On Tue, Jan 15, 2019 at 7:35 PM Mathieu Malaterre <malat@debian.org> wrote:
+>
+> On Tue, Jan 15, 2019 at 8:22 AM Masahiro Yamada
+> <yamada.masahiro@socionext.com> wrote:
+> >
+> > Commit c3ff2a5193fa ("powerpc/32: add stack protector support")
+> > caused kernel panic on PowerPC if an external module is used with
+> > CONFIG_STACKPROTECTOR because the 'prepare' target was not executed
+> > for the external module build.
+> >
+> > Commit e07db28eea38 ("kbuild: fix single target build for external
+> > module") turned it into a build error because the 'prepare' target is
+> > now executed but the 'prepare0' target is missing for the external
+> > module build.
+> >
+> > External module on arm/arm64 with CONFIG_STACKPROTECTOR_PER_TASK is
+> > also broken in the same way.
+> >
+> > Move 'PHONY += prepare0' to the common place. Make is fine with missing
+> > rule for phony targets.
+> >
+> > I minimize the change so it can be easily backported to 4.20.x
+> >
+> > To fix v4.20 for external modules of PowerPC, please backport
+> > e07db28eea38 ("kbuild: fix single target build for external module"),
+> > and then this commit.
+> >
+> > Link: https://bugzilla.kernel.org/show_bug.cgi?id=201891
+> > Fixes: e07db28eea38 ("kbuild: fix single target build for external module")
+> > Fixes: c3ff2a5193fa ("powerpc/32: add stack protector support")
+> > Fixes: 189af4657186 ("ARM: smp: add support for per-task stack canaries")
+> > Fixes: 0a1213fa7432 ("arm64: enable per-task stack canaries")
+> > Cc: linux-stable <stable@vger.kernel.org> # v4.20
+> > Reported-by: Samuel Holland <samuel@sholland.org>
+> > Reported-by: Alexey Kardashevskiy <aik@ozlabs.ru>
+> > Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+> > ---
+> >
+> >  Makefile | 4 ++--
+> >  1 file changed, 2 insertions(+), 2 deletions(-)
+> >
+> > diff --git a/Makefile b/Makefile
+> > index 499b968..789b332 100644
+> > --- a/Makefile
+> > +++ b/Makefile
+> > @@ -955,6 +955,7 @@ ifdef CONFIG_STACK_VALIDATION
+> >    endif
+> >  endif
+> >
+> > +PHONY += prepare0
+> >
+> >  ifeq ($(KBUILD_EXTMOD),)
+> >  core-y         += kernel/ certs/ mm/ fs/ ipc/ security/ crypto/ block/
+> > @@ -1061,8 +1062,7 @@ scripts: scripts_basic scripts_dtc
+> >  # archprepare is used in arch Makefiles and when processed asm symlink,
+> >  # version.h and scripts_basic is processed / created.
+> >
+> > -# Listed in dependency order
+>
+> The above comment may need to be tweaked a bit
 
-Signed-off-by: Jitendra Kumar Khasdev <jkhasdev@gmail.com>
----
- drivers/staging/comedi/comedi_fops.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+The comment is wrong irrespective of this patch,
+and less important.
 
-diff --git a/drivers/staging/comedi/comedi_fops.c b/drivers/staging/comedi/comedi_fops.c
-index 5d2fcbfe02af..0caae4a5c471 100644
---- a/drivers/staging/comedi/comedi_fops.c
-+++ b/drivers/staging/comedi/comedi_fops.c
-@@ -1605,9 +1605,8 @@ static int do_insn_ioctl(struct comedi_device *dev,
- 	unsigned int n_data = MIN_SAMPLES;
- 	int ret = 0;
+Do you have any suggestion how to tweak it?
 
--	if (copy_from_user(&insn, arg, sizeof(insn))) {
-+	if (copy_from_user(&insn, arg, sizeof(insn)))
- 		return -EFAULT;
--	}
 
- 	n_data = max(n_data, insn.n);
+> > -PHONY += prepare archprepare prepare0 prepare1 prepare2 prepare3
+> > +PHONY += prepare archprepare prepare1 prepare2 prepare3
+> >
+> >  # prepare3 is used to check if we are building in a separate output directory,
+> >  # and if so do:
+> > --
+> > 2.7.4
+> >
 
---
-2.13.6
 
+
+-- 
+Best Regards
+Masahiro Yamada
