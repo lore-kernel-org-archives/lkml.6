@@ -2,232 +2,147 @@ Return-Path: <SRS0=RZO6=PX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A7B3DC43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 11:50:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0828EC43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 11:50:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6C94020656
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 11:50:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CE82620861
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 11:50:23 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernelci-org.20150623.gappssmtp.com header.i=@kernelci-org.20150623.gappssmtp.com header.b="z8h7qLMu"
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="BAm485aP"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727778AbfAOLuN (ORCPT
+        id S1728034AbfAOLuV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 15 Jan 2019 06:50:13 -0500
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:55072 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726077AbfAOLuN (ORCPT
+        Tue, 15 Jan 2019 06:50:21 -0500
+Received: from mail-ed1-f65.google.com ([209.85.208.65]:42751 "EHLO
+        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726077AbfAOLuV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Jan 2019 06:50:13 -0500
-Received: by mail-wm1-f65.google.com with SMTP id a62so2958765wmh.4
-        for <linux-kernel@vger.kernel.org>; Tue, 15 Jan 2019 03:50:11 -0800 (PST)
+        Tue, 15 Jan 2019 06:50:21 -0500
+Received: by mail-ed1-f65.google.com with SMTP id y20so2284468edw.9
+        for <linux-kernel@vger.kernel.org>; Tue, 15 Jan 2019 03:50:20 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernelci-org.20150623.gappssmtp.com; s=20150623;
-        h=message-id:date:mime-version:content-transfer-encoding:subject:to
-         :from:cc;
-        bh=eQ1RvQDsyqcbI2kYYuKA5kJov6P1VDFMZn9MOVfCwF0=;
-        b=z8h7qLMuG4H65WC76Ah3Rk6Cdg9IEtMMSFq8BWh3oaL47ZbVlRRoL7VTRGuw5VzMuB
-         pmV8KpBg8uP2kXmQZE7CYBfbqvkpO49SJnSy6j4C9hJYUuRC+KtzbtsEYvHJT4zeiksf
-         Ss3SQQu77XW8qx60LeHDBWY3cXjidSQQXcUsChuhdppN9jYIK+eQ2Q50IHiFcxCs8zTX
-         17guppGSei7PWrBEUn4/mnOZgLEHNV/2WwB3DNj4Ms4qcYKF+KjGV0hjYSSLwnlgAMaK
-         50139gNeF4/QlIBrvL/6gBbyAUGLhN2XfoPzeuSbo1/UsX3TwU7iJ0QWc21XlMSBOAG3
-         lHJw==
+        d=ffwll.ch; s=google;
+        h=sender:date:from:to:cc:subject:message-id:mail-followup-to
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=fVuxywLN+hWEFqBjPujx3b2tZlMigafVMeZjipOROPY=;
+        b=BAm485aPBpi6LOUpU2/JyszSSBj6GbV5gZz2fWeV7xJId5HlUAqL5tstmZYEIMtCdy
+         wMfnj5Isrp/UHPVqXkYfkzE7PA746FvOkgEGqqtrmft5+XHGgxrP7shLMRlAPZSPk/xb
+         kgsevCthfCO1+TxvW8OnRGCHYKLyQ9AvNnujE=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:date:mime-version
-         :content-transfer-encoding:subject:to:from:cc;
-        bh=eQ1RvQDsyqcbI2kYYuKA5kJov6P1VDFMZn9MOVfCwF0=;
-        b=Ver4IaO69zjxGD3MbjzqVXl8pGbx3CK5lzSNWzNFTEJFbWeqo54cvTDo36iz42FYYc
-         2Mvi1+k4G29+KUgVn99QfGsMyvaAi7h6s8kv0/AuS7DgWzdtW2OnAhT9aVPP9vgujZU3
-         1AxX72gCCxhzMs6ZYFUc9Zldl2slGMxahJV/7lhHpm0iVsq2NjFVQnVTIJ3f/BqIU1pZ
-         txAYvrPTL4HJEbY24SQz+UiNXQSq7KClmJywVxBNJbILXXzaG29wNNbhXydnxGSDmZiP
-         J5WKj9j4fuzC8dutcEG2iZrDfslTyOWu5h8XUFQCbYA36Vf2AbFLDDrJdIViJ3Vr/BZV
-         QTjA==
-X-Gm-Message-State: AJcUukcntPChrgKFkfgKZu+48qRirK9EW/C3DmUjUyER0/29a0GoK3AQ
-        z2jUpdwJqqsQtTwOBfGyP+mPUw==
-X-Google-Smtp-Source: ALg8bN4VWwuvWYflURFUuyWiEj54VsRTqgec/Wvw9CvSIt+x4kGQrjGz5fbE9+zf6z6ncwY/qsKHaQ==
-X-Received: by 2002:a7b:c8d7:: with SMTP id f23mr1229292wml.121.1547553010375;
-        Tue, 15 Jan 2019 03:50:10 -0800 (PST)
-Received: from [148.251.42.114] ([2a01:4f8:201:9271::2])
-        by smtp.gmail.com with ESMTPSA id a132sm40191382wmh.5.2019.01.15.03.50.09
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 15 Jan 2019 03:50:09 -0800 (PST)
-Message-ID: <5c3dc8f1.1c69fb81.7f7ca.c87c@mx.google.com>
-Date:   Tue, 15 Jan 2019 03:50:09 -0800 (PST)
-Content-Type: text/plain; charset="utf-8"
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :mail-followup-to:references:mime-version:content-disposition
+         :in-reply-to:user-agent;
+        bh=fVuxywLN+hWEFqBjPujx3b2tZlMigafVMeZjipOROPY=;
+        b=pS/0L6IcDYQT2jXA5HN2I+O97hd+yQJjoDgaMXDZIr2kEEVxWhttDKJrQK0Zg9sgNr
+         TqPP3ZcA/mxsVqS/GkGPBGfyX+TzZ0JNgSmgh+euWhjzKn6chtvdZ0Um+mmzJilbZzDb
+         DbB6OjUw65kDd0jXpqoRgWB4V1GzcsqMqORuCEtJXRQR3srQZ1JtmVOHuSvT4IGhRYiK
+         4JwChDtxyku2Zu4c2+OessLTRnpHswSorKpk5JpG/1mVKrknYw7qQv34Xd0ipWYFq8xL
+         IxgkSTfQxmjv5/CINhcIUz0uzAAyR0mYpEChv2svS+eLp8gJ8VU0RMlDIG3yoBPwLPLe
+         Jo7w==
+X-Gm-Message-State: AJcUukdPfU8w844S2DRkjNOHR+6UKtdDX8jBnAOr5FRtMW+D0GAivCJe
+        anaumpACSF4XuF2ci76y4uorYg==
+X-Google-Smtp-Source: ALg8bN6EXwXCz5ljb27foesQQh1wF8UVvsKCPp9B72ou2Wwpo8QTJPHu4RsO9pl5Nrp5f77YoWrvdA==
+X-Received: by 2002:a50:8ad9:: with SMTP id k25mr3118584edk.189.1547553019301;
+        Tue, 15 Jan 2019 03:50:19 -0800 (PST)
+Received: from phenom.ffwll.local ([2a02:168:569e:0:3106:d637:d723:e855])
+        by smtp.gmail.com with ESMTPSA id k20sm4834955eda.71.2019.01.15.03.50.17
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 15 Jan 2019 03:50:18 -0800 (PST)
+Date:   Tue, 15 Jan 2019 12:50:16 +0100
+From:   Daniel Vetter <daniel@ffwll.ch>
+To:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Cc:     Mathieu Malaterre <malat@debian.org>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Sean Paul <sean@poorly.run>, David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] drm/dp: annotate implicit fall throughs
+Message-ID: <20190115115016.GK10517@phenom.ffwll.local>
+Mail-Followup-To: "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        Mathieu Malaterre <malat@debian.org>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Sean Paul <sean@poorly.run>, David Airlie <airlied@linux.ie>,
+        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+References: <20190114202748.15584-1-malat@debian.org>
+ <1d2a0c58-2419-9c43-b0d6-a8c1b387c240@embeddedor.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Kernelci-Report-Type: bisect
-X-Kernelci-Lab-Name: lab-baylibre
-X-Kernelci-Tree: next
-X-Kernelci-Branch: pending-fixes
-X-Kernelci-Kernel: v5.0-rc2-361-g08b435ee366b
-Subject: next/pending-fixes boot bisection: v5.0-rc2-361-g08b435ee366b on
- bcm2837-rpi-3-b-32
-To:     Ajit Pandey <ajitp@codeaurora.org>, tomeu.vizoso@collabora.com,
-        Rohit kumar <rohitkr@codeaurora.org>,
-        guillaume.tucker@collabora.com, Mark Brown <broonie@kernel.org>,
-        broonie@kernel.org, matthew.hart@linaro.org, khilman@baylibre.com,
-        enric.balletbo@collabora.com
-From:   "kernelci.org bot" <bot@kernelci.org>
-Cc:     Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
-        alsa-devel@alsa-project.org, Liam Girdwood <lgirdwood@gmail.com>,
-        linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1d2a0c58-2419-9c43-b0d6-a8c1b387c240@embeddedor.com>
+X-Operating-System: Linux phenom 4.19.0-1-amd64 
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
-* This automated bisection report was sent to you on the basis  *
-* that you may be involved with the breaking commit it has      *
-* found.  No manual investigation has been done to verify it,   *
-* and the root cause of the problem may be somewhere else.      *
-* Hope this helps!                                              *
-* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+On Mon, Jan 14, 2019 at 03:13:29PM -0600, Gustavo A. R. Silva wrote:
+> 
+> 
+> On 1/14/19 2:27 PM, Mathieu Malaterre wrote:
+> > There is a plan to build the kernel with -Wimplicit-fallthrough and
+> > these places in the code produced warnings (W=1). Fix them up.
+> > 
+> > This commit remove the following warnings:
+> > 
+> >    include/linux/compiler.h:77:22: warning: this statement may fall through [-Wimplicit-fallthrough=]
+> >    include/asm-generic/bug.h:134:2: note: in expansion of macro 'unlikely'
+> >    drivers/gpu/drm/drm_dp_helper.c:155:3: note: in expansion of macro 'WARN'
+> >    include/linux/compiler.h:77:22: warning: this statement may fall through [-Wimplicit-fallthrough=]
+> >    include/asm-generic/bug.h:134:2: note: in expansion of macro 'unlikely'
+> >    drivers/gpu/drm/drm_dp_helper.c:173:3: note: in expansion of macro 'WARN'
+> >    drivers/gpu/drm/drm_dp_helper.c:547:3: warning: this statement may fall through [-Wimplicit-fallthrough=]
+> > 
+> > Signed-off-by: Mathieu Malaterre <malat@debian.org>
+> Acked-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
 
-next/pending-fixes boot bisection: v5.0-rc2-361-g08b435ee366b on bcm2837-rp=
-i-3-b-32
+Thanks for your patch, applied.
+-Daniel
 
-Summary:
-  Start:      08b435ee366b Merge remote-tracking branch 'drm-misc-fixes/for=
--linux-next-fixes'
-  Details:    https://kernelci.org/boot/id/5c3d7a2759b51458916edd4d
-  Plain log:  https://storage.kernelci.org//next/pending-fixes/v5.0-rc2-361=
--g08b435ee366b/arm/bcm2835_defconfig/lab-baylibre/boot-bcm2837-rpi-3-b.txt
-  HTML log:   https://storage.kernelci.org//next/pending-fixes/v5.0-rc2-361=
--g08b435ee366b/arm/bcm2835_defconfig/lab-baylibre/boot-bcm2837-rpi-3-b.html
-  Result:     8780cf1142a5 ASoC: soc-core: defer card probe until all compo=
-nent is added to list
+> 
+> > ---
+> >   drivers/gpu/drm/drm_dp_helper.c | 3 +++
+> >   1 file changed, 3 insertions(+)
+> > 
+> > diff --git a/drivers/gpu/drm/drm_dp_helper.c b/drivers/gpu/drm/drm_dp_helper.c
+> > index 516e82d0ed50..26835d174939 100644
+> > --- a/drivers/gpu/drm/drm_dp_helper.c
+> > +++ b/drivers/gpu/drm/drm_dp_helper.c
+> > @@ -154,6 +154,7 @@ u8 drm_dp_link_rate_to_bw_code(int link_rate)
+> >   	default:
+> >   		WARN(1, "unknown DP link rate %d, using %x\n", link_rate,
+> >   		     DP_LINK_BW_1_62);
+> > +		/* fall through */
+> >   	case 162000:
+> >   		return DP_LINK_BW_1_62;
+> >   	case 270000:
+> > @@ -171,6 +172,7 @@ int drm_dp_bw_code_to_link_rate(u8 link_bw)
+> >   	switch (link_bw) {
+> >   	default:
+> >   		WARN(1, "unknown DP link BW code %x, using 162000\n", link_bw);
+> > +		/* fall through */
+> >   	case DP_LINK_BW_1_62:
+> >   		return 162000;
+> >   	case DP_LINK_BW_2_7:
+> > @@ -552,6 +554,7 @@ int drm_dp_downstream_max_bpc(const u8 dpcd[DP_RECEIVER_CAP_SIZE],
+> >   		case DP_DS_16BPC:
+> >   			return 16;
+> >   		}
+> > +		/* fall through */
+> >   	default:
+> >   		return 0;
+> >   	}
+> > 
 
-Checks:
-  revert:     PASS
-  verify:     PASS
-
-Parameters:
-  Tree:       next
-  URL:        http://git.kernel.org/pub/scm/linux/kernel/git/next/linux-nex=
-t.git
-  Branch:     pending-fixes
-  Target:     bcm2837-rpi-3-b-32
-  CPU arch:   arm
-  Lab:        lab-baylibre
-  Config:     bcm2835_defconfig
-  Test suite: boot
-
-Breaking commit found:
-
----------------------------------------------------------------------------=
-----
-commit 8780cf1142a59568a3aa77959cbd76b2edb6fd81
-Author: Ajit Pandey <ajitp@codeaurora.org>
-Date:   Wed Jan 9 14:17:07 2019 +0530
-
-    ASoC: soc-core: defer card probe until all component is added to list
-    =
-
-    DAI component probe is not called if it is not present
-    in component list during sound card registration.
-    Check if component is available in component list for
-    platform and cpu dai before soundcard registration.
-    =
-
-    Signed-off-by: Ajit Pandey <ajitp@codeaurora.org>
-    Signed-off-by: Rohit kumar <rohitkr@codeaurora.org>
-    Signed-off-by: Mark Brown <broonie@kernel.org>
-
-diff --git a/sound/soc/soc-core.c b/sound/soc/soc-core.c
-index 0462b3ec977a..eec92f17dd15 100644
---- a/sound/soc/soc-core.c
-+++ b/sound/soc/soc-core.c
-@@ -1027,7 +1027,6 @@ static int snd_soc_init_platform(struct snd_soc_card =
-*card,
- 				 struct snd_soc_dai_link *dai_link)
- {
- 	struct snd_soc_dai_link_component *platform =3D dai_link->platform;
--
- 	/*
- 	 * FIXME
- 	 *
-@@ -1129,6 +1128,14 @@ static int soc_init_dai_link(struct snd_soc_card *ca=
-rd,
- 			link->name);
- 		return -EINVAL;
- 	}
-+
-+	/*
-+	 * Defer card registartion if platform dai component is not added to
-+	 * component list.
-+	 */
-+	if (!soc_find_component(link->platform->of_node, link->platform->name))
-+		return -EPROBE_DEFER;
-+
- 	/*
- 	 * CPU device may be specified by either name or OF node, but
- 	 * can be left unspecified, and will be matched based on DAI
-@@ -1140,6 +1147,14 @@ static int soc_init_dai_link(struct snd_soc_card *ca=
-rd,
- 			link->name);
- 		return -EINVAL;
- 	}
-+
-+	/*
-+	 * Defer card registartion if cpu dai component is not added to
-+	 * component list.
-+	 */
-+	if (!soc_find_component(link->cpu_of_node, link->cpu_name))
-+		return -EPROBE_DEFER;
-+
- 	/*
- 	 * At least one of CPU DAI name or CPU device name/node must be
- 	 * specified
----------------------------------------------------------------------------=
-----
-
-
-Git bisection log:
-
----------------------------------------------------------------------------=
-----
-git bisect start
-# good: [3719876809e745b9db5293d418600c194bbf5c23] sbitmap: Protect swap_lo=
-ck from softirqs
-git bisect good 3719876809e745b9db5293d418600c194bbf5c23
-# bad: [08b435ee366bab63250c375ffea3c94cb02fcd93] Merge remote-tracking bra=
-nch 'drm-misc-fixes/for-linux-next-fixes'
-git bisect bad 08b435ee366bab63250c375ffea3c94cb02fcd93
-# good: [f80eb2d45c4e34750337d1210a78bfe2ebf43b73] Merge remote-tracking br=
-anch 'ipsec/master'
-git bisect good f80eb2d45c4e34750337d1210a78bfe2ebf43b73
-# bad: [e242412b491b4e34643f82c6f422e964beb81704] Merge remote-tracking bra=
-nch 'input-current/for-linus'
-git bisect bad e242412b491b4e34643f82c6f422e964beb81704
-# bad: [eb1c2383c8b929fcc5a56f5698ff3fe3d0ec54e6] Merge remote-tracking bra=
-nch 'sound-asoc-fixes/for-linus'
-git bisect bad eb1c2383c8b929fcc5a56f5698ff3fe3d0ec54e6
-# bad: [04eb1efcd614d6f067b76a355b3a3599667959dc] ASoC: soc-core: Hold clie=
-nt_mutex around soc_init_dai_link()
-git bisect bad 04eb1efcd614d6f067b76a355b3a3599667959dc
-# good: [a41d9dbf5dac5b6a1283ee8001f22807d18352ea] ASoC: qdsp6: q6asm-dai: =
-Fix a small memory leak
-git bisect good a41d9dbf5dac5b6a1283ee8001f22807d18352ea
-# good: [6175471755075d256c1c654151fc1cad183c1e33] ASoC: ti: davinci-mcasp:=
- Move context save/restore to runtime_pm callbacks
-git bisect good 6175471755075d256c1c654151fc1cad183c1e33
-# good: [44fabd8cdaaa3acb80ad2bb3b5c61ae2136af661] ASoC: atom: fix a missin=
-g check of snd_pcm_lib_malloc_pages
-git bisect good 44fabd8cdaaa3acb80ad2bb3b5c61ae2136af661
-# bad: [239b8b34a856777e562373ae0de605536a7ccade] ASoC: Intel: Boards: move=
- the codec PLL configuration to _init
-git bisect bad 239b8b34a856777e562373ae0de605536a7ccade
-# bad: [8780cf1142a59568a3aa77959cbd76b2edb6fd81] ASoC: soc-core: defer car=
-d probe until all component is added to list
-git bisect bad 8780cf1142a59568a3aa77959cbd76b2edb6fd81
-# first bad commit: [8780cf1142a59568a3aa77959cbd76b2edb6fd81] ASoC: soc-co=
-re: defer card probe until all component is added to list
----------------------------------------------------------------------------=
-----
+-- 
+Daniel Vetter
+Software Engineer, Intel Corporation
+http://blog.ffwll.ch
