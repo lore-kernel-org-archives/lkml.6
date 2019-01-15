@@ -2,439 +2,127 @@ Return-Path: <SRS0=RZO6=PX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D49EC43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 10:16:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9858CC43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 10:16:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 21A6420656
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 10:16:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 655F720656
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 10:16:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728989AbfAOKQi (ORCPT
+        id S1728891AbfAOKQE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 15 Jan 2019 05:16:38 -0500
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:46990 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728911AbfAOKQH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Jan 2019 05:16:07 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 2085D15AD;
-        Tue, 15 Jan 2019 02:16:07 -0800 (PST)
-Received: from e110439-lin.cambridge.arm.com (e110439-lin.cambridge.arm.com [10.1.194.43])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 09EA23F7B8;
-        Tue, 15 Jan 2019 02:16:03 -0800 (PST)
-From:   Patrick Bellasi <patrick.bellasi@arm.com>
-To:     linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-        linux-api@vger.kernel.org
-Cc:     Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Tejun Heo <tj@kernel.org>,
-        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Paul Turner <pjt@google.com>,
-        Quentin Perret <quentin.perret@arm.com>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Morten Rasmussen <morten.rasmussen@arm.com>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Todd Kjos <tkjos@google.com>,
-        Joel Fernandes <joelaf@google.com>,
-        Steve Muckle <smuckle@google.com>,
-        Suren Baghdasaryan <surenb@google.com>
-Subject: [PATCH v6 12/16] sched/core: uclamp: Extend CPU's cgroup controller
-Date:   Tue, 15 Jan 2019 10:15:09 +0000
-Message-Id: <20190115101513.2822-13-patrick.bellasi@arm.com>
-X-Mailer: git-send-email 2.19.2
-In-Reply-To: <20190115101513.2822-1-patrick.bellasi@arm.com>
-References: <20190115101513.2822-1-patrick.bellasi@arm.com>
+        Tue, 15 Jan 2019 05:16:04 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:58042 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728873AbfAOKQA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 Jan 2019 05:16:00 -0500
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id D558740F0C;
+        Tue, 15 Jan 2019 10:15:59 +0000 (UTC)
+Received: from [10.36.112.56] (ovpn-112-56.ams2.redhat.com [10.36.112.56])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 570D1103BAB8;
+        Tue, 15 Jan 2019 10:15:55 +0000 (UTC)
+Subject: Re: [RFC PATCH] kvm: x86/vmx: Use kzalloc for cached_vmcs12
+To:     Sean Christopherson <sean.j.christopherson@intel.com>,
+        Tom Roeder <tmroeder@google.com>
+Cc:     =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        Liran Alon <liran.alon@oracle.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H . Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
+        kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        syzbot+ded1696f6b50b615b630@syzkaller.appspotmail.com
+References: <6f79d9be-fa76-3a06-2612-f44f3a18ece7@redhat.com>
+ <20190114234728.49239-1-tmroeder@google.com>
+ <20190115024304.GD5141@linux.intel.com>
+From:   Paolo Bonzini <pbonzini@redhat.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=pbonzini@redhat.com; prefer-encrypt=mutual; keydata=
+ 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
+ uUHgL9dKIfvpm+rNXRn9wAwGjk0X/A==
+Message-ID: <2177074d-f610-0d86-7399-e63ba851346c@redhat.com>
+Date:   Tue, 15 Jan 2019 11:15:51 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190115024304.GD5141@linux.intel.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.30]); Tue, 15 Jan 2019 10:16:00 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The cgroup CPU bandwidth controller allows to assign a specified
-(maximum) bandwidth to the tasks of a group. However this bandwidth is
-defined and enforced only on a temporal base, without considering the
-actual frequency a CPU is running on. Thus, the amount of computation
-completed by a task within an allocated bandwidth can be very different
-depending on the actual frequency the CPU is running that task.
-The amount of computation can be affected also by the specific CPU a
-task is running on, especially when running on asymmetric capacity
-systems like Arm's big.LITTLE.
+On 15/01/19 03:43, Sean Christopherson wrote:
+>> -	vmx->nested.cached_vmcs12 = kmalloc(VMCS12_SIZE, GFP_KERNEL);
+>> +	vmx->nested.cached_vmcs12 = kzalloc(VMCS12_SIZE, GFP_KERNEL);
+>>  	if (!vmx->nested.cached_vmcs12)
+>>  		goto out_cached_vmcs12;
+> Obviously not your code, but why do we allocate VMCS12_SIZE instead of
+> sizeof(struct vmcs12)?  I get why we require userspace to reserve the
+> full 4k, but I don't understand why KVM needs to allocate the reserved
+> bytes internally.
 
-With the availability of schedutil, the scheduler is now able
-to drive frequency selections based on actual task utilization.
-Moreover, the utilization clamping support provides a mechanism to
-bias the frequency selection operated by schedutil depending on
-constraints assigned to the tasks currently RUNNABLE on a CPU.
+It's just cleaner and shorter code to copy everything in and out,
+instead of having to explicitly zero the slack.
 
-Giving the mechanisms described above, it is now possible to extend the
-cpu controller to specify the minimum (or maximum) utilization which
-should be considered for tasks RUNNABLE on a cpu.
-This makes it possible to better defined the actual computational
-power assigned to task groups, thus improving the cgroup CPU bandwidth
-controller which is currently based just on time constraints.
-
-Extend the CPU controller with a couple of new attributes util.{min,max}
-which allows to enforce utilization boosting and capping for all the
-tasks in a group. Specifically:
-
-- util.min: defines the minimum utilization which should be considered
-	    i.e. the RUNNABLE tasks of this group will run at least at a
-		 minimum frequency which corresponds to the min_util
-		 utilization
-
-- util.max: defines the maximum utilization which should be considered
-	    i.e. the RUNNABLE tasks of this group will run up to a
-		 maximum frequency which corresponds to the max_util
-		 utilization
-
-These attributes:
-
-a) are available only for non-root nodes, both on default and legacy
-   hierarchies, while system wide clamps are defined by a generic
-   interface which does not depends on cgroups
-
-b) do not enforce any constraints and/or dependencies between the parent
-   and its child nodes, thus relying:
-   - on permission settings defined by the system management software,
-     to define if subgroups can configure their clamp values
-   - on the delegation model, to ensure that effective clamps are
-     updated to consider both subgroup requests and parent group
-     constraints
-
-c) have higher priority than task-specific clamps, defined via
-   sched_setattr(), thus allowing to control and restrict task requests
-
-This patch provides the basic support to expose the two new attributes
-and to validate their run-time updates, while we do not (yet) actually
-allocated clamp buckets.
-
-Signed-off-by: Patrick Bellasi <patrick.bellasi@arm.com>
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Tejun Heo <tj@kernel.org>
-
----
-
-NOTEs:
-
-1) The delegation model described above is provided in one of the
-following patches of this series.
-
-2) Utilization clamping constraints are useful not only to bias frequency
-selection, when a task is running, but also to better support certain
-scheduler decisions regarding task placement. For example, on
-asymmetric capacity systems, a utilization clamp value can be
-conveniently used to enforce important interactive tasks on more capable
-CPUs or to run low priority and background tasks on more energy
-efficient CPUs.
-
-The ultimate goal of utilization clamping is thus to enable:
-
-- boosting: by selecting an higher capacity CPU and/or higher execution
-            frequency for small tasks which are affecting the user
-            interactive experience.
-
-- capping: by selecting more energy efficiency CPUs or lower execution
-           frequency, for big tasks which are mainly related to
-           background activities, and thus without a direct impact on
-           the user experience.
-
-Thus, a proper extension of the cpu controller with utilization clamping
-support will make this controller even more suitable for integration
-with advanced system management software (e.g. Android).
-Indeed, an informed user-space can provide rich information hints to the
-scheduler regarding the tasks it's going to schedule.
-
-The bits related to task placement biasing are left for a further
-extension once the basic support introduced by this series will be
-merged. Anyway they will not affect the integration with cgroups.
-
-Changes in v6:
- Others:
- - wholesale s/group/bucket/
- - wholesale s/_{get,put}/_{inc,dec}/ to match refcount APIs
----
- Documentation/admin-guide/cgroup-v2.rst |  25 +++++
- init/Kconfig                            |  22 ++++
- kernel/sched/core.c                     | 131 ++++++++++++++++++++++++
- kernel/sched/sched.h                    |   5 +
- 4 files changed, 183 insertions(+)
-
-diff --git a/Documentation/admin-guide/cgroup-v2.rst b/Documentation/admin-guide/cgroup-v2.rst
-index 7bf3f129c68b..a059aaf7cce6 100644
---- a/Documentation/admin-guide/cgroup-v2.rst
-+++ b/Documentation/admin-guide/cgroup-v2.rst
-@@ -909,6 +909,12 @@ controller implements weight and absolute bandwidth limit models for
- normal scheduling policy and absolute bandwidth allocation model for
- realtime scheduling policy.
- 
-+Cycles distribution is based, by default, on a temporal base and it
-+does not account for the frequency at which tasks are executed.
-+The (optional) utilization clamping support allows to enforce a minimum
-+bandwidth, which should always be provided by a CPU, and a maximum bandwidth,
-+which should never be exceeded by a CPU.
-+
- WARNING: cgroup2 doesn't yet support control of realtime processes and
- the cpu controller can only be enabled when all RT processes are in
- the root cgroup.  Be aware that system management software may already
-@@ -974,6 +980,25 @@ All time durations are in microseconds.
- 	Shows pressure stall information for CPU. See
- 	Documentation/accounting/psi.txt for details.
- 
-+  cpu.util.min
-+        A read-write single value file which exists on non-root cgroups.
-+        The default is "0", i.e. no utilization boosting.
-+
-+        The minimum utilization in the range [0, 1024].
-+
-+        This interface allows reading and setting minimum utilization clamp
-+        values similar to the sched_setattr(2). This minimum utilization
-+        value is used to clamp the task specific minimum utilization clamp.
-+
-+  cpu.util.max
-+        A read-write single value file which exists on non-root cgroups.
-+        The default is "1024". i.e. no utilization capping
-+
-+        The maximum utilization in the range [0, 1024].
-+
-+        This interface allows reading and setting maximum utilization clamp
-+        values similar to the sched_setattr(2). This maximum utilization
-+        value is used to clamp the task specific maximum utilization clamp.
- 
- Memory
- ------
-diff --git a/init/Kconfig b/init/Kconfig
-index e60950ec01c0..94abf368bd52 100644
---- a/init/Kconfig
-+++ b/init/Kconfig
-@@ -866,6 +866,28 @@ config RT_GROUP_SCHED
- 
- endif #CGROUP_SCHED
- 
-+config UCLAMP_TASK_GROUP
-+	bool "Utilization clamping per group of tasks"
-+	depends on CGROUP_SCHED
-+	depends on UCLAMP_TASK
-+	default n
-+	help
-+	  This feature enables the scheduler to track the clamped utilization
-+	  of each CPU based on RUNNABLE tasks currently scheduled on that CPU.
-+
-+	  When this option is enabled, the user can specify a min and max
-+	  CPU bandwidth which is allowed for each single task in a group.
-+	  The max bandwidth allows to clamp the maximum frequency a task
-+	  can use, while the min bandwidth allows to define a minimum
-+	  frequency a task will always use.
-+
-+	  When task group based utilization clamping is enabled, an eventually
-+	  specified task-specific clamp value is constrained by the cgroup
-+	  specified clamp value. Both minimum and maximum task clamping cannot
-+	  be bigger than the corresponding clamping defined at task group level.
-+
-+	  If in doubt, say N.
-+
- config CGROUP_PIDS
- 	bool "PIDs controller"
- 	help
-diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-index b41db1190d28..29ae83fb9786 100644
---- a/kernel/sched/core.c
-+++ b/kernel/sched/core.c
-@@ -1294,6 +1294,13 @@ static void __init init_uclamp(void)
- 		/* RT tasks by default will go to max frequency */
- 		uc_se = &uclamp_default_perf[clamp_id];
- 		uclamp_bucket_inc(NULL, uc_se, clamp_id, uclamp_none(UCLAMP_MAX));
-+
-+#ifdef CONFIG_UCLAMP_TASK_GROUP
-+		/* Init root TG's clamp bucket */
-+		uc_se = &root_task_group.uclamp[clamp_id];
-+		uc_se->value = uclamp_none(clamp_id);
-+		uc_se->bucket_id = 0;
-+#endif
- 	}
- }
- 
-@@ -6872,6 +6879,23 @@ void ia64_set_curr_task(int cpu, struct task_struct *p)
- /* task_group_lock serializes the addition/removal of task groups */
- static DEFINE_SPINLOCK(task_group_lock);
- 
-+static inline int alloc_uclamp_sched_group(struct task_group *tg,
-+					   struct task_group *parent)
-+{
-+#ifdef CONFIG_UCLAMP_TASK_GROUP
-+	int clamp_id;
-+
-+	for (clamp_id = 0; clamp_id < UCLAMP_CNT; ++clamp_id) {
-+		tg->uclamp[clamp_id].value =
-+			parent->uclamp[clamp_id].value;
-+		tg->uclamp[clamp_id].bucket_id =
-+			parent->uclamp[clamp_id].bucket_id;
-+	}
-+#endif
-+
-+	return 1;
-+}
-+
- static void sched_free_group(struct task_group *tg)
- {
- 	free_fair_sched_group(tg);
-@@ -6895,6 +6919,9 @@ struct task_group *sched_create_group(struct task_group *parent)
- 	if (!alloc_rt_sched_group(tg, parent))
- 		goto err;
- 
-+	if (!alloc_uclamp_sched_group(tg, parent))
-+		goto err;
-+
- 	return tg;
- 
- err:
-@@ -7115,6 +7142,84 @@ static void cpu_cgroup_attach(struct cgroup_taskset *tset)
- 		sched_move_task(task);
- }
- 
-+#ifdef CONFIG_UCLAMP_TASK_GROUP
-+static int cpu_util_min_write_u64(struct cgroup_subsys_state *css,
-+				  struct cftype *cftype, u64 min_value)
-+{
-+	struct task_group *tg;
-+	int ret = 0;
-+
-+	if (min_value > SCHED_CAPACITY_SCALE)
-+		return -ERANGE;
-+
-+	rcu_read_lock();
-+
-+	tg = css_tg(css);
-+	if (tg->uclamp[UCLAMP_MIN].value == min_value)
-+		goto out;
-+	if (tg->uclamp[UCLAMP_MAX].value < min_value) {
-+		ret = -EINVAL;
-+		goto out;
-+	}
-+
-+out:
-+	rcu_read_unlock();
-+
-+	return ret;
-+}
-+
-+static int cpu_util_max_write_u64(struct cgroup_subsys_state *css,
-+				  struct cftype *cftype, u64 max_value)
-+{
-+	struct task_group *tg;
-+	int ret = 0;
-+
-+	if (max_value > SCHED_CAPACITY_SCALE)
-+		return -ERANGE;
-+
-+	rcu_read_lock();
-+
-+	tg = css_tg(css);
-+	if (tg->uclamp[UCLAMP_MAX].value == max_value)
-+		goto out;
-+	if (tg->uclamp[UCLAMP_MIN].value > max_value) {
-+		ret = -EINVAL;
-+		goto out;
-+	}
-+
-+out:
-+	rcu_read_unlock();
-+
-+	return ret;
-+}
-+
-+static inline u64 cpu_uclamp_read(struct cgroup_subsys_state *css,
-+				  enum uclamp_id clamp_id)
-+{
-+	struct task_group *tg;
-+	u64 util_clamp;
-+
-+	rcu_read_lock();
-+	tg = css_tg(css);
-+	util_clamp = tg->uclamp[clamp_id].value;
-+	rcu_read_unlock();
-+
-+	return util_clamp;
-+}
-+
-+static u64 cpu_util_min_read_u64(struct cgroup_subsys_state *css,
-+				 struct cftype *cft)
-+{
-+	return cpu_uclamp_read(css, UCLAMP_MIN);
-+}
-+
-+static u64 cpu_util_max_read_u64(struct cgroup_subsys_state *css,
-+				 struct cftype *cft)
-+{
-+	return cpu_uclamp_read(css, UCLAMP_MAX);
-+}
-+#endif /* CONFIG_UCLAMP_TASK_GROUP */
-+
- #ifdef CONFIG_FAIR_GROUP_SCHED
- static int cpu_shares_write_u64(struct cgroup_subsys_state *css,
- 				struct cftype *cftype, u64 shareval)
-@@ -7452,6 +7557,18 @@ static struct cftype cpu_legacy_files[] = {
- 		.read_u64 = cpu_rt_period_read_uint,
- 		.write_u64 = cpu_rt_period_write_uint,
- 	},
-+#endif
-+#ifdef CONFIG_UCLAMP_TASK_GROUP
-+	{
-+		.name = "util.min",
-+		.read_u64 = cpu_util_min_read_u64,
-+		.write_u64 = cpu_util_min_write_u64,
-+	},
-+	{
-+		.name = "util.max",
-+		.read_u64 = cpu_util_max_read_u64,
-+		.write_u64 = cpu_util_max_write_u64,
-+	},
- #endif
- 	{ }	/* Terminate */
- };
-@@ -7619,6 +7736,20 @@ static struct cftype cpu_files[] = {
- 		.seq_show = cpu_max_show,
- 		.write = cpu_max_write,
- 	},
-+#endif
-+#ifdef CONFIG_UCLAMP_TASK_GROUP
-+	{
-+		.name = "util.min",
-+		.flags = CFTYPE_NOT_ON_ROOT,
-+		.read_u64 = cpu_util_min_read_u64,
-+		.write_u64 = cpu_util_min_write_u64,
-+	},
-+	{
-+		.name = "util.max",
-+		.flags = CFTYPE_NOT_ON_ROOT,
-+		.read_u64 = cpu_util_max_read_u64,
-+		.write_u64 = cpu_util_max_write_u64,
-+	},
- #endif
- 	{ }	/* terminate */
- };
-diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
-index a70f4bf66285..eca7d1a6cd43 100644
---- a/kernel/sched/sched.h
-+++ b/kernel/sched/sched.h
-@@ -399,6 +399,11 @@ struct task_group {
- #endif
- 
- 	struct cfs_bandwidth	cfs_bandwidth;
-+
-+#ifdef CONFIG_UCLAMP_TASK_GROUP
-+	struct			uclamp_se uclamp[UCLAMP_CNT];
-+#endif
-+
- };
- 
- #ifdef CONFIG_FAIR_GROUP_SCHED
--- 
-2.19.2
-
+Paolo
