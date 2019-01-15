@@ -2,67 +2,137 @@ Return-Path: <SRS0=RZO6=PX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2FF6CC43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 22:14:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 09C93C43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 22:16:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F1F2520866
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 22:14:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D5C0E20866
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 22:16:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732029AbfAOWOK (ORCPT
+        id S1733041AbfAOWQz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 15 Jan 2019 17:14:10 -0500
-Received: from cloudserver094114.home.pl ([79.96.170.134]:51205 "EHLO
-        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729724AbfAOWOK (ORCPT
+        Tue, 15 Jan 2019 17:16:55 -0500
+Received: from gateway30.websitewelcome.com ([192.185.197.25]:45645 "EHLO
+        gateway30.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727984AbfAOWQz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Jan 2019 17:14:10 -0500
-Received: from 79.184.255.239.ipv4.supernova.orange.pl (79.184.255.239) (HELO aspire.rjw.lan)
- by serwer1319399.home.pl (79.96.170.134) with SMTP (IdeaSmtpServer 0.83.183)
- id 0b7b6168b3a1a61e; Tue, 15 Jan 2019 23:14:07 +0100
-From:   "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To:     Stephen Rothwell <sfr@canb.auug.org.au>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Sinan Kaya <okaya@kernel.org>
-Subject: Re: linux-next: Fixes tags need some work in the pm tree
-Date:   Tue, 15 Jan 2019 23:13:16 +0100
-Message-ID: <2774660.l3LIlnjlhl@aspire.rjw.lan>
-In-Reply-To: <20190116075540.78cff44e@canb.auug.org.au>
-References: <20190116075540.78cff44e@canb.auug.org.au>
+        Tue, 15 Jan 2019 17:16:55 -0500
+Received: from cm10.websitewelcome.com (cm10.websitewelcome.com [100.42.49.4])
+        by gateway30.websitewelcome.com (Postfix) with ESMTP id 3B39561A2
+        for <linux-kernel@vger.kernel.org>; Tue, 15 Jan 2019 15:53:57 -0600 (CST)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id jWejg7r0h2PzOjWejgkVQx; Tue, 15 Jan 2019 15:53:57 -0600
+X-Authority-Reason: nr=8
+Received: from [189.250.130.205] (port=45270 helo=[192.168.43.131])
+        by gator4166.hostgator.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
+        (Exim 4.91)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1gjWeh-001yZe-Sk; Tue, 15 Jan 2019 15:53:56 -0600
+Subject: Re: [PATCH net-next] svcrdma: Use struct_size() in kmalloc()
+To:     Chuck Lever <chuck.lever@oracle.com>
+Cc:     Trond Myklebust <trond.myklebust@hammerspace.com>,
+        Anna Schumaker <anna.schumaker@netapp.com>,
+        Bruce Fields <bfields@fieldses.org>,
+        Jeff Layton <jlayton@kernel.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Linux NFS Mailing List <linux-nfs@vger.kernel.org>,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20190115211140.GA16131@embeddedor>
+ <F652FEF1-0FD7-4FFD-80D4-44DBC2FF47B5@oracle.com>
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Message-ID: <9e965c53-116d-4aad-63e9-e26264bea9d1@embeddedor.com>
+Date:   Tue, 15 Jan 2019 15:53:48 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+In-Reply-To: <F652FEF1-0FD7-4FFD-80D4-44DBC2FF47B5@oracle.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 189.250.130.205
+X-Source-L: No
+X-Exim-ID: 1gjWeh-001yZe-Sk
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: ([192.168.43.131]) [189.250.130.205]:45270
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 29
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tuesday, January 15, 2019 9:55:40 PM CET Stephen Rothwell wrote:
-> [I am experimenting with checking the Fixes tags in commits in linux-next.
-> Please let me know if you think I am being too strict.]
-> 
-> Hi Rafael,
-> 
-> Commits
-> 
->   62b33d57c534 ("drivers: thermal: int340x_thermal: Make PCI dependency explicit")
->   cd793ab22a93 ("x86/intel/lpss: Make PCI dependency explicit")
->   42ac19e7b81e ("ACPI: EC: Look for ECDT EC after calling acpi_load_tables()")
->   6c29b81b5695 ("platform/x86: apple-gmux: Make PCI dependency explicit")
->   34783dc0182a ("platform/x86: intel_pmc: Make PCI dependency explicit")
->   704658d1d3ae ("platform/x86: intel_ips: make PCI dependency explicit")
->   5df37f3a1aa9 ("vga-switcheroo: make PCI dependency explicit")
->   da1df6ee4296 ("ata: pata_acpi: Make PCI dependency explicit")
->   ce97a22a596b ("ACPI / LPSS: Make PCI dependency explicit")
-> 
-> Have malformed Fixes tags:
-> 
-> There should be double quotes around the commit subject.
 
-Well, where does this requirement come from?
 
-It hasn't been there before AFAICS.
+On 1/15/19 3:49 PM, Chuck Lever wrote:
+> 
+> 
+> On Jan 15, 2019, at 4:11 PM, Gustavo A. R. Silva <gustavo@embeddedor.com> wrote:
+> 
+>> One of the more common cases of allocation size calculations is finding
+>> the size of a structure that has a zero-sized array at the end, along
+>> with memory for some number of elements for that array. For example:
+>>
+>> struct foo {
+>>     int stuff;
+>>     struct boo entry[];
+>> };
+>>
+>> instance = kmalloc(sizeof(struct foo) + count * sizeof(struct boo), GFP_KERNEL);
+>>
+>> Instead of leaving these open-coded and prone to type mistakes, we can
+>> now use the new struct_size() helper:
+>>
+>> instance = kmalloc(struct_size(instance, entry, count), GFP_KERNEL);
+>>
+>> This code was detected with the help of Coccinelle.
+>>
+>> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+> 
+> Reviewed-by: Chuck Lever <chuck.lever@oracle.com>
+> 
 
+Thank you, Chuck.
+--
+Gustavo
+
+> 
+>> ---
+>> net/sunrpc/xprtrdma/svc_rdma_rw.c | 3 +--
+>> 1 file changed, 1 insertion(+), 2 deletions(-)
+>>
+>> diff --git a/net/sunrpc/xprtrdma/svc_rdma_rw.c b/net/sunrpc/xprtrdma/svc_rdma_rw.c
+>> index dc1951759a8e..cad37c2122ab 100644
+>> --- a/net/sunrpc/xprtrdma/svc_rdma_rw.c
+>> +++ b/net/sunrpc/xprtrdma/svc_rdma_rw.c
+>> @@ -64,8 +64,7 @@ svc_rdma_get_rw_ctxt(struct svcxprt_rdma *rdma, unsigned int sges)
+>> 		spin_unlock(&rdma->sc_rw_ctxt_lock);
+>> 	} else {
+>> 		spin_unlock(&rdma->sc_rw_ctxt_lock);
+>> -		ctxt = kmalloc(sizeof(*ctxt) +
+>> -			       SG_CHUNK_SIZE * sizeof(struct scatterlist),
+>> +		ctxt = kmalloc(struct_size(ctxt, rw_first_sgl, SG_CHUNK_SIZE),
+>> 			       GFP_KERNEL);
+>> 		if (!ctxt)
+>> 			goto out;
+>> -- 
+>> 2.20.1
+> 
+> --
+> Chuck Lever
+> 
+> 
+> 
