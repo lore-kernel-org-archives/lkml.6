@@ -7,48 +7,47 @@ X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9FB67C43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 16:37:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 29D78C43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 16:38:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6CAE520675
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 16:37:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EDE0E2054F
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 16:38:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547570276;
-	bh=P2GdARO/DBDOPmLqA4nUV2aae268klKglv9IYj3dSdM=;
+	s=default; t=1547570281;
+	bh=4sdIazkJBLF6iln8RMZzRVFWm+Lvt8QimDK4xWoK7wQ=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=fBvHezcb2OC8w4i5Ag1zObw7vERsQeEx1ybMFuTPcU+r8FLgR3lPYFQpyUNb8P8g3
-	 cuR0eg9TMbB+o9byR+8CcG8I5z5UdmyH6HzECk5jZAO94f4dYIWxt7UE3zCH6zDcU1
-	 bb3MTKR//lI9NQ6SMFzId5b3GH4YN2Gtw/emKEfo=
+	b=s3QXX0AQYBzrKKSvF6/BqKjVLyQgBv5KWVqWHo6kfbYS04APBNnCByQT78dYxGDU4
+	 tR9tPp6W+yFfKwRYkfZUPPCPyWoSX8q0dSjYdSX3HW3zktgK5hpKvm2qtG4LQKvBc4
+	 5pAil61PudTptooR+utFMDGgGa01gkos14e0qKAQ=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731964AbfAOQhz (ORCPT
+        id S1731989AbfAOQh7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 15 Jan 2019 11:37:55 -0500
-Received: from mail.kernel.org ([198.145.29.99]:53486 "EHLO mail.kernel.org"
+        Tue, 15 Jan 2019 11:37:59 -0500
+Received: from mail.kernel.org ([198.145.29.99]:53616 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731941AbfAOQht (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Jan 2019 11:37:49 -0500
+        id S1731965AbfAOQhz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 Jan 2019 11:37:55 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7E96F20873;
-        Tue, 15 Jan 2019 16:37:48 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 55B7D20868;
+        Tue, 15 Jan 2019 16:37:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547570269;
-        bh=P2GdARO/DBDOPmLqA4nUV2aae268klKglv9IYj3dSdM=;
+        s=default; t=1547570274;
+        bh=4sdIazkJBLF6iln8RMZzRVFWm+Lvt8QimDK4xWoK7wQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=LUYWN69+bh04xUr3J9yArtGtILJ3NiskNLt+j1AF3ugqX23BJbZRAUZtvkTjr1xpD
-         /HBRKZbr2OF2DASjomqzecqudUcnglUUiijmA5EpsS+zVSkKMSPlSuPA/h5HzZUNdz
-         4PJeG8AhBeAOSI+kYadzqVkHMpWFVbgmrchAls4o=
+        b=sXWFSi0ufDZDeoeIoaFOB0Izr8xcTAVDvDvcgPhUGQ6J6weBYG786x8JsgEoJm84r
+         xw5fAmO9nJReCTq7x1qDVGinZIDi3Ci28j3mKP77Q3rBFabp2drasGSfhhqOk0BIMX
+         zsXMpG551Ely1XteYopJRSDRc+JnYN/2ej7tVzTc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Qu Wenruo <wqu@suse.com>,
-        Su Yue <suy.fnst@cn.fujitsu.com>,
-        David Sterba <dsterba@suse.com>,
-        Ben Hutchings <ben.hutchings@codethink.co.uk>
-Subject: [PATCH 4.4 31/51] btrfs: tree-checker: Check level for leaves and nodes
-Date:   Tue, 15 Jan 2019 17:35:27 +0100
-Message-Id: <20190115154851.024231032@linuxfoundation.org>
+        stable@vger.kernel.org, Pavel Shilovsky <pshilov@microsoft.com>,
+        Jeff Layton <jlayton@kernel.org>,
+        Steve French <stfrench@microsoft.com>
+Subject: [PATCH 4.4 33/51] CIFS: Do not hide EINTR after sending network packets
+Date:   Tue, 15 Jan 2019 17:35:29 +0100
+Message-Id: <20190115154851.429803351@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190115154846.928796000@linuxfoundation.org>
 References: <20190115154846.928796000@linuxfoundation.org>
@@ -67,63 +66,35 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Qu Wenruo <wqu@suse.com>
+From: Pavel Shilovsky <pshilov@microsoft.com>
 
-commit f556faa46eb4e96d0d0772e74ecf66781e132f72 upstream.
+commit ee13919c2e8d1f904e035ad4b4239029a8994131 upstream.
 
-Although we have tree level check at tree read runtime, it's completely
-based on its parent level.
-We still need to do accurate level check to avoid invalid tree blocks
-sneak into kernel space.
+Currently we hide EINTR code returned from sock_sendmsg()
+and return 0 instead. This makes a caller think that we
+successfully completed the network operation which is not
+true. Fix this by properly returning EINTR to callers.
 
-The check itself is simple, for leaf its level should always be 0.
-For nodes its level should be in range [1, BTRFS_MAX_LEVEL - 1].
-
-Signed-off-by: Qu Wenruo <wqu@suse.com>
-Reviewed-by: Su Yue <suy.fnst@cn.fujitsu.com>
-Reviewed-by: David Sterba <dsterba@suse.com>
-Signed-off-by: David Sterba <dsterba@suse.com>
-[bwh: Backported to 4.4:
- - Pass root instead of fs_info to generic_err()
- - Adjust context]
-Signed-off-by: Ben Hutchings <ben.hutchings@codethink.co.uk>
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Pavel Shilovsky <pshilov@microsoft.com>
+Reviewed-by: Jeff Layton <jlayton@kernel.org>
+Signed-off-by: Steve French <stfrench@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- fs/btrfs/tree-checker.c |   14 ++++++++++++++
- 1 file changed, 14 insertions(+)
 
---- a/fs/btrfs/tree-checker.c
-+++ b/fs/btrfs/tree-checker.c
-@@ -447,6 +447,13 @@ static int check_leaf(struct btrfs_root
- 	u32 nritems = btrfs_header_nritems(leaf);
- 	int slot;
+---
+ fs/cifs/transport.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+--- a/fs/cifs/transport.c
++++ b/fs/cifs/transport.c
+@@ -360,7 +360,7 @@ uncork:
+ 	if (rc < 0 && rc != -EINTR)
+ 		cifs_dbg(VFS, "Error %d sending data on socket to server\n",
+ 			 rc);
+-	else
++	else if (rc > 0)
+ 		rc = 0;
  
-+	if (btrfs_header_level(leaf) != 0) {
-+		generic_err(root, leaf, 0,
-+			"invalid level for leaf, have %d expect 0",
-+			btrfs_header_level(leaf));
-+		return -EUCLEAN;
-+	}
-+
- 	/*
- 	 * Extent buffers from a relocation tree have a owner field that
- 	 * corresponds to the subvolume tree they are based on. So just from an
-@@ -589,9 +596,16 @@ int btrfs_check_node(struct btrfs_root *
- 	unsigned long nr = btrfs_header_nritems(node);
- 	struct btrfs_key key, next_key;
- 	int slot;
-+	int level = btrfs_header_level(node);
- 	u64 bytenr;
- 	int ret = 0;
- 
-+	if (level <= 0 || level >= BTRFS_MAX_LEVEL) {
-+		generic_err(root, node, 0,
-+			"invalid level for node, have %d expect [1, %d]",
-+			level, BTRFS_MAX_LEVEL - 1);
-+		return -EUCLEAN;
-+	}
- 	if (nr == 0 || nr > BTRFS_NODEPTRS_PER_BLOCK(root)) {
- 		btrfs_crit(root->fs_info,
- "corrupt node: root=%llu block=%llu, nritems too %s, have %lu expect range [1,%zu]",
+ 	return rc;
 
 
