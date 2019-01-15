@@ -2,165 +2,259 @@ Return-Path: <SRS0=RZO6=PX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FSL_HELO_FAKE,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 28C6BC43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 18:40:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2DA5CC43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 18:40:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E3ACB20675
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 18:40:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547577604;
-	bh=y1zeNc3QmmemNqVt/W4xvjBlkofOeOJIy4ph6BNF7nk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=aIwuBHS5j/u+mzv+/+gH/qoypajeLUylbhlmJ1tHS5LngMDQx7rJ7etpRY0HUHIuO
-	 bB3VFUwAqGd5jaYqV0nxQC3uf6untfGiIcoNcUvMdiaWiYL3/8IhwdYwgXWOYu3k/h
-	 eHzq9bP4YjkUc1haS/Dajod5ITFcQQcW970YNcpo=
+	by mail.kernel.org (Postfix) with ESMTP id E3BB320657
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 18:40:30 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="s7CBN5uO"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388815AbfAOSkB (ORCPT
+        id S2388866AbfAOSk3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 15 Jan 2019 13:40:01 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57006 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728911AbfAOSkB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Jan 2019 13:40:01 -0500
-Received: from gmail.com (unknown [104.132.1.77])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9841020657;
-        Tue, 15 Jan 2019 18:39:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547577599;
-        bh=y1zeNc3QmmemNqVt/W4xvjBlkofOeOJIy4ph6BNF7nk=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=n4V4Z2d5GM67a+0KB1316py1InCu0ohaAQ8JbSkaA7yDo5t9gKrlBAv71sUfJ1X0g
-         oOn/iDODfSy9EcOvDY26XKOXMVSfrKlownHq4ZOAX2m7BTl1p49QYIyV0XD+vjAIcd
-         9QJig/8yN90bsmBYDu6NKlLfpmgUO9rl3t/9A6C0=
-Date:   Tue, 15 Jan 2019 10:39:58 -0800
-From:   Eric Biggers <ebiggers@kernel.org>
-To:     syzbot <syzbot+ee4f315443a4ea97512e@syzkaller.appspotmail.com>
-Cc:     davem@davemloft.net, herbert@gondor.apana.org.au,
-        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com
-Subject: Re: general protection fault in crypto_remove_spawns (2)
-Message-ID: <20190115183956.GB10955@gmail.com>
-References: <00000000000005cc6a057f65dcea@google.com>
+        Tue, 15 Jan 2019 13:40:29 -0500
+Received: from lelv0142.ext.ti.com ([198.47.23.249]:33184 "EHLO
+        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731498AbfAOSk2 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 Jan 2019 13:40:28 -0500
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id x0FIeIRq112128;
+        Tue, 15 Jan 2019 12:40:18 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1547577618;
+        bh=8a1yEe4Bxuahg+uHIVEeJaH+B4z+HgttXGwscOFUYm4=;
+        h=Subject:From:To:CC:References:Date:In-Reply-To;
+        b=s7CBN5uO+dQj+VPsddx8KVDjWWDg6HQE6gM6rlKQ+pjuFO98PWXc0AtQevVtxHCco
+         ixa/MGvomyYkKx9uCoX9uLr5u/7VOr1Znp4srrJn02/erVbjeZnriO5ezJRXH1jxLL
+         foIxOFMA2eIjIJZQx/hk4WqlNtORvhKXXndaSpYk=
+Received: from DLEE111.ent.ti.com (dlee111.ent.ti.com [157.170.170.22])
+        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x0FIeIlH097260
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Tue, 15 Jan 2019 12:40:18 -0600
+Received: from DLEE106.ent.ti.com (157.170.170.36) by DLEE111.ent.ti.com
+ (157.170.170.22) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Tue, 15
+ Jan 2019 12:40:17 -0600
+Received: from dflp32.itg.ti.com (10.64.6.15) by DLEE106.ent.ti.com
+ (157.170.170.36) with Microsoft SMTP Server (version=TLS1_0,
+ cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1591.10 via Frontend Transport;
+ Tue, 15 Jan 2019 12:40:17 -0600
+Received: from [172.22.120.117] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by dflp32.itg.ti.com (8.14.3/8.13.8) with ESMTP id x0FIeGF3020775;
+        Tue, 15 Jan 2019 12:40:17 -0600
+Subject: Re: [PATCH 13/14] staging: android: ion: Do not sync CPU cache on
+ map/unmap
+From:   "Andrew F. Davis" <afd@ti.com>
+To:     Liam Mark <lmark@codeaurora.org>
+CC:     Laura Abbott <labbott@redhat.com>,
+        Sumit Semwal <sumit.semwal@linaro.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        =?UTF-8?Q?Arve_Hj=c3=b8nnev=c3=a5g?= <arve@android.com>,
+        <devel@driverdev.osuosl.org>, <linux-kernel@vger.kernel.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        Brian Starkey <Brian.Starkey@arm.com>
+References: <20190111180523.27862-1-afd@ti.com>
+ <20190111180523.27862-14-afd@ti.com>
+ <alpine.DEB.2.10.1901140910130.23879@lmark-linux.qualcomm.com>
+ <79eb70f6-00b0-2939-5ec9-65e196ab4987@ti.com>
+ <alpine.DEB.2.10.1901150937280.4046@lmark-linux.qualcomm.com>
+ <cfcd3daf-bd1d-0dbc-7b5c-8e504d179564@ti.com>
+Message-ID: <f53987d5-b7c1-61f4-de44-3d7b4a3c68fe@ti.com>
+Date:   Tue, 15 Jan 2019 12:40:16 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <00000000000005cc6a057f65dcea@google.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <cfcd3daf-bd1d-0dbc-7b5c-8e504d179564@ti.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Jan 13, 2019 at 11:19:03PM -0800, syzbot wrote:
-> Hello,
+On 1/15/19 12:38 PM, Andrew F. Davis wrote:
+> On 1/15/19 11:45 AM, Liam Mark wrote:
+>> On Tue, 15 Jan 2019, Andrew F. Davis wrote:
+>>
+>>> On 1/14/19 11:13 AM, Liam Mark wrote:
+>>>> On Fri, 11 Jan 2019, Andrew F. Davis wrote:
+>>>>
+>>>>> Buffers may not be mapped from the CPU so skip cache maintenance here.
+>>>>> Accesses from the CPU to a cached heap should be bracketed with
+>>>>> {begin,end}_cpu_access calls so maintenance should not be needed anyway.
+>>>>>
+>>>>> Signed-off-by: Andrew F. Davis <afd@ti.com>
+>>>>> ---
+>>>>>  drivers/staging/android/ion/ion.c | 7 ++++---
+>>>>>  1 file changed, 4 insertions(+), 3 deletions(-)
+>>>>>
+>>>>> diff --git a/drivers/staging/android/ion/ion.c b/drivers/staging/android/ion/ion.c
+>>>>> index 14e48f6eb734..09cb5a8e2b09 100644
+>>>>> --- a/drivers/staging/android/ion/ion.c
+>>>>> +++ b/drivers/staging/android/ion/ion.c
+>>>>> @@ -261,8 +261,8 @@ static struct sg_table *ion_map_dma_buf(struct dma_buf_attachment *attachment,
+>>>>>  
+>>>>>  	table = a->table;
+>>>>>  
+>>>>> -	if (!dma_map_sg(attachment->dev, table->sgl, table->nents,
+>>>>> -			direction))
+>>>>> +	if (!dma_map_sg_attrs(attachment->dev, table->sgl, table->nents,
+>>>>> +			      direction, DMA_ATTR_SKIP_CPU_SYNC))
+>>>>
+>>>> Unfortunately I don't think you can do this for a couple reasons.
+>>>> You can't rely on {begin,end}_cpu_access calls to do cache maintenance.
+>>>> If the calls to {begin,end}_cpu_access were made before the call to 
+>>>> dma_buf_attach then there won't have been a device attached so the calls 
+>>>> to {begin,end}_cpu_access won't have done any cache maintenance.
+>>>>
+>>>
+>>> That should be okay though, if you have no attachments (or all
+>>> attachments are IO-coherent) then there is no need for cache
+>>> maintenance. Unless you mean a sequence where a non-io-coherent device
+>>> is attached later after data has already been written. Does that
+>>> sequence need supporting? 
+>>
+>> Yes, but also I think there are cases where CPU access can happen before 
+>> in Android, but I will focus on later for now.
+>>
+>>> DMA-BUF doesn't have to allocate the backing
+>>> memory until map_dma_buf() time, and that should only happen after all
+>>> the devices have attached so it can know where to put the buffer. So we
+>>> shouldn't expect any CPU access to buffers before all the devices are
+>>> attached and mapped, right?
+>>>
+>>
+>> Here is an example where CPU access can happen later in Android.
+>>
+>> Camera device records video -> software post processing -> video device 
+>> (who does compression of raw data) and writes to a file
+>>
+>> In this example assume the buffer is cached and the devices are not 
+>> IO-coherent (quite common).
+>>
 > 
-> syzbot found the following crash on:
+> This is the start of the problem, having cached mappings of memory that
+> is also being accessed non-coherently is going to cause issues one way
+> or another. On top of the speculative cache fills that have to be
+> constantly fought back against with CMOs like below; some coherent
+> interconnects behave badly when you mix coherent and non-coherent access
+> (snoop filters get messed up).
 > 
-> HEAD commit:    4b3c31c8d4dd Merge branch 'i2c/for-current' of git://git.k..
-> git tree:       upstream
-> console output: https://syzkaller.appspot.com/x/log.txt?x=144cb817400000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=b05cfdb4ee8ab9b2
-> dashboard link: https://syzkaller.appspot.com/bug?extid=ee4f315443a4ea97512e
-> compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
+> The solution is to either always have the addresses marked non-coherent
+> (like device memory, no-map carveouts), or if you really want to use
+> regular system memory allocated at runtime, then all cached mappings of
+> it need to be dropped, even the kernel logical address (area as painful
+> as that would be).
 > 
-> Unfortunately, I don't have any reproducer for this crash yet.
+>> ION buffer is allocated.
+>>
+>> //Camera device records video
+>> dma_buf_attach
+>> dma_map_attachment (buffer needs to be cleaned)
 > 
-> IMPORTANT: if you fix the bug, please add the following tag to the commit:
-> Reported-by: syzbot+ee4f315443a4ea97512e@syzkaller.appspotmail.com
-> 
-> binder: 18706:18709 ioctl 40046207 0 returned -16
-> kasan: GPF could be caused by NULL-ptr deref or user memory access
-> general protection fault: 0000 [#1] PREEMPT SMP KASAN
-> CPU: 1 PID: 18713 Comm: cryptomgr_test Not tainted 5.0.0-rc1+ #21
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
-> Google 01/01/2011
-> RIP: 0010:crypto_remove_spawns+0x7ac/0x1340 crypto/algapi.c:194
-> Code: 49 8d 7c 24 10 48 89 f8 48 c1 e8 03 80 3c 18 00 0f 85 f2 06 00 00 49
-> c7 44 24 10 00 00 00 00 4d 8d 66 10 4c 89 e0 48 c1 e8 03 <80> 3c 18 00 0f 85
-> ef 06 00 00 49 83 7e 10 00 74 0a e8 4e 9e 24 fe
-> RSP: 0000:ffff888054737b88 EFLAGS: 00010202
-> RAX: 0000000000000002 RBX: dffffc0000000000 RCX: 1ffff1100a8e6f86
-> RDX: 0000000000000000 RSI: ffffffff835d58d2 RDI: ffff888085c226b8
-> RBP: ffff888054737df8 R08: ffff88804fb4e4c0 R09: ffff88804fb4ed60
-> R10: ffff88804fb4ed40 R11: 0000000000000001 R12: 0000000000000010
-> R13: ffffed100a8e6f8e R14: 0000000000000000 R15: ffff888054737dd0
-> FS:  0000000000000000(0000) GS:ffff8880ae700000(0000) knlGS:0000000000000000
-> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> CR2: 00007f6091a29000 CR3: 00000000876f9000 CR4: 00000000001406e0
-> kobject: 'loop2' (00000000d1d42c09): kobject_uevent_env
-> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-> Call Trace:
-> kobject: 'loop2' (00000000d1d42c09): fill_kobj_path: path =
-> '/devices/virtual/block/loop2'
->  crypto_alg_tested+0x52d/0x790 crypto/algapi.c:339
->  cryptomgr_test+0x18/0x30 crypto/algboss.c:226
->  kthread+0x357/0x430 kernel/kthread.c:246
-> binder: BINDER_SET_CONTEXT_MGR already set
->  ret_from_fork+0x3a/0x50 arch/x86/entry/entry_64.S:352
-> Modules linked in:
-> kobject: 'loop3' (0000000091226001): kobject_uevent_env
-> binder: 18723:18724 ioctl 40046207 0 returned -16
-> kobject: 'loop3' (0000000091226001): fill_kobj_path: path =
-> '/devices/virtual/block/loop3'
-> kobject: 'loop5' (0000000038d1e891): kobject_uevent_env
-> kobject: 'loop5' (0000000038d1e891): fill_kobj_path: path =
-> '/devices/virtual/block/loop5'
-> kobject: 'loop1' (0000000047f20675): kobject_uevent_env
-> kobject: 'loop1' (0000000047f20675): fill_kobj_path: path =
-> '/devices/virtual/block/loop1'
-> kobject: 'loop0' (00000000f3ca3d42): kobject_uevent_env
-> kobject: 'loop0' (00000000f3ca3d42): fill_kobj_path: path =
-> '/devices/virtual/block/loop0'
-> kobject: 'loop5' (0000000038d1e891): kobject_uevent_env
-> kobject: 'loop5' (0000000038d1e891): fill_kobj_path: path =
-> '/devices/virtual/block/loop5'
-> kobject: 'loop1' (0000000047f20675): kobject_uevent_env
-> kobject: 'loop1' (0000000047f20675): fill_kobj_path: path =
-> '/devices/virtual/block/loop1'
-> kobject: 'loop2' (00000000d1d42c09): kobject_uevent_env
-> kobject: 'loop2' (00000000d1d42c09): fill_kobj_path: path =
-> '/devices/virtual/block/loop2'
-> ---[ end trace d2934b3fdb1c156e ]---
-> RIP: 0010:crypto_remove_spawns+0x7ac/0x1340 crypto/algapi.c:194
-> Code: 49 8d 7c 24 10 48 89 f8 48 c1 e8 03 80 3c 18 00 0f 85 f2 06 00 00 49
-> c7 44 24 10 00 00 00 00 4d 8d 66 10 4c 89 e0 48 c1 e8 03 <80> 3c 18 00 0f 85
-> ef 06 00 00 49 83 7e 10 00 74 0a e8 4e 9e 24 fe
-> RSP: 0000:ffff888054737b88 EFLAGS: 00010202
-> RAX: 0000000000000002 RBX: dffffc0000000000 RCX: 1ffff1100a8e6f86
-> RDX: 0000000000000000 RSI: ffffffff835d58d2 RDI: ffff888085c226b8
-> RBP: ffff888054737df8 R08: ffff88804fb4e4c0 R09: ffff88804fb4ed60
-> R10: ffff88804fb4ed40 R11: 0000000000000001 R12: 0000000000000010
-> R13: ffffed100a8e6f8e R14: 0000000000000000 R15: ffff888054737dd0
-> FS:  0000000000000000(0000) GS:ffff8880ae700000(0000) knlGS:0000000000000000
-> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> CR2: 000000000110cfd0 CR3: 0000000094f35000 CR4: 00000000001406e0
-> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-> 
-> 
-> ---
-> This bug is generated by a bot. It may contain errors.
-> See https://goo.gl/tpsmEJ for more information about syzbot.
-> syzbot engineers can be reached at syzkaller@googlegroups.com.
-> 
-> syzbot will keep track of this bug report. See:
-> https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with
-> syzbot.
-> 
+> Why does the buffer need to be cleaned here? I just got through reading
+> the thread linked by Laura in the other reply. I do like +Brian's
 
-This may be the bug that will be fixed by commit 6db43410179b ("crypto: adiantum
-- initialize crypto_spawn::inst"), but I'm not sure.  Since it's unlikely that
-anyone will do anything else with this bug report, I'm going ahead and marking
-this fixed for syzbot so that it doesn't suppress similar crashes in the future.
+Actually +Brian this time :)
 
-#syz fix: crypto: adiantum - initialize crypto_spawn::inst
-
-- Eric
+> suggestion of tracking if the buffer has had CPU access since the last
+> time and only flushing the cache if it has. As unmapped heaps never get
+> CPU mapped this would never be the case for unmapped heaps, it solves my
+> problem.
+> 
+>> [camera device writes to buffer]
+>> dma_buf_unmap_attachment (buffer needs to be invalidated)
+> 
+> It doesn't know there will be any further CPU access, it could get freed
+> after this for all we know, the invalidate can be saved until the CPU
+> requests access again.
+> 
+>> dma_buf_detach  (device cannot stay attached because it is being sent down 
+>> the pipeline and Camera doesn't know the end of the use case)
+>>
+> 
+> This seems like a broken use-case, I understand the desire to keep
+> everything as modular as possible and separate the steps, but at this
+> point no one owns this buffers backing memory, not the CPU or any
+> device. I would go as far as to say DMA-BUF should be free now to
+> de-allocate the backing storage if it wants, that way it could get ready
+> for the next attachment, which may change the required backing memory
+> completely.
+> 
+> All devices should attach before the first mapping, and only let go
+> after the task is complete, otherwise this buffers data needs copied off
+> to a different location or the CPU needs to take ownership in-between.
+> 
+>> //buffer is send down the pipeline
+>>
+>> // Usersapce software post processing occurs
+>> mmap buffer
+> 
+> Perhaps the invalidate should happen here in mmap.
+> 
+>> DMA_BUF_IOCTL_SYNC IOCT with flags DMA_BUF_SYNC_START // No CMO since no 
+>> devices attached to buffer
+> 
+> And that should be okay, mmap does the sync, and if no devices are
+> attached nothing could have changed the underlying memory in the
+> mean-time, DMA_BUF_SYNC_START can safely be a no-op as they are.
+> 
+>> [CPU reads/writes to the buffer]
+>> DMA_BUF_IOCTL_SYNC IOCTL with flags DMA_BUF_SYNC_END // No CMO since no 
+>> devices attached to buffer
+>> munmap buffer
+>>
+>> //buffer is send down the pipeline
+>> // Buffer is send to video device (who does compression of raw data) and 
+>> writes to a file
+>> dma_buf_attach
+>> dma_map_attachment (buffer needs to be cleaned)
+>> [video device writes to buffer]
+>> dma_buf_unmap_attachment 
+>> dma_buf_detach  (device cannot stay attached because it is being sent down 
+>> the pipeline and Video doesn't know the end of the use case)
+>>
+>>
+>>
+>>>> Also ION no longer provides DMA ready memory, so if you are not doing CPU 
+>>>> access then there is no requirement (that I am aware of) for you to call 
+>>>> {begin,end}_cpu_access before passing the buffer to the device and if this 
+>>>> buffer is cached and your device is not IO-coherent then the cache maintenance
+>>>> in ion_map_dma_buf and ion_unmap_dma_buf is required.
+>>>>
+>>>
+>>> If I am not doing any CPU access then why do I need CPU cache
+>>> maintenance on the buffer?
+>>>
+>>
+>> Because ION no longer provides DMA ready memory.
+>> Take the above example.
+>>
+>> ION allocates memory from buddy allocator and requests zeroing.
+>> Zeros are written to the cache.
+>>
+>> You pass the buffer to the camera device which is not IO-coherent.
+>> The camera devices writes directly to the buffer in DDR.
+>> Since you didn't clean the buffer a dirty cache line (one of the zeros) is 
+>> evicted from the cache, this zero overwrites data the camera device has 
+>> written which corrupts your data.
+>>
+> 
+> The zeroing *is* a CPU access, therefor it should handle the needed CMO
+> for CPU access at the time of zeroing.
+> 
+> Andrew
+> 
+>> Liam
+>>
+>> Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+>> a Linux Foundation Collaborative Project
+>>
