@@ -2,763 +2,373 @@ Return-Path: <SRS0=RZO6=PX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 81C70C43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 19:00:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 69309C43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 19:00:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 268E920656
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 19:00:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 25A9C20656
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 19:00:39 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="FRNzfNm3"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hvxpJgF+"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732104AbfAOTAQ (ORCPT
+        id S1732195AbfAOTAh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 15 Jan 2019 14:00:16 -0500
-Received: from hqemgate15.nvidia.com ([216.228.121.64]:17222 "EHLO
-        hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729554AbfAOTAP (ORCPT
+        Tue, 15 Jan 2019 14:00:37 -0500
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:35226 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729554AbfAOTAh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Jan 2019 14:00:15 -0500
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate15.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5c3e2da60000>; Tue, 15 Jan 2019 10:59:50 -0800
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Tue, 15 Jan 2019 11:00:10 -0800
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Tue, 15 Jan 2019 11:00:10 -0800
-Received: from HQMAIL111.nvidia.com (172.20.187.18) by HQMAIL101.nvidia.com
- (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Tue, 15 Jan
- 2019 19:00:10 +0000
-Received: from HQMAIL104.nvidia.com (172.18.146.11) by HQMAIL111.nvidia.com
- (172.20.187.18) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Tue, 15 Jan
- 2019 19:00:10 +0000
-Received: from hqnvemgw02.nvidia.com (172.16.227.111) by HQMAIL104.nvidia.com
- (172.18.146.11) with Microsoft SMTP Server (TLS) id 15.0.1395.4 via Frontend
- Transport; Tue, 15 Jan 2019 19:00:10 +0000
-Received: from skomatineni-linux.nvidia.com (Not Verified[10.110.103.52]) by hqnvemgw02.nvidia.com with Trustwave SEG (v7,5,8,10121)
-        id <B5c3e2db8000c>; Tue, 15 Jan 2019 11:00:08 -0800
-From:   Sowjanya Komatineni <skomatineni@nvidia.com>
-To:     <thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
-        <mkarthik@nvidia.com>, <smohammed@nvidia.com>, <talho@nvidia.com>
-CC:     <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-i2c@vger.kernel.org>,
-        Sowjanya Komatineni <skomatineni@nvidia.com>
-Subject: [PATCH V1] i2c: tegra: Add DMA Support
-Date:   Tue, 15 Jan 2019 11:00:06 -0800
-Message-ID: <1547578806-17923-1-git-send-email-skomatineni@nvidia.com>
-X-Mailer: git-send-email 2.7.4
-X-NVConfidentiality: public
+        Tue, 15 Jan 2019 14:00:37 -0500
+Received: by mail-lj1-f194.google.com with SMTP id x85-v6so3307882ljb.2;
+        Tue, 15 Jan 2019 11:00:35 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=c+dReI6r5LQ9qvph6JLO1HA64WotlyQsucCp2V93ir8=;
+        b=hvxpJgF+YSMU9y3oV3tv+utwdO2PLpXPA6r2CuUGR9EQ/aG4+0uhTfPb42t0megr6S
+         ji8PZKl3lTdZNexPYELNUm34IS7UeBUnPpSif42xDtMD+lWbKqfhN8fg9gzJ9Ey/CmLX
+         vz1+Q66qYTR0kyh4r1ygiO1H5Q4G8dtOWE0XD3pLBpFmA1DXit2IK8fZXpELociaTN+u
+         Xl8QTNvxhzestAeMh0LV/y5vySTxsA/wKlQnDRIZ71lIzDwq55bSh6VGnDXa3dHYLTSX
+         P7iVaLIq0F9aZ/XP4uMhwYgIebQ1figB6fYrDy2Q3h4xrQtFH+Ux+vFbTcoREj6WtQ7h
+         U58w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=c+dReI6r5LQ9qvph6JLO1HA64WotlyQsucCp2V93ir8=;
+        b=Bj/uYAQYdpDlW8d3ylMZjUfUKKSe4apTzqgyuPLE4mW3Cm9etfvwMU2AFsqNgTkQ/X
+         v5rjroqZpgmPmFPMxJh7CQDzvN56qBTxBc+vvbUGOFyhROvA3qvZDLc9WUXGIyg8+ML9
+         xLDV8WTJ8JjK84iVsRsab4DJllbYEkrlqKYlD9eeyoGPU5LtbulILhcYko2UJEqMXWF+
+         qN9ItsJrey1gZjA2+MEAN9vCDCNJ+TZuU1zbcgx7JG9lCbJsIi7ayZsIZDVQIOpICfkn
+         ee4QW9bNWETGu5lk233mx4Hm+MqlQDuxfI64La2dnVGg0S3GH7EnPm4Kzb4Bto6G1l7Y
+         9EPg==
+X-Gm-Message-State: AJcUukdYsLrs69ie2Cck1RqvNRItZqPz5By9NMWaYgRnAhkqoDKwy5UA
+        iiFydvAnSmlbMduQ000cLFbrGooE
+X-Google-Smtp-Source: ALg8bN62KXbkfvixw4GJIKz8h6b4oVmOdTMJtTl2Ac7/A6zml9oC7lMXcfEEIqM/T/YaExYOJ4DjDw==
+X-Received: by 2002:a2e:9356:: with SMTP id m22-v6mr3789984ljh.135.1547578834105;
+        Tue, 15 Jan 2019 11:00:34 -0800 (PST)
+Received: from arch.domain.name (89-70-37-207.dynamic.chello.pl. [89.70.37.207])
+        by smtp.gmail.com with ESMTPSA id w12sm759588lfe.80.2019.01.15.11.00.31
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 15 Jan 2019 11:00:32 -0800 (PST)
+From:   Tomasz Duszynski <tduszyns@gmail.com>
+To:     linux-iio@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org, jeremyfertic@gmail.com,
+        Tomasz Duszynski <tduszyns@gmail.com>
+Subject: [PATCH v3] iio: chemical: sps30: allow changing self cleaning period
+Date:   Tue, 15 Jan 2019 20:00:06 +0100
+Message-Id: <20190115190006.16071-1-tduszyns@gmail.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1547578790; bh=41ssgmolSxdsFmg66s5vUI9fYSvHinipMkjUOMfhzNs=;
-        h=X-PGP-Universal:From:To:CC:Subject:Date:Message-ID:X-Mailer:
-         X-NVConfidentiality:MIME-Version:Content-Type;
-        b=FRNzfNm301BxqTMls5w2BHqmxevyxXiNLmnFiZUEt7eZI8lUvJcvFhHyOmMYt7KOs
-         fGrLhn88jNBkE5yXshV159C90NKFTHo4a09nZgcxUJdThtKAChmN5V5uzAfKAC6Eck
-         rfowAvhU1I66r5H2Oo1YHOtIjIGVX+4oGX+WDCaFniYOhE5nPNwYLfbhgA1wjaQG+X
-         14SwKm47ZZIvZ3FdEZQ/1dqsK8hAurNA/lw1uBLU/iGwQlXieZXhtbsbRO5nmflnFV
-         Ap1kuwrPTPokuQD7kv09K5k3OjCsH8DsQ4oIIvJPDtiAxzLlDw3KrjF6GZB/CDq2g5
-         6fbVicJnwa+lw==
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch adds DMA support for Tegra I2C.
+Sensor can periodically trigger self cleaning. Period can be changed by
+writing a new value to a dedicated attribute. Upon attribute read
+current period gets returned.
 
-Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
+Signed-off-by: Tomasz Duszynski <tduszyns@gmail.com>
 ---
- drivers/i2c/busses/i2c-tegra.c | 494 +++++++++++++++++++++++++++++++++++++----
- 1 file changed, 456 insertions(+), 38 deletions(-)
+v3:
+ * fix allowed period range check
 
-diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-tegra.c
-index e417ebf7628c..abb576acc610 100644
---- a/drivers/i2c/busses/i2c-tegra.c
-+++ b/drivers/i2c/busses/i2c-tegra.c
-@@ -22,6 +22,9 @@
- #include <linux/pinctrl/consumer.h>
- #include <linux/pm_runtime.h>
- #include <linux/iopoll.h>
-+#include <linux/dmaengine.h>
-+#include <linux/dma-mapping.h>
-+#include <linux/dmapool.h>
- 
- #include <asm/unaligned.h>
- 
-@@ -47,6 +50,8 @@
- #define I2C_FIFO_CONTROL_RX_FLUSH		BIT(0)
- #define I2C_FIFO_CONTROL_TX_TRIG_SHIFT		5
- #define I2C_FIFO_CONTROL_RX_TRIG_SHIFT		2
-+#define I2C_FIFO_CONTROL_RX_TRIG(x)		(((x) - 1) <<  2)
-+#define I2C_FIFO_CONTROL_TX_TRIG(x)		(((x) - 1) << 5)
- #define I2C_FIFO_STATUS				0x060
- #define I2C_FIFO_STATUS_TX_MASK			0xF0
- #define I2C_FIFO_STATUS_TX_SHIFT		4
-@@ -118,6 +123,18 @@
- #define I2C_MST_FIFO_STATUS_TX_MASK		0xff0000
- #define I2C_MST_FIFO_STATUS_TX_SHIFT		16
- 
-+#define DATA_DMA_DIR_TX				(1 << 0)
-+#define DATA_DMA_DIR_RX				(1 << 1)
+v2:
+ * return available values formated as a range
+ * tweak naming a little (interval -> period)
+
+ Documentation/ABI/testing/sysfs-bus-iio-sps30 |  20 +++
+ drivers/iio/chemical/sps30.c                  | 143 +++++++++++++++---
+ 2 files changed, 145 insertions(+), 18 deletions(-)
+
+diff --git a/Documentation/ABI/testing/sysfs-bus-iio-sps30 b/Documentation/ABI/testing/sysfs-bus-iio-sps30
+index e7ce2c57635e..143df8e89d08 100644
+--- a/Documentation/ABI/testing/sysfs-bus-iio-sps30
++++ b/Documentation/ABI/testing/sysfs-bus-iio-sps30
+@@ -6,3 +6,23 @@ Description:
+ 		Writing 1 starts sensor self cleaning. Internal fan accelerates
+ 		to its maximum speed and keeps spinning for about 10 seconds in
+ 		order to blow out accumulated dust.
 +
-+/* Upto I2C_PIO_MODE_MAX_LEN bytes, controller will use PIO mode,
-+ * above this, controller will use DMA to fill FIFO.
-+ * Here MAX PIO len is 20 bytes excluding packet header
-+ */
-+#define I2C_PIO_MODE_MAX_LEN			(32)
++What:		/sys/bus/iio/devices/iio:deviceX/cleaning_period
++Date:		January 2019
++KernelVersion:	5.1
++Contact:	linux-iio@vger.kernel.org
++Description:
++		Sensor is capable of triggering self cleaning periodically.
++		Period can be changed by writing a new value here. Upon reading
++		the current one is returned. Units are seconds.
 +
-+/* Packet header size in bytes */
-+#define I2C_PACKET_HEADER_SIZE			(12)
++		Writing 0 disables periodical self cleaning entirely.
 +
- /*
-  * msg_end_type: The bus control which need to be send at end of transfer.
-  * @MSG_END_STOP: Send stop pulse at end of transfer.
-@@ -191,6 +208,19 @@ struct tegra_i2c_hw_feature {
-  * @clk_divisor_non_hs_mode: clock divider for non-high-speed modes
-  * @is_multimaster_mode: track if I2C controller is in multi-master mode
-  * @xfer_lock: lock to serialize transfer submission and processing
-+ * @has_dma: indicated if controller supports dma
-+ * @rx_dma_desc: dma receive descriptor
-+ * @rx_dma_chan: dma receive channel
-+ * @rx_dma_buf: dma receive buffer
-+ * @rx_dma_phys: dma receive handle
-+ * @tx_dma_desc: dma transmit descriptor
-+ * @tx_dma_chan: dma transmit channel
-+ * @tx_dma_buf: dma transmit buffer
-+ * @tx_dma_phys: dma transmit handle
-+ * @dma_buf_size: dma transfer buffer size
-+ * @is_curr_dma_xfer: indicates active dma transfer
-+ * @rx_dma_complete: dma receive completion notifier
-+ * @tx_dma_complete: dma transmit completion notifier
++What:		/sys/bus/iio/devices/iio:deviceX/cleaning_period_available
++Date:		January 2019
++KernelVersion:	5.1
++Contact:	linux-iio@vger.kernel.org
++Description:
++		The range of available values in seconds represented as the
++		minimum value, the step and the maximum value, all enclosed in
++		square brackets.
+diff --git a/drivers/iio/chemical/sps30.c b/drivers/iio/chemical/sps30.c
+index f3b4390c8f5c..376fac41ecb5 100644
+--- a/drivers/iio/chemical/sps30.c
++++ b/drivers/iio/chemical/sps30.c
+@@ -5,9 +5,6 @@
+  * Copyright (c) Tomasz Duszynski <tduszyns@gmail.com>
+  *
+  * I2C slave address: 0x69
+- *
+- * TODO:
+- *  - support for reading/setting auto cleaning interval
   */
- struct tegra_i2c_dev {
- 	struct device *dev;
-@@ -200,6 +230,7 @@ struct tegra_i2c_dev {
- 	struct clk *fast_clk;
- 	struct reset_control *rst;
- 	void __iomem *base;
-+	phys_addr_t phys_addr;
- 	int cont_id;
- 	int irq;
- 	bool irq_disabled;
-@@ -213,6 +244,19 @@ struct tegra_i2c_dev {
- 	u16 clk_divisor_non_hs_mode;
- 	bool is_multimaster_mode;
- 	spinlock_t xfer_lock;
-+	bool has_dma;
-+	struct dma_async_tx_descriptor *rx_dma_desc;
-+	struct dma_chan *rx_dma_chan;
-+	u32 *rx_dma_buf;
-+	dma_addr_t rx_dma_phys;
-+	struct dma_async_tx_descriptor *tx_dma_desc;
-+	struct dma_chan *tx_dma_chan;
-+	u32 *tx_dma_buf;
-+	dma_addr_t tx_dma_phys;
-+	unsigned int dma_buf_size;
-+	bool is_curr_dma_xfer;
-+	struct completion rx_dma_complete;
-+	struct completion tx_dma_complete;
+
+ #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
+@@ -21,6 +18,7 @@
+ #include <linux/iio/sysfs.h>
+ #include <linux/iio/trigger_consumer.h>
+ #include <linux/iio/triggered_buffer.h>
++#include <linux/kernel.h>
+ #include <linux/module.h>
+
+ #define SPS30_CRC8_POLYNOMIAL 0x31
+@@ -28,6 +26,9 @@
+ #define SPS30_MAX_READ_SIZE 48
+ /* sensor measures reliably up to 3000 ug / m3 */
+ #define SPS30_MAX_PM 3000
++/* minimum and maximum self cleaning periods in seconds */
++#define SPS30_AUTO_CLEANING_PERIOD_MIN 0
++#define SPS30_AUTO_CLEANING_PERIOD_MAX 604800
+
+ /* SPS30 commands */
+ #define SPS30_START_MEAS 0x0010
+@@ -37,6 +38,9 @@
+ #define SPS30_READ_DATA 0x0300
+ #define SPS30_READ_SERIAL 0xd033
+ #define SPS30_START_FAN_CLEANING 0x5607
++#define SPS30_AUTO_CLEANING_PERIOD 0x8004
++/* not a sensor command per se, used only to distinguish write from read */
++#define SPS30_READ_AUTO_CLEANING_PERIOD 0x8005
+
+ enum {
+ 	PM1,
+@@ -45,6 +49,11 @@ enum {
+ 	PM10,
  };
- 
- static void dvc_writel(struct tegra_i2c_dev *i2c_dev, u32 val,
-@@ -265,6 +309,110 @@ static void i2c_readsl(struct tegra_i2c_dev *i2c_dev, void *data,
- 	readsl(i2c_dev->base + tegra_i2c_reg_addr(i2c_dev, reg), data, len);
+
++enum {
++	RESET,
++	MEASURING,
++};
++
+ struct sps30_state {
+ 	struct i2c_client *client;
+ 	/*
+@@ -52,6 +61,7 @@ struct sps30_state {
+ 	 * Must be held whenever sequence of commands is to be executed.
+ 	 */
+ 	struct mutex lock;
++	int state;
+ };
+
+ DECLARE_CRC8_TABLE(sps30_crc8_table);
+@@ -107,6 +117,9 @@ static int sps30_do_cmd(struct sps30_state *state, u16 cmd, u8 *data, int size)
+ 	case SPS30_START_FAN_CLEANING:
+ 		ret = sps30_write_then_read(state, buf, 2, NULL, 0);
+ 		break;
++	case SPS30_READ_AUTO_CLEANING_PERIOD:
++		buf[0] = SPS30_AUTO_CLEANING_PERIOD >> 8;
++		buf[1] = (u8)SPS30_AUTO_CLEANING_PERIOD;
+ 	case SPS30_READ_DATA_READY_FLAG:
+ 	case SPS30_READ_DATA:
+ 	case SPS30_READ_SERIAL:
+@@ -114,6 +127,15 @@ static int sps30_do_cmd(struct sps30_state *state, u16 cmd, u8 *data, int size)
+ 		size += size / 2;
+ 		ret = sps30_write_then_read(state, buf, 2, buf, size);
+ 		break;
++	case SPS30_AUTO_CLEANING_PERIOD:
++		buf[2] = data[0];
++		buf[3] = data[1];
++		buf[4] = crc8(sps30_crc8_table, &buf[2], 2, CRC8_INIT_VALUE);
++		buf[5] = data[2];
++		buf[6] = data[3];
++		buf[7] = crc8(sps30_crc8_table, &buf[5], 2, CRC8_INIT_VALUE);
++		ret = sps30_write_then_read(state, buf, 8, NULL, 0);
++		break;
+ 	}
+
+ 	if (ret)
+@@ -170,6 +192,14 @@ static int sps30_do_meas(struct sps30_state *state, s32 *data, int size)
+ 	int i, ret, tries = 5;
+ 	u8 tmp[16];
+
++	if (state->state == RESET) {
++		ret = sps30_do_cmd(state, SPS30_START_MEAS, NULL, 0);
++		if (ret)
++			return ret;
++
++		state->state = MEASURING;
++	}
++
+ 	while (tries--) {
+ 		ret = sps30_do_cmd(state, SPS30_READ_DATA_READY_FLAG, tmp, 2);
+ 		if (ret)
+@@ -276,6 +306,24 @@ static int sps30_read_raw(struct iio_dev *indio_dev,
+ 	return -EINVAL;
  }
- 
-+static void tegra_i2c_dma_complete(void *args)
+
++static int sps30_do_cmd_reset(struct sps30_state *state)
 +{
-+	struct completion *dma_complete = args;
-+
-+	complete(dma_complete);
-+}
-+
-+static int tegra_i2c_start_tx_dma(struct tegra_i2c_dev *i2c_dev, int len)
-+{
-+	reinit_completion(&i2c_dev->tx_dma_complete);
-+	dev_dbg(i2c_dev->dev, "Starting tx dma for len:%d\n", len);
-+	i2c_dev->tx_dma_desc = dmaengine_prep_slave_single(i2c_dev->tx_dma_chan,
-+				i2c_dev->tx_dma_phys, len, DMA_MEM_TO_DEV,
-+				DMA_PREP_INTERRUPT |  DMA_CTRL_ACK);
-+	if (!i2c_dev->tx_dma_desc) {
-+		dev_err(i2c_dev->dev, "Not able to get desc for Tx\n");
-+		return -EIO;
-+	}
-+
-+	i2c_dev->tx_dma_desc->callback = tegra_i2c_dma_complete;
-+	i2c_dev->tx_dma_desc->callback_param = &i2c_dev->tx_dma_complete;
-+
-+	dmaengine_submit(i2c_dev->tx_dma_desc);
-+	dma_async_issue_pending(i2c_dev->tx_dma_chan);
-+	return 0;
-+}
-+
-+static int tegra_i2c_start_rx_dma(struct tegra_i2c_dev *i2c_dev, int len)
-+{
-+	reinit_completion(&i2c_dev->rx_dma_complete);
-+	dev_dbg(i2c_dev->dev, "Starting rx dma for len:%d\n", len);
-+	i2c_dev->rx_dma_desc = dmaengine_prep_slave_single(i2c_dev->rx_dma_chan,
-+				i2c_dev->rx_dma_phys, len, DMA_DEV_TO_MEM,
-+				DMA_PREP_INTERRUPT |  DMA_CTRL_ACK);
-+	if (!i2c_dev->rx_dma_desc) {
-+		dev_err(i2c_dev->dev, "Not able to get desc for Rx\n");
-+		return -EIO;
-+	}
-+
-+	i2c_dev->rx_dma_desc->callback = tegra_i2c_dma_complete;
-+	i2c_dev->rx_dma_desc->callback_param = &i2c_dev->rx_dma_complete;
-+
-+	dmaengine_submit(i2c_dev->rx_dma_desc);
-+	dma_async_issue_pending(i2c_dev->rx_dma_chan);
-+	return 0;
-+}
-+
-+static int tegra_i2c_init_dma_param(struct tegra_i2c_dev *i2c_dev,
-+							bool dma_to_memory)
-+{
-+	struct dma_chan *dma_chan;
-+	u32 *dma_buf;
-+	dma_addr_t dma_phys;
 +	int ret;
-+	struct dma_slave_config dma_sconfig;
 +
-+	dma_chan = dma_request_slave_channel_reason(i2c_dev->dev,
-+						dma_to_memory ? "rx" : "tx");
-+	if (IS_ERR(dma_chan)) {
-+		ret = PTR_ERR(dma_chan);
-+		if (ret != -EPROBE_DEFER)
-+			dev_err(i2c_dev->dev,
-+				"Dma channel is not available: %d\n", ret);
-+		return ret;
-+	}
-+	dma_buf = dma_alloc_coherent(i2c_dev->dev, i2c_dev->dma_buf_size,
-+			&dma_phys, GFP_KERNEL);
-+	if (!dma_buf) {
-+		dev_err(i2c_dev->dev, "Not able to allocate the dma buffer\n");
-+		dma_release_channel(dma_chan);
-+		return -ENOMEM;
-+	}
++	ret = sps30_do_cmd(state, SPS30_RESET, NULL, 0);
++	msleep(300);
++	/*
++	 * Power-on-reset causes sensor to produce some glitch on i2c bus and
++	 * some controllers end up in error state. Recover simply by placing
++	 * some data on the bus, for example STOP_MEAS command, which
++	 * is NOP in this case.
++	 */
++	sps30_do_cmd(state, SPS30_STOP_MEAS, NULL, 0);
++	state->state = RESET;
 +
-+	if (dma_to_memory) {
-+		dma_sconfig.src_addr = i2c_dev->phys_addr + I2C_RX_FIFO;
-+		dma_sconfig.src_addr_width = DMA_SLAVE_BUSWIDTH_4_BYTES;
-+		dma_sconfig.src_maxburst = 0;
-+	} else {
-+		dma_sconfig.dst_addr = i2c_dev->phys_addr + I2C_TX_FIFO;
-+		dma_sconfig.dst_addr_width = DMA_SLAVE_BUSWIDTH_4_BYTES;
-+		dma_sconfig.dst_maxburst = 0;
-+	}
-+
-+	ret = dmaengine_slave_config(dma_chan, &dma_sconfig);
-+	if (ret)
-+		goto scrub;
-+	if (dma_to_memory) {
-+		i2c_dev->rx_dma_chan = dma_chan;
-+		i2c_dev->rx_dma_buf = dma_buf;
-+		i2c_dev->rx_dma_phys = dma_phys;
-+	} else {
-+		i2c_dev->tx_dma_chan = dma_chan;
-+		i2c_dev->tx_dma_buf = dma_buf;
-+		i2c_dev->tx_dma_phys = dma_phys;
-+	}
-+	return 0;
-+
-+scrub:
-+	dma_free_coherent(i2c_dev->dev, i2c_dev->dma_buf_size,
-+							dma_buf, dma_phys);
-+	dma_release_channel(dma_chan);
 +	return ret;
 +}
 +
- static void tegra_i2c_mask_irq(struct tegra_i2c_dev *i2c_dev, u32 mask)
- {
- 	u32 int_mask;
-@@ -527,6 +675,7 @@ static int tegra_i2c_init(struct tegra_i2c_dev *i2c_dev)
- 		return err;
- 	}
- 
-+	i2c_dev->is_curr_dma_xfer = false;
- 	reset_control_assert(i2c_dev->rst);
- 	udelay(2);
- 	reset_control_deassert(i2c_dev->rst);
-@@ -640,14 +789,16 @@ static irqreturn_t tegra_i2c_isr(int irq, void *dev_id)
- 		goto err;
- 	}
- 
--	if (i2c_dev->msg_read && (status & I2C_INT_RX_FIFO_DATA_REQ)) {
-+	if (i2c_dev->msg_read && (status & I2C_INT_RX_FIFO_DATA_REQ) &&
-+						!i2c_dev->is_curr_dma_xfer) {
- 		if (i2c_dev->msg_buf_remaining)
- 			tegra_i2c_empty_rx_fifo(i2c_dev);
- 		else
- 			BUG();
- 	}
- 
--	if (!i2c_dev->msg_read && (status & I2C_INT_TX_FIFO_DATA_REQ)) {
-+	if (!i2c_dev->msg_read && (status & I2C_INT_TX_FIFO_DATA_REQ) &&
-+						!i2c_dev->is_curr_dma_xfer) {
- 		if (i2c_dev->msg_buf_remaining)
- 			tegra_i2c_fill_tx_fifo(i2c_dev);
- 		else
-@@ -658,7 +809,16 @@ static irqreturn_t tegra_i2c_isr(int irq, void *dev_id)
- 	if (i2c_dev->is_dvc)
- 		dvc_writel(i2c_dev, DVC_STATUS_I2C_DONE_INTR, DVC_STATUS);
- 
--	if (status & I2C_INT_PACKET_XFER_COMPLETE) {
-+	if (status & I2C_INT_ALL_PACKETS_XFER_COMPLETE) {
-+		if (i2c_dev->is_curr_dma_xfer)
-+			i2c_dev->msg_buf_remaining = 0;
-+		status |= I2C_INT_PACKET_XFER_COMPLETE;
-+		i2c_writel(i2c_dev, status, I2C_INT_STATUS);
-+		if (!i2c_dev->msg_buf_remaining)
-+			complete(&i2c_dev->msg_complete);
-+	} else if (status & I2C_INT_PACKET_XFER_COMPLETE) {
-+		if (i2c_dev->is_curr_dma_xfer)
-+			i2c_dev->msg_buf_remaining = 0;
- 		BUG_ON(i2c_dev->msg_buf_remaining);
- 		complete(&i2c_dev->msg_complete);
- 	}
-@@ -667,90 +827,318 @@ static irqreturn_t tegra_i2c_isr(int irq, void *dev_id)
- 	/* An error occurred, mask all interrupts */
- 	tegra_i2c_mask_irq(i2c_dev, I2C_INT_NO_ACK | I2C_INT_ARBITRATION_LOST |
- 		I2C_INT_PACKET_XFER_COMPLETE | I2C_INT_TX_FIFO_DATA_REQ |
--		I2C_INT_RX_FIFO_DATA_REQ);
-+		I2C_INT_RX_FIFO_DATA_REQ | I2C_INT_ALL_PACKETS_XFER_COMPLETE);
- 	i2c_writel(i2c_dev, status, I2C_INT_STATUS);
- 	if (i2c_dev->is_dvc)
- 		dvc_writel(i2c_dev, DVC_STATUS_I2C_DONE_INTR, DVC_STATUS);
- 
-+	if (i2c_dev->is_curr_dma_xfer) {
-+		if (i2c_dev->msg_read) {
-+			dmaengine_terminate_all(i2c_dev->rx_dma_chan);
-+			complete(&i2c_dev->rx_dma_complete);
-+		} else {
-+			dmaengine_terminate_all(i2c_dev->tx_dma_chan);
-+			complete(&i2c_dev->tx_dma_complete);
-+		}
-+	}
-+
- 	complete(&i2c_dev->msg_complete);
- done:
- 	spin_unlock(&i2c_dev->xfer_lock);
- 	return IRQ_HANDLED;
+ static ssize_t start_cleaning_store(struct device *dev,
+ 				    struct device_attribute *attr,
+ 				    const char *buf, size_t len)
+@@ -296,10 +344,82 @@ static ssize_t start_cleaning_store(struct device *dev,
+ 	return len;
  }
- 
-+static void tegra_i2c_config_fifo_trig(struct tegra_i2c_dev *i2c_dev,
-+		int len, int direction)
+
++static ssize_t cleaning_period_show(struct device *dev,
++				      struct device_attribute *attr,
++				      char *buf)
 +{
-+	u32 val, reg;
-+	u8 tx_burst = 0, rx_burst = 0;
-+	struct dma_slave_config tx_dma_sconfig, rx_dma_sconfig;
++	struct iio_dev *indio_dev = dev_to_iio_dev(dev);
++	struct sps30_state *state = iio_priv(indio_dev);
++	u8 tmp[4];
++	int ret;
 +
-+	if (i2c_dev->hw->has_mst_fifo)
-+		reg = I2C_MST_FIFO_CONTROL;
-+	else
-+		reg = I2C_FIFO_CONTROL;
-+	val = i2c_readl(i2c_dev, reg);
-+
-+	if (direction == DATA_DMA_DIR_TX) {
-+		if (len & 0xF)
-+			tx_burst = 1;
-+		else if (((len) >> 4) & 0x1)
-+			tx_burst = 4;
-+		else
-+			tx_burst = 8;
-+		if (i2c_dev->hw->has_mst_fifo)
-+			val |= I2C_MST_FIFO_CONTROL_TX_TRIG(tx_burst);
-+		else
-+			val |= I2C_FIFO_CONTROL_TX_TRIG(tx_burst);
-+	}
-+	if (direction == DATA_DMA_DIR_RX) {
-+		if (len & 0xF)
-+			rx_burst = 1;
-+		else if (((len) >> 4) & 0x1)
-+			rx_burst = 4;
-+		else
-+			rx_burst = 8;
-+		if (i2c_dev->hw->has_mst_fifo)
-+			val |= I2C_MST_FIFO_CONTROL_RX_TRIG(rx_burst);
-+		else
-+			val |= I2C_FIFO_CONTROL_RX_TRIG(rx_burst);
-+	}
-+	i2c_writel(i2c_dev, val, reg);
-+
-+	if (direction == DATA_DMA_DIR_TX) {
-+		tx_dma_sconfig.dst_addr = i2c_dev->phys_addr + I2C_TX_FIFO;
-+		tx_dma_sconfig.dst_addr_width = DMA_SLAVE_BUSWIDTH_4_BYTES;
-+		tx_dma_sconfig.dst_maxburst = tx_burst;
-+		dmaengine_slave_config(i2c_dev->tx_dma_chan, &tx_dma_sconfig);
-+	}
-+	if (direction == DATA_DMA_DIR_RX) {
-+		rx_dma_sconfig.src_addr = i2c_dev->phys_addr + I2C_RX_FIFO;
-+		rx_dma_sconfig.src_addr_width = DMA_SLAVE_BUSWIDTH_4_BYTES;
-+		rx_dma_sconfig.src_maxburst = rx_burst;
-+		dmaengine_slave_config(i2c_dev->rx_dma_chan, &rx_dma_sconfig);
-+	}
-+}
-+
-+static int tegra_i2c_start_dma_xfer(struct tegra_i2c_dev *i2c_dev)
-+{
-+	u32 *buffer = (u32 *)i2c_dev->msg_buf;
-+	unsigned long time_left, flags;
-+	int ret = 0;
-+	u32 int_mask;
-+	u32 tx_len = 0;
-+	u32 rx_len = 0;
-+
-+	if (i2c_dev->msg_read) {
-+		tx_len = I2C_PACKET_HEADER_SIZE;
-+		rx_len = ALIGN(i2c_dev->msg_buf_remaining,
-+							BYTES_PER_FIFO_WORD);
-+	} else {
-+		tx_len = ALIGN(i2c_dev->msg_buf_remaining,
-+				BYTES_PER_FIFO_WORD) + I2C_PACKET_HEADER_SIZE;
-+		rx_len = 0;
-+	}
-+
-+	spin_lock_irqsave(&i2c_dev->xfer_lock, flags);
-+	int_mask = I2C_INT_NO_ACK | I2C_INT_ARBITRATION_LOST;
-+	tegra_i2c_unmask_irq(i2c_dev, int_mask);
-+
-+	if (i2c_dev->msg_read) {
-+		/* make the dma buffer to read by dma */
-+		dma_sync_single_for_device(i2c_dev->dev, i2c_dev->rx_dma_phys,
-+					i2c_dev->dma_buf_size, DMA_TO_DEVICE);
-+		tegra_i2c_config_fifo_trig(i2c_dev, rx_len, DATA_DMA_DIR_RX);
-+		ret = tegra_i2c_start_rx_dma(i2c_dev, rx_len);
-+		if (ret < 0) {
-+			dev_err(i2c_dev->dev,
-+				"Starting rx dma failed, err %d\n", ret);
-+			goto exit;
-+		}
-+		i2c_writel(i2c_dev, *(buffer++), I2C_TX_FIFO);
-+		i2c_writel(i2c_dev, *(buffer++), I2C_TX_FIFO);
-+		i2c_writel(i2c_dev, *(buffer++), I2C_TX_FIFO);
-+	} else {
-+		/* Make the dma buffer to read by cpu */
-+		dma_sync_single_for_cpu(i2c_dev->dev, i2c_dev->tx_dma_phys,
-+				i2c_dev->dma_buf_size, DMA_TO_DEVICE);
-+		memcpy(i2c_dev->tx_dma_buf, buffer, tx_len);
-+		/* make the dma buffer to read by dma */
-+		dma_sync_single_for_device(i2c_dev->dev, i2c_dev->tx_dma_phys,
-+				i2c_dev->dma_buf_size, DMA_TO_DEVICE);
-+
-+		tegra_i2c_config_fifo_trig(i2c_dev, tx_len, DATA_DMA_DIR_TX);
-+		ret = tegra_i2c_start_tx_dma(i2c_dev, tx_len);
-+		if (ret < 0) {
-+			dev_err(i2c_dev->dev,
-+				"Starting tx dma failed, err %d\n", ret);
-+			goto exit;
-+		}
-+	}
-+
-+	if (i2c_dev->hw->has_per_pkt_xfer_complete_irq)
-+		int_mask |= I2C_INT_PACKET_XFER_COMPLETE;
-+	int_mask |= I2C_INT_ALL_PACKETS_XFER_COMPLETE;
-+	tegra_i2c_unmask_irq(i2c_dev, int_mask);
-+
-+exit:
-+	spin_unlock_irqrestore(&i2c_dev->xfer_lock, flags);
++	mutex_lock(&state->lock);
++	ret = sps30_do_cmd(state, SPS30_READ_AUTO_CLEANING_PERIOD, tmp, 4);
++	mutex_unlock(&state->lock);
 +	if (ret)
 +		return ret;
 +
-+	dev_dbg(i2c_dev->dev, "unmasked irq: %02x\n",
-+		i2c_readl(i2c_dev, I2C_INT_MASK));
-+
-+	if (!i2c_dev->msg_read) {
-+		time_left = wait_for_completion_timeout(
-+					&i2c_dev->tx_dma_complete,
-+					TEGRA_I2C_TIMEOUT);
-+		if (time_left == 0) {
-+			dev_err(i2c_dev->dev,
-+					"tx dma timeout txlen:%d rxlen:%d\n",
-+					tx_len, rx_len);
-+			dmaengine_terminate_all(i2c_dev->tx_dma_chan);
-+			return -ETIMEDOUT;
-+		}
-+	} else {
-+		time_left = wait_for_completion_timeout(
-+					&i2c_dev->rx_dma_complete,
-+					TEGRA_I2C_TIMEOUT);
-+		if (time_left == 0) {
-+			dev_err(i2c_dev->dev,
-+					"rx dma timeout txlen:%d rxlen:%d\n",
-+					tx_len, rx_len);
-+			dmaengine_terminate_all(i2c_dev->rx_dma_chan);
-+			return -ETIMEDOUT;
-+		}
-+		if (likely(i2c_dev->msg_err == I2C_ERR_NONE)) {
-+			dma_sync_single_for_cpu(i2c_dev->dev,
-+						i2c_dev->rx_dma_phys,
-+						i2c_dev->dma_buf_size,
-+						DMA_FROM_DEVICE);
-+			memcpy(i2c_dev->msg_buf, i2c_dev->rx_dma_buf, rx_len);
-+			dma_sync_single_for_device(i2c_dev->dev,
-+						i2c_dev->rx_dma_phys,
-+						i2c_dev->dma_buf_size,
-+						DMA_FROM_DEVICE);
-+		}
-+	}
-+	return 0;
++	return sprintf(buf, "%d\n", get_unaligned_be32(tmp));
 +}
 +
-+static int tegra_i2c_start_pio_xfer(struct tegra_i2c_dev *i2c_dev)
++static ssize_t cleaning_period_store(struct device *dev,
++				       struct device_attribute *attr,
++				       const char *buf, size_t len)
 +{
-+	u32 *buffer = (u32 *)i2c_dev->msg_buf;
-+	unsigned long flags;
-+	int ret = 0;
-+	u32 int_mask;
++	struct iio_dev *indio_dev = dev_to_iio_dev(dev);
++	struct sps30_state *state = iio_priv(indio_dev);
++	int val, ret;
++	u8 tmp[4];
 +
-+	spin_lock_irqsave(&i2c_dev->xfer_lock, flags);
-+	int_mask = I2C_INT_NO_ACK | I2C_INT_ARBITRATION_LOST;
-+	tegra_i2c_unmask_irq(i2c_dev, int_mask);
++	if (kstrtoint(buf, 0, &val))
++		return -EINVAL;
 +
-+	i2c_writel(i2c_dev, *(buffer++), I2C_TX_FIFO);
-+	i2c_writel(i2c_dev, *(buffer++), I2C_TX_FIFO);
-+	i2c_writel(i2c_dev, *(buffer++), I2C_TX_FIFO);
++	if ((val < SPS30_AUTO_CLEANING_PERIOD_MIN) ||
++	    (val > SPS30_AUTO_CLEANING_PERIOD_MAX))
++		return -EINVAL;
 +
-+	i2c_dev->msg_buf = (u8 *) buffer;
++	put_unaligned_be32(val, tmp);
 +
-+	if (!i2c_dev->msg_read)
-+		tegra_i2c_fill_tx_fifo(i2c_dev);
++	mutex_lock(&state->lock);
++	ret = sps30_do_cmd(state, SPS30_AUTO_CLEANING_PERIOD, tmp, 0);
++	if (ret) {
++		mutex_unlock(&state->lock);
++		return ret;
++	}
 +
-+	if (i2c_dev->hw->has_per_pkt_xfer_complete_irq)
-+		int_mask |= I2C_INT_PACKET_XFER_COMPLETE;
-+	if (i2c_dev->msg_read)
-+		int_mask |= I2C_INT_RX_FIFO_DATA_REQ;
-+	else if (i2c_dev->msg_buf_remaining)
-+		int_mask |= I2C_INT_TX_FIFO_DATA_REQ;
++	msleep(20);
 +
-+	tegra_i2c_unmask_irq(i2c_dev, int_mask);
-+	spin_unlock_irqrestore(&i2c_dev->xfer_lock, flags);
-+	dev_dbg(i2c_dev->dev, "unmasked irq: %02x\n",
-+		i2c_readl(i2c_dev, I2C_INT_MASK));
++	/*
++	 * sensor requires reset in order to return up to date self cleaning
++	 * period
++	 */
++	ret = sps30_do_cmd_reset(state);
++	if (ret)
++		dev_warn(dev,
++			 "period changed but reads will return the old value\n");
 +
-+	return 0;
++	mutex_unlock(&state->lock);
++
++	return len;
 +}
 +
- static int tegra_i2c_xfer_msg(struct tegra_i2c_dev *i2c_dev,
- 	struct i2c_msg *msg, enum msg_end_type end_state)
- {
--	u32 packet_header;
-+	u32 val = 0;
-+	u32 *buffer;
- 	u32 int_mask;
- 	unsigned long time_left;
- 	unsigned long flags;
-+	int ret = 0;
-+	u32 xfer_size = 0;
-+	bool dma = false;
- 
- 	tegra_i2c_flush_fifos(i2c_dev);
- 
--	i2c_dev->msg_buf = msg->buf;
-+	if (msg->flags & I2C_M_RD)
-+		xfer_size = msg->len;
-+	else
-+		xfer_size = ALIGN(msg->len, BYTES_PER_FIFO_WORD) +
-+							I2C_PACKET_HEADER_SIZE;
-+	dma = ((xfer_size > I2C_PIO_MODE_MAX_LEN) &&
-+				i2c_dev->tx_dma_chan && i2c_dev->rx_dma_chan);
-+	i2c_dev->is_curr_dma_xfer = dma;
- 	i2c_dev->msg_buf_remaining = msg->len;
- 	i2c_dev->msg_err = I2C_ERR_NONE;
- 	i2c_dev->msg_read = (msg->flags & I2C_M_RD);
- 	reinit_completion(&i2c_dev->msg_complete);
- 
--	spin_lock_irqsave(&i2c_dev->xfer_lock, flags);
--
--	int_mask = I2C_INT_NO_ACK | I2C_INT_ARBITRATION_LOST;
--	tegra_i2c_unmask_irq(i2c_dev, int_mask);
-+	buffer = kmalloc(ALIGN(msg->len, BYTES_PER_FIFO_WORD) +
-+					I2C_PACKET_HEADER_SIZE, GFP_KERNEL);
-+	i2c_dev->msg_buf = (u8 *)buffer;
- 
--	packet_header = (0 << PACKET_HEADER0_HEADER_SIZE_SHIFT) |
-+	*(buffer++) = (0 << PACKET_HEADER0_HEADER_SIZE_SHIFT) |
- 			PACKET_HEADER0_PROTOCOL_I2C |
- 			(i2c_dev->cont_id << PACKET_HEADER0_CONT_ID_SHIFT) |
- 			(1 << PACKET_HEADER0_PACKET_ID_SHIFT);
--	i2c_writel(i2c_dev, packet_header, I2C_TX_FIFO);
- 
--	packet_header = msg->len - 1;
--	i2c_writel(i2c_dev, packet_header, I2C_TX_FIFO);
-+	*(buffer++) = msg->len - 1;
- 
--	packet_header = I2C_HEADER_IE_ENABLE;
-+	val = I2C_HEADER_IE_ENABLE;
- 	if (end_state == MSG_END_CONTINUE)
--		packet_header |= I2C_HEADER_CONTINUE_XFER;
-+		val |= I2C_HEADER_CONTINUE_XFER;
- 	else if (end_state == MSG_END_REPEAT_START)
--		packet_header |= I2C_HEADER_REPEAT_START;
-+		val |= I2C_HEADER_REPEAT_START;
- 	if (msg->flags & I2C_M_TEN) {
--		packet_header |= msg->addr;
--		packet_header |= I2C_HEADER_10BIT_ADDR;
-+		val |= msg->addr;
-+		val |= I2C_HEADER_10BIT_ADDR;
- 	} else {
--		packet_header |= msg->addr << I2C_HEADER_SLAVE_ADDR_SHIFT;
-+		val |= msg->addr << I2C_HEADER_SLAVE_ADDR_SHIFT;
- 	}
- 	if (msg->flags & I2C_M_IGNORE_NAK)
--		packet_header |= I2C_HEADER_CONT_ON_NAK;
-+		val |= I2C_HEADER_CONT_ON_NAK;
- 	if (msg->flags & I2C_M_RD)
--		packet_header |= I2C_HEADER_READ;
--	i2c_writel(i2c_dev, packet_header, I2C_TX_FIFO);
-+		val |= I2C_HEADER_READ;
-+	*(buffer++) = val;
- 
--	if (!(msg->flags & I2C_M_RD))
--		tegra_i2c_fill_tx_fifo(i2c_dev);
-+	if (!i2c_dev->msg_read)
-+		memcpy(buffer, msg->buf, msg->len);
- 
--	if (i2c_dev->hw->has_per_pkt_xfer_complete_irq)
--		int_mask |= I2C_INT_PACKET_XFER_COMPLETE;
--	if (msg->flags & I2C_M_RD)
--		int_mask |= I2C_INT_RX_FIFO_DATA_REQ;
--	else if (i2c_dev->msg_buf_remaining)
--		int_mask |= I2C_INT_TX_FIFO_DATA_REQ;
-+	if (dma)
-+		ret = tegra_i2c_start_dma_xfer(i2c_dev);
-+	else
-+		ret = tegra_i2c_start_pio_xfer(i2c_dev);
- 
--	tegra_i2c_unmask_irq(i2c_dev, int_mask);
--	spin_unlock_irqrestore(&i2c_dev->xfer_lock, flags);
--	dev_dbg(i2c_dev->dev, "unmasked irq: %02x\n",
--		i2c_readl(i2c_dev, I2C_INT_MASK));
-+	if (ret == -EIO)
-+		return ret;
-+	else if (ret == -ETIMEDOUT)
-+		goto end_xfer;
- 
- 	time_left = wait_for_completion_timeout(&i2c_dev->msg_complete,
- 						TEGRA_I2C_TIMEOUT);
--	tegra_i2c_mask_irq(i2c_dev, int_mask);
--
- 	if (time_left == 0) {
- 		dev_err(i2c_dev->dev, "i2c transfer timed out\n");
--
-+		if (i2c_dev->is_curr_dma_xfer) {
-+			if (i2c_dev->msg_read) {
-+				dmaengine_terminate_all(i2c_dev->rx_dma_chan);
-+				complete(&i2c_dev->rx_dma_complete);
-+			} else {
-+				dmaengine_terminate_all(i2c_dev->tx_dma_chan);
-+				complete(&i2c_dev->tx_dma_complete);
-+			}
-+		}
- 		tegra_i2c_init(i2c_dev);
- 		return -ETIMEDOUT;
- 	}
-+	if (i2c_dev->msg_read) {
-+		if (!dma)
-+			i2c_dev->msg_buf = (u8 *)buffer;
-+		memcpy(msg->buf, i2c_dev->msg_buf, msg->len);
-+	}
- 
-+end_xfer:
-+	int_mask = i2c_readl(i2c_dev, I2C_INT_MASK);
-+	tegra_i2c_mask_irq(i2c_dev, int_mask);
-+	if (i2c_dev->is_curr_dma_xfer && (ret < 0)) {
-+		dev_err(i2c_dev->dev, "i2c dma transfer timed out\n");
-+		tegra_i2c_init(i2c_dev);
-+		return -ETIMEDOUT;
-+	}
- 	dev_dbg(i2c_dev->dev, "transfer complete: %lu %d %d\n",
- 		time_left, completion_done(&i2c_dev->msg_complete),
- 		i2c_dev->msg_err);
-@@ -781,6 +1169,19 @@ static int tegra_i2c_xfer(struct i2c_adapter *adap, struct i2c_msg msgs[],
++static ssize_t cleaning_period_available_show(struct device *dev,
++					      struct device_attribute *attr,
++					      char *buf)
++{
++	return snprintf(buf, PAGE_SIZE, "[%d %d %d]\n",
++			SPS30_AUTO_CLEANING_PERIOD_MIN, 1,
++			SPS30_AUTO_CLEANING_PERIOD_MAX);
++}
++
+ static IIO_DEVICE_ATTR_WO(start_cleaning, 0);
++static IIO_DEVICE_ATTR_RW(cleaning_period, 0);
++static IIO_DEVICE_ATTR_RO(cleaning_period_available, 0);
+
+ static struct attribute *sps30_attrs[] = {
+ 	&iio_dev_attr_start_cleaning.dev_attr.attr,
++	&iio_dev_attr_cleaning_period.dev_attr.attr,
++	&iio_dev_attr_cleaning_period_available.dev_attr.attr,
+ 	NULL
+ };
+
+@@ -362,6 +482,7 @@ static int sps30_probe(struct i2c_client *client)
+ 	state = iio_priv(indio_dev);
+ 	i2c_set_clientdata(client, indio_dev);
+ 	state->client = client;
++	state->state = RESET;
+ 	indio_dev->dev.parent = &client->dev;
+ 	indio_dev->info = &sps30_info;
+ 	indio_dev->name = client->name;
+@@ -373,19 +494,11 @@ static int sps30_probe(struct i2c_client *client)
+ 	mutex_init(&state->lock);
+ 	crc8_populate_msb(sps30_crc8_table, SPS30_CRC8_POLYNOMIAL);
+
+-	ret = sps30_do_cmd(state, SPS30_RESET, NULL, 0);
++	ret = sps30_do_cmd_reset(state);
+ 	if (ret) {
+ 		dev_err(&client->dev, "failed to reset device\n");
  		return ret;
  	}
- 
-+	if (i2c_dev->has_dma) {
-+		if (!i2c_dev->rx_dma_chan) {
-+			ret = tegra_i2c_init_dma_param(i2c_dev, true);
-+			if (ret && (ret != -EPROBE_DEFER) && (ret != -ENODEV))
-+				return ret;
-+		}
-+		if (!i2c_dev->tx_dma_chan) {
-+			ret = tegra_i2c_init_dma_param(i2c_dev, false);
-+			if (ret && (ret != -EPROBE_DEFER) && (ret != -ENODEV))
-+				return ret;
-+		}
-+	}
-+
- 	for (i = 0; i < num; i++) {
- 		enum msg_end_type end_type = MSG_END_STOP;
- 
-@@ -823,6 +1224,8 @@ static void tegra_i2c_parse_dt(struct tegra_i2c_dev *i2c_dev)
- 
- 	i2c_dev->is_multimaster_mode = of_property_read_bool(np,
- 			"multi-master");
-+
-+	i2c_dev->has_dma = of_property_read_bool(np, "dmas");
- }
- 
- static const struct i2c_algorithm tegra_i2c_algo = {
-@@ -935,11 +1338,13 @@ static int tegra_i2c_probe(struct platform_device *pdev)
- 	struct clk *div_clk;
- 	struct clk *fast_clk;
- 	void __iomem *base;
-+	phys_addr_t phys_addr;
- 	int irq;
- 	int ret = 0;
- 	int clk_multiplier = I2C_CLK_MULTIPLIER_STD_FAST_MODE;
- 
- 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-+	phys_addr = res->start;
- 	base = devm_ioremap_resource(&pdev->dev, res);
- 	if (IS_ERR(base))
- 		return PTR_ERR(base);
-@@ -962,12 +1367,14 @@ static int tegra_i2c_probe(struct platform_device *pdev)
- 		return -ENOMEM;
- 
- 	i2c_dev->base = base;
-+	i2c_dev->phys_addr = phys_addr;
- 	i2c_dev->div_clk = div_clk;
- 	i2c_dev->adapter.algo = &tegra_i2c_algo;
- 	i2c_dev->adapter.quirks = &tegra_i2c_quirks;
- 	i2c_dev->irq = irq;
- 	i2c_dev->cont_id = pdev->id;
- 	i2c_dev->dev = &pdev->dev;
-+	i2c_dev->dma_buf_size = i2c_dev->adapter.quirks->max_write_len;
- 
- 	i2c_dev->rst = devm_reset_control_get_exclusive(&pdev->dev, "i2c");
- 	if (IS_ERR(i2c_dev->rst)) {
-@@ -982,6 +1389,8 @@ static int tegra_i2c_probe(struct platform_device *pdev)
- 						  "nvidia,tegra20-i2c-dvc");
- 	init_completion(&i2c_dev->msg_complete);
- 	spin_lock_init(&i2c_dev->xfer_lock);
-+	init_completion(&i2c_dev->tx_dma_complete);
-+	init_completion(&i2c_dev->rx_dma_complete);
- 
- 	if (!i2c_dev->hw->has_single_clk_source) {
- 		fast_clk = devm_clk_get(&pdev->dev, "fast-clk");
-@@ -1041,6 +1450,15 @@ static int tegra_i2c_probe(struct platform_device *pdev)
- 		}
- 	}
- 
-+	if (i2c_dev->has_dma) {
-+		ret = tegra_i2c_init_dma_param(i2c_dev, true);
-+		if (ret && (ret != -EPROBE_DEFER) && (ret != -ENODEV))
-+			goto disable_div_clk;
-+		ret = tegra_i2c_init_dma_param(i2c_dev, false);
-+		if (ret && (ret != -EPROBE_DEFER) && (ret != -ENODEV))
-+			goto disable_div_clk;
-+	}
-+
- 	ret = tegra_i2c_init(i2c_dev);
+-	msleep(300);
+-	/*
+-	 * Power-on-reset causes sensor to produce some glitch on i2c bus and
+-	 * some controllers end up in error state. Recover simply by placing
+-	 * some data on the bus, for example STOP_MEAS command, which
+-	 * is NOP in this case.
+-	 */
+-	sps30_do_cmd(state, SPS30_STOP_MEAS, NULL, 0);
+
+ 	ret = sps30_do_cmd(state, SPS30_READ_SERIAL, buf, sizeof(buf));
  	if (ret) {
- 		dev_err(&pdev->dev, "Failed to initialize i2c controller\n");
--- 
-2.7.4
+@@ -395,12 +508,6 @@ static int sps30_probe(struct i2c_client *client)
+ 	/* returned serial number is already NUL terminated */
+ 	dev_info(&client->dev, "serial number: %s\n", buf);
+
+-	ret = sps30_do_cmd(state, SPS30_START_MEAS, NULL, 0);
+-	if (ret) {
+-		dev_err(&client->dev, "failed to start measurement\n");
+-		return ret;
+-	}
+-
+ 	ret = devm_add_action_or_reset(&client->dev, sps30_stop_meas, state);
+ 	if (ret)
+ 		return ret;
+--
+2.20.1
 
