@@ -4,54 +4,55 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F125C43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 16:52:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 75DE8C43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 16:52:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F287620645
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 16:52:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3ACF520651
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 16:52:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547571143;
-	bh=K4cOjncYTKTtvOD3R1e2IyucTZmJQSqeDvj1+JzQ0Yc=;
+	s=default; t=1547571145;
+	bh=dU/0bNoLFCl/Pm3nYZfbgbWFS7t9nBYleLry7RwL7Lc=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=BqOqBWyn+zKLPqtIXOn2iDkO9WNEPhtjKTfvE7rOGuW4qajgnj3BM+SAQy4nMGcQp
-	 62+a8aoVO9lNB92jrfuhI2mihu34fPm4dbNCjsa6V55l0mVJbHW8h4Sn7Qu2H7KBdB
-	 0Dkd89faQlaQvKGjYzF8sADoIEggkZC4f8hW8mfQ=
+	b=scLPsTZShiBq8SrYxsOdXEipypOfsUytvaBlOCmLivOC2Q4J9h6QhvQ8b3X7sKcbK
+	 Be2TaJFi6QtpAyAUg4DGCNQYAo9i9rvEls3Aln+Mqg7BaN6G5CVBcJbKCqWuedo5QZ
+	 XWCrmHXOEBAFquwGV9R4weRY9I0sYPqEmfsrWAk0=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387575AbfAOQof (ORCPT
+        id S2387562AbfAOQoe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 15 Jan 2019 11:44:35 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34130 "EHLO mail.kernel.org"
+        Tue, 15 Jan 2019 11:44:34 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34066 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387554AbfAOQob (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Jan 2019 11:44:31 -0500
+        id S2387534AbfAOQo3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 Jan 2019 11:44:29 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AF1CF2054F;
-        Tue, 15 Jan 2019 16:44:30 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 14F5F20657;
+        Tue, 15 Jan 2019 16:44:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547570671;
-        bh=K4cOjncYTKTtvOD3R1e2IyucTZmJQSqeDvj1+JzQ0Yc=;
+        s=default; t=1547570668;
+        bh=dU/0bNoLFCl/Pm3nYZfbgbWFS7t9nBYleLry7RwL7Lc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=FQeKMflkIJwMzAJ94A8t1Tt1xidSHN0NovkGYlmULRkM8HA/I2FAAzP4XKchSqxNn
-         bw/lC9RkTJzaB9zUHxHQV/7GtZAoHF2Kk2jShhpbIkg/RIR1ZAl+EVZHxkRE3rKQ6/
-         qxeu4hyYx44iXd5WzrytaoNPCMbMxmo5sKP7pmx8=
+        b=bxO0LhCd1nc141tVSdT6yLMQwJ/sc+eJR0VH6m6IqWTzRLb+0MDY57TZoDd+Zqevf
+         qqKMK3Zpf1fpwRVqHKjbrTqYStJtxvcF/H1IzXtDxSvy2YqRje+RaVcMLZx1QEaQ4u
+         ycFeOfzTMMwFqL3cjkIunrlN/rpVA4jKdAHHPq5k=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Christoph Lameter <cl@linux.com>,
-        syzbot+d6ed4ec679652b4fd4e4@syzkaller.appspotmail.com,
+        stable@vger.kernel.org, Shakeel Butt <shakeelb@google.com>,
+        Michal Hocko <mhocko@suse.com>,
+        Rik van Riel <riel@surriel.com>,
+        Roman Gushchin <guro@fb.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Tejun Heo <tj@kernel.org>,
         Andrew Morton <akpm@linux-foundation.org>,
-        Pekka Enberg <penberg@kernel.org>,
-        David Rientjes <rientjes@google.com>,
-        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
         Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH 4.20 28/57] slab: alien caches must not be initialized if the allocation of the alien cache failed
-Date:   Tue, 15 Jan 2019 17:36:09 +0100
-Message-Id: <20190115154912.258071083@linuxfoundation.org>
+Subject: [PATCH 4.20 27/57] fork, memcg: fix cached_stacks case
+Date:   Tue, 15 Jan 2019 17:36:08 +0100
+Message-Id: <20190115154912.206139055@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190115154910.734892368@linuxfoundation.org>
 References: <20190115154910.734892368@linuxfoundation.org>
@@ -70,46 +71,43 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Christoph Lameter <cl@linux.com>
+From: Shakeel Butt <shakeelb@google.com>
 
-commit 09c2e76ed734a1d36470d257a778aaba28e86531 upstream.
+commit ba4a45746c362b665e245c50b870615f02f34781 upstream.
 
-Callers of __alloc_alien() check for NULL.  We must do the same check in
-__alloc_alien_cache to avoid NULL pointer dereferences on allocation
-failures.
+Commit 5eed6f1dff87 ("fork,memcg: fix crash in free_thread_stack on
+memcg charge fail") fixes a crash caused due to failed memcg charge of
+the kernel stack.  However the fix misses the cached_stacks case which
+this patch fixes.  So, the same crash can happen if the memcg charge of
+a cached stack is failed.
 
-Link: http://lkml.kernel.org/r/010001680f42f192-82b4e12e-1565-4ee0-ae1f-1e98974906aa-000000@email.amazonses.com
-Fixes: 49dfc304ba241 ("slab: use the lock on alien_cache, instead of the lock on array_cache")
-Fixes: c8522a3a5832b ("Slab: introduce alloc_alien")
-Signed-off-by: Christoph Lameter <cl@linux.com>
-Reported-by: syzbot+d6ed4ec679652b4fd4e4@syzkaller.appspotmail.com
-Reviewed-by: Andrew Morton <akpm@linux-foundation.org>
-Cc: Pekka Enberg <penberg@kernel.org>
-Cc: David Rientjes <rientjes@google.com>
-Cc: Joonsoo Kim <iamjoonsoo.kim@lge.com>
+Link: http://lkml.kernel.org/r/20190102180145.57406-1-shakeelb@google.com
+Fixes: 5eed6f1dff87 ("fork,memcg: fix crash in free_thread_stack on memcg charge fail")
+Signed-off-by: Shakeel Butt <shakeelb@google.com>
+Acked-by: Michal Hocko <mhocko@suse.com>
+Acked-by: Rik van Riel <riel@surriel.com>
+Cc: Rik van Riel <riel@surriel.com>
+Cc: Roman Gushchin <guro@fb.com>
+Cc: Johannes Weiner <hannes@cmpxchg.org>
+Cc: Tejun Heo <tj@kernel.org>
 Cc: <stable@vger.kernel.org>
 Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
 Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- mm/slab.c |    6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ kernel/fork.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/mm/slab.c
-+++ b/mm/slab.c
-@@ -679,8 +679,10 @@ static struct alien_cache *__alloc_alien
- 	struct alien_cache *alc = NULL;
+--- a/kernel/fork.c
++++ b/kernel/fork.c
+@@ -221,6 +221,7 @@ static unsigned long *alloc_thread_stack
+ 		memset(s->addr, 0, THREAD_SIZE);
  
- 	alc = kmalloc_node(memsize, gfp, node);
--	init_arraycache(&alc->ac, entries, batch);
--	spin_lock_init(&alc->lock);
-+	if (alc) {
-+		init_arraycache(&alc->ac, entries, batch);
-+		spin_lock_init(&alc->lock);
-+	}
- 	return alc;
- }
+ 		tsk->stack_vm_area = s;
++		tsk->stack = s->addr;
+ 		return s->addr;
+ 	}
  
 
 
