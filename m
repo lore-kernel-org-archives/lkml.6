@@ -7,668 +7,641 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C14F4C43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 12:33:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9927FC43444
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 12:33:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6E5F62085A
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 12:33:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3C35120657
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 12:33:42 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=analog.onmicrosoft.com header.i=@analog.onmicrosoft.com header.b="qfxeodhK"
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="XkXrkhcM"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729514AbfAOMdg (ORCPT
+        id S1729529AbfAOMdk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 15 Jan 2019 07:33:36 -0500
-Received: from mail-eopbgr770088.outbound.protection.outlook.com ([40.107.77.88]:36832
-        "EHLO NAM02-SN1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729481AbfAOMdb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Jan 2019 07:33:31 -0500
+        Tue, 15 Jan 2019 07:33:40 -0500
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:35426 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729482AbfAOMdc (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 Jan 2019 07:33:32 -0500
+Received: by mail-wm1-f66.google.com with SMTP id t200so3048761wmt.0
+        for <linux-kernel@vger.kernel.org>; Tue, 15 Jan 2019 04:33:29 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=analog.onmicrosoft.com; s=selector1-analog-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=HZfJV/ZUVJlyLqCdds4MIpPEbPX3mFiYzN38cqc+Bwc=;
- b=qfxeodhKrFML+MR27WNHta9bvDyDcYXzwA0uMsqILlULh/MLR0wzGca90pPQPpLPO71UNYA947DyeRA8eSpMMlnbPCG4LovIj9E3m13idt9U5YQXRDxFq3FI6ygSSD8M0dRHG35wi1NIQXAjHyMJ1QK27oFp9He64xgNpE4mNfM=
-Received: from MWHPR03CA0060.namprd03.prod.outlook.com (2603:10b6:301:3b::49)
- by BL0PR03MB4260.namprd03.prod.outlook.com (2603:10b6:208:6b::33) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.1537.24; Tue, 15 Jan
- 2019 12:33:27 +0000
-Received: from SN1NAM02FT022.eop-nam02.prod.protection.outlook.com
- (2a01:111:f400:7e44::200) by MWHPR03CA0060.outlook.office365.com
- (2603:10b6:301:3b::49) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.20.1516.17 via Frontend
- Transport; Tue, 15 Jan 2019 12:33:27 +0000
-Received-SPF: Pass (protection.outlook.com: domain of analog.com designates
- 137.71.25.55 as permitted sender) receiver=protection.outlook.com;
- client-ip=137.71.25.55; helo=nwd2mta1.analog.com;
-Received: from nwd2mta1.analog.com (137.71.25.55) by
- SN1NAM02FT022.mail.protection.outlook.com (10.152.72.148) with Microsoft SMTP
- Server (version=TLS1_0, cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.20.1471.13
- via Frontend Transport; Tue, 15 Jan 2019 12:33:26 +0000
-Received: from NWD2HUBCAS7.ad.analog.com (nwd2hubcas7.ad.analog.com [10.64.69.107])
-        by nwd2mta1.analog.com (8.13.8/8.13.8) with ESMTP id x0FCXPJH007666
-        (version=TLSv1/SSLv3 cipher=AES256-SHA bits=256 verify=OK);
-        Tue, 15 Jan 2019 04:33:25 -0800
-Received: from linux.ad.analog.com (10.32.224.122) by
- NWD2HUBCAS7.ad.analog.com (10.64.69.107) with Microsoft SMTP Server id
- 14.3.408.0; Tue, 15 Jan 2019 07:33:25 -0500
-From:   Stefan Popa <stefan.popa@analog.com>
-To:     <jic23@kernel.org>
-CC:     <Michael.Hennerich@analog.com>, <knaack.h@gmx.de>,
-        <lars@metafoo.de>, <pmeerw@pmeerw.net>,
-        <gregkh@linuxfoundation.org>, <linux-kernel@vger.kernel.org>,
-        <linux-iio@vger.kernel.org>, <stefan.popa@analog.com>
-Subject: [PATCH v2 1/2] iio: adc: Add AD7768-1 ADC basic support
-Date:   Tue, 15 Jan 2019 14:33:11 +0200
-Message-ID: <1547555591-2048-1-git-send-email-stefan.popa@analog.com>
-X-Mailer: git-send-email 2.7.4
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=KPhdr7mUHtSIzRO3uh1XMCpuoWe2XZEGHzoJJ2G/Zj8=;
+        b=XkXrkhcMzTwXbEffkyqD6qhcEDUWyFiy89u4gHmZnO+fNxisXEmeNhh8aGEjSJAuMw
+         b2SU2/D+cFQRYP8loajKocDt5oKaOYfOdi7WoLrYIGL56mjfXRETHZ7mhULetH99ke+G
+         KlbvuBaRAWxFxMUdbenyAHES88CHTDJd2lTxzea6tUJSAd8jAcJHEqrtJU/zSZUA0zO7
+         dnBMj/t1ZhlRN748ZvtN21NVk5yptcysYwkUMoz+nI4+ujM5CACCdzCHukDNNBsfaBrJ
+         gOazxPDN5ePjAlXl6zLytz/1B7fQJtz8R7WX4UgVXU4KkfWEndK1KJUWPDqX25ydCRdp
+         Hrog==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=KPhdr7mUHtSIzRO3uh1XMCpuoWe2XZEGHzoJJ2G/Zj8=;
+        b=IFpDWwHo2y8fL261RhtCySfZcXnoJra5OrBaDpalRVqW5mJso73ETcSrN4dwZBUAOg
+         8gs08J2K3cPlByuUC9oUqTvchFL8VSMAKvIPcHt6Fd0gZ4YZUVe9N56qxyg45efMruaR
+         GNhZAGn8Fm/Vke4jN8vMY6tTUWH5dqXyOrgy0B3eSbLOyTiG1WWL6fxsxv1zbSYRlgqE
+         DzikR/76SKk5j62DsRcZwumThkF5RjPsSK4ETJ5extyAvOM8Qbb2xow3SSQNlEm4SVw7
+         tjGK4xeN6z6+bPsFdb5+425zG0YjVYm0y6TmLw1cGAgQLe64QgV7ll3cNaHcCtvbtO5I
+         ND2Q==
+X-Gm-Message-State: AJcUukf0n3RoJwO6/uaBl5yURRv271oj4q0bl6O+vV+mVRArHKIHnVlc
+        pAG/IQUCnjVK+Wrb34+Svhanyw==
+X-Google-Smtp-Source: ALg8bN4rtwtN1OgL74m69rATZtVkikvs9PUDzAA6ImgElWhXFkmpWq1fF75RXvGcn5Jgw59PfBSPvA==
+X-Received: by 2002:a1c:9c0a:: with SMTP id f10mr3270546wme.73.1547555608640;
+        Tue, 15 Jan 2019 04:33:28 -0800 (PST)
+Received: from bender.baylibre.local (lmontsouris-657-1-212-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
+        by smtp.gmail.com with ESMTPSA id x15sm75658842wrs.27.2019.01.15.04.33.27
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Tue, 15 Jan 2019 04:33:27 -0800 (PST)
+From:   Neil Armstrong <narmstrong@baylibre.com>
+To:     a.hajda@samsung.com, Laurent.pinchart@ideasonboard.com
+Cc:     Neil Armstrong <narmstrong@baylibre.com>,
+        dri-devel@lists.freedesktop.org, linux-amlogic@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH 7/8] drm/meson: Add YUV420 output support
+Date:   Tue, 15 Jan 2019 13:33:14 +0100
+Message-Id: <20190115123315.11069-8-narmstrong@baylibre.com>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20190115123315.11069-1-narmstrong@baylibre.com>
+References: <20190115123315.11069-1-narmstrong@baylibre.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-ADIRoutedOnPrem: True
-X-EOPAttributedMessage: 0
-X-MS-Office365-Filtering-HT: Tenant
-X-Forefront-Antispam-Report: CIP:137.71.25.55;IPV:NLI;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(396003)(136003)(39860400002)(346002)(376002)(2980300002)(189003)(199004)(486006)(54906003)(106466001)(316002)(126002)(4326008)(476003)(6306002)(246002)(5660300001)(16586007)(2616005)(426003)(336012)(356004)(6666004)(106002)(14444005)(44832011)(30864003)(2351001)(2906002)(478600001)(26005)(8676002)(305945005)(7636002)(51416003)(7696005)(186003)(47776003)(50226002)(6916009)(77096007)(8936002)(107886003)(966005)(6346003)(50466002)(72206003)(36756003)(48376002);DIR:OUT;SFP:1101;SCL:1;SRVR:BL0PR03MB4260;H:nwd2mta1.analog.com;FPR:;SPF:Pass;LANG:en;PTR:nwd2mail10.analog.com;MX:1;A:1;
-X-Microsoft-Exchange-Diagnostics: 1;SN1NAM02FT022;1:fjdbjHaG8eA6AhYu3uCVWWnCuRXcNxiI4zV50kszbwZ0k+KAnURHB3/WX1r+PKjA1tU8mdIvU2hm0u0lACCRsRVz4AUbP9fTMByRBE5xUtuYFZrQBMvSUyO0FlGcajCu
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 226c99ba-8d59-48bd-2dc2-08d67ae5a622
-X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600109)(711020)(4608076)(4709027)(2017052603328)(7153060);SRVR:BL0PR03MB4260;
-X-Microsoft-Exchange-Diagnostics: 1;BL0PR03MB4260;3:oV3dg+8x5LJyNgYe7q5bXMth9vko5Dhbk0zWNNgnjpECbQu9nrGg1rbvtFMBm63hy9NOcJ420WClw5vJIqjui8vcfbwwnn0LUqQBOEjXoJXlMwF4da5ojqULAWp+g7gr6EDHW5qOtxuvocP8PwLx4R6F/Q1Rl/WkCxSBp3XHHpTAs5/Y2vVeQOlU2MuyZo0UJarhAOFfZtjjba1CYo7dPwRDjf76VZHdyeEnnzl+gY5qWq/Ccr9j2ex4h4By0hOcoBU6PKuup4lyCkTVAu0ww4FuXROvFDz6bFDmUr7NbY+fdOtLSgjHe7Q96f2eJyzUcIDA3b3FFkFMKASknQlv17IEfo0oEAwzHHvogNC5OUTQTir0cG9RU970xzm6t/IS;25:oJJNqFC2U4gHtUllNNxC2lBL8vxPRVHJimAttifFQj+onvywMcy9V9vVytN4m3AF4erKW+TDod5ZXWNdShuNyuPNwz2wo4EHdiKUdFB2P5s7PP2FLX3Nx2QBZjySmBOA2TuWTRw+chcmV70cMmQqIhiXQks51kbjBWhN8D6TbLo0EvBjI0DSzudbEuhWzyKItM7NVQG4yy1eKsu69p0Hti73M5ZLiPR2eq2a7WmBjtu4XubIS3WOaf412QVZzKDO7jPWOKzhRSsNP9f1Gl6S/A8QomimjIdJc22rVPP2NwVB7RjUvT1+/NDwzzhxUAjr5v3e5NsRgSPV3uDjocu4hg==
-X-MS-TrafficTypeDiagnostic: BL0PR03MB4260:
-X-Microsoft-Exchange-Diagnostics: 1;BL0PR03MB4260;31:3XIEYzLqSEUeG37X/nyz5PrW3VjjFiaBfOmrf+164+YxDMUz3VSA5G6FXq3tO6qZWUUmP7FlpyiUOd+5w/IYcJ8X6SiujiqTdx6BdRgq9T3S28G9AD9azdTp+d3NbDQvyqyGyRYYteiJy1uB8vU65glWTSZHPUYwnPeYHfnC0oiIMdmIjTGXu4SSHIpOKZoEpHnd7Vo5eorfEaIt6COgsB/YoP4uRXEdNeIBotgHYU0=;20:NH7+BPmKhvCmEiK0QGNRFw4knt1vMmuSchLVBWJM9kXPVzU5jOQwNPn0XVCjLRanAUhDhlpF/ENYk2+SCVixyo5oVY6NfZYOD7/+Ezlfmcttral4EUGJf0vMHo1Qf83WRt3MxC9APnKymArf3+/poHf/WrHiHEnd+NeM8sIEI1Csi/pqmi8oN/J8fAf8LqRQFX9CjlfLotp0BTFnISh8PKJE59FqzJc4t0zQExa0062xk3nqCIq1ClXUxLj+8A0JOVVcllhmnYatAU+7OPFFKHAgKHZshXMPOyK7jcRg6qhHh1zp/wba8MHfCLTN0rzfj82snYbYVskbNAiWmtbbbsjYDtm4WCR9TMGsGVsYd3y3yNmtIr+l4O/0yqB1v2c/gHZskyrHSZ2EzVKLgbJpW6NbvpVvWM+5v7mdmD6uoLPTFtlt3LmtedH3bSN8qnIjOE7bI02qee3gRBcYH62CVcLaCltEn4eR9uJB5xutE4xgm/wbFhtmJo2+jqW3KKrO
-X-Microsoft-Antispam-PRVS: <BL0PR03MB426042C6022E0B159E6823149D810@BL0PR03MB4260.namprd03.prod.outlook.com>
-X-Microsoft-Exchange-Diagnostics: 1;BL0PR03MB4260;4:cmZo3XUC/62Tseyx89ykM7Mz5y/gl8xCdfoQD532KBCneIi16d3tJ/Z0CynxYB1lCNM6GNrjDwGhhNT+6K1bPl3kipWptkUY8byAQkBEJZonhTR5RAWN0CLQdEMUjmcztqaDIy+C3qYj8tCpGh3Zo03sVQpe5rafon9QFrq52Yy2UCcRFAivD9V/Bc+1BZEcJ29augCWApOyaSblXla28jK0j6oKtZbdU+ohKPvIHw0FmiwlWPtZeb1KItwfk9YSr20HKgANEH33lAyLfvufxD6Wc0BZtW0p8S8Zro9UYBw=
-X-Forefront-PRVS: 0918748D70
-X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;BL0PR03MB4260;23:CQVSt+jFEfX8MLxARJjYixeJKQQg/2pdVNS9bVT/e?=
- =?us-ascii?Q?nBWhIoFZ93zxG5JBVv3X9KrvzjFY5KuUNG9KJmlds/tqVzaqPS16DEkXhJqQ?=
- =?us-ascii?Q?YPX6IRYA7EFLT4fhfOHSxMyU6c/ZA2BCUo6aYe+sAd9FjxCoCb6iGVfBuMNd?=
- =?us-ascii?Q?mUQbYk+hCcn4lQq0mycldnGu0BxKIjjixWTPY5u3zkLt9Ogk00cUxdNIS3ko?=
- =?us-ascii?Q?ZbQhd3n+sN9PGb0BP8cHRuQsUEV4/NOKW/YlmcSbtcdcuFW4wjhu5pZcsTH8?=
- =?us-ascii?Q?lGMx6a/RkL0XAj/GirXC1VA/OQljXhO8vYU17sjUV8Xew8DI4O9ewied6IMC?=
- =?us-ascii?Q?ZW2onDbjzcfx0p/UkPDyCS3JoeZHkZnbAQc6l+ucrA+rX9zV5MGOX32/H+ix?=
- =?us-ascii?Q?PtsGjHwyOOpxAGI0x/dTUfoMZ3p6kpq2jyo8cGfiGbjHTixS5YNaXDcApUCN?=
- =?us-ascii?Q?XSdu5I6q2rZcdqJDzGVMQ+/GvctvoQuHBdML1v114il0a1ApduWJilwTUjs4?=
- =?us-ascii?Q?m7KfpETRVKrmC3/3CyZGFQPimfatXGrCWDFMK4G1O1Lx9FebGTsXlAaK4cjF?=
- =?us-ascii?Q?BilS8FxrWT6RFobBSo4hJn+V7wO60U5A7php05HVkv7XZ4RT0bdgFeBYQTqR?=
- =?us-ascii?Q?slkxKW98Yoyb0zRV7i3qP8FF0tOiFy4SctqmG03q4tT/oiZxpBs+Ckhha9mZ?=
- =?us-ascii?Q?Rwg365CArBEPxi+cF40EOUQe30JuqM4agciREIx7mNbTw67rBbii42r5wtSY?=
- =?us-ascii?Q?ujZSdNjrZfAMiaPsz+4maU9I4UambpUPRCaCAsXHMhDCHJ8CZC8oEW0Cv6tv?=
- =?us-ascii?Q?2Ca6xTAMMrmZVnrJ3sIsq9JomPyPIaYH04ul9F0UMWsqj8FSJXj00v4aoP5Q?=
- =?us-ascii?Q?Kzkj9wlgd/ZVoiiT+k5qYo47RJoqlOcXR/PqfjYDjJmgiW00Z08lFDxp2COP?=
- =?us-ascii?Q?5ySP3hyk2w8JmMwJ5miP/SCiQcMW/izfarKPhnzPs47HvCdTBqu/CVXicYQ4?=
- =?us-ascii?Q?yIUXtv20jbEZvy0Vu/AGReCAMVBmaqy/LdoHd1EgoEqSwiRp4j1rA4mr1M1I?=
- =?us-ascii?Q?eoOyc6EHHB3ojH13S8TcK4KA2nZwxXX7RgvfcxJEKVTi9Qz+A=3D=3D?=
-X-MS-Exchange-SenderADCheck: 1
-X-Microsoft-Antispam-Message-Info: S54My/4fg+5A3mHOuByAS/9mOGF9Om/jg4HENKRYNUm8GzSzJrlwYO+aKXEkmxd0Q+M84A7s4A+xlC1LJzRfDYlDcH6zouKAzWg1ZSwYjuK7yaqfDah4vaP9bJ2vaeODwdzsZUU6mABEDHyMax1CDKDsfQfRZeLkwn0bOP2eebPk5RjG08GofQgl70tUSHPvQt3u/vQYQilNeRLA5y8cF7o8Hr3PvzPgU60rY/Fyf0pySPNfmahA9WjwBhJmIaFtrSeiLovUgqJEI7mORFUpn7T/YyeY2rSgFQbK/PE6gzwWj8LRT/OD9KTv+gPuRpT/7sy++IGFahp066tXlqvxglVY/I4/nD/CARgdSbNjfsM9ihOUJ+fKnWCmwmKCR3RpfBRaPVUGxDZNO7fHKJ5OIV1KIADEy2kFJmiKfE0DmJ4=
-X-Microsoft-Exchange-Diagnostics: 1;BL0PR03MB4260;6:3CH4JPwhJJC8ZU5VBn4s85VYwl8hU9N2ADbHinlTZFXOYRmrFfZ/5pDR0a70Z/R4ucXRHjgzhUYm1H/NdQJbXEuPAKC6CoPTQr0zirXZjpKAndsu38TRfsumwTsTes2YLyXcNv9cawtbTokad2+OqiMFZV+saqbzQvO/iXjL0D2e6301hJSUOaZkSqguwQEZd3bCPgQmvDGS+sSsjLut23tNEXvxk5Rd6pem7G1YxcOkseKF4uy/M/VT6rWne3tkpkL1Xekj4RyGS398Ki/142AV8ZR+Jz2U8ie06ZkBuJPNe3b3UQBFWygGY2GAI9tJrgXbglljTFlqiT9YH6oYU2UD6CfVS1S7O0P688qStsMMRBXBbUq6/gaKhxdTlWYIHIcJbjwlD5JeZhzCHBDLFl6bapuvhaQBxiN1sbedahbFZ0KKWwG/7nyaIk3zxDb/iSgG3zT7vOPkxW8TJ/lyaQ==;5:VLpmkDA8dqYHgBjobnLdd/57afrZQwYvSb6m9/6sXaiNpntp4RkNt3tBfLM6BsHk7NjK6lBWOwkdPPJ5O7QRhOxt/OEegnrNqNZEsZbrqMJMYfxH0nEXemJN8OWBsWS6tzqUOY9Z3i6RufnqHhAeNVy0H8f8smBxZ4CXTr958jMDOv82KvMJsSb6MHvKDOpkiLOGTyfl4oPk1OxFx9i0fw==;7:O55GZP7G6UOKxksTOOxDOMubUxp1GQMiOJyezUXVfh+yM6kYUZuZFf+rFQIPLNKHwQG/uRTzJz95Op82nWYMgmxAnx/aDe0xFcpltEivfZeG2HK8xXF0PndSwShvjP/N7RELkPVinGYKVg2Dl0vtWg==
-SpamDiagnosticOutput: 1:99
-SpamDiagnosticMetadata: NSPM
-X-OriginatorOrg: analog.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Jan 2019 12:33:26.9111
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 226c99ba-8d59-48bd-2dc2-08d67ae5a622
-X-MS-Exchange-CrossTenant-Id: eaa689b4-8f87-40e0-9c6f-7228de4d754a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=eaa689b4-8f87-40e0-9c6f-7228de4d754a;Ip=[137.71.25.55];Helo=[nwd2mta1.analog.com]
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL0PR03MB4260
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The ad7768-1 is a single channel, precision 24-bit analog to digital
-converter (ADC).
+This patch adds support for the YUV420 output from the Amlogic Meson SoCs
+Video Processing Unit to the HDMI Controller.
 
-This basic patch configures the device in fast mode, with 32 kSPS and
-leaves the default sinc5 filter.
+The YUV420 is obtained by generating a YUV444 pixel stream like
+the classic HDMI display modes, but then the Video Encoder output
+can be configured to down-sample the YUV444 pixel stream to a YUV420
+stream.
+In addition if pixel stream down-sampling, the Y Cb Cr components must
+also be mapped differently to align with the HDMI2.0 specifications.
 
-Two data conversion modes are made available. When data is retrieved by
-using the read_raw attribute, one shot single conversion mode is set.
-The continuous conversion mode is enabled when the triggered buffer
-mechanism is used. To assure correct data retrieval, the driver waits
-for the interrupt triggered by the low to high transition of the DRDY
-pin.
+This mode needs a different clock generation scheme since the TMDS PHY
+clock must match the 10x ration with the YUV420 pixel clock, but
+the video encoder must run at 2x the pixel clock.
 
-Datasheets:
-Link: https://www.analog.com/media/en/technical-documentation/data-sheets/ad7768-1.pdf
+This patch adds the TMDS PHY clock value in all the video clock setup
+in order to better support these specific uses cases and switch
+to the Common Clock framework for clocks handling in the future.
 
-Signed-off-by: Stefan Popa <stefan.popa@analog.com>
+Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
 ---
-Changes in v2:
-	- Added values to all the elements of ad7768_pwrmode enum.
-	- Removed the ad7768_ids enum, as the driver supports only one device.
-	- Added a new data union which is part of the ad7768_state struct. This 
-	  union, now includes a d8 field.
-	- Used spi_write_then_read() in ad7768_spi_reg_read().
-	- Called spi_read() instead of spi_sync_transfer() in ad7768_trigger_handler().
-	- Used the devm_request_irq() instead of devm_request_threaded_irq(); called
-	  iio_trigger_poll() instead of iio_trigger_poll_chained().
+ drivers/gpu/drm/meson/meson_dw_hdmi.c   | 110 ++++++++++++++++++++----
+ drivers/gpu/drm/meson/meson_vclk.c      |  93 +++++++++++++++-----
+ drivers/gpu/drm/meson/meson_vclk.h      |   7 +-
+ drivers/gpu/drm/meson/meson_venc.c      |   6 +-
+ drivers/gpu/drm/meson/meson_venc.h      |  11 +++
+ drivers/gpu/drm/meson/meson_venc_cvbs.c |   3 +-
+ 6 files changed, 184 insertions(+), 46 deletions(-)
 
- MAINTAINERS                |   7 +
- drivers/iio/adc/Kconfig    |  13 ++
- drivers/iio/adc/Makefile   |   1 +
- drivers/iio/adc/ad7768-1.c | 459 +++++++++++++++++++++++++++++++++++++++++++++
- 4 files changed, 480 insertions(+)
- create mode 100644 drivers/iio/adc/ad7768-1.c
-
-diff --git a/MAINTAINERS b/MAINTAINERS
-index d039f66..3ba3811 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -862,6 +862,13 @@ S:	Supported
- F:	drivers/iio/adc/ad7606.c
- F:	Documentation/devicetree/bindings/iio/adc/ad7606.txt
+diff --git a/drivers/gpu/drm/meson/meson_dw_hdmi.c b/drivers/gpu/drm/meson/meson_dw_hdmi.c
+index 3d8decb77019..068b56a991b5 100644
+--- a/drivers/gpu/drm/meson/meson_dw_hdmi.c
++++ b/drivers/gpu/drm/meson/meson_dw_hdmi.c
+@@ -141,6 +141,8 @@ struct meson_dw_hdmi {
+ 	struct regulator *hdmi_supply;
+ 	u32 irq_stat;
+ 	struct dw_hdmi *hdmi;
++	unsigned long input_bus_format;
++	unsigned long output_bus_format;
+ };
+ #define encoder_to_meson_dw_hdmi(x) \
+ 	container_of(x, struct meson_dw_hdmi, encoder)
+@@ -323,25 +325,36 @@ static void dw_hdmi_set_vclk(struct meson_dw_hdmi *dw_hdmi,
+ {
+ 	struct meson_drm *priv = dw_hdmi->priv;
+ 	int vic = drm_match_cea_mode(mode);
++	unsigned int phy_freq;
+ 	unsigned int vclk_freq;
+ 	unsigned int venc_freq;
+ 	unsigned int hdmi_freq;
  
-+ANALOG DEVICES INC AD7768-1 DRIVER
-+M:	Stefan Popa <stefan.popa@analog.com>
-+L:	linux-iio@vger.kernel.org
-+W:	http://ez.analog.com/community/linux-device-drivers
-+S:	Supported
-+F:	drivers/iio/adc/ad7768-1.c
-+
- ANALOG DEVICES INC AD9389B DRIVER
- M:	Hans Verkuil <hans.verkuil@cisco.com>
- L:	linux-media@vger.kernel.org
-diff --git a/drivers/iio/adc/Kconfig b/drivers/iio/adc/Kconfig
-index f3cc7a3..6c19dfe 100644
---- a/drivers/iio/adc/Kconfig
-+++ b/drivers/iio/adc/Kconfig
-@@ -108,6 +108,19 @@ config AD7766
- 	  To compile this driver as a module, choose M here: the module will be
- 	  called ad7766.
+ 	vclk_freq = mode->clock;
  
-+config AD7768_1
-+	tristate "Analog Devices AD7768-1 ADC driver"
-+	depends on SPI
-+	select IIO_BUFFER
-+	select IIO_TRIGGER
-+	select IIO_TRIGGERED_BUFFER
-+	help
-+	  Say yes here to build support for Analog Devices AD7768-1 SPI
-+	  simultaneously sampling sigma-delta analog to digital converter (ADC).
++	/* For 420, pixel clock is half unlike venc clock */
++	if (dw_hdmi->input_bus_format == MEDIA_BUS_FMT_UYYVYY8_0_5X24)
++		vclk_freq /= 2;
 +
-+	  To compile this driver as a module, choose M here: the module will be
-+	  called ad7768-1.
++	/* TMDS clock is pixel_clock * 10 */
++	phy_freq = vclk_freq * 10;
 +
- config AD7791
- 	tristate "Analog Devices AD7791 ADC driver"
- 	depends on SPI
-diff --git a/drivers/iio/adc/Makefile b/drivers/iio/adc/Makefile
-index ea50313..9d50f7b 100644
---- a/drivers/iio/adc/Makefile
-+++ b/drivers/iio/adc/Makefile
-@@ -15,6 +15,7 @@ obj-$(CONFIG_AD7606_IFACE_PARALLEL) += ad7606_par.o
- obj-$(CONFIG_AD7606_IFACE_SPI) += ad7606_spi.o
- obj-$(CONFIG_AD7606) += ad7606.o
- obj-$(CONFIG_AD7766) += ad7766.o
-+obj-$(CONFIG_AD7768_1) += ad7768-1.o
- obj-$(CONFIG_AD7791) += ad7791.o
- obj-$(CONFIG_AD7793) += ad7793.o
- obj-$(CONFIG_AD7887) += ad7887.o
-diff --git a/drivers/iio/adc/ad7768-1.c b/drivers/iio/adc/ad7768-1.c
-new file mode 100644
-index 0000000..fdcb966
---- /dev/null
-+++ b/drivers/iio/adc/ad7768-1.c
-@@ -0,0 +1,459 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Analog Devices AD7768-1 SPI ADC driver
-+ *
-+ * Copyright 2017 Analog Devices Inc.
-+ */
-+#include <linux/bitfield.h>
-+#include <linux/clk.h>
-+#include <linux/delay.h>
-+#include <linux/device.h>
-+#include <linux/err.h>
-+#include <linux/kernel.h>
-+#include <linux/module.h>
-+#include <linux/regulator/consumer.h>
-+#include <linux/sysfs.h>
-+#include <linux/spi/spi.h>
+ 	if (!vic) {
+-		meson_vclk_setup(priv, MESON_VCLK_TARGET_DMT, vclk_freq,
+-				 vclk_freq, vclk_freq, false);
++		meson_vclk_setup(priv, MESON_VCLK_TARGET_DMT, phy_freq,
++				 vclk_freq, vclk_freq, vclk_freq, false);
+ 		return;
+ 	}
+ 
++	/* 480i/576i needs global pixel doubling */
+ 	if (mode->flags & DRM_MODE_FLAG_DBLCLK)
+ 		vclk_freq *= 2;
+ 
+ 	venc_freq = vclk_freq;
+ 	hdmi_freq = vclk_freq;
+ 
+-	if (meson_venc_hdmi_venc_repeat(vic))
++	/* VENC double pixels for 1080i, 720p and YUV420 modes */
++	if (meson_venc_hdmi_venc_repeat(vic) ||
++	    dw_hdmi->input_bus_format == MEDIA_BUS_FMT_UYYVYY8_0_5X24)
+ 		venc_freq *= 2;
+ 
+ 	vclk_freq = max(venc_freq, hdmi_freq);
+@@ -349,11 +362,11 @@ static void dw_hdmi_set_vclk(struct meson_dw_hdmi *dw_hdmi,
+ 	if (mode->flags & DRM_MODE_FLAG_DBLCLK)
+ 		venc_freq /= 2;
+ 
+-	DRM_DEBUG_DRIVER("vclk:%d venc=%d hdmi=%d enci=%d\n",
+-		vclk_freq, venc_freq, hdmi_freq,
++	DRM_DEBUG_DRIVER("vclk:%d phy=%d venc=%d hdmi=%d enci=%d\n",
++		phy_freq, vclk_freq, venc_freq, hdmi_freq,
+ 		priv->venc.hdmi_use_enci);
+ 
+-	meson_vclk_setup(priv, MESON_VCLK_TARGET_HDMI, vclk_freq,
++	meson_vclk_setup(priv, MESON_VCLK_TARGET_HDMI, phy_freq, vclk_freq,
+ 			 venc_freq, hdmi_freq, priv->venc.hdmi_use_enci);
+ }
+ 
+@@ -386,8 +399,9 @@ static int dw_hdmi_phy_init(struct dw_hdmi *hdmi, void *data,
+ 	/* Enable normal output to PHY */
+ 	dw_hdmi_top_write(dw_hdmi, HDMITX_TOP_BIST_CNTL, BIT(12));
+ 
+-	/* TMDS pattern setup (TOFIX Handle the YUV420 case) */
+-	if (mode->clock > 340000) {
++	/* TMDS pattern setup */
++	if (mode->clock > 340000 &&
++	    dw_hdmi->input_bus_format == MEDIA_BUS_FMT_YUV8_1X24) {
+ 		dw_hdmi_top_write(dw_hdmi, HDMITX_TOP_TMDS_CLK_PTTN_01, 0);
+ 		dw_hdmi_top_write(dw_hdmi, HDMITX_TOP_TMDS_CLK_PTTN_23,
+ 				  0x03ff03ff);
+@@ -560,6 +574,8 @@ dw_hdmi_mode_valid(struct drm_connector *connector,
+ 		   const struct drm_display_mode *mode)
+ {
+ 	struct meson_drm *priv = connector->dev->dev_private;
++	bool is_hdmi2_sink = connector->display_info.hdmi.scdc.supported;
++	unsigned int phy_freq;
+ 	unsigned int vclk_freq;
+ 	unsigned int venc_freq;
+ 	unsigned int hdmi_freq;
+@@ -573,8 +589,10 @@ dw_hdmi_mode_valid(struct drm_connector *connector,
+ 		mode->vdisplay, mode->vsync_start,
+ 		mode->vsync_end, mode->vtotal, mode->type, mode->flags);
+ 
+-	/* If sink max TMDS clock, we reject the mode */
+-	if (mode->clock > connector->display_info.max_tmds_clock)
++	/* If sink does not support 540MHz, reject the non-420 HDMI2 modes */
++	if (mode->clock > connector->display_info.max_tmds_clock &&
++	    !drm_mode_is_420_only(&connector->display_info, mode) &&
++	    !drm_mode_is_420_also(&connector->display_info, mode))
+ 		return MODE_BAD;
+ 
+ 	/* Check against non-VIC supported modes */
+@@ -590,6 +608,15 @@ dw_hdmi_mode_valid(struct drm_connector *connector,
+ 
+ 	vclk_freq = mode->clock;
+ 
++	/* For 420, pixel clock is half unlike venc clock */
++	if (drm_mode_is_420_only(&connector->display_info, mode) ||
++	    (!is_hdmi2_sink &&
++	     drm_mode_is_420_also(&connector->display_info, mode)))
++		vclk_freq /= 2;
 +
-+#include <linux/iio/buffer.h>
-+#include <linux/iio/iio.h>
-+#include <linux/iio/sysfs.h>
-+#include <linux/iio/trigger.h>
-+#include <linux/iio/triggered_buffer.h>
-+#include <linux/iio/trigger_consumer.h>
++	/* TMDS clock is pixel_clock * 10 */
++	phy_freq = vclk_freq * 10;
 +
-+/* AD7768 registers definition */
-+#define AD7768_REG_CHIP_TYPE		0x3
-+#define AD7768_REG_PROD_ID_L		0x4
-+#define AD7768_REG_PROD_ID_H		0x5
-+#define AD7768_REG_CHIP_GRADE		0x6
-+#define AD7768_REG_SCRATCH_PAD		0x0A
-+#define AD7768_REG_VENDOR_L		0x0C
-+#define AD7768_REG_VENDOR_H		0x0D
-+#define AD7768_REG_INTERFACE_FORMAT	0x14
-+#define AD7768_REG_POWER_CLOCK		0x15
-+#define AD7768_REG_ANALOG		0x16
-+#define AD7768_REG_ANALOG2		0x17
-+#define AD7768_REG_CONVERSION		0x18
-+#define AD7768_REG_DIGITAL_FILTER	0x19
-+#define AD7768_REG_SINC3_DEC_RATE_MSB	0x1A
-+#define AD7768_REG_SINC3_DEC_RATE_LSB	0x1B
-+#define AD7768_REG_DUTY_CYCLE_RATIO	0x1C
-+#define AD7768_REG_SYNC_RESET		0x1D
-+#define AD7768_REG_GPIO_CONTROL		0x1E
-+#define AD7768_REG_GPIO_WRITE		0x1F
-+#define AD7768_REG_GPIO_READ		0x20
-+#define AD7768_REG_OFFSET_HI		0x21
-+#define AD7768_REG_OFFSET_MID		0x22
-+#define AD7768_REG_OFFSET_LO		0x23
-+#define AD7768_REG_GAIN_HI		0x24
-+#define AD7768_REG_GAIN_MID		0x25
-+#define AD7768_REG_GAIN_LO		0x26
-+#define AD7768_REG_SPI_DIAG_ENABLE	0x28
-+#define AD7768_REG_ADC_DIAG_ENABLE	0x29
-+#define AD7768_REG_DIG_DIAG_ENABLE	0x2A
-+#define AD7768_REG_ADC_DATA		0x2C
-+#define AD7768_REG_MASTER_STATUS	0x2D
-+#define AD7768_REG_SPI_DIAG_STATUS	0x2E
-+#define AD7768_REG_ADC_DIAG_STATUS	0x2F
-+#define AD7768_REG_DIG_DIAG_STATUS	0x30
-+#define AD7768_REG_MCLK_COUNTER		0x31
+ 	/* 480i/576i needs global pixel doubling */
+ 	if (mode->flags & DRM_MODE_FLAG_DBLCLK)
+ 		vclk_freq *= 2;
+@@ -597,8 +624,11 @@ dw_hdmi_mode_valid(struct drm_connector *connector,
+ 	venc_freq = vclk_freq;
+ 	hdmi_freq = vclk_freq;
+ 
+-	/* VENC double pixels for 1080i and 720p modes */
+-	if (meson_venc_hdmi_venc_repeat(vic))
++	/* VENC double pixels for 1080i, 720p and YUV420 modes */
++	if (meson_venc_hdmi_venc_repeat(vic) ||
++	    drm_mode_is_420_only(&connector->display_info, mode) ||
++	    (!is_hdmi2_sink &&
++	     drm_mode_is_420_also(&connector->display_info, mode)))
+ 		venc_freq *= 2;
+ 
+ 	vclk_freq = max(venc_freq, hdmi_freq);
+@@ -606,10 +636,10 @@ dw_hdmi_mode_valid(struct drm_connector *connector,
+ 	if (mode->flags & DRM_MODE_FLAG_DBLCLK)
+ 		venc_freq /= 2;
+ 
+-	dev_dbg(connector->dev->dev, "%s: vclk:%d venc=%d hdmi=%d\n", __func__,
+-		vclk_freq, venc_freq, hdmi_freq);
++	dev_dbg(connector->dev->dev, "%s: vclk:%d phy=%d venc=%d hdmi=%d\n",
++		__func__, phy_freq, vclk_freq, venc_freq, hdmi_freq);
+ 
+-	return meson_vclk_vic_supported_freq(vclk_freq);
++	return meson_vclk_vic_supported_freq(phy_freq, vclk_freq);
+ }
+ 
+ /* Encoder */
+@@ -627,6 +657,21 @@ static int meson_venc_hdmi_encoder_atomic_check(struct drm_encoder *encoder,
+ 					struct drm_crtc_state *crtc_state,
+ 					struct drm_connector_state *conn_state)
+ {
++	struct meson_dw_hdmi *dw_hdmi = encoder_to_meson_dw_hdmi(encoder);
++	struct drm_display_info *info = &conn_state->connector->display_info;
++	struct drm_display_mode *mode = &crtc_state->mode;
++	bool is_hdmi2_sink =
++		conn_state->connector->display_info.hdmi.scdc.supported;
 +
-+/* AD7768_REG_CONVERSION */
-+#define AD7768_CONV_MODE_MSK		GENMASK(2, 0)
-+#define AD7768_CONV_MODE(x)		FIELD_PREP(AD7768_CONV_MODE_MSK, x)
-+
-+#define AD7768_RD_FLAG_MSK(x)		(BIT(6) | ((x) & 0x3F))
-+#define AD7768_WR_FLAG_MSK(x)		((x) & 0x3F)
-+
-+enum ad7768_conv_mode {
-+	AD7768_CONTINUOUS,
-+	AD7768_ONE_SHOT,
-+	AD7768_SINGLE,
-+	AD7768_PERIODIC,
-+	AD7768_STANDBY
-+};
-+
-+enum ad7768_pwrmode {
-+	AD7768_ECO_MODE = 0,
-+	AD7768_MED_MODE = 2,
-+	AD7768_FAST_MODE = 3
-+};
-+
-+static const struct iio_chan_spec ad7768_channels[] = {
-+	{
-+		.type = IIO_VOLTAGE,
-+		.info_mask_separate = BIT(IIO_CHAN_INFO_RAW),
-+		.info_mask_shared_by_type = BIT(IIO_CHAN_INFO_SCALE),
-+		.indexed = 1,
-+		.channel = 0,
-+		.scan_index = 0,
-+		.scan_type = {
-+			.sign = 'u',
-+			.realbits = 24,
-+			.storagebits = 32,
-+			.shift = 8,
-+			.endianness = IIO_BE,
-+		},
-+	},
-+};
-+
-+struct ad7768_state {
-+	struct spi_device *spi;
-+	struct regulator *vref;
-+	struct mutex lock;
-+	struct completion completion;
-+	struct iio_trigger *trig;
-+	/*
-+	 * DMA (thus cache coherency maintenance) requires the
-+	 * transfer buffers to live in their own cache lines.
-+	 */
-+	union {
-+		__be32 d32;
-+		u8 d8[2];
-+	} data ____cacheline_aligned;
-+};
-+
-+static int ad7768_spi_reg_read(struct ad7768_state *st, unsigned int addr,
-+			       unsigned int len)
-+{
-+	unsigned int shift;
-+	int ret;
-+
-+	shift = 32 - (8 * len);
-+	st->data.d8[0] = AD7768_RD_FLAG_MSK(addr);
-+
-+	ret = spi_write_then_read(st->spi, st->data.d8, 1,
-+				  &st->data.d32, len);
-+	if (ret < 0)
-+		return ret;
-+
-+	return (be32_to_cpu(st->data.d32) >> shift);
-+}
-+
-+static int ad7768_spi_reg_write(struct ad7768_state *st,
-+				unsigned int addr,
-+				unsigned int val)
-+{
-+	st->data.d8[0] = AD7768_WR_FLAG_MSK(addr);
-+	st->data.d8[1] = val & 0xFF;
-+
-+	return spi_write(st->spi, st->data.d8, 2);
-+}
-+
-+static int ad7768_set_mode(struct ad7768_state *st,
-+			   enum ad7768_conv_mode mode)
-+{
-+	int regval;
-+
-+	regval = ad7768_spi_reg_read(st, AD7768_REG_CONVERSION, 1);
-+	if (regval < 0)
-+		return regval;
-+
-+	regval &= ~AD7768_CONV_MODE_MSK;
-+	regval |= AD7768_CONV_MODE(mode);
-+
-+	return ad7768_spi_reg_write(st, AD7768_REG_CONVERSION, regval);
-+}
-+
-+static int ad7768_scan_direct(struct iio_dev *indio_dev)
-+{
-+	struct ad7768_state *st = iio_priv(indio_dev);
-+	int readval, ret;
-+
-+	reinit_completion(&st->completion);
-+
-+	ret = ad7768_set_mode(st, AD7768_ONE_SHOT);
-+	if (ret < 0)
-+		return ret;
-+
-+	ret = wait_for_completion_timeout(&st->completion,
-+					  msecs_to_jiffies(1000));
-+	if (!ret)
-+		return -ETIMEDOUT;
-+
-+	readval = ad7768_spi_reg_read(st, AD7768_REG_ADC_DATA, 3);
-+	if (readval < 0)
-+		return readval;
-+	/*
-+	 * Any SPI configuration of the AD7768-1 can only be
-+	 * performed in continuous conversion mode.
-+	 */
-+	ret = ad7768_set_mode(st, AD7768_CONTINUOUS);
-+	if (ret < 0)
-+		return ret;
-+
-+	return readval;
-+}
-+
-+static int ad7768_reg_access(struct iio_dev *indio_dev,
-+			     unsigned int reg,
-+			     unsigned int writeval,
-+			     unsigned int *readval)
-+{
-+	struct ad7768_state *st = iio_priv(indio_dev);
-+	int ret;
-+
-+	mutex_lock(&st->lock);
-+	if (readval) {
-+		ret = ad7768_spi_reg_read(st, reg, 1);
-+		if (ret < 0)
-+			goto err_unlock;
-+		*readval = ret;
-+		ret = 0;
++	if (drm_mode_is_420_only(info, mode) ||
++	    (!is_hdmi2_sink && drm_mode_is_420_also(info, mode))) {
++		dw_hdmi->input_bus_format = MEDIA_BUS_FMT_UYYVYY8_0_5X24;
++		dw_hdmi->output_bus_format = MEDIA_BUS_FMT_UYYVYY8_0_5X24;
 +	} else {
-+		ret = ad7768_spi_reg_write(st, reg, writeval);
-+	}
-+err_unlock:
-+	mutex_unlock(&st->lock);
-+
-+	return ret;
-+}
-+
-+static int ad7768_read_raw(struct iio_dev *indio_dev,
-+			   struct iio_chan_spec const *chan,
-+			   int *val, int *val2, long info)
-+{
-+	struct ad7768_state *st = iio_priv(indio_dev);
-+	int scale_uv, ret;
-+
-+	switch (info) {
-+	case IIO_CHAN_INFO_RAW:
-+		ret = iio_device_claim_direct_mode(indio_dev);
-+		if (ret)
-+			return ret;
-+
-+		ret = ad7768_scan_direct(indio_dev);
-+		if (ret >= 0)
-+			*val = ret;
-+
-+		iio_device_release_direct_mode(indio_dev);
-+		if (ret < 0)
-+			return ret;
-+
-+		return IIO_VAL_INT;
-+
-+	case IIO_CHAN_INFO_SCALE:
-+		scale_uv = regulator_get_voltage(st->vref);
-+		if (scale_uv < 0)
-+			return scale_uv;
-+
-+		*val = (scale_uv * 2) / 1000;
-+		*val2 = chan->scan_type.realbits;
-+
-+		return IIO_VAL_FRACTIONAL_LOG2;
++		dw_hdmi->input_bus_format = MEDIA_BUS_FMT_YUV8_1X24;
++		dw_hdmi->output_bus_format = MEDIA_BUS_FMT_RGB888_1X24;
 +	}
 +
-+	return -EINVAL;
-+}
+ 	return 0;
+ }
+ 
+@@ -664,18 +709,30 @@ static void meson_venc_hdmi_encoder_mode_set(struct drm_encoder *encoder,
+ 	struct meson_dw_hdmi *dw_hdmi = encoder_to_meson_dw_hdmi(encoder);
+ 	struct meson_drm *priv = dw_hdmi->priv;
+ 	int vic = drm_match_cea_mode(mode);
++	unsigned int ycrcb_map = MESON_VENC_MAP_CB_Y_CR;
++	bool yuv420_mode = false;
+ 
+ 	DRM_DEBUG_DRIVER("%d:\"%s\" vic %d\n",
+ 			 mode->base.id, mode->name, vic);
+ 
++	if (dw_hdmi->input_bus_format == MEDIA_BUS_FMT_UYYVYY8_0_5X24) {
++		ycrcb_map = MESON_VENC_MAP_CR_Y_CB;
++		yuv420_mode = true;
++	}
 +
-+static const struct iio_info ad7768_info = {
-+	.read_raw = &ad7768_read_raw,
-+	.debugfs_reg_access = &ad7768_reg_access,
-+};
-+
-+static int ad7768_setup(struct ad7768_state *st)
-+{
-+	int ret;
-+
-+	/*
-+	 * Two writes to the SPI_RESET[1:0] bits are required to initiate
-+	 * a software reset. The bits must first be set to 11, and then
-+	 * to 10. When the sequence is detected, the reset occurs.
-+	 * See the datasheet, page 70.
-+	 */
-+	ret = ad7768_spi_reg_write(st, AD7768_REG_SYNC_RESET, 0x3);
-+	if (ret)
-+		return ret;
-+
-+	ret = ad7768_spi_reg_write(st, AD7768_REG_SYNC_RESET, 0x2);
-+	if (ret)
-+		return ret;
-+
-+	/* Set power mode to fast */
-+	return ad7768_spi_reg_write(st, AD7768_REG_POWER_CLOCK,
-+				    AD7768_FAST_MODE);
-+}
-+
-+static irqreturn_t ad7768_trigger_handler(int irq, void *p)
-+{
-+	struct iio_poll_func *pf = p;
-+	struct iio_dev *indio_dev = pf->indio_dev;
-+	struct ad7768_state *st = iio_priv(indio_dev);
-+	int ret;
-+
-+	mutex_lock(&st->lock);
-+
-+	ret = spi_read(st->spi, &st->data.d32, 3);
-+	if (ret < 0)
-+		goto err_unlock;
-+
-+	iio_push_to_buffers_with_timestamp(indio_dev, &st->data.d32,
-+					   iio_get_time_ns(indio_dev));
-+
-+	iio_trigger_notify_done(indio_dev->trig);
-+err_unlock:
-+	mutex_unlock(&st->lock);
-+
-+	return IRQ_HANDLED;
-+}
-+
-+static irqreturn_t ad7768_interrupt(int irq, void *dev_id)
-+{
-+	struct iio_dev *indio_dev = dev_id;
-+	struct ad7768_state *st = iio_priv(indio_dev);
-+
-+	if (iio_buffer_enabled(indio_dev))
-+		iio_trigger_poll(st->trig);
+ 	/* VENC + VENC-DVI Mode setup */
+-	meson_venc_hdmi_mode_set(priv, vic, mode);
++	meson_venc_hdmi_mode_set(priv, vic, ycrcb_map, yuv420_mode, mode);
+ 
+ 	/* VCLK Set clock */
+ 	dw_hdmi_set_vclk(dw_hdmi, mode);
+ 
+-	/* Setup YUV444 to HDMI-TX, no 10bit diphering */
+-	writel_relaxed(0, priv->io_base + _REG(VPU_HDMI_FMT_CTRL));
++	if (dw_hdmi->input_bus_format == MEDIA_BUS_FMT_UYYVYY8_0_5X24)
++		/* Setup YUV420 to HDMI-TX, no 10bit diphering */
++		writel_relaxed(2 | (2 << 2),
++			       priv->io_base + _REG(VPU_HDMI_FMT_CTRL));
 +	else
-+		complete(&st->completion);
-+
-+	return IRQ_HANDLED;
-+};
-+
-+static int ad7768_buffer_postenable(struct iio_dev *indio_dev)
++		/* Setup YUV444 to HDMI-TX, no 10bit diphering */
++		writel_relaxed(0, priv->io_base + _REG(VPU_HDMI_FMT_CTRL));
+ }
+ 
+ static const struct drm_encoder_helper_funcs
+@@ -714,6 +771,20 @@ static const struct regmap_config meson_dw_hdmi_regmap_config = {
+ 	.fast_io = true,
+ };
+ 
++static unsigned long meson_dw_hdmi_get_in_bus_format(void *data)
 +{
-+	struct ad7768_state *st = iio_priv(indio_dev);
++	struct meson_dw_hdmi *dw_hdmi = (struct meson_dw_hdmi *)data;
 +
-+	iio_triggered_buffer_postenable(indio_dev);
-+	/*
-+	 * Write a 1 to the LSB of the INTERFACE_FORMAT register to enter
-+	 * continuous read mode. Subsequent data reads do not require an
-+	 * initial 8-bit write to query the ADC_DATA register.
-+	 */
-+	return ad7768_spi_reg_write(st, AD7768_REG_INTERFACE_FORMAT, 0x01);
++	return dw_hdmi->input_bus_format;
 +}
 +
-+static int ad7768_buffer_predisable(struct iio_dev *indio_dev)
++static unsigned long meson_dw_hdmi_get_out_bus_format(void *data)
 +{
-+	struct ad7768_state *st = iio_priv(indio_dev);
-+	int ret;
++	struct meson_dw_hdmi *dw_hdmi = (struct meson_dw_hdmi *)data;
 +
-+	/*
-+	 * To exit continuous read mode, perform a single read of the ADC_DATA
-+	 * reg (0x2C), which allows further configuration of the device.
-+	 */
-+	ret = ad7768_spi_reg_read(st, AD7768_REG_ADC_DATA, 3);
-+	if (ret < 0)
-+		return ret;
-+
-+	return iio_triggered_buffer_predisable(indio_dev);
++	return dw_hdmi->output_bus_format;
 +}
 +
-+static const struct iio_buffer_setup_ops ad7768_buffer_ops = {
-+	.postenable = &ad7768_buffer_postenable,
-+	.predisable = &ad7768_buffer_predisable,
-+};
-+
-+static const struct iio_trigger_ops ad7768_trigger_ops = {
-+	.validate_device = iio_trigger_validate_own_device,
-+};
-+
-+static void ad7768_regulator_disable(void *data)
-+{
-+	struct ad7768_state *st = data;
-+
-+	regulator_disable(st->vref);
-+}
-+
-+static int ad7768_probe(struct spi_device *spi)
-+{
-+	struct ad7768_state *st;
-+	struct iio_dev *indio_dev;
-+	int ret;
-+
-+	indio_dev = devm_iio_device_alloc(&spi->dev, sizeof(*st));
-+	if (!indio_dev)
-+		return -ENOMEM;
-+
-+	st = iio_priv(indio_dev);
-+	st->spi = spi;
-+
-+	st->vref = devm_regulator_get(&spi->dev, "vref");
-+	if (IS_ERR(st->vref))
-+		return PTR_ERR(st->vref);
-+
-+	ret = regulator_enable(st->vref);
-+	if (ret) {
-+		dev_err(&spi->dev, "Failed to enable specified vref supply\n");
-+		return ret;
-+	}
-+
-+	ret = devm_add_action_or_reset(&spi->dev, ad7768_regulator_disable, st);
-+	if (ret)
-+		return ret;
-+
-+	spi_set_drvdata(spi, indio_dev);
-+	mutex_init(&st->lock);
-+
-+	indio_dev->channels = ad7768_channels;
-+	indio_dev->num_channels = ARRAY_SIZE(ad7768_channels);
-+	indio_dev->dev.parent = &spi->dev;
-+	indio_dev->name = spi_get_device_id(spi)->name;
-+	indio_dev->info = &ad7768_info;
-+	indio_dev->modes = INDIO_DIRECT_MODE | INDIO_BUFFER_TRIGGERED;
-+
-+	ret = ad7768_setup(st);
-+	if (ret < 0) {
-+		dev_err(&spi->dev, "AD7768 setup failed\n");
-+		return ret;
-+	}
-+
-+	st->trig = devm_iio_trigger_alloc(&spi->dev, "%s-dev%d",
-+					  indio_dev->name, indio_dev->id);
-+	if (!st->trig)
-+		return -ENOMEM;
-+
-+	st->trig->ops = &ad7768_trigger_ops;
-+	st->trig->dev.parent = &spi->dev;
-+	iio_trigger_set_drvdata(st->trig, indio_dev);
-+	ret = devm_iio_trigger_register(&spi->dev, st->trig);
-+	if (ret)
-+		return ret;
-+
-+	indio_dev->trig = iio_trigger_get(st->trig);
-+
-+	init_completion(&st->completion);
-+
-+	ret = devm_request_irq(&spi->dev, spi->irq,
-+			       &ad7768_interrupt,
-+			       IRQF_TRIGGER_RISING | IRQF_ONESHOT,
-+			       indio_dev->name, indio_dev);
-+	if (ret)
-+		return ret;
-+
-+	ret = devm_iio_triggered_buffer_setup(&spi->dev, indio_dev,
-+					      &iio_pollfunc_store_time,
-+					      &ad7768_trigger_handler,
-+					      &ad7768_buffer_ops);
-+	if (ret)
-+		return ret;
-+
-+	return devm_iio_device_register(&spi->dev, indio_dev);
-+}
-+
-+static const struct spi_device_id ad7768_id_table[] = {
-+	{ "ad7768-1", 0 },
-+	{}
-+};
-+MODULE_DEVICE_TABLE(spi, ad7768_id_table);
-+
-+static const struct of_device_id ad7768_of_match[] = {
-+	{ .compatible = "adi,ad7768-1" },
-+	{ },
-+};
-+MODULE_DEVICE_TABLE(of, ad7768_of_match);
-+
-+static struct spi_driver ad7768_driver = {
-+	.driver = {
-+		.name = "ad7768-1",
-+		.of_match_table = ad7768_of_match,
+ static bool meson_hdmi_connector_is_available(struct device *dev)
+ {
+ 	struct device_node *ep, *remote;
+@@ -890,6 +961,9 @@ static int meson_dw_hdmi_bind(struct device *dev, struct device *master,
+ 	dw_plat_data->phy_data = meson_dw_hdmi;
+ 	dw_plat_data->input_bus_format = MEDIA_BUS_FMT_YUV8_1X24;
+ 	dw_plat_data->input_bus_encoding = V4L2_YCBCR_ENC_709;
++	dw_plat_data->get_input_bus_format = meson_dw_hdmi_get_in_bus_format;
++	dw_plat_data->get_output_bus_format = meson_dw_hdmi_get_out_bus_format;
++	dw_plat_data->ycbcr_420_allowed = true;
+ 
+ 	platform_set_drvdata(pdev, meson_dw_hdmi);
+ 
+diff --git a/drivers/gpu/drm/meson/meson_vclk.c b/drivers/gpu/drm/meson/meson_vclk.c
+index f6ba35a405f8..27c9c5ead234 100644
+--- a/drivers/gpu/drm/meson/meson_vclk.c
++++ b/drivers/gpu/drm/meson/meson_vclk.c
+@@ -337,12 +337,17 @@ enum {
+ /* 2970 /1 /1 /1 /5 /2  => /1 /1 */
+ 	MESON_VCLK_HDMI_297000,
+ /* 5940 /1 /1 /2 /5 /1  => /1 /1 */
+-	MESON_VCLK_HDMI_594000
++	MESON_VCLK_HDMI_594000,
++/* 2970 /1 /1 /1 /5 /1  => /1 /2 */
++	MESON_VCLK_HDMI_594000_YUV420,
+ };
+ 
+ struct meson_vclk_params {
++	unsigned int pll_freq;
++	unsigned int phy_freq;
++	unsigned int vclk_freq;
++	unsigned int venc_freq;
+ 	unsigned int pixel_freq;
+-	unsigned int pll_base_freq;
+ 	unsigned int pll_od1;
+ 	unsigned int pll_od2;
+ 	unsigned int pll_od3;
+@@ -350,8 +355,11 @@ struct meson_vclk_params {
+ 	unsigned int vclk_div;
+ } params[] = {
+ 	[MESON_VCLK_HDMI_ENCI_54000] = {
++		.pll_freq = 4320000,
++		.phy_freq = 270000,
++		.vclk_freq = 54000,
++		.venc_freq = 54000,
+ 		.pixel_freq = 54000,
+-		.pll_base_freq = 4320000,
+ 		.pll_od1 = 4,
+ 		.pll_od2 = 4,
+ 		.pll_od3 = 1,
+@@ -359,8 +367,11 @@ struct meson_vclk_params {
+ 		.vclk_div = 1,
+ 	},
+ 	[MESON_VCLK_HDMI_DDR_54000] = {
+-		.pixel_freq = 54000,
+-		.pll_base_freq = 4320000,
++		.pll_freq = 4320000,
++		.phy_freq = 270000,
++		.vclk_freq = 54000,
++		.venc_freq = 54000,
++		.pixel_freq = 27000,
+ 		.pll_od1 = 4,
+ 		.pll_od2 = 4,
+ 		.pll_od3 = 1,
+@@ -368,8 +379,11 @@ struct meson_vclk_params {
+ 		.vclk_div = 1,
+ 	},
+ 	[MESON_VCLK_HDMI_DDR_148500] = {
+-		.pixel_freq = 148500,
+-		.pll_base_freq = 2970000,
++		.pll_freq = 2970000,
++		.phy_freq = 742500,
++		.vclk_freq = 148500,
++		.venc_freq = 148500,
++		.pixel_freq = 74250,
+ 		.pll_od1 = 4,
+ 		.pll_od2 = 1,
+ 		.pll_od3 = 1,
+@@ -377,8 +391,11 @@ struct meson_vclk_params {
+ 		.vclk_div = 1,
+ 	},
+ 	[MESON_VCLK_HDMI_74250] = {
++		.pll_freq = 2970000,
++		.phy_freq = 742500,
++		.vclk_freq = 74250,
++		.venc_freq = 74250,
+ 		.pixel_freq = 74250,
+-		.pll_base_freq = 2970000,
+ 		.pll_od1 = 2,
+ 		.pll_od2 = 2,
+ 		.pll_od3 = 2,
+@@ -386,8 +403,11 @@ struct meson_vclk_params {
+ 		.vclk_div = 1,
+ 	},
+ 	[MESON_VCLK_HDMI_148500] = {
++		.pll_freq = 2970000,
++		.phy_freq = 1485000,
++		.vclk_freq = 148500,
++		.venc_freq = 148500,
+ 		.pixel_freq = 148500,
+-		.pll_base_freq = 2970000,
+ 		.pll_od1 = 1,
+ 		.pll_od2 = 2,
+ 		.pll_od3 = 2,
+@@ -395,8 +415,11 @@ struct meson_vclk_params {
+ 		.vclk_div = 1,
+ 	},
+ 	[MESON_VCLK_HDMI_297000] = {
++		.pll_freq = 2970000,
++		.phy_freq = 2970000,
++		.venc_freq = 297000,
++		.vclk_freq = 297000,
+ 		.pixel_freq = 297000,
+-		.pll_base_freq = 2970000,
+ 		.pll_od1 = 1,
+ 		.pll_od2 = 1,
+ 		.pll_od3 = 1,
+@@ -404,14 +427,29 @@ struct meson_vclk_params {
+ 		.vclk_div = 2,
+ 	},
+ 	[MESON_VCLK_HDMI_594000] = {
++		.pll_freq = 5940000,
++		.phy_freq = 5940000,
++		.venc_freq = 594000,
++		.vclk_freq = 594000,
+ 		.pixel_freq = 594000,
+-		.pll_base_freq = 5940000,
+ 		.pll_od1 = 1,
+ 		.pll_od2 = 1,
+ 		.pll_od3 = 2,
+ 		.vid_pll_div = VID_PLL_DIV_5,
+ 		.vclk_div = 1,
+ 	},
++	[MESON_VCLK_HDMI_594000_YUV420] = {
++		.pll_freq = 2970000,
++		.phy_freq = 2970000,
++		.venc_freq = 594000,
++		.vclk_freq = 594000,
++		.pixel_freq = 297000,
++		.pll_od1 = 1,
++		.pll_od2 = 1,
++		.pll_od3 = 1,
++		.vid_pll_div = VID_PLL_DIV_5,
++		.vclk_div = 1,
 +	},
-+	.probe = ad7768_probe,
-+	.id_table = ad7768_id_table,
+ 	{ /* sentinel */ },
+ };
+ 
+@@ -616,6 +654,7 @@ static void meson_hdmi_pll_generic_set(struct meson_drm *priv,
+ 	unsigned int od, m, frac, od1, od2, od3;
+ 
+ 	if (meson_hdmi_pll_find_params(priv, pll_freq, &m, &frac, &od)) {
++		/* OD2 goes to the PHY, and needs to be *10, so keep OD3=1 */
+ 		od3 = 1;
+ 		if (od < 4) {
+ 			od1 = 2;
+@@ -638,21 +677,28 @@ static void meson_hdmi_pll_generic_set(struct meson_drm *priv,
+ }
+ 
+ enum drm_mode_status
+-meson_vclk_vic_supported_freq(unsigned int freq)
++meson_vclk_vic_supported_freq(unsigned int phy_freq,
++			      unsigned int vclk_freq)
+ {
+ 	int i;
+ 
+-	DRM_DEBUG_DRIVER("freq = %d\n", freq);
++	DRM_DEBUG_DRIVER("phy_freq = %d vclk_freq = %d\n",
++			 phy_freq, vclk_freq);
+ 
+ 	for (i = 0 ; params[i].pixel_freq ; ++i) {
+ 		DRM_DEBUG_DRIVER("i = %d pixel_freq = %d alt = %d\n",
+ 				 i, params[i].pixel_freq,
+ 				 FREQ_1000_1001(params[i].pixel_freq));
++		DRM_DEBUG_DRIVER("i = %d phy_freq = %d alt = %d\n",
++				 i, params[i].phy_freq,
++				 FREQ_1000_1001(params[i].phy_freq/10)*10);
+ 		/* Match strict frequency */
+-		if (freq == params[i].pixel_freq)
++		if (phy_freq == params[i].phy_freq &&
++		    vclk_freq == params[i].vclk_freq)
+ 			return MODE_OK;
+ 		/* Match 1000/1001 variant */
+-		if (freq == FREQ_1000_1001(params[i].pixel_freq))
++		if (phy_freq == (FREQ_1000_1001(params[i].phy_freq/10)*10) &&
++		    vclk_freq == FREQ_1000_1001(params[i].vclk_freq))
+ 			return MODE_OK;
+ 	}
+ 
+@@ -863,8 +909,9 @@ static void meson_vclk_set(struct meson_drm *priv, unsigned int pll_base_freq,
+ }
+ 
+ void meson_vclk_setup(struct meson_drm *priv, unsigned int target,
+-		      unsigned int vclk_freq, unsigned int venc_freq,
+-		      unsigned int dac_freq, bool hdmi_use_enci)
++		      unsigned int phy_freq, unsigned int vclk_freq,
++		      unsigned int venc_freq, unsigned int dac_freq,
++		      bool hdmi_use_enci)
+ {
+ 	bool vic_alternate_clock = false;
+ 	unsigned int freq;
+@@ -883,7 +930,7 @@ void meson_vclk_setup(struct meson_drm *priv, unsigned int target,
+ 		 * - venc_div = 1
+ 		 * - encp encoder
+ 		 */
+-		meson_vclk_set(priv, vclk_freq * 10, 0, 0, 0,
++		meson_vclk_set(priv, phy_freq, 0, 0, 0,
+ 			       VID_PLL_DIV_5, 2, 1, 1, false, false);
+ 		return;
+ 	}
+@@ -905,9 +952,11 @@ void meson_vclk_setup(struct meson_drm *priv, unsigned int target,
+ 	}
+ 
+ 	for (freq = 0 ; params[freq].pixel_freq ; ++freq) {
+-		if (vclk_freq == params[freq].pixel_freq ||
+-		    vclk_freq == FREQ_1000_1001(params[freq].pixel_freq)) {
+-			if (vclk_freq != params[freq].pixel_freq)
++		if ((phy_freq == params[freq].phy_freq ||
++		     phy_freq == FREQ_1000_1001(params[freq].phy_freq/10)*10) &&
++		    (vclk_freq == params[freq].vclk_freq ||
++		     vclk_freq == FREQ_1000_1001(params[freq].vclk_freq))) {
++			if (vclk_freq != params[freq].vclk_freq)
+ 				vic_alternate_clock = true;
+ 			else
+ 				vic_alternate_clock = false;
+@@ -936,7 +985,7 @@ void meson_vclk_setup(struct meson_drm *priv, unsigned int target,
+ 		return;
+ 	}
+ 
+-	meson_vclk_set(priv, params[freq].pll_base_freq,
++	meson_vclk_set(priv, params[freq].pll_freq,
+ 		       params[freq].pll_od1, params[freq].pll_od2,
+ 		       params[freq].pll_od3, params[freq].vid_pll_div,
+ 		       params[freq].vclk_div, hdmi_tx_div, venc_div,
+diff --git a/drivers/gpu/drm/meson/meson_vclk.h b/drivers/gpu/drm/meson/meson_vclk.h
+index 4bd8752da02a..c4d19ddfcd79 100644
+--- a/drivers/gpu/drm/meson/meson_vclk.h
++++ b/drivers/gpu/drm/meson/meson_vclk.h
+@@ -33,10 +33,11 @@ enum {
+ enum drm_mode_status
+ meson_vclk_dmt_supported_freq(struct meson_drm *priv, unsigned int freq);
+ enum drm_mode_status
+-meson_vclk_vic_supported_freq(unsigned int freq);
++meson_vclk_vic_supported_freq(unsigned int phy_freq, unsigned int vclk_freq);
+ 
+ void meson_vclk_setup(struct meson_drm *priv, unsigned int target,
+-		      unsigned int vclk_freq, unsigned int venc_freq,
+-		      unsigned int dac_freq, bool hdmi_use_enci);
++		      unsigned int phy_freq, unsigned int vclk_freq,
++		      unsigned int venc_freq, unsigned int dac_freq,
++		      bool hdmi_use_enci);
+ 
+ #endif /* __MESON_VCLK_H */
+diff --git a/drivers/gpu/drm/meson/meson_venc.c b/drivers/gpu/drm/meson/meson_venc.c
+index 66d73a932d19..04956e3b64b1 100644
+--- a/drivers/gpu/drm/meson/meson_venc.c
++++ b/drivers/gpu/drm/meson/meson_venc.c
+@@ -956,6 +956,8 @@ bool meson_venc_hdmi_venc_repeat(int vic)
+ EXPORT_SYMBOL_GPL(meson_venc_hdmi_venc_repeat);
+ 
+ void meson_venc_hdmi_mode_set(struct meson_drm *priv, int vic,
++			      unsigned int ycrcb_map,
++			      bool yuv420_mode,
+ 			      struct drm_display_mode *mode)
+ {
+ 	union meson_hdmi_venc_mode *vmode = NULL;
+@@ -1506,8 +1508,8 @@ void meson_venc_hdmi_mode_set(struct meson_drm *priv, int vic,
+ 	writel_relaxed((use_enci ? 1 : 2) |
+ 		       (mode->flags & DRM_MODE_FLAG_PHSYNC ? 1 << 2 : 0) |
+ 		       (mode->flags & DRM_MODE_FLAG_PVSYNC ? 1 << 3 : 0) |
+-		       4 << 5 |
+-		       (venc_repeat ? 1 << 8 : 0) |
++		       (ycrcb_map << 5) |
++		       (venc_repeat || yuv420_mode ? 1 << 8 : 0) |
+ 		       (hdmi_repeat ? 1 << 12 : 0),
+ 		       priv->io_base + _REG(VPU_HDMI_SETTING));
+ 
+diff --git a/drivers/gpu/drm/meson/meson_venc.h b/drivers/gpu/drm/meson/meson_venc.h
+index 97eaebbfa0c4..5580bf38e381 100644
+--- a/drivers/gpu/drm/meson/meson_venc.h
++++ b/drivers/gpu/drm/meson/meson_venc.h
+@@ -33,6 +33,15 @@ enum {
+ 	MESON_VENC_MODE_HDMI,
+ };
+ 
++enum {
++	MESON_VENC_MAP_CR_Y_CB = 0,
++	MESON_VENC_MAP_Y_CB_CR,
++	MESON_VENC_MAP_Y_CR_CB,
++	MESON_VENC_MAP_CB_CR_Y,
++	MESON_VENC_MAP_CB_Y_CR,
++	MESON_VENC_MAP_CR_CB_Y,
 +};
-+module_spi_driver(ad7768_driver);
 +
-+MODULE_AUTHOR("Stefan Popa <stefan.popa@analog.com>");
-+MODULE_DESCRIPTION("Analog Devices AD7768-1 ADC driver");
-+MODULE_LICENSE("GPL");
+ struct meson_cvbs_enci_mode {
+ 	unsigned int mode_tag;
+ 	unsigned int hso_begin; /* HSO begin position */
+@@ -70,6 +79,8 @@ extern struct meson_cvbs_enci_mode meson_cvbs_enci_ntsc;
+ void meson_venci_cvbs_mode_set(struct meson_drm *priv,
+ 			       struct meson_cvbs_enci_mode *mode);
+ void meson_venc_hdmi_mode_set(struct meson_drm *priv, int vic,
++			      unsigned int ycrcb_map,
++			      bool yuv420_mode,
+ 			      struct drm_display_mode *mode);
+ unsigned int meson_venci_get_field(struct meson_drm *priv);
+ 
+diff --git a/drivers/gpu/drm/meson/meson_venc_cvbs.c b/drivers/gpu/drm/meson/meson_venc_cvbs.c
+index f7945bae3b4a..38a1117b1183 100644
+--- a/drivers/gpu/drm/meson/meson_venc_cvbs.c
++++ b/drivers/gpu/drm/meson/meson_venc_cvbs.c
+@@ -207,7 +207,8 @@ static void meson_venc_cvbs_encoder_mode_set(struct drm_encoder *encoder,
+ 			/* Setup 27MHz vclk2 for ENCI and VDAC */
+ 			meson_vclk_setup(priv, MESON_VCLK_TARGET_CVBS,
+ 					 MESON_VCLK_CVBS, MESON_VCLK_CVBS,
+-					 MESON_VCLK_CVBS, true);
++					 MESON_VCLK_CVBS, MESON_VCLK_CVBS,
++					 true);
+ 			break;
+ 		}
+ 	}
 -- 
-2.7.4
+2.20.1
 
