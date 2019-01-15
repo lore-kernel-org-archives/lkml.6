@@ -2,133 +2,68 @@ Return-Path: <SRS0=RZO6=PX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8DA8CC43444
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 17:52:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D0378C43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 17:52:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 56A2320675
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 17:52:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9A8C320675
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 17:52:31 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=android.com header.i=@android.com header.b="XWWreA+o"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="cCnvMjzL"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388550AbfAORwW (ORCPT
+        id S2388564AbfAORwa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 15 Jan 2019 12:52:22 -0500
-Received: from mail-oi1-f196.google.com ([209.85.167.196]:46229 "EHLO
-        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729410AbfAORwW (ORCPT
+        Tue, 15 Jan 2019 12:52:30 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:35278 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729410AbfAORw3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Jan 2019 12:52:22 -0500
-Received: by mail-oi1-f196.google.com with SMTP id x202so2770965oif.13
-        for <linux-kernel@vger.kernel.org>; Tue, 15 Jan 2019 09:52:22 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=android.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=+Ze61RiBsdBzmtk92EzmbIeS1jQrq7l8HYGYF7t7VyY=;
-        b=XWWreA+oVlQr9sjkK+Bu3hQBULVUOS+lHQ5hZNCCBppEiei9EmygnmGhtKiOLInyQI
-         gsf+yQsqf58SzLWagpzdsV6UYtFLKkWvb+JJX3ZooeWYTbuKXKdh+MHtReGHZ2DeS2cH
-         SN5OjBDPToWY5sEHocdab+PwwGma4kPw95ICgQyLgypjnYfSkjsrpvxbMXUDfatVmur0
-         Je/m7hY5XErEF86CX8JMNqbVbmzTnCs7Ruz393Mjj1Mizj2zvJN4Md176Ro1y/NHnVs3
-         dpfLBMOo+MbBdCysDrnUqiT1eR2IlvQMz9T7gjOF9H0t7g2q2nLH5/tgoHgd1emUKykH
-         EWDw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=+Ze61RiBsdBzmtk92EzmbIeS1jQrq7l8HYGYF7t7VyY=;
-        b=BxxCXW69P4UoIJW8QpWjoNatKZEoTJb5mtWrlfKmkyeuF/eDtyj75iNY4CgZ2n4KNO
-         EWKsa6yJJKuhhLkeL1xefE1453GCt2fHSMNhKM78ZuzlaeGQ4kFypX82gnFMtASYLEbf
-         7bfApavL7yvXJMcu411HjkmKOEZBEngh9B3QXWiP2+BVlZN1HwwCr2vxDqb2q96jBm+m
-         7VhHvDZkFsF582nohY4Vqbk/B/945qQKXwm+FlvmJBT/NHl/Nl+fKgvznodeKnqeRwOz
-         QezCw/LP6kcWRiU/TqVjXcn+nf9acZuCcTDzmZqx7JW1laZfjrp5+22cYB+qFCK0ngsV
-         U0MA==
-X-Gm-Message-State: AJcUuke9wdwG1hMZIW8gt+DLwlyjdORhIFd8fvPDxA2YpRMUFFtjDCMC
-        kKNOJs6V2y02t8o7DygrRb09N6rLNp3BFjATMUlc4A==
-X-Google-Smtp-Source: ALg8bN4FOpeOOkbUFPCd0WnId3JzAVPol+ghvhaKrqDoU00ACKgfZ38T49jrmwHS/Oqxzc1Wwbb0OLzhJzoYUltRBGk=
-X-Received: by 2002:aca:f044:: with SMTP id o65mr940657oih.145.1547574741306;
- Tue, 15 Jan 2019 09:52:21 -0800 (PST)
+        Tue, 15 Jan 2019 12:52:29 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=ITJoVz+hDVQxBL7bPP0lb4AXLrlKIC+jOg6UU8bME/w=; b=cCnvMjzLSicV8PhPswJ4N9ofq
+        6ySM6/WGmOpl8O20jCDv/lPn//iBZx1hUUQYEaPKOezhgw7M95Mu5CL7KyVbXionA5unv3fNBhBKF
+        7pOFKOIzJmrnoZGsq91jgk2QZylgJv+01DKTEVmfuEf4rQqdcYLSvzEbUnKEyv6QHNxpP6nSj+aJr
+        bQ+KlHyyO9k/qXJcN9WmdBnvSRyYMqxrQC1ukDOAcP+Gwa7KCVR/ovrLrxbrwmg7Y7qXRWbbcHJXK
+        u2umN7PDL7ORWSNgmRGk+6sgUsZWqm0LW94zoldBNNL3g1hGWEW9hfMCOOFL0OTUOZyENPISke0UF
+        Bghur0oLw==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gjSt2-0002Rb-RM; Tue, 15 Jan 2019 17:52:28 +0000
+Date:   Tue, 15 Jan 2019 09:52:28 -0800
+From:   "hch@infradead.org" <hch@infradead.org>
+To:     Alistair Francis <Alistair.Francis@wdc.com>
+Cc:     "hch@infradead.org" <hch@infradead.org>,
+        "palmer@sifive.com" <palmer@sifive.com>,
+        "linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v4] RISC-V: defconfig: Enable Generic PCIE by default
+Message-ID: <20190115175228.GA9295@infradead.org>
+References: <20190112004117.28265-1-alistair.francis@wdc.com>
+ <20190115152607.GA26443@infradead.org>
+ <03cbc37636be7fce21cd2af39ad8e322ca8e64e8.camel@wdc.com>
 MIME-Version: 1.0
-References: <20190114210426.177543-1-trong@android.com> <20190114210426.177543-5-trong@android.com>
- <CAK7LNAQe5CUhvvyMDfS2t+Y+t9B5SwUOah6V==9Ds+HR2SL5nQ@mail.gmail.com>
-In-Reply-To: <CAK7LNAQe5CUhvvyMDfS2t+Y+t9B5SwUOah6V==9Ds+HR2SL5nQ@mail.gmail.com>
-From:   Tri Vo <trong@android.com>
-Date:   Tue, 15 Jan 2019 09:52:10 -0800
-Message-ID: <CANA+-vBi9nQ6tH=fY0xqrY4i6pFsXikrnaaBZ6BdEv7q92tT2Q@mail.gmail.com>
-Subject: Re: [PATCH 4/4] gcov: clang: pick GCC vs Clang format depending on compiler
-To:     Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc:     oberpar@linux.ibm.com, Greg Hackmann <ghackmann@android.com>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        kernel-team@android.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <03cbc37636be7fce21cd2af39ad8e322ca8e64e8.camel@wdc.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jan 14, 2019 at 5:25 PM Masahiro Yamada
-<yamada.masahiro@socionext.com> wrote:
->
-> On Tue, Jan 15, 2019 at 6:07 AM Tri Vo <trong@android.com> wrote:
-> >
-> > Clang gcov format is only supported by Clang compiler, and Clang
-> > compiler only supports Clang format.
->
->
-> If so, what is the point of putting GCOV_FORMAT_CLANG into the
-> choice menu?
->
->
-> You can choose the format only when you are using GCC.
->
-> I think the following is more sensible:
->
->
-> if GCOV_KERNEL
->
-> config GCOV_PROFILE_ALL
->          ....
->
->
-> choice
->         prompt "Specify GCOV format for GCC"
->         depends on CC_IS_GCC
->         ...
->
-> config GCOV_FORMAT_3_4
->         bool "GCC 3.4 format"
->         depends on GCC_VERSION < 40700
->         ...
->
-> config GCOV_FORMAT_4_7
->         bool "GCC 4.7 format"
->         ...
->
-> endchoice
->
->
-> config GCOV_FORMAT_CLANG
->          def_bool CC_IS_CLANG
->
-> endif
->
->
->
->
->
-> Or, you can delete GCOV_FORMAT_CLANG
-> if you write the Makefile like follows:
->
->
->
-> obj-y := base.o fs.o
-> obj-$(CONFIG_GCOV_FORMAT_3_4) += gcc_base.o gcc_3_4.o
-> obj-$(CONFIG_GCOV_FORMAT_4_7) += gcc_base.o gcc_4_7.o
-> obj-$(CONFIG_CC_IS_CLANG)     += clang.o
+On Tue, Jan 15, 2019 at 05:45:34PM +0000, Alistair Francis wrote:
+> > Alistair, is there a ready-made qemu machine with riscv + pcie?
+> > That would be really useful for testing..
+> 
+> Yep, if you use master QEMU (it isn't in a release yet) the virt
+> machine has PCIe support.
 
-Thanks for the suggestion! It is more sensible than the current
-approach. I'll send an update.
+Cool.  Time to play around with the latest qemu tree..
