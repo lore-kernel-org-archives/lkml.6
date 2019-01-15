@@ -4,53 +4,50 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1EDBEC43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 16:38:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 29104C43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 16:38:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E11FF20873
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 16:38:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id ED67520873
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 16:38:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547570300;
-	bh=rHdrXq04PbrnwIJz5EIIABROGpATaSJ0QZrIxxL1cmU=;
+	s=default; t=1547570303;
+	bh=TXPJLmLLL5CQmATLvnS3rYdpYZrlKBEOLix+mo6tivo=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=u6nriSMKfeCxciHBh+ee/IV/HoVhrTVF+vhHy3brvH94JkQANyrieBXFKma22mDLd
-	 vvmn3TefTf1pRsFwqXHvClG4TsYspHFmVnNAeq21Aqy8y/wQ92kFn3lALPWcJzDpOL
-	 g+ErKyFI6pUjyiGHic5eV2mJbyMcjMhRR2EVx8eI=
+	b=Fh1v9Zlmw+6z11Esx+zI1ceLKrbDpGJxPMdWqgIkrtW7vsEuZbgRSS/3aP0eC5uux
+	 Tw/lVdSVymtkNIWyBN90PPmZbubG59QSXYh0p7kbgVmHbeqnBCK5tCFxOKqp3QECLx
+	 0PxI9xd/ciEG3g+IZ28yntjACj1p2VojGpoUKxSM=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732059AbfAOQiS (ORCPT
+        id S1732071AbfAOQiV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 15 Jan 2019 11:38:18 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54036 "EHLO mail.kernel.org"
+        Tue, 15 Jan 2019 11:38:21 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54098 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732044AbfAOQiO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Jan 2019 11:38:14 -0500
+        id S1732051AbfAOQiR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 Jan 2019 11:38:17 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BB1ED20675;
-        Tue, 15 Jan 2019 16:38:13 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6820B20859;
+        Tue, 15 Jan 2019 16:38:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547570294;
-        bh=rHdrXq04PbrnwIJz5EIIABROGpATaSJ0QZrIxxL1cmU=;
+        s=default; t=1547570296;
+        bh=TXPJLmLLL5CQmATLvnS3rYdpYZrlKBEOLix+mo6tivo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=yI+Lnh7yowP0k6Ob05vV+VUGJ4oNwIhHPOWEosyLv1LfgssotiGzddgOHbc03ARSM
-         u2XFyV0vKAA6jeMUuSaXTRi3Gk6SqDlOGbiKSz4UKnGz4ayOZVK4IK0jTd9ZTlKMdf
-         zrpG0/xrTCkIIOdKoqx3kXOZzw3cyIKOmbzIkZXo=
+        b=QRK2/ZNy7HoIw1pLIaxXq0XbJwd+VR6o1gp+S6cA1lyswIbtPDbuTJNrZng67L+EB
+         QXsDCkPbEj/gpUiuG0cBJA594dnOCXxd9H08ndKI2ZP2oqM9kAKZmtyFA3PYcxej35
+         gjtzu3BDp85wmVtypeayUp08WIYSVdcShYEPU5ro=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Christoph Lameter <cl@linux.com>,
-        syzbot+d6ed4ec679652b4fd4e4@syzkaller.appspotmail.com,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Pekka Enberg <penberg@kernel.org>,
-        David Rientjes <rientjes@google.com>,
-        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH 4.4 39/51] slab: alien caches must not be initialized if the allocation of the alien cache failed
-Date:   Tue, 15 Jan 2019 17:35:35 +0100
-Message-Id: <20190115154852.900991742@linuxfoundation.org>
+        stable@vger.kernel.org, Ley Foon Tan <lftan@altera.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Claudius Heine <claudius.heine.ext@siemens.com>
+Subject: [PATCH 4.4 40/51] PCI: altera: Fix altera_pcie_link_is_up()
+Date:   Tue, 15 Jan 2019 17:35:36 +0100
+Message-Id: <20190115154853.050447253@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190115154846.928796000@linuxfoundation.org>
 References: <20190115154846.928796000@linuxfoundation.org>
@@ -69,46 +66,42 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Christoph Lameter <cl@linux.com>
+From: Ley Foon Tan <lftan@altera.com>
 
-commit 09c2e76ed734a1d36470d257a778aaba28e86531 upstream.
+commit eff31f4002c4e25b9b8c39d0a3a551c6c64c77e8 upstream.
 
-Callers of __alloc_alien() check for NULL.  We must do the same check in
-__alloc_alien_cache to avoid NULL pointer dereferences on allocation
-failures.
+Originally altera_pcie_link_is_up() decided the link was up if any of the
+low four bits of the LTSSM register were set.  But the link is only up if
+the LTSSM state is L0, so check for that exact value.
 
-Link: http://lkml.kernel.org/r/010001680f42f192-82b4e12e-1565-4ee0-ae1f-1e98974906aa-000000@email.amazonses.com
-Fixes: 49dfc304ba241 ("slab: use the lock on alien_cache, instead of the lock on array_cache")
-Fixes: c8522a3a5832b ("Slab: introduce alloc_alien")
-Signed-off-by: Christoph Lameter <cl@linux.com>
-Reported-by: syzbot+d6ed4ec679652b4fd4e4@syzkaller.appspotmail.com
-Reviewed-by: Andrew Morton <akpm@linux-foundation.org>
-Cc: Pekka Enberg <penberg@kernel.org>
-Cc: David Rientjes <rientjes@google.com>
-Cc: Joonsoo Kim <iamjoonsoo.kim@lge.com>
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+[bhelgaas: changelog]
+Signed-off-by: Ley Foon Tan <lftan@altera.com>
+Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
+Cc: Claudius Heine <claudius.heine.ext@siemens.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- mm/slab.c |    6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ drivers/pci/host/pcie-altera.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/mm/slab.c
-+++ b/mm/slab.c
-@@ -875,8 +875,10 @@ static struct alien_cache *__alloc_alien
- 	struct alien_cache *alc = NULL;
+--- a/drivers/pci/host/pcie-altera.c
++++ b/drivers/pci/host/pcie-altera.c
+@@ -40,6 +40,7 @@
+ #define P2A_INT_ENABLE			0x3070
+ #define P2A_INT_ENA_ALL			0xf
+ #define RP_LTSSM			0x3c64
++#define RP_LTSSM_MASK			0x1f
+ #define LTSSM_L0			0xf
  
- 	alc = kmalloc_node(memsize, gfp, node);
--	init_arraycache(&alc->ac, entries, batch);
--	spin_lock_init(&alc->lock);
-+	if (alc) {
-+		init_arraycache(&alc->ac, entries, batch);
-+		spin_lock_init(&alc->lock);
-+	}
- 	return alc;
+ /* TLP configuration type 0 and 1 */
+@@ -140,7 +141,7 @@ static void tlp_write_tx(struct altera_p
+ 
+ static bool altera_pcie_link_is_up(struct altera_pcie *pcie)
+ {
+-	return !!(cra_readl(pcie, RP_LTSSM) & LTSSM_L0);
++	return !!((cra_readl(pcie, RP_LTSSM) & RP_LTSSM_MASK) == LTSSM_L0);
  }
  
+ static bool altera_pcie_valid_config(struct altera_pcie *pcie,
 
 
