@@ -7,49 +7,49 @@ X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B485CC43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 16:41:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ACCE6C43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 16:41:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8294A20675
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 16:41:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7D78E2054F
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 16:41:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547570480;
-	bh=XbnYj2Bi9UdJX47hA5B7ALYRiNtugtAoQkK04yf81mk=;
+	s=default; t=1547570484;
+	bh=BNF3op7Knsdej3N7qsE5C4H4m078BfPX6SRzFchzj74=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=j6eMGOL8eo123RT4qH1TYdyCS3cj+cQm9PwQaovzTvdSZmeaz2CoY5w7iQOLth9wW
-	 MMRs3mJ5w2Up8212Sr/j1T3a9MwmVmCB/G+RjfNecuyGH80qrXS7qYnfXCoqSv6AEo
-	 wubVraDcwQ57Yb+A1XGIdwDPOJc621BtbFPqHGcY=
+	b=tzXcASLQkg1KzX3aEFP17On8qFZccwLxgnql7NXHi3ojPQLBvsQXLchWjue4Vd2uC
+	 QEJ8xE7KTdkbqWfNGyOFOcWUG00QfcFa31Hln6hDnRxippuZfymm/9v2LzwScST22p
+	 gQv9fx3RDdF/mbiSihbTbZNL2fEkNWaBfyenfz7g=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732756AbfAOQlS (ORCPT
+        id S1732769AbfAOQlX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 15 Jan 2019 11:41:18 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57916 "EHLO mail.kernel.org"
+        Tue, 15 Jan 2019 11:41:23 -0500
+Received: from mail.kernel.org ([198.145.29.99]:57976 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732736AbfAOQlP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Jan 2019 11:41:15 -0500
+        id S1732751AbfAOQlS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 Jan 2019 11:41:18 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E7A0A2054F;
-        Tue, 15 Jan 2019 16:41:13 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8075E20859;
+        Tue, 15 Jan 2019 16:41:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547570474;
-        bh=XbnYj2Bi9UdJX47hA5B7ALYRiNtugtAoQkK04yf81mk=;
+        s=default; t=1547570477;
+        bh=BNF3op7Knsdej3N7qsE5C4H4m078BfPX6SRzFchzj74=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=0UIh53ghxydbAMFLXm1W8BcEoMbYus35nuISV7f51CHL3jll7x11TvZz4sCkCkE1L
-         Z7h/jj1issuH0cseS5wQ3yhsdIZVhQ/PCprMRC+RhVL7nAaRjWGKnZ9h79DKrKBLam
-         Idi0cR23XrymqeyKXrwzymJOTs7C6fdRDULu4sDY=
+        b=ASc0dD8OOrJMmXtvEm4gd6LDbPp65xvwwxBUgZI4DZc5sl8AXJ7CqNtBkZflG8wSg
+         YJPwzIkjJVlhkUn5BNVp99zoiBqYQOFxPxVZ3aV0pX/Jz6SNGXi8hmj35AMllZbT7s
+         YgTJXeckh15N7In+YM+AiyMjFv+hDn0idwwSQrz0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Kailang Yang <kailang@realtek.com>,
-        Takashi Iwai <tiwai@suse.de>
-Subject: [PATCH 4.14 04/27] ALSA: hda/realtek - Add unplug function into unplug state of Headset Mode for ALC225
-Date:   Tue, 15 Jan 2019 17:35:53 +0100
-Message-Id: <20190115154901.461522178@linuxfoundation.org>
+        stable@vger.kernel.org, Filipe Manana <fdmanana@suse.com>,
+        David Sterba <dsterba@suse.com>
+Subject: [PATCH 4.19 01/50] Btrfs: fix deadlock when using free space tree due to block group creation
+Date:   Tue, 15 Jan 2019 17:35:37 +0100
+Message-Id: <20190115154910.033596759@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190115154901.189747728@linuxfoundation.org>
-References: <20190115154901.189747728@linuxfoundation.org>
+In-Reply-To: <20190115154909.933241945@linuxfoundation.org>
+References: <20190115154909.933241945@linuxfoundation.org>
 User-Agent: quilt/0.65
 X-stable: review
 X-Patchwork-Hint: ignore
@@ -61,35 +61,68 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.14-stable review patch.  If anyone has any objections, please let me know.
+4.19-stable review patch.  If anyone has any objections, please let me know.
 
 ------------------
 
-From: Kailang Yang <kailang@realtek.com>
+From: Filipe Manana <fdmanana@suse.com>
 
-commit 4d4b0c52bde470c379f5d168d5c139ad866cb808 upstream.
+commit a6d8654d885d7d79a3fb82da64eaa489ca332a82 upstream.
 
-Forgot to add unplug function to unplug state of headset mode
-for ALC225.
+When modifying the free space tree we can end up COWing one of its extent
+buffers which in turn might result in allocating a new chunk, which in
+turn can result in flushing (finish creation) of pending block groups. If
+that happens we can deadlock because creating a pending block group needs
+to update the free space tree, and if any of the updates tries to modify
+the same extent buffer that we are COWing, we end up in a deadlock since
+we try to write lock twice the same extent buffer.
 
-Signed-off-by: Kailang Yang <kailang@realtek.com>
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
+So fix this by skipping pending block group creation if we are COWing an
+extent buffer from the free space tree. This is a case missed by commit
+5ce555578e091 ("Btrfs: fix deadlock when writing out free space caches").
+
+Bugzilla: https://bugzilla.kernel.org/show_bug.cgi?id=202173
+Fixes: 5ce555578e091 ("Btrfs: fix deadlock when writing out free space caches")
+CC: stable@vger.kernel.org # 4.18+
+Signed-off-by: Filipe Manana <fdmanana@suse.com>
+Reviewed-by: David Sterba <dsterba@suse.com>
+Signed-off-by: David Sterba <dsterba@suse.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- sound/pci/hda/patch_realtek.c |    1 +
- 1 file changed, 1 insertion(+)
+ fs/btrfs/ctree.c |   16 +++++++++-------
+ 1 file changed, 9 insertions(+), 7 deletions(-)
 
---- a/sound/pci/hda/patch_realtek.c
-+++ b/sound/pci/hda/patch_realtek.c
-@@ -4005,6 +4005,7 @@ static void alc_headset_mode_unplugged(s
- 	case 0x10ec0225:
- 	case 0x10ec0295:
- 	case 0x10ec0299:
-+		alc_process_coef_fw(codec, alc225_pre_hsmode);
- 		alc_process_coef_fw(codec, coef0225);
- 		break;
- 	case 0x10ec0867:
+--- a/fs/btrfs/ctree.c
++++ b/fs/btrfs/ctree.c
+@@ -1051,19 +1051,21 @@ static noinline int __btrfs_cow_block(st
+ 		parent_start = parent->start;
+ 
+ 	/*
+-	 * If we are COWing a node/leaf from the extent, chunk or device trees,
+-	 * make sure that we do not finish block group creation of pending block
+-	 * groups. We do this to avoid a deadlock.
++	 * If we are COWing a node/leaf from the extent, chunk, device or free
++	 * space trees, make sure that we do not finish block group creation of
++	 * pending block groups. We do this to avoid a deadlock.
+ 	 * COWing can result in allocation of a new chunk, and flushing pending
+ 	 * block groups (btrfs_create_pending_block_groups()) can be triggered
+ 	 * when finishing allocation of a new chunk. Creation of a pending block
+-	 * group modifies the extent, chunk and device trees, therefore we could
+-	 * deadlock with ourselves since we are holding a lock on an extent
+-	 * buffer that btrfs_create_pending_block_groups() may try to COW later.
++	 * group modifies the extent, chunk, device and free space trees,
++	 * therefore we could deadlock with ourselves since we are holding a
++	 * lock on an extent buffer that btrfs_create_pending_block_groups() may
++	 * try to COW later.
+ 	 */
+ 	if (root == fs_info->extent_root ||
+ 	    root == fs_info->chunk_root ||
+-	    root == fs_info->dev_root)
++	    root == fs_info->dev_root ||
++	    root == fs_info->free_space_root)
+ 		trans->can_flush_pending_bgs = false;
+ 
+ 	cow = btrfs_alloc_tree_block(trans, root, parent_start,
 
 
