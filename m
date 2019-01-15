@@ -2,122 +2,123 @@ Return-Path: <SRS0=RZO6=PX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BFB4FC43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 05:42:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4DA05C43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 05:42:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 92D8720656
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 05:42:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 19A8520656
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 05:42:47 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="opB0LILt"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="JUd0nvd3"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728149AbfAOFmL (ORCPT
+        id S1728182AbfAOFmp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 15 Jan 2019 00:42:11 -0500
-Received: from mail-lf1-f68.google.com ([209.85.167.68]:45956 "EHLO
-        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727211AbfAOFmK (ORCPT
+        Tue, 15 Jan 2019 00:42:45 -0500
+Received: from mail-yb1-f195.google.com ([209.85.219.195]:44035 "EHLO
+        mail-yb1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727211AbfAOFmp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Jan 2019 00:42:10 -0500
-Received: by mail-lf1-f68.google.com with SMTP id b20so1044928lfa.12
-        for <linux-kernel@vger.kernel.org>; Mon, 14 Jan 2019 21:42:09 -0800 (PST)
+        Tue, 15 Jan 2019 00:42:45 -0500
+Received: by mail-yb1-f195.google.com with SMTP id e1so590493ybn.11
+        for <linux-kernel@vger.kernel.org>; Mon, 14 Jan 2019 21:42:44 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
+        d=google.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=5U4Yr+jS2JUdn/D+ygFqqoeUDxn+oxmgJpsC2yObEJM=;
-        b=opB0LILtjOwB4hb42JKCpZE4Vs5XNkvxk0O3/UNZ3WLPXcdQA73iwKl29YrZA9d3L1
-         8SYhAKEJ+NkJ4fESoaOHLpGIwJmCf+vLZfi0f+lg5Ys8NLLYSk0slaL0ai2pp8D0KE4b
-         DnVqr7YBDo9B8pSz18T9jviys2CSqrndoW3SEYNTfqJgJ+HKGfq6MzrvbJS1FihcUe5G
-         r+6b366ncZ2Qpy3LtTQQLDN3djzMmTLMxKzof/RcKVvta1n+mLO4hGax2pt/sq2aGIls
-         5cMgxzgmJ8dyRiAY+FSgbTw1QdtV0NpuxoBp/DdNlpAdkwEAHjhtvRTWUXc3wSPdvM27
-         qHpQ==
+        bh=PXDiDbCWSojGdBQHy8QvvSwkVb8vcMJGGTZ3hLVJa2A=;
+        b=JUd0nvd3wkt/6LG6T/IJx11IwhmrWtm5Y7xgOXGJmAUHHGKQpKlufxx371cdTMgZf/
+         ZXqhP/BV2TKqFC4jAD2MEZJfQAJrOQ+Avj2D3n4c7Gbw5qdAZnQfBAV1W+9Stxr7wJp6
+         sEUDzBNErQeMh0UmAh9Q0SnpdWeGMpEWIgyEDsoEazidy0JZU3FhK2oczf5MQn5UoSaB
+         jI4gO4DVSneg+glXU6+bcCYsFNBetY0mljwlFWE5Ct7tjLqemB4S7i8kzFAciAok2cwO
+         mfhMX0ekAzFut31VZawG+UIj7GwwVu4Uyue6LQacW3FfdzXPqArdL4ilZClmF09E3//V
+         UBiQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=5U4Yr+jS2JUdn/D+ygFqqoeUDxn+oxmgJpsC2yObEJM=;
-        b=HKsm0Ax0bXmYs/pU9CJy5y//b/F5H2DCvLfrdDYpmYBejdPNG5UWedoNcWZU14yhJ7
-         /kj7Qm6I3q+NHLsylyQLt7vjngtCINcKMe75/4TaNK18dISqFO2Nv9aKIQgiYgK0ZMGx
-         QB3JV1FKaHOkAvVYXwHfwcLPq8GwiaKzR+HRDvbT03md48hvVHRU33E8fjDWHZmVCc5P
-         BDArk4tNJTZuRcLMTMRr6BJbdWko3ZJnYakku4dwGyH+fURsimyrsSd9dkePJCtJ7OV4
-         CoaezbU2KBPam0QvgVaUwUi+nXg9FY2gSgrdz8Se/s5Mt5eiEIDRvarB6nXvn3hnWvPz
-         96Qw==
-X-Gm-Message-State: AJcUukfNlOsRGqWRItAiJVZG5kP1/GtBnknbDTbBIE7Qislx5NXe5pKv
-        7zyI68PY+JACDAskh+pOsmXWRU28XVtqsGWUWD0=
-X-Google-Smtp-Source: ALg8bN5rZ5g/mEr7KbXdsOB6SSm+HbAlmtg/Yt2PUrKntnU6562AUYnfG+mCjdaLAMtyhWRlNypsFZ41BnXTWPKxLHA=
-X-Received: by 2002:a19:2906:: with SMTP id p6mr1442310lfp.17.1547530928341;
- Mon, 14 Jan 2019 21:42:08 -0800 (PST)
+        bh=PXDiDbCWSojGdBQHy8QvvSwkVb8vcMJGGTZ3hLVJa2A=;
+        b=WzkHrJHWkaxQB4TehB9AOUAOPDOZNMsbKOnw427uZBtrWp9Cgp5WEHUFXloCO78Cx6
+         M9InFBByBg5KER7KOfMvgmJ1R5q7D9rRINXmbE42/VRZjSR+xQOSVl741EdYe8g50gmP
+         xRHtJ4sEzt9rj7B4VzPtVYmob0wFTvbUoJhsKazkYS0/Q7yODLKbMYpQZDoazsehRUXS
+         wy0326LS4KSx5XVje9yDi+xCGW/60DhvGFJh1YUWPJbZU01lzO2pMl9NcP6ACYAZpXTT
+         KUuwSyxfWnPtknX5V1Bb81KTYXARoIyCwkD6GczyUFtxoj/gdMXQBGW3Kw1Ht9YwJbsC
+         JGsQ==
+X-Gm-Message-State: AJcUukdYl6Yu5W+HciId4IDd7aw6dVnw66/zR9BVHvIoIl76RZRduPOd
+        NPptSolJJQawWXKFYez1z0fOX4cw5oOZZgdCfVM+sg==
+X-Google-Smtp-Source: ALg8bN6KV2E2O7byvH4O7YT0Bi3NL9LMuGsMU9chgiXsQaYeG2x20Q06h9F0vRm2eAQBFbgjqhhrDBgZboSVHM7JfWg=
+X-Received: by 2002:a25:c184:: with SMTP id r126mr1485509ybf.441.1547530963538;
+ Mon, 14 Jan 2019 21:42:43 -0800 (PST)
 MIME-Version: 1.0
-References: <20190111151326.GA2853@jordon-HP-15-Notebook-PC> <8b0e0809-8e66-079d-1186-90b3f2df7a38@oracle.com>
-In-Reply-To: <8b0e0809-8e66-079d-1186-90b3f2df7a38@oracle.com>
-From:   Souptick Joarder <jrdr.linux@gmail.com>
-Date:   Tue, 15 Jan 2019 11:11:56 +0530
-Message-ID: <CAFqt6zbgrdhoaZXW+5vHu2kV-LmtXMGAcmrv+28i78x0z4Fweg@mail.gmail.com>
-Subject: Re: [PATCH 9/9] xen/privcmd-buf.c: Convert to use vm_insert_range_buggy
-To:     Boris Ostrovsky <boris.ostrovsky@oracle.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        Michal Hocko <mhocko@suse.com>,
-        Juergen Gross <jgross@suse.com>,
-        Russell King - ARM Linux <linux@armlinux.org.uk>,
-        robin.murphy@arm.com, xen-devel@lists.xenproject.org,
-        linux-kernel@vger.kernel.org, Linux-MM <linux-mm@kvack.org>
+References: <20181129195548.204153-1-egranata@chromium.org>
+ <20181207222223.GA240898@google.com> <CAMHSBOU0qNrCfg5=N-4KXBS_0fTBRbHGY2V9R7Q9E9ZY7R-1Mg@mail.gmail.com>
+ <CA+ASDXPt5fws82r71xjuVucB=gZCYVSjx5dMaGdbW6qFOuG0vA@mail.gmail.com>
+In-Reply-To: <CA+ASDXPt5fws82r71xjuVucB=gZCYVSjx5dMaGdbW6qFOuG0vA@mail.gmail.com>
+From:   Gwendal Grignou <gwendal@google.com>
+Date:   Mon, 14 Jan 2019 21:42:30 -0800
+Message-ID: <CAMHSBOVy+n+nf+Y_mu21QkNd9U7=Tq4=R6dQFLB_xy=Uh4AHkQ@mail.gmail.com>
+Subject: Re: [PATCH] mfd: cros_ec: Add support for MKBP more event flags
+To:     Brian Norris <briannorris@chromium.org>
+Cc:     Enrico Granata <egranata@google.com>,
+        Lee Jones <lee.jones@linaro.org>,
+        Benson Leung <bleung@chromium.org>,
+        Olof Johansson <olof@lixom.net>,
+        Linux Kernel <linux-kernel@vger.kernel.org>,
+        Enrico Granata <egranata@chromium.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 15, 2019 at 5:01 AM Boris Ostrovsky
-<boris.ostrovsky@oracle.com> wrote:
+On Mon, Jan 14, 2019 at 6:04 PM Brian Norris <briannorris@chromium.org> wrote:
 >
-> On 1/11/19 10:13 AM, Souptick Joarder wrote:
-> > Convert to use vm_insert_range_buggy() to map range of kernel
-> > memory to user vma.
-> >
-> > This driver has ignored vm_pgoff. We could later "fix" these drivers
-> > to behave according to the normal vm_pgoff offsetting simply by
-> > removing the _buggy suffix on the function name and if that causes
-> > regressions, it gives us an easy way to revert.
-> >
-> > Signed-off-by: Souptick Joarder <jrdr.linux@gmail.com>
-> > ---
-> >  drivers/xen/privcmd-buf.c | 8 ++------
-> >  1 file changed, 2 insertions(+), 6 deletions(-)
-> >
-> > diff --git a/drivers/xen/privcmd-buf.c b/drivers/xen/privcmd-buf.c
-> > index de01a6d..a9d7e97 100644
-> > --- a/drivers/xen/privcmd-buf.c
-> > +++ b/drivers/xen/privcmd-buf.c
-> > @@ -166,12 +166,8 @@ static int privcmd_buf_mmap(struct file *file, struct vm_area_struct *vma)
-> >       if (vma_priv->n_pages != count)
-> >               ret = -ENOMEM;
-> >       else
-> > -             for (i = 0; i < vma_priv->n_pages; i++) {
-> > -                     ret = vm_insert_page(vma, vma->vm_start + i * PAGE_SIZE,
-> > -                                          vma_priv->pages[i]);
-> > -                     if (ret)
-> > -                             break;
-> > -             }
-> > +             ret = vm_insert_range_buggy(vma, vma_priv->pages,
-> > +                                             vma_priv->n_pages);
+> Hi Gwendal,
 >
-> This can use the non-buggy version. But since the original code was
-> indeed buggy in this respect I can submit this as a separate patch later.
+> On Mon, Jan 14, 2019 at 3:50 PM Gwendal Grignou <gwendal@google.com> wrote:
+> > On Fri, Dec 7, 2018 at 2:22 PM Brian Norris <briannorris@chromium.org> wrote:
+> > > On Thu, Nov 29, 2018 at 11:55:48AM -0800, egranata@google.com wrote:
+> > > > --- a/drivers/platform/chrome/cros_ec_proto.c
+> > > > +++ b/drivers/platform/chrome/cros_ec_proto.c
+> > > > @@ -420,10 +420,14 @@ int cros_ec_query_all(struct cros_ec_device *ec_dev)
+> > > >       ret = cros_ec_get_host_command_version_mask(ec_dev,
+> > > >                                                   EC_CMD_GET_NEXT_EVENT,
+> > > >                                                   &ver_mask);
+> > >
+> > > It's not exactly new here (although you're using 'ver_mask' in new
+> > > ways), but cros_ec_get_host_command_version_mask() doesn't look 100%
+> > > right. It doesn't look at msg->result, and instead just assumes that if
+> > > we got some data back (send_command() > 0), then it must have been a
+> > > success. I don't think that's really guaranteed in general, although it
+> > > might be for the specific case of EC_CMD_GET_CMD_VERSIONS.
 >
-> So
+> > It is guaranteed: if msg->result is not EC_RES_SUCCESS, then ret can
+> > not be greater than 0. At best it will be 0, or a negative number if
+> > we can already qualify the error in the errno space (see
+> > T() for instance).
 >
-> Reviewed-by: Boris Ostrovsky <boris.ostrovsky@oracle.com>
+> Sorry, where do you guarantee that? The only enforcements I see in
+> those xfer implementation are:
+> (1) if result == EC_RES_IN_PROGRESS, we convert that to an errno
+> (2) if the expected length or checksum are bad, we turn that to an errno
+>
+> So technically, the EC *could* be sending a valid, checksummed
+> response of the expected length, while still setting the ->result
+> field to something besides EC_RES_SUCCESS or EC_RES_IN_PROGRESS. And
+> we would treat that as a valid 'ver_mask'.
+You're right, I misread cros_ec_pkt_xfer_i2c().
+> Albeit, that seems unlikely, given understanding of how the EC is
+> supposed to behave, but our code is not properly defensive AIUI. This
+> is basically why cros_ec_cmd_xfer_status() exists -- so that
+> sub-drivers don't get lazy and use cros_ec_cmd_xfer() without handling
+> the ->result field properly.
+send_command is called for a very small subset of command where the
+ec_dev mutex is already held. We indeed need to be careful when
+calling it directly.
 
-Thanks Boris.
+Gwendal.
 >
->
-> >
-> >       if (ret)
-> >               privcmd_buf_vmapriv_free(vma_priv);
->
+> Brian
