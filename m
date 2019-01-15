@@ -2,258 +2,221 @@ Return-Path: <SRS0=RZO6=PX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AC6F8C43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 21:27:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F2715C43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 21:27:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 623922086D
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 21:27:25 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="br/Piam+"
+	by mail.kernel.org (Postfix) with ESMTP id BF7152086D
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 21:27:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732817AbfAOV1X (ORCPT
+        id S2390428AbfAOV1Z (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 15 Jan 2019 16:27:23 -0500
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:33621 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727307AbfAOV1X (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Jan 2019 16:27:23 -0500
-Received: by mail-lj1-f194.google.com with SMTP id v1-v6so3679483ljd.0
-        for <linux-kernel@vger.kernel.org>; Tue, 15 Jan 2019 13:27:20 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:from:date:message-id:subject:to:cc;
-        bh=LOzW4BQHACj21GeJaacrUI1fVDGcC2Y9DlPn2XzyNIE=;
-        b=br/Piam+4oYviFknkDLiDq6Zy/A+2JLjEPruu922IheZ2dwLbRoMEU6hMIC0B0wwbO
-         4h9D4EvqZUdgzVogbajhn4HFobXUXq9319E3Y2agWIIn8eEUiP0dyCSFMMdz5T3JLt6N
-         RBX7hT8VFYsK7LQUuqIthlI+HUq0v1uoS19BV0QX8C6GVXWmfOPxffhX4j7SENkJZdrv
-         0VXb7FkU7UdHvq9Kk5wlKKQCvoburYv3ONWRQYbukfNxVbEhI0DJEam91Qrdk1cOfERY
-         sMYXzKWN9NqaodrjlFBukRF9TYU5hi6vt/cv2OHR2cuchaqLIFvTDhD/YCll54gwupZ1
-         MZCQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
-        bh=LOzW4BQHACj21GeJaacrUI1fVDGcC2Y9DlPn2XzyNIE=;
-        b=a7WyhSjmUK6NqfDR70nQdWUT+a9RyP4O0yT8hEb82BbcLLOxNs2zE+tClRYN4TR4wW
-         CpRL+Bo0c3GqdbXQGxnGHLa1eMhkofI+3XPXsYsg7Jzme4eOQn3EfiR32y4qx08DryAB
-         8K+ho+q7r1NQOC+XVdPgTJUVEv2sDnEbfHNAv/YmPJTlfhk++Y/bbaPgqtRVwRyJOicC
-         R0PAhfHnsFsfbjQrbi2eJ1EcBzVIdzOCaO9rJ+qoWmpcSyNJ8diIDM5rc64S6BxByr2u
-         QMHUUGY80P0iIRC+vFhe+aKCzR3WDQpiEj8eVC6VJhm6Y5PB75vwIKPqKl8OtEb8aECQ
-         2zoQ==
-X-Gm-Message-State: AJcUukeZngH7alv7liwqCGbsYUdLKRMqHZXLl9rO7mjkv0H8uVU5Rq8t
-        JEVIWbp8P6lOY++CfPvorO7LSssUMvUivId8YJ5t4o/Z
-X-Google-Smtp-Source: ALg8bN5ec6loxdUg6M/9EPpgk0y4TW0dpQ6wWNIxw1LS5Sgamaw/GsqLjkGJiUnhQwt+q0CmxdLsZa4bDSSpdbj0qOE=
-X-Received: by 2002:a2e:197:: with SMTP id f23-v6mr4242002lji.144.1547587639456;
- Tue, 15 Jan 2019 13:27:19 -0800 (PST)
+        Tue, 15 Jan 2019 16:27:25 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:58920 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727307AbfAOV1Y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 Jan 2019 16:27:24 -0500
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 3EF8286663;
+        Tue, 15 Jan 2019 21:27:23 +0000 (UTC)
+Received: from [10.36.116.96] (ovpn-116-96.ams2.redhat.com [10.36.116.96])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 2E5B019C7C;
+        Tue, 15 Jan 2019 21:27:12 +0000 (UTC)
+Subject: Re: [RFC v3 14/21] iommu: introduce device fault data
+To:     Jean-Philippe Brucker <jean-philippe.brucker@arm.com>,
+        Jacob Pan <jacob.jun.pan@linux.intel.com>
+Cc:     "yi.l.liu@linux.intel.com" <yi.l.liu@linux.intel.com>,
+        "kevin.tian@intel.com" <kevin.tian@intel.com>,
+        "alex.williamson@redhat.com" <alex.williamson@redhat.com>,
+        "ashok.raj@intel.com" <ashok.raj@intel.com>,
+        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+        "peter.maydell@linaro.org" <peter.maydell@linaro.org>,
+        Will Deacon <Will.Deacon@arm.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Christoffer Dall <Christoffer.Dall@arm.com>,
+        Marc Zyngier <Marc.Zyngier@arm.com>,
+        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
+        Robin Murphy <Robin.Murphy@arm.com>,
+        "kvmarm@lists.cs.columbia.edu" <kvmarm@lists.cs.columbia.edu>,
+        "eric.auger.pro@gmail.com" <eric.auger.pro@gmail.com>
+References: <20190108102633.17482-1-eric.auger@redhat.com>
+ <20190108102633.17482-15-eric.auger@redhat.com>
+ <20190110104544.26f3bcb1@jacob-builder>
+ <63a19100-c3dd-9dbd-b37a-9dfbe254459e@arm.com>
+From:   Auger Eric <eric.auger@redhat.com>
+Message-ID: <07fc2059-3a4e-6b36-262b-779eb98b2334@redhat.com>
+Date:   Tue, 15 Jan 2019 22:27:11 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-Received: by 2002:ab3:7ad7:0:0:0:0:0 with HTTP; Tue, 15 Jan 2019 13:27:18
- -0800 (PST)
-From:   Nathaniel Russell <naterussell83@gmail.com>
-Date:   Tue, 15 Jan 2019 15:27:18 -0600
-Message-ID: <CAONH+JkS-N+M2b-McnrJmVyVNeVL7GjzGKjCMyr5SV8785qtbA@mail.gmail.com>
-Subject: Kernel Opppps Kernel 4.20.2
-To:     linux-kernel <linux-kernel@vger.kernel.org>
-Cc:     Nathaniel Russell <naterussell83@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <63a19100-c3dd-9dbd-b37a-9dfbe254459e@arm.com>
+Content-Type: text/plain; charset=windows-1252
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.26]); Tue, 15 Jan 2019 21:27:23 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[  300.403269] ------------[ cut here ]------------
-[  300.403271] CPA: called for zero pte. vaddr = 0 cpa->vaddr = 0
-[  300.403281] WARNING: CPU: 0 PID: 33 at arch/x86/mm/pageattr.c:1466
-__cpa_process_fault+0x365/0x390
-[  300.403282] Modules linked in: cmac cifs fscache snd_seq_dummy
-snd_seq_oss snd_seq_midi_event snd_seq snd_seq_device snd_pcm_oss
-snd_mixer_oss ipv6 cfg80211 8021q garp mrp stp llc joydev hid_generic
-usbhid hid gpio_ich wmi_bmof hp_wmi sparse_keymap rfkill ppdev evdev
-nouveau mxm_wmi video ttm drm_kms_helper drm tg3 agpgart i2c_algo_bit
-fb_sys_fops syscopyarea sysfillrect libphy lpc_ich
-snd_hda_codec_realtek snd_hda_codec_hdmi snd_hda_codec_generic
-sysimgblt psmouse serio_raw i2c_core coretemp firewire_ohci
-firewire_core hwmon wmi uhci_hcd snd_hda_intel snd_hda_codec ehci_pci
-snd_hda_core ehci_hcd parport_pc parport button snd_hwdep snd_pcm
-snd_timer snd soundcore pcc_cpufreq acpi_cpufreq loop
-[  300.403313] CPU: 0 PID: 33 Comm: kswapd0 Tainted: G          I
- 4.20.2 #1
-[  300.403314] Hardware name: Hewlett-Packard HP xw4600
-Workstation/0AA0h, BIOS 786F3 v01.34 07/09/2012
-[  300.403316] EIP: __cpa_process_fault+0x365/0x390
-[  300.403318] Code: c4 0c 85 c0 0f 88 5a fe ff ff 01 c6 e9 4b fe ff
-ff 8b 7d d8 e9 64 ff ff ff 8b 03 ff 30 ff 75 f0 68 d8 9d 38 cd e8 8e
-0c 01 00 <0f> 0b be f2 ff ff ff 83 c4 0c e9 e4 fc ff ff 8b 45 f0 8d b8
-00 00
-[  300.403319] EAX: 00000032 EBX: f4acfd78 ECX: cd509424 EDX: 00000007
-[  300.403320] ESI: f4acfd78 EDI: 00000000 EBP: f4acfcc4 ESP: f4acfc88
-[  300.403322] DS: 007b ES: 007b FS: 0000 GS: 00e0 SS: 0068 EFLAGS: 00010292
-[  300.403323] CR0: 80050033 CR2: b1a96000 CR3: 1477b000 CR4: 000006d0
-[  300.403324] Call Trace:
-[  300.403328]  ? __change_page_attr_set_clr+0x575/0x880
-[  300.403331]  ? invalidate_mapping_pages+0x7d/0x2f0
-[  300.403333]  ? enqueue_entity+0xa2/0x2f0
-[  300.403336]  ? change_page_attr_set_clr+0xf1/0x2f0
-[  300.403338]  ? set_memory_wb+0x35/0x80
-[  300.403344]  ? ttm_pages_put+0x4c/0x90 [ttm]
-[  300.403348]  ? ttm_page_pool_free+0x104/0x170 [ttm]
-[  300.403351]  ? ttm_pool_shrink_scan+0xc0/0x100 [ttm]
-[  300.403354]  ? do_shrink_slab+0x155/0x2f0
-[  300.403356]  ? shrink_slab+0x1cf/0x240
-[  300.403358]  ? __switch_to_asm+0x26/0x50
-[  300.403360]  ? shrink_node+0xe1/0x430
-[  300.403362]  ? kswapd+0x375/0x630
-[  300.403365]  ? kthread+0xef/0x110
-[  300.403366]  ? mem_cgroup_shrink_node+0x120/0x120
-[  300.403368]  ? kthread_stop+0xd0/0xd0
-[  300.403369]  ? ret_from_fork+0x2e/0x40
-[  300.403371] ---[ end trace 3ff74d1f7f433be3 ]---
-[  300.403372] [TTM] Failed to set 1024 pages to wb!
-[  300.403740] ------------[ cut here ]------------
-[  300.403742] CPA: called for zero pte. vaddr = 0 cpa->vaddr = 0
-[  300.403745] WARNING: CPU: 0 PID: 33 at arch/x86/mm/pageattr.c:1466
-__cpa_process_fault+0x365/0x390
-[  300.403746] Modules linked in: cmac cifs fscache snd_seq_dummy
-snd_seq_oss snd_seq_midi_event snd_seq snd_seq_device snd_pcm_oss
-snd_mixer_oss ipv6 cfg80211 8021q garp mrp stp llc joydev hid_generic
-usbhid hid gpio_ich wmi_bmof hp_wmi sparse_keymap rfkill ppdev evdev
-nouveau mxm_wmi video ttm drm_kms_helper drm tg3 agpgart i2c_algo_bit
-fb_sys_fops syscopyarea sysfillrect libphy lpc_ich
-snd_hda_codec_realtek snd_hda_codec_hdmi snd_hda_codec_generic
-sysimgblt psmouse serio_raw i2c_core coretemp firewire_ohci
-firewire_core hwmon wmi uhci_hcd snd_hda_intel snd_hda_codec ehci_pci
-snd_hda_core ehci_hcd parport_pc parport button snd_hwdep snd_pcm
-snd_timer snd soundcore pcc_cpufreq acpi_cpufreq loop
-[  300.403766] CPU: 0 PID: 33 Comm: kswapd0 Tainted: G        W I
- 4.20.2 #1
-[  300.403767] Hardware name: Hewlett-Packard HP xw4600
-Workstation/0AA0h, BIOS 786F3 v01.34 07/09/2012
-[  300.403769] EIP: __cpa_process_fault+0x365/0x390
-[  300.403770] Code: c4 0c 85 c0 0f 88 5a fe ff ff 01 c6 e9 4b fe ff
-ff 8b 7d d8 e9 64 ff ff ff 8b 03 ff 30 ff 75 f0 68 d8 9d 38 cd e8 8e
-0c 01 00 <0f> 0b be f2 ff ff ff 83 c4 0c e9 e4 fc ff ff 8b 45 f0 8d b8
-00 00
-[  300.403771] EAX: 00000032 EBX: f4acfd78 ECX: cd509424 EDX: 00000007
-[  300.403772] ESI: f4acfd78 EDI: 00000000 EBP: f4acfcc4 ESP: f4acfc88
-[  300.403773] DS: 007b ES: 007b FS: 0000 GS: 00e0 SS: 0068 EFLAGS: 00010292
-[  300.403775] CR0: 80050033 CR2: b1a96000 CR3: 1477b000 CR4: 000006d0
-[  300.403775] Call Trace:
-[  300.403778]  ? __change_page_attr_set_clr+0x575/0x880
-[  300.403780]  ? invalidate_mapping_pages+0x7d/0x2f0
-[  300.403783]  ? change_page_attr_set_clr+0xf1/0x2f0
-[  300.403785]  ? set_memory_wb+0x35/0x80
-[  300.403789]  ? ttm_pages_put+0x4c/0x90 [ttm]
-[  300.403793]  ? ttm_page_pool_free+0x104/0x170 [ttm]
-[  300.403797]  ? ttm_pool_shrink_scan+0xc0/0x100 [ttm]
-[  300.403799]  ? do_shrink_slab+0x155/0x2f0
-[  300.403801]  ? shrink_slab+0x1cf/0x240
-[  300.403802]  ? __switch_to_asm+0x26/0x50
-[  300.403804]  ? shrink_node+0xe1/0x430
-[  300.403806]  ? kswapd+0x375/0x630
-[  300.403809]  ? kthread+0xef/0x110
-[  300.403810]  ? mem_cgroup_shrink_node+0x120/0x120
-[  300.403812]  ? kthread_stop+0xd0/0xd0
-[  300.403813]  ? ret_from_fork+0x2e/0x40
-[  300.403815] ---[ end trace 3ff74d1f7f433be4 ]---
-[  300.403815] [TTM] Failed to set 1024 pages to wb!
-[  325.075833] fuse init (API version 7.28)
-[  330.936828] ------------[ cut here ]------------
-[  330.936830] CPA: called for zero pte. vaddr = 0 cpa->vaddr = 0
-[  330.936840] WARNING: CPU: 0 PID: 33 at arch/x86/mm/pageattr.c:1466
-__cpa_process_fault+0x365/0x390
-[  330.936841] Modules linked in: fuse cmac cifs fscache snd_seq_dummy
-snd_seq_oss snd_seq_midi_event snd_seq snd_seq_device snd_pcm_oss
-snd_mixer_oss ipv6 cfg80211 8021q garp mrp stp llc joydev hid_generic
-usbhid hid gpio_ich wmi_bmof hp_wmi sparse_keymap rfkill ppdev evdev
-nouveau mxm_wmi video ttm drm_kms_helper drm tg3 agpgart i2c_algo_bit
-fb_sys_fops syscopyarea sysfillrect libphy lpc_ich
-snd_hda_codec_realtek snd_hda_codec_hdmi snd_hda_codec_generic
-sysimgblt psmouse serio_raw i2c_core coretemp firewire_ohci
-firewire_core hwmon wmi uhci_hcd snd_hda_intel snd_hda_codec ehci_pci
-snd_hda_core ehci_hcd parport_pc parport button snd_hwdep snd_pcm
-snd_timer snd soundcore pcc_cpufreq acpi_cpufreq loop
-[  330.936872] CPU: 0 PID: 33 Comm: kswapd0 Tainted: G        W I
- 4.20.2 #1
-[  330.936873] Hardware name: Hewlett-Packard HP xw4600
-Workstation/0AA0h, BIOS 786F3 v01.34 07/09/2012
-[  330.936875] EIP: __cpa_process_fault+0x365/0x390
-[  330.936877] Code: c4 0c 85 c0 0f 88 5a fe ff ff 01 c6 e9 4b fe ff
-ff 8b 7d d8 e9 64 ff ff ff 8b 03 ff 30 ff 75 f0 68 d8 9d 38 cd e8 8e
-0c 01 00 <0f> 0b be f2 ff ff ff 83 c4 0c e9 e4 fc ff ff 8b 45 f0 8d b8
-00 00
-[  330.936878] EAX: 00000032 EBX: f4acfd78 ECX: cd509424 EDX: 00000007
-[  330.936879] ESI: f4acfd78 EDI: 00000000 EBP: f4acfcc4 ESP: f4acfc88
-[  330.936881] DS: 007b ES: 007b FS: 0000 GS: 00e0 SS: 0068 EFLAGS: 00010292
-[  330.936882] CR0: 80050033 CR2: b115f7a0 CR3: 13513000 CR4: 000006d0
-[  330.936883] Call Trace:
-[  330.936888]  ? __change_page_attr_set_clr+0x575/0x880
-[  330.936891]  ? __es_remove_extent+0x2c0/0x2f0
-[  330.936892]  ? __es_remove_extent+0x2c0/0x2f0
-[  330.936895]  ? change_page_attr_set_clr+0xf1/0x2f0
-[  330.936896]  ? set_memory_wb+0x35/0x80
-[  330.936896]  ? ttm_pages_put+0x4c/0x90 [ttm]
-[  330.936896]  ? ttm_page_pool_free+0x104/0x170 [ttm]
-[  330.936896]  ? ttm_pool_shrink_scan+0xc0/0x100 [ttm]
-[  330.936896]  ? do_shrink_slab+0x155/0x2f0
-[  330.936896]  ? shrink_slab+0x1cf/0x240
-[  330.936896]  ? __switch_to_asm+0x26/0x50
-[  330.936896]  ? shrink_node+0xe1/0x430
-[  330.936896]  ? kswapd+0x375/0x630
-[  330.936896]  ? kthread+0xef/0x110
-[  330.936896]  ? mem_cgroup_shrink_node+0x120/0x120
-[  330.936896]  ? kthread_stop+0xd0/0xd0
-[  330.936896]  ? ret_from_fork+0x2e/0x40
-[  330.936896] ---[ end trace 3ff74d1f7f433be5 ]---
-[  330.936941] [TTM] Failed to set 1024 pages to wb!
-[  330.938244] ------------[ cut here ]------------
-[  330.938246] CPA: called for zero pte. vaddr = 0 cpa->vaddr = 0
-[  330.938250] WARNING: CPU: 0 PID: 33 at arch/x86/mm/pageattr.c:1466
-__cpa_process_fault+0x365/0x390
-[  330.938251] Modules linked in: fuse cmac cifs fscache snd_seq_dummy
-snd_seq_oss snd_seq_midi_event snd_seq snd_seq_device snd_pcm_oss
-snd_mixer_oss ipv6 cfg80211 8021q garp mrp stp llc joydev hid_generic
-usbhid hid gpio_ich wmi_bmof hp_wmi sparse_keymap rfkill ppdev evdev
-nouveau mxm_wmi video ttm drm_kms_helper drm tg3 agpgart i2c_algo_bit
-fb_sys_fops syscopyarea sysfillrect libphy lpc_ich
-snd_hda_codec_realtek snd_hda_codec_hdmi snd_hda_codec_generic
-sysimgblt psmouse serio_raw i2c_core coretemp firewire_ohci
-firewire_core hwmon wmi uhci_hcd snd_hda_intel snd_hda_codec ehci_pci
-snd_hda_core ehci_hcd parport_pc parport button snd_hwdep snd_pcm
-snd_timer snd soundcore pcc_cpufreq acpi_cpufreq loop
-[  330.938273] CPU: 0 PID: 33 Comm: kswapd0 Tainted: G        W I
- 4.20.2 #1
-[  330.938274] Hardware name: Hewlett-Packard HP xw4600
-Workstation/0AA0h, BIOS 786F3 v01.34 07/09/2012
-[  330.938276] EIP: __cpa_process_fault+0x365/0x390
-[  330.938278] Code: c4 0c 85 c0 0f 88 5a fe ff ff 01 c6 e9 4b fe ff
-ff 8b 7d d8 e9 64 ff ff ff 8b 03 ff 30 ff 75 f0 68 d8 9d 38 cd e8 8e
-0c 01 00 <0f> 0b be f2 ff ff ff 83 c4 0c e9 e4 fc ff ff 8b 45 f0 8d b8
-00 00
-[  330.938279] EAX: 00000032 EBX: f4acfd78 ECX: cd509424 EDX: 00000007
-[  330.938280] ESI: f4acfd78 EDI: 00000000 EBP: f4acfcc4 ESP: f4acfc88
-[  330.938281] DS: 007b ES: 007b FS: 0000 GS: 00e0 SS: 0068 EFLAGS: 00010292
-[  330.938283] CR0: 80050033 CR2: b115f7a0 CR3: 250b1000 CR4: 000006d0
-[  330.938283] Call Trace:
-[  330.938287]  ? __change_page_attr_set_clr+0x575/0x880
-[  330.938288]  ? invalidate_mapping_pages+0x7d/0x2f0
-[  330.938291]  ? change_page_attr_set_clr+0xf1/0x2f0
-[  330.938293]  ? es_do_reclaim_extents+0x9a/0x100
-[  330.938296]  ? set_memory_wb+0x35/0x80
-[  330.938300]  ? ttm_pages_put+0x4c/0x90 [ttm]
-[  330.938304]  ? ttm_page_pool_free+0x104/0x170 [ttm]
-[  330.938308]  ? ttm_pool_shrink_scan+0xc0/0x100 [ttm]
-[  330.938310]  ? do_shrink_slab+0x155/0x2f0
-[  330.938312]  ? shrink_slab+0x1cf/0x240
-[  330.938313]  ? __switch_to_asm+0x26/0x50
-[  330.938315]  ? shrink_node+0xe1/0x430
-[  330.938318]  ? kswapd+0x375/0x630
-[  330.938320]  ? kthread+0xef/0x110
-[  330.938322]  ? mem_cgroup_shrink_node+0x120/0x120
-[  330.938323]  ? kthread_stop+0xd0/0xd0
-[  330.938325]  ? ret_from_fork+0x2e/0x40
-[  330.938326] ---[ end trace 3ff74d1f7f433be6 ]---
-[  330.938327] [TTM] Failed to set 1024 pages to wb
+Hi Jean,
+
+On 1/11/19 12:06 PM, Jean-Philippe Brucker wrote:
+> On 10/01/2019 18:45, Jacob Pan wrote:
+>> On Tue,  8 Jan 2019 11:26:26 +0100
+>> Eric Auger <eric.auger@redhat.com> wrote:
+>>
+>>> From: Jacob Pan <jacob.jun.pan@linux.intel.com>
+>>>
+>>> Device faults detected by IOMMU can be reported outside IOMMU
+>>> subsystem for further processing. This patch intends to provide
+>>> a generic device fault data such that device drivers can be
+>>> communicated with IOMMU faults without model specific knowledge.
+>>>
+>>> The proposed format is the result of discussion at:
+>>> https://lkml.org/lkml/2017/11/10/291
+>>> Part of the code is based on Jean-Philippe Brucker's patchset
+>>> (https://patchwork.kernel.org/patch/9989315/).
+>>>
+>>> The assumption is that model specific IOMMU driver can filter and
+>>> handle most of the internal faults if the cause is within IOMMU driver
+>>> control. Therefore, the fault reasons can be reported are grouped
+>>> and generalized based common specifications such as PCI ATS.
+>>>
+>>> Signed-off-by: Jacob Pan <jacob.jun.pan@linux.intel.com>
+>>> Signed-off-by: Jean-Philippe Brucker <jean-philippe.brucker@arm.com>
+>>> Signed-off-by: Liu, Yi L <yi.l.liu@linux.intel.com>
+>>> Signed-off-by: Ashok Raj <ashok.raj@intel.com>
+>>> Signed-off-by: Eric Auger <eric.auger@redhat.com>
+>>> [moved part of the iommu_fault_event struct in the uapi, enriched
+>>>  the fault reasons to be able to map unrecoverable SMMUv3 errors]
+>>> ---
+>>>  include/linux/iommu.h      | 55 ++++++++++++++++++++++++-
+>>>  include/uapi/linux/iommu.h | 83
+>>> ++++++++++++++++++++++++++++++++++++++ 2 files changed, 136
+>>> insertions(+), 2 deletions(-)
+>>>
+>>> diff --git a/include/linux/iommu.h b/include/linux/iommu.h
+>>> index 244c1a3d5989..1dedc2d247c2 100644
+>>> --- a/include/linux/iommu.h
+>>> +++ b/include/linux/iommu.h
+>>> @@ -49,13 +49,17 @@ struct bus_type;
+>>>  struct device;
+>>>  struct iommu_domain;
+>>>  struct notifier_block;
+>>> +struct iommu_fault_event;
+>>>  
+>>>  /* iommu fault flags */
+>>> -#define IOMMU_FAULT_READ	0x0
+>>> -#define IOMMU_FAULT_WRITE	0x1
+>>> +#define IOMMU_FAULT_READ		(1 << 0)
+>>> +#define IOMMU_FAULT_WRITE		(1 << 1)
+>>> +#define IOMMU_FAULT_EXEC		(1 << 2)
+>>> +#define IOMMU_FAULT_PRIV		(1 << 3)
+>>>  
+>>>  typedef int (*iommu_fault_handler_t)(struct iommu_domain *,
+>>>  			struct device *, unsigned long, int, void *);
+>>> +typedef int (*iommu_dev_fault_handler_t)(struct iommu_fault_event *,
+>>> void *); 
+>>>  struct iommu_domain_geometry {
+>>>  	dma_addr_t aperture_start; /* First address that can be
+>>> mapped    */ @@ -255,6 +259,52 @@ struct iommu_device {
+>>>  	struct device *dev;
+>>>  };
+>>>  
+>>> +/**
+>>> + * struct iommu_fault_event - Generic per device fault data
+>>> + *
+>>> + * - PCI and non-PCI devices
+>>> + * - Recoverable faults (e.g. page request), information based on
+>>> PCI ATS
+>>> + * and PASID spec.
+>>> + * - Un-recoverable faults of device interest
+>>> + * - DMA remapping and IRQ remapping faults
+>>> + *
+>>> + * @fault: fault descriptor
+>>> + * @device_private: if present, uniquely identify device-specific
+>>> + *                  private data for an individual page request.
+>>> + * @iommu_private: used by the IOMMU driver for storing
+>>> fault-specific
+>>> + *                 data. Users should not modify this field before
+>>> + *                 sending the fault response.
+>>> + */
+>>> +struct iommu_fault_event {
+>>> +	struct iommu_fault fault;
+>>> +	u64 device_private;
+>> I think we want to move device_private to uapi since it gets injected
+>> into the guest, then returned by guest in case of page response. For
+>> VT-d we also need 128 bits of private data. VT-d spec. 7.7.1
+> 
+> Ah, I didn't notice the format changed in VT-d rev3. On that topic, how
+> do we manage future extensions to the iommu_fault struct? Should we add
+> ~48 bytes of padding after device_private, along with some flags telling
+> which field is valid, or deal with it using a structure version like we
+> do for the invalidate and bind structs? In the first case, iommu_fault
+> wouldn't fit in a 64-byte cacheline anymore, but I'm not sure we care.
+> 
+>> For exception tracking (e.g. unanswered page request), I can add timer
+>> and list info later when I include PRQ. sounds ok?
+>>> +	u64 iommu_private;
+> [...]
+>>> +/**
+>>> + * struct iommu_fault - Generic fault data
+>>> + *
+>>> + * @type contains fault type
+>>> + * @reason fault reasons if relevant outside IOMMU driver.
+>>> + * IOMMU driver internal faults are not reported.
+>>> + * @addr: tells the offending page address
+>>> + * @fetch_addr: tells the address that caused an abort, if any
+>>> + * @pasid: contains process address space ID, used in shared virtual
+>>> memory
+>>> + * @page_req_group_id: page request group index
+>>> + * @last_req: last request in a page request group
+>>> + * @pasid_valid: indicates if the PRQ has a valid PASID
+>>> + * @prot: page access protection flag:
+>>> + *	IOMMU_FAULT_READ, IOMMU_FAULT_WRITE
+>>> + */
+>>> +
+>>> +struct iommu_fault {
+>>> +	__u32	type;   /* enum iommu_fault_type */
+>>> +	__u32	reason; /* enum iommu_fault_reason */
+>>> +	__u64	addr;
+>>> +	__u64	fetch_addr;
+>>> +	__u32	pasid;
+>>> +	__u32	page_req_group_id;
+>>> +	__u32	last_req;
+>>> +	__u32	pasid_valid;
+>>> +	__u32	prot;
+>>> +	__u32	access;
+> 
+> What does @access contain? Can it be squashed into @prot?
+it was related to F_ACCESS event record and was a placeholder for
+reporting access attributes of the input transaction (Rnw, InD, PnU
+fields). But I wonder whether this is needed to implement such fine
+level fault reporting. Do we really care?
+
+Thanks
+
+Eric
+> 
+> Thanks,
+> Jean
+> 
+>> relocated to uapi, Yi can you confirm?
+>> 	__u64 device_private[2];
+>>
+>>> +};
+>>>  #endif /* _UAPI_IOMMU_H */
+>>
+>> _______________________________________________
+>> iommu mailing list
+>> iommu@lists.linux-foundation.org
+>> https://lists.linuxfoundation.org/mailman/listinfo/iommu
+>>
+> 
