@@ -2,195 +2,131 @@ Return-Path: <SRS0=RZO6=PX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B6CF7C43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 06:51:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A6B7C43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 06:56:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 79D0C20859
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 06:51:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 508B020859
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 06:56:07 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Xz4BR5+A"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727547AbfAOGvE (ORCPT
+        id S1727273AbfAOG4D (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 15 Jan 2019 01:51:04 -0500
-Received: from pegase1.c-s.fr ([93.17.236.30]:52286 "EHLO pegase1.c-s.fr"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726594AbfAOGvE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Jan 2019 01:51:04 -0500
-Received: from localhost (mailhub1-int [192.168.12.234])
-        by localhost (Postfix) with ESMTP id 43f1Fd5nT9z9vBKb;
-        Tue, 15 Jan 2019 07:51:01 +0100 (CET)
-X-Virus-Scanned: Debian amavisd-new at c-s.fr
-Received: from pegase1.c-s.fr ([192.168.12.234])
-        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
-        with ESMTP id R1HoEa-GsUfH; Tue, 15 Jan 2019 07:51:01 +0100 (CET)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-        by pegase1.c-s.fr (Postfix) with ESMTP id 43f1Fd5Dxxz9vBKZ;
-        Tue, 15 Jan 2019 07:51:01 +0100 (CET)
-Received: from localhost (localhost [127.0.0.1])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 25B628B7D0;
-        Tue, 15 Jan 2019 07:51:03 +0100 (CET)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-        with ESMTP id AVpSXPNcQhkP; Tue, 15 Jan 2019 07:51:03 +0100 (CET)
-Received: from PO15451 (unknown [192.168.4.90])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 381478B761;
-        Tue, 15 Jan 2019 07:51:01 +0100 (CET)
-Subject: Re: [PATCH v2 00/15] powerpc/32s: Use BATs/LTLBs for
- STRICT_KERNEL_RWX
-To:     =?UTF-8?Q?Jonathan_Neusch=c3=a4fer?= <j.neuschaefer@gmx.net>
-Cc:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
-References: <cover.1547132681.git.christophe.leroy@c-s.fr>
- <20190113181621.GA22334@latitude>
- <714e78ba-1e92-a856-3dd6-a1fb96ad3785@c-s.fr>
- <20190113210227.GB22334@latitude>
- <334b1b02-b652-499c-904e-09e6f7164b8c@c-s.fr>
- <20190115003353.GD22334@latitude>
-From:   Christophe Leroy <christophe.leroy@c-s.fr>
-Message-ID: <b37e3635-9c69-0cfc-1283-25459b394033@c-s.fr>
-Date:   Tue, 15 Jan 2019 07:51:01 +0100
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        Tue, 15 Jan 2019 01:56:03 -0500
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:44429 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725840AbfAOG4D (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 Jan 2019 01:56:03 -0500
+Received: by mail-pg1-f193.google.com with SMTP id t13so804182pgr.11;
+        Mon, 14 Jan 2019 22:56:02 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=lgA604QTl/yEqXECru2x4UDjh+7W0tzUSdgMW3tISwM=;
+        b=Xz4BR5+AiDdYExeqQANk38tiw4wHLlkA75DGjuwTcxffZcNu8hvtMQSTLOQjnYRJtN
+         uDQ2dI4mE40tlIU7uYigpv7s4NqC2XSnbKqmQA8LLpvfhc5ZnLKzeWK3rUSXlE0UQFTs
+         lJ9DAVX8WaOTnu3asdojuJRZkc8yTq3yeSv1vskeCSdL5zGCXu6Zs1CDARTUau+f9zT9
+         cezvRWj0sGZbVvn7Dmqjrl4aypKX8vT5TTqwnzqf+dyRu6usX0xK28exnoO46QuMO+dx
+         NW18NFaVqwr2JN9jamyHTM9BViUn/p+qxjG61tczPK6yOeyJkRRHpmAuRXge1PH0wSZV
+         3wng==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=lgA604QTl/yEqXECru2x4UDjh+7W0tzUSdgMW3tISwM=;
+        b=BXRe8fcOSDqABQ6Ijc1UvIygdCC0teZLrzsxeHihNIndT704b9tprSRPOLJvw9YBUM
+         b1Fw9Iasgd8xd9E8llEqJhq2VAOkqi15RJzCcXBd6mdpCdpeIZaO+guCmBG8u/dNpvmn
+         4uOT5bWMslK3AsZcevlCxk1gX5mPsHDgLTDAT1iwJNzD4vFsCYUjJGhkFPsE6NTXdwzk
+         eScqBNBo/dXzF27p6Y/Vy1uWA/qqvpjkuy0xp/1/qZ0+iSWUoHrubEDFiEKZhP1Ll7z4
+         lTE50nkUtP7Qt9f7q31EeWUoGYAf4/7LsW4kxZ24YyvLwCCZqQvlOBeKjvUJs33nrnQh
+         tz3w==
+X-Gm-Message-State: AJcUukdlNSec0sk6igTrgcS8YAjX/a95TVKvrQXy5CfsaNNGT+xJMMcM
+        RznAFavlXI6M6zA13ClsQTQ=
+X-Google-Smtp-Source: ALg8bN44miKJOkvp1c8EAA0O46L3fa8Ar+nfQS2d/gcRVBX7eNMXjj7fO4D7i6OOqGepgZk7hbnJYg==
+X-Received: by 2002:a62:2292:: with SMTP id p18mr2547351pfj.9.1547535362457;
+        Mon, 14 Jan 2019 22:56:02 -0800 (PST)
+Received: from myunghoj-Precision-5530 (cpe-76-176-3-80.san.res.rr.com. [76.176.3.80])
+        by smtp.gmail.com with ESMTPSA id i72sm4003432pfe.181.2019.01.14.22.56.01
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 14 Jan 2019 22:56:01 -0800 (PST)
+Date:   Mon, 14 Jan 2019 22:55:59 -0800
+From:   Myungho Jung <mhjungk@gmail.com>
+To:     Ilya Dryomov <idryomov@gmail.com>
+Cc:     "Yan, Zheng" <zyan@redhat.com>, Sage Weil <sage@redhat.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Ceph Development <ceph-devel@vger.kernel.org>,
+        netdev <netdev@vger.kernel.org>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] libceph: protect pending flags in ceph_con_keepalive()
+Message-ID: <20190115065558.GA7165@myunghoj-Precision-5530>
+References: <20181227190842.GA19565@myunghoj-Precision-5530>
+ <CAOi1vP9G=-ZLBKH6Y5MoDRUjX4YkN6GUWKm1=fnM02odQX8GWA@mail.gmail.com>
+ <20190103035027.GA26674@myunghoj-Precision-5530>
+ <CAOi1vP-FC+X+DeLMBcefYuSjxzLgAsxQg+RNskaZsUvVbmXuYA@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20190115003353.GD22334@latitude>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: fr
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAOi1vP-FC+X+DeLMBcefYuSjxzLgAsxQg+RNskaZsUvVbmXuYA@mail.gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Mon, Jan 14, 2019 at 09:37:25PM +0100, Ilya Dryomov wrote:
+> On Thu, Jan 3, 2019 at 4:50 AM Myungho Jung <mhjungk@gmail.com> wrote:
+> > I reproduced on vm using syzkaller utils and verified the fix by syzbot.
+> 
+> Hi Myungho,
+> 
+> I think this might be a better fix:
+> 
+> diff --git a/net/ceph/messenger.c b/net/ceph/messenger.c
+> index d5718284db57..c5f5313e3537 100644
+> --- a/net/ceph/messenger.c
+> +++ b/net/ceph/messenger.c
+> @@ -3205,10 +3205,11 @@ void ceph_con_keepalive(struct ceph_connection *con)
+>  {
+>         dout("con_keepalive %p\n", con);
+>         mutex_lock(&con->mutex);
+> +       con_flag_set(con, CON_FLAG_KEEPALIVE_PENDING);
+>         clear_standby(con);
+>         mutex_unlock(&con->mutex);
+> -       if (con_flag_test_and_set(con, CON_FLAG_KEEPALIVE_PENDING) == 0 &&
+> -           con_flag_test_and_set(con, CON_FLAG_WRITE_PENDING) == 0)
+> +
+> +       if (con_flag_test_and_set(con, CON_FLAG_WRITE_PENDING) == 0)
+>                 queue_con(con);
+>  }
+>  EXPORT_SYMBOL(ceph_con_keepalive);
+> 
+> WRITE_PENDING can be set without con->mutex held from socket callbacks.
+> This is the reason we use atomic bit ops here, so testing WRITE_PENDING
+> under the lock didn't make sense to me.
+> 
+> At the same time, KEEPALIVE_PENDING could have been a non-atomic flag.
+> I spent some time trying to make sense of conditioning queue_con() call
+> on the previous value of KEEPALIVE_PENDING and couldn't see any, so I'm
+> setting it with con_flag_set(), making ceph_con_keepalive() symmetric
+> with ceph_con_send().
+> 
+> Thanks,
+> 
+>                 Ilya
 
+Hi Ilya,
 
-Le 15/01/2019 à 01:33, Jonathan Neuschäfer a écrit :
-> On Mon, Jan 14, 2019 at 07:23:07PM +0100, Christophe Leroy wrote:
->>
->>
->> Le 13/01/2019 à 22:02, Jonathan Neuschäfer a écrit :
->>> On Sun, Jan 13, 2019 at 08:43:07PM +0100, Christophe Leroy wrote:
->>>> Le 13/01/2019 à 19:16, Jonathan Neuschäfer a écrit :
->>>>> I just tested the whole series on my Wii (I didn't test any intermediate
->>>>> steps). Without CONFIG_STRICT_KERNEL_RWX, it seems to work fine, but
->>>>> with it, I get the following error while booting:
-> [...]
->> I can't see anything special in your setup, and this failure looks rather
->> unexpected because I can't see anything done that early when
->> CONFIG_STRICT_KERNEL_RWX is selected.
->>
->> Does CONFIG_STRICT_KERNEL_RWX works properly without my serie ?
-> 
-> I hadn't tried this before, but yes, without this series (on v5.0-rc2),
-> a kernel with CONFIG_STRICT_KERNEL_RWX boots.
-> 
-> I've checked it patch-by-patch now (with STRICT_KERNEL_RWX):
-> 
-> - patches 1 and 2 build and boot fine
-> - patches 3 to 6 build, but fail to boot with this error:
+Yes, it looks clear and makes sense to have an atomic operation in if statement
+but it still triggers warning. KEEPALIVE_PENDING should be set after
+clear_standby() because con_fault() can be called right before acquiring the
+lock here which sets the flag in standby state. I tesed the change with syzbot
+and confirmed there was no warning.
 
-The bug is in patch 2, mmu_mapin_ram() should return base instead of 
-returning 0 when __map_without_bats is set.
-
-> 
-> 	top of MEM2 @ 13F00000
-> 
-> 	zImage starting: loaded at 0x00e00000 (sp: 0x01588fa0)
-> 	Allocating 0x14e92c8 bytes for kernel...
-> 	Decompressing (0x00000000 <- 0x00e11000:0x01586ba7)...
-> 	Done! Decompressed 0xdc01f4 bytes
-> 
-> 	Linux/PowerPC load: root=/dev/mmcblk0p2 rootwait console=usbgecko1
-> 	Finalizing device tree... flat tree at 0x15897a0
-> 	[    0.000000] printk: bootconsole [udbg0] enabled
-> 	[    0.000000] Total memory = 319MB; using 1024kB for hash table (at (ptrval))
-> 	[    0.000000] RAM mapped without BATs
-> 	[    0.000000] RAM mapped without BATs
-> 	[    0.000000] ------------[ cut here ]------------
-> 	[    0.000000] kernel BUG at arch/powerpc/mm/pgtable_32.c:223!
-> 	[    0.000000] Oops: Exception in kernel mode, sig: 5 [#1]
-> 	[    0.000000] BE PREEMPT
-> 	[    0.000000] Modules linked in:
-> 	[    0.000000] CPU: 0 PID: 0 Comm: swapper Not tainted 5.0.0-rc1-wii-00024-g596f9fe23c13 #1337
-> 	[    0.000000] NIP:  c0017c4c LR: c0a836a0 CTR: c001edc4
-> 	[    0.000000] REGS: c0d9deb0 TRAP: 0700   Not tainted  (5.0.0-rc1-wii-00024-g596f9fe23c13)
-> 	[    0.000000] MSR:  00020030 <IR,DR>  CR: 42000888  XER: 20000000
-> 	[    0.000000]
-> 	[    0.000000] GPR00: c0a836a0 c0d9df60 c0d2a4a0 c0d29c00 00000000 c16ff000 c0d9de28 c0dc0000
-> 	[    0.000000] GPR08: c0d9c000 00000001 00000001 00000000 28000824 00000000 00000000 00000000
-> 	[    0.000000] GPR16: 00000000 00000000 00000020 00000000 c0860000 c0da0000 c0000000 c0a7d000
-> 	[    0.000000] GPR24: c0acd55c c0d487c8 13f00000 c0d29000 00000c00 00000311 c0000000 c0d487c8
-> 	[    0.000000] NIP [c0017c4c] map_kernel_page+0x78/0xf0
-> 	[    0.000000] LR [c0a836a0] mapin_ram+0xe0/0x14c
-> 	[    0.000000] Call Trace:
-> 	[    0.000000] [c0d9df60] [c0a83f54] mmu_mapin_ram+0x54/0x1a4 (unreliable)
-> 	[    0.000000] [c0d9df90] [c0a836a0] mapin_ram+0xe0/0x14c
-> 	[    0.000000] [c0d9dfd0] [c0a83578] MMU_init+0x158/0x1a0
-> 	[    0.000000] [c0d9dff0] [c0003418] start_here+0x40/0x78
-> 	[    0.000000] Instruction dump:
-> 	[    0.000000] 55290026 57c5b53a 7ca54a14 3d204000 7f854800 3ca5c000 419e0088 81250000
-> 	[    0.000000] 552afffe 552907fe 7d4a4b79 4082004c <0f0a0000> 54840026 7c84eb78 9081000c
-> 	[    0.000000] random: get_random_bytes called from print_oops_end_marker+0x34/0x6c with crng_init=0
-> 	[    0.000000] ---[ end trace 0000000000000000 ]---
-> 	[    0.000000]
-> 	[    0.000000] Kernel panic - not syncing: Attempted to kill the idle task!
-> 	[    0.000000] Rebooting in 180 seconds..
-> 
-> - patches 7 to 11 fail to build with this error (really a warning, but
->    arch/powerpc doesn't allow warnings by default):
-> 
-> 	  CC      arch/powerpc/mm/ppc_mmu_32.o
-> 	../arch/powerpc/mm/ppc_mmu_32.c:133:13: error: ‘clearibat’ defined but not used [-Werror=unused-function]
-> 	 static void clearibat(int index)
-> 		     ^~~~~~~~~
-> 	../arch/powerpc/mm/ppc_mmu_32.c:115:13: error: ‘setibat’ defined but not used [-Werror=unused-function]
-> 	 static void setibat(int index, unsigned long virt, phys_addr_t phys,
-> 		     ^~~~~~~
-> 	cc1: all warnings being treated as errors
-
-Argh ! I have to squash the patch bringing the new functions with the 
-one using them (patch 12). The result is a big messy patch which is more 
-difficult to review but that's life.
-
-> 
-> - patches 12 to 15 build but fail to boot with this error:
-
-Thats the one we need to really understand.
-
-Do you have modules ? If so, can you try without ?
-
-> 
-> 	top of MEM2 @ 13F00000
-> 
-> 	zImage starting: loaded at 0x01000000 (sp: 0x0178afa0)
-> 	Allocating 0x166b2c8 bytes for kernel...
-> 	Decompressing (0x00000000 <- 0x01011000:0x017880ce)...
-> 	Done! Decompressed 0xf421f4 bytes
-> 
-> 	Linux/PowerPC load: root=/dev/mmcblk0p2 rootwait console=usbgecko1
-> 	Finalizing device tree... flat tree at 0x178b7a0
-> 	[    0.000000] printk: bootconsole [udbg0] enabled
-> 	[    0.000000] Kernel panic - not syncing: ERROR: Failed to allocate 0x00100000 bytes below 0x00000000.
-> 	[    0.000000] CPU: 0 PID: 0 Comm: swapper Not tainted 5.0.0-rc1-wii-00033-gc263f8162122 #1337
-> 	[    0.000000] Call Trace:
-> 	[    0.000000] [c0f1ff30] [c00280f0] panic+0x144/0x324 (unreliable)
-> 	[    0.000000] [c0f1ff90] [c0c18a34] memblock_alloc_base+0x34/0x44
-> 	[    0.000000] [c0f1ffa0] [c0c071e0] MMU_init_hw+0xcc/0x300
-> 	[    0.000000] [c0f1ffd0] [c0c06554] MMU_init+0x12c/0x198
-> 	[    0.000000] [c0f1fff0] [c0003418] start_here+0x40/0x78
-> 	[    0.000000] Rebooting in 180 seconds..
-> 
-> 
-> I'll investigate some more tomorrow.
-
-Thanks a lot for your help.
-
-> 
-> Jonathan
-> 
-
-Christophe
+Thanks,
+Myungho
