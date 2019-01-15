@@ -2,99 +2,148 @@ Return-Path: <SRS0=RZO6=PX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 56A55C43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 20:45:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EE7FCC43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 20:47:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1DFDF20656
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 20:45:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AD6D320859
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 20:47:53 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="SAgWQuqs"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="OPbI2REp"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389967AbfAOUpO (ORCPT
+        id S2389979AbfAOUrv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 15 Jan 2019 15:45:14 -0500
-Received: from ozlabs.org ([203.11.71.1]:39661 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728576AbfAOUpO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Jan 2019 15:45:14 -0500
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 43fMm66gwTz9sCh;
-        Wed, 16 Jan 2019 07:45:10 +1100 (AEDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1547585111;
-        bh=v8OVTG8o0bybZxbhxI5hTdx0TUt/cjWq03SSDh+Df+k=;
-        h=Date:From:To:Cc:Subject:From;
-        b=SAgWQuqs6FWyrDaWN3ndUnYotLhJf0RTXV/FYvPbFxW8ymXSrGyay53+3nMCO0NDF
-         VgpbrVQcRnd/SKPryTcgI+bsUVVVMOorZjotWhDuDRMoDjaa4UKQcX74mB267iHP6O
-         9aBw00l0eW/5Y7tcA/tEh19FGflqIOY3oXgIm78WIoslbfvfaS9f1aSyDG4Rvm/fDr
-         GTS2/yBJcoZAvTlOqCIeDx2JJKww/F2ApMj/acpBSm9ZJELiTUKbkc3lpfMEqe+LMG
-         eKmKVkh8b6x4Rdw6UTDco6WdbRNm1YshqFflrSEMv48WdWCImH6otSLW+zWv0PNxqb
-         kgyFMaXuCzeCA==
-Date:   Wed, 16 Jan 2019 07:45:10 +1100
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Kevin Hilman <khilman@baylibre.com>,
-        Carlo Caione <carlo@caione.org>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Anand Moon <linux.amoon@gmail.com>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Paul Gortmaker <paul.gortmaker@windriver.com>
-Subject: linux-next: Fixes tag needs work in the amlogic tree
-Message-ID: <20190116074510.7c7e6a4a@canb.auug.org.au>
+        Tue, 15 Jan 2019 15:47:51 -0500
+Received: from mail-vs1-f65.google.com ([209.85.217.65]:35279 "EHLO
+        mail-vs1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728576AbfAOUrv (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 Jan 2019 15:47:51 -0500
+Received: by mail-vs1-f65.google.com with SMTP id e7so2537065vsc.2
+        for <linux-kernel@vger.kernel.org>; Tue, 15 Jan 2019 12:47:50 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=fl69mbl3aeJV852DXL+mW58QS5k6Dpd7g/JVmja/bME=;
+        b=OPbI2REp2JERIevczEz3WMraWBonXMUY16IK0bbb/yf8UT6t80Iodm+CLBLJ9gpA2U
+         UK7kf+dLnE6GypVIUZbuffN+hOHm47TNl8OPoZvQt0TKINuxi//be1cM9O5G/nkBzoZj
+         wcpmOOesNLDjhj+994/dl6yroeKS7pN4uHOZs=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=fl69mbl3aeJV852DXL+mW58QS5k6Dpd7g/JVmja/bME=;
+        b=YMpZW+saTZisAs6PxfkcmmKSZ6DfcyK/jKeK9ZhffmYapVeO3wB8DdPqz5Ma2Fz9XW
+         Zl6IodLoZMnl7AAjPFTpC5b2eOHTFcLp3owonmZunCjarCW0nxC3lYiOOqhdl6yUW5fd
+         n5Zm6LIrWWbicuMuW5F94XhcEOKjQyTFmspTOVuW/XTql1vPzMDpu7diGO4gF/ikaXfI
+         uHsCGCERmkvpwwrfX6gGpoH3eE0DduBWd2X1whYULzDBjcxY0rllmEFNyfBgutGtVTUn
+         6/Og+1l4lTm0VQbGY4kmmTYl+HjXsqVBHYJnDJMMGlvz3YDG+Fbm5G6hZ2C3txgX4RyC
+         jHvA==
+X-Gm-Message-State: AJcUukfz3hCFXvccSg0FKbT6DUPd7tBq39zFS/eUkjdo2n9+t6mLg9k0
+        RWn/AIzyOirD93UsD36GB5NJyDEKMt8=
+X-Google-Smtp-Source: ALg8bN73hWl2ff3P3MbHwLeAzY4V+FZlc4ZvEBmrXsNo7X9676rhwqzXO9QUQwgAcx4XQUNFyaTt7A==
+X-Received: by 2002:a67:e89a:: with SMTP id x26mr2312183vsn.80.1547585269221;
+        Tue, 15 Jan 2019 12:47:49 -0800 (PST)
+Received: from mail-ua1-f47.google.com (mail-ua1-f47.google.com. [209.85.222.47])
+        by smtp.gmail.com with ESMTPSA id w65sm9133867vsc.16.2019.01.15.12.47.47
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 15 Jan 2019 12:47:48 -0800 (PST)
+Received: by mail-ua1-f47.google.com with SMTP id d21so1426397uap.9
+        for <linux-kernel@vger.kernel.org>; Tue, 15 Jan 2019 12:47:47 -0800 (PST)
+X-Received: by 2002:ab0:740a:: with SMTP id r10mr333734uap.14.1547585267418;
+ Tue, 15 Jan 2019 12:47:47 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/JwLiueIBRTMFareA/PLW/UJ"; protocol="application/pgp-signature"
+References: <20190112152844.26550-1-w@1wt.eu>
+In-Reply-To: <20190112152844.26550-1-w@1wt.eu>
+From:   Kees Cook <keescook@chromium.org>
+Date:   Tue, 15 Jan 2019 12:47:34 -0800
+X-Gmail-Original-Message-ID: <CAGXu5jJvWC0=zym11noj7tOjkDFYvn+wNimwSjcmiWnrCoOVVA@mail.gmail.com>
+Message-ID: <CAGXu5jJvWC0=zym11noj7tOjkDFYvn+wNimwSjcmiWnrCoOVVA@mail.gmail.com>
+Subject: Re: [PATCH 1/8] lkdtm: change snprintf to scnprintf for possible overflow
+To:     Greg KH <greg@kroah.com>
+Cc:     Silvio Cesare <silvio.cesare@gmail.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        Will Deacon <will.deacon@arm.com>, Willy Tarreau <w@1wt.eu>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/JwLiueIBRTMFareA/PLW/UJ
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Sat, Jan 12, 2019 at 7:28 AM Willy Tarreau <w@1wt.eu> wrote:
+>
+> From: Silvio Cesare <silvio.cesare@gmail.com>
+>
+> Change snprintf to scnprintf. There are generally two cases where using
+> snprintf causes problems.
+>
+> 1) Uses of size += snprintf(buf, SIZE - size, fmt, ...)
+> In this case, if snprintf would have written more characters than what the
+> buffer size (SIZE) is, then size will end up larger than SIZE. In later
+> uses of snprintf, SIZE - size will result in a negative number, leading
+> to problems. Note that size might already be too large by using
+> size = snprintf before the code reaches a case of size += snprintf.
+>
+> 2) If size is ultimately used as a length parameter for a copy back to user
+> space, then it will potentially allow for a buffer overflow and information
+> disclosure when size is greater than SIZE. When the size is used to index
+> the buffer directly, we can have memory corruption. This also means when
+> size = snprintf... is used, it may also cause problems since size may become
+> large.  Copying to userspace is mitigated by the HARDENED_USERCOPY kernel
+> configuration.
+>
+> The solution to these issues is to use scnprintf which returns the number of
+> characters actually written to the buffer, so the size variable will never
+> exceed SIZE.
+>
+> Signed-off-by: Silvio Cesare <silvio.cesare@gmail.com>
+> Cc: Dan Carpenter <dan.carpenter@oracle.com>
+> Cc: Kees Cook <keescook@chromium.org>
+> Cc: Will Deacon <will.deacon@arm.com>
+> Cc: Greg KH <greg@kroah.com>
+> Signed-off-by: Willy Tarreau <w@1wt.eu>
 
-[I am experimenting with checking the Fixes tags in commits in linux-next.
-Please let me know if you think I am being too strict.]
+It looks like these are going via individual trees. Greg, can you
+please take this into your drivers-misc tree for lkdtm?
 
-Hi all,
+Acked-by: Kees Cook <keescook@chromium.org>
 
-Commit
+Thanks!
 
-  90d2bf8975cc ("ARM64: dts: meson-gxbb-odroidc2: Fix usb phy regulator pow=
-er failed warning")
+-Kees
 
-has a malformed Fixes tag:
+>
+> ---
+>  drivers/misc/lkdtm/core.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+>
+> diff --git a/drivers/misc/lkdtm/core.c b/drivers/misc/lkdtm/core.c
+> index 2837dc77478e..610aa3bfe630 100644
+> --- a/drivers/misc/lkdtm/core.c
+> +++ b/drivers/misc/lkdtm/core.c
+> @@ -347,9 +347,9 @@ static ssize_t lkdtm_debugfs_read(struct file *f, char __user *user_buf,
+>         if (buf == NULL)
+>                 return -ENOMEM;
+>
+> -       n = snprintf(buf, PAGE_SIZE, "Available crash types:\n");
+> +       n = scnprintf(buf, PAGE_SIZE, "Available crash types:\n");
+>         for (i = 0; i < ARRAY_SIZE(crashtypes); i++) {
+> -               n += snprintf(buf + n, PAGE_SIZE - n, "%s\n",
+> +               n += scnprintf(buf + n, PAGE_SIZE - n, "%s\n",
+>                               crashtypes[i].name);
+>         }
+>         buf[n] = '\0';
+> --
+> 2.19.2
+>
 
-  Fixes: 5a0803bd5ae (ARM64: dts: meson-gxbb-odroidc2: Enable USB Nodes)
 
-There should be at least 12 digits of the commit SHA1 and double quotes
-around the commit subject.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/JwLiueIBRTMFareA/PLW/UJ
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlw+RlYACgkQAVBC80lX
-0Gwo3gf9EiuOZIdh3hTk6RDXI6XcWLhYzK2e0I5Qm97mVT65nPEEp/tSgGLXHMYQ
-I520HkAjumZEKLP+xtpPS1eGL2O5isXd//qMMMGIrVzpWLQzD92SWXiwHlKQMzrN
-/bq2NSn1iAmNnz+Y3Fh1xyOwYTFa2UvdNeYm5XQrEbflE1qLDSDuRGeD0TdnqL95
-ThZLPgMf8ZumSMhHcHqRJlsLt0Y5Cxyy3eoAoY3VS4A/I0Gfq86ZQbOfELj/dgCk
-D6sLV02RF/9qj0XS6VndNYOqZCy7n2+6K/LDJwFYtkm4g0yzxgOPpa4n6Xg9doGd
-wbTwo88Wts4s4g0ZoJDwVR3CnsfUqA==
-=ciYL
------END PGP SIGNATURE-----
-
---Sig_/JwLiueIBRTMFareA/PLW/UJ--
+-- 
+Kees Cook
