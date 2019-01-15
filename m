@@ -4,45 +4,44 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A41AC43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 08:55:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B12C1C43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 08:55:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D6E0320656
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 08:55:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 89FE420656
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 08:55:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728528AbfAOIzJ (ORCPT
+        id S1728580AbfAOIzR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 15 Jan 2019 03:55:09 -0500
-Received: from shell.v3.sk ([90.176.6.54]:51321 "EHLO shell.v3.sk"
+        Tue, 15 Jan 2019 03:55:17 -0500
+Received: from shell.v3.sk ([90.176.6.54]:51314 "EHLO shell.v3.sk"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728025AbfAOIzI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Jan 2019 03:55:08 -0500
+        id S1728485AbfAOIzJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 Jan 2019 03:55:09 -0500
 Received: from localhost (localhost [127.0.0.1])
-        by zimbra.v3.sk (Postfix) with ESMTP id 04A7F4CC79;
-        Tue, 15 Jan 2019 09:55:05 +0100 (CET)
+        by zimbra.v3.sk (Postfix) with ESMTP id 009F54CC77;
+        Tue, 15 Jan 2019 09:55:07 +0100 (CET)
 Received: from shell.v3.sk ([127.0.0.1])
         by localhost (zimbra.v3.sk [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id pUa6pf8zgCmH; Tue, 15 Jan 2019 09:54:55 +0100 (CET)
+        with ESMTP id 1KG_Izkue9Y3; Tue, 15 Jan 2019 09:55:01 +0100 (CET)
 Received: from localhost (localhost [127.0.0.1])
-        by zimbra.v3.sk (Postfix) with ESMTP id 5A9B04B474;
-        Tue, 15 Jan 2019 09:54:55 +0100 (CET)
+        by zimbra.v3.sk (Postfix) with ESMTP id 696C94CA17;
+        Tue, 15 Jan 2019 09:54:56 +0100 (CET)
 X-Virus-Scanned: amavisd-new at zimbra.v3.sk
 Received: from shell.v3.sk ([127.0.0.1])
         by localhost (zimbra.v3.sk [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id NiRCJD-8NAhI; Tue, 15 Jan 2019 09:54:53 +0100 (CET)
+        with ESMTP id b2Og-Jmwq3mc; Tue, 15 Jan 2019 09:54:54 +0100 (CET)
 Received: from belphegor.brq.redhat.com (nat-pool-brq-t.redhat.com [213.175.37.10])
-        by zimbra.v3.sk (Postfix) with ESMTPSA id 4627C4CBA5;
+        by zimbra.v3.sk (Postfix) with ESMTPSA id 98BDC4CC56;
         Tue, 15 Jan 2019 09:54:53 +0100 (CET)
 From:   Lubomir Rintel <lkundrak@v3.sk>
 To:     Sakari Ailus <sakari.ailus@iki.fi>
 Cc:     linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Lubomir Rintel <lkundrak@v3.sk>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>
-Subject: [PATCH v4 3/5] media: ov7670: control clock along with power
-Date:   Tue, 15 Jan 2019 09:54:46 +0100
-Message-Id: <20190115085448.1400135-4-lkundrak@v3.sk>
+        Lubomir Rintel <lkundrak@v3.sk>
+Subject: [PATCH v4 5/5] media: ov7670: split register setting from set_framerate() logic
+Date:   Tue, 15 Jan 2019 09:54:48 +0100
+Message-Id: <20190115085448.1400135-6-lkundrak@v3.sk>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190115085448.1400135-1-lkundrak@v3.sk>
 References: <20190115085448.1400135-1-lkundrak@v3.sk>
@@ -53,116 +52,78 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This provides more power saving when the sensor is off.
-
-While at that, do the delay on power/clock enable even if the sensor driv=
-er
-itself doesn't control the GPIOs. This is required for the OLPC XO-1
-platform, that lacks the proper power/reset properties in its DT, but
-needs the delay after the sensor is clocked up.
+This will allow us to restore the last set frame rate after the device
+returns from a power off.
 
 Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
-Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
 ---
- drivers/media/i2c/ov7670.c | 30 ++++++++++++++----------------
- 1 file changed, 14 insertions(+), 16 deletions(-)
+ drivers/media/i2c/ov7670.c | 26 ++++++++++++++------------
+ 1 file changed, 14 insertions(+), 12 deletions(-)
 
 diff --git a/drivers/media/i2c/ov7670.c b/drivers/media/i2c/ov7670.c
-index 4679aa9dc430..93c055502bb9 100644
+index d0f40d5f6ca0..6f9a53d4dcfc 100644
 --- a/drivers/media/i2c/ov7670.c
 +++ b/drivers/media/i2c/ov7670.c
-@@ -1611,14 +1611,17 @@ static void ov7670_power_on(struct v4l2_subdev *s=
-d)
- 	if (info->on)
- 		return;
-=20
-+	clk_prepare_enable(info->clk);
-+
- 	if (info->pwdn_gpio)
- 		gpiod_set_value(info->pwdn_gpio, 0);
- 	if (info->resetb_gpio) {
- 		gpiod_set_value(info->resetb_gpio, 1);
- 		usleep_range(500, 1000);
- 		gpiod_set_value(info->resetb_gpio, 0);
--		usleep_range(3000, 5000);
- 	}
-+	if (info->pwdn_gpio || info->resetb_gpio || info->clk)
-+		usleep_range(3000, 5000);
-=20
- 	info->on =3D true;
+@@ -812,13 +812,24 @@ static void ov7675_get_framerate(struct v4l2_subdev=
+ *sd,
+ 			(4 * clkrc);
  }
-@@ -1630,6 +1633,8 @@ static void ov7670_power_off(struct v4l2_subdev *sd=
-)
- 	if (!info->on)
- 		return;
 =20
-+	clk_disable_unprepare(info->clk);
++static int ov7675_apply_framerate(struct v4l2_subdev *sd)
++{
++	struct ov7670_info *info =3D to_state(sd);
++	int ret;
 +
- 	if (info->pwdn_gpio)
- 		gpiod_set_value(info->pwdn_gpio, 1);
-=20
-@@ -1850,24 +1855,20 @@ static int ov7670_probe(struct i2c_client *client=
-,
- 			return ret;
- 	}
-=20
--	if (info->clk) {
--		ret =3D clk_prepare_enable(info->clk);
--		if (ret)
--			return ret;
-+	ret =3D ov7670_init_gpio(client, info);
-+	if (ret)
++	ret =3D ov7670_write(sd, REG_CLKRC, info->clkrc);
++	if (ret < 0)
 +		return ret;
-=20
-+	ov7670_power_on(sd);
 +
-+	if (info->clk) {
- 		info->clock_speed =3D clk_get_rate(info->clk) / 1000000;
- 		if (info->clock_speed < 10 || info->clock_speed > 48) {
- 			ret =3D -EINVAL;
--			goto clk_disable;
-+			goto power_off;
- 		}
- 	}
++	return ov7670_write(sd, REG_DBLV, info->pll_bypass ? DBLV_BYPASS : DBLV=
+_X4);
++}
++
+ static int ov7675_set_framerate(struct v4l2_subdev *sd,
+ 				 struct v4l2_fract *tpf)
+ {
+ 	struct ov7670_info *info =3D to_state(sd);
+ 	u32 clkrc;
+ 	int pll_factor;
+-	int ret;
 =20
--	ret =3D ov7670_init_gpio(client, info);
--	if (ret)
--		goto clk_disable;
+ 	/*
+ 	 * The formula is fps =3D 5/4*pixclk for YUV/RGB and
+@@ -827,19 +838,10 @@ static int ov7675_set_framerate(struct v4l2_subdev =
+*sd,
+ 	 * pixclk =3D clock_speed / (clkrc + 1) * PLLfactor
+ 	 *
+ 	 */
+-	if (info->pll_bypass) {
+-		pll_factor =3D 1;
+-		ret =3D ov7670_write(sd, REG_DBLV, DBLV_BYPASS);
+-	} else {
+-		pll_factor =3D PLL_FACTOR;
+-		ret =3D ov7670_write(sd, REG_DBLV, DBLV_X4);
+-	}
+-	if (ret < 0)
+-		return ret;
 -
--	ov7670_power_on(sd);
--
- 	/* Make sure it's an ov7670 */
- 	ret =3D ov7670_detect(sd);
- 	if (ret) {
-@@ -1946,6 +1947,7 @@ static int ov7670_probe(struct i2c_client *client,
- 	if (ret < 0)
- 		goto entity_cleanup;
+ 	if (tpf->numerator =3D=3D 0 || tpf->denominator =3D=3D 0) {
+ 		clkrc =3D 0;
+ 	} else {
++		pll_factor =3D info->pll_bypass ? 1 : PLL_FACTOR;
+ 		clkrc =3D (5 * pll_factor * info->clock_speed * tpf->numerator) /
+ 			(4 * tpf->denominator);
+ 		if (info->fmt->mbus_code =3D=3D MEDIA_BUS_FMT_SBGGR8_1X8)
+@@ -861,7 +863,7 @@ static int ov7675_set_framerate(struct v4l2_subdev *s=
+d,
+ 	/* Recalculate frame rate */
+ 	ov7675_get_framerate(sd, tpf);
 =20
-+	ov7670_power_off(sd);
- 	return 0;
-=20
- entity_cleanup:
-@@ -1954,12 +1956,9 @@ static int ov7670_probe(struct i2c_client *client,
- 	v4l2_ctrl_handler_free(&info->hdl);
- power_off:
- 	ov7670_power_off(sd);
--clk_disable:
--	clk_disable_unprepare(info->clk);
- 	return ret;
+-	return ov7670_write(sd, REG_CLKRC, info->clkrc);
++	return ov7675_apply_framerate(sd);
  }
 =20
--
- static int ov7670_remove(struct i2c_client *client)
- {
- 	struct v4l2_subdev *sd =3D i2c_get_clientdata(client);
-@@ -1967,7 +1966,6 @@ static int ov7670_remove(struct i2c_client *client)
-=20
- 	v4l2_async_unregister_subdev(sd);
- 	v4l2_ctrl_handler_free(&info->hdl);
--	clk_disable_unprepare(info->clk);
- 	media_entity_cleanup(&info->sd.entity);
- 	ov7670_power_off(sd);
- 	return 0;
+ static void ov7670_get_framerate_legacy(struct v4l2_subdev *sd,
 --=20
 2.20.1
 
