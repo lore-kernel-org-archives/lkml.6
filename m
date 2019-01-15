@@ -2,100 +2,97 @@ Return-Path: <SRS0=RZO6=PX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C1335C43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 04:41:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9BF2DC43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 04:41:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9B61020859
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 04:41:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6DC7320859
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 04:41:42 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NqzmbTg8"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727612AbfAOElG (ORCPT
+        id S1727766AbfAOElf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 14 Jan 2019 23:41:06 -0500
-Received: from gateway30.websitewelcome.com ([192.185.148.2]:45293 "EHLO
-        gateway30.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727300AbfAOElF (ORCPT
+        Mon, 14 Jan 2019 23:41:35 -0500
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:37584 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727300AbfAOEle (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 Jan 2019 23:41:05 -0500
-Received: from cm12.websitewelcome.com (cm12.websitewelcome.com [100.42.49.8])
-        by gateway30.websitewelcome.com (Postfix) with ESMTP id D898996D5
-        for <linux-kernel@vger.kernel.org>; Mon, 14 Jan 2019 22:41:04 -0600 (CST)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id jGXAgYxLWiQerjGXAgZGKq; Mon, 14 Jan 2019 22:41:04 -0600
-X-Authority-Reason: nr=8
-Received: from [189.250.130.205] (port=38692 helo=embeddedor)
-        by gator4166.hostgator.com with esmtpa (Exim 4.91)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1gjGX7-004G5n-JX; Mon, 14 Jan 2019 22:41:02 -0600
-Date:   Mon, 14 Jan 2019 22:40:58 -0600
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To:     Larry Finger <Larry.Finger@lwfinger.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Subject: [PATCH] staging: rtl8188eu: Replace kzalloc with kcalloc
-Message-ID: <20190115044058.GA29431@embeddedor>
+        Mon, 14 Jan 2019 23:41:34 -0500
+Received: by mail-wm1-f66.google.com with SMTP id g67so1814672wmd.2;
+        Mon, 14 Jan 2019 20:41:33 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=nkWbQeeZZqOQHoiCzF2orNqjxrcoTi6C42m9bZwQHQs=;
+        b=NqzmbTg8Ga8JSRfjctmuGTorGceM4hkXE65okF/LlYidngSBgyyu0qIIL1L4PiKK9T
+         3fnpVDe+N5eCJEDiK5LbHe3ugblRbXGRox05j8ZU9veoN08o8MM96YWAqIcO+JPpPXGW
+         iCKWA3UeO9eWPn2qOLb+bk1uFFXfEgTdJ00RR1HtCEmGGuEetXmBd0/ATS+QTYe/68pS
+         N0zJSTQR8zM2jJpvWm0CsPcuzSZe4KOM85S1VZnLBmctaHiNnRmdDp1fblvhCg/A+KeU
+         MDxZ9vYTtoW6rtlKPOJPLKqOEvwJ1g5p504++prDDPgfDeKCmX/Si4fw/PFEeE+WJiqM
+         LT0g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=nkWbQeeZZqOQHoiCzF2orNqjxrcoTi6C42m9bZwQHQs=;
+        b=MEXNbrcdup20OeF2D9lLi36if21kCdWosNrW2Eqh3TidwCElt6XR/ZVMUwehpcIOBs
+         AEq5aRjGJclZvwENt+HBwUjFAFBk2hb45gM5sjSSydYrzNqW8REW++/pEQA3MMrSvl+J
+         TMW+1DXYQ/Y7jKWymh13onv289+RmxGoonU2HfH4khtFkrPFjupm4C+gvJfs04hshCU6
+         aMJyjFnS1N2MgpG9N09DeJi4Anyp8+yKFX7e7HObGZxQxGt6yjAbe4pushYhQei2zq/T
+         TI5+tbKtLU7DAEyomUL68KalI9HJvHQOje0sE4aIc5sq/8HDUSLLBLWZClvIGcwwGkeA
+         EYBQ==
+X-Gm-Message-State: AJcUukeZ27yTnQJtOLikwKJDBNNfRqp8yQ2bzbycei2JGJ34Ly70rh4N
+        WWxYm8TYPq5wDr0EiYceFbTmU+IaOHeuzyBmToU=
+X-Google-Smtp-Source: ALg8bN4jSL6VkIjQd8K94ljKxhwYMjZ0GYciB7UhEtpjV38WRfWenm0gUd7vI4CxVsnzSn1cUlr7843W0xEwYJoY3Bk=
+X-Received: by 2002:a1c:c10f:: with SMTP id r15mr1639313wmf.27.1547527292713;
+ Mon, 14 Jan 2019 20:41:32 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 189.250.130.205
-X-Source-L: No
-X-Exim-ID: 1gjGX7-004G5n-JX
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: (embeddedor) [189.250.130.205]:38692
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 7
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+References: <20181220010700.8598-1-andrew.smirnov@gmail.com>
+In-Reply-To: <20181220010700.8598-1-andrew.smirnov@gmail.com>
+From:   Andrey Smirnov <andrew.smirnov@gmail.com>
+Date:   Mon, 14 Jan 2019 20:41:21 -0800
+Message-ID: <CAHQ1cqExs8MVoYUXE9tR3SBrKwG6+Los+DM6AgBTx8OGpvB6rA@mail.gmail.com>
+Subject: Re: [PATCH v4 0/3] Reset controller support for i.MX8MQ
+To:     Philipp Zabel <p.zabel@pengutronix.de>
+Cc:     linux-kernel <linux-kernel@vger.kernel.org>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Chris Healy <cphealy@gmail.com>,
+        Lucas Stach <l.stach@pengutronix.de>,
+        Leonard Crestez <leonard.crestez@nxp.com>,
+        "A.s. Dong" <aisheng.dong@nxp.com>,
+        Richard Zhu <hongxing.zhu@nxp.com>,
+        Rob Herring <robh@kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>, dl-linux-imx <linux-imx@nxp.com>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Replace kzalloc() function with its 2-factor argument form, kcalloc().
+On Wed, Dec 19, 2018 at 5:07 PM Andrey Smirnov <andrew.smirnov@gmail.com> wrote:
+>
+> Everyone:
+>
+> This patch contains changes I made in order to add support for i.MX8MQ
+> to reset-imx7.c in order to enable support of PCIE IP block on i.MX8MQ
+> SoCs.
+>
+> Feedback is welcome!
+>
+> Thanks,
+> Andrey Smirnov
+>
 
-This patch replaces cases of:
+Philipp, are there any changes that needs to be made to this series,
+or is it good enough to be accepted?
 
-	kzalloc(a * b, gfp)
-
-with:
-	kcalloc(a, b, gfp)
-
-This code was detected with the help of Coccinelle.
-
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
----
- drivers/staging/rtl8188eu/core/rtw_efuse.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/staging/rtl8188eu/core/rtw_efuse.c b/drivers/staging/rtl8188eu/core/rtw_efuse.c
-index b7be71f904ed..51c3dd6d7ffb 100644
---- a/drivers/staging/rtl8188eu/core/rtw_efuse.c
-+++ b/drivers/staging/rtl8188eu/core/rtw_efuse.c
-@@ -88,7 +88,9 @@ efuse_phymap_to_logical(u8 *phymap, u16 _offset, u16 _size_byte, u8  *pbuf)
- 	if (!efuseTbl)
- 		return;
- 
--	tmp = kzalloc(EFUSE_MAX_SECTION_88E * (sizeof(void *) + EFUSE_MAX_WORD_UNIT * sizeof(u16)), GFP_KERNEL);
-+	tmp = kcalloc(EFUSE_MAX_SECTION_88E,
-+		      sizeof(void *) + EFUSE_MAX_WORD_UNIT * sizeof(u16),
-+		      GFP_KERNEL);
- 	if (!tmp) {
- 		DBG_88E("%s: alloc eFuseWord fail!\n", __func__);
- 		goto eFuseWord_failed;
--- 
-2.20.1
-
+Thanks,
+Andrey Smirnov
