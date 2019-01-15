@@ -2,287 +2,104 @@ Return-Path: <SRS0=RZO6=PX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 37CD8C43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 16:45:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4148EC43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 16:45:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 054A620657
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 16:45:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 11DDF20645
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 16:45:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1547570731;
+	bh=7B5qYllohnDaA7tSePslQy7YHJTLmUFVcxydsXAr0i0=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=uqb4CbjgqhCGI21teII3kbrVdet4WhZHu0beTAmYYymskXAyLhJoQYYAhxP2TvyTj
+	 VyQZWgwEfR9GQ4rmKfUosS9YEmPjnroNrEjcW3nMNA6N6DWT+Tn8IO7JM6RUAy3fSl
+	 gpEMmDRzDDehBAc0/Cyw50zcxvDXvBYQ5I4163fI=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387791AbfAOQpZ (ORCPT
+        id S2387804AbfAOQpa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 15 Jan 2019 11:45:25 -0500
-Received: from mx2.suse.de ([195.135.220.15]:47482 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2387723AbfAOQpN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Jan 2019 11:45:13 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 2AA84AD14;
-        Tue, 15 Jan 2019 16:45:11 +0000 (UTC)
-From:   Miroslav Benes <mbenes@suse.cz>
-To:     jpoimboe@redhat.com, jeyu@kernel.org, jikos@kernel.org,
-        pmladek@suse.com
-Cc:     live-patching@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Miroslav Benes <mbenes@suse.cz>
-Subject: [PATCH v2 2/2] livepatch: Remove signal sysfs attribute
-Date:   Tue, 15 Jan 2019 17:45:07 +0100
-Message-Id: <20190115164507.14676-3-mbenes@suse.cz>
+        Tue, 15 Jan 2019 11:45:30 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35162 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2387723AbfAOQp1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 Jan 2019 11:45:27 -0500
+Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 128122054F;
+        Tue, 15 Jan 2019 16:45:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1547570726;
+        bh=7B5qYllohnDaA7tSePslQy7YHJTLmUFVcxydsXAr0i0=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=To/oRL9tnw+tyZsPxkW6577f4tbmaY80DpzEzOsRwJ0XiPASr9N4iSEhkaqVDDJsA
+         KQE94tDwZc6JwE5XAFm4jIIuEtQoTeZ0pXDlq1HtovY3Qg18KJu5YHqKUYD12xCe7Z
+         hxngMPe6i9Z30B48bD6bKx8axbm6s7HvG7AlS4ms=
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Theodore Tso <tytso@mit.edu>
+Subject: [PATCH 4.20 49/57] ext4: avoid kernel warning when writing the superblock to a dead device
+Date:   Tue, 15 Jan 2019 17:36:30 +0100
+Message-Id: <20190115154913.763968826@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190115164507.14676-1-mbenes@suse.cz>
-References: <20190115164507.14676-1-mbenes@suse.cz>
+In-Reply-To: <20190115154910.734892368@linuxfoundation.org>
+References: <20190115154910.734892368@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
+X-Patchwork-Hint: ignore
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The fake signal is send automatically now. We can rely on it completely
-and remove the sysfs attribute.
+4.20-stable review patch.  If anyone has any objections, please let me know.
 
-Signed-off-by: Miroslav Benes <mbenes@suse.cz>
+------------------
+
+From: Theodore Ts'o <tytso@mit.edu>
+
+commit e86807862e6880809f191c4cea7f88a489f0ed34 upstream.
+
+The xfstests generic/475 test switches the underlying device with
+dm-error while running a stress test.  This results in a large number
+of file system errors, and since we can't lock the buffer head when
+marking the superblock dirty in the ext4_grp_locked_error() case, it's
+possible the superblock to be !buffer_uptodate() without
+buffer_write_io_error() being true.
+
+We need to set buffer_uptodate() before we call mark_buffer_dirty() or
+this will trigger a WARN_ON.  It's safe to do this since the
+superblock must have been properly read into memory or the mount would
+have been successful.  So if buffer_uptodate() is not set, we can
+safely assume that this happened due to a failed attempt to write the
+superblock.
+
+Signed-off-by: Theodore Ts'o <tytso@mit.edu>
+Cc: stable@vger.kernel.org
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- .../ABI/testing/sysfs-kernel-livepatch        | 12 ---
- Documentation/livepatch/livepatch.txt         | 16 ++--
- kernel/livepatch/core.c                       | 32 --------
- kernel/livepatch/transition.c                 | 82 +++++++++----------
- kernel/livepatch/transition.h                 |  1 -
- 5 files changed, 48 insertions(+), 95 deletions(-)
+ fs/ext4/super.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/Documentation/ABI/testing/sysfs-kernel-livepatch b/Documentation/ABI/testing/sysfs-kernel-livepatch
-index dac7e1e62a8b..85db352f68f9 100644
---- a/Documentation/ABI/testing/sysfs-kernel-livepatch
-+++ b/Documentation/ABI/testing/sysfs-kernel-livepatch
-@@ -33,18 +33,6 @@ Contact:	live-patching@vger.kernel.org
- 		An attribute which indicates whether the patch is currently in
- 		transition.
- 
--What:		/sys/kernel/livepatch/<patch>/signal
--Date:		Nov 2017
--KernelVersion:	4.15.0
--Contact:	live-patching@vger.kernel.org
--Description:
--		A writable attribute that allows administrator to affect the
--		course of an existing transition. Writing 1 sends a fake
--		signal to all remaining blocking tasks. The fake signal
--		means that no proper signal is delivered (there is no data in
--		signal pending structures). Tasks are interrupted or woken up,
--		and forced to change their patched state.
--
- What:		/sys/kernel/livepatch/<patch>/force
- Date:		Nov 2017
- KernelVersion:	4.15.0
-diff --git a/Documentation/livepatch/livepatch.txt b/Documentation/livepatch/livepatch.txt
-index 407e0f03dc99..4627b41ff02e 100644
---- a/Documentation/livepatch/livepatch.txt
-+++ b/Documentation/livepatch/livepatch.txt
-@@ -158,13 +158,11 @@ If a patch is in transition, this file shows 0 to indicate the task is
- unpatched and 1 to indicate it's patched.  Otherwise, if no patch is in
- transition, it shows -1.  Any tasks which are blocking the transition
- can be signaled with SIGSTOP and SIGCONT to force them to change their
--patched state. This may be harmful to the system though.
--/sys/kernel/livepatch/<patch>/signal attribute provides a better alternative.
--Writing 1 to the attribute sends a fake signal to all remaining blocking
--tasks. No proper signal is actually delivered (there is no data in signal
--pending structures). Tasks are interrupted or woken up, and forced to change
--their patched state. Despite the sysfs attribute the fake signal is also sent
--every 15 seconds automatically.
-+patched state. This may be harmful to the system though. Sending a fake signal
-+to all remaining blocking tasks is a better alternative. No proper signal is
-+actually delivered (there is no data in signal pending structures). Tasks are
-+interrupted or woken up, and forced to change their patched state. The fake
-+signal is automatically sent every 15 seconds.
- 
- Administrator can also affect a transition through
- /sys/kernel/livepatch/<patch>/force attribute. Writing 1 there clears
-@@ -412,8 +410,8 @@ Information about the registered patches can be found under
- /sys/kernel/livepatch. The patches could be enabled and disabled
- by writing there.
- 
--/sys/kernel/livepatch/<patch>/signal and /sys/kernel/livepatch/<patch>/force
--attributes allow administrator to affect a patching operation.
-+/sys/kernel/livepatch/<patch>/force attributes allow administrator to affect a
-+patching operation.
- 
- See Documentation/ABI/testing/sysfs-kernel-livepatch for more details.
- 
-diff --git a/kernel/livepatch/core.c b/kernel/livepatch/core.c
-index adca5cf07f7e..fe1993399823 100644
---- a/kernel/livepatch/core.c
-+++ b/kernel/livepatch/core.c
-@@ -313,7 +313,6 @@ static int klp_write_object_relocations(struct module *pmod,
-  * /sys/kernel/livepatch/<patch>
-  * /sys/kernel/livepatch/<patch>/enabled
-  * /sys/kernel/livepatch/<patch>/transition
-- * /sys/kernel/livepatch/<patch>/signal
-  * /sys/kernel/livepatch/<patch>/force
-  * /sys/kernel/livepatch/<patch>/<object>
-  * /sys/kernel/livepatch/<patch>/<object>/<function,sympos>
-@@ -382,35 +381,6 @@ static ssize_t transition_show(struct kobject *kobj,
- 			patch == klp_transition_patch);
- }
- 
--static ssize_t signal_store(struct kobject *kobj, struct kobj_attribute *attr,
--			    const char *buf, size_t count)
--{
--	struct klp_patch *patch;
--	int ret;
--	bool val;
--
--	ret = kstrtobool(buf, &val);
--	if (ret)
--		return ret;
--
--	if (!val)
--		return count;
--
--	mutex_lock(&klp_mutex);
--
--	patch = container_of(kobj, struct klp_patch, kobj);
--	if (patch != klp_transition_patch) {
--		mutex_unlock(&klp_mutex);
--		return -EINVAL;
--	}
--
--	klp_send_signals();
--
--	mutex_unlock(&klp_mutex);
--
--	return count;
--}
--
- static ssize_t force_store(struct kobject *kobj, struct kobj_attribute *attr,
- 			   const char *buf, size_t count)
- {
-@@ -442,12 +412,10 @@ static ssize_t force_store(struct kobject *kobj, struct kobj_attribute *attr,
- 
- static struct kobj_attribute enabled_kobj_attr = __ATTR_RW(enabled);
- static struct kobj_attribute transition_kobj_attr = __ATTR_RO(transition);
--static struct kobj_attribute signal_kobj_attr = __ATTR_WO(signal);
- static struct kobj_attribute force_kobj_attr = __ATTR_WO(force);
- static struct attribute *klp_patch_attrs[] = {
- 	&enabled_kobj_attr.attr,
- 	&transition_kobj_attr.attr,
--	&signal_kobj_attr.attr,
- 	&force_kobj_attr.attr,
- 	NULL
- };
-diff --git a/kernel/livepatch/transition.c b/kernel/livepatch/transition.c
-index 12a1a65531a0..79876744d8da 100644
---- a/kernel/livepatch/transition.c
-+++ b/kernel/livepatch/transition.c
-@@ -347,6 +347,47 @@ static bool klp_try_switch_task(struct task_struct *task)
- 
- }
- 
-+/*
-+ * Sends a fake signal to all non-kthread tasks with TIF_PATCH_PENDING set.
-+ * Kthreads with TIF_PATCH_PENDING set are woken up.
-+ */
-+static void klp_send_signals(void)
-+{
-+	struct task_struct *g, *task;
-+
-+	if (klp_signals_cnt == SIGNALS_TIMEOUT)
-+		pr_notice("signaling remaining tasks\n");
-+
-+	read_lock(&tasklist_lock);
-+	for_each_process_thread(g, task) {
-+		if (!klp_patch_pending(task))
-+			continue;
-+
-+		/*
-+		 * There is a small race here. We could see TIF_PATCH_PENDING
-+		 * set and decide to wake up a kthread or send a fake signal.
-+		 * Meanwhile the task could migrate itself and the action
-+		 * would be meaningless. It is not serious though.
-+		 */
-+		if (task->flags & PF_KTHREAD) {
-+			/*
-+			 * Wake up a kthread which sleeps interruptedly and
-+			 * still has not been migrated.
-+			 */
-+			wake_up_state(task, TASK_INTERRUPTIBLE);
-+		} else {
-+			/*
-+			 * Send fake signal to all non-kthread tasks which are
-+			 * still not migrated.
-+			 */
-+			spin_lock_irq(&task->sighand->siglock);
-+			signal_wake_up(task, 0);
-+			spin_unlock_irq(&task->sighand->siglock);
-+		}
-+	}
-+	read_unlock(&tasklist_lock);
-+}
-+
- /*
-  * Try to switch all remaining tasks to the target patch state by walking the
-  * stacks of sleeping tasks and looking for any to-be-patched or
-@@ -587,47 +628,6 @@ void klp_copy_process(struct task_struct *child)
- 	/* TIF_PATCH_PENDING gets copied in setup_thread_stack() */
- }
- 
--/*
-- * Sends a fake signal to all non-kthread tasks with TIF_PATCH_PENDING set.
-- * Kthreads with TIF_PATCH_PENDING set are woken up.
-- */
--void klp_send_signals(void)
--{
--	struct task_struct *g, *task;
--
--	if (klp_signals_cnt == SIGNALS_TIMEOUT)
--		pr_notice("signaling remaining tasks\n");
--
--	read_lock(&tasklist_lock);
--	for_each_process_thread(g, task) {
--		if (!klp_patch_pending(task))
--			continue;
--
--		/*
--		 * There is a small race here. We could see TIF_PATCH_PENDING
--		 * set and decide to wake up a kthread or send a fake signal.
--		 * Meanwhile the task could migrate itself and the action
--		 * would be meaningless. It is not serious though.
--		 */
--		if (task->flags & PF_KTHREAD) {
--			/*
--			 * Wake up a kthread which sleeps interruptedly and
--			 * still has not been migrated.
--			 */
--			wake_up_state(task, TASK_INTERRUPTIBLE);
--		} else {
--			/*
--			 * Send fake signal to all non-kthread tasks which are
--			 * still not migrated.
--			 */
--			spin_lock_irq(&task->sighand->siglock);
--			signal_wake_up(task, 0);
--			spin_unlock_irq(&task->sighand->siglock);
--		}
--	}
--	read_unlock(&tasklist_lock);
--}
--
- /*
-  * Drop TIF_PATCH_PENDING of all tasks on admin's request. This forces an
-  * existing transition to finish.
-diff --git a/kernel/livepatch/transition.h b/kernel/livepatch/transition.h
-index f9d0bc016067..322db16233de 100644
---- a/kernel/livepatch/transition.h
-+++ b/kernel/livepatch/transition.h
-@@ -11,7 +11,6 @@ void klp_cancel_transition(void);
- void klp_start_transition(void);
- void klp_try_complete_transition(void);
- void klp_reverse_transition(void);
--void klp_send_signals(void);
- void klp_force_transition(void);
- 
- #endif /* _LIVEPATCH_TRANSITION_H */
--- 
-2.20.1
+--- a/fs/ext4/super.c
++++ b/fs/ext4/super.c
+@@ -4905,7 +4905,7 @@ static int ext4_commit_super(struct supe
+ 	ext4_superblock_csum_set(sb);
+ 	if (sync)
+ 		lock_buffer(sbh);
+-	if (buffer_write_io_error(sbh)) {
++	if (buffer_write_io_error(sbh) || !buffer_uptodate(sbh)) {
+ 		/*
+ 		 * Oh, dear.  A previous attempt to write the
+ 		 * superblock failed.  This could happen because the
+
 
