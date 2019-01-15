@@ -7,92 +7,132 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2DF4EC43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 19:14:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 27DC8C43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 19:16:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E596020866
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 19:14:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E3E9120675
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 19:16:03 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VKQNKE5L"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Vk/w5vgp"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389277AbfAOTOA (ORCPT
+        id S2389282AbfAOTQC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 15 Jan 2019 14:14:00 -0500
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:34460 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729645AbfAOTN7 (ORCPT
+        Tue, 15 Jan 2019 14:16:02 -0500
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:43751 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729645AbfAOTQB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Jan 2019 14:13:59 -0500
-Received: by mail-pg1-f194.google.com with SMTP id j10so1649166pga.1;
-        Tue, 15 Jan 2019 11:13:59 -0800 (PST)
+        Tue, 15 Jan 2019 14:16:01 -0500
+Received: by mail-pg1-f195.google.com with SMTP id v28so1628070pgk.10;
+        Tue, 15 Jan 2019 11:16:00 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id;
-        bh=fCc5KaqTgZgfy4MB65aXpKGGmlxeuIhNipMfxjQqJdM=;
-        b=VKQNKE5LGOOcdzObjQ6eXgUzuXo6ZpcUt7Ktoe7hRQN3GIiKfMpZOGvgIQBQAHdGOG
-         oF2Z5XrjC/007Z1KKL51hvrpF+brnDhTKvqQ5p72vzDQUy71yUa3/LYiaGhlsKWICixG
-         UOU5qyriAs7mHWy6MfDx/88IYwnhKYmrZSktKXTY6KgmBAy5akp/924o9SrgDi79YTmy
-         psha0CWI2z5lGVUp8cUk7aU1K2lNjFqk/Xq3e8JxHktSLhikCiE48fXUkq1daCPwbpQD
-         o1BKMEbsijIEScmCKacTeYQKPbruLkBcUr1wNEeCvxc+85wDIxhH6PLt1X+BWbn+t9PJ
-         djVg==
+        bh=LSIvMbrzQ+UiCLW5oK5dOF6+LjL9c2wUmS0an25CZk0=;
+        b=Vk/w5vgpkw7oegUt97yOlHTwWb8RpKjY4HlMUTaMJw91+UNjZv73B8Rvdc8PVeB/Gc
+         XEJRiNUBMVmRFiZA4YONkfqn5an8kaQu5tJLGTaBoCdVnCbOTSwrKZqqCjDdPtCBb+UA
+         TEi/agUCriR1iYk9wj1St9VD7I1e5LNpzSdPgF8jEWvWMKdYoVGQC80MD3lbtHo2mf55
+         g0f3VGzvMKliIW4Mg0lQT3kl0tm9ggqNHbH+55ftc1k4i7tvH0T7zLMsmepfEdpSQg6G
+         B2nNmVgYTqgD9MaCi07yJW6/D4Ic+aMKJd2FUiW9ybMc1g8iSss/1GX4I4bGWbpIQJUG
+         GHwQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=fCc5KaqTgZgfy4MB65aXpKGGmlxeuIhNipMfxjQqJdM=;
-        b=fgOcnczP0IHBXA31VFBpY8BELhRJrhr+zzi95Nch8Ycw6yRm3eetTzKF7GxFiw7ddj
-         9RIEX1DSq+PfVemjbarq8H76yDS6ElhiztetY+ao/Ko4WNHyPx39AUOcIchB1LywnlPx
-         vLJHxqaEQPTw758G+6WhjqmtwHo4u+YNNvQjTx4D98hM8PFiNvq93vu6NFPi0JXngILA
-         pflEYdJHg4ElSiSTJMqNloKLfqyIBI4ZEBk7kDicq5MwHI4JTGDKNemwmsLxG0KRCgfe
-         TZ8IGW6MvfULrtv9DhsTgGWo9k7GM2I4MKTq5SnUd/0NizJPxMQgcLS1Lpli0ImlQcCt
-         D9AA==
-X-Gm-Message-State: AJcUukcU0KYK+0t85MpFiEULdBPJSU7840jxhsszFyxxK4dDDKOtANc1
-        /MJdJuhnJIV3jrOSYsJLFS8pHOp8yGQ=
-X-Google-Smtp-Source: ALg8bN45eROKfbIYf8Y+kmouylQHHe0/YXWZ7dLIDs0Y1nENr/Air4OKrj49AkXM/giTY7JM7CH9wQ==
-X-Received: by 2002:a63:d747:: with SMTP id w7mr5030732pgi.360.1547579638462;
-        Tue, 15 Jan 2019 11:13:58 -0800 (PST)
-Received: from localhost.localdomain ([216.13.234.27])
-        by smtp.gmail.com with ESMTPSA id h64sm6130162pfc.142.2019.01.15.11.13.57
+        bh=LSIvMbrzQ+UiCLW5oK5dOF6+LjL9c2wUmS0an25CZk0=;
+        b=oAOh05hubw/x5KXtn8Evc0lTZYhTO0Uy1eKFySxJziBqDijQEl2ySx5sKHxbMFXuGq
+         ODO74y7uuJmAbckHGqlo6sOmrljv7teb/OBVmIytP37a0nSWj0+UsfeTPO99AgYgCcmu
+         XuCQWDwIOzdaM859AmBgxLl9xkjPbxuMPbUAuBhh6fi1YFS4m1mUm75Pjyu0s0B/xdub
+         1ZbaPn2623gxP3Xr8dovHBOR1dMu5yCrRyro+cNfgjimSsTG2xZ7VBvUBoyBwWgcBjiE
+         jHDnT3oYbXebHe1ZzU5NIenZ6ODRftAsbCgZNj4XjJu0q1MnFNtsjbWD22xDh5koA1g0
+         ReyA==
+X-Gm-Message-State: AJcUukd8q5sd9m4hVw2sTPtGR4S+Q4S20uGhh8RAcHSLRHnksFKz+Hqj
+        toMAik861k2kVhQuAQdDeRHC2TpriJw=
+X-Google-Smtp-Source: ALg8bN65Ym86TBzuNv5yvZCO8350EbD8o1hzCYqo9/9vq+f2p7r2548NDorns1XsGa0q1nFzZb4JNg==
+X-Received: by 2002:a63:5ec6:: with SMTP id s189mr4939295pgb.357.1547579759906;
+        Tue, 15 Jan 2019 11:15:59 -0800 (PST)
+Received: from majic.sklembedded.com (c-73-202-231-77.hsd1.ca.comcast.net. [73.202.231.77])
+        by smtp.googlemail.com with ESMTPSA id r80sm5452724pfa.111.2019.01.15.11.15.58
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 15 Jan 2019 11:13:57 -0800 (PST)
-From:   Alamy Liu <alamy.liu@gmail.com>
-To:     Venkat Gopalakrishnan <venkatg@codeaurora.org>
-Cc:     Ulf Hansson <ulf.hansson@linaro.org>, linux-mmc@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] mmc: cqhci: data size depending on queue depth
-Date:   Tue, 15 Jan 2019 11:13:50 -0800
-Message-Id: <20190115191356.32714-1-alamy.liu@gmail.com>
+        Tue, 15 Jan 2019 11:15:59 -0800 (PST)
+From:   Steve Longerbeam <slongerbeam@gmail.com>
+To:     linux-media@vger.kernel.org
+Cc:     Steve Longerbeam <slongerbeam@gmail.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        devel@driverdev.osuosl.org (open list:STAGING SUBSYSTEM),
+        linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH v2] media: imx: queue subdev events to reachable video devices
+Date:   Tue, 15 Jan 2019 11:15:46 -0800
+Message-Id: <20190115191546.12975-1-slongerbeam@gmail.com>
 X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-CQE_DCMD is not necessary to be enabled when CQE is enabled.
-(Software could halt CQE to send command, or via DCMD)
+In order to receive events generated by subdevices on the video capture
+nodes, those events need to be forwarded to the subdevice's list of
+reachable video capture devices.
 
-In the case that CQE_DCMD is not enabled, it still needs to allocate
-space for data transfer. For instance:
-  CQE_DCMD is enabled:  32 slots space
-  CQE_DCMD is disabled: 31 slots space (is good enough)
+Note this will queue the event to a video device even if there is
+no actual _enabled_ media path from the sub-device to the video device.
+So a future improvement is to skip the video device if there is no enabled
+path to it from the sub-device. The entity->pipe pointer can't be
+used for this check because in imx-media a sub-device can be a
+member to more than one streaming pipeline at a time.
 
-Signed-off-by: Alamy Liu <alamy.liu@gmail.com>
+Signed-off-by: Steve Longerbeam <slongerbeam@gmail.com>
 ---
- drivers/mmc/host/cqhci.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Changes in v2:
+- split out the implementation of (un)subscribe_event on the video
+  capture device to a separate patch.
+---
+ drivers/staging/media/imx/imx-media-dev.c | 24 +++++++++++++++++++++++
+ 1 file changed, 24 insertions(+)
 
-diff --git a/drivers/mmc/host/cqhci.c b/drivers/mmc/host/cqhci.c
-index 4cc7863c13..974997b6cb 100644
---- a/drivers/mmc/host/cqhci.c
-+++ b/drivers/mmc/host/cqhci.c
-@@ -202,7 +202,7 @@ static int cqhci_host_alloc_tdl(struct cqhci_host *cq_host)
- 	cq_host->desc_size = cq_host->slot_sz * cq_host->num_slots;
+diff --git a/drivers/staging/media/imx/imx-media-dev.c b/drivers/staging/media/imx/imx-media-dev.c
+index 4b344a4a3706..25e916562c66 100644
+--- a/drivers/staging/media/imx/imx-media-dev.c
++++ b/drivers/staging/media/imx/imx-media-dev.c
+@@ -442,6 +442,29 @@ static const struct media_device_ops imx_media_md_ops = {
+ 	.link_notify = imx_media_link_notify,
+ };
  
- 	cq_host->data_size = cq_host->trans_desc_len * cq_host->mmc->max_segs *
--		(cq_host->num_slots - 1);
-+		cq_host->mmc->cqe_qdepth;
++static void imx_media_notify(struct v4l2_subdev *sd,
++			     unsigned int notification,
++			     void *arg)
++{
++	struct media_entity *entity = &sd->entity;
++	int i;
++
++	if (notification != V4L2_DEVICE_NOTIFY_EVENT)
++		return;
++
++	for (i = 0; i < entity->num_pads; i++) {
++		struct media_pad *pad = &entity->pads[i];
++		struct imx_media_pad_vdev *pad_vdev;
++		struct list_head *pad_vdev_list;
++
++		pad_vdev_list = to_pad_vdev_list(sd, pad->index);
++		if (!pad_vdev_list)
++			continue;
++		list_for_each_entry(pad_vdev, pad_vdev_list, list)
++			v4l2_event_queue(pad_vdev->vdev->vfd, arg);
++	}
++}
++
+ static int imx_media_probe(struct platform_device *pdev)
+ {
+ 	struct device *dev = &pdev->dev;
+@@ -462,6 +485,7 @@ static int imx_media_probe(struct platform_device *pdev)
+ 	mutex_init(&imxmd->mutex);
  
- 	pr_debug("%s: cqhci: desc_size: %zu data_sz: %zu slot-sz: %d\n",
- 		 mmc_hostname(cq_host->mmc), cq_host->desc_size, cq_host->data_size,
+ 	imxmd->v4l2_dev.mdev = &imxmd->md;
++	imxmd->v4l2_dev.notify = imx_media_notify;
+ 	strscpy(imxmd->v4l2_dev.name, "imx-media",
+ 		sizeof(imxmd->v4l2_dev.name));
+ 
 -- 
 2.17.1
 
