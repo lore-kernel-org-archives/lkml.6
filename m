@@ -2,110 +2,214 @@ Return-Path: <SRS0=RZO6=PX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D418C43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 03:11:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0968BC43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 03:11:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D16CC20659
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 03:11:00 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="pHeMiLhW"
+	by mail.kernel.org (Postfix) with ESMTP id CFBF220659
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 03:11:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727620AbfAODK7 (ORCPT
+        id S1727772AbfAODLW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 14 Jan 2019 22:10:59 -0500
-Received: from mail-oi1-f195.google.com ([209.85.167.195]:33540 "EHLO
-        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727400AbfAODK6 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 Jan 2019 22:10:58 -0500
-Received: by mail-oi1-f195.google.com with SMTP id c206so1078225oib.0;
-        Mon, 14 Jan 2019 19:10:57 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=R5KmkYpJA/KK91DqJdyqJiZYDbcMfiTcwYilq3TSd9A=;
-        b=pHeMiLhWvVPxVFvIxjDKmnEtXAZ2SvYQa9Rn80wesevOhhf26EwVcoWBP+eyIOZkQh
-         d0w+h2arFSCR1+XciE7DahUNOs+yhxIphtycqoHq6N3aRTxHIXiM2PGvdtgcCN1yX3LI
-         YrCFVSF8EfRRm81mdWuEXHrmYSkYy38s7uXgIwIX3sepWaPXT/XAPfeswdGIFLQW5lgQ
-         GQ7OTWOZX9FkkcheXaOtFSPmAY5sNXrnfq8SGbpq7tD5g4GQtnOxdB8ro2V75rSjamh8
-         3VGkojuC1+g9K6ZcTwKwl49bEuyWOBE25CXwGxPHMt+rPM256BqX7WST6YRIF3zr4fqd
-         S7hw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=R5KmkYpJA/KK91DqJdyqJiZYDbcMfiTcwYilq3TSd9A=;
-        b=uJAgb+bZ4V84u63EjK/87fLU+NDV7RfyfUipnvOR4N10ellGN8jvqN4WlKqKdQsCjC
-         0bm+H86r9hHGqrSbP6VvT2+dtGfpPSqFOIYuXj7BLpcpKrjMgR0qu4u6y9Pjfn1iu3O0
-         mQAi1PtAB07JB1vm+Yg94EjKOarRdeoTNcv9yq1QG0ck/zPB65JO7r176XK66yhCVVc9
-         jvPu7FTrkP9lbty9VsC2S+DX9OA9CrPe9NYvSIoar5W5viLoW6h2WV/z4YfJod6uiJjp
-         xiocotGbcjx4ZzfkrKhy+VlAXafFvXpEXbbOIzk+DXDadorFKjF47lQ2ryXepO455ARW
-         l7DQ==
-X-Gm-Message-State: AJcUukcjI4SVq/zPC99biArDjW0paGGao4npKDO0Fy3uhhUyvPa83b5R
-        FrXwVmvAbIToIIVaa/HUcaJAJhDOqABKdDOvsWo=
-X-Google-Smtp-Source: ALg8bN40uoE9LjcbwRns63fh4ijfhlyj4G7UOaSGEjSnC5AggoXnmhxe8EfDpe16cZhvlWi3RDfffbGCzbDIUnXZDDQ=
-X-Received: by 2002:aca:e495:: with SMTP id b143mr807399oih.286.1547521857478;
- Mon, 14 Jan 2019 19:10:57 -0800 (PST)
+        Mon, 14 Jan 2019 22:11:22 -0500
+Received: from mga11.intel.com ([192.55.52.93]:5767 "EHLO mga11.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726769AbfAODLV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 14 Jan 2019 22:11:21 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga007.fm.intel.com ([10.253.24.52])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 14 Jan 2019 19:08:19 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,480,1539673200"; 
+   d="scan'208";a="114721324"
+Received: from unknown (HELO [10.254.5.67]) ([10.254.5.67])
+  by fmsmga007.fm.intel.com with ESMTP; 14 Jan 2019 19:08:16 -0800
+Subject: Re: [alsa-devel] [PATCH] ASoC: soc-core: Fix null pointer dereference
+ in soc_find_component
+To:     Mark Brown <broonie@kernel.org>
+Cc:     rohkumar@qti.qualcomm.com, alsa-devel@alsa-project.org,
+        bgoswami@codeaurora.org, vinod.koul@linaro.org,
+        linux-kernel@vger.kernel.org, plai@codeaurora.org, tiwai@suse.com,
+        lgirdwood@gmail.com, Ajit Pandey <ajitp@codeaurora.org>,
+        Liam Girdwood <liam.r.girdwood@linux.intel.com>,
+        Rohit kumar <rohitkr@codeaurora.org>, asishb@codeaurora.org,
+        srinivas.kandagatla@linaro.org
+References: <1547194442-1487-1-git-send-email-rohitkr@codeaurora.org>
+ <d8726e9a-3477-a573-8c1a-dd8245068802@linux.intel.com>
+ <4886ed21-65d2-159d-afcd-bb26dcde636e@linux.intel.com>
+ <20190115000610.GM11073@sirena.org.uk>
+From:   Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Message-ID: <163e0e01-fcf9-6f9f-4317-e71bd9cb47b1@linux.intel.com>
+Date:   Mon, 14 Jan 2019 21:08:15 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-References: <1546457808-18270-1-git-send-email-skomatineni@nvidia.com>
- <1546457808-18270-3-git-send-email-skomatineni@nvidia.com>
- <5722018a-7654-c6f9-c2aa-2817b39b1a35@intel.com> <BN7PR12MB2836750BAFFAEAF8436C7C58C2850@BN7PR12MB2836.namprd12.prod.outlook.com>
-In-Reply-To: <BN7PR12MB2836750BAFFAEAF8436C7C58C2850@BN7PR12MB2836.namprd12.prod.outlook.com>
-From:   Chunyan Zhang <zhang.lyra@gmail.com>
-Date:   Tue, 15 Jan 2019 11:10:46 +0800
-Message-ID: <CABOV4+UkA48Jc9hTSkM=cEoH0zktmjazrcWVZZ1LMqRXSdjVuA@mail.gmail.com>
-Subject: Re: [PATCH V7 2/2] mmc: tegra: HW Command Queue Support for Tegra SDMMC
-To:     Sowjanya Komatineni <skomatineni@nvidia.com>
-Cc:     Adrian Hunter <adrian.hunter@intel.com>,
-        "ulf.hansson@linaro.org" <ulf.hansson@linaro.org>,
-        Chunyan Zhang <chunyan.zhang@unisoc.com>,
-        "thierry.reding@gmail.com" <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20190115000610.GM11073@sirena.org.uk>
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jan 11, 2019 at 8:58 AM Sowjanya Komatineni
-<skomatineni@nvidia.com> wrote:
->
-> >> +static int sdhci_tegra_add_host(struct sdhci_host *host) {
-> >> +    struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
-> >> +    struct sdhci_tegra *tegra_host = sdhci_pltfm_priv(pltfm_host);
-> >> +    struct cqhci_host *cq_host;
-> >> +    bool dma64;
-> >> +    int ret;
-> >> +
-> >> +    if (!tegra_host->enable_hwcq)
-> >> +            return sdhci_add_host(host);
-> >> +
-> >> +    host->v4_mode = true;
-> >
-> >Can you use sdhci_enable_v4_mode() here?
->
-> Hi Adrian,
-> sdhci_read_caps sets v4 mode thru sdhci_do_enable_v4_mode if v4_mode is true
-> sdhci_setup_host calls sdhci_read_caps so I was setting v4_mode to true so v4 mode gets enabled during read caps.
->
 
-Hi sowjanya,
+On 1/14/19 6:06 PM, Mark Brown wrote:
+> On Fri, Jan 11, 2019 at 03:49:08PM -0600, Pierre-Louis Bossart wrote:
+>
+>> Adding some traces I can see that the the platform name we use doesn't seem
+>> compatible with your logic. All the Intel boards used a constant platform
+>> name matching the PCI ID, see e.g. [1], which IIRC is used to bind
+>> components. Liam, do you recall in more details if this is really required?
+> That's telling me that either snd_soc_find_components() isn't finding
+> components in the same way that we do when we bind things which isn't
+> good or we're binding links without having fully matched everything on
+> the link which also isn't good.
+>
+> Without a system that shows the issue I can't 100% confirm but I think
+> it's the former - I'm fairly sure that those machines are relying on the
+> component name being initialized to fmt_single_name() in
+> snd_soc_component_initialize().  That is supposed to wind up using
+> dev_name() (which would be the PCI address for a PCI device) as the
+> basis of the name.  What I can't currently see is how exactly that gets
+> bound (or how any of the other links avoid trouble for that matter).  We
+> could revert and push this into cards but I would rather be confident
+> that we understand what's going on, I'm not comfortable that we aren't
+> just pushing the breakage around rather than fixing it.  Can someone
+> with an x86 system take a look and confirm exactly what's going on with
+> binding these cards please?
 
-I also would suggest to use sdhci_enable_v4_mode() instead of setting
-host->v4_mode directly.
-Enabling v4_mode in read caps was just because that I was worried
-about v4 mode would be cleared after reset all on some controllers. If
-that's not the case for all sd host controllers, I guess it can be
-removed.
+I am actually not sure at all why we need the platform_name to be set in 
+Intel machine drivers.
 
-Thanks,
-Chunyan
+I ran a 5mn experiment with SOF and we completely ignore what is set by 
+machine drivers, it's overridden by the component name:
+
+             dev_info(card->dev, "info: override FE DAI link %s\n",
+                  card->dai_link[i].name);
+
+             /* override platform component */
+             if (snd_soc_init_platform(card, dai_link) < 0) {
+                 dev_err(card->dev, "init platform error");
+                 continue;
+             }
+             pr_err("plb: platform_name was %s, now %s\n",
+                    dai_link->platform->name,
+                    component->name);
+
+             dai_link->platform->name = component->name;
+
+existing machine driver (info is incorrect btw, should be BE DAI link)
+
+[   36.628466] bxt-pcm512x bxt-pcm512x: info: override FE DAI link 
+SSP5-Codec
+[   36.628469] plb: platform_name was sof-audio, now sof-audio
+[   36.628772] bxt-pcm512x bxt-pcm512x: info: override FE DAI link iDisp1
+[   36.628773] plb: platform_name was 0000:00:0e.0, now sof-audio
+[   36.629111] bxt-pcm512x bxt-pcm512x: info: override FE DAI link iDisp2
+[   36.629112] plb: platform_name was 0000:00:0e.0, now sof-audio
+[   36.629422] bxt-pcm512x bxt-pcm512x: info: override FE DAI link iDisp3
+[   36.629423] plb: platform_name was 0000:00:0e.0, now sof-audio
+
+machine driver with all platform_name commented out, no regression at all.
+
+[   15.839652] sof-audio sof-audio: created machine bxt-pcm512x
+[   15.846990] bxt-pcm512x bxt-pcm512x: info: override FE DAI link 
+SSP5-Codec
+[   15.846995] plb: platform_name was snd-soc-dummy, now sof-audio
+[   15.847325] bxt-pcm512x bxt-pcm512x: info: override FE DAI link iDisp1
+[   15.847326] plb: platform_name was snd-soc-dummy, now sof-audio
+[   15.847657] bxt-pcm512x bxt-pcm512x: info: override FE DAI link iDisp2
+[   15.847658] plb: platform_name was snd-soc-dummy, now sof-audio
+[   15.847974] bxt-pcm512x bxt-pcm512x: info: override FE DAI link iDisp3
+[   15.847974] plb: platform_name was snd-soc-dummy, now sof-audio
+
+I checked for a bit longer with the Skylake driver, I also couldn't see 
+a difference with or without the platform_name set.
+
+diff --git a/sound/soc/soc-core.c b/sound/soc/soc-core.c
+index 0462b3ec977a..0fdf99ec17cd 100644
+--- a/sound/soc/soc-core.c
++++ b/sound/soc/soc-core.c
+@@ -918,7 +918,7 @@ static int soc_bind_dai_link(struct snd_soc_card *card,
+                 if (!snd_soc_is_matching_component(dai_link->platform,
+                                                    component))
+                         continue;
+-
++               pr_err("plb: binding with component_name %s \n", 
+component->name);
+                 snd_soc_rtdcom_add(rtd, component);
+         }
+
+@@ -1041,6 +1041,8 @@ static int snd_soc_init_platform(struct 
+snd_soc_card *card,
+                 if (!platform)
+                         return -ENOMEM;
+
++               pr_err("plb: %s: plaform->name set to %s\n", __func__,
++                      dai_link->platform_name);
+                 dai_link->platform      = platform;
+                 platform->name          = dai_link->platform_name;
+                 platform->of_node       = dai_link->platform_of_node;
+
+[    1.345143] plb: snd_soc_init_platform: plaform->name set to 0000:00:1f.3
+[    1.345148] skl_hda_dsp_generic skl_hda_dsp_generic: ASoC: binding 
+CNL Audio
+[    1.345151] plb: binding with component_name 0000:00:1f.3
+[    1.345153] plb: snd_soc_init_platform: plaform->name set to 0000:00:1f.3
+[    1.345154] skl_hda_dsp_generic skl_hda_dsp_generic: ASoC: binding 
+CNL HDMI1
+[    1.345155] plb: binding with component_name 0000:00:1f.3
+[    1.345157] plb: snd_soc_init_platform: plaform->name set to 0000:00:1f.3
+[    1.345158] skl_hda_dsp_generic skl_hda_dsp_generic: ASoC: binding 
+CNL HDMI2
+[    1.345159] plb: binding with component_name 0000:00:1f.3
+[    1.345161] plb: snd_soc_init_platform: plaform->name set to 0000:00:1f.3
+[    1.345162] skl_hda_dsp_generic skl_hda_dsp_generic: ASoC: binding 
+CNL HDMI3
+[    1.345163] plb: binding with component_name 0000:00:1f.3
+
+[    1.349607] plb: snd_soc_init_platform: plaform->name set to (null)
+[    1.349613] skl_hda_dsp_generic skl_hda_dsp_generic: ASoC: binding 
+CNL Audio
+[    1.349617] plb: binding with component_name snd-soc-dummy
+[    1.349619] plb: binding with component_name snd-soc-dummy
+[    1.349621] plb: snd_soc_init_platform: plaform->name set to (null)
+[    1.349623] skl_hda_dsp_generic skl_hda_dsp_generic: ASoC: binding 
+CNL HDMI1
+[    1.349625] plb: binding with component_name snd-soc-dummy
+[    1.349626] plb: binding with component_name snd-soc-dummy
+[    1.349628] plb: snd_soc_init_platform: plaform->name set to (null)
+[    1.349631] skl_hda_dsp_generic skl_hda_dsp_generic: ASoC: binding 
+CNL HDMI2
+[    1.349632] plb: binding with component_name snd-soc-dummy
+[    1.349633] plb: binding with component_name snd-soc-dummy
+[    1.349635] plb: snd_soc_init_platform: plaform->name set to (null)
+[    1.349638] skl_hda_dsp_generic skl_hda_dsp_generic: ASoC: binding 
+CNL HDMI3
+[    1.349639] plb: binding with component_name snd-soc-dummy
+[    1.349641] plb: binding with component_name snd-soc-dummy
+
+Audio playback works in both cases.
+
+The funny thing is that the list of components is right in 
+/sys/kernel/debug/asoc.
+
+My guess is that the required PCI component is already added when the 
+platform_name is used in soc_bind_dai_link() and snd_soc_rtdcom_add() 
+does nothing for the back-end, so the dailink platform_name has actually 
+zero influence on the outcome.
+
+Another way to look at it is that we already provide the 
+dai_link->cpu_dai_name which is enough for soc_bind_dai_link() to find 
+the relevant component and as a result the dailink->platform_name seems 
+redundant/unnecessary. I am using the conditional here since this part 
+of the code (Intel driver included) seems to work by accident rather 
+than by design, and we'd need a set of additional tests before removing 
+these hard-coded initializations.
+
+Does this help?
