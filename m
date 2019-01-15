@@ -2,141 +2,383 @@ Return-Path: <SRS0=RZO6=PX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_MUTT autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 02288C43612
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 00:14:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 32C28C43444
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 00:15:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C7962206BA
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 00:14:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E20942054F
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 00:15:49 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=codyps.com header.i=@codyps.com header.b="buicu8ZM"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jbSWlK1e"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727184AbfAOAOi (ORCPT
+        id S1727289AbfAOAPs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 14 Jan 2019 19:14:38 -0500
-Received: from mail-qk1-f195.google.com ([209.85.222.195]:40602 "EHLO
-        mail-qk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726871AbfAOAOi (ORCPT
+        Mon, 14 Jan 2019 19:15:48 -0500
+Received: from mail-it1-f193.google.com ([209.85.166.193]:38997 "EHLO
+        mail-it1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726871AbfAOAPs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 Jan 2019 19:14:38 -0500
-Received: by mail-qk1-f195.google.com with SMTP id y16so590155qki.7
-        for <linux-kernel@vger.kernel.org>; Mon, 14 Jan 2019 16:14:36 -0800 (PST)
+        Mon, 14 Jan 2019 19:15:48 -0500
+Received: by mail-it1-f193.google.com with SMTP id a6so2085275itl.4;
+        Mon, 14 Jan 2019 16:15:47 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=codyps.com; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=U3/XlavFaV+83MK62S0qixF0uFWWpLHgt5a5yu35Agc=;
-        b=buicu8ZMu5wkDF6oZmeci2+cyaWDaWjxu06XOAv2AVC9GSdgFvHoHQbKIMqOHuLQxR
-         G1wXyqqBkSadPFjr04BL3Z0kE5QiuWUnZev9swbfASvDsj6WUMM7QvjntNXCr46Cohoq
-         l/l2MEiDmoShBWss73LQgN0CVHoMCxCpCWJ3E=
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=5JPueW1n3YS3jHCgde1e4KX1UARTD/20evBRHvW+Df0=;
+        b=jbSWlK1e8jAAijNdL3vbRUB5eZSyGzb39E9OhXa0NGWPHrwMJjaWm0a+VncchB7r6Y
+         Tzk3IV+k4TpYFfQe+efDWSI9oxtmMoFBldNhDnADU3NRQj4LLOddVlPnfC9hwUQazjxI
+         r1LTAvoPDn1CVLc4RdaKCt+gICpoRavUT2qMzmwqgLcV+S+NKH6nld+BpU7ICBh2ZT/z
+         B2P7wf6Gqw+VsuDxLeq7uF7sZsO7UyWbTCLXr6UFDJWkoPi0o9UwWCWkAmbLSfpLOHyW
+         HuaIEVAolRWI8BrFRDQfIbVpHWsiIPmDazKOWTjQm5IRgWcMue//WPKjNCWS08qJ2TBF
+         ck2Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=U3/XlavFaV+83MK62S0qixF0uFWWpLHgt5a5yu35Agc=;
-        b=RCdIPfreUerJbfhCSTnppnv4t1yD0Ph6XS0T38xXba/Lpu1wNNn5/bJksqBPhc+yAi
-         42daoeHi70ZRRY/BegrvrNDBjav9ZdSOoFLf1EUEtej369+uKHA8Qu+9/Zbvo9QZmGWo
-         YnzVql3X7HjKLuWA9Zr3cwtsMB2etM9p0HNE+/C1x0juXTGyRPUVDtOpSsachOdmkZfa
-         N0wT5kLYyENPi+ZF7BNDh3RC+P452VwZOLjk7d18kkspBaFi4iCJawBnl9jlcyf4XFrT
-         u/NbLgfnaC/lHQ/dqXLw7uRWTswd4PkNAIdkltQWJT6XupUG/PWELSmAzzp4gqCwNfSV
-         FF9Q==
-X-Gm-Message-State: AJcUukcFYzpiJOgJ7FIuIrFTrLqtbWpxJzYXXMu2fRE0IM2phxb1xCG/
-        bjWc0Cjd2eDXwzoxJRmcTgt7
-X-Google-Smtp-Source: ALg8bN5j9ApHaKZhTUZy5ALgwxurn5N80Cvs7BjfNAXNy0vz/+ln1ADzSmLeTgoSyTphGGtqQbkexA==
-X-Received: by 2002:a37:aa0c:: with SMTP id t12mr795204qke.358.1547511276388;
-        Mon, 14 Jan 2019 16:14:36 -0800 (PST)
-Received: from localhost ([2601:18f:880:9aee::8bb])
-        by smtp.gmail.com with ESMTPSA id a17sm52358384qtk.82.2019.01.14.16.14.34
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=5JPueW1n3YS3jHCgde1e4KX1UARTD/20evBRHvW+Df0=;
+        b=be7zxQgdu6LgDQkajnhMZbevb+iDH3Zd246D4TZrOXWtItLXIeD9zSqVZ+5SaX1zTR
+         NOXuecLOQYjrGVM0UWlSnQSjpWM7xDvYmRlPh0xKXpOQizohPxOvnSITJB3WvLE9gofU
+         Abn5aivansQHmRlEB3ZGCmxXhdYz9p2IDtTQ3QOSw4cs5s7q9/fubJvlsTicscNFmAtM
+         1bmUILPw0djGUDAM8YMP9q9N7XSWk6IduZBFFiEV3GAYZMYUnxniul5snL+oBbwfZRb0
+         tHABCCczAGewu2voXjMOEk0IHcX6xzuk6CQLucj9pLvRE2HPV6i+qV/jnaZCObXb45Fp
+         VARw==
+X-Gm-Message-State: AJcUukfJWbU96K8W55v5+jXLF2jj73xvgQo1ODPQx1zSC51gxaPDrwhT
+        waOIs6B6xeJERNQDTJfhT0w=
+X-Google-Smtp-Source: ALg8bN5Et+BZKx0Xmr0v2NKRhQlyqa3SoCeLT9KQbis1ggRXBkgusST9vI5FwiY7gp5nf5apjhT7eA==
+X-Received: by 2002:a24:3987:: with SMTP id l129mr1055670ita.45.1547511346365;
+        Mon, 14 Jan 2019 16:15:46 -0800 (PST)
+Received: from r2700x.localdomain (c-75-70-96-103.hsd1.co.comcast.net. [75.70.96.103])
+        by smtp.gmail.com with ESMTPSA id r9sm793469iom.44.2019.01.14.16.15.45
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 14 Jan 2019 16:14:35 -0800 (PST)
-From:   Cody P Schafer <dev@codyps.com>
-To:     "Maciej S. Szmigiero" <mail@maciej.szmigiero.name>,
-        Brad Love <brad@nextdimension.cc>,
-        Cody P Schafer <dev@codyps.com>,
-        Hans Verkuil <hans.verkuil@cisco.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc:     stable@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-media@vger.kernel.org
-Subject: [PATCH] media: cx25840: mark pad sig_types to fix cx231xx init
-Date:   Mon, 14 Jan 2019 19:14:24 -0500
-Message-Id: <20190115001431.10276-1-dev@codyps.com>
-X-Mailer: git-send-email 2.20.1
+        Mon, 14 Jan 2019 16:15:45 -0800 (PST)
+Date:   Mon, 14 Jan 2019 17:15:39 -0700
+From:   Jeremy Fertic <jeremyfertic@gmail.com>
+To:     Tomasz Duszynski <tduszyns@gmail.com>
+Cc:     linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3] iio: chemical: sps30: allow changing self cleaning
+ period
+Message-ID: <20190115001539.GA20418@r2700x.localdomain>
+References: <20190113100912.29665-1-tduszyns@gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190113100912.29665-1-tduszyns@gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Without this, we get failures like this when the kernel attempts to
-initialize a cx231xx device:
+On Sun, Jan 13, 2019 at 11:09:12AM +0100, Tomasz Duszynski wrote:
+> Sensor can periodically trigger self cleaning. Period can be changed by
+> writing a new value to a dedicated attribute. Upon attribute read
+> current period gets returned.
+> 
+> Signed-off-by: Tomasz Duszynski <tduszyns@gmail.com>
+> ---
+> v3:
+>  * add info about used units to attribute docs
+> 
+> v2:
+>  * return available values formated as a range
+>  * tweak naming a little (interval -> period)
+> 
+>  Documentation/ABI/testing/sysfs-bus-iio-sps30 |  20 +++
+>  drivers/iio/chemical/sps30.c                  | 143 +++++++++++++++---
+>  2 files changed, 145 insertions(+), 18 deletions(-)
+> 
+> diff --git a/Documentation/ABI/testing/sysfs-bus-iio-sps30 b/Documentation/ABI/testing/sysfs-bus-iio-sps30
+> index e7ce2c57635e..143df8e89d08 100644
+> --- a/Documentation/ABI/testing/sysfs-bus-iio-sps30
+> +++ b/Documentation/ABI/testing/sysfs-bus-iio-sps30
+> @@ -6,3 +6,23 @@ Description:
+>  		Writing 1 starts sensor self cleaning. Internal fan accelerates
+>  		to its maximum speed and keeps spinning for about 10 seconds in
+>  		order to blow out accumulated dust.
+> +
+> +What:		/sys/bus/iio/devices/iio:deviceX/cleaning_period
+> +Date:		January 2019
+> +KernelVersion:	5.1
+> +Contact:	linux-iio@vger.kernel.org
+> +Description:
+> +		Sensor is capable of triggering self cleaning periodically.
+> +		Period can be changed by writing a new value here. Upon reading
+> +		the current one is returned. Units are seconds.
+> +
+> +		Writing 0 disables periodical self cleaning entirely.
+> +
+> +What:		/sys/bus/iio/devices/iio:deviceX/cleaning_period_available
+> +Date:		January 2019
+> +KernelVersion:	5.1
+> +Contact:	linux-iio@vger.kernel.org
+> +Description:
+> +		The range of available values in seconds represented as the
+> +		minimum value, the step and the maximum value, all enclosed in
+> +		square brackets.
+> diff --git a/drivers/iio/chemical/sps30.c b/drivers/iio/chemical/sps30.c
+> index f3b4390c8f5c..fe5f6309191b 100644
+> --- a/drivers/iio/chemical/sps30.c
+> +++ b/drivers/iio/chemical/sps30.c
+> @@ -5,9 +5,6 @@
+>   * Copyright (c) Tomasz Duszynski <tduszyns@gmail.com>
+>   *
+>   * I2C slave address: 0x69
+> - *
+> - * TODO:
+> - *  - support for reading/setting auto cleaning interval
+>   */
+> 
+>  #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
+> @@ -21,6 +18,7 @@
+>  #include <linux/iio/sysfs.h>
+>  #include <linux/iio/trigger_consumer.h>
+>  #include <linux/iio/triggered_buffer.h>
+> +#include <linux/kernel.h>
+>  #include <linux/module.h>
+> 
+>  #define SPS30_CRC8_POLYNOMIAL 0x31
+> @@ -28,6 +26,9 @@
+>  #define SPS30_MAX_READ_SIZE 48
+>  /* sensor measures reliably up to 3000 ug / m3 */
+>  #define SPS30_MAX_PM 3000
+> +/* minimum and maximum self cleaning periods in seconds */
+> +#define SPS30_AUTO_CLEANING_PERIOD_MIN 0
+> +#define SPS30_AUTO_CLEANING_PERIOD_MAX 604800
+> 
+>  /* SPS30 commands */
+>  #define SPS30_START_MEAS 0x0010
+> @@ -37,6 +38,9 @@
+>  #define SPS30_READ_DATA 0x0300
+>  #define SPS30_READ_SERIAL 0xd033
+>  #define SPS30_START_FAN_CLEANING 0x5607
+> +#define SPS30_AUTO_CLEANING_PERIOD 0x8004
+> +/* not a sensor command per se, used only to distinguish write from read */
+> +#define SPS30_READ_AUTO_CLEANING_PERIOD 0x8005
+> 
+>  enum {
+>  	PM1,
+> @@ -45,6 +49,11 @@ enum {
+>  	PM10,
+>  };
+> 
+> +enum {
+> +	RESET,
+> +	MEASURING,
+> +};
+> +
+>  struct sps30_state {
+>  	struct i2c_client *client;
+>  	/*
+> @@ -52,6 +61,7 @@ struct sps30_state {
+>  	 * Must be held whenever sequence of commands is to be executed.
+>  	 */
+>  	struct mutex lock;
+> +	int state;
+>  };
+> 
+>  DECLARE_CRC8_TABLE(sps30_crc8_table);
+> @@ -107,6 +117,9 @@ static int sps30_do_cmd(struct sps30_state *state, u16 cmd, u8 *data, int size)
+>  	case SPS30_START_FAN_CLEANING:
+>  		ret = sps30_write_then_read(state, buf, 2, NULL, 0);
+>  		break;
+> +	case SPS30_READ_AUTO_CLEANING_PERIOD:
+> +		buf[0] = SPS30_AUTO_CLEANING_PERIOD >> 8;
+> +		buf[1] = (u8)SPS30_AUTO_CLEANING_PERIOD;
+>  	case SPS30_READ_DATA_READY_FLAG:
+>  	case SPS30_READ_DATA:
+>  	case SPS30_READ_SERIAL:
+> @@ -114,6 +127,15 @@ static int sps30_do_cmd(struct sps30_state *state, u16 cmd, u8 *data, int size)
+>  		size += size / 2;
+>  		ret = sps30_write_then_read(state, buf, 2, buf, size);
+>  		break;
+> +	case SPS30_AUTO_CLEANING_PERIOD:
+> +		buf[2] = data[0];
+> +		buf[3] = data[1];
+> +		buf[4] = crc8(sps30_crc8_table, &buf[2], 2, CRC8_INIT_VALUE);
+> +		buf[5] = data[2];
+> +		buf[6] = data[3];
+> +		buf[7] = crc8(sps30_crc8_table, &buf[5], 2, CRC8_INIT_VALUE);
+> +		ret = sps30_write_then_read(state, buf, 8, NULL, 0);
+> +		break;
+>  	}
+> 
+>  	if (ret)
+> @@ -170,6 +192,14 @@ static int sps30_do_meas(struct sps30_state *state, s32 *data, int size)
+>  	int i, ret, tries = 5;
+>  	u8 tmp[16];
+> 
+> +	if (state->state == RESET) {
+> +		ret = sps30_do_cmd(state, SPS30_START_MEAS, NULL, 0);
+> +		if (ret)
+> +			return ret;
+> +
+> +		state->state = MEASURING;
+> +	}
+> +
+>  	while (tries--) {
+>  		ret = sps30_do_cmd(state, SPS30_READ_DATA_READY_FLAG, tmp, 2);
+>  		if (ret)
+> @@ -276,6 +306,24 @@ static int sps30_read_raw(struct iio_dev *indio_dev,
+>  	return -EINVAL;
+>  }
+> 
+> +static int sps30_do_cmd_reset(struct sps30_state *state)
+> +{
+> +	int ret;
+> +
+> +	ret = sps30_do_cmd(state, SPS30_RESET, NULL, 0);
+> +	msleep(300);
+> +	/*
+> +	 * Power-on-reset causes sensor to produce some glitch on i2c bus and
+> +	 * some controllers end up in error state. Recover simply by placing
+> +	 * some data on the bus, for example STOP_MEAS command, which
+> +	 * is NOP in this case.
+> +	 */
+> +	sps30_do_cmd(state, SPS30_STOP_MEAS, NULL, 0);
+> +	state->state = RESET;
+> +
+> +	return ret;
+> +}
+> +
+>  static ssize_t start_cleaning_store(struct device *dev,
+>  				    struct device_attribute *attr,
+>  				    const char *buf, size_t len)
+> @@ -296,10 +344,82 @@ static ssize_t start_cleaning_store(struct device *dev,
+>  	return len;
+>  }
+> 
+> +static ssize_t cleaning_period_show(struct device *dev,
+> +				      struct device_attribute *attr,
+> +				      char *buf)
+> +{
+> +	struct iio_dev *indio_dev = dev_to_iio_dev(dev);
+> +	struct sps30_state *state = iio_priv(indio_dev);
+> +	u8 tmp[4];
+> +	int ret;
+> +
+> +	mutex_lock(&state->lock);
+> +	ret = sps30_do_cmd(state, SPS30_READ_AUTO_CLEANING_PERIOD, tmp, 4);
+> +	mutex_unlock(&state->lock);
+> +	if (ret)
+> +		return ret;
+> +
+> +	return sprintf(buf, "%d\n", get_unaligned_be32(tmp));
+> +}
+> +
+> +static ssize_t cleaning_period_store(struct device *dev,
+> +				       struct device_attribute *attr,
+> +				       const char *buf, size_t len)
+> +{
+> +	struct iio_dev *indio_dev = dev_to_iio_dev(dev);
+> +	struct sps30_state *state = iio_priv(indio_dev);
+> +	int val, ret;
+> +	u8 tmp[4];
+> +
+> +	if (kstrtoint(buf, 0, &val))
+> +		return -EINVAL;
+> +
+> +	if ((val < SPS30_AUTO_CLEANING_PERIOD_MIN) &&
+> +	    (val > SPS30_AUTO_CLEANING_PERIOD_MAX))
+> +		return -EINVAL;
 
-	[16046.153653] cx231xx 3-1.2:1.1: New device Hauppauge Hauppauge Device @ 480 Mbps (2040:c200) with 6 interfaces
-	[16046.153900] cx231xx 3-1.2:1.1: can't change interface 3 alt no. to 3: Max. Pkt size = 0
-	[16046.153907] cx231xx 3-1.2:1.1: Identified as Hauppauge USB Live 2 (card=9)
-	[16046.154350] i2c i2c-11: Added multiplexed i2c bus 13
-	[16046.154379] i2c i2c-11: Added multiplexed i2c bus 14
-	[16046.267194] cx25840 10-0044: cx23102 A/V decoder found @ 0x88 (cx231xx #0-0)
-	[16048.424551] cx25840 10-0044: loaded v4l-cx231xx-avcore-01.fw firmware (16382 bytes)
-	[16048.463224] cx231xx 3-1.2:1.1: v4l2 driver version 0.0.3
-	[16048.567878] cx231xx 3-1.2:1.1: Registered video device video2 [v4l2]
-	[16048.568001] cx231xx 3-1.2:1.1: Registered VBI device vbi0
-	[16048.568419] cx231xx 3-1.2:1.1: audio EndPoint Addr 0x83, Alternate settings: 3
-	[16048.568425] cx231xx 3-1.2:1.1: video EndPoint Addr 0x84, Alternate settings: 5
-	[16048.568431] cx231xx 3-1.2:1.1: VBI EndPoint Addr 0x85, Alternate settings: 2
-	[16048.568436] cx231xx 3-1.2:1.1: sliced CC EndPoint Addr 0x86, Alternate settings: 2
-	[16048.568448] usb 3-1.2: couldn't get decoder output pad for V4L I/O
-	[16048.568453] cx231xx 3-1.2:1.1: V4L2 device vbi0 deregistered
-	[16048.568579] cx231xx 3-1.2:1.1: V4L2 device video2 deregistered
-	[16048.569001] cx231xx: probe of 3-1.2:1.1 failed with error -22
+Should this be || instead of &&?
 
-Likely a regession since Commit 9d6d20e652c0
-("media: v4l2-mc: switch it to use the new approach to setup pipelines")
-(v4.19-rc1-100-g9d6d20e652c0), which introduced the use of
-PAD_SIGNAL_DV within v4l2_mc_create_media_graph().
+Jeremy
 
-This also modifies cx25840 to remove the VBI pad, matching the action
-taken in Commit 092a37875a22 ("media: v4l2: remove VBI output pad").
-
-Fixes: 9d6d20e652c0 ("media: v4l2-mc: switch it to use the new approach to setup pipelines")
-Cc: stable@vger.kernel.org
-Signed-off-by: Cody P Schafer <dev@codyps.com>
----
- drivers/media/i2c/cx25840/cx25840-core.c | 3 ++-
- drivers/media/i2c/cx25840/cx25840-core.h | 1 -
- 2 files changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/media/i2c/cx25840/cx25840-core.c b/drivers/media/i2c/cx25840/cx25840-core.c
-index b168bf3635b6..8b0b8b5aa531 100644
---- a/drivers/media/i2c/cx25840/cx25840-core.c
-+++ b/drivers/media/i2c/cx25840/cx25840-core.c
-@@ -5216,8 +5216,9 @@ static int cx25840_probe(struct i2c_client *client,
- 	 * those extra inputs. So, let's add it only when needed.
- 	 */
- 	state->pads[CX25840_PAD_INPUT].flags = MEDIA_PAD_FL_SINK;
-+	state->pads[CX25840_PAD_INPUT].sig_type = PAD_SIGNAL_ANALOG;
- 	state->pads[CX25840_PAD_VID_OUT].flags = MEDIA_PAD_FL_SOURCE;
--	state->pads[CX25840_PAD_VBI_OUT].flags = MEDIA_PAD_FL_SOURCE;
-+	state->pads[CX25840_PAD_VID_OUT].sig_type = PAD_SIGNAL_DV;
- 	sd->entity.function = MEDIA_ENT_F_ATV_DECODER;
- 
- 	ret = media_entity_pads_init(&sd->entity, ARRAY_SIZE(state->pads),
-diff --git a/drivers/media/i2c/cx25840/cx25840-core.h b/drivers/media/i2c/cx25840/cx25840-core.h
-index c323b1af1f83..9efefa15d090 100644
---- a/drivers/media/i2c/cx25840/cx25840-core.h
-+++ b/drivers/media/i2c/cx25840/cx25840-core.h
-@@ -40,7 +40,6 @@ enum cx25840_model {
- enum cx25840_media_pads {
- 	CX25840_PAD_INPUT,
- 	CX25840_PAD_VID_OUT,
--	CX25840_PAD_VBI_OUT,
- 
- 	CX25840_NUM_PADS
- };
--- 
-2.20.1
-
+> +
+> +	put_unaligned_be32(val, tmp);
+> +
+> +	mutex_lock(&state->lock);
+> +	ret = sps30_do_cmd(state, SPS30_AUTO_CLEANING_PERIOD, tmp, 0);
+> +	if (ret) {
+> +		mutex_unlock(&state->lock);
+> +		return ret;
+> +	}
+> +
+> +	msleep(20);
+> +
+> +	/*
+> +	 * sensor requires reset in order to return up to date self cleaning
+> +	 * period
+> +	 */
+> +	ret = sps30_do_cmd_reset(state);
+> +	if (ret)
+> +		dev_warn(dev,
+> +			 "period changed but reads will return the old value\n");
+> +
+> +	mutex_unlock(&state->lock);
+> +
+> +	return len;
+> +}
+> +
+> +static ssize_t cleaning_period_available_show(struct device *dev,
+> +					      struct device_attribute *attr,
+> +					      char *buf)
+> +{
+> +	return snprintf(buf, PAGE_SIZE, "[%d %d %d]\n",
+> +			SPS30_AUTO_CLEANING_PERIOD_MIN, 1,
+> +			SPS30_AUTO_CLEANING_PERIOD_MAX);
+> +}
+> +
+>  static IIO_DEVICE_ATTR_WO(start_cleaning, 0);
+> +static IIO_DEVICE_ATTR_RW(cleaning_period, 0);
+> +static IIO_DEVICE_ATTR_RO(cleaning_period_available, 0);
+> 
+>  static struct attribute *sps30_attrs[] = {
+>  	&iio_dev_attr_start_cleaning.dev_attr.attr,
+> +	&iio_dev_attr_cleaning_period.dev_attr.attr,
+> +	&iio_dev_attr_cleaning_period_available.dev_attr.attr,
+>  	NULL
+>  };
+> 
+> @@ -362,6 +482,7 @@ static int sps30_probe(struct i2c_client *client)
+>  	state = iio_priv(indio_dev);
+>  	i2c_set_clientdata(client, indio_dev);
+>  	state->client = client;
+> +	state->state = RESET;
+>  	indio_dev->dev.parent = &client->dev;
+>  	indio_dev->info = &sps30_info;
+>  	indio_dev->name = client->name;
+> @@ -373,19 +494,11 @@ static int sps30_probe(struct i2c_client *client)
+>  	mutex_init(&state->lock);
+>  	crc8_populate_msb(sps30_crc8_table, SPS30_CRC8_POLYNOMIAL);
+> 
+> -	ret = sps30_do_cmd(state, SPS30_RESET, NULL, 0);
+> +	ret = sps30_do_cmd_reset(state);
+>  	if (ret) {
+>  		dev_err(&client->dev, "failed to reset device\n");
+>  		return ret;
+>  	}
+> -	msleep(300);
+> -	/*
+> -	 * Power-on-reset causes sensor to produce some glitch on i2c bus and
+> -	 * some controllers end up in error state. Recover simply by placing
+> -	 * some data on the bus, for example STOP_MEAS command, which
+> -	 * is NOP in this case.
+> -	 */
+> -	sps30_do_cmd(state, SPS30_STOP_MEAS, NULL, 0);
+> 
+>  	ret = sps30_do_cmd(state, SPS30_READ_SERIAL, buf, sizeof(buf));
+>  	if (ret) {
+> @@ -395,12 +508,6 @@ static int sps30_probe(struct i2c_client *client)
+>  	/* returned serial number is already NUL terminated */
+>  	dev_info(&client->dev, "serial number: %s\n", buf);
+> 
+> -	ret = sps30_do_cmd(state, SPS30_START_MEAS, NULL, 0);
+> -	if (ret) {
+> -		dev_err(&client->dev, "failed to start measurement\n");
+> -		return ret;
+> -	}
+> -
+>  	ret = devm_add_action_or_reset(&client->dev, sps30_stop_meas, state);
+>  	if (ret)
+>  		return ret;
+> --
+> 2.20.1
+> 
