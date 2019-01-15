@@ -2,127 +2,120 @@ Return-Path: <SRS0=RZO6=PX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
-	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E979AC43612
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 09:43:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A06EC43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 09:46:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C1C8520657
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 09:43:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 293822085A
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 09:46:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728717AbfAOJnB (ORCPT
+        id S1728725AbfAOJp6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 15 Jan 2019 04:43:01 -0500
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:58480 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726011AbfAOJnA (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Jan 2019 04:43:00 -0500
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-        (Authenticated sender: ezequiel)
-        with ESMTPSA id 63C4E277A6D
-Message-ID: <b02d553717a5aabf6eb3cb4281e03db84a83b60b.camel@collabora.com>
-Subject: Re: [PATCH RFC 2/4] media: v4l2-mem2mem: Add an optional job_done
- operation
-From:   Ezequiel Garcia <ezequiel@collabora.com>
-To:     Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
-        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-        devel@driverdev.osuosl.org, linux-arm-kernel@lists.infradead.org,
-        linux-sunxi@googlegroups.com
-Cc:     Pawel Osciak <pawel@osciak.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Randy Li <ayaka@soulik.info>,
-        Hans Verkuil <hverkuil@xs4all.nl>,
-        Tomasz Figa <tfiga@chromium.org>,
-        Alexandre Courbot <acourbot@chromium.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Date:   Tue, 15 Jan 2019 06:42:37 -0300
-In-Reply-To: <20190114133839.29967-3-paul.kocialkowski@bootlin.com>
-References: <20190114133839.29967-1-paul.kocialkowski@bootlin.com>
-         <20190114133839.29967-3-paul.kocialkowski@bootlin.com>
-Organization: Collabora
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.30.3-1 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        Tue, 15 Jan 2019 04:45:58 -0500
+Received: from mx2.suse.de ([195.135.220.15]:33926 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726011AbfAOJp6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 Jan 2019 04:45:58 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id D320BAEEF;
+        Tue, 15 Jan 2019 09:45:55 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id 609D41E0DB1; Tue, 15 Jan 2019 10:45:55 +0100 (CET)
+Date:   Tue, 15 Jan 2019 10:45:55 +0100
+From:   Jan Kara <jack@suse.cz>
+To:     Pali =?iso-8859-1?Q?Roh=E1r?= <pali.rohar@gmail.com>
+Cc:     Jan Kara <jack@suse.cz>, Michael Sabolish <sabolish@me.com>,
+        Kevin Weidemann <kwe-lnx@postn.eu>,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: udf: Prevent write-unsupported filesystem to be remounted
+ read-write
+Message-ID: <20190115094555.GG29524@quack2.suse.cz>
+References: <124cc6ea-ca79-20f2-651e-c2f909729ac0@gmx.de>
+ <8cf39b7c-505b-91e6-849d-e66ba980042f@postn.eu>
+ <20190114103011.GD13316@quack2.suse.cz>
+ <20190114120023.wkftfz6pwatehpfe@pali>
+ <20190114123042.GH13316@quack2.suse.cz>
+ <E11914DA-D254-4198-A152-F9D6E61514BE@me.com>
+ <20190115083111.qq2mt2p2kn4opwx7@pali>
+ <20190115084119.GE29524@quack2.suse.cz>
+ <20190115084832.fypbuhyvgfizh3am@pali>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190115084832.fypbuhyvgfizh3am@pali>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 2019-01-14 at 14:38 +0100, Paul Kocialkowski wrote:
-> Introduce a new optional job_done operation, which allows calling back
-> to the driver when a job is done. Since the job might be completed
-> from interrupt context where some operations are not available, having
-> a callback from non-atomic context allows performing these operations
-> upon completion of a job. This is particularly useful for releasing
-> access to a reference buffer, which cannot be done in atomic context.
+On Tue 15-01-19 09:48:32, Pali Rohár wrote:
+> On Tuesday 15 January 2019 09:41:19 Jan Kara wrote:
+> > On Tue 15-01-19 09:31:11, Pali Rohár wrote:
+> > > On Monday 14 January 2019 19:07:35 Michael Sabolish wrote:
+> > > > I can try and make a pull-request for udftune, and I can just copy the API for tune2fs.  It would work something like:
+> > > > 
+> > > > udftune -O read-only device            (to set read-only access type)
+> > > > 
+> > > > or:
+> > > > 
+> > > > udftune -O ^read-only device          (to clear read-only access type (aka set rw))
+> > > 
+> > > This API is ambiguous. What does it mean for ^read-only? In UDF you have
+> > > following access types: overwritable, rewritable, writeonce, readonly,
+> > > pseudo-overwritable, unknown.
+> > > 
+> > > So you would need to know to which R/W access type to switch
+> > > (overwritable, rewritable, writeonce or pseudo-overwritable).
+> > > 
+> > > With information of media type, you could be able to guess correct
+> > > access type. But for UDF images stored in VFS there is no media
+> > > information. Also you can have uncommon setup, e.g. usage of CD-R
+> > > writeonce setup on CD-R/W disc. So "autodetection" of media type would
+> > > not work always correctly.
+> > > 
+> > > So I think that it would be better to have following API:
+> > > 
+> > >   udftune --access-type=<new_access_type>
+> > > 
+> > > or
+> > > 
+> > >   udftune --change-access-type=<new_access_type>
+> > > 
+> > > I understand that you would like to have similar API as tune2fs, but UDF
+> > > settings are too different from ext*.
+> > 
+> > If you wanted to follow tune2fs interface, you can have e.g.:
 > 
+> Question is if it is a good idea to follow this interface.
 
-I'm not exactly sure it makes a lot of sense to review this patch,
-since the approach could change.
+Agreed. I'll leave that decision up to you as a maintainer :)
 
-However, let me point out a few fundamental issues here.
- 
-> Use the already existing v4l2_m2m_device_run_work work queue for that
-> and clear the M2M device current context after calling job_done in the
-> worker thread, so that the private data can be passed to the operation.
+> > udftune -E access-type=<foo>
+> > 
+> > Another question about the feature is - the access type is actually per
+> > partition and there can be multiple partitions on UDF media. So I think we
+> > need to specify the partition number in the command and <foo> has to
+> > actually be something like <partition number>,<access_type>.
 > 
-> Delaying the current context clearing should not be a problem since the
-> next call to v4l2_m2m_try_run happens right after that.
-> 
+> Access type is stored in partition descriptor and in UDF (as opposite of
+> ECMA-167) you can have only one partition descriptor. IIRC there is some
+> exception when you have two partition descriptors, but then one have to be
+> readonly and second virtual.
 
-Careful here. It's misleading to think an event will happen
-"right after". I'd say it's either synchronously, or asynchronously.
+Ah, right, I forgot that UDF standard limits how partitions can be set up.
+However I don't see anything that would limit number of "type 1" maps? I've
+only found in 2.2.4.7 that "Partition Maps shall be limited to Partition
+Map type 1, except type 2 maps ...". In which I'm not sure whether this is
+meant to imply there is only one 'type 1' partition map or whether there
+can be more of them.
 
-It's quite the opposite I'd say, the clearing will happen
-"who-knows-when the scheduler picks the thread to run" :-)
-
-Before this patch the curr_ctx was cleared in v4l2_m2m_job_finish,
-atomically with the ctx job flags clearing and before waking up
-threads waiting in v4l2_m2m_cancel_job.
-
-You are now changing this, by clearing curr_ctx in a worker.
-It's perfectly possible that v4l2_m2m_try_schedule will run
-before the worker, trying to run with the old context, which
-apparently would be safely refused.
-
-> Signed-off-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
-> ---
->  drivers/media/v4l2-core/v4l2-mem2mem.c | 8 ++++++--
->  include/media/v4l2-mem2mem.h           | 4 ++++
->  2 files changed, 10 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/media/v4l2-core/v4l2-mem2mem.c b/drivers/media/v4l2-core/v4l2-mem2mem.c
-> index 631f4e2aa942..d5bccb0192f9 100644
-> --- a/drivers/media/v4l2-core/v4l2-mem2mem.c
-> +++ b/drivers/media/v4l2-core/v4l2-mem2mem.c
-> @@ -376,6 +376,11 @@ static void v4l2_m2m_device_run_work(struct work_struct *work)
->  	struct v4l2_m2m_dev *m2m_dev =
->  		container_of(work, struct v4l2_m2m_dev, job_work);
->  
-> +	if (m2m_dev->m2m_ops->job_done && m2m_dev->curr_ctx)
-> +		m2m_dev->m2m_ops->job_done(m2m_dev->curr_ctx->priv);
-> +
-> +	m2m_dev->curr_ctx = NULL;
-> +
-
-I don't think you can access this without taking the job spinlock.
-
->  	v4l2_m2m_try_run(m2m_dev);
->  }
-> 
-
-Aside from this, it seems we might need this hook sooner or later.
-
-Thanks,
-Eze
-
+								Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
