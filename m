@@ -6,86 +6,87 @@ X-Spam-Status: No, score=-6.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
 	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 62374C43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 20:03:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EFDD2C43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 20:05:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2BA6120656
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 20:03:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AFA1A20859
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 20:05:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547582621;
-	bh=0adMhxUtyzq22HjpgED11cw0g8HFnQtRZw74xtJLvdg=;
+	s=default; t=1547582708;
+	bh=DHFaRwK2Th/00+N1Ry7fj6VoSta82EwEIs0KDgmwz2E=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=h+rTvRUtgaej+w9stR6yLsrqjgmyzajFwTp7610ffJfsZDI8gt4TsVZJNqyMtIbJi
-	 8BXZr2OGhRZ69HEhcplacm0szUD+X2mYPnjZGBWmqGfJA3ibsXaiebOnHgStZcNjh5
-	 KRcM3WJiuTZG6D70Ge/wFqeq/RgmRTJDA5r90/Mg=
+	b=DFsYw1QvgDUwpP4eZnGjSBhL0peuQwJdFpvM+DaGsSC6YOCY/1VDN01XepPqC9+Ym
+	 1DDDbxIhX9gQFojRK3p6iqHmHaNAxO9VS1hhlV6gy68jMZUYIwNsVEUUeJ69jQTT5v
+	 CU64dHVtv/kI2H5t5Dz8GxexlatPVornMYgpeI0M=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389660AbfAOUDj (ORCPT
+        id S2389674AbfAOUFH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 15 Jan 2019 15:03:39 -0500
-Received: from mail-ot1-f68.google.com ([209.85.210.68]:34259 "EHLO
-        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732293AbfAOUDi (ORCPT
+        Tue, 15 Jan 2019 15:05:07 -0500
+Received: from mail-oi1-f196.google.com ([209.85.167.196]:37865 "EHLO
+        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389610AbfAOUFG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Jan 2019 15:03:38 -0500
-Received: by mail-ot1-f68.google.com with SMTP id t5so3746994otk.1;
-        Tue, 15 Jan 2019 12:03:38 -0800 (PST)
+        Tue, 15 Jan 2019 15:05:06 -0500
+Received: by mail-oi1-f196.google.com with SMTP id y23so3158657oia.4;
+        Tue, 15 Jan 2019 12:05:06 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=6QqvTBDV1uQq+GdW+1OSVJwQpsI0+7RfGV3b1bVoHRo=;
-        b=KRTVvPsJTVGVjLku0xwFvKf18g7IagEWz500T4uUxkrq2qWsNEjlSJhqiNYolHn4lJ
-         ZF9UIUypyXC0Il1fFdIbbqeIQhSH/GI6TyRnx9dUZ7mdA3v9W6sdhVhpO05jno40b3uF
-         WbwFGk4uexfiXuiLqJnJMdqq94IWzLIfUAOMIwi55X8bGqqR9Lfl5y/Wx8wINfEZw/gB
-         E6K9PwDjgkjQCjrm7wJvfRfoSyye24NXW5cFsiE4SCUKiBtx0RIvsOyKb1vczhuXmT41
-         kV/lEk6z/5Lf804ImKZX3wQK7fze9F/+sxv1ThIodHGv7iZFDrDVkxehQyj+zk6aCrnT
-         HLqw==
-X-Gm-Message-State: AJcUukctLrCnWXoby7tirACxVQpKUtNrBU4T/Q00havlwWuarEv3IWc/
-        JMhekuutqUIoi0SkQVZdWA==
-X-Google-Smtp-Source: ALg8bN4I5eDMwMY2RHE5IZ5Pg3F4bAdM6ABnyFSQgcC3NxuQZGzLmpU/jFqKuQzkGziRhBB+h71nXA==
-X-Received: by 2002:a9d:6d95:: with SMTP id x21mr3087488otp.99.1547582617993;
-        Tue, 15 Jan 2019 12:03:37 -0800 (PST)
+        bh=rPeJKUNFn6iPLyNpXriCiNvV+2WqOF6Aw2Ug+/zeudE=;
+        b=T+gLm7c4egddsR53AO0E4hA4mQIzlZ8pU8FcF3w7V3ZT7udbHXkJ5ECl6olkoklgyf
+         LoEmZNhaxx/d6loqrDwt94Ar4g8Ev++f950TmNCfDMhJ0+X1xIIJZdJ9YSgzJIjAHqql
+         XeGNXMtlSgJc0012THSwaKYCIBo1DpWFhvFGtrMrbiTgu+YtSbBWUz5nk3+UJxOMna2A
+         4dhZI1OUFSvCEPIyyyQpJ5d/5clSa3jJyEp/J0ico0lEXeDOr7eAcxYkqWWhhSHF6A/H
+         RZFCUIlVCABggJ4v6bsAHIb6TTTMTPIutVlUEBCYI7sqf+JeqgvMx8PL9pjAP4991/LY
+         qEGg==
+X-Gm-Message-State: AJcUukd3n2lViuSHGIlsn++70XnEbV9sNi+deGzBImdef8N/JKQLQjgc
+        jWQJ/w6UCIdeKrfyCCEm2A==
+X-Google-Smtp-Source: ALg8bN61+USr4I7liBYJGd8BqhG50bjzLkYSsPa86KFiOq5aeHlnqY6DTYo0ANxGORmtcqLiAmTk7w==
+X-Received: by 2002:aca:4ace:: with SMTP id x197mr3013142oia.129.1547582705684;
+        Tue, 15 Jan 2019 12:05:05 -0800 (PST)
 Received: from localhost ([70.231.7.113])
-        by smtp.gmail.com with ESMTPSA id y80sm1874026oie.40.2019.01.15.12.03.37
+        by smtp.gmail.com with ESMTPSA id c19sm1951057otl.16.2019.01.15.12.05.04
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 15 Jan 2019 12:03:37 -0800 (PST)
-Date:   Tue, 15 Jan 2019 14:03:36 -0600
+        Tue, 15 Jan 2019 12:05:05 -0800 (PST)
+Date:   Tue, 15 Jan 2019 14:05:04 -0600
 From:   Rob Herring <robh@kernel.org>
-To:     Krzysztof Kozlowski <krzk@kernel.org>
-Cc:     Jacek Anaszewski <jacek.anaszewski@gmail.com>,
-        Pavel Machek <pavel@ucw.cz>,
-        Mark Rutland <mark.rutland@arm.com>,
-        linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org,
-        devicetree@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH v7 1/5] dt-bindings: leds: Add pattern initialization
- from Device Tree
-Message-ID: <20190115200336.GA14333@bogus>
-References: <1547045089-19128-1-git-send-email-krzk@kernel.org>
- <1547045089-19128-2-git-send-email-krzk@kernel.org>
+To:     Sowjanya Komatineni <skomatineni@nvidia.com>
+Cc:     robh+dt@kernel.org, mark.rutland@arm.com, mperttunen@nvidia.com,
+        thierry.reding@gmail.com, jonathanh@nvidia.com,
+        adrian.hunter@intel.com, ulf.hansson@linaro.org, anrao@nvidia.com,
+        devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mmc@vger.kernel.org,
+        Sowjanya Komatineni <skomatineni@nvidia.com>
+Subject: Re: [PATCH V4 1/3] dt-bindings: mmc: tegra: Add pinctrl for SDMMC
+ drive strengths
+Message-ID: <20190115200504.GA16841@bogus>
+References: <1547160363-25323-1-git-send-email-skomatineni@nvidia.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1547045089-19128-2-git-send-email-krzk@kernel.org>
+In-Reply-To: <1547160363-25323-1-git-send-email-skomatineni@nvidia.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed,  9 Jan 2019 15:44:45 +0100, Krzysztof Kozlowski wrote:
-> Document new led-pattern property for initialization of LED triggers.
-> The property format is trigger-specific (except being array of
-> integers).  For pattern trigger, the explanation of pattern format was
-> moved to a common file shared with sysfs ABI.
+On Thu, 10 Jan 2019 14:46:01 -0800, Sowjanya Komatineni wrote:
+> Add pinctrls for 3V3 and 1V8 pad drive strength configuration for
+> Tegra210 sdmmc.
 > 
-> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
-> Acked-by: Pavel Machek <pavel@ucw.cz>
+> Tegra210 sdmmc has pad configuration registers in pinmux register
+> domain and handled thru pinctrl to pinmux device node.
+> 
+> Tegra186 and Tegra194 has pad configuration register with in the
+> SDMMC register domain itself and are handles thru drive strength
+> properties in sdmmc device node.
+> 
+> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
 > ---
->  .../ABI/testing/sysfs-class-led-trigger-pattern    | 51 ++--------------------
->  Documentation/devicetree/bindings/leds/common.txt  | 12 +++++
->  .../bindings/leds/leds-trigger-pattern.txt         | 49 +++++++++++++++++++++
->  3 files changed, 64 insertions(+), 48 deletions(-)
->  create mode 100644 Documentation/devicetree/bindings/leds/leds-trigger-pattern.txt
+>  Documentation/devicetree/bindings/mmc/nvidia,tegra20-sdhci.txt | 6 +++++-
+>  1 file changed, 5 insertions(+), 1 deletion(-)
 > 
 
 Reviewed-by: Rob Herring <robh@kernel.org>
