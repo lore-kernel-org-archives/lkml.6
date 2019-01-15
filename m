@@ -7,46 +7,49 @@ X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A4BCAC43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 17:01:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 806E7C43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 17:01:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 743FD20645
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 17:01:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4597220645
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 17:01:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547571667;
-	bh=SDr5bKsmtvr3jKErGt6i/jkmYbpxASafQBrAPvn/pj8=;
+	s=default; t=1547571675;
+	bh=TeGd1e5ZfDxwdJdkHapUww5LNibYh5hXyI35TNUlU3s=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=tLprsxcZdSblh7PI5xdYw29YrawlL1Om7n5iWHvNR8tD0WmyipXRsE7nbeJwqWm5q
-	 yJaY2FP9dRP/LoZgjlXcq8dmUzunGLEbCQCTX4yMQvzhLrWUC4BZJxzBgT+zjTRGbZ
-	 SL6u8+omot0m8qNSkxGWhJtSaiEJ2IDO+/5PBFMo=
+	b=jxofWVzTEmdmREGVgejTMHXfeWQk9/iEiQsCL8wO14dwlaNIGHkuwi/1mwE0EwmrW
+	 Qia1wX7ik38kbzQc37xJQQY8vwZpGeg5RfMp5WCZKUmk7Fv7zwG++Dkl6v/nJrwJl3
+	 EUhEuz0Q9fw3lAPAk5RQkzZ+MRd3w2DFNj2IGB1k=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729243AbfAORBF (ORCPT
+        id S1731977AbfAOQh5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 15 Jan 2019 12:01:05 -0500
-Received: from mail.kernel.org ([198.145.29.99]:53856 "EHLO mail.kernel.org"
+        Tue, 15 Jan 2019 11:37:57 -0500
+Received: from mail.kernel.org ([198.145.29.99]:53542 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728916AbfAOQiG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Jan 2019 11:38:06 -0500
+        id S1731932AbfAOQhw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 Jan 2019 11:37:52 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AB2232054F;
-        Tue, 15 Jan 2019 16:38:05 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A3BB020859;
+        Tue, 15 Jan 2019 16:37:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547570286;
-        bh=SDr5bKsmtvr3jKErGt6i/jkmYbpxASafQBrAPvn/pj8=;
+        s=default; t=1547570272;
+        bh=TeGd1e5ZfDxwdJdkHapUww5LNibYh5hXyI35TNUlU3s=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=QEKZhhTFvZsMuaXBGkW0Z39+Zm3/RuaVOEkYBIH76C7MNdveFuV8bjIttQiGYLK2j
-         7A6Ws4u6fsrzf3le+998zvDFGa4pV23IzbYa8QiFbOp+YAtr/ShasRCNNP749JqKsG
-         Q8BbDhsXUxWFqaolG3FFrX9gbeTkUhYTsjuWKyBk=
+        b=lgGfn4sGRbZ/6kjJqfTXulx61mAYaq/nq2wHH6Q6QfDRO6fR5bOY4vUbb1vkNjXdL
+         j2F1JFP33gcgW5qMyvUgbrMnZKk3Lzss4Dy0ciZ38ZBVPO8U/+s99HPfavFZaLU0yp
+         wyyZSEJrAXOJhj32cigaOL8QHm77MAAp6azdP9Pg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Icenowy Zheng <icenowy@aosc.io>,
-        Alan Stern <stern@rowland.harvard.edu>
-Subject: [PATCH 4.4 36/51] USB: storage: dont insert sane sense for SPC3+ when bad sense specified
-Date:   Tue, 15 Jan 2019 17:35:32 +0100
-Message-Id: <20190115154852.260919670@linuxfoundation.org>
+        stable@vger.kernel.org, Nikolay Borisov <nborisov@suse.com>,
+        Qu Wenruo <wqu@suse.com>,
+        Shaokun Zhang <zhangshaokun@hisilicon.com>,
+        David Sterba <dsterba@suse.com>,
+        Ben Hutchings <ben.hutchings@codethink.co.uk>
+Subject: [PATCH 4.4 32/51] btrfs: tree-checker: Fix misleading group system information
+Date:   Tue, 15 Jan 2019 17:35:28 +0100
+Message-Id: <20190115154851.202160834@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190115154846.928796000@linuxfoundation.org>
 References: <20190115154846.928796000@linuxfoundation.org>
@@ -65,44 +68,37 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Icenowy Zheng <icenowy@aosc.io>
+From: Shaokun Zhang <zhangshaokun@hisilicon.com>
 
-commit c5603d2fdb424849360fe7e3f8c1befc97571b8c upstream.
+commit 761333f2f50ccc887aa9957ae829300262c0d15b upstream.
 
-Currently the code will set US_FL_SANE_SENSE flag unconditionally if
-device claims SPC3+, however we should allow US_FL_BAD_SENSE flag to
-prevent this behavior, because SMI SM3350 UFS-USB bridge controller,
-which claims SPC4, will show strange behavior with 96-byte sense
-(put the chip into a wrong state that cannot read/write anything).
+block_group_err shows the group system as a decimal value with a '0x'
+prefix, which is somewhat misleading.
 
-Check the presence of US_FL_BAD_SENSE when assuming US_FL_SANE_SENSE on
-SPC4+ devices.
+Fix it to print hexadecimal, as was intended.
 
-Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
-Cc: stable <stable@vger.kernel.org>
-Acked-by: Alan Stern <stern@rowland.harvard.edu>
+Fixes: fce466eab7ac6 ("btrfs: tree-checker: Verify block_group_item")
+Reviewed-by: Nikolay Borisov <nborisov@suse.com>
+Reviewed-by: Qu Wenruo <wqu@suse.com>
+Signed-off-by: Shaokun Zhang <zhangshaokun@hisilicon.com>
+Reviewed-by: David Sterba <dsterba@suse.com>
+Signed-off-by: David Sterba <dsterba@suse.com>
+Signed-off-by: Ben Hutchings <ben.hutchings@codethink.co.uk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- drivers/usb/storage/scsiglue.c |    8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+ fs/btrfs/tree-checker.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/usb/storage/scsiglue.c
-+++ b/drivers/usb/storage/scsiglue.c
-@@ -223,8 +223,12 @@ static int slave_configure(struct scsi_d
- 		if (!(us->fflags & US_FL_NEEDS_CAP16))
- 			sdev->try_rc_10_first = 1;
- 
--		/* assume SPC3 or latter devices support sense size > 18 */
--		if (sdev->scsi_level > SCSI_SPC_2)
-+		/*
-+		 * assume SPC3 or latter devices support sense size > 18
-+		 * unless US_FL_BAD_SENSE quirk is specified.
-+		 */
-+		if (sdev->scsi_level > SCSI_SPC_2 &&
-+		    !(us->fflags & US_FL_BAD_SENSE))
- 			us->fflags |= US_FL_SANE_SENSE;
- 
- 		/* USB-IDE bridges tend to report SK = 0x04 (Non-recoverable
+--- a/fs/btrfs/tree-checker.c
++++ b/fs/btrfs/tree-checker.c
+@@ -399,7 +399,7 @@ static int check_block_group_item(struct
+ 	    type != (BTRFS_BLOCK_GROUP_METADATA |
+ 			   BTRFS_BLOCK_GROUP_DATA)) {
+ 		block_group_err(fs_info, leaf, slot,
+-"invalid type, have 0x%llx (%lu bits set) expect either 0x%llx, 0x%llx, 0x%llu or 0x%llx",
++"invalid type, have 0x%llx (%lu bits set) expect either 0x%llx, 0x%llx, 0x%llx or 0x%llx",
+ 			type, hweight64(type),
+ 			BTRFS_BLOCK_GROUP_DATA, BTRFS_BLOCK_GROUP_METADATA,
+ 			BTRFS_BLOCK_GROUP_SYSTEM,
 
 
