@@ -2,102 +2,91 @@ Return-Path: <SRS0=RZO6=PX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D32CC43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 20:02:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9186CC43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 20:02:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4A32020656
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 20:02:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547582535;
-	bh=To9SCcGmql52ej6S9yuk9qVA7+Y0qvTRe+fDt0nOJww=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=SitdFqnr++8b7YyYPAfIggi3IQbTXJI3nyQv9Ylb0zxtzEPLm/eLwoj82zDy/2B78
-	 1lKErznHRkvm8M08Y0NLb3XgNWtX3HVvCeUjLPe/rm3WUGr4edPlCmPEL1/Up5fftB
-	 1u+JXw/HoPEXGFPLroec+knDj6m7gEG9xhh56Nuk=
+	by mail.kernel.org (Postfix) with ESMTP id 6791520656
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 20:02:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389640AbfAOUCN (ORCPT
+        id S2389653AbfAOUCj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 15 Jan 2019 15:02:13 -0500
-Received: from mail-ot1-f66.google.com ([209.85.210.66]:34823 "EHLO
-        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732293AbfAOUCM (ORCPT
+        Tue, 15 Jan 2019 15:02:39 -0500
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:56679 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732293AbfAOUCj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Jan 2019 15:02:12 -0500
-Received: by mail-ot1-f66.google.com with SMTP id 81so3726530otj.2;
-        Tue, 15 Jan 2019 12:02:11 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=KHkxmrwQy1JEawfovmtFP1Ph+FNV8d7g5+agjyXgEDI=;
-        b=htdxGy6L3IfckZNqF//SrPEUej5ao1r71WqWEPxR6g2bv5mYsGhSrqt9+Wb5MwunCJ
-         Km1aqYCWn1c8ahZo3/vn3+omgGYzw/vA0U3Y7hTY/gaEY4eDLTzubUizHA00KKHqqu48
-         +nlyZVRFPolpnIL8bbDFJI8Yat84aTkcC6Xzwz9OjHm4PocLsQGa3hfpw9dbZqAgZ8h/
-         2rDqI1vNKKOGiTKI0GI9gYr1krtyTj6McyvTvwoW7AVZyVy8eTCBhdT/jhp1L4KssM9K
-         REvZKD3kf9wLQyBdvI+LBBBFW1mo374ODnznYsEEY5AQavegxuH1+OmlCO5lcqv2pixT
-         NyiA==
-X-Gm-Message-State: AJcUukfgyOQIK+xD0cXCaEcbO8e8mrWqumtVtoQSiHpfiJ3Adt7O9RZv
-        hTe0busnn5BLZgVf68zTJA==
-X-Google-Smtp-Source: ALg8bN48uuKwVh6RpLajIpwgoHOVbGMN0N+muvXekhC1tHRmvBQU93RVZsQZSQnwzanL43rcxuQ4BA==
-X-Received: by 2002:a9d:7097:: with SMTP id l23mr3277757otj.49.1547582530904;
-        Tue, 15 Jan 2019 12:02:10 -0800 (PST)
-Received: from localhost ([70.231.7.113])
-        by smtp.gmail.com with ESMTPSA id 127sm1860751oid.36.2019.01.15.12.02.10
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 15 Jan 2019 12:02:10 -0800 (PST)
-Date:   Tue, 15 Jan 2019 14:02:09 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Sowjanya Komatineni <skomatineni@nvidia.com>
-Cc:     mark.rutland@arm.com, mperttunen@nvidia.com,
-        chunyan.zhang@unisoc.com, thierry.reding@gmail.com,
-        jonathanh@nvidia.com, adrian.hunter@intel.com,
-        ulf.hansson@linaro.org, anrao@nvidia.com,
-        devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mmc@vger.kernel.org
-Subject: Re: [PATCH V8 1/3] dt-bindings: mmc: tegra: Add supports-cqe property
-Message-ID: <20190115200209.GA8473@bogus>
-References: <1547176135-2470-1-git-send-email-skomatineni@nvidia.com>
+        Tue, 15 Jan 2019 15:02:39 -0500
+Received: from ptx.hi.pengutronix.de ([2001:67c:670:100:1d::c0])
+        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1gjUut-0004Dt-Hg; Tue, 15 Jan 2019 21:02:31 +0100
+Received: from ukl by ptx.hi.pengutronix.de with local (Exim 4.89)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1gjUut-00049p-7x; Tue, 15 Jan 2019 21:02:31 +0100
+Date:   Tue, 15 Jan 2019 21:02:31 +0100
+From:   Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
+        <u.kleine-koenig@pengutronix.de>
+To:     Ryder Lee <ryder.lee@mediatek.com>
+Cc:     Thierry Reding <thierry.reding@gmail.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Sean Wang <sean.wang@kernel.org>,
+        Weijie Gao <weijie.gao@mediatek.com>,
+        linux-pwm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org
+Subject: Re: [PATCH 3/5] arm64: dts: mt7622: add a property
+ "mediatek,num-pwms" for PWM
+Message-ID: <20190115200231.drn2rbxu4jxr22yz@pengutronix.de>
+References: <0c400cb1899c1afb4c9f021350cdc0c6ca3f6239.1547453586.git.ryder.lee@mediatek.com>
+ <b5ed4626a553acb5e3107c6c96e82b674439128f.1547453586.git.ryder.lee@mediatek.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <1547176135-2470-1-git-send-email-skomatineni@nvidia.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <b5ed4626a553acb5e3107c6c96e82b674439128f.1547453586.git.ryder.lee@mediatek.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
+X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c0
+X-SA-Exim-Mail-From: ukl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jan 10, 2019 at 07:08:53PM -0800, Sowjanya Komatineni wrote:
-> Add supports-cqe optional property for Tegra SDMMC.
+Hello,
+
+On Mon, Jan 14, 2019 at 04:21:22PM +0800, Ryder Lee wrote:
+> This adds a property "mediatek,num-pwms" for PWM controller.
 > 
-> Tegra186 and Tegra194 supports HW Command queue only
-> on SDMMC4 controller. This property is used to identify
-> command queue support controller in the tegra sdhci driver.
-> 
-> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
+> Signed-off-by: Ryder Lee <ryder.lee@mediatek.com>
 > ---
->  Documentation/devicetree/bindings/mmc/nvidia,tegra20-sdhci.txt | 4 ++++
->  1 file changed, 4 insertions(+)
+>  arch/arm64/boot/dts/mediatek/mt7622.dtsi | 1 +
+>  1 file changed, 1 insertion(+)
 > 
-> diff --git a/Documentation/devicetree/bindings/mmc/nvidia,tegra20-sdhci.txt b/Documentation/devicetree/bindings/mmc/nvidia,tegra20-sdhci.txt
-> index 32b4b4e41923..fb14c2c8d7ee 100644
-> --- a/Documentation/devicetree/bindings/mmc/nvidia,tegra20-sdhci.txt
-> +++ b/Documentation/devicetree/bindings/mmc/nvidia,tegra20-sdhci.txt
-> @@ -72,6 +72,10 @@ Optional properties for Tegra210 and Tegra186:
->  - nvidia,default-trim : Specify the default outbound clock trimmer
->    value.
->  - nvidia,dqs-trim : Specify DQS trim value for HS400 timing
-> +- supports-cqe : The presence of this property indicates that the
-> +  corresponding controller supports HW command queue feature.
-> +  Tegra186 and Tegra194 has 4 SDMMC Controllers and only SDMMC4
-> +  controller supports HW Command Queue with eMMC device.
+> diff --git a/arch/arm64/boot/dts/mediatek/mt7622.dtsi b/arch/arm64/boot/dts/mediatek/mt7622.dtsi
+> index 8fc4aa7..ab016cf 100644
+> --- a/arch/arm64/boot/dts/mediatek/mt7622.dtsi
+> +++ b/arch/arm64/boot/dts/mediatek/mt7622.dtsi
+> @@ -436,6 +436,7 @@
+>  			 <&pericfg CLK_PERI_PWM6_PD>;
+>  		clock-names = "top", "main", "pwm1", "pwm2", "pwm3", "pwm4",
+>  			      "pwm5", "pwm6";
+> +		mediatek,num-pwms = <6>;
+>  		status = "disabled";
 
-Don't SDHCI capability bits do this? If not, this should probably be 
-common.
+Conceptually this patch must go in before the change to the driver.
+Otherwise the pwms are not usable with only patch 1 applied which breaks
+bisectability.
 
-Rob
+Best regards
+Uwe
+
+-- 
+Pengutronix e.K.                           | Uwe Kleine-König            |
+Industrial Linux Solutions                 | http://www.pengutronix.de/  |
