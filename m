@@ -2,287 +2,141 @@ Return-Path: <SRS0=RZO6=PX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A804CC43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 16:37:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 215D7C43444
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 16:37:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6CC4220883
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 16:37:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547570251;
-	bh=X4b7TUo2EF+b/p6bwsQdCmbSI6BmlFMsl0juTgLlJJQ=;
-	h=From:To:Cc:Subject:Date:List-ID:From;
-	b=SRUQugHwV0M8qBqABRxHs3IRpTfi1r+Fyuuv+7HhMYsbNtQaGE264AK+UBNw870/p
-	 XKVUARr90bGp4uN1O1QDnDvRRAgWVGLzJtoz2u87bw/laalF3bq9bdmnAoC4l1rM53
-	 yXC25CYFeS+l3s6Vqj8AkOuDTOWa87lpaBqzDaFU=
+	by mail.kernel.org (Postfix) with ESMTP id D8EB220675
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 16:37:33 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=cern.onmicrosoft.com header.i=@cern.onmicrosoft.com header.b="hBOkPgVu"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731853AbfAOQh3 (ORCPT
+        id S1731868AbfAOQhc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 15 Jan 2019 11:37:32 -0500
+Received: from mail-eopbgr130058.outbound.protection.outlook.com ([40.107.13.58]:19900
+        "EHLO EUR01-HE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1731791AbfAOQh3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 15 Jan 2019 11:37:29 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52944 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731839AbfAOQh0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Jan 2019 11:37:26 -0500
-Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 73DF020896;
-        Tue, 15 Jan 2019 16:37:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547570246;
-        bh=X4b7TUo2EF+b/p6bwsQdCmbSI6BmlFMsl0juTgLlJJQ=;
-        h=From:To:Cc:Subject:Date:From;
-        b=Co0s08jWCKNtOHTFfv335YbQNdojbRvMpjLT1wHvMejLsfUrwmJ6vcOjA+C6DxOZc
-         RtOWbyeMcmIyG1Zs3sQ+FXm3ux+LE93k9hFN6MhkYhzURFEn8woBMG38hdE2ZbQeXE
-         RiEwfhi2Xl2LFxzan2dpV/W22NTAYDxkb0HcHvI8=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        torvalds@linux-foundation.org, akpm@linux-foundation.org,
-        linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
-        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
-        stable@vger.kernel.org
-Subject: [PATCH 4.4 00/51] 4.4.171-stable review
-Date:   Tue, 15 Jan 2019 17:34:56 +0100
-Message-Id: <20190115154846.928796000@linuxfoundation.org>
-X-Mailer: git-send-email 2.20.1
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cern.onmicrosoft.com;
+ s=selector1-cern-ch;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=ixdzpBbmQkYOEsplTMjFYDhOVhuRQPZpOHeM7AtQ8X0=;
+ b=hBOkPgVuYxSEqvjnHmKutACZ9NklVj7YCImV8w8xfY0MSdDCH+RCsOfIpi1gqLgXtSJFLoXmKAOpoRZ0YaRIOF2UrsiGeBzkAlHzS8r52fqbebM6Yow8QAmMU+o8gg+1YO5xJuFA4uMMR/0eXAt8Kw7F8vR/hYVgEkFxovIdJqg=
+Received: from VI1PR0602CA0022.eurprd06.prod.outlook.com
+ (2603:10a6:800:bc::32) by DB6PR06MB4008.eurprd06.prod.outlook.com
+ (2603:10a6:6:54::31) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.1537.24; Tue, 15 Jan
+ 2019 16:37:25 +0000
+Received: from HE1EUR02FT019.eop-EUR02.prod.protection.outlook.com
+ (2a01:111:f400:7e05::206) by VI1PR0602CA0022.outlook.office365.com
+ (2603:10a6:800:bc::32) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.20.1537.24 via Frontend
+ Transport; Tue, 15 Jan 2019 16:37:25 +0000
+Received-SPF: Pass (protection.outlook.com: domain of cern.ch designates
+ 188.184.36.50 as permitted sender) receiver=protection.outlook.com;
+ client-ip=188.184.36.50; helo=cernmxgwlb4.cern.ch;
+Received: from cernmxgwlb4.cern.ch (188.184.36.50) by
+ HE1EUR02FT019.mail.protection.outlook.com (10.152.10.70) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ 15.20.1471.13 via Frontend Transport; Tue, 15 Jan 2019 16:37:25 +0000
+Received: from cernfe03.cern.ch (188.184.36.39) by cernmxgwlb4.cern.ch
+ (188.184.36.50) with Microsoft SMTP Server (TLS) id 14.3.408.0; Tue, 15 Jan
+ 2019 17:37:08 +0100
+Received: from pcbe13614.localnet (2001:1458:202:121::100:40) by smtp.cern.ch
+ (2001:1458:201:66::100:14) with Microsoft SMTP Server (TLS) id 14.3.408.0;
+ Tue, 15 Jan 2019 17:37:07 +0100
+From:   Federico Vaga <federico.vaga@cern.ch>
+To:     Wolfram Sang <wsa@the-dreams.de>
+Reply-To: <federico.vaga@cern.ch>
+CC:     Peter Korsgaard <peter@korsgaard.com>, <linux-i2c@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH V2 0/5] i2c:ocores: improvements
+Date:   Tue, 15 Jan 2019 17:37:07 +0100
+Message-ID: <14601911.GrvbWtgO0l@pcbe13614>
+In-Reply-To: <20181127113821.GB1107@kunai>
+References: <20181029145051.31984-1-federico.vaga@cern.ch> <20181127113821.GB1107@kunai>
 MIME-Version: 1.0
-User-Agent: quilt/0.65
-X-stable: review
-X-Patchwork-Hint: ignore
-X-KernelTest-Patch: http://kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.4.171-rc1.gz
-X-KernelTest-Tree: git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git
-X-KernelTest-Branch: linux-4.4.y
-X-KernelTest-Patches: git://git.kernel.org/pub/scm/linux/kernel/git/stable/stable-queue.git
-X-KernelTest-Version: 4.4.171-rc1
-X-KernelTest-Deadline: 2019-01-17T15:48+00:00
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
+X-Originating-IP: [2001:1458:202:121::100:40]
+X-EOPAttributedMessage: 0
+X-Forefront-Antispam-Report: CIP:188.184.36.50;IPV:NLI;CTRY:CH;EFV:NLI;SFV:NSPM;SFS:(10009020)(396003)(39860400002)(136003)(346002)(376002)(2980300002)(199004)(189003)(97756001)(8936002)(230700001)(6346003)(186003)(86362001)(4744005)(11346002)(446003)(336012)(229853002)(246002)(106466001)(106002)(7636002)(7736002)(54906003)(786003)(316002)(305945005)(426003)(16526019)(26005)(43066004)(8676002)(9576002)(33896004)(53546011)(23726003)(6116002)(9686003)(76176011)(4326008)(33716001)(3450700001)(486006)(14444005)(6916009)(46406003)(50466002)(476003)(126002)(6246003)(44832011)(5660300001)(47776003)(74482002)(478600001)(2906002)(356004)(39026011);DIR:OUT;SFP:1101;SCL:1;SRVR:DB6PR06MB4008;H:cernmxgwlb4.cern.ch;FPR:;SPF:Pass;LANG:en;PTR:cernmx11.cern.ch;A:1;MX:1;
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: e4cfec20-029c-4061-e28a-08d67b07bb12
+X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600109)(711020)(4608076)(4709027)(2017052603328)(7153060)(7193020);SRVR:DB6PR06MB4008;
+X-MS-TrafficTypeDiagnostic: DB6PR06MB4008:
+X-Microsoft-Exchange-Diagnostics: 1;DB6PR06MB4008;20:Wh+YL8dMyFrslxmVWEFHUor0owENKcz+LkHNYvI00O7CYvzOLF6gh7VAINtn/xmR45WyUhGbhDxLNBJU7wfX5Rsj0tL5KIlHuoKJF4naOD226IAawFCD/+ES0tfLwqlrKV0pS4uWzEjE2QrcePqyDdUqfIwaP8ksYJhphfQGWG+Mgge19iiKC2dSwN5UMhfg22vg0lIzQR8DGYrsAWEKDmkT5mULG6zakWOyEV8CE2k9rL930raRjyGr/FDWzk9qs+onKuXtIohU2/zZA9Oblgfa9Ih1S+r+NJa6skkyigMI0tBhhK8/Xi/W2ccBJp3Ch319Mpn8Yu+pl1e6aJacfxRrVWnZ+9Z4rd54fInevUtBtuhiYMr7hnoB3veuxkBk8yEdoAIXDm2SwMbZ5gDz/bYR3LFAA3K9D7mEOvwo4Of4XMxkEfp8yw1LyE2MlQV2bKc7xmZBUYJ5zBTdPn4Q/Zzp6Neuk3Yq+QCsQz5cdfIOK18//MeZKTbX5GgkPwZr;4:KXd8lYXKWsRvKr3mm5XcWik4aJQMOBEOExV5hJonNz32yBiE8MhnEtliMKHTHvQDAM3FjWhhm9CuVCgKd9BC1WMumfoFeJT5Mn5jjMV32kyrOfNm+N4Q+bTUL+kimv4pUXQ05bSqWdh+iUdUbodyfERx0NDxzUulRbJA1elgO/26Q/5tx7Assal+Du8zvOAWAWVofCQk56UmqXKo6JUNrFE0E6su6+wa/BNVVs6iwgv69OoRpGCzvz+XqdWvh8+iGMhJiVEI6mUza8owzWTbo1zz4nru3eT5tW1+GPXIY0HC0op9TTAOKIOuVzgL+Ouv
+X-Microsoft-Antispam-PRVS: <DB6PR06MB4008F6DAC58180A8CFBC5051EF810@DB6PR06MB4008.eurprd06.prod.outlook.com>
+X-Forefront-PRVS: 0918748D70
+X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;DB6PR06MB4008;23:kI2VPEa8kcWLEagZRxQVlPQykYKNl8sActAGDvt8/?=
+ =?us-ascii?Q?SBI8kvWmDap9GQFVAtf5W+fKXI9NuJ5torO1DpkPnDt2OMtTxCPkLfq1G2k3?=
+ =?us-ascii?Q?AJqdGgbLQSRFnTpVvEJO/Q4QjIkU+4uPM1eKRP2OZ6cV/kuLd11qUX1Xk2D1?=
+ =?us-ascii?Q?wQne5F52oiHTQifyl/Fpsnk1Ii6QgdMLOa+Q11gJXGienS4odgQ50rtpbjcz?=
+ =?us-ascii?Q?oKZUbafD/WbUwaR5oNP6e0EvlRKe13+g7RaSuA1JR0ui3qeB8iTtVIqc2pVv?=
+ =?us-ascii?Q?aML892577ztN7US3WVvV4mplMKrPjByQcCXuQEHRSGKgCn/5cbNBWW+qUA6w?=
+ =?us-ascii?Q?/rwtKVA7dDpSQ9AljCjEnzsVQufNNX7mJw4N/Kc5BLnVmZP2nBNs83CP1Y8g?=
+ =?us-ascii?Q?o22WkKXSPbS4cX3umROhpTQd5LbAKYbp2NHifdetwMGFGHU5NFJFgR4EweSu?=
+ =?us-ascii?Q?Ob1W/2h9u8sqaubrv9i0TegKglBxQU6DrIq9AEsAtnSJcUXYVisZ4v22MXaR?=
+ =?us-ascii?Q?IYiUkKEPWQSeYF7LHQF3g0Vqb4QpnsF7PnLioduL2jMj3pmp7mmQktH27XBx?=
+ =?us-ascii?Q?jptiN2OUKzeoSL+AC96ctRNikfHlIfgeVRJFNxaXuIW2nUrzstmSo4JTj19a?=
+ =?us-ascii?Q?tnlfnKML3GpgWNlTzLZ9mC33P0cdpno1CZ6MDcWOz0euXK1d/eD8aNDI6bn6?=
+ =?us-ascii?Q?mTrWjOxN6r2BJliOf7exj0pStquQkkR5IdC9APNd4YglT7TGRNiGq6L9l61p?=
+ =?us-ascii?Q?+uWdRuhS5hmpaQCjSbsWKqUKYnK5lDKecTpOK9wH9/P7du8L79vO8crIYdFz?=
+ =?us-ascii?Q?GOjPr3BJaPoLLyfqTU2C8eIbl+FkR4+NHAa1l3A1TjEb5pvoN9KXI87Mi1Lq?=
+ =?us-ascii?Q?wJGsm9WeqwrplmtSvzciTbjYFsGv6niu17yW/1VYOA0PckTPEeIxIrrvGcpT?=
+ =?us-ascii?Q?/z2+4852n2iGp5fS5XsmgYW9AdCeexoI0wt0WGB7JFX/nnUiaWUoFSK40/hA?=
+ =?us-ascii?Q?YUv7BtctYXr8rmc2AYy5DqM+VSkNnlXrkAuQNMXy5loAsbRocTfcX1jyITU4?=
+ =?us-ascii?Q?lhm4xllTJj657ERxhJbauJO3D0rS9+/F3p6dJzjiCyMHPOaXDaCDb7GqMpEC?=
+ =?us-ascii?Q?zCT7ZIeLE+8uY07DYb3HlZyM9F3IpEl6gi/C9DT7axF65J7xws+cVWoQCMAu?=
+ =?us-ascii?Q?hW63yAasesr/xAWS6iYTV0PAtA7O2Xe2Cc5+ZAaP5cYJwslfMbqt5AQhyLmG?=
+ =?us-ascii?Q?N6Uv+Ui0cWTQmfebGkXgWnAZ7sWwtTvJT469nBHLFq7i7YTFU+maiJ7NBqf3?=
+ =?us-ascii?B?UT09?=
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam-Message-Info: p23dRFfHi2wGs/KSDUg4ri6JjDwGFZWGnwLPGp+CDOh1usi7Kv9LFrqRgyl6nz4zPTbVhsqwmT2DsLqQruwA6gXRRunwpePi2mDn+WA5/z8cTTyLeEA/JuvhonINBvgN+FXq1nYmvCcxVlsG1Y/Y0VgZAmsYN3qNyB4z2B3GWAwdxsi92Gtn5QNjL/P7eF54gngE/T+65jo33LlPbCCEAFOnHqx+74eBe92jjXq59iFBKkPUYaVwgFBIruNQR8N2I38JC9X8jN02SwK+d3fth4/7yUy5wftZWfetYSIIlFFyBbL4d95FfBXbst6cYSf8MdGNyldR4x8SF35OhApBc/0x+bbbKpNfH2udvghbo/pveBNVNqRlxzQ0ZY4ZZ7BF1+RipA4IvjFL7ORdYiqRM9PDT9CrFH819QDDXgkAJzs=
+X-Microsoft-Exchange-Diagnostics: 1;DB6PR06MB4008;6:O3CTzHkrTb07iv5u7m7G6WMhL7ZFK1gJta02gfUWQv6QrF0J4jrUMIb+QiMWiLbJfaXe5wvvhYyn0j5kk6TDwEKjp1a9jfO/yuZAqAnknk54TUTwDapFbLHAky+AABzxcDJPhEGjIlQOlXtMSf5gCW82i2Ud1uhVlF2qq/nrDq5JTiCWoEVUj+T3AP9sAiSrExz9gaZ9FDZrRKg3fjOnZUz9gAwLUfTG4Mw3kXK95HUuImPV5kM5+Ic8yTBNZbiDTck76ViwvCUl/vpGLi37vJ7nlLpfwAABx3d+rBE6t1Ks/8kk6VgK2qed432yyhMIrix/IrEcq3Zpa7dPEw9IdzbqrQ4IfyjuXFfMx7FLeyzuZK/5THv+gNIIWzD1jwkKt8KOA5CH2oSVpxqaYmc0kgdoVdIL2hHFr0SorylAaVEI7cPAmMDEgInTmDpcCa9kFKNocavTfJuB1Xp7eP0YzQ==;5:XAMJW7VLfrjVY+5Gvyvc6wnBGILKgbTfixTyDFfIx4SGDTb/yOs3aFSksUXus+0xT5+vHhmLfq11e7SgPBEZ9UhSLQyGE55tIE0YhUHEKb/Lc3IfqBqMoKR8/6tDT4HGRMFCDAFjy31OkkpMqi5owlseLJdu9cbKp9CyaskxvP7pQhrsSnnS5xT5QUFNdLvRD65VdDlFqYl7XilIF6UHtw==;7:D2iQwiUJ2TLztE2xyiZVz3cmL7Twju6X5kv254lELjH4vxzbJfZCA+Xcq+toJViyhrDX1ROJk/5Qev73PAdVONZq3ZcDSxMtVkQpFUg5yDL7o/Azv6uNenrhGQpUYK8sA6U+iRr/p5B4NMWqr1Z7tA==
+SpamDiagnosticOutput: 1:99
+SpamDiagnosticMetadata: NSPM
+X-OriginatorOrg: cern.ch
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Jan 2019 16:37:25.0099
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: e4cfec20-029c-4061-e28a-08d67b07bb12
+X-MS-Exchange-CrossTenant-Id: c80d3499-4a40-4a8c-986e-abce017d6b19
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=c80d3499-4a40-4a8c-986e-abce017d6b19;Ip=[188.184.36.50];Helo=[cernmxgwlb4.cern.ch]
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB6PR06MB4008
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This is the start of the stable review cycle for the 4.4.171 release.
-There are 51 patches in this series, all will be posted as a response
-to this one.  If anyone has any issues with these being applied, please
-let me know.
+Hi there,
 
-Responses should be made by Thu Jan 17 15:48:21 UTC 2019.
-Anything received after that time might be too late.
+I just want to ask if there has been any update about this patchset that I'm 
+not aware off. Thanks
 
-The whole patch series can be found in one patch at:
-	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.4.171-rc1.gz
-or in the git tree and branch at:
-	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.4.y
-and the diffstat can be found below.
-
-thanks,
-
-greg k-h
-
--------------
-Pseudo-Shortlog of commits:
-
-Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-    Linux 4.4.171-rc1
-
-Vasily Averin <vvs@virtuozzo.com>
-    sunrpc: use-after-free in svc_process_common()
-
-Theodore Ts'o <tytso@mit.edu>
-    ext4: fix a potential fiemap/page fault deadlock w/ inline_data
-
-Eric Biggers <ebiggers@google.com>
-    crypto: cts - fix crash on short inputs
-
-Yi Zeng <yizeng@asrmicro.com>
-    i2c: dev: prevent adapter retries and timeout being set as minus value
-
-Hans de Goede <hdegoede@redhat.com>
-    ACPI: power: Skip duplicate power resource references in _PRx
-
-Ley Foon Tan <lftan@altera.com>
-    PCI: altera: Move retrain from fixup to altera_pcie_host_init()
-
-Ley Foon Tan <lftan@altera.com>
-    PCI: altera: Rework config accessors for use without a struct pci_bus
-
-Ley Foon Tan <lftan@altera.com>
-    PCI: altera: Poll for link training status after retraining the link
-
-Ley Foon Tan <lftan@altera.com>
-    PCI: altera: Poll for link up status after retraining the link
-
-Ley Foon Tan <lftan@altera.com>
-    PCI: altera: Check link status before retrain link
-
-Bjorn Helgaas <bhelgaas@google.com>
-    PCI: altera: Reorder read/write functions
-
-Ley Foon Tan <lftan@altera.com>
-    PCI: altera: Fix altera_pcie_link_is_up()
-
-Christoph Lameter <cl@linux.com>
-    slab: alien caches must not be initialized if the allocation of the alien cache failed
-
-Jack Stocker <jackstocker.93@gmail.com>
-    USB: Add USB_QUIRK_DELAY_CTRL_MSG quirk for Corsair K70 RGB
-
-Icenowy Zheng <icenowy@aosc.io>
-    USB: storage: add quirk for SMI SM3350
-
-Icenowy Zheng <icenowy@aosc.io>
-    USB: storage: don't insert sane sense for SPC3+ when bad sense specified
-
-Daniele Palmas <dnlplm@gmail.com>
-    usb: cdc-acm: send ZLP for Telit 3G Intel based modems
-
-Ross Lagerwall <ross.lagerwall@citrix.com>
-    cifs: Fix potential OOB access of lock element array
-
-Pavel Shilovsky <pshilov@microsoft.com>
-    CIFS: Do not hide EINTR after sending network packets
-
-Shaokun Zhang <zhangshaokun@hisilicon.com>
-    btrfs: tree-checker: Fix misleading group system information
-
-Qu Wenruo <wqu@suse.com>
-    btrfs: tree-checker: Check level for leaves and nodes
-
-Qu Wenruo <wqu@suse.com>
-    btrfs: Verify that every chunk has corresponding block group at mount time
-
-Qu Wenruo <wqu@suse.com>
-    btrfs: Check that each block group has corresponding chunk at mount time
-
-Gu Jinxiang <gujx@cn.fujitsu.com>
-    btrfs: validate type when reading a chunk
-
-Qu Wenruo <wqu@suse.com>
-    btrfs: tree-checker: Detect invalid and empty essential trees
-
-Qu Wenruo <wqu@suse.com>
-    btrfs: tree-checker: Verify block_group_item
-
-David Sterba <dsterba@suse.com>
-    btrfs: tree-check: reduce stack consumption in check_dir_item
-
-Arnd Bergmann <arnd@arndb.de>
-    btrfs: tree-checker: use %zu format string for size_t
-
-Qu Wenruo <wqu@suse.com>
-    btrfs: tree-checker: Add checker for dir item
-
-Qu Wenruo <wqu@suse.com>
-    btrfs: tree-checker: Fix false panic for sanity test
-
-Qu Wenruo <quwenruo.btrfs@gmx.com>
-    btrfs: tree-checker: Enhance btrfs_check_node output
-
-Qu Wenruo <quwenruo.btrfs@gmx.com>
-    btrfs: Move leaf and node validation checker to tree-checker.c
-
-Qu Wenruo <quwenruo.btrfs@gmx.com>
-    btrfs: Add checker for EXTENT_CSUM
-
-Qu Wenruo <quwenruo.btrfs@gmx.com>
-    btrfs: Add sanity check for EXTENT_DATA when reading out leaf
-
-Qu Wenruo <quwenruo.btrfs@gmx.com>
-    btrfs: Check if item pointer overlaps with the item itself
-
-Qu Wenruo <quwenruo.btrfs@gmx.com>
-    btrfs: Refactor check_leaf function for later expansion
-
-Jeff Mahoney <jeffm@suse.com>
-    btrfs: struct-funcs, constify readers
-
-Filipe Manana <fdmanana@suse.com>
-    Btrfs: fix emptiness check for dirtied extent buffers at check_leaf()
-
-Liu Bo <bo.li.liu@oracle.com>
-    Btrfs: memset to avoid stale content in btree leaf
-
-Liu Bo <bo.li.liu@oracle.com>
-    Btrfs: kill BUG_ON in run_delayed_tree_ref
-
-Liu Bo <bo.li.liu@oracle.com>
-    Btrfs: improve check_node to avoid reading corrupted nodes
-
-Liu Bo <bo.li.liu@oracle.com>
-    Btrfs: memset to avoid stale content in btree node block
-
-Liu Bo <bo.li.liu@oracle.com>
-    Btrfs: fix BUG_ON in btrfs_mark_buffer_dirty
-
-Liu Bo <bo.li.liu@oracle.com>
-    Btrfs: check btree node's nritems
-
-Liu Bo <bo.li.liu@oracle.com>
-    Btrfs: detect corruption when non-root leaf has zero item
-
-Josef Bacik <jbacik@fb.com>
-    Btrfs: fix em leak in find_first_block_group
-
-Liu Bo <bo.li.liu@oracle.com>
-    Btrfs: check inconsistence between chunk and block group
-
-Liu Bo <bo.li.liu@oracle.com>
-    Btrfs: add validadtion checks for chunk loading
-
-Qu Wenruo <quwenruo@cn.fujitsu.com>
-    btrfs: Enhance chunk validation check
-
-Jeff Mahoney <jeffm@suse.com>
-    btrfs: cleanup, stop casting for extent_map->lookup everywhere
-
-Kailang Yang <kailang@realtek.com>
-    ALSA: hda/realtek - Disable headset Mic VREF for headset mode of ALC225
+On Tuesday, November 27, 2018 12:38:22 PM CET Wolfram Sang wrote:
+> > This patch set provides improvements to the i2c-ocore driver.
+> > 
+> > [V1 -> V2]
+> > - replaced usleep_range() with udelay() so that the polling version can be
+> > 
+> >   used in atomic context.
+> > 
+> > - added dedicated patch for minor style issues
+> > - fixed delay computation
+> > - use spin_lock_irqsave(), instead of spin_trylock_irqsave(). IACK is
+> > always> 
+> >   necessary and a trylock would generate an extra interrupt for nothing
+> > 
+> > - make the driver ready for an eventual master_xfer_irqless()
+> 
+> Peter, do you have a time slot to review this?
 
 
--------------
-
-Diffstat:
-
- Makefile                           |   4 +-
- crypto/cts.c                       |   8 +-
- drivers/acpi/power.c               |  22 ++
- drivers/i2c/i2c-dev.c              |   6 +
- drivers/pci/host/pcie-altera.c     | 201 +++++++++---
- drivers/usb/class/cdc-acm.c        |   7 +
- drivers/usb/core/quirks.c          |   3 +-
- drivers/usb/storage/scsiglue.c     |   8 +-
- drivers/usb/storage/unusual_devs.h |  12 +
- fs/btrfs/Makefile                  |   2 +-
- fs/btrfs/ctree.c                   |  14 -
- fs/btrfs/ctree.h                   | 141 ++++----
- fs/btrfs/dev-replace.c             |   2 +-
- fs/btrfs/disk-io.c                 |  80 +----
- fs/btrfs/extent-tree.c             | 112 ++++++-
- fs/btrfs/extent_io.c               |  43 ++-
- fs/btrfs/extent_io.h               |  19 +-
- fs/btrfs/extent_map.c              |   2 +-
- fs/btrfs/extent_map.h              |  10 +-
- fs/btrfs/scrub.c                   |   2 +-
- fs/btrfs/struct-funcs.c            |   9 +-
- fs/btrfs/tree-checker.c            | 649 +++++++++++++++++++++++++++++++++++++
- fs/btrfs/tree-checker.h            |  38 +++
- fs/btrfs/volumes.c                 | 139 +++++++-
- fs/btrfs/volumes.h                 |   2 +
- fs/cifs/file.c                     |   8 +-
- fs/cifs/smb2file.c                 |   4 +-
- fs/cifs/transport.c                |   2 +-
- fs/ext4/inline.c                   |   6 +-
- include/linux/sunrpc/svc.h         |   5 +-
- mm/slab.c                          |   6 +-
- net/sunrpc/svc.c                   |  10 +-
- net/sunrpc/svc_xprt.c              |   5 +-
- net/sunrpc/svcsock.c               |   2 +-
- sound/pci/hda/patch_realtek.c      |  16 +-
- 35 files changed, 1324 insertions(+), 275 deletions(-)
 
 
