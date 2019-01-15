@@ -4,49 +4,49 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ACCE6C43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 16:41:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 76AB0C43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 16:41:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7D78E2054F
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 16:41:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3D4D12054F
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 16:41:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547570484;
-	bh=BNF3op7Knsdej3N7qsE5C4H4m078BfPX6SRzFchzj74=;
+	s=default; t=1547570490;
+	bh=x22OCmGHYKCXRpq0ZfjMFIcqprLfmwKC3GgywQMXNhY=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=tzXcASLQkg1KzX3aEFP17On8qFZccwLxgnql7NXHi3ojPQLBvsQXLchWjue4Vd2uC
-	 QEJ8xE7KTdkbqWfNGyOFOcWUG00QfcFa31Hln6hDnRxippuZfymm/9v2LzwScST22p
-	 gQv9fx3RDdF/mbiSihbTbZNL2fEkNWaBfyenfz7g=
+	b=i9O8cWXRsUiIV1FOZcO/ifyV4Za6CO1iyBkNj8myOl2O13lwDe/hjT+piqQfh9x2B
+	 /mvpF6Mc0iGGn52V8DSFHeKH6+23ft5h7uvZBWsTjajhr+qkpVxtc+PdsVTOSOEvct
+	 Imhzb36XkpcX6pGFN5tm2x8Ds56gNKlPjTsjQCpk=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732769AbfAOQlX (ORCPT
+        id S1732795AbfAOQl3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 15 Jan 2019 11:41:23 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57976 "EHLO mail.kernel.org"
+        Tue, 15 Jan 2019 11:41:29 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58054 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732751AbfAOQlS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Jan 2019 11:41:18 -0500
+        id S1732760AbfAOQlU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 Jan 2019 11:41:20 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8075E20859;
-        Tue, 15 Jan 2019 16:41:16 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 329A92054F;
+        Tue, 15 Jan 2019 16:41:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547570477;
-        bh=BNF3op7Knsdej3N7qsE5C4H4m078BfPX6SRzFchzj74=;
+        s=default; t=1547570479;
+        bh=x22OCmGHYKCXRpq0ZfjMFIcqprLfmwKC3GgywQMXNhY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ASc0dD8OOrJMmXtvEm4gd6LDbPp65xvwwxBUgZI4DZc5sl8AXJ7CqNtBkZflG8wSg
-         YJPwzIkjJVlhkUn5BNVp99zoiBqYQOFxPxVZ3aV0pX/Jz6SNGXi8hmj35AMllZbT7s
-         YgTJXeckh15N7In+YM+AiyMjFv+hDn0idwwSQrz0=
+        b=MB7/R3mdouyzpsBtA1oD0ZgVmQQrxDMMq657dv19LC73X7lhYBb34j9EWE9sz8fYC
+         Rumx3OBB0R9Nfm79yIV4ytyaFmJ1yV9Nuy8nBNGVcopnSsAbdXN9pr1HCZL/xb24TM
+         OcPztfKdpKTgPVMDszbl1BGLZUpv9JBp5OuTvtpI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Filipe Manana <fdmanana@suse.com>,
-        David Sterba <dsterba@suse.com>
-Subject: [PATCH 4.19 01/50] Btrfs: fix deadlock when using free space tree due to block group creation
-Date:   Tue, 15 Jan 2019 17:35:37 +0100
-Message-Id: <20190115154910.033596759@linuxfoundation.org>
+        stable@vger.kernel.org, Pavel Shilovsky <pshilov@microsoft.com>,
+        Steve French <stfrench@microsoft.com>
+Subject: [PATCH 4.19 10/50] CIFS: Do not set credits to 1 if the server didnt grant anything
+Date:   Tue, 15 Jan 2019 17:35:46 +0100
+Message-Id: <20190115154910.565903590@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190115154909.933241945@linuxfoundation.org>
 References: <20190115154909.933241945@linuxfoundation.org>
@@ -65,64 +65,35 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Filipe Manana <fdmanana@suse.com>
+From: Pavel Shilovsky <pshilov@microsoft.com>
 
-commit a6d8654d885d7d79a3fb82da64eaa489ca332a82 upstream.
+commit 33fa5c8b8a7dbe6353a56eaa654b790348890d42 upstream.
 
-When modifying the free space tree we can end up COWing one of its extent
-buffers which in turn might result in allocating a new chunk, which in
-turn can result in flushing (finish creation) of pending block groups. If
-that happens we can deadlock because creating a pending block group needs
-to update the free space tree, and if any of the updates tries to modify
-the same extent buffer that we are COWing, we end up in a deadlock since
-we try to write lock twice the same extent buffer.
+Currently we reset the number of total credits granted by the server
+to 1 if the server didn't grant us anything int the response. This
+violates the SMB3 protocol - we need to trust the server and use
+the credit values from the response. Fix this by removing the
+corresponding code.
 
-So fix this by skipping pending block group creation if we are COWing an
-extent buffer from the free space tree. This is a case missed by commit
-5ce555578e091 ("Btrfs: fix deadlock when writing out free space caches").
-
-Bugzilla: https://bugzilla.kernel.org/show_bug.cgi?id=202173
-Fixes: 5ce555578e091 ("Btrfs: fix deadlock when writing out free space caches")
-CC: stable@vger.kernel.org # 4.18+
-Signed-off-by: Filipe Manana <fdmanana@suse.com>
-Reviewed-by: David Sterba <dsterba@suse.com>
-Signed-off-by: David Sterba <dsterba@suse.com>
+Signed-off-by: Pavel Shilovsky <pshilov@microsoft.com>
+Signed-off-by: Steve French <stfrench@microsoft.com>
+CC: Stable <stable@vger.kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/btrfs/ctree.c |   16 +++++++++-------
- 1 file changed, 9 insertions(+), 7 deletions(-)
+ fs/cifs/transport.c |    2 --
+ 1 file changed, 2 deletions(-)
 
---- a/fs/btrfs/ctree.c
-+++ b/fs/btrfs/ctree.c
-@@ -1051,19 +1051,21 @@ static noinline int __btrfs_cow_block(st
- 		parent_start = parent->start;
+--- a/fs/cifs/transport.c
++++ b/fs/cifs/transport.c
+@@ -885,8 +885,6 @@ compound_send_recv(const unsigned int xi
+ 	for (i = 0; i < num_rqst; i++)
+ 		if (midQ[i]->resp_buf)
+ 			credits += ses->server->ops->get_credits(midQ[i]);
+-	if (!credits)
+-		credits = 1;
  
- 	/*
--	 * If we are COWing a node/leaf from the extent, chunk or device trees,
--	 * make sure that we do not finish block group creation of pending block
--	 * groups. We do this to avoid a deadlock.
-+	 * If we are COWing a node/leaf from the extent, chunk, device or free
-+	 * space trees, make sure that we do not finish block group creation of
-+	 * pending block groups. We do this to avoid a deadlock.
- 	 * COWing can result in allocation of a new chunk, and flushing pending
- 	 * block groups (btrfs_create_pending_block_groups()) can be triggered
- 	 * when finishing allocation of a new chunk. Creation of a pending block
--	 * group modifies the extent, chunk and device trees, therefore we could
--	 * deadlock with ourselves since we are holding a lock on an extent
--	 * buffer that btrfs_create_pending_block_groups() may try to COW later.
-+	 * group modifies the extent, chunk, device and free space trees,
-+	 * therefore we could deadlock with ourselves since we are holding a
-+	 * lock on an extent buffer that btrfs_create_pending_block_groups() may
-+	 * try to COW later.
- 	 */
- 	if (root == fs_info->extent_root ||
- 	    root == fs_info->chunk_root ||
--	    root == fs_info->dev_root)
-+	    root == fs_info->dev_root ||
-+	    root == fs_info->free_space_root)
- 		trans->can_flush_pending_bgs = false;
- 
- 	cow = btrfs_alloc_tree_block(trans, root, parent_start,
+ 	for (i = 0; i < num_rqst; i++) {
+ 		if (rc < 0)
 
 
