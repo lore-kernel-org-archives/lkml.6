@@ -2,58 +2,59 @@ Return-Path: <SRS0=RZO6=PX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1EE82C43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 16:40:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 39419C43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 16:40:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E27D62087E
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 16:40:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0929120868
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 16:40:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547570419;
-	bh=IkszSpvV49a2dRbH4RSR0R7dYN5dK64L8uQObgh2df4=;
+	s=default; t=1547570423;
+	bh=H9s4N1W9SLnwOfoGV2ws+MTyEfLT6giUlvLHZT4dVGU=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=hyB3W0vys6lDs1CCKaY7YuvBfzqgyxczZjH2lz17+zCLN45+kMMjy5f0La6uj91Xv
-	 Lg8CY8Q2m8ymgBP5Rfo40EIeruTrL+Ip5pEUjVg3i+qFM473l+e1bxbw009LxrYahE
-	 yVCXmDqh//8D1Ym+PyzmjI56TcDXReRom73P+v7I=
+	b=V4vHDs1S0eYlk9l3CKL1pEVyfw+j1tiWdHNfNE1WVewhNYkUos7Z+bdZc9A9o0wot
+	 qgYSn4d91lECdN52nDKIPqwNJR6m5F4G9VGpXic550a1v7BKMzSS6gJ2gKWsYuNx9z
+	 9n8/+olaIvGRDSl1U+RRwFn9TN9Z/00uZ8AISoQU=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732562AbfAOQkR (ORCPT
+        id S1729792AbfAOQkV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 15 Jan 2019 11:40:17 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56556 "EHLO mail.kernel.org"
+        Tue, 15 Jan 2019 11:40:21 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56608 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729067AbfAOQkO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Jan 2019 11:40:14 -0500
+        id S1732557AbfAOQkR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 Jan 2019 11:40:17 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A1C9320675;
-        Tue, 15 Jan 2019 16:40:12 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id BD3382054F;
+        Tue, 15 Jan 2019 16:40:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547570413;
-        bh=IkszSpvV49a2dRbH4RSR0R7dYN5dK64L8uQObgh2df4=;
+        s=default; t=1547570416;
+        bh=H9s4N1W9SLnwOfoGV2ws+MTyEfLT6giUlvLHZT4dVGU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=qFCsBAewVSZNjaFgWxjb9wKbPzm/t628ywXh4nRYbsbZrjmRDce//+Nhs95ZH753I
-         5ZsTwfpWweq9f5M9tezviUjVurF1ol8lW0m0NSjPHUvN2VE1IfGTQ6dgp71aqk/W8d
-         8su1cf8I1RsAEcTrTlCiKqyPTmLR8nfbvpILReQc=
+        b=PMXXUJpWV0btSSiGdiGz6MyHIh9gPGfMHc/orOZIYIBmxvLuhFHGvS5ibDWPQZPAV
+         yASFzdTuucXs8hX9pjQs1cm+zv12xpke7Ql0d1QYDz1i25NoG3VMy6+p/IDzXeI52P
+         QrINQq0ppazlZlejEXLkrXFReVdHKEqAgqcnbkJs=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jan Stancek <jstancek@redhat.com>,
-        "Kirill A. Shutemov" <kirill@shutemov.name>,
-        Michal Hocko <mhocko@suse.com>,
+        stable@vger.kernel.org, Michal Hocko <mhocko@suse.com>,
+        Liu Bo <bo.liu@linux.alibaba.com>,
         "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        David Hildenbrand <david@redhat.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
+        Johannes Weiner <hannes@cmpxchg.org>, Jan Kara <jack@suse.cz>,
+        Dave Chinner <david@fromorbit.com>,
+        Theodore Tso <tytso@mit.edu>,
+        Vladimir Davydov <vdavydov.dev@gmail.com>,
+        Shakeel Butt <shakeelb@google.com>,
         Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Laszlo Ersek <lersek@redhat.com>
-Subject: [PATCH 4.14 14/27] mm: page_mapped: dont assume compound page is huge or THP
-Date:   Tue, 15 Jan 2019 17:36:03 +0100
-Message-Id: <20190115154902.076191348@linuxfoundation.org>
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: [PATCH 4.14 15/27] mm, memcg: fix reclaim deadlock with writeback
+Date:   Tue, 15 Jan 2019 17:36:04 +0100
+Message-Id: <20190115154902.135722496@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190115154901.189747728@linuxfoundation.org>
 References: <20190115154901.189747728@linuxfoundation.org>
@@ -72,76 +73,147 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jan Stancek <jstancek@redhat.com>
+From: Michal Hocko <mhocko@suse.com>
 
-commit 8ab88c7169b7fba98812ead6524b9d05bc76cf00 upstream.
+commit 63f3655f950186752236bb88a22f8252c11ce394 upstream.
 
-LTP proc01 testcase has been observed to rarely trigger crashes
-on arm64:
-    page_mapped+0x78/0xb4
-    stable_page_flags+0x27c/0x338
-    kpageflags_read+0xfc/0x164
-    proc_reg_read+0x7c/0xb8
-    __vfs_read+0x58/0x178
-    vfs_read+0x90/0x14c
-    SyS_read+0x60/0xc0
+Liu Bo has experienced a deadlock between memcg (legacy) reclaim and the
+ext4 writeback
 
-The issue is that page_mapped() assumes that if compound page is not
-huge, then it must be THP.  But if this is 'normal' compound page
-(COMPOUND_PAGE_DTOR), then following loop can keep running (for
-HPAGE_PMD_NR iterations) until it tries to read from memory that isn't
-mapped and triggers a panic:
+  task1:
+    wait_on_page_bit+0x82/0xa0
+    shrink_page_list+0x907/0x960
+    shrink_inactive_list+0x2c7/0x680
+    shrink_node_memcg+0x404/0x830
+    shrink_node+0xd8/0x300
+    do_try_to_free_pages+0x10d/0x330
+    try_to_free_mem_cgroup_pages+0xd5/0x1b0
+    try_charge+0x14d/0x720
+    memcg_kmem_charge_memcg+0x3c/0xa0
+    memcg_kmem_charge+0x7e/0xd0
+    __alloc_pages_nodemask+0x178/0x260
+    alloc_pages_current+0x95/0x140
+    pte_alloc_one+0x17/0x40
+    __pte_alloc+0x1e/0x110
+    alloc_set_pte+0x5fe/0xc20
+    do_fault+0x103/0x970
+    handle_mm_fault+0x61e/0xd10
+    __do_page_fault+0x252/0x4d0
+    do_page_fault+0x30/0x80
+    page_fault+0x28/0x30
 
-        for (i = 0; i < hpage_nr_pages(page); i++) {
-                if (atomic_read(&page[i]._mapcount) >= 0)
-                        return true;
-	}
+  task2:
+    __lock_page+0x86/0xa0
+    mpage_prepare_extent_to_map+0x2e7/0x310 [ext4]
+    ext4_writepages+0x479/0xd60
+    do_writepages+0x1e/0x30
+    __writeback_single_inode+0x45/0x320
+    writeback_sb_inodes+0x272/0x600
+    __writeback_inodes_wb+0x92/0xc0
+    wb_writeback+0x268/0x300
+    wb_workfn+0xb4/0x390
+    process_one_work+0x189/0x420
+    worker_thread+0x4e/0x4b0
+    kthread+0xe6/0x100
+    ret_from_fork+0x41/0x50
 
-I could replicate this on x86 (v4.20-rc4-98-g60b548237fed) only
-with a custom kernel module [1] which:
- - allocates compound page (PAGEC) of order 1
- - allocates 2 normal pages (COPY), which are initialized to 0xff (to
-   satisfy _mapcount >= 0)
- - 2 PAGEC page structs are copied to address of first COPY page
- - second page of COPY is marked as not present
- - call to page_mapped(COPY) now triggers fault on access to 2nd COPY
-   page at offset 0x30 (_mapcount)
+He adds
+ "task1 is waiting for the PageWriteback bit of the page that task2 has
+  collected in mpd->io_submit->io_bio, and tasks2 is waiting for the
+  LOCKED bit the page which tasks1 has locked"
 
-[1] https://github.com/jstancek/reproducers/blob/master/kernel/page_mapped_crash/repro.c
+More precisely task1 is handling a page fault and it has a page locked
+while it charges a new page table to a memcg.  That in turn hits a
+memory limit reclaim and the memcg reclaim for legacy controller is
+waiting on the writeback but that is never going to finish because the
+writeback itself is waiting for the page locked in the #PF path.  So
+this is essentially ABBA deadlock:
 
-Fix the loop to iterate for "1 << compound_order" pages.
+                                        lock_page(A)
+                                        SetPageWriteback(A)
+                                        unlock_page(A)
+  lock_page(B)
+                                        lock_page(B)
+  pte_alloc_pne
+    shrink_page_list
+      wait_on_page_writeback(A)
+                                        SetPageWriteback(B)
+                                        unlock_page(B)
 
-Kirrill said "IIRC, sound subsystem can producuce custom mapped compound
-pages".
+                                        # flush A, B to clear the writeback
 
-Link: http://lkml.kernel.org/r/c440d69879e34209feba21e12d236d06bc0a25db.1543577156.git.jstancek@redhat.com
-Fixes: e1534ae95004 ("mm: differentiate page_mapped() from page_mapcount() for compound pages")
-Signed-off-by: Jan Stancek <jstancek@redhat.com>
-Debugged-by: Laszlo Ersek <lersek@redhat.com>
-Suggested-by: "Kirill A. Shutemov" <kirill@shutemov.name>
-Acked-by: Michal Hocko <mhocko@suse.com>
+This accumulating of more pages to flush is used by several filesystems
+to generate a more optimal IO patterns.
+
+Waiting for the writeback in legacy memcg controller is a workaround for
+pre-mature OOM killer invocations because there is no dirty IO
+throttling available for the controller.  There is no easy way around
+that unfortunately.  Therefore fix this specific issue by pre-allocating
+the page table outside of the page lock.  We have that handy
+infrastructure for that already so simply reuse the fault-around pattern
+which already does this.
+
+There are probably other hidden __GFP_ACCOUNT | GFP_KERNEL allocations
+from under a fs page locked but they should be really rare.  I am not
+aware of a better solution unfortunately.
+
+[akpm@linux-foundation.org: fix mm/memory.c:__do_fault()]
+[akpm@linux-foundation.org: coding-style fixes]
+[mhocko@kernel.org: enhance comment, per Johannes]
+  Link: http://lkml.kernel.org/r/20181214084948.GA5624@dhcp22.suse.cz
+Link: http://lkml.kernel.org/r/20181213092221.27270-1-mhocko@kernel.org
+Fixes: c3b94f44fcb0 ("memcg: further prevent OOM with too many dirty pages")
+Signed-off-by: Michal Hocko <mhocko@suse.com>
+Reported-by: Liu Bo <bo.liu@linux.alibaba.com>
+Debugged-by: Liu Bo <bo.liu@linux.alibaba.com>
 Acked-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
-Reviewed-by: David Hildenbrand <david@redhat.com>
-Reviewed-by: Andrea Arcangeli <aarcange@redhat.com>
+Acked-by: Johannes Weiner <hannes@cmpxchg.org>
+Reviewed-by: Liu Bo <bo.liu@linux.alibaba.com>
+Cc: Jan Kara <jack@suse.cz>
+Cc: Dave Chinner <david@fromorbit.com>
+Cc: Theodore Ts'o <tytso@mit.edu>
+Cc: Vladimir Davydov <vdavydov.dev@gmail.com>
+Cc: Shakeel Butt <shakeelb@google.com>
 Cc: <stable@vger.kernel.org>
 Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
 Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- mm/util.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ mm/memory.c |   23 +++++++++++++++++++++++
+ 1 file changed, 23 insertions(+)
 
---- a/mm/util.c
-+++ b/mm/util.c
-@@ -449,7 +449,7 @@ bool page_mapped(struct page *page)
- 		return true;
- 	if (PageHuge(page))
- 		return false;
--	for (i = 0; i < hpage_nr_pages(page); i++) {
-+	for (i = 0; i < (1 << compound_order(page)); i++) {
- 		if (atomic_read(&page[i]._mapcount) >= 0)
- 			return true;
- 	}
+--- a/mm/memory.c
++++ b/mm/memory.c
+@@ -3191,6 +3191,29 @@ static int __do_fault(struct vm_fault *v
+ 	struct vm_area_struct *vma = vmf->vma;
+ 	int ret;
+ 
++	/*
++	 * Preallocate pte before we take page_lock because this might lead to
++	 * deadlocks for memcg reclaim which waits for pages under writeback:
++	 *				lock_page(A)
++	 *				SetPageWriteback(A)
++	 *				unlock_page(A)
++	 * lock_page(B)
++	 *				lock_page(B)
++	 * pte_alloc_pne
++	 *   shrink_page_list
++	 *     wait_on_page_writeback(A)
++	 *				SetPageWriteback(B)
++	 *				unlock_page(B)
++	 *				# flush A, B to clear the writeback
++	 */
++	if (pmd_none(*vmf->pmd) && !vmf->prealloc_pte) {
++		vmf->prealloc_pte = pte_alloc_one(vmf->vma->vm_mm,
++						  vmf->address);
++		if (!vmf->prealloc_pte)
++			return VM_FAULT_OOM;
++		smp_wmb(); /* See comment in __pte_alloc() */
++	}
++
+ 	ret = vma->vm_ops->fault(vmf);
+ 	if (unlikely(ret & (VM_FAULT_ERROR | VM_FAULT_NOPAGE | VM_FAULT_RETRY |
+ 			    VM_FAULT_DONE_COW)))
 
 
