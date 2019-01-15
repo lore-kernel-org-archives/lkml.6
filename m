@@ -2,100 +2,153 @@ Return-Path: <SRS0=RZO6=PX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 41ACFC43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 08:42:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C9593C43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 08:42:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0F1EB20656
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 08:42:17 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="RPsmqt7b"
+	by mail.kernel.org (Postfix) with ESMTP id 7A47320656
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 08:42:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728413AbfAOImQ (ORCPT
+        id S1728450AbfAOImX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 15 Jan 2019 03:42:16 -0500
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:41500 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725869AbfAOImQ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Jan 2019 03:42:16 -0500
-Received: by mail-pl1-f194.google.com with SMTP id u6so955442plm.8
-        for <linux-kernel@vger.kernel.org>; Tue, 15 Jan 2019 00:42:15 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=Mhru6wLl9kz+UIAzkZRUNY2BQGrA9zV8yTyVy7573Rk=;
-        b=RPsmqt7bbJK9BTMZ343ENC9MtLG6QzpzbduiTIY++f5Y598NVi2y2qUyXxqDyCtOlC
-         sAlJT95csHRYrV9e3RMDxOmywqXyUkBkFUrLv1MAWmI7QUuB6h4RcCXWE0m22x4Thddd
-         5fcoqeXPyekQD30EQ6p69iTh6W2h8j6LCCaNw=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=Mhru6wLl9kz+UIAzkZRUNY2BQGrA9zV8yTyVy7573Rk=;
-        b=CfK2QtEhnhfU4q1ha5Dsf8+wuOTuaQgKCAhHRwEXhblKrEeBFeTMc22RoWSOFyeaQV
-         mBzwQILHJ9NBEQG1IeS5IW0zr0aIaaRpPUfe0U4FUN7uAUnBqCun9P9ROgWcnrueLYZ5
-         34eDPC5nlNOUUPjwGCwrTubqJnBanSbncEV93/b4SNCRtSR/y9cFAXXHfPxk2v7khKSu
-         N80F+vRn9mdR8EiJD8nKEt9IeusTePoYiEZpSxMg8NILGUw/kYkqcOuBw/zMOXou7LhT
-         /9baEFBRpflyBz6Nmx35TyknoU0e3UIVfcjwFo/73wT0BBP1faW0J62zX3g5ekCwofVC
-         B+lw==
-X-Gm-Message-State: AJcUukcTAmo7k9wXUsiMkipcQqrANZw4HJuRhx9G+n8HwZ+fK5JxiOjI
-        SA7+OQUj1cDkhGOb5HYuy53KyytbtYs=
-X-Google-Smtp-Source: ALg8bN4Qc5pwrcW3UoJk7QIVDhTBpg3encsvGah7/VAqG22sJ5wee2OLUwAdzWQKAOTa6Vby0lG3ZA==
-X-Received: by 2002:a17:902:bc3:: with SMTP id 61mr2931685plr.15.1547541735057;
-        Tue, 15 Jan 2019 00:42:15 -0800 (PST)
-Received: from cychiang-z840.tpe.corp.google.com ([2401:fa00:1:b:d3e3:8b64:9238:2823])
-        by smtp.gmail.com with ESMTPSA id w88sm5388037pfk.11.2019.01.15.00.42.12
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 15 Jan 2019 00:42:13 -0800 (PST)
-From:   Cheng-Yi Chiang <cychiang@chromium.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Mark Brown <broonie@kernel.org>, alsa-devel@alsa-project.org,
-        dgreid@chromium.org, tzungbi@chromium.org,
-        Rohit kumar <rohitkr@codeaurora.org>,
-        Cheng-Yi Chiang <cychiang@chromium.org>
-Subject: [PATCH] ASoC: sdm845: Set DAI format for dmic codec
-Date:   Tue, 15 Jan 2019 16:41:59 +0800
-Message-Id: <20190115084159.135113-1-cychiang@chromium.org>
-X-Mailer: git-send-email 2.20.1.97.g81188d93c3-goog
+        Tue, 15 Jan 2019 03:42:23 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:19040 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725869AbfAOImX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 Jan 2019 03:42:23 -0500
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 878F4A459D;
+        Tue, 15 Jan 2019 08:42:22 +0000 (UTC)
+Received: from dhcp-128-65.nay.redhat.com (ovpn-12-57.pek2.redhat.com [10.72.12.57])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 67077608E8;
+        Tue, 15 Jan 2019 08:42:17 +0000 (UTC)
+Date:   Tue, 15 Jan 2019 16:42:13 +0800
+From:   Dave Young <dyoung@redhat.com>
+To:     Kairui Song <kasong@redhat.com>
+Cc:     linux-kernel@vger.kernel.org, tglx@linutronix.de, mingo@redhat.com,
+        bp@alien8.de, hpa@zytor.com, x86@kernel.org,
+        akpm@linux-foundation.org, robert.moore@intel.com,
+        erik.schmauss@intel.com, rafael.j.wysocki@intel.com,
+        lenb@kernel.org
+Subject: Re: [PATCH 2/2] x86, kexec_file_load: make it work with
+ efi=noruntime or efi=oldmap
+Message-ID: <20190115084213.GA6468@dhcp-128-65.nay.redhat.com>
+References: <20190109064727.27936-1-kasong@redhat.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190109064727.27936-1-kasong@redhat.com>
+User-Agent: Mutt/1.9.5 (2018-04-13)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.38]); Tue, 15 Jan 2019 08:42:22 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Set codec DAI format for dmic codec in startup.
+On 01/09/19 at 02:47pm, Kairui Song wrote:
+> When efi=noruntime or efi=oldmap is used, EFI services won't be available
+> in the second kernel, therefore the second kernel will not be able to get
+> the ACPI RSDP address from firmware by calling EFI services and won't
+> boot. Previously we are expecting the user to set the acpi_rsdp=<addr>
+> on kernel command line for second kernel as there was no way to pass RSDP
+> address to second kernel.
+> 
+> After commit e6e094e053af ('x86/acpi, x86/boot: Take RSDP address from
+> boot params if available'), now it's possible to set a acpi_rsdp_addr
+> parameter in the boot_params passed to second kernel, this commit make
+> use of it, detect and set the RSDP address when it's required for second
+> kernel to boot.
+> 
+> Tested with an EFI enabled KVM VM with efi=noruntime.
+> 
+> Suggested-by: Dave Young <dyoung@redhat.com>
+> Signed-off-by: Kairui Song <kasong@redhat.com>
+> ---
+>  arch/x86/kernel/kexec-bzimage64.c | 21 +++++++++++++++++++++
+>  drivers/acpi/acpica/tbxfroot.c    |  3 +--
+>  include/acpi/acpixf.h             |  2 +-
+>  3 files changed, 23 insertions(+), 3 deletions(-)
+> 
+> diff --git a/arch/x86/kernel/kexec-bzimage64.c b/arch/x86/kernel/kexec-bzimage64.c
+> index 53917a3ebf94..0a90dcbd041f 100644
+> --- a/arch/x86/kernel/kexec-bzimage64.c
+> +++ b/arch/x86/kernel/kexec-bzimage64.c
+> @@ -20,6 +20,7 @@
+>  #include <linux/mm.h>
+>  #include <linux/efi.h>
+>  #include <linux/verification.h>
+> +#include <linux/acpi.h>
+>  
+>  #include <asm/bootparam.h>
+>  #include <asm/setup.h>
+> @@ -255,8 +256,28 @@ setup_boot_parameters(struct kimage *image, struct boot_params *params,
+>  	/* Setup EFI state */
+>  	setup_efi_state(params, params_load_addr, efi_map_offset, efi_map_sz,
+>  			efi_setup_data_offset);
+> +
+> +#ifdef CONFIG_ACPI
+> +	/* Setup ACPI RSDP pointer in case EFI is not available in second kernel */
+> +	if (!acpi_disabled && (!efi_enabled(EFI_RUNTIME_SERVICES) || efi_enabled(EFI_OLD_MEMMAP))) {
+> +		/* Copied from acpi_os_get_root_pointer accordingly */
+> +		params->acpi_rsdp_addr = boot_params.acpi_rsdp_addr;
+> +		if (!params->acpi_rsdp_addr) {
+> +			if (efi_enabled(EFI_CONFIG_TABLES)) {
+> +				if (efi.acpi20 != EFI_INVALID_TABLE_ADDR)
+> +					params->acpi_rsdp_addr = efi.acpi20;
+> +				else if (efi.acpi != EFI_INVALID_TABLE_ADDR)
+> +					params->acpi_rsdp_addr = efi.acpi;
+> +			} else if (IS_ENABLED(CONFIG_ACPI_LEGACY_TABLES_LOOKUP)) {
+> +				acpi_find_root_pointer(&params->acpi_rsdp_addr);
+> +			}
+> +		}
+> +		if (!params->acpi_rsdp_addr)
+> +			pr_warn("RSDP is not available for second kernel\n");
+> +	}
+>  #endif
+>  
+> +#endif
+>  	/* Setup EDD info */
+>  	memcpy(params->eddbuf, boot_params.eddbuf,
+>  				EDDMAXNR * sizeof(struct edd_info));
+> diff --git a/drivers/acpi/acpica/tbxfroot.c b/drivers/acpi/acpica/tbxfroot.c
+> index 483d0ce5180a..dac1e34a931c 100644
+> --- a/drivers/acpi/acpica/tbxfroot.c
+> +++ b/drivers/acpi/acpica/tbxfroot.c
+> @@ -108,8 +108,7 @@ acpi_status acpi_tb_validate_rsdp(struct acpi_table_rsdp *rsdp)
+>   *
+>   ******************************************************************************/
+>  
+> -acpi_status ACPI_INIT_FUNCTION
+> -acpi_find_root_pointer(acpi_physical_address *table_address)
+> +acpi_status acpi_find_root_pointer(acpi_physical_address *table_address)
+>  {
+>  	u8 *table_ptr;
+>  	u8 *mem_rover;
+> diff --git a/include/acpi/acpixf.h b/include/acpi/acpixf.h
+> index 7aa38b648564..869d75ecaf7d 100644
+> --- a/include/acpi/acpixf.h
+> +++ b/include/acpi/acpixf.h
+> @@ -474,7 +474,7 @@ ACPI_EXTERNAL_RETURN_STATUS(acpi_status ACPI_INIT_FUNCTION
+>  ACPI_EXTERNAL_RETURN_STATUS(acpi_status ACPI_INIT_FUNCTION
+>  			    acpi_reallocate_root_table(void))
+>  
+> -ACPI_EXTERNAL_RETURN_STATUS(acpi_status ACPI_INIT_FUNCTION
+> +ACPI_EXTERNAL_RETURN_STATUS(acpi_status
+>  			    acpi_find_root_pointer(acpi_physical_address
+>  						   *rsdp_address))
+>  ACPI_EXTERNAL_RETURN_STATUS(acpi_status
+> -- 
+> 2.20.1
+> 
 
-Signed-off-by: Cheng-Yi Chiang <cychiang@chromium.org>
----
- sound/soc/qcom/sdm845.c | 2 ++
- 1 file changed, 2 insertions(+)
+Kairui, thanks for the patches, did a test, it works for me.
 
-diff --git a/sound/soc/qcom/sdm845.c b/sound/soc/qcom/sdm845.c
-index 6f66a58e23ca..882f52ed8231 100644
---- a/sound/soc/qcom/sdm845.c
-+++ b/sound/soc/qcom/sdm845.c
-@@ -248,12 +248,14 @@ static int sdm845_snd_startup(struct snd_pcm_substream *substream)
- 		break;
- 
- 	case SECONDARY_MI2S_TX:
-+		codec_dai_fmt |= SND_SOC_DAIFMT_NB_NF | SND_SOC_DAIFMT_I2S;
- 		if (++(data->sec_mi2s_clk_count) == 1) {
- 			snd_soc_dai_set_sysclk(cpu_dai,
- 				Q6AFE_LPASS_CLK_ID_SEC_MI2S_IBIT,
- 				MI2S_BCLK_RATE,	SNDRV_PCM_STREAM_CAPTURE);
- 		}
- 		snd_soc_dai_set_fmt(cpu_dai, fmt);
-+		snd_soc_dai_set_fmt(codec_dai, codec_dai_fmt);
- 		break;
- 
- 	case QUATERNARY_TDM_RX_0:
--- 
-2.20.1.97.g81188d93c3-goog
+Seems the two patches are not in a thread, can you resend them together?
 
+Dave
