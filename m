@@ -2,99 +2,313 @@ Return-Path: <SRS0=RZO6=PX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D9B05C43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 18:54:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9149DC43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 18:54:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AB4E420656
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 18:54:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5112B20656
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 18:54:53 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=fb.com header.i=@fb.com header.b="UjP45i1A"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389098AbfAOSym (ORCPT
+        id S2389115AbfAOSyw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 15 Jan 2019 13:54:42 -0500
-Received: from Galois.linutronix.de ([146.0.238.70]:43402 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731939AbfAOSyk (ORCPT
+        Tue, 15 Jan 2019 13:54:52 -0500
+Received: from mx0b-00082601.pphosted.com ([67.231.153.30]:54480 "EHLO
+        mx0b-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1731883AbfAOSx5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Jan 2019 13:54:40 -0500
-Received: from bigeasy by Galois.linutronix.de with local (Exim 4.80)
-        (envelope-from <bigeasy@linutronix.de>)
-        id 1gjTr9-00034Z-Fh; Tue, 15 Jan 2019 19:54:35 +0100
-Date:   Tue, 15 Jan 2019 19:54:33 +0100
-From:   Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-To:     Steven Rostedt <rostedt@goodmis.org>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-rt-users <linux-rt-users@vger.kernel.org>,
-        Petr Mladek <pmladek@suse.com>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
-Subject: Re: [PATCH RT] printk: Shortcut out of waiter spinning on PREEMPT_RT
-Message-ID: <20190115185433.e7hmlpmjvpyqdyhc@linutronix.de>
-References: <20190115123910.2b18df54@gandalf.local.home>
+        Tue, 15 Jan 2019 13:53:57 -0500
+Received: from pps.filterd (m0109331.ppops.net [127.0.0.1])
+        by mx0a-00082601.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x0FIqZgc029685
+        for <linux-kernel@vger.kernel.org>; Tue, 15 Jan 2019 10:53:55 -0800
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
+ : date : message-id : in-reply-to : references : mime-version :
+ content-type; s=facebook; bh=aW4kvY8+ZtewuFKRUKorywxe2CtjbLcMtZ99vH5zDuo=;
+ b=UjP45i1As/fMzs2MyXiluguRCTnN0EpX4SrySe9xh/+fBdP+bwybgg9aaSCcX0EfWuKk
+ IWa2gVtFp9kUYBucW4MCpswbJqcSV9ct4te0X9PtvBaMz82LwWHUhEB/cMbnQPy7moyC
+ 0T/409yNfEgIth6YpugC3Kd0B2EQj/Wwnck= 
+Received: from maileast.thefacebook.com ([199.201.65.23])
+        by mx0a-00082601.pphosted.com with ESMTP id 2q1jfb8sny-12
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Tue, 15 Jan 2019 10:53:55 -0800
+Received: from mx-out.facebook.com (2620:10d:c0a1:3::13) by
+ mail.thefacebook.com (2620:10d:c021:18::176) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA) id 15.1.1531.3;
+ Tue, 15 Jan 2019 10:53:54 -0800
+Received: by devbig006.ftw2.facebook.com (Postfix, from userid 4523)
+        id 6D38862E1068; Tue, 15 Jan 2019 10:53:51 -0800 (PST)
+Smtp-Origin-Hostprefix: devbig
+From:   Song Liu <songliubraving@fb.com>
+Smtp-Origin-Hostname: devbig006.ftw2.facebook.com
+To:     <linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>
+CC:     Song Liu <songliubraving@fb.com>, <peterz@infradead.org>,
+        <acme@kernel.org>, <ast@kernel.org>, <daniel@iogearbox.net>,
+        <kernel-team@fb.com>, <dsahern@gmail.com>
+Smtp-Origin-Cluster: ftw2c04
+Subject: [PATCH v8 perf, bpf-next 1/9] perf, bpf: Introduce PERF_RECORD_KSYMBOL
+Date:   Tue, 15 Jan 2019 10:53:41 -0800
+Message-ID: <20190115185349.1191609-2-songliubraving@fb.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20190115185349.1191609-1-songliubraving@fb.com>
+References: <20190115185349.1191609-1-songliubraving@fb.com>
+X-FB-Internal: Safe
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20190115123910.2b18df54@gandalf.local.home>
-User-Agent: NeoMutt/20180716
+Content-Type: text/plain
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-01-15_06:,,
+ signatures=0
+X-Proofpoint-Spam-Reason: safe
+X-FB-Internal: Safe
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2019-01-15 12:39:10 [-0500], Steven Rostedt wrote:
-> --- a/kernel/printk/printk.c
-> +++ b/kernel/printk/printk.c
-> @@ -1742,6 +1742,13 @@ static int console_trylock_spinning(void)
->  	if (console_trylock())
->  		return 1;
->  
-> +	/*
-> +	 * The consoles are preemptable in PREEMPT_RT, which can cause
-> +	 * spinning to deadlock.
-> +	 */
-> +	if (IS_ENABLED(CONFIG_PREEMPT_RT_FULL))
-> +		return 0;
-> +
->  	printk_safe_enter_irqsave(flags);
->  
->  	raw_spin_lock(&console_owner_lock);
+For better performance analysis of dynamically JITed and loaded kernel
+functions, such as BPF programs, this patch introduces
+PERF_RECORD_KSYMBOL, a new perf_event_type that exposes kernel symbol
+register/unregister information to user space.
 
-So my ("printk: Make rt aware") patch does:
+The following data structure is used for PERF_RECORD_KSYMBOL.
 
-diff --git a/kernel/printk/printk.c b/kernel/printk/printk.c
-index 6553508ff3889..d983c509f74a2 100644
---- a/kernel/printk/printk.c
-+++ b/kernel/printk/printk.c
-@@ -1617,6 +1617,7 @@ SYSCALL_DEFINE3(syslog, int, type, char __user *, buf, int, len)
-        return do_syslog(type, buf, len, SYSLOG_FROM_READER);
+    /*
+     * struct {
+     *      struct perf_event_header        header;
+     *      u64                             addr;
+     *      u32                             len;
+     *      u16                             ksym_type;
+     *      u16                             flags;
+     *      char                            name[];
+     *      struct sample_id                sample_id;
+     * };
+     */
+
+Signed-off-by: Song Liu <songliubraving@fb.com>
+---
+ include/linux/perf_event.h      | 13 +++++
+ include/uapi/linux/perf_event.h | 26 ++++++++-
+ kernel/events/core.c            | 98 ++++++++++++++++++++++++++++++++-
+ 3 files changed, 135 insertions(+), 2 deletions(-)
+
+diff --git a/include/linux/perf_event.h b/include/linux/perf_event.h
+index 1d5c551a5add..77b2560f2dc7 100644
+--- a/include/linux/perf_event.h
++++ b/include/linux/perf_event.h
+@@ -1113,6 +1113,13 @@ static inline void perf_event_task_sched_out(struct task_struct *prev,
  }
  
-+#ifndef CONFIG_PREEMPT_RT_FULL
- /*
-  * Special console_lock variants that help to reduce the risk of soft-lockups.
-  * They allow to pass console_lock to another printk() call using a busy wait.
-@@ -1757,6 +1758,15 @@ static int console_trylock_spinning(void)
-        return 1;
- }
- 
-+#else
+ extern void perf_event_mmap(struct vm_area_struct *vma);
 +
-+static int console_trylock_spinning(void)
++/* callback function to generate ksymbol name */
++typedef int (perf_ksymbol_get_name_f)(char *name, int name_len, void *data);
++extern void perf_event_ksymbol(u16 ksym_type, u64 addr, u32 len,
++			       bool unregister,
++			       perf_ksymbol_get_name_f get_name, void *data);
++
+ extern struct perf_guest_info_callbacks *perf_guest_cbs;
+ extern int perf_register_guest_info_callbacks(struct perf_guest_info_callbacks *callbacks);
+ extern int perf_unregister_guest_info_callbacks(struct perf_guest_info_callbacks *callbacks);
+@@ -1333,6 +1340,12 @@ static inline int perf_unregister_guest_info_callbacks
+ (struct perf_guest_info_callbacks *callbacks)				{ return 0; }
+ 
+ static inline void perf_event_mmap(struct vm_area_struct *vma)		{ }
++
++typedef int (perf_ksymbol_get_name_f)(char *name, int name_len, void *data);
++static inline void perf_event_ksymbol(u16 ksym_type, u64 addr, u32 len,
++				      bool unregister,
++				      perf_ksymbol_get_name_f get_name,
++				      void *data)			{ }
+ static inline void perf_event_exec(void)				{ }
+ static inline void perf_event_comm(struct task_struct *tsk, bool exec)	{ }
+ static inline void perf_event_namespaces(struct task_struct *tsk)	{ }
+diff --git a/include/uapi/linux/perf_event.h b/include/uapi/linux/perf_event.h
+index 9de8780ac8d9..68c4da0227c5 100644
+--- a/include/uapi/linux/perf_event.h
++++ b/include/uapi/linux/perf_event.h
+@@ -372,7 +372,8 @@ struct perf_event_attr {
+ 				context_switch :  1, /* context switch data */
+ 				write_backward :  1, /* Write ring buffer from end to beginning */
+ 				namespaces     :  1, /* include namespaces data */
+-				__reserved_1   : 35;
++				ksymbol        :  1, /* include ksymbol events */
++				__reserved_1   : 34;
+ 
+ 	union {
+ 		__u32		wakeup_events;	  /* wakeup every n events */
+@@ -965,9 +966,32 @@ enum perf_event_type {
+ 	 */
+ 	PERF_RECORD_NAMESPACES			= 16,
+ 
++	/*
++	 * Record ksymbol register/unregister events:
++	 *
++	 * struct {
++	 *	struct perf_event_header	header;
++	 *	u64				addr;
++	 *	u32				len;
++	 *	u16				ksym_type;
++	 *	u16				flags;
++	 *	char				name[];
++	 *	struct sample_id		sample_id;
++	 * };
++	 */
++	PERF_RECORD_KSYMBOL			= 17,
++
+ 	PERF_RECORD_MAX,			/* non-ABI */
+ };
+ 
++enum perf_record_ksymbol_type {
++	PERF_RECORD_KSYMBOL_TYPE_UNKNOWN	= 0,
++	PERF_RECORD_KSYMBOL_TYPE_BPF		= 1,
++	PERF_RECORD_KSYMBOL_TYPE_MAX		/* non-ABI */
++};
++
++#define PERF_RECORD_KSYMBOL_FLAGS_UNREGISTER	(1 << 0)
++
+ #define PERF_MAX_STACK_DEPTH		127
+ #define PERF_MAX_CONTEXTS_PER_STACK	  8
+ 
+diff --git a/kernel/events/core.c b/kernel/events/core.c
+index 67ecac337374..dbcc90c79893 100644
+--- a/kernel/events/core.c
++++ b/kernel/events/core.c
+@@ -385,6 +385,7 @@ static atomic_t nr_namespaces_events __read_mostly;
+ static atomic_t nr_task_events __read_mostly;
+ static atomic_t nr_freq_events __read_mostly;
+ static atomic_t nr_switch_events __read_mostly;
++static atomic_t nr_ksymbol_events __read_mostly;
+ 
+ static LIST_HEAD(pmus);
+ static DEFINE_MUTEX(pmus_lock);
+@@ -4235,7 +4236,7 @@ static bool is_sb_event(struct perf_event *event)
+ 
+ 	if (attr->mmap || attr->mmap_data || attr->mmap2 ||
+ 	    attr->comm || attr->comm_exec ||
+-	    attr->task ||
++	    attr->task || attr->ksymbol ||
+ 	    attr->context_switch)
+ 		return true;
+ 	return false;
+@@ -4305,6 +4306,8 @@ static void unaccount_event(struct perf_event *event)
+ 		dec = true;
+ 	if (has_branch_stack(event))
+ 		dec = true;
++	if (event->attr.ksymbol)
++		atomic_dec(&nr_ksymbol_events);
+ 
+ 	if (dec) {
+ 		if (!atomic_add_unless(&perf_sched_count, -1, 1))
+@@ -7650,6 +7653,97 @@ static void perf_log_throttle(struct perf_event *event, int enable)
+ 	perf_output_end(&handle);
+ }
+ 
++/*
++ * ksymbol register/unregister tracking
++ */
++
++struct perf_ksymbol_event {
++	const char	*name;
++	int		name_len;
++	struct {
++		struct perf_event_header        header;
++		u64				addr;
++		u32				len;
++		u16				ksym_type;
++		u16				flags;
++	} event_id;
++};
++
++static int perf_event_ksymbol_match(struct perf_event *event)
 +{
-+       return console_trylock();
++	return event->attr.ksymbol;
 +}
 +
-+#endif
++static void perf_event_ksymbol_output(struct perf_event *event, void *data)
++{
++	struct perf_ksymbol_event *ksymbol_event = data;
++	struct perf_output_handle handle;
++	struct perf_sample_data sample;
++	int ret;
 +
- /*
-  * Call the console drivers, asking them to write out
-  * log_buf[start] to log_buf[end - 1].
++	if (!perf_event_ksymbol_match(event))
++		return;
++
++	perf_event_header__init_id(&ksymbol_event->event_id.header,
++				   &sample, event);
++	ret = perf_output_begin(&handle, event,
++				ksymbol_event->event_id.header.size);
++	if (ret)
++		return;
++
++	perf_output_put(&handle, ksymbol_event->event_id);
++	__output_copy(&handle, ksymbol_event->name, ksymbol_event->name_len);
++	perf_event__output_id_sample(event, &handle, &sample);
++
++	perf_output_end(&handle);
++}
++
++void perf_event_ksymbol(u16 ksym_type, u64 addr, u32 len, bool unregister,
++			perf_ksymbol_get_name_f get_name, void *data)
++{
++	struct perf_ksymbol_event ksymbol_event;
++	char name[KSYM_NAME_LEN];
++	u16 flags = 0;
++	int name_len;
++
++	if (!atomic_read(&nr_ksymbol_events))
++		return;
++
++	if (ksym_type >= PERF_RECORD_KSYMBOL_TYPE_MAX ||
++	    ksym_type == PERF_RECORD_KSYMBOL_TYPE_UNKNOWN)
++		goto err;
++
++	get_name(name, KSYM_NAME_LEN, data);
++	name_len = strlen(name) + 1;
++	while (!IS_ALIGNED(name_len, sizeof(u64)))
++		name[name_len++] = '\0';
++	BUILD_BUG_ON(KSYM_NAME_LEN % sizeof(u64));
++
++	if (unregister)
++		flags |= PERF_RECORD_KSYMBOL_FLAGS_UNREGISTER;
++
++	ksymbol_event = (struct perf_ksymbol_event){
++		.name = name,
++		.name_len = name_len,
++		.event_id = {
++			.header = {
++				.type = PERF_RECORD_KSYMBOL,
++				.size = sizeof(ksymbol_event.event_id) +
++					name_len,
++			},
++			.addr = addr,
++			.len = len,
++			.ksym_type = ksym_type,
++			.flags = flags,
++		},
++	};
++
++	perf_iterate_sb(perf_event_ksymbol_output, &ksymbol_event, NULL);
++	return;
++err:
++	WARN_ONCE(1, "%s: Invalid KSYMBOL type 0x%x\n", __func__, ksym_type);
++}
++
+ void perf_event_itrace_started(struct perf_event *event)
+ {
+ 	event->attach_state |= PERF_ATTACH_ITRACE;
+@@ -9900,6 +9994,8 @@ static void account_event(struct perf_event *event)
+ 		inc = true;
+ 	if (is_cgroup_event(event))
+ 		inc = true;
++	if (event->attr.ksymbol)
++		atomic_inc(&nr_ksymbol_events);
+ 
+ 	if (inc) {
+ 		/*
+-- 
+2.17.1
 
-
-So it never gets into the codepath where you try to avoid spinning.
-Right?
-
-Sebastian
