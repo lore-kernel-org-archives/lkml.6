@@ -2,90 +2,134 @@ Return-Path: <SRS0=RZO6=PX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1CA68C43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 03:38:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 25C90C43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 03:38:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DDCD42085A
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 03:38:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547523486;
-	bh=JUpAOUywM6hifFeXQvdLEgB0MWZVn/CHE2Ud6i3FjuQ=;
-	h=From:To:Cc:Subject:Date:List-ID:From;
-	b=2EZGHKTjmVtdLXyUM1ecBpwoILine+RL1lj1xi09XfvGBqerIfHMc+Cb2MCX4gnjd
-	 Xv+5MqjbgoXOUY1j+ddFNbDUDtKG0csygDPBepo886FTGKrivTkK1H3QdrN+Sn8QXU
-	 8CvBIoDNoYyUFRevE/ZxHT77N2PVES6HEOCFIdZE=
+	by mail.kernel.org (Postfix) with ESMTP id E59A720656
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 03:38:43 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="awiOEaaO"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727787AbfAODiE (ORCPT
+        id S1727888AbfAODil (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 14 Jan 2019 22:38:04 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43254 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726769AbfAODiE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 Jan 2019 22:38:04 -0500
-Received: from sol.localdomain (c-24-23-143-129.hsd1.ca.comcast.net [24.23.143.129])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 29DD920656;
-        Tue, 15 Jan 2019 03:38:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547523483;
-        bh=JUpAOUywM6hifFeXQvdLEgB0MWZVn/CHE2Ud6i3FjuQ=;
-        h=From:To:Cc:Subject:Date:From;
-        b=i20h1xODrYvzGHqe9qFAwY0GaNB5p0Vukq6JbX2Dboplk82/FrBgsviOe5mDz0DK5
-         GQ3UmrFOxK0Rgwt9Sy60P3wYbk9FLKjZ84hL6f2XfIiLuFGUdFkRjLKY8qQlaMiXb4
-         WiU6eb+Ab75eHvzoy7A3ArTmPrqFVtwbjE7f4Kp8=
-From:   Eric Biggers <ebiggers@kernel.org>
-To:     keyrings@vger.kernel.org, David Howells <dhowells@redhat.com>
-Cc:     Aaro Koskinen <aaro.koskinen@iki.fi>,
-        linux-fscrypt@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] KEYS: user: Align the payload buffer
-Date:   Mon, 14 Jan 2019 19:37:16 -0800
-Message-Id: <20190115033716.18380-1-ebiggers@kernel.org>
-X-Mailer: git-send-email 2.20.1
+        Mon, 14 Jan 2019 22:38:41 -0500
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:46533 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726769AbfAODil (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 14 Jan 2019 22:38:41 -0500
+Received: by mail-pf1-f196.google.com with SMTP id c73so610182pfe.13;
+        Mon, 14 Jan 2019 19:38:40 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
+         :user-agent;
+        bh=pbG8RCn3EcU3T71tJXbEuPRA6jWnrxO5wD15kUiK8zo=;
+        b=awiOEaaOqFx+cL/95bHzh9/HB/8ISynAokWTXyzyDP7+vQSfjvIrE7rrB+2CNzrFqM
+         tNB44eEUcILankjFyM3clLTYOhdihtAudVQghHapfeSSZ0LIKfY07czCv1acWllzVztS
+         eQ/cE/qF42KPtl+fsmhZqvMJBUpgGHtReKVv5HdSy8cCYwxbNqwT8HUZnHua7HSyk7a6
+         wDVZ3Xj5Gm+DrAjw/n4GZCh5PuLzu9G/GdgnLOnNhdKJmMTVb0OIKbPcS/Gbbij7QCbY
+         +ZksANMcjHaE5nLdMG4KWNPmClwNAyQtkCKUbITTnFRqM/JcVP78AINb5G499JuF8ixs
+         dNYw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=pbG8RCn3EcU3T71tJXbEuPRA6jWnrxO5wD15kUiK8zo=;
+        b=KCMrKINAmhY0OQdDHye+/UzOGYlbZWyCbTChuVfCk70hpwu8lQUPgblhtfUSP0bP7J
+         E0RPte6aixOQua3mGacKVtunrX4p68t8L6CJy9qj/Lm4Ut+MOwjblKVFrxQQttsM3hvv
+         e9hBck11VHAbvuMnYwzw/83paJimX81z+G+rYd/8dnW0huYkoZEjcD6gyVX9JM8InZAo
+         4Z9o9/HPyU85K2j+vFjAfTeRzhRIq7B+NYS3PU+Zz3QmoAQRoLNdQjg9cdBH72hnfXp9
+         qZxE9ri3Yz7tBf6NSpw1c+IT9jbRZfN27tEghjMx8f+8iBnxOw3+qksa90Rjgq62rjcG
+         An+Q==
+X-Gm-Message-State: AJcUukfgGFwjp6B/j7iNkYRnFe6156pwxz732bTmuO42SmmyMzLAiUkq
+        5DRfsDJJUw3kh26ltGQqw4A=
+X-Google-Smtp-Source: ALg8bN7rLZucp7Lcg9Q7fWuNYdmNA/ZLePw6UTauS/xA8JJ1sV0WFCElL+WUSORxOubItackmmJlrQ==
+X-Received: by 2002:a63:da14:: with SMTP id c20mr1755173pgh.233.1547523519813;
+        Mon, 14 Jan 2019 19:38:39 -0800 (PST)
+Received: from dtor-ws ([2620:15c:202:201:3adc:b08c:7acc:b325])
+        by smtp.gmail.com with ESMTPSA id j21sm2128457pfn.175.2019.01.14.19.38.38
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 14 Jan 2019 19:38:38 -0800 (PST)
+Date:   Mon, 14 Jan 2019 19:38:36 -0800
+From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To:     Mika Westerberg <mika.westerberg@linux.intel.com>
+Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Guenter Roeck <linux@roeck-us.net>, linux-gpio@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] pinctrl: cherryview: fix Strago DMI workaround
+Message-ID: <20190115033836.GA150475@dtor-ws>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Eric Biggers <ebiggers@google.com>
+Well, hopefully 3rd time is a charm. We tried making that check
+DMI_BIOS_VERSION and DMI_BOARD_VERSION, but the real one is
+DMI_PRODUCT_VERSION.
 
-Align the payload of "user" and "logon" keys so that users of the
-keyrings service can access it as a struct that requires more than
-2-byte alignment.  fscrypt currently does this which results in the read
-of fscrypt_key::size being misaligned as it needs 4-byte alignment.
-
-Align to __alignof__(u64) rather than __alignof__(long) since in the
-future it's conceivable that people would use structs beginning with
-u64, which on some platforms would require more than 'long' alignment.
-
-Reported-by: Aaro Koskinen <aaro.koskinen@iki.fi>
-Fixes: 2aa349f6e37c ("[PATCH] Keys: Export user-defined keyring operations")
-Fixes: 88bd6ccdcdd6 ("ext4 crypto: add encryption key management facilities")
+Fixes: 86c5dd6860a6 ("pinctrl: cherryview: limit Strago DMI workarounds to version 1.0")
+Bugzilla: https://bugzilla.kernel.org/show_bug.cgi?id=197953
+Bugzilla: https://bugzilla.redhat.com/show_bug.cgi?id=1631930
 Cc: stable@vger.kernel.org
-Signed-off-by: Eric Biggers <ebiggers@google.com>
+Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 ---
- include/keys/user-type.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/pinctrl/intel/pinctrl-cherryview.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/include/keys/user-type.h b/include/keys/user-type.h
-index e098cbe27db54..12babe9915944 100644
---- a/include/keys/user-type.h
-+++ b/include/keys/user-type.h
-@@ -31,7 +31,7 @@
- struct user_key_payload {
- 	struct rcu_head	rcu;		/* RCU destructor */
- 	unsigned short	datalen;	/* length of this data */
--	char		data[0];	/* actual data */
-+	char		data[0] __aligned(__alignof__(u64)); /* actual data */
- };
- 
- extern struct key_type key_type_user;
+diff --git a/drivers/pinctrl/intel/pinctrl-cherryview.c b/drivers/pinctrl/intel/pinctrl-cherryview.c
+index 9b0f4b9ef482..8efe8ea45602 100644
+--- a/drivers/pinctrl/intel/pinctrl-cherryview.c
++++ b/drivers/pinctrl/intel/pinctrl-cherryview.c
+@@ -1507,7 +1507,7 @@ static const struct dmi_system_id chv_no_valid_mask[] = {
+ 		.matches = {
+ 			DMI_MATCH(DMI_SYS_VENDOR, "GOOGLE"),
+ 			DMI_MATCH(DMI_PRODUCT_FAMILY, "Intel_Strago"),
+-			DMI_MATCH(DMI_BOARD_VERSION, "1.0"),
++			DMI_MATCH(DMI_PRODUCT_VERSION, "1.0"),
+ 		},
+ 	},
+ 	{
+@@ -1515,7 +1515,7 @@ static const struct dmi_system_id chv_no_valid_mask[] = {
+ 		.matches = {
+ 			DMI_MATCH(DMI_SYS_VENDOR, "HP"),
+ 			DMI_MATCH(DMI_PRODUCT_NAME, "Setzer"),
+-			DMI_MATCH(DMI_BOARD_VERSION, "1.0"),
++			DMI_MATCH(DMI_PRODUCT_VERSION, "1.0"),
+ 		},
+ 	},
+ 	{
+@@ -1523,7 +1523,7 @@ static const struct dmi_system_id chv_no_valid_mask[] = {
+ 		.matches = {
+ 			DMI_MATCH(DMI_SYS_VENDOR, "GOOGLE"),
+ 			DMI_MATCH(DMI_PRODUCT_NAME, "Cyan"),
+-			DMI_MATCH(DMI_BOARD_VERSION, "1.0"),
++			DMI_MATCH(DMI_PRODUCT_VERSION, "1.0"),
+ 		},
+ 	},
+ 	{
+@@ -1531,7 +1531,7 @@ static const struct dmi_system_id chv_no_valid_mask[] = {
+ 		.matches = {
+ 			DMI_MATCH(DMI_SYS_VENDOR, "GOOGLE"),
+ 			DMI_MATCH(DMI_PRODUCT_NAME, "Celes"),
+-			DMI_MATCH(DMI_BOARD_VERSION, "1.0"),
++			DMI_MATCH(DMI_PRODUCT_VERSION, "1.0"),
+ 		},
+ 	},
+ 	{}
 -- 
-2.20.1
+2.20.1.97.g81188d93c3-goog
 
+
+-- 
+Dmitry
