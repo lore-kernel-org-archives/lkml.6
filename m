@@ -2,119 +2,122 @@ Return-Path: <SRS0=RZO6=PX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DDDEBC43444
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 12:50:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C543EC43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 12:54:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BA43520656
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 12:50:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9524420656
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 12:54:07 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="OySq//We"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728822AbfAOMux (ORCPT
+        id S1728995AbfAOMyF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 15 Jan 2019 07:50:53 -0500
-Received: from outbound-smtp25.blacknight.com ([81.17.249.193]:37306 "EHLO
-        outbound-smtp25.blacknight.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728181AbfAOMuw (ORCPT
+        Tue, 15 Jan 2019 07:54:05 -0500
+Received: from mail-lf1-f50.google.com ([209.85.167.50]:43070 "EHLO
+        mail-lf1-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728181AbfAOMyF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Jan 2019 07:50:52 -0500
-Received: from mail.blacknight.com (pemlinmail01.blacknight.ie [81.17.254.10])
-        by outbound-smtp25.blacknight.com (Postfix) with ESMTPS id 15889B870F
-        for <linux-kernel@vger.kernel.org>; Tue, 15 Jan 2019 12:50:50 +0000 (GMT)
-Received: (qmail 3612 invoked from network); 15 Jan 2019 12:50:50 -0000
-Received: from unknown (HELO techsingularity.net) (mgorman@techsingularity.net@[37.228.229.96])
-  by 81.17.254.9 with ESMTPSA (AES256-SHA encrypted, authenticated); 15 Jan 2019 12:50:49 -0000
-Date:   Tue, 15 Jan 2019 12:50:45 +0000
-From:   Mel Gorman <mgorman@techsingularity.net>
-To:     Vlastimil Babka <vbabka@suse.cz>
-Cc:     Linux-MM <linux-mm@kvack.org>,
-        David Rientjes <rientjes@google.com>,
-        Andrea Arcangeli <aarcange@redhat.com>, ying.huang@intel.com,
-        kirill@shutemov.name, Andrew Morton <akpm@linux-foundation.org>,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 06/25] mm, compaction: Skip pageblocks with reserved pages
-Message-ID: <20190115125045.GA27437@techsingularity.net>
-References: <20190104125011.16071-1-mgorman@techsingularity.net>
- <20190104125011.16071-7-mgorman@techsingularity.net>
- <657ee6fc-48df-59ab-70b7-6066513e3b22@suse.cz>
+        Tue, 15 Jan 2019 07:54:05 -0500
+Received: by mail-lf1-f50.google.com with SMTP id u18so1924233lff.10
+        for <linux-kernel@vger.kernel.org>; Tue, 15 Jan 2019 04:54:04 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=C3HLSwkiKa59wFB4FckuMcj1IpI//0uh6c763fmVa98=;
+        b=OySq//WewiKOWOlkpKnUSOvtv6pBGpjDlYxQCj3kkHQHGf+c1Zu0XVqW3DUTdGBLFo
+         vDm5yFKdyiIeiWYschEEpCKRLs36zqwjHknAXhiqQHwxqFwPOaxUPYNEkUUj4GvoOBNS
+         VdZWdzSkmNISQvEK6vgPx8TsPpKdv6CgYPLY8=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=C3HLSwkiKa59wFB4FckuMcj1IpI//0uh6c763fmVa98=;
+        b=pzqhkEoNL3W8dLmgKX3Eql0Nr8pQ00dLeXEdJdIe+KFBApIjTefI325N5bfAdRzHFR
+         j/wKQO1XNz/6mL83B1Uq1jXQTnY3jRYbrjyR4BP7qAx5/ar5Rxfdx4FBI49Wredf0/cG
+         FJP0QIqsUxE4O3men2q4d1A4VXO5qYRWlkuhcNgrpI/OhNKrdy3d1VjSoDOHqmgVws5D
+         ch7ULHd3hh5Xd+s4Ej8VX+gzoRpA7s3wfOpJHne5M8vkUQuM3Tu3VzOK7N5ulqhalAY/
+         452yNgxx3vUtkQnjY5s5LCYSmOvT4JqdS8wJkyAjRE0z3pJXQXA5EQ/pJvVL/TEq8hkP
+         9AIA==
+X-Gm-Message-State: AJcUukfSz8sIz70ktjAhwwve2oX4rr7SKzuGXKwcS65xpnvGAHfLiKio
+        6/ed2mDnqiV8a/EULG07GlUN5LRbdCrFwO1GwzjVaA==
+X-Google-Smtp-Source: ALg8bN4F0pTxOXgSrWK6OtOouC7GP5NYLZvHsaYvJO9cqEYaHzX2930vqJNAd+LagxXlEacf39b0QrIs49PzCOIBPDU=
+X-Received: by 2002:a19:5154:: with SMTP id f81mr2854868lfb.96.1547556843081;
+ Tue, 15 Jan 2019 04:54:03 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-15
-Content-Disposition: inline
-In-Reply-To: <657ee6fc-48df-59ab-70b7-6066513e3b22@suse.cz>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <5c3d0781.1c69fb81.8f009.0d7e@mx.google.com>
+In-Reply-To: <5c3d0781.1c69fb81.8f009.0d7e@mx.google.com>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Tue, 15 Jan 2019 13:53:51 +0100
+Message-ID: <CACRpkdY5ipcZqujGXJN9hcNYA+3WvknaQH0syYDb3YrrrgkgCg@mail.gmail.com>
+Subject: Re: broonie-regulator/for-next boot bisection: v5.0-rc2-20-g61b67608c6b9
+ on meson-gxl-s905x-libretech-cc
+To:     "kernelci.org bot" <bot@kernelci.org>,
+        Neil Armstrong <narmstrong@baylibre.com>
+Cc:     Mark Brown <broonie@kernel.org>,
+        Tomeu Vizoso <tomeu.vizoso@collabora.com>,
+        guillaume.tucker@collabora.com,
+        Kevin Hilman <khilman@baylibre.com>,
+        Haojian Zhuang <haojian.zhuang@gmail.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Philipp Zabel <philipp.zabel@gmail.com>,
+        Paul Parsons <lost.distance@yahoo.com>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 15, 2019 at 01:10:57PM +0100, Vlastimil Babka wrote:
-> On 1/4/19 1:49 PM, Mel Gorman wrote:
-> > Reserved pages are set at boot time, tend to be clustered and almost never
-> > become unreserved. When isolating pages for either migration sources or
-> > target, skip the entire pageblock is one PageReserved page is encountered
-> > on the grounds that it is highly probable the entire pageblock is reserved.
-> > 
-> > The performance impact is relative to the number of reserved pages in
-> > the system and their location so it'll be variable but intuitively it
-> > should make sense. If the memblock allocator was ever changed to spread
-> > reserved pages throughout the address space then this patch would be
-> > impaired but it would also be considered a bug given that such a change
-> > would ruin fragmentation.
-> > 
-> > On both 1-socket and 2-socket machines, scan rates are reduced slightly
-> > on workloads that intensively allocate THP while the system is fragmented.
-> > 
-> > Signed-off-by: Mel Gorman <mgorman@techsingularity.net>
-> > ---
-> >  mm/compaction.c | 16 ++++++++++++++++
-> >  1 file changed, 16 insertions(+)
-> > 
-> > diff --git a/mm/compaction.c b/mm/compaction.c
-> > index 3afa4e9188b6..94d1e5b062ea 100644
-> > --- a/mm/compaction.c
-> > +++ b/mm/compaction.c
-> > @@ -484,6 +484,15 @@ static unsigned long isolate_freepages_block(struct compact_control *cc,
-> >  			goto isolate_fail;
-> >  		}
-> >  
-> > +		/*
-> > +		 * A reserved page is never freed and tend to be clustered in
-> > +		 * the same pageblock. Skip the block.
-> > +		 */
-> > +		if (PageReserved(page)) {
-> > +			blockpfn = end_pfn;
-> > +			break;
-> > +		}
-> > +
-> >  		if (!PageBuddy(page))
-> >  			goto isolate_fail;
-> >  
-> > @@ -827,6 +836,13 @@ isolate_migratepages_block(struct compact_control *cc, unsigned long low_pfn,
-> >  					goto isolate_success;
-> >  			}
-> >  
-> > +			/*
-> > +			 * A reserved page is never freed and tend to be
-> > +			 * clustered in the same pageblocks. Skip the block.
-> 
-> AFAICS memory allocator is not the only user of PageReserved. There
-> seems to be some drivers as well, notably the DRM subsystem via
-> drm_pci_alloc(). There's an effort to clean those up [1] but until then,
-> there might be some false positives here.
-> 
-> [1] https://marc.info/?l=linux-mm&m=154747078617898&w=2
-> 
+Thanks for this pretty impressive automated report!
 
-Hmm, I'm tempted to leave this anyway. The reservations for PCI space are
-likely to be persistent and I also do not expect them to grow much. While
-I consider it to be partially abuse to use PageReserved like this, it
-should get cleaned up slowly over time. If this turns out to be wrong,
-I'll attempt to fix the responsible driver that is scattering
-PageReserved around the place and at worst, revert this if it turns out
-to be a major problem in practice. Any objections?
+Maybe it will be hard to ask a robot to test changes! :D
 
--- 
-Mel Gorman
-SUSE Labs
+On Mon, Jan 14, 2019 at 11:04 PM kernelci.org bot <bot@kernelci.org> wrote:
+
+>   Target:     meson-gxl-s905x-libretech-cc
+
+I hope there is someone else with this board on CC since I don't
+know how to ask the robot to test patches.
+
+The log from the robot isn't super helpful as it does not have
+earlyprintk enabled and boot hangs before it gets to that (!)
+so no console messages.
+
+So I suppose this is:
+arch/arm64/boot/dts/amlogic/meson-gxl-s905x-libretech-cc.dts
+a pure device tree plattform which was added by Neil, so I hope
+he can test patches.
+
+And that has only one GPIO regulator, this one:
+
+        vcc_card: regulator-vcc-card {
+                compatible = "regulator-gpio";
+
+                regulator-name = "VCC_CARD";
+                regulator-min-microvolt = <1800000>;
+                regulator-max-microvolt = <3300000>;
+
+                gpios = <&gpio_ao GPIOAO_3 GPIO_ACTIVE_HIGH>;
+                gpios-states = <0>;
+
+                states = <3300000 0>,
+                         <1800000 1>;
+
+                regulator-settling-time-up-us = <200>;
+                regulator-settling-time-down-us = <50000>;
+        };
+
+Meaning this is 3.3 V when that GPIO line is low, and 1.8V when that
+line is high, correct?
+
+That controls the VCC. This surely wouldn't block the boot process.
+So my code must be crashing completely. OK I will look closer at it
+and try to create a mock system of some sort.
+
+Yours,
+Linus Walleij
