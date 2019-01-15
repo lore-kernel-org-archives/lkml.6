@@ -2,87 +2,150 @@ Return-Path: <SRS0=RZO6=PX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 87B75C43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 17:00:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D5A39C43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 17:00:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 57F5F20645
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 17:00:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A28FD20645
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 17:00:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1547571617;
+	bh=GiFshpnC1fZn4vDbg8qQclj/fozrXzgtL8o9MIRTDMc=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=xqdt0GHUvUSVpE0JrpRUMmhVugHCKjT5TzlAF0/9njyL3xDL5W0BUM9yzCKQ/HBrp
+	 g7XWIbjcLb64vkQb0EOy9oOP+c6WLpqwZNBs9C3DIOzKrdxZdsNfZTkd0zSBpLsSCG
+	 YTciOcwdlVDCJQklYjNB5H8dg45edAIlNxXf2FRo=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731644AbfAORAM (ORCPT
+        id S1731570AbfAORAQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 15 Jan 2019 12:00:12 -0500
-Received: from relay.sw.ru ([185.231.240.75]:52284 "EHLO relay.sw.ru"
+        Tue, 15 Jan 2019 12:00:16 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54596 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732121AbfAOQij (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1732147AbfAOQij (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 15 Jan 2019 11:38:39 -0500
-Received: from [172.16.25.169]
-        by relay.sw.ru with esmtp (Exim 4.91)
-        (envelope-from <ktkhai@virtuozzo.com>)
-        id 1gjRjY-0004Ms-Ge; Tue, 15 Jan 2019 19:38:36 +0300
-Subject: Re: [PATCH 2/2] fuse: Replace page without copying in
- fuse_writepage_in_flight()
-To:     Miklos Szeredi <miklos@szeredi.hu>
-Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <154322517208.18737.3297786654135648324.stgit@localhost.localdomain>
- <154322557765.18737.14337090699283695815.stgit@localhost.localdomain>
- <CAJfpegvKxJ06hfXR5yxWkdz0GzTw7vR2x8E5bjdO1df1J1C54w@mail.gmail.com>
- <30c6d750-01b1-fb7e-eb80-0f60f242974a@virtuozzo.com>
- <CAJfpeguXy_Eebok9z_FCGvjGM8_qHHyTqsTMFeaJbmrW12kqYA@mail.gmail.com>
-From:   Kirill Tkhai <ktkhai@virtuozzo.com>
-Message-ID: <1cf4d11f-224f-ca0c-55cb-01754d429fe1@virtuozzo.com>
-Date:   Tue, 15 Jan 2019 19:38:35 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id B46CE20873;
+        Tue, 15 Jan 2019 16:38:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1547570318;
+        bh=GiFshpnC1fZn4vDbg8qQclj/fozrXzgtL8o9MIRTDMc=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=0rvBo3E+EOkQOwSXtQn3DBhPvSXhlNB0h+WnV2kGjmSMIAfeN3Dpv25+NYHvTrj17
+         A3n+pBb0mR40dsuhG9133H5ZbsVm+reueiiGmr771Me/2E9zgwmitHyHd1m+yOT637
+         jpyDREg13DsnRZsIzVZukC0xK50sNRdC3LzcldN0=
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Hans de Goede <hdegoede@redhat.com>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
+Subject: [PATCH 4.4 47/51] ACPI: power: Skip duplicate power resource references in _PRx
+Date:   Tue, 15 Jan 2019 17:35:43 +0100
+Message-Id: <20190115154853.854854772@linuxfoundation.org>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20190115154846.928796000@linuxfoundation.org>
+References: <20190115154846.928796000@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
+X-Patchwork-Hint: ignore
 MIME-Version: 1.0
-In-Reply-To: <CAJfpeguXy_Eebok9z_FCGvjGM8_qHHyTqsTMFeaJbmrW12kqYA@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 15.01.2019 19:36, Miklos Szeredi wrote:
-> On Tue, Jan 15, 2019 at 5:14 PM Kirill Tkhai <ktkhai@virtuozzo.com> wrote:
->>
->> On 15.01.2019 18:39, Miklos Szeredi wrote:
->>> On Mon, Nov 26, 2018 at 10:46 AM Kirill Tkhai <ktkhai@virtuozzo.com> wrote:
->>>>
->>>> It looks like we can optimize old_req page replacement
->>>> and avoid copying by simple updating the request's page.
->>>>
->>>> Signed-off-by: Kirill Tkhai <ktkhai@virtuozzo.com>
->>>> ---
->>>>  fs/fuse/file.c |    2 +-
->>>>  1 file changed, 1 insertion(+), 1 deletion(-)
->>>>
->>>> diff --git a/fs/fuse/file.c b/fs/fuse/file.c
->>>> index c6650c68b31a..83b54b082c86 100644
->>>> --- a/fs/fuse/file.c
->>>> +++ b/fs/fuse/file.c
->>>> @@ -1778,7 +1778,7 @@ static bool fuse_writepage_in_flight(struct fuse_req *new_req,
->>>>         if (old_req->num_pages == 1 && old_req != first_req) {
->>>>                 struct backing_dev_info *bdi = inode_to_bdi(page->mapping->host);
->>>>
->>>> -               copy_highpage(old_req->pages[0], page);
->>>> +               swap(old_req->pages[0], page);
->>>
->>> This would mess up refcounting for all pages involved.   need to swap
->>> with the temp page in new_req.    Fixed version in #for-next.
->>
->> You are sure, page is just a simple pointer, not struct **page.
->> Then we would have had to change fuse_writepage_in_flight() to use ** pointer.
-> 
-> Using a struct page** would still have been broken, not because of
-> refcounting, but because of putting the wrong page into the request
-> (we do the temporary copy to avoid some issues with adding the page
-> cache page directly into the request)
+4.4-stable review patch.  If anyone has any objections, please let me know.
 
-Ok, thanks for the explanation.
+------------------
 
-Kirill
+From: Hans de Goede <hdegoede@redhat.com>
+
+commit 7d7b467cb95bf29597b417d4990160d4ea6d69b9 upstream.
+
+Some ACPI tables contain duplicate power resource references like this:
+
+        Name (_PR0, Package (0x04)  // _PR0: Power Resources for D0
+        {
+            P28P,
+            P18P,
+            P18P,
+            CLK4
+        })
+
+This causes a WARN_ON in sysfs_add_link_to_group() because we end up
+adding a link to the same acpi_device twice:
+
+sysfs: cannot create duplicate filename '/devices/LNXSYSTM:00/LNXSYBUS:00/PNP0A08:00/808622C1:00/OVTI2680:00/power_resources_D0/LNXPOWER:0a'
+CPU: 0 PID: 1 Comm: swapper/0 Not tainted 4.19.12-301.fc29.x86_64 #1
+Hardware name: Insyde CherryTrail/Type2 - Board Product Name, BIOS jumperx.T87.KFBNEEA02 04/13/2016
+Call Trace:
+ dump_stack+0x5c/0x80
+ sysfs_warn_dup.cold.3+0x17/0x2a
+ sysfs_do_create_link_sd.isra.2+0xa9/0xb0
+ sysfs_add_link_to_group+0x30/0x50
+ acpi_power_expose_list+0x74/0xa0
+ acpi_power_add_remove_device+0x50/0xa0
+ acpi_add_single_object+0x26b/0x5f0
+ acpi_bus_check_add+0xc4/0x250
+ ...
+
+To address this issue, make acpi_extract_power_resources() check for
+duplicates and simply skip them when found.
+
+Cc: All applicable <stable@vger.kernel.org>
+Signed-off-by: Hans de Goede <hdegoede@redhat.com>
+[ rjw: Subject & changelog, comments ]
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
+---
+ drivers/acpi/power.c |   22 ++++++++++++++++++++++
+ 1 file changed, 22 insertions(+)
+
+--- a/drivers/acpi/power.c
++++ b/drivers/acpi/power.c
+@@ -131,6 +131,23 @@ void acpi_power_resources_list_free(stru
+ 	}
+ }
+ 
++static bool acpi_power_resource_is_dup(union acpi_object *package,
++				       unsigned int start, unsigned int i)
++{
++	acpi_handle rhandle, dup;
++	unsigned int j;
++
++	/* The caller is expected to check the package element types */
++	rhandle = package->package.elements[i].reference.handle;
++	for (j = start; j < i; j++) {
++		dup = package->package.elements[j].reference.handle;
++		if (dup == rhandle)
++			return true;
++	}
++
++	return false;
++}
++
+ int acpi_extract_power_resources(union acpi_object *package, unsigned int start,
+ 				 struct list_head *list)
+ {
+@@ -150,6 +167,11 @@ int acpi_extract_power_resources(union a
+ 			err = -ENODEV;
+ 			break;
+ 		}
++
++		/* Some ACPI tables contain duplicate power resource references */
++		if (acpi_power_resource_is_dup(package, start, i))
++			continue;
++
+ 		err = acpi_add_power_resource(rhandle);
+ 		if (err)
+ 			break;
+
+
