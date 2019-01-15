@@ -2,149 +2,138 @@ Return-Path: <SRS0=RZO6=PX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ECBD9C43612
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 23:09:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 163CCC43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 23:10:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BDDBD20866
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 23:09:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D372A20866
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 23:10:22 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GcxMlgXv"
+	dkim=pass (1024-bit key) header.d=alien8.de header.i=@alien8.de header.b="EqTHHWjb"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390221AbfAOXJm (ORCPT
+        id S2403769AbfAOXKV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 15 Jan 2019 18:09:42 -0500
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:45550 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729436AbfAOXJl (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Jan 2019 18:09:41 -0500
-Received: by mail-pf1-f195.google.com with SMTP id g62so2019470pfd.12;
-        Tue, 15 Jan 2019 15:09:41 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=2713uGBszd3dEaGPmjaNVa1+AJ8H/PlaoGwKqkrQuSg=;
-        b=GcxMlgXvGiHGUhr3bGfeTWWPo2BNigxeR+nKbnwJPF8rRBGhHFGW6vKPyNBVfHJABj
-         OPU1DfnF5p/wlQOrMSpQv2v0OApYSFs/1XRRHJ/rlvdgLQZCGJmwRJesClj9Pii7PJSS
-         DX+6zr7XZMS/XIletiCGnimfZRY+wDwHT/6Gq4Llu6v3tgGl8/Ir2OV7EUBecvFVyk5b
-         X/BOb9RPO6oiWiBAhKHrGGuEgAgtEUl3gu2gM+f4PwemoBKirVSUcO1Ekj30hK/nqznp
-         Bfzh1cNJv++1f3xhYaLGFCzo5S3vdTgUQ7w4JjBKjPN6EdZovzORMllQGg8Bhtlf/zBC
-         pF3Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=2713uGBszd3dEaGPmjaNVa1+AJ8H/PlaoGwKqkrQuSg=;
-        b=VHr+lktPLXJPrsW3/6t+bKNwqA49qV1atXsF23cVIQNu0+iAeP7PSIT10NaP0aVoU1
-         TXD/kUL1KrYQDXKD97zgkd0Oy7FYAOLYNtnG+zi/bpowMdA7LR0NbdveJJ6mrZH8vvxB
-         jOwGFlNlAhO1p/IkH5pmHKdash/s+8MaV8RZSQQlzGNbNxbcF9wMlfi11jWg2cBBhWE9
-         ByJ15WHbyIzH9husp3oUkMBLViVrCVXGo1hMrkvPCQtqRf7wGMLRPwAkjn2dLcP7hDfw
-         OQcd+qke8jJ2XzfQlBJlR3GBh01DHH2rYceuibmhlAwaiEapdRv5w0Aq7QznrGeZ2FTe
-         nRsw==
-X-Gm-Message-State: AJcUukdpSQLkaaY5f7DQ8SJfQFu0xSoKoYBsslGb5IEIWHPnI/9Nkedu
-        q2lgDeO4uAWuqUWq5tctHudYUsFJ
-X-Google-Smtp-Source: ALg8bN6bmZ0JYRCrv46r7CA6dFCR2MRwf+Ovpq1CTKipnPogcbeA9whkPrIbzrPFzI8X+Up+shwt/Q==
-X-Received: by 2002:a62:9fcf:: with SMTP id v76mr1067769pfk.144.1547593779984;
-        Tue, 15 Jan 2019 15:09:39 -0800 (PST)
-Received: from fainelli-desktop.igp.broadcom.net ([192.19.223.250])
-        by smtp.gmail.com with ESMTPSA id s130sm5682434pgc.60.2019.01.15.15.09.38
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 15 Jan 2019 15:09:39 -0800 (PST)
-From:   Florian Fainelli <f.fainelli@gmail.com>
-To:     netdev@vger.kernel.org
-Cc:     Florian Fainelli <f.fainelli@gmail.com>,
-        Andrew Lunn <andrew@lunn.ch>,
-        Heiner Kallweit <hkallweit1@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH net-next] net: phy: Add helpers to determine if PHY driver is generic
-Date:   Tue, 15 Jan 2019 15:09:35 -0800
-Message-Id: <20190115230936.28890-1-f.fainelli@gmail.com>
-X-Mailer: git-send-email 2.17.1
+        Tue, 15 Jan 2019 18:10:21 -0500
+Received: from mail.skyhub.de ([5.9.137.197]:40386 "EHLO mail.skyhub.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728858AbfAOXKU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 Jan 2019 18:10:20 -0500
+Received: from zn.tnic (p200300EC2BCBB400BDE8DF251329FBA0.dip0.t-ipconnect.de [IPv6:2003:ec:2bcb:b400:bde8:df25:1329:fba0])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 3E72D1EC078A;
+        Wed, 16 Jan 2019 00:10:19 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
+        t=1547593819;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
+        bh=k1koKEKrTYjaI/KXHMa/+DVMU50seZGxyRktv/1YJ1w=;
+        b=EqTHHWjbvFPs7N80hJ4TCK8AEEtKM5cLyq7V8b+7JGragmDQaLj4HZ77S65KWeKwsgXYHU
+        rhYiYm3In7HLuvqFeLulbmuKwO8FHPpcEcBJYeUzIJKjtiWxhz56/yEVFkMyLgs3hxrkBn
+        Nw86O+ufNtEdKcKiSBJlUXsdC9zON0Q=
+Date:   Wed, 16 Jan 2019 00:10:05 +0100
+From:   Borislav Petkov <bp@alien8.de>
+To:     Kairui Song <kasong@redhat.com>
+Cc:     linux-kernel@vger.kernel.org, tglx@linutronix.de, mingo@redhat.com,
+        hpa@zytor.com, x86@kernel.org, dyoung@redhat.com, bhe@redhat.com,
+        kexec@lists.infradead.org, akpm@linux-foundation.org,
+        robert.moore@intel.com, erik.schmauss@intel.com,
+        rafael.j.wysocki@intel.com, lenb@kernel.org
+Subject: Re: [PATCH v2 2/2] x86, kexec_file_load: make it work with
+ efi=noruntime or efi=old_map
+Message-ID: <20190115231005.GF6596@zn.tnic>
+References: <20190115095834.22617-1-kasong@redhat.com>
+ <20190115095834.22617-3-kasong@redhat.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20190115095834.22617-3-kasong@redhat.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-We are already checking in phy_detach() that the PHY driver is of
-generic kind (1G or 10G) and we are going to make use of that in the SFP
-layer as well for 1000BaseT SFP modules, so expose helper functions to
-return that information.
+On Tue, Jan 15, 2019 at 05:58:34PM +0800, Kairui Song wrote:
+> When efi=noruntime or efi=oldmap is used, EFI services won't be available
+> in the second kernel, therefore the second kernel will not be able to get
+> the ACPI RSDP address from firmware by calling EFI services and won't
+> boot. Previously we are expecting the user to set the acpi_rsdp=<addr>
+> on kernel command line for second kernel as there was no way to pass RSDP
+> address to second kernel.
+> 
+> After commit e6e094e053af ('x86/acpi, x86/boot: Take RSDP address from
+> boot params if available'), now it's possible to set an acpi_rsdp_addr
+> parameter in the boot_params passed to second kernel, this commit make
+> use of it, detect and set the RSDP address when it's required for second
+> kernel to boot.
+> 
+> Tested with an EFI enabled KVM VM with efi=noruntime.
+> 
+> Suggested-by: Dave Young <dyoung@redhat.com>
+> Signed-off-by: Kairui Song <kasong@redhat.com>
+> ---
+>  arch/x86/kernel/kexec-bzimage64.c | 21 +++++++++++++++++++++
+>  drivers/acpi/acpica/tbxfroot.c    |  3 +--
+>  include/acpi/acpixf.h             |  2 +-
+>  3 files changed, 23 insertions(+), 3 deletions(-)
+> 
+> diff --git a/arch/x86/kernel/kexec-bzimage64.c b/arch/x86/kernel/kexec-bzimage64.c
+> index 53917a3ebf94..0a90dcbd041f 100644
+> --- a/arch/x86/kernel/kexec-bzimage64.c
+> +++ b/arch/x86/kernel/kexec-bzimage64.c
+> @@ -20,6 +20,7 @@
+>  #include <linux/mm.h>
+>  #include <linux/efi.h>
+>  #include <linux/verification.h>
+> +#include <linux/acpi.h>
+>  
+>  #include <asm/bootparam.h>
+>  #include <asm/setup.h>
+> @@ -255,8 +256,28 @@ setup_boot_parameters(struct kimage *image, struct boot_params *params,
+>  	/* Setup EFI state */
+>  	setup_efi_state(params, params_load_addr, efi_map_offset, efi_map_sz,
+>  			efi_setup_data_offset);
+> +
+> +#ifdef CONFIG_ACPI
+> +	/* Setup ACPI RSDP pointer in case EFI is not available in second kernel */
+> +	if (!acpi_disabled && (!efi_enabled(EFI_RUNTIME_SERVICES) || efi_enabled(EFI_OLD_MEMMAP))) {
+> +		/* Copied from acpi_os_get_root_pointer accordingly */
+> +		params->acpi_rsdp_addr = boot_params.acpi_rsdp_addr;
+> +		if (!params->acpi_rsdp_addr) {
+> +			if (efi_enabled(EFI_CONFIG_TABLES)) {
+> +				if (efi.acpi20 != EFI_INVALID_TABLE_ADDR)
+> +					params->acpi_rsdp_addr = efi.acpi20;
+> +				else if (efi.acpi != EFI_INVALID_TABLE_ADDR)
+> +					params->acpi_rsdp_addr = efi.acpi;
+> +			} else if (IS_ENABLED(CONFIG_ACPI_LEGACY_TABLES_LOOKUP)) {
+> +				acpi_find_root_pointer(&params->acpi_rsdp_addr);
+> +			}
+> +		}
+> +		if (!params->acpi_rsdp_addr)
+> +			pr_warn("RSDP is not available for second kernel\n");
+> +	}
+>  #endif
 
-Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
----
- drivers/net/phy/phy_device.c | 34 ++++++++++++++++++++++++++++++++--
- include/linux/phy.h          |  3 +++
- 2 files changed, 35 insertions(+), 2 deletions(-)
+Amazing the amount of ACPI RDSP parsing and fiddling patches flying
+around these days...
 
-diff --git a/drivers/net/phy/phy_device.c b/drivers/net/phy/phy_device.c
-index 51990002d495..14f148c2b9ea 100644
---- a/drivers/net/phy/phy_device.c
-+++ b/drivers/net/phy/phy_device.c
-@@ -1279,6 +1279,36 @@ struct phy_device *phy_attach(struct net_device *dev, const char *bus_id,
- }
- EXPORT_SYMBOL(phy_attach);
- 
-+static bool phy_driver_is_genphy_kind(struct phy_device *phydev,
-+				      struct device_driver *driver)
-+{
-+	struct device *d = &phydev->mdio.dev;
-+	bool ret = false;
-+
-+	if (!phydev->drv)
-+		return ret;
-+
-+	get_device(d);
-+	ret = d->driver == driver;
-+	put_device(d);
-+
-+	return ret;
-+}
-+
-+bool phy_driver_is_genphy(struct phy_device *phydev)
-+{
-+	return phy_driver_is_genphy_kind(phydev,
-+					 &genphy_driver.mdiodrv.driver);
-+}
-+EXPORT_SYMBOL_GPL(phy_driver_is_genphy);
-+
-+bool phy_driver_is_genphy_10g(struct phy_device *phydev)
-+{
-+	return phy_driver_is_genphy_kind(phydev,
-+					 &genphy_10g_driver.mdiodrv.driver);
-+}
-+EXPORT_SYMBOL_GPL(phy_driver_is_genphy_10g);
-+
- /**
-  * phy_detach - detach a PHY device from its network device
-  * @phydev: target phy_device struct
-@@ -1310,8 +1340,8 @@ void phy_detach(struct phy_device *phydev)
- 	 * from the generic driver so that there's a chance a
- 	 * real driver could be loaded
- 	 */
--	if (phydev->mdio.dev.driver == &genphy_10g_driver.mdiodrv.driver ||
--	    phydev->mdio.dev.driver == &genphy_driver.mdiodrv.driver)
-+	if (phy_driver_is_genphy(phydev) ||
-+	    phy_driver_is_genphy_10g(phydev))
- 		device_release_driver(&phydev->mdio.dev);
- 
- 	/*
-diff --git a/include/linux/phy.h b/include/linux/phy.h
-index 3b051f761450..f1c19bf8c658 100644
---- a/include/linux/phy.h
-+++ b/include/linux/phy.h
-@@ -1183,4 +1183,7 @@ module_exit(phy_module_exit)
- #define module_phy_driver(__phy_drivers)				\
- 	phy_module_driver(__phy_drivers, ARRAY_SIZE(__phy_drivers))
- 
-+bool phy_driver_is_genphy(struct phy_device *phydev);
-+bool phy_driver_is_genphy_10g(struct phy_device *phydev);
-+
- #endif /* __PHY_H */
+In any case, this needs to be synchronized with:
+
+https://lkml.kernel.org/r/20190107032243.25324-1-fanc.fnst@cn.fujitsu.com
+
+and checked whether the above can be used instead of sprinkling of ACPI
+parsing code left and right.
+
+Thx.
+
 -- 
-2.17.1
+Regards/Gruss,
+    Boris.
 
+Good mailing practices for 400: avoid top-posting and trim the reply.
