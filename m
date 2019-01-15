@@ -2,102 +2,201 @@ Return-Path: <SRS0=RZO6=PX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EEBDDC43444
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 16:56:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D4603C43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 16:56:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BC9EF2086D
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 16:56:47 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="pZA6fV4j"
+	by mail.kernel.org (Postfix) with ESMTP id A3AFD20645
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 16:56:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1547571409;
+	bh=h8iaHFq7l8+LiqpGoyvbqMa6qdU2Bxrxi9r/1Q5RcYw=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=DllXeh8+bTNXL0eKl5Kk41kv0FrqA6vgXvJubh1feMWkXcvXpnO6Mx4jzCfbsW97J
+	 xqlgQFVHQlMXqMPSZpAEhDI6JCixien+euW1f7dh1yDna+nxNK7WcuDb2W6V3poEzq
+	 KD+gT9hEXr6VvrxlbnJFU04wqGNy0r0oaqlc6v9I=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732782AbfAOQl0 (ORCPT
+        id S2388140AbfAOQ4s (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 15 Jan 2019 11:56:48 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58192 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1732777AbfAOQl0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 15 Jan 2019 11:41:26 -0500
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:44867 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732753AbfAOQlR (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Jan 2019 11:41:17 -0500
-Received: by mail-pl1-f194.google.com with SMTP id e11so1527566plt.11
-        for <linux-kernel@vger.kernel.org>; Tue, 15 Jan 2019 08:41:17 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=lTX4wBB2KWN4DoEePGtr6dBXfwKyttUXtfe8waG4gdE=;
-        b=pZA6fV4jQSwAeP1euhKTA6IBcx/S6A9zy7c5UGsxbKZTz+Le1cL5/GpKcL43lRP5it
-         Eh72lmqRnEEKBrHsWyw13+2LrbLyLW53JdCQcS1d+dtZEjJq66l6i+wsXu9A13dBcmHK
-         EUJziM3Ac/lb1J9wgFh7nCXGfGHKu27T0tfZrS8ZR+a2+iSnD89MPE5H3HyOa2BGMluk
-         w6458zzB1RffOA2DJ1BAMMNAob369zCr0ulwZHeFmb/vFZVWhEuWFs2p7amWXJNBHmC5
-         hvhl/f18AGhGfr2VG8h57b/Jitl45gfqJMFQanAP1PzW87YdwCJWaQlBzkLtY0JPSPuY
-         FLig==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=lTX4wBB2KWN4DoEePGtr6dBXfwKyttUXtfe8waG4gdE=;
-        b=SMlHCPlvl9o330S0Mvfi/Dwd8izaeNOraQqmi0NssYU4j+P1bsVpwHohU/KofSxHgq
-         aWW9f6b8VY7mLzeNSRALbWlD7KVvYOsvE/lBItFwKf5JpRBjfOuu8IN38BbbHRE4byt1
-         JngyuMHDBp0UIwNZOFGDXb/LEycTlMck9fODnmTuzjQixvHPMaYoLhd94vM3I2jKg9Ph
-         jbW5TsLPZPxwyMQ99fkxmn2vkZA5IbbuQtZxuxp67avwpJqTEOLI893eZ2+KMdLwJErt
-         4loBkdlyQigfA7VD1mg8XW53RqZNYuZFqTkuxF/Hv//m0+RVzPPGhNwDlzwxDiFmCuiS
-         OrBg==
-X-Gm-Message-State: AJcUukeOkTYVOM72pDh54L613gbqMW6i8Zw78OfyOXb4HMTsOWQG6lga
-        HC3lNNk3YUTvFhbj0xmh1MTZ5p565Lg=
-X-Google-Smtp-Source: ALg8bN7B7JIkCSLzoaLruM56807rpCywiskzVGQh3St7j3zwOwOJ1XDDk+FVMmSjid+gtPNJjUTZSQ==
-X-Received: by 2002:a17:902:503:: with SMTP id 3mr5000863plf.233.1547570477112;
-        Tue, 15 Jan 2019 08:41:17 -0800 (PST)
-Received: from localhost (68.168.130.77.16clouds.com. [68.168.130.77])
-        by smtp.gmail.com with ESMTPSA id g3sm7330744pfe.37.2019.01.15.08.41.15
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 15 Jan 2019 08:41:16 -0800 (PST)
-From:   Yangtao Li <tiny.windzz@gmail.com>
-To:     john.stultz@linaro.org, tglx@linutronix.de, sboyd@kernel.org
-Cc:     linux-kernel@vger.kernel.org, Yangtao Li <tiny.windzz@gmail.com>
-Subject: [PATCH] clocksource: use BIT() for clock source flags
-Date:   Tue, 15 Jan 2019 11:41:13 -0500
-Message-Id: <20190115164113.19560-1-tiny.windzz@gmail.com>
-X-Mailer: git-send-email 2.17.0
+Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id CC6662054F;
+        Tue, 15 Jan 2019 16:41:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1547570485;
+        bh=h8iaHFq7l8+LiqpGoyvbqMa6qdU2Bxrxi9r/1Q5RcYw=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=Y0cGUHa4WgjY1FE4JWRUEbS65DYSVIF80gc9RjF4E48Fz2TqZRP+b2pejYZxw+Paj
+         re+tJdnDlUz/oTpMMXj1S8m/D0rX+I2SERrEA1ugjgWMNpt/FnUbILSv1qlTFvU/Cg
+         bAgDkn23ZSK6hZ2IClXYOifl++xT/zV0eu3qtx7E=
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Pavel Shilovsky <pshilov@microsoft.com>,
+        Steve French <stfrench@microsoft.com>
+Subject: [PATCH 4.19 12/50] CIFS: Fix credit computation for compounded requests
+Date:   Tue, 15 Jan 2019 17:35:48 +0100
+Message-Id: <20190115154910.672683956@linuxfoundation.org>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20190115154909.933241945@linuxfoundation.org>
+References: <20190115154909.933241945@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
+X-Patchwork-Hint: ignore
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
----
- include/linux/clocksource.h | 16 ++++++++--------
- 1 file changed, 8 insertions(+), 8 deletions(-)
+4.19-stable review patch.  If anyone has any objections, please let me know.
 
-diff --git a/include/linux/clocksource.h b/include/linux/clocksource.h
-index b21db536fd52..130f4c3c0781 100644
---- a/include/linux/clocksource.h
-+++ b/include/linux/clocksource.h
-@@ -112,14 +112,14 @@ struct clocksource {
- /*
-  * Clock source flags bits::
-  */
--#define CLOCK_SOURCE_IS_CONTINUOUS		0x01
--#define CLOCK_SOURCE_MUST_VERIFY		0x02
--
--#define CLOCK_SOURCE_WATCHDOG			0x10
--#define CLOCK_SOURCE_VALID_FOR_HRES		0x20
--#define CLOCK_SOURCE_UNSTABLE			0x40
--#define CLOCK_SOURCE_SUSPEND_NONSTOP		0x80
--#define CLOCK_SOURCE_RESELECT			0x100
-+#define CLOCK_SOURCE_IS_CONTINUOUS		BIT(0)
-+#define CLOCK_SOURCE_MUST_VERIFY		BIT(1)
-+
-+#define CLOCK_SOURCE_WATCHDOG			BIT(4)
-+#define CLOCK_SOURCE_VALID_FOR_HRES		BIT(5)
-+#define CLOCK_SOURCE_UNSTABLE			BIT(6)
-+#define CLOCK_SOURCE_SUSPEND_NONSTOP		BIT(7)
-+#define CLOCK_SOURCE_RESELECT			BIT(8)
+------------------
+
+From: Pavel Shilovsky <pshilov@microsoft.com>
+
+commit 8544f4aa9dd19a04d1244dae10feecc813ccf175 upstream.
+
+In SMB3 protocol every part of the compound chain consumes credits
+individually, so we need to call wait_for_free_credits() for each
+of the PDUs in the chain. If an operation is interrupted, we must
+ensure we return all credits taken from the server structure back.
+
+Without this patch server can sometimes disconnect the session
+due to credit mismatches, especially when first operation(s)
+are large writes.
+
+Signed-off-by: Pavel Shilovsky <pshilov@microsoft.com>
+Signed-off-by: Steve French <stfrench@microsoft.com>
+CC: Stable <stable@vger.kernel.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
+---
+ fs/cifs/transport.c |   59 ++++++++++++++++++++++++++++++++++++----------------
+ 1 file changed, 41 insertions(+), 18 deletions(-)
+
+--- a/fs/cifs/transport.c
++++ b/fs/cifs/transport.c
+@@ -786,7 +786,8 @@ compound_send_recv(const unsigned int xi
+ 	int i, j, rc = 0;
+ 	int timeout, optype;
+ 	struct mid_q_entry *midQ[MAX_COMPOUND];
+-	unsigned int credits = 0;
++	bool cancelled_mid[MAX_COMPOUND] = {false};
++	unsigned int credits[MAX_COMPOUND] = {0};
+ 	char *buf;
  
- /* simplify initialization of mask field */
- #define CLOCKSOURCE_MASK(bits) GENMASK_ULL((bits) - 1, 0)
--- 
-2.17.0
+ 	timeout = flags & CIFS_TIMEOUT_MASK;
+@@ -804,13 +805,31 @@ compound_send_recv(const unsigned int xi
+ 		return -ENOENT;
+ 
+ 	/*
+-	 * Ensure that we do not send more than 50 overlapping requests
+-	 * to the same server. We may make this configurable later or
+-	 * use ses->maxReq.
++	 * Ensure we obtain 1 credit per request in the compound chain.
++	 * It can be optimized further by waiting for all the credits
++	 * at once but this can wait long enough if we don't have enough
++	 * credits due to some heavy operations in progress or the server
++	 * not granting us much, so a fallback to the current approach is
++	 * needed anyway.
+ 	 */
+-	rc = wait_for_free_request(ses->server, timeout, optype);
+-	if (rc)
+-		return rc;
++	for (i = 0; i < num_rqst; i++) {
++		rc = wait_for_free_request(ses->server, timeout, optype);
++		if (rc) {
++			/*
++			 * We haven't sent an SMB packet to the server yet but
++			 * we already obtained credits for i requests in the
++			 * compound chain - need to return those credits back
++			 * for future use. Note that we need to call add_credits
++			 * multiple times to match the way we obtained credits
++			 * in the first place and to account for in flight
++			 * requests correctly.
++			 */
++			for (j = 0; j < i; j++)
++				add_credits(ses->server, 1, optype);
++			return rc;
++		}
++		credits[i] = 1;
++	}
+ 
+ 	/*
+ 	 * Make sure that we sign in the same order that we send on this socket
+@@ -826,8 +845,10 @@ compound_send_recv(const unsigned int xi
+ 			for (j = 0; j < i; j++)
+ 				cifs_delete_mid(midQ[j]);
+ 			mutex_unlock(&ses->server->srv_mutex);
++
+ 			/* Update # of requests on wire to server */
+-			add_credits(ses->server, 1, optype);
++			for (j = 0; j < num_rqst; j++)
++				add_credits(ses->server, credits[j], optype);
+ 			return PTR_ERR(midQ[i]);
+ 		}
+ 
+@@ -874,17 +895,16 @@ compound_send_recv(const unsigned int xi
+ 			if (midQ[i]->mid_state == MID_REQUEST_SUBMITTED) {
+ 				midQ[i]->mid_flags |= MID_WAIT_CANCELLED;
+ 				midQ[i]->callback = DeleteMidQEntry;
+-				spin_unlock(&GlobalMid_Lock);
+-				add_credits(ses->server, 1, optype);
+-				return rc;
++				cancelled_mid[i] = true;
+ 			}
+ 			spin_unlock(&GlobalMid_Lock);
+ 		}
+ 	}
+ 
+ 	for (i = 0; i < num_rqst; i++)
+-		if (midQ[i]->resp_buf)
+-			credits += ses->server->ops->get_credits(midQ[i]);
++		if (!cancelled_mid[i] && midQ[i]->resp_buf
++		    && (midQ[i]->mid_state == MID_RESPONSE_RECEIVED))
++			credits[i] = ses->server->ops->get_credits(midQ[i]);
+ 
+ 	for (i = 0; i < num_rqst; i++) {
+ 		if (rc < 0)
+@@ -892,8 +912,9 @@ compound_send_recv(const unsigned int xi
+ 
+ 		rc = cifs_sync_mid_result(midQ[i], ses->server);
+ 		if (rc != 0) {
+-			add_credits(ses->server, credits, optype);
+-			return rc;
++			/* mark this mid as cancelled to not free it below */
++			cancelled_mid[i] = true;
++			goto out;
+ 		}
+ 
+ 		if (!midQ[i]->resp_buf ||
+@@ -940,9 +961,11 @@ out:
+ 	 * This is prevented above by using a noop callback that will not
+ 	 * wake this thread except for the very last PDU.
+ 	 */
+-	for (i = 0; i < num_rqst; i++)
+-		cifs_delete_mid(midQ[i]);
+-	add_credits(ses->server, credits, optype);
++	for (i = 0; i < num_rqst; i++) {
++		if (!cancelled_mid[i])
++			cifs_delete_mid(midQ[i]);
++		add_credits(ses->server, credits[i], optype);
++	}
+ 
+ 	return rc;
+ }
+
 
