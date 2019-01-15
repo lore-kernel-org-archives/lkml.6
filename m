@@ -2,150 +2,129 @@ Return-Path: <SRS0=RZO6=PX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 75C8BC43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 16:48:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A5174C43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 16:48:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 45D7120645
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 16:48:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547570911;
-	bh=9VcXK7Kf90SQ2pSiL2o8GAnDgW+CGDI79CM0DW/z2Rk=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=JcE5gUbQG+Iivh1ixDSJecvUGqTHW40BzjUHsZ5C4Ff4sbZRWvJiytm5nQU59bVeW
-	 ed6gtT0fSx+s3GVz5pQRMLQOBNnWUymUI+9RK0GdzMGJKQdX5DfXCcIKprOLVwNAlB
-	 MlPp+Tt+vfD8Vis+Gstvdg8s255sLJ3002bTQtZ4=
+	by mail.kernel.org (Postfix) with ESMTP id 6472720645
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 16:48:36 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel-com.20150623.gappssmtp.com header.i=@intel-com.20150623.gappssmtp.com header.b="gK6o7oae"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731494AbfAOQs3 (ORCPT
+        id S1732755AbfAOQse (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 15 Jan 2019 11:48:29 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34604 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728952AbfAOQpA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Jan 2019 11:45:00 -0500
-Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9463E20675;
-        Tue, 15 Jan 2019 16:44:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547570699;
-        bh=9VcXK7Kf90SQ2pSiL2o8GAnDgW+CGDI79CM0DW/z2Rk=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=acOOao4OiY5fkOjubmkslmXU+1Aqvi5iTA/ATnPvKNf6VGLEatuA1nGcyvikwQQ+4
-         K25MbnFainA2BCzqGNufVYsa1WOvzI9iuRXwoiQ1SOMQWMQ6o6JIfFw1JPnbnoF97y
-         fl1aYErezDvDuJ4fwdFEiPzPO51rd+Xdt1MMWo3k=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Hans de Goede <hdegoede@redhat.com>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
-Subject: [PATCH 4.20 31/57] ACPI: power: Skip duplicate power resource references in _PRx
-Date:   Tue, 15 Jan 2019 17:36:12 +0100
-Message-Id: <20190115154912.454424323@linuxfoundation.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190115154910.734892368@linuxfoundation.org>
-References: <20190115154910.734892368@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
-X-Patchwork-Hint: ignore
+        Tue, 15 Jan 2019 11:48:34 -0500
+Received: from mail-ot1-f68.google.com ([209.85.210.68]:39248 "EHLO
+        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728952AbfAOQsa (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 Jan 2019 11:48:30 -0500
+Received: by mail-ot1-f68.google.com with SMTP id n8so3084005otl.6
+        for <linux-kernel@vger.kernel.org>; Tue, 15 Jan 2019 08:48:30 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=intel-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=F+H9Jfq/e7VR5o3C3e8XlOS1Z/C+bcadR42ul22UhZk=;
+        b=gK6o7oaeCBrhJcuBkvI3WhYWY+3SosBfQ5iBL26V1/dMkH/p/Ao3+wCI9NPLpwaufQ
+         51NAk5hnlDsOVtensDG7z8Ly5YKFSvxB6LKjyvM9zxt4Jlv9/Q4CmTaNOg6FhzVpiyrY
+         07BJpf7bCmy/EwdS3nPUsYK17iryyIQNMWoJ4CxEGx76qLM5as0Muz9Nde94uWgBZLqD
+         +4eKZNgCm7KJABrvAL1SNpLxaNcXmv5286gucu1SkgIeLvT3BeTiHuS46k54XDJC5Jg1
+         d5BgjAMPsvBVBYsh4h+KJ8PrsjDCPqoGWtMYXykI3PV+1HazidodPFqnQrmFZI3oovnW
+         gktw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=F+H9Jfq/e7VR5o3C3e8XlOS1Z/C+bcadR42ul22UhZk=;
+        b=Iee0JH1lEAlbnU0EXjpx+pfzfB1WDTPgXDqWANQvObhfl5RFPagGxggYhduNrsNWEM
+         S1nQEEI8atYbS6AR8RAJmGWeKsTT1ojsa4YtQBfymYDLuVU4QpXy1Pw5h3oIMeF13X/r
+         TKN/9aOBXVln7xIZsA3/KZrb1l71LIqs9iFCATF31rMb5xGCsxQkWQ4TrfqQPhjHYyZs
+         F9PHgrgoKhDF0L8+yedEjnEJnL9bMp8klf/7s7rlaqjVg/tjPIBj1V2vlnPCB4fbwsrw
+         v+ClDZCuHCSesN7vCgYaF0Os5H6LKmM6r7sw6Sbk6Qsga/5F53SRK/tKhIrAk97kZVml
+         QmQw==
+X-Gm-Message-State: AJcUukeUaP3+v6Jq9uF30lMfFRTHS6maRS1l/gBI/zGmjYDWqM7KD4pq
+        NAhWuWxCqtyJ79UpPk6oJ5+8YZ8qi2x02o6nPXZmPg==
+X-Google-Smtp-Source: ALg8bN6JgtZLaVHvgCRUYcz+m1W2vr84QdQVIBGxZ+ieqaE7n52KPGH/cuKcaPr2pZ0Y54AE1TtgIkUZbcNkda9vBKA=
+X-Received: by 2002:a9d:7dd5:: with SMTP id k21mr2933302otn.214.1547570910140;
+ Tue, 15 Jan 2019 08:48:30 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <154751742416.1617064.8252289468130584022.stgit@dwillia2-desk3.amr.corp.intel.com>
+ <x49tvia80r0.fsf@segfault.boston.devel.redhat.com>
+In-Reply-To: <x49tvia80r0.fsf@segfault.boston.devel.redhat.com>
+From:   Dan Williams <dan.j.williams@intel.com>
+Date:   Tue, 15 Jan 2019 08:48:18 -0800
+Message-ID: <CAPcyv4htfew=7D_B1QDGTwSkMTx7BK2BZ+Gq+9UL1NTtqtL9FQ@mail.gmail.com>
+Subject: Re: [PATCH v2 0/2] acpi/nfit: Fix command-supported detection
+To:     Jeff Moyer <jmoyer@redhat.com>
+Cc:     linux-nvdimm <linux-nvdimm@lists.01.org>,
+        stable <stable@vger.kernel.org>,
+        stuart hayes <stuart.w.hayes@gmail.com>,
+        Sujith Pandel <sujith_pandel@dell.com>,
+        Vishal Verma <vishal.l.verma@intel.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.20-stable review patch.  If anyone has any objections, please let me know.
+On Tue, Jan 15, 2019 at 6:16 AM Jeff Moyer <jmoyer@redhat.com> wrote:
+>
+> Dan Williams <dan.j.williams@intel.com> writes:
+>
+> > Changes since v1 [1]:
+> > * Include another patch make sure that function-number zero can be
+> >   safely used as an invalid function number (Jeff)
+> > * Add a comment clarifying why zero is an invalid function number (Jeff)
+> > * Pass nfit_mem to cmd_to_func() (Jeff)
+> > * Collect a Tested-by from Sujith
+> > [1]: https://lists.01.org/pipermail/linux-nvdimm/2019-January/019435.html
+>
+> For the series:
+>
+> Reviewed-by: Jeff Moyer <jmoyer@redhat.com>
+>
+> Thanks, Dan!
 
-------------------
+Thanks, although I just realized one more change. The ND_CMD_CALL case
+should zero out command after the function translation, otherwise
+userspace can call functions that the kernel is blocking in the
+dsm_mask.
 
-From: Hans de Goede <hdegoede@redhat.com>
+Holler if this invalidates your "Reviewed-by".
 
-commit 7d7b467cb95bf29597b417d4990160d4ea6d69b9 upstream.
-
-Some ACPI tables contain duplicate power resource references like this:
-
-        Name (_PR0, Package (0x04)  // _PR0: Power Resources for D0
-        {
-            P28P,
-            P18P,
-            P18P,
-            CLK4
-        })
-
-This causes a WARN_ON in sysfs_add_link_to_group() because we end up
-adding a link to the same acpi_device twice:
-
-sysfs: cannot create duplicate filename '/devices/LNXSYSTM:00/LNXSYBUS:00/PNP0A08:00/808622C1:00/OVTI2680:00/power_resources_D0/LNXPOWER:0a'
-CPU: 0 PID: 1 Comm: swapper/0 Not tainted 4.19.12-301.fc29.x86_64 #1
-Hardware name: Insyde CherryTrail/Type2 - Board Product Name, BIOS jumperx.T87.KFBNEEA02 04/13/2016
-Call Trace:
- dump_stack+0x5c/0x80
- sysfs_warn_dup.cold.3+0x17/0x2a
- sysfs_do_create_link_sd.isra.2+0xa9/0xb0
- sysfs_add_link_to_group+0x30/0x50
- acpi_power_expose_list+0x74/0xa0
- acpi_power_add_remove_device+0x50/0xa0
- acpi_add_single_object+0x26b/0x5f0
- acpi_bus_check_add+0xc4/0x250
- ...
-
-To address this issue, make acpi_extract_power_resources() check for
-duplicates and simply skip them when found.
-
-Cc: All applicable <stable@vger.kernel.org>
-Signed-off-by: Hans de Goede <hdegoede@redhat.com>
-[ rjw: Subject & changelog, comments ]
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
----
- drivers/acpi/power.c |   22 ++++++++++++++++++++++
- 1 file changed, 22 insertions(+)
-
---- a/drivers/acpi/power.c
-+++ b/drivers/acpi/power.c
-@@ -131,6 +131,23 @@ void acpi_power_resources_list_free(stru
- 	}
- }
- 
-+static bool acpi_power_resource_is_dup(union acpi_object *package,
-+				       unsigned int start, unsigned int i)
-+{
-+	acpi_handle rhandle, dup;
-+	unsigned int j;
-+
-+	/* The caller is expected to check the package element types */
-+	rhandle = package->package.elements[i].reference.handle;
-+	for (j = start; j < i; j++) {
-+		dup = package->package.elements[j].reference.handle;
-+		if (dup == rhandle)
-+			return true;
-+	}
-+
-+	return false;
-+}
-+
- int acpi_extract_power_resources(union acpi_object *package, unsigned int start,
- 				 struct list_head *list)
- {
-@@ -150,6 +167,11 @@ int acpi_extract_power_resources(union a
- 			err = -ENODEV;
- 			break;
- 		}
-+
-+		/* Some ACPI tables contain duplicate power resource references */
-+		if (acpi_power_resource_is_dup(package, start, i))
-+			continue;
-+
- 		err = acpi_add_power_resource(rhandle);
- 		if (err)
- 			break;
-
-
+diff --git a/drivers/acpi/nfit/core.c b/drivers/acpi/nfit/core.c
+index 87e02f281e51..d7747aceb7ab 100644
+--- a/drivers/acpi/nfit/core.c
++++ b/drivers/acpi/nfit/core.c
+@@ -463,6 +463,12 @@ int acpi_nfit_ctl(struct nvdimm_bus_descriptor
+*nd_desc, struct nvdimm *nvdimm,
+                func = cmd_to_func(nfit_mem, cmd, buf);
+                if (func < 0)
+                        return func;
++               /*
++                * In the ND_CMD_CALL case we're now dependent on 'func'
++                * being validated by the dimm's dsm_mask
++                */
++               if (cmd == ND_CMD_CALL)
++                       cmd = 0;
+                dimm_name = nvdimm_name(nvdimm);
+                cmd_name = nvdimm_cmd_name(cmd);
+                cmd_mask = nvdimm_cmd_mask(nvdimm);
+@@ -477,8 +483,10 @@ int acpi_nfit_ctl(struct nvdimm_bus_descriptor
+*nd_desc, struct nvdimm *nvdimm,
+                cmd_name = nvdimm_bus_cmd_name(cmd);
+                cmd_mask = nd_desc->cmd_mask;
+                dsm_mask = cmd_mask;
+-               if (cmd == ND_CMD_CALL)
++               if (cmd == ND_CMD_CALL) {
+                        dsm_mask = nd_desc->bus_dsm_mask;
++                       cmd = 0;
++               }
+                desc = nd_cmd_bus_desc(cmd);
+                guid = to_nfit_uuid(NFIT_DEV_BUS);
+                handle = adev->handle;
