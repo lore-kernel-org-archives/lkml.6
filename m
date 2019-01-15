@@ -2,96 +2,90 @@ Return-Path: <SRS0=RZO6=PX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B75CDC43444
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 03:34:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1CA68C43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 03:38:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8940720656
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 03:34:37 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="UOeAT49E"
+	by mail.kernel.org (Postfix) with ESMTP id DDCD42085A
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 03:38:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1547523486;
+	bh=JUpAOUywM6hifFeXQvdLEgB0MWZVn/CHE2Ud6i3FjuQ=;
+	h=From:To:Cc:Subject:Date:List-ID:From;
+	b=2EZGHKTjmVtdLXyUM1ecBpwoILine+RL1lj1xi09XfvGBqerIfHMc+Cb2MCX4gnjd
+	 Xv+5MqjbgoXOUY1j+ddFNbDUDtKG0csygDPBepo886FTGKrivTkK1H3QdrN+Sn8QXU
+	 8CvBIoDNoYyUFRevE/ZxHT77N2PVES6HEOCFIdZE=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728108AbfAODeg (ORCPT
+        id S1727787AbfAODiE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 14 Jan 2019 22:34:36 -0500
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:36830 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728072AbfAODee (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 Jan 2019 22:34:34 -0500
-Received: by mail-pl1-f194.google.com with SMTP id g9so624530plo.3
-        for <linux-kernel@vger.kernel.org>; Mon, 14 Jan 2019 19:34:34 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=EmFI5a8lPjCMuBHux9Ylzns+RwprhO23lrIeWOAs4Cw=;
-        b=UOeAT49EfP+Rsq2Ml3mAp3EkU3As23NLr50Mv1XxBlBhjOFda++dKfj+X6XIVABHWj
-         lLBLF0nvAkDxOLpI5/Mo7wrfUtZKdxBDeZJy1gYseZ0sxsVbI5LQ/zjjKFP+ax/oV7+8
-         XOnbUB1TaXdST+UPukWwWxdS9Qen/pI+/WUjs=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=EmFI5a8lPjCMuBHux9Ylzns+RwprhO23lrIeWOAs4Cw=;
-        b=OLOIr+bU27tSoTr0nRErZlCkUUrMsF3dydv7Ofuk6y1vl9ucrHrPBLTg+PLkAPBFA3
-         wWbThMpM3tRnp8Ks7eQ2C+OonY+G+ISmp3rS01zwX6gA2/oApGK8LuEREyO57cyWQ4W6
-         hE+vT6e9KwwOXECEInTWXH6oVIOhGzqGfJqptBHZZZ5B1Tpt12bulmU4Hrp6Vl8w/tru
-         tK3nVZb/RAeltYAddtL3AX/wLiQmcvgOr/wEtxspetIQZKQ7KvoioiVD0VrtlnNXhvZu
-         noR3iE9R/OVDysg2JBnmvKrTrncQoK4FUXbEC2BzhGpHBiTT9piWBXNyjekhtUVrPSaT
-         +CJA==
-X-Gm-Message-State: AJcUukcsqOJgcpVSq4zzWqBb5fAltuaM1t5+wK9JyEkUMoI0ee3NCHv9
-        YlKlc8izCLWK3qfVIn1vZBhd
-X-Google-Smtp-Source: ALg8bN4ZLK6UxLmvpUeFAZdUFyqbktfD1GNFKeDN9LOXQgJVnpUTwZ/PHbF/nNpnEFRcZuPAp+TKaQ==
-X-Received: by 2002:a17:902:3143:: with SMTP id w61mr1927388plb.253.1547523273698;
-        Mon, 14 Jan 2019 19:34:33 -0800 (PST)
-Received: from localhost.localdomain ([2409:4072:6084:4813:7cd6:42d1:f14c:3e90])
-        by smtp.gmail.com with ESMTPSA id s9sm2137023pgl.88.2019.01.14.19.34.27
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 14 Jan 2019 19:34:33 -0800 (PST)
-From:   Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To:     sboyd@kernel.org, mturquette@baylibre.com, afaerber@suse.de,
-        robh+dt@kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-actions@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-Cc:     Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Subject: [PATCH v2 6/6] MAINTAINERS: Add linux-actions mailing list for Actions Semi
-Date:   Tue, 15 Jan 2019 09:03:40 +0530
-Message-Id: <20190115033340.25016-7-manivannan.sadhasivam@linaro.org>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190115033340.25016-1-manivannan.sadhasivam@linaro.org>
-References: <20190115033340.25016-1-manivannan.sadhasivam@linaro.org>
+        Mon, 14 Jan 2019 22:38:04 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43254 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726769AbfAODiE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 14 Jan 2019 22:38:04 -0500
+Received: from sol.localdomain (c-24-23-143-129.hsd1.ca.comcast.net [24.23.143.129])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 29DD920656;
+        Tue, 15 Jan 2019 03:38:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1547523483;
+        bh=JUpAOUywM6hifFeXQvdLEgB0MWZVn/CHE2Ud6i3FjuQ=;
+        h=From:To:Cc:Subject:Date:From;
+        b=i20h1xODrYvzGHqe9qFAwY0GaNB5p0Vukq6JbX2Dboplk82/FrBgsviOe5mDz0DK5
+         GQ3UmrFOxK0Rgwt9Sy60P3wYbk9FLKjZ84hL6f2XfIiLuFGUdFkRjLKY8qQlaMiXb4
+         WiU6eb+Ab75eHvzoy7A3ArTmPrqFVtwbjE7f4Kp8=
+From:   Eric Biggers <ebiggers@kernel.org>
+To:     keyrings@vger.kernel.org, David Howells <dhowells@redhat.com>
+Cc:     Aaro Koskinen <aaro.koskinen@iki.fi>,
+        linux-fscrypt@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] KEYS: user: Align the payload buffer
+Date:   Mon, 14 Jan 2019 19:37:16 -0800
+Message-Id: <20190115033716.18380-1-ebiggers@kernel.org>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add the linux-actions mailing list for Actions Semi SoC architecture.
+From: Eric Biggers <ebiggers@google.com>
 
-Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Align the payload of "user" and "logon" keys so that users of the
+keyrings service can access it as a struct that requires more than
+2-byte alignment.  fscrypt currently does this which results in the read
+of fscrypt_key::size being misaligned as it needs 4-byte alignment.
+
+Align to __alignof__(u64) rather than __alignof__(long) since in the
+future it's conceivable that people would use structs beginning with
+u64, which on some platforms would require more than 'long' alignment.
+
+Reported-by: Aaro Koskinen <aaro.koskinen@iki.fi>
+Fixes: 2aa349f6e37c ("[PATCH] Keys: Export user-defined keyring operations")
+Fixes: 88bd6ccdcdd6 ("ext4 crypto: add encryption key management facilities")
+Cc: stable@vger.kernel.org
+Signed-off-by: Eric Biggers <ebiggers@google.com>
 ---
- MAINTAINERS | 1 +
- 1 file changed, 1 insertion(+)
+ include/keys/user-type.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 7d37f8a4743c..f30e25c8e4a7 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -1240,6 +1240,7 @@ ARM/ACTIONS SEMI ARCHITECTURE
- M:	Andreas Färber <afaerber@suse.de>
- R:	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
- L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
-+L:	linux-actions@lists.infradead.org (moderated for non-subscribers)
- S:	Maintained
- N:	owl
- F:	arch/arm/mach-actions/
+diff --git a/include/keys/user-type.h b/include/keys/user-type.h
+index e098cbe27db54..12babe9915944 100644
+--- a/include/keys/user-type.h
++++ b/include/keys/user-type.h
+@@ -31,7 +31,7 @@
+ struct user_key_payload {
+ 	struct rcu_head	rcu;		/* RCU destructor */
+ 	unsigned short	datalen;	/* length of this data */
+-	char		data[0];	/* actual data */
++	char		data[0] __aligned(__alignof__(u64)); /* actual data */
+ };
+ 
+ extern struct key_type key_type_user;
 -- 
-2.17.1
+2.20.1
 
