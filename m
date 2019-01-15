@@ -2,95 +2,120 @@ Return-Path: <SRS0=RZO6=PX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E942C43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 00:03:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 815C7C43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 00:06:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EC5D8206B7
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 00:03:50 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="uvMaEyKy"
+	by mail.kernel.org (Postfix) with ESMTP id 3C026206BA
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 00:06:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1547510783;
+	bh=AwzoNIpIiT1EYQpVvwyX8XE+fAO4qTtoXdyyyJoYamg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=UN5FfVyciMzurD3h41bXDwwohxPF1Y4qC63eomEGSxhL3JN0NsbHxU3plZZdNpo6K
+	 S2MmQs5OLVaEPAlIL0or7jIpmsgLRr0yvCJVy+wWSBxUHdRZxraOCRZ8u7iWO4hgdX
+	 o/9hrbZ0XP8Aoe+h0HDB16Q1GPDRRWv9COQ+mbgk=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727308AbfAOADt (ORCPT
+        id S1727300AbfAOAGV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 14 Jan 2019 19:03:49 -0500
-Received: from mail-it1-f193.google.com ([209.85.166.193]:36109 "EHLO
-        mail-it1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726911AbfAOADs (ORCPT
+        Mon, 14 Jan 2019 19:06:21 -0500
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:59836 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726782AbfAOAGV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 Jan 2019 19:03:48 -0500
-Received: by mail-it1-f193.google.com with SMTP id c9so2097963itj.1
-        for <linux-kernel@vger.kernel.org>; Mon, 14 Jan 2019 16:03:48 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=0W8txPFyvoxj+szZzjhgBl2jXFGFteZf6FMF2NQRuv0=;
-        b=uvMaEyKyTtn7FDcLQiwISJO+TLzDSqdqpUs3Yrg0nVDKKgEe44bR/SHa6tp+AQWt4Z
-         lNLYrqEh67vntOqCqUEx4hz9jOBvuVftN6dn2WGCzvYYwV7OFT0s7E0jmpQUNWMNNbOb
-         h+eV+HgHqBKtFIIBRrruEMLObNxLaQwUT92ag+lvxxeqvWAycfJk6VPXLBt9gs+iM77R
-         RDtd+XS6ZXeP+ckKG175Fw+5hmWyiCHPSYi9w7b0q5+L+MP1UtRD66hb30pbeN5t40jv
-         rfDRydhWZikyi6ZARyj//waRl9f9pm2bqazsnH9fZVX6wSxHcU//3IUDlckVN6NjURDi
-         w96Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=0W8txPFyvoxj+szZzjhgBl2jXFGFteZf6FMF2NQRuv0=;
-        b=NtCpT2OIwNXXh9tvgsuLvYxjwed7+ezFXC5O7abs6FwQ+TRyI5usz8sfUWidv5B5/7
-         Ttbsa9JBvAke1LhkbMGxBMoGb/M3XvyA0HIuN/fSHohmEUjHMuNfUdPnQz3cCR2PkebZ
-         dNoGWDOuHO40v4RhvBEGww55/Rr9T8rzYAwPgT4J3SlP7z7xYNDqzzfmLO+vTVUxyfya
-         4+rZ6Dy5IOxX00tj/u//q/EdFkIy2sP5Ffl/J2zXMQxHjM8f5Yf9pffq9FcTeFFMfipb
-         dCwy6kBSap+i/OhWaUK9fJtsAcjP2iHEJyQeiPR2SmlJR76+x+Xv8iE2abgE8KOkrWGk
-         6CRw==
-X-Gm-Message-State: AJcUukcme9hCgede25Oyr+UAsGaTnfZeMLjtNiJvH0mC092iiSmoGsRy
-        oCmiLinPw1JOsa3h/dVG3SfRNogzP2GyJ1kN7qGaPw==
-X-Google-Smtp-Source: ALg8bN6fDVEpUUqC7w0yTvO56nDaDdnQQzdjdlbKcRP5nGPLZnzvc8gshkCm5NfIHZqaEJ4MLbaVQvExmbUYRM51J7g=
-X-Received: by 2002:a02:8a69:: with SMTP id e38mr646703jal.81.1547510627825;
- Mon, 14 Jan 2019 16:03:47 -0800 (PST)
+        Mon, 14 Jan 2019 19:06:21 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=FQ+hBYp/aGxKXJmqp5lNSD251Kl7hEqpCaaSL7187Yw=; b=A8XYWk+Of0Bekp7ZOJZWhFoX3
+        gmUSg4/LPbCH32jSXNrStl5IUoiVlCTySlsN3M0dVnEhdIJkmdvt50yoFNlRbd+V0fi15xRMv3+kT
+        Nh8MPw5mbOHfMwzZTU5L5KStDHlNSwXOvlwDrmEfOrCG+y7D2QI6TqFaa887THJammXjs=;
+Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
+        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1gjCF8-0000pp-D3; Tue, 15 Jan 2019 00:06:10 +0000
+Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
+        id 0FE22112349B; Tue, 15 Jan 2019 00:06:10 +0000 (GMT)
+Date:   Tue, 15 Jan 2019 00:06:10 +0000
+From:   Mark Brown <broonie@kernel.org>
+To:     Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Cc:     Rohit kumar <rohitkr@codeaurora.org>, plai@codeaurora.org,
+        bgoswami@codeaurora.org, asishb@codeaurora.org,
+        lgirdwood@gmail.com, perex@perex.cz, tiwai@suse.com,
+        alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
+        rohkumar@qti.qualcomm.com, srinivas.kandagatla@linaro.org,
+        vinod.koul@linaro.org, Ajit Pandey <ajitp@codeaurora.org>,
+        Liam Girdwood <liam.r.girdwood@linux.intel.com>
+Subject: Re: [alsa-devel] [PATCH] ASoC: soc-core: Fix null pointer
+ dereference in soc_find_component
+Message-ID: <20190115000610.GM11073@sirena.org.uk>
+References: <1547194442-1487-1-git-send-email-rohitkr@codeaurora.org>
+ <d8726e9a-3477-a573-8c1a-dd8245068802@linux.intel.com>
+ <4886ed21-65d2-159d-afcd-bb26dcde636e@linux.intel.com>
 MIME-Version: 1.0
-References: <6f79d9be-fa76-3a06-2612-f44f3a18ece7@redhat.com> <20190114234728.49239-1-tmroeder@google.com>
-In-Reply-To: <20190114234728.49239-1-tmroeder@google.com>
-From:   Jim Mattson <jmattson@google.com>
-Date:   Mon, 14 Jan 2019 16:03:35 -0800
-Message-ID: <CALMp9eSovFPZOmztDtzcf0BnkoV1=4ua1ymOfuEg0K7acug24A@mail.gmail.com>
-Subject: Re: [RFC PATCH] kvm: x86/vmx: Use kzalloc for cached_vmcs12
-To:     Tom Roeder <tmroeder@google.com>
-Cc:     Paolo Bonzini <pbonzini@redhat.com>,
-        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        Liran Alon <liran.alon@oracle.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H . Peter Anvin" <hpa@zytor.com>,
-        "the arch/x86 maintainers" <x86@kernel.org>,
-        kvm list <kvm@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        syzbot+ded1696f6b50b615b630@syzkaller.appspotmail.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="uwB7x3tnyrZQfZJI"
+Content-Disposition: inline
+In-Reply-To: <4886ed21-65d2-159d-afcd-bb26dcde636e@linux.intel.com>
+X-Cookie: From concentrate.
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jan 14, 2019 at 3:48 PM Tom Roeder <tmroeder@google.com> wrote:
->
-> This changes the allocation of cached_vmcs12 to use kzalloc instead of
-> kmalloc. This removes the information leak found by Syzkaller (see
-> Reported-by) in this case and prevents similar leaks from happening
-> based on cached_vmcs12.
->
-> The email from Syszkaller led to a discussion about a patch in early
-> November on the KVM list (I've made this a reply to that thread), but
-> the current upstream kernel still has kmalloc instead of kzalloc for
-> cached_vmcs12 and cached_shadow_vmcs12. This RFC proposes changing to
-> kzalloc for defense in depth.
->
-> Tested: rebuilt but not tested, since this is an RFC
->
-> Reported-by: syzbot+ded1696f6b50b615b630@syzkaller.appspotmail.com
-> Signed-off-by: Tom Roeder <tmroeder@google.com>
-Reviewed-by: Jim Mattson <jmattson@google.com>
+
+--uwB7x3tnyrZQfZJI
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Fri, Jan 11, 2019 at 03:49:08PM -0600, Pierre-Louis Bossart wrote:
+
+> Adding some traces I can see that the the platform name we use doesn't se=
+em
+> compatible with your logic. All the Intel boards used a constant platform
+> name matching the PCI ID, see e.g. [1], which IIRC is used to bind
+> components. Liam, do you recall in more details if this is really require=
+d?
+
+That's telling me that either snd_soc_find_components() isn't finding
+components in the same way that we do when we bind things which isn't
+good or we're binding links without having fully matched everything on
+the link which also isn't good. =20
+
+Without a system that shows the issue I can't 100% confirm but I think
+it's the former - I'm fairly sure that those machines are relying on the
+component name being initialized to fmt_single_name() in
+snd_soc_component_initialize().  That is supposed to wind up using
+dev_name() (which would be the PCI address for a PCI device) as the
+basis of the name.  What I can't currently see is how exactly that gets
+bound (or how any of the other links avoid trouble for that matter).  We
+could revert and push this into cards but I would rather be confident
+that we understand what's going on, I'm not comfortable that we aren't
+just pushing the breakage around rather than fixing it.  Can someone
+with an x86 system take a look and confirm exactly what's going on with
+binding these cards please?
+
+--uwB7x3tnyrZQfZJI
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlw9I/EACgkQJNaLcl1U
+h9CXiQf/ais5lfLk5aThXWHOcT4Aeoa0gV56hJp1nZlMrEqb1NJ2cJwcbJhJK3mR
+tHznZeav6m+nItDv0/qwQKuu4XAI/A2WVQl52w6aBQUoVyJhDTIowkxRg1IHQzyf
+y549gsvaqYW9OU9L0wPMIIqCJWXuTmpdSRcw7VlAqNB4SOQAGKDZpanAQzFOETg9
+7mqSDTDrROwt0kK7PXkQrtfYwb8FtpYZKJvq/siY4oKM6trowrVn73qgLLWLHhsc
+pWk3oqcr+6q+Yn1S46FoAxNoi3fq1qhXopSxXi+jJWQ1MNQOWijIMjYQfn8qCSCc
+YqnhYw4TVD84O6dU0crP6DRw6pkbnA==
+=jct2
+-----END PGP SIGNATURE-----
+
+--uwB7x3tnyrZQfZJI--
