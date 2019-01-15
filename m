@@ -2,77 +2,67 @@ Return-Path: <SRS0=RZO6=PX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6EBE7C43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 09:55:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C42D6C43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 09:59:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2D6BC20657
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 09:55:08 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=alien8.de header.i=@alien8.de header.b="Mtq+BBFY"
+	by mail.kernel.org (Postfix) with ESMTP id 908AA20651
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 09:59:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728305AbfAOJzG (ORCPT
+        id S1727888AbfAOJ72 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 15 Jan 2019 04:55:06 -0500
-Received: from mail.skyhub.de ([5.9.137.197]:35974 "EHLO mail.skyhub.de"
+        Tue, 15 Jan 2019 04:59:28 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:35024 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726011AbfAOJzG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Jan 2019 04:55:06 -0500
-Received: from zn.tnic (p200300EC2BCBB4000C4BA7EB962C71EB.dip0.t-ipconnect.de [IPv6:2003:ec:2bcb:b400:c4b:a7eb:962c:71eb])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1726842AbfAOJ72 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 Jan 2019 04:59:28 -0500
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 0B9451EC04F3;
-        Tue, 15 Jan 2019 10:55:05 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
-        t=1547546105;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
-        bh=zI8XPpI6AzBn+4YYVmFePdFYozbGqhBgYzGL4P+fAn4=;
-        b=Mtq+BBFYl5jAVM1WctvgOuzZcnS01gPCS17jvcXwhEcCrAeDcr1gDWRxb0ufVoKLJiaPm0
-        KKP3YKiSXjzPkFkZQiSrseNcsrFbrsjD1KGswKhVEycjV84BYzvnsFfY2rQZKVcVy4xLh3
-        ZIAXmu3kPqMN8gceWuXEIiVYORblIVI=
-Date:   Tue, 15 Jan 2019 10:55:02 +0100
-From:   Borislav Petkov <bp@alien8.de>
-To:     Chao Fan <fanc.fnst@cn.fujitsu.com>
-Cc:     lv.zheng@intel.com, linux-kernel@vger.kernel.org, x86@kernel.org,
-        tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com,
-        keescook@chromium.org, bhe@redhat.com, msys.mizuma@gmail.com,
-        indou.takao@jp.fujitsu.com, caoj.fnst@cn.fujitsu.com
-Subject: Re: [PATCH v15 3/6] x86/boot: Introduce efi_get_rsdp_addr() to find
- RSDP from EFI table
-Message-ID: <20190115095502.GA6596@zn.tnic>
-References: <20190107032243.25324-1-fanc.fnst@cn.fujitsu.com>
- <20190107032243.25324-4-fanc.fnst@cn.fujitsu.com>
- <20190110211523.GG17621@zn.tnic>
- <20190111012353.GD2216@localhost.localdomain>
- <20190111103225.GA4729@zn.tnic>
- <20190113094704.GC13263@localhost.localdomain>
- <20190113110544.GA7398@zn.tnic>
- <20190114012641.GA30900@localhost.localdomain>
- <20190114090756.GA2773@zn.tnic>
- <20190115072121.GB30900@localhost.localdomain>
+        by mx1.redhat.com (Postfix) with ESMTPS id F16578EA;
+        Tue, 15 Jan 2019 09:59:27 +0000 (UTC)
+Received: from kasong-desktop-nay-redhat-com.nay.redhat.com (unknown [10.66.128.41])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 4177A18763;
+        Tue, 15 Jan 2019 09:59:17 +0000 (UTC)
+From:   Kairui Song <kasong@redhat.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, hpa@zytor.com,
+        x86@kernel.org, dyoung@redhat.com, bhe@redhat.com,
+        kexec@lists.infradead.org, akpm@linux-foundation.org,
+        robert.moore@intel.com, erik.schmauss@intel.com,
+        rafael.j.wysocki@intel.com, lenb@kernel.org,
+        Kairui Song <kasong@redhat.com>
+Subject: [PATCH 0/2] make kexec work with efi=noruntime or efi=old_map
+Date:   Tue, 15 Jan 2019 17:58:32 +0800
+Message-Id: <20190115095834.22617-1-kasong@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20190115072121.GB30900@localhost.localdomain>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.28]); Tue, 15 Jan 2019 09:59:28 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 15, 2019 at 03:21:21PM +0800, Chao Fan wrote:
-> In my understanding after looking into the commit message the comments.
-> I thinks yes. For 32-bit OS:
+This patch series fix the kexec panic on efi=noruntime or efi=old_map
+and leverage acpi_rsdp_addr to make the second kernel boot up properly.
 
-And when does your "32-bit OS" define ACPI_ASL_COMPILER ?
+Kairui Song (2):
+  x86, kexec_file_load: Don't setup EFI info if EFI runtime is not
+    enabled
+  x86, kexec_file_load: make it work with efi=noruntime or efi=old_map
+
+Update from V1:
+ - Add a cover letter and fix some type in commit message
+ - Previous patches are not sent in a single thread
+
+ arch/x86/kernel/kexec-bzimage64.c | 24 ++++++++++++++++++++++++
+ drivers/acpi/acpica/tbxfroot.c    |  3 +--
+ include/acpi/acpixf.h             |  2 +-
+ 3 files changed, 26 insertions(+), 3 deletions(-)
 
 -- 
-Regards/Gruss,
-    Boris.
+2.20.1
 
-Good mailing practices for 400: avoid top-posting and trim the reply.
