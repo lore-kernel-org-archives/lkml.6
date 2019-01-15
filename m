@@ -2,65 +2,74 @@ Return-Path: <SRS0=RZO6=PX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 278EEC43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 17:53:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 01FDCC43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 17:54:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 018B220675
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 17:53:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CC18920859
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 17:54:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731000AbfAORxz convert rfc822-to-8bit (ORCPT
+        id S2388581AbfAORyU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 15 Jan 2019 12:53:55 -0500
-Received: from mail.bootlin.com ([62.4.15.54]:33100 "EHLO mail.bootlin.com"
+        Tue, 15 Jan 2019 12:54:20 -0500
+Received: from verein.lst.de ([213.95.11.211]:54554 "EHLO newverein.lst.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728073AbfAORxz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Jan 2019 12:53:55 -0500
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 18EB220797; Tue, 15 Jan 2019 18:53:53 +0100 (CET)
-Received: from xps13 (unknown [77.136.198.66])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 310BD20712;
-        Tue, 15 Jan 2019 18:53:43 +0100 (CET)
-Date:   Tue, 15 Jan 2019 18:53:41 +0100
-From:   Miquel Raynal <miquel.raynal@bootlin.com>
-To:     <Tudor.Ambarus@microchip.com>
-Cc:     <marek.vasut@gmail.com>, <boris.brezillon@bootlin.co>,
-        <richard@nod.at>, <dwmw2@infradead.org>,
-        <computersforpeace@gmail.com>, <linux-mtd@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] MAINTAINERS: add myself as SPI NOR co-maintainer
-Message-ID: <20190115185341.3abadd3c@xps13>
-In-Reply-To: <20190115165740.32450-1-tudor.ambarus@microchip.com>
-References: <20190115165740.32450-1-tudor.ambarus@microchip.com>
-Organization: Bootlin
-X-Mailer: Claws Mail 3.17.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        id S1728073AbfAORyU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 Jan 2019 12:54:20 -0500
+Received: by newverein.lst.de (Postfix, from userid 2407)
+        id 84A3467358; Tue, 15 Jan 2019 18:54:18 +0100 (CET)
+Date:   Tue, 15 Jan 2019 18:54:18 +0100
+From:   Christoph Hellwig <hch@lst.de>
+To:     Joerg Roedel <joro@8bytes.org>
+Cc:     Christoph Hellwig <hch@lst.de>,
+        "Michael S . Tsirkin" <mst@redhat.com>,
+        Jason Wang <jasowang@redhat.com>,
+        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+        Jens Axboe <axboe@kernel.dk>,
+        virtualization@lists.linux-foundation.org,
+        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+        iommu@lists.linux-foundation.org, jfehlig@suse.com,
+        jon.grimm@amd.com, brijesh.singh@amd.com, jroedel@suse.de
+Subject: Re: [PATCH 2/3] dma: Introduce dma_max_mapping_size()
+Message-ID: <20190115175418.GA11402@lst.de>
+References: <20190115132257.6426-1-joro@8bytes.org> <20190115132257.6426-3-joro@8bytes.org> <20190115133754.GB29225@lst.de> <20190115162322.GA4681@8bytes.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190115162322.GA4681@8bytes.org>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Tudor,
-
-<Tudor.Ambarus@microchip.com> wrote on Tue, 15 Jan 2019 16:57:52 +0000:
-
-> From: Tudor Ambarus <tudor.ambarus@microchip.com>
+On Tue, Jan 15, 2019 at 05:23:22PM +0100, Joerg Roedel wrote:
+> Right, I thought about that too, but didn't find a generic way to check
+> for all the cases. There are various checks that could be done:
 > 
-> I have been reviewing and contributing to the SPI NOR subsystem
-> for the last few months and I'm willing to continue doing so.
-> Volunteer as a maintainer for the SPI NOR part of the MTD subsystem.
+> 	1) Check if SWIOTLB is initialized at all, if not, return
+> 	   SIZE_MAX as the limit. This can't be checked from dma-direct
+> 	   code right now, but could be easily implemented.
+
+Yes, this is the low hanging fruit.
+
+> 	2) Check for swiotlb=force needs to be done.
 > 
-> Signed-off-by: Tudor Ambarus <tudor.ambarus@microchip.com>
+> 	3) Check whether the device can access all of available RAM. I
+> 	   have no idea how to check that in an architecture independent
+> 	   way. It also has to take memory hotplug into account as well
+> 	   as the DMA mask of the device.
+> 
+> 	   An easy approximation could be to omit the limit if the
+> 	   dma-mask covers all of the physical address bits available
+> 	   on the platform. It would require to pass the dma-mask as an
+> 	   additional parameter like it is done in dma_supported().
+> 
+> Any better ideas for how to implement 3)?
 
-Welcome :)
-
-Acked-by: Miquel Raynal <miquel.raynal@bootlin.com>
-
-
-Thanks,
-Miquèl
+And yeah, this is hard.  So I'd just go for the low hanging fruit
+for now and only implement 1) with a comment mentioning that
+we are a little pessimistic.
