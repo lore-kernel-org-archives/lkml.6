@@ -7,48 +7,48 @@ X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4069FC43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 17:01:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 58E21C43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 17:01:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0F8C120645
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 17:01:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2661720675
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 17:01:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547571682;
-	bh=mp3Nx3LQGDsr7BKW1lnilv5ZfQULlLxJ6+AutYAig3k=;
+	s=default; t=1547571684;
+	bh=e5cGdj1Tn9Fr5I5nyA4NRt51HjVRiWpBJgNvqoQjSmE=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=aj59rilaZcSv1eOqRd9h1Lx+jQgm/HjvJsKpep48Z9vIPmOQaXr4DS1Aac/HCka/g
-	 r1WcoHRxHxzIaZcqt4lBjYak+NhgfSWwTlmapHZUCNtEgubO6KtuTVDNe83wlboxDi
-	 146FBgwNfyBMlHDlMoXYECmCFvHEBQnDPVSnwpvw=
+	b=PyIcLM/cNolgBH9w5hL+ldfS4nFV89Z7am6y9NKM1G1rI0fLpok4B+7HG+MBa+DMS
+	 yLAnpAHd0Xx4KkCoAVJpLlqxHZkAiCszgF8DpGZNlVRq08BFTfBTlPfBP/ZoGSaYzk
+	 je9e6XFbgHCrChwuvLxwYEyy/n1ZVzlqaOFhy/oo=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731936AbfAOQhr (ORCPT
+        id S1731920AbfAOQhn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 15 Jan 2019 11:37:47 -0500
-Received: from mail.kernel.org ([198.145.29.99]:53362 "EHLO mail.kernel.org"
+        Tue, 15 Jan 2019 11:37:43 -0500
+Received: from mail.kernel.org ([198.145.29.99]:53308 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731914AbfAOQho (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Jan 2019 11:37:44 -0500
+        id S1731885AbfAOQhl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 Jan 2019 11:37:41 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A089A20868;
-        Tue, 15 Jan 2019 16:37:42 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3CB4520859;
+        Tue, 15 Jan 2019 16:37:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547570263;
-        bh=mp3Nx3LQGDsr7BKW1lnilv5ZfQULlLxJ6+AutYAig3k=;
+        s=default; t=1547570260;
+        bh=e5cGdj1Tn9Fr5I5nyA4NRt51HjVRiWpBJgNvqoQjSmE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=bRyVhggj5FAP4srnNNDa1FQaBtv3rthj5bAsXIpUg/c2Zr4rbWtGku5jZ0HM5Z4ch
-         eJB2438/5RUEdoJnAHONb8Wz/F2R6EirAHiFcPjtuwwbpkp4N2netTlQuO0i0I8a7y
-         4JoVxVTV9YK6k0yYox7QpFBtG0WvmKYl7WH5QeYI=
+        b=vafqPtAbO7vi57o9m0qMsjr5sVIuYnpNZ82MT/qmvKoWC2unLTuJSf5EMoWo6u3O0
+         kMr8jENBU6IdtG91xssWubEPbfVxaAzc5ZP3grHlbmqjYVRgnpFiCMWQyXI4xD+8l6
+         LLErp6mHpsOcwtOjWfdOk5CKa2SupZDXkkdFbbRU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Xu Wen <wen.xu@gatech.edu>,
-        Qu Wenruo <wqu@suse.com>, Su Yue <suy.fnst@cn.fujitsu.com>,
+        Qu Wenruo <wqu@suse.com>, Gu Jinxiang <gujx@cn.fujitsu.com>,
         David Sterba <dsterba@suse.com>,
         Ben Hutchings <ben.hutchings@codethink.co.uk>
-Subject: [PATCH 4.4 29/51] btrfs: Check that each block group has corresponding chunk at mount time
-Date:   Tue, 15 Jan 2019 17:35:25 +0100
-Message-Id: <20190115154850.720466621@linuxfoundation.org>
+Subject: [PATCH 4.4 28/51] btrfs: validate type when reading a chunk
+Date:   Tue, 15 Jan 2019 17:35:24 +0100
+Message-Id: <20190115154850.640685299@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190115154846.928796000@linuxfoundation.org>
 References: <20190115154846.928796000@linuxfoundation.org>
@@ -67,83 +67,71 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Qu Wenruo <wqu@suse.com>
+From: Gu Jinxiang <gujx@cn.fujitsu.com>
 
-commit 514c7dca85a0bf40be984dab0b477403a6db901f upstream.
+commit 315409b0098fb2651d86553f0436b70502b29bb2 upstream.
 
-A crafted btrfs image with incorrect chunk<->block group mapping will
-trigger a lot of unexpected things as the mapping is essential.
+Reported in https://bugzilla.kernel.org/show_bug.cgi?id=199839, with an
+image that has an invalid chunk type but does not return an error.
 
-Although the problem can be caught by block group item checker
-added in "btrfs: tree-checker: Verify block_group_item", it's still not
-sufficient.  A sufficiently valid block group item can pass the check
-added by the mentioned patch but could fail to match the existing chunk.
+Add chunk type check in btrfs_check_chunk_valid, to detect the wrong
+type combinations.
 
-This patch will add extra block group -> chunk mapping check, to ensure
-we have a completely matching (start, len, flags) chunk for each block
-group at mount time.
-
-Here we reuse the original helper find_first_block_group(), which is
-already doing the basic bg -> chunk checks, adding further checks of the
-start/len and type flags.
-
-Link: https://bugzilla.kernel.org/show_bug.cgi?id=199837
+Link: https://bugzilla.kernel.org/show_bug.cgi?id=199839
 Reported-by: Xu Wen <wen.xu@gatech.edu>
-Signed-off-by: Qu Wenruo <wqu@suse.com>
-Reviewed-by: Su Yue <suy.fnst@cn.fujitsu.com>
-Reviewed-by: David Sterba <dsterba@suse.com>
+Reviewed-by: Qu Wenruo <wqu@suse.com>
+Signed-off-by: Gu Jinxiang <gujx@cn.fujitsu.com>
 Signed-off-by: David Sterba <dsterba@suse.com>
 [bwh: Backported to 4.4: Use root->fs_info instead of fs_info]
 Signed-off-by: Ben Hutchings <ben.hutchings@codethink.co.uk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- fs/btrfs/extent-tree.c |   28 +++++++++++++++++++++++++++-
- 1 file changed, 27 insertions(+), 1 deletion(-)
+ fs/btrfs/volumes.c |   28 ++++++++++++++++++++++++++++
+ 1 file changed, 28 insertions(+)
 
---- a/fs/btrfs/extent-tree.c
-+++ b/fs/btrfs/extent-tree.c
-@@ -9487,6 +9487,8 @@ static int find_first_block_group(struct
- 	int ret = 0;
- 	struct btrfs_key found_key;
- 	struct extent_buffer *leaf;
-+	struct btrfs_block_group_item bg;
-+	u64 flags;
- 	int slot;
+--- a/fs/btrfs/volumes.c
++++ b/fs/btrfs/volumes.c
+@@ -6218,6 +6218,8 @@ static int btrfs_check_chunk_valid(struc
+ 	u16 num_stripes;
+ 	u16 sub_stripes;
+ 	u64 type;
++	u64 features;
++	bool mixed = false;
  
- 	ret = btrfs_search_slot(NULL, root, key, path, 0, 0);
-@@ -9521,8 +9523,32 @@ static int find_first_block_group(struct
- 			"logical %llu len %llu found bg but no related chunk",
- 					  found_key.objectid, found_key.offset);
- 				ret = -ENOENT;
-+			} else if (em->start != found_key.objectid ||
-+				   em->len != found_key.offset) {
-+				btrfs_err(root->fs_info,
-+		"block group %llu len %llu mismatch with chunk %llu len %llu",
-+					  found_key.objectid, found_key.offset,
-+					  em->start, em->len);
-+				ret = -EUCLEAN;
- 			} else {
--				ret = 0;
-+				read_extent_buffer(leaf, &bg,
-+					btrfs_item_ptr_offset(leaf, slot),
-+					sizeof(bg));
-+				flags = btrfs_block_group_flags(&bg) &
-+					BTRFS_BLOCK_GROUP_TYPE_MASK;
+ 	length = btrfs_chunk_length(leaf, chunk);
+ 	stripe_len = btrfs_chunk_stripe_len(leaf, chunk);
+@@ -6258,6 +6260,32 @@ static int btrfs_check_chunk_valid(struc
+ 			  btrfs_chunk_type(leaf, chunk));
+ 		return -EIO;
+ 	}
 +
-+				if (flags != (em->map_lookup->type &
-+					      BTRFS_BLOCK_GROUP_TYPE_MASK)) {
-+					btrfs_err(root->fs_info,
-+"block group %llu len %llu type flags 0x%llx mismatch with chunk type flags 0x%llx",
-+						found_key.objectid,
-+						found_key.offset, flags,
-+						(BTRFS_BLOCK_GROUP_TYPE_MASK &
-+						 em->map_lookup->type));
-+					ret = -EUCLEAN;
-+				} else {
-+					ret = 0;
-+				}
- 			}
- 			free_extent_map(em);
- 			goto out;
++	if ((type & BTRFS_BLOCK_GROUP_TYPE_MASK) == 0) {
++		btrfs_err(root->fs_info, "missing chunk type flag: 0x%llx", type);
++		return -EIO;
++	}
++
++	if ((type & BTRFS_BLOCK_GROUP_SYSTEM) &&
++	    (type & (BTRFS_BLOCK_GROUP_METADATA | BTRFS_BLOCK_GROUP_DATA))) {
++		btrfs_err(root->fs_info,
++			"system chunk with data or metadata type: 0x%llx", type);
++		return -EIO;
++	}
++
++	features = btrfs_super_incompat_flags(root->fs_info->super_copy);
++	if (features & BTRFS_FEATURE_INCOMPAT_MIXED_GROUPS)
++		mixed = true;
++
++	if (!mixed) {
++		if ((type & BTRFS_BLOCK_GROUP_METADATA) &&
++		    (type & BTRFS_BLOCK_GROUP_DATA)) {
++			btrfs_err(root->fs_info,
++			"mixed chunk type in non-mixed mode: 0x%llx", type);
++			return -EIO;
++		}
++	}
++
+ 	if ((type & BTRFS_BLOCK_GROUP_RAID10 && sub_stripes != 2) ||
+ 	    (type & BTRFS_BLOCK_GROUP_RAID1 && num_stripes < 1) ||
+ 	    (type & BTRFS_BLOCK_GROUP_RAID5 && num_stripes < 2) ||
 
 
