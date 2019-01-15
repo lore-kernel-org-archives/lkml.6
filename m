@@ -3,214 +3,61 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 18619C43444
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 08:34:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D4198C43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 08:37:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DC06A2063F
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 08:34:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AAFD12063F
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 08:37:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728295AbfAOIeQ (ORCPT
+        id S1728391AbfAOIho (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 15 Jan 2019 03:34:16 -0500
-Received: from mx2.suse.de ([195.135.220.15]:51060 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726022AbfAOIeP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Jan 2019 03:34:15 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 60AABAC5A;
-        Tue, 15 Jan 2019 08:34:13 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id 416851E0DBA; Tue, 15 Jan 2019 09:34:12 +0100 (CET)
-Date:   Tue, 15 Jan 2019 09:34:12 +0100
-From:   Jan Kara <jack@suse.cz>
-To:     John Hubbard <jhubbard@nvidia.com>
-Cc:     Jerome Glisse <jglisse@redhat.com>, Jan Kara <jack@suse.cz>,
-        Matthew Wilcox <willy@infradead.org>,
-        Dave Chinner <david@fromorbit.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        John Hubbard <john.hubbard@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linux MM <linux-mm@kvack.org>, tom@talpey.com,
-        Al Viro <viro@zeniv.linux.org.uk>, benve@cisco.com,
-        Christoph Hellwig <hch@infradead.org>,
-        Christopher Lameter <cl@linux.com>,
-        "Dalessandro, Dennis" <dennis.dalessandro@intel.com>,
-        Doug Ledford <dledford@redhat.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Michal Hocko <mhocko@kernel.org>, mike.marciniszyn@intel.com,
-        rcampbell@nvidia.com,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Subject: Re: [PATCH 1/2] mm: introduce put_user_page*(), placeholder versions
-Message-ID: <20190115083412.GD29524@quack2.suse.cz>
-References: <a79b259b-3982-b271-025a-0656f70506f4@nvidia.com>
- <20190111165141.GB3190@redhat.com>
- <1b37061c-5598-1b02-2983-80003f1c71f2@nvidia.com>
- <20190112020228.GA5059@redhat.com>
- <294bdcfa-5bf9-9c09-9d43-875e8375e264@nvidia.com>
- <20190112024625.GB5059@redhat.com>
- <b6f4ed36-fc8d-1f9b-8c74-b12f61d496ae@nvidia.com>
- <20190114145447.GJ13316@quack2.suse.cz>
- <20190114172124.GA3702@redhat.com>
- <fdece7f8-7e4f-f679-821f-1d05ed748c15@nvidia.com>
+        Tue, 15 Jan 2019 03:37:44 -0500
+Received: from 8bytes.org ([81.169.241.247]:57666 "EHLO theia.8bytes.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727601AbfAOIho (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 Jan 2019 03:37:44 -0500
+Received: by theia.8bytes.org (Postfix, from userid 1000)
+        id 87B9239A; Tue, 15 Jan 2019 09:37:42 +0100 (CET)
+Date:   Tue, 15 Jan 2019 09:37:42 +0100
+From:   Joerg Roedel <joro@8bytes.org>
+To:     "Michael S. Tsirkin" <mst@redhat.com>
+Cc:     Jason Wang <jasowang@redhat.com>, Christoph Hellwig <hch@lst.de>,
+        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+        Jens Axboe <axboe@kernel.dk>,
+        virtualization@lists.linux-foundation.org,
+        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+        iommu@lists.linux-foundation.org, jfehlig@suse.com,
+        jon.grimm@amd.com, brijesh.singh@amd.com
+Subject: Re: [PATCH 0/3] Fix virtio-blk issue with SWIOTLB
+Message-ID: <20190115083742.GF5825@8bytes.org>
+References: <20190110134433.15672-1-joro@8bytes.org>
+ <5ae1341e-62ec-0478-552b-259eabf9fb17@redhat.com>
+ <20190111091502.GC5825@8bytes.org>
+ <38bcbd46-674c-348a-cbd6-66bd431e986a@redhat.com>
+ <20190114095002.GA29874@lst.de>
+ <ac6d83d8-02de-dbdf-e309-3a1115642d50@redhat.com>
+ <20190114131114-mutt-send-email-mst@kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <fdece7f8-7e4f-f679-821f-1d05ed748c15@nvidia.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20190114131114-mutt-send-email-mst@kernel.org>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon 14-01-19 11:09:20, John Hubbard wrote:
-> On 1/14/19 9:21 AM, Jerome Glisse wrote:
-> >>
-> >> Also there is one more idea I had how to record number of pins in the page:
-> >>
-> >> #define PAGE_PIN_BIAS	1024
-> >>
-> >> get_page_pin()
-> >> 	atomic_add(&page->_refcount, PAGE_PIN_BIAS);
-> >>
-> >> put_page_pin();
-> >> 	atomic_add(&page->_refcount, -PAGE_PIN_BIAS);
-> >>
-> >> page_pinned(page)
-> >> 	(atomic_read(&page->_refcount) - page_mapcount(page)) > PAGE_PIN_BIAS
-> >>
-> >> This is pretty trivial scheme. It still gives us 22-bits for page pins
-> >> which should be plenty (but we should check for that and bail with error if
-> >> it would overflow). Also there will be no false negatives and false
-> >> positives only if there are more than 1024 non-page-table references to the
-> >> page which I expect to be rare (we might want to also subtract
-> >> hpage_nr_pages() for radix tree references to avoid excessive false
-> >> positives for huge pages although at this point I don't think they would
-> >> matter). Thoughts?
-> > 
-> > Racing PUP are as likely to cause issues:
-> > 
-> > CPU0                        | CPU1       | CPU2
-> >                             |            |
-> >                             | PUP()      |
-> >     page_pinned(page)       |            |
-> >       (page_count(page) -   |            |
-> >        page_mapcount(page)) |            |
-> >                             |            | GUP()
-> > 
-> > So here the refcount snap-shot does not include the second GUP and
-> > we can have a false negative ie the page_pinned() will return false
-> > because of the PUP happening just before on CPU1 despite the racing
-> > GUP on CPU2 just after.
-> > 
-> > I believe only either lock or memory ordering with barrier can
-> > guarantee that we do not miss GUP ie no false negative. Still the
-> > bias idea might be usefull as with it we should not need a flag.
-> > 
-> > So to make the above safe it would still need the page write back
-> > double check that i described so that GUP back-off if it raced with
-> > page_mkclean,clear_page_dirty_for_io and the fs write page call back
-> > which call test_set_page_writeback() (yes it is very unlikely but
-> > might still happen).
-> > 
-> > 
-> > I still need to ponder some more on all the races.
-> > 
-> 
-> Tentatively, so far I prefer the _mapcount scheme, because it seems more
-> accurate to add mapcounts than to overload the _refcount field. And the 
-> implementation is going to be cleaner. And we've already figured out the
-> races.
+On Mon, Jan 14, 2019 at 01:20:45PM -0500, Michael S. Tsirkin wrote:
+> Which would be fine especially if we can manage not to introduce a bunch
+> of indirect calls all over the place and hurt performance.
 
-I think there's no difference WRT the races when using _mapcount or _count
-bias to identify page pins. In fact the difference between what I suggested
-and what you did are just that you update _count instead of _mapcount and
-you can drop the rmap walk code and the page flag.
+Which indirect calls? In case of unset dma_ops the DMA-API functions
+call directly into the dma-direct implementation, no indirect calls at
+all.
 
-There are two reasons why I like using _count bias more:
+Regards,
 
-1) I'm still not 100% convinced that some page_mapped() or page_mapcount()
-check that starts to be true due to page being unmapped but pinned does not
-confuse some code with bad consequences. The fact that the kernel boots
-indicates that there's no common check that would get confused but full
-audit of page_mapped() and page_mapcount() checks is needed to confirm
-there isn't some cornercase missed and that is tedious. There are
-definitely places that e.g. assert that page_mapcount() == 0 after all page
-tables are unmapped and that is not necessarily true after your changes.
-
-2) If the page gets pinned, we will report it as pinned until the next
-page_mkclean() call. That can be quite a long time after page has been
-really unpinned. In particular if the page was never dirtied (e.g. because
-it was gup'ed only for read but there can be other reasons), it may never
-happen that page_mkclean() is called and we won't be able to ever reclaim
-such page. So we would have to also add some mechanism to eventually get
-such pages cleaned up and that involves rmap walk for each such page which
-is not quite cheap.
-
-> For example, the following already survives a basic boot to graphics mode.
-> It requires a bunch of callsite conversions, and a page flag (neither of which
-> is shown here), and may also have "a few" gross conceptual errors, but take a 
-> peek:
-
-Thanks for writing this down! Some comments inline.
-
-> +/*
-> + * Manages the PG_gup_pinned flag.
-> + *
-> + * Note that page->_mapcount counting part of managing that flag, because the
-> + * _mapcount is used to determine if PG_gup_pinned can be cleared, in
-> + * page_mkclean().
-> + */
-> +static void track_gup_page(struct page *page)
-> +{
-> +	page = compound_head(page);
-> +
-> +	lock_page(page);
-> +
-> +	wait_on_page_writeback(page);
-
-^^ I'd use wait_for_stable_page() here. That is the standard waiting
-mechanism to use before you allow page modification.
-
-> +
-> +	atomic_inc(&page->_mapcount);
-> +	SetPageGupPinned(page);
-> +
-> +	unlock_page(page);
-> +}
-> +
-> +/*
-> + * A variant of track_gup_page() that returns -EBUSY, instead of waiting.
-> + */
-> +static int track_gup_page_atomic(struct page *page)
-> +{
-> +	page = compound_head(page);
-> +
-> +	if (PageWriteback(page) || !trylock_page(page))
-> +		return -EBUSY;
-> +
-> +	if (PageWriteback(page)) {
-> +		unlock_page(page);
-> +		return -EBUSY;
-> +	}
-
-Here you'd need some helper that would return whether
-wait_for_stable_page() is going to wait. Like would_wait_for_stable_page()
-but maybe you can come up with a better name.
-
-> +	atomic_inc(&page->_mapcount);
-> +	SetPageGupPinned(page);
-> +
-> +	unlock_page(page);
-> +	return 0;
-> +}
-> +
-
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+	Joerg
