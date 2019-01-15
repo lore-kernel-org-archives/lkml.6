@@ -2,285 +2,172 @@ Return-Path: <SRS0=RZO6=PX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 94C08C43387
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B4E5DC43612
 	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 04:22:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 504562085A
+	by mail.kernel.org (Postfix) with ESMTP id 7EB9120656
 	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 04:22:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728259AbfAOEWa (ORCPT
+        id S1728273AbfAOEWc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 14 Jan 2019 23:22:30 -0500
-Received: from kvm5.telegraphics.com.au ([98.124.60.144]:37480 "EHLO
+        Mon, 14 Jan 2019 23:22:32 -0500
+Received: from kvm5.telegraphics.com.au ([98.124.60.144]:37550 "EHLO
         kvm5.telegraphics.com.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728160AbfAOEW1 (ORCPT
+        with ESMTP id S1728216AbfAOEW3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 Jan 2019 23:22:27 -0500
+        Mon, 14 Jan 2019 23:22:29 -0500
 Received: by kvm5.telegraphics.com.au (Postfix, from userid 502)
-        id 4DB2F29E6B; Mon, 14 Jan 2019 23:22:24 -0500 (EST)
+        id 6921A29E6F; Mon, 14 Jan 2019 23:22:24 -0500 (EST)
 To:     Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Joshua Thompson <funaho@jurai.org>,
+        Geert Uytterhoeven <geert@linux-m68k.org>
 Cc:     linux-kernel@vger.kernel.org, linux-m68k@lists.linux-m68k.org,
         linuxppc-dev@lists.ozlabs.org
-Message-Id: <24c1282d42d7d996cdc5c1a6c4dfd979af5a3ff7.1547525936.git.fthain@telegraphics.com.au>
+Message-Id: <95b208ccdb3276ad6a0a2aacc5de828550a8a024.1547525936.git.fthain@telegraphics.com.au>
 In-Reply-To: <cover.1547525936.git.fthain@telegraphics.com.au>
 References: <cover.1547525936.git.fthain@telegraphics.com.au>
 From:   Finn Thain <fthain@telegraphics.com.au>
-Subject: [PATCH v9 09/22] char/nvram: Implement NVRAM read/write methods
+Subject: [PATCH v9 12/22] m68k/mac: Use macros for RTC accesses not magic
+ numbers
 Date:   Tue, 15 Jan 2019 15:18:56 +1100
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Refactor the RTC "CMOS" NVRAM functions so that they can be used as
-arch_nvram_ops methods. Checksumming logic is moved from the misc device
-operations to the nvram read/write operations. This makes the misc device
-implementation more generic.
+This is intended to improve code style and not affect code behaviour.
 
-This preserves the locking mechanism such that "read if checksum valid"
-and "write and update checksum" remain atomic operations.
-
-Some platforms implement byte-range read/write methods which are similar
-to file_operations struct methods. Other platforms provide only
-byte-at-a-time methods. The former are more efficient but may be
-unavailable so fall back on the latter methods when necessary.
-
+Acked-by: Geert Uytterhoeven <geert@linux-m68k.org>
 Tested-by: Stan Johnson <userm57@yahoo.com>
 Signed-off-by: Finn Thain <fthain@telegraphics.com.au>
 ---
-Changed since v8:
- - Renamed nvram_* functions to avoid name collisions.
- - Added nvram_read_bytes() and nvram_write_bytes() helpers for use by
-those platforms which access NVRAM only one-byte-at-a-time.
+ arch/m68k/mac/misc.c | 59 ++++++++++++++++++++++++++++++--------------
+ 1 file changed, 41 insertions(+), 18 deletions(-)
 
-Changed since v7:
- - Adopted memdup_user(), like arch/powerpc/kernel/nvram_64.c.
----
- drivers/char/nvram.c  | 120 ++++++++++++++++++++++++++----------------
- include/linux/nvram.h |  32 ++++++++++-
- 2 files changed, 104 insertions(+), 48 deletions(-)
-
-diff --git a/drivers/char/nvram.c b/drivers/char/nvram.c
-index f88ef41d0598..adcc213c331e 100644
---- a/drivers/char/nvram.c
-+++ b/drivers/char/nvram.c
-@@ -41,6 +41,7 @@
- #include <linux/init.h>
- #include <linux/proc_fs.h>
- #include <linux/seq_file.h>
-+#include <linux/slab.h>
- #include <linux/spinlock.h>
- #include <linux/io.h>
- #include <linux/uaccess.h>
-@@ -161,7 +162,46 @@ static ssize_t pc_nvram_get_size(void)
- 	return NVRAM_BYTES;
+diff --git a/arch/m68k/mac/misc.c b/arch/m68k/mac/misc.c
+index 78c807025436..af000a015f68 100644
+--- a/arch/m68k/mac/misc.c
++++ b/arch/m68k/mac/misc.c
+@@ -136,6 +136,21 @@ static void via_rtc_send(__u8 data)
+ 	}
  }
  
-+static ssize_t pc_nvram_read(char *buf, size_t count, loff_t *ppos)
-+{
-+	char *p = buf;
-+	loff_t i;
++/*
++ * These values can be found in Inside Macintosh vol. III ch. 2
++ * which has a description of the RTC chip in the original Mac.
++ */
 +
-+	spin_lock_irq(&rtc_lock);
-+	if (!__nvram_check_checksum()) {
-+		spin_unlock_irq(&rtc_lock);
-+		return -EIO;
-+	}
-+	for (i = *ppos; count > 0 && i < NVRAM_BYTES; --count, ++i, ++p)
-+		*p = __nvram_read_byte(i);
-+	spin_unlock_irq(&rtc_lock);
++#define RTC_FLG_READ            BIT(7)
++#define RTC_FLG_WRITE_PROTECT   BIT(7)
++#define RTC_CMD_READ(r)         (RTC_FLG_READ | (r << 2))
++#define RTC_CMD_WRITE(r)        (r << 2)
++#define RTC_REG_SECONDS_0       0
++#define RTC_REG_SECONDS_1       1
++#define RTC_REG_SECONDS_2       2
++#define RTC_REG_SECONDS_3       3
++#define RTC_REG_WRITE_PROTECT   13
 +
-+	*ppos = i;
-+	return p - buf;
-+}
-+
-+static ssize_t pc_nvram_write(char *buf, size_t count, loff_t *ppos)
-+{
-+	char *p = buf;
-+	loff_t i;
-+
-+	spin_lock_irq(&rtc_lock);
-+	if (!__nvram_check_checksum()) {
-+		spin_unlock_irq(&rtc_lock);
-+		return -EIO;
-+	}
-+	for (i = *ppos; count > 0 && i < NVRAM_BYTES; --count, ++i, ++p)
-+		__nvram_write_byte(*p, i);
-+	__nvram_set_checksum();
-+	spin_unlock_irq(&rtc_lock);
-+
-+	*ppos = i;
-+	return p - buf;
-+}
-+
- const struct nvram_ops arch_nvram_ops = {
-+	.read           = pc_nvram_read,
-+	.write          = pc_nvram_write,
- 	.read_byte      = pc_nvram_read_byte,
- 	.write_byte     = pc_nvram_write_byte,
- 	.get_size       = pc_nvram_get_size,
-@@ -184,69 +224,57 @@ static loff_t nvram_misc_llseek(struct file *file, loff_t offset, int origin)
- static ssize_t nvram_misc_read(struct file *file, char __user *buf,
- 			       size_t count, loff_t *ppos)
+ /*
+  * Execute a VIA PRAM/RTC command. For read commands
+  * data should point to a one-byte buffer for the
+@@ -145,13 +160,17 @@ static void via_rtc_send(__u8 data)
+  * This function disables all interrupts while running.
+  */
+ 
+-static void via_pram_command(int command, __u8 *data)
++static void via_rtc_command(int command, __u8 *data)
  {
--	unsigned char contents[NVRAM_BYTES];
--	unsigned i = *ppos;
--	unsigned char *tmp;
--
--	spin_lock_irq(&rtc_lock);
-+	char *tmp;
-+	ssize_t ret;
+ 	unsigned long flags;
+ 	int is_read;
  
--	if (!__nvram_check_checksum())
--		goto checksum_err;
+ 	local_irq_save(flags);
  
--	for (tmp = contents; count-- > 0 && i < NVRAM_BYTES; ++i, ++tmp)
--		*tmp = __nvram_read_byte(i);
-+	if (!access_ok(buf, count))
-+		return -EFAULT;
-+	if (*ppos >= nvram_size)
-+		return 0;
- 
--	spin_unlock_irq(&rtc_lock);
-+	count = min_t(size_t, count, nvram_size - *ppos);
-+	count = min_t(size_t, count, PAGE_SIZE);
- 
--	if (copy_to_user(buf, contents, tmp - contents))
--		return -EFAULT;
-+	tmp = kmalloc(count, GFP_KERNEL);
-+	if (!tmp)
-+		return -ENOMEM;
- 
--	*ppos = i;
-+	ret = nvram_read(tmp, count, ppos);
-+	if (ret <= 0)
-+		goto out;
- 
--	return tmp - contents;
-+	if (copy_to_user(buf, tmp, ret)) {
-+		*ppos -= ret;
-+		ret = -EFAULT;
-+	}
- 
--checksum_err:
--	spin_unlock_irq(&rtc_lock);
--	return -EIO;
-+out:
-+	kfree(tmp);
-+	return ret;
- }
- 
- static ssize_t nvram_misc_write(struct file *file, const char __user *buf,
- 				size_t count, loff_t *ppos)
- {
--	unsigned char contents[NVRAM_BYTES];
--	unsigned i = *ppos;
--	unsigned char *tmp;
--
--	if (i >= NVRAM_BYTES)
--		return 0;	/* Past EOF */
--
--	if (count > NVRAM_BYTES - i)
--		count = NVRAM_BYTES - i;
--	if (count > NVRAM_BYTES)
--		return -EFAULT;	/* Can't happen, but prove it to gcc */
-+	char *tmp;
-+	ssize_t ret;
- 
--	if (copy_from_user(contents, buf, count))
-+	if (!access_ok(buf, count))
- 		return -EFAULT;
-+	if (*ppos >= nvram_size)
-+		return 0;
- 
--	spin_lock_irq(&rtc_lock);
--
--	if (!__nvram_check_checksum())
--		goto checksum_err;
--
--	for (tmp = contents; count--; ++i, ++tmp)
--		__nvram_write_byte(*tmp, i);
-+	count = min_t(size_t, count, nvram_size - *ppos);
-+	count = min_t(size_t, count, PAGE_SIZE);
- 
--	__nvram_set_checksum();
--
--	spin_unlock_irq(&rtc_lock);
-+	tmp = memdup_user(buf, count);
-+	if (IS_ERR(tmp))
-+		return PTR_ERR(tmp);
- 
--	*ppos = i;
--
--	return tmp - contents;
--
--checksum_err:
--	spin_unlock_irq(&rtc_lock);
--	return -EIO;
-+	ret = nvram_write(tmp, count, ppos);
-+	kfree(tmp);
-+	return ret;
- }
- 
- static long nvram_misc_ioctl(struct file *file, unsigned int cmd,
-diff --git a/include/linux/nvram.h b/include/linux/nvram.h
-index 31c763087746..9df85703735c 100644
---- a/include/linux/nvram.h
-+++ b/include/linux/nvram.h
-@@ -66,18 +66,46 @@ static inline void nvram_write_byte(unsigned char val, int addr)
- #endif
- }
- 
-+static inline ssize_t nvram_read_bytes(char *buf, size_t count, loff_t *ppos)
-+{
-+	ssize_t nvram_size = nvram_get_size();
-+	loff_t i;
-+	char *p = buf;
++	/* The least significant bits must be 0b01 according to Inside Mac */
 +
-+	if (nvram_size < 0)
-+		return nvram_size;
-+	for (i = *ppos; count > 0 && i < nvram_size; ++i, ++p, --count)
-+		*p = nvram_read_byte(i);
-+	*ppos = i;
-+	return p - buf;
-+}
++	command = (command & ~3) | 1;
 +
-+static inline ssize_t nvram_write_bytes(char *buf, size_t count, loff_t *ppos)
-+{
-+	ssize_t nvram_size = nvram_get_size();
-+	loff_t i;
-+	char *p = buf;
-+
-+	if (nvram_size < 0)
-+		return nvram_size;
-+	for (i = *ppos; count > 0 && i < nvram_size; ++i, ++p, --count)
-+		nvram_write_byte(*p, i);
-+	*ppos = i;
-+	return p - buf;
-+}
-+
- static inline ssize_t nvram_read(char *buf, size_t count, loff_t *ppos)
- {
- 	if (arch_nvram_ops.read)
- 		return arch_nvram_ops.read(buf, count, ppos);
--	return -ENODEV;
-+	return nvram_read_bytes(buf, count, ppos);
+ 	/* Enable the RTC and make sure the strobe line is high */
+ 
+ 	via1[vBufB] = (via1[vBufB] | VIA1B_vRTCClk) & ~VIA1B_vRTCEnb;
+@@ -159,10 +178,10 @@ static void via_pram_command(int command, __u8 *data)
+ 	if (command & 0xFF00) {		/* extended (two-byte) command */
+ 		via_rtc_send((command & 0xFF00) >> 8);
+ 		via_rtc_send(command & 0xFF);
+-		is_read = command & 0x8000;
++		is_read = command & (RTC_FLG_READ << 8);
+ 	} else {			/* one-byte command */
+ 		via_rtc_send(command);
+-		is_read = command & 0x80;
++		is_read = command & RTC_FLG_READ;
+ 	}
+ 	if (is_read) {
+ 		*data = via_rtc_recv();
+@@ -201,10 +220,10 @@ static time64_t via_read_time(void)
+ 	} result, last_result;
+ 	int count = 1;
+ 
+-	via_pram_command(0x81, &last_result.cdata[3]);
+-	via_pram_command(0x85, &last_result.cdata[2]);
+-	via_pram_command(0x89, &last_result.cdata[1]);
+-	via_pram_command(0x8D, &last_result.cdata[0]);
++	via_rtc_command(RTC_CMD_READ(RTC_REG_SECONDS_0), &last_result.cdata[3]);
++	via_rtc_command(RTC_CMD_READ(RTC_REG_SECONDS_1), &last_result.cdata[2]);
++	via_rtc_command(RTC_CMD_READ(RTC_REG_SECONDS_2), &last_result.cdata[1]);
++	via_rtc_command(RTC_CMD_READ(RTC_REG_SECONDS_3), &last_result.cdata[0]);
+ 
+ 	/*
+ 	 * The NetBSD guys say to loop until you get the same reading
+@@ -212,10 +231,14 @@ static time64_t via_read_time(void)
+ 	 */
+ 
+ 	while (1) {
+-		via_pram_command(0x81, &result.cdata[3]);
+-		via_pram_command(0x85, &result.cdata[2]);
+-		via_pram_command(0x89, &result.cdata[1]);
+-		via_pram_command(0x8D, &result.cdata[0]);
++		via_rtc_command(RTC_CMD_READ(RTC_REG_SECONDS_0),
++		                &result.cdata[3]);
++		via_rtc_command(RTC_CMD_READ(RTC_REG_SECONDS_1),
++		                &result.cdata[2]);
++		via_rtc_command(RTC_CMD_READ(RTC_REG_SECONDS_2),
++		                &result.cdata[1]);
++		via_rtc_command(RTC_CMD_READ(RTC_REG_SECONDS_3),
++		                &result.cdata[0]);
+ 
+ 		if (result.idata == last_result.idata)
+ 			return (time64_t)result.idata - RTC_OFFSET;
+@@ -254,18 +277,18 @@ static void via_set_rtc_time(struct rtc_time *tm)
+ 	/* Clear the write protect bit */
+ 
+ 	temp = 0x55;
+-	via_pram_command(0x35, &temp);
++	via_rtc_command(RTC_CMD_WRITE(RTC_REG_WRITE_PROTECT), &temp);
+ 
+ 	data.idata = lower_32_bits(time + RTC_OFFSET);
+-	via_pram_command(0x01, &data.cdata[3]);
+-	via_pram_command(0x05, &data.cdata[2]);
+-	via_pram_command(0x09, &data.cdata[1]);
+-	via_pram_command(0x0D, &data.cdata[0]);
++	via_rtc_command(RTC_CMD_WRITE(RTC_REG_SECONDS_0), &data.cdata[3]);
++	via_rtc_command(RTC_CMD_WRITE(RTC_REG_SECONDS_1), &data.cdata[2]);
++	via_rtc_command(RTC_CMD_WRITE(RTC_REG_SECONDS_2), &data.cdata[1]);
++	via_rtc_command(RTC_CMD_WRITE(RTC_REG_SECONDS_3), &data.cdata[0]);
+ 
+ 	/* Set the write protect bit */
+ 
+-	temp = 0xD5;
+-	via_pram_command(0x35, &temp);
++	temp = 0x55 | RTC_FLG_WRITE_PROTECT;
++	via_rtc_command(RTC_CMD_WRITE(RTC_REG_WRITE_PROTECT), &temp);
  }
  
- static inline ssize_t nvram_write(char *buf, size_t count, loff_t *ppos)
- {
- 	if (arch_nvram_ops.write)
- 		return arch_nvram_ops.write(buf, count, ppos);
--	return -ENODEV;
-+	return nvram_write_bytes(buf, count, ppos);
- }
- 
- #endif  /* _LINUX_NVRAM_H */
+ static void via_shutdown(void)
 -- 
 2.19.2
 
