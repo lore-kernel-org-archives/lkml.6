@@ -4,56 +4,50 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D24DC43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 16:41:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 25FCFC43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 16:42:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5985720868
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 16:41:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E72B02054F
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 16:42:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547570517;
-	bh=dkRIwGRF9AFuL/vgID5f/wtxhJdiF/o6OZjRiqRowxM=;
+	s=default; t=1547570521;
+	bh=5CNi//55BSWQNgJcUcdR95WK8PFCf3cSNn5kBIjGOVI=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=1QsXVUq0HvIfiFmjoSTRrzVeALH3TZrWoktiCjSLrC7aDPJo98G79GjY2wIX78u+t
-	 2u+8hQ9LFqm3LMFaap/rJ29/DwPQqUtPwPUZ3Q2UJwYNhjbw43Gw0bxzymtqwFupYb
-	 1cXf6O1u3dp4ePqoJ5ufrgiwYjkU3bkML1zf45Kg=
+	b=ZEf2+4rXInAWuphspSjCAUUnyDUQbFASXTP6QtcXUPU4I9Y81t00zW6c66Cl50ZG6
+	 wiRPJdZ53WRaWYXv7Rc75abtdWOOG/8UuxOyFvDY+SafenqocpSeiWR7Vr2Xr/unaq
+	 QuCi1ThVyH0IXzTNtchV1gQ/XWBp9ELLSihkZQiE=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732898AbfAOQl4 (ORCPT
+        id S1732910AbfAOQl7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 15 Jan 2019 11:41:56 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58656 "EHLO mail.kernel.org"
+        Tue, 15 Jan 2019 11:41:59 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58748 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732875AbfAOQlu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Jan 2019 11:41:50 -0500
+        id S1732894AbfAOQl4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 Jan 2019 11:41:56 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A4D662054F;
-        Tue, 15 Jan 2019 16:41:48 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E9EDE2054F;
+        Tue, 15 Jan 2019 16:41:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547570509;
-        bh=dkRIwGRF9AFuL/vgID5f/wtxhJdiF/o6OZjRiqRowxM=;
+        s=default; t=1547570514;
+        bh=5CNi//55BSWQNgJcUcdR95WK8PFCf3cSNn5kBIjGOVI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=leFww6nGLw9Gp/N44xvByqsPBy1A/Xv2KYQXUqKc69lrZM4IPrx7F2Yp4Qj0nYxMc
-         QamEKgZ6JVWnyb+nnXJaygQxHwL+9WAk6a9XYyBDNdm+PxQn1y61LPEJfKHRHBqjvJ
-         SIvXRo7ddBplttUPcMvmtkduZ3z13JA9Kf+T699g=
+        b=xEUhgnLX9bdNkcQ5E3l8LbQKy4TrYumXThnYvbkA4YIiLXkGMRSDpTvIRrNTJpmiY
+         I3V1t6p8jB9HIRULJ0LeicgQRy4EpKOXCpVQg5E7+sBbYbkMqMvbRVRWSCYNObsYZK
+         3irEvuR5B12wTaI3jXnOi4Z6z0z5GTEsKQzFULag=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Michal Hocko <mhocko@suse.com>,
-        Liu Bo <bo.liu@linux.alibaba.com>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Johannes Weiner <hannes@cmpxchg.org>, Jan Kara <jack@suse.cz>,
-        Dave Chinner <david@fromorbit.com>,
-        Theodore Tso <tytso@mit.edu>,
-        Vladimir Davydov <vdavydov.dev@gmail.com>,
-        Shakeel Butt <shakeelb@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH 4.19 20/50] mm, memcg: fix reclaim deadlock with writeback
-Date:   Tue, 15 Jan 2019 17:35:56 +0100
-Message-Id: <20190115154911.117892490@linuxfoundation.org>
+        stable@vger.kernel.org, Hans de Goede <hdegoede@redhat.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
+Subject: [PATCH 4.19 22/50] ACPI / PMIC: xpower: Fix TS-pin current-source handling
+Date:   Tue, 15 Jan 2019 17:35:58 +0100
+Message-Id: <20190115154911.233042610@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190115154909.933241945@linuxfoundation.org>
 References: <20190115154909.933241945@linuxfoundation.org>
@@ -72,147 +66,119 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Michal Hocko <mhocko@suse.com>
+From: Hans de Goede <hdegoede@redhat.com>
 
-commit 63f3655f950186752236bb88a22f8252c11ce394 upstream.
+commit 2b531d71595d2b5b12782a49b23c335869e2621e upstream.
 
-Liu Bo has experienced a deadlock between memcg (legacy) reclaim and the
-ext4 writeback
+The current-source used for the battery temp-sensor (TS) is shared with the
+GPADC. For proper fuel-gauge and charger operation the TS current-source
+needs to be permanently on. But to read the GPADC we need to temporary
+switch the TS current-source to ondemand, so that the GPADC can use it,
+otherwise we will always read an all 0 value.
 
-  task1:
-    wait_on_page_bit+0x82/0xa0
-    shrink_page_list+0x907/0x960
-    shrink_inactive_list+0x2c7/0x680
-    shrink_node_memcg+0x404/0x830
-    shrink_node+0xd8/0x300
-    do_try_to_free_pages+0x10d/0x330
-    try_to_free_mem_cgroup_pages+0xd5/0x1b0
-    try_charge+0x14d/0x720
-    memcg_kmem_charge_memcg+0x3c/0xa0
-    memcg_kmem_charge+0x7e/0xd0
-    __alloc_pages_nodemask+0x178/0x260
-    alloc_pages_current+0x95/0x140
-    pte_alloc_one+0x17/0x40
-    __pte_alloc+0x1e/0x110
-    alloc_set_pte+0x5fe/0xc20
-    do_fault+0x103/0x970
-    handle_mm_fault+0x61e/0xd10
-    __do_page_fault+0x252/0x4d0
-    do_page_fault+0x30/0x80
-    page_fault+0x28/0x30
+The switching from on to on-ondemand is not necessary when the TS
+current-source is off (this happens on devices which do not have a TS).
 
-  task2:
-    __lock_page+0x86/0xa0
-    mpage_prepare_extent_to_map+0x2e7/0x310 [ext4]
-    ext4_writepages+0x479/0xd60
-    do_writepages+0x1e/0x30
-    __writeback_single_inode+0x45/0x320
-    writeback_sb_inodes+0x272/0x600
-    __writeback_inodes_wb+0x92/0xc0
-    wb_writeback+0x268/0x300
-    wb_workfn+0xb4/0x390
-    process_one_work+0x189/0x420
-    worker_thread+0x4e/0x4b0
-    kthread+0xe6/0x100
-    ret_from_fork+0x41/0x50
+Prior to this commit there were 2 issues with our handling of the TS
+current-source switching:
 
-He adds
- "task1 is waiting for the PageWriteback bit of the page that task2 has
-  collected in mpd->io_submit->io_bio, and tasks2 is waiting for the
-  LOCKED bit the page which tasks1 has locked"
+ 1) We were writing hardcoded values to the ADC TS pin-ctrl register,
+ overwriting various other unrelated bits. Specifically we were overwriting
+ the current-source setting for the TS and GPIO0 pins, forcing it to 80ųA
+ independent of its original setting. On a Chuwi Vi10 tablet this was
+ causing us to get a too high adc value (due to a too high current-source)
+ resulting in acpi_lpat_raw_to_temp() returning -ENOENT, resulting in:
 
-More precisely task1 is handling a page fault and it has a page locked
-while it charges a new page table to a memcg.  That in turn hits a
-memory limit reclaim and the memcg reclaim for legacy controller is
-waiting on the writeback but that is never going to finish because the
-writeback itself is waiting for the page locked in the #PF path.  So
-this is essentially ABBA deadlock:
+ACPI Error: AE_ERROR, Returned by Handler for [UserDefinedRegion]
+ACPI Error: Method parse/execution failed \_SB.SXP1._TMP, AE_ERROR
 
-                                        lock_page(A)
-                                        SetPageWriteback(A)
-                                        unlock_page(A)
-  lock_page(B)
-                                        lock_page(B)
-  pte_alloc_pne
-    shrink_page_list
-      wait_on_page_writeback(A)
-                                        SetPageWriteback(B)
-                                        unlock_page(B)
+This commit fixes this by using regmap_update_bits to change only the
+relevant bits.
 
-                                        # flush A, B to clear the writeback
+ 2) At the end of intel_xpower_pmic_get_raw_temp() we were unconditionally
+ enabling the TS current-source even on devices where the TS-pin is not used
+ and the current-source thus was off on entry of the function.
 
-This accumulating of more pages to flush is used by several filesystems
-to generate a more optimal IO patterns.
+This commit fixes this by checking if the TS current-source is off when
+entering intel_xpower_pmic_get_raw_temp() and if so it is left as is.
 
-Waiting for the writeback in legacy memcg controller is a workaround for
-pre-mature OOM killer invocations because there is no dirty IO
-throttling available for the controller.  There is no easy way around
-that unfortunately.  Therefore fix this specific issue by pre-allocating
-the page table outside of the page lock.  We have that handy
-infrastructure for that already so simply reuse the fault-around pattern
-which already does this.
-
-There are probably other hidden __GFP_ACCOUNT | GFP_KERNEL allocations
-from under a fs page locked but they should be really rare.  I am not
-aware of a better solution unfortunately.
-
-[akpm@linux-foundation.org: fix mm/memory.c:__do_fault()]
-[akpm@linux-foundation.org: coding-style fixes]
-[mhocko@kernel.org: enhance comment, per Johannes]
-  Link: http://lkml.kernel.org/r/20181214084948.GA5624@dhcp22.suse.cz
-Link: http://lkml.kernel.org/r/20181213092221.27270-1-mhocko@kernel.org
-Fixes: c3b94f44fcb0 ("memcg: further prevent OOM with too many dirty pages")
-Signed-off-by: Michal Hocko <mhocko@suse.com>
-Reported-by: Liu Bo <bo.liu@linux.alibaba.com>
-Debugged-by: Liu Bo <bo.liu@linux.alibaba.com>
-Acked-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
-Acked-by: Johannes Weiner <hannes@cmpxchg.org>
-Reviewed-by: Liu Bo <bo.liu@linux.alibaba.com>
-Cc: Jan Kara <jack@suse.cz>
-Cc: Dave Chinner <david@fromorbit.com>
-Cc: Theodore Ts'o <tytso@mit.edu>
-Cc: Vladimir Davydov <vdavydov.dev@gmail.com>
-Cc: Shakeel Butt <shakeelb@google.com>
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Fixes: 58eefe2f3f53 (ACPI / PMIC: xpower: Do pinswitch ... reading GPADC)
+Signed-off-by: Hans de Goede <hdegoede@redhat.com>
+Acked-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: 4.14+ <stable@vger.kernel.org> # 4.14+
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- mm/memory.c |   23 +++++++++++++++++++++++
- 1 file changed, 23 insertions(+)
+ drivers/acpi/pmic/intel_pmic_xpower.c |   41 +++++++++++++++++++++++++++-------
+ 1 file changed, 33 insertions(+), 8 deletions(-)
 
---- a/mm/memory.c
-+++ b/mm/memory.c
-@@ -3237,6 +3237,29 @@ static vm_fault_t __do_fault(struct vm_f
- 	struct vm_area_struct *vma = vmf->vma;
- 	vm_fault_t ret;
+--- a/drivers/acpi/pmic/intel_pmic_xpower.c
++++ b/drivers/acpi/pmic/intel_pmic_xpower.c
+@@ -27,8 +27,11 @@
+ #define GPI1_LDO_ON		(3 << 0)
+ #define GPI1_LDO_OFF		(4 << 0)
  
+-#define AXP288_ADC_TS_PIN_GPADC	0xf2
+-#define AXP288_ADC_TS_PIN_ON	0xf3
++#define AXP288_ADC_TS_CURRENT_ON_OFF_MASK		GENMASK(1, 0)
++#define AXP288_ADC_TS_CURRENT_OFF			(0 << 0)
++#define AXP288_ADC_TS_CURRENT_ON_WHEN_CHARGING		(1 << 0)
++#define AXP288_ADC_TS_CURRENT_ON_ONDEMAND		(2 << 0)
++#define AXP288_ADC_TS_CURRENT_ON			(3 << 0)
+ 
+ static struct pmic_table power_table[] = {
+ 	{
+@@ -211,22 +214,44 @@ static int intel_xpower_pmic_update_powe
+  */
+ static int intel_xpower_pmic_get_raw_temp(struct regmap *regmap, int reg)
+ {
++	int ret, adc_ts_pin_ctrl;
+ 	u8 buf[2];
+-	int ret;
+ 
+-	ret = regmap_write(regmap, AXP288_ADC_TS_PIN_CTRL,
+-			   AXP288_ADC_TS_PIN_GPADC);
 +	/*
-+	 * Preallocate pte before we take page_lock because this might lead to
-+	 * deadlocks for memcg reclaim which waits for pages under writeback:
-+	 *				lock_page(A)
-+	 *				SetPageWriteback(A)
-+	 *				unlock_page(A)
-+	 * lock_page(B)
-+	 *				lock_page(B)
-+	 * pte_alloc_pne
-+	 *   shrink_page_list
-+	 *     wait_on_page_writeback(A)
-+	 *				SetPageWriteback(B)
-+	 *				unlock_page(B)
-+	 *				# flush A, B to clear the writeback
++	 * The current-source used for the battery temp-sensor (TS) is shared
++	 * with the GPADC. For proper fuel-gauge and charger operation the TS
++	 * current-source needs to be permanently on. But to read the GPADC we
++	 * need to temporary switch the TS current-source to ondemand, so that
++	 * the GPADC can use it, otherwise we will always read an all 0 value.
++	 *
++	 * Note that the switching from on to on-ondemand is not necessary
++	 * when the TS current-source is off (this happens on devices which
++	 * do not use the TS-pin).
 +	 */
-+	if (pmd_none(*vmf->pmd) && !vmf->prealloc_pte) {
-+		vmf->prealloc_pte = pte_alloc_one(vmf->vma->vm_mm,
-+						  vmf->address);
-+		if (!vmf->prealloc_pte)
-+			return VM_FAULT_OOM;
-+		smp_wmb(); /* See comment in __pte_alloc() */
-+	}
++	ret = regmap_read(regmap, AXP288_ADC_TS_PIN_CTRL, &adc_ts_pin_ctrl);
+ 	if (ret)
+ 		return ret;
+ 
+-	/* After switching to the GPADC pin give things some time to settle */
+-	usleep_range(6000, 10000);
++	if (adc_ts_pin_ctrl & AXP288_ADC_TS_CURRENT_ON_OFF_MASK) {
++		ret = regmap_update_bits(regmap, AXP288_ADC_TS_PIN_CTRL,
++					 AXP288_ADC_TS_CURRENT_ON_OFF_MASK,
++					 AXP288_ADC_TS_CURRENT_ON_ONDEMAND);
++		if (ret)
++			return ret;
 +
- 	ret = vma->vm_ops->fault(vmf);
- 	if (unlikely(ret & (VM_FAULT_ERROR | VM_FAULT_NOPAGE | VM_FAULT_RETRY |
- 			    VM_FAULT_DONE_COW)))
++		/* Wait a bit after switching the current-source */
++		usleep_range(6000, 10000);
++	}
+ 
+ 	ret = regmap_bulk_read(regmap, AXP288_GP_ADC_H, buf, 2);
+ 	if (ret == 0)
+ 		ret = (buf[0] << 4) + ((buf[1] >> 4) & 0x0f);
+ 
+-	regmap_write(regmap, AXP288_ADC_TS_PIN_CTRL, AXP288_ADC_TS_PIN_ON);
++	if (adc_ts_pin_ctrl & AXP288_ADC_TS_CURRENT_ON_OFF_MASK) {
++		regmap_update_bits(regmap, AXP288_ADC_TS_PIN_CTRL,
++				   AXP288_ADC_TS_CURRENT_ON_OFF_MASK,
++				   AXP288_ADC_TS_CURRENT_ON);
++	}
+ 
+ 	return ret;
+ }
 
 
