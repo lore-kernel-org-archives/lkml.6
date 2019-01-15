@@ -4,69 +4,49 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3EF30C43612
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 16:46:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DEB3DC43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 16:47:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1138B2054F
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 16:46:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A4CF92054F
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 16:47:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547570814;
-	bh=0D/+igIbLV/eQ+QDuRMo75HYWMnPx0zNFoFm2mc5N/Q=;
+	s=default; t=1547570821;
+	bh=EevRJsZbldkv/zL54weM5TfMscQG8fy70ASv+N//VHg=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=2rVosfB0VseuZuf7b1A84oJ/OWVU2BR+w3uWVmIwLTczm60KmZXtTwq4DPN8Ux7K5
-	 oSeoJAWdDcxh8ltWZKQAg7mgMaxAAAupYZXOJ7hFespIFK3gaT+b1Vkjsg8Ln2pL+A
-	 /6CixihEqCFCV5A2k7w0M/v4Q65cuoMoHk79CUCU=
+	b=U0im8U1btWLwuxSCIHe5efAsARPzZryy5wpxUTFnl45q5Wiw2YRlfLj1JoG9FAvhb
+	 V4Npnwl80c+ymkix1+vDiWFsFpTJst+jWDRbQas828THLwGPAlMgy+/IWITHhJTZ06
+	 VG2bqeRwPb2Jy+qTcBbtke41zoKZQMjWEkwbmsOI=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387653AbfAOQoy (ORCPT
+        id S2387984AbfAOQq7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 15 Jan 2019 11:44:54 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34384 "EHLO mail.kernel.org"
+        Tue, 15 Jan 2019 11:46:59 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35454 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728306AbfAOQov (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Jan 2019 11:44:51 -0500
+        id S2387841AbfAOQpo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 Jan 2019 11:45:44 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A7C5C20645;
-        Tue, 15 Jan 2019 16:44:49 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id CB7D020645;
+        Tue, 15 Jan 2019 16:45:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547570690;
-        bh=0D/+igIbLV/eQ+QDuRMo75HYWMnPx0zNFoFm2mc5N/Q=;
+        s=default; t=1547570743;
+        bh=EevRJsZbldkv/zL54weM5TfMscQG8fy70ASv+N//VHg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=fHZJHuZuBYM5bp8I4eEdgYErphvctGfkvAgUrssbgsVyYRP5s3kPur+WLz/V9u847
-         QeG/WTTojEnR2bDuH7oAPU+m/8qu5XRIVFQjaP3uJ83uCUzE0i0kLKVHR2STwKPxp2
-         a299LwdJc414JMVSvdYgODsPgTRN5E/UY4wD69+s=
+        b=bcQdwvX0KB0GU1tIL+LjtBQrhW/cD0dgYnkKYSyA020Q+AAR1NyAAbDjRxs+jBLc4
+         T2VCGyZcWjxTRn2zJyyBsjmfSo6NfMUrsvUlZjY52MQhRr2i5dWIJAaPnJkFG/yJfe
+         0h6fKx/vBHJi/56wm3dE4fHv4tgwPSrZ3wZ2Irt0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, WANG Chao <chao.wang@ucloud.cn>,
-        Borislav Petkov <bp@suse.de>,
-        Zhenzhong Duan <zhenzhong.duan@oracle.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, Andi Kleen <ak@linux.intel.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        David Woodhouse <dwmw@amazon.co.uk>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Jessica Yu <jeyu@kernel.org>, Jiri Kosina <jkosina@suse.cz>,
-        Kees Cook <keescook@chromium.org>,
-        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
-        Luc Van Oostenryck <luc.vanoostenryck@gmail.com>,
-        Michal Marek <michal.lkml@markovi.net>,
-        Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Tim Chen <tim.c.chen@linux.intel.com>,
-        Vasily Gorbik <gor@linux.ibm.com>,
-        linux-kbuild@vger.kernel.org, srinivas.eeda@oracle.com,
-        x86-ml <x86@kernel.org>
-Subject: [PATCH 4.20 08/57] x86, modpost: Replace last remnants of RETPOLINE with CONFIG_RETPOLINE
-Date:   Tue, 15 Jan 2019 17:35:49 +0100
-Message-Id: <20190115154911.193525782@linuxfoundation.org>
+        stable@vger.kernel.org, Vasily Averin <vvs@virtuozzo.com>,
+        "J. Bruce Fields" <bfields@redhat.com>
+Subject: [PATCH 4.20 54/57] sunrpc: use-after-free in svc_process_common()
+Date:   Tue, 15 Jan 2019 17:36:35 +0100
+Message-Id: <20190115154914.053927193@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190115154910.734892368@linuxfoundation.org>
 References: <20190115154910.734892368@linuxfoundation.org>
@@ -85,99 +65,177 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: WANG Chao <chao.wang@ucloud.cn>
+From: Vasily Averin <vvs@virtuozzo.com>
 
-commit e4f358916d528d479c3c12bd2fd03f2d5a576380 upstream.
+commit d4b09acf924b84bae77cad090a9d108e70b43643 upstream.
 
-Commit
+if node have NFSv41+ mounts inside several net namespaces
+it can lead to use-after-free in svc_process_common()
 
-  4cd24de3a098 ("x86/retpoline: Make CONFIG_RETPOLINE depend on compiler support")
+svc_process_common()
+        /* Setup reply header */
+        rqstp->rq_xprt->xpt_ops->xpo_prep_reply_hdr(rqstp); <<< HERE
 
-replaced the RETPOLINE define with CONFIG_RETPOLINE checks. Remove the
-remaining pieces.
+svc_process_common() can use incorrect rqstp->rq_xprt,
+its caller function bc_svc_process() takes it from serv->sv_bc_xprt.
+The problem is that serv is global structure but sv_bc_xprt
+is assigned per-netnamespace.
 
- [ bp: Massage commit message. ]
+According to Trond, the whole "let's set up rqstp->rq_xprt
+for the back channel" is nothing but a giant hack in order
+to work around the fact that svc_process_common() uses it
+to find the xpt_ops, and perform a couple of (meaningless
+for the back channel) tests of xpt_flags.
 
-Fixes: 4cd24de3a098 ("x86/retpoline: Make CONFIG_RETPOLINE depend on compiler support")
-Signed-off-by: WANG Chao <chao.wang@ucloud.cn>
-Signed-off-by: Borislav Petkov <bp@suse.de>
-Reviewed-by: Zhenzhong Duan <zhenzhong.duan@oracle.com>
-Reviewed-by: Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc: "H. Peter Anvin" <hpa@zytor.com>
-Cc: Andi Kleen <ak@linux.intel.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: Arnd Bergmann <arnd@arndb.de>
-Cc: Daniel Borkmann <daniel@iogearbox.net>
-Cc: David Woodhouse <dwmw@amazon.co.uk>
-Cc: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Jessica Yu <jeyu@kernel.org>
-Cc: Jiri Kosina <jkosina@suse.cz>
-Cc: Kees Cook <keescook@chromium.org>
-Cc: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
-Cc: Luc Van Oostenryck <luc.vanoostenryck@gmail.com>
-Cc: Michal Marek <michal.lkml@markovi.net>
-Cc: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Tim Chen <tim.c.chen@linux.intel.com>
-Cc: Vasily Gorbik <gor@linux.ibm.com>
-Cc: linux-kbuild@vger.kernel.org
-Cc: srinivas.eeda@oracle.com
-Cc: stable <stable@vger.kernel.org>
-Cc: x86-ml <x86@kernel.org>
-Link: https://lkml.kernel.org/r/20181210163725.95977-1-chao.wang@ucloud.cn
+All we really need in svc_process_common() is to be able to run
+rqstp->rq_xprt->xpt_ops->xpo_prep_reply_hdr()
+
+Bruce J Fields points that this xpo_prep_reply_hdr() call
+is an awfully roundabout way just to do "svc_putnl(resv, 0);"
+in the tcp case.
+
+This patch does not initialiuze rqstp->rq_xprt in bc_svc_process(),
+now it calls svc_process_common() with rqstp->rq_xprt = NULL.
+
+To adjust reply header svc_process_common() just check
+rqstp->rq_prot and calls svc_tcp_prep_reply_hdr() for tcp case.
+
+To handle rqstp->rq_xprt = NULL case in functions called from
+svc_process_common() patch intruduces net namespace pointer
+svc_rqst->rq_bc_net and adjust SVC_NET() definition.
+Some other function was also adopted to properly handle described case.
+
+Signed-off-by: Vasily Averin <vvs@virtuozzo.com>
+Cc: stable@vger.kernel.org
+Fixes: 23c20ecd4475 ("NFS: callback up - users counting cleanup")
+Signed-off-by: J. Bruce Fields <bfields@redhat.com>
+v2: added lost extern svc_tcp_prep_reply_hdr()
+Signed-off-by: Vasily Averin <vvs@virtuozzo.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/kernel/cpu/bugs.c   |    2 +-
- include/linux/compiler-gcc.h |    2 +-
- include/linux/module.h       |    2 +-
- scripts/mod/modpost.c        |    2 +-
- 4 files changed, 4 insertions(+), 4 deletions(-)
+ include/linux/sunrpc/svc.h    |    5 ++++-
+ include/trace/events/sunrpc.h |    6 ++++--
+ net/sunrpc/svc.c              |   11 +++++++----
+ net/sunrpc/svc_xprt.c         |    5 +++--
+ net/sunrpc/svcsock.c          |    2 +-
+ 5 files changed, 19 insertions(+), 10 deletions(-)
 
---- a/arch/x86/kernel/cpu/bugs.c
-+++ b/arch/x86/kernel/cpu/bugs.c
-@@ -213,7 +213,7 @@ static enum spectre_v2_mitigation spectr
- static enum spectre_v2_user_mitigation spectre_v2_user __ro_after_init =
- 	SPECTRE_V2_USER_NONE;
+--- a/include/linux/sunrpc/svc.h
++++ b/include/linux/sunrpc/svc.h
+@@ -295,9 +295,12 @@ struct svc_rqst {
+ 	struct svc_cacherep *	rq_cacherep;	/* cache info */
+ 	struct task_struct	*rq_task;	/* service thread */
+ 	spinlock_t		rq_lock;	/* per-request lock */
++	struct net		*rq_bc_net;	/* pointer to backchannel's
++						 * net namespace
++						 */
+ };
  
--#ifdef RETPOLINE
-+#ifdef CONFIG_RETPOLINE
- static bool spectre_v2_bad_module;
+-#define SVC_NET(svc_rqst)	(svc_rqst->rq_xprt->xpt_net)
++#define SVC_NET(rqst) (rqst->rq_xprt ? rqst->rq_xprt->xpt_net : rqst->rq_bc_net)
  
- bool retpoline_module_ok(bool has_retpoline)
---- a/include/linux/compiler-gcc.h
-+++ b/include/linux/compiler-gcc.h
-@@ -68,7 +68,7 @@
-  */
- #define uninitialized_var(x) x = x
+ /*
+  * Rigorous type checking on sockaddr type conversions
+--- a/include/trace/events/sunrpc.h
++++ b/include/trace/events/sunrpc.h
+@@ -569,7 +569,8 @@ TRACE_EVENT(svc_process,
+ 		__field(u32, vers)
+ 		__field(u32, proc)
+ 		__string(service, name)
+-		__string(addr, rqst->rq_xprt->xpt_remotebuf)
++		__string(addr, rqst->rq_xprt ?
++			 rqst->rq_xprt->xpt_remotebuf : "(null)")
+ 	),
  
--#ifdef RETPOLINE
-+#ifdef CONFIG_RETPOLINE
- #define __noretpoline __attribute__((__indirect_branch__("keep")))
+ 	TP_fast_assign(
+@@ -577,7 +578,8 @@ TRACE_EVENT(svc_process,
+ 		__entry->vers = rqst->rq_vers;
+ 		__entry->proc = rqst->rq_proc;
+ 		__assign_str(service, name);
+-		__assign_str(addr, rqst->rq_xprt->xpt_remotebuf);
++		__assign_str(addr, rqst->rq_xprt ?
++			     rqst->rq_xprt->xpt_remotebuf : "(null)");
+ 	),
+ 
+ 	TP_printk("addr=%s xid=0x%08x service=%s vers=%u proc=%u",
+--- a/net/sunrpc/svc.c
++++ b/net/sunrpc/svc.c
+@@ -1144,6 +1144,8 @@ void svc_printk(struct svc_rqst *rqstp,
+ static __printf(2,3) void svc_printk(struct svc_rqst *rqstp, const char *fmt, ...) {}
  #endif
  
---- a/include/linux/module.h
-+++ b/include/linux/module.h
-@@ -817,7 +817,7 @@ static inline void module_bug_finalize(c
- static inline void module_bug_cleanup(struct module *mod) {}
- #endif	/* CONFIG_GENERIC_BUG */
++extern void svc_tcp_prep_reply_hdr(struct svc_rqst *);
++
+ /*
+  * Common routine for processing the RPC request.
+  */
+@@ -1172,7 +1174,8 @@ svc_process_common(struct svc_rqst *rqst
+ 	clear_bit(RQ_DROPME, &rqstp->rq_flags);
  
--#ifdef RETPOLINE
-+#ifdef CONFIG_RETPOLINE
- extern bool retpoline_module_ok(bool has_retpoline);
- #else
- static inline bool retpoline_module_ok(bool has_retpoline)
---- a/scripts/mod/modpost.c
-+++ b/scripts/mod/modpost.c
-@@ -2157,7 +2157,7 @@ static void add_intree_flag(struct buffe
- /* Cannot check for assembler */
- static void add_retpoline(struct buffer *b)
+ 	/* Setup reply header */
+-	rqstp->rq_xprt->xpt_ops->xpo_prep_reply_hdr(rqstp);
++	if (rqstp->rq_prot == IPPROTO_TCP)
++		svc_tcp_prep_reply_hdr(rqstp);
+ 
+ 	svc_putu32(resv, rqstp->rq_xid);
+ 
+@@ -1244,7 +1247,7 @@ svc_process_common(struct svc_rqst *rqst
+ 	 * for lower versions. RPC_PROG_MISMATCH seems to be the closest
+ 	 * fit.
+ 	 */
+-	if (versp->vs_need_cong_ctrl &&
++	if (versp->vs_need_cong_ctrl && rqstp->rq_xprt &&
+ 	    !test_bit(XPT_CONG_CTRL, &rqstp->rq_xprt->xpt_flags))
+ 		goto err_bad_vers;
+ 
+@@ -1336,7 +1339,7 @@ svc_process_common(struct svc_rqst *rqst
+ 	return 0;
+ 
+  close:
+-	if (test_bit(XPT_TEMP, &rqstp->rq_xprt->xpt_flags))
++	if (rqstp->rq_xprt && test_bit(XPT_TEMP, &rqstp->rq_xprt->xpt_flags))
+ 		svc_close_xprt(rqstp->rq_xprt);
+ 	dprintk("svc: svc_process close\n");
+ 	return 0;
+@@ -1459,10 +1462,10 @@ bc_svc_process(struct svc_serv *serv, st
+ 	dprintk("svc: %s(%p)\n", __func__, req);
+ 
+ 	/* Build the svc_rqst used by the common processing routine */
+-	rqstp->rq_xprt = serv->sv_bc_xprt;
+ 	rqstp->rq_xid = req->rq_xid;
+ 	rqstp->rq_prot = req->rq_xprt->prot;
+ 	rqstp->rq_server = serv;
++	rqstp->rq_bc_net = req->rq_xprt->xprt_net;
+ 
+ 	rqstp->rq_addrlen = sizeof(req->rq_xprt->addr);
+ 	memcpy(&rqstp->rq_addr, &req->rq_xprt->addr, rqstp->rq_addrlen);
+--- a/net/sunrpc/svc_xprt.c
++++ b/net/sunrpc/svc_xprt.c
+@@ -468,10 +468,11 @@ out:
+  */
+ void svc_reserve(struct svc_rqst *rqstp, int space)
  {
--	buf_printf(b, "\n#ifdef RETPOLINE\n");
-+	buf_printf(b, "\n#ifdef CONFIG_RETPOLINE\n");
- 	buf_printf(b, "MODULE_INFO(retpoline, \"Y\");\n");
- 	buf_printf(b, "#endif\n");
- }
++	struct svc_xprt *xprt = rqstp->rq_xprt;
++
+ 	space += rqstp->rq_res.head[0].iov_len;
+ 
+-	if (space < rqstp->rq_reserved) {
+-		struct svc_xprt *xprt = rqstp->rq_xprt;
++	if (xprt && space < rqstp->rq_reserved) {
+ 		atomic_sub((rqstp->rq_reserved - space), &xprt->xpt_reserved);
+ 		rqstp->rq_reserved = space;
+ 
+--- a/net/sunrpc/svcsock.c
++++ b/net/sunrpc/svcsock.c
+@@ -1173,7 +1173,7 @@ static int svc_tcp_sendto(struct svc_rqs
+ /*
+  * Setup response header. TCP has a 4B record length field.
+  */
+-static void svc_tcp_prep_reply_hdr(struct svc_rqst *rqstp)
++void svc_tcp_prep_reply_hdr(struct svc_rqst *rqstp)
+ {
+ 	struct kvec *resv = &rqstp->rq_res.head[0];
+ 
 
 
