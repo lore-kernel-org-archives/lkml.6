@@ -6,49 +6,49 @@ X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CCD05C43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 16:42:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C9F8C43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 16:42:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9089120859
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 16:42:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DE61020645
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 16:42:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547570535;
-	bh=2WFzXCH7zjc0ZF0MW+oWE32T+wcTNfwfsx5addggZuI=;
+	s=default; t=1547570538;
+	bh=w/Kd78erW5avJym6HODm2LsUvd7Jp3JEzXazriImH2M=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=YIgthePviyTHsNLcQUBEFlcOw/p7lG7Vff1XEjXGOtVMd9q3fATeCoN0SzTlbEgoN
-	 R6C2z1F3RM+HGCGIPBgBeg0iDq7dF42bvgSJtjW+uQBzzqKAlPc5OZvjn2u1w8ql9A
-	 Vk2hmPYfJQqYDcr+Cbzu5/ZvGvc5gVxQ0eeq5ziE=
+	b=PCa+aA7QPqj6BsWmC0zPAJT/srTOtSI7evTrPGQdzbxhUSYG+RJYBrUuyjj2BEdwF
+	 R9r1Q1lwuUV5OHyRqamuzDCx2b1QA0q1Fy+5qpFaxh5Oh0wed82Gu8+bBNImoA0uJ5
+	 sNFLqIdqko7pUm0VUitrvR/9o4sufwt9hEj4uYyw=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732941AbfAOQmO (ORCPT
+        id S1732956AbfAOQmS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 15 Jan 2019 11:42:14 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58940 "EHLO mail.kernel.org"
+        Tue, 15 Jan 2019 11:42:18 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59088 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728587AbfAOQmG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Jan 2019 11:42:06 -0500
+        id S1732943AbfAOQmP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 Jan 2019 11:42:15 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1814B20645;
-        Tue, 15 Jan 2019 16:42:04 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 07A0F2054F;
+        Tue, 15 Jan 2019 16:42:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547570525;
-        bh=2WFzXCH7zjc0ZF0MW+oWE32T+wcTNfwfsx5addggZuI=;
+        s=default; t=1547570534;
+        bh=w/Kd78erW5avJym6HODm2LsUvd7Jp3JEzXazriImH2M=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=LPo6mOOaR3z9iPBFBS5XOjb6Nk+46L7UIfY+ETR6Pr8NXc3rYmopHnp0JUEHe2NFw
-         iKkMhAtEcvE6M+9duIMZW420jcQc+pmKH5W099ky9Q0CUZJTUqbGLvqbe6ySxATq9X
-         jH4vcMCMpgXgw2ILvEkCfjq06NsI4x5KE8JYkg0g=
+        b=cvCPcSgjJcrtpVQyroqdT5PeovDDnQC0iDfgWQZMLiPHKQ2mHVF3HF7+/CYTddPGh
+         3ETHmeyEZnWhQRt7vIgbuGhkBAgxz5gW8+MjNgt0RyYr/LwobnAx6YYnFjNHjBoSh3
+         ARgNjclYrSJlxucePq5pAp9lEGfyXGwpItLHq6m4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Pei Zhang <pezhang@redhat.com>,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        Peter Xu <peterx@redhat.com>,
-        Cornelia Huck <cohuck@redhat.com>,
-        Alex Williamson <alex.williamson@redhat.com>
-Subject: [PATCH 4.19 26/50] vfio/type1: Fix unmap overflow off-by-one
-Date:   Tue, 15 Jan 2019 17:36:02 +0100
-Message-Id: <20190115154911.472762784@linuxfoundation.org>
+        stable@vger.kernel.org, Niklas Cassel <niklas.cassel@linaro.org>,
+        Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
+        Stanimir Varbanov <svarbanov@mm-sol.com>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+Subject: [PATCH 4.19 29/50] PCI: dwc: Take lock when ACKing an interrupt
+Date:   Tue, 15 Jan 2019 17:36:05 +0100
+Message-Id: <20190115154911.616405882@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190115154909.933241945@linuxfoundation.org>
 References: <20190115154909.933241945@linuxfoundation.org>
@@ -67,41 +67,52 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Alex Williamson <alex.williamson@redhat.com>
+From: Marc Zyngier <marc.zyngier@arm.com>
 
-commit 58fec830fc19208354895d9832785505046d6c01 upstream.
+commit fce5423e4f431c71933d6c1f850b540a314aa6ee upstream.
 
-The below referenced commit adds a test for integer overflow, but in
-doing so prevents the unmap ioctl from ever including the last page of
-the address space.  Subtract one to compare to the last address of the
-unmap to avoid the overflow and wrap-around.
+Bizarrely, there is no lock taken in the irq_ack() helper. This
+puts the ACK callback provided by a specific platform in a awkward
+situation where there is no synchronization that would be expected
+on other callback.
 
-Fixes: 71a7d3d78e3c ("vfio/type1: silence integer overflow warning")
-Link: https://bugzilla.redhat.com/show_bug.cgi?id=1662291
-Cc: stable@vger.kernel.org # v4.15+
-Reported-by: Pei Zhang <pezhang@redhat.com>
-Debugged-by: Peter Xu <peterx@redhat.com>
-Reviewed-by: Dan Carpenter <dan.carpenter@oracle.com>
-Reviewed-by: Peter Xu <peterx@redhat.com>
-Tested-by: Peter Xu <peterx@redhat.com>
-Reviewed-by: Cornelia Huck <cohuck@redhat.com>
-Signed-off-by: Alex Williamson <alex.williamson@redhat.com>
+Introduce the required lock, giving some level of uniformity among
+callbacks.
+
+Fixes: 7c5925afbc58 ("PCI: dwc: Move MSI IRQs allocation to IRQ domains
+hierarchical API")
+Link: https://lore.kernel.org/linux-pci/20181113225734.8026-1-marc.zyngier@arm.com/
+Tested-by: Niklas Cassel <niklas.cassel@linaro.org>
+Tested-by: Gustavo Pimentel <gustavo.pimentel@synopsys.com>
+Tested-by: Stanimir Varbanov <svarbanov@mm-sol.com>
+Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
+[lorenzo.pieralisi@arm.com: updated commit log]
+Signed-off-by: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+Cc: stable@vger.kernel.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/vfio/vfio_iommu_type1.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/pci/controller/dwc/pcie-designware-host.c |    5 +++++
+ 1 file changed, 5 insertions(+)
 
---- a/drivers/vfio/vfio_iommu_type1.c
-+++ b/drivers/vfio/vfio_iommu_type1.c
-@@ -878,7 +878,7 @@ static int vfio_dma_do_unmap(struct vfio
- 		return -EINVAL;
- 	if (!unmap->size || unmap->size & mask)
- 		return -EINVAL;
--	if (unmap->iova + unmap->size < unmap->iova ||
-+	if (unmap->iova + unmap->size - 1 < unmap->iova ||
- 	    unmap->size > SIZE_MAX)
- 		return -EINVAL;
+--- a/drivers/pci/controller/dwc/pcie-designware-host.c
++++ b/drivers/pci/controller/dwc/pcie-designware-host.c
+@@ -202,11 +202,16 @@ static void dw_pci_bottom_ack(struct irq
+ {
+ 	struct msi_desc *msi = irq_data_get_msi_desc(d);
+ 	struct pcie_port *pp;
++	unsigned long flags;
  
+ 	pp = msi_desc_to_pci_sysdata(msi);
+ 
++	raw_spin_lock_irqsave(&pp->lock, flags);
++
+ 	if (pp->ops->msi_irq_ack)
+ 		pp->ops->msi_irq_ack(d->hwirq, pp);
++
++	raw_spin_unlock_irqrestore(&pp->lock, flags);
+ }
+ 
+ static struct irq_chip dw_pci_msi_bottom_irq_chip = {
 
 
