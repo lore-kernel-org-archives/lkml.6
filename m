@@ -2,81 +2,159 @@ Return-Path: <SRS0=RZO6=PX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C0FAC43444
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 17:33:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 32A4DC43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 17:34:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5F26E20859
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 17:33:12 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="V4A9K5KA"
+	by mail.kernel.org (Postfix) with ESMTP id 0D7B120656
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 17:34:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388383AbfAORdK (ORCPT
+        id S1732846AbfAORei (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 15 Jan 2019 12:33:10 -0500
-Received: from mail-it1-f195.google.com ([209.85.166.195]:56183 "EHLO
-        mail-it1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388368AbfAORdK (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Jan 2019 12:33:10 -0500
-Received: by mail-it1-f195.google.com with SMTP id m62so6288774ith.5
-        for <linux-kernel@vger.kernel.org>; Tue, 15 Jan 2019 09:33:09 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=S50Xi4pVAc+Lyh59ZSjL/y5SVO6FfgukN3lKwSidzeo=;
-        b=V4A9K5KA8NUcmLIAhCSIdhcwYkmrCHBXpJA79gPXIU/6dNcDg/Wr4rbZw9RInvka6A
-         4wFYdF2XaAqg25fsh5B/9nzfbRB/IRn4GQifmyHWyPynZ/0yrLyXgqqEgIS4yOlPqp0e
-         OM6sF67zo7TlCzc/GOfE+dmwX3IEcUjiLIQjzRIbs+D0u/BfnP15y1aaeryalcDu9jib
-         AhqUljOogvAHWgTwlElYcMU3iVC/I3zLuqAZmeSANQ/A4yG0GnwGwa58VjEL4TAwCa95
-         YmSZCapAe0z7nZHxni/8jhQ0w1gZgKwQntZxbUfCPdcUmSr2XJNRH4Wdvv55dohPy2iL
-         Fo8g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=S50Xi4pVAc+Lyh59ZSjL/y5SVO6FfgukN3lKwSidzeo=;
-        b=ko4w7YiyMJJk++3fFV5c5U2h402ln97Xio85QPuZjrd7nWLlkbqc0oHyn4FwH/d2Ka
-         y3jpvjZ/ZZMUx+H10Gtt2svdlslPWvSdN2UNX4wyu5kIvuVC6HONEktXQ+HUhRQX10DA
-         U+UUYDv0X9nufltIj58wypsi9x/2iiP+wMh2uggMh6uvUICj8c0bFeBRkC4XylHkaUXy
-         +eBCKjAqN8R2Kz7Ye84SFhBD+4BNcctskooesEdBswX3DJrUBcX6DZJXjn0HOl57fxkR
-         96mrAti+n6RzfTtdsQEpXfilsgHNEWhG4DBhaEIJgwHO+J0AdOD5mupA6wdfW6rotjZo
-         XduQ==
-X-Gm-Message-State: AJcUukdoGFABJm6PpRfYHRKoiydio+pn7K0C3mY8jPXV8avad1IgOfjC
-        FAzkuBuFi4hbgromIu9+GEDXx5sUifmePioA6kU=
-X-Google-Smtp-Source: ALg8bN4IvoHxs8NybM2gTNfJqn1APkSFRXfq76jK8lq06qnjyRxURVwADsaDc9OZ7Nc8GNyA+bX1Vmk3LKXgYomSa10=
-X-Received: by 2002:a02:48c6:: with SMTP id p189mr2580513jaa.89.1547573589087;
- Tue, 15 Jan 2019 09:33:09 -0800 (PST)
-MIME-Version: 1.0
-References: <20190115153000.GA15206@kroah.com> <20190115170221.26693-1-thirtythreeforty@gmail.com>
- <20190115172009.GB30853@kroah.com>
-In-Reply-To: <20190115172009.GB30853@kroah.com>
-From:   George Hilliard <thirtythreeforty@gmail.com>
-Date:   Tue, 15 Jan 2019 10:32:57 -0700
-Message-ID: <CACmrr9hyu4PbV7tkxJsEdFj=BHx_1MBxpYLa_7MteitbgWX=OA@mail.gmail.com>
-Subject: Re: [PATCH v3] staging: Mediatek: Use individual config flags in Makefile
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     linux-kernel@vger.kernel.org, devel@driverdev.osuosl.org,
-        NeilBrown <neil@brown.name>, sergio.paracuellos@gmail.com
+        Tue, 15 Jan 2019 12:34:38 -0500
+Received: from mga04.intel.com ([192.55.52.120]:14048 "EHLO mga04.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726022AbfAORei (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 Jan 2019 12:34:38 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 15 Jan 2019 09:34:37 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,481,1539673200"; 
+   d="scan'208";a="127980887"
+Received: from ahduyck-desk1.jf.intel.com ([10.7.198.76])
+  by orsmga001.jf.intel.com with ESMTP; 15 Jan 2019 09:34:37 -0800
+Message-ID: <9bc20a9f2f5d6a99afa61ad68d827090553c09fe.camel@linux.intel.com>
+Subject: Re: [PATCH v10] mm/page_alloc.c: memory_hotplug: free pages as
+ higher order
+From:   Alexander Duyck <alexander.h.duyck@linux.intel.com>
+To:     Arun KS <arunks@codeaurora.org>, arunks.linux@gmail.com,
+        akpm@linux-foundation.org, mhocko@kernel.org, vbabka@suse.cz,
+        osalvador@suse.de, linux-kernel@vger.kernel.org, linux-mm@kvack.org
+Cc:     getarunks@gmail.com
+Date:   Tue, 15 Jan 2019 09:34:37 -0800
+In-Reply-To: <1547571068-18902-1-git-send-email-arunks@codeaurora.org>
+References: <1547571068-18902-1-git-send-email-arunks@codeaurora.org>
 Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.5 (3.28.5-2.fc28) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 15, 2019 at 10:20 AM Greg Kroah-Hartman
-<gregkh@linuxfoundation.org> wrote:
-> What changed from v2 and v1?  That always goes below the --- line.
->
-> Please fix that up and resend v4.
->
-Sent. Didn't know to do that - first time contributor here. Sorry
-about the churn and thanks for your patience!
+On Tue, 2019-01-15 at 22:21 +0530, Arun KS wrote:
+> When freeing pages are done with higher order, time spent on coalescing
+> pages by buddy allocator can be reduced.  With section size of 256MB, hot
+> add latency of a single section shows improvement from 50-60 ms to less
+> than 1 ms, hence improving the hot add latency by 60 times.  Modify
+> external providers of online callback to align with the change.
+> 
+> Signed-off-by: Arun KS <arunks@codeaurora.org>
+> Acked-by: Michal Hocko <mhocko@suse.com>
+> Reviewed-by: Oscar Salvador <osalvador@suse.de>
+> Reviewed-by: Alexander Duyck <alexander.h.duyck@linux.intel.com>
+> ---
+> Changes since v9:
+> - Fix condition check in hv_ballon driver.
+> 
+> Changes since v8:
+> - Remove return type change for online_page_callback.
+> - Use consistent names for external online_page providers.
+> - Fix onlined_pages accounting.
+> 
+> Changes since v7:
+> - Rebased to 5.0-rc1.
+> - Fixed onlined_pages accounting.
+> - Added comment for return value of online_page_callback.
+> - Renamed xen_bring_pgs_online to xen_online_pages.
+> 
+> Changes since v6:
+> - Rebased to 4.20
+> - Changelog updated.
+> - No improvement seen on arm64, hence removed removal of prefetch.
+> 
+> Changes since v5:
+> - Rebased to 4.20-rc1.
+> - Changelog updated.
+> 
+> Changes since v4:
+> - As suggested by Michal Hocko,
+> - Simplify logic in online_pages_block() by using get_order().
+> - Seperate out removal of prefetch from __free_pages_core().
+> 
+> Changes since v3:
+> - Renamed _free_pages_boot_core -> __free_pages_core.
+> - Removed prefetch from __free_pages_core.
+> - Removed xen_online_page().
+> 
+> Changes since v2:
+> - Reuse code from __free_pages_boot_core().
+> 
+> Changes since v1:
+> - Removed prefetch().
+> 
+> Changes since RFC:
+> - Rebase.
+> - As suggested by Michal Hocko remove pages_per_block.
+> - Modifed external providers of online_page_callback.
+> 
+> v9: https://lore.kernel.org/patchwork/patch/1030806/
+> v8: https://lore.kernel.org/patchwork/patch/1030332/
+> v7: https://lore.kernel.org/patchwork/patch/1028908/
+> v6: https://lore.kernel.org/patchwork/patch/1007253/
+> v5: https://lore.kernel.org/patchwork/patch/995739/
+> v4: https://lore.kernel.org/patchwork/patch/995111/
+> v3: https://lore.kernel.org/patchwork/patch/992348/
+> v2: https://lore.kernel.org/patchwork/patch/991363/
+> v1: https://lore.kernel.org/patchwork/patch/989445/
+> RFC: https://lore.kernel.org/patchwork/patch/984754/
+> ---
+>  drivers/hv/hv_balloon.c        |  4 ++--
+>  drivers/xen/balloon.c          | 15 ++++++++++-----
+>  include/linux/memory_hotplug.h |  2 +-
+>  mm/internal.h                  |  1 +
+>  mm/memory_hotplug.c            | 37 +++++++++++++++++++++++++------------
+>  mm/page_alloc.c                |  8 ++++----
+>  6 files changed, 45 insertions(+), 25 deletions(-)
+> 
+> diff --git a/drivers/hv/hv_balloon.c b/drivers/hv/hv_balloon.c
+> index 5301fef..2ced9a7 100644
+> --- a/drivers/hv/hv_balloon.c
+> +++ b/drivers/hv/hv_balloon.c
+> @@ -771,7 +771,7 @@ static void hv_mem_hot_add(unsigned long start, unsigned long size,
+>  	}
+>  }
+>  
+> -static void hv_online_page(struct page *pg)
+> +static void hv_online_page(struct page *pg, unsigned int order)
+>  {
+>  	struct hv_hotadd_state *has;
+>  	unsigned long flags;
+> @@ -780,10 +780,11 @@ static void hv_online_page(struct page *pg)
+>  	spin_lock_irqsave(&dm_device.ha_lock, flags);
+>  	list_for_each_entry(has, &dm_device.ha_region_list, list) {
+>  		/* The page belongs to a different HAS. */
+> -		if ((pfn < has->start_pfn) || (pfn >= has->end_pfn))
+> +		if ((pfn < has->start_pfn) ||
+> +				(pfn + (1UL << order) >= has->end_pfn))
 
-Cheers,
-George
+This check should be ">" has->end_pfn, not ">=".
+
+>  			continue;
+>  
+> -		hv_page_online_one(has, pg);
+> +		hv_bring_pgs_online(has, pfn, (1UL << order));
+
+Also the parenthesis around "1UL << order" are unnecessary.
+>  		break;
+>  	}
+>  	spin_unlock_irqrestore(&dm_device.ha_lock, flags);
+
+The rest of this looks fine to me.
+
