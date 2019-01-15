@@ -2,58 +2,51 @@ Return-Path: <SRS0=RZO6=PX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 545F4C43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 16:45:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D055FC43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 16:45:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2353B20645
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 16:45:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9487420675
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 16:45:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547570753;
-	bh=k8bXhqWpO5kaQ3I9FWr8R5h834By14tmBALeMGehoVg=;
+	s=default; t=1547570757;
+	bh=7EinwiCHwBsQSCv4hDzw8KdoHLP5va2mqbwLxzSLmIg=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=V7m+Bxx9JhCe2CkkGImpHjTqSxdy4PKeMDzMOMt2UMYB748phyFJT0fo5cs4dcLVE
-	 by/qHP5QYVomJ5DJdeQtZ4FGedSpsvDuXmVHF2s/TPQFcmMgN76a4jPfgsQmych2Z7
-	 gNHPFzdNBkycOYKvCZlOF6g2lUT7hfjp5tQPDdOo=
+	b=gaGTpyzVIlFWDeu7ALDFQvPw4Iymn0X3DiE7E1HPFFLPkVUUlVGCEwN9W8mBm+B++
+	 yMN9HNEblwrNO5m0ShYkIZXZXlWPXOP7FTeuTYHE5CwV42fI3E7cQ/0ro+rCjz8tHB
+	 ogGm5lMBSd8SNsotqq30zsP8NZ13oUwlk0oxpQqU=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387852AbfAOQpq (ORCPT
+        id S2387884AbfAOQp4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 15 Jan 2019 11:45:46 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35384 "EHLO mail.kernel.org"
+        Tue, 15 Jan 2019 11:45:56 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35536 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731090AbfAOQpl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Jan 2019 11:45:41 -0500
+        id S2387859AbfAOQpu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 Jan 2019 11:45:50 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1B4A92054F;
-        Tue, 15 Jan 2019 16:45:40 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1090F20859;
+        Tue, 15 Jan 2019 16:45:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547570740;
-        bh=k8bXhqWpO5kaQ3I9FWr8R5h834By14tmBALeMGehoVg=;
+        s=default; t=1547570748;
+        bh=7EinwiCHwBsQSCv4hDzw8KdoHLP5va2mqbwLxzSLmIg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=WVstXuddeUA6CnQJY92Drnnj7ArlDJzSkIw1ED1Qw6OcqRlQ8Tl+1YRPEfOXLLjZu
-         ACJQiomh/bf2GRneA4SRaG+pEmTer3l9HQHM2x/jK5l9GRRnurHmsI6QqfH58QRUct
-         Sl2hyKOZeSdSDpE3jlrB5pI88C9ttWIkw5IA3nmw=
+        b=sMa7M2RmE8hXjc+ORe+HdcyyrTfvr33lScND/nCWEubbcYZgP4QkxrgHDAb9nuGoH
+         0JOcZZx5RgNSjsXxYaCFpBr/kEzvryCxzUBmwrRjZRrbSOPNYL1x3vsRV60eL2kBvx
+         u1gnZdDUBEZCOnzheYtaQE6TYi8VO1KEfYghSJLY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jan Stancek <jstancek@redhat.com>,
-        "Kirill A. Shutemov" <kirill@shutemov.name>,
-        Michal Hocko <mhocko@suse.com>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        David Hildenbrand <david@redhat.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Laszlo Ersek <lersek@redhat.com>
-Subject: [PATCH 4.20 53/57] mm: page_mapped: dont assume compound page is huge or THP
-Date:   Tue, 15 Jan 2019 17:36:34 +0100
-Message-Id: <20190115154913.994745402@linuxfoundation.org>
+        stable@vger.kernel.org, Filipe Manana <fdmanana@suse.com>,
+        David Sterba <dsterba@suse.com>
+Subject: [PATCH 4.20 56/57] Btrfs: fix deadlock when enabling quotas due to concurrent snapshot creation
+Date:   Tue, 15 Jan 2019 17:36:37 +0100
+Message-Id: <20190115154914.150419825@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190115154910.734892368@linuxfoundation.org>
 References: <20190115154910.734892368@linuxfoundation.org>
@@ -72,76 +65,132 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jan Stancek <jstancek@redhat.com>
+From: Filipe Manana <fdmanana@suse.com>
 
-commit 8ab88c7169b7fba98812ead6524b9d05bc76cf00 upstream.
+commit 9a6f209e36500efac51528132a3e3083586eda5f upstream.
 
-LTP proc01 testcase has been observed to rarely trigger crashes
-on arm64:
-    page_mapped+0x78/0xb4
-    stable_page_flags+0x27c/0x338
-    kpageflags_read+0xfc/0x164
-    proc_reg_read+0x7c/0xb8
-    __vfs_read+0x58/0x178
-    vfs_read+0x90/0x14c
-    SyS_read+0x60/0xc0
+If the quota enable and snapshot creation ioctls are called concurrently
+we can get into a deadlock where the task enabling quotas will deadlock
+on the fs_info->qgroup_ioctl_lock mutex because it attempts to lock it
+twice, or the task creating a snapshot tries to commit the transaction
+while the task enabling quota waits for the former task to commit the
+transaction while holding the mutex. The following time diagrams show how
+both cases happen.
 
-The issue is that page_mapped() assumes that if compound page is not
-huge, then it must be THP.  But if this is 'normal' compound page
-(COMPOUND_PAGE_DTOR), then following loop can keep running (for
-HPAGE_PMD_NR iterations) until it tries to read from memory that isn't
-mapped and triggers a panic:
+First scenario:
 
-        for (i = 0; i < hpage_nr_pages(page); i++) {
-                if (atomic_read(&page[i]._mapcount) >= 0)
-                        return true;
-	}
+           CPU 0                                    CPU 1
 
-I could replicate this on x86 (v4.20-rc4-98-g60b548237fed) only
-with a custom kernel module [1] which:
- - allocates compound page (PAGEC) of order 1
- - allocates 2 normal pages (COPY), which are initialized to 0xff (to
-   satisfy _mapcount >= 0)
- - 2 PAGEC page structs are copied to address of first COPY page
- - second page of COPY is marked as not present
- - call to page_mapped(COPY) now triggers fault on access to 2nd COPY
-   page at offset 0x30 (_mapcount)
+ btrfs_ioctl()
+  btrfs_ioctl_quota_ctl()
+   btrfs_quota_enable()
+    mutex_lock(fs_info->qgroup_ioctl_lock)
+    btrfs_start_transaction()
 
-[1] https://github.com/jstancek/reproducers/blob/master/kernel/page_mapped_crash/repro.c
+                                             btrfs_ioctl()
+                                              btrfs_ioctl_snap_create_v2
+                                               create_snapshot()
+                                                --> adds snapshot to the
+                                                    list pending_snapshots
+                                                    of the current
+                                                    transaction
 
-Fix the loop to iterate for "1 << compound_order" pages.
+    btrfs_commit_transaction()
+     create_pending_snapshots()
+       create_pending_snapshot()
+        qgroup_account_snapshot()
+         btrfs_qgroup_inherit()
+	   mutex_lock(fs_info->qgroup_ioctl_lock)
+	    --> deadlock, mutex already locked
+	        by this task at
+		btrfs_quota_enable()
 
-Kirrill said "IIRC, sound subsystem can producuce custom mapped compound
-pages".
+Second scenario:
 
-Link: http://lkml.kernel.org/r/c440d69879e34209feba21e12d236d06bc0a25db.1543577156.git.jstancek@redhat.com
-Fixes: e1534ae95004 ("mm: differentiate page_mapped() from page_mapcount() for compound pages")
-Signed-off-by: Jan Stancek <jstancek@redhat.com>
-Debugged-by: Laszlo Ersek <lersek@redhat.com>
-Suggested-by: "Kirill A. Shutemov" <kirill@shutemov.name>
-Acked-by: Michal Hocko <mhocko@suse.com>
-Acked-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
-Reviewed-by: David Hildenbrand <david@redhat.com>
-Reviewed-by: Andrea Arcangeli <aarcange@redhat.com>
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+           CPU 0                                    CPU 1
+
+ btrfs_ioctl()
+  btrfs_ioctl_quota_ctl()
+   btrfs_quota_enable()
+    mutex_lock(fs_info->qgroup_ioctl_lock)
+    btrfs_start_transaction()
+
+                                             btrfs_ioctl()
+                                              btrfs_ioctl_snap_create_v2
+                                               create_snapshot()
+                                                --> adds snapshot to the
+                                                    list pending_snapshots
+                                                    of the current
+                                                    transaction
+
+                                                btrfs_commit_transaction()
+                                                 --> waits for task at
+                                                     CPU 0 to release
+                                                     its transaction
+                                                     handle
+
+    btrfs_commit_transaction()
+     --> sees another task started
+         the transaction commit first
+     --> releases its transaction
+         handle
+     --> waits for the transaction
+         commit to be completed by
+         the task at CPU 1
+
+                                                 create_pending_snapshot()
+                                                  qgroup_account_snapshot()
+                                                   btrfs_qgroup_inherit()
+                                                    mutex_lock(fs_info->qgroup_ioctl_lock)
+                                                     --> deadlock, task at CPU 0
+                                                         has the mutex locked but
+                                                         it is waiting for us to
+                                                         finish the transaction
+                                                         commit
+
+So fix this by setting the quota enabled flag in fs_info after committing
+the transaction at btrfs_quota_enable(). This ends up serializing quota
+enable and snapshot creation as if the snapshot creation happened just
+before the quota enable request. The quota rescan task, scheduled after
+committing the transaction in btrfs_quote_enable(), will do the accounting.
+
+Fixes: 6426c7ad697d ("btrfs: qgroup: Fix qgroup accounting when creating snapshot")
+Signed-off-by: Filipe Manana <fdmanana@suse.com>
+Signed-off-by: David Sterba <dsterba@suse.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- mm/util.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ fs/btrfs/qgroup.c |   14 ++++++++++----
+ 1 file changed, 10 insertions(+), 4 deletions(-)
 
---- a/mm/util.c
-+++ b/mm/util.c
-@@ -478,7 +478,7 @@ bool page_mapped(struct page *page)
- 		return true;
- 	if (PageHuge(page))
- 		return false;
--	for (i = 0; i < hpage_nr_pages(page); i++) {
-+	for (i = 0; i < (1 << compound_order(page)); i++) {
- 		if (atomic_read(&page[i]._mapcount) >= 0)
- 			return true;
+--- a/fs/btrfs/qgroup.c
++++ b/fs/btrfs/qgroup.c
+@@ -1013,16 +1013,22 @@ out_add_root:
+ 		btrfs_abort_transaction(trans, ret);
+ 		goto out_free_path;
  	}
+-	spin_lock(&fs_info->qgroup_lock);
+-	fs_info->quota_root = quota_root;
+-	set_bit(BTRFS_FS_QUOTA_ENABLED, &fs_info->flags);
+-	spin_unlock(&fs_info->qgroup_lock);
+ 
+ 	ret = btrfs_commit_transaction(trans);
+ 	trans = NULL;
+ 	if (ret)
+ 		goto out_free_path;
+ 
++	/*
++	 * Set quota enabled flag after committing the transaction, to avoid
++	 * deadlocks on fs_info->qgroup_ioctl_lock with concurrent snapshot
++	 * creation.
++	 */
++	spin_lock(&fs_info->qgroup_lock);
++	fs_info->quota_root = quota_root;
++	set_bit(BTRFS_FS_QUOTA_ENABLED, &fs_info->flags);
++	spin_unlock(&fs_info->qgroup_lock);
++
+ 	ret = qgroup_rescan_init(fs_info, 0, 1);
+ 	if (!ret) {
+ 	        qgroup_rescan_zero_tracking(fs_info);
 
 
