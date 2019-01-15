@@ -2,144 +2,160 @@ Return-Path: <SRS0=RZO6=PX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3CA4DC43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 15:52:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E03BDC43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 15:53:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0CA2620645
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 15:52:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AFF4A20645
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 15:53:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731198AbfAOPwb (ORCPT
+        id S1731213AbfAOPxR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 15 Jan 2019 10:52:31 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:26883 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728908AbfAOPwa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Jan 2019 10:52:30 -0500
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 8B2DC753E3;
-        Tue, 15 Jan 2019 15:52:29 +0000 (UTC)
-Received: from llong.remote.csb (dhcp-17-223.bos.redhat.com [10.18.17.223])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id B492D1001F57;
-        Tue, 15 Jan 2019 15:52:27 +0000 (UTC)
-Subject: Re: [PATCH v3 4/4] /proc/stat: Call kstat_irqs_usr() only for active
- IRQs
-To:     Thomas Gleixner <tglx@linutronix.de>
-Cc:     Matthew Wilcox <willy@infradead.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Kees Cook <keescook@chromium.org>,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        Davidlohr Bueso <dave@stgolabs.net>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        Daniel Colascione <dancol@google.com>,
-        Dave Chinner <david@fromorbit.com>,
-        Randy Dunlap <rdunlap@infradead.org>
-References: <1547061648-16080-1-git-send-email-longman@redhat.com>
- <1547061648-16080-5-git-send-email-longman@redhat.com>
- <alpine.DEB.2.21.1901111750280.4957@nanos.tec.linutronix.de>
- <alpine.DEB.2.21.1901112017000.1661@nanos.tec.linutronix.de>
- <20190111192357.GK6310@bombadil.infradead.org>
- <alpine.DEB.2.21.1901112146180.1661@nanos.tec.linutronix.de>
- <3b863edf-1a3e-1436-93e7-717550c7256f@redhat.com>
- <alpine.DEB.2.21.1901151023550.1865@nanos.tec.linutronix.de>
-From:   Waiman Long <longman@redhat.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=longman@redhat.com; prefer-encrypt=mutual; keydata=
- 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
- weim8xU=
-Organization: Red Hat
-Message-ID: <86453b9a-f7c3-73a5-c5a1-bfff3cb4bade@redhat.com>
-Date:   Tue, 15 Jan 2019 10:52:27 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Tue, 15 Jan 2019 10:53:17 -0500
+Received: from mail-sh.amlogic.com ([58.32.228.43]:38074 "EHLO
+        mail-sh.amlogic.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727247AbfAOPxR (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 Jan 2019 10:53:17 -0500
+Received: from localhost.localdomain (10.18.11.217) by mail-sh.amlogic.com
+ (10.18.11.5) with Microsoft SMTP Server id 15.1.1591.10; Tue, 15 Jan 2019
+ 23:38:54 +0800
+From:   Jianxin Pan <jianxin.pan@amlogic.com>
+To:     Boris Brezillon <boris.brezillon@bootlin.com>,
+        <linux-mtd@lists.infradead.org>
+CC:     Jianxin Pan <jianxin.pan@amlogic.com>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Brian Norris <computersforpeace@gmail.com>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        Richard Weinberger <richard@nod.at>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Carlo Caione <carlo@caione.org>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Rob Herring <robh@kernel.org>,
+        Liang Yang <liang.yang@amlogic.com>,
+        Jian Hu <jian.hu@amlogic.com>,
+        Hanjie Lin <hanjie.lin@amlogic.com>,
+        Victor Wan <victor.wan@amlogic.com>,
+        <linux-amlogic@lists.infradead.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>
+Subject: [PATCH v9 0/2]  mtd: rawnand: meson: add Amlogic NAND driver support
+Date:   Tue, 15 Jan 2019 23:38:02 +0800
+Message-ID: <1547566684-57472-1-git-send-email-jianxin.pan@amlogic.com>
+X-Mailer: git-send-email 1.9.1
 MIME-Version: 1.0
-In-Reply-To: <alpine.DEB.2.21.1901151023550.1865@nanos.tec.linutronix.de>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.39]); Tue, 15 Jan 2019 15:52:30 +0000 (UTC)
+Content-Type: text/plain
+X-Originating-IP: [10.18.11.217]
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 01/15/2019 04:24 AM, Thomas Gleixner wrote:
-> Waiman,
->
-> On Mon, 14 Jan 2019, Waiman Long wrote:
->> On 01/11/2019 04:02 PM, Thomas Gleixner wrote:
->>> @@ -919,11 +920,15 @@ unsigned int kstat_irqs_cpu(unsigned int
->>>  unsigned int kstat_irqs(unsigned int irq)
->>>  {
->>>  	struct irq_desc *desc = irq_to_desc(irq);
->>> -	int cpu;
->>>  	unsigned int sum = 0;
->>> +	int cpu;
->>>  
->>>  	if (!desc || !desc->kstat_irqs)
->>>  		return 0;
->>> +	if (!irq_settings_is_per_cpu_devid(desc) &&
->>> +	    !irq_settings_is_per_cpu(desc))
->>> +	    return desc->tot_count;
->>> +
->>>  	for_each_possible_cpu(cpu)
->>>  		sum += *per_cpu_ptr(desc->kstat_irqs, cpu);
->>>  	return sum;
->>>
->>>
->> That looks good to me. Thanks for providing a more simple solution.
->>
->> BTW, if the percpu IRQ is known at allocation time, maybe we should just
->> not allocate a percpu count for the corresponding descriptor.
-> Nope. You still need the per cpu accounting for /proc/interrupts ..
+These two patches try to add initial NAND driver support for Amlogic Meson
+SoCs, current it has been tested on GXL(p212) and AXG(s400) platform.
 
-Yes, you are right.
+Changes since V8 at [9]
+ - fix build failre at object_is_on_stack
+ - update Kconfig as Martin's suggested
 
-Thanks,
-Longman
+Changes since V7 at [8]
+ - fix bitflips checking for blank pages
+ - trace the latest commit with nand/next branch
+ - checking the return of meson_nand_op_get_dma_safe_*input/output*_buf
+ - add .detach_chip for free meson_nand.data_buf/info_buf
+
+Changes since V6 at [7]
+ - use timings->tBERS_max as the maximum time out, delete NFC_CMD_RB_TIMEOUT
+ - fix nand_rw_cmd and support small block flash and which row address less than 3
+ - fix coding style
+ - replace readl/writel_* with readl/writel_relaxed*
+ - delete ECC_SET_PROTECTED_OOB_BYTE and ECC_GET_PROTECTED_OOB_BYTE
+ - implement dma access for read_buf and write_buf, more efficient.
+ - delete waiting dma finish in write process and let NAND_CMD_PAGEPROG and
+RB command go on queuing
+ - add waiting the completed flag of last ecc page be set, for more strict
+
+Changes since v5 at [6]:
+ - use instr->delay_ns in exec_op() to caculate the delay cycle
+ - delete struct meson_nfc_info_format and use macros instead
+ - delete "is_scramble" in struct meson_nfc_nand_chip
+ - add WARN_ON_ONCE() for chip > MAX_CE_NUM
+ - drop param *mtd* or struct *nfc* if param *nand exist
+ - substitute set_data_oob and get_data_oob for prase_data_oob and format_data_oob
+ - split timings caculating and setting timings
+ - move info_buf and data_buf to struct meson_nfc_nand_chip
+
+Changes since v4 at [5]:
+ - remove the initial default divider(CLK_DIV_MASK) in meson_nfc_clk_init()
+ - dt-bindings: remove staus, add "rx" and "tx" clock, and node rename
+
+Changes since v3 at [4]:
+ - remove partition table and some used props from dt-bindings 
+
+Changes since v2 at [3]:
+ - remove some hardcode time value, like twb
+ - use dev wait R/B instead of nand_soft_waitrdy
+ - implement nfc ecc init by ecc helper
+ - rework nfc buffer init to register the maximun buffer when several chips
+ - free nfc buffer when error and cleanup
+ - add variable to teack all the already assigned CS lines
+ - fix mtd->name use the first cs line only
+ - remove dt "nand-enable-scrambler" and use NAND_NEED_SCRAMBLING instead.
+ - move setuping ECC fileds after the identification phase
+ - use nand_scan() and attach_chip()
+ - check one event to return IRQ_NONE
+ - delete cast when of_device_get_match_data
+ - use nand_controller_init() helper
+ - remove nfc driver complains when calling devm_ioremap_resource
+ - clear irqs before setting up irq handler
+
+Changes since v1 at [1]:
+ - adopt property amlogic,nand-enable-scrambler - thanks Martin
+ - drop nand pins in DT
+ - convert clk access to emmc clkc model 
+ - fix regiser field definition alignment
+ - drop nand-user-mode 
+ - parse cs id from DT
+ - rework n2m, m2n function
+ - explain why insert two "IDLE" command
+ - implement exec_op()
+ - drop meson_nfc_get_nand_chip_dts()
+ - release resource once error occur in meson_nfc_nand_chips_init(), 
+ - call nand_cleanup(nand) once mtd_device_register fail
+
+Items not addressed ( or confirmed ) in this version:
+ - convert to ECC conf helper() 
+ - convert to dma coherent API
+ - how to construct mtd->name
+
+[1] https://lkml.kernel.org/r/20180613161314.14894-1-yixun.lan@amlogic.com
+[2] https://lkml.kernel.org/r/20180712211244.11428-1-yixun.lan@amlogic.com
+[3] https://lkml.kernel.org/r/20180719094612.5833-1-yixun.lan@amlogic.com
+[4] https://lkml.kernel.org/r/1536317831-58056-1-git-send-email-jianxin.pan@amlogic.com/
+[5] https://lore.kernel.org/r/1537433449-65213-2-git-send-email-jianxin.pan@amlogic.com/
+[6] https://lore.kernel.org/r/1539839345-14021-1-git-send-email-jianxin.pan@amlogic.com
+[7] https://lore.kernel.org/r/1541090542-19618-1-git-send-email-jianxin.pan@amlogic.com
+[8] http://lkml.kernel.org/r/1542386439-30166-1-git-send-email-jianxin.pan@amlogic.com
+[9] http://lkml.kernel.org/r/1544973463-59523-1-git-send-email-jianxin.pan@amlogic.com
+
+Liang Yang (2):
+  dt-bindings: nand: meson: add Amlogic NAND controller driver
+  mtd: rawnand: meson: add support for Amlogic NAND flash controller
+
+ .../devicetree/bindings/mtd/amlogic,meson-nand.txt |   60 +
+ drivers/mtd/nand/raw/Kconfig                       |    8 +
+ drivers/mtd/nand/raw/Makefile                      |    1 +
+ drivers/mtd/nand/raw/meson_nand.c                  | 1468 ++++++++++++++++++++
+ 4 files changed, 1537 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/mtd/amlogic,meson-nand.txt
+ create mode 100644 drivers/mtd/nand/raw/meson_nand.c
+
+-- 
+1.9.1
+
