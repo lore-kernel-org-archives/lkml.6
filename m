@@ -2,57 +2,50 @@ Return-Path: <SRS0=RZO6=PX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 75DE8C43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 16:52:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 16103C43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 16:52:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3ACF520651
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 16:52:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CF49420645
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 16:52:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547571145;
-	bh=dU/0bNoLFCl/Pm3nYZfbgbWFS7t9nBYleLry7RwL7Lc=;
+	s=default; t=1547571151;
+	bh=k9pITo/UzaIiX85/CtwBCZ84ujNAQKLWvLZbGujFnUM=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=scLPsTZShiBq8SrYxsOdXEipypOfsUytvaBlOCmLivOC2Q4J9h6QhvQ8b3X7sKcbK
-	 Be2TaJFi6QtpAyAUg4DGCNQYAo9i9rvEls3Aln+Mqg7BaN6G5CVBcJbKCqWuedo5QZ
-	 XWCrmHXOEBAFquwGV9R4weRY9I0sYPqEmfsrWAk0=
+	b=AfNuBk2zmTJxOD4CF+pFWZVHMPUBvOY9g1IWzpYuk219czN3xoVba1am9iL6Vfwcm
+	 M7fNbmT9rOB2IUoYCcMWyNymaRXK6nNa2GYVKppinMyxdX7nVPt9QTLnEzdelftr/3
+	 kJsQsLa8qX3lkxgmzKCsYLpPf2FjlJ8CfBcJCbTc=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387562AbfAOQoe (ORCPT
+        id S1729867AbfAOQw3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 15 Jan 2019 11:44:34 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34066 "EHLO mail.kernel.org"
+        Tue, 15 Jan 2019 11:52:29 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34016 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387534AbfAOQo3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Jan 2019 11:44:29 -0500
+        id S2387519AbfAOQo0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 Jan 2019 11:44:26 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 14F5F20657;
-        Tue, 15 Jan 2019 16:44:27 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5B3332054F;
+        Tue, 15 Jan 2019 16:44:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547570668;
-        bh=dU/0bNoLFCl/Pm3nYZfbgbWFS7t9nBYleLry7RwL7Lc=;
+        s=default; t=1547570665;
+        bh=k9pITo/UzaIiX85/CtwBCZ84ujNAQKLWvLZbGujFnUM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=bxO0LhCd1nc141tVSdT6yLMQwJ/sc+eJR0VH6m6IqWTzRLb+0MDY57TZoDd+Zqevf
-         qqKMK3Zpf1fpwRVqHKjbrTqYStJtxvcF/H1IzXtDxSvy2YqRje+RaVcMLZx1QEaQ4u
-         ycFeOfzTMMwFqL3cjkIunrlN/rpVA4jKdAHHPq5k=
+        b=IedRUMGon6p225GUr6Mln1AEwYohGqsURS3DXbXBffziq/KZ8ET6PQgYVWXgmZTeW
+         S5NexvQTZ3+NtHMFB8QAZiqDkWp2ON94zpcH0tbNgzcNgykrcf06twxMall+8f+xdk
+         X7zg6bEto/5NScNJ8KD/2W0rYOPnPH4iBVfBQRFU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Shakeel Butt <shakeelb@google.com>,
-        Michal Hocko <mhocko@suse.com>,
-        Rik van Riel <riel@surriel.com>,
-        Roman Gushchin <guro@fb.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Tejun Heo <tj@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH 4.20 27/57] fork, memcg: fix cached_stacks case
-Date:   Tue, 15 Jan 2019 17:36:08 +0100
-Message-Id: <20190115154912.206139055@linuxfoundation.org>
+        stable@vger.kernel.org, Jack Stocker <jackstocker.93@gmail.com>
+Subject: [PATCH 4.20 26/57] USB: Add USB_QUIRK_DELAY_CTRL_MSG quirk for Corsair K70 RGB
+Date:   Tue, 15 Jan 2019 17:36:07 +0100
+Message-Id: <20190115154912.163011072@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190115154910.734892368@linuxfoundation.org>
 References: <20190115154910.734892368@linuxfoundation.org>
@@ -71,43 +64,40 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Shakeel Butt <shakeelb@google.com>
+From: Jack Stocker <jackstocker.93@gmail.com>
 
-commit ba4a45746c362b665e245c50b870615f02f34781 upstream.
+commit 3483254b89438e60f719937376c5e0ce2bc46761 upstream.
 
-Commit 5eed6f1dff87 ("fork,memcg: fix crash in free_thread_stack on
-memcg charge fail") fixes a crash caused due to failed memcg charge of
-the kernel stack.  However the fix misses the cached_stacks case which
-this patch fixes.  So, the same crash can happen if the memcg charge of
-a cached stack is failed.
+To match the Corsair Strafe RGB, the Corsair K70 RGB also requires
+USB_QUIRK_DELAY_CTRL_MSG to completely resolve boot connection issues
+discussed here: https://github.com/ckb-next/ckb-next/issues/42.
+Otherwise roughly 1 in 10 boots the keyboard will fail to be detected.
 
-Link: http://lkml.kernel.org/r/20190102180145.57406-1-shakeelb@google.com
-Fixes: 5eed6f1dff87 ("fork,memcg: fix crash in free_thread_stack on memcg charge fail")
-Signed-off-by: Shakeel Butt <shakeelb@google.com>
-Acked-by: Michal Hocko <mhocko@suse.com>
-Acked-by: Rik van Riel <riel@surriel.com>
-Cc: Rik van Riel <riel@surriel.com>
-Cc: Roman Gushchin <guro@fb.com>
-Cc: Johannes Weiner <hannes@cmpxchg.org>
-Cc: Tejun Heo <tj@kernel.org>
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Patch that applied delay control quirk for Corsair Strafe RGB:
+cb88a0588717 ("usb: quirks: add control message delay for 1b1c:1b20")
+
+Previous K70 RGB patch to add delay-init quirk:
+7a1646d92257 ("Add delay-init quirk for Corsair K70 RGB keyboards")
+
+Signed-off-by: Jack Stocker <jackstocker.93@gmail.com>
+Cc: stable <stable@vger.kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- kernel/fork.c |    1 +
- 1 file changed, 1 insertion(+)
+ drivers/usb/core/quirks.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/kernel/fork.c
-+++ b/kernel/fork.c
-@@ -221,6 +221,7 @@ static unsigned long *alloc_thread_stack
- 		memset(s->addr, 0, THREAD_SIZE);
+--- a/drivers/usb/core/quirks.c
++++ b/drivers/usb/core/quirks.c
+@@ -394,7 +394,8 @@ static const struct usb_device_id usb_qu
+ 	{ USB_DEVICE(0x1a40, 0x0101), .driver_info = USB_QUIRK_HUB_SLOW_RESET },
  
- 		tsk->stack_vm_area = s;
-+		tsk->stack = s->addr;
- 		return s->addr;
- 	}
+ 	/* Corsair K70 RGB */
+-	{ USB_DEVICE(0x1b1c, 0x1b13), .driver_info = USB_QUIRK_DELAY_INIT },
++	{ USB_DEVICE(0x1b1c, 0x1b13), .driver_info = USB_QUIRK_DELAY_INIT |
++	  USB_QUIRK_DELAY_CTRL_MSG },
  
+ 	/* Corsair Strafe */
+ 	{ USB_DEVICE(0x1b1c, 0x1b15), .driver_info = USB_QUIRK_DELAY_INIT |
 
 
