@@ -2,42 +2,92 @@ Return-Path: <SRS0=RZO6=PX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A4D1BC43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 17:25:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8196DC43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 17:25:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 70ACE20675
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 17:25:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 457C120675
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 17:25:41 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="unknown key hash" (0-bit key) header.d=c-s.fr header.i=@c-s.fr header.b="gByyt/X9"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733289AbfAORY7 (ORCPT
+        id S2388153AbfAORZj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 15 Jan 2019 12:24:59 -0500
-Received: from relay.sw.ru ([185.231.240.75]:54032 "EHLO relay.sw.ru"
+        Tue, 15 Jan 2019 12:25:39 -0500
+Received: from pegase1.c-s.fr ([93.17.236.30]:10353 "EHLO pegase1.c-s.fr"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728736AbfAORY7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Jan 2019 12:24:59 -0500
-Received: from [172.16.25.12]
-        by relay.sw.ru with esmtp (Exim 4.91)
-        (envelope-from <aryabinin@virtuozzo.com>)
-        id 1gjSSP-0004cU-Nd; Tue, 15 Jan 2019 20:24:57 +0300
-Subject: Re: [PATCH v2] page_poison: play nicely with KASAN
-To:     Qian Cai <cai@lca.pw>, akpm@linux-foundation.org
-Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org
-References: <2e46c139-70d3-dc86-28c9-a9f263651b57@virtuozzo.com>
- <20190114233405.67843-1-cai@lca.pw>
-From:   Andrey Ryabinin <aryabinin@virtuozzo.com>
-Message-ID: <3a2aefb4-f108-5354-ddb9-7a35d8e0b3f2@virtuozzo.com>
-Date:   Tue, 15 Jan 2019 20:25:20 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+        id S1728736AbfAORZj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 Jan 2019 12:25:39 -0500
+Received: from localhost (mailhub1-int [192.168.12.234])
+        by localhost (Postfix) with ESMTP id 43fHKp6Q7fz9vBJc;
+        Tue, 15 Jan 2019 18:25:34 +0100 (CET)
+Authentication-Results: localhost; dkim=permerror reason="key not found"
+        header.d=c-s.fr header.i=@c-s.fr header.b=gByyt/X9;
+        dkim-adsp=none (insecure policy); dkim-atps=neutral
+X-Virus-Scanned: Debian amavisd-new at c-s.fr
+Received: from pegase1.c-s.fr ([192.168.12.234])
+        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
+        with ESMTP id Lf7f_X3vnQ4Y; Tue, 15 Jan 2019 18:25:34 +0100 (CET)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+        by pegase1.c-s.fr (Postfix) with ESMTP id 43fHKp58mcz9vBJY;
+        Tue, 15 Jan 2019 18:25:34 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=c-s.fr; s=mail;
+        t=1547573134; bh=nfiqene5M3o5kAGA4cFhUacIFPIGZMQYcHqzH6hGjNc=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=gByyt/X9hT/1zq0OG6PlK51/hNVU37xWuECwM4TeCx9xzapEuwjeNIQQt+44LpPVI
+         GPQCzr25yGAZrAYdGATnFGkMH+De6KKTgXyxHHtPY/IM3+wZfsrJ1KyPmYPtItJIXT
+         f2eh28nIAavAM0oJBLzprzk537I97GPpAynb7djXxsCE5sCYXS5NGivFQ8B8J8s1a4
+         Uz7xlYyFXZxJGIBdlsetKewbArORfGGN6uWVHShkMsbo25geYGrhH1Ai0Uo7oZxYCy
+         yJOF23I25T/AYNkvyzwOfV6pKpK04Sc2YeGRy9aak14ip49YqhvW9n531hafkubKwQ
+         haLmeX+VW4K7P3Y0kPPihVVsCoqq5nOt9apMPYdMrPYiIZIXUUztsNWvp215CQHQJL
+         BHNU06BH9enFTGmo1OfkQas1xZlQZBh+QHMTkOzzTHdGtXM0SJ9ZkkNS5k4ed0A3kQ
+         C9DIKGGtPTtpdBjCz9BqhFZUB021FCYxCGhoCLMycy14x4N9V0JRa2xYNDNRusoLPc
+         6J/QZi+XnYDnwcCGNW+iqTURwzn+UkQfcd9K/9nBNbPRQrt+PBxoKbONieBwlpa+fA
+         wL+5wfG3g7vIE4rq9ewA1gcfQzuOBzMy/Rya4DVV5yqGoLlge2ozTiQBbZeuRPgNb8
+         44MeCtd1qJ/r9+Tk7/Q0L7q0=
+Received: from localhost (localhost [127.0.0.1])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id E11108B7FF;
+        Tue, 15 Jan 2019 18:25:36 +0100 (CET)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+        with ESMTP id djneeju_xvcU; Tue, 15 Jan 2019 18:25:36 +0100 (CET)
+Received: from PO15451 (unknown [192.168.4.90])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id E2C888B7EE;
+        Tue, 15 Jan 2019 18:25:35 +0100 (CET)
+Subject: Re: [PATCH v3 1/3] powerpc/mm: prepare kernel for KAsan on PPC32
+To:     Dmitry Vyukov <dvyukov@google.com>,
+        Andrey Ryabinin <aryabinin@virtuozzo.com>
+Cc:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>,
+        Alexander Potapenko <glider@google.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linuxppc-dev@lists.ozlabs.org,
+        kasan-dev <kasan-dev@googlegroups.com>,
+        Linux-MM <linux-mm@kvack.org>
+References: <cover.1547289808.git.christophe.leroy@c-s.fr>
+ <0c854dd6b110ac2b81ef1681f6e097f59f84af8b.1547289808.git.christophe.leroy@c-s.fr>
+ <CACT4Y+aEsLWqhJmXETNsGtKdbfHDFL1NF8ofv3KwvQPraXdFyw@mail.gmail.com>
+ <801c7d58-417d-1e65-68a0-b8cf02f9f956@c-s.fr>
+ <CACT4Y+ZdA-w5OeebZg3PYPB+BX5wDxw_DxNe2==VJfbpy2eJ7A@mail.gmail.com>
+ <330696c0-90c6-27de-5eb3-4da2159fdfbc@virtuozzo.com>
+ <CACT4Y+ajgTdDyFFWCp0oRSPKZh9ercDpq3pAq2-ZSx7ouAvZYQ@mail.gmail.com>
+From:   Christophe Leroy <christophe.leroy@c-s.fr>
+Message-ID: <301f5826-64ab-1cf4-7e7e-cd026de77bca@c-s.fr>
+Date:   Tue, 15 Jan 2019 18:25:35 +0100
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
  Thunderbird/60.4.0
 MIME-Version: 1.0
-In-Reply-To: <20190114233405.67843-1-cai@lca.pw>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <CACT4Y+ajgTdDyFFWCp0oRSPKZh9ercDpq3pAq2-ZSx7ouAvZYQ@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: fr
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -45,44 +95,83 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 
 
-On 1/15/19 2:34 AM, Qian Cai wrote:
-> KASAN does not play well with the page poisoning
-> (CONFIG_PAGE_POISONING). It triggers false positives in the allocation
-> path,
+Le 15/01/2019 à 18:10, Dmitry Vyukov a écrit :
+> On Tue, Jan 15, 2019 at 6:06 PM Andrey Ryabinin <aryabinin@virtuozzo.com> wrote:
+>>
+>>
+>>
+>> On 1/15/19 2:14 PM, Dmitry Vyukov wrote:
+>>> On Tue, Jan 15, 2019 at 8:27 AM Christophe Leroy
+>>> <christophe.leroy@c-s.fr> wrote:
+>>>> On 01/14/2019 09:34 AM, Dmitry Vyukov wrote:
+>>>>> On Sat, Jan 12, 2019 at 12:16 PM Christophe Leroy
+>>>>> <christophe.leroy@c-s.fr> wrote:
+>>>>> &gt;
+>>>>> &gt; In kernel/cputable.c, explicitly use memcpy() in order
+>>>>> &gt; to allow GCC to replace it with __memcpy() when KASAN is
+>>>>> &gt; selected.
+>>>>> &gt;
+>>>>> &gt; Since commit 400c47d81ca38 ("powerpc32: memset: only use dcbz once cache is
+>>>>> &gt; enabled"), memset() can be used before activation of the cache,
+>>>>> &gt; so no need to use memset_io() for zeroing the BSS.
+>>>>> &gt;
+>>>>> &gt; Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
+>>>>> &gt; ---
+>>>>> &gt;  arch/powerpc/kernel/cputable.c | 4 ++--
+>>>>> &gt;  arch/powerpc/kernel/setup_32.c | 6 ++----
+>>>>> &gt;  2 files changed, 4 insertions(+), 6 deletions(-)
+>>>>> &gt;
+>>>>> &gt; diff --git a/arch/powerpc/kernel/cputable.c
+>>>>> b/arch/powerpc/kernel/cputable.c
+>>>>> &gt; index 1eab54bc6ee9..84814c8d1bcb 100644
+>>>>> &gt; --- a/arch/powerpc/kernel/cputable.c
+>>>>> &gt; +++ b/arch/powerpc/kernel/cputable.c
+>>>>> &gt; @@ -2147,7 +2147,7 @@ void __init set_cur_cpu_spec(struct cpu_spec *s)
+>>>>> &gt;         struct cpu_spec *t = &amp;the_cpu_spec;
+>>>>> &gt;
+>>>>> &gt;         t = PTRRELOC(t);
+>>>>> &gt; -       *t = *s;
+>>>>> &gt; +       memcpy(t, s, sizeof(*t));
+>>>>>
+>>>>> Hi Christophe,
+>>>>>
+>>>>> I understand why you are doing this, but this looks a bit fragile and
+>>>>> non-scalable. This may not work with the next version of compiler,
+>>>>> just different than yours version of compiler, clang, etc.
+>>>>
+>>>> My felling would be that this change makes it more solid.
+>>>>
+>>>> My understanding is that when you do *t = *s, the compiler can use
+>>>> whatever way it wants to do the copy.
+>>>> When you do memcpy(), you ensure it will do it that way and not another
+>>>> way, don't you ?
+>>>
+>>> It makes this single line more deterministic wrt code-gen (though,
+>>> strictly saying compiler can turn memcpy back into inlines
+>>> instructions, it knows memcpy semantics anyway).
+>>> But the problem I meant is that the set of places that are subject to
+>>> this problem is not deterministic. So if we go with this solution,
+>>> after this change it's in the status "works on your machine" and we
+>>> either need to commit to not using struct copies and zeroing
+>>> throughout kernel code or potentially have a long tail of other
+>>> similar cases, and since they can be triggered by another compiler
+>>> version, we may need to backport these changes to previous releases
+>>> too. Whereas if we would go with compiler flags, it would prevent the
+>>> problem in all current and future places and with other past/future
+>>> versions of compilers.
+>>>
+>>
+>> The patch will work for any compiler. The point of this patch is to make
+>> memcpy() visible to the preprocessor which will replace it with __memcpy().
 > 
-> BUG: KASAN: use-after-free in memchr_inv+0x2ea/0x330
-> Read of size 8 at addr ffff88881f800000 by task swapper/0
-> CPU: 0 PID: 0 Comm: swapper Not tainted 5.0.0-rc1+ #54
-> Call Trace:
->  dump_stack+0xe0/0x19a
->  print_address_description.cold.2+0x9/0x28b
->  kasan_report.cold.3+0x7a/0xb5
->  __asan_report_load8_noabort+0x19/0x20
->  memchr_inv+0x2ea/0x330
->  kernel_poison_pages+0x103/0x3d5
->  get_page_from_freelist+0x15e7/0x4d90
+> For this single line, yes. But it does not mean that KASAN will work.
 > 
-> because KASAN has not yet unpoisoned the shadow page for allocation
-> before it checks memchr_inv() but only found a stale poison pattern.
-> 
-> Also, false positives in free path,
-> 
-> BUG: KASAN: slab-out-of-bounds in kernel_poison_pages+0x29e/0x3d5
-> Write of size 4096 at addr ffff8888112cc000 by task swapper/0/1
-> CPU: 5 PID: 1 Comm: swapper/0 Not tainted 5.0.0-rc1+ #55
-> Call Trace:
->  dump_stack+0xe0/0x19a
->  print_address_description.cold.2+0x9/0x28b
->  kasan_report.cold.3+0x7a/0xb5
->  check_memory_region+0x22d/0x250
->  memset+0x28/0x40
->  kernel_poison_pages+0x29e/0x3d5
->  __free_pages_ok+0x75f/0x13e0
-> 
-> due to KASAN adds poisoned redzones around slab objects, but the page
-> poisoning needs to poison the whole page.
-> 
-> Signed-off-by: Qian Cai <cai@lca.pw>
-> ---
-> 
-Acked-by: Andrey Ryabinin <aryabinin@virtuozzo.com>
+>> After preprocessor's work, compiler will see just __memcpy() call here.
+
+This problem can affect any arch I believe. Maybe the 'solution' would 
+be to run a generic script similar to 
+arch/powerpc/kernel/prom_init_check.sh on all objects compiled with 
+KASAN_SANITIZE_object.o := n don't include any reference to memcpy() 
+memset() or memmove() ?
+
+Christophe
