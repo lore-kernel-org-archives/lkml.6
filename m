@@ -7,46 +7,46 @@ X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CAE90C43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 16:58:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 34965C43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 16:59:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9909320645
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 16:58:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0456A20675
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 16:59:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547571537;
-	bh=wSNuL6bGTQezeWqrRDKAMEj31y8Wd9U/OSUbRywJJIc=;
+	s=default; t=1547571541;
+	bh=SELms0P1p1dt6jLhOavljk9eCjEl6q0oHrVBkTFYbFU=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=Rgqppq5v8hKNY/ZwZrgZRWox7ZFeWco0P/aXtVUSMYKV/uozOr54RiENDddedILkG
-	 KqjSESCDD4GBWr6ijseenW4IyvK1Pbn6G+tW31xqlYYQrTlfN9MxPARwVLoaQ+ZTnc
-	 WGv9gLiGzGBL8kL5iJ5l2KSd5Mn7IW5qaREIlGQQ=
+	b=l9kHs6TZtSlLQWYHtowkGv9Od8CiNez0lYzXLwXd+23Es3zAXkKivEJ7CRm2zQbl5
+	 Cu4pPEKMnFLWJ7IbT1Y/mGpypj7fx0wHBM9ITgTi2f2rkkr1hxJB+t3krWgo9mgsR9
+	 G/GtZylIE4W7dDow11HuJka0hwWE9oMzsZ8ukz/g=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388163AbfAOQ6z (ORCPT
+        id S1732398AbfAOQjl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 15 Jan 2019 11:58:55 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55930 "EHLO mail.kernel.org"
+        Tue, 15 Jan 2019 11:39:41 -0500
+Received: from mail.kernel.org ([198.145.29.99]:55774 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728643AbfAOQjp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Jan 2019 11:39:45 -0500
+        id S1732368AbfAOQjh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 Jan 2019 11:39:37 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3A6FE2054F;
-        Tue, 15 Jan 2019 16:39:44 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 773FA2054F;
+        Tue, 15 Jan 2019 16:39:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547570384;
-        bh=wSNuL6bGTQezeWqrRDKAMEj31y8Wd9U/OSUbRywJJIc=;
+        s=default; t=1547570376;
+        bh=SELms0P1p1dt6jLhOavljk9eCjEl6q0oHrVBkTFYbFU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=TgJmYPfG/ZolKpOSHx++xgisjkRXVL5sbPWL7o0Mr1K8NwbzvVXosr6z3DWWxfzgq
-         vjvdIjJIDE+gp0Ot5PnwclhMO5xWOOi3nCOYKFdMNCu1ndOqAO9iWBiQuGvCPeSgqc
-         vO0cF8Mnac2PHNGmK55H5iTEKLWrNoa0NA9RzkUk=
+        b=npoi7nXssG5eZsbSXbwxDsFP/TSvsLP58gaZzKtW2wfyCzHVh/D/DcW00u8Hd8XOY
+         SpOXuUcFBgnO5+v0qP9JfXFRSuMQIWSs8SMKsLTxAj7IKy3ZSqU0HPToRm/9scLkFO
+         yteGka1mWWy/CrWSYQyjWFe9cKC7v3DcEKZ0pH1Q=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Icenowy Zheng <icenowy@aosc.io>,
-        Alan Stern <stern@rowland.harvard.edu>
-Subject: [PATCH 4.9 06/16] USB: storage: add quirk for SMI SM3350
-Date:   Tue, 15 Jan 2019 17:35:49 +0100
-Message-Id: <20190115154848.926819086@linuxfoundation.org>
+        stable@vger.kernel.org, Ross Lagerwall <ross.lagerwall@citrix.com>,
+        Steve French <stfrench@microsoft.com>
+Subject: [PATCH 4.9 03/16] cifs: Fix potential OOB access of lock element array
+Date:   Tue, 15 Jan 2019 17:35:46 +0100
+Message-Id: <20190115154848.502629068@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190115154848.164648613@linuxfoundation.org>
 References: <20190115154848.164648613@linuxfoundation.org>
@@ -65,45 +65,65 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Icenowy Zheng <icenowy@aosc.io>
+From: Ross Lagerwall <ross.lagerwall@citrix.com>
 
-commit 0a99cc4b8ee83885ab9f097a3737d1ab28455ac0 upstream.
+commit b9a74cde94957d82003fb9f7ab4777938ca851cd upstream.
 
-The SMI SM3350 USB-UFS bridge controller cannot handle long sense request
-correctly and will make the chip refuse to do read/write when requested
-long sense.
+If maxBuf is small but non-zero, it could result in a zero sized lock
+element array which we would then try and access OOB.
 
-Add a bad sense quirk for it.
-
-Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
-Cc: stable <stable@vger.kernel.org>
-Acked-by: Alan Stern <stern@rowland.harvard.edu>
+Signed-off-by: Ross Lagerwall <ross.lagerwall@citrix.com>
+Signed-off-by: Steve French <stfrench@microsoft.com>
+CC: Stable <stable@vger.kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/usb/storage/unusual_devs.h |   12 ++++++++++++
- 1 file changed, 12 insertions(+)
+ fs/cifs/file.c     |    8 ++++----
+ fs/cifs/smb2file.c |    4 ++--
+ 2 files changed, 6 insertions(+), 6 deletions(-)
 
---- a/drivers/usb/storage/unusual_devs.h
-+++ b/drivers/usb/storage/unusual_devs.h
-@@ -1285,6 +1285,18 @@ UNUSUAL_DEV( 0x090c, 0x1132, 0x0000, 0xf
- 		US_FL_FIX_CAPACITY ),
+--- a/fs/cifs/file.c
++++ b/fs/cifs/file.c
+@@ -1118,10 +1118,10 @@ cifs_push_mandatory_locks(struct cifsFil
  
- /*
-+ * Reported by Icenowy Zheng <icenowy@aosc.io>
-+ * The SMI SM3350 USB-UFS bridge controller will enter a wrong state
-+ * that do not process read/write command if a long sense is requested,
-+ * so force to use 18-byte sense.
-+ */
-+UNUSUAL_DEV(  0x090c, 0x3350, 0x0000, 0xffff,
-+		"SMI",
-+		"SM3350 UFS-to-USB-Mass-Storage bridge",
-+		USB_SC_DEVICE, USB_PR_DEVICE, NULL,
-+		US_FL_BAD_SENSE ),
-+
-+/*
-  * Reported by Paul Hartman <paul.hartman+linux@gmail.com>
-  * This card reader returns "Illegal Request, Logical Block Address
-  * Out of Range" for the first READ(10) after a new card is inserted.
+ 	/*
+ 	 * Accessing maxBuf is racy with cifs_reconnect - need to store value
+-	 * and check it for zero before using.
++	 * and check it before using.
+ 	 */
+ 	max_buf = tcon->ses->server->maxBuf;
+-	if (!max_buf) {
++	if (max_buf < (sizeof(struct smb_hdr) + sizeof(LOCKING_ANDX_RANGE))) {
+ 		free_xid(xid);
+ 		return -EINVAL;
+ 	}
+@@ -1456,10 +1456,10 @@ cifs_unlock_range(struct cifsFileInfo *c
+ 
+ 	/*
+ 	 * Accessing maxBuf is racy with cifs_reconnect - need to store value
+-	 * and check it for zero before using.
++	 * and check it before using.
+ 	 */
+ 	max_buf = tcon->ses->server->maxBuf;
+-	if (!max_buf)
++	if (max_buf < (sizeof(struct smb_hdr) + sizeof(LOCKING_ANDX_RANGE)))
+ 		return -EINVAL;
+ 
+ 	max_num = (max_buf - sizeof(struct smb_hdr)) /
+--- a/fs/cifs/smb2file.c
++++ b/fs/cifs/smb2file.c
+@@ -123,10 +123,10 @@ smb2_unlock_range(struct cifsFileInfo *c
+ 
+ 	/*
+ 	 * Accessing maxBuf is racy with cifs_reconnect - need to store value
+-	 * and check it for zero before using.
++	 * and check it before using.
+ 	 */
+ 	max_buf = tcon->ses->server->maxBuf;
+-	if (!max_buf)
++	if (max_buf < sizeof(struct smb2_lock_element))
+ 		return -EINVAL;
+ 
+ 	max_num = max_buf / sizeof(struct smb2_lock_element);
 
 
