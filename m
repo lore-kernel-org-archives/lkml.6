@@ -2,172 +2,340 @@ Return-Path: <SRS0=RZO6=PX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B4E5DC43612
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 04:22:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1DDABC43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 04:22:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7EB9120656
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 04:22:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E11B320656
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 04:22:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728273AbfAOEWc (ORCPT
+        id S1728000AbfAOEWw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 14 Jan 2019 23:22:32 -0500
-Received: from kvm5.telegraphics.com.au ([98.124.60.144]:37550 "EHLO
+        Mon, 14 Jan 2019 23:22:52 -0500
+Received: from kvm5.telegraphics.com.au ([98.124.60.144]:37574 "EHLO
         kvm5.telegraphics.com.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728216AbfAOEW3 (ORCPT
+        with ESMTP id S1728215AbfAOEW3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 14 Jan 2019 23:22:29 -0500
 Received: by kvm5.telegraphics.com.au (Postfix, from userid 502)
-        id 6921A29E6F; Mon, 14 Jan 2019 23:22:24 -0500 (EST)
+        id 9136929E7F; Mon, 14 Jan 2019 23:22:24 -0500 (EST)
 To:     Arnd Bergmann <arnd@arndb.de>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Joshua Thompson <funaho@jurai.org>,
-        Geert Uytterhoeven <geert@linux-m68k.org>
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Joshua Thompson <funaho@jurai.org>
 Cc:     linux-kernel@vger.kernel.org, linux-m68k@lists.linux-m68k.org,
         linuxppc-dev@lists.ozlabs.org
-Message-Id: <95b208ccdb3276ad6a0a2aacc5de828550a8a024.1547525936.git.fthain@telegraphics.com.au>
+Message-Id: <fc5f13c7e60b846f533de41b179d904a95f58aea.1547525936.git.fthain@telegraphics.com.au>
 In-Reply-To: <cover.1547525936.git.fthain@telegraphics.com.au>
 References: <cover.1547525936.git.fthain@telegraphics.com.au>
 From:   Finn Thain <fthain@telegraphics.com.au>
-Subject: [PATCH v9 12/22] m68k/mac: Use macros for RTC accesses not magic
- numbers
+Subject: [PATCH v9 15/22] m68k: Dispatch nvram_ops calls to Atari or Mac
+ functions
 Date:   Tue, 15 Jan 2019 15:18:56 +1100
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This is intended to improve code style and not affect code behaviour.
+A multi-platform kernel binary has to decide at run-time how to dispatch
+the arch_nvram_ops calls. Add a platform-independent arch_nvram_ops
+struct for this, to replace the atari-specific one.
+
+Enable CONFIG_HAVE_ARCH_NVRAM_OPS for Macs.
 
 Acked-by: Geert Uytterhoeven <geert@linux-m68k.org>
 Tested-by: Stan Johnson <userm57@yahoo.com>
 Signed-off-by: Finn Thain <fthain@telegraphics.com.au>
 ---
- arch/m68k/mac/misc.c | 59 ++++++++++++++++++++++++++++++--------------
- 1 file changed, 41 insertions(+), 18 deletions(-)
+Changed since v8:
+ - Adopted nvram_read_bytes() and nvram_write_bytes() where possible.
+---
+ arch/m68k/Kconfig.machine         |  1 +
+ arch/m68k/atari/nvram.c           | 21 ++------
+ arch/m68k/include/asm/atarihw.h   |  6 +++
+ arch/m68k/include/asm/macintosh.h |  4 ++
+ arch/m68k/kernel/setup_mm.c       | 82 ++++++++++++++++++++++++++++++-
+ arch/m68k/mac/misc.c              | 11 +++++
+ 6 files changed, 108 insertions(+), 17 deletions(-)
 
-diff --git a/arch/m68k/mac/misc.c b/arch/m68k/mac/misc.c
-index 78c807025436..af000a015f68 100644
---- a/arch/m68k/mac/misc.c
-+++ b/arch/m68k/mac/misc.c
-@@ -136,6 +136,21 @@ static void via_rtc_send(__u8 data)
- 	}
+diff --git a/arch/m68k/Kconfig.machine b/arch/m68k/Kconfig.machine
+index ad584e3eb8f7..c01e103492fd 100644
+--- a/arch/m68k/Kconfig.machine
++++ b/arch/m68k/Kconfig.machine
+@@ -27,6 +27,7 @@ config MAC
+ 	bool "Macintosh support"
+ 	depends on MMU
+ 	select MMU_MOTOROLA if MMU
++	select HAVE_ARCH_NVRAM_OPS
+ 	help
+ 	  This option enables support for the Apple Macintosh series of
+ 	  computers (yes, there is experimental support now, at least for part
+diff --git a/arch/m68k/atari/nvram.c b/arch/m68k/atari/nvram.c
+index c347fd206ddf..7000d2443aa3 100644
+--- a/arch/m68k/atari/nvram.c
++++ b/arch/m68k/atari/nvram.c
+@@ -74,7 +74,7 @@ static void __nvram_set_checksum(void)
+ 	__nvram_write_byte(sum, ATARI_CKS_LOC + 1);
  }
  
-+/*
-+ * These values can be found in Inside Macintosh vol. III ch. 2
-+ * which has a description of the RTC chip in the original Mac.
-+ */
+-static long atari_nvram_set_checksum(void)
++long atari_nvram_set_checksum(void)
+ {
+ 	spin_lock_irq(&rtc_lock);
+ 	__nvram_set_checksum();
+@@ -82,7 +82,7 @@ static long atari_nvram_set_checksum(void)
+ 	return 0;
+ }
+ 
+-static long atari_nvram_initialize(void)
++long atari_nvram_initialize(void)
+ {
+ 	loff_t i;
+ 
+@@ -94,7 +94,7 @@ static long atari_nvram_initialize(void)
+ 	return 0;
+ }
+ 
+-static ssize_t atari_nvram_read(char *buf, size_t count, loff_t *ppos)
++ssize_t atari_nvram_read(char *buf, size_t count, loff_t *ppos)
+ {
+ 	char *p = buf;
+ 	loff_t i;
+@@ -112,7 +112,7 @@ static ssize_t atari_nvram_read(char *buf, size_t count, loff_t *ppos)
+ 	return p - buf;
+ }
+ 
+-static ssize_t atari_nvram_write(char *buf, size_t count, loff_t *ppos)
++ssize_t atari_nvram_write(char *buf, size_t count, loff_t *ppos)
+ {
+ 	char *p = buf;
+ 	loff_t i;
+@@ -131,22 +131,11 @@ static ssize_t atari_nvram_write(char *buf, size_t count, loff_t *ppos)
+ 	return p - buf;
+ }
+ 
+-static ssize_t atari_nvram_get_size(void)
++ssize_t atari_nvram_get_size(void)
+ {
+-	if (!MACH_IS_ATARI)
+-		return -ENODEV;
+ 	return NVRAM_BYTES;
+ }
+ 
+-const struct nvram_ops arch_nvram_ops = {
+-	.read           = atari_nvram_read,
+-	.write          = atari_nvram_write,
+-	.get_size       = atari_nvram_get_size,
+-	.set_checksum   = atari_nvram_set_checksum,
+-	.initialize     = atari_nvram_initialize,
+-};
+-EXPORT_SYMBOL(arch_nvram_ops);
+-
+ #ifdef CONFIG_PROC_FS
+ static struct {
+ 	unsigned char val;
+diff --git a/arch/m68k/include/asm/atarihw.h b/arch/m68k/include/asm/atarihw.h
+index 9000b249d225..533008262b69 100644
+--- a/arch/m68k/include/asm/atarihw.h
++++ b/arch/m68k/include/asm/atarihw.h
+@@ -33,6 +33,12 @@ extern int atari_dont_touch_floppy_select;
+ 
+ extern int atari_SCC_reset_done;
+ 
++extern ssize_t atari_nvram_read(char *, size_t, loff_t *);
++extern ssize_t atari_nvram_write(char *, size_t, loff_t *);
++extern ssize_t atari_nvram_get_size(void);
++extern long atari_nvram_set_checksum(void);
++extern long atari_nvram_initialize(void);
 +
-+#define RTC_FLG_READ            BIT(7)
-+#define RTC_FLG_WRITE_PROTECT   BIT(7)
-+#define RTC_CMD_READ(r)         (RTC_FLG_READ | (r << 2))
-+#define RTC_CMD_WRITE(r)        (r << 2)
-+#define RTC_REG_SECONDS_0       0
-+#define RTC_REG_SECONDS_1       1
-+#define RTC_REG_SECONDS_2       2
-+#define RTC_REG_SECONDS_3       3
-+#define RTC_REG_WRITE_PROTECT   13
+ /* convenience macros for testing machine type */
+ #define MACH_IS_ST	((atari_mch_cookie >> 16) == ATARI_MCH_ST)
+ #define MACH_IS_STE	((atari_mch_cookie >> 16) == ATARI_MCH_STE && \
+diff --git a/arch/m68k/include/asm/macintosh.h b/arch/m68k/include/asm/macintosh.h
+index 08cee11180e6..d9a08bed4b12 100644
+--- a/arch/m68k/include/asm/macintosh.h
++++ b/arch/m68k/include/asm/macintosh.h
+@@ -19,6 +19,10 @@ extern void mac_init_IRQ(void);
+ extern void mac_irq_enable(struct irq_data *data);
+ extern void mac_irq_disable(struct irq_data *data);
+ 
++extern unsigned char mac_pram_read_byte(int);
++extern void mac_pram_write_byte(unsigned char, int);
++extern ssize_t mac_pram_get_size(void);
 +
  /*
-  * Execute a VIA PRAM/RTC command. For read commands
-  * data should point to a one-byte buffer for the
-@@ -145,13 +160,17 @@ static void via_rtc_send(__u8 data)
-  * This function disables all interrupts while running.
+  *	Macintosh Table
   */
+diff --git a/arch/m68k/kernel/setup_mm.c b/arch/m68k/kernel/setup_mm.c
+index ad0195cbe042..528484feff80 100644
+--- a/arch/m68k/kernel/setup_mm.c
++++ b/arch/m68k/kernel/setup_mm.c
+@@ -24,6 +24,7 @@
+ #include <linux/proc_fs.h>
+ #include <linux/seq_file.h>
+ #include <linux/module.h>
++#include <linux/nvram.h>
+ #include <linux/initrd.h>
  
--static void via_pram_command(int command, __u8 *data)
-+static void via_rtc_command(int command, __u8 *data)
+ #include <asm/bootinfo.h>
+@@ -37,13 +38,14 @@
+ #ifdef CONFIG_AMIGA
+ #include <asm/amigahw.h>
+ #endif
+-#ifdef CONFIG_ATARI
+ #include <asm/atarihw.h>
++#ifdef CONFIG_ATARI
+ #include <asm/atari_stram.h>
+ #endif
+ #ifdef CONFIG_SUN3X
+ #include <asm/dvma.h>
+ #endif
++#include <asm/macintosh.h>
+ #include <asm/natfeat.h>
+ 
+ #if !FPSTATESIZE || !NR_IRQS
+@@ -547,3 +549,81 @@ static int __init adb_probe_sync_enable (char *str) {
+ 
+ __setup("adb_sync", adb_probe_sync_enable);
+ #endif /* CONFIG_ADB */
++
++#if IS_ENABLED(CONFIG_NVRAM)
++#ifdef CONFIG_MAC
++static unsigned char m68k_nvram_read_byte(int addr)
++{
++	if (MACH_IS_MAC)
++		return mac_pram_read_byte(addr);
++	return 0xff;
++}
++
++static void m68k_nvram_write_byte(unsigned char val, int addr)
++{
++	if (MACH_IS_MAC)
++		mac_pram_write_byte(val, addr);
++}
++#endif /* CONFIG_MAC */
++
++#ifdef CONFIG_ATARI
++static ssize_t m68k_nvram_read(char *buf, size_t count, loff_t *ppos)
++{
++	if (MACH_IS_ATARI)
++		return atari_nvram_read(buf, count, ppos);
++	else if (MACH_IS_MAC)
++		return nvram_read_bytes(buf, count, ppos);
++	return -EINVAL;
++}
++
++static ssize_t m68k_nvram_write(char *buf, size_t count, loff_t *ppos)
++{
++	if (MACH_IS_ATARI)
++		return atari_nvram_write(buf, count, ppos);
++	else if (MACH_IS_MAC)
++		return nvram_write_bytes(buf, count, ppos);
++	return -EINVAL;
++}
++
++static long m68k_nvram_set_checksum(void)
++{
++	if (MACH_IS_ATARI)
++		return atari_nvram_set_checksum();
++	return -EINVAL;
++}
++
++static long m68k_nvram_initialize(void)
++{
++	if (MACH_IS_ATARI)
++		return atari_nvram_initialize();
++	return -EINVAL;
++}
++#endif /* CONFIG_ATARI */
++
++static ssize_t m68k_nvram_get_size(void)
++{
++	if (MACH_IS_ATARI)
++		return atari_nvram_get_size();
++	else if (MACH_IS_MAC)
++		return mac_pram_get_size();
++	return -ENODEV;
++}
++
++/* Atari device drivers call .read (to get checksum validation) whereas
++ * Mac and PowerMac device drivers just use .read_byte.
++ */
++const struct nvram_ops arch_nvram_ops = {
++#ifdef CONFIG_MAC
++	.read_byte      = m68k_nvram_read_byte,
++	.write_byte     = m68k_nvram_write_byte,
++#endif
++#ifdef CONFIG_ATARI
++	.read           = m68k_nvram_read,
++	.write          = m68k_nvram_write,
++	.set_checksum   = m68k_nvram_set_checksum,
++	.initialize     = m68k_nvram_initialize,
++#endif
++	.get_size       = m68k_nvram_get_size,
++};
++EXPORT_SYMBOL(arch_nvram_ops);
++#endif /* CONFIG_NVRAM */
+diff --git a/arch/m68k/mac/misc.c b/arch/m68k/mac/misc.c
+index d016ca2e0d10..5dc8d1e985e7 100644
+--- a/arch/m68k/mac/misc.c
++++ b/arch/m68k/mac/misc.c
+@@ -36,6 +36,7 @@
+ 
+ static void (*rom_reset)(void);
+ 
++#if IS_ENABLED(CONFIG_NVRAM)
+ #ifdef CONFIG_ADB_CUDA
+ static unsigned char cuda_pram_read_byte(int offset)
  {
- 	unsigned long flags;
- 	int is_read;
+@@ -84,6 +85,7 @@ static void pmu_pram_write_byte(unsigned char data, int offset)
+ 	pmu_wait_complete(&req);
+ }
+ #endif /* CONFIG_ADB_PMU */
++#endif /* CONFIG_NVRAM */
  
- 	local_irq_save(flags);
- 
-+	/* The least significant bits must be 0b01 according to Inside Mac */
-+
-+	command = (command & ~3) | 1;
-+
- 	/* Enable the RTC and make sure the strobe line is high */
- 
- 	via1[vBufB] = (via1[vBufB] | VIA1B_vRTCClk) & ~VIA1B_vRTCEnb;
-@@ -159,10 +178,10 @@ static void via_pram_command(int command, __u8 *data)
- 	if (command & 0xFF00) {		/* extended (two-byte) command */
- 		via_rtc_send((command & 0xFF00) >> 8);
- 		via_rtc_send(command & 0xFF);
--		is_read = command & 0x8000;
-+		is_read = command & (RTC_FLG_READ << 8);
- 	} else {			/* one-byte command */
- 		via_rtc_send(command);
--		is_read = command & 0x80;
-+		is_read = command & RTC_FLG_READ;
- 	}
- 	if (is_read) {
- 		*data = via_rtc_recv();
-@@ -201,10 +220,10 @@ static time64_t via_read_time(void)
- 	} result, last_result;
- 	int count = 1;
- 
--	via_pram_command(0x81, &last_result.cdata[3]);
--	via_pram_command(0x85, &last_result.cdata[2]);
--	via_pram_command(0x89, &last_result.cdata[1]);
--	via_pram_command(0x8D, &last_result.cdata[0]);
-+	via_rtc_command(RTC_CMD_READ(RTC_REG_SECONDS_0), &last_result.cdata[3]);
-+	via_rtc_command(RTC_CMD_READ(RTC_REG_SECONDS_1), &last_result.cdata[2]);
-+	via_rtc_command(RTC_CMD_READ(RTC_REG_SECONDS_2), &last_result.cdata[1]);
-+	via_rtc_command(RTC_CMD_READ(RTC_REG_SECONDS_3), &last_result.cdata[0]);
- 
- 	/*
- 	 * The NetBSD guys say to loop until you get the same reading
-@@ -212,10 +231,14 @@ static time64_t via_read_time(void)
- 	 */
- 
- 	while (1) {
--		via_pram_command(0x81, &result.cdata[3]);
--		via_pram_command(0x85, &result.cdata[2]);
--		via_pram_command(0x89, &result.cdata[1]);
--		via_pram_command(0x8D, &result.cdata[0]);
-+		via_rtc_command(RTC_CMD_READ(RTC_REG_SECONDS_0),
-+		                &result.cdata[3]);
-+		via_rtc_command(RTC_CMD_READ(RTC_REG_SECONDS_1),
-+		                &result.cdata[2]);
-+		via_rtc_command(RTC_CMD_READ(RTC_REG_SECONDS_2),
-+		                &result.cdata[1]);
-+		via_rtc_command(RTC_CMD_READ(RTC_REG_SECONDS_3),
-+		                &result.cdata[0]);
- 
- 		if (result.idata == last_result.idata)
- 			return (time64_t)result.idata - RTC_OFFSET;
-@@ -254,18 +277,18 @@ static void via_set_rtc_time(struct rtc_time *tm)
- 	/* Clear the write protect bit */
- 
- 	temp = 0x55;
--	via_pram_command(0x35, &temp);
-+	via_rtc_command(RTC_CMD_WRITE(RTC_REG_WRITE_PROTECT), &temp);
- 
- 	data.idata = lower_32_bits(time + RTC_OFFSET);
--	via_pram_command(0x01, &data.cdata[3]);
--	via_pram_command(0x05, &data.cdata[2]);
--	via_pram_command(0x09, &data.cdata[1]);
--	via_pram_command(0x0D, &data.cdata[0]);
-+	via_rtc_command(RTC_CMD_WRITE(RTC_REG_SECONDS_0), &data.cdata[3]);
-+	via_rtc_command(RTC_CMD_WRITE(RTC_REG_SECONDS_1), &data.cdata[2]);
-+	via_rtc_command(RTC_CMD_WRITE(RTC_REG_SECONDS_2), &data.cdata[1]);
-+	via_rtc_command(RTC_CMD_WRITE(RTC_REG_SECONDS_3), &data.cdata[0]);
- 
- 	/* Set the write protect bit */
- 
--	temp = 0xD5;
--	via_pram_command(0x35, &temp);
-+	temp = 0x55 | RTC_FLG_WRITE_PROTECT;
-+	via_rtc_command(RTC_CMD_WRITE(RTC_REG_WRITE_PROTECT), &temp);
+ /*
+  * VIA PRAM/RTC access routines
+@@ -205,6 +207,7 @@ static void via_rtc_command(int command, __u8 *data)
+ 	local_irq_restore(flags);
  }
  
- static void via_shutdown(void)
++#if IS_ENABLED(CONFIG_NVRAM)
+ static unsigned char via_pram_read_byte(int offset)
+ {
+ 	unsigned char temp;
+@@ -227,6 +230,7 @@ static void via_pram_write_byte(unsigned char data, int offset)
+ 	temp = 0x55 | RTC_FLG_WRITE_PROTECT;
+ 	via_rtc_command(RTC_CMD_WRITE(RTC_REG_WRITE_PROTECT), &temp);
+ }
++#endif /* CONFIG_NVRAM */
+ 
+ /*
+  * Return the current time in seconds since January 1, 1904.
+@@ -372,6 +376,7 @@ static void cuda_shutdown(void)
+  *-------------------------------------------------------------------
+  */
+ 
++#if IS_ENABLED(CONFIG_NVRAM)
+ unsigned char mac_pram_read_byte(int addr)
+ {
+ 	switch (macintosh_config->adb_type) {
+@@ -417,6 +422,12 @@ void mac_pram_write_byte(unsigned char val, int addr)
+ 	}
+ }
+ 
++ssize_t mac_pram_get_size(void)
++{
++	return 256;
++}
++#endif /* CONFIG_NVRAM */
++
+ void mac_poweroff(void)
+ {
+ 	if (oss_present) {
 -- 
 2.19.2
 
