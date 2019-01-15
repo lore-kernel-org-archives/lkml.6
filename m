@@ -2,323 +2,88 @@ Return-Path: <SRS0=RZO6=PX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8EBF3C43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 00:53:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F610C43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 00:54:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5E0A420659
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 00:53:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E45D420659
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 00:54:41 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="AWbsrqSC"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727686AbfAOAxs (ORCPT
+        id S1727704AbfAOAyk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 14 Jan 2019 19:53:48 -0500
-Received: from a2nlsmtp01-05.prod.iad2.secureserver.net ([198.71.225.49]:47694
-        "EHLO a2nlsmtp01-05.prod.iad2.secureserver.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727423AbfAOAxm (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 Jan 2019 19:53:42 -0500
-Received: from linuxonhyperv2.linuxonhyperv.com ([107.180.71.197])
-        by : HOSTING RELAY : with ESMTP
-        id jCy8gOlzQd333jCy8gmFm0; Mon, 14 Jan 2019 17:52:41 -0700
-x-originating-ip: 107.180.71.197
-Received: from haiyangz by linuxonhyperv2.linuxonhyperv.com with local (Exim 4.91)
-        (envelope-from <haiyangz@linuxonhyperv2.linuxonhyperv.com>)
-        id 1gjCy8-0001BO-KW; Mon, 14 Jan 2019 17:52:40 -0700
-From:   Haiyang Zhang <haiyangz@linuxonhyperv.com>
-To:     sashal@kernel.org
-Cc:     haiyangz@microsoft.com, kys@microsoft.com, sthemmin@microsoft.com,
-        olaf@aepfle.de, vkuznets@redhat.com, davem@davemloft.net,
-        netdev@vger.kernel.org, devel@linuxdriverproject.org,
+        Mon, 14 Jan 2019 19:54:40 -0500
+Received: from frisell.zx2c4.com ([192.95.5.64]:46383 "EHLO frisell.zx2c4.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727455AbfAOAyj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 14 Jan 2019 19:54:39 -0500
+X-Greylist: delayed 399 seconds by postgrey-1.27 at vger.kernel.org; Mon, 14 Jan 2019 19:54:38 EST
+Received: by frisell.zx2c4.com (ZX2C4 Mail Server) with ESMTP id 09d0ecfe;
+        Tue, 15 Jan 2019 00:34:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha1; c=relaxed; d=zx2c4.com; h=from:to:cc
+        :subject:date:message-id:mime-version:content-transfer-encoding;
+         s=mail; bh=672UyKEKNu6gN3BZ012tnuPoaAQ=; b=AWbsrqSCvzOY7MG+3xOi
+        md7pIUY6hB1/IqC42IAqe3ZNlc8sd4Cmc4/B2Lef9bbxCxcYd+1O1YkZ47HWY12A
+        JckiVlccXUGofm35pt77WA6GJOYiohKGyrebfioVF8IOcaUSyKm0F5Ntjfn0Fj+T
+        EbRxLjjzpBallNOsMcTGKSyC6+fhe/FBgGpO/aZZHDFzunWRvjExLcf2/wcI5bc/
+        AF31t9tknfqXXJfA983ptNX5uFHagE+fNi+0FJerYhnfs1MJJTfBw0dgw9ECdEeO
+        XGZyGRNemGP7XTI0+q9PaZBWOeymNfZ4XaCjTYwTO6FB1iQF5KJKHAPKzD66UIdw
+        9Q==
+Received: by frisell.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id e163c3bc (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256:NO);
+        Tue, 15 Jan 2019 00:34:44 +0000 (UTC)
+From:   "Jason A. Donenfeld" <Jason@zx2c4.com>
+To:     benh@kernel.crashing.org, paulus@samba.org, mpe@ellerman.id.au,
+        aik@ozlabs.ru, linuxppc-dev@lists.ozlabs.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH hyperv-fixes,2/3] Refactor assignments of struct netvsc_device_info
-Date:   Tue, 15 Jan 2019 00:51:43 +0000
-Message-Id: <20190115005144.4494-3-haiyangz@linuxonhyperv.com>
-X-Mailer: git-send-email 2.19.1
-In-Reply-To: <20190115005144.4494-1-haiyangz@linuxonhyperv.com>
-References: <20190115005144.4494-1-haiyangz@linuxonhyperv.com>
+Cc:     "Jason A. Donenfeld" <Jason@zx2c4.com>
+Subject: [PATCH] powerpc: PCI does not require PowerNV
+Date:   Mon, 14 Jan 2019 16:47:45 -0800
+Message-Id: <20190115004745.9996-1-Jason@zx2c4.com>
 MIME-Version: 1.0
-Reply-To: haiyangz@microsoft.com
 Content-Transfer-Encoding: 8bit
-X-CMAE-Envelope: MS4wfGf8dV/FQhZEtSR2EU18knDV0w7xQYOVo4PVAjNHdjLqj2JqH1f7I1O8eM8ix5S2IFBXMQD2TVK/oik8Up+QVcjK+2cgmroz8YeqM5xnvJMu1jDzBTLF
- ++UhzHOe2luL57sF9bUg60yMLoOQNxBuuM9F+rUCpbNfnsXWh6O5D/+eRgoXQCzA/KV+gxuBb2najNAj1C4rCfCrekXBVE+quyAQQoTGxTchcloswyZ/hQ63
- JwayIe0tsiP46dcJQY9XSaqGvUm3CDP+1qqYgU0UmgogIhvu6l2HzK+Fk/77cW1hL8n7Fc+pKdzbZ03Ypqc9kB4F+n5yxpPNjUw1XqsPhpdF1eb0Cm69AyDQ
- i0eWFDHbRodrRt39BP8TM1v64326pVjS/R9zc/KDqYaoqdqacfE4YIyqhH3Rfl2iU+0BGlHerww39xeto7qpFVCEDr5TkqetXlI7uF/T0gfOeiKTfuJZDT7G
- 7grKx3xtMx9rccKnlCP/PK5m9TDvmkZ8DdhCl6LtOradQG98ZoRy/LNykvo=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Haiyang Zhang <haiyangz@microsoft.com>
+Commit 0e759bd75285 moved around the declaration of pnv_npu2_init, but
+did not conditionalize it inside of the PCI pSeries driver. This meant
+that CONFIG_PCI && CONFIG_PPC_PSERIES && !CONFIG_PPC_POWERNV resulted
+in:
 
-These assignments occur in multiple places. The patch refactor them
-to a function for simplicity. It also puts the struct to heap area
-for future expension.
+powerpc64le-pc-linux-gnu-ld: arch/powerpc/platforms/pseries/pci.o: in function `pSeries_final_fixup':
+pci.c:(.init.text+0x1b0): undefined reference to `pnv_npu2_init'
 
-Signed-off-by: Haiyang Zhang <haiyangz@microsoft.com>
+This commit therefore wraps that line in an ifdef, so that PCI works
+without PowerNV.
+
+Signed-off-by: Jason A. Donenfeld <Jason@zx2c4.com>
+Fixes: 0e759bd75285 ("powerpc/powernv/npu: Move OPAL calls away from context manipulation")
+Cc: Alexey Kardashevskiy <aik@ozlabs.ru>
+Cc: Michael Ellerman <mpe@ellerman.id.au>
 ---
- drivers/net/hyperv/netvsc_drv.c | 134 ++++++++++++++++++++------------
- 1 file changed, 85 insertions(+), 49 deletions(-)
+ arch/powerpc/platforms/pseries/pci.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/net/hyperv/netvsc_drv.c b/drivers/net/hyperv/netvsc_drv.c
-index 91ed15ea5883..f424327f7206 100644
---- a/drivers/net/hyperv/netvsc_drv.c
-+++ b/drivers/net/hyperv/netvsc_drv.c
-@@ -858,6 +858,36 @@ static void netvsc_get_channels(struct net_device *net,
+diff --git a/arch/powerpc/platforms/pseries/pci.c b/arch/powerpc/platforms/pseries/pci.c
+index 7725825d887d..37a77e57893e 100644
+--- a/arch/powerpc/platforms/pseries/pci.c
++++ b/arch/powerpc/platforms/pseries/pci.c
+@@ -264,7 +264,9 @@ void __init pSeries_final_fixup(void)
+ 			if (!of_device_is_compatible(nvdn->parent,
+ 						"ibm,power9-npu"))
+ 				continue;
++#ifdef CONFIG_PPC_POWERNV
+ 			WARN_ON_ONCE(pnv_npu2_init(hose));
++#endif
+ 			break;
+ 		}
  	}
- }
- 
-+/* Alloc struct netvsc_device_info, and initialize it from either existing
-+ * struct netvsc_device, or from default values.
-+ */
-+static struct netvsc_device_info *netvsc_devinfo_get
-+			(struct netvsc_device *nvdev)
-+{
-+	struct netvsc_device_info *dev_info;
-+
-+	dev_info = kzalloc(sizeof(*dev_info), GFP_ATOMIC);
-+
-+	if (!dev_info)
-+		return NULL;
-+
-+	if (nvdev) {
-+		dev_info->num_chn = nvdev->num_chn;
-+		dev_info->send_sections = nvdev->send_section_cnt;
-+		dev_info->send_section_size = nvdev->send_section_size;
-+		dev_info->recv_sections = nvdev->recv_section_cnt;
-+		dev_info->recv_section_size = nvdev->recv_section_size;
-+	} else {
-+		dev_info->num_chn = VRSS_CHANNEL_DEFAULT;
-+		dev_info->send_sections = NETVSC_DEFAULT_TX;
-+		dev_info->send_section_size = NETVSC_SEND_SECTION_SIZE;
-+		dev_info->recv_sections = NETVSC_DEFAULT_RX;
-+		dev_info->recv_section_size = NETVSC_RECV_SECTION_SIZE;
-+	}
-+
-+	return dev_info;
-+}
-+
- static int netvsc_detach(struct net_device *ndev,
- 			 struct netvsc_device *nvdev)
- {
-@@ -943,7 +973,7 @@ static int netvsc_set_channels(struct net_device *net,
- 	struct net_device_context *net_device_ctx = netdev_priv(net);
- 	struct netvsc_device *nvdev = rtnl_dereference(net_device_ctx->nvdev);
- 	unsigned int orig, count = channels->combined_count;
--	struct netvsc_device_info device_info;
-+	struct netvsc_device_info *device_info;
- 	int ret;
- 
- 	/* We do not support separate count for rx, tx, or other */
-@@ -962,24 +992,26 @@ static int netvsc_set_channels(struct net_device *net,
- 
- 	orig = nvdev->num_chn;
- 
--	memset(&device_info, 0, sizeof(device_info));
--	device_info.num_chn = count;
--	device_info.send_sections = nvdev->send_section_cnt;
--	device_info.send_section_size = nvdev->send_section_size;
--	device_info.recv_sections = nvdev->recv_section_cnt;
--	device_info.recv_section_size = nvdev->recv_section_size;
-+	device_info = netvsc_devinfo_get(nvdev);
-+
-+	if (!device_info)
-+		return -ENOMEM;
-+
-+	device_info->num_chn = count;
- 
- 	ret = netvsc_detach(net, nvdev);
- 	if (ret)
--		return ret;
-+		goto out;
- 
--	ret = netvsc_attach(net, &device_info);
-+	ret = netvsc_attach(net, device_info);
- 	if (ret) {
--		device_info.num_chn = orig;
--		if (netvsc_attach(net, &device_info))
-+		device_info->num_chn = orig;
-+		if (netvsc_attach(net, device_info))
- 			netdev_err(net, "restoring channel setting failed\n");
- 	}
- 
-+out:
-+	kfree(device_info);
- 	return ret;
- }
- 
-@@ -1048,48 +1080,45 @@ static int netvsc_change_mtu(struct net_device *ndev, int mtu)
- 	struct net_device *vf_netdev = rtnl_dereference(ndevctx->vf_netdev);
- 	struct netvsc_device *nvdev = rtnl_dereference(ndevctx->nvdev);
- 	int orig_mtu = ndev->mtu;
--	struct netvsc_device_info device_info;
-+	struct netvsc_device_info *device_info;
- 	int ret = 0;
- 
- 	if (!nvdev || nvdev->destroy)
- 		return -ENODEV;
- 
-+	device_info = netvsc_devinfo_get(nvdev);
-+
-+	if (!device_info)
-+		return -ENOMEM;
-+
- 	/* Change MTU of underlying VF netdev first. */
- 	if (vf_netdev) {
- 		ret = dev_set_mtu(vf_netdev, mtu);
- 		if (ret)
--			return ret;
-+			goto out;
- 	}
- 
--	memset(&device_info, 0, sizeof(device_info));
--	device_info.num_chn = nvdev->num_chn;
--	device_info.send_sections = nvdev->send_section_cnt;
--	device_info.send_section_size = nvdev->send_section_size;
--	device_info.recv_sections = nvdev->recv_section_cnt;
--	device_info.recv_section_size = nvdev->recv_section_size;
--
- 	ret = netvsc_detach(ndev, nvdev);
- 	if (ret)
- 		goto rollback_vf;
- 
- 	ndev->mtu = mtu;
- 
--	ret = netvsc_attach(ndev, &device_info);
--	if (ret)
--		goto rollback;
--
--	return 0;
-+	ret = netvsc_attach(ndev, device_info);
-+	if (!ret)
-+		goto out;
- 
--rollback:
- 	/* Attempt rollback to original MTU */
- 	ndev->mtu = orig_mtu;
- 
--	if (netvsc_attach(ndev, &device_info))
-+	if (netvsc_attach(ndev, device_info))
- 		netdev_err(ndev, "restoring mtu failed\n");
- rollback_vf:
- 	if (vf_netdev)
- 		dev_set_mtu(vf_netdev, orig_mtu);
- 
-+out:
-+	kfree(device_info);
- 	return ret;
- }
- 
-@@ -1674,7 +1703,7 @@ static int netvsc_set_ringparam(struct net_device *ndev,
- {
- 	struct net_device_context *ndevctx = netdev_priv(ndev);
- 	struct netvsc_device *nvdev = rtnl_dereference(ndevctx->nvdev);
--	struct netvsc_device_info device_info;
-+	struct netvsc_device_info *device_info;
- 	struct ethtool_ringparam orig;
- 	u32 new_tx, new_rx;
- 	int ret = 0;
-@@ -1694,26 +1723,29 @@ static int netvsc_set_ringparam(struct net_device *ndev,
- 	    new_rx == orig.rx_pending)
- 		return 0;	 /* no change */
- 
--	memset(&device_info, 0, sizeof(device_info));
--	device_info.num_chn = nvdev->num_chn;
--	device_info.send_sections = new_tx;
--	device_info.send_section_size = nvdev->send_section_size;
--	device_info.recv_sections = new_rx;
--	device_info.recv_section_size = nvdev->recv_section_size;
-+	device_info = netvsc_devinfo_get(nvdev);
-+
-+	if (!device_info)
-+		return -ENOMEM;
-+
-+	device_info->send_sections = new_tx;
-+	device_info->recv_sections = new_rx;
- 
- 	ret = netvsc_detach(ndev, nvdev);
- 	if (ret)
--		return ret;
-+		goto out;
- 
--	ret = netvsc_attach(ndev, &device_info);
-+	ret = netvsc_attach(ndev, device_info);
- 	if (ret) {
--		device_info.send_sections = orig.tx_pending;
--		device_info.recv_sections = orig.rx_pending;
-+		device_info->send_sections = orig.tx_pending;
-+		device_info->recv_sections = orig.rx_pending;
- 
--		if (netvsc_attach(ndev, &device_info))
-+		if (netvsc_attach(ndev, device_info))
- 			netdev_err(ndev, "restoring ringparam failed");
- 	}
- 
-+out:
-+	kfree(device_info);
- 	return ret;
- }
- 
-@@ -2167,7 +2199,7 @@ static int netvsc_probe(struct hv_device *dev,
- {
- 	struct net_device *net = NULL;
- 	struct net_device_context *net_device_ctx;
--	struct netvsc_device_info device_info;
-+	struct netvsc_device_info *device_info = NULL;
- 	struct netvsc_device *nvdev;
- 	int ret = -ENOMEM;
- 
-@@ -2214,21 +2246,21 @@ static int netvsc_probe(struct hv_device *dev,
- 	netif_set_real_num_rx_queues(net, 1);
- 
- 	/* Notify the netvsc driver of the new device */
--	memset(&device_info, 0, sizeof(device_info));
--	device_info.num_chn = VRSS_CHANNEL_DEFAULT;
--	device_info.send_sections = NETVSC_DEFAULT_TX;
--	device_info.send_section_size = NETVSC_SEND_SECTION_SIZE;
--	device_info.recv_sections = NETVSC_DEFAULT_RX;
--	device_info.recv_section_size = NETVSC_RECV_SECTION_SIZE;
--
--	nvdev = rndis_filter_device_add(dev, &device_info);
-+	device_info = netvsc_devinfo_get(NULL);
-+
-+	if (!device_info) {
-+		ret = -ENOMEM;
-+		goto devinfo_failed;
-+	}
-+
-+	nvdev = rndis_filter_device_add(dev, device_info);
- 	if (IS_ERR(nvdev)) {
- 		ret = PTR_ERR(nvdev);
- 		netdev_err(net, "unable to add netvsc device (ret %d)\n", ret);
- 		goto rndis_failed;
- 	}
- 
--	memcpy(net->dev_addr, device_info.mac_adr, ETH_ALEN);
-+	memcpy(net->dev_addr, device_info->mac_adr, ETH_ALEN);
- 
- 	/* We must get rtnl lock before scheduling nvdev->subchan_work,
- 	 * otherwise netvsc_subchan_work() can get rtnl lock first and wait
-@@ -2266,12 +2298,16 @@ static int netvsc_probe(struct hv_device *dev,
- 
- 	list_add(&net_device_ctx->list, &netvsc_dev_list);
- 	rtnl_unlock();
-+
-+	kfree(device_info);
- 	return 0;
- 
- register_failed:
- 	rtnl_unlock();
- 	rndis_filter_device_remove(dev, nvdev);
- rndis_failed:
-+	kfree(device_info);
-+devinfo_failed:
- 	free_percpu(net_device_ctx->vf_stats);
- no_stats:
- 	hv_set_drvdata(dev, NULL);
 -- 
-2.19.1
+2.20.1
 
