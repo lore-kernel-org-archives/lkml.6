@@ -2,363 +2,187 @@ Return-Path: <SRS0=RZO6=PX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2CDF9C43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 21:57:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 46DA9C43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 21:58:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EECEF20866
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 21:57:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 039BD20866
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 21:58:34 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gateworks-com.20150623.gappssmtp.com header.i=@gateworks-com.20150623.gappssmtp.com header.b="xPdDuYwJ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390857AbfAOV5B (ORCPT
+        id S2387397AbfAOV6d (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 15 Jan 2019 16:57:01 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:44046 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1733247AbfAOV5A (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Jan 2019 16:57:00 -0500
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id A2DF0811D7;
-        Tue, 15 Jan 2019 21:56:59 +0000 (UTC)
-Received: from [10.36.116.96] (ovpn-116-96.ams2.redhat.com [10.36.116.96])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id B241B5DEB4;
-        Tue, 15 Jan 2019 21:56:52 +0000 (UTC)
-Subject: Re: [RFC v3 18/21] vfio-pci: Add a new VFIO_REGION_TYPE_NESTED region
- type
-To:     Alex Williamson <alex.williamson@redhat.com>
-Cc:     eric.auger.pro@gmail.com, iommu@lists.linux-foundation.org,
-        linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
-        kvmarm@lists.cs.columbia.edu, joro@8bytes.org,
-        jacob.jun.pan@linux.intel.com, yi.l.liu@linux.intel.com,
-        jean-philippe.brucker@arm.com, will.deacon@arm.com,
-        robin.murphy@arm.com, kevin.tian@intel.com, ashok.raj@intel.com,
-        marc.zyngier@arm.com, christoffer.dall@arm.com,
-        peter.maydell@linaro.org
-References: <20190108102633.17482-1-eric.auger@redhat.com>
- <20190108102633.17482-19-eric.auger@redhat.com>
- <20190111165838.06a22ab8@x1.home>
- <497dad10-8832-3f2c-3ff8-fbcdd4c41ae4@redhat.com>
- <20190114160422.6e320df9@x1.home>
-From:   Auger Eric <eric.auger@redhat.com>
-Message-ID: <1ec95b07-4485-da37-9a72-92a3cd146da0@redhat.com>
-Date:   Tue, 15 Jan 2019 22:56:51 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        Tue, 15 Jan 2019 16:58:33 -0500
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:38198 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1733253AbfAOV6c (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 Jan 2019 16:58:32 -0500
+Received: by mail-wr1-f65.google.com with SMTP id v13so4735309wrw.5
+        for <linux-kernel@vger.kernel.org>; Tue, 15 Jan 2019 13:58:31 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gateworks-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=0zQGRhHmuQ24eZyF94rspF5Sd1MCXdctQKXRkMo0+80=;
+        b=xPdDuYwJ4Z0FE3P8gDiR8Y1Lyw9aUsJXSDXAGlT8CdbUWBNRcuJg3Ee1d3i/CvXfk9
+         byoqLaBV5HDtebbAbCT+7unmByVHJgCyDg7OjmB06LpugPuMtpUmNGSV2hHtf+abqRd1
+         ef9PJgG32lSvpaA9hfnXnVGwTA1/9jZMiEWi6MQzQtQnwagRPrPlk7CXoPiRmVisTAIm
+         7jsAiypuVPBW1bV48HU1smwLiULqcYNSbwAF8IqudJgnhD8yVdUZd6naREGYz0ApaG3p
+         wjgX6tOr1fOuH5SWqm/i1p4b/6qjToKUZ8eJbE66SujoVioZGBEBm7IKTlnW2/ZNBRRv
+         0U4Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=0zQGRhHmuQ24eZyF94rspF5Sd1MCXdctQKXRkMo0+80=;
+        b=KlTEODF+QSdH3+N/7oKxH7Fo/2zEa6HVpF6yxtHPs8ZlJtuRwWOVqPyFssiWhU6JDJ
+         8dYUE7Wfm0Pu/hGdINN8c83xFMw/9sWs+bKUvHZBup/38gjJNTX5WqRJ0ZY+xUW7JvBJ
+         cPdF0HgZ71eYQwX+wLElum1zF/LsLDMHICrEGyE2zq7DlT3yy29rarPRMawFGrFCOeem
+         3wbrADlMOq1Ed/CLLE2+JfExOCzxxhie2hWGOaiii01t16y0t269ErqhjBUB1gNne7Ae
+         1DdowYt3e2KXBNAoQQamphTq3E9wYSQwQoLXTae4lHNMTPfbu5MbVC4rheO7d+AwMXXe
+         qkBg==
+X-Gm-Message-State: AJcUukf5tt6qyR81y5rD2gfjozMBB70XmD0ZxFiWfh2Qg/7Bz+N+QA8o
+        bSsU06C4D3DVCSSiHjEEG4bTeaRCM2iU53SpNPV2gg==
+X-Google-Smtp-Source: ALg8bN7izRK1RAwjh3wHK604mMpAbyMWJWyPtNT8NZ5P7S7nZZhQxZk/tFnbv4AdnXOkMBF1HABlhHScaGHpE5EDIaE=
+X-Received: by 2002:a05:6000:108d:: with SMTP id y13mr4653891wrw.135.1547589510093;
+ Tue, 15 Jan 2019 13:58:30 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20190114160422.6e320df9@x1.home>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.27]); Tue, 15 Jan 2019 21:57:00 +0000 (UTC)
+References: <20190109183014.20466-1-slongerbeam@gmail.com> <20190109183014.20466-12-slongerbeam@gmail.com>
+In-Reply-To: <20190109183014.20466-12-slongerbeam@gmail.com>
+From:   Tim Harvey <tharvey@gateworks.com>
+Date:   Tue, 15 Jan 2019 13:58:19 -0800
+Message-ID: <CAJ+vNU1r86n1=9gKDw-bTO0sWJL7NMjZcdKMQO23a+WOR1H9tw@mail.gmail.com>
+Subject: Re: [PATCH v8 11/11] media: imx.rst: Update doc to reflect fixes to
+ interlaced capture
+To:     Steve Longerbeam <slongerbeam@gmail.com>
+Cc:     linux-media <linux-media@vger.kernel.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        open list <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Alex,
+On Wed, Jan 9, 2019 at 10:30 AM Steve Longerbeam <slongerbeam@gmail.com> wrote:
+>
+> Also add an example pipeline for unconverted capture with interweave
+> on SabreAuto.
+>
+> Cleanup some language in various places in the process.
+>
+> Signed-off-by: Steve Longerbeam <slongerbeam@gmail.com>
+> Reviewed-by: Philipp Zabel <p.zabel@pengutronix.de>
+> ---
+> Changes since v4:
+> - Make clear that it is IDMAC channel that does pixel reordering and
+>   interweave, not the CSI. Caught by Philipp Zabel.
+> Changes since v3:
+> - none.
+> Changes since v2:
+> - expand on idmac interweave behavior in CSI subdev.
+> - switch second SabreAuto pipeline example to PAL to give
+>   both NTSC and PAL examples.
+> - Cleanup some language in various places.
+> ---
+>  Documentation/media/v4l-drivers/imx.rst | 103 +++++++++++++++---------
+>  1 file changed, 66 insertions(+), 37 deletions(-)
+>
+<snip>
+>  Capture Pipelines
+>  -----------------
+> @@ -516,10 +522,33 @@ On the SabreAuto, an on-board ADV7180 SD decoder is connected to the
+>  parallel bus input on the internal video mux to IPU1 CSI0.
+>
+>  The following example configures a pipeline to capture from the ADV7180
+> -video decoder, assuming NTSC 720x480 input signals, with Motion
+> -Compensated de-interlacing. Pad field types assume the adv7180 outputs
+> -"interlaced". $outputfmt can be any format supported by the ipu1_ic_prpvf
+> -entity at its output pad:
+> +video decoder, assuming NTSC 720x480 input signals, using simple
+> +interweave (unconverted and without motion compensation). The adv7180
+> +must output sequential or alternating fields (field type 'seq-bt' for
+> +NTSC, or 'alternate'):
+> +
+> +.. code-block:: none
+> +
+> +   # Setup links
+> +   media-ctl -l "'adv7180 3-0021':0 -> 'ipu1_csi0_mux':1[1]"
+> +   media-ctl -l "'ipu1_csi0_mux':2 -> 'ipu1_csi0':0[1]"
+> +   media-ctl -l "'ipu1_csi0':2 -> 'ipu1_csi0 capture':0[1]"
+> +   # Configure pads
+> +   media-ctl -V "'adv7180 3-0021':0 [fmt:UYVY2X8/720x480 field:seq-bt]"
+> +   media-ctl -V "'ipu1_csi0_mux':2 [fmt:UYVY2X8/720x480]"
+> +   media-ctl -V "'ipu1_csi0':2 [fmt:AYUV32/720x480]"
+> +   # Configure "ipu1_csi0 capture" interface (assumed at /dev/video4)
+> +   v4l2-ctl -d4 --set-fmt-video=field=interlaced_bt
+> +
+> +Streaming can then begin on /dev/video4. The v4l2-ctl tool can also be
+> +used to select any supported YUV pixelformat on /dev/video4.
+> +
 
-On 1/15/19 12:04 AM, Alex Williamson wrote:
-> On Mon, 14 Jan 2019 21:48:06 +0100
-> Auger Eric <eric.auger@redhat.com> wrote:
-> 
->> Hi Alex,
->>
->> On 1/12/19 12:58 AM, Alex Williamson wrote:
->>> On Tue,  8 Jan 2019 11:26:30 +0100
->>> Eric Auger <eric.auger@redhat.com> wrote:
->>>   
->>>> This patch adds a new 64kB region aiming to report nested mode
->>>> translation faults.
->>>>
->>>> The region contains a header with the size of the queue,
->>>> the producer and consumer indices and then the actual
->>>> fault queue data. The producer is updated by the kernel while
->>>> the consumer is updated by the userspace.
->>>>
->>>> Signed-off-by: Eric Auger <eric.auger@redhat.com>
->>>>
->>>> ---
->>>> ---
->>>>  drivers/vfio/pci/vfio_pci.c         | 102 +++++++++++++++++++++++++++-
->>>>  drivers/vfio/pci/vfio_pci_private.h |   2 +
->>>>  include/uapi/linux/vfio.h           |  15 ++++
->>>>  3 files changed, 118 insertions(+), 1 deletion(-)
->>>>
->>>> diff --git a/drivers/vfio/pci/vfio_pci.c b/drivers/vfio/pci/vfio_pci.c
->>>> index ff60bd1ea587..2ba181ab2edd 100644
->>>> --- a/drivers/vfio/pci/vfio_pci.c
->>>> +++ b/drivers/vfio/pci/vfio_pci.c
->>>> @@ -56,6 +56,11 @@ module_param(disable_idle_d3, bool, S_IRUGO | S_IWUSR);
->>>>  MODULE_PARM_DESC(disable_idle_d3,
->>>>  		 "Disable using the PCI D3 low power state for idle, unused devices");
->>>>  
->>>> +#define VFIO_FAULT_REGION_SIZE 0x10000  
->>>
->>> Why 64K?  
->> For the region to be mmappable with 64kB page size.
-> 
-> Isn't hard coding 64K just as bad as hard coding 4K?  The kernel knows
-> what PAGE_SIZE is after all.  Is there some target number of queue
-> entries here that we could round up to a multiple of PAGE_SIZE?
-Spec says the queue size has max 2^n events with n <= 19. n is
-implementation dependent. In practice the driver uses 2^8 entries, each
-entry being 32 bytes so the event queue is 8kB. So depending on the size
-of the entry we are going to choose here we may need a queue counting
-around the same number of entries.
+Hi Steve,
 
->  
->>>> +#define VFIO_FAULT_QUEUE_SIZE	\
->>>> +	((VFIO_FAULT_REGION_SIZE - sizeof(struct vfio_fault_region_header)) / \
->>>> +	sizeof(struct iommu_fault))
->>>> +
->>>>  static inline bool vfio_vga_disabled(void)
->>>>  {
->>>>  #ifdef CONFIG_VFIO_PCI_VGA
->>>> @@ -1226,6 +1231,100 @@ static const struct vfio_device_ops vfio_pci_ops = {
->>>>  static int vfio_pci_reflck_attach(struct vfio_pci_device *vdev);
->>>>  static void vfio_pci_reflck_put(struct vfio_pci_reflck *reflck);
->>>>  
->>>> +static size_t
->>>> +vfio_pci_dma_fault_rw(struct vfio_pci_device *vdev, char __user *buf,
->>>> +		      size_t count, loff_t *ppos, bool iswrite)
->>>> +{
->>>> +	unsigned int i = VFIO_PCI_OFFSET_TO_INDEX(*ppos) - VFIO_PCI_NUM_REGIONS;
->>>> +	void *base = vdev->region[i].data;
->>>> +	loff_t pos = *ppos & VFIO_PCI_OFFSET_MASK;
->>>> +
->>>> +	if (pos >= vdev->region[i].size)
->>>> +		return -EINVAL;
->>>> +
->>>> +	count = min(count, (size_t)(vdev->region[i].size - pos));
->>>> +
->>>> +	if (copy_to_user(buf, base + pos, count))
->>>> +		return -EFAULT;
->>>> +
->>>> +	*ppos += count;
->>>> +
->>>> +	return count;
->>>> +}
->>>> +
->>>> +static int vfio_pci_dma_fault_mmap(struct vfio_pci_device *vdev,
->>>> +				   struct vfio_pci_region *region,
->>>> +				   struct vm_area_struct *vma)
->>>> +{
->>>> +	u64 phys_len, req_len, pgoff, req_start;
->>>> +	unsigned long long addr;
->>>> +	unsigned int index;
->>>> +
->>>> +	index = vma->vm_pgoff >> (VFIO_PCI_OFFSET_SHIFT - PAGE_SHIFT);
->>>> +
->>>> +	if (vma->vm_end < vma->vm_start)
->>>> +		return -EINVAL;
->>>> +	if ((vma->vm_flags & VM_SHARED) == 0)
->>>> +		return -EINVAL;
->>>> +
->>>> +	phys_len = VFIO_FAULT_REGION_SIZE;
->>>> +
->>>> +	req_len = vma->vm_end - vma->vm_start;
->>>> +	pgoff = vma->vm_pgoff &
->>>> +		((1U << (VFIO_PCI_OFFSET_SHIFT - PAGE_SHIFT)) - 1);
->>>> +	req_start = pgoff << PAGE_SHIFT;
->>>> +
->>>> +	if (req_start + req_len > phys_len)
->>>> +		return -EINVAL;
->>>> +
->>>> +	addr = virt_to_phys(vdev->fault_region);
->>>> +	vma->vm_private_data = vdev;
->>>> +	vma->vm_pgoff = (addr >> PAGE_SHIFT) + pgoff;
->>>> +
->>>> +	return remap_pfn_range(vma, vma->vm_start, vma->vm_pgoff,
->>>> +			       req_len, vma->vm_page_prot);
->>>> +}
->>>> +
->>>> +void vfio_pci_dma_fault_release(struct vfio_pci_device *vdev,
->>>> +				struct vfio_pci_region *region)
->>>> +{
->>>> +}
->>>> +
->>>> +static const struct vfio_pci_regops vfio_pci_dma_fault_regops = {
->>>> +	.rw		= vfio_pci_dma_fault_rw,
->>>> +	.mmap		= vfio_pci_dma_fault_mmap,
->>>> +	.release	= vfio_pci_dma_fault_release,
->>>> +};
->>>> +
->>>> +static int vfio_pci_init_dma_fault_region(struct vfio_pci_device *vdev)
->>>> +{
->>>> +	u32 flags = VFIO_REGION_INFO_FLAG_READ | VFIO_REGION_INFO_FLAG_WRITE |
->>>> +		    VFIO_REGION_INFO_FLAG_MMAP;
->>>> +	int ret;
->>>> +
->>>> +	spin_lock_init(&vdev->fault_queue_lock);
->>>> +
->>>> +	vdev->fault_region = kmalloc(VFIO_FAULT_REGION_SIZE, GFP_KERNEL);
->>>> +	if (!vdev->fault_region)
->>>> +		return -ENOMEM;
->>>> +
->>>> +	ret = vfio_pci_register_dev_region(vdev,
->>>> +		VFIO_REGION_TYPE_NESTED,
->>>> +		VFIO_REGION_SUBTYPE_NESTED_FAULT_REGION,
->>>> +		&vfio_pci_dma_fault_regops, VFIO_FAULT_REGION_SIZE,
->>>> +		flags, vdev->fault_region);
->>>> +	if (ret) {
->>>> +		kfree(vdev->fault_region);
->>>> +		return ret;
->>>> +	}
->>>> +
->>>> +	vdev->fault_region->header.prod = 0;
->>>> +	vdev->fault_region->header.cons = 0;
->>>> +	vdev->fault_region->header.reserved = 0;  
->>>
->>> Use kzalloc above or else we're leaking kernel memory to userspace
->>> anyway.  
->> sure
->>>   
->>>> +	vdev->fault_region->header.size = VFIO_FAULT_QUEUE_SIZE;
->>>> +	return 0;
->>>> +}
->>>> +
->>>>  static int vfio_pci_probe(struct pci_dev *pdev, const struct pci_device_id *id)
->>>>  {
->>>>  	struct vfio_pci_device *vdev;
->>>> @@ -1300,7 +1399,7 @@ static int vfio_pci_probe(struct pci_dev *pdev, const struct pci_device_id *id)
->>>>  		pci_set_power_state(pdev, PCI_D3hot);
->>>>  	}
->>>>  
->>>> -	return ret;
->>>> +	return vfio_pci_init_dma_fault_region(vdev);  
->>>
->>> Missing lots of cleanup should this fail.  Why is this done on probe
->>> anyway?  This looks like something we'd do from vfio_pci_enable() and
->>> therefore our release callback would free fault_region rather than what
->>> we have below.  
->> OK. That's fine to put in the vfio_pci_enable().
->>>   
->>>>  }
->>>>  
->>>>  static void vfio_pci_remove(struct pci_dev *pdev)
->>>> @@ -1315,6 +1414,7 @@ static void vfio_pci_remove(struct pci_dev *pdev)
->>>>  
->>>>  	vfio_iommu_group_put(pdev->dev.iommu_group, &pdev->dev);
->>>>  	kfree(vdev->region);
->>>> +	kfree(vdev->fault_region);
->>>>  	mutex_destroy(&vdev->ioeventfds_lock);
->>>>  	kfree(vdev);
->>>>  
->>>> diff --git a/drivers/vfio/pci/vfio_pci_private.h b/drivers/vfio/pci/vfio_pci_private.h
->>>> index 8c0009f00818..38b5d1764a26 100644
->>>> --- a/drivers/vfio/pci/vfio_pci_private.h
->>>> +++ b/drivers/vfio/pci/vfio_pci_private.h
->>>> @@ -120,6 +120,8 @@ struct vfio_pci_device {
->>>>  	int			ioeventfds_nr;
->>>>  	struct eventfd_ctx	*err_trigger;
->>>>  	struct eventfd_ctx	*req_trigger;
->>>> +	spinlock_t              fault_queue_lock;
->>>> +	struct vfio_fault_region *fault_region;
->>>>  	struct list_head	dummy_resources_list;
->>>>  	struct mutex		ioeventfds_lock;
->>>>  	struct list_head	ioeventfds_list;
->>>> diff --git a/include/uapi/linux/vfio.h b/include/uapi/linux/vfio.h
->>>> index 352e795a93c8..b78c2c62af6d 100644
->>>> --- a/include/uapi/linux/vfio.h
->>>> +++ b/include/uapi/linux/vfio.h
->>>> @@ -307,6 +307,9 @@ struct vfio_region_info_cap_type {
->>>>  #define VFIO_REGION_TYPE_GFX                    (1)
->>>>  #define VFIO_REGION_SUBTYPE_GFX_EDID            (1)
->>>>  
->>>> +#define VFIO_REGION_TYPE_NESTED			(2)
->>>> +#define VFIO_REGION_SUBTYPE_NESTED_FAULT_REGION	(1)
->>>> +
->>>>  /**
->>>>   * struct vfio_region_gfx_edid - EDID region layout.
->>>>   *
->>>> @@ -697,6 +700,18 @@ struct vfio_device_ioeventfd {
->>>>  
->>>>  #define VFIO_DEVICE_IOEVENTFD		_IO(VFIO_TYPE, VFIO_BASE + 16)
->>>>  
->>>> +struct vfio_fault_region_header {
->>>> +	__u32	size;		/* Read-Only */
->>>> +	__u32	prod;		/* Read-Only */  
->>>
->>> We can't really enforce read-only if it's mmap'd.  
->> Do we really need to? Assuming the kernel always uses
->> VFIO_FAULT_QUEUE_SIZE to check prod and cons indice - which is not the
->> case at the moment by the way :-( -s, the queue cannot
->> be overflown .
->>
->> The header also can be checked each time the kernel fills any event in
->> the queue
->> (vfio_pci_iommu_dev_fault_handler). If inconsistent the kernel may stop
->> using the queue. If the user-space mangles with those RO fields, this
->> will break error reporting on the guest but the problem should be
->> confined here?
-> 
-> I guess this is a matter of whether the performance benefit is worth
-> the hardening and I can imagine that it could be, but we do need that
-> hardening and well defined behavior to the user.  If we put it into a
-> single page then we need to define if a user write to the producer index
-> resets the index or if it's just a shadow of internal state and will be
-> restored on the next update. 
-I had in mind the kernel would leave the prod value by the userspace.
-Obviously the error reporting would be broken then.
- Does a user write to the size register
-> change the size of the queue or is it ignored?
-it would be ignored and restored on the subsquent kernel push
-  Is there an event that
-> will restore it?  Maybe the size should be exposed as a part of a
-> region info capability like we've done for some of the new nvlink
-> regions.
-> 
->>> I worry about synchronization here too, perhaps there should be a ring offset such
->>> that the ring can be in a separate page from the header and then sparse
->>> mmap support can ensure that the user access is restricted.  
->>
->> I was assuming a single writer and single reader lock-free circular
->> buffer here. My understanding was it was safe to consider concurrent
->> read and write. What I am missing anyway is atomic counter operations to
->> guarantee the indices are updated after the push/pop action as explained in
->> https://www.kernel.org/doc/Documentation/circular-buffers.txt. I am not
->> comfortable about how to enforce this on user side though.
-> 
-> It doesn't seem enforceable to the user without slowing down the
-> interface, either via ioctl or non-mmap.  I think it's fine to have
-> acquire and release semantics, we just need to define them and have
-> safe, predictable behavior when the user does something wrong (and
-> expect them to do something wrong, intentionally or not).
-Agreed. I am not comfortable either with the existing proto despite it
-works in my case.
-> 
->> In case I split the header and the actual buffer into 2 different
->> possible 64kB pages, the first one will be very scarcely used.
-> 
-> Yes, it's wasteful, a shared page would be preferred, but it's also
-> only a page.
-agreed
-> 
->>> wonder if there are other transports that make sense here, this almost
->>> feels like a vhost sort of thing.  Thanks,  
->> Using something more sophisticated may be useful for PRI where answers
->> need to be provided. For the case of unrecoverable faults, I wonder
->> whether it is worth the pain exposing a fault region compared to the
->> original IOCTL approach introduced in
->> [RFC v2 18/20] vfio: VFIO_IOMMU_GET_FAULT_EVENTS
->> https://lkml.org/lkml/2018/9/18/1094
-> 
-> Not sure I understand the pain aspect, if we don't support mmap on a
-> region then we can fill a user read from a region just as easily as we
-> can fill a buffer passed via ioctl.  Thanks,
-My impression was the previous VFIO_IOMMU_GET_FAULT_EVENTS ioctl based
-approach filling the user provided buffer with available events was
-rather simple compared to the region implementation (my own filling). We
-could use the kfifo utilities without needing to define a region layout.
+I'm testing 4.20 with this patchset on top.
 
-Thanks
+I'm on a GW5104 which has an IMX6Q with the adv7180 on ipu1_csi0 like
+the SabeAuto example above I can't get the simple interveave example
+to work:
 
-Eric
-> 
-> Alex
-> 
+media-ctl -r # reset all links
+# Setup links (ADV7180 IPU1_CSI0)
+media-ctl -l '"adv7180 2-0020":0 -> "ipu1_csi0_mux":1[1]'
+media-ctl -l '"ipu1_csi0_mux":2 -> "ipu1_csi0":0[1]'
+media-ctl -l '"ipu1_csi0":2 -> "ipu1_csi0 capture":0[1]' # /dev/video4
+# Configure pads
+media-ctl -V "'adv7180 2-0020':0 [fmt:UYVY2X8/720x480 field:seq-bt]"
+media-ctl -V "'ipu1_csi0_mux':2 [fmt:UYVY2X8/720x480]"
+media-ctl -V "'ipu1_csi0':0 [fmt:AYUV32/720x480]"
+# Configure 'ipu1_csi0 capture' interface (/dev/video4)
+v4l2-ctl -d4 --set-fmt-video=field=interlaced_bt
+# streaming can now begin on the raw capture device node at /dev/video4
+v4l2-ctl -d4 --stream-mmap --stream-to=/x.raw --stream-count=1 # capture 1 frame
+[ 5547.354460] ipu1_csi0: pipeline start failed with -32
+VIDIOC_STREAMON: failed: Broken pipe
+
+Any ideas what is causing this pipeline failure.
+
+> +This example configures a pipeline to capture from the ADV7180
+> +video decoder, assuming PAL 720x576 input signals, with Motion
+> +Compensated de-interlacing. The adv7180 must output sequential or
+> +alternating fields (field type 'seq-tb' for PAL, or 'alternate').
+> +$outputfmt can be any format supported by the ipu1_ic_prpvf entity
+> +at its output pad:
+>
+>  .. code-block:: none
+>
+> @@ -531,11 +560,11 @@ entity at its output pad:
+>     media-ctl -l "'ipu1_ic_prp':2 -> 'ipu1_ic_prpvf':0[1]"
+>     media-ctl -l "'ipu1_ic_prpvf':1 -> 'ipu1_ic_prpvf capture':0[1]"
+>     # Configure pads
+> -   media-ctl -V "'adv7180 3-0021':0 [fmt:UYVY2X8/720x480]"
+> -   media-ctl -V "'ipu1_csi0_mux':2 [fmt:UYVY2X8/720x480 field:interlaced]"
+> -   media-ctl -V "'ipu1_csi0':1 [fmt:AYUV32/720x480 field:interlaced]"
+> -   media-ctl -V "'ipu1_vdic':2 [fmt:AYUV32/720x480 field:none]"
+> -   media-ctl -V "'ipu1_ic_prp':2 [fmt:AYUV32/720x480 field:none]"
+> +   media-ctl -V "'adv7180 3-0021':0 [fmt:UYVY2X8/720x576 field:seq-tb]"
+> +   media-ctl -V "'ipu1_csi0_mux':2 [fmt:UYVY2X8/720x576]"
+> +   media-ctl -V "'ipu1_csi0':1 [fmt:AYUV32/720x576]"
+> +   media-ctl -V "'ipu1_vdic':2 [fmt:AYUV32/720x576 field:none]"
+> +   media-ctl -V "'ipu1_ic_prp':2 [fmt:AYUV32/720x576 field:none]"
+>     media-ctl -V "'ipu1_ic_prpvf':1 [fmt:$outputfmt field:none]"
+>
+>  Streaming can then begin on the capture device node at
+
+The above motion-compensation example pipeline does now work with this
+patch series - thanks for addressing this!
+
+Regards,
+
+Tim
