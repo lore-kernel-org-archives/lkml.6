@@ -2,149 +2,148 @@ Return-Path: <SRS0=RZO6=PX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+X-Spam-Status: No, score=-12.0 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9579AC43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 11:15:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7BB2AC43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 11:19:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6DA2B20861
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 11:15:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4C88720657
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 11:19:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729201AbfAOLPk (ORCPT
+        id S1729216AbfAOLTb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 15 Jan 2019 06:15:40 -0500
-Received: from mx2.suse.de ([195.135.220.15]:48786 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727273AbfAOLPk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Jan 2019 06:15:40 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id D3119AD47;
-        Tue, 15 Jan 2019 11:15:37 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id 4D0571E0DB1; Tue, 15 Jan 2019 12:15:37 +0100 (CET)
-Date:   Tue, 15 Jan 2019 12:15:37 +0100
-From:   Jan Kara <jack@suse.cz>
-To:     Pali =?iso-8859-1?Q?Roh=E1r?= <pali.rohar@gmail.com>
-Cc:     Jan Kara <jack@suse.cz>, Michael Sabolish <sabolish@me.com>,
-        Kevin Weidemann <kwe-lnx@postn.eu>,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: udf: Prevent write-unsupported filesystem to be remounted
- read-write
-Message-ID: <20190115111537.GI29524@quack2.suse.cz>
-References: <8cf39b7c-505b-91e6-849d-e66ba980042f@postn.eu>
- <20190114103011.GD13316@quack2.suse.cz>
- <20190114120023.wkftfz6pwatehpfe@pali>
- <20190114123042.GH13316@quack2.suse.cz>
- <E11914DA-D254-4198-A152-F9D6E61514BE@me.com>
- <20190115083111.qq2mt2p2kn4opwx7@pali>
- <20190115084119.GE29524@quack2.suse.cz>
- <20190115084832.fypbuhyvgfizh3am@pali>
- <20190115094555.GG29524@quack2.suse.cz>
- <20190115105041.7bc3wzo7oawg7ea2@pali>
+        Tue, 15 Jan 2019 06:19:31 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:43879 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728194AbfAOLTb (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 Jan 2019 06:19:31 -0500
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x0FBIwZe2491256
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+        Tue, 15 Jan 2019 03:18:58 -0800
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x0FBItiI2491250;
+        Tue, 15 Jan 2019 03:18:55 -0800
+Date:   Tue, 15 Jan 2019 03:18:55 -0800
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Dave Young <tipbot@zytor.com>
+Message-ID: <tip-993a110319a4a60aadbd02f6defdebe048f7773b@git.kernel.org>
+Cc:     tglx@linutronix.de, x86@kernel.org, vgoyal@redhat.com,
+        akpm@linux-foundation.org, hpa@zytor.com, wang.yi59@zte.com.cn,
+        schwidefsky@de.ibm.com, bhe@redhat.com, bp@suse.de,
+        linux-kernel@vger.kernel.org, mingo@redhat.com,
+        ebiederm@xmission.com, mingo@kernel.org, yannik@sembritzki.me,
+        dyoung@redhat.com, prudo@linux.vnet.ibm.com,
+        takahiro.akashi@linaro.org
+Reply-To: dyoung@redhat.com, yannik@sembritzki.me,
+          prudo@linux.vnet.ibm.com, takahiro.akashi@linaro.org,
+          ebiederm@xmission.com, mingo@kernel.org, bhe@redhat.com,
+          schwidefsky@de.ibm.com, linux-kernel@vger.kernel.org, bp@suse.de,
+          mingo@redhat.com, x86@kernel.org, tglx@linutronix.de,
+          hpa@zytor.com, akpm@linux-foundation.org, vgoyal@redhat.com,
+          wang.yi59@zte.com.cn
+In-Reply-To: <20181228011247.GA9999@dhcp-128-65.nay.redhat.com>
+References: <20181228011247.GA9999@dhcp-128-65.nay.redhat.com>
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:x86/urgent] x86/kexec: Fix a kexec_file_load() failure
+Git-Commit-ID: 993a110319a4a60aadbd02f6defdebe048f7773b
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20190115105041.7bc3wzo7oawg7ea2@pali>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue 15-01-19 11:50:41, Pali Rohár wrote:
-> On Tuesday 15 January 2019 10:45:55 Jan Kara wrote:
-> > On Tue 15-01-19 09:48:32, Pali Rohár wrote:
-> > > On Tuesday 15 January 2019 09:41:19 Jan Kara wrote:
-> > > > On Tue 15-01-19 09:31:11, Pali Rohár wrote:
-> > > > > On Monday 14 January 2019 19:07:35 Michael Sabolish wrote:
-> > > > > > I can try and make a pull-request for udftune, and I can just copy the API for tune2fs.  It would work something like:
-> > > > > > 
-> > > > > > udftune -O read-only device            (to set read-only access type)
-> > > > > > 
-> > > > > > or:
-> > > > > > 
-> > > > > > udftune -O ^read-only device          (to clear read-only access type (aka set rw))
-> > > > > 
-> > > > > This API is ambiguous. What does it mean for ^read-only? In UDF you have
-> > > > > following access types: overwritable, rewritable, writeonce, readonly,
-> > > > > pseudo-overwritable, unknown.
-> > > > > 
-> > > > > So you would need to know to which R/W access type to switch
-> > > > > (overwritable, rewritable, writeonce or pseudo-overwritable).
-> > > > > 
-> > > > > With information of media type, you could be able to guess correct
-> > > > > access type. But for UDF images stored in VFS there is no media
-> > > > > information. Also you can have uncommon setup, e.g. usage of CD-R
-> > > > > writeonce setup on CD-R/W disc. So "autodetection" of media type would
-> > > > > not work always correctly.
-> > > > > 
-> > > > > So I think that it would be better to have following API:
-> > > > > 
-> > > > >   udftune --access-type=<new_access_type>
-> > > > > 
-> > > > > or
-> > > > > 
-> > > > >   udftune --change-access-type=<new_access_type>
-> > > > > 
-> > > > > I understand that you would like to have similar API as tune2fs, but UDF
-> > > > > settings are too different from ext*.
-> > > > 
-> > > > If you wanted to follow tune2fs interface, you can have e.g.:
-> > > 
-> > > Question is if it is a good idea to follow this interface.
-> > 
-> > Agreed. I'll leave that decision up to you as a maintainer :)
-> > 
-> > > > udftune -E access-type=<foo>
-> > > > 
-> > > > Another question about the feature is - the access type is actually per
-> > > > partition and there can be multiple partitions on UDF media. So I think we
-> > > > need to specify the partition number in the command and <foo> has to
-> > > > actually be something like <partition number>,<access_type>.
-> > > 
-> > > Access type is stored in partition descriptor and in UDF (as opposite of
-> > > ECMA-167) you can have only one partition descriptor. IIRC there is some
-> > > exception when you have two partition descriptors, but then one have to be
-> > > readonly and second virtual.
-> > 
-> > Ah, right, I forgot that UDF standard limits how partitions can be set up.
-> > However I don't see anything that would limit number of "type 1" maps? I've
-> > only found in 2.2.4.7 that "Partition Maps shall be limited to Partition
-> > Map type 1, except type 2 maps ...". In which I'm not sure whether this is
-> > meant to imply there is only one 'type 1' partition map or whether there
-> > can be more of them.
-> 
-> That is interesting question... I just found following:
-> 
-> In section "2. Basic Restrictions & Requirements" there is information
-> about "Partition Descriptor":
-> 
-> A Partition Descriptor Access Type of read-only, rewritable,
-> overwritable, write-once and pseudo-overwritable shall be supported.
-> There shall be exactly one prevailing Partition Descriptor recorded per
-> volume, with one exception. For Volume Sets that consist of single
-> volume, the volume may contain 2 non-overlapping Partitions with 2
-> prevailing Partition Descriptors only if one has an Access Type of
-> read-only and the other has an Access Type of rewritable, overwritable,
-> or write-once. The Logical Volume for this volume would consist of the
-> contents of both partitions.
-> 
-> But again it does not answer to your question.
+Commit-ID:  993a110319a4a60aadbd02f6defdebe048f7773b
+Gitweb:     https://git.kernel.org/tip/993a110319a4a60aadbd02f6defdebe048f7773b
+Author:     Dave Young <dyoung@redhat.com>
+AuthorDate: Fri, 28 Dec 2018 09:12:47 +0800
+Committer:  Borislav Petkov <bp@suse.de>
+CommitDate: Tue, 15 Jan 2019 12:12:50 +0100
 
-Well, it does at least for the purposes of our discussion. Because even if
-you would have more than one partition map, you would still have only one
-partition descriptor and the access type is specified in the partition
-descriptor, not in the partition map. So the above paragraph basically says
-that we can set access type arbitrarily only if there is exactly one
-partition descriptor. If there are two, we can switch partition only
-between overwritable, write-once, pseudo-overwrite but I don't think that's
-really useful. Thanks for enlightening me :).
+x86/kexec: Fix a kexec_file_load() failure
 
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+Commit
+
+  b6664ba42f14 ("s390, kexec_file: drop arch_kexec_mem_walk()")
+
+changed the behavior of kexec_locate_mem_hole(): it will try to allocate
+free memory only when kbuf.mem is initialized to zero.
+
+However, x86's kexec_file_load() implementation reuses a struct
+kexec_buf allocated on the stack and its kbuf.mem member gets set by
+each kexec_add_buffer() invocation.
+
+The second kexec_add_buffer() will reuse the same kbuf but not
+reinitialize kbuf.mem.
+
+Therefore, explictily reset kbuf.mem each time in order for
+kexec_locate_mem_hole() to locate a free memory region each time.
+
+ [ bp: massage commit message. ]
+
+Fixes: b6664ba42f14 ("s390, kexec_file: drop arch_kexec_mem_walk()")
+Signed-off-by: Dave Young <dyoung@redhat.com>
+Signed-off-by: Borislav Petkov <bp@suse.de>
+Acked-by: Baoquan He <bhe@redhat.com>
+Cc: "Eric W. Biederman" <ebiederm@xmission.com>
+Cc: "H. Peter Anvin" <hpa@zytor.com>
+Cc: AKASHI Takahiro <takahiro.akashi@linaro.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: Martin Schwidefsky <schwidefsky@de.ibm.com>
+Cc: Philipp Rudo <prudo@linux.vnet.ibm.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Vivek Goyal <vgoyal@redhat.com>
+Cc: Yannik Sembritzki <yannik@sembritzki.me>
+Cc: Yi Wang <wang.yi59@zte.com.cn>
+Cc: kexec@lists.infradead.org
+Cc: x86-ml <x86@kernel.org>
+Link: https://lkml.kernel.org/r/20181228011247.GA9999@dhcp-128-65.nay.redhat.com
+---
+ arch/x86/kernel/crash.c           | 1 +
+ arch/x86/kernel/kexec-bzimage64.c | 2 ++
+ 2 files changed, 3 insertions(+)
+
+diff --git a/arch/x86/kernel/crash.c b/arch/x86/kernel/crash.c
+index c8b07d8ea5a2..17ffc869cab8 100644
+--- a/arch/x86/kernel/crash.c
++++ b/arch/x86/kernel/crash.c
+@@ -470,6 +470,7 @@ int crash_load_segments(struct kimage *image)
+ 
+ 	kbuf.memsz = kbuf.bufsz;
+ 	kbuf.buf_align = ELF_CORE_HEADER_ALIGN;
++	kbuf.mem = KEXEC_BUF_MEM_UNKNOWN;
+ 	ret = kexec_add_buffer(&kbuf);
+ 	if (ret) {
+ 		vfree((void *)image->arch.elf_headers);
+diff --git a/arch/x86/kernel/kexec-bzimage64.c b/arch/x86/kernel/kexec-bzimage64.c
+index 278cd07228dd..0d5efa34f359 100644
+--- a/arch/x86/kernel/kexec-bzimage64.c
++++ b/arch/x86/kernel/kexec-bzimage64.c
+@@ -434,6 +434,7 @@ static void *bzImage64_load(struct kimage *image, char *kernel,
+ 	kbuf.memsz = PAGE_ALIGN(header->init_size);
+ 	kbuf.buf_align = header->kernel_alignment;
+ 	kbuf.buf_min = MIN_KERNEL_LOAD_ADDR;
++	kbuf.mem = KEXEC_BUF_MEM_UNKNOWN;
+ 	ret = kexec_add_buffer(&kbuf);
+ 	if (ret)
+ 		goto out_free_params;
+@@ -448,6 +449,7 @@ static void *bzImage64_load(struct kimage *image, char *kernel,
+ 		kbuf.bufsz = kbuf.memsz = initrd_len;
+ 		kbuf.buf_align = PAGE_SIZE;
+ 		kbuf.buf_min = MIN_INITRD_LOAD_ADDR;
++		kbuf.mem = KEXEC_BUF_MEM_UNKNOWN;
+ 		ret = kexec_add_buffer(&kbuf);
+ 		if (ret)
+ 			goto out_free_params;
