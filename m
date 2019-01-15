@@ -2,174 +2,72 @@ Return-Path: <SRS0=RZO6=PX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.5 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 09C64C43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 17:38:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 68C5EC43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 17:39:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D93EE20675
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 17:38:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 442BB20675
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 17:39:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388453AbfAORim (ORCPT
+        id S2388466AbfAORjO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 15 Jan 2019 12:38:42 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:47462 "EHLO mx1.redhat.com"
+        Tue, 15 Jan 2019 12:39:14 -0500
+Received: from mail.kernel.org ([198.145.29.99]:57288 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729052AbfAORil (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Jan 2019 12:38:41 -0500
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        id S1729035AbfAORjN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 Jan 2019 12:39:13 -0500
+Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 3C30B83F42;
-        Tue, 15 Jan 2019 17:38:41 +0000 (UTC)
-Received: from krava (unknown [10.43.17.222])
-        by smtp.corp.redhat.com (Postfix) with SMTP id 1EAAB1048110;
-        Tue, 15 Jan 2019 17:38:38 +0000 (UTC)
-Date:   Tue, 15 Jan 2019 18:38:38 +0100
-From:   Jiri Olsa <jolsa@redhat.com>
-To:     Nick Clifton <nickc@redhat.com>
-Cc:     Jiri Olsa <jolsa@kernel.org>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        lkml <linux-kernel@vger.kernel.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>,
-        Michael Petlan <mpetlan@redhat.com>,
-        Masami Hiramatsu <mhiramat@kernel.org>
-Subject: [RFCv2] perf tools: Filter out hidden symbols from labels
-Message-ID: <20190115173838.GB31411@krava>
-References: <20190115135354.11572-1-jolsa@kernel.org>
- <960f0b83-a623-67a6-ab55-d56139d10ba2@redhat.com>
+        by mail.kernel.org (Postfix) with ESMTPSA id B046F20656;
+        Tue, 15 Jan 2019 17:39:12 +0000 (UTC)
+Date:   Tue, 15 Jan 2019 12:39:10 -0500
+From:   Steven Rostedt <rostedt@goodmis.org>
+To:     Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        Thomas Gleixner <tglx@linutronix.de>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        linux-rt-users <linux-rt-users@vger.kernel.org>,
+        Petr Mladek <pmladek@suse.com>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
+Subject: [PATCH RT] printk: Shortcut out of waiter spinning on PREEMPT_RT
+Message-ID: <20190115123910.2b18df54@gandalf.local.home>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <960f0b83-a623-67a6-ab55-d56139d10ba2@redhat.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.27]); Tue, 15 Jan 2019 17:38:41 +0000 (UTC)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 15, 2019 at 04:13:16PM +0000, Nick Clifton wrote:
-> Hi Jiri,
-> 
-> > When perf is built with annobin plugin (RHEL8 build) extra symbols
-> > are added to its binary:
-> 
->   A bit of background for those wondering why annobin is creating
->   these symbols:  Annobin is a plugin for gcc that records data 
->   about how object file were built.  It is specifically designed 
->   to be able to cope with files that are built using multiple
->   different sets of optimization options.  (Eg because of #pragma
->   directives or function specific optimization attributes).  It
->   generates notes to cover each compiled region of code, and it
->   needs the symbols in order to be able to determine exactly which
->   areas in a linked binary were compiled with which options.
-> 
->   In the course of developing this plugin I encountered various
->   problems with tools not expecting to find extra symbols in a
->   binary.  Hence I made the symbols local, hidden and with no type.
->   It was the best I could do to say "ignore these symbols - they
->   are not meant to be seen by anyone but annobin".
-> 
-> 
-> > +		elf_sym__visibility(sym) != STV_HIDDEN;
-> 
->   Just to be awkward, if you are going to ignore STV_HIDDEN 
->   symbols then you should probably also ignore STV_INTERNAL ones
->   as well...  Annobin does not generate them, but you never know,
->   one day some other tool might create some.
+From: Steven Rostedt (VMware) <rostedt@goodmis.org>
 
-sounds good, thanks
+As the consoles are written with preemption enabled in PREEMPT_RT, we
+must not have any task spinning waiting on them. Currently, the code
+that would make the task spin is #ifdef out when PREEMPT_RT is
+enabled, but why go through grabbing of the locks to see if an owner is
+set, when it never will be?
 
-jirka
-
-
+Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
 ---
-When perf is built with annobin plugin (RHEL8 build) extra symbols
-are added to its binary:
-
-  # nm perf | grep annobin | head -10
-  0000000000241100 t .annobin_annotate.c
-  0000000000326490 t .annobin_annotate.c
-  0000000000249255 t .annobin_annotate.c_end
-  00000000003283a8 t .annobin_annotate.c_end
-  00000000001bce18 t .annobin_annotate.c_end.hot
-  00000000001bce18 t .annobin_annotate.c_end.hot
-  00000000001bc3e2 t .annobin_annotate.c_end.unlikely
-  00000000001bc400 t .annobin_annotate.c_end.unlikely
-  00000000001bce18 t .annobin_annotate.c.hot
-  00000000001bce18 t .annobin_annotate.c.hot
-  ...
-
-those symbols have no use for report or annotation and should be skipped.
-Moreover they interfere with dwarf unwind test on ppc arch, where they
-are mixed with checked symbols and test fails:
-
-  # perf test dwarf -v
-  59: Test dwarf unwind                                     :
-  --- start ---
-  test child forked, pid 8515
-  unwind: .annobin_dwarf_unwind.c:ip = 0x10dba40dc (0x2740dc)
-  ...
-  got: .annobin_dwarf_unwind.c 0x10dba40dc, expecting test__arch_unwind_sample
-  unwind: failed with 'no error'
-
-The annobin symbols are defined as NOTYPE/LOCAL/HIDDEN:
-
-  # readelf -s ./perf | grep annobin | head -1
-    40: 00000000001bce4f     0 NOTYPE  LOCAL  HIDDEN    13 .annobin_init.c
-
-They can still pass the check for the label symbol. Adding
-check for HIDDEN and INTERNAL (as suggested by Nick below)
-visibility and filter out such symbols.
-
-> Nick Clifton wrote:
->
->   Just to be awkward, if you are going to ignore STV_HIDDEN
->   symbols then you should probably also ignore STV_INTERNAL ones
->   as well...  Annobin does not generate them, but you never know,
->   one day some other tool might create some.
-
-Link: http://lkml.kernel.org/n/tip-4yuna6qhhg0df3q147cjdyuu@git.kernel.org
-Signed-off-by: Jiri Olsa <jolsa@kernel.org>
----
- tools/perf/util/symbol-elf.c | 9 ++++++++-
- 1 file changed, 8 insertions(+), 1 deletion(-)
-
-diff --git a/tools/perf/util/symbol-elf.c b/tools/perf/util/symbol-elf.c
-index 66a84d5846c8..03cb8c6d620a 100644
---- a/tools/perf/util/symbol-elf.c
-+++ b/tools/perf/util/symbol-elf.c
-@@ -87,6 +87,11 @@ static inline uint8_t elf_sym__type(const GElf_Sym *sym)
- 	return GELF_ST_TYPE(sym->st_info);
- }
+diff --git a/kernel/printk/printk.c b/kernel/printk/printk.c
+index a43d07d4e043..1a61132deec1 100644
+--- a/kernel/printk/printk.c
++++ b/kernel/printk/printk.c
+@@ -1742,6 +1742,13 @@ static int console_trylock_spinning(void)
+ 	if (console_trylock())
+ 		return 1;
  
-+static inline uint8_t elf_sym__visibility(const GElf_Sym *sym)
-+{
-+	return GELF_ST_VISIBILITY(sym->st_other);
-+}
++	/*
++	 * The consoles are preemptable in PREEMPT_RT, which can cause
++	 * spinning to deadlock.
++	 */
++	if (IS_ENABLED(CONFIG_PREEMPT_RT_FULL))
++		return 0;
 +
- #ifndef STT_GNU_IFUNC
- #define STT_GNU_IFUNC 10
- #endif
-@@ -111,7 +116,9 @@ static inline int elf_sym__is_label(const GElf_Sym *sym)
- 	return elf_sym__type(sym) == STT_NOTYPE &&
- 		sym->st_name != 0 &&
- 		sym->st_shndx != SHN_UNDEF &&
--		sym->st_shndx != SHN_ABS;
-+		sym->st_shndx != SHN_ABS &&
-+		elf_sym__visibility(sym) != STV_HIDDEN &&
-+		elf_sym__visibility(sym) != STV_INTERNAL;
- }
+ 	printk_safe_enter_irqsave(flags);
  
- static bool elf_sym__filter(GElf_Sym *sym)
--- 
-2.17.2
-
+ 	raw_spin_lock(&console_owner_lock);
