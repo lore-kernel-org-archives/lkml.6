@@ -2,122 +2,131 @@ Return-Path: <SRS0=RZO6=PX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1DEA4C43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 13:55:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 450BDC43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 13:56:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E2B1020651
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 13:55:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1530C20651
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 13:56:42 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="pRtGyIda"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=xenosoft.de header.i=@xenosoft.de header.b="GL+f6a3z"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730109AbfAONzu (ORCPT
+        id S1730131AbfAON4k (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 15 Jan 2019 08:55:50 -0500
-Received: from lelv0142.ext.ti.com ([198.47.23.249]:33552 "EHLO
-        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729099AbfAONzt (ORCPT
+        Tue, 15 Jan 2019 08:56:40 -0500
+Received: from mo4-p02-ob.smtp.rzone.de ([85.215.255.82]:14698 "EHLO
+        mo4-p02-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730117AbfAON4j (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Jan 2019 08:55:49 -0500
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id x0FDtUgR096889;
-        Tue, 15 Jan 2019 07:55:30 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1547560530;
-        bh=M4E9szcMy2s/1G1NcDsPyh7e/Ea7sPKwxtbQVHhwljQ=;
-        h=Date:From:To:CC:Subject:References:In-Reply-To;
-        b=pRtGyIdaRglXIN7p6XoRFmsBFfVsG5AQvr0cYrZxdQusWrTu7n/iTsIszAOSsbo6r
-         y+tH8HFY2sy/49gUoBffBaYNFVyyk3RC9hLpz175dHEzxDCN0ZGvqHPyC8BvcSk6VJ
-         pUkOA+Q/SXsR+Ecnz0SuLSHf28dVmVAvvztcPiT0=
-Received: from DFLE114.ent.ti.com (dfle114.ent.ti.com [10.64.6.35])
-        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x0FDtU8R119636
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 15 Jan 2019 07:55:30 -0600
-Received: from DFLE104.ent.ti.com (10.64.6.25) by DFLE114.ent.ti.com
- (10.64.6.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Tue, 15
- Jan 2019 07:55:29 -0600
-Received: from dlep33.itg.ti.com (157.170.170.75) by DFLE104.ent.ti.com
- (10.64.6.25) with Microsoft SMTP Server (version=TLS1_0,
- cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1591.10 via Frontend Transport;
- Tue, 15 Jan 2019 07:55:29 -0600
-Received: from localhost (ileax41-snat.itg.ti.com [10.172.224.153])
-        by dlep33.itg.ti.com (8.14.3/8.13.8) with ESMTP id x0FDtTtW025526;
-        Tue, 15 Jan 2019 07:55:29 -0600
-Date:   Tue, 15 Jan 2019 07:54:57 -0600
-From:   Nishanth Menon <nm@ti.com>
-To:     Lokesh Vutla <lokeshvutla@ti.com>
-CC:     <marc.zyngier@arm.com>, Santosh Shilimkar <ssantosh@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>, <tglx@linutronix.de>,
-        <jason@lakedaemon.net>,
-        Linux ARM Mailing List <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, Tero Kristo <t-kristo@ti.com>,
-        Sekhar Nori <nsekhar@ti.com>,
-        Device Tree Mailing List <devicetree@vger.kernel.org>,
-        Peter Ujfalusi <peter.ujfalusi@ti.com>
-Subject: Re: [RFC PATCH v4 13/13] soc: ti: am6: Enable interrupt controller
- drivers
-Message-ID: <20190115135457.2x6huvgtth2yjhhq@kahuna>
-References: <20181227060829.5080-1-lokeshvutla@ti.com>
- <20181227061313.5451-1-lokeshvutla@ti.com>
- <20181227061313.5451-13-lokeshvutla@ti.com>
+        Tue, 15 Jan 2019 08:56:39 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1547560597;
+        s=strato-dkim-0002; d=xenosoft.de;
+        h=In-Reply-To:Date:Message-ID:From:References:Cc:To:Subject:
+        X-RZG-CLASS-ID:X-RZG-AUTH:From:Subject:Sender;
+        bh=qjQYj2poIqFNPGRwB16+nYsywTx1PQvvhTI5rvcaBgI=;
+        b=GL+f6a3zzqLQAUghO+T4vIv7rbtdbadDQoPzy1rbizXCzlK8eku7C1UitaT9uVt30r
+        GiEALfcqKJgFp8vmNSwr1DZ26PhNq71tJwnyIt+JyYo6du1V2jvvofTwXOGnwEnfUNco
+        gzcQShOIQSxbfa4eeSwU5GUBbtow9AhN8TgR10slVMKF2CAAGWGo855NIBk/Zy9VQzk4
+        JTS5nazSIrwp0qJV3h8bTl+1tMYbZygsC4FERGbiH2/VCcQsOKMMAPJ3tFarAEvyohB5
+        Vn+MkL0Yr3nwoJ0mBvYyKEP5x6FXbYP5pVRa3cbFxodqdJn3dvYyH3O4Jb4EdnnbIzC0
+        tOlw==
+X-RZG-AUTH: ":L2QefEenb+UdBJSdRCXu93KJ1bmSGnhMdmOod1DhGM4l4Hio94KKxRySfLxnHfJ+Dkjp5G5MdirQj0WG7CkNi0C2kzEbDQg0vrQvOCYvo/qC"
+X-RZG-CLASS-ID: mo00
+Received: from [IPv6:2a02:8109:a400:162c:25bb:7249:5b2a:1f0]
+        by smtp.strato.de (RZmta 44.9 AUTH)
+        with ESMTPSA id t0203dv0FDuYsN4
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (curve secp521r1 with 521 ECDH bits, eq. 15360 bits RSA))
+        (Client did not present a certificate);
+        Tue, 15 Jan 2019 14:56:34 +0100 (CET)
+Subject: Re: use generic DMA mapping code in powerpc V4
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     linux-arch@vger.kernel.org,
+        Darren Stevens <darren@stevens-zone.net>,
+        linux-kernel@vger.kernel.org, Julian Margetson <runaway@candw.ms>,
+        linux-mm@kvack.org, iommu@lists.linux-foundation.org,
+        Paul Mackerras <paulus@samba.org>,
+        Olof Johansson <olof@lixom.net>, linuxppc-dev@lists.ozlabs.org
+References: <008c981e-bdd2-21a7-f5f7-c57e4850ae9a@xenosoft.de>
+ <20190103073622.GA24323@lst.de>
+ <71A251A5-FA06-4019-B324-7AED32F7B714@xenosoft.de>
+ <1b0c5c21-2761-d3a3-651b-3687bb6ae694@xenosoft.de>
+ <3504ee70-02de-049e-6402-2d530bf55a84@xenosoft.de>
+ <23284859-bf0a-9cd5-a480-2a7fd7802056@xenosoft.de>
+ <075f70e3-7a4a-732f-b501-05a1a8e3c853@xenosoft.de>
+ <b04d08ea-61f9-3212-b9a3-ad79e3b8bd05@xenosoft.de>
+ <21f72a6a-9095-7034-f169-95e876228b2a@xenosoft.de>
+ <27148ac2-2a92-5536-d886-2c0971ab43d9@xenosoft.de>
+ <20190115133558.GA29225@lst.de>
+From:   Christian Zigotzky <chzigotzky@xenosoft.de>
+Message-ID: <685f0c06-af1b-0bec-ac03-f9bf1f7a2b35@xenosoft.de>
+Date:   Tue, 15 Jan 2019 14:56:34 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20181227061313.5451-13-lokeshvutla@ti.com>
-User-Agent: NeoMutt/20171215
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+In-Reply-To: <20190115133558.GA29225@lst.de>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: de-DE
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11:43-20181227, Lokesh Vutla wrote:
-> Select all the TISCI dependent interrupt controller drivers
-> for AM6 SoC.
-> 
-> Suggested-by: Marc Zyngier <marc.zyngier@arm.com>
-> Signed-off-by: Lokesh Vutla <lokeshvutla@ti.com>
-> ---
->  drivers/soc/ti/Kconfig | 5 +++++
->  1 file changed, 5 insertions(+)
-> 
-> diff --git a/drivers/soc/ti/Kconfig b/drivers/soc/ti/Kconfig
-> index 7640490c2a6a..145b701a3d96 100644
-> --- a/drivers/soc/ti/Kconfig
-> +++ b/drivers/soc/ti/Kconfig
-> @@ -5,6 +5,11 @@ if ARCH_K3
->  
->  config ARCH_K3_AM6_SOC
->  	bool "K3 AM6 SoC"
-> +	select MAILBOX
-> +	select TI_MESSAGE_MANAGER
-> +	select TI_SCI_PROTOCOL
-> +	select TI_SCI_INTR_IRQCHIP
-> +	select TI_SCI_INTA_IRQCHIP
+On 15 January 2019 at 2:35PM, Christoph Hellwig wrote:
+> On Tue, Jan 15, 2019 at 11:55:25AM +0100, Christian Zigotzky wrote:
+>> Next step: 21074ef03c0816ae158721a78cabe9035938dddd (powerpc/dma: use the
+>> generic direct mapping bypass)
+>>
+>> git clone git://git.infradead.org/users/hch/misc.git -b powerpc-dma.6 a
+>>
+>> git checkout 21074ef03c0816ae158721a78cabe9035938dddd
+>>
+>> I was able to compile the kernel for the AmigaOne X1000 (Nemo board with PA
+>> Semi PA6T-1682M SoC). It boots but the PA Semi onboard ethernet doesn't
+>> work.
+> Thanks.  But we are exactly missing the steps that are relevant.  I've
+> pushed a fixed up powerpc-dma.6 tree, which will only change starting from
+> the first commit that didn't link.
+>
+> The first commit that changed from the old one is this one:
+>
+> http://git.infradead.org/users/hch/misc.git/commitdiff/257002094bc5935dd63207a380d9698ab81f0775
+>
+> which was that one that your compile failed on first.
+>
+> Thanks again for all your work!
+>
+Thank you! I tried the commit 240d7ecd7f6fa62e074e8a835e620047954f0b28 
+(powerpc/dma: use the dma-direct allocator for coherent platforms) again.
 
-Sorry for joining the party late.. but just 2 cents for thought..
+git clone git://git.infradead.org/users/hch/misc.git -b powerpc-dma.6 a
 
-Is'nt imply better than select here? for a very tiny kernel, it is
-possible to boot kernel up and TISCI and mailbox could be modules as
-well.. I know it is a theoretical concept, but it may be helpful (esp
-during pre-silicon time frame, at least during start, I usually start
-with almost everything other than the CPU cores and PSCI disabled).
-there is not much you can do with it ofcourse, but it helps me with a
-clean start.
+git checkout 240d7ecd7f6fa62e074e8a835e620047954f0b28
 
+I modified the 'dma.c' patch because of the undefined references to 
+'__dma_nommu_free_coherent' and '__dma_nommu_alloc_coherent':
 
->  	help
->  	  Enable support for TI's AM6 SoC Family support
->  
-> -- 
-> 2.19.2
-> 
+---
 
--- 
-Regards,
-Nishanth Menon
+@@ -163,8 +99,13 @@ static inline void dma_nommu_sync_single(struct 
+device *dev,
+  #endif
+
+  const struct dma_map_ops dma_nommu_ops = {
++       .alloc                          = dma_direct_alloc,
++       .free                           = dma_direct_free,
+         .map_sg                         = dma_nommu_map_sg,
+         .unmap_sg                       = dma_nommu_unmap_sg,
+         .dma_supported                  = dma_direct_supported,
+
+---
+
+The X1000 boots and the PASEMI onboard ethernet works! X5000 (P5020 
+board): U-Boot loads the kernel and the dtb file. Then the kernel starts 
+but it doesn't find any hard disks (partitions).
+
+-- Christian
+
