@@ -4,50 +4,52 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F3DBC43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 16:59:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 36974C43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 16:59:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 49D5D20645
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 16:59:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F00A020645
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 16:59:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547571569;
-	bh=t0pcsQC3952/2Ob+DwD4jYTkmSafEYVASREjwr+8fZE=;
+	s=default; t=1547571576;
+	bh=5zpcqiGEBVprRk4OyBRLlHPuADz3O+2Y420POmOhjU0=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=Xg5tRTKlkiPsMjx+1+T4TKaFXwnZWzrKr6hTRl60oyzMWy2pD6Z9b5xe6nit4EwRm
-	 lraB81dvdcSMK/Kebb1F/9bVxnEnQvV+oqBKWqZsecuysDE4hQdpapLHGF6+HbfNmm
-	 mzjmGgkxR5pBhWhuMsUzbkLOuMqaUaJnfhseDSuM=
+	b=XNiCSLkRFoaajYbUfwnnE+97rb4JdlaeaHsQHRxR9TpYj3Tgwj+ZgosZwV9qSzhAK
+	 4BJG0V0py0nVYkrOE2XoiAkKH1djBkz44Xpd9mxqPpWaVNMC8T7epDAQdhbFm//1P6
+	 6B5RNpTgsdF9KsINF0yAHp/IjRCpxnUJ7gKKspEM=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732304AbfAOQjO (ORCPT
+        id S1732276AbfAOQjJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 15 Jan 2019 11:39:14 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55268 "EHLO mail.kernel.org"
+        Tue, 15 Jan 2019 11:39:09 -0500
+Received: from mail.kernel.org ([198.145.29.99]:55152 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732279AbfAOQjL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Jan 2019 11:39:11 -0500
+        id S1732251AbfAOQjF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 Jan 2019 11:39:05 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1C81E20868;
-        Tue, 15 Jan 2019 16:39:08 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 770892087E;
+        Tue, 15 Jan 2019 16:39:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547570349;
-        bh=t0pcsQC3952/2Ob+DwD4jYTkmSafEYVASREjwr+8fZE=;
+        s=default; t=1547570343;
+        bh=5zpcqiGEBVprRk4OyBRLlHPuADz3O+2Y420POmOhjU0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=H39v1ReDDe/GD/2uVRfBqTSnzd1hV7I/vOTXehUkvulpwNtaDY5ZXoQJHdwvrOTq1
-         fp8JcgIVwJDI4I6YUekZaFC8tc8RZHCteKZBdPGcsgh2X/+n3DQzg01fajj29wDPWn
-         1Y7LNmD/+hmtUK1yvcFZXsjW7VRxqJ0o/AJOtLXA=
+        b=pG5kyCfqV3lBmPzcVG+KSsEbltL4AXpECyyYY0T572CM5ZdIDvlII61IW7mY6UB54
+         H7IGVnx7Gbdw8T5RhfGDH2NL3WeUPgfrZIQ1s0rUH6QWrMDXhSGdl8ZtyHQyIUKvw9
+         EX3x4dbnQGPjNsU2JkOPu99pU3Tyybd6tQo6s0gk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jeff Mahoney <jeffm@suse.com>,
+        stable@vger.kernel.org, Qu Wenruo <wqu@suse.com>,
+        Nikolay Borisov <nborisov@suse.com>,
+        Su Yue <suy.fnst@cn.fujitsu.com>,
         David Sterba <dsterba@suse.com>,
         Ben Hutchings <ben.hutchings@codethink.co.uk>
-Subject: [PATCH 4.4 15/51] btrfs: struct-funcs, constify readers
-Date:   Tue, 15 Jan 2019 17:35:11 +0100
-Message-Id: <20190115154849.021374188@linuxfoundation.org>
+Subject: [PATCH 4.4 23/51] btrfs: tree-checker: Add checker for dir item
+Date:   Tue, 15 Jan 2019 17:35:19 +0100
+Message-Id: <20190115154849.982067263@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190115154846.928796000@linuxfoundation.org>
 References: <20190115154846.928796000@linuxfoundation.org>
@@ -66,532 +68,209 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jeff Mahoney <jeffm@suse.com>
+From: Qu Wenruo <wqu@suse.com>
 
-commit 1cbb1f454e5321e47fc1e6b233066c7ccc979d15 upstream.
+commit ad7b0368f33cffe67fecd302028915926e50ef7e upstream.
 
-We have reader helpers for most of the on-disk structures that use
-an extent_buffer and pointer as offset into the buffer that are
-read-only.  We should mark them as const and, in turn, allow consumers
-of these interfaces to mark the buffers const as well.
+Add checker for dir item, for key types DIR_ITEM, DIR_INDEX and
+XATTR_ITEM.
 
-No impact on code, but serves as documentation that a buffer is intended
-not to be modified.
+This checker does comprehensive checks for:
 
-Signed-off-by: Jeff Mahoney <jeffm@suse.com>
+1) dir_item header and its data size
+   Against item boundary and maximum name/xattr length.
+   This part is mostly the same as old verify_dir_item().
+
+2) dir_type
+   Against maximum file types, and against key type.
+   Since XATTR key should only have FT_XATTR dir item, and normal dir
+   item type should not have XATTR key.
+
+   The check between key->type and dir_type is newly introduced by this
+   patch.
+
+3) name hash
+   For XATTR and DIR_ITEM key, key->offset is name hash (crc32c).
+   Check the hash of the name against the key to ensure it's correct.
+
+   The name hash check is only found in btrfs-progs before this patch.
+
+Signed-off-by: Qu Wenruo <wqu@suse.com>
+Reviewed-by: Nikolay Borisov <nborisov@suse.com>
+Reviewed-by: Su Yue <suy.fnst@cn.fujitsu.com>
+Reviewed-by: David Sterba <dsterba@suse.com>
 Signed-off-by: David Sterba <dsterba@suse.com>
+[bwh: Backported to 4.4: BTRFS_MAX_XATTR_SIZE() takes a root instead of an
+ fs_info, and yields a value of type size_t instead of unsigned int]
 Signed-off-by: Ben Hutchings <ben.hutchings@codethink.co.uk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- fs/btrfs/ctree.h        |  128 ++++++++++++++++++++++++------------------------
- fs/btrfs/extent_io.c    |   24 ++++-----
- fs/btrfs/extent_io.h    |   19 +++----
- fs/btrfs/struct-funcs.c |    9 +--
- 4 files changed, 91 insertions(+), 89 deletions(-)
+ fs/btrfs/tree-checker.c |  141 ++++++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 141 insertions(+)
 
---- a/fs/btrfs/ctree.h
-+++ b/fs/btrfs/ctree.h
-@@ -2283,7 +2283,7 @@ do {
- #define BTRFS_INODE_ROOT_ITEM_INIT	(1 << 31)
+--- a/fs/btrfs/tree-checker.c
++++ b/fs/btrfs/tree-checker.c
+@@ -30,6 +30,7 @@
+ #include "tree-checker.h"
+ #include "disk-io.h"
+ #include "compression.h"
++#include "hash.h"
  
- struct btrfs_map_token {
--	struct extent_buffer *eb;
-+	const struct extent_buffer *eb;
- 	char *kaddr;
- 	unsigned long offset;
- };
-@@ -2314,18 +2314,19 @@ static inline void btrfs_init_map_token
- 			   sizeof(((type *)0)->member)))
- 
- #define DECLARE_BTRFS_SETGET_BITS(bits)					\
--u##bits btrfs_get_token_##bits(struct extent_buffer *eb, void *ptr,	\
--			       unsigned long off,			\
--                              struct btrfs_map_token *token);		\
--void btrfs_set_token_##bits(struct extent_buffer *eb, void *ptr,	\
-+u##bits btrfs_get_token_##bits(const struct extent_buffer *eb,		\
-+			       const void *ptr, unsigned long off,	\
-+			       struct btrfs_map_token *token);		\
-+void btrfs_set_token_##bits(struct extent_buffer *eb, const void *ptr,	\
- 			    unsigned long off, u##bits val,		\
- 			    struct btrfs_map_token *token);		\
--static inline u##bits btrfs_get_##bits(struct extent_buffer *eb, void *ptr, \
-+static inline u##bits btrfs_get_##bits(const struct extent_buffer *eb,	\
-+				       const void *ptr,			\
- 				       unsigned long off)		\
- {									\
- 	return btrfs_get_token_##bits(eb, ptr, off, NULL);		\
- }									\
--static inline void btrfs_set_##bits(struct extent_buffer *eb, void *ptr, \
-+static inline void btrfs_set_##bits(struct extent_buffer *eb, void *ptr,\
- 				    unsigned long off, u##bits val)	\
- {									\
-        btrfs_set_token_##bits(eb, ptr, off, val, NULL);			\
-@@ -2337,7 +2338,8 @@ DECLARE_BTRFS_SETGET_BITS(32)
- DECLARE_BTRFS_SETGET_BITS(64)
- 
- #define BTRFS_SETGET_FUNCS(name, type, member, bits)			\
--static inline u##bits btrfs_##name(struct extent_buffer *eb, type *s)	\
-+static inline u##bits btrfs_##name(const struct extent_buffer *eb,	\
-+				   const type *s)			\
- {									\
- 	BUILD_BUG_ON(sizeof(u##bits) != sizeof(((type *)0))->member);	\
- 	return btrfs_get_##bits(eb, s, offsetof(type, member));		\
-@@ -2348,7 +2350,8 @@ static inline void btrfs_set_##name(stru
- 	BUILD_BUG_ON(sizeof(u##bits) != sizeof(((type *)0))->member);	\
- 	btrfs_set_##bits(eb, s, offsetof(type, member), val);		\
- }									\
--static inline u##bits btrfs_token_##name(struct extent_buffer *eb, type *s, \
-+static inline u##bits btrfs_token_##name(const struct extent_buffer *eb,\
-+					 const type *s,			\
- 					 struct btrfs_map_token *token)	\
- {									\
- 	BUILD_BUG_ON(sizeof(u##bits) != sizeof(((type *)0))->member);	\
-@@ -2363,9 +2366,9 @@ static inline void btrfs_set_token_##nam
+ #define CORRUPT(reason, eb, root, slot)					\
+ 	btrfs_crit(root->fs_info,					\
+@@ -176,6 +177,141 @@ static int check_csum_item(struct btrfs_
  }
  
- #define BTRFS_SETGET_HEADER_FUNCS(name, type, member, bits)		\
--static inline u##bits btrfs_##name(struct extent_buffer *eb)		\
-+static inline u##bits btrfs_##name(const struct extent_buffer *eb)	\
- {									\
--	type *p = page_address(eb->pages[0]);				\
-+	const type *p = page_address(eb->pages[0]);			\
- 	u##bits res = le##bits##_to_cpu(p->member);			\
- 	return res;							\
- }									\
-@@ -2377,7 +2380,7 @@ static inline void btrfs_set_##name(stru
- }
- 
- #define BTRFS_SETGET_STACK_FUNCS(name, type, member, bits)		\
--static inline u##bits btrfs_##name(type *s)				\
-+static inline u##bits btrfs_##name(const type *s)			\
- {									\
- 	return le##bits##_to_cpu(s->member);				\
- }									\
-@@ -2678,7 +2681,7 @@ static inline unsigned long btrfs_node_k
- 		sizeof(struct btrfs_key_ptr) * nr;
- }
- 
--void btrfs_node_key(struct extent_buffer *eb,
-+void btrfs_node_key(const struct extent_buffer *eb,
- 		    struct btrfs_disk_key *disk_key, int nr);
- 
- static inline void btrfs_set_node_key(struct extent_buffer *eb,
-@@ -2707,28 +2710,28 @@ static inline struct btrfs_item *btrfs_i
- 	return (struct btrfs_item *)btrfs_item_nr_offset(nr);
- }
- 
--static inline u32 btrfs_item_end(struct extent_buffer *eb,
-+static inline u32 btrfs_item_end(const struct extent_buffer *eb,
- 				 struct btrfs_item *item)
- {
- 	return btrfs_item_offset(eb, item) + btrfs_item_size(eb, item);
- }
- 
--static inline u32 btrfs_item_end_nr(struct extent_buffer *eb, int nr)
-+static inline u32 btrfs_item_end_nr(const struct extent_buffer *eb, int nr)
- {
- 	return btrfs_item_end(eb, btrfs_item_nr(nr));
- }
- 
--static inline u32 btrfs_item_offset_nr(struct extent_buffer *eb, int nr)
-+static inline u32 btrfs_item_offset_nr(const struct extent_buffer *eb, int nr)
- {
- 	return btrfs_item_offset(eb, btrfs_item_nr(nr));
- }
- 
--static inline u32 btrfs_item_size_nr(struct extent_buffer *eb, int nr)
-+static inline u32 btrfs_item_size_nr(const struct extent_buffer *eb, int nr)
- {
- 	return btrfs_item_size(eb, btrfs_item_nr(nr));
- }
- 
--static inline void btrfs_item_key(struct extent_buffer *eb,
-+static inline void btrfs_item_key(const struct extent_buffer *eb,
- 			   struct btrfs_disk_key *disk_key, int nr)
- {
- 	struct btrfs_item *item = btrfs_item_nr(nr);
-@@ -2764,8 +2767,8 @@ BTRFS_SETGET_STACK_FUNCS(stack_dir_name_
- BTRFS_SETGET_STACK_FUNCS(stack_dir_transid, struct btrfs_dir_item,
- 			 transid, 64);
- 
--static inline void btrfs_dir_item_key(struct extent_buffer *eb,
--				      struct btrfs_dir_item *item,
-+static inline void btrfs_dir_item_key(const struct extent_buffer *eb,
-+				      const struct btrfs_dir_item *item,
- 				      struct btrfs_disk_key *key)
- {
- 	read_eb_member(eb, item, struct btrfs_dir_item, location, key);
-@@ -2773,7 +2776,7 @@ static inline void btrfs_dir_item_key(st
- 
- static inline void btrfs_set_dir_item_key(struct extent_buffer *eb,
- 					  struct btrfs_dir_item *item,
--					  struct btrfs_disk_key *key)
-+					  const struct btrfs_disk_key *key)
- {
- 	write_eb_member(eb, item, struct btrfs_dir_item, location, key);
- }
-@@ -2785,8 +2788,8 @@ BTRFS_SETGET_FUNCS(free_space_bitmaps, s
- BTRFS_SETGET_FUNCS(free_space_generation, struct btrfs_free_space_header,
- 		   generation, 64);
- 
--static inline void btrfs_free_space_key(struct extent_buffer *eb,
--					struct btrfs_free_space_header *h,
-+static inline void btrfs_free_space_key(const struct extent_buffer *eb,
-+					const struct btrfs_free_space_header *h,
- 					struct btrfs_disk_key *key)
- {
- 	read_eb_member(eb, h, struct btrfs_free_space_header, location, key);
-@@ -2794,7 +2797,7 @@ static inline void btrfs_free_space_key(
- 
- static inline void btrfs_set_free_space_key(struct extent_buffer *eb,
- 					    struct btrfs_free_space_header *h,
--					    struct btrfs_disk_key *key)
-+					    const struct btrfs_disk_key *key)
- {
- 	write_eb_member(eb, h, struct btrfs_free_space_header, location, key);
- }
-@@ -2821,25 +2824,25 @@ static inline void btrfs_cpu_key_to_disk
- 	disk->objectid = cpu_to_le64(cpu->objectid);
- }
- 
--static inline void btrfs_node_key_to_cpu(struct extent_buffer *eb,
--				  struct btrfs_key *key, int nr)
-+static inline void btrfs_node_key_to_cpu(const struct extent_buffer *eb,
-+					 struct btrfs_key *key, int nr)
- {
- 	struct btrfs_disk_key disk_key;
- 	btrfs_node_key(eb, &disk_key, nr);
- 	btrfs_disk_key_to_cpu(key, &disk_key);
- }
- 
--static inline void btrfs_item_key_to_cpu(struct extent_buffer *eb,
--				  struct btrfs_key *key, int nr)
-+static inline void btrfs_item_key_to_cpu(const struct extent_buffer *eb,
-+					 struct btrfs_key *key, int nr)
- {
- 	struct btrfs_disk_key disk_key;
- 	btrfs_item_key(eb, &disk_key, nr);
- 	btrfs_disk_key_to_cpu(key, &disk_key);
- }
- 
--static inline void btrfs_dir_item_key_to_cpu(struct extent_buffer *eb,
--				      struct btrfs_dir_item *item,
--				      struct btrfs_key *key)
-+static inline void btrfs_dir_item_key_to_cpu(const struct extent_buffer *eb,
-+					     const struct btrfs_dir_item *item,
-+					     struct btrfs_key *key)
- {
- 	struct btrfs_disk_key disk_key;
- 	btrfs_dir_item_key(eb, item, &disk_key);
-@@ -2872,7 +2875,7 @@ BTRFS_SETGET_STACK_FUNCS(stack_header_nr
- 			 nritems, 32);
- BTRFS_SETGET_STACK_FUNCS(stack_header_bytenr, struct btrfs_header, bytenr, 64);
- 
--static inline int btrfs_header_flag(struct extent_buffer *eb, u64 flag)
-+static inline int btrfs_header_flag(const struct extent_buffer *eb, u64 flag)
- {
- 	return (btrfs_header_flags(eb) & flag) == flag;
- }
-@@ -2891,7 +2894,7 @@ static inline int btrfs_clear_header_fla
- 	return (flags & flag) == flag;
- }
- 
--static inline int btrfs_header_backref_rev(struct extent_buffer *eb)
-+static inline int btrfs_header_backref_rev(const struct extent_buffer *eb)
- {
- 	u64 flags = btrfs_header_flags(eb);
- 	return flags >> BTRFS_BACKREF_REV_SHIFT;
-@@ -2911,12 +2914,12 @@ static inline unsigned long btrfs_header
- 	return offsetof(struct btrfs_header, fsid);
- }
- 
--static inline unsigned long btrfs_header_chunk_tree_uuid(struct extent_buffer *eb)
-+static inline unsigned long btrfs_header_chunk_tree_uuid(const struct extent_buffer *eb)
- {
- 	return offsetof(struct btrfs_header, chunk_tree_uuid);
- }
- 
--static inline int btrfs_is_leaf(struct extent_buffer *eb)
-+static inline int btrfs_is_leaf(const struct extent_buffer *eb)
- {
- 	return btrfs_header_level(eb) == 0;
- }
-@@ -2950,12 +2953,12 @@ BTRFS_SETGET_STACK_FUNCS(root_stransid,
- BTRFS_SETGET_STACK_FUNCS(root_rtransid, struct btrfs_root_item,
- 			 rtransid, 64);
- 
--static inline bool btrfs_root_readonly(struct btrfs_root *root)
-+static inline bool btrfs_root_readonly(const struct btrfs_root *root)
- {
- 	return (root->root_item.flags & cpu_to_le64(BTRFS_ROOT_SUBVOL_RDONLY)) != 0;
- }
- 
--static inline bool btrfs_root_dead(struct btrfs_root *root)
-+static inline bool btrfs_root_dead(const struct btrfs_root *root)
- {
- 	return (root->root_item.flags & cpu_to_le64(BTRFS_ROOT_SUBVOL_DEAD)) != 0;
- }
-@@ -3012,51 +3015,51 @@ BTRFS_SETGET_STACK_FUNCS(backup_num_devi
- /* struct btrfs_balance_item */
- BTRFS_SETGET_FUNCS(balance_flags, struct btrfs_balance_item, flags, 64);
- 
--static inline void btrfs_balance_data(struct extent_buffer *eb,
--				      struct btrfs_balance_item *bi,
-+static inline void btrfs_balance_data(const struct extent_buffer *eb,
-+				      const struct btrfs_balance_item *bi,
- 				      struct btrfs_disk_balance_args *ba)
- {
- 	read_eb_member(eb, bi, struct btrfs_balance_item, data, ba);
- }
- 
- static inline void btrfs_set_balance_data(struct extent_buffer *eb,
--					  struct btrfs_balance_item *bi,
--					  struct btrfs_disk_balance_args *ba)
-+				  struct btrfs_balance_item *bi,
-+				  const struct btrfs_disk_balance_args *ba)
- {
- 	write_eb_member(eb, bi, struct btrfs_balance_item, data, ba);
- }
- 
--static inline void btrfs_balance_meta(struct extent_buffer *eb,
--				      struct btrfs_balance_item *bi,
-+static inline void btrfs_balance_meta(const struct extent_buffer *eb,
-+				      const struct btrfs_balance_item *bi,
- 				      struct btrfs_disk_balance_args *ba)
- {
- 	read_eb_member(eb, bi, struct btrfs_balance_item, meta, ba);
- }
- 
- static inline void btrfs_set_balance_meta(struct extent_buffer *eb,
--					  struct btrfs_balance_item *bi,
--					  struct btrfs_disk_balance_args *ba)
-+				  struct btrfs_balance_item *bi,
-+				  const struct btrfs_disk_balance_args *ba)
- {
- 	write_eb_member(eb, bi, struct btrfs_balance_item, meta, ba);
- }
- 
--static inline void btrfs_balance_sys(struct extent_buffer *eb,
--				     struct btrfs_balance_item *bi,
-+static inline void btrfs_balance_sys(const struct extent_buffer *eb,
-+				     const struct btrfs_balance_item *bi,
- 				     struct btrfs_disk_balance_args *ba)
- {
- 	read_eb_member(eb, bi, struct btrfs_balance_item, sys, ba);
- }
- 
- static inline void btrfs_set_balance_sys(struct extent_buffer *eb,
--					 struct btrfs_balance_item *bi,
--					 struct btrfs_disk_balance_args *ba)
-+				 struct btrfs_balance_item *bi,
-+				 const struct btrfs_disk_balance_args *ba)
- {
- 	write_eb_member(eb, bi, struct btrfs_balance_item, sys, ba);
- }
- 
- static inline void
- btrfs_disk_balance_args_to_cpu(struct btrfs_balance_args *cpu,
--			       struct btrfs_disk_balance_args *disk)
-+			       const struct btrfs_disk_balance_args *disk)
- {
- 	memset(cpu, 0, sizeof(*cpu));
- 
-@@ -3076,7 +3079,7 @@ btrfs_disk_balance_args_to_cpu(struct bt
- 
- static inline void
- btrfs_cpu_balance_args_to_disk(struct btrfs_disk_balance_args *disk,
--			       struct btrfs_balance_args *cpu)
-+			       const struct btrfs_balance_args *cpu)
- {
- 	memset(disk, 0, sizeof(*disk));
- 
-@@ -3144,7 +3147,7 @@ BTRFS_SETGET_STACK_FUNCS(super_magic, st
- BTRFS_SETGET_STACK_FUNCS(super_uuid_tree_generation, struct btrfs_super_block,
- 			 uuid_tree_generation, 64);
- 
--static inline int btrfs_super_csum_size(struct btrfs_super_block *s)
-+static inline int btrfs_super_csum_size(const struct btrfs_super_block *s)
- {
- 	u16 t = btrfs_super_csum_type(s);
- 	/*
-@@ -3163,8 +3166,8 @@ static inline unsigned long btrfs_leaf_d
-  * this returns the address of the start of the last item,
-  * which is the stop of the leaf data stack
+ /*
++ * Customized reported for dir_item, only important new info is key->objectid,
++ * which represents inode number
++ */
++__printf(4, 5)
++static void dir_item_err(const struct btrfs_root *root,
++			 const struct extent_buffer *eb, int slot,
++			 const char *fmt, ...)
++{
++	struct btrfs_key key;
++	struct va_format vaf;
++	va_list args;
++
++	btrfs_item_key_to_cpu(eb, &key, slot);
++	va_start(args, fmt);
++
++	vaf.fmt = fmt;
++	vaf.va = &args;
++
++	btrfs_crit(root->fs_info,
++	"corrupt %s: root=%llu block=%llu slot=%d ino=%llu, %pV",
++		btrfs_header_level(eb) == 0 ? "leaf" : "node", root->objectid,
++		btrfs_header_bytenr(eb), slot, key.objectid, &vaf);
++	va_end(args);
++}
++
++static int check_dir_item(struct btrfs_root *root,
++			  struct extent_buffer *leaf,
++			  struct btrfs_key *key, int slot)
++{
++	struct btrfs_dir_item *di;
++	u32 item_size = btrfs_item_size_nr(leaf, slot);
++	u32 cur = 0;
++
++	di = btrfs_item_ptr(leaf, slot, struct btrfs_dir_item);
++	while (cur < item_size) {
++		char namebuf[max(BTRFS_NAME_LEN, XATTR_NAME_MAX)];
++		u32 name_len;
++		u32 data_len;
++		u32 max_name_len;
++		u32 total_size;
++		u32 name_hash;
++		u8 dir_type;
++
++		/* header itself should not cross item boundary */
++		if (cur + sizeof(*di) > item_size) {
++			dir_item_err(root, leaf, slot,
++		"dir item header crosses item boundary, have %lu boundary %u",
++				cur + sizeof(*di), item_size);
++			return -EUCLEAN;
++		}
++
++		/* dir type check */
++		dir_type = btrfs_dir_type(leaf, di);
++		if (dir_type >= BTRFS_FT_MAX) {
++			dir_item_err(root, leaf, slot,
++			"invalid dir item type, have %u expect [0, %u)",
++				dir_type, BTRFS_FT_MAX);
++			return -EUCLEAN;
++		}
++
++		if (key->type == BTRFS_XATTR_ITEM_KEY &&
++		    dir_type != BTRFS_FT_XATTR) {
++			dir_item_err(root, leaf, slot,
++		"invalid dir item type for XATTR key, have %u expect %u",
++				dir_type, BTRFS_FT_XATTR);
++			return -EUCLEAN;
++		}
++		if (dir_type == BTRFS_FT_XATTR &&
++		    key->type != BTRFS_XATTR_ITEM_KEY) {
++			dir_item_err(root, leaf, slot,
++			"xattr dir type found for non-XATTR key");
++			return -EUCLEAN;
++		}
++		if (dir_type == BTRFS_FT_XATTR)
++			max_name_len = XATTR_NAME_MAX;
++		else
++			max_name_len = BTRFS_NAME_LEN;
++
++		/* Name/data length check */
++		name_len = btrfs_dir_name_len(leaf, di);
++		data_len = btrfs_dir_data_len(leaf, di);
++		if (name_len > max_name_len) {
++			dir_item_err(root, leaf, slot,
++			"dir item name len too long, have %u max %u",
++				name_len, max_name_len);
++			return -EUCLEAN;
++		}
++		if (name_len + data_len > BTRFS_MAX_XATTR_SIZE(root)) {
++			dir_item_err(root, leaf, slot,
++			"dir item name and data len too long, have %u max %zu",
++				name_len + data_len,
++				BTRFS_MAX_XATTR_SIZE(root));
++			return -EUCLEAN;
++		}
++
++		if (data_len && dir_type != BTRFS_FT_XATTR) {
++			dir_item_err(root, leaf, slot,
++			"dir item with invalid data len, have %u expect 0",
++				data_len);
++			return -EUCLEAN;
++		}
++
++		total_size = sizeof(*di) + name_len + data_len;
++
++		/* header and name/data should not cross item boundary */
++		if (cur + total_size > item_size) {
++			dir_item_err(root, leaf, slot,
++		"dir item data crosses item boundary, have %u boundary %u",
++				cur + total_size, item_size);
++			return -EUCLEAN;
++		}
++
++		/*
++		 * Special check for XATTR/DIR_ITEM, as key->offset is name
++		 * hash, should match its name
++		 */
++		if (key->type == BTRFS_DIR_ITEM_KEY ||
++		    key->type == BTRFS_XATTR_ITEM_KEY) {
++			read_extent_buffer(leaf, namebuf,
++					(unsigned long)(di + 1), name_len);
++			name_hash = btrfs_name_hash(namebuf, name_len);
++			if (key->offset != name_hash) {
++				dir_item_err(root, leaf, slot,
++		"name hash mismatch with key, have 0x%016x expect 0x%016llx",
++					name_hash, key->offset);
++				return -EUCLEAN;
++			}
++		}
++		cur += total_size;
++		di = (struct btrfs_dir_item *)((void *)di + total_size);
++	}
++	return 0;
++}
++
++/*
+  * Common point to switch the item-specific validation.
   */
--static inline unsigned int leaf_data_end(struct btrfs_root *root,
--					 struct extent_buffer *leaf)
-+static inline unsigned int leaf_data_end(const struct btrfs_root *root,
-+					 const struct extent_buffer *leaf)
- {
- 	u32 nr = btrfs_header_nritems(leaf);
- 
-@@ -3189,7 +3192,7 @@ BTRFS_SETGET_STACK_FUNCS(stack_file_exte
- 			 struct btrfs_file_extent_item, compression, 8);
- 
- static inline unsigned long
--btrfs_file_extent_inline_start(struct btrfs_file_extent_item *e)
-+btrfs_file_extent_inline_start(const struct btrfs_file_extent_item *e)
- {
- 	return (unsigned long)e + BTRFS_FILE_EXTENT_INLINE_DATA_START;
- }
-@@ -3223,8 +3226,9 @@ BTRFS_SETGET_FUNCS(file_extent_other_enc
-  * size of any extent headers.  If a file is compressed on disk, this is
-  * the compressed size
-  */
--static inline u32 btrfs_file_extent_inline_item_len(struct extent_buffer *eb,
--						    struct btrfs_item *e)
-+static inline u32 btrfs_file_extent_inline_item_len(
-+						const struct extent_buffer *eb,
-+						struct btrfs_item *e)
- {
- 	return btrfs_item_size(eb, e) - BTRFS_FILE_EXTENT_INLINE_DATA_START;
- }
-@@ -3232,9 +3236,9 @@ static inline u32 btrfs_file_extent_inli
- /* this returns the number of file bytes represented by the inline item.
-  * If an item is compressed, this is the uncompressed size
-  */
--static inline u32 btrfs_file_extent_inline_len(struct extent_buffer *eb,
--					       int slot,
--					       struct btrfs_file_extent_item *fi)
-+static inline u32 btrfs_file_extent_inline_len(const struct extent_buffer *eb,
-+					int slot,
-+					const struct btrfs_file_extent_item *fi)
- {
- 	struct btrfs_map_token token;
- 
-@@ -3256,8 +3260,8 @@ static inline u32 btrfs_file_extent_inli
- 
- 
- /* btrfs_dev_stats_item */
--static inline u64 btrfs_dev_stats_value(struct extent_buffer *eb,
--					struct btrfs_dev_stats_item *ptr,
-+static inline u64 btrfs_dev_stats_value(const struct extent_buffer *eb,
-+					const struct btrfs_dev_stats_item *ptr,
- 					int index)
- {
- 	u64 val;
---- a/fs/btrfs/extent_io.c
-+++ b/fs/btrfs/extent_io.c
-@@ -5381,9 +5381,8 @@ unlock_exit:
- 	return ret;
- }
- 
--void read_extent_buffer(struct extent_buffer *eb, void *dstv,
--			unsigned long start,
--			unsigned long len)
-+void read_extent_buffer(const struct extent_buffer *eb, void *dstv,
-+			unsigned long start, unsigned long len)
- {
- 	size_t cur;
- 	size_t offset;
-@@ -5412,9 +5411,9 @@ void read_extent_buffer(struct extent_bu
+ static int check_leaf_item(struct btrfs_root *root,
+@@ -191,6 +327,11 @@ static int check_leaf_item(struct btrfs_
+ 	case BTRFS_EXTENT_CSUM_KEY:
+ 		ret = check_csum_item(root, leaf, key, slot);
+ 		break;
++	case BTRFS_DIR_ITEM_KEY:
++	case BTRFS_DIR_INDEX_KEY:
++	case BTRFS_XATTR_ITEM_KEY:
++		ret = check_dir_item(root, leaf, key, slot);
++		break;
  	}
- }
- 
--int read_extent_buffer_to_user(struct extent_buffer *eb, void __user *dstv,
--			unsigned long start,
--			unsigned long len)
-+int read_extent_buffer_to_user(const struct extent_buffer *eb,
-+			       void __user *dstv,
-+			       unsigned long start, unsigned long len)
- {
- 	size_t cur;
- 	size_t offset;
-@@ -5449,10 +5448,10 @@ int read_extent_buffer_to_user(struct ex
  	return ret;
  }
- 
--int map_private_extent_buffer(struct extent_buffer *eb, unsigned long start,
--			       unsigned long min_len, char **map,
--			       unsigned long *map_start,
--			       unsigned long *map_len)
-+int map_private_extent_buffer(const struct extent_buffer *eb,
-+			      unsigned long start, unsigned long min_len,
-+			      char **map, unsigned long *map_start,
-+			      unsigned long *map_len)
- {
- 	size_t offset = start & (PAGE_CACHE_SIZE - 1);
- 	char *kaddr;
-@@ -5487,9 +5486,8 @@ int map_private_extent_buffer(struct ext
- 	return 0;
- }
- 
--int memcmp_extent_buffer(struct extent_buffer *eb, const void *ptrv,
--			  unsigned long start,
--			  unsigned long len)
-+int memcmp_extent_buffer(const struct extent_buffer *eb, const void *ptrv,
-+			 unsigned long start, unsigned long len)
- {
- 	size_t cur;
- 	size_t offset;
---- a/fs/btrfs/extent_io.h
-+++ b/fs/btrfs/extent_io.h
-@@ -308,14 +308,13 @@ static inline void extent_buffer_get(str
- 	atomic_inc(&eb->refs);
- }
- 
--int memcmp_extent_buffer(struct extent_buffer *eb, const void *ptrv,
--			  unsigned long start,
--			  unsigned long len);
--void read_extent_buffer(struct extent_buffer *eb, void *dst,
-+int memcmp_extent_buffer(const struct extent_buffer *eb, const void *ptrv,
-+			 unsigned long start, unsigned long len);
-+void read_extent_buffer(const struct extent_buffer *eb, void *dst,
- 			unsigned long start,
- 			unsigned long len);
--int read_extent_buffer_to_user(struct extent_buffer *eb, void __user *dst,
--			       unsigned long start,
-+int read_extent_buffer_to_user(const struct extent_buffer *eb,
-+			       void __user *dst, unsigned long start,
- 			       unsigned long len);
- void write_extent_buffer(struct extent_buffer *eb, const void *src,
- 			 unsigned long start, unsigned long len);
-@@ -334,10 +333,10 @@ int set_extent_buffer_uptodate(struct ex
- int clear_extent_buffer_uptodate(struct extent_buffer *eb);
- int extent_buffer_uptodate(struct extent_buffer *eb);
- int extent_buffer_under_io(struct extent_buffer *eb);
--int map_private_extent_buffer(struct extent_buffer *eb, unsigned long offset,
--		      unsigned long min_len, char **map,
--		      unsigned long *map_start,
--		      unsigned long *map_len);
-+int map_private_extent_buffer(const struct extent_buffer *eb,
-+			      unsigned long offset, unsigned long min_len,
-+			      char **map, unsigned long *map_start,
-+			      unsigned long *map_len);
- int extent_range_clear_dirty_for_io(struct inode *inode, u64 start, u64 end);
- int extent_range_redirty_for_io(struct inode *inode, u64 start, u64 end);
- int extent_clear_unlock_delalloc(struct inode *inode, u64 start, u64 end,
---- a/fs/btrfs/struct-funcs.c
-+++ b/fs/btrfs/struct-funcs.c
-@@ -50,8 +50,8 @@ static inline void put_unaligned_le8(u8
-  */
- 
- #define DEFINE_BTRFS_SETGET_BITS(bits)					\
--u##bits btrfs_get_token_##bits(struct extent_buffer *eb, void *ptr,	\
--			       unsigned long off,			\
-+u##bits btrfs_get_token_##bits(const struct extent_buffer *eb,		\
-+			       const void *ptr, unsigned long off,	\
- 			       struct btrfs_map_token *token)		\
- {									\
- 	unsigned long part_offset = (unsigned long)ptr;			\
-@@ -90,7 +90,8 @@ u##bits btrfs_get_token_##bits(struct ex
- 	return res;							\
- }									\
- void btrfs_set_token_##bits(struct extent_buffer *eb,			\
--			    void *ptr, unsigned long off, u##bits val,	\
-+			    const void *ptr, unsigned long off,		\
-+			    u##bits val,				\
- 			    struct btrfs_map_token *token)		\
- {									\
- 	unsigned long part_offset = (unsigned long)ptr;			\
-@@ -133,7 +134,7 @@ DEFINE_BTRFS_SETGET_BITS(16)
- DEFINE_BTRFS_SETGET_BITS(32)
- DEFINE_BTRFS_SETGET_BITS(64)
- 
--void btrfs_node_key(struct extent_buffer *eb,
-+void btrfs_node_key(const struct extent_buffer *eb,
- 		    struct btrfs_disk_key *disk_key, int nr)
- {
- 	unsigned long ptr = btrfs_node_key_ptr_offset(nr);
 
 
