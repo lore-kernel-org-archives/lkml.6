@@ -2,55 +2,52 @@ Return-Path: <SRS0=RZO6=PX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C911C43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 16:45:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 04601C43444
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 16:45:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D3DAE2086D
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 16:45:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BC0B920989
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 16:45:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547570707;
-	bh=fYwLCenUyZpaEOgOOn2diogjVcZ/FbuzWmho/x/WAQ8=;
+	s=default; t=1547570714;
+	bh=rj8LO837gZat4hJDfMyuXWNw9cCRayliHEiTaVakJLI=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=2a1tIW485OBLloItcUSdLDOdbUU0QF4Y8kDNRt8I+wawcBWCu/BBFwOZG0PASIiiy
-	 5Fi7IW2cqmUIZoeUU9y0yFymIQok/FHzlTEhpE221SreYZ6n23gyQ+7pbTXqlagQmm
-	 iEw8uH+9Bh/STXFqmaBHaH3l7C/mxKPwh1NbFUp8=
+	b=dvo1GLtHe6CQMSSYUyFbboaXmMtcmyAbgceNXEDj1/zloYjE7M+BNrk8KHm4Kc9WH
+	 ENMX9Zc/0+Gs+fK5iK65jcknN1FZETBacZLqI9NLQDe8zjJ1b9uUZAiNKiT+x66lWV
+	 P78adYoCJ8HOLHYfqofx5NfhNKZUqFD2iYa0QhmI=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387703AbfAOQpF (ORCPT
+        id S2387738AbfAOQpN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 15 Jan 2019 11:45:05 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34708 "EHLO mail.kernel.org"
+        Tue, 15 Jan 2019 11:45:13 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34798 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387660AbfAOQpC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Jan 2019 11:45:02 -0500
+        id S1730958AbfAOQpH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 Jan 2019 11:45:07 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 38E6220859;
-        Tue, 15 Jan 2019 16:45:01 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5C82120675;
+        Tue, 15 Jan 2019 16:45:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547570701;
-        bh=fYwLCenUyZpaEOgOOn2diogjVcZ/FbuzWmho/x/WAQ8=;
+        s=default; t=1547570706;
+        bh=rj8LO837gZat4hJDfMyuXWNw9cCRayliHEiTaVakJLI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=uk0YIBgHQ8dxb3f+Uv0vGWD8Bm2lq1G8jUY6hnBP94Y38YOHzLcxe7frQulDtOxR+
-         Z2osYuULKo2nxOy+0Ot0G1PwhOfNj6KASrPOiVE6Aydbj2H4GlBCxG0kkEXKZKnrbW
-         qZvRWVwTyfyiuS5KboWUKGtt9HoOhpBunc4C4jHE=
+        b=T9ECPOv2l0jGhVIKCSRWXheIRdwTyzrHeH5EfFzyt+sgCZnw3WbRaAfdG7/ETXYYr
+         UhaOWOs95PKoHPhRAJPw+TmwgP2mlRP3nPZsr/V3Vu+rRbeJzIKvfvbtg7fbr1kJJz
+         IvgVCwxEVgM7N5WMt6KQc+RN5ddRQWWzAtnjDP6s=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Trent Piepho <tpiepho@impinj.com>,
-        Niklas Cassel <niklas.cassel@linaro.org>,
-        Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
-        Stanimir Varbanov <svarbanov@mm-sol.com>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-Subject: [PATCH 4.20 40/57] PCI: dwc: Move interrupt acking into the proper callback
-Date:   Tue, 15 Jan 2019 17:36:21 +0100
-Message-Id: <20190115154913.090434858@linuxfoundation.org>
+        stable@vger.kernel.org, saahriktu <mail@saahriktu.org>,
+        Ivan Mironov <mironov.ivan@gmail.com>,
+        Daniel Vetter <daniel.vetter@ffwll.ch>
+Subject: [PATCH 4.20 42/57] drm/fb-helper: Partially bring back workaround for bugs of SDL 1.2
+Date:   Tue, 15 Jan 2019 17:36:23 +0100
+Message-Id: <20190115154913.264566339@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190115154910.734892368@linuxfoundation.org>
 References: <20190115154910.734892368@linuxfoundation.org>
@@ -69,67 +66,218 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Marc Zyngier <marc.zyngier@arm.com>
+From: Ivan Mironov <mironov.ivan@gmail.com>
 
-commit 3f7bb2ec20ce07c02b2002349d256c91a463fcc5 upstream.
+commit 62d85b3bf9d978ed4b6b2aeef5cf0ccf1423906e upstream.
 
-The write to the status register is really an ACK for the HW,
-and should be treated as such by the driver. Let's move it to the
-irq_ack() callback, which will prevent people from moving it around
-in order to paper over other bugs.
+SDL 1.2 sets all fields related to the pixel format to zero in some
+cases[1]. Prior to commit db05c48197759 ("drm: fb-helper: Reject all
+pixel format changing requests"), there was an unintentional workaround
+for this that existed for more than a decade. First in device-specific DRM
+drivers, then here in drm_fb_helper.c.
 
-Fixes: 8c934095fa2f ("PCI: dwc: Clear MSI interrupt status after it is handled,
-not before")
-Fixes: 7c5925afbc58 ("PCI: dwc: Move MSI IRQs allocation to IRQ domains
-hierarchical API")
-Link: https://lore.kernel.org/linux-pci/20181113225734.8026-1-marc.zyngier@arm.com/
-Reported-by: Trent Piepho <tpiepho@impinj.com>
-Tested-by: Niklas Cassel <niklas.cassel@linaro.org>
-Tested-by: Gustavo Pimentel <gustavo.pimentel@synopsys.com>
-Tested-by: Stanimir Varbanov <svarbanov@mm-sol.com>
-Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
-[lorenzo.pieralisi@arm.com: updated commit log]
-Signed-off-by: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+Previous code containing this workaround just ignores pixel format fields
+from userspace code. Not a good thing either, as this way, driver may
+silently use pixel format different from what client actually requested,
+and this in turn will lead to displaying garbage on the screen. I think
+that returning EINVAL to userspace in this particular case is the right
+option, so I decided to left code from problematic commit untouched
+instead of just reverting it entirely.
+
+Here is the steps required to reproduce this problem exactly:
+	1) Compile fceux[2] with SDL 1.2.15 and without GTK or OpenGL
+	   support. SDL should be compiled with fbdev support (which is
+	   on by default).
+	2) Create /etc/fb.modes with following contents (values seems
+	   not used, and just required to trigger problematic code in
+	   SDL):
+
+		mode "test"
+		    geometry 1 1 1 1 1
+		    timings 1 1 1 1 1 1 1
+		endmode
+
+	3) Create ~/.fceux/fceux.cfg with following contents:
+
+		SDL.Hotkeys.Quit = 27
+		SDL.DoubleBuffering = 1
+
+	4) Ensure that screen resolution is at least 1280x960 (e.g.
+	   append "video=Virtual-1:1280x960-32" to the kernel cmdline
+	   for qemu/QXL).
+
+	5) Try to run fceux on VT with some ROM file[3]:
+
+		# ./fceux color_test.nes
+
+[1] SDL 1.2.15 source code, src/video/fbcon/SDL_fbvideo.c,
+    FB_SetVideoMode()
+[2] http://www.fceux.com
+[3] Example ROM: https://github.com/bokuweb/rustynes/blob/master/roms/color_test.nes
+
+Reported-by: saahriktu <mail@saahriktu.org>
+Suggested-by: saahriktu <mail@saahriktu.org>
 Cc: stable@vger.kernel.org
+Fixes: db05c48197759 ("drm: fb-helper: Reject all pixel format changing requests")
+Signed-off-by: Ivan Mironov <mironov.ivan@gmail.com>
+[danvet: Delete misleading comment.]
+Signed-off-by: Daniel Vetter <daniel.vetter@ffwll.ch>
+Link: https://patchwork.freedesktop.org/patch/msgid/20190108072353.28078-2-mironov.ivan@gmail.com
+Link: https://patchwork.freedesktop.org/patch/msgid/20190108072353.28078-2-mironov.ivan@gmail.com
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/pci/controller/dwc/pcie-designware-host.c |   13 +++++++------
- 1 file changed, 7 insertions(+), 6 deletions(-)
+ drivers/gpu/drm/drm_fb_helper.c |  126 +++++++++++++++++++++++-----------------
+ 1 file changed, 73 insertions(+), 53 deletions(-)
 
---- a/drivers/pci/controller/dwc/pcie-designware-host.c
-+++ b/drivers/pci/controller/dwc/pcie-designware-host.c
-@@ -99,9 +99,6 @@ irqreturn_t dw_handle_msi_irq(struct pci
- 					       (i * MAX_MSI_IRQS_PER_CTRL) +
- 					       pos);
- 			generic_handle_irq(irq);
--			dw_pcie_wr_own_conf(pp, PCIE_MSI_INTR0_STATUS +
--						(i * MSI_REG_CTRL_BLOCK_SIZE),
--					    4, 1 << pos);
- 			pos++;
- 		}
- 	}
-@@ -200,14 +197,18 @@ static void dw_pci_bottom_unmask(struct
+--- a/drivers/gpu/drm/drm_fb_helper.c
++++ b/drivers/gpu/drm/drm_fb_helper.c
+@@ -1621,6 +1621,64 @@ static bool drm_fb_pixel_format_equal(co
+ 	       var_1->transp.msb_right == var_2->transp.msb_right;
+ }
  
- static void dw_pci_bottom_ack(struct irq_data *d)
- {
--	struct msi_desc *msi = irq_data_get_msi_desc(d);
--	struct pcie_port *pp;
-+	struct pcie_port *pp  = irq_data_get_irq_chip_data(d);
-+	unsigned int res, bit, ctrl;
- 	unsigned long flags;
- 
--	pp = msi_desc_to_pci_sysdata(msi);
-+	ctrl = d->hwirq / MAX_MSI_IRQS_PER_CTRL;
-+	res = ctrl * MSI_REG_CTRL_BLOCK_SIZE;
-+	bit = d->hwirq % MAX_MSI_IRQS_PER_CTRL;
- 
- 	raw_spin_lock_irqsave(&pp->lock, flags);
- 
-+	dw_pcie_wr_own_conf(pp, PCIE_MSI_INTR0_STATUS + res, 4, 1 << bit);
++static void drm_fb_helper_fill_pixel_fmt(struct fb_var_screeninfo *var,
++					 u8 depth)
++{
++	switch (depth) {
++	case 8:
++		var->red.offset = 0;
++		var->green.offset = 0;
++		var->blue.offset = 0;
++		var->red.length = 8; /* 8bit DAC */
++		var->green.length = 8;
++		var->blue.length = 8;
++		var->transp.offset = 0;
++		var->transp.length = 0;
++		break;
++	case 15:
++		var->red.offset = 10;
++		var->green.offset = 5;
++		var->blue.offset = 0;
++		var->red.length = 5;
++		var->green.length = 5;
++		var->blue.length = 5;
++		var->transp.offset = 15;
++		var->transp.length = 1;
++		break;
++	case 16:
++		var->red.offset = 11;
++		var->green.offset = 5;
++		var->blue.offset = 0;
++		var->red.length = 5;
++		var->green.length = 6;
++		var->blue.length = 5;
++		var->transp.offset = 0;
++		break;
++	case 24:
++		var->red.offset = 16;
++		var->green.offset = 8;
++		var->blue.offset = 0;
++		var->red.length = 8;
++		var->green.length = 8;
++		var->blue.length = 8;
++		var->transp.offset = 0;
++		var->transp.length = 0;
++		break;
++	case 32:
++		var->red.offset = 16;
++		var->green.offset = 8;
++		var->blue.offset = 0;
++		var->red.length = 8;
++		var->green.length = 8;
++		var->blue.length = 8;
++		var->transp.offset = 24;
++		var->transp.length = 8;
++		break;
++	default:
++		break;
++	}
++}
 +
- 	if (pp->ops->msi_irq_ack)
- 		pp->ops->msi_irq_ack(d->hwirq, pp);
+ /**
+  * drm_fb_helper_check_var - implementation for &fb_ops.fb_check_var
+  * @var: screeninfo to check
+@@ -1651,6 +1709,20 @@ int drm_fb_helper_check_var(struct fb_va
+ 	}
  
+ 	/*
++	 * Workaround for SDL 1.2, which is known to be setting all pixel format
++	 * fields values to zero in some cases. We treat this situation as a
++	 * kind of "use some reasonable autodetected values".
++	 */
++	if (!var->red.offset     && !var->green.offset    &&
++	    !var->blue.offset    && !var->transp.offset   &&
++	    !var->red.length     && !var->green.length    &&
++	    !var->blue.length    && !var->transp.length   &&
++	    !var->red.msb_right  && !var->green.msb_right &&
++	    !var->blue.msb_right && !var->transp.msb_right) {
++		drm_fb_helper_fill_pixel_fmt(var, fb->format->depth);
++	}
++
++	/*
+ 	 * drm fbdev emulation doesn't support changing the pixel format at all,
+ 	 * so reject all pixel format changing requests.
+ 	 */
+@@ -1961,59 +2033,7 @@ void drm_fb_helper_fill_var(struct fb_in
+ 	info->var.yoffset = 0;
+ 	info->var.activate = FB_ACTIVATE_NOW;
+ 
+-	switch (fb->format->depth) {
+-	case 8:
+-		info->var.red.offset = 0;
+-		info->var.green.offset = 0;
+-		info->var.blue.offset = 0;
+-		info->var.red.length = 8; /* 8bit DAC */
+-		info->var.green.length = 8;
+-		info->var.blue.length = 8;
+-		info->var.transp.offset = 0;
+-		info->var.transp.length = 0;
+-		break;
+-	case 15:
+-		info->var.red.offset = 10;
+-		info->var.green.offset = 5;
+-		info->var.blue.offset = 0;
+-		info->var.red.length = 5;
+-		info->var.green.length = 5;
+-		info->var.blue.length = 5;
+-		info->var.transp.offset = 15;
+-		info->var.transp.length = 1;
+-		break;
+-	case 16:
+-		info->var.red.offset = 11;
+-		info->var.green.offset = 5;
+-		info->var.blue.offset = 0;
+-		info->var.red.length = 5;
+-		info->var.green.length = 6;
+-		info->var.blue.length = 5;
+-		info->var.transp.offset = 0;
+-		break;
+-	case 24:
+-		info->var.red.offset = 16;
+-		info->var.green.offset = 8;
+-		info->var.blue.offset = 0;
+-		info->var.red.length = 8;
+-		info->var.green.length = 8;
+-		info->var.blue.length = 8;
+-		info->var.transp.offset = 0;
+-		info->var.transp.length = 0;
+-		break;
+-	case 32:
+-		info->var.red.offset = 16;
+-		info->var.green.offset = 8;
+-		info->var.blue.offset = 0;
+-		info->var.red.length = 8;
+-		info->var.green.length = 8;
+-		info->var.blue.length = 8;
+-		info->var.transp.offset = 24;
+-		info->var.transp.length = 8;
+-		break;
+-	default:
+-		break;
+-	}
++	drm_fb_helper_fill_pixel_fmt(&info->var, fb->format->depth);
+ 
+ 	info->var.xres = fb_width;
+ 	info->var.yres = fb_height;
 
 
