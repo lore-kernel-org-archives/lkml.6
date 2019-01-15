@@ -7,46 +7,46 @@ X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A1336C43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 16:39:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A93FC43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 16:39:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6160D20675
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 16:39:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E32F920859
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 16:39:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547570369;
-	bh=Va5tB+lYJhVwaPRzxs864kB88MHq+MHSgMNlEFJmo6Q=;
+	s=default; t=1547570373;
+	bh=sCXDiBO19Cef8htAnAM9I2796qaLC3B87m2G038gy2g=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=kb0hjWEROKplrVnK2wNdXJvLVs0zKjl5dV9/zatjYHB/d9Fq0LZBVinRGH/QpnkP8
-	 j5pTbVVE7NPt79QqXxmc+9sl4Ics84gcPcoTKpDjQWQm/v3mhMuletA9V1w/8DM1N1
-	 9wtEaOKJ1Mx86sKOMiKdLbzwdVeK9sM0XO55BVco=
+	b=qGXktcbvmYeOrHlaoKUQKAlW9LItFvp5bxoD/wJDMe6BLr8bw/8uBFepea5yszHrR
+	 q7psp+0lV+5h+Wq26nO+2ARnD1BVO0fP6J6RJnasqC4OlZVYUXdFwYzbcZRqTAGPn1
+	 6dr1t7KbPHBSuNP+46Mr4d8ucH+QBNaZZO42iPr4=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732357AbfAOQj2 (ORCPT
+        id S1732369AbfAOQjc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 15 Jan 2019 11:39:28 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55542 "EHLO mail.kernel.org"
+        Tue, 15 Jan 2019 11:39:32 -0500
+Received: from mail.kernel.org ([198.145.29.99]:55570 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729401AbfAOQjX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Jan 2019 11:39:23 -0500
+        id S1732346AbfAOQj0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 Jan 2019 11:39:26 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5E48520675;
-        Tue, 15 Jan 2019 16:39:22 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id EC0A82054F;
+        Tue, 15 Jan 2019 16:39:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547570362;
-        bh=Va5tB+lYJhVwaPRzxs864kB88MHq+MHSgMNlEFJmo6Q=;
+        s=default; t=1547570365;
+        bh=sCXDiBO19Cef8htAnAM9I2796qaLC3B87m2G038gy2g=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=S9nh0CyIcg1m4TNx/T1NEHR+3FFCmGdZYsAsYhkrcuzJZ+PbJ/axzK5vfQCK8lzhH
-         rb+KicOqzrvcPeidt7T3Cai0TefgZCOlGPsf4mgjIJRalE/hlsHV/7NR/s3JA44GDS
-         zGEwSxt2TL6KoM5VAd1XHiNilkYw4mKm3M8VW7YQ=
+        b=IvVIYYMTWp2lPfGMcg+AUdgfsLGA5zA3W08KFlqHLOPGLL4FH72VddFJ0ZxHBWMYP
+         RpDKW4KCPEIVzh6TerrB2m1xFJ/rvZzgAo+4vbUnCKlsnuezjAj0LR2FFzOu6q3vXj
+         pCtIRM0+EJwYyTyIpNyxaCk50Naer2R/20sVymv8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Theodore Tso <tytso@mit.edu>,
         stable@kernel.org
-Subject: [PATCH 4.9 13/16] ext4: make sure enough credits are reserved for dioread_nolock writes
-Date:   Tue, 15 Jan 2019 17:35:56 +0100
-Message-Id: <20190115154849.737293057@linuxfoundation.org>
+Subject: [PATCH 4.9 14/16] ext4: fix a potential fiemap/page fault deadlock w/ inline_data
+Date:   Tue, 15 Jan 2019 17:35:57 +0100
+Message-Id: <20190115154849.886322430@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190115154848.164648613@linuxfoundation.org>
 References: <20190115154848.164648613@linuxfoundation.org>
@@ -67,42 +67,44 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Theodore Ts'o <tytso@mit.edu>
 
-commit 812c0cab2c0dfad977605dbadf9148490ca5d93f upstream.
+commit 2b08b1f12cd664dc7d5c84ead9ff25ae97ad5491 upstream.
 
-There are enough credits reserved for most dioread_nolock writes;
-however, if the extent tree is sufficiently deep, and/or quota is
-enabled, the code was not allowing for all eventualities when
-reserving journal credits for the unwritten extent conversion.
+The ext4_inline_data_fiemap() function calls fiemap_fill_next_extent()
+while still holding the xattr semaphore.  This is not necessary and it
+triggers a circular lockdep warning.  This is because
+fiemap_fill_next_extent() could trigger a page fault when it writes
+into page which triggers a page fault.  If that page is mmaped from
+the inline file in question, this could very well result in a
+deadlock.
 
-This problem can be seen using xfstests ext4/034:
-
-   WARNING: CPU: 1 PID: 257 at fs/ext4/ext4_jbd2.c:271 __ext4_handle_dirty_metadata+0x10c/0x180
-   Workqueue: ext4-rsv-conversion ext4_end_io_rsv_work
-   RIP: 0010:__ext4_handle_dirty_metadata+0x10c/0x180
-   	...
-   EXT4-fs: ext4_free_blocks:4938: aborting transaction: error 28 in __ext4_handle_dirty_metadata
-   EXT4: jbd2_journal_dirty_metadata failed: handle type 11 started at line 4921, credits 4/0, errcode -28
-   EXT4-fs error (device dm-1) in ext4_free_blocks:4950: error 28
+This problem can be reproduced using generic/519 with a file system
+configuration which has the inline_data feature enabled.
 
 Signed-off-by: Theodore Ts'o <tytso@mit.edu>
 Cc: stable@kernel.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/ext4/inode.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ fs/ext4/inline.c |    6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
---- a/fs/ext4/inode.c
-+++ b/fs/ext4/inode.c
-@@ -2698,7 +2698,8 @@ static int ext4_writepages(struct addres
- 		 * We may need to convert up to one extent per block in
- 		 * the page and we may dirty the inode.
- 		 */
--		rsv_blocks = 1 + (PAGE_SIZE >> inode->i_blkbits);
-+		rsv_blocks = 1 + ext4_chunk_trans_blocks(inode,
-+						PAGE_SIZE >> inode->i_blkbits);
- 	}
+--- a/fs/ext4/inline.c
++++ b/fs/ext4/inline.c
+@@ -1859,12 +1859,12 @@ int ext4_inline_data_fiemap(struct inode
+ 	physical += (char *)ext4_raw_inode(&iloc) - iloc.bh->b_data;
+ 	physical += offsetof(struct ext4_inode, i_block);
  
- 	/*
+-	if (physical)
+-		error = fiemap_fill_next_extent(fieinfo, start, physical,
+-						inline_len, flags);
+ 	brelse(iloc.bh);
+ out:
+ 	up_read(&EXT4_I(inode)->xattr_sem);
++	if (physical)
++		error = fiemap_fill_next_extent(fieinfo, start, physical,
++						inline_len, flags);
+ 	return (error < 0 ? error : 0);
+ }
+ 
 
 
