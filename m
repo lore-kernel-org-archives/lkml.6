@@ -2,193 +2,297 @@ Return-Path: <SRS0=RZO6=PX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+X-Spam-Status: No, score=-12.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D624DC43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 12:37:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F906C43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 12:38:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 92E2420657
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 12:37:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EF1C22085A
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 12:38:34 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=analog.onmicrosoft.com header.i=@analog.onmicrosoft.com header.b="M3rbcbQj"
+	dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="TNSblKHA"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728822AbfAOMhC (ORCPT
+        id S1729067AbfAOMid (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 15 Jan 2019 07:37:02 -0500
-Received: from mail-eopbgr700041.outbound.protection.outlook.com ([40.107.70.41]:14848
-        "EHLO NAM04-SN1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727703AbfAOMhB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Jan 2019 07:37:01 -0500
+        Tue, 15 Jan 2019 07:38:33 -0500
+Received: from mail-io1-f67.google.com ([209.85.166.67]:40995 "EHLO
+        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726123AbfAOMic (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 Jan 2019 07:38:32 -0500
+Received: by mail-io1-f67.google.com with SMTP id s22so1891463ioc.8
+        for <linux-kernel@vger.kernel.org>; Tue, 15 Jan 2019 04:38:31 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=analog.onmicrosoft.com; s=selector1-analog-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=HaLW6Imh2GfryteF+Rh6351HpC42pu6ILM4iX6lbn8I=;
- b=M3rbcbQjKHmHAZJGpQi4EXtSoKE0hIWr/b62HWKfC9QnMFFJW/YzrhYbSnXVSSkI8H2Zjw/B+j/YkNpq0UHGTUQirUzGr8Zm3kVX3z5b4YV0F+KnnKromMi1Df55oKWHJHWSJxfC2nPEI6CvhmKekHNKEb+V14L2tIpNXwmv8Us=
-Received: from DM5PR03CA0030.namprd03.prod.outlook.com (2603:10b6:4:3b::19) by
- BYAPR03MB3493.namprd03.prod.outlook.com (2603:10b6:a02:a9::30) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1516.14; Tue, 15 Jan 2019 12:34:17 +0000
-Received: from SN1NAM02FT062.eop-nam02.prod.protection.outlook.com
- (2a01:111:f400:7e44::203) by DM5PR03CA0030.outlook.office365.com
- (2603:10b6:4:3b::19) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.20.1516.14 via Frontend
- Transport; Tue, 15 Jan 2019 12:34:16 +0000
-Authentication-Results: spf=pass (sender IP is 137.71.25.55)
- smtp.mailfrom=analog.com; gmx.de; dkim=none (message not signed)
- header.d=none;gmx.de; dmarc=bestguesspass action=none header.from=analog.com;
-Received-SPF: Pass (protection.outlook.com: domain of analog.com designates
- 137.71.25.55 as permitted sender) receiver=protection.outlook.com;
- client-ip=137.71.25.55; helo=nwd2mta1.analog.com;
-Received: from nwd2mta1.analog.com (137.71.25.55) by
- SN1NAM02FT062.mail.protection.outlook.com (10.152.72.208) with Microsoft SMTP
- Server (version=TLS1_0, cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.20.1471.13
- via Frontend Transport; Tue, 15 Jan 2019 12:34:16 +0000
-Received: from NWD2HUBCAS7.ad.analog.com (nwd2hubcas7.ad.analog.com [10.64.69.107])
-        by nwd2mta1.analog.com (8.13.8/8.13.8) with ESMTP id x0FCYFYh007929
-        (version=TLSv1/SSLv3 cipher=AES256-SHA bits=256 verify=OK);
-        Tue, 15 Jan 2019 04:34:15 -0800
-Received: from linux.ad.analog.com (10.32.224.122) by
- NWD2HUBCAS7.ad.analog.com (10.64.69.107) with Microsoft SMTP Server id
- 14.3.408.0; Tue, 15 Jan 2019 07:34:15 -0500
-From:   Stefan Popa <stefan.popa@analog.com>
-To:     <jic23@kernel.org>, <robh+dt@kernel.org>
-CC:     <mark.rutland@arm.com>, <knaack.h@gmx.de>, <lars@metafoo.de>,
-        <pmeerw@pmeerw.net>, <Michael.Hennerich@analog.com>,
-        <gregkh@linuxfoundation.org>, <linux-iio@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <stefan.popa@analog.com>
-Subject: [PATCH v2 2/2] dt-bindings: iio: adc: Add docs for AD7768-1
-Date:   Tue, 15 Jan 2019 14:34:03 +0200
-Message-ID: <1547555643-2248-1-git-send-email-stefan.popa@analog.com>
-X-Mailer: git-send-email 2.7.4
+        d=ffwll.ch; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=DxqrcBm1pwzvgSQmgRO9nkuYdxGnJGRsgTxwvckVwh8=;
+        b=TNSblKHA9bqZDIOGXti/oi4ZyrXAbYMW9va9eNpO2xCW2okQWboUVZE34VSw/tVjHB
+         HfIjj5fIcBEDn9J5GlL+SgYECxUJz25RcbqOQAIu/EgZVkNqf1l9ZwzcT/48FmNBl7+y
+         JcaL3XpO4lLxKCA4BGA8h7+ajZEWAmCx7lQAI=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=DxqrcBm1pwzvgSQmgRO9nkuYdxGnJGRsgTxwvckVwh8=;
+        b=un8nG3EF1FyF7vJn1GKx6BrX2T77NVOIOWkyG9Q87HgB08Ra6hXHcY1DGzotVcZpSy
+         cBz84KKW3oM6Vn/brGuxRG6X13muOS/aA5gI+PvhAY5NEp0GkcwpEFkjyN3iEmjJa34o
+         1I/9GzqUTmeCQ9dquAYQZM5eQok+hycd7DCVXt1uQK3uYetnS7f0ye1LuClDZERmw4+w
+         xA9oZ9ziGFEgmgexnVyUaRtmjizYXSiuROhCQkpmsghNqpqyD7cyUhSAtjLS8VpL9d+1
+         kuJ1vTYDFfvWEnD5sZG3Pe4+D/a0J1aREjZHzy4AkWxWiNzy+CDa1CZiqtZoBgzg1aL0
+         NfsQ==
+X-Gm-Message-State: AJcUukcZcB9QjFaUAmbePi3/fYgXkwSRW6cZP7x1ihO9RsmnHQbj66IQ
+        Gd5rOkYV7NxkuCJVvCI58KEGol1TI4ocV7smh8ZB5w==
+X-Google-Smtp-Source: ALg8bN5m/nkJSCIDvLJdmGlfCNlWx/R5ZNlPpXzJ29iYnwE0ARlPxUoTEyqB86aP5jLPcgeS7txvJ2ifjkh0w/Bhu8k=
+X-Received: by 2002:a5d:959a:: with SMTP id a26mr1843825ioo.278.1547555911171;
+ Tue, 15 Jan 2019 04:38:31 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-ADIRoutedOnPrem: True
-X-EOPAttributedMessage: 0
-X-MS-Office365-Filtering-HT: Tenant
-X-Forefront-Antispam-Report: CIP:137.71.25.55;IPV:NLI;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(376002)(136003)(346002)(39860400002)(396003)(2980300002)(199004)(189003)(77096007)(26005)(110136005)(186003)(486006)(44832011)(6306002)(305945005)(7636002)(7696005)(47776003)(54906003)(51416003)(7416002)(36756003)(316002)(16586007)(106002)(5660300001)(106466001)(2906002)(966005)(356004)(6666004)(72206003)(2616005)(476003)(126002)(426003)(48376002)(336012)(50466002)(8936002)(50226002)(8676002)(246002)(478600001)(4326008)(107886003);DIR:OUT;SFP:1101;SCL:1;SRVR:BYAPR03MB3493;H:nwd2mta1.analog.com;FPR:;SPF:Pass;LANG:en;PTR:nwd2mail10.analog.com;A:1;MX:1;
-X-Microsoft-Exchange-Diagnostics: 1;SN1NAM02FT062;1:HIVJsYwsK5TomRv6MCjtZHWyQHp3Uaw0WZ0grbpUk4GMdbhidYYA+dltAa0TqCgLzPLaPWZr5fc5Xqlj2hSYmXHuRtUDmLxjezGrglgf8rZV7rdu92aNwgDzVfRrawBn
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 4f882752-d8ee-4f2a-5c1c-08d67ae5c3aa
-X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600109)(711020)(4608076)(4709027)(2017052603328)(7153060);SRVR:BYAPR03MB3493;
-X-Microsoft-Exchange-Diagnostics: 1;BYAPR03MB3493;3:iw9juaUWAwmGviSGu9iYJ7jBRQZpo91We3x8ua/WhqqBZu2IUm0zZ09n+cxZfeu8nX4nF+gCaGxuJSslV82ZFtVr9NNbJfXPzle9tSughKsE8Ih432dQ0gWqhyssM+IBk7w7t/8ZjpVZ5ATLki2n/lzyEum9xgny9JQBQmV1R/PAFhJd3ZcrwrcRjLU5JG90/DGf577h4v9uF8oY3kJ9vizR+qx2TCOVxT3BitRSH/RRjmrTe0pluiOO1qtxCxoyB2VLCDfXCnU2FdDgUkz7kHeReE2Xsj7jcGTQOvPo68SI0iP/1JwpxXNb4/Dw3u+rMlKbIfmKhEmlx3CxuYhKARwKArYxn0W+Emx1DN/MiB/fQYcbENqHr8FrHeAMAEvy;25:OPyr8M1ZsUN3H3FsR/hKZ4Z3/eCw0Oa4HUJkxQf7Ek3xg1bkM+JOdndN9SxhF7g4gCwErXoAknhI5F6F0YYS64umn90k47Cj33ixeu+ODilo/tKTEGDhCKz/i95fPW7VpovRJfRJwoAKzqBNu2wXW9Ewl4fO/riMzXDHSV9C3UnYNKfLDxX+JlGqn/YN4e1TLqnsRDwSk6h2ve8lJwdsflUVCX1C/VYP/jTFmehS1ajc1g2JfYI9S+xC20OyEL3s16vhwVHTWmEaiMOur3TWFZBfMbFvZnzDukwBVsf41u0kN5TnU+2LrziCgd7HPw7m1qAQ/mxd8Jy+3i9YS+skWQ==
-X-MS-TrafficTypeDiagnostic: BYAPR03MB3493:
-X-Microsoft-Exchange-Diagnostics: 1;BYAPR03MB3493;31:2sEvI20GIzvzCuLe2DpbZkP7Qv5SnIZyjPxMrC6wPEWlDFJe/SuC/YCnm0y2iS6TR1YVxwJPe5a6NB08raWcwYtG7H9bcJsvSQPVOtlsJqeqpj/lUrfmndGUzdpfjD7s3OE1iG7TL0Bm64Xraeo4Ji8XFSZ9ZPKKPAtusYEmXACNebkHj5X+oqnKW8FO4nNWo0tmz4arBwjkI9gTzRn52M1M+ZaDPDXZWuLefdYc/Pg=;20:yVSefg+XmTraeZWlPG5S0jl4pdpbjMHw7nBhEqe7RBbm2wOzvG1nnIcsHXJMODh5EvMxedeyV7JX5+YIZll/Y8mGRoSVXEzTMAXB5R9pepzZcZsZWVQbKlNgs7XbyQ56wmz1Dn88se1+ePiQMwblHDCaYLMGWQMB4NajrU61mKlt71H3LyooiM6wpacteE6tav6ThiT+GMGuYrriSy4omoTqhHWvhMeox1VXlUxerOh6Ia1C4ChUq85RZOgYp4HJ2Vl7nWe1tOn9hUGyEUX0PX7H9Y2CwjQqOq1QshOHfG2Lyv0wVaCR1GZ65GskRiPO4V3QgkDBJGdUCOjj03Xu5ByoVCwvuaH3Ep+XVIAMFEIoPFUFZqrv7OIpjgvwIMiL2oI74Kj2fQ4PY2+m8BAjXL4/n2t0WLaE/1PnYuXdlNFa/4CMtvmPeUpJ04o1aJGnNhYDkDC4/IdtuIc11np7owCl1nYxxV4BiD055yMqDki/+U//+P7rhkkGRqNv0Dnj
-X-Microsoft-Antispam-PRVS: <BYAPR03MB3493D036959E62CEFAF39CE49D810@BYAPR03MB3493.namprd03.prod.outlook.com>
-X-Microsoft-Exchange-Diagnostics: 1;BYAPR03MB3493;4:r9EVOO4HdD3BR2G15ilc1r5QB9YkStUEg12pE1piMeTCRogkJFPgzcoUxqIOy1cVmS56SnWWA1Tb2FK69jzZ1gzPEKLwM2Zmeg3hngAZVatljxIkkCqx1yv4Xd5ISm3FAn+z7VcOfcajblXjIFVqs7rhbzCcoZjkGFcVaq6RurZPY67CCB6ZLTP7CKyVNMB34WmD98iCFz/BNPkn8rtvanaqeWfLja+PW+XmvdkizvnjA6MerAkV6xsCBAHw0KrPUG2794xYo7Bh5vDyBo09XtGWm0PYZCcxXuCmFf/T1ysi6+Z9CfKTl7vkQWW8A0Qn
-X-Forefront-PRVS: 0918748D70
-X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;BYAPR03MB3493;23:UoAn8ldFXu7v1lsz7OjZcl25YJG9KBE4FcQEW6dM1?=
- =?us-ascii?Q?FJFmREPsNe9TwbS07eQM7jcOyazSLQnUQoetMc6hu0/mYPKnvKOVu8BzpJKt?=
- =?us-ascii?Q?5tGBLy7T8V9J2LzwkH1NOERX7ZeJflG9J+GfW2v4Quzg5nVZToTgnNY2+4D9?=
- =?us-ascii?Q?XgeURsTjHjweh/fwGP010oaUxsTp5RQiLRZWMr+i4CNj2y7UsyVM7mrgbqBj?=
- =?us-ascii?Q?7rI0JL2pibk+9rSoJNxpihqnTzBSw5/Wuj5ai6zXKrKbcjetmroyijUNuxon?=
- =?us-ascii?Q?XZ/+opDLNxdbNjehMJbDE9KkLF5Y28gZewzzkMv0llA62IIIuM0OsfHVd6UI?=
- =?us-ascii?Q?taEf/l1/tcc0ZV9L18ulBPYB9nqdpVM/25tFs4rVZdxTSyaX1pzDR/PiXlGW?=
- =?us-ascii?Q?5HH4CEWNCVxBzu7wa14eTs/0Vz0jgmNvaOSiNLFAH1kgj/XD/lrM6dMFVB75?=
- =?us-ascii?Q?fp+CeIJkOoI44gHzMZJOwaxVJLjqNX5wzjPxeuyfkx2T+XqkH31kRjp24sTM?=
- =?us-ascii?Q?wvi6dqFQGdJHiAq/1yFnINkP7zX+L7bxb1UEoNMYR+h7HRk4jJWnmMio0IUj?=
- =?us-ascii?Q?X88OBZZ/Dq5zrONw/INx3Jhz4Uh0TxatYzvuKI2s2+jnHzP0qYYTztJMxpXw?=
- =?us-ascii?Q?50WbxCskbYz0PzzRs4Kr9HsQWwbMxHPVkFa5Oy3y2iZALYCE/vThPEDL6phe?=
- =?us-ascii?Q?a9U9gII8slrZIRCeKqV1PKSn5fl923yk8TuF7dJwIfA27sM5byT2re/Srkpl?=
- =?us-ascii?Q?igqwyTNO3qS6mPQNSkmT1NsnWOqpMI/cKCbPnmdtspwBviRMESn97NvtcTPe?=
- =?us-ascii?Q?kqVGvvWX+3Y59S3vSS0OgcoueCCUl9JXp9iAv6I3bDr+BndvC4XNSTjvmTjX?=
- =?us-ascii?Q?rmN/X6hBEIqEpkqBmi0dYxKKbXN7a0KjyPPclN/TfB8UH4czlpyrSiQBnm39?=
- =?us-ascii?Q?fgheXuzRciGDnMrRMKwKCaLPR7y1MmdscyEqmqoUV5aTPMR4Pu4f4cJrejhy?=
- =?us-ascii?Q?S2WjIc7B/abCoJtihjXvfv3wbzz9X0ZN9Nd0q3MqB3p2Q=3D=3D?=
-X-MS-Exchange-SenderADCheck: 1
-X-Microsoft-Antispam-Message-Info: bmKnb8WNOuprIjwhIItJeOeGmVOTMUKYYl/fCJDY8u7UfIZvYabVFi9xtK8Ln+bvaftRu7VjU+pMFuGrHvHo6TNz7E4wwxWw1WadkTmoqJ4/u027TeMuB8Cocywrbw1qlZxtnXIymV2nWzSCKnO8HgJ8rmYPB8ePmt9fOkMdv1vj8wDvFlvHac1+g9yRVKzOt4ALQXMpf+D8ljn1kvKpRFJcezGFiNi5gHVdAI1bsSYM9tvV4DszsCM1TEU9OsxwjaY7Bo3pI0Z/+Nc6w+s0d4gqQ5wZxpC3iM4TItPw4ynRXSN9UVlYZ50aVMGM3ONrPMeMFxkzEK9uNokFATOoRGV8yqooiAL+hUahpp9NQCBHgfhVyR0re9rn73oj9zRp/bTosqsE/nxi4O9u5E7YpKKyepJ8PQIVWhLuTs9LTfI=
-X-Microsoft-Exchange-Diagnostics: 1;BYAPR03MB3493;6:u2usjnA1R9kRJthObBc3gBqsRNfekQae66jGiRBx5US/L+7AelAwO8Iur44ZhD/sow4dAJna9DM19nCAIQOwDoYYXgYDDTeOuEluGefSf4yT05usyXnB2IojpWJt2YtK5MTGluoJmkm0SfgBvV+4hCpgIQahad4eWqmRcGhbx4F/VfLjSfMttgKzgFaxHUf864xEIPx3Kv67EshJgrTUOFm7DeZCj3+J0iuXSpFTZlXM2/Y+LjWvyUrF3umSVFhu19BTJPXCcVekpTzkv+PP7ehpEdXtunZ1iFbPUIf2P7rAQIQT60Z5jq2aDSF1d8f7hH2hrZzjsRkkdy6JdaNTZ1HgiMLkRjbsVZ5PNMDFwBhgDP1N0x6ufAXPA/f61sYJsglWxLw4FuWY7h/ijxD5zsYOlMgW1/Ah+ixMvglPl7racx+aT5G4e6g0dfJwq0K7v98OzALhbP04+YIbKjkkDw==;5:mN+6bZcTb9veOzCp1M6xjkBUp+8ZSJgfzPHcgDKiRoUTBUeknmcQohroFZH14AqoM5LB+gcc1Vn7k2+xX5CvDGeDCFtrV6Pi/7qRVAyLEnwPLsuIflpEw2vnN3Nd/t2rBsQ6QX4QRJAxxrRPzMYECJQ5mDaSbnfxIOxUxvK2SnWKbidBBUNEBivSexaUNAaisDJx+EFC6j5kZmHUHFv7Dg==;7:9wOAFMitS7gJ3eDqgbw27ZlZ+cDuc/QJouL8FyMcrM/+MZ89y40CQ3tOtfN4rR5IqXkuu+tfW40arHCN6fm8McRYYmNlnYB+X0dcj06c1JDhTFtddwV3x48PnlGrPYRfBt96xxfqg/DvopwFOqVPbw==
-SpamDiagnosticOutput: 1:99
-SpamDiagnosticMetadata: NSPM
-X-OriginatorOrg: analog.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Jan 2019 12:34:16.3324
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 4f882752-d8ee-4f2a-5c1c-08d67ae5c3aa
-X-MS-Exchange-CrossTenant-Id: eaa689b4-8f87-40e0-9c6f-7228de4d754a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=eaa689b4-8f87-40e0-9c6f-7228de4d754a;Ip=[137.71.25.55];Helo=[nwd2mta1.analog.com]
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR03MB3493
+References: <1547479696-14376-1-git-send-email-ayan.halder@arm.com>
+ <20190115120547.GL10517@phenom.ffwll.local> <20190115122418.GS20661@e110455-lin.cambridge.arm.com>
+In-Reply-To: <20190115122418.GS20661@e110455-lin.cambridge.arm.com>
+From:   Daniel Vetter <daniel@ffwll.ch>
+Date:   Tue, 15 Jan 2019 13:38:19 +0100
+Message-ID: <CAKMK7uHW=PafGQdcT7HykwSRMtVJ_zufdgBk2O6pVxSxk9CCyg@mail.gmail.com>
+Subject: Re: [PATCH] [RFC] drm_hwcomposer: Add support for Arm Framebuffer
+ Compression (AFBC) modifiers.
+To:     Liviu Dudau <Liviu.Dudau@arm.com>
+Cc:     Ayan Halder <Ayan.Halder@arm.com>,
+        Brian Starkey <Brian.Starkey@arm.com>,
+        "john.stultz@linaro.org" <john.stultz@linaro.org>,
+        "seanpaul@google.com" <seanpaul@google.com>,
+        "malidp@foss.arm.com" <malidp@foss.arm.com>,
+        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        nd <nd@arm.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Document support for AD7768-1 Analog to Digital Converter.
+On Tue, Jan 15, 2019 at 1:24 PM Liviu Dudau <Liviu.Dudau@arm.com> wrote:
+>
+> On Tue, Jan 15, 2019 at 01:05:47PM +0100, Daniel Vetter wrote:
+> > On Mon, Jan 14, 2019 at 03:28:27PM +0000, Ayan Halder wrote:
+> > > One needs to translate the Gralloc buffer flags for AFBC (eg
+> > > MALI_GRALLOC_INTFMT_AFBC_BASIC) to the corresponding linux kernel drm=
+ modifiers.
+> > > This gets passed to libdrm via drmModeAddFB2WithModifiers.
+> > >
+> > > Signed-off-by: Ayan Kumar Halder <ayan.halder@arm.com>
+> > >
+> > > /-- Note for reviewer
+> > > I was able to get this working for Android P on Juno with Mali DP650 =
+and Mali
+> > > T860 gpu(with some additional hacks). I have not yet validated this h=
+ikey960.
+> > >
+> > > I have used the following components:-
+> > > 1. Gralloc (from https://android.googlesource.com/device/linaro/hikey=
+/+/master/gralloc960)
+> > >   - Built with MALI_MMSS=3D1
+> > > 2. Libdrm (from git://anongit.freedesktop.org/mesa/drm)
+> > >   - You would need drm_fourcc.h and gralloc_handle.h
+> > > --/
+> >
+> > I thought drm_hwcomposer has switched over to gitlab merge requests?
+> > README at least says so:
+> >
+> > https://gitlab.freedesktop.org/drm-hwcomposer/drm-hwcomposer
+>
+> So are we to send pull requests for RFCs as well?
 
-Signed-off-by: Stefan Popa <stefan.popa@analog.com>
----
-Changes in v2:
-	- Added information regarding the simultaneous sampling of the SYNC-IN pin
-	- Added the reset-gpios in the binding.
+Hm, not sure you should stuff RFC material into your linux-next
+branches. I thought that's only for patches which by all intents are
+ready for the next merge window, i.e. reviewed&tested and all that.
+Not for in-flight stuff still under discussion.
+-Daniel
 
- .../devicetree/bindings/iio/adc/adi,ad7768-1.txt   | 41 ++++++++++++++++++++++
- MAINTAINERS                                        |  1 +
- 2 files changed, 42 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/iio/adc/adi,ad7768-1.txt
 
-diff --git a/Documentation/devicetree/bindings/iio/adc/adi,ad7768-1.txt b/Documentation/devicetree/bindings/iio/adc/adi,ad7768-1.txt
-new file mode 100644
-index 0000000..9f5b88c
---- /dev/null
-+++ b/Documentation/devicetree/bindings/iio/adc/adi,ad7768-1.txt
-@@ -0,0 +1,41 @@
-+Analog Devices AD7768-1 ADC device driver
-+
-+Required properties for the AD7768-1:
-+
-+- compatible: Must be "adi,ad7768-1"
-+- reg: SPI chip select number for the device
-+- spi-max-frequency: Max SPI frequency to use
-+	see: Documentation/devicetree/bindings/spi/spi-bus.txt
-+- clocks: phandle to the master clock (mclk)
-+	see: Documentation/devicetree/bindings/clock/clock-bindings.txt
-+- clock-names: Must be "mclk".
-+- interrupts: IRQ line for the ADC
-+	see: Documentation/devicetree/bindings/interrupt-controller/interrupts.txt
-+- vref-supply: vref supply can be used as reference for conversion
-+- adi,sync-in-gpios: must be the device tree identifier of the SYNC-IN pin. Enables
-+	synchronization of multiple devices that require simultaneous sampling.
-+	A pulse is always required if the configuration is changed in any way, for example
-+	if the filter decimation rate changes. As the line is active low, it should
-+	be marked GPIO_ACTIVE_LOW.
-+
-+Optional properties:
-+
-+ - reset-gpios : GPIO spec for the RESET pin. If specified, it will be asserted during
-+	driver probe. As the line is active low, it should be marked GPIO_ACTIVE_LOW.
-+
-+Example:
-+
-+	adc@0 {
-+		compatible = "adi,ad7768-1";
-+		reg = <0>;
-+		spi-max-frequency = <2000000>;
-+		spi-cpol;
-+		spi-cpha;
-+		vref-supply = <&adc_vref>;
-+		interrupts = <25 IRQ_TYPE_EDGE_RISING>;
-+		interrupt-parent = <&gpio>;
-+		adi,sync-in-gpios = <&gpio 22 GPIO_ACTIVE_LOW>;
-+		reset-gpios = <&gpio 27 GPIO_ACTIVE_LOW>;
-+		clocks = <&ad7768_mclk>;
-+		clock-names = "mclk";
-+	};
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 3ba3811..e5613b6 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -868,6 +868,7 @@ L:	linux-iio@vger.kernel.org
- W:	http://ez.analog.com/community/linux-device-drivers
- S:	Supported
- F:	drivers/iio/adc/ad7768-1.c
-+F:	Documentation/devicetree/bindings/iio/adc/adi,ad7768-1.txt
- 
- ANALOG DEVICES INC AD9389B DRIVER
- M:	Hans Verkuil <hans.verkuil@cisco.com>
--- 
-2.7.4
+> Best regards,
+> Liviu
+>
+> >
+> > Cheers, Daniel
+> >
+> > > ---
+> > >  platformdrmgeneric.cpp | 42 ++++++++++++++++++++++++++++++++++++++++=
+++
+> > >  platformdrmgeneric.h   |  2 ++
+> > >  platformhisi.cpp       | 14 ++++++++++++--
+> > >  3 files changed, 56 insertions(+), 2 deletions(-)
+> > >
+> > > diff --git a/platformdrmgeneric.cpp b/platformdrmgeneric.cpp
+> > > index 503c04a..a520224 100644
+> > > --- a/platformdrmgeneric.cpp
+> > > +++ b/platformdrmgeneric.cpp
+> > > @@ -18,6 +18,7 @@
+> > >
+> > >  #include "platformdrmgeneric.h"
+> > >  #include "drmdevice.h"
+> > > +#include "mali_gralloc_formats.h"
+> > >  #include "platform.h"
+> > >
+> > >  #include <drm/drm_fourcc.h>
+> > > @@ -83,6 +84,31 @@ uint32_t DrmGenericImporter::ConvertHalFormatToDrm=
+(uint32_t hal_format) {
+> > >    }
+> > >  }
+> > >
+> > > +uint64_t DrmGenericImporter::ConvertGrallocFormatToDrmModifiers(uint=
+64_t flags,
+> > > +                                                                bool=
+ is_rgb) {
+> > > +  uint64_t features =3D 0;
+> > > +
+> > > +  if (flags & MALI_GRALLOC_INTFMT_AFBC_BASIC)
+> > > +    features |=3D AFBC_FORMAT_MOD_BLOCK_SIZE_16x16;
+> > > +
+> > > +  if (is_rgb)
+> > > +    features |=3D AFBC_FORMAT_MOD_YTR;
+> > > +
+> > > +  if (flags & MALI_GRALLOC_INTFMT_AFBC_SPLITBLK)
+> > > +    features |=3D (AFBC_FORMAT_MOD_SPLIT | AFBC_FORMAT_MOD_SPARSE);
+> > > +
+> > > +  if (flags & MALI_GRALLOC_INTFMT_AFBC_WIDEBLK)
+> > > +    features |=3D AFBC_FORMAT_MOD_BLOCK_SIZE_32x8;
+> > > +
+> > > +  if (flags & MALI_GRALLOC_INTFMT_AFBC_TILED_HEADERS)
+> > > +    features |=3D AFBC_FORMAT_MOD_TILED;
+> > > +
+> > > +  if (features)
+> > > +    return DRM_FORMAT_MOD_ARM_AFBC(features);
+> > > +  else
+> > > +    return 0;
+> > > +}
+> > > +
+> > >  uint32_t DrmGenericImporter::DrmFormatToBitsPerPixel(uint32_t drm_fo=
+rmat) {
+> > >    switch (drm_format) {
+> > >      case DRM_FORMAT_ARGB8888:
+> > > @@ -101,6 +127,22 @@ uint32_t DrmGenericImporter::DrmFormatToBitsPerP=
+ixel(uint32_t drm_format) {
+> > >    }
+> > >  }
+> > >
+> > > +bool DrmGenericImporter::IsDrmFormatRgb(uint32_t drm_format) {
+> > > +  switch (drm_format) {
+> > > +    case DRM_FORMAT_ARGB8888:
+> > > +    case DRM_FORMAT_XBGR8888:
+> > > +    case DRM_FORMAT_ABGR8888:
+> > > +    case DRM_FORMAT_BGR888:
+> > > +    case DRM_FORMAT_BGR565:
+> > > +      return true;
+> > > +    case DRM_FORMAT_YVU420:
+> > > +      return false;
+> > > +    default:
+> > > +      ALOGE("Unsupported format %u assuming rgb?", drm_format);
+> > > +      return true;
+> > > +  }
+> > > +}
+> > > +
+> > >  int DrmGenericImporter::ImportBuffer(buffer_handle_t handle, hwc_drm=
+_bo_t *bo) {
+> > >    gralloc_handle_t *gr_handle =3D gralloc_handle(handle);
+> > >    if (!gr_handle)
+> > > diff --git a/platformdrmgeneric.h b/platformdrmgeneric.h
+> > > index 233ba55..43cb618 100644
+> > > --- a/platformdrmgeneric.h
+> > > +++ b/platformdrmgeneric.h
+> > > @@ -36,6 +36,8 @@ class DrmGenericImporter : public Importer {
+> > >    bool CanImportBuffer(buffer_handle_t handle) override;
+> > >
+> > >    uint32_t ConvertHalFormatToDrm(uint32_t hal_format);
+> > > +  uint64_t ConvertGrallocFormatToDrmModifiers(uint64_t flags, bool i=
+s_rgb);
+> > > +  bool IsDrmFormatRgb(uint32_t drm_format);
+> > >    uint32_t DrmFormatToBitsPerPixel(uint32_t drm_format);
+> > >
+> > >   private:
+> > > diff --git a/platformhisi.cpp b/platformhisi.cpp
+> > > index 76fe1e7..1cb7e2c 100644
+> > > --- a/platformhisi.cpp
+> > > +++ b/platformhisi.cpp
+> > > @@ -71,6 +71,9 @@ int HisiImporter::Init() {
+> > >  }
+> > >
+> > >  int HisiImporter::ImportBuffer(buffer_handle_t handle, hwc_drm_bo_t =
+*bo) {
+> > > +  bool is_rgb;
+> > > +  uint64_t modifiers[4] =3D {0};
+> > > +
+> > >    memset(bo, 0, sizeof(hwc_drm_bo_t));
+> > >
+> > >    private_handle_t const *hnd =3D reinterpret_cast<private_handle_t =
+const *>(
+> > > @@ -94,6 +97,10 @@ int HisiImporter::ImportBuffer(buffer_handle_t han=
+dle, hwc_drm_bo_t *bo) {
+> > >    if (fmt < 0)
+> > >      return fmt;
+> > >
+> > > +  is_rgb =3D IsDrmFormatRgb(fmt);
+> > > +  modifiers[0] =3D ConvertGrallocFormatToDrmModifiers(hnd->internal_=
+format,
+> > > +                                                    is_rgb);
+> > > +
+> > >    bo->width =3D hnd->width;
+> > >    bo->height =3D hnd->height;
+> > >    bo->hal_format =3D hnd->req_format;
+> > > @@ -129,8 +136,11 @@ int HisiImporter::ImportBuffer(buffer_handle_t h=
+andle, hwc_drm_bo_t *bo) {
+> > >        break;
+> > >    }
+> > >
+> > > -  ret =3D drmModeAddFB2(drm_->fd(), bo->width, bo->height, bo->forma=
+t,
+> > > -                      bo->gem_handles, bo->pitches, bo->offsets, &bo=
+->fb_id, 0);
+> > > +  ret =3D drmModeAddFB2WithModifiers(drm_->fd(), bo->width, bo->heig=
+ht,
+> > > +                                   bo->format, bo->gem_handles, bo->=
+pitches,
+> > > +                                   bo->offsets, modifiers, &bo->fb_i=
+d,
+> > > +                                   modifiers[0] ? DRM_MODE_FB_MODIFI=
+ERS : 0);
+> > > +
+> > >    if (ret) {
+> > >      ALOGE("could not create drm fb %d", ret);
+> > >      return ret;
+> > > --
+> > > 2.7.4
+> > >
+> > > _______________________________________________
+> > > dri-devel mailing list
+> > > dri-devel@lists.freedesktop.org
+> > > https://lists.freedesktop.org/mailman/listinfo/dri-devel
+> >
+> > --
+> > Daniel Vetter
+> > Software Engineer, Intel Corporation
+> > http://blog.ffwll.ch
+>
+> --
+> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> | I would like to |
+> | fix the world,  |
+> | but they're not |
+> | giving me the   |
+>  \ source code!  /
+>   ---------------
+>     =C2=AF\_(=E3=83=84)_/=C2=AF
+> _______________________________________________
+> dri-devel mailing list
+> dri-devel@lists.freedesktop.org
+> https://lists.freedesktop.org/mailman/listinfo/dri-devel
 
+
+
+--=20
+Daniel Vetter
+Software Engineer, Intel Corporation
++41 (0) 79 365 57 48 - http://blog.ffwll.ch
