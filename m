@@ -4,50 +4,48 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CCE15C43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 16:59:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2892DC43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 16:59:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 91B8920645
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 16:59:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E6B2420675
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 16:59:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547571546;
-	bh=VqwcoxuwVNJxyFs/mLhqSXcPs76mtFO/PCs+w7wvE/0=;
+	s=default; t=1547571554;
+	bh=cEDnNehdEbI+1Eo1L3mFAnnF843SqOjg6Txo2fEMBwM=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=x7CdX+rw+O+ehBKDg5TB9L7ggm/7RdFMw9Nd25ATKQap0g0orQDXyljhcwhrXcukK
-	 RKiOqGKKwNuicbA1kSrTF9RShCqSKz4LOoC5vpW8u4t0XymxWk4PdJGx/sBUHVoWr4
-	 oj/16ge/hcek5sxsPzCElvN1wKQ4GH6LljnZBJWg=
+	b=1nUH+R2q9RkPW5+/D/59FoZ9jOcu/XIvhbiuOb3VVB9ONDDLgljcSq48ZmyjUGM2m
+	 2LedbfDIXJTGYDkLPgKVgmPkTUGatqkSL1LCXURCE0z6Y8lkQVc0X/BdmImZ3SHnbI
+	 k56KsHJG6aVNgFP9nYct9edMbVhdrl68yoskzujw=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388167AbfAOQ7F (ORCPT
+        id S2388173AbfAOQ7M (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 15 Jan 2019 11:59:05 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55734 "EHLO mail.kernel.org"
+        Tue, 15 Jan 2019 11:59:12 -0500
+Received: from mail.kernel.org ([198.145.29.99]:55636 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732346AbfAOQje (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Jan 2019 11:39:34 -0500
+        id S1729401AbfAOQja (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 Jan 2019 11:39:30 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E6BF220859;
-        Tue, 15 Jan 2019 16:39:33 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9BD372054F;
+        Tue, 15 Jan 2019 16:39:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547570374;
-        bh=VqwcoxuwVNJxyFs/mLhqSXcPs76mtFO/PCs+w7wvE/0=;
+        s=default; t=1547570369;
+        bh=cEDnNehdEbI+1Eo1L3mFAnnF843SqOjg6Txo2fEMBwM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=IYblhUtt9QlwWyc0Fd5CUb3fNhfKf38jakJ9KfUdGhRBSeoKeOWLvLlcLISYahi3J
-         P01htl325hbYwR++is6WyKRgwVKbZPG/OO2R2eM7oNTBPGRIKtaS1eQOsS9yJbiwzV
-         zWfr8yx9nIq+T/nePf6tBgShyBveX7cp4cj/uHRg=
+        b=ii6YyPSc1Dy2x62tM8ls/JVQfbZ92WKPfHcT6bsIn1A+Lt2tVFRQM3V5XkmS7RSfR
+         ubgQS7mlHd+6UWQJi+ecO+vjak4PKBbMjJ7lljThhUjA0DfPdKp5zYlWKp2vw4bdTk
+         TtP+Bhv2xR2b1ClBygIs4skPwreR+O6B3r68Mzmk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Pavel Shilovsky <pshilov@microsoft.com>,
-        Jeff Layton <jlayton@kernel.org>,
-        Steve French <stfrench@microsoft.com>
-Subject: [PATCH 4.9 02/16] CIFS: Do not hide EINTR after sending network packets
-Date:   Tue, 15 Jan 2019 17:35:45 +0100
-Message-Id: <20190115154848.370685096@linuxfoundation.org>
+        stable@vger.kernel.org, Theodore Tso <tytso@mit.edu>
+Subject: [PATCH 4.9 15/16] ext4: avoid kernel warning when writing the superblock to a dead device
+Date:   Tue, 15 Jan 2019 17:35:58 +0100
+Message-Id: <20190115154850.004102144@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190115154848.164648613@linuxfoundation.org>
 References: <20190115154848.164648613@linuxfoundation.org>
@@ -66,35 +64,42 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Pavel Shilovsky <pshilov@microsoft.com>
+From: Theodore Ts'o <tytso@mit.edu>
 
-commit ee13919c2e8d1f904e035ad4b4239029a8994131 upstream.
+commit e86807862e6880809f191c4cea7f88a489f0ed34 upstream.
 
-Currently we hide EINTR code returned from sock_sendmsg()
-and return 0 instead. This makes a caller think that we
-successfully completed the network operation which is not
-true. Fix this by properly returning EINTR to callers.
+The xfstests generic/475 test switches the underlying device with
+dm-error while running a stress test.  This results in a large number
+of file system errors, and since we can't lock the buffer head when
+marking the superblock dirty in the ext4_grp_locked_error() case, it's
+possible the superblock to be !buffer_uptodate() without
+buffer_write_io_error() being true.
 
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Pavel Shilovsky <pshilov@microsoft.com>
-Reviewed-by: Jeff Layton <jlayton@kernel.org>
-Signed-off-by: Steve French <stfrench@microsoft.com>
+We need to set buffer_uptodate() before we call mark_buffer_dirty() or
+this will trigger a WARN_ON.  It's safe to do this since the
+superblock must have been properly read into memory or the mount would
+have been successful.  So if buffer_uptodate() is not set, we can
+safely assume that this happened due to a failed attempt to write the
+superblock.
+
+Signed-off-by: Theodore Ts'o <tytso@mit.edu>
+Cc: stable@vger.kernel.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/cifs/transport.c |    2 +-
+ fs/ext4/super.c |    2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/fs/cifs/transport.c
-+++ b/fs/cifs/transport.c
-@@ -301,7 +301,7 @@ uncork:
- 	if (rc < 0 && rc != -EINTR)
- 		cifs_dbg(VFS, "Error %d sending data on socket to server\n",
- 			 rc);
--	else
-+	else if (rc > 0)
- 		rc = 0;
- 
- 	return rc;
+--- a/fs/ext4/super.c
++++ b/fs/ext4/super.c
+@@ -4679,7 +4679,7 @@ static int ext4_commit_super(struct supe
+ 	ext4_superblock_csum_set(sb);
+ 	if (sync)
+ 		lock_buffer(sbh);
+-	if (buffer_write_io_error(sbh)) {
++	if (buffer_write_io_error(sbh) || !buffer_uptodate(sbh)) {
+ 		/*
+ 		 * Oh, dear.  A previous attempt to write the
+ 		 * superblock failed.  This could happen because the
 
 
