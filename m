@@ -2,118 +2,75 @@ Return-Path: <SRS0=RZO6=PX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 93CD3C43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 01:25:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 94262C43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 01:34:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6345820657
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 01:25:45 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XckFj4as"
+	by mail.kernel.org (Postfix) with ESMTP id 6A52B20659
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 01:34:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727803AbfAOBZn (ORCPT
+        id S1727598AbfAOBe2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 14 Jan 2019 20:25:43 -0500
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:39636 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727787AbfAOBZn (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 Jan 2019 20:25:43 -0500
-Received: by mail-pg1-f194.google.com with SMTP id w6so459326pgl.6
-        for <linux-kernel@vger.kernel.org>; Mon, 14 Jan 2019 17:25:42 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=dD3cXzqnTifY+DlmcmSOfw8BIYt+azZnh4seFWq2G0s=;
-        b=XckFj4asqCdm0KPp7UyzwahbpUnMz2IpiJz/U8veQ3UZysx4Mzy0NoWlQhH3w3A2y8
-         wktIeQOsaoZVP4lzwPfhC1W/+ZJbzKa9gvnx5lmaBln6eeC326pyhG1B7dvPA71iSrMt
-         X56R+LVEfBDoKbBXRNRbWKHzwfkgLlmSFpNlApjhx1msBn4m72pmJaEDyNj1diHTtQTW
-         Iw23K9L0Lv1tHpXIseWD8vSMAH3mu3gvB1IMW6lCmnoYnvNTTtr1bKhlKN4BfokjGyWG
-         dBhLlGl7nVG3tSDBd3Q3+9oGGwpSnghrYxyEBYcqIli9gGVpB/+M+Hx19/G0pl6MuHPV
-         znKw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=dD3cXzqnTifY+DlmcmSOfw8BIYt+azZnh4seFWq2G0s=;
-        b=YzQz7PK8MONj3dww9etlVJT7YXyYT07JkljaHLYQybYatsAktX/dn6ud3EYgtYBbBX
-         q2s8rU7H8DNG4jwlws63j/dG3Iv4flcrB/poi97PDjsmGhseCDtbADAXuIN/YmMY+8W3
-         IuxBWPXbsIwFQnFQHheQTeBdkx3RfkzWDAT44qGtNP6J3fs2PRQiyz6tUlEOYtBEg5Ia
-         mJrdUZBlgcWn3Ju54R/8VcItmbanvPyz4mfOMP9yiF/7JFzrqOlNY4CcFMnjg9ZoYDMs
-         1U1cQGp/6//EvR5h/v8944SuyaL4p8vXT1Id1x9+iHXArMdbj2603JAys5BTWwxCNPzz
-         Wceg==
-X-Gm-Message-State: AJcUukcCopm37SegJ7CNF7o4I5LXUthJRH4H6MueqGTFdQ/oc5O9oMiU
-        HyYPVazkgaR9OZglu1wUSJo=
-X-Google-Smtp-Source: ALg8bN7eYhg0y/eztq5XYFV9qKFobuNKw7/p3lTnCe4ifa9SGW33swb6qwLhd6VDHzJYRiPImqyHkg==
-X-Received: by 2002:a63:4d66:: with SMTP id n38mr1370207pgl.270.1547515541911;
-        Mon, 14 Jan 2019 17:25:41 -0800 (PST)
-Received: from Asurada-Nvidia.nvidia.com (thunderhill.nvidia.com. [216.228.112.22])
-        by smtp.gmail.com with ESMTPSA id b27sm1924251pfh.113.2019.01.14.17.25.41
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 14 Jan 2019 17:25:41 -0800 (PST)
-Date:   Mon, 14 Jan 2019 17:25:37 -0800
-From:   Nicolin Chen <nicoleotsuka@gmail.com>
-To:     Willy Tarreau <w@1wt.eu>
-Cc:     Silvio Cesare <silvio.cesare@gmail.com>,
-        linux-kernel@vger.kernel.org, Timur Tabi <timur@kernel.org>,
-        Xiubo Li <Xiubo.Lee@gmail.com>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        Kees Cook <keescook@chromium.org>,
-        Will Deacon <will.deacon@arm.com>, Greg KH <greg@kroah.com>
-Subject: Re: [PATCH 4/8] ASoC: change snprintf to scnprintf for possible
- overflow
-Message-ID: <20190115012536.GA12096@Asurada-Nvidia.nvidia.com>
-References: <20190112152844.26550-1-w@1wt.eu>
- <20190112152844.26550-4-w@1wt.eu>
+        Mon, 14 Jan 2019 20:34:28 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:48060 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726769AbfAOBe2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 14 Jan 2019 20:34:28 -0500
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 3AAEDC049580;
+        Tue, 15 Jan 2019 01:34:28 +0000 (UTC)
+Received: from redhat.com (ovpn-124-229.rdu2.redhat.com [10.10.124.229])
+        by smtp.corp.redhat.com (Postfix) with SMTP id E68E419744;
+        Tue, 15 Jan 2019 01:34:26 +0000 (UTC)
+Date:   Mon, 14 Jan 2019 20:34:26 -0500
+From:   "Michael S. Tsirkin" <mst@redhat.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     Jason Wang <jasowang@redhat.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        virtualization@lists.linux-foundation.org, netdev@vger.kernel.org
+Subject: [PATCH net-next] virtio_net: bulk free tx skbs
+Message-ID: <20190115012847.14730-1-mst@redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190112152844.26550-4-w@1wt.eu>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Mutt-Fcc: =sent
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.31]); Tue, 15 Jan 2019 01:34:28 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Jan 12, 2019 at 04:28:40PM +0100, Willy Tarreau wrote:
-> From: Silvio Cesare <silvio.cesare@gmail.com>
-> 
-> Change snprintf to scnprintf. There are generally two cases where using
-> snprintf causes problems.
-> 
-> 1) Uses of size += snprintf(buf, SIZE - size, fmt, ...)
-> In this case, if snprintf would have written more characters than what the
-> buffer size (SIZE) is, then size will end up larger than SIZE. In later
-> uses of snprintf, SIZE - size will result in a negative number, leading
-> to problems. Note that size might already be too large by using
-> size = snprintf before the code reaches a case of size += snprintf.
-> 
-> 2) If size is ultimately used as a length parameter for a copy back to user
-> space, then it will potentially allow for a buffer overflow and information
-> disclosure when size is greater than SIZE. When the size is used to index
-> the buffer directly, we can have memory corruption. This also means when
-> size = snprintf... is used, it may also cause problems since size may become
-> large.  Copying to userspace is mitigated by the HARDENED_USERCOPY kernel
-> configuration.
-> 
-> The solution to these issues is to use scnprintf which returns the number of
-> characters actually written to the buffer, so the size variable will never
-> exceed SIZE.
-> 
-> Signed-off-by: Silvio Cesare <silvio.cesare@gmail.com>
+Use napi_consume_skb() to get bulk free.  Note that napi_consume_skb is
+safe to call in a non-napi context as long as the napi_budget flag is
+correct.
 
-> Cc: Nicolin Chen <nicoleotsuka@gmail.com>
+Signed-off-by: Michael S. Tsirkin <mst@redhat.com>
+---
 
-I think you probably need to run get_maintainer.pl for the patch
-and should send to Mark Brown and CC alsa-devel. And for subject,
-we usually use prefix "ASoC: imx-audmux:". Otherwise,
+My perf testing setup is down but it works fine on my devel box and
+should be fairly uncontroversial.
 
-Acked-by: Nicolin Chen <nicoleotsuka@gmail.com>
+ drivers/net/virtio_net.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Thanks
+diff --git a/drivers/net/virtio_net.c b/drivers/net/virtio_net.c
+index 023725086046..d76dcc68cbb6 100644
+--- a/drivers/net/virtio_net.c
++++ b/drivers/net/virtio_net.c
+@@ -1343,7 +1343,7 @@ static void free_old_xmit_skbs(struct send_queue *sq)
+ 		bytes += skb->len;
+ 		packets++;
+ 
+-		dev_consume_skb_any(skb);
++		napi_consume_skb(skb, use_napi);
+ 	}
+ 
+ 	/* Avoid overhead when no packets have been processed
+-- 
+MST
