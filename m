@@ -2,101 +2,85 @@ Return-Path: <SRS0=RZO6=PX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+X-Spam-Status: No, score=-1.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 35D1DC43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 21:09:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D90EC43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 21:10:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F41D7205C9
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 21:09:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 09A0D20859
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 21:10:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547586579;
-	bh=s2X22d1LlqDVePqLYmP1rwf2MpuOBw+myHHoyI9YyHk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=YGUQJNTGcBx9K28lcj0JX+hUR2YTjEz6ktLG8F2OEohFh9fZAwqkbkOwn9A+ia1A2
-	 OwOeB4LYFZCqKXvVOgIIHI86we1UwCC4i1SAWmh5jCA474CKizNEBHL5R6vOrAvkLp
-	 USoc1itSJuzr1GeA8QobNyyb+OU+3VN/yVrSFX3s=
+	s=default; t=1547586613;
+	bh=a+yhYIgCGS8zOho0awPieGM53ZbswgC6PdvPfksh3N4=;
+	h=Subject:To:Cc:References:From:Date:In-Reply-To:List-ID:From;
+	b=lNRGZdnU0yQXUD0XlxvyATexXAY0ny8OURin/L2Hx9tmxg/I2lJJYlPGb0Bn0DFbC
+	 UYA4wGd4g0AhxNtfQbAcgGUvHCkg9y5Bb7QNHFXL6LmPSaefgVFbqb+ocnB1m5xKvb
+	 DrKtuWeoESFjh3ne+65B3MDV12ub69UUgYid4UAM=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390237AbfAOVJh (ORCPT
+        id S2390247AbfAOVKL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 15 Jan 2019 16:09:37 -0500
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:34256 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732930AbfAOVJf (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Jan 2019 16:09:35 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=s2X22d1LlqDVePqLYmP1rwf2MpuOBw+myHHoyI9YyHk=; b=mh/agSM4jSnUq0H3YM1nkDfP6
-        Sxi82ChGz/VUzNWbZLbq0BDYjphGbgdd/uepAF9i2hamiYBVwQ/LDVEH1onD/txd9bpsoJCPbQnWt
-        XrCkSJkaeKvNn97ufjo5VDgHK24QdeK2HoTOYKLHZ0XtCcmI/WHbgaMf86mCqGZk2Q0rY=;
-Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
-        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1gjVxZ-000327-Hh; Tue, 15 Jan 2019 21:09:21 +0000
-Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
-        id 1C9151127848; Tue, 15 Jan 2019 21:09:21 +0000 (GMT)
-Date:   Tue, 15 Jan 2019 21:09:21 +0000
-From:   Mark Brown <broonie@kernel.org>
-To:     Tony Lindgren <tony@atomide.com>
-Cc:     Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
-        Belisko Marek <marek.belisko@gmail.com>,
-        "Dr. H. Nikolaus Schaller" <hns@goldelico.com>,
-        Jon Hunter <jonathanh@nvidia.com>,
-        Laxman Dewangan <ldewangan@nvidia.com>,
-        Keerthy <j-keerthy@ti.com>,
-        Peter Ujfalusi <peter.ujfalusi@ti.com>,
-        Tero Kristo <t-kristo@ti.com>,
-        Thierry Reding <treding@nvidia.com>,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-omap@vger.kernel.org
-Subject: Re: Regression in v5.0-rc with regmap-irq level-irq changes
-Message-ID: <20190115210920.GJ5522@sirena.org.uk>
-References: <20190115192840.GK5544@atomide.com>
+        Tue, 15 Jan 2019 16:10:11 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58554 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1732930AbfAOVKK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 Jan 2019 16:10:10 -0500
+Received: from [10.84.151.17] (unknown [167.220.148.17])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id C4816205C9;
+        Tue, 15 Jan 2019 21:10:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1547586610;
+        bh=a+yhYIgCGS8zOho0awPieGM53ZbswgC6PdvPfksh3N4=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=T8oBXhQn4h+VSyhq+OKXwKzIWh/CWRlv8mvJODbYSv2qx1g8f48MPaefU7y6pmhwu
+         BFVtcl9nR3hfvOBwtK0CZT1Rf/g2OznoG8Wdi2mb5n0uX52vsRdE8wKHlw/Q5pIgcF
+         gENQwb6SjQUCP8kdBqVC3vdL/fNpWzJJGc5uLgbo=
+Subject: Re: linux-next: Fixes tags need some work in the pm tree
+To:     Stephen Rothwell <sfr@canb.auug.org.au>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <20190116075540.78cff44e@canb.auug.org.au>
+From:   Sinan Kaya <okaya@kernel.org>
+Message-ID: <0f64417d-be5e-2939-7fc5-ee5ba26c64a6@kernel.org>
+Date:   Tue, 15 Jan 2019 16:10:07 -0500
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="ONvqYzh+7ST5RsLk"
-Content-Disposition: inline
-In-Reply-To: <20190115192840.GK5544@atomide.com>
-X-Cookie: Violence is molding.
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20190116075540.78cff44e@canb.auug.org.au>
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 1/15/2019 3:55 PM, Stephen Rothwell wrote:
+> [I am experimenting with checking the Fixes tags in commits in linux-next.
+> Please let me know if you think I am being too strict.]
+> 
+> Hi Rafael,
+> 
+> Commits
+> 
+>    62b33d57c534 ("drivers: thermal: int340x_thermal: Make PCI dependency explicit")
+>    cd793ab22a93 ("x86/intel/lpss: Make PCI dependency explicit")
+>    42ac19e7b81e ("ACPI: EC: Look for ECDT EC after calling acpi_load_tables()")
+>    6c29b81b5695 ("platform/x86: apple-gmux: Make PCI dependency explicit")
+>    34783dc0182a ("platform/x86: intel_pmc: Make PCI dependency explicit")
+>    704658d1d3ae ("platform/x86: intel_ips: make PCI dependency explicit")
+>    5df37f3a1aa9 ("vga-switcheroo: make PCI dependency explicit")
+>    da1df6ee4296 ("ata: pata_acpi: Make PCI dependency explicit")
+>    ce97a22a596b ("ACPI / LPSS: Make PCI dependency explicit")
+> 
+> Have malformed Fixes tags:
+> 
+> There should be double quotes around the commit subject.
+> 
 
---ONvqYzh+7ST5RsLk
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-
-On Tue, Jan 15, 2019 at 11:28:40AM -0800, Tony Lindgren wrote:
-
-> Any ideas what's needed? Some triggering mapping data to palmas.c
-> driver?
-
-There should be a fix in -next already waiting for me to send it to
-Linus, can you check there (a couple actually, in my for-linus branch)?
-
---ONvqYzh+7ST5RsLk
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlw+TAAACgkQJNaLcl1U
-h9AwIwf8C1ynMQh1N1yNP3/lscQNBS3K8lg9krjtYsdc+zKtloGVvHZLf8rafYsE
-gnWZ8hF5cwMEAkCULG7/iW565WQ5p023DMPmNtk6u9jn3mrbsfk7eYJjapwXrDnL
-vXwdJwQra2PVqQzlwjye7R2cg8sVHpt93e2tv1wCETqTqTZNLIrt+CV8qn9JniCG
-auqMlP/rGMEjNENMh/rslWbpOrVbWnvWOND8h81q4uqFicr67LTSlwBOOkFom1n5
-mlkXLgeFQgsqIaf3T8YVg3vyFmcp1ynTvCKLepDAIDdJyyY6AXbSCL6UoMPkyLQc
-L6ks69fcLXODh7IT0NQaCZaYamiI2w==
-=0Hrj
------END PGP SIGNATURE-----
-
---ONvqYzh+7ST5RsLk--
+Interesting, can you add this to the checkpatch.pl script so that it doesn't
+happen again?
