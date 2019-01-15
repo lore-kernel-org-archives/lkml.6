@@ -4,48 +4,50 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A8314C43444
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 16:43:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 45AC3C43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 16:43:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 75EA820645
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 16:43:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0975120645
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 16:43:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547570629;
-	bh=jok/EpH1o3jvskm95QHvUcwmPw+Q/2aJKstzyhjJ5KI=;
+	s=default; t=1547570636;
+	bh=TXt5aRQFcwk8UTxrXsxEanTc0VKoP6pSVN6fKOX3hRo=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=fClL9Uz1fO+r2vtzXkkAdBLqLSZUgGx/Pjed+XDdHyLkgsKrZZAWCuN03cyVrlGdd
-	 QJY0XpEohrZgEL6KiAIxRlTNNoh+Zj3PngOEjyzgv5f/7YWWqdd5v0n/WkSOWOGYKT
-	 5HvEpnl8GdHVTa66+sNhKyyg7Kum/1EsaLP/MPdo=
+	b=NArguXXomyuItTG1sEZrh/BrplFw472AOk74rr+I68ynr1bHP5YqeQM+6Zsc2gfC0
+	 XGBmrNLf/XAAznsUMUe/1jzpZWbPV65WbCPfNz4Ee3Jj1Se1A4uL4ihR6aphxPomxN
+	 6O9vHR1zpiZwyCM933E+ECACp7jgWYf45oSZKEj4=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387399AbfAOQnr (ORCPT
+        id S2387418AbfAOQnz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 15 Jan 2019 11:43:47 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33256 "EHLO mail.kernel.org"
+        Tue, 15 Jan 2019 11:43:55 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33348 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731633AbfAOQnn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Jan 2019 11:43:43 -0500
+        id S1730622AbfAOQnt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 Jan 2019 11:43:49 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CA33F2054F;
-        Tue, 15 Jan 2019 16:43:42 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6DDFA2054F;
+        Tue, 15 Jan 2019 16:43:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547570623;
-        bh=jok/EpH1o3jvskm95QHvUcwmPw+Q/2aJKstzyhjJ5KI=;
+        s=default; t=1547570628;
+        bh=TXt5aRQFcwk8UTxrXsxEanTc0VKoP6pSVN6fKOX3hRo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=1TWeXeaKWZ7qiFR0AHxBxKd1ow9KmBgs8hr+7Yis/YNqXUMIxcvzYyD8z2ZQHL+Pd
-         96dzISBHuuODSMsS13S8zouaSL/qaY1hRilbKBK5qJHx4QeO3jv8GnuHMgCdJnD2m4
-         5bciYbDKaUUDJv1KgWmNrGpqN+1HfT9D1DAWn0RY=
+        b=s8Ut6+fn3xXBrpcs2hS2Gf0YBKUBaYxC8sQSzb6PsHUwfM/Iuk4Oo3LBWCpwHkeTu
+         +TkxSJnZhq79FiGQ7qQw4M3z4KqZ520trpY76Mh8AlAq+ZWwjhGQXZktDSKlzFJvR0
+         ZBOXGgRaeqgTptrFeA55P4L1LjdN7pFCYxB6288c=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Pavel Shilovsky <pshilov@microsoft.com>,
+        Jeff Layton <jlayton@kernel.org>,
         Steve French <stfrench@microsoft.com>
-Subject: [PATCH 4.20 12/57] CIFS: Fix adjustment of credits for MTU requests
-Date:   Tue, 15 Jan 2019 17:35:53 +0100
-Message-Id: <20190115154911.413721821@linuxfoundation.org>
+Subject: [PATCH 4.20 14/57] CIFS: Do not hide EINTR after sending network packets
+Date:   Tue, 15 Jan 2019 17:35:55 +0100
+Message-Id: <20190115154911.514830122@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190115154910.734892368@linuxfoundation.org>
 References: <20190115154910.734892368@linuxfoundation.org>
@@ -66,60 +68,33 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Pavel Shilovsky <pshilov@microsoft.com>
 
-commit b983f7e92348d7e7d091db1b78b7915e9dd3d63a upstream.
+commit ee13919c2e8d1f904e035ad4b4239029a8994131 upstream.
 
-Currently for MTU requests we allocate maximum possible credits
-in advance and then adjust them according to the request size.
-While we were adjusting the number of credits belonging to the
-server, we were skipping adjustment of credits belonging to the
-request. This patch fixes it by setting request credits to
-CreditCharge field value of SMB2 packet header.
+Currently we hide EINTR code returned from sock_sendmsg()
+and return 0 instead. This makes a caller think that we
+successfully completed the network operation which is not
+true. Fix this by properly returning EINTR to callers.
 
-Also ask 1 credit more for async read and write operations to
-increase parallelism and match the behavior of other operations.
-
+Cc: <stable@vger.kernel.org>
 Signed-off-by: Pavel Shilovsky <pshilov@microsoft.com>
+Reviewed-by: Jeff Layton <jlayton@kernel.org>
 Signed-off-by: Steve French <stfrench@microsoft.com>
-CC: Stable <stable@vger.kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/cifs/smb2pdu.c |    8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+ fs/cifs/transport.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/fs/cifs/smb2pdu.c
-+++ b/fs/cifs/smb2pdu.c
-@@ -3197,12 +3197,14 @@ smb2_async_readv(struct cifs_readdata *r
- 	if (rdata->credits) {
- 		shdr->CreditCharge = cpu_to_le16(DIV_ROUND_UP(rdata->bytes,
- 						SMB2_MAX_BUFFER_SIZE));
--		shdr->CreditRequest = shdr->CreditCharge;
-+		shdr->CreditRequest =
-+			cpu_to_le16(le16_to_cpu(shdr->CreditCharge) + 1);
- 		spin_lock(&server->req_lock);
- 		server->credits += rdata->credits -
- 						le16_to_cpu(shdr->CreditCharge);
- 		spin_unlock(&server->req_lock);
- 		wake_up(&server->request_q);
-+		rdata->credits = le16_to_cpu(shdr->CreditCharge);
- 		flags |= CIFS_HAS_CREDITS;
- 	}
+--- a/fs/cifs/transport.c
++++ b/fs/cifs/transport.c
+@@ -385,7 +385,7 @@ smbd_done:
+ 	if (rc < 0 && rc != -EINTR)
+ 		cifs_dbg(VFS, "Error %d sending data on socket to server\n",
+ 			 rc);
+-	else
++	else if (rc > 0)
+ 		rc = 0;
  
-@@ -3474,12 +3476,14 @@ smb2_async_writev(struct cifs_writedata
- 	if (wdata->credits) {
- 		shdr->CreditCharge = cpu_to_le16(DIV_ROUND_UP(wdata->bytes,
- 						    SMB2_MAX_BUFFER_SIZE));
--		shdr->CreditRequest = shdr->CreditCharge;
-+		shdr->CreditRequest =
-+			cpu_to_le16(le16_to_cpu(shdr->CreditCharge) + 1);
- 		spin_lock(&server->req_lock);
- 		server->credits += wdata->credits -
- 						le16_to_cpu(shdr->CreditCharge);
- 		spin_unlock(&server->req_lock);
- 		wake_up(&server->request_q);
-+		wdata->credits = le16_to_cpu(shdr->CreditCharge);
- 		flags |= CIFS_HAS_CREDITS;
- 	}
- 
+ 	return rc;
 
 
