@@ -2,97 +2,263 @@ Return-Path: <SRS0=RZO6=PX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A76A4C43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 21:06:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9DB82C43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 21:06:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 64817205C9
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 21:06:27 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="pMaiJjSf"
+	by mail.kernel.org (Postfix) with ESMTP id 69677205C9
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 21:06:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390144AbfAOVG0 (ORCPT
+        id S2390174AbfAOVGi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 15 Jan 2019 16:06:26 -0500
-Received: from ozlabs.org ([203.11.71.1]:42135 "EHLO ozlabs.org"
+        Tue, 15 Jan 2019 16:06:38 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:46984 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732826AbfAOVGY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Jan 2019 16:06:24 -0500
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        id S2390168AbfAOVGh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 Jan 2019 16:06:37 -0500
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 43fNDY2Q3fz9s9G;
-        Wed, 16 Jan 2019 08:06:20 +1100 (AEDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1547586382;
-        bh=7X6bpVmYy0XZwk1EkDvweYXFdQZQhxulKUObaJugykg=;
-        h=Date:From:To:Cc:Subject:From;
-        b=pMaiJjSfUT6hp1LlkwC0GvGdKgusfcg1VSK0ERmrpletX/GKOc7xAg0wpwZ37aiXg
-         5EjqJU5JYLev3MO0eALp8O0eZQsrDzJi744DFEI6rTCIC3jfS2Iip5KivI25rhDaFE
-         gcgOSzctnrvSr0huet8wa2R8RBwKHObDTEZupwwdvgKdUJaANsWlD3J7N2C3dZZWBF
-         IOXQT1YQ+1o/HCjyFH+xapX+8pMBKNTYGlbGfISK2XBrC238s9i01GNnoqeaStvVbj
-         DTD0r1dHH051UKWkkDnqjp9ijrCupJK22ZPEgZT8ht9eGsoKOOEupLBlk5J1SZatpz
-         QhKunpdJ9X2pg==
-Date:   Wed, 16 Jan 2019 08:06:20 +1100
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Juergen Gross <jgross@suse.com>,
-        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
-        Stefano Stabellini <sstabellini@kernel.org>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        Xen Devel <Xen-devel@lists.xensource.com>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Wen Yang <wen.yang99@zte.com.cn>,
-        Paul Gortmaker <paul.gortmaker@windriver.com>
-Subject: linux-next: Fixes tag needs work in the xen-tip tree
-Message-ID: <20190116080620.4c2c143f@canb.auug.org.au>
+        by mx1.redhat.com (Postfix) with ESMTPS id AF4977A19B;
+        Tue, 15 Jan 2019 21:06:36 +0000 (UTC)
+Received: from [10.36.116.96] (ovpn-116-96.ams2.redhat.com [10.36.116.96])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 1A2125D777;
+        Tue, 15 Jan 2019 21:06:28 +0000 (UTC)
+Subject: Re: [RFC v3 17/21] iommu/smmuv3: Report non recoverable faults
+To:     Jean-Philippe Brucker <jean-philippe.brucker@arm.com>,
+        eric.auger.pro@gmail.com, iommu@lists.linux-foundation.org,
+        linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
+        kvmarm@lists.cs.columbia.edu, joro@8bytes.org,
+        alex.williamson@redhat.com, jacob.jun.pan@linux.intel.com,
+        yi.l.liu@linux.intel.com, will.deacon@arm.com, robin.murphy@arm.com
+Cc:     marc.zyngier@arm.com, peter.maydell@linaro.org,
+        kevin.tian@intel.com, ashok.raj@intel.com, christoffer.dall@arm.com
+References: <20190108102633.17482-1-eric.auger@redhat.com>
+ <20190108102633.17482-18-eric.auger@redhat.com>
+ <dae89fd8-6a82-d2f0-a8c7-ddbf12a7b047@arm.com>
+From:   Auger Eric <eric.auger@redhat.com>
+Message-ID: <e634adee-f7ab-b90d-aac6-06400fa9ffb4@redhat.com>
+Date:   Tue, 15 Jan 2019 22:06:27 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/4IYe9d_Dvvr_jnwqXDMiwhV"; protocol="application/pgp-signature"
+In-Reply-To: <dae89fd8-6a82-d2f0-a8c7-ddbf12a7b047@arm.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.28]); Tue, 15 Jan 2019 21:06:36 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/4IYe9d_Dvvr_jnwqXDMiwhV
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Hi Jean,
 
-Hi all,
+On 1/11/19 6:46 PM, Jean-Philippe Brucker wrote:
+> On 08/01/2019 10:26, Eric Auger wrote:
+>> When a stage 1 related fault event is read from the event queue,
+>> let's propagate it to potential external fault listeners, ie. users
+>> who registered a fault handler.
+>>
+>> Signed-off-by: Eric Auger <eric.auger@redhat.com>
+>> ---
+>>  drivers/iommu/arm-smmu-v3.c | 124 ++++++++++++++++++++++++++++++++----
+>>  1 file changed, 113 insertions(+), 11 deletions(-)
+>>
+>> diff --git a/drivers/iommu/arm-smmu-v3.c b/drivers/iommu/arm-smmu-v3.c
+>> index 999ee470a2ae..6a711cbbb228 100644
+>> --- a/drivers/iommu/arm-smmu-v3.c
+>> +++ b/drivers/iommu/arm-smmu-v3.c
+>> @@ -168,6 +168,26 @@
+>>  #define ARM_SMMU_PRIQ_IRQ_CFG1		0xd8
+>>  #define ARM_SMMU_PRIQ_IRQ_CFG2		0xdc
+>>  
+>> +/* Events */
+>> +#define ARM_SMMU_EVT_F_UUT		0x01
+>> +#define ARM_SMMU_EVT_C_BAD_STREAMID	0x02
+>> +#define ARM_SMMU_EVT_F_STE_FETCH	0x03
+>> +#define ARM_SMMU_EVT_C_BAD_STE		0x04
+>> +#define ARM_SMMU_EVT_F_BAD_ATS_TREQ	0x05
+>> +#define ARM_SMMU_EVT_F_STREAM_DISABLED	0x06
+>> +#define ARM_SMMU_EVT_F_TRANSL_FORBIDDEN	0x07
+>> +#define ARM_SMMU_EVT_C_BAD_SUBSTREAMID	0x08
+>> +#define ARM_SMMU_EVT_F_CD_FETCH		0x09
+>> +#define ARM_SMMU_EVT_C_BAD_CD		0x0a
+>> +#define ARM_SMMU_EVT_F_WALK_EABT	0x0b
+>> +#define ARM_SMMU_EVT_F_TRANSLATION	0x10
+>> +#define ARM_SMMU_EVT_F_ADDR_SIZE	0x11
+>> +#define ARM_SMMU_EVT_F_ACCESS		0x12
+>> +#define ARM_SMMU_EVT_F_PERMISSION	0x13
+>> +#define ARM_SMMU_EVT_F_TLB_CONFLICT	0x20
+>> +#define ARM_SMMU_EVT_F_CFG_CONFLICT	0x21
+>> +#define ARM_SMMU_EVT_E_PAGE_REQUEST	0x24
+>> +
+>>  /* Common MSI config fields */
+>>  #define MSI_CFG0_ADDR_MASK		GENMASK_ULL(51, 2)
+>>  #define MSI_CFG2_SH			GENMASK(5, 4)
+>> @@ -333,6 +353,11 @@
+>>  #define EVTQ_MAX_SZ_SHIFT		7
+>>  
+>>  #define EVTQ_0_ID			GENMASK_ULL(7, 0)
+>> +#define EVTQ_0_SUBSTREAMID		GENMASK_ULL(31, 12)
+>> +#define EVTQ_0_STREAMID			GENMASK_ULL(63, 32)
+>> +#define EVTQ_1_S2			GENMASK_ULL(39, 39)
+>> +#define EVTQ_1_CLASS			GENMASK_ULL(40, 41)
+>> +#define EVTQ_3_FETCH_ADDR		GENMASK_ULL(51, 3)
+>>  
+>>  /* PRI queue */
+>>  #define PRIQ_ENT_DWORDS			2
+>> @@ -1270,7 +1295,6 @@ static int arm_smmu_init_l2_strtab(struct arm_smmu_device *smmu, u32 sid)
+>>  	return 0;
+>>  }
+>>  
+>> -__maybe_unused
+>>  static struct arm_smmu_master_data *
+>>  arm_smmu_find_master(struct arm_smmu_device *smmu, u32 sid)
+>>  {
+>> @@ -1296,24 +1320,102 @@ arm_smmu_find_master(struct arm_smmu_device *smmu, u32 sid)
+>>  	return master;
+>>  }
+>>  
+>> +static void arm_smmu_report_event(struct arm_smmu_device *smmu, u64 *evt)
+>> +{
+>> +	u64 fetch_addr = FIELD_GET(EVTQ_3_FETCH_ADDR, evt[3]);
+>> +	u32 sid = FIELD_GET(EVTQ_0_STREAMID, evt[0]);
+>> +	bool s1 = !FIELD_GET(EVTQ_1_S2, evt[1]);
+>> +	u8 type = FIELD_GET(EVTQ_0_ID, evt[0]);
+>> +	struct arm_smmu_master_data *master;
+>> +	struct iommu_fault_event event;
+>> +	bool propagate = true;
+>> +	u64 addr = evt[2];
+>> +	int i;
+>> +
+>> +	master = arm_smmu_find_master(smmu, sid);
+>> +	if (WARN_ON(!master))
+>> +		return;
+>> +
+>> +	event.fault.type = IOMMU_FAULT_DMA_UNRECOV;
+>> +
+>> +	switch (type) {
+>> +	case ARM_SMMU_EVT_C_BAD_STREAMID:
+>> +		event.fault.reason = IOMMU_FAULT_REASON_SOURCEID_INVALID;
+>> +		break;
+>> +	case ARM_SMMU_EVT_F_STREAM_DISABLED:
+>> +	case ARM_SMMU_EVT_C_BAD_SUBSTREAMID:
+>> +		event.fault.reason = IOMMU_FAULT_REASON_PASID_INVALID;
+>> +		break;
+>> +	case ARM_SMMU_EVT_F_CD_FETCH:
+>> +		event.fault.reason = IOMMU_FAULT_REASON_PASID_FETCH;
+>> +		break;
+>> +	case ARM_SMMU_EVT_F_WALK_EABT:
+>> +		event.fault.reason = IOMMU_FAULT_REASON_WALK_EABT;
+>> +		event.fault.addr = addr;
+>> +		event.fault.fetch_addr = fetch_addr;
+>> +		propagate = s1;
+>> +		break;
+>> +	case ARM_SMMU_EVT_F_TRANSLATION:
+>> +		event.fault.reason = IOMMU_FAULT_REASON_PTE_FETCH;
+>> +		event.fault.addr = addr;
+>> +		event.fault.fetch_addr = fetch_addr;
+>> +		propagate = s1;
+>> +		break;
+>> +	case ARM_SMMU_EVT_F_PERMISSION:
+>> +		event.fault.reason = IOMMU_FAULT_REASON_PERMISSION;
+>> +		event.fault.addr = addr;
+>> +		propagate = s1;
+>> +		break;
+>> +	case ARM_SMMU_EVT_F_ACCESS:
+>> +		event.fault.reason = IOMMU_FAULT_REASON_ACCESS;
+>> +		event.fault.addr = addr;
+>> +		propagate = s1;
+>> +		break;
+>> +	case ARM_SMMU_EVT_C_BAD_STE:
+>> +		event.fault.reason = IOMMU_FAULT_REASON_BAD_DEVICE_CONTEXT_ENTRY;
+>> +		break;
+>> +	case ARM_SMMU_EVT_C_BAD_CD:
+>> +		event.fault.reason = IOMMU_FAULT_REASON_BAD_PASID_ENTRY;
+>> +		break;
+>> +	case ARM_SMMU_EVT_F_ADDR_SIZE:
+>> +		event.fault.reason = IOMMU_FAULT_REASON_OOR_ADDRESS;
+>> +		propagate = s1;
+>> +		break;
+>> +	case ARM_SMMU_EVT_F_STE_FETCH:
+>> +		event.fault.reason = IOMMU_FAULT_REASON_DEVICE_CONTEXT_FETCH;
+>> +		event.fault.fetch_addr = fetch_addr;
+>> +		break;
+>> +	/* End of addition */
+>> +	case ARM_SMMU_EVT_E_PAGE_REQUEST:
+>> +	case ARM_SMMU_EVT_F_TLB_CONFLICT:
+>> +	case ARM_SMMU_EVT_F_CFG_CONFLICT:
+>> +	case ARM_SMMU_EVT_F_BAD_ATS_TREQ:
+>> +	case ARM_SMMU_EVT_F_TRANSL_FORBIDDEN:
+>> +	case ARM_SMMU_EVT_F_UUT:
+>> +	default:
+>> +		event.fault.reason = IOMMU_FAULT_REASON_UNKNOWN;
+>> +	}
+>> +	/* only propagate the error if it relates to stage 1 */
+>> +	if (s1)
+> 
+> if (propagate)
+> 
+> But I don't quite understand how we're deciding what to propagate: a
+> C_BAD_STE is most likely a bug in the SMMU driver, but is reported to
+> userspace. On the other hand a stage-2 F_TRANSLATION is likely an error
+> from the VMM (didn't setup stage-2 mappings properly), but we're not
+> reporting it. Maybe we should add a bit to event.fault that tells
+> whether the fault was stage 1 or 2, and let the VMM deal with it?
+Yes I mixed this up. propagate should be false by default. In case the
+event has an S2 field and S2 == 0 we can safely propagate to the guest.
+Otherwise it is case by case and I need to do another review. If it
+relates to structures owned by the guest propagate.
+> 
+>> +		iommu_report_device_fault(master->dev, &event);
+> 
+> We should return here if the fault is successfully injected
 
-Commit
+Even if the fault gets injected in the guest can't it be still useful to
+get the message below on host side?
 
-  786e1048e7f4 ("pvcalls-front: fix potential null dereference")
+Thanks
 
-has a malformed Fixes tag:
-
-  Fixes: 9f51c05dc41a ("pvcalls-front: Avoid get_free_pages(GFP_KERNEL)
-  under spinlock")
-
-It should not be split over 2 lines.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/4IYe9d_Dvvr_jnwqXDMiwhV
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlw+S0wACgkQAVBC80lX
-0GxqOwf/UnZo2vpgBTaU3aSs7Iv6kCTE67ggBAJ/mNpcWALc7y/C0aOYcbzKxgYu
-0999RqxHy6nxkVlJiAsYtR0ctAF2JH2y8pY5TJB5w9mGlmlMW2dkRN40BE6h6IbD
-gqXUYz+5t/C2hNrrx9C7pGeAk3larJztaQvoNG6wa8US90h6nFNe7Pgzr9rJn17j
-18vw44Ai6sGNdVTgccT3BNUb9PdYAeqQ/TdYPvEdXHmuLQ1AjSa7zgE4Mlvj0ue3
-IDZml9hyCyjcLbyIuXrCXVUJp5V5ZNv7byDpvT8tE2JBHf1qW9Ea1NAV+RRNgBsB
-f5x2snqafEUTcUlBKRGH18Qha1zzjg==
-=J/wc
------END PGP SIGNATURE-----
-
---Sig_/4IYe9d_Dvvr_jnwqXDMiwhV--
+Eric
+> 
+> Thanks,
+> Jean
+> 
+>> +
+>> +	dev_info(smmu->dev, "event 0x%02x received:\n", type);
+>> +	for (i = 0; i < EVTQ_ENT_DWORDS; ++i) {
+>> +		dev_info(smmu->dev, "\t0x%016llx\n",
+>> +			 (unsigned long long)evt[i]);
+>> +	}
+>> +}
+>> +
+>>  /* IRQ and event handlers */
+>>  static irqreturn_t arm_smmu_evtq_thread(int irq, void *dev)
+>>  {
+>> -	int i;
+>>  	struct arm_smmu_device *smmu = dev;
+>>  	struct arm_smmu_queue *q = &smmu->evtq.q;
+>>  	u64 evt[EVTQ_ENT_DWORDS];
+>>  
+>>  	do {
+>> -		while (!queue_remove_raw(q, evt)) {
+>> -			u8 id = FIELD_GET(EVTQ_0_ID, evt[0]);
+>> -
+>> -			dev_info(smmu->dev, "event 0x%02x received:\n", id);
+>> -			for (i = 0; i < ARRAY_SIZE(evt); ++i)
+>> -				dev_info(smmu->dev, "\t0x%016llx\n",
+>> -					 (unsigned long long)evt[i]);
+>> -
+>> -		}
+>> +		while (!queue_remove_raw(q, evt))
+>> +			arm_smmu_report_event(smmu, evt);
+>>  
+>>  		/*
+>>  		 * Not much we can do on overflow, so scream and pretend we're
+>>
+> 
