@@ -7,47 +7,47 @@ X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F5FCC43612
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 16:38:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2698BC43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 16:38:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3FDF82087E
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 16:38:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EAEF520868
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 16:38:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547570312;
-	bh=OlUEew7ILBfVn6lWP4cq7qnod613allZ2T/d3JHjwB4=;
+	s=default; t=1547570319;
+	bh=nPtdFiAJQ21DenT+bjFy7I17yy/o/UYJxoEZGe4hlOI=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=dWcME/458znbAiCkQoE03/Kj5o8gNvQLWC+/kc37GSMhLzJOprT3lV6NVddHomNuY
-	 NFRPaeEQ1MeUSELqvfkfL4qnxUGtTcikkzAQciih8RUKjxmfxY9DArgyq/KIy0V1xc
-	 CvvmgNjseH8Ec264KSXCg3RmCX+GSbskdEIWA6WA=
+	b=a9dYxtjrq2MoJVN1QPEq0IliesJ8wneEZzUsQ2ss7YbQIFmzzD3NHe+2goWJzFcgq
+	 fUVlafFghE5YSFTPR7Ca/Gku3Flf660E/enR9kBIVO3ozstYRcx6YNbO4G8t+lYgXt
+	 XJcKcWWSW/tvAEBEhTn3Yy2ZvxhZzUcITgLd5NMY=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732115AbfAOQia (ORCPT
+        id S1732144AbfAOQih (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 15 Jan 2019 11:38:30 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54296 "EHLO mail.kernel.org"
+        Tue, 15 Jan 2019 11:38:37 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54452 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732066AbfAOQi2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Jan 2019 11:38:28 -0500
+        id S1732121AbfAOQid (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 Jan 2019 11:38:33 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9D1DC2087E;
-        Tue, 15 Jan 2019 16:38:26 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 138A020873;
+        Tue, 15 Jan 2019 16:38:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547570307;
-        bh=OlUEew7ILBfVn6lWP4cq7qnod613allZ2T/d3JHjwB4=;
+        s=default; t=1547570312;
+        bh=nPtdFiAJQ21DenT+bjFy7I17yy/o/UYJxoEZGe4hlOI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=egePWub5lchoL+tiXRPd5TQJ4cmRz9jQ7c1zhxPAo+KEDD8Zmu4MBRYFm+biy+5bM
-         EtTABT8QB+2K/s/6hF2/Nx33Hc2/wYPh2gTT+hOCnCXieWGSN+LhR9OXVb+9fZMHzb
-         b2k3upFFGdXse0pCpCXQPDo2N+hZh+IkDDYp327s=
+        b=qqejvuV/nqVu8ciTO7egXo5lGvoszN/95sAvAfMS/W4UwSw2T68eZJx99RiQQCZiu
+         zPYWVHP9DORA+tTEZ2YEw9VAVn15k3wAJ48y2ME/oHCILXtfk3bgcY5PBkdhjrqCzp
+         JI7dAxR31pIGVvUb2lmWDXo78TDQg2W6t7/n33cU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Ley Foon Tan <lftan@altera.com>,
         Bjorn Helgaas <bhelgaas@google.com>,
         Claudius Heine <claudius.heine.ext@siemens.com>
-Subject: [PATCH 4.4 44/51] PCI: altera: Poll for link training status after retraining the link
-Date:   Tue, 15 Jan 2019 17:35:40 +0100
-Message-Id: <20190115154853.486522240@linuxfoundation.org>
+Subject: [PATCH 4.4 45/51] PCI: altera: Rework config accessors for use without a struct pci_bus
+Date:   Tue, 15 Jan 2019 17:35:41 +0100
+Message-Id: <20190115154853.643101946@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190115154846.928796000@linuxfoundation.org>
 References: <20190115154846.928796000@linuxfoundation.org>
@@ -68,11 +68,10 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Ley Foon Tan <lftan@altera.com>
 
-commit 411dc32d8810e0a204c799ce5c97cb56990de1cb upstream.
+commit 31fc0ad47e2e0b8417616aa0f1ddcc67edf1e109 upstream.
 
-Poll for link training status is cleared before poll for link up status.
-This can help to get the reliable link up status, especially when PCIe is
-in Gen 3 speed.
+Rework configs accessors so a future patch can use them in _probe() with
+struct altera_pcie instead of struct pci_bus.
 
 Signed-off-by: Ley Foon Tan <lftan@altera.com>
 Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
@@ -80,80 +79,112 @@ Cc: Claudius Heine <claudius.heine.ext@siemens.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/pci/host/pcie-altera.c |   45 +++++++++++++++++++++++++++++++++--------
- 1 file changed, 37 insertions(+), 8 deletions(-)
+ drivers/pci/host/pcie-altera.c |   64 ++++++++++++++++++++++++++---------------
+ 1 file changed, 41 insertions(+), 23 deletions(-)
 
 --- a/drivers/pci/host/pcie-altera.c
 +++ b/drivers/pci/host/pcie-altera.c
-@@ -61,7 +61,8 @@
- #define TLP_LOOP			500
- #define RP_DEVFN			0
- 
--#define LINK_UP_TIMEOUT			5000
-+#define LINK_UP_TIMEOUT			HZ
-+#define LINK_RETRAIN_TIMEOUT		HZ
- 
- #define INTX_NUM			4
- 
-@@ -99,11 +100,44 @@ static bool altera_pcie_link_is_up(struc
- 	return !!((cra_readl(pcie, RP_LTSSM) & RP_LTSSM_MASK) == LTSSM_L0);
+@@ -330,22 +330,14 @@ static int tlp_cfg_dword_write(struct al
+ 	return PCIBIOS_SUCCESSFUL;
  }
  
-+static void altera_wait_link_retrain(struct pci_dev *dev)
-+{
-+	u16 reg16;
-+	unsigned long start_jiffies;
-+	struct altera_pcie *pcie = dev->bus->sysdata;
-+
-+	/* Wait for link training end. */
-+	start_jiffies = jiffies;
-+	for (;;) {
-+		pcie_capability_read_word(dev, PCI_EXP_LNKSTA, &reg16);
-+		if (!(reg16 & PCI_EXP_LNKSTA_LT))
-+			break;
-+
-+		if (time_after(jiffies, start_jiffies + LINK_RETRAIN_TIMEOUT)) {
-+			dev_err(&pcie->pdev->dev, "link retrain timeout\n");
-+			break;
-+		}
-+		udelay(100);
-+	}
-+
-+	/* Wait for link is up */
-+	start_jiffies = jiffies;
-+	for (;;) {
-+		if (altera_pcie_link_is_up(pcie))
-+			break;
-+
-+		if (time_after(jiffies, start_jiffies + LINK_UP_TIMEOUT)) {
-+			dev_err(&pcie->pdev->dev, "link up timeout\n");
-+			break;
-+		}
-+		udelay(100);
-+	}
+-static int altera_pcie_cfg_read(struct pci_bus *bus, unsigned int devfn,
+-				int where, int size, u32 *value)
++static int _altera_pcie_cfg_read(struct altera_pcie *pcie, u8 busno,
++				 unsigned int devfn, int where, int size,
++				 u32 *value)
+ {
+-	struct altera_pcie *pcie = bus->sysdata;
+ 	int ret;
+ 	u32 data;
+ 	u8 byte_en;
+ 
+-	if (altera_pcie_hide_rc_bar(bus, devfn, where))
+-		return PCIBIOS_BAD_REGISTER_NUMBER;
+-
+-	if (!altera_pcie_valid_config(pcie, bus, PCI_SLOT(devfn))) {
+-		*value = 0xffffffff;
+-		return PCIBIOS_DEVICE_NOT_FOUND;
+-	}
+-
+ 	switch (size) {
+ 	case 1:
+ 		byte_en = 1 << (where & 3);
+@@ -358,7 +350,7 @@ static int altera_pcie_cfg_read(struct p
+ 		break;
+ 	}
+ 
+-	ret = tlp_cfg_dword_read(pcie, bus->number, devfn,
++	ret = tlp_cfg_dword_read(pcie, busno, devfn,
+ 				 (where & ~DWORD_MASK), byte_en, &data);
+ 	if (ret != PCIBIOS_SUCCESSFUL)
+ 		return ret;
+@@ -378,20 +370,14 @@ static int altera_pcie_cfg_read(struct p
+ 	return PCIBIOS_SUCCESSFUL;
+ }
+ 
+-static int altera_pcie_cfg_write(struct pci_bus *bus, unsigned int devfn,
+-				 int where, int size, u32 value)
++static int _altera_pcie_cfg_write(struct altera_pcie *pcie, u8 busno,
++				  unsigned int devfn, int where, int size,
++				  u32 value)
+ {
+-	struct altera_pcie *pcie = bus->sysdata;
+ 	u32 data32;
+ 	u32 shift = 8 * (where & 3);
+ 	u8 byte_en;
+ 
+-	if (altera_pcie_hide_rc_bar(bus, devfn, where))
+-		return PCIBIOS_BAD_REGISTER_NUMBER;
+-
+-	if (!altera_pcie_valid_config(pcie, bus, PCI_SLOT(devfn)))
+-		return PCIBIOS_DEVICE_NOT_FOUND;
+-
+ 	switch (size) {
+ 	case 1:
+ 		data32 = (value & 0xff) << shift;
+@@ -407,8 +393,40 @@ static int altera_pcie_cfg_write(struct
+ 		break;
+ 	}
+ 
+-	return tlp_cfg_dword_write(pcie, bus->number, devfn,
+-		(where & ~DWORD_MASK), byte_en, data32);
++	return tlp_cfg_dword_write(pcie, busno, devfn, (where & ~DWORD_MASK),
++				   byte_en, data32);
 +}
 +
- static void altera_pcie_retrain(struct pci_dev *dev)
- {
- 	u16 linkcap, linkstat;
- 	struct altera_pcie *pcie = dev->bus->sysdata;
--	int timeout =  0;
- 
- 	if (!altera_pcie_link_is_up(pcie))
- 		return;
-@@ -121,12 +155,7 @@ static void altera_pcie_retrain(struct p
- 	if ((linkstat & PCI_EXP_LNKSTA_CLS) == PCI_EXP_LNKSTA_CLS_2_5GB) {
- 		pcie_capability_set_word(dev, PCI_EXP_LNKCTL,
- 					 PCI_EXP_LNKCTL_RL);
--		while (!altera_pcie_link_is_up(pcie)) {
--			timeout++;
--			if (timeout > LINK_UP_TIMEOUT)
--				break;
--			udelay(5);
--		}
-+		altera_wait_link_retrain(dev);
- 	}
++static int altera_pcie_cfg_read(struct pci_bus *bus, unsigned int devfn,
++				int where, int size, u32 *value)
++{
++	struct altera_pcie *pcie = bus->sysdata;
++
++	if (altera_pcie_hide_rc_bar(bus, devfn, where))
++		return PCIBIOS_BAD_REGISTER_NUMBER;
++
++	if (!altera_pcie_valid_config(pcie, bus, PCI_SLOT(devfn))) {
++		*value = 0xffffffff;
++		return PCIBIOS_DEVICE_NOT_FOUND;
++	}
++
++	return _altera_pcie_cfg_read(pcie, bus->number, devfn, where, size,
++				     value);
++}
++
++static int altera_pcie_cfg_write(struct pci_bus *bus, unsigned int devfn,
++				 int where, int size, u32 value)
++{
++	struct altera_pcie *pcie = bus->sysdata;
++
++	if (altera_pcie_hide_rc_bar(bus, devfn, where))
++		return PCIBIOS_BAD_REGISTER_NUMBER;
++
++	if (!altera_pcie_valid_config(pcie, bus, PCI_SLOT(devfn)))
++		return PCIBIOS_DEVICE_NOT_FOUND;
++
++	return _altera_pcie_cfg_write(pcie, bus->number, devfn, where, size,
++				     value);
  }
- DECLARE_PCI_FIXUP_EARLY(0x1172, PCI_ANY_ID, altera_pcie_retrain);
+ 
+ static struct pci_ops altera_pcie_ops = {
 
 
