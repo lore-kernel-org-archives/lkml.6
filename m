@@ -2,136 +2,97 @@ Return-Path: <SRS0=RZO6=PX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 305B0C43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 19:13:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2DF4EC43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 19:14:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E236C20859
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 19:13:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E596020866
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 19:14:01 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=amdcloud.onmicrosoft.com header.i=@amdcloud.onmicrosoft.com header.b="X4v+p8Jz"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VKQNKE5L"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389273AbfAOTNS (ORCPT
+        id S2389277AbfAOTOA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 15 Jan 2019 14:13:18 -0500
-Received: from mail-eopbgr800075.outbound.protection.outlook.com ([40.107.80.75]:19328
-        "EHLO NAM03-DM3-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729921AbfAOTNS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Jan 2019 14:13:18 -0500
+        Tue, 15 Jan 2019 14:14:00 -0500
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:34460 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729645AbfAOTN7 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 Jan 2019 14:13:59 -0500
+Received: by mail-pg1-f194.google.com with SMTP id j10so1649166pga.1;
+        Tue, 15 Jan 2019 11:13:59 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=amdcloud.onmicrosoft.com; s=selector1-amd-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=CYIHVzOR0Sqrw5I44vPkS27UuFfQgE9rdE2ylOeNKIs=;
- b=X4v+p8JzgvJBSMFNLwxfo5yXtXo85RgtUBHnhxUkd51jCErAZT7gt684xoaR83hW4lbhTlXHJOSaqUXRLDqs3biAnukaA+Sf6rf5eHJmLrOe+I0RpdDNPsGP3mOoKipVXxnrjJcZCvXw4PVOejmp/+/WiyAF308FD2ri1zkWCwQ=
-Received: from BN6PR12MB1714.namprd12.prod.outlook.com (10.175.101.11) by
- BN6PR12MB1731.namprd12.prod.outlook.com (10.175.101.16) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1516.18; Tue, 15 Jan 2019 19:13:11 +0000
-Received: from BN6PR12MB1714.namprd12.prod.outlook.com
- ([fe80::1c01:3bbc:5ef1:4090]) by BN6PR12MB1714.namprd12.prod.outlook.com
- ([fe80::1c01:3bbc:5ef1:4090%11]) with mapi id 15.20.1516.019; Tue, 15 Jan
- 2019 19:13:11 +0000
-From:   "Koenig, Christian" <Christian.Koenig@amd.com>
-To:     "hch@lst.de" <hch@lst.de>, Thomas Hellstrom <thellstrom@vmware.com>
-CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "yong.zhi@intel.com" <yong.zhi@intel.com>,
-        "daniel.vetter@ffwll.ch" <daniel.vetter@ffwll.ch>,
-        "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>,
-        "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>,
-        "bingbu.cao@intel.com" <bingbu.cao@intel.com>,
-        "jian.xu.zheng@intel.com" <jian.xu.zheng@intel.com>,
-        "tian.shu.qiu@intel.com" <tian.shu.qiu@intel.com>,
-        "shiraz.saleem@intel.com" <shiraz.saleem@intel.com>,
-        "sakari.ailus@linux.intel.com" <sakari.ailus@linux.intel.com>,
-        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-        "jgg@ziepe.ca" <jgg@ziepe.ca>
-Subject: Re: [PATCH] lib/scatterlist: Provide a DMA page iterator
-Thread-Topic: [PATCH] lib/scatterlist: Provide a DMA page iterator
-Thread-Index: AQHUrOXdj04wr1dVGkWvqY6Mg4pf06Wwn32AgAAHy4CAAAuYgA==
-Date:   Tue, 15 Jan 2019 19:13:11 +0000
-Message-ID: <c82076aa-a6ee-5ba2-a8d8-935fdbb7d5ca@amd.com>
-References: <20190104223531.GA1705@ziepe.ca> <20190110234218.GM6890@ziepe.ca>
- <20190114094856.GB29604@lst.de>
- <1fb20ab4b171b281e9994b6c55734c120958530b.camel@vmware.com>
- <2b440a3b-ed2f-8fd6-a21e-97ca0b2f5db9@gmail.com>
- <20190115152029.GB2325@lst.de>
- <41d0616e95fb48942404fb54d82249f5700affb1.camel@vmware.com>
- <20190115183133.GA12350@lst.de>
-In-Reply-To: <20190115183133.GA12350@lst.de>
-Accept-Language: de-DE, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-user-agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
-x-originating-ip: [2a02:908:1252:fb60:be8a:bd56:1f94:86e7]
-x-clientproxiedby: AM5PR0202CA0003.eurprd02.prod.outlook.com
- (2603:10a6:203:69::13) To BN6PR12MB1714.namprd12.prod.outlook.com
- (2603:10b6:404:106::11)
-x-ms-exchange-messagesentrepresentingtype: 1
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;BN6PR12MB1731;20:8JoEZaK5rOjTjGvWn0/jNsdeUr3o4QK8F7wUCGuvFLXrjOEomIxmuPK8GI3wIAYYAE64KxYndHCmoUKGnqbZwp+Jx+5Ewm7kFugkhC5QmHROjy0pqG6Lw9u6dG5dDazMpMD0cMpE1ZpDxq4VnkqvLh27+3j5D4horuvWePvq0ZTx5p9Xq5rWD9BqQmGApAMsFtWgAhAWZM9AduSYSEiUTiGn7nKm3SfiX3FvzX8mcf2xuIqg0rP2PBAGj/xaZ0Lp
-x-ms-office365-filtering-correlation-id: ffc98a4a-9b0e-4df9-ec7c-08d67b1d7d7b
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600109)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:BN6PR12MB1731;
-x-ms-traffictypediagnostic: BN6PR12MB1731:
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Christian.Koenig@amd.com; 
-x-microsoft-antispam-prvs: <BN6PR12MB1731E1CF8B9AE5752EEF300583810@BN6PR12MB1731.namprd12.prod.outlook.com>
-x-forefront-prvs: 0918748D70
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(346002)(39860400002)(136003)(376002)(366004)(396003)(189003)(199004)(43544003)(6486002)(6116002)(386003)(6506007)(36756003)(72206003)(64126003)(14454004)(478600001)(52116002)(76176011)(68736007)(2906002)(229853002)(31686004)(106356001)(105586002)(102836004)(25786009)(31696002)(4326008)(86362001)(486006)(65826007)(99286004)(6436002)(7416002)(5660300001)(53936002)(186003)(6512007)(476003)(2616005)(11346002)(446003)(81166006)(81156014)(7736002)(46003)(97736004)(305945005)(8676002)(65956001)(65806001)(8936002)(54906003)(110136005)(256004)(71200400001)(6246003)(58126008)(71190400001)(2501003)(93886005)(316002);DIR:OUT;SFP:1101;SCL:1;SRVR:BN6PR12MB1731;H:BN6PR12MB1714.namprd12.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: amd.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: pzm4Y//mPX3OWRrzHs404z2Ff37ZSja+DPbLCU3Ukbd5XcGA/ZRf7iLYgVi3d27m39SwtmvSRP9m+bCMakvps4s0D7+uttaZKv1hhhoBrpmbgk8h2ycB88iVsa2m8+OGt14pDlKIyplRhERHEsZUElTZwOB0vuqRQzvWr3Ktl/OeCn4h2ojEWiEc6aWNZYTppm9qvdiEoYkZCqwzzwdknuJSixzND1emGoyJyQZWpwUTqg2sRNslwdRVXCbBtJD7PwRC1sHevEWPTkq5RaPPLtPEW4yaHoNTin0vvwKTqMwoY3/rpxpkAb/bxY3TZvml5wf/hX4fV+h+ywL0IsZClX32GCqLyHja1S7JiCESDC+2UJEbfYjR52QQ4tOK2Xn1nbq6zIT0uGU6hJaXYYDo5PongBkdj2kXXO7P+Nuqufc=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <01DFD43BFF2D1B4DB471E42D38BF959C@namprd12.prod.outlook.com>
-Content-Transfer-Encoding: base64
-MIME-Version: 1.0
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: ffc98a4a-9b0e-4df9-ec7c-08d67b1d7d7b
-X-MS-Exchange-CrossTenant-originalarrivaltime: 15 Jan 2019 19:13:08.6746
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN6PR12MB1731
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=fCc5KaqTgZgfy4MB65aXpKGGmlxeuIhNipMfxjQqJdM=;
+        b=VKQNKE5LGOOcdzObjQ6eXgUzuXo6ZpcUt7Ktoe7hRQN3GIiKfMpZOGvgIQBQAHdGOG
+         oF2Z5XrjC/007Z1KKL51hvrpF+brnDhTKvqQ5p72vzDQUy71yUa3/LYiaGhlsKWICixG
+         UOU5qyriAs7mHWy6MfDx/88IYwnhKYmrZSktKXTY6KgmBAy5akp/924o9SrgDi79YTmy
+         psha0CWI2z5lGVUp8cUk7aU1K2lNjFqk/Xq3e8JxHktSLhikCiE48fXUkq1daCPwbpQD
+         o1BKMEbsijIEScmCKacTeYQKPbruLkBcUr1wNEeCvxc+85wDIxhH6PLt1X+BWbn+t9PJ
+         djVg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=fCc5KaqTgZgfy4MB65aXpKGGmlxeuIhNipMfxjQqJdM=;
+        b=fgOcnczP0IHBXA31VFBpY8BELhRJrhr+zzi95Nch8Ycw6yRm3eetTzKF7GxFiw7ddj
+         9RIEX1DSq+PfVemjbarq8H76yDS6ElhiztetY+ao/Ko4WNHyPx39AUOcIchB1LywnlPx
+         vLJHxqaEQPTw758G+6WhjqmtwHo4u+YNNvQjTx4D98hM8PFiNvq93vu6NFPi0JXngILA
+         pflEYdJHg4ElSiSTJMqNloKLfqyIBI4ZEBk7kDicq5MwHI4JTGDKNemwmsLxG0KRCgfe
+         TZ8IGW6MvfULrtv9DhsTgGWo9k7GM2I4MKTq5SnUd/0NizJPxMQgcLS1Lpli0ImlQcCt
+         D9AA==
+X-Gm-Message-State: AJcUukcU0KYK+0t85MpFiEULdBPJSU7840jxhsszFyxxK4dDDKOtANc1
+        /MJdJuhnJIV3jrOSYsJLFS8pHOp8yGQ=
+X-Google-Smtp-Source: ALg8bN45eROKfbIYf8Y+kmouylQHHe0/YXWZ7dLIDs0Y1nENr/Air4OKrj49AkXM/giTY7JM7CH9wQ==
+X-Received: by 2002:a63:d747:: with SMTP id w7mr5030732pgi.360.1547579638462;
+        Tue, 15 Jan 2019 11:13:58 -0800 (PST)
+Received: from localhost.localdomain ([216.13.234.27])
+        by smtp.gmail.com with ESMTPSA id h64sm6130162pfc.142.2019.01.15.11.13.57
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 15 Jan 2019 11:13:57 -0800 (PST)
+From:   Alamy Liu <alamy.liu@gmail.com>
+To:     Venkat Gopalakrishnan <venkatg@codeaurora.org>
+Cc:     Ulf Hansson <ulf.hansson@linaro.org>, linux-mmc@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] mmc: cqhci: data size depending on queue depth
+Date:   Tue, 15 Jan 2019 11:13:50 -0800
+Message-Id: <20190115191356.32714-1-alamy.liu@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-QW0gMTUuMDEuMTkgdW0gMTk6MzEgc2NocmllYiBoY2hAbHN0LmRlOg0KPiBPbiBUdWUsIEphbiAx
-NSwgMjAxOSBhdCAwNjowMzozOVBNICswMDAwLCBUaG9tYXMgSGVsbHN0cm9tIHdyb3RlOg0KPj4g
-SW4gdGhlIGdyYXBoaWNzIGNhc2UsIGl0J3MgcHJvYmFibHkgYmVjYXVzZSBpdCBkb2Vzbid0IGZp
-dCB0aGUgZ3JhcGhpY3MNCj4+IHVzZS1jYXNlczoNCj4+DQo+PiAxKSBNZW1vcnkgdHlwaWNhbGx5
-IG5lZWRzIHRvIGJlIG1hcHBhYmxlIGJ5IGFub3RoZXIgZGV2aWNlLiAodGhlICJkbWEtDQo+PiBi
-dWYiIGludGVyZmFjZSkNCj4gQW5kIHRoZXJlIGlzIG5vdGhpbmcgcHJldmVudGluZyBkbWEtYnVm
-IHNoYXJpbmcgb2YgdGhlc2UgYnVmZmVycy4NCj4gVW5saWtlIHRoZSBnZXRfc2d0YWJsZSBtZXNz
-IGl0IGNhbiBhY3R1YWxseSB3b3JrIHJlbGlhYmx5IG9uDQo+IGFyY2hpdGVjdHVyZXMgdGhhdCBo
-YXZlIHZpcnR1YWxseSB0YWdnZWQgY2FjaGVzIGFuZC9vciBkb24ndA0KPiBndWFyYW50ZWUgY2Fj
-aGUgY29oZXJlbmN5IHdpdGggbWl4ZWQgYXR0cmlidXRlIG1hcHBpbmdzLg0KPg0KPj4gMikgRE1B
-IGJ1ZmZlcnMgYXJlIGV4cG9ydGVkIHRvIHVzZXItc3BhY2UgYW5kIGlzIHN1Yi1hbGxvY2F0ZWQg
-YnkgaXQuDQo+PiBNb3N0bHkgdGhlcmUgYXJlIG5vIEdQVSB1c2VyLXNwYWNlIGtlcm5lbCBpbnRl
-cmZhY2VzIHRvIHN5bmMgLyBmbHVzaA0KPj4gc3VicmVnaW9ucyBhbmQgdGhlc2Ugc3luY3MgbWF5
-IGhhcHBlbiBvbiBhIHNtYWxsZXItdGhhbi1jYWNoZS1saW5lDQo+PiBncmFudWxhcml0eS4NCj4g
-SSBrbm93IG9mIG5vIGFyY2hpdGVjdHVyZXMgdGhhdCBjYW4gZG8gY2FjaGUgbWFpbnRhaW5hbmNl
-IG9uIGEgbGVzcw0KPiB0aGFuIGNhY2hlIGxpbmUgYmFzaXMuICBFaXRoZXIgdGhlIGluc3RydWN0
-aW9ucyByZXF1aXJlIHlvdSB0bw0KPiBzcGVjaWZjeSBjYWNoZSBsaW5lcywgb3IgdGhleSBkbyBz
-b21ldGltZXMgbW9yZSwgc29tZXRpbWVzIGxlc3MNCj4gaW50ZWxsaWdlbnQgcm91bmRpbmcgdXAu
-DQo+DQo+IE5vdGUgdGhhdCBhcyBsb25nIGRtYSBub24tY29oZXJlbnQgYnVmZmVycyBhcmUgZGV2
-aWNlcyBvd25lZCBpdA0KPiBpcyB1cCB0byB0aGUgZGV2aWNlIGFuZCB0aGUgdXNlciBzcGFjZSBk
-cml2ZXIgdG8gdGFrZSBjYXJlIG9mDQo+IGNvaGVyZW5jeSwgdGhlIGtlcm5lbCB2ZXJ5IG11Y2gg
-aXMgb3V0IG9mIHRoZSBwaWN0dXJlLg0KDQpUaG9tYXMgaXMgY29ycmVjdCB0aGF0IHRoZSBpbnRl
-cmZhY2UgeW91IHByb3Bvc2UgaGVyZSBkb2Vzbid0IHdvcmsgYXQgDQphbGwgZm9yIEdQVXMuDQoN
-ClRoZSBrZXJuZWwgZHJpdmVyIGlzIG5vdCBpbmZvcm1lZCBvZiBmbHVzaC9zeW5jLCBidXQgcmF0
-aGVyIGp1c3Qgc2V0dXBzIA0KY29oZXJlbnQgbWFwcGluZ3MgYmV0d2VlbiBzeXN0ZW0gbWVtb3J5
-IGFuZCBkZXZpY2VzLg0KDQpJbiBvdGhlciB3b3JkcyB5b3UgaGF2ZSBhbiBhcnJheSBvZiBzdHJ1
-Y3QgcGFnZXMgYW5kIG5lZWQgdG8gbWFwIHRoYXQgdG8gDQphIHNwZWNpZmljIGRldmljZSBhbmQg
-c28gY3JlYXRlIGRtYV9hZGRyZXNzZXMgZm9yIHRoZSBtYXBwaW5ncy4NCg0KUmVnYXJkcywNCkNo
-cmlzdGlhbi4NCg==
+CQE_DCMD is not necessary to be enabled when CQE is enabled.
+(Software could halt CQE to send command, or via DCMD)
+
+In the case that CQE_DCMD is not enabled, it still needs to allocate
+space for data transfer. For instance:
+  CQE_DCMD is enabled:  32 slots space
+  CQE_DCMD is disabled: 31 slots space (is good enough)
+
+Signed-off-by: Alamy Liu <alamy.liu@gmail.com>
+---
+ drivers/mmc/host/cqhci.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/mmc/host/cqhci.c b/drivers/mmc/host/cqhci.c
+index 4cc7863c13..974997b6cb 100644
+--- a/drivers/mmc/host/cqhci.c
++++ b/drivers/mmc/host/cqhci.c
+@@ -202,7 +202,7 @@ static int cqhci_host_alloc_tdl(struct cqhci_host *cq_host)
+ 	cq_host->desc_size = cq_host->slot_sz * cq_host->num_slots;
+ 
+ 	cq_host->data_size = cq_host->trans_desc_len * cq_host->mmc->max_segs *
+-		(cq_host->num_slots - 1);
++		cq_host->mmc->cqe_qdepth;
+ 
+ 	pr_debug("%s: cqhci: desc_size: %zu data_sz: %zu slot-sz: %d\n",
+ 		 mmc_hostname(cq_host->mmc), cq_host->desc_size, cq_host->data_size,
+-- 
+2.17.1
+
