@@ -2,93 +2,79 @@ Return-Path: <SRS0=RZO6=PX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D96E1C43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 22:44:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D632C43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 22:46:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A76FA208E4
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 22:44:29 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="iJa+Y8nc"
+	by mail.kernel.org (Postfix) with ESMTP id 0572A214AE
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 22:46:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391185AbfAOWo1 (ORCPT
+        id S2391189AbfAOWqf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 15 Jan 2019 17:44:27 -0500
-Received: from ozlabs.org ([203.11.71.1]:58741 "EHLO ozlabs.org"
+        Tue, 15 Jan 2019 17:46:35 -0500
+Received: from mga14.intel.com ([192.55.52.115]:38348 "EHLO mga14.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729846AbfAOWo1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Jan 2019 17:44:27 -0500
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 43fQPj0bh2z9sBQ;
-        Wed, 16 Jan 2019 09:44:25 +1100 (AEDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1547592265;
-        bh=vJ0+pOBJLY3PEcQjCrqAe82N/uLT+5UcE+ni7IZeu78=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=iJa+Y8ncBnnZzslg9+dygv8nUGFZW3F+WJilO73Bd7g92waAQ6V+KnXfMZjbwtiE5
-         EWuuwpBgOZRWmtJOF/qrwOM5yL5rrXoUcbUoHIiMjwNNypDu+YxcgFWvchQ3UHhoNa
-         mq3y+NGiuGB5i+BBTTD7xgFL97YfVRggHUL+al/GHnmsft3igJJVx0dTGx2Xzw8vzU
-         Kc/TUbD1aVbtf+/brnJFEdJfYAPbCJInFpJiWekfkNMYfu4N0zRpWsg7EmPuV6DN5P
-         zaRcrjFfs7qDJS1dNZIWveJzC9MyLBp4OXAhyS0a8o+4lrkRSrPaP+MQ2CkbO6/Hdg
-         vCYUfNfIaE+nw==
-Date:   Wed, 16 Jan 2019 09:44:24 +1100
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Sinan Kaya <okaya@kernel.org>
-Cc:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Paul Gortmaker <paul.gortmaker@windriver.com>
-Subject: Re: linux-next: Fixes tags need some work in the pm tree
-Message-ID: <20190116094424.143ddd3d@canb.auug.org.au>
-In-Reply-To: <0f64417d-be5e-2939-7fc5-ee5ba26c64a6@kernel.org>
-References: <20190116075540.78cff44e@canb.auug.org.au>
-        <0f64417d-be5e-2939-7fc5-ee5ba26c64a6@kernel.org>
+        id S1729846AbfAOWqe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 Jan 2019 17:46:34 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 15 Jan 2019 14:46:34 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,483,1539673200"; 
+   d="scan'208";a="118785411"
+Received: from dwillia2-desk3.jf.intel.com (HELO dwillia2-desk3.amr.corp.intel.com) ([10.54.39.16])
+  by orsmga003.jf.intel.com with ESMTP; 15 Jan 2019 14:46:33 -0800
+Subject: [PATCH v3 0/2] acpi/nfit: Fix command-supported detection
+From:   Dan Williams <dan.j.williams@intel.com>
+To:     linux-nvdimm@lists.01.org
+Cc:     stable@vger.kernel.org, stuart hayes <stuart.w.hayes@gmail.com>,
+        Sujith Pandel <sujith_pandel@dell.com>,
+        Jeff Moyer <jmoyer@redhat.com>,
+        Vishal Verma <vishal.l.verma@intel.com>,
+        linux-kernel@vger.kernel.org, vishal.l.verma@intel.com
+Date:   Tue, 15 Jan 2019 14:33:56 -0800
+Message-ID: <154759163682.1953028.16995572958827750312.stgit@dwillia2-desk3.amr.corp.intel.com>
+User-Agent: StGit/0.18-2-gc94f
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/73wTgXXxonDkNshJsIwyUh_"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/73wTgXXxonDkNshJsIwyUh_
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Changes since v2 [1]:
+* Don't allow ND_CMD_CALL to bypass dsm_mask restrictions (Jeff)
 
-Hi Sinan,
+[1]: https://lists.01.org/pipermail/linux-nvdimm/2019-January/019498.html
 
-On Tue, 15 Jan 2019 16:10:07 -0500 Sinan Kaya <okaya@kernel.org> wrote:
->
-> Interesting, can you add this to the checkpatch.pl script so that it does=
-n't
-> happen again?
+---
 
-Probably a good idea ... (cc'ing Paul G :-))
+One last resend to make sure all the last bits of thrash have settled.
 
---=20
-Cheers,
-Stephen Rothwell
+Quote patch2 changelog:
 
---Sig_/73wTgXXxonDkNshJsIwyUh_
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
+The _DSM function number validation only happens to succeed when the
+generic Linux command number translation corresponds with a
+DSM-family-specific function number. This breaks NVDIMM-N
+implementations that correctly implement _LSR, _LSW, and _LSI, but do
+not happen to publish support for DSM function numbers 4, 5, and 6.
 
------BEGIN PGP SIGNATURE-----
+Recall that the support for _LS{I,R,W} family of methods results in the
+DIMM being marked as supporting those command numbers at
+acpi_nfit_register_dimms() time. The DSM function mask is only used for
+ND_CMD_CALL support of non-NVDIMM_FAMILY_INTEL devices.
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlw+YkgACgkQAVBC80lX
-0GyzoAgAo63fV1JtvbQExAhCsgmVoSWGjth/zWcwK1EhL8ivzQQWUk+pHPbbNbCG
-PY9aYyBvUiwZcxnr0+NZ7XXchreK4wXfHFZ2shKH/IAgLwaqIbmmd1C2RGLGuUvd
-xR5m+8cGhZiyhV7TpbNHTdVsKsZNEhZ7HzXTg+URF2e3nAGo48GpjJVZticgZJQV
-e0nBIBsBQrltEvvmGnXACC/m+p7Xz4htTC9inrGIAzpyAnfZkDm4TEbGeA4GvVMh
-kTM4GOXYVbCR3+EdqaY2rCTOCUoc8hbhGuwSfyQolxTUZQTEKjka9WthEoElICfx
-//hcavKlyOH+Kja4Jbf2bBFTRkKkxQ==
-=6lMM
------END PGP SIGNATURE-----
+---
 
---Sig_/73wTgXXxonDkNshJsIwyUh_--
+Dan Williams (2):
+      acpi/nfit: Block function zero DSMs
+      acpi/nfit: Fix command-supported detection
+
+
+ drivers/acpi/nfit/core.c |   59 +++++++++++++++++++++++++++++++++++-----------
+ 1 file changed, 45 insertions(+), 14 deletions(-)
