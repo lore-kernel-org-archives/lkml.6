@@ -2,143 +2,191 @@ Return-Path: <SRS0=RZO6=PX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6BDAFC43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 22:43:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EF0D1C43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 22:43:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3D4B320657
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 22:43:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BAC2E208E4
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 22:43:36 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="g/NvlWbo"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="t1nPeEzs"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391150AbfAOWnK (ORCPT
+        id S2391159AbfAOWnf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 15 Jan 2019 17:43:10 -0500
-Received: from ozlabs.org ([203.11.71.1]:33599 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729846AbfAOWnK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Jan 2019 17:43:10 -0500
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 43fQNB3ZmKz9sBQ;
-        Wed, 16 Jan 2019 09:43:06 +1100 (AEDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1547592186;
-        bh=yisXX9kbz+WY61CujAyWjVJi1RYkiCLCzebzjuXDdak=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=g/NvlWbouNu87jPBBx/JZzIm9NuDnr0VfAy6RI0Gid4y5103ZYWyRbp3fAvGLXnJg
-         p834jW6+Pu+XIXZ7/KmTUrIV4eRaxT75zSgb3MiwUWqlUV+/11iatC7/gCWcTTSEMN
-         V/4Gm9TG8C5HmqK9W2JqjexEeJeZAf27fNc9Cr5Yw4k0FhE3rZ6J3FNM0Fp4W3IvRK
-         9VckpFqx3GqDOuZBZQfUlAUKJsmU3z336T9Nkq3lmP28Me6a+Htba+UJcsD2+ZFpXO
-         7MiSy/vBgKMglaKsjksP6U4gFAr23pB/54fr6w+LmUwGxUV46LFs8x/8492W35u27f
-         Gczakr5UyxIuA==
-Date:   Wed, 16 Jan 2019 09:43:05 +1100
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Sinan Kaya <okaya@kernel.org>,
-        Paul Gortmaker <paul.gortmaker@windriver.com>
-Subject: Re: linux-next: Fixes tags need some work in the pm tree
-Message-ID: <20190116094305.0f66356a@canb.auug.org.au>
-In-Reply-To: <2774660.l3LIlnjlhl@aspire.rjw.lan>
-References: <20190116075540.78cff44e@canb.auug.org.au>
-        <2774660.l3LIlnjlhl@aspire.rjw.lan>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/FOZKysFIF2eQjL7bBvWOq7f"; protocol="application/pgp-signature"
+        Tue, 15 Jan 2019 17:43:35 -0500
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:46226 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730919AbfAOWnf (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 Jan 2019 17:43:35 -0500
+Received: by mail-pg1-f193.google.com with SMTP id w7so1845334pgp.13;
+        Tue, 15 Jan 2019 14:43:34 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=ZOnjqvNYpF0b3NTZ9L7L8hAtbEIUG8+2lvDJ4PJi+ZA=;
+        b=t1nPeEzs16fXHuhrT13p83AB0PlIz2zHTem8fGQbrKNNXcU52WMXJ6Plyv0UJCSVmQ
+         g7ykB/ma94bBE19uguRa1acoDZyNhlb7iJnrjgJonsvW1IHubDbSvNlTfCuHp87VIjq8
+         jiUufxwLn2VllBJ0mQj/v1TMEk5cVuHB2u480Zv35oTY37cdFDcdMHiYAl3I6IwlbSgZ
+         bk7W5V228xLDLEsZfz7f9KxmKrf617U4uzJiBOejb4XwzOmpaXbWP4Z0WwbX7G6KlUGI
+         rswHDe4h57W9hCiFPvtGjSalNJugiuESHahUxIgWo7Zq7pvMf0QOn9Klh5JSIGkkapgG
+         lN7A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=ZOnjqvNYpF0b3NTZ9L7L8hAtbEIUG8+2lvDJ4PJi+ZA=;
+        b=qjwbZt20r5c4/w0g0bQRPM4KQPau+aiqBocTP8cLSbyEypiSUDe9rsl8A03QZOaP/6
+         p5B0WiI7ghlsUYECjyR7a6qJ4wpORiNOCc0LaWyIvBP2UMih8iclCkyihYIQelXyEWzz
+         l66N15rQ+n6ahpmwuV+/FBASJdIj3OXjkHl4uFctQbl5td34Pkjx9mE429ERCTZV/k2d
+         0BPVWZMCjOWe4PnvIlt+fcv80q8LQkhs3xK4FWWKImEVDtM5J+W+S+0GNHBjmlq3d3QP
+         rl512T98n6hDVlo5bgkyz5guIoulPnwXzI6EHYL76t+cCNP6Ou+9Y5Y5YC9lposxGuzv
+         Z7iQ==
+X-Gm-Message-State: AJcUukcIkedhWo1QcPcXc3zys+9gBAa48YE6i2YgNn1qkvzCaD+ccj3w
+        /AAOogb+P3nzCpRrVdo/grA/2Gq9
+X-Google-Smtp-Source: ALg8bN7ka+dMCDujW8q1HJiYcezbQ0JWu3oX5oL7wcBj3Ha7HajcHAOruTokb1QenQ36EgmP+zhlEg==
+X-Received: by 2002:a65:4049:: with SMTP id h9mr5820945pgp.304.1547592213133;
+        Tue, 15 Jan 2019 14:43:33 -0800 (PST)
+Received: from fainelli-desktop.igp.broadcom.net ([192.19.223.250])
+        by smtp.gmail.com with ESMTPSA id i184sm5206628pfc.41.2019.01.15.14.43.31
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 15 Jan 2019 14:43:32 -0800 (PST)
+From:   Florian Fainelli <f.fainelli@gmail.com>
+To:     netdev@vger.kernel.org
+Cc:     Florian Fainelli <f.fainelli@gmail.com>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Vivien Didelot <vivien.didelot@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH net-next] net: dsa: Add ndo_get_phys_port_name() for CPU port
+Date:   Tue, 15 Jan 2019 14:43:04 -0800
+Message-Id: <20190115224304.17500-1-f.fainelli@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/FOZKysFIF2eQjL7bBvWOq7f
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+There is not currently way to infer the port number through sysfs that
+is being used as the CPU port number. Overlay a ndo_get_phys_port_name()
+operation onto the DSA master network device in order to retrieve that
+information.
 
-Hi Rafael,
+Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
+---
+ include/net/dsa.h |  5 +++++
+ net/dsa/master.c  | 56 ++++++++++++++++++++++++++++++++++++++++++++++-
+ 2 files changed, 60 insertions(+), 1 deletion(-)
 
-On Tue, 15 Jan 2019 23:13:16 +0100 "Rafael J. Wysocki" <rjw@rjwysocki.net> =
-wrote:
->
-> On Tuesday, January 15, 2019 9:55:40 PM CET Stephen Rothwell wrote:
-> > [I am experimenting with checking the Fixes tags in commits in linux-ne=
-xt.
-> > Please let me know if you think I am being too strict.]
-> >=20
-> > Hi Rafael,
-> >=20
-> > Commits
-> >=20
-> >   62b33d57c534 ("drivers: thermal: int340x_thermal: Make PCI dependency=
- explicit")
-> >   cd793ab22a93 ("x86/intel/lpss: Make PCI dependency explicit")
-> >   42ac19e7b81e ("ACPI: EC: Look for ECDT EC after calling acpi_load_tab=
-les()")
-> >   6c29b81b5695 ("platform/x86: apple-gmux: Make PCI dependency explicit=
-")
-> >   34783dc0182a ("platform/x86: intel_pmc: Make PCI dependency explicit")
-> >   704658d1d3ae ("platform/x86: intel_ips: make PCI dependency explicit")
-> >   5df37f3a1aa9 ("vga-switcheroo: make PCI dependency explicit")
-> >   da1df6ee4296 ("ata: pata_acpi: Make PCI dependency explicit")
-> >   ce97a22a596b ("ACPI / LPSS: Make PCI dependency explicit")
-> >=20
-> > Have malformed Fixes tags:
-> >=20
-> > There should be double quotes around the commit subject. =20
->=20
-> Well, where does this requirement come from?
->=20
-> It hasn't been there before AFAICS.
+diff --git a/include/net/dsa.h b/include/net/dsa.h
+index b3eefe8e18fd..2f1daf29131a 100644
+--- a/include/net/dsa.h
++++ b/include/net/dsa.h
+@@ -208,6 +208,11 @@ struct dsa_port {
+ 	 * Original copy of the master netdev ethtool_ops
+ 	 */
+ 	const struct ethtool_ops *orig_ethtool_ops;
++
++	/*
++	 * Original copy of the master netdev net_device_ops
++	 */
++	const struct net_device_ops *orig_ndo_ops;
+ };
+ 
+ struct dsa_switch {
+diff --git a/net/dsa/master.c b/net/dsa/master.c
+index 71bb15f491c8..79e97d2f2d9b 100644
+--- a/net/dsa/master.c
++++ b/net/dsa/master.c
+@@ -126,6 +126,17 @@ static void dsa_master_get_strings(struct net_device *dev, uint32_t stringset,
+ 	}
+ }
+ 
++static int dsa_master_get_phys_port_name(struct net_device *dev,
++					 char *name, size_t len)
++{
++	struct dsa_port *cpu_dp = dev->dsa_ptr;
++
++	if (snprintf(name, len, "p%d", cpu_dp->index) >= len)
++		return -EINVAL;
++
++	return 0;
++}
++
+ static int dsa_master_ethtool_setup(struct net_device *dev)
+ {
+ 	struct dsa_port *cpu_dp = dev->dsa_ptr;
+@@ -158,6 +169,38 @@ static void dsa_master_ethtool_teardown(struct net_device *dev)
+ 	cpu_dp->orig_ethtool_ops = NULL;
+ }
+ 
++static int dsa_master_ndo_setup(struct net_device *dev)
++{
++	struct dsa_port *cpu_dp = dev->dsa_ptr;
++	struct dsa_switch *ds = cpu_dp->ds;
++	struct net_device_ops *ops;
++
++	if (dev->netdev_ops->ndo_get_phys_port_name)
++		return 0;
++
++	ops = devm_kzalloc(ds->dev, sizeof(*ops), GFP_KERNEL);
++	if (!ops)
++		return -ENOMEM;
++
++	cpu_dp->orig_ndo_ops = dev->netdev_ops;
++	if (cpu_dp->orig_ndo_ops)
++		memcpy(ops, cpu_dp->orig_ndo_ops, sizeof(*ops));
++
++	ops->ndo_get_phys_port_name = dsa_master_get_phys_port_name;
++
++	dev->netdev_ops  = ops;
++
++	return 0;
++}
++
++static void dsa_master_ndo_teardown(struct net_device *dev)
++{
++	struct dsa_port *cpu_dp = dev->dsa_ptr;
++
++	dev->netdev_ops = cpu_dp->orig_ndo_ops;
++	cpu_dp->orig_ndo_ops = NULL;
++}
++
+ static ssize_t tagging_show(struct device *d, struct device_attribute *attr,
+ 			    char *buf)
+ {
+@@ -223,16 +266,27 @@ int dsa_master_setup(struct net_device *dev, struct dsa_port *cpu_dp)
+ 	if (ret)
+ 		return ret;
+ 
++	ret = dsa_master_ndo_setup(dev);
++	if (ret)
++		goto out_err_ethtool_teardown;
++
+ 	ret = sysfs_create_group(&dev->dev.kobj, &dsa_group);
+ 	if (ret)
+-		dsa_master_ethtool_teardown(dev);
++		goto out_err_ndo_teardown;
++
++	return ret;
+ 
++out_err_ndo_teardown:
++	dsa_master_ndo_teardown(dev);
++out_err_ethtool_teardown:
++	dsa_master_ethtool_teardown(dev);
+ 	return ret;
+ }
+ 
+ void dsa_master_teardown(struct net_device *dev)
+ {
+ 	sysfs_remove_group(&dev->dev.kobj, &dsa_group);
++	dsa_master_ndo_teardown(dev);
+ 	dsa_master_ethtool_teardown(dev);
+ 	dsa_master_reset_mtu(dev);
+ 
+-- 
+2.17.1
 
-Documentation/process/submitting-patches.rst has the following, but I
-am sure people are happy to discuss changes and it does say "For
-example", so maybe I am being to strict?  The counter argument is that
-there are various (semi-)automated processes that use these tags and
-being consistent probably makes those processes (and life for those who
-run them) easier.
-
-------------------------------------------------------------------------
-If your patch fixes a bug in a specific commit, e.g. you found an issue usi=
-ng
-``git bisect``, please use the 'Fixes:' tag with the first 12 characters of
-the SHA-1 ID, and the one line summary.  For example::
-
-        Fixes: e21d2170f366 ("video: remove unnecessary platform_set_drvdat=
-a()")
-
-The following ``git config`` settings can be used to add a pretty format for
-outputting the above style in the ``git log`` or ``git show`` commands::
-
-        [core]
-                abbrev =3D 12
-        [pretty]
-                fixes =3D Fixes: %h (\"%s\")
-------------------------------------------------------------------------
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/FOZKysFIF2eQjL7bBvWOq7f
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlw+YfkACgkQAVBC80lX
-0GyARAf/Yk/+xQP8jM/ZUpbG0mhqurzZmSRPs1VBNMgil6/Y7Krw1+719wBd3stg
-/S9ULY1rQBDLQiIuSN9AtLqIF2ZrNa/YhumIlR5cedFOl7gEY/5FmYWUk3O9YXLw
-0WAFrA3doBCOAIsL1iatRVdYWqRvxPziCtlcf7cRDOk4MalJPMvme6tI0aOiU6SV
-dHlCm95SAaqPJFDK5OIX3zTKjPxrN9zkF/IFD6IK21TI67OwsJfWzOKK70SdV0Uz
-e4KJyCdSP4EG+Of1AH+3emiJnDGPliXpSEsH4v1BSTThNTycv1xGqAEgq6RUyKe+
-cqzGStlSsHqd/8xuKoy+45cp+SLd3A==
-=F+57
------END PGP SIGNATURE-----
-
---Sig_/FOZKysFIF2eQjL7bBvWOq7f--
