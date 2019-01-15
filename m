@@ -2,91 +2,85 @@ Return-Path: <SRS0=RZO6=PX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.0 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A9E64C43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 09:46:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D3B1EC43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 09:46:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8131C20657
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 09:46:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A1FDA20657
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 09:46:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728750AbfAOJqg (ORCPT
+        id S1728768AbfAOJqn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 15 Jan 2019 04:46:36 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:33565 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726011AbfAOJqg (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Jan 2019 04:46:36 -0500
-Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x0F9kVNk2461595
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Tue, 15 Jan 2019 01:46:31 -0800
-Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x0F9kUMW2461592;
-        Tue, 15 Jan 2019 01:46:30 -0800
-Date:   Tue, 15 Jan 2019 01:46:30 -0800
-X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Mathieu Malaterre <tipbot@zytor.com>
-Message-ID: <tip-01cdfa912f1004c463586f52f1dfcbec1274b1f2@git.kernel.org>
-Cc:     hpa@zytor.com, linux-kernel@vger.kernel.org, malat@debian.org,
-        mingo@kernel.org, tglx@linutronix.de
-Reply-To: hpa@zytor.com, linux-kernel@vger.kernel.org, malat@debian.org,
-          mingo@kernel.org, tglx@linutronix.de
-In-Reply-To: <20190114203633.18557-1-malat@debian.org>
-References: <20190114203633.18557-1-malat@debian.org>
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:irq/core] genirq: Correctly annotate implicit fall through
-Git-Commit-ID: 01cdfa912f1004c463586f52f1dfcbec1274b1f2
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        Tue, 15 Jan 2019 04:46:43 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:53310 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726011AbfAOJqn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 Jan 2019 04:46:43 -0500
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 87582804EC;
+        Tue, 15 Jan 2019 09:46:42 +0000 (UTC)
+Received: from kasong-desktop-nay-redhat-com.nay.redhat.com (unknown [10.66.128.41])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id B644D19940;
+        Tue, 15 Jan 2019 09:46:35 +0000 (UTC)
+From:   Kairui Song <kasong@redhat.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     dhowells@redhat.com, dwmw2@infradead.org,
+        jwboyer@fedoraproject.org, keyrings@vger.kernel.org,
+        jmorris@namei.org, serge@hallyn.com, zohar@linux.ibm.com,
+        bauerman@linux.ibm.com, ebiggers@google.com, nayna@linux.ibm.com,
+        dyoung@redhat.com, linux-integrity@vger.kernel.org,
+        kexec@lists.infradead.org, Kairui Song <kasong@redhat.com>
+Subject: [RFC PATCH v2 0/2] let kexec_file_load use platform keyring to verify the kernel image
+Date:   Tue, 15 Jan 2019 17:45:40 +0800
+Message-Id: <20190115094542.17129-1-kasong@redhat.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.27]); Tue, 15 Jan 2019 09:46:42 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  01cdfa912f1004c463586f52f1dfcbec1274b1f2
-Gitweb:     https://git.kernel.org/tip/01cdfa912f1004c463586f52f1dfcbec1274b1f2
-Author:     Mathieu Malaterre <malat@debian.org>
-AuthorDate: Mon, 14 Jan 2019 21:36:33 +0100
-Committer:  Thomas Gleixner <tglx@linutronix.de>
-CommitDate: Tue, 15 Jan 2019 10:40:53 +0100
+Hi,
 
-genirq: Correctly annotate implicit fall through
+This patch series adds a .platform_trusted_keys in system_keyring as the
+reference to .platform keyring in integrity subsystem, when platform
+keyring is being initialized it will be updated. So other component could
+use this keyring as well.
 
-There is a plan to build the kernel with -Wimplicit-fallthrough. The
-fallthrough in __handle_irq_event_percpu() has a fallthrough annotation
-which is followed by an additional comment and is not recognized by GCC.
+This patch series also let kexec_file_load use platform keyring as fall
+back if it failed to verify the image against secondary keyring, make it
+possible to load kernel signed by third part key if third party key is
+imported in the firmware.
 
-Separate the 'fall through' and the rest of the comment with a dash so the
-regular expression used by GCC matches.
+After this patch kexec_file_load will be able to verify a signed PE
+bzImage using keys in platform keyring.
 
-Signed-off-by: Mathieu Malaterre <malat@debian.org>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Link: https://lkml.kernel.org/r/20190114203633.18557-1-malat@debian.org
----
- kernel/irq/handle.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Tested in a VM with locally signed kernel with pesign and imported the
+cert to EFI's MokList variable.
 
-diff --git a/kernel/irq/handle.c b/kernel/irq/handle.c
-index 38554bc35375..6df5ddfdb0f8 100644
---- a/kernel/irq/handle.c
-+++ b/kernel/irq/handle.c
-@@ -166,7 +166,7 @@ irqreturn_t __handle_irq_event_percpu(struct irq_desc *desc, unsigned int *flags
- 
- 			__irq_wake_thread(desc, action);
- 
--			/* Fall through to add to randomness */
-+			/* Fall through - to add to randomness */
- 		case IRQ_HANDLED:
- 			*flags |= action->flags;
- 			break;
+Kairui Song (2):
+  integrity, KEYS: add a reference to platform keyring
+  kexec, KEYS: Make use of platform keyring for signature verify
+
+Update from V1:
+  - Make platform_trusted_keys static, and update commit message as suggested
+    by Mimi Zohar
+  - Always check if platform keyring is initialized before use it
+
+ arch/x86/kernel/kexec-bzimage64.c | 15 ++++++++++++---
+ certs/system_keyring.c            | 20 +++++++++++++++++++-
+ include/keys/system_keyring.h     |  5 +++++
+ include/linux/verification.h      |  3 +++
+ security/integrity/digsig.c       |  6 ++++++
+ 5 files changed, 45 insertions(+), 4 deletions(-)
+
+-- 
+2.20.1
+
