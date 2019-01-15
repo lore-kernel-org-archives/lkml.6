@@ -2,93 +2,122 @@ Return-Path: <SRS0=RZO6=PX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E3738C43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 05:32:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 870E3C43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 05:33:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AFB9A20651
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 05:32:44 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="m6fF8bXI"
+	by mail.kernel.org (Postfix) with ESMTP id 6160E20651
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 05:33:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727990AbfAOFcj (ORCPT
+        id S1728016AbfAOFdC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 15 Jan 2019 00:32:39 -0500
-Received: from mail-it1-f195.google.com ([209.85.166.195]:51598 "EHLO
-        mail-it1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725929AbfAOFcj (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Jan 2019 00:32:39 -0500
-Received: by mail-it1-f195.google.com with SMTP id w18so3331697ite.1;
-        Mon, 14 Jan 2019 21:32:38 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=H/Olo4Zo97UTApRdojgY9u8WeJGg3GDT9ZjHatNwaRQ=;
-        b=m6fF8bXIVc6PWxgcCfFajs4IaHv7C0LorIWbySRC2P5gkUZfYyidyACmBfCbkdlqBu
-         2SvZXnzDqtsqwAadvs/m29LnUoU6VaRQ8HJ+qamcCGIUZl/IaWKwjTn/YKcqnkSr5bCF
-         +XCiNjzzt9f5jrM3uvakBSKBl3BRCMTtaDmW7fNREoIt7cn2cQfV8CXqoSAk7kwkHUpr
-         V0UxIg6vkn1RQJpHm2me+/aeajx6MYJbMk5dO6TdCrp8pVEzBvdN3l6mX3l82+pyDDz8
-         GRFQwIHqf2Qazm0YwazgrIE3Pv6/b4KxxuN2dYE3a78RDocIkp+lThSHLxl+rB+8Lgdq
-         K2CQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=H/Olo4Zo97UTApRdojgY9u8WeJGg3GDT9ZjHatNwaRQ=;
-        b=re8mJygaEsJX/th2Inn1ASCORFWOC20l4UHl8kucn4EvC2xlvBXEs+m9Kfs2bPobIL
-         lFEuWawIAH83LfTZsbFs0xMxhzF4goixqa0GoC+ERI1ThBM2nKGdE3LwofNNPiVLPD7K
-         CIn4iOCNBKltDStOx4OC9CpchlIaDsP/4Rydgs9s+ZXuIXTqmxRdg4WKJ3NFEJ2oBEm4
-         9rhwoYEd35uQfWJjiHJQhoEiX0FEe2EnmOJRKi3UG5Qwo/lXry8kgO9FrLF5pm92F+aR
-         pQXQFjQpY0QxRICnqxlxvFX/b/HSJfmRGVs0jwjL65lRnShJquDd7fxeRy2wje2yeiOh
-         Xz9g==
-X-Gm-Message-State: AJcUukf9VsnFkmXX+NNVWEYM711zK+PUDSv9AxxS/NAEOlAb/eUMgjD7
-        SsBWA3caXebloUvjXs8yc03L5cUxiVI1yz3jEQFnEvbzjQ==
-X-Google-Smtp-Source: ALg8bN5O2lFzZTWu9TqA8JEFzWVvOWjL1NUo8it6as3mUcu/spjDS7kq3BiHGG9R0CwV9dXZcpnV/rdIvwa6dDOvGok=
-X-Received: by 2002:a24:7a94:: with SMTP id a142mr1314367itc.88.1547530358246;
- Mon, 14 Jan 2019 21:32:38 -0800 (PST)
+        Tue, 15 Jan 2019 00:33:02 -0500
+Received: from mga01.intel.com ([192.55.52.88]:14301 "EHLO mga01.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725929AbfAOFdC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 Jan 2019 00:33:02 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 14 Jan 2019 21:33:01 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,480,1539673200"; 
+   d="scan'208";a="125954931"
+Received: from smile.fi.intel.com (HELO smile) ([10.237.72.86])
+  by FMSMGA003.fm.intel.com with ESMTP; 14 Jan 2019 21:32:59 -0800
+Received: from andy by smile with local (Exim 4.92-RC4)
+        (envelope-from <andriy.shevchenko@linux.intel.com>)
+        id 1gjHLO-0000Si-Gz; Tue, 15 Jan 2019 07:32:58 +0200
+Date:   Tue, 15 Jan 2019 07:32:58 +0200
+From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To:     Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc:     Mika Westerberg <mika.westerberg@linux.intel.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Guenter Roeck <linux@roeck-us.net>, linux-gpio@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] pinctrl: cherryview: fix Strago DMI workaround
+Message-ID: <20190115053258.GA9170@smile.fi.intel.com>
+References: <20190115033836.GA150475@dtor-ws>
 MIME-Version: 1.0
-References: <20190114082416.30939-1-mhocko@kernel.org> <87pnszzg9s.fsf@concordia.ellerman.id.au>
-In-Reply-To: <87pnszzg9s.fsf@concordia.ellerman.id.au>
-From:   Pingfan Liu <kernelfans@gmail.com>
-Date:   Tue, 15 Jan 2019 13:32:26 +0800
-Message-ID: <CAFgQCTsEtjKnCdUb=0d9aTNL94L1=XQGDtot=2MqmqQ-fqmr1g@mail.gmail.com>
-Subject: Re: [RFC PATCH] x86, numa: always initialize all possible nodes
-To:     Michael Ellerman <mpe@ellerman.id.au>
-Cc:     Michal Hocko <mhocko@kernel.org>, linux-mm@kvack.org,
-        Dave Hansen <dave.hansen@intel.com>,
-        Peter Zijlstra <peterz@infradead.org>, x86@kernel.org,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Tony Luck <tony.luck@intel.com>, linuxppc-dev@lists.ozlabs.org,
-        linux-ia64@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        Michal Hocko <mhocko@suse.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190115033836.GA150475@dtor-ws>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[...]
-> >
-> > I would appreciate a help with those architectures because I couldn't
-> > really grasp how the memoryless nodes are really initialized there. E.g.
-> > ppc only seem to call setup_node_data for online nodes but I couldn't
-> > find any special treatment for nodes without any memory.
->
-> We have a somewhat dubious hack in our hotplug code, see:
->
-> e67e02a544e9 ("powerpc/pseries: Fix cpu hotplug crash with memoryless nodes")
->
-> Which basically onlines the node when we hotplug a CPU into it.
->
-This bug should be related with the present state of numa node during
-boot time. On PowerNV and PSeries, the boot code seems not to bring up
-all nodes if memoryless. Then it can not avoid this bug.
+On Mon, Jan 14, 2019 at 07:38:36PM -0800, Dmitry Torokhov wrote:
+> Well, hopefully 3rd time is a charm. We tried making that check
+> DMI_BIOS_VERSION and DMI_BOARD_VERSION, but the real one is
+> DMI_PRODUCT_VERSION.
 
-Thanks,
-Pingfan
+Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+
+> Fixes: 86c5dd6860a6 ("pinctrl: cherryview: limit Strago DMI workarounds to version 1.0")
+> Bugzilla: https://bugzilla.kernel.org/show_bug.cgi?id=197953
+> Bugzilla: https://bugzilla.redhat.com/show_bug.cgi?id=1631930
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+> ---
+>  drivers/pinctrl/intel/pinctrl-cherryview.c | 8 ++++----
+>  1 file changed, 4 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/pinctrl/intel/pinctrl-cherryview.c b/drivers/pinctrl/intel/pinctrl-cherryview.c
+> index 9b0f4b9ef482..8efe8ea45602 100644
+> --- a/drivers/pinctrl/intel/pinctrl-cherryview.c
+> +++ b/drivers/pinctrl/intel/pinctrl-cherryview.c
+> @@ -1507,7 +1507,7 @@ static const struct dmi_system_id chv_no_valid_mask[] = {
+>  		.matches = {
+>  			DMI_MATCH(DMI_SYS_VENDOR, "GOOGLE"),
+>  			DMI_MATCH(DMI_PRODUCT_FAMILY, "Intel_Strago"),
+> -			DMI_MATCH(DMI_BOARD_VERSION, "1.0"),
+> +			DMI_MATCH(DMI_PRODUCT_VERSION, "1.0"),
+>  		},
+>  	},
+>  	{
+> @@ -1515,7 +1515,7 @@ static const struct dmi_system_id chv_no_valid_mask[] = {
+>  		.matches = {
+>  			DMI_MATCH(DMI_SYS_VENDOR, "HP"),
+>  			DMI_MATCH(DMI_PRODUCT_NAME, "Setzer"),
+> -			DMI_MATCH(DMI_BOARD_VERSION, "1.0"),
+> +			DMI_MATCH(DMI_PRODUCT_VERSION, "1.0"),
+>  		},
+>  	},
+>  	{
+> @@ -1523,7 +1523,7 @@ static const struct dmi_system_id chv_no_valid_mask[] = {
+>  		.matches = {
+>  			DMI_MATCH(DMI_SYS_VENDOR, "GOOGLE"),
+>  			DMI_MATCH(DMI_PRODUCT_NAME, "Cyan"),
+> -			DMI_MATCH(DMI_BOARD_VERSION, "1.0"),
+> +			DMI_MATCH(DMI_PRODUCT_VERSION, "1.0"),
+>  		},
+>  	},
+>  	{
+> @@ -1531,7 +1531,7 @@ static const struct dmi_system_id chv_no_valid_mask[] = {
+>  		.matches = {
+>  			DMI_MATCH(DMI_SYS_VENDOR, "GOOGLE"),
+>  			DMI_MATCH(DMI_PRODUCT_NAME, "Celes"),
+> -			DMI_MATCH(DMI_BOARD_VERSION, "1.0"),
+> +			DMI_MATCH(DMI_PRODUCT_VERSION, "1.0"),
+>  		},
+>  	},
+>  	{}
+> -- 
+> 2.20.1.97.g81188d93c3-goog
+> 
+> 
+> -- 
+> Dmitry
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
