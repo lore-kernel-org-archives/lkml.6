@@ -2,150 +2,168 @@ Return-Path: <SRS0=RZO6=PX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EA594C43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 10:05:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 71153C43444
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 10:06:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AC95220651
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 10:05:46 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="cCgQw5YK"
+	by mail.kernel.org (Postfix) with ESMTP id 3E4CA20651
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 10:06:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728609AbfAOKFo (ORCPT
+        id S1728257AbfAOKGt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 15 Jan 2019 05:05:44 -0500
-Received: from mail-eopbgr130040.outbound.protection.outlook.com ([40.107.13.40]:62592
-        "EHLO EUR01-HE1-obe.outbound.protection.outlook.com"
+        Tue, 15 Jan 2019 05:06:49 -0500
+Received: from mx2.suse.de ([195.135.220.15]:36680 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727790AbfAOKFk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Jan 2019 05:05:40 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=fnBg/3Zd/nOHZWiutsHzWXpvg1b8b3mX29x9+sBnDXY=;
- b=cCgQw5YKVz0GMGKJZNVxGBT+m2jFkOzQQV3F73d5+2mW0ulTgj3NetanjmTTafs+1j7QoNSdyqHWTetNf85xBtq+wZt6Uy4kqFFiTbefPkuZLRU3rWTKVMAhLAlgs+oTV6mXN2moSNfsZvDIXJaBusBnJ7ridN2KhxsVq3pEURk=
-Received: from VI1PR04MB5726.eurprd04.prod.outlook.com (20.178.127.24) by
- VI1PR04MB5822.eurprd04.prod.outlook.com (20.178.204.88) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1516.14; Tue, 15 Jan 2019 10:05:35 +0000
-Received: from VI1PR04MB5726.eurprd04.prod.outlook.com
- ([fe80::a1c2:cc79:80f3:3bcb]) by VI1PR04MB5726.eurprd04.prod.outlook.com
- ([fe80::a1c2:cc79:80f3:3bcb%4]) with mapi id 15.20.1516.019; Tue, 15 Jan 2019
- 10:05:35 +0000
-From:   Yogesh Narayan Gaur <yogeshnarayan.gaur@nxp.com>
-To:     "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>,
-        "boris.brezillon@bootlin.com" <boris.brezillon@bootlin.com>,
-        "broonie@kernel.org" <broonie@kernel.org>,
-        "marek.vasut@gmail.com" <marek.vasut@gmail.com>,
-        "vigneshr@ti.com" <vigneshr@ti.com>,
-        "linux-spi@vger.kernel.org" <linux-spi@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
-CC:     "tudor.ambarus@microchip.com" <tudor.ambarus@microchip.com>,
-        "robh@kernel.org" <robh@kernel.org>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "shawnguo@kernel.org" <shawnguo@kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "computersforpeace@gmail.com" <computersforpeace@gmail.com>,
-        "frieder.schrempf@exceet.de" <frieder.schrempf@exceet.de>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Yogesh Narayan Gaur <yogeshnarayan.gaur@nxp.com>
-Subject: [PATCH v7 5/5] arm64: dts: lx2160a: update fspi node
-Thread-Topic: [PATCH v7 5/5] arm64: dts: lx2160a: update fspi node
-Thread-Index: AQHUrLnbWH3YDSF6OUOBVDSvHgkBWw==
-Date:   Tue, 15 Jan 2019 10:05:35 +0000
-Message-ID: <1547546584-5254-6-git-send-email-yogeshnarayan.gaur@nxp.com>
-References: <1547546584-5254-1-git-send-email-yogeshnarayan.gaur@nxp.com>
-In-Reply-To: <1547546584-5254-1-git-send-email-yogeshnarayan.gaur@nxp.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: SG2PR06CA0123.apcprd06.prod.outlook.com
- (2603:1096:1:1d::25) To VI1PR04MB5726.eurprd04.prod.outlook.com
- (2603:10a6:803:e4::24)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=yogeshnarayan.gaur@nxp.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-mailer: git-send-email 1.9.1
-x-originating-ip: [14.143.30.134]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;VI1PR04MB5822;6:As0kijqYpdLXyo/cdHf5tv3DukVLKJlSrelMt5fcIHXxo8so1vzga9pd7L9TSf+5Hc/A2UI6jdZGOcBjV6pLxbx5+r8YwqSM+gekE6uSeOEkC/7+yo0Vy/Gau3yjl0M4f31ksHN8IfjWH6kezA12rwjE5KHPoPToCeegDuGvT/r1Lv2vohK9g7nhybR3CPpB21Hy/IPwNcbN1DezAsXgtm3sYB+XyydpslvRBcFF6hVev9qrmXxChTkAV7hcWk8K1cJTx7QGPDWowijYBnzEcjxOE6l5ga/mmCUYxe0VmepUVPACimeh/Grfsz1gT+WwIMsplsee2DfJPu7ydeZAvBggPf9YJDLGJBvtpxzO0iQ8Zw0M9xJkrWGQXnm0VTW89+MPtJXW20oVN7BlmaRUwYBTH8n8hScKmBCrE2VnJnnwxYXn6mTYmABa2Orh4eCGc8LXHTNFmiPv0JZyYHzhmQ==;5:TBB8xsgEVQTEGXk4huBj41QUcQK5caVyFMfPbDFnsFqO1JSusOlpIk+Slo3Db1eJgX4pedZOQyYqShMPfP+uIeZsAKBL+r9lO5bPgcRH9vvC2xMpr5Vsf2cNhap/+Ijc37ShVhwCCRiYxH3jzR1jj1H6/1w6Rz5dTJ+dw+AsZ8yW/9+a6ajsLxyvLv/4Ko7LfiVJtXGhXvvCYiwAQzcriA==;7:5ul/OENiRKkVmyhobrfF4mxKmsfX/RxTZHZoa5QNASNeEN9RIZt9BBxwAkSTxSP8ewRP9XGxrn55/byg/brqOqgk45g/B2wBkDYigZWKaAzdccVBLVOVpJZF4cuCo9c0KyhqE9gjifD0RkgfVy0GRQ==
-x-ms-office365-filtering-correlation-id: b6540173-c398-4d61-2c7e-08d67ad0fdeb
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(7168020)(4627221)(201703031133081)(201702281549075)(8990200)(5600109)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:VI1PR04MB5822;
-x-ms-traffictypediagnostic: VI1PR04MB5822:
-x-microsoft-antispam-prvs: <VI1PR04MB58229BC270402356EAAE0EF799810@VI1PR04MB5822.eurprd04.prod.outlook.com>
-x-forefront-prvs: 0918748D70
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(366004)(346002)(396003)(39860400002)(136003)(376002)(189003)(199004)(36756003)(305945005)(14454004)(6512007)(81166006)(486006)(446003)(2201001)(81156014)(2501003)(4326008)(105586002)(8936002)(386003)(7736002)(86362001)(102836004)(2616005)(26005)(186003)(6506007)(54906003)(50226002)(97736004)(316002)(5660300001)(110136005)(2906002)(6116002)(8676002)(256004)(71190400001)(6486002)(7416002)(66066001)(3846002)(99286004)(6436002)(106356001)(478600001)(76176011)(55236004)(71200400001)(78486014)(11346002)(39060400002)(53936002)(52116002)(68736007)(476003)(25786009);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR04MB5822;H:VI1PR04MB5726.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: YOjbCOhrN8U/RrqNzfxvLr/Md/UmthoOdzf6T9QkdDfr0jv8mdxkxbsnvrP4Q+FHhXp8Epk4HrSiUm9A69I4r5/wryGdn1NYv2dYei+W5LgBp2SAPue8ZHWIfXXRxgYIodlvMaUGY//Zto/y0KCr2ev5AXDvUBNB9DSPrdNlvP/zAYvHOBI5YgxjSW1iG1sKY8Y806wWEYi3Z5FJtAgVADdMDKGoTMQmmsYYNNlw1FjbX/LpV68MsyI6I0pelO1eoMdO8pLAV3n1s14/Mf/KQmnLMIlfaHfwQBNvGl7i/6zujE2y9rSY1pF+e56Qzts616xLbn9IbgQpO4VlsIbMTIdk/UDr20MvEG0erDt/RYxZyKAoeTYFd9ZNnFz+OZmyQHiuoKE0wNyBxxKHAYCoOUR5cCvKS/fdOQ9kSnlRvvs=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+        id S1727200AbfAOKGt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 Jan 2019 05:06:49 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 05C79ADF5;
+        Tue, 15 Jan 2019 10:06:46 +0000 (UTC)
+Subject: Re: KMSAN: uninit-value in mpol_rebind_mm
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     Dmitry Vyukov <dvyukov@google.com>,
+        syzbot <syzbot+b19c2dc2c990ea657a71@syzkaller.appspotmail.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Alexander Potapenko <glider@google.com>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linux-MM <linux-mm@kvack.org>, linux@dominikbrodowski.net,
+        Michal Hocko <mhocko@suse.com>,
+        David Rientjes <rientjes@google.com>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
+        xieyisheng1@huawei.com, zhong jiang <zhongjiang@huawei.com>
+References: <000000000000c06550057e4cac7c@google.com>
+ <a71997c3-e8ae-a787-d5ce-3db05768b27c@suse.cz>
+ <CACT4Y+bRvwxkdnyRosOujpf5-hkBwd2g0knyCQHob7p=0hC=Dw@mail.gmail.com>
+ <52835ef5-6351-3852-d4ba-b6de285f96f5@suse.cz>
+ <20190104172802.ce9c4b77577a9c2810f04171@linux-foundation.org>
+From:   Vlastimil Babka <vbabka@suse.cz>
+Openpgp: preference=signencrypt
+Message-ID: <73da3e9c-cc84-509e-17d9-0c434bb9967d@suse.cz>
+Date:   Tue, 15 Jan 2019 11:06:44 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.3
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: b6540173-c398-4d61-2c7e-08d67ad0fdeb
-X-MS-Exchange-CrossTenant-originalarrivaltime: 15 Jan 2019 10:05:29.6493
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR04MB5822
+In-Reply-To: <20190104172802.ce9c4b77577a9c2810f04171@linux-foundation.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Flash mt35xu512aba connected to FlexSPI controller supports
-1-1-8/1-8-8 protocol.
-Added flag spi-rx-bus-width and spi-tx-bus-width with values as
-8 and 8 respectively for both flashes connected at CS0 and CS1.
+On 1/5/19 2:28 AM, Andrew Morton wrote:
+> On Fri, 4 Jan 2019 09:50:31 +0100 Vlastimil Babka <vbabka@suse.cz> wrote:
+> 
+>>> Yes, it doesn't and it's not trivial to do. The tool reports uses of
+>>> unint _values_. Values don't necessary reside in memory. It can be a
+>>> register, that come from another register that was calculated as a sum
+>>> of two other values, which may come from a function argument, etc.
+>>
+>> I see. BTW, the patch I sent will be picked up for testing, or does it
+>> have to be in mmotm/linux-next first?
+> 
+> I grabbed it.  To go further we'd need a changelog, a signoff,
+> description of testing status, reviews, a Fixes: and perhaps a
+> cc:stable ;)
 
-Signed-off-by: Yogesh Narayan Gaur <yogeshnarayan.gaur@nxp.com>
----
-Changes for v6:
-- Correct S-o-b tag with full author name as 'Yogesh Narayan Gaur'.
-Changes for v5:
-- None
-Changes for v4:
-- None
-Changes for v3:
-- None
-Changes for v2:
-- None
----
- arch/arm64/boot/dts/freescale/fsl-lx2160a-rdb.dts | 4 ++++
- 1 file changed, 4 insertions(+)
+Here's the full patch. Since there was no reproducer, there probably
+won't be any conclusive testing, but we might interpret lack of further
+KSMSAN reports as a success :)
 
-diff --git a/arch/arm64/boot/dts/freescale/fsl-lx2160a-rdb.dts b/arch/arm64=
-/boot/dts/freescale/fsl-lx2160a-rdb.dts
-index 70658946fbbe..9df37b159415 100644
---- a/arch/arm64/boot/dts/freescale/fsl-lx2160a-rdb.dts
-+++ b/arch/arm64/boot/dts/freescale/fsl-lx2160a-rdb.dts
-@@ -60,6 +60,8 @@
- 		m25p,fast-read;
- 		spi-max-frequency =3D <50000000>;
- 		reg =3D <0>;
-+		spi-rx-bus-width =3D <8>;
-+		spi-tx-bus-width =3D <8>;
- 	};
-=20
- 	mt35xu512aba1: flash@1 {
-@@ -69,6 +71,8 @@
- 		m25p,fast-read;
- 		spi-max-frequency =3D <50000000>;
- 		reg =3D <1>;
-+		spi-rx-bus-width =3D <8>;
-+		spi-tx-bus-width =3D <8>;
- 	};
- };
-=20
---=20
-2.17.1
+----8<----
+
+From 81ad0c822cb022cacea9b69565e12aac96dfb3fc Mon Sep 17 00:00:00 2001
+From: Vlastimil Babka <vbabka@suse.cz>
+Date: Thu, 3 Jan 2019 09:31:59 +0100
+Subject: [PATCH] mm, mempolicy: fix uninit memory access
+
+Syzbot with KMSAN reports (excerpt):
+
+==================================================================
+BUG: KMSAN: uninit-value in mpol_rebind_policy mm/mempolicy.c:353 [inline]
+BUG: KMSAN: uninit-value in mpol_rebind_mm+0x249/0x370 mm/mempolicy.c:384
+CPU: 1 PID: 17420 Comm: syz-executor4 Not tainted 4.20.0-rc7+ #15
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
+Google 01/01/2011
+Call Trace:
+  __dump_stack lib/dump_stack.c:77 [inline]
+  dump_stack+0x173/0x1d0 lib/dump_stack.c:113
+  kmsan_report+0x12e/0x2a0 mm/kmsan/kmsan.c:613
+  __msan_warning+0x82/0xf0 mm/kmsan/kmsan_instr.c:295
+  mpol_rebind_policy mm/mempolicy.c:353 [inline]
+  mpol_rebind_mm+0x249/0x370 mm/mempolicy.c:384
+  update_tasks_nodemask+0x608/0xca0 kernel/cgroup/cpuset.c:1120
+  update_nodemasks_hier kernel/cgroup/cpuset.c:1185 [inline]
+  update_nodemask kernel/cgroup/cpuset.c:1253 [inline]
+  cpuset_write_resmask+0x2a98/0x34b0 kernel/cgroup/cpuset.c:1728
+
+...
+
+Uninit was created at:
+  kmsan_save_stack_with_flags mm/kmsan/kmsan.c:204 [inline]
+  kmsan_internal_poison_shadow+0x92/0x150 mm/kmsan/kmsan.c:158
+  kmsan_kmalloc+0xa6/0x130 mm/kmsan/kmsan_hooks.c:176
+  kmem_cache_alloc+0x572/0xb90 mm/slub.c:2777
+  mpol_new mm/mempolicy.c:276 [inline]
+  do_mbind mm/mempolicy.c:1180 [inline]
+  kernel_mbind+0x8a7/0x31a0 mm/mempolicy.c:1347
+  __do_sys_mbind mm/mempolicy.c:1354 [inline]
+
+As it's difficult to report where exactly the uninit value resides in the
+mempolicy object, we have to guess a bit. mm/mempolicy.c:353 contains this
+part of mpol_rebind_policy():
+
+        if (!mpol_store_user_nodemask(pol) &&
+            nodes_equal(pol->w.cpuset_mems_allowed, *newmask))
+
+"mpol_store_user_nodemask(pol)" is testing pol->flags, which I couldn't ever
+see being uninitialized after leaving mpol_new(). So I'll guess it's actually
+about accessing pol->w.cpuset_mems_allowed on line 354, but still part of
+statement starting on line 353.
+
+For w.cpuset_mems_allowed to be not initialized, and the nodes_equal()
+reachable for a mempolicy where mpol_set_nodemask() is called in do_mbind(), it
+seems the only possibility is a MPOL_PREFERRED policy with empty set of nodes,
+i.e. MPOL_LOCAL equivalent, with MPOL_F_LOCAL flag. Let's exclude such policies
+from the nodes_equal() check. Note the uninit access should be benign anyway,
+as rebinding this kind of policy is always a no-op. Therefore no actual need for
+stable inclusion.
+
+Link: http://lkml.kernel.org/r/a71997c3-e8ae-a787-d5ce-3db05768b27c@suse.cz
+Reported-by: syzbot+b19c2dc2c990ea657a71@syzkaller.appspotmail.com
+Signed-off-by: Vlastimil Babka <vbabka@suse.cz>
+Cc: Alexander Potapenko <glider@google.com>
+Cc: Dmitry Vyukov <dvyukov@google.com>
+Cc: Andrea Arcangeli <aarcange@redhat.com>
+Cc: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+Cc: Michal Hocko <mhocko@suse.com>
+Cc: David Rientjes <rientjes@google.com>
+Cc: Yisheng Xie <xieyisheng1@huawei.com>
+Cc: zhong jiang <zhongjiang@huawei.com>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+---
+ mm/mempolicy.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/mm/mempolicy.c b/mm/mempolicy.c
+index d4496d9d34f5..a0b7487b9112 100644
+--- a/mm/mempolicy.c
++++ b/mm/mempolicy.c
+@@ -350,7 +350,7 @@ static void mpol_rebind_policy(struct mempolicy *pol, const nodemask_t *newmask)
+ {
+ 	if (!pol)
+ 		return;
+-	if (!mpol_store_user_nodemask(pol) &&
++	if (!mpol_store_user_nodemask(pol) && !(pol->flags & MPOL_F_LOCAL) &&
+ 	    nodes_equal(pol->w.cpuset_mems_allowed, *newmask))
+ 		return;
+ 
+-- 
+2.20.1
 
