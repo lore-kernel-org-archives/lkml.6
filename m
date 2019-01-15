@@ -2,98 +2,144 @@ Return-Path: <SRS0=RZO6=PX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C510C43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 15:47:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3CA4DC43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 15:52:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1621F20645
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 15:47:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0CA2620645
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 15:52:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731171AbfAOPrw (ORCPT
+        id S1731198AbfAOPwb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 15 Jan 2019 10:47:52 -0500
-Received: from mail-io1-f68.google.com ([209.85.166.68]:39715 "EHLO
-        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731155AbfAOPrv (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Jan 2019 10:47:51 -0500
-Received: by mail-io1-f68.google.com with SMTP id k7so2403778iob.6
-        for <linux-kernel@vger.kernel.org>; Tue, 15 Jan 2019 07:47:51 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=63qAqn9+8knOzrpJzAgh/hypu9BmGLnvogVKxHDPq6A=;
-        b=b9mk5DPM1MbX6wknbcTAgYLIFC5Gi2JLo4mU+DB1Gj0oyKQesrqFi4yeeepvmoVb2a
-         lPQwNyBAju3twy6hksFA0VWHVzY33cPlBphf4uuj09A3RxkKml9p/sNLJQIZuwkuLxFP
-         y7WFgp3pKNDxdopX5N6FJyuW/Aw30/241PPbSHxrS3XawuUjucNiiETto5jUNMgVmp0r
-         qrNMXn+T+zhkmV1apJ2FhQIh8BJWMiV9THullPkfcKUkV5PwxAFy43TWHKcxTy+992Cx
-         60uVT5TIBkUQdrHrE6c0KKiobRS5+aKFLx54wC7lmwsA7dy324ahZ/hy54jG8WWnZSU1
-         OmfQ==
-X-Gm-Message-State: AJcUukd1qeTUE1QNUJnqUUy8BcFd4FqCwrLEmUhCyCI7exn+Yljw/iBk
-        yZtHNgaPchL/8tH1EGLo80StSiLB8yCRB/FtcN9Pyw==
-X-Google-Smtp-Source: ALg8bN4WJuGrxOHRSezcEWLtO1Y1typgGd1LD5dX6Xw96Rsk7r61Fr4MImLRM8qfYRsr/bC8+8Gytd8fgrS5deJnNMg=
-X-Received: by 2002:a5e:de01:: with SMTP id e1mr2352082iok.137.1547567270976;
- Tue, 15 Jan 2019 07:47:50 -0800 (PST)
+        Tue, 15 Jan 2019 10:52:31 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:26883 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728908AbfAOPwa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 Jan 2019 10:52:30 -0500
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 8B2DC753E3;
+        Tue, 15 Jan 2019 15:52:29 +0000 (UTC)
+Received: from llong.remote.csb (dhcp-17-223.bos.redhat.com [10.18.17.223])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id B492D1001F57;
+        Tue, 15 Jan 2019 15:52:27 +0000 (UTC)
+Subject: Re: [PATCH v3 4/4] /proc/stat: Call kstat_irqs_usr() only for active
+ IRQs
+To:     Thomas Gleixner <tglx@linutronix.de>
+Cc:     Matthew Wilcox <willy@infradead.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Kees Cook <keescook@chromium.org>,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        Davidlohr Bueso <dave@stgolabs.net>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        Daniel Colascione <dancol@google.com>,
+        Dave Chinner <david@fromorbit.com>,
+        Randy Dunlap <rdunlap@infradead.org>
+References: <1547061648-16080-1-git-send-email-longman@redhat.com>
+ <1547061648-16080-5-git-send-email-longman@redhat.com>
+ <alpine.DEB.2.21.1901111750280.4957@nanos.tec.linutronix.de>
+ <alpine.DEB.2.21.1901112017000.1661@nanos.tec.linutronix.de>
+ <20190111192357.GK6310@bombadil.infradead.org>
+ <alpine.DEB.2.21.1901112146180.1661@nanos.tec.linutronix.de>
+ <3b863edf-1a3e-1436-93e7-717550c7256f@redhat.com>
+ <alpine.DEB.2.21.1901151023550.1865@nanos.tec.linutronix.de>
+From:   Waiman Long <longman@redhat.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=longman@redhat.com; prefer-encrypt=mutual; keydata=
+ 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
+ weim8xU=
+Organization: Red Hat
+Message-ID: <86453b9a-f7c3-73a5-c5a1-bfff3cb4bade@redhat.com>
+Date:   Tue, 15 Jan 2019 10:52:27 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-References: <20190115094542.17129-1-kasong@redhat.com> <20190115094542.17129-2-kasong@redhat.com>
- <1547566455.4156.283.camel@linux.ibm.com>
-In-Reply-To: <1547566455.4156.283.camel@linux.ibm.com>
-From:   Kairui Song <kasong@redhat.com>
-Date:   Tue, 15 Jan 2019 23:47:39 +0800
-Message-ID: <CACPcB9fQUNiD8UEVDa+bU67PZSOkckwhwD00Qvu4m3G0JmqqHQ@mail.gmail.com>
-Subject: Re: [RFC PATCH v2 1/2] integrity, KEYS: add a reference to platform keyring
-To:     Mimi Zohar <zohar@linux.ibm.com>
-Cc:     linux-kernel@vger.kernel.org, David Howells <dhowells@redhat.com>,
-        David Woodhouse <dwmw2@infradead.org>,
-        jwboyer@fedoraproject.org, keyrings@vger.kernel.org,
-        jmorris@namei.org, serge@hallyn.com, bauerman@linux.ibm.com,
-        Eric Biggers <ebiggers@google.com>, nayna@linux.ibm.com,
-        Dave Young <dyoung@redhat.com>,
-        linux-integrity <linux-integrity@vger.kernel.org>,
-        kexec@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <alpine.DEB.2.21.1901151023550.1865@nanos.tec.linutronix.de>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.39]); Tue, 15 Jan 2019 15:52:30 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 15, 2019 at 11:34 PM Mimi Zohar <zohar@linux.ibm.com> wrote:
+On 01/15/2019 04:24 AM, Thomas Gleixner wrote:
+> Waiman,
 >
-> On Tue, 2019-01-15 at 17:45 +0800, Kairui Song wrote:
-> [snip]
->
-> > diff --git a/security/integrity/digsig.c b/security/integrity/digsig.c
-> > index f45d6edecf99..bfabc2a8111d 100644
-> > --- a/security/integrity/digsig.c
-> > +++ b/security/integrity/digsig.c
-> > @@ -89,6 +89,12 @@ static int __integrity_init_keyring(const unsigned int id, key_perm_t perm,
-> >               keyring[id] = NULL;
-> >       }
-> >
-> > +#ifdef CONFIG_INTEGRITY_PLATFORM_KEYRING
-> > +     if (id == INTEGRITY_KEYRING_PLATFORM) {
-> > +             set_platform_trusted_keys(keyring[id]);
-> > +     }
-> > +#endif
-> > +
-> >       return err;
-> >  }
-> >
->
-> Any reason for setting it here as opposed to in the caller
-> platform_keyring_init()?
->
-> Mimi
->
+> On Mon, 14 Jan 2019, Waiman Long wrote:
+>> On 01/11/2019 04:02 PM, Thomas Gleixner wrote:
+>>> @@ -919,11 +920,15 @@ unsigned int kstat_irqs_cpu(unsigned int
+>>>  unsigned int kstat_irqs(unsigned int irq)
+>>>  {
+>>>  	struct irq_desc *desc = irq_to_desc(irq);
+>>> -	int cpu;
+>>>  	unsigned int sum = 0;
+>>> +	int cpu;
+>>>  
+>>>  	if (!desc || !desc->kstat_irqs)
+>>>  		return 0;
+>>> +	if (!irq_settings_is_per_cpu_devid(desc) &&
+>>> +	    !irq_settings_is_per_cpu(desc))
+>>> +	    return desc->tot_count;
+>>> +
+>>>  	for_each_possible_cpu(cpu)
+>>>  		sum += *per_cpu_ptr(desc->kstat_irqs, cpu);
+>>>  	return sum;
+>>>
+>>>
+>> That looks good to me. Thanks for providing a more simple solution.
+>>
+>> BTW, if the percpu IRQ is known at allocation time, maybe we should just
+>> not allocate a percpu count for the corresponding descriptor.
+> Nope. You still need the per cpu accounting for /proc/interrupts ..
 
-Yes, "keyring" is static so unless I expose it to other files, it is
-only accessible here. And I think there should be no problem to put
-the set_platform_trusted_keys here.
+Yes, you are right.
 
--- 
-Best Regards,
-Kairui Song
+Thanks,
+Longman
