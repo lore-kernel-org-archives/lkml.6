@@ -2,80 +2,139 @@ Return-Path: <SRS0=RZO6=PX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BF294C43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 08:02:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 03421C43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 08:02:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 835E920656
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 08:02:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C6A1420656
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 08:02:53 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=verge.net.au header.i=@verge.net.au header.b="dii0z4mi"
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="BMCemkgF"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728339AbfAOICn (ORCPT
+        id S1728365AbfAOICw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 15 Jan 2019 03:02:43 -0500
-Received: from kirsty.vergenet.net ([202.4.237.240]:45776 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725869AbfAOICn (ORCPT
+        Tue, 15 Jan 2019 03:02:52 -0500
+Received: from mail-io1-f65.google.com ([209.85.166.65]:46963 "EHLO
+        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725869AbfAOICv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Jan 2019 03:02:43 -0500
-Received: from reginn.horms.nl (watermunt.horms.nl [80.127.179.77])
-        by kirsty.vergenet.net (Postfix) with ESMTPA id ADCFD25B812;
-        Tue, 15 Jan 2019 19:02:40 +1100 (AEDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=verge.net.au; s=mail;
-        t=1547539361; bh=omrUf4oVMq6RvP84L7n93zm+6YpMNICRn9h38Wq3OSo=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=dii0z4miFoI/muIU7+7ZKTy5yq82yn0fXpyT+1aA3HX3Vu9sY41w8Om3nBFfsDchD
-         NuprwlBGP8Sb93KJ8mv5fe9WOiMjsCpxzFflGRHy/DWuo5FEGBld6TVzb/qcPvrMU7
-         7/P5Nyq0sTDJm714iLdFRuD3KK9AO9okZbQy/Gp8=
-Received: by reginn.horms.nl (Postfix, from userid 7100)
-        id 12EB59402FD; Tue, 15 Jan 2019 09:02:38 +0100 (CET)
-Date:   Tue, 15 Jan 2019 09:02:38 +0100
-From:   Simon Horman <horms@verge.net.au>
-To:     Rob Herring <robh@kernel.org>
-Cc:     devicetree@vger.kernel.org,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>
-Subject: Re: [PATCH 1/2] dt-bindings: serial: Convert snps,dw-apb-uart to
- json-schema
-Message-ID: <20190115080233.dllow4e4vsdp3k63@verge.net.au>
-References: <20190110222017.6390-1-robh@kernel.org>
- <20190114093022.hjouckoss2zemefg@verge.net.au>
- <CAL_JsqJd_kHi+XU7_oe0upg1iJT2rjjEup3YpyrDQA-OhkgKTw@mail.gmail.com>
+        Tue, 15 Jan 2019 03:02:51 -0500
+Received: by mail-io1-f65.google.com with SMTP id v10so1325597ios.13
+        for <linux-kernel@vger.kernel.org>; Tue, 15 Jan 2019 00:02:51 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=McN6moR7y88+4bHZhsA4IJdl2dXNtxu73L8Cv6c8vJo=;
+        b=BMCemkgFqp7ogQxURcXpH3XZfZKctda5nI20RiZ3Fm7bOLETb5vXvC5VHveXVlQvhP
+         ixzFM7NYkLtA7L+LaEysPMd5TEuMOhFuwjlF1CodHnDvEUVp8ND7FhpEkKfstJ4nlkHO
+         5FWeRvuFS1VnQRmxssBvcbXsjrvUEynuArx/4=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=McN6moR7y88+4bHZhsA4IJdl2dXNtxu73L8Cv6c8vJo=;
+        b=pVHHte4NdqtdKRhmbHtK3qc24ZF7/LLGt9p02tISnqzhff2rdMKjeq/9ck/5MaTNHf
+         ZWO+XdZBoBG/gmkV/z6ZVxiu89Shtz+sb8PjmYL+AH531BBbxPawH4jpD1JLXfcYLjrA
+         U6olLRauEjy7jBeyHjXvug+FJpFBSXGslcZ9DtKKDCHE92tOU7EdgCZkHxme/W8xkwMu
+         jy5vKALDP4DVZkAPSwMe4jX+8Y3zYgIKx17Glb2VgrWbgoI0Qkzzm9ni+q5Ki9dE53NS
+         BPO+9JmNTpJOaLr1G/TZtEnaHaK7vMJuqQrFSfEtNif96nIYLMLqj1kLUGj8rHJ6HV78
+         fuOA==
+X-Gm-Message-State: AJcUukfQEFehA9zx9aH6s4UJIqD1GhKYTQAQBoJoi+IQYh3gSb8VO99n
+        BWvruNPiP+l6LLpVApPfFLWpIWAwonpPyfqFNHy/ag==
+X-Google-Smtp-Source: ALg8bN6ZZt8ErAyZptBe8Cm5A3zYjUNW+vcN8IJRFNgG99+6fjZJjifeqxiOqCUNzlxaydHre3MtoaZC738WVp7f9lc=
+X-Received: by 2002:a5e:c206:: with SMTP id v6mr1397349iop.60.1547539371093;
+ Tue, 15 Jan 2019 00:02:51 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAL_JsqJd_kHi+XU7_oe0upg1iJT2rjjEup3YpyrDQA-OhkgKTw@mail.gmail.com>
-Organisation: Horms Solutions BV
-User-Agent: NeoMutt/20170113 (1.7.2)
+References: <1547536740-1572-1-git-send-email-yamada.masahiro@socionext.com>
+In-Reply-To: <1547536740-1572-1-git-send-email-yamada.masahiro@socionext.com>
+From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Date:   Tue, 15 Jan 2019 09:02:40 +0100
+Message-ID: <CAKv+Gu9qt1HydS7J2q8g6f07XpSgCtRy-vc_shJqknYtAp2u9g@mail.gmail.com>
+Subject: Re: [PATCH] kbuild: mark prepare0 as PHONY to fix external module build
+To:     Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc:     Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+        Samuel Holland <samuel@sholland.org>,
+        Alexey Kardashevskiy <aik@ozlabs.ru>,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        "linux-stable # v4 . 20" <stable@vger.kernel.org>,
+        Michal Marek <michal.lkml@markovi.net>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jan 14, 2019 at 10:23:15AM -0600, Rob Herring wrote:
-> On Mon, Jan 14, 2019 at 3:30 AM Simon Horman <horms@verge.net.au> wrote:
-> >
-> > On Thu, Jan 10, 2019 at 04:20:16PM -0600, Rob Herring wrote:
-> > > Convert the snps,dw-apb-uart binding to DT schema using json-schema.
-> > >
-> > > The Rockchip and Broadcom compatible strings were not documented,
-> > > so add them here.
-> >
-> > I believe the documentation of the Renesas compatible strings is also new
-> > in this file. Perhaps it would be worth mentioning that too.
-> 
-> Ah, that should be in patch 2. Will respin.
+On Tue, 15 Jan 2019 at 08:20, Masahiro Yamada
+<yamada.masahiro@socionext.com> wrote:
+>
+> Commit c3ff2a5193fa ("powerpc/32: add stack protector support")
+> caused kernel panic on PowerPC if an external module is used with
+> CONFIG_STACKPROTECTOR because the 'prepare' target was not executed
+> for the external module build.
+>
+> Commit e07db28eea38 ("kbuild: fix single target build for external
+> module") turned it into a build error because the 'prepare' target is
+> now executed but the 'prepare0' target is missing for the external
+> module build.
+>
+> External module on arm/arm64 with CONFIG_STACKPROTECTOR_PER_TASK is
+> also broken in the same way.
+>
+> Move 'PHONY += prepare0' to the common place. Make is fine with missing
+> rule for phony targets.
+>
+> I minimize the change so it can be easily backported to 4.20.x
+>
+> To fix v4.20 for external modules of PowerPC, please backport
+> e07db28eea38 ("kbuild: fix single target build for external module"),
+> and then this commit.
+>
+> Link: https://bugzilla.kernel.org/show_bug.cgi?id=201891
+> Fixes: e07db28eea38 ("kbuild: fix single target build for external module")
+> Fixes: c3ff2a5193fa ("powerpc/32: add stack protector support")
+> Fixes: 189af4657186 ("ARM: smp: add support for per-task stack canaries")
+> Fixes: 0a1213fa7432 ("arm64: enable per-task stack canaries")
+> Cc: linux-stable <stable@vger.kernel.org> # v4.20
+> Reported-by: Samuel Holland <samuel@sholland.org>
+> Reported-by: Alexey Kardashevskiy <aik@ozlabs.ru>
+> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
 
-Thanks!
+Acked-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
 
-> 
-> > In any case
-> >
-> > Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
-> >
-> 
+> ---
+>
+>  Makefile | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+>
+> diff --git a/Makefile b/Makefile
+> index 499b968..789b332 100644
+> --- a/Makefile
+> +++ b/Makefile
+> @@ -955,6 +955,7 @@ ifdef CONFIG_STACK_VALIDATION
+>    endif
+>  endif
+>
+> +PHONY += prepare0
+>
+>  ifeq ($(KBUILD_EXTMOD),)
+>  core-y         += kernel/ certs/ mm/ fs/ ipc/ security/ crypto/ block/
+> @@ -1061,8 +1062,7 @@ scripts: scripts_basic scripts_dtc
+>  # archprepare is used in arch Makefiles and when processed asm symlink,
+>  # version.h and scripts_basic is processed / created.
+>
+> -# Listed in dependency order
+> -PHONY += prepare archprepare prepare0 prepare1 prepare2 prepare3
+> +PHONY += prepare archprepare prepare1 prepare2 prepare3
+>
+>  # prepare3 is used to check if we are building in a separate output directory,
+>  # and if so do:
+> --
+> 2.7.4
+>
