@@ -2,73 +2,73 @@ Return-Path: <SRS0=RZO6=PX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2DBF4C43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 15:20:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 27906C43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 15:20:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F0A4F204FD
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 15:20:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547565621;
-	bh=q0GTjYyaAJ4gQO3NCBmTd1icIc8sxpBwgCfji6BZz+4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=fm9sKeEtC7Cxvw/Gk/sOsoTSxPuDtl7hudHy0KXZuf6kEJTv5HYaQDpM0SSNA8NdR
-	 Fzj0Pi75oz/dC8WOfMm6qX+bZbuEy+T1QURSrBv1c3IiBvISOtnORhWY2fnNFe4XY5
-	 ZJi8VfS9a1q/tczBaJAuuAXt/MdF0kWMjodGrg7w=
+	by mail.kernel.org (Postfix) with ESMTP id E8916204FD
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 15:20:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730761AbfAOPUT (ORCPT
+        id S1730796AbfAOPUb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 15 Jan 2019 10:20:19 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45618 "EHLO mail.kernel.org"
+        Tue, 15 Jan 2019 10:20:31 -0500
+Received: from verein.lst.de ([213.95.11.211]:53668 "EHLO newverein.lst.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728418AbfAOPUS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Jan 2019 10:20:18 -0500
-Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 83D04204FD;
-        Tue, 15 Jan 2019 15:20:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547565618;
-        bh=q0GTjYyaAJ4gQO3NCBmTd1icIc8sxpBwgCfji6BZz+4=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=N+Yc6ByPS57iQ46Rn7d/qApANJ5lav7B3Y6dsabufzTnnsCq4sjwzJaCaKwXzrrMH
-         qA5vB5MNweJmf8bAbrnMYGWj1Z0IffohzJzxhTnEqK2pvB5c5aLWawj2pyRsLfId2B
-         kE1I0oEm587YtUQR+j0qzIagXmz1j9TtaRZW0HFs=
-Date:   Tue, 15 Jan 2019 16:20:15 +0100
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     root <jkhasdev@gmail.com>
-Cc:     abbotti@mev.co.uk, hsweeten@visionengravers.com,
-        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] staging: comedi: Removed not necessary braces for single
- block
-Message-ID: <20190115152015.GA25735@kroah.com>
-References: <20190115145108.10249-1-root@localhost.localdomain>
+        id S1728418AbfAOPUa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 Jan 2019 10:20:30 -0500
+Received: by newverein.lst.de (Postfix, from userid 2407)
+        id 5831167358; Tue, 15 Jan 2019 16:20:29 +0100 (CET)
+Date:   Tue, 15 Jan 2019 16:20:29 +0100
+From:   "hch@lst.de" <hch@lst.de>
+To:     christian.koenig@amd.com
+Cc:     Thomas Hellstrom <thellstrom@vmware.com>,
+        "hch@lst.de" <hch@lst.de>, "jgg@ziepe.ca" <jgg@ziepe.ca>,
+        "syeh@vmware.com" <syeh@vmware.com>,
+        "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>,
+        "daniel.vetter@ffwll.ch" <daniel.vetter@ffwll.ch>,
+        "jian.xu.zheng@intel.com" <jian.xu.zheng@intel.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+        "sakari.ailus@linux.intel.com" <sakari.ailus@linux.intel.com>,
+        "bingbu.cao@intel.com" <bingbu.cao@intel.com>,
+        "yong.zhi@intel.com" <yong.zhi@intel.com>,
+        "shiraz.saleem@intel.com" <shiraz.saleem@intel.com>,
+        "tian.shu.qiu@intel.com" <tian.shu.qiu@intel.com>,
+        "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>
+Subject: Re: [PATCH] lib/scatterlist: Provide a DMA page iterator
+Message-ID: <20190115152029.GB2325@lst.de>
+References: <20190104223531.GA1705@ziepe.ca> <20190110234218.GM6890@ziepe.ca> <20190114094856.GB29604@lst.de> <1fb20ab4b171b281e9994b6c55734c120958530b.camel@vmware.com> <2b440a3b-ed2f-8fd6-a21e-97ca0b2f5db9@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20190115145108.10249-1-root@localhost.localdomain>
-User-Agent: Mutt/1.11.2 (2019-01-07)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <2b440a3b-ed2f-8fd6-a21e-97ca0b2f5db9@gmail.com>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 15, 2019 at 08:21:08PM +0530, root wrote:
-> This patch is used to remove not necessary braces for single if block.
-> 
-> Signed-off-by: Jitendra Kumar Khasdev <jkhasdev@gmail.com>
-> ---
->  drivers/staging/comedi/comedi_fops.c | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
+On Tue, Jan 15, 2019 at 03:24:55PM +0100, Christian König wrote:
+> Yeah, indeed. Bounce buffers are an absolute no-go for GPUs.
+>
+> If the DMA API finds that a piece of memory is not directly accessible by 
+> the GPU we need to return an error and not try to use bounce buffers behind 
+> the surface.
+>
+> That is something which always annoyed me with the DMA API, which is 
+> otherwise rather cleanly defined.
 
-"interesting" email name you used here :)
+That is exactly what I want to fix with my series to make
+DMA_ATTR_NON_CONSISTENT more useful and always available:
 
-Please fix up, it has to match the signed-off-by line.
+https://lists.linuxfoundation.org/pipermail/iommu/2018-December/031985.html
 
-thanks,
-
-greg k-h
+With that you allocate the memory using dma_alloc_attrs with
+DMA_ATTR_NON_CONSISTENT, and use dma_sync_single_* to transfer
+ownership to the cpu and back to the device, with a gurantee that
+there won't be any bouncing.  So far the interest by the parties that
+requested the feature has been rather lacklustre, though.
