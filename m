@@ -2,135 +2,107 @@ Return-Path: <SRS0=RZO6=PX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8327EC43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 16:47:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D155C43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 16:48:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 546EB20645
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 16:47:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547570876;
-	bh=/FgYSkl3NEeP6q4XyKN3SGB15FIRGfwrtDSIN7gjrWI=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=lDN+2P6IykApP3Dn9OUPiuc7n2XUmRfWkU21IBKdNEm1QNB+UyjpEo0U5dYwHe2MF
-	 Z8/wj2fIKbNac8yYPiD8XEpMN0A0l0kfjQnCvwqhPIXVCcbOiXvFP13jjGuAlQ9OV8
-	 EX4hjpP9zpmReaBm/Q+J5isRFq2plgG5ZwLzyu9E=
+	by mail.kernel.org (Postfix) with ESMTP id 6C61920645
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 16:48:02 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lMhXLJEa"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731043AbfAOQry (ORCPT
+        id S2387776AbfAOQsA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 15 Jan 2019 11:47:54 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34976 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387746AbfAOQpP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Jan 2019 11:45:15 -0500
-Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9273920883;
-        Tue, 15 Jan 2019 16:45:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547570715;
-        bh=/FgYSkl3NEeP6q4XyKN3SGB15FIRGfwrtDSIN7gjrWI=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Ai6Fn0wnXCVjFQzlqQssKC7Fyi6mmlFQ9HFWomO23XcWHP2ajn/DGAgmAmut8er1K
-         k9KDyHh3osnjCDYlliywlWP64UyJ9UKmWtZTszFUOP3IMjpbW/i/1oS3Ntwvfk9+PE
-         x+av4hx/XFHS2pDY8073bgvrISwVxROR+kaZI7ZY=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Lyude Paul <lyude@redhat.com>,
-        Harry Wentland <harry.wentland@amd.com>,
-        Jerry Zuo <Jerry.Zuo@amd.com>
-Subject: [PATCH 4.20 45/57] drm/amdgpu: Dont fail resume process if resuming atomic state fails
-Date:   Tue, 15 Jan 2019 17:36:26 +0100
-Message-Id: <20190115154913.479428526@linuxfoundation.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190115154910.734892368@linuxfoundation.org>
-References: <20190115154910.734892368@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
-X-Patchwork-Hint: ignore
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+        Tue, 15 Jan 2019 11:48:00 -0500
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:39642 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387743AbfAOQpO (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 Jan 2019 11:45:14 -0500
+Received: by mail-pl1-f196.google.com with SMTP id 101so1541812pld.6
+        for <linux-kernel@vger.kernel.org>; Tue, 15 Jan 2019 08:45:14 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=v+1zm1MHqauBe7cDg0DzjpVqwSHDVQn/jH/aHhX9j9Q=;
+        b=lMhXLJEahQX+HAr2JO1udRx3lCQet4a1Y4sBAq8vUJkX/w7ZOXuk7f3n4BAyK8pMA7
+         4s/NYWmr206trEiGnEY3xRuaKYr6appQXgmN9gGSKDiTxK1pUK9eN4o7tgzDtuLQ6HLZ
+         JjZu6BZxtbIzWrbgzbD1+wQZpxdNFdDz2dxbFZ3qQShSRyGywnAgPcToYrcRzvKWoRs/
+         80KrLOrLffxXjsmMIm7IxenDxkYUGKd2OXo6htwrt9KRU/+5V34b2woNEu/3/tUdGag4
+         +xnbv6X9IuY5D1Ka8UwMHC22O/x9qKae4tr+q04JXEipHbfN8KIB82KrzbiNgh2t2xJ9
+         GmCw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=v+1zm1MHqauBe7cDg0DzjpVqwSHDVQn/jH/aHhX9j9Q=;
+        b=oMs3svlfwUtsTOBR6Dl0DilE4OcC3v6Hl0d3XL0zrKHbv4nDvKeV1nG2uEchWMnxDN
+         eBGaqOFJq3IbZu9bhs3VN61buAURxYSb0g9lBNDBJnDWDZqXhJKeSxQLVgnDqwm7y4f4
+         SvlwY3agnX+j4LxwLqMuTf1sFE7DqPgw1KATIVk8iml2fgS1d4CYpYkWl/csL1rHl72s
+         h66qfyQP29sRmbfYuNfpH1RqTTiI3csjZV60H8OukJfEiab97EuKT373sGORX6HPe/IK
+         ZgNzxPtN9k+8h9FmSDQKt3zDOTzJ3EPeCn6CRFndOYzrOEEEw7fMQKYV7WwbSP3Hs2Tu
+         PwxQ==
+X-Gm-Message-State: AJcUukdPGi5kexdjEDsTiTKgbiyWFNii5NxaYQWHkSTNvJe21OFlqoLv
+        BGoDCVE0ITx7cp63dpIkjr4=
+X-Google-Smtp-Source: ALg8bN5+GwIQGWanyyvr0dqhj9U7q5H1jd2/3phuamLLUBEJHx/dwGqcIetI2Xr2PCnyUbhyBeXvKw==
+X-Received: by 2002:a17:902:7d82:: with SMTP id a2mr5022378plm.163.1547570714005;
+        Tue, 15 Jan 2019 08:45:14 -0800 (PST)
+Received: from localhost (68.168.130.77.16clouds.com. [68.168.130.77])
+        by smtp.gmail.com with ESMTPSA id y1sm4656950pfe.9.2019.01.15.08.45.13
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 15 Jan 2019 08:45:13 -0800 (PST)
+From:   Yangtao Li <tiny.windzz@gmail.com>
+To:     john.stultz@linaro.org, tglx@linutronix.de, sboyd@kernel.org
+Cc:     linux-kernel@vger.kernel.org, Yangtao Li <tiny.windzz@gmail.com>
+Subject: [PATCH v2] clocksource: use BIT() for clock source flags
+Date:   Tue, 15 Jan 2019 11:45:10 -0500
+Message-Id: <20190115164510.19643-1-tiny.windzz@gmail.com>
+X-Mailer: git-send-email 2.17.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.20-stable review patch.  If anyone has any objections, please let me know.
+It's a small tidy-up.
 
-------------------
-
-From: Lyude Paul <lyude@redhat.com>
-
-commit 2d1af6a11cb9d88e0e3dd10258904c437fe1b315 upstream.
-
-This is an ugly one unfortunately. Currently, all DRM drivers supporting
-atomic modesetting will save the state that userspace had set before
-suspending, then attempt to restore that state on resume. This probably
-worked very well at one point, like many other things, until DP MST came
-into the picture. While it's easy to restore state on normal display
-connectors that were disconnected during suspend regardless of their
-state post-resume, this can't really be done with MST because of the
-fact that setting up a downstream sink requires performing sideband
-transactions between the source and the MST hub, sending out the ACT
-packets, etc.
-
-Because of this, there isn't really a guarantee that we can restore the
-atomic state we had before suspend once we've resumed. This sucks pretty
-bad, but so far I haven't run into any compositors that this actually
-causes serious issues with. Most compositors will notice the hotplug we
-send afterwards, and then reprobe state.
-
-Since nouveau and i915 also don't fail the suspend/resume process due to
-failing to restore the atomic state, let's make amdgpu match this
-behavior. Better to resume the GPU properly, then to stop the process
-half way because of a potentially unavoidable atomic commit failure.
-
-Eventually, we'll have a real fix for this problem on the DRM level. But
-we've got some more important low-hanging fruit to deal with first.
-
-Signed-off-by: Lyude Paul <lyude@redhat.com>
-Reviewed-by: Harry Wentland <harry.wentland@amd.com>
-Cc: Jerry Zuo <Jerry.Zuo@amd.com>
-Cc: <stable@vger.kernel.org> # v4.15+
-Link: https://patchwork.freedesktop.org/patch/msgid/20190108211133.32564-3-lyude@redhat.com
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
 ---
- drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c |    5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+v2:
+-add missing changelog
+---
+ include/linux/clocksource.h | 16 ++++++++--------
+ 1 file changed, 8 insertions(+), 8 deletions(-)
 
---- a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
-+++ b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
-@@ -830,7 +830,6 @@ static int dm_resume(void *handle)
- 	struct drm_plane_state *new_plane_state;
- 	struct dm_plane_state *dm_new_plane_state;
- 	enum dc_connection_type new_connection_type = dc_connection_none;
--	int ret;
- 	int i;
+diff --git a/include/linux/clocksource.h b/include/linux/clocksource.h
+index b21db536fd52..130f4c3c0781 100644
+--- a/include/linux/clocksource.h
++++ b/include/linux/clocksource.h
+@@ -112,14 +112,14 @@ struct clocksource {
+ /*
+  * Clock source flags bits::
+  */
+-#define CLOCK_SOURCE_IS_CONTINUOUS		0x01
+-#define CLOCK_SOURCE_MUST_VERIFY		0x02
+-
+-#define CLOCK_SOURCE_WATCHDOG			0x10
+-#define CLOCK_SOURCE_VALID_FOR_HRES		0x20
+-#define CLOCK_SOURCE_UNSTABLE			0x40
+-#define CLOCK_SOURCE_SUSPEND_NONSTOP		0x80
+-#define CLOCK_SOURCE_RESELECT			0x100
++#define CLOCK_SOURCE_IS_CONTINUOUS		BIT(0)
++#define CLOCK_SOURCE_MUST_VERIFY		BIT(1)
++
++#define CLOCK_SOURCE_WATCHDOG			BIT(4)
++#define CLOCK_SOURCE_VALID_FOR_HRES		BIT(5)
++#define CLOCK_SOURCE_UNSTABLE			BIT(6)
++#define CLOCK_SOURCE_SUSPEND_NONSTOP		BIT(7)
++#define CLOCK_SOURCE_RESELECT			BIT(8)
  
- 	/* power on hardware */
-@@ -903,13 +902,13 @@ static int dm_resume(void *handle)
- 		}
- 	}
- 
--	ret = drm_atomic_helper_resume(ddev, dm->cached_state);
-+	drm_atomic_helper_resume(ddev, dm->cached_state);
- 
- 	dm->cached_state = NULL;
- 
- 	amdgpu_dm_irq_resume_late(adev);
- 
--	return ret;
-+	return 0;
- }
- 
- static const struct amd_ip_funcs amdgpu_dm_funcs = {
-
+ /* simplify initialization of mask field */
+ #define CLOCKSOURCE_MASK(bits) GENMASK_ULL((bits) - 1, 0)
+-- 
+2.17.0
 
