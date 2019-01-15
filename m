@@ -2,75 +2,347 @@ Return-Path: <SRS0=RZO6=PX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 782B2C43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 15:57:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4EF49C43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 15:58:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4770B20645
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 15:57:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 071B020645
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 15:58:13 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="XJeTUcaD"
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="p4wURC7e"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731353AbfAOP5c (ORCPT
+        id S1731356AbfAOP6L (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 15 Jan 2019 10:57:32 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:37954 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730211AbfAOP5c (ORCPT
+        Tue, 15 Jan 2019 10:58:11 -0500
+Received: from fllv0016.ext.ti.com ([198.47.19.142]:47530 "EHLO
+        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728836AbfAOP6K (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Jan 2019 10:57:32 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=opK8COkigmz0NFnchVnzN0WwfNsAGHZZ5MfSbVwO76c=; b=XJeTUcaDv53vxbK6/XI/K53aj
-        rPa/x0fxDelXpyj8dYNzMiiYetpN3e27R5ycDbJytRkCC4I/WMHdjrL7ca25BRro7lBuRQ+mOPaT0
-        +RzHc6TIaiQWQxOFUwH6yYwb2EVtdzJxbxLOki4zttTkAo/SjyiOPsGEEjsI5tnh2R8MYfWqkRYZm
-        Ft/BIhfUNaOXMne64m4/JWO5LlmiQyIFzB3D4cMQdBGFulXw8h/sqhARvk+Tt/eCkFx+ruDyBUSm+
-        LygjWzg2qSx5zeLPSR5RCNOABMZrclSKFe+rKhQa3/l2YEb9sbNq/Qn6p+FbFYItr/m7j5UHU9e4M
-        YlCsJ1z/Q==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gjR5j-0005dc-Gb; Tue, 15 Jan 2019 15:57:27 +0000
-Date:   Tue, 15 Jan 2019 07:57:27 -0800
-From:   Christoph Hellwig <hch@infradead.org>
-To:     Anup Patel <anup@brainfault.org>
-Cc:     Palmer Dabbelt <palmer@sifive.com>,
-        Albert Ou <aou@eecs.berkeley.edu>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Atish Patra <atish.patra@wdc.com>,
-        linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 5/5] irqchip: sifive-plic: Implement
- irq_set_affinity() for SMP host
-Message-ID: <20190115155727.GD13095@infradead.org>
-References: <20181227111821.80908-1-anup@brainfault.org>
- <20181227111821.80908-6-anup@brainfault.org>
+        Tue, 15 Jan 2019 10:58:10 -0500
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id x0FFw19b030311;
+        Tue, 15 Jan 2019 09:58:01 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1547567881;
+        bh=3hhz4Z94l9ISOZzVNuJC94AnVjhRJvDOtnuNov9Wj/A=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=p4wURC7eXmNsz7WqdvCBSTMlv5r+kDin/eZ8iBtCrMAeYXJbC5qUaXEgbPucaBf64
+         XNW9REL8vRz6CT0nJQM0SWCi0SQKiIYDI4tdXK98Ny6FiHdbHwKXxVcl9/iI/DpNOt
+         cmEinIp23EqY7tGZSRnLhPsf7H6IYx/FUtuw0Kx8=
+Received: from DFLE100.ent.ti.com (dfle100.ent.ti.com [10.64.6.21])
+        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x0FFw14e117616
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Tue, 15 Jan 2019 09:58:01 -0600
+Received: from DFLE100.ent.ti.com (10.64.6.21) by DFLE100.ent.ti.com
+ (10.64.6.21) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Tue, 15
+ Jan 2019 09:58:01 -0600
+Received: from dflp32.itg.ti.com (10.64.6.15) by DFLE100.ent.ti.com
+ (10.64.6.21) with Microsoft SMTP Server (version=TLS1_0,
+ cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1591.10 via Frontend Transport;
+ Tue, 15 Jan 2019 09:58:01 -0600
+Received: from [172.22.120.117] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by dflp32.itg.ti.com (8.14.3/8.13.8) with ESMTP id x0FFw0Gk029884;
+        Tue, 15 Jan 2019 09:58:01 -0600
+Subject: Re: [PATCH 14/14] staging: android: ion: Add UNMAPPED heap type and
+ helper
+To:     Laura Abbott <labbott@redhat.com>,
+        Sumit Semwal <sumit.semwal@linaro.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        =?UTF-8?Q?Arve_Hj=c3=b8nnev=c3=a5g?= <arve@android.com>
+CC:     <devel@driverdev.osuosl.org>, <dri-devel@lists.freedesktop.org>,
+        <linux-kernel@vger.kernel.org>
+References: <20190111180523.27862-1-afd@ti.com>
+ <20190111180523.27862-15-afd@ti.com>
+ <bd3c15f2-2635-588e-80b4-18e8e44d27b3@redhat.com>
+From:   "Andrew F. Davis" <afd@ti.com>
+Message-ID: <ee3bb691-8c9b-457c-5da3-522a4baff140@ti.com>
+Date:   Tue, 15 Jan 2019 09:58:00 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181227111821.80908-6-anup@brainfault.org>
-User-Agent: Mutt/1.9.2 (2017-12-15)
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+In-Reply-To: <bd3c15f2-2635-588e-80b4-18e8e44d27b3@redhat.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> +	if (!force)
-> +		cpu = cpumask_any_and(mask_val, cpu_online_mask);
-> +	else
-> +		cpu = cpumask_first(mask_val);
+On 1/14/19 8:32 PM, Laura Abbott wrote:
+> On 1/11/19 10:05 AM, Andrew F. Davis wrote:
+>> The "unmapped" heap is very similar to the carveout heap except
+>> the backing memory is presumed to be unmappable by the host, in
+>> my specific case due to firewalls. This memory can still be
+>> allocated from and used by devices that do have access to the
+>> backing memory.
+>>
+>> Based originally on the secure/unmapped heap from Linaro for
+>> the OP-TEE SDP implementation, this was re-written to match
+>> the carveout heap helper code.
+>>
+>> Suggested-by: Etienne Carriere <etienne.carriere@linaro.org>
+>> Signed-off-by: Andrew F. Davis <afd@ti.com>
+>> ---
+>>   drivers/staging/android/ion/Kconfig           |  10 ++
+>>   drivers/staging/android/ion/Makefile          |   1 +
+>>   drivers/staging/android/ion/ion.h             |  16 +++
+>>   .../staging/android/ion/ion_unmapped_heap.c   | 123 ++++++++++++++++++
+>>   drivers/staging/android/uapi/ion.h            |   3 +
+>>   5 files changed, 153 insertions(+)
+>>   create mode 100644 drivers/staging/android/ion/ion_unmapped_heap.c
+>>
+>> diff --git a/drivers/staging/android/ion/Kconfig
+>> b/drivers/staging/android/ion/Kconfig
+>> index 0fdda6f62953..a117b8b91b14 100644
+>> --- a/drivers/staging/android/ion/Kconfig
+>> +++ b/drivers/staging/android/ion/Kconfig
+>> @@ -42,3 +42,13 @@ config ION_CMA_HEAP
+>>         Choose this option to enable CMA heaps with Ion. This heap is
+>> backed
+>>         by the Contiguous Memory Allocator (CMA). If your system has
+>> these
+>>         regions, you should say Y here.
+>> +
+>> +config ION_UNMAPPED_HEAP
+>> +    bool "ION unmapped heap support"
+>> +    depends on ION
+>> +    help
+>> +      Choose this option to enable UNMAPPED heaps with Ion. This heap is
+>> +      backed in specific memory pools, carveout from the Linux memory.
+>> +      Unlike carveout heaps these are assumed to be not mappable by
+>> +      kernel or user-space.
+>> +      Unless you know your system has these regions, you should say N
+>> here.
+>> diff --git a/drivers/staging/android/ion/Makefile
+>> b/drivers/staging/android/ion/Makefile
+>> index 17f3a7569e3d..c71a1f3de581 100644
+>> --- a/drivers/staging/android/ion/Makefile
+>> +++ b/drivers/staging/android/ion/Makefile
+>> @@ -4,3 +4,4 @@ obj-$(CONFIG_ION_SYSTEM_HEAP) += ion_system_heap.o
+>> ion_page_pool.o
+>>   obj-$(CONFIG_ION_CARVEOUT_HEAP) += ion_carveout_heap.o
+>>   obj-$(CONFIG_ION_CHUNK_HEAP) += ion_chunk_heap.o
+>>   obj-$(CONFIG_ION_CMA_HEAP) += ion_cma_heap.o
+>> +obj-$(CONFIG_ION_UNMAPPED_HEAP) += ion_unmapped_heap.o
+>> diff --git a/drivers/staging/android/ion/ion.h
+>> b/drivers/staging/android/ion/ion.h
+>> index 97b2876b165a..ce74332018ba 100644
+>> --- a/drivers/staging/android/ion/ion.h
+>> +++ b/drivers/staging/android/ion/ion.h
+>> @@ -341,4 +341,20 @@ static inline struct ion_heap
+>> *ion_chunk_heap_create(phys_addr_t base, size_t si
+>>   }
+>>   #endif
+>>   +#ifdef CONFIG_ION_UNMAPPED_HEAP
+>> +/**
+>> + * ion_unmapped_heap_create
+>> + * @base:        base address of carveout memory
+>> + * @size:        size of carveout memory region
+>> + *
+>> + * Creates an unmapped ion_heap using the passed in data
+>> + */
+>> +struct ion_heap *ion_unmapped_heap_create(phys_addr_t base, size_t
+>> size);
+>> +#else
+>> +struct ion_heap *ion_unmapped_heap_create(phys_addr_t base, size_t size)
+>> +{
+>> +    return ERR_PTR(-ENODEV);
+>> +}
+>> +#endif
+>> +
+>>   #endif /* _ION_H */
+>> diff --git a/drivers/staging/android/ion/ion_unmapped_heap.c
+>> b/drivers/staging/android/ion/ion_unmapped_heap.c
+>> new file mode 100644
+>> index 000000000000..7602b659c2ec
+>> --- /dev/null
+>> +++ b/drivers/staging/android/ion/ion_unmapped_heap.c
+>> @@ -0,0 +1,123 @@
+>> +// SPDX-License-Identifier: GPL-2.0
+>> +/*
+>> + * ION Memory Allocator unmapped heap helper
+>> + *
+>> + * Copyright (C) 2015-2016 Texas Instruments Incorporated -
+>> http://www.ti.com/
+>> + *    Andrew F. Davis <afd@ti.com>
+>> + *
+>> + * ION "unmapped" heaps are physical memory heaps not by default
+>> mapped into
+>> + * a virtual address space. The buffer owner can explicitly request
+>> kernel
+>> + * space mappings but the underlying memory may still not be
+>> accessible for
+>> + * various reasons, such as firewalls.
+>> + */
+>> +
+>> +#include <linux/err.h>
+>> +#include <linux/genalloc.h>
+>> +#include <linux/scatterlist.h>
+>> +#include <linux/slab.h>
+>> +
+>> +#include "ion.h"
+>> +
+>> +#define ION_UNMAPPED_ALLOCATE_FAIL -1
+>> +
+>> +struct ion_unmapped_heap {
+>> +    struct ion_heap heap;
+>> +    struct gen_pool *pool;
+>> +};
+>> +
+>> +static phys_addr_t ion_unmapped_allocate(struct ion_heap *heap,
+>> +                     unsigned long size)
+>> +{
+>> +    struct ion_unmapped_heap *unmapped_heap =
+>> +        container_of(heap, struct ion_unmapped_heap, heap);
+>> +    unsigned long offset;
+>> +
+>> +    offset = gen_pool_alloc(unmapped_heap->pool, size);
+>> +    if (!offset)
+>> +        return ION_UNMAPPED_ALLOCATE_FAIL;
+>> +
+>> +    return offset;
+>> +}
+>> +
+>> +static void ion_unmapped_free(struct ion_heap *heap, phys_addr_t addr,
+>> +                  unsigned long size)
+>> +{
+>> +    struct ion_unmapped_heap *unmapped_heap =
+>> +        container_of(heap, struct ion_unmapped_heap, heap);
+>> +
+>> +    gen_pool_free(unmapped_heap->pool, addr, size);
+>> +}
+>> +
+>> +static int ion_unmapped_heap_allocate(struct ion_heap *heap,
+>> +                      struct ion_buffer *buffer,
+>> +                      unsigned long size,
+>> +                      unsigned long flags)
+>> +{
+>> +    struct sg_table *table;
+>> +    phys_addr_t paddr;
+>> +    int ret;
+>> +
+>> +    table = kmalloc(sizeof(*table), GFP_KERNEL);
+>> +    if (!table)
+>> +        return -ENOMEM;
+>> +    ret = sg_alloc_table(table, 1, GFP_KERNEL);
+>> +    if (ret)
+>> +        goto err_free;
+>> +
+>> +    paddr = ion_unmapped_allocate(heap, size);
+>> +    if (paddr == ION_UNMAPPED_ALLOCATE_FAIL) {
+>> +        ret = -ENOMEM;
+>> +        goto err_free_table;
+>> +    }
+>> +
+>> +    sg_set_page(table->sgl, pfn_to_page(PFN_DOWN(paddr)), size, 0);
+>> +    buffer->sg_table = table;
+>> +
+> 
+> 
+> If this memory is actually unmapped this is not going to work because
+> the struct page will not be valid.
+> 
 
-Any reason for the inverted test?
+If it will never get mapped then it doesn't need a valid struct page as
+far as I can tell. We only use it as a marker to where the start of
+backing memory is, and that is calculated based on the struct page
+pointer address, not its contents.
 
-Otherwise this looks fine to me:
+>> +    return 0;
+>> +
+>> +err_free_table:
+>> +    sg_free_table(table);
+>> +err_free:
+>> +    kfree(table);
+>> +    return ret;
+>> +}
+>> +
+>> +static void ion_unmapped_heap_free(struct ion_buffer *buffer)
+>> +{
+>> +    struct ion_heap *heap = buffer->heap;
+>> +    struct sg_table *table = buffer->sg_table;
+>> +    struct page *page = sg_page(table->sgl);
+>> +    phys_addr_t paddr = PFN_PHYS(page_to_pfn(page));
+>> +
+>> +    ion_unmapped_free(heap, paddr, buffer->size);
+>> +    sg_free_table(buffer->sg_table);
+>> +    kfree(buffer->sg_table);
+>> +}
+>> +
+>> +static struct ion_heap_ops unmapped_heap_ops = {
+>> +    .allocate = ion_unmapped_heap_allocate,
+>> +    .free = ion_unmapped_heap_free,
+>> +    /* no .map_user, user mapping of unmapped heaps not allowed */
+>> +    .map_kernel = ion_heap_map_kernel,
+>> +    .unmap_kernel = ion_heap_unmap_kernel,
+>> +};
+>> +
+>> +struct ion_heap *ion_unmapped_heap_create(phys_addr_t base, size_t size)
+>> +{
+>> +    struct ion_unmapped_heap *unmapped_heap;
+>> +
+>> +    unmapped_heap = kzalloc(sizeof(*unmapped_heap), GFP_KERNEL);
+>> +    if (!unmapped_heap)
+>> +        return ERR_PTR(-ENOMEM);
+>> +
+>> +    unmapped_heap->pool = gen_pool_create(PAGE_SHIFT, -1);
+>> +    if (!unmapped_heap->pool) {
+>> +        kfree(unmapped_heap);
+>> +        return ERR_PTR(-ENOMEM);
+>> +    }
+>> +    gen_pool_add(unmapped_heap->pool, base, size, -1);
+>> +    unmapped_heap->heap.ops = &unmapped_heap_ops;
+>> +    unmapped_heap->heap.type = ION_HEAP_TYPE_UNMAPPED;
+>> +
+>> +    return &unmapped_heap->heap;
+>> +}
+>> diff --git a/drivers/staging/android/uapi/ion.h
+>> b/drivers/staging/android/uapi/ion.h
+>> index 5d7009884c13..d5f98bc5f340 100644
+>> --- a/drivers/staging/android/uapi/ion.h
+>> +++ b/drivers/staging/android/uapi/ion.h
+>> @@ -19,6 +19,8 @@
+>>    *                 carveout heap, allocations are physically
+>>    *                 contiguous
+>>    * @ION_HEAP_TYPE_DMA:         memory allocated via DMA API
+>> + * @ION_HEAP_TYPE_UNMAPPED:     memory not intended to be mapped into
+>> the
+>> + *                 linux address space unless for debug cases
+>>    * @ION_NUM_HEAPS:         helper for iterating over heaps, a bit mask
+>>    *                 is used to identify the heaps, so only 32
+>>    *                 total heap types are supported
+>> @@ -29,6 +31,7 @@ enum ion_heap_type {
+>>       ION_HEAP_TYPE_CARVEOUT,
+>>       ION_HEAP_TYPE_CHUNK,
+>>       ION_HEAP_TYPE_DMA,
+>> +    ION_HEAP_TYPE_UNMAPPED,
+>>       ION_HEAP_TYPE_CUSTOM, /*
+>>                      * must be last so device specific heaps always
+>>                      * are at the end of this enum
+>>
+> 
+> Overall this seems way too similar to the carveout heap
+> to justify adding another heap type. It also still missing
+> the part of where exactly you call ion_unmapped_heap_create.
+> Figuring that out is one of the blocking items for moving
+> Ion out of staging.
+> 
 
-Reviewed-by: Christoph Hellwig <hch@lst.de>
+I agree with this being almost a 1:1 copy of the carveout heap, I'm just
+not sure of a good way to do this without a new heap type. Adding flags
+to the existing carveout type seem a bit messy. Plus then those flags
+should be valid for other heap types, gets complicated quickly..
+
+I'll reply to the second part in your other top level response.
+
+Andrew
+
+> Thanks,
+> Laura
