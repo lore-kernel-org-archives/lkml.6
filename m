@@ -2,104 +2,150 @@ Return-Path: <SRS0=RZO6=PX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F06CDC43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 02:43:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0413CC43444
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 02:45:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C6F2F20651
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 02:43:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D246420651
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 02:45:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727935AbfAOCnG (ORCPT
+        id S1727644AbfAOCpv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 14 Jan 2019 21:43:06 -0500
-Received: from mga06.intel.com ([134.134.136.31]:22269 "EHLO mga06.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727200AbfAOCnG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 Jan 2019 21:43:06 -0500
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from fmsmga007.fm.intel.com ([10.253.24.52])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 14 Jan 2019 18:43:05 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,480,1539673200"; 
-   d="scan'208";a="114715134"
-Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.154])
-  by fmsmga007.fm.intel.com with ESMTP; 14 Jan 2019 18:43:05 -0800
-Date:   Mon, 14 Jan 2019 18:43:04 -0800
-From:   Sean Christopherson <sean.j.christopherson@intel.com>
-To:     Tom Roeder <tmroeder@google.com>
-Cc:     Paolo Bonzini <pbonzini@redhat.com>,
-        Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        Liran Alon <liran.alon@oracle.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H . Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
-        kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        syzbot+ded1696f6b50b615b630@syzkaller.appspotmail.com
-Subject: Re: [RFC PATCH] kvm: x86/vmx: Use kzalloc for cached_vmcs12
-Message-ID: <20190115024304.GD5141@linux.intel.com>
-References: <6f79d9be-fa76-3a06-2612-f44f3a18ece7@redhat.com>
- <20190114234728.49239-1-tmroeder@google.com>
+        Mon, 14 Jan 2019 21:45:51 -0500
+Received: from mirror2.csie.ntu.edu.tw ([140.112.30.76]:57600 "EHLO
+        wens.csie.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726788AbfAOCpu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 14 Jan 2019 21:45:50 -0500
+Received: by wens.csie.org (Postfix, from userid 1000)
+        id F0B965FCA8; Tue, 15 Jan 2019 10:45:44 +0800 (CST)
+From:   Chen-Yu Tsai <wens@csie.org>
+To:     Maxime Ripard <maxime.ripard@bootlin.com>,
+        Linus Walleij <linus.walleij@linaro.org>
+Cc:     Chen-Yu Tsai <wens@csie.org>, linux-arm-kernel@lists.infradead.org,
+        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+        stable@vger.kernel.org
+Subject: [PATCH] pinctrl: sunxi: Correct number of IRQ banks on H6 main pin controller
+Date:   Tue, 15 Jan 2019 10:45:43 +0800
+Message-Id: <20190115024543.12928-1-wens@csie.org>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190114234728.49239-1-tmroeder@google.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jan 14, 2019 at 03:47:28PM -0800, Tom Roeder wrote:
-> This changes the allocation of cached_vmcs12 to use kzalloc instead of
-> kmalloc. This removes the information leak found by Syzkaller (see
-> Reported-by) in this case and prevents similar leaks from happening
-> based on cached_vmcs12.
+The H6 main pin controller has four banks of interrupt-triggering pins.
+The driver as originally submitted only specified three, but had pin
+descriptions referencing a fourth bank. This results in a out-of-bounds
+access into .irq_array of struct sunxi_pinctrl. This however did not
+result in a crash until v4.20, with commit a66d972465d1 ("devres: Align
+data[] to ARCH_KMALLOC_MINALIGN"), which changed the alignment of memory
+region returned by devm_kcalloc(). The increase likely moved the
+out-of-bounds access into the next, unmapped page.
 
-Is the leak specific to vmx_set_nested_state(), e.g. can we zero out
-the memory if copy_from_user() fails instead of taking the hit on every
-allocation?
+With KASAN on, the bug is quite clear:
 
-> The email from Syszkaller led to a discussion about a patch in early
-> November on the KVM list (I've made this a reply to that thread), but
-> the current upstream kernel still has kmalloc instead of kzalloc for
-> cached_vmcs12 and cached_shadow_vmcs12. This RFC proposes changing to
-> kzalloc for defense in depth.
-> 
-> Tested: rebuilt but not tested, since this is an RFC
-> 
-> Reported-by: syzbot+ded1696f6b50b615b630@syzkaller.appspotmail.com
-> Signed-off-by: Tom Roeder <tmroeder@google.com>
-> ---
->  arch/x86/kvm/vmx/nested.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/arch/x86/kvm/vmx/nested.c b/arch/x86/kvm/vmx/nested.c
-> index 2616bd2c7f2c7..ad46667042c7a 100644
-> --- a/arch/x86/kvm/vmx/nested.c
-> +++ b/arch/x86/kvm/vmx/nested.c
-> @@ -4140,11 +4140,11 @@ static int enter_vmx_operation(struct kvm_vcpu *vcpu)
->  	if (r < 0)
->  		goto out_vmcs02;
->  
-> -	vmx->nested.cached_vmcs12 = kmalloc(VMCS12_SIZE, GFP_KERNEL);
-> +	vmx->nested.cached_vmcs12 = kzalloc(VMCS12_SIZE, GFP_KERNEL);
->  	if (!vmx->nested.cached_vmcs12)
->  		goto out_cached_vmcs12;
+    BUG: KASAN: slab-out-of-bounds in sunxi_pinctrl_init_with_variant+0x49c/0x12b8
+    Write of size 4 at addr ffff80002c680280 by task swapper/0/1
 
-Obviously not your code, but why do we allocate VMCS12_SIZE instead of
-sizeof(struct vmcs12)?  I get why we require userspace to reserve the
-full 4k, but I don't understand why KVM needs to allocate the reserved
-bytes internally.
+    CPU: 2 PID: 1 Comm: swapper/0 Not tainted 5.0.0-rc1-00016-gc480a5e6a077 #3
+    Hardware name: OrangePi Lite2 (DT)
+    Call trace:
+     dump_backtrace+0x0/0x220
+     show_stack+0x14/0x20
+     dump_stack+0xac/0xd4
+     print_address_description+0x60/0x25c
+     kasan_report+0x14c/0x1ac
+     __asan_store4+0x80/0xa0
+     sunxi_pinctrl_init_with_variant+0x49c/0x12b8
+     h6_pinctrl_probe+0x18/0x20
+     platform_drv_probe+0x6c/0xc8
+     really_probe+0x244/0x4b0
+     driver_probe_device.part.4+0x11c/0x164
+     __driver_attach+0x120/0x190
+     bus_for_each_dev+0xe8/0x158
+     driver_attach+0x30/0x40
+     bus_add_driver+0x308/0x318
+     driver_register+0xbc/0x1d0
+     __platform_driver_register+0x7c/0x88
+     h6_pinctrl_driver_init+0x18/0x20
+     do_one_initcall+0xd4/0x208
+     kernel_init_freeable+0x230/0x2c8
+     kernel_init+0x10/0x108
+     ret_from_fork+0x10/0x1c
 
-> -	vmx->nested.cached_shadow_vmcs12 = kmalloc(VMCS12_SIZE, GFP_KERNEL);
-> +	vmx->nested.cached_shadow_vmcs12 = kzalloc(VMCS12_SIZE, GFP_KERNEL);
->  	if (!vmx->nested.cached_shadow_vmcs12)
->  		goto out_cached_shadow_vmcs12;
->  
-> -- 
-> 2.20.1.97.g81188d93c3-goog
-> 
+    Allocated by task 1:
+     kasan_kmalloc.part.0+0x4c/0x100
+     kasan_kmalloc+0xc4/0xe8
+     kasan_slab_alloc+0x14/0x20
+     __kmalloc_track_caller+0x130/0x238
+     devm_kmalloc+0x34/0xd0
+     sunxi_pinctrl_init_with_variant+0x1d8/0x12b8
+     h6_pinctrl_probe+0x18/0x20
+     platform_drv_probe+0x6c/0xc8
+     really_probe+0x244/0x4b0
+     driver_probe_device.part.4+0x11c/0x164
+     __driver_attach+0x120/0x190
+     bus_for_each_dev+0xe8/0x158
+     driver_attach+0x30/0x40
+     bus_add_driver+0x308/0x318
+     driver_register+0xbc/0x1d0
+     __platform_driver_register+0x7c/0x88
+     h6_pinctrl_driver_init+0x18/0x20
+     do_one_initcall+0xd4/0x208
+     kernel_init_freeable+0x230/0x2c8
+     kernel_init+0x10/0x108
+     ret_from_fork+0x10/0x1c
+
+    Freed by task 0:
+    (stack is not available)
+
+    The buggy address belongs to the object at ffff80002c680080
+     which belongs to the cache kmalloc-512 of size 512
+    The buggy address is located 0 bytes to the right of
+     512-byte region [ffff80002c680080, ffff80002c680280)
+    The buggy address belongs to the page:
+    page:ffff7e0000b1a000 count:1 mapcount:0 mapping:ffff80002e00c780 index:0xffff80002c683c80 compound_mapcount: 0
+    flags: 0x10200(slab|head)
+    raw: 0000000000010200 ffff80002e003a10 ffff80002e003a10 ffff80002e00c780
+    raw: ffff80002c683c80 0000000000100001 00000001ffffffff 0000000000000000
+    page dumped because: kasan: bad access detected
+
+    Memory state around the buggy address:
+     ffff80002c680180: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+     ffff80002c680200: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+    >ffff80002c680280: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+		       ^
+     ffff80002c680300: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+     ffff80002c680380: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+
+Correct the number of IRQ banks so there are no more mismatches.
+
+Fixes: c8a830904991 ("pinctrl: sunxi: add support for the Allwinner H6
+		      main pin controller")
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+---
+ drivers/pinctrl/sunxi/pinctrl-sun50i-h6.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/pinctrl/sunxi/pinctrl-sun50i-h6.c b/drivers/pinctrl/sunxi/pinctrl-sun50i-h6.c
+index aa8b58125568..ef4268cc6227 100644
+--- a/drivers/pinctrl/sunxi/pinctrl-sun50i-h6.c
++++ b/drivers/pinctrl/sunxi/pinctrl-sun50i-h6.c
+@@ -588,7 +588,7 @@ static const unsigned int h6_irq_bank_map[] = { 1, 5, 6, 7 };
+ static const struct sunxi_pinctrl_desc h6_pinctrl_data = {
+ 	.pins = h6_pins,
+ 	.npins = ARRAY_SIZE(h6_pins),
+-	.irq_banks = 3,
++	.irq_banks = 4,
+ 	.irq_bank_map = h6_irq_bank_map,
+ 	.irq_read_needs_mux = true,
+ };
+-- 
+2.20.1
+
