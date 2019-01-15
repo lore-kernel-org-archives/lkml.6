@@ -2,85 +2,98 @@ Return-Path: <SRS0=RZO6=PX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A1D9C43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 21:32:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E515C43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 21:34:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 080EF2086D
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 21:32:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547587923;
-	bh=88VJeO6jo2Kjn5ZG6TlHcwm9guwqKoIrqosPywIEhOo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=wYe70L8IkaiC3n3oOfvxRnqAOn0IJsXeV1HHqfxZQPdoSJT2RMsDfp6dJz8rqliwo
-	 TiOr++a67FvMvriGdYNfC/3vqFOFCQjJwsLz4sRYMAGhIKZBRIv5H8ny0J5dmzYmDx
-	 3Xr4MOStTLhK4EChFTHpPrd+TOiHZLnU5XvtevDg=
+	by mail.kernel.org (Postfix) with ESMTP id 5B39820896
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 21:34:51 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="Bhc4gk/s"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390478AbfAOVcB (ORCPT
+        id S2390498AbfAOVet (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 15 Jan 2019 16:32:01 -0500
-Received: from mail-oi1-f194.google.com ([209.85.167.194]:34898 "EHLO
-        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732817AbfAOVcB (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Jan 2019 16:32:01 -0500
-Received: by mail-oi1-f194.google.com with SMTP id v6so3373675oif.2;
-        Tue, 15 Jan 2019 13:32:00 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=z9gEuT+YNXtCWVAFBTcu1FTumM4T92y7to9PgZX0coQ=;
-        b=jNP43C9ojiKqUI+uVO0Z3sA+knK/gJMPtzTJ7N/nucdtD68a61HfONtuvo3NntlD8j
-         Ef4JRLR5KJKOLX08oqP3Fky9TW69vTEuVevC4Oc5xQcCBAlHn35NdXe2WrGuRp4prUvW
-         cXxlf8OYtALRWdRonGTGNPUkjNaGQdDvkPH4x0eysmwT72nCQAOV7+Eva3AXT8K+Uhuq
-         KvfYK6k4Es282fGGskX4Jp3lV6WcLsVcYSUz+b4xdu6HVtYHhd6f8j45gZT8nzoAKf7t
-         WbrW+WnnZmjJazyjuhita1sDLizkyHBUqW0UZJrpybNPgXEBLGww+vDlCyOgMYkDBAhK
-         My3Q==
-X-Gm-Message-State: AJcUukcYdYlyWIi7LsfxfUhHuk0R9QLbxHTJtsAZswScr23wBczgPC0h
-        B4K8to7BUWfEmdciEgub/Q==
-X-Google-Smtp-Source: ALg8bN46tdJkXSr9UlbEAiQScxzL4Sh2niknXE4jMQPxp0hHi2TBQnCAmqsaPBl7jSHP+unwEvy0Xg==
-X-Received: by 2002:aca:4d3:: with SMTP id 202mr488889oie.345.1547587920354;
-        Tue, 15 Jan 2019 13:32:00 -0800 (PST)
-Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id z18sm1862540otp.41.2019.01.15.13.31.59
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 15 Jan 2019 13:31:59 -0800 (PST)
-Date:   Tue, 15 Jan 2019 15:31:58 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Tomer Maimon <tmaimon77@gmail.com>
-Cc:     jic23@kernel.org, knaack.h@gmx.de, lars@metafoo.de,
-        pmeerw@pmeerw.net, robh+dt@kernel.org, mark.rutland@arm.com,
-        yuenn@google.com, venture@google.com, brendanhiggins@google.com,
-        avifishman70@gmail.com, joel@jms.id.au, linux-iio@vger.kernel.org,
-        openbmc@lists.ozlabs.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, Tomer Maimon <tmaimon77@gmail.com>
-Subject: Re: [PATCH v2 1/2] dt-binding: iio: add NPCM ADC documentation
-Message-ID: <20190115213158.GA7016@bogus>
-References: <20190109164343.164205-1-tmaimon77@gmail.com>
- <20190109164343.164205-2-tmaimon77@gmail.com>
+        Tue, 15 Jan 2019 16:34:49 -0500
+Received: from ozlabs.org ([203.11.71.1]:42791 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730508AbfAOVet (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 Jan 2019 16:34:49 -0500
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by ozlabs.org (Postfix) with ESMTPSA id 43fNsK6dqJz9sDT;
+        Wed, 16 Jan 2019 08:34:45 +1100 (AEDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1547588086;
+        bh=PhoXp/f+riK0m1tbRDlpXlm6595oHGFhDQpHfBHHSgI=;
+        h=Date:From:To:Cc:Subject:From;
+        b=Bhc4gk/s4HXGJUtQoxWSuUFU6CNED4lM2sDKjXTT6kxE++xH5s5lKGbzEJOVBxHIC
+         EPF0hH8d9cWE3oh/Qau2xQuuN5nUxiK3ADyvKR52nB+79OVBGEfLcqPR/lHb8t0nf1
+         QXsqshJI/I/zMr/bbowDMFKu/5Dgu/agoLAtw3CLlNLVgwd6ubJdZdgNrrElAHwy1w
+         zER/50BFutJvcN+IhVghzm+6H0o3XxuSrvt05TQyihwL8RJ6r5F4rBVrtgSkN7J7Kx
+         Pqt277ZI3XG4b9L4JiKGhD1cE00KCpcmXQsYjokH99VSHgNaYZdqOGlf4U5HafG9rd
+         t0sOgJ/UFsR1g==
+Date:   Wed, 16 Jan 2019 08:34:40 +1100
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Mike Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Dinh Nguyen <dinguyen@kernel.org>,
+        Paul Gortmaker <paul.gortmaker@windriver.com>
+Subject: linux-next: Fixes tag needs some work in the clk tree
+Message-ID: <20190116083440.11b6839c@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190109164343.164205-2-tmaimon77@gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/LUD=LGqnB_f5UgHKR.0CxKt"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed,  9 Jan 2019 18:43:42 +0200, Tomer Maimon wrote:
-> Added device tree binding documentation for Nuvoton BMC
-> NPCM Analog-to-Digital Converter(ADC).
-> 
-> Signed-off-by: Tomer Maimon <tmaimon77@gmail.com>
-> ---
->  .../bindings/iio/adc/nuvoton,npcm-adc.txt          | 35 ++++++++++++++++++++++
->  1 file changed, 35 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/iio/adc/nuvoton,npcm-adc.txt
-> 
+--Sig_/LUD=LGqnB_f5UgHKR.0CxKt
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+[I am experimenting with checking the Fixes tags in commits in linux-next.
+Please let me know if you think I am being too strict.]
+
+Hi all,
+
+Commit
+
+  b488517b28a4 ("clk: socfpga: stratix10: fix naming convention for the fix=
+ed-clocks")
+
+has a malformed Fixes tag:
+
+  Fixes: 07afb8db7340 ("clk: socfpga: stratix10: add clock driver for
+  Stratix10 platform")
+
+It should not be split over 2 lines.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/LUD=LGqnB_f5UgHKR.0CxKt
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlw+UfAACgkQAVBC80lX
+0Gx63gf/dAKugoyaKtZoTxvkBM7rUSXFDmIMyek1ikXkkAVEGAG6FCsMDOoL7wwZ
+aSy4gIHouoSfiMPp2bvNtyWe98ztjYul6qQlR2TOURsMNF8cy1vzulDpteDITaPY
+w+VGAVmmd5M+HmM8FO1g+56w3wwoZT0mexO+eqbeaoAcsaKEYhathKlksUPoQ9EW
+l3DO1cc0BQ4bEIKcmtEvAjvi5+sOnjFYBBeaZ/e5oq3vRjfyDv8JDayI9UeZ3+SS
+s8V4cYlcDnVJ0HS0nj+xbdnQj0qFXeLI/SYG3iIIpxyAv/qIHO9OpnVfb6MH2jcE
+RCI69JqkqswyNSN3Ymxz0KKXlb5tmQ==
+=FQSz
+-----END PGP SIGNATURE-----
+
+--Sig_/LUD=LGqnB_f5UgHKR.0CxKt--
