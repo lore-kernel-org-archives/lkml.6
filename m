@@ -6,46 +6,47 @@ X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E8138C43387
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 16:44:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B0B58C43387
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 16:44:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B54FD2054F
-	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 16:44:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 742462054F
+	for <linux-kernel@archiver.kernel.org>; Tue, 15 Jan 2019 16:44:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547570650;
-	bh=jG+rAo61gvCU7PLL1KnFP9e45hwXCrfJK9LUonLqKfA=;
+	s=default; t=1547570656;
+	bh=vSKc/4NGggkJ7CE4qVYqUwMkGZOYLbhksPgoy74waco=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=doj5/svPdLr97ATkwbvJDVth+MwiGug4Sxu55mnQf23RZkg3AA6pHNWC/b7v4dvUG
-	 HFs5NOREnK68W9/aVWf+cmrRPgtSJL0VbIXBKXzDliNJJxjaGhKWdh9uP0DaGqCe3G
-	 XREs0XB3+fJQzoEtnvEwsMSOf2XxHA/dgwj4Sh7Q=
+	b=F+sn9MWyIqgbgCJVzaFGOWU/tEzJnLlWCePZjeuAdiovIMqZ+HmgTAHinkBhDGy2V
+	 1IsiGsmFggvHB60vm/bpkYPwP8pnPT88OauAIPo8FOBDRoXCa0/ENht6xzHfnEwFPg
+	 uZ5NZF0xHXiVJNjAKxKsx3jAIb9+7Q6kxS95I4j4=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387482AbfAOQoK (ORCPT
+        id S2387496AbfAOQoO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 15 Jan 2019 11:44:10 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33658 "EHLO mail.kernel.org"
+        Tue, 15 Jan 2019 11:44:14 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33734 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387469AbfAOQoH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Jan 2019 11:44:07 -0500
+        id S2387478AbfAOQoJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 Jan 2019 11:44:09 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BF4CD2054F;
-        Tue, 15 Jan 2019 16:44:05 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 699F320657;
+        Tue, 15 Jan 2019 16:44:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547570646;
-        bh=jG+rAo61gvCU7PLL1KnFP9e45hwXCrfJK9LUonLqKfA=;
+        s=default; t=1547570648;
+        bh=vSKc/4NGggkJ7CE4qVYqUwMkGZOYLbhksPgoy74waco=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=cGsgL5g9Qe/haLsG6hdtCL++NYf5oTyN68XuAuHaW4LKyUYR1Byx9253wyOj83RQ/
-         W/3GAaDElTtI/p6Kxj+W7/sAO8BY2ZNs4pxLBiUnjMxg9Re07rhjUDbAyVP8THfhGr
-         KEqtoMTGj6exuRFkagPLipUWDJPb8ceKentxct00=
+        b=x0sUxD0eSU15N1vuoTn0/OC5AKYC4oT6k2PY6OQ5XqBJvShfhGWG20FPvatOpSRE2
+         7rWiY0i5bHqHGFadoP5EcrObWDI02f7+PLkAbEl3AYNuDRHf7ux2Vm0/caV/BrF4bK
+         BPY+MUvhmOjhBmz08ml/R2k9larLGyqVqDlHfDpU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Filipe Manana <fdmanana@suse.com>,
-        David Sterba <dsterba@suse.com>
-Subject: [PATCH 4.20 02/57] Btrfs: fix deadlock when using free space tree due to block group creation
-Date:   Tue, 15 Jan 2019 17:35:43 +0100
-Message-Id: <20190115154910.863488970@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Sekhar Nori <nsekhar@ti.com>
+Subject: [PATCH 4.20 20/57] ARM: davinci: omapl138-hawk: fix label names in GPIO lookup entries
+Date:   Tue, 15 Jan 2019 17:36:01 +0100
+Message-Id: <20190115154911.831396640@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190115154910.734892368@linuxfoundation.org>
 References: <20190115154910.734892368@linuxfoundation.org>
@@ -64,64 +65,37 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Filipe Manana <fdmanana@suse.com>
+From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
-commit a6d8654d885d7d79a3fb82da64eaa489ca332a82 upstream.
+commit 054b8dc381b1c784852ad3e109270d236a58b71d upstream.
 
-When modifying the free space tree we can end up COWing one of its extent
-buffers which in turn might result in allocating a new chunk, which in
-turn can result in flushing (finish creation) of pending block groups. If
-that happens we can deadlock because creating a pending block group needs
-to update the free space tree, and if any of the updates tries to modify
-the same extent buffer that we are COWing, we end up in a deadlock since
-we try to write lock twice the same extent buffer.
+Since commit 587f7a694f01 ("gpio: davinci: Use dev name for label and
+automatic base selection") the gpiochip label no longer has an ID
+suffix. Update the GPIO lookup entries.
 
-So fix this by skipping pending block group creation if we are COWing an
-extent buffer from the free space tree. This is a case missed by commit
-5ce555578e091 ("Btrfs: fix deadlock when writing out free space caches").
-
-Bugzilla: https://bugzilla.kernel.org/show_bug.cgi?id=202173
-Fixes: 5ce555578e091 ("Btrfs: fix deadlock when writing out free space caches")
-CC: stable@vger.kernel.org # 4.18+
-Signed-off-by: Filipe Manana <fdmanana@suse.com>
-Reviewed-by: David Sterba <dsterba@suse.com>
-Signed-off-by: David Sterba <dsterba@suse.com>
+Fixes: 587f7a694f01 ("gpio: davinci: Use dev name for label and automatic base selection")
+Cc: stable@vger.kernel.org
+Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Signed-off-by: Sekhar Nori <nsekhar@ti.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/btrfs/ctree.c |   16 +++++++++-------
- 1 file changed, 9 insertions(+), 7 deletions(-)
+ arch/arm/mach-davinci/board-omapl138-hawk.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/fs/btrfs/ctree.c
-+++ b/fs/btrfs/ctree.c
-@@ -1015,19 +1015,21 @@ static noinline int __btrfs_cow_block(st
- 		parent_start = parent->start;
- 
- 	/*
--	 * If we are COWing a node/leaf from the extent, chunk or device trees,
--	 * make sure that we do not finish block group creation of pending block
--	 * groups. We do this to avoid a deadlock.
-+	 * If we are COWing a node/leaf from the extent, chunk, device or free
-+	 * space trees, make sure that we do not finish block group creation of
-+	 * pending block groups. We do this to avoid a deadlock.
- 	 * COWing can result in allocation of a new chunk, and flushing pending
- 	 * block groups (btrfs_create_pending_block_groups()) can be triggered
- 	 * when finishing allocation of a new chunk. Creation of a pending block
--	 * group modifies the extent, chunk and device trees, therefore we could
--	 * deadlock with ourselves since we are holding a lock on an extent
--	 * buffer that btrfs_create_pending_block_groups() may try to COW later.
-+	 * group modifies the extent, chunk, device and free space trees,
-+	 * therefore we could deadlock with ourselves since we are holding a
-+	 * lock on an extent buffer that btrfs_create_pending_block_groups() may
-+	 * try to COW later.
- 	 */
- 	if (root == fs_info->extent_root ||
- 	    root == fs_info->chunk_root ||
--	    root == fs_info->dev_root)
-+	    root == fs_info->dev_root ||
-+	    root == fs_info->free_space_root)
- 		trans->can_flush_pending_bgs = false;
- 
- 	cow = btrfs_alloc_tree_block(trans, root, parent_start,
+--- a/arch/arm/mach-davinci/board-omapl138-hawk.c
++++ b/arch/arm/mach-davinci/board-omapl138-hawk.c
+@@ -134,9 +134,9 @@ static const short hawk_mmcsd0_pins[] =
+ static struct gpiod_lookup_table mmc_gpios_table = {
+ 	.dev_id = "da830-mmc.0",
+ 	.table = {
+-		GPIO_LOOKUP("davinci_gpio.0", DA850_HAWK_MMCSD_CD_PIN, "cd",
++		GPIO_LOOKUP("davinci_gpio", DA850_HAWK_MMCSD_CD_PIN, "cd",
+ 			    GPIO_ACTIVE_LOW),
+-		GPIO_LOOKUP("davinci_gpio.0", DA850_HAWK_MMCSD_WP_PIN, "wp",
++		GPIO_LOOKUP("davinci_gpio", DA850_HAWK_MMCSD_WP_PIN, "wp",
+ 			    GPIO_ACTIVE_LOW),
+ 	},
+ };
 
 
