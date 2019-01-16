@@ -2,80 +2,110 @@ Return-Path: <SRS0=1Lvk=PY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 248CBC43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 09:46:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 44EB8C43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 09:46:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DA9B920859
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 09:46:25 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=alien8.de header.i=@alien8.de header.b="Oq+9b5Ao"
+	by mail.kernel.org (Postfix) with ESMTP id 1A0EB20859
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 09:46:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391741AbfAPJqY (ORCPT
+        id S2391884AbfAPJqn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 16 Jan 2019 04:46:24 -0500
-Received: from mail.skyhub.de ([5.9.137.197]:36442 "EHLO mail.skyhub.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730200AbfAPJqY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Jan 2019 04:46:24 -0500
-Received: from zn.tnic (p200300EC2BC98A00BDE8DF251329FBA0.dip0.t-ipconnect.de [IPv6:2003:ec:2bc9:8a00:bde8:df25:1329:fba0])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 1328F1EC0543;
-        Wed, 16 Jan 2019 10:46:22 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
-        t=1547631982;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
-        bh=M++/71/DKaK6+iBzrI+O+F4dhOM43KG6ku0qH1KuJoA=;
-        b=Oq+9b5AoiEHbMxKio+CnCxN7BHAV7YEk5s0ifhs7iKmUufeI0jMBQIq77AZBE90TCHrd9Q
-        87yKGkvkSy0jVZfhdKI+9P0iGdxfynpbVLjM+U6UaDYXo4bZRiriU5yFlwicJ7INEwegGf
-        mksdupApTS5G3VfY5J1DPu2zUS0JcMI=
-Date:   Wed, 16 Jan 2019 10:46:19 +0100
-From:   Borislav Petkov <bp@alien8.de>
-To:     Kairui Song <kasong@redhat.com>
-Cc:     linux-kernel@vger.kernel.org, tglx@linutronix.de, mingo@redhat.com,
-        hpa@zytor.com, x86@kernel.org, Dave Young <dyoung@redhat.com>,
-        Baoquan He <bhe@redhat.com>, kexec@lists.infradead.org,
-        akpm@linux-foundation.org, robert.moore@intel.com,
-        erik.schmauss@intel.com, rafael.j.wysocki@intel.com,
-        Len Brown <lenb@kernel.org>,
-        Chao Fan <fanc.fnst@cn.fujitsu.com>
-Subject: Re: [PATCH v2 2/2] x86, kexec_file_load: make it work with
- efi=noruntime or efi=old_map
-Message-ID: <20190116094619.GB15409@zn.tnic>
-References: <20190115095834.22617-1-kasong@redhat.com>
- <20190115095834.22617-3-kasong@redhat.com>
- <20190115231005.GF6596@zn.tnic>
- <CACPcB9dYD2zR7ssXFibkefo3EZuvVnLegovwTMA8MaaLP1UsYQ@mail.gmail.com>
+        Wed, 16 Jan 2019 04:46:43 -0500
+Received: from outbound-smtp04.blacknight.com ([81.17.249.35]:58501 "EHLO
+        outbound-smtp04.blacknight.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S2391858AbfAPJqm (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 Jan 2019 04:46:42 -0500
+Received: from mail.blacknight.com (pemlinmail01.blacknight.ie [81.17.254.10])
+        by outbound-smtp04.blacknight.com (Postfix) with ESMTPS id A78099864A
+        for <linux-kernel@vger.kernel.org>; Wed, 16 Jan 2019 09:46:40 +0000 (UTC)
+Received: (qmail 18993 invoked from network); 16 Jan 2019 09:46:40 -0000
+Received: from unknown (HELO techsingularity.net) (mgorman@techsingularity.net@[37.228.229.96])
+  by 81.17.254.9 with ESMTPSA (AES256-SHA encrypted, authenticated); 16 Jan 2019 09:46:40 -0000
+Date:   Wed, 16 Jan 2019 09:46:39 +0000
+From:   Mel Gorman <mgorman@techsingularity.net>
+To:     Vlastimil Babka <vbabka@suse.cz>
+Cc:     Linux-MM <linux-mm@kvack.org>,
+        David Rientjes <rientjes@google.com>,
+        Andrea Arcangeli <aarcange@redhat.com>, ying.huang@intel.com,
+        kirill@shutemov.name, Andrew Morton <akpm@linux-foundation.org>,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 09/25] mm, compaction: Use the page allocator bulk-free
+ helper for lists of pages
+Message-ID: <20190116094639.GC27437@techsingularity.net>
+References: <20190104125011.16071-1-mgorman@techsingularity.net>
+ <20190104125011.16071-10-mgorman@techsingularity.net>
+ <a61312d7-8235-fe4d-6411-d3143d965f81@suse.cz>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=iso-8859-15
 Content-Disposition: inline
-In-Reply-To: <CACPcB9dYD2zR7ssXFibkefo3EZuvVnLegovwTMA8MaaLP1UsYQ@mail.gmail.com>
+In-Reply-To: <a61312d7-8235-fe4d-6411-d3143d965f81@suse.cz>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 16, 2019 at 03:08:42PM +0800, Kairui Song wrote:
-> I didn't see a way to reuse things in that patch series, situation is
-> different, in that patch it needs to get RSDP in very early boot stage
-> so it did everything from scratch, in this patch kexec_file_load need
-> to get RSDP too, but everything is well setup so things are a lot
-> easier, just read from current boot_prams, efi and fallback to
-> acpi_find_root_pointer should be good.
+On Tue, Jan 15, 2019 at 01:39:28PM +0100, Vlastimil Babka wrote:
+> On 1/4/19 1:49 PM, Mel Gorman wrote:
+> > release_pages() is a simpler version of free_unref_page_list() but it
+> > tracks the highest PFN for caching the restart point of the compaction
+> > free scanner. This patch optionally tracks the highest PFN in the core
+> > helper and converts compaction to use it. The performance impact is
+> > limited but it should reduce lock contention slightly in some cases.
+> > The main benefit is removing some partially duplicated code.
+> > 
+> > Signed-off-by: Mel Gorman <mgorman@techsingularity.net>
+> 
+> ...
+> 
+> > --- a/mm/page_alloc.c
+> > +++ b/mm/page_alloc.c
+> > @@ -2876,18 +2876,26 @@ void free_unref_page(struct page *page)
+> >  /*
+> >   * Free a list of 0-order pages
+> >   */
+> > -void free_unref_page_list(struct list_head *list)
+> > +void __free_page_list(struct list_head *list, bool dropref,
+> > +				unsigned long *highest_pfn)
+> >  {
+> >  	struct page *page, *next;
+> >  	unsigned long flags, pfn;
+> >  	int batch_count = 0;
+> >  
+> > +	if (highest_pfn)
+> > +		*highest_pfn = 0;
+> > +
+> >  	/* Prepare pages for freeing */
+> >  	list_for_each_entry_safe(page, next, list, lru) {
+> > +		if (dropref)
+> > +			WARN_ON_ONCE(!put_page_testzero(page));
+> 
+> I've thought about it again and still think it can cause spurious
+> warnings. We enter this function with one page pin, which means somebody
+> else might be doing pfn scanning and get_page_unless_zero() with
+> success, so there are two pins. Then we do the put_page_testzero() above
+> and go back to one pin, and warn. You said "this function simply does
+> not expect it and the callers do not violate the rule", but this is
+> rather about potential parallel pfn scanning activity and not about this
+> function's callers. Maybe there really is no parallel pfn scanner that
+> would try to pin a page with a state the page has when it's processed by
+> this function, but I wouldn't bet on it (any state checks preceding the
+> pin might also be racy etc.).
+> 
 
-No no. Early code should find out that venerable RSDP thing once and
-will save it somewhere for further use. No gazillion parsings of it.
-Just once and share it with the rest of the code that needs it.
+Ok, I'll drop this patch because in theory you're right. I wouldn't think
+that parallel PFN scanning is likely to trigger it but gup is a potential
+issue. While this also will increase CPU usage slightly again, it'll be
+no worse than it was before and again, I don't want to stall the entire
+series over a relatively small optimisation.
+
+Thanks Vlastimil!
 
 -- 
-Regards/Gruss,
-    Boris.
-
-Good mailing practices for 400: avoid top-posting and trim the reply.
+Mel Gorman
+SUSE Labs
