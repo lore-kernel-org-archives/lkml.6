@@ -2,86 +2,109 @@ Return-Path: <SRS0=1Lvk=PY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CB165C43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 18:30:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C3A32C43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 18:31:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A33C120866
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 18:30:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 959C720866
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 18:31:14 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="oc+Zg9qc"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728932AbfAPSag (ORCPT
+        id S1728958AbfAPSbN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 16 Jan 2019 13:30:36 -0500
-Received: from ale.deltatee.com ([207.54.116.67]:35230 "EHLO ale.deltatee.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728489AbfAPSag (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Jan 2019 13:30:36 -0500
-Received: from guinness.priv.deltatee.com ([172.16.1.162])
-        by ale.deltatee.com with esmtp (Exim 4.89)
-        (envelope-from <logang@deltatee.com>)
-        id 1gjpxR-0003Sc-G2; Wed, 16 Jan 2019 11:30:34 -0700
-To:     Jarkko Nikula <jarkko.nikula@linux.intel.com>,
-        linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Bjorn Helgaas <bhelgaas@google.com>
-Cc:     Stephen Bates <sbates@raithlin.com>
-References: <20190115173203.14850-1-logang@deltatee.com>
- <48a93172-25a2-d6a6-e908-7d27249f1bc2@linux.intel.com>
-From:   Logan Gunthorpe <logang@deltatee.com>
-Message-ID: <44629b35-8315-c090-eca7-ca1e9347ba13@deltatee.com>
-Date:   Wed, 16 Jan 2019 11:30:32 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.0
+        Wed, 16 Jan 2019 13:31:13 -0500
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:42277 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728855AbfAPSbM (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 Jan 2019 13:31:12 -0500
+Received: by mail-pg1-f195.google.com with SMTP id d72so3182615pga.9
+        for <linux-kernel@vger.kernel.org>; Wed, 16 Jan 2019 10:31:12 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition;
+        bh=dHSazQ7qGm2UKIzzWog2IYg+72OPhXPfMJM+TsIBw6g=;
+        b=oc+Zg9qcwExCefgBVQow/0OPvZrOxpfIcZvPTxksMyF90W8LF+6GOyjKGCdvgmJ12Q
+         jzKxp/kb7S4ZMWNM62beUsxiJfgkAm45XtHaen6iTR4nsvRCWwMMzEDRj4gjL0YGobPw
+         hX9u4qUWL0PLptWpT8icrFMYvigBZfY+qLs3Q=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition;
+        bh=dHSazQ7qGm2UKIzzWog2IYg+72OPhXPfMJM+TsIBw6g=;
+        b=VjSDWy9pG0tw8Tq/iGkgaZxkOiLxW/9KN9n1dQxlD5MVrYZH6xSThK7Uo+wwg/1hyt
+         jTly3IeNn1ZM2YpNZjeWEmHxyecbcMovdc882AGepaMCQnbgEWTWt3B5HoswJjAmHVcd
+         Ir8cxRINIkbkKAqaeKXlnOcyTkOp9M9GOOR8YGO76LRUnnPpvGZRieKaQLxow0IuFVhp
+         cJa7WumclQVka+kuQ3g3oDg4VNxYMyTk7GSyfR13gQc6XeuiS8IPbNLG0fUcRT6oQyhD
+         4CrvRJ1pwZxykWAo0R/ILM9g5nAeZf/QD041lVk9BQfd2GC6LPdWDv1iBdEyJQjPzpAb
+         XVFQ==
+X-Gm-Message-State: AJcUukfRrQYuh4yFyg4l/2G4keRcrFpvlsc5tBLOQEUns8AT9gr9J0hR
+        dvzA8YHvBPILAdtyuvhU75HODw==
+X-Google-Smtp-Source: ALg8bN6+uVFaQoD6XHZsdht80UFBlRjUJK3eIohahgUokfNwQYcjryhsNsFyFJut7DcwqlRhK8Fo5A==
+X-Received: by 2002:a63:2784:: with SMTP id n126mr10315231pgn.48.1547663471587;
+        Wed, 16 Jan 2019 10:31:11 -0800 (PST)
+Received: from www.outflux.net (173-164-112-133-Oregon.hfc.comcastbusiness.net. [173.164.112.133])
+        by smtp.gmail.com with ESMTPSA id 184sm9071194pfe.106.2019.01.16.10.31.10
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 16 Jan 2019 10:31:10 -0800 (PST)
+Date:   Wed, 16 Jan 2019 10:31:09 -0800
+From:   Kees Cook <keescook@chromium.org>
+To:     James Morris <jmorris@namei.org>
+Cc:     Oleg Nesterov <oleg@redhat.com>,
+        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-security-module <linux-security-module@vger.kernel.org>,
+        syzbot <syzbot+a9ac39bf55329e206219@syzkaller.appspotmail.com>,
+        syzkaller-bugs@googlegroups.com
+Subject: [PATCH] Yama: Check for pid death before checking ancestry
+Message-ID: <20190116183109.GA21722@beast>
 MIME-Version: 1.0
-In-Reply-To: <48a93172-25a2-d6a6-e908-7d27249f1bc2@linux.intel.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-CA
-Content-Transfer-Encoding: 7bit
-X-SA-Exim-Connect-IP: 172.16.1.162
-X-SA-Exim-Rcpt-To: sbates@raithlin.com, bhelgaas@google.com, linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org, jarkko.nikula@linux.intel.com
-X-SA-Exim-Mail-From: logang@deltatee.com
-Subject: Re: [PATCH] PCI: fix using __initdata memory after free in
- disable_acs_redir parameter
-X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
-X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+It's possible that a pid has died before we take the rcu lock, in which
+case we can't walk the ancestry list as it may be detached. Instead, check
+for death first before doing the walk.
+
+Reported-by: syzbot+a9ac39bf55329e206219@syzkaller.appspotmail.com
+Fixes: 2d514487faf1 ("security: Yama LSM")
+Cc: stable@vger.kernel.org
+Suggested-by: Oleg Nesterov <oleg@redhat.com>
+Signed-off-by: Kees Cook <keescook@chromium.org>
+---
+James, can you please send this to Linus in your -fixes tree?
+---
+ security/yama/yama_lsm.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/security/yama/yama_lsm.c b/security/yama/yama_lsm.c
+index ffda91a4a1aa..02514fe558b4 100644
+--- a/security/yama/yama_lsm.c
++++ b/security/yama/yama_lsm.c
+@@ -368,7 +368,9 @@ static int yama_ptrace_access_check(struct task_struct *child,
+ 			break;
+ 		case YAMA_SCOPE_RELATIONAL:
+ 			rcu_read_lock();
+-			if (!task_is_descendant(current, child) &&
++			if (!pid_alive(child))
++				rc = -EPERM;
++			if (!rc && !task_is_descendant(current, child) &&
+ 			    !ptracer_exception_found(current, child) &&
+ 			    !ns_capable(__task_cred(child)->user_ns, CAP_SYS_PTRACE))
+ 				rc = -EPERM;
+-- 
+2.17.1
 
 
-On 2019-01-16 2:37 a.m., Jarkko Nikula wrote:
-> So this doesn't happen if you revert c5eb1190074c?
-
-Yes, but the bug was fully mine in the disable_acs_redir code. That
-patch only just made it noticable to me.
-
-> I guess this is due dev->state_saved being true set by 
-> pci_pm_runtime_suspend() -> pci_save_state() after my patch and now 
-> pci_pm_runtime_resume() -> pci_restore_standard_config() -> 
-> pci_restore_state() reach the pci_enable_acs(). I think this is possible 
-> to trigger also before my patch if device has the runtime PM callback 
-> defined?
-
-Yes, I also think it was possible to trigger without that patch. I just
-never hit it.
-
-> I wasn't able to trigger this but I saw
-> "PCI: Can't parse disable_acs_redir parameter: " followed by a few lines 
-> of junk during boot when I defined pci=disable_acs_redir=0000:00:xy.z 
-> which disappear after your patch.
-
-Yes, I guess in theory, it will also depend what happens to the RAM the
-parameter pointer points too. On my system it's panicing trying to
-access unallocated RAM, on yours it may be reading RAM that's used for
-another purpose and spewing garbage because of it.
-
-> Tested-by: Jarkko Nikula <jarkko.nikula@linux.intel.com>
-> Reviewed-by: Jarkko Nikula <jarkko.nikula@linux.intel.com>
-
-Thanks!
-
-Logan
+-- 
+Kees Cook
