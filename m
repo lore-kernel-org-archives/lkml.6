@@ -2,100 +2,137 @@ Return-Path: <SRS0=1Lvk=PY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-9.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E8CBBC43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 08:46:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7AB4BC43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 08:47:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B4D5E20840
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 08:46:38 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="HZ0JCTky"
+	by mail.kernel.org (Postfix) with ESMTP id 4770920840
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 08:47:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1547628425;
+	bh=ENq0LuKgcRn0ltfMIgMJAq2XqV1ELqCxTiQfipMOs1w=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=RLV8VLnmxI9UxEJFOu5bxZ1gTYsB681NWvGWnv+bSzAjbk8LU0q2ImFQvEDz6yJ/o
+	 JTKY+NNjz34gOftVA2A8K17/TiVF2d20lReeu05VVtfLnMtCTZ2vs58T+eFiUdB5A7
+	 IGsufGWWDAt1iJ1M8TCdgHKVwhxMehX1jymiOqWM=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389922AbfAPIqg (ORCPT
+        id S2390021AbfAPIrD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 16 Jan 2019 03:46:36 -0500
-Received: from fllv0015.ext.ti.com ([198.47.19.141]:47074 "EHLO
-        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389879AbfAPIqg (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Jan 2019 03:46:36 -0500
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id x0G8kOTL009825;
-        Wed, 16 Jan 2019 02:46:24 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1547628384;
-        bh=lV1oRpzpKFOU70CTWXbLuNLNOnXrBRjGFwpC5uu30uI=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=HZ0JCTkyrzc6qwp8FkseWKpaV3F225E1mPS/T5idR9b9g2+UjZjNntl6l9Gta2hTY
-         C9Y5rf4M1MylRc6vgd8DzbJaRRUxsV1YA8l9sVqwns4enjLa5YYA9TZH6rtaYBpa1n
-         8V+HENqHUuSOGNUAe8q4suSek8OwzKYNIchsX/fI=
-Received: from DFLE101.ent.ti.com (dfle101.ent.ti.com [10.64.6.22])
-        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x0G8kO6D126573
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 16 Jan 2019 02:46:24 -0600
-Received: from DFLE114.ent.ti.com (10.64.6.35) by DFLE101.ent.ti.com
- (10.64.6.22) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Wed, 16
- Jan 2019 02:46:24 -0600
-Received: from dflp32.itg.ti.com (10.64.6.15) by DFLE114.ent.ti.com
- (10.64.6.35) with Microsoft SMTP Server (version=TLS1_0,
- cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1591.10 via Frontend Transport;
- Wed, 16 Jan 2019 02:46:24 -0600
-Received: from [172.24.190.233] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by dflp32.itg.ti.com (8.14.3/8.13.8) with ESMTP id x0G8kLe4026677;
-        Wed, 16 Jan 2019 02:46:21 -0600
-Subject: Re: [PATCH v2] phy: phy-rockchip-inno-usb2: drop reading the
- utmi-avalid property
-To:     Heiko Stuebner <heiko@sntech.de>,
-        Enric Balletbo i Serra <enric.balletbo@collabora.com>
-CC:     <linux-kernel@vger.kernel.org>, <kernel@collabora.com>,
-        <bleung@chromium.org>, <groeck@google.com>,
-        <kieran.bingham@ideasonboard.com>,
-        <linux-rockchip@lists.infradead.org>,
-        <linux-arm-kernel@lists.infradead.org>
-References: <20190109171415.9954-1-enric.balletbo@collabora.com>
- <5125335.cuvu72hbmo@phil>
-From:   Kishon Vijay Abraham I <kishon@ti.com>
-Message-ID: <8a0ea28a-961f-130b-bd76-9dbda42ea417@ti.com>
-Date:   Wed, 16 Jan 2019 14:15:58 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Wed, 16 Jan 2019 03:47:03 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36998 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2388910AbfAPIrD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 Jan 2019 03:47:03 -0500
+Received: from localhost (unknown [95.99.207.112])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9559D20840;
+        Wed, 16 Jan 2019 08:47:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1547628422;
+        bh=ENq0LuKgcRn0ltfMIgMJAq2XqV1ELqCxTiQfipMOs1w=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=kiH949EI8DXx+LxAH5AGCqjuTlKsu+DgU5EzysJUJu5vG0QRD2/M9++Tz1AZ28T7V
+         1qqo8Ped3h1FpJXpXT5+gPGETCKiMgU5gprp2zRXqx3HpvA9usj8rOhIDOMUVEifhW
+         6qTTTXGs7AUe6KfAYUSXbNof44BOW22wBT0rQq20=
+Date:   Wed, 16 Jan 2019 09:46:58 +0100
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Nathan Chancellor <natechancellor@gmail.com>
+Cc:     devel@driverdev.osuosl.org,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] staging: rtl8723bs: Fix build error with Clang when
+ inlining is disabled
+Message-ID: <20190116084658.GA28112@kroah.com>
+References: <20190116060302.8882-1-natechancellor@gmail.com>
+ <20190116064202.GA25498@kroah.com>
+ <20190116065340.GA5336@flashbox>
 MIME-Version: 1.0
-In-Reply-To: <5125335.cuvu72hbmo@phil>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190116065340.GA5336@flashbox>
+User-Agent: Mutt/1.11.2 (2019-01-07)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
-
-On 10/01/19 5:56 PM, Heiko Stuebner wrote:
-> Am Mittwoch, 9. Januar 2019, 18:14:15 CET schrieb Enric Balletbo i Serra:
->> That property is no used in mainline and is not documented. The only
->> board using that property is the rk33-99-evb-rev1 and -rev2 in the
->> vendor kernel. The existence of a further -rev3 (which also looks way
->> better cared for compared rev1+2) indicates that the older ones are
->> probably some sort of preproduction models, where some wiring (on the soc
->> or board) may have gone wrong.
->>
->> It is also not clear why this is a hardware-description or a DT
->> property, so, as noboby seems to care of this just drop reading that
->> property.
->>
->> Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+On Tue, Jan 15, 2019 at 11:53:40PM -0700, Nathan Chancellor wrote:
+> On Wed, Jan 16, 2019 at 07:42:02AM +0100, Greg Kroah-Hartman wrote:
+> > On Tue, Jan 15, 2019 at 11:03:02PM -0700, Nathan Chancellor wrote:
+> > > When CONFIG_NO_AUTO_INLINE was present in linux-next (which added
+> > > '-fno-inline-functions' to KBUILD_CFLAGS), an allyesconfig build with
+> > > Clang failed at the modpost stage:
+> > > 
+> > > ERROR: "is_broadcast_mac_addr" [drivers/staging/rtl8723bs/r8723bs.ko] undefined!
+> > > ERROR: "is_zero_mac_addr" [drivers/staging/rtl8723bs/r8723bs.ko] undefined!
+> > > ERROR: "is_multicast_mac_addr" [drivers/staging/rtl8723bs/r8723bs.ko] undefined!
+> > > 
+> > > These functions were marked as extern inline, meaning that if inlining
+> > > doesn't happen, the function will be undefined, as it is above.
+> > > 
+> > > This happens to work with GCC because the '-fno-inline-functions' option
+> > > respects the __inline attribute so all instances of these functions are
+> > > inlined as expected and the definition doesn't actually matter. However,
+> > > with Clang and '-fno-inline-functions', a function has to be marked with
+> > > the __always_inline attribute to be considered for inlining, which none
+> > > of these functions are. Clang tries to find the symbol definition
+> > > elsewhere as it was told and fails, which trickles down to modpost.
+> > > 
+> > > To make sure that this code compiles regardless of compiler and make the
+> > > intention of the code clearer, use 'static __always_inline' to ensure
+> > > that these functions are always inlined. Some alternative solutions
+> > > included 'extern __always_inline' or converting these functions to
+> > > macros (so the preprocessor deals with them) but I would argue this is
+> > > the more "standard" solution.
+> > > 
+> > > Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+> > > ---
+> > >  drivers/staging/rtl8723bs/include/ieee80211.h | 6 +++---
+> > >  1 file changed, 3 insertions(+), 3 deletions(-)
+> > > 
+> > > diff --git a/drivers/staging/rtl8723bs/include/ieee80211.h b/drivers/staging/rtl8723bs/include/ieee80211.h
+> > > index bcc8dfa8e672..959e822315b5 100644
+> > > --- a/drivers/staging/rtl8723bs/include/ieee80211.h
+> > > +++ b/drivers/staging/rtl8723bs/include/ieee80211.h
+> > > @@ -850,18 +850,18 @@ enum ieee80211_state {
+> > >  #define IP_FMT "%pI4"
+> > >  #define IP_ARG(x) (x)
+> > >  
+> > > -extern __inline int is_multicast_mac_addr(const u8 *addr)
+> > > +static __always_inline int is_multicast_mac_addr(const u8 *addr)
+> > 
+> > Ick, really?  This is in a .h file, the .c file sees this, so why isn't
+> > clang picking it up?  Worst case it just makes it a "normal" function
+> > and doesn't inline it, right?
+> > 
 > 
-> Reviewed-by: Heiko Stuebner <heiko@sntech.de>
+> As I understand it, the meaning of 'extern inline' is basically use this
+> defintion when inlining, otherwise use one from a different file or
+> translation unit. See commit d0a8d9378d16 ("x86/paravirt: Make
+> native_save_fl() extern inline"). These functions don't have any other
+> declaration/definition so when they aren't inlined, they don't exist.
+> 
+> > How about just replacing "extern" with "static", that should solve this,
+> > adding "__always_inline" everywhere is not going to be fun and doesn't
+> > make any sense.
+> > 
+> 
+> Yes, that would work (and what I originally tested). My assumption with
+> the code is that it was intended for this function to always be inlined
+> but if you'd rather it just be 'static', I am happy to send a v2!
 
-For some reason, I don't seem to have the original patch in the inbox. Can you
-resend it please?
+This code is not trying to be that smart, someone just put the extern in
+there without realizing it.  So making it static is the correct fix, so
+a v2 would be great.
 
-Thanks
-Kishon
+Odds are, almost all other places in the kernel that you hit with this
+also needs the same fixup, no need to be fancy here :)
+
+thanks,
+
+greg k-h
