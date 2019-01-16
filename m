@@ -2,137 +2,112 @@ Return-Path: <SRS0=1Lvk=PY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E15AEC43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 16:18:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D131C43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 16:18:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B148E20651
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 16:18:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DD01B20651
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 16:18:28 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="ZXUj2Jdt";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="HnKlDb9O"
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="FPG0FDDJ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405371AbfAPQSK (ORCPT
+        id S1730772AbfAPQS0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 16 Jan 2019 11:18:10 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:41384 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728055AbfAPQSJ (ORCPT
+        Wed, 16 Jan 2019 11:18:26 -0500
+Received: from mail-ot1-f67.google.com ([209.85.210.67]:34550 "EHLO
+        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727883AbfAPQS0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Jan 2019 11:18:09 -0500
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 0A97B60C88; Wed, 16 Jan 2019 16:18:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1547655488;
-        bh=yGiryjewCdi98umIS3eEjPSOfpjeW+E5TX1N9WW5cXA=;
-        h=From:To:Cc:Subject:References:Date:In-Reply-To:From;
-        b=ZXUj2Jdtc3VyUre5WYgYVfQIcmr/STCZEs3+sYJP6A8xhlcZwF3le4ThP4oCrZXHm
-         C6TRpxo5PU+aT6i21OgXYJCflK57Q+Km8ZWofz7qML2AiRLJnA82EFFbPL7VjmYDsv
-         5F3A+Ed8PAAhpYYrsNhBT+vRJJ4gktCqS597++6o=
-Received: from x230.qca.qualcomm.com (88-114-240-156.elisa-laajakaista.fi [88.114.240.156])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: kvalo@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 424D96086A;
-        Wed, 16 Jan 2019 16:18:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1547655486;
-        bh=yGiryjewCdi98umIS3eEjPSOfpjeW+E5TX1N9WW5cXA=;
-        h=From:To:Cc:Subject:References:Date:In-Reply-To:From;
-        b=HnKlDb9O2h9l1caUtreEWgvU4UR5Gnobz+c5T3x7ZwoAYypCeAeES1JyBQsezxXDD
-         sXofkNr6P2iPdJ/edd/zIasJawwdqus6ItOEN9PrWWhFIMESPfj9wT9kAGJd1Zfvha
-         YOilUkY2X3mjSccgkKNEXq4UquNUV3ParMTOW59g=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 424D96086A
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=kvalo@codeaurora.org
-From:   Kalle Valo <kvalo@codeaurora.org>
-To:     Ulf Hansson <ulf.hansson@linaro.org>
-Cc:     Tony Lindgren <tony@atomide.com>, Eyal Reizer <eyalr@ti.com>,
-        linux-wireless@vger.kernel.org,
-        Ricardo Salveti <rsalveti@rsalveti.net>,
-        Kishon Vijay Abraham I <kishon@ti.com>,
-        Anders Roxell <anders.roxell@linaro.org>,
-        John Stultz <john.stultz@linaro.org>,
-        Jan Kiszka <jan.kiszka@web.de>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-omap <linux-omap@vger.kernel.org>
-Subject: Re: [PATCH V2] wlcore: sdio: Fixup power on/off sequence
-References: <20190116113723.15668-1-ulf.hansson@linaro.org>
-        <20190116154311.GP5544@atomide.com>
-        <CAPDyKFpAc=xSsLKgMm-2H4WkD34ieRS91wH4GbwD=GH01-pt3A@mail.gmail.com>
-Date:   Wed, 16 Jan 2019 18:18:00 +0200
-In-Reply-To: <CAPDyKFpAc=xSsLKgMm-2H4WkD34ieRS91wH4GbwD=GH01-pt3A@mail.gmail.com>
-        (Ulf Hansson's message of "Wed, 16 Jan 2019 16:48:40 +0100")
-Message-ID: <87muo04lvr.fsf@codeaurora.org>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/24.5 (gnu/linux)
+        Wed, 16 Jan 2019 11:18:26 -0500
+Received: by mail-ot1-f67.google.com with SMTP id t5so3149477otk.1
+        for <linux-kernel@vger.kernel.org>; Wed, 16 Jan 2019 08:18:25 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=ZH1kjbCFBnhNgMc1b6ksnUKlBzkEZ8vpRmL7Cqg2hEk=;
+        b=FPG0FDDJg7gq48lLP/uJB6mtqE+I8whBdW4cqBuQQjhhr+zpxXf9YOsHUQCj1p1y9/
+         LS+1ih3Azh9tPzMHInNhhsAb2NTm0Db8L9BzI3LMYX0JqutIY+3XfNUAy1g9u+IC1SDc
+         m0ki+vxgk4mpqR70KFHzcNZIQt7ljfDbHDgdzbCxSUU5OAiR61yafMGwJXbmN781NIB3
+         SIeasj6L4NOvbG/qjwoMbfsXFWvrcgPhpYMcaQ0ycno1tM16vGIYZnEf1RB2rc2IwGFU
+         qyrs/fQTX77ifd1XEEBoA5I/8wZkqX32mVaLKo31XFEhQ6qdCQ4/7ep8WHA3jYGS8CRC
+         9j6Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=ZH1kjbCFBnhNgMc1b6ksnUKlBzkEZ8vpRmL7Cqg2hEk=;
+        b=MmRYjoRlAy6W30fvBof8FpqHM1BqsQAWY85tINy5X2p3rpyg+EW2V0kMjXWu3CXzk4
+         LE+KsjKQm1qL5bUWBJ8cIkrltkCrZy0Us2rSTwbiZcOybo8DDWQde6ZSA7Nn7vUpdkzg
+         rt9lWJYA6NYSeO/Dkqi3mp8CIgfcKKoLQ3bKjaFGPcBlU/YnhghXzVe4evxgCkhV7/Xh
+         Hf7IEXmv0rXDSzMNL5ICIyd7tyLfU5QBqfbZOnKncyE5+9mRq8OVtXYDlnmpFhl3cKdw
+         DCW2aacOBRgtGXvz/1LglOct1nxFVg5eQdCI6rZnT9s22X4rjIJu0VyDJcfQyPZV4ugl
+         Guuw==
+X-Gm-Message-State: AJcUukf4JGEmQNwy0j+AccUFXw3LJz3qmNN7mXuzjHfrkMUJlz+o/r++
+        NRwmKt25vPrDxPu9Pf9YYA+upCelV7qRINPUmV9TJQ==
+X-Google-Smtp-Source: ALg8bN41Uv6p35HZnI7DnvSbejJxTLdXs8a2ITFj706jVwAiIR/Go+/j6JdYxHr3eTqCyrKHkylTBmquYuMLp6Vpr2I=
+X-Received: by 2002:aca:57d7:: with SMTP id l206mr5344565oib.277.1547655505206;
+ Wed, 16 Jan 2019 08:18:25 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain
+References: <20190116153557.13720-1-brgl@bgdev.pl> <20190116160216.GA4594@kroah.com>
+In-Reply-To: <20190116160216.GA4594@kroah.com>
+From:   Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Date:   Wed, 16 Jan 2019 17:18:14 +0100
+Message-ID: <CAMpxmJWAT2-Fr-fxBW+DcmrrUyNyJ8rtpSvLhD74GP1DcE30rQ@mail.gmail.com>
+Subject: Re: [PATCH STABLE v4.19.15] gpiolib: fix line event timestamps for
+ nested irqs
+To:     Greg KH <greg@kroah.com>
+Cc:     Bartosz Golaszewski <brgl@bgdev.pl>,
+        Sasha Levin <sashal@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        linux-gpio <linux-gpio@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        "Stable # 4 . 20+" <stable@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Ulf Hansson <ulf.hansson@linaro.org> writes:
-
-> On Wed, 16 Jan 2019 at 16:43, Tony Lindgren <tony@atomide.com> wrote:
->>
->> * Ulf Hansson <ulf.hansson@linaro.org> [190116 11:37]:
->> > During "wlan-up", we are programming the FW into the WiFi-chip. However,
->> > re-programming the FW doesn't work, unless a power cycle of the WiFi-chip
->> > is made in-between the programmings.
->> >
->> > To conform to this requirement and to fix the regression in a simple way,
->> > let's start by allowing that the SDIO card (WiFi-chip) may stay powered on
->> > (runtime resumed) when wl12xx_sdio_power_off() returns. The intent with the
->> > current code is to treat this scenario as an error, but unfortunate this
->> > doesn't work as expected, so let's fix this.
->> >
->> > The other part is to guarantee that a power cycle of the SDIO card has been
->> > completed when wl12xx_sdio_power_on() returns, as to allow the FW
->> > programming to succeed. However, relying solely on runtime PM to deal with
->> > this isn't sufficient. For example, userspace may prevent runtime suspend
->> > via sysfs for the device that represents the SDIO card, leading to that the
->> > mmc core also keeps it powered on. For this reason, let's instead do a
->> > brute force power cycle in wl12xx_sdio_power_on().
->> >
->> > Fixes: 728a9dc61f13 ("wlcore: sdio: Fix flakey SDIO runtime PM handling")
->> > Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
->> > ---
->> >
->> > Changes in v2:
->> >       - Keep the SDIO host claimed when calling mmc_hw_reset().
->> >       - Add a fixes tag.
->>
->> This v2 version works for me as tested with:
->>
->> # while [ 1 ]; do ifconfig wlan0 down; ifconfig wlan0 up; done
->> [  181.364990] wlcore: down
->> [  182.116424] wlcore: firmware booted (Rev 6.3.10.0.141)
->> [  182.151641] IPv6: ADDRCONF(NETDEV_UP): wlan0: link is not ready
->> [  182.166778] wlcore: down
->> [  182.773132] wlcore: firmware booted (Rev 6.3.10.0.141)
->> [  182.811096] IPv6: ADDRCONF(NETDEV_UP): wlan0: link is not ready
->> ...
->>
->> Thanks for fixing this issue properly, and feel free to add:
->>
->> Tested-by: Tony Lindgren <tony@atomide.com>
+=C5=9Br., 16 sty 2019 o 17:02 Greg KH <greg@kroah.com> napisa=C5=82(a):
 >
-> Thanks for testing, great news!
+> On Wed, Jan 16, 2019 at 04:35:57PM +0100, Bartosz Golaszewski wrote:
+> > From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+> >
+> > Nested interrupts run inside the calling thread's context and the top
+> > half handler is never called which means that we never read the
+> > timestamp.
+> >
+> > This issue came up when trying to read line events from a gpiochip
+> > using regmap_irq_chip for interrupts.
+> >
+> > Fix it by reading the timestamp from the irq thread function if it's
+> > still 0 by the time the second handler is called.
+> >
+> > Fixes: d58f2bf261fd ("gpio: Timestamp events in hardirq handler")
+> > Cc: stable@vger.kernel.org
+> > Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+> > ---
+> > Hi Sasha,
+> >
+> > this is a backport for v4.19.y series. The original patch didn't apply
+> > due to a conflict.
 >
-> Before queuing this as fix, let's also see what the Hikey folkz thinks
-> of this. I have pinged Anders and he is currently running a test
-> suite.
+> What is the git commit id for this patch in Linus's tree?
 >
-> Kalle, can you please tag this for stable as well?
 
-Ok, I'll queue this for 5.0 (but wait for testing feedback at least a
-day) and add:
+I'm not sure if you mean Linus Torvalds or Linus Walleij (through whom
+my GPIO patches go) but neither has picked this one up yet. I'm not
+sure why it got processed for stable already, I thought it must go
+into Linus Torvalds' master branch first.
 
-Cc: <stable@vger.kernel.org>
+Anyway, in my GPIO branch its commit id is
+8d694dcdbbdcfe4f27a52bcc6f2ce733ba5ec53c and it should get merged into
+Linus Walleij's tree soon. I have already sent a PR.
 
--- 
-Kalle Valo
+Best regards,
+Bartosz Golaszewski
