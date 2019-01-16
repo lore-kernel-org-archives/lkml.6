@@ -6,170 +6,66 @@ X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 43C7AC43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 15:52:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ABB88C43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 15:53:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 13B752082F
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 15:52:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7AFD520657
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 15:53:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387540AbfAPPwj (ORCPT
+        id S2390246AbfAPPxt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 16 Jan 2019 10:52:39 -0500
-Received: from foss.arm.com ([217.140.101.70]:51386 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726813AbfAPPwj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Jan 2019 10:52:39 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 5A7C5A78;
-        Wed, 16 Jan 2019 07:52:38 -0800 (PST)
-Received: from [10.1.196.128] (ostrya.cambridge.arm.com [10.1.196.128])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id E44A83F763;
-        Wed, 16 Jan 2019 07:52:35 -0800 (PST)
-From:   Jean-Philippe Brucker <jean-philippe.brucker@arm.com>
-Subject: Re: [RFC v3 14/21] iommu: introduce device fault data
-To:     Jacob Pan <jacob.jun.pan@linux.intel.com>
-Cc:     "yi.l.liu@linux.intel.com" <yi.l.liu@linux.intel.com>,
-        "kevin.tian@intel.com" <kevin.tian@intel.com>,
-        "ashok.raj@intel.com" <ashok.raj@intel.com>,
-        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-        "peter.maydell@linaro.org" <peter.maydell@linaro.org>,
-        Marc Zyngier <Marc.Zyngier@arm.com>,
-        Will Deacon <Will.Deacon@arm.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
-        Christoffer Dall <Christoffer.Dall@arm.com>,
-        "alex.williamson@redhat.com" <alex.williamson@redhat.com>,
-        Robin Murphy <Robin.Murphy@arm.com>,
-        "kvmarm@lists.cs.columbia.edu" <kvmarm@lists.cs.columbia.edu>,
-        "eric.auger.pro@gmail.com" <eric.auger.pro@gmail.com>
-References: <20190108102633.17482-1-eric.auger@redhat.com>
- <20190108102633.17482-15-eric.auger@redhat.com>
- <20190110104544.26f3bcb1@jacob-builder>
- <63a19100-c3dd-9dbd-b37a-9dfbe254459e@arm.com>
- <20190114143208.66eac25a@jacob-builder>
-Message-ID: <519a1669-1343-1296-8f04-6ba63085d9a5@arm.com>
-Date:   Wed, 16 Jan 2019 15:52:20 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.0
+        Wed, 16 Jan 2019 10:53:49 -0500
+Received: from mail-ot1-f43.google.com ([209.85.210.43]:36112 "EHLO
+        mail-ot1-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726812AbfAPPxs (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 Jan 2019 10:53:48 -0500
+Received: by mail-ot1-f43.google.com with SMTP id k98so8032940otk.3
+        for <linux-kernel@vger.kernel.org>; Wed, 16 Jan 2019 07:53:48 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=eAvxNtZoC7Ibcb7e6PHv9+1R2qLZQ9sqMFt1pZuFfCQ=;
+        b=XnulpuJRLw0o3PsDLRAIgsVGr6rVmurjY6OxxX05c2Mkj7GSRqmXJCRxe9A612Em5Z
+         ZGXuxnmweHZ20pxDNLppbHEdy9VVYEhK51f/VJxmeQiM8U/NfhWV14M5evRCfsXLfdA/
+         AZF7GEomONygiZG1FbBBsSYVbPPhmGiPdJ9xOmKeycFqJyQ5Zr7hXxDjLu6fLU5mcJdJ
+         emEYOGRPC+14razit2M0ieOfqEymqJVACkWzmD618+rHtNsrAdknOxkf9GEc0LJpPNtU
+         hztgbQ1amgkUguVZ5X63Vtx76mp+vvZLNF6C2TZy7vUfxUSMb1sqTkrW9CxICv/7E4kA
+         sPIw==
+X-Gm-Message-State: AJcUukd/aN2dXGHm3TR0YFeBfDDawTorIXEw2QaCAzjumQY6Dz4pVi1G
+        ++dDLUi7dWOKG6npkLpIbMVUb2vs04Rs0qXO5AkOGg==
+X-Google-Smtp-Source: ALg8bN4ig5vmObzH6z9Il9ChXUS2MFKqXpPPysHeEkH/mZXt8xQC8sk+pgXFj9ISzDlYcXyWOq1OINcHDkuDSWsrCes=
+X-Received: by 2002:a9d:39a6:: with SMTP id y35mr6368873otb.253.1547654028045;
+ Wed, 16 Jan 2019 07:53:48 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20190114143208.66eac25a@jacob-builder>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <1541437840-29293-1-git-send-email-neelx@redhat.com>
+ <tip-a786ef152cdcfebc923a67f63c7815806eefcf81@git.kernel.org>
+ <CACjP9X-ax44OxjRmVPJaAu93ZJJySuuFO9mtsvSc6Lfpipzspw@mail.gmail.com> <alpine.DEB.2.21.1901112143540.1661@nanos.tec.linutronix.de>
+In-Reply-To: <alpine.DEB.2.21.1901112143540.1661@nanos.tec.linutronix.de>
+From:   Daniel Vacek <neelx@redhat.com>
+Date:   Wed, 16 Jan 2019 16:53:21 +0100
+Message-ID: <CACjP9X_pwYyBvh6Zu0R1sbkzLoXJ7U2psFfK4wFeSz614_hvNA@mail.gmail.com>
+Subject: Re: [tip:x86/timers] x86/tsc: Make calibration refinement more robust
+To:     Thomas Gleixner <tglx@linutronix.de>
+Cc:     mingo@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
+        linux-tip-commits@vger.kernel.org,
+        open list <linux-kernel@vger.kernel.org>,
+        Borislav Petkov <bp@alien8.de>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 14/01/2019 22:32, Jacob Pan wrote:
->> [...]
->>>> +/**
->>>> + * struct iommu_fault - Generic fault data
->>>> + *
->>>> + * @type contains fault type
->>>> + * @reason fault reasons if relevant outside IOMMU driver.
->>>> + * IOMMU driver internal faults are not reported.
->>>> + * @addr: tells the offending page address
->>>> + * @fetch_addr: tells the address that caused an abort, if any
->>>> + * @pasid: contains process address space ID, used in shared
->>>> virtual memory
->>>> + * @page_req_group_id: page request group index
->>>> + * @last_req: last request in a page request group
->>>> + * @pasid_valid: indicates if the PRQ has a valid PASID
->>>> + * @prot: page access protection flag:
->>>> + *	IOMMU_FAULT_READ, IOMMU_FAULT_WRITE
->>>> + */
->>>> +
->>>> +struct iommu_fault {
->>>> +	__u32	type;   /* enum iommu_fault_type */
->>>> +	__u32	reason; /* enum iommu_fault_reason */
->>>> +	__u64	addr;
->>>> +	__u64	fetch_addr;
->>>> +	__u32	pasid;
->>>> +	__u32	page_req_group_id;
->>>> +	__u32	last_req;
->>>> +	__u32	pasid_valid;
->>>> +	__u32	prot;
->>>> +	__u32	access;  
->>
->> What does @access contain? Can it be squashed into @prot?
->>
-> I agreed.
-> 
-> how about this?
-> #define IOMMU_FAULT_VERSION_V1 0x1
-> struct iommu_fault {
-> 	__u16 version;
+On Fri, Jan 11, 2019 at 10:03 PM Thomas Gleixner <tglx@linutronix.de> wrote:
+>
+> No. The branch was not sent to Linus during the merge window due to holiday
+> season induced oversight.
 
-Right, but the version field becomes redundant when we present a batch
-of these to userspace, in patch 18 (assuming we don't want to mix fault
-structure versions within a batch... I certainly don't).
+So does it wait for the next merge window now or is it still going to
+be sent? This is actually worth stable branches. I've confirmations
+from Hitachi and Nec that this really helps latest Skylake-X systems
+boot reliably.
 
-When introducing IOMMU_FAULT_VERSION_V2, in a distant future, I think we
-still need to support a userspace that uses IOMMU_FAULT_VERSION_V1. One
-strategy for this:
-
-* We define structs iommu_fault_v1 (the current iommu_fault) and
-  iommu_fault_v2.
-* Userspace selects IOMMU_FAULT_VERSION_V1 when registering the fault
-  queue
-* The IOMMU driver fills iommu_fault_v2 and passes it to VFIO
-* VFIO does its best to translate this into a iommu_fault_v1 struct
-
-So what we need now, is a way for userspace to tell the kernel which
-structure version it expects. I'm not sure we even need to pass the
-actual version number we're using back to userspace. Agreeing on one
-version at registration should be sufficient.
-
-> 	__u16 type;
-> 	__u32 reason;
-> 	__u64 addr;
-
-I'm in favor of keeping @fetch_addr as well, it can contain useful
-information. For example, while attempting to translate an IOVA
-0xfffff000, the IOMMU can't find the PASID table that we installed with
-address 0xdead - the guest passed an invalid address to
-bind_pasid_table(). We can then report 0xfffff000 in @addr, and 0xdead
-in @fetch_addr.
-
-> 	__u32 pasid;
-> 	__u32 page_req_group_id;
-> 	__u32 last_req : 1;
-> 	__u32 pasid_valid : 1;
-
-Agreed, with some explicit padding or combined as a @flag field. In fact
-if we do add the @fetch_addr field, I think we need a bit that indicates
-its validity as well.
-
-Thanks,
-Jean
-
-> 	__u32 prot;
-> 	__u64 device_private[2];
-> 	__u8 padding[48];
-> };
-> 
-> 
->> Thanks,
->> Jean
->>
->>> relocated to uapi, Yi can you confirm?
->>> 	__u64 device_private[2];
->>>   
->>>> +};
->>>>  #endif /* _UAPI_IOMMU_H */  
->>>
->>> _______________________________________________
->>> iommu mailing list
->>> iommu@lists.linux-foundation.org
->>> https://lists.linuxfoundation.org/mailman/listinfo/iommu
->>>   
->>
-> 
-> [Jacob Pan]
-> _______________________________________________
-> iommu mailing list
-> iommu@lists.linux-foundation.org
-> https://lists.linuxfoundation.org/mailman/listinfo/iommu
-> 
-
+--nX
