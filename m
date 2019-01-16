@@ -7,45 +7,47 @@ X-Spam-Status: No, score=-12.0 required=3.0
 	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 272A6C43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 19:31:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8FA00C43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 19:31:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F177520840
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 19:31:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6981F20840
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 19:31:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731105AbfAPTbN (ORCPT
+        id S1731181AbfAPTbw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 16 Jan 2019 14:31:13 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:57139 "EHLO
+        Wed, 16 Jan 2019 14:31:52 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:51325 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730951AbfAPTbM (ORCPT
+        with ESMTP id S1730880AbfAPTbw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Jan 2019 14:31:12 -0500
+        Wed, 16 Jan 2019 14:31:52 -0500
 Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x0GJUtM3397585
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x0GJVZhc397652
         (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
-        Wed, 16 Jan 2019 11:30:55 -0800
+        Wed, 16 Jan 2019 11:31:35 -0800
 Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x0GJUs2r397582;
-        Wed, 16 Jan 2019 11:30:54 -0800
-Date:   Wed, 16 Jan 2019 11:30:54 -0800
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x0GJVY6v397649;
+        Wed, 16 Jan 2019 11:31:34 -0800
+Date:   Wed, 16 Jan 2019 11:31:34 -0800
 X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
 From:   tip-bot for Shirish S <tipbot@zytor.com>
-Message-ID: <tip-c95b323dcd3598dd7ef5005d6723c1ba3b801093@git.kernel.org>
-Cc:     tony.luck@intel.com, shirish.s@amd.com, bp@suse.de,
-        linux-kernel@vger.kernel.org, vishal.l.verma@intel.com,
-        mingo@redhat.com, x86@kernel.org, tglx@linutronix.de,
-        Shirish.S@amd.com, hpa@zytor.com, mingo@kernel.org
-Reply-To: Shirish.S@amd.com, tglx@linutronix.de, x86@kernel.org,
-          mingo@kernel.org, hpa@zytor.com, bp@suse.de, shirish.s@amd.com,
-          tony.luck@intel.com, mingo@redhat.com,
-          linux-kernel@vger.kernel.org, vishal.l.verma@intel.com
-In-Reply-To: <1547106849-3476-2-git-send-email-shirish.s@amd.com>
-References: <1547106849-3476-2-git-send-email-shirish.s@amd.com>
+Message-ID: <tip-30aa3d26edb0f3d7992757287eec0ca588a5c259@git.kernel.org>
+Cc:     bp@suse.de, hpa@zytor.com, Shirish.S@amd.com,
+        yazen.ghannam@amd.com, keescook@chromium.org, shirish.s@amd.com,
+        vishal.l.verma@intel.com, tony.luck@intel.com, tglx@linutronix.de,
+        linux-kernel@vger.kernel.org, x86@kernel.org, mingo@redhat.com,
+        mingo@kernel.org
+Reply-To: bp@suse.de, Shirish.S@amd.com, hpa@zytor.com,
+          tony.luck@intel.com, tglx@linutronix.de, shirish.s@amd.com,
+          vishal.l.verma@intel.com, keescook@chromium.org,
+          yazen.ghannam@amd.com, mingo@kernel.org, mingo@redhat.com,
+          x86@kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <1547651417-23583-3-git-send-email-shirish.s@amd.com>
+References: <1547651417-23583-3-git-send-email-shirish.s@amd.com>
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:ras/core] x86/MCE/AMD: Turn off MC4_MISC thresholding on all
- family 0x15 models
-Git-Commit-ID: c95b323dcd3598dd7ef5005d6723c1ba3b801093
+Subject: [tip:ras/core] x86/MCE/AMD: Carve out the MC4_MISC thresholding
+ quirk
+Git-Commit-ID: 30aa3d26edb0f3d7992757287eec0ca588a5c259
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -59,48 +61,129 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  c95b323dcd3598dd7ef5005d6723c1ba3b801093
-Gitweb:     https://git.kernel.org/tip/c95b323dcd3598dd7ef5005d6723c1ba3b801093
+Commit-ID:  30aa3d26edb0f3d7992757287eec0ca588a5c259
+Gitweb:     https://git.kernel.org/tip/30aa3d26edb0f3d7992757287eec0ca588a5c259
 Author:     Shirish S <Shirish.S@amd.com>
-AuthorDate: Thu, 10 Jan 2019 07:54:40 +0000
+AuthorDate: Wed, 16 Jan 2019 15:10:40 +0000
 Committer:  Borislav Petkov <bp@suse.de>
-CommitDate: Tue, 15 Jan 2019 18:11:38 +0100
+CommitDate: Wed, 16 Jan 2019 19:42:00 +0100
 
-x86/MCE/AMD: Turn off MC4_MISC thresholding on all family 0x15 models
+x86/MCE/AMD: Carve out the MC4_MISC thresholding quirk
 
-MC4_MISC thresholding is not supported on all family 0x15 processors,
-hence skip the x86_model check when applying the quirk.
+The MC4_MISC thresholding quirk needs to be applied during S5 -> S0 and
+S3 -> S0 state transitions, which follow different code paths. Carve it
+out into a separate function and call it mce_amd_feature_init() where
+the two code paths of the state transitions converge.
 
- [ bp: massage commit message. ]
+ [ bp: massage commit message and the carved out function. ]
 
 Signed-off-by: Shirish S <shirish.s@amd.com>
 Signed-off-by: Borislav Petkov <bp@suse.de>
 Cc: "H. Peter Anvin" <hpa@zytor.com>
 Cc: Ingo Molnar <mingo@redhat.com>
+Cc: Kees Cook <keescook@chromium.org>
 Cc: Thomas Gleixner <tglx@linutronix.de>
 Cc: Tony Luck <tony.luck@intel.com>
 Cc: Vishal Verma <vishal.l.verma@intel.com>
+Cc: Yazen Ghannam <yazen.ghannam@amd.com>
 Cc: x86-ml <x86@kernel.org>
-Link: https://lkml.kernel.org/r/1547106849-3476-2-git-send-email-shirish.s@amd.com
+Link: https://lkml.kernel.org/r/1547651417-23583-3-git-send-email-shirish.s@amd.com
 ---
- arch/x86/kernel/cpu/mce/core.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+ arch/x86/kernel/cpu/mce/amd.c  | 36 ++++++++++++++++++++++++++++++++++++
+ arch/x86/kernel/cpu/mce/core.c | 29 -----------------------------
+ 2 files changed, 36 insertions(+), 29 deletions(-)
 
+diff --git a/arch/x86/kernel/cpu/mce/amd.c b/arch/x86/kernel/cpu/mce/amd.c
+index 89298c83de53..ed3327342b40 100644
+--- a/arch/x86/kernel/cpu/mce/amd.c
++++ b/arch/x86/kernel/cpu/mce/amd.c
+@@ -545,6 +545,40 @@ out:
+ 	return offset;
+ }
+ 
++/*
++ * Turn off MC4_MISC thresholding banks on all family 0x15 models since
++ * they're not supported there.
++ */
++void disable_err_thresholding(struct cpuinfo_x86 *c)
++{
++	int i;
++	u64 hwcr;
++	bool need_toggle;
++	u32 msrs[] = {
++		0x00000413, /* MC4_MISC0 */
++		0xc0000408, /* MC4_MISC1 */
++	};
++
++	if (c->x86 != 0x15)
++		return;
++
++	rdmsrl(MSR_K7_HWCR, hwcr);
++
++	/* McStatusWrEn has to be set */
++	need_toggle = !(hwcr & BIT(18));
++
++	if (need_toggle)
++		wrmsrl(MSR_K7_HWCR, hwcr | BIT(18));
++
++	/* Clear CntP bit safely */
++	for (i = 0; i < ARRAY_SIZE(msrs); i++)
++		msr_clear_bit(msrs[i], 62);
++
++	/* restore old settings */
++	if (need_toggle)
++		wrmsrl(MSR_K7_HWCR, hwcr);
++}
++
+ /* cpu init entry point, called from mce.c with preempt off */
+ void mce_amd_feature_init(struct cpuinfo_x86 *c)
+ {
+@@ -552,6 +586,8 @@ void mce_amd_feature_init(struct cpuinfo_x86 *c)
+ 	unsigned int bank, block, cpu = smp_processor_id();
+ 	int offset = -1;
+ 
++	disable_err_thresholding(c);
++
+ 	for (bank = 0; bank < mca_cfg.banks; ++bank) {
+ 		if (mce_flags.smca)
+ 			smca_configure(bank, cpu);
 diff --git a/arch/x86/kernel/cpu/mce/core.c b/arch/x86/kernel/cpu/mce/core.c
-index 672c7225cb1b..d0c54160b439 100644
+index d0c54160b439..6063ae2376b2 100644
 --- a/arch/x86/kernel/cpu/mce/core.c
 +++ b/arch/x86/kernel/cpu/mce/core.c
-@@ -1612,11 +1612,10 @@ static int __mcheck_cpu_apply_quirks(struct cpuinfo_x86 *c)
+@@ -1611,35 +1611,6 @@ static int __mcheck_cpu_apply_quirks(struct cpuinfo_x86 *c)
+ 		if (c->x86 == 0x15 && c->x86_model <= 0xf)
  			mce_flags.overflow_recov = 1;
  
- 		/*
--		 * Turn off MC4_MISC thresholding banks on those models since
-+		 * Turn off MC4_MISC thresholding banks on all models since
- 		 * they're not supported there.
- 		 */
--		if (c->x86 == 0x15 &&
--		    (c->x86_model >= 0x10 && c->x86_model <= 0x1f)) {
-+		if (c->x86 == 0x15) {
- 			int i;
- 			u64 hwcr;
- 			bool need_toggle;
+-		/*
+-		 * Turn off MC4_MISC thresholding banks on all models since
+-		 * they're not supported there.
+-		 */
+-		if (c->x86 == 0x15) {
+-			int i;
+-			u64 hwcr;
+-			bool need_toggle;
+-			u32 msrs[] = {
+-				0x00000413, /* MC4_MISC0 */
+-				0xc0000408, /* MC4_MISC1 */
+-			};
+-
+-			rdmsrl(MSR_K7_HWCR, hwcr);
+-
+-			/* McStatusWrEn has to be set */
+-			need_toggle = !(hwcr & BIT(18));
+-
+-			if (need_toggle)
+-				wrmsrl(MSR_K7_HWCR, hwcr | BIT(18));
+-
+-			/* Clear CntP bit safely */
+-			for (i = 0; i < ARRAY_SIZE(msrs); i++)
+-				msr_clear_bit(msrs[i], 62);
+-
+-			/* restore old settings */
+-			if (need_toggle)
+-				wrmsrl(MSR_K7_HWCR, hwcr);
+-		}
+ 	}
+ 
+ 	if (c->x86_vendor == X86_VENDOR_INTEL) {
