@@ -2,170 +2,175 @@ Return-Path: <SRS0=1Lvk=PY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 10BFDC43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 00:24:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CD837C43612
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 00:24:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A57A120859
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 00:24:05 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore-com.20150623.gappssmtp.com header.i=@paul-moore-com.20150623.gappssmtp.com header.b="cibXxBE6"
+	by mail.kernel.org (Postfix) with ESMTP id 9D03520657
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 00:24:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726949AbfAPAYD (ORCPT
+        id S1726972AbfAPAYO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 15 Jan 2019 19:24:03 -0500
-Received: from mail-lf1-f67.google.com ([209.85.167.67]:33768 "EHLO
-        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726674AbfAPAYD (ORCPT
+        Tue, 15 Jan 2019 19:24:14 -0500
+Received: from syrinx.knorrie.org ([82.94.188.77]:36356 "EHLO
+        syrinx.knorrie.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726821AbfAPAYN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Jan 2019 19:24:03 -0500
-Received: by mail-lf1-f67.google.com with SMTP id i26so3541653lfc.0
-        for <linux-kernel@vger.kernel.org>; Tue, 15 Jan 2019 16:24:01 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=b+fg7QbZbOcdcVHlJSnobJ6ACH2Nq1ev/xVq38eoWVk=;
-        b=cibXxBE6L5LG/oXEGunhbabVwd5lHapOCaQi88S8uk/olxqt5nu/X4qn9+jzlvB94H
-         rie7MYVMoxbl4yiylufZpCXB0B8atl2yqAijx0cR05MNWdvnsju/ISOSNSqyO5SnHFYb
-         i1qO6x5k7GsGaWFu7Z8RL8G0fItJYrK7wkVqROle58Rqvxc5K/Bt7jyF8vqg4YKLFEWq
-         GJjbtZtzJJXFE1gqkwldbBX9ns+4yetPuL9XoVPPl8wdxD2Li0vocseRtX5HH1155rZ6
-         jN7SiBHEXYHSGWsAcAeIu94wyNEP7U1+St2kffcUzcygtqyhvpyJVj2tJn/MOTY4A7VS
-         61UQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=b+fg7QbZbOcdcVHlJSnobJ6ACH2Nq1ev/xVq38eoWVk=;
-        b=CLPPI9aXqvwEX6GNSWPYVD+pbFZqBJeWrzP7yq9gq1c0v0nj5n0uNQKe9URuwcOUVn
-         cfubyd5aw2DGZ5uK3gmD3m9oMBqcE+bQIBcSL9yQ+QmRmJMiYLawugtvIuj3a3chy7to
-         fTZEmQY53eBQ8vdCAZ6jvxAHcV8Phj/RC5v0y61F/NeYME3FWBteN5uXWu56KqYVWTOh
-         cGfPTuQ15n90sFlUQRiv4kUu9iQrginTq7z4x+ZLZQhUfWffenMnOSRB98p7iXFvRqkm
-         rxnrrSS5ti/zFiuLvIC0yqDd9Az7hsfkwQJk/pBXyau9MaiqR1ldAGl/hezsY262rxvH
-         mr2A==
-X-Gm-Message-State: AJcUukd6O44WASh/cYmawIPzbP+NA2/IH2Jj/qfApvLu5ZEzZQwi7uwN
-        ngPF2H0jEhwQuXnEaz46RjcJE/vLP2zCGtIFvgRV
-X-Google-Smtp-Source: ALg8bN63IqFMQ0eeVrqsxnSMy5eV2EPbsXGFwu5JCnoVWjbZ9EKG5foASBzJsGXWYcbfofzm4yxzY63LJis8gQxkUnI=
-X-Received: by 2002:a19:f115:: with SMTP id p21mr1381093lfh.20.1547598240121;
- Tue, 15 Jan 2019 16:24:00 -0800 (PST)
+        Tue, 15 Jan 2019 19:24:13 -0500
+Received: from [IPv6:2001:980:4a41:fb::12] (unknown [IPv6:2001:980:4a41:fb::12])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by syrinx.knorrie.org (Postfix) with ESMTPSA id 4DD21353CFB4E;
+        Wed, 16 Jan 2019 01:24:10 +0100 (CET)
+Subject: Re: [PATCH v3] xen: Fix x86 sched_clock() interface for xen
+To:     Juergen Gross <jgross@suse.com>, linux-kernel@vger.kernel.org,
+        xen-devel@lists.xenproject.org, x86@kernel.org
+Cc:     boris.ostrovsky@oracle.com, sstabellini@kernel.org, hpa@zytor.com,
+        tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
+        stable@vger.kernel.org
+References: <20190114124413.3742-1-jgross@suse.com>
+From:   Hans van Kranenburg <hans@knorrie.org>
+Openpgp: preference=signencrypt
+Autocrypt: addr=hans@knorrie.org; prefer-encrypt=mutual; keydata=
+ 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
+Message-ID: <ebfc24e3-21a0-6cc6-ae68-5c13c1e66b9a@knorrie.org>
+Date:   Wed, 16 Jan 2019 01:24:09 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.0
 MIME-Version: 1.0
-References: <cover.1544477629.git.rgb@redhat.com> <43548fafdfa98ee64ecfd0d7a69a2f5cb2c31c50.1544477629.git.rgb@redhat.com>
- <CAHC9VhSaTvVgSWVWo42Ur2k6hVNJ1XBkLwrd-J4-SUuidwXUYg@mail.gmail.com> <20190115162112.jq6m2j4wmyk4rq25@madcap2.tricolour.ca>
-In-Reply-To: <20190115162112.jq6m2j4wmyk4rq25@madcap2.tricolour.ca>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Tue, 15 Jan 2019 19:23:49 -0500
-Message-ID: <CAHC9VhQb5o5bxEqMW6CA36Qp60DkitBpcEskQ74EG0m3cGYYyQ@mail.gmail.com>
-Subject: Re: [PATCH ghak59 V3 2/4] audit: add syscall information to
- CONFIG_CHANGE records
-To:     Richard Guy Briggs <rgb@redhat.com>
-Cc:     Linux-Audit Mailing List <linux-audit@redhat.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20190114124413.3742-1-jgross@suse.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en_US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 15, 2019 at 11:21 AM Richard Guy Briggs <rgb@redhat.com> wrote:
->
-> On 2019-01-14 17:58, Paul Moore wrote:
-> > On Mon, Dec 10, 2018 at 5:18 PM Richard Guy Briggs <rgb@redhat.com> wrote:
-> > > Tie syscall information to all CONFIG_CHANGE calls since they are all a
-> > > result of user actions.
-> > >
-> > > Exclude user records from syscall context:
-> > > Since the function audit_log_common_recv_msg() is shared by a number of
-> > > AUDIT_CONFIG_CHANGE and the entire range of AUDIT_USER_* record types,
-> > > and since the AUDIT_CONFIG_CHANGE message type has been converted to a
-> > > syscall accompanied record type, special-case the AUDIT_USER_* range of
-> > > messages so they remain standalone records.
-> > >
-> > > See: https://github.com/linux-audit/audit-kernel/issues/59
-> > > See: https://github.com/linux-audit/audit-kernel/issues/50
-> > > Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
-> > > ---
-> > >  kernel/audit.c          | 27 +++++++++++++++++++--------
-> > >  kernel/audit_fsnotify.c |  2 +-
-> > >  kernel/audit_tree.c     |  2 +-
-> > >  kernel/audit_watch.c    |  2 +-
-> > >  kernel/auditfilter.c    |  2 +-
-> > >  5 files changed, 23 insertions(+), 12 deletions(-)
-> > >
-> > > diff --git a/kernel/audit.c b/kernel/audit.c
-> > > index 0e8026423fbd..a321fea94cc6 100644
-> > > --- a/kernel/audit.c
-> > > +++ b/kernel/audit.c
-> > > @@ -1072,6 +1073,16 @@ static void audit_log_common_recv_msg(struct audit_buffer **ab, u16 msg_type)
-> > >         audit_log_task_context(*ab);
-> > >  }
-> > >
-> > > +static inline void audit_log_user_recv_msg(struct audit_buffer **ab, u16 msg_type)
-> > > +{
-> > > +       audit_log_common_recv_msg(NULL, ab, msg_type);
-> > > +}
-> >
-> > This makes sense because this is used by "user" records ...
-> >
-> > > +static inline void audit_log_config_change_alt(struct audit_buffer **ab)
-> > > +{
-> > > +       audit_log_common_recv_msg(audit_context(), ab, AUDIT_CONFIG_CHANGE);
-> > > +}
-> >
-> > ... and I don't believe this makes sense because there is no real
-> > logical grouping with the callers like there is for
-> > audit_log_user_recv_msg().
->
-> I don't follow "logical grouping".  They are all CONFIG_CHANGE record
-> prefixes with the current context.
+Hi,
 
-The audit_log_user_recv_msg() callers have a logical grouping because
-they are all user generated records which we've decided shouldn't be
-associated with any audit records tied to the current task.
+On 1/14/19 1:44 PM, Juergen Gross wrote:
+> Commit f94c8d11699759 ("sched/clock, x86/tsc: Rework the x86 'unstable'
+> sched_clock() interface") broke Xen guest time handling across
+> migration:
+> 
+> [  187.249951] Freezing user space processes ... (elapsed 0.001 seconds) done.
+> [  187.251137] OOM killer disabled.
+> [  187.251137] Freezing remaining freezable tasks ... (elapsed 0.001 seconds) done.
+> [  187.252299] suspending xenstore...
+> [  187.266987] xen:grant_table: Grant tables using version 1 layout
+> [18446743811.706476] OOM killer enabled.
+> [18446743811.706478] Restarting tasks ... done.
+> [18446743811.720505] Setting capacity to 16777216
+> 
+> Fix that by setting xen_sched_clock_offset at resume time to ensure a
+> monotonic clock value.
+> 
+> [...]
 
-The audit_log_config_change_alt() callers seem only to be grouped by
-the fact that they are share some common audit_log_config_change_alt()
-parameters; they don't appear to have anything else in common.  Yes,
-sometimes we do create functions like audit_log_config_change_alt()
-for reasons such as these, but I don't believe it is necessary, or
-desirable, in this particular patch(set).
+With v3 of the patch, I see the time jump in one log line happen, but
+only when using PVH.
 
-My comments on your v2 of this patchset suggested the creation of
-audit_log_user_recv_msg() instead of what you did with
-__audit_log_common_recv_msg().  You made that suggested change for v3
-- good - but with v3 you also introduced audit_log_config_change_alt -
-not good.
+[   49.486453] Freezing user space processes ... (elapsed 0.002 seconds)
+done.
+[   49.488743] OOM killer disabled.
+[   49.488764] Freezing remaining freezable tasks ... (elapsed 0.001
+seconds) done.
+[   49.491117] suspending xenstore...
+[2000731.388722] xen:events: Xen HVM callback vector for event delivery
+is enabled
+[   49.491750] xen:grant_table: Grant tables using version 1 layout
+[   49.810722] OOM killer enabled.
+[   49.810744] Restarting tasks ... done.
+[   49.856263] Setting capacity to 6291456
+[   50.006002] Setting capacity to 10485760
 
-Get rid of audit_log_config_change_alt() (respin, retest, etc.) and
-post this revised single patch (the others in the patchset that are ok
-are already in audit/next) and we can get it into audit/next.
+If I start as PV, it never seems to happen.
 
-> Can you suggest an alternate name or another way of sharing
-> audit_log_common_recv_msg() since the only differences between the two
-> are a NULL context vs current task's context and the message type.  I
-> wasn't particularly happy with this name either.  I'd really like to
-> refactor this with all the rest of the CONFIG_CHANGE records, but there
-> is too much of a format difference to make it work without reordering or
-> deleting useless fields.
->
-> I know you had suggested making two different functions, but I think
-> they are more similar than different and merit the common factored code.
->
-> > paul moore
->
-> - RGB
->
-> --
-> Richard Guy Briggs <rgb@redhat.com>
-> Sr. S/W Engineer, Kernel Security, Base Operating Systems
-> Remote, Ottawa, Red Hat Canada
-> IRC: rgb, SunRaycer
-> Voice: +1.647.777.2635, Internal: (81) 32635
+Up to you to decide how important this is. :)
 
--- 
-paul moore
-www.paul-moore.com
+FYI this is with v3 on top of the Debian stretch-backports 4.19 kernel,
+which I'm starting to use now to reboot things with.
+
+-# uname -a
+Linux appnode-kylie 4.19.0-0.bpo.1-cloud-amd64 #1 SMP Debian
+4.19.12-1~bpo9+1+mendix1 (2019-01-15) x86_64 GNU/Linux
+
+https://salsa.debian.org/knorrie-guest/linux/commits/mendix/stretch-backports
+
+Hans
