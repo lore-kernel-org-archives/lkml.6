@@ -2,340 +2,190 @@ Return-Path: <SRS0=1Lvk=PY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F7C4C43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 08:53:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AE28EC43444
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 08:53:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E60B420840
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 08:53:02 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="a3f2a0VB"
+	by mail.kernel.org (Postfix) with ESMTP id 6AE8620840
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 08:53:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1547628791;
+	bh=rfXvYttg4cT6f4bSX7fa0VUZoRH/KzVfbLos6r3fYmQ=;
+	h=From:Date:Subject:To:List-ID:From;
+	b=rnyP0P6h4AFf/QCHwhdoiqCXeRaJZj92j5Lr5qNFZIGbQF1VBspsRm+sNrEbJGkzQ
+	 nJ4axnWLeynUJlsiInQw0HYzxMYPVyqSEOW8cG+MzITLMv5rGWzOdlW103LeqTcfti
+	 p/Hw7l53yIktLlOO5tBMPh4ifS9NX4ZoYt5IBiDU=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390584AbfAPIxB (ORCPT
+        id S2390703AbfAPIxJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 16 Jan 2019 03:53:01 -0500
-Received: from lelv0142.ext.ti.com ([198.47.23.249]:51386 "EHLO
-        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731887AbfAPIxA (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Jan 2019 03:53:00 -0500
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id x0G8qqxs126088;
-        Wed, 16 Jan 2019 02:52:52 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1547628772;
-        bh=k45dxeaNU4bwgfHrBVVuc11ANNgSitIi283yd3AkUZo=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=a3f2a0VBfq/TvoeARZcO81wZZoQ9BWsnOKI/vqRkXPgsDNtZQYkX2g8WFBQ/Npa/y
-         dI2JxF93z5qQZD8g0npZXov/QURGAySQD5CBP3jWQaSPQLINs+GWURh41+MNVBsCnR
-         MdAa8fu5tE+Jr3IUZ4hd1YQ6HhwFN5/pJY09Z/io=
-Received: from DLEE114.ent.ti.com (dlee114.ent.ti.com [157.170.170.25])
-        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x0G8qqe5040685
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 16 Jan 2019 02:52:52 -0600
-Received: from DLEE115.ent.ti.com (157.170.170.26) by DLEE114.ent.ti.com
- (157.170.170.25) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Wed, 16
- Jan 2019 02:52:52 -0600
-Received: from dlep33.itg.ti.com (157.170.170.75) by DLEE115.ent.ti.com
- (157.170.170.26) with Microsoft SMTP Server (version=TLS1_0,
- cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1591.10 via Frontend Transport;
- Wed, 16 Jan 2019 02:52:52 -0600
-Received: from [172.24.190.233] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by dlep33.itg.ti.com (8.14.3/8.13.8) with ESMTP id x0G8qmaL024113;
-        Wed, 16 Jan 2019 02:52:49 -0600
-Subject: Re: [PATCH v1 5/8] scsi: ufs: qcom: Expose the reset controller for
- PHY
-To:     Evan Green <evgreen@chromium.org>,
-        Andy Gross <andy.gross@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Vinayak Holikatti <vinholikatti@gmail.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>
-CC:     Can Guo <cang@codeaurora.org>,
-        Douglas Anderson <dianders@chromium.org>,
-        Asutosh Das <asutoshd@codeaurora.org>,
-        Stephen Boyd <swboyd@chromium.org>,
-        Vivek Gautam <vivek.gautam@codeaurora.org>,
-        "James E.J. Bottomley" <jejb@linux.ibm.com>,
-        <linux-scsi@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20190111230129.127037-1-evgreen@chromium.org>
- <20190111230129.127037-6-evgreen@chromium.org>
-From:   Kishon Vijay Abraham I <kishon@ti.com>
-Message-ID: <a289d841-858d-5583-ce9a-8dc0f2d18a78@ti.com>
-Date:   Wed, 16 Jan 2019 14:22:25 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Wed, 16 Jan 2019 03:53:09 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38582 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1731887AbfAPIxJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 Jan 2019 03:53:09 -0500
+Received: from mail-lj1-f178.google.com (mail-lj1-f178.google.com [209.85.208.178])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 762BF20866;
+        Wed, 16 Jan 2019 08:53:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1547628787;
+        bh=rfXvYttg4cT6f4bSX7fa0VUZoRH/KzVfbLos6r3fYmQ=;
+        h=From:Date:Subject:To:From;
+        b=LdQpeuIa2v9Y58dSjnkQAOMJiadjlkuX45droosi9Nm9/h8mfln3NoT4YVjOVxbqz
+         qqD4b4iQwfbnFF8EWFJxaj6f72nL4oCpHUgqFVzWuPNfFkNEYwVe5xA5kAELmHAP9m
+         NHdQ+MdR4JjDyrnXroSWKbfdNcFaXXP606I8sHl4=
+Received: by mail-lj1-f178.google.com with SMTP id q2-v6so4724539lji.10;
+        Wed, 16 Jan 2019 00:53:07 -0800 (PST)
+X-Gm-Message-State: AJcUukeSTRbvKtBDjmchRB5ssh6eYevJIU2LxCGrELe0rlPgDHoxzp3W
+        3360ZGPfUvWjyzH49tkV8R8dMPEW7xoyCIvztcg=
+X-Google-Smtp-Source: ALg8bN4Eb0ZIFUuVyNcwvhXLDbYBA2Tdv883OUA/iMmBlZ9DukvQ7w87uAuRm6w6jaWgbwsZxh5L/Q9r2cJIenRPREc=
+X-Received: by 2002:a2e:551:: with SMTP id 78-v6mr5515396ljf.82.1547628785511;
+ Wed, 16 Jan 2019 00:53:05 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20190111230129.127037-6-evgreen@chromium.org>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+Date:   Wed, 16 Jan 2019 09:52:54 +0100
+X-Gmail-Original-Message-ID: <CAJKOXPdQaxKH3z3yMBggP3dAFJ3ecgCcHk=bGaVHZ-Q+V2Riug@mail.gmail.com>
+Message-ID: <CAJKOXPdQaxKH3z3yMBggP3dAFJ3ecgCcHk=bGaVHZ-Q+V2Riug@mail.gmail.com>
+Subject: [BUG bisect] kernel BUG at block/bio.c:1833 and fail to mount disk
+To:     Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Christoph Hellwig <hch@lst.de>,
+        Omar Sandoval <osandov@fb.com>, Ming Lei <ming.lei@redhat.com>,
+        "linux-samsung-soc@vger.kernel.org" 
+        <linux-samsung-soc@vger.kernel.org>,
+        linux-arm-kernel@lists.infradead.org,
+        "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi,
 
+On today's next-20190116 I see a bug during boot:
+[ 6.843308] kernel BUG at ../block/bio.c:1833!
+[ 6.847723] Internal error: Oops - BUG: 0 [#1] PREEMPT SMP ARM
+...
+[ 7.543824] [<c044c144>] (bio_split) from [<00000000>] ( (null))
+[ 7.549881] Code: 13833b01 11c630bc e1a00006 e8bd8070 (e7f001f2)
 
-On 12/01/19 4:31 AM, Evan Green wrote:
-> Expose a reset controller that the phy can use to perform its
-> initialization in a single callback.
-> 
-> Also, change the use of the phy functions from ufs-qcom such that
-> phy_poweron actually fires up the phy, and phy_poweroff actually
-> powers it down.
-> 
-> Signed-off-by: Evan Green <evgreen@chromium.org>
+(not much in the calltrace)
+On all my boards. Also QEMU-arm fails.
 
-Can I get Ack for this patch from SCSI MAINTAINERS?
+Ultimately the target fails to mount /home from SD card (although root
+is from NFSv4):
+    Timed out waiting for device dev-disk-by\x2dlabel-home.device.
 
-Thanks
-Kishon
+Full console logs:
+https://krzk.eu/#/builders/25/builds/1079/steps/12/logs/serial0
+https://krzk.eu/#/builders/1/builds/3031/steps/12/logs/serial0
 
-> 
-> ---
-> Note: This change depends on the remaining changes in this series,
-> since UFS PHY reset now needs to be done by the PHY driver.
-> 
->  drivers/scsi/ufs/Kconfig    |   1 +
->  drivers/scsi/ufs/ufs-qcom.c | 110 +++++++++++++++++++++---------------
->  drivers/scsi/ufs/ufs-qcom.h |   4 ++
->  3 files changed, 71 insertions(+), 44 deletions(-)
-> 
-> diff --git a/drivers/scsi/ufs/Kconfig b/drivers/scsi/ufs/Kconfig
-> index 2ddbb26d9c265..63c5c4115981f 100644
-> --- a/drivers/scsi/ufs/Kconfig
-> +++ b/drivers/scsi/ufs/Kconfig
-> @@ -100,6 +100,7 @@ config SCSI_UFS_QCOM
->  	tristate "QCOM specific hooks to UFS controller platform driver"
->  	depends on SCSI_UFSHCD_PLATFORM && ARCH_QCOM
->  	select PHY_QCOM_UFS
-> +	select RESET_CONTROLLER
->  	help
->  	  This selects the QCOM specific additions to UFSHCD platform driver.
->  	  UFS host on QCOM needs some vendor specific configuration before
-> diff --git a/drivers/scsi/ufs/ufs-qcom.c b/drivers/scsi/ufs/ufs-qcom.c
-> index 3aeadb14aae1e..db46f9a64b54c 100644
-> --- a/drivers/scsi/ufs/ufs-qcom.c
-> +++ b/drivers/scsi/ufs/ufs-qcom.c
-> @@ -16,6 +16,7 @@
->  #include <linux/of.h>
->  #include <linux/platform_device.h>
->  #include <linux/phy/phy.h>
-> +#include <linux/reset.h>
->  
->  #include "ufshcd.h"
->  #include "ufshcd-pltfrm.h"
-> @@ -49,6 +50,11 @@ static void ufs_qcom_get_default_testbus_cfg(struct ufs_qcom_host *host);
->  static int ufs_qcom_set_dme_vs_core_clk_ctrl_clear_div(struct ufs_hba *hba,
->  						       u32 clk_cycles);
->  
-> +static struct ufs_qcom_host *rcdev_to_ufs_host(struct reset_controller_dev *rcd)
-> +{
-> +	return container_of(rcd, struct ufs_qcom_host, rcdev);
-> +}
-> +
->  static void ufs_qcom_dump_regs_wrapper(struct ufs_hba *hba, int offset, int len,
->  				       const char *prefix, void *priv)
->  {
-> @@ -255,11 +261,6 @@ static int ufs_qcom_power_up_sequence(struct ufs_hba *hba)
->  	if (is_rate_B)
->  		phy_set_mode(phy, PHY_MODE_UFS_HS_B);
->  
-> -	/* Assert PHY reset and apply PHY calibration values */
-> -	ufs_qcom_assert_reset(hba);
-> -	/* provide 1ms delay to let the reset pulse propagate */
-> -	usleep_range(1000, 1100);
-> -
->  	/* phy initialization - calibrate the phy */
->  	ret = phy_init(phy);
->  	if (ret) {
-> @@ -268,15 +269,6 @@ static int ufs_qcom_power_up_sequence(struct ufs_hba *hba)
->  		goto out;
->  	}
->  
-> -	/* De-assert PHY reset and start serdes */
-> -	ufs_qcom_deassert_reset(hba);
-> -
-> -	/*
-> -	 * after reset deassertion, phy will need all ref clocks,
-> -	 * voltage, current to settle down before starting serdes.
-> -	 */
-> -	usleep_range(1000, 1100);
-> -
->  	/* power on phy - start serdes and phy's power and clocks */
->  	ret = phy_power_on(phy);
->  	if (ret) {
-> @@ -290,7 +282,6 @@ static int ufs_qcom_power_up_sequence(struct ufs_hba *hba)
->  	return 0;
->  
->  out_disable_phy:
-> -	ufs_qcom_assert_reset(hba);
->  	phy_exit(phy);
->  out:
->  	return ret;
-> @@ -554,21 +545,10 @@ static int ufs_qcom_suspend(struct ufs_hba *hba, enum ufs_pm_op pm_op)
->  		ufs_qcom_disable_lane_clks(host);
->  		phy_power_off(phy);
->  
-> -		/* Assert PHY soft reset */
-> -		ufs_qcom_assert_reset(hba);
-> -		goto out;
-> -	}
-> -
-> -	/*
-> -	 * If UniPro link is not active, PHY ref_clk, main PHY analog power
-> -	 * rail and low noise analog power rail for PLL can be switched off.
-> -	 */
-> -	if (!ufs_qcom_is_link_active(hba)) {
-> +	} else if (!ufs_qcom_is_link_active(hba)) {
->  		ufs_qcom_disable_lane_clks(host);
-> -		phy_power_off(phy);
->  	}
->  
-> -out:
->  	return ret;
->  }
->  
-> @@ -578,21 +558,26 @@ static int ufs_qcom_resume(struct ufs_hba *hba, enum ufs_pm_op pm_op)
->  	struct phy *phy = host->generic_phy;
->  	int err;
->  
-> -	err = phy_power_on(phy);
-> -	if (err) {
-> -		dev_err(hba->dev, "%s: failed enabling regs, err = %d\n",
-> -			__func__, err);
-> -		goto out;
-> -	}
-> +	if (ufs_qcom_is_link_off(hba)) {
-> +		err = phy_power_on(phy);
-> +		if (err) {
-> +			dev_err(hba->dev, "%s: failed enabling regs, err = %d\n",
-> +				__func__, err);
-> +			return err;
-> +		}
->  
-> -	err = ufs_qcom_enable_lane_clks(host);
-> -	if (err)
-> -		goto out;
-> +		err = ufs_qcom_enable_lane_clks(host);
-> +		if (err)
-> +			return err;
->  
-> -	hba->is_sys_suspended = false;
-> +	} else if (!ufs_qcom_is_link_active(hba)) {
-> +		err = ufs_qcom_enable_lane_clks(host);
-> +		if (err)
-> +			return err;
-> +	}
->  
-> -out:
-> -	return err;
-> +	hba->is_sys_suspended = false;
-> +	return 0;
->  }
->  
->  struct ufs_qcom_dev_params {
-> @@ -1118,8 +1103,6 @@ static int ufs_qcom_setup_clocks(struct ufs_hba *hba, bool on,
->  		return 0;
->  
->  	if (on && (status == POST_CHANGE)) {
-> -		phy_power_on(host->generic_phy);
-> -
->  		/* enable the device ref clock for HS mode*/
->  		if (ufshcd_is_hs_mode(&hba->pwr_info))
->  			ufs_qcom_dev_ref_clk_ctrl(host, true);
-> @@ -1131,9 +1114,6 @@ static int ufs_qcom_setup_clocks(struct ufs_hba *hba, bool on,
->  		if (!ufs_qcom_is_link_active(hba)) {
->  			/* disable device ref_clk */
->  			ufs_qcom_dev_ref_clk_ctrl(host, false);
-> -
-> -			/* powering off PHY during aggressive clk gating */
-> -			phy_power_off(host->generic_phy);
->  		}
->  
->  		vote = host->bus_vote.min_bw_vote;
-> @@ -1147,6 +1127,39 @@ static int ufs_qcom_setup_clocks(struct ufs_hba *hba, bool on,
->  	return err;
->  }
->  
-> +static int
-> +ufs_qcom_reset_assert(struct reset_controller_dev *rcdev, unsigned long id)
-> +{
-> +	struct ufs_qcom_host *host = rcdev_to_ufs_host(rcdev);
-> +
-> +	WARN_ON(id);
-> +	ufs_qcom_assert_reset(host->hba);
-> +	/* provide 1ms delay to let the reset pulse propagate */
-> +	usleep_range(1000, 1100);
-> +	return 0;
-> +}
-> +
-> +static int
-> +ufs_qcom_reset_deassert(struct reset_controller_dev *rcdev, unsigned long id)
-> +{
-> +	struct ufs_qcom_host *host = rcdev_to_ufs_host(rcdev);
-> +
-> +	WARN_ON(id);
-> +	ufs_qcom_deassert_reset(host->hba);
-> +
-> +	/*
-> +	 * after reset deassertion, phy will need all ref clocks,
-> +	 * voltage, current to settle down before starting serdes.
-> +	 */
-> +	usleep_range(1000, 1100);
-> +	return 0;
-> +}
-> +
-> +const struct reset_control_ops ufs_qcom_reset_ops = {
-> +	.assert = ufs_qcom_reset_assert,
-> +	.deassert = ufs_qcom_reset_deassert,
-> +};
-> +
->  #define	ANDROID_BOOT_DEV_MAX	30
->  static char android_boot_dev[ANDROID_BOOT_DEV_MAX];
->  
-> @@ -1191,6 +1204,15 @@ static int ufs_qcom_init(struct ufs_hba *hba)
->  	host->hba = hba;
->  	ufshcd_set_variant(hba, host);
->  
-> +	/* Fire up the reset controller. Failure here is non-fatal. */
-> +	host->rcdev.of_node = dev->of_node;
-> +	host->rcdev.ops = &ufs_qcom_reset_ops;
-> +	host->rcdev.owner = dev->driver->owner;
-> +	host->rcdev.nr_resets = 1;
-> +	err = devm_reset_controller_register(dev, &host->rcdev);
-> +	if (err)
-> +		dev_warn(dev, "Failed to register reset controller\n");
-> +
->  	/*
->  	 * voting/devoting device ref_clk source is time consuming hence
->  	 * skip devoting it during aggressive clock gating. This clock
-> diff --git a/drivers/scsi/ufs/ufs-qcom.h b/drivers/scsi/ufs/ufs-qcom.h
-> index c114826316eb0..68a8801857529 100644
-> --- a/drivers/scsi/ufs/ufs-qcom.h
-> +++ b/drivers/scsi/ufs/ufs-qcom.h
-> @@ -14,6 +14,8 @@
->  #ifndef UFS_QCOM_H_
->  #define UFS_QCOM_H_
->  
-> +#include <linux/reset-controller.h>
-> +
->  #define MAX_UFS_QCOM_HOSTS	1
->  #define MAX_U32                 (~(u32)0)
->  #define MPHY_TX_FSM_STATE       0x41
-> @@ -237,6 +239,8 @@ struct ufs_qcom_host {
->  	/* Bitmask for enabling debug prints */
->  	u32 dbg_print_en;
->  	struct ufs_qcom_testbus testbus;
-> +
-> +	struct reset_controller_dev rcdev;
->  };
->  
->  static inline u32
-> 
+1. Arch ARM Linux
+2. exynos_defconfig
+  - All my Odroid boards (ARMv7, Exynos)
+  - Odroid HC1, U3, XU3, XU
+  - Systemd
+3. All boards boot from TFTP with NFS root (NFSv4)
+
+The QEMU arm fails with more information:
+
+[ 0.596078] loop: module loaded
+[ 0.601633] virtio_blk virtio0: [vda] 10240 512-byte logical blocks
+(5.24 MB/5.00 MiB)
+[ 0.603320] Internal error: Oops - undefined instruction: 0 [#1] ARM
+[ 0.603504] Modules linked in:
+[ 0.603784] CPU: 0 PID: 1 Comm: swapper Tainted: G W
+5.0.0-rc2-next-20190116-gcbeb3db #1
+[ 0.603905] Hardware name: ARM-Versatile Express
+[ 0.604329] PC is at bio_split+0x5c/0x64
+[ 0.604461] LR is at blk_queue_split+0x47c/0x5f4
+[ 0.604553] pc : [<8036e2c4>] lr : [<80376134>] psr: 60000013
+[ 0.604652] sp : 8681f878 ip : 00000000 fp : 8699df00
+[ 0.604750] r10: 8681f914 r9 : 00000000 r8 : 0000007e
+[ 0.604838] r7 : 00000000 r6 : 8547ac28 r5 : 00000000 r4 : 00000000
+[ 0.604937] r3 : 8547b068 r2 : 00600000 r1 : 00000000 r0 : 8699df00
+[ 0.605070] Flags: nZCv IRQs on FIQs on Mode SVC_32 ISA ARM Segment none
+[ 0.605185] Control: 10c5387d Table: 60004059 DAC: 00000051
+[ 0.605338] Process swapper (pid: 1, stack limit = 0x(ptrval))
+...
+[ 0.619332] [<8036e2c4>] (bio_split) from [<80376134>]
+(blk_queue_split+0x47c/0x5f4)
+[ 0.619480] [<80376134>] (blk_queue_split) from [<8037bee8>]
+(blk_mq_make_request+0x80/0x3bc)
+[ 0.619608] [<8037bee8>] (blk_mq_make_request) from [<80371840>]
+(generic_make_request+0x1b0/0x364)
+[ 0.619733] [<80371840>] (generic_make_request) from [<80371a8c>]
+(submit_bio+0x98/0x194)
+[ 0.619850] [<80371a8c>] (submit_bio) from [<8020e1b8>]
+(submit_bh_wbc.constprop.21+0x154/0x17c)
+[ 0.619980] [<8020e1b8>] (submit_bh_wbc.constprop.21) from
+[<80210634>] (block_read_full_page+0x3b0/0x3d0)
+[ 0.620109] [<80210634>] (block_read_full_page) from [<8019139c>]
+(do_read_cache_page+0x180/0x33c)
+[ 0.620237] [<8019139c>] (do_read_cache_page) from [<8019156c>]
+(read_cache_page+0x14/0x1c)
+[ 0.620388] [<8019156c>] (read_cache_page) from [<80383be4>]
+(read_dev_sector+0x2c/0xbc)
+[ 0.620508] [<80383be4>] (read_dev_sector) from [<80386e7c>]
+(read_lba+0x134/0x1b4)
+[ 0.620623] [<80386e7c>] (read_lba) from [<80387234>] (efi_partition+0xbc/0x8e8)
+[ 0.620741] [<80387234>] (efi_partition) from [<80386114>]
+(check_partition+0x11c/0x1e8)
+[ 0.620856] [<80386114>] (check_partition) from [<80384298>]
+(rescan_partitions+0x94/0x45c)
+[ 0.620971] [<80384298>] (rescan_partitions) from [<80213230>]
+(__blkdev_get+0x260/0x404)
+[ 0.621087] [<80213230>] (__blkdev_get) from [<802134d8>]
+(blkdev_get+0x104/0x2f4)
+[ 0.621206] [<802134d8>] (blkdev_get) from [<80382f9c>]
+(__device_add_disk+0x498/0x4fc)
+[ 0.621325] [<80382f9c>] (__device_add_disk) from [<804317f0>]
+(virtblk_probe+0x444/0x744)
+[ 0.621444] [<804317f0>] (virtblk_probe) from [<803d3df0>]
+(virtio_dev_probe+0x258/0x330)
+[ 0.621561] [<803d3df0>] (virtio_dev_probe) from [<80415864>]
+(really_probe+0xf4/0x2c8)
+[ 0.621675] [<80415864>] (really_probe) from [<80415b9c>]
+(driver_probe_device+0x60/0x16c)
+[ 0.621788] [<80415b9c>] (driver_probe_device) from [<80415d84>]
+(__driver_attach+0xdc/0xe0)
+[ 0.621911] [<80415d84>] (__driver_attach) from [<80413d3c>]
+(bus_for_each_dev+0x68/0xb4)
+[ 0.622024] [<80413d3c>] (bus_for_each_dev) from [<80414e04>]
+(bus_add_driver+0x100/0x20c)
+[ 0.622137] [<80414e04>] (bus_add_driver) from [<804166b0>]
+(driver_register+0x78/0x10c)
+[ 0.622253] [<804166b0>] (driver_register) from [<8091b5e4>] (init+0x70/0x9c)
+[ 0.622403] [<8091b5e4>] (init) from [<801025ec>] (do_one_initcall+0x54/0x194)
+[ 0.622525] [<801025ec>] (do_one_initcall) from [<80900e14>]
+(kernel_init_freeable+0x12c/0x1c8)
+[ 0.622658] [<80900e14>] (kernel_init_freeable) from [<80628c08>]
+(kernel_init+0x8/0x110)
+[ 0.622776] [<80628c08>] (kernel_init) from [<801010e8>]
+(ret_from_fork+0x14/0x2c)
+[ 0.622887] Exception stack(0x8681ffb0 to 0x8681fff8)
+[ 0.623021] ffa0: 00000000 00000000 00000000 00000000
+[ 0.623242] ffc0: 00000000 00000000 00000000 00000000 00000000
+00000000 00000000 00000000
+[ 0.623438] ffe0: 00000000 00000000 00000000 00000000 00000013 00000000
+[ 0.623747] Code: 13833b01 11c630bc e1a00006 e8bd8070 (e7f001f2)
+[ 0.624241] ---[ end trace 925652e8270d42ae ]---
+[ 0.624904] Kernel panic - not syncing: Attempted to kill init!
+exitcode=0x0000000b
+
+https://pastebin.com/tKqNv033
+QEMU setup:
+1. Yocto Linux
+2. Custom VF50 defconfig
+3. Machine: Vexpress A9
+4. DTB: vexpress-v2p-ca9
+5. Memory: 128 MB
+
+Let me know if you need any more data.
+
+Best regards,
+Krzysztof
