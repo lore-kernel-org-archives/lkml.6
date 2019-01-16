@@ -7,61 +7,61 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 99EB3C43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 14:25:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C0C6C43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 14:26:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6ADB7205C9
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 14:25:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2B69E205C9
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 14:26:05 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=g.ncu.edu.tw header.i=@g.ncu.edu.tw header.b="aNhVun+G"
+	dkim=pass (1024-bit key) header.d=g.ncu.edu.tw header.i=@g.ncu.edu.tw header.b="Pvnpn+he"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2393319AbfAPOZf (ORCPT
+        id S2393425AbfAPO0D (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 16 Jan 2019 09:25:35 -0500
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:37546 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2391350AbfAPOZe (ORCPT
+        Wed, 16 Jan 2019 09:26:03 -0500
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:32897 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2390995AbfAPO0D (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Jan 2019 09:25:34 -0500
-Received: by mail-pf1-f196.google.com with SMTP id y126so3144975pfb.4
-        for <linux-kernel@vger.kernel.org>; Wed, 16 Jan 2019 06:25:34 -0800 (PST)
+        Wed, 16 Jan 2019 09:26:03 -0500
+Received: by mail-pg1-f196.google.com with SMTP id z11so2913943pgu.0
+        for <linux-kernel@vger.kernel.org>; Wed, 16 Jan 2019 06:26:02 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=g.ncu.edu.tw; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=b+2IAnExCO9vokV2p16FJgeCx9M1JeLkxUVCmUw2Veg=;
-        b=aNhVun+GvGu/C4cchsQwKDtrElSmzsfw5WZ+yZQN5x4sKMzLo0WwzDeQcSYkpJwipM
-         TvNXdA5J4nLYzn42XCXlCQPz4qE+tYJ0PuCETstvg3whY1wkVlaH10IESnNzz99Evn/d
-         M+fuIub6/JWfUwojYH+vLBIypXJtnuKOsHK7Q=
+        bh=OFYi0B0xaMyvevGQpx6Nyn5JWeEzLpCt1jdHdRE25uY=;
+        b=Pvnpn+heih5+7CDHMgICaTLHo1866UMg7a46Nfq+olAo/Avf8jw69IGFS93WQGSmQx
+         Ooko3VxNfjFdX2uu4kE3t1SObzeYughNhUFtGu5n5GC+gEM3tKkjxc7J8xmkwplrtGSE
+         P0AfBlcXuJQW2mZ3HKAGCKaEnCf9E8/902uDI=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=b+2IAnExCO9vokV2p16FJgeCx9M1JeLkxUVCmUw2Veg=;
-        b=rGfYLruOq8psNTD1+kVkbbRIPxjAPRqHXjiheQErnmfoIiR0SvKaYz8kojAiaWXJVr
-         iVPNJuCbjSEuWqWhXdqNmlR7Q4JuWh9BZ5O4e/9qLSv+YszPuDhbtNpHYsOs4eFvor/p
-         tg+ZnptV+j7rnE2MVLPz/U1PMvlKvfVEPiQUTy958FJSUoySnRz9UmSG9La1AncNGm4a
-         zkVBYCajb6wZKB7JPKH5ws0Rs2yR2Y5Ev0Lk6bX4PL4V7QisuSifjcb0MzorGLG/5fJe
-         2oDaMH8d+fEKftpCSHqkTGr2cY2FAl1aZ8zzyzHVHfa+iZHf65MrCG3XXzCDXRH4iqgL
-         zjOA==
-X-Gm-Message-State: AJcUukeSXObRC8Wxvp6mmyjaEDCnUpkIvzDGbqzTq3fc03JgACKT0yMU
-        U8T9qO4n1Os5LHAiMRjll13/iw==
-X-Google-Smtp-Source: ALg8bN5i780L0PkW8ABkomT860ra9KrnM3Wsk5woRqpcv+l1z092ltGQZb+HhhPTFyHp2FlIaf9i6A==
-X-Received: by 2002:a63:c748:: with SMTP id v8mr9277797pgg.108.1547648733633;
-        Wed, 16 Jan 2019 06:25:33 -0800 (PST)
+        bh=OFYi0B0xaMyvevGQpx6Nyn5JWeEzLpCt1jdHdRE25uY=;
+        b=ADeBML5+ZoP24Yi26kIrIYUlv+XzraXJ+AvBCVEgxC98FE5H2q+dfh8zr25OId+U8f
+         CCpG8xKIz5RDg/E9IkdknFt7KsewqMpeUBJGwRSeiIW8PFZ0BdjOaY9+s5QSZt5mojlk
+         ZzZ4lTfvk7nne16vjRR9W32mKiIsB1yxHopxcdu1ou84HK7N617iDb9Uim1gI3nEvT/f
+         7RN66yzI/1bOgUcUg7+xE+PcyLknuMF1rr1fy0alViPFksFmPGwbqV4A+gLdq34BVCVF
+         I/mc+KhkT7ovjmdFPpnMSWPPr9rfID8NtYii5i92FFRFzj7Iq7nrCJSzkwSxpNpWrvr4
+         cCJQ==
+X-Gm-Message-State: AJcUukeO9L+ZJAGNa6sqd3paJG93yfEhwYG3pqLmBXOkak0fd/dP0+/F
+        9pJrwT8uDLWtNcqAyhnfgN2A8A==
+X-Google-Smtp-Source: ALg8bN74EQAx6xaPCby36H5blYZySCEw6xY6RY8NbQmY1fCiJjZYABituDk5LtY49qbnKuCuBtqYUQ==
+X-Received: by 2002:a63:a064:: with SMTP id u36mr9143400pgn.145.1547648762037;
+        Wed, 16 Jan 2019 06:26:02 -0800 (PST)
 Received: from starnight.local ([150.116.255.181])
-        by smtp.gmail.com with ESMTPSA id a17sm9211783pgm.26.2019.01.16.06.25.31
+        by smtp.gmail.com with ESMTPSA id a17sm9211783pgm.26.2019.01.16.06.26.00
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 16 Jan 2019 06:25:33 -0800 (PST)
+        Wed, 16 Jan 2019 06:26:01 -0800 (PST)
 From:   Jian-Hong Pan <starnight@g.ncu.edu.tw>
 To:     =?UTF-8?q?Andreas=20F=C3=A4rber?= <afaerber@suse.de>
 Cc:     Ben Whitten <ben.whitten@lairdtech.com>,
         linux-lpwan@lists.infradead.org, netdev@vger.kernel.org,
         linux-kernel@vger.kernel.org,
         Jian-Hong Pan <starnight@g.ncu.edu.tw>
-Subject: [RFC PATCH 2/5] net: lorawan: Remove unused lrw_dev_hard_header function
-Date:   Wed, 16 Jan 2019 22:24:56 +0800
-Message-Id: <20190116142458.19542-2-starnight@g.ncu.edu.tw>
+Subject: [RFC PATCH 3/5] net; lorawan: Fix net device leakage
+Date:   Wed, 16 Jan 2019 22:24:58 +0800
+Message-Id: <20190116142458.19542-3-starnight@g.ncu.edu.tw>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190116142048.19446-1-starnight@g.ncu.edu.tw>
 References: <20190116142048.19446-1-starnight@g.ncu.edu.tw>
@@ -72,45 +72,59 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The lorawan module is an abastraction layer over the LoRaWAN soft and
-hard MAC.  It passes the original buffer to the real MAC layer.  So,
-this patch removes the lrw_dev_hard_header function.
+The net device may be missed to be put after error check.  This patch
+fixes the issue to prevent the leakage.
 
 Signed-off-by: Jian-Hong Pan <starnight@g.ncu.edu.tw>
 ---
- net/lorawan/socket.c | 12 ------------
- 1 file changed, 12 deletions(-)
+ net/lorawan/socket.c | 12 ++++--------
+ 1 file changed, 4 insertions(+), 8 deletions(-)
 
 diff --git a/net/lorawan/socket.c b/net/lorawan/socket.c
-index 0ec2d2bf1682..9c0722379e25 100644
+index 9c0722379e25..7139fab63159 100644
 --- a/net/lorawan/socket.c
 +++ b/net/lorawan/socket.c
-@@ -115,14 +115,6 @@ dgram_bind(struct sock *sk, struct sockaddr *uaddr, int len)
+@@ -51,8 +51,10 @@ lrw_get_dev_by_addr(struct net *net, u32 devaddr)
+ 
+ 	rcu_read_lock();
+ 	ndev = dev_getbyhwaddr_rcu(net, ARPHRD_LORAWAN, (char *)&be_addr);
+-	if (ndev)
++	if (ndev && ndev->type == ARPHRD_LORAWAN)
+ 		dev_hold(ndev);
++	else
++		ndev = NULL;
+ 	rcu_read_unlock();
+ 
+ 	return ndev;
+@@ -99,11 +101,6 @@ dgram_bind(struct sock *sk, struct sockaddr *uaddr, int len)
+ 	}
+ 	netdev_dbg(ndev, "%s: get ndev\n", __func__);
+ 
+-	if (ndev->type != ARPHRD_LORAWAN) {
+-		ret = -ENODEV;
+-		goto dgram_bind_end;
+-	}
+-
+ 	ro->src_devaddr = addr->addr_in.devaddr;
+ 	ro->bound = 1;
+ 	ret = 0;
+@@ -152,7 +149,7 @@ dgram_sendmsg(struct sock *sk, struct msghdr *msg, size_t size)
+ 	if (size > ndev->mtu) {
+ 		netdev_dbg(ndev, "size = %zu, mtu = %u\n", size, ndev->mtu);
+ 		ret = -EMSGSIZE;
+-		goto dgram_sendmsg_end;
++		goto dgram_sendmsg_no_skb;
+ 	}
+ 
+ 	netdev_dbg(ndev, "%s: create skb\n", __func__);
+@@ -189,7 +186,6 @@ dgram_sendmsg(struct sock *sk, struct msghdr *msg, size_t size)
+ 	kfree_skb(skb);
+ dgram_sendmsg_no_skb:
+ 	dev_put(ndev);
+-
+ dgram_sendmsg_end:
  	return ret;
  }
- 
--static int
--lrw_dev_hard_header(struct sk_buff *skb, struct net_device *ndev,
--		    const u32 src_devaddr, size_t len)
--{
--	/* TODO: Prepare the LoRaWAN sending header here */
--	return 0;
--}
--
- static int
- dgram_sendmsg(struct sock *sk, struct msghdr *msg, size_t size)
- {
-@@ -176,10 +168,6 @@ dgram_sendmsg(struct sock *sk, struct msghdr *msg, size_t size)
- 	skb_reserve(skb, hlen);
- 	skb_reset_network_header(skb);
- 
--	ret = lrw_dev_hard_header(skb, ndev, 0, size);
--	if (ret < 0)
--		goto dgram_sendmsg_no_skb;
--
- 	ret = memcpy_from_msg(skb_put(skb, size), msg, size);
- 	if (ret > 0)
- 		goto dgram_sendmsg_err_skb;
 -- 
 2.20.1
 
