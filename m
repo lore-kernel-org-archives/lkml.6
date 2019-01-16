@@ -2,110 +2,106 @@ Return-Path: <SRS0=1Lvk=PY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 44EB8C43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 09:46:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8165AC43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 09:50:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1A0EB20859
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 09:46:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 580CD206C2
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 09:50:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391884AbfAPJqn (ORCPT
+        id S1732100AbfAPJus (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 16 Jan 2019 04:46:43 -0500
-Received: from outbound-smtp04.blacknight.com ([81.17.249.35]:58501 "EHLO
-        outbound-smtp04.blacknight.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2391858AbfAPJqm (ORCPT
+        Wed, 16 Jan 2019 04:50:48 -0500
+Received: from faui40.informatik.uni-erlangen.de ([131.188.34.40]:35290 "EHLO
+        faui40.informatik.uni-erlangen.de" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728528AbfAPJus (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Jan 2019 04:46:42 -0500
-Received: from mail.blacknight.com (pemlinmail01.blacknight.ie [81.17.254.10])
-        by outbound-smtp04.blacknight.com (Postfix) with ESMTPS id A78099864A
-        for <linux-kernel@vger.kernel.org>; Wed, 16 Jan 2019 09:46:40 +0000 (UTC)
-Received: (qmail 18993 invoked from network); 16 Jan 2019 09:46:40 -0000
-Received: from unknown (HELO techsingularity.net) (mgorman@techsingularity.net@[37.228.229.96])
-  by 81.17.254.9 with ESMTPSA (AES256-SHA encrypted, authenticated); 16 Jan 2019 09:46:40 -0000
-Date:   Wed, 16 Jan 2019 09:46:39 +0000
-From:   Mel Gorman <mgorman@techsingularity.net>
-To:     Vlastimil Babka <vbabka@suse.cz>
-Cc:     Linux-MM <linux-mm@kvack.org>,
-        David Rientjes <rientjes@google.com>,
-        Andrea Arcangeli <aarcange@redhat.com>, ying.huang@intel.com,
-        kirill@shutemov.name, Andrew Morton <akpm@linux-foundation.org>,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 09/25] mm, compaction: Use the page allocator bulk-free
- helper for lists of pages
-Message-ID: <20190116094639.GC27437@techsingularity.net>
-References: <20190104125011.16071-1-mgorman@techsingularity.net>
- <20190104125011.16071-10-mgorman@techsingularity.net>
- <a61312d7-8235-fe4d-6411-d3143d965f81@suse.cz>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-15
-Content-Disposition: inline
-In-Reply-To: <a61312d7-8235-fe4d-6411-d3143d965f81@suse.cz>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Wed, 16 Jan 2019 04:50:48 -0500
+X-Greylist: delayed 527 seconds by postgrey-1.27 at vger.kernel.org; Wed, 16 Jan 2019 04:50:47 EST
+Received: from faui49copter1 (faui49copter1.informatik.uni-erlangen.de [131.188.42.149])
+        by faui40.informatik.uni-erlangen.de (Postfix) with SMTP id 87168548614;
+        Wed, 16 Jan 2019 10:41:55 +0100 (CET)
+Received: by faui49copter1 (sSMTP sendmail emulation); Wed, 16 Jan 2019 10:41:55 +0100
+From:   Andreas Ziegler <andreas.ziegler@fau.de>
+To:     Steven Rostedt <rostedt@goodmis.org>
+Cc:     Ingo Molnar <mingo@redhat.com>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        linux-kernel@vger.kernel.org,
+        Andreas Ziegler <andreas.ziegler@fau.de>
+Subject: [PATCH] tracing/uprobes: Fix output for multiple string arguments
+Date:   Wed, 16 Jan 2019 10:41:12 +0100
+Message-Id: <20190116094112.16043-1-andreas.ziegler@fau.de>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <8b67136d-28d7-a734-6366-9511e30d66a7@fau.de>
+References: <8b67136d-28d7-a734-6366-9511e30d66a7@fau.de>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 15, 2019 at 01:39:28PM +0100, Vlastimil Babka wrote:
-> On 1/4/19 1:49 PM, Mel Gorman wrote:
-> > release_pages() is a simpler version of free_unref_page_list() but it
-> > tracks the highest PFN for caching the restart point of the compaction
-> > free scanner. This patch optionally tracks the highest PFN in the core
-> > helper and converts compaction to use it. The performance impact is
-> > limited but it should reduce lock contention slightly in some cases.
-> > The main benefit is removing some partially duplicated code.
-> > 
-> > Signed-off-by: Mel Gorman <mgorman@techsingularity.net>
-> 
-> ...
-> 
-> > --- a/mm/page_alloc.c
-> > +++ b/mm/page_alloc.c
-> > @@ -2876,18 +2876,26 @@ void free_unref_page(struct page *page)
-> >  /*
-> >   * Free a list of 0-order pages
-> >   */
-> > -void free_unref_page_list(struct list_head *list)
-> > +void __free_page_list(struct list_head *list, bool dropref,
-> > +				unsigned long *highest_pfn)
-> >  {
-> >  	struct page *page, *next;
-> >  	unsigned long flags, pfn;
-> >  	int batch_count = 0;
-> >  
-> > +	if (highest_pfn)
-> > +		*highest_pfn = 0;
-> > +
-> >  	/* Prepare pages for freeing */
-> >  	list_for_each_entry_safe(page, next, list, lru) {
-> > +		if (dropref)
-> > +			WARN_ON_ONCE(!put_page_testzero(page));
-> 
-> I've thought about it again and still think it can cause spurious
-> warnings. We enter this function with one page pin, which means somebody
-> else might be doing pfn scanning and get_page_unless_zero() with
-> success, so there are two pins. Then we do the put_page_testzero() above
-> and go back to one pin, and warn. You said "this function simply does
-> not expect it and the callers do not violate the rule", but this is
-> rather about potential parallel pfn scanning activity and not about this
-> function's callers. Maybe there really is no parallel pfn scanner that
-> would try to pin a page with a state the page has when it's processed by
-> this function, but I wouldn't bet on it (any state checks preceding the
-> pin might also be racy etc.).
-> 
+When printing multiple uprobe arguments as strings the output for the
+earlier arguments would also include all later string arguments.
 
-Ok, I'll drop this patch because in theory you're right. I wouldn't think
-that parallel PFN scanning is likely to trigger it but gup is a potential
-issue. While this also will increase CPU usage slightly again, it'll be
-no worse than it was before and again, I don't want to stall the entire
-series over a relatively small optimisation.
+This is best explained in an example:
 
-Thanks Vlastimil!
+Consider adding a uprobe to a function receiving two strings as
+parameters which is at offset 0xa0 in strlib.so and we want to print
+both parameters when the uprobe is hit (on x86_64):
 
+$ echo 'p:func /lib/strlib.so:0xa0 +0(%di):string +0(%si):string' > \
+    /sys/kernel/debug/tracing/uprobe_events
+
+When the function is called as func("foo", "bar") and we hit the probe,
+the trace file shows a line like the following:
+
+  [...] func: (0x7f7e683706a0) arg1="foobar" arg2="bar"
+
+Note the extra "bar" printed as part of arg1. This behaviour stacks up
+for additional string arguments.
+
+The strings are stored in a dynamically growing part of the uprobe
+buffer by fetch_store_string() after copying them from userspace via
+strncpy_from_user(). The return value of strncpy_from_user() is then
+directly used as the required size for the string. However, this does
+not take the terminating null byte into account as the documentation
+for strncpy_from_user() cleary states that it "[...] returns the
+length of the string (not including the trailing NUL)" even though the
+null byte will be copied to the destination.
+
+Therefore, subsequent calls to fetch_store_string() will overwrite
+the terminating null byte of the most recently fetched string with
+the first character of the current string, leading to the
+"accumulation" of strings in earlier arguments in the output.
+
+Fix this by incrementing the return value of strncpy_from_user() by
+one if we did not hit the maximum buffer size.
+
+Signed-off-by: Andreas Ziegler <andreas.ziegler@fau.de>
+---
+ kernel/trace/trace_uprobe.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
+
+diff --git a/kernel/trace/trace_uprobe.c b/kernel/trace/trace_uprobe.c
+index e335576b9411..dfb9bbc7fd82 100644
+--- a/kernel/trace/trace_uprobe.c
++++ b/kernel/trace/trace_uprobe.c
+@@ -160,6 +160,13 @@ fetch_store_string(unsigned long addr, void *dest, void *base)
+ 	if (ret >= 0) {
+ 		if (ret == maxlen)
+ 			dst[ret - 1] = '\0';
++		else if (ret > 0)
++			/*
++			 * Include the terminating null byte. In this case it
++			 * was copied by strncpy_from_user but not accounted
++			 * for in ret.
++			 */
++			ret++;
+ 		*(u32 *)dest = make_data_loc(ret, (void *)dst - base);
+ 	}
+ 
 -- 
-Mel Gorman
-SUSE Labs
+2.17.1
+
