@@ -2,117 +2,146 @@ Return-Path: <SRS0=1Lvk=PY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DC916C43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 19:41:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1BE6EC43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 19:46:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8EF2220868
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 19:41:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D666B206C2
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 19:45:59 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="cC0flz6F"
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="ZFISkBu+";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="kgF0KTGq"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731594AbfAPTlA (ORCPT
+        id S1731606AbfAPTpq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 16 Jan 2019 14:41:00 -0500
-Received: from mail-yw1-f66.google.com ([209.85.161.66]:39488 "EHLO
-        mail-yw1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731174AbfAPTlA (ORCPT
+        Wed, 16 Jan 2019 14:45:46 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:36354 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731174AbfAPTpq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Jan 2019 14:41:00 -0500
-Received: by mail-yw1-f66.google.com with SMTP id k188so2880724ywa.6
-        for <linux-kernel@vger.kernel.org>; Wed, 16 Jan 2019 11:40:59 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google;
-        h=from:to:cc:subject:date:message-id;
-        bh=wGPVLMKNQ0r/KWhK3vlcayEkiauUERQ12dg7Nc+G2lg=;
-        b=cC0flz6FTlp/pBvzI3oE4+NeNwx2GNNZUi+PkSTzHOItH8d3V9o6xyyc+CBr2hDdCF
-         g2tYc3S+FFUZPiPCTRrb9kRzMvgX8DmW2XsmZpUpeutQl4MB0DJ1ZCCGLVeJk7gF1mxs
-         WQlMQiZUJOa92Xd4XsykIncvEcsFNijy679iE=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=wGPVLMKNQ0r/KWhK3vlcayEkiauUERQ12dg7Nc+G2lg=;
-        b=RcHDi22kb8CbZhGoi7v6P6NhL9nczItiQ6zG16hGr9iycJgzUZveOA9ec+qw5s7XCm
-         9HPbiJ56Hz836VFhucTNkNEJXYhn4LNKGOsGBo66K1Ls3q5Crz1WYmrhR2hlz6K1PjA5
-         5j6GpoGzZkW3HVEJ/qdQlGNxl/Qr9JXNGZzPUsI4wkMC4nS73JeP3qmucRd9KEAf6Igz
-         C1iUEhgB+6WggowZWQa1TIa5vHrwBBBGY4ruHR9fiOAg7DqFLikzQf0AY9HH01k8A2K8
-         /kGzmqo4rWRJPIoX7hrbhvz9yFoymueQCMHNsnnVdZTIsi7h+xtJMWYkEaqVkbciZud4
-         qmZQ==
-X-Gm-Message-State: AJcUukfvfCw5ewHDsPLqIHUxf7arAQjoREgnQHER0hYe+UHyycYfeBmO
-        pE/UX0VV2ur70CVAzgQB0deHnA==
-X-Google-Smtp-Source: ALg8bN7Uj33aouqzodIXryOVkcB/bO6rzTyeQsczGhNyrRHxT4a/FL/yN7uQC9CPojLEk9cjbzJiew==
-X-Received: by 2002:a0d:ce82:: with SMTP id q124mr9041982ywd.482.1547667659058;
-        Wed, 16 Jan 2019 11:40:59 -0800 (PST)
-Received: from shitalt.dhcp.broadcom.net ([192.19.234.250])
-        by smtp.gmail.com with ESMTPSA id j12sm3030068ywk.43.2019.01.16.11.40.55
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Wed, 16 Jan 2019 11:40:58 -0800 (PST)
-From:   Sheetal Tigadoli <sheetal.tigadoli@broadcom.com>
-To:     Thierry Reding <thierry.reding@gmail.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Ray Jui <rjui@broadcom.com>,
-        Scott Branden <sbranden@broadcom.com>
-Cc:     bcm-kernel-feedback-list@broadcom.com, linux-pwm@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Sheetal Tigadoli <sheetal.tigadoli@broadcom.com>
-Subject: [PATCH] drivers: pwm: pwm-bcm-kona: update macros to remove braces around numbers
-Date:   Thu, 17 Jan 2019 01:11:22 +0530
-Message-Id: <1547667682-5095-1-git-send-email-sheetal.tigadoli@broadcom.com>
-X-Mailer: git-send-email 1.9.1
+        Wed, 16 Jan 2019 14:45:46 -0500
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 5A0196024C; Wed, 16 Jan 2019 19:45:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1547667945;
+        bh=ddWK41vxBC664zh8VbVZtm20yC+tz5cxJXvovfJlykg=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=ZFISkBu+ZpWbTWRovYhPOafBzlZTJ+6f89yZy2aZ5mjPN2vM1WjnrCF/ASzRD+l17
+         gL9A1jpd1U6w0N4wcl+uW385lo6QtVlz0r+Rhd9BoZ5hyAARahdtL+SFkF0iJGraGL
+         9LRTVz0fgB5dIyI5BJTe4MUJS4W5oDopDxH/gKX0=
+Received: from jcrouse1-lnx.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: jcrouse@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id D1D9C6024C;
+        Wed, 16 Jan 2019 19:45:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1547667944;
+        bh=ddWK41vxBC664zh8VbVZtm20yC+tz5cxJXvovfJlykg=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=kgF0KTGq5lJGEXbzM5/MtlNAGKqCXPgYh5f0xSxsrq16jqYmKThpVzdNBuVZ1LcwU
+         z7mN4mSf952xNSN4a4zkoOE2YlA/CzHPUg3skvYSnf3ip/Bdgm/7NigZPuyPfE8wVE
+         kOAmqtWiTkVUMNeoakE3s0mYngSm0yBKsvxEryg8=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org D1D9C6024C
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=jcrouse@codeaurora.org
+Date:   Wed, 16 Jan 2019 12:45:41 -0700
+From:   Jordan Crouse <jcrouse@codeaurora.org>
+To:     Douglas Anderson <dianders@chromium.org>
+Cc:     Rob Clark <robdclark@gmail.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Stephen Boyd <swboyd@chromium.org>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        Andy Gross <andy.gross@linaro.org>,
+        linux-arm-msm@vger.kernel.org,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        "Kristian H . Kristensen" <hoegsberg@chromium.org>,
+        Colin Ian King <colin.king@canonical.com>,
+        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        Sharat Masetty <smasetty@codeaurora.org>,
+        David Airlie <airlied@linux.ie>,
+        freedreno@lists.freedesktop.org,
+        Mamta Shukla <mamtashukla555@gmail.com>,
+        Daniel Vetter <daniel@ffwll.ch>
+Subject: Re: [PATCH v2 1/2] drm/msm: Fix A6XX support for opp-level
+Message-ID: <20190116194540.GC4140@jcrouse1-lnx.qualcomm.com>
+Mail-Followup-To: Douglas Anderson <dianders@chromium.org>,
+        Rob Clark <robdclark@gmail.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Stephen Boyd <swboyd@chromium.org>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        Andy Gross <andy.gross@linaro.org>, linux-arm-msm@vger.kernel.org,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        "Kristian H . Kristensen" <hoegsberg@chromium.org>,
+        Colin Ian King <colin.king@canonical.com>,
+        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        Sharat Masetty <smasetty@codeaurora.org>,
+        David Airlie <airlied@linux.ie>, freedreno@lists.freedesktop.org,
+        Mamta Shukla <mamtashukla555@gmail.com>,
+        Daniel Vetter <daniel@ffwll.ch>
+References: <20190116184623.77136-1-dianders@chromium.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190116184623.77136-1-dianders@chromium.org>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-update macros to remove braces around numbers
+On Wed, Jan 16, 2019 at 10:46:21AM -0800, Douglas Anderson wrote:
+> The bindings for Qualcomm opp levels changed after being Acked but
+> before landing.  Thus the code in the GPU driver that was relying on
+> the old bindings is now broken.
+> 
+> Let's change the code to match the new bindings by adjusting the old
+> string 'qcom,level' to the new string 'opp-level'.  See the patch
+> ("dt-bindings: opp: Introduce opp-level bindings").
+> 
+> NOTE: we will do additional cleanup to totally remove the string from
+> the code and use the new dev_pm_opp_get_level() but we'll do it in a
+> future patch.  This will facilitate getting the important code fix in
+> sooner without having to deal with cross-maintainer dependencies.
+> 
+> This patch needs to land before the patch ("arm64: dts: sdm845: Add
+> gpu and gmu device nodes") since if a tree contains the device tree
+> patch but not this one you'll get a crash at bootup.
+> 
+> Fixes: 4b565ca5a2cb ("drm/msm: Add A6XX device support")
+> Signed-off-by: Douglas Anderson <dianders@chromium.org>
 
-Signed-off-by: Sheetal Tigadoli <sheetal.tigadoli@broadcom.com>
----
- drivers/pwm/pwm-bcm-kona.c | 16 ++++++++--------
- 1 file changed, 8 insertions(+), 8 deletions(-)
+I agree that splitting these out make sense for the workflow.
 
-diff --git a/drivers/pwm/pwm-bcm-kona.c b/drivers/pwm/pwm-bcm-kona.c
-index 09a95ae..81da91d 100644
---- a/drivers/pwm/pwm-bcm-kona.c
-+++ b/drivers/pwm/pwm-bcm-kona.c
-@@ -45,25 +45,25 @@
-  *    high or low depending on its state at that exact instant.
-  */
- 
--#define PWM_CONTROL_OFFSET			(0x00000000)
-+#define PWM_CONTROL_OFFSET			0x00000000
- #define PWM_CONTROL_SMOOTH_SHIFT(chan)		(24 + (chan))
- #define PWM_CONTROL_TYPE_SHIFT(chan)		(16 + (chan))
- #define PWM_CONTROL_POLARITY_SHIFT(chan)	(8 + (chan))
- #define PWM_CONTROL_TRIGGER_SHIFT(chan)		(chan)
- 
--#define PRESCALE_OFFSET				(0x00000004)
-+#define PRESCALE_OFFSET				0x00000004
- #define PRESCALE_SHIFT(chan)			((chan) << 2)
- #define PRESCALE_MASK(chan)			(0x7 << PRESCALE_SHIFT(chan))
--#define PRESCALE_MIN				(0x00000000)
--#define PRESCALE_MAX				(0x00000007)
-+#define PRESCALE_MIN				0x00000000
-+#define PRESCALE_MAX				0x00000007
- 
- #define PERIOD_COUNT_OFFSET(chan)		(0x00000008 + ((chan) << 3))
--#define PERIOD_COUNT_MIN			(0x00000002)
--#define PERIOD_COUNT_MAX			(0x00ffffff)
-+#define PERIOD_COUNT_MIN			0x00000002
-+#define PERIOD_COUNT_MAX			0x00ffffff
- 
- #define DUTY_CYCLE_HIGH_OFFSET(chan)		(0x0000000c + ((chan) << 3))
--#define DUTY_CYCLE_HIGH_MIN			(0x00000000)
--#define DUTY_CYCLE_HIGH_MAX			(0x00ffffff)
-+#define DUTY_CYCLE_HIGH_MIN			0x00000000
-+#define DUTY_CYCLE_HIGH_MAX			0x00ffffff
- 
- struct kona_pwmc {
- 	struct pwm_chip chip;
+Reviewed-by: Jordan Crouse <jcrouse@codeaurora.org>
+> ---
+> 
+> Changes in v2:
+> - Split into two patches to facilitate landing.
+> 
+>  drivers/gpu/drm/msm/adreno/a6xx_gmu.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/gpu/drm/msm/adreno/a6xx_gmu.c b/drivers/gpu/drm/msm/adreno/a6xx_gmu.c
+> index 5beb83d1cf87..ce1b3cc4bf6d 100644
+> --- a/drivers/gpu/drm/msm/adreno/a6xx_gmu.c
+> +++ b/drivers/gpu/drm/msm/adreno/a6xx_gmu.c
+> @@ -944,7 +944,7 @@ static u32 a6xx_gmu_get_arc_level(struct device *dev, unsigned long freq)
+>  	np = dev_pm_opp_get_of_node(opp);
+>  
+>  	if (np) {
+> -		of_property_read_u32(np, "qcom,level", &val);
+> +		of_property_read_u32(np, "opp-level", &val);
+>  		of_node_put(np);
+>  	}
+>  
+> -- 
+> 2.20.1.97.g81188d93c3-goog
+> 
+
 -- 
-1.9.1
-
+The Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
