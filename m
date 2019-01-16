@@ -2,137 +2,100 @@ Return-Path: <SRS0=1Lvk=PY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=FROM_EXCESS_BASE64,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MSGID_FROM_MTA_HEADER,
+	SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 538C4C43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 02:57:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 28313C43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 03:00:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 225FB20675
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 02:57:29 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="tfopv3kf"
+	by mail.kernel.org (Postfix) with ESMTP id 0049720675
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 03:00:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730846AbfAPC51 (ORCPT
+        id S1730907AbfAPDAX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 15 Jan 2019 21:57:27 -0500
-Received: from conuserg-10.nifty.com ([210.131.2.77]:49547 "EHLO
-        conuserg-10.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727883AbfAPC50 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Jan 2019 21:57:26 -0500
-Received: from pug.e01.socionext.com (p14092-ipngnfx01kyoto.kyoto.ocn.ne.jp [153.142.97.92]) (authenticated)
-        by conuserg-10.nifty.com with ESMTP id x0G2uksS010468;
-        Wed, 16 Jan 2019 11:56:47 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-10.nifty.com x0G2uksS010468
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1547607407;
-        bh=IlGcv8kn+7pcad/nWtO0JJAMgDS4Ul+f1F9xFRcEK7s=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=tfopv3kfUnZrL/Td8x/+9NMIWA6dvCq/XCM1R3dEnFOzKcjtrESUhP2rVGSaTE5wO
-         rcoAkzhTHsi7kqhLMwueZ3k6YsPgmX7G99bnBWuu1GLmYSa6YyND7/Lf3Y7zzFhkzo
-         2d9ZgLYv/lbbKYMlKrAKxv13U7uj8KMkjctySP4TWvhspj4lmq8R61cZUGBXnNcYvG
-         wAwyEGqPpe76nKTycAuUQ0bOfv8UgQkY6UpfSP+kW6PIaxTTrDEq8Z0iGkkvnGpR+l
-         xrlI5qZEfWkK6zJ02Vm4695FcDKXIO1v7gv9JX4ipEngrZpGbfDGxN3IaPZcajO4y1
-         +FQ9gAzOUoBRw==
-X-Nifty-SrcIP: [153.142.97.92]
-From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-To:     linux-kbuild@vger.kernel.org
-Cc:     devicetree@vger.kernel.org,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        linux-kernel@vger.kernel.org,
-        Michal Marek <michal.lkml@markovi.net>,
-        Mauro Rossi <issor.oruam@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Frank Rowand <frowand.list@gmail.com>
-Subject: [PATCH 2/2] kbuild: add -I$(srctree)/$(src) automatically for hostprogs with O=
-Date:   Wed, 16 Jan 2019 11:56:41 +0900
-Message-Id: <1547607401-20118-2-git-send-email-yamada.masahiro@socionext.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1547607401-20118-1-git-send-email-yamada.masahiro@socionext.com>
-References: <1547607401-20118-1-git-send-email-yamada.masahiro@socionext.com>
+        Tue, 15 Jan 2019 22:00:23 -0500
+Received: from smtpbgsg2.qq.com ([54.254.200.128]:51683 "EHLO smtpbgsg2.qq.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729852AbfAPDAW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 Jan 2019 22:00:22 -0500
+X-QQ-GoodBg: 0
+X-QQ-SSF: 00100000000000F0
+X-QQ-FEAT: CaOyJLkxpPnx61D352dvXIWnMUSC/YUqnJQcOILfRgADW3I8/c9vBsquJz1Jb
+        DK7JnuuIbPVSs7qeTORBPZSZoDbaNdSBMtErP2fw+NBovf24kJ8c24QiiZyIuNsHz0DjEY9
+        qFaIDf1SGYiWXocDB5Ey9Pql4fto7hATn4yNWfvXgADhVJAEk36nqIxFnODlh4/DQnJqAlG
+        7wbSOLQ6fGpc4g2UI1TmapX+tloni45wtWKV+4DaNHxNjxWxtunfNmvvmuczlydsRBX9azu
+        /TWJmzIaL0EG0UMktuRdg28xE=
+X-QQ-BUSINESS-ORIGIN: 2
+X-Originating-IP: 222.92.124.153
+X-QQ-STYLE: 
+X-QQ-mid: bizmailfree7t1547607607t83862
+From:   "=?utf-8?B?6ZmI5Y2O5omN?=" <chenhc@lemote.com>
+To:     "=?utf-8?B?VGhvbWFzIEdsZWl4bmVy?=" <tglx@linutronix.de>
+Cc:     "=?utf-8?B?bGludXgta2VybmVs?=" <linux-kernel@vger.kernel.org>,
+        "=?utf-8?B?RnV4aW4gWmhhbmc=?=" <zhangfx@lemote.com>,
+        "=?utf-8?B?d3V6aGFuZ2ppbg==?=" <wuzhangjin@gmail.com>,
+        "=?utf-8?B?c3RhYmxl?=" <stable@vger.kernel.org>,
+        "=?utf-8?B?Q2hyaXN0b3BoIEhlbGx3aWc=?=" <hch@lst.de>,
+        "=?utf-8?B?TWljaGFlbCBIZXJuYW5kZXo=?=" <michael.hernandez@cavium.com>
+Subject: Re: [PATCH] genirq/affinity: Assign default affinity to pre/post vectors
+Mime-Version: 1.0
+Content-Type: text/plain;
+        charset="utf-8"
+Content-Transfer-Encoding: base64
+Date:   Wed, 16 Jan 2019 11:00:07 +0800
+X-Priority: 3
+Message-ID: <tencent_7CB943266ADCFDB06DDDE6EF@qq.com>
+X-QQ-MIME: TCMime 1.0 by Tencent
+X-Mailer: QQMail 2.x
+X-QQ-Mailer: QQMail 2.x
+References: <1546225404-6775-1-git-send-email-chenhc@lemote.com>
+        <alpine.DEB.2.21.1901151959060.1655@nanos.tec.linutronix.de>
+In-Reply-To: <alpine.DEB.2.21.1901151959060.1655@nanos.tec.linutronix.de>
+X-QQ-ReplyHash: 3970353298
+X-QQ-SENDSIZE: 520
+Received: from qq.com (unknown [127.0.0.1])
+        by smtp.qq.com (ESMTP) with SMTP
+        id ; Wed, 16 Jan 2019 11:00:10 +0800 (CST)
+Feedback-ID: bizmailfree:lemote.com:qybgforeign:qybgforeign4
+X-QQ-Bgrelay: 1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When building kernel objects with the O= option, scripts/Makefile.lib
-automatically adds both -I$(srctree)/$(src) and -I$(obj) so each
-Makefile does not need to add them explicitly.
+SGksIFRob21hcywNCg0KSSdtIG5vdCByZW1vdmluZyBhbGwgcmV0dXJuIE5VTEwgb2YgIGly
+cV9jcmVhdGVfYWZmaW5pdHlfbWFza3MoKSwgc28gdGhlIG1lbW9yeSBhbGxvY2F0aW9uIGZh
+aWx1cmUgc3RpbGwgcmV0dXJuIE5VTEwuIEkganVzdCBoYW5kbGUgdGhlIGNhc2UgdGhhdCB0
+aGVyZSBhcmUgbm90IGVub3VnaCBpcnEgdmVjdG9ycy4gRS5nLiBpbiBudm1lIGRyaXZlciwg
+dGhlIGNhbGxlciBtYXkgY2FsbCBpcnFfY3JlYXRlX2FmZmluaXR5X21hc2tzKCkgd2l0aCBu
+dmVjcz0xLHByZV92ZWN0b3JzPTEscG9zdF92ZWN0b3JzPTAuIEluIHRoaXMgY2FzZSwgdGhl
+IG9ubHkgb25lIHZlY3RvcidzIGRlZmF1bHQgYWZmaW5pdHkgYXNzaWduaW5nIGlzIHNraXBw
+ZWQuDQoNCkh1YWNhaSANCg0KLS0tLS0tLS0tLS0tLS0tLS0tIE9yaWdpbmFsIC0tLS0tLS0t
+LS0tLS0tLS0tLQ0KRnJvbTogICJUaG9tYXMgR2xlaXhuZXIiPHRnbHhAbGludXRyb25peC5k
+ZT47DQpEYXRlOiAgV2VkLCBKYW4gMTYsIDIwMTkgMDM6MTAgQU0NClRvOiAgIkh1YWNhaSBD
+aGVuIjxjaGVuaGNAbGVtb3RlLmNvbT47DQpDYzogICJsaW51eC1rZXJuZWwiPGxpbnV4LWtl
+cm5lbEB2Z2VyLmtlcm5lbC5vcmc+OyAiRnV4aW4gWmhhbmciPHpoYW5nZnhAbGVtb3RlLmNv
+bT47ICJ3dXpoYW5namluIjx3dXpoYW5namluQGdtYWlsLmNvbT47ICJzdGFibGUiPHN0YWJs
+ZUB2Z2VyLmtlcm5lbC5vcmc+OyAiQ2hyaXN0b3BoIEhlbGx3aWciPGhjaEBsc3QuZGU+OyAi
+TWljaGFlbCBIZXJuYW5kZXoiPG1pY2hhZWwuaGVybmFuZGV6QGNhdml1bS5jb20+Ow0KU3Vi
+amVjdDogIFJlOiBbUEFUQ0hdIGdlbmlycS9hZmZpbml0eTogQXNzaWduIGRlZmF1bHQgYWZm
+aW5pdHkgdG8gcHJlL3Bvc3QgdmVjdG9ycw0KIA0KT24gTW9uLCAzMSBEZWMgMjAxOCwgSHVh
+Y2FpIENoZW4gd3JvdGU6DQoNCj4gR2VuZXJhbGx5LCBpcnFfY3JlYXRlX2FmZmluaXR5X21h
+c2tzKCkgYXNzaWduIGRlZmF1bHQgYWZmaW5pdHkgdG8gcHJlLw0KPiBwb3N0IHZlY3RvcnMg
+Y29ycmVjdGx5LiBIb3dldmVyLCBpdCBpZ25vcmUgdGhlIGNhc2UgdGhhdCB0aGVyZSBhcmUg
+b25seQ0KPiBwcmUvcG9zdCB2ZWN0b3JzICh3aGVuIG52ZWNzID09IGFmZmQtPnByZV92ZWN0
+b3JzICsgYWZmZC0+cG9zdF92ZWN0b3JzKQ0KPiBhbmQgcmV0dXJuIE5VTEwuIFRoaXMgY2Fz
+ZSB1c3VhbGx5IGhhcHBlbnMgd2hlbiBudmVjcyA9IDEgKGUuZy4gaW4gbnZtZQ0KPiBkcml2
+ZXIgd2hlbiBNU0ktWCBpcyB1bmF2YWlsYWJsZSBhbmQgZmFsbGJhY2sgdG8gTVNJKSBhbmQg
+d2lsbCB0cmlnZ2VyDQo+IHRoZSB3YXJuaW5nIGluIHBjaV9pcnFfZ2V0X2FmZmluaXR5KCku
+IFRoaXMgcGF0Y2ggZml4IHRoZSBjb3JuZXIgY2FzZS4NCg0KRXJybS4gVGhpcyBpcyBqdXN0
+IHdyb25nLiBXaGVuIHRoaXMgZnVuY3Rpb24gcmV0dXJucyBOVUxMLCB0aGVuIGl0IGhhcw0K
+ZmFpbGVkIGFuZCB0aGUgY2FsbGVyIG9yIGFueSBzdWJzZXF1ZW50IGNvZGUgaXMgbm90IHN1
+cHBvc2VkIHRvIHVzZSB0aGUNCnJlc3VsdC4NCg0KVGhlIGZ1bmN0aW9uIGNhbiByZXR1cm4g
+TlVMTCBmb3Igb3RoZXIgcmVhc29ucywgZS5nLiB3aGVuIHRoZSBtZW1vcnkNCmFsbG9jYXRp
+b24gZmFpbGVkLiBIb3cgYXJlIHlvdSBnb2luZyB0byBkdWN0IHRhcGUgdGhhdCBvbmU/DQoN
+ClRoYW5rcywNCg0KdGdseA==
 
-In contrast, scripts/Makefile.host adds only -I$(obj) when building
-host programs with the O= option. As a result, each Makefile must add
-the extra option to include checkin headers from generated C files.
 
-Let's cater to this in the build system for consistency, and drop
-extra options from the kconfig, dtc, genksyms Makefiles.
-
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
----
-
- scripts/Makefile.host     | 4 ++--
- scripts/dtc/Makefile      | 4 ----
- scripts/genksyms/Makefile | 4 ----
- scripts/kconfig/Makefile  | 2 --
- 4 files changed, 2 insertions(+), 12 deletions(-)
-
-diff --git a/scripts/Makefile.host b/scripts/Makefile.host
-index a115259..c41d5a1d 100644
---- a/scripts/Makefile.host
-+++ b/scripts/Makefile.host
-@@ -72,8 +72,8 @@ __hostcxx_flags	= $(_hostcxx_flags)
- 
- ifeq ($(KBUILD_EXTMOD),)
- ifneq ($(KBUILD_SRC),)
--__hostc_flags	= -I$(obj) $(call flags,_hostc_flags)
--__hostcxx_flags	= -I$(obj) $(call flags,_hostcxx_flags)
-+__hostc_flags	= -I $(srctree)/$(src) -I $(obj) $(call flags,_hostc_flags)
-+__hostcxx_flags	= -I $(srctree)/$(src) -I $(obj) $(call flags,_hostcxx_flags)
- endif
- endif
- 
-diff --git a/scripts/dtc/Makefile b/scripts/dtc/Makefile
-index 5f227d8..72d3fa4 100644
---- a/scripts/dtc/Makefile
-+++ b/scripts/dtc/Makefile
-@@ -22,9 +22,5 @@ dtc-objs	+= yamltree.o
- HOSTLDLIBS_dtc	:= -lyaml
- endif
- 
--# Generated files need one more search path to include headers in source tree
--HOSTCFLAGS_dtc-lexer.lex.o := -I$(src)
--HOSTCFLAGS_dtc-parser.tab.o := -I$(src)
--
- # dependencies on generated files need to be listed explicitly
- $(obj)/dtc-lexer.lex.o: $(obj)/dtc-parser.tab.h
-diff --git a/scripts/genksyms/Makefile b/scripts/genksyms/Makefile
-index 03b7ce9..ae5953d 100644
---- a/scripts/genksyms/Makefile
-+++ b/scripts/genksyms/Makefile
-@@ -30,9 +30,5 @@ $(obj)/parse.tab.h: $(src)/parse.y FORCE
- 
- endif
- 
--# -I needed for generated C source (shipped source)
--HOSTCFLAGS_parse.tab.o := -I$(src)
--HOSTCFLAGS_lex.lex.o := -I$(src)
--
- # dependencies on generated files need to be listed explicitly
- $(obj)/lex.lex.o: $(obj)/parse.tab.h
-diff --git a/scripts/kconfig/Makefile b/scripts/kconfig/Makefile
-index 1819735..12cb5eb 100644
---- a/scripts/kconfig/Makefile
-+++ b/scripts/kconfig/Makefile
-@@ -146,8 +146,6 @@ help:
- common-objs	:= confdata.o expr.o symbol.o preprocess.o zconf.lex.o zconf.tab.o
- 
- $(obj)/zconf.lex.o: $(obj)/zconf.tab.h
--HOSTCFLAGS_zconf.lex.o	:= -I$(src)
--HOSTCFLAGS_zconf.tab.o	:= -I$(src)
- 
- # conf: Used for defconfig, oldconfig and related targets
- hostprogs-y	+= conf
--- 
-2.7.4
 
