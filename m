@@ -2,123 +2,128 @@ Return-Path: <SRS0=1Lvk=PY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9BBE7C43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 17:11:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 687BAC43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 17:12:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6B84020651
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 17:11:27 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="kOB1Q123"
+	by mail.kernel.org (Postfix) with ESMTP id 3085A20675
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 17:12:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1547658720;
+	bh=Xv8tQ1PzEMDcd51TfoFUCHKVA/Gh9Mkxv0Bcdlx8Nag=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=OGjk0kj5M8VbHkH7+5u/4bxV66tOfxUU5CUi/5ejBFMSAOCFIMGp/A8yvsE6bGzpA
+	 L80XdRBIYaFFfntaJXBtagAn5LQmXBSPUOd+mZimjvKJZeBSNVaDSap19cPSum0EZh
+	 dxUIgCstr1w5cfit0+AgzcD9VK0mxmuW35oiOcQI=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405841AbfAPRLZ (ORCPT
+        id S2405851AbfAPRL6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 16 Jan 2019 12:11:25 -0500
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:39080 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2394478AbfAPRKr (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Jan 2019 12:10:47 -0500
-Received: by mail-pl1-f195.google.com with SMTP id 101so3297009pld.6
-        for <linux-kernel@vger.kernel.org>; Wed, 16 Jan 2019 09:10:47 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=pJa/3xt1JMxzSbHyVab2zd3RhWbY439V9Orw9mFVXdA=;
-        b=kOB1Q123vSecSRTJ06CsqyBuW9/HImrhm3MqYY0doaB11TP2Dvk+npnTSqQsTfnRcW
-         mTe1bbiGHRs4vn+edG0CtmnyPCzVa6hRASQjKRNBQD5vUqJzCSfGsxe7g9I+sZPV16Hd
-         3hEdg0wcrJKS+17GRjAwcC1qKLl6RGEh06c3I=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=pJa/3xt1JMxzSbHyVab2zd3RhWbY439V9Orw9mFVXdA=;
-        b=dFTwUyvkK+JqfVRFXbAXsdx3Q+yx0Doj0e4X5n5UG09Z4fhhxapfgQoke3evtTOAvF
-         jHMEPgEpUY85zQAmmOIfMqk3HScFHUZzJKQsU4zTVOFcmnb9NCXu741uLZFnBn96WJGB
-         W/dYYBNiEHWYdVPqkVjs6/ITZWjO0VxIxMQOyuGtwydNIf6os4494b/Iu8HxAbMI10AW
-         Kv4vEd3CvGn+T+eDFpaYIh7rwZdtV+26lIdSmt7OQESL6z6HpJfirGtfCYMAQqNgoojy
-         jeoGKnn3CPC4xUtC+thW05GuGZAcnscL10ktZBz8/Jsk7VpX9QZrZjDGjet5fcBaKkAv
-         C7cw==
-X-Gm-Message-State: AJcUukd9tFDiGZU4iZ4iMxHPlFUqj9yAKP5jCb7+6zR6psZsKku8gImZ
-        8AXZ4tW5mIF1UuCFWxg33YeN5rfVHV/d1A==
-X-Google-Smtp-Source: ALg8bN53UVr90AHvPfr8dtUoE+UjK3twxa1QIy9kliJAMjdXVHiYMuFJ2I9wblt0BFdSy8YMh/khfA==
-X-Received: by 2002:a17:902:2a0a:: with SMTP id i10mr10713001plb.323.1547658646183;
-        Wed, 16 Jan 2019 09:10:46 -0800 (PST)
-Received: from localhost.localdomain ([2601:1c2:680:1319:4e72:b9ff:fe99:466a])
-        by smtp.gmail.com with ESMTPSA id h129sm17914023pfb.110.2019.01.16.09.10.44
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Wed, 16 Jan 2019 09:10:44 -0800 (PST)
-From:   John Stultz <john.stultz@linaro.org>
-To:     lkml <linux-kernel@vger.kernel.org>
-Cc:     John Stultz <john.stultz@linaro.org>,
-        Vinod Koul <vkoul@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Tanglei Han <hantanglei@huawei.com>,
-        Zhuangluan Su <suzhuangluan@hisilicon.com>,
-        Ryan Grachek <ryan@edited.us>,
-        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-        dmaengine@vger.kernel.org, devicetree@vger.kernel.org
-Subject: [PATCH 2/8 v4] Documentation: bindings: dma: Add binding for dma-channel-mask
-Date:   Wed, 16 Jan 2019 09:10:23 -0800
-Message-Id: <1547658629-25378-3-git-send-email-john.stultz@linaro.org>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1547658629-25378-1-git-send-email-john.stultz@linaro.org>
-References: <1547658629-25378-1-git-send-email-john.stultz@linaro.org>
+        Wed, 16 Jan 2019 12:11:58 -0500
+Received: from mail.kernel.org ([198.145.29.99]:55294 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728496AbfAPRL6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 Jan 2019 12:11:58 -0500
+Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5FD8420651;
+        Wed, 16 Jan 2019 17:11:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1547658716;
+        bh=Xv8tQ1PzEMDcd51TfoFUCHKVA/Gh9Mkxv0Bcdlx8Nag=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=QTtUbb8eab0Hyx3NI85qhj3MQb1jviOzqT8T/mRCrbJJuS+A7sp5AmdfGMF4Y17Nt
+         G1RbLuudw6O2op/OT8xf3huvs+JUUaK5ZGF1J1Wk4rvmGLdsjTqehsWvIl8MHRzMoa
+         kThlJ+GaEm4SG9zJ5iPRuGeNL5XYO9Byr+hGBgEQ=
+Date:   Wed, 16 Jan 2019 18:11:53 +0100
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Jon Hunter <jonathanh@nvidia.com>
+Cc:     linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+        akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
+        patches@kernelci.org, ben.hutchings@codethink.co.uk,
+        lkft-triage@lists.linaro.org, stable@vger.kernel.org,
+        linux-tegra <linux-tegra@vger.kernel.org>
+Subject: Re: [PATCH 4.14 00/27] 4.14.94-stable review
+Message-ID: <20190116171153.GA10164@kroah.com>
+References: <20190115154901.189747728@linuxfoundation.org>
+ <794339d5-a1f8-7ae1-8c8c-fbef141cc81d@nvidia.com>
+ <20190116160252.GB4594@kroah.com>
+ <26826b67-6a6b-dc79-84de-4ce48212203e@nvidia.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <26826b67-6a6b-dc79-84de-4ce48212203e@nvidia.com>
+User-Agent: Mutt/1.11.2 (2019-01-07)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Some dma channels can be reserved for secure mode or other
-hardware on the SoC, so provide a binding for a bitmask
-listing the available channels for the kernel to use.
+On Wed, Jan 16, 2019 at 04:56:08PM +0000, Jon Hunter wrote:
+> 
+> On 16/01/2019 16:02, Greg Kroah-Hartman wrote:
+> > On Wed, Jan 16, 2019 at 09:25:12AM +0000, Jon Hunter wrote:
+> >>
+> >> On 15/01/2019 16:35, Greg Kroah-Hartman wrote:
+> >>> This is the start of the stable review cycle for the 4.14.94 release.
+> >>> There are 27 patches in this series, all will be posted as a response
+> >>> to this one.  If anyone has any issues with these being applied, please
+> >>> let me know.
+> >>>
+> >>> Responses should be made by Thu Jan 17 15:48:28 UTC 2019.
+> >>> Anything received after that time might be too late.
+> >>>
+> >>> The whole patch series can be found in one patch at:
+> >>> 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.14.94-rc1.gz
+> >>> or in the git tree and branch at:
+> >>> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.14.y
+> >>> and the diffstat can be found below.
+> >>>
+> >>> thanks,
+> >>>
+> >>> greg k-h
+> >> All tests are passing for Tegra ...
+> >>
+> >> Test results for stable-v4.14:
+> >>     8 builds:	8 pass, 0 fail
+> >>     16 boots:	16 pass, 0 fail
+> >>     14 tests:	14 pass, 0 fail
+> >>
+> >> Linux version:	4.14.94-rc1-gec31b1a
+> >> Boards tested:	tegra124-jetson-tk1, tegra20-ventana,
+> >>                 tegra210-p2371-2180, tegra30-cardhu-a04
+> > 
+> > Thanks for testing two of these.
+> > 
+> > How about 4.19 and 4.20?  Does modern kernels work on this hardware as
+> > well?  :)
+> 
+> We are not that advanced yet ;-)
 
-This follows the pre-existing bcm,dma-channel-mask binding.
+So not everything for those platforms is upstream?  :(
 
-Cc: Vinod Koul <vkoul@kernel.org>
-Cc: Rob Herring <robh+dt@kernel.org>
-Cc: Mark Rutland <mark.rutland@arm.com>
-Cc: Tanglei Han <hantanglei@huawei.com>
-Cc: Zhuangluan Su <suzhuangluan@hisilicon.com>
-Cc: Ryan Grachek <ryan@edited.us>
-Cc: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Cc: dmaengine@vger.kernel.org
-Cc: devicetree@vger.kernel.org
-Signed-off-by: John Stultz <john.stultz@linaro.org>
----
-v3: Renamed to hisi-dma-avail-chan
-v4: Reworked to generic dma-channel-mask
----
- Documentation/devicetree/bindings/dma/dma.txt | 4 ++++
- 1 file changed, 4 insertions(+)
+> Only joking, absolutely and in fact we have more devices/boards
+> supported in newer kernels so it would make sense. We are also testing
+> mainline and -next.
+> 
+> Unfortunately, it is a bit of a process to add new branches at the
+> moment simply because we are piggy backing on existing infrastructure
+> for testing that I personally do not own and so it needs to be approved.
+> However, nonetheless it is doable.
+> 
+> We were talking about adding v4.19 and then v4.20 popped up. I am not
+> sure if you have any ideas yet about the EOL for v4.20? I was just
+> wondering if we should prioritise v4.20 now over v4.19?
 
-diff --git a/Documentation/devicetree/bindings/dma/dma.txt b/Documentation/devicetree/bindings/dma/dma.txt
-index 6312fb0..eeb4e4d 100644
---- a/Documentation/devicetree/bindings/dma/dma.txt
-+++ b/Documentation/devicetree/bindings/dma/dma.txt
-@@ -16,6 +16,9 @@ Optional properties:
- - dma-channels: 	Number of DMA channels supported by the controller.
- - dma-requests: 	Number of DMA request signals supported by the
- 			controller.
-+- dma-channel-mask:	Bitmask of available DMA channels in ascending order
-+			that are not reserved by firmware and are available to
-+			the kernel. i.e. first channel corresponds to LSB.
- 
- Example:
- 
-@@ -29,6 +32,7 @@ Example:
- 		#dma-cells = <1>;
- 		dma-channels = <32>;
- 		dma-requests = <127>;
-+		dma-channel-mask = <0xfffe>
- 	};
- 
- * DMA router
--- 
-2.7.4
+I was just curious, if everything was upstream (like the boards that
+linaro tests for), then running 4.19 should be just the same as 4.20.
+But if you have big out-of-tree patchsets, that's a totally different
+story.
 
+thanks,
+
+greg k-h
