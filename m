@@ -2,119 +2,104 @@ Return-Path: <SRS0=1Lvk=PY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 51F98C43387
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 70A24C43612
 	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 08:21:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1816020859
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 08:21:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547626898;
-	bh=Glnfas44zREpYviceaOBIfEKtvEurpB8LJB0mVbU470=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:List-ID:From;
-	b=Dm4uU6aJw7BjNIQDaG51+uEZ7LYZcgMFSlazPM7HAn1VYMVbDDFpiKwZtv0K+ufDC
-	 PABHRCsj28fRnqvC4IkjH+A8CCiMENCqLVIyM4HrPBo+rMMxuTwIb87b/SqcjgIteI
-	 e8W/U+5Eu66v+vLbN+y/xxMBO8FOMOhj9OoeknTk=
+	by mail.kernel.org (Postfix) with ESMTP id 4622420866
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 08:21:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387850AbfAPIVX (ORCPT
+        id S2388606AbfAPIV3 convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 16 Jan 2019 03:21:23 -0500
-Received: from mga03.intel.com ([134.134.136.65]:46231 "EHLO mga03.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730345AbfAPIVW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Jan 2019 03:21:22 -0500
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 16 Jan 2019 00:21:22 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,485,1539673200"; 
-   d="asc'?scan'208";a="138685795"
-Received: from pipin.fi.intel.com (HELO localhost) ([10.237.72.175])
-  by fmsmga001.fm.intel.com with ESMTP; 16 Jan 2019 00:21:19 -0800
-From:   Felipe Balbi <balbi@kernel.org>
-To:     Ran Wang <ran.wang_1@nxp.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc:     "linux-usb\@vger.kernel.org" <linux-usb@vger.kernel.org>,
-        "devicetree\@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-kernel\@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Ran Wang <ran.wang_1@nxp.com>
-Subject: Re: [PATCH 2/2] usb: dwc3: Add workaround for host mode VBUS glitch when boot
-In-Reply-To: <20190116064820.20007-3-ran.wang_1@nxp.com>
-References: <20190116064820.20007-1-ran.wang_1@nxp.com> <20190116064820.20007-3-ran.wang_1@nxp.com>
-Date:   Wed, 16 Jan 2019 10:21:15 +0200
-Message-ID: <87y37lko78.fsf@linux.intel.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="=-=-=";
-        micalg=pgp-sha256; protocol="application/pgp-signature"
+        Wed, 16 Jan 2019 03:21:29 -0500
+Received: from youngberry.canonical.com ([91.189.89.112]:37922 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388586AbfAPIV2 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 Jan 2019 03:21:28 -0500
+Received: from mail-pg1-f197.google.com ([209.85.215.197])
+        by youngberry.canonical.com with esmtps (TLS1.0:RSA_AES_128_CBC_SHA1:16)
+        (Exim 4.76)
+        (envelope-from <kai.heng.feng@canonical.com>)
+        id 1gjgRy-0003r5-Fa
+        for linux-kernel@vger.kernel.org; Wed, 16 Jan 2019 08:21:26 +0000
+Received: by mail-pg1-f197.google.com with SMTP id p4so3401706pgj.21
+        for <linux-kernel@vger.kernel.org>; Wed, 16 Jan 2019 00:21:26 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=R2i8PUL7ly2weAfBpz1vycpQ1SdmhQgqOzAL1abnVp4=;
+        b=Hb40ZPBnGPlWVhefNBUNK8CSc1VO9QGwi5Vp2w9u4OGza+zTef+cRzGm5ko4if2c7A
+         awauh6lGJ9mHXGx1DR/ia3wOJTFbUIaWlxVuvT0+ZZKXGSSdccJkm4h62e76h0Qt12ri
+         zCHjytoeV8048w3eWfmvjFJ2yaOM7AQaMMgjuAhfI+Kpj51wc3c9WRVg6iJMZ379VnZL
+         Tpp5JXZYZyLD8kln+8kQPCwkT3AugtcwpSY1iZj4eom/Q9DtMm8b3PKwnEJ8SBPiItwG
+         x7/R1ixR35HxImGl1H5GzTiflgrV9/4i7Wt6mQfzogu3LJEWU+Rj1PLZyow7WIpDLRnH
+         Urgw==
+X-Gm-Message-State: AJcUukcHaFSWTHipt60KG/zW9qWynbTVzXt5A2lRyXIrPvG25abDRZo5
+        dUGlJPqyfCCEhbye+C/bGb/kqM2HZOw5UA+vnh445PVHzJrQEoeb6zmT9dbd/J2Qz/TCTgMDNeP
+        iofClFGAmJxjoJ6CkB1Cur7TnJUsQGdY0jQ04ERreNg==
+X-Received: by 2002:a63:cb4a:: with SMTP id m10mr7517993pgi.105.1547626884879;
+        Wed, 16 Jan 2019 00:21:24 -0800 (PST)
+X-Google-Smtp-Source: ALg8bN6k0pLpezZfrzcZc2GDNXOqeCgz5o6tLY4QsKSOTBzm90caJateo/XahQ50j/cFtCTcjHKi6Q==
+X-Received: by 2002:a63:cb4a:: with SMTP id m10mr7517971pgi.105.1547626884543;
+        Wed, 16 Jan 2019 00:21:24 -0800 (PST)
+Received: from 2001-b011-380f-13aa-c92e-9fed-1d27-9897.dynamic-ip6.hinet.net (2001-b011-380f-13aa-c92e-9fed-1d27-9897.dynamic-ip6.hinet.net. [2001:b011:380f:13aa:c92e:9fed:1d27:9897])
+        by smtp.gmail.com with ESMTPSA id q195sm6565637pgq.7.2019.01.16.00.21.22
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 16 Jan 2019 00:21:23 -0800 (PST)
+Content-Type: text/plain;
+        charset=utf-8
+Mime-Version: 1.0 (Mac OS X Mail 12.2 \(3445.102.3\))
+Subject: Re: [PATCH] HID: i2c-hid: Disable runtime PM on Goodix touchpad
+From:   Kai Heng Feng <kai.heng.feng@canonical.com>
+In-Reply-To: <nycvar.YFH.7.76.1901141217550.6626@cbobk.fhfr.pm>
+Date:   Wed, 16 Jan 2019 16:21:21 +0800
+Cc:     benjamin.tissoires@redhat.com, linux-input@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8BIT
+Message-Id: <663EE74C-02E8-49DB-A197-2022AFE2D863@canonical.com>
+References: <20190114084734.3362-1-kai.heng.feng@canonical.com>
+ <nycvar.YFH.7.76.1901141217550.6626@cbobk.fhfr.pm>
+To:     Jiri Kosina <jikos@kernel.org>
+X-Mailer: Apple Mail (2.3445.102.3)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---=-=-=
-Content-Type: text/plain
-Content-Transfer-Encoding: quoted-printable
 
 
-Hi,
+> On Jan 14, 2019, at 19:18, Jiri Kosina <jikos@kernel.org> wrote:
+> 
+> On Mon, 14 Jan 2019, Kai-Heng Feng wrote:
+> 
+>> A Goodix touchpad doesn't work. Touching the touchpad can trigger IRQ
+>> but there's no input event from HID subsystem.
+>> 
+>> Turns out it reports some invalid data:
+>> [   22.136630] i2c_hid i2c-DELL091F:00: input: 0b 00 01 00 00 00 00 00 00 00 00
+>> 
+>> After some trial and error, it's another device that doesn't work well
+>> with ON/SLEEP commands. Disable runtime PM to fix the issue.
+> 
+> Thanks, I've now applied the patch to for-5.0/upstream-fixes. I am 
+> wondering though we are we seeing these at all - do other OSes not do the 
+> runtime PM on i2c at all?
 
-Ran Wang <ran.wang_1@nxp.com> writes:
-> +static void dwc3_power_off_all_roothub_ports(struct dwc3 *dwc)
-> +{
-> +	int i, port_num;
-> +	u32 reg, op_regs_base, offset;
-> +	void __iomem		*xhci_regs;
-> +
-> +	/* xhci regs is not mapped yet, do it temperary here */
-> +	if (dwc->xhci_resources[0].start) {
-> +		xhci_regs =3D ioremap(dwc->xhci_resources[0].start,
-> +				DWC3_XHCI_REGS_END);
-> +		if (IS_ERR(xhci_regs)) {
-> +			dev_err(dwc->dev, "Failed to ioremap xhci_regs\n");
-> +			return;
-> +		}
-> +
-> +		op_regs_base =3D HC_LENGTH(readl(xhci_regs));
-> +		reg =3D readl(xhci_regs + XHCI_HCSPARAMS1);
-> +		port_num =3D HCS_MAX_PORTS(reg);
-> +
-> +		for (i =3D 1; i <=3D port_num; i++) {
-> +			offset =3D op_regs_base + XHCI_PORTSC_BASE + 0x10*(i-1);
-> +			reg =3D readl(xhci_regs + offset);
-> +			reg &=3D ~PORT_POWER;
-> +			writel(reg, xhci_regs + offset);
-> +		}
-> +
-> +		iounmap(xhci_regs);
+According to the vendor, Windows does use ON/SLEEP, but infrequently.
 
-why can't this be done during xhci_gen_setup()?
+We can use pm_runtime_use_autosuspend() to reduce the frequency of
+ON/SLEEP commands, but it’s just papering over the touchpad firmware
+bug.
 
-=2D-=20
-balbi
+Kai-Heng
 
---=-=-=
-Content-Type: application/pgp-signature; name="signature.asc"
+> 
+> -- 
+> Jiri Kosina
+> SUSE Labs
+> 
 
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCAAdFiEElLzh7wn96CXwjh2IzL64meEamQYFAlw+6XsACgkQzL64meEa
-mQaYthAA0N7cZj+TDKBtt13xQYprxukJbw0hJF5r+Xwp64RbDU04hHDxOqrV7S7G
-gI+RWTZ1p/dvBZ5z0cf9/5Wj4Uyzcnyesd/OCWvTzJA18zNVObO7Dx/KrZawzgJf
-B6s3deHMVN1wUVJprVqqUFEXOyJ0hgvup9dQOVeatZMJLYqgW1ubPrK/7LSW52vy
-4KUBT4Ol4hXeJiz/SIngZopM9Vc1BTNXFs7ldR6UqWWtU9KnCajBz0QK5T0k4eqj
-cvw+jKj8PMts0beRRqTIRAL128aov+/+9o2X+1PEIrPYmiRlFDwUjSGTEaXfb/K2
-wHg1Bt6FdBufnlWYTuhGkT5mp1MPe6L2q11m/q6rYnJJNfqnCAExp6hx8K6cQSHP
-SATYdBr/ZaOpYJ3RaNOHX3ehfhCkLKFeofT3I/DJEUqSld5s4AmDH8VYLkSx+YtC
-KCBjwhYq9Rs1MF66jVWL+oaTG57q+Ta5FVlxlR/ARnZf3Rp65+NvSzZfckmze8p7
-pR+G1J34nziVWCNLV4YXmkfYVV3CHLdPl1YM6hvzEZiBOY0lAHPK40f56L9I/IIF
-I+eQmDT/SDNqXcEBs5pZh+2UXZSd1GWFGl2z6C5qXzXo8nGXjhHMg8powkudXxp4
-8OFNnT6Se2d9OYRnADDbMR1valZ3spQbsnjX1YPyh2s9ztsEfaU=
-=lIIu
------END PGP SIGNATURE-----
---=-=-=--
