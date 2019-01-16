@@ -6,143 +6,126 @@ X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CCC12C43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 20:38:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 70FA2C43444
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 20:38:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 91ED3206C2
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 20:38:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4B234206C2
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 20:38:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732778AbfAPUiO (ORCPT
+        id S1732839AbfAPUiU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 16 Jan 2019 15:38:14 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:57486 "EHLO mx1.redhat.com"
+        Wed, 16 Jan 2019 15:38:20 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:55772 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732714AbfAPUiK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Jan 2019 15:38:10 -0500
+        id S1732772AbfAPUiN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 Jan 2019 15:38:13 -0500
 Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 73B3AC05D3E1;
-        Wed, 16 Jan 2019 20:38:10 +0000 (UTC)
+        by mx1.redhat.com (Postfix) with ESMTPS id 138FE80F7D;
+        Wed, 16 Jan 2019 20:38:13 +0000 (UTC)
 Received: from malachite.bss.redhat.com (dhcp-10-20-1-11.bss.redhat.com [10.20.1.11])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 8DC805D967;
-        Wed, 16 Jan 2019 20:38:07 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 19C545D967;
+        Wed, 16 Jan 2019 20:38:12 +0000 (UTC)
 From:   Lyude Paul <lyude@redhat.com>
 To:     dri-devel@lists.freedesktop.org
-Cc:     Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+Cc:     David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>,
+        stable@vger.kernel.org,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
         Maxime Ripard <maxime.ripard@bootlin.com>,
-        Sean Paul <sean@poorly.run>, David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>, linux-kernel@vger.kernel.org
-Subject: [PATCH 1/3] drm/dp_mst: Remove lock check in drm_atomic_get_mst_topology_state()
-Date:   Wed, 16 Jan 2019 15:37:57 -0500
-Message-Id: <20190116203759.31820-2-lyude@redhat.com>
+        Sean Paul <sean@poorly.run>, linux-kernel@vger.kernel.org
+Subject: [PATCH 3/3] drm/dp_mst: Fix topology ref leak in drm_dp_mst_allocate_vcpi()
+Date:   Wed, 16 Jan 2019 15:37:59 -0500
+Message-Id: <20190116203759.31820-4-lyude@redhat.com>
 In-Reply-To: <20190116203759.31820-1-lyude@redhat.com>
 References: <20190116203759.31820-1-lyude@redhat.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.32]); Wed, 16 Jan 2019 20:38:10 +0000 (UTC)
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.27]); Wed, 16 Jan 2019 20:38:13 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Since modesetting locks by default were added to private objects in:
+Another drive-by fix. If slots < 0, or drm_dp_init_vcpi() fails, we'll
+end up returning from the function without dropping the topology ref
+that we grabbed at the very start. This would result in an MST hub
+and/or it's ports staying around even after the MST topology has been
+removed from the system.
 
-commit b962a12050a3 ("drm/atomic: integrate modeset lock with private
-objects")
+So, fix this by making sure that we always drop the topology ref to port
+when returning from this function.
 
-This means that the atomic state of a drm_dp_mst_topology_mgr is now
-protected by drm_dp_mst_topology_mgr->base.lock as opposed to the main
-connection_status mutex. This also means that locking isn't left up to
-the caller anymore, and is handled automatically in
-drm_atomic_get_private_obj_state().
-
-So, remove the WARN_ON() in drm_atomic_get_mst_topology_state() since
-that's now incorrect, and update the kernel docs for the function.
-Additionally since all function is now is a simple wrapper around
-drm_atomic_get_private_obj_state(), it seems more reasonable to move
-this out of drm_dp_mst_topology.c and turn it into an inline function in
-drm_dp_mst_helper.h
+Additionally: it looks like this bug exists pre-topology & malloc krefs,
+so let's also make sure this gets backported to stable.
 
 Signed-off-by: Lyude Paul <lyude@redhat.com>
+Fixes: ad7f8a1f9ced ("drm/helper: add Displayport multi-stream helper (v0.6)")
+Cc: David Airlie <airlied@linux.ie>
+Cc: Daniel Vetter <daniel@ffwll.ch>
+Cc: <stable@vger.kernel.org> # v3.17+
 ---
- drivers/gpu/drm/drm_dp_mst_topology.c | 25 -------------------------
- include/drm/drm_dp_mst_helper.h       | 20 ++++++++++++++++++--
- 2 files changed, 18 insertions(+), 27 deletions(-)
+ drivers/gpu/drm/drm_dp_mst_topology.c | 25 +++++++++++++------------
+ 1 file changed, 13 insertions(+), 12 deletions(-)
 
 diff --git a/drivers/gpu/drm/drm_dp_mst_topology.c b/drivers/gpu/drm/drm_dp_mst_topology.c
-index 196ebba8af5f..49575b80caeb 100644
+index d99560c5c693..403f035dc8b8 100644
 --- a/drivers/gpu/drm/drm_dp_mst_topology.c
 +++ b/drivers/gpu/drm/drm_dp_mst_topology.c
-@@ -3718,31 +3718,6 @@ const struct drm_private_state_funcs drm_dp_mst_topology_state_funcs = {
- };
- EXPORT_SYMBOL(drm_dp_mst_topology_state_funcs);
+@@ -3177,28 +3177,29 @@ EXPORT_SYMBOL(drm_dp_atomic_release_vcpi_slots);
+ bool drm_dp_mst_allocate_vcpi(struct drm_dp_mst_topology_mgr *mgr,
+ 			      struct drm_dp_mst_port *port, int pbn, int slots)
+ {
+-	int ret;
++	int rc;
++	bool ret = false;
  
--/**
-- * drm_atomic_get_mst_topology_state: get MST topology state
-- *
-- * @state: global atomic state
-- * @mgr: MST topology manager, also the private object in this case
-- *
-- * This function wraps drm_atomic_get_priv_obj_state() passing in the MST atomic
-- * state vtable so that the private object state returned is that of a MST
-- * topology object. Also, drm_atomic_get_private_obj_state() expects the caller
-- * to care of the locking, so warn if don't hold the connection_mutex.
-- *
-- * RETURNS:
-- *
-- * The MST topology state or error pointer.
-- */
--struct drm_dp_mst_topology_state *drm_atomic_get_mst_topology_state(struct drm_atomic_state *state,
--								    struct drm_dp_mst_topology_mgr *mgr)
--{
--	struct drm_device *dev = mgr->dev;
--
--	WARN_ON(!drm_modeset_is_locked(&dev->mode_config.connection_mutex));
--	return to_dp_mst_topology_state(drm_atomic_get_private_obj_state(state, &mgr->base));
--}
--EXPORT_SYMBOL(drm_atomic_get_mst_topology_state);
--
- /**
-  * drm_dp_mst_topology_mgr_init - initialise a topology manager
-  * @mgr: manager struct to initialise
-diff --git a/include/drm/drm_dp_mst_helper.h b/include/drm/drm_dp_mst_helper.h
-index 8c97a5f92c47..263d82178ecd 100644
---- a/include/drm/drm_dp_mst_helper.h
-+++ b/include/drm/drm_dp_mst_helper.h
-@@ -643,8 +643,6 @@ void drm_dp_mst_dump_topology(struct seq_file *m,
- void drm_dp_mst_topology_mgr_suspend(struct drm_dp_mst_topology_mgr *mgr);
- int __must_check
- drm_dp_mst_topology_mgr_resume(struct drm_dp_mst_topology_mgr *mgr);
--struct drm_dp_mst_topology_state *drm_atomic_get_mst_topology_state(struct drm_atomic_state *state,
--								    struct drm_dp_mst_topology_mgr *mgr);
- int __must_check
- drm_dp_atomic_find_vcpi_slots(struct drm_atomic_state *state,
- 			      struct drm_dp_mst_topology_mgr *mgr,
-@@ -756,4 +754,22 @@ __drm_dp_mst_state_iter_get(struct drm_atomic_state *state,
- 	for ((__i) = 0; (__i) < (__state)->num_private_objs; (__i)++) \
- 		for_each_if(__drm_dp_mst_state_iter_get((__state), &(mgr), NULL, &(new_state), (__i)))
+-	port = drm_dp_mst_topology_get_port_validated(mgr, port);
+-	if (!port)
++	if (slots < 0)
+ 		return false;
  
-+/**
-+ * drm_atomic_get_mst_topology_state() - get MST topology state
-+ * @state: global atomic state
-+ * @mgr: MST topology manager, also the private object in this case
-+ *
-+ * This function retrieves the atomic topology state for @mgr using
-+ * drm_atomic_get_priv_obj_state().
-+ *
-+ * Returns:
-+ * The atomic MST topology state or an error pointer.
-+ */
-+static inline struct drm_dp_mst_topology_state *
-+drm_atomic_get_mst_topology_state(struct drm_atomic_state *state,
-+				  struct drm_dp_mst_topology_mgr *mgr)
-+{
-+	return to_dp_mst_topology_state(drm_atomic_get_private_obj_state(
-+		state, &mgr->base));
-+}
- #endif
+-	if (slots < 0)
++	port = drm_dp_mst_topology_get_port_validated(mgr, port);
++	if (!port)
+ 		return false;
+ 
+ 	if (port->vcpi.vcpi > 0) {
+ 		DRM_DEBUG_KMS("payload: vcpi %d already allocated for pbn %d - requested pbn %d\n",
+ 			      port->vcpi.vcpi, port->vcpi.pbn, pbn);
+ 		if (pbn == port->vcpi.pbn) {
+-			drm_dp_mst_topology_put_port(port);
+-			return true;
++			ret = true;
++			goto out;
+ 		}
+ 	}
+ 
+-	ret = drm_dp_init_vcpi(mgr, &port->vcpi, pbn, slots);
+-	if (ret) {
++	rc = drm_dp_init_vcpi(mgr, &port->vcpi, pbn, slots);
++	if (rc) {
+ 		DRM_DEBUG_KMS("failed to init vcpi slots=%d max=63 ret=%d\n",
+-			      DIV_ROUND_UP(pbn, mgr->pbn_div), ret);
++			      DIV_ROUND_UP(pbn, mgr->pbn_div), rc);
+ 		goto out;
+ 	}
+ 	DRM_DEBUG_KMS("initing vcpi for pbn=%d slots=%d\n",
+@@ -3206,10 +3207,10 @@ bool drm_dp_mst_allocate_vcpi(struct drm_dp_mst_topology_mgr *mgr,
+ 
+ 	/* Keep port allocated until it's payload has been removed */
+ 	drm_dp_mst_get_port_malloc(port);
+-	drm_dp_mst_topology_put_port(port);
+-	return true;
++	ret = true;
+ out:
+-	return false;
++	drm_dp_mst_topology_put_port(port);
++	return ret;
+ }
+ EXPORT_SYMBOL(drm_dp_mst_allocate_vcpi);
+ 
 -- 
 2.20.1
 
