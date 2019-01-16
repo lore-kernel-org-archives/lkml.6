@@ -7,55 +7,58 @@ X-Spam-Status: No, score=-13.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 422E5C43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 18:07:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EEB73C43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 18:07:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0C2D920873
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 18:07:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BF74720840
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 18:07:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547662022;
-	bh=jo53Mup14T/v/AZoCNwxMsMz0yMW181Zf8oCCuRWX64=;
+	s=default; t=1547662028;
+	bh=P3+AwJVlOh7QmTKjL45wx+2I6YeStWYJygYJG3ub0x0=;
 	h=From:To:Cc:Subject:In-Reply-To:Date:List-ID:From;
-	b=sAZyLgAgoNRv1CJx+s8Z+sg5ELTnuE8CB4/k+Aj7Q5seWHNBhDX4LkZ42o6QJYjVC
-	 5oo48IeeRPoBKSYkPXR8yTf7rXYnK5T6JalHu9S1iB+07r7rkHP6qW8fbhBKlBIbCz
-	 dclGNwXKhkeuW5DJa0tEPpqAP7vQO9SWfndUlhYs=
+	b=XWyJkQBIUC7Lt3kAT4gX3o6NMGGG7bC6nAcwhSQHV7liD2dAi4kKuRK88QTjbkC3b
+	 34Ipd1CWPmCCuVXB0VaFzjwAkZF0roDDbHPXXo8UfKV0pFUM7RDHoy2KMmG23hT8dA
+	 sE8tHF3Ufem9SMdDr7HksJ6h5A/U7IOZ2Va3Lb24=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728197AbfAPSHA (ORCPT
+        id S1728337AbfAPSHG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 16 Jan 2019 13:07:00 -0500
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:55366 "EHLO
+        Wed, 16 Jan 2019 13:07:06 -0500
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:55574 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727818AbfAPSG7 (ORCPT
+        with ESMTP id S1728221AbfAPSHF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Jan 2019 13:06:59 -0500
+        Wed, 16 Jan 2019 13:07:05 -0500
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
         Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
         List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=oGstHByNYvXdISvva2ed34wo98vsqou08mH4dzCEedQ=; b=eG+bOlUH+mD/
-        l60aihAVHrz3fp/vx5wVX5FqrjW0qjNEjkxW6AlzmwYsIOdvsu2fxhxPblrd9/KtZeNPyBtUczyM6
-        caAPJ3h+vhslpZRRXjlCMnVI1HPevyiUbE+uMm8S7/pXX731f/89fZs+HlOFppBjgDSWKnStfOIb4
-        SkgJs=;
+        List-Archive; bh=VxtsiwJxpPVFGGMEFrg0N5yUlvnl8mDU8YIXx8BJ71k=; b=I7ZHQBLtm1aD
+        NkNGlj1WA1DKcb3lzXSBdED+aySaWBWwBEfj2yBN191+/Evt5ZLtRtM0+C9prV4RbHZtHMwFzfQ9p
+        Fzn3SJrdDCbMNJX+9uD09mlRUytH5u625C1jwWWHLwaCs/8vAxmve3xxcMgYcrFx3ugtna+NFPGhz
+        w1CJ4=;
 Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
         by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
         (envelope-from <broonie@sirena.org.uk>)
-        id 1gjpaX-0002SR-VP; Wed, 16 Jan 2019 18:06:54 +0000
+        id 1gjpaZ-0002SY-JP; Wed, 16 Jan 2019 18:06:55 +0000
 Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
-        id 563621126FFD; Wed, 16 Jan 2019 18:06:53 +0000 (GMT)
+        id 34F5D1126FFD; Wed, 16 Jan 2019 18:06:55 +0000 (GMT)
 From:   Mark Brown <broonie@kernel.org>
 To:     Cheng-Yi Chiang <cychiang@chromium.org>
-Cc:     Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org,
+Cc:     Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+        Rohit kumar <rohitkr@codeaurora.org>,
+        Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org,
         alsa-devel@alsa-project.org, tzungbi@chromium.org,
         Mark Brown <broonie@kernel.org>,
+        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
         Rohit kumar <rohitkr@codeaurora.org>, dgreid@chromium.org,
         alsa-devel@alsa-project.org
-Subject: Applied "ASoC: sdm845: Set DAI format for dmic codec" to the asoc tree
-In-Reply-To:  <20190115084159.135113-1-cychiang@chromium.org>
+Subject: Applied "ASoC: qcom: Kconfig: select max98927 for sdm845" to the asoc tree
+In-Reply-To:  <20190115110253.261596-1-cychiang@chromium.org>
 X-Patchwork-Hint: ignore
-Message-Id: <20190116180653.563621126FFD@debutante.sirena.org.uk>
-Date:   Wed, 16 Jan 2019 18:06:53 +0000 (GMT)
+Message-Id: <20190116180655.34F5D1126FFD@debutante.sirena.org.uk>
+Date:   Wed, 16 Jan 2019 18:06:55 +0000 (GMT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -63,7 +66,7 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   ASoC: sdm845: Set DAI format for dmic codec
+   ASoC: qcom: Kconfig: select max98927 for sdm845
 
 has been applied to the asoc tree at
 
@@ -88,38 +91,33 @@ to this mail.
 Thanks,
 Mark
 
-From 9019ab102fe8d741f873e6f630fb7aa74c38818a Mon Sep 17 00:00:00 2001
+From 0ddb0fb00a769ef85c788cb40627d09df6919833 Mon Sep 17 00:00:00 2001
 From: Cheng-Yi Chiang <cychiang@chromium.org>
-Date: Tue, 15 Jan 2019 16:41:59 +0800
-Subject: [PATCH] ASoC: sdm845: Set DAI format for dmic codec
+Date: Tue, 15 Jan 2019 19:02:53 +0800
+Subject: [PATCH] ASoC: qcom: Kconfig: select max98927 for sdm845
 
-Set codec DAI format for dmic codec in startup.
+Select SND_SOC_MAX98927 for SND_SOC_SDM845.
 
+Acked-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Signed-off-by: Rohit kumar <rohitkr@codeaurora.org>
 Signed-off-by: Cheng-Yi Chiang <cychiang@chromium.org>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- sound/soc/qcom/sdm845.c | 2 ++
- 1 file changed, 2 insertions(+)
+ sound/soc/qcom/Kconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/sound/soc/qcom/sdm845.c b/sound/soc/qcom/sdm845.c
-index 6f66a58e23ca..882f52ed8231 100644
---- a/sound/soc/qcom/sdm845.c
-+++ b/sound/soc/qcom/sdm845.c
-@@ -248,12 +248,14 @@ static int sdm845_snd_startup(struct snd_pcm_substream *substream)
- 		break;
- 
- 	case SECONDARY_MI2S_TX:
-+		codec_dai_fmt |= SND_SOC_DAIFMT_NB_NF | SND_SOC_DAIFMT_I2S;
- 		if (++(data->sec_mi2s_clk_count) == 1) {
- 			snd_soc_dai_set_sysclk(cpu_dai,
- 				Q6AFE_LPASS_CLK_ID_SEC_MI2S_IBIT,
- 				MI2S_BCLK_RATE,	SNDRV_PCM_STREAM_CAPTURE);
- 		}
- 		snd_soc_dai_set_fmt(cpu_dai, fmt);
-+		snd_soc_dai_set_fmt(codec_dai, codec_dai_fmt);
- 		break;
- 
- 	case QUATERNARY_TDM_RX_0:
+diff --git a/sound/soc/qcom/Kconfig b/sound/soc/qcom/Kconfig
+index 804ae0d93058..7948e993adba 100644
+--- a/sound/soc/qcom/Kconfig
++++ b/sound/soc/qcom/Kconfig
+@@ -102,6 +102,7 @@ config SND_SOC_SDM845
+ 	select SND_SOC_QDSP6
+ 	select SND_SOC_QCOM_COMMON
+ 	select SND_SOC_RT5663
++	select SND_SOC_MAX98927
+ 	help
+ 	  To add support for audio on Qualcomm Technologies Inc.
+ 	  SDM845 SoC-based systems.
 -- 
 2.20.1
 
