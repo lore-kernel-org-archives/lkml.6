@@ -2,126 +2,511 @@ Return-Path: <SRS0=1Lvk=PY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C0832C43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 06:19:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B6F4C43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 06:21:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7F3332082F
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 06:19:29 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=microchiptechnology.onmicrosoft.com header.i=@microchiptechnology.onmicrosoft.com header.b="jr1Tyq4K"
+	by mail.kernel.org (Postfix) with ESMTP id 39D172082F
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 06:21:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387417AbfAPGT1 (ORCPT
+        id S2387459AbfAPGVr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 16 Jan 2019 01:19:27 -0500
-Received: from esa1.microchip.iphmx.com ([68.232.147.91]:1333 "EHLO
-        esa1.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730701AbfAPGT1 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Jan 2019 01:19:27 -0500
-X-IronPort-AV: E=Sophos;i="5.56,485,1539673200"; 
-   d="scan'208";a="26477945"
-Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
-  by esa1.microchip.iphmx.com with ESMTP/TLS/DHE-RSA-AES256-SHA; 15 Jan 2019 23:19:24 -0700
-Received: from NAM01-BN3-obe.outbound.protection.outlook.com (10.10.215.89) by
- email.microchip.com (10.10.76.108) with Microsoft SMTP Server (TLS) id
- 14.3.352.0; Tue, 15 Jan 2019 23:19:24 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=microchiptechnology.onmicrosoft.com;
- s=selector1-microchiptechnology-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=NByypZFWjagvW5Y2AcMKZgxN1lXdnRFEOiYR+yCP/Gs=;
- b=jr1Tyq4KyHcONZIuyO03Rt4B/QAtrg61+IQipci3pYjUFp68dEAKRFNCZekd7llGM8Tgd8MqQP4F6g0Xrx2l4NGzyFGA5ZCYDwbaLEYZgmlCJYSmDS1eoUPU77zTm/cPzi/yiHLqQ7ngSVec7y80J4eN9UihgkuD99IXJsuteSE=
-Received: from BN6PR11MB1842.namprd11.prod.outlook.com (10.175.99.146) by
- BN6PR11MB1684.namprd11.prod.outlook.com (10.173.28.23) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1537.26; Wed, 16 Jan 2019 06:19:20 +0000
-Received: from BN6PR11MB1842.namprd11.prod.outlook.com
- ([fe80::79d8:b977:b90a:76fa]) by BN6PR11MB1842.namprd11.prod.outlook.com
- ([fe80::79d8:b977:b90a:76fa%4]) with mapi id 15.20.1516.019; Wed, 16 Jan 2019
- 06:19:20 +0000
-From:   <Tudor.Ambarus@microchip.com>
-To:     <yogeshnarayan.gaur@nxp.com>, <linux-mtd@lists.infradead.org>,
-        <boris.brezillon@bootlin.com>, <broonie@kernel.org>,
-        <marek.vasut@gmail.com>, <vigneshr@ti.com>,
-        <linux-spi@vger.kernel.org>, <devicetree@vger.kernel.org>
-CC:     <robh@kernel.org>, <mark.rutland@arm.com>, <shawnguo@kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <computersforpeace@gmail.com>, <frieder.schrempf@exceet.de>,
-        <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v7 2/5] mtd: spi-nor: add octal read flag for flash
- mt35xu512aba
-Thread-Topic: [PATCH v7 2/5] mtd: spi-nor: add octal read flag for flash
- mt35xu512aba
-Thread-Index: AQHUrLnyGdnur+dY+UC8ZO94XGejjaWxbVaA
-Date:   Wed, 16 Jan 2019 06:19:20 +0000
-Message-ID: <cb800292-a732-f6f4-650e-00bffe760e5a@microchip.com>
-References: <1547546584-5254-1-git-send-email-yogeshnarayan.gaur@nxp.com>
- <1547546584-5254-3-git-send-email-yogeshnarayan.gaur@nxp.com>
-In-Reply-To: <1547546584-5254-3-git-send-email-yogeshnarayan.gaur@nxp.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: VI1PR04CA0109.eurprd04.prod.outlook.com
- (2603:10a6:803:64::44) To BN6PR11MB1842.namprd11.prod.outlook.com
- (2603:10b6:404:103::18)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Tudor.Ambarus@microchip.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-originating-ip: [94.177.32.154]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;BN6PR11MB1684;6:VV0nXFtkUbxdq+5rOiocPF0mc0bHLZOqszbzgcr23ZixFT/Xls4yzDEWDGNkU5P062gCZJKQLe2MvoAyPnHVWYY+1tQthcZQHi7qshtE/iC/D6G6f4E5NHS5jINLc7Z0iGTwjQdTdtP1/3hvEz1DDUHeX5q6d/6HVPKm3yCeDlotA6do9DDLQYf+naGldudMgCRVP8npLe9fvrS874VsObH0bWTJ8CmQswcngZyhiFYgSmR+B7UdasQkTuWX2AyN4vawlplH7lUQR86JIlJsieHvq2l6q7nydVNl/NUqsslELPkIzr9P/hOb15iXvd1W9k1jj+8xELqMyjb7TIuGVBfnJtA2duCSVG2cdbMKSfuBhh9ovsd7PH1oLzMR3LhxFw0tk4d0pnLPv3KlnFeczDPUeFVJzln5vSo3ezCVjzGeIaUWDIfWEMMZ+Wpf+FdEB7CDmrK97P3TORgLSIEp4w==;5:kT5HcADGRBFVxGCTos4gILUBKRDs5kblL/DSEP57f07DIbsLlxYkfRzLghc/dqHVunONhagIteTaIqQHAWgIXaScJ70R5KiH7gi/pgJoJJQTikjFmbzbgBRENGJHHbiTmxWXO15pA+k+xSc6kc7fC/Ep5Oqlm315LgnDqkndSyLf9zTNhnAt7Ru5QxQdtmTSM1fL1JUtGQNvBHOPx4vOgA==;7:DKNWsSrkOoc5XbguE5ppXszpJnK1vzONnE4i3nbsdETPt1Wlvdwzn9PqzkaiEE+/zNKtVawl7RMx5GhEs/EAhfLKrF/w01w9w2xSy+5gni9QkzxJjhNMbccCyFcKAsu3+7jjT3AJCrUI0lUCg61ASQ==
-x-ms-office365-filtering-correlation-id: 4f85e8c4-14e4-4c6f-5064-08d67b7a8cc5
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600109)(711020)(2017052603328)(7153060)(7193020);SRVR:BN6PR11MB1684;
-x-ms-traffictypediagnostic: BN6PR11MB1684:
-x-microsoft-antispam-prvs: <BN6PR11MB1684CE75096A18BCBDA2F42CF0820@BN6PR11MB1684.namprd11.prod.outlook.com>
-x-forefront-prvs: 091949432C
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(376002)(136003)(346002)(39860400002)(396003)(366004)(189003)(199004)(14454004)(66066001)(3846002)(86362001)(53936002)(6506007)(6116002)(386003)(31696002)(4326008)(14444005)(256004)(53546011)(97736004)(72206003)(71190400001)(71200400001)(39060400002)(6512007)(7736002)(305945005)(316002)(81156014)(81166006)(102836004)(36756003)(8936002)(8676002)(2201001)(6246003)(76176011)(54906003)(229853002)(105586002)(106356001)(52116002)(7416002)(25786009)(26005)(5660300001)(110136005)(11346002)(6436002)(68736007)(476003)(2616005)(486006)(186003)(31686004)(446003)(99286004)(6486002)(2501003)(478600001)(2906002);DIR:OUT;SFP:1101;SCL:1;SRVR:BN6PR11MB1684;H:BN6PR11MB1842.namprd11.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: microchip.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: 56DyFUFyEiivMs9sUknZhhkqJ3HyL11rRmxFIIdjpAFo3Ptm6gQtRNLl384NVy4D8oUJ7AxRRDVNBPDNUiUFsVl9e7mJcRkReL72gFkB7Pyjmee/3pyWBpkcBMfeNPWr409qvnU0sn308Q6pp/NpD+6QlqpehzaK6Op9Q2vyNoCmh0zbueebyk9olMaO6v5FetgS21/qO0rPv/ra3TYjsI0HBhc7Py01VFANwNBhN2Pqd0AMzcFj745xjhAByYNEPeoegwOnK0ZlXmTfYolW+EuyzpZ+gCRECR6HHnyfBvAtQzCpDcCrKhxB09KkU7Aaha5Awnwzpe54wPftqMxo9ar1H3nKGmqpG4tpV+JcQ1FZJuPS1fcSyoEpbNgyKIGccsUoLwpEXqLATMwLZzeLYOe9otJm6lhwfy3FCEymn3E=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <94D5D15A0F9C1B4FA92B2F87B7A562AA@namprd11.prod.outlook.com>
-Content-Transfer-Encoding: base64
-MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-Network-Message-Id: 4f85e8c4-14e4-4c6f-5064-08d67b7a8cc5
-X-MS-Exchange-CrossTenant-originalarrivaltime: 16 Jan 2019 06:19:17.3601
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 3f4057f3-b418-4d4e-ba84-d55b4e897d88
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN6PR11MB1684
-X-OriginatorOrg: microchip.com
+        Wed, 16 Jan 2019 01:21:47 -0500
+Received: from foss.arm.com ([217.140.101.70]:41016 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730701AbfAPGVr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 Jan 2019 01:21:47 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 04F9FA78;
+        Tue, 15 Jan 2019 22:21:46 -0800 (PST)
+Received: from p8cg001049571a15.blr.arm.com (p8cg001049571a15.blr.arm.com [10.162.42.129])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 1BC7B3F5AF;
+        Tue, 15 Jan 2019 22:21:34 -0800 (PST)
+From:   Anshuman Khandual <anshuman.khandual@arm.com>
+To:     linux-mm@kvack.org, akpm@linux-foundation.org,
+        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-arm-kernel@lists.infradead.org, linux-sh@vger.kernel.org,
+        kvmarm@lists.cs.columbia.edu, linux-riscv@lists.infradead.org
+Cc:     linux@armlinux.org.uk, catalin.marinas@arm.com,
+        will.deacon@arm.com, mpe@ellerman.id.au, tglx@linutronix.de,
+        mingo@redhat.com, dave.hansen@linux.intel.com,
+        peterz@infradead.org, christoffer.dall@arm.com,
+        marc.zyngier@arm.com, kirill@shutemov.name,
+        rppt@linux.vnet.ibm.com, mhocko@suse.com,
+        ard.biesheuvel@linaro.org, mark.rutland@arm.com,
+        steve.capper@arm.com, james.morse@arm.com, robin.murphy@arm.com,
+        aneesh.kumar@linux.ibm.com, vbabka@suse.cz, shakeelb@google.com,
+        rientjes@google.com, palmer@sifive.com, greentime@andestech.com
+Subject: [PATCH V2] mm: Introduce GFP_PGTABLE
+Date:   Wed, 16 Jan 2019 11:51:32 +0530
+Message-Id: <1547619692-7946-1-git-send-email-anshuman.khandual@arm.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-DQoNCk9uIDAxLzE1LzIwMTkgMTI6MDUgUE0sIFlvZ2VzaCBOYXJheWFuIEdhdXIgd3JvdGU6DQo+
-IEFkZCBvY3RhbCByZWFkIGZsYWcgZm9yIGZsYXNoIG10MzV4dTUxMmFiYS4NCj4gVGhpcyBmbGFz
-aCwgbXQzNXh1NTEyYWJhLCBpcyBvbmx5IGNvbXBsYWludCB0byBTRkRQIEpFU0QyMTZCIGFuZCBk
-b2VzDQo+IG5vdCBzZWVtIHRvIHN1cHBvcnQgbmV3ZXIgSkVTRDIxNkMgc3RhbmRhcmQgdGhhdCBw
-cm92aWRlcyBhdXRvDQo+IGRldGVjdGlvbiBvZiBPY3RhbCBtb2RlIGNhcGFiaWxpdGllcyBhbmQg
-b3Bjb2Rlcy4gVGhlcmVmb3JlLCB0aGlzDQo+IGNhcGFiaWxpdHkgaXMgbWFudWFsbHkgYWRkZWQg
-dXNpbmcgbmV3IFNQSV9OT1JfT0NUQUxfUkVBRCBmbGFnLg0KPiANCj4gU2lnbmVkLW9mZi1ieTog
-VmlnbmVzaCBSIDx2aWduZXNockB0aS5jb20+DQo+IFNpZ25lZC1vZmYtYnk6IFlvZ2VzaCBOYXJh
-eWFuIEdhdXIgPHlvZ2VzaG5hcmF5YW4uZ2F1ckBueHAuY29tPg0KDQpSZXZpZXdlZC1ieTogVHVk
-b3IgQW1iYXJ1cyA8dHVkb3IuYW1iYXJ1c0BtaWNyb2NoaXAuY29tPg0KDQo+IC0tLQ0KPiAgZHJp
-dmVycy9tdGQvc3BpLW5vci9zcGktbm9yLmMgfCAzICsrLQ0KPiAgMSBmaWxlIGNoYW5nZWQsIDIg
-aW5zZXJ0aW9ucygrKSwgMSBkZWxldGlvbigtKQ0KPiANCj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMv
-bXRkL3NwaS1ub3Ivc3BpLW5vci5jIGIvZHJpdmVycy9tdGQvc3BpLW5vci9zcGktbm9yLmMNCj4g
-aW5kZXggODcyZDcwNzIyNjcyLi41M2EzYmNjNmE1NWIgMTAwNjQ0DQo+IC0tLSBhL2RyaXZlcnMv
-bXRkL3NwaS1ub3Ivc3BpLW5vci5jDQo+ICsrKyBiL2RyaXZlcnMvbXRkL3NwaS1ub3Ivc3BpLW5v
-ci5jDQo+IEBAIC0xODc3LDcgKzE4NzcsOCBAQCBzdGF0aWMgY29uc3Qgc3RydWN0IGZsYXNoX2lu
-Zm8gc3BpX25vcl9pZHNbXSA9IHsNCj4gIAkvKiBNaWNyb24gKi8NCj4gIAl7DQo+ICAJCSJtdDM1
-eHU1MTJhYmEiLCBJTkZPKDB4MmM1YjFhLCAwLCAxMjggKiAxMDI0LCA1MTIsDQo+IC0JCQlTRUNU
-XzRLIHwgVVNFX0ZTUiB8IFNQSV9OT1JfNEJfT1BDT0RFUykNCj4gKwkJCVNFQ1RfNEsgfCBVU0Vf
-RlNSIHwgU1BJX05PUl9PQ1RBTF9SRUFEIHwNCj4gKwkJCVNQSV9OT1JfNEJfT1BDT0RFUykNCj4g
-IAl9LA0KPiAgDQo+ICAJLyogUE1DICovDQo+IA0K
+All architectures have been defining their own PGALLOC_GFP as (GFP_KERNEL |
+__GFP_ZERO) and using it for allocating page table pages. This causes some
+code duplication which can be easily avoided. GFP_KERNEL allocated and
+cleared out pages (__GFP_ZERO) are required for page tables on any given
+architecture. This creates a new generic GFP flag flag which can be used
+for any page table page allocation. Does not cause any functional change.
+
+GFP_PGTABLE is being added into include/asm-generic/pgtable.h which is the
+generic page tabe header just to prevent it's potential misuse as a general
+allocation flag if included in include/linux/gfp.h.
+
+Signed-off-by: Anshuman Khandual <anshuman.khandual@arm.com>
+---
+Build tested on arm, arm64, powerpc, powerpc64le and x86.
+Boot tested on arm64 and x86.
+
+Changes in V2:
+
+- Moved GFP_PGTABLE into include/asm-generic/pgtable.h
+- On X86 added __GFP_ACCOUNT into GFP_PGTABLE at various places
+- Replaced possible flags on riscv and nds32 with GFP_PGTABLE
+
+Original V1: https://lkml.org/lkml/2019/1/12/54 
+
+ arch/arm/include/asm/pgalloc.h               |  8 +++-----
+ arch/arm/mm/mmu.c                            |  2 +-
+ arch/arm64/include/asm/pgalloc.h             |  9 ++++-----
+ arch/arm64/mm/mmu.c                          |  2 +-
+ arch/arm64/mm/pgd.c                          |  4 ++--
+ arch/nds32/include/asm/pgalloc.h             |  3 +--
+ arch/powerpc/include/asm/book3s/64/pgalloc.h |  6 +++---
+ arch/powerpc/include/asm/pgalloc.h           |  2 --
+ arch/powerpc/kvm/book3s_64_mmu_hv.c          |  2 +-
+ arch/powerpc/mm/pgtable-frag.c               |  4 ++--
+ arch/riscv/include/asm/pgalloc.h             |  8 +++-----
+ arch/sh/mm/pgtable.c                         |  6 ++----
+ arch/unicore32/include/asm/pgalloc.h         |  6 ++----
+ arch/x86/kernel/espfix_64.c                  |  6 ++----
+ arch/x86/mm/pgtable.c                        | 15 +++++++--------
+ include/asm-generic/pgtable.h                |  2 ++
+ virt/kvm/arm/mmu.c                           |  2 +-
+ 17 files changed, 37 insertions(+), 50 deletions(-)
+
+diff --git a/arch/arm/include/asm/pgalloc.h b/arch/arm/include/asm/pgalloc.h
+index 17ab72f..72be6f5 100644
+--- a/arch/arm/include/asm/pgalloc.h
++++ b/arch/arm/include/asm/pgalloc.h
+@@ -57,8 +57,6 @@ static inline void pud_populate(struct mm_struct *mm, pud_t *pud, pmd_t *pmd)
+ extern pgd_t *pgd_alloc(struct mm_struct *mm);
+ extern void pgd_free(struct mm_struct *mm, pgd_t *pgd);
+ 
+-#define PGALLOC_GFP	(GFP_KERNEL | __GFP_ZERO)
+-
+ static inline void clean_pte_table(pte_t *pte)
+ {
+ 	clean_dcache_area(pte + PTE_HWTABLE_PTRS, PTE_HWTABLE_SIZE);
+@@ -85,7 +83,7 @@ pte_alloc_one_kernel(struct mm_struct *mm)
+ {
+ 	pte_t *pte;
+ 
+-	pte = (pte_t *)__get_free_page(PGALLOC_GFP);
++	pte = (pte_t *)__get_free_page(GFP_PGTABLE);
+ 	if (pte)
+ 		clean_pte_table(pte);
+ 
+@@ -98,9 +96,9 @@ pte_alloc_one(struct mm_struct *mm)
+ 	struct page *pte;
+ 
+ #ifdef CONFIG_HIGHPTE
+-	pte = alloc_pages(PGALLOC_GFP | __GFP_HIGHMEM, 0);
++	pte = alloc_pages(GFP_PGTABLE | __GFP_HIGHMEM, 0);
+ #else
+-	pte = alloc_pages(PGALLOC_GFP, 0);
++	pte = alloc_pages(GFP_PGTABLE, 0);
+ #endif
+ 	if (!pte)
+ 		return NULL;
+diff --git a/arch/arm/mm/mmu.c b/arch/arm/mm/mmu.c
+index f5cc1cc..6d47784 100644
+--- a/arch/arm/mm/mmu.c
++++ b/arch/arm/mm/mmu.c
+@@ -733,7 +733,7 @@ static void __init *early_alloc(unsigned long sz)
+ 
+ static void *__init late_alloc(unsigned long sz)
+ {
+-	void *ptr = (void *)__get_free_pages(PGALLOC_GFP, get_order(sz));
++	void *ptr = (void *)__get_free_pages(GFP_PGTABLE, get_order(sz));
+ 
+ 	if (!ptr || !pgtable_page_ctor(virt_to_page(ptr)))
+ 		BUG();
+diff --git a/arch/arm64/include/asm/pgalloc.h b/arch/arm64/include/asm/pgalloc.h
+index 52fa47c..d5c75bf 100644
+--- a/arch/arm64/include/asm/pgalloc.h
++++ b/arch/arm64/include/asm/pgalloc.h
+@@ -26,14 +26,13 @@
+ 
+ #define check_pgt_cache()		do { } while (0)
+ 
+-#define PGALLOC_GFP	(GFP_KERNEL | __GFP_ZERO)
+ #define PGD_SIZE	(PTRS_PER_PGD * sizeof(pgd_t))
+ 
+ #if CONFIG_PGTABLE_LEVELS > 2
+ 
+ static inline pmd_t *pmd_alloc_one(struct mm_struct *mm, unsigned long addr)
+ {
+-	return (pmd_t *)__get_free_page(PGALLOC_GFP);
++	return (pmd_t *)__get_free_page(GFP_PGTABLE);
+ }
+ 
+ static inline void pmd_free(struct mm_struct *mm, pmd_t *pmdp)
+@@ -62,7 +61,7 @@ static inline void __pud_populate(pud_t *pudp, phys_addr_t pmdp, pudval_t prot)
+ 
+ static inline pud_t *pud_alloc_one(struct mm_struct *mm, unsigned long addr)
+ {
+-	return (pud_t *)__get_free_page(PGALLOC_GFP);
++	return (pud_t *)__get_free_page(GFP_PGTABLE);
+ }
+ 
+ static inline void pud_free(struct mm_struct *mm, pud_t *pudp)
+@@ -93,7 +92,7 @@ extern void pgd_free(struct mm_struct *mm, pgd_t *pgdp);
+ static inline pte_t *
+ pte_alloc_one_kernel(struct mm_struct *mm)
+ {
+-	return (pte_t *)__get_free_page(PGALLOC_GFP);
++	return (pte_t *)__get_free_page(GFP_PGTABLE);
+ }
+ 
+ static inline pgtable_t
+@@ -101,7 +100,7 @@ pte_alloc_one(struct mm_struct *mm)
+ {
+ 	struct page *pte;
+ 
+-	pte = alloc_pages(PGALLOC_GFP, 0);
++	pte = alloc_pages(GFP_PGTABLE, 0);
+ 	if (!pte)
+ 		return NULL;
+ 	if (!pgtable_page_ctor(pte)) {
+diff --git a/arch/arm64/mm/mmu.c b/arch/arm64/mm/mmu.c
+index b6f5aa5..07b1c0f 100644
+--- a/arch/arm64/mm/mmu.c
++++ b/arch/arm64/mm/mmu.c
+@@ -372,7 +372,7 @@ static void __create_pgd_mapping(pgd_t *pgdir, phys_addr_t phys,
+ 
+ static phys_addr_t pgd_pgtable_alloc(void)
+ {
+-	void *ptr = (void *)__get_free_page(PGALLOC_GFP);
++	void *ptr = (void *)__get_free_page(GFP_PGTABLE);
+ 	if (!ptr || !pgtable_page_ctor(virt_to_page(ptr)))
+ 		BUG();
+ 
+diff --git a/arch/arm64/mm/pgd.c b/arch/arm64/mm/pgd.c
+index 289f911..5b28e2b 100644
+--- a/arch/arm64/mm/pgd.c
++++ b/arch/arm64/mm/pgd.c
+@@ -31,9 +31,9 @@ static struct kmem_cache *pgd_cache __ro_after_init;
+ pgd_t *pgd_alloc(struct mm_struct *mm)
+ {
+ 	if (PGD_SIZE == PAGE_SIZE)
+-		return (pgd_t *)__get_free_page(PGALLOC_GFP);
++		return (pgd_t *)__get_free_page(GFP_PGTABLE);
+ 	else
+-		return kmem_cache_alloc(pgd_cache, PGALLOC_GFP);
++		return kmem_cache_alloc(pgd_cache, GFP_PGTABLE);
+ }
+ 
+ void pgd_free(struct mm_struct *mm, pgd_t *pgd)
+diff --git a/arch/nds32/include/asm/pgalloc.h b/arch/nds32/include/asm/pgalloc.h
+index 3c5fee5..e1137ce 100644
+--- a/arch/nds32/include/asm/pgalloc.h
++++ b/arch/nds32/include/asm/pgalloc.h
+@@ -27,8 +27,7 @@ static inline pte_t *pte_alloc_one_kernel(struct mm_struct *mm)
+ 	pte_t *pte;
+ 
+ 	pte =
+-	    (pte_t *) __get_free_page(GFP_KERNEL | __GFP_RETRY_MAYFAIL |
+-				      __GFP_ZERO);
++	    (pte_t *) __get_free_page(GFP_PGTABLE | __GFP_RETRY_MAYFAIL);
+ 
+ 	return pte;
+ }
+diff --git a/arch/powerpc/include/asm/book3s/64/pgalloc.h b/arch/powerpc/include/asm/book3s/64/pgalloc.h
+index 9c11732..71704e5 100644
+--- a/arch/powerpc/include/asm/book3s/64/pgalloc.h
++++ b/arch/powerpc/include/asm/book3s/64/pgalloc.h
+@@ -52,11 +52,11 @@ void pte_frag_destroy(void *pte_frag);
+ static inline pgd_t *radix__pgd_alloc(struct mm_struct *mm)
+ {
+ #ifdef CONFIG_PPC_64K_PAGES
+-	return (pgd_t *)__get_free_page(pgtable_gfp_flags(mm, PGALLOC_GFP));
++	return (pgd_t *)__get_free_page(pgtable_gfp_flags(mm, GFP_PGTABLE));
+ #else
+ 	struct page *page;
+-	page = alloc_pages(pgtable_gfp_flags(mm, PGALLOC_GFP | __GFP_RETRY_MAYFAIL),
+-				4);
++	page = alloc_pages(pgtable_gfp_flags(mm, GFP_PGTABLE |
++				__GFP_RETRY_MAYFAIL), 4);
+ 	if (!page)
+ 		return NULL;
+ 	return (pgd_t *) page_address(page);
+diff --git a/arch/powerpc/include/asm/pgalloc.h b/arch/powerpc/include/asm/pgalloc.h
+index e11f030..3b11e8b 100644
+--- a/arch/powerpc/include/asm/pgalloc.h
++++ b/arch/powerpc/include/asm/pgalloc.h
+@@ -18,8 +18,6 @@ static inline gfp_t pgtable_gfp_flags(struct mm_struct *mm, gfp_t gfp)
+ }
+ #endif /* MODULE */
+ 
+-#define PGALLOC_GFP (GFP_KERNEL | __GFP_ZERO)
+-
+ #ifdef CONFIG_PPC_BOOK3S
+ #include <asm/book3s/pgalloc.h>
+ #else
+diff --git a/arch/powerpc/kvm/book3s_64_mmu_hv.c b/arch/powerpc/kvm/book3s_64_mmu_hv.c
+index bd2dcfb..b419878 100644
+--- a/arch/powerpc/kvm/book3s_64_mmu_hv.c
++++ b/arch/powerpc/kvm/book3s_64_mmu_hv.c
+@@ -97,7 +97,7 @@ int kvmppc_allocate_hpt(struct kvm_hpt_info *info, u32 order)
+ 	}
+ 
+ 	if (!hpt)
+-		hpt = __get_free_pages(GFP_KERNEL|__GFP_ZERO|__GFP_RETRY_MAYFAIL
++		hpt = __get_free_pages(GFP_PGTABLE | __GFP_RETRY_MAYFAIL
+ 				       |__GFP_NOWARN, order - PAGE_SHIFT);
+ 
+ 	if (!hpt)
+diff --git a/arch/powerpc/mm/pgtable-frag.c b/arch/powerpc/mm/pgtable-frag.c
+index a7b0521..211aaa7 100644
+--- a/arch/powerpc/mm/pgtable-frag.c
++++ b/arch/powerpc/mm/pgtable-frag.c
+@@ -58,7 +58,7 @@ static pte_t *__alloc_for_ptecache(struct mm_struct *mm, int kernel)
+ 	struct page *page;
+ 
+ 	if (!kernel) {
+-		page = alloc_page(PGALLOC_GFP | __GFP_ACCOUNT);
++		page = alloc_page(GFP_PGTABLE | __GFP_ACCOUNT);
+ 		if (!page)
+ 			return NULL;
+ 		if (!pgtable_page_ctor(page)) {
+@@ -66,7 +66,7 @@ static pte_t *__alloc_for_ptecache(struct mm_struct *mm, int kernel)
+ 			return NULL;
+ 		}
+ 	} else {
+-		page = alloc_page(PGALLOC_GFP);
++		page = alloc_page(GFP_PGTABLE);
+ 		if (!page)
+ 			return NULL;
+ 	}
+diff --git a/arch/riscv/include/asm/pgalloc.h b/arch/riscv/include/asm/pgalloc.h
+index 94043cf..7ff1cd7 100644
+--- a/arch/riscv/include/asm/pgalloc.h
++++ b/arch/riscv/include/asm/pgalloc.h
+@@ -69,8 +69,7 @@ static inline void pgd_free(struct mm_struct *mm, pgd_t *pgd)
+ 
+ static inline pmd_t *pmd_alloc_one(struct mm_struct *mm, unsigned long addr)
+ {
+-	return (pmd_t *)__get_free_page(
+-		GFP_KERNEL | __GFP_RETRY_MAYFAIL | __GFP_ZERO);
++	return (pmd_t *)__get_free_page(GFP_PGTABLE | __GFP_RETRY_MAYFAIL);
+ }
+ 
+ static inline void pmd_free(struct mm_struct *mm, pmd_t *pmd)
+@@ -84,15 +83,14 @@ static inline void pmd_free(struct mm_struct *mm, pmd_t *pmd)
+ 
+ static inline pte_t *pte_alloc_one_kernel(struct mm_struct *mm)
+ {
+-	return (pte_t *)__get_free_page(
+-		GFP_KERNEL | __GFP_RETRY_MAYFAIL | __GFP_ZERO);
++	return (pte_t *)__get_free_page(GFP_PGTABLE | __GFP_RETRY_MAYFAIL);
+ }
+ 
+ static inline struct page *pte_alloc_one(struct mm_struct *mm)
+ {
+ 	struct page *pte;
+ 
+-	pte = alloc_page(GFP_KERNEL | __GFP_RETRY_MAYFAIL | __GFP_ZERO);
++	pte = alloc_page(GFP_PGTABLE | __GFP_RETRY_MAYFAIL);
+ 	if (likely(pte != NULL))
+ 		pgtable_page_ctor(pte);
+ 	return pte;
+diff --git a/arch/sh/mm/pgtable.c b/arch/sh/mm/pgtable.c
+index 5c8f924..324732dc5 100644
+--- a/arch/sh/mm/pgtable.c
++++ b/arch/sh/mm/pgtable.c
+@@ -2,8 +2,6 @@
+ #include <linux/mm.h>
+ #include <linux/slab.h>
+ 
+-#define PGALLOC_GFP GFP_KERNEL | __GFP_ZERO
+-
+ static struct kmem_cache *pgd_cachep;
+ #if PAGETABLE_LEVELS > 2
+ static struct kmem_cache *pmd_cachep;
+@@ -32,7 +30,7 @@ void pgtable_cache_init(void)
+ 
+ pgd_t *pgd_alloc(struct mm_struct *mm)
+ {
+-	return kmem_cache_alloc(pgd_cachep, PGALLOC_GFP);
++	return kmem_cache_alloc(pgd_cachep, GFP_PGTABLE);
+ }
+ 
+ void pgd_free(struct mm_struct *mm, pgd_t *pgd)
+@@ -48,7 +46,7 @@ void pud_populate(struct mm_struct *mm, pud_t *pud, pmd_t *pmd)
+ 
+ pmd_t *pmd_alloc_one(struct mm_struct *mm, unsigned long address)
+ {
+-	return kmem_cache_alloc(pmd_cachep, PGALLOC_GFP);
++	return kmem_cache_alloc(pmd_cachep, GFP_PGTABLE);
+ }
+ 
+ void pmd_free(struct mm_struct *mm, pmd_t *pmd)
+diff --git a/arch/unicore32/include/asm/pgalloc.h b/arch/unicore32/include/asm/pgalloc.h
+index 7cceabe..a3506e5 100644
+--- a/arch/unicore32/include/asm/pgalloc.h
++++ b/arch/unicore32/include/asm/pgalloc.h
+@@ -28,8 +28,6 @@ extern void free_pgd_slow(struct mm_struct *mm, pgd_t *pgd);
+ #define pgd_alloc(mm)			get_pgd_slow(mm)
+ #define pgd_free(mm, pgd)		free_pgd_slow(mm, pgd)
+ 
+-#define PGALLOC_GFP	(GFP_KERNEL | __GFP_ZERO)
+-
+ /*
+  * Allocate one PTE table.
+  */
+@@ -38,7 +36,7 @@ pte_alloc_one_kernel(struct mm_struct *mm)
+ {
+ 	pte_t *pte;
+ 
+-	pte = (pte_t *)__get_free_page(PGALLOC_GFP);
++	pte = (pte_t *)__get_free_page(GFP_PGTABLE);
+ 	if (pte)
+ 		clean_dcache_area(pte, PTRS_PER_PTE * sizeof(pte_t));
+ 
+@@ -50,7 +48,7 @@ pte_alloc_one(struct mm_struct *mm)
+ {
+ 	struct page *pte;
+ 
+-	pte = alloc_pages(PGALLOC_GFP, 0);
++	pte = alloc_pages(GFP_PGTABLE, 0);
+ 	if (!pte)
+ 		return NULL;
+ 	if (!PageHighMem(pte)) {
+diff --git a/arch/x86/kernel/espfix_64.c b/arch/x86/kernel/espfix_64.c
+index aebd0d5..dae28cc 100644
+--- a/arch/x86/kernel/espfix_64.c
++++ b/arch/x86/kernel/espfix_64.c
+@@ -57,8 +57,6 @@
+ # error "Need more virtual address space for the ESPFIX hack"
+ #endif
+ 
+-#define PGALLOC_GFP (GFP_KERNEL | __GFP_ZERO)
+-
+ /* This contains the *bottom* address of the espfix stack */
+ DEFINE_PER_CPU_READ_MOSTLY(unsigned long, espfix_stack);
+ DEFINE_PER_CPU_READ_MOSTLY(unsigned long, espfix_waddr);
+@@ -172,7 +170,7 @@ void init_espfix_ap(int cpu)
+ 	pud_p = &espfix_pud_page[pud_index(addr)];
+ 	pud = *pud_p;
+ 	if (!pud_present(pud)) {
+-		struct page *page = alloc_pages_node(node, PGALLOC_GFP, 0);
++		struct page *page = alloc_pages_node(node, GFP_PGTABLE, 0);
+ 
+ 		pmd_p = (pmd_t *)page_address(page);
+ 		pud = __pud(__pa(pmd_p) | (PGTABLE_PROT & ptemask));
+@@ -184,7 +182,7 @@ void init_espfix_ap(int cpu)
+ 	pmd_p = pmd_offset(&pud, addr);
+ 	pmd = *pmd_p;
+ 	if (!pmd_present(pmd)) {
+-		struct page *page = alloc_pages_node(node, PGALLOC_GFP, 0);
++		struct page *page = alloc_pages_node(node, GFP_PGTABLE, 0);
+ 
+ 		pte_p = (pte_t *)page_address(page);
+ 		pmd = __pmd(__pa(pte_p) | (PGTABLE_PROT & ptemask));
+diff --git a/arch/x86/mm/pgtable.c b/arch/x86/mm/pgtable.c
+index 7bd0170..a5b1672 100644
+--- a/arch/x86/mm/pgtable.c
++++ b/arch/x86/mm/pgtable.c
+@@ -13,19 +13,17 @@ phys_addr_t physical_mask __ro_after_init = (1ULL << __PHYSICAL_MASK_SHIFT) - 1;
+ EXPORT_SYMBOL(physical_mask);
+ #endif
+ 
+-#define PGALLOC_GFP (GFP_KERNEL_ACCOUNT | __GFP_ZERO)
+-
+ #ifdef CONFIG_HIGHPTE
+ #define PGALLOC_USER_GFP __GFP_HIGHMEM
+ #else
+ #define PGALLOC_USER_GFP 0
+ #endif
+ 
+-gfp_t __userpte_alloc_gfp = PGALLOC_GFP | PGALLOC_USER_GFP;
++gfp_t __userpte_alloc_gfp = GFP_PGTABLE | __GFP_ACCOUNT | PGALLOC_USER_GFP;
+ 
+ pte_t *pte_alloc_one_kernel(struct mm_struct *mm)
+ {
+-	return (pte_t *)__get_free_page(PGALLOC_GFP & ~__GFP_ACCOUNT);
++	return (pte_t *)__get_free_page(GFP_PGTABLE);
+ }
+ 
+ pgtable_t pte_alloc_one(struct mm_struct *mm)
+@@ -235,7 +233,7 @@ static int preallocate_pmds(struct mm_struct *mm, pmd_t *pmds[], int count)
+ {
+ 	int i;
+ 	bool failed = false;
+-	gfp_t gfp = PGALLOC_GFP;
++	gfp_t gfp = GFP_PGTABLE | __GFP_ACCOUNT;
+ 
+ 	if (mm == &init_mm)
+ 		gfp &= ~__GFP_ACCOUNT;
+@@ -401,14 +399,14 @@ static inline pgd_t *_pgd_alloc(void)
+ 	 * We allocate one page for pgd.
+ 	 */
+ 	if (!SHARED_KERNEL_PMD)
+-		return (pgd_t *)__get_free_pages(PGALLOC_GFP,
++		return (pgd_t *)__get_free_pages(GFP_PGTABLE | __GFP_ACCOUNT,
+ 						 PGD_ALLOCATION_ORDER);
+ 
+ 	/*
+ 	 * Now PAE kernel is not running as a Xen domain. We can allocate
+ 	 * a 32-byte slab for pgd to save memory space.
+ 	 */
+-	return kmem_cache_alloc(pgd_cache, PGALLOC_GFP);
++	return kmem_cache_alloc(pgd_cache, GFP_PGTABLE | __GFP_ACCOUNT);
+ }
+ 
+ static inline void _pgd_free(pgd_t *pgd)
+@@ -422,7 +420,8 @@ static inline void _pgd_free(pgd_t *pgd)
+ 
+ static inline pgd_t *_pgd_alloc(void)
+ {
+-	return (pgd_t *)__get_free_pages(PGALLOC_GFP, PGD_ALLOCATION_ORDER);
++	return (pgd_t *)__get_free_pages(GFP_PGTABLE | __GFP_ACCOUNT,
++						PGD_ALLOCATION_ORDER);
+ }
+ 
+ static inline void _pgd_free(pgd_t *pgd)
+diff --git a/include/asm-generic/pgtable.h b/include/asm-generic/pgtable.h
+index 05e61e6..3d9cde6 100644
+--- a/include/asm-generic/pgtable.h
++++ b/include/asm-generic/pgtable.h
+@@ -1186,4 +1186,6 @@ static inline bool arch_has_pfn_modify_check(void)
+ #define mm_pmd_folded(mm)	__is_defined(__PAGETABLE_PMD_FOLDED)
+ #endif
+ 
++#define GFP_PGTABLE	(GFP_KERNEL | __GFP_ZERO)
++
+ #endif /* _ASM_GENERIC_PGTABLE_H */
+diff --git a/virt/kvm/arm/mmu.c b/virt/kvm/arm/mmu.c
+index fbdf3ac..f60a5b8 100644
+--- a/virt/kvm/arm/mmu.c
++++ b/virt/kvm/arm/mmu.c
+@@ -143,7 +143,7 @@ static int mmu_topup_memory_cache(struct kvm_mmu_memory_cache *cache,
+ 	if (cache->nobjs >= min)
+ 		return 0;
+ 	while (cache->nobjs < max) {
+-		page = (void *)__get_free_page(PGALLOC_GFP);
++		page = (void *)__get_free_page(GFP_PGTABLE);
+ 		if (!page)
+ 			return -ENOMEM;
+ 		cache->objects[cache->nobjs++] = page;
+-- 
+2.7.4
+
