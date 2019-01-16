@@ -2,61 +2,68 @@ Return-Path: <SRS0=1Lvk=PY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B22FC43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 21:46:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 94526C43612
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 21:46:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1AE4A20652
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 21:46:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 698A020675
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 21:46:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731413AbfAPVqa (ORCPT
+        id S1731503AbfAPVql (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 16 Jan 2019 16:46:30 -0500
-Received: from mga04.intel.com ([192.55.52.120]:29949 "EHLO mga04.intel.com"
+        Wed, 16 Jan 2019 16:46:41 -0500
+Received: from mx1.mailbox.org ([80.241.60.212]:51284 "EHLO mx1.mailbox.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731045AbfAPVq3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Jan 2019 16:46:29 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga007.fm.intel.com ([10.253.24.52])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 16 Jan 2019 13:46:29 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,487,1539673200"; 
-   d="scan'208";a="115222565"
-Received: from lhaqq1-mobl2.amr.corp.intel.com (HELO localhost) ([10.249.254.231])
-  by fmsmga007.fm.intel.com with ESMTP; 16 Jan 2019 13:46:26 -0800
-Date:   Wed, 16 Jan 2019 23:46:24 +0200
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     Stefan Berger <stefanb@linux.vnet.ibm.com>
-Cc:     linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/5] tpm: ppi: rename TPM_PPI_REVISION_ID to
- TPM_PPI_REVISION_1
-Message-ID: <20190116214624.GC25803@linux.intel.com>
-References: <20190109221103.1897677-1-stefanb@linux.vnet.ibm.com>
- <20190109221103.1897677-3-stefanb@linux.vnet.ibm.com>
+        id S1731045AbfAPVqk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 Jan 2019 16:46:40 -0500
+Received: from smtp2.mailbox.org (smtp2.mailbox.org [80.241.60.241])
+        (using TLSv1.2 with cipher ECDHE-RSA-CHACHA20-POLY1305 (256/256 bits))
+        (No client certificate requested)
+        by mx1.mailbox.org (Postfix) with ESMTPS id 1B9584BABE;
+        Wed, 16 Jan 2019 22:46:38 +0100 (CET)
+X-Virus-Scanned: amavisd-new at heinlein-support.de
+Received: from smtp2.mailbox.org ([80.241.60.241])
+        by spamfilter05.heinlein-hosting.de (spamfilter05.heinlein-hosting.de [80.241.56.123]) (amavisd-new, port 10030)
+        with ESMTP id JoVaH_P6vLlp; Wed, 16 Jan 2019 22:46:37 +0100 (CET)
+Subject: Re: [PATCH 2/3] net: dsa: lantiq_gswip: fix OF child-node lookups
+To:     Johan Hovold <johan@kernel.org>
+Cc:     Andrew Lunn <andrew@lunn.ch>,
+        Vivien Didelot <vivien.didelot@gmail.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, stable <stable@vger.kernel.org>
+References: <20190116102335.30433-1-johan@kernel.org>
+ <20190116102335.30433-3-johan@kernel.org>
+From:   Hauke Mehrtens <hauke@hauke-m.de>
+Message-ID: <97b4da00-2aef-fbb1-2336-15a9399aff7b@hauke-m.de>
+Date:   Wed, 16 Jan 2019 22:46:35 +0100
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190109221103.1897677-3-stefanb@linux.vnet.ibm.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20190116102335.30433-3-johan@kernel.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 09, 2019 at 05:11:00PM -0500, Stefan Berger wrote:
-> TPM PPI 1.3 introduces a function revision 2 for some functions. So,
-> rename the existing TPM_PPI_REVISION_ID to TPM_PPI_REVISION_1.
+On 1/16/19 11:23 AM, Johan Hovold wrote:
+> Use the new of_get_compatible_child() helper to look up child nodes to
+> avoid ever matching non-child nodes elsewhere in the tree.
 > 
-> Signed-off-by: Stefan Berger <stefanb@linux.vnet.ibm.com>
+> Also fix up the related struct device_node leaks.
+> 
+> Fixes: 14fceff4771e ("net: dsa: Add Lantiq / Intel DSA driver for vrx200")
+> Cc: stable <stable@vger.kernel.org>	# 4.20
+> Cc: Hauke Mehrtens <hauke@hauke-m.de>
+> Signed-off-by: Johan Hovold <johan@kernel.org>
 
-The change looks good, but why TPM_PPI_REVISION_1 and not
-TPM_PPI_REVISION_ID_1?
+Acked-by: Hauke Mehrtens <hauke@hauke-m.de>
 
-/Jarkko
+> ---
+>  drivers/net/dsa/lantiq_gswip.c | 16 +++++++++-------
+>  1 file changed, 9 insertions(+), 7 deletions(-)
+> 
