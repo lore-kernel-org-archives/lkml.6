@@ -6,49 +6,49 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 80194C43612
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 13:46:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AEB95C43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 13:46:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 55BBD206C2
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 13:46:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 87EFF20859
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 13:46:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390829AbfAPNqJ (ORCPT
+        id S2404560AbfAPNqN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 16 Jan 2019 08:46:09 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:40510 "EHLO
+        Wed, 16 Jan 2019 08:46:13 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:44678 "EHLO
         mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2404521AbfAPNqF (ORCPT
+        by vger.kernel.org with ESMTP id S2404545AbfAPNqL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Jan 2019 08:46:05 -0500
-Received: from pps.filterd (m0098394.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id x0GDeYZ1079250
-        for <linux-kernel@vger.kernel.org>; Wed, 16 Jan 2019 08:46:04 -0500
-Received: from e06smtp07.uk.ibm.com (e06smtp07.uk.ibm.com [195.75.94.103])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2q2303fwxg-1
+        Wed, 16 Jan 2019 08:46:11 -0500
+Received: from pps.filterd (m0098393.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id x0GDeiax127668
+        for <linux-kernel@vger.kernel.org>; Wed, 16 Jan 2019 08:46:10 -0500
+Received: from e06smtp05.uk.ibm.com (e06smtp05.uk.ibm.com [195.75.94.101])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2q23ejpuv9-1
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Wed, 16 Jan 2019 08:46:04 -0500
+        for <linux-kernel@vger.kernel.org>; Wed, 16 Jan 2019 08:46:10 -0500
 Received: from localhost
-        by e06smtp07.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        by e06smtp05.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
         for <linux-kernel@vger.kernel.org> from <rppt@linux.ibm.com>;
-        Wed, 16 Jan 2019 13:46:01 -0000
-Received: from b06cxnps4074.portsmouth.uk.ibm.com (9.149.109.196)
-        by e06smtp07.uk.ibm.com (192.168.101.137) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        Wed, 16 Jan 2019 13:46:07 -0000
+Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
+        by e06smtp05.uk.ibm.com (192.168.101.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
         (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Wed, 16 Jan 2019 13:45:50 -0000
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (b06wcsmtp001.portsmouth.uk.ibm.com [9.149.105.160])
-        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x0GDjnsK66256932
+        Wed, 16 Jan 2019 13:45:55 -0000
+Received: from d06av24.portsmouth.uk.ibm.com (mk.ibm.com [9.149.105.60])
+        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x0GDjsO65046570
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 16 Jan 2019 13:45:49 GMT
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 727C0A405F;
-        Wed, 16 Jan 2019 13:45:49 +0000 (GMT)
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 58723A4054;
-        Wed, 16 Jan 2019 13:45:45 +0000 (GMT)
+        Wed, 16 Jan 2019 13:45:54 GMT
+Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 6076642045;
+        Wed, 16 Jan 2019 13:45:54 +0000 (GMT)
+Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 1E6D642041;
+        Wed, 16 Jan 2019 13:45:50 +0000 (GMT)
 Received: from rapoport-lnx (unknown [9.148.8.226])
-        by b06wcsmtp001.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
-        Wed, 16 Jan 2019 13:45:45 +0000 (GMT)
-Received: by rapoport-lnx (sSMTP sendmail emulation); Wed, 16 Jan 2019 15:45:44 +0200
+        by d06av24.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
+        Wed, 16 Jan 2019 13:45:50 +0000 (GMT)
+Received: by rapoport-lnx (sSMTP sendmail emulation); Wed, 16 Jan 2019 15:45:49 +0200
 From:   Mike Rapoport <rppt@linux.ibm.com>
 To:     linux-mm@kvack.org
 Cc:     Andrew Morton <akpm@linux-foundation.org>,
@@ -86,22 +86,22 @@ Cc:     Andrew Morton <akpm@linux-foundation.org>,
         openrisc@lists.librecores.org, sparclinux@vger.kernel.org,
         uclinux-h8-devel@lists.sourceforge.jp, x86@kernel.org,
         xen-devel@lists.xenproject.org, Mike Rapoport <rppt@linux.ibm.com>
-Subject: [PATCH 17/21] init/main: add checks for the return value of memblock_alloc*()
-Date:   Wed, 16 Jan 2019 15:44:17 +0200
+Subject: [PATCH 18/21] swiotlb: add checks for the return value of memblock_alloc*()
+Date:   Wed, 16 Jan 2019 15:44:18 +0200
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1547646261-32535-1-git-send-email-rppt@linux.ibm.com>
 References: <1547646261-32535-1-git-send-email-rppt@linux.ibm.com>
 X-TM-AS-GCONF: 00
-x-cbid: 19011613-0028-0000-0000-00000339FC69
+x-cbid: 19011613-0020-0000-0000-0000030747DE
 X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19011613-0029-0000-0000-000023F7237C
-Message-Id: <1547646261-32535-18-git-send-email-rppt@linux.ibm.com>
+x-cbparentid: 19011613-0021-0000-0000-00002158647E
+Message-Id: <1547646261-32535-19-git-send-email-rppt@linux.ibm.com>
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-01-16_05:,,
  signatures=0
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
+ malwarescore=0 suspectscore=3 phishscore=0 bulkscore=0 spamscore=0
  clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ mlxlogscore=998 adultscore=0 classifier=spam adjust=0 reason=mlx
  scancount=1 engine=8.0.1-1810050000 definitions=main-1901160114
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -116,55 +116,46 @@ size calculations with a local variable.
 
 Signed-off-by: Mike Rapoport <rppt@linux.ibm.com>
 ---
- init/main.c | 26 ++++++++++++++++++++------
- 1 file changed, 20 insertions(+), 6 deletions(-)
+ kernel/dma/swiotlb.c | 19 +++++++++++++------
+ 1 file changed, 13 insertions(+), 6 deletions(-)
 
-diff --git a/init/main.c b/init/main.c
-index a56f65a..d58a365 100644
---- a/init/main.c
-+++ b/init/main.c
-@@ -373,12 +373,20 @@ static inline void smp_prepare_cpus(unsigned int maxcpus) { }
-  */
- static void __init setup_command_line(char *command_line)
+diff --git a/kernel/dma/swiotlb.c b/kernel/dma/swiotlb.c
+index d636177..e78835c8 100644
+--- a/kernel/dma/swiotlb.c
++++ b/kernel/dma/swiotlb.c
+@@ -191,6 +191,7 @@ void __init swiotlb_update_mem_attributes(void)
+ int __init swiotlb_init_with_tbl(char *tlb, unsigned long nslabs, int verbose)
  {
--	saved_command_line =
--		memblock_alloc(strlen(boot_command_line) + 1, SMP_CACHE_BYTES);
--	initcall_command_line =
--		memblock_alloc(strlen(boot_command_line) + 1, SMP_CACHE_BYTES);
--	static_command_line = memblock_alloc(strlen(command_line) + 1,
--					     SMP_CACHE_BYTES);
-+	size_t len = strlen(boot_command_line) + 1;
+ 	unsigned long i, bytes;
++	size_t alloc_size;
+ 
+ 	bytes = nslabs << IO_TLB_SHIFT;
+ 
+@@ -203,12 +204,18 @@ int __init swiotlb_init_with_tbl(char *tlb, unsigned long nslabs, int verbose)
+ 	 * to find contiguous free memory regions of size up to IO_TLB_SEGSIZE
+ 	 * between io_tlb_start and io_tlb_end.
+ 	 */
+-	io_tlb_list = memblock_alloc(
+-				PAGE_ALIGN(io_tlb_nslabs * sizeof(int)),
+-				PAGE_SIZE);
+-	io_tlb_orig_addr = memblock_alloc(
+-				PAGE_ALIGN(io_tlb_nslabs * sizeof(phys_addr_t)),
+-				PAGE_SIZE);
++	alloc_size = PAGE_ALIGN(io_tlb_nslabs * sizeof(int));
++	io_tlb_list = memblock_alloc(alloc_size, PAGE_SIZE);
++	if (!io_tlb_list)
++		panic("%s: Failed to allocate %lu bytes align=0x%lx\n",
++		      __func__, alloc_size, PAGE_SIZE);
 +
-+	saved_command_line = memblock_alloc(len, SMP_CACHE_BYTES);
-+	if (!saved_command_line)
-+		panic("%s: Failed to allocate %zu bytes\n", __func__, len);
++	alloc_size = PAGE_ALIGN(io_tlb_nslabs * sizeof(phys_addr_t));
++	io_tlb_orig_addr = memblock_alloc(alloc_size, PAGE_SIZE);
++	if (!io_tlb_orig_addr)
++		panic("%s: Failed to allocate %lu bytes align=0x%lx\n",
++		      __func__, alloc_size, PAGE_SIZE);
 +
-+	initcall_command_line =	memblock_alloc(len, SMP_CACHE_BYTES);
-+	if (!initcall_command_line)
-+		panic("%s: Failed to allocate %zu bytes\n", __func__, len);
-+
-+	static_command_line = memblock_alloc(len, SMP_CACHE_BYTES);
-+	if (!static_command_line)
-+		panic("%s: Failed to allocate %zu bytes\n", __func__, len);
-+
- 	strcpy(saved_command_line, boot_command_line);
- 	strcpy(static_command_line, command_line);
- }
-@@ -773,8 +781,14 @@ static int __init initcall_blacklist(char *str)
- 			pr_debug("blacklisting initcall %s\n", str_entry);
- 			entry = memblock_alloc(sizeof(*entry),
- 					       SMP_CACHE_BYTES);
-+			if (!entry)
-+				panic("%s: Failed to allocate %zu bytes\n",
-+				      __func__, sizeof(*entry));
- 			entry->buf = memblock_alloc(strlen(str_entry) + 1,
- 						    SMP_CACHE_BYTES);
-+			if (!entry->buf)
-+				panic("%s: Failed to allocate %zu bytes\n",
-+				      __func__, strlen(str_entry) + 1);
- 			strcpy(entry->buf, str_entry);
- 			list_add(&entry->next, &blacklisted_initcalls);
- 		}
+ 	for (i = 0; i < io_tlb_nslabs; i++) {
+ 		io_tlb_list[i] = IO_TLB_SEGSIZE - OFFSET(i, IO_TLB_SEGSIZE);
+ 		io_tlb_orig_addr[i] = INVALID_PHYS_ADDR;
 -- 
 2.7.4
 
