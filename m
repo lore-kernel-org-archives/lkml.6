@@ -2,175 +2,126 @@ Return-Path: <SRS0=1Lvk=PY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CD837C43612
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 00:24:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2FFCEC43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 00:24:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9D03520657
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 00:24:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EF6B920657
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 00:24:46 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TZ/QH7aR"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726972AbfAPAYO (ORCPT
+        id S1726994AbfAPAYp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 15 Jan 2019 19:24:14 -0500
-Received: from syrinx.knorrie.org ([82.94.188.77]:36356 "EHLO
-        syrinx.knorrie.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726821AbfAPAYN (ORCPT
+        Tue, 15 Jan 2019 19:24:45 -0500
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:40793 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726821AbfAPAYo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Jan 2019 19:24:13 -0500
-Received: from [IPv6:2001:980:4a41:fb::12] (unknown [IPv6:2001:980:4a41:fb::12])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by syrinx.knorrie.org (Postfix) with ESMTPSA id 4DD21353CFB4E;
-        Wed, 16 Jan 2019 01:24:10 +0100 (CET)
-Subject: Re: [PATCH v3] xen: Fix x86 sched_clock() interface for xen
-To:     Juergen Gross <jgross@suse.com>, linux-kernel@vger.kernel.org,
-        xen-devel@lists.xenproject.org, x86@kernel.org
-Cc:     boris.ostrovsky@oracle.com, sstabellini@kernel.org, hpa@zytor.com,
-        tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
-        stable@vger.kernel.org
-References: <20190114124413.3742-1-jgross@suse.com>
-From:   Hans van Kranenburg <hans@knorrie.org>
-Openpgp: preference=signencrypt
-Autocrypt: addr=hans@knorrie.org; prefer-encrypt=mutual; keydata=
- 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
-Message-ID: <ebfc24e3-21a0-6cc6-ae68-5c13c1e66b9a@knorrie.org>
-Date:   Wed, 16 Jan 2019 01:24:09 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.0
-MIME-Version: 1.0
-In-Reply-To: <20190114124413.3742-1-jgross@suse.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en_US
-Content-Transfer-Encoding: 8bit
+        Tue, 15 Jan 2019 19:24:44 -0500
+Received: by mail-pg1-f194.google.com with SMTP id z10so1962476pgp.7;
+        Tue, 15 Jan 2019 16:24:44 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=mkmFmJdpSXSKhijNr3kUkL3r8cCD+bdzluzE9exscmM=;
+        b=TZ/QH7aRXAxqH+Xg6KEZcagmJ2Sw7xHhvUJGfwgyVUUq5/Gk+FpwS1SWmmtvL0Dtp6
+         yTEAXyMGSSD1nFrRsSWZe3pR3ded7HNX0dhoFD6fMOA26WICBFm33+zwdoPXXOGD9EMt
+         TbPGs+iMInZunQ2ef1c0ljxdCR2NSLvhEBb5sQwPkCYqVt08HY+7QOPbn6TFxshMBJh0
+         Mpx/Ie4WHTz3qJzs70GnHzyinRS5dmq68SLID7BKUjWbo20nc0zULSeF1R9sAfD67ILp
+         xHZ6qO26FqCluktWlwFz+wMQV5FTrvEtOqYUJCODNnAMF2ej7k4O5zX3D2RvLTiUmVAS
+         ns8w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=mkmFmJdpSXSKhijNr3kUkL3r8cCD+bdzluzE9exscmM=;
+        b=KfoSpqnrzwOwdOXUfZVMbew2KB/P26gRDO8i+QycLir6z40jbda12+Gow8Eb1oEA7H
+         DqAEqKxEWgjXnzYtnw+E9db73ABYnBoNClez+HkE65oQPhPkEM7vSf/vLdLE2AHSaha5
+         SxkA7pEH1u9ugC7K2qgWGiHRsXsSWY7KeOHqeSiz41hRP9n/ipuDQdz9UuKlXAfVDtu8
+         TeWx3Zfst7YLHIbWVti3eupJNgzJimSuWTsHhKun5K2cFY214m9GqzVZG8tWAfvvoUtQ
+         bv9Ejz8O78osr0UJta0oYTL9b/MehoAgEWda55RbJRNISCVDSAkyLAOZjSHtjJ4T+I3Q
+         4PbA==
+X-Gm-Message-State: AJcUukdy4DafMNUPnUMBqinwyGqGfFh7hmxBmeaoK6n5EUitzIAPgHoh
+        sui65er/Mu0box3BbPqVhqHFvxwneNI=
+X-Google-Smtp-Source: ALg8bN7EoMaQJiremLvfE98vGDdT8Nd0yJX7h3nNiWGTKvo3KPDsUX0fl3IPnkcA8eXBdR1gxDi4+w==
+X-Received: by 2002:a62:1212:: with SMTP id a18mr6963374pfj.217.1547598283743;
+        Tue, 15 Jan 2019 16:24:43 -0800 (PST)
+Received: from localhost.localdomain ([216.13.234.27])
+        by smtp.gmail.com with ESMTPSA id 22sm6730519pgd.85.2019.01.15.16.24.42
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 15 Jan 2019 16:24:42 -0800 (PST)
+From:   Alamy Liu <alamy.liu@gmail.com>
+To:     Venkat Gopalakrishnan <venkatg@codeaurora.org>
+Cc:     Ulf Hansson <ulf.hansson@linaro.org>,
+        linux-mmc@vger.kernel.org (open list:MULTIMEDIA CARD (MMC), SECURE
+        DIGITAL (SD) AND...), linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH] mmc: cqhci: Fix a tiny potential memory leak on error condition
+Date:   Tue, 15 Jan 2019 16:24:38 -0800
+Message-Id: <20190116002440.1678-1-alamy.liu@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+In the error case:
+   either cq_host->desc_base
+       or cq_host->trans_desc_base
+might have been granted memory successfully.
 
-On 1/14/19 1:44 PM, Juergen Gross wrote:
-> Commit f94c8d11699759 ("sched/clock, x86/tsc: Rework the x86 'unstable'
-> sched_clock() interface") broke Xen guest time handling across
-> migration:
-> 
-> [  187.249951] Freezing user space processes ... (elapsed 0.001 seconds) done.
-> [  187.251137] OOM killer disabled.
-> [  187.251137] Freezing remaining freezable tasks ... (elapsed 0.001 seconds) done.
-> [  187.252299] suspending xenstore...
-> [  187.266987] xen:grant_table: Grant tables using version 1 layout
-> [18446743811.706476] OOM killer enabled.
-> [18446743811.706478] Restarting tasks ... done.
-> [18446743811.720505] Setting capacity to 16777216
-> 
-> Fix that by setting xen_sched_clock_offset at resume time to ensure a
-> monotonic clock value.
-> 
-> [...]
+The value of mmc_host->cqe_enabled stays 'false'.
+Thus, cqhci_disable (mmc_cqe_ops->cqe_disable) won't be called to
+free the memory.
+Also, cqhci_disable() is designed to disable and free all resources,
+not suitable to handle this corner case.
 
-With v3 of the patch, I see the time jump in one log line happen, but
-only when using PVH.
+Signed-off-by: Alamy Liu <alamy.liu@gmail.com>
+---
+ drivers/mmc/host/cqhci.c | 20 +++++++++++++++++++-
+ 1 file changed, 19 insertions(+), 1 deletion(-)
 
-[   49.486453] Freezing user space processes ... (elapsed 0.002 seconds)
-done.
-[   49.488743] OOM killer disabled.
-[   49.488764] Freezing remaining freezable tasks ... (elapsed 0.001
-seconds) done.
-[   49.491117] suspending xenstore...
-[2000731.388722] xen:events: Xen HVM callback vector for event delivery
-is enabled
-[   49.491750] xen:grant_table: Grant tables using version 1 layout
-[   49.810722] OOM killer enabled.
-[   49.810744] Restarting tasks ... done.
-[   49.856263] Setting capacity to 6291456
-[   50.006002] Setting capacity to 10485760
+diff --git a/drivers/mmc/host/cqhci.c b/drivers/mmc/host/cqhci.c
+index 974997b6cb..58ad8cd613 100644
+--- a/drivers/mmc/host/cqhci.c
++++ b/drivers/mmc/host/cqhci.c
+@@ -223,7 +223,7 @@ static int cqhci_host_alloc_tdl(struct cqhci_host *cq_host)
+ 					      &cq_host->trans_desc_dma_base,
+ 					      GFP_KERNEL);
+ 	if (!cq_host->desc_base || !cq_host->trans_desc_base)
+-		return -ENOMEM;
++		goto err_free_dma;
+ 
+ 	pr_debug("%s: cqhci: desc-base: 0x%p trans-base: 0x%p\n desc_dma 0x%llx trans_dma: 0x%llx\n",
+ 		 mmc_hostname(cq_host->mmc), cq_host->desc_base, cq_host->trans_desc_base,
+@@ -234,6 +234,24 @@ static int cqhci_host_alloc_tdl(struct cqhci_host *cq_host)
+ 		setup_trans_desc(cq_host, i);
+ 
+ 	return 0;
++
++err_free_dma:
++	if (cq_host->desc_base) {
++		dmam_free_coherent(mmc_dev(cq_host->mmc), cq_host->desc_size,
++				   cq_host->desc_base,
++				   cq_host->desc_dma_base);
++		cq_host->desc_base = NULL;
++		cq_host->desc_dma_base = 0;
++	}
++	if (cq_host->trans_desc_base) {
++		dmam_free_coherent(mmc_dev(cq_host->mmc), cq_host->data_size,
++				   cq_host->trans_desc_base,
++				   cq_host->trans_desc_dma_base);
++		cq_host->trans_desc_base = NULL;
++		cq_host->trans_desc_dma_base = 0;
++	}
++
++	return -ENOMEM;
+ }
+ 
+ static void __cqhci_enable(struct cqhci_host *cq_host)
+-- 
+2.17.1
 
-If I start as PV, it never seems to happen.
-
-Up to you to decide how important this is. :)
-
-FYI this is with v3 on top of the Debian stretch-backports 4.19 kernel,
-which I'm starting to use now to reboot things with.
-
--# uname -a
-Linux appnode-kylie 4.19.0-0.bpo.1-cloud-amd64 #1 SMP Debian
-4.19.12-1~bpo9+1+mendix1 (2019-01-15) x86_64 GNU/Linux
-
-https://salsa.debian.org/knorrie-guest/linux/commits/mendix/stretch-backports
-
-Hans
