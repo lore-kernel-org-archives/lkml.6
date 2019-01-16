@@ -2,176 +2,124 @@ Return-Path: <SRS0=1Lvk=PY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 728B5C43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 05:09:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0FE42C43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 05:25:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 41F8720840
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 05:09:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C96542087E
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 05:25:43 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=amacapital-net.20150623.gappssmtp.com header.i=@amacapital-net.20150623.gappssmtp.com header.b="ld0edM9O"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729052AbfAPFJv (ORCPT
+        id S1732289AbfAPFZm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 16 Jan 2019 00:09:51 -0500
-Received: from mail-it1-f196.google.com ([209.85.166.196]:53676 "EHLO
-        mail-it1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727738AbfAPFJv (ORCPT
+        Wed, 16 Jan 2019 00:25:42 -0500
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:36629 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729133AbfAPFZl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Jan 2019 00:09:51 -0500
-Received: by mail-it1-f196.google.com with SMTP id g85so1239560ita.3
-        for <linux-kernel@vger.kernel.org>; Tue, 15 Jan 2019 21:09:50 -0800 (PST)
+        Wed, 16 Jan 2019 00:25:41 -0500
+Received: by mail-pg1-f193.google.com with SMTP id n2so2280769pgm.3
+        for <linux-kernel@vger.kernel.org>; Tue, 15 Jan 2019 21:25:41 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=amacapital-net.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=H/HALKcacvqDYXk15+v0kxp0lBj9BJAmXZoagms+T7A=;
+        b=ld0edM9OOGm+n0suq+USsITO2pV1cvxagw8TDWH+1R42BTWZMUlzvo6GkvIDUIe9cU
+         RHk7Rh0yE1uyAifrO7FBqnk0JGoY11XLJOoM353xOjnIDSWBCHfRXTE/D6c+UJfZjgPI
+         0ENXKzC3asdIkTSWVWXA71wJaOPjPX6sMdBHpqdVLYAbcgYGvvRBbM5p5AxyiMS6rVNq
+         3RFSSJx3RljUjFv18zVmJuQpb+RgGxgFL5IKOm3REi27VshBs/K86+zjIndW3VMB6pfb
+         JUT+RC6QmqypWPTrtbr0cplNxeWLaddf487LLVCF/YAUB7VeVWjnricOyl4zq2w2kyPG
+         HvDw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=mLwqZsLPctr46/6aQANoR969bgmeOBMpHoBdkgcDvhA=;
-        b=lRPbch+m8Rl/5M3NN4hfsjpM3EM/2UFmgU1OGsg14FWLl/oBRR+TTRMyjB8QNzwio5
-         N/xgQf+RDe7ukrtvxOlXVYjQytw9yonQ0tRm+LBv09O6ASFvOmp2w5rQFF0OMpGk8LWa
-         SqlXxBf+X4Rhtr1YORRu6WQSBu2V5zxzeDR9afDCVoGej071s+7d5htg6Vgp7/7GuPJX
-         YqXF/tIANuae6kjLPS12BMD/9hA3ucF7tJwzci0PB61Fig25kDwciDAvwVmPqArhBjKN
-         W7thUjTfulH7unPimGe28nH8tkK+iTfjN9UKpz4sfMz+7xbQRsRAWoKm7NwrouAk8avP
-         HmCw==
-X-Gm-Message-State: AJcUukfXfU9RP8kAAvu1cv6i/HEWnScFq9z5qH98ebR0eq6YIS49N2FG
-        lCB/gO+5QIkK3Nn20mKYwR9NoTxeQ820Ft2YNQNgDQ==
-X-Google-Smtp-Source: ALg8bN562ARQZL7NPD7vkyggQae3X5MTDuP362sQLN0nU/tBOVyFufFFHakTHBQa5OJ3LfZjWTZ62rtPa8NcomnkAJQ=
-X-Received: by 2002:a24:ce42:: with SMTP id v63mr4551925itg.136.1547615389860;
- Tue, 15 Jan 2019 21:09:49 -0800 (PST)
-MIME-Version: 1.0
-References: <20190115095834.22617-1-kasong@redhat.com> <20190115095834.22617-3-kasong@redhat.com>
- <20190115231005.GF6596@zn.tnic> <20190116033243.GB9649@dhcp-128-65.nay.redhat.com>
-In-Reply-To: <20190116033243.GB9649@dhcp-128-65.nay.redhat.com>
-From:   Kairui Song <kasong@redhat.com>
-Date:   Wed, 16 Jan 2019 13:09:38 +0800
-Message-ID: <CACPcB9fWoV=b3DwhmBAAgqDHc0x=PfSyEuqnZcAQjM=LLLkAQw@mail.gmail.com>
-Subject: Re: [PATCH v2 2/2] x86, kexec_file_load: make it work with
- efi=noruntime or efi=old_map
-To:     Dave Young <dyoung@redhat.com>
-Cc:     Borislav Petkov <bp@alien8.de>, linux-kernel@vger.kernel.org,
-        tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com,
-        x86@kernel.org, Baoquan He <bhe@redhat.com>,
-        kexec@lists.infradead.org, akpm@linux-foundation.org,
-        robert.moore@intel.com, erik.schmauss@intel.com,
-        rafael.j.wysocki@intel.com, Len Brown <lenb@kernel.org>,
-        Chao Fan <fanc.fnst@cn.fujitsu.com>
-Content-Type: text/plain; charset="UTF-8"
+        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=H/HALKcacvqDYXk15+v0kxp0lBj9BJAmXZoagms+T7A=;
+        b=Jo1HDH7ep/dxMcqSOfNeDRYO7Zbo2o0Bk5GHF+oicY6tXVdOjDkRgi76Xlqk4e2vGn
+         XNSqQdhy6HA5HQSgBc34wJElKuO938W14kKuCcEPpYaqvvvQnvdrKlxpD1zjzkC4+e2W
+         ZKvHhFmv8Xr5CtV+q4JKE1HylBLDBGgZuNqQ3jv0zeM+zocz0J3vOjo5TlJ2m7z9dk0c
+         F8/wjZlTnp6SRHhha2b21g6hFK0d4zkkMz1uZbTL6gkjY6/tjxqj6b468Yw+7pFTdI6g
+         NNNyUZKvstIDmQIVcCQBBEzJo0vfmZhzYaHHEcajIHdtT1GhFAbwJyZap+6F26FXWFk6
+         uS0A==
+X-Gm-Message-State: AJcUukcv1QwiGuM9uOpLI+SdIyc3UVtqzSqdGLOPZxKPXYPTb4mtucSZ
+        M+AXfYS84SbwgwW2vgsKK3zFxA==
+X-Google-Smtp-Source: ALg8bN4uVx6TDRJoMjFYg5t3oSEiRJIzKKRyCL5utcwwI8xVwy5NlRPDTRPsAx94EPURadO99JkTBA==
+X-Received: by 2002:a63:7c41:: with SMTP id l1mr7094325pgn.45.1547616340771;
+        Tue, 15 Jan 2019 21:25:40 -0800 (PST)
+Received: from ?IPv6:2601:646:c200:7429:f1d4:c2ab:a188:f287? ([2601:646:c200:7429:f1d4:c2ab:a188:f287])
+        by smtp.gmail.com with ESMTPSA id q199sm9196537pfc.97.2019.01.15.21.25.39
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 15 Jan 2019 21:25:39 -0800 (PST)
+Content-Type: text/plain;
+        charset=us-ascii
+Mime-Version: 1.0 (1.0)
+Subject: Re: [PATCH] mm/mincore: allow for making sys_mincore() privileged
+From:   Andy Lutomirski <luto@amacapital.net>
+X-Mailer: iPhone Mail (16C101)
+In-Reply-To: <CAHk-=wgF9p9xNzZei_-ejGLy1bJf4VS1C5E9_V0kCTEpCkpCTQ@mail.gmail.com>
+Date:   Tue, 15 Jan 2019 21:25:38 -0800
+Cc:     Josh Snyder <joshs@netflix.com>,
+        Dominique Martinet <asmadeus@codewreck.org>,
+        Dave Chinner <david@fromorbit.com>,
+        Jiri Kosina <jikos@kernel.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        Jann Horn <jannh@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Michal Hocko <mhocko@suse.com>, Linux-MM <linux-mm@kvack.org>,
+        kernel list <linux-kernel@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <9E337EA6-7CDA-457B-96C6-E91F83742587@amacapital.net>
+References: <20190108044336.GB27534@dastard> <CAHk-=wjvzEFQcTGJFh9cyV_MPQftNrjOLon8YMMxaX0G1TLqkg@mail.gmail.com> <20190109022430.GE27534@dastard> <nycvar.YFH.7.76.1901090326460.16954@cbobk.fhfr.pm> <20190109043906.GF27534@dastard> <CAHk-=wic28fSkwmPbBHZcJ3BGbiftprNy861M53k+=OAB9n0=w@mail.gmail.com> <20190110004424.GH27534@dastard> <CAHk-=wg1jSQ-gq-M3+HeTBbDs1VCjyiwF4gqnnBhHeWizyrigg@mail.gmail.com> <20190110070355.GJ27534@dastard> <CAHk-=wigwXV_G-V1VxLs6BAvVkvW5=Oj+xrNHxE_7yxEVwoe3w@mail.gmail.com> <20190110122442.GA21216@nautica> <CAHk-=wip2CPrdOwgF0z4n2tsdW7uu+Egtcx9Mxxe3gPfPW_JmQ@mail.gmail.com> <5c3e7de6.1c69fb81.4aebb.3fec@mx.google.com> <CAHk-=wgF9p9xNzZei_-ejGLy1bJf4VS1C5E9_V0kCTEpCkpCTQ@mail.gmail.com>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 16, 2019 at 11:32 AM Dave Young <dyoung@redhat.com> wrote:
->
-> On 01/16/19 at 12:10am, Borislav Petkov wrote:
-> > On Tue, Jan 15, 2019 at 05:58:34PM +0800, Kairui Song wrote:
-> > > When efi=noruntime or efi=oldmap is used, EFI services won't be available
-> > > in the second kernel, therefore the second kernel will not be able to get
-> > > the ACPI RSDP address from firmware by calling EFI services and won't
-> > > boot. Previously we are expecting the user to set the acpi_rsdp=<addr>
-> > > on kernel command line for second kernel as there was no way to pass RSDP
-> > > address to second kernel.
-> > >
-> > > After commit e6e094e053af ('x86/acpi, x86/boot: Take RSDP address from
-> > > boot params if available'), now it's possible to set an acpi_rsdp_addr
-> > > parameter in the boot_params passed to second kernel, this commit make
-> > > use of it, detect and set the RSDP address when it's required for second
-> > > kernel to boot.
-> > >
-> > > Tested with an EFI enabled KVM VM with efi=noruntime.
-> > >
-> > > Suggested-by: Dave Young <dyoung@redhat.com>
-> > > Signed-off-by: Kairui Song <kasong@redhat.com>
-> > > ---
-> > >  arch/x86/kernel/kexec-bzimage64.c | 21 +++++++++++++++++++++
-> > >  drivers/acpi/acpica/tbxfroot.c    |  3 +--
-> > >  include/acpi/acpixf.h             |  2 +-
-> > >  3 files changed, 23 insertions(+), 3 deletions(-)
-> > >
-> > > diff --git a/arch/x86/kernel/kexec-bzimage64.c b/arch/x86/kernel/kexec-bzimage64.c
-> > > index 53917a3ebf94..0a90dcbd041f 100644
-> > > --- a/arch/x86/kernel/kexec-bzimage64.c
-> > > +++ b/arch/x86/kernel/kexec-bzimage64.c
-> > > @@ -20,6 +20,7 @@
-> > >  #include <linux/mm.h>
-> > >  #include <linux/efi.h>
-> > >  #include <linux/verification.h>
-> > > +#include <linux/acpi.h>
-> > >
-> > >  #include <asm/bootparam.h>
-> > >  #include <asm/setup.h>
-> > > @@ -255,8 +256,28 @@ setup_boot_parameters(struct kimage *image, struct boot_params *params,
-> > >     /* Setup EFI state */
-> > >     setup_efi_state(params, params_load_addr, efi_map_offset, efi_map_sz,
-> > >                     efi_setup_data_offset);
-> > > +
-> > > +#ifdef CONFIG_ACPI
-> > > +   /* Setup ACPI RSDP pointer in case EFI is not available in second kernel */
-> > > +   if (!acpi_disabled && (!efi_enabled(EFI_RUNTIME_SERVICES) || efi_enabled(EFI_OLD_MEMMAP))) {
-> > > +           /* Copied from acpi_os_get_root_pointer accordingly */
-> > > +           params->acpi_rsdp_addr = boot_params.acpi_rsdp_addr;
-> > > +           if (!params->acpi_rsdp_addr) {
-> > > +                   if (efi_enabled(EFI_CONFIG_TABLES)) {
-> > > +                           if (efi.acpi20 != EFI_INVALID_TABLE_ADDR)
-> > > +                                   params->acpi_rsdp_addr = efi.acpi20;
-> > > +                           else if (efi.acpi != EFI_INVALID_TABLE_ADDR)
-> > > +                                   params->acpi_rsdp_addr = efi.acpi;
-> > > +                   } else if (IS_ENABLED(CONFIG_ACPI_LEGACY_TABLES_LOOKUP)) {
-> > > +                           acpi_find_root_pointer(&params->acpi_rsdp_addr);
-> > > +                   }
-> > > +           }
-> > > +           if (!params->acpi_rsdp_addr)
-> > > +                   pr_warn("RSDP is not available for second kernel\n");
-> > > +   }
-> > >  #endif
-> >
-> > Amazing the amount of ACPI RDSP parsing and fiddling patches flying
-> > around these days...
-> >
-> > In any case, this needs to be synchronized with:
-> >
-> > https://lkml.kernel.org/r/20190107032243.25324-1-fanc.fnst@cn.fujitsu.com
-> >
-> > and checked whether the above can be used instead of sprinkling of ACPI
-> > parsing code left and right.
->
-> Both Baoquan and Chao are cced for comments.
-> The above KASLR patches seems some early code to parsing acpi, but I think in this
-> patch just call acpi function to get the root pointer no need to add the
-> duplicate logic of if/else/else if.
->
-> Kairui,  do you have any reason for the checking?  Is there some simple
-> acpi function to just return the root pointer?
-
-Hi, I'm afraid that would require moving multiple structure and
-function out of .init,
-acpi_os_get_root_pointer is an ideal function to do the job, but it's
-in .init and (on x86) it will call x86_init.acpi.get_root_pointer (by
-calling acpi_arch_get_root_pointer) which will also be freed after
-init, unless I change the x86_init, move they out of .init which is
-not a good idea.
-
-Maybe I could split acpi_os_get_root_pointer into two, one gets freed
-after init, one for later use. But the "acpi_rsdp_addr" trick only
-works for x86, and this would change more common acpi driver code so
-not sure if a good idea.
 
 
->
-> >
-> > Thx.
-> >
-> > --
-> > Regards/Gruss,
-> >     Boris.
-> >
-> > Good mailing practices for 400: avoid top-posting and trim the reply.
->
-> Thanks
-> Dave
+> On Jan 15, 2019, at 9:00 PM, Linus Torvalds <torvalds@linux-foundation.org=
+> wrote:
+>=20
+>> On Wed, Jan 16, 2019 at 12:42 PM Josh Snyder <joshs@netflix.com> wrote:
+>>=20
+>> For Netflix, losing accurate information from the mincore syscall would
+>> lengthen database cluster maintenance operations from days to months.  We=
+
+>> rely on cross-process mincore to migrate the contents of a page cache fro=
+m
+>> machine to machine, and across reboots.
+>=20
+> Ok, this is the kind of feedback we need, and means I guess we can't
+> just use the mapping existence for mincore.
+>=20
+> The two other ways that we considered were:
+>=20
+> (a) owner of the file gets to know cache information for that file.
+>=20
+> (b) having the fd opened *writably* gets you cache residency information.
+>=20
+> Sadly, taking a look at happycache, you open the file read-only, so
+> (b) doesn't work.
+>=20
+> Judging just from the source code, I can't tell how the user ownership
+> works. Any input on that?
+>=20
+> And if you're not the owner of the file, do you have another
+> suggestion for that "Yes, I have the right to see what's in-core for
+> this file". Because the problem is literally that if it's some random
+> read-only system file, the kernel shouldn't leak access patterns to
+> it..
+>=20
+>=20
 
 
-
---
-Best Regards,
-Kairui Song
+Something like CAP_DAC_READ_SEARCH might not be crazy.=
