@@ -2,148 +2,116 @@ Return-Path: <SRS0=1Lvk=PY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E87AC43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 17:18:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BC19DC43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 17:21:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 163EF20578
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 17:18:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8C38220651
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 17:21:20 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="IwHR6ITw"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="ejGwBCRo"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405920AbfAPRSt (ORCPT
+        id S2405831AbfAPRVS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 16 Jan 2019 12:18:49 -0500
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:38785 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727015AbfAPRSs (ORCPT
+        Wed, 16 Jan 2019 12:21:18 -0500
+Received: from merlin.infradead.org ([205.233.59.134]:40694 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727015AbfAPRVS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Jan 2019 12:18:48 -0500
-Received: by mail-pl1-f194.google.com with SMTP id e5so3309063plb.5
-        for <linux-kernel@vger.kernel.org>; Wed, 16 Jan 2019 09:18:48 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sifive.com; s=google;
-        h=from:date:to:cc:subject:in-reply-to:message-id:references
-         :user-agent:mime-version;
-        bh=ZTiHF3dL+2srsmvssgd9ObZTL3s29JwNyOk6wAQF10Y=;
-        b=IwHR6ITwxyt3b2CWTgmNjHANS4gmQledAxOXiMHswCHz/xLfPVxbU8BBevwVaAfpdx
-         2iAOsl6omCigjzyzO9eKUtexe7lhU/Q7jZd0LWapEgsaGEQryfV2u7VmwBcgKlsYoWcp
-         bMOVuF6rlAZNKp5vzPcafNDiILF7H6ehsrhv5cdS98NzLslHpclX4oeCZHZJdQgL0hpp
-         DSOvvQHdShbMwk+X9meaONPOoRsDq7NjV7DIdgdybuPdpq6yeXEWmHYZbF9X2vDtBuo3
-         2P3AROnEeI2gkl014SZgWzeeIPt0Dfdc4DhWqK5XxntQnHU4+uJ443WK43MXOA8RGCtm
-         dE5A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:date:to:cc:subject:in-reply-to:message-id
-         :references:user-agent:mime-version;
-        bh=ZTiHF3dL+2srsmvssgd9ObZTL3s29JwNyOk6wAQF10Y=;
-        b=tT8Au85wd348tYfklZfKHa+KD3HMaQ0ycQ9N0zBb+7FLYYm29VF4jezSgv2qhs6gnV
-         m/LWrKDauVmjEnm/m56PmHRUfNeqV2s5QIiBcPmt2do/N4nXrg+2VdeAROteXMGzB+4g
-         QQTN/nTQORvEIZMHKBPMFs68LaLLVp2Z25b673jeCguRI/8cy/Y6Pu6pA8LkMS03L9Gm
-         xjyjH+93EzF3AUDllgQ2kspSrfIXX0Jq4MxYDRR//xRR05c4eScA3rQsJSFDURgMyoDE
-         Hg0/t603sp2X0AgdxCU+xKktbMnO6InRrjnASl3joMkWX76ui8OYZa79ljNlNNG2YHwl
-         XZPw==
-X-Gm-Message-State: AJcUukeSlhX04YqJtrJwNofLo2v9JzAEuZFVZvC5Ci1f15czJfeskjtp
-        p90q9Kp7nECugVDuR8iSD8G38g==
-X-Google-Smtp-Source: ALg8bN75ZlXgeuf3XWu6SSZjOj9NOU9HLQ37HC38cXDiHArS8zTJukwiUl2PXmBP/rZaDiLrUFlACg==
-X-Received: by 2002:a17:902:925:: with SMTP id 34mr10638623plm.14.1547659127552;
-        Wed, 16 Jan 2019 09:18:47 -0800 (PST)
-Received: from localhost ([2607:f598:b382:d300::14ef])
-        by smtp.gmail.com with ESMTPSA id q199sm12601950pfc.97.2019.01.16.09.18.46
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 16 Jan 2019 09:18:46 -0800 (PST)
-From:   Paul Walmsley <paul.walmsley@sifive.com>
-X-Google-Original-From: Paul Walmsley <paulw@sifive.com>
-Date:   Wed, 16 Jan 2019 09:18:45 -0800 (PST)
-To:     =?ISO-8859-15?Q?Uwe_Kleine-K=F6nig?= 
-        <u.kleine-koenig@pengutronix.de>
-cc:     Yash Shah <yash.shah@sifive.com>,
-        Palmer Dabbelt <palmer@sifive.com>, linux-pwm@vger.kernel.org,
-        linux-riscv@lists.infradead.org,
-        Thierry Reding <thierry.reding@gmail.com>, robh+dt@kernel.org,
-        mark.rutland@arm.com, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Sachin Ghadi <sachin.ghadi@sifive.com>,
-        Paul Walmsley <paul.walmsley@sifive.com>
-Subject: Re: [PATCH 2/2] pwm: sifive: Add a driver for SiFive SoC PWM
-In-Reply-To: <20190116164640.mi3zjbhbhc6k5v7p@pengutronix.de>
-Message-ID: <alpine.DEB.2.21.9999.1901160909540.19681@viisi.sifive.com>
-References: <1547194964-16718-1-git-send-email-yash.shah@sifive.com> <1547194964-16718-3-git-send-email-yash.shah@sifive.com> <20190115220046.etgbno6ymsux75dk@pengutronix.de> <CAJ2_jOEuU_=bpbVmdsq7FFEKEm_wHza-h7Hu8QmZ3BgsGgi-ng@mail.gmail.com>
- <20190116164640.mi3zjbhbhc6k5v7p@pengutronix.de>
-User-Agent: Alpine 2.21.9999 (DEB 301 2018-08-15)
+        Wed, 16 Jan 2019 12:21:18 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=Content-Transfer-Encoding:Content-Type:
+        In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender
+        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=HjB4WyTG0y963TSzDm2EKwD/+zJ5pPanwxddC7G0mTw=; b=ejGwBCRoKP4jizHf4jljpbq8Ge
+        ocCCBkkxl47KYLXCdgdiSlP1dPQ4T+/v7X9oPIF96L33/f6dIitqjyFlq0jNCV2n7uDwd9bcp5gcu
+        1CmaOIU+Hz15IHxd+zAJc4JWyEOQzUJCFr64ukBPVoMOvn6B66p3jrlLgYdx/Fs7TMSMvTAbH1827
+        TQL888u1TxkBcoqcj5Mc8C6ZQSSiwIo2pynIwahqkRuXq6a6lUs2+czBg+iHGFb5nxpvsV93YVz8D
+        2KRhJFDorEc5PSVa7knXcLCqEkAap6W/kCR7dyMgPqJ808vj9ZJ79fmvbIeyLjncdF18CEl1YnEcb
+        y+oADF8A==;
+Received: from [199.233.58.37] (helo=[10.83.93.157])
+        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gjosL-0002gO-7t; Wed, 16 Jan 2019 17:21:13 +0000
+Subject: Re: [PATCH] powerpc/ps3: Use struct_size() in kzalloc()
+To:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>
+Cc:     linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
+References: <20190108210010.GA980@embeddedor>
+From:   Geoff Levand <geoff@infradead.org>
+Message-ID: <595f7b4b-9e26-ae72-de5f-270dce677c65@infradead.org>
+Date:   Wed, 16 Jan 2019 09:21:12 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="8323329-800223328-1547659125=:19681"
+In-Reply-To: <20190108210010.GA980@embeddedor>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
+Hi Gustavo,
 
---8323329-800223328-1547659125=:19681
-Content-Type: text/plain; charset=iso-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+On 1/8/19 1:00 PM, Gustavo A. R. Silva wrote:
+> One of the more common cases of allocation size calculations is finding the
+> size of a structure that has a zero-sized array at the end, along with memory
+> for some number of elements for that array. For example:
+> 
+> struct foo {
+>     int stuff;
+>     void *entry[];
+> };
+> 
+> instance = kzalloc(sizeof(struct foo) + sizeof(void *) * count, GFP_KERNEL);
+> 
+> Instead of leaving these open-coded and prone to type mistakes, we can now
+> use the new struct_size() helper:
+> 
+> instance = kzalloc(struct_size(instance, entry, count), GFP_KERNEL);
+> 
+> This code was detected with the help of Coccinelle.
+> 
+> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+> ---
+>  arch/powerpc/platforms/ps3/device-init.c | 4 +---
+>  1 file changed, 1 insertion(+), 3 deletions(-)
+> 
+> diff --git a/arch/powerpc/platforms/ps3/device-init.c b/arch/powerpc/platforms/ps3/device-init.c
+> index e7075aaff1bb..59587b75493d 100644
+> --- a/arch/powerpc/platforms/ps3/device-init.c
+> +++ b/arch/powerpc/platforms/ps3/device-init.c
+> @@ -354,9 +354,7 @@ static int ps3_setup_storage_dev(const struct ps3_repository_device *repo,
+>  		 repo->dev_index, repo->dev_type, port, blk_size, num_blocks,
+>  		 num_regions);
+>  
+> -	p = kzalloc(sizeof(struct ps3_storage_device) +
+> -		    num_regions * sizeof(struct ps3_storage_region),
+> -		    GFP_KERNEL);
+> +	p = kzalloc(struct_size(p, regions, num_regions), GFP_KERNEL);
+>  	if (!p) {
+>  		result = -ENOMEM;
+>  		goto fail_malloc;
+It seems to me the motivation for this change is just to have a
+code change.  As I've said for other similar patches, I'm reluctant
+to accept such trivial changes to the PS3 code because it makes
+it harder for me to maintain the code in the long term.  When I
+need to do a git bisect to track down a problem I generally have
+a set of debugging patches that I apply on top of the bisect.  A
+change to the code like this creates the potential for a patch
+conflict that I then need to manually edit to resolve.
 
-On Wed, 16 Jan 2019, Uwe Kleine-K=F6nig wrote:
+If this change was for relatively new code, or better, for a patch
+that was submitted but not yet merged, then my feelings would be
+different.  I think it would be really useful to have something
+that scans patches in patchwork.
 
-> On Wed, Jan 16, 2019 at 04:40:42PM +0530, Yash Shah wrote:
-> > On Wed, Jan 16, 2019 at 3:30 AM Uwe Kleine-K=F6nig
-> > <u.kleine-koenig@pengutronix.de> wrote:
-> > > On Fri, Jan 11, 2019 at 01:52:44PM +0530, Yash Shah wrote:
-> > > > diff --git a/drivers/pwm/Kconfig b/drivers/pwm/Kconfig
-> > > > index a8f47df..3bcaf6a 100644
-> > > > --- a/drivers/pwm/Kconfig
-> > > > +++ b/drivers/pwm/Kconfig
-> > > > @@ -380,6 +380,16 @@ config PWM_SAMSUNG
-> > > >         To compile this driver as a module, choose M here: the modu=
-le
-> > > >         will be called pwm-samsung.
-> > > >
-> > > > +config PWM_SIFIVE
-> > > > +     tristate "SiFive PWM support"
-> > > > +     depends on OF
-> > > > +     depends on COMMON_CLK
-> > >
-> > > I'd say add:
-> > >
-> > >         depends on MACH_SIFIVE || COMPILE_TEST
-> > >
-> > > (I guess "MACH_SIFIVE" is wrong, but I assume you get what I mean.)
-> >=20
-> > As of now, MACH_SIFIVE/ARCH_SIFIVE isn't available.
-> > @Paul, Do you have any comments on this?
->=20
-> If this is not going to be available at least protect it by
->=20
-> =09depends RISCV || COMPILE_TEST
-
-There's nothing RISC-V or SiFive SoC-specific about this driver or IP=20
-block.  The HDL for this IP block is open-source and posted on Github. =20
-The IP block and driver would work unchanged on an ARM or MIPS SoC, and in=
-=20
-fact, SiFive does design ARM-based SoCs as well.  Likewise, any other SoC=
-=20
-vendor could take the HDL for this IP block from the git tree and=20
-implement it on their own SoC.
-
-More generally: it's a basic principle of Linux device drivers that they=20
-should be buildable for any architecture.  The idea here is to prevent=20
-developers from burying architecture or SoC-specific hacks into the=20
-driver.  So there shouldn't be any architecture or SoC-specific code in=20
-any device driver, unless it's abstracted in some way - ideally through a=
-=20
-common framework.
-
-So from this point of view, neither "depends MACH_SIFIVE" nor "depends=20
-RISCV" would be appropriate.  Similarly, the equivalents for other=20
-architectures (e.g. "ARCH_ARM") or SoC manufacturers (e.g.,=20
-"MACH_SAMSUNG") wouldn't be appropriate for any generic IP block device=20
-driver like this one.
-
-
-- Paul
---8323329-800223328-1547659125=:19681--
+-Geoff
