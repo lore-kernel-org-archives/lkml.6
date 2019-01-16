@@ -2,142 +2,106 @@ Return-Path: <SRS0=1Lvk=PY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EAF61C43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 13:24:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 501DCC43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 13:24:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B1A3B20651
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 13:24:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1796020651
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 13:24:57 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="f7K77Q7g"
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="AgpmqYnM"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404290AbfAPNYi (ORCPT
+        id S2393123AbfAPNYz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 16 Jan 2019 08:24:38 -0500
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:55066 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732880AbfAPNYh (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Jan 2019 08:24:37 -0500
-Received: by mail-wm1-f65.google.com with SMTP id a62so1959104wmh.4
-        for <linux-kernel@vger.kernel.org>; Wed, 16 Jan 2019 05:24:35 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=VZGE+THsRwEY5N+8xt1GakeqbbAUxTIXTQwNrTtr11s=;
-        b=f7K77Q7gmUbCEwYDDMy2pRXG6Gw2fxoGXpTKkHulBV2vYPW9Cm9n6+FWukj08+X25S
-         oAYqlCDZdRD8daeE9fNoza9/2oAMoFJch28nbl7MCUJ9VxChgv5YFVzhKHzNnB9aJSlB
-         CSs49jFBS9Slm1Vu+HzNfYv0AcBF1X0GJsglo=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=VZGE+THsRwEY5N+8xt1GakeqbbAUxTIXTQwNrTtr11s=;
-        b=Pf+p96mI284ZnnpY5JnjghPU1PQHdbKj6YtZrwG8rV9bctptKagUyhPsvTK/cNY2Zs
-         rc8SY3zRaMwx9pzQPY0JrI053xvp095dHmxmBLYjYIpX4MlOReM7ndYvgsCi9BSSyhpp
-         6ndfYPhLjP1KjH8/8SqkqZD4WcHWTQLqd8AALhHsTPMdFbQPcG43SZbWUiE0izmgP3Z2
-         3E5Vik4r6+NWAA7y9MkM5lYozHHTdnV+R0RtQB8IsblEw9X3rMAJ4DsgOuS3jSR/1cxg
-         RGCWjY0n7sorrjHG7YmP0aNK1B0SdCLxtG+m9LqV3aAtami5pVnKCx0ngWAkbi0HhDTH
-         KlyA==
-X-Gm-Message-State: AJcUukc363aHoSapGf698uNz+y6UrDinK1dgh3bP85BXxkFYdJjMxCVR
-        8UHJr3Btvzh36wYcTb2O27VUlC7VO3c=
-X-Google-Smtp-Source: ALg8bN5ei4x1z6ktQw4Exv4ov/9ky+Ftv6arfQ09YxA0JE3bx9ZqTdem6CjMRAkJ2bY703iItzj8Og==
-X-Received: by 2002:a7b:c44d:: with SMTP id l13mr7653216wmi.144.1547645074471;
-        Wed, 16 Jan 2019 05:24:34 -0800 (PST)
-Received: from dell ([2.27.35.149])
-        by smtp.gmail.com with ESMTPSA id o15sm64418504wrp.12.2019.01.16.05.24.32
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 16 Jan 2019 05:24:33 -0800 (PST)
-Date:   Wed, 16 Jan 2019 13:24:31 +0000
-From:   Lee Jones <lee.jones@linaro.org>
-To:     Paul Gortmaker <paul.gortmaker@windriver.com>
-Cc:     linux-kernel@vger.kernel.org, Alessandro Rubini <rubini@gnudd.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Charles Keepax <ckeepax@opensource.cirrus.com>,
-        Cory Maccarrone <darkstar6262@gmail.com>,
-        Davide Ciminaghi <ciminaghi@gnudd.com>,
-        Dong Aisheng <dong.aisheng@linaro.org>,
-        Graeme Gregory <gg@slimlogic.co.uk>,
-        Guennadi Liakhovetski <g.liakhovetski@gmx.de>,
-        Haojian Zhuang <haojian.zhuang@marvell.com>,
-        Jin Park <jinyoungp@nvidia.com>,
-        Jorge Eduardo Candelaria <jedu@slimlogic.co.uk>,
-        Laxman Dewangan <ldewangan@nvidia.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Mark Brown <broonie@opensource.wolfsonmicro.com>,
-        Mattias Nilsson <mattias.i.nilsson@stericsson.com>,
-        Michael Hennerich <michael.hennerich@analog.com>,
-        Tony Lindgren <tony@atomide.com>,
-        Venu Byravarasu <vbyravarasu@nvidia.com>,
-        linux-omap@vger.kernel.org, patches@opensource.cirrus.com
-Subject: Re: [PATCH v5 00/18] mfd: demodularization of non-modular drivers
-Message-ID: <20190116132431.GE23399@dell>
-References: <1547404609-14161-1-git-send-email-paul.gortmaker@windriver.com>
+        Wed, 16 Jan 2019 08:24:55 -0500
+Received: from mail-eopbgr00041.outbound.protection.outlook.com ([40.107.0.41]:46501
+        "EHLO EUR02-AM5-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1732880AbfAPNYy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 Jan 2019 08:24:54 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=FK32LNF2QQX5PnMpHol5IcP8snf0+pXpiBwtLMCeZ5E=;
+ b=AgpmqYnMqwOddDX1zLdSSB4epq2vBqvFmTuunkvIZsRjfRdTsyiK9pPpGdTMX5PuM5cgyYq6VpWCL1ZbxpfRdUwNIdn63P/nBrN5BS8tt1MdXdaUyATCChVGjlkQ2l6N0NXlmNj+LYFPAkGK6bm5z6vMU6ZDpxaFjldWtULaTUw=
+Received: from VI1PR0402MB3357.eurprd04.prod.outlook.com (52.134.1.18) by
+ VI1PR0402MB2943.eurprd04.prod.outlook.com (10.175.24.21) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1516.14; Wed, 16 Jan 2019 13:24:49 +0000
+Received: from VI1PR0402MB3357.eurprd04.prod.outlook.com
+ ([fe80::a8aa:5f09:1d1c:7b57]) by VI1PR0402MB3357.eurprd04.prod.outlook.com
+ ([fe80::a8aa:5f09:1d1c:7b57%3]) with mapi id 15.20.1516.019; Wed, 16 Jan 2019
+ 13:24:49 +0000
+From:   Daniel Baluta <daniel.baluta@nxp.com>
+To:     "festevam@gmail.com" <festevam@gmail.com>
+CC:     dl-linux-imx <linux-imx@nxp.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Aisheng Dong <aisheng.dong@nxp.com>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "shawnguo@kernel.org" <shawnguo@kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        Anson Huang <anson.huang@nxp.com>,
+        "S.j. Wang" <shengjiu.wang@nxp.com>,
+        "kernel@pengutronix.de" <kernel@pengutronix.de>,
+        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>
+Subject: Re: [PATCH] arm64: dts: imx: Fix MU4_INT number
+Thread-Topic: [PATCH] arm64: dts: imx: Fix MU4_INT number
+Thread-Index: AQHUrPR8+s4T0qQiBEy8rhYNUN5cRKWx4EYAgAADhQA=
+Date:   Wed, 16 Jan 2019 13:24:49 +0000
+Message-ID: <11058ce79d91a49e47be47bd369ddc111875fa23.camel@nxp.com>
+References: <20190115170501.10952-1-daniel.baluta@nxp.com>
+         <CAOMZO5D_kakB82dEcXrU4EZARLj90US8Zf+sGgaKkZvUG3t=PA@mail.gmail.com>
+In-Reply-To: <CAOMZO5D_kakB82dEcXrU4EZARLj90US8Zf+sGgaKkZvUG3t=PA@mail.gmail.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=daniel.baluta@nxp.com; 
+x-originating-ip: [95.76.156.53]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;VI1PR0402MB2943;6:gCagNyJPzS6ciyLYv2W6p7GCPTnZ6iZzkw3S70zem0+RMxKHKxMXH/uVWL4I8e0e0YA+J1PjCA+zrqiiCypjfd+HHadXEY8I4Bu30I7dyQrIqpVVcVjCIJTpsTR3TVzMX3H7JmLUgQ73vJddYjqclwmSAARRH82Jp08atvsV6WQju5ycwA5CBfAa7xL/Zv6Yo0Hb4lAph6d1HjxNZbxsUfzhWKatSbdC/D14SZIKrEWJF9XAAjTp6IIwfggd+W8vc7MlY/DACmU+oZa4vATyZvTLNc7eST0XEV83qubwH+jM/94hWnbMLM0OWVSx7Bg0AUt+ONvXvCTnaVWJNUdtxYZqCKVKVzambIdHdrBbiNvEWw/Ijd7Vcw0sJcAiyKa2cEBOzbhM2Tl9beeMTjdpzg4ec1X4UYximYbQXgfdTAw5B1Rtq5u1PJn1oUG2bHK4SRz5aMu6QvrMaP83WTNkwQ==;5:zJRf3SeKfOnF1J350kz4uoMvWRNZDVBq7iDsy3jWQTb0xoFRRLFTaFTQ1zRO3Zzc8VvS9nMshAtSs/n26uBCiqklu3aMBgvFtxE9VuPWRRF9UOPjJRIy50c39FNjLXOoIglb2/iqRRmxT4kV8dxPCPnYQw/kdEm3hYXUxFPIc7ovFzveKQMMRy8365GJwRebK/662X8Ktv1QKGHOv9TVBQ==;7:dl4l6nctxLRRhQbMCml7IWxmdPpINXuRt1wjiV/g9IjHI/pAuiK42nhqAKeFBBt92WEjuCKdubFQ1FA6Mjla/S0vQ9+NN7f9nm9G5vzGXPHsP327t/5m11OP9hO+p0Wg3A01+7WwP+Wdp5KkOtaHSQ==
+x-ms-exchange-antispam-srfa-diagnostics: SOS;
+x-ms-office365-filtering-correlation-id: 3d3db9ae-a7ff-4549-00f6-08d67bb5fda4
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600109)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:VI1PR0402MB2943;
+x-ms-traffictypediagnostic: VI1PR0402MB2943:
+x-microsoft-antispam-prvs: <VI1PR0402MB2943D3BCFA4CE4C43A148584F9820@VI1PR0402MB2943.eurprd04.prod.outlook.com>
+x-forefront-prvs: 091949432C
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(136003)(396003)(346002)(366004)(376002)(39860400002)(199004)(189003)(6506007)(6116002)(3846002)(25786009)(476003)(6436002)(6486002)(186003)(76176011)(44832011)(4326008)(229853002)(66066001)(86362001)(105586002)(106356001)(2351001)(1411001)(8676002)(486006)(54906003)(39060400002)(26005)(11346002)(81166006)(81156014)(2906002)(316002)(1730700003)(5640700003)(97736004)(8936002)(446003)(118296001)(1361003)(2616005)(53546011)(7736002)(102836004)(305945005)(36756003)(2501003)(14454004)(68736007)(6512007)(256004)(71190400001)(71200400001)(99286004)(478600001)(6246003)(5660300001)(53936002)(6916009);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR0402MB2943;H:VI1PR0402MB3357.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: p5r2GrO2BG73MQ2cRzokyhxbKNL6aHd3oqOxoF5Fxss+KRtUuQzdYYM3Hd9JxuQjOLzOCAXd8vrJ2ZWcn01UJItEcAb/t9K8BLxqVbCRjcRQ9wNBVvLoCqVddNv1EMPg29ssMlrxxkhG8+c+yr1na/H9dx6Nh/tuyYnFgEHbxaO5soBW9SRet7GQIl81vdB4fvU14gd4Scucj+qvg/u9yZb+vhJUPvk1QjVFsXwthb01mMwnPukrva6oxmCjqlJtOSOUtYdhLPzueAgtoLaJ88K39GFNiTFjAGorrLBsOBFTHxUfYO92wW0sbjG9gfl4SdzoDJXclcdH9yMQ+XM/aKzhnUWoUZJ2oyERR+VrEyDCY9TVNCmT61tiG/gkAI3fOQe2HUJjbDrhQi21HAmpsI3on1JRHgoyJuYZ5LPwDqE=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <7D477C7A82A01A469730D7380997E81C@eurprd04.prod.outlook.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <1547404609-14161-1-git-send-email-paul.gortmaker@windriver.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 3d3db9ae-a7ff-4549-00f6-08d67bb5fda4
+X-MS-Exchange-CrossTenant-originalarrivaltime: 16 Jan 2019 13:24:49.2673
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR0402MB2943
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[...]
-
-> Paul Gortmaker (18):
->   mfd: aat2870-core: Make it explicitly non-modular
->   mfd: adp5520: Make it explicitly non-modular
->   mfd: as3711: Make it explicitly non-modular
->   mfd: db8500-prcmu: drop unused MODULE_ tags from non-modular code
->   mfd: htc-i2cpld: Make it explicitly non-modular
->   mfd: max8925-core: drop unused MODULE_ tags from non-modular code
->   mfd: rc5t583: Make it explicitly non-modular
->   mfd: sta2x11: drop unused MODULE_ tags from non-modular code
->   mfd: syscon: Make it explicitly non-modular
->   mfd: tps65090: Make it explicitly non-modular
->   mfd: tps65910: Make it explicitly non-modular
->   mfd: tps80031: Make it explicitly non-modular
->   mfd: wm831x-spi: Make it explicitly non-modular
->   mfd: wm831x-i2c: Make it explicitly non-modular
->   mfd: wm831x-core: drop unused module infrastructure from non-modular code
->   mfd: wm8350-i2c: Make it explicitly non-modular
->   mfd: wm8350-core: drop unused module infrastructure from non-modular code
->   mfd: wm8400-core: Make it explicitly non-modular
-> 
->  drivers/mfd/aat2870-core.c      | 40 +++-------------------------------------
->  drivers/mfd/adp5520.c           | 30 +++++++-----------------------
->  drivers/mfd/as3711.c            | 14 --------------
->  drivers/mfd/db8500-prcmu.c      | 10 ++++------
->  drivers/mfd/htc-i2cpld.c        | 18 +-----------------
->  drivers/mfd/max8925-core.c      |  7 +------
->  drivers/mfd/rc5t583.c           | 14 --------------
->  drivers/mfd/sta2x11-mfd.c       | 10 ++++------
->  drivers/mfd/syscon.c            | 12 +-----------
->  drivers/mfd/tps65090.c          | 30 +++++-------------------------
->  drivers/mfd/tps65910.c          | 18 +-----------------
->  drivers/mfd/tps80031.c          | 37 ++-----------------------------------
->  drivers/mfd/wm831x-core.c       | 15 ++-------------
->  drivers/mfd/wm831x-i2c.c        | 20 ++------------------
->  drivers/mfd/wm831x-spi.c        | 24 ++----------------------
->  drivers/mfd/wm8350-core.c       | 30 ++----------------------------
->  drivers/mfd/wm8350-i2c.c        | 24 +-----------------------
->  drivers/mfd/wm8400-core.c       | 18 +++---------------
->  include/linux/mfd/wm831x/core.h |  1 -
->  include/linux/mfd/wm8350/core.h |  1 -
->  20 files changed, 41 insertions(+), 332 deletions(-)
-
-All applied!
-
--- 
-Lee Jones [李琼斯]
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+T24gV2VkLCAyMDE5LTAxLTE2IGF0IDExOjEyIC0wMjAwLCBGYWJpbyBFc3RldmFtIHdyb3RlOg0K
+PiBIaSBEYW5pZWwsDQo+IA0KPiBPbiBUdWUsIEphbiAxNSwgMjAxOSBhdCAzOjA1IFBNIERhbmll
+bCBCYWx1dGEgPGRhbmllbC5iYWx1dGFAbnhwLmNvbT4NCj4gd3JvdGU6DQo+ID4gDQo+ID4gTVU0
+X0lOVCBjb3JyZWN0IG51bWJlciBpcyAxODAsIHdoaWxlIDE3OSBpcyBmb3IgTVUzX0lOVC4NCj4g
+PiANCj4gPiBTaWduZWQtb2ZmLWJ5OiBEYW5pZWwgQmFsdXRhIDxkYW5pZWwuYmFsdXRhQG54cC5j
+b20+DQo+IA0KPiBUd28gbml0cGlja3M6DQo+IA0KPiAxLiBJbiB0aGUgU3ViamVjdCBpdCB3b3Vs
+ZCBiZSBiZXR0ZXIgdG8gc3BlY2lmeSB0aGUgU29DIG5hbWU6DQo+IGFybTY0OiBkdHM6IGlteDhx
+eHA6IEZpeCBNVTRfSU5UIG51bWJlcg0KPiANCj4gMi4gSXQgd291bGQgYmUgbmljZSB0byBhZGQg
+YSBGaXhlcyB0YWcNCj4gDQo+IFJldmlld2VkLWJ5OiBGYWJpbyBFc3RldmFtIDxmZXN0ZXZhbUBn
+bWFpbC5jb20+DQoNClRoYW5rcyBGYWJpbyBmb3IgcmV2aWV3LiBGaXhlZCBpbiB2Mi4NCg0KDQo=
