@@ -2,99 +2,93 @@ Return-Path: <SRS0=1Lvk=PY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1FC59C43444
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 12:44:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0ECE1C43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 12:50:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E4F2020657
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 12:44:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547642682;
-	bh=POdIZ2yOuysxpHyx96Jdas1VKPgBc4oYmnmFiLg4HfQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=DQAMlbGE2rvfEN1mAVSdny9QLB8qm6HM+Fz0dK7QYTsgiMuYAp+O6BfUdmq76br/q
-	 G3qCxB4APkR7ZOjRA8M8Pn4OSFXb00oshyccliRKXmpxIYSNU4KJVZaNteOUqkUHCF
-	 FATnM917VervjXK6JmonC8SnFTMoqdKvBpV6DBy8=
+	by mail.kernel.org (Postfix) with ESMTP id D23BF20675
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 12:50:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392815AbfAPMok (ORCPT
+        id S2392835AbfAPMt5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 16 Jan 2019 07:44:40 -0500
-Received: from mx2.suse.de ([195.135.220.15]:37738 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1732803AbfAPMoj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Jan 2019 07:44:39 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id C0897AED6;
-        Wed, 16 Jan 2019 12:44:37 +0000 (UTC)
-Date:   Wed, 16 Jan 2019 13:44:31 +0100
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     Anshuman Khandual <anshuman.khandual@arm.com>, linux-mm@kvack.org,
-        akpm@linux-foundation.org, linux-kernel@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org,
-        linux-arm-kernel@lists.infradead.org, linux-sh@vger.kernel.org,
-        kvmarm@lists.cs.columbia.edu, linux-riscv@lists.infradead.org,
-        linux@armlinux.org.uk, catalin.marinas@arm.com,
-        will.deacon@arm.com, mpe@ellerman.id.au, tglx@linutronix.de,
-        mingo@redhat.com, dave.hansen@linux.intel.com,
-        peterz@infradead.org, christoffer.dall@arm.com,
-        marc.zyngier@arm.com, kirill@shutemov.name,
-        rppt@linux.vnet.ibm.com, ard.biesheuvel@linaro.org,
-        mark.rutland@arm.com, steve.capper@arm.com, james.morse@arm.com,
-        robin.murphy@arm.com, aneesh.kumar@linux.ibm.com, vbabka@suse.cz,
-        shakeelb@google.com, rientjes@google.com, palmer@sifive.com,
-        greentime@andestech.com
-Subject: Re: [PATCH V2] mm: Introduce GFP_PGTABLE
-Message-ID: <20190116124431.GK24149@dhcp22.suse.cz>
-References: <1547619692-7946-1-git-send-email-anshuman.khandual@arm.com>
- <20190116065703.GE24149@dhcp22.suse.cz>
- <20190116123018.GF6310@bombadil.infradead.org>
+        Wed, 16 Jan 2019 07:49:57 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:57122 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2390338AbfAPMt4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 Jan 2019 07:49:56 -0500
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 18F1558E59;
+        Wed, 16 Jan 2019 12:49:56 +0000 (UTC)
+Received: from [10.36.116.96] (ovpn-116-96.ams2.redhat.com [10.36.116.96])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id F184A1019633;
+        Wed, 16 Jan 2019 12:49:49 +0000 (UTC)
+Subject: Re: [RFC v3 17/21] iommu/smmuv3: Report non recoverable faults
+To:     Jean-Philippe Brucker <jean-philippe.brucker@arm.com>,
+        "eric.auger.pro@gmail.com" <eric.auger.pro@gmail.com>,
+        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+        "kvmarm@lists.cs.columbia.edu" <kvmarm@lists.cs.columbia.edu>,
+        "joro@8bytes.org" <joro@8bytes.org>,
+        "alex.williamson@redhat.com" <alex.williamson@redhat.com>,
+        "jacob.jun.pan@linux.intel.com" <jacob.jun.pan@linux.intel.com>,
+        "yi.l.liu@linux.intel.com" <yi.l.liu@linux.intel.com>,
+        Will Deacon <Will.Deacon@arm.com>,
+        Robin Murphy <Robin.Murphy@arm.com>
+Cc:     Marc Zyngier <Marc.Zyngier@arm.com>,
+        "peter.maydell@linaro.org" <peter.maydell@linaro.org>,
+        "kevin.tian@intel.com" <kevin.tian@intel.com>,
+        "ashok.raj@intel.com" <ashok.raj@intel.com>,
+        Christoffer Dall <Christoffer.Dall@arm.com>
+References: <20190108102633.17482-1-eric.auger@redhat.com>
+ <20190108102633.17482-18-eric.auger@redhat.com>
+ <dae89fd8-6a82-d2f0-a8c7-ddbf12a7b047@arm.com>
+ <e634adee-f7ab-b90d-aac6-06400fa9ffb4@redhat.com>
+ <c0328bbe-e02c-c337-ec52-c899dc0025d3@arm.com>
+From:   Auger Eric <eric.auger@redhat.com>
+Message-ID: <93599256-947f-d267-6b72-0759e17b4df1@redhat.com>
+Date:   Wed, 16 Jan 2019 13:49:48 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190116123018.GF6310@bombadil.infradead.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <c0328bbe-e02c-c337-ec52-c899dc0025d3@arm.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.39]); Wed, 16 Jan 2019 12:49:56 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed 16-01-19 04:30:18, Matthew Wilcox wrote:
-> On Wed, Jan 16, 2019 at 07:57:03AM +0100, Michal Hocko wrote:
-> > On Wed 16-01-19 11:51:32, Anshuman Khandual wrote:
-> > > All architectures have been defining their own PGALLOC_GFP as (GFP_KERNEL |
-> > > __GFP_ZERO) and using it for allocating page table pages. This causes some
-> > > code duplication which can be easily avoided. GFP_KERNEL allocated and
-> > > cleared out pages (__GFP_ZERO) are required for page tables on any given
-> > > architecture. This creates a new generic GFP flag flag which can be used
-> > > for any page table page allocation. Does not cause any functional change.
-> > > 
-> > > GFP_PGTABLE is being added into include/asm-generic/pgtable.h which is the
-> > > generic page tabe header just to prevent it's potential misuse as a general
-> > > allocation flag if included in include/linux/gfp.h.
-> > 
-> > I haven't reviewed the patch yet but I am wondering whether this is
-> > really worth it without going all the way down to unify the common code
-> > and remove much more code duplication. Or is this not possible for some
-> > reason?
-> 
-> Exactly what I suggested doing in response to v1.
-> 
-> Also, the approach taken here is crazy.  x86 has a feature that no other
-> architecture has bothered to implement yet -- accounting page tables
-> to the process.  Yet instead of spreading that goodness to all other
-> architectures, Anshuman has gone to more effort to avoid doing that.
+Hi Jean,
 
-Yes, I believe the only reason this is x86 only is that each arch would
-have to be tweaked separately. So a cleanup in _that_ regard would be
-helpful. There is no real reason to have ptes accounted only for x86.
-There might be some exceptions but well, our asm-generic allows to opt
-in for generic implementation or override it with a special one. The
-later should be an exception rather than the rule.
--- 
-Michal Hocko
-SUSE Labs
+On 1/16/19 1:25 PM, Jean-Philippe Brucker wrote:
+> On 15/01/2019 21:06, Auger Eric wrote:
+>>>> +		iommu_report_device_fault(master->dev, &event);
+>>>
+>>> We should return here if the fault is successfully injected
+>>
+>> Even if the fault gets injected in the guest can't it be still useful to
+>> get the message below on host side?
+> 
+> I don't think we should let the guest flood the host log by issuing
+> invalid DMA (or are there other cases where the guest can freely print
+> stuff in the host?) We do print all errors at the moment, but we should
+> tighten this once there is an upstream solution to let the guest control
+> DMA mappings.
+OK thank you for the clarification. Yes it makes sense to skip those
+traces then.
+
+Thanks
+
+Eric
+> 
+> Thanks,
+> Jean
+> 
