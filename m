@@ -2,178 +2,203 @@ Return-Path: <SRS0=1Lvk=PY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C440C43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 18:26:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 96D78C43444
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 18:26:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DDEDB206C2
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 18:26:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547663179;
-	bh=xnGEX9v6nmKAsw2QN5b5mi4P3QWOR/2zUgstlmwUAJM=;
-	h=Subject:To:Cc:References:From:Date:In-Reply-To:List-ID:From;
-	b=eP4DjzjShP/yY4SDEEVj8571zOaqJ+ybAkV7nK0JuCZI/GZw/LlyGolnQsfPBV9Rz
-	 HEGeVi81UvAEdWpBWISARx8mFWB08u8gQqwCMUNk8wFR2LZ1HoiyKtoCBMZ2qFDiav
-	 4I2igtwYxTABzcio5ZhHc5WSHAjL9UnRCSNoOeDQ=
+	by mail.kernel.org (Postfix) with ESMTP id 7339D206C2
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 18:26:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728748AbfAPS0R (ORCPT
+        id S1728539AbfAPSZf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 16 Jan 2019 13:26:17 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45340 "EHLO mail.kernel.org"
+        Wed, 16 Jan 2019 13:25:35 -0500
+Received: from ale.deltatee.com ([207.54.116.67]:35034 "EHLO ale.deltatee.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728671AbfAPS0P (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Jan 2019 13:26:15 -0500
-Received: from [192.168.1.112] (c-24-9-64-241.hsd1.co.comcast.net [24.9.64.241])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 03256206C2;
-        Wed, 16 Jan 2019 18:26:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547663174;
-        bh=xnGEX9v6nmKAsw2QN5b5mi4P3QWOR/2zUgstlmwUAJM=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=lQGERS4tCUZX+yjgowEXKui5On8Lf6nX96c9ds9vkhTb56yB2t0I0njSfOvlpnHCz
-         6+dPF67EzjXbHCqdm0fLOfgdc1cMX1e7ho1I7aZsZhtHgAkEPmmYIMUILzV4GZtjg2
-         PhuNw0/tmRtQDrC/d6Wqbw4BndQx1pnHh+8cmQLQ=
-Subject: Re: [PATCH 3/4] selftests: seccomp: use LDLIBS instead of LDFLAGS
-To:     Kees Cook <keescook@chromium.org>,
-        =?UTF-8?Q?Daniel_D=c3=adaz?= <daniel.diaz@linaro.org>
-Cc:     Fathi Boudra <fathi.boudra@linaro.org>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Will Drewry <wad@chromium.org>,
-        "open list:KERNEL SELFTEST FRAMEWORK" 
-        <linux-kselftest@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>,
-        shuah <shuah@kernel.org>
-References: <20190116174320.14938-1-daniel.diaz@linaro.org>
- <20190116174320.14938-3-daniel.diaz@linaro.org>
- <CAGXu5j+1tOvB0jHk=kCxfhTg-PEPjCHp2TQb++wZsGxJCcQxng@mail.gmail.com>
-From:   shuah <shuah@kernel.org>
-Message-ID: <dfe6e14f-ccf4-80ef-7bdd-23d7d2698bb8@kernel.org>
-Date:   Wed, 16 Jan 2019 11:26:13 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        id S1727770AbfAPSZc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 Jan 2019 13:25:32 -0500
+Received: from cgy1-donard.priv.deltatee.com ([172.16.1.31])
+        by ale.deltatee.com with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <gunthorp@deltatee.com>)
+        id 1gjpsV-0003NA-5B; Wed, 16 Jan 2019 11:25:29 -0700
+Received: from gunthorp by cgy1-donard.priv.deltatee.com with local (Exim 4.89)
+        (envelope-from <gunthorp@deltatee.com>)
+        id 1gjpsT-00054S-Po; Wed, 16 Jan 2019 11:25:25 -0700
+From:   Logan Gunthorpe <logang@deltatee.com>
+To:     linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
+        linux-ntb@googlegroups.com, linux-crypto@vger.kernel.org,
+        linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>
+Cc:     Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Andy Shevchenko <andy.shevchenko@gmail.com>,
+        =?UTF-8?q?Horia=20Geant=C4=83?= <horia.geanta@nxp.com>,
+        Logan Gunthorpe <logang@deltatee.com>
+Date:   Wed, 16 Jan 2019 11:25:17 -0700
+Message-Id: <20190116182523.19446-1-logang@deltatee.com>
+X-Mailer: git-send-email 2.19.0
 MIME-Version: 1.0
-In-Reply-To: <CAGXu5j+1tOvB0jHk=kCxfhTg-PEPjCHp2TQb++wZsGxJCcQxng@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
 Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 172.16.1.31
+X-SA-Exim-Rcpt-To: linux-ntb@googlegroups.com, linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org, linux-crypto@vger.kernel.org, linux-mm@kvack.org, akpm@linux-foundation.org, arnd@arndb.de, gregkh@linuxfoundation.org, andy.shevchenko@gmail.com, horia.geanta@nxp.com, logang@deltatee.com
+X-SA-Exim-Mail-From: gunthorp@deltatee.com
+Subject: [PATCH v25 0/6] Add io{read|write}64 to io-64-atomic headers
+X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
+X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 1/16/19 11:13 AM, Kees Cook wrote:
-> On Wed, Jan 16, 2019 at 9:44 AM Daniel Díaz <daniel.diaz@linaro.org> wrote:
->>
->> From: Fathi Boudra <fathi.boudra@linaro.org>
->>
->> seccomp_bpf fails to build due to undefined reference errors:
->>
->>   aarch64-linaro-linux-gcc --sysroot=/build/tmp-rpb-glibc/sysroots/hikey
->>   -O2 -pipe -g -feliminate-unused-debug-types -Wl,-no-as-needed -Wall
->>   -Wl,-O1 -Wl,--hash-style=gnu -Wl,--as-needed -lpthread seccomp_bpf.c -o
->>   /build/tmp-rpb-glibc/work/hikey-linaro-linux/kselftests/4.12-r0/linux-4.12-rc7/tools/testing/selftests/seccomp/seccomp_bpf
->>   /tmp/ccrlR3MW.o: In function `tsync_sibling':
->>   /usr/src/debug/kselftests/4.12-r0/linux-4.12-rc7/tools/testing/selftests/seccomp/seccomp_bpf.c:1920: undefined reference to `sem_post'
->>   /usr/src/debug/kselftests/4.12-r0/linux-4.12-rc7/tools/testing/selftests/seccomp/seccomp_bpf.c:1920: undefined reference to `sem_post'
->>   /tmp/ccrlR3MW.o: In function `TSYNC_setup':
->>   /usr/src/debug/kselftests/4.12-r0/linux-4.12-rc7/tools/testing/selftests/seccomp/seccomp_bpf.c:1863: undefined reference to `sem_init'
->>   /tmp/ccrlR3MW.o: In function `TSYNC_teardown':
->>   /usr/src/debug/kselftests/4.12-r0/linux-4.12-rc7/tools/testing/selftests/seccomp/seccomp_bpf.c:1904: undefined reference to `sem_destroy'
->>   /usr/src/debug/kselftests/4.12-r0/linux-4.12-rc7/tools/testing/selftests/seccomp/seccomp_bpf.c:1897: undefined reference to `pthread_kill'
->>   /usr/src/debug/kselftests/4.12-r0/linux-4.12-rc7/tools/testing/selftests/seccomp/seccomp_bpf.c:1898: undefined reference to `pthread_cancel'
->>   /usr/src/debug/kselftests/4.12-r0/linux-4.12-rc7/tools/testing/selftests/seccomp/seccomp_bpf.c:1899: undefined reference to `pthread_join'
->>   /tmp/ccrlR3MW.o: In function `tsync_start_sibling':
->>   /usr/src/debug/kselftests/4.12-r0/linux-4.12-rc7/tools/testing/selftests/seccomp/seccomp_bpf.c:1941: undefined reference to `pthread_create'
->>   /usr/src/debug/kselftests/4.12-r0/linux-4.12-rc7/tools/testing/selftests/seccomp/seccomp_bpf.c:1941: undefined reference to `pthread_create'
->>   /tmp/ccrlR3MW.o: In function `TSYNC_siblings_fail_prctl':
->>   /usr/src/debug/kselftests/4.12-r0/linux-4.12-rc7/tools/testing/selftests/seccomp/seccomp_bpf.c:1978: undefined reference to `sem_wait'
->>   /usr/src/debug/kselftests/4.12-r0/linux-4.12-rc7/tools/testing/selftests/seccomp/seccomp_bpf.c:1990: undefined reference to `pthread_join'
->>   /usr/src/debug/kselftests/4.12-r0/linux-4.12-rc7/tools/testing/selftests/seccomp/seccomp_bpf.c:1992: undefined reference to `pthread_join'
->>   /tmp/ccrlR3MW.o: In function `tsync_start_sibling':
->>   /usr/src/debug/kselftests/4.12-r0/linux-4.12-rc7/tools/testing/selftests/seccomp/seccomp_bpf.c:1941: undefined reference to `pthread_create'
->>   /usr/src/debug/kselftests/4.12-r0/linux-4.12-rc7/tools/testing/selftests/seccomp/seccomp_bpf.c:1941: undefined reference to `pthread_create'
->>   /tmp/ccrlR3MW.o: In function `TSYNC_two_siblings_with_ancestor':
->>   /usr/src/debug/kselftests/4.12-r0/linux-4.12-rc7/tools/testing/selftests/seccomp/seccomp_bpf.c:2016: undefined reference to `sem_wait'
->>   /usr/src/debug/kselftests/4.12-r0/linux-4.12-rc7/tools/testing/selftests/seccomp/seccomp_bpf.c:2032: undefined reference to `pthread_join'
->>   /usr/src/debug/kselftests/4.12-r0/linux-4.12-rc7/tools/testing/selftests/seccomp/seccomp_bpf.c:2034: undefined reference to `pthread_join'
->>   /tmp/ccrlR3MW.o: In function `tsync_start_sibling':
->>   /usr/src/debug/kselftests/4.12-r0/linux-4.12-rc7/tools/testing/selftests/seccomp/seccomp_bpf.c:1941: undefined reference to `pthread_create'
->>   /usr/src/debug/kselftests/4.12-r0/linux-4.12-rc7/tools/testing/selftests/seccomp/seccomp_bpf.c:1941: undefined reference to `pthread_create'
->>   /tmp/ccrlR3MW.o: In function `TSYNC_two_sibling_want_nnp':
->>   /usr/src/debug/kselftests/4.12-r0/linux-4.12-rc7/tools/testing/selftests/seccomp/seccomp_bpf.c:2046: undefined reference to `sem_wait'
->>   /usr/src/debug/kselftests/4.12-r0/linux-4.12-rc7/tools/testing/selftests/seccomp/seccomp_bpf.c:2058: undefined reference to `pthread_join'
->>   /usr/src/debug/kselftests/4.12-r0/linux-4.12-rc7/tools/testing/selftests/seccomp/seccomp_bpf.c:2060: undefined reference to `pthread_join'
->>   /tmp/ccrlR3MW.o: In function `tsync_start_sibling':
->>   /usr/src/debug/kselftests/4.12-r0/linux-4.12-rc7/tools/testing/selftests/seccomp/seccomp_bpf.c:1941: undefined reference to `pthread_create'
->>   /usr/src/debug/kselftests/4.12-r0/linux-4.12-rc7/tools/testing/selftests/seccomp/seccomp_bpf.c:1941: undefined reference to `pthread_create'
->>   /tmp/ccrlR3MW.o: In function `TSYNC_two_siblings_with_no_filter':
->>   /usr/src/debug/kselftests/4.12-r0/linux-4.12-rc7/tools/testing/selftests/seccomp/seccomp_bpf.c:2073: undefined reference to `sem_wait'
->>   /usr/src/debug/kselftests/4.12-r0/linux-4.12-rc7/tools/testing/selftests/seccomp/seccomp_bpf.c:2098: undefined reference to `pthread_join'
->>   /usr/src/debug/kselftests/4.12-r0/linux-4.12-rc7/tools/testing/selftests/seccomp/seccomp_bpf.c:2100: undefined reference to `pthread_join'
->>   /tmp/ccrlR3MW.o: In function `tsync_start_sibling':
->>   /usr/src/debug/kselftests/4.12-r0/linux-4.12-rc7/tools/testing/selftests/seccomp/seccomp_bpf.c:1941: undefined reference to `pthread_create'
->>   /usr/src/debug/kselftests/4.12-r0/linux-4.12-rc7/tools/testing/selftests/seccomp/seccomp_bpf.c:1941: undefined reference to `pthread_create'
->>   /tmp/ccrlR3MW.o: In function `TSYNC_two_siblings_with_one_divergence':
->>   /usr/src/debug/kselftests/4.12-r0/linux-4.12-rc7/tools/testing/selftests/seccomp/seccomp_bpf.c:2125: undefined reference to `sem_wait'
->>   /usr/src/debug/kselftests/4.12-r0/linux-4.12-rc7/tools/testing/selftests/seccomp/seccomp_bpf.c:2143: undefined reference to `pthread_join'
->>   /usr/src/debug/kselftests/4.12-r0/linux-4.12-rc7/tools/testing/selftests/seccomp/seccomp_bpf.c:2145: undefined reference to `pthread_join'
->>   /tmp/ccrlR3MW.o: In function `tsync_start_sibling':
->>   /usr/src/debug/kselftests/4.12-r0/linux-4.12-rc7/tools/testing/selftests/seccomp/seccomp_bpf.c:1941: undefined reference to `pthread_create'
->>   /usr/src/debug/kselftests/4.12-r0/linux-4.12-rc7/tools/testing/selftests/seccomp/seccomp_bpf.c:1941: undefined reference to `pthread_create'
->>   /tmp/ccrlR3MW.o: In function `TSYNC_two_siblings_not_under_filter':
->>   /usr/src/debug/kselftests/4.12-r0/linux-4.12-rc7/tools/testing/selftests/seccomp/seccomp_bpf.c:2169: undefined reference to `sem_wait'
->>   /usr/src/debug/kselftests/4.12-r0/linux-4.12-rc7/tools/testing/selftests/seccomp/seccomp_bpf.c:2202: undefined reference to `pthread_join'
->>   /usr/src/debug/kselftests/4.12-r0/linux-4.12-rc7/tools/testing/selftests/seccomp/seccomp_bpf.c:2227: undefined reference to `pthread_join'
->>   /tmp/ccrlR3MW.o: In function `tsync_start_sibling':
->>   /usr/src/debug/kselftests/4.12-r0/linux-4.12-rc7/tools/testing/selftests/seccomp/seccomp_bpf.c:1941: undefined reference to `pthread_create'
->>
->> It's GNU Make and linker specific.
->>
->> The default Makefile rule looks like:
->>
->> $(CC) $(CFLAGS) $(LDFLAGS) $@ $^ $(LDLIBS)
->>
->> When linking is done by gcc itself, no issue, but when it needs to be passed
->> to proper ld, only LDLIBS follows and then ld cannot know what libs to link
->> with.
->>
->> More detail:
->> https://www.gnu.org/software/make/manual/html_node/Implicit-Variables.html
->>
->> LDFLAGS
->> Extra flags to give to compilers when they are supposed to invoke the linker,
->> ‘ld’, such as -L. Libraries (-lfoo) should be added to the LDLIBS variable
->> instead.
->>
->> LDLIBS
->> Library flags or names given to compilers when they are supposed to invoke the
->> linker, ‘ld’. LOADLIBES is a deprecated (but still supported) alternative to
->> LDLIBS. Non-library linker flags, such as -L, should go in the LDFLAGS
->> variable.
->>
->> https://lkml.org/lkml/2010/2/10/362
->>
->> tools/perf: libraries must come after objects
->>
->> Link order matters, use LDLIBS instead of LDFLAGS to properly link against
->> libpthread.
->>
->> Signed-off-by: Fathi Boudra <fathi.boudra@linaro.org>
-> 
+This is resend number 6 since the last change to this series.
 
-Thanks for the patch.
+This cleanup was requested by Greg KH back in June of 2017. I've resent the series
+a couple times a cycle since then, updating and fixing as feedback was slowly
+recieved some patches were alread accepted by specific arches. In June 2018,
+Andrew picked the remainder of this up and it was in linux-next for a
+couple weeks. There were a couple problems that were identified and addressed
+back then and I'd really like to get the ball rolling again. A year
+and a half of sending this without much feedback is far too long.
 
-> Acked-by: Kees Cook <keescook@chromium.org>
-> 
-> Shuah, can you take this?
-> 
+@Andrew, can you please pick this set up again so it can get into
+linux-next? Or let me know if there's something else I should be doing.
 
-Thanks for Ack. I will get this in for 5.0-rc3 or rc4.
+Thanks,
 
-thanks,
--- Shuah
+Logan
+
+--
+
+Changes since v24:
+- Rebased onto v5.0-rc2 (No Changes)
+
+Changes since v23:
+- Rebased onto v4.20-rc4 (No Changes)
+
+Changes since v22:
+- Rebased onto v4.20-rc1 (No Changes)
+
+Changes since v21:
+- Rebased onto v4.19-rc6 (No Changes)
+
+Changes since v20:
+- Rebased onto v4.19-rc3 (No Changes)
+
+Changes since v19:
+- Rebased onto v4.19-rc1 (No Changes)
+
+Changes since v18:
+- Dropped the CAAM patch as it was subtly wrong and broke when people
+  tested it in linux-next. Seeing the code is much trickier than it
+  appears, we'll leave it to its maintainers to clean it up,
+  should they chose.
+- Restored the ioread64/iowrite64 extern prototypes as despite
+  appearing to be unusued, they are in fact used in a rare corner case
+  by the caam driver on 64bit powerpc. This was reported by Guenter testing
+  on linux-next.
+- Rebased onto v4.18-rc4 (No Changes)
+
+Changes since v17:
+- Rebased onto v4.18-rc1 (No Changes)
+
+Changes since v16:
+- Rebased onto v4.17-rc4 (No Changes)
+
+Changes since v15:
+- Rebased onto v4.17-rc1, dropping the powerpc patches which were
+  picked up by Michael
+
+Changes since v14:
+- Rebased onto v4.16-rc7
+- Replace the first two patches so that instead of correcting the
+  endianness annotations we change to using writeX() and readX() with
+  swabX() calls. This makes the big-endian functions more symmetric
+  with the little-endian versions (with respect to barriers that are
+  not included in the raw functions). As a side effect, it also fixes
+  the kbuild warnings that the first two patches tried to address.
+
+Changes since v13:
+- Changed the subject of patch 0001 to correct a nit pointed out by Luc
+
+Changes since v12:
+- Rebased onto v4.16-rc6
+- Split patch 0001 into two and reworked the commit log as requested
+  by Luc Van Oostenryck
+
+Changes since v11:
+- Rebased onto v4.16-rc5
+- Added a patch (0001) to fix some old and new sparse warnings
+  that the kbuild robot warned about this cycle. The latest version
+  of sparse was required to reproduce these.
+- Added a patch (0002) to add io{read|write}64 to parisc which the kbuild
+  robot also found errors for this cycle
+
+Changes since v10:
+- Rebased onto v4.16-rc4, this droped the drm/tilcdc patch which was
+  picked up by that tree and is already in 4.16.
+
+Changes since v9:
+- Rebased onto v4.15-rc6
+- Fixed a couple of issues in the new version of the CAAM patch as
+  pointed out by Horia
+
+Changes since v8:
+- Rebased onto v4.15-rc2, as a result rewrote patch 7 seeing someone did
+  some similar cleanup in that area.
+- Added a patch to clean up the Switchtec NTB driver which landed in
+  v4.15-rc1
+
+Changes since v7:
+- Fix minor nits from Andy Shevchenko
+- Rebased onto v4.14-rc1
+
+Changes since v6:
+ ** none **
+
+Changes since v5:
+- Added a fix to the tilcdc driver to ensure it doesn't use the
+  non-atomic operation. (This includes adding io{read|write}64[be]_is_nonatomic
+  defines).
+
+Changes since v4:
+- Add functions so the powerpc implementation of iomap.c compiles. (As
+  noticed by Horia)
+
+Changes since v3:
+
+- I noticed powerpc didn't use the appropriate functions seeing
+  readq/writeq were not defined when iomap.h was included. Thus I've
+  included a patch to adjust this
+- Fixed some mistakes with a couple of the defines in io-64-nonatomic*
+  headers
+- Fixed a typo noticed by Horia.
+
+(earlier versions were drastically different)
+
+
+--
+
+Logan Gunthorpe (6):
+  iomap: Use non-raw io functions for io{read|write}XXbe
+  parisc: iomap: introduce io{read|write}64
+  iomap: introduce io{read|write}64_{lo_hi|hi_lo}
+  io-64-nonatomic: add io{read|write}64[be]{_lo_hi|_hi_lo} macros
+  ntb: ntb_hw_intel: use io-64-nonatomic instead of in-driver hacks
+  ntb: ntb_hw_switchtec: Cleanup 64bit IO defines to use the common
+    header
+
+ arch/parisc/include/asm/io.h           |   9 ++
+ arch/parisc/lib/iomap.c                |  64 +++++++++++
+ arch/powerpc/include/asm/io.h          |   2 +
+ drivers/ntb/hw/intel/ntb_hw_intel.h    |  30 +-----
+ drivers/ntb/hw/mscc/ntb_hw_switchtec.c |  36 +------
+ include/asm-generic/iomap.h            |  22 ++++
+ include/linux/io-64-nonatomic-hi-lo.h  |  64 +++++++++++
+ include/linux/io-64-nonatomic-lo-hi.h  |  64 +++++++++++
+ lib/iomap.c                            | 140 ++++++++++++++++++++++++-
+ 9 files changed, 366 insertions(+), 65 deletions(-)
+
+--
+2.19.0
