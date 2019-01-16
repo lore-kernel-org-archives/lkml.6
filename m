@@ -2,87 +2,117 @@ Return-Path: <SRS0=1Lvk=PY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E5FEC43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 08:41:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F2A48C43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 08:41:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2BB8D20859
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 08:41:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547628063;
-	bh=ZKnzUtIu6HSCQMGOj5zuOt2WoTBGvpo03n+L8Lxke+I=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:List-ID:From;
-	b=N3lk9v1NtHGd5dCxqbMtGE4Kb69OT0SSggt/WMKf2yrCpwkBnSWtLi0ryQLL2d1lV
-	 8SknhL6T34hCezFdHmKyNl5GRQ1T4KnAY/Vqy1O5rqFddxlKRxWaNyP6EuLK5bcohr
-	 mJ/8j6qlQgvjkG7EK+Kg3Mv/u+KIkMx+dNUlO6q0=
+	by mail.kernel.org (Postfix) with ESMTP id BA48D2082F
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 08:41:22 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=brauner.io header.i=@brauner.io header.b="d1aVn+yx"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389299AbfAPIlB (ORCPT
+        id S2389397AbfAPIlU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 16 Jan 2019 03:41:01 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34902 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388686AbfAPIlB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Jan 2019 03:41:01 -0500
-Received: from localhost.localdomain (91-160-177-164.subs.proxad.net [91.160.177.164])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 55B792082F;
-        Wed, 16 Jan 2019 08:40:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547628060;
-        bh=ZKnzUtIu6HSCQMGOj5zuOt2WoTBGvpo03n+L8Lxke+I=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:From;
-        b=kxtq3FD8iifDxanMz3BzD0C7YMIOH4SqwTzXJ+UznilHU8lNozeAez32gSUENRp7K
-         8pTc4C2ydySw2T41tY2mBnDsF9o7Xiwczr2WtfRWc0RhXu79lM4WTqtRFcpUPAJLDB
-         SjQGUuJ8ugK+UgzvNl5UjP1lU/jWy4qIH7pscWqY=
-From:   Boris Brezillon <bbrezillon@kernel.org>
-To:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Brian Norris <computersforpeace@gmail.com>,
-        Boris Brezillon <bbrezillon@kernel.org>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        Richard Weinberger <richard@nod.at>
-Cc:     Boris Brezillon <boris.brezillon@bootlin.com>,
-        linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: mtd: gen_probe: Use struct_size() in kmalloc()
-Date:   Wed, 16 Jan 2019 09:40:53 +0100
-Message-Id: <20190116084053.29791-1-bbrezillon@kernel.org>
-X-Mailer: git-send-email 2.17.1
-X-linux-mtd-patch-notification: thanks
-X-linux-mtd-patch-commit: 9cb76a6aa1a9524866ec1558f08d044506b707fa
-In-Reply-To: <20190108153601.GA11557@embeddedor>
+        Wed, 16 Jan 2019 03:41:20 -0500
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:51009 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732624AbfAPIlU (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 Jan 2019 03:41:20 -0500
+Received: by mail-wm1-f66.google.com with SMTP id n190so1048532wmd.0
+        for <linux-kernel@vger.kernel.org>; Wed, 16 Jan 2019 00:41:18 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=brauner.io; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=b2LuXdXxQcuKvwCS+44bPlMgNx8NsNIh48/lWI4p120=;
+        b=d1aVn+yxVUY4XUkMpjFyB7K0U4rnONpHYd3Kz11h9reic7cfIXhGfPm83tmdrR6f0I
+         mEtXNeg4juCdqyVZbucs9Wd27bKknDmf9rEDaRQtqiEsY1T+7Tsoml+u6NSRCABY3kV0
+         ET889DX5mkbExtqSfG3+bnisJuOhtOUaECN3aQU9PeaM36QwDRQbrlsEkkW3cW5KRZ/c
+         TfOPwt0+eqhonVvvTPavsj9hb553oShrIdijIGKHWwNtTsCG7Rdo1U++fe3WPRGILzU0
+         oVvOx7O1f4kqozwkCoXgH2qHebkm0DrChuCZehV/TL80rqpOzh4lMms1jNQaUVs0131e
+         r7TA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=b2LuXdXxQcuKvwCS+44bPlMgNx8NsNIh48/lWI4p120=;
+        b=hon9tanBb009GGEEX+l0Kv/JSUz3e+VTzNk/V5tcvK5ms24dDgSzSKfx1ksJ+vCkrR
+         ODoOPGOS/0eOXQutYIyeN/nkHmbMBvZLm6H1G2BcrdFuJukVpFnDRuq3mTIXzCwlHy1W
+         UCQLCLHiy9lGm7DwCvvQWyrsnfCEhW0SPjhnaCQFKWtFNwMsnl4MWUXnrQI//s/RkZX3
+         swHNswGBO49BqXGDNDx9kAjAsw3LSzOUbhlj2wO5hTHnHagQA3ildRweafCUDHxsVbCI
+         3buhPcYzNWZ8Yjd3hR3YWRGsrf46TNuxBhwyfqvXoWRo1DeT7POhXdgvSh0p7EPhWyim
+         x5PA==
+X-Gm-Message-State: AJcUukeytuKpGAGpsTutbbV0Bdoew4yq9TbkrNx2XCZFSi9sHoH/+KbO
+        6SnMjjpo4HNL+JmPAF5py0nPoQ==
+X-Google-Smtp-Source: ALg8bN674HNiJJ/2BEtoj/Q5L93tvMuOpcPZrBe/5Pk+E7S4h7RShVjwxVZ7wXe4zDkZWhw+1wYSyA==
+X-Received: by 2002:a1c:4c0c:: with SMTP id z12mr6145358wmf.17.1547628077974;
+        Wed, 16 Jan 2019 00:41:17 -0800 (PST)
+Received: from brauner.io ([154.119.33.254])
+        by smtp.gmail.com with ESMTPSA id p10sm22873323wrt.25.2019.01.16.00.41.12
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 16 Jan 2019 00:41:17 -0800 (PST)
+Date:   Wed, 16 Jan 2019 09:41:10 +0100
+From:   Christian Brauner <christian@brauner.io>
+To:     Wei Yongjun <weiyongjun1@huawei.com>
+Cc:     gregkh@linuxfoundation.org, arve@android.com, tkjos@android.com,
+        maco@android.com, joel@joelfernandes.org,
+        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH -next v2] binderfs: fix error return code in
+ binderfs_fill_super()
+Message-ID: <20190116084108.lubcpqaflkzmwfvp@brauner.io>
+References: <1547607664-5612-1-git-send-email-weiyongjun1@huawei.com>
+ <1547627642-96450-1-git-send-email-weiyongjun1@huawei.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <1547627642-96450-1-git-send-email-weiyongjun1@huawei.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Boris Brezillon <boris.brezillon@bootlin.com>
+On Wed, Jan 16, 2019 at 08:34:02AM +0000, Wei Yongjun wrote:
+> Fix to return a negative error code -ENOMEM from the new_inode() and
+> d_make_root() error handling cases instead of 0, as done elsewhere in
+> this function.
+> 
+> Fixes: 3ad20fe393b3 ("binder: implement binderfs")
 
-On Tue, 2019-01-08 at 15:36:01 UTC, "Gustavo A. R. Silva" wrote:
-> One of the more common cases of allocation size calculations is finding
-> the size of a structure that has a zero-sized array at the end, along
-> with memory for some number of elements for that array. For example:
-> 
-> struct foo {
->     int stuff;
->     void *entry[];
-> };
-> 
-> instance = kmalloc(sizeof(struct foo) + sizeof(void *) * count, GFP_KERNEL);
-> 
-> Instead of leaving these open-coded and prone to type mistakes, we can
-> now use the new struct_size() helper:
-> 
-> instance = kmalloc(struct_size(instance, entry, count), GFP_KERNEL);
-> 
-> This code was detected with the help of Coccinelle.
-> 
-> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+This should be:
 
-Applied to http://git.infradead.org/linux-mtd.git mtd/next, thanks.
+Fixes: 849d540ddfcd ("binderfs: implement "max" mount option")
 
-Boris
+If you have added that feel free to also add my Reviewed-by.
+
+Thanks!
+Christian
+
+> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+> ---
+> v1 -> v2: move 'ret = -ENOMEM' out of if
+> ---
+>  drivers/android/binderfs.c | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/drivers/android/binderfs.c b/drivers/android/binderfs.c
+> index 9518e2e..e4ff4c3 100644
+> --- a/drivers/android/binderfs.c
+> +++ b/drivers/android/binderfs.c
+> @@ -518,6 +518,7 @@ static int binderfs_fill_super(struct super_block *sb, void *data, int silent)
+>  
+>  	sb->s_fs_info = info;
+>  
+> +	ret = -ENOMEM;
+>  	inode = new_inode(sb);
+>  	if (!inode)
+>  		goto err_without_dentry;
+> 
+> 
+> 
