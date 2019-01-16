@@ -2,90 +2,98 @@ Return-Path: <SRS0=1Lvk=PY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9AD64C43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 17:54:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 341C0C43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 17:54:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6BE8020866
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 17:54:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547661286;
-	bh=2WEx89wuZi3BpK3TnQMdYQDOKkaPo+xKSX6ZDgd9KBs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=LI9FdPdfcA/v7du77Ft0lM1VKLlArwUTN8VX3+OXbulhUl861uMY1meXiWGa31ZcD
-	 /AdHSfSpbUCNarZTO453zVcloNDrqGuKaTBgBFcbW9zbUSGCYHgCIg8S2LUa8dnxdD
-	 GQpKsRB5KLfws0i8FgyuDAwNTwre2LuheVSxxvSM=
+	by mail.kernel.org (Postfix) with ESMTP id 023C220859
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 17:54:53 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="PXuSBDEx"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727770AbfAPRyo (ORCPT
+        id S1727793AbfAPRyw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 16 Jan 2019 12:54:44 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47700 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726754AbfAPRyo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Jan 2019 12:54:44 -0500
-Received: from localhost (lfbn-ncy-1-66-34.w83-194.abo.wanadoo.fr [83.194.157.34])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 09FBB20859;
-        Wed, 16 Jan 2019 17:54:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547661283;
-        bh=2WEx89wuZi3BpK3TnQMdYQDOKkaPo+xKSX6ZDgd9KBs=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=xVUqNn7yTWmoOwZIF8aZQaHer0ZURA/DlPfa+mMsGDM+jYoES7EVIAKRIZjhvmBUb
-         Jp6HHrFzjzwDo1dSn/hTMygaCvYC8a+0k3Dxoz4sI4mWwI5iXlT5KqERDtj9Sehvks
-         NKgNIqLoxruC/TFuOvY68rlYCpAgQ1xR7f3r7294=
-Date:   Wed, 16 Jan 2019 18:54:40 +0100
-From:   Frederic Weisbecker <frederic@kernel.org>
-To:     Nicholas Piggin <npiggin@gmail.com>
-Cc:     Frederic Weisbecker <fweisbec@gmail.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        linux-kernel@vger.kernel.org, Michael Neuling <mikey@neuling.org>
-Subject: Re: [RFC PATCH] time/nohz: allow the boot CPU to be nohz_full
-Message-ID: <20190116175440.GB26169@lenoir>
-References: <20190114064745.27306-1-npiggin@gmail.com>
+        Wed, 16 Jan 2019 12:54:52 -0500
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:36037 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727772AbfAPRyv (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 Jan 2019 12:54:51 -0500
+Received: by mail-wr1-f65.google.com with SMTP id u4so7988904wrp.3
+        for <linux-kernel@vger.kernel.org>; Wed, 16 Jan 2019 09:54:50 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=SVtN4iPcY9zshcCkTMLevoptOZxFBUuW0e/FWPhm+M0=;
+        b=PXuSBDEx8jenUvktfa+dL3KOmAHKnN1f3NXBjaaSO2lYL6p+A4jIJhsB9l/Nl7a5CO
+         BatQOv3PqoY9mwywoL4V3ZP3SE03TWdwi+yGYfNReV3NjtmCO44UYXBtep1TKsJQjXdh
+         gGYBm6q5BzEhdyklYb6OJAAiMtaqNgIl+SXnXs/1IbaH+vwOboBLJrhKbAROT0rEyXvr
+         cSzyz0V59SYh55RCpZxN2McXyK7Ht/lFzw2fKv40lDfnzq03JV4jUl0om2TGQh0cY+VX
+         8SjjDch+NxrceCkqrS5fw1TxGs8KeoSlJ5Gia3QE423cUxL1yHRxbtkCun+XQGtCSPUT
+         j4OQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=SVtN4iPcY9zshcCkTMLevoptOZxFBUuW0e/FWPhm+M0=;
+        b=DtOQYz45GmWh2hcMz9oXSjl83b6w/1sBiq0p3IB6NoY5hGQgP8knIeJhGiO4ouWVXa
+         XjHYo+nvmiYGYd/JADNFeEy56Yz9K/BgjGZHYAbXaXQhg5WxVz8j7pduyxPpmFQCUAWR
+         OuMtAsxs1uDqfKzhge05HV1tUbLHckqBG3jiL6PVeN5JYhzqBflgSoZUCTrXYNXMbx02
+         yWQNzUeuZkbTdy7oTpmkhtn5F1uBQ3n6PlRN/rfzE4zvXTiS5onXZB6SCuof+y3/l9sj
+         EH4/CgIF7ujQRvMTca3jHdu6PFW4HSttevEy7yHquK9U+R91m6530KMOpQgHpBdpLEOL
+         ho2A==
+X-Gm-Message-State: AJcUukePgd1BFLID6Yo6UStSYjZySaPIr3iHBgImwzxwHB+VSzdQdfIr
+        k1kxPmXNO19XUtOSLuJEpw/jXg==
+X-Google-Smtp-Source: ALg8bN7k8146w1SKv9w0xx2lsDhIDb65NLp99FCuk6OViftv3063GGkHsaM0phdh5uZDHnV8MeEU3Q==
+X-Received: by 2002:adf:ed46:: with SMTP id u6mr8857298wro.262.1547661289277;
+        Wed, 16 Jan 2019 09:54:49 -0800 (PST)
+Received: from boomer.local (lmontsouris-657-1-212-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
+        by smtp.googlemail.com with ESMTPSA id z9sm68703861wrs.63.2019.01.16.09.54.48
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 16 Jan 2019 09:54:48 -0800 (PST)
+From:   Jerome Brunet <jbrunet@baylibre.com>
+To:     Neil Armstrong <narmstrong@baylibre.com>
+Cc:     Jerome Brunet <jbrunet@baylibre.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Kevin Hilman <khilman@baylibre.com>,
+        linux-amlogic@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, patchwork-bot+notify@kernel.org
+Subject: [PATCH 0/3] clk: meson: claim input clocks through DT
+Date:   Wed, 16 Jan 2019 18:54:32 +0100
+Message-Id: <20190116175435.4990-1-jbrunet@baylibre.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190114064745.27306-1-npiggin@gmail.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jan 14, 2019 at 04:47:45PM +1000, Nicholas Piggin wrote:
-> We have a supercomputer site testing nohz_full to reduce jitter with
-> good results, but they want CPU0 to be nohz_full. That happens to be
-> the boot CPU, which is disallowed by the nohz_full code.
-> 
-> They have existing job scheduling code which wants this, I don't know
-> too much detail beyond that, but I hope the kernel can be made to
-> work with their config.
-> 
-> This patch has the boot CPU take over the jiffies update in the low
-> res timer before SMP is brought up, after which the nohz CPU will take
-> over.
-> 
-> It also modifies the housekeeping check code a bit to ensure at least
-> one !nohz CPU is in the present map so it comes up at boot, rather
-> than having the nohz code take the boot CPU out of the nohz mask.
-> 
-> This keeps jiffies incrementing on the nohz_full boot CPU before SMP
-> init, but I'm not sure if this is covering all races and platform
-> considerations. Sorry I don't know the timer code too well, I would
-> appreciate any help.
-> 
-> Thanks,
-> Nick
+Following the preparation series [0] sent in the last cycle, this
+patchset adds clock input claim through DT in the gxbb and axg clock
+controllers
 
-We used to allow that and that broke hibernation :)
+[0]: https://lkml.kernel.org/r/20181203171640.12110-1-jbrunet@baylibre.com
 
-So, since we need to have at least one CPU alive to handle the
-timekeeping updates on behalf of nohz CPUs, we forbid it to go idle
-and offline, for simplicity. Now hibernation requires to disable
-non-boot CPUs. So if the timekeeper is not the boot CPU, it's going to
-refuse the hotplug operation and break hibernation.
+Jerome Brunet (3):
+  clk: meson: gxbb: claim clock controller input clock from DT
+  clk: meson: axg: claim clock controller input clock from DT
+  clk: meson: ao-clkc: claim clock controller input clocks from DT
+
+ drivers/clk/meson/axg-aoclk.c   | 22 +++++++++++++++-----
+ drivers/clk/meson/axg.c         | 27 +++++++++++++++++-------
+ drivers/clk/meson/gxbb-aoclk.c  | 25 ++++++++++++++++------
+ drivers/clk/meson/gxbb.c        | 37 +++++++++++++++++++++------------
+ drivers/clk/meson/meson-aoclk.c | 37 ++++++++++++++++++++++++++++++++-
+ drivers/clk/meson/meson-aoclk.h | 12 +++++++++--
+ 6 files changed, 125 insertions(+), 35 deletions(-)
+
+-- 
+2.20.1
+
