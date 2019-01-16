@@ -2,142 +2,95 @@ Return-Path: <SRS0=1Lvk=PY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B3153C43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 13:10:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 72AFBC43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 13:11:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8684D206C2
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 13:10:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 362F4206C2
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 13:11:46 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lJyWZd59"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390382AbfAPNKa (ORCPT
+        id S2392990AbfAPNLo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 16 Jan 2019 08:10:30 -0500
-Received: from mga05.intel.com ([192.55.52.43]:44856 "EHLO mga05.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390143AbfAPNKa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Jan 2019 08:10:30 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 16 Jan 2019 05:10:30 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,486,1539673200"; 
-   d="scan'208";a="126489253"
-Received: from mint-dev.iind.intel.com ([10.223.25.164])
-  by orsmga002.jf.intel.com with ESMTP; 16 Jan 2019 05:10:27 -0800
-From:   Ramalingam C <ramalingam.c@intel.com>
-To:     intel-gfx-trybot@lists.freedesktop.org
-Cc:     Ramalingam C <ramalingam.c@intel.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v10 03/40] component: alloc component_match without any comp to match
-Date:   Wed, 16 Jan 2019 18:34:52 +0530
-Message-Id: <1547643929-4679-3-git-send-email-ramalingam.c@intel.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1547643929-4679-1-git-send-email-ramalingam.c@intel.com>
-References: <1547643929-4679-1-git-send-email-ramalingam.c@intel.com>
+        Wed, 16 Jan 2019 08:11:44 -0500
+Received: from mail-ot1-f66.google.com ([209.85.210.66]:34443 "EHLO
+        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2390326AbfAPNLo (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 Jan 2019 08:11:44 -0500
+Received: by mail-ot1-f66.google.com with SMTP id t5so2044520otk.1
+        for <linux-kernel@vger.kernel.org>; Wed, 16 Jan 2019 05:11:43 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=WYbvESzi3MHLWnd2PGoU42O5hBXw411ONY7gkyHaweA=;
+        b=lJyWZd59FaF+sDcCyxfI4zq0dQrY8hqtuP/ONPOlHzW4xkWKgK08Esf+0zFEmIs0R0
+         sFsiEdRU/HNDlgAj9K/nixJ9rUbzeYamq/0EsNFOa3P90V833Lc4xLTgSAQn8x0929UH
+         6ulmfUYONnFguxnmczQqyK4bjWgIvp6ebTMbJ68B+Zeqqi5FNjE6NKOio14LGazt29cA
+         uBhLNL1cbqXfaexqapfp0cBFDX+Ber4fezboPqJxQN3wHa8DAWB9s6rPAuRhSvy4twoX
+         hijroa9K6O+XS61T3wC2ARyC2VPcJdgZ+yTT2avo1qGV2FRmIMV1iqKPLhaTI7tl1PZE
+         aeMg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=WYbvESzi3MHLWnd2PGoU42O5hBXw411ONY7gkyHaweA=;
+        b=jdre+F3hjUSO/yZJXyF4ypieUwV0JZbr+b5OuuZmkglpl6ZoaMoLTxYphrJHqpu3Ey
+         KmtIdJvVPvRbELb376zS8+vtR1z10zhySHbZxYjGCe5us9S+GPoIIslSR7I77SVnlQsw
+         LLkoeRHurVd50bRQgl+wtvVGb6FmEphI2WUYyQqmNzTC2+EAZHoQN37H2OMsoL2LbSUr
+         zIkAbwLeAvHkupKfr9f2u9D5Knit+i0kO33Z5oDbVfLlLqv8JaAZChiksXMEwFQcDtYf
+         qpnTt19alzZx4L7Tx4B9RZ5UmIhiysWtmW4/+JKmUeAbPZjf6awLfz2LZOruzVRGTCDC
+         CwMA==
+X-Gm-Message-State: AJcUukeroV2I05XLXtp4L1IKPACq8wJWj8njmgJUC1qESJCfLGgTMC3p
+        ffvklTitRG/RcsTsAkMBJkIuTIFoXmm394vHaxs=
+X-Google-Smtp-Source: ALg8bN44D17nhZKn6Ag2Wr9n2qTeJbgXIhCDi+pB3ACsyOCmzO4A2mlXK/ld7I1p/1Zxq7ZQy/38hWxwtNb78UhBg28=
+X-Received: by 2002:a9d:7285:: with SMTP id t5mr5701786otj.228.1547644303237;
+ Wed, 16 Jan 2019 05:11:43 -0800 (PST)
+MIME-Version: 1.0
+References: <20190115170501.10952-1-daniel.baluta@nxp.com>
+In-Reply-To: <20190115170501.10952-1-daniel.baluta@nxp.com>
+From:   Fabio Estevam <festevam@gmail.com>
+Date:   Wed, 16 Jan 2019 11:12:12 -0200
+Message-ID: <CAOMZO5D_kakB82dEcXrU4EZARLj90US8Zf+sGgaKkZvUG3t=PA@mail.gmail.com>
+Subject: Re: [PATCH] arm64: dts: imx: Fix MU4_INT number
+To:     Daniel Baluta <daniel.baluta@nxp.com>
+Cc:     "shawnguo@kernel.org" <shawnguo@kernel.org>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        Aisheng Dong <aisheng.dong@nxp.com>,
+        Anson Huang <anson.huang@nxp.com>,
+        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        dl-linux-imx <linux-imx@nxp.com>,
+        "kernel@pengutronix.de" <kernel@pengutronix.de>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        "S.j. Wang" <shengjiu.wang@nxp.com>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-If all the components associated to a component master is not added
-to the component framework due to the HW capability or Kconfig
-selection, component_match will be NULL at
-component_master_add_with_match().
+Hi Daniel,
 
-To avoid this, component_match_alloc() is added to the framework,
-to allcoate the struct component_match with zero associated components.
-Hence component master can be added with a component_match with zero
-associated components.
+On Tue, Jan 15, 2019 at 3:05 PM Daniel Baluta <daniel.baluta@nxp.com> wrote:
+>
+> MU4_INT correct number is 180, while 179 is for MU3_INT.
+>
+> Signed-off-by: Daniel Baluta <daniel.baluta@nxp.com>
 
-This helps the component master bind call to get triggered,
-even if no component is registered for that particular master.
+Two nitpicks:
 
-This is meant for big PCI device drivers where small/optional
-features are external components, and based on usecases different
-combination of components are build as entire driver.
+1. In the Subject it would be better to specify the SoC name:
+arm64: dts: imx8qxp: Fix MU4_INT number
 
-In such PCI device driver Load, if we use the component master for
-waiting for few  components(features) availability, only if they are
-supported by the underlying HW, then we need to allocate memory for
-component_match using the API introduced in this change before
-the call to component_master_add_with_match.
+2. It would be nice to add a Fixes tag
 
-Signed-off-by: Ramalingam C <ramalingam.c@intel.com>
-Suggested-by: Daniel Vetter <daniel.vetter@ffwll.ch>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Kate Stewart <kstewart@linuxfoundation.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Philippe Ombredanne <pombredanne@nexb.com>
-Cc: linux-kernel@vger.kernel.org
-Reviewed-by: Daniel Vetter <daniel.vetter@ffwll.ch>
-Acked-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- drivers/base/component.c  | 30 ++++++++++++++++++++++++++++++
- include/linux/component.h |  2 ++
- 2 files changed, 32 insertions(+)
-
-diff --git a/drivers/base/component.c b/drivers/base/component.c
-index ddcea8739c12..1b8bb07c0ec7 100644
---- a/drivers/base/component.c
-+++ b/drivers/base/component.c
-@@ -302,6 +302,36 @@ static int component_match_realloc(struct device *dev,
- }
- 
- /*
-+ * Allocate the match without any component_match_array elements.
-+ *
-+ * This function is useful when the component master might end up
-+ * registering itself without any matching components.
-+ */
-+void component_match_alloc(struct device *master,
-+	struct component_match **matchptr)
-+{
-+	struct component_match *match = *matchptr;
-+
-+	if (IS_ERR(match))
-+		return;
-+
-+	if (match)
-+		return;
-+
-+	match = devres_alloc(devm_component_match_release,
-+			     sizeof(*match), GFP_KERNEL);
-+	if (!match) {
-+		*matchptr = ERR_PTR(-ENOMEM);
-+		return;
-+	}
-+
-+	devres_add(master, match);
-+
-+	*matchptr = match;
-+}
-+EXPORT_SYMBOL(component_match_alloc);
-+
-+/*
-  * Add a component to be matched, with a release function.
-  *
-  * The match array is first created or extended if necessary.
-diff --git a/include/linux/component.h b/include/linux/component.h
-index e71fbbbc74e2..3f6b420a58f8 100644
---- a/include/linux/component.h
-+++ b/include/linux/component.h
-@@ -37,6 +37,8 @@ void component_match_add_release(struct device *master,
- 	struct component_match **matchptr,
- 	void (*release)(struct device *, void *),
- 	int (*compare)(struct device *, void *), void *compare_data);
-+void component_match_alloc(struct device *master,
-+	struct component_match **matchptr);
- 
- static inline void component_match_add(struct device *master,
- 	struct component_match **matchptr,
--- 
-2.7.4
-
+Reviewed-by: Fabio Estevam <festevam@gmail.com>
