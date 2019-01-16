@@ -6,18 +6,18 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2CB24C43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 21:25:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C7EE3C43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 21:25:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 02721206C2
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 21:25:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9DF93206C2
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 21:25:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729906AbfAPVZJ (ORCPT
+        id S1730011AbfAPVZQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 16 Jan 2019 16:25:09 -0500
-Received: from mga11.intel.com ([192.55.52.93]:32309 "EHLO mga11.intel.com"
+        Wed, 16 Jan 2019 16:25:16 -0500
+Received: from mga11.intel.com ([192.55.52.93]:32307 "EHLO mga11.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729508AbfAPVYf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1729451AbfAPVYf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 16 Jan 2019 16:24:35 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
@@ -25,7 +25,7 @@ Received: from fmsmga008.fm.intel.com ([10.253.24.58])
   by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 16 Jan 2019 13:24:35 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.56,487,1539673200"; 
-   d="scan'208";a="117269597"
+   d="scan'208";a="117269585"
 Received: from romley-ivt3.sc.intel.com ([172.25.110.60])
   by fmsmga008.fm.intel.com with ESMTP; 16 Jan 2019 13:24:34 -0800
 From:   Fenghua Yu <fenghua.yu@intel.com>
@@ -39,8 +39,8 @@ To:     "Thomas Gleixner" <tglx@linutronix.de>,
 Cc:     "linux-kernel" <linux-kernel@vger.kernel.org>,
         "x86" <x86@kernel.org>, Fenghua Yu <fenghua.yu@intel.com>
 Subject: [PATCH v2 1/3] x86/cpufeatures: Enumerate user wait instructions
-Date:   Wed, 16 Jan 2019 13:18:40 -0800
-Message-Id: <1547673522-226408-6-git-send-email-fenghua.yu@intel.com>
+Date:   Wed, 16 Jan 2019 13:18:36 -0800
+Message-Id: <1547673522-226408-2-git-send-email-fenghua.yu@intel.com>
 X-Mailer: git-send-email 2.5.0
 In-Reply-To: <1547673522-226408-1-git-send-email-fenghua.yu@intel.com>
 References: <1547673522-226408-1-git-send-email-fenghua.yu@intel.com>
