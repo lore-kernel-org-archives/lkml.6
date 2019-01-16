@@ -2,121 +2,76 @@ Return-Path: <SRS0=1Lvk=PY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C48AEC43444
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 13:21:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 04E66C43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 13:21:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 800CA20859
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 13:21:49 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="C4NHT6Pg"
+	by mail.kernel.org (Postfix) with ESMTP id C932F20651
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 13:21:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1547644912;
+	bh=0h4fXiB422XIVi8xxqXNfKhz7PB/keGojDsDhKn7bIk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=pD/ysoE84vrsO6c3Ue/ElcXidG8hPUUvKNycyheTVGuP4YGPx8jtko8Xvp0AoWiVc
+	 wYCiZlVILvmkV17h3AD5/JE0b6OEB6cI4BDB7QfgAVsSQ8ZBFPWyhLKb5lgrHCr2/f
+	 NnZKiEzeuEtXFZsm+XMTty8OcaMPsDhhoHm6ovY0=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404256AbfAPNVr (ORCPT
+        id S2404268AbfAPNVv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 16 Jan 2019 08:21:51 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35370 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2404226AbfAPNVr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 16 Jan 2019 08:21:47 -0500
-Received: from mail-ed1-f68.google.com ([209.85.208.68]:42476 "EHLO
-        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2393175AbfAPNVq (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Jan 2019 08:21:46 -0500
-Received: by mail-ed1-f68.google.com with SMTP id y20so5360211edw.9
-        for <linux-kernel@vger.kernel.org>; Wed, 16 Jan 2019 05:21:45 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ffwll.ch; s=google;
-        h=sender:date:from:to:cc:subject:message-id:mail-followup-to
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=xbHpzTokusgalm/0iOQJVfLtqZdOjyIUIWDBI+0BAs4=;
-        b=C4NHT6PgSSBLiEt9sEdkonFKKDhKK8/CYrG1W0CNUhxSbIdg1zmwlFmNjOPQ4loOmq
-         UHIsnxiGFhuwfBDytX51xWDkI5zT2b7SL5wtkcNKpfZEz+FMweNS/iMkLw0idBRrb61C
-         bsdsWdpifNNWgSICVMYv9DEODnLbEHAQn2Gek=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :mail-followup-to:references:mime-version:content-disposition
-         :in-reply-to:user-agent;
-        bh=xbHpzTokusgalm/0iOQJVfLtqZdOjyIUIWDBI+0BAs4=;
-        b=V72vwY8MnskDOFgxfo83KaP/2u+lCmA5jl6Pmr79mTV9dHivvggzryBpkSI63s9XTR
-         zsM/vP6tJJviVVVhUaPd/NtVKZwXEkBrBczAHzojO8b4gAve0tQUxlUby3SRWTTWrLlE
-         00CAUZJl9yVTZKgRJk5Njd7MEotEvfKVES+A4V3Gu4pTmIWIGQ2HGQTGdypb6rSwYHLe
-         A6wKN1yjxJhbvJ/ev6sYaetWhnnzcfSLJx6IC4tnOYPxwjlI245QSAVPVwuxUzIiYsMY
-         WfsEa+gkKW6MvKgvDpoCRH2CwqKJfKEzWIZIjBFQTFx6C380UcwOIBdmiLKawZ8A26n8
-         Pv8w==
-X-Gm-Message-State: AJcUukfMJnqj/l8JieHFECD/8XQA+pcCCAq7DtuGQIrFRAfE+CNvKOsn
-        FrOARA1/qPQr6HG+8pkAuvPRcQ==
-X-Google-Smtp-Source: ALg8bN6voaz9DD0VIPiw7I4o1J2o4Iy0lXwyhCO8Dji626zJo8Q0XV7UYRc/tz3fYO2bgCBU5dBmlg==
-X-Received: by 2002:a50:ac19:: with SMTP id v25mr7546875edc.218.1547644904360;
-        Wed, 16 Jan 2019 05:21:44 -0800 (PST)
-Received: from phenom.ffwll.local ([2a02:168:569e:0:3106:d637:d723:e855])
-        by smtp.gmail.com with ESMTPSA id f35sm5869952edd.80.2019.01.16.05.21.42
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 16 Jan 2019 05:21:43 -0800 (PST)
-Date:   Wed, 16 Jan 2019 14:21:41 +0100
-From:   Daniel Vetter <daniel@ffwll.ch>
-To:     Gerd Hoffmann <kraxel@redhat.com>
-Cc:     Frediano Ziglio <fziglio@redhat.com>,
-        dri-devel@lists.freedesktop.org, David Airlie <airlied@linux.ie>,
-        open list <linux-kernel@vger.kernel.org>,
-        "open list:DRM DRIVER FOR QXL VIRTUAL GPU" 
-        <virtualization@lists.linux-foundation.org>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        "open list:DRM DRIVER FOR QXL VIRTUAL GPU" 
-        <spice-devel@lists.freedesktop.org>,
-        Dave Airlie <airlied@redhat.com>
-Subject: Re: [Spice-devel] [PATCH 1/3] drm/qxl: add mode/framebuffer check
- functions
-Message-ID: <20190116132141.GX10517@phenom.ffwll.local>
-Mail-Followup-To: Gerd Hoffmann <kraxel@redhat.com>,
-        Frediano Ziglio <fziglio@redhat.com>,
-        dri-devel@lists.freedesktop.org, David Airlie <airlied@linux.ie>,
-        open list <linux-kernel@vger.kernel.org>,
-        "open list:DRM DRIVER FOR QXL VIRTUAL GPU" <virtualization@lists.linux-foundation.org>,
-        "open list:DRM DRIVER FOR QXL VIRTUAL GPU" <spice-devel@lists.freedesktop.org>,
-        Dave Airlie <airlied@redhat.com>
-References: <20190116083521.22673-1-kraxel@redhat.com>
- <20190116083521.22673-2-kraxel@redhat.com>
- <636470684.58090538.1547630691403.JavaMail.zimbra@redhat.com>
- <20190116112800.v73xmxedt4b3gktj@sirius.home.kraxel.org>
+Received: from dragon (61-216-91-114.HINET-IP.hinet.net [61.216.91.114])
+        (using TLSv1.2 with cipher DHE-RSA-AES128-SHA (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 621DF20651;
+        Wed, 16 Jan 2019 13:21:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1547644906;
+        bh=0h4fXiB422XIVi8xxqXNfKhz7PB/keGojDsDhKn7bIk=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=lXSq4g09Zk9qNYslA5maR1vv/nf5xkALvO6lXlJXEkvyPCKZLIL/Ijcz31pymw7JG
+         T1mxoyW+i/moExwW77HU8iWcbN+7nPNhwy3bHkXf/3uwnhbsKlAGuMX9vHWoGh/EzC
+         5M53Ff405vAmWi7TvbQn8EbqcP1g0WUT7GDl84eY=
+Date:   Wed, 16 Jan 2019 21:21:18 +0800
+From:   Shawn Guo <shawnguo@kernel.org>
+To:     Abel Vesa <abel.vesa@nxp.com>
+Cc:     "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Aisheng Dong <aisheng.dong@nxp.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        dl-linux-imx <linux-imx@nxp.com>,
+        Sascha Hauer <kernel@pengutronix.de>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH v3] arm64: defconfig: Add i.MX8MQ boot necessary configs
+Message-ID: <20190116132117.GA17702@dragon>
+References: <1547631712-24544-1-git-send-email-abel.vesa@nxp.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190116112800.v73xmxedt4b3gktj@sirius.home.kraxel.org>
-X-Operating-System: Linux phenom 4.19.0-1-amd64 
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <1547631712-24544-1-git-send-email-abel.vesa@nxp.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 16, 2019 at 12:28:00PM +0100, Gerd Hoffmann wrote:
-> > > +static int qxl_check_mode(struct qxl_device *qdev,
-> > > +			  unsigned int width,
-> > > +			  unsigned int height)
-> > > +{
-> > > +	if (width * height * 4 > qdev->vram_size)
-> > 
-> > Is someone checking for integer overflows already?
+On Wed, Jan 16, 2019 at 09:41:59AM +0000, Abel Vesa wrote:
+> Enable all the i.MX8MQ configs necessary to boot.
 > 
-> Need to have a look.  This is just ...
+> Cc: Catalin Marinas <catalin.marinas@arm.com>
+> Cc: Will Deacon <will.deacon@arm.com>
+> Cc: Shawn Guo <shawnguo@kernel.org>
+> Cc: Sascha Hauer <kernel@pengutronix.de>
+> Cc: Fabio Estevam <fabio.estevam@nxp.com>
+> Signed-off-by: Abel Vesa <abel.vesa@nxp.com>
 
-The addfb ioctl checks for integer overflows for you.
--Daniel
-
-> 
-> > > -	if (bo->surf.stride * bo->surf.height > qdev->vram_size) {
-> > > -		DRM_ERROR("Mode doesn't fit in vram size (vgamem)");
-> > > -		return -EINVAL;
-> > > -	}
-> 
-> ... that check moved into the new function.
-> 
-> cheers,
->   Gerd
-> 
-
--- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
+Applied, thanks.
