@@ -2,94 +2,115 @@ Return-Path: <SRS0=1Lvk=PY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D4381C43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 10:30:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E23A0C43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 10:30:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 97A80206C2
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 10:30:05 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="ZMlhixMv"
+	by mail.kernel.org (Postfix) with ESMTP id B747620866
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 10:30:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392070AbfAPKaE (ORCPT
+        id S2404042AbfAPKap (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 16 Jan 2019 05:30:04 -0500
-Received: from lelv0142.ext.ti.com ([198.47.23.249]:39278 "EHLO
-        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2392045AbfAPK37 (ORCPT
+        Wed, 16 Jan 2019 05:30:45 -0500
+Received: from eu-smtp-delivery-151.mimecast.com ([207.82.80.151]:59581 "EHLO
+        eu-smtp-delivery-151.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S2403917AbfAPKao (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Jan 2019 05:29:59 -0500
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id x0GATmfd024303;
-        Wed, 16 Jan 2019 04:29:48 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1547634588;
-        bh=Wku//qhDYReUpq+it2Ytj5cnwAN9CDbL+m4mcFy8NsY=;
-        h=From:To:CC:Subject:Date;
-        b=ZMlhixMvz1yKnVqLFIeqVkePqcCDmCKiIdRnFSoUNRC2jN3yzYJoLQz7qWgisucAC
-         V+dcwVzj6AQmJVkBPzCvrkS2iXcnps14n/LoHXV9ccOBdcVjXO9DpY9lwGLAYdIbDv
-         n4M2OSqOA0pcxEYgnKwIIfIuwNrBHjUWJTP7Bk6g=
-Received: from DFLE112.ent.ti.com (dfle112.ent.ti.com [10.64.6.33])
-        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x0GATmW3063713
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 16 Jan 2019 04:29:48 -0600
-Received: from DFLE107.ent.ti.com (10.64.6.28) by DFLE112.ent.ti.com
- (10.64.6.33) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Wed, 16
- Jan 2019 04:29:48 -0600
-Received: from dflp33.itg.ti.com (10.64.6.16) by DFLE107.ent.ti.com
- (10.64.6.28) with Microsoft SMTP Server (version=TLS1_0,
- cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1591.10 via Frontend Transport;
- Wed, 16 Jan 2019 04:29:48 -0600
-Received: from a0132425.india.ti.com (ileax41-snat.itg.ti.com [10.172.224.153])
-        by dflp33.itg.ti.com (8.14.3/8.13.8) with ESMTP id x0GATjJ3009725;
-        Wed, 16 Jan 2019 04:29:45 -0600
-From:   Vignesh R <vigneshr@ti.com>
-To:     Boris Brezillon <bbrezillon@kernel.org>,
-        <Tudor.Ambarus@microchip.com>
-CC:     Marek Vasut <marek.vasut@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        <linux-mtd@lists.infradead.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, Vignesh R <vigneshr@ti.com>
-Subject: [PATCH v3 0/2] cadence-quadspi: Add Octal mode support
-Date:   Wed, 16 Jan 2019 16:00:25 +0530
-Message-ID: <20190116103027.22657-1-vigneshr@ti.com>
-X-Mailer: git-send-email 2.20.1
+        Wed, 16 Jan 2019 05:30:44 -0500
+Received: from AcuMS.aculab.com (156.67.243.126 [156.67.243.126]) (Using
+ TLS) by relay.mimecast.com with ESMTP id
+ uk-mta-136-4U74QEZyNQu_MdkClKZp5A-1; Wed, 16 Jan 2019 10:30:41 +0000
+Received: from AcuMS.Aculab.com (fd9f:af1c:a25b::d117) by AcuMS.aculab.com
+ (fd9f:af1c:a25b::d117) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Wed,
+ 16 Jan 2019 10:31:08 +0000
+Received: from AcuMS.Aculab.com ([fe80::43c:695e:880f:8750]) by
+ AcuMS.aculab.com ([fe80::43c:695e:880f:8750%12]) with mapi id 15.00.1347.000;
+ Wed, 16 Jan 2019 10:31:08 +0000
+From:   David Laight <David.Laight@ACULAB.COM>
+To:     'Andy Lutomirski' <luto@kernel.org>,
+        Dave Hansen <dave.hansen@intel.com>
+CC:     "Jason A. Donenfeld" <Jason@zx2c4.com>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "x86@kernel.org" <x86@kernel.org>,
+        "Paolo Bonzini" <pbonzini@redhat.com>,
+        =?utf-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+        "Rik van Riel" <riel@surriel.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>
+Subject: RE: [PATCH v6] x86: load FPU registers on return to userland
+Thread-Topic: [PATCH v6] x86: load FPU registers on return to userland
+Thread-Index: AQHUqBFG/2WmFKVnEEqv3ikTpa8106WwTizwgACPwxKAANvx0A==
+Date:   Wed, 16 Jan 2019 10:31:08 +0000
+Message-ID: <ac60c5d4acc2493298d0d864320993ba@AcuMS.aculab.com>
+References: <20190109114744.10936-1-bigeasy@linutronix.de>
+ <2e396dbcbb1c4cc191b4208626baed07@AcuMS.aculab.com>
+ <dc9e3308-4e2a-2ce8-495e-6fdb868c60b2@intel.com>
+ <CALCETrX0RNgiVop+9uSkLyfxoy-cDyWk2G09svGD_UPsVyLAhA@mail.gmail.com>
+ <39ab2f2b-81bb-636e-933d-f3a5225aa020@intel.com>
+ <CALCETrXq8GFAzunui7d-seaK-on6_xiZOv0A4wc=sAur0wuDzg@mail.gmail.com>
+In-Reply-To: <CALCETrXq8GFAzunui7d-seaK-on6_xiZOv0A4wc=sAur0wuDzg@mail.gmail.com>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.202.205.107]
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+X-MC-Unique: 4U74QEZyNQu_MdkClKZp5A-1
+X-Mimecast-Spam-Score: 0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: base64
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This series adds support for OSPI version of Cadence QSPI controller IP.
-Based on top of [1][2] that add Octal mode support in spi-nor core:
-
-[1] https://patchwork.ozlabs.org/patch/1025081/
-[2] https://patchwork.ozlabs.org/patch/1025082/
-
-Changes:
-v3:
-Rebase on top of v7 of Yogesh's series[1]
-
-v2:
-spi-nor core patches dropped, are now part of Yogesh's series [1]
-Declare Octal mode capability based on compatible.
-
-
-Vignesh R (2):
-  dt-bindings: cadence-quadspi: Add new compatible for AM654 SoC
-  mtd: spi-nor: cadence-quadspi: Add support for Octal SPI controller
-
- .../bindings/mtd/cadence-quadspi.txt          |  1 +
- drivers/mtd/spi-nor/cadence-quadspi.c         | 54 ++++++++++++++-----
- 2 files changed, 43 insertions(+), 12 deletions(-)
-
--- 
-2.20.1
+RnJvbTogQW5keSBMdXRvbWlyc2tpIFttYWlsdG86bHV0b0BrZXJuZWwub3JnXQ0KPiBPbiBUdWUs
+IEphbiAxNSwgMjAxOSBhdCAxMjo1NCBQTSBEYXZlIEhhbnNlbiA8ZGF2ZS5oYW5zZW5AaW50ZWwu
+Y29tPiB3cm90ZToNCj4gPg0KPiA+IE9uIDEvMTUvMTkgMTI6MjYgUE0sIEFuZHkgTHV0b21pcnNr
+aSB3cm90ZToNCj4gPiA+IEkgZG9uJ3QgdGhpbmsgd2UnZCBldmVyIHdhbnQga2VybmVsX2ZwdV9l
+bmQoKSB0byByZXN0b3JlIGFueXRoaW5nLA0KPiA+ID4gcmlnaHQ/ICBJJ20gYSBiaXQgY29uZnVz
+ZWQgYXMgdG8gd2hlbiB0aGlzIG9wdGltaXphdGlvbiB3b3VsZCBhY3R1YWxseQ0KPiA+ID4gYmUg
+dXNlZnVsLg0KPiA+DQo+ID4gVXNpbmcgQVZYLTUxMiBhcyBhbiBleGFtcGxlLi4uDQo+ID4NCj4g
+PiBMZXQncyBzYXkgdGhlcmUgd2FzIEFWWC01MTIgc3RhdGUsIGFuZCBhIGtlcm5lbF9mcHVfYmVn
+aW4oKSB1c2VyIG9ubHkNCj4gPiB1c2VkIEFWWDIuICBXZSBjb3VsZCB0b3RhbGx5IGF2b2lkIGRv
+aW5nICphbnkqIEFWWC01MTIgc3RhdGUgc2F2ZS9yZXN0b3JlLg0KPiA+DQo+ID4gVGhlIGluaXQg
+b3B0aW1pemF0aW9uIGRvZXNuJ3QgaGVscCB1cyBpZiB0aGVyZSBfaXNfIEFWWC01MTIgc3RhdGUs
+IGFuZA0KPiA+IHRoZSBtb2RpZmllZCBvcHRpbWl6YXRpb24gb25seSBoZWxwcyBpZiB3ZSByZWNl
+bnRseSBkaWQgYSBYUlNUT1IgYXQNCj4gPiBjb250ZXh0IHN3aXRjaCBhbmQgaGF2ZSBub3Qgd3Jp
+dHRlbiB0byBBVlgtNTEyIHN0YXRlIHNpbmNlIFhSU1RPUi4NCj4gPg0KPiA+IFRoaXMgcHJvYmFi
+bHkgb25seSBtYXR0ZXJzIGZvciBBVlgtNTEyLXVzaW5nIGFwcHMgdGhhdCBoYXZlIHJ1biBvbiBh
+DQo+ID4ga2VybmVsIHdpdGggbG90cyBvZiBrZXJuZWxfZnB1X2JlZ2luKClzIHRoYXQgZG9uJ3Qg
+dXNlIEFWWC01MTIuICBTbywgbm90DQo+ID4gYSBiaWcgZGVhbCByaWdodCBub3cuDQo+IA0KPiBP
+biB0b3Agb2YgdGhpcyBzZXJpZXMsIHRoaXMgZ2V0cyByYXRoZXIgYXdrd2FyZCwgSSB0aGluayAt
+LSBub3cgd2UNCj4gbmVlZCB0byBiZSBhYmxlIHRvIGtlZXAgdHJhY2sgb2YgYSBzdGF0ZSBpbiB3
+aGljaCBzb21lIG9mIHRoZSB1c2VyDQo+IHJlZ2lzdGVycyBsaXZlIGluIHRoZSBDUFUgYW5kIHNv
+bWUgbGl2ZSBpbiBtZW1vcnksIGFuZCB3ZSBuZWVkIHRvIGJlDQo+IGFibGUgdG8gZG8gdGhlIHBh
+cnRpYWwgcmVzdG9yZSBpZiB3ZSBnbyBiYWNrIHRvIHVzZXIgbW9kZSBsaWtlIHRoaXMuDQo+IFdl
+IGFsc28gbmVlZCB0byBiZSBhYmxlIHRvIGRvIGEgcGFydGlhbCBzYXZlIGlmIHdlIGVuZCB1cCBj
+b250ZXh0DQo+IHN3aXRjaGluZy4gIFRoaXMgc2VlbXMgcmF0aGVyIGNvbXBsaWNhdGVkLg0KDQpJ
+ZiBrZXJuZWxfZnB1X2JlZ2luKCkgcmVxdWVzdHMgcmVnaXN0ZXJzIHRoYXQgYXJlICdsaXZlJyBm
+b3IgdXNlcnNwYWNlLA0Kb3IgaWYgdGhlIHVzZXIgcmVnaXN0ZXJzIGhhdmUgYmVlbiBzYXZlZCB0
+aGVuIHlvdSAobW9yZSBvciBsZXNzKSBoYXZlDQp0byBkaXNhYmxlIHByZS1lbXB0aW9uLg0KT1RP
+SCBpZiB0aGUga2VybmVsIHdhbnRzIHRoZSBBVlgyIHJlZ2lzdGVycyBhbmQgdGhlIHVzZXIgb25l
+cyBhcmUgYWxsIDANCnRoZW4gdGhlIGtlcm5lbCBjYW4ganVzdCB1c2UgdGhlIHJlZ2lzdGVycyBw
+cm92aWRlZCBrZXJuZWxfZnB1X2VuZCgpDQp6ZXJvZXMgdGhlbS4gSW4gdGhpcyBjYW4geW91IGNh
+biBhbGxvdyBwcmUtZW1wdGlvbiBiZWNhdXNlIGl0IHdpbGwgc2F2ZQ0KZXZlcnl0aGluZyBhbmQg
+aXQgd2lsbCBhbGwgZ2V0IHJlc3RvcmVkIGNvcnJlY3RseSAod2lsbCBuZWVkIHRvIGJlDQpyZXN0
+b3JlZCB3aGVuIHRoZSBwcm9jZXNzIGlzIHNjaGVkdWxlZCwgbm90IHJldHVybiB0byB1c2VyKS4N
+ClRoZSByZWdpc3RlciBzYXZlIGFyZWEgbWlnaHQgbmVlZCB6YXBwaW5nIChpZiB1c2VkKSBiZWNh
+dXNlIGl0IG1pZ2h0DQpiZSByZWFkYWJsZSBmcm9tIHVzZXIgc3BhY2UgKGJ5IGEgZGVidWdnZXIp
+Lg0KDQpUaGUgb3RoZXIgY2FzZSBpcyBrZXJuZWwgY29kZSB0aGF0IGd1YXJhbnRlZXMgdG8gc2F2
+ZSBhbmQgcmVzdG9yZQ0KYW55IHJlZ2lzdGVycyBpcyB1c2VzIChpdCBtaWdodCBvbmx5IHdhbnQg
+MiByZWdpc3RlcnMgZm9yIGEgQ1JDKS4NClN1Y2ggY29kZSBjYW4gbmVzdCB3aXRoIG90aGVyIGtl
+cm5lbCB1c2VycyAoZWcgaW4gYW4gSVNSKS4NCkknbSBub3Qgc3VyZSB3aGV0aGVyIGlzIG5lZWRz
+IGEgc21hbGwgJ3NhdmUgYXJlYScgZm9yIGZwdSBmbGFncz8NCkl0IG1pZ2h0IGJlIHdvcnRoIGFk
+ZGluZyBzdWNoIGEgc3RydWN0dXJlIHRvIHRoZSBpbnRlcmZhY2UgLSBldmVuDQppZiBpdCBpcyBj
+dXJyZW50bHkgYSBkdW1teSBzdHJ1Y3R1cmUuDQoNCglEYXZpZA0KDQotDQpSZWdpc3RlcmVkIEFk
+ZHJlc3MgTGFrZXNpZGUsIEJyYW1sZXkgUm9hZCwgTW91bnQgRmFybSwgTWlsdG9uIEtleW5lcywg
+TUsxIDFQVCwgVUsNClJlZ2lzdHJhdGlvbiBObzogMTM5NzM4NiAoV2FsZXMpDQo=
 
