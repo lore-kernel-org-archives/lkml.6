@@ -2,86 +2,92 @@ Return-Path: <SRS0=1Lvk=PY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B47F5C43444
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 15:00:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1EBD0C43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 15:00:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 824F120657
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 15:00:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E0880205C9
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 15:00:16 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=amazon.de header.i=@amazon.de header.b="B0mp1JeW"
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="sfYEvZdI"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2393770AbfAPPAA (ORCPT
+        id S2393788AbfAPPAP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 16 Jan 2019 10:00:00 -0500
-Received: from smtp-fw-9102.amazon.com ([207.171.184.29]:26902 "EHLO
-        smtp-fw-9102.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728675AbfAPPAA (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Jan 2019 10:00:00 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.de; i=@amazon.de; q=dns/txt; s=amazon201209;
-  t=1547650799; x=1579186799;
-  h=from:to:cc:subject:references:date:in-reply-to:
-   message-id:mime-version;
-  bh=RaiNxQUKMt3ENI0wPF/bEAsbn6PzyzrB2L8Q11F+LsQ=;
-  b=B0mp1JeW0Irq10CKbd5zRgNoRO8cJxLlVppKUJP9MQFagYlZVphTifeE
-   XUFxUsDRm0MZoharn4IgmB3Bec/zgEYlKOK2D4B1dYxZE2CYiD+SygAD4
-   c6TqapEHoIRFUyOlu20OmxSIW2aScCKHnE8d1sK/L2ZLXdH4JoIH/4lEG
-   I=;
-X-IronPort-AV: E=Sophos;i="5.56,253,1539648000"; 
-   d="scan'208";a="653786779"
-Received: from sea3-co-svc-lb6-vlan3.sea.amazon.com (HELO email-inbound-relay-1d-74cf8b49.us-east-1.amazon.com) ([10.47.22.38])
-  by smtp-border-fw-out-9102.sea19.amazon.com with ESMTP/TLS/DHE-RSA-AES256-SHA; 16 Jan 2019 14:57:10 +0000
-Received: from u54ee758033e858cfa736.ant.amazon.com (iad7-ws-svc-lb50-vlan2.amazon.com [10.0.93.210])
-        by email-inbound-relay-1d-74cf8b49.us-east-1.amazon.com (8.14.7/8.14.7) with ESMTP id x0GEujFk043915
-        (version=TLSv1/SSLv3 cipher=AES128-SHA bits=128 verify=NO);
-        Wed, 16 Jan 2019 14:56:47 GMT
-From:   Julian Stecklina <jsteckli@amazon.de>
-To:     Khalid Aziz <khalid.aziz@oracle.com>
-Cc:     juergh@gmail.com, tycho@tycho.ws, ak@linux.intel.com,
-        torvalds@linux-foundation.org, liran.alon@oracle.com,
-        keescook@google.com, konrad.wilk@oracle.com,
-        deepa.srinivasan@oracle.com, chris.hyser@oracle.com,
-        tyhicks@canonical.com, dwmw@amazon.co.uk,
-        andrew.cooper3@citrix.com, jcm@redhat.com,
-        boris.ostrovsky@oracle.com, kanth.ghatraju@oracle.com,
-        joao.m.martins@oracle.com, jmattson@google.com,
-        pradeep.vincent@oracle.com, john.haxby@oracle.com,
-        tglx@linutronix.de, kirill.shutemov@linux.intel.com, hch@lst.de,
-        steven.sistare@oracle.com, kernel-hardening@lists.openwall.com,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH v7 00/16] Add support for eXclusive Page Frame Ownership
-References: <cover.1547153058.git.khalid.aziz@oracle.com>
-Date:   Wed, 16 Jan 2019 15:56:44 +0100
-In-Reply-To: <cover.1547153058.git.khalid.aziz@oracle.com> (Khalid Aziz's
-        message of "Thu, 10 Jan 2019 14:09:32 -0700")
-Message-ID: <ciirm8o98gzm4z.fsf@u54ee758033e858cfa736.ant.amazon.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/24.5 (gnu/linux)
+        Wed, 16 Jan 2019 10:00:15 -0500
+Received: from vps0.lunn.ch ([185.16.172.187]:45309 "EHLO vps0.lunn.ch"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728675AbfAPPAP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 Jan 2019 10:00:15 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch; s=20171124;
+        h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date; bh=FAJnXUUIubJJzqURBD3F7bfBh9AUxwlewlTQHGPdEOU=;
+        b=sfYEvZdI7qX1qFsR8i4TOxgaVXF7wF4jLvIN0nDZSbEVK0htRr8Euk7W229GW4uFSSZxhyfOlr3obdqbp8l9Z1sMlsf1AzxhV3DFGY7psSJ+m+3N9CR3XxnAlBr0u+6eOT7g4v6Nd778t2G4539dKY2sys+EML0xmrGY7RnAHyI=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.84_2)
+        (envelope-from <andrew@lunn.ch>)
+        id 1gjmfp-0007PC-Kp; Wed, 16 Jan 2019 16:00:09 +0100
+Date:   Wed, 16 Jan 2019 16:00:09 +0100
+From:   Andrew Lunn <andrew@lunn.ch>
+To:     Johan Hovold <johan@kernel.org>
+Cc:     Hauke Mehrtens <hauke@hauke-m.de>,
+        Vivien Didelot <vivien.didelot@gmail.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, stable <stable@vger.kernel.org>
+Subject: Re: [PATCH 1/3] net: dsa: lantiq_gswip: fix use-after-free on failed
+ probe
+Message-ID: <20190116150009.GE25731@lunn.ch>
+References: <20190116102335.30433-1-johan@kernel.org>
+ <20190116102335.30433-2-johan@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190116102335.30433-2-johan@kernel.org>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Khalid Aziz <khalid.aziz@oracle.com> writes:
+On Wed, Jan 16, 2019 at 11:23:33AM +0100, Johan Hovold wrote:
+> Make sure to disable and deregister the switch on late probe errors to
+> avoid use-after-free when the device-resource-managed switch is freed.
+> 
+> Fixes: 14fceff4771e ("net: dsa: Add Lantiq / Intel DSA driver for vrx200")
+> Cc: stable <stable@vger.kernel.org>	# 4.20
+> Cc: Hauke Mehrtens <hauke@hauke-m.de>
+> Signed-off-by: Johan Hovold <johan@kernel.org>
+> ---
+>  drivers/net/dsa/lantiq_gswip.c | 5 ++++-
+>  1 file changed, 4 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/net/dsa/lantiq_gswip.c b/drivers/net/dsa/lantiq_gswip.c
+> index 693a67f45bef..b06c41c98de9 100644
+> --- a/drivers/net/dsa/lantiq_gswip.c
+> +++ b/drivers/net/dsa/lantiq_gswip.c
+> @@ -1099,7 +1099,7 @@ static int gswip_probe(struct platform_device *pdev)
+>  		dev_err(dev, "wrong CPU port defined, HW only supports port: %i",
+>  			priv->hw_info->cpu_port);
+>  		err = -EINVAL;
+> -		goto mdio_bus;
+> +		goto disable_switch;
+>  	}
+>  
+>  	platform_set_drvdata(pdev, priv);
+> @@ -1109,6 +1109,9 @@ static int gswip_probe(struct platform_device *pdev)
+>  		 (version & GSWIP_VERSION_MOD_MASK) >> GSWIP_VERSION_MOD_SHIFT);
+>  	return 0;
+>  
+> +disable_switch:
+> +	gswip_mdio_mask(priv, GSWIP_MDIO_GLOB_ENABLE, 0, GSWIP_MDIO_GLOB);
+> +	dsa_unregister_switch(priv->ds);
 
-> I am continuing to build on the work Juerg, Tycho and Julian have done
-> on XPFO.
+This is correct. But it would be nice if somebody in the future could
+move the disabling of the switch to the inverse of the gswip_setup()
+function to make the code symmetrical.
 
-Awesome!
+Reviewed-by: Andrew Lunn <andrew@lunn.ch>
 
-> A rogue process can launch a ret2dir attack only from a CPU that has
-> dual mapping for its pages in physmap in its TLB. We can hence defer
-> TLB flush on a CPU until a process that would have caused a TLB flush
-> is scheduled on that CPU.
-
-Assuming the attacker already has the ability to execute arbitrary code
-in userspace, they can just create a second process and thus avoid the
-TLB flush. Am I getting this wrong?
-
-Julian
+    Andrew
