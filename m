@@ -2,96 +2,199 @@ Return-Path: <SRS0=1Lvk=PY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B057C43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 17:30:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D60EAC43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 17:30:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2994620675
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 17:30:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547659826;
-	bh=HVXK5pX6jfwzGFegE5CjD6E5XZeyLc0GJv6qpY+9q+Y=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=FQIcyNTvyc4S9MGN5S8dAhewnGnqbvKfwm2qQiEUeZpnO1E2GQnvuvopAlMrSI37Z
-	 851ZGp7zDYRjXTV3Csa4YZEOck8+7K0FxVNOrr4ze95yFI5udJhQR/7zP8t2wsynAL
-	 6LJ72Whhy9AlxqSjuuhv4tlRbaGQvTHYe9/AUkMc=
+	by mail.kernel.org (Postfix) with ESMTP id 994EB20675
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 17:30:30 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="Myq5jeuQ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727244AbfAPRaY (ORCPT
+        id S1727218AbfAPRa3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 16 Jan 2019 12:30:24 -0500
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:50500 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727169AbfAPRaX (ORCPT
+        Wed, 16 Jan 2019 12:30:29 -0500
+Received: from mail-it1-f196.google.com ([209.85.166.196]:38223 "EHLO
+        mail-it1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727068AbfAPRa2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Jan 2019 12:30:23 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=HVXK5pX6jfwzGFegE5CjD6E5XZeyLc0GJv6qpY+9q+Y=; b=prppcnTlG8dH9T0zqyeH9bGE+
-        lhaFQUdZn/AkHOzYENTMwtfEsZ1U+m6Z6w5pTh6alIT1ZXzTnqfFfX/s35/vgN1AGnurMsgjelVSD
-        6CzZGNt92xpv7PXJXmVumZAZbqik5cvmwz6zdqEsZWJsvPmfaIDE0L1fGAvdJM2f+E8e0=;
-Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
-        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1gjp19-000266-5P; Wed, 16 Jan 2019 17:30:19 +0000
-Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
-        id 5E6481126FFD; Wed, 16 Jan 2019 17:30:18 +0000 (GMT)
-Date:   Wed, 16 Jan 2019 17:30:18 +0000
-From:   Mark Brown <broonie@kernel.org>
-To:     Benjamin Gaignard <benjamin.gaignard@st.com>
-Cc:     robh@kernel.org, arnd@arndb.de, linux-kernel@vger.kernel.org,
-        loic.pallardy@st.com, benjamin.gaignard@linaro.org
-Subject: Re: [RFC 1/7] devicetree: bindings: Document domains controller
- bindings
-Message-ID: <20190116173018.GD7186@sirena.org.uk>
-References: <20190114144202.27315-1-benjamin.gaignard@st.com>
- <20190114144202.27315-2-benjamin.gaignard@st.com>
+        Wed, 16 Jan 2019 12:30:28 -0500
+Received: by mail-it1-f196.google.com with SMTP id h65so3812651ith.3
+        for <linux-kernel@vger.kernel.org>; Wed, 16 Jan 2019 09:30:27 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=Ljv1GR361GBRKYIkB7jsE2in05byxJjM9Of4H3Lyf7A=;
+        b=Myq5jeuQiJRYN2ReKgBqC+F4WGXNyGRFDymPLmULSfQs2QRfD5K5Ahb63Z4mhTyh17
+         MpMjhQcqZG6hctg9oIL/rLUg29Xp1ba+aUzYzHmQv1/+g7orOEOrG19xW6nYHMEgpPEm
+         J9EtBEv+x9wwEmBh8HQLRPHDaOeuSgyXrNhJs=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Ljv1GR361GBRKYIkB7jsE2in05byxJjM9Of4H3Lyf7A=;
+        b=KJ1wApqhU5+7XnPnsXgoxByzw25J0MY1jfI5HnqZZ5TzsgCB539HFovYtAjt2w05uh
+         /r9NH1edsKbrnQp7vBhhiunDODfgFWJAReo5x2Z4pBoeJvDzugLESFWLmWoBhNrf4hCz
+         wx6RMz3oH+JJe1VDnvHgbd3FW2WAplR4up9v3oWWFEJ0X7/0Seafu9PhT7ErtXOLisjW
+         /9vuxjZ0ghIcVLnNgtpNZLXLYfbZRsNhXL6IBNp49QFzpyC720SvjDYiD7z8Gim15WKv
+         dTkQP0V5JdUisi3r9pY5XwEppanDSs8ETEl2pLX00nSQayMN8G0Ks3Ni4M6WJE5QuV6C
+         1UpQ==
+X-Gm-Message-State: AJcUukck/dORv4+cZd0lDsymSoQjkmHNPBs3Oc61fFLeqSp+smkhIgJa
+        wilQrJWaxjMXawqtNE4hbgk+EidZ88srU8aZEdIMdQ==
+X-Google-Smtp-Source: ALg8bN5ovBywmS2CY3P6+MGnjtlKbf7GdYn/0jnI7YCqLKMeYq51k91Eh0XXDHFIbC9usy4KjWsgWtsp6K1xpI+fWbM=
+X-Received: by 2002:a02:1b1d:: with SMTP id l29mr5818176jad.98.1547659826972;
+ Wed, 16 Jan 2019 09:30:26 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="8w3uRX/HFJGApMzv"
-Content-Disposition: inline
-In-Reply-To: <20190114144202.27315-2-benjamin.gaignard@st.com>
-X-Cookie: Help a swallow land at Capistrano.
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20190115230742.13730-1-mathieu.poirier@linaro.org>
+ <20190115230742.13730-3-mathieu.poirier@linaro.org> <20190116153948.GC871@kroah.com>
+ <CANLsYkzfbJae6Nk7cHhnR09ZPSATa3g8sceGC=O3DfXYC2ruQQ@mail.gmail.com>
+ <20190116163314.GB5446@kroah.com> <CANLsYkw_=_OC-95HRMxTZfpAe4UzAuidPJcZmL_T-LbkOwWCkQ@mail.gmail.com>
+ <20190116171259.GB10164@kroah.com>
+In-Reply-To: <20190116171259.GB10164@kroah.com>
+From:   Mathieu Poirier <mathieu.poirier@linaro.org>
+Date:   Wed, 16 Jan 2019 10:30:16 -0700
+Message-ID: <CANLsYkyFJx9gSfkMNmxT=bdas=sKFpZ0Cad42gm6nHoyq8FfnA@mail.gmail.com>
+Subject: Re: [PATCH 2/7] coresight: perf: Add "sinks" group to PMU directory
+To:     Greg KH <gregkh@linuxfoundation.org>
+Cc:     Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        schwidefsky@de.ibm.com, heiko.carstens@de.ibm.com,
+        Will Deacon <will.deacon@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Adrian Hunter <adrian.hunter@intel.com>, ast@kernel.org,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        "Suzuki K. Poulose" <suzuki.poulose@arm.com>,
+        linux-s390@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Wed, 16 Jan 2019 at 10:13, Greg KH <gregkh@linuxfoundation.org> wrote:
+>
+> On Wed, Jan 16, 2019 at 09:38:09AM -0700, Mathieu Poirier wrote:
+> > On Wed, 16 Jan 2019 at 09:33, Greg KH <gregkh@linuxfoundation.org> wrote:
+> > >
+> > > On Wed, Jan 16, 2019 at 09:14:33AM -0700, Mathieu Poirier wrote:
+> > > > On Wed, 16 Jan 2019 at 08:39, Greg KH <gregkh@linuxfoundation.org> wrote:
+> > > > >
+> > > > > On Tue, Jan 15, 2019 at 04:07:37PM -0700, Mathieu Poirier wrote:
+> > > > > > Add a "sinks" directory entry so that users can see all the sinks
+> > > > > > available in the system in a single place.  Individual sink are added
+> > > > > > as they are registered with the coresight bus.
+> > > > > >
+> > > > > > Signed-off-by: Mathieu Poirier <mathieu.poirier@linaro.org>
+> > > > > > ---
+> > > > > >  .../hwtracing/coresight/coresight-etm-perf.c  | 43 +++++++++++++++++++
+> > > > > >  .../hwtracing/coresight/coresight-etm-perf.h  |  1 +
+> > > > > >  drivers/hwtracing/coresight/coresight.c       | 17 ++++++++
+> > > > > >  3 files changed, 61 insertions(+)
+> > > > > >
+> > > > > > diff --git a/drivers/hwtracing/coresight/coresight-etm-perf.c b/drivers/hwtracing/coresight/coresight-etm-perf.c
+> > > > > > index f21eb28b6782..292bd409a68c 100644
+> > > > > > --- a/drivers/hwtracing/coresight/coresight-etm-perf.c
+> > > > > > +++ b/drivers/hwtracing/coresight/coresight-etm-perf.c
+> > > > > > @@ -14,6 +14,7 @@
+> > > > > >  #include <linux/perf_event.h>
+> > > > > >  #include <linux/percpu-defs.h>
+> > > > > >  #include <linux/slab.h>
+> > > > > > +#include <linux/stringhash.h>
+> > > > > >  #include <linux/types.h>
+> > > > > >  #include <linux/workqueue.h>
+> > > > > >
+> > > > > > @@ -43,8 +44,18 @@ static const struct attribute_group etm_pmu_format_group = {
+> > > > > >       .attrs  = etm_config_formats_attr,
+> > > > > >  };
+> > > > > >
+> > > > > > +static struct attribute *etm_config_sinks_attr[] = {
+> > > > > > +     NULL,
+> > > > > > +};
+> > > > > > +
+> > > > > > +static const struct attribute_group etm_pmu_sinks_group = {
+> > > > > > +     .name   = "sinks",
+> > > > > > +     .attrs  = etm_config_sinks_attr,
+> > > > > > +};
+> > > > > > +
+> > > > > >  static const struct attribute_group *etm_pmu_attr_groups[] = {
+> > > > > >       &etm_pmu_format_group,
+> > > > > > +     &etm_pmu_sinks_group,
+> > > > > >       NULL,
+> > > > > >  };
+> > > > > >
+> > > > > > @@ -479,6 +490,38 @@ int etm_perf_symlink(struct coresight_device *csdev, bool link)
+> > > > > >       return 0;
+> > > > > >  }
+> > > > > >
+> > > > > > +static ssize_t etm_perf_sink_name_show(struct device *dev,
+> > > > > > +                                    struct device_attribute *dattr,
+> > > > > > +                                    char *buf)
+> > > > > > +{
+> > > > > > +     /* See function coresight_sink_by_id() to know where this is used */
+> > > > > > +     u32 hash = hashlen_hash(hashlen_string(NULL, dattr->attr.name));
+> > > > > > +
+> > > > > > +     return scnprintf(buf, PAGE_SIZE, "%x\n", hash);
+> > > > > > +}
+> > > > > > +
+> > > > > > +int etm_perf_symlink_sink(struct coresight_device *csdev)
+> > > > > > +{
+> > > > > > +     struct device *pmu_dev = etm_pmu.dev;
+> > > > > > +     struct device *pdev = csdev->dev.parent;
+> > > > > > +     struct device_attribute *dev_attr;
+> > > > > > +
+> > > > > > +     if (csdev->type != CORESIGHT_DEV_TYPE_SINK &&
+> > > > > > +         csdev->type != CORESIGHT_DEV_TYPE_LINKSINK)
+> > > > > > +             return -EINVAL;
+> > > > > > +
+> > > > > > +     if (!etm_perf_up)
+> > > > > > +             return -EPROBE_DEFER;
+> > > > > > +
+> > > > > > +     dev_attr = kzalloc(sizeof(*dev_attr), GFP_KERNEL);
+> > > > > > +     dev_attr->attr.name = kstrdup(dev_name(pdev), GFP_KERNEL);
+> > > > > > +     dev_attr->attr.mode = 0444;
+> > > > > > +     dev_attr->show = etm_perf_sink_name_show;
+> > > > > > +
+> > > > > > +     return sysfs_add_file_to_group(&pmu_dev->kobj,
+> > > > > > +                                    &dev_attr->attr, "sinks");
+> > > > >
+> > > > > What is so odd about this call that you needed me to review this?
+> > > >
+> > > > As far as I can tell nobody is feeding a dynamic struct attribute to
+> > > > the function and I wasn't sure if it was because they were told not to
+> > > > or simply because it wasn't needed, hence asking for a second opinion.
+> > >
+> > > Ah.  Well, again, this is a good question to answer:
+> > >
+> > > > > And what happens if this call fails, do you leak memory?
+> >
+> > That's something I will fix in the next revision.
+> >
+> > >
+> > > And also, what happens when you unload the device, who frees the
+> > > attribute's memory?
+> >
+> > If configured, coresight devices aren't removable.
+>
+> But is the driver able to be unloaded?  Unbound from the device manually
+> through sysfs?  There's lots of ways devices are "removed" that don't
+> involved physical removal :)
 
---8w3uRX/HFJGApMzv
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+All drivers are built-in and thus preventing them from being unloaded.
+They also have their ".suppress_bin_attrs" field set to take care of
+unbinding through sysfs.
 
-On Mon, Jan 14, 2019 at 03:41:56PM +0100, Benjamin Gaignard wrote:
-
-> +Common Domains Controller bindings properties
-> +
-> +Domains Controller framework defines common bindings properties to describe
-> +the configurations to be applied for each device.
-
-I suspect this is going to need a few more words about what a Domains
-Controller is.
-
---8w3uRX/HFJGApMzv
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlw/aikACgkQJNaLcl1U
-h9DAlwf9GIk6jp2btSb+YYZXsv2dTL5t24Z/wDnqreIA1Dxymv/Qd46FtTOF8WIk
-s4khV0+j60zmYiDMBmEDx7358kVv9lRo5ZzspLBLwkIKKDCbhl5VxfhDwo5qpukw
-DrJse22kDheT3jTyu7W2CfIT7DR/I5UkLl3CDGuiRTSKOxYh81g9C3SjfEH8ZzMo
-oBlf3hf3XMvyu00XFlRKG/MafuF0WsvzTanzSl0+N0PmRw6HfZ2Q2c37ud3+axMW
-+P+hM/+mK2HjlXl6vW4jR74MDWJwfPL8yCCT7tWqvBuCA1guISm/H9KOrmIWsJln
-wPNTS1yehT+rlOLZNPYV83Xo7P0OuA==
-=6+jP
------END PGP SIGNATURE-----
-
---8w3uRX/HFJGApMzv--
+>
+> thanks,
+>
+> greg k-h
