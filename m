@@ -2,137 +2,145 @@ Return-Path: <SRS0=1Lvk=PY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 94A59C43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 10:27:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1174EC43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 10:27:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6852C206C2
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 10:27:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D20C0206C2
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 10:27:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1547634467;
+	bh=+yhquqpOuDoj1Lnw/39iOILCN5166vzqeK5qZibx6Qw=;
+	h=From:To:Cc:Subject:Date:List-ID:From;
+	b=LIlg1dP6eWzFCYJdUb0bpOykkMyXRhYjtCSmQUL1cCu8xRVji4o2D0jqwBg/fO059
+	 CMBS87Ii0mTvE9zZ/zwDrA0+oOfMOJwFW4JIpIq0x76KeeznNa/RmpqUSo4wnqfpgL
+	 NitdlByNDE1aI0KJ221Y8KXVS90aTsO0ISGrbtFs=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391994AbfAPK1Y (ORCPT
+        id S2392013AbfAPK1q (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 16 Jan 2019 05:27:24 -0500
-Received: from mga09.intel.com ([134.134.136.24]:31384 "EHLO mga09.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729269AbfAPK1Y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Jan 2019 05:27:24 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 16 Jan 2019 02:27:23 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,485,1539673200"; 
-   d="scan'208";a="118910341"
-Received: from elena-thinkpad-x230.fi.intel.com ([10.237.68.34])
-  by orsmga003.jf.intel.com with ESMTP; 16 Jan 2019 02:27:20 -0800
-From:   Elena Reshetova <elena.reshetova@intel.com>
-To:     akpm@linux-foundation.org
-Cc:     aryabinin@virtuozzo.com, anders.roxell@linaro.org,
-        mark.rutland@arm.com, dvyukov@google.com,
-        linux-kernel@vger.kernel.org, keescook@chromium.org,
-        peterz@infradead.org, Elena Reshetova <elena.reshetova@intel.com>
-Subject: [PATCH] kcov: convert kcov.refcount to refcount_t
-Date:   Wed, 16 Jan 2019 12:27:09 +0200
-Message-Id: <1547634429-772-1-git-send-email-elena.reshetova@intel.com>
-X-Mailer: git-send-email 2.7.4
+        Wed, 16 Jan 2019 05:27:46 -0500
+Received: from mail-lf1-f65.google.com ([209.85.167.65]:36861 "EHLO
+        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729269AbfAPK1p (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 Jan 2019 05:27:45 -0500
+Received: by mail-lf1-f65.google.com with SMTP id a16so4459688lfg.3;
+        Wed, 16 Jan 2019 02:27:43 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=PM5jJFBb+raYWgZeLbLRCOD3DLFWKq/Us6K9CVm3ahA=;
+        b=M44tMHKCUTm6lhaKO3TuHJaU68qnSom7g7rmz0XCdTyPw0peT/1399NDggIAwPa/On
+         FjwAovAN9ldLg5cyS3DoY4FkshHNZQnFPAAbBa1xETO1eSM5CGddkHm7+wIq6+zrgA27
+         fV2jfmmj+iEVHulG0EG1JsI+emlqxN834UcKZo9VTm9hITc6sToToOwPSvwix/JP2mPk
+         VIA4bGMnHRfLTu6kohKuERPu46npO5OI/mqUUP+m/9qu6qodwaVmGyR9IfCXwaMNt+dO
+         KDPOPnSa088puR74mnOi6qHr3sFmtHfOZycxmyLqrBSpZ25nF6chnj2VGwM2MdvXitqI
+         uMyA==
+X-Gm-Message-State: AJcUukdlsNepgg6i91rfPLKliQGw04VGkrP/+NKRYSByGP/BaG8xBIP2
+        JvLV5T+wggOEPAt9QKaDI40=
+X-Google-Smtp-Source: ALg8bN7CeFmaVO9bUC0dkyhIJwXeZbZPBu/rPpp1lIgbXOZ+oXq7A9/BuW5Mpo3tjx4KyA2LhEI8dw==
+X-Received: by 2002:a19:1994:: with SMTP id 142mr6518594lfz.134.1547634463166;
+        Wed, 16 Jan 2019 02:27:43 -0800 (PST)
+Received: from xi.terra (c-74bee655.07-184-6d6c6d4.bbcust.telenor.se. [85.230.190.116])
+        by smtp.gmail.com with ESMTPSA id c2-v6sm959884ljj.41.2019.01.16.02.27.42
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 16 Jan 2019 02:27:42 -0800 (PST)
+Received: from johan by xi.terra with local (Exim 4.91)
+        (envelope-from <johan@xi.terra>)
+        id 1gjiQB-0007yN-8f; Wed, 16 Jan 2019 11:27:43 +0100
+From:   Johan Hovold <johan@kernel.org>
+To:     Linus Walleij <linus.walleij@linaro.org>
+Cc:     Andrew Lunn <andrew@lunn.ch>,
+        Vivien Didelot <vivien.didelot@gmail.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Johan Hovold <johan@kernel.org>,
+        stable <stable@vger.kernel.org>
+Subject: [PATCH] net: dsa: realtek-smi: fix OF child-node lookup
+Date:   Wed, 16 Jan 2019 11:27:08 +0100
+Message-Id: <20190116102708.30608-1-johan@kernel.org>
+X-Mailer: git-send-email 2.20.1
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-atomic_t variables are currently used to implement reference
-counters with the following properties:
- - counter is initialized to 1 using atomic_set()
- - a resource is freed upon counter reaching zero
- - once counter reaches zero, its further
-   increments aren't allowed
- - counter schema uses basic atomic operations
-   (set, inc, inc_not_zero, dec_and_test, etc.)
+Use the new of_get_compatible_child() helper to look up child nodes to
+avoid ever matching non-child nodes elsewhere in the tree.
 
-Such atomic variables should be converted to a newly provided
-refcount_t type and API that prevents accidental counter overflows
-and underflows. This is important since overflows and underflows
-can lead to use-after-free situation and be exploitable.
+Also fix up the related struct device_node leaks.
 
-The variable kcov.refcount is used as pure reference counter.
-Convert it to refcount_t and fix up the operations.
-
-**Important note for maintainers:
-
-Some functions from refcount_t API defined in lib/refcount.c
-have different memory ordering guarantees than their atomic
-counterparts.
-The full comparison can be seen in
-https://lkml.org/lkml/2017/11/15/57 and it is hopefully soon
-in state to be merged to the documentation tree.
-Normally the differences should not matter since refcount_t provides
-enough guarantees to satisfy the refcounting use cases, but in
-some rare cases it might matter.
-Please double check that you don't have some undocumented
-memory guarantees for this variable usage.
-
-For the kcov.refcount it might make a difference
-in following places:
- - kcov_put(): decrement in refcount_dec_and_test() only
-   provides RELEASE ordering and control dependency on success
-   vs. fully ordered atomic counterpart
-
-Suggested-by: Kees Cook <keescook@chromium.org>
-Reviewed-by: David Windsor <dwindsor@gmail.com>
-Reviewed-by: Hans Liljestrand <ishkamiel@gmail.com>
-Signed-off-by: Elena Reshetova <elena.reshetova@intel.com>
+Fixes: d8652956cf37 ("net: dsa: realtek-smi: Add Realtek SMI driver")
+Cc: stable <stable@vger.kernel.org>     # 4.19: 36156f9241cb0
+Cc: Linus Walleij <linus.walleij@linaro.org>
+Signed-off-by: Johan Hovold <johan@kernel.org>
 ---
- kernel/kcov.c | 9 +++++----
- 1 file changed, 5 insertions(+), 4 deletions(-)
 
-diff --git a/kernel/kcov.c b/kernel/kcov.c
-index c2277db..051e86e 100644
---- a/kernel/kcov.c
-+++ b/kernel/kcov.c
-@@ -20,6 +20,7 @@
- #include <linux/debugfs.h>
- #include <linux/uaccess.h>
- #include <linux/kcov.h>
-+#include <linux/refcount.h>
- #include <asm/setup.h>
+Note that this one has only been compile tested.
+
+
+ drivers/net/dsa/realtek-smi.c | 18 +++++++++++++-----
+ 1 file changed, 13 insertions(+), 5 deletions(-)
+
+diff --git a/drivers/net/dsa/realtek-smi.c b/drivers/net/dsa/realtek-smi.c
+index b4b839a1d095..ad41ec63cc9f 100644
+--- a/drivers/net/dsa/realtek-smi.c
++++ b/drivers/net/dsa/realtek-smi.c
+@@ -347,16 +347,17 @@ int realtek_smi_setup_mdio(struct realtek_smi *smi)
+ 	struct device_node *mdio_np;
+ 	int ret;
  
- /* Number of 64-bit words written per one comparison: */
-@@ -44,7 +45,7 @@ struct kcov {
- 	 *  - opened file descriptor
- 	 *  - task with enabled coverage (we can't unwire it from another task)
- 	 */
--	atomic_t		refcount;
-+	refcount_t		refcount;
- 	/* The lock protects mode, size, area and t. */
- 	spinlock_t		lock;
- 	enum kcov_mode		mode;
-@@ -228,12 +229,12 @@ EXPORT_SYMBOL(__sanitizer_cov_trace_switch);
+-	mdio_np = of_find_compatible_node(smi->dev->of_node, NULL,
+-					  "realtek,smi-mdio");
++	mdio_np = of_get_compatible_child(smi->dev->of_node, "realtek,smi-mdio");
+ 	if (!mdio_np) {
+ 		dev_err(smi->dev, "no MDIO bus node\n");
+ 		return -ENODEV;
+ 	}
  
- static void kcov_get(struct kcov *kcov)
- {
--	atomic_inc(&kcov->refcount);
-+	refcount_inc(&kcov->refcount);
+ 	smi->slave_mii_bus = devm_mdiobus_alloc(smi->dev);
+-	if (!smi->slave_mii_bus)
+-		return -ENOMEM;
++	if (!smi->slave_mii_bus) {
++		ret = -ENOMEM;
++		goto err_put_node;
++	}
+ 	smi->slave_mii_bus->priv = smi;
+ 	smi->slave_mii_bus->name = "SMI slave MII";
+ 	smi->slave_mii_bus->read = realtek_smi_mdio_read;
+@@ -371,10 +372,15 @@ int realtek_smi_setup_mdio(struct realtek_smi *smi)
+ 	if (ret) {
+ 		dev_err(smi->dev, "unable to register MDIO bus %s\n",
+ 			smi->slave_mii_bus->id);
+-		of_node_put(mdio_np);
++		goto err_put_node;
+ 	}
+ 
+ 	return 0;
++
++err_put_node:
++	of_node_put(mdio_np);
++
++	return ret;
  }
  
- static void kcov_put(struct kcov *kcov)
- {
--	if (atomic_dec_and_test(&kcov->refcount)) {
-+	if (refcount_dec_and_test(&kcov->refcount)) {
- 		vfree(kcov->area);
- 		kfree(kcov);
- 	}
-@@ -312,7 +313,7 @@ static int kcov_open(struct inode *inode, struct file *filep)
- 	if (!kcov)
- 		return -ENOMEM;
- 	kcov->mode = KCOV_MODE_DISABLED;
--	atomic_set(&kcov->refcount, 1);
-+	refcount_set(&kcov->refcount, 1);
- 	spin_lock_init(&kcov->lock);
- 	filep->private_data = kcov;
- 	return nonseekable_open(inode, filep);
+ static int realtek_smi_probe(struct platform_device *pdev)
+@@ -457,6 +463,8 @@ static int realtek_smi_remove(struct platform_device *pdev)
+ 	struct realtek_smi *smi = dev_get_drvdata(&pdev->dev);
+ 
+ 	dsa_unregister_switch(smi->ds);
++	if (smi->slave_mii_bus)
++		of_node_put(smi->slave_mii_bus->dev.of_node);
+ 	gpiod_set_value(smi->reset, 1);
+ 
+ 	return 0;
 -- 
-2.7.4
+2.20.1
 
