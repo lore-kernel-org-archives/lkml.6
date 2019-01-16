@@ -2,208 +2,178 @@ Return-Path: <SRS0=1Lvk=PY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B6AEC43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 10:54:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C9E2C43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 10:55:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3C7B9206C2
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 10:54:49 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="UOV2p7Mi"
+	by mail.kernel.org (Postfix) with ESMTP id 61DC1206C2
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 10:55:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392240AbfAPKyr (ORCPT
+        id S2404136AbfAPKzl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 16 Jan 2019 05:54:47 -0500
-Received: from lelv0142.ext.ti.com ([198.47.23.249]:43078 "EHLO
-        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731772AbfAPKyq (ORCPT
+        Wed, 16 Jan 2019 05:55:41 -0500
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:57346 "EHLO
+        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731772AbfAPKzl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Jan 2019 05:54:46 -0500
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id x0GAsiMw031448;
-        Wed, 16 Jan 2019 04:54:44 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1547636084;
-        bh=xl+k7pJruERRlTwVkasOLoTeza4rWwaYN/sZWVuQyFE=;
-        h=Subject:To:References:CC:From:Date:In-Reply-To;
-        b=UOV2p7Mi8AveFZ95GiPx6sDVKj2mQpvzj5+eC1JdJIitjN0Fh3L94flGkEy7fpvLt
-         UbvrIJ0+7aab6VO1VZw1DhnZ/AD9uxGTfodGStTjBWiro5ZzN6DqqY87z0146Trqrn
-         qqs/tF4kCelHeFEpl1jcSpbxz15r+RngC5VIcjdg=
-Received: from DLEE105.ent.ti.com (dlee105.ent.ti.com [157.170.170.35])
-        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x0GAshl3042823
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 16 Jan 2019 04:54:43 -0600
-Received: from DLEE111.ent.ti.com (157.170.170.22) by DLEE105.ent.ti.com
- (157.170.170.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Wed, 16
- Jan 2019 04:54:43 -0600
-Received: from dlep32.itg.ti.com (157.170.170.100) by DLEE111.ent.ti.com
- (157.170.170.22) with Microsoft SMTP Server (version=TLS1_0,
- cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1591.10 via Frontend Transport;
- Wed, 16 Jan 2019 04:54:43 -0600
-Received: from [192.168.2.6] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by dlep32.itg.ti.com (8.14.3/8.13.8) with ESMTP id x0GAsfve007696;
-        Wed, 16 Jan 2019 04:54:41 -0600
-Subject: Re: [PATCH 2/3] arm64: dts: ti: k3-am6: add USB support
-To:     Nishanth Menon <nm@ti.com>
-References: <1547200861-17795-1-git-send-email-rogerq@ti.com>
- <1547200861-17795-3-git-send-email-rogerq@ti.com>
- <20190115143641.m2cvwljr7rbtayi2@kahuna>
-CC:     <t-kristo@ti.com>, <nsekhar@ti.com>, <vigneshr@ti.com>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-From:   Roger Quadros <rogerq@ti.com>
-Message-ID: <5C3F0D70.4050903@ti.com>
-Date:   Wed, 16 Jan 2019 12:54:40 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:38.0) Gecko/20100101
- Thunderbird/38.6.0
+        Wed, 16 Jan 2019 05:55:41 -0500
+Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
+        id 09D7A80829; Wed, 16 Jan 2019 11:55:31 +0100 (CET)
+Date:   Wed, 16 Jan 2019 11:55:37 +0100
+From:   Pavel Machek <pavel@ucw.cz>
+To:     Dan Murphy <dmurphy@ti.com>
+Cc:     Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+        linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, dachaac@gmail.com, robh+dt@kernel.org
+Subject: Re: [PATCH v2 2/2] leds: lp50xx: Add the LP50XX family of the RGB
+ LED driver
+Message-ID: <20190116105537.GA1803@amd>
+References: <20190114211723.11186-1-dmurphy@ti.com>
+ <20190114211723.11186-2-dmurphy@ti.com>
+ <ce911fdf-c7c2-63e8-5c7a-b0be965ab69b@gmail.com>
+ <20190115222223.GA17363@amd>
+ <79394d17-3124-75b2-ccac-dc1046499d14@ti.com>
 MIME-Version: 1.0
-In-Reply-To: <20190115143641.m2cvwljr7rbtayi2@kahuna>
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="fUYQa+Pmc3FrFX/N"
+Content-Disposition: inline
+In-Reply-To: <79394d17-3124-75b2-ccac-dc1046499d14@ti.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 15/01/19 16:36, Nishanth Menon wrote:
-> On 12:01-20190111, Roger Quadros wrote:
->> Adds support for USB0 and USB1 instances on the AM6 SoC.
->> USB0 is limited to high-speed for now.
->>
->> Signed-off-by: Roger Quadros <rogerq@ti.com>
->> ---
->>  arch/arm64/boot/dts/ti/k3-am65-main.dtsi | 80 ++++++++++++++++++++++++++++++++
->>  1 file changed, 80 insertions(+)
->>
->> diff --git a/arch/arm64/boot/dts/ti/k3-am65-main.dtsi b/arch/arm64/boot/dts/ti/k3-am65-main.dtsi
->> index 8b55108..680cbc7 100644
->> --- a/arch/arm64/boot/dts/ti/k3-am65-main.dtsi
->> +++ b/arch/arm64/boot/dts/ti/k3-am65-main.dtsi
->> @@ -199,4 +199,84 @@
->>  		#size-cells = <1>;
->>  		ranges = <0x0 0x0 0x00100000 0x1c000>;
->>  	};
->> +
->> +	dwc3_0: dwc3@4000000 {
->> +		compatible = "ti,am654-dwc3";
->> +		reg = <0x0 0x4000000 0x0 0x4000>;
->> +		#address-cells = <1>;
->> +		#size-cells = <1>;
->> +		ranges = <0x0 0x0 0x4000000 0x20000>;
->> +		interrupts = <GIC_SPI 97 IRQ_TYPE_LEVEL_HIGH>;
->> +		dma-coherent;
->> +		status = "disabled";
-> 
-> NAK. -> in ARMV8, we dont do default disabled. Instead, please disable
-> nodes in the board dts or overlay as necessary.
 
-got it.
+--fUYQa+Pmc3FrFX/N
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> 
->> +		power-domains = <&k3_pds 151>;
->> +		assigned-clocks = <&k3_clks 151 2>, <&k3_clks 151 7>;
->> +		assigned-clock-parents = <&k3_clks 151 4>,	/* set REF_CLK to 20MHz i.e. PER0_PLL/48 */
->> +					 <&k3_clks 151 9>;	/* set PIPE3_TXB_CLK to CLK_12M_RC/256 (for HS only) */
->> +
->> +		usb0: usb@10000 {
->> +			compatible = "snps,dwc3";
->> +			reg = <0x10000 0x10000>;
->> +			interrupts = <GIC_SPI 100 IRQ_TYPE_LEVEL_HIGH>,
->> +				     <GIC_SPI 100 IRQ_TYPE_LEVEL_HIGH>,
->> +				     <GIC_SPI 96 IRQ_TYPE_LEVEL_HIGH>;
->> +			interrupt-names = "peripheral",
->> +					  "host",
->> +					  "otg";
->> +			maximum-speed = "high-speed";
->> +			dr_mode = "otg";
->> +			phys = <&usb0_phy>;
->> +			phy-names = "usb2-phy";
->> +			snps,dis_u3_susphy_quirk;
->> +		};
->> +	};
->> +
->> +	usb0_phy: phy@4100000 {
->> +		compatible = "ti,am654-usb2", "ti,omap-usb2";
->> +		reg = <0x0 0x4100000 0x0 0x54>;
->> +		syscon-phy-power = <&scm_conf 0x4000>;
-> 
-> Just curious, dont we need a power domain as well?
+Hi!
 
-Not for USB2.0 PHYs. Those are part of USB3SSn power domains.
+> On 1/15/19 4:22 PM, Pavel Machek wrote:
+> > Hi!
+> >=20
+> >>> +The 24-bit RGB value passed in follows the pattern 0xXXRRGGBB
+> >>> +XX - Do not care ignored by the driver
+> >>> +RR - is the 8 bit Red LED value
+> >>> +GG - is the 8 bit Green LED value
+> >>> +BB - is the 8 bit Blue LED value
+> >>> +
+> >>> +Example:
+> >>> +LED module output 4 of the LP5024 will be a yellow color:
+> >>> +echo 0xe6de00 > /sys/class/leds/lp5024\:led4_mod/color
+> >>> +
+> >>> +LED module output 4 of the LP5024 will be dimmed 50%:
+> >>> +echo 0x80 > /sys/class/leds/lp5024\:led4_mod/brightness
+> >>> +
+> >>> +LED banked RGBs of the LP5036 will be a white color:
+> >>> +echo 0xffffff > /sys/class/leds/lp5036\:led_banked/color
+> >>
+> >> This part with example cans remain in Documentation/leds if you
+> >>> like.
+> >=20
+> > Does it actually work like that on hardware?
+>=20
+> What?
 
-> 
->> +		clocks = <&k3_clks 151 0>, <&k3_clks 151 1>;
->> +		clock-names = "wkupclk", "refclk";
->> +		#phy-cells = <0>;
->> +		status = "disabled";
-> 
-> same here -> please drop
-> 
->> +	};
->> +
->> +	dwc3_1: dwc3@4020000 {
->> +		compatible = "ti,am654-dwc3";
->> +		reg = <0x0 0x4020000 0x0 0x4000>;
->> +		#address-cells = <1>;
->> +		#size-cells = <1>;
->> +		ranges = <0x0 0x0 0x4020000 0x20000>;
->> +		interrupts = <GIC_SPI 117 IRQ_TYPE_LEVEL_HIGH>;
->> +		dma-coherent;
->> +		status = "disabled";
-> 
-> same here -> please drop
-> 
->> +		power-domains = <&k3_pds 152>;
->> +		assigned-clocks = <&k3_clks 152 2>;
->> +		assigned-clock-parents = <&k3_clks 152 4>;	/* set REF_CLK to 20MHz i.e. PER0_PLL/48 */
->> +
->> +		usb1: usb@10000 {
->> +			compatible = "snps,dwc3";
->> +			reg = <0x10000 0x10000>;
->> +			interrupts = <GIC_SPI 120 IRQ_TYPE_LEVEL_HIGH>,
->> +				     <GIC_SPI 120 IRQ_TYPE_LEVEL_HIGH>,
->> +				     <GIC_SPI 116 IRQ_TYPE_LEVEL_HIGH>;
->> +			interrupt-names = "peripheral",
->> +					  "host",
->> +					  "otg";
->> +			maximum-speed = "high-speed";
->> +			dr_mode = "otg";
->> +			phys = <&usb1_phy>;
->> +			phy-names = "usb2-phy";
->> +		};
->> +	};
->> +
->> +	usb1_phy: phy@4110000 {
->> +		compatible = "ti,am654-usb2", "ti,omap-usb2";
->> +		reg = <0x0 0x4110000 0x0 0x54>;
->> +		syscon-phy-power = <&scm_conf 0x4020>;
-> 
-> Same question on power domain..
-> 
->> +		clocks = <&k3_clks 152 0>, <&k3_clks 152 1>;
->> +		clock-names = "wkupclk", "refclk";
->> +		#phy-cells = <0>;
->> +		status = "disabled";
-> 
-> same here -> please drop
-> 
->> +	};
->>  };
->> -- 
->> Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
->> Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
->>
-> 
+If you do echo 0xffffff > /sys/class/leds/lp5036\:led_banked/color,
+does it actually produce white? With all the different RGB modules
+manufacturers can use with lp5024P?
 
-cheers,
--roger
+If you do echo 0xe6de00 > /sys/class/leds/lp5024\:led4_mod/color, does
+it actually produce yellow, with all the different RGB modules
+manufacturers can use with lp5024P?
 
--- 
-Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
-Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
+> > Is it supposed to support "normal" RGB colors as seen on monitors?
+>=20
+> Monitors are not an application for this part.
+
+You did not answer the question. When you talk about yellow, is it
+same yellow the rest of world talks about?
+
+> > Because 100% PWM on all channels does not result in white on hardware
+> > I have.
+>=20
+> I don't know I am usually blinded by the light and have no diffuser over
+> the LEDs to disperse the light so when I look I see all 3 colors.
+
+How can we have useful discussion about colors when you don't see the
+colors?
+
+Place a piece of paper over the LEDs....
+
+> > But...
+> >=20
+> > I believe we should have a reasonable design before we do something
+> > like this. There's no guarantee someone will not use lp50xx with just
+> > the white LEDs for example. How will this work? Plus existing hardware
+> > already uses three separate LEDs for RGB LED. Why not provide same
+> > interface?
+>=20
+> Which existing hardware?  Are they using this part?
+
+Nokia N900. They are not using this part, but any interface we invent
+should work there, too.
+
+> <rant>
+> Why are we delaying getting the RGB framework or HSV in?
+> I would rather design against something you want instead of having
+> everyone complain about every implementation I post.
+> </rant>
+
+Because you insist on creating new kernel interfaces, when existing
+interfaces work, and are doing that badly.
+
+Because your patches are of lower quality than is acceptable for linux
+kernel.
+
+Because you don't seem to be reading the emails.
+
+I sent list of requirements for RGB led support. This does not meet
+them.
+
+> It is not a normal RGB driver.  The device collates the individual RGB
+> clusters into a single brightness register and you can modify the intensi=
+ty of the individual
+> LEDs via other registers.  If brightness is 0 then the cluster is OFF reg=
+ardless of the color
+> set in the individual registers.
+
+I understand that. So just set cluster brightness to 255 and you have
+normal RGB driver you can control with existing interfaces. You don't
+have to use every feature your hardware has.
+
+You did not answer the "what if someone uses this with all white LEDs"
+question.
+
+You know what? First, submit driver with similar functionality to
+existing RGB drivers, using same interface existing drivers are
+using. When that is accepted, we can talk about extending
+kernel<->user interfaces.
+
+Thanks,
+									Pavel
+
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
+
+--fUYQa+Pmc3FrFX/N
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEARECAAYFAlw/DagACgkQMOfwapXb+vIoVgCfedc0OSdbNGb0hlloqu6krDpU
+X6oAn3s2wHVdp1ECg7vpxXdJOQUskULQ
+=APCk
+-----END PGP SIGNATURE-----
+
+--fUYQa+Pmc3FrFX/N--
