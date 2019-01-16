@@ -2,330 +2,266 @@ Return-Path: <SRS0=1Lvk=PY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4177AC43612
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 13:18:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2CCF3C43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 13:19:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0623F20651
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 13:18:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D0E7920651
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 13:19:18 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=brauner.io header.i=@brauner.io header.b="UAiSTzN+"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404225AbfAPNSk (ORCPT
+        id S2393115AbfAPNTR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 16 Jan 2019 08:18:40 -0500
-Received: from mout.kundenserver.de ([212.227.126.187]:40129 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2393104AbfAPNSj (ORCPT
+        Wed, 16 Jan 2019 08:19:17 -0500
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:38640 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731240AbfAPNTQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Jan 2019 08:18:39 -0500
-Received: from wuerfel.lan ([109.192.41.194]) by mrelayeu.kundenserver.de
- (mreue009 [212.227.15.129]) with ESMTPA (Nemesis) id
- 1Mj8eD-1hDKc53Z4f-00fCiG; Wed, 16 Jan 2019 14:18:28 +0100
-From:   Arnd Bergmann <arnd@arndb.de>
-To:     linux-s390@vger.kernel.org,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>
-Cc:     linux-kernel@vger.kernel.org, y2038@lists.linaro.org,
-        Dominik Brodowski <linux@dominikbrodowski.net>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Vasily Gorbik <gor@linux.ibm.com>
-Subject: [PATCH 4/5] s390: autogenerate compat syscall wrappers
-Date:   Wed, 16 Jan 2019 14:15:22 +0100
-Message-Id: <20190116131527.2071570-5-arnd@arndb.de>
-X-Mailer: git-send-email 2.20.0
-In-Reply-To: <20190116131527.2071570-1-arnd@arndb.de>
-References: <20190116131527.2071570-1-arnd@arndb.de>
+        Wed, 16 Jan 2019 08:19:16 -0500
+Received: by mail-wr1-f67.google.com with SMTP id v13so6897390wrw.5
+        for <linux-kernel@vger.kernel.org>; Wed, 16 Jan 2019 05:19:15 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=brauner.io; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=TBgI0/G3+ypI3YCZeUDVPUzIoSqUrcTSJaTWmjXaKf4=;
+        b=UAiSTzN+DQpjLxdd5pTmsvdHOU7RJ6lkSDr8aGnQ9IscfbPuVmjO3E8KxFxZA+82rW
+         Jb8ddpqP/lyRgsznYMWzIeeW2KpGjJvSUCYTUtjSdcfR4L7z0bwvEaXXq9jnnc4NFwBk
+         s39MfTEZVU8XJLbe4wMKU8dhhI0xhu8xtvdfZkqjSh6PtS52iEhR9hrkDI3AeBee93Mz
+         LExv6mtTqrsKxGWIR4eZabjb49QCZ1OeHRjwlS3d33L4gQOYvvLqMnX80QxcY0jsbVte
+         1b7K/GJwaUF6l2/IDB2w6jBo7uEXybiGxkZaZAtDYedxF2BROArciGYX1qizezk1AZ0w
+         V4Ng==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=TBgI0/G3+ypI3YCZeUDVPUzIoSqUrcTSJaTWmjXaKf4=;
+        b=mzN6pa8r21DcbDbpoYp4vWlTxZ/+6ekSZkiunvgtU4vWAhWNB39RWONzCIMaKVjqe8
+         Lui9TbZvU1P53cAiM070NrMZ4MxIQgouiQsI2NiQ5cdI8Zw3Q8jsR3hlYs3RUfevpR0n
+         KhvoLqj36lSp8zWVbqmoyl4ARY1+XxBH5GQM2Cchpaq4igVQ6aKTU+4HdQbg2vUlpLTp
+         GX9bikeB0I4Uwb++yGrQU+c00q9iW7TLSqVfQeTlVstjaGB1aM1DuI8uYfjtkeROaGUS
+         AQUt2v8ZXMWB9xdiCfZlMBvpoYBqUkVUjMgF/g2u0j57TYwz4A95vsQEGVOikPSbbSs9
+         Lu8Q==
+X-Gm-Message-State: AJcUukdLRuEzQ9uzQ6lAapFidnTeoO/GXI0dbNN9xIYviMUtaAkkAeAG
+        HkF/Z+u/vBL8i4PS0iaCcaPMXw==
+X-Google-Smtp-Source: ALg8bN5C6v13mgL7u4YTr4EmzwqBpzhrtdonpaLqLd/Xjdw4Z3ZI/oWaP+AndykrjQx2nTCuNcxpZg==
+X-Received: by 2002:adf:b307:: with SMTP id j7mr8057788wrd.46.1547644754318;
+        Wed, 16 Jan 2019 05:19:14 -0800 (PST)
+Received: from localhost.localdomain ([154.119.33.254])
+        by smtp.gmail.com with ESMTPSA id x10sm96423440wrn.29.2019.01.16.05.19.10
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 16 Jan 2019 05:19:13 -0800 (PST)
+From:   Christian Brauner <christian@brauner.io>
+To:     gregkh@linuxfoundation.org, tkjos@android.com,
+        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
+Cc:     arve@android.com, maco@android.com, joel@joelfernandes.org,
+        tkjos@google.com, Christian Brauner <christian@brauner.io>
+Subject: [PATCH] selftests: add binderfs selftests
+Date:   Wed, 16 Jan 2019 14:19:03 +0100
+Message-Id: <20190116131903.8515-1-christian@brauner.io>
+X-Mailer: git-send-email 2.19.1
 MIME-Version: 1.0
+X-Patchwork-Bot: notify
 Content-Transfer-Encoding: 8bit
-X-Provags-ID: V03:K1:eeyOSW8wvu9xSOpnVm5UOJK4AcuRSjfkNhMQc6aqFs2QSMQm/9s
- V12AaIfUhRoaoSh1/GLSaKy/uOW4bboPY0Jd2D9UHmS89mckbT/jP8d1WvV6dYZM142dSna
- IYpDow3dnmZMfIeq3YG1TeO89BfOMwRuW3BHADDfSxsL45VFDyLWU6F0/dNNqczPVmTqPs2
- v4EN68e0SgWa9XLTvYJFA==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:DSbxSy6I7qE=:Ju6OQ2twibdGaX4TeUnQmS
- bli4LiWI7Vk9yqNg7QEptG+PJdKiLHchncsvpTqsukVj9gtqOorTWM3pdSIMX79++VtBd0U5I
- Gz54TL1OxWUPlFxNBoV/EpKQeXLrY+r6eTmSZ98ud5mdjP1gVHs5JQV6k9A/tUmxFl8ObQ704
- Vg1D4mTLph8yk7CfYa33WZ2S2sCVhgqtTbnGYfZ7FmFw/Bm/oNUcrxkXi1P6QsWzvUvGjOIsB
- /Ycg0cDnN1Pd5CXb+DfM82VL6iMxra132kzpLWvKvGGTgB+BVGKtCJIzW0NC6chOxF86LFfFv
- cG88l+NZlNVj60miwy8TVoNUctKCv1r6qHS/O3MN94O74Ux0yigSDeoW2lEV9WxBVidRrOWk7
- JLhXNzjC8sbbiONush36n7bA06CydGOAuUXtmAjbDwOD9/DzpHp29+ccVBVCCfGyAShIKnxRN
- fXKnfGDsnAzT3BKQ0bP24LjqfAWtqWlPoJjx1K0yg6iJb2fQXMPav1mu6UIKempbi+oe/vb7v
- 0PvoByJCFU0R2gutnXLd7jxGDHlmk/9OJ97X/ZfFocP9tkEbbXkGO4gijaaHlN32Eaq1u1HgP
- IQ+Bl4mv1h5vGGdjiF40JlTv9aaInUyLNWCCJoo0OYz2ZDKEmmLJpkARZDDUNMu/lhG8eb7yI
- bTGGQjdtlSwcrKZ23TzK3VQmrIOgVccIDpbrTLozzVBP1dGZUOIfPPQrzNlQogRmBWr/r7nUD
- 3X01QfCKxmahkx6YGLVUapCC1ovFcVmi6rS2xg==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Any system call that takes a pointer argument on s390 requires
-a wrapper function to do a 31-to-64 zero-extension, these are
-currently generated in arch/s390/kernel/compat_wrapper.c.
+This adds the promised selftest for binderfs. It will verify the following
+things:
+- binderfs mounting works
+- binder device allocation works
+- performing a binder ioctl() request through a binderfs device works
+- binder device removal works
+- binder-control removal fails
+- binderfs unmounting works
 
-On arm64 and x86, we already generate similar wrappers for all
-system calls in the place of their definition, just for a different
-purpose (they load the arguments from pt_regs).
-
-We can do the same thing here, by adding an asm/syscall_wrapper.h
-file with a copy of all the relevant macros to override the generic
-version. Besides the addition of the compat entry point, these also
-rename the entry points with a __s390_ or __s390x_ prefix, similar
-to what we do on arm64 and x86. This in turn requires renaming
-a few things, and adding a proper ni_syscall() entry point.
-
-In order to still compile system call definitions that pass an
-loff_t argument, the __SC_COMPAT_CAST() macro checks for that
-and forces an -ENOSYS error, which was the best I could come up
-with. Those functions must obviously not get called from user
-space, but instead require hand-written compat_sys_*() handlers,
-which fortunately already exist.
-
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Cc: Todd Kjos <tkjos@google.com>
+Signed-off-by: Christian Brauner <christian.brauner@ubuntu.com>
 ---
- arch/s390/Kconfig                       |   1 +
- arch/s390/include/asm/syscall_wrapper.h | 136 ++++++++++++++++++++++++
- arch/s390/kernel/compat_wrapper.c       |  23 +---
- arch/s390/kernel/entry.S                |   4 +-
- arch/s390/kernel/sys_s390.c             |   5 +
- 5 files changed, 148 insertions(+), 21 deletions(-)
- create mode 100644 arch/s390/include/asm/syscall_wrapper.h
+ tools/testing/selftests/Makefile              |   1 +
+ .../selftests/filesystems/binderfs/.gitignore |   1 +
+ .../selftests/filesystems/binderfs/Makefile   |   6 +
+ .../filesystems/binderfs/binderfs_test.c      | 120 ++++++++++++++++++
+ .../selftests/filesystems/binderfs/config     |   3 +
+ 5 files changed, 131 insertions(+)
+ create mode 100644 tools/testing/selftests/filesystems/binderfs/.gitignore
+ create mode 100644 tools/testing/selftests/filesystems/binderfs/Makefile
+ create mode 100644 tools/testing/selftests/filesystems/binderfs/binderfs_test.c
+ create mode 100644 tools/testing/selftests/filesystems/binderfs/config
 
-diff --git a/arch/s390/Kconfig b/arch/s390/Kconfig
-index 41cafd245bbc..b6e3d0653002 100644
---- a/arch/s390/Kconfig
-+++ b/arch/s390/Kconfig
-@@ -75,6 +75,7 @@ config S390
- 	select ARCH_HAS_SET_MEMORY
- 	select ARCH_HAS_STRICT_KERNEL_RWX
- 	select ARCH_HAS_STRICT_MODULE_RWX
-+	select ARCH_HAS_SYSCALL_WRAPPER
- 	select ARCH_HAS_UBSAN_SANITIZE_ALL
- 	select ARCH_HAVE_NMI_SAFE_CMPXCHG
- 	select ARCH_INLINE_READ_LOCK
-diff --git a/arch/s390/include/asm/syscall_wrapper.h b/arch/s390/include/asm/syscall_wrapper.h
+diff --git a/tools/testing/selftests/Makefile b/tools/testing/selftests/Makefile
+index 1a2bd15c5b6e..400ee81a3043 100644
+--- a/tools/testing/selftests/Makefile
++++ b/tools/testing/selftests/Makefile
+@@ -10,6 +10,7 @@ TARGETS += drivers/dma-buf
+ TARGETS += efivarfs
+ TARGETS += exec
+ TARGETS += filesystems
++TARGETS += filesystems/binderfs
+ TARGETS += firmware
+ TARGETS += ftrace
+ TARGETS += futex
+diff --git a/tools/testing/selftests/filesystems/binderfs/.gitignore b/tools/testing/selftests/filesystems/binderfs/.gitignore
 new file mode 100644
-index 000000000000..27ebe871692f
+index 000000000000..8a5d9bf63dd4
 --- /dev/null
-+++ b/arch/s390/include/asm/syscall_wrapper.h
-@@ -0,0 +1,136 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+/*
-+ * syscall_wrapper.h - s390 specific wrappers to syscall definitions
-+ *
-+ */
++++ b/tools/testing/selftests/filesystems/binderfs/.gitignore
+@@ -0,0 +1 @@
++binderfs_test
+diff --git a/tools/testing/selftests/filesystems/binderfs/Makefile b/tools/testing/selftests/filesystems/binderfs/Makefile
+new file mode 100644
+index 000000000000..58cb659b56b4
+--- /dev/null
++++ b/tools/testing/selftests/filesystems/binderfs/Makefile
+@@ -0,0 +1,6 @@
++# SPDX-License-Identifier: GPL-2.0
 +
-+#ifndef _ASM_S390_SYSCALL_WRAPPER_H
-+#define _ASM_S390_SYSCALL_WRAPPER_H
++CFLAGS += -I../../../../../usr/include/
++TEST_GEN_PROGS := binderfs_test
 +
-+#ifdef CONFIG_COMPAT
-+#define __SC_COMPAT_TYPE(t, a) \
-+	__typeof(__builtin_choose_expr(sizeof(t) > 4, 0L, (t)0)) a
++include ../../lib.mk
+diff --git a/tools/testing/selftests/filesystems/binderfs/binderfs_test.c b/tools/testing/selftests/filesystems/binderfs/binderfs_test.c
+new file mode 100644
+index 000000000000..ca4d9b616e84
+--- /dev/null
++++ b/tools/testing/selftests/filesystems/binderfs/binderfs_test.c
+@@ -0,0 +1,120 @@
++// SPDX-License-Identifier: GPL-2.0
 +
-+#define __SC_COMPAT_CAST(t, a)						\
-+({									\
-+	long __ReS = a;							\
-+									\
-+	BUILD_BUG_ON((sizeof(t) > 4) && !__TYPE_IS_L(t) &&		\
-+		     !__TYPE_IS_UL(t) && !__TYPE_IS_PTR(t) &&		\
-+		     !__TYPE_IS_LL(t));					\
-+	if (__TYPE_IS_L(t))						\
-+		__ReS = (s32)a;						\
-+	if (__TYPE_IS_UL(t))						\
-+		__ReS = (u32)a;						\
-+	if (__TYPE_IS_PTR(t))						\
-+		__ReS = a & 0x7fffffff;					\
-+	if (__TYPE_IS_LL(t))						\
-+		return -ENOSYS;						\
-+	(t)__ReS;							\
-+})
++#define _GNU_SOURCE
++#include <errno.h>
++#include <fcntl.h>
++#include <sched.h>
++#include <stdio.h>
++#include <stdlib.h>
++#include <string.h>
++#include <sys/ioctl.h>
++#include <sys/mount.h>
++#include <sys/stat.h>
++#include <sys/types.h>
++#include <unistd.h>
++#include <linux/android/binder.h>
++#include <linux/android/binderfs.h>
++#include "../../kselftest.h"
 +
-+#define __S390_SYS_STUBx(x, name, ...)					\
-+	asmlinkage long __s390_sys##name(__MAP(x,__SC_LONG,__VA_ARGS__))\
-+	ALLOW_ERROR_INJECTION(__s390_sys##name, ERRNO);			\
-+	asmlinkage long __s390_sys##name(__MAP(x,__SC_LONG,__VA_ARGS__))\
-+	{								\
-+		long ret = __s390x_sys##name(__MAP(x,__SC_COMPAT_CAST,__VA_ARGS__));\
-+		__MAP(x,__SC_TEST,__VA_ARGS__);				\
-+		return ret;						\
-+	}
-+
-+/*
-+ * To keep the naming coherent, re-define SYSCALL_DEFINE0 to create an alias
-+ * named __s390x_sys_*()
-+ */
-+#define COMPAT_SYSCALL_DEFINE0(sname)					\
-+	SYSCALL_METADATA(_##sname, 0);					\
-+	asmlinkage long __s390_compat_sys_##sname(void);		\
-+	ALLOW_ERROR_INJECTION(__s390_compat__sys_##sname, ERRNO);	\
-+	asmlinkage long __s390_compat_sys_##sname(void)
-+
-+#define SYSCALL_DEFINE0(sname)						\
-+	SYSCALL_METADATA(_##sname, 0);					\
-+	asmlinkage long __s390x_sys_##sname(void);			\
-+	ALLOW_ERROR_INJECTION(__s390x_sys_##sname, ERRNO);		\
-+	asmlinkage long __s390_sys_##sname(void)			\
-+		__attribute__((alias(__stringify(__s390x_sys_##sname)))); \
-+	asmlinkage long __s390x_sys_##sname(void)
-+
-+#define COND_SYSCALL(name)						\
-+	cond_syscall(__s390x_sys_##name);				\
-+	cond_syscall(__s390_sys_##name)
-+
-+#define SYS_NI(name)							\
-+	SYSCALL_ALIAS(__s390x_sys_##name, sys_ni_posix_timers);		\
-+	SYSCALL_ALIAS(__s390_sys_##name, sys_ni_posix_timers)
-+
-+#define COMPAT_SYSCALL_DEFINEx(x, name, ...)					\
-+	__diag_push();								\
-+	__diag_ignore(GCC, 8, "-Wattribute-alias",				\
-+		      "Type aliasing is used to sanitize syscall arguments");\
-+	asmlinkage long __s390_compat_sys##name(__MAP(x,__SC_DECL,__VA_ARGS__));	\
-+	asmlinkage long __s390_compat_sys##name(__MAP(x,__SC_DECL,__VA_ARGS__))	\
-+		__attribute__((alias(__stringify(__se_compat_sys##name))));	\
-+	ALLOW_ERROR_INJECTION(compat_sys##name, ERRNO);				\
-+	static inline long __do_compat_sys##name(__MAP(x,__SC_DECL,__VA_ARGS__));\
-+	asmlinkage long __se_compat_sys##name(__MAP(x,__SC_LONG,__VA_ARGS__));	\
-+	asmlinkage long __se_compat_sys##name(__MAP(x,__SC_LONG,__VA_ARGS__))	\
-+	{									\
-+		long ret = __do_compat_sys##name(__MAP(x,__SC_DELOUSE,__VA_ARGS__));\
-+		__MAP(x,__SC_TEST,__VA_ARGS__);					\
-+		return ret;							\
-+	}									\
-+	__diag_pop();								\
-+	static inline long __do_compat_sys##name(__MAP(x,__SC_DECL,__VA_ARGS__))
-+
-+/*
-+ * As some compat syscalls may not be implemented, we need to expand
-+ * COND_SYSCALL_COMPAT in kernel/sys_ni.c and COMPAT_SYS_NI in
-+ * kernel/time/posix-stubs.c to cover this case as well.
-+ */
-+#define COND_SYSCALL_COMPAT(name) 					\
-+	cond_syscall(__s390_compat_sys_##name)
-+
-+#define COMPAT_SYS_NI(name)						\
-+	SYSCALL_ALIAS(__s390_compat_sys_##name, sys_ni_posix_timers)
-+
-+#else /* CONFIG_COMPAT */
-+
-+#define __S390_SYS_STUBx(x, fullname, name, ...)
-+
-+#define SYSCALL_DEFINE0(sname)						\
-+	SYSCALL_METADATA(_##sname, 0);					\
-+	asmlinkage long __s390x_sys_##sname(void);			\
-+	ALLOW_ERROR_INJECTION(__s390x_sys_##sname, ERRNO);		\
-+	asmlinkage long __s390x_sys_##sname(void)
-+
-+#define COND_SYSCALL(name)						\
-+	cond_syscall(__s390x_sys_##name)				\
-+	cond_syscall(__s390_sys_##name)
-+
-+#define SYS_NI(name)							\
-+	SYSCALL_ALIAS(__s390_sys_##name, sys_ni_posix_timers);
-+
-+#endif /* CONFIG_COMPAT */
-+
-+#define __SYSCALL_DEFINEx(x, name, ...)						\
-+	__diag_push();								\
-+	__diag_ignore(GCC, 8, "-Wattribute-alias",				\
-+		      "Type aliasing is used to sanitize syscall arguments");\
-+	asmlinkage long __s390x_sys##name(__MAP(x,__SC_DECL,__VA_ARGS__))	\
-+		__attribute__((alias(__stringify(__se_sys##name))));		\
-+	ALLOW_ERROR_INJECTION(__s390x_sys##name, ERRNO);				\
-+	static long __se_sys##name(__MAP(x,__SC_LONG,__VA_ARGS__));		\
-+	static inline long __do_sys##name(__MAP(x,__SC_DECL,__VA_ARGS__));	\
-+	__S390_SYS_STUBx(x, name, __VA_ARGS__)					\
-+	asmlinkage long __se_sys##name(__MAP(x,__SC_LONG,__VA_ARGS__))		\
-+	{									\
-+		long ret = __do_sys##name(__MAP(x,__SC_CAST,__VA_ARGS__));	\
-+		__MAP(x,__SC_TEST,__VA_ARGS__);					\
-+		return ret;							\
-+	}									\
-+	__diag_pop();								\
-+	static inline long __do_sys##name(__MAP(x,__SC_DECL,__VA_ARGS__))
-+
-+#endif /* _ASM_X86_SYSCALL_WRAPPER_H */
-diff --git a/arch/s390/kernel/compat_wrapper.c b/arch/s390/kernel/compat_wrapper.c
-index f54b7b73f316..9d07cd553fc7 100644
---- a/arch/s390/kernel/compat_wrapper.c
-+++ b/arch/s390/kernel/compat_wrapper.c
-@@ -25,21 +25,6 @@
- #define __SC_COMPAT_TYPE(t, a) \
- 	__typeof(__builtin_choose_expr(sizeof(t) > 4, 0L, (t)0)) a
- 
--#define __SC_COMPAT_CAST(t, a)						\
--({									\
--	long __ReS = a;							\
--									\
--	BUILD_BUG_ON((sizeof(t) > 4) && !__TYPE_IS_L(t) &&		\
--		     !__TYPE_IS_UL(t) && !__TYPE_IS_PTR(t));		\
--	if (__TYPE_IS_L(t))						\
--		__ReS = (s32)a;						\
--	if (__TYPE_IS_UL(t))						\
--		__ReS = (u32)a;						\
--	if (__TYPE_IS_PTR(t))						\
--		__ReS = a & 0x7fffffff;					\
--	(t)__ReS;							\
--})
--
- /*
-  * The COMPAT_SYSCALL_WRAP macro generates system call wrappers to be used by
-  * compat tasks. These wrappers will only be used for system calls where only
-@@ -53,11 +38,11 @@
-  * the regular system call wrappers.
-  */
- #define COMPAT_SYSCALL_WRAPx(x, name, ...)					\
--asmlinkage long sys##name(__MAP(x,__SC_DECL,__VA_ARGS__));			\
--asmlinkage long notrace compat_sys##name(__MAP(x,__SC_COMPAT_TYPE,__VA_ARGS__));\
--asmlinkage long notrace compat_sys##name(__MAP(x,__SC_COMPAT_TYPE,__VA_ARGS__))	\
-+asmlinkage long __s390_sys##name(__MAP(x,__SC_DECL,__VA_ARGS__));		\
-+asmlinkage long notrace __s390_compat_sys##name(__MAP(x,__SC_DECL,__VA_ARGS__));\
-+asmlinkage long notrace __s390_compat_sys##name(__MAP(x,__SC_DECL,__VA_ARGS__))	\
- {										\
--	return sys##name(__MAP(x,__SC_COMPAT_CAST,__VA_ARGS__));		\
-+	return __s390_sys##name(__MAP(x,__SC_ARGS,__VA_ARGS__));		\
- }
- 
- COMPAT_SYSCALL_WRAP2(creat, const char __user *, pathname, umode_t, mode);
-diff --git a/arch/s390/kernel/entry.S b/arch/s390/kernel/entry.S
-index 39191a0feed1..583d65ef5007 100644
---- a/arch/s390/kernel/entry.S
-+++ b/arch/s390/kernel/entry.S
-@@ -1512,7 +1512,7 @@ cleanup_critical:
- 	.quad   .Lsie_skip - .Lsie_entry
- #endif
- 	.section .rodata, "a"
--#define SYSCALL(esame,emu)	.long esame
-+#define SYSCALL(esame,emu)	.long __s390x_ ## esame
- 	.globl	sys_call_table
- sys_call_table:
- #include "asm/syscall_table.h"
-@@ -1520,7 +1520,7 @@ sys_call_table:
- 
- #ifdef CONFIG_COMPAT
- 
--#define SYSCALL(esame,emu)	.long emu
-+#define SYSCALL(esame,emu)	.long __s390_ ## emu
- 	.globl	sys_call_table_emu
- sys_call_table_emu:
- #include "asm/syscall_table.h"
-diff --git a/arch/s390/kernel/sys_s390.c b/arch/s390/kernel/sys_s390.c
-index 6aa8fe00b39e..a8c2cc858864 100644
---- a/arch/s390/kernel/sys_s390.c
-+++ b/arch/s390/kernel/sys_s390.c
-@@ -93,3 +93,8 @@ SYSCALL_DEFINE1(s390_personality, unsigned int, personality)
- 
- 	return ret;
- }
-+
-+SYSCALL_DEFINE0(ni_syscall)
++int main(int argc, char *argv[])
 +{
-+	return -ENOSYS;
++	int fd, ret, saved_errno;
++	size_t len;
++	struct binderfs_device device = { 0 };
++	struct binder_version version = { 0 };
++
++	ret = unshare(CLONE_NEWNS);
++	if (ret < 0)
++		ksft_exit_fail_msg("%s - Failed to unshare mount namespace\n",
++				   strerror(errno));
++
++	ret = mount(NULL, "/", NULL, MS_REC | MS_PRIVATE, 0);
++	if (ret < 0)
++		ksft_exit_fail_msg("%s - Failed to mount / as private\n",
++				   strerror(errno));
++
++	ret = mkdir("/dev/binderfs", 0755);
++	if (ret < 0 && errno != EEXIST)
++		ksft_exit_fail_msg(
++			"%s - Failed to create binderfs mountpoint\n",
++			strerror(errno));
++
++	ret = mount(NULL, "/dev/binderfs", "binder", 0, 0);
++	if (ret < 0)
++		ksft_exit_fail_msg("%s - Failed to mount binderfs\n",
++				   strerror(errno));
++
++	/* binderfs mount test passed */
++	ksft_inc_pass_cnt();
++
++	memcpy(device.name, "my-binder", strlen("my-binder"));
++
++	fd = open("/dev/binderfs/binder-control", O_RDONLY | O_CLOEXEC);
++	if (fd < 0)
++		ksft_exit_fail_msg(
++			"%s - Failed to open binder-control device\n",
++			strerror(errno));
++
++	ret = ioctl(fd, BINDER_CTL_ADD, &device);
++	saved_errno = errno;
++	close(fd);
++	errno = saved_errno;
++	if (ret < 0)
++		ksft_exit_fail_msg(
++			"%s - Failed to allocate new binder device\n",
++			strerror(errno));
++
++	printf("Allocated new binder device with major %d, minor %d, and name %s\n",
++	       device.major, device.minor, device.name);
++
++	/* binder device allocation test passed */
++	ksft_inc_pass_cnt();
++
++	fd = open("/dev/binderfs/my-binder", O_CLOEXEC | O_RDONLY);
++	if (fd < 0)
++		ksft_exit_fail_msg("%s - Failed to open my-binder device\n",
++				   strerror(errno));
++
++	ret = ioctl(fd, BINDER_VERSION, &version);
++	saved_errno = errno;
++	close(fd);
++	errno = saved_errno;
++	if (ret < 0)
++		ksft_exit_fail_msg(
++			"%s - Failed to open perform BINDER_VERSION request\n",
++			strerror(errno));
++
++	printf("Detected binder version: %d\n", version.protocol_version);
++
++	/* binder transaction with binderfs binder device passed */
++	ksft_inc_pass_cnt();
++
++	ret = unlink("/dev/binderfs/my-binder");
++	if (ret < 0)
++		ksft_exit_fail_msg("%s - Failed to delete binder device\n",
++				   strerror(errno));
++
++	/* binder device removal passed */
++	ksft_inc_pass_cnt();
++
++	ret = unlink("/dev/binderfs/binder-control");
++	if (!ret)
++		ksft_exit_fail_msg("Managed to delete binder-control device\n");
++	else if (errno != EPERM)
++		ksft_exit_fail_msg(
++			"%s - Failed to delete binder-control device but exited with unexpected error code\n",
++			strerror(errno));
++
++	/* binder-control device removal failed as expected */
++	ksft_inc_xfail_cnt();
++
++	ret = umount2("/dev/binderfs", MNT_DETACH);
++	if (ret < 0)
++		ksft_exit_fail_msg("%s - Failed to unmount binderfs\n",
++				   strerror(errno));
++
++	/* binderfs unmount test passed */
++	ksft_inc_pass_cnt();
++
++	ksft_exit_pass();
 +}
+diff --git a/tools/testing/selftests/filesystems/binderfs/config b/tools/testing/selftests/filesystems/binderfs/config
+new file mode 100644
+index 000000000000..02dd6cc9cf99
+--- /dev/null
++++ b/tools/testing/selftests/filesystems/binderfs/config
+@@ -0,0 +1,3 @@
++CONFIG_ANDROID=y
++CONFIG_ANDROID_BINDERFS=y
++CONFIG_ANDROID_BINDER_IPC=y
 -- 
-2.20.0
+2.19.1
 
