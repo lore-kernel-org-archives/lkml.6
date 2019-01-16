@@ -2,240 +2,119 @@ Return-Path: <SRS0=1Lvk=PY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 37435C43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 16:06:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A133C43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 16:09:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 07EDE20657
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 16:06:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CDAC8205C9
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 16:09:07 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EBuU7Snl"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405174AbfAPQGq (ORCPT
+        id S1727493AbfAPQJG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 16 Jan 2019 11:06:46 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:41348 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2405165AbfAPQGo (ORCPT
+        Wed, 16 Jan 2019 11:09:06 -0500
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:42811 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727116AbfAPQJF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Jan 2019 11:06:44 -0500
-Received: from pps.filterd (m0098409.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id x0GG5VGr102012
-        for <linux-kernel@vger.kernel.org>; Wed, 16 Jan 2019 11:06:43 -0500
-Received: from e06smtp04.uk.ibm.com (e06smtp04.uk.ibm.com [195.75.94.100])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2q27hqgxac-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Wed, 16 Jan 2019 11:06:43 -0500
-Received: from localhost
-        by e06smtp04.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <oberpar@linux.ibm.com>;
-        Wed, 16 Jan 2019 16:06:40 -0000
-Received: from b06cxnps3075.portsmouth.uk.ibm.com (9.149.109.195)
-        by e06smtp04.uk.ibm.com (192.168.101.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Wed, 16 Jan 2019 16:06:36 -0000
-Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
-        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x0GG6ZMU57868304
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 16 Jan 2019 16:06:35 GMT
-Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 832C8A4055;
-        Wed, 16 Jan 2019 16:06:35 +0000 (GMT)
-Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 1ED42A404D;
-        Wed, 16 Jan 2019 16:06:35 +0000 (GMT)
-Received: from [9.83.224.254] (unknown [9.83.224.254])
-        by d06av23.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Wed, 16 Jan 2019 16:06:34 +0000 (GMT)
-Subject: Re: [PATCH 2/4] gcov: clang support
-To:     Tri Vo <trong@android.com>
-Cc:     ghackmann@android.com, ndesaulniers@google.com,
-        linux-kernel@vger.kernel.org, kernel-team@android.com,
-        Greg Hackmann <ghackmann@google.com>,
-        Trilok Soni <tsoni@quicinc.com>,
-        Prasad Sodagudi <psodagud@quicinc.com>
-References: <20190114210426.177543-1-trong@android.com>
- <20190114210426.177543-3-trong@android.com>
-From:   Peter Oberparleiter <oberpar@linux.ibm.com>
-Date:   Wed, 16 Jan 2019 17:06:36 +0100
-MIME-Version: 1.0
-In-Reply-To: <20190114210426.177543-3-trong@android.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-x-cbid: 19011616-0016-0000-0000-0000024652BF
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19011616-0017-0000-0000-000032A070DB
-Message-Id: <6c97cdb9-7b7d-e95b-567e-1938ca7f4ac2@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-01-16_06:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1901160130
+        Wed, 16 Jan 2019 11:09:05 -0500
+Received: by mail-pg1-f196.google.com with SMTP id d72so3012913pga.9
+        for <linux-kernel@vger.kernel.org>; Wed, 16 Jan 2019 08:09:05 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=9CIbBSmbne4E3sSPgt3DDYr+TcTJoKVZqcg6VHLE14U=;
+        b=EBuU7Snlky8qWqG/LkDQn3REVBy3m+URGRKxo3NUPU/VscoZ+fE/T9ZS2bkGpcJ+j0
+         y+qc8DihXSr0GVd1aDLBEgir3hde84tq2i0mLpbCQurVS2H++VaxXhkrxVgJvjPqkkA3
+         T/G2DMeQym1IVtGMGQkq3BuLow+zSAyUzYF2fSqWd0vqtYj/vDJZRYxXIZ/tMgDp7Czu
+         ZSqszKBvTqyAJmRgJSepV6+dxiKHN/FI3G0HAJvQvMjjp9oyKFGzM6qZ/Hh8CAoskH64
+         XgoNReItM93yAp0cBAiiM5oqDJBcLMVBPP+X6IQqeA33wOt2MOEFOKtx+FABkUOQ5Q0r
+         WzvA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=9CIbBSmbne4E3sSPgt3DDYr+TcTJoKVZqcg6VHLE14U=;
+        b=BIDjiP58Wrtbew+PgRkxaPbH1OSw1UMpJBwLSuedwWlsjIvwF7uvKza0YJNZLGbAc6
+         H02rPGJfQ+UD5Ry+oCxfFC8ClZXEEaWFd9EzgSv/o2MAfwPZYHkafNonuOiMvFDWZAOx
+         lQyKnQjb05o2IoHdxtlNrYt9AjkrTzWW0L5CTumSawNYEfa8kTHB2p8GCj85OB86IO4S
+         w5ZBrNArmDcHXSQnbNhDKK+shRerGEToYBjbfKTplCzpD8OTMBduNzRA9Ea7Ys+PdzkR
+         0vGQZQDAMVfDwXp+mZrK2Dsxg9bZ8AWBz6g0fE65aaEHf2uQZpu7wXwslZWIv7b/rDIc
+         lv4w==
+X-Gm-Message-State: AJcUukcTgZx7J+rU6NNxGBR4q3s2K6ED8i2oH2kEyK895nmusFxpveP8
+        ZkaDmf1UZ24S0t+yqA1AF1Q=
+X-Google-Smtp-Source: ALg8bN5LGCTi2ESbjX3TpzmWa+XuMaQ4VHsQX4KuoWVRWJEA47bxaCaE9lnU7jPfPmIqVwyY3kPZqw==
+X-Received: by 2002:a63:7044:: with SMTP id a4mr9305523pgn.359.1547654944861;
+        Wed, 16 Jan 2019 08:09:04 -0800 (PST)
+Received: from localhost (68.168.130.77.16clouds.com. [68.168.130.77])
+        by smtp.gmail.com with ESMTPSA id f62sm7104166pgc.67.2019.01.16.08.09.03
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 16 Jan 2019 08:09:03 -0800 (PST)
+From:   Yangtao Li <tiny.windzz@gmail.com>
+To:     tglx@linutronix.de, linux-kernel@vger.kernel.org
+Cc:     Yangtao Li <tiny.windzz@gmail.com>
+Subject: [PATCH] clockchips: convert the code format to BIT()
+Date:   Wed, 16 Jan 2019 11:09:00 -0500
+Message-Id: <20190116160900.20771-1-tiny.windzz@gmail.com>
+X-Mailer: git-send-email 2.17.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 14.01.2019 22:04, Tri Vo wrote:
-> From: Greg Hackmann <ghackmann@google.com>
-> 
-> LLVM uses profiling data that's deliberately similar to GCC, but has a very
-> different way of exporting that data.  LLVM calls llvm_gcov_init() once per
-> module, and provides a couple of callbacks that we can use to ask for more
-> data.
-> 
-> We care about the "writeout" callback, which in turn calls back into
-> compiler-rt/this module to dump all the gathered coverage data to disk:
-> 
->    llvm_gcda_start_file()
->      llvm_gcda_emit_function()
->      llvm_gcda_emit_arcs()
->      llvm_gcda_emit_function()
->      llvm_gcda_emit_arcs()
->      [... repeats for each function ...]
->    llvm_gcda_summary_info()
->    llvm_gcda_end_file()
-> 
-> This design is much more stateless and unstructured than gcc's, and is
-> intended to run at process exit.  This forces us to keep some local state
-> about which module we're dealing with at the moment.  On the other hand, it
-> also means we don't depend as much on how LLVM represents profiling data
-> internally.
-> 
-> See LLVM's lib/Transforms/Instrumentation/GCOVProfiling.cpp for more
-> details on how this works, particularly GCOVProfiler::emitProfileArcs(),
-> GCOVProfiler::insertCounterWriteout(), and GCOVProfiler::insertFlush().
-> 
-> Signed-off-by: Greg Hackmann <ghackmann@google.com>
-> Signed-off-by: Nick Desaulniers <ndesaulniers@google.com>
-> Signed-off-by: Tri Vo <trong@android.com>
-> Tested-by: Trilok Soni <tsoni@quicinc.com>
-> Tested-by: Prasad Sodagudi <psodagud@quicinc.com>
-> Tested-by: Tri Vo <trong@android.com>
-> ---
->  kernel/gcov/Kconfig  |   5 +
->  kernel/gcov/Makefile |   1 +
->  kernel/gcov/clang.c  | 531 +++++++++++++++++++++++++++++++++++++++++++
->  3 files changed, 537 insertions(+)
->  create mode 100644 kernel/gcov/clang.c
+Use BIT() to do some clean-up.
 
-Please consider adding a short section detailing usage differences
-between GCC and Clang coverage to the GCOV documentation at
+Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
+---
+ include/linux/clockchips.h | 16 ++++++++--------
+ 1 file changed, 8 insertions(+), 8 deletions(-)
 
-  Documentation/dev-tools/gcov.rst
-
-> diff --git a/kernel/gcov/clang.c b/kernel/gcov/clang.c
-> new file mode 100644
-> index 000000000000..b00795d28137
-> --- /dev/null
-> +++ b/kernel/gcov/clang.c
-
-[...]
-
-> +/**
-> + * gcov_info_add - add up profiling data
-> + * @dest: profiling data set to which data is added
-> + * @source: profiling data set which is added
-> + *
-> + * Adds profiling counts of @source to @dest.
-> + */
-> +void gcov_info_add(struct gcov_info *dst, struct gcov_info *src)
-> +{
-> +	struct gcov_fn_info *dfn_ptr;
-> +	struct gcov_fn_info *sfn_ptr = list_first_entry_or_null(&src->functions,
-> +			struct gcov_fn_info, head);
-> +
-> +	list_for_each_entry(dfn_ptr, &dst->functions, head) {
-> +		u32 i;
-> +
-> +		for (i = 0; i < sfn_ptr->num_counters; i++)
-> +			dfn_ptr->counters[i] += sfn_ptr->counters[i];
-> +
-> +		if (!list_is_last(&sfn_ptr->head, &src->functions))
-
-This check seems wrong - both dst and src should contain the same amount
-of functions and counters per function (the GCC support is based on the
-same assumption).
-
-Even if not, the next iteration would try to add counters for different
-functions which would be incorrect and could cause access violations due
-to differing values for num_counters.
-
-> +			sfn_ptr = list_next_entry(sfn_ptr, head);
-> +	}
-> +}
-> +
-> +static struct gcov_fn_info *gcov_fn_info_dup(struct gcov_fn_info *fn)
-> +{
-> +	struct gcov_fn_info *fn_dup = kmemdup(fn, sizeof(*fn),
-> +			GFP_KERNEL);
-> +	if (!fn_dup)
-> +		return NULL;
-> +	INIT_LIST_HEAD(&fn_dup->head);
-> +
-> +	fn_dup->name = kstrdup(fn->name, GFP_KERNEL);
-
-Since struct gcov_fn_info does not define a member named 'name', this
-should fail during compilation. I saw that this is fixed with the next
-patch, but this really needs to be merged into this one.
-
-> +	if (!fn_dup->name)
-> +		goto err_name;
-> +
-> +	fn_dup->counters = kmemdup(fn->counters,
-> +			fn->num_counters * sizeof(fn->counters[0]),
-> +			GFP_KERNEL);
-
-Please consider using vmalloc() here (like the GCC support does) because
-the number of counters can be quite large and there might be situations
-where the required amount of physically contiguous memory is not
-available at run-time.
-
-> +	if (!fn_dup->counters)
-> +		goto err_counters;
-> +
-> +	return fn_dup;
-> +
-> +err_counters:
-> +	kfree(fn_dup->name);
-> +err_name:
-> +	kfree(fn_dup);
-> +	return NULL;
-> +}
-> +
-> +/**
-> + * gcov_info_dup - duplicate profiling data set
-> + * @info: profiling data set to duplicate
-> + *
-> + * Return newly allocated duplicate on success, %NULL on error.
-> + */
-> +struct gcov_info *gcov_info_dup(struct gcov_info *info)
-> +{
-> +	struct gcov_info *dup;
-> +	struct gcov_fn_info *fn, *tmp;
-> +
-> +	dup = kmemdup(info, sizeof(*dup), GFP_KERNEL);
-> +	if (!dup)
-> +		return NULL;
-> +	INIT_LIST_HEAD(&dup->head);
-> +	INIT_LIST_HEAD(&dup->functions);
-> +	dup->filename = kstrdup(info->filename, GFP_KERNEL);
-
-To be consistent, please also check for a failed allocation here.
-
-> +
-> +	list_for_each_entry_safe(fn, tmp, &info->functions, head) {
-
-It should not be necessary to use the _safe variant here as
-info->functions is not modified during traversal.
-
-
+diff --git a/include/linux/clockchips.h b/include/linux/clockchips.h
+index 8ae9a95ebf5b..39a2294e995b 100644
+--- a/include/linux/clockchips.h
++++ b/include/linux/clockchips.h
+@@ -43,9 +43,9 @@ enum clock_event_state {
+ /*
+  * Clock event features
+  */
+-# define CLOCK_EVT_FEAT_PERIODIC	0x000001
+-# define CLOCK_EVT_FEAT_ONESHOT		0x000002
+-# define CLOCK_EVT_FEAT_KTIME		0x000004
++# define CLOCK_EVT_FEAT_PERIODIC	BIT(0)
++# define CLOCK_EVT_FEAT_ONESHOT		BIT(1)
++# define CLOCK_EVT_FEAT_KTIME		BIT(2)
+ 
+ /*
+  * x86(64) specific (mis)features:
+@@ -53,19 +53,19 @@ enum clock_event_state {
+  * - Clockevent source stops in C3 State and needs broadcast support.
+  * - Local APIC timer is used as a dummy device.
+  */
+-# define CLOCK_EVT_FEAT_C3STOP		0x000008
+-# define CLOCK_EVT_FEAT_DUMMY		0x000010
++# define CLOCK_EVT_FEAT_C3STOP		BIT(3)
++# define CLOCK_EVT_FEAT_DUMMY		BIT(4)
+ 
+ /*
+  * Core shall set the interrupt affinity dynamically in broadcast mode
+  */
+-# define CLOCK_EVT_FEAT_DYNIRQ		0x000020
+-# define CLOCK_EVT_FEAT_PERCPU		0x000040
++# define CLOCK_EVT_FEAT_DYNIRQ		BIT(5)
++# define CLOCK_EVT_FEAT_PERCPU		BIT(6)
+ 
+ /*
+  * Clockevent device is based on a hrtimer for broadcast
+  */
+-# define CLOCK_EVT_FEAT_HRTIMER		0x000080
++# define CLOCK_EVT_FEAT_HRTIMER		BIT(7)
+ 
+ /**
+  * struct clock_event_device - clock event device descriptor
 -- 
-Peter Oberparleiter
-Linux on Z Development - IBM Germany
+2.17.0
 
