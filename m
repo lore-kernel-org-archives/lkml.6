@@ -5,90 +5,79 @@ X-Spam-Level:
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0ECE1C43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 12:50:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A3D7AC43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 12:50:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D23BF20675
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 12:50:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7D92820675
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 12:50:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392835AbfAPMt5 (ORCPT
+        id S2392872AbfAPMuq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 16 Jan 2019 07:49:57 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:57122 "EHLO mx1.redhat.com"
+        Wed, 16 Jan 2019 07:50:46 -0500
+Received: from foss.arm.com ([217.140.101.70]:47560 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390338AbfAPMt4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Jan 2019 07:49:56 -0500
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 18F1558E59;
-        Wed, 16 Jan 2019 12:49:56 +0000 (UTC)
-Received: from [10.36.116.96] (ovpn-116-96.ams2.redhat.com [10.36.116.96])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id F184A1019633;
-        Wed, 16 Jan 2019 12:49:49 +0000 (UTC)
-Subject: Re: [RFC v3 17/21] iommu/smmuv3: Report non recoverable faults
-To:     Jean-Philippe Brucker <jean-philippe.brucker@arm.com>,
-        "eric.auger.pro@gmail.com" <eric.auger.pro@gmail.com>,
-        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-        "kvmarm@lists.cs.columbia.edu" <kvmarm@lists.cs.columbia.edu>,
-        "joro@8bytes.org" <joro@8bytes.org>,
-        "alex.williamson@redhat.com" <alex.williamson@redhat.com>,
-        "jacob.jun.pan@linux.intel.com" <jacob.jun.pan@linux.intel.com>,
-        "yi.l.liu@linux.intel.com" <yi.l.liu@linux.intel.com>,
-        Will Deacon <Will.Deacon@arm.com>,
-        Robin Murphy <Robin.Murphy@arm.com>
-Cc:     Marc Zyngier <Marc.Zyngier@arm.com>,
-        "peter.maydell@linaro.org" <peter.maydell@linaro.org>,
-        "kevin.tian@intel.com" <kevin.tian@intel.com>,
-        "ashok.raj@intel.com" <ashok.raj@intel.com>,
-        Christoffer Dall <Christoffer.Dall@arm.com>
-References: <20190108102633.17482-1-eric.auger@redhat.com>
- <20190108102633.17482-18-eric.auger@redhat.com>
- <dae89fd8-6a82-d2f0-a8c7-ddbf12a7b047@arm.com>
- <e634adee-f7ab-b90d-aac6-06400fa9ffb4@redhat.com>
- <c0328bbe-e02c-c337-ec52-c899dc0025d3@arm.com>
-From:   Auger Eric <eric.auger@redhat.com>
-Message-ID: <93599256-947f-d267-6b72-0759e17b4df1@redhat.com>
-Date:   Wed, 16 Jan 2019 13:49:48 +0100
+        id S2390394AbfAPMup (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 Jan 2019 07:50:45 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 0CA4680D;
+        Wed, 16 Jan 2019 04:50:45 -0800 (PST)
+Received: from [10.1.194.37] (e113632-lin.cambridge.arm.com [10.1.194.37])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id CC9843F5AF;
+        Wed, 16 Jan 2019 04:50:43 -0800 (PST)
+To:     Ingo Molnar <mingo@kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Julien Thierry <julien.thierry@arm.com>
+From:   Valentin Schneider <valentin.schneider@arm.com>
+Subject: preempt_schedule_irq() loop question
+Message-ID: <cc989920-a13b-d53b-db83-1584a7f53edc@arm.com>
+Date:   Wed, 16 Jan 2019 12:50:42 +0000
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-In-Reply-To: <c0328bbe-e02c-c337-ec52-c899dc0025d3@arm.com>
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+Content-Language: en-GB
 Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.39]); Wed, 16 Jan 2019 12:49:56 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Jean,
+Hi,
 
-On 1/16/19 1:25 PM, Jean-Philippe Brucker wrote:
-> On 15/01/2019 21:06, Auger Eric wrote:
->>>> +		iommu_report_device_fault(master->dev, &event);
->>>
->>> We should return here if the fault is successfully injected
->>
->> Even if the fault gets injected in the guest can't it be still useful to
->> get the message below on host side?
-> 
-> I don't think we should let the guest flood the host log by issuing
-> invalid DMA (or are there other cases where the guest can freely print
-> stuff in the host?) We do print all errors at the moment, but we should
-> tighten this once there is an upstream solution to let the guest control
-> DMA mappings.
-OK thank you for the clarification. Yes it makes sense to skip those
-traces then.
+I've been wandering around preempt_schedule_irq() in sched/core.c, and
+got curious regarding how the arch code calls it.
 
-Thanks
+The main part of preempt_schedule_irq() is:
 
-Eric
-> 
-> Thanks,
-> Jean
-> 
+    do {
+	    preempt_disable();
+	    local_irq_enable();
+	    __schedule(true);
+	    local_irq_disable();
+	    sched_preempt_enable_no_resched();
+    } while (need_resched());
+
+Yet all the arch entry.S I looked at (I stopped after arm64, arm, x86_32,
+MIPS, powerpc) wrap the call to preempt_schedule_irq() in another
+
+    do { ... } while (need_resched())
+
+For instance, this is what's done in arm64:
+
+    1:	bl	preempt_schedule_irq		// irq en/disable is done inside
+	ldr	x0, [tsk, #TSK_TI_FLAGS]	// get new tasks TI_FLAGS
+	tbnz	x0, #TIF_NEED_RESCHED, 1b	// needs rescheduling?
+
+
+I naively thought this could be attributed to something like
+preempt_schedule_irq() historically not having an inner loop, but it seems
+to have been there since the beginning of time (or at least up to the point
+where the git history stops).
+
+I don't see why we need to have these nested loops - AFAICT the one in
+preempt_schedule_irq() would suffice. What am I missing?
+
