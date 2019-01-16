@@ -2,126 +2,94 @@ Return-Path: <SRS0=1Lvk=PY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EF6C7C43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 03:25:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9ADE9C43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 03:25:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C3F35206C2
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 03:25:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 68B50206C2
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 03:25:29 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CBN0GgKf"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731107AbfAPDZE (ORCPT
+        id S1731151AbfAPDZ1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 15 Jan 2019 22:25:04 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52778 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731039AbfAPDZE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Jan 2019 22:25:04 -0500
-Received: from vmware.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B383B206C2;
-        Wed, 16 Jan 2019 03:25:02 +0000 (UTC)
-Date:   Tue, 15 Jan 2019 22:25:00 -0500
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     Changbin Du <changbin.du@gmail.com>
-Cc:     mingo@redhat.com, corbet@lwn.net, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 4/5] sched/tracing: Show stacktrace for wakeup tracers
-Message-ID: <20190115222500.6b1ca824@vmware.local.home>
-In-Reply-To: <20190101154614.8887-5-changbin.du@gmail.com>
-References: <20190101154614.8887-1-changbin.du@gmail.com>
-        <20190101154614.8887-5-changbin.du@gmail.com>
-X-Mailer: Claws Mail 3.15.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        Tue, 15 Jan 2019 22:25:27 -0500
+Received: from mail-ot1-f66.google.com ([209.85.210.66]:37771 "EHLO
+        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731039AbfAPDZ1 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 Jan 2019 22:25:27 -0500
+Received: by mail-ot1-f66.google.com with SMTP id s13so4929798otq.4
+        for <linux-kernel@vger.kernel.org>; Tue, 15 Jan 2019 19:25:27 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:from:date:message-id:subject:to:cc;
+        bh=iug1m1r6FrUl2yxO8k9WIkcW6n+pohJCiwrmF0qZVtM=;
+        b=CBN0GgKf4JJ/EH+RUx//FkuFtzn3LwaRlVAxjapwnAkyOK83pbbu7ZJ5kxdvSbduN6
+         ZcH/SsyioMr3bT7f5a8Qb6rkGTB/oyJFt9Nw6BvUEVv7zhFpSDy2ox8+39mScKvueyiB
+         p7NT2QsqUFjp2zwOK50V+Y/MEs+fBiTNs8qD7Aprm8llcr+GJ43nk0YrEutYzNM095Q3
+         RN0nThXGU4F7prVhoSemQ344JCr5IW5WITNU+lklKdvz5esi3L8n/RSJAzR/OggnIcZa
+         D0LplrMZY3KZDQtEdQqHxniGHaTt7ED71eHY1lCi0LgocCFH6SX4mEm6D7DolEpByDS9
+         YBcg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
+        bh=iug1m1r6FrUl2yxO8k9WIkcW6n+pohJCiwrmF0qZVtM=;
+        b=eo4vXVVhDxZ98Vs/01Ay1sZxb7FcsqdDcEIQgPkrSwyrvj3M8mg8q6Xzd0B9Opur8z
+         +H5DJrZWmKy3qyvxLLqnbQ/8bbY741l3UIxdzPTdvZSrUc+jK+huoIwnLNWIVKUL4pc3
+         WM7EEnWBGtIrfsIjohtsOCarS5bXrgkFXzembAyWbldWJEzoJjWeFhXWr1OCRhVfSBLu
+         k1Ub1BWEoHMSWn477+1EZDI1GglW8FRCCsiQx2JnallcZW3qmWcJ7idja9FDKoPHc43O
+         mPOPficTdtBQO+cHszAioP6zWfBZlGtZmiq3WIiyGRjFcNq16dVGC3147itlN5EF1dvi
+         j+RQ==
+X-Gm-Message-State: AJcUukfU3GT8q9ltIOhgdwu1JlAfGr7QC4mMt+pHdSVDpytVEaCkoNDy
+        /qOImp1/DmM6Z4ORcmCKrn9u18CIcoIN+GCtEZaE07NIEgE=
+X-Google-Smtp-Source: ALg8bN5CJxxm8u1MZUanAopcwuzZRE200s9ZMbfQ1rvBqmjloqYwBSlnFVJRTD9Py5SiX8GHyL1Rr/yEUDhvLuVpGV4=
+X-Received: by 2002:aca:408b:: with SMTP id n133mr3282269oia.44.1547609126403;
+ Tue, 15 Jan 2019 19:25:26 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+From:   Kassey <kassey1216@gmail.com>
+Date:   Wed, 16 Jan 2019 11:25:15 +0800
+Message-ID: <CAKwPUowmzZ2BNi-RmJm3=ENrZ5sxPf1SeT+b9A9iHHSCUQQAUw@mail.gmail.com>
+Subject: arm64: copy_from_user access the last page of ddr has problem on 4.14 kernel
+To:     linux-kernel@vger.kernel.org, willy@infradead.org,
+        will.deacon@arm.com
+Cc:     kassey@126.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue,  1 Jan 2019 23:46:13 +0800
-Changbin Du <changbin.du@gmail.com> wrote:
+Hi, Will and team:
 
-> This align the behavior of wakeup tracers with irqsoff latency tracer
-> that we record stacktrace at the beginning and end of waking up. The
-> stacktrace shows us what is happening in the kernel.
+   we met a issue when copy_from_user to access the last page of DDR
+on 4.14 kenrel, below is the detail steps,
+   can you help to suggest if there is know fix or debug something ?
 
-OK, so I've applied (locally) all of the patches in this series except
-this one.
+1. we mmap ( in userspace)  a region of  phy address that is not
+continous  but include the last page of ddr
 
-> 
-> Signed-off-by: Changbin Du <changbin.du@gmail.com>
-> ---
->  kernel/trace/trace_sched_wakeup.c | 4 ++++
->  1 file changed, 4 insertions(+)
-> 
-> diff --git a/kernel/trace/trace_sched_wakeup.c b/kernel/trace/trace_sched_wakeup.c
-> index da5b6e012840..0ec136d408ff 100644
-> --- a/kernel/trace/trace_sched_wakeup.c
-> +++ b/kernel/trace/trace_sched_wakeup.c
-> @@ -474,6 +474,8 @@ probe_wakeup_sched_switch(void *ignore, bool preempt,
->  	data = per_cpu_ptr(wakeup_trace->trace_buffer.data, wakeup_cpu);
->  
->  	__trace_function(wakeup_trace, CALLER_ADDR0, CALLER_ADDR1, flags, pc);
-> +	/* Skip 2 functions to get to the task switch function */
-> +	__trace_stack(wakeup_trace, flags, 2, pc);
+  for example our ddr end is 0x200000000
+  the last page is fall in below addr:
+  0x1fffff000  to  0x200000000
 
-1) Just put in zero for skip. I found that with all the new updates to
-the unwinders, you can never get this number right :-(, as well as with
-gcc playing games, and retpolines and all that jazz.
+2. we using copy_from_user to copy these mmap address to kernel buffer
 
->  	tracing_sched_switch_trace(wakeup_trace, prev, next, flags, pc);
+3. and we find everytime when trying to copy_from_user  the last page
+in phy of ddr,
+    the dst kernel buffer is looks overwrite by some same patten start
+with "mmap" in this last page ,but the src in the last page of ddr is
+still correct.
 
-2) Have the stack trace go after the sched_switch trace, otherwise it
-looks funny:
+is there any know issue for copy_from_user to accces the last page of
+phy ddr mmaped by userspace  ?
 
-      285 us |   5)    <idle>-0    |  dN.2 |   1.632 us    |    }
-      286 us |   5)    <idle>-0    |  d..3 |   0.000 us    |  __schedule();
-  <idle>-0       5d..3  299us : <stack trace>
- => schedule_idle
- => do_idle
- => cpu_startup_entry
- => start_secondary
- => secondary_startup_64
-      299 us |   5)    <idle>-0    |  d..3 |               |  /*      0:120:R ==> [005]   811: 98:R i915/signal:0 */
 
-Note, I removed the skip and moved the trace and it looks like this:
 
-      180 us |   3)    <idle>-0    |  dN.2 |   0.944 us    |    }
-      181 us |   3)    <idle>-0    |  d..3 |   0.000 us    |  __schedule();
-      181 us |   3)    <idle>-0    |  d..3 |               |  /*      0:120:R ==> [003]    25:  0:R migration/3 */
-  <idle>-0       3d..3  195us : <stack trace>
- => probe_wakeup_sched_switch
- => __schedule
- => schedule_idle
- => do_idle
- => cpu_startup_entry
- => start_secondary
- => secondary_startup_64
-
-Yeah, it shows the "probe_wakeup_sched" but its better to show too much
-than not enough. I've had a hard time debugging some kernels because
-the skip was too high.
-
-Please resend this patch with the above updates. Just this patch.
-
-Thanks!
-
--- Steve
-
->  
->  	T0 = data->preempt_timestamp;
-> @@ -593,6 +595,8 @@ probe_wakeup(void *ignore, struct task_struct *p)
->  	 * it should be safe to use it here.
->  	 */
->  	__trace_function(wakeup_trace, CALLER_ADDR1, CALLER_ADDR2, flags, pc);
-> +	/* Skip 2 functions to get to the task wakeup function */
-> +	__trace_stack(wakeup_trace, flags, 2, pc);
->  
->  out_locked:
->  	arch_spin_unlock(&wakeup_lock);
-
+-- 
+Best regards
+Kassey
