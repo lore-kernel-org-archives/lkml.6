@@ -2,186 +2,133 @@ Return-Path: <SRS0=1Lvk=PY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+X-Spam-Status: No, score=-9.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9FB73C43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 00:14:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 554E5C43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 00:14:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6554320859
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 00:14:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1AC0920859
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 00:14:40 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="A9yfAR5h"
+	dkim=pass (1024-bit key) header.d=fb.com header.i=@fb.com header.b="U9EJuoZz"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726831AbfAPAOc (ORCPT
+        id S1730329AbfAPAO0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 15 Jan 2019 19:14:32 -0500
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:41547 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730376AbfAPAO2 (ORCPT
+        Tue, 15 Jan 2019 19:14:26 -0500
+Received: from mx0a-00082601.pphosted.com ([67.231.145.42]:44384 "EHLO
+        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726860AbfAPAOZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Jan 2019 19:14:28 -0500
-Received: by mail-pf1-f193.google.com with SMTP id b7so2098435pfi.8
-        for <linux-kernel@vger.kernel.org>; Tue, 15 Jan 2019 16:14:27 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-transfer-encoding:content-language;
-        bh=ZA20ebCNbHqeH+NvZr746IlKnzu2haXNYszOlgma2HQ=;
-        b=A9yfAR5h0fZfr9gAbSLybL81lgfUym/wQcT6X0/PAHuGeU2zHXqxCwvF/kacUe9ONz
-         VIUYQyCgTAtp73Z1J8IVcwL9FxkLYdxWYVVa1WekbPiXXpyiy0e7HnAs7UoADDnX0cVO
-         yxDOuJb1LtV5cLOIdw8UKDTy3AwE/tWhG3amM=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-transfer-encoding
-         :content-language;
-        bh=ZA20ebCNbHqeH+NvZr746IlKnzu2haXNYszOlgma2HQ=;
-        b=FDUThJh7MNdrewC4PXTy9arD4BcSigPZK8Lai26FUIeMQOaEUmjArVStRIoi5OeCTs
-         hPR0yhHeejTWrefnAweiYw/c1gjjveQX+ygN4JuoWSDdDKaJBsFKWAaj7W9MbXBaq+G6
-         aodfVJIfVd21bZRP3CWXKYuijdwxvtlVWmVEfO6CEt61b++qBSacaG/p2jYbQ45Na/fh
-         O72nAOpD69g/26xnh5JX194Hm7p4q0Gl6dkoz4BgNJjiJcAHPt4pa/FxBFWCMdyFKCos
-         YkOwOASSQH1GjNAYbTiWEe9lSuM5v1f23aFivBCmaBSeMogWvVAdct6LwpG9XcINwEcy
-         R/QQ==
-X-Gm-Message-State: AJcUukds82Y0eaQcg50HC4ktBWKMEHla7Ly+eaIgawt3rNvnBW/0nbvf
-        3uS0eNcoi8jfy3TA3AlbHRhuDA==
-X-Google-Smtp-Source: ALg8bN521l1NRwW8yuyctaZqkY8KD2IwR4iVboInTLhR3OIAgolSZCAy6yn2Cgok3Fd56d1DnbsVmg==
-X-Received: by 2002:a63:1013:: with SMTP id f19mr6251463pgl.38.1547597666850;
-        Tue, 15 Jan 2019 16:14:26 -0800 (PST)
-Received: from [10.136.13.65] ([192.19.228.250])
-        by smtp.gmail.com with ESMTPSA id d18sm5194007pfj.47.2019.01.15.16.14.23
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 15 Jan 2019 16:14:25 -0800 (PST)
-Subject: Re: [PATCH 1/3] dt-bindings: pwm: kona: Add new compatible for new
- version pwm-kona
-To:     =?UTF-8?Q?Uwe_Kleine-K=c3=b6nig?= <u.kleine-koenig@pengutronix.de>
-Cc:     Sheetal Tigadoli <sheetal.tigadoli@broadcom.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Ray Jui <rjui@broadcom.com>,
-        Scott Branden <sbranden@broadcom.com>,
-        bcm-kernel-feedback-list@broadcom.com, linux-pwm@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Praveen Kumar B <praveen.b@broadcom.com>
-References: <1547184076-20521-1-git-send-email-sheetal.tigadoli@broadcom.com>
- <1547184076-20521-2-git-send-email-sheetal.tigadoli@broadcom.com>
- <20190111204801.2ytdeblcai7lg3on@pengutronix.de>
- <f1ec3121-a8e7-a1c0-008a-ea4ae6028157@broadcom.com>
- <20190112150515.i7mwq7rtd62wlifh@pengutronix.de>
-From:   Scott Branden <scott.branden@broadcom.com>
-Message-ID: <faadc46d-94b5-a32c-79ae-4206fbc26608@broadcom.com>
-Date:   Tue, 15 Jan 2019 16:14:21 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Tue, 15 Jan 2019 19:14:25 -0500
+Received: from pps.filterd (m0109334.ppops.net [127.0.0.1])
+        by mx0a-00082601.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x0G08UXP031518
+        for <linux-kernel@vger.kernel.org>; Tue, 15 Jan 2019 16:14:24 -0800
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
+ : date : message-id : in-reply-to : references : mime-version :
+ content-type; s=facebook; bh=WP64zRf4UnoCieOOZ+Q2rHf+h2+SK57dQ72xUL5PtBw=;
+ b=U9EJuoZzZUVkJVoMElZDTHvllmLpDpAE4c6rUTa0qN/IU9m0CKvIKDC9un+eW+4c+0/Z
+ kpi5Q9OMWUKdvVZJSRNnEo8q5CE7ZkwadLmjFguhR1uNpyJ5//iEP1vBltISbS2XIdSO
+ 7HpkF+gOz0e+IkHTmS7lW5dvBz/o+yfOfuw= 
+Received: from maileast.thefacebook.com ([199.201.65.23])
+        by mx0a-00082601.pphosted.com with ESMTP id 2q1qgh0f4m-2
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Tue, 15 Jan 2019 16:14:24 -0800
+Received: from mx-out.facebook.com (2620:10d:c0a1:3::13) by
+ mail.thefacebook.com (2620:10d:c021:18::172) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA) id 15.1.1531.3;
+ Tue, 15 Jan 2019 16:14:17 -0800
+Received: by devbig006.ftw2.facebook.com (Postfix, from userid 4523)
+        id E2BF462E1DFB; Tue, 15 Jan 2019 16:14:13 -0800 (PST)
+Smtp-Origin-Hostprefix: devbig
+From:   Song Liu <songliubraving@fb.com>
+Smtp-Origin-Hostname: devbig006.ftw2.facebook.com
+To:     <linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>
+CC:     Song Liu <songliubraving@fb.com>, <peterz@infradead.org>,
+        <acme@kernel.org>, <ast@kernel.org>, <daniel@iogearbox.net>,
+        <kernel-team@fb.com>, <dsahern@gmail.com>
+Smtp-Origin-Cluster: ftw2c04
+Subject: [PATCH v9 perf, bpf-next 4/9] sync tools/include/uapi/linux/perf_event.h
+Date:   Tue, 15 Jan 2019 16:14:05 -0800
+Message-ID: <20190116001410.3522226-5-songliubraving@fb.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20190116001410.3522226-1-songliubraving@fb.com>
+References: <20190116001410.3522226-1-songliubraving@fb.com>
+X-FB-Internal: Safe
 MIME-Version: 1.0
-In-Reply-To: <20190112150515.i7mwq7rtd62wlifh@pengutronix.de>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
+Content-Type: text/plain
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-01-15_08:,,
+ signatures=0
+X-Proofpoint-Spam-Reason: safe
+X-FB-Internal: Safe
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Uwe,
+sync for PERF_RECORD_BPF_EVENT
 
-On 2019-01-12 7:05 a.m., Uwe Kleine-König wrote:
-> Hello Scott,
->
-> On Fri, Jan 11, 2019 at 01:28:45PM -0800, Scott Branden wrote:
->> On 2019-01-11 12:48 p.m., Uwe Kleine-König wrote:
->>> On Fri, Jan 11, 2019 at 10:51:14AM +0530, Sheetal Tigadoli wrote:
->>>> From: Praveen Kumar B <praveen.b@broadcom.com>
->>>>
->>>> Add new compatible string for new version of pwm-kona
->>>>
->>>> Signed-off-by: Praveen Kumar B <praveen.b@broadcom.com>
->>>> Reviewed-by: Ray Jui <ray.jui@broadcom.com>
->>>> Reviewed-by: Scott Branden <scott.branden@broadcom.com>
->>>> Signed-off-by: Sheetal Tigadoli <sheetal.tigadoli@broadcom.com>
->>>> ---
->>>>    Documentation/devicetree/bindings/pwm/brcm,kona-pwm.txt | 2 +-
->>>>    1 file changed, 1 insertion(+), 1 deletion(-)
->>>>
->>>> diff --git a/Documentation/devicetree/bindings/pwm/brcm,kona-pwm.txt b/Documentation/devicetree/bindings/pwm/brcm,kona-pwm.txt
->>>> index 8eae9fe..d37f697 100644
->>>> --- a/Documentation/devicetree/bindings/pwm/brcm,kona-pwm.txt
->>>> +++ b/Documentation/devicetree/bindings/pwm/brcm,kona-pwm.txt
->>>> @@ -3,7 +3,7 @@ Broadcom Kona PWM controller device tree bindings
->>>>    This controller has 6 channels.
->>>>    Required Properties :
->>>> -- compatible: should contain "brcm,kona-pwm"
->>>> +- compatible: should contain "brcm,kona-pwm" or "brcm,kona-pwm-v2"
->>> Is v2 used on a newer generation of kona SoCs? On i.MX these variants
->>> are usually named after the first SoC that came with the new variant. Is
->>> this sensible here, too?
->> It doesn't make as much sense here as different revs of the IP block are
->> picked up based on various decisions.
->>
->> A new SoC could decide to use an old version.
-> IMHO this is no reason to not use the name of the oldest SoC with this
-> variant. I don't know how the SoC names are in the broadcom family, but
-> if they were (in order of age, oldest first):
->
-> 	ant
-> 	bear
-> 	crocodile
->
-> and ant and crocodile use the same IP block we would have
->
-> a) with v1, v2:
->
-> 	ant:
-> 		compatible = "brcm,kona-pwm-v1";
-> 	bear:
-> 		compatible = "brcm,kona-pwm-v2";
-> 	crocodile:
-> 		compatible = "brcm,kona-pwm-v1";
->
-> ; and
->
-> b) with the SoC naming:
->
-> 	ant:
-> 		compatible = "brcm,kona-ant-pwm";
-> 	bear:
-> 		compatible = "brcm,kona-bear-pwm";
-> 	crocodile:
-> 		compatible = "brcm,kona-crocodile-pwm", "brcm,kona-ant-pwm";
->
-> (If you want, drop "brcm,kona-crocodile-pwm", but keeping it is more
-> defensive.)
->
-> I like b) (with "...-crocodile-...") better than a). crocodile using
-> "...-ant-..." is not more ugly than crocodile using "...-v1". This is
-> also a tad more robust because if broadcom releases kona-dolphin and
-> someone finds a minor difference between the IPs used on ant and
-> crocodile it depends on the order of these events who gets v3, while
-> with the SoC naming the result is clear.
->
-> (OK, and given that "brcm,kona-pwm" is already fixed, both approaches
-> need slight adaption, but I guess you still get what I meant.)
+Signed-off-by: Song Liu <songliubraving@fb.com>
+---
+ tools/include/uapi/linux/perf_event.h | 29 ++++++++++++++++++++++++++-
+ 1 file changed, 28 insertions(+), 1 deletion(-)
 
-Thanks for your thoughts and explanation.
+diff --git a/tools/include/uapi/linux/perf_event.h b/tools/include/uapi/linux/perf_event.h
+index 68c4da0227c5..8bd78a34e396 100644
+--- a/tools/include/uapi/linux/perf_event.h
++++ b/tools/include/uapi/linux/perf_event.h
+@@ -373,7 +373,8 @@ struct perf_event_attr {
+ 				write_backward :  1, /* Write ring buffer from end to beginning */
+ 				namespaces     :  1, /* include namespaces data */
+ 				ksymbol        :  1, /* include ksymbol events */
+-				__reserved_1   : 34;
++				bpf_event      :  1, /* include bpf events */
++				__reserved_1   : 33;
+ 
+ 	union {
+ 		__u32		wakeup_events;	  /* wakeup every n events */
+@@ -981,6 +982,25 @@ enum perf_event_type {
+ 	 */
+ 	PERF_RECORD_KSYMBOL			= 17,
+ 
++	/*
++	 * Record bpf events:
++	 *  enum perf_bpf_event_type {
++	 *	PERF_BPF_EVENT_UNKNOWN		= 0,
++	 *	PERF_BPF_EVENT_PROG_LOAD	= 1,
++	 *	PERF_BPF_EVENT_PROG_UNLOAD	= 2,
++	 *  };
++	 *
++	 * struct {
++	 *	struct perf_event_header	header;
++	 *	u16				type;
++	 *	u16				flags;
++	 *	u32				id;
++	 *	u8				tag[BPF_TAG_SIZE];
++	 *	struct sample_id		sample_id;
++	 * };
++	 */
++	PERF_RECORD_BPF_EVENT			= 18,
++
+ 	PERF_RECORD_MAX,			/* non-ABI */
+ };
+ 
+@@ -992,6 +1012,13 @@ enum perf_record_ksymbol_type {
+ 
+ #define PERF_RECORD_KSYMBOL_FLAGS_UNREGISTER	(1 << 0)
+ 
++enum perf_bpf_event_type {
++	PERF_BPF_EVENT_UNKNOWN		= 0,
++	PERF_BPF_EVENT_PROG_LOAD	= 1,
++	PERF_BPF_EVENT_PROG_UNLOAD	= 2,
++	PERF_BPF_EVENT_MAX,		/* non-ABI */
++};
++
+ #define PERF_MAX_STACK_DEPTH		127
+ #define PERF_MAX_CONTEXTS_PER_STACK	  8
+ 
+-- 
+2.17.1
 
-It is unfortunate devicetree has no proper guidelines or documentation on
-
-binding naming.  In the interest of getting this upstream we can name it
-
-"brcm, omega-pwm".  We can drop kona from the binding name as that 
-architecture
-
-is really no more - only IP derived from it is - hence the name kona-v2 
-previously.
-
->
-> Best regards
-> Uwe
->
->
-Cheers,
-Scott
