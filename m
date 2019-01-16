@@ -2,533 +2,148 @@ Return-Path: <SRS0=1Lvk=PY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 205CBC43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 06:57:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F33BC43444
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 07:02:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C5A0C2082F
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 06:57:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 41B862082F
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 07:02:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547621831;
-	bh=VEbgUo4Kuy7+Nv5Nps6vV76QxxdavpzW0SuU3LkngYY=;
+	s=default; t=1547622144;
+	bh=f4Rn/CWE0P1xG99iEb5KtGaw5HrTOf+GYfYwtOZrDnw=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=ivZvjsEF/jFhuelrkY1VKRtRSRQHxDYy1KnEcriXn3/hlrk21pBOTM+YMbVu6s7G5
-	 mxgjS87TcFKjaGPs0lkBKnBauAjYEgg8zOr7UzlZXAHioMz0N+4jZh9pMci8zoo4K6
-	 gglU3VORp1PKKb8h1uj97yDmVwO5SVP6EmSGTexk=
+	b=Foo/Eix3nFwP/ZEz1wkM+hDNt7O2cMUed0H5DMZOdMIxc1iA7EiR0nQmPI0vEW9Fs
+	 /Be0aoejFTJibiiyhSemByqH3z4N6767+qCJO8L/Go6Efo6IfAYJqcvFWndec95ANc
+	 mGZTI58rCvFC7Cwz0J4eEPpvZ8O81FiI403mrK10=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388305AbfAPG5I (ORCPT
+        id S2388317AbfAPHCW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 16 Jan 2019 01:57:08 -0500
-Received: from mx2.suse.de ([195.135.220.15]:41654 "EHLO mx1.suse.de"
+        Wed, 16 Jan 2019 02:02:22 -0500
+Received: from mx2.suse.de ([195.135.220.15]:42616 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1731043AbfAPG5I (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Jan 2019 01:57:08 -0500
+        id S1731011AbfAPHCV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 Jan 2019 02:02:21 -0500
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 75547AD86;
-        Wed, 16 Jan 2019 06:57:05 +0000 (UTC)
-Date:   Wed, 16 Jan 2019 07:57:03 +0100
+        by mx1.suse.de (Postfix) with ESMTP id B61CBAD86;
+        Wed, 16 Jan 2019 07:02:19 +0000 (UTC)
+Date:   Wed, 16 Jan 2019 08:02:18 +0100
 From:   Michal Hocko <mhocko@kernel.org>
-To:     Anshuman Khandual <anshuman.khandual@arm.com>
-Cc:     linux-mm@kvack.org, akpm@linux-foundation.org,
-        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        linux-arm-kernel@lists.infradead.org, linux-sh@vger.kernel.org,
-        kvmarm@lists.cs.columbia.edu, linux-riscv@lists.infradead.org,
-        linux@armlinux.org.uk, catalin.marinas@arm.com,
-        will.deacon@arm.com, mpe@ellerman.id.au, tglx@linutronix.de,
-        mingo@redhat.com, dave.hansen@linux.intel.com,
-        peterz@infradead.org, christoffer.dall@arm.com,
-        marc.zyngier@arm.com, kirill@shutemov.name,
-        rppt@linux.vnet.ibm.com, ard.biesheuvel@linaro.org,
-        mark.rutland@arm.com, steve.capper@arm.com, james.morse@arm.com,
-        robin.murphy@arm.com, aneesh.kumar@linux.ibm.com, vbabka@suse.cz,
-        shakeelb@google.com, rientjes@google.com, palmer@sifive.com,
-        greentime@andestech.com
-Subject: Re: [PATCH V2] mm: Introduce GFP_PGTABLE
-Message-ID: <20190116065703.GE24149@dhcp22.suse.cz>
-References: <1547619692-7946-1-git-send-email-anshuman.khandual@arm.com>
+To:     Shakeel Butt <shakeelb@google.com>
+Cc:     Johannes Weiner <hannes@cmpxchg.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Vladimir Davydov <vdavydov.dev@gmail.com>,
+        Cgroups <cgroups@vger.kernel.org>, Linux MM <linux-mm@kvack.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v3] memcg: schedule high reclaim for remote memcgs on
+ high_work
+Message-ID: <20190116070218.GF24149@dhcp22.suse.cz>
+References: <20190110174432.82064-1-shakeelb@google.com>
+ <20190111205948.GA4591@cmpxchg.org>
+ <CALvZod7O2CJuhbuLUy9R-E4dTgL4WBg8CayW_AFnCCG6KCDjUA@mail.gmail.com>
+ <20190113183402.GD1578@dhcp22.suse.cz>
+ <CALvZod6paX4_vtgP8AJm5PmW_zA_ecLLP2qTvQz8rRyKticgDg@mail.gmail.com>
+ <20190115072551.GO21345@dhcp22.suse.cz>
+ <CALvZod6U+OGZJ1mcSG++Q5CJtEjLbr3pwvLRBbkpbZbqf6YSsA@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1547619692-7946-1-git-send-email-anshuman.khandual@arm.com>
+In-Reply-To: <CALvZod6U+OGZJ1mcSG++Q5CJtEjLbr3pwvLRBbkpbZbqf6YSsA@mail.gmail.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed 16-01-19 11:51:32, Anshuman Khandual wrote:
-> All architectures have been defining their own PGALLOC_GFP as (GFP_KERNEL |
-> __GFP_ZERO) and using it for allocating page table pages. This causes some
-> code duplication which can be easily avoided. GFP_KERNEL allocated and
-> cleared out pages (__GFP_ZERO) are required for page tables on any given
-> architecture. This creates a new generic GFP flag flag which can be used
-> for any page table page allocation. Does not cause any functional change.
+On Tue 15-01-19 11:38:23, Shakeel Butt wrote:
+> On Mon, Jan 14, 2019 at 11:25 PM Michal Hocko <mhocko@kernel.org> wrote:
+> >
+> > On Mon 14-01-19 12:18:07, Shakeel Butt wrote:
+> > > On Sun, Jan 13, 2019 at 10:34 AM Michal Hocko <mhocko@kernel.org> wrote:
+> > > >
+> > > > On Fri 11-01-19 14:54:32, Shakeel Butt wrote:
+> > > > > Hi Johannes,
+> > > > >
+> > > > > On Fri, Jan 11, 2019 at 12:59 PM Johannes Weiner <hannes@cmpxchg.org> wrote:
+> > > > > >
+> > > > > > Hi Shakeel,
+> > > > > >
+> > > > > > On Thu, Jan 10, 2019 at 09:44:32AM -0800, Shakeel Butt wrote:
+> > > > > > > If a memcg is over high limit, memory reclaim is scheduled to run on
+> > > > > > > return-to-userland.  However it is assumed that the memcg is the current
+> > > > > > > process's memcg.  With remote memcg charging for kmem or swapping in a
+> > > > > > > page charged to remote memcg, current process can trigger reclaim on
+> > > > > > > remote memcg.  So, schduling reclaim on return-to-userland for remote
+> > > > > > > memcgs will ignore the high reclaim altogether. So, record the memcg
+> > > > > > > needing high reclaim and trigger high reclaim for that memcg on
+> > > > > > > return-to-userland.  However if the memcg is already recorded for high
+> > > > > > > reclaim and the recorded memcg is not the descendant of the the memcg
+> > > > > > > needing high reclaim, punt the high reclaim to the work queue.
+> > > > > >
+> > > > > > The idea behind remote charging is that the thread allocating the
+> > > > > > memory is not responsible for that memory, but a different cgroup
+> > > > > > is. Why would the same thread then have to work off any high excess
+> > > > > > this could produce in that unrelated group?
+> > > > > >
+> > > > > > Say you have a inotify/dnotify listener that is restricted in its
+> > > > > > memory use - now everybody sending notification events from outside
+> > > > > > that listener's group would get throttled on a cgroup over which it
+> > > > > > has no control. That sounds like a recipe for priority inversions.
+> > > > > >
+> > > > > > It seems to me we should only do reclaim-on-return when current is in
+> > > > > > the ill-behaved cgroup, and punt everything else - interrupts and
+> > > > > > remote charges - to the workqueue.
+> > > > >
+> > > > > This is what v1 of this patch was doing but Michal suggested to do
+> > > > > what this version is doing. Michal's argument was that the current is
+> > > > > already charging and maybe reclaiming a remote memcg then why not do
+> > > > > the high excess reclaim as well.
+> > > >
+> > > > Johannes has a good point about the priority inversion problems which I
+> > > > haven't thought about.
+> > > >
+> > > > > Personally I don't have any strong opinion either way. What I actually
+> > > > > wanted was to punt this high reclaim to some process in that remote
+> > > > > memcg. However I didn't explore much on that direction thinking if
+> > > > > that complexity is worth it. Maybe I should at least explore it, so,
+> > > > > we can compare the solutions. What do you think?
+> > > >
+> > > > My question would be whether we really care all that much. Do we know of
+> > > > workloads which would generate a large high limit excess?
+> > > >
+> > >
+> > > The current semantics of memory.high is that it can be breached under
+> > > extreme conditions. However any workload where memory.high is used and
+> > > a lot of remote memcg charging happens (inotify/dnotify example given
+> > > by Johannes or swapping in tmpfs file or shared memory region) the
+> > > memory.high breach will become common.
+> >
+> > This is exactly what I am asking about. Is this something that can
+> > happen easily? Remote charges on themselves should be rare, no?
+> >
 > 
-> GFP_PGTABLE is being added into include/asm-generic/pgtable.h which is the
-> generic page tabe header just to prevent it's potential misuse as a general
-> allocation flag if included in include/linux/gfp.h.
+> At the moment, for kmem we can do remote charging for fanotify,
+> inotify and buffer_head and for anon pages we can do remote charging
+> on swap in. Now based on the workload's cgroup setup the remote
+> charging can be very frequent or rare.
+> 
+> At Google, remote charging is very frequent but since we are still on
+> cgroup-v1 and do not use memory.high, the issue this patch is fixing
+> is not observed. However for the adoption of cgroup-v2, this fix is
+> needed.
 
-I haven't reviewed the patch yet but I am wondering whether this is
-really worth it without going all the way down to unify the common code
-and remove much more code duplication. Or is this not possible for some
-reason?
+Adding some numbers into the changelog would be really valuable to judge
+the urgency and the scale of the problem. If we are going via kworker
+then it is also important to evaluate what kind of effect on the system
+this has.  How big of the excess can we get? Why don't those memcgs
+resolve the excess by themselves on the first direct charge? Is it
+possible that kworkers simply swamp the system with many parallel memcgs
+with remote charges?
 
-> Signed-off-by: Anshuman Khandual <anshuman.khandual@arm.com>
-> ---
-> Build tested on arm, arm64, powerpc, powerpc64le and x86.
-> Boot tested on arm64 and x86.
-> 
-> Changes in V2:
-> 
-> - Moved GFP_PGTABLE into include/asm-generic/pgtable.h
-> - On X86 added __GFP_ACCOUNT into GFP_PGTABLE at various places
-> - Replaced possible flags on riscv and nds32 with GFP_PGTABLE
-> 
-> Original V1: https://lkml.org/lkml/2019/1/12/54 
-> 
->  arch/arm/include/asm/pgalloc.h               |  8 +++-----
->  arch/arm/mm/mmu.c                            |  2 +-
->  arch/arm64/include/asm/pgalloc.h             |  9 ++++-----
->  arch/arm64/mm/mmu.c                          |  2 +-
->  arch/arm64/mm/pgd.c                          |  4 ++--
->  arch/nds32/include/asm/pgalloc.h             |  3 +--
->  arch/powerpc/include/asm/book3s/64/pgalloc.h |  6 +++---
->  arch/powerpc/include/asm/pgalloc.h           |  2 --
->  arch/powerpc/kvm/book3s_64_mmu_hv.c          |  2 +-
->  arch/powerpc/mm/pgtable-frag.c               |  4 ++--
->  arch/riscv/include/asm/pgalloc.h             |  8 +++-----
->  arch/sh/mm/pgtable.c                         |  6 ++----
->  arch/unicore32/include/asm/pgalloc.h         |  6 ++----
->  arch/x86/kernel/espfix_64.c                  |  6 ++----
->  arch/x86/mm/pgtable.c                        | 15 +++++++--------
->  include/asm-generic/pgtable.h                |  2 ++
->  virt/kvm/arm/mmu.c                           |  2 +-
->  17 files changed, 37 insertions(+), 50 deletions(-)
-> 
-> diff --git a/arch/arm/include/asm/pgalloc.h b/arch/arm/include/asm/pgalloc.h
-> index 17ab72f..72be6f5 100644
-> --- a/arch/arm/include/asm/pgalloc.h
-> +++ b/arch/arm/include/asm/pgalloc.h
-> @@ -57,8 +57,6 @@ static inline void pud_populate(struct mm_struct *mm, pud_t *pud, pmd_t *pmd)
->  extern pgd_t *pgd_alloc(struct mm_struct *mm);
->  extern void pgd_free(struct mm_struct *mm, pgd_t *pgd);
->  
-> -#define PGALLOC_GFP	(GFP_KERNEL | __GFP_ZERO)
-> -
->  static inline void clean_pte_table(pte_t *pte)
->  {
->  	clean_dcache_area(pte + PTE_HWTABLE_PTRS, PTE_HWTABLE_SIZE);
-> @@ -85,7 +83,7 @@ pte_alloc_one_kernel(struct mm_struct *mm)
->  {
->  	pte_t *pte;
->  
-> -	pte = (pte_t *)__get_free_page(PGALLOC_GFP);
-> +	pte = (pte_t *)__get_free_page(GFP_PGTABLE);
->  	if (pte)
->  		clean_pte_table(pte);
->  
-> @@ -98,9 +96,9 @@ pte_alloc_one(struct mm_struct *mm)
->  	struct page *pte;
->  
->  #ifdef CONFIG_HIGHPTE
-> -	pte = alloc_pages(PGALLOC_GFP | __GFP_HIGHMEM, 0);
-> +	pte = alloc_pages(GFP_PGTABLE | __GFP_HIGHMEM, 0);
->  #else
-> -	pte = alloc_pages(PGALLOC_GFP, 0);
-> +	pte = alloc_pages(GFP_PGTABLE, 0);
->  #endif
->  	if (!pte)
->  		return NULL;
-> diff --git a/arch/arm/mm/mmu.c b/arch/arm/mm/mmu.c
-> index f5cc1cc..6d47784 100644
-> --- a/arch/arm/mm/mmu.c
-> +++ b/arch/arm/mm/mmu.c
-> @@ -733,7 +733,7 @@ static void __init *early_alloc(unsigned long sz)
->  
->  static void *__init late_alloc(unsigned long sz)
->  {
-> -	void *ptr = (void *)__get_free_pages(PGALLOC_GFP, get_order(sz));
-> +	void *ptr = (void *)__get_free_pages(GFP_PGTABLE, get_order(sz));
->  
->  	if (!ptr || !pgtable_page_ctor(virt_to_page(ptr)))
->  		BUG();
-> diff --git a/arch/arm64/include/asm/pgalloc.h b/arch/arm64/include/asm/pgalloc.h
-> index 52fa47c..d5c75bf 100644
-> --- a/arch/arm64/include/asm/pgalloc.h
-> +++ b/arch/arm64/include/asm/pgalloc.h
-> @@ -26,14 +26,13 @@
->  
->  #define check_pgt_cache()		do { } while (0)
->  
-> -#define PGALLOC_GFP	(GFP_KERNEL | __GFP_ZERO)
->  #define PGD_SIZE	(PTRS_PER_PGD * sizeof(pgd_t))
->  
->  #if CONFIG_PGTABLE_LEVELS > 2
->  
->  static inline pmd_t *pmd_alloc_one(struct mm_struct *mm, unsigned long addr)
->  {
-> -	return (pmd_t *)__get_free_page(PGALLOC_GFP);
-> +	return (pmd_t *)__get_free_page(GFP_PGTABLE);
->  }
->  
->  static inline void pmd_free(struct mm_struct *mm, pmd_t *pmdp)
-> @@ -62,7 +61,7 @@ static inline void __pud_populate(pud_t *pudp, phys_addr_t pmdp, pudval_t prot)
->  
->  static inline pud_t *pud_alloc_one(struct mm_struct *mm, unsigned long addr)
->  {
-> -	return (pud_t *)__get_free_page(PGALLOC_GFP);
-> +	return (pud_t *)__get_free_page(GFP_PGTABLE);
->  }
->  
->  static inline void pud_free(struct mm_struct *mm, pud_t *pudp)
-> @@ -93,7 +92,7 @@ extern void pgd_free(struct mm_struct *mm, pgd_t *pgdp);
->  static inline pte_t *
->  pte_alloc_one_kernel(struct mm_struct *mm)
->  {
-> -	return (pte_t *)__get_free_page(PGALLOC_GFP);
-> +	return (pte_t *)__get_free_page(GFP_PGTABLE);
->  }
->  
->  static inline pgtable_t
-> @@ -101,7 +100,7 @@ pte_alloc_one(struct mm_struct *mm)
->  {
->  	struct page *pte;
->  
-> -	pte = alloc_pages(PGALLOC_GFP, 0);
-> +	pte = alloc_pages(GFP_PGTABLE, 0);
->  	if (!pte)
->  		return NULL;
->  	if (!pgtable_page_ctor(pte)) {
-> diff --git a/arch/arm64/mm/mmu.c b/arch/arm64/mm/mmu.c
-> index b6f5aa5..07b1c0f 100644
-> --- a/arch/arm64/mm/mmu.c
-> +++ b/arch/arm64/mm/mmu.c
-> @@ -372,7 +372,7 @@ static void __create_pgd_mapping(pgd_t *pgdir, phys_addr_t phys,
->  
->  static phys_addr_t pgd_pgtable_alloc(void)
->  {
-> -	void *ptr = (void *)__get_free_page(PGALLOC_GFP);
-> +	void *ptr = (void *)__get_free_page(GFP_PGTABLE);
->  	if (!ptr || !pgtable_page_ctor(virt_to_page(ptr)))
->  		BUG();
->  
-> diff --git a/arch/arm64/mm/pgd.c b/arch/arm64/mm/pgd.c
-> index 289f911..5b28e2b 100644
-> --- a/arch/arm64/mm/pgd.c
-> +++ b/arch/arm64/mm/pgd.c
-> @@ -31,9 +31,9 @@ static struct kmem_cache *pgd_cache __ro_after_init;
->  pgd_t *pgd_alloc(struct mm_struct *mm)
->  {
->  	if (PGD_SIZE == PAGE_SIZE)
-> -		return (pgd_t *)__get_free_page(PGALLOC_GFP);
-> +		return (pgd_t *)__get_free_page(GFP_PGTABLE);
->  	else
-> -		return kmem_cache_alloc(pgd_cache, PGALLOC_GFP);
-> +		return kmem_cache_alloc(pgd_cache, GFP_PGTABLE);
->  }
->  
->  void pgd_free(struct mm_struct *mm, pgd_t *pgd)
-> diff --git a/arch/nds32/include/asm/pgalloc.h b/arch/nds32/include/asm/pgalloc.h
-> index 3c5fee5..e1137ce 100644
-> --- a/arch/nds32/include/asm/pgalloc.h
-> +++ b/arch/nds32/include/asm/pgalloc.h
-> @@ -27,8 +27,7 @@ static inline pte_t *pte_alloc_one_kernel(struct mm_struct *mm)
->  	pte_t *pte;
->  
->  	pte =
-> -	    (pte_t *) __get_free_page(GFP_KERNEL | __GFP_RETRY_MAYFAIL |
-> -				      __GFP_ZERO);
-> +	    (pte_t *) __get_free_page(GFP_PGTABLE | __GFP_RETRY_MAYFAIL);
->  
->  	return pte;
->  }
-> diff --git a/arch/powerpc/include/asm/book3s/64/pgalloc.h b/arch/powerpc/include/asm/book3s/64/pgalloc.h
-> index 9c11732..71704e5 100644
-> --- a/arch/powerpc/include/asm/book3s/64/pgalloc.h
-> +++ b/arch/powerpc/include/asm/book3s/64/pgalloc.h
-> @@ -52,11 +52,11 @@ void pte_frag_destroy(void *pte_frag);
->  static inline pgd_t *radix__pgd_alloc(struct mm_struct *mm)
->  {
->  #ifdef CONFIG_PPC_64K_PAGES
-> -	return (pgd_t *)__get_free_page(pgtable_gfp_flags(mm, PGALLOC_GFP));
-> +	return (pgd_t *)__get_free_page(pgtable_gfp_flags(mm, GFP_PGTABLE));
->  #else
->  	struct page *page;
-> -	page = alloc_pages(pgtable_gfp_flags(mm, PGALLOC_GFP | __GFP_RETRY_MAYFAIL),
-> -				4);
-> +	page = alloc_pages(pgtable_gfp_flags(mm, GFP_PGTABLE |
-> +				__GFP_RETRY_MAYFAIL), 4);
->  	if (!page)
->  		return NULL;
->  	return (pgd_t *) page_address(page);
-> diff --git a/arch/powerpc/include/asm/pgalloc.h b/arch/powerpc/include/asm/pgalloc.h
-> index e11f030..3b11e8b 100644
-> --- a/arch/powerpc/include/asm/pgalloc.h
-> +++ b/arch/powerpc/include/asm/pgalloc.h
-> @@ -18,8 +18,6 @@ static inline gfp_t pgtable_gfp_flags(struct mm_struct *mm, gfp_t gfp)
->  }
->  #endif /* MODULE */
->  
-> -#define PGALLOC_GFP (GFP_KERNEL | __GFP_ZERO)
-> -
->  #ifdef CONFIG_PPC_BOOK3S
->  #include <asm/book3s/pgalloc.h>
->  #else
-> diff --git a/arch/powerpc/kvm/book3s_64_mmu_hv.c b/arch/powerpc/kvm/book3s_64_mmu_hv.c
-> index bd2dcfb..b419878 100644
-> --- a/arch/powerpc/kvm/book3s_64_mmu_hv.c
-> +++ b/arch/powerpc/kvm/book3s_64_mmu_hv.c
-> @@ -97,7 +97,7 @@ int kvmppc_allocate_hpt(struct kvm_hpt_info *info, u32 order)
->  	}
->  
->  	if (!hpt)
-> -		hpt = __get_free_pages(GFP_KERNEL|__GFP_ZERO|__GFP_RETRY_MAYFAIL
-> +		hpt = __get_free_pages(GFP_PGTABLE | __GFP_RETRY_MAYFAIL
->  				       |__GFP_NOWARN, order - PAGE_SHIFT);
->  
->  	if (!hpt)
-> diff --git a/arch/powerpc/mm/pgtable-frag.c b/arch/powerpc/mm/pgtable-frag.c
-> index a7b0521..211aaa7 100644
-> --- a/arch/powerpc/mm/pgtable-frag.c
-> +++ b/arch/powerpc/mm/pgtable-frag.c
-> @@ -58,7 +58,7 @@ static pte_t *__alloc_for_ptecache(struct mm_struct *mm, int kernel)
->  	struct page *page;
->  
->  	if (!kernel) {
-> -		page = alloc_page(PGALLOC_GFP | __GFP_ACCOUNT);
-> +		page = alloc_page(GFP_PGTABLE | __GFP_ACCOUNT);
->  		if (!page)
->  			return NULL;
->  		if (!pgtable_page_ctor(page)) {
-> @@ -66,7 +66,7 @@ static pte_t *__alloc_for_ptecache(struct mm_struct *mm, int kernel)
->  			return NULL;
->  		}
->  	} else {
-> -		page = alloc_page(PGALLOC_GFP);
-> +		page = alloc_page(GFP_PGTABLE);
->  		if (!page)
->  			return NULL;
->  	}
-> diff --git a/arch/riscv/include/asm/pgalloc.h b/arch/riscv/include/asm/pgalloc.h
-> index 94043cf..7ff1cd7 100644
-> --- a/arch/riscv/include/asm/pgalloc.h
-> +++ b/arch/riscv/include/asm/pgalloc.h
-> @@ -69,8 +69,7 @@ static inline void pgd_free(struct mm_struct *mm, pgd_t *pgd)
->  
->  static inline pmd_t *pmd_alloc_one(struct mm_struct *mm, unsigned long addr)
->  {
-> -	return (pmd_t *)__get_free_page(
-> -		GFP_KERNEL | __GFP_RETRY_MAYFAIL | __GFP_ZERO);
-> +	return (pmd_t *)__get_free_page(GFP_PGTABLE | __GFP_RETRY_MAYFAIL);
->  }
->  
->  static inline void pmd_free(struct mm_struct *mm, pmd_t *pmd)
-> @@ -84,15 +83,14 @@ static inline void pmd_free(struct mm_struct *mm, pmd_t *pmd)
->  
->  static inline pte_t *pte_alloc_one_kernel(struct mm_struct *mm)
->  {
-> -	return (pte_t *)__get_free_page(
-> -		GFP_KERNEL | __GFP_RETRY_MAYFAIL | __GFP_ZERO);
-> +	return (pte_t *)__get_free_page(GFP_PGTABLE | __GFP_RETRY_MAYFAIL);
->  }
->  
->  static inline struct page *pte_alloc_one(struct mm_struct *mm)
->  {
->  	struct page *pte;
->  
-> -	pte = alloc_page(GFP_KERNEL | __GFP_RETRY_MAYFAIL | __GFP_ZERO);
-> +	pte = alloc_page(GFP_PGTABLE | __GFP_RETRY_MAYFAIL);
->  	if (likely(pte != NULL))
->  		pgtable_page_ctor(pte);
->  	return pte;
-> diff --git a/arch/sh/mm/pgtable.c b/arch/sh/mm/pgtable.c
-> index 5c8f924..324732dc5 100644
-> --- a/arch/sh/mm/pgtable.c
-> +++ b/arch/sh/mm/pgtable.c
-> @@ -2,8 +2,6 @@
->  #include <linux/mm.h>
->  #include <linux/slab.h>
->  
-> -#define PGALLOC_GFP GFP_KERNEL | __GFP_ZERO
-> -
->  static struct kmem_cache *pgd_cachep;
->  #if PAGETABLE_LEVELS > 2
->  static struct kmem_cache *pmd_cachep;
-> @@ -32,7 +30,7 @@ void pgtable_cache_init(void)
->  
->  pgd_t *pgd_alloc(struct mm_struct *mm)
->  {
-> -	return kmem_cache_alloc(pgd_cachep, PGALLOC_GFP);
-> +	return kmem_cache_alloc(pgd_cachep, GFP_PGTABLE);
->  }
->  
->  void pgd_free(struct mm_struct *mm, pgd_t *pgd)
-> @@ -48,7 +46,7 @@ void pud_populate(struct mm_struct *mm, pud_t *pud, pmd_t *pmd)
->  
->  pmd_t *pmd_alloc_one(struct mm_struct *mm, unsigned long address)
->  {
-> -	return kmem_cache_alloc(pmd_cachep, PGALLOC_GFP);
-> +	return kmem_cache_alloc(pmd_cachep, GFP_PGTABLE);
->  }
->  
->  void pmd_free(struct mm_struct *mm, pmd_t *pmd)
-> diff --git a/arch/unicore32/include/asm/pgalloc.h b/arch/unicore32/include/asm/pgalloc.h
-> index 7cceabe..a3506e5 100644
-> --- a/arch/unicore32/include/asm/pgalloc.h
-> +++ b/arch/unicore32/include/asm/pgalloc.h
-> @@ -28,8 +28,6 @@ extern void free_pgd_slow(struct mm_struct *mm, pgd_t *pgd);
->  #define pgd_alloc(mm)			get_pgd_slow(mm)
->  #define pgd_free(mm, pgd)		free_pgd_slow(mm, pgd)
->  
-> -#define PGALLOC_GFP	(GFP_KERNEL | __GFP_ZERO)
-> -
->  /*
->   * Allocate one PTE table.
->   */
-> @@ -38,7 +36,7 @@ pte_alloc_one_kernel(struct mm_struct *mm)
->  {
->  	pte_t *pte;
->  
-> -	pte = (pte_t *)__get_free_page(PGALLOC_GFP);
-> +	pte = (pte_t *)__get_free_page(GFP_PGTABLE);
->  	if (pte)
->  		clean_dcache_area(pte, PTRS_PER_PTE * sizeof(pte_t));
->  
-> @@ -50,7 +48,7 @@ pte_alloc_one(struct mm_struct *mm)
->  {
->  	struct page *pte;
->  
-> -	pte = alloc_pages(PGALLOC_GFP, 0);
-> +	pte = alloc_pages(GFP_PGTABLE, 0);
->  	if (!pte)
->  		return NULL;
->  	if (!PageHighMem(pte)) {
-> diff --git a/arch/x86/kernel/espfix_64.c b/arch/x86/kernel/espfix_64.c
-> index aebd0d5..dae28cc 100644
-> --- a/arch/x86/kernel/espfix_64.c
-> +++ b/arch/x86/kernel/espfix_64.c
-> @@ -57,8 +57,6 @@
->  # error "Need more virtual address space for the ESPFIX hack"
->  #endif
->  
-> -#define PGALLOC_GFP (GFP_KERNEL | __GFP_ZERO)
-> -
->  /* This contains the *bottom* address of the espfix stack */
->  DEFINE_PER_CPU_READ_MOSTLY(unsigned long, espfix_stack);
->  DEFINE_PER_CPU_READ_MOSTLY(unsigned long, espfix_waddr);
-> @@ -172,7 +170,7 @@ void init_espfix_ap(int cpu)
->  	pud_p = &espfix_pud_page[pud_index(addr)];
->  	pud = *pud_p;
->  	if (!pud_present(pud)) {
-> -		struct page *page = alloc_pages_node(node, PGALLOC_GFP, 0);
-> +		struct page *page = alloc_pages_node(node, GFP_PGTABLE, 0);
->  
->  		pmd_p = (pmd_t *)page_address(page);
->  		pud = __pud(__pa(pmd_p) | (PGTABLE_PROT & ptemask));
-> @@ -184,7 +182,7 @@ void init_espfix_ap(int cpu)
->  	pmd_p = pmd_offset(&pud, addr);
->  	pmd = *pmd_p;
->  	if (!pmd_present(pmd)) {
-> -		struct page *page = alloc_pages_node(node, PGALLOC_GFP, 0);
-> +		struct page *page = alloc_pages_node(node, GFP_PGTABLE, 0);
->  
->  		pte_p = (pte_t *)page_address(page);
->  		pmd = __pmd(__pa(pte_p) | (PGTABLE_PROT & ptemask));
-> diff --git a/arch/x86/mm/pgtable.c b/arch/x86/mm/pgtable.c
-> index 7bd0170..a5b1672 100644
-> --- a/arch/x86/mm/pgtable.c
-> +++ b/arch/x86/mm/pgtable.c
-> @@ -13,19 +13,17 @@ phys_addr_t physical_mask __ro_after_init = (1ULL << __PHYSICAL_MASK_SHIFT) - 1;
->  EXPORT_SYMBOL(physical_mask);
->  #endif
->  
-> -#define PGALLOC_GFP (GFP_KERNEL_ACCOUNT | __GFP_ZERO)
-> -
->  #ifdef CONFIG_HIGHPTE
->  #define PGALLOC_USER_GFP __GFP_HIGHMEM
->  #else
->  #define PGALLOC_USER_GFP 0
->  #endif
->  
-> -gfp_t __userpte_alloc_gfp = PGALLOC_GFP | PGALLOC_USER_GFP;
-> +gfp_t __userpte_alloc_gfp = GFP_PGTABLE | __GFP_ACCOUNT | PGALLOC_USER_GFP;
->  
->  pte_t *pte_alloc_one_kernel(struct mm_struct *mm)
->  {
-> -	return (pte_t *)__get_free_page(PGALLOC_GFP & ~__GFP_ACCOUNT);
-> +	return (pte_t *)__get_free_page(GFP_PGTABLE);
->  }
->  
->  pgtable_t pte_alloc_one(struct mm_struct *mm)
-> @@ -235,7 +233,7 @@ static int preallocate_pmds(struct mm_struct *mm, pmd_t *pmds[], int count)
->  {
->  	int i;
->  	bool failed = false;
-> -	gfp_t gfp = PGALLOC_GFP;
-> +	gfp_t gfp = GFP_PGTABLE | __GFP_ACCOUNT;
->  
->  	if (mm == &init_mm)
->  		gfp &= ~__GFP_ACCOUNT;
-> @@ -401,14 +399,14 @@ static inline pgd_t *_pgd_alloc(void)
->  	 * We allocate one page for pgd.
->  	 */
->  	if (!SHARED_KERNEL_PMD)
-> -		return (pgd_t *)__get_free_pages(PGALLOC_GFP,
-> +		return (pgd_t *)__get_free_pages(GFP_PGTABLE | __GFP_ACCOUNT,
->  						 PGD_ALLOCATION_ORDER);
->  
->  	/*
->  	 * Now PAE kernel is not running as a Xen domain. We can allocate
->  	 * a 32-byte slab for pgd to save memory space.
->  	 */
-> -	return kmem_cache_alloc(pgd_cache, PGALLOC_GFP);
-> +	return kmem_cache_alloc(pgd_cache, GFP_PGTABLE | __GFP_ACCOUNT);
->  }
->  
->  static inline void _pgd_free(pgd_t *pgd)
-> @@ -422,7 +420,8 @@ static inline void _pgd_free(pgd_t *pgd)
->  
->  static inline pgd_t *_pgd_alloc(void)
->  {
-> -	return (pgd_t *)__get_free_pages(PGALLOC_GFP, PGD_ALLOCATION_ORDER);
-> +	return (pgd_t *)__get_free_pages(GFP_PGTABLE | __GFP_ACCOUNT,
-> +						PGD_ALLOCATION_ORDER);
->  }
->  
->  static inline void _pgd_free(pgd_t *pgd)
-> diff --git a/include/asm-generic/pgtable.h b/include/asm-generic/pgtable.h
-> index 05e61e6..3d9cde6 100644
-> --- a/include/asm-generic/pgtable.h
-> +++ b/include/asm-generic/pgtable.h
-> @@ -1186,4 +1186,6 @@ static inline bool arch_has_pfn_modify_check(void)
->  #define mm_pmd_folded(mm)	__is_defined(__PAGETABLE_PMD_FOLDED)
->  #endif
->  
-> +#define GFP_PGTABLE	(GFP_KERNEL | __GFP_ZERO)
-> +
->  #endif /* _ASM_GENERIC_PGTABLE_H */
-> diff --git a/virt/kvm/arm/mmu.c b/virt/kvm/arm/mmu.c
-> index fbdf3ac..f60a5b8 100644
-> --- a/virt/kvm/arm/mmu.c
-> +++ b/virt/kvm/arm/mmu.c
-> @@ -143,7 +143,7 @@ static int mmu_topup_memory_cache(struct kvm_mmu_memory_cache *cache,
->  	if (cache->nobjs >= min)
->  		return 0;
->  	while (cache->nobjs < max) {
-> -		page = (void *)__get_free_page(PGALLOC_GFP);
-> +		page = (void *)__get_free_page(GFP_PGTABLE);
->  		if (!page)
->  			return -ENOMEM;
->  		cache->objects[cache->nobjs++] = page;
-> -- 
-> 2.7.4
-> 
-
+In other words we need deeper analysis of the problem and the solution.
 -- 
 Michal Hocko
 SUSE Labs
