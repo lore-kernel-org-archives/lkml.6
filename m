@@ -2,221 +2,100 @@ Return-Path: <SRS0=1Lvk=PY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,UPPERCASE_50_75,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C30A2C43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 16:03:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 79AA8C43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 16:03:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8B0EE205C9
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 16:03:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4866520657
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 16:03:15 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KMT7cpjm"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="V2I146kW"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405026AbfAPQDK (ORCPT
+        id S2405067AbfAPQDN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 16 Jan 2019 11:03:10 -0500
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:37320 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2404786AbfAPQDJ (ORCPT
+        Wed, 16 Jan 2019 11:03:13 -0500
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:46174 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2404786AbfAPQDL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Jan 2019 11:03:09 -0500
-Received: by mail-pf1-f194.google.com with SMTP id y126so3264886pfb.4
-        for <linux-kernel@vger.kernel.org>; Wed, 16 Jan 2019 08:03:08 -0800 (PST)
+        Wed, 16 Jan 2019 11:03:11 -0500
+Received: by mail-pg1-f196.google.com with SMTP id w7so2991802pgp.13;
+        Wed, 16 Jan 2019 08:03:10 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id;
-        bh=nuglaLaqAM4zKue/k6H9LxmeowaBhzx0m1mqCkpfrCE=;
-        b=KMT7cpjmE3czhfGHAAeGqkjx4EVt069NgUOeMTWRexwRlvzW5VUJ4jrDODrtp/tGrL
-         zWg7b0PM6v75UtBrFXlPOo6ikCysI5Y9T3FBUQY2Kqd40B1whnmkDCfaAPQ0RqnYkq1B
-         asHA62ISICTixCvnDSIfUWOVI8g88drd+e4SH0y4CGI5+clexbxao9zeY+voKre5DVvf
-         A9i1jEuaudfw8KzFb4dL9P1VBX1o7mIcIqLXamg5eIAaZw75lzgccYcAwtodDC5PVXYX
-         nVqwIL85t37vpXzc1KmRR5CZ2oEEjOWnXJwgqc9f/Lm9Gki2WnuAJPyGmmURCcmm9Li4
-         8JjQ==
+        bh=7tvUhaOMr6fMd4OHfKBrsZQZNY2iWRK7ENGLWPCFLt0=;
+        b=V2I146kWq5TINmXj0tIRTIFNm0UI+2nMgzKLlX9KbU91Ld4NVFKSlkYQpnrd6qKkZd
+         xmzcJpddBIdS9N6rZcEvd0px6IeTusvomWgtHWZk8r2/dXLjQgf36P+3ZhJjTt+n3SST
+         jUxI0W2xzXy3lvBSUninHJ1xBbG8OQOjR6pRMoJCbrTwg4qe5DgzaSu1izfTjQd0ilLj
+         LgyLa9nwhYSK/Xw+xjHJmRKuImuz35v1J7qhTnv7lqF6RK4xxECf6D2prsbiYN7qmtou
+         0BZ+0w0SWKdzBW/bI3oNyIDiQQSmrgH8fC9ETVSvwsDXIOkwnKwh5MN1v8QThPWwD4DJ
+         H/BQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=nuglaLaqAM4zKue/k6H9LxmeowaBhzx0m1mqCkpfrCE=;
-        b=kTYhNPWG/YkEWWHH+c/gGzMlClS0wBe3u3bZh59W879xR+eXp/WeLeY1BF8nSmI2fj
-         ol1eUoUWNeUDVSrBqTKi6Vkd80Fdql4QZM29WRGs74tIfwhoEMH8v7Ifx+brpsZKNO12
-         nPwe4yJxvZW7tpGZRQO9/E0jL2yKoFSE4k2NfBUIaUdaTy+bht/09NJehXuliskXU76K
-         At/z9XFCFiEN5CeRHPLSP01Q445kn8Q6kskpqqzBnl4uoDIOfgiXZTMOP8tR1vHJxULr
-         JPH8JgT3p4w5IBwkhIFipr43NXEMGsmIyVO6XLqe2MzcQdStYRZJ4dMWeXKrtRLCxZA7
-         tY4Q==
-X-Gm-Message-State: AJcUukf4vuGNb7AoTDDSknCvAW6G5CdsGRnNm4S7nz/bIkDeLqFVO3TI
-        BPQBiCfEhk7qBf77n9dhrDs=
-X-Google-Smtp-Source: ALg8bN5c6RpBFnSpq3avYvP3dvrYG0CTPwqXrt2bUEBrXjdfpJYqstK5S0RlDHzc/RsS9VAgKd5nqQ==
-X-Received: by 2002:a63:e711:: with SMTP id b17mr9219353pgi.363.1547654588253;
-        Wed, 16 Jan 2019 08:03:08 -0800 (PST)
-Received: from localhost (68.168.130.77.16clouds.com. [68.168.130.77])
-        by smtp.gmail.com with ESMTPSA id v89sm12892594pfj.164.2019.01.16.08.03.07
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 16 Jan 2019 08:03:07 -0800 (PST)
-From:   Yangtao Li <tiny.windzz@gmail.com>
-To:     tglx@linutronix.de, douliyangs@gmail.com, marc.zyngier@arm.com,
-        rdunlap@infradead.org, palmer@sifive.com
-Cc:     linux-kernel@vger.kernel.org, Yangtao Li <tiny.windzz@gmail.com>
-Subject: [PATCH] irq: convert the code format to BIT()
-Date:   Wed, 16 Jan 2019 11:03:05 -0500
-Message-Id: <20190116160305.20639-1-tiny.windzz@gmail.com>
-X-Mailer: git-send-email 2.17.0
+        bh=7tvUhaOMr6fMd4OHfKBrsZQZNY2iWRK7ENGLWPCFLt0=;
+        b=czLsH4o2qGbF4fOGWT4mMB2Rp3azAlGotjk2qeKKPcvdULyR/V2CtzlxJ1YuvTLB+8
+         8T9W+1Vt6O2MwwuYYWMSha4ktoixbpowtPBkfuiZ9DaSO7GtjAvTrVWbXIYuisvkG/Jn
+         pxKjS/tmspyj20etTb5EtRTH4/dvme9MiPKWtgEOgBin2XUmrfzmj0YrOxev9sDhuIiI
+         ZgBiLUL8qrKF2e7E3deyBMiOvvyJ9flSsmmop7kpIfIlswPOhYZveET01RbfhbRiCA4q
+         n4nA66HPTWOmEUOByTtdwrvhH9EAg/ed2IVO3dEdmjq1br86wqsE7sDcEc3Uj6kgDcZ1
+         Zr8g==
+X-Gm-Message-State: AJcUukeGkZEiq/SRc4uLUmXFJ+g6xwziVfnTOtd3MbfBgbheOmexs4UC
+        XZ17+sntUfMl5j+9xHhGbCE=
+X-Google-Smtp-Source: ALg8bN7UHhfC1Y6iel0WKoAul95Y3GKO2dbCrd3hQ/vZSSeh6SfX4Q2buhhbbOxyknc4gVbp2NJ/vw==
+X-Received: by 2002:a63:4819:: with SMTP id v25mr9456809pga.308.1547654589959;
+        Wed, 16 Jan 2019 08:03:09 -0800 (PST)
+Received: from localhost.localdomain ([207.246.99.41])
+        by smtp.gmail.com with ESMTPSA id 184sm8714938pfe.106.2019.01.16.08.03.02
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 16 Jan 2019 08:03:09 -0800 (PST)
+From:   Changbin Du <changbin.du@gmail.com>
+To:     rostedt@goodmis.org
+Cc:     mingo@redhat.com, corbet@lwn.net, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Changbin Du <changbin.du@gmail.com>
+Subject: [PATCH v2] sched/tracing: Show stacktrace for wakeup tracers
+Date:   Thu, 17 Jan 2019 00:02:49 +0800
+Message-Id: <20190116160249.7554-1-changbin.du@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Use BIT() to do some clean-up.
+This align the behavior of wakeup tracers with irqsoff latency tracer
+that we record stacktrace at the beginning and end of waking up. The
+stacktrace shows us what is happening in the kernel.
 
-Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
+Signed-off-by: Changbin Du <changbin.du@gmail.com>
 ---
- include/linux/irq.h | 106 ++++++++++++++++++++++----------------------
- 1 file changed, 53 insertions(+), 53 deletions(-)
+ kernel/trace/trace_sched_wakeup.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/include/linux/irq.h b/include/linux/irq.h
-index def2b2aac8b1..66c9801ce108 100644
---- a/include/linux/irq.h
-+++ b/include/linux/irq.h
-@@ -73,30 +73,30 @@ enum irqchip_irq_state;
-  * IRQ_DISABLE_UNLAZY		- Disable lazy irq disable
-  */
- enum {
--	IRQ_TYPE_NONE		= 0x00000000,
--	IRQ_TYPE_EDGE_RISING	= 0x00000001,
--	IRQ_TYPE_EDGE_FALLING	= 0x00000002,
-+	IRQ_TYPE_NONE		= 0,
-+	IRQ_TYPE_EDGE_RISING	= BIT(0),
-+	IRQ_TYPE_EDGE_FALLING	= BIT(1),
- 	IRQ_TYPE_EDGE_BOTH	= (IRQ_TYPE_EDGE_FALLING | IRQ_TYPE_EDGE_RISING),
--	IRQ_TYPE_LEVEL_HIGH	= 0x00000004,
--	IRQ_TYPE_LEVEL_LOW	= 0x00000008,
-+	IRQ_TYPE_LEVEL_HIGH	= BIT(2),
-+	IRQ_TYPE_LEVEL_LOW	= BIT(3),
- 	IRQ_TYPE_LEVEL_MASK	= (IRQ_TYPE_LEVEL_LOW | IRQ_TYPE_LEVEL_HIGH),
--	IRQ_TYPE_SENSE_MASK	= 0x0000000f,
-+	IRQ_TYPE_SENSE_MASK	= GENMASK(3,0),
- 	IRQ_TYPE_DEFAULT	= IRQ_TYPE_SENSE_MASK,
+diff --git a/kernel/trace/trace_sched_wakeup.c b/kernel/trace/trace_sched_wakeup.c
+index da5b6e012840..f4fe7d1781e9 100644
+--- a/kernel/trace/trace_sched_wakeup.c
++++ b/kernel/trace/trace_sched_wakeup.c
+@@ -475,6 +475,7 @@ probe_wakeup_sched_switch(void *ignore, bool preempt,
  
--	IRQ_TYPE_PROBE		= 0x00000010,
--
--	IRQ_LEVEL		= (1 <<  8),
--	IRQ_PER_CPU		= (1 <<  9),
--	IRQ_NOPROBE		= (1 << 10),
--	IRQ_NOREQUEST		= (1 << 11),
--	IRQ_NOAUTOEN		= (1 << 12),
--	IRQ_NO_BALANCING	= (1 << 13),
--	IRQ_MOVE_PCNTXT		= (1 << 14),
--	IRQ_NESTED_THREAD	= (1 << 15),
--	IRQ_NOTHREAD		= (1 << 16),
--	IRQ_PER_CPU_DEVID	= (1 << 17),
--	IRQ_IS_POLLED		= (1 << 18),
--	IRQ_DISABLE_UNLAZY	= (1 << 19),
-+	IRQ_TYPE_PROBE		= BIT(4),
-+
-+	IRQ_LEVEL		= BIT(8),
-+	IRQ_PER_CPU		= BIT(9),
-+	IRQ_NOPROBE		= BIT(10),
-+	IRQ_NOREQUEST		= BIT(11),
-+	IRQ_NOAUTOEN		= BIT(12),
-+	IRQ_NO_BALANCING	= BIT(13),
-+	IRQ_MOVE_PCNTXT		= BIT(14),
-+	IRQ_NESTED_THREAD	= BIT(15),
-+	IRQ_NOTHREAD		= BIT(16),
-+	IRQ_PER_CPU_DEVID	= BIT(17),
-+	IRQ_IS_POLLED		= BIT(18),
-+	IRQ_DISABLE_UNLAZY	= BIT(19),
- };
+ 	__trace_function(wakeup_trace, CALLER_ADDR0, CALLER_ADDR1, flags, pc);
+ 	tracing_sched_switch_trace(wakeup_trace, prev, next, flags, pc);
++	__trace_stack(wakeup_trace, flags, 0, pc);
  
- #define IRQF_MODIFY_MASK	\
-@@ -211,26 +211,26 @@ struct irq_data {
-  * IRQD_CAN_RESERVE		- Can use reservation mode
-  */
- enum {
--	IRQD_TRIGGER_MASK		= 0xf,
--	IRQD_SETAFFINITY_PENDING	= (1 <<  8),
--	IRQD_ACTIVATED			= (1 <<  9),
--	IRQD_NO_BALANCING		= (1 << 10),
--	IRQD_PER_CPU			= (1 << 11),
--	IRQD_AFFINITY_SET		= (1 << 12),
--	IRQD_LEVEL			= (1 << 13),
--	IRQD_WAKEUP_STATE		= (1 << 14),
--	IRQD_MOVE_PCNTXT		= (1 << 15),
--	IRQD_IRQ_DISABLED		= (1 << 16),
--	IRQD_IRQ_MASKED			= (1 << 17),
--	IRQD_IRQ_INPROGRESS		= (1 << 18),
--	IRQD_WAKEUP_ARMED		= (1 << 19),
--	IRQD_FORWARDED_TO_VCPU		= (1 << 20),
--	IRQD_AFFINITY_MANAGED		= (1 << 21),
--	IRQD_IRQ_STARTED		= (1 << 22),
--	IRQD_MANAGED_SHUTDOWN		= (1 << 23),
--	IRQD_SINGLE_TARGET		= (1 << 24),
--	IRQD_DEFAULT_TRIGGER_SET	= (1 << 25),
--	IRQD_CAN_RESERVE		= (1 << 26),
-+	IRQD_TRIGGER_MASK		= GENMASK(3,0),
-+	IRQD_SETAFFINITY_PENDING	= BIT(8),
-+	IRQD_ACTIVATED			= BIT(9),
-+	IRQD_NO_BALANCING		= BIT(10),
-+	IRQD_PER_CPU			= BIT(11),
-+	IRQD_AFFINITY_SET		= BIT(12),
-+	IRQD_LEVEL			= BIT(13),
-+	IRQD_WAKEUP_STATE		= BIT(14),
-+	IRQD_MOVE_PCNTXT		= BIT(15),
-+	IRQD_IRQ_DISABLED		= BIT(16),
-+	IRQD_IRQ_MASKED			= BIT(17),
-+	IRQD_IRQ_INPROGRESS		= BIT(18),
-+	IRQD_WAKEUP_ARMED		= BIT(19),
-+	IRQD_FORWARDED_TO_VCPU		= BIT(20),
-+	IRQD_AFFINITY_MANAGED		= BIT(21),
-+	IRQD_IRQ_STARTED		= BIT(22),
-+	IRQD_MANAGED_SHUTDOWN		= BIT(23),
-+	IRQD_SINGLE_TARGET		= BIT(24),
-+	IRQD_DEFAULT_TRIGGER_SET	= BIT(25),
-+	IRQD_CAN_RESERVE		= BIT(26),
- };
+ 	T0 = data->preempt_timestamp;
+ 	T1 = ftrace_now(cpu);
+@@ -586,6 +587,7 @@ probe_wakeup(void *ignore, struct task_struct *p)
+ 	data = per_cpu_ptr(wakeup_trace->trace_buffer.data, wakeup_cpu);
+ 	data->preempt_timestamp = ftrace_now(cpu);
+ 	tracing_sched_wakeup_trace(wakeup_trace, p, current, flags, pc);
++	__trace_stack(wakeup_trace, flags, 0, pc);
  
- #define __irqd_to_state(d) ACCESS_PRIVATE((d)->common, state_use_accessors)
-@@ -507,14 +507,14 @@ struct irq_chip {
-  * IRQCHIP_SUPPORTS_LEVEL_MSI	Chip can provide two doorbells for Level MSIs
-  */
- enum {
--	IRQCHIP_SET_TYPE_MASKED		= (1 <<  0),
--	IRQCHIP_EOI_IF_HANDLED		= (1 <<  1),
--	IRQCHIP_MASK_ON_SUSPEND		= (1 <<  2),
--	IRQCHIP_ONOFFLINE_ENABLED	= (1 <<  3),
--	IRQCHIP_SKIP_SET_WAKE		= (1 <<  4),
--	IRQCHIP_ONESHOT_SAFE		= (1 <<  5),
--	IRQCHIP_EOI_THREADED		= (1 <<  6),
--	IRQCHIP_SUPPORTS_LEVEL_MSI	= (1 <<  7),
-+	IRQCHIP_SET_TYPE_MASKED		= BIT(0),
-+	IRQCHIP_EOI_IF_HANDLED		= BIT(1),
-+	IRQCHIP_MASK_ON_SUSPEND		= BIT(2),
-+	IRQCHIP_ONOFFLINE_ENABLED	= BIT(3),
-+	IRQCHIP_SKIP_SET_WAKE		= BIT(4),
-+	IRQCHIP_ONESHOT_SAFE		= BIT(5),
-+	IRQCHIP_EOI_THREADED		= BIT(6),
-+	IRQCHIP_SUPPORTS_LEVEL_MSI	= BIT(7),
- };
- 
- #include <linux/irqdesc.h>
-@@ -1007,11 +1007,11 @@ struct irq_chip_generic {
-  * @IRQ_GC_BE_IO:		Use big-endian register accesses (default: LE)
-  */
- enum irq_gc_flags {
--	IRQ_GC_INIT_MASK_CACHE		= 1 << 0,
--	IRQ_GC_INIT_NESTED_LOCK		= 1 << 1,
--	IRQ_GC_MASK_CACHE_PER_TYPE	= 1 << 2,
--	IRQ_GC_NO_MASK			= 1 << 3,
--	IRQ_GC_BE_IO			= 1 << 4,
-+	IRQ_GC_INIT_MASK_CACHE		= BIT(0),
-+	IRQ_GC_INIT_NESTED_LOCK		= BIT(1),
-+	IRQ_GC_MASK_CACHE_PER_TYPE	= BIT(2),
-+	IRQ_GC_NO_MASK			= BIT(3),
-+	IRQ_GC_BE_IO			= BIT(4),
- };
- 
- /*
+ 	/*
+ 	 * We must be careful in using CALLER_ADDR2. But since wake_up
 -- 
-2.17.0
+2.17.1
 
