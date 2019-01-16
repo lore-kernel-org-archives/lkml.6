@@ -2,172 +2,110 @@ Return-Path: <SRS0=1Lvk=PY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 13571C43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 15:17:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 80DB4C43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 15:17:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CB616205C9
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 15:17:39 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="tAhnC7FK"
+	by mail.kernel.org (Postfix) with ESMTP id 5A82A205C9
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 15:17:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404827AbfAPPRi (ORCPT
+        id S2404840AbfAPPRn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 16 Jan 2019 10:17:38 -0500
-Received: from userp2130.oracle.com ([156.151.31.86]:58298 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387431AbfAPPRf (ORCPT
+        Wed, 16 Jan 2019 10:17:43 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:47246 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S2404817AbfAPPRn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Jan 2019 10:17:35 -0500
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id x0GFCSJj092300;
-        Wed, 16 Jan 2019 15:16:55 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
- references : from : message-id : date : mime-version : in-reply-to :
- content-type; s=corp-2018-07-02;
- bh=8yj/4/aghz4QecdYtLWPQfCofhrkxP7T4OtHIbXDJr4=;
- b=tAhnC7FKawKDD9pWW+dKq9RkAZf42wS2PFpTRkAAzpkfH342qwFqYBUy5wcdTluPTGa0
- 0PYKk7QnJI1VZszLd/vZjvOpCAzZyKzrErwNHFRuGwG0iMDyuIbjoRtJgnYpOyDznIb/
- L8Xeu7QJl454eeKi3p6qbttfiSiIqNYn6ZfD5QvBQcbi8mVsUJ4f42Xzf4tW3ZYpqIzJ
- WrNgohXBuvg3M0PXRAYM5kHrdcAc81Bf2RSIVEDHy3XVsD7lOV03vKp5xiucQp7vRe+q
- noV3wGYQv9XDQzHfpCp0Lsjh7bJl2PbNLfIZxuyhSV6letoCFHbYxZ/ANX4Xa4LQqZEc Bw== 
-Received: from aserv0022.oracle.com (aserv0022.oracle.com [141.146.126.234])
-        by userp2130.oracle.com with ESMTP id 2pybkcjg03-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 16 Jan 2019 15:16:55 +0000
-Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
-        by aserv0022.oracle.com (8.14.4/8.14.4) with ESMTP id x0GFGr7N012830
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 16 Jan 2019 15:16:53 GMT
-Received: from abhmp0005.oracle.com (abhmp0005.oracle.com [141.146.116.11])
-        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x0GFGpXD000320;
-        Wed, 16 Jan 2019 15:16:51 GMT
-Received: from [192.168.1.44] (/24.9.64.241)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Wed, 16 Jan 2019 07:16:50 -0800
-Subject: Re: [RFC PATCH v7 00/16] Add support for eXclusive Page Frame
- Ownership
-To:     Julian Stecklina <jsteckli@amazon.de>
-Cc:     juergh@gmail.com, tycho@tycho.ws, ak@linux.intel.com,
-        torvalds@linux-foundation.org, liran.alon@oracle.com,
-        keescook@google.com, konrad.wilk@oracle.com,
-        deepa.srinivasan@oracle.com, chris.hyser@oracle.com,
-        tyhicks@canonical.com, dwmw@amazon.co.uk,
-        andrew.cooper3@citrix.com, jcm@redhat.com,
-        boris.ostrovsky@oracle.com, kanth.ghatraju@oracle.com,
-        joao.m.martins@oracle.com, jmattson@google.com,
-        pradeep.vincent@oracle.com, john.haxby@oracle.com,
-        tglx@linutronix.de, kirill.shutemov@linux.intel.com, hch@lst.de,
-        steven.sistare@oracle.com, kernel-hardening@lists.openwall.com,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org
-References: <cover.1547153058.git.khalid.aziz@oracle.com>
- <ciirm8o98gzm4z.fsf@u54ee758033e858cfa736.ant.amazon.com>
-From:   Khalid Aziz <khalid.aziz@oracle.com>
-Organization: Oracle Corp
-Message-ID: <2e274b82-75a7-63b9-d7db-b81132114089@oracle.com>
-Date:   Wed, 16 Jan 2019 08:16:47 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Wed, 16 Jan 2019 10:17:43 -0500
+Received: from pps.filterd (m0098417.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id x0GFBB3H046909
+        for <linux-kernel@vger.kernel.org>; Wed, 16 Jan 2019 10:17:42 -0500
+Received: from e06smtp05.uk.ibm.com (e06smtp05.uk.ibm.com [195.75.94.101])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2q26s3h3cd-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Wed, 16 Jan 2019 10:17:41 -0500
+Received: from localhost
+        by e06smtp05.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <oberpar@linux.ibm.com>;
+        Wed, 16 Jan 2019 15:17:40 -0000
+Received: from b06cxnps3075.portsmouth.uk.ibm.com (9.149.109.195)
+        by e06smtp05.uk.ibm.com (192.168.101.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Wed, 16 Jan 2019 15:17:36 -0000
+Received: from d06av24.portsmouth.uk.ibm.com (mk.ibm.com [9.149.105.60])
+        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x0GFHZ3Y60883150
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 16 Jan 2019 15:17:35 GMT
+Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 09A0C42047;
+        Wed, 16 Jan 2019 15:17:35 +0000 (GMT)
+Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id C68B94204F;
+        Wed, 16 Jan 2019 15:17:34 +0000 (GMT)
+Received: from [9.83.224.254] (unknown [9.83.224.254])
+        by d06av24.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Wed, 16 Jan 2019 15:17:34 +0000 (GMT)
+Subject: Re: [PATCH v2 0/4] gcov: add Clang support
+To:     Tri Vo <trong@android.com>
+Cc:     ghackmann@android.com, ndesaulniers@google.com,
+        linux-kernel@vger.kernel.org, kernel-team@android.com
+References: <20190115183643.120619-1-trong@google.com>
+From:   Peter Oberparleiter <oberpar@linux.ibm.com>
+Date:   Wed, 16 Jan 2019 16:17:35 +0100
 MIME-Version: 1.0
-In-Reply-To: <ciirm8o98gzm4z.fsf@u54ee758033e858cfa736.ant.amazon.com>
-Content-Type: multipart/mixed;
- boundary="------------1F66028AF58B3FA1222C73F6"
+In-Reply-To: <20190115183643.120619-1-trong@google.com>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9138 signatures=668682
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1810050000 definitions=main-1901160125
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+x-cbid: 19011615-0020-0000-0000-00000307510D
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19011615-0021-0000-0000-000021586E3D
+Message-Id: <65bb2ab8-4929-db7c-9d54-491d87ec23ae@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-01-16_06:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1901160125
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This is a multi-part message in MIME format.
---------------1F66028AF58B3FA1222C73F6
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+On 15.01.2019 19:36, Tri Vo wrote:
+> From: Tri Vo <trong@android.com>
+> 
+> This patch series adds Clang supoprt for gcov.
+> 
+> Patch 1 refactors existing code in preparation for Clang support. Patches
+> 2-3 implement necessary LLVM runtime hooks and gcov kernel interfaces.
+> Patch 4 simplifies config selection.
+> 
+> Greg Hackmann (2):
+>   gcov: clang: move common gcc code into gcc_base.c
+>   gcov: clang support
+> 
+> Nick Desaulniers (1):
+>   gcov: clang: link/unlink profiling data set.
+> 
+> Tri Vo (1):
+>   gcov: clang: pick GCC vs Clang format depending on compiler
 
-On 1/16/19 7:56 AM, Julian Stecklina wrote:
-> Khalid Aziz <khalid.aziz@oracle.com> writes:
->=20
->> I am continuing to build on the work Juerg, Tycho and Julian have done=
+Overall this patch set looks good to me. It introduces a clean way for
+GCC and Clang specific implementation details to coexist.
 
->> on XPFO.
->=20
-> Awesome!
->=20
->> A rogue process can launch a ret2dir attack only from a CPU that has
->> dual mapping for its pages in physmap in its TLB. We can hence defer
->> TLB flush on a CPU until a process that would have caused a TLB flush
->> is scheduled on that CPU.
->=20
-> Assuming the attacker already has the ability to execute arbitrary code=
+A quick test compile using GCC on s390 with the patch set applied was
+successful, so it seems like the existing support is unaffected.
 
-> in userspace, they can just create a second process and thus avoid the
-> TLB flush. Am I getting this wrong?
+There are some detail suggestions on patch improvements that I'll post
+in separate e-mails.
 
-No, you got it right. The patch I wrote closes the security hole when
-attack is launched from the same process but still leaves a window open
-when attack is launched from another process. I am working on figuring
-out how to close that hole while keeping the performance the same as it
-is now. Synchronous TLB flush across all cores is the most secure but
-performance impact is horrendous.
+-- 
+Peter Oberparleiter
+Linux on Z Development - IBM Germany
 
---
-Khalid
-
-
---------------1F66028AF58B3FA1222C73F6
-Content-Type: application/pgp-keys;
- name="pEpkey.asc"
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: attachment;
- filename="pEpkey.asc"
-
------BEGIN PGP PUBLIC KEY BLOCK-----
-
-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
-+Wrj8Rwom6h21PXZRKnlkis7ibQfE+TxqOI7vg=3D=3D
-=3DnPqY
------END PGP PUBLIC KEY BLOCK-----
-
---------------1F66028AF58B3FA1222C73F6--
