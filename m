@@ -2,225 +2,487 @@ Return-Path: <SRS0=1Lvk=PY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 20FA6C43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 22:10:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9EA7DC43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 22:10:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CB9FF206C2
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 22:10:11 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="cAQlqQmQ"
+	by mail.kernel.org (Postfix) with ESMTP id 47CB9206C2
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 22:10:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1547676654;
+	bh=WblcDIBDpk7Vw3y+mIyhARMUIuxWCXdieS7jCGJXrhM=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=gw2BPRtv/vCvhTFT1HghNwqhligDHQ1ZEsVwlxO/Ds3zQ1KoW4JGqclTF5285IauN
+	 Fxe87h0DOBtgHWlEnRVJf5x3BzvHNMqmczgbqQZmLlUXAI97cAnr7sPVwH4lFyHnVV
+	 H94R5r9rCJDx3YjOiiqHYJMPqgWxRiRrVLMCubgM=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732595AbfAPWKK (ORCPT
+        id S1732895AbfAPWKw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 16 Jan 2019 17:10:10 -0500
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:32771 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731483AbfAPWKJ (ORCPT
+        Wed, 16 Jan 2019 17:10:52 -0500
+Received: from mail-oi1-f193.google.com ([209.85.167.193]:39489 "EHLO
+        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730269AbfAPWKw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Jan 2019 17:10:09 -0500
-Received: by mail-pg1-f195.google.com with SMTP id z11so3445573pgu.0
-        for <linux-kernel@vger.kernel.org>; Wed, 16 Jan 2019 14:10:07 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=U151yVnbAvUOZuLCCUFJ3g8XSBWOsxZ1LBmPh7NWUyM=;
-        b=cAQlqQmQHhbji+ll/wAs02MIMeKdCyarmZymRg/FA/EemA3g1Zj6hKOtY0yTu2uiGY
-         NN69V5ClSadlulg0Y4hl+KuJMImuaUJQLU8NswBwqqNumjnnBX25Y0fYKO/nR78+LKPu
-         buYrnCVdmFcYAsz1ahJkcx3mZms8w8n02npEA=
+        Wed, 16 Jan 2019 17:10:52 -0500
+Received: by mail-oi1-f193.google.com with SMTP id i6so4539091oia.6;
+        Wed, 16 Jan 2019 14:10:50 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=U151yVnbAvUOZuLCCUFJ3g8XSBWOsxZ1LBmPh7NWUyM=;
-        b=dAaAlWaEpj0qUUWJjV4CAdADWcNqsm9Ea8yJvtYXVb5uRvhquK1jeYKrsh4lv99DWC
-         t2evS3OSd4NH8BnxDj01OzN/Kt6Z/Mqb+h3GZ10fl69bGLRYICzpWwNskeCkwfgLWwFj
-         Pd3x88merWVQ5wdkQDEZHlfa6CQYkbylAuTKNtdRBwU/vzRCwcSJEMim6L2XBy2qNAgg
-         MgEseq5wZX4cFL0qSorqyy6ao7EnFd9NarCSfSuYRKQ+fkIIHjfNkdbE2hOZWOSYwH/+
-         fKrs8FO3Cza4OWIrBKAKno7otDLvmlHwg8zyQB6rapha3DbKzd2mGlEvr1U86qEML0JL
-         VXRQ==
-X-Gm-Message-State: AJcUukesYqa8YLW8SOqcek4Fv/cOX9NMBrQzfMTT0+vSnVi8c1CTGxe3
-        /8eFvO6ldEVKm2gxzr5VMD/p8w==
-X-Google-Smtp-Source: ALg8bN4y/WiDASSjpWDjZz0Eb8sH5Hk6pFyq1RAFElh9LlxncEHlq/dbXfhQUHgjNbfLnMUwID95Jg==
-X-Received: by 2002:a63:f141:: with SMTP id o1mr11158651pgk.134.1547676607020;
-        Wed, 16 Jan 2019 14:10:07 -0800 (PST)
-Received: from minitux (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
-        by smtp.gmail.com with ESMTPSA id g2sm9488600pfi.95.2019.01.16.14.10.05
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 16 Jan 2019 14:10:06 -0800 (PST)
-Date:   Wed, 16 Jan 2019 14:10:03 -0800
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Stephen Boyd <swboyd@chromium.org>
-Cc:     Andy Gross <andy.gross@linaro.org>,
-        David Brown <david.brown@linaro.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Doug Anderson <dianders@chromium.org>
-Subject: Re: [PATCH v3] arm64: dts: qcom: sdm845: Expand soc bus address range
-Message-ID: <20190116221003.GW9278@minitux>
-References: <20190116071939.23136-1-bjorn.andersson@linaro.org>
- <154767410807.169631.11634052870112778681@swboyd.mtv.corp.google.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=gXuM+t/BcKEs9MJ/ix6GjpRP844k1PNzSZ+cx5qQ6Ts=;
+        b=sEgfXrTEetEFo3GffkMi9+V/vEGk8G35R1bgGyUIH9QKzG0HxjQnFHGr9YxPpVZZrY
+         3vR107XolgEaW/tUSXPvXc4YUsbYivVM1viNBIgOulLP60TJ1K1tyRN4WqArS2HL3uBn
+         5HyJLEhZ29oX7dT9suzBvZCgyBi+AoNJFOnXTFgd8ybC+vx5mV85a80j1uIFMPnwsnY8
+         csC2qBfNii/lSV5ra2Xt4cMafIgQsDh21+Khq6NbR8uOOLCpae818EZt/6xea4d3xGdK
+         ePuF25FiVNzjvKHnMo/WtNAIR0q5eGoLh5/YcF3m3GodH/U7oXkZ2NKtPWBl+8FYDRH1
+         z4fg==
+X-Gm-Message-State: AJcUukdg9ud2XCOmNUuZ1BJAh8nt2POAAlB4Tw8b2c59doezaI/F96rr
+        2781tA9r5XdkRUNHOgNhTvuulG8fGPGjTdbk0+4=
+X-Google-Smtp-Source: ALg8bN5JNeDUou9dbHUJ05l/+KLku8BjGbV+DOyDrJkrdkc6tiiY7JIKPmc50AgwquaCPKdvoP68vfxRhxJ+eTeax8U=
+X-Received: by 2002:a54:4d01:: with SMTP id v1mr5883561oix.246.1547676648909;
+ Wed, 16 Jan 2019 14:10:48 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <154767410807.169631.11634052870112778681@swboyd.mtv.corp.google.com>
-User-Agent: Mutt/1.11.2 (2019-01-07)
+References: <6027163.jfBZkT499p@aspire.rjw.lan>
+In-Reply-To: <6027163.jfBZkT499p@aspire.rjw.lan>
+From:   "Rafael J. Wysocki" <rafael@kernel.org>
+Date:   Wed, 16 Jan 2019 23:10:37 +0100
+Message-ID: <CAJZ5v0hhZN_HYyQBaKSquWCH6yeC35XSCqpFDLPGrF5cDaMy6g@mail.gmail.com>
+Subject: Re: [PATCH] Documentation: driver-api: PM: Add cpuidle document
+To:     "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc:     Linux PM <linux-pm@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linux Documentation <linux-doc@vger.kernel.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Kevin Hilman <khilman@kernel.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Sudeep Holla <sudeep.holla@arm.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed 16 Jan 13:28 PST 2019, Stephen Boyd wrote:
+On Wed, Jan 9, 2019 at 11:54 AM Rafael J. Wysocki <rjw@rjwysocki.net> wrote:
+>
+> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+>
+> Replace the remaining documents under Documentation/cpuidle/
+> with one more complete governor and driver API document for cpuidle
+> under Documentation/driver-api/pm/.
+>
+> Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 
-> Quoting Bjorn Andersson (2019-01-15 23:19:39)
-> > DMA addresses for devices on the soc bus must be constrained to the 36
-> > address bits that the bus provides.  When no IOMMU is present then this
-> > is easy--DMA addresses are just physical addresses and physical
-> > addresses are (by definition) within the address bits of the bus.  When
-> > an IOMMU is present, however, DMA addresses are virtual addresses.
-> > Despite these addresses being virtual, however, they are still
-> > constrained by the 36 address bits of the bus.
-> > 
-> > Unless dma-ranges is specified, which causes bus_dma_mask to be set, DMA
-> > allocations for devices on the platform_bus will use all 48 address bits
-> > available by the ARM SMMU. Causing addresses to be truncated on the bus.
-> 
-> I read it three times and still got confused by the statement that DMA
-> addresses are virtual addresses. There are CPU virtual addresses, DMA
-> addresses, IOVAs, and physical addresses. Stating that DMA addresses are
-> virtual addresses makes it sound like we're talking about CPU virtual
-> addresses.
-> 
+In the face of the lack of any feedback I'm assuming that this is fine
+by everyone.
 
-The addresses used behind the TBU are virtual and are referred to that
-in the context of the SMMU. But I guess we can use one of the other
-names for it, to distinguish it from the virtual addresses we normally
-refer to my that name.
-
-And you do it yourself in the first sentence below ;)
-
-
-I'll grab a new cup of coffee and see what I can do to update this
-section again...
-
-> Maybe it would be clearer if it stated that DMA addresses are 1:1 with
-> IOVAs (IO virtual addresses) when a device has an iommus property and
-> 1:1 with physical addresses when that property is absent? When devices
-> use an iommus property the DMA addresses that are generated in the
-> absence of a dma-ranges property can have as many as 48 bits, as opposed
-> to the default of 32 bits in the absence of an iommus property.
-> Therefore we need to constrain the DMA addresses that devices which
-> reside in the SoC node (including the SMMU) can use to be at most 36
-> bits because that's the largest physical address the internal bus
-> supports. This expands the size of DMA addresses that devices without an
-> iommus property can use while also limiting the size that devices using
-> SMMU can use.
-> 
-
-For devices not attached to the SMMU allocations are done from System
-RAM, so afaict that means we use 33 address bits. So let's stick to some
-form of "IOVA are physical addresses".
-
-> > 
-> > This patch increases the #size-cells to 2, in order to be able to define
-> > dma-ranges describe the 36 bit DMA capability of the bus, and bumps
-> 
-> Did the commit text get cut off here?
-> 
-
-Looks like it, sorry about that.
-
-> > 
-> > While touching all reg properties, addresses are padded to 8 digits.
-> > 
-> 
-> I liked the paint the way it was without the padding. It matched the
-> unit address that way and didn't make anyone think they should pad that
-> out in the node name with leading zeros so that 'reg' and unit address
-> match.
-> 
-
-I agree with aesthetic aspect of this, but it does make sorting the
-nodes faster - and I merely introduce what was already decided upon.
-
-> > Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-> > ---
-> > diff --git a/arch/arm64/boot/dts/qcom/sdm845.dtsi b/arch/arm64/boot/dts/qcom/sdm845.dtsi
-> > index c98b1937353b..fc01b1c93fe4 100644
-> > --- a/arch/arm64/boot/dts/qcom/sdm845.dtsi
-> > +++ b/arch/arm64/boot/dts/qcom/sdm845.dtsi
-> > @@ -346,14 +346,15 @@
-> >         };
-> >  
-> >         soc: soc {
-> > -               #address-cells = <1>;
-> > -               #size-cells = <1>;
-> > -               ranges = <0 0 0 0xffffffff>;
-> > +               #address-cells = <2>;
-> > +               #size-cells = <2>;
-> 
-> Do we need #size-cells = <2>? Maybe it could be #size-cells = <1> and we
-> can avoid having to specify a second size entry that's always going to
-> be 0 because we don't have devices with huge IO regions in the SoC. Or
-> does it need to be 2 for the large size of the size element of
-> dma-ranges and ranges here? Looking at the code I think we can rely on
-> the size-cells of the parent node so I think it will work with size of 1
-> here.
-> 
-
-The "length" part of dma-ranges is described using #size-cells number of
-cells, so with 1 there's no way we can describe this being 36 bits.
-
-As all hardware resides within the first 31 bits we could have stayed
-with #address-cells = <1>, but that looks odd.
-
-> > +               ranges = <0 0 0 0 0x10 0>;
-> > +               dma-ranges = <0 0 0 0 0x10 0>;
-> >                 compatible = "simple-bus";
-> 
-> It might also be a good idea to split the patch into two. The first
-> patch would expand the reg properties and the second one would do the
-> 0x10 change and add dma-ranges. Then if anything goes wrong with the
-> second patch a quick revert is easier and smaller vs. the obviously good
-> reg property expanding patch that should be a no-op.
-> 
-
-A revert of the dma-ranges comes with the result of all devices with an
-iommu specified stops working, so the benefit would be to be able to
-revert from a state that works in my testing to a state of e.g. not
-working at all.
-
-But splitting of the two concerns might bring clarity to the commit
-message.
-
-[..]
-> >                 timer@17c90000 {
-> > -                       #address-cells = <1>;
-> > -                       #size-cells = <1>;
-> > +                       #address-cells = <2>;
-> > +                       #size-cells = <2>;
-> >                         ranges;
-> 
-> These could be written with ranges to remap the child nodes into the
-> address space of the parent. It would be nice to not change these
-> wrapper nodes and reduce the diff in this patch by using different
-> ranges properties.
-> 
-
-Do you mean to use ranges to map them down to 32-bits, or do you mean to
-map them relative to the APPS_HM block?
-
-If you mean the prior, I think the benefit of using the same addressing
-format for all devices on the "platform bus" out weights the hassle of
-changing these few lines.
-
-The latter I would like to see as a separate commit regardless.
-
-Regards,
-Bjorn
+> ---
+>
+> On top of https://patchwork.kernel.org/patch/10747185/
+>
+> ---
+>  Documentation/cpuidle/driver.txt        |   37 ----
+>  Documentation/cpuidle/governor.txt      |   28 ---
+>  Documentation/driver-api/pm/cpuidle.rst |  282 ++++++++++++++++++++++++++++++++
+>  Documentation/driver-api/pm/index.rst   |    7
+>  MAINTAINERS                             |    1
+>  5 files changed, 287 insertions(+), 68 deletions(-)
+>
+> Index: linux-pm/Documentation/driver-api/pm/index.rst
+> ===================================================================
+> --- linux-pm.orig/Documentation/driver-api/pm/index.rst
+> +++ linux-pm/Documentation/driver-api/pm/index.rst
+> @@ -1,9 +1,10 @@
+> -=======================
+> -Device Power Management
+> -=======================
+> +===============================
+> +CPU and Device Power Management
+> +===============================
+>
+>  .. toctree::
+>
+> +   cpuidle
+>     devices
+>     notifiers
+>     types
+> Index: linux-pm/Documentation/driver-api/pm/cpuidle.rst
+> ===================================================================
+> --- /dev/null
+> +++ linux-pm/Documentation/driver-api/pm/cpuidle.rst
+> @@ -0,0 +1,282 @@
+> +.. |struct cpuidle_governor| replace:: :c:type:`struct cpuidle_governor <cpuidle_governor>`
+> +.. |struct cpuidle_device| replace:: :c:type:`struct cpuidle_device <cpuidle_device>`
+> +.. |struct cpuidle_driver| replace:: :c:type:`struct cpuidle_driver <cpuidle_driver>`
+> +.. |struct cpuidle_state| replace:: :c:type:`struct cpuidle_state <cpuidle_state>`
+> +
+> +========================
+> +CPU Idle Time Management
+> +========================
+> +
+> +::
+> +
+> + Copyright (c) 2019 Intel Corp., Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> +
+> +
+> +CPU Idle Time Management Subsystem
+> +==================================
+> +
+> +Every time one of the logical CPUs in the system (the entities that appear to
+> +fetch and execute instructions: hardware threads, if present, or processor
+> +cores) is idle after an interrupt or equivalent wakeup event, which means that
+> +there are no tasks to run on it except for the special "idle" task associated
+> +with it, there is an opportunity to save energy for the processor that it
+> +belongs to.  That can be done by making the idle logical CPU stop fetching
+> +instructions from memory and putting some of the processor's functional units
+> +depended on by it into an idle state in which they will draw less power.
+> +
+> +However, there may be multiple different idle states that can be used in such a
+> +situation in principle, so it may be necessary to find the most suitable one
+> +(from the kernel perspective) and ask the processor to use (or "enter") that
+> +particular idle state.  That is the role of the CPU idle time management
+> +subsystem in the kernel, called ``CPUIdle``.
+> +
+> +The design of ``CPUIdle`` is modular and based on the code duplication avoidance
+> +principle, so the generic code that in principle need not depend on the hardware
+> +or platform design details in it is separate from the code that interacts with
+> +the hardware.  It generally is divided into three categories of functional
+> +units: *governors* responsible for selecting idle states to ask the processor
+> +to enter, *drivers* that pass the governors' decisions on to the hardware and
+> +the *core* providing a common framework for them.
+> +
+> +
+> +CPU Idle Time Governors
+> +=======================
+> +
+> +A CPU idle time (``CPUIdle``) governor is a bundle of policy code invoked when
+> +one of the logical CPUs in the system turns out to be idle.  Its role is to
+> +select an idle state to ask the processor to enter in order to save some energy.
+> +
+> +``CPUIdle`` governors are generic and each of them can be used on any hardware
+> +platform that the Linux kernel can run on.  For this reason, data structures
+> +operated on by them cannot depend on any hardware architecture or platform
+> +design details as well.
+> +
+> +The governor itself is represented by a |struct cpuidle_governor| object
+> +containing four callback pointers, :c:member:`enable`, :c:member:`disable`,
+> +:c:member:`select`, :c:member:`reflect`, a :c:member:`rating` field described
+> +below, and a name (string) used for identifying it.
+> +
+> +For the governor to be available at all, that object needs to be registered
+> +with the ``CPUIdle`` core by calling :c:func:`cpuidle_register_governor()` with
+> +a pointer to it passed as the argument.  If successful, that causes the core to
+> +add the governor to the global list of available governors and, if it is the
+> +only one in the list (that is, the list was empty before) or the value of its
+> +:c:member:`rating` field is greater than the value of that field for the
+> +governor currently in use, or the name of the new governor was passed to the
+> +kernel as the value of the ``cpuidle.governor=`` command line parameter, the new
+> +governor will be used from that point on (there can be only one ``CPUIdle``
+> +governor in use at a time).  Also, if ``cpuidle_sysfs_switch`` is passed to the
+> +kernel in the command line, user space can choose the ``CPUIdle`` governor to
+> +use at run time via ``sysfs``.
+> +
+> +Once registered, ``CPUIdle`` governors cannot be unregistered, so it is not
+> +practical to put them into loadable kernel modules.
+> +
+> +The interface between ``CPUIdle`` governors and the core consists of four
+> +callbacks:
+> +
+> +:c:member:`enable`
+> +       ::
+> +
+> +         int (*enable) (struct cpuidle_driver *drv, struct cpuidle_device *dev);
+> +
+> +       The role of this callback is to prepare the governor for handling the
+> +       (logical) CPU represented by the |struct cpuidle_device| object pointed
+> +       to by the ``dev`` argument.  The |struct cpuidle_driver| object pointed
+> +       to by the ``drv`` argument represents the ``CPUIdle`` driver to be used
+> +       with that CPU (among other things, it should contain the list of
+> +       |struct cpuidle_state| objects representing idle states that the
+> +       processor holding the given CPU can be asked to enter).
+> +
+> +       It may fail, in which case it is expected to return a negative error
+> +       code, and that causes the kernel to run the architecture-specific
+> +       default code for idle CPUs on the CPU in question instead of ``CPUIdle``
+> +       until the ``->enable()`` governor callback is invoked for that CPU
+> +       again.
+> +
+> +:c:member:`disable`
+> +       ::
+> +
+> +         void (*disable) (struct cpuidle_driver *drv, struct cpuidle_device *dev);
+> +
+> +       Called to make the governor stop handling the (logical) CPU represented
+> +       by the |struct cpuidle_device| object pointed to by the ``dev``
+> +       argument.
+> +
+> +       It is expected to reverse any changes made by the ``->enable()``
+> +       callback when it was last invoked for the target CPU, free all memory
+> +       allocated by that callback and so on.
+> +
+> +:c:member:`select`
+> +       ::
+> +
+> +         int (*select) (struct cpuidle_driver *drv, struct cpuidle_device *dev,
+> +                        bool *stop_tick);
+> +
+> +       Called to select an idle state for the processor holding the (logical)
+> +       CPU represented by the |struct cpuidle_device| object pointed to by the
+> +       ``dev`` argument.
+> +
+> +       The list of idle states to take into consideration is represented by the
+> +       :c:member:`states` array of |struct cpuidle_state| objects held by the
+> +       |struct cpuidle_driver| object pointed to by the ``drv`` argument (which
+> +       represents the ``CPUIdle`` driver to be used with the CPU at hand).  The
+> +       value returned by this callback is interpreted as an index into that
+> +       array (unless it is a negative error code).
+> +
+> +       The ``stop_tick`` argument is used to indicate whether or not to stop
+> +       the scheduler tick before asking the processor to enter the selected
+> +       idle state.  When the ``bool`` variable pointed to by it (which is set
+> +       to ``true`` before invoking this callback) is cleared to ``false``, the
+> +       processor will be asked to enter the selected idle state without
+> +       stopping the scheduler tick on the given CPU (if the tick has been
+> +       stopped on that CPU already, however, it will not be restarted before
+> +       asking the processor to enter the idle state).
+> +
+> +       This callback is mandatory (i.e. the :c:member:`select` callback pointer
+> +       in |struct cpuidle_governor| must not be ``NULL`` for the registration
+> +       of the governor to succeed).
+> +
+> +:c:member:`reflect`
+> +       ::
+> +
+> +         void (*reflect) (struct cpuidle_device *dev, int index);
+> +
+> +       Called to allow the governor to evaluate the accuracy of the idle state
+> +       selection made by the ``->select()`` callback (when it was invoked last
+> +       time) and possibly use the result of that to improve the accuracy of
+> +       idle state selections in the future.
+> +
+> +In addition, ``CPUIdle`` governors are required to take power management
+> +quality of service (PM QoS) constraints on the processor wakeup latency into
+> +account when selecting idle states.  In order to obtain the current effective
+> +PM QoS wakeup latency constraint for a given CPU, a ``CPUIdle`` governor is
+> +expected to pass the number of the CPU to
+> +:c:func:`cpuidle_governor_latency_req()`.  Then, the governor's ``->select()``
+> +callback must not return the index of an indle state whose
+> +:c:member:`exit_latency` value is greater than the number returned by that
+> +function.
+> +
+> +
+> +CPU Idle Time Management Drivers
+> +================================
+> +
+> +CPU idle time management (``CPUIdle``) drivers provide an interface between the
+> +other parts of ``CPUIdle`` and the hardware.
+> +
+> +First of all, a ``CPUIdle`` driver has to populate the :c:member:`states` array
+> +of |struct cpuidle_state| objects included in the |struct cpuidle_driver| object
+> +representing it.  Going forward this array will represent the list of available
+> +idle states that the processor hardware can be asked to enter shared by all of
+> +the logical CPUs handled by the given driver.
+> +
+> +The entries in the :c:member:`states` array are expected to be sorted by the
+> +value of the :c:member:`target_residency` field in |struct cpuidle_state| in
+> +the ascending order (that is, index 0 should correspond to the idle state with
+> +the minimum value of :c:member:`target_residency`).  [Since the
+> +:c:member:`target_residency` value is expected to reflect the "depth" of the
+> +idle state represented by the |struct cpuidle_state| object holding it, this
+> +sorting order should be the same as the ascending sorting order by the idle
+> +state "depth".]
+> +
+> +Three fields in |struct cpuidle_state| are used by the existing ``CPUIdle``
+> +governors for computations related to idle state selection:
+> +
+> +:c:member:`target_residency`
+> +       Minimum time to spend in this idle state including the time needed to
+> +       enter it (which may be substantial) to save more energy than could
+> +       be saved by staying in a shallower idle state for the same amount of
+> +       time, in microseconds.
+> +
+> +:c:member:`exit_latency`
+> +       Maximum time it will take a CPU asking the processor to enter this idle
+> +       state to start executing the first instruction after a wakeup from it,
+> +       in microseconds.
+> +
+> +:c:member:`flags`
+> +       Flags representing idle state properties.  Currently, governors only use
+> +       the ``CPUIDLE_FLAG_POLLING`` flag which is set if the given object
+> +       does not represent a real idle state, but an interface to a software
+> +       "loop" that can be used in order to avoid asking the processor to enter
+> +       any idle state at all.  [There are other flags used by the ``CPUIdle``
+> +       core in special situations.]
+> +
+> +The :c:member:`enter` callback pointer in |struct cpuidle_state|, which must not
+> +be ``NULL``, points to the routine to execute in order to ask the processor to
+> +enter this particular idle state:
+> +
+> +::
+> +
+> +  void (*enter) (struct cpuidle_device *dev, struct cpuidle_driver *drv,
+> +                 int index);
+> +
+> +The first two arguments of it point to the |struct cpuidle_device| object
+> +representing the logical CPU running this callback and the
+> +|struct cpuidle_driver| object representing the driver itself, respectively,
+> +and the last one is an index of the |struct cpuidle_state| entry in the driver's
+> +:c:member:`states` array representing the idle state to ask the processor to
+> +enter.
+> +
+> +The analogous ``->enter_s2idle()`` callback in |struct cpuidle_state| is used
+> +only for implementing the suspend-to-idle system-wide power management feature.
+> +The difference between in and ``->enter()`` is that it must not re-enable
+> +interrupts at any point (even temporarily) or attempt to change the states of
+> +clock event devices, which the ``->enter()`` callback may do sometimes.
+> +
+> +Once the :c:member:`states` array has been populated, the number of valid
+> +entries in it has to be stored in the :c:member:`state_count` field of the
+> +|struct cpuidle_driver| object representing the driver.  Moreover, if any
+> +entries in the :c:member:`states` array represent "coupled" idle states (that
+> +is, idle states that can only be asked for if multiple related logical CPUs are
+> +idle), the :c:member:`safe_state_index` field in |struct cpuidle_driver| needs
+> +to be the index of an idle state that is not "coupled" (that is, one that can be
+> +asked for if only one logical CPU is idle).
+> +
+> +In addition to that, if the given ``CPUIdle`` driver is only going to handle a
+> +subset of logical CPUs in the system, the :c:member:`cpumask` field in its
+> +|struct cpuidle_driver| object must point to the set (mask) of CPUs that will be
+> +handled by it.
+> +
+> +A ``CPUIdle`` driver can only be used after it has been registered.  If there
+> +are no "coupled" idle state entries in the driver's :c:member:`states` array,
+> +that can be accomplished by passing the driver's |struct cpuidle_driver| object
+> +to :c:func:`cpuidle_register_driver()`.  Otherwise, :c:func:`cpuidle_register()`
+> +should be used for this purpose.
+> +
+> +However, it also is necessary to register |struct cpuidle_device| objects for
+> +all of the logical CPUs to be handled by the given ``CPUIdle`` driver with the
+> +help of :c:func:`cpuidle_register_device()` after the driver has been registered
+> +and :c:func:`cpuidle_register_driver()`, unlike :c:func:`cpuidle_register()`,
+> +does not do that automatically.  For this reason, the drivers that use
+> +:c:func:`cpuidle_register_driver()` to register themselves must also take care
+> +of registering the |struct cpuidle_device| objects as needed, so it is generally
+> +recommended to use :c:func:`cpuidle_register()` for ``CPUIdle`` driver
+> +registration in all cases.
+> +
+> +The registration of a |struct cpuidle_device| object causes the ``CPUIdle``
+> +``sysfs`` interface to be created and the governor's ``->enable()`` callback to
+> +be invoked for the logical CPU represented by it, so it must take place after
+> +registering the driver that will handle the CPU in question.
+> +
+> +``CPUIdle`` drivers and |struct cpuidle_device| objects can be unregistered
+> +when they are not necessary any more which allows some resources associated with
+> +them to be released.  Due to dependencies between them, all of the
+> +|struct cpuidle_device| objects representing CPUs handled by the given
+> +``CPUIdle`` driver must be unregistered, with the help of
+> +:c:func:`cpuidle_unregister_device()`, before calling
+> +:c:func:`cpuidle_unregister_driver()` to unregister the driver.  Alternatively,
+> +:c:func:`cpuidle_unregister()` can be called to unregister a ``CPUIdle`` driver
+> +along with all of the |struct cpuidle_device| objects representing CPUs handled
+> +by it.
+> +
+> +``CPUIdle`` drivers can respond to runtime system configuration changes that
+> +lead to modifications of the list of available processor idle states (which can
+> +happen, for example, when the system's power source is switched from AC to
+> +battery or the other way around).  Upon a notification of such a change,
+> +a ``CPUIdle`` driver is expected to call :c:func:`cpuidle_pause_and_lock()` to
+> +turn ``CPUIdle`` off temporarily and then :c:func:`cpuidle_disable_device()` for
+> +all of the |struct cpuidle_device| objects representing CPUs affected by that
+> +change.  Next, it can update its :c:member:`states` array in accordance with
+> +the new configuration of the system, call :c:func:`cpuidle_enable_device()` for
+> +all of the relevant |struct cpuidle_device| objects and invoke
+> +:c:func:`cpuidle_resume_and_unlock()` to allow ``CPUIdle`` to be used again.
+> Index: linux-pm/Documentation/cpuidle/driver.txt
+> ===================================================================
+> --- linux-pm.orig/Documentation/cpuidle/driver.txt
+> +++ /dev/null
+> @@ -1,37 +0,0 @@
+> -
+> -
+> -               Supporting multiple CPU idle levels in kernel
+> -
+> -                               cpuidle drivers
+> -
+> -
+> -
+> -
+> -cpuidle driver hooks into the cpuidle infrastructure and handles the
+> -architecture/platform dependent part of CPU idle states. Driver
+> -provides the platform idle state detection capability and also
+> -has mechanisms in place to support actual entry-exit into CPU idle states.
+> -
+> -cpuidle driver initializes the cpuidle_device structure for each CPU device
+> -and registers with cpuidle using cpuidle_register_device.
+> -
+> -If all the idle states are the same, the wrapper function cpuidle_register
+> -could be used instead.
+> -
+> -It can also support the dynamic changes (like battery <-> AC), by using
+> -cpuidle_pause_and_lock, cpuidle_disable_device and cpuidle_enable_device,
+> -cpuidle_resume_and_unlock.
+> -
+> -Interfaces:
+> -extern int cpuidle_register(struct cpuidle_driver *drv,
+> -                            const struct cpumask *const coupled_cpus);
+> -extern int cpuidle_unregister(struct cpuidle_driver *drv);
+> -extern int cpuidle_register_driver(struct cpuidle_driver *drv);
+> -extern void cpuidle_unregister_driver(struct cpuidle_driver *drv);
+> -extern int cpuidle_register_device(struct cpuidle_device *dev);
+> -extern void cpuidle_unregister_device(struct cpuidle_device *dev);
+> -
+> -extern void cpuidle_pause_and_lock(void);
+> -extern void cpuidle_resume_and_unlock(void);
+> -extern int cpuidle_enable_device(struct cpuidle_device *dev);
+> -extern void cpuidle_disable_device(struct cpuidle_device *dev);
+> Index: linux-pm/Documentation/cpuidle/governor.txt
+> ===================================================================
+> --- linux-pm.orig/Documentation/cpuidle/governor.txt
+> +++ /dev/null
+> @@ -1,28 +0,0 @@
+> -
+> -
+> -
+> -               Supporting multiple CPU idle levels in kernel
+> -
+> -                               cpuidle governors
+> -
+> -
+> -
+> -
+> -cpuidle governor is policy routine that decides what idle state to enter at
+> -any given time. cpuidle core uses different callbacks to the governor.
+> -
+> -* enable() to enable governor for a particular device
+> -* disable() to disable governor for a particular device
+> -* select() to select an idle state to enter
+> -* reflect() called after returning from the idle state, which can be used
+> -  by the governor for some record keeping.
+> -
+> -More than one governor can be registered at the same time and
+> -users can switch between drivers using /sysfs interface (when enabled).
+> -More than one governor part is supported for developers to easily experiment
+> -with different governors. By default, most optimal governor based on your
+> -kernel configuration and platform will be selected by cpuidle.
+> -
+> -Interfaces:
+> -extern int cpuidle_register_governor(struct cpuidle_governor *gov);
+> -struct cpuidle_governor
+> Index: linux-pm/MAINTAINERS
+> ===================================================================
+> --- linux-pm.orig/MAINTAINERS
+> +++ linux-pm/MAINTAINERS
+> @@ -4016,6 +4016,7 @@ S:        Maintained
+>  T:     git git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git
+>  B:     https://bugzilla.kernel.org
+>  F:     Documentation/admin-guide/pm/cpuidle.rst
+> +F:     Documentation/driver-api/pm/cpuidle.rst
+>  F:     drivers/cpuidle/*
+>  F:     include/linux/cpuidle.h
+>
+>
