@@ -7,63 +7,65 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DDE60C43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 17:44:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DFEE0C43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 17:44:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9C39220657
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 17:44:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AC56E20657
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 17:44:56 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="e7h7QqHz"
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="dE6LaPYL"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727555AbfAPRoo (ORCPT
+        id S1727577AbfAPRoz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 16 Jan 2019 12:44:44 -0500
-Received: from mail-oi1-f193.google.com ([209.85.167.193]:42635 "EHLO
+        Wed, 16 Jan 2019 12:44:55 -0500
+Received: from mail-oi1-f193.google.com ([209.85.167.193]:41770 "EHLO
         mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726741AbfAPRon (ORCPT
+        with ESMTP id S1726466AbfAPRoy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Jan 2019 12:44:43 -0500
-Received: by mail-oi1-f193.google.com with SMTP id w13so3862105oiw.9
-        for <linux-kernel@vger.kernel.org>; Wed, 16 Jan 2019 09:44:43 -0800 (PST)
+        Wed, 16 Jan 2019 12:44:54 -0500
+Received: by mail-oi1-f193.google.com with SMTP id j21so3856653oii.8
+        for <linux-kernel@vger.kernel.org>; Wed, 16 Jan 2019 09:44:53 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=DBgikpoYDKLEsgn7BLzA/++54/fMRAvNSrEOYwzsOh8=;
-        b=e7h7QqHzW42AQDkJh7c6/QoNKvD63z2+M5xmA7fgyLu1+/7J6PSLFK+51KLCPqi4YD
-         f1ToYgfo6MeyVl2XR77cwkDxyMNKNVZ/ll40is4ZbqMdjvbLGkNp6DBIesrx/5021ON1
-         wz9ahbUNGzS+YKi8f1rzhl1raNff65vVdqyHE=
+        bh=9ntliFnHMh1UFNI4i4XDupue9MMU30iXjJz2OA1O7CA=;
+        b=dE6LaPYLsHeS+ovTqbvwCuSHNPNEk3K5LNXIm2pin52MRe9AEshtvGhtUaT/VcQfsf
+         gqmwwhDTOCtkpd/n+1VJpacJfROA6aQYHN47Ej0jJM0MRC0aRNxFpoKTvlhMc0Hw+Tfg
+         I6g2EU3HqPqW0kO5J2e1pLJvs7+tWMc+RWpd0=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=DBgikpoYDKLEsgn7BLzA/++54/fMRAvNSrEOYwzsOh8=;
-        b=ba/Vru2UnqgnZQW34ZV2JRtNKx5fLSsLyfO8IISEjqldtGLg+f7UtuOMxYkXTsiX3V
-         P9WNyZIlZBOFxZIxEcJGJBqkGIAa2CDvKCPqYvjKHNexwmCnbdtGeRwVslHOTj3CdMZ8
-         ATAgFWIrkm4/BDGfnckFnv1PLNbQy+e+ac6O+aH+TlHYOrs2x3m7Sto84Yrjies2ISya
-         lWoDG7ZXrA/ArzayZLjIgleme1m2WWaSsb7qJFd3A35BgOtN+OdWrdfey5PbjdH6EYeL
-         tomTnbJs1v5+eUOPPWuLJS+TgBHb/zxdM6H4VTpekMQpuVOA7ORqayrbvQNhMUWV1pK1
-         ZwSQ==
-X-Gm-Message-State: AJcUukfMToetI3PmqkacwOJm7DJs4d4Ax674HbQ/Jh9OkcukQThfT2yP
-        n4lkG0kAsPdRKIQoIR6OoWDrtcLUx8ru+Q==
-X-Google-Smtp-Source: ALg8bN4S4y3YgBSPkE0rbw31yJI6R0kiFXRG71naTplcdigJMXWEwpxxatgcIf6u5j0EeT9++xT7cw==
-X-Received: by 2002:aca:3209:: with SMTP id y9mr4174552oiy.198.1547660682542;
-        Wed, 16 Jan 2019 09:44:42 -0800 (PST)
+        bh=9ntliFnHMh1UFNI4i4XDupue9MMU30iXjJz2OA1O7CA=;
+        b=Zz2gqrOkwIwspb+68dofTllE2Bld8W/Xuz2Noz6bhDzYB0pUbUk+cyFDwQ7T+vB3/K
+         HbHymyF+JMfP1ZmltCVCqtQPzlrpPv6SI1FTexIWD7g6R97xt1/YlzMIblzSC6NJJogR
+         JQRQawcNTVhvPfI8T51K2EhRlwICJzeZVK2cvfONxpAhyIcf2zEjIrmRuU0drgYfmdVY
+         Np5muT7J14NN2nVM1Uv+yAEBSaqyUZ+c9Nn2d30AKM/jdttfwfMHqrhWRhAZpHgijPe/
+         3TsUpX6UPcvUDGhvpF8fp4D5e5evJdFucKtaAlhcvLZ0UbNhKlUit7dHDaiVLroGyKGX
+         ZP4A==
+X-Gm-Message-State: AJcUukfgEkGXxupYG/hxHFL+Gvo9NRkCi6D7LJnqIRANZ9g8kznk+3AI
+        ZiGLdpoFohCkvZuHu1Bj5OyPLw==
+X-Google-Smtp-Source: ALg8bN7cpCI03/LDta+Zt56exwYfkyZ06NbTx5DgNNwHmvViSlk8WwsVOE0d4mMo1TYGXUP9s07jkA==
+X-Received: by 2002:a54:488b:: with SMTP id r11mr595706oic.80.1547660693160;
+        Wed, 16 Jan 2019 09:44:53 -0800 (PST)
 Received: from alago.cortijodelrio.net (CableLink-189-218-30-19.Hosts.InterCable.net. [189.218.30.19])
-        by smtp.googlemail.com with ESMTPSA id m129sm3152973oif.50.2019.01.16.09.44.40
+        by smtp.googlemail.com with ESMTPSA id m129sm3152973oif.50.2019.01.16.09.44.51
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 16 Jan 2019 09:44:41 -0800 (PST)
+        Wed, 16 Jan 2019 09:44:52 -0800 (PST)
 From:   =?UTF-8?q?Daniel=20D=C3=ADaz?= <daniel.diaz@linaro.org>
 To:     shuah@kernel.org
 Cc:     Fathi Boudra <fathi.boudra@linaro.org>,
-        Kees Cook <keescook@chromium.org>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Will Drewry <wad@chromium.org>,
-        linux-kselftest@vger.kernel.org (open list:KERNEL SELFTEST FRAMEWORK),
-        linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH 3/4] selftests: seccomp: use LDLIBS instead of LDFLAGS
-Date:   Wed, 16 Jan 2019 11:43:19 -0600
-Message-Id: <20190116174320.14938-3-daniel.diaz@linaro.org>
+        Denys Dmytriyenko <denys@ti.com>,
+        John Stultz <john.stultz@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Stephen Boyd <sboyd@kernel.org>,
+        linux-kernel@vger.kernel.org (open list:TIMEKEEPING, CLOCKSOURCE CORE,
+        NTP, ALARMTIMER),
+        linux-kselftest@vger.kernel.org (open list:KERNEL SELFTEST FRAMEWORK)
+Subject: [PATCH 4/4] selftests: timers: use LDLIBS instead of LDFLAGS
+Date:   Wed, 16 Jan 2019 11:43:20 -0600
+Message-Id: <20190116174320.14938-4-daniel.diaz@linaro.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190116174320.14938-1-daniel.diaz@linaro.org>
 References: <20190116174320.14938-1-daniel.diaz@linaro.org>
@@ -77,66 +79,19 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Fathi Boudra <fathi.boudra@linaro.org>
 
-seccomp_bpf fails to build due to undefined reference errors:
+posix_timers fails to build due to undefined reference errors:
 
  aarch64-linaro-linux-gcc --sysroot=/build/tmp-rpb-glibc/sysroots/hikey
- -O2 -pipe -g -feliminate-unused-debug-types -Wl,-no-as-needed -Wall
- -Wl,-O1 -Wl,--hash-style=gnu -Wl,--as-needed -lpthread seccomp_bpf.c -o
- /build/tmp-rpb-glibc/work/hikey-linaro-linux/kselftests/4.12-r0/linux-4.12-rc7/tools/testing/selftests/seccomp/seccomp_bpf
- /tmp/ccrlR3MW.o: In function `tsync_sibling':
- /usr/src/debug/kselftests/4.12-r0/linux-4.12-rc7/tools/testing/selftests/seccomp/seccomp_bpf.c:1920: undefined reference to `sem_post'
- /usr/src/debug/kselftests/4.12-r0/linux-4.12-rc7/tools/testing/selftests/seccomp/seccomp_bpf.c:1920: undefined reference to `sem_post'
- /tmp/ccrlR3MW.o: In function `TSYNC_setup':
- /usr/src/debug/kselftests/4.12-r0/linux-4.12-rc7/tools/testing/selftests/seccomp/seccomp_bpf.c:1863: undefined reference to `sem_init'
- /tmp/ccrlR3MW.o: In function `TSYNC_teardown':
- /usr/src/debug/kselftests/4.12-r0/linux-4.12-rc7/tools/testing/selftests/seccomp/seccomp_bpf.c:1904: undefined reference to `sem_destroy'
- /usr/src/debug/kselftests/4.12-r0/linux-4.12-rc7/tools/testing/selftests/seccomp/seccomp_bpf.c:1897: undefined reference to `pthread_kill'
- /usr/src/debug/kselftests/4.12-r0/linux-4.12-rc7/tools/testing/selftests/seccomp/seccomp_bpf.c:1898: undefined reference to `pthread_cancel'
- /usr/src/debug/kselftests/4.12-r0/linux-4.12-rc7/tools/testing/selftests/seccomp/seccomp_bpf.c:1899: undefined reference to `pthread_join'
- /tmp/ccrlR3MW.o: In function `tsync_start_sibling':
- /usr/src/debug/kselftests/4.12-r0/linux-4.12-rc7/tools/testing/selftests/seccomp/seccomp_bpf.c:1941: undefined reference to `pthread_create'
- /usr/src/debug/kselftests/4.12-r0/linux-4.12-rc7/tools/testing/selftests/seccomp/seccomp_bpf.c:1941: undefined reference to `pthread_create'
- /tmp/ccrlR3MW.o: In function `TSYNC_siblings_fail_prctl':
- /usr/src/debug/kselftests/4.12-r0/linux-4.12-rc7/tools/testing/selftests/seccomp/seccomp_bpf.c:1978: undefined reference to `sem_wait'
- /usr/src/debug/kselftests/4.12-r0/linux-4.12-rc7/tools/testing/selftests/seccomp/seccomp_bpf.c:1990: undefined reference to `pthread_join'
- /usr/src/debug/kselftests/4.12-r0/linux-4.12-rc7/tools/testing/selftests/seccomp/seccomp_bpf.c:1992: undefined reference to `pthread_join'
- /tmp/ccrlR3MW.o: In function `tsync_start_sibling':
- /usr/src/debug/kselftests/4.12-r0/linux-4.12-rc7/tools/testing/selftests/seccomp/seccomp_bpf.c:1941: undefined reference to `pthread_create'
- /usr/src/debug/kselftests/4.12-r0/linux-4.12-rc7/tools/testing/selftests/seccomp/seccomp_bpf.c:1941: undefined reference to `pthread_create'
- /tmp/ccrlR3MW.o: In function `TSYNC_two_siblings_with_ancestor':
- /usr/src/debug/kselftests/4.12-r0/linux-4.12-rc7/tools/testing/selftests/seccomp/seccomp_bpf.c:2016: undefined reference to `sem_wait'
- /usr/src/debug/kselftests/4.12-r0/linux-4.12-rc7/tools/testing/selftests/seccomp/seccomp_bpf.c:2032: undefined reference to `pthread_join'
- /usr/src/debug/kselftests/4.12-r0/linux-4.12-rc7/tools/testing/selftests/seccomp/seccomp_bpf.c:2034: undefined reference to `pthread_join'
- /tmp/ccrlR3MW.o: In function `tsync_start_sibling':
- /usr/src/debug/kselftests/4.12-r0/linux-4.12-rc7/tools/testing/selftests/seccomp/seccomp_bpf.c:1941: undefined reference to `pthread_create'
- /usr/src/debug/kselftests/4.12-r0/linux-4.12-rc7/tools/testing/selftests/seccomp/seccomp_bpf.c:1941: undefined reference to `pthread_create'
- /tmp/ccrlR3MW.o: In function `TSYNC_two_sibling_want_nnp':
- /usr/src/debug/kselftests/4.12-r0/linux-4.12-rc7/tools/testing/selftests/seccomp/seccomp_bpf.c:2046: undefined reference to `sem_wait'
- /usr/src/debug/kselftests/4.12-r0/linux-4.12-rc7/tools/testing/selftests/seccomp/seccomp_bpf.c:2058: undefined reference to `pthread_join'
- /usr/src/debug/kselftests/4.12-r0/linux-4.12-rc7/tools/testing/selftests/seccomp/seccomp_bpf.c:2060: undefined reference to `pthread_join'
- /tmp/ccrlR3MW.o: In function `tsync_start_sibling':
- /usr/src/debug/kselftests/4.12-r0/linux-4.12-rc7/tools/testing/selftests/seccomp/seccomp_bpf.c:1941: undefined reference to `pthread_create'
- /usr/src/debug/kselftests/4.12-r0/linux-4.12-rc7/tools/testing/selftests/seccomp/seccomp_bpf.c:1941: undefined reference to `pthread_create'
- /tmp/ccrlR3MW.o: In function `TSYNC_two_siblings_with_no_filter':
- /usr/src/debug/kselftests/4.12-r0/linux-4.12-rc7/tools/testing/selftests/seccomp/seccomp_bpf.c:2073: undefined reference to `sem_wait'
- /usr/src/debug/kselftests/4.12-r0/linux-4.12-rc7/tools/testing/selftests/seccomp/seccomp_bpf.c:2098: undefined reference to `pthread_join'
- /usr/src/debug/kselftests/4.12-r0/linux-4.12-rc7/tools/testing/selftests/seccomp/seccomp_bpf.c:2100: undefined reference to `pthread_join'
- /tmp/ccrlR3MW.o: In function `tsync_start_sibling':
- /usr/src/debug/kselftests/4.12-r0/linux-4.12-rc7/tools/testing/selftests/seccomp/seccomp_bpf.c:1941: undefined reference to `pthread_create'
- /usr/src/debug/kselftests/4.12-r0/linux-4.12-rc7/tools/testing/selftests/seccomp/seccomp_bpf.c:1941: undefined reference to `pthread_create'
- /tmp/ccrlR3MW.o: In function `TSYNC_two_siblings_with_one_divergence':
- /usr/src/debug/kselftests/4.12-r0/linux-4.12-rc7/tools/testing/selftests/seccomp/seccomp_bpf.c:2125: undefined reference to `sem_wait'
- /usr/src/debug/kselftests/4.12-r0/linux-4.12-rc7/tools/testing/selftests/seccomp/seccomp_bpf.c:2143: undefined reference to `pthread_join'
- /usr/src/debug/kselftests/4.12-r0/linux-4.12-rc7/tools/testing/selftests/seccomp/seccomp_bpf.c:2145: undefined reference to `pthread_join'
- /tmp/ccrlR3MW.o: In function `tsync_start_sibling':
- /usr/src/debug/kselftests/4.12-r0/linux-4.12-rc7/tools/testing/selftests/seccomp/seccomp_bpf.c:1941: undefined reference to `pthread_create'
- /usr/src/debug/kselftests/4.12-r0/linux-4.12-rc7/tools/testing/selftests/seccomp/seccomp_bpf.c:1941: undefined reference to `pthread_create'
- /tmp/ccrlR3MW.o: In function `TSYNC_two_siblings_not_under_filter':
- /usr/src/debug/kselftests/4.12-r0/linux-4.12-rc7/tools/testing/selftests/seccomp/seccomp_bpf.c:2169: undefined reference to `sem_wait'
- /usr/src/debug/kselftests/4.12-r0/linux-4.12-rc7/tools/testing/selftests/seccomp/seccomp_bpf.c:2202: undefined reference to `pthread_join'
- /usr/src/debug/kselftests/4.12-r0/linux-4.12-rc7/tools/testing/selftests/seccomp/seccomp_bpf.c:2227: undefined reference to `pthread_join'
- /tmp/ccrlR3MW.o: In function `tsync_start_sibling':
- /usr/src/debug/kselftests/4.12-r0/linux-4.12-rc7/tools/testing/selftests/seccomp/seccomp_bpf.c:1941: undefined reference to `pthread_create'
+ -O2 -pipe -g -feliminate-unused-debug-types -O3 -Wl,-no-as-needed -Wall
+ -DKTEST  -Wl,-O1 -Wl,--hash-style=gnu -Wl,--as-needed -lrt -lpthread
+ posix_timers.c
+ -o /build/tmp-rpb-glibc/work/hikey-linaro-linux/kselftests/4.12-r0/linux-4.12-rc7/tools/testing/selftests/timers/posix_timers
+ /tmp/cc1FTZzT.o: In function `check_timer_create':
+ /usr/src/debug/kselftests/4.12-r0/linux-4.12-rc7/tools/testing/selftests/timers/posix_timers.c:157:
+ undefined reference to `timer_create'
+ /usr/src/debug/kselftests/4.12-r0/linux-4.12-rc7/tools/testing/selftests/timers/posix_timers.c:170:
+ undefined reference to `timer_settime'
+ collect2: error: ld returned 1 exit status
 
 It's GNU Make and linker specific.
 
@@ -169,24 +124,24 @@ tools/perf: libraries must come after objects
 Link order matters, use LDLIBS instead of LDFLAGS to properly link against
 libpthread.
 
+Signed-off-by: Denys Dmytriyenko <denys@ti.com>
 Signed-off-by: Fathi Boudra <fathi.boudra@linaro.org>
 ---
- tools/testing/selftests/seccomp/Makefile | 2 +-
+ tools/testing/selftests/timers/Makefile | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/tools/testing/selftests/seccomp/Makefile b/tools/testing/selftests/seccomp/Makefile
-index fce7f4ce0692..1760b3e39730 100644
---- a/tools/testing/selftests/seccomp/Makefile
-+++ b/tools/testing/selftests/seccomp/Makefile
-@@ -9,7 +9,7 @@ BINARIES := seccomp_bpf seccomp_benchmark
- CFLAGS += -Wl,-no-as-needed -Wall
+diff --git a/tools/testing/selftests/timers/Makefile b/tools/testing/selftests/timers/Makefile
+index c02683cfb6c9..7656c7ce79d9 100644
+--- a/tools/testing/selftests/timers/Makefile
++++ b/tools/testing/selftests/timers/Makefile
+@@ -1,6 +1,6 @@
+ # SPDX-License-Identifier: GPL-2.0
+ CFLAGS += -O3 -Wl,-no-as-needed -Wall
+-LDFLAGS += -lrt -lpthread -lm
++LDLIBS += -lrt -lpthread -lm
  
- seccomp_bpf: seccomp_bpf.c ../kselftest_harness.h
--	$(CC) $(CFLAGS) $(LDFLAGS) -lpthread $< -o $@
-+	$(CC) $(CFLAGS) $(LDFLAGS) $< -lpthread -o $@
- 
- TEST_PROGS += $(BINARIES)
- EXTRA_CLEAN := $(BINARIES)
+ # these are all "safe" tests that don't modify
+ # system time or require escalated privileges
 -- 
 2.17.1
 
