@@ -2,167 +2,126 @@ Return-Path: <SRS0=1Lvk=PY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C31E1C43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 00:11:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B0739C43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 00:14:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 929AF206C2
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 00:11:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7A94320866
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 00:14:21 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=jms.id.au header.i=@jms.id.au header.b="nmFSGF5+"
+	dkim=pass (1024-bit key) header.d=fb.com header.i=@fb.com header.b="eJGU63SK"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730635AbfAPALO (ORCPT
+        id S1728919AbfAPAOU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 15 Jan 2019 19:11:14 -0500
-Received: from mail-qt1-f196.google.com ([209.85.160.196]:33100 "EHLO
-        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727060AbfAPALN (ORCPT
+        Tue, 15 Jan 2019 19:14:20 -0500
+Received: from mx0a-00082601.pphosted.com ([67.231.145.42]:34472 "EHLO
+        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728455AbfAPAOT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Jan 2019 19:11:13 -0500
-Received: by mail-qt1-f196.google.com with SMTP id l11so5246216qtp.0
-        for <linux-kernel@vger.kernel.org>; Tue, 15 Jan 2019 16:11:13 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=jms.id.au; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=9UWxkyK0epyPeU314jsRls3vNFn1c0AujvqZOvXdHDM=;
-        b=nmFSGF5+YkIzhYrqbNwAkkJsJfCkjt4oSwtmOTJEido0I6J3ojm6ipVIn3MJdHxhJj
-         9Y2FylhgPGO2V7mJzP3IEkPKSVPgOV1aPQlSW8YMod+NNBQsQAKUeVPrCFxov8y/aUTd
-         bdfRFdh931J+3XUvq1oGcF3vvxbaV7504yAEQ=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=9UWxkyK0epyPeU314jsRls3vNFn1c0AujvqZOvXdHDM=;
-        b=ZRMqovgfuQzoW0p7MSWL14fnO6aungwbMo26Mtskq81cQmC0ltNeMkvM93JChNrFeh
-         ZILHfZvapWXN5MwE012wWhAxdJuVnQnIR3pynNVUQ+SRyieobc30ARY1q3L0d/Gdg8kn
-         HRKeG1T69wlwT55dxC87n6kkVIQh/FPjytXK2bR8ApW9RFERX3thqoyr2bXE3HGGtc05
-         mqnY3ZstqIqbopSKJ8iMGdNGiYqlODSdqarOgy78HNh2Borl5ZD3q3TH9MGVIqKhW1kK
-         e5WoDOguIRNnk/7NV1f2xqaQ4VxXHNnIkochvFyJVf+Ibkb0GMbmWx4JBXPkLUmvNs0y
-         UHCw==
-X-Gm-Message-State: AJcUukcA6czk0rkolVUJkPkNlVVLI+TP7d7RRvtHFk/xYrzhtJj2ZZlK
-        l1ftrHG5nfosDMSki/Jtn7KaR4RVSeBg89XPYTWGjP2e5DI=
-X-Google-Smtp-Source: ALg8bN4QOX2GrSFP9TsPFlPxQIvJb5FHhVnrwz3LVEvABZFa80Qz14Xsq6181xv66iH5XLoPQV3FbKMcbfw3EV3lghM=
-X-Received: by 2002:a0c:e751:: with SMTP id g17mr5083778qvn.160.1547597472528;
- Tue, 15 Jan 2019 16:11:12 -0800 (PST)
+        Tue, 15 Jan 2019 19:14:19 -0500
+Received: from pps.filterd (m0044012.ppops.net [127.0.0.1])
+        by mx0a-00082601.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x0G09qP8028621
+        for <linux-kernel@vger.kernel.org>; Tue, 15 Jan 2019 16:14:18 -0800
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
+ : date : message-id : in-reply-to : references : mime-version :
+ content-type; s=facebook; bh=xkc/m6L5gIetS+MM8nNA5Dq8r/hwzty2qHxIbJneJL4=;
+ b=eJGU63SKD8oTU0xg34jvOZyGGLhyEIU86S5yzCjDF12zvGUr4w/9oNidjABH0dzapgvK
+ gQhsLUXIit2zcKUY9d2MvKeakRVzTBu7xXXXx1rr6wn4cAVuwn8F0YOlfMBoEp18miA9
+ zL7u7anHJ4njpL8XlsM2nEie+mMu1pEtSiQ= 
+Received: from maileast.thefacebook.com ([199.201.65.23])
+        by mx0a-00082601.pphosted.com with ESMTP id 2q1pnggmgb-6
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Tue, 15 Jan 2019 16:14:18 -0800
+Received: from mx-out.facebook.com (2620:10d:c0a1:3::13) by
+ mail.thefacebook.com (2620:10d:c021:18::172) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA) id 15.1.1531.3;
+ Tue, 15 Jan 2019 16:14:15 -0800
+Received: by devbig006.ftw2.facebook.com (Postfix, from userid 4523)
+        id C86CA62E1EC1; Tue, 15 Jan 2019 16:14:13 -0800 (PST)
+Smtp-Origin-Hostprefix: devbig
+From:   Song Liu <songliubraving@fb.com>
+Smtp-Origin-Hostname: devbig006.ftw2.facebook.com
+To:     <linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>
+CC:     Song Liu <songliubraving@fb.com>, <peterz@infradead.org>,
+        <acme@kernel.org>, <ast@kernel.org>, <daniel@iogearbox.net>,
+        <kernel-team@fb.com>, <dsahern@gmail.com>
+Smtp-Origin-Cluster: ftw2c04
+Subject: [PATCH v9 perf, bpf-next 2/9] sync tools/include/uapi/linux/perf_event.h
+Date:   Tue, 15 Jan 2019 16:14:03 -0800
+Message-ID: <20190116001410.3522226-3-songliubraving@fb.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20190116001410.3522226-1-songliubraving@fb.com>
+References: <20190116001410.3522226-1-songliubraving@fb.com>
+X-FB-Internal: Safe
 MIME-Version: 1.0
-References: <20190115015146.2412785-1-vijaykhemka@fb.com>
-In-Reply-To: <20190115015146.2412785-1-vijaykhemka@fb.com>
-From:   Joel Stanley <joel@jms.id.au>
-Date:   Wed, 16 Jan 2019 11:11:01 +1100
-Message-ID: <CACPK8Xesi2tQzH1d=Ow6VucO3qo6ptosKb-WDi-Cw1vg5FXGzg@mail.gmail.com>
-Subject: Re: [PATCH] misc: aspeed-lpc-ctrl: make memory-region optional
-To:     Vijay Khemka <vijaykhemka@fb.com>, Andrew Jeffery <andrew@aj.id.au>
-Cc:     Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        linux-aspeed@lists.ozlabs.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "openbmc @ lists . ozlabs . org" <openbmc@lists.ozlabs.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-01-15_08:,,
+ signatures=0
+X-Proofpoint-Spam-Reason: safe
+X-FB-Internal: Safe
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Vijay,
+sync changes for PERF_RECORD_KSYMBOL
 
-On Tue, 15 Jan 2019 at 12:51, Vijay Khemka <vijaykhemka@fb.com> wrote:
->
-> Makiing memory-region as optional parameter in device tree if
-> user needs to use memory-region then define in devicetree.
+Signed-off-by: Song Liu <songliubraving@fb.com>
+---
+ tools/include/uapi/linux/perf_event.h | 26 +++++++++++++++++++++++++-
+ 1 file changed, 25 insertions(+), 1 deletion(-)
 
-Thank you for finding the time to do this work. You're not the first
-to be blocked by this limitation, but you are the first who found the
-time to propose a patch.
+diff --git a/tools/include/uapi/linux/perf_event.h b/tools/include/uapi/linux/perf_event.h
+index 9de8780ac8d9..68c4da0227c5 100644
+--- a/tools/include/uapi/linux/perf_event.h
++++ b/tools/include/uapi/linux/perf_event.h
+@@ -372,7 +372,8 @@ struct perf_event_attr {
+ 				context_switch :  1, /* context switch data */
+ 				write_backward :  1, /* Write ring buffer from end to beginning */
+ 				namespaces     :  1, /* include namespaces data */
+-				__reserved_1   : 35;
++				ksymbol        :  1, /* include ksymbol events */
++				__reserved_1   : 34;
+ 
+ 	union {
+ 		__u32		wakeup_events;	  /* wakeup every n events */
+@@ -965,9 +966,32 @@ enum perf_event_type {
+ 	 */
+ 	PERF_RECORD_NAMESPACES			= 16,
+ 
++	/*
++	 * Record ksymbol register/unregister events:
++	 *
++	 * struct {
++	 *	struct perf_event_header	header;
++	 *	u64				addr;
++	 *	u32				len;
++	 *	u16				ksym_type;
++	 *	u16				flags;
++	 *	char				name[];
++	 *	struct sample_id		sample_id;
++	 * };
++	 */
++	PERF_RECORD_KSYMBOL			= 17,
++
+ 	PERF_RECORD_MAX,			/* non-ABI */
+ };
+ 
++enum perf_record_ksymbol_type {
++	PERF_RECORD_KSYMBOL_TYPE_UNKNOWN	= 0,
++	PERF_RECORD_KSYMBOL_TYPE_BPF		= 1,
++	PERF_RECORD_KSYMBOL_TYPE_MAX		/* non-ABI */
++};
++
++#define PERF_RECORD_KSYMBOL_FLAGS_UNREGISTER	(1 << 0)
++
+ #define PERF_MAX_STACK_DEPTH		127
+ #define PERF_MAX_CONTEXTS_PER_STACK	  8
+ 
+-- 
+2.17.1
 
-I think we should complete the rework to make the flash device
-optional too. Can you do a v2 with a proposal for that?
-
->
-> Signed-off-by: Vijay Khemka <vijaykhemka@fb.com>
-> ---
->  drivers/misc/aspeed-lpc-ctrl.c | 30 ++++++++++++++++++------------
->  1 file changed, 18 insertions(+), 12 deletions(-)
->
-> diff --git a/drivers/misc/aspeed-lpc-ctrl.c b/drivers/misc/aspeed-lpc-ctrl.c
-> index a024f8042259..20507f0764fb 100644
-> --- a/drivers/misc/aspeed-lpc-ctrl.c
-> +++ b/drivers/misc/aspeed-lpc-ctrl.c
-> @@ -90,6 +90,10 @@ static long aspeed_lpc_ctrl_ioctl(struct file *file, unsigned int cmd,
->                 if (map.window_id != 0)
->                         return -EINVAL;
->
-> +               /* If memory-region is not described in device tree */
-> +               if (!lpc_ctrl->mem_size)
-> +                       return -EINVAL;
-> +
->                 map.size = lpc_ctrl->mem_size;
->
->                 return copy_to_user(p, &map, sizeof(map)) ? -EFAULT : 0;
-> @@ -129,6 +133,10 @@ static long aspeed_lpc_ctrl_ioctl(struct file *file, unsigned int cmd,
->                         addr = lpc_ctrl->pnor_base;
->                         size = lpc_ctrl->pnor_size;
->                 } else if (map.window_type == ASPEED_LPC_CTRL_WINDOW_MEMORY) {
-> +                       /* If memory-region is not described in device tree */
-> +                       if (!lpc_ctrl->mem_size)
-
-Should it print a message here? I think a dev_dbg makes sense.
-
-> +                               return -EINVAL;
-> +
->                         addr = lpc_ctrl->mem_base;
->                         size = lpc_ctrl->mem_size;
->                 } else {
-> @@ -214,22 +222,20 @@ static int aspeed_lpc_ctrl_probe(struct platform_device *pdev)
->
->         dev_set_drvdata(&pdev->dev, lpc_ctrl);
->
-> +       /* If memory-region is described in device tree then store */
->         node = of_parse_phandle(dev->of_node, "memory-region", 0);
-> -       if (!node) {
-> -               dev_err(dev, "Didn't find reserved memory\n");
-> -               return -EINVAL;
-> -       }
-> +       if (node) {
-
-Print a debug message when we didn't find the node.
-
-> +               rc = of_address_to_resource(node, 0, &resm);
-> +               of_node_put(node);
-> +               if (rc) {
-> +                       dev_err(dev, "Couldn't address to resource for reserved memory\n");
-> +                       return -ENOMEM;
-> +               }
->
-> -       rc = of_address_to_resource(node, 0, &resm);
-> -       of_node_put(node);
-> -       if (rc) {
-> -               dev_err(dev, "Couldn't address to resource for reserved memory\n");
-> -               return -ENOMEM;
-> +               lpc_ctrl->mem_size = resource_size(&resm);
-> +               lpc_ctrl->mem_base = resm.start;
->         }
->
-> -       lpc_ctrl->mem_size = resource_size(&resm);
-> -       lpc_ctrl->mem_base = resm.start;
-> -
->         lpc_ctrl->regmap = syscon_node_to_regmap(
->                         pdev->dev.parent->of_node);
->         if (IS_ERR(lpc_ctrl->regmap)) {
-
-Down below here is this line:
-
->        dev_info(dev, "Loaded at %pr\n", &resm);
-
-As resm is first used for the flash resource and then the memory
-region, it will display the location of the flash when the memory
-region is not present. This is confusing. You should either print out
-the regions separately, or consider removing this dev_info completely.
-
-> --
-> 2.17.1
->
