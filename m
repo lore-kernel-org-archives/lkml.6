@@ -5,75 +5,63 @@ X-Spam-Level:
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B400C43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 12:25:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A8B1FC43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 12:27:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0100220657
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 12:25:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7EAFE2082F
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 12:27:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392563AbfAPMZ5 (ORCPT
+        id S2392716AbfAPM1b (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 16 Jan 2019 07:25:57 -0500
-Received: from foss.arm.com ([217.140.101.70]:47010 "EHLO foss.arm.com"
+        Wed, 16 Jan 2019 07:27:31 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43256 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732749AbfAPMZ5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Jan 2019 07:25:57 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D6A19A78;
-        Wed, 16 Jan 2019 04:25:56 -0800 (PST)
-Received: from [10.1.196.128] (ostrya.cambridge.arm.com [10.1.196.128])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 2D7423F5AF;
-        Wed, 16 Jan 2019 04:25:54 -0800 (PST)
-Subject: Re: [RFC v3 17/21] iommu/smmuv3: Report non recoverable faults
-To:     Auger Eric <eric.auger@redhat.com>,
-        "eric.auger.pro@gmail.com" <eric.auger.pro@gmail.com>,
-        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-        "kvmarm@lists.cs.columbia.edu" <kvmarm@lists.cs.columbia.edu>,
-        "joro@8bytes.org" <joro@8bytes.org>,
-        "alex.williamson@redhat.com" <alex.williamson@redhat.com>,
-        "jacob.jun.pan@linux.intel.com" <jacob.jun.pan@linux.intel.com>,
-        "yi.l.liu@linux.intel.com" <yi.l.liu@linux.intel.com>,
-        Will Deacon <Will.Deacon@arm.com>,
-        Robin Murphy <Robin.Murphy@arm.com>
-Cc:     Marc Zyngier <Marc.Zyngier@arm.com>,
-        "peter.maydell@linaro.org" <peter.maydell@linaro.org>,
-        "kevin.tian@intel.com" <kevin.tian@intel.com>,
-        "ashok.raj@intel.com" <ashok.raj@intel.com>,
-        Christoffer Dall <Christoffer.Dall@arm.com>
-References: <20190108102633.17482-1-eric.auger@redhat.com>
- <20190108102633.17482-18-eric.auger@redhat.com>
- <dae89fd8-6a82-d2f0-a8c7-ddbf12a7b047@arm.com>
- <e634adee-f7ab-b90d-aac6-06400fa9ffb4@redhat.com>
-From:   Jean-Philippe Brucker <jean-philippe.brucker@arm.com>
-Message-ID: <c0328bbe-e02c-c337-ec52-c899dc0025d3@arm.com>
-Date:   Wed, 16 Jan 2019 12:25:38 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.0
+        id S2390234AbfAPM1b (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 Jan 2019 07:27:31 -0500
+Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0F8C120578;
+        Wed, 16 Jan 2019 12:27:29 +0000 (UTC)
+Date:   Wed, 16 Jan 2019 07:27:28 -0500
+From:   Steven Rostedt <rostedt@goodmis.org>
+To:     Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
+Cc:     Petr Mladek <pmladek@suse.com>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-rt-users <linux-rt-users@vger.kernel.org>
+Subject: Re: [PATCH RT] printk: Shortcut out of waiter spinning on
+ PREEMPT_RT
+Message-ID: <20190116072728.1fcc54d0@gandalf.local.home>
+In-Reply-To: <20190116114340.GA6322@tigerII.localdomain>
+References: <20190115123910.2b18df54@gandalf.local.home>
+        <20190115185433.e7hmlpmjvpyqdyhc@linutronix.de>
+        <20190115145815.13713791@gandalf.local.home>
+        <20190116100751.2glxadlpco7a46o5@pathway.suse.cz>
+        <20190116114340.GA6322@tigerII.localdomain>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-In-Reply-To: <e634adee-f7ab-b90d-aac6-06400fa9ffb4@redhat.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 15/01/2019 21:06, Auger Eric wrote:
->>> +		iommu_report_device_fault(master->dev, &event);
->>
->> We should return here if the fault is successfully injected
+On Wed, 16 Jan 2019 20:43:40 +0900
+Sergey Senozhatsky <sergey.senozhatsky@gmail.com> wrote:
+
+> On (01/16/19 11:07), Petr Mladek wrote:
+> > The patch makes perfect sense. But it is not ready for upstream
+> > because CONFIG_PREEMPT_RT_FULL is not there yet. Do I get it
+> > correctly, please?  
 > 
-> Even if the fault gets injected in the guest can't it be still useful to
-> get the message below on host side?
+> Yes. Hence Cc linux-rt-users.
+> 
+>
 
-I don't think we should let the guest flood the host log by issuing
-invalid DMA (or are there other cases where the guest can freely print
-stuff in the host?) We do print all errors at the moment, but we should
-tighten this once there is an upstream solution to let the guest control
-DMA mappings.
+Actually it's the Subject line. We use "[PATCH RT]" to denote changes
+caused by PREEMPT_RT existing.
 
-Thanks,
-Jean
+-- Steve
