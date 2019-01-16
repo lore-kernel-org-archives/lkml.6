@@ -2,71 +2,85 @@ Return-Path: <SRS0=1Lvk=PY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E951C43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 22:34:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D28FC43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 22:36:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0DA3120652
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 22:34:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 589D320840
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 22:36:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1547678163;
+	bh=4OBXSwgqPCQ4syk3N0wXCAqDt+UDaPlt4orBGi6gmCY=;
+	h=Subject:In-Reply-To:References:Cc:To:From:Date:List-ID:From;
+	b=awr7wIy8uAUipp6JsCJvpMmFfUAglCpKhhRhLQuP4YYFToEg6kJlV8usSikIvDqId
+	 2LRwYZ0FzmScvY/E9GyOvLn/slQcEqZyknFKyxxBB+oGGodtGt98dxaRT+4knVFnHF
+	 nJtVijKo1BVfAjzLjmoXKaRN+bQjXD44EDIW1E9U=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733288AbfAPWei (ORCPT
+        id S1733305AbfAPWgB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 16 Jan 2019 17:34:38 -0500
-Received: from ms.lwn.net ([45.79.88.28]:52788 "EHLO ms.lwn.net"
+        Wed, 16 Jan 2019 17:36:01 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36136 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732911AbfAPWei (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Jan 2019 17:34:38 -0500
-Received: from lwn.net (localhost [127.0.0.1])
+        id S1732911AbfAPWgB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 Jan 2019 17:36:01 -0500
+Received: from localhost (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ms.lwn.net (Postfix) with ESMTPSA id CDF81300;
-        Wed, 16 Jan 2019 22:34:37 +0000 (UTC)
-Date:   Wed, 16 Jan 2019 15:34:36 -0700
-From:   Jonathan Corbet <corbet@lwn.net>
-To:     Sumit Semwal <sumit.semwal@linaro.org>
-Cc:     dri-devel@lists.freedesktop.org,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: [PATCH] dma-buf: Fix kerneldoc comment for struct dma_fence_array
-Message-ID: <20190116153436.3b244cda@lwn.net>
-Organization: LWN.net
+        by mail.kernel.org (Postfix) with ESMTPSA id B246D20652;
+        Wed, 16 Jan 2019 22:36:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1547678160;
+        bh=4OBXSwgqPCQ4syk3N0wXCAqDt+UDaPlt4orBGi6gmCY=;
+        h=Subject:In-Reply-To:References:Cc:To:From:Date:From;
+        b=r4Zyf2KarABTVwjGXgitvgyIKxz2F4ADbaPgiXLFhAxZk1SvwIcVtG2Q+Z347XC9b
+         X0n/1SOxnmjc1Vtz3ob0owDtKbiwG2aJd4nRzHMeeJJ9JiWvJ0A2osYO9T2IPAoTev
+         5GPBuYYpNJ83zzV9HasqJ9X7/q+3kLrq15+etZDs=
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: linux-next: Fixes tag needs some work in the clk tree
+User-Agent: alot/0.8
+In-Reply-To: <20190116083440.11b6839c@canb.auug.org.au>
+References: <20190116083440.11b6839c@canb.auug.org.au>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Dinh Nguyen <dinguyen@kernel.org>,
+        Paul Gortmaker <paul.gortmaker@windriver.com>
+To:     Mike Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Stephen Rothwell <sfr@canb.auug.org.au>
+Message-ID: <154767815973.169631.1738587342757192096@swboyd.mtv.corp.google.com>
+From:   Stephen Boyd <sboyd@kernel.org>
+Date:   Wed, 16 Jan 2019 14:35:59 -0800
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The kerneldoc comment for struct dma_fence_array lacks a description
-of the "work" member, leading to this docs-build warning:
+Quoting Stephen Rothwell (2019-01-15 13:34:40)
+> [I am experimenting with checking the Fixes tags in commits in linux-next.
+> Please let me know if you think I am being too strict.]
+>=20
+> Hi all,
+>=20
+> Commit
+>=20
+>   b488517b28a4 ("clk: socfpga: stratix10: fix naming convention for the f=
+ixed-clocks")
+>=20
+> has a malformed Fixes tag:
+>=20
+>   Fixes: 07afb8db7340 ("clk: socfpga: stratix10: add clock driver for
+>   Stratix10 platform")
+>=20
+> It should not be split over 2 lines.
 
-  ./include/linux/dma-fence-array.h:54: warning: Function parameter or member 'work' not described in 'dma_fence_array'
-
-Add a description and make the warning go away.
-
-Signed-off-by: Jonathan Corbet <corbet@lwn.net>
----
-Hopefully I've sent this to the right place; perhaps this file needs to be
-added to the MAINTAINERS entry?
-
- include/linux/dma-fence-array.h | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/include/linux/dma-fence-array.h b/include/linux/dma-fence-array.h
-index bc8940ca280d..c0ff417b4770 100644
---- a/include/linux/dma-fence-array.h
-+++ b/include/linux/dma-fence-array.h
-@@ -40,6 +40,7 @@ struct dma_fence_array_cb {
-  * @num_fences: number of fences in the array
-  * @num_pending: fences in the array still pending
-  * @fences: array of the fences
-+ * @work: internal irq_work function
-  */
- struct dma_fence_array {
- 	struct dma_fence base;
--- 
-2.20.1
+Ok sure. Does this matter to scripts? Is it documented in
+Documentation/process/submitting-patches.rst? I've seen both types, one
+line or many lines, so I'm happy to mandate a policy as long as it's
+documented. Maybe also checkpatch can complain about this so that people
+don't submit patches "the wrong way".
 
