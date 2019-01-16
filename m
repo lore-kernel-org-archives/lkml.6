@@ -2,121 +2,119 @@ Return-Path: <SRS0=1Lvk=PY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EAF2EC43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 15:11:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4926EC43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 15:13:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B9CFF206C2
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 15:11:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 23A43205C9
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 15:13:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2393924AbfAPPL2 (ORCPT
+        id S2393947AbfAPPNB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 16 Jan 2019 10:11:28 -0500
-Received: from mail-qt1-f194.google.com ([209.85.160.194]:41371 "EHLO
-        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729301AbfAPPL1 (ORCPT
+        Wed, 16 Jan 2019 10:13:01 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:36192 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1728675AbfAPPNA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Jan 2019 10:11:27 -0500
-Received: by mail-qt1-f194.google.com with SMTP id l12so7450660qtf.8;
-        Wed, 16 Jan 2019 07:11:26 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=4IMG7jlqdMP9fj1j/3+ne8Scrl1K/KH+xgzb4mZhEV0=;
-        b=bI6MPAHStDomHprgy4bg/elQD7wrj0PVr1DflLLR8dDwTD7OiExB4yhWuwC+9mWVKu
-         9cjzfWE58QLsF7kkGchP+8euOpyZQoiVUXjyQqAa4WeZ2mrhGaFutbkOxf5QdVc2PFUq
-         kkaafPShNhNCrF2HTnKAJt9OTDkg3vrPG8Hqz9jatoU/2OLaHrd4kBjtGxy97bEV8Hlv
-         A8u4zR9MTcup0F1OI2EyMAiYVaf49st+yV2LX02OM8XnoXlezp6qe3+Oehsxmqbj+5uo
-         ETL4EFoskdfU2foBNFjy+2H+RaqTwydSw+CJxQp+IS96aixbRxes91PIfQ1vAn0uZvF8
-         oRGw==
-X-Gm-Message-State: AJcUukc7c7O+QZch7LeWvDE++f8J4xE3esXE83OxjyGFNt1wswrucNTF
-        yfrWYw/VQ4hSSdDvMymiGufccqWcsQrSwF1so3s=
-X-Google-Smtp-Source: ALg8bN4MHIpOwtix2a/9wSEs3En9UrRmeCKYXHdJzIxZZCLyKqC9gqX6rkyLnf9nTjE5CgELUF2MJJxfv35dxC2atSk=
-X-Received: by 2002:ac8:4141:: with SMTP id e1mr7088485qtm.96.1547651485740;
- Wed, 16 Jan 2019 07:11:25 -0800 (PST)
+        Wed, 16 Jan 2019 10:13:00 -0500
+Received: from pps.filterd (m0098417.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id x0GFBAVZ046873
+        for <linux-kernel@vger.kernel.org>; Wed, 16 Jan 2019 10:12:59 -0500
+Received: from e06smtp05.uk.ibm.com (e06smtp05.uk.ibm.com [195.75.94.101])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2q26s3gvu2-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Wed, 16 Jan 2019 10:12:59 -0500
+Received: from localhost
+        by e06smtp05.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <heiko.carstens@de.ibm.com>;
+        Wed, 16 Jan 2019 15:12:57 -0000
+Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
+        by e06smtp05.uk.ibm.com (192.168.101.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Wed, 16 Jan 2019 15:12:53 -0000
+Received: from d06av22.portsmouth.uk.ibm.com (d06av22.portsmouth.uk.ibm.com [9.149.105.58])
+        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x0GFCqoC61210668
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 16 Jan 2019 15:12:52 GMT
+Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 1329C4C073;
+        Wed, 16 Jan 2019 15:12:52 +0000 (GMT)
+Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id CA6824C071;
+        Wed, 16 Jan 2019 15:12:51 +0000 (GMT)
+Received: from osiris (unknown [9.152.212.95])
+        by d06av22.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
+        Wed, 16 Jan 2019 15:12:51 +0000 (GMT)
+Date:   Wed, 16 Jan 2019 16:12:50 +0100
+From:   Heiko Carstens <heiko.carstens@de.ibm.com>
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     linux-s390@vger.kernel.org,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        linux-kernel@vger.kernel.org, y2038@lists.linaro.org,
+        Dominik Brodowski <linux@dominikbrodowski.net>,
+        Mark Rutland <mark.rutland@arm.com>
+Subject: Re: [PATCH 0/5] s390: rework compat wrapper generation
+References: <20190116131527.2071570-1-arnd@arndb.de>
 MIME-Version: 1.0
-References: <1544604495-4082-1-git-send-email-fabrice.gasnier@st.com>
- <1544604495-4082-3-git-send-email-fabrice.gasnier@st.com> <CAK8P3a1MucNG86=bXwVVsasGBOLJ67kuRSpoeneF6M5aB6GmQA@mail.gmail.com>
- <9e0ee154-a399-9bff-3beb-adfd9d6c6fee@st.com>
-In-Reply-To: <9e0ee154-a399-9bff-3beb-adfd9d6c6fee@st.com>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Wed, 16 Jan 2019 16:11:08 +0100
-Message-ID: <CAK8P3a0kV4-OF7JPwM9cEqxaPvNM9dFZdyZetc47t+D5izkFwQ@mail.gmail.com>
-Subject: Re: [PATCH v2 2/3] mfd: syscon: Add optional clock support
-To:     Fabrice Gasnier <fabrice.gasnier@st.com>
-Cc:     Lee Jones <lee.jones@linaro.org>, Rob Herring <robh+dt@kernel.org>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Gabriel Fernandez <gabriel.fernandez@st.com>,
-        DTML <devicetree@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-stm32@st-md-mailman.stormreply.com,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20190116131527.2071570-1-arnd@arndb.de>
+X-TM-AS-GCONF: 00
+x-cbid: 19011615-0020-0000-0000-00000307506C
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19011615-0021-0000-0000-000021586D96
+Message-Id: <20190116151250.GB3474@osiris>
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 8bit
+Content-Disposition: inline
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-01-16_06:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=869 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1901160125
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 16, 2019 at 3:10 PM Fabrice Gasnier <fabrice.gasnier@st.com> wrote:
->
-> On 1/16/19 1:14 PM, Arnd Bergmann wrote:
-> > (sorry for the late reply, I just realized that I had never sent out the
-> > mail after Lee asked me for a review last year and I had drafted
-> > my reply).
->
-> Hi Arnd,
->
-> Many thanks for reviewing, no worries :-)
->
-> >
-> > On Wed, Dec 12, 2018 at 9:48 AM Fabrice Gasnier <fabrice.gasnier@st.com> wrote:
-> >>
-> >> Some system control registers need to be clocked, so the registers can
-> >> be accessed. Add an optional clock and attach it to regmap.
-> >>
-> >> Signed-off-by: Fabrice Gasnier <fabrice.gasnier@st.com>
-> >
-> > This looks ok to me in principle, but I have one question: When we
-> > do a clk_get() and clk_prepare() as part of regmap_mmio_attach_clk(),
-> > does that change the behavior of syscon nodes that are otherwise
-> > unused?
->
-> I'm not sure I correctly understand this question. I don't think it will
-> change the behavior for "unused" nodes. These should remain unused with
-> this patch.
+On Wed, Jan 16, 2019 at 02:15:18PM +0100, Arnd Bergmann wrote:
+> Hi Heiko and Martin,
+> 
+> As promised, I gave this a go and changed the SYSCALL_DEFINEx()
+> infrastructure to always include the wrappers for doing the
+> 31-bit argument conversion on s390 compat mode.
+> 
+> This does three main things:
+> 
+> - The UID16 rework saved a lot of duplicated code, and would
+>   probably make sense by itself, but is also required as
+>   we can no longer call sys_*() functions directly after the
+>   last step.
+> 
+> - Removing the compat_wrapper.c file is of course the main
+>   goal here, in order to remove the need to maintain the
+>   compat_wrapper.c file when new system calls get added.
+>   Unfortunately, this requires adding some complexity in
+>   syscall_wrapper.h, and trades a small reduction in source
+>   code lines for a small increase in binary size for
+>   unused wrappers.
+> 
+> - As an added benefit, the use of syscall_wrapper.h now makes
+>   it easy to change the syscall wrappers so they no longer
+>   see all user space register contents, similar to changes
+>   done in commits fa697140f9a2 ("syscalls/x86: Use 'struct pt_regs'
+>   based syscall calling convention for 64-bit syscalls") and
+>   4378a7d4be30 ("arm64: implement syscall wrappers").
+>   I leave the actual implementation of this for you, if you
+>   want to do it later.
+> 
+> I did not test the changes at runtime, but I looked at the
+> generated object code, which seems fine here and includes
+> the same conversions as before.
 
-What I mean is that nodes that listed as 'compatible="syscon"' get
-probed by the syscon driver even when no other driver references
-them, and that in turn would acquire the clock, right?
+This work is highly appreciated! I'll look into this tomorrow.
 
-> > I think we have a bunch of devices that started out as a syscon but
-> > then we added a proper driver for them, which would handle the
-> > clocks explicitly. Is it guaranteed that this will keep working (including
-> > shutting down the clocks when they are unused) if we have two drivers
-> > that call clk_get() on the same device node?
->
-> I'd expect nothing wrong happens when two drivers call clk_get() for the
-> same clock.
-> Are there some case where two drivers are bind (e.g. syscon driver +
-> another driver) for the same piece of hardware ?
+Thanks!
 
-You won't actually have two drivers binding to the same device, but you
-could have a driver and a syscon user that does relies on the
-syscon_regmap_lookup_by_*() functions.
-
-I think we've had a couple of cases where we started out representing
-a device as syscon, and then later decided that a high-level abstraction
-would be needed because syscon didn't quite support all the needed
-features.
-
-Since each syscon node should also have a more specific
-compatible value, you can then have another driver that binds
-to that compatible string.
-
-      Arnd
