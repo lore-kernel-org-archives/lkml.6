@@ -7,61 +7,61 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C0C6C43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 14:26:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D8C7C43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 14:26:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2B69E205C9
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 14:26:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5CB8E205C9
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 14:26:22 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=g.ncu.edu.tw header.i=@g.ncu.edu.tw header.b="Pvnpn+he"
+	dkim=pass (1024-bit key) header.d=g.ncu.edu.tw header.i=@g.ncu.edu.tw header.b="ZHTioefZ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2393425AbfAPO0D (ORCPT
+        id S2393491AbfAPO0V (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 16 Jan 2019 09:26:03 -0500
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:32897 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390995AbfAPO0D (ORCPT
+        Wed, 16 Jan 2019 09:26:21 -0500
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:44865 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2391293AbfAPO0U (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Jan 2019 09:26:03 -0500
-Received: by mail-pg1-f196.google.com with SMTP id z11so2913943pgu.0
-        for <linux-kernel@vger.kernel.org>; Wed, 16 Jan 2019 06:26:02 -0800 (PST)
+        Wed, 16 Jan 2019 09:26:20 -0500
+Received: by mail-pf1-f193.google.com with SMTP id u6so3132305pfh.11
+        for <linux-kernel@vger.kernel.org>; Wed, 16 Jan 2019 06:26:20 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=g.ncu.edu.tw; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=OFYi0B0xaMyvevGQpx6Nyn5JWeEzLpCt1jdHdRE25uY=;
-        b=Pvnpn+heih5+7CDHMgICaTLHo1866UMg7a46Nfq+olAo/Avf8jw69IGFS93WQGSmQx
-         Ooko3VxNfjFdX2uu4kE3t1SObzeYughNhUFtGu5n5GC+gEM3tKkjxc7J8xmkwplrtGSE
-         P0AfBlcXuJQW2mZ3HKAGCKaEnCf9E8/902uDI=
+        bh=A6tN3e+L8ccUqYJSG3UfdrqjaLGmj6h8YqE2TggOmsQ=;
+        b=ZHTioefZ6UZDDkz5bSrjcB9KvWdTeYQRftOtPbMM4OcvRVGQkeXdi8NEh6GTUoVlBO
+         mQ017XGOlotuG2/M4y8GsAFHXSl/jNwl8ybhZNOjnI621HFDR590HYKMAI8t6bch6/JM
+         NZ2vAUR9rkWMLihLynewQ4YiCPQ2zrWxMdr0U=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=OFYi0B0xaMyvevGQpx6Nyn5JWeEzLpCt1jdHdRE25uY=;
-        b=ADeBML5+ZoP24Yi26kIrIYUlv+XzraXJ+AvBCVEgxC98FE5H2q+dfh8zr25OId+U8f
-         CCpG8xKIz5RDg/E9IkdknFt7KsewqMpeUBJGwRSeiIW8PFZ0BdjOaY9+s5QSZt5mojlk
-         ZzZ4lTfvk7nne16vjRR9W32mKiIsB1yxHopxcdu1ou84HK7N617iDb9Uim1gI3nEvT/f
-         7RN66yzI/1bOgUcUg7+xE+PcyLknuMF1rr1fy0alViPFksFmPGwbqV4A+gLdq34BVCVF
-         I/mc+KhkT7ovjmdFPpnMSWPPr9rfID8NtYii5i92FFRFzj7Iq7nrCJSzkwSxpNpWrvr4
-         cCJQ==
-X-Gm-Message-State: AJcUukeO9L+ZJAGNa6sqd3paJG93yfEhwYG3pqLmBXOkak0fd/dP0+/F
-        9pJrwT8uDLWtNcqAyhnfgN2A8A==
-X-Google-Smtp-Source: ALg8bN74EQAx6xaPCby36H5blYZySCEw6xY6RY8NbQmY1fCiJjZYABituDk5LtY49qbnKuCuBtqYUQ==
-X-Received: by 2002:a63:a064:: with SMTP id u36mr9143400pgn.145.1547648762037;
-        Wed, 16 Jan 2019 06:26:02 -0800 (PST)
+        bh=A6tN3e+L8ccUqYJSG3UfdrqjaLGmj6h8YqE2TggOmsQ=;
+        b=WcuiOe1H3//A30P+KkMXd4cW0VZmsuOZU8/GTbKrsqONTE+2QfDHSgMHUKSqsthU8m
+         fCraWiAIH7oyoTzHcND5ohNI+tL42BLmdNIC0eW0Jv7LK6ELvIW+dAmD00W2CVMKT5+0
+         AcuKnkFTz6XeVAA1kaKEm5M54rUQXY752heVIBbVcsSnSbfvI0r4LOlTttM6ErDrtMTS
+         6Jfb2WhuhnJloFfthlctW8d3cv+EsyPa05qkOGoB7us9hhr5p7iERNb0qpiGiq6pOs5X
+         /ukK1sACfpt0EFns1KNldF5lqeaugTasxTioRCdanT82F1+/sPQOWKazTY6PFDutSkBd
+         grIQ==
+X-Gm-Message-State: AJcUukfNdGMLbYepJR5TsGccYJm9su5snw/GKwSW+NW0JGL9AIJME2Wb
+        +vvHd0l+DVyMEiNh6I0wYh+9aQ==
+X-Google-Smtp-Source: ALg8bN6uYXSbuuXFsbeZmtMzOFU7+JXhKxbYqyL2VVoOw3dzPDprcGGPdlEznkbJYHbQmR6UZBVraA==
+X-Received: by 2002:a63:fb4c:: with SMTP id w12mr9132328pgj.321.1547648779942;
+        Wed, 16 Jan 2019 06:26:19 -0800 (PST)
 Received: from starnight.local ([150.116.255.181])
-        by smtp.gmail.com with ESMTPSA id a17sm9211783pgm.26.2019.01.16.06.26.00
+        by smtp.gmail.com with ESMTPSA id a17sm9211783pgm.26.2019.01.16.06.26.18
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 16 Jan 2019 06:26:01 -0800 (PST)
+        Wed, 16 Jan 2019 06:26:19 -0800 (PST)
 From:   Jian-Hong Pan <starnight@g.ncu.edu.tw>
 To:     =?UTF-8?q?Andreas=20F=C3=A4rber?= <afaerber@suse.de>
 Cc:     Ben Whitten <ben.whitten@lairdtech.com>,
         linux-lpwan@lists.infradead.org, netdev@vger.kernel.org,
         linux-kernel@vger.kernel.org,
         Jian-Hong Pan <starnight@g.ncu.edu.tw>
-Subject: [RFC PATCH 3/5] net; lorawan: Fix net device leakage
-Date:   Wed, 16 Jan 2019 22:24:58 +0800
-Message-Id: <20190116142458.19542-3-starnight@g.ncu.edu.tw>
+Subject: [RFC PATCH 4/5] net: lorawan: Fulfill the help text of Kconfig
+Date:   Wed, 16 Jan 2019 22:25:00 +0800
+Message-Id: <20190116142458.19542-4-starnight@g.ncu.edu.tw>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190116142048.19446-1-starnight@g.ncu.edu.tw>
 References: <20190116142048.19446-1-starnight@g.ncu.edu.tw>
@@ -72,59 +72,28 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The net device may be missed to be put after error check.  This patch
-fixes the issue to prevent the leakage.
+Mention the LoRaWAN network feature to distinguish it from other
+Low-Power Wide-Area Network like Sigfox and NB-IoT.
 
 Signed-off-by: Jian-Hong Pan <starnight@g.ncu.edu.tw>
 ---
- net/lorawan/socket.c | 12 ++++--------
- 1 file changed, 4 insertions(+), 8 deletions(-)
+ net/lorawan/Kconfig | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/net/lorawan/socket.c b/net/lorawan/socket.c
-index 9c0722379e25..7139fab63159 100644
---- a/net/lorawan/socket.c
-+++ b/net/lorawan/socket.c
-@@ -51,8 +51,10 @@ lrw_get_dev_by_addr(struct net *net, u32 devaddr)
+diff --git a/net/lorawan/Kconfig b/net/lorawan/Kconfig
+index bf6c9b77573b..ce3ed6e6d11c 100644
+--- a/net/lorawan/Kconfig
++++ b/net/lorawan/Kconfig
+@@ -4,7 +4,8 @@ config LORAWAN
+ 	  LoRaWAN defines low data rate, low power and long range wireless
+ 	  wide area networks. It was designed to organize networks of automation
+ 	  devices, such as sensors, switches and actuators. It can operate
+-	  multiple kilometers wide.
++	  multiple kilometers wide.  The network is client/server technology
++	  centered around gateways.
  
- 	rcu_read_lock();
- 	ndev = dev_getbyhwaddr_rcu(net, ARPHRD_LORAWAN, (char *)&be_addr);
--	if (ndev)
-+	if (ndev && ndev->type == ARPHRD_LORAWAN)
- 		dev_hold(ndev);
-+	else
-+		ndev = NULL;
- 	rcu_read_unlock();
- 
- 	return ndev;
-@@ -99,11 +101,6 @@ dgram_bind(struct sock *sk, struct sockaddr *uaddr, int len)
- 	}
- 	netdev_dbg(ndev, "%s: get ndev\n", __func__);
- 
--	if (ndev->type != ARPHRD_LORAWAN) {
--		ret = -ENODEV;
--		goto dgram_bind_end;
--	}
--
- 	ro->src_devaddr = addr->addr_in.devaddr;
- 	ro->bound = 1;
- 	ret = 0;
-@@ -152,7 +149,7 @@ dgram_sendmsg(struct sock *sk, struct msghdr *msg, size_t size)
- 	if (size > ndev->mtu) {
- 		netdev_dbg(ndev, "size = %zu, mtu = %u\n", size, ndev->mtu);
- 		ret = -EMSGSIZE;
--		goto dgram_sendmsg_end;
-+		goto dgram_sendmsg_no_skb;
- 	}
- 
- 	netdev_dbg(ndev, "%s: create skb\n", __func__);
-@@ -189,7 +186,6 @@ dgram_sendmsg(struct sock *sk, struct msghdr *msg, size_t size)
- 	kfree_skb(skb);
- dgram_sendmsg_no_skb:
- 	dev_put(ndev);
--
- dgram_sendmsg_end:
- 	return ret;
- }
+ 	  Say Y here to compile LoRaWAN support into the kernel or say M to
+ 	  compile it as a module.
 -- 
 2.20.1
 
