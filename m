@@ -6,28 +6,28 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 62A18C43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 18:00:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C8852C43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 18:00:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 344D9206C2
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 18:00:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A4FF9206C2
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 18:00:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728152AbfAPSAJ (ORCPT
+        id S1728196AbfAPSAR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 16 Jan 2019 13:00:09 -0500
-Received: from mga04.intel.com ([192.55.52.120]:8983 "EHLO mga04.intel.com"
+        Wed, 16 Jan 2019 13:00:17 -0500
+Received: from mga04.intel.com ([192.55.52.120]:8981 "EHLO mga04.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728014AbfAPR7n (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Jan 2019 12:59:43 -0500
+        id S1728002AbfAPR7m (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 Jan 2019 12:59:42 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from fmsmga008.fm.intel.com ([10.253.24.58])
   by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 16 Jan 2019 09:59:42 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.56,487,1539673200"; 
-   d="scan'208";a="117227809"
+   d="scan'208";a="117227804"
 Received: from unknown (HELO localhost.lm.intel.com) ([10.232.112.69])
-  by fmsmga008.fm.intel.com with ESMTP; 16 Jan 2019 09:59:42 -0800
+  by fmsmga008.fm.intel.com with ESMTP; 16 Jan 2019 09:59:41 -0800
 From:   Keith Busch <keith.busch@intel.com>
 To:     linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org,
         linux-mm@kvack.org
@@ -36,9 +36,9 @@ Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Dave Hansen <dave.hansen@intel.com>,
         Dan Williams <dan.j.williams@intel.com>,
         Keith Busch <keith.busch@intel.com>
-Subject: [PATCHv4 12/13] acpi/hmat: Register memory side cache attributes
-Date:   Wed, 16 Jan 2019 10:58:03 -0700
-Message-Id: <20190116175804.30196-13-keith.busch@intel.com>
+Subject: [PATCHv4 11/13] Documentation/ABI: Add node cache attributes
+Date:   Wed, 16 Jan 2019 10:58:02 -0700
+Message-Id: <20190116175804.30196-12-keith.busch@intel.com>
 X-Mailer: git-send-email 2.13.6
 In-Reply-To: <20190116175804.30196-1-keith.busch@intel.com>
 References: <20190116175804.30196-1-keith.busch@intel.com>
@@ -47,64 +47,55 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Register memory side cache attributes with the memory's node if HMAT
-provides the side cache iniformation table.
+Add the attributes for the system memory side caches.
 
 Signed-off-by: Keith Busch <keith.busch@intel.com>
 ---
- drivers/acpi/hmat/hmat.c | 32 ++++++++++++++++++++++++++++++++
- 1 file changed, 32 insertions(+)
+ Documentation/ABI/stable/sysfs-devices-node | 34 +++++++++++++++++++++++++++++
+ 1 file changed, 34 insertions(+)
 
-diff --git a/drivers/acpi/hmat/hmat.c b/drivers/acpi/hmat/hmat.c
-index 45e20dc677f9..9efdd0a63a79 100644
---- a/drivers/acpi/hmat/hmat.c
-+++ b/drivers/acpi/hmat/hmat.c
-@@ -206,6 +206,7 @@ static __init int hmat_parse_cache(union acpi_subtable_headers *header,
- 				   const unsigned long end)
- {
- 	struct acpi_hmat_cache *cache = (void *)header;
-+	struct node_cache_attrs cache_attrs;
- 	u32 attrs;
- 
- 	if (cache->header.length < sizeof(*cache)) {
-@@ -219,6 +220,37 @@ static __init int hmat_parse_cache(union acpi_subtable_headers *header,
- 		cache->memory_PD, cache->cache_size, attrs,
- 		cache->number_of_SMBIOShandles);
- 
-+	cache_attrs.size = cache->cache_size;
-+	cache_attrs.level = (attrs & ACPI_HMAT_CACHE_LEVEL) >> 4;
-+	cache_attrs.line_size = (attrs & ACPI_HMAT_CACHE_LINE_SIZE) >> 16;
+diff --git a/Documentation/ABI/stable/sysfs-devices-node b/Documentation/ABI/stable/sysfs-devices-node
+index 2217557f29d3..613d51fb52a3 100644
+--- a/Documentation/ABI/stable/sysfs-devices-node
++++ b/Documentation/ABI/stable/sysfs-devices-node
+@@ -142,3 +142,37 @@ Contact:	Keith Busch <keith.busch@intel.com>
+ Description:
+ 		This node's write latency in nanoseconds available to memory
+ 		initiators in nodes found in this class's initiators_nodelist.
 +
-+	switch ((attrs & ACPI_HMAT_CACHE_ASSOCIATIVITY) >> 8) {
-+	case ACPI_HMAT_CA_DIRECT_MAPPED:
-+		cache_attrs.associativity = NODE_CACHE_DIRECT_MAP;
-+		break;
-+	case ACPI_HMAT_CA_COMPLEX_CACHE_INDEXING:
-+		cache_attrs.associativity = NODE_CACHE_INDEXED;
-+		break;
-+	case ACPI_HMAT_CA_NONE:
-+	default:
-+		cache_attrs.associativity = NODE_CACHE_OTHER;
-+		break;
-+	}
++What:		/sys/devices/system/node/nodeX/side_cache/indexY/associativity
++Date:		December 2018
++Contact:	Keith Busch <keith.busch@intel.com>
++Description:
++		The caches associativity: 0 for direct mapped, non-zero if
++		indexed.
 +
-+	switch ((attrs & ACPI_HMAT_WRITE_POLICY) >> 12) {
-+	case ACPI_HMAT_CP_WB:
-+		cache_attrs.write_policy = NODE_CACHE_WRITE_BACK;
-+		break;
-+	case ACPI_HMAT_CP_WT:
-+		cache_attrs.write_policy = NODE_CACHE_WRITE_THROUGH;
-+		break;
-+	case ACPI_HMAT_CP_NONE:
-+	default:
-+		cache_attrs.write_policy = NODE_CACHE_WRITE_OTHER;
-+		break;
-+	}
++What:		/sys/devices/system/node/nodeX/side_cache/indexY/level
++Date:		December 2018
++Contact:	Keith Busch <keith.busch@intel.com>
++Description:
++		This cache's level in the memory hierarchy. Matches 'Y' in the
++		directory name.
 +
-+	node_add_cache(pxm_to_node(cache->memory_PD), &cache_attrs);
- 	return 0;
- }
- 
++What:		/sys/devices/system/node/nodeX/side_cache/indexY/line_size
++Date:		December 2018
++Contact:	Keith Busch <keith.busch@intel.com>
++Description:
++		The number of bytes accessed from the next cache level on a
++		cache miss.
++
++What:		/sys/devices/system/node/nodeX/side_cache/indexY/size
++Date:		December 2018
++Contact:	Keith Busch <keith.busch@intel.com>
++Description:
++		The size of this memory side cache in bytes.
++
++What:		/sys/devices/system/node/nodeX/side_cache/indexY/write_policy
++Date:		December 2018
++Contact:	Keith Busch <keith.busch@intel.com>
++Description:
++		The cache write policy: 0 for write-back, 1 for write-through,
++		2 for other or unknown.
 -- 
 2.14.4
 
