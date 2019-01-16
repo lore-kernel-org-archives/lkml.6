@@ -2,141 +2,170 @@ Return-Path: <SRS0=1Lvk=PY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
-	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9DAFAC43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 18:27:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C7517C43444
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 18:27:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7787320866
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 18:27:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A044520866
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 18:27:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728851AbfAPS1I (ORCPT
+        id S1728897AbfAPS1X (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 16 Jan 2019 13:27:08 -0500
-Received: from smtp1-g21.free.fr ([212.27.42.1]:4805 "EHLO smtp1-g21.free.fr"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728195AbfAPS1I (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Jan 2019 13:27:08 -0500
-Received: from tack (unknown [IPv6:2a02:8108:4840:8f74:a08c:f56:b2dd:7ae0])
-        (Authenticated sender: albeu)
-        by smtp1-g21.free.fr (Postfix) with ESMTPSA id 7A011B0058E;
-        Wed, 16 Jan 2019 19:27:00 +0100 (CET)
-Date:   Wed, 16 Jan 2019 19:26:58 +0100
-From:   Alban <albeu@free.fr>
-To:     Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Cc:     Aban Bedel <albeu@free.fr>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 3/8] nvmem: Add nvmem_cell_get_optional and
- devm_nvmem_cell_get_optional
-Message-ID: <20190116192658.7df211e8@tack>
-In-Reply-To: <de4aa31e-2d9e-a7bd-270e-f00ac3e88988@linaro.org>
-References: <20190106192820.12558-1-albeu@free.fr>
-        <20190106192820.12558-4-albeu@free.fr>
-        <de4aa31e-2d9e-a7bd-270e-f00ac3e88988@linaro.org>
-X-Mailer: Claws Mail 3.17.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        Wed, 16 Jan 2019 13:27:23 -0500
+Received: from vmicros1.altlinux.org ([194.107.17.57]:32786 "EHLO
+        vmicros1.altlinux.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728862AbfAPS1W (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 Jan 2019 13:27:22 -0500
+Received: from imap.altlinux.org (imap.altlinux.org [194.107.17.38])
+        by vmicros1.altlinux.org (Postfix) with ESMTP id 4316872CC71;
+        Wed, 16 Jan 2019 21:27:20 +0300 (MSK)
+Received: from altlinux.org (sole.flsd.net [185.75.180.6])
+        by imap.altlinux.org (Postfix) with ESMTPSA id 2791B4A4A14;
+        Wed, 16 Jan 2019 21:27:20 +0300 (MSK)
+Date:   Wed, 16 Jan 2019 21:27:19 +0300
+From:   Vitaly Chikunov <vt@altlinux.org>
+To:     David Howells <dhowells@redhat.com>
+Cc:     Tudor Ambarus <tudor-dan.ambarus@nxp.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S. Miller" <davem@davemloft.net>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        Horia =?utf-8?Q?Geant=C4=83?= <horia.geanta@nxp.com>,
+        Aymen Sghaier <aymen.sghaier@nxp.com>,
+        Tom Lendacky <thomas.lendacky@amd.com>,
+        Gary Hook <gary.hook@amd.com>,
+        Giovanni Cabiddu <giovanni.cabiddu@intel.com>,
+        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
+        keyrings@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
+        linux-arm-kernel@lists.infradead.org, qat-linux@intel.com
+Subject: Re: [RFC PATCH v2] akcipher: Introduce verify_rsa/verify for public
+ key algorithms
+Message-ID: <20190116182719.j6ii6nmn4ciiurqr@altlinux.org>
+Mail-Followup-To: David Howells <dhowells@redhat.com>,
+        Tudor Ambarus <tudor-dan.ambarus@nxp.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S. Miller" <davem@davemloft.net>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        Horia =?utf-8?Q?Geant=C4=83?= <horia.geanta@nxp.com>,
+        Aymen Sghaier <aymen.sghaier@nxp.com>,
+        Tom Lendacky <thomas.lendacky@amd.com>,
+        Gary Hook <gary.hook@amd.com>,
+        Giovanni Cabiddu <giovanni.cabiddu@intel.com>,
+        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
+        keyrings@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
+        linux-arm-kernel@lists.infradead.org, qat-linux@intel.com
+References: <20190116164703.9267-1-vt@altlinux.org>
+ <24887.1547658740@warthog.procyon.org.uk>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
- boundary="Sig_/BnuoXlM.vOTuMS9AUjPKwOp"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=koi8-r
+Content-Disposition: inline
+In-Reply-To: <24887.1547658740@warthog.procyon.org.uk>
+User-Agent: NeoMutt/20171215-106-ac61c7
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/BnuoXlM.vOTuMS9AUjPKwOp
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+David,
 
-On Tue, 15 Jan 2019 12:40:53 +0000
-Srinivas Kandagatla <srinivas.kandagatla@linaro.org> wrote:
+On Wed, Jan 16, 2019 at 05:12:20PM +0000, David Howells wrote:
+> Umm...  What do I apply this patch to?
 
-> On 06/01/2019 19:28, Alban Bedel wrote:
-> > Add helper functions to make the driver code simpler when a cell is
-> > optional. Using these functions just return NULL when the cell doesn't
-> > exists or if nvmem is disabled.
-> >=20
-> > Signed-off-by: Alban Bedel<albeu@free.fr>
-> > ---
-> >   drivers/nvmem/core.c           | 48 ++++++++++++++++++++++++++++++++++
-> >   include/linux/nvmem-consumer.h | 16 ++++++++++++
-> >   2 files changed, 64 insertions(+)
-> >=20
-> > diff --git a/drivers/nvmem/core.c b/drivers/nvmem/core.c
-> > index f8c43da6f2ca..8e1b52559467 100644
-> > --- a/drivers/nvmem/core.c
-> > +++ b/drivers/nvmem/core.c
-> > @@ -1083,6 +1083,30 @@ struct nvmem_cell *nvmem_cell_get(struct device =
-*dev, const char *id)
-> >   }
-> >   EXPORT_SYMBOL_GPL(nvmem_cell_get);
-> >  =20
-> > +/**
-> > + * nvmem_cell_get_optional() - Get an optional nvmem cell of device fr=
-om
-> > + * a given id.
-> > + *
-> > + * @dev: Device that requests the nvmem cell.
-> > + * @cell_id: nvmem cell name to get.
-> > + *
-> > + * Return: Will be NULL if no cell with the given name is defined,
-> > + * an ERR_PTR() on error or a valid pointer to a struct nvmem_cell.
-> > + * The nvmem_cell will be freed by the nvmem_cell_put().
-> > + */
-> > +struct nvmem_cell *nvmem_cell_get_optional(struct device *dev,
-> > +					   const char *cell_id)
-> > +{
-> > +	struct nvmem_cell *cell;
-> > +
-> > +	cell =3D nvmem_cell_get(dev, cell_id);
-> > +	if (IS_ERR(cell) && PTR_ERR(cell) =3D=3D -ENOENT)
-> > +		return NULL; =20
->=20
-> What is the real use-case here, it does not make sense to me to add this=
-=20
-> additional call just to return NULL when cell is not found!
+This should go over "crypto: testmgr - split akcipher tests by a key type"
+which I sent at 20190107 to linux-crypto. Sorry for the mess.
 
-It also return NULL when nvmem is not compiled in. I quiet like such
-convenience functions as they make the driver code much simpler and
-the intent explicit. It replace:
+> In your modified public_key_verify_signature():
+> 
+> > -	sg_init_one(&digest_sg, output, outlen);
+> > -	akcipher_request_set_crypt(req, &sig_sg, &digest_sg, sig->s_size,
+> > +	sg_init_one(&output_sg, output, outlen);
+> > +	akcipher_request_set_crypt(req, &sig_sg, &output_sg, sig->s_size,
+> >  				   outlen);
+> 
+> Why is the output necessary?  It was there for the decoded hash to be placed
+> in prior to comparison - but now that's not necessary.
 
-	data->cell =3D devm_nvmem_cell_get(dev, "my-cell");
-	if (IS_ERR(data->cell) {
-		if (PTR_ERR(data->cell) =3D=3D -ENOENT ||
-		    PTR_ERR(data->cell) =3D=3D -EOPNOTSUPP)
-			data->cell =3D NULL;
-		else
-			return PTR_ERR(data->cell);
-	}
+Agreed.
 
-with:
+> > -	ret = crypto_wait_req(crypto_akcipher_verify(req), &cwait);
+> > +	ret = crypto_wait_req(crypto_akcipher_verify(req, sig->digest,
+> > +						     sig->digest_size), &cwait);
+> 
+> I see sig->digest is passed in here.  Should it be passed in in place of
+> output_sg above?
 
-	data->cell =3D dev_nvmem_cell_get_optional(dev, "my-cell");
-	if (IS_ERR(cell))
-		return PTR_ERR(data->cell);
+(I tried different approaches such as passing additional arguments to
+`akcipher_request_set_crypt' or having additional setter like
+`akcipher_request_set_aux' just to set value of digest and that should
+be used just for verify op.)
 
-It's your call if you find that useful or not.
+I thought passing input parameter in `struct akcipher_request' in the
+field called 'dst' could be confusing for users. So this should be an
+additional parameter in the request which is never used by any other caller.
+Also, it was unknown if this should be scatterlist or not (I choose that
+it should not). When it's separate argument to crypto_akcipher_verify()
+call user is forced to set it, and there is no cluttering of `struct
+akcipher_request' (which is designed to handle just encryption/decryption)
+with not needed auxiliary parameters, and because it's very separated
+from request parameters which all scatterlists and all other calls
+arguments usually are not scatterlists, so this looked like similar
+approach to what others do.
 
-Alban
+> > -	inst->alg.verify = pkcs1pad_verify;
+> > +	inst->alg.verify_rsa = pkcs1pad_verify;
+> 
+> Is there a reason that pkcs1pad_verify() can't do the comparison?
 
---Sig_/BnuoXlM.vOTuMS9AUjPKwOp
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
+If you agree that we have two callbacks for a full and a partial
+verification (I assume you do), why should pkcs1pad_verify do a full
+verification if it's allowed to do just partial one, and it's RSA
+cipher which have special partial verification designed for them.
 
------BEGIN PGP SIGNATURE-----
+So I decided that pkcs1pad_verify should implement verify_rsa api only
+and this is beneficial for having minimal code change and somewhat
+backward compatible.
 
-iQIzBAEBCgAdFiEE0W61GceYqNjiMSkodJSaS524LbwFAlw/d3IACgkQdJSaS524
-Lby4OhAAk2EKLbGZ6IvsG+YelauFhWszQp2IRXo9Ff4Vwy5SyOcPw/yLuhvlXIRX
-4GTn7p6E/zNceO2bAnFcM4z4pp/qZqRMBSX4uQnQhDhs+oTRfwGWd4pZmGvJvjg+
-pGBGJn1aHBXzFM7cKB7dD54AiM6diesX946xAV55wr0FHQdZtSasntKeg6DnJn+R
-vlQf8vy2YzN6HDVDB7NVvqD/x6LYGXDcfWUtZ3f2q79Qh0sM6VKsp94AKMhjWo1/
-xeIsTX489ZZJOho62nszYDX7aFN5vPvIRKW/2AR4OnjUUofpmFUJvvCBWZWtbZtY
-zJ6OsSHSCum/wvTmQgAnydICGEQu0O5bR/MduOaObamZ9prhHnaXHf4B3OPDOjWg
-TF78q4gW+AJXvO24Sbzw6Iib+J2NpQ9+r7kHXCkhY4XnyY12rqavm5gZaICDl9Dx
-qRNHbacs8lzMx4vVNST8zFZ8/1hGP4VQrLyq4Fh4dVTa8XAV6ax30eje1DzU/aDs
-SpQJrMf2WJePsOC3MJ3pHEjjHl7AHma9A8VEWKSHOqIU2YSpL/5KOVAdhAlIPXfX
-T7ddt1AfpnnlBsgYS8Fu4vItBqdm//hJcC5j1iak2yoi3m2+/Jq1RyPmXQn/O9r9
-XE/04nOvE2+uVR9NWrob8yc+F9/Kz9lmzgA6bQVdMuB8g8alA1w=
-=p3qI
------END PGP SIGNATURE-----
+> > -	.verify = rsa_verify,
+> > +	.verify_rsa = rsa_verify,
+> 
+> Likewise verify_rsa()?
+> 
+> Granted, this might involve pkcs1pad_verify() dressing up the signature in the
+> appropriate wrappings and passing it along to verify_rsa() to do the actual
+> comparison there (ie. what pkcs1pad_verify_complete() does).
 
---Sig_/BnuoXlM.vOTuMS9AUjPKwOp--
+If we stay with the two api calls (verify and verify_rsa) pkcs1pad_verify
+does not need to do any verification leaving it to the akcipher core.
+
+There is only potential "problem" that pkcs1pad code will not be able to
+use other akciphers besides rsa family (implementing only verify_rsa),
+but I assumed this is not needed (since only RSA is actually using
+PKCS1) and maybe even beneficial restriction.
+
+> > -	.verify = caam_rsa_enc,
+> > +	.verify_rsa = caam_rsa_enc,
+> 
+> I presume this is the reason - because this reuses its encrypt operation
+> directly.  But could this instead perform the comparison upon completion, say
+> in rsa_pub_done()?
+> 
+> > -	.verify = qat_rsa_enc,
+> > +	.verify_rsa = qat_rsa_enc,
+> 
+> Again, this could do the comparison, say, in qat_rsa_cb().
+
+Abandoning idea with two api calls (full verify and partial verify_rsa)
+will require me to modify code for all these drivers for devices that I
+don't have and can't test. So, I choose approach with less new code.
+
+If you think that partial verify api should be completely removed that
+change will require much bigger rework. Please tell if you would prefer
+that.
+
+Thanks,
+
