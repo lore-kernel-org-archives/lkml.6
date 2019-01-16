@@ -2,82 +2,132 @@ Return-Path: <SRS0=1Lvk=PY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DE606C43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 19:05:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 19C8EC43612
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 19:09:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9DE5A20873
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 19:05:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547665525;
-	bh=5olV6zpSzh9GNHl6Mc46BztOq/FXTTdaN6TPBFOQYI4=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=MOBdhCUVa4DQP4D7Ri3cQUoPh7HVk0KXXjVBtlvtqSZD81Tr+7PrnrTFk3XKh5FK7
-	 fe/0SXMnWqLvFleoNMJJ+yBzB6cLSSWwcXGLHJyWtlt9xjQJp2ig52ouXSAFLXS79s
-	 S2PyIByR9FifMleTL8abpLTOKzyC2sLDUgXESXTo=
+	by mail.kernel.org (Postfix) with ESMTP id E6E29206C2
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 19:09:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730041AbfAPTFX (ORCPT
+        id S1730169AbfAPTJJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 16 Jan 2019 14:05:23 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39860 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729330AbfAPTFX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Jan 2019 14:05:23 -0500
-Received: from mail-qt1-f170.google.com (mail-qt1-f170.google.com [209.85.160.170])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 81A2E2087E;
-        Wed, 16 Jan 2019 19:05:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547665522;
-        bh=5olV6zpSzh9GNHl6Mc46BztOq/FXTTdaN6TPBFOQYI4=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=ni84c3LK2Ll4JX7SSOII9IzjQ2HXs0yXSpRhlxE1ccpgGQhz/Plr3ezxFxDuTvMV/
-         JaWF8oZyQTIAI+EGaDJ/by6SN1ya7ebUs307bzxaWssKcj+q+GyjXV7X6ATIE0LlZa
-         rcsqcyW8kQRYu5d1YHNyQnsFxweh6F/1gFBflmrY=
-Received: by mail-qt1-f170.google.com with SMTP id y20so8411277qtm.13;
-        Wed, 16 Jan 2019 11:05:22 -0800 (PST)
-X-Gm-Message-State: AJcUukf0FAou+tor0f4tCmwRFtfMtc735GUaTFwiBGoqFAEUW8+q+Ylu
-        nJO/UQqKbj6dHGs14ARqwsNo55cW0u6KhUCo3Q==
-X-Google-Smtp-Source: ALg8bN7x0PUNJi6aq5r075dFNIchbq9tvoq5SX5dzf2ErkP0fH1eink68f7p77/k3hdYt9ZcZXdiBZjePbu5T84lZys=
-X-Received: by 2002:ac8:1712:: with SMTP id w18mr8272262qtj.76.1547665521715;
- Wed, 16 Jan 2019 11:05:21 -0800 (PST)
+        Wed, 16 Jan 2019 14:09:09 -0500
+Received: from mail-qt1-f195.google.com ([209.85.160.195]:33376 "EHLO
+        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727397AbfAPTJJ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 Jan 2019 14:09:09 -0500
+Received: by mail-qt1-f195.google.com with SMTP id l11so8553166qtp.0
+        for <linux-kernel@vger.kernel.org>; Wed, 16 Jan 2019 11:09:08 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=OwZkzptQU0+HK/ylAHkmkywrAphsJk3JuztpOisP7h4=;
+        b=DZ+ZdqfW/955vqWAHHGUZ0ruJOkigEcuc1bwIRO5YaosbTjErGVVS7pdOIscnPwL5E
+         Oxlf1ZzofGQc2g02Z3VICf9vZU5AmyXnx8bMFeUkMDW/gQ1zjuuMJ6Y+/cDgGw7OhrRK
+         /V5+ajn9/nJIXB1gyMXTMUXH4rBnbG4nznU7iLQpog2yGNiFsHB0OVw/MflcDo19faF4
+         Ic81u4At5AhxmPvC79Ovcp0pLEU/WW3D5QcGRKpELwB0iRHn16GXa7kGwhBkSJTLj5X0
+         Hkozfhdh2ivOBgewPNPOYK3BPM2oQR5xFQbZICZGiiyLWpmMnwfLwIsMGnUDQ54CoUuY
+         mZrQ==
+X-Gm-Message-State: AJcUukcWp44OC0JJiQf+R7FLT+uIGlEchkI7h35+m1cJTks4huvF6UBY
+        DcpwmpJABcDFNiLCsJOKT5JVZA==
+X-Google-Smtp-Source: ALg8bN72g6BOZ/DkDSJTug7/jwiWWw414sMyuv3HMnGi2M194/lpE9XDn9XSC6nSpz3HYV+B6lBGIQ==
+X-Received: by 2002:aed:3722:: with SMTP id i31mr8636706qtb.289.1547665748041;
+        Wed, 16 Jan 2019 11:09:08 -0800 (PST)
+Received: from ?IPv6:2601:602:9800:dae6::fb21? ([2601:602:9800:dae6::fb21])
+        by smtp.gmail.com with ESMTPSA id q17sm59341058qtc.19.2019.01.16.11.09.05
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 16 Jan 2019 11:09:06 -0800 (PST)
+Subject: Re: kernel BUG at kernel/cred.c:825!
+To:     Dave Jones <davej@codemonkey.org.uk>,
+        Linux Kernel <linux-kernel@vger.kernel.org>,
+        Trond Myklebust <trond.myklebust@hammerspace.com>,
+        Anna Schumaker <anna.schumaker@netapp.com>,
+        linux-nfs@vger.kernel.org
+References: <20190107191841.nejcug5dcdrt5e3a@codemonkey.org.uk>
+From:   Laura Abbott <labbott@redhat.com>
+Message-ID: <577c9205-ca83-459e-dd2a-5dfed1d2df25@redhat.com>
+Date:   Wed, 16 Jan 2019 11:09:04 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-References: <1546949500-30044-1-git-send-email-krzk@kernel.org>
-In-Reply-To: <1546949500-30044-1-git-send-email-krzk@kernel.org>
-From:   Rob Herring <robh+dt@kernel.org>
-Date:   Wed, 16 Jan 2019 13:05:10 -0600
-X-Gmail-Original-Message-ID: <CAL_JsqK=hE4T4YOsbvYFAwrVed8fECtAPhiHp7Z8PhD1XyQ3jQ@mail.gmail.com>
-Message-ID: <CAL_JsqK=hE4T4YOsbvYFAwrVed8fECtAPhiHp7Z8PhD1XyQ3jQ@mail.gmail.com>
-Subject: Re: [PATCH] dt-bindings: soc: qcom: Fix trivial language typos
-To:     Krzysztof Kozlowski <krzk@kernel.org>
-Cc:     Andy Gross <andy.gross@linaro.org>,
-        David Brown <david.brown@linaro.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Jiri Kosina <trivial@kernel.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        devicetree@vger.kernel.org,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20190107191841.nejcug5dcdrt5e3a@codemonkey.org.uk>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 8, 2019 at 6:11 AM Krzysztof Kozlowski <krzk@kernel.org> wrote:
->
-> Fix few trivial language typos in bindings.
->
-> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
-> ---
->  Documentation/devicetree/bindings/soc/qcom/qcom,glink.txt | 2 +-
->  Documentation/devicetree/bindings/soc/qcom/qcom,smp2p.txt | 4 ++--
->  2 files changed, 3 insertions(+), 3 deletions(-)
->
+On 1/7/19 11:18 AM, Dave Jones wrote:
+> [   53.980701] NFSD: Using /var/lib/nfs/v4recovery as the NFSv4 state recovery directory
+> [   53.981216] NFSD: starting 45-second grace period (net f0000098)
+> [   54.006802] CRED: Invalid credentials
+> [   54.006880] CRED: At ./include/linux/cred.h:253
+> [   54.006899] CRED: Specified credentials: 000000005daa4529
+> [   54.006916] CRED: ->magic=0, put_addr=          (null)
+> [   54.006927] CRED: ->usage=1, subscr=0
+> [   54.006935] CRED: ->*uid = { 0,0,0,0 }
+> [   54.006944] CRED: ->*gid = { 0,0,0,0 }
+> [   54.006954] ------------[ cut here ]------------
+> [   54.006964] kernel BUG at kernel/cred.c:825!
+> [   54.006977] invalid opcode: 0000 [#1] SMP RIP: __invalid_creds+0x48/0x50
+> [   54.006987] CPU: 2 PID: 814 Comm: mount.nfs Tainted: G        W         5.0.0-rc1-backup+ #1
+> [   54.006997] Hardware name: ASUS All Series/Z97-DELUXE, BIOS 2602 08/18/2015
+> [   54.007171] RIP: 0010:__invalid_creds+0x48/0x50
+> [   54.007184] Code: 44 89 e2 48 89 ee 48 c7 c7 37 3e 53 ba e8 f7 8f 03 00 48 c7 c6 49 3e 53 ba 48 89 df 65 48 8b 14 25 80 4e 01 00 e8 48 fd ff ff <0f> 0b 66 0f 1f 44 00 00 0f 1f 44 00 00 55 48 89 e5 41 56 49 89 fe
+> [   54.007207] RSP: 0018:ffffc90000e33a30 EFLAGS: 00010286
+> [   54.007219] RAX: 000000000000001a RBX: ffffffffba960300 RCX: 0000000000000006
+> [   54.007234] RDX: 0000000000000000 RSI: ffff8884276f8818 RDI: ffff88842f895710
+> [   54.007246] RBP: ffffffffba5274c3 R08: 0000000000000001 R09: 0000000000000000
+> [   54.007254] R10: ffffc90000e33a50 R11: 0000000000000000 R12: 00000000000000fd
+> [   54.007261] R13: ffff88842c1a6a08 R14: ffffffffba960300 R15: ffffc90000e33d60
+> [   54.007269] FS:  00007f73770cb140(0000) GS:ffff88842f880000(0000) knlGS:0000000000000000
+> [   54.007277] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> [   54.007283] CR2: 00005557d17d1000 CR3: 00000004122ba006 CR4: 00000000001606e0
+> [   54.007359] Call Trace:
+> [   54.007366]  nfs4_discover_server_trunking+0x286/0x310
+> [   54.007376]  nfs4_init_client+0xe8/0x260
+> [   54.007389]  ? nfs_get_client+0x519/0x610
+> [   54.007401]  ? _raw_spin_unlock+0x24/0x30
+> [   54.007412]  ? nfs_get_client+0x519/0x610
+> [   54.007424]  nfs4_set_client+0xb8/0x100
+> [   54.007439]  nfs4_create_server+0xfe/0x270
+> [   54.007451]  ? pcpu_alloc+0x611/0x8a0
+> [   54.007462]  nfs4_remote_mount+0x28/0x50
+> [   54.007474]  mount_fs+0xf/0x80
+> [   54.007487]  vfs_kern_mount+0x62/0x160
+> [   54.007498]  nfs_do_root_mount+0x7f/0xc0
+> [   54.007510]  nfs4_try_mount+0x3f/0xc0
+> [   54.007521]  ? get_nfs_version+0x11/0x50
+> [   54.007536]  nfs_fs_mount+0x61b/0xbd0
+> [   54.007548]  ? rcu_read_lock_sched_held+0x66/0x70
+> [   54.007560]  ? nfs_clone_super+0x70/0x70
+> [   54.007571]  ? nfs_destroy_inode+0x20/0x20
+> [   54.007585]  ? mount_fs+0xf/0x80
+> [   54.007595]  mount_fs+0xf/0x80
+> [   54.007606]  vfs_kern_mount+0x62/0x160
+> [   54.007618]  do_mount+0x1d1/0xd40
+> [   54.007631]  ? copy_mount_options+0xd2/0x170
+> [   54.007643]  ksys_mount+0x7e/0xd0
+> [   54.007654]  __x64_sys_mount+0x21/0x30
+> [   54.007665]  do_syscall_64+0x6d/0x660
+> [   54.007677]  ? trace_hardirqs_off_thunk+0x1a/0x1c
+> [   54.007690]  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+> [   54.007702] RIP: 0033:0x7f7377e97a1a
+> [   54.007713] Code: 48 8b 0d 71 e4 0b 00 f7 d8 64 89 01 48 83 c8 ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 44 00 00 49 89 ca b8 a5 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 8b 0d 3e e4 0b 00 f7 d8 64 89 01 48
+> [   54.007736] RSP: 002b:00007ffc73d9b4a8 EFLAGS: 00000202 ORIG_RAX: 00000000000000a5
+> [   54.007751] RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007f7377e97a1a
+> [   54.007764] RDX: 00005632beb51b50 RSI: 00005632beb51b70 RDI: 00005632beb53880
+> [   54.007780] RBP: 00007ffc73d9b600 R08: 00005632beb556b0 R09: 33643a303036343a
+> [   54.007794] R10: 0000000000000c00 R11: 0000000000000202 R12: 00007ffc73d9b600
+> [   54.007807] R13: 00005632beb548a0 R14: 000000000000001c R15: 00007ffc73d9b510
+> 
 
-Applied, thanks.
-
-Rob
+Fedora still seems to be hitting this as of -rc2
