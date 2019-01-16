@@ -2,125 +2,166 @@ Return-Path: <SRS0=1Lvk=PY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7DEB9C43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 08:48:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 38C53C43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 08:50:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 47EBB20840
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 08:48:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F196420840
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 08:50:54 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="b75uGW5L"
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="MyPBB15S"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389533AbfAPIsg (ORCPT
+        id S2390202AbfAPIux (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 16 Jan 2019 03:48:36 -0500
-Received: from mail-eopbgr30081.outbound.protection.outlook.com ([40.107.3.81]:43774
-        "EHLO EUR03-AM5-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2388743AbfAPIsg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Jan 2019 03:48:36 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=7KH1hrngfGhtmSD9y6vpXgNNTfxPho2lwqmSJd0NLZc=;
- b=b75uGW5LlIYq+LvYWDzv4xZkTTf07Ya/sxsWEsletKgozpYSbW1xTi4eqZM8BrM/PxVOVkWkQoF2HK9e43FE+cm5xBwfoXfkUZ4Ulj1uBCO3e7fXOzhvT/wWoBmCKzwb/bjQUcdQ++cZrrkcTyz9VlEvtrS0vtTPf8YNhSTpQmU=
-Received: from VI1PR04MB5134.eurprd04.prod.outlook.com (20.177.50.159) by
- VI1PR04MB2157.eurprd04.prod.outlook.com (10.166.43.143) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1516.18; Wed, 16 Jan 2019 08:48:28 +0000
-Received: from VI1PR04MB5134.eurprd04.prod.outlook.com
- ([fe80::9c6e:406c:e2bd:c293]) by VI1PR04MB5134.eurprd04.prod.outlook.com
- ([fe80::9c6e:406c:e2bd:c293%5]) with mapi id 15.20.1537.018; Wed, 16 Jan 2019
- 08:48:28 +0000
-From:   Laurentiu Tudor <laurentiu.tudor@nxp.com>
-To:     Wolfram Sang <wsa@the-dreams.de>
-CC:     "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
-        dl-linux-imx <linux-imx@nxp.com>,
-        "shawnguo@kernel.org" <shawnguo@kernel.org>,
-        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
-        "kernel@pengutronix.de" <kernel@pengutronix.de>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Leo Li <leoyang.li@nxp.com>
-Subject: Re: [PATCH] i2c: imx: defer probing on dma channel request
-Thread-Topic: [PATCH] i2c: imx: defer probing on dma channel request
-Thread-Index: AQHUrNscebgymanw5EqY6/es3fB8+KWw4HEAgAC2V4A=
-Date:   Wed, 16 Jan 2019 08:48:28 +0000
-Message-ID: <633db479-e1be-3b8b-45c4-06d1b651fe12@nxp.com>
-References: <20190115140332.30417-1-laurentiu.tudor@nxp.com>
- <20190115215549.sepj7rmpqmtlxwbw@ninjato>
-In-Reply-To: <20190115215549.sepj7rmpqmtlxwbw@ninjato>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=laurentiu.tudor@nxp.com; 
-x-originating-ip: [86.34.165.90]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;VI1PR04MB2157;6:9DnXq/9LwAuLeT24a7UC9gkHWstdaCeiu8cntKPHWccC+P66+7zE2STASZpCXLWiso63RkJciBuNhiSrmomT707ghTWJ8mzpx9oDf70H6uuWGBMXhaGD0+8vAjPtLpbhlcnalp8/peFggZAX6QstnPejWHQjnmIXX2TCgtjhgfE+bNTR7hao+FzUhuUYy7MNsNcfR78KW6ipvBh17gkMPhg8+o4aABIhzLI0fcUt+gCxW+KIZJiM4BUia78o6CL0VJ2Ag26s2xxCKLzggOzh7xPkru7KlPc1a0ZGHLMKtr5amtJQsYV85fd36GhT5eOyHzEb4jjxShooHPiTFRjHJqHdbRy7jaYfXOmpGIZhyLVnb4I/k2cs9YtvFTtKSC8E4SEjC7Z50jPQ2+Uxg1+145rfvo0sXjTify7ngvK91HoWUXfdYhVnf0aW2KvI+Bv8Y7HuGjo+dpvjJjJz6Cbb3g==;5:/iySYbRQ/uUWdZPt9JjidUfVSb4znjY5vRV0X+uJmPVLREYu5G92GmbckQWbY6ATMpzI2lYVKZvLL9I+Iy7ODDrT4Xe7gxK7KCRZG0hu8iZGzHIShQne2T5S0+07W+2IYeKQEeg188vbvGg+ff1ctinlKiOXfLbSfPcgd5uyFnvcYUKJ5/QfSQb5n+oHZuB4gW87ZvQliRMcKPg8qRTBHQ==;7:uS7NKiKJvmng4nSToS92uZCn2Nn4npBmJ5+AxUtBinpENIgMXMXunts2U5abnpBaggI6DFNdZGQhlq6w0C9GuSA47/eE79ilEgDttyVSDH2vmA65w8Q2+nvASp/SlBw2yGUhWleVX6S2S1FW+JQ2Uw==
-x-ms-exchange-antispam-srfa-diagnostics: SOS;
-x-ms-office365-filtering-correlation-id: 697b2dd5-0701-44f6-2a8d-08d67b8f62b0
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600109)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:VI1PR04MB2157;
-x-ms-traffictypediagnostic: VI1PR04MB2157:
-x-microsoft-antispam-prvs: <VI1PR04MB2157D86CC52664ECF0D1CF45EC820@VI1PR04MB2157.eurprd04.prod.outlook.com>
-x-forefront-prvs: 091949432C
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(39860400002)(346002)(396003)(376002)(136003)(366004)(189003)(199004)(71200400001)(71190400001)(6436002)(6486002)(6512007)(6306002)(6916009)(229853002)(7736002)(26005)(102836004)(8936002)(53546011)(81166006)(81156014)(68736007)(14444005)(256004)(305945005)(6506007)(11346002)(446003)(31696002)(476003)(5660300001)(2616005)(76176011)(86362001)(2906002)(186003)(8676002)(44832011)(54906003)(99286004)(486006)(6246003)(31686004)(316002)(66066001)(53936002)(966005)(97736004)(478600001)(6116002)(3846002)(106356001)(105586002)(4326008)(25786009)(14454004)(36756003);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR04MB2157;H:VI1PR04MB5134.eurprd04.prod.outlook.com;FPR:;SPF:None;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: Sz/RTeXUHrrO2EeTGIbCAJvNsGvfk4fM0ls/qEnoKRjsUxBCUolT+xuAfCQB7g3kmAsP3XYpWRWd1H4+wjv6zS67irkj2qjfDEW15hXv9c3D4zMJUfEF21Kt05Er3Hn4mBZaqf542VU6Xvx9WU5k+B7/d1t7lR7kwl5Ebn+x04HGqOicqgYnyisYlb1dspQ+RGPVMU5/4tSQ8D+ZauZcDqmED6Xsn4EXyblo+v8ZAzQacYR6Boj5CUkbtMPva5u9dIAg4m2wceaZ23B/CH4TTvQkl+K8qNVQ4DePBGd1dABDv4j0MfIl6k2JUF8QPP8TZZwvzH+Pzaf6Y7OVyfVkBjatubdxqYtib4A0nYsvZNA9tjwg/NPBJjeMnwkg2t5XaH0qeXvTVrs5gzyfVkKgZEAo6Rh/GoJtilK5DITYOko=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="Windows-1252"
-Content-ID: <1515DFC079315A43BEFC0B7DB76310FF@eurprd04.prod.outlook.com>
-Content-Transfer-Encoding: quoted-printable
+        Wed, 16 Jan 2019 03:50:53 -0500
+Received: from lelv0142.ext.ti.com ([198.47.23.249]:51074 "EHLO
+        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388743AbfAPIuw (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 Jan 2019 03:50:52 -0500
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id x0G8ojTN125431;
+        Wed, 16 Jan 2019 02:50:45 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1547628645;
+        bh=425qREL/d4ieoG4MQbhMpgrNG1BhOdFWngd/gRiwhPg=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=MyPBB15S1Y3erOQsH+ike8WfLBG6TnhWhKF5iPyMMP4VXsI85yk3ujRwi63MPyY3R
+         LvUNcj8SQO1scvDOWc9aUlGriFzN/vVep85DMNkxxXt+35zgeV3JiudlRsNTfHRQxh
+         npskchZPmfY1W8AQIPH592s8jkFI6nH7lJ2zg5A0=
+Received: from DFLE109.ent.ti.com (dfle109.ent.ti.com [10.64.6.30])
+        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x0G8oj6e084578
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 16 Jan 2019 02:50:45 -0600
+Received: from DFLE100.ent.ti.com (10.64.6.21) by DFLE109.ent.ti.com
+ (10.64.6.30) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Wed, 16
+ Jan 2019 02:50:45 -0600
+Received: from dflp33.itg.ti.com (10.64.6.16) by DFLE100.ent.ti.com
+ (10.64.6.21) with Microsoft SMTP Server (version=TLS1_0,
+ cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1591.10 via Frontend Transport;
+ Wed, 16 Jan 2019 02:50:45 -0600
+Received: from [172.24.190.233] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by dflp33.itg.ti.com (8.14.3/8.13.8) with ESMTP id x0G8ofln022388;
+        Wed, 16 Jan 2019 02:50:41 -0600
+Subject: Re: [PATCH v2 3/6] phy: qcom-qusb2: Add QUSB2 PHY support for msm8998
+To:     Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Jeffrey Hugo <jhugo@codeaurora.org>
+CC:     <andy.gross@linaro.org>, <david.brown@linaro.org>,
+        <linux-arm-msm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <robh+dt@kernel.org>, <mark.rutland@arm.com>,
+        <devicetree@vger.kernel.org>, <gregkh@linuxfoundation.org>,
+        <balbi@kernel.org>, <linux-usb@vger.kernel.org>
+References: <1547483802-5408-1-git-send-email-jhugo@codeaurora.org>
+ <20190115181114.GE28907@builder>
+From:   Kishon Vijay Abraham I <kishon@ti.com>
+Message-ID: <72cedbb9-c64b-a142-7c0d-64cb15f7ce00@ti.com>
+Date:   Wed, 16 Jan 2019 14:20:18 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 697b2dd5-0701-44f6-2a8d-08d67b8f62b0
-X-MS-Exchange-CrossTenant-originalarrivaltime: 16 Jan 2019 08:48:28.4104
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR04MB2157
+In-Reply-To: <20190115181114.GE28907@builder>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
 
-On 15.01.2019 23:55, Wolfram Sang wrote:
-> Hi,
->=20
-> On Tue, Jan 15, 2019 at 04:03:32PM +0200, Laurentiu Tudor wrote:
->> If the dma controller is not yet probed, defer i2c probe.
->> The error path in probe was slightly modified (no functional change)
->> to avoid triggering this WARN_ON():
->> "cg-pll0-div1 already disabled
->> WARNING: CPU: 1 PID: 1 at drivers/clk/clk.c:828 clk_core_disable+0xa8/0x=
-b0"
+
+On 15/01/19 11:41 PM, Bjorn Andersson wrote:
+> On Mon 14 Jan 08:36 PST 2019, Jeffrey Hugo wrote:
+> 
+>> MSM8998 contains one QUSB2 PHY which is very similar to the existing
+>> sdm845 support.
 >>
->> Signed-off-by: Laurentiu Tudor <laurentiu.tudor@nxp.com>
->=20
-> I just applied this series to i2c/for-next:
->=20
-> http://patchwork.ozlabs.org/project/linux-i2c/list/?series=3D85099&state=
-=3D*
->=20
-> I haven't checked carefully but maybe it fixes/changes your issue?=20
+> 
+I don't seem to have the dt-binding patch in my inbox. Can you send them as well?
 
-Not really as it doesn't seem to defer probing until the dma controller=20
-gets probed.
-
-> If not, your patch most likely will need a rebase on top of the above.
-
-Will rebase on latest i2c tree and re-send.
-
----
-Best Regards, Laurentiu=
+Thanks
+Kishon
+> Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+> 
+>> Signed-off-by: Jeffrey Hugo <jhugo@codeaurora.org>
+>> ---
+>>  drivers/phy/qualcomm/phy-qcom-qusb2.c | 41 +++++++++++++++++++++++++++++++++++
+>>  1 file changed, 41 insertions(+)
+>>
+>> diff --git a/drivers/phy/qualcomm/phy-qcom-qusb2.c b/drivers/phy/qualcomm/phy-qcom-qusb2.c
+>> index 9177989f..e5e4f36 100644
+>> --- a/drivers/phy/qualcomm/phy-qcom-qusb2.c
+>> +++ b/drivers/phy/qualcomm/phy-qcom-qusb2.c
+>> @@ -152,6 +152,32 @@ enum qusb2phy_reg_layout {
+>>  	QUSB2_PHY_INIT_CFG(QUSB2PHY_PLL_PWR_CTRL, 0x00),
+>>  };
+>>  
+>> +static const unsigned int msm8998_regs_layout[] = {
+>> +	[QUSB2PHY_PLL_CORE_INPUT_OVERRIDE] = 0xa8,
+>> +	[QUSB2PHY_PLL_STATUS]              = 0x1a0,
+>> +	[QUSB2PHY_PORT_TUNE1]              = 0x23c,
+>> +	[QUSB2PHY_PORT_TUNE2]              = 0x240,
+>> +	[QUSB2PHY_PORT_TUNE3]              = 0x244,
+>> +	[QUSB2PHY_PORT_TUNE4]              = 0x248,
+>> +	[QUSB2PHY_PORT_TEST1]              = 0x24c,
+>> +	[QUSB2PHY_PORT_TEST2]              = 0x250,
+>> +	[QUSB2PHY_PORT_POWERDOWN]          = 0x210,
+>> +	[QUSB2PHY_INTR_CTRL]               = 0x22c,
+>> +};
+>> +
+>> +static const struct qusb2_phy_init_tbl msm8998_init_tbl[] = {
+>> +	QUSB2_PHY_INIT_CFG(QUSB2PHY_PLL_ANALOG_CONTROLS_TWO, 0x13),
+>> +	QUSB2_PHY_INIT_CFG(QUSB2PHY_PLL_CLOCK_INVERTERS, 0x7c),
+>> +	QUSB2_PHY_INIT_CFG(QUSB2PHY_PLL_CMODE, 0x80),
+>> +	QUSB2_PHY_INIT_CFG(QUSB2PHY_PLL_LOCK_DELAY, 0x0a),
+>> +
+>> +	QUSB2_PHY_INIT_CFG_L(QUSB2PHY_PORT_TUNE1, 0xa5),
+>> +	QUSB2_PHY_INIT_CFG_L(QUSB2PHY_PORT_TUNE2, 0x09),
+>> +
+>> +	QUSB2_PHY_INIT_CFG(QUSB2PHY_PLL_DIGITAL_TIMERS_TWO, 0x19),
+>> +};
+>> +
+>> +
+>>  static const unsigned int sdm845_regs_layout[] = {
+>>  	[QUSB2PHY_PLL_CORE_INPUT_OVERRIDE] = 0xa8,
+>>  	[QUSB2PHY_PLL_STATUS]		= 0x1a0,
+>> @@ -221,6 +247,18 @@ struct qusb2_phy_cfg {
+>>  	.autoresume_en	 = BIT(3),
+>>  };
+>>  
+>> +static const struct qusb2_phy_cfg msm8998_phy_cfg = {
+>> +	.tbl            = msm8998_init_tbl,
+>> +	.tbl_num        = ARRAY_SIZE(msm8998_init_tbl),
+>> +	.regs           = msm8998_regs_layout,
+>> +
+>> +	.disable_ctrl   = POWER_DOWN,
+>> +	.mask_core_ready = CORE_READY_STATUS,
+>> +	.has_pll_override = true,
+>> +	.autoresume_en   = BIT(0),
+>> +	.update_tune1_with_efuse = true,
+>> +};
+>> +
+>>  static const struct qusb2_phy_cfg sdm845_phy_cfg = {
+>>  	.tbl		= sdm845_init_tbl,
+>>  	.tbl_num	= ARRAY_SIZE(sdm845_init_tbl),
+>> @@ -734,6 +772,9 @@ static int qusb2_phy_exit(struct phy *phy)
+>>  		.compatible	= "qcom,msm8996-qusb2-phy",
+>>  		.data		= &msm8996_phy_cfg,
+>>  	}, {
+>> +		.compatible	= "qcom,msm8998-qusb2-phy",
+>> +		.data		= &msm8998_phy_cfg,
+>> +	}, {
+>>  		.compatible	= "qcom,sdm845-qusb2-phy",
+>>  		.data		= &sdm845_phy_cfg,
+>>  	},
+>> -- 
+>> Qualcomm Datacenter Technologies as an affiliate of Qualcomm Technologies, Inc.
+>> Qualcomm Technologies, Inc. is a member of the
+>> Code Aurora Forum, a Linux Foundation Collaborative Project.
+>>
