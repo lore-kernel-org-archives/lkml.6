@@ -3,99 +3,93 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D2534C43612
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 09:37:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A541DC43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 09:39:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A24F220840
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 09:37:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6F1C420840
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 09:39:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391714AbfAPJht (ORCPT
+        id S2391734AbfAPJjL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 16 Jan 2019 04:37:49 -0500
-Received: from mga01.intel.com ([192.55.52.88]:30317 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2391688AbfAPJhs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Jan 2019 04:37:48 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga007.fm.intel.com ([10.253.24.52])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 16 Jan 2019 01:37:48 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,485,1539673200"; 
-   d="scan'208";a="115060200"
-Received: from mylly.fi.intel.com (HELO [10.237.72.89]) ([10.237.72.89])
-  by fmsmga007.fm.intel.com with ESMTP; 16 Jan 2019 01:37:46 -0800
-Subject: Re: [PATCH] PCI: fix using __initdata memory after free in
- disable_acs_redir parameter
-To:     Logan Gunthorpe <logang@deltatee.com>, linux-pci@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Bjorn Helgaas <bhelgaas@google.com>
-Cc:     Stephen Bates <sbates@raithlin.com>
-References: <20190115173203.14850-1-logang@deltatee.com>
-From:   Jarkko Nikula <jarkko.nikula@linux.intel.com>
-Message-ID: <48a93172-25a2-d6a6-e908-7d27249f1bc2@linux.intel.com>
-Date:   Wed, 16 Jan 2019 11:37:46 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
-MIME-Version: 1.0
-In-Reply-To: <20190115173203.14850-1-logang@deltatee.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
+        Wed, 16 Jan 2019 04:39:11 -0500
+Received: from Mailgw01.mediatek.com ([1.203.163.78]:58213 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1729019AbfAPJjL (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 Jan 2019 04:39:11 -0500
+X-UUID: 078d37c2db33413ea58da6945614a314-20190116
+X-UUID: 078d37c2db33413ea58da6945614a314-20190116
+Received: from mtkcas32.mediatek.inc [(172.27.4.250)] by mailgw01.mediatek.com
+        (envelope-from <min.guo@mediatek.com>)
+        (mailgw01.mediatek.com ESMTP with TLS)
+        with ESMTP id 621702362; Wed, 16 Jan 2019 17:39:06 +0800
+Received: from MTKCAS36.mediatek.inc (172.27.4.186) by MTKMBS31N2.mediatek.inc
+ (172.27.4.87) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Wed, 16 Jan
+ 2019 17:39:04 +0800
+Received: from [10.17.3.153] (10.17.3.153) by MTKCAS36.mediatek.inc
+ (172.27.4.170) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Wed, 16 Jan 2019 17:39:02 +0800
+Message-ID: <1547631542.4433.232.camel@mhfsdcap03>
+Subject: Re: [PATCH v2 4/4] usb: musb: Add support for MediaTek musb
+ controller
+From:   Min Guo <min.guo@mediatek.com>
+To:     Bin Liu <b-liu@ti.com>
+CC:     Rob Herring <robh+dt@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "Matthias Brugger" <matthias.bgg@gmail.com>,
+        Alan Stern <stern@rowland.harvard.edu>,
+        <chunfeng.yun@mediatek.com>, <linux-usb@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>,
+        Yonglong Wu <yonglong.wu@mediatek.com>
+Date:   Wed, 16 Jan 2019 17:39:02 +0800
+In-Reply-To: <20190115203815.GD18026@uda0271908>
+References: <1547516626-5084-1-git-send-email-min.guo@mediatek.com>
+         <1547516626-5084-5-git-send-email-min.guo@mediatek.com>
+         <20190115203815.GD18026@uda0271908>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.2.3-0ubuntu6 
 Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi
+Hi Bin,
 
-On 1/15/19 7:32 PM, Logan Gunthorpe wrote:
-> The disable_acs_redir parameter stores a pointer to the string passed to
-> pci_setup(). However, the string passed to PCI setup is actually a
-> temporary copy allocated in static __initdata memory. After init, once
-> the memory is freed, it is no longer valid to reference this pointer.
+On Tue, 2019-01-15 at 14:38 -0600, Bin Liu wrote:
+> Hi Min,
 > 
-> This bug was noticed in v5.0-rc1 after a change in commit c5eb1190074c
-> ("PCI / PM: Allow runtime PM without callback functions") caused
-> pci_disable_acs_redir() to be called during shutdown which manifested
-> as an unable to handle kernel paging request at:
+> very close, thanks.
+> Below I tried to explain a further cleanup in musb_clearb/w() and
+> musb_get/set_toggle() implementation. Please let me know if it is not
+> clear.
 > 
-> RIP: 0010:pci_enable_acs+0x3f/0x1e0
-> Call Trace:
->     pci_restore_state.part.44+0x159/0x3c0
->     pci_restore_standard_config+0x33/0x40
->     pci_pm_runtime_resume+0x2b/0xd0
->     ? pci_restore_standard_config+0x40/0x40
->     __rpm_callback+0xbc/0x1b0
->     rpm_callback+0x1f/0x70
->     ? pci_restore_standard_config+0x40/0x40
->      rpm_resume+0x4f9/0x710
->     ? pci_conf1_read+0xb6/0xf0
->     ? pci_conf1_write+0xb2/0xe0
->     __pm_runtime_resume+0x47/0x70
->     pci_device_shutdown+0x1e/0x60
-
-So this doesn't happen if you revert c5eb1190074c?
-
-I guess this is due dev->state_saved being true set by 
-pci_pm_runtime_suspend() -> pci_save_state() after my patch and now 
-pci_pm_runtime_resume() -> pci_restore_standard_config() -> 
-pci_restore_state() reach the pci_enable_acs(). I think this is possible 
-to trigger also before my patch if device has the runtime PM callback 
-defined?
-
-> It was also likely possible to trigger this bug when hotplugging PCI
-> devices.
+> Basically, we don't need musb_default_clearb/w(), just assign the
+> musb_io function pointers to musb_readb/w().
 > 
-> To fix this, instead of storing a pointer, we use kstrdup to copy the
-> disable_acs_redir_param to its own buffer which will never be freed.
-> 
-I wasn't able to trigger this but I saw
-"PCI: Can't parse disable_acs_redir parameter: " followed by a few lines 
-of junk during boot when I defined pci=disable_acs_redir=0000:00:xy.z 
-which disappear after your patch.
+> Then the mtk platform musb_clearb/w() calls musb_readb/w() and
+> musb_writeb/w() to handle W1C.
 
-Tested-by: Jarkko Nikula <jarkko.nikula@linux.intel.com>
-Reviewed-by: Jarkko Nikula <jarkko.nikula@linux.intel.com>
+Sorry to bother you again, I encounter a problem when prepare the patch.
+The define of musb_clearb/w and musb_readb/w are difference as follow,
+and cannot be directly assigned:
+u8/u16 (*readb/w)(const void __iomem *addr, unsigned offset)
+void (*clearb/w)(void __iomem *addr, unsigned int offset)) 
+
+if modify clearb/w as:
+u8/u16 (*clearb/w)(const void __iomem *addr, unsigned int offset)) 
+then musb_clear needs writeb/w the const addr.
+Can I delete const in (*readb/w)?
+
+> regards,
+> -Bin.
+
+
