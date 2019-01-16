@@ -2,237 +2,107 @@ Return-Path: <SRS0=1Lvk=PY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DATE_IN_PAST_96_XX,
-	DKIM_SIGNED,DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNWANTED_LANGUAGE_BODY
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A0881C43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 23:05:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3FC4EC43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 23:06:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6385D20840
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 23:05:23 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=fjfi.cvut.cz header.i=@fjfi.cvut.cz header.b="YvIgHfgM"
+	by mail.kernel.org (Postfix) with ESMTP id 189D920675
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 23:06:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387881AbfAPXFV (ORCPT
+        id S2388023AbfAPXGJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 16 Jan 2019 18:05:21 -0500
-Received: from mailgw1.fjfi.cvut.cz ([147.32.9.3]:45652 "EHLO
-        mailgw1.fjfi.cvut.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726196AbfAPXDz (ORCPT
+        Wed, 16 Jan 2019 18:06:09 -0500
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:49958 "EHLO
+        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387980AbfAPXGG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Jan 2019 18:03:55 -0500
-Received: from localhost (localhost [127.0.0.1])
-        by mailgw1.fjfi.cvut.cz (Postfix) with ESMTP id 90E1AB03C8;
-        Wed, 16 Jan 2019 23:55:43 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fjfi.cvut.cz;
-        s=20151024; t=1547679343; i=@fjfi.cvut.cz;
-        bh=zhDqzAiUIfAJYs/kqmBNjAqyV8MAuWGL2Hmgk0052M0=;
-        h=From:Date:Subject:To:Cc;
-        b=YvIgHfgMrP8e4Mhz2quJLFiFug2JxG0NG+z2YxmJYyo7Kpbgai8PMEkeuH4AAu2Tw
-         i3N7aW4XGm+ZDmbArIQbPjHhEK+MD8zvzJhUuRijCLQVLtl7/d00U96TaC1cvsKeMw
-         13UK56EKtKCzGtFEYkUDoKPaUIuJta7zHvuR5zkI=
-X-CTU-FNSPE-Virus-Scanned: amavisd-new at fjfi.cvut.cz
-Received: from mailgw1.fjfi.cvut.cz ([127.0.0.1])
-        by localhost (mailgw1.fjfi.cvut.cz [127.0.0.1]) (amavisd-new, port 10022)
-        with ESMTP id qHnGM52njcXe; Wed, 16 Jan 2019 23:55:38 +0100 (CET)
-Received: from linux.fjfi.cvut.cz (linux.fjfi.cvut.cz [147.32.5.111])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mailgw1.fjfi.cvut.cz (Postfix) with ESMTPS id 47BEBADF0E;
-        Wed, 16 Jan 2019 23:55:38 +0100 (CET)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailgw1.fjfi.cvut.cz 47BEBADF0E
-Received: by linux.fjfi.cvut.cz (Postfix, from userid 1001)
-        id 2333D6004E; Wed, 16 Jan 2019 23:55:38 +0100 (CET)
-From:   David Kozub <zub@linux.fjfi.cvut.cz>
-Date:   Thu, 8 Nov 2018 22:50:19 +0100
-Subject: [PATCH 04/16] block: sed-opal: close parameter list in cmd_finalize
-To:     Jens Axboe <axboe@kernel.dk>, Scott Bauer <scott.bauer@intel.com>,
-        Jonathan Derrick <jonathan.derrick@intel.com>,
-        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Jonas Rabenstein <jonas.rabenstein@studium.uni-erlangen.de>
-Message-Id: <20190116225538.2333D6004E@linux.fjfi.cvut.cz>
+        Wed, 16 Jan 2019 18:06:06 -0500
+Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
+        id 59011801E9; Thu, 17 Jan 2019 00:05:57 +0100 (CET)
+Date:   Thu, 17 Jan 2019 00:06:02 +0100
+From:   Pavel Machek <pavel@ucw.cz>
+To:     Tony Lindgren <tony@atomide.com>
+Cc:     linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-omap@vger.kernel.org,
+        Jarkko Nikula <jarkko.nikula@bitmer.com>,
+        Johan Hovold <johan@kernel.org>,
+        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+        Marcel Partap <mpartap@gmx.net>,
+        Merlijn Wajer <merlijn@wizzup.org>,
+        Michael Scott <hashcode0f@gmail.com>,
+        NeKit <nekit1000@gmail.com>, omerlle@gmail.com,
+        Sebastian Reichel <sre@kernel.org>,
+        Peter Ujfalusi <peter.ujfalusi@ti.com>,
+        Rob Herring <robh@kernel.org>
+Subject: Re: WIP Droid 4 voice calls, GNSS & PM with a TS 27.010 serdev driver
+Message-ID: <20190116230602.GA3131@amd>
+References: <20181217004450.GW6707@atomide.com>
+ <20181227101647.GA32260@amd>
+ <20181228193105.GW6707@atomide.com>
+ <20190116135829.GA10426@amd>
+ <20190116145904.GM5544@atomide.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="MGYHOYXEY6WxJCY8"
+Content-Disposition: inline
+In-Reply-To: <20190116145904.GM5544@atomide.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Every step ends by calling cmd_finalize (via finalize_and_send)
-yet every step adds the token OPAL_ENDLIST on its own. Moving
-this into cmd_finalize decreases code duplication.
 
-Co-authored-by: Jonas Rabenstein <jonas.rabenstein@studium.uni-erlangen.de>
-Signed-off-by: David Kozub <zub@linux.fjfi.cvut.cz>
-Signed-off-by: Jonas Rabenstein <jonas.rabenstein@studium.uni-erlangen.de>
----
- block/sed-opal.c | 25 +++----------------------
- 1 file changed, 3 insertions(+), 22 deletions(-)
+--MGYHOYXEY6WxJCY8
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/block/sed-opal.c b/block/sed-opal.c
-index 980705681806..35b1747b650f 100644
---- a/block/sed-opal.c
-+++ b/block/sed-opal.c
-@@ -661,6 +661,9 @@ static int cmd_finalize(struct opal_dev *cmd, u32 hsn, u32 tsn)
- 	struct opal_header *hdr;
- 	int err = 0;
- 
-+	/* close parameter list */
-+	add_token_u8(&err, cmd, OPAL_ENDLIST);
-+
- 	add_token_u8(&err, cmd, OPAL_ENDOFDATA);
- 	add_token_u8(&err, cmd, OPAL_STARTLIST);
- 	add_token_u8(&err, cmd, 0);
-@@ -1079,7 +1082,6 @@ static int gen_key(struct opal_dev *dev, void *data)
- 	add_token_bytestring(&err, dev, opalmethod[OPAL_GENKEY],
- 			     OPAL_UID_LENGTH);
- 	add_token_u8(&err, dev, OPAL_STARTLIST);
--	add_token_u8(&err, dev, OPAL_ENDLIST);
- 
- 	if (err) {
- 		pr_debug("Error building gen key command\n");
-@@ -1142,7 +1144,6 @@ static int get_active_key(struct opal_dev *dev, void *data)
- 	add_token_u8(&err, dev, 10); /* ActiveKey */
- 	add_token_u8(&err, dev, OPAL_ENDNAME);
- 	add_token_u8(&err, dev, OPAL_ENDLIST);
--	add_token_u8(&err, dev, OPAL_ENDLIST);
- 	if (err) {
- 		pr_debug("Error building get active key command\n");
- 		return err;
-@@ -1188,7 +1189,6 @@ static int generic_lr_enable_disable(struct opal_dev *dev,
- 
- 	add_token_u8(&err, dev, OPAL_ENDLIST);
- 	add_token_u8(&err, dev, OPAL_ENDNAME);
--	add_token_u8(&err, dev, OPAL_ENDLIST);
- 	return err;
- }
- 
-@@ -1254,8 +1254,6 @@ static int setup_locking_range(struct opal_dev *dev, void *data)
- 
- 		add_token_u8(&err, dev, OPAL_ENDLIST);
- 		add_token_u8(&err, dev, OPAL_ENDNAME);
--		add_token_u8(&err, dev, OPAL_ENDLIST);
--
- 	}
- 	if (err) {
- 		pr_debug("Error building Setup Locking range command.\n");
-@@ -1295,7 +1293,6 @@ static int start_generic_opal_session(struct opal_dev *dev,
- 
- 	switch (auth) {
- 	case OPAL_ANYBODY_UID:
--		add_token_u8(&err, dev, OPAL_ENDLIST);
- 		break;
- 	case OPAL_ADMIN1_UID:
- 	case OPAL_SID_UID:
-@@ -1308,7 +1305,6 @@ static int start_generic_opal_session(struct opal_dev *dev,
- 		add_token_bytestring(&err, dev, opaluid[auth],
- 				     OPAL_UID_LENGTH);
- 		add_token_u8(&err, dev, OPAL_ENDNAME);
--		add_token_u8(&err, dev, OPAL_ENDLIST);
- 		break;
- 	default:
- 		pr_debug("Cannot start Admin SP session with auth %d\n", auth);
-@@ -1406,7 +1402,6 @@ static int start_auth_opal_session(struct opal_dev *dev, void *data)
- 	add_token_u8(&err, dev, 3);
- 	add_token_bytestring(&err, dev, lk_ul_user, OPAL_UID_LENGTH);
- 	add_token_u8(&err, dev, OPAL_ENDNAME);
--	add_token_u8(&err, dev, OPAL_ENDLIST);
- 
- 	if (err) {
- 		pr_debug("Error building STARTSESSION command.\n");
-@@ -1429,7 +1424,6 @@ static int revert_tper(struct opal_dev *dev, void *data)
- 	add_token_bytestring(&err, dev, opalmethod[OPAL_REVERT],
- 			     OPAL_UID_LENGTH);
- 	add_token_u8(&err, dev, OPAL_STARTLIST);
--	add_token_u8(&err, dev, OPAL_ENDLIST);
- 	if (err) {
- 		pr_debug("Error building REVERT TPER command.\n");
- 		return err;
-@@ -1463,7 +1457,6 @@ static int internal_activate_user(struct opal_dev *dev, void *data)
- 	add_token_u8(&err, dev, OPAL_ENDNAME);
- 	add_token_u8(&err, dev, OPAL_ENDLIST);
- 	add_token_u8(&err, dev, OPAL_ENDNAME);
--	add_token_u8(&err, dev, OPAL_ENDLIST);
- 
- 	if (err) {
- 		pr_debug("Error building Activate UserN command.\n");
-@@ -1490,7 +1483,6 @@ static int erase_locking_range(struct opal_dev *dev, void *data)
- 	add_token_bytestring(&err, dev, opalmethod[OPAL_ERASE],
- 			     OPAL_UID_LENGTH);
- 	add_token_u8(&err, dev, OPAL_STARTLIST);
--	add_token_u8(&err, dev, OPAL_ENDLIST);
- 
- 	if (err) {
- 		pr_debug("Error building Erase Locking Range Command.\n");
-@@ -1521,7 +1513,6 @@ static int set_mbr_done(struct opal_dev *dev, void *data)
- 	add_token_u8(&err, dev, OPAL_ENDNAME);
- 	add_token_u8(&err, dev, OPAL_ENDLIST);
- 	add_token_u8(&err, dev, OPAL_ENDNAME);
--	add_token_u8(&err, dev, OPAL_ENDLIST);
- 
- 	if (err) {
- 		pr_debug("Error Building set MBR Done command\n");
-@@ -1553,7 +1544,6 @@ static int set_mbr_enable_disable(struct opal_dev *dev, void *data)
- 	add_token_u8(&err, dev, OPAL_ENDNAME);
- 	add_token_u8(&err, dev, OPAL_ENDLIST);
- 	add_token_u8(&err, dev, OPAL_ENDNAME);
--	add_token_u8(&err, dev, OPAL_ENDLIST);
- 
- 	if (err) {
- 		pr_debug("Error Building set MBR done command\n");
-@@ -1585,7 +1575,6 @@ static int generic_pw_cmd(u8 *key, size_t key_len, u8 *cpin_uid,
- 	add_token_u8(&err, dev, OPAL_ENDNAME);
- 	add_token_u8(&err, dev, OPAL_ENDLIST);
- 	add_token_u8(&err, dev, OPAL_ENDNAME);
--	add_token_u8(&err, dev, OPAL_ENDLIST);
- 
- 	return err;
- }
-@@ -1694,7 +1683,6 @@ static int add_user_to_lr(struct opal_dev *dev, void *data)
- 	add_token_u8(&err, dev, OPAL_ENDNAME);
- 	add_token_u8(&err, dev, OPAL_ENDLIST);
- 	add_token_u8(&err, dev, OPAL_ENDNAME);
--	add_token_u8(&err, dev, OPAL_ENDLIST);
- 
- 	if (err) {
- 		pr_debug("Error building add user to locking range command.\n");
-@@ -1755,7 +1743,6 @@ static int lock_unlock_locking_range(struct opal_dev *dev, void *data)
- 
- 	add_token_u8(&err, dev, OPAL_ENDLIST);
- 	add_token_u8(&err, dev, OPAL_ENDNAME);
--	add_token_u8(&err, dev, OPAL_ENDLIST);
- 
- 	if (err) {
- 		pr_debug("Error building SET command.\n");
-@@ -1843,11 +1830,8 @@ static int activate_lsp(struct opal_dev *dev, void *data)
- 		}
- 		add_token_u8(&err, dev, OPAL_ENDLIST);
- 		add_token_u8(&err, dev, OPAL_ENDNAME);
--		add_token_u8(&err, dev, OPAL_ENDLIST);
--
- 	} else {
- 		add_token_u8(&err, dev, OPAL_STARTLIST);
--		add_token_u8(&err, dev, OPAL_ENDLIST);
- 	}
- 
- 	if (err) {
-@@ -1904,7 +1888,6 @@ static int get_lsp_lifecycle(struct opal_dev *dev, void *data)
- 	add_token_u8(&err, dev, 6); /* Lifecycle Column */
- 	add_token_u8(&err, dev, OPAL_ENDNAME);
- 
--	add_token_u8(&err, dev, OPAL_ENDLIST);
- 	add_token_u8(&err, dev, OPAL_ENDLIST);
- 
- 	if (err) {
-@@ -1964,8 +1947,6 @@ static int get_msid_cpin_pin(struct opal_dev *dev, void *data)
- 	add_token_u8(&err, dev, 4); /* End Column */
- 	add_token_u8(&err, dev, 3); /* Lifecycle Column */
- 	add_token_u8(&err, dev, OPAL_ENDNAME);
--
--	add_token_u8(&err, dev, OPAL_ENDLIST);
- 	add_token_u8(&err, dev, OPAL_ENDLIST);
- 
- 	if (err) {
--- 
-2.20.1
+Hi!
 
+> Yeah the scripts in droid4-sms-tools git repo work for me for sending
+> and receiving. They do not work with cdma currently as the format is
+> different.
+>=20
+> Maybe you've managed to change the mode of the modem to queue the
+> messages with the at commands to the usb port?
+
+I did not have ttyUSB open during that boot. I hope this kind of
+settings does not survive across reboots.
+
+> You are reading and writing to /dev/motmdm9 for incoming sms right?
+
+Yes, I think so. Same one where hex-coded PDU comes.
+
+> > > My logs show that Android uses two different commands for ack.
+> > > Either AT+GCNMA=3D1 or AT+CNMA=3D0,0 gets used depending on something
+> > > that I have no idea of.. Maybe the network connected?
+>=20
+> I think AT+GCNMA=3D1 works 3g and AT+CNMA=3D0,0 with cdma. Or it could be
+> that one of them is just a delayed ack, I don't know.
+
+Strange. It does not seem to be recognized at all.
+
+Best regards,
+									Pavel
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
+
+--MGYHOYXEY6WxJCY8
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEARECAAYFAlw/uNoACgkQMOfwapXb+vJkJgCgtVXOjauuirufh27+aE7wL1wK
+srwAoKKn3ZrHosTe5XBvcVSlcKcXrF59
+=UwGO
+-----END PGP SIGNATURE-----
+
+--MGYHOYXEY6WxJCY8--
