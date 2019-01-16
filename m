@@ -2,143 +2,203 @@ Return-Path: <SRS0=1Lvk=PY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3CF64C43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 22:36:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 55CE5C43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 22:37:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1222A20652
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 22:36:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 19D0B20652
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 22:37:54 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=lca.pw header.i=@lca.pw header.b="bkspQSD7"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387400AbfAPWgl (ORCPT
+        id S2387412AbfAPWhw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 16 Jan 2019 17:36:41 -0500
-Received: from youngberry.canonical.com ([91.189.89.112]:52369 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732911AbfAPWgk (ORCPT
+        Wed, 16 Jan 2019 17:37:52 -0500
+Received: from mail-qt1-f194.google.com ([209.85.160.194]:44744 "EHLO
+        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1733147AbfAPWhw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Jan 2019 17:36:40 -0500
-Received: from static-50-53-47-167.bvtn.or.frontiernet.net ([50.53.47.167] helo=[192.168.192.153])
-        by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_128_CBC_SHA1:16)
-        (Exim 4.76)
-        (envelope-from <john.johansen@canonical.com>)
-        id 1gjtna-0006om-4T; Wed, 16 Jan 2019 22:36:38 +0000
-Subject: Re: WARNING in apparmor_cred_free
-To:     James Morris <jmorris@namei.org>,
-        Casey Schaufler <casey@schaufler-ca.com>
-Cc:     linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org, serge@hallyn.com
-References: <0000000000007f604f057f2b8509@google.com>
- <6213e783-4377-489d-cdfb-1a83f4497076@schaufler-ca.com>
- <b0d2811e-87e4-21d4-c33a-2d2012a906cc@canonical.com>
- <2ccf6281-3f4b-a94a-ed71-31905e583fa6@schaufler-ca.com>
- <234c868b-4521-0707-a135-d8c24bc179bd@schaufler-ca.com>
- <99cd1f6b-682e-7d1f-35ad-b9092d46323f@schaufler-ca.com>
- <alpine.LRH.2.21.1901170814170.7422@namei.org>
-From:   John Johansen <john.johansen@canonical.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=john.johansen@canonical.com; prefer-encrypt=mutual; keydata=
- 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
-Organization: Canonical
-Message-ID: <81e41439-7b32-45cf-465a-19dd14f6f3ef@canonical.com>
-Date:   Wed, 16 Jan 2019 14:36:34 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
-MIME-Version: 1.0
-In-Reply-To: <alpine.LRH.2.21.1901170814170.7422@namei.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+        Wed, 16 Jan 2019 17:37:52 -0500
+Received: by mail-qt1-f194.google.com with SMTP id n32so9178385qte.11
+        for <linux-kernel@vger.kernel.org>; Wed, 16 Jan 2019 14:37:51 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=lca.pw; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=iEbt3vOpW1vSXw8Y1FUZOQX7cwVTiCMvjhJS6q091Dw=;
+        b=bkspQSD7184VxjjBLkKwOTG622pr36brd8Dq/hG2mn+DxTuOrgj86l9WC+tajy1NTw
+         HEGnhl2KOM27ps5YVEOBOny36/OCNuPh9aYj7g4YLqsh7JulUh4Q+9OWJDaZAm3Wt7Ta
+         MhhhKojyNMJGjHLa5ykvJ51BLXc34Ca3O+Al9JkfnUaoJvid1AkB4+ucbkTP7N4PIoSd
+         ObO0U1PFHilL9hIgK+u43pa7C5VKmMKPkeRXEmhKbNj9W0CB55DisQI8DouVOwhgT3da
+         uQDZA8xHE/u2WejORZwUnPesgjkq01O/83OJZ1Ud+Xi6gIBmMWpCsxQd3WBWZw3snnIk
+         STRA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=iEbt3vOpW1vSXw8Y1FUZOQX7cwVTiCMvjhJS6q091Dw=;
+        b=NBGxDyydwYidDgt15TC1WHuEXbbpOK1W9QG9C4aVkpMoMLf8PWBpoQBYBYrrIwEWcC
+         J4eAJN9yX95ad58GkUBPibx5452stLT/E773OMfu+3pS+Xf9RMcNaRpZS1WgBzjtQO+7
+         UWsLwZIFX4gqxPqI39efDNUXEnxbD0QsOkSg9sa9815267wlslEy/3LxFH+5b81tA56u
+         tVh2uIerjbgeeQVll7HcVN6J+LrdL07qIMIuwhSzDumvNbERG+7uMLJMdTZ1TMEIAzof
+         9j2bl1mc8V3ksxQShK2JZd7K60gsMX7N3Vef9/fJozPPvGRkasluOEp/bH4IglK/1W9r
+         ytYQ==
+X-Gm-Message-State: AJcUukfYhlGTkKPAhjAyhVojw9T4A4MF7tJf7TQwE/8+iavhUnUfcjRW
+        ZfGGesjJOZI8BtFeNgjA4fQuDg==
+X-Google-Smtp-Source: ALg8bN7XMYiVZj43cLvnPQFjWqoat8WwSgO+9DO+IrX8MEY5lR3QwMtA7Jtw3GYM/oDbVdJGp0ee4Q==
+X-Received: by 2002:a0c:edcb:: with SMTP id i11mr8881817qvr.95.1547678270693;
+        Wed, 16 Jan 2019 14:37:50 -0800 (PST)
+Received: from ovpn-120-55.rdu2.redhat.com (pool-71-184-117-43.bstnma.fios.verizon.net. [71.184.117.43])
+        by smtp.gmail.com with ESMTPSA id p48sm59906393qtp.62.2019.01.16.14.37.49
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 16 Jan 2019 14:37:50 -0800 (PST)
+From:   Qian Cai <cai@lca.pw>
+To:     cl@linux.com, penberg@kernel.org, rientjes@google.com,
+        iamjoonsoo.kim@lge.com, akpm@linux-foundation.org
+Cc:     catalin.marinas@arm.com, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, Qian Cai <cai@lca.pw>
+Subject: [PATCH] slab: kmemleak no scan alien caches
+Date:   Wed, 16 Jan 2019 17:37:20 -0500
+Message-Id: <20190116223720.84181-1-cai@lca.pw>
+X-Mailer: git-send-email 2.17.2 (Apple Git-113)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 1/16/19 1:14 PM, James Morris wrote:
-> On Fri, 11 Jan 2019, Casey Schaufler wrote:
-> 
->> >From 47134986133c822e1d88860fa2b108f92c97a7ff Mon Sep 17 00:00:00 2001
->> From: Casey Schaufler <casey@schaufler-ca.com>
->> Date: Fri, 11 Jan 2019 17:31:50 -0800
->> Subject: [PATCH 1/2] LSM: Check for NULL cred-security on free
->>
->> Check that the cred security blob has been set before trying
->> to clean it up. There is a case during credential initialization
->> that could result in this.
->>
->> Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
-> 
-> JJ: does this fix the problem?
-> 
+Kmemleak throws endless warnings during boot due to in
+__alloc_alien_cache(),
 
-sorry for not responding earlier, yes it does.
+alc = kmalloc_node(memsize, gfp, node);
+init_arraycache(&alc->ac, entries, batch);
+kmemleak_no_scan(ac);
 
-Acked-by: John Johansen <john.johansen@canonical.com>
+Kmemleak does not track the array cache (alc->ac) but the alien cache
+(alc) instead, so let it track the later by lifting kmemleak_no_scan()
+out of init_arraycache().
 
->> ---
->>  security/security.c | 7 +++++++
->>  1 file changed, 7 insertions(+)
->>
->> diff --git a/security/security.c b/security/security.c
->> index a618e22df5c6..7bffc86d4e87 100644
->> --- a/security/security.c
->> +++ b/security/security.c
->> @@ -1477,6 +1477,13 @@ int security_cred_alloc_blank(struct cred *cred, gfp_t gfp)
->>  
->>  void security_cred_free(struct cred *cred)
->>  {
->> +	/*
->> +	 * There is a failure case in prepare_creds() that
->> +	 * may result in a call here with ->security being NULL.
->> +	 */
->> +	if (unlikely(cred->security == NULL))
->> +		return;
->> +
->>  	call_void_hook(cred_free, cred);
->>  
->>  	kfree(cred->security);
->>
-> 
+There is another place calls init_arraycache(), but
+alloc_kmem_cache_cpus() uses the percpu allocation where will never be
+considered as a leak.
+
+[   32.258841] kmemleak: Found object by alias at 0xffff8007b9aa7e38
+[   32.258847] CPU: 190 PID: 1 Comm: swapper/0 Not tainted 5.0.0-rc2+ #2
+[   32.258851] Call trace:
+[   32.258858]  dump_backtrace+0x0/0x168
+[   32.258863]  show_stack+0x24/0x30
+[   32.258868]  dump_stack+0x88/0xb0
+[   32.258873]  lookup_object+0x84/0xac
+[   32.258877]  find_and_get_object+0x84/0xe4
+[   32.258882]  kmemleak_no_scan+0x74/0xf4
+[   32.258887]  setup_kmem_cache_node+0x2b4/0x35c
+[   32.258892]  __do_tune_cpucache+0x250/0x2d4
+[   32.258896]  do_tune_cpucache+0x4c/0xe4
+[   32.258901]  enable_cpucache+0xc8/0x110
+[   32.258905]  setup_cpu_cache+0x40/0x1b8
+[   32.258909]  __kmem_cache_create+0x240/0x358
+[   32.258913]  create_cache+0xc0/0x198
+[   32.258918]  kmem_cache_create_usercopy+0x158/0x20c
+[   32.258922]  kmem_cache_create+0x50/0x64
+[   32.258928]  fsnotify_init+0x58/0x6c
+[   32.258932]  do_one_initcall+0x194/0x388
+[   32.258937]  kernel_init_freeable+0x668/0x688
+[   32.258941]  kernel_init+0x18/0x124
+[   32.258946]  ret_from_fork+0x10/0x18
+[   32.258950] kmemleak: Object 0xffff8007b9aa7e00 (size 256):
+[   32.258954] kmemleak:   comm "swapper/0", pid 1, jiffies 4294697137
+[   32.258958] kmemleak:   min_count = 1
+[   32.258962] kmemleak:   count = 0
+[   32.258965] kmemleak:   flags = 0x1
+[   32.258969] kmemleak:   checksum = 0
+[   32.258972] kmemleak:   backtrace:
+[   32.258977]      kmemleak_alloc+0x84/0xb8
+[   32.258982]      kmem_cache_alloc_node_trace+0x31c/0x3a0
+[   32.258987]      __kmalloc_node+0x58/0x78
+[   32.258991]      setup_kmem_cache_node+0x26c/0x35c
+[   32.258996]      __do_tune_cpucache+0x250/0x2d4
+[   32.259001]      do_tune_cpucache+0x4c/0xe4
+[   32.259005]      enable_cpucache+0xc8/0x110
+[   32.259010]      setup_cpu_cache+0x40/0x1b8
+[   32.259014]      __kmem_cache_create+0x240/0x358
+[   32.259018]      create_cache+0xc0/0x198
+[   32.259022]      kmem_cache_create_usercopy+0x158/0x20c
+[   32.259026]      kmem_cache_create+0x50/0x64
+[   32.259031]      fsnotify_init+0x58/0x6c
+[   32.259035]      do_one_initcall+0x194/0x388
+[   32.259039]      kernel_init_freeable+0x668/0x688
+[   32.259043]      kernel_init+0x18/0x124
+[   32.259048] kmemleak: Not scanning unknown object at 0xffff8007b9aa7e38
+[   32.259052] CPU: 190 PID: 1 Comm: swapper/0 Not tainted 5.0.0-rc2+ #2
+[   32.259056] Call trace:
+[   32.259060]  dump_backtrace+0x0/0x168
+[   32.259065]  show_stack+0x24/0x30
+[   32.259070]  dump_stack+0x88/0xb0
+[   32.259074]  kmemleak_no_scan+0x90/0xf4
+[   32.259078]  setup_kmem_cache_node+0x2b4/0x35c
+[   32.259083]  __do_tune_cpucache+0x250/0x2d4
+[   32.259088]  do_tune_cpucache+0x4c/0xe4
+[   32.259092]  enable_cpucache+0xc8/0x110
+[   32.259096]  setup_cpu_cache+0x40/0x1b8
+[   32.259100]  __kmem_cache_create+0x240/0x358
+[   32.259104]  create_cache+0xc0/0x198
+[   32.259108]  kmem_cache_create_usercopy+0x158/0x20c
+[   32.259112]  kmem_cache_create+0x50/0x64
+[   32.259116]  fsnotify_init+0x58/0x6c
+[   32.259120]  do_one_initcall+0x194/0x388
+[   32.259125]  kernel_init_freeable+0x668/0x688
+[   32.259129]  kernel_init+0x18/0x124
+[   32.259133]  ret_from_fork+0x10/0x18
+
+Fixes: 1fe00d50a9e8 (slab: factor out initialization of array cache)
+Signed-off-by: Qian Cai <cai@lca.pw>
+---
+ mm/slab.c | 17 +++++++++--------
+ 1 file changed, 9 insertions(+), 8 deletions(-)
+
+diff --git a/mm/slab.c b/mm/slab.c
+index 78eb8c5bf4e4..0aff454f007b 100644
+--- a/mm/slab.c
++++ b/mm/slab.c
+@@ -550,14 +550,6 @@ static void start_cpu_timer(int cpu)
+ 
+ static void init_arraycache(struct array_cache *ac, int limit, int batch)
+ {
+-	/*
+-	 * The array_cache structures contain pointers to free object.
+-	 * However, when such objects are allocated or transferred to another
+-	 * cache the pointers are not cleared and they could be counted as
+-	 * valid references during a kmemleak scan. Therefore, kmemleak must
+-	 * not scan such objects.
+-	 */
+-	kmemleak_no_scan(ac);
+ 	if (ac) {
+ 		ac->avail = 0;
+ 		ac->limit = limit;
+@@ -573,6 +565,14 @@ static struct array_cache *alloc_arraycache(int node, int entries,
+ 	struct array_cache *ac = NULL;
+ 
+ 	ac = kmalloc_node(memsize, gfp, node);
++	/*
++	 * The array_cache structures contain pointers to free object.
++	 * However, when such objects are allocated or transferred to another
++	 * cache the pointers are not cleared and they could be counted as
++	 * valid references during a kmemleak scan. Therefore, kmemleak must
++	 * not scan such objects.
++	 */
++	kmemleak_no_scan(ac);
+ 	init_arraycache(ac, entries, batchcount);
+ 	return ac;
+ }
+@@ -667,6 +667,7 @@ static struct alien_cache *__alloc_alien_cache(int node, int entries,
+ 
+ 	alc = kmalloc_node(memsize, gfp, node);
+ 	if (alc) {
++		kmemleak_no_scan(alc);
+ 		init_arraycache(&alc->ac, entries, batch);
+ 		spin_lock_init(&alc->lock);
+ 	}
+-- 
+2.17.2 (Apple Git-113)
 
