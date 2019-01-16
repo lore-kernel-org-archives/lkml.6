@@ -2,127 +2,157 @@ Return-Path: <SRS0=1Lvk=PY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1489BC43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 13:11:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C8636C43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 13:12:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E3A7C206C2
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 13:11:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 92C61206C2
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 13:12:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2393003AbfAPNLt (ORCPT
+        id S2393016AbfAPNMA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 16 Jan 2019 08:11:49 -0500
-Received: from szxga07-in.huawei.com ([45.249.212.35]:43084 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2390326AbfAPNLr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Jan 2019 08:11:47 -0500
-Received: from DGGEMS410-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id D8A9C3EA12F2C37541A4;
-        Wed, 16 Jan 2019 21:11:44 +0800 (CST)
-Received: from 138.huawei.com (10.175.124.28) by smtp.huawei.com (10.3.19.210)
- with Microsoft SMTP Server (TLS) id 14.3.408.0; Wed, 16 Jan 2019 21:11:37
- +0800
-From:   Gao Xiang <gaoxiang25@huawei.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        <devel@driverdev.osuosl.org>
-CC:     Chao Yu <yuchao0@huawei.com>, LKML <linux-kernel@vger.kernel.org>,
-        <linux-erofs@lists.ozlabs.org>, Chao Yu <chao@kernel.org>,
-        Miao Xie <miaoxie@huawei.com>, <weidu.du@huawei.com>,
-        Fang Wei <fangwei1@huawei.com>,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        Gao Xiang <gaoxiang25@huawei.com>
-Subject: [PATCH v2 3/5] staging: erofs: move shrink accounting inside the function
-Date:   Wed, 16 Jan 2019 21:10:10 +0800
-Message-ID: <20190116131010.44542-1-gaoxiang25@huawei.com>
-X-Mailer: git-send-email 2.14.4
-In-Reply-To: <75258956-db6f-501e-f022-536134c53911@huawei.com>
-References: <75258956-db6f-501e-f022-536134c53911@huawei.com>
+        Wed, 16 Jan 2019 08:12:00 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:59648 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S2392952AbfAPNL7 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 Jan 2019 08:11:59 -0500
+Received: from pps.filterd (m0098417.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id x0GD9JHW085449
+        for <linux-kernel@vger.kernel.org>; Wed, 16 Jan 2019 08:11:57 -0500
+Received: from e12.ny.us.ibm.com (e12.ny.us.ibm.com [129.33.205.202])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2q23ekd8tm-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Wed, 16 Jan 2019 08:11:57 -0500
+Received: from localhost
+        by e12.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
+        Wed, 16 Jan 2019 13:11:56 -0000
+Received: from b01cxnp22034.gho.pok.ibm.com (9.57.198.24)
+        by e12.ny.us.ibm.com (146.89.104.199) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Wed, 16 Jan 2019 13:11:51 -0000
+Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
+        by b01cxnp22034.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x0GDBojr21954598
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 16 Jan 2019 13:11:50 GMT
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 68292B206A;
+        Wed, 16 Jan 2019 13:11:50 +0000 (GMT)
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 46D1DB205F;
+        Wed, 16 Jan 2019 13:11:50 +0000 (GMT)
+Received: from paulmck-ThinkPad-W541 (unknown [9.85.203.159])
+        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
+        Wed, 16 Jan 2019 13:11:50 +0000 (GMT)
+Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
+        id 6238E16C618A; Wed, 16 Jan 2019 05:11:50 -0800 (PST)
+Date:   Wed, 16 Jan 2019 05:11:50 -0800
+From:   "Paul E. McKenney" <paulmck@linux.ibm.com>
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     Alan Stern <stern@rowland.harvard.edu>,
+        Andrea Parri <andrea.parri@amarulasolutions.com>,
+        LKMM Maintainers -- Akira Yokosawa <akiyks@gmail.com>,
+        Boqun Feng <boqun.feng@gmail.com>,
+        Daniel Lustig <dlustig@nvidia.com>,
+        David Howells <dhowells@redhat.com>,
+        Jade Alglave <j.alglave@ucl.ac.uk>,
+        Luc Maranget <luc.maranget@inria.fr>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        linux-kernel@vger.kernel.org
+Subject: Re: Plain accesses and data races in the Linux Kernel Memory Model
+Reply-To: paulmck@linux.ibm.com
+References: <20190115142545.GA9255@andrea>
+ <Pine.LNX.4.44L0.1901151003470.1408-100000@iolanthe.rowland.org>
+ <20190116115752.GB10803@hirez.programming.kicks-ass.net>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.175.124.28]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190116115752.GB10803@hirez.programming.kicks-ass.net>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-TM-AS-GCONF: 00
+x-cbid: 19011613-0060-0000-0000-000002FA6673
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00010417; HX=3.00000242; KW=3.00000007;
+ PH=3.00000004; SC=3.00000274; SDB=6.01147300; UDB=6.00597622; IPR=6.00927595;
+ MB=3.00025155; MTD=3.00000008; XFM=3.00000015; UTC=2019-01-16 13:11:55
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19011613-0061-0000-0000-000047F1D072
+Message-Id: <20190116131150.GH1215@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-01-16_05:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=928 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1901160110
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch moves the &erofs_global_shrink_cnt accounting
-from the caller to erofs_workgroup_get().  It's cleaner and
-it matches erofs_workgroup_put() better. No behavior change.
+On Wed, Jan 16, 2019 at 12:57:52PM +0100, Peter Zijlstra wrote:
+> On Tue, Jan 15, 2019 at 10:19:10AM -0500, Alan Stern wrote:
+> > On Tue, 15 Jan 2019, Andrea Parri wrote:
+> > 
+> > > Unless I'm mis-reading/-applying this definition, this will flag the
+> > > following test (a variation on your "race.litmus") with "data-race":
+> > > 
+> > > C no-race
+> > > 
+> > > {}
+> > > 
+> > > P0(int *x, spinlock_t *s)
+> > > {
+> > > 	spin_lock(s);
+> > >         WRITE_ONCE(*x, 1);	/* A */
+> > > 	spin_unlock(s);	/* B */
+> > > }
+> > > 
+> > > P1(int *x, spinlock_t *s)
+> > > {
+> > >         int r1;
+> > > 
+> > > 	spin_lock(s); /* C */
+> > >         r1 = *x;	/* D */
+> > > 	spin_unlock(s);
+> > > }
+> > > 
+> > > exists (1:r1=1)
+> > > 
+> > > Broadly speaking, this is due to the fact that the modified "happens-
+> > > before" axiom does not forbid the execution with the (MP-) cycle
+> > > 
+> > > 	A ->po-rel B ->rfe C ->acq-po D ->fre A
+> > > 
+> > > and then to the link "D ->race-from-r A" here defined.
+> > 
+> > Yes, that cycle certainly should be forbidden.  On the other hand, we
+> > don't want to insist that C happens before D, given that D may not
+> > happen at all.
+> > 
+> > This is a real problem.  Can we solve it by adding a modified
+> > "happens-before" which says essentially that _if_ D is preserved _then_
+> > C happens before D?  But then what about cycles involving more than one
+> > possibly preserved access?  Or maybe a relation which says that D
+> > cannot execute before C (so if D executes at all, it has to come after
+> > C)?
+> 
+> The latter; there is a compiler barrier implied at the end of
+> spin_lock() such that anything later (in PO) must indeed be later.
+> 
+> > Now you see why this stuff is so difficult...  At the moment, I don't
+> > know how to fix this.
 
-Reviewed-by: Chao Yu <yuchao0@huawei.com>
-Reviewed-by: Dan Carpenter <dan.carpenter@oracle.com>
-Signed-off-by: Gao Xiang <gaoxiang25@huawei.com>
----
-change log v2:
- - fix commit message as Dan Carpenter pointed out to make more clear.
+In the spirit of cutting the Gordian Knot...
 
-Thanks,
-Gao Xiang
+Given that we are flagging data races, how much do we really lose by
+simply ignoring the possibility of removed accesses?
 
- drivers/staging/erofs/utils.c | 17 +++++++----------
- 1 file changed, 7 insertions(+), 10 deletions(-)
-
-diff --git a/drivers/staging/erofs/utils.c b/drivers/staging/erofs/utils.c
-index d24945aab133..5695efaeb43a 100644
---- a/drivers/staging/erofs/utils.c
-+++ b/drivers/staging/erofs/utils.c
-@@ -34,29 +34,29 @@ static atomic_long_t erofs_global_shrink_cnt;
- #define __erofs_workgroup_get(grp)	atomic_inc(&(grp)->refcount)
- #define __erofs_workgroup_put(grp)	atomic_dec(&(grp)->refcount)
- 
--static int erofs_workgroup_get(struct erofs_workgroup *grp, int *ocnt)
-+static int erofs_workgroup_get(struct erofs_workgroup *grp)
- {
- 	int o;
- 
- repeat:
- 	o = erofs_wait_on_workgroup_freezed(grp);
--
- 	if (unlikely(o <= 0))
- 		return -1;
- 
- 	if (unlikely(atomic_cmpxchg(&grp->refcount, o, o + 1) != o))
- 		goto repeat;
- 
--	*ocnt = o;
-+	/* decrease refcount paired by erofs_workgroup_put */
-+	if (unlikely(o == 1))
-+		atomic_long_dec(&erofs_global_shrink_cnt);
- 	return 0;
- }
- 
--struct erofs_workgroup *erofs_find_workgroup(
--	struct super_block *sb, pgoff_t index, bool *tag)
-+struct erofs_workgroup *erofs_find_workgroup(struct super_block *sb,
-+					     pgoff_t index, bool *tag)
- {
- 	struct erofs_sb_info *sbi = EROFS_SB(sb);
- 	struct erofs_workgroup *grp;
--	int oldcount;
- 
- repeat:
- 	rcu_read_lock();
-@@ -65,15 +65,12 @@ struct erofs_workgroup *erofs_find_workgroup(
- 		*tag = xa_pointer_tag(grp);
- 		grp = xa_untag_pointer(grp);
- 
--		if (erofs_workgroup_get(grp, &oldcount)) {
-+		if (erofs_workgroup_get(grp)) {
- 			/* prefer to relax rcu read side */
- 			rcu_read_unlock();
- 			goto repeat;
- 		}
- 
--		/* decrease refcount added by erofs_workgroup_put */
--		if (unlikely(oldcount == 1))
--			atomic_long_dec(&erofs_global_shrink_cnt);
- 		DBG_BUGON(index != grp->index);
- 	}
- 	rcu_read_unlock();
--- 
-2.14.4
+							Thanx, Paul
 
