@@ -2,72 +2,110 @@ Return-Path: <SRS0=1Lvk=PY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 66CB9C43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 06:30:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1862AC43612
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 06:32:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3495520840
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 06:30:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DCA2D20840
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 06:32:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387862AbfAPGaE (ORCPT
+        id S2387729AbfAPGcU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 16 Jan 2019 01:30:04 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:38848 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728649AbfAPGaE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Jan 2019 01:30:04 -0500
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id DBFC6CAA7F;
-        Wed, 16 Jan 2019 06:30:03 +0000 (UTC)
-Received: from sirius.home.kraxel.org (ovpn-117-186.ams2.redhat.com [10.36.117.186])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 33E2460A9F;
-        Wed, 16 Jan 2019 06:30:03 +0000 (UTC)
-Received: by sirius.home.kraxel.org (Postfix, from userid 1000)
-        id 58C8C16E03; Wed, 16 Jan 2019 07:30:02 +0100 (CET)
-Date:   Wed, 16 Jan 2019 07:30:02 +0100
-From:   Gerd Hoffmann <kraxel@redhat.com>
-To:     Oleksandr Andrushchenko <andr2000@gmail.com>
-Cc:     xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, daniel.vetter@intel.com,
-        jgross@suse.com, boris.ostrovsky@oracle.com, noralf@tronnes.org,
-        hch@infradead.org,
-        Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
-Subject: Re: [PATCH v2] drm/xen-front: Make shmem backed display buffer
- coherent
-Message-ID: <20190116063002.jq3aas6ofhaogmyk@sirius.home.kraxel.org>
-References: <20190115140420.4652-1-andr2000@gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190115140420.4652-1-andr2000@gmail.com>
-User-Agent: NeoMutt/20180716
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.38]); Wed, 16 Jan 2019 06:30:04 +0000 (UTC)
+        Wed, 16 Jan 2019 01:32:20 -0500
+Received: from mx2.suse.de ([195.135.220.15]:38168 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1730938AbfAPGcU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 Jan 2019 01:32:20 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id EB829AF69;
+        Wed, 16 Jan 2019 06:32:18 +0000 (UTC)
+Date:   Wed, 16 Jan 2019 07:32:18 +0100
+Message-ID: <s5h4la9f6z1.wl-tiwai@suse.de>
+From:   Takashi Iwai <tiwai@suse.de>
+To:     Paul Gortmaker <paul.gortmaker@windriver.com>
+Cc:     Takashi Iwai <tiwai@suse.de>, Chuck Lever <chuck.lever@oracle.com>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        Anna Schumaker <Anna.Schumaker@Netapp.com>,
+        Trond Myklebust <trondmy@gmail.com>,
+        Linux NFS Mailing List <linux-nfs@vger.kernel.org>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: linux-next: Fixes tag needs some work in the nfs-anna tree
+In-Reply-To: <20190115233811.GD26416@windriver.com>
+References: <20190116083831.256824cf@canb.auug.org.au>
+        <A4B834E5-2DFD-428E-8E24-9F6F6A822B09@oracle.com>
+        <s5hbm4hfu45.wl-tiwai@suse.de>
+        <20190115233811.GD26416@windriver.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI/1.14.6 (Maruoka)
+ FLIM/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL/10.8 Emacs/26
+ (x86_64-suse-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+MIME-Version: 1.0 (generated by SEMI 1.14.6 - "Maruoka")
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-  Hi,
+On Wed, 16 Jan 2019 00:38:11 +0100,
+Paul Gortmaker wrote:
+> 
+> [Re: linux-next: Fixes tag needs some work in the nfs-anna tree] On 15/01/2019 (Tue 23:12) Takashi Iwai wrote:
+> 
+> > On Tue, 15 Jan 2019 22:41:21 +0100,
+> > Chuck Lever wrote:
+> > > 
+> > > Hi Stephen-
+> > > 
+> > > On Jan 15, 2019, at 4:38 PM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> > > 
+> > > > [I am experimenting with checking the Fixes tags in commits in linux-next.
+> > > > Please let me know if you think I am being too strict.]
+> > > > 
+> > > > Hi all,
+> > > > 
+> > > > Commit
+> > > > 
+> > > >  deaa5c96c2f7 ("SUNRPC: Address Kerberos performance/behavior regression")
+> > > > 
+> > > > has problem with this Fixes tag:
+> > > > 
+> > > >  Fixes: 918f3c1fe83c ("SUNRPC: Improve latency for interactive ... ")
+> > > > 
+> > > > The subject should match the subject of the fixed commit.
+> > > > 
+> > > > -- 
+> > > > Cheers,
+> > > > Stephen Rothwell
+> > > 
+> > > I shortened the commit title so that the Fixes: line is shorter than 68
+> > > characters. I can leave these titles alone if that's preferred.
+> > 
+> > I've sometimes shorted the subject like the above, too, as I find a
+> > too long text annoying.  Maybe the partial string matching should
+> > suffice, especially when it ends with "..." ?
+> 
+> The problem is consistency.  Perhaps you shorten at four words.  A
+> person searches with five words or 70 chars -  they never see your commit.
 
-> +	if (!dma_map_sg(dev->dev, xen_obj->sgt->sgl, xen_obj->sgt->nents,
-> +			DMA_BIDIRECTIONAL)) {
-> +		ret = -EFAULT;
-> +		goto fail_free_sgt;
-> +	}
+What's the reason to search for words instead of commit ID?
 
-Hmm, so it seems the arm guys could not come up with a suggestion how to
-solve that one in a better way.  Ok, lets go with this then.
+> The idea of consistency across the "Fixes:" tags is to allow a level of
+> automated processing so that the creators of the stable releases can do
+> a lot less manual hands-on processing.  They have enough work to do.
 
-But didn't we agree that this deserves a comment exmplaining the purpose
-of the dma_map_sg() call is to flush caches and that there is no actual
-DMA happening here?
+Yes, I know, but the important point for stable pick-up is the
+correctness of the commit ID, no?
 
-cheers,
-  Gerd
+I can understand the need for validity check of the Fixes tag,
+especially to check whether the given commit ID is really correct, in
+linux-next stage.  But this can be verified even with a partial string
+match.
 
+
+thanks,
+
+Takashi
