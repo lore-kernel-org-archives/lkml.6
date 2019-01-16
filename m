@@ -2,374 +2,103 @@ Return-Path: <SRS0=1Lvk=PY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E674AC43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 14:19:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B7CB4C43612
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 14:20:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A13B720675
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 14:19:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547648379;
-	bh=365p3wyES+bTnjyipN/Yfdj6OhW+fe8p9ZJoDQ+jIGE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=tgN8ROXFl/tmjsg/yh896Ku880KRIXsbv+i/+5nyjaXPJfA6B27m0/Fg3Q+52Mwrx
-	 GaTG3sljDGO9lqNHzOkn2MqR9jU2lcvz59D3gfDUVcxHPGyBQHiVeiV7jBojTiAjF9
-	 iTL4MFzutL9KoFzHqzQqg8ceQ7qT4d0k3V819q5s=
+	by mail.kernel.org (Postfix) with ESMTP id 864D1205C9
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 14:20:23 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="umaZGSlS"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404625AbfAPOTi (ORCPT
+        id S2404638AbfAPOUV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 16 Jan 2019 09:19:38 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35466 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404562AbfAPOTh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Jan 2019 09:19:37 -0500
-Received: from quaco.ghostprotocols.net (unknown [179.97.41.186])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 75B82205C9;
-        Wed, 16 Jan 2019 14:19:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547648375;
-        bh=365p3wyES+bTnjyipN/Yfdj6OhW+fe8p9ZJoDQ+jIGE=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=0EFUyJnSrBZnVWV98zKI9bcHpN6e/N/pJo8zqz/BDK7dWq39sAu2UMUFDGSBkbfaL
-         U1tfR8PTcGBEH8PI3JLleRcaCWEN+I6Q14UKXISuwcfvehprBuTR2ev44r3hgDsFGp
-         pE/4Q8J5A5BSqJ4VaGvZpU/LxcVMicnYKn/4T4X8=
-Received: by quaco.ghostprotocols.net (Postfix, from userid 1000)
-        id 9DFA141AB5; Wed, 16 Jan 2019 11:19:32 -0300 (-03)
-Date:   Wed, 16 Jan 2019 11:19:32 -0300
-From:   Arnaldo Carvalho de Melo <acme@kernel.org>
-To:     Song Liu <songliubraving@fb.com>
-Cc:     linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-        peterz@infradead.org, ast@kernel.org, daniel@iogearbox.net,
-        kernel-team@fb.com, dsahern@gmail.com
-Subject: Re: [PATCH v9 perf, bpf-next 7/9] perf tools: synthesize
- PERF_RECORD_* for loaded BPF programs
-Message-ID: <20190116141932.GC2243@kernel.org>
-References: <20190116001410.3522226-1-songliubraving@fb.com>
- <20190116001410.3522226-8-songliubraving@fb.com>
+        Wed, 16 Jan 2019 09:20:21 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:57816 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2403767AbfAPOUU (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 Jan 2019 09:20:20 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Transfer-Encoding
+        :Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
+        Sender:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=SOzqtRQnhrzBV/2kqoR/jW1DTahkUHWwkEGG0EIDlt8=; b=umaZGSlS/Mx6cAOQCY2BhcS56F
+        JTft6i3pABnXS+1yEzVxc6J/HnMUqGhP0z1/U/ELpC9SPiGJZcpycToje9yk1SCtTpJbuIjaAZfmP
+        9hgJTa4oK7erwr+7pkqsEdHsRPFYxHJAVeOHEDkR3daRz6oJ+hfPDRkmAFSHXgwkYW03JUr4iiiII
+        pwe6c5cQNXDArfmTdHshCR5u/eyVvFEO+8x+kCLvbRtYRUabVSSELftUY6vgPIKuKwP7gszL4UsYi
+        SgiqQeZoXMooGlZZ0v46pl3O6+uIH4DVqAg7COtrdlYJg5fVyENBSsXIpN1paT+qMmm9LyeLLhLV1
+        yd5Thhxg==;
+Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gjm3C-0006U0-M1; Wed, 16 Jan 2019 14:20:14 +0000
+Date:   Wed, 16 Jan 2019 06:20:14 -0800
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Christophe Leroy <christophe.leroy@c-s.fr>
+Cc:     Anshuman Khandual <anshuman.khandual@arm.com>,
+        mark.rutland@arm.com, linux-sh@vger.kernel.org,
+        peterz@infradead.org, catalin.marinas@arm.com,
+        dave.hansen@linux.intel.com, will.deacon@arm.com,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        linux-riscv@lists.infradead.org, kvmarm@lists.cs.columbia.edu,
+        linux@armlinux.org.uk, mingo@redhat.com, vbabka@suse.cz,
+        rientjes@google.com, palmer@sifive.com, greentime@andestech.com,
+        marc.zyngier@arm.com, rppt@linux.vnet.ibm.com, shakeelb@google.com,
+        kirill@shutemov.name, tglx@linutronix.de,
+        Michal Hocko <mhocko@kernel.org>,
+        linux-arm-kernel@lists.infradead.org, ard.biesheuvel@linaro.org,
+        robin.murphy@arm.com, steve.capper@arm.com,
+        christoffer.dall@arm.com, james.morse@arm.com,
+        aneesh.kumar@linux.ibm.com, akpm@linux-foundation.org,
+        linuxppc-dev@lists.ozlabs.org
+Subject: Re: [PATCH V2] mm: Introduce GFP_PGTABLE
+Message-ID: <20190116142014.GJ6310@bombadil.infradead.org>
+References: <1547619692-7946-1-git-send-email-anshuman.khandual@arm.com>
+ <20190116065703.GE24149@dhcp22.suse.cz>
+ <20190116123018.GF6310@bombadil.infradead.org>
+ <07d6a264-dccd-78ab-e8a9-2410bbef7b97@arm.com>
+ <20190116131827.GH6310@bombadil.infradead.org>
+ <521d8511-4c87-49c6-de03-67a71d5bacca@c-s.fr>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20190116001410.3522226-8-songliubraving@fb.com>
-X-Url:  http://acmel.wordpress.com
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <521d8511-4c87-49c6-de03-67a71d5bacca@c-s.fr>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Tue, Jan 15, 2019 at 04:14:08PM -0800, Song Liu escreveu:
-> This patch synthesize PERF_RECORD_KSYMBOL and PERF_RECORD_BPF_EVENT for
-> BPF programs loaded before perf-record. This is achieved by gathering
-> information about all BPF programs via sys_bpf.
+On Wed, Jan 16, 2019 at 02:47:16PM +0100, Christophe Leroy wrote:
+> Le 16/01/2019 à 14:18, Matthew Wilcox a écrit :
+> > I disagree with your objective.  Making more code common is a great idea,
+> > but this patch is too unambitious.  We should be heading towards one or
+> > two page table allocation functions instead of having every architecture do
+> > its own thing.
+> > 
+> > So start there.  Move the x86 function into common code and convert one
+> > other architecture to use it too.
 > 
-> Signed-off-by: Song Liu <songliubraving@fb.com>
-> ---
->  tools/perf/builtin-record.c |   6 ++
->  tools/perf/util/bpf-event.c | 206 ++++++++++++++++++++++++++++++++++++
->  tools/perf/util/bpf-event.h |   5 +
->  3 files changed, 217 insertions(+)
+> Are we talking about pte_alloc_one_kernel() and pte_alloc_one() ?
 > 
-> diff --git a/tools/perf/builtin-record.c b/tools/perf/builtin-record.c
-> index deaf9b902094..88ea11d57c6f 100644
-> --- a/tools/perf/builtin-record.c
-> +++ b/tools/perf/builtin-record.c
-> @@ -41,6 +41,7 @@
->  #include "util/perf-hooks.h"
->  #include "util/time-utils.h"
->  #include "util/units.h"
-> +#include "util/bpf-event.h"
->  #include "asm/bug.h"
->  
->  #include <errno.h>
-> @@ -1082,6 +1083,11 @@ static int record__synthesize(struct record *rec, bool tail)
->  		return err;
->  	}
->  
-> +	err = perf_event__synthesize_bpf_events(tool, process_synthesized_event,
-> +						machine, opts);
-> +	if (err < 0)
-> +		pr_warning("Couldn't synthesize bpf events.\n");
-> +
->  	err = __machine__synthesize_threads(machine, tool, &opts->target, rec->evlist->threads,
->  					    process_synthesized_event, opts->sample_address,
->  					    1);
-> diff --git a/tools/perf/util/bpf-event.c b/tools/perf/util/bpf-event.c
-> index 87004706874f..4fe30ad622b8 100644
-> --- a/tools/perf/util/bpf-event.c
-> +++ b/tools/perf/util/bpf-event.c
-> @@ -1,10 +1,24 @@
->  // SPDX-License-Identifier: GPL-2.0
->  #include <errno.h>
->  #include <bpf/bpf.h>
-> +#include <bpf/btf.h>
-> +#include <linux/btf.h>
->  #include "bpf-event.h"
->  #include "debug.h"
->  #include "symbol.h"
->  
-> +#define ptr_to_u64(ptr)    ((__u64)(unsigned long)(ptr))
-> +
-> +static int snprintf_hex(char *buf, size_t size, unsigned char *data, size_t len)
-> +{
-> +	int ret = 0;
-> +	size_t i;
-> +
-> +	for (i = 0; i < len; i++)
-> +		ret += snprintf(buf + ret, size - ret, "%02x", data[i]);
-> +	return ret;
-> +}
-> +
->  int machine__process_bpf_event(struct machine *machine __maybe_unused,
->  			       union perf_event *event,
->  			       struct perf_sample *sample __maybe_unused)
-> @@ -13,3 +27,195 @@ int machine__process_bpf_event(struct machine *machine __maybe_unused,
->  		perf_event__fprintf_bpf_event(event, stdout);
->  	return 0;
->  }
-> +
-> +/*
-> + * Synthesize PERF_RECORD_KSYMBOL and PERF_RECORD_BPF_EVENT for one bpf
-> + * program. One PERF_RECORD_BPF_EVENT is generated for the program. And
-> + * one PERF_RECORD_KSYMBOL is generated for each sub program.
-> + */
-> +static int perf_event__synthesize_one_bpf_prog(struct perf_tool *tool,
-> +					       perf_event__handler_t process,
-> +					       struct machine *machine,
-> +					       int fd,
-> +					       union perf_event *event,
-> +					       struct record_opts *opts)
-> +{
-> +	struct ksymbol_event *ksymbol_event = &event->ksymbol_event;
-> +	struct bpf_event *bpf_event = &event->bpf_event;
-> +	u32 sub_prog_cnt, i, func_info_rec_size;
-> +	u8 (*prog_tags)[BPF_TAG_SIZE] = NULL;
-> +	struct bpf_prog_info info = {};
-> +	u32 info_len = sizeof(info);
-> +	void *func_infos = NULL;
-> +	u64 *prog_addrs = NULL;
-> +	struct btf *btf = NULL;
-> +	u32 *prog_lens = NULL;
-> +	bool has_btf = false;
-> +	int err = 0;
-> +
-> +	/* Call bpf_obj_get_info_by_fd() to get sizes of arrays */
-> +	err = bpf_obj_get_info_by_fd(fd, &info, &info_len);
-> +
-> +	if (err || info_len < 192 /* need field prog_tags */)
-> +		return -1;
+> I'm not sure x86 function is the best common one, as it seems to allocate a
+> multiple of PAGE_SIZE only.
 
-perhaps:
+And that's the common case.  Most architectures use a single page for at
+least one level of the pte/pmd/pud/p4d/pgd hierarchy.  Some use multiple
+pages and some use a fraction of a page.
 
-	> offsetof(bpf_prog_info, prog_tags)
+> Some arches like powerpc use pagetables which are smaller than a page, for
+> instance powerpc 8xx uses 4k pagetables even with 16k pages, which means a
+> single page can be used by 4 pagetables.
 
-Makes this clearer, i.e. the kernel needs to be providing a struct
-bpf_prog_info with that field?
-
-> +
-> +	/* number of ksyms, func_lengths, and tags should match */
-> +	sub_prog_cnt = info.nr_jited_ksyms;
-> +	if (sub_prog_cnt != info.nr_prog_tags ||
-> +	    sub_prog_cnt != info.nr_jited_func_lens)
-> +		return -1;
-> +
-> +	/* check BTF func info support */
-> +	if (info.btf_id && info.nr_func_info && info.func_info_rec_size) {
-> +		/* btf func info number should be same as sub_prog_cnt */
-> +		if (sub_prog_cnt != info.nr_func_info)
-
-Can you ad some pr_debug() with some informative message to help with
-debugging?
-
-> +			return -1;
-> +		if (btf__get_from_id(info.btf_id, &btf))
-
-Ditto.
-
-> +			return -1;
-> +		func_info_rec_size = info.func_info_rec_size;
-> +		func_infos = malloc(sub_prog_cnt * func_info_rec_size);
-> +		if (!func_infos)
-
-Ditto.
-
-> +			return -1;
-> +		has_btf = true;
-> +	}
-> +
-> +	/*
-> +	 * We need address, length, and tag for each sub program.
-> +	 * Allocate memory and call bpf_obj_get_info_by_fd() again
-> +	 */
-> +	prog_addrs = (u64 *)malloc(sizeof(u64) * sub_prog_cnt);
-> +	prog_lens = (u32 *)malloc(sizeof(u64) * sub_prog_cnt);
-
-Why the casting? And also since its for N elements of a sizeof, why not
-use calloc():
-
-> +	prog_tags = malloc(sizeof(u8) * BPF_TAG_SIZE * sub_prog_cnt);
-> +
-> +	err = !prog_addrs || !prog_lens || !prog_tags;
-> +	if (err)
-> +		goto out;
-> +
-> +	memset(&info, 0, sizeof(info));
-> +	info.nr_jited_ksyms = sub_prog_cnt;
-> +	info.nr_jited_func_lens = sub_prog_cnt;
-> +	info.nr_prog_tags = sub_prog_cnt;
-> +	info.jited_ksyms = ptr_to_u64(prog_addrs);
-> +	info.jited_func_lens = ptr_to_u64(prog_lens);
-> +	info.prog_tags = ptr_to_u64(prog_tags);
-> +	info_len = sizeof(info);
-> +	if (has_btf) {
-> +		info.nr_func_info = sub_prog_cnt;
-> +		info.func_info_rec_size = func_info_rec_size;
-> +		info.func_info = ptr_to_u64(func_infos);
-> +	}
-> +
-> +	err = bpf_obj_get_info_by_fd(fd, &info, &info_len);
-> +	if (err)
-
-This is all new, its better to have pr_debug() stuff in here to help
-debugging.
-
-> +		goto out;
-> +
-> +	/* Synthesize PERF_RECORD_KSYMBOL */
-> +	for (i = 0; i < sub_prog_cnt; i++) {
-> +		const struct bpf_func_info *finfo;
-> +		const char *short_name = NULL;
-> +		const struct btf_type *t;
-> +		int name_len;
-> +
-> +		*ksymbol_event = (struct ksymbol_event){
-> +			.header = {
-> +				.type = PERF_RECORD_KSYMBOL,
-> +				.size = sizeof(struct ksymbol_event),
-> +			},
-> +			.addr = prog_addrs[i],
-> +			.len = prog_lens[i],
-> +			.ksym_type = PERF_RECORD_KSYMBOL_TYPE_BPF,
-> +			.flags = 0,
-> +		};
-> +		name_len = snprintf(ksymbol_event->name, KSYM_NAME_LEN,
-> +				    "bpf_prog_");
-> +		name_len += snprintf_hex(ksymbol_event->name + name_len,
-> +					 KSYM_NAME_LEN - name_len,
-> +					 prog_tags[i], BPF_TAG_SIZE);
-> +		if (has_btf) {
-> +			finfo = func_infos + i * info.func_info_rec_size;
-> +			t = btf__type_by_id(btf, finfo->type_id);
-> +			short_name = btf__name_by_offset(btf, t->name_off);
-> +		} else if (i == 0 && sub_prog_cnt == 1) {
-> +			/* no subprog */
-> +			if (info.name[0])
-> +				short_name = info.name;
-> +		} else
-> +			short_name = "F";
-> +		if (short_name)
-> +			name_len += snprintf(ksymbol_event->name + name_len,
-> +					     KSYM_NAME_LEN - name_len,
-> +					     "_%s", short_name);
-> +
-> +		ksymbol_event->header.size += PERF_ALIGN(name_len + 1,
-> +							 sizeof(u64));
-> +		err = perf_tool__process_synth_event(tool, event,
-> +						     machine, process);
-> +	}
-> +
-> +	/* Synthesize PERF_RECORD_BPF_EVENT */
-> +	if (opts->bpf_event) {
-> +		*bpf_event = (struct bpf_event){
-> +			.header = {
-> +				.type = PERF_RECORD_BPF_EVENT,
-> +				.size = sizeof(struct bpf_event),
-> +			},
-> +			.type = PERF_BPF_EVENT_PROG_LOAD,
-> +			.flags = 0,
-> +			.id = info.id,
-> +		};
-> +		memcpy(bpf_event->tag, prog_tags[i], BPF_TAG_SIZE);
-> +		err = perf_tool__process_synth_event(tool, event,
-> +						     machine, process);
-> +	}
-> +
-> +out:
-> +	free(prog_tags);
-> +	free(prog_lens);
-> +	free(prog_addrs);
-> +	free(func_infos);
-> +	free(btf);
-> +	return err ? -1 : 0;
-> +}
-> +
-> +int perf_event__synthesize_bpf_events(struct perf_tool *tool,
-> +				      perf_event__handler_t process,
-> +				      struct machine *machine,
-> +				      struct record_opts *opts)
-> +{
-> +	union perf_event *event;
-> +	__u32 id = 0;
-> +	int err;
-> +	int fd;
-> +
-> +	event = malloc(sizeof(event->bpf_event) + KSYM_NAME_LEN);
-> +	if (!event)
-> +		return -1;
-> +	while (true) {
-> +		err = bpf_prog_get_next_id(id, &id);
-> +		if (err) {
-> +			if (errno == ENOENT) {
-> +				err = 0;
-> +				break;
-> +			}
-> +			pr_err("can't get next program: %s%s",
-> +			       strerror(errno),
-> +			       errno == EINVAL ? " -- kernel too old?" : "");
-> +			/* don't report error on old kernel */
-> +			err = (errno == EINVAL) ? 0 : -1;
-> +			break;
-> +		}
-> +		fd = bpf_prog_get_fd_by_id(id);
-> +		if (fd < 0) {
-> +			pr_debug("Failed to get fd for prog_id %u\n", id);
-> +			continue;
-> +		}
-> +
-> +		err = perf_event__synthesize_one_bpf_prog(
-> +			tool, process, machine, fd, event, opts);
-
-first parameter on the same line of the function call, please.
-
-> +		close(fd);
-> +		if (err)
-> +			break;
-> +	}
-> +	free(event);
-> +	return err;
-> +}
-> diff --git a/tools/perf/util/bpf-event.h b/tools/perf/util/bpf-event.h
-> index d5ca355dd298..38aee4040f12 100644
-> --- a/tools/perf/util/bpf-event.h
-> +++ b/tools/perf/util/bpf-event.h
-> @@ -8,4 +8,9 @@ int machine__process_bpf_event(struct machine *machine,
->  			       union perf_event *event,
->  			       struct perf_sample *sample);
->  
-> +int perf_event__synthesize_bpf_events(struct perf_tool *tool,
-> +				      perf_event__handler_t process,
-> +				      struct machine *machine,
-> +				      struct record_opts *opts);
-> +
->  #endif
-> -- 
-> 2.17.1
-
--- 
-
-- Arnaldo
+Those can be added later.  Note I said "one or two", and that's what I
+had in mind; I think we want one function that allocates just a page
+and another that allocates a page fragment.  Then we can have a good
+discussion about what method we use; s390 and ppc use different techniques
+today and there's really no good reason for that.
