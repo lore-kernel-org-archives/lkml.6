@@ -2,90 +2,91 @@ Return-Path: <SRS0=1Lvk=PY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E771C43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 17:40:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 66E0EC43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 17:44:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 09C0D20840
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 17:40:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 314B620657
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 17:44:13 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="SYJt/2jF"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727487AbfAPRkI (ORCPT
+        id S1727499AbfAPRoL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 16 Jan 2019 12:40:08 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:50672 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727464AbfAPRkI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Jan 2019 12:40:08 -0500
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 5D624C002960;
-        Wed, 16 Jan 2019 17:40:07 +0000 (UTC)
-Received: from dhcp-27-174.brq.redhat.com (unknown [10.43.17.162])
-        by smtp.corp.redhat.com (Postfix) with SMTP id DDE551C959;
-        Wed, 16 Jan 2019 17:40:04 +0000 (UTC)
-Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
-        oleg@redhat.com; Wed, 16 Jan 2019 18:40:07 +0100 (CET)
-Date:   Wed, 16 Jan 2019 18:40:04 +0100
-From:   Oleg Nesterov <oleg@redhat.com>
-To:     Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-Cc:     Kees Cook <keescook@chromium.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        syzbot <syzbot+a9ac39bf55329e206219@syzkaller.appspotmail.com>,
-        James Morris <jmorris@namei.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-security-module <linux-security-module@vger.kernel.org>,
-        syzkaller-bugs@googlegroups.com
-Subject: Re: yama: unsafe usage of ptrace_relation->tracer
-Message-ID: <20190116174003.GB20060@redhat.com>
-References: <20181022134634.GA7358@redhat.com>
- <201810250215.w9P2Fm2M078167@www262.sakura.ne.jp>
- <20181025111355.GA3725@redhat.com>
- <b0ac67e6-4279-91b3-0178-3176876abe70@i-love.sakura.ne.jp>
- <20181025121709.GD3725@redhat.com>
- <20181025130129.GE3725@redhat.com>
- <CAGXu5jJDkt0vR28Rzhi2gmb=9S7BwWkiMuVrN98AOABgngYY4A@mail.gmail.com>
- <20181029122356.GA29883@redhat.com>
- <20181029150546.GA30959@redhat.com>
- <0fc3493d-a50e-f386-20a8-28d348c19544@I-love.SAKURA.ne.jp>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <0fc3493d-a50e-f386-20a8-28d348c19544@I-love.SAKURA.ne.jp>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.31]); Wed, 16 Jan 2019 17:40:07 +0000 (UTC)
+        Wed, 16 Jan 2019 12:44:11 -0500
+Received: from mail-ot1-f67.google.com ([209.85.210.67]:42802 "EHLO
+        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726934AbfAPRoL (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 Jan 2019 12:44:11 -0500
+Received: by mail-ot1-f67.google.com with SMTP id v23so8468504otk.9
+        for <linux-kernel@vger.kernel.org>; Wed, 16 Jan 2019 09:44:10 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=CjETfAnfRxtbE9MWGkPp2aHU9Y+vwQE7qZ1JQ/QEJmM=;
+        b=SYJt/2jFty9uyfCQ+VSpn/7urDoH9zQ8wkSsk946KPg8eE+owKpIT4Z1tFPhbM4Ok4
+         4Vp0rRlVH1jiKTXHbIkmRu8pBb8OKOiNXN3pgBbD7d2TtVRX/FX3/64X+Sv3ihvO524W
+         yt/6XADt7d/tSDDPXihdxAJj9bP5hWC1ToYIo=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=CjETfAnfRxtbE9MWGkPp2aHU9Y+vwQE7qZ1JQ/QEJmM=;
+        b=meDK4F46EiykoUpqx/omVRWmS0zS+W+FVRGBamhyxt/jHznLnNcV8zNURKbtiD2Hae
+         ED1/6MhvSaGp+WlOygR3RAa66NabZD1EOxDSoYFNW1myUEzOeaEQg9mTno9v4iC7Oerj
+         4b64yXJGqCmDLzBusKe7Dm70EnWEtKKK5/2zsyvUh0j0A8VpbgrLNKTbL8hIALPKt2KZ
+         ZutQx0jBMn4kByZmlg64KJaXIcS7ZnuDlc7VDIwpcPDaz56MDlLeVVdTA8we7+fIxt8L
+         COmXVBJhDxygGEoRurQsYE+nnhXx2SccCNrD+VCOfXqC+iAM5uSMETNi+2q7tGSy4JTl
+         RDsw==
+X-Gm-Message-State: AJcUukcDTehWl3+EsmCOMmgOUZGOqd12THLGq8R6lIXi9deBbOlgEPzJ
+        choYKXypkgR/Cj8WOmavOoSUqQ==
+X-Google-Smtp-Source: ALg8bN7E2a+BrEjT0XTiStofNUshGEOMJ1QwK4HVMst67gq8PT3Ao7WA8OS97kdmjlyGgEJPWiOr2Q==
+X-Received: by 2002:a9d:6191:: with SMTP id g17mr6481114otk.56.1547660650423;
+        Wed, 16 Jan 2019 09:44:10 -0800 (PST)
+Received: from alago.cortijodelrio.net (CableLink-189-218-30-19.Hosts.InterCable.net. [189.218.30.19])
+        by smtp.googlemail.com with ESMTPSA id m129sm3152973oif.50.2019.01.16.09.44.08
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 16 Jan 2019 09:44:09 -0800 (PST)
+From:   =?UTF-8?q?Daniel=20D=C3=ADaz?= <daniel.diaz@linaro.org>
+To:     shuah@kernel.org
+Cc:     Fathi Boudra <fathi.boudra@linaro.org>,
+        Denys Dmytriyenko <denys@ti.com>,
+        linux-kselftest@vger.kernel.org (open list:KERNEL SELFTEST FRAMEWORK),
+        linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH 1/4] selftests: lib: allow to override CC in the top-level Makefile
+Date:   Wed, 16 Jan 2019 11:43:17 -0600
+Message-Id: <20190116174320.14938-1-daniel.diaz@linaro.org>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 01/10, Tetsuo Handa wrote:
->
-> syzbot is hitting this problem as of linux-next-20190110.
-> When a patch will be proposed?
+From: Fathi Boudra <fathi.boudra@linaro.org>
 
-Well. I have already suggested the patch below several times. It won't fix all
-problems in this code (I forgot the details but iirc ptracer_exception_found()
-is broken too, task_is_descendant() should be cleanuped, may be something else),
-but probably this trivial fix makes sense for the start?
+Relax CC assignment to allow to override CC in the top-level Makefile.
 
-Oleg.
+Signed-off-by: Denys Dmytriyenko <denys@ti.com>
+---
+ tools/testing/selftests/lib.mk | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-
---- x/security/yama/yama_lsm.c
-+++ x/security/yama/yama_lsm.c
-@@ -368,7 +368,8 @@ static int yama_ptrace_access_check(stru
- 			break;
- 		case YAMA_SCOPE_RELATIONAL:
- 			rcu_read_lock();
--			if (!task_is_descendant(current, child) &&
-+			if (!pid_alive(child) ||
-+			    !task_is_descendant(current, child) &&
- 			    !ptracer_exception_found(current, child) &&
- 			    !ns_capable(__task_cred(child)->user_ns, CAP_SYS_PTRACE))
- 				rc = -EPERM;
+diff --git a/tools/testing/selftests/lib.mk b/tools/testing/selftests/lib.mk
+index 8b0f16409ed7..0f9c47eaaa6f 100644
+--- a/tools/testing/selftests/lib.mk
++++ b/tools/testing/selftests/lib.mk
+@@ -1,6 +1,6 @@
+ # This mimics the top-level Makefile. We do it explicitly here so that this
+ # Makefile can operate with or without the kbuild infrastructure.
+-CC := $(CROSS_COMPILE)gcc
++CC ?= $(CROSS_COMPILE)gcc
+ 
+ ifeq (0,$(MAKELEVEL))
+ OUTPUT := $(shell pwd)
+-- 
+2.17.1
 
