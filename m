@@ -2,100 +2,93 @@ Return-Path: <SRS0=1Lvk=PY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=FROM_EXCESS_BASE64,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MSGID_FROM_MTA_HEADER,
-	SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 28313C43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 03:00:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C4C9FC43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 03:13:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0049720675
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 03:00:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 94176206C2
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 03:13:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730907AbfAPDAX (ORCPT
+        id S1730483AbfAPDNN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 15 Jan 2019 22:00:23 -0500
-Received: from smtpbgsg2.qq.com ([54.254.200.128]:51683 "EHLO smtpbgsg2.qq.com"
+        Tue, 15 Jan 2019 22:13:13 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:57962 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729852AbfAPDAW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 15 Jan 2019 22:00:22 -0500
-X-QQ-GoodBg: 0
-X-QQ-SSF: 00100000000000F0
-X-QQ-FEAT: CaOyJLkxpPnx61D352dvXIWnMUSC/YUqnJQcOILfRgADW3I8/c9vBsquJz1Jb
-        DK7JnuuIbPVSs7qeTORBPZSZoDbaNdSBMtErP2fw+NBovf24kJ8c24QiiZyIuNsHz0DjEY9
-        qFaIDf1SGYiWXocDB5Ey9Pql4fto7hATn4yNWfvXgADhVJAEk36nqIxFnODlh4/DQnJqAlG
-        7wbSOLQ6fGpc4g2UI1TmapX+tloni45wtWKV+4DaNHxNjxWxtunfNmvvmuczlydsRBX9azu
-        /TWJmzIaL0EG0UMktuRdg28xE=
-X-QQ-BUSINESS-ORIGIN: 2
-X-Originating-IP: 222.92.124.153
-X-QQ-STYLE: 
-X-QQ-mid: bizmailfree7t1547607607t83862
-From:   "=?utf-8?B?6ZmI5Y2O5omN?=" <chenhc@lemote.com>
-To:     "=?utf-8?B?VGhvbWFzIEdsZWl4bmVy?=" <tglx@linutronix.de>
-Cc:     "=?utf-8?B?bGludXgta2VybmVs?=" <linux-kernel@vger.kernel.org>,
-        "=?utf-8?B?RnV4aW4gWmhhbmc=?=" <zhangfx@lemote.com>,
-        "=?utf-8?B?d3V6aGFuZ2ppbg==?=" <wuzhangjin@gmail.com>,
-        "=?utf-8?B?c3RhYmxl?=" <stable@vger.kernel.org>,
-        "=?utf-8?B?Q2hyaXN0b3BoIEhlbGx3aWc=?=" <hch@lst.de>,
-        "=?utf-8?B?TWljaGFlbCBIZXJuYW5kZXo=?=" <michael.hernandez@cavium.com>
-Subject: Re: [PATCH] genirq/affinity: Assign default affinity to pre/post vectors
-Mime-Version: 1.0
-Content-Type: text/plain;
-        charset="utf-8"
-Content-Transfer-Encoding: base64
-Date:   Wed, 16 Jan 2019 11:00:07 +0800
-X-Priority: 3
-Message-ID: <tencent_7CB943266ADCFDB06DDDE6EF@qq.com>
-X-QQ-MIME: TCMime 1.0 by Tencent
-X-Mailer: QQMail 2.x
-X-QQ-Mailer: QQMail 2.x
-References: <1546225404-6775-1-git-send-email-chenhc@lemote.com>
-        <alpine.DEB.2.21.1901151959060.1655@nanos.tec.linutronix.de>
-In-Reply-To: <alpine.DEB.2.21.1901151959060.1655@nanos.tec.linutronix.de>
-X-QQ-ReplyHash: 3970353298
-X-QQ-SENDSIZE: 520
-Received: from qq.com (unknown [127.0.0.1])
-        by smtp.qq.com (ESMTP) with SMTP
-        id ; Wed, 16 Jan 2019 11:00:10 +0800 (CST)
-Feedback-ID: bizmailfree:lemote.com:qybgforeign:qybgforeign4
-X-QQ-Bgrelay: 1
+        id S1729097AbfAPDNN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 15 Jan 2019 22:13:13 -0500
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id B746536809;
+        Wed, 16 Jan 2019 03:13:12 +0000 (UTC)
+Received: from ming.t460p (ovpn-8-27.pek2.redhat.com [10.72.8.27])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 0E7836014F;
+        Wed, 16 Jan 2019 03:13:06 +0000 (UTC)
+Date:   Wed, 16 Jan 2019 11:13:02 +0800
+From:   Ming Lei <ming.lei@redhat.com>
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     Stephen Rothwell <sfr@canb.auug.org.au>,
+        Theodore Ts'o <tytso@mit.edu>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Eric Biggers <ebiggers@google.com>
+Subject: Re: linux-next: manual merge of the block tree with the fscrypt tree
+Message-ID: <20190116031301.GC26146@ming.t460p>
+References: <20190116132522.1b756433@canb.auug.org.au>
+ <ca843f39-3fcd-1a03-34c9-7284f10fe262@kernel.dk>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ca843f39-3fcd-1a03-34c9-7284f10fe262@kernel.dk>
+User-Agent: Mutt/1.9.1 (2017-09-22)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.30]); Wed, 16 Jan 2019 03:13:12 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-SGksIFRob21hcywNCg0KSSdtIG5vdCByZW1vdmluZyBhbGwgcmV0dXJuIE5VTEwgb2YgIGly
-cV9jcmVhdGVfYWZmaW5pdHlfbWFza3MoKSwgc28gdGhlIG1lbW9yeSBhbGxvY2F0aW9uIGZh
-aWx1cmUgc3RpbGwgcmV0dXJuIE5VTEwuIEkganVzdCBoYW5kbGUgdGhlIGNhc2UgdGhhdCB0
-aGVyZSBhcmUgbm90IGVub3VnaCBpcnEgdmVjdG9ycy4gRS5nLiBpbiBudm1lIGRyaXZlciwg
-dGhlIGNhbGxlciBtYXkgY2FsbCBpcnFfY3JlYXRlX2FmZmluaXR5X21hc2tzKCkgd2l0aCBu
-dmVjcz0xLHByZV92ZWN0b3JzPTEscG9zdF92ZWN0b3JzPTAuIEluIHRoaXMgY2FzZSwgdGhl
-IG9ubHkgb25lIHZlY3RvcidzIGRlZmF1bHQgYWZmaW5pdHkgYXNzaWduaW5nIGlzIHNraXBw
-ZWQuDQoNCkh1YWNhaSANCg0KLS0tLS0tLS0tLS0tLS0tLS0tIE9yaWdpbmFsIC0tLS0tLS0t
-LS0tLS0tLS0tLQ0KRnJvbTogICJUaG9tYXMgR2xlaXhuZXIiPHRnbHhAbGludXRyb25peC5k
-ZT47DQpEYXRlOiAgV2VkLCBKYW4gMTYsIDIwMTkgMDM6MTAgQU0NClRvOiAgIkh1YWNhaSBD
-aGVuIjxjaGVuaGNAbGVtb3RlLmNvbT47DQpDYzogICJsaW51eC1rZXJuZWwiPGxpbnV4LWtl
-cm5lbEB2Z2VyLmtlcm5lbC5vcmc+OyAiRnV4aW4gWmhhbmciPHpoYW5nZnhAbGVtb3RlLmNv
-bT47ICJ3dXpoYW5namluIjx3dXpoYW5namluQGdtYWlsLmNvbT47ICJzdGFibGUiPHN0YWJs
-ZUB2Z2VyLmtlcm5lbC5vcmc+OyAiQ2hyaXN0b3BoIEhlbGx3aWciPGhjaEBsc3QuZGU+OyAi
-TWljaGFlbCBIZXJuYW5kZXoiPG1pY2hhZWwuaGVybmFuZGV6QGNhdml1bS5jb20+Ow0KU3Vi
-amVjdDogIFJlOiBbUEFUQ0hdIGdlbmlycS9hZmZpbml0eTogQXNzaWduIGRlZmF1bHQgYWZm
-aW5pdHkgdG8gcHJlL3Bvc3QgdmVjdG9ycw0KIA0KT24gTW9uLCAzMSBEZWMgMjAxOCwgSHVh
-Y2FpIENoZW4gd3JvdGU6DQoNCj4gR2VuZXJhbGx5LCBpcnFfY3JlYXRlX2FmZmluaXR5X21h
-c2tzKCkgYXNzaWduIGRlZmF1bHQgYWZmaW5pdHkgdG8gcHJlLw0KPiBwb3N0IHZlY3RvcnMg
-Y29ycmVjdGx5LiBIb3dldmVyLCBpdCBpZ25vcmUgdGhlIGNhc2UgdGhhdCB0aGVyZSBhcmUg
-b25seQ0KPiBwcmUvcG9zdCB2ZWN0b3JzICh3aGVuIG52ZWNzID09IGFmZmQtPnByZV92ZWN0
-b3JzICsgYWZmZC0+cG9zdF92ZWN0b3JzKQ0KPiBhbmQgcmV0dXJuIE5VTEwuIFRoaXMgY2Fz
-ZSB1c3VhbGx5IGhhcHBlbnMgd2hlbiBudmVjcyA9IDEgKGUuZy4gaW4gbnZtZQ0KPiBkcml2
-ZXIgd2hlbiBNU0ktWCBpcyB1bmF2YWlsYWJsZSBhbmQgZmFsbGJhY2sgdG8gTVNJKSBhbmQg
-d2lsbCB0cmlnZ2VyDQo+IHRoZSB3YXJuaW5nIGluIHBjaV9pcnFfZ2V0X2FmZmluaXR5KCku
-IFRoaXMgcGF0Y2ggZml4IHRoZSBjb3JuZXIgY2FzZS4NCg0KRXJybS4gVGhpcyBpcyBqdXN0
-IHdyb25nLiBXaGVuIHRoaXMgZnVuY3Rpb24gcmV0dXJucyBOVUxMLCB0aGVuIGl0IGhhcw0K
-ZmFpbGVkIGFuZCB0aGUgY2FsbGVyIG9yIGFueSBzdWJzZXF1ZW50IGNvZGUgaXMgbm90IHN1
-cHBvc2VkIHRvIHVzZSB0aGUNCnJlc3VsdC4NCg0KVGhlIGZ1bmN0aW9uIGNhbiByZXR1cm4g
-TlVMTCBmb3Igb3RoZXIgcmVhc29ucywgZS5nLiB3aGVuIHRoZSBtZW1vcnkNCmFsbG9jYXRp
-b24gZmFpbGVkLiBIb3cgYXJlIHlvdSBnb2luZyB0byBkdWN0IHRhcGUgdGhhdCBvbmU/DQoN
-ClRoYW5rcywNCg0KdGdseA==
+On Tue, Jan 15, 2019 at 07:55:39PM -0700, Jens Axboe wrote:
+> On 1/15/19 7:25 PM, Stephen Rothwell wrote:
+> > Hi all,
+> > 
+> > Today's linux-next merge of the block tree got a conflict in:
+> > 
+> >   fs/ext4/readpage.c
+> > 
+> > between commit:
+> > 
+> >   acc9eb0a6073 ("ext4: add fs-verity read support")
+> > 
+> > from the fscrypt tree and commit:
+> > 
+> >   eb754eb2a953 ("block: allow bio_for_each_segment_all() to iterate over multi-page bvec")
+> > 
+> > from the block tree.
+> > 
+> > I fixed it up (see below - the former moved the code modified by the
+> > latter) and can carry the fix as necessary. This is now fixed as far as
+> > linux-next is concerned, but any non trivial conflicts should be mentioned
+> > to your upstream maintainer when your tree is submitted for merging.
+> > You may also want to consider cooperating with the maintainer of the
+> > conflicting tree to minimise any particularly complex conflicts.
+> 
+> Ming, I'm pulling this, I thought we agreed none of these bullshit
+> renames? The fact that a patch looks like this:
+> 
+> -               for_each_bvec(bv, (it)->bvecs, __cur_iter, __cur_iter)        \
+> +               for_each_segment(bv, (it)->bvecs, __cur_iter, __cur_iter)     \
+> 
+> is SUPER annoying and does NOTHING but to cause merge conflicts.
+> 
+> Resend it without that.
 
+We need to differentiate 'segment' with 'bvec' in bvec helpers, which is
+usually seldom used by drivers. For example, only two in-tree users(ceph, iov_iter).
+That is why I rename it, and seems Christoph prefers to do it too.
 
-
+Thanks,
+Ming
