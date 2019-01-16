@@ -2,109 +2,92 @@ Return-Path: <SRS0=1Lvk=PY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ED618C43444
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 21:41:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D988C43444
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 21:42:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B8D3220675
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 21:41:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547674882;
-	bh=2i+euSZhv1qErXrszgu4zkUVEwb/h9b/qnVw13fvI80=;
-	h=Date:From:To:cc:Subject:In-Reply-To:References:List-ID:From;
-	b=V/GY7Pnl+0pWfqvA+SqFrEbbJQum1tuArNgh8jgQwflGrLAbtrrABEI1dnRB1Wlv6
-	 0KC4QhJpCLlV7h8LDpUZk2kiV/fGn6nnahzL7HjdoeexJlFvfWCt0cs28t6YPnXdHn
-	 klQxgNMZOfjFeQ9lizQgH3R1auuDHzS2NmLMjXFE=
+	by mail.kernel.org (Postfix) with ESMTP id 051BB20652
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 21:42:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731006AbfAPVlV (ORCPT
+        id S1731156AbfAPVmJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 16 Jan 2019 16:41:21 -0500
-Received: from mx2.suse.de ([195.135.220.15]:53370 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729361AbfAPVlU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Jan 2019 16:41:20 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id BA921AD86;
-        Wed, 16 Jan 2019 21:41:18 +0000 (UTC)
-Date:   Wed, 16 Jan 2019 22:41:16 +0100 (CET)
-From:   Jiri Kosina <jikos@kernel.org>
-To:     Matthew Wilcox <willy@infradead.org>
-cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Dominique Martinet <asmadeus@codewreck.org>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Josh Snyder <joshs@netflix.com>,
-        Dave Chinner <david@fromorbit.com>,
-        Jann Horn <jannh@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Michal Hocko <mhocko@suse.com>, Linux-MM <linux-mm@kvack.org>,
-        kernel list <linux-kernel@vger.kernel.org>,
-        Cyril Hrubis <chrubis@suse.cz>,
-        Linux API <linux-api@vger.kernel.org>
-Subject: Re: [PATCH] mm/mincore: allow for making sys_mincore() privileged
-In-Reply-To: <20190116213708.GN6310@bombadil.infradead.org>
-Message-ID: <nycvar.YFH.7.76.1901162238310.6626@cbobk.fhfr.pm>
-References: <CAHk-=wip2CPrdOwgF0z4n2tsdW7uu+Egtcx9Mxxe3gPfPW_JmQ@mail.gmail.com> <5c3e7de6.1c69fb81.4aebb.3fec@mx.google.com> <CAHk-=wgF9p9xNzZei_-ejGLy1bJf4VS1C5E9_V0kCTEpCkpCTQ@mail.gmail.com> <9E337EA6-7CDA-457B-96C6-E91F83742587@amacapital.net>
- <CAHk-=wjqkbjL2_BwUYxJxJhdadiw6Zx-Yu_mK3E6P7kG3wSGcQ@mail.gmail.com> <20190116054613.GA11670@nautica> <CAHk-=wjVjecbGRcxZUSwoSgAq9ZbMxbA=MOiqDrPgx7_P3xGhg@mail.gmail.com> <nycvar.YFH.7.76.1901161710470.6626@cbobk.fhfr.pm>
- <CAHk-=wgsnWvSsMfoEYzOq6fpahkHWxF3aSJBbVqywLa34OXnLg@mail.gmail.com> <nycvar.YFH.7.76.1901162120000.6626@cbobk.fhfr.pm> <20190116213708.GN6310@bombadil.infradead.org>
-User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
+        Wed, 16 Jan 2019 16:42:09 -0500
+Received: from mx2.mailbox.org ([80.241.60.215]:61610 "EHLO mx2.mailbox.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729361AbfAPVmJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 Jan 2019 16:42:09 -0500
+Received: from smtp1.mailbox.org (smtp1.mailbox.org [IPv6:2001:67c:2050:105:465:1:1:0])
+        (using TLSv1.2 with cipher ECDHE-RSA-CHACHA20-POLY1305 (256/256 bits))
+        (No client certificate requested)
+        by mx2.mailbox.org (Postfix) with ESMTPS id 4E5AEA1152;
+        Wed, 16 Jan 2019 22:42:06 +0100 (CET)
+X-Virus-Scanned: amavisd-new at heinlein-support.de
+Received: from smtp1.mailbox.org ([80.241.60.240])
+        by spamfilter02.heinlein-hosting.de (spamfilter02.heinlein-hosting.de [80.241.56.116]) (amavisd-new, port 10030)
+        with ESMTP id kV-ni1ASqHSL; Wed, 16 Jan 2019 22:42:05 +0100 (CET)
+Subject: Re: [PATCH 1/3] net: dsa: lantiq_gswip: fix use-after-free on failed
+ probe
+To:     Johan Hovold <johan@kernel.org>
+Cc:     Andrew Lunn <andrew@lunn.ch>,
+        Vivien Didelot <vivien.didelot@gmail.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, stable <stable@vger.kernel.org>
+References: <20190116102335.30433-1-johan@kernel.org>
+ <20190116102335.30433-2-johan@kernel.org>
+From:   Hauke Mehrtens <hauke@hauke-m.de>
+Message-ID: <ceefc2e0-72c8-0621-e9f7-cd1a1fc28e49@hauke-m.de>
+Date:   Wed, 16 Jan 2019 22:42:04 +0100
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+In-Reply-To: <20190116102335.30433-2-johan@kernel.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 16 Jan 2019, Matthew Wilcox wrote:
-
-> > On Thu, 17 Jan 2019, Linus Torvalds wrote:
-> > > As I suggested earlier in the thread, the fix for RWF_NOWAIT might be
-> > > to just move the test down to after readahead.
+On 1/16/19 11:23 AM, Johan Hovold wrote:
+> Make sure to disable and deregister the switch on late probe errors to
+> avoid use-after-free when the device-resource-managed switch is freed.
 > 
-> Your patch 3/3 just removes the test.  Am I right in thinking that it
-> doesn't need to be *moved* because the existing test after !PageUptodate
-> catches it?
+> Fixes: 14fceff4771e ("net: dsa: Add Lantiq / Intel DSA driver for vrx200")
+> Cc: stable <stable@vger.kernel.org>	# 4.20
+> Cc: Hauke Mehrtens <hauke@hauke-m.de>
+> Signed-off-by: Johan Hovold <johan@kernel.org>
 
-Exactly. It just initiates read-ahead for IOCB_NOWAIT cases as well, and 
-if it's actually set, it'll be handled by the !PageUpdtodate case.
+Acked-by: Hauke Mehrtens <hauke@hauke-m.de>
 
-> Of course, there aren't any tests for RWF_NOWAIT in xfstests.  Are there 
-> any in LTP?
-
-Not in the released version AFAIK. I've asked the LTP maintainer (in our 
-internal bugzilla) to take care of this thread a few days ago, but not 
-sure what came out of it. Adding him (Cyril) to CC.
-
-> Some typos in the commit messages:
+> ---
+>  drivers/net/dsa/lantiq_gswip.c | 5 ++++-
+>  1 file changed, 4 insertions(+), 1 deletion(-)
 > 
-> > Another aproach (checking file access permissions in order to decide
-> "approach"
+> diff --git a/drivers/net/dsa/lantiq_gswip.c b/drivers/net/dsa/lantiq_gswip.c
+> index 693a67f45bef..b06c41c98de9 100644
+> --- a/drivers/net/dsa/lantiq_gswip.c
+> +++ b/drivers/net/dsa/lantiq_gswip.c
+> @@ -1099,7 +1099,7 @@ static int gswip_probe(struct platform_device *pdev)
+>  		dev_err(dev, "wrong CPU port defined, HW only supports port: %i",
+>  			priv->hw_info->cpu_port);
+>  		err = -EINVAL;
+> -		goto mdio_bus;
+> +		goto disable_switch;
+>  	}
+>  
+>  	platform_set_drvdata(pdev, priv);
+> @@ -1109,6 +1109,9 @@ static int gswip_probe(struct platform_device *pdev)
+>  		 (version & GSWIP_VERSION_MOD_MASK) >> GSWIP_VERSION_MOD_SHIFT);
+>  	return 0;
+>  
+> +disable_switch:
+> +	gswip_mdio_mask(priv, GSWIP_MDIO_GLOB_ENABLE, 0, GSWIP_MDIO_GLOB);
+> +	dsa_unregister_switch(priv->ds);
+>  mdio_bus:
+>  	if (mdio_np)
+>  		mdiobus_unregister(priv->ds->slave_mii_bus);
 > 
-> > Subject: [PATCH 2/3] mm/mincore: make mincore() more conservative
-> > 
-> > The semantics of what mincore() considers to be resident is not completely
-> > clearar, but Linux has always (since 2.3.52, which is when mincore() was
-> "clear"
-> 
-> > initially done) treated it as "page is available in page cache".
-> > 
-> > That's potentially a problem, as that [in]directly exposes meta-information
-> > about pagecache / memory mapping state even about memory not strictly belonging
-> > to the process executing the syscall, opening possibilities for sidechannel
-> > attacks.
-> > 
-> > Change the semantics of mincore() so that it only reveals pagecache information
-> > for non-anonymous mappings that belog to files that the calling process could
-> "belong"
-
-Thanks.
-
--- 
-Jiri Kosina
-SUSE Labs
 
