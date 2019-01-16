@@ -7,34 +7,34 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1CEF9C43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 11:48:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 569D9C43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 11:48:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CA2A020657
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 11:48:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1B97F20657
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 11:48:58 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="I17EIurI"
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="brLdY/sR"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392562AbfAPLsy (ORCPT
+        id S2392578AbfAPLs5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 16 Jan 2019 06:48:54 -0500
-Received: from mail-eopbgr70084.outbound.protection.outlook.com ([40.107.7.84]:57311
-        "EHLO EUR04-HE1-obe.outbound.protection.outlook.com"
+        Wed, 16 Jan 2019 06:48:57 -0500
+Received: from mail-eopbgr10044.outbound.protection.outlook.com ([40.107.1.44]:33184
+        "EHLO EUR02-HE1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2392541AbfAPLsv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Jan 2019 06:48:51 -0500
+        id S2389735AbfAPLsy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 Jan 2019 06:48:54 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=DtybiGACgmn7BGqGzPOjdCrkOF1+3TRVfcMBxUT55mg=;
- b=I17EIurI1R0orY9Wk/+J0SxssFdTU8cYfaA3Q6/XUVfk5GTuQBmprjyEK7UXcS2QT4d2tyZvDQtNEtxa0GrpFtMz3F5E96E13XBHYR6EvV4PhfH/iwjKJ0rrpAYi3HM+ZOQ2FCTw7EI8TDYmaLVYvTLo/M1ZTTlPVtH/gLhfKiY=
+ bh=yktlCVQ9I8BT0W2qXeAYFVIhUBpDuMXP9UKx7qzzwSU=;
+ b=brLdY/sRXs0Fw3dzZfK5xjgXWwf0ahJFq1U9QQJu3iLivnwi8iT94b8xvp94Cbiv9mi1siOJ00IMtUB8AW0RMbMxruBBwiPCYsqSaYEagAx6c02Gwzo8Mb0agmNCV6c45OK/y59bIZ2n+GFERJQoUL7IlMkG6LlbaZYAEMD9v6g=
 Received: from AM6PR04MB4007.eurprd04.prod.outlook.com (52.135.161.10) by
- AM6PR04MB6101.eurprd04.prod.outlook.com (20.179.5.146) with Microsoft SMTP
+ AM6PR04MB6280.eurprd04.prod.outlook.com (20.179.18.13) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1537.24; Wed, 16 Jan 2019 11:48:41 +0000
+ 15.20.1537.24; Wed, 16 Jan 2019 11:48:48 +0000
 Received: from AM6PR04MB4007.eurprd04.prod.outlook.com
  ([fe80::65e5:2a3b:b9a8:3cd9]) by AM6PR04MB4007.eurprd04.prod.outlook.com
  ([fe80::65e5:2a3b:b9a8:3cd9%5]) with mapi id 15.20.1537.018; Wed, 16 Jan 2019
- 11:48:41 +0000
+ 11:48:48 +0000
 From:   Robert Chiras <robert.chiras@nxp.com>
 To:     Daniel Vetter <daniel.vetter@ffwll.ch>,
         Philipp Zabel <p.zabel@pengutronix.de>,
@@ -49,11 +49,11 @@ CC:     Robert Chiras <robert.chiras@nxp.com>,
         dl-linux-imx <linux-imx@nxp.com>,
         "kernel@pengutronix.de" <kernel@pengutronix.de>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: [PATCH 03/11] drm/mxsfb: Add max-res property for MXSFB
-Thread-Topic: [PATCH 03/11] drm/mxsfb: Add max-res property for MXSFB
-Thread-Index: AQHUrZFtCGq+Do85ZE6KGSMh1XYBZg==
-Date:   Wed, 16 Jan 2019 11:48:41 +0000
-Message-ID: <1547639306-19151-4-git-send-email-robert.chiras@nxp.com>
+Subject: [PATCH 11/11] drm/mxsfb: Clear OUTSTANDING_REQS bits
+Thread-Topic: [PATCH 11/11] drm/mxsfb: Clear OUTSTANDING_REQS bits
+Thread-Index: AQHUrZFx6GwZl2wRTEajGcQBe5+8+w==
+Date:   Wed, 16 Jan 2019 11:48:48 +0000
+Message-ID: <1547639306-19151-12-git-send-email-robert.chiras@nxp.com>
 References: <1547639306-19151-1-git-send-email-robert.chiras@nxp.com>
 In-Reply-To: <1547639306-19151-1-git-send-email-robert.chiras@nxp.com>
 Accept-Language: en-US
@@ -69,80 +69,66 @@ x-ms-exchange-messagesentrepresentingtype: 1
 x-mailer: git-send-email 2.7.4
 x-originating-ip: [95.76.156.53]
 x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;AM6PR04MB6101;6:1zH71gbM6klkT07UGkSNDT0dZq4PtucMNSmQyeogRRhkhOLgkTb38SPZSn8+y+uKG96Day0loLkb/OEFpKvWkeX0vS9cNCv/0RJECzzpJ6ldQNX8oiCqmadC6yM7yvQe/isKA8idlJ3ksTKdTCXXpfy2D03ejri6RTcLbZ0TFRoTmUhMfD4HHUsE7IKtQhZvAP0YtVaEjyoqfb2/a9MwieHWggL1/+59mkWZHFIMEHohTWDaji2pv86J1BNgyfA5EMSpjhP5yoLoKhAXCd/aRi6g+eA899V1RrOrfoOBZPKs6N2WzItvPbTvOTwnwGWZ/psJMD5Jah39Fu+TXCZBPxcxjZDh01HkeH2tg20FZUgQMQgzd2E8tPEpLLGsAuNEMNj5AjU7JEzU4QsZ5Ny9xQFNtov8Nl1IiERfANRxO3aInVtrmqTMAoR7A1ulCTW63BdCqS/WlnRCSDSZwcco/g==;5:y8vT4Hto6AD034JRf4P2wZZ9SETt8dDptZNBQ4N5kmqqT23Grq1MpOX/nTfeAolMxBgvDiJ7B382M+3SGXy3xHI6oYze0a4co8U4mEl5YQeXLNd/QUdtgPR0HJU1cocptb5aVNPFP2xqAtNMpUPYG0s+RdpkhHvnZ3kw9ZEslzA5wM1orAeW9V7p4KA184NKs7sGI+3y1ZiN12+GfzvDHA==;7:9Na+PzFZfOW4y0zXPhaiy1mWMb5Ti2wYfcGSaAJP/lZkHsV7bzOkEFLZy4Qi/RrvhaPF+T9SJqQ7tqLhRaAtPhxtX4iEYYZHM3vIFelwk0bHuETRJvLLFiKFjwZZCHnULj1MpZi90Nf6Ifhnsluczw==
-x-ms-office365-filtering-correlation-id: f5b7c150-aff1-41e9-05fa-08d67ba88f55
+x-microsoft-exchange-diagnostics: 1;AM6PR04MB6280;6:XT+M4Qf3IIBlzMI9d9Ed1qvINZwtiRcuVFwKS5Rr+v9c3sMqJhKaIe93L/quQSctB/sE8yzkhfEdztLiFx6NQBAvZ06WHbmHTUHdgAI2Q2eIPbosmYGG3fAWOS7IZLYNZ9mpLuO9PgPwjL9GB8T5OCu7eVrqGQk23QkUdfwIgU00yUJJ6Zl+4/ZQSjrYK34f0ypTUgagA5us4FRl6eFC00DUGrxYxNVKg7mt/JQ82GgdsPiomfGNXiUduw9fGmDrz+FvDFabpTSUZ+U+lOgFZC7GCMBXHxHPQHPhnHAhmo+vr7jJ/XaJhIpC1mV3CABK1EuPvRoJJvya9INAWHxFmMhK9pRzCI1KUOYxv7ydj4yUSoHWCY69mzw9hmm02zdBKScN96dBFuITLmoN8Kl9oK+QxqzBEQpnY9QDmFqr8JHBjk+23Rq+0k+bkIKP6EtOMWU2uf1wodemhROjLNKm2A==;5:NaACSl6yGT9UhYNOjguG39r0uu26GnpB95aAlvdwLjX0OC2V/10Wq8CWHTDTF/UDI9qD5k0jnpzrnc85qtVnSClnnGO2pBVZ6at1salHP7TkN+K/xCn5rieOQh/wp98x9QjaYuWvoMuPpFsruOVELSUNR+Al4sKr79aj7j4AMNrptp+9ekOOFN6D+UdkZVrJv0Lm+BjXMGwI+FzWD0gIlQ==;7:36iuOu+8m64XgKcRHqstdnj6DTRvHj8RTA7ti2AhpDwC+5hOwXxvgnT5QjzvQnmK1fuYHt6yszdF3w/Zqn05VNOr22f2CX5VpJZyC2Y+bu6Uu7RRAHB4K+CSyAx1i6QHBcjC+EfVR5K0rM9+hqqqQg==
+x-ms-office365-filtering-correlation-id: 1ae36352-34aa-4680-e066-08d67ba893e0
 x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600109)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:AM6PR04MB6101;
-x-ms-traffictypediagnostic: AM6PR04MB6101:
-x-microsoft-antispam-prvs: <AM6PR04MB6101E32FD09845C4BD706E39E3820@AM6PR04MB6101.eurprd04.prod.outlook.com>
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600109)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:AM6PR04MB6280;
+x-ms-traffictypediagnostic: AM6PR04MB6280:
+x-microsoft-antispam-prvs: <AM6PR04MB62809106C263886D4ECCA755E3820@AM6PR04MB6280.eurprd04.prod.outlook.com>
 x-forefront-prvs: 091949432C
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(136003)(39860400002)(346002)(366004)(376002)(396003)(199004)(189003)(316002)(81156014)(110136005)(102836004)(81166006)(476003)(26005)(2616005)(186003)(8676002)(7736002)(66066001)(3846002)(50226002)(105586002)(305945005)(6486002)(8936002)(99286004)(54906003)(6436002)(106356001)(6116002)(86362001)(2906002)(44832011)(14454004)(478600001)(486006)(71200400001)(68736007)(97736004)(5660300001)(53936002)(76176011)(36756003)(256004)(446003)(14444005)(11346002)(25786009)(386003)(6506007)(6512007)(52116002)(4326008)(71190400001);DIR:OUT;SFP:1101;SCL:1;SRVR:AM6PR04MB6101;H:AM6PR04MB4007.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(136003)(376002)(396003)(39860400002)(366004)(346002)(199004)(189003)(6436002)(44832011)(50226002)(6486002)(86362001)(6512007)(4326008)(486006)(105586002)(97736004)(53936002)(66066001)(478600001)(71200400001)(8676002)(71190400001)(446003)(11346002)(14454004)(186003)(2616005)(6116002)(316002)(106356001)(76176011)(102836004)(305945005)(8936002)(99286004)(386003)(25786009)(3846002)(26005)(2906002)(256004)(54906003)(14444005)(7736002)(110136005)(36756003)(52116002)(68736007)(5660300001)(476003)(81166006)(81156014)(6506007);DIR:OUT;SFP:1101;SCL:1;SRVR:AM6PR04MB6280;H:AM6PR04MB4007.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
 received-spf: None (protection.outlook.com: nxp.com does not designate
  permitted sender hosts)
 x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: 2FLkoL2Hr7qtIISVrOTWxlNB3trk7S1fO1aHOMEkq/NEo61M5fBClH7DgXwdS6RAnLQBolL882q7jDuAhVaWqZNFDoqHyOFgIkUrgGSAnaHrL24bw8aORfgB1DCsIsmpIF0dHSx9FurK6ULIckD1FnyI2my+flTcL/22gOV90TseZxfsm82B0JSbiFsIk9Rm3nZjtGx/AIIBkd5XJP4aHTPwwvyP2Go5mB41jTi9WRkyCtWbAVpTnAw4X+kQLc442v/YXIdJ5c7cb0HH/M1OC5zTgabkh4FX61wZ2/FGbqyJA0CWwaopBXRhX9kj3xnOo7LFBeKFlotYkyUXOpBzs/RoXLt8N4vzSE9v8oJZ6qGQafG0zyj6QgibnBLOl/oSZ70zGpL/diitf1fA2tdGhADE4uaSh4ZlPyr2hw2FFWA=
+x-microsoft-antispam-message-info: Ef8Jwh6xw8c9262+aB8x9l806cmXGv0nbbKR+Cr0U42zpjV9irBwqmMW7a56RhW8OrHMOF4ma7V9ddbDj96xnZNOH9H9AqnRrENX26OQkUUbA9Xx9WfPKI/ePaj/WGe3UcQSxqG4k4L0JqesmIXarMY9JX32DZVVjf+xmkWJlA93Y/Ee3cvsmUGk6fEWC80AASnl9io/NV/OFnOV0yETRQvdZhgrDoNfJebmjMla2fuU21tV4kLj0A25mAw74QaR0KdJ/5q6l2V0tymZ8HDW/h+2sxLRkBAYMvHbKbgRL6bdj5S2j8lApwaRwNkB0bACLzhs2FlBvp4+VZr8MyUdlVBs6xQw7pRtt6fJ8zEGpZ6zOHA6ftqcXyhJ6sgTmtYdqc1ksas+z9zBsk29o52IVwpeVtrsVkI68S12yyErS9g=
 spamdiagnosticoutput: 1:99
 spamdiagnosticmetadata: NSPM
 Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: f5b7c150-aff1-41e9-05fa-08d67ba88f55
-X-MS-Exchange-CrossTenant-originalarrivaltime: 16 Jan 2019 11:48:40.2945
+X-MS-Exchange-CrossTenant-Network-Message-Id: 1ae36352-34aa-4680-e066-08d67ba893e0
+X-MS-Exchange-CrossTenant-originalarrivaltime: 16 Jan 2019 11:48:47.9200
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM6PR04MB6101
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM6PR04MB6280
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Because of stability issues, we may want to limit the maximum resolution
-supported by the MXSFB (eLCDIF) driver.
-This patch add support for a new property which we can use to impose such
-limitation.
+Bit 21 can alter the CTRL2_OUTSTANDING_REQS value right after the eLCDIF
+is enabled, since it comes up with default value of 1 (this behaviour
+has been seen on some imx8 platforms).
+In order to fix this, clear CTRL2_OUTSTANDING_REQS bits before setting
+its value.
 
 Signed-off-by: Robert Chiras <robert.chiras@nxp.com>
 ---
- drivers/gpu/drm/mxsfb/mxsfb_drv.c | 12 ++++++++++--
- 1 file changed, 10 insertions(+), 2 deletions(-)
+ drivers/gpu/drm/mxsfb/mxsfb_crtc.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-diff --git a/drivers/gpu/drm/mxsfb/mxsfb_drv.c b/drivers/gpu/drm/mxsfb/mxsf=
-b_drv.c
-index 9a73564..c0b6198 100644
---- a/drivers/gpu/drm/mxsfb/mxsfb_drv.c
-+++ b/drivers/gpu/drm/mxsfb/mxsfb_drv.c
-@@ -201,6 +201,7 @@ static int mxsfb_load(struct drm_device *drm, unsigned =
-long flags)
- 	struct platform_device *pdev =3D to_platform_device(drm->dev);
- 	struct mxsfb_drm_private *mxsfb;
- 	struct resource *res;
-+	u32 max_res[2] =3D {0, 0};
- 	int ret;
+diff --git a/drivers/gpu/drm/mxsfb/mxsfb_crtc.c b/drivers/gpu/drm/mxsfb/mxs=
+fb_crtc.c
+index cbdbd47..41b3648 100644
+--- a/drivers/gpu/drm/mxsfb/mxsfb_crtc.c
++++ b/drivers/gpu/drm/mxsfb/mxsfb_crtc.c
+@@ -231,6 +231,13 @@ static void mxsfb_enable_controller(struct mxsfb_drm_p=
+rivate *mxsfb)
+ 	clk_prepare_enable(mxsfb->clk);
 =20
- 	mxsfb =3D devm_kzalloc(&pdev->dev, sizeof(*mxsfb), GFP_KERNEL);
-@@ -279,10 +280,17 @@ static int mxsfb_load(struct drm_device *drm, unsigne=
-d long flags)
- 		}
- 	}
-=20
-+	of_property_read_u32_array(drm->dev->of_node, "max-res",
-+				   &max_res[0], 2);
-+	if (!max_res[0])
-+		max_res[0] =3D MXSFB_MAX_XRES;
-+	if (!max_res[1])
-+		max_res[1] =3D MXSFB_MAX_YRES;
-+
- 	drm->mode_config.min_width	=3D MXSFB_MIN_XRES;
- 	drm->mode_config.min_height	=3D MXSFB_MIN_YRES;
--	drm->mode_config.max_width	=3D MXSFB_MAX_XRES;
--	drm->mode_config.max_height	=3D MXSFB_MAX_YRES;
-+	drm->mode_config.max_width	=3D max_res[0];
-+	drm->mode_config.max_height	=3D max_res[1];
- 	drm->mode_config.funcs		=3D &mxsfb_mode_config_funcs;
- 	drm->mode_config.helper_private	=3D &mxsfb_mode_config_helpers;
-=20
+ 	if (mxsfb->devdata->ipversion >=3D 4) {
++		/*
++		 * On some platforms, bit 21 is defaulted to 1, which may alter
++		 * the below setting. So, to make sure we have the right setting
++		 * clear all the bits for CTRL2_OUTSTANDING_REQS.
++		 */
++		writel(CTRL2_OUTSTANDING_REQS(0x7),
++			mxsfb->base + LCDC_V4_CTRL2 + REG_CLR);
+ 		writel(CTRL2_OUTSTANDING_REQS(REQ_16),
+ 			mxsfb->base + LCDC_V4_CTRL2 + REG_SET);
+ 		/* Assert LCD Reset bit */
 --=20
 2.7.4
 
