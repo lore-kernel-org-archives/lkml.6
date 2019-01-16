@@ -2,119 +2,109 @@ Return-Path: <SRS0=1Lvk=PY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 20FEDC43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 05:00:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F9D9C43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 05:07:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E478720840
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 05:00:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 269D320840
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 05:07:25 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="AoIGPgeI"
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="ThhjCLKb"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725917AbfAPFAt (ORCPT
+        id S1725965AbfAPFGy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 16 Jan 2019 00:00:49 -0500
-Received: from mail-lf1-f66.google.com ([209.85.167.66]:41718 "EHLO
-        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725887AbfAPFAs (ORCPT
+        Wed, 16 Jan 2019 00:06:54 -0500
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:37179 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725906AbfAPFGx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Jan 2019 00:00:48 -0500
-Received: by mail-lf1-f66.google.com with SMTP id c16so3844451lfj.8
-        for <linux-kernel@vger.kernel.org>; Tue, 15 Jan 2019 21:00:47 -0800 (PST)
+        Wed, 16 Jan 2019 00:06:53 -0500
+Received: by mail-pf1-f194.google.com with SMTP id y126so2443811pfb.4
+        for <linux-kernel@vger.kernel.org>; Tue, 15 Jan 2019 21:06:53 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=MyahoR9gA3cZPmJ4fRmUUg2fkKftA4/cTtIIntxPKm0=;
-        b=AoIGPgeIUOnsX1DPPQIz4mINWsh4eAVO7IZuYdn9y4NELoNnTOraTGcibFzGsdnWQu
-         kZll5DLe2ClnMoYrsv4IXeCv2kriiDIwHXaVU6mcbZKXlqLHoeZXdJtz+8Islp9hHoGC
-         sy7X+9W6kpegaZwAxwmWrxB6j8+30F1v7C9/U=
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=UjqyiLdS2ob09b2Z4ip9zepqiphUB4pWHb9KKE6913I=;
+        b=ThhjCLKbGB0aSJW/dfx7GDmmMjs+HqUjfVC9s3V3R52RXV40o/ovlKQmtYLZ/y9IcU
+         feWB6vn2ww4djoUEwWaCXSIroLwcN6aMlTqkMjTMuf7mTLAjUoH/JP4vwdzSRZI+em75
+         Hw2WJeB8ucObmZaNuqOxfn7+J9v/MyYVrVTQY=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=MyahoR9gA3cZPmJ4fRmUUg2fkKftA4/cTtIIntxPKm0=;
-        b=cHdyrkfJZhTCeTF67YSamdkKEIHiVrCi3yg+FTe36r9UGyoWKWR09PxldkgxrInM+k
-         kufjOycHBkVvetptm2+A27YWBAt94bhmhuJfR5mufhTlSK2MzyVcQi457XOXxIHdjuox
-         GpHmpo0Qd9OAuBrWqdXs1jUvJ+WuyprUTRxNNNQsYh/dwL9vsbVOfWfpLBhA/5Vwf6gm
-         gH/POWcOIixADAEzPED7CwaVVOSQM0ekpT7VT6htFB15l+KJZFsPdx3FqzcmcGGtD4v1
-         7xDn8hSb+8jactWsSATljCHdFmPYMYu16ZQRCWn1dQRyb+cpcFhbbtSadIPDAWFf0lGV
-         I5tA==
-X-Gm-Message-State: AJcUuke2Td63srfabFGw5A+me3kbuMYepejIMTWoiFzWM5i1MYcuvM/y
-        cWWDOLRNtNA9tmZHjukhrx3a6q3jPxM=
-X-Google-Smtp-Source: ALg8bN5VbWrT48Q/1PqUHL52rxNobs2R8sdEjcvXpZdf3FD+MHjyff017OZa+d572CHzFD/3kGH/9g==
-X-Received: by 2002:a19:2584:: with SMTP id l126mr5149040lfl.69.1547614846067;
-        Tue, 15 Jan 2019 21:00:46 -0800 (PST)
-Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com. [209.85.167.52])
-        by smtp.gmail.com with ESMTPSA id b81-v6sm871546ljb.7.2019.01.15.21.00.42
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 15 Jan 2019 21:00:43 -0800 (PST)
-Received: by mail-lf1-f52.google.com with SMTP id e26so3862061lfc.2
-        for <linux-kernel@vger.kernel.org>; Tue, 15 Jan 2019 21:00:42 -0800 (PST)
-X-Received: by 2002:a19:c014:: with SMTP id q20mr5034140lff.16.1547614842100;
- Tue, 15 Jan 2019 21:00:42 -0800 (PST)
-MIME-Version: 1.0
-References: <20190108044336.GB27534@dastard> <CAHk-=wjvzEFQcTGJFh9cyV_MPQftNrjOLon8YMMxaX0G1TLqkg@mail.gmail.com>
- <20190109022430.GE27534@dastard> <nycvar.YFH.7.76.1901090326460.16954@cbobk.fhfr.pm>
- <20190109043906.GF27534@dastard> <CAHk-=wic28fSkwmPbBHZcJ3BGbiftprNy861M53k+=OAB9n0=w@mail.gmail.com>
- <20190110004424.GH27534@dastard> <CAHk-=wg1jSQ-gq-M3+HeTBbDs1VCjyiwF4gqnnBhHeWizyrigg@mail.gmail.com>
- <20190110070355.GJ27534@dastard> <CAHk-=wigwXV_G-V1VxLs6BAvVkvW5=Oj+xrNHxE_7yxEVwoe3w@mail.gmail.com>
- <20190110122442.GA21216@nautica> <CAHk-=wip2CPrdOwgF0z4n2tsdW7uu+Egtcx9Mxxe3gPfPW_JmQ@mail.gmail.com>
- <5c3e7de6.1c69fb81.4aebb.3fec@mx.google.com>
-In-Reply-To: <5c3e7de6.1c69fb81.4aebb.3fec@mx.google.com>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Wed, 16 Jan 2019 17:00:25 +1200
-X-Gmail-Original-Message-ID: <CAHk-=wgF9p9xNzZei_-ejGLy1bJf4VS1C5E9_V0kCTEpCkpCTQ@mail.gmail.com>
-Message-ID: <CAHk-=wgF9p9xNzZei_-ejGLy1bJf4VS1C5E9_V0kCTEpCkpCTQ@mail.gmail.com>
-Subject: Re: [PATCH] mm/mincore: allow for making sys_mincore() privileged
-To:     Josh Snyder <joshs@netflix.com>
-Cc:     Dominique Martinet <asmadeus@codewreck.org>,
-        Dave Chinner <david@fromorbit.com>,
-        Jiri Kosina <jikos@kernel.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        Jann Horn <jannh@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Michal Hocko <mhocko@suse.com>, Linux-MM <linux-mm@kvack.org>,
-        kernel list <linux-kernel@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=UjqyiLdS2ob09b2Z4ip9zepqiphUB4pWHb9KKE6913I=;
+        b=ZjW3q0F1jxpEcQl6Hv6USc3Kw018Q56/rsneKB8i1bcpYSZF4HtXZ91+5vlNpSLOUZ
+         nL9oyNaM9oQQanWMW0TpeZJjdoKbU2yUjJdFG99iy9Z5seofpjfS/WZYft4acGkRztYk
+         Pw4q8pHJyTmoSFvLiexjYdm9RVuMO8DqBnjXJrmlf9uBGb/cQvhl4KHsbFpD3Lm8Dy7Y
+         FO8OHpTxBs7XaVhxgr0cWwEqwUzrPlMIZuuxq534hTjqCOHRh+FnJkwusDF7sfdRLccf
+         iiwH3h5VUd5bx+lCGFSg02mm72FcIBkZkqi2UNjxBvPXh0O02WtX2ok0APqeUIf9a8fB
+         rReQ==
+X-Gm-Message-State: AJcUukc69YRIClN1PJj/V8kqdEFMNaFwv1NvvQfkph6udtFSZbtceKvK
+        Oz5SfJrqLi/8SPgrFdbdMvrZgg==
+X-Google-Smtp-Source: ALg8bN7ZYPHuERBQK3YfmymcTl1jgDYbH7JrsarhpNmiXpRibteZf4TA7Mjx+ovCyc6trZcmhs5WXQ==
+X-Received: by 2002:a63:1f1c:: with SMTP id f28mr7139149pgf.193.1547615212701;
+        Tue, 15 Jan 2019 21:06:52 -0800 (PST)
+Received: from baolinwangubtpc.spreadtrum.com ([117.18.48.102])
+        by smtp.gmail.com with ESMTPSA id m20sm4784888pgv.93.2019.01.15.21.06.49
+        (version=TLS1 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Tue, 15 Jan 2019 21:06:51 -0800 (PST)
+From:   Baolin Wang <baolin.wang@linaro.org>
+To:     linus.walleij@linaro.org, bgolaszewski@baylibre.com
+Cc:     orsonzhai@gmail.com, zhang.lyra@gmail.com, baolin.wang@linaro.org,
+        neo.hou@unisoc.com, broonie@kernel.org, linux-gpio@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v2 1/2] gpio: sprd: Fix the incorrect data register
+Date:   Wed, 16 Jan 2019 13:06:13 +0800
+Message-Id: <24594f8799f6aabdeaad3935fe36d832fb465148.1547615070.git.baolin.wang@linaro.org>
+X-Mailer: git-send-email 1.7.9.5
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 16, 2019 at 12:42 PM Josh Snyder <joshs@netflix.com> wrote:
->
-> For Netflix, losing accurate information from the mincore syscall would
-> lengthen database cluster maintenance operations from days to months.  We
-> rely on cross-process mincore to migrate the contents of a page cache from
-> machine to machine, and across reboots.
+From: Neo Hou <neo.hou@unisoc.com>
 
-Ok, this is the kind of feedback we need, and means I guess we can't
-just use the mapping existence for mincore.
+Since differnt type EICs have its own data register to read, thus fix the
+incorrect data register.
 
-The two other ways that we considered were:
+Fixes: 25518e024e3a ("gpio: Add Spreadtrum EIC driver support")
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Neo Hou <neo.hou@unisoc.com>
+Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
+---
+Changes from v1:
+ - Add fix tag and CC stable.
+---
+ drivers/gpio/gpio-eic-sprd.c |   13 ++++++++++++-
+ 1 file changed, 12 insertions(+), 1 deletion(-)
 
- (a) owner of the file gets to know cache information for that file.
+diff --git a/drivers/gpio/gpio-eic-sprd.c b/drivers/gpio/gpio-eic-sprd.c
+index e0d6a0a..257df59 100644
+--- a/drivers/gpio/gpio-eic-sprd.c
++++ b/drivers/gpio/gpio-eic-sprd.c
+@@ -180,7 +180,18 @@ static void sprd_eic_free(struct gpio_chip *chip, unsigned int offset)
+ 
+ static int sprd_eic_get(struct gpio_chip *chip, unsigned int offset)
+ {
+-	return sprd_eic_read(chip, offset, SPRD_EIC_DBNC_DATA);
++	struct sprd_eic *sprd_eic = gpiochip_get_data(chip);
++
++	switch (sprd_eic->type) {
++	case SPRD_EIC_DEBOUNCE:
++		return sprd_eic_read(chip, offset, SPRD_EIC_DBNC_DATA);
++	case SPRD_EIC_ASYNC:
++		return sprd_eic_read(chip, offset, SPRD_EIC_ASYNC_DATA);
++	case SPRD_EIC_SYNC:
++		return sprd_eic_read(chip, offset, SPRD_EIC_SYNC_DATA);
++	default:
++		return -ENOTSUPP;
++	}
+ }
+ 
+ static int sprd_eic_direction_input(struct gpio_chip *chip, unsigned int offset)
+-- 
+1.7.9.5
 
- (b) having the fd opened *writably* gets you cache residency information.
-
-Sadly, taking a look at happycache, you open the file read-only, so
-(b) doesn't work.
-
-Judging just from the source code, I can't tell how the user ownership
-works. Any input on that?
-
-And if you're not the owner of the file, do you have another
-suggestion for that "Yes, I have the right to see what's in-core for
-this file". Because the problem is literally that if it's some random
-read-only system file, the kernel shouldn't leak access patterns to
-it..
-
-                     Linus
