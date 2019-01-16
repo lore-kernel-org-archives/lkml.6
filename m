@@ -6,63 +6,63 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 16E30C43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 16:24:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 66187C43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 16:24:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E01DD20651
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 16:24:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 41EB120651
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 16:24:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405473AbfAPQYN (ORCPT
+        id S2405486AbfAPQYR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 16 Jan 2019 11:24:13 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:42286 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728499AbfAPQYM (ORCPT
+        Wed, 16 Jan 2019 11:24:17 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:47334 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1728499AbfAPQYQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Jan 2019 11:24:12 -0500
-Received: from pps.filterd (m0098399.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id x0GGJr6w012248
-        for <linux-kernel@vger.kernel.org>; Wed, 16 Jan 2019 11:24:10 -0500
-Received: from e06smtp03.uk.ibm.com (e06smtp03.uk.ibm.com [195.75.94.99])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2q27b4tah7-1
+        Wed, 16 Jan 2019 11:24:16 -0500
+Received: from pps.filterd (m0098420.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id x0GGMhDZ179556
+        for <linux-kernel@vger.kernel.org>; Wed, 16 Jan 2019 11:24:14 -0500
+Received: from e06smtp04.uk.ibm.com (e06smtp04.uk.ibm.com [195.75.94.100])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2q2832g2gu-1
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Wed, 16 Jan 2019 11:24:10 -0500
+        for <linux-kernel@vger.kernel.org>; Wed, 16 Jan 2019 11:24:14 -0500
 Received: from localhost
-        by e06smtp03.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        by e06smtp04.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
         for <linux-kernel@vger.kernel.org> from <s1seetee@linux.vnet.ibm.com>;
-        Wed, 16 Jan 2019 16:24:08 -0000
-Received: from b06cxnps3074.portsmouth.uk.ibm.com (9.149.109.194)
-        by e06smtp03.uk.ibm.com (192.168.101.133) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        Wed, 16 Jan 2019 16:24:12 -0000
+Received: from b06cxnps4075.portsmouth.uk.ibm.com (9.149.109.197)
+        by e06smtp04.uk.ibm.com (192.168.101.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
         (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Wed, 16 Jan 2019 16:24:04 -0000
-Received: from d06av24.portsmouth.uk.ibm.com (d06av24.portsmouth.uk.ibm.com [9.149.105.60])
-        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x0GGO3VY59113628
+        Wed, 16 Jan 2019 16:24:08 -0000
+Received: from d06av24.portsmouth.uk.ibm.com (mk.ibm.com [9.149.105.60])
+        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x0GGO7oE7078308
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 16 Jan 2019 16:24:03 GMT
+        Wed, 16 Jan 2019 16:24:07 GMT
 Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 765814203F;
-        Wed, 16 Jan 2019 16:24:03 +0000 (GMT)
+        by IMSVA (Postfix) with ESMTP id 20DAE42042;
+        Wed, 16 Jan 2019 16:24:07 +0000 (GMT)
 Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 612934204C;
-        Wed, 16 Jan 2019 16:24:01 +0000 (GMT)
+        by IMSVA (Postfix) with ESMTP id D68F14203F;
+        Wed, 16 Jan 2019 16:24:04 +0000 (GMT)
 Received: from oc1548405160.ibm.com (unknown [9.85.72.239])
         by d06av24.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
-        Wed, 16 Jan 2019 16:24:01 +0000 (GMT)
+        Wed, 16 Jan 2019 16:24:04 +0000 (GMT)
 From:   Seeteena Thoufeek <s1seetee@linux.vnet.ibm.com>
 To:     peterz@infradead.org, mingo@redhat.com, acme@kernel.org,
         alexander.shishkin@linux.intel.com, jolsa@redhat.com,
         namhyung@kernel.org, linux-kernel@vger.kernel.org
 Cc:     s1seetee@linux.vnet.ibm.com, ravi.bangoria@linux.ibm.com
-Subject: [PATCH] perf scripts python: Add Python 3 support to export-to-sqlite.py
-Date:   Wed, 16 Jan 2019 21:53:32 +0530
+Subject: [PATCH] perf scripts python: Add Python 3 support to failed-syscalls-by-pid.py
+Date:   Wed, 16 Jan 2019 21:53:33 +0530
 X-Mailer: git-send-email 1.8.3.1
 In-Reply-To: <1547655825-28754-1-git-send-email-s1seetee@linux.vnet.ibm.com>
 References: <1547655825-28754-1-git-send-email-s1seetee@linux.vnet.ibm.com>
 X-TM-AS-GCONF: 00
-x-cbid: 19011616-0012-0000-0000-000002E8E1D5
+x-cbid: 19011616-0016-0000-0000-000002465468
 X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19011616-0013-0000-0000-0000211FFAB9
-Message-Id: <1547655825-28754-4-git-send-email-s1seetee@linux.vnet.ibm.com>
+x-cbparentid: 19011616-0017-0000-0000-000032A07294
+Message-Id: <1547655825-28754-5-git-send-email-s1seetee@linux.vnet.ibm.com>
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-01-16_06:,,
  signatures=0
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
@@ -75,55 +75,65 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Support both Python 2 and Python 3 in export-to-sqlite.py. ``print`` is
-now a function rather than a statement. This should have no functional
-change.
+Support both Python 2 and Python 3 in failed-syscalls-by-pid.py.
+``print`` is now a function rather than a statement. This should have
+no functional change.
+
+Fixes lambda syntax error.
 
 Signed-off-by: Seeteena Thoufeek <s1seetee@linux.vnet.ibm.com>
 Reviewed-by: Ravi Bangoria <ravi.bangoria@linux.ibm.com>
----
- tools/perf/scripts/python/export-to-sqlite.py | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
 
-diff --git a/tools/perf/scripts/python/export-to-sqlite.py b/tools/perf/scripts/python/export-to-sqlite.py
-index 245caf2..530b9e3 100644
---- a/tools/perf/scripts/python/export-to-sqlite.py
-+++ b/tools/perf/scripts/python/export-to-sqlite.py
-@@ -100,7 +100,7 @@ def do_query_(q):
- 		return
- 	raise Exception("Query failed: " + q.lastError().text())
- 
--print datetime.datetime.today(), "Creating database..."
-+print(datetime.datetime.today(), "Creating database...")
- 
- db_exists = False
- try:
-@@ -376,7 +376,7 @@ if perf_db_export_calls:
- 	call_query.prepare("INSERT INTO calls VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")
+Please enter the commit message for your changes. Lines starting
+---
+ tools/perf/scripts/python/failed-syscalls-by-pid.py | 20 ++++++++++----------
+ 1 file changed, 10 insertions(+), 10 deletions(-)
+
+diff --git a/tools/perf/scripts/python/failed-syscalls-by-pid.py b/tools/perf/scripts/python/failed-syscalls-by-pid.py
+index cafeff3..333c762 100644
+--- a/tools/perf/scripts/python/failed-syscalls-by-pid.py
++++ b/tools/perf/scripts/python/failed-syscalls-by-pid.py
+@@ -32,7 +32,7 @@ if len(sys.argv) > 1:
+ syscalls = autodict()
  
  def trace_begin():
--	print datetime.datetime.today(), "Writing records..."
-+	print(datetime.datetime.today(), "Writing records...")
- 	do_query(query, 'BEGIN TRANSACTION')
- 	# id == 0 means unknown.  It is easier to create records for them than replace the zeroes with NULLs
- 	evsel_table(0, "unknown")
-@@ -394,13 +394,13 @@ unhandled_count = 0
+-	print "Press control+C to stop and show the summary"
++	print("Press control+C to stop and show the summary")
+ 
  def trace_end():
- 	do_query(query, 'END TRANSACTION')
+ 	print_error_totals()
+@@ -57,22 +57,22 @@ def syscalls__sys_exit(event_name, context, common_cpu,
  
--	print datetime.datetime.today(), "Adding indexes"
-+	print(datetime.datetime.today(), "Adding indexes")
- 	if perf_db_export_calls:
- 		do_query(query, 'CREATE INDEX pcpid_idx ON calls (parent_call_path_id)')
+ def print_error_totals():
+     if for_comm is not None:
+-	    print "\nsyscall errors for %s:\n\n" % (for_comm),
++	    print("\nsyscall errors for %s:\n\n" % (for_comm)),
+     else:
+-	    print "\nsyscall errors:\n\n",
++	    print("\nsyscall errors:\n\n"),
  
- 	if (unhandled_count):
--		print datetime.datetime.today(), "Warning: ", unhandled_count, " unhandled events"
--	print datetime.datetime.today(), "Done"
-+		print(datetime.datetime.today(), "Warning: ", unhandled_count, " unhandled events")
-+	print(datetime.datetime.today(), "Done")
+-    print "%-30s  %10s\n" % ("comm [pid]", "count"),
+-    print "%-30s  %10s\n" % ("------------------------------", \
+-                                 "----------"),
++    print("%-30s  %10s\n" % ("comm [pid]", "count")),
++    print("%-30s  %10s\n" % ("------------------------------", \
++                                 "----------")),
  
- def trace_unhandled(event_name, context, event_fields_dict):
- 	global unhandled_count
+     comm_keys = syscalls.keys()
+     for comm in comm_keys:
+ 	    pid_keys = syscalls[comm].keys()
+ 	    for pid in pid_keys:
+-		    print "\n%s [%d]\n" % (comm, pid),
++		    print("\n%s [%d]\n" % (comm, pid)),
+ 		    id_keys = syscalls[comm][pid].keys()
+ 		    for id in id_keys:
+-			    print "  syscall: %-16s\n" % syscall_name(id),
++			    print("  syscall: %-16s\n" % syscall_name(id)),
+ 			    ret_keys = syscalls[comm][pid][id].keys()
+-			    for ret, val in sorted(syscalls[comm][pid][id].iteritems(), key = lambda(k, v): (v, k),  reverse = True):
+-				    print "    err = %-20s  %10d\n" % (strerror(ret), val),
++			    for ret, val in sorted(syscalls[comm][pid][id].iteritems(), key = lambda k_v: (k_v[1], k_v[0]),  reverse = True):
++				    print("    err = %-20s  %10d\n" % (strerror(ret), val)),
 -- 
 1.8.3.1
 
