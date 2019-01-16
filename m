@@ -2,155 +2,99 @@ Return-Path: <SRS0=1Lvk=PY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,USER_AGENT_MUTT
+X-Spam-Status: No, score=-3.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 45C9FC43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 12:44:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1FC59C43444
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 12:44:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 151B120657
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 12:44:31 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="bqyNUgd0"
+	by mail.kernel.org (Postfix) with ESMTP id E4F2020657
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 12:44:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1547642682;
+	bh=POdIZ2yOuysxpHyx96Jdas1VKPgBc4oYmnmFiLg4HfQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=DQAMlbGE2rvfEN1mAVSdny9QLB8qm6HM+Fz0dK7QYTsgiMuYAp+O6BfUdmq76br/q
+	 G3qCxB4APkR7ZOjRA8M8Pn4OSFXb00oshyccliRKXmpxIYSNU4KJVZaNteOUqkUHCF
+	 FATnM917VervjXK6JmonC8SnFTMoqdKvBpV6DBy8=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390394AbfAPMo3 (ORCPT
+        id S2392815AbfAPMok (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 16 Jan 2019 07:44:29 -0500
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:40884 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732803AbfAPMo0 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Jan 2019 07:44:26 -0500
-Received: by mail-wr1-f65.google.com with SMTP id p4so6753398wrt.7
-        for <linux-kernel@vger.kernel.org>; Wed, 16 Jan 2019 04:44:25 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=YI/hMv2Ykfpzsha58avQfgbQuOAe4wiKzvr58KA+C/4=;
-        b=bqyNUgd0gfeRk1x1ONPXAxtmtgtkVIZQ4vTcWAaR4cjSIbk6sbAjhEa4a8gAFmSTUm
-         0WTosVm+mjFAcid3iCNfaYDVE85/dPnxvAGRy6vrfRCe9YbtgvjeIalIoORPHXVtv2xE
-         IUZ3c0unFCSlNppo8UYeXEZsDPlqoskBmxb30=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=YI/hMv2Ykfpzsha58avQfgbQuOAe4wiKzvr58KA+C/4=;
-        b=DMKPZw97HMDwZrQccC7FvJ7bmh1ow9jTzUh3YrMKjfhZZMy1wqzPfLiqTrjX6eyxdI
-         mVwrsaNzdReSJj6Erm0HFp1IK0QBLKlVdTl4qQ+H2cbbWtvKDU3jknDw3cCJiKB/D/87
-         NanHQLKVDPEgv3sX8n/G6AoJlt6we6hLLRW4gUK6gUXZfnbhSURiH7afry34QY0Kikhg
-         eV0wZ8zWZ65zJVmnCLex+6tkyuu/T/KllTw53q69qlWeK8trTMxnGWYwQm2pkUs0+jqy
-         FRP5T3f8JwbstRAcSHG6CowDbkb4A4fQKA8HHa+trOqTelo+VKZb0Nk+SVbKBIsc+ZWM
-         tkVg==
-X-Gm-Message-State: AJcUukeXplIwB1N21/vbzO6/Iw9AQpuCva3z4DK6ugSqO0ACUk54dJM9
-        2VvEBBJ4WTZQpgASylTW/H1FRQ==
-X-Google-Smtp-Source: ALg8bN6DdBq+X2nTLgwh2v+QzLpv9b8DGxQUfKcMDxj2cVxfqvcPm3IOUOrAn3yXMgVZdzcsdlxr9g==
-X-Received: by 2002:adf:e407:: with SMTP id g7mr7222174wrm.277.1547642664949;
-        Wed, 16 Jan 2019 04:44:24 -0800 (PST)
-Received: from dell ([2.27.35.149])
-        by smtp.gmail.com with ESMTPSA id f130sm33103811wme.41.2019.01.16.04.44.23
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 16 Jan 2019 04:44:24 -0800 (PST)
-Date:   Wed, 16 Jan 2019 12:44:21 +0000
-From:   Lee Jones <lee.jones@linaro.org>
-To:     Philippe Schenker <dev@pschenker.ch>
-Cc:     jic23@kernel.org, marcel.ziswiler@toradex.com, stefan@agner.ch,
-        robh@kernel.org, alexandre.torgue@st.com, shawnguo@kernel.org,
-        dmitry.torokhov@gmail.com, thierry.reding@gmail.com,
-        digetx@gmail.com, coquelin.stm32@gmail.com,
-        Philippe Schenker <philippe.schenker@toradex.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Arnaud Pouliquen <arnaud.pouliquen@st.com>,
-        linux-iio@vger.kernel.org, Mark Brown <broonie@kernel.org>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Rob Herring <robh+dt@kernel.org>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        William Breathitt Gray <vilhelm.gray@gmail.com>,
-        linux-stm32@st-md-mailman.stormreply.com,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-        Freeman Liu <freeman.liu@spreadtrum.com>,
-        linux-input@vger.kernel.org,
-        Eugen Hristev <eugen.hristev@microchip.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
-        devicetree@vger.kernel.org, Jonathan Hunter <jonathanh@nvidia.com>,
-        linux-tegra@vger.kernel.org, Lars-Peter Clausen <lars@metafoo.de>,
-        Hartmut Knaack <knaack.h@gmx.de>,
-        linux-arm-kernel@lists.infradead.org,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Max Krummenacher <max.krummenacher@toradex.com>,
-        Siddartha Mohanadoss <smohanad@codeaurora.org>,
-        linux-kernel@vger.kernel.org,
-        Marcus Folkesson <marcus.folkesson@gmail.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Sascha Hauer <s.hauer@pengutronix.de>
-Subject: [GIT PULL] Immutable branch between MFD, IIO and Input due for the
- v5.1 merge window
-Message-ID: <20190116124421.GD23399@dell>
-References: <20181221134638.20600-1-dev@pschenker.ch>
+        Wed, 16 Jan 2019 07:44:40 -0500
+Received: from mx2.suse.de ([195.135.220.15]:37738 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1732803AbfAPMoj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 Jan 2019 07:44:39 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id C0897AED6;
+        Wed, 16 Jan 2019 12:44:37 +0000 (UTC)
+Date:   Wed, 16 Jan 2019 13:44:31 +0100
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     Anshuman Khandual <anshuman.khandual@arm.com>, linux-mm@kvack.org,
+        akpm@linux-foundation.org, linux-kernel@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org,
+        linux-arm-kernel@lists.infradead.org, linux-sh@vger.kernel.org,
+        kvmarm@lists.cs.columbia.edu, linux-riscv@lists.infradead.org,
+        linux@armlinux.org.uk, catalin.marinas@arm.com,
+        will.deacon@arm.com, mpe@ellerman.id.au, tglx@linutronix.de,
+        mingo@redhat.com, dave.hansen@linux.intel.com,
+        peterz@infradead.org, christoffer.dall@arm.com,
+        marc.zyngier@arm.com, kirill@shutemov.name,
+        rppt@linux.vnet.ibm.com, ard.biesheuvel@linaro.org,
+        mark.rutland@arm.com, steve.capper@arm.com, james.morse@arm.com,
+        robin.murphy@arm.com, aneesh.kumar@linux.ibm.com, vbabka@suse.cz,
+        shakeelb@google.com, rientjes@google.com, palmer@sifive.com,
+        greentime@andestech.com
+Subject: Re: [PATCH V2] mm: Introduce GFP_PGTABLE
+Message-ID: <20190116124431.GK24149@dhcp22.suse.cz>
+References: <1547619692-7946-1-git-send-email-anshuman.khandual@arm.com>
+ <20190116065703.GE24149@dhcp22.suse.cz>
+ <20190116123018.GF6310@bombadil.infradead.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20181221134638.20600-1-dev@pschenker.ch>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20190116123018.GF6310@bombadil.infradead.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Taken all but the ARM patches.
+On Wed 16-01-19 04:30:18, Matthew Wilcox wrote:
+> On Wed, Jan 16, 2019 at 07:57:03AM +0100, Michal Hocko wrote:
+> > On Wed 16-01-19 11:51:32, Anshuman Khandual wrote:
+> > > All architectures have been defining their own PGALLOC_GFP as (GFP_KERNEL |
+> > > __GFP_ZERO) and using it for allocating page table pages. This causes some
+> > > code duplication which can be easily avoided. GFP_KERNEL allocated and
+> > > cleared out pages (__GFP_ZERO) are required for page tables on any given
+> > > architecture. This creates a new generic GFP flag flag which can be used
+> > > for any page table page allocation. Does not cause any functional change.
+> > > 
+> > > GFP_PGTABLE is being added into include/asm-generic/pgtable.h which is the
+> > > generic page tabe header just to prevent it's potential misuse as a general
+> > > allocation flag if included in include/linux/gfp.h.
+> > 
+> > I haven't reviewed the patch yet but I am wondering whether this is
+> > really worth it without going all the way down to unify the common code
+> > and remove much more code duplication. Or is this not possible for some
+> > reason?
+> 
+> Exactly what I suggested doing in response to v1.
+> 
+> Also, the approach taken here is crazy.  x86 has a feature that no other
+> architecture has bothered to implement yet -- accounting page tables
+> to the process.  Yet instead of spreading that goodness to all other
+> architectures, Anshuman has gone to more effort to avoid doing that.
 
-These need to be reviewed and go in via ARM-SoC.
-
-The following changes since commit bfeffd155283772bbe78c6a05dec7c0128ee500c:
-
-  Linux 5.0-rc1 (2019-01-06 17:08:20 -0800)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/lee/mfd.git ib-mfd-iio-input-v5.1
-
-for you to fetch changes up to 81cdab79818988d27d8aeb162b7988c9e6dde936:
-
-  iio: adc: add STMPE ADC devicetree bindings (2019-01-16 12:37:36 +0000)
-
-----------------------------------------------------------------
-Immutable branch between MFD, IIO and Input due for the v5.1 merge window
-
-----------------------------------------------------------------
-Philippe Schenker (3):
-      dt-bindings: stmpe: Reformatting parameter list and use tabs only
-      mfd: stmpe: Move ADC related defines to MFD header
-      Input: stmpe-ts: preparations for STMPE ADC driver
-
-Stefan Agner (3):
-      mfd: stmpe: Preparations for STMPE ADC driver
-      iio: adc: add STMPE ADC driver using IIO framework
-      iio: adc: add STMPE ADC devicetree bindings
-
- .../devicetree/bindings/iio/adc/stmpe-adc.txt      |  21 ++
- .../bindings/input/touchscreen/stmpe.txt           | 116 +++++--
- Documentation/devicetree/bindings/mfd/stmpe.txt    |  28 +-
- drivers/iio/adc/Kconfig                            |   7 +
- drivers/iio/adc/Makefile                           |   1 +
- drivers/iio/adc/stmpe-adc.c                        | 363 +++++++++++++++++++++
- drivers/input/touchscreen/stmpe-ts.c               |  66 +---
- drivers/mfd/Kconfig                                |   3 +-
- drivers/mfd/stmpe.c                                |  68 ++++
- include/linux/mfd/stmpe.h                          |  21 ++
- 10 files changed, 610 insertions(+), 84 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/iio/adc/stmpe-adc.txt
- create mode 100644 drivers/iio/adc/stmpe-adc.c
-
+Yes, I believe the only reason this is x86 only is that each arch would
+have to be tweaked separately. So a cleanup in _that_ regard would be
+helpful. There is no real reason to have ptes accounted only for x86.
+There might be some exceptions but well, our asm-generic allows to opt
+in for generic implementation or override it with a special one. The
+later should be an exception rather than the rule.
 -- 
-Lee Jones [李琼斯]
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+Michal Hocko
+SUSE Labs
