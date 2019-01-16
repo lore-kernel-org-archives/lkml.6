@@ -7,34 +7,34 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 569D9C43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 11:48:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BAD06C43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 11:49:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1B97F20657
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 11:48:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 802E020657
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 11:49:00 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="brLdY/sR"
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="gFcktjtq"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392578AbfAPLs5 (ORCPT
+        id S2392590AbfAPLs5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Wed, 16 Jan 2019 06:48:57 -0500
-Received: from mail-eopbgr10044.outbound.protection.outlook.com ([40.107.1.44]:33184
-        "EHLO EUR02-HE1-obe.outbound.protection.outlook.com"
+Received: from mail-eopbgr70084.outbound.protection.outlook.com ([40.107.7.84]:57311
+        "EHLO EUR04-HE1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2389735AbfAPLsy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S2392534AbfAPLsy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 16 Jan 2019 06:48:54 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=yktlCVQ9I8BT0W2qXeAYFVIhUBpDuMXP9UKx7qzzwSU=;
- b=brLdY/sRXs0Fw3dzZfK5xjgXWwf0ahJFq1U9QQJu3iLivnwi8iT94b8xvp94Cbiv9mi1siOJ00IMtUB8AW0RMbMxruBBwiPCYsqSaYEagAx6c02Gwzo8Mb0agmNCV6c45OK/y59bIZ2n+GFERJQoUL7IlMkG6LlbaZYAEMD9v6g=
+ bh=wIAgtPcw4qoKkYC5cej7gfsu8/PGd4RhIe75ka5riu0=;
+ b=gFcktjtqWn7IsPiT+S4teFG+KNtVW134DMlRkneVTVbW1PvOFcBx2lzERmsmh6yJXdfyvlNf8cY3ISwaDAFZ9rh2MOLuH88NbIq/SXC9if9mExNXI+guN2k8pHD+4uDqiLo0Vrwp/DZtiPZAYgvsWSCS8cims5dp1oDseNiHEYg=
 Received: from AM6PR04MB4007.eurprd04.prod.outlook.com (52.135.161.10) by
- AM6PR04MB6280.eurprd04.prod.outlook.com (20.179.18.13) with Microsoft SMTP
+ AM6PR04MB6101.eurprd04.prod.outlook.com (20.179.5.146) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1537.24; Wed, 16 Jan 2019 11:48:48 +0000
+ 15.20.1537.24; Wed, 16 Jan 2019 11:48:43 +0000
 Received: from AM6PR04MB4007.eurprd04.prod.outlook.com
  ([fe80::65e5:2a3b:b9a8:3cd9]) by AM6PR04MB4007.eurprd04.prod.outlook.com
  ([fe80::65e5:2a3b:b9a8:3cd9%5]) with mapi id 15.20.1537.018; Wed, 16 Jan 2019
- 11:48:48 +0000
+ 11:48:43 +0000
 From:   Robert Chiras <robert.chiras@nxp.com>
 To:     Daniel Vetter <daniel.vetter@ffwll.ch>,
         Philipp Zabel <p.zabel@pengutronix.de>,
@@ -49,11 +49,11 @@ CC:     Robert Chiras <robert.chiras@nxp.com>,
         dl-linux-imx <linux-imx@nxp.com>,
         "kernel@pengutronix.de" <kernel@pengutronix.de>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: [PATCH 11/11] drm/mxsfb: Clear OUTSTANDING_REQS bits
-Thread-Topic: [PATCH 11/11] drm/mxsfb: Clear OUTSTANDING_REQS bits
-Thread-Index: AQHUrZFx6GwZl2wRTEajGcQBe5+8+w==
-Date:   Wed, 16 Jan 2019 11:48:48 +0000
-Message-ID: <1547639306-19151-12-git-send-email-robert.chiras@nxp.com>
+Subject: [PATCH 05/11] drm/mxsfb: Fix the vblank events
+Thread-Topic: [PATCH 05/11] drm/mxsfb: Fix the vblank events
+Thread-Index: AQHUrZFufQ1GssoiqkOzBRY15FPrhw==
+Date:   Wed, 16 Jan 2019 11:48:43 +0000
+Message-ID: <1547639306-19151-6-git-send-email-robert.chiras@nxp.com>
 References: <1547639306-19151-1-git-send-email-robert.chiras@nxp.com>
 In-Reply-To: <1547639306-19151-1-git-send-email-robert.chiras@nxp.com>
 Accept-Language: en-US
@@ -69,66 +69,90 @@ x-ms-exchange-messagesentrepresentingtype: 1
 x-mailer: git-send-email 2.7.4
 x-originating-ip: [95.76.156.53]
 x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;AM6PR04MB6280;6:XT+M4Qf3IIBlzMI9d9Ed1qvINZwtiRcuVFwKS5Rr+v9c3sMqJhKaIe93L/quQSctB/sE8yzkhfEdztLiFx6NQBAvZ06WHbmHTUHdgAI2Q2eIPbosmYGG3fAWOS7IZLYNZ9mpLuO9PgPwjL9GB8T5OCu7eVrqGQk23QkUdfwIgU00yUJJ6Zl+4/ZQSjrYK34f0ypTUgagA5us4FRl6eFC00DUGrxYxNVKg7mt/JQ82GgdsPiomfGNXiUduw9fGmDrz+FvDFabpTSUZ+U+lOgFZC7GCMBXHxHPQHPhnHAhmo+vr7jJ/XaJhIpC1mV3CABK1EuPvRoJJvya9INAWHxFmMhK9pRzCI1KUOYxv7ydj4yUSoHWCY69mzw9hmm02zdBKScN96dBFuITLmoN8Kl9oK+QxqzBEQpnY9QDmFqr8JHBjk+23Rq+0k+bkIKP6EtOMWU2uf1wodemhROjLNKm2A==;5:NaACSl6yGT9UhYNOjguG39r0uu26GnpB95aAlvdwLjX0OC2V/10Wq8CWHTDTF/UDI9qD5k0jnpzrnc85qtVnSClnnGO2pBVZ6at1salHP7TkN+K/xCn5rieOQh/wp98x9QjaYuWvoMuPpFsruOVELSUNR+Al4sKr79aj7j4AMNrptp+9ekOOFN6D+UdkZVrJv0Lm+BjXMGwI+FzWD0gIlQ==;7:36iuOu+8m64XgKcRHqstdnj6DTRvHj8RTA7ti2AhpDwC+5hOwXxvgnT5QjzvQnmK1fuYHt6yszdF3w/Zqn05VNOr22f2CX5VpJZyC2Y+bu6Uu7RRAHB4K+CSyAx1i6QHBcjC+EfVR5K0rM9+hqqqQg==
-x-ms-office365-filtering-correlation-id: 1ae36352-34aa-4680-e066-08d67ba893e0
+x-microsoft-exchange-diagnostics: 1;AM6PR04MB6101;6:rx8Qe/jshJyRR5gEbQYyke15kZ33k+Tlk2x/6RqbnSgWCClBSJfa70TqWCE4/JTtSnafD2y4HAecpPB+nUA+pKHhz6Zora8BaPhBVrsGjNfIZ3xoOZTG7eSMb83Q9SsSF5JoqRta9kKauRpYwBeq74M8QzuCubMv99HWMAp1p0qXjjLba5iEJ2r+W/TNS8RtSL+SWoAvs9FPx7aSw2YPcGtYiafak7RDiSYy0p8sTLv7Odo90QzhgmI2xFmBkM3/GuCWYh5A9OwOw33lMLUPOi7TTySfE80eEBje+QdMY3OxVF+808Ta6++pWcnnwCYX8DyUVa2yPhcvjauoampWj25vzmJa0Cl+yWpszOWwVcwrYocbGrOrEaFQFHMqlTRqxEvlr3IvQvxCH0u31rdMqPr43LWdZsMtlWyAxLJlLqBBNGLhiZaLwBbISEe6cC6SF6dFOmSpdloLRCnn0CO+IA==;5:zST3xh2DBEL05AF2M2Nv46CMkVxZ7wtjih+5RZ6PYNBqdYlntvnEAERxK38il/cX0+l7U3uAdHk1dzdKwVRNkH5RtlFIvHEItbAfvcJUZmqoWysFt4RDH1qhNrx0u6nmGab9c8AkF/2+eIwf0slWChFh/qhnGjVGHoocgZSxnsiU6HNxt4k+Gi5ty/Bg8GdMJiFLsWJPKc+aIVmyOjcHPw==;7:rrpJPTFBzevlFJ9Selfpr4WTJZSPeG3jHAYR7C+wto4JU72h4uQE3zbwhKiv3F3Lz7TfQ12uAMpIaowPY6NsWqDvQNfWOcXKirNt8/g+rTBwAziDu8k9u01VlPgfRcZwabsr8kRSa0yRV4LgFPZCyQ==
+x-ms-office365-filtering-correlation-id: cacc08c7-f34d-41e8-f488-08d67ba89071
 x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600109)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:AM6PR04MB6280;
-x-ms-traffictypediagnostic: AM6PR04MB6280:
-x-microsoft-antispam-prvs: <AM6PR04MB62809106C263886D4ECCA755E3820@AM6PR04MB6280.eurprd04.prod.outlook.com>
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600109)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:AM6PR04MB6101;
+x-ms-traffictypediagnostic: AM6PR04MB6101:
+x-microsoft-antispam-prvs: <AM6PR04MB610138AD398200BCC9D6C890E3820@AM6PR04MB6101.eurprd04.prod.outlook.com>
 x-forefront-prvs: 091949432C
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(136003)(376002)(396003)(39860400002)(366004)(346002)(199004)(189003)(6436002)(44832011)(50226002)(6486002)(86362001)(6512007)(4326008)(486006)(105586002)(97736004)(53936002)(66066001)(478600001)(71200400001)(8676002)(71190400001)(446003)(11346002)(14454004)(186003)(2616005)(6116002)(316002)(106356001)(76176011)(102836004)(305945005)(8936002)(99286004)(386003)(25786009)(3846002)(26005)(2906002)(256004)(54906003)(14444005)(7736002)(110136005)(36756003)(52116002)(68736007)(5660300001)(476003)(81166006)(81156014)(6506007);DIR:OUT;SFP:1101;SCL:1;SRVR:AM6PR04MB6280;H:AM6PR04MB4007.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(136003)(39860400002)(346002)(366004)(376002)(396003)(199004)(189003)(316002)(81156014)(110136005)(102836004)(81166006)(476003)(26005)(2616005)(186003)(8676002)(7736002)(66066001)(3846002)(50226002)(105586002)(305945005)(6486002)(8936002)(99286004)(54906003)(6436002)(106356001)(6116002)(86362001)(2906002)(44832011)(14454004)(478600001)(486006)(71200400001)(68736007)(97736004)(5660300001)(53936002)(76176011)(36756003)(5024004)(256004)(446003)(14444005)(11346002)(25786009)(386003)(6506007)(6512007)(52116002)(4326008)(71190400001);DIR:OUT;SFP:1101;SCL:1;SRVR:AM6PR04MB6101;H:AM6PR04MB4007.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
 received-spf: None (protection.outlook.com: nxp.com does not designate
  permitted sender hosts)
 x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: Ef8Jwh6xw8c9262+aB8x9l806cmXGv0nbbKR+Cr0U42zpjV9irBwqmMW7a56RhW8OrHMOF4ma7V9ddbDj96xnZNOH9H9AqnRrENX26OQkUUbA9Xx9WfPKI/ePaj/WGe3UcQSxqG4k4L0JqesmIXarMY9JX32DZVVjf+xmkWJlA93Y/Ee3cvsmUGk6fEWC80AASnl9io/NV/OFnOV0yETRQvdZhgrDoNfJebmjMla2fuU21tV4kLj0A25mAw74QaR0KdJ/5q6l2V0tymZ8HDW/h+2sxLRkBAYMvHbKbgRL6bdj5S2j8lApwaRwNkB0bACLzhs2FlBvp4+VZr8MyUdlVBs6xQw7pRtt6fJ8zEGpZ6zOHA6ftqcXyhJ6sgTmtYdqc1ksas+z9zBsk29o52IVwpeVtrsVkI68S12yyErS9g=
+x-microsoft-antispam-message-info: v+vvfHNgngbCALxAp8yDek+sU8xGiWCLD0it7vD4vA+WagsaUbn3RD21P7GORFaurHOZDrSVT+CE/T4zqlASWbPF0BCOe/nz5rRoCl5DCyenxLmczYOWOk2Da00kB5x8c0MP0Z4/jqYmoP0yPjMETJC00lpY+4SGsnuglv8dlgdoeCqVJ6rhmPVHeNtOAwtyoc2em0i/lixhNVd8wpdpqKAFf9E6gNgAObgqa3iuFzHEzEscLuQLhunMa5J6HwMpAvJesl6GjIW1ypD/HwzhU29SQoobyrEbSx1aHBp+HdstHkIQElbbKVhKAl9uYDQLF6CxE7yhTBukKbLM10tNemSb0JhAoVBv+nC6ZY4xIjBjCKSb84SubODlhK0vjkAg1gZW/7VORe7CvBPozPRIgXLz79F4u5XcyfxepeiNGK4=
 spamdiagnosticoutput: 1:99
 spamdiagnosticmetadata: NSPM
 Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 1ae36352-34aa-4680-e066-08d67ba893e0
-X-MS-Exchange-CrossTenant-originalarrivaltime: 16 Jan 2019 11:48:47.9200
+X-MS-Exchange-CrossTenant-Network-Message-Id: cacc08c7-f34d-41e8-f488-08d67ba89071
+X-MS-Exchange-CrossTenant-originalarrivaltime: 16 Jan 2019 11:48:42.1609
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM6PR04MB6280
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM6PR04MB6101
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Bit 21 can alter the CTRL2_OUTSTANDING_REQS value right after the eLCDIF
-is enabled, since it comes up with default value of 1 (this behaviour
-has been seen on some imx8 platforms).
-In order to fix this, clear CTRL2_OUTSTANDING_REQS bits before setting
-its value.
+Currently, the vblank support is not correctly implemented in MXSFB_DRM
+driver. The call to drm_vblank_init is made with mode_config.num_crtc
+which at that time is 0. Because of this, vblank is not activated, so
+there won't be any vblank event submitted.
 
 Signed-off-by: Robert Chiras <robert.chiras@nxp.com>
 ---
- drivers/gpu/drm/mxsfb/mxsfb_crtc.c | 7 +++++++
- 1 file changed, 7 insertions(+)
+ drivers/gpu/drm/mxsfb/mxsfb_drv.c | 9 ++++++++-
+ 1 file changed, 8 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/mxsfb/mxsfb_crtc.c b/drivers/gpu/drm/mxsfb/mxs=
-fb_crtc.c
-index cbdbd47..41b3648 100644
---- a/drivers/gpu/drm/mxsfb/mxsfb_crtc.c
-+++ b/drivers/gpu/drm/mxsfb/mxsfb_crtc.c
-@@ -231,6 +231,13 @@ static void mxsfb_enable_controller(struct mxsfb_drm_p=
-rivate *mxsfb)
- 	clk_prepare_enable(mxsfb->clk);
+diff --git a/drivers/gpu/drm/mxsfb/mxsfb_drv.c b/drivers/gpu/drm/mxsfb/mxsf=
+b_drv.c
+index bc1b750..d292192 100644
+--- a/drivers/gpu/drm/mxsfb/mxsfb_drv.c
++++ b/drivers/gpu/drm/mxsfb/mxsfb_drv.c
+@@ -43,6 +43,9 @@
+ #include "mxsfb_drv.h"
+ #include "mxsfb_regs.h"
 =20
- 	if (mxsfb->devdata->ipversion >=3D 4) {
-+		/*
-+		 * On some platforms, bit 21 is defaulted to 1, which may alter
-+		 * the below setting. So, to make sure we have the right setting
-+		 * clear all the bits for CTRL2_OUTSTANDING_REQS.
-+		 */
-+		writel(CTRL2_OUTSTANDING_REQS(0x7),
-+			mxsfb->base + LCDC_V4_CTRL2 + REG_CLR);
- 		writel(CTRL2_OUTSTANDING_REQS(REQ_16),
- 			mxsfb->base + LCDC_V4_CTRL2 + REG_SET);
- 		/* Assert LCD Reset bit */
++/* The eLCDIF max possible CRTCs */
++#define MAX_CRTCS 1
++
+ enum mxsfb_devtype {
+ 	MXSFB_V3,
+ 	MXSFB_V4,
+@@ -138,6 +141,8 @@ static void mxsfb_pipe_enable(struct drm_simple_display=
+_pipe *pipe,
+ 		mxsfb->connector =3D &mxsfb->panel_connector;
+ 	}
+=20
++	drm_crtc_vblank_on(&mxsfb->pipe.crtc);
++
+ 	pm_runtime_get_sync(drm->dev);
+ 	drm_panel_prepare(mxsfb->panel);
+ 	mxsfb_crtc_enable(mxsfb);
+@@ -247,7 +252,7 @@ static int mxsfb_load(struct drm_device *drm, unsigned =
+long flags)
+=20
+ 	pm_runtime_enable(drm->dev);
+=20
+-	ret =3D drm_vblank_init(drm, drm->mode_config.num_crtc);
++	ret =3D drm_vblank_init(drm, MAX_CRTCS);
+ 	if (ret < 0) {
+ 		dev_err(drm->dev, "Failed to initialise vblank\n");
+ 		goto err_vblank;
+@@ -270,6 +275,8 @@ static int mxsfb_load(struct drm_device *drm, unsigned =
+long flags)
+ 		goto err_vblank;
+ 	}
+=20
++	drm_crtc_vblank_off(&mxsfb->pipe.crtc);
++
+ 	/*
+ 	 * Attach panel only if there is one.
+ 	 * If there is no panel attach, it must be a bridge. In this case, we
 --=20
 2.7.4
 
