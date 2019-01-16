@@ -2,57 +2,106 @@ Return-Path: <SRS0=1Lvk=PY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 65C53C43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 21:54:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 86114C43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 21:54:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3E81420652
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 21:54:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 36ADC20866
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 21:54:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731717AbfAPVyV (ORCPT
+        id S1731815AbfAPVyn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 16 Jan 2019 16:54:21 -0500
-Received: from mga07.intel.com ([134.134.136.100]:39281 "EHLO mga07.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731095AbfAPVyV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Jan 2019 16:54:21 -0500
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from fmsmga007.fm.intel.com ([10.253.24.52])
-  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 16 Jan 2019 13:54:20 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,487,1539673200"; 
-   d="scan'208";a="115223766"
-Received: from lhaqq1-mobl2.amr.corp.intel.com (HELO localhost) ([10.249.254.231])
-  by fmsmga007.fm.intel.com with ESMTP; 16 Jan 2019 13:54:17 -0800
-Date:   Wed, 16 Jan 2019 23:54:16 +0200
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     Stefan Berger <stefanb@linux.vnet.ibm.com>
-Cc:     linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 5/5] tpm: ppi: Enable submission of optional command
- parameter for PPI 1.3
-Message-ID: <20190116215416.GG25803@linux.intel.com>
-References: <20190109221103.1897677-1-stefanb@linux.vnet.ibm.com>
- <20190109221103.1897677-6-stefanb@linux.vnet.ibm.com>
+        Wed, 16 Jan 2019 16:54:43 -0500
+Received: from Galois.linutronix.de ([146.0.238.70]:45907 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731095AbfAPVyn (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 Jan 2019 16:54:43 -0500
+Received: from p4fea4364.dip0.t-ipconnect.de ([79.234.67.100] helo=nanos)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1gjt8r-0000Um-Ia; Wed, 16 Jan 2019 22:54:33 +0100
+Date:   Wed, 16 Jan 2019 22:54:25 +0100 (CET)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     Nathan Chancellor <natechancellor@gmail.com>
+cc:     Borislav Petkov <bp@alien8.de>, Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
+        linux-kernel@vger.kernel.org,
+        Nick Desaulniers <ndesaulniers@google.com>
+Subject: Re: [PATCH v2] x86/pgtable: Always inline p4d_index
+In-Reply-To: <20190116134158.344-1-natechancellor@gmail.com>
+Message-ID: <alpine.DEB.2.21.1901161848560.1642@nanos.tec.linutronix.de>
+References: <20181210234538.5405-1-natechancellor@gmail.com> <20190116134158.344-1-natechancellor@gmail.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190109221103.1897677-6-stefanb@linux.vnet.ibm.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=US-ASCII
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 09, 2019 at 05:11:03PM -0500, Stefan Berger wrote:
-> +		if (sscanf(buf, "%llu %llu", &tmp[0].integer.value,
-> +					     &tmp[1].integer.value) != 2)
+On Wed, 16 Jan 2019, Nathan Chancellor wrote:
 
-The alignment is broken here.
+> When building an allyesconfig build with Clang, the kernel fails to link
+> arch/x86/platform/efi/efi_64.o because of a failed BUILD_BUG_ON:
+> 
+> ld: arch/x86/platform/efi/efi_64.o: in function `efi_sync_low_kernel_mappings':
+> (.text+0x8e5): undefined reference to `__compiletime_assert_277'
+> 
+> Since there are several BUILD_BUG_ONs in efi_64.c, I isolated it down to
+> the following:
+> 
+>     BUILD_BUG_ON(p4d_index(EFI_VA_END) != p4d_index(MODULES_END));
+> 
+> After some research, it turns out that there is a new config option
+> called NO_AUTO_INLINE, which adds '-fno-inline-functions' to
+> KBUILD_CFLAGS so that the compiler does not auto inline small functions,
+> which causes this BUILD_BUG_ON to fail because p4d_index is no longer an
+> integer constant expression.
 
-/Jarkko
+There is no tree where this config option exists.
+
+> According to the help text of the config, functions explicitly marked
+> inline should still be inlined. As it turns out, GCC and Clang both
+> support '-fno-inline-functions' but Clang only inlines functions when
+> they are marked with an always inline annotation[1].
+> 
+> Since it's expected that p4d_index should always be inlined so that its
+> value can be evaluated at build time, mark it as __always_inline.
+
+Sorry no, that's just papering over the problem.
+
+The point is that NO_AUTO_INLINE is/was meant to prevent the compiler from
+automatically inlining functions, which are NOT marked inline in any form
+in order to expand the traceability.
+
+With GCC this makes sense, because it still inlines functions which are
+solely marked inline and even if it decides not to inline them it will
+evaluate them if they expand to a build time constant expression.
+
+Now Clang decided to give -fno-inline-functions a different meaning,
+i.e. the same as GCC has for -fno-inline, which prevents inlining for
+everything except functions which are marked __always_inline.
+
+So just "fixing" the build wreckage by duct taping one single instance of
+inline functions is really a bad idea. The resulting kernel will be
+bloatware because all regular inlines and we have tons of them will turn
+into function calls even if the function overhead is larger than the
+resulting inline code. Not to talk about the performance impact.
+
+Anyway, as this option is found to be nowhere there is no point to apply
+this patch.
+
+Thanks,
+
+	tglx
+
+
+
+
