@@ -2,222 +2,99 @@ Return-Path: <SRS0=1Lvk=PY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FSL_HELO_FAKE,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A7EDC43444
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 17:57:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A0C76C43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 17:59:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2D9472086D
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 17:57:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547661426;
-	bh=LqNnElH0GNood3aNFKq5Q8oAXnnzecCJ6fo9bR6y1X0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=Pac6aGRqIMOjvuhV2McbZn70W3VQXQxsGJ8n6qmPGdfDnRJbPBHGkpGZcalE71IUk
-	 i+aoGRmeF6PCdia9ZaOlLQ9gH5Kf9ZmfxcDZPhuYRBDcludUsifldWP2jHLwPF1TRE
-	 qW4Uyu4ET2w9CrpFencR6aEX59HJ1zUZgv2Zg+60=
+	by mail.kernel.org (Postfix) with ESMTP id 6AF45206C2
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 17:59:22 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="XrfO9sOP"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727951AbfAPR5E (ORCPT
+        id S1727919AbfAPR7U (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 16 Jan 2019 12:57:04 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51960 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727629AbfAPR5D (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Jan 2019 12:57:03 -0500
-Received: from gmail.com (unknown [104.132.1.77])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9178520859;
-        Wed, 16 Jan 2019 17:57:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547661422;
-        bh=LqNnElH0GNood3aNFKq5Q8oAXnnzecCJ6fo9bR6y1X0=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=19M8g7T1HetZE2UvNfLZzB+A2K8vuqOGRPbIp4WtdkyOlG8JR7x6o4qgyxf3cuUK+
-         wm8zADG47yWS9ZJ6NfYzF+vQvEuv8Mi2qUZFuTtYJ0H7rD1jBc66sW6rd9O32tg6vh
-         /29FN18t0w8azFTrmSWnc9x6ewaY9WjdL0mjNk8k=
-Date:   Wed, 16 Jan 2019 09:57:01 -0800
-From:   Eric Biggers <ebiggers@kernel.org>
-To:     Xiongfeng Wang <wangxiongfeng2@huawei.com>
-Cc:     herbert@gondor.apana.org.au, davem@davemloft.net,
-        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
-        broonie@kernel.org, ard.biesheuvel@linaro.org,
-        jonathan.cameron@huawei.com
-Subject: Re: [PATCH 2/5] crypto: ccm - use template array registering API to
- simplify the code
-Message-ID: <20190116175700.GC152952@gmail.com>
-References: <1547607034-40948-1-git-send-email-wangxiongfeng2@huawei.com>
- <1547607034-40948-3-git-send-email-wangxiongfeng2@huawei.com>
+        Wed, 16 Jan 2019 12:59:20 -0500
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:45643 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727769AbfAPR7U (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 Jan 2019 12:59:20 -0500
+Received: by mail-wr1-f68.google.com with SMTP id t6so7940777wrr.12
+        for <linux-kernel@vger.kernel.org>; Wed, 16 Jan 2019 09:59:19 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=OGHM2N2WtdqsIqm1wuBaVDYD4GGJqThFPI7IpSINGlI=;
+        b=XrfO9sOP4jXmsMPFHS7rLSI+6aZpeYXOHQOv9L3ndVzRqSbsm0hxPavwGKMENkZPgf
+         6t9n9adC4KJFHnTAWDeZ36Wdaxkz2wB4TDOqedsX3gxndXWWReM4z8Mzdfrvc7Ry+rus
+         w5857yiT7rpwUWwQ50yKd0482KeoZ3uDTw+hxDpnv4LBDNFg+Khrn9Oa/8B0Iuzfdq1A
+         Pi9ofF+Zjmv1sf/u3OHD+HW3DLZpajrWf4lws5X3f0hXj9RGY6BG7unpda4ZAGui6FlZ
+         Y7sHs6ykksXhmT6JGR5Wo82JmNEzzP2SSH99FYTgNb0R0rKc3l0qUkA5QsSLXRDDKfp6
+         QPwA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=OGHM2N2WtdqsIqm1wuBaVDYD4GGJqThFPI7IpSINGlI=;
+        b=iL6Nq7S37H1GAfd+JjNlTAEhWBQWw6EI8VS8wI/oNAmlXPNE/wVUsBRSdqBwDwc06j
+         V5S5g7R+bvU3zw4oy27J5sk7tJsv0W5EHvq3fsJsslXxzKfODmGSd4oBeFnu4YT8BpSa
+         PUpUC+Ol8NIyPhtvuM95ZtoepSfetqVJJPEknoafzI7M90WJUz2LGkQI24xtpmzls7kz
+         aSQi8xGhJ2ZPNjhrv3nqIwcfYn53d7v32i5DcILguGsjgzdQ7PBRXnR79gp6CgxND4k7
+         YDGarSC0DvRED8XDmybxPfU03i1Y1nvgHe60wZTah8RSxPKkM0WdlcIWcaH2bwDpHSYG
+         0Pxg==
+X-Gm-Message-State: AJcUukdb4W4c8fW5NWYVab8/6e4Js/goZEUbIkDSeAl8+WpuKDOU/9JV
+        a0iUcpsajMH2p0L6rx2W3A8GXA==
+X-Google-Smtp-Source: ALg8bN55WY6SihpB6uxj+w141K80WQwdVgvXOa91M41k3U38zXCRRcwq425myaNWmHuDi47kpOjbtg==
+X-Received: by 2002:adf:8228:: with SMTP id 37mr8367659wrb.160.1547661558331;
+        Wed, 16 Jan 2019 09:59:18 -0800 (PST)
+Received: from boomer.local (lmontsouris-657-1-212-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
+        by smtp.googlemail.com with ESMTPSA id 3sm42867315wmw.46.2019.01.16.09.59.17
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 16 Jan 2019 09:59:17 -0800 (PST)
+From:   Jerome Brunet <jbrunet@baylibre.com>
+To:     Kevin Hilman <khilman@baylibre.com>
+Cc:     Jerome Brunet <jbrunet@baylibre.com>,
+        linux-amlogic@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, patchwork-bot+notify@kernel.org
+Subject: [PATCH] arm64: dts: meson: s400: enable sdr104 on sdio
+Date:   Wed, 16 Jan 2019 18:59:13 +0100
+Message-Id: <20190116175913.5907-1-jbrunet@baylibre.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1547607034-40948-3-git-send-email-wangxiongfeng2@huawei.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 16, 2019 at 10:50:31AM +0800, Xiongfeng Wang wrote:
-> Use crypto template array registering API to simplify the code.
-> 
-> Signed-off-by: Xiongfeng Wang <xiongfeng.wang@linaro.org>
-> ---
->  crypto/ccm.c | 81 +++++++++++++++++++-----------------------------------------
->  1 file changed, 26 insertions(+), 55 deletions(-)
-> 
-> diff --git a/crypto/ccm.c b/crypto/ccm.c
-> index b242fd0..8949aa2 100644
-> --- a/crypto/ccm.c
-> +++ b/crypto/ccm.c
-> @@ -589,12 +589,6 @@ static int crypto_ccm_create(struct crypto_template *tmpl, struct rtattr **tb)
->  					mac_name);
->  }
->  
-> -static struct crypto_template crypto_ccm_tmpl = {
-> -	.name = "ccm",
-> -	.create = crypto_ccm_create,
-> -	.module = THIS_MODULE,
-> -};
-> -
->  static int crypto_ccm_base_create(struct crypto_template *tmpl,
->  				  struct rtattr **tb)
->  {
-> @@ -618,12 +612,6 @@ static int crypto_ccm_base_create(struct crypto_template *tmpl,
->  					cipher_name);
->  }
->  
-> -static struct crypto_template crypto_ccm_base_tmpl = {
-> -	.name = "ccm_base",
-> -	.create = crypto_ccm_base_create,
-> -	.module = THIS_MODULE,
-> -};
-> -
->  static int crypto_rfc4309_setkey(struct crypto_aead *parent, const u8 *key,
->  				 unsigned int keylen)
->  {
-> @@ -854,12 +842,6 @@ static int crypto_rfc4309_create(struct crypto_template *tmpl,
->  	goto out;
->  }
->  
-> -static struct crypto_template crypto_rfc4309_tmpl = {
-> -	.name = "rfc4309",
-> -	.create = crypto_rfc4309_create,
-> -	.module = THIS_MODULE,
-> -};
-> -
->  static int crypto_cbcmac_digest_setkey(struct crypto_shash *parent,
->  				     const u8 *inkey, unsigned int keylen)
->  {
-> @@ -999,51 +981,40 @@ static int cbcmac_create(struct crypto_template *tmpl, struct rtattr **tb)
->  	return err;
->  }
->  
-> -static struct crypto_template crypto_cbcmac_tmpl = {
-> -	.name = "cbcmac",
-> -	.create = cbcmac_create,
-> -	.free = shash_free_instance,
-> -	.module = THIS_MODULE,
-> +static struct crypto_template crypto_ccm_tmpl[] = {
+The bcm wifi/bt device on SDIO support SDR104 and it seems to work
+well following the recent mmc driver update, so enable this
+ultra high speed mode
 
-Add an 's':  'crypto_ccm_tmpls'.  Likewise everywhere else in this patch series
-where you're defining an array of crypto_templates.
+Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+---
+ arch/arm64/boot/dts/amlogic/meson-axg-s400.dts | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-> +	{
-> +		.name = "cbcmac",
-> +		.create = cbcmac_create,
-> +		.free = shash_free_instance,
-> +		.module = THIS_MODULE,
-> +	},
-> +	{
+diff --git a/arch/arm64/boot/dts/amlogic/meson-axg-s400.dts b/arch/arm64/boot/dts/amlogic/meson-axg-s400.dts
+index 2e1dcf1c26bf..0c98ca78c8b8 100644
+--- a/arch/arm64/boot/dts/amlogic/meson-axg-s400.dts
++++ b/arch/arm64/boot/dts/amlogic/meson-axg-s400.dts
+@@ -464,7 +464,8 @@
+ 
+ 	bus-width = <4>;
+ 	cap-sd-highspeed;
+-	max-frequency = <100000000>;
++	sd-uhs-sdr104;
++	max-frequency = <200000000>;
+ 	non-removable;
+ 	disable-wp;
+ 
+-- 
+2.20.1
 
-In a list of struct definitions, the { should be on the same line as the
-previous '},'.  Likewise everywhere else in this patch series where you're
-defining an array of crypto_templates.
-
-> +		.name = "ccm_base",
-> +		.create = crypto_ccm_base_create,
-> +		.module = THIS_MODULE,
-> +	},
-> +	{
-> +		.name = "ccm",
-> +		.create = crypto_ccm_create,
-> +		.module = THIS_MODULE,
-> +	},
-> +	{
-> +		.name = "rfc4309",
-> +		.create = crypto_rfc4309_create,
-> +		.module = THIS_MODULE,
-> +	},
->  };
->  
->  static int __init crypto_ccm_module_init(void)
->  {
-> -	int err;
-> -
-> -	err = crypto_register_template(&crypto_cbcmac_tmpl);
-> -	if (err)
-> -		goto out;
-> -
-> -	err = crypto_register_template(&crypto_ccm_base_tmpl);
-> -	if (err)
-> -		goto out_undo_cbcmac;
-> -
-> -	err = crypto_register_template(&crypto_ccm_tmpl);
-> -	if (err)
-> -		goto out_undo_base;
-> -
-> -	err = crypto_register_template(&crypto_rfc4309_tmpl);
-> -	if (err)
-> -		goto out_undo_ccm;
-> -
-> -out:
-> -	return err;
-> -
-> -out_undo_ccm:
-> -	crypto_unregister_template(&crypto_ccm_tmpl);
-> -out_undo_base:
-> -	crypto_unregister_template(&crypto_ccm_base_tmpl);
-> -out_undo_cbcmac:
-> -	crypto_register_template(&crypto_cbcmac_tmpl);
-> -	goto out;
-> +	return crypto_register_templates(crypto_ccm_tmpl,
-> +			ARRAY_SIZE(crypto_ccm_tmpl));
->  }
-
-Please fix the indentation here, so the continuation line is aligned.
-
-	return crypto_register_templates(crypto_ccm_tmpl,
-					 ARRAY_SIZE(crypto_ccm_tmpl));
-
-Likewise everywhere else in the patch series where you're registering or
-unregistering templates.
-
->  
->  static void __exit crypto_ccm_module_exit(void)
->  {
-> -	crypto_unregister_template(&crypto_rfc4309_tmpl);
-> -	crypto_unregister_template(&crypto_ccm_tmpl);
-> -	crypto_unregister_template(&crypto_ccm_base_tmpl);
-> -	crypto_unregister_template(&crypto_cbcmac_tmpl);
-> +	crypto_unregister_templates(crypto_ccm_tmpl,
-> +			ARRAY_SIZE(crypto_ccm_tmpl));
->  }
-
-Same here.
-
-	crypto_unregister_templates(crypto_ccm_tmpl,
-				    ARRAY_SIZE(crypto_ccm_tmpl));
-
->  
->  module_init(crypto_ccm_module_init);
-> -- 
-> 1.7.12.4
-> 
-
-Thanks,
-
-- Eric
