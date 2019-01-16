@@ -2,98 +2,71 @@ Return-Path: <SRS0=1Lvk=PY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
+	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 76D95C43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 11:00:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D7542C43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 11:01:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4794F20859
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 11:00:17 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="K3c7mfIf"
+	by mail.kernel.org (Postfix) with ESMTP id AAA2720657
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 11:01:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404197AbfAPLAP (ORCPT
+        id S2392279AbfAPLBT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 16 Jan 2019 06:00:15 -0500
-Received: from fllv0015.ext.ti.com ([198.47.19.141]:40682 "EHLO
-        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731772AbfAPLAO (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Jan 2019 06:00:14 -0500
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id x0GB08cR048366;
-        Wed, 16 Jan 2019 05:00:08 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1547636408;
-        bh=2R5fWHqkPFLyQKAK2GNDYC8P3Ii+C6OezNPxqPK9GMY=;
-        h=Subject:To:References:CC:From:Date:In-Reply-To;
-        b=K3c7mfIfTzP1GOGHU8jkMWn021NL5hKiLHXf1Wt5AqbZ595S3UOSw4mQrEgA6vwZq
-         f4FoRlSLYZdLuiCS29dvA/x5UCULbDLejVl2jgCL4RfzGmPZZxcTFfROTIf0F2sTwD
-         52vgGSknlRVVAVOpOz2tffZxQqthRCAUvMxZQ6r0=
-Received: from DLEE103.ent.ti.com (dlee103.ent.ti.com [157.170.170.33])
-        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x0GB08jx011770
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 16 Jan 2019 05:00:08 -0600
-Received: from DLEE107.ent.ti.com (157.170.170.37) by DLEE103.ent.ti.com
- (157.170.170.33) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Wed, 16
- Jan 2019 05:00:05 -0600
-Received: from dlep33.itg.ti.com (157.170.170.75) by DLEE107.ent.ti.com
- (157.170.170.37) with Microsoft SMTP Server (version=TLS1_0,
- cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1591.10 via Frontend Transport;
- Wed, 16 Jan 2019 05:00:05 -0600
-Received: from [192.168.2.6] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by dlep33.itg.ti.com (8.14.3/8.13.8) with ESMTP id x0GB03KX011830;
-        Wed, 16 Jan 2019 05:00:04 -0600
-Subject: Re: [PATCH 0/3] arm64: ti: k3-am654: USB support
-To:     Nishanth Menon <nm@ti.com>
-References: <1547200861-17795-1-git-send-email-rogerq@ti.com>
- <20190115143306.wub3y2c2zsq7byy5@kahuna>
-CC:     <t-kristo@ti.com>, <nsekhar@ti.com>, <vigneshr@ti.com>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-From:   Roger Quadros <rogerq@ti.com>
-Message-ID: <5C3F0EB3.5090009@ti.com>
-Date:   Wed, 16 Jan 2019 13:00:03 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:38.0) Gecko/20100101
- Thunderbird/38.6.0
+        Wed, 16 Jan 2019 06:01:19 -0500
+Received: from smtp3-g21.free.fr ([212.27.42.3]:23960 "EHLO smtp3-g21.free.fr"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1731772AbfAPLBT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 Jan 2019 06:01:19 -0500
+Received: from [192.168.108.68] (unknown [213.36.7.13])
+        (Authenticated sender: marc.w.gonzalez)
+        by smtp3-g21.free.fr (Postfix) with ESMTPSA id CDA2F13F8E8;
+        Wed, 16 Jan 2019 12:01:06 +0100 (CET)
+To:     MSM <linux-arm-msm@vger.kernel.org>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Jeffrey Hugo <jhugo@codeaurora.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Andy Gross <andy.gross@linaro.org>
+From:   Marc Gonzalez <marc.w.gonzalez@free.fr>
+Subject: [RFC PATCH v2 0/4] UFS on APQ8098
+Message-ID: <88e04336-723f-c157-0384-c5054a73e0a4@free.fr>
+Date:   Wed, 16 Jan 2019 11:50:20 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-In-Reply-To: <20190115143306.wub3y2c2zsq7byy5@kahuna>
-Content-Type: text/plain; charset="windows-1252"
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 15/01/19 16:33, Nishanth Menon wrote:
-> On 12:00-20190111, Roger Quadros wrote:
->> Hi,
->>
->> The AM654 SoC supports 2 DWC3 USB controller instances. The
->> AM654 base board supports the 2nd (USB1) instance in high-speed.
->>
->> This series enables support for USB1 instance on the AM654-base-board.
->>
->> To test, you need to first apply the below 2 series.
->>
->> AM654 USB2 PHY support https://lkml.org/lkml/2018/12/5/908
->> AM654 DWC3 support https://www.mail-archive.com/linux-kernel@vger.kernel.org/msg1896101.html
->>
-> 
-> Please clarify if these have hit linux-next yet (I dont see anything in
-> the threads as to being picked up yet, may be I am wrong). Once they do hit
-> linux-next, please rebase to Tero's latest tip and repost.
-> 
-> 
+Hello,
 
-They haven't yet. PHY patches were picked up today.
+After weeks (literally!) of poking the system at random, Jeffrey found why UFS
+refused to work on APQ8098: we were not setting the load on the vregs.
 
-cheers,
--roger
+Difference between v1 and v2:
+- New patch to add 'regulator-allow-set-load' prop to all vreg nodes
+- Rename rpmcc node to 'clock-controller' + Add Review tags
+- Drop UFS pinctrl gymnastics (not required, probably left enabled in bootloader)
+- Delete GCC_UFS_ICE_CORE_CLK (ICE not used upstream, I think)
+- Fix sizes of ufsphy register areas based on Jeffrey's feedback
+- Hack ufshcd_set_vccq_rail_unused into a NOP to work around lock up + reboot
+
+
+Marc Gonzalez (4):
+  arm64: dts: qcom: msm8998: Add rpmcc node
+  arm64: dts: qcom: msm8998: Add UFS nodes
+  Add regulator-allow-set-load
+  ufshcd_set_vccq_rail_unused locks up the board
+
+ arch/arm64/boot/dts/qcom/msm8998-mtp.dtsi | 52 +++++++++++++++++
+ arch/arm64/boot/dts/qcom/msm8998.dtsi     | 69 +++++++++++++++++++++++
+ drivers/scsi/ufs/ufshcd.c                 |  1 +
+ 3 files changed, 122 insertions(+)
+
 -- 
-Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
-Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
+2.17.1
