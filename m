@@ -2,123 +2,206 @@ Return-Path: <SRS0=1Lvk=PY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A85A0C43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 19:52:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F641C43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 19:52:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 705F3206C2
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 19:52:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5EED020868
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 19:52:23 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="oSSqC/YF"
+	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="GH8bSZNy"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731889AbfAPTwO (ORCPT
+        id S1731927AbfAPTwV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 16 Jan 2019 14:52:14 -0500
-Received: from mail-vs1-f66.google.com ([209.85.217.66]:42863 "EHLO
-        mail-vs1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731691AbfAPTwN (ORCPT
+        Wed, 16 Jan 2019 14:52:21 -0500
+Received: from smtp-fw-2101.amazon.com ([72.21.196.25]:3575 "EHLO
+        smtp-fw-2101.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731691AbfAPTwU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Jan 2019 14:52:13 -0500
-Received: by mail-vs1-f66.google.com with SMTP id b74so4697787vsd.9
-        for <linux-kernel@vger.kernel.org>; Wed, 16 Jan 2019 11:52:12 -0800 (PST)
+        Wed, 16 Jan 2019 14:52:20 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=y0opV3Y2wiIVBThPYKggJycuAfqtYtufOBgcluFNRZs=;
-        b=oSSqC/YF4vwIKZlk0yBv+mMI84xqkr4GAtagv9UetDhzZWO4Mge1ZwA4n+iWIG4JDN
-         uu4IPwRxy8mZhqgRzlo9lmq7+8aJU0M/9DoIyah4puESMRROkgUDAzwWHL2Ls0MbclJC
-         BwH2ceY+Hkb8p7zSKszGjOiCDT7bW5v1tcLvg=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=y0opV3Y2wiIVBThPYKggJycuAfqtYtufOBgcluFNRZs=;
-        b=lmVBYCm98pZQVySz1ZFpW09HNqaYHiJOqrs0GKsuk5WzHpMk94Amco208lW+f26koz
-         KOD7AOo6m7wFhaO43+NJb+YD+Nz3irszOI79VBhfwA2Xgh6BdmionZCciNTCEf/MDMhN
-         BWM7t1hD97hdER0lf7lFbGjINKwjE0c9RRfygvxC79aN0RBz4KnSy0PtYBmlIj6DOtDn
-         3X1VeklUnODEv4v/OG/2zNMh+kvsNOYgEezFTX2jhqCvmHGGnXXgIaQBmB/z4WBavcnQ
-         0zZW+7Bwqp3A3uPaJzZE/Xzg+cJMcIuCSNf8z92xK07+aGoMYS9CJt3fQzNy3TTN7v7K
-         owxg==
-X-Gm-Message-State: AJcUukfpqJQpauZ7Ujvxhnq0VBLUVVDKHt4MdZEfKw1hhJI2Xadg7yAW
-        Tr7dDWsePcbxIwrM5jBw6rRp9wg3Sso=
-X-Google-Smtp-Source: ALg8bN6SWDCwCbYhNWM1FA9Zy40D7WYyreLxd2f/jJEyA0g3qbYaOXCS898TQ+68tpjwHUcJ2/7dLg==
-X-Received: by 2002:a67:485:: with SMTP id 127mr4596623vse.54.1547668332008;
-        Wed, 16 Jan 2019 11:52:12 -0800 (PST)
-Received: from mail-vk1-f170.google.com (mail-vk1-f170.google.com. [209.85.221.170])
-        by smtp.gmail.com with ESMTPSA id m89sm3620842vsh.22.2019.01.16.11.52.10
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 16 Jan 2019 11:52:10 -0800 (PST)
-Received: by mail-vk1-f170.google.com with SMTP id d201so1728023vka.0
-        for <linux-kernel@vger.kernel.org>; Wed, 16 Jan 2019 11:52:10 -0800 (PST)
-X-Received: by 2002:a1f:e7c5:: with SMTP id e188mr4134454vkh.92.1547668329785;
- Wed, 16 Jan 2019 11:52:09 -0800 (PST)
+  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
+  t=1547668338; x=1579204338;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=gnVmayem9rEUqt10OEJCKuSodmD9It35lu8lKUZkShY=;
+  b=GH8bSZNyOur+I4ER5VK3f6O5qWnqanX/vDugYlB1gZTvmfgcvkEncY7W
+   7UZK0iy/w5v/xeu3QmFdMEb4BmzU+Ev8g48jhYZu6lIB9z8KOirNIY5wj
+   TC+GTo14/CeCjyHQXfdM7hI56jJMrRWi6+7W7oKwR/H9xPTWb1Qki3pdk
+   4=;
+X-IronPort-AV: E=Sophos;i="5.56,253,1539648000"; 
+   d="scan'208";a="713144239"
+Received: from iad6-co-svc-p1-lb1-vlan2.amazon.com (HELO email-inbound-relay-1a-e34f1ddc.us-east-1.amazon.com) ([10.124.125.2])
+  by smtp-border-fw-out-2101.iad2.amazon.com with ESMTP/TLS/DHE-RSA-AES256-SHA; 16 Jan 2019 19:52:17 +0000
+Received: from EX13MTAUWC001.ant.amazon.com (iad55-ws-svc-p15-lb9-vlan3.iad.amazon.com [10.40.159.166])
+        by email-inbound-relay-1a-e34f1ddc.us-east-1.amazon.com (8.14.7/8.14.7) with ESMTP id x0GJqDWW047994
+        (version=TLSv1/SSLv3 cipher=AES256-SHA bits=256 verify=FAIL);
+        Wed, 16 Jan 2019 19:52:15 GMT
+Received: from EX13D17UWC003.ant.amazon.com (10.43.162.206) by
+ EX13MTAUWC001.ant.amazon.com (10.43.162.135) with Microsoft SMTP Server (TLS)
+ id 15.0.1367.3; Wed, 16 Jan 2019 19:52:14 +0000
+Received: from dev-dsk-alakeshh-2c-f8a3e6e0.us-west-2.amazon.com
+ (10.43.160.211) by EX13D17UWC003.ant.amazon.com (10.43.162.206) with
+ Microsoft SMTP Server (TLS) id 15.0.1367.3; Wed, 16 Jan 2019 19:52:14 +0000
+Date:   Wed, 16 Jan 2019 19:52:08 +0000
+From:   Alakesh Haloi <alakeshh@amazon.com>
+To:     <stable@vger.kernel.org>
+CC:     Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        <linux-kernel@vger.kernel.org>,
+        Xunlei Pang <xlpang@linux.alibaba.com>
+Subject: [PATCH] sched/fair: Fix bandwidth timer clock drift condition
+Message-ID: <20190116195202.GA89178@dev-dsk-alakeshh-2c-f8a3e6e0.us-west-2.amazon.com>
 MIME-Version: 1.0
-References: <20190112152844.26550-1-w@1wt.eu> <20190112152844.26550-6-w@1wt.eu>
- <CAGXu5j+LvQsLSO+TtVr5hrUTYHA0Hqrc=pxPMv++erySJ8pV7g@mail.gmail.com> <ce0fca46-ff5e-beb3-5318-3a7c1e6da0e8@linux.intel.com>
-In-Reply-To: <ce0fca46-ff5e-beb3-5318-3a7c1e6da0e8@linux.intel.com>
-From:   Kees Cook <keescook@chromium.org>
-Date:   Wed, 16 Jan 2019 11:51:58 -0800
-X-Gmail-Original-Message-ID: <CAGXu5jK90twOG1=iO7_YQVMhFqDYQZ90CSWX=fkKWR56h6Y4Cw@mail.gmail.com>
-Message-ID: <CAGXu5jK90twOG1=iO7_YQVMhFqDYQZ90CSWX=fkKWR56h6Y4Cw@mail.gmail.com>
-Subject: Re: [PATCH 6/8] ASoC: intel: skylake: change snprintf to scnprintf
- for possible overflow
-To:     Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-Cc:     Willy Tarreau <w@1wt.eu>, Silvio Cesare <silvio.cesare@gmail.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Liam Girdwood <liam.r.girdwood@linux.intel.com>,
-        Jie Yang <yang.jie@linux.intel.com>,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        Will Deacon <will.deacon@arm.com>, Greg KH <greg@kroah.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-Originating-IP: [10.43.160.211]
+X-ClientProxiedBy: EX13D16UWC004.ant.amazon.com (10.43.162.72) To
+ EX13D17UWC003.ant.amazon.com (10.43.162.206)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 16, 2019 at 11:35 AM Pierre-Louis Bossart
-<pierre-louis.bossart@linux.intel.com> wrote:
->
->
-> >> diff --git a/sound/soc/intel/skylake/skl-debug.c b/sound/soc/intel/skylake/skl-debug.c
-> >> index 5d7ac2ee7a3c..bb28db734fb7 100644
-> >> --- a/sound/soc/intel/skylake/skl-debug.c
-> >> +++ b/sound/soc/intel/skylake/skl-debug.c
-> >> @@ -43,7 +43,7 @@ static ssize_t skl_print_pins(struct skl_module_pin *m_pin, char *buf,
-> >>          ssize_t ret = 0;
-> >>
-> >>          for (i = 0; i < max_pin; i++)
-> >> -               ret += snprintf(buf + size, MOD_BUF - size,
-> >> +               ret += scnprintf(buf + size, MOD_BUF - size,
-> >>                                  "%s %d\n\tModule %d\n\tInstance %d\n\t"
-> >>                                  "In-used %s\n\tType %s\n"
-> >>                                  "\tState %d\n\tIndex %d\n",
-> >>
-> > While working on a Coccinelle script to find more cases of this, I
-> > noticed that this code is buggy: it keeps overwriting the same
-> > position in the buf string: "buf + size" and don't take "ret" into
-> > account at all. This needs to be:
-> >
-> > ret += scnprintf(buf + size + ret, MOD_BUF - size - ret,
->
-> Thanks for the sighting. Indeed this looks like a bug, all other calls
-> to snprintf use "ret" to modify the destination/length.
->
-> The only explanation I have for it not being noticed earlier is that
-> it's possibly not used - a 5mn test on 2 machines show the loop is
-> actually not run (max_pin == 0).
->
-> It'll take me a bit of time to figure out what exactly this routine is
-> supposed to do, maybe we should do the cross-tree change first?
+[ Upstream commit 512ac999d2755d2b7109e996a76b6fb8b888631d ]
 
-Sounds good to me. These patches are direct at maintainers, so please
-apply at will. :)
+I noticed that cgroup task groups constantly get throttled even
+if they have low CPU usage, this causes some jitters on the response
+time to some of our business containers when enabling CPU quotas.
 
-Thanks!
+It's very simple to reproduce:
 
+  mkdir /sys/fs/cgroup/cpu/test
+  cd /sys/fs/cgroup/cpu/test
+  echo 100000 > cpu.cfs_quota_us
+  echo $$ > tasks
+
+then repeat:
+
+  cat cpu.stat | grep nr_throttled  # nr_throttled will increase steadily
+
+After some analysis, we found that cfs_rq::runtime_remaining will
+be cleared by expire_cfs_rq_runtime() due to two equal but stale
+"cfs_{b|q}->runtime_expires" after period timer is re-armed.
+
+The current condition to judge clock drift in expire_cfs_rq_runtime()
+is wrong, the two runtime_expires are actually the same when clock
+drift happens, so this condtion can never hit. The orginal design was
+correctly done by this commit:
+
+  a9cf55b28610 ("sched: Expire invalid runtime")
+
+... but was changed to be the current implementation due to its locking bug.
+
+This patch introduces another way, it adds a new field in both structures
+cfs_rq and cfs_bandwidth to record the expiration update sequence, and
+uses them to figure out if clock drift happens (true if they are equal).
+
+Signed-off-by: Xunlei Pang <xlpang@linux.alibaba.com>
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+[alakeshh: backport: Fixed merge conflicts:
+ - sched.h: Fix the indentation and order in which the variables are
+   declared to match with coding style of the existing code in 4.14
+   Struct members of same type were declared in separate lines in
+   upstream patch which has been changed back to having multiple
+   members of same type in the same line.
+   e.g. int a; int b; ->  int a, b; ]
+Signed-off-by: Alakesh Haloi <alakeshh@amazon.com>
+Reviewed-by: Ben Segall <bsegall@google.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: <stable@vger.kernel.org> # 4.14.x
+Fixes: 51f2176d74ac ("sched/fair: Fix unlocked reads of some cfs_b->quota/period")
+Link: http://lkml.kernel.org/r/20180620101834.24455-1-xlpang@linux.alibaba.com
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+---
+ kernel/sched/fair.c  | 14 ++++++++------
+ kernel/sched/sched.h |  4 +++-
+ 2 files changed, 11 insertions(+), 7 deletions(-)
+
+diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+index 7240bb4a4090..e03fb6b2eb94 100644
+--- a/kernel/sched/fair.c
++++ b/kernel/sched/fair.c
+@@ -4088,6 +4088,7 @@ void __refill_cfs_bandwidth_runtime(struct cfs_bandwidth *cfs_b)
+ 	now = sched_clock_cpu(smp_processor_id());
+ 	cfs_b->runtime = cfs_b->quota;
+ 	cfs_b->runtime_expires = now + ktime_to_ns(cfs_b->period);
++	cfs_b->expires_seq++;
+ }
+ 
+ static inline struct cfs_bandwidth *tg_cfs_bandwidth(struct task_group *tg)
+@@ -4110,6 +4111,7 @@ static int assign_cfs_rq_runtime(struct cfs_rq *cfs_rq)
+ 	struct task_group *tg = cfs_rq->tg;
+ 	struct cfs_bandwidth *cfs_b = tg_cfs_bandwidth(tg);
+ 	u64 amount = 0, min_amount, expires;
++	int expires_seq;
+ 
+ 	/* note: this is a positive sum as runtime_remaining <= 0 */
+ 	min_amount = sched_cfs_bandwidth_slice() - cfs_rq->runtime_remaining;
+@@ -4126,6 +4128,7 @@ static int assign_cfs_rq_runtime(struct cfs_rq *cfs_rq)
+ 			cfs_b->idle = 0;
+ 		}
+ 	}
++	expires_seq = cfs_b->expires_seq;
+ 	expires = cfs_b->runtime_expires;
+ 	raw_spin_unlock(&cfs_b->lock);
+ 
+@@ -4135,8 +4138,10 @@ static int assign_cfs_rq_runtime(struct cfs_rq *cfs_rq)
+ 	 * spread between our sched_clock and the one on which runtime was
+ 	 * issued.
+ 	 */
+-	if ((s64)(expires - cfs_rq->runtime_expires) > 0)
++	if (cfs_rq->expires_seq != expires_seq) {
++		cfs_rq->expires_seq = expires_seq;
+ 		cfs_rq->runtime_expires = expires;
++	}
+ 
+ 	return cfs_rq->runtime_remaining > 0;
+ }
+@@ -4162,12 +4167,9 @@ static void expire_cfs_rq_runtime(struct cfs_rq *cfs_rq)
+ 	 * has not truly expired.
+ 	 *
+ 	 * Fortunately we can check determine whether this the case by checking
+-	 * whether the global deadline has advanced. It is valid to compare
+-	 * cfs_b->runtime_expires without any locks since we only care about
+-	 * exact equality, so a partial write will still work.
++	 * whether the global deadline(cfs_b->expires_seq) has advanced.
+ 	 */
+-
+-	if (cfs_rq->runtime_expires != cfs_b->runtime_expires) {
++	if (cfs_rq->expires_seq == cfs_b->expires_seq) {
+ 		/* extend local deadline, drift is bounded above by 2 ticks */
+ 		cfs_rq->runtime_expires += TICK_NSEC;
+ 	} else {
+diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
+index b3ba6e5e99f2..452b56923c6d 100644
+--- a/kernel/sched/sched.h
++++ b/kernel/sched/sched.h
+@@ -281,8 +281,9 @@ struct cfs_bandwidth {
+ 	u64 quota, runtime;
+ 	s64 hierarchical_quota;
+ 	u64 runtime_expires;
++	int expires_seq;
+ 
+-	int idle, period_active;
++	short idle, period_active;
+ 	struct hrtimer period_timer, slack_timer;
+ 	struct list_head throttled_cfs_rq;
+ 
+@@ -488,6 +489,7 @@ struct cfs_rq {
+ 
+ #ifdef CONFIG_CFS_BANDWIDTH
+ 	int runtime_enabled;
++	int expires_seq;
+ 	u64 runtime_expires;
+ 	s64 runtime_remaining;
+ 
 -- 
-Kees Cook
+2.14.4
+
