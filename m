@@ -2,216 +2,111 @@ Return-Path: <SRS0=1Lvk=PY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 206F8C43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 12:51:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 24A48C43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 12:52:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D2DBE20675
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 12:51:51 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="uqmoPKZc"
+	by mail.kernel.org (Postfix) with ESMTP id E8C5D20675
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 12:52:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1547643144;
+	bh=zocHPgqrJLLcvhzPRPh6giO290W+5WiL6XSm+yhAWrs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=HDBYYzhIOP0G9WCvhk5FBlpgYHN446KevvX7Q6BEXYeWL66OYJhx8o7iyvutE6F0n
+	 g9/XssUjrE+5ZirNFHi5CBQPkGvuZPc7bZP9lP09RHVXl3oGhjd9719hdF/RbOpE3k
+	 CCSMSGpsR9rE/XY6L3Sma/f2NIlV1/JmAKAMD/WQ=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392860AbfAPMvq (ORCPT
+        id S2392882AbfAPMwV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 16 Jan 2019 07:51:46 -0500
-Received: from mail-it1-f193.google.com ([209.85.166.193]:36714 "EHLO
-        mail-it1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390115AbfAPMvp (ORCPT
+        Wed, 16 Jan 2019 07:52:21 -0500
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:35700 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2390231AbfAPMwV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Jan 2019 07:51:45 -0500
-Received: by mail-it1-f193.google.com with SMTP id c9so2529418itj.1
-        for <linux-kernel@vger.kernel.org>; Wed, 16 Jan 2019 04:51:45 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=rETGl7o2fGs5+cpdOh+3cwNMQcwXj7xEC2JHUJhKfDA=;
-        b=uqmoPKZcnF+a04u8AJ/n3tbnb1CqQVnkmub47jiv85mbmV59JDjmK0ggaAHn7sHQdt
-         B8yFAwgS2WwN6ec2MehsI3QR0P8nNDB2NtVlqplKoki4rvR3zHBXjuiSXmBkfc8qBsAY
-         eezUIcmImTHx7fid+SMag3mI28Qg+bb/MeMjB/X6vZAhtfuwriO6hGtvKP5KU6PDVp3S
-         hAwHuxYVLfiPsyFRyqU40uivnDAWvUW+mwdKYhI+RJzFaRiTTQHD+THMCihfyo2X9yGu
-         DRKzMVaNTU3X4aQyO2BPrLDQav6zz/6wvuHZYVHkVYGGLa1GIvKzESxCj2YeajEpqA+Z
-         Lzvg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=rETGl7o2fGs5+cpdOh+3cwNMQcwXj7xEC2JHUJhKfDA=;
-        b=HJMUVAxi3Iw4jsL7E7Y7uo18Dwssj2viUneBOcy9p4vgz5clM32gQuHycsxmnhwwUc
-         ojZWpAbnvVcXzxMFwh34OytqKGp+7gD5olSWgsHRgSrG4bqmdsqom/OEN/9n9Qss0mhn
-         sN1Zt068vWo53GfI4HJNxvavYz2cdBZ1QPOsUTA7pTZMgzL5E7Y6+749DCXWzEM89KUR
-         08ZhHtg34Rtmt6JCv5GE1dyjgHzk5Zt6DHj+PADqvdOCcfvjfZhTPt21Rbu8Xdu1A+YS
-         k6XjDzvBcU9ccCp9Q/iiByA6wHz4d9l2vchGApSm7hTGJ8nO9n1Xvw3A1lHiqHr8wAki
-         6HhA==
-X-Gm-Message-State: AJcUukfReXHtaDJPMWTP/VzqfZAQWRRVvB6HzkpzVVpl1jTaaIT7b5be
-        jYtQxbjhquoxsthciE9QPxqCnSAPexeAN5P7l4GftUXI0mk=
-X-Google-Smtp-Source: ALg8bN54XAUuvg9MBEM56pARJa8YteEpCgvNxtNCUp3jzZJhSMzRqRkucdXZsdupy35xV+iAqObNoL4v6z7U2HV8DIc=
-X-Received: by 2002:a24:f14d:: with SMTP id q13mr1271642iti.166.1547643104451;
- Wed, 16 Jan 2019 04:51:44 -0800 (PST)
+        Wed, 16 Jan 2019 07:52:21 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=zocHPgqrJLLcvhzPRPh6giO290W+5WiL6XSm+yhAWrs=; b=ETUdQ8M1wBOfjpbO6BXC3NRHB
+        vIDX4AjtfY+aKWIwyA8E6Zp3aBV6CMrqD5H6jhzyZE6RA5fJ+/45qNLYRO5FI02BPFZ2fPr7ZMj5x
+        67JzI7jjiPvZD0+EM4kIV4KJ/apjDA2FKz4GwfQma71+e1cBFH2+HK/yej7JgDhk7PDhw=;
+Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
+        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1gjkfy-0000Dn-RD; Wed, 16 Jan 2019 12:52:10 +0000
+Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
+        id 1B1D31126FFC; Wed, 16 Jan 2019 12:52:10 +0000 (GMT)
+Date:   Wed, 16 Jan 2019 12:52:10 +0000
+From:   Mark Brown <broonie@kernel.org>
+To:     Tony Lindgren <tony@atomide.com>
+Cc:     Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
+        Belisko Marek <marek.belisko@gmail.com>,
+        "Dr. H. Nikolaus Schaller" <hns@goldelico.com>,
+        Jon Hunter <jonathanh@nvidia.com>,
+        Laxman Dewangan <ldewangan@nvidia.com>,
+        Keerthy <j-keerthy@ti.com>,
+        Peter Ujfalusi <peter.ujfalusi@ti.com>,
+        Tero Kristo <t-kristo@ti.com>,
+        Thierry Reding <treding@nvidia.com>,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-omap@vger.kernel.org
+Subject: Re: Regression in v5.0-rc with regmap-irq level-irq changes
+Message-ID: <20190116125210.GA7186@sirena.org.uk>
+References: <20190115192840.GK5544@atomide.com>
+ <20190115210920.GJ5522@sirena.org.uk>
+ <20190116001025.GL5544@atomide.com>
 MIME-Version: 1.0
-References: <1547634429-772-1-git-send-email-elena.reshetova@intel.com>
-In-Reply-To: <1547634429-772-1-git-send-email-elena.reshetova@intel.com>
-From:   Dmitry Vyukov <dvyukov@google.com>
-Date:   Wed, 16 Jan 2019 13:51:33 +0100
-Message-ID: <CACT4Y+bWgcS=c=KrthWyyjjBpc72DEK-=czLYK8=SkmOsZ_-jg@mail.gmail.com>
-Subject: Re: [PATCH] kcov: convert kcov.refcount to refcount_t
-To:     Elena Reshetova <elena.reshetova@intel.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Andrey Ryabinin <aryabinin@virtuozzo.com>,
-        Anders Roxell <anders.roxell@linaro.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Peter Zijlstra <peterz@infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="PNTmBPCT7hxwcZjr"
+Content-Disposition: inline
+In-Reply-To: <20190116001025.GL5544@atomide.com>
+X-Cookie: Help a swallow land at Capistrano.
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 16, 2019 at 11:27 AM Elena Reshetova
-<elena.reshetova@intel.com> wrote:
->
-> atomic_t variables are currently used to implement reference
-> counters with the following properties:
->  - counter is initialized to 1 using atomic_set()
->  - a resource is freed upon counter reaching zero
->  - once counter reaches zero, its further
->    increments aren't allowed
->  - counter schema uses basic atomic operations
->    (set, inc, inc_not_zero, dec_and_test, etc.)
->
-> Such atomic variables should be converted to a newly provided
-> refcount_t type and API that prevents accidental counter overflows
-> and underflows. This is important since overflows and underflows
-> can lead to use-after-free situation and be exploitable.
->
-> The variable kcov.refcount is used as pure reference counter.
-> Convert it to refcount_t and fix up the operations.
->
-> **Important note for maintainers:
->
-> Some functions from refcount_t API defined in lib/refcount.c
-> have different memory ordering guarantees than their atomic
-> counterparts.
-> The full comparison can be seen in
-> https://lkml.org/lkml/2017/11/15/57 and it is hopefully soon
-> in state to be merged to the documentation tree.
-> Normally the differences should not matter since refcount_t provides
-> enough guarantees to satisfy the refcounting use cases, but in
-> some rare cases it might matter.
-> Please double check that you don't have some undocumented
-> memory guarantees for this variable usage.
->
-> For the kcov.refcount it might make a difference
-> in following places:
->  - kcov_put(): decrement in refcount_dec_and_test() only
->    provides RELEASE ordering and control dependency on success
->    vs. fully ordered atomic counterpart
 
-Reviewed-by: Dmitry Vyukov <dvyukov@google.com>
+--PNTmBPCT7hxwcZjr
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Thanks for improving this.
+On Tue, Jan 15, 2019 at 04:10:25PM -0800, Tony Lindgren wrote:
+> * Mark Brown <broonie@kernel.org> [190115 21:09]:
+> > On Tue, Jan 15, 2019 at 11:28:40AM -0800, Tony Lindgren wrote:
 
-KCOV uses refcounts in a very simple canonical way, so no hidden
-ordering implied.
+> > > Any ideas what's needed? Some triggering mapping data to palmas.c
+> > > driver?
 
-Am I missing something or refcount_dec_and_test does not in fact
-provide ACQUIRE ordering?
+> > There should be a fix in -next already waiting for me to send it to
+> > Linus, can you check there (a couple actually, in my for-linus branch)?
 
-+case 5) - decrement-based RMW ops that return a value
-+-----------------------------------------------------
-+
-+Function changes:
-+                atomic_dec_and_test() --> refcount_dec_and_test()
-+                atomic_sub_and_test() --> refcount_sub_and_test()
-+                no atomic counterpart --> refcount_dec_if_one()
-+                atomic_add_unless(&var, -1, 1) --> refcount_dec_not_one(&var)
-+
-+Memory ordering guarantees changes:
-+                fully ordered --> RELEASE ordering + control dependency
+> OK great, yes the two drivers/base/regmap patches fix the issue
+> for me.
 
-I think that's against the expected refcount guarantees. When I
-privatize an  atomic_dec_and_test I would expect that not only stores,
-but also loads act on a quiescent object. But loads can hoist outside
-of the control dependency.
+Excellent, thanks for testing - I'm aiming to send them off this week, I
+was going to send them off earlier but then the second fix came in.
 
-Consider the following example, is it the case that the BUG_ON can still fire?
+--PNTmBPCT7hxwcZjr
+Content-Type: application/pgp-signature; name="signature.asc"
 
-struct X {
-  refcount_t rc; // == 2
-  int done1, done2; // == 0
-};
+-----BEGIN PGP SIGNATURE-----
 
-// thread 1:
-x->done1 = 1;
-if (refcount_dec_and_test(&x->rc))
-  BUG_ON(!x->done2);
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlw/KPcACgkQJNaLcl1U
+h9DwqAgAgbp/wZ9ShYsmuBGRqZdnPQEW8wZpe9J1e5R5GTuMp3Cy1DCifx6ohZvk
+IxQ8rb098HtKbLdK4ujaKoim33Q6e/du3O6hRUh1gYUBdh8TFVkYsFXkB01zPQyq
+ZTfB46YNXuvMW7/ozyYA7C/nH1ELFSoxryuLOHFkgrZDOo90KwcrgkrnBzgoEvHb
+4ZqwIcUXaEk1LkzR9XDiY+JjXe/pKLg4uiuwvCd7X3cjJSMOJeHTHwIYP91tK+yy
+emHNsoG48aTVyBFjUIYf1Nni2YeZUj5/+Bi1Oo91rC2Z7k+glaPJnXwQsFBhbnH3
+ue+lO3czhhIgW/jtnUe7uH+8LWNgpQ==
+=DgRu
+-----END PGP SIGNATURE-----
 
-// thread 2:
-x->done2 = 1;
-if (refcount_dec_and_test(&x->rc))
-  BUG_ON(!x->done1);
-
-
-
-> Suggested-by: Kees Cook <keescook@chromium.org>
-> Reviewed-by: David Windsor <dwindsor@gmail.com>
-> Reviewed-by: Hans Liljestrand <ishkamiel@gmail.com>
-> Signed-off-by: Elena Reshetova <elena.reshetova@intel.com>
-> ---
->  kernel/kcov.c | 9 +++++----
->  1 file changed, 5 insertions(+), 4 deletions(-)
->
-> diff --git a/kernel/kcov.c b/kernel/kcov.c
-> index c2277db..051e86e 100644
-> --- a/kernel/kcov.c
-> +++ b/kernel/kcov.c
-> @@ -20,6 +20,7 @@
->  #include <linux/debugfs.h>
->  #include <linux/uaccess.h>
->  #include <linux/kcov.h>
-> +#include <linux/refcount.h>
->  #include <asm/setup.h>
->
->  /* Number of 64-bit words written per one comparison: */
-> @@ -44,7 +45,7 @@ struct kcov {
->          *  - opened file descriptor
->          *  - task with enabled coverage (we can't unwire it from another task)
->          */
-> -       atomic_t                refcount;
-> +       refcount_t              refcount;
->         /* The lock protects mode, size, area and t. */
->         spinlock_t              lock;
->         enum kcov_mode          mode;
-> @@ -228,12 +229,12 @@ EXPORT_SYMBOL(__sanitizer_cov_trace_switch);
->
->  static void kcov_get(struct kcov *kcov)
->  {
-> -       atomic_inc(&kcov->refcount);
-> +       refcount_inc(&kcov->refcount);
->  }
->
->  static void kcov_put(struct kcov *kcov)
->  {
-> -       if (atomic_dec_and_test(&kcov->refcount)) {
-> +       if (refcount_dec_and_test(&kcov->refcount)) {
->                 vfree(kcov->area);
->                 kfree(kcov);
->         }
-> @@ -312,7 +313,7 @@ static int kcov_open(struct inode *inode, struct file *filep)
->         if (!kcov)
->                 return -ENOMEM;
->         kcov->mode = KCOV_MODE_DISABLED;
-> -       atomic_set(&kcov->refcount, 1);
-> +       refcount_set(&kcov->refcount, 1);
->         spin_lock_init(&kcov->lock);
->         filep->private_data = kcov;
->         return nonseekable_open(inode, filep);
-> --
-> 2.7.4
->
+--PNTmBPCT7hxwcZjr--
