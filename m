@@ -6,41 +6,41 @@ X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C628C43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 11:11:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CF54DC43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 11:12:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9BBEF20657
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 11:11:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8BE1720657
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 11:12:04 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=chronox.de header.i=@chronox.de header.b="kQ88Ul4U"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=chronox.de header.i=@chronox.de header.b="gV5Di6Df"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392374AbfAPLLu (ORCPT
+        id S2392402AbfAPLMC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 16 Jan 2019 06:11:50 -0500
-Received: from mo4-p02-ob.smtp.rzone.de ([85.215.255.82]:18160 "EHLO
-        mo4-p02-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2392367AbfAPLLs (ORCPT
+        Wed, 16 Jan 2019 06:12:02 -0500
+Received: from mo4-p03-ob.smtp.rzone.de ([85.215.255.103]:8863 "EHLO
+        mo4-p03-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730526AbfAPLMA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Jan 2019 06:11:48 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1547637103;
+        Wed, 16 Jan 2019 06:12:00 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1547637112;
         s=strato-dkim-0002; d=chronox.de;
         h=References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:
         X-RZG-CLASS-ID:X-RZG-AUTH:From:Subject:Sender;
-        bh=1Sd5yDNPiSJSxhy4ySS6exTR+m+Hq7U1h1jNBS7Nqmo=;
-        b=kQ88Ul4U4RzOmbAvqIH8r/0nd47iDScwtod6Cxul0x01v+bx2flDcWS7r7Ux5C7nVG
-        dbDJVDJ6jsJtV9ICyfzMX4ctLyLLPyK8aa/Nej5rwFCIkqb6IxlYvRb9vbMIwJGVYiY4
-        KrzcVBiq4DAcr7t0sPYzjgpVgZt/K3X/a+xRry/mQu0ojIxhPue1juelGR/iR221qmiB
-        IUEBzmPS2B6oESSMTaVa1y2fPRdERhjLdbw4Zp2pLmKJJBkZlF+gVOvMp9obOYvOc3VX
-        iJU+St+MaJdqzCUHn8yZEBhIbVRL+pY2Ug2qFMZ0nskcFuiTkSOVTXhWDS9xdpSCfHsd
-        VQqQ==
+        bh=sTChyO5sil1yDQGIPAkiWjuaAsMmqvKVZBUqplTCU7Y=;
+        b=gV5Di6Df9XjGlFP3cQfcTLkrnr+/UNVRauJPPlWTYx0wvsE7oUuHjvPt8nyN3W3DQP
+        AIXXVSJG3/zl6t35FpDA/p7w2hsCl3jmlieDy1aACC5PaKJ5uzkd7eccZoJAbYzn4LSM
+        woqxH0AIxqBftcaP7byNlb7Q8ZZ/T7FFLM4Mh3V/9Z5uuwmZJf4cBh1DOAPtSlgnhjhN
+        kZDGSZKBnSP2YHuLpcVV/HbdGotz059ZiHclh7egefOUIgAtVwMar+nu6fV7KVUqY8i3
+        qI1VgyA9lMj251ngcpdE2t/LbiSlWlkBdEg62oq/GtfZiBAywTYcd40R8jpgyDx7rTt7
+        LuPg==
 X-RZG-AUTH: ":P2ERcEykfu11Y98lp/T7+hdri+uKZK8TKWEqNyiHySGSa9k9yWgdNs16dfA/c7fW145n"
 X-RZG-CLASS-ID: mo00
 Received: from positron.chronox.de
         by smtp.strato.de (RZmta 44.9 AUTH)
-        with ESMTPSA id 309bcfv0GBBQ4NV
+        with ESMTPSA id 309bcfv0GBBV4NY
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (curve secp521r1 with 521 ECDH bits, eq. 15360 bits RSA))
         (Client did not present a certificate);
-        Wed, 16 Jan 2019 12:11:26 +0100 (CET)
+        Wed, 16 Jan 2019 12:11:31 +0100 (CET)
 From:   Stephan =?ISO-8859-1?Q?M=FCller?= <smueller@chronox.de>
 To:     Herbert Xu <herbert@gondor.apana.org.au>
 Cc:     Eric Biggers <ebiggers@kernel.org>,
@@ -59,9 +59,9 @@ Cc:     Eric Biggers <ebiggers@kernel.org>,
         Randy Dunlap <rdunlap@infradead.org>,
         Jann Horn <jannh@google.com>,
         Andy Lutomirski <luto@kernel.org>, linux-crypto@vger.kernel.org
-Subject: [PATCH v2 4/6] crypto: hkdf - HMAC-based Extract-and-Expand KDF
-Date:   Wed, 16 Jan 2019 12:08:49 +0100
-Message-ID: <3767574.eZANq8FNrB@positron.chronox.de>
+Subject: [PATCH v2 3/6] crypto: kdf - add known answer tests
+Date:   Wed, 16 Jan 2019 12:08:29 +0100
+Message-ID: <1981110.LazqzSmiWA@positron.chronox.de>
 In-Reply-To: <2082192.jPI8ve1O8G@positron.chronox.de>
 References: <20190103143227.9138-1-jlee@suse.com> <9733066.Vrs4h5eWcW@positron.chronox.de> <2082192.jPI8ve1O8G@positron.chronox.de>
 MIME-Version: 1.0
@@ -72,333 +72,390 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The HMAC-based Extract-and-Expand Key Derivation Function is conformant
-to RFC5869.
-
-The extraction phase can be invoked separately from the expansion phase.
-This implies that the once a key is set and thus the extraction phase was
-applied, the expansion phase can be invoked multiple times.
-
-The HKDF implementation does not restrict the type of keyed message
-digest it is instantiated with. RFC5869 specifies HMAC-SHA as the only
-keyed message digest, though. From a cryptographic point of view, using
-other keyed message digests would result in an equally strong KDF.
+Add known answer tests to the testmgr for the KDF (SP800-108) cipher.
 
 Signed-off-by: Stephan Mueller <smueller@chronox.de>
 ---
- crypto/Kconfig  |   6 ++
- crypto/Makefile |   1 +
- crypto/hkdf.c   | 272 ++++++++++++++++++++++++++++++++++++++++++++++++
- 3 files changed, 279 insertions(+)
- create mode 100644 crypto/hkdf.c
+ crypto/testmgr.c | 219 +++++++++++++++++++++++++++++++++++++++++++++++
+ crypto/testmgr.h | 107 +++++++++++++++++++++++
+ 2 files changed, 326 insertions(+)
 
-diff --git a/crypto/Kconfig b/crypto/Kconfig
-index 7c0336c9ba9c..c25b2033321a 100644
---- a/crypto/Kconfig
-+++ b/crypto/Kconfig
-@@ -568,6 +568,12 @@ config CRYPTO_KDF_SP800108
- 	  Support for KDF compliant to SP800-108. All three types of
- 	  KDF specified in SP800-108 are implemented.
+diff --git a/crypto/testmgr.c b/crypto/testmgr.c
+index 0f684a414acb..309819af55d8 100644
+--- a/crypto/testmgr.c
++++ b/crypto/testmgr.c
+@@ -110,6 +110,11 @@ struct drbg_test_suite {
+ 	unsigned int count;
+ };
  
-+config CRYPTO_HKDF
-+	tristate "HMAC-based Extract-and-Expand Key Derivation Function (HKDF)"
-+	select CRYPTO_RNG
-+	help
-+	  Support for KDF conformant to RFC5869.
-+
- config CRYPTO_XCBC
- 	tristate "XCBC support"
- 	select CRYPTO_HASH
-diff --git a/crypto/Makefile b/crypto/Makefile
-index eead7ec9fd8e..80363b8cbf6c 100644
---- a/crypto/Makefile
-+++ b/crypto/Makefile
-@@ -59,6 +59,7 @@ crypto_user-$(CONFIG_CRYPTO_STATS) += crypto_user_stat.o
- obj-$(CONFIG_CRYPTO_CMAC) += cmac.o
- obj-$(CONFIG_CRYPTO_HMAC) += hmac.o
- obj-$(CONFIG_CRYPTO_KDF_SP800108) += kdf_sp800108.o
-+obj-$(CONFIG_CRYPTO_HKDF) += hkdf.o
- obj-$(CONFIG_CRYPTO_VMAC) += vmac.o
- obj-$(CONFIG_CRYPTO_XCBC) += xcbc.o
- obj-$(CONFIG_CRYPTO_NULL2) += crypto_null.o
-diff --git a/crypto/hkdf.c b/crypto/hkdf.c
-new file mode 100644
-index 000000000000..2f392c71c85b
---- /dev/null
-+++ b/crypto/hkdf.c
-@@ -0,0 +1,272 @@
-+// SPDX-License-Identifier: GPL-2.0
-+
-+/*
-+ * HMAC-based Extract-and-Expand Key Derivation Function (conformant to RFC5869)
-+ *
-+ * Copyright (C) 2019, Stephan Mueller <smueller@chronox.de>
-+ */
-+
-+/*
-+ * The HKDF extract phase is applied with crypto_rng_reset().
-+ * The HKDF expand phase is applied with crypto_rng_generate().
-+ */
-+
-+#include <asm/unaligned.h>
-+#include <linux/module.h>
-+#include <crypto/rng.h>
-+#include <crypto/internal/rng.h>
-+#include <crypto/hash.h>
-+#include <crypto/internal/hash.h>
-+
-+struct crypto_hkdf_ctx {
-+	struct crypto_shash *kmd;
++struct kdf_test_suite {
++	const struct kdf_testvec *vecs;
++	unsigned int count;
 +};
 +
-+#define CRYPTO_HKDF_MAX_DIGESTSIZE	64
-+
-+static inline void crypto_kdf_init_desc(struct shash_desc *desc,
-+					struct crypto_shash *kmd)
+ struct akcipher_test_suite {
+ 	const struct akcipher_testvec *vecs;
+ 	unsigned int count;
+@@ -133,6 +138,7 @@ struct alg_test_desc {
+ 		struct hash_test_suite hash;
+ 		struct cprng_test_suite cprng;
+ 		struct drbg_test_suite drbg;
++		struct kdf_test_suite kdf;
+ 		struct akcipher_test_suite akcipher;
+ 		struct kpp_test_suite kpp;
+ 	} suite;
+@@ -2020,6 +2026,66 @@ static int drbg_cavs_test(const struct drbg_testvec *test, int pr,
+ 	return ret;
+ }
+ 
++static int kdf_test(const struct kdf_testvec *test,
++		    const char *driver, u32 type, u32 mask)
 +{
-+	desc->tfm = kmd;
-+	desc->flags = 0;
-+}
++	int ret = -EAGAIN;
++	struct crypto_rng *drng;
++	u8 *buf = kzalloc(test->expectedlen, GFP_KERNEL);
 +
-+/*
-+ * HKDF expand phase
-+ */
-+static int crypto_hkdf_generate(struct crypto_rng *rng,
-+				const u8 *info, unsigned int infolen,
-+				u8 *dst, unsigned int dlen)
-+{
-+	const struct crypto_hkdf_ctx *ctx = crypto_tfm_ctx(crypto_rng_tfm(rng));
-+	struct crypto_shash *kmd = ctx->kmd;
-+	SHASH_DESC_ON_STACK(desc, kmd);
-+	const unsigned int h = crypto_shash_digestsize(kmd);
-+	int err = 0;
-+	u8 *dst_orig = dst;
-+	const u8 *prev = NULL;
-+	u8 ctr = 0x01;
++	if (!buf)
++		return -ENOMEM;
 +
-+	if (dlen > h * 255)
-+		return -EINVAL;
-+
-+	crypto_kdf_init_desc(desc, kmd);
-+
-+	/* T(1) and following */
-+	while (dlen) {
-+		err = crypto_shash_init(desc);
-+		if (err)
-+			goto out;
-+
-+		if (prev) {
-+			err = crypto_shash_update(desc, prev, h);
-+			if (err)
-+				goto out;
-+		}
-+
-+		if (info) {
-+			err = crypto_shash_update(desc, info, infolen);
-+			if (err)
-+				goto out;
-+		}
-+
-+		if (dlen < h) {
-+			u8 tmpbuffer[CRYPTO_HKDF_MAX_DIGESTSIZE];
-+
-+			err = crypto_shash_finup(desc, &ctr, 1, tmpbuffer);
-+			if (err)
-+				goto out;
-+			memcpy(dst, tmpbuffer, dlen);
-+			memzero_explicit(tmpbuffer, h);
-+			goto out;
-+		}
-+
-+		err = crypto_shash_finup(desc, &ctr, 1, dst);
-+		if (err)
-+			goto out;
-+
-+		prev = dst;
-+		dst += h;
-+		dlen -= h;
-+		ctr++;
++	drng = crypto_alloc_rng(driver, type | CRYPTO_ALG_INTERNAL, mask);
++	if (IS_ERR(drng)) {
++		pr_err("alg: kdf: could not allocate cipher handle "
++		       "for %s\n", driver);
++		kfree(buf);
++		return -ENOMEM;
 +	}
 +
-+out:
-+	if (err)
-+		memzero_explicit(dst_orig, dlen);
-+	shash_desc_zero(desc);
-+	return err;
-+}
-+
-+/*
-+ * HKDF extract phase.
-+ *
-+ * The seed is defined to be a concatenation of the salt and the IKM.
-+ * The data buffer is pre-pended by a word which provides an u32 value
-+ * with the length of the salt. Thus, the buffer length - salt length is the
-+ * IKM length.
-+ */
-+static int crypto_hkdf_seed(struct crypto_rng *rng,
-+			    const u8 *seed, unsigned int slen)
-+{
-+	const struct crypto_hkdf_ctx *ctx = crypto_tfm_ctx(crypto_rng_tfm(rng));
-+	struct crypto_shash *kmd = ctx->kmd;
-+	SHASH_DESC_ON_STACK(desc, kmd);
-+	u32 saltlen;
-+	unsigned int h = crypto_shash_digestsize(kmd);
-+	int err;
-+	const u8 null_salt[CRYPTO_HKDF_MAX_DIGESTSIZE] = { 0 };
-+	u8 prk[CRYPTO_HKDF_MAX_DIGESTSIZE];
-+
-+	if (slen < sizeof(saltlen))
-+		return -EINVAL;
-+
-+	saltlen = get_unaligned((u32 *)seed);
-+
-+	seed += sizeof(saltlen);
-+	slen -= sizeof(saltlen);
-+
-+	if (slen < saltlen)
-+		return -EINVAL;
-+
-+	crypto_kdf_init_desc(desc, kmd);
-+
-+	/* Set the salt as HMAC key */
-+	if (saltlen)
-+		err = crypto_shash_setkey(kmd, seed, saltlen);
-+	else
-+		err = crypto_shash_setkey(kmd, null_salt, h);
-+	if (err)
-+		return err;
-+
-+	/* Extract the PRK */
-+	err = crypto_shash_digest(desc, seed + saltlen, slen - saltlen, prk);
-+	if (err)
++	ret = crypto_rng_reset(drng, test->K1, test->K1len);
++	if (ret) {
++		pr_err("alg: kdf: could not set key derivation key\n");
 +		goto err;
++	}
 +
-+	/* Set the PRK for the expand phase */
-+	err = crypto_shash_setkey(kmd, prk, h);
++	ret = crypto_rng_generate(drng, test->context, test->contextlen,
++				  buf, test->expectedlen);
++	if (ret) {
++		pr_err("alg: kdf: could not obtain key data\n");
++		goto err;
++	}
++
++	ret = memcmp(test->expected, buf, test->expectedlen);
++	if (ret)
++		ret = -EINVAL;
 +
 +err:
-+	shash_desc_zero(desc);
-+	memzero_explicit(prk, h);
-+	return err;
++	crypto_free_rng(drng);
++	kfree(buf);
++	return ret;
 +}
 +
-+static int crypto_hkdf_init_tfm(struct crypto_tfm *tfm)
++static int alg_test_kdf(const struct alg_test_desc *desc, const char *driver,
++			u32 type, u32 mask)
 +{
-+	struct crypto_instance *inst = crypto_tfm_alg_instance(tfm);
-+	struct crypto_shash_spawn *spawn = crypto_instance_ctx(inst);
-+	struct crypto_hkdf_ctx *ctx = crypto_tfm_ctx(tfm);
-+	struct crypto_shash *kmd;
++	int err = 0;
++	unsigned int i = 0;
++	const struct kdf_testvec *template = desc->suite.kdf.vecs;
++	unsigned int tcount = desc->suite.kdf.count;
 +
-+	kmd = crypto_spawn_shash(spawn);
-+	if (IS_ERR(kmd))
-+		return PTR_ERR(kmd);
-+
-+	ctx->kmd = kmd;
-+
-+	return 0;
-+}
-+
-+static void crypto_hkdf_exit_tfm(struct crypto_tfm *tfm)
-+{
-+	struct crypto_hkdf_ctx *ctx = crypto_tfm_ctx(tfm);
-+
-+	crypto_free_shash(ctx->kmd);
-+}
-+
-+static void crypto_kdf_free(struct rng_instance *inst)
-+{
-+	crypto_drop_spawn(rng_instance_ctx(inst));
-+	kfree(inst);
-+}
-+
-+static int crypto_hkdf_create(struct crypto_template *tmpl, struct rtattr **tb)
-+{
-+	struct rng_instance *inst;
-+	struct crypto_alg *alg;
-+	struct shash_alg *salg;
-+	int err;
-+	unsigned int ds, ss;
-+
-+	err = crypto_check_attr_type(tb, CRYPTO_ALG_TYPE_RNG);
-+	if (err)
-+		return err;
-+
-+	salg = shash_attr_alg(tb[1], 0, 0);
-+	if (IS_ERR(salg))
-+		return PTR_ERR(salg);
-+
-+	/* Require a keyed message digest */
-+	if (!salg->setkey)
-+		return -EOPNOTSUPP;
-+
-+	ds = salg->digestsize;
-+	/* Hashes with no digest size are not allowed for KDFs. */
-+	if (!ds || WARN_ON(ds > CRYPTO_HKDF_MAX_DIGESTSIZE))
-+		return -EOPNOTSUPP;
-+
-+	ss = salg->statesize;
-+	alg = &salg->base;
-+
-+	inst = rng_alloc_instance("hkdf", alg);
-+	err = PTR_ERR(inst);
-+	if (IS_ERR(inst))
-+		goto out_put_alg;
-+
-+	err = crypto_init_shash_spawn(rng_instance_ctx(inst), salg,
-+				      rng_crypto_instance(inst));
-+	if (err)
-+		goto free_inst;
-+
-+	inst->alg.base.cra_priority	= alg->cra_priority;
-+	inst->alg.base.cra_blocksize	= alg->cra_blocksize;
-+	inst->alg.base.cra_alignmask	= alg->cra_alignmask;
-+
-+	inst->alg.generate		= crypto_hkdf_generate;
-+	inst->alg.seed			= crypto_hkdf_seed;
-+
-+	inst->alg.base.cra_init		= crypto_hkdf_init_tfm;
-+	inst->alg.base.cra_exit		= crypto_hkdf_exit_tfm;
-+	inst->alg.base.cra_ctxsize	= sizeof(struct crypto_hkdf_ctx);
-+
-+	inst->free			= crypto_kdf_free;
-+
-+	err = rng_register_instance(tmpl, inst);
-+
-+	if (err) {
-+		crypto_drop_spawn(rng_instance_ctx(inst));
-+free_inst:
-+		kfree(inst);
++	for (i = 0; i < tcount; i++) {
++		err = kdf_test(&template[i], driver, type, mask);
++		if (err) {
++			pr_err("alg: kdf: Test %d failed for %s\n",
++			       i, driver);
++			err = -EINVAL;
++			break;
++		}
 +	}
-+
-+
-+out_put_alg:
-+	crypto_mod_put(alg);
 +	return err;
 +}
-+
-+static struct crypto_template crypto_hkdf_tmpl = {
-+	.name = "hkdf",
-+	.create = crypto_hkdf_create,
-+	.module = THIS_MODULE,
+ 
+ static int alg_test_drbg(const struct alg_test_desc *desc, const char *driver,
+ 			 u32 type, u32 mask)
+@@ -3220,6 +3286,159 @@ static const struct alg_test_desc alg_test_descs[] = {
+ 		.alg = "jitterentropy_rng",
+ 		.fips_allowed = 1,
+ 		.test = alg_test_null,
++	}, {
++		.alg = "kdf_ctr(cmac(aes))",
++		.test = alg_test_null,
++		.fips_allowed = 1,
++	}, {
++		.alg = "kdf_ctr(cmac(des3_ede))",
++		.test = alg_test_null,
++		.fips_allowed = 1,
++	}, {
++		.alg = "kdf_ctr(hmac(sha1))",
++		.test = alg_test_null,
++		.fips_allowed = 1,
++	}, {
++		.alg = "kdf_ctr(hmac(sha224))",
++		.test = alg_test_null,
++		.fips_allowed = 1,
++	}, {
++		.alg = "kdf_ctr(hmac(sha256))",
++		.test = alg_test_kdf,
++		.fips_allowed = 1,
++		.suite = {
++			.kdf = __VECS(kdf_ctr_hmac_sha256_tv_template)
++		}
++	}, {
++		.alg = "kdf_ctr(hmac(sha384))",
++		.test = alg_test_null,
++		.fips_allowed = 1,
++	}, {
++		.alg = "kdf_ctr(hmac(sha512))",
++		.test = alg_test_null,
++		.fips_allowed = 1,
++	}, {
++		.alg = "kdf_ctr(sha1)",
++		.test = alg_test_null,
++		.fips_allowed = 1,
++	}, {
++		.alg = "kdf_ctr(sha224)",
++		.test = alg_test_null,
++		.fips_allowed = 1,
++	}, {
++		.alg = "kdf_ctr(sha256)",
++		.test = alg_test_null,
++		.fips_allowed = 1,
++	}, {
++		.alg = "kdf_ctr(sha384)",
++		.test = alg_test_null,
++		.fips_allowed = 1,
++	}, {
++		.alg = "kdf_ctr(sha512)",
++		.test = alg_test_null,
++		.fips_allowed = 1,
++	}, {
++		.alg = "kdf_dpi(cmac(aes))",
++		.test = alg_test_null,
++		.fips_allowed = 1,
++	}, {
++		.alg = "kdf_dpi(cmac(des3_ede))",
++		.test = alg_test_null,
++		.fips_allowed = 1,
++	}, {
++		.alg = "kdf_dpi(hmac(sha1))",
++		.test = alg_test_null,
++		.fips_allowed = 1,
++	}, {
++		.alg = "kdf_dpi(hmac(sha224))",
++		.test = alg_test_null,
++		.fips_allowed = 1,
++	}, {
++		.alg = "kdf_dpi(hmac(sha256))",
++		.test = alg_test_kdf,
++		.fips_allowed = 1,
++		.suite = {
++			.kdf = __VECS(kdf_dpi_hmac_sha256_tv_template)
++		}
++	}, {
++		.alg = "kdf_dpi(hmac(sha384))",
++		.test = alg_test_null,
++		.fips_allowed = 1,
++	}, {
++		.alg = "kdf_dpi(hmac(sha512))",
++		.test = alg_test_null,
++		.fips_allowed = 1,
++	}, {
++		.alg = "kdf_dpi(sha1)",
++		.test = alg_test_null,
++		.fips_allowed = 1,
++	}, {
++		.alg = "kdf_dpi(sha224)",
++		.test = alg_test_null,
++		.fips_allowed = 1,
++	}, {
++		.alg = "kdf_dpi(sha256)",
++		.test = alg_test_null,
++		.fips_allowed = 1,
++	}, {
++		.alg = "kdf_dpi(sha384)",
++		.test = alg_test_null,
++		.fips_allowed = 1,
++	}, {
++		.alg = "kdf_dpi(sha512)",
++		.test = alg_test_null,
++		.fips_allowed = 1,
++	}, {
++		.alg = "kdf_fb(cmac(aes))",
++		.test = alg_test_null,
++		.fips_allowed = 1,
++	}, {
++		.alg = "kdf_fb(cmac(des3_ede))",
++		.test = alg_test_null,
++		.fips_allowed = 1,
++	}, {
++		.alg = "kdf_fb(hmac(sha1))",
++		.test = alg_test_null,
++		.fips_allowed = 1,
++	}, {
++		.alg = "kdf_fb(hmac(sha224))",
++		.test = alg_test_null,
++		.fips_allowed = 1,
++	}, {
++		.alg = "kdf_fb(hmac(sha256))",
++		.test = alg_test_kdf,
++		.fips_allowed = 1,
++		.suite = {
++			.kdf = __VECS(kdf_fb_hmac_sha256_tv_template)
++		}
++	}, {
++		.alg = "kdf_fb(hmac(sha384))",
++		.test = alg_test_null,
++		.fips_allowed = 1,
++	}, {
++		.alg = "kdf_fb(hmac(sha512))",
++		.test = alg_test_null,
++		.fips_allowed = 1,
++	}, {
++		.alg = "kdf_fb(sha1)",
++		.test = alg_test_null,
++		.fips_allowed = 1,
++	}, {
++		.alg = "kdf_fb(sha224)",
++		.test = alg_test_null,
++		.fips_allowed = 1,
++	}, {
++		.alg = "kdf_fb(sha256)",
++		.test = alg_test_null,
++		.fips_allowed = 1,
++	}, {
++		.alg = "kdf_fb(sha384)",
++		.test = alg_test_null,
++		.fips_allowed = 1,
++	}, {
++		.alg = "kdf_fb(sha512)",
++		.test = alg_test_null,
++		.fips_allowed = 1,
+ 	}, {
+ 		.alg = "kw(aes)",
+ 		.test = alg_test_skcipher,
+diff --git a/crypto/testmgr.h b/crypto/testmgr.h
+index ca8e8ebef309..65fe3d4ef082 100644
+--- a/crypto/testmgr.h
++++ b/crypto/testmgr.h
+@@ -122,6 +122,15 @@ struct drbg_testvec {
+ 	size_t expectedlen;
+ };
+ 
++struct kdf_testvec {
++	unsigned char *K1;
++	size_t K1len;
++	unsigned char *context;
++	size_t contextlen;
++	unsigned char *expected;
++	size_t expectedlen;
 +};
 +
-+static int __init crypto_hkdf_init(void)
-+{
-+	return crypto_register_template(&crypto_hkdf_tmpl);
-+}
+ struct akcipher_testvec {
+ 	const unsigned char *key;
+ 	const unsigned char *m;
+@@ -27892,6 +27901,104 @@ static const struct drbg_testvec drbg_nopr_ctr_aes128_tv_template[] = {
+ 	},
+ };
+ 
++/*
++ * Test vector obtained from
++ * http://csrc.nist.gov/groups/STM/cavp/documents/KBKDF800-108/CounterMode.zip
++ */
++static const struct kdf_testvec kdf_ctr_hmac_sha256_tv_template[] = {
++	{
++		.K1 =	"\xdd\x1d\x91\xb7\xd9\x0b\x2b\xd3"
++			"\x13\x85\x33\xce\x92\xb2\x72\xfb"
++			"\xf8\xa3\x69\x31\x6a\xef\xe2\x42"
++			"\xe6\x59\xcc\x0a\xe2\x38\xaf\xe0",
++		.K1len = 32,
++		.context =
++			"\x01\x32\x2b\x96\xb3\x0a\xcd\x19"
++			"\x79\x79\x44\x4e\x46\x8e\x1c\x5c"
++			"\x68\x59\xbf\x1b\x1c\xf9\x51\xb7"
++			"\xe7\x25\x30\x3e\x23\x7e\x46\xb8"
++			"\x64\xa1\x45\xfa\xb2\x5e\x51\x7b"
++			"\x08\xf8\x68\x3d\x03\x15\xbb\x29"
++			"\x11\xd8\x0a\x0e\x8a\xba\x17\xf3"
++			"\xb4\x13\xfa\xac",
++		.contextlen = 60,
++		.expected =
++			"\x10\x62\x13\x42\xbf\xb0\xfd\x40"
++			"\x04\x6c\x0e\x29\xf2\xcf\xdb\xf0",
++		.expectedlen = 16
++	}
++};
 +
-+static void __exit crypto_hkdf_exit(void)
-+{
-+	crypto_unregister_template(&crypto_hkdf_tmpl);
-+}
++/*
++ * Test vector obtained from
++ * http://csrc.nist.gov/groups/STM/cavp/documents/KBKDF800-108/FeedbackModeNOzeroiv.zip
++ */
++static const struct kdf_testvec kdf_fb_hmac_sha256_tv_template[] = {
++	{
++		.K1 =	"\x93\xf6\x98\xe8\x42\xee\xd7\x53"
++			"\x94\xd6\x29\xd9\x57\xe2\xe8\x9c"
++			"\x6e\x74\x1f\x81\x0b\x62\x3c\x8b"
++			"\x90\x1e\x38\x37\x6d\x06\x8e\x7b",
++		.K1len = 32,
++		.context =
++			"\x9f\x57\x5d\x90\x59\xd3\xe0\xc0"
++			"\x80\x3f\x08\x11\x2f\x8a\x80\x6d"
++			"\xe3\xc3\x47\x19\x12\xcd\xf4\x2b"
++			"\x09\x53\x88\xb1\x4b\x33\x50\x8e"
++			"\x53\xb8\x9c\x18\x69\x0e\x20\x57"
++			"\xa1\xd1\x67\x82\x2e\x63\x6d\xe5"
++			"\x0b\xe0\x01\x85\x32\xc4\x31\xf7"
++			"\xf5\xe3\x7f\x77\x13\x92\x20\xd5"
++			"\xe0\x42\x59\x9e\xbe\x26\x6a\xf5"
++			"\x76\x7e\xe1\x8c\xd2\xc5\xc1\x9a"
++			"\x1f\x0f\x80",
++		.contextlen = 83,
++		.expected =
++			"\xbd\x14\x76\xf4\x3a\x4e\x31\x57"
++			"\x47\xcf\x59\x18\xe0\xea\x5b\xc0"
++			"\xd9\x87\x69\x45\x74\x77\xc3\xab"
++			"\x18\xb7\x42\xde\xf0\xe0\x79\xa9"
++			"\x33\xb7\x56\x36\x5a\xfb\x55\x41"
++			"\xf2\x53\xfe\xe4\x3c\x6f\xd7\x88"
++			"\xa4\x40\x41\x03\x85\x09\xe9\xee"
++			"\xb6\x8f\x7d\x65\xff\xbb\x5f\x95",
++		.expectedlen = 64
++	}
++};
 +
-+module_init(crypto_hkdf_init);
-+module_exit(crypto_hkdf_exit);
++/*
++ * Test vector obtained from
++ * http://csrc.nist.gov/groups/STM/cavp/documents/KBKDF800-108/PipelineModewithCounter.zip
++ */
++static const struct kdf_testvec kdf_dpi_hmac_sha256_tv_template[] = {
++	{
++		.K1 =	"\x02\xd3\x6f\xa0\x21\xc2\x0d\xdb"
++			"\xde\xe4\x69\xf0\x57\x94\x68\xba"
++			"\xe5\xcb\x13\xb5\x48\xb6\xc6\x1c"
++			"\xdf\x9d\x3e\xc4\x19\x11\x1d\xe2",
++		.K1len = 32,
++		.context =
++			"\x85\xab\xe3\x8b\xf2\x65\xfb\xdc"
++			"\x64\x45\xae\x5c\x71\x15\x9f\x15"
++			"\x48\xc7\x3b\x7d\x52\x6a\x62\x31"
++			"\x04\x90\x4a\x0f\x87\x92\x07\x0b"
++			"\x3d\xf9\x90\x2b\x96\x69\x49\x04"
++			"\x25\xa3\x85\xea\xdb\x0f\x9c\x76"
++			"\xe4\x6f\x0f",
++		.contextlen = 51,
++		.expected =
++			"\xd6\x9f\x74\xf5\x18\xc9\xf6\x4f"
++			"\x90\xa0\xbe\xeb\xab\x69\xf6\x89"
++			"\xb7\x3b\x5c\x13\xeb\x0f\x86\x0a"
++			"\x95\xca\xd7\xd9\x81\x4f\x8c\x50"
++			"\x6e\xb7\xb1\x79\xa5\xc5\xb4\x46"
++			"\x6a\x9e\xc1\x54\xc3\xbf\x1c\x13"
++			"\xef\xd6\xec\x0d\x82\xb0\x2c\x29"
++			"\xaf\x2c\x69\x02\x99\xed\xc4\x53",
++		.expectedlen = 64
++	}
++};
 +
-+MODULE_LICENSE("GPL v2");
-+MODULE_AUTHOR("Stephan Mueller <smueller@chronox.de>");
-+MODULE_DESCRIPTION("HKDF HMAC-based Extract-and-Expand Key Derivation Function  (conformant to RFC5869)");
-+MODULE_ALIAS_CRYPTO("hkdf");
+ /* Cast5 test vectors from RFC 2144 */
+ static const struct cipher_testvec cast5_tv_template[] = {
+ 	{
 -- 
 2.20.1
 
