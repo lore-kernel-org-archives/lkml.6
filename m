@@ -6,49 +6,49 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AEB95C43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 13:46:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 88B97C43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 13:46:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 87EFF20859
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 13:46:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5811A2082F
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 13:46:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404560AbfAPNqN (ORCPT
+        id S2393447AbfAPNqZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 16 Jan 2019 08:46:13 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:44678 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2404545AbfAPNqL (ORCPT
+        Wed, 16 Jan 2019 08:46:25 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:37788 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S2404581AbfAPNqU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Jan 2019 08:46:11 -0500
-Received: from pps.filterd (m0098393.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id x0GDeiax127668
-        for <linux-kernel@vger.kernel.org>; Wed, 16 Jan 2019 08:46:10 -0500
+        Wed, 16 Jan 2019 08:46:20 -0500
+Received: from pps.filterd (m0098417.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id x0GDeZxs042621
+        for <linux-kernel@vger.kernel.org>; Wed, 16 Jan 2019 08:46:19 -0500
 Received: from e06smtp05.uk.ibm.com (e06smtp05.uk.ibm.com [195.75.94.101])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2q23ejpuv9-1
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2q23eken2j-1
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Wed, 16 Jan 2019 08:46:10 -0500
+        for <linux-kernel@vger.kernel.org>; Wed, 16 Jan 2019 08:46:18 -0500
 Received: from localhost
         by e06smtp05.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
         for <linux-kernel@vger.kernel.org> from <rppt@linux.ibm.com>;
-        Wed, 16 Jan 2019 13:46:07 -0000
-Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
+        Wed, 16 Jan 2019 13:46:16 -0000
+Received: from b06cxnps4075.portsmouth.uk.ibm.com (9.149.109.197)
         by e06smtp05.uk.ibm.com (192.168.101.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
         (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Wed, 16 Jan 2019 13:45:55 -0000
-Received: from d06av24.portsmouth.uk.ibm.com (mk.ibm.com [9.149.105.60])
-        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x0GDjsO65046570
+        Wed, 16 Jan 2019 13:46:05 -0000
+Received: from d06av22.portsmouth.uk.ibm.com (d06av22.portsmouth.uk.ibm.com [9.149.105.58])
+        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x0GDk4Wc5243350
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 16 Jan 2019 13:45:54 GMT
-Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 6076642045;
-        Wed, 16 Jan 2019 13:45:54 +0000 (GMT)
-Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 1E6D642041;
-        Wed, 16 Jan 2019 13:45:50 +0000 (GMT)
+        Wed, 16 Jan 2019 13:46:04 GMT
+Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 1E9DB4C050;
+        Wed, 16 Jan 2019 13:46:04 +0000 (GMT)
+Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id E9C384C040;
+        Wed, 16 Jan 2019 13:45:59 +0000 (GMT)
 Received: from rapoport-lnx (unknown [9.148.8.226])
-        by d06av24.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
-        Wed, 16 Jan 2019 13:45:50 +0000 (GMT)
-Received: by rapoport-lnx (sSMTP sendmail emulation); Wed, 16 Jan 2019 15:45:49 +0200
+        by d06av22.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
+        Wed, 16 Jan 2019 13:45:59 +0000 (GMT)
+Received: by rapoport-lnx (sSMTP sendmail emulation); Wed, 16 Jan 2019 15:45:59 +0200
 From:   Mike Rapoport <rppt@linux.ibm.com>
 To:     linux-mm@kvack.org
 Cc:     Andrew Morton <akpm@linux-foundation.org>,
@@ -86,76 +86,79 @@ Cc:     Andrew Morton <akpm@linux-foundation.org>,
         openrisc@lists.librecores.org, sparclinux@vger.kernel.org,
         uclinux-h8-devel@lists.sourceforge.jp, x86@kernel.org,
         xen-devel@lists.xenproject.org, Mike Rapoport <rppt@linux.ibm.com>
-Subject: [PATCH 18/21] swiotlb: add checks for the return value of memblock_alloc*()
-Date:   Wed, 16 Jan 2019 15:44:18 +0200
+Subject: [PATCH 20/21] memblock: memblock_alloc_try_nid: don't panic
+Date:   Wed, 16 Jan 2019 15:44:20 +0200
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1547646261-32535-1-git-send-email-rppt@linux.ibm.com>
 References: <1547646261-32535-1-git-send-email-rppt@linux.ibm.com>
 X-TM-AS-GCONF: 00
-x-cbid: 19011613-0020-0000-0000-0000030747DE
+x-cbid: 19011613-0020-0000-0000-0000030747E3
 X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19011613-0021-0000-0000-00002158647E
-Message-Id: <1547646261-32535-19-git-send-email-rppt@linux.ibm.com>
+x-cbparentid: 19011613-0021-0000-0000-000021586486
+Message-Id: <1547646261-32535-21-git-send-email-rppt@linux.ibm.com>
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-01-16_05:,,
  signatures=0
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=3 phishscore=0 bulkscore=0 spamscore=0
+ malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
  clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=998 adultscore=0 classifier=spam adjust=0 reason=mlx
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
  scancount=1 engine=8.0.1-1810050000 definitions=main-1901160114
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add panic() calls if memblock_alloc() returns NULL.
-
-The panic() format duplicates the one used by memblock itself and in order
-to avoid explosion with long parameters list replace open coded allocation
-size calculations with a local variable.
+As all the memblock_alloc*() users are now checking the return value and
+panic() in case of error, the panic() call can be removed from the core
+memblock allocator, namely memblock_alloc_try_nid().
 
 Signed-off-by: Mike Rapoport <rppt@linux.ibm.com>
 ---
- kernel/dma/swiotlb.c | 19 +++++++++++++------
- 1 file changed, 13 insertions(+), 6 deletions(-)
+ mm/memblock.c | 15 +++++----------
+ 1 file changed, 5 insertions(+), 10 deletions(-)
 
-diff --git a/kernel/dma/swiotlb.c b/kernel/dma/swiotlb.c
-index d636177..e78835c8 100644
---- a/kernel/dma/swiotlb.c
-+++ b/kernel/dma/swiotlb.c
-@@ -191,6 +191,7 @@ void __init swiotlb_update_mem_attributes(void)
- int __init swiotlb_init_with_tbl(char *tlb, unsigned long nslabs, int verbose)
- {
- 	unsigned long i, bytes;
-+	size_t alloc_size;
+diff --git a/mm/memblock.c b/mm/memblock.c
+index 03b3929..7164275 100644
+--- a/mm/memblock.c
++++ b/mm/memblock.c
+@@ -1526,7 +1526,7 @@ void * __init memblock_alloc_try_nid_nopanic(
+ }
  
- 	bytes = nslabs << IO_TLB_SHIFT;
+ /**
+- * memblock_alloc_try_nid - allocate boot memory block with panicking
++ * memblock_alloc_try_nid - allocate boot memory block
+  * @size: size of memory block to be allocated in bytes
+  * @align: alignment of the region and block's size
+  * @min_addr: the lower bound of the memory region from where the allocation
+@@ -1536,9 +1536,8 @@ void * __init memblock_alloc_try_nid_nopanic(
+  *	      allocate only from memory limited by memblock.current_limit value
+  * @nid: nid of the free area to find, %NUMA_NO_NODE for any node
+  *
+- * Public panicking version of memblock_alloc_try_nid_nopanic()
+- * which provides debug information (including caller info), if enabled,
+- * and panics if the request can not be satisfied.
++ * Public function, provides additional debug information (including caller
++ * info), if enabled. This function zeroes the allocated memory.
+  *
+  * Return:
+  * Virtual address of allocated memory block on success, NULL on failure.
+@@ -1555,14 +1554,10 @@ void * __init memblock_alloc_try_nid(
+ 		     &max_addr, (void *)_RET_IP_);
+ 	ptr = memblock_alloc_internal(size, align,
+ 					   min_addr, max_addr, nid);
+-	if (ptr) {
++	if (ptr)
+ 		memset(ptr, 0, size);
+-		return ptr;
+-	}
  
-@@ -203,12 +204,18 @@ int __init swiotlb_init_with_tbl(char *tlb, unsigned long nslabs, int verbose)
- 	 * to find contiguous free memory regions of size up to IO_TLB_SEGSIZE
- 	 * between io_tlb_start and io_tlb_end.
- 	 */
--	io_tlb_list = memblock_alloc(
--				PAGE_ALIGN(io_tlb_nslabs * sizeof(int)),
--				PAGE_SIZE);
--	io_tlb_orig_addr = memblock_alloc(
--				PAGE_ALIGN(io_tlb_nslabs * sizeof(phys_addr_t)),
--				PAGE_SIZE);
-+	alloc_size = PAGE_ALIGN(io_tlb_nslabs * sizeof(int));
-+	io_tlb_list = memblock_alloc(alloc_size, PAGE_SIZE);
-+	if (!io_tlb_list)
-+		panic("%s: Failed to allocate %lu bytes align=0x%lx\n",
-+		      __func__, alloc_size, PAGE_SIZE);
-+
-+	alloc_size = PAGE_ALIGN(io_tlb_nslabs * sizeof(phys_addr_t));
-+	io_tlb_orig_addr = memblock_alloc(alloc_size, PAGE_SIZE);
-+	if (!io_tlb_orig_addr)
-+		panic("%s: Failed to allocate %lu bytes align=0x%lx\n",
-+		      __func__, alloc_size, PAGE_SIZE);
-+
- 	for (i = 0; i < io_tlb_nslabs; i++) {
- 		io_tlb_list[i] = IO_TLB_SEGSIZE - OFFSET(i, IO_TLB_SEGSIZE);
- 		io_tlb_orig_addr[i] = INVALID_PHYS_ADDR;
+-	panic("%s: Failed to allocate %llu bytes align=0x%llx nid=%d from=%pa max_addr=%pa\n",
+-	      __func__, (u64)size, (u64)align, nid, &min_addr, &max_addr);
+-	return NULL;
++	return ptr;
+ }
+ 
+ /**
 -- 
 2.7.4
 
