@@ -7,41 +7,41 @@ X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5090AC43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 16:30:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F1CFDC43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 16:30:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D51E620657
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 16:30:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A74F720657
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 16:30:06 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=fb.com header.i=@fb.com header.b="YmzkGNtA"
+	dkim=pass (1024-bit key) header.d=fb.com header.i=@fb.com header.b="PtlhFtaY"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731795AbfAPQaA (ORCPT
+        id S1731729AbfAPQaA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Wed, 16 Jan 2019 11:30:00 -0500
-Received: from mx0b-00082601.pphosted.com ([67.231.153.30]:59142 "EHLO
-        mx0b-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1729569AbfAPQ35 (ORCPT
+Received: from mx0b-00082601.pphosted.com ([67.231.153.30]:59844 "EHLO
+        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727530AbfAPQ35 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 16 Jan 2019 11:29:57 -0500
-Received: from pps.filterd (m0109332.ppops.net [127.0.0.1])
-        by mx0a-00082601.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x0GGSred024153
+Received: from pps.filterd (m0089730.ppops.net [127.0.0.1])
+        by m0089730.ppops.net (8.16.0.27/8.16.0.27) with SMTP id x0GGLsY2019650
         for <linux-kernel@vger.kernel.org>; Wed, 16 Jan 2019 08:29:56 -0800
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
  : date : message-id : in-reply-to : references : mime-version :
- content-type; s=facebook; bh=N653OTGHDeOC7yr7TGBWGhmSQGb8iTzOloQxe6fFcBw=;
- b=YmzkGNtAyOj+4SzOddeq7WeqGhagETKtaI/C6yU/V4hVUd7BL1CjljOENhYMbrhZ0LWb
- 7v9cu4ZAq0/XWzHiPHpetdXQvYMpZszhORLsxRTlZu1E75BB1HIZPu8dknojCnwcAdw7
- 4mSTbDVxPlV1wm2WGJ94m/tCO7k17fqv4Lo= 
-Received: from mail.thefacebook.com ([199.201.64.23])
-        by mx0a-00082601.pphosted.com with ESMTP id 2q260frg0e-1
+ content-type; s=facebook; bh=KFHTPxrgwBB4twvm8Ad7dIV8YDmfFJFH9z4PCrDj7AA=;
+ b=PtlhFtaYTJJ9wHH4I1AkpooBk2PD1eb4a1oDqwfAbKwRzkj9GZvC3wbbySign182MiEP
+ QI4wWpSNUj4Ps4p6D5rrdvnck6qcITZhYewNw/uEhwb5dVI4BSX+9BaAXGUdUqhq5UX4
+ OYWfG7uZCIfnsOPMLgMi2hpVMpUogk6oJ6Y= 
+Received: from maileast.thefacebook.com ([199.201.65.23])
+        by m0089730.ppops.net with ESMTP id 2q24rugp51-7
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT)
         for <linux-kernel@vger.kernel.org>; Wed, 16 Jan 2019 08:29:56 -0800
-Received: from mx-out.facebook.com (2620:10d:c081:10::13) by
- mail.thefacebook.com (2620:10d:c081:35::125) with Microsoft SMTP Server
+Received: from mx-out.facebook.com (2620:10d:c0a1:3::13) by
+ mail.thefacebook.com (2620:10d:c021:18::176) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA) id 15.1.1531.3;
- Wed, 16 Jan 2019 08:29:55 -0800
+ Wed, 16 Jan 2019 08:29:52 -0800
 Received: by devbig006.ftw2.facebook.com (Postfix, from userid 4523)
-        id 0611F62E1D0D; Wed, 16 Jan 2019 08:29:50 -0800 (PST)
+        id DE60B62E1D13; Wed, 16 Jan 2019 08:29:49 -0800 (PST)
 Smtp-Origin-Hostprefix: devbig
 From:   Song Liu <songliubraving@fb.com>
 Smtp-Origin-Hostname: devbig006.ftw2.facebook.com
@@ -50,9 +50,9 @@ CC:     Song Liu <songliubraving@fb.com>, <peterz@infradead.org>,
         <acme@kernel.org>, <ast@kernel.org>, <daniel@iogearbox.net>,
         <kernel-team@fb.com>, <dsahern@gmail.com>
 Smtp-Origin-Cluster: ftw2c04
-Subject: [PATCH v10 perf, bpf-next 3/9] perf, bpf: introduce PERF_RECORD_BPF_EVENT
-Date:   Wed, 16 Jan 2019 08:29:25 -0800
-Message-ID: <20190116162931.1542429-4-songliubraving@fb.com>
+Subject: [PATCH v10 perf, bpf-next 1/9] perf, bpf: Introduce PERF_RECORD_KSYMBOL
+Date:   Wed, 16 Jan 2019 08:29:23 -0800
+Message-ID: <20190116162931.1542429-2-songliubraving@fb.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190116162931.1542429-1-songliubraving@fb.com>
 References: <20190116162931.1542429-1-songliubraving@fb.com>
@@ -68,327 +68,245 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-For better performance analysis of BPF programs, this patch introduces
-PERF_RECORD_BPF_EVENT, a new perf_event_type that exposes BPF program
-load/unload information to user space.
+For better performance analysis of dynamically JITed and loaded kernel
+functions, such as BPF programs, this patch introduces
+PERF_RECORD_KSYMBOL, a new perf_event_type that exposes kernel symbol
+register/unregister information to user space.
 
-Each BPF program may contain up to BPF_MAX_SUBPROGS (256) sub programs.
-The following example shows kernel symbols for a BPF program with 7
-sub programs:
+The following data structure is used for PERF_RECORD_KSYMBOL.
 
-    ffffffffa0257cf9 t bpf_prog_b07ccb89267cf242_F
-    ffffffffa02592e1 t bpf_prog_2dcecc18072623fc_F
-    ffffffffa025b0e9 t bpf_prog_bb7a405ebaec5d5c_F
-    ffffffffa025dd2c t bpf_prog_a7540d4a39ec1fc7_F
-    ffffffffa025fcca t bpf_prog_05762d4ade0e3737_F
-    ffffffffa026108f t bpf_prog_db4bd11e35df90d4_F
-    ffffffffa0263f00 t bpf_prog_89d64e4abf0f0126_F
-    ffffffffa0257cf9 t bpf_prog_ae31629322c4b018__dummy_tracepoi
-
-When a bpf program is loaded, PERF_RECORD_KSYMBOL is generated for
-each of these sub programs. Therefore, PERF_RECORD_BPF_EVENT is not
-needed for simple profiling.
-
-For annotation, user space need to listen to PERF_RECORD_BPF_EVENT
-and gather more information about these (sub) programs via sys_bpf.
+    /*
+     * struct {
+     *      struct perf_event_header        header;
+     *      u64                             addr;
+     *      u32                             len;
+     *      u16                             ksym_type;
+     *      u16                             flags;
+     *      char                            name[];
+     *      struct sample_id                sample_id;
+     * };
+     */
 
 Reviewed-by: Arnaldo Carvalho de Melo <acme@redhat.com>
-Acked-by: Alexei Starovoitov <ast@kernel.org>
 Signed-off-by: Song Liu <songliubraving@fb.com>
 ---
- include/linux/filter.h          |   7 ++
- include/linux/perf_event.h      |   6 ++
- include/uapi/linux/perf_event.h |  29 +++++++-
- kernel/bpf/core.c               |   2 +-
- kernel/bpf/syscall.c            |   2 +
- kernel/events/core.c            | 120 ++++++++++++++++++++++++++++++++
- 6 files changed, 164 insertions(+), 2 deletions(-)
+ include/linux/perf_event.h      | 13 +++++
+ include/uapi/linux/perf_event.h | 26 ++++++++-
+ kernel/events/core.c            | 98 ++++++++++++++++++++++++++++++++-
+ 3 files changed, 135 insertions(+), 2 deletions(-)
 
-diff --git a/include/linux/filter.h b/include/linux/filter.h
-index ad106d845b22..d531d4250bff 100644
---- a/include/linux/filter.h
-+++ b/include/linux/filter.h
-@@ -951,6 +951,7 @@ bpf_address_lookup(unsigned long addr, unsigned long *size,
- 
- void bpf_prog_kallsyms_add(struct bpf_prog *fp);
- void bpf_prog_kallsyms_del(struct bpf_prog *fp);
-+void bpf_get_prog_name(const struct bpf_prog *prog, char *sym);
- 
- #else /* CONFIG_BPF_JIT */
- 
-@@ -1006,6 +1007,12 @@ static inline void bpf_prog_kallsyms_add(struct bpf_prog *fp)
- static inline void bpf_prog_kallsyms_del(struct bpf_prog *fp)
- {
- }
-+
-+static inline void bpf_get_prog_name(const struct bpf_prog *prog, char *sym)
-+{
-+	sym[0] = '\0';
-+}
-+
- #endif /* CONFIG_BPF_JIT */
- 
- void bpf_prog_kallsyms_del_subprogs(struct bpf_prog *fp);
 diff --git a/include/linux/perf_event.h b/include/linux/perf_event.h
-index 77b2560f2dc7..0b539a2e21af 100644
+index 1d5c551a5add..77b2560f2dc7 100644
 --- a/include/linux/perf_event.h
 +++ b/include/linux/perf_event.h
-@@ -1119,6 +1119,9 @@ typedef int (perf_ksymbol_get_name_f)(char *name, int name_len, void *data);
- extern void perf_event_ksymbol(u16 ksym_type, u64 addr, u32 len,
- 			       bool unregister,
- 			       perf_ksymbol_get_name_f get_name, void *data);
-+extern void perf_event_bpf_event(struct bpf_prog *prog,
-+				 enum perf_bpf_event_type type,
-+				 u16 flags);
+@@ -1113,6 +1113,13 @@ static inline void perf_event_task_sched_out(struct task_struct *prev,
+ }
  
+ extern void perf_event_mmap(struct vm_area_struct *vma);
++
++/* callback function to generate ksymbol name */
++typedef int (perf_ksymbol_get_name_f)(char *name, int name_len, void *data);
++extern void perf_event_ksymbol(u16 ksym_type, u64 addr, u32 len,
++			       bool unregister,
++			       perf_ksymbol_get_name_f get_name, void *data);
++
  extern struct perf_guest_info_callbacks *perf_guest_cbs;
  extern int perf_register_guest_info_callbacks(struct perf_guest_info_callbacks *callbacks);
-@@ -1346,6 +1349,9 @@ static inline void perf_event_ksymbol(u16 ksym_type, u64 addr, u32 len,
- 				      bool unregister,
- 				      perf_ksymbol_get_name_f get_name,
- 				      void *data)			{ }
-+static inline void perf_event_bpf_event(struct bpf_prog *prog,
-+					enum perf_bpf_event_type type,
-+					u16 flags)			{ }
+ extern int perf_unregister_guest_info_callbacks(struct perf_guest_info_callbacks *callbacks);
+@@ -1333,6 +1340,12 @@ static inline int perf_unregister_guest_info_callbacks
+ (struct perf_guest_info_callbacks *callbacks)				{ return 0; }
+ 
+ static inline void perf_event_mmap(struct vm_area_struct *vma)		{ }
++
++typedef int (perf_ksymbol_get_name_f)(char *name, int name_len, void *data);
++static inline void perf_event_ksymbol(u16 ksym_type, u64 addr, u32 len,
++				      bool unregister,
++				      perf_ksymbol_get_name_f get_name,
++				      void *data)			{ }
  static inline void perf_event_exec(void)				{ }
  static inline void perf_event_comm(struct task_struct *tsk, bool exec)	{ }
  static inline void perf_event_namespaces(struct task_struct *tsk)	{ }
 diff --git a/include/uapi/linux/perf_event.h b/include/uapi/linux/perf_event.h
-index 68c4da0227c5..8bd78a34e396 100644
+index 9de8780ac8d9..68c4da0227c5 100644
 --- a/include/uapi/linux/perf_event.h
 +++ b/include/uapi/linux/perf_event.h
-@@ -373,7 +373,8 @@ struct perf_event_attr {
+@@ -372,7 +372,8 @@ struct perf_event_attr {
+ 				context_switch :  1, /* context switch data */
  				write_backward :  1, /* Write ring buffer from end to beginning */
  				namespaces     :  1, /* include namespaces data */
- 				ksymbol        :  1, /* include ksymbol events */
--				__reserved_1   : 34;
-+				bpf_event      :  1, /* include bpf events */
-+				__reserved_1   : 33;
+-				__reserved_1   : 35;
++				ksymbol        :  1, /* include ksymbol events */
++				__reserved_1   : 34;
  
  	union {
  		__u32		wakeup_events;	  /* wakeup every n events */
-@@ -981,6 +982,25 @@ enum perf_event_type {
+@@ -965,9 +966,32 @@ enum perf_event_type {
  	 */
- 	PERF_RECORD_KSYMBOL			= 17,
+ 	PERF_RECORD_NAMESPACES			= 16,
  
 +	/*
-+	 * Record bpf events:
-+	 *  enum perf_bpf_event_type {
-+	 *	PERF_BPF_EVENT_UNKNOWN		= 0,
-+	 *	PERF_BPF_EVENT_PROG_LOAD	= 1,
-+	 *	PERF_BPF_EVENT_PROG_UNLOAD	= 2,
-+	 *  };
++	 * Record ksymbol register/unregister events:
 +	 *
 +	 * struct {
 +	 *	struct perf_event_header	header;
-+	 *	u16				type;
++	 *	u64				addr;
++	 *	u32				len;
++	 *	u16				ksym_type;
 +	 *	u16				flags;
-+	 *	u32				id;
-+	 *	u8				tag[BPF_TAG_SIZE];
++	 *	char				name[];
 +	 *	struct sample_id		sample_id;
 +	 * };
 +	 */
-+	PERF_RECORD_BPF_EVENT			= 18,
++	PERF_RECORD_KSYMBOL			= 17,
 +
  	PERF_RECORD_MAX,			/* non-ABI */
  };
  
-@@ -992,6 +1012,13 @@ enum perf_record_ksymbol_type {
- 
- #define PERF_RECORD_KSYMBOL_FLAGS_UNREGISTER	(1 << 0)
- 
-+enum perf_bpf_event_type {
-+	PERF_BPF_EVENT_UNKNOWN		= 0,
-+	PERF_BPF_EVENT_PROG_LOAD	= 1,
-+	PERF_BPF_EVENT_PROG_UNLOAD	= 2,
-+	PERF_BPF_EVENT_MAX,		/* non-ABI */
++enum perf_record_ksymbol_type {
++	PERF_RECORD_KSYMBOL_TYPE_UNKNOWN	= 0,
++	PERF_RECORD_KSYMBOL_TYPE_BPF		= 1,
++	PERF_RECORD_KSYMBOL_TYPE_MAX		/* non-ABI */
 +};
++
++#define PERF_RECORD_KSYMBOL_FLAGS_UNREGISTER	(1 << 0)
 +
  #define PERF_MAX_STACK_DEPTH		127
  #define PERF_MAX_CONTEXTS_PER_STACK	  8
  
-diff --git a/kernel/bpf/core.c b/kernel/bpf/core.c
-index f908b9356025..19c49313c709 100644
---- a/kernel/bpf/core.c
-+++ b/kernel/bpf/core.c
-@@ -495,7 +495,7 @@ bpf_get_prog_addr_region(const struct bpf_prog *prog,
- 	*symbol_end   = addr + hdr->pages * PAGE_SIZE;
- }
- 
--static void bpf_get_prog_name(const struct bpf_prog *prog, char *sym)
-+void bpf_get_prog_name(const struct bpf_prog *prog, char *sym)
- {
- 	const char *end = sym + KSYM_NAME_LEN;
- 	const struct btf_type *type;
-diff --git a/kernel/bpf/syscall.c b/kernel/bpf/syscall.c
-index b155cd17c1bd..30ebd085790b 100644
---- a/kernel/bpf/syscall.c
-+++ b/kernel/bpf/syscall.c
-@@ -1211,6 +1211,7 @@ static void __bpf_prog_put_rcu(struct rcu_head *rcu)
- static void __bpf_prog_put(struct bpf_prog *prog, bool do_idr_lock)
- {
- 	if (atomic_dec_and_test(&prog->aux->refcnt)) {
-+		perf_event_bpf_event(prog, PERF_BPF_EVENT_PROG_UNLOAD, 0);
- 		/* bpf_prog_free_id() must be called first */
- 		bpf_prog_free_id(prog, do_idr_lock);
- 		bpf_prog_kallsyms_del_all(prog);
-@@ -1554,6 +1555,7 @@ static int bpf_prog_load(union bpf_attr *attr, union bpf_attr __user *uattr)
- 	}
- 
- 	bpf_prog_kallsyms_add(prog);
-+	perf_event_bpf_event(prog, PERF_BPF_EVENT_PROG_LOAD, 0);
- 	return err;
- 
- free_used_maps:
 diff --git a/kernel/events/core.c b/kernel/events/core.c
-index ef27f2776999..2f238a8ddaab 100644
+index 3cd13a30f732..ef27f2776999 100644
 --- a/kernel/events/core.c
 +++ b/kernel/events/core.c
-@@ -386,6 +386,7 @@ static atomic_t nr_task_events __read_mostly;
+@@ -385,6 +385,7 @@ static atomic_t nr_namespaces_events __read_mostly;
+ static atomic_t nr_task_events __read_mostly;
  static atomic_t nr_freq_events __read_mostly;
  static atomic_t nr_switch_events __read_mostly;
- static atomic_t nr_ksymbol_events __read_mostly;
-+static atomic_t nr_bpf_events __read_mostly;
++static atomic_t nr_ksymbol_events __read_mostly;
  
  static LIST_HEAD(pmus);
  static DEFINE_MUTEX(pmus_lock);
-@@ -4308,6 +4309,8 @@ static void unaccount_event(struct perf_event *event)
+@@ -4235,7 +4236,7 @@ static bool is_sb_event(struct perf_event *event)
+ 
+ 	if (attr->mmap || attr->mmap_data || attr->mmap2 ||
+ 	    attr->comm || attr->comm_exec ||
+-	    attr->task ||
++	    attr->task || attr->ksymbol ||
+ 	    attr->context_switch)
+ 		return true;
+ 	return false;
+@@ -4305,6 +4306,8 @@ static void unaccount_event(struct perf_event *event)
  		dec = true;
- 	if (event->attr.ksymbol)
- 		atomic_dec(&nr_ksymbol_events);
-+	if (event->attr.bpf_event)
-+		atomic_dec(&nr_bpf_events);
+ 	if (has_branch_stack(event))
+ 		dec = true;
++	if (event->attr.ksymbol)
++		atomic_dec(&nr_ksymbol_events);
  
  	if (dec) {
  		if (!atomic_add_unless(&perf_sched_count, -1, 1))
-@@ -7744,6 +7747,121 @@ void perf_event_ksymbol(u16 ksym_type, u64 addr, u32 len, bool unregister,
- 	WARN_ONCE(1, "%s: Invalid KSYMBOL type 0x%x\n", __func__, ksym_type);
+@@ -7650,6 +7653,97 @@ static void perf_log_throttle(struct perf_event *event, int enable)
+ 	perf_output_end(&handle);
  }
  
 +/*
-+ * bpf program load/unload tracking
++ * ksymbol register/unregister tracking
 + */
 +
-+struct perf_bpf_event {
-+	struct bpf_prog	*prog;
++struct perf_ksymbol_event {
++	const char	*name;
++	int		name_len;
 +	struct {
 +		struct perf_event_header        header;
-+		u16				type;
++		u64				addr;
++		u32				len;
++		u16				ksym_type;
 +		u16				flags;
-+		u32				id;
-+		u8				tag[BPF_TAG_SIZE];
 +	} event_id;
 +};
 +
-+static int perf_event_bpf_match(struct perf_event *event)
++static int perf_event_ksymbol_match(struct perf_event *event)
 +{
-+	return event->attr.bpf_event;
++	return event->attr.ksymbol;
 +}
 +
-+static void perf_event_bpf_output(struct perf_event *event, void *data)
++static void perf_event_ksymbol_output(struct perf_event *event, void *data)
 +{
-+	struct perf_bpf_event *bpf_event = data;
++	struct perf_ksymbol_event *ksymbol_event = data;
 +	struct perf_output_handle handle;
 +	struct perf_sample_data sample;
 +	int ret;
 +
-+	if (!perf_event_bpf_match(event))
++	if (!perf_event_ksymbol_match(event))
 +		return;
 +
-+	perf_event_header__init_id(&bpf_event->event_id.header,
++	perf_event_header__init_id(&ksymbol_event->event_id.header,
 +				   &sample, event);
 +	ret = perf_output_begin(&handle, event,
-+				bpf_event->event_id.header.size);
++				ksymbol_event->event_id.header.size);
 +	if (ret)
 +		return;
 +
-+	perf_output_put(&handle, bpf_event->event_id);
++	perf_output_put(&handle, ksymbol_event->event_id);
++	__output_copy(&handle, ksymbol_event->name, ksymbol_event->name_len);
 +	perf_event__output_id_sample(event, &handle, &sample);
 +
 +	perf_output_end(&handle);
 +}
 +
-+static int perf_event_bpf_get_name(char *name, int len, void *data)
++void perf_event_ksymbol(u16 ksym_type, u64 addr, u32 len, bool unregister,
++			perf_ksymbol_get_name_f get_name, void *data)
 +{
-+	struct bpf_prog *prog = data;
++	struct perf_ksymbol_event ksymbol_event;
++	char name[KSYM_NAME_LEN];
++	u16 flags = 0;
++	int name_len;
 +
-+	bpf_get_prog_name(prog, name);
-+	return 0;
-+}
-+
-+static void perf_event_bpf_emit_ksymbols(struct bpf_prog *prog,
-+					 enum perf_bpf_event_type type)
-+{
-+	bool unregister = type == PERF_BPF_EVENT_PROG_UNLOAD;
-+	int i;
-+
-+	if (prog->aux->func_cnt == 0) {
-+		perf_event_ksymbol(PERF_RECORD_KSYMBOL_TYPE_BPF,
-+				   (u64)(unsigned long)prog->bpf_func,
-+				   prog->jited_len, unregister,
-+				   perf_event_bpf_get_name, prog);
-+	} else {
-+		for (i = 0; i < prog->aux->func_cnt; i++) {
-+			struct bpf_prog *subprog = prog->aux->func[i];
-+
-+			perf_event_ksymbol(
-+				PERF_RECORD_KSYMBOL_TYPE_BPF,
-+				(u64)(unsigned long)subprog->bpf_func,
-+				subprog->jited_len, unregister,
-+				perf_event_bpf_get_name, subprog);
-+		}
-+	}
-+}
-+
-+void perf_event_bpf_event(struct bpf_prog *prog,
-+			  enum perf_bpf_event_type type,
-+			  u16 flags)
-+{
-+	struct perf_bpf_event bpf_event;
-+
-+	if (type <= PERF_BPF_EVENT_UNKNOWN ||
-+	    type >= PERF_BPF_EVENT_MAX)
++	if (!atomic_read(&nr_ksymbol_events))
 +		return;
 +
-+	switch (type) {
-+	case PERF_BPF_EVENT_PROG_LOAD:
-+	case PERF_BPF_EVENT_PROG_UNLOAD:
-+		if (atomic_read(&nr_ksymbol_events))
-+			perf_event_bpf_emit_ksymbols(prog, type);
-+		break;
-+	default:
-+		break;
-+	}
++	if (ksym_type >= PERF_RECORD_KSYMBOL_TYPE_MAX ||
++	    ksym_type == PERF_RECORD_KSYMBOL_TYPE_UNKNOWN)
++		goto err;
 +
-+	if (!atomic_read(&nr_bpf_events))
-+		return;
++	get_name(name, KSYM_NAME_LEN, data);
++	name_len = strlen(name) + 1;
++	while (!IS_ALIGNED(name_len, sizeof(u64)))
++		name[name_len++] = '\0';
++	BUILD_BUG_ON(KSYM_NAME_LEN % sizeof(u64));
 +
-+	bpf_event = (struct perf_bpf_event){
-+		.prog = prog,
++	if (unregister)
++		flags |= PERF_RECORD_KSYMBOL_FLAGS_UNREGISTER;
++
++	ksymbol_event = (struct perf_ksymbol_event){
++		.name = name,
++		.name_len = name_len,
 +		.event_id = {
 +			.header = {
-+				.type = PERF_RECORD_BPF_EVENT,
-+				.size = sizeof(bpf_event.event_id),
++				.type = PERF_RECORD_KSYMBOL,
++				.size = sizeof(ksymbol_event.event_id) +
++					name_len,
 +			},
-+			.type = type,
++			.addr = addr,
++			.len = len,
++			.ksym_type = ksym_type,
 +			.flags = flags,
-+			.id = prog->aux->id,
 +		},
 +	};
 +
-+	memcpy(bpf_event.event_id.tag, prog->tag, BPF_TAG_SIZE);
-+	perf_iterate_sb(perf_event_bpf_output, &bpf_event, NULL);
++	perf_iterate_sb(perf_event_ksymbol_output, &ksymbol_event, NULL);
++	return;
++err:
++	WARN_ONCE(1, "%s: Invalid KSYMBOL type 0x%x\n", __func__, ksym_type);
 +}
 +
  void perf_event_itrace_started(struct perf_event *event)
  {
  	event->attach_state |= PERF_ATTACH_ITRACE;
-@@ -9996,6 +10114,8 @@ static void account_event(struct perf_event *event)
+@@ -9900,6 +9994,8 @@ static void account_event(struct perf_event *event)
  		inc = true;
- 	if (event->attr.ksymbol)
- 		atomic_inc(&nr_ksymbol_events);
-+	if (event->attr.bpf_event)
-+		atomic_inc(&nr_bpf_events);
+ 	if (is_cgroup_event(event))
+ 		inc = true;
++	if (event->attr.ksymbol)
++		atomic_inc(&nr_ksymbol_events);
  
  	if (inc) {
  		/*
