@@ -6,80 +6,78 @@ X-Spam-Status: No, score=-5.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C498C43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 19:02:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C3ED2C43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 19:02:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0327620873
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 19:02:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 88AB020873
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 19:02:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547665352;
-	bh=J9sR3hR/eMoiUT4UKUr7fq1T6PyLVac/imBYPkjLk0o=;
+	s=default; t=1547665366;
+	bh=zGV1x+A4UOjkIap9GCOnaA1snknthJ8s8Ua0b1m7W+c=;
 	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=X0IXlJEFeIQytA8nJKNO1g1j4FL1Y0g/aIpCT9jC/VlUiFC+ffPRFYFiwFXkct6Q5
-	 eVU9ORMFYZkVGLqqJZVfXOXBLCVkEOrzAarn3yS2Q6tEJEJ9dRsca3kCarf7AmNkwf
-	 wJW/WOZEbJJpeW6cCSGQ+m5UwlF/lF7CvlxJEnmo=
+	b=GyN07YikUP9ac3a5FdCCBOqz3C9m8w0Mc36I+XP/j0BO/QJQc9xafZrdyoq7bTDtI
+	 rRxuuIn7a0ybbqJd8X4ECkOdiV0h0YfDG0qWfWmxrOPKxCSrKVGBPZn1jQF9tuNE9A
+	 idAT1bsuCA818h+a2XIKI1T79ZWklohU+az1Iaj4=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729961AbfAPTCa (ORCPT
+        id S1730117AbfAPTCo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 16 Jan 2019 14:02:30 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37574 "EHLO mail.kernel.org"
+        Wed, 16 Jan 2019 14:02:44 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37854 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728926AbfAPTCa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Jan 2019 14:02:30 -0500
-Received: from mail-qt1-f176.google.com (mail-qt1-f176.google.com [209.85.160.176])
+        id S1728926AbfAPTCo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 Jan 2019 14:02:44 -0500
+Received: from mail-qt1-f180.google.com (mail-qt1-f180.google.com [209.85.160.180])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3E78F20883;
-        Wed, 16 Jan 2019 19:02:29 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7E0CE20873;
+        Wed, 16 Jan 2019 19:02:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547665349;
-        bh=J9sR3hR/eMoiUT4UKUr7fq1T6PyLVac/imBYPkjLk0o=;
+        s=default; t=1547665363;
+        bh=zGV1x+A4UOjkIap9GCOnaA1snknthJ8s8Ua0b1m7W+c=;
         h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=ZAcm6/gEWnyTn1Wnjq7wJWxAXzTkmCqO0LRSAWvZwpRiI7F0z5azc06OP68+Gg7G3
-         Tgid3K3Hf919qD7VCEVkUf9Lqs5gsNO3pAxshN9+LPzbLNWhv26Vokv8GTaHKvHy2N
-         MuWYOzLVf3okgbRn5cwkWjoBs8HVfmbXxQRvHbSk=
-Received: by mail-qt1-f176.google.com with SMTP id i7so8420110qtj.10;
-        Wed, 16 Jan 2019 11:02:29 -0800 (PST)
-X-Gm-Message-State: AJcUukcikHCsr6TtKN09fh71Hk8gIbdTkMWmyJ21sR3et5iIjXArB9Fh
-        mePYM1OsbzxOjLg0T0Bsyl8fk+ijGNqZbPzALQ==
-X-Google-Smtp-Source: ALg8bN5WJIHLM4/ai0prRwf544e5iT4/SbrSFQTWB1ILnn1xTHytoQ0Lhzm4U6St8PGzIr8tsLzfx628QwDLY9/aAHM=
-X-Received: by 2002:a0c:8c8a:: with SMTP id p10mr8284743qvb.218.1547665348477;
- Wed, 16 Jan 2019 11:02:28 -0800 (PST)
+        b=xF2amGIR8KE4u1CrdM85QPhFnGQqEHl9NSgdNjHRayjTgFtsHbva3OHKCKFDEypQJ
+         3qIn37FYmvhxHVOQQNPx0YPmoJj1DkOWmy3TQyUIEd2/cvXvmCnZ98G7DLmPkpaWNx
+         +X9aiF9ryCeQgc+QWA4vPduMgnC/k1QeEhZ6U3N0=
+Received: by mail-qt1-f180.google.com with SMTP id l11so8526143qtp.0;
+        Wed, 16 Jan 2019 11:02:43 -0800 (PST)
+X-Gm-Message-State: AJcUukeYXqIXgY1F7gE079RYhQ7UTVq1X8IaAPW2LM45aZp8c79YAIAC
+        3bV2U6cCw8x/On6f3F/KhuVVnjoinbb7YRrPzg==
+X-Google-Smtp-Source: ALg8bN7yAyhz/3evSA3iCRjO57QTECE3jWcoRYZpz46wcoOrjeZjKGulqo6js4fDBuNUJ3PWD7MtwYwgfSpeBdq4j/E=
+X-Received: by 2002:ac8:2d2b:: with SMTP id n40mr8083086qta.38.1547665362783;
+ Wed, 16 Jan 2019 11:02:42 -0800 (PST)
 MIME-Version: 1.0
-References: <08ea3e964c337df6ef532ac4586f488edab80048.1546991072.git.ottosabart@seberm.com>
-In-Reply-To: <08ea3e964c337df6ef532ac4586f488edab80048.1546991072.git.ottosabart@seberm.com>
-From:   Rob Herring <robh+dt@kernel.org>
-Date:   Wed, 16 Jan 2019 13:02:16 -0600
-X-Gmail-Original-Message-ID: <CAL_JsqK_oHtYxCh+9yF11XoPoEVQ7yakyDDG-OJfQMgYhC4yWA@mail.gmail.com>
-Message-ID: <CAL_JsqK_oHtYxCh+9yF11XoPoEVQ7yakyDDG-OJfQMgYhC4yWA@mail.gmail.com>
-Subject: Re: [PATCH 1/1] doc: bindings: fix bad reference to ARM CPU bindings
+References: <8fd140950dd0bb859f9a48d8b25fb919cbb3cc6b.1547059503.git.ottosabart@seberm.com>
+In-Reply-To: <8fd140950dd0bb859f9a48d8b25fb919cbb3cc6b.1547059503.git.ottosabart@seberm.com>
+From:   Rob Herring <robh@kernel.org>
+Date:   Wed, 16 Jan 2019 13:02:32 -0600
+X-Gmail-Original-Message-ID: <CAL_JsqJFcUnDPmsZpvrxn3EsR5+B4jcjHonWsEsDrNxc98rZTA@mail.gmail.com>
+Message-ID: <CAL_JsqJFcUnDPmsZpvrxn3EsR5+B4jcjHonWsEsDrNxc98rZTA@mail.gmail.com>
+Subject: Re: [PATCH 1/1] doc: gpio-mvebu: fix broken reference to
+ cp110-system-controller0.txt file
 To:     Otto Sabart <ottosabart@seberm.com>
-Cc:     devicetree@vger.kernel.org,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        Mark Rutland <mark.rutland@arm.com>
+Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Linux PWM List <linux-pwm@vger.kernel.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        devicetree@vger.kernel.org,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Linus Walleij <linus.walleij@linaro.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 8, 2019 at 5:47 PM Otto Sabart <ottosabart@seberm.com> wrote:
+On Wed, Jan 9, 2019 at 1:07 PM Otto Sabart <ottosabart@seberm.com> wrote:
 >
-> The primecell.txt and cpus.txt files were converted into YAML. This
-> patch updates old references with new ones.
+> The cp110-system-controller0.txt file was renamed to
+> cp110-system-controller.txt.
 >
-> Fixes: d3c207eeb905 ("dt-bindings: arm: Convert primecell binding to json-schema")
-> Fixes: 672951cbd1b7 ("dt-bindings: arm: Convert cpu binding to json-schema")
+> Fixes: 4aa5496980e4 ("dt-bindings: cp110: rename cp110 syscon file")
 > Signed-off-by: Otto Sabart <ottosabart@seberm.com>
 > ---
->  Documentation/devicetree/bindings/arm/cpu-capacity.txt          | 2 +-
->  Documentation/devicetree/bindings/arm/idle-states.txt           | 2 +-
->  Documentation/devicetree/bindings/arm/sp810.txt                 | 2 +-
->  Documentation/devicetree/bindings/arm/topology.txt              | 2 +-
->  Documentation/devicetree/bindings/display/arm,pl11x.txt         | 2 +-
->  .../devicetree/bindings/interrupt-controller/arm,gic-v3.txt     | 2 +-
->  6 files changed, 6 insertions(+), 6 deletions(-)
+>  Documentation/devicetree/bindings/gpio/gpio-mvebu.txt | 2 --
+>  1 file changed, 2 deletions(-)
 
 Applied, thanks.
 
