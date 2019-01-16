@@ -7,255 +7,267 @@ X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A7FC9C43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 18:14:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 80224C43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 18:15:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5818420675
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 18:14:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 492C220868
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 18:15:09 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="bcSWqxDA"
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="X1sHMIct"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728403AbfAPSOP (ORCPT
+        id S1728434AbfAPSPH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 16 Jan 2019 13:14:15 -0500
-Received: from mail-ua1-f66.google.com ([209.85.222.66]:43223 "EHLO
-        mail-ua1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725710AbfAPSOP (ORCPT
+        Wed, 16 Jan 2019 13:15:07 -0500
+Received: from mail-yw1-f68.google.com ([209.85.161.68]:38570 "EHLO
+        mail-yw1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725882AbfAPSPH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Jan 2019 13:14:15 -0500
-Received: by mail-ua1-f66.google.com with SMTP id z11so2494926uaa.10
-        for <linux-kernel@vger.kernel.org>; Wed, 16 Jan 2019 10:14:14 -0800 (PST)
+        Wed, 16 Jan 2019 13:15:07 -0500
+Received: by mail-yw1-f68.google.com with SMTP id d190so2738635ywb.5
+        for <linux-kernel@vger.kernel.org>; Wed, 16 Jan 2019 10:15:06 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=YeovtTKcFZoIShUVI6LJfRJxWzSHt98QfNVCTY0fudk=;
-        b=bcSWqxDATSWvM6ZIKAnmy0S4taqzqViQJa8kKQkoiMiJXewZEV6lJshRwr8wffzNHP
-         ApNxjnXfciOaPKR9V7OVG6XFwLBsn8BBqtHpHLmiyCO3K9FkFHct5DdNHXMbyQkw+Ig0
-         LqhOOt5LfPGMo6F5CoksPNitJFGI6Bzdx4q/4=
+        d=broadcom.com; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-transfer-encoding:content-language;
+        bh=4URaJZgH8FXMoyxrFNcjoOcddqjBhVcQuxxw0ZXZLpE=;
+        b=X1sHMIctDPunp4OKjEWfJJEw3mt/QeHA/7Dwlyv+FO4b61tq9PcnpL4fytzbCshYPU
+         ASA2VAs2jWbLkAL5tS8YE/BytuWfGNS/abwj8csbZQp786uDI/uvUEzwcH+fWGFhAQAK
+         GcVFffvv7lIWJAZY8iT1PNBmFkht0p88REhRk=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=YeovtTKcFZoIShUVI6LJfRJxWzSHt98QfNVCTY0fudk=;
-        b=HNZs3vbJAmPquPSSzLNZ1nocjBtme0WdaGcKdShhTrpCi4SEgs71xmkyA1Lo/f5/Ki
-         PVET5MhIphkbcLa3y98zIVidjmdm4Azwnq6cCpismT8eQOklscy8x2s2ab8FLW1c3lt7
-         /C/jDiTu4pQE48ElyFyQSyxk87JJkAQS9JELg1XzdWxg/0BhntSFjcF/q93Nmi2owvH6
-         1fDTOGRVB/pv2OVCS/bW3QgXy1DXQKAEBmcxCOBewXS8A2Uwyv0LHpbPsLZ2g9znQDyO
-         oj11ZdOHJYMqFzcgkyQtrvT8X3KxrFYkuKhWSjPV212L31bspajEVb5k99iPGRj4kXIi
-         LWWw==
-X-Gm-Message-State: AJcUukcHhX2GfaoGuOzWjjverTbu5E4lvDpU/wLeXbNNKu+iumMyjv5V
-        puWLA2Acv86ow+wOqAWyblFHVe2kCwA=
-X-Google-Smtp-Source: ALg8bN6sLXyZ/YNSfwdq5XGaYpR8kIyIpCiPI8rSd5NGHYJmNu2wBmc0hVuMEhTWg1KEeUk0O0tBnQ==
-X-Received: by 2002:ab0:21c6:: with SMTP id u6mr4210879uan.97.1547662453095;
-        Wed, 16 Jan 2019 10:14:13 -0800 (PST)
-Received: from mail-vk1-f174.google.com (mail-vk1-f174.google.com. [209.85.221.174])
-        by smtp.gmail.com with ESMTPSA id y195sm44581076vkd.0.2019.01.16.10.14.11
-        for <linux-kernel@vger.kernel.org>
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-transfer-encoding
+         :content-language;
+        bh=4URaJZgH8FXMoyxrFNcjoOcddqjBhVcQuxxw0ZXZLpE=;
+        b=SR1l2uu6pWqolLVIU32c25Mc2B+r+o8QHkwuN6N3+x9nHx79ecuVeBLcN5JPVncaqZ
+         9d94C2PO31/fZWY3u8BPrLUU8zIOPG6uCpwRAw3Yw6KIihP6ESgZxmy1knVouGsxnskC
+         TUf0JaFfefi5ByOCtzwCoFwRMZNKy6qPaTnYG5+BBzIQWLwL5MpyTa495TURzf0TD3Jt
+         xpn9Lh2pVJTK5gQ+tV/TdUH2G0ul/TrUIi3W3d1dfZt2LuwVmAUIMRB6uOlzUOA+MQNq
+         HqX7LC9duNC2ZUeeDZOvphHvS7nbnnNyIGIR+VruKg7VcQ0t0Ys6DrDayt3tRVzVAR0r
+         JiRg==
+X-Gm-Message-State: AJcUukdOL7IQB8m/diPySS1AjlE68AlC9x3PJRP9pDD0Or7BzXMWz3nz
+        a66h5ABXHtId0anzwhVam2hDkA==
+X-Google-Smtp-Source: ALg8bN7lG1DCEVAK5K4XqjP28cwXatn/WipoDWH9ooBtl8484KPLw8jCjA1+V4AHYugyTO5IM6sUiw==
+X-Received: by 2002:a81:87c3:: with SMTP id x186mr8604403ywf.147.1547662505977;
+        Wed, 16 Jan 2019 10:15:05 -0800 (PST)
+Received: from [10.136.13.65] ([192.19.228.250])
+        by smtp.gmail.com with ESMTPSA id s185sm4658831yws.69.2019.01.16.10.15.03
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 16 Jan 2019 10:14:11 -0800 (PST)
-Received: by mail-vk1-f174.google.com with SMTP id y14so1658317vkd.1
-        for <linux-kernel@vger.kernel.org>; Wed, 16 Jan 2019 10:14:11 -0800 (PST)
-X-Received: by 2002:a1f:4982:: with SMTP id w124mr4042143vka.4.1547662450962;
- Wed, 16 Jan 2019 10:14:10 -0800 (PST)
+        Wed, 16 Jan 2019 10:15:05 -0800 (PST)
+Subject: Re: [PATCH v2 2/2] reset: Add Broadcom STB SW_INIT reset controller
+ driver
+To:     Florian Fainelli <f.fainelli@gmail.com>,
+        linux-kernel@vger.kernel.org
+Cc:     Philipp Zabel <p.zabel@pengutronix.de>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Brian Norris <computersforpeace@gmail.com>,
+        Gregory Fong <gregory.0xf0@gmail.com>,
+        "maintainer:BROADCOM BCM7XXX ARM ARCHITECTURE" 
+        <bcm-kernel-feedback-list@broadcom.com>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        "moderated list:BROADCOM BCM7XXX ARM ARCHITECTURE" 
+        <linux-arm-kernel@lists.infradead.org>
+References: <20190115184406.3164-1-f.fainelli@gmail.com>
+ <20190115184406.3164-3-f.fainelli@gmail.com>
+From:   Scott Branden <scott.branden@broadcom.com>
+Message-ID: <7bc8d9ee-5be1-1765-55dd-b7407cff962f@broadcom.com>
+Date:   Wed, 16 Jan 2019 10:15:01 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-References: <20190116174320.14938-1-daniel.diaz@linaro.org> <20190116174320.14938-3-daniel.diaz@linaro.org>
-In-Reply-To: <20190116174320.14938-3-daniel.diaz@linaro.org>
-From:   Kees Cook <keescook@chromium.org>
-Date:   Wed, 16 Jan 2019 10:13:59 -0800
-X-Gmail-Original-Message-ID: <CAGXu5j+1tOvB0jHk=kCxfhTg-PEPjCHp2TQb++wZsGxJCcQxng@mail.gmail.com>
-Message-ID: <CAGXu5j+1tOvB0jHk=kCxfhTg-PEPjCHp2TQb++wZsGxJCcQxng@mail.gmail.com>
-Subject: Re: [PATCH 3/4] selftests: seccomp: use LDLIBS instead of LDFLAGS
-To:     =?UTF-8?B?RGFuaWVsIETDrWF6?= <daniel.diaz@linaro.org>,
-        Shuah Khan <shuah@kernel.org>
-Cc:     Fathi Boudra <fathi.boudra@linaro.org>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Will Drewry <wad@chromium.org>,
-        "open list:KERNEL SELFTEST FRAMEWORK" 
-        <linux-kselftest@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20190115184406.3164-3-f.fainelli@gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 16, 2019 at 9:44 AM Daniel D=C3=ADaz <daniel.diaz@linaro.org> w=
-rote:
->
-> From: Fathi Boudra <fathi.boudra@linaro.org>
->
-> seccomp_bpf fails to build due to undefined reference errors:
->
->  aarch64-linaro-linux-gcc --sysroot=3D/build/tmp-rpb-glibc/sysroots/hikey
->  -O2 -pipe -g -feliminate-unused-debug-types -Wl,-no-as-needed -Wall
->  -Wl,-O1 -Wl,--hash-style=3Dgnu -Wl,--as-needed -lpthread seccomp_bpf.c -=
-o
->  /build/tmp-rpb-glibc/work/hikey-linaro-linux/kselftests/4.12-r0/linux-4.=
-12-rc7/tools/testing/selftests/seccomp/seccomp_bpf
->  /tmp/ccrlR3MW.o: In function `tsync_sibling':
->  /usr/src/debug/kselftests/4.12-r0/linux-4.12-rc7/tools/testing/selftests=
-/seccomp/seccomp_bpf.c:1920: undefined reference to `sem_post'
->  /usr/src/debug/kselftests/4.12-r0/linux-4.12-rc7/tools/testing/selftests=
-/seccomp/seccomp_bpf.c:1920: undefined reference to `sem_post'
->  /tmp/ccrlR3MW.o: In function `TSYNC_setup':
->  /usr/src/debug/kselftests/4.12-r0/linux-4.12-rc7/tools/testing/selftests=
-/seccomp/seccomp_bpf.c:1863: undefined reference to `sem_init'
->  /tmp/ccrlR3MW.o: In function `TSYNC_teardown':
->  /usr/src/debug/kselftests/4.12-r0/linux-4.12-rc7/tools/testing/selftests=
-/seccomp/seccomp_bpf.c:1904: undefined reference to `sem_destroy'
->  /usr/src/debug/kselftests/4.12-r0/linux-4.12-rc7/tools/testing/selftests=
-/seccomp/seccomp_bpf.c:1897: undefined reference to `pthread_kill'
->  /usr/src/debug/kselftests/4.12-r0/linux-4.12-rc7/tools/testing/selftests=
-/seccomp/seccomp_bpf.c:1898: undefined reference to `pthread_cancel'
->  /usr/src/debug/kselftests/4.12-r0/linux-4.12-rc7/tools/testing/selftests=
-/seccomp/seccomp_bpf.c:1899: undefined reference to `pthread_join'
->  /tmp/ccrlR3MW.o: In function `tsync_start_sibling':
->  /usr/src/debug/kselftests/4.12-r0/linux-4.12-rc7/tools/testing/selftests=
-/seccomp/seccomp_bpf.c:1941: undefined reference to `pthread_create'
->  /usr/src/debug/kselftests/4.12-r0/linux-4.12-rc7/tools/testing/selftests=
-/seccomp/seccomp_bpf.c:1941: undefined reference to `pthread_create'
->  /tmp/ccrlR3MW.o: In function `TSYNC_siblings_fail_prctl':
->  /usr/src/debug/kselftests/4.12-r0/linux-4.12-rc7/tools/testing/selftests=
-/seccomp/seccomp_bpf.c:1978: undefined reference to `sem_wait'
->  /usr/src/debug/kselftests/4.12-r0/linux-4.12-rc7/tools/testing/selftests=
-/seccomp/seccomp_bpf.c:1990: undefined reference to `pthread_join'
->  /usr/src/debug/kselftests/4.12-r0/linux-4.12-rc7/tools/testing/selftests=
-/seccomp/seccomp_bpf.c:1992: undefined reference to `pthread_join'
->  /tmp/ccrlR3MW.o: In function `tsync_start_sibling':
->  /usr/src/debug/kselftests/4.12-r0/linux-4.12-rc7/tools/testing/selftests=
-/seccomp/seccomp_bpf.c:1941: undefined reference to `pthread_create'
->  /usr/src/debug/kselftests/4.12-r0/linux-4.12-rc7/tools/testing/selftests=
-/seccomp/seccomp_bpf.c:1941: undefined reference to `pthread_create'
->  /tmp/ccrlR3MW.o: In function `TSYNC_two_siblings_with_ancestor':
->  /usr/src/debug/kselftests/4.12-r0/linux-4.12-rc7/tools/testing/selftests=
-/seccomp/seccomp_bpf.c:2016: undefined reference to `sem_wait'
->  /usr/src/debug/kselftests/4.12-r0/linux-4.12-rc7/tools/testing/selftests=
-/seccomp/seccomp_bpf.c:2032: undefined reference to `pthread_join'
->  /usr/src/debug/kselftests/4.12-r0/linux-4.12-rc7/tools/testing/selftests=
-/seccomp/seccomp_bpf.c:2034: undefined reference to `pthread_join'
->  /tmp/ccrlR3MW.o: In function `tsync_start_sibling':
->  /usr/src/debug/kselftests/4.12-r0/linux-4.12-rc7/tools/testing/selftests=
-/seccomp/seccomp_bpf.c:1941: undefined reference to `pthread_create'
->  /usr/src/debug/kselftests/4.12-r0/linux-4.12-rc7/tools/testing/selftests=
-/seccomp/seccomp_bpf.c:1941: undefined reference to `pthread_create'
->  /tmp/ccrlR3MW.o: In function `TSYNC_two_sibling_want_nnp':
->  /usr/src/debug/kselftests/4.12-r0/linux-4.12-rc7/tools/testing/selftests=
-/seccomp/seccomp_bpf.c:2046: undefined reference to `sem_wait'
->  /usr/src/debug/kselftests/4.12-r0/linux-4.12-rc7/tools/testing/selftests=
-/seccomp/seccomp_bpf.c:2058: undefined reference to `pthread_join'
->  /usr/src/debug/kselftests/4.12-r0/linux-4.12-rc7/tools/testing/selftests=
-/seccomp/seccomp_bpf.c:2060: undefined reference to `pthread_join'
->  /tmp/ccrlR3MW.o: In function `tsync_start_sibling':
->  /usr/src/debug/kselftests/4.12-r0/linux-4.12-rc7/tools/testing/selftests=
-/seccomp/seccomp_bpf.c:1941: undefined reference to `pthread_create'
->  /usr/src/debug/kselftests/4.12-r0/linux-4.12-rc7/tools/testing/selftests=
-/seccomp/seccomp_bpf.c:1941: undefined reference to `pthread_create'
->  /tmp/ccrlR3MW.o: In function `TSYNC_two_siblings_with_no_filter':
->  /usr/src/debug/kselftests/4.12-r0/linux-4.12-rc7/tools/testing/selftests=
-/seccomp/seccomp_bpf.c:2073: undefined reference to `sem_wait'
->  /usr/src/debug/kselftests/4.12-r0/linux-4.12-rc7/tools/testing/selftests=
-/seccomp/seccomp_bpf.c:2098: undefined reference to `pthread_join'
->  /usr/src/debug/kselftests/4.12-r0/linux-4.12-rc7/tools/testing/selftests=
-/seccomp/seccomp_bpf.c:2100: undefined reference to `pthread_join'
->  /tmp/ccrlR3MW.o: In function `tsync_start_sibling':
->  /usr/src/debug/kselftests/4.12-r0/linux-4.12-rc7/tools/testing/selftests=
-/seccomp/seccomp_bpf.c:1941: undefined reference to `pthread_create'
->  /usr/src/debug/kselftests/4.12-r0/linux-4.12-rc7/tools/testing/selftests=
-/seccomp/seccomp_bpf.c:1941: undefined reference to `pthread_create'
->  /tmp/ccrlR3MW.o: In function `TSYNC_two_siblings_with_one_divergence':
->  /usr/src/debug/kselftests/4.12-r0/linux-4.12-rc7/tools/testing/selftests=
-/seccomp/seccomp_bpf.c:2125: undefined reference to `sem_wait'
->  /usr/src/debug/kselftests/4.12-r0/linux-4.12-rc7/tools/testing/selftests=
-/seccomp/seccomp_bpf.c:2143: undefined reference to `pthread_join'
->  /usr/src/debug/kselftests/4.12-r0/linux-4.12-rc7/tools/testing/selftests=
-/seccomp/seccomp_bpf.c:2145: undefined reference to `pthread_join'
->  /tmp/ccrlR3MW.o: In function `tsync_start_sibling':
->  /usr/src/debug/kselftests/4.12-r0/linux-4.12-rc7/tools/testing/selftests=
-/seccomp/seccomp_bpf.c:1941: undefined reference to `pthread_create'
->  /usr/src/debug/kselftests/4.12-r0/linux-4.12-rc7/tools/testing/selftests=
-/seccomp/seccomp_bpf.c:1941: undefined reference to `pthread_create'
->  /tmp/ccrlR3MW.o: In function `TSYNC_two_siblings_not_under_filter':
->  /usr/src/debug/kselftests/4.12-r0/linux-4.12-rc7/tools/testing/selftests=
-/seccomp/seccomp_bpf.c:2169: undefined reference to `sem_wait'
->  /usr/src/debug/kselftests/4.12-r0/linux-4.12-rc7/tools/testing/selftests=
-/seccomp/seccomp_bpf.c:2202: undefined reference to `pthread_join'
->  /usr/src/debug/kselftests/4.12-r0/linux-4.12-rc7/tools/testing/selftests=
-/seccomp/seccomp_bpf.c:2227: undefined reference to `pthread_join'
->  /tmp/ccrlR3MW.o: In function `tsync_start_sibling':
->  /usr/src/debug/kselftests/4.12-r0/linux-4.12-rc7/tools/testing/selftests=
-/seccomp/seccomp_bpf.c:1941: undefined reference to `pthread_create'
->
-> It's GNU Make and linker specific.
->
-> The default Makefile rule looks like:
->
-> $(CC) $(CFLAGS) $(LDFLAGS) $@ $^ $(LDLIBS)
->
-> When linking is done by gcc itself, no issue, but when it needs to be pas=
-sed
-> to proper ld, only LDLIBS follows and then ld cannot know what libs to li=
-nk
-> with.
->
-> More detail:
-> https://www.gnu.org/software/make/manual/html_node/Implicit-Variables.htm=
-l
->
-> LDFLAGS
-> Extra flags to give to compilers when they are supposed to invoke the lin=
-ker,
-> =E2=80=98ld=E2=80=99, such as -L. Libraries (-lfoo) should be added to th=
-e LDLIBS variable
-> instead.
->
-> LDLIBS
-> Library flags or names given to compilers when they are supposed to invok=
-e the
-> linker, =E2=80=98ld=E2=80=99. LOADLIBES is a deprecated (but still suppor=
-ted) alternative to
-> LDLIBS. Non-library linker flags, such as -L, should go in the LDFLAGS
-> variable.
->
-> https://lkml.org/lkml/2010/2/10/362
->
-> tools/perf: libraries must come after objects
->
-> Link order matters, use LDLIBS instead of LDFLAGS to properly link agains=
-t
-> libpthread.
->
-> Signed-off-by: Fathi Boudra <fathi.boudra@linaro.org>
 
-Acked-by: Kees Cook <keescook@chromium.org>
-
-Shuah, can you take this?
-
--Kees
-
+On 2019-01-15 10:44 a.m., Florian Fainelli wrote:
+> Add support for resetting blocks through the Linux reset controller
+> subsystem when reset lines are provided through a SW_INIT-style reset
+> controller on Broadcom STB SoCs.
+>
+> Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
 > ---
->  tools/testing/selftests/seccomp/Makefile | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+>   drivers/reset/Kconfig         |   7 ++
+>   drivers/reset/Makefile        |   1 +
+>   drivers/reset/reset-brcmstb.c | 130 ++++++++++++++++++++++++++++++++++
+>   3 files changed, 138 insertions(+)
+>   create mode 100644 drivers/reset/reset-brcmstb.c
 >
-> diff --git a/tools/testing/selftests/seccomp/Makefile b/tools/testing/sel=
-ftests/seccomp/Makefile
-> index fce7f4ce0692..1760b3e39730 100644
-> --- a/tools/testing/selftests/seccomp/Makefile
-> +++ b/tools/testing/selftests/seccomp/Makefile
-> @@ -9,7 +9,7 @@ BINARIES :=3D seccomp_bpf seccomp_benchmark
->  CFLAGS +=3D -Wl,-no-as-needed -Wall
->
->  seccomp_bpf: seccomp_bpf.c ../kselftest_harness.h
-> -       $(CC) $(CFLAGS) $(LDFLAGS) -lpthread $< -o $@
-> +       $(CC) $(CFLAGS) $(LDFLAGS) $< -lpthread -o $@
->
->  TEST_PROGS +=3D $(BINARIES)
->  EXTRA_CLEAN :=3D $(BINARIES)
-> --
-> 2.17.1
->
+> diff --git a/drivers/reset/Kconfig b/drivers/reset/Kconfig
+> index 2e01bd833ffd..1ca03c57e049 100644
+> --- a/drivers/reset/Kconfig
+> +++ b/drivers/reset/Kconfig
+> @@ -40,6 +40,13 @@ config RESET_BERLIN
+>   	help
+>   	  This enables the reset controller driver for Marvell Berlin SoCs.
+>   
+> +config RESET_BRCMSTB
+> +	bool "Broadcom STB reset controller" if COMPILE_TEST
 
+Could this even be:
 
---=20
-Kees Cook
+depends on ARCH_BRCMSTB || COMPILE_TEST
+
+> +	default ARCH_BRCMSTB
+> +	help
+> +	  This enables the reset controller driver for Broadcom STB SoCs using
+> +	  a SUN_TOP_CTRL_SW_INIT style controller.
+> +
+>   config RESET_HSDK
+>   	bool "Synopsys HSDK Reset Driver"
+>   	depends on HAS_IOMEM
+> diff --git a/drivers/reset/Makefile b/drivers/reset/Makefile
+> index dc7874df78d9..7395db2cb1dd 100644
+> --- a/drivers/reset/Makefile
+> +++ b/drivers/reset/Makefile
+> @@ -7,6 +7,7 @@ obj-$(CONFIG_RESET_A10SR) += reset-a10sr.o
+>   obj-$(CONFIG_RESET_ATH79) += reset-ath79.o
+>   obj-$(CONFIG_RESET_AXS10X) += reset-axs10x.o
+>   obj-$(CONFIG_RESET_BERLIN) += reset-berlin.o
+> +obj-$(CONFIG_RESET_BRCMSTB) += reset-brcmstb.o
+>   obj-$(CONFIG_RESET_HSDK) += reset-hsdk.o
+>   obj-$(CONFIG_RESET_IMX7) += reset-imx7.o
+>   obj-$(CONFIG_RESET_LANTIQ) += reset-lantiq.o
+> diff --git a/drivers/reset/reset-brcmstb.c b/drivers/reset/reset-brcmstb.c
+> new file mode 100644
+> index 000000000000..01ab1f71518b
+> --- /dev/null
+> +++ b/drivers/reset/reset-brcmstb.c
+> @@ -0,0 +1,130 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Broadcom STB generic reset controller for SW_INIT style reset controller
+> + *
+> + * Author: Florian Fainelli <f.fainelli@gmail.com>
+> + * Copyright (C) 2018 Broadcom
+> + */
+> +#include <linux/delay.h>
+> +#include <linux/device.h>
+> +#include <linux/io.h>
+> +#include <linux/module.h>
+> +#include <linux/of.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/reset-controller.h>
+> +#include <linux/types.h>
+> +
+> +struct brcmstb_reset {
+> +	void __iomem *base;
+> +	struct reset_controller_dev rcdev;
+> +};
+> +
+> +#define SW_INIT_SET		0x00
+> +#define SW_INIT_CLEAR		0x04
+> +#define SW_INIT_STATUS		0x08
+> +
+> +#define SW_INIT_BIT(id)		BIT((id) & 0x1f)
+> +#define SW_INIT_BANK(id)	((id) >> 5)
+> +
+> +/* A full bank contains extra registers that we are not utilizing but still
+> + * qualify as a single bank.
+> + */
+> +#define SW_INIT_BANK_SIZE	0x18
+> +
+> +static inline
+> +struct brcmstb_reset *to_brcmstb(struct reset_controller_dev *rcdev)
+> +{
+> +	return container_of(rcdev, struct brcmstb_reset, rcdev);
+> +}
+> +
+> +static int brcmstb_reset_assert(struct reset_controller_dev *rcdev,
+> +				unsigned long id)
+> +{
+> +	unsigned int off = SW_INIT_BANK(id) * SW_INIT_BANK_SIZE;
+> +	struct brcmstb_reset *priv = to_brcmstb(rcdev);
+> +
+> +	writel_relaxed(SW_INIT_BIT(id), priv->base + off + SW_INIT_SET);
+> +
+> +	return 0;
+> +}
+> +
+> +static int brcmstb_reset_deassert(struct reset_controller_dev *rcdev,
+> +				  unsigned long id)
+> +{
+> +	unsigned int off = SW_INIT_BANK(id) * SW_INIT_BANK_SIZE;
+> +	struct brcmstb_reset *priv = to_brcmstb(rcdev);
+> +
+> +	writel_relaxed(SW_INIT_BIT(id), priv->base + off + SW_INIT_CLEAR);
+> +	/* Maximum reset delay after de-asserting a line and seeing block
+> +	 * operation is typically 14us for the worst case, build some slack
+> +	 * here.
+> +	 */
+> +	usleep_range(100, 200);
+> +
+> +	return 0;
+> +}
+> +
+> +static int brcmstb_reset_status(struct reset_controller_dev *rcdev,
+> +				unsigned long id)
+> +{
+> +	unsigned int off = SW_INIT_BANK(id) * SW_INIT_BANK_SIZE;
+> +	struct brcmstb_reset *priv = to_brcmstb(rcdev);
+> +
+> +	return readl_relaxed(priv->base + off + SW_INIT_STATUS) &
+> +			     SW_INIT_BIT(id);
+> +}
+> +
+> +static const struct reset_control_ops brcmstb_reset_ops = {
+> +	.assert	= brcmstb_reset_assert,
+> +	.deassert = brcmstb_reset_deassert,
+> +	.status = brcmstb_reset_status,
+> +};
+> +
+> +static int brcmstb_reset_probe(struct platform_device *pdev)
+> +{
+> +	struct device *kdev = &pdev->dev;
+> +	struct brcmstb_reset *priv;
+> +	struct resource *res;
+> +
+> +	priv = devm_kzalloc(kdev, sizeof(*priv), GFP_KERNEL);
+> +	if (!priv)
+> +		return -ENOMEM;
+> +
+> +	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+> +	if (resource_size(res) % SW_INIT_BANK_SIZE) {
+> +		dev_err(kdev, "incorrect register range\n");
+> +		return -EINVAL;
+> +	}
+> +
+> +	priv->base = devm_ioremap_resource(kdev, res);
+> +	if (IS_ERR(priv->base))
+> +		return PTR_ERR(priv->base);
+> +
+> +	dev_set_drvdata(kdev, priv);
+> +
+> +	priv->rcdev.owner = THIS_MODULE;
+> +	priv->rcdev.nr_resets = (resource_size(res) / SW_INIT_BANK_SIZE) * 32;
+> +	priv->rcdev.ops = &brcmstb_reset_ops;
+> +	priv->rcdev.of_node = kdev->of_node;
+> +	/* Use defaults: 1 cell and simple xlate function */
+> +
+> +	return devm_reset_controller_register(kdev, &priv->rcdev);
+> +}
+> +
+> +static const struct of_device_id brcmstb_reset_of_match[] = {
+> +	{ .compatible = "brcm,brcmstb-reset" },
+> +	{ /* sentinel */ }
+> +};
+> +
+> +static struct platform_driver brcmstb_reset_driver = {
+> +	.probe	= brcmstb_reset_probe,
+> +	.driver	= {
+> +		.name = "brcmstb-reset",
+> +		.of_match_table = brcmstb_reset_of_match,
+> +	},
+> +};
+> +module_platform_driver(brcmstb_reset_driver);
+> +
+> +MODULE_AUTHOR("Broadcom");
+> +MODULE_DESCRIPTION("Broadcom STB reset controller");
+> +MODULE_LICENSE("GPL");
