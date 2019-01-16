@@ -4,33 +4,36 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
 	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6154FC43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 18:56:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C403C43444
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 18:56:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3A71A2086D
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 18:56:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 31E3520873
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 18:56:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729781AbfAPS4L (ORCPT
+        id S1729692AbfAPS4d (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 16 Jan 2019 13:56:11 -0500
-Received: from smtp1-g21.free.fr ([212.27.42.1]:58469 "EHLO smtp1-g21.free.fr"
+        Wed, 16 Jan 2019 13:56:33 -0500
+Received: from smtp1-g21.free.fr ([212.27.42.1]:60512 "EHLO smtp1-g21.free.fr"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729409AbfAPS4L (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Jan 2019 13:56:11 -0500
+        id S1729085AbfAPS4c (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 Jan 2019 13:56:32 -0500
 Received: from localhost.localdomain (unknown [IPv6:2a02:8108:4840:8f74:a08c:f56:b2dd:7ae0])
         (Authenticated sender: albeu)
-        by smtp1-g21.free.fr (Postfix) with ESMTPA id E6411B0059A;
-        Wed, 16 Jan 2019 19:56:00 +0100 (CET)
+        by smtp1-g21.free.fr (Postfix) with ESMTPA id 8BBFBB00583;
+        Wed, 16 Jan 2019 19:56:13 +0100 (CET)
 From:   Alban Bedel <albeu@free.fr>
 To:     linux-kernel@vger.kernel.org
-Cc:     Alban Bedel <albeu@free.fr>, Mark Brown <broonie@kernel.org>,
+Cc:     Alban Bedel <albeu@free.fr>, Ralf Baechle <ralf@linux-mips.org>,
+        Paul Burton <paul.burton@mips.com>,
+        James Hogan <jhogan@kernel.org>,
+        Mark Brown <broonie@kernel.org>, linux-mips@vger.kernel.org,
         linux-spi@vger.kernel.org
-Subject: [PATCH 2/6] spi: ath79: Simplify ath79_spi_chipselect()
-Date:   Wed, 16 Jan 2019 19:55:45 +0100
-Message-Id: <20190116185549.23295-2-albeu@free.fr>
+Subject: [PATCH 3/6] spi: ath79: Enable support for compile test
+Date:   Wed, 16 Jan 2019 19:55:46 +0100
+Message-Id: <20190116185549.23295-3-albeu@free.fr>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190116185549.23295-1-albeu@free.fr>
 References: <20190116185549.23295-1-albeu@free.fr>
@@ -41,102 +44,83 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-First of all this callback was slightly misused to setup the clock
-polarity at the beginning of a transfer. Beside being at the wrong
-place, it is also useless as only SPI mode 1 is supported. Instead
-just make sure the base value used for IOC is suitable to start a
-transfer by clearing the clock and data bits during the controller
-setup.
-
-This also remove the last direct usage of the GPIO API, so we can
-remove the direct dependency on GPIOLIB.
+To allow building this driver in compile test we need to remove all
+dependency on headers from arch/mips/include. To allow this we
+explicitly define all the registers locally instead of using
+ar71xx_regs.h and we move the platform data struct definition to
+include/linux/platform_data/spi-ath79.h.
 
 Signed-off-by: Alban Bedel <albeu@free.fr>
 ---
- drivers/spi/Kconfig     |  2 +-
- drivers/spi/spi-ath79.c | 40 +++++++++-------------------------------
- 2 files changed, 10 insertions(+), 32 deletions(-)
+ arch/mips/ath79/dev-spi.h                         |  2 +-
+ drivers/spi/Kconfig                               |  2 +-
+ drivers/spi/spi-ath79.c                           | 15 ++++++++++++---
+ .../linux/platform_data/spi-ath79.h               |  0
+ 4 files changed, 14 insertions(+), 5 deletions(-)
+ rename arch/mips/include/asm/mach-ath79/ath79_spi_platform.h => include/linux/platform_data/spi-ath79.h (100%)
 
+diff --git a/arch/mips/ath79/dev-spi.h b/arch/mips/ath79/dev-spi.h
+index d732565ca736..6e15bc8651be 100644
+--- a/arch/mips/ath79/dev-spi.h
++++ b/arch/mips/ath79/dev-spi.h
+@@ -13,7 +13,7 @@
+ #define _ATH79_DEV_SPI_H
+ 
+ #include <linux/spi/spi.h>
+-#include <asm/mach-ath79/ath79_spi_platform.h>
++#include <linux/platform_data/spi-ath79.h>
+ 
+ void ath79_register_spi(struct ath79_spi_platform_data *pdata,
+ 			 struct spi_board_info const *info,
 diff --git a/drivers/spi/Kconfig b/drivers/spi/Kconfig
-index dc67eda1788a..128892c7e21e 100644
+index 128892c7e21e..71d3d2d5e5d1 100644
 --- a/drivers/spi/Kconfig
 +++ b/drivers/spi/Kconfig
 @@ -63,7 +63,7 @@ config SPI_ALTERA
  
  config SPI_ATH79
  	tristate "Atheros AR71XX/AR724X/AR913X SPI controller driver"
--	depends on ATH79 && GPIOLIB
-+	depends on ATH79
+-	depends on ATH79
++	depends on ATH79 || COMPILE_TEST
  	select SPI_BITBANG
  	help
  	  This enables support for the SPI controller present on the
 diff --git a/drivers/spi/spi-ath79.c b/drivers/spi/spi-ath79.c
-index ed1068ac055f..edf695a359f4 100644
+index edf695a359f4..09c4fb7fcf7a 100644
 --- a/drivers/spi/spi-ath79.c
 +++ b/drivers/spi/spi-ath79.c
-@@ -21,7 +21,6 @@
- #include <linux/spi/spi.h>
- #include <linux/spi/spi_bitbang.h>
+@@ -23,15 +23,24 @@
  #include <linux/bitops.h>
--#include <linux/gpio/consumer.h>
  #include <linux/clk.h>
  #include <linux/err.h>
- 
-@@ -67,38 +66,14 @@ static void ath79_spi_chipselect(struct spi_device *spi, int is_active)
- {
- 	struct ath79_spi *sp = ath79_spidev_to_sp(spi);
- 	int cs_high = (spi->mode & SPI_CS_HIGH) ? is_active : !is_active;
-+	u32 cs_bit = AR71XX_SPI_IOC_CS(spi->chip_select);
- 
--	if (is_active) {
--		/* set initial clock polarity */
--		if (spi->mode & SPI_CPOL)
--			sp->ioc_base |= AR71XX_SPI_IOC_CLK;
--		else
--			sp->ioc_base &= ~AR71XX_SPI_IOC_CLK;
 -
--		ath79_spi_wr(sp, AR71XX_SPI_REG_IOC, sp->ioc_base);
--	}
--
--	if (spi->cs_gpiod) {
--		/*
--		 * SPI chipselect is normally active-low, but
--		 * inversion semantics are handled by gpiolib.
--		 *
--		 * FIXME: is this ever used? The driver doesn't
--		 * set SPI_MASTER_GPIO_SS so this callback should not
--		 * get called if a CS GPIO is found by the SPI core.
--		 */
--		gpiod_set_value_cansleep(spi->cs_gpiod, is_active);
--	} else {
--		u32 cs_bit = AR71XX_SPI_IOC_CS(spi->chip_select);
--
--		if (cs_high)
--			sp->ioc_base |= cs_bit;
--		else
--			sp->ioc_base &= ~cs_bit;
--
--		ath79_spi_wr(sp, AR71XX_SPI_REG_IOC, sp->ioc_base);
--	}
-+	if (cs_high)
-+		sp->ioc_base |= cs_bit;
-+	else
-+		sp->ioc_base &= ~cs_bit;
+-#include <asm/mach-ath79/ar71xx_regs.h>
+-#include <asm/mach-ath79/ath79_spi_platform.h>
++#include <linux/platform_data/spi-ath79.h>
  
-+	ath79_spi_wr(sp, AR71XX_SPI_REG_IOC, sp->ioc_base);
- }
+ #define DRV_NAME	"ath79-spi"
  
- static void ath79_spi_enable(struct ath79_spi *sp)
-@@ -110,6 +85,9 @@ static void ath79_spi_enable(struct ath79_spi *sp)
- 	sp->reg_ctrl = ath79_spi_rr(sp, AR71XX_SPI_REG_CTRL);
- 	sp->ioc_base = ath79_spi_rr(sp, AR71XX_SPI_REG_IOC);
+ #define ATH79_SPI_RRW_DELAY_FACTOR	12000
+ #define MHZ				(1000 * 1000)
  
-+	/* clear clk and mosi in the base state */
-+	sp->ioc_base &= ~(AR71XX_SPI_IOC_DO | AR71XX_SPI_IOC_CLK);
++#define AR71XX_SPI_REG_FS		0x00	/* Function Select */
++#define AR71XX_SPI_REG_CTRL		0x04	/* SPI Control */
++#define AR71XX_SPI_REG_IOC		0x08	/* SPI I/O Control */
++#define AR71XX_SPI_REG_RDS		0x0c	/* Read Data Shift */
 +
- 	/* TODO: setup speed? */
- 	ath79_spi_wr(sp, AR71XX_SPI_REG_CTRL, 0x43);
- }
++#define AR71XX_SPI_FS_GPIO		BIT(0)	/* Enable GPIO mode */
++
++#define AR71XX_SPI_IOC_DO		BIT(0)	/* Data Out pin */
++#define AR71XX_SPI_IOC_CLK		BIT(8)	/* CLK pin */
++#define AR71XX_SPI_IOC_CS(n)		BIT(16 + (n))
++
+ struct ath79_spi {
+ 	struct spi_bitbang	bitbang;
+ 	u32			ioc_base;
+diff --git a/arch/mips/include/asm/mach-ath79/ath79_spi_platform.h b/include/linux/platform_data/spi-ath79.h
+similarity index 100%
+rename from arch/mips/include/asm/mach-ath79/ath79_spi_platform.h
+rename to include/linux/platform_data/spi-ath79.h
 -- 
 2.19.1
 
