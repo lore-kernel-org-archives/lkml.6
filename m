@@ -2,134 +2,91 @@ Return-Path: <SRS0=1Lvk=PY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E7CBC43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 11:38:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0DF44C43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 11:43:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0DC14206C2
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 11:38:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C7B4B20657
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 11:43:48 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bqnT3sfr"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390097AbfAPLif (ORCPT
+        id S2392227AbfAPLnr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 16 Jan 2019 06:38:35 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:34306 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730420AbfAPLif (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Jan 2019 06:38:35 -0500
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 67E381393B;
-        Wed, 16 Jan 2019 11:38:34 +0000 (UTC)
-Received: from [10.36.116.252] (ovpn-116-252.ams2.redhat.com [10.36.116.252])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 5A9F55D978;
-        Wed, 16 Jan 2019 11:38:32 +0000 (UTC)
-To:     Namhyung Kim <namhyung@kernel.org>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc:     Jiri Olsa <jolsa@kernel.org>, lkml <linux-kernel@vger.kernel.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>,
-        Michael Petlan <mpetlan@redhat.com>,
-        Masami Hiramatsu <mhiramat@kernel.org>, kernel-team@lge.com
-References: <20190115135354.11572-1-jolsa@kernel.org>
- <960f0b83-a623-67a6-ab55-d56139d10ba2@redhat.com>
- <20190115163540.GA20159@kernel.org> <20190116043735.GA31070@sejong>
-From:   Nick Clifton <nickc@redhat.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=nickc@redhat.com; prefer-encrypt=mutual; keydata=
- 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
- 6susi2ReUyNJEJaSnjO5z13TQ1U=
-Organization: Red Hat
-Subject: Re: [RFC] perf tools: Filter out hidden symbols from labels
-Message-ID: <35bf274a-f91e-1b4f-398a-dbe6f4105dfd@redhat.com>
-Date:   Wed, 16 Jan 2019 11:38:30 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        Wed, 16 Jan 2019 06:43:47 -0500
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:44561 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389613AbfAPLnq (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 Jan 2019 06:43:46 -0500
+Received: by mail-pl1-f195.google.com with SMTP id e11so2903199plt.11;
+        Wed, 16 Jan 2019 03:43:46 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:date:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=yP5q4xsWqcIkZqqwOPTDMFnIdAGxXGy16x81ltL/e7o=;
+        b=bqnT3sfrJxL280Wm0YVFj6CxH/QAAmKD9hQh9RANEn/GX7xIy7+fZgrkhsXHVIiRfd
+         q89nvC1cMpUhbfxWIyUycut7Kn8p/F3uHuvyk5NUxbzZQWF86sHwqQ5+GI+Og3HgfXt8
+         DQztBPyZvEjywX5xGY2B/C9GHB1FNvVDT6GNoxdu+ADiELQbMeZlwuh3pa+bj+HfVZIt
+         7ybJ+J7ErjoEjD6k0Mxqavn0gOP+RP2MdpwFgcNwiEciXpbQgav3HHbbHiYiJ0jk7Ej/
+         lZxJxYP1mwwhFINmmp0nlrJGHGEFpzuQIOvawX8Xf6mNFnoXEPz0NQUVx55SQYx/GU1c
+         tSVQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:date:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=yP5q4xsWqcIkZqqwOPTDMFnIdAGxXGy16x81ltL/e7o=;
+        b=B8jopa4dukPmyaZPrdsqc4JSJB+VEnpq13vTrUQT02Z6RnGWsqvbS1wFourr+O9lZs
+         MbL4jLwSgV++U5p0K6U5eNKeVki4chkeRc7VZL+5tG76q3XjYc4fJIz5kQL2M6B9hO+9
+         o+f8JvdaP+HqQHwB3ECv27BAr4H+did2c8pHnqNEJynOxuamEk5d2jYlqUo4+gqXi7WH
+         4L0eibZplnY0/X82bkSyEin8JwrN3LyY/UiJT3Fml0Iztpi5ti24s903TDxY/L0Zm7yF
+         YJ9tV38yypmPKiEia9NVaRdOkavu+Ve5ZxBPyLYXMZORgPrEzwT/kl0rflq3Ll5ZglMj
+         8QFQ==
+X-Gm-Message-State: AJcUukeJLCPYAsdK3AbIp+ucZMlDISszAL7Z01qEK9bOAwDCLUo33oAK
+        6Ly+Pw3JEaqvHiMz8C58Z3SZU2NB
+X-Google-Smtp-Source: ALg8bN6/GqrDk7oLVuCLdrB3W0a8hxe/jtmOwBjTUpe5ezj5N9x+IzrIwDEgZvVwDS+jm30Luofdig==
+X-Received: by 2002:a17:902:2006:: with SMTP id n6mr9562501pla.66.1547639025409;
+        Wed, 16 Jan 2019 03:43:45 -0800 (PST)
+Received: from localhost ([121.137.63.184])
+        by smtp.gmail.com with ESMTPSA id t3sm5639788pgv.31.2019.01.16.03.43.42
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 16 Jan 2019 03:43:43 -0800 (PST)
+From:   Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
+X-Google-Original-From: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+Date:   Wed, 16 Jan 2019 20:43:40 +0900
+To:     Petr Mladek <pmladek@suse.com>
+Cc:     Steven Rostedt <rostedt@goodmis.org>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-rt-users <linux-rt-users@vger.kernel.org>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
+Subject: Re: [PATCH RT] printk: Shortcut out of waiter spinning on PREEMPT_RT
+Message-ID: <20190116114340.GA6322@tigerII.localdomain>
+References: <20190115123910.2b18df54@gandalf.local.home>
+ <20190115185433.e7hmlpmjvpyqdyhc@linutronix.de>
+ <20190115145815.13713791@gandalf.local.home>
+ <20190116100751.2glxadlpco7a46o5@pathway.suse.cz>
 MIME-Version: 1.0
-In-Reply-To: <20190116043735.GA31070@sejong>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.28]); Wed, 16 Jan 2019 11:38:34 +0000 (UTC)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190116100751.2glxadlpco7a46o5@pathway.suse.cz>
+User-Agent: Mutt/1.11.2 (2019-01-07)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Guys,
+On (01/16/19 11:07), Petr Mladek wrote:
+> The patch makes perfect sense. But it is not ready for upstream
+> because CONFIG_PREEMPT_RT_FULL is not there yet. Do I get it
+> correctly, please?
 
+Yes. Hence Cc linux-rt-users.
 
->> Humm, it would be nice for perf annotate to show those options when one
->> navigates the annotation,
-
-Usually the command line options can also be found in the debug info for
-the executable.  Assuming it has not been stripped, of course.
-
-One of the advantages of the annobin strategy of using ELF notes is that
-these are not stripped from executables...
-
-Unfortunately the annobin notes will probably not be very helpful as they
-only record a minor subset of the typical gcc command line options.
-(Specifically: -O, -g, -D_FORTIFY_SOURCE, -D_GLIBCXX_ASSERTIONS, 
--fcf-protection, -fpic (and variants), -fshort-enum, -fstack-clash-protection,
--fstack-protector, -mstackrealign, -fexceptions).
-
->> Is there any library that gets those
->> annotations and put them in some linked list that we could use in
->> tools/perf/?
-
-Sorry - no such library exists.
-
-> If it's just an ELF note, we could parse it directly.
-> https://developers.redhat.com/blog/2018/02/20/annobin-storing-information-binaries/
-
-Exactly - and what a great blog author that person is ... :-)
-
-Cheers
-  Nick
-
-
+	-ss
