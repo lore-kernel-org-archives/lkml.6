@@ -2,99 +2,135 @@ Return-Path: <SRS0=1Lvk=PY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A0C76C43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 17:59:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C2F1BC43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 17:59:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6AF45206C2
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 17:59:22 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="XrfO9sOP"
+	by mail.kernel.org (Postfix) with ESMTP id 96BEB206C2
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 17:59:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727919AbfAPR7U (ORCPT
+        id S1727953AbfAPR7h (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 16 Jan 2019 12:59:20 -0500
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:45643 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727769AbfAPR7U (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Jan 2019 12:59:20 -0500
-Received: by mail-wr1-f68.google.com with SMTP id t6so7940777wrr.12
-        for <linux-kernel@vger.kernel.org>; Wed, 16 Jan 2019 09:59:19 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=OGHM2N2WtdqsIqm1wuBaVDYD4GGJqThFPI7IpSINGlI=;
-        b=XrfO9sOP4jXmsMPFHS7rLSI+6aZpeYXOHQOv9L3ndVzRqSbsm0hxPavwGKMENkZPgf
-         6t9n9adC4KJFHnTAWDeZ36Wdaxkz2wB4TDOqedsX3gxndXWWReM4z8Mzdfrvc7Ry+rus
-         w5857yiT7rpwUWwQ50yKd0482KeoZ3uDTw+hxDpnv4LBDNFg+Khrn9Oa/8B0Iuzfdq1A
-         Pi9ofF+Zjmv1sf/u3OHD+HW3DLZpajrWf4lws5X3f0hXj9RGY6BG7unpda4ZAGui6FlZ
-         Y7sHs6ykksXhmT6JGR5Wo82JmNEzzP2SSH99FYTgNb0R0rKc3l0qUkA5QsSLXRDDKfp6
-         QPwA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=OGHM2N2WtdqsIqm1wuBaVDYD4GGJqThFPI7IpSINGlI=;
-        b=iL6Nq7S37H1GAfd+JjNlTAEhWBQWw6EI8VS8wI/oNAmlXPNE/wVUsBRSdqBwDwc06j
-         V5S5g7R+bvU3zw4oy27J5sk7tJsv0W5EHvq3fsJsslXxzKfODmGSd4oBeFnu4YT8BpSa
-         PUpUC+Ol8NIyPhtvuM95ZtoepSfetqVJJPEknoafzI7M90WJUz2LGkQI24xtpmzls7kz
-         aSQi8xGhJ2ZPNjhrv3nqIwcfYn53d7v32i5DcILguGsjgzdQ7PBRXnR79gp6CgxND4k7
-         YDGarSC0DvRED8XDmybxPfU03i1Y1nvgHe60wZTah8RSxPKkM0WdlcIWcaH2bwDpHSYG
-         0Pxg==
-X-Gm-Message-State: AJcUukdb4W4c8fW5NWYVab8/6e4Js/goZEUbIkDSeAl8+WpuKDOU/9JV
-        a0iUcpsajMH2p0L6rx2W3A8GXA==
-X-Google-Smtp-Source: ALg8bN55WY6SihpB6uxj+w141K80WQwdVgvXOa91M41k3U38zXCRRcwq425myaNWmHuDi47kpOjbtg==
-X-Received: by 2002:adf:8228:: with SMTP id 37mr8367659wrb.160.1547661558331;
-        Wed, 16 Jan 2019 09:59:18 -0800 (PST)
-Received: from boomer.local (lmontsouris-657-1-212-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
-        by smtp.googlemail.com with ESMTPSA id 3sm42867315wmw.46.2019.01.16.09.59.17
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 16 Jan 2019 09:59:17 -0800 (PST)
-From:   Jerome Brunet <jbrunet@baylibre.com>
-To:     Kevin Hilman <khilman@baylibre.com>
-Cc:     Jerome Brunet <jbrunet@baylibre.com>,
-        linux-amlogic@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, patchwork-bot+notify@kernel.org
-Subject: [PATCH] arm64: dts: meson: s400: enable sdr104 on sdio
-Date:   Wed, 16 Jan 2019 18:59:13 +0100
-Message-Id: <20190116175913.5907-1-jbrunet@baylibre.com>
-X-Mailer: git-send-email 2.20.1
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Wed, 16 Jan 2019 12:59:37 -0500
+Received: from mga04.intel.com ([192.55.52.120]:8967 "EHLO mga04.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727769AbfAPR7g (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 Jan 2019 12:59:36 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga008.fm.intel.com ([10.253.24.58])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 16 Jan 2019 09:59:36 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,487,1539673200"; 
+   d="scan'208";a="117227760"
+Received: from unknown (HELO localhost.lm.intel.com) ([10.232.112.69])
+  by fmsmga008.fm.intel.com with ESMTP; 16 Jan 2019 09:59:35 -0800
+From:   Keith Busch <keith.busch@intel.com>
+To:     linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org,
+        linux-mm@kvack.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Rafael Wysocki <rafael@kernel.org>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Keith Busch <keith.busch@intel.com>
+Subject: [PATCHv4 00/13] Heterogeneuos memory node attributes
+Date:   Wed, 16 Jan 2019 10:57:51 -0700
+Message-Id: <20190116175804.30196-1-keith.busch@intel.com>
+X-Mailer: git-send-email 2.13.6
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The bcm wifi/bt device on SDIO support SDR104 and it seems to work
-well following the recent mmc driver update, so enable this
-ultra high speed mode
+The series seems quite calm now. I've received some approvals of the
+on the proposal, and heard no objections on the new core interfaces.
 
-Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
----
- arch/arm64/boot/dts/amlogic/meson-axg-s400.dts | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+Please let me know if there is anyone or group of people I should request
+and wait for a review. And if anyone reading this would like additional
+time as well before I post a potentially subsequent version, please let
+me know.
 
-diff --git a/arch/arm64/boot/dts/amlogic/meson-axg-s400.dts b/arch/arm64/boot/dts/amlogic/meson-axg-s400.dts
-index 2e1dcf1c26bf..0c98ca78c8b8 100644
---- a/arch/arm64/boot/dts/amlogic/meson-axg-s400.dts
-+++ b/arch/arm64/boot/dts/amlogic/meson-axg-s400.dts
-@@ -464,7 +464,8 @@
- 
- 	bus-width = <4>;
- 	cap-sd-highspeed;
--	max-frequency = <100000000>;
-+	sd-uhs-sdr104;
-+	max-frequency = <200000000>;
- 	non-removable;
- 	disable-wp;
- 
+I also wanted to inquire on upstream strategy if/when all desired
+reviews are received. The series is spanning a few subsystems, so I'm
+not sure who's tree is the best candidate. I could see an argument for
+driver-core, acpi, or mm as possible paths. Please let me know if there's
+a more appropriate option or any other gating concerns.
+
+== Changes from v3 ==
+
+  I've fixed the documentation issues that have been raised for v3 
+
+  Moved the hmat files according to Rafael's recommendation
+
+  Added received Reviewed-by's
+
+Otherwise this v4 is much the same as v3.
+
+== Background ==
+
+Platforms may provide multiple types of cpu attached system memory. The
+memory ranges for each type may have different characteristics that
+applications may wish to know about when considering what node they want
+their memory allocated from. 
+
+It had previously been difficult to describe these setups as memory
+rangers were generally lumped into the NUMA node of the CPUs. New
+platform attributes have been created and in use today that describe
+the more complex memory hierarchies that can be created.
+
+This series' objective is to provide the attributes from such systems
+that are useful for applications to know about, and readily usable with
+existing tools and libraries.
+
+Keith Busch (13):
+  acpi: Create subtable parsing infrastructure
+  acpi: Add HMAT to generic parsing tables
+  acpi/hmat: Parse and report heterogeneous memory
+  node: Link memory nodes to their compute nodes
+  Documentation/ABI: Add new node sysfs attributes
+  acpi/hmat: Register processor domain to its memory
+  node: Add heterogenous memory access attributes
+  Documentation/ABI: Add node performance attributes
+  acpi/hmat: Register performance attributes
+  node: Add memory caching attributes
+  Documentation/ABI: Add node cache attributes
+  acpi/hmat: Register memory side cache attributes
+  doc/mm: New documentation for memory performance
+
+ Documentation/ABI/stable/sysfs-devices-node   |  87 +++++-
+ Documentation/admin-guide/mm/numaperf.rst     | 184 +++++++++++++
+ arch/arm64/kernel/acpi_numa.c                 |   2 +-
+ arch/arm64/kernel/smp.c                       |   4 +-
+ arch/ia64/kernel/acpi.c                       |  12 +-
+ arch/x86/kernel/acpi/boot.c                   |  36 +--
+ drivers/acpi/Kconfig                          |   1 +
+ drivers/acpi/Makefile                         |   1 +
+ drivers/acpi/hmat/Kconfig                     |   9 +
+ drivers/acpi/hmat/Makefile                    |   1 +
+ drivers/acpi/hmat/hmat.c                      | 375 ++++++++++++++++++++++++++
+ drivers/acpi/numa.c                           |  16 +-
+ drivers/acpi/scan.c                           |   4 +-
+ drivers/acpi/tables.c                         |  76 +++++-
+ drivers/base/Kconfig                          |   8 +
+ drivers/base/node.c                           | 317 +++++++++++++++++++++-
+ drivers/irqchip/irq-gic-v2m.c                 |   2 +-
+ drivers/irqchip/irq-gic-v3-its-pci-msi.c      |   2 +-
+ drivers/irqchip/irq-gic-v3-its-platform-msi.c |   2 +-
+ drivers/irqchip/irq-gic-v3-its.c              |   6 +-
+ drivers/irqchip/irq-gic-v3.c                  |  10 +-
+ drivers/irqchip/irq-gic.c                     |   4 +-
+ drivers/mailbox/pcc.c                         |   2 +-
+ include/linux/acpi.h                          |   6 +-
+ include/linux/node.h                          |  70 ++++-
+ 25 files changed, 1172 insertions(+), 65 deletions(-)
+ create mode 100644 Documentation/admin-guide/mm/numaperf.rst
+ create mode 100644 drivers/acpi/hmat/Kconfig
+ create mode 100644 drivers/acpi/hmat/Makefile
+ create mode 100644 drivers/acpi/hmat/hmat.c
+
 -- 
-2.20.1
+2.14.4
 
