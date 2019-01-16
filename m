@@ -4,55 +4,55 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DE214C43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 16:12:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B4FBC43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 16:12:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A2C8220675
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 16:12:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5319C20675
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 16:12:14 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="RbKKLVqb"
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="iYeXy6FI"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405314AbfAPQMG (ORCPT
+        id S2405324AbfAPQMM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 16 Jan 2019 11:12:06 -0500
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:39988 "EHLO
+        Wed, 16 Jan 2019 11:12:12 -0500
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:39981 "EHLO
         mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2405191AbfAPQLP (ORCPT
+        with ESMTP id S2405180AbfAPQLM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Jan 2019 11:11:15 -0500
-Received: by mail-wm1-f66.google.com with SMTP id f188so2568473wmf.5
-        for <linux-kernel@vger.kernel.org>; Wed, 16 Jan 2019 08:11:14 -0800 (PST)
+        Wed, 16 Jan 2019 11:11:12 -0500
+Received: by mail-wm1-f66.google.com with SMTP id f188so2568195wmf.5
+        for <linux-kernel@vger.kernel.org>; Wed, 16 Jan 2019 08:11:10 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=kamvgp22OZ2lC2CgQIDQ09qvX48AAxDWMNt8RTccA94=;
-        b=RbKKLVqbEqEAWF3jnkdul5t1R8QVtB6kPhWtqzNvxi7rT8Kh6eNa+/AWfbS8cS5yUL
-         oeUYeMTszhq7J0oZUH0WKYI+U87du8+MU6NoXBadhq9rvuosoFCFP5cDk1ZYlZMLKdHE
-         73+j2/7f3aRpMHana7wuse1B++g22BJLVWHBQ=
+        bh=Qrw8eZyUWhtyN8OhBU7c+WSWme90oJVJg5KXq0dWYUw=;
+        b=iYeXy6FIYPD/mpKUEZ/gHft/xE5Rr+c7jxIqjGBTpnqhpwDaAg5uQxVbieQrcsOiHK
+         X80fPZA6AXT0knSMkocGzLdzy27uIAtbnxDM7z2NhetG2PSgYtIdZ0z015xeLzwbkS7N
+         cVsjMS5KSrTsePvrHXd9Xitod/d1glAP031dM=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=kamvgp22OZ2lC2CgQIDQ09qvX48AAxDWMNt8RTccA94=;
-        b=t50RixLT24mQorK3OfJyNBIdgjgfV6ApwcZQZWcdvMutaKxN5xYeqM4+jZxqSHYryU
-         2jmQUdBMrySi29JzRDbwe7S5RfVFFb9fnGHl3gpyulp+5ByGXBm8lpudLd3V0Cdk0Nf2
-         pmOaLdZOfIAdmpI0aMSKz0yz1Oo+UZbKFjbwOVDgdHXQ12fl3ycwBV7fU3PtG/pMI0Bc
-         +m4ley+gUw7/43GPyjvn/yuFmwQ34J3GgrKtjBXqdOvwjQNdkKWveObUqqiXMlbxVywi
-         8QaKP6cGigvsXlvIcuV94CRcEzxZ6SIFtS71iRG/JDT+VJzYbNLQKPvVM/wbAuyNcThF
-         P1OQ==
-X-Gm-Message-State: AJcUukfsWalgVIvX2ObSp4K6j5l9eHpF0I8ol6n1tqdldKMayvUQ9Xr3
-        HOHcoCXslg+JaYI+kLIXRg4ZNw==
-X-Google-Smtp-Source: ALg8bN4ii83luuAuwM3i6nTr8UPp6tr3At1yFZKD4qux8JWC0p6JRcinvIw/8Yba+mRiAF+mj4tlkQ==
-X-Received: by 2002:a1c:1d8e:: with SMTP id d136mr7953184wmd.98.1547655073749;
-        Wed, 16 Jan 2019 08:11:13 -0800 (PST)
+        bh=Qrw8eZyUWhtyN8OhBU7c+WSWme90oJVJg5KXq0dWYUw=;
+        b=M6p8JZ07TifdpiY7bb/9NiXqFxH3/JRbCQlqwuiEvH7VEMng5Yn1OHlWYh86oDCEZZ
+         0B+BsC/vvOtDVkTipzBuWW60Tgdrdun91L6KvuiI28esscegASbgFpvL0diUttb8ZlJ8
+         v4IqiH4qWXJpZVdHaI/9M8a3VDoBfHRgrhtSwSEO2GJSAyOuyfQFN0NHNzZCRtP7gXHK
+         wESdFgq4J3RnXIEv8dd0kLoIpwtRlkTb0+ZE1FSeBoZZN53xlzMpzH9AJrYrJFYIHWiI
+         RBQgNDSWU84gdRONUucwhiAMMeNPD3NeSxN72MCCV+QWWNuFbdtlwBhEbTm84EjiEowF
+         o+Fw==
+X-Gm-Message-State: AJcUukf/rSkwYD0ub6t0EvOVh/G3VfB9+YCPuT1jSp4ca6iMLvHRjHwQ
+        tR+KoyTzjRWkyUiyclnh0IrsaQ==
+X-Google-Smtp-Source: ALg8bN7nAagyuKQwAHkrt7/NIkN63DxgHwTJ4O9DHr9Nd0rgaK0JnkGsFAWtHQaj3uRhWn1iUXfuPQ==
+X-Received: by 2002:a1c:60c3:: with SMTP id u186mr8756298wmb.66.1547655069304;
+        Wed, 16 Jan 2019 08:11:09 -0800 (PST)
 Received: from localhost.localdomain ([212.45.67.2])
-        by smtp.googlemail.com with ESMTPSA id a17sm78193407wrs.58.2019.01.16.08.11.11
+        by smtp.googlemail.com with ESMTPSA id a17sm78193407wrs.58.2019.01.16.08.11.06
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Wed, 16 Jan 2019 08:11:12 -0800 (PST)
+        Wed, 16 Jan 2019 08:11:08 -0800 (PST)
 From:   Georgi Djakov <georgi.djakov@linaro.org>
 To:     gregkh@linuxfoundation.org
 Cc:     andy.gross@linaro.org, olof@lixom.net, arnd@arndb.de,
@@ -69,9 +69,9 @@ Cc:     andy.gross@linaro.org, olof@lixom.net, arnd@arndb.de,
         linux-arm-kernel@lists.infradead.org,
         linux-arm-msm@vger.kernel.org, linux-tegra@vger.kernel.org,
         linux-mediatek@lists.infradead.org, georgi.djakov@linaro.org
-Subject: [PATCH v13 3/8] interconnect: Allow endpoints translation via DT
-Date:   Wed, 16 Jan 2019 18:10:58 +0200
-Message-Id: <20190116161103.6937-4-georgi.djakov@linaro.org>
+Subject: [PATCH v13 1/8] interconnect: Add generic on-chip interconnect API
+Date:   Wed, 16 Jan 2019 18:10:56 +0200
+Message-Id: <20190116161103.6937-2-georgi.djakov@linaro.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20190116161103.6937-1-georgi.djakov@linaro.org>
 References: <20190116161103.6937-1-georgi.djakov@linaro.org>
@@ -82,259 +82,945 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Currently we support only platform data for specifying the interconnect
-endpoints. As now the endpoints are hard-coded into the consumer driver
-this may lead to complications when a single driver is used by multiple
-SoCs, which may have different interconnect topology.
-To avoid cluttering the consumer drivers, introduce a translation function
-to help us get the board specific interconnect data from device-tree.
+This patch introduces a new API to get requirements and configure the
+interconnect buses across the entire chipset to fit with the current
+demand.
+
+The API is using a consumer/provider-based model, where the providers are
+the interconnect buses and the consumers could be various drivers.
+The consumers request interconnect resources (path) between endpoints and
+set the desired constraints on this data flow path. The providers receive
+requests from consumers and aggregate these requests for all master-slave
+pairs on that path. Then the providers configure each node along the path
+to support a bandwidth that satisfies all bandwidth requests that cross
+through that node. The topology could be complicated and multi-tiered and
+is SoC specific.
 
 Reviewed-by: Evan Green <evgreen@chromium.org>
 Signed-off-by: Georgi Djakov <georgi.djakov@linaro.org>
 ---
- drivers/interconnect/core.c           | 149 ++++++++++++++++++++++++++
- include/linux/interconnect-provider.h |  17 +++
- include/linux/interconnect.h          |   7 ++
- 3 files changed, 173 insertions(+)
+ Documentation/interconnect/interconnect.rst |  94 ++++
+ drivers/Kconfig                             |   2 +
+ drivers/Makefile                            |   1 +
+ drivers/interconnect/Kconfig                |  10 +
+ drivers/interconnect/Makefile               |   5 +
+ drivers/interconnect/core.c                 | 567 ++++++++++++++++++++
+ include/linux/interconnect-provider.h       | 125 +++++
+ include/linux/interconnect.h                |  52 ++
+ 8 files changed, 856 insertions(+)
+ create mode 100644 Documentation/interconnect/interconnect.rst
+ create mode 100644 drivers/interconnect/Kconfig
+ create mode 100644 drivers/interconnect/Makefile
+ create mode 100644 drivers/interconnect/core.c
+ create mode 100644 include/linux/interconnect-provider.h
+ create mode 100644 include/linux/interconnect.h
 
+diff --git a/Documentation/interconnect/interconnect.rst b/Documentation/interconnect/interconnect.rst
+new file mode 100644
+index 000000000000..b8107dcc4cd3
+--- /dev/null
++++ b/Documentation/interconnect/interconnect.rst
+@@ -0,0 +1,94 @@
++.. SPDX-License-Identifier: GPL-2.0
++
++=====================================
++GENERIC SYSTEM INTERCONNECT SUBSYSTEM
++=====================================
++
++Introduction
++------------
++
++This framework is designed to provide a standard kernel interface to control
++the settings of the interconnects on an SoC. These settings can be throughput,
++latency and priority between multiple interconnected devices or functional
++blocks. This can be controlled dynamically in order to save power or provide
++maximum performance.
++
++The interconnect bus is hardware with configurable parameters, which can be
++set on a data path according to the requests received from various drivers.
++An example of interconnect buses are the interconnects between various
++components or functional blocks in chipsets. There can be multiple interconnects
++on an SoC that can be multi-tiered.
++
++Below is a simplified diagram of a real-world SoC interconnect bus topology.
++
++::
++
++ +----------------+    +----------------+
++ | HW Accelerator |--->|      M NoC     |<---------------+
++ +----------------+    +----------------+                |
++                         |      |                    +------------+
++  +-----+  +-------------+      V       +------+     |            |
++  | DDR |  |                +--------+  | PCIe |     |            |
++  +-----+  |                | Slaves |  +------+     |            |
++    ^ ^    |                +--------+     |         |   C NoC    |
++    | |    V                               V         |            |
++ +------------------+   +------------------------+   |            |   +-----+
++ |                  |-->|                        |-->|            |-->| CPU |
++ |                  |-->|                        |<--|            |   +-----+
++ |     Mem NoC      |   |         S NoC          |   +------------+
++ |                  |<--|                        |---------+    |
++ |                  |<--|                        |<------+ |    |   +--------+
++ +------------------+   +------------------------+       | |    +-->| Slaves |
++   ^  ^    ^    ^          ^                             | |        +--------+
++   |  |    |    |          |                             | V
++ +------+  |  +-----+   +-----+  +---------+   +----------------+   +--------+
++ | CPUs |  |  | GPU |   | DSP |  | Masters |-->|       P NoC    |-->| Slaves |
++ +------+  |  +-----+   +-----+  +---------+   +----------------+   +--------+
++           |
++       +-------+
++       | Modem |
++       +-------+
++
++Terminology
++-----------
++
++Interconnect provider is the software definition of the interconnect hardware.
++The interconnect providers on the above diagram are M NoC, S NoC, C NoC, P NoC
++and Mem NoC.
++
++Interconnect node is the software definition of the interconnect hardware
++port. Each interconnect provider consists of multiple interconnect nodes,
++which are connected to other SoC components including other interconnect
++providers. The point on the diagram where the CPUs connect to the memory is
++called an interconnect node, which belongs to the Mem NoC interconnect provider.
++
++Interconnect endpoints are the first or the last element of the path. Every
++endpoint is a node, but not every node is an endpoint.
++
++Interconnect path is everything between two endpoints including all the nodes
++that have to be traversed to reach from a source to destination node. It may
++include multiple master-slave pairs across several interconnect providers.
++
++Interconnect consumers are the entities which make use of the data paths exposed
++by the providers. The consumers send requests to providers requesting various
++throughput, latency and priority. Usually the consumers are device drivers, that
++send request based on their needs. An example for a consumer is a video decoder
++that supports various formats and image sizes.
++
++Interconnect providers
++----------------------
++
++Interconnect provider is an entity that implements methods to initialize and
++configure interconnect bus hardware. The interconnect provider drivers should
++be registered with the interconnect provider core.
++
++.. kernel-doc:: include/linux/interconnect-provider.h
++
++Interconnect consumers
++----------------------
++
++Interconnect consumers are the clients which use the interconnect APIs to
++get paths between endpoints and set their bandwidth/latency/QoS requirements
++for these interconnect paths.
++
++.. kernel-doc:: include/linux/interconnect.h
+diff --git a/drivers/Kconfig b/drivers/Kconfig
+index 4f9f99057ff8..45f9decb9848 100644
+--- a/drivers/Kconfig
++++ b/drivers/Kconfig
+@@ -228,4 +228,6 @@ source "drivers/siox/Kconfig"
+ 
+ source "drivers/slimbus/Kconfig"
+ 
++source "drivers/interconnect/Kconfig"
++
+ endmenu
+diff --git a/drivers/Makefile b/drivers/Makefile
+index e1ce029d28fd..bb15b9d0e793 100644
+--- a/drivers/Makefile
++++ b/drivers/Makefile
+@@ -186,3 +186,4 @@ obj-$(CONFIG_MULTIPLEXER)	+= mux/
+ obj-$(CONFIG_UNISYS_VISORBUS)	+= visorbus/
+ obj-$(CONFIG_SIOX)		+= siox/
+ obj-$(CONFIG_GNSS)		+= gnss/
++obj-$(CONFIG_INTERCONNECT)	+= interconnect/
+diff --git a/drivers/interconnect/Kconfig b/drivers/interconnect/Kconfig
+new file mode 100644
+index 000000000000..a261c7d41deb
+--- /dev/null
++++ b/drivers/interconnect/Kconfig
+@@ -0,0 +1,10 @@
++menuconfig INTERCONNECT
++	tristate "On-Chip Interconnect management support"
++	help
++	  Support for management of the on-chip interconnects.
++
++	  This framework is designed to provide a generic interface for
++	  managing the interconnects in a SoC.
++
++	  If unsure, say no.
++
+diff --git a/drivers/interconnect/Makefile b/drivers/interconnect/Makefile
+new file mode 100644
+index 000000000000..7a01f33b5593
+--- /dev/null
++++ b/drivers/interconnect/Makefile
+@@ -0,0 +1,5 @@
++# SPDX-License-Identifier: GPL-2.0
++
++icc-core-objs				:= core.o
++
++obj-$(CONFIG_INTERCONNECT)		+= icc-core.o
 diff --git a/drivers/interconnect/core.c b/drivers/interconnect/core.c
-index 2b937b4f43c4..a8c2bd35197f 100644
---- a/drivers/interconnect/core.c
+new file mode 100644
+index 000000000000..2b937b4f43c4
+--- /dev/null
 +++ b/drivers/interconnect/core.c
-@@ -15,6 +15,7 @@
- #include <linux/module.h>
- #include <linux/mutex.h>
- #include <linux/slab.h>
-+#include <linux/of.h>
- #include <linux/overflow.h>
- 
- static DEFINE_IDR(icc_idr);
-@@ -194,6 +195,152 @@ static int apply_constraints(struct icc_path *path)
- 	return ret;
- }
- 
-+/* of_icc_xlate_onecell() - Translate function using a single index.
-+ * @spec: OF phandle args to map into an interconnect node.
-+ * @data: private data (pointer to struct icc_onecell_data)
+@@ -0,0 +1,567 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Interconnect framework core driver
 + *
-+ * This is a generic translate function that can be used to model simple
-+ * interconnect providers that have one device tree node and provide
-+ * multiple interconnect nodes. A single cell is used as an index into
-+ * an array of icc nodes specified in the icc_onecell_data struct when
-+ * registering the provider.
++ * Copyright (c) 2017-2019, Linaro Ltd.
++ * Author: Georgi Djakov <georgi.djakov@linaro.org>
 + */
-+struct icc_node *of_icc_xlate_onecell(struct of_phandle_args *spec,
-+				      void *data)
-+{
-+	struct icc_onecell_data *icc_data = data;
-+	unsigned int idx = spec->args[0];
 +
-+	if (idx >= icc_data->num_nodes) {
-+		pr_err("%s: invalid index %u\n", __func__, idx);
-+		return ERR_PTR(-EINVAL);
-+	}
++#include <linux/device.h>
++#include <linux/idr.h>
++#include <linux/init.h>
++#include <linux/interconnect.h>
++#include <linux/interconnect-provider.h>
++#include <linux/list.h>
++#include <linux/module.h>
++#include <linux/mutex.h>
++#include <linux/slab.h>
++#include <linux/overflow.h>
 +
-+	return icc_data->nodes[idx];
-+}
-+EXPORT_SYMBOL_GPL(of_icc_xlate_onecell);
++static DEFINE_IDR(icc_idr);
++static LIST_HEAD(icc_providers);
++static DEFINE_MUTEX(icc_lock);
 +
 +/**
-+ * of_icc_get_from_provider() - Look-up interconnect node
-+ * @spec: OF phandle args to use for look-up
-+ *
-+ * Looks for interconnect provider under the node specified by @spec and if
-+ * found, uses xlate function of the provider to map phandle args to node.
-+ *
-+ * Returns a valid pointer to struct icc_node on success or ERR_PTR()
-+ * on failure.
++ * struct icc_req - constraints that are attached to each node
++ * @req_node: entry in list of requests for the particular @node
++ * @node: the interconnect node to which this constraint applies
++ * @dev: reference to the device that sets the constraints
++ * @avg_bw: an integer describing the average bandwidth in kBps
++ * @peak_bw: an integer describing the peak bandwidth in kBps
 + */
-+static struct icc_node *of_icc_get_from_provider(struct of_phandle_args *spec)
-+{
-+	struct icc_node *node = ERR_PTR(-EPROBE_DEFER);
-+	struct icc_provider *provider;
++struct icc_req {
++	struct hlist_node req_node;
++	struct icc_node *node;
++	struct device *dev;
++	u32 avg_bw;
++	u32 peak_bw;
++};
 +
-+	if (!spec || spec->args_count != 1)
-+		return ERR_PTR(-EINVAL);
++/**
++ * struct icc_path - interconnect path structure
++ * @num_nodes: number of hops (nodes)
++ * @reqs: array of the requests applicable to this path of nodes
++ */
++struct icc_path {
++	size_t num_nodes;
++	struct icc_req reqs[];
++};
++
++static struct icc_node *node_find(const int id)
++{
++	return idr_find(&icc_idr, id);
++}
++
++static struct icc_path *path_init(struct device *dev, struct icc_node *dst,
++				  ssize_t num_nodes)
++{
++	struct icc_node *node = dst;
++	struct icc_path *path;
++	int i;
++
++	path = kzalloc(struct_size(path, reqs, num_nodes), GFP_KERNEL);
++	if (!path)
++		return ERR_PTR(-ENOMEM);
++
++	path->num_nodes = num_nodes;
++
++	for (i = num_nodes - 1; i >= 0; i--) {
++		node->provider->users++;
++		hlist_add_head(&path->reqs[i].req_node, &node->req_list);
++		path->reqs[i].node = node;
++		path->reqs[i].dev = dev;
++		/* reference to previous node was saved during path traversal */
++		node = node->reverse;
++	}
++
++	return path;
++}
++
++static struct icc_path *path_find(struct device *dev, struct icc_node *src,
++				  struct icc_node *dst)
++{
++	struct icc_path *path = ERR_PTR(-EPROBE_DEFER);
++	struct icc_node *n, *node = NULL;
++	struct list_head traverse_list;
++	struct list_head edge_list;
++	struct list_head visited_list;
++	size_t i, depth = 1;
++	bool found = false;
++
++	INIT_LIST_HEAD(&traverse_list);
++	INIT_LIST_HEAD(&edge_list);
++	INIT_LIST_HEAD(&visited_list);
++
++	list_add(&src->search_list, &traverse_list);
++	src->reverse = NULL;
++
++	do {
++		list_for_each_entry_safe(node, n, &traverse_list, search_list) {
++			if (node == dst) {
++				found = true;
++				list_splice_init(&edge_list, &visited_list);
++				list_splice_init(&traverse_list, &visited_list);
++				break;
++			}
++			for (i = 0; i < node->num_links; i++) {
++				struct icc_node *tmp = node->links[i];
++
++				if (!tmp) {
++					path = ERR_PTR(-ENOENT);
++					goto out;
++				}
++
++				if (tmp->is_traversed)
++					continue;
++
++				tmp->is_traversed = true;
++				tmp->reverse = node;
++				list_add_tail(&tmp->search_list, &edge_list);
++			}
++		}
++
++		if (found)
++			break;
++
++		list_splice_init(&traverse_list, &visited_list);
++		list_splice_init(&edge_list, &traverse_list);
++
++		/* count the hops including the source */
++		depth++;
++
++	} while (!list_empty(&traverse_list));
++
++out:
++
++	/* reset the traversed state */
++	list_for_each_entry_reverse(n, &visited_list, search_list)
++		n->is_traversed = false;
++
++	if (found)
++		path = path_init(dev, dst, depth);
++
++	return path;
++}
++
++/*
++ * We want the path to honor all bandwidth requests, so the average and peak
++ * bandwidth requirements from each consumer are aggregated at each node.
++ * The aggregation is platform specific, so each platform can customize it by
++ * implementing its own aggregate() function.
++ */
++
++static int aggregate_requests(struct icc_node *node)
++{
++	struct icc_provider *p = node->provider;
++	struct icc_req *r;
++
++	node->avg_bw = 0;
++	node->peak_bw = 0;
++
++	hlist_for_each_entry(r, &node->req_list, req_node)
++		p->aggregate(node, r->avg_bw, r->peak_bw,
++			     &node->avg_bw, &node->peak_bw);
++
++	return 0;
++}
++
++static int apply_constraints(struct icc_path *path)
++{
++	struct icc_node *next, *prev = NULL;
++	int ret = -EINVAL;
++	int i;
++
++	for (i = 0; i < path->num_nodes; i++) {
++		next = path->reqs[i].node;
++
++		/*
++		 * Both endpoints should be valid master-slave pairs of the
++		 * same interconnect provider that will be configured.
++		 */
++		if (!prev || next->provider != prev->provider) {
++			prev = next;
++			continue;
++		}
++
++		/* set the constraints */
++		ret = next->provider->set(prev, next);
++		if (ret)
++			goto out;
++
++		prev = next;
++	}
++out:
++	return ret;
++}
++
++/**
++ * icc_set_bw() - set bandwidth constraints on an interconnect path
++ * @path: reference to the path returned by icc_get()
++ * @avg_bw: average bandwidth in kilobytes per second
++ * @peak_bw: peak bandwidth in kilobytes per second
++ *
++ * This function is used by an interconnect consumer to express its own needs
++ * in terms of bandwidth for a previously requested path between two endpoints.
++ * The requests are aggregated and each node is updated accordingly. The entire
++ * path is locked by a mutex to ensure that the set() is completed.
++ * The @path can be NULL when the "interconnects" DT properties is missing,
++ * which will mean that no constraints will be set.
++ *
++ * Returns 0 on success, or an appropriate error code otherwise.
++ */
++int icc_set_bw(struct icc_path *path, u32 avg_bw, u32 peak_bw)
++{
++	struct icc_node *node;
++	size_t i;
++	int ret;
++
++	if (!path)
++		return 0;
 +
 +	mutex_lock(&icc_lock);
-+	list_for_each_entry(provider, &icc_providers, provider_list) {
-+		if (provider->dev->of_node == spec->np)
-+			node = provider->xlate(spec, provider->data);
-+		if (!IS_ERR(node))
-+			break;
++
++	for (i = 0; i < path->num_nodes; i++) {
++		node = path->reqs[i].node;
++
++		/* update the consumer request for this path */
++		path->reqs[i].avg_bw = avg_bw;
++		path->reqs[i].peak_bw = peak_bw;
++
++		/* aggregate requests for this node */
++		aggregate_requests(node);
++	}
++
++	ret = apply_constraints(path);
++	if (ret)
++		pr_debug("interconnect: error applying constraints (%d)\n",
++			 ret);
++
++	mutex_unlock(&icc_lock);
++
++	return ret;
++}
++EXPORT_SYMBOL_GPL(icc_set_bw);
++
++/**
++ * icc_get() - return a handle for path between two endpoints
++ * @dev: the device requesting the path
++ * @src_id: source device port id
++ * @dst_id: destination device port id
++ *
++ * This function will search for a path between two endpoints and return an
++ * icc_path handle on success. Use icc_put() to release
++ * constraints when they are not needed anymore.
++ * If the interconnect API is disabled, NULL is returned and the consumer
++ * drivers will still build. Drivers are free to handle this specifically,
++ * but they don't have to.
++ *
++ * Return: icc_path pointer on success, ERR_PTR() on error or NULL if the
++ * interconnect API is disabled.
++ */
++struct icc_path *icc_get(struct device *dev, const int src_id, const int dst_id)
++{
++	struct icc_node *src, *dst;
++	struct icc_path *path = ERR_PTR(-EPROBE_DEFER);
++
++	mutex_lock(&icc_lock);
++
++	src = node_find(src_id);
++	if (!src)
++		goto out;
++
++	dst = node_find(dst_id);
++	if (!dst)
++		goto out;
++
++	path = path_find(dev, src, dst);
++	if (IS_ERR(path))
++		dev_err(dev, "%s: invalid path=%ld\n", __func__, PTR_ERR(path));
++
++out:
++	mutex_unlock(&icc_lock);
++	return path;
++}
++EXPORT_SYMBOL_GPL(icc_get);
++
++/**
++ * icc_put() - release the reference to the icc_path
++ * @path: interconnect path
++ *
++ * Use this function to release the constraints on a path when the path is
++ * no longer needed. The constraints will be re-aggregated.
++ */
++void icc_put(struct icc_path *path)
++{
++	struct icc_node *node;
++	size_t i;
++	int ret;
++
++	if (!path || WARN_ON(IS_ERR(path)))
++		return;
++
++	ret = icc_set_bw(path, 0, 0);
++	if (ret)
++		pr_err("%s: error (%d)\n", __func__, ret);
++
++	mutex_lock(&icc_lock);
++	for (i = 0; i < path->num_nodes; i++) {
++		node = path->reqs[i].node;
++		hlist_del(&path->reqs[i].req_node);
++		if (!WARN_ON(!node->provider->users))
++			node->provider->users--;
 +	}
 +	mutex_unlock(&icc_lock);
++
++	kfree(path);
++}
++EXPORT_SYMBOL_GPL(icc_put);
++
++static struct icc_node *icc_node_create_nolock(int id)
++{
++	struct icc_node *node;
++
++	/* check if node already exists */
++	node = node_find(id);
++	if (node)
++		return node;
++
++	node = kzalloc(sizeof(*node), GFP_KERNEL);
++	if (!node)
++		return ERR_PTR(-ENOMEM);
++
++	id = idr_alloc(&icc_idr, node, id, id + 1, GFP_KERNEL);
++	if (id < 0) {
++		WARN(1, "%s: couldn't get idr\n", __func__);
++		kfree(node);
++		return ERR_PTR(id);
++	}
++
++	node->id = id;
 +
 +	return node;
 +}
 +
 +/**
-+ * of_icc_get() - get a path handle from a DT node based on name
-+ * @dev: device pointer for the consumer device
-+ * @name: interconnect path name
++ * icc_node_create() - create a node
++ * @id: node id
 + *
-+ * This function will search for a path between two endpoints and return an
-+ * icc_path handle on success. Use icc_put() to release constraints when they
-+ * are not needed anymore.
-+ * If the interconnect API is disabled, NULL is returned and the consumer
-+ * drivers will still build. Drivers are free to handle this specifically,
-+ * but they don't have to.
-+ *
-+ * Return: icc_path pointer on success or ERR_PTR() on error. NULL is returned
-+ * when the API is disabled or the "interconnects" DT property is missing.
++ * Return: icc_node pointer on success, or ERR_PTR() on error
 + */
-+struct icc_path *of_icc_get(struct device *dev, const char *name)
++struct icc_node *icc_node_create(int id)
 +{
-+	struct icc_path *path = ERR_PTR(-EPROBE_DEFER);
-+	struct icc_node *src_node, *dst_node;
-+	struct device_node *np = NULL;
-+	struct of_phandle_args src_args, dst_args;
-+	int idx = 0;
-+	int ret;
-+
-+	if (!dev || !dev->of_node)
-+		return ERR_PTR(-ENODEV);
-+
-+	np = dev->of_node;
-+
-+	/*
-+	 * When the consumer DT node do not have "interconnects" property
-+	 * return a NULL path to skip setting constraints.
-+	 */
-+	if (!of_find_property(np, "interconnects", NULL))
-+		return NULL;
-+
-+	/*
-+	 * We use a combination of phandle and specifier for endpoint. For now
-+	 * lets support only global ids and extend this in the future if needed
-+	 * without breaking DT compatibility.
-+	 */
-+	if (name) {
-+		idx = of_property_match_string(np, "interconnect-names", name);
-+		if (idx < 0)
-+			return ERR_PTR(idx);
-+	}
-+
-+	ret = of_parse_phandle_with_args(np, "interconnects",
-+					 "#interconnect-cells", idx * 2,
-+					 &src_args);
-+	if (ret)
-+		return ERR_PTR(ret);
-+
-+	of_node_put(src_args.np);
-+
-+	ret = of_parse_phandle_with_args(np, "interconnects",
-+					 "#interconnect-cells", idx * 2 + 1,
-+					 &dst_args);
-+	if (ret)
-+		return ERR_PTR(ret);
-+
-+	of_node_put(dst_args.np);
-+
-+	src_node = of_icc_get_from_provider(&src_args);
-+
-+	if (IS_ERR(src_node)) {
-+		if (PTR_ERR(src_node) != -EPROBE_DEFER)
-+			dev_err(dev, "error finding src node: %ld\n",
-+				PTR_ERR(src_node));
-+		return ERR_CAST(src_node);
-+	}
-+
-+	dst_node = of_icc_get_from_provider(&dst_args);
-+
-+	if (IS_ERR(dst_node)) {
-+		if (PTR_ERR(dst_node) != -EPROBE_DEFER)
-+			dev_err(dev, "error finding dst node: %ld\n",
-+				PTR_ERR(dst_node));
-+		return ERR_CAST(dst_node);
-+	}
++	struct icc_node *node;
 +
 +	mutex_lock(&icc_lock);
-+	path = path_find(dev, src_node, dst_node);
-+	if (IS_ERR(path))
-+		dev_err(dev, "%s: invalid path=%ld\n", __func__, PTR_ERR(path));
++
++	node = icc_node_create_nolock(id);
++
 +	mutex_unlock(&icc_lock);
 +
-+	return path;
++	return node;
 +}
-+EXPORT_SYMBOL_GPL(of_icc_get);
-+
- /**
-  * icc_set_bw() - set bandwidth constraints on an interconnect path
-  * @path: reference to the path returned by icc_get()
-@@ -519,6 +666,8 @@ int icc_provider_add(struct icc_provider *provider)
- {
- 	if (WARN_ON(!provider->set))
- 		return -EINVAL;
-+	if (WARN_ON(!provider->xlate))
-+		return -EINVAL;
- 
- 	mutex_lock(&icc_lock);
- 
-diff --git a/include/linux/interconnect-provider.h b/include/linux/interconnect-provider.h
-index 78208a754181..63caccadc2db 100644
---- a/include/linux/interconnect-provider.h
-+++ b/include/linux/interconnect-provider.h
-@@ -12,6 +12,21 @@
- #define icc_units_to_bps(bw)  ((bw) * 1000ULL)
- 
- struct icc_node;
-+struct of_phandle_args;
++EXPORT_SYMBOL_GPL(icc_node_create);
 +
 +/**
-+ * struct icc_onecell_data - driver data for onecell interconnect providers
-+ *
-+ * @num_nodes: number of nodes in this device
-+ * @nodes: array of pointers to the nodes in this device
++ * icc_node_destroy() - destroy a node
++ * @id: node id
 + */
-+struct icc_onecell_data {
-+	unsigned int num_nodes;
-+	struct icc_node *nodes[];
++void icc_node_destroy(int id)
++{
++	struct icc_node *node;
++
++	mutex_lock(&icc_lock);
++
++	node = node_find(id);
++	if (node) {
++		idr_remove(&icc_idr, node->id);
++		WARN_ON(!hlist_empty(&node->req_list));
++	}
++
++	mutex_unlock(&icc_lock);
++
++	kfree(node);
++}
++EXPORT_SYMBOL_GPL(icc_node_destroy);
++
++/**
++ * icc_link_create() - create a link between two nodes
++ * @node: source node id
++ * @dst_id: destination node id
++ *
++ * Create a link between two nodes. The nodes might belong to different
++ * interconnect providers and the @dst_id node might not exist (if the
++ * provider driver has not probed yet). So just create the @dst_id node
++ * and when the actual provider driver is probed, the rest of the node
++ * data is filled.
++ *
++ * Return: 0 on success, or an error code otherwise
++ */
++int icc_link_create(struct icc_node *node, const int dst_id)
++{
++	struct icc_node *dst;
++	struct icc_node **new;
++	int ret = 0;
++
++	if (!node->provider)
++		return -EINVAL;
++
++	mutex_lock(&icc_lock);
++
++	dst = node_find(dst_id);
++	if (!dst) {
++		dst = icc_node_create_nolock(dst_id);
++
++		if (IS_ERR(dst)) {
++			ret = PTR_ERR(dst);
++			goto out;
++		}
++	}
++
++	new = krealloc(node->links,
++		       (node->num_links + 1) * sizeof(*node->links),
++		       GFP_KERNEL);
++	if (!new) {
++		ret = -ENOMEM;
++		goto out;
++	}
++
++	node->links = new;
++	node->links[node->num_links++] = dst;
++
++out:
++	mutex_unlock(&icc_lock);
++
++	return ret;
++}
++EXPORT_SYMBOL_GPL(icc_link_create);
++
++/**
++ * icc_link_destroy() - destroy a link between two nodes
++ * @src: pointer to source node
++ * @dst: pointer to destination node
++ *
++ * Return: 0 on success, or an error code otherwise
++ */
++int icc_link_destroy(struct icc_node *src, struct icc_node *dst)
++{
++	struct icc_node **new;
++	size_t slot;
++	int ret = 0;
++
++	if (IS_ERR_OR_NULL(src))
++		return -EINVAL;
++
++	if (IS_ERR_OR_NULL(dst))
++		return -EINVAL;
++
++	mutex_lock(&icc_lock);
++
++	for (slot = 0; slot < src->num_links; slot++)
++		if (src->links[slot] == dst)
++			break;
++
++	if (WARN_ON(slot == src->num_links)) {
++		ret = -ENXIO;
++		goto out;
++	}
++
++	src->links[slot] = src->links[--src->num_links];
++
++	new = krealloc(src->links, src->num_links * sizeof(*src->links),
++		       GFP_KERNEL);
++	if (new)
++		src->links = new;
++
++out:
++	mutex_unlock(&icc_lock);
++
++	return ret;
++}
++EXPORT_SYMBOL_GPL(icc_link_destroy);
++
++/**
++ * icc_node_add() - add interconnect node to interconnect provider
++ * @node: pointer to the interconnect node
++ * @provider: pointer to the interconnect provider
++ */
++void icc_node_add(struct icc_node *node, struct icc_provider *provider)
++{
++	mutex_lock(&icc_lock);
++
++	node->provider = provider;
++	list_add_tail(&node->node_list, &provider->nodes);
++
++	mutex_unlock(&icc_lock);
++}
++EXPORT_SYMBOL_GPL(icc_node_add);
++
++/**
++ * icc_node_del() - delete interconnect node from interconnect provider
++ * @node: pointer to the interconnect node
++ */
++void icc_node_del(struct icc_node *node)
++{
++	mutex_lock(&icc_lock);
++
++	list_del(&node->node_list);
++
++	mutex_unlock(&icc_lock);
++}
++EXPORT_SYMBOL_GPL(icc_node_del);
++
++/**
++ * icc_provider_add() - add a new interconnect provider
++ * @provider: the interconnect provider that will be added into topology
++ *
++ * Return: 0 on success, or an error code otherwise
++ */
++int icc_provider_add(struct icc_provider *provider)
++{
++	if (WARN_ON(!provider->set))
++		return -EINVAL;
++
++	mutex_lock(&icc_lock);
++
++	INIT_LIST_HEAD(&provider->nodes);
++	list_add_tail(&provider->provider_list, &icc_providers);
++
++	mutex_unlock(&icc_lock);
++
++	dev_dbg(provider->dev, "interconnect provider added to topology\n");
++
++	return 0;
++}
++EXPORT_SYMBOL_GPL(icc_provider_add);
++
++/**
++ * icc_provider_del() - delete previously added interconnect provider
++ * @provider: the interconnect provider that will be removed from topology
++ *
++ * Return: 0 on success, or an error code otherwise
++ */
++int icc_provider_del(struct icc_provider *provider)
++{
++	mutex_lock(&icc_lock);
++	if (provider->users) {
++		pr_warn("interconnect provider still has %d users\n",
++			provider->users);
++		mutex_unlock(&icc_lock);
++		return -EBUSY;
++	}
++
++	if (!list_empty(&provider->nodes)) {
++		pr_warn("interconnect provider still has nodes\n");
++		mutex_unlock(&icc_lock);
++		return -EBUSY;
++	}
++
++	list_del(&provider->provider_list);
++	mutex_unlock(&icc_lock);
++
++	return 0;
++}
++EXPORT_SYMBOL_GPL(icc_provider_del);
++
++MODULE_AUTHOR("Georgi Djakov <georgi.djakov@linaro.org>");
++MODULE_DESCRIPTION("Interconnect Driver Core");
++MODULE_LICENSE("GPL v2");
+diff --git a/include/linux/interconnect-provider.h b/include/linux/interconnect-provider.h
+new file mode 100644
+index 000000000000..78208a754181
+--- /dev/null
++++ b/include/linux/interconnect-provider.h
+@@ -0,0 +1,125 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++/*
++ * Copyright (c) 2018, Linaro Ltd.
++ * Author: Georgi Djakov <georgi.djakov@linaro.org>
++ */
++
++#ifndef __LINUX_INTERCONNECT_PROVIDER_H
++#define __LINUX_INTERCONNECT_PROVIDER_H
++
++#include <linux/interconnect.h>
++
++#define icc_units_to_bps(bw)  ((bw) * 1000ULL)
++
++struct icc_node;
++
++/**
++ * struct icc_provider - interconnect provider (controller) entity that might
++ * provide multiple interconnect controls
++ *
++ * @provider_list: list of the registered interconnect providers
++ * @nodes: internal list of the interconnect provider nodes
++ * @set: pointer to device specific set operation function
++ * @aggregate: pointer to device specific aggregate operation function
++ * @dev: the device this interconnect provider belongs to
++ * @users: count of active users
++ * @data: pointer to private data
++ */
++struct icc_provider {
++	struct list_head	provider_list;
++	struct list_head	nodes;
++	int (*set)(struct icc_node *src, struct icc_node *dst);
++	int (*aggregate)(struct icc_node *node, u32 avg_bw, u32 peak_bw,
++			 u32 *agg_avg, u32 *agg_peak);
++	struct device		*dev;
++	int			users;
++	void			*data;
 +};
 +
-+struct icc_node *of_icc_xlate_onecell(struct of_phandle_args *spec,
-+				      void *data);
- 
- /**
-  * struct icc_provider - interconnect provider (controller) entity that might
-@@ -21,6 +36,7 @@ struct icc_node;
-  * @nodes: internal list of the interconnect provider nodes
-  * @set: pointer to device specific set operation function
-  * @aggregate: pointer to device specific aggregate operation function
-+ * @xlate: provider-specific callback for mapping nodes from phandle arguments
-  * @dev: the device this interconnect provider belongs to
-  * @users: count of active users
-  * @data: pointer to private data
-@@ -31,6 +47,7 @@ struct icc_provider {
- 	int (*set)(struct icc_node *src, struct icc_node *dst);
- 	int (*aggregate)(struct icc_node *node, u32 avg_bw, u32 peak_bw,
- 			 u32 *agg_avg, u32 *agg_peak);
-+	struct icc_node* (*xlate)(struct of_phandle_args *spec, void *data);
- 	struct device		*dev;
- 	int			users;
- 	void			*data;
++/**
++ * struct icc_node - entity that is part of the interconnect topology
++ *
++ * @id: platform specific node id
++ * @name: node name used in debugfs
++ * @links: a list of targets pointing to where we can go next when traversing
++ * @num_links: number of links to other interconnect nodes
++ * @provider: points to the interconnect provider of this node
++ * @node_list: the list entry in the parent provider's "nodes" list
++ * @search_list: list used when walking the nodes graph
++ * @reverse: pointer to previous node when walking the nodes graph
++ * @is_traversed: flag that is used when walking the nodes graph
++ * @req_list: a list of QoS constraint requests associated with this node
++ * @avg_bw: aggregated value of average bandwidth requests from all consumers
++ * @peak_bw: aggregated value of peak bandwidth requests from all consumers
++ * @data: pointer to private data
++ */
++struct icc_node {
++	int			id;
++	const char              *name;
++	struct icc_node		**links;
++	size_t			num_links;
++
++	struct icc_provider	*provider;
++	struct list_head	node_list;
++	struct list_head	search_list;
++	struct icc_node		*reverse;
++	u8			is_traversed:1;
++	struct hlist_head	req_list;
++	u32			avg_bw;
++	u32			peak_bw;
++	void			*data;
++};
++
++#if IS_ENABLED(CONFIG_INTERCONNECT)
++
++struct icc_node *icc_node_create(int id);
++void icc_node_destroy(int id);
++int icc_link_create(struct icc_node *node, const int dst_id);
++int icc_link_destroy(struct icc_node *src, struct icc_node *dst);
++void icc_node_add(struct icc_node *node, struct icc_provider *provider);
++void icc_node_del(struct icc_node *node);
++int icc_provider_add(struct icc_provider *provider);
++int icc_provider_del(struct icc_provider *provider);
++
++#else
++
++static inline struct icc_node *icc_node_create(int id)
++{
++	return ERR_PTR(-ENOTSUPP);
++}
++
++void icc_node_destroy(int id)
++{
++}
++
++static inline int icc_link_create(struct icc_node *node, const int dst_id)
++{
++	return -ENOTSUPP;
++}
++
++int icc_link_destroy(struct icc_node *src, struct icc_node *dst)
++{
++	return -ENOTSUPP;
++}
++
++void icc_node_add(struct icc_node *node, struct icc_provider *provider)
++{
++}
++
++void icc_node_del(struct icc_node *node)
++{
++}
++
++static inline int icc_provider_add(struct icc_provider *provider)
++{
++	return -ENOTSUPP;
++}
++
++static inline int icc_provider_del(struct icc_provider *provider)
++{
++	return -ENOTSUPP;
++}
++
++#endif /* CONFIG_INTERCONNECT */
++
++#endif /* __LINUX_INTERCONNECT_PROVIDER_H */
 diff --git a/include/linux/interconnect.h b/include/linux/interconnect.h
-index c331afb3a2c8..dc25864755ba 100644
---- a/include/linux/interconnect.h
+new file mode 100644
+index 000000000000..c331afb3a2c8
+--- /dev/null
 +++ b/include/linux/interconnect.h
-@@ -27,6 +27,7 @@ struct device;
- 
- struct icc_path *icc_get(struct device *dev, const int src_id,
- 			 const int dst_id);
-+struct icc_path *of_icc_get(struct device *dev, const char *name);
- void icc_put(struct icc_path *path);
- int icc_set_bw(struct icc_path *path, u32 avg_bw, u32 peak_bw);
- 
-@@ -38,6 +39,12 @@ static inline struct icc_path *icc_get(struct device *dev, const int src_id,
- 	return NULL;
- }
- 
-+static inline struct icc_path *of_icc_get(struct device *dev,
-+					  const char *name)
+@@ -0,0 +1,52 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++/*
++ * Copyright (c) 2018-2019, Linaro Ltd.
++ * Author: Georgi Djakov <georgi.djakov@linaro.org>
++ */
++
++#ifndef __LINUX_INTERCONNECT_H
++#define __LINUX_INTERCONNECT_H
++
++#include <linux/mutex.h>
++#include <linux/types.h>
++
++/* macros for converting to icc units */
++#define Bps_to_icc(x)	((x) / 1000)
++#define kBps_to_icc(x)	(x)
++#define MBps_to_icc(x)	((x) * 1000)
++#define GBps_to_icc(x)	((x) * 1000 * 1000)
++#define bps_to_icc(x)	(1)
++#define kbps_to_icc(x)	((x) / 8 + ((x) % 8 ? 1 : 0))
++#define Mbps_to_icc(x)	((x) * 1000 / 8)
++#define Gbps_to_icc(x)	((x) * 1000 * 1000 / 8)
++
++struct icc_path;
++struct device;
++
++#if IS_ENABLED(CONFIG_INTERCONNECT)
++
++struct icc_path *icc_get(struct device *dev, const int src_id,
++			 const int dst_id);
++void icc_put(struct icc_path *path);
++int icc_set_bw(struct icc_path *path, u32 avg_bw, u32 peak_bw);
++
++#else
++
++static inline struct icc_path *icc_get(struct device *dev, const int src_id,
++				       const int dst_id)
 +{
 +	return NULL;
 +}
 +
- static inline void icc_put(struct icc_path *path)
- {
- }
++static inline void icc_put(struct icc_path *path)
++{
++}
++
++static inline int icc_set_bw(struct icc_path *path, u32 avg_bw, u32 peak_bw)
++{
++	return 0;
++}
++
++#endif /* CONFIG_INTERCONNECT */
++
++#endif /* __LINUX_INTERCONNECT_H */
