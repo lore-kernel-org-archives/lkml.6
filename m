@@ -2,226 +2,114 @@ Return-Path: <SRS0=1Lvk=PY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E233BC43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 18:04:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 342BBC43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 18:06:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9979C2086D
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 18:04:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 01BFC20866
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 18:06:35 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="MgI3lUg7";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="HLDqSbI5"
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="UjC4u3gJ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728329AbfAPSDi (ORCPT
+        id S1727913AbfAPSGd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 16 Jan 2019 13:03:38 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:37996 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725710AbfAPSDh (ORCPT
+        Wed, 16 Jan 2019 13:06:33 -0500
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:44601 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725864AbfAPSGc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Jan 2019 13:03:37 -0500
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 962436086B; Wed, 16 Jan 2019 18:03:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1547661816;
-        bh=rR3MvLrYA2vNLPZiKFT4GZYVb0lBqkdehgMaRYxBNgU=;
-        h=From:To:Cc:Subject:Date:From;
-        b=MgI3lUg7vP1euqqnKQ1LRFgeGtxtNkZaVh2apJTT0s7SAWfef3gXytwL6ziqIUV+h
-         kS17+hHJmHGVeOYtfufLYyYwdtidivy2aXlDcjMmyG4JiYhHSSAKSxn5vb5XpoJsgd
-         ilbpEEsrgK7XudvdBdCVPXidrvWAhjT7gCkkui7c=
-Received: from jcrouse1-lnx.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: jcrouse@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id D64A260312;
-        Wed, 16 Jan 2019 18:03:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1547661814;
-        bh=rR3MvLrYA2vNLPZiKFT4GZYVb0lBqkdehgMaRYxBNgU=;
-        h=From:To:Cc:Subject:Date:From;
-        b=HLDqSbI53eNr9L9FsvCxbF5GajvHHqVD5da3v4mrQeUZMwVxKx0A/Jhaf413wnGY/
-         CmR2GGqjmLn1bfSeSp55OgX7zhCEiCpLqhXPihdEXxoUBCTETQvLu21K8x8ScBs+90
-         RnFS2BMxITVLmvK3sTnSv5REyFLYCWmcixnKIHMA=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org D64A260312
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=jcrouse@codeaurora.org
-From:   Jordan Crouse <jcrouse@codeaurora.org>
-To:     freedreno@lists.freedesktop.org
-Cc:     linux-arm-msm@vger.kernel.org, rnayak@codeaurora.org,
-        dianders@chromium.org, dri-devel@lists.freedesktop.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Andy Gross <andy.gross@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        David Brown <david.brown@linaro.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Subject: [PATCH v8] arm64: dts: sdm845: Add gpu and gmu device nodes
-Date:   Wed, 16 Jan 2019 11:03:29 -0700
-Message-Id: <1547661809-31184-1-git-send-email-jcrouse@codeaurora.org>
-X-Mailer: git-send-email 2.7.4
+        Wed, 16 Jan 2019 13:06:32 -0500
+Received: by mail-pl1-f193.google.com with SMTP id e11so3360735plt.11
+        for <linux-kernel@vger.kernel.org>; Wed, 16 Jan 2019 10:06:32 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=broadcom.com; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-transfer-encoding:content-language;
+        bh=6K39/QLGsaxRZ05/uOSjLCq/5EeuHt4nUThhnw2J9PM=;
+        b=UjC4u3gJvHmJ8Nm6G4D2Mncd9VrNDtydzcTRD/MLw16xOenz0Y1lg19c1ZkEnuwXoG
+         pAUQdrHEeTzAG3+xOXM53AGGgV0lJ3STh/CJu3PxNQUYu0HN17oHsIJ8et2JJVMp/rPp
+         dkqxEm8AZkTL0G+Us9AfP1jxRiW7bOc/QTuuI=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-transfer-encoding
+         :content-language;
+        bh=6K39/QLGsaxRZ05/uOSjLCq/5EeuHt4nUThhnw2J9PM=;
+        b=aI6KmcDPec/Ad8kIHd4T6kPFBqzeXciFiYvObUU0MuphJcKpHzGHd5ULBRM9Wmhbau
+         c9CY9ywvnWZNzRIyxXjKxuEesZKEnqSTQJV4uR+b5YxOvbXF55WbU8YRioAGApQl+dxF
+         4xa4O6cXvE+bOQvwQlj2VEhWpBQ3l9JAqn0hWB4hr1jdI8AYSSIJ/wOlV26Q9t3QrS3K
+         2bIcuUAf/NjRdbxshrJ5/iSw0wvECTzITElc70atDVmFET6gPCtpeu+3zePD9oblamHb
+         r6l5vEkvpeDVy6s7GcpwwTZZ3b25Lm0qyw2EeUmiOtaQbYFT8innv6BBU30aMrLpVNze
+         9VZg==
+X-Gm-Message-State: AJcUukfWtMXHesWJRmkAlaA8XbgBQB9qfHGkfuOmKaSUy/wMfMDt3Rab
+        njDwkZ8WPHC1xkVDSxO7KQFPwcKa0MHEDixr
+X-Google-Smtp-Source: ALg8bN4ZCT4p2HOk1lg+UmpMu5Fwovrgm8xmlayH0mdHa31bk3nQqLRZSmow33lepw0hz4hTm0mlUw==
+X-Received: by 2002:a17:902:8b88:: with SMTP id ay8mr11254413plb.55.1547661992181;
+        Wed, 16 Jan 2019 10:06:32 -0800 (PST)
+Received: from [10.136.13.65] ([192.19.228.250])
+        by smtp.gmail.com with ESMTPSA id d68sm9467672pfa.64.2019.01.16.10.06.29
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 16 Jan 2019 10:06:31 -0800 (PST)
+Subject: Re: [PATCH -next] soc: bcm: bcm2835-pm: Make local symbol static
+To:     Wei Yongjun <weiyongjun1@huawei.com>,
+        Eric Anholt <eric@anholt.net>,
+        Stefan Wahren <stefan.wahren@i2se.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Ray Jui <rjui@broadcom.com>,
+        Scott Branden <sbranden@broadcom.com>,
+        Rob Herring <robh@kernel.org>
+Cc:     bcm-kernel-feedback-list@broadcom.com,
+        linux-rpi-kernel@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+References: <1547617457-60066-1-git-send-email-weiyongjun1@huawei.com>
+From:   Scott Branden <scott.branden@broadcom.com>
+Message-ID: <50481a6e-53de-96ef-11c9-421568d7b7e5@broadcom.com>
+Date:   Wed, 16 Jan 2019 10:06:26 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
+MIME-Version: 1.0
+In-Reply-To: <1547617457-60066-1-git-send-email-weiyongjun1@huawei.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add the nodes to describe the Adreno GPU and GMU devices for sdm845.
+Looks good.
 
-Signed-off-by: Jordan Crouse <jcrouse@codeaurora.org>
-Reviewed-by: Douglas Anderson <dianders@chromium.org>
-Tested-by: Douglas Anderson <dianders@chromium.org>
----
-This has the following dependencies:
-
-[v11,1/9] dt-bindings: opp: Introduce opp-level bindings
-https://patchwork.kernel.org/patch/10755199/
-
-And the following patches already in Rob's msm-next:
-msm-next:d1c9cadea6f7 ("drm/msm/gpu: Remove hardcoded interrupt name")
-msm-next:b08b92546807 ("drm/msm: drop interrupt-names")
-msm-next:24937c540917 ("dt-bindings: drm/msm/a6xx: Document GMU and update GPU bindings")
-
-And finally drm/msm: Fix A6XX support for opp-level
-https://patchwork.freedesktop.org/patch/276756/
-
-Which is not merged because it too depends on Rajendra's stack.
-
- arch/arm64/boot/dts/qcom/sdm845.dtsi | 121 +++++++++++++++++++++++++++++++++++
- 1 file changed, 121 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/qcom/sdm845.dtsi b/arch/arm64/boot/dts/qcom/sdm845.dtsi
-index f07c4ca..90766fc 100644
---- a/arch/arm64/boot/dts/qcom/sdm845.dtsi
-+++ b/arch/arm64/boot/dts/qcom/sdm845.dtsi
-@@ -1618,6 +1618,127 @@
- 			};
- 		};
- 
-+
-+		gpu@5000000 {
-+			compatible = "qcom,adreno-630.2", "qcom,adreno";
-+			#stream-id-cells = <16>;
-+
-+			reg = <0x5000000 0x40000>, <0x509e000 0x10>;
-+			reg-names = "kgsl_3d0_reg_memory", "cx_mem";
-+
-+			/*
-+			 * Look ma, no clocks! The GPU clocks and power are
-+			 * controlled entirely by the GMU
-+			 */
-+
-+			interrupts = <GIC_SPI 300 IRQ_TYPE_LEVEL_HIGH>;
-+
-+			iommus = <&adreno_smmu 0>;
-+
-+			operating-points-v2 = <&gpu_opp_table>;
-+
-+			qcom,gmu = <&gmu>;
-+
-+			gpu_opp_table: opp-table {
-+				compatible = "operating-points-v2";
-+
-+				opp-710000000 {
-+					opp-hz = /bits/ 64 <710000000>;
-+					opp-level = <RPMH_REGULATOR_LEVEL_TURBO_L1>;
-+				};
-+
-+				opp-675000000 {
-+					opp-hz = /bits/ 64 <675000000>;
-+					opp-level = <RPMH_REGULATOR_LEVEL_TURBO>;
-+				};
-+
-+				opp-596000000 {
-+					opp-hz = /bits/ 64 <596000000>;
-+					opp-level = <RPMH_REGULATOR_LEVEL_NOM_L1>;
-+				};
-+
-+				opp-520000000 {
-+					opp-hz = /bits/ 64 <520000000>;
-+					opp-level = <RPMH_REGULATOR_LEVEL_NOM>;
-+				};
-+
-+				opp-414000000 {
-+					opp-hz = /bits/ 64 <414000000>;
-+					opp-level = <RPMH_REGULATOR_LEVEL_SVS_L1>;
-+				};
-+
-+				opp-342000000 {
-+					opp-hz = /bits/ 64 <342000000>;
-+					opp-level = <RPMH_REGULATOR_LEVEL_SVS>;
-+				};
-+
-+				opp-257000000 {
-+					opp-hz = /bits/ 64 <257000000>;
-+					opp-level = <RPMH_REGULATOR_LEVEL_LOW_SVS>;
-+				};
-+			};
-+		};
-+
-+		adreno_smmu: iommu@5040000 {
-+			compatible = "qcom,sdm845-smmu-v2", "qcom,smmu-v2";
-+			reg = <0x5040000 0x10000>;
-+			#iommu-cells = <1>;
-+			#global-interrupts = <2>;
-+			interrupts = <GIC_SPI 229 IRQ_TYPE_LEVEL_HIGH>,
-+					<GIC_SPI 231 IRQ_TYPE_LEVEL_HIGH>,
-+					<GIC_SPI 364 IRQ_TYPE_EDGE_RISING>,
-+					<GIC_SPI 365 IRQ_TYPE_EDGE_RISING>,
-+					<GIC_SPI 366 IRQ_TYPE_EDGE_RISING>,
-+					<GIC_SPI 367 IRQ_TYPE_EDGE_RISING>,
-+					<GIC_SPI 368 IRQ_TYPE_EDGE_RISING>,
-+					<GIC_SPI 369 IRQ_TYPE_EDGE_RISING>,
-+					<GIC_SPI 370 IRQ_TYPE_EDGE_RISING>,
-+					<GIC_SPI 371 IRQ_TYPE_EDGE_RISING>;
-+			clocks = <&gcc GCC_GPU_MEMNOC_GFX_CLK>,
-+				<&gcc GCC_GPU_CFG_AHB_CLK>;
-+			clock-names = "bus", "iface";
-+
-+			power-domains = <&gpucc GPU_CX_GDSC>;
-+		};
-+
-+		gmu: gmu@506a000 {
-+			compatible="qcom,adreno-gmu-630.2", "qcom,adreno-gmu";
-+
-+			reg = <0x506a000 0x30000>,
-+				<0xb280000 0x10000>,
-+				<0xb480000 0x10000>;
-+			reg-names = "gmu", "gmu_pdc", "gmu_pdc_seq";
-+
-+			interrupts = <GIC_SPI 304 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 305 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupt-names = "hfi", "gmu";
-+
-+			clocks = <&gpucc GPU_CC_CX_GMU_CLK>,
-+				<&gpucc GPU_CC_CXO_CLK>,
-+				<&gcc GCC_DDRSS_GPU_AXI_CLK>,
-+				<&gcc GCC_GPU_MEMNOC_GFX_CLK>;
-+			clock-names = "gmu", "cxo", "axi", "memnoc";
-+
-+			power-domains = <&gpucc GPU_CX_GDSC>;
-+			iommus = <&adreno_smmu 5>;
-+
-+			operating-points-v2 = <&gmu_opp_table>;
-+
-+			gmu_opp_table: opp-table {
-+				compatible = "operating-points-v2";
-+
-+				opp-400000000 {
-+					opp-hz = /bits/ 64 <400000000>;
-+					opp-level = <RPMH_REGULATOR_LEVEL_SVS>;
-+				};
-+
-+				opp-200000000 {
-+					opp-hz = /bits/ 64 <200000000>;
-+					opp-level = <RPMH_REGULATOR_LEVEL_MIN_SVS>;
-+				};
-+			};
-+		};
-+
- 		dispcc: clock-controller@af00000 {
- 			compatible = "qcom,sdm845-dispcc";
- 			reg = <0xaf00000 0x10000>;
--- 
-2.7.4
-
+On 2019-01-15 9:44 p.m., Wei Yongjun wrote:
+> Fixes the following sparse warning:
+>
+> drivers/soc/bcm/bcm2835-power.c:556:32: warning:
+>   symbol 'bcm2835_reset_ops' was not declared. Should it be static?
+>
+> Fixes: 670c672608a1 ("soc: bcm: bcm2835-pm: Add support for power domains under a new binding.")
+> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+Acked-by: Scott Branden <scott.branden@broadcom.com>
+> ---
+>   drivers/soc/bcm/bcm2835-power.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/soc/bcm/bcm2835-power.c b/drivers/soc/bcm/bcm2835-power.c
+> index 4841295..9351349 100644
+> --- a/drivers/soc/bcm/bcm2835-power.c
+> +++ b/drivers/soc/bcm/bcm2835-power.c
+> @@ -553,7 +553,7 @@ static int bcm2835_reset_status(struct reset_controller_dev *rcdev,
+>   	}
+>   }
+>   
+> -const struct reset_control_ops bcm2835_reset_ops = {
+> +static const struct reset_control_ops bcm2835_reset_ops = {
+>   	.reset = bcm2835_reset_reset,
+>   	.status = bcm2835_reset_status,
+>   };
+>
+>
+>
