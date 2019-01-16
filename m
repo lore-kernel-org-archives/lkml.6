@@ -2,108 +2,139 @@ Return-Path: <SRS0=1Lvk=PY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D5C3DC43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 17:12:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 468D4C43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 17:12:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B183820651
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 17:12:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 16D7920651
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 17:12:41 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="GTP5qre6"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405881AbfAPRM2 (ORCPT
+        id S2405886AbfAPRMj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 16 Jan 2019 12:12:28 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:57004 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728878AbfAPRM1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Jan 2019 12:12:27 -0500
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id F40755C9;
-        Wed, 16 Jan 2019 17:12:26 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-120-244.rdu2.redhat.com [10.10.120.244])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id B63405C228;
-        Wed, 16 Jan 2019 17:12:21 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <20190116164703.9267-1-vt@altlinux.org>
-References: <20190116164703.9267-1-vt@altlinux.org>
-To:     Vitaly Chikunov <vt@altlinux.org>
-Cc:     dhowells@redhat.com, Tudor Ambarus <tudor-dan.ambarus@nxp.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S. Miller" <davem@davemloft.net>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        =?UTF-8?q?Horia=20Geant=C4=83?= <horia.geanta@nxp.com>,
-        Aymen Sghaier <aymen.sghaier@nxp.com>,
-        Tom Lendacky <thomas.lendacky@amd.com>,
-        Gary Hook <gary.hook@amd.com>,
-        Giovanni Cabiddu <giovanni.cabiddu@intel.com>,
-        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
-        keyrings@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
-        linux-arm-kernel@lists.infradead.org, qat-linux@intel.com
-Subject: Re: [RFC PATCH v2] akcipher: Introduce verify_rsa/verify for public key algorithms
+        Wed, 16 Jan 2019 12:12:39 -0500
+Received: from lelv0143.ext.ti.com ([198.47.23.248]:55410 "EHLO
+        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727430AbfAPRMj (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 Jan 2019 12:12:39 -0500
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id x0GHCTtr122280;
+        Wed, 16 Jan 2019 11:12:29 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1547658749;
+        bh=9yh5RvztSaWujiBz6b5nKhFLd6k2r4HHS60blovpu98=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=GTP5qre61HuKblMR9JAEyiPZjOZt9NV1BMJ/wQdl8wUXUNVyQwgsvsWQoUMvqt5b5
+         J44LvlzCiaLd8AxRGmW4QWVJDc4ecu4/xNxWUAAyLOQK4pae8Ei2O00lFevakVn0YY
+         gAvoHwhfS4Z+xV6ifdxECW3dgZTYSeVvdbpkRu90=
+Received: from DLEE114.ent.ti.com (dlee114.ent.ti.com [157.170.170.25])
+        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x0GHCTGU130209
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 16 Jan 2019 11:12:29 -0600
+Received: from DLEE112.ent.ti.com (157.170.170.23) by DLEE114.ent.ti.com
+ (157.170.170.25) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Wed, 16
+ Jan 2019 11:12:29 -0600
+Received: from dflp33.itg.ti.com (10.64.6.16) by DLEE112.ent.ti.com
+ (157.170.170.23) with Microsoft SMTP Server (version=TLS1_0,
+ cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1591.10 via Frontend Transport;
+ Wed, 16 Jan 2019 11:12:29 -0600
+Received: from [172.22.93.115] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by dflp33.itg.ti.com (8.14.3/8.13.8) with ESMTP id x0GHCS0k029522;
+        Wed, 16 Jan 2019 11:12:28 -0600
+Subject: Re: [PATCH 11/14] staging: android: ion: Allow heap name to be null
+To:     Brian Starkey <Brian.Starkey@arm.com>
+CC:     Laura Abbott <labbott@redhat.com>,
+        Sumit Semwal <sumit.semwal@linaro.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        =?UTF-8?Q?Arve_Hj=c3=b8nnev=c3=a5g?= <arve@android.com>,
+        "devel@driverdev.osuosl.org" <devel@driverdev.osuosl.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+        nd <nd@arm.com>
+References: <20190111180523.27862-1-afd@ti.com>
+ <20190111180523.27862-12-afd@ti.com>
+ <20190116152807.phyq5pqrmbkj6oxk@DESKTOP-E1NTVVP.localdomain>
+From:   "Andrew F. Davis" <afd@ti.com>
+Message-ID: <39453e0a-2db8-3a59-1909-e02caa9afa31@ti.com>
+Date:   Wed, 16 Jan 2019 11:12:28 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <24886.1547658740.1@warthog.procyon.org.uk>
-Date:   Wed, 16 Jan 2019 17:12:20 +0000
-Message-ID: <24887.1547658740@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.29]); Wed, 16 Jan 2019 17:12:27 +0000 (UTC)
+In-Reply-To: <20190116152807.phyq5pqrmbkj6oxk@DESKTOP-E1NTVVP.localdomain>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Umm...  What do I apply this patch to?
+On 1/16/19 9:28 AM, Brian Starkey wrote:
+> Hi Andrew,
+> 
+> On Fri, Jan 11, 2019 at 12:05:20PM -0600, Andrew F. Davis wrote:
+>> The heap name can be used for debugging but otherwise does not seem
+>> to be required and no other part of the code will fail if left NULL
+>> except here. We can make it required and check for it at some point,
+>> for now lets just prevent this from causing a NULL pointer exception.
+> 
+> I'm not so keen on this one. In the "new" API with heap querying, the
+> name string is the only way to identify the heap. I think Laura
+> mentioned at XDC2017 that it was expected that userspace should use
+> the strings to find the heap they want.
+> 
 
-In your modified public_key_verify_signature():
+Right now the names are only for debug. I accidentally left the name
+null once and got a kernel crash. This is the only spot where it is
+needed so I fixed it up. The other option is to make the name mandatory
+and properly error out, I don't want to do that right now until the
+below discussion is had to see if names really do matter or not.
 
-> -	sg_init_one(&digest_sg, output, outlen);
-> -	akcipher_request_set_crypt(req, &sig_sg, &digest_sg, sig->s_size,
-> +	sg_init_one(&output_sg, output, outlen);
-> +	akcipher_request_set_crypt(req, &sig_sg, &output_sg, sig->s_size,
->  				   outlen);
+> I'd actually be in favor of making the string a more strict UAPI than
+> allowing it to be empty (at least, if heap name strings is the API we
+> decide on for identifying heaps - which is another discussion).
+> 
 
-Why is the output necessary?  It was there for the decoded hash to be placed
-in prior to comparison - but now that's not necessary.
+I would think identifying heaps by name would be less portable, but as
+you said that is a whole different discussion..
 
-> -	ret = crypto_wait_req(crypto_akcipher_verify(req), &cwait);
-> +	ret = crypto_wait_req(crypto_akcipher_verify(req, sig->digest,
-> +						     sig->digest_size), &cwait);
+Thanks,
+Andrew
 
-I see sig->digest is passed in here.  Should it be passed in in place of
-output_sg above?
-
-> -	inst->alg.verify = pkcs1pad_verify;
-> +	inst->alg.verify_rsa = pkcs1pad_verify;
-
-Is there a reason that pkcs1pad_verify() can't do the comparison?
-
-> -	.verify = rsa_verify,
-> +	.verify_rsa = rsa_verify,
-
-Likewise verify_rsa()?
-
-Granted, this might involve pkcs1pad_verify() dressing up the signature in the
-appropriate wrappings and passing it along to verify_rsa() to do the actual
-comparison there (ie. what pkcs1pad_verify_complete() does).
-
-> -	.verify = caam_rsa_enc,
-> +	.verify_rsa = caam_rsa_enc,
-
-I presume this is the reason - because this reuses its encrypt operation
-directly.  But could this instead perform the comparison upon completion, say
-in rsa_pub_done()?
-
-> -	.verify = qat_rsa_enc,
-> +	.verify_rsa = qat_rsa_enc,
-
-Again, this could do the comparison, say, in qat_rsa_cb().
-
-David
+> Cheers,
+> -Brian
+> 
+>>
+>> Signed-off-by: Andrew F. Davis <afd@ti.com>
+>> ---
+>>  drivers/staging/android/ion/ion.c | 2 +-
+>>  1 file changed, 1 insertion(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/staging/android/ion/ion.c b/drivers/staging/android/ion/ion.c
+>> index bba5f682bc25..14e48f6eb734 100644
+>> --- a/drivers/staging/android/ion/ion.c
+>> +++ b/drivers/staging/android/ion/ion.c
+>> @@ -467,7 +467,7 @@ static int ion_query_heaps(struct ion_heap_query *query)
+>>  	max_cnt = query->cnt;
+>>  
+>>  	plist_for_each_entry(heap, &dev->heaps, node) {
+>> -		strncpy(hdata.name, heap->name, MAX_HEAP_NAME);
+>> +		strncpy(hdata.name, heap->name ?: "(null)", MAX_HEAP_NAME);
+>>  		hdata.name[sizeof(hdata.name) - 1] = '\0';
+>>  		hdata.type = heap->type;
+>>  		hdata.heap_id = heap->id;
+>> -- 
+>> 2.19.1
+>>
+>> _______________________________________________
+>> dri-devel mailing list
+>> dri-devel@lists.freedesktop.org
+>> https://lists.freedesktop.org/mailman/listinfo/dri-devel
