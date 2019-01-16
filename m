@@ -2,144 +2,85 @@ Return-Path: <SRS0=1Lvk=PY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 56CB3C43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 21:04:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C41EC43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 21:05:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2BCFE20652
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 21:04:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D776C20652
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 21:05:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727072AbfAPVEp (ORCPT
+        id S1727177AbfAPVFJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 16 Jan 2019 16:04:45 -0500
-Received: from mail.bootlin.com ([62.4.15.54]:45893 "EHLO mail.bootlin.com"
+        Wed, 16 Jan 2019 16:05:09 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38474 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726803AbfAPVEp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Jan 2019 16:04:45 -0500
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 92D2D207B0; Wed, 16 Jan 2019 22:04:41 +0100 (CET)
-Received: from localhost (lfbn-lyo-1-59-119.w86-202.abo.wanadoo.fr [86.202.150.119])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 5E22E206A6;
-        Wed, 16 Jan 2019 22:04:41 +0100 (CET)
-Date:   Wed, 16 Jan 2019 22:04:41 +0100
-From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
-To:     Sam Ravnborg <sam@ravnborg.org>
-Cc:     Alessandro Zummo <a.zummo@towertech.it>,
-        Andrew Jeffery <andrew@aj.id.au>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Joel Stanley <joel@jms.id.au>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Russell King <linux@armlinux.org.uk>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Urs =?iso-8859-1?Q?F=E4ssler?= <urs.fassler@bbv.ch>,
-        Shawn Guo <shawnguo@kernel.org>, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-rtc@vger.kernel.org
-Subject: Re: [PATCH v2 4/5] rtc: pcf8523: set xtal load capacitance from DT
-Message-ID: <20190116210441.GE2627@piout.net>
-References: <20190108185414.26922-1-sam@ravnborg.org>
- <20190108185414.26922-5-sam@ravnborg.org>
+        id S1726803AbfAPVFJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 Jan 2019 16:05:09 -0500
+Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0685920652;
+        Wed, 16 Jan 2019 21:05:07 +0000 (UTC)
+Date:   Wed, 16 Jan 2019 16:05:06 -0500
+From:   Steven Rostedt <rostedt@goodmis.org>
+To:     Changbin Du <changbin.du@gmail.com>
+Cc:     mingo@redhat.com, corbet@lwn.net, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] sched/tracing: Show stacktrace for wakeup tracers
+Message-ID: <20190116160506.0d56e027@gandalf.local.home>
+In-Reply-To: <20190116160249.7554-1-changbin.du@gmail.com>
+References: <20190116160249.7554-1-changbin.du@gmail.com>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190108185414.26922-5-sam@ravnborg.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 08/01/2019 19:54:13+0100, Sam Ravnborg wrote:
-> Add support for specifying the xtal load capacitance in the DT node.
-> The pcf8523 supports xtal load capacitance of 7pF or 12.5pF.
-> If the rtc has the wrong configuration the time will
-> drift several hours/week.
+On Thu, 17 Jan 2019 00:02:49 +0800
+Changbin Du <changbin.du@gmail.com> wrote:
+
+> This align the behavior of wakeup tracers with irqsoff latency tracer
+> that we record stacktrace at the beginning and end of waking up. The
+> stacktrace shows us what is happening in the kernel.
 > 
-> The driver use the default value 12.5pF.
-> 
-> The DT may specify either 7000fF or 12500fF.
-> (The DT uses femto Farad to avoid decimal numbers).
-> Other values are warned and the driver uses the default value.
-> 
-> Signed-off-by: Sam Ravnborg <sam@ravnborg.org>
-> Cc: Alessandro Zummo <a.zummo@towertech.it>
-> Cc: Alexandre Belloni <alexandre.belloni@bootlin.com>
+> Signed-off-by: Changbin Du <changbin.du@gmail.com>
+
+I've applied your patch, but it may be a while before you see it in
+linux-next. I'll be traveling for a bit and wont be able to do the full
+tests which I do before pushing to my linux-next branch.
+
+You may see them soon in my ftrace/core branch on kernel.org.
+
+-- Steve
+
 > ---
->  drivers/rtc/rtc-pcf8523.c | 28 ++++++++++++++++++++--------
->  1 file changed, 20 insertions(+), 8 deletions(-)
+>  kernel/trace/trace_sched_wakeup.c | 2 ++
+>  1 file changed, 2 insertions(+)
 > 
-> diff --git a/drivers/rtc/rtc-pcf8523.c b/drivers/rtc/rtc-pcf8523.c
-> index 3fcd2cbafc84..dbbc00b53b50 100644
-> --- a/drivers/rtc/rtc-pcf8523.c
-> +++ b/drivers/rtc/rtc-pcf8523.c
-> @@ -97,8 +97,9 @@ static int pcf8523_voltage_low(struct i2c_client *client)
->  	return !!(value & REG_CONTROL3_BLF);
->  }
+> diff --git a/kernel/trace/trace_sched_wakeup.c b/kernel/trace/trace_sched_wakeup.c
+> index da5b6e012840..f4fe7d1781e9 100644
+> --- a/kernel/trace/trace_sched_wakeup.c
+> +++ b/kernel/trace/trace_sched_wakeup.c
+> @@ -475,6 +475,7 @@ probe_wakeup_sched_switch(void *ignore, bool preempt,
 >  
-> -static int pcf8523_select_capacitance(struct i2c_client *client, bool high)
-> +static int pcf8523_load_capacitance(struct i2c_client *client)
->  {
-> +	u32 load;
->  	u8 value;
->  	int err;
+>  	__trace_function(wakeup_trace, CALLER_ADDR0, CALLER_ADDR1, flags, pc);
+>  	tracing_sched_switch_trace(wakeup_trace, prev, next, flags, pc);
+> +	__trace_stack(wakeup_trace, flags, 0, pc);
 >  
-> @@ -106,14 +107,24 @@ static int pcf8523_select_capacitance(struct i2c_client *client, bool high)
->  	if (err < 0)
->  		return err;
+>  	T0 = data->preempt_timestamp;
+>  	T1 = ftrace_now(cpu);
+> @@ -586,6 +587,7 @@ probe_wakeup(void *ignore, struct task_struct *p)
+>  	data = per_cpu_ptr(wakeup_trace->trace_buffer.data, wakeup_cpu);
+>  	data->preempt_timestamp = ftrace_now(cpu);
+>  	tracing_sched_wakeup_trace(wakeup_trace, p, current, flags, pc);
+> +	__trace_stack(wakeup_trace, flags, 0, pc);
 >  
-> -	if (!high)
-> -		value &= ~REG_CONTROL1_CAP_SEL;
-> -	else
-> +	load = 12500;
-> +	of_property_read_u32(client->dev.of_node, "quartz-load-femtofarads",
-> +			     &load);
-> +
-> +	switch (load) {
-> +	default:
-> +		dev_warn(&client->dev, "Unknown quartz-load-femtofarads value: %d. Assuming 12500",
-> +			load);
+>  	/*
+>  	 * We must be careful in using CALLER_ADDR2. But since wake_up
 
-This alignment is not correct, as you will be respinning for the DT doc,
-please fix ;)
-
-> +		/* fall through */
-> +	case 12500:
->  		value |= REG_CONTROL1_CAP_SEL;
-> +		break;
-> +	case 7000:
-> +		value &= ~REG_CONTROL1_CAP_SEL;
-> +		break;
-> +	}
->  
->  	err = pcf8523_write(client, REG_CONTROL1, value);
-> -	if (err < 0)
-> -		return err;
->  
->  	return err;
->  }
-> @@ -347,9 +358,10 @@ static int pcf8523_probe(struct i2c_client *client,
->  	if (!pcf)
->  		return -ENOMEM;
->  
-> -	err = pcf8523_select_capacitance(client, true);
-> +	err = pcf8523_load_capacitance(client);
->  	if (err < 0)
-> -		return err;
-> +		dev_warn(&client->dev, "failed to set xtal load capacitance: %d",
-> +			err);
-Ditto
-
->  
->  	err = pcf8523_set_pm(client, 0);
->  	if (err < 0)
-> -- 
-> 2.12.0
-> 
-
--- 
-Alexandre Belloni, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
