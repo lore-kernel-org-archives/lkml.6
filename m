@@ -2,140 +2,115 @@ Return-Path: <SRS0=1Lvk=PY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 27452C43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 22:31:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B3BCC43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 22:32:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F27E920652
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 22:31:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DCDB520652
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 22:32:17 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Sv4jC31K"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733251AbfAPWbe (ORCPT
+        id S1733285AbfAPWcQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 16 Jan 2019 17:31:34 -0500
-Received: from youngberry.canonical.com ([91.189.89.112]:52322 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732911AbfAPWbd (ORCPT
+        Wed, 16 Jan 2019 17:32:16 -0500
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:38313 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732911AbfAPWcP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Jan 2019 17:31:33 -0500
-Received: from static-50-53-47-167.bvtn.or.frontiernet.net ([50.53.47.167] helo=[192.168.192.153])
-        by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_128_CBC_SHA1:16)
-        (Exim 4.76)
-        (envelope-from <john.johansen@canonical.com>)
-        id 1gjtic-0006db-44; Wed, 16 Jan 2019 22:31:30 +0000
-Subject: Re: [PATCH] security/apparmor/domain: use PTR_ERR_OR_ZERO
-To:     Peng Hao <peng.hao2@zte.com.cn>, jmorris@namei.org,
-        serge@hallyn.com
-Cc:     linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <1546593430-24355-1-git-send-email-peng.hao2@zte.com.cn>
-From:   John Johansen <john.johansen@canonical.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=john.johansen@canonical.com; prefer-encrypt=mutual; keydata=
- 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
-Organization: Canonical
-Message-ID: <82ead100-3f36-5928-703d-28281c6b5353@canonical.com>
-Date:   Wed, 16 Jan 2019 14:31:26 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Wed, 16 Jan 2019 17:32:15 -0500
+Received: by mail-pg1-f193.google.com with SMTP id g189so3458592pgc.5
+        for <linux-kernel@vger.kernel.org>; Wed, 16 Jan 2019 14:32:15 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:content-transfer-encoding:subject:user-agent
+         :in-reply-to:references:cc:to:message-id:from:date;
+        bh=s52TufgdnA1Jpsl6ZZ0u+tFTg6i3vn3OhwSJLLQGsNc=;
+        b=Sv4jC31KiGmyb5B0TQ8kIWLxnz8L+wgRIlFifHYmgjg3C1WDv1kF+LrdiWC87bFJxF
+         hkmZfX2NmxOsNpP8Lltzyxkm1KjAGzSM5LK3GOOwYRpnnknxNdLCmg8uKk4MTePBjcsG
+         /BOSGlBenfByFZqkVTqdznoKXvU/Unw2X2+k0=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:content-transfer-encoding:subject
+         :user-agent:in-reply-to:references:cc:to:message-id:from:date;
+        bh=s52TufgdnA1Jpsl6ZZ0u+tFTg6i3vn3OhwSJLLQGsNc=;
+        b=fdPwRhVrRVfhwwVnWyI2UgAwqJxQskBGGJMy/k0sel4kB/LJSPa4Zz3ZTblvt4SX6a
+         oFVqfMb7upF1a9IumkKCzYayhTTaeJP6fLmRK2CjYqPuVm/wwhGTV3Hy65C6uVmqU/wv
+         Au3U1xZc1YmIQn0pvq2B3l2EE3OxeO9tlYhYpJ1XaD1ijgoEx43qZgxIpalVnEWbFLIM
+         VZFE165CJxxRLzDZwYPRYFVTpSq/w5vyHKTaJh/jooKmwtzHnScQAqi/VwzYci+xppCt
+         1hRLavkRaXacEpmLgN8kgNzTsSoNTJq5wIThtDc6Akm5Lo5dmh5QazBZbmt8DFBaThaQ
+         QZug==
+X-Gm-Message-State: AJcUukfmI1/nHKKdriFhbDyxMGsl2ecBJ4X3ucd1T6wOCDSmoScoQE4J
+        JJXchFHxoAbQgTkv41l1GM8DyQ==
+X-Google-Smtp-Source: ALg8bN6S67wTjHSFHvr5/AmEyXUEZee1Yn2llTcYysGQ0RxdYgomLZqwx4JqPFUOIUBAs9IpqYOHMA==
+X-Received: by 2002:aa7:810c:: with SMTP id b12mr12158397pfi.44.1547677934715;
+        Wed, 16 Jan 2019 14:32:14 -0800 (PST)
+Received: from localhost ([2620:15c:202:1:fa53:7765:582b:82b9])
+        by smtp.gmail.com with ESMTPSA id k14sm7593063pgs.52.2019.01.16.14.32.13
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 16 Jan 2019 14:32:14 -0800 (PST)
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-In-Reply-To: <1546593430-24355-1-git-send-email-peng.hao2@zte.com.cn>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v1 0/8] phy: qcom-ufs: Enable regulators to be off in suspend
+User-Agent: alot/0.8
+In-Reply-To: <20190111230129.127037-1-evgreen@chromium.org>
+References: <20190111230129.127037-1-evgreen@chromium.org>
+Cc:     Can Guo <cang@codeaurora.org>,
+        Douglas Anderson <dianders@chromium.org>,
+        Asutosh Das <asutoshd@codeaurora.org>,
+        Vivek Gautam <vivek.gautam@codeaurora.org>,
+        Evan Green <evgreen@chromium.org>, devicetree@vger.kernel.org,
+        Arnd Bergmann <arnd@arndb.de>,
+        Grygorii Strashko <grygorii.strashko@ti.com>,
+        linux-scsi@vger.kernel.org,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Vinayak Holikatti <vinholikatti@gmail.com>,
+        Manu Gautam <mgautam@codeaurora.org>,
+        David Brown <david.brown@linaro.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "James E.J. Bottomley" <jejb@linux.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>
+To:     Andy Gross <andy.gross@linaro.org>,
+        Evan Green <evgreen@chromium.org>,
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        Rob Herring <robh+dt@kernel.org>
+Message-ID: <154767793304.169631.18064099850112277477@swboyd.mtv.corp.google.com>
+From:   Stephen Boyd <swboyd@chromium.org>
+Date:   Wed, 16 Jan 2019 14:32:13 -0800
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 1/4/19 1:17 AM, Peng Hao wrote:
-> The variable 'new' may be NULL, so use PTR_ERR_OR_ZERO instead
-> of PTR_ERR.
-> 
-> Signed-off-by: Peng Hao <peng.hao2@zte.com.cn>
+Quoting Evan Green (2019-01-11 15:01:21)
+>=20
+> Because the UFS PHY reset bit is now toggled in the PHY, rather
+> than in ufs-qcom, this also percolated to all other PHYs using
+> ufs-qcom, which from what I can see is just 8996.
+>=20
+> There are a couple of tradeoffs in this series that I'd welcome feedback
+> on. First, it breaks compatibility with device trees that don't expose
+> this new reset controller. Making this work with older device trees
+> would be pretty ugly in the code, and given that the SDM845 UFS DT nodes
+> aren't accepted upstream yet, the breakage seemed worth it. I'm not as
+> sure about 8996.
 
-yep that is a problem unfortunately the fix isn't quite right
-we don't want to return 0 for an error here. Instead we can
-do
+It may take some minor surgery to the reset framework, but it should be
+possible to register a reset lookup that can be used if nothing matches
+in DT. Right now the reset code looks to only want to use DT if it's
+there for the device requesting the reset. If there isn't a DT node for
+the device it will look in the global lookup list. That could be changed
+to fallback to the global lookup that uses device names (similar to clk
+framework) when the DT lookup fails. Then it's just a matter of
+registering the lookup for this reset with the handful of device names
+that need the non-DT way of finding the reset.
 
-diff --git a/security/apparmor/domain.c b/security/apparmor/domain.c
-index 08c88de0ffda..11975ec8d566 100644
---- a/security/apparmor/domain.c
-+++ b/security/apparmor/domain.c
-@@ -1444,7 +1444,10 @@ int aa_change_profile(const char *fqname, int flags)
- 			new = aa_label_merge(label, target, GFP_KERNEL);
- 		if (IS_ERR_OR_NULL(new)) {
- 			info = "failed to build target label";
--			error = PTR_ERR(new);
-+			if (!new)
-+				error = -ENOMEM;
-+			else
-+				error = PTR_ERR(new);
- 			new = NULL;
- 			perms.allow = 0;
- 			goto audit;
-
-
-I have pulled your patch into my apparmor tree with the above revision
-
-
-> ---
->  security/apparmor/domain.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/security/apparmor/domain.c b/security/apparmor/domain.c
-> index 08c88de..7663589 100644
-> --- a/security/apparmor/domain.c
-> +++ b/security/apparmor/domain.c
-> @@ -1444,7 +1444,7 @@ int aa_change_profile(const char *fqname, int flags)
->  			new = aa_label_merge(label, target, GFP_KERNEL);
->  		if (IS_ERR_OR_NULL(new)) {
->  			info = "failed to build target label";
-> -			error = PTR_ERR(new);
-> +			error = PTR_ERR_OR_ZERO(new);
->  			new = NULL;
->  			perms.allow = 0;
->  			goto audit;
-> 
+Of course, that's another change and if breaking DT is simpler and
+acceptable then I would say go for the path of least resistance and
+don't try to modify reset framework for this.
 
