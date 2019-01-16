@@ -2,59 +2,73 @@ Return-Path: <SRS0=1Lvk=PY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EFF5EC43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 16:06:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C24DC43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 16:06:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BE11C205C9
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 16:06:32 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="Tc6nVXXc"
+	by mail.kernel.org (Postfix) with ESMTP id 77672205C9
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 16:06:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405136AbfAPQGa (ORCPT
+        id S2405163AbfAPQGl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 16 Jan 2019 11:06:30 -0500
-Received: from vps0.lunn.ch ([185.16.172.187]:45416 "EHLO vps0.lunn.ch"
+        Wed, 16 Jan 2019 11:06:41 -0500
+Received: from verein.lst.de ([213.95.11.211]:60290 "EHLO newverein.lst.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727058AbfAPQGa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Jan 2019 11:06:30 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch; s=20171124;
-        h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date; bh=Tk1f7fFIOHhlUxI/DgzUnABxxilbTd/RX6CjkTa2KVA=;
-        b=Tc6nVXXcXJwNTtt9esqj8UpDh8/2y8s58Bi3iUoCu5Bh3KB7e0WyRX83bthZqfZJmZdiriFEeeO8Rn0hU6276da3VBhk1yREa+UnjbroiujOV9yUmZ3XkaU3oxvL00bf5CSlKvZ0gwyoiCul1Eyfz7XOhCmup6EguLfHXvgdWlc=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.84_2)
-        (envelope-from <andrew@lunn.ch>)
-        id 1gjnhz-0008Av-Sw; Wed, 16 Jan 2019 17:06:27 +0100
-Date:   Wed, 16 Jan 2019 17:06:27 +0100
-From:   Andrew Lunn <andrew@lunn.ch>
-To:     Florian Fainelli <f.fainelli@gmail.com>
-Cc:     netdev@vger.kernel.org, Heiner Kallweit <hkallweit1@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH net-next] net: phy: Add helpers to determine if PHY
- driver is generic
-Message-ID: <20190116160627.GE29244@lunn.ch>
-References: <20190115230936.28890-1-f.fainelli@gmail.com>
+        id S2405141AbfAPQGl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 16 Jan 2019 11:06:41 -0500
+Received: by newverein.lst.de (Postfix, from userid 2407)
+        id 26CD668CEC; Wed, 16 Jan 2019 17:06:39 +0100 (CET)
+Date:   Wed, 16 Jan 2019 17:06:39 +0100
+From:   "hch@lst.de" <hch@lst.de>
+To:     "Koenig, Christian" <Christian.Koenig@amd.com>
+Cc:     Thomas Hellstrom <thellstrom@vmware.com>,
+        "hch@lst.de" <hch@lst.de>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "yong.zhi@intel.com" <yong.zhi@intel.com>,
+        "daniel.vetter@ffwll.ch" <daniel.vetter@ffwll.ch>,
+        "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>,
+        "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>,
+        "bingbu.cao@intel.com" <bingbu.cao@intel.com>,
+        "jian.xu.zheng@intel.com" <jian.xu.zheng@intel.com>,
+        "tian.shu.qiu@intel.com" <tian.shu.qiu@intel.com>,
+        "shiraz.saleem@intel.com" <shiraz.saleem@intel.com>,
+        "sakari.ailus@linux.intel.com" <sakari.ailus@linux.intel.com>,
+        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+        "jgg@ziepe.ca" <jgg@ziepe.ca>
+Subject: Re: [PATCH] lib/scatterlist: Provide a DMA page iterator
+Message-ID: <20190116160639.GA28619@lst.de>
+References: <20190114094856.GB29604@lst.de> <1fb20ab4b171b281e9994b6c55734c120958530b.camel@vmware.com> <2b440a3b-ed2f-8fd6-a21e-97ca0b2f5db9@gmail.com> <20190115152029.GB2325@lst.de> <41d0616e95fb48942404fb54d82249f5700affb1.camel@vmware.com> <20190115183133.GA12350@lst.de> <c82076aa-a6ee-5ba2-a8d8-935fdbb7d5ca@amd.com> <20190115205801.GA15432@lst.de> <01e5522bf88549bfdaea1430fece23cb3d1a1a55.camel@vmware.com> <8aadac80-da9b-b52a-a4bf-066406127117@amd.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190115230936.28890-1-f.fainelli@gmail.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <8aadac80-da9b-b52a-a4bf-066406127117@amd.com>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 15, 2019 at 03:09:35PM -0800, Florian Fainelli wrote:
-> We are already checking in phy_detach() that the PHY driver is of
-> generic kind (1G or 10G) and we are going to make use of that in the SFP
-> layer as well for 1000BaseT SFP modules, so expose helper functions to
-> return that information.
+On Wed, Jan 16, 2019 at 07:28:13AM +0000, Koenig, Christian wrote:
+> To summarize once more: We have an array of struct pages and want to 
+> coherently map that to a device.
+
+And the answer to that is very simple: you can't.  What is so hard
+to understand about?  If you want to map arbitrary memory it simply
+can't be done in a coherent way on about half of our platforms.
+
+> If that is not possible because of whatever reason we want to get an 
+> error code or even not load the driver from the beginning.
+
+That is a bullshit attitude.  Just like everyone else makes their
+drivers work you should not be lazy.
+
+> > bool dma_streaming_is_coherent(const struct device *)
+> >
+> > API to help us decide when to load or not.
 > 
-> Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
+> Yes, please.
 
-Reviewed-by: Andrew Lunn <andrew@lunn.ch>
-
-    Andrew
+Hell no.
