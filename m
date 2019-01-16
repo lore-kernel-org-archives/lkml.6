@@ -2,101 +2,110 @@ Return-Path: <SRS0=1Lvk=PY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B95BEC43387
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 16:29:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3BFA3C43387
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 16:29:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8A68620675
-	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 16:29:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0C23320657
+	for <linux-kernel@archiver.kernel.org>; Wed, 16 Jan 2019 16:29:15 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="Dj9GyEjk";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="OBqlmXvm"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726065AbfAPQ3C (ORCPT
+        id S1729434AbfAPQ3N (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 16 Jan 2019 11:29:02 -0500
-Received: from youngberry.canonical.com ([91.189.89.112]:47073 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725385AbfAPQ3C (ORCPT
+        Wed, 16 Jan 2019 11:29:13 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:50808 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725320AbfAPQ3N (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 16 Jan 2019 11:29:02 -0500
-Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
-        by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_256_CBC_SHA1:32)
-        (Exim 4.76)
-        (envelope-from <colin.king@canonical.com>)
-        id 1gjo3n-0003IV-VF; Wed, 16 Jan 2019 16:29:00 +0000
-From:   Colin King <colin.king@canonical.com>
-To:     Steve French <sfrench@samba.org>, linux-cifs@vger.kernel.org,
-        samba-technical@lists.samba.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH][V2] cifs: fix memory leak of an allocated cifs_ntsd structure
-Date:   Wed, 16 Jan 2019 16:28:59 +0000
-Message-Id: <20190116162859.8028-1-colin.king@canonical.com>
-X-Mailer: git-send-email 2.19.1
+        Wed, 16 Jan 2019 11:29:13 -0500
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 32827607DE; Wed, 16 Jan 2019 16:29:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1547656152;
+        bh=Mx8xI5Et49VlkQlFAUQZRJGnf3pfMfSnFxGPFlPGgSY=;
+        h=From:To:Cc:Subject:References:Date:In-Reply-To:From;
+        b=Dj9GyEjkq+T5FnY8bFfUTu7MYqmMZa2i14WVNciP0KySTe65/oAVQAamqWZYdVtUM
+         ng7GIZ8CkkeMM/tZS8CLv4UrA1MW5S3OWPE4bXbB/ol8TWO7cTq8UxkS6uat6bW9bV
+         sLInCht5jj2iBlt7q9XNZ6Rmjv39Cob1iuZBt3FM=
+Received: from x230.qca.qualcomm.com (88-114-240-156.elisa-laajakaista.fi [88.114.240.156])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: kvalo@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id EA63A60208;
+        Wed, 16 Jan 2019 16:29:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1547656151;
+        bh=Mx8xI5Et49VlkQlFAUQZRJGnf3pfMfSnFxGPFlPGgSY=;
+        h=From:To:Cc:Subject:References:Date:In-Reply-To:From;
+        b=OBqlmXvmfxu3pKeuXdjlUCB+yL1UPJR2V14qtdI3YrflY4KAFM4p9eNq0uH7QWpqm
+         cPZYJEwlAtqaRCRTgND+qi9Tk0abrnUkPZxJZOLRw7LUzOkLkTH+aXQLEChRz06qMl
+         EAjm0i70YbmETuCfoT3rIVeDYjxoA7kDuTmuzdk4=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org EA63A60208
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=kvalo@codeaurora.org
+From:   Kalle Valo <kvalo@codeaurora.org>
+To:     Stanislaw Gruszka <sgruszka@redhat.com>
+Cc:     Bernd Edlinger <bernd.edlinger@hotmail.de>,
+        Helmut Schaa <helmut.schaa@googlemail.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        "linux-wireless\@vger.kernel.org" <linux-wireless@vger.kernel.org>,
+        "netdev\@vger.kernel.org" <netdev@vger.kernel.org>,
+        "linux-kernel\@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] rt61pci: Work around a firmware bug with shared keys
+References: <AM0PR07MB3874E8F6ADD41C4E1BCBE43EE4810@AM0PR07MB3874.eurprd07.prod.outlook.com>
+        <20190116112129.GC5234@redhat.com>
+Date:   Wed, 16 Jan 2019 18:29:07 +0200
+In-Reply-To: <20190116112129.GC5234@redhat.com> (Stanislaw Gruszka's message
+        of "Wed, 16 Jan 2019 12:21:30 +0100")
+Message-ID: <87imyo4ld8.fsf@codeaurora.org>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/24.5 (gnu/linux)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+Stanislaw Gruszka <sgruszka@redhat.com> writes:
 
-The call to SMB2_queary_acl can allocate memory to pntsd and also
-return a failure via a call to SMB2_query_acl (and then query_info).
-This occurs when query_info allocates the structure and then in
-query_info the call to smb2_validate_and_copy_iov fails. Currently the
-failure just returns without kfree'ing pntsd hence causing a memory
-leak.
+> On Tue, Jan 15, 2019 at 02:01:29PM +0000, Bernd Edlinger wrote:
+>> Apparently the rt2x61 firmware fails temporarily to decode
+>> broadcast packets if the shared keys are not assigned
+>> in the "correct" sequence. At the same time unicast
+>> packets work fine, since they are encrypted with the
+>> pairwise key.
+>> 
+>> At least with WPA2 CCMP mode the shared keys are
+>> set in the following sequence: keyidx=1, 2, 1, 2.
+>> After a while only keyidx 2 gets decrypted, and
+>> keyidx 1 is ignored, probably because there is never
+>> a keyidx 3.
+>> 
+>> Symptoms are arping -b works for 10 minutes, since
+>> keyidx=2 is used for broadcast, and then it stops
+>> working for 10 minutes, because keyidx=1 is used.
+>> That failure mode repeats forever.
+>> 
+>> Note, the firmware does not even know which keyidx
+>> corresponds to which hw_key_idx so the firmware is
+>> trying to be smarter than the driver, which is bound
+>> to fail.
+>> 
+>> As workaround the function rt61pci_config_shared_key
+>> requests software decryption of the shared keys,
+>> by returning EOPNOTSUPP. However, pairwise keys are
+>> still handled by hardware which works just fine.
+>> 
+>> Signed-off-by: Bernd Edlinger <bernd.edlinger@hotmail.de>
+>
+> Acked-by: Stanislaw Gruszka <sgruszka@redhat.com>
 
-Currently, *data is allocated if it's not already pointing to a buffer,
-so it needs to be kfree'd only if was allocated in query_info, so the
-fix adds an allocated flag to track this.  Also set *dlen to zero on
-an error just to be safe since *data is kfree'd.
+The prefix should be "rt2x00:", I can change that.
 
-Also set errno to -ENOMEM if the allocation of *data fails.
-
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
-
----
- fs/cifs/smb2pdu.c | 8 ++++++++
- 1 file changed, 8 insertions(+)
-
-diff --git a/fs/cifs/smb2pdu.c b/fs/cifs/smb2pdu.c
-index 50811a7dc0e0..0af87bd0dc49 100644
---- a/fs/cifs/smb2pdu.c
-+++ b/fs/cifs/smb2pdu.c
-@@ -2816,6 +2816,7 @@ query_info(const unsigned int xid, struct cifs_tcon *tcon,
- 	int resp_buftype = CIFS_NO_BUFFER;
- 	struct cifs_ses *ses = tcon->ses;
- 	int flags = 0;
-+	bool allocated = false;
- 
- 	cifs_dbg(FYI, "Query Info\n");
- 
-@@ -2855,14 +2856,21 @@ query_info(const unsigned int xid, struct cifs_tcon *tcon,
- 					"Error %d allocating memory for acl\n",
- 					rc);
- 				*dlen = 0;
-+				rc = -ENOMEM;
- 				goto qinf_exit;
- 			}
-+			allocated = true;
- 		}
- 	}
- 
- 	rc = smb2_validate_and_copy_iov(le16_to_cpu(rsp->OutputBufferOffset),
- 					le32_to_cpu(rsp->OutputBufferLength),
- 					&rsp_iov, min_len, *data);
-+	if (rc && allocated) {
-+		kfree(*data);
-+		*data = NULL;
-+		*dlen = 0;
-+	}
- 
- qinf_exit:
- 	SMB2_query_info_free(&rqst);
 -- 
-2.19.1
-
+Kalle Valo
